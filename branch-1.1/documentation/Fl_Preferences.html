@@ -1,0 +1,216 @@
+<html>
+<HEAD>
+	<TITLE>Fl_Preferences</TITLE>
+</HEAD>
+<body>
+
+<!-- NEW PAGE -->
+
+<h2><a name="Fl_Preferences">class Fl_Preferences</a></h2>
+
+<hr>   
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<b>Fl_Preferences</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Preferences.H&gt;
+</pre></ul>
+
+<h3>Description</h3>
+
+<P><tt>Fl_Preferences </tt>provides methods to store user
+setting between application starts. It is similar to the
+Registry on WIN32 and Preferences on MacOS, and provides a
+simple configuration mechanism for UNIX.
+
+<P><tt>Fl_Preferences </tt>uses a hierarchy to store data. It
+bundles similar data into groups and manages entries into those
+groups as name/value pairs.
+
+<P>Preferences are stored in text files that can be edited
+manually. The file format is easy to read and relatively
+forgiving. Preferences files are the same on all platforms. User
+comments in preference files are preserved. Filenames are unique
+for each application by using a vendor/application naming
+scheme. The user must provide default values for all entries to
+ensure proper operation should preferences be corrupted or not
+yet exist.
+
+<P>Entries can be of any length. However, the size of each
+preferences file should be kept under 100k for performance
+reasons. One application can have multiple preferences files.
+Extensive binary data however should be stored in seperate
+files; see the <A
+href="#Fl_Preferences.getUserdataPath"><tt>getUserdataPath()</tt></A>
+method.
+
+<h3>Methods</h3>
+
+<ul>
+
+    <li><a href="#Fl_Preferences.Fl_Preferences">Fl_Preferences</a></li>
+    <li><a href="#Fl_Preferences.~Fl_Preferences">~Fl_Preferences</a></li>
+    <li><a href="#Fl_Preferences.deleteEntry">deleteEntry</a></li>
+    <li><a href="#Fl_Preferences.deleteGroup">deleteGroup</a></li>
+    <li><a href="#Fl_Preferences.entries">entries</a></li>
+    <li><a href="#Fl_Preferences.entry">entry</a></li>
+    <li><a href="#Fl_Preferences.entryExists">entryExists</a></li>
+    <li><a href="#Fl_Preferences.get">get</a></li>
+    <li><a href="#Fl_Preferences.getUserdataPath">getUserdataPath</a></li>
+    <li><a href="#Fl_Preferences.group">group</a></li>
+    <li><a href="#Fl_Preferences.groupExists">groupExists</a></li>
+    <li><a href="#Fl_Preferences.groups">groups</a></li>
+    <li><a href="#Fl_Preferences.set">set</a></li>
+    <li><a href="#Fl_Preferences.size">size</a></li>
+    <li><a href="#Fl_Preferences.Name">Name</a></li>
+
+</ul>
+
+<H4><a name="Fl_Preferences.Fl_Preferences">
+Fl_Preferences(enum Root root, const char *vendor, const char *application)<BR>
+Fl_Preferences(const char *path, const char *vendor, const char *application)<BR>
+Fl_Preferences(Fl_Preferences &amp;p, const char *groupname)<BR>
+</a></H4>
+
+<P>The constructor creates a group that manages name/value pairs and
+child groups. Groups are ready for reading and writing at any time.
+The <tt>root</tt> argument is either <tt>Fl_Preferences::USER</tt>
+or <tt>Fl_Preferences::SYSTEM</tt>.
+
+<P>The first format creates the <i>base</i> instance for all
+following entries and reads existing databases into memory. The
+<tt>vendor</tt> argument is a unique text string identifying the
+development team or vendor of an application.  A domain name or
+an EMail address are great unique names, e.g.
+"researchATmatthiasm.com" or "fltk.org". The
+<tt>application</tt> argument can be the working title or final
+name of your application. Both <tt>vendor</tt> and
+<tt>application</tt> must be valid relative UNIX pathnames and
+may contain '/'s to create deeper file structures.
+
+<P>The second format is used to create a preferences file at an
+arbitrary position in the file system. The file name is generated
+as <tt><i>path</i>/<i>application</i>.prefs</tt>. If <i>application</i>
+is 0, <i>path</i> must contain the full file name.
+
+<P>The third format generates a new group of preference entries
+inside the group or file <i>p</i>. The <tt>groupname</tt> argument 
+identifies a group of entries. It can contain '/'s to get quick 
+access to individual elements inside the hierarchy.
+
+<H4><a name="Fl_Preferences.~Fl_Preferences">~Fl_Preferences()</a></H4>
+
+<P>The destructor removes allocated resources. When used on the
+<i>base</i> preferences group, the destructor flushes all
+changes to the preferences file and deletes all internal
+databases.
+
+<H4><a name="Fl_Preferences.deleteEntry">int Fl_Preferences::deleteEntry(const char *entry)</a></H4>
+
+<P>Removes a single entry (name/value pair).
+
+<H4><a name="Fl_Preferences.deleteGroup">int Fl_Preferences::deleteGroup(const char *groupname)</a></H4>
+
+<P>Deletes a group.
+
+<H4><a name="Fl_Preferences.entries">int Fl_Preferences::entries()</a></H4>
+
+<P>Returns the number of entries (name/value) pairs in a group.
+
+<H4><a name="Fl_Preferences.entry">const char *Fl_Preferences::entry(int ix)</a></H4>
+
+<P>Returns the name of an entry. There is no guaranteed order of
+entry names. The index must be within the range given by
+<tt>entries()</tt>.
+
+<H4><a name="Fl_Preferences.entryExists">int Fl_Preferences::entryExists(const char *entry)</a></H4>
+
+<P>Returns non-zero if an entry with this name exists.
+
+<H4><a name="Fl_Preferences.flush">void Fl_Preferences::flush()</a></H4>
+
+<P>Write all preferences to disk. This function works only with
+the base preference group. This function is rarely used as
+deleting the base preferences flushes automatically.
+
+<H4><a name="Fl_Preferences.getUserdataPath">int Fl_Preferences::getUserdataPath(char *path, int path_size)</a></H4>
+
+<P>Creates a path that is related to the preferences file and
+that is usable for application data beyond what is covered by
+<tt>Fl_Preferences</tt>.
+
+<H4><a name="Fl_Preferences.get">int get(const char *entry, int &amp;value, int defaultValue)<BR>
+int get(const char *entry, int &amp;value, int defaultValue)<BR>
+int get(const char *entry, float &amp;value, float defaultValue)<BR>
+int get(const char *entry, double &amp;value, double defaultValue )<BR>
+int get(const char *entry, char *&amp;text, const char *defaultValue)<BR>
+int get(const char *entry, char *text, const char *defaultValue, int maxLength)<BR>
+int get(const char *entry, void *&amp;data, const void *defaultValue, int defaultSize)<BR>
+int get(const char *entry, void *data, const void *defaultValue, int defaultSize,
+int maxSize)</a></H4>
+
+<P>Reads an entry from the group. A default value must be
+supplied. The return value indicates if the value was available
+(non-zero) or the default was used (0). If the '<tt>char
+*&amp;text</tt>' or '<tt>void *&amp;data</tt>' form is used, 
+the resulting data must be freed with '<tt>free(value)</tt>'. 
+<P>'<tt>maxLength</tt>' is the maximum length of text that will be read. The text buffer must allow for one additional byte for a trailling zero.
+
+<H4><a name="Fl_Preferences.group">const char
+*Fl_Preferences::group(int ix)</a></H4>
+
+<P>Returns the name of the Nth group. There is no guaranteed
+order  of group names. The index must be within the range given
+by <tt>groups()</tt>.
+
+<H4><a name="Fl_Preferences.groupExists">int Fl_Preferences::groupExists(const char *groupname)</a></H4>
+
+<P>Returns non-zero if a group with this name exists.
+Groupnames are relative to the Preferences node and can contain a path.
+<tt>"."</tt> describes the current node, <tt>"./"</tt> describes the topmost node.
+By preceding a groupname with a <tt>"./"</tt>, its path becomes relative to the topmost node.
+
+<H4><a name="Fl_Preferences.groups">int Fl_Preferences::groups()</a></H4>
+
+<P>Returns the number of groups that are contained within a
+group.
+
+<H4><a name="Fl_Preferences.set">int set(const char *entry, int value)<BR>
+int set(const char *entry, int value)<BR>
+int set(const char *entry, float value)<BR>
+int set(const char *entry, float value, int precision)<BR>
+int set(const char *entry, double value)<BR>
+int set(const char *entry, double value, int precision)<BR>
+int set(const char *entry, const char *text)<BR>
+int set(const char *entry, const void *data, int size)</a></H4>
+
+<P>Sets an entry (name/value pair). The return value indicates if there
+was a problem storing the data in memory. However it does not
+reflect if the value was actually stored in the preferences
+file.
+
+<H4><a name="Fl_Preferences.size">int Fl_Preferences::size(const char *key)</a></H4>
+
+<P>Returns the size of the value part of an entry.
+
+<H4><a name="Fl_Preferences.Name">
+Fl_Preferences::Name( unsigned int numericName )<BR>
+Fl_Preferences::Name( const char *format, ... )
+</a></H4>
+
+<P>'Name' provides a simple method to create numerical or more complex 
+procedural names for entries and groups on the fly,
+i.e. <tt>prefs.set(Fl_Preferences::Name("File%d",i),file[i]);</tt>. 
+See <tt>test/preferences.cxx</tt> as a sample for writing arrays into preferences.<p>
+'Name' is actually implemented as a class inside Fl_Preferences. It casts
+into <tt>const char*</tt> and gets automatically destroyed after the enclosing call.
+
+
+</body>
+</html>

@@ -1,0 +1,568 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Widget</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Widget>class Fl_Widget</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<B>Fl_Widget</B>
+   |
+   +----<A href=Fl_Box.html#Fl_Box>Fl_Box</A>, <A href=Fl_Browser_.html#Fl_Browser_>Fl_Browser_</A>, <A href=Fl_Button.html#Fl_Button>Fl_Button</A>, <A href=Fl_Chart.html#Fl_Chart>Fl_Chart</A>, <A href=Fl_Clock_Output.html#Fl_Clock_Output>Fl_Clock_Output</A>,
+        <A href=Fl_Free.html#Fl_Free>Fl_Free</A>, <A href=Fl_Group.html#Fl_Group>Fl_Group</A>, <A href=Fl_Input_.html#Fl_Input_>Fl_Input_</A>, <A href=Fl_Menu_.html#Fl_Menu_>Fl_Menu_</A>, <A href=Fl_Positioner.html#Fl_Positioner>Fl_Positioner</A>,
+        <A HREF="Fl_Progress.html">Fl_Progress</A>, <A href=Fl_Timer.html#Fl_Timer>Fl_Timer</A>, <A href=Fl_Valuator.html#Fl_Valuator>Fl_Valuator</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Widget.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+<TT>Fl_Widget</TT> is the base class for all widgets in FLTK. You can't
+create one of these because the constructor is not public.  However you
+can <A href="subclassing.html#subclassing">subclass</A> it.
+<P>All &quot;property&quot; accessing methods, such as <TT>color()</TT>, <TT>
+parent()</TT>, or <TT>argument()</TT> are implemented as trivial inline
+functions and thus are as fast and small as accessing fields in a
+structure. Unless otherwise noted, the property setting methods such as <TT>
+color(n)</TT> or <TT>label(s)</TT> are also trivial inline functions,
+even if they change the widget's appearance.  It is up to the user code
+to call <TT>redraw()</TT> after these. </P>
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90% summary="Fl_Widget methods.">
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Widget.Fl_Widget>Fl_Widget</A></LI>
+<LI><A href=#Fl_Widget.~Fl_Widget>~Fl_Widget</A></LI>
+<LI><A href=#Fl_Widget.activate>activate</A></LI>
+<LI><A href=#Fl_Widget.active>active</A></LI>
+<LI><A href=#Fl_Widget.active_r>active_r</A></LI>
+<LI><A href=#Fl_Widget.align>align</A></LI>
+<LI><A href=#Fl_Widget.argument>argument</A></LI>
+<LI><A href=#Fl_Widget.box>box</A></LI>
+<LI><A href=#Fl_Widget.callback>callback</A></LI>
+<LI><A href=#Fl_Widget.changed>changed</A></LI>
+<LI><A href=#Fl_Widget.clear_changed>clear_changed</A></LI>
+<LI><A href=#Fl_Widget.clear_output>clear_output</A></LI>
+<LI><A href=#Fl_Widget.clear_visible>clear_visible</A></LI>
+<LI><A href=#Fl_Widget.clear_visible_focus>clear_visible_focus</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Widget.color>color</A></LI>
+<LI><A href=#Fl_Widget.contains>contains</A></LI>
+<LI><A href=#Fl_Widget.copy_label>copy_label</A></LI>
+<LI><A href=#Fl_Widget.damage>damage</A></LI>
+<LI><A href=#Fl_Widget.deactivate>deactivate</A></LI>
+<LI><A href=#Fl_Widget.default_callback>default_callback</A></LI>
+<LI><A href=#Fl_Widget.deimage>deimage</A></LI>
+<LI><A href=#Fl_Widget.do_callback>do_callback</A></LI>
+<LI><A href=#Fl_Widget.h>h</A></LI>
+<LI><A href=#Fl_Widget.handle>handle</A></LI>
+<LI><A href=#Fl_Widget.hide>hide</A></LI>
+<LI><A href=#Fl_Widget.image>image</A></LI>
+<LI><A href=#Fl_Widget.inside>inside</A></LI>
+<LI><A href=#Fl_Widget.label>label</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Widget.labelcolor>labelcolor</A></LI>
+<LI><A href=#Fl_Widget.labelfont>labelfont</A></LI>
+<LI><A href=#Fl_Widget.labelsize>labelsize</A></LI>
+<LI><A href=#Fl_Widget.labeltype>labeltype</A></LI>
+<LI><A href=#Fl_Widget.output>output</A></LI>
+<LI><A href=#Fl_Widget.parent>parent</A></LI>
+<LI><A href=#Fl_Widget.position>position</A></LI>
+<LI><A href=#Fl_Widget.redraw>redraw</A></LI>
+<LI><A href=#Fl_Widget.redraw_label>redraw_label</A></LI>
+<LI><A href=#Fl_Widget.resize>resize</A></LI>
+<LI><A href=#Fl_Widget.selection_color>selection_color</A></LI>
+<LI><A href=#Fl_Widget.set_changed>set_changed</A></LI>
+<LI><A href=#Fl_Widget.set_output>set_output</A></LI>
+<LI><A href=#Fl_Widget.set_visible>set_visible</A></LI>
+<LI><A href=#Fl_Widget.set_visible_focus>set_visible_focus</A></LI>
+<LI><A href=#Fl_Widget.show>show</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Widget.size>size</A></LI>
+<LI><A href=#Fl_Widget.take_focus>take_focus</A></LI>
+<LI><A href=#Fl_Widget.takesevents>takesevents</A></LI>
+<LI><A href="#Fl_Widget.tooltip">tooltip</A></LI>
+<LI><A href=#Fl_Widget.type>type</A></LI>
+<LI><A href=#Fl_Widget.user_data>user_data</A></LI>
+<LI><A href=#Fl_Widget.visible>visible</A></LI>
+<LI><A href=#Fl_Widget.visible_focus>visible_focus</A></LI>
+<LI><A href=#Fl_Widget.visible_r>visible_r</A></LI>
+<LI><A href=#Fl_Widget.w>w</A></LI>
+<LI><A href=#Fl_Widget.when>when</A></LI>
+<LI><A href=#Fl_Widget.window>window</A></LI>
+<LI><A href=#Fl_Widget.x>x</A></LI>
+<LI><A href=#Fl_Widget.y>y</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+
+
+<H4><A NAME="Fl_Widget.Fl_Widget">protected Fl_Widget::Fl_Widget(int x, int y, int w, int h, const char*
+label=0);</A></H4>
+
+<P>Creates a widget at the given position and size. The
+<TT>Fl_Widget</TT> is a protected constructor, but all derived
+widgets have a matching public constructor. It takes a value for
+<TT>x()</TT>, <TT>y()</TT>, <TT>w()</TT>, <TT>h()</TT>, and an
+optional value for <TT>label()</TT>.
+
+
+<H4><A NAME="Fl_Widget.~Fl_Widget">virtual Fl_Widget::~Fl_Widget();</A></H4>
+
+<P>Destroys the widget. Destroying single widgets is not very
+common, and it is your responsibility to either
+<TT>remove()</TT> them from any enclosing group or destroy that
+group <I>immediately</I> after destroying the children. You
+almost always want to destroy the parent group instead which
+will destroy all of the child widgets and groups in that group.
+
+
+<H4><A name=Fl_Widget.active>int Fl_Widget::active() const</A><BR>
+<A name=Fl_Widget.active_r>int Fl_Widget::active_r() const</A><BR>
+<A name=Fl_Widget.activate>void Fl_Widget::activate()</A><BR>
+<A name=Fl_Widget.deactivate>void Fl_Widget::deactivate()</A></H4>
+
+<P><TT>Fl_Widget::active()</TT> returns whether the widget is
+active. <TT>Fl_Widget::active_r()</TT> returns whether the
+widget and all of its parents are active. Inactive widgets
+will be drawn "grayed out", e.g. with less contrast than the 
+active widget. Inactive widgets will not receive any keyboard or
+mouse button events. Other events (including <tt>FL_ENTER</tt>,
+<tt>FL_MOVE</tt>, <tt>FL_LEAVE</tt>, <tt>FL_SHORTCUT</tt>, and 
+others) will still be sent. A widget is only active if 
+<TT>active()</TT> is true on it <I>and all of its parents</I>.
+
+<P>Changing this value will send <TT>FL_ACTIVATE</TT> or <TT>
+FL_DEACTIVATE</TT> to the widget if <tt>active_r()</tt> is true.
+<P>Currently you cannot deactivate <TT>Fl_Window</TT> widgets. </P>
+
+
+<H4><A name=Fl_Widget.align>Fl_Align Fl_Widget::align() const
+<BR> void Fl_Widget::align(Fl_Align)</A></H4>
+
+<P>Gets or sets the label alignment, which controls how the
+label is displayed next to or inside the widget. The default
+value is <TT>FL_ALIGN_CENTER</TT>, which centers the label
+inside the widget. The value can be any of these constants
+bitwise-OR'd together:
+
+<UL>
+	<LI><TT>FL_ALIGN_BOTTOM</TT></LI>
+	<LI><TT>FL_ALIGN_CENTER</TT></LI>
+	<LI><TT>FL_ALIGN_CLIP</TT></LI>
+	<LI><TT>FL_ALIGN_INSIDE</TT></LI>
+	<LI><TT>FL_ALIGN_LEFT</TT></LI>
+	<LI><TT>FL_ALIGN_RIGHT</TT></LI>
+	<LI><TT>FL_ALIGN_TEXT_OVER_IMAGE</TT></LI>
+	<LI><TT>FL_ALIGN_TOP</TT></LI>
+	<LI><TT>FL_ALIGN_WRAP</TT></LI>
+</UL>
+
+
+<H4><A name=Fl_Widget.argument>long Fl_Widget::argument() const
+<BR> void Fl_Widget::argument(long)</A></H4>
+
+<P>Gets or sets the current user data (<TT>long</TT>) argument
+that is passed to the callback function. 
+
+<CENTER><TABLE BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>Note:</B>
+
+	<P>This is implemented by casting the <TT>long</TT>
+	value to a <TT>void *</TT> and may not be portable on
+	some machines.
+
+	</TD>
+</TR>
+</TABLE></CENTER>
+
+
+<H4><A name=Fl_Widget.box>Fl_Boxtype Fl_Widget::box() const
+<BR> void Fl_Widget::box(Fl_Boxtype)</A></H4>
+
+<P>Gets or sets the box type for the widget, which identifies a
+routine that draws the background of the widget. See <A
+href="common.html#boxtypes">Box Types</A> for the available
+types. The default depends on the widget, but is usually
+<TT>FL_NO_BOX</TT> or <TT>FL_UP_BOX</TT>.
+
+
+<H4><A name=Fl_Widget.callback>typedef void (Fl_Callback)(Fl_Widget*, void*)
+<BR>Fl_Callback* Fl_Widget::callback() const
+<BR>void Fl_Widget::callback(Fl_Callback*, void* = 0)
+<BR>void Fl_Widget::callback(void (*)(Fl_Widget*, long), long = 0)
+<BR>void Fl_Widget::callback(void (*)(Fl_Widget*))</A></H4>
+
+<P>Gets or sets the current callback function for the widget.
+Each widget has a single callback.
+
+
+<H4><A name=Fl_Widget.changed>int Fl_Widget::changed() const</A>
+<BR><A name=Fl_Widget.clear_changed>void Fl_Widget::clear_changed()</A>
+<BR><A name=Fl_Widget.set_changed>void Fl_Widget::set_changed()</A></H4>
+
+<P><TT>Fl_Widget::changed()</TT> is a flag that is turned on
+when the user changes the value stored in the widget.  This is
+only used by subclasses of <TT>Fl_Widget</TT> that store values,
+but is in the base class so it is easier to scan all the widgets
+in a panel and <TT> do_callback()</TT> on the changed ones in
+response to an &quot;OK&quot; button.
+
+<P>Most widgets turn this flag off when they do the callback, and when
+the program sets the stored value. </P>
+
+
+<H4><A NAME="Fl_Widget.clear_visible">void Fl_Widget::clear_visible();</A></H4>
+
+<P>Hides the widget; you must still redraw the parent to see a
+change in the window. Normally you want to use the <A
+HREF="#Fl_Widget.hide"><CODE>hide()</CODE></A> method instead.
+
+
+<H4><A NAME="Fl_Widget.clear_visible_focus">void Fl_Window::clear_visible_focus();</A></H4>
+
+<P>Disables keyboard focus navigation with this widget;
+normally, all widgets participate in keyboard focus navigation.
+
+
+<H4><A name=Fl_Widget.color>Fl_Color Fl_Widget::color() const
+<BR>void Fl_Widget::color(Fl_Color)
+<BR>void Fl_Widget::color(Fl_Color, Fl_Color)</A></H4>
+
+<P>Gets or sets the background color of the widget. The color is
+passed to the box routine. The color is either an index into an
+internal table of RGB colors or an RGB color value generated
+using <TT>fl_rgb_color()</TT>. The default for most widgets is
+<TT>FL_BACKGROUND_COLOR</TT>. See the <A
+href=enumerations.html#Enumerations>enumeration list</A> for
+predefined colors. Use <A
+href="Fl.html#Fl.set_color"><TT>Fl::set_color()</TT></A> to
+redefine colors.
+
+<P>The two color form sets both the background and selection
+colors. See the description of the <A
+HREF="#Fl_Widget.selection_color"><TT>selection_color()</TT></A>
+method for more information.
+
+
+<h4><a name="Fl_Widget.contains">int Fl_Widget::contains(Fl_Widget* b) const</A></H4>
+
+<P>Returns 1 if <TT>b</TT> is a child of this widget, or is
+equal to this widget. Returns 0 if <TT>b</TT> is <TT>NULL</TT>.
+
+
+<H4><A name='Fl_Widget.copy_label'>void Fl_Widget::copy_label(const char*)</A></H4>
+
+<P>Sets the current label. Unlike <a
+href='#Fl_Widget.label'><tt>label()</tt></a>, this method
+allocates a copy of the label string instead of using the
+original string pointer.</p>
+
+
+<H4><A name=Fl_Widget.damage>uchar Fl_Widget::damage() const<BR>
+void damage(uchar c);<BR>
+void damage(uchar c, int X, int Y, int W, int H);</A></H4>
+
+<P>The first version returns non-zero if <A
+HREF="subclassing.html#draw"><TT>draw()</TT></A> needs to be
+called. The damage value is actually a bit field that the widget
+subclass can use to figure out what parts to draw.
+
+<P>The last two forms set the damage bits for the widget; the
+last form damages the widget within the specified bounding box.
+
+<H4><A name=Fl_Widget.default_callback>static void
+Fl_Widget::default_callback(Fl_Widget*, void*)</A></H4>
+
+<P>The default callback, which puts a pointer to the widget on
+the queue returned by <A
+href="Fl.html#Fl.readqueue"><TT>Fl::readqueue()</TT></A>. You
+may want to call this from your own callback.
+
+
+<H4><A name="Fl_Widget.deimage">Fl_Image* Fl_Widget::deimage()</A><BR>
+void Fl_Widget::deimage(Fl_Image* a)<BR>
+void Fl_Widget::deimage(Fl_Image&amp; a)</H4>
+
+<P>Gets or sets the image to use as part of the widget label.
+This image is used when drawing the widget in the inactive
+state.
+
+
+<H4><A name=Fl_Widget.do_callback>void Fl_Widget::do_callback()
+<BR> void Fl_Widget::do_callback(Fl_Widget*, void* = 0)
+<BR> void Fl_Widget::do_callback(Fl_Widget*, long)</A></H4>
+
+<P>Causes a widget to invoke its callback function, optionally
+with arbitrary arguments.
+
+
+<H4><A name="Fl_Widget.handle">virtual int Fl_Widget::handle(int event)</A></H4>
+
+<P>Handles the specified event. You normally don't call this
+method directly, but instead let FLTK do it when the user
+interacts with the widget.</p>
+
+<p>When implemented in a new widget, this function must return 0
+if the widget does not use the event or 1 if it uses the
+event.</p>
+
+
+<H4><A name="Fl_Widget.image">Fl_Image* Fl_Widget::image()</A><BR>
+void Fl_Widget::image(Fl_Image* a)<BR>
+void Fl_Widget::image(Fl_Image&amp; a)</H4>
+
+<P>Gets or sets the image to use as part of the widget label.
+This image is used when drawing the widget in the active state.
+
+
+<H4><A name=Fl_Widget.inside>int Fl_Widget::inside(const Fl_Widget* a)
+const</A></H4>
+
+<P>Returns 1 if this widget is a child of <TT>a</TT>, or is
+equal to <TT>a</TT>. Returns 0 if <TT>a</TT> is <TT>NULL</TT>.
+
+
+<H4><A name=Fl_Widget.label>const char* Fl_Widget::label() const
+<BR> void Fl_Widget::label(const char*)</A></H4>
+
+<P>Get or set the current label pointer. The label is shown
+somewhere on or next to the widget. The passed pointer is stored
+unchanged in the widget (the string is <I>not</I> copied), so if
+you need to set the label to a formatted value, make sure the
+buffer is <TT>static</TT>, global, or allocated. The <a
+href='#Fl_Widget.copy_label'><tt>copy_label()</tt></a> method
+can be used to make a copy of the label string
+automatically.</p>
+
+
+<H4><A name=Fl_Widget.labelcolor>Fl_Color Fl_Widget::labelcolor() const
+<BR> void Fl_Widget::labelcolor(Fl_Color)</A></H4>
+
+<P>Gets or sets the label color. The default color is <TT>FL_FOREGROUND_COLOR</TT>.
+
+
+<H4><A name=Fl_Widget.labelfont>Fl_Font Fl_Widget::labelfont() const
+<BR> void Fl_Widget::labelfont(Fl_Font)</A></H4>
+
+<P>Gets or sets the font to use. Fonts are identified by small
+8-bit indexes into a table.  See the <A
+href=enumerations.html#Enumerations> enumeration list</A> for
+predefined typefaces. The default value uses a Helvetica
+typeface (Arial for Microsoft&reg; Windows&reg;). The function
+<A href="Fl.html#Fl.set_font"><TT>Fl::set_font()</TT></A> can
+define new typefaces.
+
+
+<H4><A name=Fl_Widget.labelsize>uchar Fl_Widget::labelsize() const
+<BR>void Fl_Widget::labelsize(uchar)</A></H4>
+
+<P>Gets or sets the font size in pixels. The default size is 14
+pixels.
+
+
+<H4><A name=Fl_Widget.labeltype>void Fl_Widget::label(Fl_Labeltype,
+const char*)
+<BR> uchar Fl_Widget::labeltype() const
+<BR> void Fl_Widget::labeltype(Fl_Labeltype)</A></H4>
+
+<P>Gets or sets the <A
+href="common.html#labeltypes"><TT>labeltype</TT></A> which
+identifies the function that draws the label of the widget. This
+is generally used for special effects such as embossing or for
+using the <TT>label()</TT> pointer as another form of data such
+as an icon. The value <TT>FL_NORMAL_LABEL</TT> prints the label
+as plain text.
+
+
+<H4><A name=Fl_Widget.output>int Fl_Widget::output() const</A>
+<BR><A name=Fl_Widget.clear_output>void Fl_Widget::clear_output()</A>
+<BR><A name=Fl_Widget.set_output>void Fl_Widget::set_output()</A></H4>
+
+<P><tt>output()</tt> means the same as <tt>!active()</tt> except
+it does not change how the widget is drawn. The widget will not
+receive any events. This is useful for making scrollbars or
+buttons that work as displays rather than input devices.
+
+
+<H4><A name=Fl_Widget.parent>Fl_Group *Fl_Widget::parent() const</A></H4>
+
+<P>Returns a pointer to the parent widget.  Usually this is a <A
+href=Fl_Group.html#Fl_Group> <TT>Fl_Group</TT></A> or <A
+HREF="Fl_Window.html#Fl_Window"><tt>Fl_Window</tt></a>. Returns
+<tt>NULL</tt> if the widget has no parent.
+
+
+<H4><A name=Fl_Widget.redraw>void Fl_Widget::redraw()</A></H4>
+
+<P>Marks the widget as needing its <A
+HREF="subclassing.html#draw"><TT>draw()</TT></A> routine called.
+
+
+<H4><A name=Fl_Widget.redraw_label>void Fl_Widget::redraw_label()</A></H4>
+
+<P>Marks the widget or the parent as needing a redraw for the
+label area of a widget.
+
+
+<H4><A name=Fl_Widget.resize>virtual void
+Fl_Widget::resize(int x, int y, int w, int h)</A>
+<BR><A name=Fl_Widget.position>void Fl_Widget::position(short x, short y)</A>
+<BR><A name=Fl_Widget.size>void Fl_Widget::size(short w, short h)</A></H4>
+
+<P>Change the size or position of the widget. This is a virtual
+function so that the widget may implement its own handling of
+resizing. The default version does <I>not</I> call the
+<TT>redraw()</TT> method, but instead relies on the parent
+widget to do so because the parent may know a faster way to
+update the display, such as scrolling from the old position.
+
+<P>Some window managers under X11 call <TT>resize</TT> a lot more
+often than needed. Please verify that the position or size of
+a widget did actually change before doing any extensiive calculations.
+
+<P><TT>position(x,y)</TT> is a shortcut for <TT>resize(x,y,w(),h())</TT>,
+and <TT>size(w,h)</TT> is a shortcut for <TT>resize(x(),y(),w,h)</TT>.</P>
+
+
+<H4><A name=Fl_Widget.selection_color>Fl_Color
+Fl_Widget::selection_color() const
+<BR>void Fl_Widget::selection_color(Fl_Color)</A></H4>
+
+<P>Gets or sets the selection color, which is defined for Forms
+compatibility and is usually used to color the widget when it is
+selected, although some widgets use this color for other
+purposes. You can set both colors at once with
+<TT>color(a,b)</TT>.
+
+
+<H4><A name=Fl_Widget.takesevents>int Fl_Widget::takesevents() const</A></H4>
+
+<P>This is the same as <TT>(active() &amp;&amp; !output()
+&amp;&amp; visible())</TT> but is faster.
+
+
+<H4><A name=Fl_Widget.take_focus>int Fl_Widget::take_focus()</A></H4>
+ Tries to make this widget be the <TT>Fl::focus()</TT> widget, by first
+sending it an <TT>FL_FOCUS</TT> event, and if it returns non-zero,
+setting <TT>Fl::focus()</TT> to this widget.  You should use this
+method to assign the focus to an widget.  Returns true if the widget
+accepted the focus.
+
+
+<H4><A name="Fl_Widget.tooltip">const char *Fl_Widget::tooltip()<BR>
+void Fl_Widget::tooltip(const char *t)</A></H4>
+
+<P>Gets or sets a string of text to display in a popup tooltip
+window when the user hovers the mouse over the widget. The
+string is <I>not</I> copied, so make sure any formatted string
+is stored in a <TT>static</TT>, global, or allocated buffer.
+
+<P>If no tooltip is set, the tooltip of the parent is inherited.
+Setting a tooltip for a group and setting no tooltip for a child 
+will show the group's tooltip instead. To avoid this behavior, 
+you can set the child's tooltip to an empty string 
+(<tt>&quot;&quot;</tt>).
+
+<H4><A NAME="Fl_Widget.type">uchar Fl_Widget::type() const;</A></H4>
+
+<P>Returns the widget type value, which is used for Forms
+compatability and to simulate RTTI.
+
+<H4><A name=Fl_Widget.x>short Fl_Widget::x() const</A>
+<BR><A name=Fl_Widget.y>short Fl_Widget::y() const</A>
+<BR><A name=Fl_Widget.w>short Fl_Widget::w() const</A>
+<BR><A name=Fl_Widget.h>short Fl_Widget::h() const</A></H4>
+
+<P>Returns the position of the upper-left corner of the widget
+in its enclosing Fl_Window (<I>not</I> its parent if that is not
+an Fl_Window), and its width and height.
+
+
+<H4><A name=Fl_Widget.user_data>void* Fl_Widget::user_data() const
+<BR>void Fl_Widget::user_data(void*)</A></H4>
+
+<P>Gets or sets the current user data (<TT>void *</TT>) argument
+that is passed to the callback function.
+
+
+<H4><A name=Fl_Widget.window>Fl_Window* Fl_Widget::window() const;</A></H4>
+
+<P>Returns a pointer to the primary <A
+href=Fl_Window.html#Fl_Window><TT>Fl_Window</TT></A> widget.
+Returns <TT>NULL</TT> if no window is associated with this
+widget.  Note: for an <TT>Fl_Window</TT> widget, this returns
+its <I>parent</I> window (if any), not <I>this</I> window.
+
+
+<H4><A NAME="Fl_Widget.set_visible">void Fl_Widget::set_visible();</A></H4>
+
+<P>Makes the widget visible; you must still redraw the parent
+widget to see a change in the window. Normally you want to use
+the <A HREF="#Fl_Widget.show"><CODE>show()</CODE></A> method
+instead.
+
+
+<H4><A NAME="Fl_Widget.set_visible_focus">void Fl_Widget::set_visible_focus();</A></H4>
+
+<P>Enables keyboard focus navigation with this widget; note,
+however, that this will not necessarily mean that the widget
+will accept focus, but for widgets that can accept focus, this
+method enables it if it has been disabled.
+
+
+<H4><A name=Fl_Widget.visible>int Fl_Widget::visible() const</A><BR>
+<A name=Fl_Widget.visible_r>int Fl_Widget::visible_r() const</A><BR>
+<A name=Fl_Widget.show>void Fl_Widget::show()</A><BR>
+<A name=Fl_Widget.hide>void Fl_Widget::hide()</A></H4>
+
+<P>An invisible widget never gets redrawn and does not get
+events.  The <TT>visible()</TT> method returns true if the
+widget is set to be visible.The <TT>visible_r()</TT> method
+returns true if the widget and all of its parents are visible. A
+widget is only visible if <TT>visible()</TT> is true on it
+<I>and all of its parents</I>. 
+
+<P>Changing it will send <TT>FL_SHOW</TT> or <TT>FL_HIDE</TT>
+events to the widget. <I>Do not change it if the parent is not
+visible, as this will send false <TT>FL_SHOW</TT> or <TT>FL_HIDE</TT>
+ events to the widget</I>. <TT>redraw()</TT> is called if necessary on
+this or the parent.
+
+<H4><A NAME="Fl_Widget.visible_focus">void Fl_Widget::visible_focus(int);</A><BR>
+int Fl_Widget::visible_focus();</H4>
+
+<P>Modifies keyboard focus navigation. 
+See <A HREF="#Fl_Widget.set_visible_focus"><code>set_visible_focus()</code></a> and 
+<A HREF="#Fl_Widget.clear_visible_focus"><code>clear_visible_focus()</code></a>. 
+The second form returns non-zero if this widget will participate in keyboard focus navigation.
+
+<H4><A name=Fl_Widget.when>Fl_When Fl_Widget::when() const
+<BR> void Fl_Widget::when(Fl_When)</A></H4>
+
+<P><TT>Fl_Widget::when()</TT> is a set of bitflags used by
+subclasses of <TT> Fl_Widget</TT> to decide when to do the
+callback.  If the value is zero then the callback is never
+done.  Other values are described in the individual widgets. 
+This field is in the base class so that you can scan a panel and
+<TT>do_callback()</TT> on all the ones that don't do their own
+callbacks in response to an &quot;OK&quot; button.
+
+
+</BODY>
+</HTML>

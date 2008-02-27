@@ -1,0 +1,370 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+comment {//
+// "$Id$"
+//
+// FLUID print panel for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2005 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+} {in_source in_header
+} 
+
+decl {\#include <stdio.h>} {} 
+
+decl {\#include <stdlib.h>} {} 
+
+decl {\#include "../src/flstring.h"} {} 
+
+decl {\#include <FL/Fl_Preferences.H>} {} 
+
+decl {extern Fl_Preferences fluid_prefs;} {} 
+
+Function {make_print_panel()} {open
+} {
+  Fl_Window print_panel {
+    label Print open
+    xywh {342 21 465 235} type Double modal visible
+  } {
+    Fl_Group print_panel_controls {open
+      xywh {10 10 447 216}
+    } {
+      Fl_Choice print_choice {
+        label {Printer:}
+        callback {print_update_status();} open
+        xywh {113 10 181 25} down_box BORDER_BOX labelfont 1 when 1
+      } {}
+      Fl_Button print_properties {
+        label {Properties...}
+        callback {print_properties_panel->show();}
+        xywh {294 10 105 25}
+      }
+      Fl_Box print_status {
+        label {printer/job status}
+        xywh {111 41 288 17} align 84
+      }
+      Fl_Group {} {
+        label {Print Range} open
+        xywh {10 86 227 105} box THIN_DOWN_BOX labelfont 1 align 5
+      } {
+        Fl_Round_Button print_all {
+          label All
+          callback {print_from->deactivate();
+print_to->deactivate();}
+          xywh {20 96 38 25} type Radio down_box ROUND_DOWN_BOX value 1
+        }
+        Fl_Round_Button print_pages {
+          label Pages
+          callback {print_from->activate();
+print_to->activate();}
+          xywh {20 126 64 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button print_selection {
+          label Selection
+          callback {print_from->deactivate();
+print_to->deactivate();}
+          xywh {20 156 82 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Input print_from {
+          label {From:}
+          xywh {136 126 28 25} type Int textfont 4 deactivate
+        }
+        Fl_Input print_to {
+          label {To:}
+          xywh {199 126 28 25} type Int textfont 4 deactivate
+        }
+      }
+      Fl_Group {} {
+        label Copies open
+        xywh {247 86 210 105} box THIN_DOWN_BOX labelfont 1 align 5
+      } {
+        Fl_Spinner print_copies {
+          label {\# Copies:}
+          callback {if (print_copies->value() == 1) {
+  print_collate_button->deactivate();
+  print_collate_group[0]->deactivate();
+  print_collate_group[1]->deactivate();
+} else {
+  print_collate_button->activate();
+  print_collate_group[0]->activate();
+  print_collate_group[1]->activate();
+}} selected
+          xywh {321 96 45 25} when 1
+        }
+        Fl_Check_Button print_collate_button {
+          label Collate
+          callback {int i = print_collate_button->value() != 0;
+print_collate_group[i]->show();
+print_collate_group[1 - i]->hide();}
+          xywh {376 96 64 25} down_box DOWN_BOX when 1 deactivate
+        }
+        Fl_Group {print_collate_group[0]} {
+          xywh {257 131 191 50} deactivate
+        } {
+          Fl_Box {} {
+            label 1
+            xywh {287 141 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+          Fl_Box {} {
+            label 1
+            xywh {272 136 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+          Fl_Box {} {
+            label 1
+            xywh {257 131 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+          Fl_Box {} {
+            label 2
+            xywh {352 141 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+          Fl_Box {} {
+            label 2
+            xywh {337 136 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+          Fl_Box {} {
+            label 2
+            xywh {322 131 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+          Fl_Box {} {
+            label 3
+            xywh {417 141 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+          Fl_Box {} {
+            label 3
+            xywh {402 136 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+          Fl_Box {} {
+            label 3
+            xywh {387 131 30 40} box BORDER_BOX color 7 labelsize 11 align 26 deactivate
+          }
+        }
+        Fl_Group {print_collate_group[1]} {
+          xywh {257 131 191 50} hide deactivate
+        } {
+          Fl_Box {} {
+            label 3
+            xywh {287 141 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+          Fl_Box {} {
+            label 2
+            xywh {272 136 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+          Fl_Box {} {
+            label 1
+            xywh {257 131 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+          Fl_Box {} {
+            label 3
+            xywh {352 141 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+          Fl_Box {} {
+            label 2
+            xywh {337 136 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+          Fl_Box {} {
+            label 1
+            xywh {322 131 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+          Fl_Box {} {
+            label 3
+            xywh {417 141 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+          Fl_Box {} {
+            label 2
+            xywh {402 136 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+          Fl_Box {} {
+            label 1
+            xywh {387 131 30 40} box BORDER_BOX color 7 labelsize 11 align 26
+          }
+        }
+      }
+      Fl_Return_Button {} {
+        label Print
+        callback print_cb
+        xywh {309 201 70 25}
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {print_panel->hide();}
+        xywh {389 201 68 25}
+      }
+    }
+    Fl_Progress print_progress {
+      xywh {10 203 289 21} selection_color 4 hide
+    }
+  }
+  Fl_Window print_properties_panel {
+    label {Printer Properties}
+    callback {print_properties_panel->hide();
+print_update_status();} open
+    xywh {340 213 290 130} type Double modal visible
+  } {
+    Fl_Choice print_page_size {
+      label {Page Size:}
+      xywh {110 10 80 25} down_box BORDER_BOX labelfont 1
+    } {
+      MenuItem {} {
+        label Letter
+        xywh {0 0 35 25}
+      }
+      MenuItem {} {
+        label A4
+        xywh {0 0 35 25}
+      }
+    }
+    Fl_Group {} {
+      label {Output Mode:} open
+      xywh {110 45 170 40} labelfont 1 align 4
+    } {
+      Fl_Button {print_output_mode[0]} {
+        image {pixmaps/print_color.xpm} xywh {110 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX value 1 color 7 selection_color 0
+      }
+      Fl_Button {print_output_mode[1]} {
+        image {pixmaps/print_color.xpm} xywh {150 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
+      }
+      Fl_Button {print_output_mode[2]} {
+        image {pixmaps/print_gray.xpm} xywh {200 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
+      }
+      Fl_Button {print_output_mode[3]} {
+        image {pixmaps/print_gray.xpm} xywh {240 50 40 30} type Radio box BORDER_BOX down_box BORDER_BOX color 7 selection_color 0
+      }
+    }
+    Fl_Return_Button {} {
+      label Save
+      callback {print_properties_panel->hide();
+
+char name[1024];
+int val;
+const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
+
+snprintf(name, sizeof(name), "%s/page_size", printer);
+fluid_prefs.set(name, print_page_size->value());
+
+snprintf(name, sizeof(name), "%s/output_mode", printer);
+for (val = 0; val < 4; val ++) {
+  if (print_output_mode[val]->value()) break;
+}
+fluid_prefs.set(name, val);}
+      xywh {123 95 79 25}
+    }
+    Fl_Button {} {
+      label Cancel
+      callback {print_properties_panel->hide();
+print_update_status();}
+      xywh {212 95 68 25}
+    }
+    Fl_Button {} {
+      label Use
+      callback {print_properties_panel->hide();}
+      xywh {60 95 53 25}
+    }
+  }
+} 
+
+decl {void print_cb(Fl_Return_Button *, void *);} {public
+} 
+
+Function {print_load()} {open return_type void
+} {
+  code {FILE *lpstat;
+char line[1024], name[1024], *nptr, qname[2048], *qptr, defname[1024];
+int i;
+
+if (print_choice->size() > 1) {
+  for (i = 1; print_choice->text(i); i ++) {
+    free(print_choice->menu()[i].user_data());
+  }
+}
+
+print_choice->clear();
+print_choice->add("Print To File", 0, 0, 0, FL_MENU_DIVIDER);
+print_choice->value(0);
+
+defname[0] = '\\0';
+
+if ((lpstat = popen("lpstat -p -d", "r")) != NULL) {
+  while (fgets(line, sizeof(line), lpstat)) {
+    if (!strncmp(line, "printer ", 8) &&
+        sscanf(line + 8, "%s", name) == 1) {
+      for (nptr = name, qptr = qname; *nptr; *qptr++ = *nptr++) {
+        if (*nptr == '/') *qptr++ = '\\\\';
+      }
+      *qptr = '\\0';
+
+      print_choice->add(qname, 0, 0, (void *)strdup(name), 0);
+    } else if (!strncmp(line, "system default destination: ", 28)) {
+      if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\\0';
+    }
+  }
+  pclose(lpstat);
+}
+
+if (defname[0]) {
+  for (i = 1; print_choice->text(i); i ++) {
+    if (!strcmp((char *)print_choice->menu()[i].user_data(), defname)) {
+      print_choice->value(i);
+      break;
+    }
+  }
+} else if (print_choice->size() > 2) print_choice->value(1);
+
+
+print_update_status();} {}
+} 
+
+Function {print_update_status()} {open return_type void
+} {
+  code {FILE *lpstat;
+char command[1024];
+static char status[1024];
+const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
+
+if (print_choice->value()) {
+  snprintf(command, sizeof(command), "lpstat -p '%s'", printer);
+  if ((lpstat = popen(command, "r")) != NULL) {
+    fgets(status, sizeof(status), lpstat);
+    pclose(lpstat);
+  } else strcpy(status, "printer status unavailable");
+} else status[0] = '\\0';
+
+print_status->label(status);
+
+char name[1024];
+int val;
+
+snprintf(name, sizeof(name), "%s/page_size", printer);
+fluid_prefs.get(name, val, 0);
+print_page_size->value(val);
+
+snprintf(name, sizeof(name), "%s/output_mode", printer);
+fluid_prefs.get(name, val, 0);
+print_output_mode[val]->setonly();} {}
+} 
+
+comment {
+//
+// End of "$Id$".
+//} {in_source in_header
+} 

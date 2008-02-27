@@ -1,0 +1,32 @@
+.TH fluid 1 "Fast Light Tool Kit" "6 January 2002"
+.SH NAME
+fluid \- the fast light user-interface designer
+.sp
+.SH SYNOPSIS
+fluid [ -c [ -o
+.I code-filename
+-h
+.I header-filename
+] ] [
+.I filename.fl
+] 
+.fi
+.SH DESCRIPTION
+\fIfluid\fR is an interactive GUI designer for FLTK. When run
+with no arguments or with a filename, \fIfluid\fR will display
+the GUI hierarchy and any windows defined in the file.
+Functions, classes, windows, and GUI components can be
+manipulated as needed.
+.LP
+When used with the \fI-c\fR option, \fIfluid\fR will create the
+necessary C++ header and code files in the current directory. 
+You can override the default extensions, filenames, and
+directories using the \fI-o\fR and \fI-h\fR options.
+.SH SEE ALSO
+fltk-config(1), fltk(3)
+.br
+FLTK Programming Manual, Chapter 9
+.br
+FLTK Web Site, http://www.fltk.org/
+.SH AUTHORS
+Bill Spitzak and others.

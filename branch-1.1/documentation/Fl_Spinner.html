@@ -1,0 +1,123 @@
+<html>
+<HEAD>
+	<TITLE>Fl_Spinner</TITLE>
+</HEAD>
+<body>
+
+<!-- NEW PAGE -->
+
+<h2><a name=Fl_Spinner>class Fl_Spinner</a></h2>
+
+<hr>
+
+<h3>Class Hierarchy</h3>
+
+<ul><pre>
+<a href=Fl_Group.html#Fl_Group>Fl_Group</a>
+   |
+   +----<b>Fl_Spinner</b>
+</pre></ul>
+
+<h3>Include Files</h3>
+
+<ul><pre>
+#include &lt;FL/Fl_Spinner.H&gt;
+</pre></ul>
+
+<h3>Description</h3>
+
+<p>The <tt>Fl_Spinner</tt> widget is a combination of the input
+widget and repeat buttons. The user can either type into the
+input area or use the buttons to change the value.
+
+<h3>Methods</h3>
+
+<ul>
+
+	<li><a href='#Fl_Spinner.Fl_Spinner'>Fl_Spinner</a></li>
+	<li><a href='#Fl_Spinner.~Fl_Spinner'>~Fl_Spinner</a></li>
+	<li><a href='#Fl_Spinner.format'>format</a></li>
+	<li><a href='#Fl_Spinner.maximum'>maximum</a></li>
+	<li><a href='#Fl_Spinner.minimum'>minimum</a></li>
+	<li><a href='#Fl_Spinner.range'>range</a></li>
+	<li><a href='#Fl_Spinner.step'>step</a></li>
+	<li><a href='#Fl_Spinner.textcolor'>textcolor</a></li>
+	<li><a href='#Fl_Spinner.textfont'>textfont</a></li>
+	<li><a href='#Fl_Spinner.textsize'>textsize</a></li>
+	<li><a href='#Fl_Spinner.type'>type</a></li>
+	<li><a href='#Fl_Spinner.value'>value</a></li>
+
+</ul>
+
+<h4><a name="Fl_Spinner.Fl_Spinner">Fl_Spinner::Fl_Spinner(int x, int y, int w,
+int h, const char *label = 0)</a></h4>
+
+<p>Creates a new <TT>Fl_Spinner</TT> widget using the given position, size,
+and label string.
+
+<h4><a name="Fl_Spinner.~Fl_Spinner">virtual Fl_Spinner::~Fl_Spinner()</a></h4>
+
+<p>Destroys the widget and any value associated with it.
+
+<h4><a name='Fl_Spinner.format'>void format(const char *f)<br />
+const char *format()</a></h4>
+
+<p>Sets or returns the format string for the value.</p>
+
+<h4><a name='Fl_Spinner.maximum'>void maximum(double m)<br />
+double maximum() const</a></h4>
+
+<p>Sets or returns the maximum value of the widget.</p>
+
+<h4><a name='Fl_Spinner.minimum'>void minimum(double m)<br />
+double minimum() const</a></h4>
+
+<p>Sets or returns the minimum value of the widget.</p>
+
+<h4><a name='Fl_Spinner.range'>void range(double minval, double maxval)</a></h4>
+
+<p>Sets the minimum and maximum values for the widget.</p>
+
+<h4><a name='Fl_Spinner.step'>void step(double s)<br />
+double step() const</a></h4>
+
+<p>Sets or returns the amount to change the value when the user
+clicks a button. 
+Before setting <tt>step</tt> to a non-integer value, the spinner 
+<a href='#Fl_Spinner.type'><tt>type()</tt></a> should be changed 
+to floating point.</p>
+
+<h4><a name='Fl_Spinner.textcolor'>void textcolor(Fl_Color c)<br />
+Fl_Color textcolor() const</a></h4>
+
+<p>Sets or returns the color of the text in the input field.</p>
+
+<h4><a name='Fl_Spinner.textfont'>void textfont(uchar f)<br />
+uchar textfont() const</a></h4>
+
+<p>Sets or returns the font of the text in the input field.</p>
+
+<h4><a name='Fl_Spinner.textsize'>void textsize(uchar s)<br />
+uchar textsize() const</a></h4>
+
+<p>Sets or returns the size of the text in the input field.</p>
+
+<h4><a name='Fl_Spinner.type'>void type(uchar s)<br />
+uchar type() const</a></h4>
+
+<p>Sets or returns the numeric representation in the input field.
+Valid values are <tt>FL_INT_INPUT</tt> and <tt>FL_FLOAT_INPUT</tt>.
+The first form also changes the <tt>format()</tt> template.
+Please note that <tt>type</tt> is not a virtual function. 
+Setting a new spinner type via a superclass pointer will not work.</p>
+
+<h4><a name="Fl_Spinner.value">void Fl_Spinner::value(double v)<br />
+double Fl_Spinner::value() const</a></h4>
+
+<p>Sets or returns the current value of the widget.
+Before setting <tt>value</tt> to a non-integer value, the spinner 
+<a href='#Fl_Spinner.type'><tt>type()</tt></a> should be changed 
+to floating point.</p>
+
+</body>
+</html>

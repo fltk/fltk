@@ -1,0 +1,83 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Menu_Button</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Menu_Button>class Fl_Menu_Button</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Menu_.html#Fl_Menu_>Fl_Menu_</A>
+   |
+   +----<B>Fl_Menu_Button</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Menu_Button.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This is a button that when pushed pops up a menu (or hierarchy of
+menus) defined by an array of <A href=Fl_Menu_Item.html#Fl_Menu_Item><TT>
+Fl_Menu_Item</TT></A> objects.
+<P ALIGN=CENTER><IMG src="menu_button.gif" ALT="Fl_Menu_Button widget."></P>
+<P>Normally any mouse button will pop up a menu and it is lined up
+below the button as shown in the picture.  However an <TT>Fl_Menu_Button</TT>
+ may also control a pop-up menu.  This is done by setting the <TT>type()</TT>
+, see below. </P>
+<P>The menu will also pop up in response to shortcuts indicated by
+putting a '&amp;' character in the <TT>label()</TT>. </P>
+<P>Typing the <TT>shortcut()</TT> of any of the menu items will cause
+callbacks exactly the same as when you pick the item with the mouse.
+ The '&amp;' character in menu item names are only looked at when the menu is
+popped up, however. </P>
+<P>When the user picks an item off the menu, the item's callback is
+done with the menu_button as the <TT>Fl_Widget*</TT> argument.  If the
+item does not have a callback the menu_button's callback is done
+instead. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Menu_Button.Fl_Menu_Button>Fl_Menu_Button</A></LI>
+<LI><A href=#Fl_Menu_Button.~Fl_Menu_Button>~Fl_Menu_Button</A></LI>
+<LI><A href=#Fl_Menu_Button.popup>popup</A></LI>
+<LI><A href=#Fl_Menu_Button.type>type</A></LI>
+</UL>
+<H4><A name=Fl_Menu_Button.Fl_Menu_Button>
+Fl_Menu_Button::Fl_Menu_Button(int x, int y, int w, int h, const char
+*label = 0)</A></H4>
+ Creates a new <TT>Fl_Menu_Button</TT> widget using the given position,
+size, and label string. The default boxtype is <TT>FL_UP_BOX</TT>.
+<P>The constructor sets <TT>menu()</TT> to <TT>NULL</TT>.  See <A href=Fl_Menu_.html#Fl_Menu_>
+<TT>Fl_Menu_</TT></A> for the methods to set or change the menu. </P>
+<H4><A name=Fl_Menu_Button.~Fl_Menu_Button>virtual
+Fl_Menu_Button::~Fl_Menu_Button()</A></H4>
+ The destructor removes the <TT>Fl_Menu_Button</TT> widget and all of
+its menu items.
+<H4><A name=Fl_Menu_Button.popup>const Fl_Menu* Fl_Menu_Button::popup()</A>
+</H4>
+ Act exactly as though the user clicked the button or typed the
+shortcut key.  The menu appears, it waits for the user to pick an item,
+and if they pick one it sets <TT>value()</TT> and does the callback or
+sets <TT>changed()</TT> as described above.  The menu item is returned
+or <TT>NULL</TT> if the user dismisses the menu.
+<H4><A name=Fl_Menu_Button.type>void Fl_Menu_Button::type(uchar)</A></H4>
+ If <TT>type()</TT> is zero a normal menu button is produced.  If it is
+nonzero then this is a pop-up menu.  The bits in <TT>type()</TT>
+ indicate what mouse buttons pop up the menu.  For convienece the
+constants <TT>Fl_Menu_Button::POPUP1, POPUP2, POPUP3, POPUP12, POPUP13,
+POPUP23</TT>, and <TT>POPUP123</TT> are defined. <TT>
+Fl_Menu_Button::POPUP3</TT> is usually what you want.
+<P>A popup menu button is invisible and does not interfere with any
+events other than the mouse button specified (and any shortcuts).  The
+widget can be stretched to cover all your other widgets by putting it
+last in the hierarchy so it is &quot;on top&quot;.  You can also make several
+widgets covering different areas for context-sensitive popup menus. </P>
+<P>The popup menus appear with the cursor pointing at the previously
+selected item.  This is a <I>feature</I>.  If you don't like it, do <TT>
+value(0)</TT> after the menu items are picked to forget the current
+item. </P>
+</BODY></HTML>

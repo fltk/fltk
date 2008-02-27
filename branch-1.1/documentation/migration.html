@@ -1,0 +1,163 @@
+<HTML>
+<HEAD>
+	<TITLE>G - Migrating Code from FLTK 1.0.x</TITLE>
+</HEAD>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="migration">G - Migrating Code from FLTK 1.0.x</A></H1>
+
+<P>This appendix describes the differences between the FLTK
+1.0.x and FLTK 1.1.x functions and classes.</P>
+
+<H2>Color Values</H2>
+
+<P>Color values are now stored in a 32-bit unsigned integer
+instead of the unsigned character in 1.0.x. This allows for the
+specification of 24-bit RGB values or 8-bit FLTK color indices.
+
+<P><TT>FL_BLACK</TT> and <TT>FL_WHITE</TT> now remain black and 
+white, even if the base color of the gray ramp is changed using 
+<A HREF="Fl.html#Fl.background"><TT>Fl::background()</TT></A>.
+<TT>FL_DARK3</TT> and <TT>FL_LIGHT3</TT> can be used instead to 
+draw a very dark or a very bright background hue.</P>
+
+<P>Widgets use the new color symbols <TT>FL_FORGROUND_COLOR</TT>,
+<TT>FL_BACKGROUND_COLOR</TT>, <TT>FL_BACKGROUND2_COLOR</TT>, 
+<TT>FL_INACTIVE_COLOR</TT>, and <TT>FL_SELECTION_COLOR</TT>.
+More details can be found in the chapter
+<A HREF="enumerations.html#colors">Enumerations</A>.</P>
+
+<H2>Cut and Paste Support</H2>
+
+<P>The FLTK clipboard is now broken into two parts - a local
+selection value and a cut-and-paste value. This allows FLTK to
+support things like highlighting and replacing text that was
+previously cut or copied, which makes FLTK applications behave
+like traditional GUI applications.
+
+<H2>File Chooser</H2>
+
+<P>The file chooser in FLTK 1.1.x is significantly different
+than the one supplied with FLTK 1.0.x. Any code that directly
+references the old <TT>FCB</TT> class or members will need
+to be ported to the new <A
+HREF="Fl_File_Chooser.html"><TT>Fl_File_Chooser</TT></A>
+class.</P>
+
+<H2>Function Names</H2>
+
+<P>Some function names have changed from FLTK 1.0.x to 1.1.x in
+order to avoid name space collisions. You can still use the old
+function names by defining the <CODE>FLTK_1_0_COMPAT</CODE>
+symbol on the command-line when you compile
+(<CODE>-DFLTK_1_0_COMPAT</CODE>) or in your source, e.g.:
+
+<UL><PRE>
+#define FLTK_1_0_COMPAT
+#include &lt;FL/Fl.H&gt;
+#include &lt;FL/Enumerations.H&gt;
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<P>The following table shows the old and new function names:</P>
+
+<CENTER><TABLE WIDTH="80%" BORDER="1">
+<TR>
+	<TH>Old 1.0.x Name</TH>
+	<TH>New 1.1.x Name</TH>
+</TR>
+<TR>
+	<TD>contrast()</TD>
+	<TD>fl_contrast()</TD>
+</TR>
+<TR>
+	<TD>down()</TD>
+	<TD>fl_down()</TD>
+</TR>
+<TR>
+	<TD>filename_absolute()</TD>
+	<TD>fl_filename_absolute()</TD>
+</TR>
+<TR>
+	<TD>filename_expand()</TD>
+	<TD>fl_filename_expand()</TD>
+</TR>
+<TR>
+	<TD>filename_ext()</TD>
+	<TD>fl_filename_ext()</TD>
+</TR>
+<TR>
+	<TD>filename_isdir()</TD>
+	<TD>fl_filename_isdir()</TD>
+</TR>
+<TR>
+	<TD>filename_list()</TD>
+	<TD>fl_filename_list()</TD>
+</TR>
+<TR>
+	<TD>filename_match()</TD>
+	<TD>fl_filename_match()</TD>
+</TR>
+<TR>
+	<TD>filename_name()</TD>
+	<TD>fl_filename_name()</TD>
+</TR>
+<TR>
+	<TD>filename_relative()</TD>
+	<TD>fl_filename_relative()</TD>
+</TR>
+<TR>
+	<TD>filename_setext()</TD>
+	<TD>fl_filename_setext()</TD>
+</TR>
+<TR>
+	<TD>frame()</TD>
+	<TD>fl_frame()</TD>
+</TR>
+<TR>
+	<TD>inactive()</TD>
+	<TD>fl_inactive()</TD>
+</TR>
+<TR>
+	<TD>numericsort()</TD>
+	<TD>fl_numericsort()</TD>
+</TR>
+</TABLE></CENTER>
+
+<H2>Image Support</H2>
+
+<P>Image support in FLTK has been significantly revamped in
+1.1.x. The <A HREF="Fl_Image.html"><TT>Fl_Image</TT></A> class
+is now a proper base class, with the core image drawing
+functionality in the <A
+HREF="Fl_Bitmap.html"><TT>Fl_Bitmap</TT></A>, <A
+HREF="Fl_Pixmap.html"><TT>Fl_Pixmap</TT></A>, and <A
+HREF="Fl_RGB_Image.html"><TT>Fl_RGB_Image</TT></A> classes.
+
+<P>BMP, GIF, JPEG, PNG, XBM, and XPM image files can now be
+loaded using the appropriate image classes, and the <A
+HREF="Fl_Shared_Image.html"><TT>Fl_Shared_Image</TT></A> class
+can be used to cache images in memory.
+
+<P>Image labels are no longer provided as an add-on label type.
+If you use the old <TT>label()</TT> methods on an image, the
+widget's <TT>image()</TT> method is called to set the image
+as the label.
+
+<P>Image labels in menu items must still use the old labeltype
+mechanism to preserve source compatibility.
+
+<H2>Keyboard Navigation</H2>
+
+<P>FLTK 1.1.x now supports keyboard navigation and control with
+all widgets. To restore the old FLTK 1.0.x behavior so that only
+text widgets get keyboard focus, call the <A
+HREF="Fl.html#Fl.visible_focus"><CODE>Fl::visible_focus()</CODE></A>
+method to disable it:
+
+<UL><PRE>
+Fl::visible_focus(0);
+</PRE></UL>
+
+</BODY>
+</HTML>

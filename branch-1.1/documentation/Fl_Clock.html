@@ -1,0 +1,52 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Clock</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Clock>class Fl_Clock</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Clock_Output.html#Fl_Clock_Output>Fl_Clock_Output</A>
+   |
+   +----<B>Fl_Clock</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Clock.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This widget provides a round analog clock display and is provided for
+Forms compatibility.  It installs a 1-second timeout callback using <A href="Fl.html#Fl.add_timeout">
+<TT>Fl::add_timeout()</TT></A>.
+<P ALIGN=CENTER><IMG src="clock.gif" ALT="Fl_Clock widget."> <IMG src="round_clock.gif" ALT="Fl_Clock widget."></P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Clock.Fl_Clock>Fl_Clock</A></LI>
+<LI><A href=#Fl_Clock.~Fl_Clock>~Fl_Clock</A></LI>
+<LI><A href=#Fl_Clock.hour>hour</A></LI>
+<LI><A href=#Fl_Clock.minute>minute</A></LI>
+<LI><A href=#Fl_Clock.second>second</A></LI>
+<LI><A href=#Fl_Clock.value>value</A></LI>
+</UL>
+<H4><A name=Fl_Clock.Fl_Clock>Fl_Clock::Fl_Clock(int x, int y, int w,
+int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Clock</TT> widget using the given position, size,
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
+<H4><A name=Fl_Clock.~Fl_Clock>virtual Fl_Clock::~Fl_Clock()</A></H4>
+ The destructor removes the clock.
+<H4><A name=Fl_Clock.hour>int Fl_Clock_Output::hour() const</A></H4>
+ Returns the current hour (0 to 23).
+<H4><A name=Fl_Clock.minute>int Fl_Clock_Output::minute() const</A></H4>
+ Returns the current minute (0 to 59).
+<H4><A name=Fl_Clock.second>int Fl_Clock_Output::second() const</A></H4>
+ Returns the current second (0 to 60, 60 = leap second).
+<H4><A name=Fl_Clock.value>ulong Fl_Clock::value(void)</A></H4>
+ Returns the displayed time in seconds since the UNIX epoch (January 1, 1970).
+</BODY>
+</HTML>

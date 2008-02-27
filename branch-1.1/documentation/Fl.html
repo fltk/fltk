@@ -1,0 +1,1392 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name="Fl">class Fl</A></H2>
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<B>Fl</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl</TT> class is the FLTK global (static) class containing
+state information and global methods for the current application.</P>
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#Fl.add_check">add_check</A></LI>
+	<LI><A HREF="#Fl.add_fd">add_fd</A></LI>
+	<LI><A HREF="#Fl.add_handler">add_handler</A></LI>
+	<LI><A HREF="#Fl.add_idle">add_idle</A></LI>
+	<LI><A HREF="#Fl.add_timeout">add_timeout</A></LI>
+	<LI><A HREF="#Fl.arg">arg</A></LI>
+	<LI><A HREF="#Fl.args">args</A></LI>
+	<LI><A HREF="#Fl.atclose">atclose</A></LI>
+	<LI><A HREF="#Fl.awake">awake</A></LI>
+	<LI><A HREF="#Fl.background">background</A></LI>
+	<LI><A HREF="#Fl.background2">background2</A></LI>
+	<LI><A HREF="#Fl.belowmouse">belowmouse</A></LI>
+	<LI><A HREF="#Fl.box_dh">box_dh</A></LI>
+	<LI><A HREF="#Fl.box_dw">box_dw</A></LI>
+	<LI><A HREF="#Fl.box_dx">box_dx</A></LI>
+	<LI><A HREF="#Fl.box_dy">box_dy</A></LI>
+	<LI><A HREF="#Fl.check">check</A></LI>
+	<LI><A HREF="#Fl.compose">compose</A></LI>
+	<LI><A HREF="#Fl.compose_reset">compose_reset</A></LI>
+	<LI><A HREF="#Fl.copy">copy</A></LI>
+	<LI><A HREF="#Fl.damage">damage</A></LI>
+	<LI><A HREF="#Fl.default_atclose">default_atclose</A></LI>
+	<LI><A HREF="#Fl.delete_widget">delete_widget</A></LI>
+	<LI><A HREF="#Fl.display">display</A></LI>
+	<LI><A HREF="#Fl.dnd">dnd</A></LI>
+	<LI><A HREF="#Fl.dnd_text_ops">dnd_text_ops</A></LI>
+	<LI><A HREF="#Fl.error">error</A></LI>
+	<LI><A HREF="#Fl.event">event</A></LI>
+	<LI><A HREF="#Fl.event_alt">event_alt</A></LI>
+	<LI><A HREF="#Fl.event_button1">event_button1</A></LI>
+	<LI><A HREF="#Fl.event_button2">event_button2</A></LI>
+	<LI><A HREF="#Fl.event_button3">event_button3</A></LI>
+	<LI><A HREF="#Fl.event_button">event_button</A></LI>
+	<LI><A HREF="#Fl.event_buttons">event_buttons</A></LI>
+	<LI><A HREF="#Fl.event_clicks">event_clicks</A></LI>
+	<LI><A HREF="#Fl.event_ctrl">event_ctrl</A></LI>
+	<LI><A HREF="#Fl.event_dx">event_dx</A></LI>
+	<LI><A HREF="#Fl.event_dy">event_dy</A></LI>
+	<LI><A HREF="#Fl.event_inside">event_inside</A></LI>
+	<LI><A HREF="#Fl.event_is_click">event_is_click</A></LI>
+	<LI><A HREF="#Fl.event_key">event_key</A></LI>
+	<LI><A HREF="#Fl.event_length">event_length</A></LI>
+	<LI><A HREF="#Fl.event_original_key">event_original_key</A></LI>
+	<LI><A HREF="#Fl.event_shift">event_shift</A></LI>
+	<LI><A HREF="#Fl.event_state">event_state</A></LI>
+	<LI><A HREF="#Fl.event_text">event_text</A></LI>
+	<LI><A HREF="#Fl.event_x">event_x</A></LI>
+	<LI><A HREF="#Fl.event_x_root">event_x_root</A></LI>
+	<LI><A HREF="#Fl.event_y">event_y</A></LI>
+	<LI><A HREF="#Fl.event_y_root">event_y_root</A></LI>
+	<LI><A HREF="#Fl.fatal">fatal</A></LI>
+	<LI><A HREF="#Fl.first_window">first_window</A></LI>
+	<LI><A HREF="#Fl.flush">flush</A></LI>
+	<LI><A HREF="#Fl.focus">focus</A></LI>
+	<LI><A HREF="#Fl.foreground">foreground</A></LI>
+	<LI><A HREF="#Fl.free_color">free_color</A></LI>
+	<LI><A HREF="#Fl.get_boxtype">get_boxtype</A></LI>
+	<LI><A HREF="#Fl.get_color">get_color</A></LI>
+	<LI><A HREF="#Fl.get_font">get_font</A></LI>
+	<LI><A HREF="#Fl.get_font_name">get_font_name</A></LI>
+	<LI><A HREF="#Fl.get_font_sizes">get_font_sizes</A></LI>
+	<LI><A HREF="#Fl.get_key">get_key</A></LI>
+	<LI><A HREF="#Fl.get_mouse">get_mouse</A></LI>
+	<LI><A HREF="#Fl.get_system_colors">get_system_colors</A></LI>
+	<LI><A HREF="#Fl.gl_visual">gl_visual</A></LI>
+	<LI><A HREF="#Fl.grab">grab</A></LI>
+	<LI><A HREF="#Fl.h">h</A></LI>
+	<LI><A HREF="#Fl.handle">handle</A></LI>
+	<LI><A HREF="#Fl.has_check">has_check</A></LI>
+	<LI><A HREF="#Fl.has_idle">has_idle</A></LI>
+	<LI><A HREF="#Fl.has_timeout">has_timeout</A></LI>
+	<LI><A HREF="#Fl.lock">lock</A></LI>
+	<LI><A HREF="#Fl.modal">modal</A></LI>
+	<LI><A HREF="#Fl.next_window">next_window</A></LI>
+	<LI><A HREF="#Fl.own_colormap">own_colormap</A></LI>
+	<LI><A HREF="#Fl.paste">paste</A></LI>
+	<LI><A HREF="#Fl.pushed">pushed</A></LI>
+	<LI><A HREF="#Fl.readqueue">readqueue</A></LI>
+	<LI><A HREF="#Fl.ready">ready</A></LI>
+	<LI><A HREF="#Fl.redraw">redraw</A></LI>
+	<LI><A HREF="#Fl.release">release</A></LI>
+	<LI><A HREF="#Fl.remove_check">remove_check</A></LI>
+	<LI><A HREF="#Fl.remove_fd">remove_fd</A></LI>
+	<LI><A HREF="#Fl.remove_handler">remove_handler</A></LI>
+	<LI><A HREF="#Fl.remove_idle">remove_idle</A></LI>
+	<LI><A HREF="#Fl.remove_timeout">remove_timeout</A></LI>
+	<LI><A HREF="#Fl.repeat_timeout">repeat_timeout</A></LI>
+	<LI><A HREF="#Fl.run">run</A></LI>
+	<LI><A HREF="#Fl.scheme">scheme</A></LI>
+	<LI><A HREF="#Fl.screen_count">screen_count</A></LI>
+	<LI><A HREF="#Fl.screen_xywh">screen_xywh</A></LI>
+	<LI><A HREF="#Fl.scrollbar_size">scrollbar_size</A></LI>
+	<LI><A HREF="#Fl.selection">selection</A></LI>
+	<LI><A HREF="#Fl.selection_owner">selection_owner</A></LI>
+	<LI><A HREF="#Fl.set_abort">set_abort</A></LI>
+	<LI><A HREF="#Fl.set_atclose">set_atclose</A></LI>
+	<LI><A HREF="#Fl.set_boxtype">set_boxtype</A></LI>
+	<LI><A HREF="#Fl.set_color">set_color</A></LI>
+	<LI><A HREF="#Fl.set_font">set_font</A></LI>
+	<LI><A HREF="#Fl.set_fonts">set_fonts</A></LI>
+	<LI><A HREF="#Fl.set_idle">set_idle</A></LI>
+	<LI><A HREF="#Fl.set_labeltype">set_labeltype</A></LI>
+	<LI><A HREF="#Fl.test_shortcut">test_shortcut</A></LI>
+	<LI><A HREF="#Fl.thread_message">thread_message</A></LI>
+	<LI><A HREF="#Fl.unlock">unlock</A></LI>
+	<LI><A HREF="#Fl.version">version</A></LI>
+	<LI><A HREF="#Fl.visible_focus">visible_focus</A></LI>
+	<LI><A HREF="#Fl.visual">visual</A></LI>
+	<LI><A HREF="#Fl.wait">wait</A></LI>
+	<LI><A HREF="#Fl.warning">warning</A></LI>
+	<LI><A HREF="#Fl.w">w</A></LI>
+	<LI><A HREF="#Fl.x">x</A></LI>
+	<LI><A HREF="#Fl.y">y</A></LI>
+
+</UL>
+
+<H4><A NAME="Fl.add_check">void add_check(Fl_Timeout_Handler, void* = 0);</A></H4>
+
+<P>FLTK will call this callback just before it flushes the display and
+waits for events.  This is different than an idle callback because it
+is only called once, then FLTK calls the system and tells it not to
+return until an event happens.
+
+<p>This can be used by code that wants to monitor the
+application's state, such as to keep a display up to date. The
+advantage of using a check callback is that it is called only when no
+events are pending. If events are coming in quickly, whole blocks of
+them will be processed before this is called once. This can save
+significant time and avoid the application falling behind the events.
+
+<p>Sample code:
+
+<UL><PRE>
+bool state_changed; // anything that changes the display turns this on
+
+void callback(void*) {
+  if (!state_changed) return;
+  state_changed = false;
+  do_expensive_calculation();
+  widget-&gt;redraw();
+}
+
+main() {
+  Fl::add_check(callback);
+  return Fl::run();
+}
+</PRE></UL>
+
+<H4><A NAME="Fl.add_fd">void add_fd(int fd, void (*cb)(int,void*),void* =0);<BR>
+void add_fd(int fd, int when, void (*cb)(int, void*), void* = 0);</A></H4>
+
+<P>Add file descriptor <tt>fd</tt> to listen to.  When the <tt>fd</tt>
+becomes ready for reading <tt>Fl::wait()</tt> will call the callback
+and then return.  The callback is
+passed the <tt>fd</tt> and the arbitrary <tt>void*</tt> argument.</P>
+
+<P>The second version takes a <tt>when</tt> bitfield, with the bits
+<tt>FL_READ</tt>, <tt>FL_WRITE</tt>, and <tt>FL_EXCEPT</tt> defined,
+to indicate when the callback should be done.
+
+<P>There can only be one callback of each type for a file descriptor. <tt>
+Fl::remove_fd()</tt> gets rid of <I>all</I> the callbacks for a given
+file descriptor.
+
+<P>Under UNIX <I>any</I> file descriptor can be monitored (files,
+devices, pipes, sockets, etc.) Due to limitations in Microsoft Windows,
+WIN32 applications can only monitor sockets.
+
+<H4><A NAME="Fl.add_handler">void add_handler(int (*h)(int));</A></H4>
+
+<P>Install a function to parse unrecognized events.  If FLTK cannot
+figure out what to do with an event, it calls each of these functions
+(most recent first) until one of them returns non-zero.  If none of
+them returns non zero then the event is ignored.  Events that cause
+this to be called are:
+
+<UL>
+<LI><tt>FL_SHORTCUT</tt> events that are not recognized by any  widget.
+This lets you provide global shortcut keys. </LI>
+<LI>System events that FLTK does not recognize.  See <A href=osissues.html#fl_xevent>
+<tt>fl_xevent</tt></A>. </LI>
+<LI><I>Some</I> other events when the widget FLTK selected  returns
+zero from its <tt>handle()</tt> method.  Exactly which  ones may change
+in future versions, however. </LI>
+</UL>
+
+<H4><A NAME="Fl.add_idle">void add_idle(void (*cb)(void*), void* = 0);</A></H4>
+
+<P>Adds a callback function that is called every time by
+<tt>Fl::wait()</tt> and also makes it act as though the timeout is
+zero (this makes <tt>Fl::wait()</tt> return immediately, so if it is
+in a loop it is called repeatedly, and thus the idle fucntion is
+called repeatedly).  The idle function can be used to get background
+processing done.
+
+<P>You can have multiple idle callbacks. To remove an idle callback use <A
+href="#Fl.remove_idle"><tt>Fl::remove_idle()</tt></A>.
+
+<P><tt>Fl::wait()</tt> and <tt>Fl::check()</tt> call idle callbacks,
+but <tt>Fl::ready()</tt> does not.
+
+<P>The idle callback can call any FLTK functions, including
+<tt>Fl::wait()</tt>, <tt>Fl::check()</tt>, and <tt>Fl::ready()</tt>.
+FLTK will not recursively call the idle callback.
+
+<H4><A NAME="Fl.add_timeout">void add_timeout(double t, Fl_Timeout_Handler,void* = 0);</A></H4>
+
+<P>Add a one-shot timeout callback.  The function will be called by
+<tt>Fl::wait()</tt> at <i>t</i> seconds after this function is called.
+The optional <tt>void*</tt> argument is passed to the callback.
+
+<P>You can have multiple timeout callbacks. To remove an timeout
+callback use <A
+href="#Fl.remove_timeout"><tt>Fl::remove_timeout()</tt></A>.
+
+<p>If you need more accurate, repeated timeouts, use <a
+href='#Fl.repeat_timeout'><tt>Fl::repeat_timeout()</tt></a> to
+reschedule the subsequent timeouts.</p>
+
+<p>The following code will print &quot;TICK&quot; each second on
+<tt>stdout</tt> with a fair degree of accuracy:</p>
+
+<PRE>
+    void callback(void*) {
+      puts("TICK");
+      Fl::repeat_timeout(1.0, callback);
+    }
+
+    int main() {
+      Fl::add_timeout(1.0, callback);
+      return Fl::run();
+    }
+</PRE>
+
+<H4><A NAME="Fl.arg">int arg(int, char**, int&amp;);</A></H4>
+
+<P>Consume a single switch from <tt>argv</tt>, starting at word i.
+Returns the number of words eaten (1 or 2, or 0 if it is not
+recognized) and adds the same value to <tt>i</tt>.  You can use this
+function if you prefer to control the incrementing through the
+arguments yourself.
+
+<H4><A NAME="Fl.args">int args(int, char**, int&amp;, int (*)(int,char**,int&amp;) = 0);</A></H4>
+
+<P>FLTK provides an <I>entirely optional</I> command-line switch parser.
+You don't have to call it if you don't like them! Everything it can do
+can be done with other calls to FLTK.
+
+<P>To use the switch parser, call <tt>Fl::args(...)</tt> near the start
+of your program.  This does <I>not</I> open the display, instead
+switches that need the display open are stashed into static variables.
+Then you <I>must</I> display your first window by calling <A href=Fl_Window.html#Fl_Window.show>
+window-&gt;show(argc,argv)</A>, which will do anything stored in the
+static variables.
+
+<P><tt>callback</tt> lets you define your own switches.  It is called
+with the same <tt>argc</tt> and <tt>argv</tt>, and with <tt>i</tt> the
+index of each word. The callback should return zero if the switch is
+unrecognized, and not change <tt>i</tt>.  It should return non-zero if
+the switch is recognized, and add at least 1 to <tt>i</tt> (it can add
+more to consume words after the switch).  This function is called
+<i>before</i> any other tests, so <i>you can override any FLTK
+switch</i> (this is why FLTK can use very short switches instead of
+the long ones all other toolkits force you to use).
+
+<P>On return <tt>i</tt> is set to the index of the first non-switch.
+This is either:
+
+<UL>
+<LI>The first word that does not start with '-'. </LI>
+<LI>The word '-' (used by many programs to name stdin as a file) </LI>
+<LI>The first unrecognized switch (return value is 0). </LI>
+<LI><tt>argc</tt></LI>
+</UL>
+
+<P>The return value is <tt>i</tt> unless an unrecognized switch is found,
+in which case it is zero.  If your program takes no arguments other
+than switches you should produce an error if the return value is less
+than <tt>argc</tt>.
+
+<P>All switches except -bg2 may be abbreviated one letter and case is ignored:
+
+<UL>
+
+	<LI><TT>-bg color</TT> or <TT>-background color</TT>
+
+	<P>Sets the background color using <A
+	HREF="#Fl.background"><TT>Fl::background()</TT></A>.</LI>
+
+	<LI><TT>-bg2 color</TT> or <TT>-background2 color</TT>
+
+	<P>Sets the secondary background color using <A
+	HREF="#Fl.background2"><TT>Fl::background2()</TT></A>.</LI>
+
+	<LI><TT>-display host:n.n</TT>
+
+	<P>Sets the X display to use; this option is silently
+	ignored under WIN32 and MacOS.</LI>
+
+	<LI><TT>-dnd</TT> and <TT>-nodnd</TT>
+
+	<P>Enables or disables drag and drop text operations
+	using <A
+	HREF="#Fl.dnd_text_ops"><TT>Fl::dnd_text_ops()</TT></A>.</LI>
+
+	<LI><TT>-fg color</TT> or <TT>-foreground color</TT>
+
+	<P>Sets the foreground color using <A
+	HREF="#Fl.foreground"><TT>Fl::foreground()</TT></A>.</LI>
+
+	<LI><TT>-geometry WxH+X+Y</TT>
+
+	<P>Sets the initial window position and size according
+	the the standard X geometry string.</LI>
+
+	<LI><TT>-iconic</TT>
+
+	<P>Iconifies the window using <A
+	HREF="Fl_Window.html#Fl_Window.iconize"><TT>Fl_Window::iconize()</TT></A>.</LI>
+
+	<LI><TT>-kbd</TT> and <TT>-nokbd</TT>
+
+	<P>Enables or disables visible keyboard focus for
+	non-text widgets using <A
+	HREF="#Fl.visible_focus"><TT>Fl::visible_focus()</TT></A>.</LI>
+
+	<LI><TT>-name string</TT>
+
+	<P>Sets the window class using <A
+	HREF="Fl_Window.html#Fl_Window.xclass"><TT>Fl_Window::xclass()</TT></A>.</LI>
+
+	<LI><TT>-scheme string</TT>
+
+	<P>Sets the widget scheme using <A
+	HREF="#Fl.scheme"><TT>Fl::scheme()</TT></A>.</LI>
+
+	<LI><TT>-title string</TT>
+
+	<P>Sets the window title using <A
+	HREF="Fl_Window.html#Fl_Window.label"><TT>Fl_Window::label()</TT></A>.</LI>
+
+	<LI><TT>-tooltips</TT> and <TT>-notooltips</TT>
+
+	<P>Enables or disables tooltips using <A
+	HREF="Fl_Tooltip.html#Fl_Tooltip.enable"><TT>Fl_Tooltip::enable()</TT></A>.</LI>
+
+</UL>
+
+<P>The second form of <tt>Fl::args()</tt> is useful if your program does
+not have command line switches of its own. It parses all the switches,
+and if any are not recognized it calls <tt>Fl::abort(Fl::help)</tt>.
+
+<P>A usage string is displayed if <tt>Fl::args()</tt> detects an invalid
+argument on the command-line. You can change the message by setting the
+<TT>Fl::help</TT> pointer.
+
+<H4><A NAME="Fl.atclose">void (*atclose)(Fl_Window*,void*);</A></H4>
+
+<H4><A NAME="Fl.awake">void awake(void *p);</A></H4>
+
+<H4><A NAME="Fl.awake">int awake(void (*callback)(void*), void *userdata);</A></H4>
+
+<P>The <TT>awake()</TT> method sends a message pointer to the main thread, 
+causing any pending <A HREF="#Fl.wait"><TT>Fl::wait()</TT></A> call to 
+terminate so that the main thread can retrieve the message and any pending 
+redraws can be processed.
+
+<P>Multiple calls to <TT>Fl::awake()</TT> will queue multiple pointers 
+for the main thread to process, up to a system-defined (typically several 
+thousand) depth. The default message handler saves the last message which 
+can be accessed using the <A HREF="#Fl.thread_message">
+<TT>Fl::thread_message()</TT></A> function.
+
+<P>The second form of <TT>awake()</TT> registers a function that will be 
+called by the main thread during the next message handling cycle. 
+<TT>awake()</TT> will return 0 if the callback function was registered, 
+and -1 if registration failed. Over a thousand awake callbacks can be
+registered simultaneously.
+
+<P>See also: <a href="advanced.html#multithreading">multithreading</a>.
+
+<H4><A NAME="Fl.background2">void background2(uchar, uchar, uchar);</A></H4>
+
+<P>Changes the alternative background color. This color is used as a 
+background by <tt>Fl_Input</tt> and other text widgets.
+<P>This call may change <tt>fl_color(FL_FOREGROUND_COLOR)</tt> if it 
+does not provide sufficient contrast to FL_BACKGROUND2_COLOR.
+
+<H4><A NAME="Fl.background">void background(uchar, uchar, uchar);</A></H4>
+
+<P>Changes <tt>fl_color(FL_BACKGROUND_COLOR)</tt> to the given color, 
+and changes the gray ramp from 32 to 56 to black to white.  These are 
+the colors used as backgrounds by almost all widgets and used to draw 
+the edges of all the boxtypes.
+
+<H4><A NAME="Fl.belowmouse">Fl_Widget* belowmouse();<BR>
+void belowmouse(Fl_Widget*);</A></H4>
+
+<P>Get or set the widget that is below the mouse.  This is for
+highlighting buttons.  It is not used to send <tt>FL_PUSH</tt> or <tt>
+FL_MOVE</tt> directly, for several obscure reasons, but those events
+typically go to this widget.  This is also the first widget tried for <tt>
+FL_SHORTCUT</tt> events.
+
+<P>If you change the belowmouse widget, the previous one and all
+parents (that don't contain the new widget) are sent <tt>FL_LEAVE</tt>
+events.  Changing this does <I>not</I> send <tt>FL_ENTER</tt> to this
+or any widget, because sending <tt>FL_ENTER</tt> is supposed to <I>test</I>
+if the widget wants the mouse (by it returning non-zero from <tt>
+handle()</tt>).
+
+<H4><A NAME="Fl.box_dh">int box_dh(Fl_Boxtype);</A></H4>
+
+<P>Returns the height offset for the given boxtype.
+See <tt><a href="#Fl.box_dy">box_dy</a></tt>.
+
+<H4><A NAME="Fl.box_dw">int box_dw(Fl_Boxtype);</A></H4>
+
+<P>Returns the width offset for the given boxtype.
+See <tt><a href="#Fl.box_dy">box_dy</a></tt>.
+
+<H4><A NAME="Fl.box_dx">int box_dx(Fl_Boxtype);</A></H4>
+
+<P>Returns the X offset for the given boxtype.
+See <tt><a href="#Fl.box_dy">box_dy</a></tt>.
+
+<H4><A NAME="Fl.box_dy">int box_dy(Fl_Boxtype);</A></H4>
+
+<P>Returns the Y offset for the given boxtype.
+
+<P>These functions return the offset values necessary for a given
+boxtype, useful for computing the area inside a box's borders, to
+prevent overdrawing the borders.
+
+<P>For instance, in the case of a boxtype like <tt>FL_DOWN_BOX</tt>
+where the border width might be 2 pixels all around, the above 
+functions would return 2, 2, 4, and 4 for <tt>box_dx</tt>, 
+<tt>box_dy</tt>, <tt>box_dw</tt>, and <tt>box_dh</tt>
+respectively.
+
+<P>An example to compute the area inside a widget's box():
+<pre>
+      int X = yourwidget-&gt;x() + Fl::box_dx(yourwidget-&gt;box());
+      int Y = yourwidget-&gt;y() + Fl::box_dy(yourwidget-&gt;box());
+      int W = yourwidget-&gt;w() - Fl::box_dw(yourwidget-&gt;box());
+      int H = yourwidget-&gt;h() - Fl::box_dh(yourwidget-&gt;box());
+</pre>
+<P>These functions are mainly useful in the <tt>draw()</tt> code 
+for deriving custom widgets, where one wants to avoid drawing 
+over the widget's own border <tt>box()</tt>.
+
+<H4><A NAME="Fl.check">int check();</A></H4>
+
+<P>Same as <tt>Fl::wait(0)</tt>.  Calling this during a big calculation
+will keep the screen up to date and the interface responsive:
+
+<UL><PRE>
+while (!calculation_done()) {
+ calculate();
+ Fl::check();
+ if (user_hit_abort_button()) break;
+}
+</PRE></UL>
+
+<P>The returns non-zero if any windows are displayed, and 0 if no
+windows are displayed (this is likely to change in future versions of
+FLTK).
+
+<H4><A NAME="Fl.compose">int compose(int &amp;del);</A></H4>
+
+<p>Use of this function is very simple. Any text editing widget should
+call this for each <tt>FL_KEYBOARD</tt> event.
+
+<p>If <i>true</i> is returned, then it has modified the
+Fl::event_text() and Fl::event_length() to a set of <i>bytes</i> to
+insert (it may be of zero length!).  In will also set the "del"
+parameter to the number of <i>bytes</i> to the left of the cursor to
+delete, this is used to delete the results of the previous call to
+Fl::compose().
+
+<p>If <i>false</i> is returned, the keys should be treated as function
+keys, and del is set to zero. You could insert the text anyways, if
+you don't know what else to do.
+
+<p>Though the current implementation returns immediately, future
+versions may take quite awhile, as they may pop up a window or do
+other user-interface things to allow characters to be selected.
+
+<H4><A NAME="Fl.compose_reset">void compose_reset();</A></H4>
+
+<p>If the user moves the cursor, be sure to call Fl::compose_reset().
+The next call to Fl::compose() will start out in an initial state.  In
+particular it will not set "del" to non-zero. This call is very fast
+so it is ok to call it many times and in many places.
+
+<H4><A NAME="Fl.copy">void copy(const char *stuff, int len, int clipboard);</A></H4>
+
+<P>Copies the data pointed to by <TT>stuff</TT> to the selection
+(0) or primary (1) clipboard.  The selection clipboard is used
+for middle-mouse pastes and for drag-and-drop selections. The
+primary clipboard is used for traditional copy/cut/paste
+operations.
+
+<H4><A NAME="Fl.damage">int damage();<BR>
+void damage(int x);</A></H4>
+
+<P>If true then <A href="#Fl.flush"><tt>flush()</tt></A> will do something.
+
+<H4><A NAME="Fl.default_atclose">void default_atclose(Fl_Window*,void*);</A></H4>
+
+<p>This is the default callback for window widgets. It hides the
+window and then calls the default widget callback.</p>
+
+<H4><A NAME="Fl.delete_widget">void delete_widget(Fl_Widget*);</A></H4>
+
+<p>Schedules a widget for deletion at the next call to the event loop.
+Use this method to delete a widget inside a callback function. 
+To avoid early deletion of widgets, this function
+should be called toward the end of a callback and only after any call 
+to the event loop (<tt>Fl:wait()</tt>, <tt>Fl::flush()</tt>, 
+<tt>fl_ask()</tt>, etc).</p>
+
+<p>When deleting groups or windows, you must only delete the group or
+window widget and not the individual child widgets.</p>
+
+<H4><A NAME="Fl.display">void display(const char*);</A></H4>
+
+<P>Sets the X display to use for all windows.  Actually this just sets
+the environment variable $DISPLAY to the passed string, so this only
+works before you show() the first window or otherwise open the display,
+and does nothing useful under WIN32.
+
+<H4><A NAME="Fl.dnd">int dnd();</A></H4>
+
+<P>Initiate a Drag And Drop operation. The clipboard should be
+filled with relevant data before calling this method. FLTK will
+then initiate the system wide drag and drop handling. Dropped data
+will be marked as <i>text</i>.
+
+<H4><A NAME="Fl.dnd_text_ops">void dnd_text_ops(int d);<BR>
+int dnd_text_ops();</A></H4>
+
+<P>Gets or sets whether drag and drop text operations are
+supported. This specifically affects whether selected text can
+be dragged from text fields or dragged within a text field as a
+cut/paste shortcut.
+
+<H4><A NAME="Fl.error">void (*error)(const char*, ...);</A></H4>
+
+<P>FLTK calls this to print a normal error message. You can
+override the behavior by setting the function pointer to your
+own routine.
+
+<P><tt>Fl::error</tt> means there is a recoverable error such as
+the inability to read an image file. The default implementation
+prints the error message to <TT>stderr</TT> and returns.
+
+<H4><A NAME="Fl.event_alt">int event_alt();</A></H4>
+
+<P>Returns non-zero if the Alt key is pressed.
+
+<H4><A NAME="Fl.event_button1">int event_button1();</A></H4>
+
+<P>Returns non-zero if button 1 is currently held down.
+For more details, see <TT><A href="#Fl.event_buttons">Fl::event_buttons()</A></TT>.
+
+<H4><A NAME="Fl.event_button2">int event_button2();</A></H4>
+
+<P>Returns non-zero if button 2 is currently held down.
+For more details, see <TT><A href="#Fl.event_buttons">Fl::event_buttons()</A></TT>.
+
+<H4><A NAME="Fl.event_button3">int event_button3();</A></H4>
+
+<P>Returns non-zero if button 3 is currently held down.
+For more details, see <TT><A href="#Fl.event_buttons">Fl::event_buttons()</A></TT>.
+
+<H4><A NAME="Fl.event_button">int event_button();</A></H4>
+
+<P>Returns which mouse button caused te current event. This returns garbage if the
+most recent event was not a <tt>FL_PUSH</tt> or <tt>FL_RELEASE</tt>
+event.
+
+<H4><A NAME="Fl.event_buttons">int event_buttons();</A></H4>
+
+<P>Returns the button state bits; if non-zero, then at least one
+button is pressed.  This function returns the button state at the 
+time of the event. During an <tt>FL_RELEASE</tt> event, the state 
+of the released button will be <tt>0</tt>. To find out, which button 
+caused an <tt>FL_RELEASE</tt> event, you can use 
+<tt><a href="#Fl.event_button">Fl::event_button()</a></tt> instead.
+
+<H4><A NAME="Fl.event_clicks">int event_clicks();<BR>
+void event_clicks(int i);</A></H4>
+
+<P>The first form returns non-zero if the most recent <tt>FL_PUSH</tt> or
+<tt>FL_KEYBOARD</tt> was a &quot;double click&quot;.  Returns N-1 for
+N clicks.  A double click is counted if the same button is pressed
+again while <tt>event_is_click()</tt> is true.
+
+<P>The second form directly sets the number returned by <tt>
+Fl::event_clicks()</tt>.  This can be used to set it to zero so that
+later code does not think an item was double-clicked.
+
+<H4><A NAME="Fl.event_ctrl">int event_ctrl();</A></H4>
+
+<P>Returns non-zero if the Control key is pressed.
+
+<H4><A NAME="Fl.event">int event();</A></H4>
+
+<P>Returns the last event that was processed. This can be used
+to determine if a callback is being done in response to a
+keypress, mouse click, etc.
+
+<H4><A NAME="Fl.event_inside">int event_inside(int,int,int,int);<BR>
+int event_inside(const Fl_Widget*);</A></H4>
+
+<P>Returns non-zero if the current <tt>event_x</tt> and <tt>event_y</tt>
+put it inside the widget or inside an arbitrary bounding box.  You
+should always call this rather than doing your own comparison so you
+are consistent about edge effects.
+
+<H4><A NAME="Fl.event_is_click">int event_is_click();<BR>
+void event_is_click(0);</A></H4>
+
+<P>The first form returns non-zero if the mouse has not moved far enough
+and not enough time has passed since the last <tt>FL_PUSH</tt> or <tt>
+FL_KEYBOARD</tt> event for it to be considered a &quot;drag&quot; rather than a
+&quot;click&quot;.  You can test this on <tt>FL_DRAG</tt>, <tt>FL_RELEASE</tt>,
+and <tt>FL_MOVE</tt> events.  The second form clears the value returned
+by <tt>Fl::event_is_click()</tt>.  Useful to prevent the <I>next</I>
+click from being counted as a double-click or to make a popup menu
+pick an item with a single click.  Don't pass non-zero to this.
+
+<H4><A NAME="Fl.event_key">int event_key();<BR>
+int event_key(int s);</A></H4>
+
+<P><tt>Fl::event_key()</tt> returns which key on the keyboard was last
+pushed.  It returns zero if the last event was not a key press or release.
+
+<P><tt>Fl::event_key(int)</tt> returns true if the given key was held
+down (or pressed) <I>during</I> the last event.  This is constant until
+the next event is read from the server.
+
+<P><tt>Fl::get_key(int)</tt> returns true if the given key is held down <I>
+now</I>.  Under X this requires a round-trip to the server and is <I>
+much</I> slower than <tt>Fl::event_key(int)</tt>.
+
+<P>Keys are identified by the <I>unshifted</I> values. FLTK defines a
+set of symbols that should work on most modern machines for every key
+on the keyboard:
+
+<UL>
+<LI>All keys on the main keyboard producing a printable ASCII
+character use the value of that ASCII character (as though shift,
+ctrl, and caps lock were not on).  The space bar is 32. </LI>
+<LI>All keys on the numeric keypad producing a printable ASCII
+character use the value of that ASCII character plus <tt>FL_KP</tt>.
+The highest possible value is <tt>FL_KP_Last</tt> so you can
+range-check to see if something is  on the keypad. </LI>
+<LI>All numbered function keys use the number on the function key plus <tt>
+FL_F</tt>.  The highest possible number is <tt>FL_F_Last</tt>, so you
+can range-check a value. </LI>
+<LI>Buttons on the mouse are considered keys, and use the button
+number (where the left button is 1) plus <tt>FL_Button</tt>. </LI>
+<LI>All other keys on the keypad have a symbol: <tt>FL_Escape,
+FL_BackSpace, FL_Tab, FL_Enter, FL_Print, FL_Scroll_Lock, FL_Pause,
+FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down,
+FL_Left, FL_Up, FL_Right, FL_Down, FL_Shift_L, FL_Shift_R,
+FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R,
+FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter</tt>.  Be
+careful not to confuse these with the very similar, but all-caps,
+symbols used by <a href="Fl.html#Fl.event_state"><tt>Fl::event_state()</tt>
+</A>. </LI>
+</UL>
+
+<P>On X <tt>Fl::get_key(FL_Button+n)</tt> does not work.
+
+<P>On WIN32 <tt>Fl::get_key(FL_KP_Enter)</tt> and <tt>
+Fl::event_key(FL_KP_Enter)</tt> do not work.
+
+<H4><A NAME="Fl.event_length">int event_length();</A></H4>
+
+<P>Returns the length of the text in <tt>Fl::event_text()</tt>.  There
+will always be a nul at this position in the text.  However there may
+be a nul before that if the keystroke translates to a nul character or
+you paste a nul character.
+
+<H4><A NAME="Fl.event_original_key">int event_original_key();</A></H4>
+
+<P> If NumLock is deactivated, FLTK translates events from the 
+numeric keypad into the corresponding arrow key events. 
+<tt>event_key()</tt> returns the translated key code, whereas
+<tt>event_original_key()</tt> returns the keycode before 
+NumLock translation.
+
+<H4><A NAME="Fl.event_shift">int event_shift();</A></H4>
+
+<P>Returns non-zero if the Shift key is pressed.
+
+<H4><A NAME="Fl.event_state">int event_state();<BR>
+int event_state(int i);</A></H4>
+
+<P>This is a bitfield of what shift states were on and what mouse buttons
+were held down during the most recent event.  The second version
+returns non-zero if any of the passed bits are turned on.  The legal
+bits are:
+
+<UL>
+<LI><tt>FL_SHIFT</tt></LI>
+<LI><tt>FL_CAPS_LOCK</tt></LI>
+<LI><tt>FL_CTRL</tt></LI>
+<LI><tt>FL_ALT</tt></LI>
+<LI><tt>FL_NUM_LOCK</tt></LI>
+<LI><tt>FL_META</tt></LI>
+<LI><tt>FL_SCROLL_LOCK</tt></LI>
+<LI><tt>FL_BUTTON1</tt></LI>
+<LI><tt>FL_BUTTON2</tt></LI>
+<LI><tt>FL_BUTTON3</tt></LI>
+</UL>
+
+<P>X servers do not agree on shift states, and FL_NUM_LOCK, FL_META, and
+FL_SCROLL_LOCK may not work.  The values were selected to match the
+XFree86 server on Linux.  In addition there is a bug in the way X works
+so that the shift state is not correctly reported until the first event <I>
+after</I> the shift key is pressed or released.
+
+<H4><A NAME="Fl.event_x">int event_x();</A></H4>
+
+<P>Returns the mouse position of the event relative to the <tt>Fl_Window</tt>
+it was passed to.
+
+<H4><A NAME="Fl.event_x_root">int event_x_root();</A></H4>
+
+<P>Returns the mouse position on the screen of the event.  To find the
+absolute position of an <tt>Fl_Window</tt> on the screen, use the
+difference between <tt>event_x_root(),event_y_root()</tt> and <tt>
+event_x(),event_y()</tt>.
+
+<H4><A NAME="Fl.event_y">int event_y();</A></H4>
+
+<P>Returns the mouse position of the event relative to the <tt>Fl_Window</tt>
+it was passed to.
+
+<H4><A NAME="Fl.event_y_root">int event_y_root();</A></H4>
+
+<P>Returns the mouse position on the screen of the event.  To find the
+absolute position of an <tt>Fl_Window</tt> on the screen, use the
+difference between <tt>event_x_root(),event_y_root()</tt> and <tt>
+event_x(),event_y()</tt>.
+
+<H4><A NAME="Fl.fatal">void (*fatal)(const char*, ...);</A></H4>
+
+<P>FLTK calls this to print a fatal error message. You can
+override the behavior by setting the function pointer to your
+own routine.
+
+<P><tt>Fl::fatal</tt> must not return, as FLTK is in an unusable
+state, however your version may be able to use <tt>longjmp</tt>
+or an exception to continue, as long as it does not call FLTK
+again. The default implementation prints the error message to
+<TT>stderr</TT> and exits with status 1.
+
+<H4><A NAME="Fl.first_window">Fl_Window* first_window();<BR>
+void first_window(Fl_Window*);</A></H4>
+
+<P>Returns the first top-level window in the list of shown() windows.  If
+a modal() window is shown this is the top-most modal window, otherwise
+it is the most recent window to get an event.
+
+<P>The second form sets the window that is returned by
+first_window.  The window is removed from wherever it is in the
+list and inserted at the top.  This is not done if Fl::modal()
+is on or if the window is not shown(). Because the first window
+is used to set the "parent" of modal windows, this is often
+useful.
+
+<H4><A NAME="Fl.flush">void flush();</A></H4>
+
+<P>Causes all the windows that need it to be redrawn and graphics forced
+out through the pipes.  This is what <tt>wait()</tt> does before
+looking for events.
+
+<H4><A NAME="Fl.focus">Fl_Widget* focus();<BR>
+void focus(Fl_Widget*);</A></H4>
+
+<P>Get or set the widget that will receive <tt>FL_KEYBOARD</tt> events.
+
+<P>If you change <tt>Fl::focus()</tt>, the previous widget and all
+parents (that don't contain the new widget) are sent <tt>FL_UNFOCUS</tt>
+events.  Changing the focus does <I>not</I> send <tt>FL_FOCUS</tt> to
+this or any widget, because sending <tt>FL_FOCUS</tt> is supposed to <I>
+test</I> if the widget wants the focus (by it returning non-zero from
+<tt>handle()</tt>).
+
+<H4><A NAME="Fl.foreground">void foreground(uchar, uchar, uchar);</A></H4>
+
+<P>Changes <tt>fl_color(FL_FOREGROUND_COLOR)</tt>.
+
+<H4><A NAME="Fl.free_color">void free_color(Fl_Color c, int overlay = 0);</A></H4>
+
+<P>Frees the specified color from the colormap, if applicable.
+If <tt>overlay</tt> is non-zero then the color is freed from the
+overlay colormap.
+
+<H4><A NAME="Fl.get_boxtype">Fl_Box_Draw_F *get_boxtype(Fl_Boxtype);</A></H4>
+
+<P>Gets the current box drawing function for the specified box type.
+
+
+<H4><A NAME="Fl.get_color">unsigned get_color(Fl_Color c);<BR>
+void get_color(Fl_Color c, uchar&amp;r, uchar&amp;g, uchar&amp;b);</A></H4>
+
+<P>Returns the RGB value(s) for the given FLTK color index. The
+first form returns the RGB values packed in a 32-bit unsigned
+integer with the red value in the upper 8 bits, the green value
+in the next 8 bits, and the blue value in bits 8-15.  The lower
+8 bits will always be 0.
+
+<P>The second form returns the red, green, and blue values
+separately in referenced variables.
+
+
+<H4><A NAME="Fl.get_font">const char* get_font(Fl_Font);</A></H4>
+
+<P>Get the string for this face.  This string is different for each
+face. Under X this value is passed to XListFonts to get all the sizes
+of this face.
+
+<H4><A NAME="Fl.get_font_name">const char* get_font_name(Fl_Font, int* attributes = 0);</A></H4>
+
+<P>Get a human-readable string describing the family of this face.  This
+is useful if you are presenting a choice to the user.  There is no
+guarantee that each face has a different name.  The return value points
+to a static buffer that is overwritten each call.
+
+<P>The integer pointed to by <tt>attributes</tt> (if the pointer is not
+zero) is set to zero, <tt>FL_BOLD</tt> or <tt>FL_ITALIC</tt> or <tt>
+FL_BOLD | FL_ITALIC</tt>.  To locate a &quot;family&quot; of fonts, search
+forward and back for a set with non-zero attributes, these faces along
+with the face with a zero attribute before them constitute a family.
+
+<H4><A NAME="Fl.get_font_sizes">int get_font_sizes(Fl_Font, int*&amp; sizep);</A></H4>
+
+<P>Return an array of sizes in <tt>sizep</tt>.  The return value is the
+length of this array.  The sizes are sorted from smallest to largest
+and indicate what sizes can be given to <tt>fl_font()</tt> that will
+be matched exactly (<tt>fl_font()</tt> will pick the closest size for
+other sizes).  A zero in the first location of the array indicates a
+scalable font, where any size works, although the array may list sizes
+that work &quot;better&quot; than others.  Warning: the returned array
+points at a static buffer that is overwritten each call.  Under X this
+will open the display.
+
+<H4><A NAME="Fl.get_key">int get_key(int);</A></H4>
+
+<H4><A NAME="Fl.get_mouse">void get_mouse(int &amp;x,int &amp;y);</A></H4>
+
+<P>Return where the mouse is on the screen by doing a round-trip query to
+the server.  You should use <tt>Fl::event_x_root()</tt> and <tt>
+Fl::event_y_root()</tt> if possible, but this is necessary if you are
+not sure if a mouse event has been processed recently (such as to
+position your first window).  If the display is not open, this will
+open it.
+
+<H4><A NAME="Fl.get_system_colors">void get_system_colors();</A></H4>
+
+<P>Read the user preference colors from the system and use them to call
+<tt> Fl::foreground()</tt>, <tt>Fl::background()</tt>, and <tt>
+Fl::background2()</tt>.  This is done by
+<tt>Fl_Window::show(argc,argv)</tt> before applying the -fg and -bg
+switches.
+
+<P>On X this reads some common values from the Xdefaults database.
+KDE users can set these values by running the "krdb" program, and
+newer versions of KDE set this automatically if you check the "apply
+style to other X programs" switch in their control panel.
+
+<H4><A NAME="Fl.gl_visual">int gl_visual(int, int *alist=0);</A></H4>
+
+<P>This does the same thing as
+<A href="#Fl.visual"><tt>Fl::visual(int)</tt></A> but also
+requires OpenGL drawing to work.  This <I>must</I> be done if
+you want to draw in normal windows with OpenGL with <A
+href=opengl.html#gl_start> <tt>gl_start()</tt></A> and
+<tt>gl_end()</tt>.  It may be useful to call this so your X
+windows use the same visual as an
+<A href="Fl_Gl_Window.html"><tt>Fl_Gl_Window</tt></A>, which on
+some servers will reduce colormap flashing.
+
+<P>See <A href="Fl_Gl_Window.html#Fl_Gl_Window.mode"><tt>Fl_Gl_Window</tt></A>
+for a list of additional values for the argument.
+
+<H4><A NAME="Fl.grab">Fl_Window* grab();<BR>
+void grab(Fl_Window&amp;w) {grab(&amp;w);}</A></H4>
+
+<P>This is used when pop-up menu systems are active.  Send all events to
+the passed window no matter where the pointer or focus is (including
+in other programs).  The window <I>does not have to be
+<tt>shown()</tt></I> , this lets the <tt>handle()</tt> method of a
+&quot;dummy&quot; window override all event handling and allows you to
+map and unmap a complex set of windows (under both X and WIN32
+<I>some</I> window must be mapped because the system interface needs a
+window id).
+
+<P>If <tt>grab()</tt> is on it will also affect show() of windows by
+doing system-specific operations (on X it turns on
+override-redirect).  These are designed to make menus popup reliably
+and faster on the system.
+
+<P>To turn off grabbing do <tt>Fl::grab(0)</tt>.
+
+<P><I>Be careful that your program does not enter an infinite loop
+while <tt>grab()</tt> is on.  On X this will lock up your screen!</I>
+To avoid this potential lockup, all newer operating systems seem to 
+limit mouse pointer grabbing to the time during which a mouse button 
+is held down. Some OS's may not support grabbing at all.
+
+<H4><A NAME="Fl.h">int h();</A></H4>
+
+<P>Returns the height of the screen in pixels.
+
+<H4><A NAME="Fl.handle">int handle(int, Fl_Window*);</A></H4>
+
+<P>Sends the event to a window for processing.  Returns non-zero if any
+widget uses the event.
+
+<H4><A NAME="Fl.has_check">int has_check(Fl_Timeout_Handler, void* = 0);</A></H4>
+
+<P>Returns true if the check exists and has not been called yet.
+
+<H4><A NAME="Fl.has_idle">int has_idle(void (*cb)(void*), void* = 0);</A></H4>
+
+<P>Returns true if the specified idle callback is currently installed.
+
+<H4><A NAME="Fl.has_timeout">int has_timeout(Fl_Timeout_Handler, void* = 0);</A></H4>
+
+<P>Returns true if the timeout exists and has not been called yet.
+
+<H4><A NAME="Fl.lock">void lock();</A></H4>
+
+<P>The <TT>lock()</TT> method blocks the current thread until it
+can safely access FLTK widgets and data. Child threads should
+call this method prior to updating any widgets or accessing
+data. The main thread must call <TT>lock()</TT> to initialize
+the threading support in FLTK.
+
+<P>Child threads must call <A
+HREF="#Fl.unlock"><TT>unlock()</TT></A> when they are done
+accessing FLTK.
+
+<P>When the <A HREF="#Fl.wait"><TT>wait()</TT></A> method is waiting
+for input or timeouts, child threads are given access to FLTK.
+Similarly, when the main thread needs to do processing, it will
+wait until all child threads have called <A
+HREF="#Fl.unlock"><TT>unlock()</TT></A> before processing
+additional data.
+
+<P>See also: <a href="advanced.html#multithreading">multithreading</a>
+
+<H4><A NAME="Fl.modal">Fl_Window* modal();</A></H4>
+
+<P>Returns the top-most <tt>modal()</tt> window currently shown.
+This is the most recently <tt>
+shown()</tt> window with <A href=Fl_Window.html#Fl_Window.modal><tt>
+modal()</tt></A> true, or <tt>NULL</tt> if there are no <tt>modal()</tt>
+windows <tt>shown()</tt>.
+The <tt>modal()</tt> window has its <tt>handle()</tt> method called
+for all events, and no other windows will have <tt>handle()</tt>
+called (<A href="#Fl.grab"><tt>grab()</tt></A> overrides this).
+
+<H4><A NAME="Fl.next_window">Fl_Window* next_window(const Fl_Window*);</A></H4>
+
+<P>Returns the next top-level window in the list of shown() windows.  You can
+use this call to iterate through all the windows that are shown().
+
+<H4><A NAME="Fl.own_colormap">void own_colormap();</A></H4>
+
+<P>Makes FLTK use its own colormap.  This may make FLTK display better
+and will reduce conflicts with other programs that want lots of colors.
+However the colors may flash as you move the cursor between windows.
+
+<P>This does nothing if the current visual is not colormapped.
+
+<H4><A NAME="Fl.paste">void paste(Fl_Widget &amp;receiver, int clipboard=0);</A></H4>
+
+<P>Set things up so the receiver widget will be called with an <A
+href="enumerations.html#events"> <tt>FL_PASTE</tt></A> event some
+time in the future for the specified clipboard. The reciever
+should be prepared to be called <I>directly</I> by this, or for
+it to happen <I>later</I>, or possibly <I>not at all</I>.  This
+allows the window system to take as long as necessary to retrieve
+the paste buffer (or even to screw up completely) without complex
+and error-prone synchronization code in FLTK.
+
+<H4><A NAME="Fl.pushed">Fl_Widget* pushed();<BR>
+void pushed(Fl_Widget*);</A></H4>
+
+<P>Get or set the widget that is being pushed. <tt>FL_DRAG</tt> or <tt>
+FL_RELEASE</tt> (and any more <tt>FL_PUSH</tt>) events will be sent to
+this widget.
+
+<P>If you change the pushed widget, the previous one and all parents
+(that don't contain the new widget) are sent <tt>FL_RELEASE</tt>
+events.  Changing this does <I>not</I> send <tt>FL_PUSH</tt> to this
+or any widget, because sending <tt>FL_PUSH</tt> is supposed to <I>test</I>
+if the widget wants the mouse (by it returning non-zero from <tt>
+handle()</tt>).
+
+<H4><A NAME="Fl.readqueue">Fl_Widget* readqueue();</A></H4>
+
+<P>All <tt>Fl_Widgets</tt> that don't have a callback defined use a
+default callback that puts a pointer to the widget in this queue, and
+this method reads the oldest widget out of this queue.
+
+<H4><A NAME="Fl.ready">int ready();</A></H4>
+
+<P>This is similar to <tt>Fl::check()</tt> except this does <I>not</I>
+call <tt>Fl::flush()</tt> or any callbacks, which is useful if your
+program is in a state where such callbacks are illegal.  This returns
+true if <tt>Fl::check()</tt> would do anything (it will continue to
+return true until you call <tt>Fl::check()</tt> or <tt>Fl::wait()</tt>).
+
+<UL><PRE>
+while (!calculation_done()) {
+ calculate();
+ if (Fl::ready()) {
+   do_expensive_cleanup();
+   Fl::check();
+   if (user_hit_abort_button()) break;
+ }
+}
+</PRE></UL>
+
+<H4><A NAME="Fl.redraw">void redraw();</A></H4>
+
+<P>Redraws all widgets.
+
+<H4><A NAME="Fl.release">void release();</A></H4>
+
+<H4><A NAME="Fl.remove_check">void remove_check(Fl_Timeout_Handler, void* = 0);</A></H4>
+
+<P>Removes a check callback. It is harmless to remove a check
+callback that no longer exists.
+
+<H4><A NAME="Fl.remove_fd">void remove_fd(int, int when);<BR>
+void remove_fd(int);</A></H4>
+
+<P>Removes a file descriptor handler.
+
+<H4><A NAME="Fl.remove_handler">void remove_handler(int (*h)(int));</A></H4>
+
+<P>Removes a previously added event handler.
+
+<H4><A NAME="Fl.remove_idle">void remove_idle(void (*cb)(void*), void* = 0);</A></H4>
+
+<P>Removes the specified idle callback, if it is installed.
+
+<H4><A NAME="Fl.remove_timeout">void remove_timeout(Fl_Timeout_Handler, void* = 0);</A></H4>
+
+<P>Removes a timeout callback. It is harmless to remove a timeout
+callback that no longer exists.
+
+<H4><A NAME="Fl.repeat_timeout">void repeat_timeout(double t, Fl_Timeout_Handler,void* = 0);</A></H4>
+
+<P>This method repeats a timeout callback from the expiration of the
+previous timeout, allowing for more accurate timing. You may only call
+this method inside a timeout callback.
+
+<p>The following code will print &quot;TICK&quot; each second on
+<tt>stdout</tt> with a fair degree of accuracy:</p>
+
+<PRE>
+    void callback(void*) {
+      puts("TICK");
+      Fl::repeat_timeout(1.0, callback);
+    }
+
+    int main() {
+      Fl::add_timeout(1.0, callback);
+      return Fl::run();
+    }
+</PRE>
+
+<H4><A NAME="Fl.run">int run();</A></H4>
+
+<P>As long as any windows are displayed this calls <tt>Fl::wait()</tt>
+repeatedly.  When all the windows are closed it returns zero
+(supposedly it would return non-zero on any errors, but FLTK calls
+exit directly for these).  A normal program will end <tt>main()</tt>
+with <tt>return Fl::run();</tt>.
+
+<H4><A NAME="Fl.scheme">void scheme(const char *name);
+<BR>const char *scheme();</A></H4>
+
+<P>Gets or sets the current widget scheme. <TT>NULL</TT> will use
+the scheme defined in the <TT>FLTK_SCHEME</TT> environment
+variable or the <TT>scheme</TT> resource under X11. Otherwise,
+any of the following schemes can be used:</P>
+
+<ul>
+
+	<li>"none" - This is the default look-n-feel which resembles old
+	Windows (95/98/Me/NT/2000) and old GTK/KDE</li>
+
+	<li>"plastic" - This scheme is inspired by the Aqua user interface
+	on Mac OS X</li>
+
+	<li>"gtk+" - This scheme is inspired by the Red Hat Bluecurve
+	theme</li>
+
+</ul>
+
+<H4><A NAME="Fl.screen_count">int screen_count();</A></H4>
+
+<P>Gets the number of available screens.</P>
+
+<H4><A NAME="Fl.screen_xywh">void screen_xywh(int &amp;x, int &amp;y, int &amp;w, int &amp;h);<BR>
+void screen_xywh(int &amp;x, int &amp;y, int &amp;w, int &amp;h, int mx, int my);<BR>
+void screen_xywh(int &amp;x, int &amp;y, int &amp;w, int &amp;h, int n);</A></H4>
+
+<P>Gets the bounding box of a screen. The first form gets the
+bounding box for the screen the mouse pointer is in. The second
+form gets the bounding box for the screen that contains the
+specified coordinates. The last form gets the bounding box for
+the numbered screen, where <tt>n</tt> is a number from 0 to the
+number of screens less 1.</P>
+
+<H4><A NAME="Fl.scrollbar_size">void scrollbar_size(int W);<BR>
+int scrollbar_size();</A></H4>
+
+<P>Sets or gets the default scrollbar size that is used by the
+<A HREF="Fl_Browser_.html#Fl_Browser_"><TT>Fl_Browser_</TT></A>,
+<A HREF="Fl_Help_View.html#Fl_Help_View"><TT>Fl_Help_View</TT></A>,
+<A HREF="Fl_Scroll.html#Fl_Scroll"><TT>Fl_Scroll</TT></A>, and
+<A HREF="Fl_Text_Display.html#Fl_Text_Display"><TT>Fl_Text_Display</TT></A> widgets.</P>
+
+<H4><A NAME="Fl.selection">void selection(Fl_Widget &amp;owner, const char* stuff, int len);</A></H4>
+
+<P>Changes the current selection.  The block of text is
+copied to an internal buffer by FLTK (be careful if doing this in
+response to an <tt>FL_PASTE</tt> as this <I>may</I> be the same buffer
+returned by <tt>event_text()</tt>).  The <tt>selection_owner()</tt>
+widget is set to the passed owner.
+
+<H4><A NAME="Fl.selection_owner">Fl_Widget* selection_owner();<BR>
+void selection_owner(Fl_Widget*);</A></H4>
+
+<P>The single-argument <tt>selection_owner(x)</tt> call can be used to
+move the selection to another widget or to set the owner to
+<tt>NULL</tt>, without changing the actual text of the
+selection. <tt>FL_SELECTIONCLEAR</tt> is sent to the previous
+selection owner, if any.
+
+<P><I>Copying the buffer every time the selection is changed is
+obviously wasteful, especially for large selections.  An interface will
+probably be added in a future version to allow the selection to be made
+by a callback function.  The current interface will be emulated on top
+of this.</I>
+
+<H4><A NAME="Fl.set_abort">void set_abort(void (*f)(const char*,...));</A></H4>
+
+<H4><A NAME="Fl.set_atclose">void set_atclose(void (*f)(Fl_Window*,void*));</A></H4>
+
+<H4><A NAME="Fl.set_boxtype">void set_boxtype(Fl_Boxtype, Fl_Box_Draw_F*,uchar,uchar,uchar,uchar);<BR>
+void set_boxtype(Fl_Boxtype, Fl_Boxtype from);</A></H4>
+
+<P>The first form sets the function to call to draw a specific boxtype.
+
+<P>The second form copies the <tt>from</tt> boxtype.
+
+<H4><A NAME="Fl.set_color">void	set_color(Fl_Color, uchar, uchar, uchar);<BR>
+void set_color(Fl_Color, unsigned);</A></H4>
+
+<P>Sets an entry in the <tt>fl_color</tt> index table.  You can set it to
+any 8-bit RGB color.  The color is not allocated until <tt>fl_color(i)</tt>
+is used.
+
+<H4><A NAME="Fl.set_font">void set_font(Fl_Font, const char*);<BR>
+void set_font(Fl_Font, Fl_Font);</A></H4>
+
+<P>The first form changes a face.  The string pointer is simply stored,
+the string is not copied, so the string must be in static memory.
+
+<P>The second form copies one face to another.
+
+<H4><A NAME="Fl.set_fonts">Fl_Font set_fonts(const char* = 0);</A></H4>
+
+<P>FLTK will open the display, and add every font on the server to the
+face table.  It will attempt to put &quot;families&quot; of faces together, so
+that the normal one is first, followed by bold, italic, and bold
+italic.
+
+<P>The optional argument is a string to describe the set of fonts to
+add.  Passing <tt>NULL</tt> will select only fonts that have the
+ISO8859-1 character set (and are thus usable by normal text).  Passing
+&quot;-*&quot; will select all fonts with any encoding as long as they have
+normal X font names with dashes in them.  Passing &quot;*&quot; will list every
+font that exists (on X this may produce some strange output).  Other
+values may be useful but are system dependent.  With WIN32 <tt>NULL</tt>
+selects fonts with ISO8859-1 encoding and non-<tt>NULL</tt> selects
+all fonts.
+
+<P>The return value is how many faces are in the table after this is
+done.
+
+<H4><A NAME="Fl.set_idle">void set_idle(void (*cb)());</A></H4>
+
+<P>Sets an idle callback.
+
+<P>This method is obsolete - use the <A
+HREF="#Fl.add_idle"><TT>add_idle()</TT></A> method instead.
+
+<H4><A NAME="Fl.set_labeltype">void set_labeltype(Fl_Labeltype,Fl_Label_Draw_F*,Fl_Label_Measure_F*);<BR>
+void set_labeltype(Fl_Labeltype, Fl_Labeltype from);</A></H4>
+
+<P>The first form sets the functions to call to draw and measure a
+specific labeltype.
+
+<P>The second form copies the <tt>from</tt> labeltype.
+
+<H4><A NAME="Fl.test_shortcut">int test_shortcut(int);</A></H4>
+
+<P>Test the current event, which must be an <tt>FL_KEYBOARD</tt> or <tt>
+FL_SHORTCUT</tt>, against a shortcut value (described in <A href=Fl_Button.html#Fl_Button.shortcut>
+<tt>Fl_Button</tt></A>).  Returns non-zero if there is a match.  Not to
+be confused with <A href="subclassing.html#test_shortcut"><tt>
+Fl_Widget::test_shortcut()</tt></A>.
+
+<H4><A NAME="Fl.thread_message">void *thread_message();</A></H4>
+
+<P>The <TT>thread_message()</TT> method returns the last message
+that was sent from a child by the <A
+HREF="#Fl.awake"><TT>awake()</TT></A> method.
+
+<P>See also: <a href="advanced.html#multithreading">multithreading</a>
+
+<H4><A NAME="Fl.unlock">void unlock();</A></H4>
+
+<P>The <TT>unlock()</TT> method releases the lock that was set
+using the <A HREF="#Fl.lock"><TT>lock()</TT></A> method. Child
+threads should call this method as soon as they are finished
+accessing FLTK.
+
+<P>See also: <a href="advanced.html#multithreading">multithreading</a>
+
+<H4><A NAME="Fl.version">double version();</A></H4>
+
+<P>Returns the compiled-in value of the FL_VERSION constant. This
+is useful for checking the version of a shared library.
+
+<H4><A NAME="Fl.visible_focus">void visible_focus(int v);<BR>
+int visible_focus();</A></H4>
+
+<P>Gets or sets the visible keyboard focus on buttons and other
+non-text widgets. The default mode is to enable keyboard focus
+for all widgets.
+
+<H4><A NAME="Fl.visual">int visual(int);</A></H4>
+
+<P>Selects a visual so that your graphics are drawn correctly.  This is
+only allowed before you call show() on any windows.  This does nothing
+if the default visual satisfies the capabilities, or if no visual
+satisfies the capabilities, or on systems that don't have such
+brain-dead notions.
+
+<P>Only the following combinations do anything useful:
+
+<UL>
+<LI><tt>Fl::visual(FL_RGB)</tt>
+<BR>Full/true color (if there are several depths FLTK chooses  the
+largest).  Do this if you use <A href="drawing.html#fl_draw_image"><tt>fl_draw_image</tt>
+</A> for much better (non-dithered)  output.
+<BR>&nbsp; </LI>
+<LI><tt>Fl::visual(FL_RGB8)</tt>
+<BR>Full color with at least 24 bits of color. <tt>FL_RGB</tt> will
+always  pick this if available, but if not it will happily return a
+less-than-24 bit deep visual.  This call fails if 24 bits are not
+available.
+<BR>&nbsp; </LI>
+<LI><tt>Fl::visual(FL_DOUBLE|FL_INDEX)</tt>
+<BR>Hardware double buffering.  Call this if you are going to use <A href=Fl_Double_Window.html#Fl_Double_Window>
+<tt>Fl_Double_Window</tt></A>.
+<BR>&nbsp; </LI>
+<LI><tt>Fl::visual(FL_DOUBLE|FL_RGB)</tt></LI>
+<LI><tt>Fl::visual(FL_DOUBLE|FL_RGB8)</tt>
+<BR>Hardware double buffering and full color.
+</UL>
+
+<P>This returns true if the system has the capabilities by default or
+FLTK suceeded in turing them on.  Your program will still work even if
+this returns false (it just won't look as good).
+
+<H4><A NAME="Fl.w">int w();</A></H4>
+
+<P>Returns the width of the screen in pixels.
+
+<H4><A NAME="Fl.wait">int wait();<BR>
+double wait(double time);</A></H4>
+
+<P>Waits until "something happens" and then returns.  Call this
+repeatedly to "run" your program.  You can also check what happened
+each time after this returns, which is quite useful for managing
+program state.
+
+<P>What this really does is call all idle callbacks, all elapsed
+timeouts, call <tt>Fl::flush()</tt> to get the screen to update, and
+then wait some time (zero if there are idle callbacks, the shortest of
+all pending timeouts, or infinity), for any events from the user or
+any <tt>Fl::add_fd()</tt> callbacks.  It then handles the events and
+calls the callbacks and then returns.
+
+<P>The return value of the first form is non-zero if there are
+any visible windows - this may change in future versions of
+FLTK.
+
+<P>The second form waits a maximum of <i>time</i>
+seconds.  <i>It can return much sooner if something happens.</i>
+
+<P>The return value is positive if an event or fd happens before the
+time elapsed.  It is zero if nothing happens (on Win32 this will only
+return zero if <i>time</i> is zero).  It is negative if an error
+occurs (this will happen on UNIX if a signal happens).
+
+<H4><A NAME="Fl.warning">void (*warning)(const char*, ...);</A></H4>
+
+<P>FLTK calls this to print a warning message. You can
+override the behavior by setting the function pointer to your
+own routine.
+
+<P><tt>Fl::warning</tt> means that there was a recoverable
+problem, the display may be messed up but the user can probably
+keep working - all X protocol errors call this, for example.
+
+<H4><A NAME="Fl.x">int x();</A></H4>
+
+<P>Returns the origin of the current screen, where 0 indicates
+the left side of the screen.
+
+<H4><A NAME="Fl.y">int y();</A></H4>
+
+<P>Returns the origin of the current screen, where 0 indicates
+the top edge of the screen.
+
+<H4><A NAME="Fl.event_dx">int event_dx();</A></H4>
+
+Returns the current horizontal mouse scrolling associated with the
+<tt>FL_MOUSEWHEEL</tt> event. Right is positive.
+
+<H4><A NAME="Fl.event_dy">int event_dy();</A></H4>
+
+Returns the current vertical mouse scrolling assoaciated with the
+<tt>FL_MOUSEWHEEL</tt> event. Down is positive.
+
+<H4><A NAME="Fl.event_text">const char* event_text();</A></H4>
+
+Returns the text associated with the current <tt>FL_PASTE</tt> or
+<tt>FL_DND_RELEASE</tt> event.
+
+</BODY>
+</HTML>

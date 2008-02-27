@@ -1,0 +1,75 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+class CubeViewUI {open
+} {
+  Function {CubeViewUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label CubeView open
+      private xywh {428 124 415 405} type Double box UP_BOX labelsize 12 resizable visible
+    } {
+      Fl_Group {} {open
+        xywh {5 3 374 399}
+      } {
+        Fl_Group VChange {open
+          xywh {5 100 37 192}
+        } {
+          Fl_Roller vrot {
+            label {V Rot}
+            callback {cube->v_angle(((Fl_Roller *)o)->value());
+cube->redraw();}
+            xywh {5 100 17 186} labeltype NO_LABEL labelsize 12 align 128 minimum -180 maximum 180 step 1
+            code0 {\#include <stdio.h>}
+          }
+          Fl_Slider ypan {
+            label {V Pan}
+            callback {cube->pany(((Fl_Slider *)o)->value());
+cube->redraw();}
+            xywh {25 100 17 186} type {Vert Knob} selection_color 136 labeltype NO_LABEL labelsize 12 align 0 minimum -25 maximum 25 step 0.1
+          }
+        }
+        Fl_Group HChange {open
+          xywh {120 362 190 40}
+        } {
+          Fl_Slider xpan {
+            label {H Pan}
+            callback {cube->panx(((Fl_Slider *)o)->value());
+cube->redraw();}
+            xywh {122 364 186 17} type {Horz Knob} selection_color 136 labeltype NO_LABEL labelsize 12 align 16 minimum 25 maximum -25 step 0.1
+          }
+          Fl_Roller hrot {
+            label {H Rotation}
+            callback {cube->h_angle(((Fl_Roller *)o)->value());
+cube->redraw();}
+            xywh {122 383 186 17} type Horizontal labeltype NO_LABEL labelsize 12 align 8 minimum -180 maximum 180 step 1
+          }
+        }
+        Fl_Group MainView {open
+          xywh {46 27 333 333} resizable
+        } {
+          Fl_Box cframe {
+            xywh {46 27 333 333} box DOWN_FRAME color 4 selection_color 69
+          }
+          Fl_Box cube {
+            label {This is the cube_view} selected
+            xywh {48 29 329 329} align 16 resizable
+            code0 {\#include "CubeView.h"}
+            class CubeView
+          }
+        }
+        Fl_Value_Slider zoom {
+          label Zoom
+          callback {cube->size=((Fl_Value_Slider *)o)->value();
+cube->redraw();}
+          xywh {106 3 227 19} type {Horz Knob} selection_color 136 labelfont 1 labelsize 12 align 4 minimum 1 maximum 50 step 0.1 value 10 textfont 1
+        }
+      }
+    }
+  }
+  Function {show(int argc, char **argv)} {open
+  } {
+    code {mainWindow->show(argc, argv);} {}
+  }
+} 

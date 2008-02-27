@@ -1,0 +1,30 @@
+/* XPM */
+static const char *flCheckButton_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 7 1",
+/* colors */
+"a c #606060",
+"b c #2020ff",
+"c c none",
+"d c #ffffff",
+"e c #8080ff",
+"f c #d0d0d0",
+"' c #000000",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccaaaaaaaaaaccc",
+"cccaddddddddfccc",
+"cccadddddd''fccc",
+"cccaddddd''dfccc",
+"cccaddddd''dfccc",
+"ccca''dd''ddfccc",
+"cccad''''dddfccc",
+"cccadd''ddddfccc",
+"cccaddddddddfccc",
+"cccaaaaaaaaaaccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc"
+};

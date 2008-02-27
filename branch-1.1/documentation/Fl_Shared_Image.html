@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Shared_Image</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name="Fl_Shared_Image">class Fl_Shared_Image</A></H2>
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href="Fl_Image.html">Fl_Image</A>
+   |
+   +----<B>Fl_Shared_Image</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Shared_Image.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl_Shared_Image</TT> class supports caching, loading,
+and drawing of image files. Most applications will also want to
+link against the <CODE>fltk_images</CODE> library and call the
+<A
+HREF="functions.html#fl_register_images"><CODE>fl_register_images()</CODE></A>
+function to support standard image formats such as BMP, GIF, JPEG, and PNG.</P>
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A href="#Fl_Shared_Image.Fl_Shared_Image">Fl_Shared_Image</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.~Fl_Shared_Image">~Fl_Shared_Image</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.find">find</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.get">get</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.images">images</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.name">name</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.num_images">num_images</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.refcount">refcount</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.release">release</A></LI>
+
+	<LI><A href="#Fl_Shared_Image.reload">reload</A></LI>
+
+</UL>
+
+<H4><A name="Fl_Shared_Image.Fl_Shared_Image">protected Fl_Shared_Image::Fl_Shared_Image();<BR>
+protected Fl_Shared_Image::Fl_Shared_Image(const char *name, Fl_Image *img);</A></H4>
+
+<P>The constructors create a new shared image record in the
+image cache.
+
+<P>The constructors are protected and cannot be used directly
+from a program. Use the <A
+HREF="#Fl_Shared_Image.get"><TT>get()</TT></A> method instead.
+
+<H4><A name="Fl_Shared_Image.~Fl_Shared_Image">protected Fl_Shared_Image::~Fl_Shared_Image();</A></H4>
+
+<P>The destructor free all memory and server resources that are
+used by the image. The destructor is protected and cannot be
+used directly from a program. Use the <A
+HREF="#Fl_Shared_Image.release"><TT>release()</TT></A> method
+instead.
+
+<H4><A NAME="Fl_Shared_Image.find">static Fl_Shared_Image *find(const char *n, int W = 0, int H = 0);</A></H4>
+
+<H4><A NAME="Fl_Shared_Image.get">static Fl_Shared_Image *get(const char *n, int W = 0, int H = 0);</A></H4>
+
+<H4><A NAME="Fl_Shared_Image.images">static Fl_Shared_Image **images();</A></H4>
+
+<H4><A NAME="Fl_Shared_Image.name">const char *name();</A></H4>
+
+<H4><A NAME="Fl_Shared_Image.num_images">static int num_images();</A></H4>
+
+<H4><A NAME="Fl_Shared_Image.refcount">int refcount();</A></H4>
+
+<H4><A NAME="Fl_Shared_Image.release">void release();</A></H4>
+
+<H4><A NAME="Fl_Shared_Image.reload">void reload();</A></H4>
+
+</BODY>
+</HTML>

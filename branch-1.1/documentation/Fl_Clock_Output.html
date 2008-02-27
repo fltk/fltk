@@ -1,0 +1,62 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Clock_Output</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Clock_Output>class Fl_Clock_Output</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+   |
+   +----<B>Fl_Clock_Output</B>
+           |
+           +----<A href=Fl_Clock.html#Fl_Clock>Fl_Clock</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Clock.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+
+<P>This widget can be used to display a program-supplied time.
+The time shown on the clock is not updated. 
+To display the current time, use <TT><A href=Fl_Clock.html#Fl_Clock>Fl_Clock</A></TT>
+instead.
+
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Clock_Output.Fl_Clock_Output>Fl_Clock_Output</A></LI>
+<LI><A href=#Fl_Clock_Output.~Fl_Clock_Output>~Fl_Clock_Output</A></LI>
+<LI><A href=#Fl_Clock_Output.hour>hour</A></LI>
+<LI><A href=#Fl_Clock_Output.minute>minute</A></LI>
+<LI><A href=#Fl_Clock_Output.second>second</A></LI>
+<LI><A href=#Fl_Clock_Output.value>value</A></LI>
+</UL>
+<H4><A name=Fl_Clock_Output.Fl_Clock_Output>Fl_Clock_Output::Fl_Clock_Output(int x, int y, int w,
+int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Clock_Output</TT> widget using the given position, size,
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
+<H4><A name=Fl_Clock_Output.~Fl_Clock_Output>virtual Fl_Clock_Output::~Fl_Clock_Output()</A></H4>
+ The destructor removes the clock.
+<H4><A name=Fl_Clock_Output.hour>int Fl_Clock_Output::hour() const</A></H4>
+ Returns the current hour (0 to 23).
+<H4><A name=Fl_Clock_Output.minute>int Fl_Clock_Output::minute() const</A></H4>
+ Returns the current minute (0 to 59).
+<H4><A name=Fl_Clock_Output.second>int Fl_Clock_Output::second() const</A></H4>
+ Returns the current second (0 to 60, 60 = leap second).
+<H4><A name=Fl_Clock_Output.value>void Fl_Clock_Output::value(ulong v)
+<BR> void Fl_Clock_Output::value(int h, int m, int s)
+<BR> ulong Fl_Clock_Output::value(void)</A></H4>
+ The first two forms of <TT>value</TT> set the displayed time to the
+given UNIX time value or specific hours, minutes, and seconds.
+<P>The third form of <TT>value</TT> returns the displayed time in
+seconds since the UNIX epoch (January 1, 1970). </P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,73 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Pack</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Pack>class Fl_Pack</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Group.html#Fl_Group>Fl_Group</A>
+   |
+   +----<B>Fl_Pack</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Pack.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This widget was designed to add the functionality of compressing and
+aligning widgets.
+<P>If <TT>type()</TT> is <TT>Fl_Pack::HORIZONTAL</TT> all the children are
+resized to the height of the <TT>Fl_Pack</TT>, and are moved next to
+each other horizontally. If <TT>type()</TT> is not <TT>Fl_Pack::HORIZONTAL</TT>
+ then the children are resized to the width and are stacked below each
+other.  Then the <TT>Fl_Pack</TT> resizes itself to surround the child
+widgets. </P>
+<P>This widget is needed for the <A href=Fl_Tabs.html#Fl_Tabs><TT>Fl_Tabs</TT></A>.
+ In addition you may want to put the <TT>Fl_Pack</TT> inside an <A href=Fl_Scroll.html#Fl_Scroll>
+<TT>Fl_Scroll</TT></A>. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Pack.Fl_Pack>Fl_Pack</A></LI>
+<LI><A href=#Fl_Pack.~Fl_Pack>~Fl_Pack</A></LI>
+<LI><A href=#Fl_Pack.box>box</A></LI>
+<LI><A href=#Fl_Pack.resizable>resizable</A></LI>
+<LI><A href=#Fl_Pack.spacing>spacing</A></LI>
+</UL>
+<H4><A name=Fl_Pack.Fl_Pack>Fl_Pack::Fl_Pack(int x, int y, int w, int
+h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Pack</TT> widget using the given position, size,
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
+<H4><A name=Fl_Pack.~Fl_Pack>virtual Fl_Pack::~Fl_Pack()</A></H4>
+ The destructor <I>also deletes all the children</I>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to
+all the children in the user code. A kludge has been done so the <TT>
+Fl_Pack</TT> and all of it's children can be automatic (local)
+variables, but you must declare the <TT>Fl_Pack</TT><I>first</I>, so
+that it is destroyed last.
+
+<H4><A name=Fl_Pack.box>Fl_Boxtype Fl_Pack::box() const
+<BR> void Fl_Pack::box(Fl_Boxtype)</A></H4>
+
+<P>Gets or sets the box type for the widget, which identifies a
+routine that draws the background of the widget. <em>Only frame
+box types may be used with the <tt>Fl_Pack</tt> widget.</em></p>
+
+<H4><A name=Fl_Pack.resizable>void Fl_Pack::resizable(Fl_Widget *box)
+<BR> void Fl_Pack::resizable(Fl_Widget &amp;box)
+<BR> Fl_Widget *Fl_Pack::resizable() const</A></H4>
+<P>The resizable for <tt>Fl_Pack</tt> is set to <TT>NULL</TT> by 
+default.</p>
+
+<p> See also: <A href=Fl_Group.html#Fl_Group.resizable>Fl_Group::resizable()</A></p>
+
+<H4><A name=Fl_Pack.spacing>int Fl_Pack::spacing() const
+<BR> void Fl_Pack::spacing(int)</A></H4>
+ Gets or sets the number of extra pixels of blank space that are added
+between the children. </BODY></HTML>

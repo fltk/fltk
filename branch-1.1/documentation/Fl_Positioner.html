@@ -1,0 +1,73 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Positioner</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Positioner>class Fl_Positioner</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+   |
+   +----<B>Fl_Positioner</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Positioner.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This class is provided for Forms compatibility.  It provides 2D input.
+It would be useful if this could be put atop another widget so that the
+crosshairs are on top, but this is not implemented.  The color of the
+crosshairs is <TT>selection_color()</TT>.
+<P ALIGN=CENTER><IMG src="positioner.gif" ALT="Fl_Positioner widget."></P>
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90% summary="Fl_Positioner methods.">
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Positioner.Fl_Positioner>Fl_Positioner</A></LI>
+<LI><A href=#Fl_Positioner.~Fl_Positioner>~Fl_Positioner</A></LI>
+<LI><A href=#Fl_Positioner.value>value</A></LI>
+<LI><A href=#Fl_Positioner.xbounds>xbounds</A></LI>
+<LI><A href=#Fl_Positioner.xstep>xstep</A></LI>
+<LI><A href=#Fl_Positioner.xvalue>xvalue</A></LI>
+<LI><A href=#Fl_Positioner.ybounds>ybounds</A></LI>
+<LI><A href=#Fl_Positioner.ystep>ystep</A></LI>
+<LI><A href=#Fl_Positioner.yvalue>yvalue</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+<H4><A name=Fl_Positioner.Fl_Positioner>
+Fl_Positioner::Fl_Positioner(int x, int y, int w, int h, const char
+*label = 0)</A></H4>
+ Creates a new <TT>Fl_Positioner</TT> widget using the given position,
+size, and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
+<H4><A name=Fl_Positioner.~Fl_Positioner>virtual
+Fl_Positioner::~Fl_Positioner()</A></H4>
+ Deletes the widget.
+<H4><A name=Fl_Positioner.value>void Fl_Positioner::value(float *x,
+float *y) const</A></H4>
+ Returns the current position in <TT>x</TT> and <TT>y</TT>.
+<H4><A name=Fl_Positioner.xbounds>void xbounds(float *xmin, float *xmax)
+<BR> void xbounds(float xmin, float xmax)</A></H4>
+ Gets or sets the X axis bounds.
+<H4><A name=Fl_Positioner.xstep>void xstep(float x)</A></H4>
+ Sets the stepping value for the X axis.
+<H4><A name=Fl_Positioner.xvalue>float Fl_Positioner::xvalue(void) const
+<BR> void Fl_Positioner::xvalue(float x)</A></H4>
+ Gets or sets the X axis coordinate.
+<H4><A name=Fl_Positioner.ybounds>void ybounds(float *ymin, float *ymay)
+<BR> void ybounds(float ymin, float ymay)</A></H4>
+ Gets or sets the Y axis bounds.
+<H4><A name=Fl_Positioner.ystep>void ystep(float y)</A></H4>
+ Sets the stepping value for the Y axis.
+<H4><A name=Fl_Positioner.yvalue>float Fl_Positioner::yvalue(void) const
+<BR> void Fl_Positioner::yvalue(float y)</A></H4>
+ Gets or sets the Y axis coordinate. </BODY></HTML>

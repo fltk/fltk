@@ -1,0 +1,45 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_End</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_End>class Fl_End</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<B>Fl_End</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Group.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+This is a dummy class that allows you to end a <A
+href=Fl_Group.html#Fl_Group>Fl_Group</A> in a constructor list of a
+class:
+<UL>
+<PRE>class MyClass {
+  Fl_Group group;
+  Fl_Button button_in_group;
+  Fl_End end;
+  Fl_Button button_outside_group;
+  MyClass();
+};
+MyClass::MyClass() :
+  group(10,10,100,100),
+  button_in_group(20,20,60,30),
+  end(),
+  button_outside_group(10,120,60,30)
+{}</PRE>
+</UL>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_End.Fl_End>Fl_End</A></LI>
+</UL>
+<H4><A name=Fl_End.Fl_End>Fl_End::Fl_End</A></H4>
+ The constructor does <TT>Fl_Group::current()-&gt;end()</TT>. </BODY></HTML>

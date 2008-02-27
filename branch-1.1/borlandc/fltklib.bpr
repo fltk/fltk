@@ -1,0 +1,344 @@
+<?xml version='1.0' encoding='utf-8' ?>
+<!-- C++Builder XML Project -->
+<PROJECT>
+  <MACROS>
+    <VERSION value="BCB.06.00"/>
+    <PROJECT value="..\lib\fltklib.lib"/>
+    <OBJFILES value="..\obj\glut_font.obj ..\obj\filename_absolute.obj 
+      ..\obj\filename_expand.obj ..\obj\filename_ext.obj 
+      ..\obj\filename_isdir.obj ..\obj\filename_list.obj 
+      ..\obj\filename_match.obj ..\obj\filename_setext.obj ..\obj\Fl.obj 
+      ..\obj\Fl_abort.obj ..\obj\Fl_add_idle.obj ..\obj\Fl_Adjuster.obj 
+      ..\obj\fl_arc.obj ..\obj\fl_arci.obj ..\obj\Fl_arg.obj ..\obj\fl_ask.obj 
+      ..\obj\Fl_Bitmap.obj ..\obj\Fl_BMP_Image.obj ..\obj\Fl_Box.obj 
+      ..\obj\fl_boxtype.obj ..\obj\Fl_Browser.obj ..\obj\Fl_Browser_.obj 
+      ..\obj\Fl_Browser_load.obj ..\obj\Fl_Button.obj ..\obj\Fl_Chart.obj 
+      ..\obj\Fl_Check_Browser.obj ..\obj\Fl_Check_Button.obj 
+      ..\obj\Fl_Choice.obj ..\obj\Fl_Clock.obj ..\obj\fl_color.obj 
+      ..\obj\Fl_Color_Chooser.obj ..\obj\Fl_compose.obj ..\obj\Fl_Counter.obj 
+      ..\obj\fl_cursor.obj ..\obj\fl_curve.obj ..\obj\Fl_Dial.obj 
+      ..\obj\fl_diamond_box.obj ..\obj\Fl_display.obj ..\obj\fl_dnd.obj 
+      ..\obj\Fl_Double_Window.obj ..\obj\fl_draw.obj ..\obj\fl_draw_image.obj 
+      ..\obj\fl_draw_pixmap.obj ..\obj\fl_engraved_label.obj 
+      ..\obj\Fl_File_Browser.obj ..\obj\Fl_File_Chooser.obj 
+      ..\obj\Fl_File_Chooser2.obj ..\obj\fl_file_dir.obj ..\obj\Fl_File_Icon.obj 
+      ..\obj\Fl_File_Icon2.obj ..\obj\Fl_File_Input.obj ..\obj\fl_font.obj 
+      ..\obj\Fl_get_key.obj ..\obj\Fl_get_system_colors.obj 
+      ..\obj\Fl_GIF_Image.obj ..\obj\Fl_Gl_Choice.obj ..\obj\Fl_Gl_Overlay.obj 
+      ..\obj\Fl_Gl_Window.obj ..\obj\Fl_grab.obj ..\obj\Fl_Group.obj 
+      ..\obj\Fl_Help_Dialog.obj ..\obj\Fl_Help_View.obj ..\obj\Fl_Image.obj 
+      ..\obj\Fl_Input.obj ..\obj\Fl_Input_.obj ..\obj\Fl_JPEG_Image.obj 
+      ..\obj\fl_labeltype.obj ..\obj\Fl_Light_Button.obj 
+      ..\obj\fl_line_style.obj ..\obj\Fl_lock.obj ..\obj\Fl_Menu.obj 
+      ..\obj\Fl_Menu_.obj ..\obj\Fl_Menu_add.obj ..\obj\Fl_Menu_Bar.obj 
+      ..\obj\Fl_Menu_Button.obj ..\obj\Fl_Menu_global.obj 
+      ..\obj\Fl_Menu_Window.obj ..\obj\Fl_Multi_Label.obj ..\obj\fl_oval_box.obj 
+      ..\obj\fl_overlay.obj ..\obj\fl_overlay_visual.obj 
+      ..\obj\Fl_Overlay_Window.obj ..\obj\Fl_own_colormap.obj ..\obj\Fl_Pack.obj 
+      ..\obj\Fl_Pixmap.obj ..\obj\fl_plastic.obj ..\obj\Fl_PNG_Image.obj 
+      ..\obj\Fl_PNM_Image.obj ..\obj\Fl_Positioner.obj ..\obj\Fl_Preferences.obj 
+      ..\obj\Fl_Progress.obj ..\obj\fl_read_image.obj ..\obj\fl_rect.obj 
+      ..\obj\Fl_Repeat_Button.obj ..\obj\Fl_Return_Button.obj 
+      ..\obj\Fl_Roller.obj ..\obj\fl_round_box.obj ..\obj\Fl_Round_Button.obj 
+      ..\obj\fl_rounded_box.obj ..\obj\Fl_Scroll.obj ..\obj\fl_scroll_area.obj 
+      ..\obj\Fl_Scrollbar.obj ..\obj\fl_set_font.obj ..\obj\fl_set_fonts.obj 
+      ..\obj\fl_set_gray.obj ..\obj\fl_shadow_box.obj ..\obj\Fl_Shared_Image.obj 
+      ..\obj\fl_shortcut.obj ..\obj\fl_show_colormap.obj 
+      ..\obj\Fl_Single_Window.obj ..\obj\Fl_Slider.obj ..\obj\fl_symbols.obj 
+      ..\obj\Fl_Tabs.obj ..\obj\Fl_Text_Buffer.obj ..\obj\Fl_Text_Display.obj 
+      ..\obj\Fl_Text_Editor.obj ..\obj\Fl_Tile.obj ..\obj\Fl_Tiled_Image.obj 
+      ..\obj\Fl_Tooltip.obj ..\obj\Fl_Valuator.obj ..\obj\Fl_Value_Input.obj 
+      ..\obj\Fl_Value_Output.obj ..\obj\Fl_Value_Slider.obj ..\obj\fl_vertex.obj 
+      ..\obj\Fl_visual.obj ..\obj\Fl_Widget.obj ..\obj\Fl_Window.obj 
+      ..\obj\Fl_Window_fullscreen.obj ..\obj\Fl_Window_hotspot.obj 
+      ..\obj\Fl_Window_iconize.obj ..\obj\Fl_Wizard.obj ..\obj\Fl_XBM_Image.obj 
+      ..\obj\Fl_XPM_Image.obj ..\obj\forms_bitmap.obj 
+      ..\obj\forms_compatability.obj ..\obj\forms_free.obj 
+      ..\obj\forms_fselect.obj ..\obj\forms_pixmap.obj ..\obj\forms_timer.obj 
+      ..\obj\gl_draw.obj ..\obj\gl_start.obj ..\obj\glut_compatability.obj 
+      ..\obj\cmap.obj ..\obj\Fl_win32.obj ..\obj\flstring.obj ..\obj\scandir.obj 
+      ..\obj\numericsort.obj"/>
+    <RESFILES value=""/>
+    <IDLFILES value=""/>
+    <IDLGENFILES value=""/>
+    <DEFFILE value=""/>
+    <RESDEPEN value="$(RESFILES)"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value=""/>
+    <PACKAGES value=""/>
+    <PATHCPP value=".;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src;..\src"/>
+    <PATHPAS value=".;"/>
+    <PATHRC value=".;"/>
+    <PATHASM value=".;"/>
+    <LINKER value="TLib"/>
+    <USERDEFINES value="_DEBUG;WIN32"/>
+    <SYSDEFINES value="_RTLDLL;NO_STRICT"/>
+    <MAINSOURCE value="fltklib.bpf"/>
+    <INCLUDEPATH value="..\src;$(BCB)\include;$(BCB)\include\vcl;..\FL;.."/>
+    <LIBPATH value="..\src;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <WARNINGS value="-w-par"/>
+    <LISTFILE value=""/>
+    <OTHERFILES value=""/>
+  </MACROS>
+  <OPTIONS>
+    <IDLCFLAGS value="-I..\src -I$(BCB)\include -I$(BCB)\include\vcl -I..\FL -I.. -src_suffix 
+      cpp -D_DEBUG -DWIN32 -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -P -Vx -Ve -X- -r- -a8 -b -k -y -v -vi- -c 
+      -tW -tWM"/>
+    <PFLAGS value="-N2..\obj -N0..\obj -$YD -$W -$O- -$A8 -v -JPHNE -M"/>
+    <AFLAGS value="/mx /w2 /zd"/>
+    <LFLAGS value="/P64"/>
+    <OTHERFILES value=""/>
+  </OPTIONS>
+  <LINKER>
+    <ALLOBJ value="$(OBJFILES)"/>
+    <ALLLIB value=""/>
+    <OTHERFILES value=""/>
+  </LINKER>
+  <FILELIST>
+      <FILE FILENAME="fltklib.bpf" FORMNAME="" UNITNAME="fltklib" CONTAINERID="BPF" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\glut_font.cxx" FORMNAME="" UNITNAME="glut_font.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\filename_absolute.cxx" FORMNAME="" UNITNAME="filename_absolute.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\filename_expand.cxx" FORMNAME="" UNITNAME="filename_expand.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\filename_ext.cxx" FORMNAME="" UNITNAME="filename_ext.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\filename_isdir.cxx" FORMNAME="" UNITNAME="filename_isdir.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\filename_list.cxx" FORMNAME="" UNITNAME="filename_list.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\filename_match.cxx" FORMNAME="" UNITNAME="filename_match.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\filename_setext.cxx" FORMNAME="" UNITNAME="filename_setext.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl.cxx" FORMNAME="" UNITNAME="Fl.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_abort.cxx" FORMNAME="" UNITNAME="Fl_abort.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_add_idle.cxx" FORMNAME="" UNITNAME="Fl_add_idle.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Adjuster.cxx" FORMNAME="" UNITNAME="Fl_Adjuster.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_arc.cxx" FORMNAME="" UNITNAME="fl_arc.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_arci.cxx" FORMNAME="" UNITNAME="fl_arci.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_arg.cxx" FORMNAME="" UNITNAME="Fl_arg.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_ask.cxx" FORMNAME="" UNITNAME="fl_ask.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Bitmap.cxx" FORMNAME="" UNITNAME="Fl_Bitmap.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_BMP_Image.cxx" FORMNAME="" UNITNAME="Fl_BMP_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Box.cxx" FORMNAME="" UNITNAME="Fl_Box.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_boxtype.cxx" FORMNAME="" UNITNAME="fl_boxtype.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Browser.cxx" FORMNAME="" UNITNAME="Fl_Browser.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Browser_.cxx" FORMNAME="" UNITNAME="Fl_Browser_.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Browser_load.cxx" FORMNAME="" UNITNAME="Fl_Browser_load.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Button.cxx" FORMNAME="" UNITNAME="Fl_Button.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Chart.cxx" FORMNAME="" UNITNAME="Fl_Chart.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Check_Browser.cxx" FORMNAME="" UNITNAME="Fl_Check_Browser.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Check_Button.cxx" FORMNAME="" UNITNAME="Fl_Check_Button.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Choice.cxx" FORMNAME="" UNITNAME="Fl_Choice.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Clock.cxx" FORMNAME="" UNITNAME="Fl_Clock.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_color.cxx" FORMNAME="" UNITNAME="fl_color.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Color_Chooser.cxx" FORMNAME="" UNITNAME="Fl_Color_Chooser.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_compose.cxx" FORMNAME="" UNITNAME="Fl_compose.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Counter.cxx" FORMNAME="" UNITNAME="Fl_Counter.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_cursor.cxx" FORMNAME="" UNITNAME="fl_cursor.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_curve.cxx" FORMNAME="" UNITNAME="fl_curve.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Dial.cxx" FORMNAME="" UNITNAME="Fl_Dial.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_diamond_box.cxx" FORMNAME="" UNITNAME="fl_diamond_box.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_display.cxx" FORMNAME="" UNITNAME="Fl_display.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_dnd.cxx" FORMNAME="" UNITNAME="fl_dnd.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Double_Window.cxx" FORMNAME="" UNITNAME="Fl_Double_Window.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_draw.cxx" FORMNAME="" UNITNAME="fl_draw.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_draw_image.cxx" FORMNAME="" UNITNAME="fl_draw_image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_draw_pixmap.cxx" FORMNAME="" UNITNAME="fl_draw_pixmap.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_engraved_label.cxx" FORMNAME="" UNITNAME="fl_engraved_label.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_File_Browser.cxx" FORMNAME="" UNITNAME="Fl_File_Browser.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_File_Chooser.cxx" FORMNAME="" UNITNAME="Fl_File_Chooser.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_File_Chooser2.cxx" FORMNAME="" UNITNAME="Fl_File_Chooser2.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_file_dir.cxx" FORMNAME="" UNITNAME="fl_file_dir.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_File_Icon.cxx" FORMNAME="" UNITNAME="Fl_File_Icon.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_File_Icon2.cxx" FORMNAME="" UNITNAME="Fl_File_Icon2.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_File_Input.cxx" FORMNAME="" UNITNAME="Fl_File_Input.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_font.cxx" FORMNAME="" UNITNAME="fl_font.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_get_key.cxx" FORMNAME="" UNITNAME="Fl_get_key.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_get_system_colors.cxx" FORMNAME="" UNITNAME="Fl_get_system_colors.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_GIF_Image.cxx" FORMNAME="" UNITNAME="Fl_GIF_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Gl_Choice.cxx" FORMNAME="" UNITNAME="Fl_Gl_Choice.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Gl_Overlay.cxx" FORMNAME="" UNITNAME="Fl_Gl_Overlay.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Gl_Window.cxx" FORMNAME="" UNITNAME="Fl_Gl_Window.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_grab.cxx" FORMNAME="" UNITNAME="Fl_grab.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Group.cxx" FORMNAME="" UNITNAME="Fl_Group.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Help_Dialog.cxx" FORMNAME="" UNITNAME="Fl_Help_Dialog.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Help_View.cxx" FORMNAME="" UNITNAME="Fl_Help_View.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Image.cxx" FORMNAME="" UNITNAME="Fl_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Input.cxx" FORMNAME="" UNITNAME="Fl_Input.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Input_.cxx" FORMNAME="" UNITNAME="Fl_Input_.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_JPEG_Image.cxx" FORMNAME="" UNITNAME="Fl_JPEG_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_labeltype.cxx" FORMNAME="" UNITNAME="fl_labeltype.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Light_Button.cxx" FORMNAME="" UNITNAME="Fl_Light_Button.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_line_style.cxx" FORMNAME="" UNITNAME="fl_line_style.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_lock.cxx" FORMNAME="" UNITNAME="Fl_lock.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Menu.cxx" FORMNAME="" UNITNAME="Fl_Menu.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Menu_.cxx" FORMNAME="" UNITNAME="Fl_Menu_.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Menu_add.cxx" FORMNAME="" UNITNAME="Fl_Menu_add.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Menu_Bar.cxx" FORMNAME="" UNITNAME="Fl_Menu_Bar.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Menu_Button.cxx" FORMNAME="" UNITNAME="Fl_Menu_Button.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Menu_global.cxx" FORMNAME="" UNITNAME="Fl_Menu_global.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Menu_Window.cxx" FORMNAME="" UNITNAME="Fl_Menu_Window.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Multi_Label.cxx" FORMNAME="" UNITNAME="Fl_Multi_Label.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_oval_box.cxx" FORMNAME="" UNITNAME="fl_oval_box.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_overlay.cxx" FORMNAME="" UNITNAME="fl_overlay.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_overlay_visual.cxx" FORMNAME="" UNITNAME="fl_overlay_visual.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Overlay_Window.cxx" FORMNAME="" UNITNAME="Fl_Overlay_Window.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_own_colormap.cxx" FORMNAME="" UNITNAME="Fl_own_colormap.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Pack.cxx" FORMNAME="" UNITNAME="Fl_Pack.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Pixmap.cxx" FORMNAME="" UNITNAME="Fl_Pixmap.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_plastic.cxx" FORMNAME="" UNITNAME="fl_plastic.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_PNG_Image.cxx" FORMNAME="" UNITNAME="Fl_PNG_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_PNM_Image.cxx" FORMNAME="" UNITNAME="Fl_PNM_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Positioner.cxx" FORMNAME="" UNITNAME="Fl_Positioner.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Preferences.cxx" FORMNAME="" UNITNAME="Fl_Preferences.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Progress.cxx" FORMNAME="" UNITNAME="Fl_Progress.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_read_image.cxx" FORMNAME="" UNITNAME="fl_read_image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_rect.cxx" FORMNAME="" UNITNAME="fl_rect.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Repeat_Button.cxx" FORMNAME="" UNITNAME="Fl_Repeat_Button.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Return_Button.cxx" FORMNAME="" UNITNAME="Fl_Return_Button.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Roller.cxx" FORMNAME="" UNITNAME="Fl_Roller.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_round_box.cxx" FORMNAME="" UNITNAME="fl_round_box.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Round_Button.cxx" FORMNAME="" UNITNAME="Fl_Round_Button.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_rounded_box.cxx" FORMNAME="" UNITNAME="fl_rounded_box.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Scroll.cxx" FORMNAME="" UNITNAME="Fl_Scroll.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_scroll_area.cxx" FORMNAME="" UNITNAME="fl_scroll_area.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Scrollbar.cxx" FORMNAME="" UNITNAME="Fl_Scrollbar.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_set_font.cxx" FORMNAME="" UNITNAME="fl_set_font.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_set_fonts.cxx" FORMNAME="" UNITNAME="fl_set_fonts.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_set_gray.cxx" FORMNAME="" UNITNAME="fl_set_gray.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_shadow_box.cxx" FORMNAME="" UNITNAME="fl_shadow_box.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Shared_Image.cxx" FORMNAME="" UNITNAME="Fl_Shared_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_shortcut.cxx" FORMNAME="" UNITNAME="fl_shortcut.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_show_colormap.cxx" FORMNAME="" UNITNAME="fl_show_colormap.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Single_Window.cxx" FORMNAME="" UNITNAME="Fl_Single_Window.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Slider.cxx" FORMNAME="" UNITNAME="Fl_Slider.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_symbols.cxx" FORMNAME="" UNITNAME="fl_symbols.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Tabs.cxx" FORMNAME="" UNITNAME="Fl_Tabs.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Text_Buffer.cxx" FORMNAME="" UNITNAME="Fl_Text_Buffer.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Text_Display.cxx" FORMNAME="" UNITNAME="Fl_Text_Display.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Text_Editor.cxx" FORMNAME="" UNITNAME="Fl_Text_Editor.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Tile.cxx" FORMNAME="" UNITNAME="Fl_Tile.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Tiled_Image.cxx" FORMNAME="" UNITNAME="Fl_Tiled_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Tooltip.cxx" FORMNAME="" UNITNAME="Fl_Tooltip.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Valuator.cxx" FORMNAME="" UNITNAME="Fl_Valuator.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Value_Input.cxx" FORMNAME="" UNITNAME="Fl_Value_Input.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Value_Output.cxx" FORMNAME="" UNITNAME="Fl_Value_Output.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Value_Slider.cxx" FORMNAME="" UNITNAME="Fl_Value_Slider.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\fl_vertex.cxx" FORMNAME="" UNITNAME="fl_vertex.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_visual.cxx" FORMNAME="" UNITNAME="Fl_visual.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Widget.cxx" FORMNAME="" UNITNAME="Fl_Widget.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Window.cxx" FORMNAME="" UNITNAME="Fl_Window.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Window_fullscreen.cxx" FORMNAME="" UNITNAME="Fl_Window_fullscreen.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Window_hotspot.cxx" FORMNAME="" UNITNAME="Fl_Window_hotspot.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Window_iconize.cxx" FORMNAME="" UNITNAME="Fl_Window_iconize.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_Wizard.cxx" FORMNAME="" UNITNAME="Fl_Wizard.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_XBM_Image.cxx" FORMNAME="" UNITNAME="Fl_XBM_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_XPM_Image.cxx" FORMNAME="" UNITNAME="Fl_XPM_Image.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\forms_bitmap.cxx" FORMNAME="" UNITNAME="forms_bitmap.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\forms_compatability.cxx" FORMNAME="" UNITNAME="forms_compatability.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\forms_free.cxx" FORMNAME="" UNITNAME="forms_free.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\forms_fselect.cxx" FORMNAME="" UNITNAME="forms_fselect.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\forms_pixmap.cxx" FORMNAME="" UNITNAME="forms_pixmap.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\forms_timer.cxx" FORMNAME="" UNITNAME="forms_timer.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\gl_draw.cxx" FORMNAME="" UNITNAME="gl_draw.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\gl_start.cxx" FORMNAME="" UNITNAME="gl_start.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\glut_compatability.cxx" FORMNAME="" UNITNAME="glut_compatability.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\cmap.cxx" FORMNAME="" UNITNAME="cmap.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\Fl_win32.cxx" FORMNAME="" UNITNAME="Fl_win32.cxx" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\flstring.c" FORMNAME="" UNITNAME="flstring" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\scandir.c" FORMNAME="" UNITNAME="scandir.c" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="..\src\numericsort.c" FORMNAME="" UNITNAME="numericsort.c" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+  </FILELIST>
+  <BUILDTOOLS>
+  </BUILDTOOLS>
+
+  <FILES>
+    <FILE type="override" value="..\src\scandir.c" translator="Auto">
+      <CFLAG1 value=" -P-"/>
+    </FILE>
+  </FILES>
+
+  <IDEOPTIONS>
+[Version Info]
+IncludeVerInfo=0
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1033
+CodePage=1252
+
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=4
+Item0=..\src;$(BCB)\include;$(BCB)\include\vcl;..\FL;..
+Item1=..\src;$(BCB)\include;$(BCB)\include\vcl;R:\develop.w32\fltk-1.1.0rc3\FL;..
+Item2=..\src;$(BCB)\include;$(BCB)\include\vcl;R:\develop.w32\fltk-1.1.0rc3\FL
+Item3=..\src;$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=1
+Item0=..\src;$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=2
+Item0=_DEBUG;WIN32
+Item1=_DEBUG
+
+[HistoryLists\hlIntOutputDir]
+Count=1
+Item0=..\obj
+
+[HistoryLists\hlFinalOutputDir]
+Count=2
+Item0=..\lib\
+Item1=..\lib
+
+[HistoryLists\hlTlibPageSize]
+Count=2
+Item0=0x0040
+Item1=0x0010
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+Launcher=
+UseLauncher=0
+DebugCWD=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteLauncher=
+RemoteCWD=
+RemoteDebug=0
+
+[Compiler]
+ShowInfoMsgs=0
+LinkDebugVcl=0
+LinkCGLIB=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+  </IDEOPTIONS>
+</PROJECT>

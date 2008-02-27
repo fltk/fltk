@@ -1,0 +1,306 @@
+<HTML>
+<HEAD>
+	<TITLE>C - FLTK Enumerations</TITLE>
+</HEAD>
+<BODY>
+<H1 ALIGN=RIGHT><A NAME=Enumerations>C - FLTK Enumerations</A></H1>
+
+<P>This appendix lists the enumerations provided in the
+<TT>&lt;FL/Enumerations.H&gt;</TT> header file, organized by
+section. Constants whose value is zero are marked with "(0)",
+this is often useful to know when programming.
+
+<H2>Version Numbers</H2>
+ The FLTK version number is stored in a number of compile-time
+constants:
+<UL>
+<LI><TT>FL_MAJOR_VERSION</TT> - The major release number, currently  1. </LI>
+<LI><TT>FL_MINOR_VERSION</TT> - The minor release number, currently  1. </LI>
+<LI><TT>FL_PATCH_VERSION</TT> - The patch release number, currently  0. </LI>
+<LI><TT>FL_VERSION</TT> - A combined floating-point version  number for
+the major, minor, and patch release numbers, currently 1.0100. </LI>
+</UL>
+<H2><A NAME="events">Events</A></H2>
+ Events are identified by an <TT>Fl_Event</TT> enumeration value.  The
+following events are currently defined:
+<UL>
+<LI><TT>FL_NO_EVENT</TT> - No event (or an event fltk does not
+understand) occurred (0).</LI>
+<LI><TT>FL_PUSH</TT> - A mouse button was pushed. </LI>
+<LI><TT>FL_RELEASE</TT> - A mouse button was released. </LI>
+<LI><TT>FL_ENTER</TT> - The mouse pointer entered a widget. </LI>
+<LI><TT>FL_LEAVE</TT> - The mouse pointer left a widget. </LI>
+<LI><TT>FL_DRAG</TT> - The mouse pointer was moved with a button
+ pressed. </LI>
+<LI><TT>FL_FOCUS</TT> - A widget should receive keyboard focus. </LI>
+<LI><TT>FL_UNFOCUS</TT> - A widget loses keyboard focus. </LI>
+<LI><TT>FL_KEYBOARD</TT> - A key was pressed. </LI>
+<LI><TT>FL_CLOSE</TT> - A window was closed. </LI>
+<LI><TT>FL_MOVE</TT> - The mouse pointer was moved with no buttons
+ pressed. </LI>
+<LI><TT>FL_SHORTCUT</TT> - The user pressed a shortcut key. </LI>
+<LI><TT>FL_DEACTIVATE</TT> - The widget has been deactivated. </LI>
+<LI><TT>FL_ACTIVATE</TT> - The widget has been activated. </LI>
+<LI><TT>FL_HIDE</TT> - The widget has been hidden. </LI>
+<LI><TT>FL_SHOW</TT> - The widget has been shown. </LI>
+<LI><TT>FL_PASTE</TT> - The widget should paste the contents of the
+ clipboard. </LI>
+<LI><TT>FL_SELECTIONCLEAR</TT> - The widget should clear any selections
+ made for the clipboard. </LI>
+<LI><TT>FL_MOUSEWHEEL</TT> - The horizontal or vertical mousewheel was turned. </LI>
+<LI><TT>FL_DND_ENTER</TT> - The mouse pointer entered a widget dragging data. </LI>
+<LI><TT>FL_DND_DRAG</TT> - The mouse pointer was moved dragging data. </LI>
+<LI><TT>FL_DND_LEAVE</TT> - The mouse pointer left a widget still dragging data. </LI>
+<LI><TT>FL_DND_RELEASE</TT> - Dragged data is about to be dropped. </LI>
+</UL>
+<H2><a name=when>Callback &quot;When&quot; Conditions</A></H2>
+ The following constants determine when a callback is performed:
+<UL>
+<LI><TT>FL_WHEN_NEVER</TT> - Never call the callback (0). </LI>
+<LI><TT>FL_WHEN_CHANGED</TT> - Do the callback only when the  widget
+value changes. </LI>
+<LI><TT>FL_WHEN_NOT_CHANGED</TT> - Do the callback whenever the  user
+interacts with the widget. </LI>
+<LI><TT>FL_WHEN_RELEASE</TT> - Do the callback when the button or  key
+is released and the value changes. </LI>
+<LI><TT>FL_WHEN_ENTER_KEY</TT> - Do the callback when the user presses
+ the ENTER key and the value changes. </LI>
+<LI><TT>FL_WHEN_RELEASE_ALWAYS</TT> - Do the callback when the button
+ or key is released, even if the value doesn't change. </LI>
+<LI><TT>FL_WHEN_ENTER_KEY_ALWAYS</TT> - Do the callback when the user
+ presses the ENTER key, even if the value doesn't change. </LI>
+</UL>
+<H2><A NAME="button_values">Fl::event_button() Values</A></H2>
+
+<P>The following constants define the button numbers for <TT>FL_PUSH</TT> and
+<TT>FL_RELEASE</TT> events:
+
+<UL>
+	<LI><TT>FL_LEFT_MOUSE</TT> - the left mouse button
+	<LI><TT>FL_MIDDLE_MOUSE</TT> - the middle mouse button
+	<LI><TT>FL_RIGHT_MOUSE</TT> - the right mouse button
+</UL>
+
+<H2><A NAME="key_values">Fl::event_key() Values</A></H2>
+ The following constants define the non-ASCII keys on the keyboard for <TT>
+FL_KEYBOARD</TT> and <TT>FL_SHORTCUT</TT> events:
+<UL>
+<LI><TT>FL_Button</TT> - A mouse button; use <TT>Fl_Button +  n</TT>
+ for mouse button <TT>n</TT>. </LI>
+<LI><TT>FL_BackSpace</TT> - The backspace key. </LI>
+<LI><TT>FL_Tab</TT> - The tab key. </LI>
+<LI><TT>FL_Enter</TT> - The enter key. </LI>
+<LI><TT>FL_Pause</TT> - The pause key. </LI>
+<LI><TT>FL_Scroll_Lock</TT> - The scroll lock key. </LI>
+<LI><TT>FL_Escape</TT> - The escape key. </LI>
+<LI><TT>FL_Home</TT> - The home key. </LI>
+<LI><TT>FL_Left</TT> - The left arrow key. </LI>
+<LI><TT>FL_Up</TT> - The up arrow key. </LI>
+<LI><TT>FL_Right</TT> - The right arrow key. </LI>
+<LI><TT>FL_Down</TT> - The down arrow key. </LI>
+<LI><TT>FL_Page_Up</TT> - The page-up key. </LI>
+<LI><TT>FL_Page_Down</TT> - The page-down key. </LI>
+<LI><TT>FL_End</TT> - The end key. </LI>
+<LI><TT>FL_Print</TT> - The print (or print-screen) key. </LI>
+<LI><TT>FL_Insert</TT> - The insert key. </LI>
+<LI><TT>FL_Menu</TT> - The menu key. </LI>
+<LI><TT>FL_Num_Lock</TT> - The num lock key. </LI>
+<LI><TT>FL_KP</TT> - One of the keypad numbers; use <TT>FL_KP +  n</TT>
+ for number <TT>n</TT>. </LI>
+<LI><TT>FL_KP_Enter</TT> - The enter key on the keypad. </LI>
+<LI><TT>FL_F</TT> - One of the function keys; use <TT>FL_F +  n</TT>
+ for function key <TT>n</TT>. </LI>
+<LI><TT>FL_Shift_L</TT> - The lefthand shift key. </LI>
+<LI><TT>FL_Shift_R</TT> - The righthand shift key. </LI>
+<LI><TT>FL_Control_L</TT> - The lefthand control key. </LI>
+<LI><TT>FL_Control_R</TT> - The righthand control key. </LI>
+<LI><TT>FL_Caps_Lock</TT> - The caps lock key. </LI>
+<LI><TT>FL_Meta_L</TT> - The left meta/Windows key. </LI>
+<LI><TT>FL_Meta_R</TT> - The right meta/Windows key. </LI>
+<LI><TT>FL_Alt_L</TT> - The left alt key. </LI>
+<LI><TT>FL_Alt_R</TT> - The right alt key. </LI>
+<LI><TT>FL_Delete</TT> - The delete key. </LI>
+</UL>
+<H2>Fl::event_state() Values</H2>
+ The following constants define bits in the <TT>Fl::event_state()</TT>
+ value:
+<UL>
+<LI><TT>FL_SHIFT</TT> - One of the shift keys is down. </LI>
+<LI><TT>FL_CAPS_LOCK</TT> - The caps lock is on. </LI>
+<LI><TT>FL_CTRL</TT> - One of the ctrl keys is down. </LI>
+<LI><TT>FL_ALT</TT> - One of the alt keys is down. </LI>
+<LI><TT>FL_NUM_LOCK</TT> - The num lock is on. </LI>
+<LI><TT>FL_META</TT> - One of the meta/Windows keys is down. </LI>
+<LI><TT>FL_COMMAND</TT> - An alias for <TT>FL_CTRL</TT> on WIN32 and X11, or
+<TT>FL_META</TT> on MacOS X. </LI>
+<LI><TT>FL_SCROLL_LOCK</TT> - The scroll lock is on. </LI>
+<LI><TT>FL_BUTTON1</TT> - Mouse button 1 is pushed. </LI>
+<LI><TT>FL_BUTTON2</TT> - Mouse button 2 is pushed. </LI>
+<LI><TT>FL_BUTTON3</TT> - Mouse button 3 is pushed. </LI>
+<LI><TT>FL_BUTTONS</TT> - Any mouse button is pushed. </LI>
+<LI><TT>FL_BUTTON(n)</TT> - Mouse button N (N &gt; 0) is pushed. </LI>
+
+</UL>
+<!-- NEED 4in -->
+<H2><a name=align>Alignment Values</A></H2>
+ The following constants define bits that can be used with <A href=Fl_Widget.html#Fl_Widget.align>
+<TT>Fl_Widget::align()</TT></A> to control the positioning of the
+label:
+<UL>
+<LI><TT>FL_ALIGN_CENTER</TT> - The label is centered (0). </LI>
+<LI><TT>FL_ALIGN_TOP</TT> - The label is top-aligned. </LI>
+<LI><TT>FL_ALIGN_BOTTOM</TT> - The label is bottom-aligned. </LI>
+<LI><TT>FL_ALIGN_LEFT</TT> - The label is left-aligned. </LI>
+<LI><TT>FL_ALIGN_RIGHT</TT> - The label is right-aligned. </LI>
+<LI><TT>FL_ALIGN_CLIP</TT> - The label is clipped to the widget. </LI>
+<LI><TT>FL_ALIGN_WRAP</TT> - The label text is wrapped as needed. </LI>
+<LI><TT>FL_ALIGN_TOP_LEFT</TT></LI>
+<LI><TT>FL_ALIGN_TOP_RIGHT</TT></LI>
+<LI><TT>FL_ALIGN_BOTTOM_LEFT</TT></LI>
+<LI><TT>FL_ALIGN_BOTTOM_RIGHT</TT></LI>
+<LI><TT>FL_ALIGN_LEFT_TOP</TT></LI>
+<LI><TT>FL_ALIGN_RIGHT_TOP</TT></LI>
+<LI><TT>FL_ALIGN_LEFT_BOTTOM</TT></LI>
+<LI><TT>FL_ALIGN_RIGHT_BOTTOM</TT></LI>
+<LI><TT>FL_ALIGN_INSIDE</TT> - 'or' this with other values to put
+label inside the widget. </LI>
+
+</UL>
+<H2><a name=fonts>Fonts</A></H2>
+ The following constants define the standard FLTK fonts:
+<ul>
+<LI><TT>FL_HELVETICA</TT> - Helvetica (or Arial) normal (0). </LI>
+<LI><TT>FL_HELVETICA_BOLD</TT> - Helvetica (or Arial) bold. </LI>
+<LI><TT>FL_HELVETICA_ITALIC</TT> - Helvetica (or Arial) oblique. </LI>
+<LI><TT>FL_HELVETICA_BOLD_ITALIC</TT> - Helvetica (or Arial)
+bold-oblique. </LI>
+<LI><TT>FL_COURIER</TT> - Courier normal. </LI>
+<LI><TT>FL_COURIER_BOLD</TT> - Courier bold. </LI>
+<LI><TT>FL_COURIER_ITALIC</TT> - Courier italic. </LI>
+<LI><TT>FL_COURIER_BOLD_ITALIC</TT> - Courier bold-italic. </LI>
+<LI><TT>FL_TIMES</TT> - Times roman. </LI>
+<LI><TT>FL_TIMES_BOLD</TT> - Times bold. </LI>
+<LI><TT>FL_TIMES_ITALIC</TT> - Times italic. </LI>
+<LI><TT>FL_TIMES_BOLD_ITALIC</TT> - Times bold-italic. </LI>
+<LI><TT>FL_SYMBOL</TT> - Standard symbol font. </LI>
+<LI><TT>FL_SCREEN</TT> - Default monospaced screen font. </LI>
+<LI><TT>FL_SCREEN_BOLD</TT> - Default monospaced bold screen font. </LI>
+<LI><TT>FL_ZAPF_DINGBATS</TT> - Zapf-dingbats font.
+</ul>
+
+<H2><a name=colors>Colors</A></H2>
+
+<P>The <TT>Fl_Color</TT> enumeration type holds a FLTK color value.
+Colors are either 8-bit indexes into a virtual colormap or 24-bit RGB
+color values. Color indices occupy the lower 8 bits of the value, while
+RGB colors occupy the upper 24 bits, for a byte organization of RGBI.
+
+<H3>Color Constants</H3>
+
+<P>Constants are defined for the user-defined foreground and background
+colors, as well as specific colors and the start of the grayscale ramp
+and color cube in the virtual colormap. Inline functions are provided to
+retrieve specific grayscale, color cube, or RGB color values.
+
+<P>The following color constants can be used to access the user-defined
+colors:
+
+<UL>
+
+	<LI><TT>FL_BACKGROUND_COLOR</TT> - the default
+	background color</LI>
+
+	<LI><TT>FL_BACKGROUND2_COLOR</TT> - the default
+	background color for text, list, and valuator widgets</LI>
+
+	<LI><TT>FL_FOREGROUND_COLOR</TT> - the default
+	foreground color (0) used for labels and text</LI>
+
+	<LI><TT>FL_INACTIVE_COLOR</TT> - the inactive foreground
+	color</LI>
+
+	<LI><TT>FL_SELECTION_COLOR</TT> - the default selection/highlight
+	color</LI>
+
+</UL>
+
+<P>The following color constants can be used to access the colors from the
+FLTK standard color cube:
+
+<UL>
+
+	<LI><TT>FL_BLACK</TT></LI>
+	<LI><TT>FL_BLUE</TT></LI>
+	<LI><TT>FL_CYAN</TT></LI>
+	<LI><TT>FL_DARK_BLUE</TT></LI>
+	<LI><TT>FL_DARK_CYAN</TT></LI>
+	<LI><TT>FL_DARK_GREEN</TT></LI>
+	<LI><TT>FL_DARK_MAGENTA</TT></LI>
+	<LI><TT>FL_DARK_RED</TT></LI>
+	<LI><TT>FL_DARK_YELLOW</TT></LI>
+	<LI><TT>FL_GREEN</TT></LI>
+	<LI><TT>FL_MAGENTA</TT></LI>
+	<LI><TT>FL_RED</TT></LI>
+	<LI><TT>FL_WHITE</TT></LI>
+	<LI><TT>FL_YELLOW</TT></LI>
+
+</UL>
+
+<P>The inline methods for getting a grayscale, color cube, or
+RGB color value are described in <A
+HREF="functions.html#functions">Appendix B - Function
+Reference</A>.
+
+<H2><a name=cursor>Cursors</A></H2>
+
+<P>The following constants define the mouse cursors that are available in
+FLTK.  The  double-headed arrows are bitmaps
+provided by FLTK on X, the others are provided by system-defined
+cursors.</P>
+
+<UL>
+
+	<LI><TT>FL_CURSOR_DEFAULT</TT> - the default cursor, usually an arrow (0)</LI>
+	<LI><TT>FL_CURSOR_ARROW</TT> - an arrow pointer </LI>
+	<LI><TT>FL_CURSOR_CROSS</TT> - crosshair </LI>
+	<LI><TT>FL_CURSOR_WAIT</TT> - watch or hourglass </LI>
+	<LI><TT>FL_CURSOR_INSERT</TT> - I-beam </LI>
+	<LI><TT>FL_CURSOR_HAND</TT> - hand (uparrow on MSWindows) </LI>
+	<LI><TT>FL_CURSOR_HELP</TT> - question mark </LI>
+	<LI><TT>FL_CURSOR_MOVE</TT> - 4-pointed arrow </LI>
+	<LI><TT>FL_CURSOR_NS</TT> - up/down arrow </LI>
+	<LI><TT>FL_CURSOR_WE</TT> - left/right arrow </LI>
+	<LI><TT>FL_CURSOR_NWSE</TT> - diagonal arrow </LI>
+	<LI><TT>FL_CURSOR_NESW</TT> - diagonal arrow </LI>
+	<LI><TT>FL_CURSOR_NONE</TT> - invisible </LI>
+
+</UL>
+
+<H2>FD &quot;When&quot; Conditions</H2>
+
+<UL>
+
+	<LI><TT>FL_READ</TT> - Call the callback when there is data to be
+	read.</LI>
+
+	<LI><TT>FL_WRITE</TT> - Call the callback when data can be written
+	without blocking.</LI>
+
+	<LI><TT>FL_EXCEPT</TT> - Call the callback if an exception occurs on
+	the file.</LI>
+
+</UL>
+
+<H2><a name=damage>Damage Masks</A></H2>
+ The following damage mask bits are used by the standard FLTK widgets:
+<UL>
+<LI><TT>FL_DAMAGE_CHILD</TT> - A child needs to be redrawn. </LI>
+<LI><TT>FL_DAMAGE_EXPOSE</TT> - The window was exposed. </LI>
+<LI><TT>FL_DAMAGE_SCROLL</TT> - The <TT>Fl_Scroll</TT> widget was
+ scrolled. </LI>
+<LI><TT>FL_DAMAGE_OVERLAY</TT> - The overlay planes need to be redrawn. </LI>
+<LI><TT>FL_DAMAGE_USER1</TT> - First user-defined damage bit. </LI>
+<LI><TT>FL_DAMAGE_USER2</TT> - Second user-defined damage bit. </LI>
+<LI><TT>FL_DAMAGE_ALL</TT> - Everything needs to be redrawn. </LI>
+</UL>
+</BODY></HTML>

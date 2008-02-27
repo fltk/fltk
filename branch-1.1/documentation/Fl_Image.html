@@ -1,0 +1,212 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Image</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name="Fl_Image">class Fl_Image</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<B>Fl_Image</B>
+      |
+      +----<A href="Fl_Bitmap.html">Fl_Bitmap</A>,
+           <A href="Fl_Pixmap.html">Fl_Pixmap</A>,
+           <A href="Fl_RGB_Image.html">Fl_RGB_Image</A>,
+           <A href="Fl_Shared_Image.html">Fl_Shared_Image</A>,
+           <A href="Fl_Tiled_Image.html">Fl_Tiled_Image</A>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Image.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P><TT>Fl_Image</TT> is the base class used for caching and
+drawing all kinds of images in FLTK. This class keeps track of
+common image data such as the pixels, colormap, width, height,
+and depth. Virtual methods are used to provide type-specific
+image handling.</P>
+
+<P>Since the <TT>Fl_Image</TT> class does not support image
+drawing by itself, calling the <TT>draw()</TT> method results in
+a box with an X in it being drawn instead.</P>
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A href="#Fl_Image.Fl_Image">Fl_Image</A></LI>
+
+	<LI><A href="#Fl_Image.~Fl_Image">~Fl_Image</A></LI>
+
+	<LI><A href="#Fl_Image.color_average">color_average</A></LI>
+
+	<LI><A href="#Fl_Image.copy">copy</A></LI>
+
+	<LI><A href="#Fl_Image.count">count</A></LI>
+
+	<LI><A href="#Fl_Image.d">d</A></LI>
+
+	<LI><A href="#Fl_Image.data">data</A></LI>
+
+	<LI><A href="#Fl_Image.desaturate">desaturate</A></LI>
+
+	<LI><A href="#Fl_Image.draw">draw</A></LI>
+
+	<LI><A href="#Fl_Image.draw_empty">draw_empty</A></LI>
+
+	<LI><A href="#Fl_Image.h">h</A></LI>
+
+	<LI><A href="#Fl_Image.inactive">inactive</A></LI>
+
+	<LI><A href="#Fl_Image.label">label</A></LI>
+
+	<LI><A href="#Fl_Image.ld">ld</A></LI>
+
+	<LI><A href="#Fl_Image.uncache">uncache</A></LI>
+
+	<LI><A href="#Fl_Image.w">w</A></LI>
+
+</UL>
+
+<H4><A NAME="Fl_Image.Fl_Image">Fl_Image(int W, int H, int D);</A></H4>
+
+<P>The constructor creates an empty image with the specified
+width, height, and depth. The width and height are in pixels.
+The depth is 0 for bitmaps, 1 for pixmap (colormap) images, and
+1 to 4 for color images.</P>
+
+<H4><A NAME="Fl_Image.~Fl_Image">virtual ~Fl_Image();</A></H4>
+
+<P>The destructor is a virtual method that frees all memory used
+by the image.</P>
+
+<H4><A NAME="Fl_Image.color_average">virtual void color_average(Fl_Color c, float i);</A></H4>
+
+<P>The <TT>color_average()</TT> method averages the colors in
+the image with the FLTK color value <TT>c</TT>. The <TT>i</TT>
+argument specifies the amount of the original image to combine
+with the color, so a value of 1.0 results in no color blend, and
+a value of 0.0 results in a constant image of the specified
+color. <I>The original image data is not altered by this
+method.</I></P>
+
+<H4><A NAME="Fl_Image.copy">virtual Fl_Image *copy(int W, int H);<BR>
+copy();</A></H4>
+
+<P>The <TT>copy()</TT> method creates a copy of the specified
+image. If the width and height are provided, the image is
+resized to the specified size. The image should be deleted (or in
+the case of <tt>Fl_Shared_Image</tt>, released) when you are done
+with it.</P>
+
+<H4><A NAME="Fl_Image.count">int count();</A></H4>
+
+<P>The <TT>count()</TT> method returns the number of data values
+associated with the image. The value will be 0 for images with
+no associated data, 1 for bitmap and color images, and greater
+than 2 for pixmap images.</P>
+
+<H4><A NAME="Fl_Image.d">int d();<BR>
+protected void d(int D);</A></H4>
+
+<P>The first form of the <TT>d()</TT> method returns the current
+image depth. The return value will be 0 for bitmaps, 1 for
+pixmaps, and 1 to 4 for color images.</P>
+
+<P>The second form is a protected method that sets the current
+image depth.</P>
+
+<H4><A NAME="Fl_Image.data">const char * const *data();<BR>
+protected void data(const char * const *data, int count);</A></H4>
+
+<P>The first form of the <TT>data()</TT> method returns a
+pointer to the current image data array. Use the
+<TT>count()</TT> method to find the size of the data array.</P>
+
+<P>The second form is a protected method that sets the current
+array pointer and count of pointers in the array.</P>
+
+<H4><A NAME="Fl_Image.desaturate">virtual void desaturate()</A></H4>
+
+<P>The <TT>desaturate()</TT> method converts an image to
+grayscale. If the image contains an alpha channel (depth = 4),
+the alpha channel is preserved. <I>This method does not alter
+the original image data.</I></P>
+
+<H4><A NAME="Fl_Image.draw">void draw(int X, int Y);<BR>
+virtual void draw(int X, int Y, int W, int H, int cx, int cy);</A></H4>
+
+<P>The <TT>draw()</TT> methods draw the image. The first form
+specifies the upper-lefthand corner of the image. The second
+form specifies a bounding box for the image, with the origin
+(upper-lefthand corner) of the image offset by the <TT>cx</TT>
+and <TT>cy</TT> arguments.</P>
+
+<H4><A NAME="Fl_Image.draw_empty">protected void draw_empty(int X, int Y);</A></H4>
+
+<P>The protected method <TT>draw_empty()</TT> draws a box with
+an X in it. It can be used to draw any image that lacks image
+data.</P>
+
+<H4><A NAME="Fl_Image.h">int h();<BR>
+protected void h(int H);</A></H4>
+
+<P>The first form of the <TT>h()</TT> method returns the current
+image height in pixels.</P>
+
+<P>The second form is a protected method that sets the current
+image height.</P>
+
+<H4><A NAME="Fl_Image.inactive">void inactive();</A></H4>
+
+<P>The <TT>inactive()</TT> method calls
+<TT>color_average(FL_BACKGROUND_COLOR, 0.33f)</TT> to produce 
+an image that appears grayed out. <I>This method does not 
+alter the original image data.</I></P>
+
+<H4><A NAME="Fl_Image.label">virtual void label(Fl_Widget *w);
+virtual void label(Fl_Menu_Item *m);</A></H4>
+
+<P>The <TT>label()</TT> methods are an obsolete way to set the
+image attribute of a widget or menu item. Use the
+<TT>image()</TT> or <TT>deimage()</TT> methods of the
+<TT>Fl_Widget</TT> and <TT>Fl_Menu_Item</TT> classes
+instead.</P>
+
+<H4><A NAME="Fl_Image.ld">int ld();<BR>
+protected void ld(int LD);</A></H4>
+
+<P>The first form of the <TT>ld()</TT> method returns the current
+line data size in bytes. Line data is extra data that is included
+after each line of color image data and is normally not present.</P>
+
+<P>The second form is a protected method that sets the current
+line data size in bytes.</P>
+
+<H4><A NAME="Fl_Image.uncache">void uncache();</A></H4>
+
+<P>If the image has been cached for display, delete the cache
+data. This allows you to change the data used for the image and
+then redraw it without recreating an image object.
+
+<H4><A NAME="Fl_Image.w">int w();<BR>
+protected void w(int W);</A></H4>
+
+<P>The first form of the <TT>w()</TT> method returns the current
+image width in pixels.</P>
+
+<P>The second form is a protected method that sets the current
+image width.</P>
+
+</BODY>
+</HTML>

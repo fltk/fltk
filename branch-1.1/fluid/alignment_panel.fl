@@ -1,0 +1,420 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0108 
+header_name {.h} 
+code_name {.cxx}
+comment {//
+// "$Id$"
+//
+// Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2005 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+} {in_source in_header
+} 
+
+decl {\#include <FL/Fl_Text_Buffer.H>} {public
+} 
+
+decl {\#include <FL/Fl_Text_Display.H>} {public
+} 
+
+decl {extern void load_history();} {public
+} 
+
+Function {make_project_window()} {open
+} {
+  Fl_Window project_window {
+    label {Project Settings}
+    xywh {312 395 358 207} type Double
+    code0 {\#include <FL/Fl_Preferences.H>}
+    code1 {\#include <FL/Fl_Tooltip.H>} modal visible
+  } {
+    Fl_Button {} {
+      label Close
+      callback {project_window->hide();}
+      tooltip {Close this dialog.} xywh {293 175 52 20} labelsize 11
+    }
+    Fl_Tabs {} {open
+      xywh {10 10 335 151} selection_color 12 labelsize 11
+    } {
+      Fl_Group {} {
+        label Output open
+        xywh {10 30 335 131} labelsize 11
+      } {
+        Fl_Box {} {
+          label {Use "name.ext" to set name or just ".ext" to set extension.}
+          xywh {15 40 325 15} labelsize 11 align 144
+        }
+        Fl_Input header_file_input {
+          label {Header File:}
+          user_data 1 user_data_type {void*}
+          callback header_input_cb
+          tooltip {The name of the generated header file.} xywh {96 60 228 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
+        }
+        Fl_Input code_file_input {
+          label {Code File:}
+          user_data 1 user_data_type {void*}
+          callback code_input_cb
+          tooltip {The name of the generated code file.} xywh {97 85 227 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
+        }
+        Fl_Check_Button include_H_from_C_button {
+          label {Include Header from Code}
+          callback include_H_from_C_button_cb
+          tooltip {Include the header file from the code file.} xywh {95 110 145 20} down_box DOWN_BOX labelsize 11
+        }
+        Fl_Check_Button use_FL_COMMAND_button {
+          label {Generate menu shortcuts using FL_COMMAND}
+          callback use_FL_COMMAND_button_cb selected
+          tooltip {Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.} xywh {95 130 245 20} down_box DOWN_BOX labelsize 11
+        }
+      }
+      Fl_Group {} {
+        label Internationalization open
+        xywh {10 30 335 131} labelsize 11 hide
+      } {
+        Fl_Choice i18n_type_chooser {
+          label {Use:}
+          callback i18n_type_cb open
+          tooltip {Type of internationalization to use.} xywh {80 42 100 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+        } {
+          MenuItem {} {
+            label None
+            xywh {0 0 100 20} labelsize 11
+          }
+          MenuItem {} {
+            label {GNU gettext}
+            xywh {0 0 100 20} labelsize 11
+          }
+          MenuItem {} {
+            label {POSIX catgets}
+            xywh {0 0 100 20} labelsize 11
+          }
+        }
+        Fl_Input i18n_include_input {
+          label {\#include:}
+          callback i18n_text_cb
+          tooltip {The include file for internationalization.} xywh {80 67 245 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 textfont 4 textsize 11
+        }
+        Fl_Input i18n_file_input {
+          label {File:}
+          callback i18n_text_cb
+          tooltip {The name of the message catalog.} xywh {80 92 245 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 textfont 4 textsize 11
+        }
+        Fl_Input i18n_set_input {
+          label {Set:}
+          callback i18n_text_cb
+          tooltip {The message set number.} xywh {80 117 245 20} type Int box THIN_DOWN_BOX labelfont 1 labelsize 11 textfont 4 textsize 11
+        }
+        Fl_Input i18n_function_input {
+          label {Function:}
+          callback i18n_text_cb
+          tooltip {The function to call to internationalize the labels and tooltips.} xywh {80 92 245 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 textfont 4 textsize 11
+        }
+      }
+    }
+  }
+} 
+
+decl {extern void i18n_cb(Fl_Choice *,void *);} {public
+} 
+
+decl {extern Fl_Preferences fluid_prefs;} {public
+} 
+
+decl {Fl_Text_Buffer *shell_run_buffer;} {public
+} 
+
+decl {void scheme_cb(Fl_Choice *, void *);} {public
+} 
+
+Function {make_settings_window()} {open
+} {
+  Fl_Window settings_window {
+    label {GUI Settings} open
+    xywh {326 145 340 225} type Double non_modal visible
+  } {
+    Fl_Choice scheme_choice {
+      label {Scheme:}
+      callback scheme_cb open
+      xywh {116 10 115 25} down_box BORDER_BOX labelfont 1
+      code0 {int s;}
+      code1 {fluid_prefs.get("scheme", s, 0);}
+      code2 {scheme_choice->value(s);}
+      code3 {scheme_cb(0, 0);}
+    } {
+      MenuItem {} {
+        label Default
+        xywh {0 0 35 25}
+      }
+      MenuItem {} {
+        label None
+        xywh {0 0 35 25}
+      }
+      MenuItem {} {
+        label Plastic
+        xywh {0 0 35 25}
+      }
+      MenuItem {} {
+        label {GTK+}
+        xywh {10 10 35 25}
+      }
+    }
+    Fl_Group {} {
+      label {Options:
+
+
+
+
+} open
+      xywh {116 45 215 100} labelfont 1 align 4
+    } {
+      Fl_Check_Button tooltips_button {
+        label {Show Tooltips}
+        callback {Fl_Tooltip::enable(tooltips_button->value());
+fluid_prefs.set("show_tooltips", tooltips_button->value());}
+        xywh {116 45 113 25} down_box DOWN_BOX
+        code0 {int b;}
+        code1 {fluid_prefs.get("show_tooltips", b, 1);}
+        code2 {tooltips_button->value(b);}
+        code3 {Fl_Tooltip::enable(b);}
+      }
+      Fl_Check_Button completion_button {
+        label {Show Completion Dialogs}
+        callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
+        xywh {116 70 186 25} down_box DOWN_BOX
+        code0 {int b;}
+        code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
+        code2 {completion_button->value(b);}
+      }
+      Fl_Check_Button openlast_button {
+        label {Open Previous File on Startup}
+        callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
+        xywh {116 95 215 25} down_box DOWN_BOX
+        code0 {int b;}
+        code1 {fluid_prefs.get("open_previous_file", b, 0);}
+        code2 {openlast_button->value(b);}
+      }
+      Fl_Check_Button prevpos_button {
+        label {Remember Window Positions}
+        callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
+        xywh {116 120 210 25} down_box DOWN_BOX
+        code0 {int b;}
+        code1 {fluid_prefs.get("prev_window_pos", b, 1);}
+        code2 {prevpos_button->value(b);}
+      }
+    }
+    Fl_Button {} {
+      label Close
+      callback {settings_window->hide();}
+      tooltip {Close this dialog.} xywh {266 190 64 25}
+    }
+    Fl_Spinner recent_spinner {
+      label {\# Recent Files:}
+      callback {fluid_prefs.set("recent_files", recent_spinner->value());
+load_history();}
+      xywh {116 155 40 25} labelfont 1 when 1 value 1
+      code0 {int c;}
+      code1 {fluid_prefs.get("recent_files", c, 5);}
+      code2 {recent_spinner->maximum(10);}
+      code3 {recent_spinner->value(c);}
+    }
+  }
+} 
+
+Function {make_shell_window()} {open
+} {
+  Fl_Window shell_window {
+    label {Shell Command}
+    xywh {682 167 365 125} type Double visible
+  } {
+    Fl_Input shell_command_input {
+      label {Command:}
+      callback {fluid_prefs.set("shell_command", shell_command_input->value());}
+      xywh {10 27 347 25} labelfont 1 align 5
+      code0 {char buf[1024];}
+      code1 {fluid_prefs.get("shell_command", buf, "", sizeof(buf));}
+      code2 {shell_command_input->value(buf);}
+    }
+    Fl_Check_Button shell_writecode_button {
+      label {Write Code}
+      callback {fluid_prefs.set("shell_writecode", shell_writecode_button->value());}
+      xywh {128 61 93 19} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("shell_writecode", b, 1);}
+      code2 {shell_writecode_button->value(b);}
+    }
+    Fl_Check_Button shell_writemsgs_button {
+      label {Write Messages}
+      callback {fluid_prefs.set("shell_writemsgs", shell_writemsgs_button->value());}
+      xywh {231 61 126 19} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("shell_writemsgs", b, 0);}
+      code2 {shell_writemsgs_button->value(b);}
+    }
+    Fl_Check_Button shell_savefl_button {
+      label {Save .FL File}
+      callback {fluid_prefs.set("shell_savefl", shell_savefl_button->value());}
+      xywh {10 62 108 19} down_box DOWN_BOX
+      code0 {int b;}
+      code1 {fluid_prefs.get("shell_savefl", b, 1);}
+      code2 {shell_savefl_button->value(b);}
+    }
+    Fl_Return_Button {} {
+      label {Run Command}
+      callback do_shell_command
+      xywh {132 90 143 25}
+    }
+    Fl_Button {} {
+      label Cancel
+      callback {shell_window->hide();}
+      xywh {285 90 72 25}
+    }
+  }
+  Fl_Window shell_run_window {
+    label {Shell Command Output}
+    xywh {592 332 555 430} type Double hide resizable
+  } {
+    Fl_Text_Display shell_run_display {
+      xywh {10 10 535 375} box DOWN_BOX textfont 4 resizable
+      code0 {shell_run_buffer = new Fl_Text_Buffer();}
+      code1 {shell_run_display->buffer(shell_run_buffer);}
+    }
+    Fl_Return_Button shell_run_button {
+      label Close
+      callback {shell_run_window->hide();}
+      xywh {468 395 77 25}
+    }
+  }
+} 
+
+Function {make_layout_window()} {open
+} {
+  Fl_Window grid_window {
+    label {Layout Settings}
+    xywh {676 337 285 245} type Double non_modal visible
+  } {
+    Fl_Input horizontal_input {
+      label x
+      user_data 1 user_data_type long
+      callback grid_cb
+      tooltip {Horizontal grid spacing.} xywh {106 10 50 25} type Int box THIN_DOWN_BOX align 8
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Input vertical_input {
+      label pixels
+      user_data 2 user_data_type long
+      callback grid_cb
+      tooltip {Vertical grid spacing.} xywh {166 10 50 25} type Int box THIN_DOWN_BOX align 8
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Input snap_input {
+      label {pixel snap}
+      user_data 3 user_data_type long
+      callback grid_cb
+      tooltip {Snap to grid within this many pixels.} xywh {106 45 50 25} type Int box THIN_DOWN_BOX align 8
+      code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
+    }
+    Fl_Check_Button guides_toggle {
+      label {Show Guides}
+      user_data 4 user_data_type long
+      callback guides_cb
+      tooltip {Show distance and alignment guides in overlay} xywh {106 80 110 25} down_box DOWN_BOX
+    }
+    Fl_Button {} {
+      label Close
+      callback {grid_window->hide();}
+      tooltip {Close this dialog.} xywh {215 210 60 25}
+    }
+    Fl_Box {} {
+      label {Grid:}
+      xywh {26 10 70 25} labelfont 1 align 24
+    }
+    Fl_Box {} {
+      label {Widget Size:}
+      xywh {-1 115 97 25} labelfont 1 align 24
+    }
+    Fl_Group {} {open
+      xywh {105 115 170 75}
+    } {
+      Fl_Round_Button {def_widget_size[0]} {
+        user_data 8 user_data_type long
+        callback default_widget_size_cb
+        xywh {105 115 70 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label tiny
+        xywh {120 115 50 25} labelsize 8 align 20
+      }
+      Fl_Round_Button {def_widget_size[1]} {
+        user_data 11 user_data_type long
+        callback default_widget_size_cb
+        xywh {180 115 70 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label small
+        xywh {195 115 50 25} labelsize 11 align 20
+      }
+      Fl_Round_Button {def_widget_size[2]} {
+        user_data 14 user_data_type long
+        callback default_widget_size_cb
+        xywh {105 140 70 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label normal
+        xywh {120 140 50 25} align 20
+      }
+      Fl_Round_Button {def_widget_size[3]} {
+        user_data 18 user_data_type long
+        callback default_widget_size_cb
+        xywh {180 140 90 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label medium
+        xywh {195 140 68 25} labelsize 18 align 20
+      }
+      Fl_Round_Button {def_widget_size[4]} {
+        user_data 24 user_data_type long
+        callback default_widget_size_cb
+        xywh {105 165 75 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label large
+        xywh {120 165 64 25} labelsize 24 align 20
+      }
+      Fl_Round_Button {def_widget_size[5]} {
+        user_data 32 user_data_type long
+        callback default_widget_size_cb
+        xywh {180 165 95 25} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Box {} {
+        label huge
+        xywh {195 165 76 25} labelsize 32 align 20
+      }
+    }
+  }
+} 
+
+comment {
+//
+// End of "$Id$".
+//} {in_source in_header
+} 

@@ -1,0 +1,907 @@
+<HTML>
+<HEAD>
+	<TITLE>A - Class Reference</TITLE>
+</HEAD>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="widgets">A - Class Reference</A></H1>
+
+This appendix describes all classes in FLTK and their methods. 
+For a description of the <TT>fl_</TT> functions, see
+<A href="functions.html">Appendix B</A>.
+
+<H2>Alphabetical List of Classes</H2>
+
+<CENTER><TABLE WIDTH=80% SUMMARY="List of FLTK Classes">
+<TR ALIGN=LEFT VALIGN=TOP>
+<TD>
+<A HREF="Fl.html">Fl</A><BR>
+<A HREF="Fl_Adjuster.html">Fl_Adjuster</A><BR>
+<A HREF="Fl_Bitmap.html">Fl_Bitmap</A><BR>
+<A HREF="Fl_BMP_Image.html">Fl_BMP_Image</A><BR>
+<A HREF="Fl_Box.html">Fl_Box</A><BR>
+<A HREF="Fl_Browser_.html">Fl_Browser_</A><BR>
+<A HREF="Fl_Browser.html">Fl_Browser</A><BR>
+<A HREF="Fl_Button.html">Fl_Button</A><BR>
+<A HREF="Fl_Chart.html">Fl_Chart</A><BR>
+<A HREF="Fl_Check_Browser.html">Fl_Check_Browser</A><BR>
+<A HREF="Fl_Check_Button.html">Fl_Check_Button</A><BR>
+<A HREF="Fl_Choice.html">Fl_Choice</A><BR>
+<A HREF="Fl_Clock.html">Fl_Clock</A><BR>
+<A HREF="Fl_Clock_Output.html">Fl_Clock_Output</A><BR>
+<A HREF="Fl_Color_Chooser.html">Fl_Color_Chooser</A><BR>
+<A HREF="Fl_Counter.html">Fl_Counter</A><BR>
+<A HREF="Fl_Dial.html">Fl_Dial</A><BR>
+<A HREF="Fl_Double_Window.html">Fl_Double_Window</A><BR>
+<A HREF="Fl_End.html">Fl_End</A><BR>
+<A HREF="Fl_File_Browser.html">Fl_File_Browser</A><BR>
+<A HREF="Fl_File_Chooser.html">Fl_File_Chooser</A><BR>
+<A HREF="Fl_File_Icon.html">Fl_File_Icon</A><BR>
+<A HREF="Fl_File_Input.html">Fl_File_Input</A><BR>
+<A HREF="Fl_Float_Input.html">Fl_Float_Input</A><BR>
+<A HREF="Fl_Free.html">Fl_Free</A><BR>
+<A HREF="Fl_GIF_Image.html">Fl_GIF_Image</A><BR>
+<A HREF="Fl_Gl_Window.html">Fl_Gl_Window</A><BR>
+<A HREF="Fl_Group.html">Fl_Group</A><BR>
+<A HREF="Fl_Help_Dialog.html">Fl_Help_Dialog</A><BR>
+<A HREF="Fl_Help_View.html">Fl_Help_View</A><BR>
+<A HREF="Fl_Hold_Browser.html">Fl_Hold_Browser</A><BR>
+<A HREF="Fl_Image.html">Fl_Image</A><BR>
+<A HREF="Fl_Input_.html">Fl_Input_</A><BR>
+<A HREF="Fl_Input.html">Fl_Input</A><BR>
+<A HREF="Fl_Input_Choice.html">Fl_Input_Choice</A><BR>
+<A HREF="Fl_Int_Input.html">Fl_Int_Input</A><BR>
+<A HREF="Fl_JPEG_Image.html">Fl_JPEG_Image</A><BR>
+<A HREF="Fl_Light_Button.html">Fl_Light_Button</A><BR>
+<A HREF="Fl_Menu_Bar.html">Fl_Menu_Bar</A><BR>
+<A HREF="Fl_Menu_Button.html">Fl_Menu_Button</A><BR>
+<A HREF="Fl_Menu_.html">Fl_Menu_</A><BR>
+<A HREF="Fl_Menu_Item.html">Fl_Menu_Item</A><BR>
+<A HREF="Fl_Menu_Window.html">Fl_Menu_Window</A><BR>
+</TD><TD>
+<A HREF="Fl_Multi_Browser.html">Fl_Multi_Browser</A><BR>
+<A HREF="Fl_Multiline_Input.html">Fl_Multiline_Input</A><BR>
+<A HREF="Fl_Multiline_Output.html">Fl_Multiline_Output</A><BR>
+<A HREF="Fl_Output.html">Fl_Output</A><BR>
+<A HREF="Fl_Overlay_Window.html">Fl_Overlay_Window</A><BR>
+<A HREF="Fl_Pack.html">Fl_Pack</A><BR>
+<A HREF="Fl_Pixmap.html">Fl_Pixmap</A><BR>
+<A HREF="Fl_PNG_Image.html">Fl_PNG_Image</A><BR>
+<A HREF="Fl_PNM_Image.html">Fl_PNM_Image</A><BR>
+<A HREF="Fl_Positioner.html">Fl_Positioner</A><BR>
+<A HREF="Fl_Preferences.html">Fl_Preferences</A><BR>
+<A HREF="Fl_Progress.html">Fl_Progress</A><BR>
+<A HREF="Fl_Repeat_Button.html">Fl_Repeat_Button</A><BR>
+<A HREF="Fl_Return_Button.html">Fl_Return_Button</A><BR>
+<A HREF="Fl_RGB_Image.html">Fl_RGB_Image</A><BR>
+<A HREF="Fl_Roller.html">Fl_Roller</A><BR>
+<A HREF="Fl_Round_Button.html">Fl_Round_Button</A><BR>
+<A HREF="Fl_Scrollbar.html">Fl_Scrollbar</A><BR>
+<A HREF="Fl_Scroll.html">Fl_Scroll</A><BR>
+<A HREF="Fl_Secret_Input.html">Fl_Secret_Input</A><BR>
+<A HREF="Fl_Select_Browser.html">Fl_Select_Browser</A><BR>
+<A HREF="Fl_Shared_Image.html">Fl_Shared_Image</A><BR>
+<A HREF="Fl_Single_Window.html">Fl_Single_Window</A><BR>
+<A HREF="Fl_Slider.html">Fl_Slider</A><BR>
+<A HREF="Fl_Spinner.html">Fl_Spinner</A><BR>
+<A HREF="Fl_Tabs.html">Fl_Tabs</A><BR>
+<A HREF="Fl_Text_Buffer.html">Fl_Text_Buffer</A><BR>
+<A HREF="Fl_Text_Display.html">Fl_Text_Display</A><BR>
+<A HREF="Fl_Text_Editor.html">Fl_Text_Editor</A><BR>
+<A HREF="Fl_Tiled_Image.html">Fl_Tiled_Image</A><BR>
+<A HREF="Fl_Tile.html">Fl_Tile</A><BR>
+<A HREF="Fl_Timer.html">Fl_Timer</A><BR>
+<A HREF="Fl_Toggle_Button.html">Fl_Toggle_Button</A><BR>
+<A HREF="Fl_Tooltip.html">Fl_Tooltip</A><BR>
+<A HREF="Fl_Valuator.html">Fl_Valuator</A><BR>
+<A HREF="Fl_Value_Input.html">Fl_Value_Input</A><BR>
+<A HREF="Fl_Value_Output.html">Fl_Value_Output</A><BR>
+<A HREF="Fl_Value_Slider.html">Fl_Value_Slider</A><BR>
+<A HREF="Fl_Widget.html">Fl_Widget</A><BR>
+<A HREF="Fl_Window.html">Fl_Window</A><BR>
+<A HREF="Fl_Wizard.html">Fl_Wizard</A><BR>
+<A HREF="Fl_XBM_Image.html">Fl_XBM_Image</A><BR>
+<A HREF="Fl_XPM_Image.html">Fl_XPM_Image</A><BR>
+</TD>
+</TR>
+</TABLE></CENTER>
+
+<H2>Class Hierarchy</H2>
+
+<UL>
+    <LI><A HREF="Fl.html">Fl</A>
+    <LI><A HREF="Fl_End.html#Fl_End">Fl_End</A>
+    <LI><A HREF="Fl_File_Icon.html#Fl_File_Icon">Fl_File_Icon</A>
+	<LI><A HREF="Fl_Help_Dialog.html#Fl_Help_Dialog">Fl_Help_Dialog</A>
+    <LI><A HREF="Fl_Image.html">Fl_Image</A>
+    <UL>
+	<LI><A HREF="Fl_Bitmap.html">Fl_Bitmap</A><BR>
+	<UL>
+	    <LI><A HREF="Fl_XBM_Image.html">Fl_XBM_Image</A><BR>
+	</UL>
+	<LI><A HREF="Fl_Pixmap.html">Fl_Pixmap</A><BR>
+	<UL>
+	    <LI><A HREF="Fl_GIF_Image.html">Fl_GIF_Image</A><BR>
+	    <LI><A HREF="Fl_XPM_Image.html">Fl_XPM_Image</A><BR>
+	</UL>
+	<LI><A HREF="Fl_RGB_Image.html">Fl_RGB_Image</A><BR>
+	<UL>
+	    <LI><A HREF="Fl_BMP_Image.html">Fl_BMP_Image</A><BR>
+	    <LI><A HREF="Fl_JPEG_Image.html">Fl_JPEG_Image</A><BR>
+	    <LI><A HREF="Fl_PNG_Image.html">Fl_PNG_Image</A><BR>
+	    <LI><A HREF="Fl_PNM_Image.html">Fl_PNM_Image</A><BR>
+	</UL>
+	<LI><A HREF="Fl_Shared_Image.html">Fl_Shared_Image</A><BR>
+	<LI><A HREF="Fl_Tiled_Image.html">Fl_Tiled_Image</A><BR>
+    </UL>
+    <LI><A HREF="Fl_Menu_Item.html#Fl_Menu_Item">Fl_Menu_Item</A>
+    <LI><A HREF="Fl_Preferences.html">Fl_Preferences</A>
+    <LI><A HREF="Fl_Text_Buffer.html">Fl_Text_Buffer</A>
+    <LI><A HREF="Fl_Tooltip.html">Fl_Tooltip</A>
+    <LI><A HREF="Fl_Widget.html#Fl_Widget">Fl_Widget</A>
+    <UL>
+	<LI><A HREF="Fl_Box.html#Fl_Box">Fl_Box</A>
+	<LI><A HREF="Fl_Button.html#Fl_Button">Fl_Button</A>
+	<UL>
+	    <LI><A HREF="Fl_Check_Button.html#Fl_Check_Button">Fl_Check_Button</A>
+	    <LI><A HREF="Fl_Light_Button.html#Fl_Light_Button">Fl_Light_Button</A>
+	    <LI><A HREF="Fl_Repeat_Button.html#Fl_Repeat_Button">Fl_Repeat_Button</A>
+	    <LI><A HREF="Fl_Return_Button.html#Fl_Return_Button">Fl_Return_Button</A>
+	    <LI><A HREF="Fl_Round_Button.html#Fl_Round_Button">Fl_Round_Button</A>
+	    <LI><A HREF="Fl_Toggle_Button.html#Fl_Toggle_Button">Fl_Toggle_Button</A>
+	</UL>
+	<LI><A HREF="Fl_Chart.html#Fl_Chart">Fl_Chart</A>
+	<LI><A HREF="Fl_Clock_Output.html#Fl_Clock_Output">Fl_Clock_Output</A>
+	<UL>
+	    <LI><A HREF="Fl_Clock.html#Fl_Clock">Fl_Clock</A>
+	</UL>
+	<LI><A HREF="Fl_File_Chooser.html#Fl_File_Chooser">Fl_File_Chooser</A>
+	<LI><A HREF="Fl_Free.html#Fl_Free">Fl_Free</A>
+	<LI><A HREF="Fl_Group.html#Fl_Group">Fl_Group</A>
+	<UL>
+	    <LI><A HREF="Fl_Browser_.html#Fl_Browser_">Fl_Browser_</A>
+	    <UL>
+		<LI><A HREF="Fl_Browser.html#Fl_Browser">Fl_Browser</A>
+		<UL>
+		    <LI><A HREF="Fl_File_Browser.html#Fl_File_Browser">Fl_File_Browser</A>
+		    <LI><A HREF="Fl_Hold_Browser.html#Fl_Hold_Browser">Fl_Hold_Browser</A>
+		    <LI><A HREF="Fl_Multi_Browser.html#Fl_Multi_Browser">Fl_Multi_Browser</A>
+		    <LI><A HREF="Fl_Select_Browser.html#Fl_Select_Browser">Fl_Select_Browser</A>
+		</UL>
+		<LI><A HREF="Fl_Check_Browser.html">Fl_Check_Browser</A>
+	    </UL>
+	    <LI><A HREF="Fl_Color_Chooser.html#Fl_Color_Chooser">Fl_Color_Chooser</A>
+	    <LI><A HREF="Fl_Help_View.html#Fl_Help_View">Fl_Help_View</A>
+            <LI><A HREF="Fl_Input_Choice.html">Fl_Input_Choice</A>
+	    <LI><A HREF="Fl_Pack.html#Fl_Pack">Fl_Pack</A>
+	    <LI><A HREF="Fl_Scroll.html#Fl_Scroll">Fl_Scroll</A>
+	    <LI><A HREF="Fl_Spinner.html#Fl_Spinner">Fl_Spinner</A>
+	    <LI><A HREF="Fl_Tabs.html#Fl_Tabs">Fl_Tabs</A>
+	    <LI><A HREF="Fl_Text_Display.html">Fl_Text_Display</A>
+	    <UL>
+		<LI><A HREF="Fl_Text_Editor.html">Fl_Text_Editor</A>
+	    </UL>
+	    <LI><A HREF="Fl_Tile.html#Fl_Tile">Fl_Tile</A>
+	    <LI><A HREF="Fl_Window.html#Fl_Window">Fl_Window</A>
+	    <UL>
+		<LI><A HREF="Fl_Double_Window.html#Fl_Double_Window">Fl_Double_Window</A>
+		<LI><A HREF="Fl_Gl_Window.html#Fl_Gl_Window">Fl_Gl_Window</A>
+		<LI><A HREF="Fl_Menu_Window.html#Fl_Menu_Window">Fl_Menu_Window</A>
+		<LI><A HREF="Fl_Overlay_Window.html#Fl_Overlay_Window">Fl_Overlay_Window</A>
+		<LI><A HREF="Fl_Single_Window.html#Fl_Single_Window">Fl_Single_Window</A>
+	    </UL>
+	    <LI><A HREF="Fl_Wizard.html#Fl_Wizard">Fl_Wizard</A>
+	</UL>
+	<LI><A HREF="Fl_Input_.html#Fl_Input_">Fl_Input_</A>
+	<UL>
+	    <LI><A HREF="Fl_Input.html#Fl_Input">Fl_Input</A>
+	    <UL>
+		<LI><A HREF="Fl_File_Input.html#Fl_File_Input">Fl_File_Input</A>
+		<LI><A HREF="Fl_Float_Input.html#Fl_Float_Input">Fl_Float_Input</A>
+		<LI><A HREF="Fl_Int_Input.html#Fl_Int_Input">Fl_Int_Input</A>
+		<LI><A HREF="Fl_Multiline_Input.html#Fl_Multiline_Input">Fl_Multiline_Input</A>
+		<LI><A HREF="Fl_Secret_Input.html#Fl_Secret_Input">Fl_Secret_Input</A>
+	        <LI><A HREF="Fl_Output.html#Fl_Output">Fl_Output</A>
+	        <UL>
+		    <LI><A HREF="Fl_Multiline_Output.html#Fl_Multiline_Output">Fl_Multiline_Output</A>
+	        </UL>
+	    </UL>
+	</UL>
+	<LI><A HREF="Fl_Menu_.html#Fl_Menu_">Fl_Menu_</A>
+	<UL>
+	    <LI><A HREF="Fl_Choice.html#Fl_Choice">Fl_Choice</A>
+	    <LI><A HREF="Fl_Menu_Bar.html#Fl_Menu_Bar">Fl_Menu_Bar</A>
+	    <LI><A HREF="Fl_Menu_Button.html#Fl_Menu_Button">Fl_Menu_Button</A>
+	</UL>
+	<LI><A HREF="Fl_Positioner.html#Fl_Positioner">Fl_Positioner</A>
+	<LI><A HREF="Fl_Progress.html">Fl_Progress</A>
+	<LI><A HREF="Fl_Timer.html#Fl_Timer">Fl_Timer</A>
+	<LI><A HREF="Fl_Valuator.html#Fl_Valuator">Fl_Valuator</A>
+	<UL>
+	    <LI><A HREF="Fl_Adjuster.html#Fl_Adjuster">Fl_Adjuster</A>
+	    <LI><A HREF="Fl_Counter.html#Fl_Counter">Fl_Counter</A>
+	    <LI><A HREF="Fl_Dial.html#Fl_Dial">Fl_Dial</A>
+	    <LI><A HREF="Fl_Roller.html#Fl_Roller">Fl_Roller</A>
+	    <LI><A HREF="Fl_Slider.html#Fl_Slider">Fl_Slider</A>
+	    <UL>
+		<LI><A HREF="Fl_Scrollbar.html#Fl_Scrollbar">Fl_Scrollbar</A>
+		<LI><A HREF="Fl_Value_Slider.html#Fl_Value_Slider">Fl_Value_Slider</A>
+	    </UL>
+	    <LI><A HREF="Fl_Value_Input.html#Fl_Value_Input">Fl_Value_Input</A>
+	    <LI><A HREF="Fl_Value_Output.html#Fl_Value_Output">Fl_Value_Output</A>
+	</UL>
+    </UL>
+</UL>
+
+<H2>Alphabetical List of Methods</H2>
+
+<H3>A</H3><UL>
+<LI>activate: <A href=Fl_Menu_Item.html#Fl_Menu_Item.activate>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.activate>Fl_Widget</A></LI>
+<LI>active: <A href=Fl_Menu_Item.html#Fl_Menu_Item.active>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.active>Fl_Widget</A></LI>
+<LI>active_r: <A href=Fl_Widget.html#Fl_Widget.active_r>Fl_Widget</A></LI>
+<LI>add: <A HREF="Fl_File_Icon.html#Fl_File_Icon.add">Fl_File_Icon</A>,
+ <A href=Fl_Browser.html#Fl_Browser.add>Fl_Browser</A>,
+ <A href=Fl_Chart.html#Fl_Chart.add>Fl_Chart</A>,
+ <A href=Fl_Check_Browser.html#Fl_Check_Browser.add>Fl_Check_Browser</A>,
+ <A href=Fl_Group.html#Fl_Group.add>Fl_Group</A>,
+ <A href=Fl_Input_Choice.html#Fl_Input_Choice.add>Fl_Input_Choice</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.add>Fl_Menu_</A></LI>
+<LI>add_color: <A HREF="Fl_File_Icon.html#Fl_File_Icon.add_color">Fl_File_Icon</A></LI>
+<LI>add_default_key_bindings: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.add_default_key_bindings">Fl_Text_Editor</A></LI>
+<LI>add_key_binding: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.add_key_binding">Fl_Text_Editor</A></LI>
+<LI>add_modify_callback: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.add_modify_callback">Fl_Text_Buffer</A></LI>
+<LI>add_resizable: <A href=Fl_Group.html#Fl_Group.add_resizable>Fl_Group</A></LI>
+<LI>add_vertex: <A HREF="Fl_File_Icon.html#Fl_File_Icon.add_vertex">Fl_File_Icon</A></LI>
+<LI>align: <A href=Fl_Scroll.html#Fl_Scroll.align>Fl_Scroll</A>,
+ <A href=Fl_Widget.html#Fl_Widget.align>Fl_Widget</A></LI>
+<LI>angle1: <A href=Fl_Dial.html#Fl_Dial.angles>Fl_Dial</A></LI>
+<LI>angle2: <A href=Fl_Dial.html#Fl_Dial.angles>Fl_Dial</A></LI>
+<LI>angles: <A href=Fl_Dial.html#Fl_Dial.angles>Fl_Dial</A></LI>
+<LI>append: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.append">Fl_Text_Buffer</A></LI>
+<LI>appendfile: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.appendfile">Fl_Text_Buffer</A></LI>
+<LI>argument: <A href=Fl_Menu_Item.html#Fl_Menu_Item.argument>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.argument>Fl_Widget</A></LI>
+<LI>array: <A href=Fl_Group.html#Fl_Group.array>Fl_Group</A></LI>
+<LI>autosize: <A href=Fl_Chart.html#Fl_Chart.autosize>Fl_Chart</A></LI>
+</UL>
+<H3>B</H3><UL>
+<LI>b: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.b>Fl_Color_Chooser</A></LI>
+<LI>bbox: <A href="Fl_Browser_.html#Fl_Browser_.bbox">Fl_Browser_</A></LI>
+<LI>begin: <A href=Fl_Group.html#Fl_Group.begin>Fl_Group</A></LI>
+<LI>border: <A href=Fl_Window.html#Fl_Window.border>Fl_Window</A></LI>
+<LI>bottomline: <A href=Fl_Browser.html#Fl_Browser.bottomline>Fl_Browser</A></LI>
+<LI>bound_key_function: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.bound_key_function">Fl_Text_Editor</A></LI>
+<LI>bounds: <A href="Fl_Valuator.html#Fl_Valuator.bounds">Fl_Valuator</A>,
+ <A href=Fl_Chart.html#Fl_Chart.bounds>Fl_Chart</A></LI>
+<LI>box: <A href=Fl_Widget.html#Fl_Widget.box>Fl_Widget</A></LI>
+<LI>buffer: <A HREF="Fl_Text_Display.html#Fl_Text_Display.buffer">Fl_Text_Display</A></LI>
+</UL>
+<H3>C</H3><UL>
+<LI>call_modify_callbacks: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.call_modify_callbacks">Fl_Text_Buffer</A></LI>
+<LI>callback: <A href=Fl_Menu_Item.html#Fl_Menu_Item.callback>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.callback>Fl_Widget</A></LI>
+<LI>can_do: <A href=Fl_Gl_Window.html#Fl_Gl_Window.can_do>Fl_Gl_Window</A></LI>
+<LI>can_do_overlay: <A href=Fl_Gl_Window.html#Fl_Gl_Window.can_do_overlay>Fl_Gl_Window</A></LI>
+<LI>changed: <A href="Fl_Valuator.html#Fl_Valuator.changed">Fl_Valuator</A>,
+ <A href=Fl_Choice.html#Fl_Choice.changed>Fl_Choice</A>,
+ <A href=Fl_Widget.html#Fl_Widget.changed>Fl_Widget</A></LI>
+<LI>character: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.character">Fl_Text_Buffer</A></LI>
+<LI>character_width: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.character_width">Fl_Text_Buffer</A></LI>
+<LI>check_all: <A href=Fl_Check_Browser.html#Fl_Check_Browser.check_all>Fl_Check_Browser</A></LI>
+<LI>check_none: <A href=Fl_Check_Browser.html#Fl_Check_Browser.check_none>Fl_Check_Browser</A></LI>
+<LI>checkbox: <A href=Fl_Menu_Item.html#Fl_Menu_Item.checkbox>Fl_Menu_Item</A></LI>
+<LI>checked: <A href=Fl_Check_Browser.html#Fl_Check_Browser.checked>Fl_Check_Browser</A></LI>
+<LI>child: <A href=Fl_Group.html#Fl_Group.child>Fl_Group</A></LI>
+<LI>children: <A href=Fl_Group.html#Fl_Group.children>Fl_Group</A></LI>
+<LI>clamp: <A href="Fl_Valuator.html#Fl_Valuator.clamp">Fl_Valuator</A></LI>
+<LI>clear: <A HREF="Fl_File_Icon.html#Fl_File_Icon.clear">Fl_File_Icon</A>,
+ <A href="Fl_Group.html#Fl_Group.clear">Fl_Group</A>,
+ <A href=Fl_Browser.html#Fl_Browser.clear>Fl_Browser</A>,
+ <A href=Fl_Button.html#Fl_Button.clear>Fl_Button</A>,
+ <A href=Fl_Chart.html#Fl_Chart.clear>Fl_Chart</A>,
+ <A href=Fl_Check_Browser.html#Fl_Check_Browser.clear>Fl_Check_Browser</A>,
+ <A href=Fl_Input_Choice.html#Fl_Input_Choice.clear>Fl_Input_Choice</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.clear>Fl_Menu_</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.clear>Fl_Menu_Item</A></LI>
+<LI>clear_border: <A href=Fl_Window.html#Fl_Window.clear_border>Fl_Window</A></LI>
+<LI>clear_changed: <A href="Fl_Valuator.html#Fl_Valuator.clear_changed">Fl_Valuator</A>,
+ <A href=Fl_Choice.html#Fl_Choice.clear_changed>Fl_Choice</A>,
+ <A href=Fl_Widget.html#Fl_Widget.clear_changed>Fl_Widget</A></LI>
+<LI>clear_output: <A href=Fl_Widget.html#Fl_Widget.clear_output>Fl_Widget</A></LI>
+<LI>clear_overlay: <A href=Fl_Menu_Window.html#Fl_Menu_Window.clear_overlay>Fl_Menu_Window</A></LI>
+<LI>clear_rectangular: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.clear_rectangular">Fl_Text_Buffer</A></LI>
+<LI>clear_visible: <A href=Fl_Widget.html#Fl_Widget.clear_visible>Fl_Widget</A></LI>
+<LI>clear_visible_focus: <A href=Fl_Widget.html#Fl_Widget.clear_visible_focus>Fl_Widget</A></LI>
+<LI>color: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.color">Fl_File_Chooser</A>,
+ <A HREF="Fl_Tooltip.html#Fl_Tooltip.color">Fl_Tooltip</A>,
+ <A href=Fl_Widget.html#Fl_Widget.color>Fl_Widget</A></LI>
+<LI>color_average: <A href="Fl_Image.html#Fl_Image.color_average">Fl_Image</A></LI>
+<LI>column_char: <A href=Fl_Browser.html#Fl_Browser.column_char>Fl_Browser</A></LI>
+<LI>column_widths: <A href=Fl_Browser.html#Fl_Browser.column_widths>Fl_Browser</A></LI>
+<LI>contains: <A href=Fl_Widget.html#Fl_Widget.contains>Fl_Widget</A></LI>
+<LI>context: <A href=Fl_Gl_Window.html#Fl_Gl_Window.context>Fl_Gl_Window</A></LI>
+<LI>context_valid: <A href=Fl_Gl_Window.html#Fl_Gl_Window.context_valid>Fl_Gl_Window</A></LI>
+<LI>copy: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.copy">Fl_Text_Buffer</A>,
+ <A href="Fl_Image.html#Fl_Image.copy">Fl_Image</A>,
+ <A href="Fl_Input_.html#Fl_Input_.copy">Fl_Input_</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.copy>Fl_Menu_</A></LI>
+<LI>copy_cuts: <A href="Fl_Input_.html#Fl_Input_.copy_cuts">Fl_Input_</A></LI>
+<LI>copy_label: <A href=Fl_Widget.html#Fl_Widget.copy_label>Fl_Widget</A></LI>
+<LI>count: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.count">Fl_File_Chooser</A>,
+ <A href="Fl_Image.html#Fl_Image.count">Fl_Image</A></LI>
+<LI>count_displayed_characters: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.count_displayed_characters">Fl_Text_Buffer</A></LI>
+<LI>count_lines: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.count_lines">Fl_Text_Buffer</A></LI>
+<LI>current: <A href=Fl_Group.html#Fl_Group.current>Fl_Group</A>,
+ <A href=Fl_Window.html#Fl_Window.current>Fl_Window</A></LI>
+<LI>cursor: <A href=Fl_Window.html#Fl_Window.cursor>Fl_Window</A></LI>
+<LI>cursor_color: <A HREF="Fl_Text_Display.html#Fl_Text_Display.cursor_color">Fl_Text_Display</A>,
+ <A href="Fl_Value_Input.html#Fl_Value_Input.cursor_color">Fl_Value_Input</A>,
+ <A href=Fl_Input.html#Fl_Input.cursor_color>Fl_Input</A></LI>
+<LI>cursor_style: <A HREF="Fl_Text_Display.html#Fl_Text_Display.cursor_style">Fl_Text_Display</A></LI>
+<LI>cut: <A href="Fl_Input_.html#Fl_Input_.cut">Fl_Input_</A></LI>
+</UL>
+<H3>D</H3><UL>
+<LI>d: <A href="Fl_Image.html#Fl_Image.d">Fl_Image</A></LI>
+<LI>damage: <A href=Fl_Widget.html#Fl_Widget.damage>Fl_Widget</A></LI>
+<LI>data: <A href="Fl_Image.html#Fl_Image.data">Fl_Image</A>,
+ <A href=Fl_Browser.html#Fl_Browser.data>Fl_Browser</A></LI>
+<LI>deactivate: <A href=Fl_Menu_Item.html#Fl_Menu_Item.deactivate>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.deactivate>Fl_Widget</A></LI>
+<LI>default_callback: <A href=Fl_Widget.html#Fl_Widget.default_callback>Fl_Widget</A></LI>
+<LI>default_key_function: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.default_key_function">Fl_Text_Editor</A></LI>
+<LI>deimage: <A href=Fl_Widget.html#Fl_Widget.deimage>Fl_Widget</A></LI>
+<LI>delay: <A HREF="Fl_Tooltip.html#Fl_Tooltip.delay">Fl_Tooltip</A></LI>
+<LI>deleteEntry: <a href="Fl_Preferences.html#Fl_Preferences.deleteEntry">Fl_Preferences</a></LI>
+<LI>deleteGroup: <a href="Fl_Preferences.html#Fl_Preferences.deleteGroup">Fl_Preferences</a></LI>
+<LI>deleting: <A href="Fl_Browser_.html#Fl_Browser_.deleting">Fl_Browser_</A></LI>
+<LI>desaturate: <A href="Fl_Image.html#Fl_Image.desaturate">Fl_Image</A></LI>
+<LI>deselect: <A href="Fl_Browser_.html#Fl_Browser_.deselect">Fl_Browser_</A>,
+ <A href=Fl_Hold_Browser.html#Fl_Hold_Browser.deselect>Fl_Hold_Browser</A>,
+ <A href=Fl_Multi_Browser.html#Fl_Multi_Browser.deselect>Fl_Multi_Browser</A>,
+ <A href=Fl_Select_Browser.html#Fl_Select_Browser.deselect>Fl_Select_Browser</A></LI>
+<LI>direction: <A href=Fl_Timer.html#Fl_Timer.direction>Fl_Timer</A></LI>
+<LI>directory: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.directory">Fl_File_Chooser</A>,
+ <A HREF="Fl_Help_View.html#Fl_Help_View.directory">Fl_Help_View</A></LI>
+<LI>disable: <A HREF="Fl_Tooltip.html#Fl_Tooltip.disable">Fl_Tooltip</A></LI>
+<LI>display: <A href="Fl_Browser_.html#Fl_Browser_.display">Fl_Browser_</A></LI>
+<LI>displayed: <A href="Fl_Browser_.html#Fl_Browser_.displayed">Fl_Browser_</A></LI>
+<LI>do_callback: <A href=Fl_Menu_Item.html#Fl_Menu_Item.do_callback>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.do_callback>Fl_Widget</A></LI>
+<LI>down_box: <A href="Fl_File_Input.html#Fl_File_Input.down_box">Fl_File_Input</A>,
+ <A href=Fl_Button.html#Fl_Button.down_box>Fl_Button</A>,
+ <A href=Fl_Choice.html#Fl_Choice.down_box>Fl_Choice</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.down_box>Fl_Menu_</A></LI>
+<LI>draw: <A HREF="Fl_File_Icon.html#Fl_File_Icon.draw">Fl_File_Icon</A>,
+ <A href="Fl_Browser_.html#Fl_Browser_.draw">Fl_Browser_</A>,
+ <A href="Fl_Image.html#Fl_Image.draw">Fl_Image</A>,
+ <A href=Fl_Gl_Window.html#Fl_Gl_Window.draw>Fl_Gl_Window</A></LI>
+<LI>draw_empty: <A href="Fl_Image.html#Fl_Image.draw_empty">Fl_Image</A></LI>
+<LI>draw_overlay: <A href=Fl_Gl_Window.html#Fl_Gl_Window.draw_overlay>Fl_Gl_Window</A>,
+ <A href=Fl_Overlay_Window.html#Fl_Overlay_Window.draw_overlay>Fl_Overlay_Window</A></LI>
+<LI>drawtext: <A href="Fl_Input_.html#Fl_Input_.drawtext">Fl_Input_</A></LI>
+</UL>
+<H3>E</H3><UL>
+<LI>enable: <A HREF="Fl_Tooltip.html#Fl_Tooltip.enable">Fl_Tooltip</A></LI>
+<LI>enabled: <A HREF="Fl_Tooltip.html#Fl_Tooltip.enabled">Fl_Tooltip</A></LI>
+<LI>end: <A href=Fl_Group.html#Fl_Group.end>Fl_Group</A></LI>
+<LI>enter: <A HREF="Fl_Tooltip.html#Fl_Tooltip.enter">Fl_Tooltip</A></LI>
+<LI>enter_area: <A HREF="Fl_Tooltip.html#Fl_Tooltip.enter_area">Fl_Tooltip</A></LI>
+<LI>entries: <a href="Fl_Preferences.html#Fl_Preferences.entries">Fl_Preferences</a></LI>
+<LI>entry: <a href="Fl_Preferences.html#Fl_Preferences.entry">Fl_Preferences</a></LI>
+<LI>entryExists: <a href="Fl_Preferences.html#Fl_Preferences.entryExists">Fl_Preferences</a></LI>
+<LI>exit: <A HREF="Fl_Tooltip.html#Fl_Tooltip.exit">Fl_Tooltip</A></LI>
+<LI>expand_character: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.expand_character">Fl_Text_Buffer</A></LI>
+</UL>
+<H3>F</H3><UL>
+<LI>filename: <A HREF="Fl_Help_View.html#Fl_Help_View.filename">Fl_Help_View</A></LI>
+<LI>filetype: <A HREF="Fl_File_Browser.html#Fl_File_Browser.filetype">Fl_File_Browser</A></LI>
+<LI>filter: <A HREF="Fl_File_Browser.html#Fl_File_Browser.filter">Fl_File_Browser</A>,
+ <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.filter">Fl_File_Chooser</A></LI>
+<LI>filter_value: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.filter_value">Fl_File_Chooser</A></LI>
+<LI>find: <A HREF="Fl_File_Icon.html#Fl_File_Icon.find">Fl_File_Icon</A>,
+ <A href="Fl_Shared_Image.html#Fl_Shared_Image.find">Fl_Shared_Image</A>,
+ <A href=Fl_Group.html#Fl_Group.find>Fl_Group</A></LI>
+<LI>find_item: <A href="Fl_Browser_.html#Fl_Browser_.find_item">Fl_Browser_</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.find_item>Fl_Menu_</A></LI>
+<LI>findchar_backward: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.findchar_backward">Fl_Text_Buffer</A></LI>
+<LI>findchar_forward: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.findchar_forward">Fl_Text_Buffer</A></LI>
+<LI>findchars_backward: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.findchars_backward">Fl_Text_Buffer</A></LI>
+<LI>findchars_forward: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.findchars_forward">Fl_Text_Buffer</A></LI>
+<LI>first: <A HREF="Fl_File_Icon.html#Fl_File_Icon.first">Fl_File_Icon</A></LI>
+<LI>font: <A HREF="Fl_Tooltip.html#Fl_Tooltip.font">Fl_Tooltip</A></LI>
+<LI>format: <A href="Fl_Valuator.html#Fl_Valuator.format">Fl_Valuator</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.format>Fl_Spinner</a></LI>
+<LI>format_char: <A href=Fl_Browser.html#Fl_Browser.format_char>Fl_Browser</A></LI>
+<LI>free_position: <A href=Fl_Window.html#Fl_Window.free_position>Fl_Window</A></LI>
+<LI>full_height: <A href="Fl_Browser_.html#Fl_Browser_.full_height">Fl_Browser_</A></LI>
+<LI>full_width: <A href="Fl_Browser_.html#Fl_Browser_.full_width">Fl_Browser_</A></LI>
+<LI>fullscreen: <A href=Fl_Window.html#Fl_Window.fullscreen>Fl_Window</A></LI>
+<LI>fullscreen_off: <A href=Fl_Window.html#Fl_Window.fullscreen_off>Fl_Window</A></LI>
+</UL>
+<H3>G</H3><UL>
+<LI>g: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.g>Fl_Color_Chooser</A></LI>
+<LI>get: <A href="Fl_Shared_Image.html#Fl_Shared_Image.get">Fl_Shared_Image</A>,
+ <a href="Fl_Preferences.html#Fl_Preferences.get">Fl_Preferences</a></LI>
+<LI>getUserdataPath: <a href="Fl_Preferences.html#Fl_Preferences.getUserdataPath">Fl_Preferences</a></LI>
+<LI>global: <A href=Fl_Menu_.html#Fl_Menu_.global>Fl_Menu_</A></LI>
+<LI>group: <a href="Fl_Preferences.html#Fl_Preferences.group">Fl_Preferences</a></LI>
+<LI>groupExists: <a href="Fl_Preferences.html#Fl_Preferences.groupExists">Fl_Preferences</a></LI>
+<LI>groups: <a href="Fl_Preferences.html#Fl_Preferences.groups">Fl_Preferences</a></LI>
+</UL>
+<H3>H</H3><UL>
+<LI>h: <A href="Fl_Image.html#Fl_Image.h">Fl_Image</A>,
+ <A href=Fl_Widget.html#Fl_Widget.h>Fl_Widget</A></LI>
+<LI>handle: <A href="Fl_Browser_.html#Fl_Browser_.handle">Fl_Browser_</A>,
+ <A href=Fl_Widget.html#Fl_Widget.handle>Fl_Widget</A></LI>
+<LI>handletext: <A href="Fl_Input_.html#Fl_Input_.handletext">Fl_Input_</A></LI>
+<LI>has_scrollbar: <A href="Fl_Browser_.html#Fl_Browser_.has_scrollbar">Fl_Browser_</A></LI>
+<LI>hide: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.hide">Fl_File_Chooser</A>,
+ <A HREF="Fl_Help_Dialog.html#Fl_Help_Dialog.hide">Fl_Help_Dialog</A>,
+ <A href=Fl_Browser.html#Fl_Browser.hide>Fl_Browser</A>,
+ <A href=Fl_Gl_Window.html#Fl_Gl_Window.hide>Fl_Gl_Window</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.hide>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.hide>Fl_Widget</A>,
+ <A href=Fl_Window.html#Fl_Window.hide>Fl_Window</A></LI>
+<LI>hide_cursor: <A HREF="Fl_Text_Display.html#Fl_Text_Display.hide_cursor">Fl_Text_Display</A></LI>
+<LI>highlight: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.highlight">Fl_Text_Buffer</A></LI>
+<LI>highlight_data: <A HREF="Fl_Text_Display.html#Fl_Text_Display.highlight_data">Fl_Text_Display</A></LI>
+<LI>highlight_position: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.highlight_position">Fl_Text_Buffer</A></LI>
+<LI>highlight_rectangular: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.highlight_rectangular">Fl_Text_Buffer</A></LI>
+<LI>highlight_selection: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.highlight_selection">Fl_Text_Buffer</A></LI>
+<LI>highlight_text: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.highlight_text">Fl_Text_Buffer</A></LI>
+<LI>hotspot: <A href=Fl_Window.html#Fl_Window.hotspot>Fl_Window</A></LI>
+<LI>hour: <A href=Fl_Clock.html#Fl_Clock.hour>Fl_Clock</A>,
+ <A href=Fl_Clock_Output.html#Fl_Clock_Output.hour>Fl_Clock_Output</A></LI>
+<LI>hoverdelay: <A HREF="Fl_Tooltip.html#Fl_Tooltip.hoverdelay">Fl_Tooltip</A></LI>
+<LI>hposition: <A href="Fl_Browser_.html#Fl_Browser_.hposition">Fl_Browser_</A></LI>
+<LI>hsv2rgb: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.hsv2rgb>Fl_Color_Chooser</A></LI>
+<LI>hsv: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.hsv>Fl_Color_Chooser</A></LI>
+<LI>hue: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.hue>Fl_Color_Chooser</A></LI>
+</UL>
+<H3>I</H3><UL>
+<LI>iconize: <A href=Fl_Window.html#Fl_Window.iconize>Fl_Window</A></LI>
+<LI>iconlabel: <A href=Fl_Window.html#Fl_Window.iconlabel>Fl_Window</A></LI>
+<LI>iconsize: <A HREF="Fl_File_Browser.html#Fl_File_Browser.iconsize">Fl_File_Browser</A>,
+ <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.iconsize">Fl_File_Chooser</A></LI>
+<LI>image: <A href="Fl_Tiled_Image.html#Fl_Tiled_Image.image">Fl_Tiled_Image</A>,
+ <A href=Fl_Widget.html#Fl_Widget.image>Fl_Widget</A></LI>
+<LI>images: <A href="Fl_Shared_Image.html#Fl_Shared_Image.images">Fl_Shared_Image</A></LI>
+<LI>in_selection: <A HREF="Fl_Text_Display.html#Fl_Text_Display.in_selection">Fl_Text_Display</A></LI>
+<LI>inactive: <A href="Fl_Image.html#Fl_Image.inactive">Fl_Image</A></LI>
+<LI>incr_height: <A href="Fl_Browser_.html#Fl_Browser_.incr_height">Fl_Browser_</A></LI>
+<LI>increment: <A href="Fl_Valuator.html#Fl_Valuator.increment">Fl_Valuator</A></LI>
+<LI>index: <A href=Fl_Input.html#Fl_Input.index>Fl_Input</A>,
+ <A href=Fl_Output.html#Fl_Output.index>Fl_Output</A></LI>
+<LI>init_sizes: <A href=Fl_Group.html#Fl_Group.init_sizes>Fl_Group</A></LI>
+<LI>input: <A href=Fl_Input_Choice.html#Fl_Input_Choice.input>Fl_Input_Choice</A></LI>
+<LI>input_type: <A href="Fl_Input_.html#Fl_Input_.input_type">Fl_Input_</A></LI>
+<LI>insert: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.insert">Fl_Text_Buffer</A>,
+ <A HREF="Fl_Text_Display.html#Fl_Text_Display.insert">Fl_Text_Display</A>,
+ <A href="Fl_Input_.html#Fl_Input_.insert">Fl_Input_</A>,
+ <A href=Fl_Browser.html#Fl_Browser.insert>Fl_Browser</A>,
+ <A href=Fl_Chart.html#Fl_Chart.insert>Fl_Chart</A>,
+ <A href=Fl_Group.html#Fl_Group.insert>Fl_Group</A></LI>
+<LI>insert_column: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.insert_column">Fl_Text_Buffer</A></LI>
+<LI>insert_mode: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.insert_mode">Fl_Text_Editor</A></LI>
+<LI>insert_position: <A HREF="Fl_Text_Display.html#Fl_Text_Display.insert_position">Fl_Text_Display</A></LI>
+<LI>insertfile: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.insertfile">Fl_Text_Buffer</A></LI>
+<LI>inserting: <A href="Fl_Browser_.html#Fl_Browser_.inserting">Fl_Browser_</A></LI>
+<LI>inside: <A href=Fl_Widget.html#Fl_Widget.inside>Fl_Widget</A></LI>
+<LI>invalidate: <A href=Fl_Gl_Window.html#Fl_Gl_Window.invalidate>Fl_Gl_Window</A></LI>
+<LI>item_draw: <A href="Fl_Browser_.html#Fl_Browser_.item_draw">Fl_Browser_</A></LI>
+<LI>item_first: <A href="Fl_Browser_.html#Fl_Browser_.item_first">Fl_Browser_</A></LI>
+<LI>item_height: <A href="Fl_Browser_.html#Fl_Browser_.item_height">Fl_Browser_</A></LI>
+<LI>item_next: <A href="Fl_Browser_.html#Fl_Browser_.item_next">Fl_Browser_</A></LI>
+<LI>item_pathname: <A href=Fl_Menu_.html#Fl_Menu_.item_pathname>Fl_Menu_</A></LI>
+<LI>item_prev: <A href="Fl_Browser_.html#Fl_Browser_.item_prev">Fl_Browser_</A></LI>
+<LI>item_quick_height: <A href="Fl_Browser_.html#Fl_Browser_.item_quick_height">Fl_Browser_</A></LI>
+<LI>item_select: <A href="Fl_Browser_.html#Fl_Browser_.item_select">Fl_Browser_</A></LI>
+<LI>item_selected: <A href="Fl_Browser_.html#Fl_Browser_.item_selected">Fl_Browser_</A></LI>
+<LI>item_width: <A href="Fl_Browser_.html#Fl_Browser_.item_width">Fl_Browser_</A></LI>
+</UL>
+<H3>K</H3><UL>
+<LI>kf_backspace: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_backspace">Fl_Text_Editor</A></LI>
+<LI>kf_c_s_move: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_c_s_move">Fl_Text_Editor</A></LI>
+<LI>kf_copy: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_copy">Fl_Text_Editor</A></LI>
+<LI>kf_ctrl_move: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_ctrl_move">Fl_Text_Editor</A></LI>
+<LI>kf_cut: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_cut">Fl_Text_Editor</A></LI>
+<LI>kf_default: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_default">Fl_Text_Editor</A></LI>
+<LI>kf_delete: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_delete">Fl_Text_Editor</A></LI>
+<LI>kf_down: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_down">Fl_Text_Editor</A></LI>
+<LI>kf_end: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_end">Fl_Text_Editor</A></LI>
+<LI>kf_enter: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_enter">Fl_Text_Editor</A></LI>
+<LI>kf_home: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_home">Fl_Text_Editor</A></LI>
+<LI>kf_ignore: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_ignore">Fl_Text_Editor</A></LI>
+<LI>kf_insert: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_insert">Fl_Text_Editor</A></LI>
+<LI>kf_left: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_left">Fl_Text_Editor</A></LI>
+<LI>kf_move: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_move">Fl_Text_Editor</A></LI>
+<LI>kf_page_down: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_page_down">Fl_Text_Editor</A></LI>
+<LI>kf_page_up: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_page_up">Fl_Text_Editor</A></LI>
+<LI>kf_paste: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_paste">Fl_Text_Editor</A></LI>
+<LI>kf_right: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_right">Fl_Text_Editor</A></LI>
+<LI>kf_select_all: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_select_all">Fl_Text_Editor</A></LI>
+<LI>kf_shift_move: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_shift_move">Fl_Text_Editor</A></LI>
+<LI>kf_up: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.kf_up">Fl_Text_Editor</A></LI>
+</UL>
+<H3>L</H3><UL>
+<LI>label: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.label">Fl_File_Chooser</A>,
+ <A HREF="Fl_File_Icon.html#Fl_File_Icon.label">Fl_File_Icon</A>,
+ <A href="Fl_Image.html#Fl_Image.label">Fl_Image</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.label>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.label>Fl_Widget</A>,
+ <A href=Fl_Window.html#Fl_Window.label>Fl_Window</A></LI>
+<LI>labelcolor: <A href=Fl_Menu_Item.html#Fl_Menu_Item.labelcolor>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.labelcolor>Fl_Widget</A></LI>
+<LI>labelfont: <A href=Fl_Menu_Item.html#Fl_Menu_Item.labelfont>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.labelfont>Fl_Widget</A></LI>
+<LI>labelsize: <A href=Fl_Menu_Item.html#Fl_Menu_Item.labelsize>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.labelsize>Fl_Widget</A></LI>
+<LI>labeltype: <A HREF="Fl_File_Icon.html#Fl_File_Icon.labeltype">Fl_File_Icon</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.labeltype>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.labeltype>Fl_Widget</A></LI>
+<LI>ld: <A href="Fl_Image.html#Fl_Image.ld">Fl_Image</A></LI>
+<LI>leftedge: <A href="Fl_Browser_.html#Fl_Browser_.leftedge">Fl_Browser_</A></LI>
+<LI>length: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.length">Fl_Text_Buffer</A></LI>
+<LI>line_end: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.line_end">Fl_Text_Buffer</A></LI>
+<LI>line_start: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.line_start">Fl_Text_Buffer</A></LI>
+<LI>line_text: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.line_text">Fl_Text_Buffer</A></LI>
+<LI>lineboundary: <A href="Fl_Input_.html#Fl_Input_.lineboundary">Fl_Input_</A></LI>
+<LI>linesize: <A href=Fl_Scrollbar.html#Fl_Scrollbar.linesize>Fl_Scrollbar</A></LI>
+<LI>link: <A HREF="Fl_Help_View.html#Fl_Help_View.link">Fl_Help_View</A></LI>
+<LI>load: <A HREF="Fl_File_Browser.html#Fl_File_Browser.load">Fl_File_Browser</A>,
+ <A HREF="Fl_File_Icon.html#Fl_File_Icon.load">Fl_File_Icon</A>,
+ <A HREF="Fl_Help_Dialog.html#Fl_Help_Dialog.load">Fl_Help_Dialog</A>,
+ <A HREF="Fl_Help_View.html#Fl_Help_View.load">Fl_Help_View</A>,
+ <A href=Fl_Browser.html#Fl_Browser.load>Fl_Browser</A></LI>
+<LI>load_fti: <A HREF="Fl_File_Icon.html#Fl_File_Icon.load_fti">Fl_File_Icon</A></LI>
+<LI>load_system_icons: <A HREF="Fl_File_Icon.html#Fl_File_Icon.load_system_icons">Fl_File_Icon</A></LI>
+<LI>load_xpm: <A HREF="Fl_File_Icon.html#Fl_File_Icon.load_xpm">Fl_File_Icon</A></LI>
+<LI>loadfile: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.loadfile">Fl_Text_Buffer</A></LI>
+<LI>lstep: <A href=Fl_Counter.html#Fl_Counter.lstep>Fl_Counter</A></LI>
+</UL>
+<H3>M</H3><UL>
+<LI>make_current: <A href=Fl_Gl_Window.html#Fl_Gl_Window.make_current>Fl_Gl_Window</A>,
+ <A href=Fl_Window.html#Fl_Window.make_current>Fl_Window</A></LI>
+<LI>make_overlay_current: <A href=Fl_Gl_Window.html#Fl_Gl_Window.make_overlay_current>Fl_Gl_Window</A></LI>
+<LI>mark: <A href="Fl_Input_.html#Fl_Input_.mark">Fl_Input_</A></LI>
+<LI>maximum: <A href="Fl_Progress.html#Fl_Progress.maximum">Fl_Progress</A>,
+ <A href="Fl_Valuator.html#Fl_Valuator.maximum">Fl_Valuator</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.maximum>Fl_Spinner</a></LI>
+<LI>maximum_size: <A href="Fl_Input_.html#Fl_Input_.maximum_size">Fl_Input_</A></LI>
+<LI>maxsize: <A href=Fl_Chart.html#Fl_Chart.maxsize>Fl_Chart</A></LI>
+<LI>maybe_do_callback: <A href="Fl_Input_.html#Fl_Input_.maybe_do_callback">Fl_Input_</A></LI>
+<LI>menu: <A href=Fl_Input_Choice.html#Fl_Input_Choice.menu>Fl_Input_Choice</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.menu>Fl_Menu_</A></LI>
+<LI>menubutton: <A href=Fl_Input_Choice.html#Fl_Input_Choice.menubutton>Fl_Input_Choice</A></LI>
+<LI>middleline: <A href=Fl_Browser.html#Fl_Browser.middleline>Fl_Browser</A></LI>
+<LI>minimum: <A href="Fl_Progress.html#Fl_Progress.minimum">Fl_Progress</A>,
+ <A href="Fl_Valuator.html#Fl_Valuator.minimum">Fl_Valuator</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.minimum>Fl_Spinner</a></LI>
+<LI>minute: <A href=Fl_Clock.html#Fl_Clock.minute>Fl_Clock</A>,
+ <A href=Fl_Clock_Output.html#Fl_Clock_Output.minute>Fl_Clock_Output</A></LI>
+<LI>modal: <A href=Fl_Window.html#Fl_Window.modal>Fl_Window</A></LI>
+<LI>mode: <A href=Fl_Gl_Window.html#Fl_Gl_Window.mode>Fl_Gl_Window</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.mode>Fl_Menu_</A></LI>
+<LI>move: <A href=Fl_Browser.html#Fl_Browser.move>Fl_Browser</A></LI>
+<LI>move_down: <A HREF="Fl_Text_Display.html#Fl_Text_Display.move_down">Fl_Text_Display</A></LI>
+<LI>move_left: <A HREF="Fl_Text_Display.html#Fl_Text_Display.move_left">Fl_Text_Display</A></LI>
+<LI>move_right: <A HREF="Fl_Text_Display.html#Fl_Text_Display.move_right">Fl_Text_Display</A></LI>
+<LI>move_up: <A HREF="Fl_Text_Display.html#Fl_Text_Display.move_up">Fl_Text_Display</A></LI>
+<LI>mvalue: <A href=Fl_Menu_.html#Fl_Menu_.mvalue>Fl_Menu_</A></LI>
+</UL>
+<H3>N</H3><UL>
+<LI>name: <A href="Fl_Shared_Image.html#Fl_Shared_Image.name">Fl_Shared_Image</A></LI>
+<LI>nchecked: <A href=Fl_Check_Browser.html#Fl_Check_Browser.nchecked>Fl_Check_Browser</A></LI>
+<LI>new_list: <A href="Fl_Browser_.html#Fl_Browser_.new_list">Fl_Browser_</A></LI>
+<LI>next: <A HREF="Fl_Wizard.html#Fl_Wizard.next">Fl_Wizard</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.next>Fl_Menu_Item</A></LI>
+<LI>next_word: <A HREF="Fl_Text_Display.html#Fl_Text_Display.next_word">Fl_Text_Display</A></LI>
+<LI>nitems: <A href=Fl_Check_Browser.html#Fl_Check_Browser.nitems>Fl_Check_Browser</A></LI>
+<LI>non_modal: <A href=Fl_Window.html#Fl_Window.non_modal>Fl_Window</A></LI>
+<LI>null_substitution_character: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.null_substitution_character">Fl_Text_Buffer</A></LI>
+<LI>num_images: <A href="Fl_Shared_Image.html#Fl_Shared_Image.num_images">Fl_Shared_Image</A></LI>
+</UL>
+<H3>O</H3><UL>
+<LI>ok_label: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.ok_label">Fl_File_Chooser</A></LI>
+<LI>ortho: <A href=Fl_Gl_Window.html#Fl_Gl_Window.ortho>Fl_Gl_Window</A></LI>
+<LI>output: <A href=Fl_Widget.html#Fl_Widget.output>Fl_Widget</A></LI>
+<LI>outputfile: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.outputfile">Fl_Text_Buffer</A></LI>
+<LI>overlay_rectangular: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.overlay_rectangular">Fl_Text_Buffer</A></LI>
+<LI>overstrike: <A HREF="Fl_Text_Display.html#Fl_Text_Display.overstrike">Fl_Text_Display</A></LI>
+</UL>
+<H3>P</H3><UL>
+<LI>parent: <A href=Fl_Widget.html#Fl_Widget.parent>Fl_Widget</A></LI>
+<LI>pattern: <A HREF="Fl_File_Icon.html#Fl_File_Icon.pattern">Fl_File_Icon</A></LI>
+<LI>popup: <A href=Fl_Menu_Button.html#Fl_Menu_Button.popup>Fl_Menu_Button</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.popup>Fl_Menu_Item</A></LI>
+<LI>position: <A href="Fl_Browser_.html#Fl_Browser_.position">Fl_Browser_</A>,
+ <A href="Fl_Input_.html#Fl_Input_.position">Fl_Input_</A>,
+ <A href=Fl_Browser.html#Fl_Browser.position>Fl_Browser</A>,
+ <A href=Fl_Scroll.html#Fl_Scroll.position>Fl_Scroll</A>,
+ <A href=Fl_Tile.html#Fl_Tile.position>Fl_Tile</A>,
+ <A href=Fl_Widget.html#Fl_Widget.position>Fl_Widget</A></LI>
+<LI>position_style: <A HREF="Fl_Text_Display.html#Fl_Text_Display.position_style">Fl_Text_Display</A></LI>
+<LI>precision: <A href="Fl_Valuator.html#Fl_Valuator.precision">Fl_Valuator</A></LI>
+<LI>prev: <A HREF="Fl_Wizard.html#Fl_Wizard.prev">Fl_Wizard</A></LI>
+<LI>preview: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.preview">Fl_File_Chooser</A></LI>
+<LI>previous_word: <A HREF="Fl_Text_Display.html#Fl_Text_Display.previous_word">Fl_Text_Display</A></LI>
+<LI>primary_selection: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.primary_selection">Fl_Text_Buffer</A></LI>
+<LI>pulldown: <A href=Fl_Menu_Item.html#Fl_Menu_Item.pulldown>Fl_Menu_Item</A></LI>
+</UL>
+<H3>R</H3><UL>
+<LI>r: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.r>Fl_Color_Chooser</A></LI>
+<LI>radio: <A href=Fl_Menu_Item.html#Fl_Menu_Item.radio>Fl_Menu_Item</A></LI>
+<LI>range: <A href="Fl_Valuator.html#Fl_Valuator.range">Fl_Valuator</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.range>Fl_Spinner</a></LI>
+<LI>readonly: <A href="Fl_Input_.html#Fl_Input_.readonly">Fl_Input_</A></LI>
+<LI>redisplay_range: <A HREF="Fl_Text_Display.html#Fl_Text_Display.redisplay_range">Fl_Text_Display</A></LI>
+<LI>redraw: <A href=Fl_Widget.html#Fl_Widget.redraw>Fl_Widget</A></LI>
+<LI>redraw_label: <A href=Fl_Widget.html#Fl_Widget.redraw_label>Fl_Widget</A></LI>
+<LI>redraw_line: <A href="Fl_Browser_.html#Fl_Browser_.redraw_line">Fl_Browser_</A>,
+ <A href="Fl_Browser_.html#Fl_Browser_.redraw_lines">Fl_Browser_</A></LI>
+<LI>redraw_overlay: <A href=Fl_Gl_Window.html#Fl_Gl_Window.redraw_overlay>Fl_Gl_Window</A>,
+ <A href=Fl_Overlay_Window.html#Fl_Overlay_Window.redraw_overlay>Fl_Overlay_Window</A></LI>
+<LI>refcount: <A href="Fl_Shared_Image.html#Fl_Shared_Image.refcount">Fl_Shared_Image</A></LI>
+<LI>release: <A href="Fl_Shared_Image.html#Fl_Shared_Image.release">Fl_Shared_Image</A></LI>
+<LI>reload: <A href="Fl_Shared_Image.html#Fl_Shared_Image.reload">Fl_Shared_Image</A></LI>
+<LI>remove: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.remove">Fl_Text_Buffer</A>,
+ <A href=Fl_Browser.html#Fl_Browser.remove>Fl_Browser</A>,
+ <A href=Fl_Group.html#Fl_Group.remove>Fl_Group</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.remove>Fl_Menu_</A></LI>
+<LI>remove_all_key_bindings: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.remove_all_key_bindings">Fl_Text_Editor</A></LI>
+<LI>remove_key_binding: <A HREF="Fl_Text_Editor.html#Fl_Text_Editor.remove_key_binding">Fl_Text_Editor</A></LI>
+<LI>remove_modify_callback: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.remove_modify_callback">Fl_Text_Buffer</A></LI>
+<LI>remove_rectangular: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.remove_rectangular">Fl_Text_Buffer</A></LI>
+<LI>remove_secondary_selection: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.remove_secondary_selection">Fl_Text_Buffer</A></LI>
+<LI>remove_selection: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.remove_selection">Fl_Text_Buffer</A></LI>
+<LI>replace: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.replace">Fl_Text_Buffer</A>,
+ <A href="Fl_Input_.html#Fl_Input_.replace">Fl_Input_</A>,
+ <A href=Fl_Chart.html#Fl_Chart.replace>Fl_Chart</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.replace>Fl_Menu_</A></LI>
+<LI>replace_rectangular: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.replace_rectangular">Fl_Text_Buffer</A></LI>
+<LI>replace_secondary_selection: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.replace_secondary_selection">Fl_Text_Buffer</A></LI>
+<LI>replace_selection: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.replace_selection">Fl_Text_Buffer</A></LI>
+<LI>replacing: <A href="Fl_Browser_.html#Fl_Browser_.replacing">Fl_Browser_</A></LI>
+<LI>rescan: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.rescan">Fl_File_Chooser</A></LI>
+<LI>resizable: <A href=Fl_Group.html#Fl_Group.resizable>Fl_Group</A></LI>
+<LI>resize: <A href="Fl_Browser_.html#Fl_Browser_.resize">Fl_Browser_</A>,
+ <A href=Fl_Widget.html#Fl_Widget.resize>Fl_Widget</A>,
+ <A href=Fl_Window.html#Fl_Window.resize>Fl_Window</A></LI>
+<LI>resizeable: <A href=Fl_Tile.html#Fl_Tile.resizeable>Fl_Tile</A></LI>
+<LI>rewind_lines: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.rewind_lines">Fl_Text_Buffer</A></LI>
+<LI>rgb2hsv: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.rgb2hsv>Fl_Color_Chooser</A></LI>
+<LI>rgb: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.rgb>Fl_Color_Chooser</A></LI>
+<LI>round: <A href="Fl_Valuator.html#Fl_Valuator.round">Fl_Valuator</A></LI>
+</UL>
+<H3>S</H3><UL>
+<LI>saturation: <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.saturation>Fl_Color_Chooser</A></LI>
+<LI>savefile: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.savefile">Fl_Text_Buffer</A></LI>
+<LI>scroll: <A HREF="Fl_Text_Display.html#Fl_Text_Display.scroll">Fl_Text_Display</A></LI>
+<LI>scrollbar_align: <A HREF="Fl_Text_Display.html#Fl_Text_Display.scrollbar_align">Fl_Text_Display</A></LI>
+<LI>scrollbar_left: <A href="Fl_Browser_.html#Fl_Browser_.scrollbar_left">Fl_Browser_</A></LI>
+<LI>scrollbar_right: <A href="Fl_Browser_.html#Fl_Browser_.scrollbar_right">Fl_Browser_</A></LI>
+<LI>scrollbar_size: <A HREF="Fl.html#Fl.scrollbar_size">Fl</A></LI>
+<LI>scrollbar_width: <A HREF="Fl_Browser_.html#Fl_Browser_.scrollbar_width">Fl_Browser_</A>, <A HREF="Fl_Text_Display.html#Fl_Text_Display.scrollbar_width">Fl_Text_Display</A></LI>
+<LI>scrollvalue: <A href=Fl_Slider.html#Fl_Slider.scrollvalue>Fl_Slider</A></LI>
+<LI>search_backward: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.search_backward">Fl_Text_Buffer</A></LI>
+<LI>search_forward: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.search_forward">Fl_Text_Buffer</A></LI>
+<LI>second: <A href=Fl_Clock.html#Fl_Clock.second>Fl_Clock</A>,
+ <A href=Fl_Clock_Output.html#Fl_Clock_Output.second>Fl_Clock_Output</A></LI>
+<LI>secondary_select: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.secondary_select">Fl_Text_Buffer</A></LI>
+<LI>secondary_select_rectangular: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.secondary_select_rectangular">Fl_Text_Buffer</A></LI>
+<LI>secondary_selection: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.secondary_selection">Fl_Text_Buffer</A></LI>
+<LI>secondary_selection_position: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.secondary_selection_position">Fl_Text_Buffer</A></LI>
+<LI>secondary_selection_text: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.secondary_selection_text">Fl_Text_Buffer</A></LI>
+<LI>secondary_unselect: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.secondary_unselect">Fl_Text_Buffer</A></LI>
+<LI>select: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.select">Fl_Text_Buffer</A>,
+ <A href="Fl_Browser_.html#Fl_Browser_.select">Fl_Browser_</A>,
+ <A href=Fl_Hold_Browser.html#Fl_Hold_Browser.select>Fl_Hold_Browser</A>,
+ <A href=Fl_Multi_Browser.html#Fl_Multi_Browser.select>Fl_Multi_Browser</A>,
+ <A href=Fl_Select_Browser.html#Fl_Select_Browser.select>Fl_Select_Browser</A></LI>
+<LI>select_only: <A href="Fl_Browser_.html#Fl_Browser_.select_only">Fl_Browser_</A></LI>
+<LI>select_rectangular: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.select_rectangular">Fl_Text_Buffer</A></LI>
+<LI>selected: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.selected">Fl_Text_Buffer</A></LI>
+<LI>selection: <A href="Fl_Browser_.html#Fl_Browser_.selection">Fl_Browser_</A></LI>
+<LI>selection_color: <A href=Fl_Widget.html#Fl_Widget.selection_color>Fl_Widget</A></LI>
+<LI>selection_position: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.selection_position">Fl_Text_Buffer</A></LI>
+<LI>selection_text: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.selection_text">Fl_Text_Buffer</A></LI>
+<LI>set: <A href=Fl_Button.html#Fl_Button.set>Fl_Button</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.set>Fl_Menu_Item</A>,
+ <a href="Fl_Preferences.html#Fl_Preferences.set">Fl_Preferences</a></LI>
+<LI>set_changed: <A href="Fl_Valuator.html#Fl_Valuator.set_changed">Fl_Valuator</A>,
+ <A href=Fl_Choice.html#Fl_Choice.set_changed>Fl_Choice</A>,
+ <A href=Fl_Widget.html#Fl_Widget.set_changed>Fl_Widget</A>,
+ <A href=Fl_Check_Browser.html#Fl_Check_Browser.set_checked>Fl_Check_Browser</A></LI>
+<LI>set_modal: <A href=Fl_Window.html#Fl_Window.set_modal>Fl_Window</A></LI>
+<LI>set_non_modal: <A href=Fl_Window.html#Fl_Window.set_non_modal>Fl_Window</A></LI>
+<LI>set_output: <A href=Fl_Widget.html#Fl_Widget.set_output>Fl_Widget</A></LI>
+<LI>set_overlay: <A href=Fl_Menu_Window.html#Fl_Menu_Window.set_overlay>Fl_Menu_Window</A></LI>
+<LI>set_visible: <A href=Fl_Widget.html#Fl_Widget.set_visible>Fl_Widget</A></LI>
+<LI>set_visible_focus: <A href=Fl_Widget.html#Fl_Widget.set_visible_focus>Fl_Widget</A></LI>
+<LI>setonly: <A href=Fl_Button.html#Fl_Button.setonly>Fl_Button</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.setonly>Fl_Menu_Item</A></LI>
+<LI>shortcut: <A href=Fl_Button.html#Fl_Button.shortcut>Fl_Button</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.shortcut>Fl_Menu_</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.shortcut>Fl_Menu_Item</A></LI>
+<LI>show: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.show">Fl_File_Chooser</A>,
+ <A HREF="Fl_Help_Dialog.html#Fl_Help_Dialog.show">Fl_Help_Dialog</A>,
+ <A href=Fl_Browser.html#Fl_Browser.show>Fl_Browser</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.show>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.show>Fl_Widget</A>,
+ <A href=Fl_Window.html#Fl_Window.show>Fl_Window</A></LI>
+<LI>show_cursor: <A HREF="Fl_Text_Display.html#Fl_Text_Display.show_cursor">Fl_Text_Display</A></LI>
+<LI>show_insert_position: <A HREF="Fl_Text_Display.html#Fl_Text_Display.show_insert_position">Fl_Text_Display</A></LI>
+<LI>shown: <A href=Fl_Window.html#Fl_Window.shown>Fl_Window</A></LI>
+<LI>size: <A HREF="Fl_File_Icon.html#Fl_File_Icon.size">Fl_File_Icon</A>,
+ <A HREF="Fl_Help_View.html#Fl_Help_View.size">Fl_Help_View</A>,
+ <A HREF="Fl_Tooltip.html#Fl_Tooltip.size">Fl_Tooltip</A>,
+ <A href=Fl_Browser.html#Fl_Browser.size>Fl_Browser</A>,
+ <A href=Fl_Chart.html#Fl_Chart.size>Fl_Chart</A>,
+ <A href=Fl_Input.html#Fl_Input.size>Fl_Input</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.size>Fl_Menu_</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.size>Fl_Menu_Item</A>,
+ <A href=Fl_Output.html#Fl_Output.size>Fl_Output</A>,
+ <A href=Fl_Widget.html#Fl_Widget.size>Fl_Widget</A>,
+ <a href="Fl_Preferences.html#Fl_Preferences.size">Fl_Preferences</a></LI>
+<LI>size_range: <A href=Fl_Window.html#Fl_Window.size_range>Fl_Window</A></LI>
+<LI>skip_displayed_characters: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.skip_displayed_characters">Fl_Text_Buffer</A></LI>
+<LI>skip_lines: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.skip_lines">Fl_Text_Buffer</A></LI>
+<LI>slider: <A href=Fl_Slider.html#Fl_Slider.slider>Fl_Slider</A></LI>
+<LI>slider_size: <A href=Fl_Slider.html#Fl_Slider.slider_size>Fl_Slider</A></LI>
+<LI>soft: <A href="Fl_Value_Input.html#Fl_Value_Input.soft">Fl_Value_Input</A>,
+ <A href=Fl_Adjuster.html#Fl_Adjuster.soft>Fl_Adjuster</A>,
+ <A href=Fl_Value_Output.html#Fl_Value_Output.soft>Fl_Value_Output</A></LI>
+<LI>spacing: <A href=Fl_Pack.html#Fl_Pack.spacing>Fl_Pack</A></LI>
+<LI>static_value: <A href=Fl_Input.html#Fl_Input.static_value>Fl_Input</A></LI>
+<LI>step: <A href="Fl_Valuator.html#Fl_Valuator.step">Fl_Valuator</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.step>Fl_Spinner</a></LI>
+<LI>submenu: <A href=Fl_Menu_Item.html#Fl_Menu_Item.submenu>Fl_Menu_Item</A></LI>
+<LI>substitute_null_characters: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.substitute_null_characters">Fl_Text_Buffer</A></LI>
+<LI>suspended: <A href=Fl_Timer.html#Fl_Timer.suspended>Fl_Timer</A></LI>
+<LI>swap: <A href=Fl_Browser.html#Fl_Browser.swap>Fl_Browser</A></LI>
+<LI>swap_buffers: <A href=Fl_Gl_Window.html#Fl_Gl_Window.swap_buffers>Fl_Gl_Window</A></LI>
+</UL>
+<H3>T</H3><UL>
+<LI>tab_distance: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.tab_distance">Fl_Text_Buffer</A></LI>
+<LI>take_focus: <A href=Fl_Widget.html#Fl_Widget.take_focus>Fl_Widget</A></LI>
+<LI>takesevents: <A href=Fl_Widget.html#Fl_Widget.takesevents>Fl_Widget</A></LI>
+<LI>test_shortcut: <A href=Fl_Menu_.html#Fl_Menu_.test_shortcut>Fl_Menu_</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.test_shortcut>Fl_Menu_Item</A></LI>
+<LI>text: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.text">Fl_Text_Buffer</A>,
+ <A href=Fl_Browser.html#Fl_Browser.text>Fl_Browser</A>,
+ <A href=Fl_Check_Browser.html#Fl_Check_Browser.text>Fl_Check_Browser</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.text>Fl_Menu_</A></LI>
+<LI>text_in_rectangle: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.text_in_rectangle">Fl_Text_Buffer</A></LI>
+<LI>text_range: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.text_range">Fl_Text_Buffer</A></LI>
+<LI>textcolor: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.textcolor">Fl_File_Chooser</A>,
+ <A HREF="Fl_Help_View.html#Fl_Help_View.textcolor">Fl_Help_View</A>,
+ <A HREF="Fl_Text_Display.html#Fl_Text_Display.textcolor">Fl_Text_Display</A>,
+ <A HREF="Fl_Tooltip.html#Fl_Tooltip.textcolor">Fl_Tooltip</A>,
+ <A href="Fl_Browser_.html#Fl_Browser_.textcolor">Fl_Browser_</A>,
+ <A href="Fl_Value_Input.html#Fl_Value_Input.textcolor">Fl_Value_Input</A>,
+ <A href=Fl_Input.html#Fl_Input.textcolor>Fl_Input</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.textcolor>Fl_Menu_</A>,
+ <A href=Fl_Output.html#Fl_Output.textcolor>Fl_Output</A>,
+ <A href=Fl_Value_Output.html#Fl_Value_Output.textcolor>Fl_Value_Output</A>,
+ <A href=Fl_Value_Slider.html#Fl_Value_Slider.textcolor>Fl_Value_Slider</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.textcolor>Fl_Spinner</a></LI>
+<LI>textfont: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.textfont">Fl_File_Chooser</A>,
+ <A HREF="Fl_Help_View.html#Fl_Help_View.textfont">Fl_Help_View</A>,
+ <A HREF="Fl_Text_Display.html#Fl_Text_Display.textfont">Fl_Text_Display</A>,
+ <A href="Fl_Browser_.html#Fl_Browser_.textfont">Fl_Browser_</A>,
+ <A href="Fl_Value_Input.html#Fl_Value_Input.textfont">Fl_Value_Input</A>,
+ <A href=Fl_Input.html#Fl_Input.textfont>Fl_Input</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.textfont>Fl_Menu_</A>,
+ <A href=Fl_Output.html#Fl_Output.textfont>Fl_Output</A>,
+ <A href=Fl_Value_Output.html#Fl_Value_Output.textfont>Fl_Value_Output</A>,
+ <A href=Fl_Value_Slider.html#Fl_Value_Slider.textfont>Fl_Value_Slider</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.textfont>Fl_Spinner</a></LI>
+<LI>textsize: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.textsize">Fl_File_Chooser</A>,
+ <A HREF="Fl_Help_View.html#Fl_Help_View.textsize">Fl_Help_View</A>,
+ <A HREF="Fl_Text_Display.html#Fl_Text_Display.textsize">Fl_Text_Display</A>,
+ <A href="Fl_Browser_.html#Fl_Browser_.textsize">Fl_Browser_</A>,
+ <A href="Fl_Value_Input.html#Fl_Value_Input.textsize">Fl_Value_Input</A>,
+ <A href=Fl_Input.html#Fl_Input.textsize>Fl_Input</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.textsize>Fl_Menu_</A>,
+ <A href=Fl_Output.html#Fl_Output.textsize>Fl_Output</A>,
+ <A href=Fl_Value_Output.html#Fl_Value_Output.textsize>Fl_Value_Output</A>,
+ <A href=Fl_Value_Slider.html#Fl_Value_Slider.textsize>Fl_Value_Slider</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.textsize>Fl_Spinner</a></LI>
+<LI>title: <A HREF="Fl_Help_View.html#Fl_Help_View.title">Fl_Help_View</A></LI>
+<LI>tooltip: <A href="Fl_Widget.html#Fl_Widget.tooltip">Fl_Widget</A></LI>
+<LI>top: <A href="Fl_Browser_.html#Fl_Browser_.top">Fl_Browser_</A></LI>
+<LI>topline: <A HREF="Fl_Help_Dialog.html#Fl_Help_Dialog.topline">Fl_Help_Dialog</A>,
+ <A HREF="Fl_Help_View.html#Fl_Help_View.topline">Fl_Help_View</A>,
+ <A href=Fl_Browser.html#Fl_Browser.topline>Fl_Browser</A></LI>
+<LI>type: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.type">Fl_File_Chooser</A>,
+ <A HREF="Fl_File_Icon.html#Fl_File_Icon.type">Fl_File_Icon</A>,
+ <A href=Fl_Button.html#Fl_Button.type>Fl_Button</A>,
+ <A href=Fl_Chart.html#Fl_Chart.type>Fl_Chart</A>,
+ <A href=Fl_Counter.html#Fl_Counter.type>Fl_Counter</A>,
+ <A href=Fl_Dial.html#Fl_Dial.type>Fl_Dial</A>,
+ <A href=Fl_Menu_Button.html#Fl_Menu_Button.type>Fl_Menu_Button</A>,
+ <A href=Fl_Scroll.html#Fl_Scroll.type>Fl_Scroll</A>,
+ <A href=Fl_Slider.html#Fl_Slider.type>Fl_Slider</A>,
+ <A href=Fl_Widget.html#Fl_Widget.type>Fl_Widget</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.type>Fl_Spinner</a></LI>
+</UL>
+<H3>U</H3><UL>
+<LI>uncache: <A href="Fl_Image.html#Fl_Image.uncache">Fl_Image</A></LI>
+<LI>undo: <A href="Fl_Input_.html#Fl_Input_.undo">Fl_Input_</A></LI>
+<LI>unhighlight: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.unhighlight">Fl_Text_Buffer</A></LI>
+<LI>unselect: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.unselect">Fl_Text_Buffer</A></LI>
+<LI>unsubstitute_null_characters: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.unsubstitute_null_characters">Fl_Text_Buffer</A></LI>
+<LI>up_down_position: <A href="Fl_Input_.html#Fl_Input_.up_down_position">Fl_Input_</A></LI>
+<LI>user_data: <A href=Fl_Menu_Item.html#Fl_Menu_Item.user_data>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.user_data>Fl_Widget</A></LI>
+</UL>
+<H3>V</H3><UL>
+<LI>valid: <A href=Fl_Gl_Window.html#Fl_Gl_Window.valid>Fl_Gl_Window</A></LI>
+<LI>value: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.value">Fl_File_Chooser</A>,
+ <A HREF="Fl_File_Icon.html#Fl_File_Icon.value">Fl_File_Icon</A>,
+ <A HREF="Fl_Help_Dialog.html#Fl_Help_Dialog.value">Fl_Help_Dialog</A>,
+ <A HREF="Fl_Help_View.html#Fl_Help_View.value">Fl_Help_View</A>,
+ <A HREF="Fl_Wizard.html#Fl_Wizard.value">Fl_Wizard</A>,
+ <A href="Fl_Progress.html#Fl_Progress.value">Fl_Progress</A>,
+ <A href="Fl_Tabs.html#Fl_Tabs.value">Fl_Tabs</A>,
+ <A href="Fl_Valuator.html#Fl_Valuator.value">Fl_Valuator</A>,
+ <A href=Fl_Button.html#Fl_Button.value>Fl_Button</A>,
+ <A href=Fl_Check_Browser.html#Fl_Check_Browser.value>Fl_Check_Browser</A>,
+ <A href=Fl_Choice.html#Fl_Choice.value>Fl_Choice</A>,
+ <A href=Fl_Clock.html#Fl_Clock.value>Fl_Clock</A>,
+ <A href=Fl_Clock_Output.html#Fl_Clock_Output.value>Fl_Clock_Output</A>,
+ <A href=Fl_Color_Chooser.html#Fl_Color_Chooser.value>Fl_Color_Chooser</A>,
+ <A href=Fl_Hold_Browser.html#Fl_Hold_Browser.value>Fl_Hold_Browser</A>,
+ <A href=Fl_Input.html#Fl_Input.value>Fl_Input</A>,
+ <A href=Fl_Input_Choice.html#Fl_Input_Choice.value>Fl_Input_Choice</A>,
+ <A href=Fl_Menu_.html#Fl_Menu_.value>Fl_Menu_</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.value>Fl_Menu_Item</A>,
+ <A href=Fl_Multi_Browser.html#Fl_Multi_Browser.value>Fl_Multi_Browser</A>,
+ <A href=Fl_Output.html#Fl_Output.value>Fl_Output</A>,
+ <A href=Fl_Positioner.html#Fl_Positioner.value>Fl_Positioner</A>,
+ <A href=Fl_Scrollbar.html#Fl_Scrollbar.value>Fl_Scrollbar</A>,
+ <A href=Fl_Select_Browser.html#Fl_Select_Browser.value>Fl_Select_Browser</A>,
+ <A href=Fl_Timer.html#Fl_Timer.value>Fl_Timer</A>,
+ <a href=Fl_Spinner.html#Fl_Spinner.value>Fl_Spinner</a></LI>
+<LI>visible: <A HREF="Fl_File_Chooser.html#Fl_File_Chooser.visible">Fl_File_Chooser</A>,
+ <A HREF="Fl_Help_Dialog.html#Fl_Help_Dialog.visible">Fl_Help_Dialog</A>,
+ <A href=Fl_Browser.html#Fl_Browser.visible>Fl_Browser</A>,
+ <A href=Fl_Menu_Item.html#Fl_Menu_Item.visible>Fl_Menu_Item</A>,
+ <A href=Fl_Widget.html#Fl_Widget.visible>Fl_Widget</A></LI>
+<LI>visible_focus: <A href=Fl_Widget.html#Fl_Widget.visible_focus>Fl_Widget</A></LI>
+<LI>visible_r: <A href=Fl_Widget.html#Fl_Widget.visible_r>Fl_Widget</A></LI>
+</UL>
+<H3>W</H3><UL>
+<LI>w: <A href="Fl_Image.html#Fl_Image.w">Fl_Image</A>,
+ <A href=Fl_Widget.html#Fl_Widget.w>Fl_Widget</A></LI>
+<LI>when: <A href=Fl_Button.html#Fl_Button.when>Fl_Button</A>,
+ <A href=Fl_Input.html#Fl_Input.when>Fl_Input</A>,
+ <A href=Fl_Widget.html#Fl_Widget.when>Fl_Widget</A></LI>
+<LI>window: <A href=Fl_Widget.html#Fl_Widget.window>Fl_Widget</A></LI>
+<LI>word_end: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.word_end">Fl_Text_Buffer</A>,
+ <A HREF="Fl_Text_Display.html#Fl_Text_Display.word_end">Fl_Text_Display</A></LI>
+<LI>word_start: <A HREF="Fl_Text_Buffer.html#Fl_Text_Buffer.word_start">Fl_Text_Buffer</A>,
+ <A HREF="Fl_Text_Display.html#Fl_Text_Display.word_start">Fl_Text_Display</A></LI>
+<LI>wrap: <A href="Fl_Input_.html#Fl_Input_.wrap">Fl_Input_</A></LI>
+<LI>wrap_mode: <A HREF="Fl_Text_Display.html#Fl_Text_Display.wrap_mode">Fl_Text_Display</A></LI>
+</UL>
+<H3>X</H3><UL>
+<LI>x: <A href=Fl_Widget.html#Fl_Widget.x>Fl_Widget</A></LI>
+<LI>xbounds: <A href=Fl_Positioner.html#Fl_Positioner.xbounds>Fl_Positioner</A></LI>
+<LI>xclass: <A href=Fl_Window.html#Fl_Window.xclass>Fl_Window</A></LI>
+<LI>xposition: <A href=Fl_Scroll.html#Fl_Scroll.xposition>Fl_Scroll</A></LI>
+<LI>xstep: <A href=Fl_Positioner.html#Fl_Positioner.xstep>Fl_Positioner</A></LI>
+<LI>xvalue: <A href=Fl_Positioner.html#Fl_Positioner.xvalue>Fl_Positioner</A></LI>
+</UL>
+<H3>y</H3><UL>
+<LI>y: <A href=Fl_Widget.html#Fl_Widget.y>Fl_Widget</A></LI>
+<LI>ybounds: <A href=Fl_Positioner.html#Fl_Positioner.ybounds>Fl_Positioner</A></LI>
+<LI>yposition: <A href=Fl_Scroll.html#Fl_Scroll.yposition>Fl_Scroll</A></LI>
+<LI>ystep: <A href=Fl_Positioner.html#Fl_Positioner.ystep>Fl_Positioner</A></LI>
+<LI>yvalue: <A href=Fl_Positioner.html#Fl_Positioner.yvalue>Fl_Positioner</A></LI>
+</UL>
+
+</BODY>
+</HTML>

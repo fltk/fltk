@@ -1,0 +1,115 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Value_Input</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name=Fl_Value_Input>class Fl_Value_Input</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href=Fl_Valuator.html#Fl_Valuator>Fl_Valuator</A>
+   |
+   +----<B>Fl_Value_Input</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Value_Input.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl_Value_Input</TT> widget displays a numeric value.
+The user can click in the text field and edit it - there is in
+fact a hidden <A
+href="Fl_Input.html#Fl_Input"><TT>Fl_Input</TT></A> widget with
+<TT>type(FL_FLOAT_INPUT)</TT> or <TT>type(FL_INT_INPUT)</TT> in
+there - and when they hit return or tab the value updates to
+what they typed and the callback is done.
+
+<P>If <TT>step()</TT> is non-zero and integral, then the range of numbers
+is limited to integers instead of floating point numbers. As
+well as displaying the value as an integer, typed input is also
+limited to integer values, even if the hidden <TT>Fl_Input</TT> widget
+is of <TT>type(FL_FLOAT_INPUT)</TT>.</P>
+
+<P>If <TT>step()</TT> is non-zero, the user can also drag the
+mouse across the object and thus slide the value. The left
+button moves one <TT>step()</TT> per pixel, the middle by <TT>10
+* step()</TT>, and the right button by <TT>100 * step()</TT>. It
+is therefore impossible to select text by dragging across it,
+although clicking can still move the insertion cursor.</P>
+
+<P>If <TT>step()</TT> is non-zero and integral, then the range
+of numbers are limited to integers instead of floating point
+values.
+
+<P ALIGN="CENTER"><IMG src="Fl_Value_Input.gif"
+ALT="Fl_Value_Input widget."></P>
+
+<H3>Methods</H3>
+<UL>
+	<LI><A href="#Fl_Value_Input.Fl_Value_Input">Fl_Value_Input</A></LI>
+	<LI><A href="#Fl_Value_Input.~Fl_Value_Input">~Fl_Value_Input</A></LI>
+	<LI><A href="#Fl_Value_Input.cursor_color">cursor_color</A></LI>
+	<LI><A href="#Fl_Value_Input.soft">soft</A></LI>
+	<LI><A href="#Fl_Value_Input.textcolor">textcolor</A></LI>
+	<LI><A href="#Fl_Value_Input.textfont">textfont</A></LI>
+	<LI><A href="#Fl_Value_Input.textsize">textsize</A></LI>
+</UL>
+
+<H4><A
+name="Fl_Value_Input.Fl_Value_Input">Fl_Value_Input::Fl_Value_Input(int
+x, int y, int w, int h, const char *label = 0)</A></H4>
+
+<P>Creates a new <TT>Fl_Value_Input</TT> widget using the given
+position, size, and label string. The default boxtype is
+<TT>FL_DOWN_BOX</TT>.
+
+<H4><A name="Fl_Value_Input.~Fl_Value_Input">virtual
+Fl_Value_Input::~Fl_Value_Input()</A></H4>
+
+<P>Destroys the valuator.
+
+<H4><A name="Fl_Value_Input.cursor_color">Fl_Color
+Fl_Value_Input::cursor_color() const<BR>
+void Fl_Value_Input::cursor_color(Fl_Color)</A></H4>
+
+<P>Get or set the color of the text cursor. The text cursor is
+black by default.
+
+<H4><A name="Fl_Value_Input.soft">uchar Fl_Value_Input::soft() const<BR>
+void Fl_Value_Input::soft(uchar)</A></H4>
+
+<P>If &quot;soft&quot; is turned on, the user is allowed to drag
+the value outside the range. If they drag the value to one of
+the ends, let go, then grab again and continue to drag, they can
+get to any value. The default is true.
+
+<H4><A name="Fl_Value_Input.textcolor">Fl_Color
+Fl_Value_Input::textcolor() const<BR>
+void Fl_Value_Input::textcolor(Fl_Color)</A></H4>
+
+<P>Gets or sets the color of the text in the value box.
+
+<H4><A name="Fl_Value_Input.textfont">Fl_Font
+Fl_Value_Input::textfont() const<BR>
+void Fl_Value_Input::textfont(Fl_Font)</A></H4>
+
+<P>Gets or sets the typeface of the text in the value box.
+
+<H4><A name="Fl_Value_Input.textsize">uchar
+Fl_Value_Input::textsize() const<BR>
+void Fl_Value_Input::textsize(uchar)</A></H4>
+
+<P>Gets or sets the size of the text in the value box.
+
+</BODY>
+</HTML>

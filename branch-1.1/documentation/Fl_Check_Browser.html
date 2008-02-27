@@ -1,0 +1,104 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Check_Browser</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Check_Browser>class Fl_Check_Browser</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Browser_.html#Fl_Browser_>Fl_Browser_</A>
+   |
+   +----<B>Fl_Check_Browser</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Check_Browser.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+
+The <TT>Fl_Check_Browser</TT> widget displays a scrolling list of text
+lines that may be selected and/or checked by the user.
+
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90% summary="Fl_Check_Browser methods">
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Check_Browser.Fl_Check_Browser>Fl_Check_Browser</A></LI>
+<!-- <LI><A href=#Fl_Check_Browser.~Fl_Check_Browser>~Fl_Check_Browser</A></LI>-->
+<LI><A href=#Fl_Check_Browser.add>add</A></LI>
+<LI><A href=#Fl_Check_Browser.check_all>check_all</A></LI>
+<LI><A href=#Fl_Check_Browser.check_none>check_none</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Check_Browser.checked>checked</A></LI>
+<LI><A href=#Fl_Check_Browser.clear>clear</A></LI>
+<LI><A href=#Fl_Check_Browser.nchecked>nchecked</A></LI>
+<LI><A href=#Fl_Check_Browser.nitems>nitems</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Check_Browser.remove>remove</A></LI>
+<LI><A href=#Fl_Check_Browser.set_checked>set_checked</A></LI>
+<LI><A href=#Fl_Check_Browser.text>text</A></LI>
+<LI><A href=#Fl_Check_Browser.value>value</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+
+<H4><A name=Fl_Check_Browser.Fl_Check_Browser>Fl_Check_Browser::Fl_Check_Browser(int, int, int, int, const char * = 0)</A></H4>
+The constructor makes an empty browser.
+<!--
+<H4><A name=Fl_Check_Browser.~Fl_Check_Browser>Fl_Check_Browser::~Fl_Check_Browser(void)</A></H4>
+ The destructor deletes all list items and destroys the browser.
+-->
+<H4><A name=Fl_Check_Browser.add>int Fl_Check_Browser::add(const char *)<BR>
+int Fl_Check_Browser::add(const char *, int)</A></H4>
+Add a new unchecked line to the end of the browser.  The text is copied
+using the <TT>strdup()</TT> function.  It may also be <TT>NULL</TT> to make
+a blank line.  The second form can set the item checked.
+
+<H4><A name=Fl_Check_Browser.check_all>void Fl_Check_Browser::check_all()</A></H4>
+Sets all the items checked.
+
+<H4><A name=Fl_Check_Browser.check_none>void Fl_Check_Browser::check_none()</A></H4>
+Sets all the items unchecked.
+
+<H4><A name=Fl_Check_Browser.checked>int Fl_Check_Browser::checked(int item) const<BR>
+void Fl_Check_Browser::checked(int item, int b)</A></H4>
+The first form gets the current status of item <TT>item</TT>. The second form
+sets the check status of item <TT>item</TT> to <TT>b</TT>.
+
+<H4><A name=Fl_Check_Browser.clear>void Fl_Check_Browser::clear()</A></H4>
+Remove every item from the browser.
+
+<H4><A name=Fl_Check_Browser.nchecked>int Fl_Check_Browser::nchecked() const</A></H4>
+Returns how many items are currently checked.
+
+<H4><A name=Fl_Check_Browser.nitems>int Fl_Check_Browser::nitems() const</A></H4>
+Returns how many lines are in the browser.  The last line number is equal to
+this.
+
+<H4><A name=Fl_Check_Browser.remove>int Fl_Check_Browser::remove(int n)</A></H4>
+Remove line <TT>n</TT> and make the browser one line shorter. Returns the 
+number of lines left in the browser.
+
+<H4><A name=Fl_Check_Browser.set_checked>void Fl_Check_Browser::set_checked(int item)</A></H4>
+Equivalent to <TT>Fl_Check_Browser::checked(item, 1)</TT>.
+
+<H4><A name=Fl_Check_Browser.text>char *Fl_Check_Browser::text(int item) const</A></H4>
+Return a pointer to an internal buffer holding item <TT>item</TT>'s text.
+
+<H4><A name=Fl_Check_Browser.value>int Fl_Check_Browser::value() const</A></H4>
+Returns the index of the currently selected item.
+
+</BODY>
+</HTML>

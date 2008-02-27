@@ -1,0 +1,83 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Output</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name="Fl_Output">class Fl_Output</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href="Fl_Input.html#Fl_Input">Fl_Input</A>
+   |
+   +----<B>Fl_Output</B>
+           |
+           +----<A href=Fl_Multiline_Output.html#Fl_Multiline_Output>Fl_Multiline_Output</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Output.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This widget displays a piece of text.  When you set the <TT>value()</TT>
+, <TT>Fl_Output</TT> does a <TT>strcpy()</TT> to it's own storage,
+which is useful for program-generated values.  The user may select
+portions of the text using the mouse and paste the contents into other
+fields or programs.
+<CENTER><IMG src="text.gif" ALT="Fl_Output widget."></CENTER>
+<P>There is a single subclass, <A href=Fl_Multiline_Output.html#Fl_Multiline_Output>
+Fl_Multiline_Output</A>, which allows you to display multiple lines of
+text. </P>
+<P>The text may contain any characters except \0, and will correctly
+display anything, using ^X notation for unprintable control characters
+and \nnn notation for unprintable characters with the high bit set. It
+assumes the font can draw any characters in the ISO-Latin1 character
+set. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Output.Fl_Output>Fl_Output</A></LI>
+<LI><A href=#Fl_Output.~Fl_Output>~Fl_Output</A></LI>
+<LI><A href=#Fl_Output.index>index</A></LI>
+<LI><A href=#Fl_Output.size>size</A></LI>
+<LI><A href=#Fl_Output.textcolor>textcolor</A></LI>
+<LI><A href=#Fl_Output.textfont>textfont</A></LI>
+<LI><A href=#Fl_Output.textsize>textsize</A></LI>
+<LI><A href=#Fl_Output.value>value</A></LI>
+</UL>
+<H4><A name=Fl_Output.Fl_Output>Fl_Output::Fl_Output(int x, int y, int
+w, int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Output</TT> widget using the given position,
+size, and label string. The default boxtype is <TT>FL_DOWN_BOX</TT>.
+<H4><A name=Fl_Output.~Fl_Output>virtual Fl_Output::~Fl_Output()</A></H4>
+ Destroys the widget and any value associated with it.
+<H4><A name=Fl_Output.value>const char *Fl_Output::value() const
+<BR> int Fl_Output::value(const char*)
+<BR> int Fl_Output::value(const char*, int)</A></H4>
+ The first form returns the current value, which is a pointer to the
+internal buffer and is valid only until the value is changed.
+<P>The second two forms change the text and set the mark and the point
+to the end of it. The string is copied to the internal buffer.  Passing <TT>
+NULL</TT> is the same as &quot;&quot;.  This returns non-zero if the new value is
+different than the current one.  You can use the second version to
+directly set the length if you know it already or want to put nul's in
+the text. </P>
+<H4><A name=Fl_Output.size>int Fl_Output::size() const</A></H4>
+ Returns the number of characters in <TT>value()</TT>.  This may be
+greater than <TT>strlen(value())</TT> if there are nul characters in
+it.
+<H4><A name=Fl_Output.index>char Fl_Output::index(int) const</A></H4>
+ Same as <TT>value()[n]</TT>, but may be faster in plausible
+implementations. No bounds checking is done.
+<H4><A name=Fl_Output.textcolor>Fl_Color Fl_Output::textcolor() const
+<BR> void Fl_Output::textcolor(Fl_Color)</A></H4>
+ Gets or sets the color of the text in the input field.
+<H4><A name=Fl_Output.textfont>Fl_Font Fl_Output::textfont() const
+<BR> void Fl_Output::textfont(Fl_Font)</A></H4>
+ Gets or sets the font of the text in the input field.
+<H4><A name=Fl_Output.textsize>uchar Fl_Output::textsize() const
+<BR> void Fl_Output::textsize(uchar)</A></H4>
+ Gets or sets the size of the text in the input field. </BODY></HTML>

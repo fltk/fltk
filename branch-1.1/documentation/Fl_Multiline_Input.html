@@ -1,0 +1,47 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Multiline_Input</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Multiline_Input>class Fl_Multiline_Input</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Input.html#Fl_Input>Fl_Input</A>
+   |
+   +----<B>Fl_Multiline_Input</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Multiline_Input.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This input field displays '\n' characters as new lines rather than ^J,
+and accepts the Return, Tab, and up and down arrow keys.  This is for
+editing multiline text.
+<P>This is far from the nirvana of text editors, and is probably only
+good for small bits of text, 10 lines at most.  I think FLTK can be
+used to write a powerful text editor, but it is not going to be a
+built-in feature.  Powerful text editors in a toolkit are a big source
+of bloat. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Multiline_Input.Fl_Multiline_Input>Fl_Multiline_Input</A>
+</LI>
+<LI><A href=#Fl_Multiline_Input.~Fl_Multiline_Input>~Fl_Multiline_Input</A>
+</LI>
+</UL>
+<H4><A name=Fl_Multiline_Input.Fl_Multiline_Input>
+Fl_Multiline_Input::Fl_Multiline_Input(int x, int y, int w, int h,
+const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Multiline_Input</TT> widget using the given
+position, size, and label string. The default boxtype is <TT>FL_DOWN_BOX</TT>
+.
+<H4><A name=Fl_Multiline_Input.~Fl_Multiline_Input>virtual
+Fl_Multiline_Input::~Fl_Multiline_Input()</A></H4>
+ Destroys the widget and any value associated with it. </BODY></HTML>

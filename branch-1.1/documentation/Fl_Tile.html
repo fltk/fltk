@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Tile</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name=Fl_Tile>class Fl_Tile</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href=Fl_Group.html#Fl_Group>Fl_Group</A>
+   |
+   +----<B>Fl_Tile</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Tile.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl_Tile</TT> class lets you resize the children by dragging
+the border between them:
+
+<P ALIGN=CENTER><IMG src="Fl_Tile.gif" ALT="Fl_Tile widget."></P>
+
+<P>For the tiling to work correctly, the children of an 
+<TT>Fl_Tile</TT> must cover the entire area of the widget, but not
+overlap. This means that all children must touch each 
+other at their edges, and no gaps can't be left inside the 
+<TT>Fl_Tile</TT>.
+
+<P><TT>Fl_Tile</TT> does not normailly draw any graphics of its own.
+The &quot;borders&quot; which can be seen in the snapshot above
+are actually part of the children. Their boxtypes have been set
+to <TT>FL_DOWN_BOX</TT> creating the impression of 
+&quot;ridges&quot; where the boxes touch. What you see are 
+actually two adjacent <TT>FL_DOWN_BOX</TT>'s drawn next to each 
+other. All neighboring widgets share the same edge - the widget's 
+thick borders make it appear as though the widgets aren't actually
+touching, but they are. If the edges of adjacent widgets do not
+touch, then it will be impossible to drag the corresponding
+edges.</P>
+
+<P><TT>Fl_Tile</TT> allows objects to be resized to zero dimensions.
+To prevent this you can use the <TT>resizable()</TT> to limit where
+corners can be dragged to.</P>
+
+<P>Even though objects can be resized to zero sizes, they must
+initially have non-zero sizes so the <TT>Fl_Tile</TT> can figure out
+their layout. If desired, call <TT>position()</TT> after creating the
+children but before displaying the window to set the borders where you
+want.</P>
+
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Tile.Fl_Tile>Fl_Tile</A></LI>
+<LI><A href=#Fl_Tile.~Fl_Tile>~Fl_Tile</A></LI>
+<LI><A href=#Fl_Tile.position>position</A></LI>
+<LI><A href=#Fl_Tile.resizeable>resizeable</A></LI>
+</UL>
+<H4><A name=Fl_Tile.Fl_Tile>Fl_Tile::Fl_Tile(int x, int y, int w, int
+h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Tile</TT> widget using the given position, size,
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
+<H4><A name=Fl_Tile.~Fl_Tile>virtual Fl_Tile::~Fl_Tile()</A></H4>
+ The destructor <I>also deletes all the children</I>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to
+all the children in the user code. A kludge has been done so the <TT>
+Fl_Tile</TT> and all of it's children can be automatic (local)
+variables, but you must declare the <TT>Fl_Tile</TT> <I>first</I>, so
+that it is destroyed last.
+<H4><A name=Fl_Tile.position>void Fl_Tile::position(from_x, from_y,
+to_x, to_y)</A></H4>
+ Drag the intersection at <TT>from_x,from_y</TT> to <TT>to_x,to_y</TT>.
+ This redraws all the necessary children.
+<H4><A name=Fl_Tile.resizeable>void Fl_Tile::resizable(Fl_Widget &amp;w)<BR>
+void Fl_Tile::resizable(Fl_Widget *w)</A></H4>
+The &quot;resizable&quot; child widget (which should be invisible) limits where the
+border can be dragged to.  If you don't set it, it will be possible to
+drag the borders right to the edge, and thus resize objects on the edge
+to zero width or height.  The <TT>resizable()</TT> widget is not
+resized by dragging any borders.
+</BODY></HTML>

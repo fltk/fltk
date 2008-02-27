@@ -1,0 +1,349 @@
+The FLTK Team is proud to announce the release of FLTK 1.1.7,
+a cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
+Microsoft(r) Windows(r), and MacOS(r) X. FLTK provides
+modern GUI functionality without the bloat and supports 3D
+graphics via OpenGL(r) and its built-in GLUT emulation.
+
+FLTK 1.1.7 fixes many bugs, adds some new example programs, and
+adds many new improvements to the FLUID software including
+multi-level undo, syntax highlighting in all code fields, widget
+alignment and sizing guides, dialog templates, widget subclasses,
+and printing and testing of user interfaces within FLUID.
+
+FLTK is provided under the GNU Library Public License with
+exceptions that allow for static linking.
+
+Changes since FLTK 1.1.6 include:
+
+	- Added Fl::screen_count() and Fl::screen_xywh() APIs to
+	  support multi-screen displays.
+	- Added Greg Ercolano's simple Fl_Input_Choice widget
+	  which is a combination of the Fl_Input and
+	  Fl_Menu_Button widgets (STR #650)
+	- Added many new FLUID features: syntax highlighting,
+	  multi-level undo, templates, comments, live code view,
+	  live UI test, alignment/sizing guides, printing, and
+	  widget subclassing!
+	- Documentation fixes (STR #571, STR #648, STR #692, STR
+	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
+	  STR #969)
+	- Build system fixes (STR #636, STR #638, STR #645, STR
+	  #724, STR #774, STR #863, STR #893, STR #926, STR #972,
+	  STR #995, STR #996, STR #997, STR #1087, STR #1123)
+	- fltk-config fixes (STR #840, STR #868, STR #869)
+	- Threading fixes (STR #1138)
+	- X11 fixes (STR #711, STR #933, STR #1012)
+	- MacOS fixes (STR #602, STR #662, STR #765, STR #804,
+	  STR #905, STR #908, STR #968, STR #1099)
+	- WIN32 fixes (STR #647, STR #726, STR #821, STR #828,
+	  STR #831, STR #848, STR #862, STR #905, STR #961, STR
+	  #968, STR #1007, STR #1019, STR #1079, STR #1104)
+	- Drawing API fixes (STR #837, STR #924, STR
+	  #1052)
+	- Filename handling fixes (STR #741, STR #816, STR #854,
+	  STR #874)
+	- Plastic scheme fixes (STR #769, STR #841, STR #852, STR
+	  #906)
+	- Image class fixes (STR #632, STR #652, STR #676, STR
+	  #739, STR #825, STR #914, STR #915, STR #918)
+	- FLUID fixes (STR #668, STR #701, STR #718, STR #742,
+	  STR #776, STR #783, STR #784, STR #790, STR #791, STR
+	  #798, STR #799, STR #850, STR #851, STR #873, STR #879,
+	  STR #891, STR #904, STR #912, STR #959, STR #964, STR
+	  #979, STR #984, STR #999, STR #1129)
+	- Example program fixes (STR #777, STR #809, STR #843,
+	  STR #867, STR #909)
+	- Fl_Widget fixes (STR #643, STR #707, STR #860, STR
+	  #910)
+	- Browser widget fixes (STR #681, STR #729, STR #786, STR
+	  #834, STR #839, STR #967)
+	- Fl_Chart would draw outside its bounding box (STR #780)
+	- Fl_Clock_Output::value() did not return the previously
+	  set value (STR #748)
+	- Fl_File_Chooser fixes (STR #653, STR #654, STR #746,
+	  STR #747, STR #766, STR #770, STR #811, STR #819, STR
+	  #884, STR #958, STR #970)
+	- Fl_Help_View fixes (STR #631, STR #768, STR #815, STR
+	  #871, STR #998)
+	- Input widget fixes (STR #727, STR #836, STR #903, STR
+	  #941, STR #981)
+	- Menu widget fixes (STR #637, STR #651, STR #685, STR
+	  #704, STR #706, STR #740, STR #781, STR #795, STR #973,
+	  STR #1140, STR #1143, STR #1144)
+	- Fl_Preferences fixes (STR #720, STR #872, STR #1025)
+	- Fl_Scrollbar didn't compute the correct knob size when
+	  using the "nice" types (STR #845)
+	- Fl_Tabs fixes (STR #870, STR #882)
+	- Fl_Text_Display/Editor fixes (STR #635, STR #762, STR
+	  #915, STR #1069, STR #1122)
+	- Valuator widget fixes (STR #911, STR #971, STR #1037)
+	- Window widget fixes (STR #641, STR #723, STR #886, STR
+	  #898)
+	- FL_SHADOW_BOX/FRAME drew outside of the bounding box
+	  (STR #694)
+	- Fl::delete_widget would hang fl_wait() after deleting the
+	  window (STR #679)
+	- Fl::event_number() didn't always match the value sent
+	  to the handle() method (STR #634)
+	- Fl::paste() would sometimes not recoginze external 
+	  changes of the clipboard (STR #722)
+	- Fixed fl_message() code so that it does not get
+	  accidentaly addded to the current group (STR #253)
+	- The keyboard shortcut handling code did not handle
+	  8-bit characters properly (STR #731)
+
+----HTML----
+
+<P>The FLTK Team is proud to announce the release of FLTK 1.1.7,
+a cross-platform C++ GUI toolkit for UNIX&reg;/Linux&reg; (X11),
+Microsoft&reg; Windows&reg;, and MacOS&reg; X. FLTK provides
+modern GUI functionality without the bloat and supports 3D
+graphics via OpenGL&reg; and its built-in GLUT emulation.
+
+<P>FLTK 1.1.7 fixes many bugs, adds some new example programs, and
+adds many new improvements to the FLUID software including
+multi-level undo, syntax highlighting in all code fields, widget
+alignment and sizing guides, the ability to create widget
+subclasses, and the ability to print and test your user
+interfaces within FLUID.
+
+<P>FLTK is provided under the GNU Library Public License with
+exceptions that allow for static linking.
+
+<P>Changes since FLTK 1.1.6 include:
+
+<UL>
+
+	<li>Added Fl::screen_count() and Fl::screen_xywh() APIs to
+	support multi-screen displays.</li>
+
+	<li>Added Greg Ercolano's simple Fl_Input_Choice widget
+	which is a combination of the Fl_Input and Fl_Menu_Button
+	widgets (<a href='str.php?L650'>STR #650</a>)</li>
+
+	<li>Added many new FLUID features: syntax highlighting,
+	multi-level undo, templates, comments, live code view,
+	live UI test, alignment/sizing guides, printing, and
+	widget subclassing!</li>
+
+	<li>Documentation fixes (<a href='str.php?L571'>STR
+	#571</a>, <a href='str.php?L648'>STR #648</a>, <a
+	href='str.php?L692'>STR #692</a>, <a
+	href='str.php?L730'>STR #730</a>, <a
+	href='str.php?L744'>STR #744</a>, <a
+	href='str.php?L745'>STR #745</a>, <a
+	href='str.php?L931'>STR #931</a>, <a
+	href='str.php?L942'>STR #942</a>, <a
+	href='str.php?L960'>STR #960</a>, <a
+	href='str.php?L969'>STR #969</a>)</li>
+
+	<li>Build system fixes (<a href='str.php?L636'>STR
+	#636</a>, <a href='str.php?L638'>STR #638</a>, <a
+	href='str.php?L645'>STR #645</a>, <a
+	href='str.php?L724'>STR #724</a>, <a
+	href='str.php?L774'>STR #774</a>, <a
+	href='str.php?L863'>STR #863</a>, <a
+	href='str.php?L893'>STR #893</a>, <a
+	href='str.php?L926'>STR #926</a>, <a
+	href='str.php?L972'>STR #972</a>, <a
+	href='str.php?L995'>STR #995</a>, <a
+	href='str.php?L996'>STR #996</a>, <a
+	href='str.php?L997'>STR #997</a>, <a
+	href='str.php?L1087'>STR #1087</a>, <a
+	href='str.php?L1123'>STR #1123</a>)</li>
+
+	<li>fltk-config fixes (<a href='str.php?L840'>STR
+	#840</a>, <a href='str.php?L868'>STR #868</a>, <a
+	href='str.php?L869'>STR #869</a>)</li>
+
+	<li>Threading fixes (<a href='str.php?L1138'>STR
+	#1138</a>)</li>
+
+	<li>X11 fixes (<a href='str.php?L711'>STR #711</a>, <a
+	href='str.php?L933'>STR #933</a>, <a href='str.php?L1012'>STR
+	#1012</a>)</li>
+
+	<li>MacOS fixes (<a href='str.php?L602'>STR #602</a>, <a
+	href='str.php?L662'>STR #662</a>, <a
+	href='str.php?L765'>STR #765</a>, <a
+	href='str.php?L804'>STR #804</a>, <a
+	href='str.php?L905'>STR #905</a>, <a
+	href='str.php?L908'>STR #908</a>, <a
+	href='str.php?L968'>STR #968</a>, <a
+	href='str.php?L1099'>STR #1099</a>)</li>
+
+	<li>WIN32 fixes (<a href='str.php?L647'>STR #647</a>, <a
+	href='str.php?L726'>STR #726</a>, <a
+	href='str.php?L821'>STR #821</a>, <a
+	href='str.php?L828'>STR #828</a>, <a
+	href='str.php?L831'>STR #831</a>, <a
+	href='str.php?L848'>STR #848</a>, <a
+	href='str.php?L862'>STR #862</a>, <a
+	href='str.php?L905'>STR #905</a>, <a
+	href='str.php?L961'>STR #961</a>, <a
+	href='str.php?L968'>STR #968</a>, <a
+	href='str.php?L1007'>STR #1007</a>, <a
+	href='str.php?L1019'>STR #1019</a>, <a
+	href='str.php?L1079'>STR #1079</a>, <a
+	href='str.php?L1104'>STR #1104</a>)</li>
+
+	<li>Drawing API fixes (<a href='str.php?L837'>STR
+	#837</a>, <a href='str.php?L924'>STR #924</a>, <a
+	href='str.php?L1052'>STR #1052</a>)</li>
+
+	<li>Filename handling fixes (<a href='str.php?L741'>STR
+	#741</a>, <a href='str.php?L816'>STR #816</a>, <a
+	href='str.php?L854'>STR #854</a>, <a
+	href='str.php?L874'>STR #874</a>)</li>
+
+	<li>Plastic scheme fixes (<a href='str.php?L769'>STR
+	#769</a>, <a href='str.php?L841'>STR #841</a>, <a
+	href='str.php?L852'>STR #852</a>, <a
+	href='str.php?L906'>STR #906</a>)</li>
+
+	<li>Image class fixes (<a href='str.php?L632'>STR
+	#632</a>, <a href='str.php?L652'>STR #652</a>, <a
+	href='str.php?L676'>STR #676</a>, <a
+	href='str.php?L739'>STR #739</a>, <a
+	href='str.php?L825'>STR #825</a>, <a
+	href='str.php?L914'>STR #914</a>, <a
+	href='str.php?L915'>STR #915</a>, <a
+	href='str.php?L918'>STR #918</a>)</li>
+
+	<li>FLUID fixes (<a href='str.php?L668'>STR #668</a>, <a
+	href='str.php?L701'>STR #701</a>, <a
+	href='str.php?L718'>STR #718</a>, <a
+	href='str.php?L742'>STR #742</a>, <a
+	href='str.php?L776'>STR #776</a>, <a
+	href='str.php?L783'>STR #783</a>, <a
+	href='str.php?L784'>STR #784</a>, <a
+	href='str.php?L790'>STR #790</a>, <a
+	href='str.php?L791'>STR #791</a>, <a
+	href='str.php?L798'>STR #798</a>, <a
+	href='str.php?L799'>STR #799</a>, <a
+	href='str.php?L850'>STR #850</a>, <a
+	href='str.php?L851'>STR #851</a>, <a
+	href='str.php?L873'>STR #873</a>, <a
+	href='str.php?L879'>STR #879</a>, <a
+	href='str.php?L891'>STR #891</a>, <a
+	href='str.php?L904'>STR #904</a>, <a
+	href='str.php?L912'>STR #912</a>, <a
+	href='str.php?L959'>STR #959</a>, <a
+	href='str.php?L964'>STR #964</a>, <a
+	href='str.php?L979'>STR #979</a>, <a
+	href='str.php?L984'>STR #984</a>, <a
+	href='str.php?L999'>STR #999</a>, <a
+	href='str.php?L1129'>STR #1129</a>)</li>
+
+	<li>Example program fixes (<a href='str.php?L777'>STR
+	#777</a>, <a href='str.php?L809'>STR #809</a>, <a
+	href='str.php?L843'>STR #843</a>, <a
+	href='str.php?L867'>STR #867</a>, <a
+	href='str.php?L909'>STR #909</a>)</li>
+
+	<li>Fl_Widget fixes (<a href='str.php?L643'>STR #643</a>,
+	<a href='str.php?L707'>STR #707</a>, <a
+	href='str.php?L860'>STR #860</a>, <a
+	href='str.php?L910'>STR #910</a>)</li>
+
+	<li>Browser widget fixes (<a href='str.php?L681'>STR
+	#681</a>, <a href='str.php?L729'>STR #729</a>, <a
+	href='str.php?L786'>STR #786</a>, <a
+	href='str.php?L834'>STR #834</a>, <a
+	href='str.php?L839'>STR #839</a>, <a
+	href='str.php?L967'>STR #967</a>)</li>
+
+	<li>Fl_Chart would draw outside its bounding box (<a
+	href='str.php?L780'>STR #780</a>)</li>
+
+	<li>Fl_Clock_Output::value() did not return the
+	previously set value (<a href='str.php?L748'>STR
+	#748</a>)</li>
+
+	<li>Fl_File_Chooser fixes (<a href='str.php?L653'>STR
+	#653</a>, <a href='str.php?L654'>STR #654</a>, <a
+	href='str.php?L746'>STR #746</a>, <a
+	href='str.php?L747'>STR #747</a>, <a
+	href='str.php?L766'>STR #766</a>, <a
+	href='str.php?L770'>STR #770</a>, <a
+	href='str.php?L811'>STR #811</a>, <a
+	href='str.php?L819'>STR #819</a>, <a
+	href='str.php?L884'>STR #884</a>, <a
+	href='str.php?L958'>STR #958</a>, <a
+	href='str.php?L970'>STR #970</a>)</li>
+
+	<li>Fl_Help_View fixes (<a href='str.php?L631'>STR
+	#631</a>, <a href='str.php?L768'>STR #768</a>, <a
+	href='str.php?L815'>STR #815</a>, <a
+	href='str.php?L871'>STR #871</a>, <a
+	href='str.php?L998'>STR #998</a>)</li>
+
+	<li>Input widget fixes (<a href='str.php?L727'>STR
+	#727</a>, <a href='str.php?L836'>STR #836</a>, <a
+	href='str.php?L903'>STR #903</a>, <a
+	href='str.php?L941'>STR #941</a>, <a
+	href='str.php?L981'>STR #981</a>)</li>
+
+	<li>Menu widget fixes (<a href='str.php?L637'>STR
+	#637</a>, <a href='str.php?L651'>STR #651</a>, <a
+	href='str.php?L685'>STR #685</a>, <a
+	href='str.php?L704'>STR #704</a>, <a
+	href='str.php?L706'>STR #706</a>, <a
+	href='str.php?L740'>STR #740</a>, <a
+	href='str.php?L781'>STR #781</a>, <a
+	href='str.php?L795'>STR #795</a>, <a
+	href='str.php?L973'>STR #973</a>, <a
+	href='str.php?L1140'>STR #1140</a>, <a
+	href='str.php?L1143'>STR #1143</a>, <a
+	href='str.php?L1144'>STR #1144</a>)</li>
+
+	<li>Fl_Preferences fixes (<a href='str.php?L720'>STR
+	#720</a>, <a href='str.php?L872'>STR #872</a>, <a
+	href='str.php?L1025'>STR #1025</a>)</li>
+
+	<li>Fl_Scrollbar didn't compute the correct knob size
+	when using the "nice" types (<a href='str.php?L845'>STR
+	#845</a>)</li>
+
+	<li>Fl_Tabs fixes (<a href='str.php?L870'>STR #870</a>,
+	<a href='str.php?L882'>STR #882</a>)</li>
+
+	<li>Fl_Text_Display/Editor fixes (<a
+	href='str.php?L635'>STR #635</a>, <a
+	href='str.php?L762'>STR #762</a>, <a
+	href='str.php?L915'>STR #915</a>, <a
+	href='str.php?L1069'>STR #1069</a>, <a
+	href='str.php?L1122'>STR #1122</a>)</li>
+
+	<li>Valuator widget fixes (<a href='str.php?L911'>STR
+	#911</a>, <a href='str.php?L971'>STR #971</a>, <a
+	href='str.php?L1037'>STR #1037</a>)</li>
+
+	<li>Window widget fixes (<a href='str.php?L641'>STR
+	#641</a>, <a href='str.php?L723'>STR #723</a>, <a
+	href='str.php?L886'>STR #886</a>, <a
+	href='str.php?L898'>STR #898</a>)</li>
+
+	<li>FL_SHADOW_BOX/FRAME drew outside of the bounding box
+	(<a href='str.php?L694'>STR #694</a>)</li>
+
+	<li>Fl::delete_widget would hang fl_wait() after deleting
+	the window (<a href='str.php?L679'>STR #679</a>)</li>
+
+	<li>Fl::event_number() didn't always match the value sent
+	to the handle() method (<a href='str.php?L634'>STR
+	#634</a>)</li>
+
+	<li>Fl::paste() would sometimes not recoginze external 
+	changes of the clipboard (<a href='str.php?L722'>STR
+	#722</a>)</li>
+
+	<li>Fixed fl_message() code so that it does not get
+	accidentaly addded to the current group (<a
+	href='str.php?L253'>STR #253</a>)</li>
+
+	<li>The keyboard shortcut handling code did not handle
+	8-bit characters properly (<a href='str.php?L731'>STR
+	#731</a>)</li>
+
+</UL>

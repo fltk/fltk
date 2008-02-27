@@ -1,0 +1,62 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Timer</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Timer>class Fl_Timer</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+   |
+   +----<B>Fl_Timer</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Timer.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This is provided only to emulate the Forms Timer widget.  It works by
+making a timeout callback every 1/5 second.  This is wasteful and
+inaccurate if you just want something to happen a fixed time in the
+future.  You should directly call <A href="Fl.html#Fl.add_timeout"><TT>
+Fl::add_timeout()</TT></A> instead.
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Timer.Fl_Timer>Fl_Timer</A></LI>
+<LI><A href=#Fl_Timer.~Fl_Timer>~Fl_Timer</A></LI>
+<LI><A href=#Fl_Timer.direction>direction</A></LI>
+<LI><A href=#Fl_Timer.suspended>suspended</A></LI>
+<LI><A href=#Fl_Timer.value>value</A></LI>
+</UL>
+<H4><A name=Fl_Timer.Fl_Timer>Fl_Timer::Fl_Timer(uchar type, int x, int
+y, int w, int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Timer</TT> widget using the given type, position,
+size, and label string. The <TT>type</TT> parameter can be any of the
+following symbolic constants:
+<UL>
+<LI><TT>FL_NORMAL_TIMER</TT> - The timer just does the callback  and
+displays the string &quot;Timer&quot; in the widget. </LI>
+<LI><TT>FL_VALUE_TIMER</TT> - The timer does the callback and  displays
+the current timer value in the widget. </LI>
+<LI><TT>FL_HIDDEN_TIMER</TT> - The timer just does the callback  and
+does not display anything. </LI>
+</UL>
+<H4><A name=Fl_Timer.~Fl_Timer>virtual Fl_Timer::~Fl_Timer()</A></H4>
+ Destroys the timer and removes the timeout.
+<H4><A name=Fl_Timer.direction>char direction() const
+<BR> void direction(char d)</A></H4>
+ Gets or sets the direction of the timer.  If the direction is zero
+then the timer will count up, otherwise it will count down from the
+initial <TT>value()</TT>.
+<H4><A name=Fl_Timer.suspended>char suspended() const
+<BR> void suspended(char d)</A></H4>
+ Gets or sets whether the timer is suspended.
+<H4><A name=Fl_Timer.value>float value() const
+<BR> void value(float)</A></H4>
+ Gets or sets the current timer value. </BODY></HTML>
