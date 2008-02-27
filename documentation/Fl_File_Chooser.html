@@ -274,6 +274,19 @@ const char *value()</A></H4>
 
 <P>Sets or gets the current value of the selected file.
 
+<P>In the second form, <i>file</i> is a <i>1</i>-based index into a list of
+file names. The number of selected files is returned by
+<CODE>Fl_File_Chooser::count()</CODE>.
+
+<P>This sample code loops through all selected files:
+<PRE>
+// Get list of filenames user selected from a MULTI chooser
+for ( int t=1; t<=chooser->count(); t++ ) {
+    const char *filename = chooser->value(t);
+    ..
+}
+</PRE>
+
 <H4><A NAME="Fl_File_Chooser.visible">int visible()</A></H4>
 
 <P>Returns 1 if the <CODE>Fl_File_Chooser</CODE> window is visible.
