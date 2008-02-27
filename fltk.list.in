@@ -42,12 +42,12 @@
 $prefix=@prefix@
 $exec_prefix=@exec_prefix@
 $bindir=@bindir@
-$datadir=@datadir@
 $datarootdir=@datarootdir@
+$datadir=@datadir@
 $includedir=@includedir@
 $libdir=@libdir@
 $mandir=@mandir@
-$docdir=$(datadir)/doc/fltk
+$docdir=${datadir}/doc/fltk
 
 $CAT1EXT=@CAT1EXT@
 $CAT3EXT=@CAT3EXT@
@@ -395,18 +395,18 @@ f 0444 root sys /Applications/sudoku.app/Contents/Resources/sudoku.icns test/sud
 %system !darwin
 f 0555 root sys $bindir/blocks test/blocks
 f 0444 root sys /usr/share/applications/blocks.desktop test/desktop/blocks.desktop
-f 0444 root sys /usr/share/icons/hicolor/32x32/apps/blocks.png test/icons/blocks-32.png
-f 0444 root sys /usr/share/icons/hicolor/128x128/apps/blocks.png test/icons/blocks-128.png
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/blocks.png test/desktop/blocks-32.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/blocks.png test/desktop/blocks-128.png
 
 f 0555 root sys $bindir/checkers test/checkers
 f 0444 root sys /usr/share/applications/checkers.desktop test/desktop/checkers.desktop
-f 0444 root sys /usr/share/icons/hicolor/32x32/apps/checkers.png test/icons/checkers-32.png
-f 0444 root sys /usr/share/icons/hicolor/128x128/apps/checkers.png test/icons/checkers-128.png
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/checkers.png test/desktop/checkers-32.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/checkers.png test/desktop/checkers-128.png
 
 f 0555 root sys $bindir/sudoku test/sudoku
 f 0444 root sys /usr/share/applications/sudoku.desktop test/desktop/sudoku.desktop
-f 0444 root sys /usr/share/icons/hicolor/32x32/apps/sudoku.png test/icons/sudoku-32.png
-f 0444 root sys /usr/share/icons/hicolor/128x128/apps/sudoku.png test/icons/sudoku-128.png
+f 0444 root sys /usr/share/icons/hicolor/32x32/apps/sudoku.png test/desktop/sudoku-32.png
+f 0444 root sys /usr/share/icons/hicolor/128x128/apps/sudoku.png test/desktop/sudoku-128.png
 
 %system all
 f 0444 root sys $mandir/cat6/blocks.$CAT6EXT documentation/blocks.$CAT6EXT
