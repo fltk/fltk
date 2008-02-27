@@ -409,8 +409,8 @@ mgwfltknox_images-1.1.dll: $(IMGLIBNAME) mgwfltknox-1.1.dll
 clean:
 	-$(RM) *.o *.dll.a core.* *~ *.bck *.bck
 	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
-		../lib/$(LIBNAME) ../lib/$(FLLIBNAME) ../lib/$(GLLIBNAME) \
-		../lib/$(IMGLIBNAME) \
+		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
+		$(IMGLIBNAME) \
 		libfltk.so libfltk_forms.so libfltk_gl.so libfltk_images.so \
 		libfltk.sl libfltk_forms.sl libfltk_gl.sl libfltk_images.sl \
 		libfltk.dylib libfltk_forms.dylib \
