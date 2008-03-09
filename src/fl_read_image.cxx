@@ -124,18 +124,18 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 
   if (!image) {
     // fetch absolute coordinates
-    int dx, dy;
+    int dx, dy, sx, sy, sw, sh;
     Window child_win;
-    XTranslateCoordinates(fl_display, fl_window,
-	RootWindow(fl_display, fl_screen), X, Y, &dx, &dy, &child_win);
-
-    // screen dimensions
-    int sx, sy, sw, sh;
-    Fl::screen_xywh(sx, sy, sw, sh, fl_screen);
-
-    if (dx >= sx && dy >= sy && dx + w <= sw && dy + h <= sh) {
+    Fl_Window *win = fl_find(fl_window);
+    if (win) {
+      XTranslateCoordinates(fl_display, fl_window,
+          RootWindow(fl_display, fl_screen), X, Y, &dx, &dy, &child_win);
+      // screen dimensions
+      Fl::screen_xywh(sx, sy, sw, sh, fl_screen);
+    }
+    if (!win || (dx >= sx && dy >= sy && dx + w <= sw && dy + h <= sh)) {
       // the image is fully contained, we can use the traditional method
-    image = XGetImage(fl_display, fl_window, X, Y, w, h, AllPlanes, ZPixmap);
+      image = XGetImage(fl_display, fl_window, X, Y, w, h, AllPlanes, ZPixmap);
     } else {
       // image is crossing borders, determine visible region
       int nw, nh, noffx, noffy;
