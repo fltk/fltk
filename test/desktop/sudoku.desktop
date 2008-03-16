@@ -6,4 +6,4 @@ Exec=sudoku
 Icon=sudoku
 Terminal=false
 Type=Application
-Categories=Game;LogicGame
+Categories=Game;LogicGame;
