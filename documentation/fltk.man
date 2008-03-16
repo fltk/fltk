@@ -19,7 +19,7 @@ do not constitute a modified or derivative work.
 .IP
 The authors do request that such modifications be
 contributed to the FLTK project - send all
-contributions to "fltk-bugs@fltk.org".
+contributions to "fltk\-bugs@fltk.org".
 .IP
 2. Widgets that are subclassed from FLTK widgets do not
 constitute a derivative work.
@@ -46,7 +46,7 @@ documentation to satisfy this requirement:
 [program/widget] is based in part on the work of the FLTK
 project (http://www.fltk.org).
 .SH SEE ALSO
-fltk-config(1), fluid(1)
+fltk\-config(1), fluid(1)
 .br
 FLTK Programming Manual
 .br

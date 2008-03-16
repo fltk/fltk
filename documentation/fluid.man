@@ -3,9 +3,9 @@
 fluid \- the fast light user-interface designer
 .sp
 .SH SYNOPSIS
-fluid [ -c [ -o
+fluid [ \-c [ \-o
 .I code-filename
--h
+\-h
 .I header-filename
 ] ] [
 .I filename.fl
@@ -18,12 +18,12 @@ the GUI hierarchy and any windows defined in the file.
 Functions, classes, windows, and GUI components can be
 manipulated as needed.
 .LP
-When used with the \fI-c\fR option, \fIfluid\fR will create the
+When used with the \fI\-c\fR option, \fIfluid\fR will create the
 necessary C++ header and code files in the current directory. 
 You can override the default extensions, filenames, and
-directories using the \fI-o\fR and \fI-h\fR options.
+directories using the \fI\-o\fR and \fI\-h\fR options.
 .SH SEE ALSO
-fltk-config(1), fltk(3)
+fltk\-config(1), fltk(3)
 .br
 FLTK Programming Manual, Chapter 9
 .br
