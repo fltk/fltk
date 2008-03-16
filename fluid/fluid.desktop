@@ -2,10 +2,9 @@
 Name=FLUID
 Comment=FLTK GUI Designer
 TryExec=fluid
-Exec=fluid %F
+Exec=cd %D && fluid %F
 Icon=fluid
 Terminal=false
 Type=Application
 MimeType=application/x-fluid
-Encoding=UTF-8
-Categories=Development
+Categories=Development;GUIDesigner;

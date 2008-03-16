@@ -6,5 +6,4 @@ Exec=checkers
 Icon=checkers
 Terminal=false
 Type=Application
-Encoding=UTF-8
-Categories=Application;Game
+Categories=Game;BoardGame

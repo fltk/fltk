@@ -6,5 +6,4 @@ Exec=blocks
 Icon=blocks
 Terminal=false
 Type=Application
-Encoding=UTF-8
-Categories=Application;Game
+Categories=Game;BlocksGame
