@@ -1,0 +1,1460 @@
+<HTML>
+<HEAD>
+	<TITLE>B - Function Reference</TITLE>
+</HEAD>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="functions">B - Function Reference</A></H1>
+
+<P>This appendix describes all of the <tt>fl_</tt> functions. For a
+description of the FLTK classes, see <A href="widgets.html">Appendix
+A</A>.
+
+<H2>Function List by Name</H2>
+
+<TABLE width=100%>
+  <TR>
+    <TD width=33%>
+      <UL>
+        <LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_RGB</TT></A> (WIN32)</LI>
+        <LI><A HREF="common.html#add_symbol"><TT>fl_add_symbol</TT></A></LI>
+        <LI><A HREF="#fl_alert"><TT>fl_alert</TT></A></LI>
+        <LI><A HREF="#fl_alphasort"><TT>fl_alphasort</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_arc"><TT>fl_arc</TT></A></LI>
+        <LI><A HREF="#fl_ask"><TT>fl_ask</TT></A></LI>
+        <LI><A HREF="#fl_beep"><TT>fl_beep</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_complex_polygon"><TT>fl_begin_complex_polygon</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_line"><TT>fl_begin_line</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_loop"><TT>fl_begin_loop</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_offscreen"><TT>fl_begin_offscreen</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_points"><TT>fl_begin_points</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_polygon"><TT>fl_begin_polygon</TT></A></LI>
+        <LI><A HREF="common.html#fl_box"><TT>fl_box</TT></A></LI>
+        <LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_brush</TT></A> (WIN32)</LI>
+        <LI><A HREF="drawing.html#fl_can_do_alpha_blending"><TT>fl_can_do_alpha_blending</TT></A></LI>
+        <LI><A HREF="#fl_casealphasort"><TT>fl_casealphasort</TT></A></LI>
+        <LI><A HREF="#fl_casenumericsort"><TT>fl_casenumericsort</TT></A></LI>
+        <LI><A HREF="#fl_choice2"><TT>fl_choice</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_circle"><TT>fl_circle</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_clip_box"><TT>fl_clip_box</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_clip_region"><TT>fl_clip_region</TT></A></LI>
+        <LI><A HREF="osissues.html#fl_close_display"><TT>fl_close_display</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_color"><TT>fl_color</TT></A></LI>
+        <LI><A HREF="#fl_color_average"><TT>fl_color_average</TT></A></LI>
+        <LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
+        <LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
+        <LI><A HREF="#fl_contrast"><TT>fl_contrast</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_copy_offscreen"><TT>fl_copy_offscreen</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_create_offscreen"><TT>fl_create_offscreen</TT></A></LI>
+        <LI><A HREF="#fl_cursor"><TT>fl_cursor</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_curve"><TT>fl_curve</TT></A></LI>
+        <LI><A HREF="#fl_darker"><TT>fl_darker</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_delete_offscreen"><TT>fl_delete_offscreen</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_descent"><TT>fl_descent</TT></A></LI>
+        <LI><A HREF="#fl_dir_chooser"><TT>fl_dir_chooser</TT></A></LI>
+        <LI><A HREF="common.html#fl_down"><TT>fl_down</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_draw"><TT>fl_draw</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_draw_box"><TT>fl_draw_box</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_draw_image"><TT>fl_draw_image</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_draw_image"><TT>fl_draw_image_mono</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_draw_pixmap"><TT>fl_draw_pixmap</TT></A></LI>
+        <LI><A HREF="common.html#fl_draw_symbol"><TT>fl_draw_symbol</TT></A></LI>
+      </UL>
+    </TD>
+    <TD width=33%>
+      <UL>
+        <LI><A HREF="drawing.html#fl_begin_complex_polygon"><TT>fl_end_complex_polygon</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_line"><TT>fl_end_line</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_loop"><TT>fl_end_loop</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_end_offscreen"><TT>fl_end_offscreen</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_points"><TT>fl_end_points</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_polygon"><TT>fl_end_polygon</TT></A></LI>
+        <LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
+        <LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
+        <LI><A HREF="#fl_file_chooser_ok_label"><TT>fl_file_chooser_ok_label</TT></A></LI>
+        <LI><A HREF="#fl_filename_absolute"><TT>fl_filename_absolute</TT></A></LI>
+        <LI><A HREF="#fl_filename_expand"><TT>fl_filename_expand</TT></A></LI>
+        <LI><A HREF="#fl_filename_ext"><TT>fl_filename_ext</TT></A></LI>
+        <LI><A HREF="#fl_filename_isdir"><TT>fl_filename_isdir</TT></A></LI>
+        <LI><A HREF="#fl_filename_list"><TT>fl_filename_list</TT></A></LI>
+        <LI><A HREF="#fl_filename_match"><TT>fl_filename_match</TT></A></LI>
+        <LI><A HREF="#fl_filename_name"><TT>fl_filename_name</TT></A></LI>
+        <LI><A HREF="#fl_filename_relative"><TT>fl_filename_relative</TT></A></LI>
+        <LI><A HREF="#fl_filename_setext"><TT>fl_filename_setext</TT></A></LI>
+        <LI><A HREF="osissues.html#fl_find"><TT>fl_find</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_font"><TT>fl_font</TT></A></LI>
+        <LI><A HREF="common.html#fl_frame"><TT>fl_frame</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_frame"><TT>fl_frame</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_frame2"><TT>fl_frame2</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_complex_polygon"><TT>fl_gap</TT></A></LI>
+        <LI><A HREF="#fl_gray_ramp"><TT>fl_gray_ramp</TT></A></LI>
+        <LI><A HREF="osissues.html#fl_handle"><TT>fl_handle</TT></A> (X11)</LI>
+        <LI><A HREF="drawing.html#fl_height"><TT>fl_height</TT></A></LI>
+        <LI><A HREF="#fl_inactive"><TT>fl_inactive</TT></A></LI>
+        <LI><A HREF="#fl_input2"><TT>fl_input</TT></A></LI>
+        <LI><A HREF="drawing.html#character_encoding"><TT>fl_latin1_to_local</TT></A></LI>
+        <LI><A HREF="#fl_lighter"><TT>fl_lighter</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_line"><TT>fl_line</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_line_style"><TT>fl_line_style</TT></A></LI>
+        <LI><A HREF="drawing.html#character_encoding"><TT>fl_local_to_latin1</TT></A></LI>
+        <LI><A HREF="drawing.html#character_encoding"><TT>fl_local_to_mac_roman</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_loop"><TT>fl_loop</TT></A></LI>
+        <LI><A HREF="drawing.html#character_encoding"><TT>fl_mac_roman_to_local</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_measure"><TT>fl_measure</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_measure_pixmap"><TT>fl_measure_pixmap</TT></A></LI>
+        <LI><A HREF="#fl_message"><TT>fl_message</TT></A></LI>
+        <LI><A HREF="#fl_message_font"><TT>fl_message_font</TT></A></LI>
+        <LI><A HREF="#fl_message_icon"><TT>fl_message_icon</TT></A></LI>
+      </UL>
+    </TD>
+    <TD width=30%>
+      <UL>
+        <LI><A HREF="drawing.html#fl_scale"><TT>fl_mult_matrix</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_not_clipped"><TT>fl_not_clipped</TT></A></LI>
+        <LI><A HREF="#fl_numericsort"><TT>fl_numericsort</TT></A></LI>
+        <LI><A HREF="osissues.html#fl_open_callback"><TT>fl_open_callback</TT></A></LI>
+        <LI><A HREF="osissues.html#fl_open_display"><TT>fl_open_display</TT></A></LI>
+        <LI><A HREF="#fl_open_uri"><TT>fl_open_uri</TT></A></LI>
+        <LI><A HREF="drawing.html#overlay"><TT>fl_overlay_clear</TT></A></LI>
+        <LI><A HREF="drawing.html#overlay"><TT>fl_overlay_rect</TT></A></LI>
+        <LI><A HREF="osissues.html#fl_parse_color"><TT>fl_parse_color</TT></A></LI>
+        <LI><A HREF="#fl_password"><TT>fl_password</TT></A></LI>
+        <LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_pen</TT></A> (WIN32)</LI>
+        <LI><A HREF="drawing.html#fl_pie"><TT>fl_pie</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_point"><TT>fl_point</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_polygon"><TT>fl_polygon</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_pop_clip"><TT>fl_pop_clip</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_push_matrix"><TT>fl_pop_matrix</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_push_clip"><TT>fl_push_clip</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_push_matrix"><TT>fl_push_matrix</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_push_no_clip"><TT>fl_push_no_clip</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_read_image"><TT>fl_read_image</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_rect"><TT>fl_rect</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_rectf"><TT>fl_rectf</TT></A></LI>
+        <LI><A HREF="#fl_register_images"><TT>fl_register_images</TT></A></LI>
+        <LI><A HREF="#fl_rgb_color"><TT>fl_rgb_color</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scale"><TT>fl_rotate</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scale"><TT>fl_scale</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scroll"><TT>fl_scroll</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_shortcut_label"><TT>fl_shortcut_label</TT></A></LI>
+        <LI><A HREF="#fl_show_colormap"><TT>fl_show_colormap</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_size"><TT>fl_size</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transform_dx</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transform_dy</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transform_x</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transform_y</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transformed_vertex</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scale"><TT>fl_translate</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_vertex"><TT>fl_vertex</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_width"><TT>fl_width</TT></A></LI>
+        <LI><A HREF="osissues.html#fl_xid"><TT>fl_xid</TT></A></LI>
+        <LI><A HREF="osissues.html#fl_xpixel"><TT>fl_xpixel</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_xyline"><TT>fl_xyline</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_yxline"><TT>fl_yxline</TT></A></LI>
+<!--        <LI><A HREF=""><TT>fl_brush_action</TT></A> (WIN32)</LI>  -->
+<!--        <LI><A HREF=""><TT>fl_create_alphamask</TT></A></LI>  -->
+<!--        <LI><A HREF=""><TT>fl_create_bitmask</TT></A></LI>  -->
+<!--        <LI><A HREF=""><TT>fl_delete_bitmask</TT></A></LI>  -->
+<!--        <LI><A HREF=""><TT>fl_makeDC</TT></A> (WIN32)</LI>  -->
+<!--        <LI><A HREF=""><TT>fl_old_shortcut</TT></A></LI>  -->
+<!--        <LI><A HREF=""><TT>fl_release_dc</TT></A></LI>  -->
+<!--        <LI><A HREF=""><TT>fl_save_dc</TT></A></LI>  -->
+      </UL>
+    </TD>
+  </TR>
+</TABLE>
+
+<H2>Function List by Category</H2>
+
+<TABLE width=100%>
+  <TR>
+    <TD width=50% valign=top>
+<UL>
+  <LI>Drawing Functions
+  <UL>
+    <LI>Color
+    <UL>
+      <LI><A HREF="drawing.html#fl_color"><TT>fl_color</TT></A></LI>
+      <LI><A HREF="#fl_color_average"><TT>fl_color_average</TT></A></LI>
+      <LI><A HREF="#fl_color_cube"><TT>fl_color_cube</TT></A></LI>
+      <LI><A HREF="#fl_contrast"><TT>fl_contrast</TT></A></LI>
+      <LI><A HREF="#fl_cursor"><TT>fl_cursor</TT></A></LI>
+      <LI><A HREF="#fl_darker"><TT>fl_darker</TT></A></LI>
+      <LI><A HREF="#fl_gray_ramp"><TT>fl_gray_ramp</TT></A></LI>
+      <LI><A HREF="#fl_lighter"><TT>fl_lighter</TT></A></LI>
+      <LI><A HREF="#fl_rgb_color"><TT>fl_rgb_color</TT></A></LI>
+    </UL>
+    <LI>Text
+    <UL>
+        <LI><A HREF="drawing.html#fl_descent"><TT>fl_descent</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_draw"><TT>fl_draw</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_font"><TT>fl_font</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_height"><TT>fl_height</TT></A></LI>
+        <LI><A HREF="drawing.html#character_encoding"><TT>fl_latin1_to_local</TT></A></LI>
+        <LI><A HREF="drawing.html#character_encoding"><TT>fl_local_to_latin1</TT></A></LI>
+        <LI><A HREF="drawing.html#character_encoding"><TT>fl_local_to_mac_roman</TT></A></LI>
+        <LI><A HREF="drawing.html#character_encoding"><TT>fl_mac_roman_to_local</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_measure"><TT>fl_measure</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_shortcut_label"><TT>fl_shortcut_label</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_size"><TT>fl_size</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_width"><TT>fl_width</TT></A></LI>
+    </UL>
+    <LI>Symbols
+    <UL>
+        <LI><A HREF="common.html#add_symbol"><TT>fl_add_symbol</TT></A></LI>
+        <LI><A HREF="common.html#fl_draw_symbol"><TT>fl_draw_symbol</TT></A></LI>
+    </UL>
+    <LI>Fast Drawing
+    <UL>
+        <LI><A HREF="drawing.html#fl_arc"><TT>fl_arc</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_circle"><TT>fl_circle</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_frame"><TT>fl_frame</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_frame2"><TT>fl_frame2</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_line"><TT>fl_line</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_line_style"><TT>fl_line_style</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_loop"><TT>fl_loop</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_pie"><TT>fl_pie</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_point"><TT>fl_point</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_polygon"><TT>fl_polygon</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_rect"><TT>fl_rect</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_rectf"><TT>fl_rectf</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scroll"><TT>fl_scroll</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_xyline"><TT>fl_xyline</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_yxline"><TT>fl_yxline</TT></A></LI>
+    </UL>
+    <LI>Complex Drawing
+    <UL>
+        <LI><A HREF="drawing.html#fl_pie"><TT>fl_arc</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_complex_polygon"><TT>fl_begin_complex_polygon</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_line"><TT>fl_begin_line</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_loop"><TT>fl_begin_loop</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_offscreen"><TT>fl_begin_offscreen</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_points"><TT>fl_begin_points</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_polygon"><TT>fl_begin_polygon</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_curve"><TT>fl_curve</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scale"><TT>fl_rotate</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scale"><TT>fl_scale</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_complex_polygon"><TT>fl_end_complex_polygon</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_line"><TT>fl_end_line</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_loop"><TT>fl_end_loop</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_points"><TT>fl_end_points</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_polygon"><TT>fl_end_polygon</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_begin_complex_polygon"><TT>fl_gap</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scale"><TT>fl_mult_matrix</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_push_matrix"><TT>fl_pop_matrix</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_push_matrix"><TT>fl_push_matrix</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transform_dx</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transform_dy</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transform_x</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transform_y</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_transform"><TT>fl_transformed_vertex</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_scale"><TT>fl_translate</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_vertex"><TT>fl_vertex</TT></A></LI>
+    </UL>
+    </UL>
+    </TD>
+    <TD width=50% valign=top>
+    <UL><LI>Drawing Functions (cont'd)
+    <UL>
+    <LI>Clipping
+    <UL>
+        <LI><A HREF="drawing.html#fl_clip_box"><TT>fl_clip_box</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_clip_region"><TT>fl_clip_region</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_not_clipped"><TT>fl_not_clipped</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_push_no_clip"><TT>fl_push_no_clip</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_push_clip"><TT>fl_push_clip</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_pop_clip"><TT>fl_pop_clip</TT></A></LI>
+    </UL>
+    <LI>Overlay Drawing
+    <UL>
+        <LI><A HREF="drawing.html#overlay"><TT>fl_overlay_clear</TT></A></LI>
+        <LI><A HREF="drawing.html#overlay"><TT>fl_overlay_rect</TT></A></LI>
+    </UL>
+    <LI>Offscreen Drawing
+    <UL>
+        <LI><A HREF="drawing.html#fl_copy_offscreen"><TT>fl_copy_offscreen</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_create_offscreen"><TT>fl_create_offscreen</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_delete_offscreen"><TT>fl_delete_offscreen</TT></A></LI>
+        <LI><A HREF="drawing.html#fl_end_offscreen"><TT>fl_end_offscreen</TT></A></LI>
+    </UL>
+  </UL>
+  </LI>
+
+</UL>
+<UL>
+
+	<LI>Dialog Functions
+	<UL>
+		<LI><A HREF="#fl_alert"><TT>fl_alert</TT></A></LI>
+		<LI><A HREF="#fl_ask"><TT>fl_ask</TT></A></LI>
+		<LI><A HREF="#fl_beep"><TT>fl_beep</TT></A></LI>
+		<LI><A HREF="#fl_choice2"><TT>fl_choice</TT></A></LI>
+		<LI><A HREF="#fl_color_chooser_func"><TT>fl_color_chooser</TT></A></LI>
+		<LI><A HREF="#fl_dir_chooser"><TT>fl_dir_chooser</TT></A></LI>
+		<LI><A HREF="#fl_file_chooser2"><TT>fl_file_chooser</TT></A></LI>
+		<LI><A HREF="#fl_file_chooser_callback"><TT>fl_file_chooser_callback</TT></A></LI>
+		<LI><A HREF="#fl_file_chooser_ok_label"><TT>fl_file_chooser_ok_label</TT></A></LI>
+		<LI><A HREF="#fl_input2"><TT>fl_input</TT></A></LI>
+		<LI><A HREF="#fl_message"><TT>fl_message</TT></A></LI>
+		<LI><A HREF="#fl_message_font"><TT>fl_message_font</TT></A></LI>
+		<LI><A HREF="#fl_message_icon"><TT>fl_message_icon</TT></A></LI>
+		<LI><A HREF="#fl_password"><TT>fl_password</TT></A></LI>
+		<LI><A HREF="#fl_show_colormap"><TT>fl_show_colormap</TT></A></LI>
+	</UL>
+	</LI>
+	<LI>Filename Functions
+	<UL>
+		<LI><A HREF="#fl_filename_absolute"><TT>fl_filename_absolute</TT></A></LI>
+		<LI><A HREF="#fl_filename_expand"><TT>fl_filename_expand</TT></A></LI>
+		<LI><A HREF="#fl_filename_ext"><TT>fl_filename_ext</TT></A></LI>
+		<LI><A HREF="#fl_filename_isdir"><TT>fl_filename_isdir</TT></A></LI>
+		<LI><A HREF="#fl_filename_list"><TT>fl_filename_list</TT></A></LI>
+		<LI><A HREF="#fl_filename_match"><TT>fl_filename_match</TT></A></LI>
+		<LI><A HREF="#fl_filename_name"><TT>fl_filename_name</TT></A></LI>
+		<LI><A HREF="#fl_filename_relative"><TT>fl_filename_relative</TT></A></LI>
+		<LI><A HREF="#fl_filename_setext"><TT>fl_filename_setext</TT></A></LI>
+	        <LI><A HREF="#fl_open_uri"><TT>fl_open_uri</TT></A></LI>
+	</UL>
+	</LI>
+
+	<LI>Image Functions
+	<UL>
+		<LI><A HREF="drawing.html#fl_can_do_alpha_blending"><TT>fl_can_do_alpha_blending</TT></A></LI>
+		<LI><A HREF="#fl_register_images"><TT>fl_register_images</TT></A></LI>
+		<LI><A HREF="drawing.html#fl_draw_image"><TT>fl_draw_image</TT></A></LI>
+		<LI><A HREF="drawing.html#fl_draw_image"><TT>fl_draw_image_mono</TT></A></LI>
+		<LI><A HREF="drawing.html#fl_draw_pixmap"><TT>fl_draw_pixmap</TT></A></LI>
+		<LI><A HREF="drawing.html#fl_measure_pixmap"><TT>fl_measure_pixmap</TT></A></LI>
+		<LI><A HREF="drawing.html#fl_read_image"><TT>fl_read_image</TT></A></LI>
+	</UL>
+	</LI>
+
+	<LI>Box Types
+	<UL>
+	        <LI><A HREF="common.html#fl_down"><TT>fl_down</TT></A></LI>
+		<LI><A HREF="drawing.html#fl_draw_box"><TT>fl_draw_box</TT></A></LI>
+		<LI><A HREF="common.html#fl_frame"><TT>fl_frame</TT></A></LI>
+	</UL>
+
+	<LI>System Related Functions
+	<UL>
+        	<LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_RGB</TT></A> (WIN32)</LI>
+        	<LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_brush</TT></A> (WIN32)</LI>
+        	<LI><A HREF="osissues.html#fl_close_display"><TT>fl_close_display</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_find"><TT>fl_find</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_handle"><TT>fl_handle</TT></A> (X11)</LI>
+        	<LI><A HREF="osissues.html#fl_open_callback"><TT>fl_open_callback</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_open_display"><TT>fl_open_display</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_parse_color"><TT>fl_parse_color</TT></A></LI>
+        	<LI><A HREF="osissues.html#WIN32.gdi"><TT>fl_pen</TT></A> (WIN32)</LI>
+        	<LI><A HREF="osissues.html#fl_xid"><TT>fl_xid</TT></A></LI>
+        	<LI><A HREF="osissues.html#fl_xpixel"><TT>fl_xpixel</TT></A></LI>
+	</UL>
+</UL>
+</td>
+</table>
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_alert">fl_alert</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_alert(const char *, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Same as <tt>fl_message()</tt> except for the &quot;!&quot; symbol.
+
+<P ALIGN=CENTER><IMG src="fl_alert.gif" ALT="The fl_alert window">
+
+
+<!-- NEED 4in -->
+<H2><A name="fl_ask">fl_ask</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_ask(const char *, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Displays a printf-style message in a pop-up box with an
+&quot;Yes&quot; and &quot;No&quot; button and waits for the user
+to hit a button. The return value is 1 if the user hits Yes, 0
+if they pick No. The enter key is a shortcut for Yes and ESC is
+a shortcut for No.
+
+<P ALIGN="CENTER"><IMG SRC="fl_ask.gif" ALT="The fl_ask window.">
+
+<p><b>Note:</b> Use of this function is <i>strongly</i>
+discouraged, and it will be removed in FLTK 2.0. Instead, use <a
+href='#fl_choice2'><tt>fl_choice()</tt></a> instead and provide
+unambiguous verbs in place of "Yes" and "No".</p>
+
+<!-- NEED 4in -->
+<H2><A name="fl_beep">fl_beep</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_beep(int type = FL_BEEP_DEFAULT)
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Sounds an audible notification; the default <CODE>type</CODE> argument
+sounds a simple "beep" sound. Other values for <CODE>type</CODE> may use
+a system or user-defined sound file:
+
+<UL>
+
+	<LI><TT>FL_BEEP_DEFAULT</TT> - Make a generic "beep" sound.
+
+	<LI><TT>FL_BEEP_MESSAGE</TT> - Make a sound appropriate for an
+	informational message.
+
+	<LI><TT>FL_BEEP_ERROR</TT> - Make a sound appropriate for an
+	error message.
+
+	<LI><TT>FL_BEEP_QUESTION</TT> - Make a sound appropriate for
+	a question.
+
+	<LI><TT>FL_BEEP_PASSWORD</TT> - Make a sound appropriate for
+	a password prompt.
+
+	<LI><TT>FL_BEEP_NOTIFICATION</TT> - Make a sound appropriate for
+	an event notification ("you have mail", etc.)
+
+</UL>
+
+
+<!-- NEED 4in -->
+<H2><A name="fl_choice2">fl_choice</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_choice(const char *q, const char *b0, const char *b1, const char *b2, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Shows the message with three buttons below it marked with the
+strings <tt> b0</tt>, <tt>b1</tt>, and <tt>b2</tt>. Returns 0,
+1, or 2 depending on which button is hit. ESC is a shortcut for
+button 0 and the enter key is a shortcut for button 1. Notice
+the buttons are positioned &quot;backwards&quot;. You can hide
+buttons by passing <tt>NULL</tt> as their labels.
+
+<P ALIGN="CENTER"><IMG SRC="fl_choice.gif" ALT="The fl_choice window.">
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_color_average">fl_color_average</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns the weighted average color between the two colors.
+The red, green, and blue values are averaged using the following
+formula:
+
+<UL><PRE>
+color = c1 * weight + c2 * (1 - weight)
+</PRE></UL>
+
+<P>Thus, a <CODE>weight</CODE> value of 1.0 will return the
+first color, while a value of 0.0 will return the second color.
+
+
+<!-- NEED 4in -->
+<H2><A name="fl_color_chooser_func">fl_color_chooser</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Color_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_color_chooser(const char *title, double &amp;r, double &amp;g, double &amp;b);
+int fl_color_chooser(const char *title, uchar &amp;r, uchar &amp;g, uchar &amp;b);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <CODE>double</CODE> version takes RGB values in the range
+0.0 to 1.0.  The <CODE>uchar</CODE> version takes RGB values in
+the range 0 to 255. The <tt>title</tt> argument specifies the
+label (title) for the window.
+
+<P ALIGN="CENTER"><IMG SRC="fl_color_chooser.jpg" ALT="The fl_color_chooser dialog."></P>
+
+<P><tt>fl_color_chooser()</tt> pops up a window to let the user
+pick an arbitrary RGB color.  They can pick the hue and
+saturation in the &quot;hue box&quot; on the left (hold down
+CTRL to just change the saturation), and the brighness using the
+vertical slider.  Or they can type the 8-bit numbers into the
+RGB <A href=Fl_Value_Input.html#Fl_Value_Input><tt>
+Fl_Value_Input</tt></A> fields, or drag the mouse across them to
+adjust them.  The pull-down menu lets the user set the input
+fields to show RGB, HSV, or 8-bit RGB (0 to 255).
+
+<P>This returns non-zero if the user picks ok, and updates the
+RGB values.  If the user picks cancel or closes the window this
+returns zero and leaves RGB unchanged.
+
+<P>If you use the color chooser on an 8-bit screen, it will
+allocate all the available colors, leaving you no space to
+exactly represent the color the user picks!  You can however use
+<A href="drawing.html#fast"><tt> fl_rectf()</tt></A> to fill a
+region with a simulated color using dithering.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_color_cube">fl_color_cube</A></H2>
+
+<HR>
+
+<H3>Include File</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_draw.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_color_cube(int r, int g, int b);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a color out of the color cube. <tt>r</tt> must be in
+the range 0 to FL_NUM_RED (5) minus 1. <tt>g</tt> must be in the
+range 0 to FL_NUM_GREEN (8) minus 1. <tt>b</tt> must be in the
+range 0 to FL_NUM_BLUE (5) minus 1.
+
+<P>To get the closest color to a 8-bit set of R,G,B values use:
+
+<UL><PRE>
+fl_color_cube(R * (FL_NUM_RED - 1) / 255,
+              G * (FL_NUM_GREEN - 1) / 255,
+              B * (FL_NUM_BLUE - 1) / 255);
+</PRE></UL>
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_contrast">fl_contrast</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns the foreground color if it contrasts sufficiently
+with the background color. Otherwise, returns
+<CODE>FL_WHITE</CODE> or <CODE>FL_BLACK</CODE> depending on
+which color provides the best contrast.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_cursor">fl_cursor</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_draw.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_cursor(Fl_Cursor cursor, Fl_Color fg, Fl_Color bg);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Sets the cursor for the current window to the specified shape
+and colors. The cursors are defined in the <A
+HREF="enumerations.html#cursor"><CODE>&lt;FL/Enumerations.H&gt;</CODE>
+header file</A>.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_darker">fl_darker</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_darker(Fl_Color c);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a darker version of the specified color.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_dir_chooser">fl_dir_chooser</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+char *fl_dir_chooser(const char * message, const char *fname, int relative = 0);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <tt>fl_dir_chooser()</tt> function displays a <A
+HREF="Fl_File_Chooser.html"><tt>Fl_File_Chooser</tt></A> dialog
+so that the user can choose a directory.
+
+<P><tt>message</tt> is a string used to title the window.
+
+<P><tt>fname</tt> is a default filename to fill in the chooser
+with. If this is <tt>NULL</tt> then the last filename that was
+choosen is used. The first time the file chooser is called this
+defaults to a blank string.
+
+<P><tt>relative</tt> specifies whether the returned filename
+should be relative (any non-zero value) or absolute (0). The
+default is to return absolute paths.
+
+<P>The returned value points at a static buffer that is only
+good until the next time <tt>fl_dir_chooser()</tt> is called.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_file_chooser2">fl_file_chooser</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+char *fl_file_chooser(const char * message, const char *pattern, const char *fname, int relative = 0);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>FLTK provides a &quot;tab completion&quot; file chooser that
+makes it easy to choose files from large directories.  This file
+chooser has several unique features, the major one being that
+the Tab key completes filenames like it does in Emacs or tcsh,
+and the list always shows all possible completions.
+
+<P ALIGN="CENTER"><IMG SRC="Fl_File_Chooser.jpg" ALT="The fl_file_chooser window.">
+
+<P><tt>fl_file_chooser()</tt> pops up the file chooser, waits
+for the user to pick a file or Cancel, and then returns a
+pointer to that filename or <tt>NULL</tt> if Cancel is chosen.
+
+<P><tt>message</tt> is a string used to title the window.
+
+<P><tt>pattern</tt> is used to limit the files listed in a
+directory to those matching the pattern. This matching is done by
+<A href="#fl_filename_match"><tt>fl_filename_match()</tt></A>.
+Multiple patterns can be used by separating them with tabs, like
+"*.jpg\t*.png\t*.gif\t*". In addition, you can provide
+human-readable labels with the patterns inside parenthesis, like
+"JPEG&nbsp;Files&nbsp;(*.jpg)\tPNG&nbsp;Files&nbsp;(*.png)\tGIF&nbsp;Files&nbsp;(*.gif)\tAll&nbsp;Files&nbsp;(*)".
+Pass <tt>NULL</tt> to show all files.</p>
+
+<P><tt>fname</tt> is a default filename to fill in the chooser
+with. If this is <tt>NULL</tt> then the last filename that was
+choosen is used (unless that had a different pattern, in which
+case just the last directory with no name is used). The first
+time the file chooser is called this defaults to a blank string.
+
+<P><tt>relative</tt> specifies whether the returned filename
+should be relative (any non-zero value) or absolute (0). The
+default is to return absolute paths.
+
+<P>The returned value points at a static buffer that is only
+good until the next time <tt>fl_file_chooser()</tt> is called.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_file_chooser_callback">fl_file_chooser_callback</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_file_chooser_callback(void (*cb)(const char *));
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Sets a function that is called every time the user clicks a
+file in the currently popped-up file chooser. This could be used
+to preview the contents of the file. It has to be reasonably
+fast, and cannot create FLTK windows.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_file_chooser_ok_label">fl_file_chooser_ok_label</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_file_chooser_ok_label(const char *l);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Sets the label that is shown on the "OK" button in the file
+chooser. The default label (<tt>fl_ok</tt>) can be restored by
+passing a <tt>NULL</tt> pointer for the label string.</p>
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_absolute">fl_filename_absolute</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_absolute(char *to, int tolen, const char *from);
+int fl_filename_absolute(char *to, const char *from);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Converts a relative pathname to an absolute pathname. If
+<tt>from</tt> does not start with a slash, the current working
+directory is prepended to <tt>from</tt> with any occurances of
+<tt>.</tt> and <tt>x/..</TT> deleted from the result. The
+absolute pathname is copied to <tt>to</tt>; <tt>from</tt> and
+<tt>to</tt> may point to the  same buffer.
+<TT>fl_filename_absolute</TT> returns non-zero if any changes
+were made.
+
+<P>The first form accepts a maximum length (<TT>tolen</TT>) for
+the destination buffer, while the second form assumes that the
+destination buffer is at least <TT>FL_PATH_MAX</TT> characters
+in length.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_expand">fl_filename_expand</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_expand(char *to, int tolen, const char *from);
+int fl_filename_expand(char *to, const char *from);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>This function replaces environment variables and home
+directories with the corresponding strings. Any occurrence of
+<tt>$X</tt> is replaced by <tt>getenv(&quot;X&quot;)</tt>; if
+<TT>$X</TT> is not defined in the environment, the occurrence is
+not replaced. Any occurence of <tt>~X</tt> is replaced by user
+<tt>X</tt>'s home directory; if user <TT>X</TT> does not exist,
+the occurrence is not replaced. Any resulting double slashes
+cause everything before the second slash to be deleted.
+
+<P>The result is copied to <TT>to</TT>, and <TT>from</TT> and
+<TT>to</TT> may point to the same buffer.
+<TT>fl_filename_expand()</TT> returns non-zero if any changes
+were made.
+
+<P>The first form accepts a maximum length (<TT>tolen</TT>) for
+the destination buffer, while the second form assumes that the
+destination buffer is at least <TT>FL_PATH_MAX</TT> characters
+in length.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_ext">fl_filename_ext</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+const char *fl_filename_ext(const char *f);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a pointer to the last period in
+<tt>fl_filename_name(f)</tt>, or a pointer to the trailing
+<TT>nul</TT> if none is found.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_isdir">fl_filename_isdir</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_isdir(const char *f);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns non-zero if the file exists and is a directory.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_list">fl_filename_list</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_list(const char *d, dirent ***list, Fl_File_Sort_F *sort = fl_numericsort);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>This is a portable and const-correct wrapper for the
+<tt>scandir()</tt> function. <tt>d</tt> is the name of a
+directory; it does not matter if it has a trailing slash or not.
+For each file in that directory a &quot;dirent&quot; structure
+is created. The only portable thing about a dirent is that
+<TT>dirent.d_name</TT> is the <TT>nul</TT>-terminated file name.
+An array of pointers to these <TT>dirent</TT>'s is created and a
+pointer to the array is returned in <tt>*list</tt>. The number
+of entries is given as a return value. If there is an error
+reading the directory a number less than zero is returned, and
+<tt>errno</tt> has the reason; <tt>errno</tt> does not work
+under WIN32.
+
+<P>The name of directory always ends in a forward slash '/'.
+
+<P>The <tt>sort</tt> argument specifies a sort function to be used
+when on the array of filenames. The following standard sort functions
+are provided with FLTK:
+
+<UL>
+
+	<LI><TT><A NAME=fl_alphasort>fl_alphasort</A></tt> - The files are sorted in
+	ascending alphabetical order; upper- and lowercase
+	letters are compared according to their ASCII ordering -
+	uppercase before lowercase.
+
+	<LI><TT><A NAME=fl_casealphasort>fl_casealphasort</A></tt> - The files are sorted in
+	ascending alphabetical order; upper- and lowercase
+	letters are compared equally - case is not significant.
+
+	<LI><TT><A NAME=fl_casenumericsort>fl_casenumericsort</A></TT> - The files are sorted
+	in ascending &quot;alphanumeric&quot; order, where an
+	attempt is made to put unpadded numbers in consecutive
+	order; upper- and lowercase letters are compared equally
+	- case is not significant.
+
+	<LI><TT><A NAME=fl_numericsort>fl_numericsort</A></TT> - The files are sorted in
+	ascending &quot;alphanumeric&quot; order, where an
+	attempt is made to put unpadded numbers in consecutive
+	order; upper- and lowercase letters are compared
+	according to their ASCII ordering - uppercase before
+	lowercase.
+
+</UL>
+
+<P>You can free the returned list of files with the following
+code:
+
+<UL><PRE>
+for (int i = return_value; i &gt; 0;) {
+  free((void*)(list[--i]));
+}
+
+free((void*)list);
+</PRE></UL>
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_match">fl_filename_match</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_match(const char *f, const char *pattern);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns non-zero if <tt>f</tt> matches <tt>pattern</tt>. The
+following syntax is used by <tt>pattern</tt>:
+
+<UL>
+
+	<LI><tt>*</tt> matches any sequence of 0 or more
+	characters.</LI>
+
+	<LI><tt>?</tt> matches any single character.</LI>
+
+	<LI><tt>[set]</tt> matches any character in the set. Set
+	can contain any single characters, or a-z to represent a
+	range. To match ] or - they must be the first
+	characters. To match ^ or ! they must not be the first
+	characters.</LI>
+
+	<LI><tt>[^set] or <B>[!set]</B></tt> matches any
+	character not in the set.</LI>
+
+	<LI><tt>{X|Y|Z} or <B>{X,Y,Z}</B></tt> matches any one of the
+	subexpressions literally.</LI>
+
+	<LI><tt>\x</tt> quotes the character x so it has no
+	special meaning.</LI>
+
+	<LI><tt>x</tt> all other characters must be matched
+	exactly.</LI>
+
+</UL>
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_name">fl_filename_name</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+const char *fl_filename_name(const char *f);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a pointer to the character after the last slash, or
+to the start of the filename if there is none.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_relative">fl_filename_relative</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+int fl_filename_relative(char *to, int tolen, const char *from);
+int fl_filename_relative(char *to, const char *from);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Converts an absolute pathname to an relative pathname. The
+relative pathname is copied to <tt>to</tt>; <tt>from</tt> and
+<tt>to</tt> may point to the same buffer.
+<TT>fl_filename_relative</TT> returns non-zero if any changes
+were made.
+
+<P>The first form accepts a maximum length (<TT>tolen</TT>) for
+the destination buffer, while the second form assumes that the
+destination buffer is at least <TT>FL_PATH_MAX</TT> characters
+in length.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_filename_setext">fl_filename_setext</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+char *fl_filename_setext(char *to, int tolen, const char *ext);
+char *fl_filename_setext(char *to, const char *ext);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Replaces the extension in <TT>to</TT> with the extension in
+<TT>ext</TT>. Returns a pointer to <tt>to</tt>.
+
+<P>The first form accepts a maximum length (<TT>tolen</TT>) for
+the destination buffer, while the second form assumes that the
+destination buffer is at least <TT>FL_PATH_MAX</TT> characters
+in length.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_gray_ramp">fl_gray_ramp</A></H2>
+
+<HR>
+
+<H3>Include File</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_draw.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_gray_ramp(int i);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a gray color value from black (<TT>i == 0</TT>) to
+white (<TT>i == FL_NUM_GRAY - 1</TT>). <TT>FL_NUM_GRAY</TT> is
+defined to be 24 in the current FLTK release. To get the closest
+FLTK gray value to an 8-bit grayscale color 'I' use:
+
+<UL><PRE>
+fl_gray_ramp(I * (FL_NUM_GRAY - 1) / 255)
+</PRE></UL>
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_inactive">fl_inactive</A></H2>
+
+<HR>
+
+<H3>Include File</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_inactive(Fl_Color c);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns the inactive, dimmed version of the give color
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_input2">fl_input</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+const char *fl_input(const char *label, const char *deflt = 0, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Pops up a window displaying a string, lets the user edit it,
+and return the new value. The cancel button returns
+<tt>NULL</tt>. <I>The returned pointer is only valid until the
+next time <tt>fl_input()</tt> is called</I>. Due to
+back-compatability, the arguments to any printf commands in the
+label are after the default value.
+
+<P ALIGN=CENTER><IMG SRC="fl_input.gif" ALT="The fl_input window.">
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_lighter">fl_lighter</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Enumerations.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_lighter(Fl_Color c);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a lighter version of the specified color.
+
+
+<!-- NEED 4in -->
+<H2><A name="fl_message">fl_message</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_message(const char *, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Displays a printf-style message in a pop-up box with an
+&quot;OK&quot; button, waits for the user to hit the button. 
+The message will wrap to fit the window, or may be many lines by
+putting <tt>\n</tt> characters into it. The enter key is a
+shortcut for the OK button.
+
+<P>A message text can be further formatted with html tags by 
+adding <tt>&lt;html&gt;</tt> at the beginning of the message.
+See <tt><a href="Fl_Help_View.html">Fl_Help_View</a></tt> for
+details.
+
+<P>The message text is limited to 1024 characters.
+
+<P ALIGN="CENTER"><IMG src="fl_message.gif" ALT="The fl_message window.">
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_message_font">fl_message_font</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_message_font(Fl_Font fontid, uchar size);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Changes the font and font size used for the messages in all
+the popups.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_message_icon">fl_message_icon</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Widget *fl_message_icon();
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns a pointer to the box at the left edge of all the
+popups. You can alter the font, color, label, or image before
+calling the functions.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_open_uri">fl_open_uri</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/filename.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_open_uri(const char *uri, char *msg = (char *)0, int msglen = 0);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>fl_open_uri() opens the specified Uniform Resource Identifier (URI) using an operating-system dependent program or interface. For URIs using the "ftp", "http", or "https" schemes, the system default web browser is used to open the URI, while "mailto" and "news" URIs are typically opened using the system default mail reader and "file" URIs are opened using the file system navigator.</P>
+
+<P>On success, the (optional) <TT>msg</TT> buffer is filled with the command that was run to open the URI; on Windows, this will always be "open uri".</P>
+
+<P>On failure, the <TT>msg</TT> buffer is filled with an English error message.</P>
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_password">fl_password</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_ask.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+const char *fl_password(const char *label, const char *deflt = 0, ...);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Same as <tt>fl_input()</tt>, except an <A
+href=Fl_Secret_Input.html><tt>Fl_Secret_Input</tt></A> field is
+used.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_register_images">fl_register_images</A></H2>
+
+<HR>
+
+<H3>Include File</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Shared_Image.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+void fl_register_images();
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Registers the extra image file formats that are not provided
+as part of the core FLTK library for use with the <A
+HREF="Fl_Shared_Image.html#Fl_Shared_Image"><CODE>Fl_Shared_Image</CODE></A>
+class.
+
+<P>This function is provided in the <CODE>fltk_images</CODE>
+library.
+
+
+<!-- NEED 4in -->
+<H2><A NAME="fl_rgb_color">fl_rgb_color</A></H2>
+
+<HR>
+
+<H3>Include File</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_draw.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_rgb_color(uchar r, uchar g, uchar b);
+Fl_Color fl_rgb_color(uchar g);
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>Returns the 24-bit RGB color value for the specified 8-bit
+RGB or grayscale values.
+
+
+<!-- NEED 8in -->
+<H2><A name="fl_show_colormap">fl_show_colormap</A></H2>
+
+<HR>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/fl_show_colormap.H&gt;
+</PRE></UL>
+
+<H3>Prototype</H3>
+
+<UL><PRE>
+Fl_Color fl_show_colormap(Fl_Color oldcol)
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P><tt>fl_show_colormap()</tt> pops up a panel of the 256 colors
+you can access with <A
+href="drawing.html#fl_color"><tt>fl_color()</tt></A> and lets
+the user pick one of them. It returns the new color index, or
+the old one if the user types ESC or clicks outside the window.
+
+<P ALIGN="CENTER"><IMG src="fl_show_colormap.gif" ALT="The fl_show_colormap dialog">
+
+
+</BODY>
+</HTML>

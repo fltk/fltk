@@ -1,0 +1,156 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_File_Icon</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+<H2><A NAME="Fl_File_Icon">class Fl_File_Icon</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<B>Fl_File_Icon</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Icon.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <CODE>Fl_File_Icon</CODE> class manages icon images that can be
+used as labels in other widgets and as icons in the <CODE>FileBrowser</CODE>
+widget.
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#Fl_File_Icon.Fl_File_Icon">Fl_File_Icon</A>
+	<LI><A HREF="#Fl_File_Icon.~Fl_File_Icon">~Fl_File_Icon</A>
+	<LI><A HREF="#Fl_File_Icon.add">add</A>
+	<LI><A HREF="#Fl_File_Icon.add_color">add_color</A>
+	<LI><A HREF="#Fl_File_Icon.add_vertex">add_vertex</A>
+	<LI><A HREF="#Fl_File_Icon.clear">clear</A>
+	<LI><A HREF="#Fl_File_Icon.draw">draw</A>
+	<LI><A HREF="#Fl_File_Icon.find">find</A>
+	<LI><A HREF="#Fl_File_Icon.first">first</A>
+	<LI><A HREF="#Fl_File_Icon.label">label</A>
+	<LI><A HREF="#Fl_File_Icon.labeltype">labeltype</A>
+	<LI><A HREF="#Fl_File_Icon.load_fti">load_fti</A>
+	<LI><A HREF="#Fl_File_Icon.load">load</A>
+	<LI><A HREF="#Fl_File_Icon.load_system_icons">load_system_icons</A>
+	<LI><A HREF="#Fl_File_Icon.load_xpm">load_xpm</A>
+	<LI><A HREF="#Fl_File_Icon.pattern">pattern</A>
+	<LI><A HREF="#Fl_File_Icon.size">size</A>
+	<LI><A HREF="#Fl_File_Icon.type">type</A>
+	<LI><A HREF="#Fl_File_Icon.value">value</A>
+
+</UL>
+
+<H4><A NAME="Fl_File_Icon.Fl_File_Icon">Fl_File_Icon()</A></H4>
+
+<P>The constructor creates a new <CODE>Fl_File_Icon</CODE> with the specified
+information.
+
+<H4><A NAME="Fl_File_Icon.~Fl_File_Icon">~Fl_File_Icon()</A></H4>
+
+<P>The destructor destroys the icon and frees all memory that has been
+allocated for it.
+
+<H4><A NAME="Fl_File_Icon.add">short *add(short d)</A></H4>
+
+<P>Adds a keyword value to the icon array, returning a pointer to it.
+
+<H4><A NAME="Fl_File_Icon.add_color">short *add_color(short c)</A></H4>
+
+<P>Adds a color value to the icon array, returning a pointer to it.
+
+<H4><A NAME="Fl_File_Icon.add_vertex">short *add_vertex(int x, int y)<BR>
+short *add_vertex(float x, float y)</A></H4>
+
+<P>Adds a vertex value to the icon array, returning a pointer to it.
+The integer version accepts coordinates from 0 to 10000, while the
+floating point version goes from 0.0 to 1.0. The origin (0.0) is in
+the lower-lefthand corner of the icon.
+
+<H4><A NAME="Fl_File_Icon.clear">void clear()</A></H4>
+
+<P>Clears all icon data from the icon.
+
+<H4><A NAME="Fl_File_Icon.draw">void draw(int x, int y, int w, int h, Fl_Color ic, int active = 1)</A></H4>
+
+<P>Draws the icon in the indicated area.
+
+<H4><A NAME="Fl_File_Icon.find">static Fl_File_Icon *find(const char *filename, int filetype = ANY);</A></H4>
+
+<P>Finds an icon that matches the given filename and file type.
+
+<H4><A NAME="Fl_File_Icon.first">static Fl_File_Icon *first()</A></H4>
+
+<P>Returns a pointer to the first icon in the list.
+
+<H4><A NAME="Fl_File_Icon.label">void label(Fl_Widget *w)</A></H4>
+
+<P>Applies the icon to the widget, registering the <CODE>Fl_File_Icon</CODE>
+label type as needed.
+
+<H4><A NAME="Fl_File_Icon.labeltype">static void labeltype(const Fl_Label *o, int x, int y, int w, int h, Fl_Align a)</A></H4>
+
+<P>The labeltype function for icons.
+
+<H4><A NAME="Fl_File_Icon.load">void load(const char *f)</A></H4>
+
+<P>Loads the specified icon image. The format is deduced from the filename.
+
+<H4><A NAME="Fl_File_Icon.load_fti">void load_fti(const char *fti)</A></H4>
+
+<P>Loads an SGI icon file.
+
+<H4><A NAME="Fl_File_Icon.load_system_icons">static void load_system_icons(void)</A></H4>
+
+<P>Loads all system-defined icons. This call is useful when using the
+<CODE>FileChooser</CODE> widget and should be used when the application
+starts:
+
+<UL><PRE>
+Fl_File_Icon::load_system_icons();
+</PRE></UL>
+
+<H4><A NAME="Fl_File_Icon.load_xpm">void load_xpm(const char *xpm)</A></H4>
+
+<P>Loads an XPM icon file.
+
+<H4><A NAME="Fl_File_Icon.pattern">const char *pattern()</A></H4>
+
+<P>Returns the filename matching pattern for the icon.
+
+<H4><A NAME="Fl_File_Icon.size">int size()</A></H4>
+
+<P>Returns the number of words of data used by the icon.
+
+<H4><A NAME="Fl_File_Icon.type">int type()</A></H4>
+
+<P>Returns the filetype associated with the icon, which can be one of the
+following:
+
+<UL>
+	<LI><CODE>Fl_File_Icon::ANY</CODE>, any kind of file.
+	<LI><CODE>Fl_File_Icon::PLAIN</CODE>, plain files.
+	<LI><CODE>Fl_File_Icon::FIFO</CODE>, named pipes.
+	<LI><CODE>Fl_File_Icon::DEVICE</CODE>, character and block devices.
+	<LI><CODE>Fl_File_Icon::LINK</CODE>, symbolic links.
+	<LI><CODE>Fl_File_Icon::DIRECTORY</CODE>, directories.
+</UL>
+
+<H4><A NAME="Fl_File_Icon.value">short *value()</A></H4>
+
+<P>Returns the data array for the icon.
+
+</BODY>
+</HTML>

@@ -1,0 +1,69 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Value_Output</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Value_Output>class Fl_Value_Output</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Valuator.html#Fl_Valuator>Fl_Valuator</A>
+   |
+   +----<B>Fl_Value_Output</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Value_Output.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Value_Output</TT> widget displays a floating point value.
+If <TT>step()</TT> is not zero, the user can adjust the value by
+dragging the mouse left and right.  The left button moves one <TT>step()</TT>
+ per pixel, the middle by <TT>10 * step()</TT>, and the right button by <TT>
+100 * step()</TT>.
+<P>This is much lighter-weight than <A href=Fl_Value_Input.html#Fl_Value_Input>
+<TT>Fl_Value_Input</TT></A> because it contains no text editing code or
+character buffer. </P>
+<P ALIGN=CENTER><IMG src="Fl_Value_Output.gif" ALT="Fl_Value_Output widget."></P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Value_Output.Fl_Value_Output>Fl_Value_Output</A></LI>
+<LI><A href=#Fl_Value_Output.~Fl_Value_Output>~Fl_Value_Output</A></LI>
+<LI><A href=#Fl_Value_Output.soft>soft</A></LI>
+<LI><A href=#Fl_Value_Output.textcolor>textcolor</A></LI>
+<LI><A href=#Fl_Value_Output.textfont>textfont</A></LI>
+<LI><A href=#Fl_Value_Output.textsize>textsize</A></LI>
+</UL>
+<H4><A name=Fl_Value_Output.Fl_Value_Output>
+Fl_Value_Output::Fl_Value_Output(int x, int y, int w, int h, const char
+*label = 0)</A></H4>
+ Creates a new <TT>Fl_Value_Output</TT> widget using the given
+position, size, and label string. The default boxtype is <TT>FL_NO_BOX</TT>
+.
+<H4><A name=Fl_Value_Output.~Fl_Value_Output>virtual
+Fl_Value_Output::~Fl_Value_Output()</A></H4>
+ Destroys the valuator.
+<H4><A name=Fl_Value_Output.soft>uchar Fl_Value_Output::soft() const
+<BR> void Fl_Value_Output::soft(uchar)</A></H4>
+ If &quot;soft&quot; is turned on, the user is allowed to drag the value outside
+the range.  If they drag the value to one of the ends, let go, then
+grab again and continue to drag, they can get to any value.  Default is
+one.
+<H4><A name=Fl_Value_Output.textcolor>Fl_Color
+Fl_Value_Output::textcolor() const
+<BR> void Fl_Value_Output::textcolor(Fl_Color)</A></H4>
+ Gets or sets the color of the text in the value box.
+<H4><A name=Fl_Value_Output.textfont>Fl_Font
+Fl_Value_Output::textfont() const
+<BR>
+<BR>void Fl_Value_Output::textfont(Fl_Font)</A></H4>
+ Gets or sets the typeface of the text in the value box.
+<H4><A name=Fl_Value_Output.textsize>uchar Fl_Value_Output::textsize()
+const
+<BR> void Fl_Value_Output::textsize(uchar)</A></H4>
+ Gets or sets the size of the text in the value box. </BODY></HTML>

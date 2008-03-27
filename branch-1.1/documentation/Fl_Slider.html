@@ -1,0 +1,82 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Slider</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Slider>class Fl_Slider</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Valuator.html#Fl_Valuator>Fl_Valuator</A>
+   |
+   +----<B>Fl_Slider</B>
+           |
+           +----<A href=Fl_Scrollbar.html#Fl_Scrollbar>Fl_Scrollbar</A>, <A href=Fl_Value_Slider.html#Fl_Value_Slider>Fl_Value_Slider</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Slider.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Slider</TT> widget contains a sliding knob inside a box. It
+if often used as a scrollbar.  Moving the box all the way to the
+top/left sets it to the <TT>minimum()</TT>, and to the bottom/right to
+the <TT>maximum()</TT>.  The <TT>minimum()</TT> may be greater than the <TT>
+maximum()</TT> to reverse the slider direction.
+<P ALIGN=CENTER><IMG src="slider.gif" ALT="Fl_Slider widget."></P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Slider.Fl_Slider>Fl_Slider</A></LI>
+<LI><A href=#Fl_Slider.~Fl_Slider>~Fl_Slider</A></LI>
+<LI><A href=#Fl_Slider.scrollvalue>scrollvalue</A></LI>
+<LI><A href=#Fl_Slider.slider>slider</A></LI>
+<LI><A href=#Fl_Slider.slider_size>slider_size</A></LI>
+<LI><A href=#Fl_Slider.type>type</A></LI>
+</UL>
+<H4><A name=Fl_Slider.Fl_Slider>Fl_Slider::Fl_Slider(int x, int y, int
+w, int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Slider</TT> widget using the given position,
+size, and label string. The default boxtype is <TT>FL_DOWN_BOX</TT>.
+<H4><A name=Fl_Slider.~Fl_Slider>virtual Fl_Slider::~Fl_Slider()</A></H4>
+ Destroys the valuator.
+<H4><A name=Fl_Slider.scrollvalue>int Fl_Slider::scrollvalue(int
+windowtop, int windowsize, int first, int totalsize)</A></H4>
+ Returns <A href=Fl_Scrollbar.html#Fl_Scrollbar.value><TT>
+Fl_Scrollbar::value()</TT></A>.
+<H4><A name=Fl_Slider.slider>Fl_Boxtype Fl_Slider::slider() const
+<BR> void Fl_Slider::slider(Fl_Boxtype)</A></H4>
+ Set the type of box to draw for the moving part of the slider.  The
+color of the moving part (or of the notch in it for the nice sliders)
+is controlled by <TT>selection_color()</TT>.  The default value of zero
+causes the slider to figure out what to draw from <TT>box()</TT>.
+<H4><A name=Fl_Slider.slider_size>float Fl_Slider::slider_size() const
+<BR> void Fl_Slider::slider_size(float)</A></H4>
+ Get or set the dimensions of the moving piece of slider.  This is the
+fraction of the size of the entire widget.  If you set this to 1 then
+the slider cannot move.  The default value is .08.
+<P>For the &quot;fill&quot; sliders this is the size of the area around the end
+that causes a drag effect rather than causing the slider to jump to the
+mouse. </P>
+<H4><A name=Fl_Slider.type>uchar Fl_Widget::type() const
+<BR> void Fl_Widget::type(uchar t)</A></H4>
+ Setting this changes how the slider is drawn, which can be one of the
+following:
+<UL>
+<LI><TT>FL_VERTICAL</TT> - Draws a vertical slider (this is the
+default). </LI>
+<LI><TT>FL_HORIZONTAL</TT> - Draws a horizontal slider. </LI>
+<LI><TT>FL_VERT_FILL_SLIDER</TT> - Draws a filled vertical  slider,
+useful as a progress or value meter. </LI>
+<LI><TT>FL_HOR_FILL_SLIDER</TT> - Draws a filled horizontal  slider,
+useful as a progress or value meter. </LI>
+<LI><TT>FL_VERT_NICE_SLIDER</TT> - Draws a vertical slider with  a nice
+looking control knob. </LI>
+<LI><TT>FL_HOR_NICE_SLIDER</TT> - Draws a horizontal slider with  a
+nice looking control knob. </LI>
+</UL>
+</BODY></HTML>

@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Input_Choice</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name=Fl_Input_Choice>class Fl_Input_Choice</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href=Fl_Group.html#Fl_Group>Fl_Group</A>
+   |
+   +----<B>Fl_Input_Choice</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Input_Choice.H&gt;
+</PRE></UL>
+
+<P align='center'>
+<IMG SRC='input_choice.jpg'><BR>
+<I>Plastic and normal Fl::scheme()s.</I>
+</P>
+
+<H3>Description</H3>
+<P>A combination of the input widget and a menu button.
+The user can either type into the input area, or use the
+menu button chooser on the right, which loads the input area
+with predefined text.  Normally it is drawn with an inset box 
+and a white background. 
+<P>
+The application can directly access both the input and menu
+widgets directly, using the <A HREF=#Fl_Input_Choice.menubutton>menubutton()</A>
+and <A HREF=#Fl_Input_Choice.input>input()</A> accessor methods.
+
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90% summary="Fl_Input_Choice methods."><TR><TD align=left valign=top>
+<UL TYPE=DISC>
+    <LI><A href='#Fl_Input_Choice.Fl_Input_Choice'>Fl_Input_Choice</A></LI>
+    <LI><A href='#Fl_Input_Choice.~Fl_Input_Choice'>~Fl_Input_Choice</A></LI>
+    <LI><A href='#Fl_Input_Choice.add'>add</A></LI>
+    <LI><A href='#Fl_Input_Choice.clear'>clear</A></LI>
+    <LI><A href='#Fl_Input_Choice.input'>input</A></LI>
+    <LI><A href='#Fl_Input_Choice.menu'>menu</A></LI>
+    <LI><A href='#Fl_Input_Choice.menubutton'>menubutton</A></LI>
+    <LI><A href='#Fl_Input_Choice.value'>value</A></LI>
+</TD></TR></TABLE>
+</CENTER>
+
+<H4><A name="Fl_Input_Choice.Fl_Input_Choice">Fl_Input_Choice::Fl_Input_Choice(int x, int y, int w,
+int h, const char *label = 0)</A></H4>
+
+<P>Creates a new <TT>Fl_Input_Choice</TT> widget using the given position, size,
+and label string.
+
+<H4><A name="Fl_Input_Choice.~Fl_Input_Choice">virtual Fl_Input_Choice::~Fl_Input_Choice()</A></H4>
+
+<P>Destroys the widget and any value associated with it.
+
+<h4><a name='Fl_Input_Choice.add'>void Fl_Input_Choice::add(const char *s)</a></h4>
+
+<p>Adds an item to the menu.</p>
+
+<h4><a name='Fl_Input_Choice.clear'>void Fl_Input_Choice::clear()</a></h4>
+
+<p>Removes all items from the menu.</p>
+
+<H4><A name="Fl_Input_Choice.input">Fl_Input *Fl_Input_Choice::input()</A></H4>
+
+<p>Returns a reference to the internal <tt>Fl_Input</tt> widget.</p>
+
+<h4><a name='Fl_Input_Choice.menu'>void Fl_Input_Choice::menu(const Fl_Menu_Item *m)<br>
+const Fl_Menu_Item *menu()</A></h4>
+
+<p>Gets or sets the <tt>Fl_Menu_Item</tt> array used for the menu.</p>
+
+<H4><A name="Fl_Input_Choice.menubutton">Fl_Menu_Button *Fl_Input_Choice::menubutton()</A></H4>
+
+<P>Returns a reference to the internal <tt>Fl_Menu_Button</tt> widget.
+
+<H4><A name="Fl_Input_Choice.value">void Fl_Input_Choice::value(const char *s)<br>
+void Fl_Input_Choice::value(int v)<br>
+const char *Fl_Input_Choice::value() const</A></H4>
+
+<P>Sets or returns the input widget's current contents. The
+second form sets the contents using the index into the menu
+which you can set as an integer.  Setting the value effectively
+'chooses' this menu item, and sets it as the new input text,
+deleting the previous text.</p>
+
+</BODY>
+</HTML>

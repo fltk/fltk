@@ -1,0 +1,141 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Help_View</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name="Fl_Help_View">class Fl_Help_View</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+Fl_Group
+   |
+   +----<B>Fl_Help_View</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include "Fl_Help_View.h"
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <CODE>Fl_Help_View</CODE> widget displays HTML text. Most HTML 2.0
+elements are supported, as well as a primitive implementation of tables.
+GIF, JPEG, and PNG images are displayed inline.
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#Fl_Help_View.Fl_Help_View">Fl_Help_View</A>
+	<LI><A HREF="#Fl_Help_View.~Fl_Help_View">~Fl_Help_View</A>
+	<LI><A HREF="#Fl_Help_View.directory">directory</A>
+	<LI><A HREF="#Fl_Help_View.filename">filename</A>
+	<LI><A HREF="#Fl_Help_View.link">link</A>
+	<LI><A HREF="#Fl_Help_View.load">load</A>
+	<LI><A HREF="#Fl_Help_View.size">size</A>
+	<LI><A HREF="#Fl_Help_View.textcolor">textcolor</A>
+	<LI><A HREF="#Fl_Help_View.textfont">textfont</A>
+	<LI><A HREF="#Fl_Help_View.textsize">textsize</A>
+	<LI><A HREF="#Fl_Help_View.title">title</A>
+	<LI><A HREF="#Fl_Help_View.topline">topline</A>
+	<LI><A HREF="#Fl_Help_View.value">value</A>
+
+</UL>
+
+<H4><A NAME="Fl_Help_View.Fl_Help_View">Fl_Help_View(int xx, int yy, int ww, int hh, const char *l = 0)</A></H4>
+
+<P>The constructor creates the <CODE>Fl_Help_View</CODE> widget at the specified
+position and size.
+
+<H4><A NAME="Fl_Help_View.~Fl_Help_View">~Fl_Help_View()</A></H4>
+
+<P>The destructor destroys the widget and frees all memory that has been
+allocated for the current file.
+
+<H4><A NAME="Fl_Help_View.directory">const char *directory() const</A></H4>
+
+<P>This method returns the current directory (base) path for the file
+in the buffer.
+
+<H4><A NAME="Fl_Help_View.filename">const char *filename() const</A></H4>
+
+<P>This method returns the current filename for the text in the buffer.
+
+<H4><A NAME="Fl_Help_View.link">void link(Fl_Help_Func *fn)</A></H4>
+
+<P>This method assigns a callback function to use when a link is
+followed or a file is loaded (via
+<CODE>Fl_Help_View::load()</CODE>) that requires a different
+file or path. The callback function receives a pointer to the
+<CODE>Fl_Help_View</CODE> widget and the URI or full pathname
+for the file in question. It must return a pathname that can be
+opened as a local file or <TT>NULL</TT>:</P>
+
+<UL><PRE>
+const char *fn(Fl_Widget *w, const char *uri);
+</PRE></UL>
+
+<P>The link function can be used to retrieve remote or virtual
+documents, returning a temporary file that contains the actual
+data. If the link function returns <TT>NULL</TT>, the value of
+the <TT>Fl_Help_View</TT> widget will remain unchanged.</P>
+
+<P>If the link callback cannot handle the URI scheme, it should
+return the <TT>uri</TT> value unchanged or set the <A
+HREF="#Fl_Help_View.value"><TT>value()</TT></A> of the widget
+before returning <TT>NULL</TT>.</P>
+
+<H4><A NAME="Fl_Help_View.load">int load(const char *f)</A></H4>
+
+<P>This method loads the specified file or URL.
+
+<H4><A NAME="Fl_Help_View.size">int size() const</A></H4>
+
+<P>This method returns the length of the buffer text in pixels.
+
+<H4><A NAME="Fl_Help_View.textcolor">void textcolor(Fl_Color c)<BR>
+Fl_Color textcolor() const</A></H4>
+
+<P>The first form sets the default text color. The second returns
+the current default text color.
+
+<H4><A NAME="Fl_Help_View.textfont">void textfont(uchar f)<BR>
+uchar textfont() const</A></H4>
+
+<P>The first form sets the default text font. The second returns
+the current default text font.
+
+<H4><A NAME="Fl_Help_View.textsize">void textsize(uchar s)<BR>
+uchar textsize() const</A></H4>
+
+<P>The first form sets the default text size. The second returns
+the current default text size.
+
+<H4><A NAME="Fl_Help_View.title">const char *title()</A></H4>
+
+<P>This method returns the current document title, or NULL if there
+is no title.
+
+<H4><A NAME="Fl_Help_View.topline">void topline(const char *n)<BR>
+void topline(int)<BR>
+int topline() const</A></H4>
+
+<P>The first two forms scroll the text to the indicated position, either
+with a named destination or by pixel line.
+
+<P>The second form returns the current top line in pixels.
+
+<H4><A NAME="Fl_Help_View.value">void value(const char *v)<BR>
+const char *value() const</A></H4>
+
+<P>The first form sets the current buffer to the string provided and
+reformats the text. The second form returns the current buffer contents.
+
+</BODY>
+</HTML>

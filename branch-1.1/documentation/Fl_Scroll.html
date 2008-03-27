@@ -1,0 +1,105 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Scroll</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Scroll>class Fl_Scroll</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Group.html#Fl_Group>Fl_Group</A>
+   |
+   +----<B>Fl_Scroll</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Scroll.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This container widget lets you maneuver around a set of widgets much
+larger than your window.  If the child widgets are larger than the size
+of this object then scrollbars will appear so that you can scroll over
+to them:
+<P ALIGN=CENTER><IMG src="Fl_Scroll.gif" ALT="Fl_Scroll widget."></P>
+<P>If all of the child widgets are packed together into a solid
+rectangle then you want to set <TT>box()</TT> to <TT>FL_NO_BOX</TT> or
+one of the <TT>_FRAME</TT> types. This will result in the best output.
+ However, if the child widgets are a sparse arrangment you must set <TT>
+box()</TT> to a real <TT>_BOX</TT> type.  This can result in some
+blinking during redrawing, but that can be solved by using a <TT>
+Fl_Double_Window</TT>. </P>
+<P>This widget can also be used to pan around a single child widget
+&quot;canvas&quot;.  This child widget should be of your own class, with a <TT>
+draw()</TT> method that draws the contents.  The scrolling is done by
+changing the <TT>x()</TT> and <TT>y()</TT> of the widget, so this child
+must use the <TT>x()</TT> and <TT>y()</TT> to position it's drawing.
+ To speed up drawing it should test <A href=drawing.html#fl_push_clip><TT>fl_push_clip()</TT></A>
+. </P>
+<P>Another very useful child is a single <A href=Fl_Pack.html#Fl_Pack><TT>
+Fl_Pack</TT></A>, which is itself a group that packs it's children
+together and changes size to surround them.  Filling the <TT>Fl_Pack</TT>
+ with <A href=Fl_Tabs.html#Fl_Tabs><TT>Fl_Tabs</TT></A> groups (and then putting
+normal widgets inside those) gives you a very powerful scrolling list
+of individually-openable panels. </P>
+<P>Fluid lets you create these, but you can only lay out objects that
+fit inside the <TT>Fl_Scroll</TT> without scrolling.  Be sure to leave
+space for the scrollbars, as Fluid won't show these either. </P>
+<P><I>You cannot use <TT>Fl_Window</TT> as a child of this since the
+clipping is not conveyed to it when drawn, and it will draw over the
+scrollbars and neighboring objects.</I></P>
+<P><I><TT>Fl_Scroll</TT> widgets should not be nested. Having an Fl_Scroll 
+inside another Fl_Scroll may result in drawing errors when resizing.</I></P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Scroll.Fl_Scroll>Fl_Scroll</A></LI>
+<LI><A href=#Fl_Scroll.~Fl_Scroll>~Fl_Scroll</A></LI>
+<LI><A href=#Fl_Scroll.align>align</A></LI>
+<LI><A href=#Fl_Scroll.position>position</A></LI>
+<LI><A href=#Fl_Scroll.type>type</A></LI>
+<LI><A href=#Fl_Scroll.xposition>xposition</A></LI>
+<LI><A href=#Fl_Scroll.yposition>yposition</A></LI>
+</UL>
+<H4><A name=Fl_Scroll.Fl_Scroll>Fl_Scroll::Fl_Scroll(int x, int y, int
+w, int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Scroll</TT> widget using the given position,
+size, and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
+<H4><A name=Fl_Scroll.~Fl_Scroll>virtual Fl_Scroll::~Fl_Scroll()</A></H4>
+ The destructor <I>also deletes all the children</I>. This allows a
+whole tree to be deleted at once, without having to keep a pointer to
+all the children in the user code. A kludge has been done so the <TT>
+Fl_Scroll</TT> and all of it's children can be automatic (local)
+variables, but you must declare the <TT>Fl_Scroll</TT><I>first</I>, so
+that it is destroyed last.
+<H4><A name=Fl_Scroll.type>void Fl_Widget::type(int)</A></H4>
+ By default you can scroll in both directions, and the scrollbars
+disappear if the data will fit in the area of the scroll. <TT>type()</TT>
+ can change this:
+<UL>
+<LI><TT>0</TT> - No scrollbars </LI>
+<LI><TT>Fl_Scroll::HORIZONTAL</TT> - Only a horizontal scrollbar. </LI>
+<LI><TT>Fl_Scroll::VERTICAL</TT> - Only a vertical scrollbar. </LI>
+<LI><TT>Fl_Scroll::BOTH</TT> - The default is both scrollbars. </LI>
+<LI><TT>Fl_Scroll::HORIZONTAL_ALWAYS</TT> - Horizontal scrollbar
+ always on, vertical always off. </LI>
+<LI><TT>Fl_Scroll::VERTICAL_ALWAYS</TT> - Vertical scrollbar always on,
+ horizontal always off. </LI>
+<LI><TT>Fl_Scroll::BOTH_ALWAYS</TT> - Both always on. </LI>
+</UL>
+<H4><A name=Fl_Scroll.align>void Fl_Scroll::scrollbar.align(int)</A></H4>
+ This is used to change what side the scrollbars are drawn on.  If the <TT>
+FL_ALIGN_LEFT</TT> bit is on, the vertical scrollbar is on the left.
+ If the <TT>FL_ALIGN_TOP</TT> bit is on, the horizontal scrollbar is on
+the top. Note that only the alignment flags in <TT>scrollbar</TT> are 
+considered. The flags in <TT>hscrollbar</TT> however are ignored.
+<H4><A name=Fl_Scroll.xposition>int Fl_Scroll::xposition() const</A></H4>
+ Gets the current horizontal scrolling position.
+<H4><A name=Fl_Scroll.yposition>int Fl_Scroll::yposition() const</A></H4>
+ Gets the current vertical scrolling position.
+<H4><A name=Fl_Scroll.position>void Fl_Scroll::position(int w, int h)</A>
+</H4>
+ Sets the upper-lefthand corner of the scrolling region. </BODY></HTML>

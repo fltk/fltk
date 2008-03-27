@@ -1,0 +1,123 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Chart</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Chart>class Fl_Chart</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+   |
+   +----<B>Fl_Chart</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Chart.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+This widget displays simple charts and is provided for Forms compatibility.
+<CENTER><IMG src="charts.gif" width="80%" alt="Fl_Chart widget"></CENTER>
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90% summary="Fl_Chart methods.">
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Chart.Fl_Chart>Fl_Chart</A></LI>
+<LI><A href=#Fl_Chart.~Fl_Chart>~Fl_Chart</A></LI>
+<LI><A href=#Fl_Chart.add>add</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Chart.autosize>autosize</A></LI>
+<LI><A href=#Fl_Chart.bounds>bounds</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Chart.clear>clear</A></LI>
+<LI><A href=#Fl_Chart.insert>insert</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Chart.maxsize>maxsize</A></LI>
+<LI><A href=#Fl_Chart.replace>replace</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Chart.size>size</A></LI>
+<LI><A href=#Fl_Chart.type>type</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+<H4><A name=Fl_Chart.Fl_Chart>Fl_Chart::Fl_Chart(int x, int y, int w,
+int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Chart</TT> widget using the given position, size,
+and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
+<H4><A name=Fl_Chart.~Fl_Chart>virtual Fl_Chart::~Fl_Chart()</A></H4>
+ Destroys the <TT>Fl_Chart</TT> widget and all of its data.
+<H4><A name=Fl_Chart.add>void add(double value, const char *label =
+NULL, uchar color = 0)</A></H4>
+ The <TT>add</TT> method adds the <TT>value</TT> and optionally <TT>
+label</TT> and <TT>color</TT> to the chart.
+<H4><A name=Fl_Chart.autosize>uchar autosize(void) const
+<BR> void autosize(uchar onoff)</A></H4>
+ The <TT>autosize</TT> method controls whether or not the chart will
+automatically adjust the bounds of the chart.  The first form returns a
+boolean value that is non-zero if auto-sizing is enabled and zero is
+auto-sizing is disabled.
+<P>The second form of <TT>autosize</TT> sets the auto-sizing property
+to <TT>onoff</TT>. </P>
+<H4><A name=Fl_Chart.bounds>void bounds(double *a, double *b)
+<BR> void bounds(double a, double b)</A></H4>
+ The <TT>bounds</TT> method gets or sets the lower and upper bounds of
+the chart values to <TT>a</TT> and <TT>b</TT> respectively.
+<H4><A name=Fl_Chart.clear>void clear(void)</A></H4>
+ The <TT>clear</TT> method removes all values from the chart.
+<H4><A name=Fl_Chart.insert>void insert(int pos, double value, const
+char *label = NULL, uchar color = 0)</A></H4>
+ The <TT>insert</TT> method inserts a data value at the given position <TT>
+pos</TT>. Position 1 is the first data value.
+<H4><A name=Fl_Chart.maxsize>int maxsize(void) const
+<BR> void maxsize(int n)</A></H4>
+The <TT>maxsize</TT> method gets or sets the maximum number of data
+values for a chart. If you do not call this method then the chart will
+be allowed to grow to any size depending on available memory.
+<H4><A name=Fl_Chart.replace>void replace(int pos, double value, const
+char *label = NULL, uchar color = 0)</A></H4>
+ The <TT>replace</TT> method replaces data value <TT>pos</TT> with <TT>
+value</TT>, <TT>label</TT>, and <TT>color</TT>.  Position 1 is the
+first data value.
+<H4><A name=Fl_Chart.size>int size(void) const</A></H4>
+ The <TT>size</TT> method returns the number of data values in the
+chart.
+<H4><A name=Fl_Chart.type>uchar type() const
+<BR> void type(uchar t)</A></H4>
+ The first form of <TT>type()</TT> returns the current chart type. The
+chart type can be one of the following:
+<DL>
+<DT>FL_BAR_CHART</DT>
+<DD>Each sample value is drawn as a vertical bar.</DD>
+<DT>FL_FILLED_CHART</DT>
+<DD>The chart is filled from the bottom of the graph to the  sample
+values.</DD>
+<DT>FL_HORBAR_CHART</DT>
+<DD>Each sample value is drawn as a horizontal bar.</DD>
+<DT>FL_LINE_CHART</DT>
+<DD>The chart is drawn as a polyline with vertices at each  sample
+value.</DD>
+<DT>FL_PIE_CHART</DT>
+<DD>A pie chart is drawn with each sample value being drawn  as a
+proportionate slice in the circle.</DD>
+<DT>FL_SPECIALPIE_CHART</DT>
+<DD>Like FL_PIE_CHART, but the first slice is separated from  the pie.</DD>
+<DT>FL_SPIKE_CHART</DT>
+<DD>Each sample value is drawn as a vertical line.</DD>
+</DL>
+ The second form of <TT>type()</TT> sets the chart type to <TT>t</TT>.
+</BODY></HTML>

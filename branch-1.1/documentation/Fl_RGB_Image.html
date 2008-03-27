@@ -1,0 +1,64 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_RGB_Image</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name="Fl_RGB_Image">class Fl_RGB_Image</A></H2>
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href="Fl_Image.html">Fl_Image</A>
+   |
+   +----<B>Fl_RGB_Image</B>
+           |
+           +----<A href="Fl_JPEG_Image.html">Fl_JPEG_Image</A>,
+                <A href="Fl_PNG_Image.html">Fl_PNG_Image</A>,
+                <A href="Fl_PNM_Image.html">Fl_PNM_Image</A>,
+                <A href="Fl_BMP_Image.html">Fl_BMP_Image</A>
+
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_RGB_Image.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl_RGB_Image</TT> class supports caching and drawing
+of full-color images with 1 to 4 channels of color information.
+Images with an even number of channels are assumed to contain
+alpha information, which is used to blend the image with the
+contents of the screen.</P>
+
+<P><TT>Fl_RGB_Image</TT> is defined in
+<TT>&lt;FL/Fl_Image.H&gt;</TT>, however for compatibility reasons
+<TT>&lt;FL/Fl_RGB_Image.H&gt;</TT> should be included.</P>
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A href="#Fl_RGB_Image.Fl_RGB_Image">Fl_RGB_Image</A></LI>
+
+	<LI><A href="#Fl_RGB_Image.~Fl_RGB_Image">~Fl_RGB_Image</A></LI>
+
+</UL>
+
+<H4><A name="Fl_RGB_Image.Fl_RGB_Image">Fl_RGB_Image::Fl_RGB_Image(const unsigned char *array, int W, int H, int D = 3, int LD = 0);</A></H4>
+
+<P>The constructor creates a new image from the specified data.</P>
+
+<H4><A name="Fl_RGB_Image.~Fl_RGB_Image">Fl_RGB_Image::~Fl_RGB_Image();</A></H4>
+
+<P>The destructor free all memory and server resources that are used by
+the image.</P>
+
+</BODY>
+</HTML>

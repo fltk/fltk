@@ -1,0 +1,221 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Text_Editor</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name=Fl_Text_Editor>class Fl_Text_Editor</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL>
+<PRE>
+<A href="Fl_Text_Display.html">Fl_Text_Display</A>
+   |
+   +----<B>Fl_Text_Editor</B>
+</PRE>
+</UL>
+
+<H3>Include Files</H3>
+
+<UL>
+<PRE>
+#include &lt;FL/Fl_Text_Editor.H&gt;
+</PRE>
+</UL>
+
+<H3>Description</H3>
+
+<P>This is the FLTK text editor widget. It allows the user to
+edit multiple lines of text and supports highlighting and
+scrolling. The buffer that is displayed in the widget is managed
+by the <A HREF="Fl_Text_Buffer.html"><TT>Fl_Text_Buffer</TT></A>
+class.
+
+<H3>Methods</H3>
+
+<TABLE CELLPADDING="10">
+<TR VALIGN="TOP"><TD><UL>
+
+	<LI><A HREF="#Fl_Text_Editor.Fl_Text_Editor">Fl_Text_Editor</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.~Fl_Text_Editor">~Fl_Text_Editor</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.add_default_key_bindings">add_default_key_bindings</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.add_key_binding">add_key_binding</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.bound_key_function">bound_key_function</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.default_key_function">default_key_function</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.insert_mode">insert_mode</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_backspace">kf_backspace</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_copy">kf_copy</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_c_s_move">kf_c_s_move</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_ctrl_move">kf_ctrl_move</A></LI>
+
+</UL></TD><TD><UL>
+
+	<LI><A HREF="#Fl_Text_Editor.kf_cut">kf_cut</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_default">kf_default</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_delete">kf_delete</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_down">kf_down</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_end">kf_end</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_enter">kf_enter</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_home">kf_home</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_ignore">kf_ignore</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_insert">kf_insert</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_left">kf_left</A></LI>
+
+</UL></TD><TD><UL>
+
+	<LI><A HREF="#Fl_Text_Editor.kf_move">kf_move</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_page_down">kf_page_down</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_page_up">kf_page_up</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_paste">kf_paste</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_right">kf_right</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_select_all">kf_select_all</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_shift_move">kf_shift_move</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.kf_up">kf_up</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.remove_all_key_bindings">remove_all_key_bindings</A></LI>
+	<LI><A HREF="#Fl_Text_Editor.remove_key_binding">remove_key_binding</A></LI>
+
+</UL></TD></TR>
+</TABLE>
+
+<H4><A NAME="Fl_Text_Editor.Fl_Text_Editor">Fl_Text_Editor(int X, int Y, int W, int H, const char* l = 0);</A></H4>
+
+<P>The constructor creates a new text editor widget.
+
+<H4><A NAME="Fl_Text_Editor.~Fl_Text_Editor">~Fl_Text_Editor();</A></H4>
+
+<P>The destructor frees all memory used by the text editor widget.
+
+<H4><A NAME="Fl_Text_Editor.add_default_key_bindings">void add_default_key_bindings(Key_Binding** list);</A></H4>
+
+<P>Adds all of the default editor key bindings to the specified key binding list.
+
+<H4><A NAME="Fl_Text_Editor.add_key_binding">void add_key_binding(int key, int state, Key_Func f, Key_Binding** list);<BR>
+void add_key_binding(int key, int state, Key_Func f);</A></H4>
+
+<P>Adds a single key binding to the specified or current key binding list.
+
+<H4><A NAME="Fl_Text_Editor.bound_key_function">Key_Func bound_key_function(int key, int state, Key_Binding* list);<BR>
+Key_Func bound_key_function(int key, int state);</A></H4>
+
+<P>Returns the function associated with a key binding.
+
+<H4><A NAME="Fl_Text_Editor.default_key_function">void default_key_function(Key_Func f);</A></H4>
+
+<P>Sets the default key function for unassigned keys.
+
+<H4><A NAME="Fl_Text_Editor.insert_mode">void insert_mode(int b);<BR>
+int insert_mode();</A></H4>
+
+<P>Sets or gets the current insert mode; if non-zero, new text
+is inserted before the current cursor position. Otherwise, new
+text replaces text at the current cursor position.
+
+<H4><A NAME="Fl_Text_Editor.kf_backspace">int kf_backspace(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Does a backspace in the current buffer.
+
+<H4><A NAME="Fl_Text_Editor.kf_copy">int kf_copy(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Does a copy of selected text in the current buffer.
+
+<H4><A NAME="Fl_Text_Editor.kf_c_s_move">int kf_c_s_move(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Extends the current selection in the direction indicated by
+control key <CODE>c</CODE>.
+
+<H4><A NAME="Fl_Text_Editor.kf_ctrl_move">int kf_ctrl_move(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the current text cursor in the direction indicated by
+control key <CODE>c</CODE>.
+
+<H4><A NAME="Fl_Text_Editor.kf_cut">int kf_cut(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Does a cut of selected text in the current buffer.
+
+<H4><A NAME="Fl_Text_Editor.kf_default">int kf_default(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Inserts the text associated with the key <CODE>c</CODE>.
+
+<H4><A NAME="Fl_Text_Editor.kf_delete">int kf_delete(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Does a delete of selected text or the current character in
+the current buffer.
+
+<H4><A NAME="Fl_Text_Editor.kf_down">int kf_down(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor down one line.
+
+<H4><A NAME="Fl_Text_Editor.kf_end">int kf_end(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor to the end of the current line.
+
+<H4><A NAME="Fl_Text_Editor.kf_enter">int kf_enter(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Inserts a newline at the current cursor position.
+
+<H4><A NAME="Fl_Text_Editor.kf_home">int kf_home(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor to the beginning of the current line.
+
+<H4><A NAME="Fl_Text_Editor.kf_ignore">int kf_ignore(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Ignores the keypress.
+
+<H4><A NAME="Fl_Text_Editor.kf_insert">int kf_insert(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Toggles the insert mode in the text editor.
+
+<H4><A NAME="Fl_Text_Editor.kf_left">int kf_left(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor to the left in the buffer.
+
+<H4><A NAME="Fl_Text_Editor.kf_move">int kf_move(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor in the direction indicated by key
+<CODE>c</CODE>.
+
+<H4><A NAME="Fl_Text_Editor.kf_page_down">int kf_page_down(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor down one page.
+
+<H4><A NAME="Fl_Text_Editor.kf_page_up">int kf_page_up(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor up one page.
+
+<H4><A NAME="Fl_Text_Editor.kf_paste">int kf_paste(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Pastes the contents of the clipboard at the current text cursor position.
+
+<H4><A NAME="Fl_Text_Editor.kf_right">int kf_right(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor one character to the right.
+
+<H4><A NAME="Fl_Text_Editor.kf_select_all">int kf_select_all(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Selects all text in the buffer.
+
+<H4><A NAME="Fl_Text_Editor.kf_shift_move">int kf_shift_move(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Extends the current selection in the direction of key <CODE>c</CODE>.
+
+<H4><A NAME="Fl_Text_Editor.kf_up">int kf_up(int c, Fl_Text_Editor* e);</A></H4>
+
+<P>Moves the text cursor up one line.
+
+<H4><A NAME="Fl_Text_Editor.remove_all_key_bindings">void remove_all_key_bindings(Key_Binding** list);<BR>
+void remove_all_key_bindings();</A></H4>
+
+<P>Removes all of the key bindings associated with the text editor or list.
+
+<H4><A NAME="Fl_Text_Editor.remove_key_binding">void remove_key_binding(int key, int state, Key_Binding** list);<BR>
+void remove_key_binding(int key, int state);</A></H4>
+
+<P>Removes a single key binding from the text editor or list.
+
+</BODY>
+</HTML>

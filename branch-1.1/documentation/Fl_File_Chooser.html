@@ -1,0 +1,295 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_File_Chooser</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+<H2><A NAME="Fl_File_Chooser">class Fl_File_Chooser</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<B>Fl_File_Chooser</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Chooser.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <CODE>Fl_File_Chooser</CODE> widget displays a standard file selection
+dialog that supports various selection modes.
+
+<CENTER><IMG SRC="Fl_File_Chooser.jpg" WIDTH="498" HEIGHT="408" ALT="Fl_File_Chooser widget"></CENTER>
+
+<P>The <CODE>Fl_File_Chooser</CODE> class also exports several static values
+that may be used to localize or customize the appearance of all file chooser
+dialogs:
+
+<CENTER><TABLE BORDER="1">
+<TR>
+	<TH>Member</TH>
+	<TH>Default value</TH>
+</TR>
+<TR>
+	<TD><TT>add_favorites_label</TT></TD>
+	<TD>"Add to Favorites"</TD>
+</TR>
+<TR>
+	<TD><TT>all_files_label</TT></TD>
+	<TD>"All Files (*)"</TD>
+</TR>
+<TR>
+	<TD><TT>custom_filter_label</TT></TD>
+	<TD>"Custom Filter"</TD>
+</TR>
+<TR>
+	<TD><TT>existing_file_label</TT></TD>
+	<TD>"Please choose an existing file!"</TD>
+</TR>
+<TR>
+	<TD><TT>favorites_label</TT></TD>
+	<TD>"Favorites"</TD>
+</TR>
+<TR>
+	<TD><TT>filename_label</TT></TD>
+	<TD>"Filename:"</TD>
+</TR>
+<TR>
+	<TD><TT>filesystems_label</TT></TD>
+	<TD>"My Computer" (WIN32)<BR>
+	"File Systems" (all others)</TD>
+</TR>
+<TR>
+	<TD><TT>manage_favorites_label</TT></TD>
+	<TD>"Manage Favorites"</TD>
+</TR>
+<TR>
+	<TD><TT>new_directory_label</TT></TD>
+	<TD>"New Directory?"</TD>
+</TR>
+<TR>
+	<TD><TT>new_directory_tooltip</TT></TD>
+	<TD>"Create a new directory."</TD>
+</TR>
+<TR>
+	<TD><TT>preview_label</TT></TD>
+	<TD>"Preview"</TD>
+</TR>
+<TR>
+	<TD><TT>save_label</TT></TD>
+	<TD>"Save"</TD>
+</TR>
+<TR>
+	<TD><TT>show_label</TT></TD>
+	<TD>"Show:"</TD>
+</TR>
+<TR>
+	<TD><TT>sort</TT></TD>
+	<TD>fl_numericsort</TD>
+</TR>
+</TABLE></CENTER>
+
+<P>The <TT>sort</TT> member specifies the sort function that is
+used when loading the contents of a directory.
+
+<H3>Public Members</H3>
+
+<P>The <CODE>Fl_File_Chooser</CODE> class exports the "new
+directory" (<CODE>newButton</CODE>) and "preview"
+(<CODE>previewButton</CODE>) widgets so that application
+developers can control their appearance and use. For more
+complex customization, consider copying the FLTK file chooser
+code and changing it accordingly.
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#Fl_File_Chooser.Fl_File_Chooser">Fl_File_Chooser</A>
+	<LI><A HREF="#Fl_File_Chooser.~Fl_File_Chooser">~Fl_File_Chooser</A>
+	<LI><A HREF="#Fl_File_Chooser.color">color</A>
+	<LI><A HREF="#Fl_File_Chooser.count">count</A>
+	<LI><A HREF="#Fl_File_Chooser.directory">directory</A>
+	<LI><A HREF="#Fl_File_Chooser.filter">filter</A>
+	<LI><A HREF="#Fl_File_Chooser.filter_value">filter_value</A>
+	<LI><A HREF="#Fl_File_Chooser.hide">hide</A>
+	<LI><A HREF="#Fl_File_Chooser.iconsize">iconsize</A>
+	<LI><A HREF="#Fl_File_Chooser.label">label</A>
+	<LI><A HREF="#Fl_File_Chooser.ok_label">ok_label</A>
+	<LI><A HREF="#Fl_File_Chooser.preview">preview</A>
+	<LI><A HREF="#Fl_File_Chooser.rescan">rescan</A>
+	<LI><A HREF="#Fl_File_Chooser.show">show</A>
+	<LI><A HREF="#Fl_File_Chooser.textcolor">textcolor</A>
+	<LI><A HREF="#Fl_File_Chooser.textfont">textfont</A>
+	<LI><A HREF="#Fl_File_Chooser.textsize">textsize</A>
+	<LI><A HREF="#Fl_File_Chooser.type">type</A>
+	<LI><A HREF="#Fl_File_Chooser.value">value</A>
+	<LI><A HREF="#Fl_File_Chooser.visible">visible</A>
+
+</UL>
+
+<H4><A NAME="Fl_File_Chooser.Fl_File_Chooser">Fl_File_Chooser(const char *pathname, const char *pattern,
+int type, const char *title)</A></H4>
+
+<P>The constructor creates the <CODE>Fl_File_Chooser</CODE> dialog pictured
+above. The <CODE>pathname</CODE> argument can be a directory name or a
+complete file name (in which case the corresponding file is highlighted
+in the list and in the filename input field.)
+
+<P>The <CODE>pattern</CODE> argument can be a <CODE>NULL</CODE>
+string or <CODE>"*"</CODE> to list all files, or it can be a
+series of descriptions and filter strings separated by tab
+characters (<TT>\t</TT>). The format of filters is either
+"Description text (patterns)" or just "patterns". A file chooser
+that provides filters for HTML and image files might look like:
+
+<UL><PRE>
+"HTML Files (*.html)\tImage Files (*.{bmp,gif,jpg,png})"
+</PRE></UL>
+
+<P>The file chooser will automatically add the "All Files (*)"
+pattern to the end of the string you pass if you do not provide
+one. The first filter in the string is the default filter.
+
+<P>See the FLTK documentation on <A
+HREF="functions.html#fl_filename_match"><CODE>fl_filename_match()</CODE></A>
+for the kinds of pattern strings that are supported.
+
+<P>The <CODE>type</CODE> argument can be one of the following:
+
+<UL>
+	<LI><CODE>SINGLE</CODE> - allows the user to select a
+	single, existing file.
+	<LI><CODE>MULTI</CODE> - allows the user to select one
+	or more existing files.
+	<LI><CODE>CREATE</CODE> - allows the user to select a
+	single, existing file or specify a new filename.
+	<LI><CODE>DIRECTORY</CODE> - allows the user to select a
+	single, existing directory.
+</UL>
+
+<P>The <CODE>title</CODE> argument is used to set the title bar text for the
+<CODE>Fl_File_Chooser</CODE> window.
+
+<H4><A NAME="Fl_File_Chooser.~Fl_File_Chooser">~Fl_File_Chooser()</A></H4>
+
+<P>Destroys the widget and frees all memory used by it.
+
+<H4><A NAME="Fl_File_Chooser.color">void color(Fl_Color c)<BR>
+Fl_Color color()</A></H4>
+
+<P>Sets or gets the background color of the <CODE>Fl_File_Browser</CODE> list.
+
+<H4><A NAME="Fl_File_Chooser.count">int count()</A></H4>
+
+<P>Returns the number of selected files.
+
+<H4><A NAME="Fl_File_Chooser.directory">void directory(const char *pathname)<BR>
+const char *directory()</A></H4>
+
+<P>Sets or gets the current directory.
+
+<H4><A NAME="Fl_File_Chooser.filter">void filter(const char *pattern)<BR>
+const char *filter()</A></H4>
+
+<P>Sets or gets the current filename filter patterns. The filter
+patterns use <A
+href="functions.html#fl_filename_match"><tt>fl_filename_match()</tt></A>.
+Multiple patterns can be used by separating them with tabs, like
+"*.jpg\t*.png\t*.gif\t*". In addition, you can provide
+human-readable labels with the patterns inside parenthesis, like
+"JPEG&nbsp;Files&nbsp;(*.jpg)\tPNG&nbsp;Files&nbsp;(*.png)\tGIF&nbsp;Files&nbsp;(*.gif)\tAll&nbsp;Files&nbsp;(*)".
+Use <tt>filter(NULL)</tt> to show all files.</p>
+
+<H4><A NAME="Fl_File_Chooser.filter_value">void filter_value(int f)<BR>
+int filter_value()</A></H4>
+
+<P>Sets or gets the current filename filter selection.
+
+<H4><A NAME="Fl_File_Chooser.hide">void hide()</A></H4>
+
+<P>Hides the <CODE>Fl_File_Chooser</CODE> window.
+
+<H4><A NAME="Fl_File_Chooser.iconsize">void iconsize(uchar s)<BR>
+uchar iconsize()</A></H4>
+
+<P>Sets or gets the size of the icons in the <CODE>Fl_File_Browser</CODE>.  By
+default the icon size is set to 1.5 times the <CODE>textsize()</CODE>.
+
+<H4><A NAME="Fl_File_Chooser.label">void label(const char *l)<BR>
+const char *label()</A></H4>
+
+<P>Sets or gets the title bar text for the <CODE>Fl_File_Chooser</CODE>.
+
+<H4><A NAME="Fl_File_Chooser.ok_label">void ok_label(const char *l)<BR>
+const char *ok_label()</A></H4>
+
+<P>Sets or gets the label for the "ok" button in the
+<CODE>Fl_File_Chooser</CODE>.
+
+<H4><A NAME="Fl_File_Chooser.preview">void preview(int e)<BR>
+int preview()</A></H4>
+
+<P>The first form enables or disables the preview box in the file chooser.
+The second form returns the current state of the preview box.
+
+<H4><A NAME="Fl_File_Chooser.rescan">void rescan()</A></H4>
+
+<P>Reloads the current directory in the <CODE>Fl_File_Browser</CODE>.
+
+<H4><A NAME="Fl_File_Chooser.show">void show()</A></H4>
+
+<P>Shows the <CODE>Fl_File_Chooser</CODE> window.
+
+<H4><A NAME="Fl_File_Chooser.textcolor">void textcolor(Fl_Color c)<BR>
+Fl_Color textcolor()</A></H4>
+
+<P>Sets or gets the current <CODE>Fl_File_Browser</CODE> text color.
+
+<H4><A NAME="Fl_File_Chooser.textfont">void textfont(uchar f)<BR>
+uchar textfont()</A></H4>
+
+<P>Sets or gets the current <CODE>Fl_File_Browser</CODE> text font.
+
+<H4><A NAME="Fl_File_Chooser.textsize">void textsize(uchar s)<BR>
+uchar textsize()</A></H4>
+
+<P>Sets or gets the current <CODE>Fl_File_Browser</CODE> text size.
+
+<H4><A NAME="Fl_File_Chooser.type">void type(int t)<BR>
+int type()</A></H4>
+
+<P>Sets or gets the current type of <CODE>Fl_File_Chooser</CODE>.
+
+<H4><A NAME="Fl_File_Chooser.value">const char *value(const char *pathname)<BR>
+const char *value(int file)<BR>
+const char *value()</A></H4>
+
+<P>Sets or gets the current value of the selected file.
+
+<P>In the second form, <i>file</i> is a <i>1</i>-based index into a list of
+file names. The number of selected files is returned by
+<CODE>Fl_File_Chooser::count()</CODE>.
+
+<P>This sample code loops through all selected files:
+<PRE>
+// Get list of filenames user selected from a MULTI chooser
+for ( int t=1; t&lt;=chooser-&gt;count(); t++ ) {
+    const char *filename = chooser-&gt;value(t);
+    ..
+}
+</PRE>
+
+<H4><A NAME="Fl_File_Chooser.visible">int visible()</A></H4>
+
+<P>Returns 1 if the <CODE>Fl_File_Chooser</CODE> window is visible.
+
+</BODY>
+</HTML>

@@ -1,0 +1,244 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+comment {//
+// "$Id$"
+//
+// FLUID template support for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2005 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+} {in_source in_header
+} 
+
+decl {\#include <stdio.h>} {} 
+
+decl {\#include <stdlib.h>} {} 
+
+decl {\#include "../src/flstring.h"} {} 
+
+decl {\#include <errno.h>} {} 
+
+decl {\#include <FL/filename.H>} {} 
+
+decl {\#include <FL/fl_ask.H>} {} 
+
+decl {\#include <FL/Fl_Shared_Image.H>} {} 
+
+decl {\#include <FL/Fl_Preferences.H>} {} 
+
+declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {selected after {\#endif // WIN32 && !__CYGWIN__}
+} {
+  decl {\#include <io.h>} {}
+  decl {\#else} {}
+  decl {\#include <unistd.h>} {}
+} 
+
+decl {extern Fl_Preferences fluid_prefs;} {} 
+
+Function {make_template_panel()} {open
+} {
+  Fl_Window template_panel {
+    label {New/Save Template}
+    callback {Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
+if (img) img->release();
+template_preview->image(0);
+
+template_browser->deselect();
+template_name->value("");
+template_instance->value("");
+template_panel->hide();} open
+    xywh {340 237 460 355} type Double resizable modal visible
+  } {
+    Fl_Browser template_browser {
+      label {Available Templates:}
+      callback {if (Fl::event_clicks()) {
+  template_panel->hide();
+  return;
+}
+Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
+if (img) img->release();
+template_preview->image(0);
+template_preview->redraw();
+
+int item = template_browser->value();
+
+if (item <= 1) template_instance->deactivate();
+else template_instance->activate();
+
+if (item < 1) {
+  template_submit->deactivate();
+  template_delete->deactivate();
+  return;
+}
+
+template_submit->activate();
+
+const char *flfile = (const char *)template_browser->data(item);
+if (!flfile) {
+  template_delete->deactivate();
+  return;
+}
+
+template_name->value(template_browser->text(item));
+
+template_delete->activate();
+
+char pngfile[1024], *ext;
+
+strlcpy(pngfile, flfile, sizeof(pngfile));
+if ((ext = strrchr(pngfile, '.')) == NULL) return;
+strcpy(ext, ".png");
+
+img = Fl_Shared_Image::get(pngfile);
+
+if (img) {
+  template_preview->image(img);
+  template_preview->redraw();
+}}
+      xywh {10 28 180 250} type Hold labelfont 1 align 5 when 3
+    }
+    Fl_Box template_preview {
+      xywh {200 28 250 250} box THIN_DOWN_BOX align 85 resizable
+    }
+    Fl_Input template_name {
+      label {Template Name:}
+      callback {if (strlen(template_name->value())) {
+  template_submit->activate();
+  if (Fl::event_key() == FL_Enter) template_panel->hide();
+} else template_submit->deactivate();}
+      xywh {124 288 326 25} labelfont 1 when 3 textfont 4
+    }
+    Fl_Input template_instance {
+      label {Instance Name:}
+      xywh {124 288 326 25} labelfont 1 textfont 4 hide
+    }
+    Fl_Group {} {
+      xywh {10 323 440 25}
+    } {
+      Fl_Button template_delete {
+        label {Delete Template}
+        callback template_delete_cb
+        xywh {10 323 133 25}
+      }
+      Fl_Box {} {
+        xywh {153 323 126 25} resizable
+      }
+      Fl_Button {} {
+        label Cancel
+        callback {Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
+if (img) img->release();
+template_preview->image(0);
+
+template_browser->deselect();
+template_name->value("");
+template_instance->value("");
+template_panel->hide();}
+        xywh {289 323 72 25}
+      }
+      Fl_Return_Button template_submit {
+        label Save
+        callback {Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
+if (img) img->release();
+template_preview->image(0);
+
+template_panel->hide();}
+        xywh {371 323 79 25}
+      }
+    }
+  }
+} 
+
+Function {template_clear()} {return_type void
+} {
+  code {int i;
+void *filename;
+
+for (i = 1; i <= template_browser->size(); i ++) {
+  if ((filename = template_browser->data(i)) != NULL) free(filename);
+}
+
+template_browser->deselect();
+template_browser->clear();} {}
+} 
+
+Function {template_delete_cb(Fl_Button *, void *)} {return_type void
+} {
+  code {int item = template_browser->value();
+if (item < 1) return;
+
+const char *name = template_browser->text(item);
+const char *flfile = (const char *)template_browser->data(item);
+if (!flfile) return;
+
+if (!fl_choice("Are you sure you want to delete the template \\"%s\\"?",
+               "Cancel", "Delete", 0, name)) return;
+
+if (unlink(flfile)) {
+  fl_alert("Unable to delete template \\"%s\\":\\n%s", name, strerror(errno));
+  return;
+}
+
+template_browser->remove(item);
+template_browser->do_callback();} {}
+} 
+
+Function {template_load()} {open return_type void
+} {
+  code {int i;
+char name[1024], filename[1024], path[1024], *ptr;
+struct dirent **files;
+int num_files;
+
+fluid_prefs.getUserdataPath(path, sizeof(path));
+strlcat(path, "templates", sizeof(path));
+
+num_files = fl_filename_list(path, &files);
+
+for (i = 0; i < num_files; i ++) {
+  if (fl_filename_match(files[i]->d_name, "*.fl")) {
+    // Format the name as the filename with "_" replaced with " "
+    // and without the trailing ".fl"...
+    strlcpy(name, files[i]->d_name, sizeof(name));
+    *strstr(name, ".fl") = '\\0';
+
+    for (ptr = name; *ptr; ptr ++) {
+      if (*ptr == '_') *ptr = ' ';
+    }
+
+    // Add the template to the browser...
+    snprintf(filename, sizeof(filename), "%s/%s", path, files[i]->d_name);
+    template_browser->add(name, strdup(filename));
+  }
+
+  free(files[i]);
+}
+
+if (num_files > 0) free(files);} {}
+} 
+
+comment {
+//
+// End of "$Id$".
+//} {in_source in_header
+} 

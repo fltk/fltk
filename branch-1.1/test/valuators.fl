@@ -1,0 +1,198 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0107 
+header_name {.h} 
+code_name {.cxx}
+Function {callback(Fl_Widget* o, void*)} {open private return_type void
+} {
+  code {printf("%g     \\r", ((Fl_Valuator*)o)->value());
+fflush(stdout);} {}
+} 
+
+Function {} {open
+} {
+  Fl_Window {} {
+    label {Valuator classes, showing values for type()} open
+    xywh {479 151 580 510} type Double color 43 selection_color 43
+    code0 {\#include <stdio.h>} visible
+  } {
+    Fl_Box {} {
+      label Fl_Slider
+      xywh {10 10 280 210} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Slider {} {
+      label 0
+      callback callback
+      tooltip {Vertical Slider} xywh {30 45 20 145} selection_color 1 labelsize 8 align 1
+    }
+    Fl_Slider {} {
+      label FL_VERT_FILL_SLIDER
+      callback callback
+      xywh {70 55 20 145} type {Vert Fill} selection_color 1 labelsize 8
+    }
+    Fl_Slider {} {
+      label FL_VERT_NICE_SLIDER
+      callback callback
+      xywh {105 45 20 145} type {Vert Knob} box FLAT_BOX color 10 selection_color 1 labelsize 8 align 1
+    }
+    Fl_Slider {} {
+      label FL_HORIZONTAL
+      callback callback
+      xywh {140 80 130 20} type Horizontal selection_color 1 labelsize 8
+    }
+    Fl_Slider {} {
+      label FL_HOR_FILL_SLIDER
+      callback callback
+      xywh {140 120 130 20} type {Horz Fill} selection_color 1 labelsize 8
+    }
+    Fl_Slider {} {
+      label FL_HOR_NICE_SLIDER
+      callback callback
+      xywh {140 160 130 20} type {Horz Knob} box FLAT_BOX color 10 selection_color 1 labelsize 8
+    }
+    Fl_Box {} {
+      label Fl_Value_Slider
+      xywh {10 230 280 210} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Value_Slider {} {
+      label 0
+      callback callback
+      tooltip {Value Slider} xywh {30 260 30 145} selection_color 1 labelsize 8 align 1
+    }
+    Fl_Value_Slider {} {
+      label FL_VERT_FILL_SLIDER
+      callback callback
+      xywh {70 275 30 140} type {Vert Fill} selection_color 1 labelsize 8
+    }
+    Fl_Value_Slider {} {
+      label FL_VERT_NICE_SLIDER
+      callback callback
+      xywh {110 260 20 145} type {Vert Knob} box FLAT_BOX color 10 selection_color 1 labelsize 8 align 1
+    }
+    Fl_Value_Slider {} {
+      label FL_HOR_SLIDER
+      callback callback
+      xywh {140 290 130 20} type Horizontal selection_color 1 labelsize 8
+    }
+    Fl_Value_Slider {} {
+      label FL_HOR_FILL_SLIDER
+      callback callback
+      xywh {140 330 130 20} type {Horz Fill} selection_color 1 labelsize 8
+    }
+    Fl_Value_Slider {} {
+      label FL_HOR_NICE_SLIDER
+      callback callback
+      xywh {140 370 130 20} type {Horz Knob} box FLAT_BOX color 10 selection_color 1 labelsize 8
+    }
+    Fl_Box {} {
+      label Fl_Value_Input
+      xywh {10 450 135 50} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Value_Input {} {
+      label 0
+      callback callback
+      tooltip {Value Input} xywh {30 470 105 25} labelsize 8 maximum 100 step 0.1
+    }
+    Fl_Box {} {
+      label Fl_Value_Output
+      xywh {155 450 135 50} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Value_Output {} {
+      label 0
+      callback callback
+      tooltip {Value Output} xywh {170 470 105 25} labelsize 8 maximum 100 step 0.1
+    }
+    Fl_Box {} {
+      label {   Fl_Scrollbar}
+      xywh {300 10 130 120} box ENGRAVED_BOX labelfont 1 align 21
+    }
+    Fl_Scrollbar {} {
+      label FL_HORIZONTAL
+      callback callback
+      tooltip {Horizontal Scrollbar} xywh {305 65 95 20} type Horizontal labelsize 8 maximum 100 value 20
+    }
+    Fl_Scrollbar {} {
+      label 0
+      callback callback
+      tooltip {Vertical Scrollbar} xywh {400 20 20 105} labelsize 8 align 1 maximum 100
+    }
+    Fl_Box {} {
+      label Fl_Adjuster
+      xywh {440 10 130 120} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Adjuster {} {
+      label {w()>h()}
+      callback callback
+      tooltip {Horizontal Adjuster} xywh {450 60 75 25} labelsize 8
+    }
+    Fl_Adjuster {} {
+      label {w()<h()}
+      callback callback
+      tooltip {Vertical Adjuster} xywh {530 35 25 75} labelsize 8
+    }
+    Fl_Box {} {
+      label Fl_Counter
+      xywh {300 140 130 120} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Counter {} {
+      label 0
+      callback callback
+      tooltip {Standard Counter} xywh {310 175 110 25} labelsize 8
+    }
+    Fl_Counter {} {
+      label FL_SIMPLE_COUNTER
+      callback callback
+      tooltip {Simple Counter} xywh {310 215 110 25} type Simple labelsize 8
+    }
+    Fl_Box {} {
+      label Fl_Spinner
+      xywh {440 140 130 120} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Spinner {} {
+      label FL_INT_INPUT
+      xywh {465 176 80 24} labelsize 8 align 2 minimum -30 maximum 30 step 2 value 5
+    }
+    Fl_Spinner {} {
+      label FL_FLOAT_INPUT
+      xywh {465 216 80 24} type Float labelsize 8 align 2 minimum 0 maximum 1 step 0.01 value 0.05
+    }
+    Fl_Box {} {
+      label Fl_Dial
+      xywh {300 270 270 105} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Dial {} {
+      label 0
+      callback callback
+      tooltip {Standard Dial} xywh {320 295 65 65} color 10 selection_color 1 labelsize 8 value 0.5
+      code0 {o->angles(0,315);}
+    }
+    Fl_Dial {} {
+      label FL_LINE_DIAL
+      callback callback
+      tooltip {Line Dial} xywh {400 295 65 65} type Line color 10 selection_color 1 labelsize 8 value 0.5
+    }
+    Fl_Dial {} {
+      label FL_FILL_DIAL
+      callback callback
+      tooltip {Fill Dial} xywh {480 295 65 65} type Fill color 10 selection_color 1 labelsize 8 value 1
+      code0 {o->angles(0,360);}
+    }
+    Fl_Box {} {
+      label Fl_Roller
+      xywh {300 385 150 115} box ENGRAVED_BOX labelfont 1 align 17
+    }
+    Fl_Roller {} {
+      label 0
+      callback callback
+      tooltip {Vertical Roller} xywh {315 390 20 95} labelsize 8
+    }
+    Fl_Roller {} {
+      label FL_HORIZONTAL
+      callback callback
+      tooltip {Horizontal Roller} xywh {345 430 90 20} type Horizontal labelsize 8
+    }
+    Fl_Box {} {
+      label {Some widgets have color(FL_GREEN) and color2(FL_RED) to show the areas these effect.} selected
+      xywh {460 385 110 115} box BORDER_FRAME color 0 selection_color 0 labelsize 11 align 128
+    }
+  }
+} 

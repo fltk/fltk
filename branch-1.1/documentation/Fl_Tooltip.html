@@ -1,0 +1,116 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Tooltip</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name="Fl_Tooltip">class Fl_Tooltip</A></H2>
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<B>Fl_Tooltip</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Tooltip.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl_Tooltip</TT> class provides tooltip support for
+all FLTK widgets.</P>
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#Fl_Tooltip.color">color</A></LI>
+	<LI><A HREF="#Fl_Tooltip.delay">delay</A></LI>
+	<LI><A HREF="#Fl_Tooltip.disable">disable</A></LI>
+	<LI><A HREF="#Fl_Tooltip.enabled">enabled</A></LI>
+	<LI><A HREF="#Fl_Tooltip.enable">enable</A></LI>
+	<LI><A HREF="#Fl_Tooltip.enter">enter</A></LI>
+	<LI><A HREF="#Fl_Tooltip.enter_area">enter_area</A></LI>
+	<LI><A HREF="#Fl_Tooltip.exit">exit</A></LI>
+	<LI><A HREF="#Fl_Tooltip.font">font</A></LI>
+	<LI><A HREF="#Fl_Tooltip.hoverdelay">hoverdelay</A></LI>
+	<LI><A HREF="#Fl_Tooltip.size">size</A></LI>
+	<LI><A HREF="#Fl_Tooltip.textcolor">textcolor</A></LI>
+
+</UL>
+
+<H4><A NAME="Fl_Tooltip.delay">void delay(float f);<BR>
+float delay();</A></H4>
+
+<P>Gets or sets the tooltip delay. The default delay is 1.0 seconds.
+
+<H4><A NAME="Fl_Tooltip.enabled">int enabled();</A></H4>
+
+<P>Returns non-zero if tooltips are enabled.
+
+<H4><A NAME="Fl_Tooltip.enable">void enable(int b = 1);</A></H4>
+
+<P>Enables tooltips on all widgets (or disables if <i>b</i> is false).
+
+<H4><A NAME="Fl_Tooltip.disable">void disable();</A></H4>
+
+<P>Same as <tt>enable(0)</tt>, disables tooltips on all widgets.
+
+<H4><A NAME="Fl_Tooltip.enter">void enter(Fl_Widget *w);</A></H4>
+
+<P>This method is called when the mouse pointer enters a
+widget.
+
+<h4><a name="Fl_Tooltip.enter_area">void enter_area(Fl_Widget* widget, int x,int y,int w,int h, const char* tip)</a></h4>
+
+<p>You may be able to use this to provide tooltips for internal pieces
+of your widget. Call this after setting <tt>Fl::belowmouse()</tt> to
+your widget (because that calls the above enter() method). Then figure
+out what thing the mouse is pointing at, and call this with the widget
+(this pointer is used to remove the tooltip if the widget is deleted
+or hidden, and to locate the tooltip), the rectangle surrounding the
+area, relative to the top-left corner of the widget (used to calculate
+where to put the tooltip), and the text of the tooltip (which must be
+a pointer to static data as it is not copied).
+
+<H4><A NAME="Fl_Tooltip.exit">void exit(Fl_Widget *w);</A></H4>
+
+<P>This method is called when the mouse pointer leaves a
+widget.
+
+<H4><A NAME="Fl_Tooltip.color">void color(unsigned c);<BR>
+Fl_Color color();</A></H4>
+
+<P>Gets or sets the background color for tooltips. The default
+background color is a pale yellow.
+
+<H4><A NAME="Fl_Tooltip.font">void font(int i);<BR>
+int font();</A></H4>
+
+<P>Gets or sets the typeface for the tooltip text.
+
+<H4><A NAME="Fl_Tooltip.hoverdelay">void hoverdelay(float f);<BR>
+float hoverdelay();</A></H4>
+
+<P>Gets or sets the tooltip hover delay, the delay between tooltips.
+The default delay is 0.2 seconds.
+
+<H4><A NAME="Fl_Tooltip.size">void size(int s);<BR>
+int size();</A></H4>
+
+<P>Gets or sets the size of the tooltip text.
+
+<H4><A NAME="Fl_Tooltip.textcolor">void textcolor(unsigned c);<BR>
+Fl_Color textcolor();</A></H4>
+
+<P>Gets or sets the color of the text in the tooltip. The default is
+black.
+
+</BODY>
+</HTML>

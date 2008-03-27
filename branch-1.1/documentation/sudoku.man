@@ -1,0 +1,33 @@
+.TH sudoku 6 "FLTK Sudoku" "15 January 2006"
+.SH NAME
+sudoku \- the fltk sudoku game
+.sp
+.SH SYNOPSIS
+\fISudoku\fR is a FLTK-based version of the game of Sudoku.
+Sudoku (pronounced soo-dough-coo with the emphasis on the first
+syllable) is a simple number-based puzzle/game played on a 9x9
+grid that is divided into 3x3 subgrids. The goal is to enter a
+number from 1 to 9 in each cell so that each number appears only
+once in each column and row.
+.LP
+At the start of a new game, Sudoku fills in a random selection of
+cells for you - the number of cells depends on the difficulty
+level you use. Click in any of the empty cells or use the arrow
+keys to highlight individual cells and press a number from 1 to 9
+to fill in the cell. To clear a cell, press 0, Delete, or
+Backspace. As you complete each subgrid, correct subgrids are
+highlighted in green. When you have successfully completed all
+subgrids, the entire puzzle is highlighted until you start a new
+game.
+.LP
+As you work to complete the puzzle, you can display possible
+solutions inside each cell by holding the Shift key and pressing
+each number in turn. Repeat the process to remove individual
+numbers, or press a number without the Shift key to replace them
+with the actual number to use.
+.SH SEE ALSO
+fltk(3)
+.br
+FLTK Web Site, http://www.fltk.org/
+.SH AUTHOR
+Michael R Sweet.

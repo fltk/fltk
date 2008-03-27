@@ -1,0 +1,127 @@
+#
+# "$Id$"
+#
+# Make include file for the Fast Light Tool Kit (FLTK).
+# (this file for MingW using GCC 3.1.x)
+#
+# Copyright 1998-2003 by Bill Spitzak and others.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
+#
+
+# Notes:
+#
+# 1) Console windows appearing
+#
+#    Consoles will not appear when run from a command line prompt
+#    but will cause an 'unnecessary' console to appear when run directly from
+#    windows (say explorer). It provides i/o for stdin/stdout for debugging
+#
+#    To avoid this add "-mwindows" to LDLIBS and GLDLIBS below
+#
+# 2) Stripping the executable to reduce size
+#
+#    An external program may be run to strip out any debug symbols:
+#    strip filename.exe
+# 
+#    Alternatively add -s option to LDLIBS and GLDLIBS below to strip all
+#    symbols. (or -S for stripping of debug symbols only). See 'ld' man page
+#    for other useful link-time options.
+#
+# The default is to leave -mwindows and the stripping off, so as to facilitate
+# debugging. For release it may be appropriate to add these additional switches
+
+
+prefix          = /usr/local
+exec_prefix     = ${prefix}
+bindir          = ${exec_prefix}/bin
+includedir      = ${prefix}/include
+libdir          = ${exec_prefix}/lib
+srcdir          = .
+
+# programs we use...
+CHMOD		= :
+CP		= copy
+HTMLDOC		= htmldoc.exe
+LN		= :
+MKDIR		= md
+NROFF		= nroff
+RM		= del
+RMDIR		= rd
+STRIP		= :
+
+# compiler names:
+CXX		= g++
+CC		= gcc
+MAKEDEPEND	= $(CXX) -M
+POSTBUILD	= :
+
+# flags for C++ compiler:
+CFLAGS		= -Wall -O2 -DWIN32
+CXXFLAGS	= -Wall -O2 -DWIN32
+
+# program to make the archive:
+LIBNAME		= ../lib/libfltk.a
+FLLIBNAME	= ../lib/libfltk_forms.a
+GLLIBNAME	= ../lib/libfltk_gl.a
+IMGLIBNAME	= ../lib/libfltk_images.a
+LIBCOMMAND	= ar -ruv
+LIBEXT		= .a
+RANLIB		= ranlib
+DSONAME		=
+FLDSONAME	=
+GLDSONAME	=
+IMGDSONAME	=
+DSOCOMMAND	= echo
+
+# libraries to link with (in addition to default libs):
+LDLIBS		=-mwindows -lole32 -luuid -lgdi32 -lcomctl32 -lwsock32 -lsupc++
+GLDLIBS		=-mwindows -lole32 -luuid -lglu32 -lopengl32 -lgdi32 -lcomctl32 -lwsock32 -lsupc++
+LINKFLTK	=-L../lib -lfltk
+LINKFLTKGL	=-L../lib -lfltk_gl
+LINKFLTKFORMS	=-L../lib -lfltk_forms -lfltk
+LINKFLTKIMG	=-L../lib -lfltk_images -lfltk
+IMAGELIBS	=
+
+# Do we build the OpenGL demos?
+GLDEMOS		=gldemos
+
+# Do we build the threads demo?
+THREADS		=threads
+
+# Be quiet when building...
+.SILENT:
+
+# Build commands and filename extensions...
+.SUFFIXES:	.c .cxx .h .fl .o
+
+.cxx:
+	echo Compiling and linking $@...
+	$(CXX) -I.. $(CXXFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+
+.c.o:
+	echo Compiling $@...
+	$(CC) -I.. $(CXXFLAGS) $< -c
+
+.cxx.o:
+	echo Compiling $@...
+	$(CXX) -I.. $(CXXFLAGS) $< -c
+
+#
+# End of "$Id$".
+#

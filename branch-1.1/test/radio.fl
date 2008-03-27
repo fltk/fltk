@@ -1,0 +1,74 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0100 
+header_name {.h} 
+code_name {.cxx} 
+gridx 10 
+gridy 5 
+snap 3
+Function {} {open
+} {
+  Fl_Window {} {open
+    xywh {447 255 369 214} visible
+  } {
+    Fl_Button {} {
+      label Fl_Button
+      xywh {20 10 160 30}
+    }
+    Fl_Return_Button {} {
+      label Fl_Return_Button
+      xywh {20 50 160 30}
+    }
+    Fl_Light_Button {} {
+      label Fl_Light_Button
+      xywh {20 90 160 30}
+    }
+    Fl_Check_Button {} {
+      label Fl_Check_Button
+      xywh {20 130 160 30} down_box DOWN_BOX
+    }
+    Fl_Round_Button {} {
+      label Fl_Round_Button selected
+      xywh {20 170 160 30} down_box ROUND_DOWN_BOX
+    }
+    Fl_Group {} {
+      xywh {190 10 70 120} box THIN_UP_FRAME
+    } {
+      Fl_Round_Button {} {
+        label radio
+        xywh {190 10 70 30} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Round_Button {} {
+        label radio
+        xywh {190 40 70 30} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Round_Button {} {
+        label radio
+        xywh {190 70 70 30} type Radio down_box ROUND_DOWN_BOX
+      }
+      Fl_Round_Button {} {
+        label radio
+        xywh {190 100 70 30} type Radio down_box ROUND_DOWN_BOX
+      }
+    }
+    Fl_Group {} {open
+      xywh {270 10 90 115} box THIN_UP_BOX
+    } {
+      Fl_Button {} {
+        label radio
+        xywh {280 20 20 20} type Radio selection_color 1 align 8
+      }
+      Fl_Button {} {
+        label radio
+        xywh {280 45 20 20} type Radio selection_color 1 align 8
+      }
+      Fl_Button {} {
+        label radio
+        xywh {280 70 20 20} type Radio selection_color 1 align 8
+      }
+      Fl_Button {} {
+        label radio
+        xywh {280 95 20 20} type Radio selection_color 1 align 8
+      }
+    }
+  }
+} 

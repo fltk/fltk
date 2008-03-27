@@ -1,0 +1,419 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Browser_</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name="Fl_Browser_">class Fl_Browser_</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href="Fl_Group.html#Fl_Group">Fl_Group</A>
+   |
+   +----<B>Fl_Browser_</B>
+           |
+           +----<A href=Fl_Browser.html#Fl_Browser>Fl_Browser</A>, <A href=Fl_Check_Browser.html#Fl_Check_Browser>Fl_Check_Browser</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Browser_.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This is the base class for browsers.  To be useful it must be
+subclassed and several virtual functions defined.  The Forms-compatible
+browser and the file chooser's browser are subclassed off of this.
+<P>This has been designed so that the subclass has complete control
+over the storage of the data, although because <TT>next()</TT> and <TT>
+prev()</TT> functions are used to index, it works best as a linked list
+or as a large block of characters in which the line breaks must be
+searched for. </P>
+<P>A great deal of work has been done so that the &quot;height&quot; of a data
+object does not need to be determined until it is drawn.  This is
+useful if actually figuring out the size of an object requires
+accessing image data or doing <TT>stat()</TT> on a file or doing some
+other slow operation. </P>
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90% summary="Fl_Browser_ methods">
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href="#Fl_Browser_.Fl_Browser_">Fl_Browser_</A></LI>
+<LI><A href="#Fl_Browser_.~Fl_Browser_">~Fl_Browser_</A></LI>
+<LI><A href="#Fl_Browser_.bbox">bbox</A></LI>
+<LI><A href="#Fl_Browser_.deleting">deleting</A></LI>
+<LI><A href="#Fl_Browser_.deselect">deselect</A></LI>
+<LI><A href="#Fl_Browser_.display">display</A></LI>
+<LI><A href="#Fl_Browser_.displayed">displayed</A></LI>
+<LI><A href="#Fl_Browser_.draw">draw</A></LI>
+<LI><A href="#Fl_Browser_.find_item">find_item</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href="#Fl_Browser_.full_height">full_height</A></LI>
+<LI><A href="#Fl_Browser_.full_width">full_width</A></LI>
+<LI><A href="#Fl_Browser_.handle">handle</A></LI>
+<LI><A href="#Fl_Browser_.has_scrollbar">has_scrollbar</A></LI>
+<LI><A href="#Fl_Browser_.hposition">hposition</A></LI>
+<LI><A href="#Fl_Browser_.incr_height">incr_height</A></LI>
+<LI><A href="#Fl_Browser_.inserting">inserting</A></LI>
+<LI><A href="#Fl_Browser_.item_draw">item_draw</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href="#Fl_Browser_.item_first">item_first</A></LI>
+<LI><A href="#Fl_Browser_.item_height">item_height</A></LI>
+<LI><A href="#Fl_Browser_.item_next">item_next</A></LI>
+<LI><A href="#Fl_Browser_.item_prev">item_prev</A></LI>
+<LI><A href="#Fl_Browser_.item_quick_height">item_quick_height</A></LI>
+<LI><A href="#Fl_Browser_.item_select">item_select</A></LI>
+<LI><A href="#Fl_Browser_.item_selected">item_selected</A></LI>
+<LI><A href="#Fl_Browser_.item_width">item_width</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href="#Fl_Browser_.leftedge">leftedge</A></LI>
+<LI><A href="#Fl_Browser_.new_list">new_list</A></LI>
+<LI><A href="#Fl_Browser_.position">position</A></LI>
+<LI><A href="#Fl_Browser_.redraw_line">redraw_line</A></LI>
+<LI><A href="#Fl_Browser_.redraw_lines">redraw_lines</A></LI>
+<LI><A href="#Fl_Browser_.replacing">replacing</A></LI>
+<LI><A href="#Fl_Browser_.resize">resize</A></LI>
+<LI><A href="#Fl_Browser_.scrollbar_left">scrollbar_left</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href="#Fl_Browser_.scrollbar_right">scrollbar_right</A></LI>
+<LI><A href="#Fl_Browser_.scrollbar_width">scrollbar_width</A></LI>
+<LI><A href="#Fl_Browser_.select">select</A></LI>
+<LI><A href="#Fl_Browser_.select_only">select_only</A></LI>
+<LI><A href="#Fl_Browser_.selection">selection</A></LI>
+<LI><A href="#Fl_Browser_.textcolor">textcolor</A></LI>
+<LI><A href="#Fl_Browser_.textfont">textfont</A></LI>
+<LI><A href="#Fl_Browser_.textsize">textsize</A></LI>
+<LI><A href="#Fl_Browser_.top">top</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+
+<H4><A name="Fl_Browser_.Fl_Browser_">Fl_Browser::Fl_Browser(int, int,
+int, int, const char * = 0)</A></H4>
+
+<P>The constructor makes an empty browser.
+
+
+<H4><A name="Fl_Browser_.~Fl_Browser_">Fl_Browser::~Fl_Browser(void)</A></H4>
+
+<P>The destructor deletes all list items and destroys the browser.
+
+
+<H4><A NAME="Fl_Browser_.bbox">Fl_Browser_::bbox(int &amp;x, int &amp;y, int &amp;w, int &amp;h) const</A></H4>
+
+<P><tt>[protected]</tt> This method returns the bounding box for the interior of the list, inside
+the scrollbars.
+
+
+<H4><A NAME="Fl_Browser_.deleting">Fl_Browser_::deleting(void *a)</A></H4>
+
+<P><tt>[protected]</tt> This method should be used when an item is deleted from the list.
+It allows the <TT>Fl_Browser_</TT> to discard any cached data it has
+on the item.
+
+
+<H4><A NAME="Fl_Browser_.deselect">int Fl_Browser_::deselect(int docb=0)</A></H4>
+
+<P>Deselects all items in the list and returns 1 if the state changed
+or 0 if it did not.
+
+<P>If <TT>docb</TT> is non-zero, <TT>deselect</TT> tries to call the
+callback function for the widget.
+
+
+<H4><A NAME="Fl_Browser_.display">Fl_Browser_::display(void *p)</A></H4>
+
+<P>Displays item <TT>p</TT>, scrolling the list as necessary.
+
+
+<H4><A NAME="Fl_Browser_.displayed">int Fl_Browser_::displayed(void *p) const</A></H4>
+
+<P><tt>[protected]</tt> This method returns non-zero if item <TT>p</TT> is currently visible in
+the list.
+
+
+<H4><A NAME="Fl_Browser_.draw">Fl_Browser_::draw()
+<BR>Fl_Browser_::draw(int x, int y, int w, int h)</A></H4>
+
+<P><tt>[protected]</tt> The first form draws the list within the normal widget bounding box.
+
+<P><tt>[protected]</tt> The second form draws the contents of the browser within the
+specified bounding box.
+
+
+<H4><A NAME="Fl_Browser_.find_item">void *Fl_Browser_::find_item(int my)</A></H4>
+
+<P>This method returns the item under mouse at <TT>my</TT>. If no item is
+displayed at that position then <TT>NULL</TT> is returned.
+
+
+<H4><A NAME="Fl_Browser_.full_height">virtual int Fl_Browser_::full_height() const</A></H4>
+
+<P><tt>[protected]</tt> This method may be provided by the subclass to indicate the full height
+of the item list in pixels. The default implementation computes the full
+height from the item heights.
+
+
+<H4><A NAME="Fl_Browser_.full_width">Fl_Browser_::full_width() const</A></H4>
+
+<P><tt>[protected]</tt> This method may be provided by the subclass to indicate the full width
+of the item list in pixels. The default implementation computes the full
+width from the item widths.
+
+
+<H4><A NAME="Fl_Browser_.handle">Fl_Browser_::handle(int event)
+<BR>Fl_Browser_::handle(int event, int x, int y, int w, int h)</A></H4>
+
+<P>The first form handles an event within the normal widget bounding box.
+
+<P><tt>[protected]</tt> The second form handles an event within the specified bounding box.
+
+
+<H4><A name="Fl_Browser_.has_scrollbar">void
+Fl_Browser_::has_scrollbar(int h)</A></H4>
+
+<P>By default you can scroll in both directions, and the scrollbars
+disappear if the data will fit in the widget.  has_scrollbar() changes
+this based on the value of <TT>h</TT>:
+
+<UL>
+
+	<LI><CODE>0</CODE> - No scrollbars.
+
+	<LI><CODE>Fl_Browser_::HORIZONTAL</CODE> - Only a horizontal
+	scrollbar.
+
+	<LI><CODE>Fl_Browser_::VERTICAL</CODE> - Only a vertical
+	scrollbar.
+
+	<LI><CODE>Fl_Browser_::BOTH</CODE> - The default is both
+	scrollbars.
+
+	<LI><CODE>Fl_Browser_::HORIZONTAL_ALWAYS</CODE> - Horizontal
+	scrollbar always on, vertical always off.
+
+	<LI><CODE>Fl_Browser_::VERTICAL_ALWAYS</CODE> - Vertical
+	scrollbar always on, horizontal always off.
+
+	<LI><CODE>Fl_Browser_::BOTH_ALWAYS</CODE> - Both always on.
+
+</UL>
+
+
+<H4><A NAME="Fl_Browser_.hposition">int Fl_Browser_::hposition() const
+<BR>Fl_Browser_::hposition(int h)</A></H4>
+
+<P>Gets or sets the horizontal scrolling position of the list,
+which is the pixel offset of the list items within the list
+area.
+
+
+<H4><A NAME="Fl_Browser_.incr_height">virtual int Fl_Browser_::incr_height() const</A></H4>
+
+<P><tt>[protected]</tt> This method may be provided to return the average height of all items, to
+be used for scrolling. The default implementation uses the height of the first
+item.
+
+
+<H4><A NAME="Fl_Browser_.inserting">Fl_Browser_::inserting(void *a, void *b)</A></H4>
+
+<P><tt>[protected]</tt> This method should be used when an item is added to the list.
+It allows the <TT>Fl_Browser_</TT> to update its cache data as needed.
+
+
+<H4><A NAME="Fl_Browser_.item_draw">virtual void Fl_Browser_::item_draw(void *p, int x, int y, int w, int h)</A></H4>
+
+<P><tt>[protected]</tt> This method must be provided by the subclass to draw the item
+<TT>p</TT> in the area indicated by <TT>x</TT>, <TT>y</TT>, <TT>w</TT>,
+and <TT>h</TT>.
+
+
+<H4><A NAME="Fl_Browser_.item_first">virtual void *Fl_Browser_::item_first() const</A></H4>
+
+<P><tt>[protected]</tt> This method must be provided by the subclass to return the first item in
+the list.
+
+
+<H4><A NAME="Fl_Browser_.item_height">virtual int Fl_Browser_::item_height(void *p) const</A></H4>
+
+<P><tt>[protected]</tt> This method must be provided by the subclass to return the height of the
+item <TT>p</TT> in pixels.  Allow for two additional pixels for the list
+selection box.
+
+
+<H4><A NAME="Fl_Browser_.item_next">virtual void *Fl_Browser_::item_next(void *p) const</A></H4>
+
+<P><tt>[protected]</tt> This method must be provided by the subclass to return the item in
+the list after <TT>p</TT>.
+
+
+<H4><A NAME="Fl_Browser_.item_prev">virtual void *Fl_Browser_::item_prev(void *p) const</A></H4>
+
+<P><tt>[protected]</tt> This method must be provided by the subclass to return the item in
+the list before <TT>p</TT>.
+
+
+<H4><A NAME="Fl_Browser_.item_quick_height">virtual int Fl_Browser_::item_quick_height(void *p) const</A></H4>
+
+<P><tt>[protected]</tt> This method may be provided by the subclass to return the height of the
+item <TT>p</TT> in pixels.  Allow for two additional pixels for the list
+selection box.  This method differs from
+<A HREF="#Fl_Browser_.item_height"><TT>item_height</TT></A> in that it is only
+called for selection and scrolling operations. The default implementation
+calls <TT>item_height</TT>.
+
+
+<H4><A NAME="Fl_Browser_.item_select">virtual void Fl_Browser_::item_select(void *p, int s=1)</A></H4>
+
+<P><tt>[protected]</tt> This method must be implemented by the subclass if it supports
+multiple selections in the browser. The <TT>s</TT> argument specifies the
+selection state for item <TT>p</TT>: 0 = off, 1 = on.
+
+
+<H4><A NAME="Fl_Browser_.item_selected">virtual int Fl_Browser_::item_selected(void *p) const</A></H4>
+
+<P><tt>[protected]</tt> This method must be implemented by the subclass if it supports
+multiple selections in the browser. The method should return 1 if <TT>p</TT>
+is selected and 0 otherwise.
+
+
+<H4><A NAME="Fl_Browser_.item_width">virtual int Fl_Browser_::item_width(void *p) const</A></H4>
+
+<P><tt>[protected]</tt> This method must be provided by the subclass to return the width of the
+item <TT>p</TT> in pixels.  Allow for two additional pixels for the list
+selection box.
+
+
+<H4><A NAME="Fl_Browser_.leftedge">int Fl_Browser_::leftedge() const</A></H4>
+
+<P><tt>[protected]</tt> This method returns the X position of the left edge of the list area
+after adjusting for the scrollbar and border, if any.
+
+
+<H4><A NAME="Fl_Browser_.new_list">Fl_Browser_::new_list()</A></H4>
+
+<P><tt>[protected]</tt> This method should be called when the list data is completely replaced
+or cleared. It informs the <TT>Fl_Browser_</TT> widget that any cached
+information it has concerning the items is invalid.
+
+
+<H4><A NAME="Fl_Browser_.position">int Fl_Browser_::position() const
+<BR>Fl_Browser_::position(int v) const</A></H4>
+
+<P>Gets or sets the vertical scrolling position of the list,
+which is the pixel offset of the list items within the list
+area.
+
+
+<H4><A NAME="Fl_Browser_.redraw_line">Fl_Browser_::redraw_line(void *p)</A></H4>
+
+<P><tt>[protected]</tt> This method should be called when the contents of an item have changed
+but not changed the height of the item.
+
+
+<H4><A NAME="Fl_Browser_.redraw_lines">Fl_Browser_::redraw_lines()</A></H4>
+
+<P><tt>[protected]</tt> This method will cause the entire list to be redrawn.
+
+
+<H4><A NAME="Fl_Browser_.replacing">Fl_Browser_::replacing(void *a, void *b)</A></H4>
+
+<P><tt>[protected]</tt> This method should be used when an item is replaced in the list.
+It allows the <TT>Fl_Browser_</TT> to update its cache data as needed.
+
+
+<H4><A NAME="Fl_Browser_.resize">Fl_Browser_::resize(int x, int y, int w, int h)</A></H4>
+
+<P>Repositions and/or resizes the browser.
+
+
+<H4><A NAME="Fl_Browser_.scrollbar_left">Fl_Browser_::scrollbar_left()</A></H4>
+
+<P>This method moves the vertical scrollbar to the lefthand side of the list.
+
+
+<H4><A NAME="Fl_Browser_.scrollbar_right">Fl_Browser_::scrollbar_right()</A></H4>
+
+<P>This method moves the vertical scrollbar to the righthand side of the list.
+
+
+<H4><A NAME="Fl_Browser_.scrollbar_width">static void Fl_Browser_::scrollbar_width(int sw);</A><BR>
+static int Fl_Browser_::scrollbar_width() const;</H4>
+
+<P>Sets or gets the width of any scrollbars that are used.
+
+
+<H4><A NAME="Fl_Browser_.select">int Fl_Browser_::select(void *p, int s=1, int docb=0)</A></H4>
+
+<P>Sets the selection state of item <TT>p</TT> to <TT>s</TT> and
+returns 1 if the state changed or 0 if it did not.
+
+<P>If <TT>docb</TT> is non-zero, <TT>select</TT> tries to call the callback
+function for the widget.
+
+
+<H4><A NAME="Fl_Browser_.select_only">Fl_Browser_::select_only(void *p, int docb=0)</A></H4>
+
+<P>Selects item <TT>p</TT> and returns 1 if the state changed or 0 if it did
+not. Any other items in the list are deselected.
+
+<P>If <TT>docb</TT> is non-zero, <TT>select_only</TT> tries to call the
+callback function for the widget.
+
+
+<H4><A NAME="Fl_Browser_.selection">void *Fl_Browser_::selection() const</A></H4>
+
+<P><tt>[protected]</tt> Returns the item currently selected, or NULL if there is no selection.
+
+<P>For multiple selection browsers this call returns the currently focused item,
+even if it is not selected. To find all selected items, call 
+<TT><A href=Fl_Multi_Browser.html#Fl_Multi_Browser.select>
+Fl_Multi_Browser::selected()</A></TT> for every item in question.
+
+
+<H4><A name="Fl_Browser_.textcolor">Fl_Color Fl_Browser_::textcolor() const
+<BR>void Fl_Browser_::textcolor(Fl_Color color)</A></H4>
+
+<P>The first form gets the default text color for the lines in the
+browser.
+
+<P>The second form sets the default text color to <TT>color</TT></P>
+
+
+<H4><A name="Fl_Browser_.textfont">Fl_Font Fl_Browser_::textfont() const
+<BR>void Fl_Browser_::textfont(Fl_Font font)</A></H4>
+
+<P>The first form gets the default text font for the lines in the
+browser.
+
+<P>The second form sets the default text font to <TT>font</TT></P>
+
+
+<H4><A name="Fl_Browser_.textsize">uchar Fl_Browser_::textsize() const
+<BR>void Fl_Browser_::textsize(uchar size)</A></H4>
+
+<P>The first form gets the default text size for the lines in the
+browser.
+
+<P>The second form sets the default text size to <TT>size</TT></P>
+
+
+<H4><A NAME="Fl_Browser_.top">void *Fl_Browser_::top() const</A></H4>
+
+<P><tt>[protected]</tt> Returns the item the appears at the top of the list.
+
+
+</BODY>
+</HTML>

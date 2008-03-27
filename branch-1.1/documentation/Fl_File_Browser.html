@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_File_Browser</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+<H2><A NAME="Fl_File_Browser">class Fl_File_Browser</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A HREF="Fl_Browser.html#Fl_Browser">Fl_Browser</A>
+   |
+   +----<B>Fl_File_Browser</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_File_Browser.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <CODE>Fl_File_Browser</CODE> widget displays a list of filenames,
+optionally with file-specific icons.
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#Fl_File_Browser.Fl_File_Browser">Fl_File_Browser</A>
+	<LI><A HREF="#Fl_File_Browser.~Fl_File_Browser">~Fl_File_Browser</A>
+	<LI><A HREF="#Fl_File_Browser.iconsize">iconsize</A>
+	<LI><A HREF="#Fl_File_Browser.filter">filter</A>
+	<LI><A HREF="#Fl_File_Browser.filetype">filetype</A>
+	<LI><A HREF="#Fl_File_Browser.load">load</A>
+
+</UL>
+
+<H4><A NAME="Fl_File_Browser.Fl_File_Browser">Fl_File_Browser(int xx, int yy, int ww, int hh, const char *l = 0)</A></H4>
+
+<P>The constructor creates the <CODE>Fl_File_Browser</CODE> widget at the specified
+position and size.
+
+<H4><A NAME="Fl_File_Browser.~Fl_File_Browser">~Fl_File_Browser()</A></H4>
+
+<P>The destructor destroys the widget and frees all memory that has been
+allocated.
+
+<H4><A NAME="Fl_File_Browser.iconsize">void iconsize(uchar s)<BR>
+uchar iconsize() const</A></H4>
+
+<P>Sets or gets the size of the icons. The default size is 20 pixels.
+
+<H4><A NAME="Fl_File_Browser.filter">void filter(const char *pattern)<BR>
+const char *filter() const</A></H4>
+
+<P>Sets or gets the filename filter. The pattern matching uses
+the <A
+HREF="functions.html#fl_filename_match"><CODE>fl_filename_match()</CODE></A>
+function in FLTK.
+
+<H4><A NAME="Fl_File_Browser.filetype">void filetype(int type)<BR>
+int filetype() const</A></H4>
+
+<P>Sets or gets the file browser type, <CODE>FILES</CODE> or
+<CODE>DIRECTORIES</CODE>. When set to <CODE>FILES</CODE>, both
+files and directories are shown. Otherwise only directories are
+shown.
+
+<H4><A NAME="Fl_File_Browser.load">int load(const char *directory, Fl_File_Sort_F *sort = fl_numeric_sort)</A></H4>
+
+<P>Loads the specified directory into the browser. If icons have been
+loaded then the correct icon is associated with each file in the list.
+
+<P>The <tt>sort</tt> argument specifies a sort function to be used with
+<A HREF="functions.html#fl_filename_list"><tt>fl_filename_list()</tt></A>.
+
+</BODY>
+</HTML>

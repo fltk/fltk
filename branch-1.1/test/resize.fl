@@ -1,0 +1,54 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.00 
+header_name {.h} 
+code_name {.cxx} 
+gridx 10 
+gridy 10 
+snap 3
+Function {} {open
+} {
+  Fl_Window {} {open
+    xywh {333 489 366 261} visible
+  } {
+    Fl_Button {} {
+      label {@<-}
+      callback {Fl_Window* w = o->window();
+w->position(w->x()-50,w->y());}
+      xywh {20 40 40 40} labeltype SYMBOL_LABEL
+    }
+    Fl_Button {} {
+      label {@2->}
+      callback {Fl_Window* w = o->window();
+w->position(w->x(),w->y()+50);}
+      xywh {60 80 40 40} labeltype SYMBOL_LABEL
+    }
+    Fl_Button {} {
+      label {@->}
+      callback {Fl_Window* w = o->window();
+w->position(w->x()+50,w->y());}
+      xywh {100 40 40 40} labeltype SYMBOL_LABEL
+    }
+    Fl_Button {} {
+      label {@8->}
+      callback {Fl_Window* w = o->window();
+w->position(w->x(),w->y()-50);}
+      xywh {60 0 40 40} labeltype SYMBOL_LABEL
+    }
+    Fl_Button {} {
+      label grow
+      callback {Fl_Window* w = o->window();
+w->size(w->w()+20, w->h()+20);}
+      xywh {30 130 110 40} labeltype SYMBOL_LABEL labelfont 1 labelsize 18
+    }
+    Fl_Button {} {
+      label shrink
+      callback {Fl_Window* w = o->window();
+w->size(w->w()-20, w->h()-20);}
+      xywh {30 190 110 40} labeltype SYMBOL_LABEL labelfont 1 labelsize 18
+    }
+    Fl_Box {} {
+      label {This is a test of program-generated resize() of a window.  The window should move or resize once when each button is clicked.  The program and window manager should not go into fits echoing resizes back and forth!} selected
+      xywh {150 10 160 220} box BORDER_BOX align 148
+    }
+  }
+} 

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="0.9">
+    <dict>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+
+	<key>CFBundleExecutable</key>
+	<string>blocks</string>
+
+	<key>CFBundleIdentifier</key>
+	<string>com.easysw.blocks</string>
+
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright 2006 by Michael Sweet</string>
+
+	<key>CFAppleHelpAnchor</key>
+	<string>help</string>
+
+	<key>CFBundleName</key>
+	<string>blocks</string>
+
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+
+	<key>CFBundleSignature</key>
+	<string>BLKS</string>
+
+	<key>CFBundleIconFile</key>
+	<string>blocks.icns</string>
+
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+
+	<key>CFBundleGetInfoString</key>
+	<string>1.0, Copyright 2006 by Michael Sweet</string>
+
+    </dict>
+</plist>

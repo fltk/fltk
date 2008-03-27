@@ -1,0 +1,64 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Tiled_Image</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name=Fl_Tiled_Image>class Fl_Tiled_Image</A></H2>
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href="Fl_Image.html">Fl_Image</A>
+   |
+   +----<B>Fl_Tiled_Image</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Tiled_Image.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl_Tiled_Image</TT> class supports tiling of images
+over a specified area. The source (tile) image is <B>not</B>
+copied unless you call the <A
+HREF="Fl_Image.html#Fl_Image.color_average"><TT>color_average()</TT></A>,
+<A
+HREF="Fl_Image.html#Fl_Image.desaturate"><TT>desaturate()</TT></A>,
+or <A
+HREF="Fl_Image.html#Fl_Image.inactive"><TT>inactive()</TT></A>
+methods.</P>
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A href="#Fl_Tiled_Image.Fl_Tiled_Image">Fl_Tiled_Image</A></LI>
+
+	<LI><A href="#Fl_Tiled_Image.~Fl_Tiled_Image">~Fl_Tiled_Image</A></LI>
+
+	<LI><A href="#Fl_Tiled_Image.image">image</A></LI>
+
+</UL>
+
+<H4><A name="Fl_Tiled_Image.Fl_Tiled_Image">Fl_Tiled_Image::Fl_Tiled_Image(Fl_Image *img, int W, int H);</A></H4>
+
+<P>The constructors create a new tiled image containing the specified image.</P>
+
+<H4><A name="Fl_Tiled_Image.~Fl_Tiled_Image">Fl_Tiled_Image::~Fl_Tiled_Image();</A></H4>
+
+<P>The destructor frees all memory and server resources that are used by
+the tiled image.</P>
+
+<H4><A name="Fl_Tiled_Image.image">Fl_Image *Fl_Tiled_Image::image();</A></H4>
+
+<P>Returns the image that will be tiled.</P>
+
+</BODY>
+</HTML>

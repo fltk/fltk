@@ -1,0 +1,265 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Input_</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name="Fl_Input_">class Fl_Input_</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+   |
+   +----<B>Fl_Input_</B>
+           |
+	   +----<A href=Fl_Input.html#Fl_Input>Fl_Input</A>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Input_.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>This is a virtual base class below <A
+href="Fl_Input.html#Fl_Input"><TT>Fl_Input</TT></A>. It has all
+the same interfaces, but lacks the <TT>handle()</TT> and
+<TT>draw()</TT> method. You may want to subclass it if you are
+one of those people who likes to change how the editing keys
+work.
+
+<P>This can act like any of the subclasses of Fl_Input, by
+setting <TT>type()</TT> to one of the following values:</P>
+
+<UL><PRE>
+#define FL_NORMAL_INPUT		0
+#define FL_FLOAT_INPUT		1
+#define FL_INT_INPUT		2
+#define FL_MULTILINE_INPUT	4
+#define FL_SECRET_INPUT		5
+#define FL_INPUT_TYPE		7
+#define FL_INPUT_READONLY	8
+#define FL_NORMAL_OUTPUT	(FL_NORMAL_INPUT | FL_INPUT_READONLY)
+#define FL_MULTILINE_OUTPUT	(FL_MULTILINE_INPUT | FL_INPUT_READONLY)
+#define FL_INPUT_WRAP		16
+#define FL_MULTILINE_INPUT_WRAP	(FL_MULTILINE_INPUT | FL_INPUT_WRAP)
+#define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
+</PRE></UL>
+
+<H3>Methods</H3>
+
+<CENTER>
+<TABLE width="90%" summary="Fl_Input_ methods.">
+<TR><TD align="left" valign="top">
+<UL>
+<LI><A href="#Fl_Input_.Fl_Input_">Fl_Input_</A></LI>
+<LI><A href="#Fl_Input_.~Fl_Input_">~Fl_Input_</A></LI>
+<LI><A href="#Fl_Input_.copy">copy</A></LI>
+<LI><A href="#Fl_Input_.copy_cuts">copy_cuts</A></LI>
+</UL>
+</TD><TD align="left" valign="top">
+<UL>
+<LI><A href="#Fl_Input_.cut">cut</A></LI>
+<LI><A href="#Fl_Input_.drawtext">drawtext</A></LI>
+<LI><A href="#Fl_Input_.handletext">handletext</A></LI>
+<LI><A href="#Fl_Input_.input_type">input_type</A></LI>
+</UL>
+</TD><TD align="left" valign="top">
+<UL>
+<LI><A href="#Fl_Input_.insert">insert</A></LI>
+<LI><A href="#Fl_Input_.lineboundary">lineboundary</A></LI>
+<LI><A href="#Fl_Input_.mark">mark</A></LI>
+<LI><A href="#Fl_Input_.maybe_do_callback">maybe_do_callback</A></LI>
+</UL>
+</TD><TD align="left" valign="top">
+<UL>
+<LI><A href="#Fl_Input_.maximum_size">maximum_size</A></LI>
+<LI><A href="#Fl_Input_.position">position</A></LI>
+<LI><A href="#Fl_Input_.readonly">readonly</A></LI>
+<LI><A href="#Fl_Input_.replace">replace</A></LI>
+</UL>
+</TD><TD align="left" valign="top">
+<UL>
+<LI><A href="#Fl_Input_.undo">undo</A></LI>
+<LI><A href="#Fl_Input_.up_down_position">up_down_position</A></LI>
+<LI><A href="#Fl_Input_.wrap">wrap</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+
+<H4><A name="Fl_Input_.Fl_Input_">Fl_Input_::Fl_Input_(int x, int y, int
+w, int h, const char *label = 0)</A></H4>
+
+<P>Creates a new <TT>Fl_Input_</TT> widget using the given
+position, size, and label string. The default boxtype is
+<TT>FL_DOWN_BOX</TT>.
+
+<H4><A name="Fl_Input_.~Fl_Input_">virtual Fl_Input_::~Fl_Input_()</A></H4>
+
+<P>The destructor removes the widget and any value associated with it.
+
+<H4><A name="Fl_Input_.wordboundary">int Fl_Input_::wordboundary(int i)
+const</A></H4>
+
+<P>Returns true if position <TT>i</TT> is at the start or end of a word.
+
+<H4><A name="Fl_Input_.lineboundary">int Fl_Input_::lineboundary(int i)
+const</A></H4>
+
+<P>Returns true if position <TT>i</TT> is at the start or end of a line.
+
+<H4><A name="Fl_Input_.drawtext">void Fl_Input_::drawtext(int,int,int,int)</A></H4>
+
+<P>Draw the text in the passed bounding box.  If <TT>damage()
+&amp; FL_DAMAGE_ALL</TT> is true, this assumes the area has
+already been erased to <TT>color()</TT>. Otherwise it does
+minimal update and erases the area itself.
+
+<H4><A name="Fl_Input_.handletext">int Fl_Input_::handletext(int
+e,int,int,int,int)</A></H4>
+
+<P>Default handler for all event types. Your <TT>handle()</TT>
+method should call this for all events that it does not handle
+completely. You must pass it the same bounding box as you do
+when calling <TT>drawtext()</TT> from your <tt>draw()</tt>
+method. Handles <TT>FL_PUSH</TT>, <TT>FL_DRAG</TT>,
+<TT>FL_RELEASE</TT> to select text, handles <TT>FL_FOCUS</TT>
+and <TT>FL_UNFOCUS</TT> to show and hide the cursor.
+
+<H4><A name="Fl_Input_.up_down_position">int
+Fl_Input_::up_down_position(int i, int keepmark=0)</A></H4>
+
+<P>Do the correct thing for arrow keys. Sets the position (and
+mark if <I>keepmark</I> is zero) to somewhere in the same line
+as <I>i</I>, such that pressing the arrows repeatedly will cause
+the point to move up and down.
+
+<H4><A name="Fl_Input_.maybe_do_callback">void
+Fl_Input_::maybe_do_callback()</A></H4>
+
+<P>Does the callback if <TT>changed()</TT> is true or if
+<TT>when() &amp; FL_WHEN_NOT_CHANGED</TT> is non-zero. You
+should call this at any point you think you should generate a
+callback.
+
+<H4><A name="Fl_Input_.maximum_size">void Fl_Input_::maximum_size(int m)<BR>
+int Fl_Input_::maximum_size() const</A></H4>
+
+<P>Sets or returns the maximum length of the input field.
+
+<H4><A name="Fl_Input_.position">int Fl_Input_::position() const
+<BR>int Fl_Input_::position(int new_position, int new_mark)
+<BR>int Fl_Input_::position(int new_position_and_new_mark)</A></H4>
+
+<P>The input widget maintains two pointers into the string. The
+&quot;position&quot; is where the cursor is. The
+&quot;mark&quot; is the other end of the selected text. If they
+are equal then there is no selection. Changing this does not
+affect the clipboard (use <TT>copy()</TT> to do that).
+
+<P>Changing these values causes a <TT>redraw()</TT>. The new
+values are bounds checked. The return value is non-zero if the
+new position is different than the old one. <TT>position(n)</TT>
+is the same as <TT>position(n,n)</TT>. <TT>mark(n)</TT> is the
+same as <TT>position(position(),n)</TT>.</P>
+
+<H4><A name="Fl_Input_.mark">int Fl_Input_::mark() const
+<BR> int Fl_Input_::mark(int new_mark)</A></H4>
+
+<P>Gets or sets the current selection mark. <TT>mark(n)</TT> is
+the same as <TT>position(position(),n)</TT>.
+
+<H4><A name="Fl_Input_.replace">int Fl_Input_::replace(int a, int b,
+const char *insert, int length=0)</A></H4>
+
+<P>This call does all editing of the text. It deletes the region
+between <TT>a</TT> and <TT>b</TT> (either one may be less or
+equal to the other), and then inserts the string <TT>insert</TT>
+at that point and leaves the <TT>mark()</TT> and
+<TT>position()</TT> after the insertion. Does the callback if
+<TT>when() &amp; FL_WHEN_CHANGED</TT> and there is a change.
+
+<P>Set <TT>start</TT> and <TT>end</TT> equal to not delete
+anything. Set <TT>insert</TT> to <TT>NULL</TT> to not insert
+anything.</P>
+
+<P><TT>length</TT> must be zero or <TT>strlen(insert)</TT>, this
+saves a tiny bit of time if you happen to already know the
+length of the insertion, or can be used to insert a portion of a
+string or a string containing nul's.</P>
+
+<P><TT>a</TT> and <TT>b</TT> are clamped to the
+0..<TT>size()</TT> range, so it is safe to pass any values.</P>
+
+<P><TT>cut()</TT> and <TT>insert()</TT> are just inline
+functions that call <TT>replace()</TT>.</P>
+
+<H4><A name="Fl_Input_.cut">int Fl_Input_::cut()
+<BR> int Fl_Input_::cut(int n)
+<BR> int Fl_Input_::cut(int a, int b);</A></H4>
+
+<P><TT>Fl_Input_::cut()</TT> deletes the current selection.
+<TT>cut(n)</TT> deletes <TT>n</TT> characters after the
+<TT>position()</TT>. <TT>cut(-n)</TT> deletes <TT>n</TT>
+characters before the <TT>position()</TT>. <TT>cut(a,b)</TT>
+deletes the characters between offsets <TT>a</TT> and
+<TT>b</TT>. <TT>A</TT>, <TT>b</TT>, and <TT>n</TT> are all
+clamped to the size of the string. The mark and point are left
+where the deleted text was.
+
+<P>If you want the data to go into the clipboard, do
+<TT>Fl_Input_::copy()</TT> before calling
+<TT>Fl_Input_::cut()</TT>, or do <TT>Fl_Input_::copy_cuts()</TT>
+afterwards.</P>
+
+<H4><A name="Fl_Input_.insert">int Fl_Input_::insert(const char *t,int
+l=0)</A></H4>
+
+<P>Insert the string <TT>t</TT> at the current position, and
+leave the mark and position after it. If <TT>l</TT> is not zero
+then it is assumed to be <TT>strlen(t)</TT>.
+
+<H4><A name="Fl_Input_.copy">int Fl_Input_::copy(int clipboard)</A></H4>
+
+<P>Put the current selection between <TT>mark()</TT> and
+<TT>position()</TT> into the specified clipboard.  Does not
+replace the old clipboard contents if <TT>position()</TT> and
+<TT>mark()</TT> are equal. Clipboard 0 maps to the current text
+selection and clipboard 1 maps to the cut/paste clipboard.
+
+<H4><A name="Fl_Input_.undo">int Fl_Input_::undo()</A></H4>
+
+<P>Does undo of several previous calls to <TT>replace()</TT>.
+Returns non-zero if any change was made.
+
+<H4><A name="Fl_Input_.copy_cuts">int Fl_Input_::copy_cuts()</A></H4>
+
+<P>Copy all the previous contiguous cuts from the undo
+information to the clipboard. This is used to make ^K work.
+
+<H4><A name="Fl_Input_.input_type">int Fl_Input_::input_type() const
+<BR>void Fl_Input_::input_type(int)</A></H4>
+
+<P>Gets or sets the input field type.
+
+<H4><A name="Fl_Input_.readonly">int Fl_Input_::readonly() const
+<BR>void Fl_Input_::readonly(int)</A></H4>
+
+<P>Gets or sets the read-only state of the input field.
+
+<H4><A name="Fl_Input_.wrap">int Fl_Input_::wrap() const
+<BR>void Fl_Input_::wrap(int)</A></H4>
+
+<P>Gets or sets the word wrapping state of the input field. Word
+wrap is only functional with multi-line input fields.
+
+</BODY>
+</HTML>

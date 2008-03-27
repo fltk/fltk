@@ -1,0 +1,316 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Menu_</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Menu_>class Fl_Menu_</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+   |
+   +----<B>Fl_Menu_</B>----<A href=Fl_Menu_Item.html#Fl_Menu_Item>Fl_Menu_Item</A>
+           |
+           +----<A href=Fl_Choice.html#Fl_Choice>Fl_Choice</A>, <A href=Fl_Menu_Bar.html#Fl_Menu_Bar>Fl_Menu_Bar</A>, <A href=Fl_Menu_Button.html#Fl_Menu_Button>Fl_Menu_Button</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Menu_.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+All widgets that have a menu in FLTK are subclassed off of this class.
+Currently FLTK provides you with <A href=Fl_Menu_Button.html#Fl_Menu_Button>
+<TT>Fl_Menu_Button</TT></A>, <A href=Fl_Menu_Bar.html#Fl_Menu_Bar><TT>
+Fl_Menu_Bar</TT></A>, and <A href=Fl_Choice.html#Fl_Choice><TT>Fl_Choice</TT>
+</A>.
+
+<P>The class contains a pointer to an array of structures of type <A
+href=Fl_Menu_Item.html#Fl_Menu_Item> <TT>Fl_Menu_Item</TT></A>.  The
+array may either be supplied directly by the user program, or it may
+be "private": a dynamically allocated array managed by the Fl_Menu_.
+
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90% summary="Fl_Menu_ methods.">
+<TR><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Menu_.Fl_Menu_>Fl_Menu_</A></LI>
+<LI><A href=#Fl_Menu_.~Fl_Menu_>~Fl_Menu_</A></LI>
+<LI><A href=#Fl_Menu_.add>add</A></LI>
+<LI><A href=#Fl_Menu_.clear>clear</A></LI>
+<LI><A href=#Fl_Menu_.copy>copy</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Menu_.down_box>down_box</A></LI>
+<LI><A href=#Fl_Menu_.find_item>find_item</A></LI>
+<LI><A href=#Fl_Menu_.global>global</A></LI>
+<LI><A href=#Fl_Menu_.item_pathname>item_pathname</A></LI>
+<LI><A href=#Fl_Menu_.menu>menu</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Menu_.mode>mode</A></LI>
+<LI><A href=#Fl_Menu_.mvalue>mvalue</A></LI>
+<LI><A href=#Fl_Menu_.remove>remove</A></LI>
+<LI><A href=#Fl_Menu_.replace>replace</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Menu_.shortcut>shortcut</A></LI>
+<LI><A href=#Fl_Menu_.size>size</A></LI>
+<LI><A href=#Fl_Menu_.test_shortcut>test_shortcut</A></LI>
+<LI><A href=#Fl_Menu_.text>text</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+<LI><A href=#Fl_Menu_.textfont>textfont</A></LI>
+<LI><A href=#Fl_Menu_.textsize>textsize</A></LI>
+<LI><A href=#Fl_Menu_.value>value</A></LI>
+<LI><A href=#Fl_Menu_.textcolor>textcolor</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+
+<H4><A name=Fl_Menu_.Fl_Menu_>Fl_Menu_::Fl_Menu_(int x, int y, int w,
+int h, const char *label = 0)</A></H4>
+
+Creates a new <TT>Fl_Menu_</TT> widget using the given position, size,
+and label string.<tt>  menu()</tt> is initialized to null.
+
+
+<H4><A name=Fl_Menu_.~Fl_Menu_>virtual Fl_Menu_::~Fl_Menu_()</A></H4>
+
+If the menu array is private the memory it uses is freed.
+
+
+<H4><A name=Fl_Menu_.add>int Fl_Menu_::add(const char* label, const
+char* shortcut, Fl_Callback*, void *user_data=0, int flags=0)</a><br>
+int Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*,
+void *user_data=0, int flags=0)</h4>
+
+<p>Adds a new menu item, with a <TT>title</TT> string, <TT>
+shortcut</TT> string, <TT>callback</TT>, argument to the
+callback, and flags.  If the menu array was directly set with
+<tt>menu(x)</tt> then <tt>copy()</tt> is done to make a private
+array.
+
+<p>The characters "&amp;", "/", "\", and "_" are treated as
+special characters in the label string. The "&amp;" character
+specifies that the following character is an accelerator and
+will be underlined. The "\" character is used to escape the next
+character in the string. Labels starting with the "_" character
+cause a divider to be placed after that menu item.</p>
+
+<p>A label of the form &quot;foo/bar/baz&quot; will create a
+submenus called &quot;foo&quot; and &quot;bar&quot; with an
+entry called &quot;baz&quot;. The "/" character is ignored if it
+appears as the first character of the label string, e.g.
+"/foo/bar/baz".</p>
+
+<p>The label string is copied to new memory and can be freed.
+The other arguments (including the shortcut) are copied into the
+menu item unchanged. </P>
+
+<P>If an item exists already with that name then it is replaced with
+this new one.  Otherwise this new one is added to the end of the
+correct menu or submenu.  The return value is the offset into the array
+that the new entry was placed at.</P>
+
+<P>Shortcut can be 0L, or either a modifier/key combination (for example
+FL_CTRL+'A') or a string describing the shortcut in one of two ways:</p>
+
+<pre>
+  [#+^]&lt;ascii_value&gt;    eg. "97", "^97", "+97", "#97"
+  [#+^]&lt;ascii_char&gt;     eg. "a", "^a", "+a", "#a"
+</pre>
+..where &lt;ascii_value&gt; is a decimal value representing an
+ascii character (eg. 97 is the ascii for 'a'), and the optional
+prefixes enhance the value  that follows. Multiple prefixes must
+appear in the above order.
+<pre>
+  # - Alt
+  + - Shift
+  ^ - Control
+</pre>
+Text shortcuts are converted to integer shortcut by calling 
+<tt>int fl_old_shortcut(const char*)</tt>.
+
+<P>The return value is the index into the array that the entry was put. </P>
+
+<P>No items must be added to a menu during a callback to the same menu.</P>
+
+
+<h4>int Fl_Menu_::add(const char *)</H4>
+
+<P>The passed string is split at any '|' characters and then
+<TT>add(s,0,0,0,0)</TT> is done with each section. This is
+often useful if you are just using the value, and is compatible
+with Forms and other GL programs. The section strings use the
+same special characters as described for the long version of <a
+href='#Fl_Menu_.add'><tt>add()</tt></a></p>
+
+<P>No items must be added to a menu during a callback to the same menu.</P>
+
+
+<H4><A name=Fl_Menu_.clear>void Fl_Menu_::clear()</A></H4>
+Same as <tt>menu(NULL)</tt>, set the array pointer to null, indicating
+a zero-length menu.
+
+<P>Menus must no be cleared during a callback to the same menu.</P>
+
+
+<H4><A name=Fl_Menu_.copy>void Fl_Menu_::copy(const
+Fl_Menu_Item*, void* user_data = 0)</A></H4>
+
+<P>The menu is set to a private copy of the passed Fl_Menu_Item
+array. This is useful if you want to modify the flags of the
+menu items. If the <tt>user_data</tt> argument is non-NULL, then
+the <tt>user_data</tt> members of the menu items are set to the
+given value.
+
+
+<H4><A name=Fl_Menu_.down_box>Fl_Boxtype Fl_Menu_::down_box() const
+<BR> void Fl_Menu_::down_box(Fl_Boxtype)</A></H4>
+ This box type is used to surround the currently-selected items in the
+menus.  If this is <TT>FL_NO_BOX</TT> then it acts like <TT>
+FL_THIN_UP_BOX</TT> and <TT>selection_color()</TT> acts like <TT>
+FL_WHITE</TT>, for back compatability.
+
+
+<h4><a name="Fl_Menu_.find_item">const Fl_Menu_Item *Fl_Menu_::find_item(const char *name);</a></h4>
+
+<p>Returns a pointer to the menu item with the given (full)
+pathname. If no matching menu item can be found, a NULL pointer
+is returned. This function does not search submenus that are linked
+via FL_SUBMENU_POINTER.</p>
+
+
+<h4><a name=Fl_Menu_.item_pathname>int Fl_Menu_::item_pathname(char *name, int namelen ) const;</a><br>
+int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem) const;</h4>
+
+<p>Returns the 'menu pathname' (eg. "File/Quit") for the recently picked item in user supplied string 'name'. Useful in the callback function for a menu item, to determine the last picked item's 'menu pathname' string.
+
+<p>If finditem is specified, name will contain the 'menu pathname' for that item.
+
+<p>Returns:
+
+<ul>
+	<li>0 - OK: 'name' has the pathname, guaranteed not longer than namelen
+	<li>-1 - Failed: 'finditem' was not found in the menu
+	<li>-2 - Failed: 'name' is not large enough to handle the menu names
+</ul>
+
+<p>In the case of errors (-1 or -2), 'name' will be an empty string.
+
+
+<H4><A name=Fl_Menu_.menu>const Fl_Menu_Item* Fl_Menu_::menu()
+const</a></h4>
+
+Returns a pointer to the array of Fl_Menu_Items.  This will either be
+the value passed to <tt>menu(value)</tt> or the private copy.
+
+<h4>void Fl_Menu_::menu(const Fl_Menu_Item*)</H4>
+Set the menu array pointer directly.  If the old menu is private it is
+deleted.  <tt>NULL</tt> is allowed and acts the same as a zero-length
+menu.  If you try to modify the array (with add(), replace(), or
+delete()) a private copy is automatically done.
+
+
+<H4><A name=Fl_Menu_.mode>void Fl_Menu_::mode(int i, int x);</A></H4>
+
+Changes the flags of item <TT>i</TT>.  For a list of the flags, see <a
+href=Fl_Menu_Item.html>Fl_Menu_Item</a>.
+
+
+<H4><A name=Fl_Menu_.mvalue>const Fl_Menu_Item* Fl_Menu_::mvalue()
+const</a></h4>
+
+<P>Returns a pointer to the last menu item that was picked.
+
+
+<H4><A name=Fl_Menu_.remove>void Fl_Menu_::remove(int n)</A></H4>
+
+Deletes item <TT>n</TT> from the menu.  If the menu array was directly
+set with menu(x) then copy() is done to make a private array.
+
+<P>No items must be removed from a menu during a callback to the same menu.</P>
+
+
+<H4><A name=Fl_Menu_.replace>void Fl_Menu_::replace(int n, const char *)</A>
+</H4>
+
+Changes the text of item <TT>n</TT>.  This is the only way to get
+slash into an add()'ed menu item.  If the menu array was directly set
+with menu(x) then copy() is done to make a private array.
+
+
+<H4><A name=Fl_Menu_.shortcut>void Fl_Menu_::shortcut(int i, int n);</A></H4>
+
+Changes the shortcut of item <TT>i</TT> to <TT>n</TT>.
+
+
+<H4><A name=Fl_Menu_.size>int Fl_Menu_::size() const</A></H4>
+
+This returns the number of Fl_Menu_Item structures that make up the
+menu, correctly counting submenus.  This includes the "terminator"
+item at the end.  To copy a menu array you need to copy
+<tt>size()*sizeof(Fl_Menu_Item)</tt> bytes.  If the menu is
+<TT>NULL</TT> this returns zero (an empty menu will return 1).
+
+
+<H4><A name=Fl_Menu_.test_shortcut>const Fl_Menu_Item*
+Fl_Menu_::test_shortcut()</A></H4>
+ Only call this in response to <TT>FL_SHORTCUT events</TT>.  If the
+event matches an entry in the menu that entry is selected and the
+callback will be done (or <TT>changed()</TT> will be set).  This allows
+shortcuts directed at one window to call menus in another.
+<H4><A name=Fl_Menu_.global>void Fl_Menu_::global()</A></H4>
+ Make the shortcuts for this menu work no matter what window has the
+focus when you type it.  This is done by using <A href=osissues.html#add_handler>
+<TT>Fl::add_handler()</TT></A>.  This <TT>Fl_Menu_</TT> widget does not
+have to be visible (ie the window it is in can be hidden, or it does
+not have to be put in a window at all).
+<P>Currently there can be only one <TT>global()</TT>menu.  Setting a new
+one will replace the old one.  There is no way to remove the <TT>
+global()</TT> setting (so don't destroy the widget!)</P>
+
+
+<H4><A name=Fl_Menu_.text>const char* Fl_Menu_::text() const
+<BR> const char* Fl_Menu_::text(int i) const</A></H4>
+ Returns the title of the last item chosen, or of item <TT>i</TT>.
+
+
+<H4><A name=Fl_Menu_.textcolor>Fl_Color Fl_Menu_::textcolor() const
+<BR> void Fl_Menu_::textcolor(Fl_Color)</A></H4>
+ Get or set the current color of menu item labels.
+
+
+<H4><A name=Fl_Menu_.textfont>Fl_Font Fl_Menu_::textfont() const
+<BR> void Fl_Menu_::textfont(Fl_Font)</A></H4>
+ Get or set the current font of menu item labels.
+
+
+<H4><A name=Fl_Menu_.textsize>uchar Fl_Menu_::textsize() const
+<BR> void Fl_Menu_::textsize(uchar)</A></H4>
+ Get or set the font size of menu item labels.
+
+
+<H4><A name=Fl_Menu_.value>int Fl_Menu_::value() const
+<BR> int Fl_Menu_::value(int)
+<BR> const Fl_Menu_Item* mvalue() const
+<BR> int Fl_Menu_::value(const Fl_Menu_Item*)</A></H4>
+ The value is the index into <TT>menu()</TT> of the last item chosen by
+the user.  It is zero initially.  You can set it as an integer, or set
+it with a pointer to a menu item.  The set routines return non-zero if
+the new value is different than the old one.
+
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<HTML>
+<HEAD>
+	<TITLE>2 - FLTK Basics</TITLE>
+</HEAD>
+<BODY>
+
+<H1 ALIGN="RIGHT"><A NAME="basics">2 - FLTK Basics</A></H1>
+
+<P>This chapter teaches you the basics of compiling programs
+that use FLTK.</P>
+
+<H2>Writing Your First FLTK Program</H2>
+
+<P>All programs must include the file <TT>&lt;FL/Fl.H&gt;</TT>.
+In addition the program must include a header file for each
+FLTK class it uses. Listing 1 shows a simple &quot;Hello,
+World!&quot; program that uses FLTK to display the window.</P>
+
+<UL>
+<P><I>Listing 1 - &quot;hello.cxx&quot;</I>
+<PRE>
+#include &lt;FL/Fl.H&gt;
+#include &lt;FL/Fl_Window.H&gt;
+#include &lt;FL/Fl_Box.H&gt;
+
+int main(int argc, char **argv) {
+  <A href="Fl_Window.html">Fl_Window</A> *window = new <A href="Fl_Window.html#Fl_Window.Fl_Window">Fl_Window</A>(300,180);
+  <A href="Fl_Box.html">Fl_Box</A> *box = new <A href="Fl_Box.html#Fl_Box.Fl_Box">Fl_Box</A>(20,40,260,100,&quot;Hello, World!&quot;);
+  box-&gt;<A href="Fl_Widget.html#Fl_Widget.box">box</A>(<A href="common.html#boxtypes">FL_UP_BOX</A>);
+  box-&gt;<A href="Fl_Widget.html#Fl_Widget.labelsize">labelsize</A>(36);
+  box-&gt;<A href="Fl_Widget.html#Fl_Widget.labelfont">labelfont</A>(<A href="drawing.html#fonts">FL_BOLD</A>+<A href="drawing.html#fonts">FL_ITALIC</A>);
+  box-&gt;<A href="Fl_Widget.html#Fl_Widget.labeltype">labeltype</A>(<A href="common.html#labels">FL_SHADOW_LABEL</A>);
+  window-&gt;<A href="Fl_Group.html#Fl_Group.end">end</A>();
+  window-&gt;<A href="Fl_Window.html#Fl_Window.show">show</A>(argc, argv);
+  return <A href="Fl.html#Fl.run">Fl::run</A>();
+}
+</PRE></UL>
+
+<!-- NEED 2in -->
+
+<P>After including the required header files, the program then creates a
+window. All following widgets will automatically be children of this window.</P>
+
+<UL><PRE>
+Fl_Window *window = new <A href="Fl_Window.html#Fl_Window">Fl_Window</A>(300,180);
+</PRE></UL>
+
+<P>Then we create a box with the &quot;Hello, World!&quot; string in it. FLTK automatically adds
+the new box to <tt>window</tt>, the current grouping widget.</P>
+
+<UL><PRE>
+Fl_Box *box = new <A href="Fl_Box.html#Fl_Box">Fl_Box</A>(20,40,260,100,&quot;Hello, World!&quot;);
+</PRE></UL>
+
+<P>Next, we set the type of box and the size, font, and style of the label:</P>
+
+<UL><PRE>
+box-&gt;<A href="Fl_Widget.html#Fl_Widget.box">box</A>(FL_UP_BOX);
+box-&gt;<A href=Fl_Widget.html#Fl_Widget.labelsize>labelsize</A>(36);
+box-&gt;<A href=Fl_Widget.html#Fl_Widget.labelfont>labelfont</A>(FL_BOLD+FL_ITALIC);
+box-&gt;<A href=Fl_Widget.html#Fl_Widget.labeltype>labeltype</A>(FL_SHADOW_LABEL);
+</PRE></UL>
+
+<P>We tell FLTK that we will not add any more widgets to <tt>window</tt>.</P>
+
+<UL><PRE>
+window-&gt;<A href=Fl_Group.html#Fl_Group.end>end</A>();
+</PRE></UL>
+
+<P>Finally, we show the window and enter the FLTK event loop:</P>
+
+<UL><PRE>
+window-&gt;<A href=Fl_Window.html#Fl_Window.show>show</A>(argc, argv);
+return <A href="Fl.html#Fl.run">Fl::run</A>();
+</PRE></UL>
+
+<P>The resulting program will display the window in Figure 2-1.
+You can quit the  program by closing the window or pressing the
+<KBD>ESC</KBD>ape key.</P>
+
+<P ALIGN="CENTER"><IMG src="hello.C.gif" alt="Hello, World! Window"><BR>
+<I>Figure 2-1: The Hello, World! Window</I></P>
+
+<H3>Creating the Widgets</H3>
+
+<P>The widgets are created using the C++ <TT>new</TT> operator.  For
+most widgets the arguments to the constructor are:</P>
+
+<UL><PRE>
+Fl_Widget(x, y, width, height, label)
+</PRE></UL>
+
+<P>The <TT>x</TT> and <TT>y</TT> parameters determine where the
+widget or window is placed on the screen. In FLTK the top left
+corner of the window or screen is the origin (i.e. x = 0, y =
+0) and the units are in pixels.</P>
+
+<P>The <TT>width</TT> and <TT>height</TT> parameters determine
+the size of the widget or window in pixels. The maximum widget
+size is typically governed by the underlying window system or
+hardware.</P>
+
+<P><tt>label</tt> is a pointer to a character string to label
+the widget with or <tt>NULL</tt>. If not specified the label
+defaults to <tt>NULL</tt>. The label string must be in static
+storage such as a string constant because FLTK does not make a
+copy of it - it just uses the pointer.</P>
+
+<H3>Creating Widget hierarchies</H3>
+
+<P>Widgets are commonly ordered into functional groups, which 
+in turn may be grouped again, creating a hierarchy of widgets. 
+FLTK makes it easy to fill groups by automatically adding all widgets 
+that are created between a <tt>myGroup-&gt;begin()</tt> and 
+<tt>myGroup-&gt;end()</tt>. In this example, <tt>myGroup</tt>  
+would be the <i>current</i> group.</P>
+
+<P>Newly created groups and their derived widgets implicitly call
+<tt>begin()</tt> in the constructor, effectively adding all 
+subsequently created widgets to itself until <tt>end()</tt> 
+is called.</P>
+
+<P>Setting the current group to <tt>NULL</tt> will stop automatic
+hierarchies. New widgets can now be added manually using 
+<tt>Fl_Group::add(...)</tt> and <tt>Fl_Group::insert(...)</tt>.</P>
+
+<H3>Get/Set Methods</H3>
+
+<P><tt>box-&gt;box(FL_UP_BOX)</tt> sets the type of box the
+Fl_Box draws, changing it from the default of
+<tt>FL_NO_BOX</tt>, which means  that no box is drawn. In our
+&quot;Hello, World!&quot; example we use <TT>FL_UP_BOX</TT>,
+which means that a raised button border will be drawn around
+the widget. You can learn more about boxtypes in
+<A href="common.html#boxtypes">Chapter 3</A>.</P>
+
+<P>You could examine the boxtype in by doing
+<tt>box-&gt;box()</tt>. FLTK uses method name overloading to make
+short names for get/set methods. A "set" method is always of
+the form "void&nbsp;name(type)", and a "get" method is always
+of the form "type&nbsp;name()&nbsp;const".</P>
+
+<H3>Redrawing After Changing Attributes</H3>
+
+<P>Almost all of the set/get pairs are very fast, short inline
+functions and thus very efficient. However, <i>the "set" methods
+do not call <TT>redraw()</TT></i> - you have to call it
+yourself. This greatly reduces code size and execution time. The
+only common exceptions are <tt>value()</tt> which calls
+<TT>redraw()</TT> and <tt>label()</tt> which calls
+<TT>redraw_label()</TT> if necessary.</P>
+
+<H3>Labels</H3>
+
+<P>All widgets support labels.  In the case of window widgets,
+the label  is used for the label in the title bar. Our example
+program calls the <A href=Fl_Widget.html#Fl_Widget.labelfont>
+<TT>labelfont</TT></A>,
+<A href=Fl_Widget.html#Fl_Widget.labelsize><TT> labelsize</TT></A>,
+and <A href=Fl_Widget.html#Fl_Widget.labeltype><TT>labeltype</TT></A>
+methods.</P>
+
+<P>The <TT>labelfont</TT> method sets the typeface and style
+that is used for the label, which for this example we are using
+<TT>FL_BOLD</TT> and <TT>FL_ITALIC</TT>. You can also specify
+typefaces directly. </P> <P>The <TT>labelsize</TT> method sets
+the height of the font in pixels. </P> <P>The <TT>labeltype</TT>
+method sets the type of label. FLTK supports normal, embossed,
+and shadowed labels internally, and more types can be added as
+desired.</P>
+
+<P>A complete list of all label options can be found in
+<A href="common.html#labels">Chapter 3</A>.</P>
+
+<H3>Showing the Window</H3>
+
+<P>The <TT>show()</TT> method shows the widget or window. For windows
+you can also provide the command-line arguments to allow users to
+customize the appearance, size, and position of your windows.</P>
+
+<H3>The Main Event Loop</H3>
+
+<P>All FLTK applications (and most GUI applications in general)
+are based on a simple event processing model. User actions such
+as mouse movement, button clicks, and keyboard activity generate
+events that are sent to an application. The application may then
+ignore the events or respond to the user, typically by redrawing
+a button in the "down" position, adding the text to an input
+field, and so forth.</P>
+
+<P>FLTK also supports idle, timer, and file pseudo-events that
+cause a function to be called when they occur. Idle functions
+are called when no user input is present and no timers or files
+need to be handled - in short, when the application is not doing
+anything. Idle callbacks are often used to update a 3D display
+or do other background processing.</P>
+
+<P>Timer functions are called after a specific amount of time
+has expired. They can be used to pop up a progress dialog after
+a certain amount of time or do other things that need to happen
+at more-or-less regular intervals. FLTK timers are not 100%
+accurate, so they should not be used to measure time intervals,
+for example.</P>
+
+<P>File functions are called when data is ready to read or
+write, or when an error condition occurs on a file. They are
+most often used to monitor network connections (sockets) for
+data-driven displays.</P>
+
+<P>FLTK applications must periodically check
+(<TT>Fl::check()</TT>) or wait (<TT>Fl::wait()</TT>) for events
+or use the <A href="Fl.html#Fl.run"><TT>Fl::run()</TT></A>
+method to enter a standard event processing loop. Calling
+<TT>Fl::run()</TT> is equivalent to the following code:</P>
+
+<UL><PRE>
+while (Fl::wait());
+</PRE></UL>
+
+<P><TT>Fl::run()</TT> does not return until all of the windows
+under FLTK control are closed by the user or your program.</P>
+
+<H2>Compiling Programs with Standard Compilers</H2>
+
+<P>Under UNIX (and under Microsoft Windows when using the GNU development
+tools) you will probably need to tell the compiler where to find the
+header files. This is usually done using the <TT>-I</TT> option:</P>
+
+<UL><PRE>
+CC -I/usr/local/include ...
+gcc -I/usr/local/include ...
+</PRE></UL>
+
+<P>The <TT>fltk-config</TT> script included with FLTK can be
+used to get the options that are required by your compiler:</P>
+
+<UL><PRE>
+CC `fltk-config --cxxflags` ...
+</PRE></UL>
+
+<P>Similarly, when linking your application you will need to tell the
+compiler to use the FLTK library:</P>
+
+<UL><PRE>
+CC ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
+gcc ... -L/usr/local/lib -lfltk -lXext -lX11 -lm
+</PRE></UL>
+
+<P>Aside from the "fltk" library, there is also a "fltk_forms"
+library for the XForms compatibility classes, "fltk_gl" for the
+OpenGL and GLUT classes, and "fltk_images" for the image file
+classes, <A
+HREF="Fl_Help_Dialog.html#Fl_Help_Dialog"><CODE>Fl_Help_Dialog</CODE></A>
+widget, and system icon support.
+
+<CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="10" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>Note:</B>
+	<P>The libraries are named "fltk.lib", "fltkgl.lib", "fltkforms.lib",
+	and "fltkimages.lib", respectively under Windows.
+	</TD>
+</TR>
+</TABLE></CENTER>
+
+<P>As before, the <TT>fltk-config</TT> script included with FLTK can be
+used to get the options that are required by your linker:</P>
+
+<UL><PRE>
+CC ... `fltk-config --ldflags`
+</PRE></UL>
+
+<!-- NEED 2in -->
+
+<P>The forms, GL, and images libraries are included with the "--use-foo"
+options, as follows:
+
+<UL><PRE>
+CC ... `fltk-config --use-forms --ldflags`
+CC ... `fltk-config --use-gl --ldflags`
+CC ... `fltk-config --use-images --ldflags`
+CC ... `fltk-config --use-forms --use-gl --use-images --ldflags`
+</PRE></UL>
+
+<P>Finally, you can use the <TT>fltk-config</TT> script to
+compile a single source file as a FLTK program:
+
+<UL><PRE>
+fltk-config --compile filename.cpp
+fltk-config --use-forms --compile filename.cpp
+fltk-config --use-gl --compile filename.cpp
+fltk-config --use-images --compile filename.cpp
+fltk-config --use-forms --use-gl --use-images --compile filename.cpp
+</PRE></UL>
+
+<P>Any of these will create an executable named <TT>filename</TT>.
+
+<H2>Compiling Programs with Microsoft Visual C++</H2>
+
+<P>In Visual C++ you will need to tell the compiler where to
+find the  FLTK header files.  This can be done by selecting
+&quot;Settings&quot; from the  &quot;Project&quot; menu and then
+changing the &quot;Preprocessor&quot; settings under the
+&quot;C/C++&quot; tab. You will also need to add the FLTK and
+WinSock (WSOCK32.LIB) libraries to the &quot;Link&quot;
+settings.</P>
+
+<P>You can build your Microsoft Windows applications as Console or
+WIN32 applications.  If you want to use the standard C <TT>main()</TT>
+function as the entry point, FLTK includes a <TT>WinMain()</TT>
+function that will call your <TT>main()</TT> function for you.</P>
+
+<P><I>Note: The Visual C++ 5.0 optimizer is known to cause problems with
+many programs.  We only recommend using the &quot;Favor Small Code&quot;
+optimization setting.</I> The Visual C++ 6.0 optimizer seems to be much
+better and can be used with the "optimized for speed" setting.</P>
+
+<H2>Naming</H2>
+
+<P>All public symbols in FLTK start with the characters 'F' and 'L':</P>
+
+<UL>
+
+	<LI>Functions are either <TT>Fl::foo()</TT> or
+	<TT>fl_foo()</TT>.</LI>
+
+	<LI>Class and type names are capitalized:
+	<TT>Fl_Foo</TT>.</LI>
+
+	<LI><A href="enumerations.html">Constants and
+	enumerations</A> are uppercase: <TT>FL_FOO</TT>.</LI>
+
+	<LI>All header files start with <TT>&lt;FL/...&gt;</TT>.
+	</LI>
+
+</UL>
+
+<!-- NEED 5in -->
+
+<H2>Header Files</H2>
+
+<P>The proper way to include FLTK header files is:</P>
+
+<UL><PRE>
+#include &lt;FL/Fl_xyz.H&gt;
+</PRE></UL>
+
+<CENTER><TABLE BORDER="1" CELLPADDING="10" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>Note:</B>
+
+	<P>Case <I>is</I> significant on many operating systems,
+	and the C standard uses the forward slash (/) to
+	separate directories. <i>Do not use any of the following
+	include lines:</i></P>
+
+	<UL><PRE>
+	#include &lt;FL\Fl_xyz.H&gt;
+	#include &lt;fl/fl_xyz.h&gt;
+	#include &lt;Fl/fl_xyz.h&gt;
+	</PRE></UL>
+
+	</TD>
+</TR>
+</TABLE></CENTER>
+
+</BODY>
+</HTML>

@@ -1,0 +1,73 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Wizard</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+<H2><A name="Fl_Wizard">class Fl_Wizard</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href=Fl_Group.html#Fl_Group>Fl_Group</A>
+   |
+   +----<B>Fl_Wizard</B>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include "Fl_Wizard.h"
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <CODE>Fl_Wizard</CODE> widget is based off the <CODE>Fl_Tabs</CODE>
+widget, but instead of displaying tabs it only changes "tabs" under
+program control. Its primary purpose is to support "wizards" that
+step a user through configuration or troubleshooting tasks.
+
+<P>As with <CODE>Fl_Tabs</CODE>, wizard panes are composed of child (usually
+<CODE>Fl_Group</CODE>) widgets. Navigation buttons must be added separately.
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A HREF="#Fl_Wizard.Fl_Wizard">Fl_Wizard</A>
+	<LI><A HREF="#Fl_Wizard.~Fl_Wizard">~Fl_Wizard</A>
+	<LI><A HREF="#Fl_Wizard.next">next</A>
+	<LI><A HREF="#Fl_Wizard.prev">prev</A>
+	<LI><A HREF="#Fl_Wizard.value">value</A>
+
+</UL>
+
+<H4><A NAME="Fl_Wizard.Fl_Wizard">Fl_Wizard(int xx, int yy, int ww, int hh, const char *l = 0)</A></H4>
+
+<P>The constructor creates the <CODE>Fl_Wizard</CODE> widget at the specified
+position and size.
+
+<H4><A NAME="Fl_Wizard.~Fl_Wizard">~Fl_Wizard()</A></H4>
+
+<P>The destructor destroys the widget and its children.
+
+<H4><A NAME="Fl_Wizard.next">void next()</A></H4>
+
+<P>This method shows the next child of the wizard. If the last child
+is already visible, this function does nothing.
+
+<H4><A NAME="Fl_Wizard.prev">void prev()</A></H4>
+
+<P>This method shows the previous child of the wizard. If the first child
+is already visible, this function does nothing.
+
+<H4><A NAME="Fl_Wizard.value">void value(Fl_Widget *w)<BR>
+Fl_Widget *value()</A></H4>
+
+<P>Sets or gets the child widget that is visible.
+
+</BODY>
+</HTML>

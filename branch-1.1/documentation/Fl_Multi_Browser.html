@@ -1,0 +1,79 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Multi_Browser</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Multi_Browser>class Fl_Multi_Browser</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Browser.html#Fl_Browser>Fl_Browser</A>
+   |
+   +----<B>Fl_Multi_Browser</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Multi_Browser.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Multi_Browser</TT> class is a subclass of <TT>Fl_Browser</TT>
+ which lets the user select any set of the lines.  The user interface
+is Macintosh style: clicking an item turns off all the others and
+selects that one, dragging selects all the items the mouse moves over,
+and shift + click toggles the items. This is different then how forms
+did it.  Normally the callback is done when the user releases the
+mouse, but you can change this with <TT>when()</TT>.
+<P>See <A href=Fl_Browser.html#Fl_Browser><TT>Fl_Browser</TT></A> for
+methods to add and remove lines from the browser. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Multi_Browser.Fl_Multi_Browser>Fl_Multi_Browser</A></LI>
+<LI><A href=#Fl_Multi_Browser.~Fl_Multi_Browser>~Fl_Multi_Browser</A></LI>
+<LI><A href=#Fl_Multi_Browser.deselect>deselect</A></LI>
+<LI><A href=#Fl_Multi_Browser.select>select</A></LI>
+<LI><A href=#Fl_Multi_Browser.value>value</A></LI>
+</UL>
+
+<H4><A name=Fl_Multi_Browser.Fl_Multi_Browser>
+Fl_Multi_Browser::Fl_Multi_Browser(int x, int y, int w, int h, const
+char *label = 0)</A></H4>
+
+Creates a new <TT>Fl_Multi_Browser</TT> widget using the given
+position, size, and label string. The default boxtype is <TT>FL_DOWN_BOX</TT>
+.
+
+
+<H4><A name=Fl_Multi_Browser.~Fl_Multi_Browser>virtual
+Fl_Multi_Browser::~Fl_Multi_Browser()</A></H4>
+
+The destructor <I>also deletes all the items in the list</I>.
+
+
+<H4><A name=Fl_Multi_Browser.deselect>int Fl_Browser::deselect()</A></H4>
+
+Deselects all lines.
+
+
+<H4><A name=Fl_Multi_Browser.select>int Fl_Browser::select(int line_no,int v=1)
+<BR> int Fl_Browser::selected(int line_no) const</A></H4>
+
+The first version of this call selects (v=1) or deselects (v=0) 
+a line in the browser.  The second call returns the current selection 
+state of a line.
+
+
+<H4><A name=Fl_Multi_Browser.value>void Fl_Browser::value(int)
+<BR> int Fl_Browser::value() const</A></H4>
+
+The first version of this call selects a single line. The second version returns 
+the currently focused item, even if it is not selected. To find all 
+selected items, call 
+<TT><A href=Fl_Multi_Browser.html#Fl_Multi_Browser.select>
+Fl_Multi_Browser::selected()</A></TT> for every item in question.
+ 
+</BODY></HTML>

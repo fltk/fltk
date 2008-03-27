@@ -1,0 +1,279 @@
+######################################################################
+#
+#  Watcom C specific makefile, multiplatform
+#
+#
+#  The following macross must be set active when this file is called
+#  -D parameter, e.g. -DPROJ=fltk
+#  ROOT   = root of project (e.g. FLTK directory)
+#  PROJ   = project name (e.g. fltk)
+#
+#  The following environment variable must be set. If you have multiple
+#  Watcom versions, use the setvars file in the Watcom directory to set it.
+#  WATCOM = root of Watcom C
+######################################################################
+
+#
+# The following options must be set when calling this wmake file
+# (case-sensitive):
+# D (debug/release mode): d for debug mode,
+#                         r for release mode
+# O (target environment): d = DOS 32 bits
+#                         o = OS/2 32 bits
+#                         w = Windows 32 bit
+#                         l = Linux Intel (experimental, no graphics yet (OW 1.3))
+#
+#
+# If not set, debug mode and target=host (that is, no cross-compiling).
+# Example: wmake -h -f makefile.wat d=r o=w
+#
+# Following macros can be used to add/override existing macros in
+# this file.
+# EXTRA_INCLUDE_DIRS        # Non-Watcom (project) include dirs
+# ODIR                      # Output directory if not default
+# ROOT                      # Project root. If not given, .
+# PROJ                      # Project name.
+# LIBS                      # Extra libs to link in
+# LIBDIR                    # Project library directory. Default: PROJ\LIB
+# LIBNAMEROOT               # Project rootname of output library. Default: PROJ\Lib\Proj
+# EXTRA_LIBS                # Target specific include libs
+
+!ifndef D
+MODE=d                      # default is debug mode
+!else
+!  ifeq D d
+MODE=d
+!  else ifeq D r
+MODE=r
+!  else
+CONFIG_ERROR_MSG=Unrecognized mode: $(D)
+!  endif
+!endif
+
+# If target is specified, check its validity; if not specified, the target is
+# the host platform itself.
+
+!ifdef O
+!  ifeq O d
+TARGET=dos
+!  else ifeq O o
+TARGET=os2
+!  else ifeq O w
+TARGET=nt
+!  else ifeq O l
+TARGET=linux
+!  else
+CONFIG_ERROR_MSG=Unrecognized target: $(O)
+!  endif
+!else
+!  ifdef __DOS__
+TARGET=dos
+!  else ifdef __OS2__
+TARGET=os2
+!  else ifdef __NT__
+TARGET=nt
+!  else ifdef __LINUX__
+TARGET=linux
+!  endif
+!endif
+
+#
+# Now we know the target. Determine the link target. For fltk, this
+# is always GUI for Windows and OS/2. For possible link targets (aliases
+# for a set of linker directives) see wlsystem.lnk in Watcom's BINW directory.
+#
+!ifeq TARGET dos
+LINKTARGET=dos32a
+!else ifeq TARGET os2
+LINKTARGET=os2v2_pm
+!else ifeq TARGET nt
+LINKTARGET=nt_win
+!else
+LINKTARGET=linux
+!endif
+
+#
+# Very important: specify the sequence of extensions. Wmake will try to make a target
+# with an extension from the first file of the same name with an extension to the right.
+# E.g. it tries to make hello.obj from hello.cxx, or hello.cpp etc, but never from hello.exe
+#
+.EXTENSIONS :
+.EXTENSIONS : .exe .lib .obj .cxx .cpp .c .h .fl
+
+#
+# Create output directory name if not already supplied. To allow
+# cross-development, must include target name.
+#
+!ifndef ODIR
+ODIR=$(D)_$(TARGET)
+!endif
+
+#
+# Contruct the libname from the root plus D and O macros, so that
+# multiple LIBS can co-exists, e.g. FLTK_DW and FLTK_RW for Win32.
+#
+!ifndef LIBDIR
+LIBDIR=$(ROOT)\lib\
+!endif
+!ifndef LIBNAMEROOT
+LIBNAMEROOT=$(PROJ)
+!endif
+!ifndef LIBNAME
+LIBNAME = $(LIBDIR)$(LIBNAMEROOT)_$(D)$(O).lib
+# FLTK has other 'global' libs. Define the names here so that any application
+# using FLTK can use them by just including this mif file.
+LIBNAMEFL = $(LIBDIR)$(LIBNAMEROOT)_fl_$(D)$(O).lib
+LIBNAMEGL = $(LIBDIR)$(LIBNAMEROOT)_gl_$(D)$(O).lib
+LIBNAMEIMG = $(LIBDIR)$(LIBNAMEROOT)_img_$(D)$(O).lib
+LIBS = $(LIBNAME) $(LIBNAMEFL) $(LIBNAMEGL) $(LIBNAMEIMG)
+!endif
+
+# Set target environment options for the project
+
+!ifeqi TARGET  nt                   # WINDOWS 32 bit
+SYSDEF= -DWIN32
+ASYSDEF=
+SYSLIBS=wsock32.lib mpr.lib glu32.lib opengl32.lib
+EXEEXT=.exe
+
+!else ifeqi TARGET linux            # Linux Intel 32 bit generic
+SYSDEF=
+ASYSDEF=
+EXEEXT=.exe                         # We need some exe extension else the build won't work
+
+!else ifeqi TARGET os2              # OS/2 32 bit
+SYSDEF=
+ASYSDEF=
+EXEEXT=.exe
+
+!else ifeqi TARGET dos              # DOS 32 bit
+SYSDEF=
+ASYSDEF=
+EXEEXT=.exe
+
+!endif
+
+
+######################################################################
+#
+# End of compiler- and environment specific options
+#
+# Note !message will print before any actions ('PRE'processor!), and thus
+#      will not reflect results of any rules (like set xxx=yyy).
+#      echo is a rule itself, and will reflect results of preceding rules.
+#
+######################################################################
+
+.BEFORE :
+!ifdef CONFIG_ERROR_MSG
+!   message
+!   message Configuration error:
+!   message $(CONFIG_ERROR_MSG)
+!   message
+    %abort
+!endif
+    @if not exist $(ODIR) mkdir $(ODIR) >nul
+!ifeqi TARGET dos
+   @set INCLUDE=$(%WATCOM)\H;$(EXTRA_INCLUDE_DIRS)
+!else ifeqi TARGET os2
+   @set INCLUDE=$(%WATCOM)\H;$(%WATCOM)\H\OS2;$(EXTRA_INCLUDE_DIRS)
+!else ifeqi TARGET nt
+   @set INCLUDE=$(%WATCOM)\H;$(%WATCOM)\H\NT;$(EXTRA_INCLUDE_DIRS)
+!else ifeqi TARGET linux
+   @set INCLUDE=$(%WATCOM)\LH;$(EXTRA_INCLUDE_DIRS)
+!endif
+
+#    @set LIB=$(LIBPATH)
+#    @echo Top dir: $(PROJ)
+    @echo Include dirs: $(%INCLUDE)
+#    @echo Lib dirs: $(LIBDIRS)
+#    @echo Libname=$(LIBNAME)
+#    @echo extra libs: $(LIBS)
+#    @echo Wmake version $(__VERSION__)
+#    @echo Wmake parameters: $(__MAKEOPTS__)
+#    @echo Compiler : $(CC) $(CCOPTS0) $(CCOPTS1) $(CCOPTS2) $(CCOPTS3)
+#    @echo Librarian: $(LIB)
+#    @echo Linker   : $(LN) $(LNOPTS)
+#    @echo Project  : $(P)
+
+!ifeqi D d
+WCADEBUG=-d1                        # debug opts for wasm
+WCCDEBUG=-d2 -s -ors -wcd=666 -wcd=836 # debug opts for wcc. NOTE: -we is to make errors of all warnings
+WCLDEBUG=d all                      # debug opts for wlink
+# WCCTIMING=-et         # if added to CC command line will generate timing file after execution
+!else
+#
+# WCADEBUG=                                    # debug opts for wasm
+WCCDEBUG= -ors -s -wcd=666 -wcd=836            # release opts for wcc
+# WCLDEBUG=                                    # release opts for wlink
+!endif
+
+#       Conventions Watcom
+
+# Tell default paths based on extension
+.fl             : .
+.h              : .
+#.lib            : .
+.c              : .
+.cpp            : .
+.cxx            : .
+.obj            : $(ODIR)
+.exe            : $(ODIR)
+
+#
+# Tell wmake to use DLL versions of some commands (much quicker)
+#
+!loaddll wcc386 wccd386
+!loaddll wpp386 wppd386
+!loaddll wlink  wlink
+!loaddll wlib   wlibd
+
+CCOPTS0=-6r -zq
+CCOPTS1=$(WCCDEBUG) -bt=$(TARGET) -fp6 -fpi87 # 1st part of Watcom opts
+CCOPTS2=-mf -wce=130 -wx -zq                  # -j # 2nd part of Watcom opts
+CCOPTS3=-fo$(ODIR)\$^&.obj                    # 3rd part Watcom opts
+COPTS=-zm
+CPPOPTS=-zmf -zv -fx
+
+LNOPTS=sys $(LINKTARGET) $(WCLDEBUG) op symf,q,m,el,vfr op st=32k # linker options
+LIBOPTS= -b -q -p=512 -c                     # librarian options
+LN=wlink                                     # Watcom linker
+AS=wasm                                      # Watcom assembler
+cc=wcc386                                    # Watcom C compiler
+cpp=wpp386                                   # Watcom C++ compiler
+LIB=wlib                                     # Watcom librarian
+
+#
+# Compilation
+#
+.c.obj: .AUTODEPEND
+    $(CC) $(SYSDEF) $(DEBUGDEF) $(CCOPTS0) $(CCOPTS1) $(CCOPTS2) $(CCOPTS3) $(COPTS) $[@
+
+.cpp.obj: .AUTODEPEND
+    $(CPP) $(SYSDEF) $(DEBUGDEF) $(CCOPTS0) $(CCOPTS1) $(CCOPTS2) $(CCOPTS3) $(CPPOPTS) $[@
+
+.cxx.obj: .AUTODEPEND
+    $(CPP) $(SYSDEF) $(DEBUGDEF) $(CCOPTS0) $(CCOPTS1) $(CCOPTS2) $(CCOPTS3) $(CPPOPTS) $[@
+
+#
+# Librarian stage
+#
+.obj.lib:
+    $(LIB) $(LIBOPTS) $@ $<
+
+#
+# Linking stage. This implicit rule assumes the .exe is created from an object file with the
+# same name, plus other object in macro OBJECTS, a number of .libs in macro LIBS etc.
+# If the linking fails for some reason, the .lk1 file is not deleted and it can be
+# examined.
+#
+.obj.exe:
+    @%create $^*.lk1
+    @%append $^*.lk1 F $(ODIR)/$^&
+    @for %i in ($(%OBJS)) do @%append $^*.lk1 F $(ODIR)/%i
+    @for %i in ($(OBJECTS)) do @%append $^*.lk1 F $(ODIR)/%i
+    @for %i in ($(LIBS)) do @%append $^*.lk1 L %i
+    @for %i in ($(EXTRA_LIBS)) do @%append $^*.lk1 L %i
+    @for %i in ($(SYSLIBS)) do @%append $^*.lk1 L %i
+    $(LN) $(LNOPTS) name $^@ op map=$^* @$^*.lk1
+    @del $^*.lk1

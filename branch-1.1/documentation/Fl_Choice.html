@@ -1,0 +1,88 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Choice</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Choice>class Fl_Choice</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Menu_.html#Fl_Menu_>Fl_Menu_</A>
+   |
+   +----<B>Fl_Choice</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Choice.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ This is a button that when pushed pops up a menu (or hierarchy of
+menus) defined by an array of <A href=Fl_Menu_Item.html#Fl_Menu_Item><TT>
+Fl_Menu_Item</TT></A> objects.  Motif calls this an OptionButton.
+<P>The only difference between this and a <A href=Fl_Menu_Button.html#Fl_Menu_Button>
+<TT>Fl_Menu_Button</TT></A> is that the name of the most recent chosen
+menu item is displayed inside the box, while the label is displayed
+outside the box.  However, since the use of this is most often to
+control a single variable rather than do individual callbacks, some of
+the <TT>Fl_Menu_Button</TT> methods are redescribed here in those
+terms. </P>
+<P>When the user picks an item off the menu the <TT>value()</TT>
+is set to that item and then the item's callback is done with
+the menu_button as the <TT>Fl_Widget*</TT> argument.  If the
+item does not have a callback the menu_button's callback is done
+instead. </P>
+<P>All three mouse buttons pop up the menu.  The Forms behavior of the
+first two buttons to increment/decrement the choice is not implemented.
+ This could be added with a subclass, however. </P>
+<P>The menu will also pop up in response to shortcuts indicated by
+putting a '&amp;' character in the <TT>label()</TT>.  See <A href=Fl_Button.html#Fl_Button>
+<TT>Fl_Button</TT></A> for a description of this. </P>
+<P>Typing the <TT>shortcut()</TT> of any of the items will do exactly
+the same as when you pick the item with the mouse.  The '&amp;' character in
+item names are only looked at when the menu is popped up, however. </P>
+<P ALIGN=CENTER><IMG src="choice.gif" ALT="Fl_Choice widget."></P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Choice.Fl_Choice>Fl_Choice</A></LI>
+<LI><A href=#Fl_Choice.~Fl_Choice>~Fl_Choice</A></LI>
+<LI><A href=#Fl_Choice.clear_changed>clear_changed</A></LI>
+<LI><A href=#Fl_Choice.changed>changed</A></LI>
+<LI><A href=#Fl_Choice.down_box>down_box</A></LI>
+<LI><A href=#Fl_Choice.set_changed>set_changed</A></LI>
+<LI><A href=#Fl_Choice.value>value</A></LI>
+</UL>
+<H4><A name=Fl_Choice.Fl_Choice>Fl_Choice::Fl_Choice(int x, int y, int
+w, int h, const char *label = 0)</A></H4>
+ Creates a new <TT>Fl_Choice</TT> widget using the given position,
+size, and label string. The default boxtype is <TT>FL_UP_BOX</TT>.
+<P>The constructor sets <TT>menu()</TT> to <TT>NULL</TT>.  See <A href=Fl_Menu_.html#Fl_Menu_>
+<TT>Fl_Menu_</TT></A> for the methods to set or change the menu. </P>
+<H4><A name=Fl_Choice.~Fl_Choice>virtual Fl_Choice::~Fl_Choice()</A></H4>
+ The destructor removes the <TT>Fl_Choice</TT> widget and all of its
+menu items.
+<H4><A name=Fl_Choice.value>int Fl_Choice::value() const
+<BR> int Fl_Choice::value(int)
+<BR> int Fl_Choice::value(const Fl_Menu *)</A></H4>
+ The value is the index into the <TT>Fl_Menu</TT> array of the last
+item chosen by the user.  It is zero initially.  You can set it as an
+integer, or set it with a pointer to a menu item.  The set routines
+return non-zero if the new value is different than the old one.
+ Changing it causes a <TT>redraw()</TT>.
+<H4><A name=Fl_Choice.changed>int Fl_Widget::changed() const</A></H4>
+ This value is true if the user picks a different value. <I>It is
+turned off by <TT>value()</TT> and just before doing a callback (the
+callback can turn it back on if desired).</I>
+<H4><A name=Fl_Choice.set_changed>void Fl_Widget::set_changed()</A></H4>
+ This method sets the <TT>changed()</TT> flag.
+<H4><A name=Fl_Choice.clear_changed>void Fl_Widget::clear_changed()</A></H4>
+ This method clears the <TT>changed()</TT> flag.
+<H4><A name=Fl_Choice.down_box>Fl_Boxtype Fl_Choice::down_box() const
+<BR> void Fl_Choice::down_box(Fl_Boxtype b)</A></H4>
+ The first form gets the current down box, which is used when the menu
+is popped up.  The default down box type is <TT>FL_DOWN_BOX</TT> The
+second form sets the current down box type to <TT>b</TT>. </BODY></HTML>

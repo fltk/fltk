@@ -1,0 +1,897 @@
+The FLTK Team is proud to announce the release of FLTK 1.1.8,
+a cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
+Microsoft(r) Windows(r), and MacOS(r) X. FLTK provides
+modern GUI functionality without the bloat and supports 3D
+graphics via OpenGL(r) and its built-in GLUT emulation.
+
+FLTK 1.1.8 fixes many bugs, improves OS X and Quartz
+compatibility and overall reliability. It adds a new GTK+ 
+style theme, more GLUT4 compatibility, and alpha blending
+for image maps.
+
+This is the final release of the FLTK 1.1.x development tree.
+
+FLTK is provided under the GNU Library Public License with
+exceptions that allow for static linking.
+
+Changes since FLTK 1.1.7 include:
+
+	- Documentation fixes (STR #1336, STR #1329,
+	  STR #1340, STR #1454, STR #1455, STR #1456, STR #1339,
+	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578,
+	  STR #1639, STR #1645, STR #1644, STR #1792, STR #1793,
+	  STR #1742, STR #1777, STR #1794, STR #1827, STR #1843,
+	  STR #1796, STR #1815, STR #1726, STR #1753, STR #1855,
+	  STR #1862, STR #1867, STR #1874, STR #1888)
+	- Fixed library path in Makefile (STR #1885)
+	- Fixed image read for partial regions on X11 
+	  (STR #1716)
+	- Fixed KDE/Gnome icon paths (STR #1795)
+	- Fixed Tab key to wrap around menu bars (STR #1877)
+	- Fixed possible timer leak in Scrollbar (STR #1880)
+	- Added documentation about the potential limitations
+	  of Fl::grab on newer operating systems (STR #1747)
+	- Fixed lockout when mixing popups and alerts
+	  (STR # 1869)
+	- Fixed recursion crash in event handling (STR #1873)
+	- Fixed missing return code in 'fltk-config' (STR #1875)
+	- Fixed inconsistencies with CHANGED flags (STR #1719)
+	- Fixed message sent to hidden widgets (STR #1849)
+	- Fixed width calculation in Fl_Help_View (STR #1868)
+	- Fixed offset bug in OS X pixmap code (STR #1856)
+	- Fixed potential buffer overrun 
+	  in Fl_Preferences (STR #1853)
+	- Fixed method attributes in consecutive class
+	  declarations in FLUID (STR #1741)
+	- FLUID checks for seperately declared callbacks to 
+	  avoid a bogus "extern" declaration (STR #1776)
+	- Added "protected" class memebrs in FLUID
+	- Double-clicking a widget in a FLUID layout will show 
+	  the item in the widget browser
+	- Fixed color highlighting in Text_Display
+	- Fixed 16 bit PNM image support (STR #1847)
+	- Fixed exposure event on zero size windows (STR #1824)
+	- Fixed overlay offset for OS X Quartz (STR #1729)
+	- gl_font() support for Xft+X11 (STR #1809)
+	- Fl_Gl_Window::mode() needed to hide and show the window
+	  when toggling stereo mode (STR #1846)
+	- Fl_Gl_Window::show() did not work reliably on Mac OS X
+	  (STR #1707)
+	- Added Fl_Group::clip_children() methods to support
+	  automatic clipping of child widget drawing (STR #1844)
+	- Fl_Browser_ and friends now support FL_WHEN_ENTER_KEY
+	  for both Enter/Return and double-clicks (STR #1818)
+	- Fl_Help_View did not release the images it used (STR
+	  #1817)
+	- Shared libraries would not build on 64-bit Linux
+	  systems with an existing non-PIC FLTK installation
+	  (STR #1791)
+	- Fl_Browser::hide() and Fl_Browser::show() did not
+	  correctly update the scrollbar (STR #1724)
+	- The configure script now shows a summry of the
+	  configuration results (STR #1810)
+	- "fltk-config --use-* --libs" did not list all of the
+	  dependent libraries (STR #1799)
+	- Hiding a nested window on WIN32 caused 100% CPU (STR #1748)
+	- Changing the window size in FLUID would not mark the 
+	  project as modified (STR #1751)
+	- Fixed fl_filename_isdir for "/"-path (STR #1761)
+	- Fixed Fl_Chart drawing (STR #1756)
+	- Fixed mapping of subwindows with unmapped parent
+	  windows (STR #1706)
+	- Fixed rendering of grayscale images with alpha
+	  channel (STR #1703)
+	- Fixed occasional incomplete refresh (STR #1681)
+	- Improved fl_down, fl_frame, added fl_box (STR #1678)
+	- Fixed selection of submenu items in 
+	  input_choice (STR #1676)
+	- Fixed calculation of stride for image scaling and
+	  color manipulation (STR #1673)
+	- Made -O3 the default optimization on Cygwin/Mingw since
+	  -Os currently creates bad code (STR #1656)
+	- OSF/Tru64 now uses 'install-sh' instead of 'install' to
+	  accomodate for a missing '-d' option (STR #1632)
+	- New option in Fluid project settings to translate all
+	  shortcut modifiers from FL_META or FL_CTRL to FL_COMMAND
+	- Made icon size fixed (50x50) in fl_message etc. (STR #1626)
+	- Fixed selection of first word in Fl_Help_View
+	- Fixed endless loop in Fl_Text_Display (STR #1655)
+	- Allowing shortcuts in Tabs (STR #1652)
+	- Fixed Makefile "make clean" (STR #1642,
+	  STR #1643, STR #1641)
+	- The sample RPM spec file now enables large file support
+	  and threading support (STR #1603)
+	- Changed minimum contrast between background and text to 
+	  99 and added more weight to the blue component to improve
+	  readability for certain color combinations (STR #1625)
+	- Fixed VCNet OpenGL project file (STR #1617)
+	- Fixed scrolling of clipped areas in MSWindows (STR
+	  #1601)
+	- Fixed clipping in OS X Quartz offscreen buffers (STR
+	  #1595)
+	- Now flush file chooser preferences after every change to
+	  avoid data loss (STR #1609)
+	- The Fl_File_Chooser constructor now saves and restores the
+	  current group (STR #1611)
+	- Added Fl::awake(fn*,void*) to set a handler for thread
+	  messages (STR #1536)
+	- Added "mute sound" option to Sudoku game.
+	- Updated the bundled zlib to v1.2.3.
+	- Updated the bundled libpng to v1.2.16.
+	- "make install" now uses the install command (or the
+	  included install-sh script) to copy files to the
+	  install directories, to ensure that permissions are
+	  correct.
+	- Fixed DLL generation via MingW/Cygwin (STR #1546)
+	- FLUID incorrectly opened the display when generating
+	  source code for Fl_Help_View widgets (STR #1318)
+	- Fl_Double_Window did not always show the scheme
+	  background image.
+	- Fixed first window behavior in OS X (STR #1548)
+	- Fixed calculation of character widths for OS X
+	  Quartz rendering (no STR)
+	- Fixed OS X mouse click handling (STR #1504)
+	- Added missing GLUT functions so that FLTK can be used
+	  as a fairly complete C++ replacement for the original
+	  GLUT library (STR #1522)
+	- Fl::awake() could block on X11 and OSX (STR #1537)
+	- Updated recursive mutex code to run on platforms other
+	  than Linux and to do a run-time check to determine
+	  whether they are supported by the kernel (STR #1575)
+	- WIN32 did check callbacks after the event processing instead of
+	  before as documented (STR #1535)
+	- Fl_File_Chooser now hides the window before doing a callback
+	  when the user clicks on the OK button (STR #1565)
+	- Fixed indentation of nested HTML elements (STR #1549)
+	- Made layout of Fl_Help_Dialog consistent with other
+	  help windows and web browsers.
+	- Improved GTK+ schemed round box (STR #1531)
+	- Fluid avoids writing unsupported combinations of the 
+	  "when()" flags (STR #1501)
+	- Fl_Browser_ would allow keyboard callbacks even though
+	  "when()" was set to "never" (STR #1501)
+	- Added automated little helpers to Sudoku 
+	- Added example code for Wizard with the
+	  Tabs demo (STR #1564)
+	- Optimized Fl_Tabs drawing for speed (STR #1520)
+	- OS X resource fork now obsolete (STR #1453)
+	- Added chapter 10 about multithreading (STR #1532, 
+	  1533)
+	- OS X system menu bar top level attribute support 
+	  improved (STR #1505)
+	- Fixed Quartz image drawing bug (STR #1438)
+	- Fixed Quartz fl_read_image
+	- Overlay drawing is now avoiding XOR mode (STR #1438) 
+	- Fixed Scroll crash in Fluid Live Mode (STR #1524) 
+	- Fixed mousewheel event propagation (STR #1521) 
+	- Fixed drawing issues of a tile in a scroll (STR #1507) 
+	- Fixed dismissing buttons in menu bars (STR #1494) 
+	- Making a child group visible in a Fl_Tabs or Fl_Wizard
+	  group now shows that tab or pane.
+	- Added fl_open_uri() function as proposed on
+	  fltk.development.
+	- Added Fl::has_check() which previously was prototyped
+	  and documented, but not implemented (STR #1542)
+	- Enabled Fl::add_check() on OS X (STR #1534)
+	- Documented tooltip inheritance (STR #1467)
+	- Better event mouse handling fixing detached menus and
+	  sticky tooltips (STR #1463, STR #449)
+	- Added Fl::scrollbar_size() methods that are used by all
+	  of the scrollbar-using widgets (STR #1500)
+	- fl_read_image() was broken on Intel-based Macs (STR
+	  #1490)
+	- Fl_Progress was using the wrong width to calculate 
+	  progress (STR #1492)
+	- Fl::x(), Fl::y(), Fl::w(), and Fl::h() did not report
+	  the desktop work area on X11 (STR #1482)
+	- Shortcut events could be sent to the wrong window (STR
+	  #1451)
+	- Fl_Spinner did not handle the arrow keys properly (STR
+	  #1476)
+	- Fl_File_Browser did not calculate the width of
+	  directory items correctly (STR #1469, STR #1470)
+	- Fl_Pack incorrectly started widgets at an offset of 1/2
+	  the spacing value.
+	- FLUID did not generate correct window class code if
+	  the class name was not a standard FLTK window class.
+	- FLUID incorrectly included <FL/Fl_classname.H> for
+	  widget classes that were not subclassed from a standard
+	  FLTK widget class.
+	- The demo master test program now supports scheme
+	  selection and all demos use it (STR #1459)
+	- fl_arc() and fl_pie() did not draw properly on WIN32
+	  when the start and end points were identical (STR
+	  #1461)
+	- Fl_Input and Fl_Text_Editor now hide the mouse pointer
+	  when typing into them (STR #1466)
+	- Implemented alpha blending for Quartz, WIN32, and X11
+	- Check buttons did not redraw properly with box() set to
+	  FL_NO_BOX (STR #1440)
+	- Added the Bluecurve-inspired scheme "gtk+".
+	- Updated documentation (STR #1420, STR #1421)
+	- Fixed font caching issue (STR #1415)
+	- Fixed crash in fl_file_chooser (STR #1410)
+	- Fixed Fluid hotspot bug (STR #1416)
+	- Fixed image copy code (STR #1412)
+	- Fixed latin-to-roman text conversion (STR #1411)
+	- Fixed Cygwin timeout for "select" calls (STR #1151)
+	- Improved Mac OS X subwindow handling (STR #1402)
+	- Fixed more inconsistencies between fl_draw and
+	  fl_measure (STR #1408)
+	- Fixed fl_measure which mistook a trailing '@@' for a
+	  symbol (STR #1406)
+	- Fixed GLUT behavior on window creation (STR #1403)
+	- Fixed OS X bug that would hide tooltips before they
+	  were shown (STR #1392)
+	- Fixed Fl_Tabs tooltip reappearing (STR #1324)
+	- Added a new demo game called "Block Attack!"
+	- Updated the Sudoku game to show a notice about Hard and
+	  Impossible puzzles having multiple solutions which are
+	  not a bug or error (STR #1361)
+	- Fixed filechooser to behave as documented when file
+	  pattern changes (STR #1359)
+	- Completed the global function index and added an
+	  alphabetical list of all methods (STR #1319)
+	- Avoiding problems with some platforms that don't 
+	  implement hypot() (STR #1366)
+	- Fixed floating point value formatting for Fl_Spinner
+	  (STR #1331)
+	- Fixed Fl_Positioner callback when released (STR #1387)
+	- Fixed WIN32 zero size window issue (STR #1387)
+	- Fixed Sudoku window positioning (STR #1398)
+	- Fluid Code Declarations can now handle C++ style
+	  comments (STR #1383)
+	- Fixed uninitialized data in OS X and WIN32 timeout
+	  functions (STR #1374).
+	- Fixed speed issues when measuring text on OS X with
+	  Quartz (STR #1386).
+	- Fixed focus issues on OS X (STR #1377)
+	- Optional precision argument when storing floats or 
+	  doubles in a Preferences file (STR #1381)
+	- Fixed callback not called when using arrow keys in
+	  Fl_Slider (STR #1333)
+	- Changing the shortcut of a widget in fluid now marks the
+	  document as dirty (STR #1382)
+	- Fl_Text_Editor now correctly handles middle mouse
+	  clicks (STR #1384)
+	- Added some GLUT4 functions (STR #1370)
+	- Added "context_changed()" function for OpenGL windows
+	  which allows efficient texture loading (STR #1372)
+	- Added missing "const" to GLUT call (STR #1371)
+	- Fixed stray FL_RELEASE events after clicking system
+	  areas on OS X (STR #1376)
+	- FLUID now only writes definitions of "o" and "w"
+	  variables as needed, reducing the number of "variable
+	  is shadowed" warnings from GCC.
+	- Added access to Xft font pointer (STR #1328)
+	- Fixed endianness in OS X mouse cursor graphics (STR
+	  #1348)
+	- Fixed crash on mixed use of keyboard and mouse for
+	  Fl_Menu_Button (STR #1356)
+	- Fixed Fl_Window::visible() and shown() for OS X
+	  (STR #1341)
+	- Fixed Fl_Window::copy_label() losing copy (STR #1332)
+	- Added support for floating point Fl_Spinner in the
+	  API, documentation, and Fluid (STR #1331)
+	- Repeat button now cancels timeout if it should get 
+	  deactivated during a callback (STR #1330)
+	- Added support for assigning Fl_Menu_Items to array 
+	  variables in Fluid (STR #1280)
+	- Added --with-archflags configure option to allow
+	  passing of specific architecture-selection options to
+	  the compiler and linker.
+	- Fixed WIN32 window stacking bug (STR #1296)
+	- Fixed wrong code generated by FLUID for Scrollbars (STR
+	  #1287)
+	- Loading a file would not update the Widget Properties
+	  dialog in FLUID (STR #1326)
+	- Fixed key compose sequences for shifted keys (STR
+	  #1194)
+	- Added text selection and copy to Fl_Help_View.
+	- Fixed position of popup menu titles (STR #1322)
+	- Showing any window will disable the current tooltip
+	  so it won't pop over menus (STR #1321)
+	- Updated documentation to reflect limitation of 
+	  Fl::delete_widget() (STR #1306)
+	- Fixed line wrapping in Fl_Text_Display (STR #1227)
+	- New function Fl::event_original_key() returns key code
+	  before NumLock handling.
+	- Many OS X Quartz fixes (STR #1310, etc.)
+	- Fixed shortcut and default focus for message dialogs
+	  (STR #1298)
+	- Fixed focus issues (STR #1286, STR #1289, STR #1296)
+	- Fixed window resizing in OS X (STR #1297)
+	- In FLUID, declarations starting with the keyword
+	  'typedef', 'class', or 'struct' are now treated
+	  correctly if inside a class (STR #1283)
+	- Tabs now show the correct tooltip (STR #1282)
+	- Included fltk.spec in configure.in (STR #1274)
+	- Fixed insufficiently invalidated cache 
+	  in Fl_Browser (STR #1265)
+	- Attempt to fix multi monitor issues (STR #1153)
+	- Fixed warnings when compiling w/Cygwin (STR #1152)
+	- Fixed missing reset of flag in FLUID (STR #1187)
+	- Fixed maximizing in OS X (STR #1221)
+	- Fixed 'make distclean' to remove binaries inside
+	  MacOS app packages (STR #1169)
+	- FLUID Code Viewer is now truly a viewer, not a text
+	  editor because edited text can not be saved.
+	- Fl_Spinner is now fully supported by FLUID (STR #1158)
+	- Fixed usage of deleted object after menu pulldown
+	  (STR #1162)
+	- Calling fl_font(0, 0) under Xft would access a NULL
+	  pointer (STR #1205)
+	- Setting a new value in Fl_Input_ wil now actually move
+	  cursor to the end of the input field as documented
+	  (STR #1161)
+	- FLUID crashed on WIN32 with international characters
+	  (STR #1176)
+	- Fl_Check_Browser did not allow the user to toggle the
+	  check boxes (STR #1232)
+	- Fl_Help_View crashed on WIN32 with international
+	  characters (STR #1228)
+	- Fl::run() no longer clears resources on WIN32 (STR
+	  #1231)
+	- Fl::add_timeout() leaked resources on OSX (STR #1233)
+	- Accented characters could not be entered on OSX (STR
+	  #1195)
+	- The caret key lookup was missing for OS X
+	- FLUID didn't handle loading .fl files with
+	  international characters properly with all compilers
+	  (STR #1150)
+	- Fl_Spinner's minimum() and maximum() "get" methods were
+	  misspelled (STR #1146)
+	- The largefile support changes in 1.1.7 broke binary
+	  compability for fl_filename_list(); you must now use
+	  "--enable-largefile" when configuring to get large file
+	  support, and the large file support definitions are
+	  added to the output of "fltk-config --cflags" (STR
+	  #1159)
+
+----HTML----
+
+<P>The FLTK Team is proud to announce the release of FLTK 1.1.8,
+a cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
+Microsoft(r) Windows(r), and MacOS(r) X. FLTK provides
+modern GUI functionality without the bloat and supports 3D
+graphics via OpenGL(r) and its built-in GLUT emulation.</P>
+
+<P>FLTK 1.1.8 fixes many bugs, improves OS X and Quartz
+compatibility and overall reliability. It adds a new GTK+ 
+style theme, more GLUT4 compatibility, and alpha blending
+for image maps.</P>
+
+<P>This is the final release of the FLTK 1.1.x development tree.</P>
+
+<P>FLTK is provided under the GNU Library Public License with
+exceptions that allow for static linking.</P>
+
+<P>Changes since FLTK 1.1.7 include:</P>
+
+<UL>
+
+	<LI>Documentation fixes (
+	  <A HREF="http://www.fltk.org/str.php?L1336">STR #1336</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1329">STR #1329</A>,
+	  
+	  <A HREF="http://www.fltk.org/str.php?L1340">STR #1340</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1454">STR #1454</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1455">STR #1455</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1456">STR #1456</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1339">STR #1339</A>,
+	  
+	  <A HREF="http://www.fltk.org/str.php?L1457">STR #1457</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1458">STR #1458</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1460">STR #1460</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1481">STR #1481</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1578">STR #1578</A>,
+	  
+	  <A HREF="http://www.fltk.org/str.php?L1639">STR #1639</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1645">STR #1645</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1644">STR #1644</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1792">STR #1792</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1793">STR #1793</A>,
+	  
+	  <A HREF="http://www.fltk.org/str.php?L1742">STR #1742</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1777">STR #1777</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1794">STR #1794</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1827">STR #1827</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1843">STR #1843</A>,
+	  
+	  <A HREF="http://www.fltk.org/str.php?L1796">STR #1796</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1815">STR #1815</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1726">STR #1726</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1753">STR #1753</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1855">STR #1855</A>,
+	  
+	  <A HREF="http://www.fltk.org/str.php?L1862">STR #1862</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1867">STR #1867</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1874">STR #1874</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1888">STR #1888</A>)
+	<LI>Fixed library path in Makefile (
+	  <A HREF="http://www.fltk.org/str.php?L1885">STR #1885</A>)
+	<LI>Fixed image read for partial regions on X11 
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1716">STR #1716</A>)
+	<LI>Fixed KDE/Gnome icon paths (
+	  <A HREF="http://www.fltk.org/str.php?L1795">STR #1795</A>)
+	<LI>Fixed Tab key to wrap around menu bars (
+	  <A HREF="http://www.fltk.org/str.php?L1877">STR #1877</A>)
+	<LI>Fixed possible timer leak in Scrollbar (
+	  <A HREF="http://www.fltk.org/str.php?L1880">STR #1880</A>)
+	<LI>Added documentation about the potential limitations
+	  of Fl::grab on newer operating systems (
+	  <A HREF="http://www.fltk.org/str.php?L1747">STR #1747</A>)
+	<LI>Fixed lockout when mixing popups and alerts
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L">STR #</A> 1869)
+	<LI>Fixed recursion crash in event handling (
+	  <A HREF="http://www.fltk.org/str.php?L1873">STR #1873</A>)
+	<LI>Fixed missing return code in 'fltk-config' (
+	  <A HREF="http://www.fltk.org/str.php?L1875">STR #1875</A>)
+	<LI>Fixed inconsistencies with CHANGED flags (
+	  <A HREF="http://www.fltk.org/str.php?L1719">STR #1719</A>)
+	<LI>Fixed message sent to hidden widgets (
+	  <A HREF="http://www.fltk.org/str.php?L1849">STR #1849</A>)
+	<LI>Fixed width calculation in Fl_Help_View (
+	  <A HREF="http://www.fltk.org/str.php?L1868">STR #1868</A>)
+	<LI>Fixed offset bug in OS X pixmap code (
+	  <A HREF="http://www.fltk.org/str.php?L1856">STR #1856</A>)
+	<LI>Fixed potential buffer overrun 
+	  in Fl_Preferences (
+	  <A HREF="http://www.fltk.org/str.php?L1853">STR #1853</A>)
+	<LI>Fixed method attributes in consecutive class
+	  declarations in FLUID (
+	  <A HREF="http://www.fltk.org/str.php?L1741">STR #1741</A>)
+	<LI>FLUID checks for seperately declared callbacks to 
+	  avoid a bogus "extern" declaration (
+	  <A HREF="http://www.fltk.org/str.php?L1776">STR #1776</A>)
+	<LI>Added "protected" class memebrs in FLUID
+	<LI>Double-clicking a widget in a FLUID layout will show 
+	  the item in the widget browser
+	<LI>Fixed color highlighting in Text_Display
+	<LI>Fixed 16 bit PNM image support (
+	  <A HREF="http://www.fltk.org/str.php?L1847">STR #1847</A>)
+	<LI>Fixed exposure event on zero size windows (
+	  <A HREF="http://www.fltk.org/str.php?L1824">STR #1824</A>)
+	<LI>Fixed overlay offset for OS X Quartz (
+	  <A HREF="http://www.fltk.org/str.php?L1729">STR #1729</A>)
+	<LI>gl_font() support for Xft+X11 (
+	  <A HREF="http://www.fltk.org/str.php?L1809">STR #1809</A>)
+	<LI>Fl_Gl_Window::mode() needed to hide and show the window
+	  when toggling stereo mode (
+	  <A HREF="http://www.fltk.org/str.php?L1846">STR #1846</A>)
+	<LI>Fl_Gl_Window::show() did not work reliably on Mac OS X
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1707">STR #1707</A>)
+	<LI>Added Fl_Group::clip_children() methods to support
+	  automatic clipping of child widget drawing (
+	  <A HREF="http://www.fltk.org/str.php?L1844">STR #1844</A>)
+	<LI>Fl_Browser_ and friends now support FL_WHEN_ENTER_KEY
+	  for both Enter/Return and double-clicks (
+	  <A HREF="http://www.fltk.org/str.php?L1818">STR #1818</A>)
+	<LI>Fl_Help_View did not release the images it used (STR
+	  #1817)
+	<LI>Shared libraries would not build on 64-bit Linux
+	  systems with an existing non-PIC FLTK installation
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1791">STR #1791</A>)
+	<LI>Fl_Browser::hide() and Fl_Browser::show() did not
+	  correctly update the scrollbar (
+	  <A HREF="http://www.fltk.org/str.php?L1724">STR #1724</A>)
+	<LI>The configure script now shows a summry of the
+	  configuration results (
+	  <A HREF="http://www.fltk.org/str.php?L1810">STR #1810</A>)
+	<LI>"fltk-config --use-* --libs" did not list all of the
+	  dependent libraries (
+	  <A HREF="http://www.fltk.org/str.php?L1799">STR #1799</A>)
+	<LI>Hiding a nested window on WIN32 caused 100% CPU (
+	  <A HREF="http://www.fltk.org/str.php?L1748">STR #1748</A>)
+	<LI>Changing the window size in FLUID would not mark the 
+	  project as modified (
+	  <A HREF="http://www.fltk.org/str.php?L1751">STR #1751</A>)
+	<LI>Fixed fl_filename_isdir for "/"-path (
+	  <A HREF="http://www.fltk.org/str.php?L1761">STR #1761</A>)
+	<LI>Fixed Fl_Chart drawing (
+	  <A HREF="http://www.fltk.org/str.php?L1756">STR #1756</A>)
+	<LI>Fixed mapping of subwindows with unmapped parent
+	  windows (
+	  <A HREF="http://www.fltk.org/str.php?L1706">STR #1706</A>)
+	<LI>Fixed rendering of grayscale images with alpha
+	  channel (
+	  <A HREF="http://www.fltk.org/str.php?L1703">STR #1703</A>)
+	<LI>Fixed occasional incomplete refresh (
+	  <A HREF="http://www.fltk.org/str.php?L1681">STR #1681</A>)
+	<LI>Improved fl_down, fl_frame, added fl_box (
+	  <A HREF="http://www.fltk.org/str.php?L1678">STR #1678</A>)
+	<LI>Fixed selection of submenu items in 
+	  input_choice (
+	  <A HREF="http://www.fltk.org/str.php?L1676">STR #1676</A>)
+	<LI>Fixed calculation of stride for image scaling and
+	  color manipulation (
+	  <A HREF="http://www.fltk.org/str.php?L1673">STR #1673</A>)
+	<LI>Made -O3 the default optimization on Cygwin/Mingw since
+	  -Os currently creates bad code (
+	  <A HREF="http://www.fltk.org/str.php?L1656">STR #1656</A>)
+	<LI>OSF/Tru64 now uses 'install-sh' instead of 'install' to
+	  accomodate for a missing '-d' option (
+	  <A HREF="http://www.fltk.org/str.php?L1632">STR #1632</A>)
+	<LI>New option in Fluid project settings to translate all
+	  shortcut modifiers from FL_META or FL_CTRL to FL_COMMAND
+	<LI>Made icon size fixed (50x50) in fl_message etc. (
+	  <A HREF="http://www.fltk.org/str.php?L1626">STR #1626</A>)
+	<LI>Fixed selection of first word in Fl_Help_View
+	<LI>Fixed endless loop in Fl_Text_Display (
+	  <A HREF="http://www.fltk.org/str.php?L1655">STR #1655</A>)
+	<LI>Allowing shortcuts in Tabs (
+	  <A HREF="http://www.fltk.org/str.php?L1652">STR #1652</A>)
+	<LI>Fixed Makefile "make clean" (
+	  <A HREF="http://www.fltk.org/str.php?L1642">STR #1642</A>,
+	  
+	  <A HREF="http://www.fltk.org/str.php?L1643">STR #1643</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1641">STR #1641</A>)
+	<LI>The sample RPM spec file now enables large file support
+	  and threading support (
+	  <A HREF="http://www.fltk.org/str.php?L1603">STR #1603</A>)
+	<LI>Changed minimum contrast between background and text to 
+	  99 and added more weight to the blue component to improve
+	  readability for certain color combinations (
+	  <A HREF="http://www.fltk.org/str.php?L1625">STR #1625</A>)
+	<LI>Fixed VCNet OpenGL project file (
+	  <A HREF="http://www.fltk.org/str.php?L1617">STR #1617</A>)
+	<LI>Fixed scrolling of clipped areas in MSWindows (STR
+	  #1601)
+	<LI>Fixed clipping in OS X Quartz offscreen buffers (STR
+	  #1595)
+	<LI>Now flush file chooser preferences after every change to
+	  avoid data loss (
+	  <A HREF="http://www.fltk.org/str.php?L1609">STR #1609</A>)
+	<LI>The Fl_File_Chooser constructor now saves and restores the
+	  current group (
+	  <A HREF="http://www.fltk.org/str.php?L1611">STR #1611</A>)
+	<LI>Added Fl::awake(fn*,void*) to set a handler for thread
+	  messages (
+	  <A HREF="http://www.fltk.org/str.php?L1536">STR #1536</A>)
+	<LI>Added "mute sound" option to Sudoku game.
+	<LI>Updated the bundled zlib to v1.2.3.
+	<LI>Updated the bundled libpng to v1.2.16.
+	<LI>"make install" now uses the install command (or the
+	  included install-sh script) to copy files to the
+	  install directories, to ensure that permissions are
+	  correct.
+	<LI>Fixed DLL generation via MingW/Cygwin (
+	  <A HREF="http://www.fltk.org/str.php?L1546">STR #1546</A>)
+	<LI>FLUID incorrectly opened the display when generating
+	  source code for Fl_Help_View widgets (
+	  <A HREF="http://www.fltk.org/str.php?L1318">STR #1318</A>)
+	<LI>Fl_Double_Window did not always show the scheme
+	  background image.
+	<LI>Fixed first window behavior in OS X (
+	  <A HREF="http://www.fltk.org/str.php?L1548">STR #1548</A>)
+	<LI>Fixed calculation of character widths for OS X
+	  Quartz rendering (no STR)
+	<LI>Fixed OS X mouse click handling (
+	  <A HREF="http://www.fltk.org/str.php?L1504">STR #1504</A>)
+	<LI>Added missing GLUT functions so that FLTK can be used
+	  as a fairly complete C++ replacement for the original
+	  GLUT library (
+	  <A HREF="http://www.fltk.org/str.php?L1522">STR #1522</A>)
+	<LI>Fl::awake() could block on X11 and OSX (
+	  <A HREF="http://www.fltk.org/str.php?L1537">STR #1537</A>)
+	<LI>Updated recursive mutex code to run on platforms other
+	  than Linux and to do a run-time check to determine
+	  whether they are supported by the kernel (
+	  <A HREF="http://www.fltk.org/str.php?L1575">STR #1575</A>)
+	<LI>WIN32 did check callbacks after the event processing instead of
+	  before as documented (
+	  <A HREF="http://www.fltk.org/str.php?L1535">STR #1535</A>)
+	<LI>Fl_File_Chooser now hides the window before doing a callback
+	  when the user clicks on the OK button (
+	  <A HREF="http://www.fltk.org/str.php?L1565">STR #1565</A>)
+	<LI>Fixed indentation of nested HTML elements (
+	  <A HREF="http://www.fltk.org/str.php?L1549">STR #1549</A>)
+	<LI>Made layout of Fl_Help_Dialog consistent with other
+	  help windows and web browsers.
+	<LI>Improved GTK+ schemed round box (
+	  <A HREF="http://www.fltk.org/str.php?L1531">STR #1531</A>)
+	<LI>Fluid avoids writing unsupported combinations of the 
+	  "when()" flags (
+	  <A HREF="http://www.fltk.org/str.php?L1501">STR #1501</A>)
+	<LI>Fl_Browser_ would allow keyboard callbacks even though
+	  "when()" was set to "never" (
+	  <A HREF="http://www.fltk.org/str.php?L1501">STR #1501</A>)
+	<LI>Added automated little helpers to Sudoku 
+	<LI>Added example code for Wizard with the
+	  Tabs demo (
+	  <A HREF="http://www.fltk.org/str.php?L1564">STR #1564</A>)
+	<LI>Optimized Fl_Tabs drawing for speed (
+	  <A HREF="http://www.fltk.org/str.php?L1520">STR #1520</A>)
+	<LI>OS X resource fork now obsolete (
+	  <A HREF="http://www.fltk.org/str.php?L1453">STR #1453</A>)
+	<LI>Added chapter 10 about multithreading (
+	  <A HREF="http://www.fltk.org/str.php?L1532">STR #1532</A>, 
+	  1533)
+	<LI>OS X system menu bar top level attribute support 
+	  improved (
+	  <A HREF="http://www.fltk.org/str.php?L1505">STR #1505</A>)
+	<LI>Fixed Quartz image drawing bug (
+	  <A HREF="http://www.fltk.org/str.php?L1438">STR #1438</A>)
+	<LI>Fixed Quartz fl_read_image
+	<LI>Overlay drawing is now avoiding XOR mode (
+	  <A HREF="http://www.fltk.org/str.php?L1438">STR #1438</A>) 
+	<LI>Fixed Scroll crash in Fluid Live Mode (
+	  <A HREF="http://www.fltk.org/str.php?L1524">STR #1524</A>) 
+	<LI>Fixed mousewheel event propagation (
+	  <A HREF="http://www.fltk.org/str.php?L1521">STR #1521</A>) 
+	<LI>Fixed drawing issues of a tile in a scroll (
+	  <A HREF="http://www.fltk.org/str.php?L1507">STR #1507</A>) 
+	<LI>Fixed dismissing buttons in menu bars (
+	  <A HREF="http://www.fltk.org/str.php?L1494">STR #1494</A>) 
+	<LI>Making a child group visible in a Fl_Tabs or Fl_Wizard
+	  group now shows that tab or pane.
+	<LI>Added fl_open_uri() function as proposed on
+	  fltk.development.
+	<LI>Added Fl::has_check() which previously was prototyped
+	  and documented, but not implemented (
+	  <A HREF="http://www.fltk.org/str.php?L1542">STR #1542</A>)
+	<LI>Enabled Fl::add_check() on OS X (
+	  <A HREF="http://www.fltk.org/str.php?L1534">STR #1534</A>)
+	<LI>Documented tooltip inheritance (
+	  <A HREF="http://www.fltk.org/str.php?L1467">STR #1467</A>)
+	<LI>Better event mouse handling fixing detached menus and
+	  sticky tooltips (
+	  <A HREF="http://www.fltk.org/str.php?L1463">STR #1463</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L449">STR #449</A>)
+	<LI>Added Fl::scrollbar_size() methods that are used by all
+	  of the scrollbar-using widgets (
+	  <A HREF="http://www.fltk.org/str.php?L1500">STR #1500</A>)
+	<LI>fl_read_image() was broken on Intel-based Macs (STR
+	  #1490)
+	<LI>Fl_Progress was using the wrong width to calculate 
+	  progress (
+	  <A HREF="http://www.fltk.org/str.php?L1492">STR #1492</A>)
+	<LI>Fl::x(), Fl::y(), Fl::w(), and Fl::h() did not report
+	  the desktop work area on X11 (
+	  <A HREF="http://www.fltk.org/str.php?L1482">STR #1482</A>)
+	<LI>Shortcut events could be sent to the wrong window (STR
+	  #1451)
+	<LI>Fl_Spinner did not handle the arrow keys properly (STR
+	  #1476)
+	<LI>Fl_File_Browser did not calculate the width of
+	  directory items correctly (
+	  <A HREF="http://www.fltk.org/str.php?L1469">STR #1469</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1470">STR #1470</A>)
+	<LI>Fl_Pack incorrectly started widgets at an offset of 1/2
+	  the spacing value.
+	<LI>FLUID did not generate correct window class code if
+	  the class name was not a standard FLTK window class.
+	<LI>FLUID incorrectly included <FL/Fl_classname.H> for
+	  widget classes that were not subclassed from a standard
+	  FLTK widget class.
+	<LI>The demo master test program now supports scheme
+	  selection and all demos use it (
+	  <A HREF="http://www.fltk.org/str.php?L1459">STR #1459</A>)
+	<LI>fl_arc() and fl_pie() did not draw properly on WIN32
+	  when the start and end points were identical (STR
+	  #1461)
+	<LI>Fl_Input and Fl_Text_Editor now hide the mouse pointer
+	  when typing into them (
+	  <A HREF="http://www.fltk.org/str.php?L1466">STR #1466</A>)
+	<LI>Implemented alpha blending for Quartz, WIN32, and X11
+	<LI>Check buttons did not redraw properly with box() set to
+	  FL_NO_BOX (
+	  <A HREF="http://www.fltk.org/str.php?L1440">STR #1440</A>)
+	<LI>Added the Bluecurve-inspired scheme "gtk+".
+	<LI>Updated documentation (
+	  <A HREF="http://www.fltk.org/str.php?L1420">STR #1420</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1421">STR #1421</A>)
+	<LI>Fixed font caching issue (
+	  <A HREF="http://www.fltk.org/str.php?L1415">STR #1415</A>)
+	<LI>Fixed crash in fl_file_chooser (
+	  <A HREF="http://www.fltk.org/str.php?L1410">STR #1410</A>)
+	<LI>Fixed Fluid hotspot bug (
+	  <A HREF="http://www.fltk.org/str.php?L1416">STR #1416</A>)
+	<LI>Fixed image copy code (
+	  <A HREF="http://www.fltk.org/str.php?L1412">STR #1412</A>)
+	<LI>Fixed latin-to-roman text conversion (
+	  <A HREF="http://www.fltk.org/str.php?L1411">STR #1411</A>)
+	<LI>Fixed Cygwin timeout for "select" calls (
+	  <A HREF="http://www.fltk.org/str.php?L1151">STR #1151</A>)
+	<LI>Improved Mac OS X subwindow handling (
+	  <A HREF="http://www.fltk.org/str.php?L1402">STR #1402</A>)
+	<LI>Fixed more inconsistencies between fl_draw and
+	  fl_measure (
+	  <A HREF="http://www.fltk.org/str.php?L1408">STR #1408</A>)
+	<LI>Fixed fl_measure which mistook a trailing '@@' for a
+	  symbol (
+	  <A HREF="http://www.fltk.org/str.php?L1406">STR #1406</A>)
+	<LI>Fixed GLUT behavior on window creation (
+	  <A HREF="http://www.fltk.org/str.php?L1403">STR #1403</A>)
+	<LI>Fixed OS X bug that would hide tooltips before they
+	  were shown (
+	  <A HREF="http://www.fltk.org/str.php?L1392">STR #1392</A>)
+	<LI>Fixed Fl_Tabs tooltip reappearing (
+	  <A HREF="http://www.fltk.org/str.php?L1324">STR #1324</A>)
+	<LI>Added a new demo game called "Block Attack!"
+	<LI>Updated the Sudoku game to show a notice about Hard and
+	  Impossible puzzles having multiple solutions which are
+	  not a bug or error (
+	  <A HREF="http://www.fltk.org/str.php?L1361">STR #1361</A>)
+	<LI>Fixed filechooser to behave as documented when file
+	  pattern changes (
+	  <A HREF="http://www.fltk.org/str.php?L1359">STR #1359</A>)
+	<LI>Completed the global function index and added an
+	  alphabetical list of all methods (
+	  <A HREF="http://www.fltk.org/str.php?L1319">STR #1319</A>)
+	<LI>Avoiding problems with some platforms that don't 
+	  implement hypot() (
+	  <A HREF="http://www.fltk.org/str.php?L1366">STR #1366</A>)
+	<LI>Fixed floating point value formatting for Fl_Spinner
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1331">STR #1331</A>)
+	<LI>Fixed Fl_Positioner callback when released (
+	  <A HREF="http://www.fltk.org/str.php?L1387">STR #1387</A>)
+	<LI>Fixed WIN32 zero size window issue (
+	  <A HREF="http://www.fltk.org/str.php?L1387">STR #1387</A>)
+	<LI>Fixed Sudoku window positioning (
+	  <A HREF="http://www.fltk.org/str.php?L1398">STR #1398</A>)
+	<LI>Fluid Code Declarations can now handle C++ style
+	  comments (
+	  <A HREF="http://www.fltk.org/str.php?L1383">STR #1383</A>)
+	<LI>Fixed uninitialized data in OS X and WIN32 timeout
+	  functions (
+	  <A HREF="http://www.fltk.org/str.php?L1374">STR #1374</A>).
+	<LI>Fixed speed issues when measuring text on OS X with
+	  Quartz (
+	  <A HREF="http://www.fltk.org/str.php?L1386">STR #1386</A>).
+	<LI>Fixed focus issues on OS X (
+	  <A HREF="http://www.fltk.org/str.php?L1377">STR #1377</A>)
+	<LI>Optional precision argument when storing floats or 
+	  doubles in a Preferences file (
+	  <A HREF="http://www.fltk.org/str.php?L1381">STR #1381</A>)
+	<LI>Fixed callback not called when using arrow keys in
+	  Fl_Slider (
+	  <A HREF="http://www.fltk.org/str.php?L1333">STR #1333</A>)
+	<LI>Changing the shortcut of a widget in fluid now marks the
+	  document as dirty (
+	  <A HREF="http://www.fltk.org/str.php?L1382">STR #1382</A>)
+	<LI>Fl_Text_Editor now correctly handles middle mouse
+	  clicks (
+	  <A HREF="http://www.fltk.org/str.php?L1384">STR #1384</A>)
+	<LI>Added some GLUT4 functions (
+	  <A HREF="http://www.fltk.org/str.php?L1370">STR #1370</A>)
+	<LI>Added "context_changed()" function for OpenGL windows
+	  which allows efficient texture loading (
+	  <A HREF="http://www.fltk.org/str.php?L1372">STR #1372</A>)
+	<LI>Added missing "const" to GLUT call (
+	  <A HREF="http://www.fltk.org/str.php?L1371">STR #1371</A>)
+	<LI>Fixed stray FL_RELEASE events after clicking system
+	  areas on OS X (
+	  <A HREF="http://www.fltk.org/str.php?L1376">STR #1376</A>)
+	<LI>FLUID now only writes definitions of "o" and "w"
+	  variables as needed, reducing the number of "variable
+	  is shadowed" warnings from GCC.
+	<LI>Added access to Xft font pointer (
+	  <A HREF="http://www.fltk.org/str.php?L1328">STR #1328</A>)
+	<LI>Fixed endianness in OS X mouse cursor graphics (
+	  <A HREF="http://www.fltk.org/str.php?L1348">STR #1348</A>)
+	<LI>Fixed crash on mixed use of keyboard and mouse for
+	  Fl_Menu_Button (
+	  <A HREF="http://www.fltk.org/str.php?L1356">STR #1356</A>)
+	<LI>Fixed Fl_Window::visible() and shown() for OS X
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1341">STR #1341</A>)
+	<LI>Fixed Fl_Window::copy_label() losing copy (
+	  <A HREF="http://www.fltk.org/str.php?L1332">STR #1332</A>)
+	<LI>Added support for floating point Fl_Spinner in the
+	  API, documentation, and Fluid (
+	  <A HREF="http://www.fltk.org/str.php?L1331">STR #1331</A>)
+	<LI>Repeat button now cancels timeout if it should get 
+	  deactivated during a callback (
+	  <A HREF="http://www.fltk.org/str.php?L1330">STR #1330</A>)
+	<LI>Added support for assigning Fl_Menu_Items to array 
+	  variables in Fluid (
+	  <A HREF="http://www.fltk.org/str.php?L1280">STR #1280</A>)
+	<LI>Added --with-archflags configure option to allow
+	  passing of specific architecture-selection options to
+	  the compiler and linker.
+	<LI>Fixed WIN32 window stacking bug (
+	  <A HREF="http://www.fltk.org/str.php?L1296">STR #1296</A>)
+	<LI>Fixed wrong code generated by FLUID for Scrollbars (STR
+	  #1287)
+	<LI>Loading a file would not update the Widget Properties
+	  dialog in FLUID (
+	  <A HREF="http://www.fltk.org/str.php?L1326">STR #1326</A>)
+	<LI>Fixed key compose sequences for shifted keys (STR
+	  #1194)
+	<LI>Added text selection and copy to Fl_Help_View.
+	<LI>Fixed position of popup menu titles (
+	  <A HREF="http://www.fltk.org/str.php?L1322">STR #1322</A>)
+	<LI>Showing any window will disable the current tooltip
+	  so it won't pop over menus (
+	  <A HREF="http://www.fltk.org/str.php?L1321">STR #1321</A>)
+	<LI>Updated documentation to reflect limitation of 
+	  Fl::delete_widget() (
+	  <A HREF="http://www.fltk.org/str.php?L1306">STR #1306</A>)
+	<LI>Fixed line wrapping in Fl_Text_Display (
+	  <A HREF="http://www.fltk.org/str.php?L1227">STR #1227</A>)
+	<LI>New function Fl::event_original_key() returns key code
+	  before NumLock handling.
+	<LI>Many OS X Quartz fixes (
+	  <A HREF="http://www.fltk.org/str.php?L1310">STR #1310</A>, etc.)
+	<LI>Fixed shortcut and default focus for message dialogs
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1298">STR #1298</A>)
+	<LI>Fixed focus issues (
+	  <A HREF="http://www.fltk.org/str.php?L1286">STR #1286</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1289">STR #1289</A>, 
+	  <A HREF="http://www.fltk.org/str.php?L1296">STR #1296</A>)
+	<LI>Fixed window resizing in OS X (
+	  <A HREF="http://www.fltk.org/str.php?L1297">STR #1297</A>)
+	<LI>In FLUID, declarations starting with the keyword
+	  'typedef', 'class', or 'struct' are now treated
+	  correctly if inside a class (
+	  <A HREF="http://www.fltk.org/str.php?L1283">STR #1283</A>)
+	<LI>Tabs now show the correct tooltip (
+	  <A HREF="http://www.fltk.org/str.php?L1282">STR #1282</A>)
+	<LI>Included fltk.spec in configure.in (
+	  <A HREF="http://www.fltk.org/str.php?L1274">STR #1274</A>)
+	<LI>Fixed insufficiently invalidated cache 
+	  in Fl_Browser (
+	  <A HREF="http://www.fltk.org/str.php?L1265">STR #1265</A>)
+	<LI>Attempt to fix multi monitor issues (
+	  <A HREF="http://www.fltk.org/str.php?L1153">STR #1153</A>)
+	<LI>Fixed warnings when compiling w/Cygwin (
+	  <A HREF="http://www.fltk.org/str.php?L1152">STR #1152</A>)
+	<LI>Fixed missing reset of flag in FLUID (
+	  <A HREF="http://www.fltk.org/str.php?L1187">STR #1187</A>)
+	<LI>Fixed maximizing in OS X (
+	  <A HREF="http://www.fltk.org/str.php?L1221">STR #1221</A>)
+	<LI>Fixed 'make distclean' to remove binaries inside
+	  MacOS app packages (
+	  <A HREF="http://www.fltk.org/str.php?L1169">STR #1169</A>)
+	<LI>FLUID Code Viewer is now truly a viewer, not a text
+	  editor because edited text can not be saved.
+	<LI>Fl_Spinner is now fully supported by FLUID (
+	  <A HREF="http://www.fltk.org/str.php?L1158">STR #1158</A>)
+	<LI>Fixed usage of deleted object after menu pulldown
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1162">STR #1162</A>)
+	<LI>Calling fl_font(0, 0) under Xft would access a NULL
+	  pointer (
+	  <A HREF="http://www.fltk.org/str.php?L1205">STR #1205</A>)
+	<LI>Setting a new value in Fl_Input_ wil now actually move
+	  cursor to the end of the input field as documented
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1161">STR #1161</A>)
+	<LI>FLUID crashed on WIN32 with international characters
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1176">STR #1176</A>)
+	<LI>Fl_Check_Browser did not allow the user to toggle the
+	  check boxes (
+	  <A HREF="http://www.fltk.org/str.php?L1232">STR #1232</A>)
+	<LI>Fl_Help_View crashed on WIN32 with international
+	  characters (
+	  <A HREF="http://www.fltk.org/str.php?L1228">STR #1228</A>)
+	<LI>Fl::run() no longer clears resources on WIN32 (STR
+	  #1231)
+	<LI>Fl::add_timeout() leaked resources on OSX (
+	  <A HREF="http://www.fltk.org/str.php?L1233">STR #1233</A>)
+	<LI>Accented characters could not be entered on OSX (STR
+	  #1195)
+	<LI>The caret key lookup was missing for OS X
+	<LI>FLUID didn't handle loading .fl files with
+	  international characters properly with all compilers
+	  (
+	  <A HREF="http://www.fltk.org/str.php?L1150">STR #1150</A>)
+	<LI>Fl_Spinner's minimum() and maximum() "get" methods were
+	  misspelled (
+	  <A HREF="http://www.fltk.org/str.php?L1146">STR #1146</A>)
+	<LI>The largefile support changes in 1.1.7 broke binary
+	  compability for fl_filename_list(); you must now use
+	  "--enable-largefile" when configuring to get large file
+	  support, and the large file support definitions are
+	  added to the output of "fltk-config --cflags" (
+	  <A HREF="http://www.fltk.org/str.php?L1159">STR #1159</A>)
+
+</UL>

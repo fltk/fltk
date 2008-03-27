@@ -1,0 +1,78 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Free</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Free>class Fl_Free</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+   |
+   +----<B>Fl_Free</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Free.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ Emulation of the Forms &quot;free&quot; widget.  This emulation allows the free
+demo to run, and appears to be useful for porting programs written in
+Forms which use the free widget or make subclasses of the Forms
+widgets.
+<P>There are five types of free, which determine when the handle
+function is called: </P>
+<UL>
+<PRE>
+#define FL_NORMAL_FREE		1
+#define FL_SLEEPING_FREE	2
+#define FL_INPUT_FREE		3
+#define FL_CONTINUOUS_FREE	4
+#define FL_ALL_FREE		5
+</PRE>
+</UL>
+<P>An FL_INPUT_FREE accepts FL_FOCUS events.  A FL_CONTINUOUS_FREE sets
+a timeout callback 100 times a second and provides a FL_STEP event,
+this has obvious detrimental effects on machine performance.
+FL_ALL_FREE does both.  FL_SLEEPING_FREE are deactivated. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Free.Fl_Free>Fl_Free</A></LI>
+<LI><A href=#Fl_Free.~Fl_Free>~Fl_Free</A></LI>
+</UL>
+<H4><A name=Fl_Free.Fl_Free>Fl_Free(uchar type, int, int, int, int,
+const char*l, FL_HANDLEPTR hdl)</A></H4>
+ The constructor takes both the <TT>type</TT> and the <TT>handle</TT>
+ function. The handle function should be declared as follows:
+<UL>
+<PRE>
+int
+handle_function(Fl_Widget *w,
+                int       event,
+	        float     event_x,
+		float     event_y,
+		char      key)
+</PRE>
+</UL>
+ This function is called from the the <TT>handle()</TT> method in
+response to most events, and is called by the <TT>draw()</TT> method.
+The <TT>event</TT> argument contains the event type:
+<UL>
+<PRE>
+// old event names for compatability:
+#define FL_MOUSE		FL_DRAG
+#define FL_DRAW			0
+#define FL_STEP			9
+#define FL_FREEMEM		12
+#define FL_FREEZE		FL_UNMAP
+#define FL_THAW			FL_MAP
+</PRE>
+</UL>
+<H4><A name=Fl_Free.~Fl_Free>virtual Fl_Free::~Fl_Free()</A></H4>
+ The destructor will call the handle function with the event <TT>
+FL_FREE_MEM</TT>. </BODY></HTML>

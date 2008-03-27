@@ -1,0 +1,57 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Pixmap</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name="Fl_Pixmap">class Fl_Pixmap</A></H2>
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL><PRE>
+<A href="Fl_Image.html">Fl_Image</A>
+   |
+   +----<B>Fl_Pixmap</B>
+           |
+           +----<A href="Fl_GIF_Image.html">Fl_GIF_Image</A>,
+                <A href="Fl_XPM_Image.html">Fl_XPM_Image</A>
+</PRE></UL>
+
+<H3>Include Files</H3>
+
+<UL><PRE>
+#include &lt;FL/Fl_Pixmap.H&gt;
+</PRE></UL>
+
+<H3>Description</H3>
+
+<P>The <TT>Fl_Pixmap</TT> class supports caching and drawing of colormap
+(pixmap) images, including transparency.</P>
+
+<H3>Methods</H3>
+
+<UL>
+
+	<LI><A href="#Fl_Pixmap.Fl_Pixmap">Fl_Pixmap</A></LI>
+
+	<LI><A href="#Fl_Pixmap.~Fl_Pixmap">~Fl_Pixmap</A></LI>
+
+</UL>
+
+<H4><A name="Fl_Pixmap.Fl_Pixmap">Fl_Pixmap::Fl_Pixmap(const char * const *data);<BR>
+Fl_Pixmap::Fl_Pixmap(const char **data);<BR>
+Fl_Pixmap::Fl_Pixmap(const unsigned char * const *data);<BR>
+Fl_Pixmap::Fl_Pixmap(const unsigned char **data);</A></H4>
+
+<P>The constructors create a new pixmap from the specified XPM data.</P>
+
+<H4><A name="Fl_Pixmap.~Fl_Pixmap">Fl_Pixmap::~Fl_Pixmap();</A></H4>
+
+<P>The destructor free all memory and server resources that are used by
+the pixmap.</P>
+
+</BODY>
+</HTML>

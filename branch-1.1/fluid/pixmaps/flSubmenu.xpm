@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flSubmenu_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"a c #606060",
+". c #000000",
+"c c none",
+"d c #b0b0b0",
+"e c #d0d0d0",
+"f c #c0c0c0",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccffffccccccccc",
+"c.fffffffccccf.c",
+"c.ffffffffffff.c",
+"c.eeeeeeeeeeee.c",
+"c.ee.eeeee.eee.c",
+"c.e.e.eeee..ee.c",
+"c.e...eeee...e.c",
+"c.e.e.eeee..ee.c",
+"c.e.e.eeee.eee.c",
+"c.eeeeeeeee.....",
+"c.fffffffff.ffff",
+"c.fccccffff.ffff",
+"cccccccccff.ffff",
+"ccccccccccc.ffff"
+};

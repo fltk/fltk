@@ -1,0 +1,246 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Text_Display</TITLE>
+</HEAD>
+<BODY>
+
+<!-- NEW PAGE -->
+
+<H2><A name="Fl_Text_Display">class Fl_Text_Display</A></H2>
+
+<HR>
+
+<H3>Class Hierarchy</H3>
+
+<UL>
+<PRE>
+<A href="Fl_Group.html">Fl_Group</A>
+   |
+   +----<B>Fl_Text_Display</B>----<A HREF="Fl_Text_Buffer.html">Fl_Text_Buffer</A>
+           |
+           +----<A href="Fl_Text_Editor.html">Fl_Text_Editor</A>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+
+<UL>
+<PRE>
+#include &lt;FL/Fl_Text_Display.H&gt;
+</PRE>
+</UL>
+
+<H3>Description</H3>
+
+<P>This is the FLTK text display widget. It allows the user to
+view multiple lines of text and supports highlighting and
+scrolling. The buffer that is displayed in the widget is managed
+by the <A HREF="Fl_Text_Buffer.html"><TT>Fl_Text_Buffer</TT></A>
+class.
+
+
+<H3>Methods</H3>
+
+<TABLE CELLPADDING="10">
+<TR VALIGN="TOP"><TD><UL>
+
+	<LI><A HREF="#Fl_Text_Display.Fl_Text_Display">Fl_Text_Display</A></LI>
+	<LI><A HREF="#Fl_Text_Display.~Fl_Text_Display">~Fl_Text_Display</A></LI>
+	<LI><A HREF="#Fl_Text_Display.buffer">buffer</A></LI>
+	<LI><A HREF="#Fl_Text_Display.cursor_color">cursor_color</A></LI>
+	<LI><A HREF="#Fl_Text_Display.cursor_style">cursor_style</A></LI>
+	<LI><A HREF="#Fl_Text_Display.hide_cursor">hide_cursor</A></LI>
+	<LI><A HREF="#Fl_Text_Display.highlight_data">highlight_data</A></LI>
+	<LI><A HREF="#Fl_Text_Display.in_selection">in_selection</A></LI>
+	<LI><A HREF="#Fl_Text_Display.insert">insert</A></LI>
+	<LI><A HREF="#Fl_Text_Display.insert_position">insert_position</A></LI>
+	<LI><A HREF="#Fl_Text_Display.move_down">move_down</A></LI>
+
+</UL></TD><TD><UL>
+
+	<LI><A HREF="#Fl_Text_Display.move_left">move_left</A></LI>
+	<LI><A HREF="#Fl_Text_Display.move_right">move_right</A></LI>
+	<LI><A HREF="#Fl_Text_Display.move_up">move_up</A></LI>
+	<LI><A HREF="#Fl_Text_Display.next_word">next_word</A></LI>
+	<LI><A HREF="#Fl_Text_Display.overstrike">overstrike</A></LI>
+	<LI><A HREF="#Fl_Text_Display.position_style">position_style</A></LI>
+	<LI><A HREF="#Fl_Text_Display.previous_word">previous_word</A></LI>
+	<LI><A HREF="#Fl_Text_Display.redisplay_range">redisplay_range</A></LI>
+	<LI><A HREF="#Fl_Text_Display.scrollbar_align">scrollbar_align</A></LI>
+        <LI><A HREF="#Fl_Text_Display.scrollbar_width">scrollbar_width</A></LI>
+
+</UL></TD><TD><UL>
+
+	<LI><A HREF="#Fl_Text_Display.scroll">scroll</A></LI>
+	<LI><A HREF="#Fl_Text_Display.show_cursor">show_cursor</A></LI>
+	<LI><A HREF="#Fl_Text_Display.show_insert_position">show_insert_position</A></LI>
+	<LI><A HREF="#Fl_Text_Display.textcolor">textcolor</A></LI>
+	<LI><A HREF="#Fl_Text_Display.textfont">textfont</A></LI>
+	<LI><A HREF="#Fl_Text_Display.textsize">textsize</A></LI>
+	<LI><A HREF="#Fl_Text_Display.word_end">word_end</A></LI>
+	<LI><A HREF="#Fl_Text_Display.word_start">word_start</A></LI>
+	<LI><A HREF="#Fl_Text_Display.wrap_mode">wrap_mode</A></LI>
+
+</UL></TD></TR>
+</TABLE>
+
+<H4><A NAME="Fl_Text_Display.Fl_Text_Display">Fl_Text_Display(int X, int Y, int W, int H, const char *l = 0);</A></H4>
+
+<P>Creates a new text display widget.
+
+<H4><A NAME="Fl_Text_Display.~Fl_Text_Display">~Fl_Text_Display();</A></H4>
+
+<P>Destroys a text display widget.
+
+<H4><A NAME="Fl_Text_Display.buffer">void buffer(Fl_Text_Buffer* buf);<BR>
+void buffer(Fl_Text_Buffer&amp; buf);<BR>
+Fl_Text_Buffer* buffer();</A></H4>
+
+<P>Sets or gets the current text buffer associated with the text widget.
+Multiple text widgets can be associated with the same text buffer.
+
+<H4><A NAME="Fl_Text_Display.cursor_color">void cursor_color(Fl_Color c);</A><br>
+Fl_Color cursor_color();</H4>
+
+<P>Sets or gets the text cursor color.
+
+<H4><A NAME="Fl_Text_Display.cursor_style">void cursor_style(int style);</A></H4>
+
+<P>Sets the text cursor style to one of the following:
+
+<UL>
+
+	<LI><CODE>Fl_Text_Display::NORMAL_CURSOR</CODE> - Shows an I beam.
+
+	<LI><CODE>Fl_Text_Display::CARET_CURSOR</CODE> - Shows a caret under the text.
+
+	<LI><CODE>Fl_Text_Display::DIM_CURSOR</CODE> - Shows a dimmed I beam.
+
+	<LI><CODE>Fl_Text_Display::BLOCK_CURSOR</CODE> - Shows an unfilled box around the current
+	character.
+
+	<LI><CODE>Fl_Text_Display::HEAVY_CURSOR</CODE> - Shows a thick I beam.
+
+</UL>
+
+<H4><A NAME="Fl_Text_Display.hide_cursor">void hide_cursor();</A></H4>
+
+<P>Hides the text cursor.
+
+<H4><A NAME="Fl_Text_Display.highlight_data">void highlight_data(Fl_Text_Buffer *styleBuffer,
+Style_Table_Entry *styleTable, int nStyles, char
+unfinishedStyle, Unfinished_Style_Cb unfinishedHighlightCB, void
+*cbArg);</A></H4>
+
+<P>Sets the text buffer, text styles, and callbacks to use when
+displaying text in the widget. Style buffers cannot be shared
+between widgets and are often used to do syntax highlighting.
+The editor example from <A HREF="editor.html">Chapter 4</A>
+shows how to use the <CODE>highlight_data()</CODE> method.
+
+<H4><A NAME="Fl_Text_Display.in_selection">int in_selection(int x, int y);</A></H4>
+
+<P>Returns non-zero if the specified mouse position is inside the current
+selection.
+
+<H4><A NAME="Fl_Text_Display.insert">void insert(const char* text);</A></H4>
+
+<P>Inserts text at the current insert position.
+
+<H4><A NAME="Fl_Text_Display.insert_position">void insert_position(int newPos);<BR>
+int insert_position()</A></H4>
+
+<P>Sets or gets the current insert position.
+
+<H4><A NAME="Fl_Text_Display.move_down">int move_down();</A></H4>
+
+<P>Moves the current insert position down one line.
+
+<H4><A NAME="Fl_Text_Display.move_left">int move_left();</A></H4>
+
+<P>Moves the current insert position left one character.
+
+<H4><A NAME="Fl_Text_Display.move_right">int move_right();</A></H4>
+
+<P>Moves the current insert position right one character.
+
+<H4><A NAME="Fl_Text_Display.move_up">int move_up();</A></H4>
+
+<P>Moves the current insert position up one line.
+
+<H4><A NAME="Fl_Text_Display.next_word">void next_word(void);</A></H4>
+
+<P>Moves the current insert position right one word.
+
+<H4><A NAME="Fl_Text_Display.overstrike">void overstrike(const char* text);</A></H4>
+
+<P>Replaces text at the current insert position.
+
+<H4><A NAME="Fl_Text_Display.position_style">int position_style(int lineStartPos, int lineLen, int lineIndex,
+int dispIndex);</A></H4>
+
+<P>Returns the style associated with the character at position
+<CODE>lineStartPos + lineIndex</CODE>.
+
+<H4><A NAME="Fl_Text_Display.previous_word">void previous_word(void);</A></H4>
+
+<P>Moves the current insert position left one word.
+
+<H4><A NAME="Fl_Text_Display.redisplay_range">void redisplay_range(int start, int end);</A></H4>
+
+<P>Marks text from <CODE>start</CODE> to <CODE>end</CODE> as needing a redraw.
+
+<H4><A NAME="Fl_Text_Display.scrollbar_align">void scrollbar_align(Fl_Align a);<BR>
+Fl_Align scrollbar_align();</A></H4>
+
+<P>Sets or gets where scrollbars are attached to the widget -
+<CODE>FL_ALIGN_LEFT</CODE> and <CODE>FL_ALIGN_RIGHT</CODE> for
+the vertical scrollbar and <CODE>FL_ALIGN_TOP</CODE> and
+<CODE>FL_ALIGN_BOTTOM</CODE> for the horizontal scrollbar.
+
+<H4><A NAME="Fl_Text_Display.scrollbar_width">void scrollbar_width(int w);<BR>
+int scrollbar_width();</A></H4>
+
+<P>Sets or gets the width/height of the scrollbars.
+
+<H4><A NAME="Fl_Text_Display.scroll">void scroll(int topLineNum, int horizOffset);</A></H4>
+
+<P>Scrolls the current buffer to start at the specified line and column.
+
+<H4><A NAME="Fl_Text_Display.show_cursor">void show_cursor(int b = 1);</A></H4>
+
+<P>Shows or hides the text cursor.
+
+<H4><A NAME="Fl_Text_Display.show_insert_position">void show_insert_position();</A></H4>
+
+<P>Scrolls the text buffer to show the current insert position.
+
+<H4><A NAME="Fl_Text_Display.textcolor">void textcolor(unsigned n);<BR>
+Fl_Color textcolor() const;</A></H4>
+
+<P>Sets or gets the default color of text in the widget.
+
+<H4><A NAME="Fl_Text_Display.textfont">void textfont(uchar s);<BR>
+Fl_Font textfont() const;</A></H4>
+
+<P>Sets or gets the default font used when drawing text in the widget.
+
+<H4><A NAME="Fl_Text_Display.textsize">void textsize(uchar s);<BR>
+uchar textsize() const;</A></H4>
+
+<P>Sets or gets the default size of text in the widget.
+
+<H4><A NAME="Fl_Text_Display.word_end">int word_end(int pos);</A></H4>
+
+<P>Moves the insert position to the end of the current word.
+
+<H4><A NAME="Fl_Text_Display.word_start">int word_start(int pos);</A></H4>
+
+<P>Moves the insert position to the beginning of the current word.
+
+<H4><A NAME="Fl_Text_Display.wrap_mode">void wrap_mode(int mode, int pos);</A></H4>
+
+<P>If <i>mode</i> is not zero, this call enables automatic word wrapping at column <i>pos</i>. 
+Word-wrapping does not change the text buffer itself, only the way that the text is displayed.
+
+</BODY>
+</HTML>

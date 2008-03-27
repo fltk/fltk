@@ -1,0 +1,199 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Valuator</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Valuator>class Fl_Valuator</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Widget.html#Fl_Widget>Fl_Widget</A>
+   |
+   +----<B>Fl_Valuator</B>
+           |
+           +----<A href=Fl_Adjuster.html#Fl_Adjuster>Fl_Adjuster</A>, <A href=Fl_Counter.html#Fl_Counter>Fl_Counter</A>, <A href=Fl_Dial.html#Fl_Dial>Fl_Dial</A>, <A href=Fl_Roller.html#Fl_Roller>Fl_Roller</A>,
+                <A href=Fl_Slider.html#Fl_Slider>Fl_Slider</A>, <A href=Fl_Value_Input.html#Fl_Value_Input>Fl_Value_Input</A>, <A href=Fl_Value_Output.html#Fl_Value_Output>Fl_Value_Output</A>,
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Valuator.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Valuator</TT> class controls a single floating-point value
+and provides a consistent interface to set the value, range, and step,
+and insures that callbacks are done the same for every object.
+<P>There are probably more of these classes in FLTK than any others: </P>
+<P ALIGN=CENTER><IMG src="valuators.gif" ALT="Fl_Valuator widgets."></P>
+<P>In the above diagram each box surrounds an actual subclass.  These
+are further differentiated by setting the <A href=Fl_Widget.html#Fl_Widget.type><TT>
+type()</TT></A> of the widget to the symbolic value labeling the
+widget.  The ones labelled &quot;0&quot; are the default versions with a <TT>
+type(0)</TT>.  For consistency the symbol <TT>FL_VERTICAL</TT> is
+defined as zero.</P>
+<H3>Methods</H3>
+<CENTER>
+<TABLE width=90% summary="Fl_Valuator methods.">
+<TR><TD align=left valign=top>
+<UL>
+	<LI><A href="#Fl_Valuator.Fl_Valuator">Fl_Valuator</A></LI>
+	<LI><A href="#Fl_Valuator.~Fl_Valuator">~Fl_Valuator</A></LI>
+	<LI><A href="#Fl_Valuator.bounds">bounds</A></LI>
+	<LI><A href="#Fl_Valuator.changed">changed</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+	<LI><A href="#Fl_Valuator.clamp">clamp</A></LI>
+	<LI><A href="#Fl_Valuator.clear_changed">clear_changed</A></LI>
+	<LI><A href="#Fl_Valuator.format">format</A></LI>
+	<LI><A href="#Fl_Valuator.increment">increment</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+	<LI><A href="#Fl_Valuator.maximum">maximum</A></LI>
+	<LI><A href="#Fl_Valuator.minimum">minimum</A></LI>
+	<LI><A href="#Fl_Valuator.precision">precision</A></LI>
+	<LI><A href="#Fl_Valuator.range">range</A></LI>
+</UL>
+</TD><TD align=left valign=top>
+<UL>
+	<LI><A href="#Fl_Valuator.round">round</A></LI>
+	<LI><A href="#Fl_Valuator.set_changed">set_changed</A></LI>
+	<LI><A href="#Fl_Valuator.step">step</A></LI>
+	<LI><A href="#Fl_Valuator.value">value</A></LI>
+</UL>
+</TD></TR>
+</TABLE>
+</CENTER>
+
+<H4><A name=Fl_Valuator.Fl_Valuator>Fl_Valuator::Fl_Valuator(int x, int
+y, int w, int h, const char *label = 0)</A></H4>
+
+<P>Creates a new <TT>Fl_Valuator</TT> widget using the given position,
+size, and label string. The default boxtype is <TT>FL_NO_BOX</TT>.
+
+<H4><A name=Fl_Valuator.~Fl_Valuator>virtual Fl_Valuator::~Fl_Valuator()</A></H4>
+
+<P>Destroys the valuator.
+
+<H4><A NAME="Fl_Valuator.bounds">void Fl_Valuator::bounds(double a, double b);</A></H4>
+
+<P>Sets the minimum (<TT>a</TT>) and maximum (<TT>b</TT>) values for
+the valuator widget.
+
+<H4><A name=Fl_Valuator.changed>int Fl_Valuator::changed() const</A></H4>
+
+<P>This value is true if the user has moved the slider. It is
+turned off by <TT>value(x)</TT> and just before doing a callback
+(the callback can turn it back on if desired).
+
+<H4><A name=Fl_Valuator.clamp>double Fl_Valuator::clamp(double)</A></H4>
+
+<P>Clamps the passed value to the valuator range.
+
+<H4><A name=Fl_Valuator.clear_changed>void Fl_Valuator::clear_changed()</A></H4>
+
+<P>Clears the <TT>changed()</TT> flag.
+
+<H4><A name=Fl_Valuator.format>int Fl_Valuator::format(char *buffer)</A></H4>
+
+<P>Uses internal rules to format the fields numerical value into
+the character array pointed to by the passed parameter.</P>
+
+<P>The actual format used depends on the current step value. If
+the step value has been set to zero then a %g format is used.
+If the step value is non-zero, then a %.*f format is used,
+where the precision is calculated to show sufficient digits
+for the current step value. An integer step value, such as 1
+or 1.0, gives a precision of 0, so the formatted value will
+appear as an integer.</P>
+
+<P>This method is used by the <TT>Fl_Value_...</TT> group of widgets to 
+format the current value into a text string. 
+The return value is the length of the formatted text.
+The formatted value is written into in <i>buffer</i>. 
+<i>buffer</i> should have space for at least 128 bytes.</P>
+
+<P>You may override this function to create your own text formatting.</P>
+
+<H4><A name=Fl_Valuator.increment>double
+Fl_Valuator::increment(double,int n)</A></H4>
+
+<P>Adds <TT>n</TT> times the step value to the passed value. If
+step was set to zero it uses <TT>fabs(maximum() - minimum()) /
+100</TT>.
+
+<H4><A name=Fl_Valuator.maximum>double Fl_Valuator::maximum() const
+<BR>void Fl_Valuator::maximum(double)</A></H4>
+
+<P>Gets or sets the maximum value for the valuator.
+
+<H4><A name=Fl_Valuator.minimum>double Fl_Valuator::minimum() const
+<BR>void Fl_Valuator::minimum(double)</A></H4>
+
+<P>Gets or sets the minimum value for the valuator.
+
+<H4><A NAME="Fl_Valuator.precision">void Fl_Valuator::precision(int digits);</A></H4>
+
+<P>Sets the step value to 1/10<SUP>digits.
+
+<H4><A name=Fl_Valuator.range>void Fl_Valuator::range(double min,
+double max);</A></H4>
+
+<P>Sets the minimum and maximum values for the valuator. When
+the user manipulates the widget, the value is limited to this
+range. This clamping is done <I>after</I> rounding to the step
+value (this makes a difference if the range is not a multiple of
+the step).
+
+<P>The minimum may be greater than the maximum. This has the
+effect of &quot;reversing&quot; the object so the larger values
+are in the opposite direction. This also switches which end of
+the filled sliders is filled.</P>
+
+<P>Some widgets consider this a &quot;soft&quot; range.  This
+means they will stop at the range, but if the user releases and
+grabs the control again and tries to move it further, it is
+allowed.</P>
+
+<P>The range may affect the display. You must <TT>redraw()</TT>
+the widget after changing the range.</P>
+
+<H4><A name=Fl_Valuator.round>double Fl_Valuator::round(double)</A></H4>
+
+<P>Round the passed value to the nearest step increment.  Does
+nothing if step is zero.
+
+<H4><A name=Fl_Valuator.set_changed>void Fl_Valuator::set_changed()</A></H4>
+
+<P>Sets the <TT>changed()</TT> flag.
+
+<H4><A name=Fl_Valuator.step>double Fl_Valuator::step() const
+<BR>void Fl_Valuator::step(double)
+<BR>void Fl_Valuator::step(int A, int B)</A></H4>
+
+<P>Gets or sets the step value. As the user moves the mouse the
+value is rounded to the nearest multiple of the step value. This
+is done <I>before</I> clamping it to the range. For most widgets
+the default step is zero.
+
+<P>For precision the step is stored as the ratio of two
+integers, A/B. You can set these integers directly. Currently
+setting a floating point value sets the nearest A/1 or 1/B value
+possible.</P>
+
+<H4><A name=Fl_Valuator.value>double Fl_Valuator::value() const
+<BR> int Fl_Valuator::value(double)</A></H4>
+
+<P>Gets or sets the current value. The new value is <I>not</I>
+clamped or otherwise changed before storing it. Use
+<TT>clamp()</TT> or <TT>round()</TT> to modify the value before
+calling <TT>value()</TT>. The widget is redrawn if the new value
+is different than the current one. The initial value is zero.
+
+</BODY>
+</HTML>

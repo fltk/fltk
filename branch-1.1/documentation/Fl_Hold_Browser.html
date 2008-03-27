@@ -1,0 +1,59 @@
+<HTML>
+<HEAD>
+	<TITLE>Fl_Hold_Browser</TITLE>
+</HEAD>
+<BODY>
+<!-- NEW PAGE -->
+<H2><A name=Fl_Hold_Browser>class Fl_Hold_Browser</A></H2>
+<HR>
+<H3>Class Hierarchy</H3>
+<UL>
+<PRE>
+<A href=Fl_Browser.html#Fl_Browser>Fl_Browser</A>
+   |
+   +----<B>Fl_Hold_Browser</B>
+</PRE>
+</UL>
+<H3>Include Files</H3>
+<UL>
+<PRE>
+#include &lt;FL/Fl_Hold_Browser.H&gt;
+</PRE>
+</UL>
+<H3>Description</H3>
+ The <TT>Fl_Hold_Browser</TT> class is a subclass of <TT>Fl_Browser</TT>
+ which lets the user select a single item, or no items by clicking on
+the empty space.  As long as the mouse button is held down the item
+pointed to by it is highlighted, and this highlighting remains on when
+the mouse button is released. Normally the callback is done when the
+user releases the mouse, but you can change this with <TT>when()</TT>.
+<P>See <A href=Fl_Browser.html#Fl_Browser><TT>Fl_Browser</TT></A> for
+methods to add and remove lines from the browser. </P>
+<H3>Methods</H3>
+<UL>
+<LI><A href=#Fl_Hold_Browser.Fl_Hold_Browser>Fl_Hold_Browser</A></LI>
+<LI><A href=#Fl_Hold_Browser.~Fl_Hold_Browser>~Fl_Hold_Browser</A></LI>
+<LI><A href=#Fl_Hold_Browser.deselect>deselect</A></LI>
+<LI><A href=#Fl_Hold_Browser.select>select</A></LI>
+<LI><A href=#Fl_Hold_Browser.value>value</A></LI>
+</UL>
+<H4><A name=Fl_Hold_Browser.Fl_Hold_Browser>
+Fl_Hold_Browser::Fl_Hold_Browser(int x, int y, int w, int h, const char
+*label = 0)</A></H4>
+ Creates a new <TT>Fl_Hold_Browser</TT> widget using the given
+position, size, and label string. The default boxtype is <TT>FL_DOWN_BOX</TT>
+.
+<H4><A name=Fl_Hold_Browser.~Fl_Hold_Browser>virtual
+Fl_Hold_Browser::~Fl_Hold_Browser()</A></H4>
+ The destructor <I>also deletes all the items in the list</I>.
+<H4><A name=Fl_Hold_Browser.deselect>int Fl_Browser::deselect()</A></H4>
+<P>Deselects any selected item.
+<H4><A name=Fl_Hold_Browser.select>int Fl_Browser::select(int,int=1)
+<BR> int Fl_Browser::selected(int) const</A></H4>
+ You can use these for compatibility with <A href=Fl_Multi_Browser.html#Fl_Multi_Browser>
+<TT>Fl_Multi_Browser</TT></A>. If you turn on the selection of more
+than one line the results are unpredictable.
+<H4><A name=Fl_Hold_Browser.value>int Fl_Browser::value() const
+<BR> void Fl_Browser::value(int)</A></H4>
+ Set or get which line is selected.  This returns zero if no line is
+selected, so be aware that this can happen in a callback. </BODY></HTML>
