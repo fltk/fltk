@@ -38,7 +38,7 @@ Function {make_about_panel()} {open
 } {
   Fl_Window about_panel {
     label {About FLUID} open
-    xywh {391 113 315 175} type Double color 50 selection_color 47 hotspot non_modal visible
+    xywh {419 216 315 175} type Double color 50 selection_color 47 hotspot non_modal visible
   } {
     Fl_Box {} {
       image {icons/fluid-96.xpm} xywh {10 10 115 120}
@@ -46,12 +46,12 @@ Function {make_about_panel()} {open
     Fl_Box {} {
       label {FLTK User
 Interface Designer
-Version 1.1.8} selected
+Version 1.3.0}
       xywh {135 10 170 69} color 12 selection_color 47 labelfont 1 labelsize 18 align 21
     }
     Fl_Box {} {
-      label {Copyright 1998-2006 by
-Bill Spitzak and others}
+      label {Copyright 1998-2008 by
+Bill Spitzak and others} selected
       xywh {135 89 170 42} align 148
     }
     Fl_Button {} {

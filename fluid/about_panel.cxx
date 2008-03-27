@@ -278,14 +278,14 @@ Fl_Double_Window* make_about_panel() {
     { Fl_Box* o = new Fl_Box(10, 10, 115, 120);
       o->image(image_fluid);
     } // Fl_Box* o
-    { Fl_Box* o = new Fl_Box(135, 10, 170, 69, "FLTK User\nInterface Designer\nVersion 1.1.8");
+    { Fl_Box* o = new Fl_Box(135, 10, 170, 69, "FLTK User\nInterface Designer\nVersion 1.3.0");
       o->color((Fl_Color)12);
       o->selection_color(FL_DARK1);
       o->labelfont(1);
       o->labelsize(18);
       o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
     } // Fl_Box* o
-    { Fl_Box* o = new Fl_Box(135, 89, 170, 42, "Copyright 1998-2006 by\nBill Spitzak and others");
+    { Fl_Box* o = new Fl_Box(135, 89, 170, 42, "Copyright 1998-2008 by\nBill Spitzak and others");
       o->align(132|FL_ALIGN_INSIDE);
     } // Fl_Box* o
     { Fl_Button* o = new Fl_Button(89, 141, 123, 25, "View License...");
