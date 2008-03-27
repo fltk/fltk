@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-// Thnaks to Greg Ercolano for this addition.
+// Thanks to Greg Ercolano for this addition.
 
 #ifndef FL_NAMES_H
 #define FL_NAMES_H
