@@ -315,8 +315,9 @@ show_callback(void)
 
   fc->show();
 
-  while (fc->visible())
+  while (fc->visible()) {
     Fl::wait();
+  }
 
   count = fc->count();
   if (count > 0)

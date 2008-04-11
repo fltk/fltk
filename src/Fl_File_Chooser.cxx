@@ -218,7 +218,7 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
         fileName->callback((Fl_Callback*)cb_fileName);
         fileName->when(FL_WHEN_ENTER_KEY);
         Fl_Group::current()->resizable(fileName);
-        fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);
+        fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);
       } // Fl_File_Input* fileName
       { Fl_Box* o = new Fl_Box(10, 310, 105, 25, "Filename:");
         o->labelfont(1);
