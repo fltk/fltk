@@ -134,9 +134,12 @@ Fl_File_Chooser::count() {
   for (i = 1, fcount = 0; i <= fileList->size(); i ++)
     if (fileList->selected(i)) {
       // See if this file is a directory...
-      filename = (char *)fileList->text(i);
+      // matt: why would we do that? It is perfectly legal to select multiple
+      // directories in a DIR chooser. They are visually selected and value(i)
+      // returns all of them as expected
+      //filename = (char *)fileList->text(i);
 
-      if (filename[strlen(filename) - 1] != '/')
+      //if (filename[strlen(filename) - 1] != '/')
 	fcount ++;
     }
 
@@ -505,8 +508,8 @@ Fl_File_Chooser::fileNameCB()
 		first_line;	// First matching line
   const char	*file;		// File from directory
 
-
 //  puts("fileNameCB()");
+//  printf("Event: %s\n", fl_eventnames[Fl::event()]);
 
   // Get the filename from the text field...
   filename = (char *)fileName->value();

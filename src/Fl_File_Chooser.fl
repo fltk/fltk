@@ -123,7 +123,7 @@ window->hide();}
         Fl_File_Input fileName {
           callback {fileNameCB();}
           private xywh {115 300 365 35} labelfont 1 when 8 resizable
-          code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY_ALWAYS);}
+          code0 {fileName->when(FL_WHEN_CHANGED | FL_WHEN_ENTER_KEY);}
         }
         Fl_Box {} {
           label {Filename:}

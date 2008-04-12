@@ -2872,7 +2872,7 @@ void Fl_Help_View::end_selection(int clipboard)
           *d++ = *src++;
         }
         c = src[-1];
-        p = isspace(c) ? ' ' : c;
+        p = isspace(c&255) ? ' ' : c;
       }
       continue;
     }
@@ -2888,7 +2888,7 @@ void Fl_Help_View::end_selection(int clipboard)
     }
     int n = s-value_;
     if (n>selection_first && n<=selection_last) {
-      if (!pre && isspace(c)) c = ' ';
+      if (!pre && isspace(c&255)) c = ' ';
       if (p!=' '||c!=' ')
         *d++ = c;
       p = c;
