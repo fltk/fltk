@@ -410,9 +410,10 @@ int Fl_Input::handle(int event) {
       copy(0);
     }
 
-    // perform the RELEASE callback
-    if (when() & FL_WHEN_RELEASE)
-      maybe_do_callback();
+    // For output widgets, do the callback so the app knows the user
+    // did something with the mouse...
+    if (readonly()) do_callback();
+
     return 1;
 
   case FL_DND_ENTER:
