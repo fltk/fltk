@@ -1664,19 +1664,19 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
 
     if (style & PRIMARY_MASK) {
       if (Fl::focus() == this) background = selection_color();
-      else background = fl_color_average(color(), selection_color(), 0.5f);
+      else background = fl_color_average(color(), selection_color(), 0.4f);
     } else if (style & HIGHLIGHT_MASK) {
-      if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.8f);
-      else background = fl_color_average(color(), selection_color(), 0.9f);
+      if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.5f);
+      else background = fl_color_average(color(), selection_color(), 0.6f);
     } else background = color();
     foreground = fl_contrast(styleRec->color, background);
   } else if (style & PRIMARY_MASK) {
     if (Fl::focus() == this) background = selection_color();
-    else background = fl_color_average(color(), selection_color(), 0.5f);
+    else background = fl_color_average(color(), selection_color(), 0.4f);
     foreground = fl_contrast(textcolor(), background);
   } else if (style & HIGHLIGHT_MASK) {
-    if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.8f);
-    else background = fl_color_average(color(), selection_color(), 0.9f);
+    if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.5f);
+    else background = fl_color_average(color(), selection_color(), 0.6f);
     foreground = fl_contrast(textcolor(), background);
   } else {
     foreground = textcolor();
@@ -1727,13 +1727,13 @@ void Fl_Text_Display::clear_rect( int style, int X, int Y,
     if (Fl::focus()==this) {
       fl_color(selection_color());
     } else {
-      fl_color(fl_color_average(color(), selection_color(), 0.5f));
+      fl_color(fl_color_average(color(), selection_color(), 0.4f));
     }
   } else if (style & HIGHLIGHT_MASK) {
     if (Fl::focus()==this) {
-      fl_color(fl_color_average(color(), selection_color(), 0.8f));
+      fl_color(fl_color_average(color(), selection_color(), 0.5f));
     } else {
-      fl_color(fl_color_average(color(), selection_color(), 0.9f));
+      fl_color(fl_color_average(color(), selection_color(), 0.6f));
     }
   } else {
     fl_color( color() );
