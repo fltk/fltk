@@ -31,8 +31,6 @@
 #include <FL/filename.H>
 
 int main(int argc, char **argv) {
-  char b[1024];
-  fl_filename_relative(b, 1024, "/Users/matt/proj/source");
   Fl_Window *window = new Fl_Window(300,180);
   Fl_Box *box = new Fl_Box(FL_UP_BOX,20,40,260,100,"Hello, World!");
   box->labelfont(FL_BOLD+FL_ITALIC);

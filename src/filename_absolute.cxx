@@ -116,9 +116,11 @@ fl_filename_relative(char       *to,	// O - Relative filename
                      const char *from) {// I - Absolute filename
   char		*newslash;		// Directory separator
   const char	*slash;			// Directory separator
-  char		cwd[1024];		// Current directory
+  char		cwd_buf[1024];		// Current directory
+  char          *cwd = cwd_buf;
 
 
+  // return if "from" is not an absolue path
 #if defined(WIN32) || defined(__EMX__)
   if (from[0] == '\0' ||
       (!isdirsep(*from) && !isalpha(*from) && from[1] != ':' &&
@@ -130,35 +132,42 @@ fl_filename_relative(char       *to,	// O - Relative filename
     return 0;
   }
 
-  if (!getcwd(cwd, sizeof(cwd))) {
+  // get the current directory and return if we can't
+  if (!getcwd(cwd_buf, sizeof(cwd_buf))) {
     strlcpy(to, from, tolen);
     return 0;
   }
 
 #if defined(WIN32) || defined(__EMX__)
+  // convert all backslashes into forward slashes
   for (newslash = strchr(cwd, '\\'); newslash; newslash = strchr(newslash + 1, '\\'))
     *newslash = '/';
 
+  // test for the exact same string and return "." if so
   if (!strcasecmp(from, cwd)) {
     strlcpy(to, ".", tolen);
     return (1);
   }
 
+  // test for the same drive. Return the absolute path if not
   if (tolower(*from & 255) != tolower(*cwd & 255)) {
-    // Not the same drive...
     strlcpy(to, from, tolen);
     return 0;
   }
-  for (slash = from + 2, newslash = cwd + 2;
+
+  // compare the path name without the drive prefix
+  from += 2; cwd += 2;
 #else
+  // test for the exact same string and return "." if so
   if (!strcmp(from, cwd)) {
     strlcpy(to, ".", tolen);
     return (1);
   }
-
-  for (slash = from, newslash = cwd;
 #endif // WIN32 || __EMX__
-       *slash != '\0' && *newslash != '\0';
+
+  // compare both path names until we find a difference
+  for (slash = from, newslash = cwd;
+      *slash != '\0' && *newslash != '\0';
        slash ++, newslash ++)
     if (isdirsep(*slash) && isdirsep(*newslash)) continue;
 #if defined(WIN32) || defined(__EMX__) || defined(__APPLE__)
@@ -167,25 +176,31 @@ fl_filename_relative(char       *to,	// O - Relative filename
     else if (*slash != *newslash) break;
 #endif // WIN32 || __EMX__ || __APPLE__
 
-  if (*newslash == '\0' && *slash != '\0' && !isdirsep(*slash))
+  // skip over trailing slashes
+  if ( *newslash == '\0' && *slash != '\0' && !isdirsep(*slash)
+     &&(newslash==cwd || !isdirsep(newslash[-1])) )
     newslash--;
 
+  // now go back to the first character of the first differing paths segment
   while (!isdirsep(*slash) && slash > from) slash --;
-
   if (isdirsep(*slash)) slash ++;
 
+  // do the same for the current dir
   if (*newslash != '\0')
     while (!isdirsep(*newslash) && newslash > cwd) newslash --;
 
+  // prepare the destination buffer
   to[0]         = '\0';
   to[tolen - 1] = '\0';
 
+  // now add a "previous dir" sequence for every following slash in the cwd
   while (*newslash != '\0') {
     if (isdirsep(*newslash)) strlcat(to, "../", tolen);
 
     newslash ++;
   }
 
+  // finally add the differing path from "from"
   strlcat(to, slash, tolen);
 
   return 1;
