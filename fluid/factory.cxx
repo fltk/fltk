@@ -791,7 +791,6 @@ public:
     if (w < 15) w = 15;
   }
   virtual const char *type_name() {return "Fl_Value_Input";}
-  int is_input() const {return 1;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
   int is_valuator() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
