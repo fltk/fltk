@@ -589,9 +589,14 @@ int Shortcut_Button::handle(int e) {
   
 void shortcut_in_cb(Shortcut_Button* i, void* v) {
   if (v == LOAD) {
-    if (!current_widget->is_button()) {i->hide(); return;}
+    if ( !current_widget->is_button() && !current_widget->is_input() ) {
+      i->hide(); return;
+    }
     i->show();
-    i->svalue = ((Fl_Button*)(current_widget->o))->shortcut();
+    if (current_widget->is_button())
+      i->svalue = ((Fl_Button*)(current_widget->o))->shortcut();
+    else if (current_widget->is_input())
+      i->svalue = ((Fl_Input_*)(current_widget->o))->shortcut();
     i->redraw();
   } else {
     int mod = 0;
@@ -601,6 +606,11 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
         if (b->shortcut()!=i->svalue) mod = 1;
 	b->shortcut(i->svalue);
 	if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
+      }
+      else if (o->selected && o->is_input()) {
+	Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
+        if (b->shortcut()!=i->svalue) mod = 1;
+	b->shortcut(i->svalue);
       }
     if (mod) set_modflag(1);
   }

@@ -442,6 +442,7 @@ public:
     if (w < 15) w = 15;
   }
   virtual const char *type_name() {return "Fl_Input";}
+  int is_input() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_Input *myo = new Fl_Input(x,y,w,h,"input:");
     myo->value("Text Input");
@@ -455,6 +456,7 @@ public:
     d->textfont(s->textfont());
     d->textsize(s->textsize());
     d->textcolor(s->textcolor());
+    d->shortcut(s->shortcut());
   }
 };
 static Fl_Input_Type Fl_Input_type;
@@ -489,6 +491,7 @@ public:
     if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_File_Input";}
+  int is_input() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_File_Input *myo = new Fl_File_Input(x,y,w,h,"file:");
     myo->value("/now/is/the/time/for/a/filename.ext");
@@ -788,6 +791,7 @@ public:
     if (w < 15) w = 15;
   }
   virtual const char *type_name() {return "Fl_Value_Input";}
+  int is_input() const {return 1;}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
   int is_valuator() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {

@@ -131,6 +131,7 @@ public:
   virtual int is_parent() const;
   virtual int is_widget() const;
   virtual int is_button() const;
+  virtual int is_input() const;
   virtual int is_valuator() const;
   virtual int is_spinner() const;
   virtual int is_menu_item() const;

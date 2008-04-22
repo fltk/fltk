@@ -788,6 +788,13 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     }
     return replace(position(), mark(), t, e-t);}
 
+  case FL_SHORTCUT:
+    if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut())) 
+      return 0;
+    if (Fl::visible_focus() && handle(FL_FOCUS)) 
+      Fl::focus(this);
+    return 1;
+
   default:
     return 0;
   }
@@ -810,6 +817,8 @@ Fl_Input_::Fl_Input_(int X, int Y, int W, int H, const char* l)
   value_ = "";
   xscroll_ = yscroll_ = 0;
   maximum_size_ = 32767;
+  shortcut_ = 0;
+  set_flag(SHORTCUT_LABEL);
 }
 
 void Fl_Input_::put_in_buffer(int len) {

@@ -58,6 +58,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
   int xscroll_, yscroll_;
   int mu_p;
   int maximum_size_;
+  int shortcut_;
 
   uchar erase_cursor_only;
   uchar textfont_;
@@ -118,6 +119,9 @@ public:
   int copy(int clipboard);
   int undo();
   int copy_cuts();
+
+  int shortcut() const {return shortcut_;}
+  void shortcut(int s) {shortcut_ = s;}
 
   Fl_Font textfont() const {return (Fl_Font)textfont_;}
   void textfont(uchar s) {textfont_ = s;}

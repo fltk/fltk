@@ -88,13 +88,15 @@ int main(int argc, char **argv) {
   // input[0]->maximum_size(20);
   // input[0]->static_value("this is a testgarbage");
   input[1] = new Fl_Float_Input(70,y,300,30,"Float:"); y += 35;
-  input[1]->tooltip("Input field for floating-point number");
+  input[1]->tooltip("Input field for floating-point number (F1)");
+  input[1]->shortcut(FL_F+1);
   input[2] = new Fl_Int_Input(70,y,300,30,"Int:"); y += 35;
-  input[2]->tooltip("Input field for integer number");
-  input[3] = new Fl_Secret_Input(70,y,300,30,"Secret:"); y += 35;
-  input[3]->tooltip("Input field for password");
-  input[4] = new Fl_Multiline_Input(70,y,300,100,"Multiline:"); y += 105;
-  input[4]->tooltip("Input field for short text with newlines");
+  input[2]->tooltip("Input field for integer number (F2)");
+  input[2]->shortcut(FL_F+2);
+  input[3] = new Fl_Secret_Input(70,y,300,30,"&Secret:"); y += 35;
+  input[3]->tooltip("Input field for password (Alt-S)");
+  input[4] = new Fl_Multiline_Input(70,y,300,100,"&Multiline:"); y += 105;
+  input[4]->tooltip("Input field for short text with newlines (Alt-M)");
   input[4]->wrap(1);
 
   for (int i = 0; i < 4; i++) {
