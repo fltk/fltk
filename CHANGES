@@ -4,6 +4,11 @@ CHANGES IN FLTK 1.3.0
 
 CHANGES IN FLTK 1.1.9
 
+	- Improved color contrast in secondary selection blocks
+	  of Fl_Text_Display (STR #1917)
+	- Fixed regression in callback handling (STR #1918)
+	- Fixed wrong relative path when absolute path has a 
+	  trailing slash in fl_filename_relative (STR #1920)
 	- Fixed multiple selction of files and directories in
 	  Fl_File_Chooser (STR #1913)
 	- Fixed MSWindows crash when selecting umlauts
