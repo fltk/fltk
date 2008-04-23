@@ -45,8 +45,8 @@ struct FL_EXPORT Fl_Label {
   Fl_Image* image;
   Fl_Image* deimage;
   uchar type;
-  uchar font;
-  uchar size;
+  Fl_Font font;
+  Fl_Font_Size size;
   unsigned color;
   void draw(int,int,int,int, Fl_Align) const ;
   void measure(int&, int&) const ;
@@ -136,10 +136,10 @@ public:
   void labeltype(Fl_Labeltype a) {label_.type = a;}
   Fl_Color labelcolor() const {return (Fl_Color)label_.color;}
   void labelcolor(unsigned a) {label_.color=a;}
-  Fl_Font labelfont() const {return (Fl_Font)label_.font;}
-  void labelfont(uchar a) {label_.font=a;}
-  uchar labelsize() const {return label_.size;}
-  void labelsize(uchar a) {label_.size=a;}
+  Fl_Font labelfont() const {return label_.font;}
+  void labelfont(Fl_Font a) {label_.font=a;}
+  Fl_Font_Size labelsize() const {return label_.size;}
+  void labelsize(Fl_Font_Size a) {label_.size=a;}
   Fl_Image* image() {return label_.image;}
   void image(Fl_Image* a) {label_.image=a;}
   void image(Fl_Image& a) {label_.image=&a;}

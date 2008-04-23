@@ -391,19 +391,19 @@ Fl_Color Fl_File_Chooser::textcolor() {
   return (fileList->textcolor());
 }
 
-void Fl_File_Chooser::textfont(uchar f) {
+void Fl_File_Chooser::textfont(Fl_Font f) {
   fileList->textfont(f);
 }
 
-uchar Fl_File_Chooser::textfont() {
+Fl_Font Fl_File_Chooser::textfont() {
   return (fileList->textfont());
 }
 
-void Fl_File_Chooser::textsize(uchar s) {
+void Fl_File_Chooser::textsize(Fl_Font_Size s) {
   fileList->textsize(s);
 }
 
-uchar Fl_File_Chooser::textsize() {
+Fl_Font_Size Fl_File_Chooser::textsize() {
   return (fileList->textsize());
 }
 

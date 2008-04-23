@@ -103,8 +103,8 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 		bgcolor_,		// Background color
 		textcolor_,		// Text color
 		linkcolor_;		// Link color
-  uchar		textfont_,		// Default font for text
-		textsize_;		// Default font size
+  Fl_Font       textfont_;		// Default font for text
+  Fl_Font_Size  textsize_;		// Default font size
   const char	*value_;		// HTML text value
 
   int		nblocks_,		// Number of blocks/paragraphs
@@ -112,7 +112,8 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   Fl_Help_Block	*blocks_;		// Blocks
 
   int		nfonts_;		// Number of fonts in stack
-  uchar		fonts_[100][2];		// Font stack
+  Fl_Font       fonts_[100];		// Font stack
+  Fl_Font_Size  font_sizes_[100];       // Font Size stack
 
   Fl_Help_Func	*link_;			// Link transform function
 
@@ -164,15 +165,15 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   int		get_length(const char *l);
   int		handle(int);
 
-  void		initfont(uchar &f, uchar &s) { nfonts_ = 0;
-			fl_font(f = fonts_[0][0] = textfont_,
-			        s = fonts_[0][1] = textsize_); }
-  void		pushfont(uchar f, uchar s) { if (nfonts_ < 99) nfonts_ ++;
-			fl_font(fonts_[nfonts_][0] = f,
-			        fonts_[nfonts_][1] = s); }
-  void		popfont(uchar &f, uchar &s) { if (nfonts_ > 0) nfonts_ --;
-			fl_font(f = fonts_[nfonts_][0],
-			        s = fonts_[nfonts_][1]); }
+  void		initfont(Fl_Font &f, Fl_Font_Size &s) { nfonts_ = 0;
+			fl_font(f = fonts_[0] = textfont_,
+			        s = font_sizes_[0] = textsize_); }
+  void		pushfont(Fl_Font f, Fl_Font_Size s) { if (nfonts_ < 99) nfonts_ ++;
+			fl_font(fonts_[nfonts_] = f,
+			        font_sizes_[nfonts_] = s); }
+  void		popfont(Fl_Font &f, Fl_Font_Size &s) { if (nfonts_ > 0) nfonts_ --;
+			fl_font(f = fonts_[nfonts_],
+			        s = font_sizes_[nfonts_]); }
 
   void          hv_draw(const char *t, int x, int y);
   char          begin_selection();
@@ -198,10 +199,10 @@ public:
   void		size(int W, int H) { Fl_Widget::size(W, H); }
   void		textcolor(Fl_Color c) { if (textcolor_ == defcolor_) textcolor_ = c; defcolor_ = c; }
   Fl_Color	textcolor() const { return (defcolor_); }
-  void		textfont(uchar f) { textfont_ = f; format(); }
-  uchar		textfont() const { return (textfont_); }
-  void		textsize(uchar s) { textsize_ = s; format(); }
-  uchar		textsize() const { return (textsize_); }
+  void		textfont(Fl_Font f) { textfont_ = f; format(); }
+  Fl_Font       textfont() const { return (textfont_); }
+  void		textsize(Fl_Font_Size s) { textsize_ = s; format(); }
+  Fl_Font_Size  textsize() const { return (textsize_); }
   const char	*title() { return (title_); }
   void		topline(const char *n);
   void		topline(int);

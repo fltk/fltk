@@ -521,7 +521,7 @@ void widget_size_cb(Fl_Widget *, long size) {
       }
 
       Fl_Widget *w = ((Fl_Widget_Type *)o)->o;
-      w->labelsize((uchar)size);
+      w->labelsize((Fl_Font)size);
       Fl_Font f;
       int s = (int)size;
       Fl_Color c;

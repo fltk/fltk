@@ -136,11 +136,11 @@ FL_EXPORT double fl_transform_dy(double x, double y);
 FL_EXPORT void fl_transformed_vertex(double x, double y);
 
 // current font:
-FL_EXPORT void fl_font(int face, int size);
-extern FL_EXPORT int fl_font_;
-inline int fl_font() {return fl_font_;}
-extern FL_EXPORT int fl_size_;
-inline int fl_size() {return fl_size_;}
+FL_EXPORT void fl_font(Fl_Font face, Fl_Font_Size size);
+extern FL_EXPORT Fl_Font fl_font_;
+inline Fl_Font fl_font() {return fl_font_;}
+extern FL_EXPORT Fl_Font_Size fl_size_;
+inline Fl_Font_Size fl_size() {return fl_size_;}
 
 // information you can get about the current font:
 FL_EXPORT int   fl_height();	// using "size" should work ok

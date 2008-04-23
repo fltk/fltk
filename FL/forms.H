@@ -209,7 +209,7 @@ inline void fl_reset_focus_object(Fl_Widget* o) {Fl::focus(o);}
 inline void fl_set_object_boxtype(Fl_Widget* o, Fl_Boxtype a) {o->box(a);}
 inline void fl_set_object_lsize(Fl_Widget* o,int s) {o->labelsize(s);}
 inline void fl_set_object_lstyle(Fl_Widget* o,int a) {
-  o->labelfont((uchar)a); o->labeltype((Fl_Labeltype)(a>>8));}
+  o->labelfont((Fl_Font)a); o->labeltype((Fl_Labeltype)(a>>8));}
 inline void fl_set_object_lcol(Fl_Widget* o, unsigned a) {o->labelcolor(a);}
 #define fl_set_object_lcolor  fl_set_object_lcol
 inline void fl_set_object_lalign(Fl_Widget* o, Fl_Align a) {o->align(a);}

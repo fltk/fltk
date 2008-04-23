@@ -93,7 +93,7 @@ Fl_Value_Output::Fl_Value_Output(int X, int Y, int W, int H,const char *l)
   box(FL_NO_BOX);
   align(FL_ALIGN_LEFT);
   textfont_ = FL_HELVETICA;
-  textsize_ = (uchar)FL_NORMAL_SIZE;
+  textsize_ = FL_NORMAL_SIZE;
   textcolor_ = FL_FOREGROUND_COLOR;
   soft_ = 0;
 }

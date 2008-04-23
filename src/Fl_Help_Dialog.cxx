@@ -244,7 +244,7 @@ void Fl_Help_Dialog::show(int argc, char **argv) {
   window_->show(argc, argv);
 }
 
-void Fl_Help_Dialog::textsize(uchar s) {
+void Fl_Help_Dialog::textsize(Fl_Font_Size s) {
   view_->textsize(s);
 
 if (s <= 8)
@@ -258,7 +258,7 @@ else
   larger_->activate();
 }
 
-uchar Fl_Help_Dialog::textsize() {
+Fl_Font_Size Fl_Help_Dialog::textsize() {
   return (view_->textsize());
 }
 

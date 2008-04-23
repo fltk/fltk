@@ -89,7 +89,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
 
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   box(FL_DOWN_FRAME);
-  textsize((uchar)FL_NORMAL_SIZE);
+  textsize(FL_NORMAL_SIZE);
   textcolor(FL_FOREGROUND_COLOR);
   textfont(FL_HELVETICA);
   set_flag(SHORTCUT_LABEL);

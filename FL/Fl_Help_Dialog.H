@@ -74,8 +74,8 @@ public:
   void resize(int xx, int yy, int ww, int hh);
   void show();
   void show(int argc, char **argv);
-  void textsize(uchar s);
-  uchar textsize();
+  void textsize(Fl_Font_Size s);
+  Fl_Font_Size textsize();
   void topline(const char *n);
   void topline(int n);
   void value(const char *f);

@@ -91,7 +91,7 @@ void Fl_Choice::draw() {
       l.image = 0;
       l.deimage = 0;
       l.type = m.labeltype_;
-      l.font = m.labelsize_ || m.labelfont_ ? m.labelfont_ : uchar(textfont());
+      l.font = m.labelsize_ || m.labelfont_ ? m.labelfont_ : textfont();
       l.size = m.labelsize_ ? m.labelsize_ : textsize();
       l.color= m.labelcolor_ ? m.labelcolor_ : textcolor();
       if (!m.active()) l.color = fl_inactive((Fl_Color)l.color);

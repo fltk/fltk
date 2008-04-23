@@ -1067,7 +1067,7 @@ Fl_File_Chooser::update_preview()
       previewBox->label(preview_text_);
       previewBox->align((Fl_Align)(FL_ALIGN_CLIP | FL_ALIGN_INSIDE |
                                    FL_ALIGN_LEFT | FL_ALIGN_TOP));
-      previewBox->labelsize((uchar)size);
+      previewBox->labelsize(size);
       previewBox->labelfont(FL_COURIER);
     }
   } else {

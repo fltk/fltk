@@ -150,10 +150,10 @@ public:
   int shown();
   void textcolor(Fl_Color c);
   Fl_Color textcolor();
-  void textfont(uchar f);
-  uchar textfont();
-  void textsize(uchar s);
-  uchar textsize();
+  void textfont(Fl_Font f);
+  Fl_Font textfont();
+  void textsize(Fl_Font_Size s);
+  Fl_Font_Size textsize();
   void type(int t);
   int type();
   void * user_data() const;

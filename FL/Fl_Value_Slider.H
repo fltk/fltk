@@ -31,16 +31,17 @@
 #include "Fl_Slider.H"
 
 class FL_EXPORT Fl_Value_Slider : public Fl_Slider {
-    uchar textfont_, textsize_;
+    Fl_Font textfont_;
+    Fl_Font_Size textsize_;
     unsigned textcolor_;
 public:
     void draw();
     int handle(int);
     Fl_Value_Slider(int x,int y,int w,int h, const char *l = 0);
-    Fl_Font textfont() const {return (Fl_Font)textfont_;}
-    void textfont(uchar s) {textfont_ = s;}
-    uchar textsize() const {return textsize_;}
-    void textsize(uchar s) {textsize_ = s;}
+    Fl_Font textfont() const {return textfont_;}
+    void textfont(Fl_Font s) {textfont_ = s;}
+    Fl_Font_Size textsize() const {return textsize_;}
+    void textsize(Fl_Font_Size s) {textsize_ = s;}
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
     void textcolor(unsigned s) {textcolor_ = s;}
 };

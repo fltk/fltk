@@ -40,7 +40,8 @@
 
 class FL_EXPORT Fl_Counter : public Fl_Valuator {
 
-  uchar textfont_, textsize_;
+  Fl_Font textfont_;
+  Fl_Font_Size textsize_;
   unsigned textcolor_;
   double lstep_;
   uchar mouseobj;
@@ -60,10 +61,10 @@ public:
   void lstep(double a) {lstep_ = a;}
   void step(double a,double b) {Fl_Valuator::step(a); lstep_ = b;}
   void step(double a) {Fl_Valuator::step(a);}
-  Fl_Font textfont() const {return (Fl_Font)textfont_;}
-  void textfont(uchar s) {textfont_ = s;}
-  uchar textsize() const {return textsize_;}
-  void textsize(uchar s) {textsize_ = s;}
+  Fl_Font textfont() const {return textfont_;}
+  void textfont(Fl_Font s) {textfont_ = s;}
+  Fl_Font_Size textsize() const {return textsize_;}
+  void textsize(Fl_Font_Size s) {textsize_ = s;}
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
   void textcolor(unsigned s) {textcolor_ = s;}
 

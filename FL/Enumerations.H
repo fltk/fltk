@@ -287,30 +287,33 @@ enum Fl_Align {	// align() values
   FL_ALIGN_NOWRAP		= 0 // for back compatability
 };
 
-enum Fl_Font {	// standard fonts
-  FL_HELVETICA		= 0,
-  FL_HELVETICA_BOLD,
-  FL_HELVETICA_ITALIC,
-  FL_HELVETICA_BOLD_ITALIC,
-  FL_COURIER,
-  FL_COURIER_BOLD,
-  FL_COURIER_ITALIC,
-  FL_COURIER_BOLD_ITALIC,
-  FL_TIMES,
-  FL_TIMES_BOLD,
-  FL_TIMES_ITALIC,
-  FL_TIMES_BOLD_ITALIC,
-  FL_SYMBOL,
-  FL_SCREEN,
-  FL_SCREEN_BOLD,
-  FL_ZAPF_DINGBATS,
+typedef unsigned int Fl_Font;
+typedef unsigned int Fl_Font_Size;
 
-  FL_FREE_FONT		= 16,	// first one to allocate
-  FL_BOLD		= 1,	// add this to helvetica, courier, or times
-  FL_ITALIC		= 2	// add this to helvetica, courier, or times
-};
+// standard fonts
+const Fl_Font FL_HELVETICA              = 0;
+const Fl_Font FL_HELVETICA_BOLD         = 1;
+const Fl_Font FL_HELVETICA_ITALIC       = 2;
+const Fl_Font FL_HELVETICA_BOLD_ITALIC  = 3;
+const Fl_Font FL_COURIER                = 4;
+const Fl_Font FL_COURIER_BOLD           = 5;
+const Fl_Font FL_COURIER_ITALIC         = 6;
+const Fl_Font FL_COURIER_BOLD_ITALIC    = 7;
+const Fl_Font FL_TIMES                  = 8;
+const Fl_Font FL_TIMES_BOLD             = 9;
+const Fl_Font FL_TIMES_ITALIC           = 10;
+const Fl_Font FL_TIMES_BOLD_ITALIC      = 11;
+const Fl_Font FL_SYMBOL                 = 12;
+const Fl_Font FL_SCREEN                 = 13;
+const Fl_Font FL_SCREEN_BOLD            = 14;
+const Fl_Font FL_ZAPF_DINGBATS          = 15;
 
-extern FL_EXPORT int FL_NORMAL_SIZE;
+const Fl_Font FL_FREE_FONT              = 16; // first one to allocate
+const Fl_Font FL_BOLD                   = 1;  // add this to helvetica, courier, or times
+const Fl_Font FL_ITALIC                 = 2;  // add this to helvetica, courier, or times
+
+extern FL_EXPORT Fl_Font_Size FL_NORMAL_SIZE;
+
 
 enum Fl_Color {	// standard colors
   // These are used as default colors in widgets and altered as necessary

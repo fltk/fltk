@@ -38,8 +38,8 @@ unsigned	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
 		                                   FL_NUM_GREEN - 1,
 						   FL_NUM_BLUE - 2);
 unsigned	Fl_Tooltip::textcolor_ = FL_BLACK;
-int		Fl_Tooltip::font_ = FL_HELVETICA;
-int		Fl_Tooltip::size_ = FL_NORMAL_SIZE;
+Fl_Font         Fl_Tooltip::font_ = FL_HELVETICA;
+Fl_Font_Size    Fl_Tooltip::size_ = FL_NORMAL_SIZE;
 
 #define MAX_WIDTH 400
 

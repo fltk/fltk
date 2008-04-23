@@ -76,7 +76,7 @@ int Fl_Widget::handle(int) {
   return 0;
 }
 
-int FL_NORMAL_SIZE = 14;
+Fl_Font_Size FL_NORMAL_SIZE = 14;
 
 Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
 
@@ -87,7 +87,7 @@ Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
   label_.deimage = 0;
   label_.type	 = FL_NORMAL_LABEL;
   label_.font	 = FL_HELVETICA;
-  label_.size	 = (uchar)FL_NORMAL_SIZE;
+  label_.size	 = FL_NORMAL_SIZE;
   label_.color	 = FL_FOREGROUND_COLOR;
   tooltip_       = 0;
   callback_	 = default_callback;

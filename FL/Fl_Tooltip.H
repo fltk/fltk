@@ -46,10 +46,10 @@ public:
   static Fl_Widget* current() {return widget_;}
   static void current(Fl_Widget*);
 
-  static int font() { return font_; }
-  static int size() { return size_; }
-  static void font(int i) { font_ = i; }
-  static void size(int s) { size_ = s; }
+  static Fl_Font font() { return font_; }
+  static Fl_Font_Size size() { return size_; }
+  static void font(Fl_Font i) { font_ = i; }
+  static void size(Fl_Font_Size s) { size_ = s; }
   static void color(unsigned c) { color_ = c; }
   static Fl_Color color() { return (Fl_Color)color_; }
   static void textcolor(unsigned c) { textcolor_ = c; }
@@ -65,8 +65,8 @@ private:
   static int enabled_;
   static unsigned color_;
   static unsigned textcolor_;
-  static int font_;
-  static int size_;
+  static Fl_Font font_;
+  static Fl_Font_Size size_;
   static Fl_Widget* widget_;
 };
 

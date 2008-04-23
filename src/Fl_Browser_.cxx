@@ -803,7 +803,7 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* l)
   hscrollbar.callback(hscrollbar_callback);
   hscrollbar.type(FL_HORIZONTAL);
   textfont_ = FL_HELVETICA;
-  textsize_ = (uchar)FL_NORMAL_SIZE;
+  textsize_ = FL_NORMAL_SIZE;
   textcolor_ = FL_FOREGROUND_COLOR;
   has_scrollbar_ = BOTH;
   max_width = 0;

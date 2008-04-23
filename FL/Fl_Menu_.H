@@ -42,8 +42,8 @@ protected:
 
   uchar alloc;
   uchar down_box_;
-  uchar textfont_;
-  uchar textsize_;
+  Fl_Font textfont_;
+  Fl_Font_Size textsize_;
   unsigned textcolor_;
 
 public:
@@ -80,10 +80,10 @@ public:
   const char *text() const {return value_ ? value_->text : 0;}
   const char *text(int i) const {return menu_[i].text;}
 
-  Fl_Font textfont() const {return (Fl_Font)textfont_;}
-  void textfont(uchar c) {textfont_=c;}
-  uchar textsize() const {return textsize_;}
-  void textsize(uchar c) {textsize_=c;}
+  Fl_Font textfont() const {return textfont_;}
+  void textfont(Fl_Font c) {textfont_=c;}
+  Fl_Font_Size textsize() const {return textsize_;}
+  void textsize(Fl_Font_Size c) {textsize_=c;}
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
   void textcolor(unsigned c) {textcolor_=c;}
 

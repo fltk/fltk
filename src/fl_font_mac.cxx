@@ -27,7 +27,7 @@
 
 #include <config.h>
 
-Fl_FontSize::Fl_FontSize(const char* name, int Size) {
+Fl_FontSize::Fl_FontSize(const char* name, Fl_Font_Size Size) {
   next = 0;
 #  if HAVE_GL
   listbase = 0;
@@ -83,7 +83,7 @@ Fl_FontSize::Fl_FontSize(const char* name, int Size) {
     // now set the actual font, size and attributes. We also set the font matrix to 
     // render our font up-side-down, so when rendered through our inverted CGContext,
     // text will appear normal again.
-  Fixed fsize = IntToFixed(Size);
+  Fixed fsize = FloatToFixed(Size);
   ATSUFontID fontID = FMGetFontFromATSFontRef(font);
   static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
   ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag, kATSUFontMatrixTag };
@@ -245,7 +245,7 @@ void fl_font(Fl_FontSize* s) {
 #endif
 }
 
-static Fl_FontSize* find(int fnum, int size) {
+static Fl_FontSize* find(Fl_Font fnum, Fl_Font_Size size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_FontSize* f;
@@ -260,10 +260,10 @@ static Fl_FontSize* find(int fnum, int size) {
 ////////////////////////////////////////////////////////////////
 // Public interface:
 
-int fl_font_ = 0;
-int fl_size_ = 0;
+Fl_Font fl_font_ = 0;
+Fl_Font_Size fl_size_ = 0;
 
-void fl_font(int fnum, int size) {
+void fl_font(Fl_Font fnum, Fl_Font_Size size) {
   if (fnum==-1) {
     fl_font_ = 0; 
     fl_size_ = 0;

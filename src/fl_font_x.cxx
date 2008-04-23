@@ -113,7 +113,7 @@ int fl_correct_encoding(const char* name) {
 }
 
 // locate or create an Fl_FontSize for a given Fl_Fontdesc and size:
-static Fl_FontSize* find(int fnum, int size) {
+static Fl_FontSize* find(Fl_Font fnum, Fl_Font_Size size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use font 0 if still undefined
   Fl_FontSize* f;
@@ -193,13 +193,13 @@ static Fl_FontSize* find(int fnum, int size) {
 ////////////////////////////////////////////////////////////////
 // Public interface:
 
-int fl_font_ = 0;
-int fl_size_ = 0;
+Fl_Font fl_font_ = 0;
+Fl_Font_Size fl_size_ = 0;
 XFontStruct* fl_xfont = 0;
 void *fl_xftfont = 0;
 static GC font_gc;
 
-void fl_font(int fnum, int size) {
+void fl_font(Fl_Font fnum, Fl_Font_Size size) {
   if (fnum==-1) {
     fl_font_ = 0; fl_size_ = 0;
     return;

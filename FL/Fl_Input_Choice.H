@@ -166,16 +166,16 @@ public:
   void textcolor(Fl_Color c) {
     inp_->textcolor(c);
   }
-  uchar textfont() const {
+  Fl_Font textfont() const {
     return (inp_->textfont());
   }
-  void textfont(uchar f) {
+  void textfont(Fl_Font f) {
     inp_->textfont(f);
   }
-  uchar textsize() const {
+  Fl_Font_Size textsize() const {
     return (inp_->textsize());
   }
-  void textsize(uchar s) {
+  void textsize(Fl_Font_Size s) {
     inp_->textsize(s);
   }
   const char* value() const {

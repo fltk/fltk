@@ -465,7 +465,8 @@ Fl_Help_View::draw()
 			attr[1024];	// Attribute buffer
   int			xx, yy, ww, hh;	// Current positions and sizes
   int			line;		// Current line
-  unsigned char		font, fsize;	// Current font and size
+  Fl_Font               font;
+  Fl_Font_Size          fsize;          // Current font and size
   int			head, pre,	// Flags for text
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
@@ -700,11 +701,11 @@ Fl_Help_View::draw()
             if (tolower(buf[0]) == 'h')
 	    {
 	      font  = FL_HELVETICA_BOLD;
-	      fsize = (uchar)(textsize_ + '7' - buf[1]);
+	      fsize = textsize_ + '7' - buf[1];
 	    }
 	    else if (strcasecmp(buf, "DT") == 0)
 	    {
-	      font  = (uchar)(textfont_ | FL_ITALIC);
+	      font  = textfont_ | FL_ITALIC;
 	      fsize = textsize_;
 	    }
 	    else if (strcasecmp(buf, "PRE") == 0)
@@ -1082,7 +1083,8 @@ Fl_Help_View::format()
   int		xx, yy, ww, hh;	// Size of current text fragment
   int		line;		// Current line in block
   int		links;		// Links for current line
-  unsigned char	font, fsize;	// Current font and size
+  Fl_Font       font;
+  Fl_Font_Size  fsize;          // Current font and size
   unsigned char	border;		// Draw border?
   int		talign,		// Current alignment
 		newalign,	// New alignment
@@ -1387,11 +1389,11 @@ Fl_Help_View::format()
           if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
 	  {
 	    font  = FL_HELVETICA_BOLD;
-	    fsize = (uchar)(textsize_ + '7' - buf[1]);
+	    fsize = textsize_ + '7' - buf[1];
 	  }
 	  else if (strcasecmp(buf, "DT") == 0)
 	  {
-	    font  = (uchar)(textfont_ | FL_ITALIC);
+	    font  = textfont_ | FL_ITALIC;
 	    fsize = textsize_;
 	  }
 	  else if (strcasecmp(buf, "PRE") == 0)
@@ -1575,7 +1577,7 @@ Fl_Help_View::format()
 	  block->h   += hh;
 
           if (strcasecmp(buf, "TH") == 0)
-	    font = (uchar)(textfont_ | FL_BOLD);
+	    font = textfont_ | FL_BOLD;
 	  else
 	    font = textfont_;
 
@@ -1894,7 +1896,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 		*attrs,					// Pointer to attributes
 		*start;					// Start of element
   int		minwidths[MAX_COLUMNS];			// Minimum widths for each column
-  unsigned char	font, fsize;				// Current font and size
+  Fl_Font       font;
+  Fl_Font_Size  fsize;				// Current font and size
 
 
   // Clear widths...
@@ -1910,8 +1913,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   max_width   = 0;
   pre         = 0;
   needspace   = 0;
-  font        = fonts_[nfonts_][0];
-  fsize       = fonts_[nfonts_][1];
+  font        = fonts_[nfonts_];
+  fsize       = font_sizes_[nfonts_];
 
   // Scan the table...
   for (ptr = table, column = -1, width = 0, s = buf, incell = 0; *ptr;)
@@ -1988,11 +1991,11 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
         if (tolower(buf[0]) == 'h' && isdigit(buf[1]))
 	{
 	  font  = FL_HELVETICA_BOLD;
-	  fsize = (uchar)(textsize_ + '7' - buf[1]);
+	  fsize = textsize_ + '7' - buf[1];
 	}
 	else if (strcasecmp(buf, "DT") == 0)
 	{
-	  font  = (uchar)(textfont_ | FL_ITALIC);
+	  font  = textfont_ | FL_ITALIC;
 	  fsize = textsize_;
 	}
 	else if (strcasecmp(buf, "PRE") == 0)
@@ -2102,7 +2105,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	incell    = 1;
 
         if (strcasecmp(buf, "TH") == 0)
-	  font = (uchar)(textfont_ | FL_BOLD);
+	  font = textfont_ | FL_BOLD;
 	else
 	  font = textfont_;
 

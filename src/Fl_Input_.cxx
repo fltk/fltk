@@ -807,7 +807,7 @@ Fl_Input_::Fl_Input_(int X, int Y, int W, int H, const char* l)
   box(FL_DOWN_BOX);
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   align(FL_ALIGN_LEFT);
-  textsize_ = (uchar)FL_NORMAL_SIZE;
+  textsize_ = FL_NORMAL_SIZE;
   textfont_ = FL_HELVETICA;
   textcolor_ = FL_FOREGROUND_COLOR;
   cursor_color_ = FL_FOREGROUND_COLOR; // was FL_BLUE

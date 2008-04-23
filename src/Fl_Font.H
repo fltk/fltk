@@ -51,15 +51,15 @@ public:
   HFONT fid;
   int width[256];
   TEXTMETRIC metr;
-  FL_EXPORT Fl_FontSize(const char* fontname, int size);
+  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Font_Size size);
 #  elif defined(__APPLE_QD__)
-  FL_EXPORT Fl_FontSize(const char* fontname, int size);
+  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Font_Size size);
   short font, face, size;
   short ascent, descent;
   short width[256];
   bool knowMetrics;
 #  elif defined(__APPLE_QUARTZ__)
-  FL_EXPORT Fl_FontSize(const char* fontname, int size);
+  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Font_Size size);
   ATSUTextLayout layout;
   ATSUStyle style;
   short ascent, descent, q_width;
