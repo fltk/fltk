@@ -428,9 +428,9 @@ void Fl_Group::init_sizes() {
   delete[] sizes_; sizes_ = 0;
 }
 
-short* Fl_Group::sizes() {
+int *Fl_Group::sizes() {
   if (!sizes_) {
-    short* p = sizes_ = new short[4*(children_+2)];
+    int *p = sizes_ = new int[4*(children_+2)];
     // first thing in sizes array is the group's size:
     if (type() < FL_WINDOW) {p[0] = x(); p[2] = y();} else {p[0] = p[2] = 0;}
     p[1] = p[0]+w(); p[3] = p[2]+h();
@@ -477,7 +477,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
   } else if (children_) {
 
-    short* p = sizes();
+    int *p = sizes();
 
     // get changes in size/position from the initial size:
     int dx = X - p[0];

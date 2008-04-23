@@ -39,7 +39,7 @@
 
 void Fl_Tile::position(int oix, int oiy, int newx, int newy) {
   Fl_Widget*const* a = array();
-  short* p = sizes();
+  int *p = sizes();
   p += 8; // skip group & resizable's saved size
   for (int i=children(); i--; p += 4) {
     Fl_Widget* o = *a++;
@@ -73,7 +73,7 @@ void Fl_Tile::resize(int X,int Y,int W,int H) {
   int dy = Y-y();
   int dw = W-w();
   int dh = H-h();
-  short* p = sizes();
+  int *p = sizes();
   // resize this (skip the Fl_Group resize):
   Fl_Widget::resize(X,Y,W,H);
   // find bottom-right of resiable:
@@ -138,8 +138,8 @@ int Fl_Tile::handle(int event) {
     int oldx = 0;
     int oldy = 0;
     Fl_Widget*const* a = array();
-    short* q = sizes();
-    short* p = q+8;
+    int *q = sizes();
+    int *p = q+8;
     for (int i=children(); i--; p += 4) {
       Fl_Widget* o = *a++;
       if (o == resizable()) continue;

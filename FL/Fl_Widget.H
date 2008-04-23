@@ -58,7 +58,7 @@ class FL_EXPORT Fl_Widget {
   Fl_Group* parent_;
   Fl_Callback* callback_;
   void* user_data_;
-  short x_,y_,w_,h_;
+  int x_,y_,w_,h_;
   Fl_Label label_;
   int flags_;
   unsigned color_;
@@ -79,10 +79,10 @@ protected:
 
   Fl_Widget(int,int,int,int,const char* =0);
 
-  void x(int v) {x_ = (short)v;}
-  void y(int v) {y_ = (short)v;}
-  void w(int v) {w_ = (short)v;}
-  void h(int v) {h_ = (short)v;}
+  void x(int v) {x_ = v;}
+  void y(int v) {y_ = v;}
+  void w(int v) {w_ = v;}
+  void h(int v) {h_ = v;}
 
   int flags() const {return flags_;}
   void set_flag(int c) {flags_ |= c;}

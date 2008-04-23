@@ -44,8 +44,9 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   const char* xclass_;
   const void* icon_;
   // size_range stuff:
-  short minw, minh, maxw, maxh;
-  uchar dw, dh, aspect, size_range_set;
+  int minw, minh, maxw, maxh;
+  int dw, dh, aspect;
+  uchar size_range_set;
   // cursor stuff
   Fl_Cursor cursor_default;
   Fl_Color cursor_fg, cursor_bg;
@@ -94,7 +95,7 @@ public:
   void hotspot(const Fl_Widget& p, int offscreen = 0) {hotspot(&p,offscreen);}
   void free_position()	{clear_flag(FL_FORCE_POSITION);}
   void size_range(int a, int b, int c=0, int d=0, int e=0, int f=0, int g=0) {
-    minw=(short)a; minh=(short)b; maxw=(short)c; maxh=(short)d; dw=(uchar)e; dh=(uchar)f; aspect=(uchar)g; size_range_();}
+    minw=a; minh=b; maxw=c; maxh=d; dw=e; dh=f; aspect=g; size_range_();}
 
   const char* label() const	{return Fl_Widget::label();}
   const char* iconlabel() const	{return iconlabel_;}

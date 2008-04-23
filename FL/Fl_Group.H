@@ -38,7 +38,7 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
   Fl_Widget* savedfocus_;
   Fl_Widget* resizable_;
   int children_;
-  short *sizes_; // remembered initial sizes of children
+  int *sizes_; // remembered initial sizes of children
 
   int navigation(int);
   static Fl_Group *current_;
@@ -58,7 +58,7 @@ protected:
   void draw_children();
   void draw_outside_label(const Fl_Widget&) const ;
   void update_child(Fl_Widget&) const;
-  short* sizes();
+  int  *sizes();
 
 public:
 
