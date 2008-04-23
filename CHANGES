@@ -1,6 +1,7 @@
 CHANGES IN FLTK 1.3.0
 
-        - added support for shortcuts for Fl_Input_ derived
+        - added support for shortcuts for Fl_Input_,
+	  Fl_Value_Input, and Fl_Text_Display derived
           widgets (STR #1770)
         - initial setup (STR #1904)
 

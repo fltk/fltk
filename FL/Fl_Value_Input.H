@@ -47,6 +47,9 @@ public:
   void soft(char s) {soft_ = s;}
   char soft() const {return soft_;}
 
+  int shortcut() const {return input.shortcut();}
+  void shortcut(int s) {input.shortcut(s);}
+
   Fl_Font textfont() const {return input.textfont();}
   void textfont(uchar s) {input.textfont(s);}
   uchar textsize() const {return input.textsize();}

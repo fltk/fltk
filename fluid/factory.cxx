@@ -533,6 +533,7 @@ public:
     if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_Text_Display";}
+  int is_text_display() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_Text_Display *myo = new Fl_Text_Display(x,y,w,h);
     return myo;
@@ -573,6 +574,7 @@ public:
     if (w < 50) w = 50;
   }
   virtual const char *type_name() {return "Fl_Text_Editor";}
+  int is_text_display() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_Text_Editor *myo = new Fl_Text_Editor(x,y,w,h);
     return myo;
@@ -793,6 +795,7 @@ public:
   virtual const char *type_name() {return "Fl_Value_Input";}
   int textstuff(int w, Fl_Font& f, int& s, Fl_Color& c);
   int is_valuator() const {return 1;}
+  int is_value_input() const {return 1;}
   Fl_Widget *widget(int x,int y,int w,int h) {
     Fl_Value_Input *myo = new Fl_Value_Input(x,y,w,h,"value:");
     return myo;

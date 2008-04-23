@@ -37,6 +37,8 @@
 #include <FL/fl_message.H>
 #include <FL/Fl_Menu_.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Value_Input.H>
+#include <FL/Fl_Text_Display.H>
 #include "../src/flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -589,14 +591,19 @@ int Shortcut_Button::handle(int e) {
   
 void shortcut_in_cb(Shortcut_Button* i, void* v) {
   if (v == LOAD) {
-    if ( !current_widget->is_button() && !current_widget->is_input() ) {
-      i->hide(); return;
-    }
-    i->show();
     if (current_widget->is_button())
       i->svalue = ((Fl_Button*)(current_widget->o))->shortcut();
     else if (current_widget->is_input())
       i->svalue = ((Fl_Input_*)(current_widget->o))->shortcut();
+    else if (current_widget->is_value_input())
+      i->svalue = ((Fl_Value_Input*)(current_widget->o))->shortcut();
+    else if (current_widget->is_text_display())
+      i->svalue = ((Fl_Text_Display*)(current_widget->o))->shortcut();
+    else {
+      i->hide();
+      return;
+    }
+    i->show();
     i->redraw();
   } else {
     int mod = 0;
@@ -606,9 +613,16 @@ void shortcut_in_cb(Shortcut_Button* i, void* v) {
         if (b->shortcut()!=i->svalue) mod = 1;
 	b->shortcut(i->svalue);
 	if (o->is_menu_item()) ((Fl_Widget_Type*)o)->redraw();
-      }
-      else if (o->selected && o->is_input()) {
+      } else if (o->selected && o->is_input()) {
 	Fl_Input_* b = (Fl_Input_*)(((Fl_Widget_Type*)o)->o);
+        if (b->shortcut()!=i->svalue) mod = 1;
+	b->shortcut(i->svalue);
+      } else if (o->selected && o->is_value_input()) {
+	Fl_Value_Input* b = (Fl_Value_Input*)(((Fl_Widget_Type*)o)->o);
+        if (b->shortcut()!=i->svalue) mod = 1;
+	b->shortcut(i->svalue);
+      } else if (o->selected && o->is_text_display()) {
+	Fl_Text_Display* b = (Fl_Text_Display*)(((Fl_Widget_Type*)o)->o);
         if (b->shortcut()!=i->svalue) mod = 1;
 	b->shortcut(i->svalue);
       }

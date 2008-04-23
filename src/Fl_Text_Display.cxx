@@ -85,12 +85,14 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
   damage_range2_start = damage_range2_end = -1;
   dragPos = dragType = dragging = 0;
   display_insert_position_hint = 0;
+  shortcut_ = 0;
 
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   box(FL_DOWN_FRAME);
   textsize((uchar)FL_NORMAL_SIZE);
   textcolor(FL_FOREGROUND_COLOR);
   textfont(FL_HELVETICA);
+  set_flag(SHORTCUT_LABEL);
 
   text_area.x = 0;
   text_area.y = 0;
@@ -3261,6 +3263,14 @@ int Fl_Text_Display::handle(int event) {
       if (mHScrollBar->handle(event)) return 1;
 
       break;
+
+    case FL_SHORTCUT:
+      if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut()))
+        return 0;
+      if (Fl::visible_focus() && handle(FL_FOCUS))
+        Fl::focus(this);
+      return 1;
+      
   }
 
   return 0;

@@ -2162,30 +2162,26 @@ void Fl_Widget_Type::write_widget_code() {
     write_c("%s%s->type(%d);\n", indent(), var, o->type());
   if (o->box() != tplate->box() || subclass())
     write_c("%s%s->box(FL_%s);\n", indent(), var, boxname(o->box()));
-  if (is_input()) {
-    Fl_Input_* b = (Fl_Input_*)o;
-    if (b->shortcut()) {
-			int s = b->shortcut();
-			if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
-		    write_c("%s%s->shortcut(FL_COMMAND|0x%x);\n", indent(), var, s & ~(FL_CTRL|FL_META));
-			} else {
-	      write_c("%s%s->shortcut(0x%x);\n", indent(), var, s);
-			}
-		}
+
+  // write shortcut command if needed
+  int shortcut = 0;
+  if (is_button()) shortcut = ((Fl_Button*)o)->shortcut();
+  else if (is_input()) shortcut = ((Fl_Input_*)o)->shortcut();
+  else if (is_value_input()) shortcut = ((Fl_Value_Input*)o)->shortcut();
+  else if (is_text_display()) shortcut = ((Fl_Text_Display*)o)->shortcut();
+  if (shortcut) {
+    if (use_FL_COMMAND && (shortcut & (FL_CTRL|FL_META))) {
+      write_c("%s%s->shortcut(FL_COMMAND|0x%x);\n", indent(), var, shortcut & ~(FL_CTRL|FL_META));
+    } else {
+      write_c("%s%s->shortcut(0x%x);\n", indent(), var, shortcut);
+    }
   }
+
   if (is_button()) {
     Fl_Button* b = (Fl_Button*)o;
     if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
 			       boxname(b->down_box()));
     if (b->value()) write_c("%s%s->value(1);\n", indent(), var);
-    if (b->shortcut()) {
-			int s = b->shortcut();
-			if (use_FL_COMMAND && (s & (FL_CTRL|FL_META))) {
-		    write_c("%s%s->shortcut(FL_COMMAND|0x%x);\n", indent(), var, s & ~(FL_CTRL|FL_META));
-			} else {
-	      write_c("%s%s->shortcut(0x%x);\n", indent(), var, s);
-			}
-		}
   } else if (!strcmp(type_name(), "Fl_Input_Choice")) {
     Fl_Input_Choice* b = (Fl_Input_Choice*)o;
     if (b->down_box()) write_c("%s%s->down_box(FL_%s);\n", indent(), var,
@@ -2346,6 +2342,14 @@ void Fl_Widget_Type::write_properties() {
     write_string("box"); write_word(boxname(o->box()));}
   if (is_input()) {
     Fl_Input_* b = (Fl_Input_*)o;
+    if (b->shortcut()) write_string("shortcut 0x%x", b->shortcut());
+  }
+  if (is_value_input()) {
+    Fl_Value_Input* b = (Fl_Value_Input*)o;
+    if (b->shortcut()) write_string("shortcut 0x%x", b->shortcut());
+  }
+  if (is_text_display()) {
+    Fl_Text_Display* b = (Fl_Text_Display*)o;
     if (b->shortcut()) write_string("shortcut 0x%x", b->shortcut());
   }
   if (is_button()) {
@@ -2537,10 +2541,12 @@ void Fl_Widget_Type::read_property(const char *c) {
     hotspot(1);
   } else if (!strcmp(c,"class")) {
     subclass(read_word());
-  } else if (is_button() && !strcmp(c,"shortcut")) {
-    ((Fl_Button*)o)->shortcut(strtol(read_word(),0,0));
-  } else if (is_input() && !strcmp(c,"shortcut")) {
-    ((Fl_Input_*)o)->shortcut(strtol(read_word(),0,0));
+  } else if (!strcmp(c,"shortcut")) {
+    int shortcut = strtol(read_word(),0,0);
+    if (is_button()) ((Fl_Button*)o)->shortcut(shortcut);
+    else if (is_input()) ((Fl_Input_*)o)->shortcut(shortcut);
+    else if (is_value_input()) ((Fl_Value_Input*)o)->shortcut(shortcut);
+    else if (is_text_display()) ((Fl_Text_Display*)o)->shortcut(shortcut);
   } else {
     if (!strncmp(c,"code",4)) {
       int n = atoi(c+4);
@@ -2714,6 +2720,18 @@ void Fl_Widget_Type::copy_properties() {
   // copy all attributes specific to widgets derived from Fl_Input_
   if (is_input()) {
     Fl_Input_* d = (Fl_Input_*)live_widget, *s = (Fl_Input_*)o;
+    d->shortcut(s->shortcut());
+  }
+
+  // copy all attributes specific to widgets derived from Fl_Value_Input
+  if (is_value_input()) {
+    Fl_Value_Input* d = (Fl_Value_Input*)live_widget, *s = (Fl_Value_Input*)o;
+    d->shortcut(s->shortcut());
+  }
+
+  // copy all attributes specific to widgets derived from Fl_Text_Display
+  if (is_text_display()) {
+    Fl_Text_Display* d = (Fl_Text_Display*)live_widget, *s = (Fl_Text_Display*)o;
     d->shortcut(s->shortcut());
   }
 

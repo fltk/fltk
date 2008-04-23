@@ -119,6 +119,9 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     int position_style(int lineStartPos, int lineLen, int lineIndex,
                        int dispIndex);
 
+    int shortcut() const {return shortcut_;}
+    void shortcut(int s) {shortcut_ = s;}
+
     Fl_Font textfont() const {return (Fl_Font)textfont_;}
     void textfont(uchar s) {textfont_ = s;}
     uchar textsize() const {return textsize_;}
@@ -279,6 +282,8 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     int dragPos, dragType, dragging;
     int display_insert_position_hint;
     struct { int x, y, w, h; } text_area;
+
+    int shortcut_;
 
     uchar textfont_;
     uchar textsize_;

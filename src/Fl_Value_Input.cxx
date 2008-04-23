@@ -106,6 +106,8 @@ int Fl_Value_Input::handle(int event) {
     return 1;
   case FL_FOCUS:
     return input.take_focus();
+  case FL_SHORTCUT:
+    return input.handle(event);
   default:
   DEFAULT:
     input.type(((step() - floor(step()))>0.0 || step() == 0.0) ? FL_FLOAT_INPUT : FL_INT_INPUT);
@@ -126,6 +128,7 @@ Fl_Value_Input::Fl_Value_Input(int X, int Y, int W, int H, const char* l)
   selection_color(input.selection_color());
   align(FL_ALIGN_LEFT);
   value_damage();
+  set_flag(SHORTCUT_LABEL);
 }
 
 //

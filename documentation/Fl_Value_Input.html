@@ -59,6 +59,7 @@ ALT="Fl_Value_Input widget."></P>
 	<LI><A href="#Fl_Value_Input.Fl_Value_Input">Fl_Value_Input</A></LI>
 	<LI><A href="#Fl_Value_Input.~Fl_Value_Input">~Fl_Value_Input</A></LI>
 	<LI><A href="#Fl_Value_Input.cursor_color">cursor_color</A></LI>
+	<LI><A href="#Fl_Value_Input.shortcut">shortcut</A></LI>
 	<LI><A href="#Fl_Value_Input.soft">soft</A></LI>
 	<LI><A href="#Fl_Value_Input.textcolor">textcolor</A></LI>
 	<LI><A href="#Fl_Value_Input.textfont">textfont</A></LI>
@@ -84,6 +85,23 @@ void Fl_Value_Input::cursor_color(Fl_Color)</A></H4>
 
 <P>Get or set the color of the text cursor. The text cursor is
 black by default.
+
+<H4><A name="Fl_Value_Input.shortcut">ulong Fl_Value_Input::shortcut() const
+<BR> void Fl_Value_Input::shortcut(ulong key)</A></H4>
+ The first form returns the current shortcut key for the Input.
+<P>The second form sets the shortcut key to <TT>key</TT>. Setting this
+overrides the use of '&amp;' in the <TT>label()</TT>.  The value is a bitwise
+OR of a key and a set of shift flags, for example <CODE>FL_ALT | 'a'</CODE>
+, <CODE>FL_ALT | (FL_F + 10)</CODE>, or just <CODE>'a'</CODE>.  A value
+of 0 disables the shortcut. </P>
+<P>The key can be any value returned by <A href="Fl.html#Fl.event_key">
+<TT>Fl::event_key()</TT></A>, but will usually be an ASCII letter.  Use
+a lower-case letter unless you require the shift key to be held down. </P>
+<P>The shift flags can be any set of values accepted by <A href="Fl.html#Fl.event_state">
+<TT>Fl::event_state()</TT></A>.  If the bit is on that shift key must
+be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
+the shift flags (zero for the other bits indicates a &quot;don't care&quot;
+setting). </P>
 
 <H4><A name="Fl_Value_Input.soft">uchar Fl_Value_Input::soft() const<BR>
 void Fl_Value_Input::soft(uchar)</A></H4>

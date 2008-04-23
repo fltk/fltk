@@ -629,6 +629,8 @@ int Fl_Type::is_valuator() const {return 0;}
 int Fl_Type::is_spinner() const {return 0;}
 int Fl_Type::is_button() const {return 0;}
 int Fl_Type::is_input() const {return 0;}
+int Fl_Type::is_value_input() const {return 0;}
+int Fl_Type::is_text_display() const {return 0;}
 int Fl_Type::is_menu_item() const {return 0;}
 int Fl_Type::is_menu_button() const {return 0;}
 int Fl_Type::is_group() const {return 0;}

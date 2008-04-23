@@ -78,6 +78,7 @@ class.
 	<LI><A HREF="#Fl_Text_Editor.kf_up">kf_up</A></LI>
 	<LI><A HREF="#Fl_Text_Editor.remove_all_key_bindings">remove_all_key_bindings</A></LI>
 	<LI><A HREF="#Fl_Text_Editor.remove_key_binding">remove_key_binding</A></LI>
+	<LI><A href="#Fl_Text_Editor.shortcut">shortcut</A></LI>
 
 </UL></TD></TR>
 </TABLE>
@@ -216,6 +217,11 @@ void remove_all_key_bindings();</A></H4>
 void remove_key_binding(int key, int state);</A></H4>
 
 <P>Removes a single key binding from the text editor or list.
+
+<H4><A name="Fl_Text_Editor.shortcut">ulong Fl_Text_Editor::shortcut() const
+<BR> void Fl_Text_Editor::shortcut(ulong key)</A></H4>
+ The first form returns the current shortcut key for the editor.
+<P>The second form sets the shortcut key to <TT>key</TT>.
 
 </BODY>
 </HTML>
