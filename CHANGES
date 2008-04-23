@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.3.0
 
+	- hardcoded 1.1 references in src/Makefile to 1.3 
+	  (STR #1922)
 	- changed font index to 32 bit
 	- changed font size to 32 bit
         - changed widget coordinates to 32 bit
