@@ -287,8 +287,8 @@ enum Fl_Align {	// align() values
   FL_ALIGN_NOWRAP		= 0 // for back compatability
 };
 
-typedef unsigned int Fl_Font;
-typedef unsigned int Fl_Font_Size;
+typedef int Fl_Font;
+typedef int Fl_Font_Size;
 
 // standard fonts
 const Fl_Font FL_HELVETICA              = 0;
