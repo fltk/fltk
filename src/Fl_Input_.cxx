@@ -791,9 +791,10 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
   case FL_SHORTCUT:
     if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut())) 
       return 0;
-    if (Fl::visible_focus() && handle(FL_FOCUS)) 
+    if (Fl::visible_focus() && handle(FL_FOCUS)) {
       Fl::focus(this);
-    return 1;
+      return 1;
+    } // else fall through
 
   default:
     return 0;

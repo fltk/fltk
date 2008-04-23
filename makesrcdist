@@ -9,8 +9,8 @@ if test $# = 0 -o "x$1" = xsnapshot; then
 	echo Updating for snapshot...
 	svn up
 	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
-	version="1.1svn"
-	fileversion="1.1svn-r$rev"
+	version="1.3svn"
+	fileversion="1.3svn-r$rev"
 	fileurl="ftp://ftp.easysw.com/pub/fltk/snapshots/fltk-$fileversion-source.tar.bz2"
 	url="."
 else
@@ -21,7 +21,7 @@ else
 	fileurl="ftp://ftp.easysw.com/pub/fltk/$version/fltk-$fileversion-source.tar.bz2"
 	url="https://svn.easysw.com/public/fltk/fltk/tags/release-$version"
 
-	svn copy https://svn.easysw.com/public/fltk/fltk/branches/branch-1.1 "$url" \
+	svn copy https://svn.easysw.com/public/fltk/fltk/branches/branch-1.3 "$url" \
 		-m "Tag $version" || exit 1
 fi
 

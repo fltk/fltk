@@ -486,9 +486,11 @@ int Fl_Text_Editor::handle(int event) {
     case FL_SHORTCUT:
       if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut()))
         return 0;
-      if (Fl::visible_focus() && handle(FL_FOCUS))
+      if (Fl::visible_focus() && handle(FL_FOCUS)) {
         Fl::focus(this);
-      return 1;
+        return 1;
+      }
+      break;
   }
 
   return Fl_Text_Display::handle(event);
