@@ -52,15 +52,13 @@ space for the scrollbars, as Fluid won't show these either. </P>
 <P><I>You cannot use <TT>Fl_Window</TT> as a child of this since the
 clipping is not conveyed to it when drawn, and it will draw over the
 scrollbars and neighboring objects.</I></P>
-<P><I><TT>Fl_Scroll</TT> widgets should not be nested. Having an Fl_Scroll 
-inside another Fl_Scroll may result in drawing errors when resizing.</I></P>
 <H3>Methods</H3>
 <UL>
 <LI><A href=#Fl_Scroll.Fl_Scroll>Fl_Scroll</A></LI>
 <LI><A href=#Fl_Scroll.~Fl_Scroll>~Fl_Scroll</A></LI>
 <LI><A href=#Fl_Scroll.align>align</A></LI>
-<LI><A href=#Fl_Scroll.position>position</A></LI>
 <LI><A href=#Fl_Scroll.type>type</A></LI>
+<LI><A href=#Fl_Scroll.scroll_to>scroll_to</A></LI>
 <LI><A href=#Fl_Scroll.xposition>xposition</A></LI>
 <LI><A href=#Fl_Scroll.yposition>yposition</A></LI>
 </UL>
@@ -100,6 +98,8 @@ considered. The flags in <TT>hscrollbar</TT> however are ignored.
  Gets the current horizontal scrolling position.
 <H4><A name=Fl_Scroll.yposition>int Fl_Scroll::yposition() const</A></H4>
  Gets the current vertical scrolling position.
-<H4><A name=Fl_Scroll.position>void Fl_Scroll::position(int w, int h)</A>
-</H4>
- Sets the upper-lefthand corner of the scrolling region. </BODY></HTML>
+<H4><A name=Fl_Scroll.scroll_to>void Fl_Scroll::scroll_to(int x, int y)</A></H4>
+Moves the contents of the scroll group to a new position.
+<H4><A name=Fl_Scroll.position>void Fl_Scroll::position(int x, int y)</A></H4>
+Moves the scroll group itself to a new position.
+</BODY></HTML>

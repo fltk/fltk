@@ -237,17 +237,28 @@ void Fl_Scroll::draw() {
 }
 
 void Fl_Scroll::resize(int X, int Y, int W, int H) {
+  int dx = X-x(), dy = Y-y();
   fix_scrollbar_order();
   // move all the children:
   Fl_Widget*const* a = array();
   for (int i=children()-2; i--;) {
     Fl_Object* o = *a++;
-    o->position(o->x()+X-x(), o->y()+Y-y());
+    o->position(o->x()+dx, o->y()+dy);
+  }
+  if (w()==W && h()==H) {
+    char pad = (scrollbar.visible() && hscrollbar.visible());
+    char al = (scrollbar.align()&FL_ALIGN_LEFT!=0);
+    char at = (scrollbar.align()&FL_ALIGN_TOP!=0);
+    scrollbar.position(al?X:X+W-scrollbar.w(), (at&&pad)?Y+hscrollbar.h():Y);
+    hscrollbar.position((al&&pad)?X+scrollbar.w():X, at?Y:Y+H-hscrollbar.h());
+  } else {
+    // FIXME recalculation of scrollbars needs to be moved out fo "draw()" (STR #1895)
+    redraw(); // need full recalculation of scrollbars
   }
   Fl_Widget::resize(X,Y,W,H);
 }
 
-void Fl_Scroll::position(int X, int Y) {
+void Fl_Scroll::scroll_to(int X, int Y) {
   int dx = xposition_-X;
   int dy = yposition_-Y;
   if (!dx && !dy) return;
@@ -265,12 +276,12 @@ void Fl_Scroll::position(int X, int Y) {
 
 void Fl_Scroll::hscrollbar_cb(Fl_Widget* o, void*) {
   Fl_Scroll* s = (Fl_Scroll*)(o->parent());
-  s->position(int(((Fl_Scrollbar*)o)->value()), s->yposition());
+  s->scroll_to(int(((Fl_Scrollbar*)o)->value()), s->yposition());
 }
 
 void Fl_Scroll::scrollbar_cb(Fl_Widget* o, void*) {
   Fl_Scroll* s = (Fl_Scroll*)(o->parent());
-  s->position(s->xposition(), int(((Fl_Scrollbar*)o)->value()));
+  s->scroll_to(s->xposition(), int(((Fl_Scrollbar*)o)->value()));
 }
 
 Fl_Scroll::Fl_Scroll(int X,int Y,int W,int H,const char* L)

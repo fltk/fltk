@@ -68,7 +68,7 @@ public:
 
   int xposition() const {return xposition_;}
   int yposition() const {return yposition_;}
-  void position(int, int);
+  void scroll_to(int, int);
   void clear();
 };
 
