@@ -28,7 +28,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
-#include <FL/filename.H>
 
 int main(int argc, char **argv) {
   Fl_Window *window = new Fl_Window(300,180);

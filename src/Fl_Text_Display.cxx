@@ -377,7 +377,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   H -= Fl::box_dh(box());
 
   text_area.x = X+LEFT_MARGIN;
-  text_area.y = Y+BOTTOM_MARGIN;
+  text_area.y = Y+TOP_MARGIN;
   text_area.w = W-LEFT_MARGIN-RIGHT_MARGIN;
   text_area.h = H-TOP_MARGIN-BOTTOM_MARGIN;
   int i;
