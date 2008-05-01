@@ -35,6 +35,8 @@
 //                      file.
 //   show_callback()  - Show the file chooser...
 //
+//   extra_callback() - circle extra groups (none,group1,check_button);
+//
 
 //
 // Include necessary headers...
@@ -58,6 +60,13 @@ Fl_File_Browser		*files;
 Fl_File_Chooser		*fc;
 Fl_Shared_Image		*image = 0;
 
+// for choosing extra groups
+Fl_Choice *ch_extra;
+// first extra group
+Fl_Group *encodings = (Fl_Group*)0;
+Fl_Choice *ch_enc;
+// second extra widget
+Fl_Check_Button *version = (Fl_Check_Button*)0;
 
 //
 // Functions...
@@ -72,6 +81,7 @@ Fl_Image	*pdf_check(const char *, uchar *, int);
 Fl_Image	*ps_check(const char *, uchar *, int);
 void		show_callback(void);
 
+void		extra_callback(Fl_Choice*,void*);
 
 //
 // 'main()' - Create a file chooser and wait for a selection to be made.
@@ -98,7 +108,7 @@ main(int  argc,		// I - Number of command-line arguments
   Fl_Shared_Image::add_handler(ps_check);
 
   // Make the main window...
-  window = new Fl_Window(400, 200, "File Chooser Test");
+  window = new Fl_Window(400, 215, "File Chooser Test");
 
   filter = new Fl_Input(50, 10, 315, 25, "Filter:");
   if (argc > 1)
@@ -125,10 +135,16 @@ main(int  argc,		// I - Number of command-line arguments
   button = new Fl_Light_Button(240, 45, 115, 25, "DIRECTORY");
   button->callback((Fl_Callback *)dir_callback);
 
-  files = new Fl_File_Browser(50, 80, 340, 75, "Files:");
+  //
+  ch_extra = new Fl_Choice(150, 75, 150, 25, "Extra Group:");
+  ch_extra->add("none|encodings group|check button");
+  ch_extra->value(0);
+  ch_extra->callback((Fl_Callback *)extra_callback);
+  //
+  files = new Fl_File_Browser(50, 105, 340, 75, "Files:");
   files->align(FL_ALIGN_LEFT);
 
-  button = new Fl_Button(340, 165, 50, 25, "Close");
+  button = new Fl_Button(340, 185, 50, 25, "Close");
   button->callback((Fl_Callback *)close_callback);
 
   window->resizable(files);
@@ -138,6 +154,28 @@ main(int  argc,		// I - Number of command-line arguments
   Fl::run();
 
   return (0);
+}
+
+
+void
+extra_callback(Fl_Choice*w,void*)
+{
+  int val=w->value();
+  if (0 == val) fc->add_extra(NULL);
+  else if (1 == val) {
+    if(!encodings){
+      encodings=new Fl_Group(0,0,254,30);
+      ch_enc=new Fl_Choice(152,2,100,25,"Choose Encoding:");
+      ch_enc->add("ASCII|Koi8-r|win1251|Utf-8");
+      encodings->end();
+    }
+    fc->add_extra(encodings);
+  } else {
+    if (!version) {
+      version = new Fl_Check_Button(5,0,200,25,"Save binary 1.0 version");
+    }
+    fc->add_extra(version);
+  }
 }
 
 
