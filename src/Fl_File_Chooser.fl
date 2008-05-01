@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0300 
 header_name {../FL/Fl_File_Chooser.H} 
 code_name {.cxx}
 comment {//
@@ -28,7 +28,7 @@ comment {//
 //
 //     http://www.fltk.org/str.php
 //
-} {in_source in_header
+} {selected in_source in_header
 } 
 
 decl {\#include <FL/fl_draw.H>} {} 
@@ -53,22 +53,21 @@ class FL_EXPORT Fl_File_Chooser {open
   decl {void showChoiceCB();} {}
   decl {void update_favorites();} {}
   decl {void update_preview();} {}
-  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {open
-  } {
+  Function {Fl_File_Chooser(const char *d, const char *p, int t, const char *title)} {} {
     code {Fl_Group *prev_current = Fl_Group::current();} {}
     Fl_Window window {
       label {Choose File}
       callback {fileName->value("");
 fileList->deselect();
 Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
-window->hide();}
-      private xywh {388 284 490 380} type Double resizable
+window->hide();} open
+      private xywh {507 327 490 380} type Double resizable
       code0 {if (title) window->label(title);}
       code1 {\#include <stdio.h>}
       code2 {\#include <stdlib.h>}
       code3 {\#include <string.h>} modal visible
     } {
-      Fl_Group {} {
+      Fl_Group {} {open
         private xywh {10 10 470 25}
       } {
         Fl_Choice showChoice {
@@ -104,7 +103,7 @@ window->hide();}
           private xywh {305 45 175 225} box DOWN_BOX labelsize 100 align 80
         }
       }
-      Fl_Group {} {
+      Fl_Group {} {open
         private xywh {10 275 470 95}
       } {
         Fl_Group {} {open
@@ -220,11 +219,13 @@ type(t);
 int e;
 prefs_.get("preview", e, 1);
 preview(e);
-Fl_Group::current(prev_current);} {selected
-    }
+Fl_Group::current(prev_current);} {}
+    code {ext_group=(Fl_Widget*)0;} {}
   }
-  Function {~Fl_File_Chooser()} {} {
+  Function {~Fl_File_Chooser()} {open
+  } {
     code {Fl::remove_timeout((Fl_Timeout_Handler)previewCB, this);
+if(ext_group)window->remove(ext_group);
 delete window;
 delete favWindow;} {}
   }
@@ -405,6 +406,38 @@ else
   decl {static const char *show_label;} {public
   }
   decl {static Fl_File_Sort_F *sort;} {public
+  }
+  decl {Fl_Widget* ext_group;} {}
+  decl {bool ext_managed;} {}
+  Function {add_extra(Fl_Widget* gr)} {open return_type {Fl_Widget*}
+  } {
+    code {Fl_Widget* ret=ext_group;} {}
+    codeblock {if (gr==ext_group)} {open
+    } {
+      code {return ret;} {}
+    }
+    codeblock {if (ext_group)} {open
+    } {
+      code {int sh=ext_group->h()+4;
+Fl_Widget* svres=window->resizable();
+window->resizable(NULL);
+window->size(window->w(),window->h()-sh);
+window->remove(ext_group);
+ext_group=NULL;
+window->resizable(svres);} {}
+    }
+    codeblock {if (gr)} {open
+    } {
+      code {int nh=window->h()+gr->h()+4;
+Fl_Widget* svres=window->resizable();
+window->resizable(NULL);
+window->size(window->w(),nh);
+gr->position(2,okButton->y()+okButton->h()+2);
+window->add(gr);
+ext_group=gr;
+window->resizable(svres);} {}
+    }
+    code {return ret;} {}
   }
 } 
 

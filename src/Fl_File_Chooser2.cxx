@@ -41,6 +41,13 @@
 //   quote_pathname()                     - Quote a pathname for a menu.
 //   unquote_pathname()                   - Unquote a pathname from a menu.
 //
+//   Fl_File_Chooser::add_extra()         - add extra widget at the bottom, return pointer 
+//                                          to previous extra widget or NULL if none,
+//                                          If argument is NULL extra widget removed.
+//                                          NOTE! file chooser don't delete extra widget in 
+//                                          destructor! To prevent memory leakage don't forget
+//					    delete unused extra widgets by yuorself.
+//
 
 //
 // Include necessary headers.
