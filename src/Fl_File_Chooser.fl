@@ -28,7 +28,7 @@ comment {//
 //
 //     http://www.fltk.org/str.php
 //
-} {selected in_source in_header
+} {in_source in_header
 } 
 
 decl {\#include <FL/fl_draw.H>} {} 
@@ -327,19 +327,19 @@ fileName->take_focus();} {}
   } {
     code {return (fileList->textcolor());} {}
   }
-  Function {textfont(uchar f)} {return_type void
+  Function {textfont(Fl_Font f)} {return_type void
   } {
     code {fileList->textfont(f);} {}
   }
-  Function {textfont()} {return_type uchar
+  Function {textfont()} {selected return_type Fl_Font
   } {
     code {return (fileList->textfont());} {}
   }
-  Function {textsize(uchar s)} {return_type void
+  Function {textsize(Fl_Font_Size s)} {return_type void
   } {
     code {fileList->textsize(s);} {}
   }
-  Function {textsize()} {return_type uchar
+  Function {textsize()} {return_type Fl_Font_Size
   } {
     code {return (fileList->textsize());} {}
   }
