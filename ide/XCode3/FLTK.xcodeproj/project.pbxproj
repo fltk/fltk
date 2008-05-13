@@ -1807,169 +1807,169 @@
 
 /* Begin PBXFileReference section */
 		C918DB370DD9EE4100167E99 /* editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = editor.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DB390DD9EE4100167E99 /* editor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "editor-Info.plist"; sourceTree = "<group>"; };
+		C918DB390DD9EE4100167E99 /* editor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "editor-Info.plist"; path = "plists/editor-Info.plist"; sourceTree = "<group>"; };
 		C918DB400DD9EE7500167E99 /* editor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = editor.cxx; path = ../../test/editor.cxx; sourceTree = SOURCE_ROOT; };
 		C918DB570DD9EEB800167E99 /* fast_slow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fast_slow.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DB590DD9EEB800167E99 /* fast_slow-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fast_slow-Info.plist"; sourceTree = "<group>"; };
+		C918DB590DD9EEB800167E99 /* fast_slow-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fast_slow-Info.plist"; path = "plists/fast_slow-Info.plist"; sourceTree = "<group>"; };
 		C918DB5E0DD9EED100167E99 /* fast_slow.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fast_slow.fl; path = ../../test/fast_slow.fl; sourceTree = SOURCE_ROOT; };
 		C918DB880DD9EFC200167E99 /* fast_slow.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fast_slow.cxx; path = ../../test/fast_slow.cxx; sourceTree = SOURCE_ROOT; };
 		C918DB9E0DD9EFFA00167E99 /* file_chooser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = file_chooser.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DBA10DD9EFFB00167E99 /* file_chooser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "file_chooser-Info.plist"; sourceTree = "<group>"; };
+		C918DBA10DD9EFFB00167E99 /* file_chooser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "file_chooser-Info.plist"; path = "plists/file_chooser-Info.plist"; sourceTree = "<group>"; };
 		C918DBB00DD9F02B00167E99 /* file_chooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = file_chooser.cxx; path = ../../test/file_chooser.cxx; sourceTree = SOURCE_ROOT; };
 		C918DBEB0DD9F0C100167E99 /* fonts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fonts.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DBED0DD9F0C100167E99 /* fonts-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fonts-Info.plist"; sourceTree = "<group>"; };
+		C918DBED0DD9F0C100167E99 /* fonts-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fonts-Info.plist"; path = "plists/fonts-Info.plist"; sourceTree = "<group>"; };
 		C918DBF60DD9F0E700167E99 /* fonts.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fonts.cxx; path = ../../test/fonts.cxx; sourceTree = SOURCE_ROOT; };
 		C918DC0D0DD9F11C00167E99 /* forms.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = forms.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DC0F0DD9F11C00167E99 /* forms-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "forms-Info.plist"; sourceTree = "<group>"; };
+		C918DC0F0DD9F11C00167E99 /* forms-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "forms-Info.plist"; path = "plists/forms-Info.plist"; sourceTree = "<group>"; };
 		C918DC1A0DD9F13D00167E99 /* forms.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = forms.cxx; path = ../../test/forms.cxx; sourceTree = SOURCE_ROOT; };
 		C918DC330DD9F19200167E99 /* fractals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fractals.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DC350DD9F19200167E99 /* fractals-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fractals-Info.plist"; sourceTree = "<group>"; };
+		C918DC350DD9F19200167E99 /* fractals-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fractals-Info.plist"; path = "plists/fractals-Info.plist"; sourceTree = "<group>"; };
 		C918DC3F0DD9F1AC00167E99 /* fractals.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fractals.cxx; path = ../../test/fractals.cxx; sourceTree = SOURCE_ROOT; };
 		C918DC520DD9F21700167E99 /* fracviewer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fracviewer.cxx; path = ../../test/fracviewer.cxx; sourceTree = SOURCE_ROOT; };
 		C918DC660DD9F25400167E99 /* fullscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fullscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DC680DD9F25400167E99 /* fullscreen-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fullscreen-Info.plist"; sourceTree = "<group>"; };
+		C918DC680DD9F25400167E99 /* fullscreen-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fullscreen-Info.plist"; path = "plists/fullscreen-Info.plist"; sourceTree = "<group>"; };
 		C918DC6F0DD9F26C00167E99 /* fullscreen.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fullscreen.cxx; path = ../../test/fullscreen.cxx; sourceTree = SOURCE_ROOT; };
 		C918DC8D0DD9F31500167E99 /* gl_overlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gl_overlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DC8F0DD9F31500167E99 /* gl_overlay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "gl_overlay-Info.plist"; sourceTree = "<group>"; };
+		C918DC8F0DD9F31500167E99 /* gl_overlay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "gl_overlay-Info.plist"; path = "plists/gl_overlay-Info.plist"; sourceTree = "<group>"; };
 		C918DC980DD9F33300167E99 /* gl_overlay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gl_overlay.cxx; path = ../../test/gl_overlay.cxx; sourceTree = SOURCE_ROOT; };
 		C918DCB20DD9F36800167E99 /* glpuzzle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = glpuzzle.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DCB40DD9F36800167E99 /* glpuzzle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "glpuzzle-Info.plist"; sourceTree = "<group>"; };
+		C918DCB40DD9F36800167E99 /* glpuzzle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "glpuzzle-Info.plist"; path = "plists/glpuzzle-Info.plist"; sourceTree = "<group>"; };
 		C918DCC00DD9F38800167E99 /* glpuzzle.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glpuzzle.cxx; path = ../../test/glpuzzle.cxx; sourceTree = SOURCE_ROOT; };
 		C918DCDA0DD9F3C100167E99 /* help.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = help.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DCDC0DD9F3C100167E99 /* help-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "help-Info.plist"; sourceTree = "<group>"; };
+		C918DCDC0DD9F3C100167E99 /* help-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "help-Info.plist"; path = "plists/help-Info.plist"; sourceTree = "<group>"; };
 		C918DCEC0DD9F3DE00167E99 /* help.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = help.cxx; path = ../../test/help.cxx; sourceTree = SOURCE_ROOT; };
 		C918DD090DD9F42F00167E99 /* iconize.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iconize.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DD0B0DD9F42F00167E99 /* iconize-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iconize-Info.plist"; sourceTree = "<group>"; };
+		C918DD0B0DD9F42F00167E99 /* iconize-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "iconize-Info.plist"; path = "plists/iconize-Info.plist"; sourceTree = "<group>"; };
 		C918DD120DD9F44600167E99 /* iconize.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = iconize.cxx; path = ../../test/iconize.cxx; sourceTree = SOURCE_ROOT; };
 		C918DD280DD9F47A00167E99 /* image.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = image.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DD2A0DD9F47A00167E99 /* image-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "image-Info.plist"; sourceTree = "<group>"; };
+		C918DD2A0DD9F47A00167E99 /* image-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "image-Info.plist"; path = "plists/image-Info.plist"; sourceTree = "<group>"; };
 		C918DD380DD9F49400167E99 /* image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = image.cxx; path = ../../test/image.cxx; sourceTree = SOURCE_ROOT; };
 		C918DD5C0DD9F4EE00167E99 /* inactive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = inactive.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DD5E0DD9F4EE00167E99 /* inactive-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "inactive-Info.plist"; sourceTree = "<group>"; };
+		C918DD5E0DD9F4EE00167E99 /* inactive-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "inactive-Info.plist"; path = "plists/inactive-Info.plist"; sourceTree = "<group>"; };
 		C918DD690DD9F54400167E99 /* inactive.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = inactive.fl; path = ../../test/inactive.fl; sourceTree = SOURCE_ROOT; };
 		C918DD7B0DD9F55B00167E99 /* inactive.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = inactive.cxx; path = ../../test/inactive.cxx; sourceTree = SOURCE_ROOT; };
 		C918DD8B0DD9F58200167E99 /* input.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DD8D0DD9F58200167E99 /* input-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "input-Info.plist"; sourceTree = "<group>"; };
+		C918DD8D0DD9F58200167E99 /* input-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "input-Info.plist"; path = "plists/input-Info.plist"; sourceTree = "<group>"; };
 		C918DD940DD9F59A00167E99 /* input.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = input.cxx; path = ../../test/input.cxx; sourceTree = SOURCE_ROOT; };
 		C918DDAA0DD9F5D100167E99 /* input_choice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input_choice.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DDAC0DD9F5D100167E99 /* input_choice-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "input_choice-Info.plist"; sourceTree = "<group>"; };
+		C918DDAC0DD9F5D100167E99 /* input_choice-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "input_choice-Info.plist"; path = "plists/input_choice-Info.plist"; sourceTree = "<group>"; };
 		C918DDB30DD9F5E700167E99 /* input_choice.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = input_choice.cxx; path = ../../test/input_choice.cxx; sourceTree = SOURCE_ROOT; };
 		C918DDCB0DD9F62200167E99 /* keyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = keyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DDCD0DD9F62200167E99 /* keyboard-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "keyboard-Info.plist"; sourceTree = "<group>"; };
+		C918DDCD0DD9F62200167E99 /* keyboard-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "keyboard-Info.plist"; path = "plists/keyboard-Info.plist"; sourceTree = "<group>"; };
 		C918DDE40DD9F68B00167E99 /* keyboard.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = keyboard.cxx; path = ../../test/keyboard.cxx; sourceTree = SOURCE_ROOT; };
 		C918DDE60DD9F69300167E99 /* keyboard_ui.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = keyboard_ui.fl; path = ../../test/keyboard_ui.fl; sourceTree = SOURCE_ROOT; };
 		C918DDED0DD9F6C400167E99 /* keyboard_ui.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = keyboard_ui.cxx; path = ../../test/keyboard_ui.cxx; sourceTree = SOURCE_ROOT; };
 		C918DE020DD9F70500167E99 /* label.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = label.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DE040DD9F70500167E99 /* label-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "label-Info.plist"; sourceTree = "<group>"; };
+		C918DE040DD9F70500167E99 /* label-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "label-Info.plist"; path = "plists/label-Info.plist"; sourceTree = "<group>"; };
 		C918DE0B0DD9F71C00167E99 /* label.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = label.cxx; path = ../../test/label.cxx; sourceTree = SOURCE_ROOT; };
 		C918DE270DD9F75700167E99 /* line_style.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = line_style.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DE290DD9F75700167E99 /* line_style-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "line_style-Info.plist"; sourceTree = "<group>"; };
+		C918DE290DD9F75700167E99 /* line_style-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "line_style-Info.plist"; path = "plists/line_style-Info.plist"; sourceTree = "<group>"; };
 		C918DE300DD9F77100167E99 /* line_style.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = line_style.cxx; path = ../../test/line_style.cxx; sourceTree = SOURCE_ROOT; };
 		C918DE460DD9F7BF00167E99 /* list_visuals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = list_visuals.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DE480DD9F7BF00167E99 /* list_visuals-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "list_visuals-Info.plist"; sourceTree = "<group>"; };
+		C918DE480DD9F7BF00167E99 /* list_visuals-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "list_visuals-Info.plist"; path = "plists/list_visuals-Info.plist"; sourceTree = "<group>"; };
 		C918DE4F0DD9F7D700167E99 /* list_visuals.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = list_visuals.cxx; path = ../../test/list_visuals.cxx; sourceTree = SOURCE_ROOT; };
 		C918DE660DD9F80500167E99 /* mandelbrot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mandelbrot.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DE680DD9F80500167E99 /* mandelbrot-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "mandelbrot-Info.plist"; sourceTree = "<group>"; };
+		C918DE680DD9F80500167E99 /* mandelbrot-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "mandelbrot-Info.plist"; path = "plists/mandelbrot-Info.plist"; sourceTree = "<group>"; };
 		C918DE6F0DD9F81F00167E99 /* mandelbrot_ui.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mandelbrot_ui.fl; path = ../../test/mandelbrot_ui.fl; sourceTree = SOURCE_ROOT; };
 		C918DE700DD9F81F00167E99 /* mandelbrot.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mandelbrot.cxx; path = ../../test/mandelbrot.cxx; sourceTree = SOURCE_ROOT; };
 		C918DE7F0DD9F86400167E99 /* mandelbrot_ui.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mandelbrot_ui.cxx; path = ../../test/mandelbrot_ui.cxx; sourceTree = SOURCE_ROOT; };
 		C918DE8F0DD9F8B900167E99 /* menubar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = menubar.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DE910DD9F8BA00167E99 /* menubar-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "menubar-Info.plist"; sourceTree = "<group>"; };
+		C918DE910DD9F8BA00167E99 /* menubar-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "menubar-Info.plist"; path = "plists/menubar-Info.plist"; sourceTree = "<group>"; };
 		C918DE980DD9F8D800167E99 /* menubar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menubar.cxx; path = ../../test/menubar.cxx; sourceTree = SOURCE_ROOT; };
 		C918DEB10DD9F99F00167E99 /* message.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = message.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DEB30DD9F99F00167E99 /* message-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "message-Info.plist"; sourceTree = "<group>"; };
+		C918DEB30DD9F99F00167E99 /* message-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "message-Info.plist"; path = "plists/message-Info.plist"; sourceTree = "<group>"; };
 		C918DEBA0DD9F9B800167E99 /* message.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = message.cxx; path = ../../test/message.cxx; sourceTree = SOURCE_ROOT; };
 		C918DED00DD9F9F800167E99 /* minimum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = minimum.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DED20DD9F9F800167E99 /* minimum-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "minimum-Info.plist"; sourceTree = "<group>"; };
+		C918DED20DD9F9F800167E99 /* minimum-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "minimum-Info.plist"; path = "plists/minimum-Info.plist"; sourceTree = "<group>"; };
 		C918DED90DD9FA1000167E99 /* minimum.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = minimum.cxx; path = ../../test/minimum.cxx; sourceTree = SOURCE_ROOT; };
 		C918DEEF0DD9FA4F00167E99 /* navigation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = navigation.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DEF10DD9FA4F00167E99 /* navigation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "navigation-Info.plist"; sourceTree = "<group>"; };
+		C918DEF10DD9FA4F00167E99 /* navigation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "navigation-Info.plist"; path = "plists/navigation-Info.plist"; sourceTree = "<group>"; };
 		C918DEF80DD9FA6600167E99 /* navigation.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = navigation.cxx; path = ../../test/navigation.cxx; sourceTree = SOURCE_ROOT; };
 		C918DF0F0DD9FA9100167E99 /* output.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = output.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DF110DD9FA9100167E99 /* output-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "output-Info.plist"; sourceTree = "<group>"; };
+		C918DF110DD9FA9100167E99 /* output-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "output-Info.plist"; path = "plists/output-Info.plist"; sourceTree = "<group>"; };
 		C918DF1F0DD9FAB600167E99 /* output.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = output.cxx; path = ../../test/output.cxx; sourceTree = SOURCE_ROOT; };
 		C918DF3B0DD9FAF800167E99 /* overlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = overlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DF3D0DD9FAF800167E99 /* overlay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "overlay-Info.plist"; sourceTree = "<group>"; };
+		C918DF3D0DD9FAF800167E99 /* overlay-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "overlay-Info.plist"; path = "plists/overlay-Info.plist"; sourceTree = "<group>"; };
 		C918DF440DD9FB1000167E99 /* overlay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = overlay.cxx; path = ../../test/overlay.cxx; sourceTree = SOURCE_ROOT; };
 		C918DF5D0DD9FB4700167E99 /* pack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pack.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DF5F0DD9FB4700167E99 /* pack-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "pack-Info.plist"; sourceTree = "<group>"; };
+		C918DF5F0DD9FB4700167E99 /* pack-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "pack-Info.plist"; path = "plists/pack-Info.plist"; sourceTree = "<group>"; };
 		C918DF660DD9FB6400167E99 /* pack.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pack.cxx; path = ../../test/pack.cxx; sourceTree = SOURCE_ROOT; };
 		C918DF7C0DD9FB8D00167E99 /* pixmap_browser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pixmap_browser.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DF7E0DD9FB8D00167E99 /* pixmap_browser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "pixmap_browser-Info.plist"; sourceTree = "<group>"; };
+		C918DF7E0DD9FB8D00167E99 /* pixmap_browser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "pixmap_browser-Info.plist"; path = "plists/pixmap_browser-Info.plist"; sourceTree = "<group>"; };
 		C918DF850DD9FBA400167E99 /* pixmap_browser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pixmap_browser.cxx; path = ../../test/pixmap_browser.cxx; sourceTree = SOURCE_ROOT; };
 		C918DFAB0DD9FBFF00167E99 /* pixmap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pixmap.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DFAD0DD9FBFF00167E99 /* pixmap-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "pixmap-Info.plist"; sourceTree = "<group>"; };
+		C918DFAD0DD9FBFF00167E99 /* pixmap-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "pixmap-Info.plist"; path = "plists/pixmap-Info.plist"; sourceTree = "<group>"; };
 		C918DFB40DD9FC1600167E99 /* pixmap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pixmap.cxx; path = ../../test/pixmap.cxx; sourceTree = SOURCE_ROOT; };
 		C918DFCA0DD9FC4300167E99 /* preferences.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = preferences.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DFCC0DD9FC4300167E99 /* preferences-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "preferences-Info.plist"; sourceTree = "<group>"; };
+		C918DFCC0DD9FC4300167E99 /* preferences-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "preferences-Info.plist"; path = "plists/preferences-Info.plist"; sourceTree = "<group>"; };
 		C918DFD60DD9FC9000167E99 /* preferences.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = preferences.fl; path = ../../test/preferences.fl; sourceTree = SOURCE_ROOT; };
 		C918DFE50DD9FCA200167E99 /* preferences.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = preferences.cxx; path = ../../test/preferences.cxx; sourceTree = SOURCE_ROOT; };
 		C918DFF70DD9FCCF00167E99 /* radio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = radio.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918DFF90DD9FCCF00167E99 /* radio-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "radio-Info.plist"; sourceTree = "<group>"; };
+		C918DFF90DD9FCCF00167E99 /* radio-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "radio-Info.plist"; path = "plists/radio-Info.plist"; sourceTree = "<group>"; };
 		C918E0030DD9FD1600167E99 /* radio.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = radio.fl; path = ../../test/radio.fl; sourceTree = SOURCE_ROOT; };
 		C918E0120DD9FD2500167E99 /* radio.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = radio.cxx; path = ../../test/radio.cxx; sourceTree = SOURCE_ROOT; };
 		C918E0230DD9FD4600167E99 /* resizebox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = resizebox.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E0250DD9FD4600167E99 /* resizebox-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "resizebox-Info.plist"; sourceTree = "<group>"; };
+		C918E0250DD9FD4600167E99 /* resizebox-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "resizebox-Info.plist"; path = "plists/resizebox-Info.plist"; sourceTree = "<group>"; };
 		C918E02C0DD9FD6100167E99 /* resizebox.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resizebox.cxx; path = ../../test/resizebox.cxx; sourceTree = SOURCE_ROOT; };
 		C918E0420DD9FD8A00167E99 /* resize.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = resize.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E0440DD9FD8A00167E99 /* resize-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "resize-Info.plist"; sourceTree = "<group>"; };
+		C918E0440DD9FD8A00167E99 /* resize-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "resize-Info.plist"; path = "plists/resize-Info.plist"; sourceTree = "<group>"; };
 		C918E04B0DD9FDAB00167E99 /* resize.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = resize.fl; path = ../../test/resize.fl; sourceTree = SOURCE_ROOT; };
 		C918E05C0DD9FDE900167E99 /* resize.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resize.cxx; path = ../../test/resize.cxx; sourceTree = SOURCE_ROOT; };
 		C918E06D0DD9FE0600167E99 /* scroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = scroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E06F0DD9FE0600167E99 /* scroll-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "scroll-Info.plist"; sourceTree = "<group>"; };
+		C918E06F0DD9FE0600167E99 /* scroll-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "scroll-Info.plist"; path = "plists/scroll-Info.plist"; sourceTree = "<group>"; };
 		C918E0760DD9FE1D00167E99 /* scroll.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scroll.cxx; path = ../../test/scroll.cxx; sourceTree = SOURCE_ROOT; };
 		C918E0910DD9FE4300167E99 /* shape.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = shape.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E0930DD9FE4300167E99 /* shape-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "shape-Info.plist"; sourceTree = "<group>"; };
+		C918E0930DD9FE4300167E99 /* shape-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "shape-Info.plist"; path = "plists/shape-Info.plist"; sourceTree = "<group>"; };
 		C918E09E0DD9FE6700167E99 /* shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shape.cxx; path = ../../test/shape.cxx; sourceTree = SOURCE_ROOT; };
 		C918E0B90DD9FE9500167E99 /* subwindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = subwindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E0BB0DD9FE9500167E99 /* subwindow-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "subwindow-Info.plist"; sourceTree = "<group>"; };
+		C918E0BB0DD9FE9500167E99 /* subwindow-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "subwindow-Info.plist"; path = "plists/subwindow-Info.plist"; sourceTree = "<group>"; };
 		C918E0C20DD9FEAC00167E99 /* subwindow.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = subwindow.cxx; path = ../../test/subwindow.cxx; sourceTree = SOURCE_ROOT; };
 		C918E0D80DD9FED700167E99 /* sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sudoku.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E0DA0DD9FED700167E99 /* sudoku-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "sudoku-Info.plist"; sourceTree = "<group>"; };
+		C918E0DA0DD9FED700167E99 /* sudoku-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "sudoku-Info.plist"; path = "plists/sudoku-Info.plist"; sourceTree = "<group>"; };
 		C918E0E10DD9FF2C00167E99 /* sudoku.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sudoku.cxx; path = ../../test/sudoku.cxx; sourceTree = SOURCE_ROOT; };
 		C918E1070DD9FF9300167E99 /* symbols.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = symbols.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E1090DD9FF9300167E99 /* symbols-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "symbols-Info.plist"; sourceTree = "<group>"; };
+		C918E1090DD9FF9300167E99 /* symbols-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "symbols-Info.plist"; path = "plists/symbols-Info.plist"; sourceTree = "<group>"; };
 		C918E1100DD9FFAD00167E99 /* symbols.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = symbols.cxx; path = ../../test/symbols.cxx; sourceTree = SOURCE_ROOT; };
 		C918E1260DDA112A00167E99 /* tabs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tabs.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E1280DDA112B00167E99 /* tabs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "tabs-Info.plist"; sourceTree = "<group>"; };
+		C918E1280DDA112B00167E99 /* tabs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "tabs-Info.plist"; path = "plists/tabs-Info.plist"; sourceTree = "<group>"; };
 		C918E1310DDA117700167E99 /* tabs.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tabs.fl; path = ../../test/tabs.fl; sourceTree = SOURCE_ROOT; };
 		C918E1410DDA11BA00167E99 /* tabs.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tabs.cxx; path = ../../test/tabs.cxx; sourceTree = SOURCE_ROOT; };
 		C918E1520DDA11E400167E99 /* threads.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = threads.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E1540DDA11E400167E99 /* threads-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "threads-Info.plist"; sourceTree = "<group>"; };
+		C918E1540DDA11E400167E99 /* threads-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "threads-Info.plist"; path = "plists/threads-Info.plist"; sourceTree = "<group>"; };
 		C918E15B0DDA11FE00167E99 /* threads.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = threads.cxx; path = ../../test/threads.cxx; sourceTree = SOURCE_ROOT; };
 		C918E1720DDA122D00167E99 /* tile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tile.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E1740DDA122D00167E99 /* tile-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "tile-Info.plist"; sourceTree = "<group>"; };
+		C918E1740DDA122D00167E99 /* tile-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "tile-Info.plist"; path = "plists/tile-Info.plist"; sourceTree = "<group>"; };
 		C918E17B0DDA124500167E99 /* tile.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tile.cxx; path = ../../test/tile.cxx; sourceTree = SOURCE_ROOT; };
 		C918E1920DDA126E00167E99 /* tiled_image.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tiled_image.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E1940DDA126F00167E99 /* tiled_image-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "tiled_image-Info.plist"; sourceTree = "<group>"; };
+		C918E1940DDA126F00167E99 /* tiled_image-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "tiled_image-Info.plist"; path = "plists/tiled_image-Info.plist"; sourceTree = "<group>"; };
 		C918E1A10DDA128900167E99 /* tiled_image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tiled_image.cxx; path = ../../test/tiled_image.cxx; sourceTree = SOURCE_ROOT; };
 		C918E1BE0DDA12CF00167E99 /* valuators.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = valuators.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C918E1C00DDA12CF00167E99 /* valuators-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "valuators-Info.plist"; sourceTree = "<group>"; };
+		C918E1C00DDA12CF00167E99 /* valuators-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "valuators-Info.plist"; path = "plists/valuators-Info.plist"; sourceTree = "<group>"; };
 		C918E1CB0DDA132100167E99 /* valuators.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = valuators.fl; path = ../../test/valuators.fl; sourceTree = SOURCE_ROOT; };
 		C918E1DA0DDA133400167E99 /* valuators.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = valuators.cxx; path = ../../test/valuators.cxx; sourceTree = SOURCE_ROOT; };
 		C97741850DD9D1910047C1BF /* cursor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cursor.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C97741870DD9D1910047C1BF /* cursor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "cursor-Info.plist"; sourceTree = "<group>"; };
+		C97741870DD9D1910047C1BF /* cursor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "cursor-Info.plist"; path = "plists/cursor-Info.plist"; sourceTree = "<group>"; };
 		C97741920DD9D1BD0047C1BF /* cursor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cursor.cxx; path = ../../test/cursor.cxx; sourceTree = SOURCE_ROOT; };
 		C97741DC0DD9D2D80047C1BF /* curve.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = curve.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C97741DE0DD9D2D80047C1BF /* curve-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "curve-Info.plist"; sourceTree = "<group>"; };
+		C97741DE0DD9D2D80047C1BF /* curve-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "curve-Info.plist"; path = "plists/curve-Info.plist"; sourceTree = "<group>"; };
 		C97741E70DD9D2ED0047C1BF /* curve.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = curve.cxx; path = ../../test/curve.cxx; sourceTree = SOURCE_ROOT; };
 		C97741FF0DD9D33B0047C1BF /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C97742010DD9D33B0047C1BF /* Demo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Demo-Info.plist"; sourceTree = "<group>"; };
+		C97742010DD9D33B0047C1BF /* Demo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Demo-Info.plist"; path = "plists/Demo-Info.plist"; sourceTree = "<group>"; };
 		C977420D0DD9D36C0047C1BF /* demo.menu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = demo.menu; path = ../../test/demo.menu; sourceTree = SOURCE_ROOT; };
 		C977420E0DD9D36C0047C1BF /* demo.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = demo.cxx; path = ../../test/demo.cxx; sourceTree = SOURCE_ROOT; };
 		C977425D0DD9D8110047C1BF /* doublebuffer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = doublebuffer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C977425F0DD9D8110047C1BF /* doublebuffer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "doublebuffer-Info.plist"; sourceTree = "<group>"; };
+		C977425F0DD9D8110047C1BF /* doublebuffer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "doublebuffer-Info.plist"; path = "plists/doublebuffer-Info.plist"; sourceTree = "<group>"; };
 		C97742670DD9D8280047C1BF /* doublebuffer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = doublebuffer.cxx; path = ../../test/doublebuffer.cxx; sourceTree = SOURCE_ROOT; };
 		C99CF5240DD78B550094BD10 /* CubeView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CubeView.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C99CF5260DD78B550094BD10 /* CubeView-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CubeView-Info.plist"; sourceTree = "<group>"; };
+		C99CF5260DD78B550094BD10 /* CubeView-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "CubeView-Info.plist"; path = "plists/CubeView-Info.plist"; sourceTree = "<group>"; };
 		C99CF52B0DD78BBA0094BD10 /* CubeMain.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CubeMain.cxx; path = ../../test/CubeMain.cxx; sourceTree = SOURCE_ROOT; };
 		C99CF52D0DD78BD50094BD10 /* CubeViewUI.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CubeViewUI.fl; path = ../../test/CubeViewUI.fl; sourceTree = SOURCE_ROOT; };
 		C99CF5430DD78E690094BD10 /* CubeView.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CubeView.cxx; path = ../../test/CubeView.cxx; sourceTree = SOURCE_ROOT; };
 		C99CF5A40DD8CB5E0094BD10 /* CubeViewUI.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CubeViewUI.cxx; path = ../../test/CubeViewUI.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3E9510DD6336500486E4F /* fltk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3E9530DD6336500486E4F /* fltk-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fltk-Info.plist"; sourceTree = "<group>"; };
+		C9A3E9530DD6336500486E4F /* fltk-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fltk-Info.plist"; path = "plists/fltk-Info.plist"; sourceTree = "<group>"; };
 		C9A3E95F0DD633C300486E4F /* hello.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hello.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3E9610DD633C300486E4F /* hello-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "hello-Info.plist"; sourceTree = "<group>"; };
+		C9A3E9610DD633C300486E4F /* hello-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "hello-Info.plist"; path = "plists/hello-Info.plist"; sourceTree = "<group>"; };
 		C9A3E9650DD633F100486E4F /* hello.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hello.cxx; path = ../../test/hello.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EAD60DD634CC00486E4F /* Fl_get_system_colors.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_get_system_colors.cxx; path = ../../src/Fl_get_system_colors.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EAD70DD634CC00486E4F /* Fl_get_key_win32.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_get_key_win32.cxx; path = ../../src/Fl_get_key_win32.cxx; sourceTree = SOURCE_ROOT; };
@@ -2154,64 +2154,64 @@
 		C9A3EB8A0DD634CC00486E4F /* Fl_BMP_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_BMP_Image.cxx; path = ../../src/Fl_BMP_Image.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB8B0DD634CC00486E4F /* fl_shadow_box.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_shadow_box.cxx; path = ../../src/fl_shadow_box.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltk_forms.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EC6F0DD6397400486E4F /* fltk_forms-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fltk_forms-Info.plist"; sourceTree = "<group>"; };
+		C9A3EC6F0DD6397400486E4F /* fltk_forms-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fltk_forms-Info.plist"; path = "plists/fltk_forms-Info.plist"; sourceTree = "<group>"; };
 		C9A3EC790DD6398C00486E4F /* fltk_images.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltk_images.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EC7A0DD6398C00486E4F /* fltk_images-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fltk_images-Info.plist"; sourceTree = "<group>"; };
+		C9A3EC7A0DD6398C00486E4F /* fltk_images-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fltk_images-Info.plist"; path = "plists/fltk_images-Info.plist"; sourceTree = "<group>"; };
 		C9A3EC830DD639A200486E4F /* fltk_gl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltk_gl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EC850DD639A200486E4F /* fltk_gl-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fltk_gl-Info.plist"; sourceTree = "<group>"; };
+		C9A3EC850DD639A200486E4F /* fltk_gl-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fltk_gl-Info.plist"; path = "plists/fltk_gl-Info.plist"; sourceTree = "<group>"; };
 		C9A3EC8E0DD639CE00486E4F /* fltk_png.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltk_png.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EC900DD639CE00486E4F /* fltk_png-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fltk_png-Info.plist"; sourceTree = "<group>"; };
+		C9A3EC900DD639CE00486E4F /* fltk_png-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fltk_png-Info.plist"; path = "plists/fltk_png-Info.plist"; sourceTree = "<group>"; };
 		C9A3EC9A0DD639E600486E4F /* fltk_jpeg.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltk_jpeg.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EC9B0DD639E600486E4F /* fltk_jpeg-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "fltk_jpeg-Info.plist"; sourceTree = "<group>"; };
+		C9A3EC9B0DD639E600486E4F /* fltk_jpeg-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "fltk_jpeg-Info.plist"; path = "plists/fltk_jpeg-Info.plist"; sourceTree = "<group>"; };
 		C9A3ECA30DD63A5200486E4F /* adjuster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = adjuster.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3ECA60DD63A5200486E4F /* adjuster-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "adjuster-Info.plist"; sourceTree = "<group>"; };
+		C9A3ECA60DD63A5200486E4F /* adjuster-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "adjuster-Info.plist"; path = "plists/adjuster-Info.plist"; sourceTree = "<group>"; };
 		C9A3ECAA0DD63A9E00486E4F /* adjuster.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = adjuster.cxx; path = ../../test/adjuster.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3ED020DD63C8B00486E4F /* arc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = arc.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3ED040DD63C8B00486E4F /* arc-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "arc-Info.plist"; sourceTree = "<group>"; };
+		C9A3ED040DD63C8B00486E4F /* arc-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "arc-Info.plist"; path = "plists/arc-Info.plist"; sourceTree = "<group>"; };
 		C9A3ED090DD63CC900486E4F /* arc.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = arc.cxx; path = ../../test/arc.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3ED1A0DD63D2800486E4F /* ask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ask.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3ED1C0DD63D2800486E4F /* ask-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ask-Info.plist"; sourceTree = "<group>"; };
+		C9A3ED1C0DD63D2800486E4F /* ask-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ask-Info.plist"; path = "plists/ask-Info.plist"; sourceTree = "<group>"; };
 		C9A3ED210DD63D4C00486E4F /* ask.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ask.cxx; path = ../../test/ask.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3ED330DD63D8600486E4F /* bitmap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bitmap.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3ED350DD63D8600486E4F /* bitmap-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "bitmap-Info.plist"; sourceTree = "<group>"; };
+		C9A3ED350DD63D8600486E4F /* bitmap-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bitmap-Info.plist"; path = "plists/bitmap-Info.plist"; sourceTree = "<group>"; };
 		C9A3ED3A0DD63D9E00486E4F /* bitmap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bitmap.cxx; path = ../../test/bitmap.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3ED4D0DD63DD100486E4F /* blocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = blocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3ED4F0DD63DD100486E4F /* blocks-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "blocks-Info.plist"; sourceTree = "<group>"; };
+		C9A3ED4F0DD63DD100486E4F /* blocks-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "blocks-Info.plist"; path = "plists/blocks-Info.plist"; sourceTree = "<group>"; };
 		C9A3ED540DD63DEF00486E4F /* blocks.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = blocks.cxx; path = ../../test/blocks.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3ED5B0DD63E4C00486E4F /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		C9A3ED6D0DD63E7F00486E4F /* boxtype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = boxtype.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3ED6F0DD63E7F00486E4F /* boxtype-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "boxtype-Info.plist"; sourceTree = "<group>"; };
+		C9A3ED6F0DD63E7F00486E4F /* boxtype-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "boxtype-Info.plist"; path = "plists/boxtype-Info.plist"; sourceTree = "<group>"; };
 		C9A3ED740DD63E9B00486E4F /* boxtype.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = boxtype.cxx; path = ../../test/boxtype.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3ED850DD63EDC00486E4F /* browser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = browser.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3ED870DD63EDC00486E4F /* browser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "browser-Info.plist"; sourceTree = "<group>"; };
+		C9A3ED870DD63EDC00486E4F /* browser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "browser-Info.plist"; path = "plists/browser-Info.plist"; sourceTree = "<group>"; };
 		C9A3ED8F0DD63EFF00486E4F /* browser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = browser.cxx; path = ../../test/browser.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EDAF0DD6457A00486E4F /* button.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = button.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EDB10DD6457A00486E4F /* button-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "button-Info.plist"; sourceTree = "<group>"; };
+		C9A3EDB10DD6457A00486E4F /* button-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "button-Info.plist"; path = "plists/button-Info.plist"; sourceTree = "<group>"; };
 		C9A3EDB60DD6459800486E4F /* button.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = button.cxx; path = ../../test/button.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EDC70DD645C200486E4F /* buttons.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = buttons.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EDC90DD645C200486E4F /* buttons-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "buttons-Info.plist"; sourceTree = "<group>"; };
+		C9A3EDC90DD645C200486E4F /* buttons-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "buttons-Info.plist"; path = "plists/buttons-Info.plist"; sourceTree = "<group>"; };
 		C9A3EDCE0DD645D900486E4F /* buttons.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = buttons.cxx; path = ../../test/buttons.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EDDE0DD6460900486E4F /* checkers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = checkers.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EDE00DD6460900486E4F /* checkers-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "checkers-Info.plist"; sourceTree = "<group>"; };
+		C9A3EDE00DD6460900486E4F /* checkers-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "checkers-Info.plist"; path = "plists/checkers-Info.plist"; sourceTree = "<group>"; };
 		C9A3EDE50DD6462500486E4F /* checkers.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = checkers.cxx; path = ../../test/checkers.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EDF90DD6467E00486E4F /* clock.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = clock.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EDFB0DD6467E00486E4F /* clock-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "clock-Info.plist"; sourceTree = "<group>"; };
+		C9A3EDFB0DD6467E00486E4F /* clock-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "clock-Info.plist"; path = "plists/clock-Info.plist"; sourceTree = "<group>"; };
 		C9A3EE000DD6469C00486E4F /* clock.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clock.cxx; path = ../../test/clock.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EE110DD646DA00486E4F /* colbrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = colbrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9A3EE130DD646DA00486E4F /* colbrowser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "colbrowser-Info.plist"; sourceTree = "<group>"; };
+		C9A3EE130DD646DA00486E4F /* colbrowser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "colbrowser-Info.plist"; path = "plists/colbrowser-Info.plist"; sourceTree = "<group>"; };
 		C9A3EE180DD646F100486E4F /* colbrowser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colbrowser.cxx; path = ../../test/colbrowser.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EE780DD64AE700486E4F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		C9A3EE790DD64B0200486E4F /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		C9C870BE0DD7721700A9793F /* color_chooser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = color_chooser.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9C870C00DD7721700A9793F /* color_chooser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "color_chooser-Info.plist"; sourceTree = "<group>"; };
+		C9C870C00DD7721700A9793F /* color_chooser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "color_chooser-Info.plist"; path = "plists/color_chooser-Info.plist"; sourceTree = "<group>"; };
 		C9C870C80DD7724200A9793F /* color_chooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color_chooser.cxx; path = ../../test/color_chooser.cxx; sourceTree = SOURCE_ROOT; };
 		C9C871E80DD773E700A9793F /* cube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cube.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9C871EA0DD773E700A9793F /* cube-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "cube-Info.plist"; sourceTree = "<group>"; };
+		C9C871EA0DD773E700A9793F /* cube-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "cube-Info.plist"; path = "plists/cube-Info.plist"; sourceTree = "<group>"; };
 		C9C871F20DD7740800A9793F /* cube.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cube.cxx; path = ../../test/cube.cxx; sourceTree = SOURCE_ROOT; };
 		C9C872120DD7756600A9793F /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		C9C872160DD7757700A9793F /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		C9C873740DD7772000A9793F /* Fluid.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fluid.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9C873760DD7772000A9793F /* Fluid-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Fluid-Info.plist"; sourceTree = "<group>"; };
+		C9C873760DD7772000A9793F /* Fluid-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Fluid-Info.plist"; path = "plists/Fluid-Info.plist"; sourceTree = "<group>"; };
 		C9C8737F0DD7777A00A9793F /* alignment_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = alignment_panel.cxx; path = ../../fluid/alignment_panel.cxx; sourceTree = SOURCE_ROOT; };
 		C9C873800DD7777A00A9793F /* Fluid_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fluid_Image.cxx; path = ../../fluid/Fluid_Image.cxx; sourceTree = SOURCE_ROOT; };
 		C9C873810DD7777A00A9793F /* fluid.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fluid.cxx; path = ../../fluid/fluid.cxx; sourceTree = SOURCE_ROOT; };
@@ -7192,7 +7192,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "editor-Info.plist";
+				INFOPLIST_FILE = "plists/editor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7215,7 +7215,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "editor-Info.plist";
+				INFOPLIST_FILE = "plists/editor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7239,7 +7239,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fast_slow-Info.plist";
+				INFOPLIST_FILE = "plists/fast_slow-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7262,7 +7262,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fast_slow-Info.plist";
+				INFOPLIST_FILE = "plists/fast_slow-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7286,7 +7286,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "file_chooser-Info.plist";
+				INFOPLIST_FILE = "plists/file_chooser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7309,7 +7309,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "file_chooser-Info.plist";
+				INFOPLIST_FILE = "plists/file_chooser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7333,7 +7333,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fonts-Info.plist";
+				INFOPLIST_FILE = "plists/fonts-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7356,7 +7356,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fonts-Info.plist";
+				INFOPLIST_FILE = "plists/fonts-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7380,7 +7380,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "forms-Info.plist";
+				INFOPLIST_FILE = "plists/forms-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7403,7 +7403,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "forms-Info.plist";
+				INFOPLIST_FILE = "plists/forms-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7427,7 +7427,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fractals-Info.plist";
+				INFOPLIST_FILE = "plists/fractals-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7450,7 +7450,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fractals-Info.plist";
+				INFOPLIST_FILE = "plists/fractals-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7474,7 +7474,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fullscreen-Info.plist";
+				INFOPLIST_FILE = "plists/fullscreen-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7497,7 +7497,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fullscreen-Info.plist";
+				INFOPLIST_FILE = "plists/fullscreen-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7521,7 +7521,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "gl_overlay-Info.plist";
+				INFOPLIST_FILE = "plists/gl_overlay-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7544,7 +7544,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "gl_overlay-Info.plist";
+				INFOPLIST_FILE = "plists/gl_overlay-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7568,7 +7568,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "glpuzzle-Info.plist";
+				INFOPLIST_FILE = "plists/glpuzzle-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7591,7 +7591,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "glpuzzle-Info.plist";
+				INFOPLIST_FILE = "plists/glpuzzle-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7615,7 +7615,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "help-Info.plist";
+				INFOPLIST_FILE = "plists/help-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7638,7 +7638,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "help-Info.plist";
+				INFOPLIST_FILE = "plists/help-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7662,7 +7662,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "iconize-Info.plist";
+				INFOPLIST_FILE = "plists/iconize-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7685,7 +7685,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "iconize-Info.plist";
+				INFOPLIST_FILE = "plists/iconize-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7709,7 +7709,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "image-Info.plist";
+				INFOPLIST_FILE = "plists/image-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7732,7 +7732,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "image-Info.plist";
+				INFOPLIST_FILE = "plists/image-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7756,7 +7756,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "inactive-Info.plist";
+				INFOPLIST_FILE = "plists/inactive-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7779,7 +7779,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "inactive-Info.plist";
+				INFOPLIST_FILE = "plists/inactive-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7803,7 +7803,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "input-Info.plist";
+				INFOPLIST_FILE = "plists/input-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7826,7 +7826,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "input-Info.plist";
+				INFOPLIST_FILE = "plists/input-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7850,7 +7850,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "input_choice-Info.plist";
+				INFOPLIST_FILE = "plists/input_choice-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7873,7 +7873,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "input_choice-Info.plist";
+				INFOPLIST_FILE = "plists/input_choice-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7897,7 +7897,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "keyboard-Info.plist";
+				INFOPLIST_FILE = "plists/keyboard-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7920,7 +7920,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "keyboard-Info.plist";
+				INFOPLIST_FILE = "plists/keyboard-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7944,7 +7944,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "label-Info.plist";
+				INFOPLIST_FILE = "plists/label-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7967,7 +7967,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "label-Info.plist";
+				INFOPLIST_FILE = "plists/label-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -7991,7 +7991,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "line_style-Info.plist";
+				INFOPLIST_FILE = "plists/line_style-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8014,7 +8014,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "line_style-Info.plist";
+				INFOPLIST_FILE = "plists/line_style-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8038,7 +8038,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "list_visuals-Info.plist";
+				INFOPLIST_FILE = "plists/list_visuals-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8061,7 +8061,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "list_visuals-Info.plist";
+				INFOPLIST_FILE = "plists/list_visuals-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8085,7 +8085,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "mandelbrot-Info.plist";
+				INFOPLIST_FILE = "plists/mandelbrot-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8108,7 +8108,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "mandelbrot-Info.plist";
+				INFOPLIST_FILE = "plists/mandelbrot-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8132,7 +8132,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "menubar-Info.plist";
+				INFOPLIST_FILE = "plists/menubar-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8155,7 +8155,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "menubar-Info.plist";
+				INFOPLIST_FILE = "plists/menubar-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8179,7 +8179,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "message-Info.plist";
+				INFOPLIST_FILE = "plists/message-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8202,7 +8202,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "message-Info.plist";
+				INFOPLIST_FILE = "plists/message-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8226,7 +8226,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "minimum-Info.plist";
+				INFOPLIST_FILE = "plists/minimum-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8249,7 +8249,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "minimum-Info.plist";
+				INFOPLIST_FILE = "plists/minimum-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8273,7 +8273,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "navigation-Info.plist";
+				INFOPLIST_FILE = "plists/navigation-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8296,7 +8296,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "navigation-Info.plist";
+				INFOPLIST_FILE = "plists/navigation-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8320,7 +8320,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "output-Info.plist";
+				INFOPLIST_FILE = "plists/output-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8343,7 +8343,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "output-Info.plist";
+				INFOPLIST_FILE = "plists/output-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8367,7 +8367,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "overlay-Info.plist";
+				INFOPLIST_FILE = "plists/overlay-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8390,7 +8390,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "overlay-Info.plist";
+				INFOPLIST_FILE = "plists/overlay-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8414,7 +8414,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "pack-Info.plist";
+				INFOPLIST_FILE = "plists/pack-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8437,7 +8437,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "pack-Info.plist";
+				INFOPLIST_FILE = "plists/pack-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8461,7 +8461,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "pixmap_browser-Info.plist";
+				INFOPLIST_FILE = "plists/pixmap_browser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8484,7 +8484,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "pixmap_browser-Info.plist";
+				INFOPLIST_FILE = "plists/pixmap_browser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8508,7 +8508,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "pixmap-Info.plist";
+				INFOPLIST_FILE = "plists/pixmap-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8531,7 +8531,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "pixmap-Info.plist";
+				INFOPLIST_FILE = "plists/pixmap-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8555,7 +8555,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "preferences-Info.plist";
+				INFOPLIST_FILE = "plists/preferences-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8578,7 +8578,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "preferences-Info.plist";
+				INFOPLIST_FILE = "plists/preferences-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8602,7 +8602,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "radio-Info.plist";
+				INFOPLIST_FILE = "plists/radio-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8625,7 +8625,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "radio-Info.plist";
+				INFOPLIST_FILE = "plists/radio-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8649,7 +8649,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "resizebox-Info.plist";
+				INFOPLIST_FILE = "plists/resizebox-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8672,7 +8672,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "resizebox-Info.plist";
+				INFOPLIST_FILE = "plists/resizebox-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8696,7 +8696,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "resize-Info.plist";
+				INFOPLIST_FILE = "plists/resize-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8719,7 +8719,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "resize-Info.plist";
+				INFOPLIST_FILE = "plists/resize-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8743,7 +8743,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "scroll-Info.plist";
+				INFOPLIST_FILE = "plists/scroll-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8766,7 +8766,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "scroll-Info.plist";
+				INFOPLIST_FILE = "plists/scroll-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8790,7 +8790,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "shape-Info.plist";
+				INFOPLIST_FILE = "plists/shape-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8813,7 +8813,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "shape-Info.plist";
+				INFOPLIST_FILE = "plists/shape-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8837,7 +8837,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "subwindow-Info.plist";
+				INFOPLIST_FILE = "plists/subwindow-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8860,7 +8860,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "subwindow-Info.plist";
+				INFOPLIST_FILE = "plists/subwindow-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8884,7 +8884,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "sudoku-Info.plist";
+				INFOPLIST_FILE = "plists/sudoku-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8907,7 +8907,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "sudoku-Info.plist";
+				INFOPLIST_FILE = "plists/sudoku-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8931,7 +8931,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "symbols-Info.plist";
+				INFOPLIST_FILE = "plists/symbols-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8954,7 +8954,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "symbols-Info.plist";
+				INFOPLIST_FILE = "plists/symbols-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -8978,7 +8978,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "tabs-Info.plist";
+				INFOPLIST_FILE = "plists/tabs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9001,7 +9001,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "tabs-Info.plist";
+				INFOPLIST_FILE = "plists/tabs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9025,7 +9025,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "threads-Info.plist";
+				INFOPLIST_FILE = "plists/threads-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9048,7 +9048,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "threads-Info.plist";
+				INFOPLIST_FILE = "plists/threads-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9072,7 +9072,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "tile-Info.plist";
+				INFOPLIST_FILE = "plists/tile-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9095,7 +9095,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "tile-Info.plist";
+				INFOPLIST_FILE = "plists/tile-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9119,7 +9119,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "tiled_image-Info.plist";
+				INFOPLIST_FILE = "plists/tiled_image-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9142,7 +9142,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "tiled_image-Info.plist";
+				INFOPLIST_FILE = "plists/tiled_image-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9166,7 +9166,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "valuators-Info.plist";
+				INFOPLIST_FILE = "plists/valuators-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9189,7 +9189,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "valuators-Info.plist";
+				INFOPLIST_FILE = "plists/valuators-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9213,7 +9213,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "cursor-Info.plist";
+				INFOPLIST_FILE = "plists/cursor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9236,7 +9236,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "cursor-Info.plist";
+				INFOPLIST_FILE = "plists/cursor-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9260,7 +9260,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "curve-Info.plist";
+				INFOPLIST_FILE = "plists/curve-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9283,7 +9283,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "curve-Info.plist";
+				INFOPLIST_FILE = "plists/curve-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9310,7 +9310,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "Demo-Info.plist";
+				INFOPLIST_FILE = "plists/Demo-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9337,7 +9337,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "Demo-Info.plist";
+				INFOPLIST_FILE = "plists/Demo-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9362,7 +9362,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "doublebuffer-Info.plist";
+				INFOPLIST_FILE = "plists/doublebuffer-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9385,7 +9385,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "doublebuffer-Info.plist";
+				INFOPLIST_FILE = "plists/doublebuffer-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9409,7 +9409,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "CubeView-Info.plist";
+				INFOPLIST_FILE = "plists/CubeView-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9432,7 +9432,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "CubeView-Info.plist";
+				INFOPLIST_FILE = "plists/CubeView-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9478,7 +9478,7 @@
 					../../ide/XCode3/,
 					../../,
 				);
-				INFOPLIST_FILE = "fltk-Info.plist";
+				INFOPLIST_FILE = "plists/fltk-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9509,7 +9509,7 @@
 					../../ide/XCode3/,
 					../../,
 				);
-				INFOPLIST_FILE = "fltk-Info.plist";
+				INFOPLIST_FILE = "plists/fltk-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9533,7 +9533,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "hello-Info.plist";
+				INFOPLIST_FILE = "plists/hello-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9556,7 +9556,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "hello-Info.plist";
+				INFOPLIST_FILE = "plists/hello-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9586,7 +9586,7 @@
 					../../ide/XCode3,
 					../../,
 				);
-				INFOPLIST_FILE = "fltk_forms-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_forms-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9614,7 +9614,7 @@
 					../../ide/XCode3,
 					../../,
 				);
-				INFOPLIST_FILE = "fltk_forms-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_forms-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9644,7 +9644,7 @@
 					../../,
 					../../png/,
 				);
-				INFOPLIST_FILE = "fltk_images-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_images-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9673,7 +9673,7 @@
 					../../,
 					../../png/,
 				);
-				INFOPLIST_FILE = "fltk_images-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_images-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9699,7 +9699,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fltk_gl-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_gl-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9724,7 +9724,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "fltk_gl-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_gl-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9754,7 +9754,7 @@
 					../../,
 					../../png/,
 				);
-				INFOPLIST_FILE = "fltk_png-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_png-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9783,7 +9783,7 @@
 					../../,
 					../../png/,
 				);
-				INFOPLIST_FILE = "fltk_png-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_png-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9808,7 +9808,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = "fltk_jpeg-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_jpeg-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9832,7 +9832,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = "fltk_jpeg-Info.plist";
+				INFOPLIST_FILE = "plists/fltk_jpeg-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9855,7 +9855,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "adjuster-Info.plist";
+				INFOPLIST_FILE = "plists/adjuster-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9878,7 +9878,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "adjuster-Info.plist";
+				INFOPLIST_FILE = "plists/adjuster-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9902,7 +9902,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "arc-Info.plist";
+				INFOPLIST_FILE = "plists/arc-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9925,7 +9925,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "arc-Info.plist";
+				INFOPLIST_FILE = "plists/arc-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9949,7 +9949,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../..;
-				INFOPLIST_FILE = "ask-Info.plist";
+				INFOPLIST_FILE = "plists/ask-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9972,7 +9972,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../..;
-				INFOPLIST_FILE = "ask-Info.plist";
+				INFOPLIST_FILE = "plists/ask-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -9996,7 +9996,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "bitmap-Info.plist";
+				INFOPLIST_FILE = "plists/bitmap-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10019,7 +10019,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "bitmap-Info.plist";
+				INFOPLIST_FILE = "plists/bitmap-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10043,7 +10043,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "blocks-Info.plist";
+				INFOPLIST_FILE = "plists/blocks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10066,7 +10066,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "blocks-Info.plist";
+				INFOPLIST_FILE = "plists/blocks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10090,7 +10090,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "boxtype-Info.plist";
+				INFOPLIST_FILE = "plists/boxtype-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10113,7 +10113,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "boxtype-Info.plist";
+				INFOPLIST_FILE = "plists/boxtype-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10138,7 +10138,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "browser-Info.plist";
+				INFOPLIST_FILE = "plists/browser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10162,7 +10162,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "browser-Info.plist";
+				INFOPLIST_FILE = "plists/browser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10186,7 +10186,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "button-Info.plist";
+				INFOPLIST_FILE = "plists/button-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10209,7 +10209,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "button-Info.plist";
+				INFOPLIST_FILE = "plists/button-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10233,7 +10233,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "buttons-Info.plist";
+				INFOPLIST_FILE = "plists/buttons-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10256,7 +10256,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "buttons-Info.plist";
+				INFOPLIST_FILE = "plists/buttons-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10280,7 +10280,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "checkers-Info.plist";
+				INFOPLIST_FILE = "plists/checkers-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10303,7 +10303,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "checkers-Info.plist";
+				INFOPLIST_FILE = "plists/checkers-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10327,7 +10327,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "clock-Info.plist";
+				INFOPLIST_FILE = "plists/clock-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10350,7 +10350,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "clock-Info.plist";
+				INFOPLIST_FILE = "plists/clock-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10375,7 +10375,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "colbrowser-Info.plist";
+				INFOPLIST_FILE = "plists/colbrowser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10399,7 +10399,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "colbrowser-Info.plist";
+				INFOPLIST_FILE = "plists/colbrowser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10423,7 +10423,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "color_chooser-Info.plist";
+				INFOPLIST_FILE = "plists/color_chooser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10446,7 +10446,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "color_chooser-Info.plist";
+				INFOPLIST_FILE = "plists/color_chooser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10470,7 +10470,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "cube-Info.plist";
+				INFOPLIST_FILE = "plists/cube-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10493,7 +10493,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "cube-Info.plist";
+				INFOPLIST_FILE = "plists/cube-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10521,7 +10521,7 @@
 					../../,
 					../../png,
 				);
-				INFOPLIST_FILE = "Fluid-Info.plist";
+				INFOPLIST_FILE = "plists/Fluid-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10549,7 +10549,7 @@
 					../../,
 					../../png,
 				);
-				INFOPLIST_FILE = "Fluid-Info.plist";
+				INFOPLIST_FILE = "plists/Fluid-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
