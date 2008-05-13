@@ -139,6 +139,7 @@
 		C918E1CC0DDA132100167E99 /* valuators.fl in Resources */ = {isa = PBXBuildFile; fileRef = C918E1CB0DDA132100167E99 /* valuators.fl */; };
 		C918E1D30DDA132A00167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918E1DB0DDA133400167E99 /* valuators.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918E1DA0DDA133400167E99 /* valuators.cxx */; };
+		C93F25300DDA257B0017EE72 /* fluid.icns in Resources */ = {isa = PBXBuildFile; fileRef = C93F252F0DDA257B0017EE72 /* fluid.icns */; };
 		C97741930DD9D1BD0047C1BF /* cursor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97741920DD9D1BD0047C1BF /* cursor.cxx */; };
 		C977419A0DD9D1C90047C1BF /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C97741E80DD9D2ED0047C1BF /* curve.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97741E70DD9D2ED0047C1BF /* curve.cxx */; };
@@ -1947,6 +1948,7 @@
 		C918E1C00DDA12CF00167E99 /* valuators-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "valuators-Info.plist"; path = "plists/valuators-Info.plist"; sourceTree = "<group>"; };
 		C918E1CB0DDA132100167E99 /* valuators.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = valuators.fl; path = ../../test/valuators.fl; sourceTree = SOURCE_ROOT; };
 		C918E1DA0DDA133400167E99 /* valuators.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = valuators.cxx; path = ../../test/valuators.cxx; sourceTree = SOURCE_ROOT; };
+		C93F252F0DDA257B0017EE72 /* fluid.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = fluid.icns; path = icons/fluid.icns; sourceTree = "<group>"; };
 		C97741850DD9D1910047C1BF /* cursor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cursor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97741870DD9D1910047C1BF /* cursor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "cursor-Info.plist"; path = "plists/cursor-Info.plist"; sourceTree = "<group>"; };
 		C97741920DD9D1BD0047C1BF /* cursor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cursor.cxx; path = ../../test/cursor.cxx; sourceTree = SOURCE_ROOT; };
@@ -2911,6 +2913,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C93F252E0DDA25530017EE72 /* icons */ = {
+			isa = PBXGroup;
+			children = (
+				C93F252F0DDA257B0017EE72 /* fluid.icns */,
+			);
+			name = icons;
+			sourceTree = "<group>";
+		};
 		C9A3E93A0DD6332D00486E4F = {
 			isa = PBXGroup;
 			children = (
@@ -2921,6 +2931,7 @@
 				C9DD57660DD7820400A896B4 /* jpeg Sources */,
 				C9DD576D0DD7821800A896B4 /* png Sources */,
 				C9A3E9580DD6338300486E4F /* plists */,
+				C93F252E0DDA25530017EE72 /* icons */,
 				C9A3ED5A0DD63E3200486E4F /* Frameworks */,
 				C9DD58060DD7834400A896B4 /* libs */,
 				C9A3E9520DD6336500486E4F /* Products */,
@@ -5493,6 +5504,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C93F25300DDA257B0017EE72 /* fluid.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
