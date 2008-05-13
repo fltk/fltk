@@ -58,6 +58,8 @@ const char* copyright =
 #define FLTK
 //#define VT100
 
+#undef check
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

@@ -54,7 +54,11 @@ main(int argc, char *argv[])
     fl_initialize(&argc, argv, "FormDemo", 0, 0);
 
     create_form_cl();
-    strcpy(dbname, "rgb.txt");
+#ifdef USING_XCODE
+  strcpy(dbname, "../../../../test/rgb.txt");
+#else
+  strcpy(dbname, "rgb.txt");
+#endif
 
     if (load_browser(dbname))
 	fl_set_object_label(dbobj, dbname);

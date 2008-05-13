@@ -130,25 +130,28 @@ int main(int argc, char **argv) {
   // browser->scrollbar_right();
   //browser->has_scrollbar(Fl_Browser::BOTH_ALWAYS);
   if (!browser->load(fname)) {
+    int done = 0;
 #ifdef _MSC_VER
     // if 'browser' was started from the VisualC environment in Win32, 
     // the current directory is set to the environment itself, 
     // so we need to correct the browser file path
-    int done = 1;
     if ( i == argc ) 
     {
       fname = "../test/browser.cxx";
       done = browser->load(fname);
     }
+#elif defined(USING_XCODE)
+    if ( i == argc ) 
+    {
+      fname = "../../../../test/browser.cxx";
+      done = browser->load(fname);
+    }
+#endif
     if ( !done )
     {
       printf("Can't load %s, %s\n", fname, strerror(errno));
       exit(1);
     }
-#else
-    printf("Can't load %s, %s\n", fname, strerror(errno));
-    exit(1);
-#endif
   }
   browser->position(0);
 
