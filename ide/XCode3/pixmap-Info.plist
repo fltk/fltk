@@ -7,13 +7,13 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.fltk.Demo</string>
+	<string>com.yourcompany.pixmap</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
-	<string>FLTK</string>
+	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 </dict>

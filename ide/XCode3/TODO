@@ -1,5 +1,2 @@
 
-- adjuster..clock: must explicitly depend on fltk.framework
 - colbrowser: crashes (possibly wrong include path?)
-- everything after colbrowser is not being built
-- fltk-image to fltk-jpeg: frameworks not built
