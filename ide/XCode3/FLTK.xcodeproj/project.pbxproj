@@ -140,6 +140,7 @@
 		C918E1D30DDA132A00167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918E1DB0DDA133400167E99 /* valuators.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918E1DA0DDA133400167E99 /* valuators.cxx */; };
 		C93F25300DDA257B0017EE72 /* fluid.icns in Resources */ = {isa = PBXBuildFile; fileRef = C93F252F0DDA257B0017EE72 /* fluid.icns */; };
+		C969E9A00DDAE446003BCABC /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C97741930DD9D1BD0047C1BF /* cursor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97741920DD9D1BD0047C1BF /* cursor.cxx */; };
 		C977419A0DD9D1C90047C1BF /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C97741E80DD9D2ED0047C1BF /* curve.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97741E70DD9D2ED0047C1BF /* curve.cxx */; };
@@ -1805,6 +1806,19 @@
 			remoteInfo = fltk_jpeg;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C9E8C6490DDAE3E200F5B0CF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C969E9A00DDAE446003BCABC /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C918DB370DD9EE4100167E99 /* editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = editor.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4648,6 +4662,7 @@
 				C9A3EC9F0DD63A5200486E4F /* Resources */,
 				C9A3ECA00DD63A5200486E4F /* Sources */,
 				C9A3ECA10DD63A5200486E4F /* Frameworks */,
+				C9E8C6490DDAE3E200F5B0CF /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -9491,7 +9506,7 @@
 					../../,
 				);
 				INFOPLIST_FILE = "plists/fltk-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9522,7 +9537,7 @@
 					../../,
 				);
 				INFOPLIST_FILE = "plists/fltk-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
