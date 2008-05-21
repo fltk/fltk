@@ -145,7 +145,7 @@
 		C977419A0DD9D1C90047C1BF /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C97741E80DD9D2ED0047C1BF /* curve.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97741E70DD9D2ED0047C1BF /* curve.cxx */; };
 		C97741F00DD9D3240047C1BF /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
-		C977420B0DD9D3570047C1BF /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		C977420B0DD9D3570047C1BF /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C977420F0DD9D36C0047C1BF /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C977420D0DD9D36C0047C1BF /* demo.menu */; };
 		C97742100DD9D36C0047C1BF /* demo.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C977420E0DD9D36C0047C1BF /* demo.cxx */; };
 		C97742520DD9D3F00047C1BF /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */; };
@@ -447,6 +447,12 @@
 		C9DD58190DD784C700A896B4 /* fltk_jpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC9A0DD639E600486E4F /* fltk_jpeg.framework */; };
 		C9DD581A0DD784C700A896B4 /* fltk_png.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC8E0DD639CE00486E4F /* fltk_png.framework */; };
 		C9DD58310DD7885D00A896B4 /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */; };
+		C9FB9AAE0DE34BD200026BB1 /* fltk_forms.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */; };
+		C9FB9AB50DE34C4A00026BB1 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		C9FB9AB60DE34C4A00026BB1 /* fltk_forms.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */; };
+		C9FB9AB70DE34C4A00026BB1 /* fltk_images.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3EC790DD6398C00486E4F /* fltk_images.framework */; };
+		C9FB9AB80DE34C4A00026BB1 /* fltk_png.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3EC8E0DD639CE00486E4F /* fltk_png.framework */; };
+		C9FB9AB90DE34C4A00026BB1 /* fltk_jpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3EC9A0DD639E600486E4F /* fltk_jpeg.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1420,13 +1426,6 @@
 			remoteGlobalIDString = C9C873730DD7772000A9793F;
 			remoteInfo = Fluid;
 		};
-		C977421A0DD9D3BA0047C1BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
-			remoteInfo = fltk;
-		};
 		C977421C0DD9D3BA0047C1BF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
@@ -1805,6 +1804,13 @@
 			remoteGlobalIDString = C9A3EC990DD639E600486E4F;
 			remoteInfo = fltk_jpeg;
 		};
+		C9FB9AA40DE34B3900026BB1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
+			remoteInfo = fltk;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1815,6 +1821,31 @@
 			dstSubfolderSpec = 10;
 			files = (
 				C969E9A00DDAE446003BCABC /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9FB9A980DE34AB200026BB1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C9FB9AAE0DE34BD200026BB1 /* fltk_forms.framework in CopyFiles */,
+				C977420B0DD9D3570047C1BF /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9FB9ABF0DE34C6800026BB1 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C9FB9AB50DE34C4A00026BB1 /* fltk.framework in CopyFiles */,
+				C9FB9AB60DE34C4A00026BB1 /* fltk_forms.framework in CopyFiles */,
+				C9FB9AB70DE34C4A00026BB1 /* fltk_images.framework in CopyFiles */,
+				C9FB9AB80DE34C4A00026BB1 /* fltk_png.framework in CopyFiles */,
+				C9FB9AB90DE34C4A00026BB1 /* fltk_jpeg.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2711,7 +2742,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C977420B0DD9D3570047C1BF /* fltk.framework in Frameworks */,
 				C97742520DD9D3F00047C1BF /* fltk_forms.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2957,7 +2987,6 @@
 			isa = PBXGroup;
 			children = (
 				C9A3E9510DD6336500486E4F /* fltk.framework */,
-				C9A3E95F0DD633C300486E4F /* hello.app */,
 				C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */,
 				C9A3EC790DD6398C00486E4F /* fltk_images.framework */,
 				C9A3EC830DD639A200486E4F /* fltk_gl.framework */,
@@ -2992,6 +3021,7 @@
 				C918DC660DD9F25400167E99 /* fullscreen.app */,
 				C918DC8D0DD9F31500167E99 /* gl_overlay.app */,
 				C918DCB20DD9F36800167E99 /* glpuzzle.app */,
+				C9A3E95F0DD633C300486E4F /* hello.app */,
 				C918DCDA0DD9F3C100167E99 /* help.app */,
 				C918DD090DD9F42F00167E99 /* iconize.app */,
 				C918DD280DD9F47A00167E99 /* image.app */,
@@ -4406,12 +4436,13 @@
 				C97741FB0DD9D33B0047C1BF /* Resources */,
 				C97741FC0DD9D33B0047C1BF /* Sources */,
 				C97741FD0DD9D33B0047C1BF /* Frameworks */,
+				C9FB9A980DE34AB200026BB1 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				C97742190DD9D3BA0047C1BF /* PBXTargetDependency */,
-				C977421B0DD9D3BA0047C1BF /* PBXTargetDependency */,
+				C9FB9AA50DE34B3900026BB1 /* PBXTargetDependency */,
 				C977421D0DD9D3BA0047C1BF /* PBXTargetDependency */,
 				C977421F0DD9D3BA0047C1BF /* PBXTargetDependency */,
 				C97742210DD9D3BA0047C1BF /* PBXTargetDependency */,
@@ -4918,6 +4949,7 @@
 				C9C873700DD7772000A9793F /* Resources */,
 				C9C873710DD7772000A9793F /* Sources */,
 				C9C873720DD7772000A9793F /* Frameworks */,
+				C9FB9ABF0DE34C6800026BB1 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -6930,11 +6962,6 @@
 			target = C9C873730DD7772000A9793F /* Fluid */;
 			targetProxy = C97742180DD9D3BA0047C1BF /* PBXContainerItemProxy */;
 		};
-		C977421B0DD9D3BA0047C1BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9A3E9500DD6336500486E4F /* fltk */;
-			targetProxy = C977421A0DD9D3BA0047C1BF /* PBXContainerItemProxy */;
-		};
 		C977421D0DD9D3BA0047C1BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C9A3EC6D0DD6397400486E4F /* fltk_forms */;
@@ -7204,6 +7231,11 @@
 			isa = PBXTargetDependency;
 			target = C9A3EC990DD639E600486E4F /* fltk_jpeg */;
 			targetProxy = C9DD583B0DD7888200A896B4 /* PBXContainerItemProxy */;
+		};
+		C9FB9AA50DE34B3900026BB1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9A3E9500DD6336500486E4F /* fltk */;
+			targetProxy = C9FB9AA40DE34B3900026BB1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -9614,7 +9646,7 @@
 					../../,
 				);
 				INFOPLIST_FILE = "plists/fltk_forms-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9642,7 +9674,7 @@
 					../../,
 				);
 				INFOPLIST_FILE = "plists/fltk_forms-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9672,7 +9704,7 @@
 					../../png/,
 				);
 				INFOPLIST_FILE = "plists/fltk_images-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9701,7 +9733,7 @@
 					../../png/,
 				);
 				INFOPLIST_FILE = "plists/fltk_images-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9727,7 +9759,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/fltk_gl-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9752,7 +9784,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/fltk_gl-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9782,7 +9814,7 @@
 					../../png/,
 				);
 				INFOPLIST_FILE = "plists/fltk_png-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9811,7 +9843,7 @@
 					../../png/,
 				);
 				INFOPLIST_FILE = "plists/fltk_png-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9836,7 +9868,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				INFOPLIST_FILE = "plists/fltk_jpeg-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9860,7 +9892,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				INFOPLIST_FILE = "plists/fltk_jpeg-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -9874,7 +9906,9 @@
 		C9A3ECA70DD63A5200486E4F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -9898,8 +9932,10 @@
 		C9A3ECA80DD63A5200486E4F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEPLOYMENT_LOCATION = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -10549,7 +10585,7 @@
 					../../png,
 				);
 				INFOPLIST_FILE = "plists/Fluid-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
+				INSTALL_PATH = /Applications;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
@@ -10577,7 +10613,7 @@
 					../../png,
 				);
 				INFOPLIST_FILE = "plists/Fluid-Info.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
+				INSTALL_PATH = /Applications;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
