@@ -114,6 +114,7 @@ code and changing it accordingly.
 
 	<LI><A HREF="#Fl_File_Chooser.Fl_File_Chooser">Fl_File_Chooser</A>
 	<LI><A HREF="#Fl_File_Chooser.~Fl_File_Chooser">~Fl_File_Chooser</A>
+	<LI><A HREF="#Fl_File_Chooser.add_extra">add_extra</A>
 	<LI><A HREF="#Fl_File_Chooser.color">color</A>
 	<LI><A HREF="#Fl_File_Chooser.count">count</A>
 	<LI><A HREF="#Fl_File_Chooser.directory">directory</A>
@@ -290,6 +291,13 @@ for ( int t=1; t&lt;=chooser-&gt;count(); t++ ) {
 <H4><A NAME="Fl_File_Chooser.visible">int visible()</A></H4>
 
 <P>Returns 1 if the <CODE>Fl_File_Chooser</CODE> window is visible.
+
+<H4><A NAME="Fl_File_Chooser.add_extra">Fl_Widget* add_extra(Fl_Widget*)</A></H4>
+<P>Adds extra widget at the bottom of <CODE>Fl_File_Chooser</CODE> window.
+ Returns pointer for previous extra widget or <CODE>NULL</CODE> if not set previously.
+ If argument is <CODE>NULL</CODE> only remove previous extra widget.<BR>
+ <I>NOTE! <CODE>Fl_File_Chooser</CODE> doesn't delete extra widget in destructor! To prevent memory leakage don't forget
+  delete unused extra widgets by yuorself.</I>
 
 </BODY>
 </HTML>
