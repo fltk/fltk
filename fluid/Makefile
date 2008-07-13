@@ -3,7 +3,7 @@
 #
 # FLUID makefile for the Fast Light Tool Kit (FLTK).
 #
-# Copyright 1998-2007 by Bill Spitzak and others.
+# Copyright 1998-2008 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -59,13 +59,11 @@ fluid$(EXEEXT):		$(OBJECTS) ../lib/$(LIBNAME) ../lib/$(FLLIBNAME) \
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
-	$(POSTBUILD) $@ ../FL/mac.r
 
 fluid-shared$(EXEEXT):	$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \
 			../src/$(IMGDSONAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)
-	$(POSTBUILD) $@ ../FL/mac.r
 
 clean:
 	-$(RM) *.o core.* *~ *.bck *.bck

@@ -5,7 +5,7 @@ dnl "$Id$"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2007 by Bill Spitzak and others.
+dnl Copyright 1998-2008 by Bill Spitzak and others.
 dnl
 dnl This library is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU Library General Public
@@ -250,7 +250,7 @@ AC_SUBST(SHAREDSUFFIX)
 AC_SUBST(LINKSHARED)
 AC_SUBST(FLUID)
 
-AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support])
+AC_ARG_ENABLE(threads, [  --enable-threads        enable multi-threading support (default=yes)])
 
 AC_ARG_WITH(optim, [  --with-optim="flags"    use custom optimization flags])
 
@@ -260,8 +260,8 @@ AC_ARG_WITH(archflags, [  --with-archflags="flags"
 
 case $uname in
     Darwin*)
-        AC_ARG_ENABLE(quartz, [  --enable-quartz         use Quartz instead of Quickdraw (default=no)])
-        if test "x$enable_quartz" = "xyes"; then
+        AC_ARG_ENABLE(quartz, [  --enable-quartz         use Quartz instead of Quickdraw (default=yes)])
+        if test "x$enable_quartz" != "xno"; then
             AC_DEFINE(USE_QUARTZ, 1)
             AC_DEFINE(__APPLE_QUARTZ__)
         else
@@ -423,7 +423,7 @@ AC_SYS_LARGEFILE
 
 dnl Define largefile options as needed...
 LARGEFILE=""
-if test x$enable_largefile = xyes; then
+if test x$enable_largefile != xno; then
 	LARGEFILE="-D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE"
 
 	if test x$ac_cv_sys_large_files = x1; then
@@ -565,7 +565,7 @@ dnl Check for pthreads for multi-threaded apps...
 have_pthread=no
 PTHREAD_FLAGS=""
 
-if test "x$enable_threads" = xyes; then
+if test "x$enable_threads" != xno; then
     AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
 
     if test x$ac_cv_header_pthread_h = xyes; then
@@ -599,7 +599,6 @@ AC_SUBST(PTHREAD_FLAGS)
 
 dnl Define OS-specific stuff...
 HLINKS=
-POSTBUILD=:
 OSX_ONLY=:
 THREADS=
 
@@ -678,9 +677,6 @@ case $uname in
 		HLINKS="#"
 	fi
 
-	# Add a postbuild step after linking applications
-	POSTBUILD="/Developer/Tools/Rez -t APPL -o"
-
 	# Some steps are only done for OS X package management
 	OSX_ONLY=
 
@@ -754,18 +750,18 @@ case $uname in
 	fi
 
 	dnl Check for Xinerama support unless disabled...
-        AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [default=no]])
+        AC_ARG_ENABLE(xinerama, [  --enable-xinerama       turn on Xinerama support [default=yes]])
 
-	if test x$enable_xinerama = xyes; then
+	if test x$enable_xinerama != xno; then
 	    AC_CHECK_LIB(Xinerama,XineramaIsActive,
 		    AC_DEFINE(HAVE_XINERAMA)
 		    LIBS="-lXinerama $LIBS")
 	fi
 
 	dnl Check for the Xft library unless disabled...
-        AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [default=no]])
+        AC_ARG_ENABLE(xft, [  --enable-xft            turn on Xft support [default=yes]])
 
-	if test x$enable_xft = xyes; then
+	if test x$enable_xft != xno; then
             AC_PATH_PROG(FTCONFIG,freetype-config)
 
 	    if test "x$FTCONFIG" != x; then
@@ -780,9 +776,9 @@ case $uname in
 	fi
 
 	dnl Check for the Xdbe extension unless disabled...
-        AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [default=no]])
+        AC_ARG_ENABLE(xdbe, [  --enable-xdbe           turn on Xdbe support [default=yes]])
 
-	if test x$enable_xdbe = xyes; then
+	if test x$enable_xdbe != xno; then
 	    AC_CHECK_HEADER(X11/extensions/Xdbe.h, AC_DEFINE(HAVE_XDBE),,
 	        [#include <X11/Xlib.h>])
 	fi
@@ -818,7 +814,6 @@ esac
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIB)
 AC_SUBST(HLINKS)
-AC_SUBST(POSTBUILD)
 AC_SUBST(OSX_ONLY)
 AC_SUBST(THREADS)
 
@@ -1084,7 +1079,7 @@ case $uname in
         graphics="GDI"
 	;;
     Darwin*)
-        if test x$enable_quartz = xyes; then
+        if test x$enable_quartz != xno; then
             graphics="Quartz"
 	else
             graphics="Quickdraw"
@@ -1092,13 +1087,13 @@ case $uname in
         ;;
     *)
         graphics="X11"
-	if test x$enable_xft = xyes; then
+	if test x$enable_xft != xno; then
 	    graphics="$graphics+Xft"
 	fi
-	if test x$enable_xdbe = xyes; then
+	if test x$enable_xdbe != xno; then
 	    graphics="$graphics+Xdbe"
 	fi
-	if test x$enable_xinerama = xyes; then
+	if test x$enable_xinerama != xno; then
 	    graphics="$graphics+Xinerama"
 	fi
         ;;
@@ -1130,7 +1125,7 @@ else
     echo "                 ZLIB=Builtin"
 fi
 
-if test x$enable_largefile = xyes; then
+if test x$enable_largefile != xno; then
     echo "    Large Files: YES"
 else
     echo "    Large Files: NO"

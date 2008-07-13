@@ -1,17 +1,20 @@
 CHANGES IN FLTK 1.3.0
 
-	- added scroll_to() to Fl_Scroll, replacing position()
+	- "fltk-config --post foo" now creates an application
+	  bundle rather than attaching a resource fork.
+	- Added scroll_to() to Fl_Scroll, replacing position()
 	  which now behaves as it should (STR #1303)
-	- fixed Fl_Scroll inside Fl_Scroll (STR #265)
-	- hardcoded 1.1 references in src/Makefile to 1.3 
+	- Fixed Fl_Scroll inside Fl_Scroll (STR #265)
+	- Hardcoded 1.1 references in src/Makefile to 1.3 
 	  (STR #1922)
-	- changed font index to 32 bit
-	- changed font size to 32 bit
-        - changed widget coordinates to 32 bit
-        - added support for shortcuts for Fl_Input_,
+	- Changed font index to 32 bit
+	- Changed font size to 32 bit
+        - Changed widget coordinates to 32 bit
+        - Added support for shortcuts for Fl_Input_,
 	  Fl_Value_Input, and Fl_Text_Display derived
           widgets (STR #1770)
-        - initial setup (STR #1904)
+        - Initial setup (STR #1904)
+
 
 CHANGES IN FLTK 1.1.9
 
@@ -24,6 +27,7 @@ CHANGES IN FLTK 1.1.9
 	  Fl_File_Chooser (STR #1913)
 	- Fixed MSWindows crash when selecting umlauts
 	  in Fl_Help_View (STR #1912)
+
 
 CHANGES IN FLTK 1.1.8
 

@@ -49,9 +49,6 @@ srcdir=@srcdir@
 CC="@CC@"
 CXX="@CXX@"
 
-# post-process command (only needed for MacOS)
-POSTBUILD="@POSTBUILD@"
-
 # flags for C++ compiler:
 ARCHFLAGS="@ARCHFLAGS@"
 CFLAGS="@CFLAGS@ @LARGEFILE@ @PTHREAD_FLAGS@"
@@ -118,11 +115,11 @@ Options telling what information we request:
                                           even if there are DSOs installed
 	[--libs]          return FLTK libraries full path for dependencies
 
-Option to compile and link an application:
+Options to compile and link an application:
 	[-g]              compile the program with debugging information
 	[-Dname[=value]]  compile the program with the given define
 	[--compile program.cxx]
-        [--post program]
+        [--post program]  prepare the program for desktop use
 "
     exit $1
 }
@@ -195,12 +192,11 @@ do
 	    CXXFLAGS="$CXXFLAGS $1"
 	    ;;
 	--compile)
-	    compile=$2
-	    post=$2
+	    compile="$2"
 	    shift
 	    ;;
 	--post)
-	    post=$2
+	    post="$2"
 	    shift
 	    ;;
 	*)
@@ -248,40 +244,68 @@ if test -n "$echo_help"; then
 fi
 
 if test -n "$compile"; then
-    case $compile in
+    case "$compile" in
         *.cxx)
-            prog=`basename $compile .cxx`
+            prog="`basename '$compile' .cxx`"
 	    ;;
         *.cpp)
-            prog=`basename $compile .cpp`
+            prog="`basename '$compile' .cpp`"
 	    ;;
         *.cc)
-            prog=`basename $compile .cc`
+            prog="`basename '$compile' .cc`"
 	    ;;
         *.C)
-            prog=`basename $compile .C`
+            prog="`basename '$compile' .C`"
 	    ;;
 	*)
 	    echo "ERROR: Unknown/bad C++ source file extension on \"$compile\"!"
 	    exit 1
 	    ;;
     esac
-	    
-    post=$prog
 
-    echo $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
-    $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o $prog $compile $LDSTATIC
+    post="$prog"
 
-    # stop after compilation in case of errors
-    err=$?
-    if test $err != 0; then
-	exit $err
-    fi
+    echo $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o "'$prog'" "'$compile'" $LDSTATIC
+    $CXX $ARCHFLAGS $includes $CXXFLAGS $debug -o "$prog" "$compile" $LDSTATIC || exit 1
 fi
 
-if test -n "$post" -a "$POSTBUILD" != ":"; then
-    echo $POSTBUILD $post $includedir/FL/mac.r
-    $POSTBUILD $post $includedir/FL/mac.r
+if test -n "$post"; then
+    case "`uname`" in
+	Darwin)
+	    echo Creating "'$post.app'" bundle for desktop...
+	    id=`echo $post | tr ' ' '_'`
+
+	    # Make the bundle directory and move the executable there
+	    rm -rf "$post.app/Contents/MacOS"
+	    mkdir -p "$post.app/Contents/MacOS"
+	    mv "$post" "$post.app/Contents/MacOS"
+
+	    # Make a shell script that runs the bundled executable
+	    echo "#!/bin/sh" >"$post"
+	    echo 'dir="`dirname $0`"' >>"$post"
+	    echo 'exec "$dir/'"$post.app/Contents/MacOS/$post"'" $*' >>"$post"
+	    chmod +x "$post"
+
+	    # Make the simplest Info.plist needed for an application
+	    cat >"$post.app/Contents/Info.plist" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="0.9">
+    <dict>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleExecutable</key>
+	<string>$post</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.fltk.$id</string>
+	<key>CFBundleName</key>
+	<string>$post</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+    </dict>
+</plist>
+EOF
+	    ;;
+    esac
 fi
 
 if test "$echo_cflags" = "yes"; then
