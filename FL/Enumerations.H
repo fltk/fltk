@@ -25,29 +25,49 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+ *  This file contains type definitions and general enumerations.
+ */
+
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
 
 #  include "Fl_Export.H"
 
-
-//
-// The FLTK version number; this is changed slightly from the beta versions
-// because the old "const double" definition would not allow for conditional
-// compilation...
-//
-// FL_VERSION is a double that describes the major and minor version numbers.
-// Version 1.1 is actually stored as 1.01 to allow for more than 9 minor
-// releases.
-//
-// The FL_MAJOR_VERSION, FL_MINOR_VERSION, and FL_PATCH_VERSION constants
-// give the integral values for the major, minor, and patch releases
-// respectively.
-//
-
+/**
+ * The major release version of this FLTK library.
+ */
 #define FL_MAJOR_VERSION	1
+
+/**
+ * The minor release version for this library.
+ *
+ * FLTK remains mostly source-code compatible between minor version changes.
+ */
 #define FL_MINOR_VERSION	3
+
+/**
+ * The patch version for this library.
+ *
+ * FLTK remains binary compatible between patches.
+ */
 #define FL_PATCH_VERSION	0
+
+/**
+ *  The FLTK version number as a \em double.
+ *
+ *  This is changed slightly from the beta versions
+ *  because the old "const double" definition would not allow for conditional
+ *  compilation...
+ *
+ *  FL_VERSION is a double that describes the major and minor version numbers.
+ *  Version 1.1 is actually stored as 1.01 to allow for more than 9 minor
+ *  releases.
+ *
+ *  The FL_MAJOR_VERSION, FL_MINOR_VERSION, and FL_PATCH_VERSION constants
+ *  give the integral values for the major, minor, and patch releases
+ *  respectively.
+ */
 #define FL_VERSION		((double)FL_MAJOR_VERSION + \
 				 (double)FL_MINOR_VERSION * 0.01 + \
 				 (double)FL_PATCH_VERSION * 0.0001)
@@ -55,33 +75,220 @@
 typedef unsigned char uchar;
 typedef unsigned long ulong;
 
+// FIXME: temporarary (?) typedef to mark UTF8 and Unicode conversions
+typedef char *Fl_String; // flexible length utf8 Unicode text
+typedef const char *Fl_CString; // flexible length utf8 Unicode read-only string
+typedef unsigned int Fl_Char; // 24-bit Unicode character + 8-bit indicatur for keyboard flags
+ 
+
+/**
+ *  Every time a user moves the mouse pointer, clicks a button,
+ *  or presses a key, an event is generated and sent to your
+ *  application. Events can also come from other programs like the
+ *  window manager.
+ * 
+ *  Events are identified by the integer argument passed to the 
+ *  Fl_Widget::handle() virtual method. Other information about the 
+ *  most recent event is stored in static locations and acquired  by 
+ *  calling the Fl::event_*() methods. This static information remains 
+ *  valid until the next event is read from the window system, so it 
+ *  is ok to look at it outside of the handle() method.
+ */
 enum Fl_Event {	// events
   FL_NO_EVENT		= 0,
+
+  /** A mouse button has gone down with the mouse pointing at this
+   *  widget. You can find out what button by calling Fl::event_button(). 
+   *  You find out the mouse position by calling Fl::event_x() and
+   *  Fl::event_y().
+   *
+   *  A widget indicates that it "wants" the mouse click by returning non-zero 
+   *  from its Fl_Widget::handle() method. It will then become the 
+   *  Fl::pushed() widget and will get FL_DRAG and the matching FL_RELEASE events.  
+   *  If Fl_Widget::handle() returns zero then FLTK will try sending the FL_PUSH 
+   *  to another widget. 
+   */
   FL_PUSH		= 1,
+
+  /** A mouse button has been released. You can find out what button by 
+   *  calling Fl::event_button().
+   *
+   *  In order to receive the FL_RELEASE event, the widget must return 
+   *  non-zero when handling FL_PUSH.
+   */
   FL_RELEASE		= 2,
+
+  /** The mouse has been moved to point at this widget.  This can
+   *  be used for highlighting feedback.  If a widget wants to
+   *  highlight or otherwise track the mouse, it indicates this by
+   *  returning non-zero from its handle() method. It then
+   *  becomes the Fl::belowmouse() widget and will receive 
+   *  FL_MOVE and FL_LEAVE events.
+   */
   FL_ENTER		= 3,
+
+  /** The mouse has moved out of the widget.
+   *  In order to receive the FL_LEAVE event, the widget must 
+   *  return non-zero when handling FL_ENTER.
+   */
   FL_LEAVE		= 4,
+
+  /** The mouse has moved with a button held down. The current button state 
+   *  is in Fl::event_state(). The mouse position is in Fl::event_x() and 
+   *  Fl::event_y().
+   *
+   *  In order to receive FL_DRAG events, the widget must return non-zero 
+   *  when handling FL_PUSH.
+   */
   FL_DRAG		= 5,
+
+  /** This indicates an <I>attempt</I> to give a widget the keyboard focus.
+   *
+   *  If a widget wants the focus, it should change itself to display the 
+   *  fact that it has the focus, and return non-zero from its handle() method.
+   *  It then becomes the Fl::focus() widget and gets FL_KEYDOWN, FL_KEYUP, 
+   *  and FL_UNFOCUS events.
+   *
+   *  The focus will change either because the window manager changed which 
+   *  window gets the focus, or because the user tried to navigate using tab, 
+   *  arrows, or other keys. You can check Fl::event_key() to figure out why 
+   *  it moved. For navigation it will be the key pressed and interaction 
+   *  with the window manager it will be zero.
+   */
   FL_FOCUS		= 6,
+  
+  /** This event is sent to the previous Fl::focus() widget when another 
+   *  widget gets the focus or the window loses focus.
+   */
   FL_UNFOCUS		= 7,
+
+  /** A key was pressed or released. The key can be found in Fl::event_key().
+   *  The text that the key should insert can be found with Fl::event_text() 
+   *  and its length is in Fl::event_length(). If you use the key handle()
+   *  should return 1. If you return zero then FLTK assumes you ignored the 
+   *  key and will then attempt to send it to a parent widget. If none of 
+   *  them want it, it will change the event into a FL_SHORTCUT event.
+   *
+   *  To receive FL_KEYBOARD events you must also respond to the FL_FOCUS
+   *  and FL_UNFOCUS events.
+   *
+   *  If you are writing a text-editing widget you may also want to call 
+   *  the Fl::compose() function to translate individual keystrokes into 
+   *  foreign characters.
+   *
+   *  FL_KEYUP events are sent to the widget that currently has focus. This 
+   *  is not necessarily the same widget that received the corresponding 
+   *  FL_KEYDOWN event because focus may have changed between events.
+   */
   FL_KEYDOWN		= 8,
+
+  /** Equvalent to FL_KEYDOWN.
+   *  \see FL_KEYDOWN
+   */
+  FL_KEYBOARD		= 8,
+ 
+  /** Key release event.
+   *  \see FL_KEYDOWN
+   */
   FL_KEYUP		= 9,
+
+  /** The user clicked the close button of a window.
+   *  This event is used internally only to trigger the callback of
+   *  Fl_Window derived classed. The default callback closes the 
+   *  window calling Fl_Window::hide().
+   */
   FL_CLOSE		= 10,
+
+  /** The mouse has moved without any mouse buttons held down. 
+   *  This event is sent to the Fl::belowmouse() widget.
+   *
+   *  In order to receive FL_MOVE events, the widget must return 
+   *  non-zero when handling FL_ENTER.
+   */
   FL_MOVE		= 11,
+
+  /** If the Fl::focus() widget is zero or ignores an FL_KEYBOARD
+   *  event then FLTK tries sending this event to every widget it 
+   *  can, until one of them returns non-zero. FL_SHORTCUT is first 
+   *  sent to the Fl::belowmouse() widget, then its parents and siblings, 
+   *  and eventually to every widget in the window, trying to find an 
+   *  object that returns non-zero. FLTK tries really hard to not to ignore 
+   *  any keystrokes!
+   *
+   *  You can also make "global" shortcuts by using Fl::add_handler(). A 
+   *  global shortcut will work no matter what windows are displayed or 
+   *  which one has the focus.
+   */
   FL_SHORTCUT		= 12,
+
+  /** This widget is no longer active, due to Fl_Widget::deactivate() 
+   *  being called on it or one of its parents. Fl_Widget::active() may 
+   *  still be true after this, the widget is only active if Fl_Widget::active()
+   *  is true on it and all its parents (use Fl_Widget::active_r() to check this).
+   */
   FL_DEACTIVATE		= 13,
+
+  /** This widget is now active, due to Fl_Widget::activate() being 
+   *  called on it or one of its parents.
+   */
   FL_ACTIVATE		= 14,
+
+  /** This widget is no longer visible, due to Fl_Widget::hide() being 
+   *  called on it or one of its parents, or due to a parent window being 
+   *  minimized.  Fl_Widget::visible() may still be true after this, but the 
+   *  widget is visible only if visible() is true for it and all its 
+   *  parents (use Fl_Widget::visible_r() to check this).
+   */
   FL_HIDE		= 15,
+
+  /** This widget is visible again, due to Fl_Widget::show() being called on 
+   *  it or one of its parents, or due to a parent window being restored. 
+   *  Child Fl_Windows respond to this by actually creating the window if not 
+   *  done already, so if you subclass a window, be sure to pass FL_SHOW 
+   *  to the base class Fl_Widget::handle() method!
+   */
   FL_SHOW		= 16,
+
+  /** You should get this event some time after you call Fl::paste(). 
+   *  The contents of Fl::event_text() is the text to insert and the number 
+   *  of characters is in Fl::event_length().
+   */
   FL_PASTE		= 17,
+
+  /** The Fl::selection_owner() will get this event before the selection is 
+   *  moved to another widget. This indicates that some other widget or program 
+   *  has claimed the selection. Motif programs used this to clear the selection 
+   *  indication. Most modern programs ignore this.
+   */
   FL_SELECTIONCLEAR	= 18,
+
+  /** The user has moved the mouse wheel. The Fl::event_dx() and Fl::event_dy()
+   *  methods can be used to find the amount to scroll horizontally and vertically.
+   */
   FL_MOUSEWHEEL		= 19,
+
+  /** The mouse has been moved to point at this widget. A widget that is 
+   *  interested in receiving drag'n'drop data must return 1 to receive 
+   *  FL_DND_DRAG, FL_DND_LEAVE and FL_DND_RELEASE events.
+   */
   FL_DND_ENTER		= 20,
+
+  /** The mouse has been moved inside a widget while dragging data.  A 
+   *  widget that is interested in receiving drag'n'drop data should 
+   *  indicate the possible drop position.
+   */
   FL_DND_DRAG		= 21,
+
+  /** The mouse has moved out of the widget.
+   */
   FL_DND_LEAVE		= 22,
+
+  /** The user has released the mouse button dropping data into the widget. 
+   *  If the widget returns 1, it will receive the data in the immediatly 
+   *  following FL_PASTE event.
+   */
   FL_DND_RELEASE	= 23
 };
-#define FL_KEYBOARD FL_KEYDOWN
 
 enum Fl_When { // Fl_Widget::when():
   FL_WHEN_NEVER		= 0,
