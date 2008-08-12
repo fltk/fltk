@@ -67,7 +67,7 @@ struct FL_EXPORT Fl_Label {
   Fl_Font_Size size;
   /** text color */
   unsigned color;
-  /** draw the leabel aligned to the given box */
+  /** draw the label aligned to the given box */
   void draw(int,int,int,int, Fl_Align) const ;
   /** measure the size of the label.
    *  \param w, h on input, this is the requested size for the label text plus image;
@@ -161,7 +161,7 @@ public:
   virtual ~Fl_Widget();
 
   /** Draw the widget.
-   *  Never draw this function directly. FLTK will schedule redrawing whenever
+   *  Never call this function directly. FLTK will schedule redrawing whenever
    *  needed. If your widget must be redrawn as soon as possible, call redraw()
    *  instead.
    *
@@ -195,7 +195,7 @@ public:
 
   /** Returns the widget type.
    *  Returns the widget type value, which is used for Forms
-   *  compatability and to simulate RTTI.
+   *  compatibility and to simulate RTTI.
    */
   uchar type() const {return type_;}
 
@@ -233,7 +233,7 @@ public:
    *
    *  Some window managers under X11 call resize() a lot more often 
    *  than needed. Please verify that the position or size of a widget 
-   *  did actually change before doing any extensiive calculations.
+   *  did actually change before doing any extensive calculations.
    *
    *  position(x,y) is a shortcut for resize(x,y,w(),h()), and size(w,h) is a shortcut for resize(x(),y(),w,h).
    *
@@ -549,7 +549,7 @@ public:
   void when(uchar i) {when_ = i;}
 
   /** Returns whether a widget is visble.
-   *  \retval 0 if the widget is not drawn and hence invisble.
+   *  \retval 0 if the widget is not drawn and hence invisible.
    *  \see show(), hide(), visible_r()
    */
   int visible() const {return !(flags_&INVISIBLE);}
@@ -563,7 +563,7 @@ public:
   /** Makes a widget visible.
    *  An invisible widget never gets redrawn and does not get events.  
    *  The <TT>visible()</TT> method returns true if the widget is set to be  
-   *  visible.The <TT>visible_r()</TT> method returns true if the widget and 
+   *  visible. The <TT>visible_r()</TT> method returns true if the widget and 
    *  all of its parents are visible. A widget is only visible if 
    *  <TT>visible()</TT> is true on it <I>and all of its parents</I>. 
    * 
@@ -633,7 +633,7 @@ public:
    *  output() means the same as !active() except it does not change how the 
    *  widget is drawn. The widget will not receive any events. This is useful 
    *  for making scrollbars or buttons that work as displays rather than input devices.
-   *  \retval 0 if the widget is used for input an output
+   *  \retval 0 if the widget is used for input and output
    *  \see set_output(), clear_output() 
    */
   int output() const {return (flags_&OUTPUT);}
@@ -648,7 +648,7 @@ public:
    */
   void clear_output() {flags_ &= ~OUTPUT;}
 
-  /** Returns if the widget is ableto take events.
+  /** Returns if the widget is able to take events.
    *  This is the same as <TT>(active() && !output()
    *  && visible())</TT> but is faster.
    *  \retval 0 if the widget takes no events
@@ -709,7 +709,7 @@ public:
   void visible_focus(int v) { if (v) set_visible_focus(); else clear_visible_focus(); }
  
   /** Check whether this widget has a visible focus.
-   *  \retval 0 if tis widget has no visible focus.
+   *  \retval 0 if this widget has no visible focus.
    *  \see visible_focus(int), set_visible_focus(), clear_visible_focus()
    */
   int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
