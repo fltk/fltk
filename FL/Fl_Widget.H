@@ -188,7 +188,7 @@ public:
    * \param[in] alignment new label alignment
    * \see align(), Fl_Align
    */
-  void align(uchar alignment) {align_ = a;}
+  void align(uchar alignment) {align_ = alignment;}
 
   /** Gets the box type for the widget.
    *  \return the current box type
@@ -219,7 +219,7 @@ public:
    *  \param[in] bg background color
    *  \see color(), color(unsigned, unsigned), selection_color(unsigned)
    */
-  void color(unsigned bg) {color_ = a;}
+  void color(unsigned bg) {color_ = bg;}
 
   Fl_Color selection_color() const {return (Fl_Color)color2_;}
   void selection_color(unsigned a) {color2_ = a;}
@@ -230,7 +230,7 @@ public:
    *  \param[in] sel selection color
    *  \see color(unsigned), selection_color(unsigned)
    */
-  void color(unsigned bg, unsigned sel) {color_=a; color2_=b;}
+  void color(unsigned bg, unsigned sel) {color_=bg; color2_=sel;}
 
   /** Get the current label text.
    *  \return a pointer to the current label text
@@ -367,26 +367,26 @@ public:
    *  \param[in] cb new callback
    *  \param[in] p user data
    */
-  void callback(Fl_Callback* cb, void* p) {callback_=c; user_data_=p;}
+  void callback(Fl_Callback* cb, void* p) {callback_=cb; user_data_=p;}
 
   /** Sets the current callback function for the widget.
    *  Each widget has a single callback.
    *  \param[in] cb new callback
    */
-  void callback(Fl_Callback* cb) {callback_=c;}
+  void callback(Fl_Callback* cb) {callback_=cb;}
 
   /** Sets the current callback function for the widget.
    *  Each widget has a single callback.
    *  \param[in] cb new callback
    */
-  void callback(Fl_Callback0*cb) {callback_=(Fl_Callback*)c;}
+  void callback(Fl_Callback0*cb) {callback_=(Fl_Callback*)cb;}
 
   /** Sets the current callback function for the widget.
    *  Each widget has a single callback.
    *  \param[in] cb new callback
    *  \param[in] p user data
    */
-  void callback(Fl_Callback1*cb, long p=0) {callback_=(Fl_Callback*)c; user_data_=(void*)p;}
+  void callback(Fl_Callback1*cb, long p=0) {callback_=(Fl_Callback*)cb; user_data_=(void*)p;}
 
   void* user_data() const {return user_data_;}
   void user_data(void* v) {user_data_ = v;}
