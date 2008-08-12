@@ -46,20 +46,32 @@ typedef void (Fl_Callback1)(Fl_Widget*, long);
 
 /** This struct stores all information for a text or mixed graphics label.
  *
- *  \todo For FLTK1.3, the Fl_Label type eill become a widget by itself. That way
+ *  \todo For FLTK1.3, the Fl_Label type will become a widget by itself. That way
  *        we will be avoiding a lot of code duplication by handling labels in 
  *        a similar fashion to widgets containing text. We also provide an easy
  *        interface for very complex labels, containing html or vector graphics.
  */
 struct FL_EXPORT Fl_Label {
+  /** label text */
   const char* value;
+  /** optional image for an active label */
   Fl_Image* image;
+  /** optional image for a deactivated label */
   Fl_Image* deimage;
+  /** type of label. \see Fl_Labeltype */
   uchar type;
+  /** label font used in text */
   Fl_Font font;
+  /** size of label font */
   Fl_Font_Size size;
+  /** text color */
   unsigned color;
+  /** draw the leabel aligned to the given box */
   void draw(int,int,int,int, Fl_Align) const ;
+  /** measure the size of the label.
+   *  \param[inout] w, h on input, this is the requested size for the label text plus image;
+   *                on return, this will contain the size needed to fit the label
+   */
   void measure(int&, int&) const ;
 };
 
@@ -95,8 +107,9 @@ class FL_EXPORT Fl_Widget {
 
   const char *tooltip_;
 
-  // unimplemented copy ctor and assignment operator
+  /** unimplemented copy ctor */
   Fl_Widget(const Fl_Widget &);
+  /** unimplemented assignment operator */
   Fl_Widget& operator=(const Fl_Widget &);
 
 protected:
@@ -112,9 +125,13 @@ protected:
    */
   Fl_Widget(int x, int y, int w, int h, Fl_CString label=0L);
 
+  /** Internal use only. Use position(int,int), size(int, int) or resize(int,int,int,int) instead. */
   void x(int v) {x_ = v;}
+  /** Internal use only. Use position(int,int), size(int, int) or resize(int,int,int,int) instead. */
   void y(int v) {y_ = v;}
+  /** Internal use only. Use position(int,int), size(int, int) or resize(int,int,int,int) instead. */
   void w(int v) {w_ = v;}
+  /** Internal use only. Use position(int,int), size(int, int) or resize(int,int,int,int) instead. */
   void h(int v) {h_ = v;}
 
   int flags() const {return flags_;}
@@ -142,6 +159,13 @@ public:
    */
   virtual ~Fl_Widget();
 
+  /** Draw the widget.
+   *  Never draw this function directly. FLTK will schedule redrawing whenever
+   *  needed. If your widget must be redrawn as soon as possible, call redraw()
+   *  instead.
+   *
+   *  Override this function to draw your own widgets.
+   */
   virtual void draw() = 0;
 
   /** Handles the specified event. 
@@ -158,19 +182,83 @@ public:
    */
   virtual int handle(int event);
 
+  /** Returns a pointer to the parent widget.  
+   *  Usually this is a Fl_Group or Fl_Window. 
+   *  \retval NULL if the widget has no parent
+   *  \see Fl_Group::add(Fl_Widget*)
+   */
   Fl_Group* parent() const {return parent_;}
+
+  /** Internal use only. Use Fl_Group::add(Fl_Widget*) instead. */
   void parent(Fl_Group* p) {parent_ = p;} // for hacks only, Fl_Group::add()
 
+  /** Returns the widget type.
+   *  Returns the widget type value, which is used for Forms
+   *  compatability and to simulate RTTI.
+   */
   uchar type() const {return type_;}
+
+  /** Sets tye widget type.
+   *  This is used for Forms compatibility.
+   */
   void type(uchar t) {type_ = t;}
 
+  /** Return the widget position in its window.
+   *  \return the x position relative to the window
+   */
   int x() const {return x_;}
+
+  /** Return the widget position in its window.
+   *  \return the y position relative to the window
+   */
   int y() const {return y_;}
+
+  /** Return the widget width.
+   *  \return the width of the widget in pixels.
+   */
   int w() const {return w_;}
+
+  /** Return the widget height.
+   *  \return the height of the widget in pixels.
+   */
   int h() const {return h_;}
-  virtual void resize(int,int,int,int);
+
+  /** Change the size or position of the widget. 
+   *  This is a virtual function so that the widget may implement its 
+   *  own handling of resizing. The default version does <I>not</I> 
+   *  call the redraw() method, but instead relies on the parent widget 
+   *  to do so because the parent may know a faster way to update the 
+   *  display, such as scrolling from the old position.  
+   *
+   *  Some window managers under X11 call resize() a lot more often 
+   *  than needed. Please verify that the position or size of a widget 
+   *  did actually change before doing any extensiive calculations.
+   *
+   *  position(x,y) is a shortcut for resize(x,y,w(),h()), and size(w,h) is a shortcut for resize(x(),y(),w,h).
+   *
+   *  \param[in] x, y new position relative to the parent window 
+   *  \param[in] w, h new size
+   *  \see position(int, int), size(int, int)
+   */
+  virtual void resize(int x, int y, int w, int h);
+
+  /** Internal use only. */
   int damage_resize(int,int,int,int);
+
+  /** Reposition the window or widget.
+   *  position(x,y) is a shortcut for resize(x,y,w(),h()).
+   *
+   *  \param[in] x, y new position relative to the parent window 
+   *  \see resize(int, int, int, int), size(int, int)
+   */
   void position(int X,int Y) {resize(X,Y,w_,h_);}
+
+  /** Change the size of the widget.
+   *  size(w,h) is a shortcut for resize(x(),y(),w,h).
+   *
+   *  \param[in] w, h new size
+   *  \see position(int, int), resize(int, int, int, int)
+   */
   void size(int W,int H) {resize(x_,y_,W,H);}
 
   /** Gets the label alignment.
@@ -221,7 +309,20 @@ public:
    */
   void color(unsigned bg) {color_ = bg;}
 
+  /** Gets the selection color.
+   *  \return the current selection color
+   *  \see selection_color(unsigned), color(unsigned, unsigned)
+   */
   Fl_Color selection_color() const {return (Fl_Color)color2_;}
+
+  /** Gets or sets the selection color.
+   *  The selection color is defined for Forms compatibility and is usually 
+   *  used to color the widget when it is selected, although some widgets 
+   *  use this color for other purposes. You can set both colors at once 
+   *  with color(int, int).
+   *  \param[in] a the new selection color
+   *  \see selection_color(), color(unsigned, unsigned)
+   */
   void selection_color(unsigned a) {color2_ = a;}
 
   /** Sets the background and selection color of the widget. 
@@ -257,6 +358,9 @@ public:
    */
   void copy_label(Fl_CString new_label);
 
+  /** Shortcut to set the label text and type in one call.
+   *  \see label(FL_CString), labeltype(Fl_Labeltype)
+   */
   void label(Fl_Labeltype a,const char* b) {label_.type = a; label_.value = b;}
 
   /** Gets the label type.
@@ -353,7 +457,23 @@ public:
    */
   void deimage(Fl_Image& img) {label_.deimage=&img;}
 
+  /** Gets the current tooltip text.
+   *  \return a pointer to the tooltip text or NULL
+   */
   const char *tooltip() const {return tooltip_;}
+
+  /** Sets the current tooltip text. 
+   *  Sets a string of text to display in a popup tooltip window when the user 
+   *  hovers the mouse over the widget. The string is <I>not</I> copied, so 
+   *  make sure any formatted string is stored in a <TT>static</TT>, global, 
+   *  or allocated buffer.
+   * 
+   *  If no tooltip is set, the tooltip of the parent is inherited. Setting a 
+   *  tooltip for a group and setting no tooltip for a child will show the 
+   *  group's tooltip instead. To avoid this behavior, you can set the child's 
+   *  tooltip to an empty string (<tt>&quot;&quot;</tt>).
+   *  \param[in] t new tooltip
+   */
   void tooltip(const char *t);
 
   /** Gets the current callback function for the widget.
@@ -388,7 +508,18 @@ public:
    */
   void callback(Fl_Callback1*cb, long p=0) {callback_=(Fl_Callback*)cb; user_data_=(void*)p;}
 
+  /** Gets the user data for this widget.
+   *  Gets the current user data (<TT>void *</TT>) argument
+   *  that is passed to the callback function.
+   *  \return user data as a pointer
+   */
   void* user_data() const {return user_data_;}
+
+  /** Sets the user data for this widget.
+   *  Sets the new user data (<TT>void *</TT>) argument
+   *  that is passed to the callback function.
+   *  \param[in] v new user data
+   */
   void user_data(void* v) {user_data_ = v;}
 
   /** Gets the current user data (long) argument that is passed to the callback function.
@@ -400,13 +531,59 @@ public:
    */
   void argument(long v) {user_data_ = (void*)v;}
 
+  /** Return the conditions under which the callback is called.
+   *  \return set of flags
+   */
   Fl_When when() const {return (Fl_When)when_;}
+
+  /** Flags used to decide when a callback is called.
+   *  <TT>Fl_Widget::when()</TT> is a set of bitflags used by subclasses of 
+   *  <TT> Fl_Widget</TT> to decide when to do the callback.  If the value 
+   *  is zero then the callback is never done.  Other values are described 
+   *  in the individual widgets.  This field is in the base class so that 
+   *  you can scan a panel and <TT>do_callback()</TT> on all the ones that 
+   *  don't do their own callbacks in response to an &quot;OK&quot; button.
+   *  \param[in] i set of flags 
+   */
   void when(uchar i) {when_ = i;}
 
+  /** Returns whether a widget is visble.
+   *  \retval 0 if the widget is not drawn and hence invisble.
+   *  \see show(), hide(), visible_r()
+   */
   int visible() const {return !(flags_&INVISIBLE);}
+  
+  /** Returns whether a widget and all its parents are visible.
+   *  \retval 0 if the widget or any of its parents are invisible.
+   *  \see show(), hide(), visible()
+   */
   int visible_r() const;
+
+  /** Makes a widget visible.
+   *  An invisible widget never gets redrawn and does not get events.  
+   *  The <TT>visible()</TT> method returns true if the widget is set to be  
+   *  visible.The <TT>visible_r()</TT> method returns true if the widget and 
+   *  all of its parents are visible. A widget is only visible if 
+   *  <TT>visible()</TT> is true on it <I>and all of its parents</I>. 
+   * 
+   *  Changing it will send <TT>FL_SHOW</TT> or <TT>FL_HIDE</TT> events to 
+   *  the widget. <I>Do not change it if the parent is not visible, as this 
+   *  will send false <TT>FL_SHOW</TT> or <TT>FL_HIDE</TT> events to the 
+   *  widget</I>. <TT>redraw()</TT> is called if necessary on this or the parent.
+   *  
+   *  \see hide(), visible(), visible_r()
+   */
   void show();
+  
+  /** Makes a widget invisible.
+   *  \see show(), visible(), visible_r()
+   */
   void hide();
+
+  /** Makes the widget visible. 
+   *  You must still redraw the parent widget to see a change in the 
+   *  window. Normally you want to use the show() method instead.
+   */
   void set_visible() {flags_ &= ~INVISIBLE;}
 
   /** Hides the widget. 
@@ -451,9 +628,30 @@ public:
    */
   void deactivate();
 
+  /** Return if a widget is used for output only.
+   *  output() means the same as !active() except it does not change how the 
+   *  widget is drawn. The widget will not receive any events. This is useful 
+   *  for making scrollbars or buttons that work as displays rather than input devices.
+   *  \retval 0 if the widget is used for input an output
+   *  \see set_output(), clear_output() 
+   */
   int output() const {return (flags_&OUTPUT);}
+
+  /** Set a widget to output only.
+   *  \see output(), clear_output() 
+   */
   void set_output() {flags_ |= OUTPUT;}
+
+  /** Set a widget to accept input.
+   *  \see set_output(), output() 
+   */
   void clear_output() {flags_ &= ~OUTPUT;}
+
+  /** Returns if the widget is ableto take events.
+   *  This is the same as <TT>(active() && !output()
+   *  && visible())</TT> but is faster.
+   *  \retval 0 if the widget takes no events
+   */ 
   int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
 
   /** Check if the widget value changed since the last callback.
@@ -480,14 +678,39 @@ public:
    */
   void clear_changed() {flags_ &= ~CHANGED;}
 
+  /** Give the widget the keyboard focus.
+   *  Tries to make this widget be the Fl::focus() widget, by first sending 
+   *  it an <TT>FL_FOCUS</TT> event, and if it returns non-zero, setting 
+   *  <TT>Fl::focus()</TT> to this widget.  You should use this method to 
+   *  assign the focus to a widget.  
+   *  \return true if the widget accepted the focus.
+   */
   int take_focus();
+
+  /** Enables keyboard focus navigation with this widget. 
+   *  Note, however, that this will not necessarily mean that the widget will 
+   *  accept focus, but for widgets that can accept focus, this method enables 
+   *  it if it has been disabled.
+   *  \see visible_focus(), clear_visible_focus(), visible_focus(int) 
+   */
   void set_visible_focus() { flags_ |= VISIBLE_FOCUS; }
 
   /** Disables keyboard focus navigation with this widget. 
    *  Normally, all widgets participate in keyboard focus navigation.
+   *  \see set_visible_focus(), visible_focus(), visible_focus(int) 
    */
   void clear_visible_focus() { flags_ &= ~VISIBLE_FOCUS; }
+
+  /** Modifies keyboard focus navigation. 
+   *  \param[in] v set or clear visible focus
+   *  \see set_visible_focus(), clear_visible_focus(), visible_focus() 
+   */
   void visible_focus(int v) { if (v) set_visible_focus(); else clear_visible_focus(); }
+ 
+  /** Check whether this widget has a visible focus.
+   *  \retval 0 if tis widget has no visible focus.
+   *  \see visible_focus(int), set_visible_focus(), clear_visible_focus()
+   */
   int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
 
   /** Sets the default callback for all widgets..
@@ -524,8 +747,11 @@ public:
    */
   void do_callback(Fl_Widget* o,long arg) {callback_(o,(void*)arg); if (callback_ != default_callback) clear_changed();}
 
+  /** Internal use only. */
   int test_shortcut();
+  /** Internal use only. */
   static char label_shortcut(const char *t);
+  /** Internal use only. */
   static int test_shortcut(const char*);
 
   /** Checks if w is a child of this widget.
@@ -543,7 +769,14 @@ public:
    */
   int inside(const Fl_Widget* w) const {return w ? w->contains(this) : 0;}
 
+  /** Schedule the drawing of the widget.
+   *  Marks the widget as needing its draw() routine called.
+   */
   void redraw();
+
+  /** Schedule the drawing of the label.
+   * Marks the widget or the parent as needing a redraw for the label area of a widget.
+   */
   void redraw_label();
 
   /** Returns non-zero if draw() needs to be called. 
@@ -579,10 +812,15 @@ public:
   void draw_label(int, int, int, int, Fl_Align) const;
   void measure_label(int& xx, int& yy) {label_.measure(xx,yy);}
 
+  /** Returns a pointer to the primary Fl_Window widget.
+   *  \retval  NULL if no window is associated with this widget.  
+   *  \note for an <TT>Fl_Window</TT> widget, this returns its <I>parent</I> window (if any), not <I>this</I> window.
+   */
   Fl_Window* window() const ;
 
-  // back compatability only:
+  /** For back compatibility only. */
   Fl_Color color2() const {return (Fl_Color)color2_;}
+  /** For back compatibility only. */
   void color2(unsigned a) {color2_ = a;}
 };
 
