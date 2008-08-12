@@ -44,6 +44,7 @@ typedef Fl_Callback* Fl_Callback_p; // needed for BORLAND
 typedef void (Fl_Callback0)(Fl_Widget*);
 typedef void (Fl_Callback1)(Fl_Widget*, long);
 
+
 /** This struct stores all information for a text or mixed graphics label.
  *
  *  \todo For FLTK1.3, the Fl_Label type will become a widget by itself. That way
@@ -69,10 +70,10 @@ struct FL_EXPORT Fl_Label {
   /** draw the leabel aligned to the given box */
   void draw(int,int,int,int, Fl_Align) const ;
   /** measure the size of the label.
-   *  \param[inout] w, h on input, this is the requested size for the label text plus image;
+   *  \param w, h on input, this is the requested size for the label text plus image;
    *                on return, this will contain the size needed to fit the label
    */
-  void measure(int&, int&) const ;
+  void measure(int &w, int &h) const ;
 };
 
 
@@ -256,7 +257,7 @@ public:
   /** Change the size of the widget.
    *  size(w,h) is a shortcut for resize(x(),y(),w,h).
    *
-   *  \param[in] w, h new size
+   *  \param[in] W, H new size
    *  \see position(int, int), resize(int, int, int, int)
    */
   void size(int W,int H) {resize(x_,y_,W,H);}
@@ -343,7 +344,7 @@ public:
    *  The label is shown somewhere on or next to the widget. The passed pointer 
    *  is stored unchanged in the widget (the string is \em not copied), so if 
    *  you need to set the label to a formatted value, make sure the buffer is 
-   *  \code static, global, or allocated. The copy_label() method can be used 
+   *  <tt>static</tt>, global, or allocated. The copy_label() method can be used 
    *  to make a copy of the label string automatically.
    *  \param[in] text pointer to new label text
    *  \see copy_label()
@@ -713,7 +714,7 @@ public:
    */
   int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
 
-  /** Sets the default callback for all widgets..
+  /** Sets the default callback for all widgets.
    *  Sets the default callback, which puts a pointer to the widget on the queue 
    *  returned by Fl::readqueue(). You may want to call this from your own callback.
    *  \param cb the new callback
@@ -757,7 +758,7 @@ public:
   /** Checks if w is a child of this widget.
    *  \param[in] w potential child widget
    *  \return Returns 1 if \em w is a child of this widget, or is
-   *  equal to this widget. Returns 0 if \en w is NULL.
+   *  equal to this widget. Returns 0 if \em w is NULL.
    */
   int contains(const Fl_Widget *w) const ;
 
