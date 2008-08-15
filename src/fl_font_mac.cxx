@@ -27,7 +27,7 @@
 
 #include <config.h>
 
-Fl_FontSize::Fl_FontSize(const char* name, Fl_Font_Size Size) {
+Fl_FontSize::Fl_FontSize(const char* name, Fl_Fontsize Size) {
   next = 0;
 #  if HAVE_GL
   listbase = 0;
@@ -245,7 +245,7 @@ void fl_font(Fl_FontSize* s) {
 #endif
 }
 
-static Fl_FontSize* find(Fl_Font fnum, Fl_Font_Size size) {
+static Fl_FontSize* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_FontSize* f;
@@ -261,9 +261,9 @@ static Fl_FontSize* find(Fl_Font fnum, Fl_Font_Size size) {
 // Public interface:
 
 Fl_Font fl_font_ = 0;
-Fl_Font_Size fl_size_ = 0;
+Fl_Fontsize fl_size_ = 0;
 
-void fl_font(Fl_Font fnum, Fl_Font_Size size) {
+void fl_font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) {
     fl_font_ = 0; 
     fl_size_ = 0;

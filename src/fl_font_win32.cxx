@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-Fl_FontSize::Fl_FontSize(const char* name, Fl_Font_Size size) {
+Fl_FontSize::Fl_FontSize(const char* name, Fl_Fontsize size) {
   int weight = FW_NORMAL;
   int italic = 0;
   switch (*name++) {
@@ -106,7 +106,7 @@ static Fl_Fontdesc built_in_table[] = {
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
-static Fl_FontSize* find(Fl_Font fnum, Fl_Font_Size size) {
+static Fl_FontSize* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_FontSize* f;
@@ -122,10 +122,10 @@ static Fl_FontSize* find(Fl_Font fnum, Fl_Font_Size size) {
 // Public interface:
 
 Fl_Font fl_font_ = 0;
-Fl_Font_Size fl_size_ = 0;
+Fl_Fontsize fl_size_ = 0;
 //static HDC font_gc;
 
-void fl_font(Fl_Font fnum, Fl_Font_Size size) {
+void fl_font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) { // just make sure that we will load a new font next time
     fl_font_ = 0; fl_size_ = 0;
     return;

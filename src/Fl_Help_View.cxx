@@ -466,7 +466,7 @@ Fl_Help_View::draw()
   int			xx, yy, ww, hh;	// Current positions and sizes
   int			line;		// Current line
   Fl_Font               font;
-  Fl_Font_Size          fsize;          // Current font and size
+  Fl_Fontsize          fsize;          // Current font and size
   int			head, pre,	// Flags for text
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
@@ -1084,7 +1084,7 @@ Fl_Help_View::format()
   int		line;		// Current line in block
   int		links;		// Links for current line
   Fl_Font       font;
-  Fl_Font_Size  fsize;          // Current font and size
+  Fl_Fontsize  fsize;          // Current font and size
   unsigned char	border;		// Draw border?
   int		talign,		// Current alignment
 		newalign,	// New alignment
@@ -1897,7 +1897,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 		*start;					// Start of element
   int		minwidths[MAX_COLUMNS];			// Minimum widths for each column
   Fl_Font       font;
-  Fl_Font_Size  fsize;				// Current font and size
+  Fl_Fontsize  fsize;				// Current font and size
 
 
   // Clear widths...

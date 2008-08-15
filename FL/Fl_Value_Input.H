@@ -52,8 +52,8 @@ public:
 
   Fl_Font textfont() const {return input.textfont();}
   void textfont(Fl_Font s) {input.textfont(s);}
-  Fl_Font_Size textsize() const {return input.textsize();}
-  void textsize(Fl_Font_Size s) {input.textsize(s);}
+  Fl_Fontsize textsize() const {return input.textsize();}
+  void textsize(Fl_Fontsize s) {input.textsize(s);}
   Fl_Color textcolor() const {return input.textcolor();}
   void textcolor(unsigned n) {input.textcolor(n);}
   Fl_Color cursor_color() const {return input.cursor_color();}

@@ -59,7 +59,7 @@ struct FL_EXPORT Fl_Menu_Item {
   int flags;
   uchar labeltype_;
   Fl_Font labelfont_;
-  Fl_Font_Size labelsize_;
+  Fl_Fontsize labelsize_;
   unsigned labelcolor_;
 
   // advance N items, skipping submenus:
@@ -79,8 +79,8 @@ struct FL_EXPORT Fl_Menu_Item {
   void labelcolor(unsigned a) {labelcolor_ = a;}
   Fl_Font labelfont() const {return labelfont_;}
   void labelfont(Fl_Font a) {labelfont_ = a;}
-  Fl_Font_Size labelsize() const {return labelsize_;}
-  void labelsize(Fl_Font_Size a) {labelsize_ = a;}
+  Fl_Fontsize labelsize() const {return labelsize_;}
+  void labelsize(Fl_Fontsize a) {labelsize_ = a;}
   Fl_Callback_p callback() const {return callback_;}
   void callback(Fl_Callback* c, void* p) {callback_=c; user_data_=p;}
   void callback(Fl_Callback* c) {callback_=c;}

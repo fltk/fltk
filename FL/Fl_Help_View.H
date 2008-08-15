@@ -104,7 +104,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 		textcolor_,		// Text color
 		linkcolor_;		// Link color
   Fl_Font       textfont_;		// Default font for text
-  Fl_Font_Size  textsize_;		// Default font size
+  Fl_Fontsize  textsize_;		// Default font size
   const char	*value_;		// HTML text value
 
   int		nblocks_,		// Number of blocks/paragraphs
@@ -113,7 +113,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 
   int		nfonts_;		// Number of fonts in stack
   Fl_Font       fonts_[100];		// Font stack
-  Fl_Font_Size  font_sizes_[100];       // Font Size stack
+  Fl_Fontsize  font_sizes_[100];       // Font Size stack
 
   Fl_Help_Func	*link_;			// Link transform function
 
@@ -165,13 +165,13 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   int		get_length(const char *l);
   int		handle(int);
 
-  void		initfont(Fl_Font &f, Fl_Font_Size &s) { nfonts_ = 0;
+  void		initfont(Fl_Font &f, Fl_Fontsize &s) { nfonts_ = 0;
 			fl_font(f = fonts_[0] = textfont_,
 			        s = font_sizes_[0] = textsize_); }
-  void		pushfont(Fl_Font f, Fl_Font_Size s) { if (nfonts_ < 99) nfonts_ ++;
+  void		pushfont(Fl_Font f, Fl_Fontsize s) { if (nfonts_ < 99) nfonts_ ++;
 			fl_font(fonts_[nfonts_] = f,
 			        font_sizes_[nfonts_] = s); }
-  void		popfont(Fl_Font &f, Fl_Font_Size &s) { if (nfonts_ > 0) nfonts_ --;
+  void		popfont(Fl_Font &f, Fl_Fontsize &s) { if (nfonts_ > 0) nfonts_ --;
 			fl_font(f = fonts_[nfonts_],
 			        s = font_sizes_[nfonts_]); }
 
@@ -201,8 +201,8 @@ public:
   Fl_Color	textcolor() const { return (defcolor_); }
   void		textfont(Fl_Font f) { textfont_ = f; format(); }
   Fl_Font       textfont() const { return (textfont_); }
-  void		textsize(Fl_Font_Size s) { textsize_ = s; format(); }
-  Fl_Font_Size  textsize() const { return (textsize_); }
+  void		textsize(Fl_Fontsize s) { textsize_ = s; format(); }
+  Fl_Fontsize  textsize() const { return (textsize_); }
   const char	*title() { return (title_); }
   void		topline(const char *n);
   void		topline(int);

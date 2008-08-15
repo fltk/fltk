@@ -335,11 +335,11 @@ fileName->take_focus();} {}
   } {
     code {return (fileList->textfont());} {}
   }
-  Function {textsize(Fl_Font_Size s)} {return_type void
+  Function {textsize(Fl_Fontsize s)} {return_type void
   } {
     code {fileList->textsize(s);} {}
   }
-  Function {textsize()} {return_type Fl_Font_Size
+  Function {textsize()} {return_type Fl_Fontsize
   } {
     code {return (fileList->textsize());} {}
   }

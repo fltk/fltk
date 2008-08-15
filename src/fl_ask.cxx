@@ -54,7 +54,7 @@ static Fl_Button *button[3];
 static Fl_Input *input;
 static const char *iconlabel = "?";
 Fl_Font fl_message_font_ = FL_HELVETICA;
-Fl_Font_Size fl_message_size_ = 14;
+Fl_Fontsize fl_message_size_ = 14;
 
 static Fl_Window *makeform() {
  if (message_form) {

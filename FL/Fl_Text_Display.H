@@ -124,8 +124,8 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
     Fl_Font textfont() const {return textfont_;}
     void textfont(Fl_Font s) {textfont_ = s;}
-    Fl_Font_Size textsize() const {return textsize_;}
-    void textsize(Fl_Font_Size s) {textsize_ = s;}
+    Fl_Fontsize textsize() const {return textsize_;}
+    void textsize(Fl_Fontsize s) {textsize_ = s;}
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
     void textcolor(unsigned n) {textcolor_ = n;}
 
@@ -286,7 +286,7 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     int shortcut_;
 
     Fl_Font textfont_;
-    Fl_Font_Size textsize_;
+    Fl_Fontsize textsize_;
     unsigned textcolor_;
 
 	 // The following are not presently used from the original NEdit code,

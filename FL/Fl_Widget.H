@@ -64,7 +64,7 @@ struct FL_EXPORT Fl_Label {
   /** label font used in text */
   Fl_Font font;
   /** size of label font */
-  Fl_Font_Size size;
+  Fl_Fontsize size;
   /** text color */
   unsigned color;
   /** draw the label aligned to the given box */
@@ -414,13 +414,13 @@ public:
    *  The default size is 14 pixels.
    *  \return the current font size
    */
-  Fl_Font_Size labelsize() const {return label_.size;}
+  Fl_Fontsize labelsize() const {return label_.size;}
 
   /** Gets or sets the font size in pixels. 
    *  The default size is 14 pixels.
    *  \param[in] pix the new font size
    */
-  void labelsize(Fl_Font_Size pix) {label_.size=pix;}
+  void labelsize(Fl_Fontsize pix) {label_.size=pix;}
 
   /** Gets or sets the image to use as part of the widget label.
    *  This image is used when drawing the widget in the active state.

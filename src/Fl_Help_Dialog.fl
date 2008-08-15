@@ -204,7 +204,7 @@ window_->label(view_->title());} {}
   } {
     code {window_->show(argc, argv);} {}
   }
-  Function {textsize(Fl_Font_Size s)} {return_type void
+  Function {textsize(Fl_Fontsize s)} {return_type void
   } {
     code {view_->textsize(s);
 
@@ -218,7 +218,7 @@ if (s >= 18)
 else
   larger_->activate();} {}
   }
-  Function {textsize()} {return_type Fl_Font_Size
+  Function {textsize()} {return_type Fl_Fontsize
   } {
     code {return (view_->textsize());} {}
   }

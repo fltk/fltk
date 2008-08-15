@@ -401,11 +401,11 @@ Fl_Font Fl_File_Chooser::textfont() {
   return (fileList->textfont());
 }
 
-void Fl_File_Chooser::textsize(Fl_Font_Size s) {
+void Fl_File_Chooser::textsize(Fl_Fontsize s) {
   fileList->textsize(s);
 }
 
-Fl_Font_Size Fl_File_Chooser::textsize() {
+Fl_Fontsize Fl_File_Chooser::textsize() {
   return (fileList->textsize());
 }
 

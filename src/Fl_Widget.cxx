@@ -76,7 +76,7 @@ int Fl_Widget::handle(int) {
   return 0;
 }
 
-Fl_Font_Size FL_NORMAL_SIZE = 14;
+Fl_Fontsize FL_NORMAL_SIZE = 14;
 
 Fl_Widget::Fl_Widget(int X, int Y, int W, int H, Fl_CString L) {
 

@@ -517,8 +517,14 @@ const Fl_Align FL_ALIGN_RIGHT_BOTTOM	= FL_ALIGN_BOTTOM_RIGHT;
 const Fl_Align FL_ALIGN_NOWRAP		= (Fl_Align)0; // for back compatability
 /**@}*/
 
+/** Index into the font table.
+ */
 typedef int Fl_Font;
-typedef int Fl_Font_Size;
+
+/** Size of a font in pixels.
+ *  This is the approximate height of a font in pixels.
+ */
+typedef int Fl_Fontsize;
 
 // standard fonts
 const Fl_Font FL_HELVETICA              = 0;
@@ -542,7 +548,7 @@ const Fl_Font FL_FREE_FONT              = 16; // first one to allocate
 const Fl_Font FL_BOLD                   = 1;  // add this to helvetica, courier, or times
 const Fl_Font FL_ITALIC                 = 2;  // add this to helvetica, courier, or times
 
-extern FL_EXPORT Fl_Font_Size FL_NORMAL_SIZE;
+extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;
 
 
 enum Fl_Color {	// standard colors

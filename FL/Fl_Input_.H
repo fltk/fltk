@@ -62,7 +62,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
   uchar erase_cursor_only;
   Fl_Font textfont_;
-  Fl_Font_Size textsize_;
+  Fl_Fontsize textsize_;
   unsigned textcolor_;
   unsigned cursor_color_;
 
@@ -125,8 +125,8 @@ public:
 
   Fl_Font textfont() const {return textfont_;}
   void textfont(Fl_Font s) {textfont_ = s;}
-  Fl_Font_Size textsize() const {return textsize_;}
-  void textsize(Fl_Font_Size s) {textsize_ = s;}
+  Fl_Fontsize textsize() const {return textsize_;}
+  void textsize(Fl_Fontsize s) {textsize_ = s;}
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
   void textcolor(unsigned n) {textcolor_ = n;}
   Fl_Color cursor_color() const {return (Fl_Color)cursor_color_;}

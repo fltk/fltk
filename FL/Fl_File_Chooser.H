@@ -152,8 +152,8 @@ public:
   Fl_Color textcolor();
   void textfont(Fl_Font f);
   Fl_Font textfont();
-  void textsize(Fl_Font_Size s);
-  Fl_Font_Size textsize();
+  void textsize(Fl_Fontsize s);
+  Fl_Fontsize textsize();
   void type(int t);
   int type();
   void * user_data() const;

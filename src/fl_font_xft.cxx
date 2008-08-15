@@ -89,13 +89,13 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 #define current_font (fl_fontsize->font)
 
 Fl_Font fl_font_ = 0;
-Fl_Font_Size fl_size_ = 0;
+Fl_Fontsize fl_size_ = 0;
 XFontStruct* fl_xfont = 0;
 void *fl_xftfont = 0;
 const char* fl_encoding_ = "iso8859-1";
 Fl_FontSize* fl_fontsize = 0;
 
-void fl_font(Fl_Font fnum, Fl_Font_Size size) {
+void fl_font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) { // special case to stop font caching
     fl_font_ = 0; fl_size_ = 0;
     return;

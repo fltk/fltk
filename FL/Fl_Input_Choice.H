@@ -172,10 +172,10 @@ public:
   void textfont(Fl_Font f) {
     inp_->textfont(f);
   }
-  Fl_Font_Size textsize() const {
+  Fl_Fontsize textsize() const {
     return (inp_->textsize());
   }
-  void textsize(Fl_Font_Size s) {
+  void textsize(Fl_Fontsize s) {
     inp_->textsize(s);
   }
   const char* value() const {

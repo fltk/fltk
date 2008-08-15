@@ -67,8 +67,8 @@ public:
 
   int		load(const char *directory, Fl_File_Sort_F *sort = fl_numericsort);
 
-  Fl_Font_Size  textsize() const { return Fl_Browser::textsize(); };
-  void		textsize(Fl_Font_Size s) { Fl_Browser::textsize(s); iconsize_ = (uchar)(3 * s / 2); };
+  Fl_Fontsize  textsize() const { return Fl_Browser::textsize(); };
+  void		textsize(Fl_Fontsize s) { Fl_Browser::textsize(s); iconsize_ = (uchar)(3 * s / 2); };
 
   int		filetype() const { return (filetype_); };
   void		filetype(int t) { filetype_ = t; };

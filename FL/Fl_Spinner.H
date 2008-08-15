@@ -198,10 +198,10 @@ class Fl_Spinner : public Fl_Group
   void		textfont(Fl_Font f) {
 		  input_.textfont(f);
 		}
-  Fl_Font_Size  textsize() const {
+  Fl_Fontsize  textsize() const {
 		  return (input_.textsize());
 		}
-  void		textsize(Fl_Font_Size s) {
+  void		textsize(Fl_Fontsize s) {
 		  input_.textsize(s);
 		}
   uchar		type() const { return (input_.type()); }

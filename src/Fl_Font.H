@@ -51,15 +51,15 @@ public:
   HFONT fid;
   int width[256];
   TEXTMETRIC metr;
-  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Font_Size size);
+  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Fontsize size);
 #  elif defined(__APPLE_QD__)
-  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Font_Size size);
+  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Fontsize size);
   short font, face, size;
   short ascent, descent;
   short width[256];
   bool knowMetrics;
 #  elif defined(__APPLE_QUARTZ__)
-  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Font_Size size);
+  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Fontsize size);
   ATSUTextLayout layout;
   ATSUStyle style;
   short ascent, descent, q_width;
@@ -70,14 +70,14 @@ public:
 #  elif USE_XFT
   XftFont* font;
   const char* encoding;
-  Fl_Font_Size size;
+  Fl_Fontsize size;
   FL_EXPORT Fl_FontSize(const char* xfontname);
 #  else
   XFontStruct* font;	// X font information
   FL_EXPORT Fl_FontSize(const char* xfontname);
 #  endif
-  Fl_Font_Size minsize;		// smallest point size that should use this
-  Fl_Font_Size maxsize;		// largest point size that should use this
+  Fl_Fontsize minsize;		// smallest point size that should use this
+  Fl_Fontsize maxsize;		// largest point size that should use this
 #  if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
 #  endif
