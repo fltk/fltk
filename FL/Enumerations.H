@@ -472,47 +472,50 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_ENGRAVED_LABEL();
 extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL fl_define_FL_EMBOSSED_LABEL()
 
+/** \name Alignment Flags */
+/**@{*/
 /** Flags to control the label alignment. 
  *  This controls how the label is displayed next to or inside the widget. 
  *  The default value is FL_ALIGN_CENTER for most widgets, which centers the label
  *  inside the widget.
  *
  *  Flags can be or'd to achieve a combination of alignments.
+ *  \see #FL_ALIGN_CENTER, etc.
  */
-enum Fl_Align {	// align() values
+typedef unsigned Fl_Align;
   /** Align the label horizontally in the middle. */
-  FL_ALIGN_CENTER		= 0,
+const Fl_Align FL_ALIGN_CENTER		= (Fl_Align)0;
   /** Align the label at the top of the widget. Inside labels appear below the top,
    *  outside labels are drawn on top of the widget. */
-  FL_ALIGN_TOP			= 1,
+const Fl_Align FL_ALIGN_TOP		= (Fl_Align)1;
   /** Align the label at the bottom of the widget. */
-  FL_ALIGN_BOTTOM		= 2,
+const Fl_Align FL_ALIGN_BOTTOM		= (Fl_Align)2;
   /** Align the label at the left of the widget. Inside labels appear left-justified
    *  starting at the left side of the widget, outside labels are right-justified and
    *  drawn to the left of the widget. */
-  FL_ALIGN_LEFT			= 4,
+const Fl_Align FL_ALIGN_LEFT		= (Fl_Align)4;
   /** Align the label to the right of the widget. */
-  FL_ALIGN_RIGHT		= 8,
+const Fl_Align FL_ALIGN_RIGHT		= (Fl_Align)8;
   /** Draw the label inside of the widget. */
-  FL_ALIGN_INSIDE		= 16,
+const Fl_Align FL_ALIGN_INSIDE		= (Fl_Align)16;
   /** If the label contains an image, draw the text on top of the image. */
-  FL_ALIGN_TEXT_OVER_IMAGE	= 32,
+const Fl_Align FL_ALIGN_TEXT_OVER_IMAGE	= (Fl_Align)32;
   /** If the label contains an image, draw the text below the image. */
-  FL_ALIGN_IMAGE_OVER_TEXT	= 0,
+const Fl_Align FL_ALIGN_IMAGE_OVER_TEXT	= (Fl_Align)0;
   /** All parts of the label that are lager than the widget will not be drawn . */
-  FL_ALIGN_CLIP			= 64,
+const Fl_Align FL_ALIGN_CLIP		= (Fl_Align)64;
   /** Wrap text that does not fit the width of the widget. */
-  FL_ALIGN_WRAP			= 128,
-  FL_ALIGN_TOP_LEFT		= FL_ALIGN_TOP | FL_ALIGN_LEFT,
-  FL_ALIGN_TOP_RIGHT		= FL_ALIGN_TOP | FL_ALIGN_RIGHT,
-  FL_ALIGN_BOTTOM_LEFT		= FL_ALIGN_BOTTOM | FL_ALIGN_LEFT,
-  FL_ALIGN_BOTTOM_RIGHT		= FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT,
-  FL_ALIGN_LEFT_TOP		= FL_ALIGN_TOP_LEFT,
-  FL_ALIGN_RIGHT_TOP		= FL_ALIGN_TOP_RIGHT,
-  FL_ALIGN_LEFT_BOTTOM		= FL_ALIGN_BOTTOM_LEFT,
-  FL_ALIGN_RIGHT_BOTTOM		= FL_ALIGN_BOTTOM_RIGHT,
-  FL_ALIGN_NOWRAP		= 0 // for back compatability
-};
+const Fl_Align FL_ALIGN_WRAP		= (Fl_Align)128;
+const Fl_Align FL_ALIGN_TOP_LEFT	= FL_ALIGN_TOP | FL_ALIGN_LEFT;
+const Fl_Align FL_ALIGN_TOP_RIGHT	= FL_ALIGN_TOP | FL_ALIGN_RIGHT;
+const Fl_Align FL_ALIGN_BOTTOM_LEFT	= FL_ALIGN_BOTTOM | FL_ALIGN_LEFT;
+const Fl_Align FL_ALIGN_BOTTOM_RIGHT	= FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT;
+const Fl_Align FL_ALIGN_LEFT_TOP	= FL_ALIGN_TOP_LEFT;
+const Fl_Align FL_ALIGN_RIGHT_TOP	= FL_ALIGN_TOP_RIGHT;
+const Fl_Align FL_ALIGN_LEFT_BOTTOM	= FL_ALIGN_BOTTOM_LEFT;
+const Fl_Align FL_ALIGN_RIGHT_BOTTOM	= FL_ALIGN_BOTTOM_RIGHT;
+const Fl_Align FL_ALIGN_NOWRAP		= (Fl_Align)0; // for back compatability
+/**@}*/
 
 typedef int Fl_Font;
 typedef int Fl_Font_Size;

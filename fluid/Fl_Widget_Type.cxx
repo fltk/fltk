@@ -1133,7 +1133,7 @@ static Fl_Menu_Item alignmenu[] = {
 {0}};
 
 void align_cb(Fl_Button* i, void *v) {
-  int b = int(long(i->user_data()));
+  Fl_Align b = Fl_Align(long(i->user_data()));
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
     i->value(current_widget->o->align() & b);
@@ -1142,8 +1142,8 @@ void align_cb(Fl_Button* i, void *v) {
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
 	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
-	int x = q->o->align();
-	int y;
+	Fl_Align x = q->o->align();
+	Fl_Align y;
 	if (i->value()) {
 	  y = x | b;
 	  if (b == FL_ALIGN_LEFT || b == FL_ALIGN_TOP) {
@@ -2260,10 +2260,10 @@ void Fl_Widget_Type::write_widget_code() {
   }
   if (o->align() != tplate->align() || subclass()) {
     int i = o->align();
-    write_c("%s%s->align(%s", indent(), var,
+    write_c("%s%s->align(Fl_Align(%s", indent(), var,
 	    item_name(alignmenu, i & ~FL_ALIGN_INSIDE));
     if (i & FL_ALIGN_INSIDE) write_c("|FL_ALIGN_INSIDE");
-    write_c(");\n");
+    write_c("));\n");
   }
   // avoid the unsupported combination of flegs when user sets 
   // "when" to "FL_WHEN_NEVER", but keeps the "no change" set. 

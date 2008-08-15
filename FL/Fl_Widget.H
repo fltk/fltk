@@ -103,7 +103,7 @@ class FL_EXPORT Fl_Widget {
   uchar type_;
   uchar damage_;
   uchar box_;
-  uchar align_;
+  Fl_Align align_:8;
   uchar when_;
 
   const char *tooltip_;
@@ -264,12 +264,12 @@ public:
 
   /** Gets the label alignment.
    *  \return label alignment
-   *  \see label(), align(uchar), Fl_Align
+   *  \see label(), align(Fl_Align), Fl_Align
    *  \todo This function should not take ucahr as an argument. Apart from the fact that ucahr is too short 
    *        with only 8 bits, it does not provide type safety (in which case we don't need to declare Fl_Type
    *        an enum to begin with).
    */
-  Fl_Align align() const {return (Fl_Align)align_;}
+  Fl_Align align() const {return align_;}
 
   /** Sets the label alignment.
    * This controls how the label is displayed next to or inside the widget. 
@@ -277,7 +277,7 @@ public:
    * \param[in] alignment new label alignment
    * \see align(), Fl_Align
    */
-  void align(uchar alignment) {align_ = alignment;}
+  void align(Fl_Align alignment) {align_ = alignment;}
 
   /** Gets the box type for the widget.
    *  \return the current box type
