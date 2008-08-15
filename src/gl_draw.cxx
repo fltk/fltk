@@ -98,9 +98,9 @@ void gl_remove_displaylist_fonts()
 
   for (int j = 0 ; j < FL_FREE_FONT ; ++j)
   {
-    Fl_FontSize* past = 0;
+    Fl_Font_Descriptor* past = 0;
     Fl_Fontdesc* s    = fl_fonts + j ;
-    Fl_FontSize* f    = s->first;
+    Fl_Font_Descriptor* f    = s->first;
     while (f != 0) {
       if(f->listbase) {
         if(f == s->first) {
@@ -113,7 +113,7 @@ void gl_remove_displaylist_fonts()
         // It would be nice if this next line was in a descturctor somewhere
         glDeleteLists(f->listbase, 256);
 
-        Fl_FontSize* tmp = f;
+        Fl_Font_Descriptor* tmp = f;
         f = f->next;
         delete tmp;
       }

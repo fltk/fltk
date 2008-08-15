@@ -2192,8 +2192,8 @@ void Fl_Window::make_current()
 // helper function to manage the current CGContext fl_gc
 #ifdef __APPLE_QUARTZ__
 extern Fl_Color fl_color_;
-extern class Fl_FontSize *fl_fontsize;
-extern void fl_font(class Fl_FontSize*);
+extern class Fl_Font_Descriptor *fl_fontsize;
+extern void fl_font(class Fl_Font_Descriptor*);
 extern void fl_quartz_restore_line_style_();
 
 // FLTK has only one global graphics state. This function copies the FLTK state into the

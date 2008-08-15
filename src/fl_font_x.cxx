@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-Fl_FontSize::Fl_FontSize(const char* name) {
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
   font = XLoadQueryFont(fl_display, name);
   if (!font) {
     Fl::warning("bad font: %s", name);
@@ -36,9 +36,9 @@ Fl_FontSize::Fl_FontSize(const char* name) {
 #  endif
 }
 
-Fl_FontSize* fl_fontsize;
+Fl_Font_Descriptor* fl_fontsize;
 
-Fl_FontSize::~Fl_FontSize() {
+Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #  if HAVE_GL
 // Delete list created by gl_draw().  This is not done by this code
 // as it will link in GL unnecessarily.  There should be some kind
@@ -112,18 +112,18 @@ int fl_correct_encoding(const char* name) {
   return (*c++ && !strcmp(c,fl_encoding));
 }
 
-// locate or create an Fl_FontSize for a given Fl_Fontdesc and size:
-static Fl_FontSize* find(Fl_Font fnum, Fl_Fontsize size) {
+// locate or create an Fl_Font_Descriptor for a given Fl_Fontdesc and size:
+static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use font 0 if still undefined
-  Fl_FontSize* f;
+  Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->minsize <= size && f->maxsize >= size) return f;
   fl_open_display();
   if (!s->xlist) {
     s->xlist = XListFonts(fl_display, s->name, 100, &(s->n));
     if (!s->xlist) {	// use fixed if no matching font...
-      s->first = new Fl_FontSize("fixed");
+      s->first = new Fl_Font_Descriptor("fixed");
       s->first->minsize = 0;
       s->first->maxsize = 32767;
       return s->first;
@@ -181,7 +181,7 @@ static Fl_FontSize* find(Fl_Font fnum, Fl_Fontsize size) {
   }
 
   // okay, we definately have some name, make the font:
-  f = new Fl_FontSize(name);
+  f = new Fl_Font_Descriptor(name);
   if (ptsize < size) {f->minsize = ptsize; f->maxsize = size;}
   else {f->minsize = size; f->maxsize = ptsize;}
   f->next = s->first;
@@ -206,7 +206,7 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size) {
   }
   if (fnum == fl_font_ && size == fl_size_) return;
   fl_font_ = fnum; fl_size_ = size;
-  Fl_FontSize* f = find(fnum, size);
+  Fl_Font_Descriptor* f = find(fnum, size);
   if (f != fl_fontsize) {
     fl_fontsize = f;
     fl_xfont = f->font;

@@ -27,7 +27,7 @@
 
 #include <config.h>
 
-Fl_FontSize::Fl_FontSize(const char* name, Fl_Fontsize Size) {
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
 #  if HAVE_GL
   listbase = 0;
@@ -114,9 +114,9 @@ Fl_FontSize::Fl_FontSize(const char* name, Fl_Fontsize Size) {
 #endif
 }
 
-Fl_FontSize* fl_fontsize = 0L;
+Fl_Font_Descriptor* fl_fontsize = 0L;
 
-Fl_FontSize::~Fl_FontSize() {
+Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 /*
 #if HAVE_GL
  // ++ todo: remove OpenGL font alocations
@@ -221,7 +221,7 @@ UniChar *fl_macToUtf16(const char *txt, int len)
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
-void fl_font(Fl_FontSize* s) {
+void fl_font(Fl_Font_Descriptor* s) {
   fl_fontsize = s;
 #ifdef __APPLE_QD__
   if (fl_window) SetPort( GetWindowPort(fl_window) );
@@ -245,13 +245,13 @@ void fl_font(Fl_FontSize* s) {
 #endif
 }
 
-static Fl_FontSize* find(Fl_Font fnum, Fl_Fontsize size) {
+static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
-  Fl_FontSize* f;
+  Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->minsize <= size && f->maxsize >= size) return f;
-  f = new Fl_FontSize(s->name, size);
+  f = new Fl_Font_Descriptor(s->name, size);
   f->next = s->first;
   s->first = f;
   return f;

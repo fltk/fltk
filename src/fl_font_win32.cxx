@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-Fl_FontSize::Fl_FontSize(const char* name, Fl_Fontsize size) {
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
   int weight = FW_NORMAL;
   int italic = 0;
   switch (*name++) {
@@ -63,9 +63,9 @@ Fl_FontSize::Fl_FontSize(const char* name, Fl_Fontsize size) {
   minsize = maxsize = size;
 }
 
-Fl_FontSize* fl_fontsize;
+Fl_Font_Descriptor* fl_fontsize;
 
-Fl_FontSize::~Fl_FontSize() {
+Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #if HAVE_GL
 // Delete list created by gl_draw().  This is not done by this code
 // as it will link in GL unnecessarily.  There should be some kind
@@ -106,13 +106,13 @@ static Fl_Fontdesc built_in_table[] = {
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
-static Fl_FontSize* find(Fl_Font fnum, Fl_Fontsize size) {
+static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
-  Fl_FontSize* f;
+  Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->minsize <= size && f->maxsize >= size) return f;
-  f = new Fl_FontSize(s->name, size);
+  f = new Fl_Font_Descriptor(s->name, size);
   f->next = s->first;
   s->first = f;
   return f;

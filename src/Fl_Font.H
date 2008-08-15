@@ -30,7 +30,7 @@
 // Fl_Fontdesc: an entry into the fl_font() table.  There is one of these
 // for each fltk font number.
 //
-// Fl_FontSize: a structure for an actual system font, with junk to
+// Fl_Font_Descriptor: a structure for an actual system font, with junk to
 // help choose it and info on character sizes.  Each Fl_Fontdesc has a
 // linked list of these.  These are created the first time each system
 // font/size combination is used.
@@ -44,22 +44,22 @@
 typedef struct _XftFont XftFont;
 #  endif // USE_XFT
 
-class Fl_FontSize {
+class Fl_Font_Descriptor {
 public:
-  Fl_FontSize *next;	// linked list for this Fl_Fontdesc
+  Fl_Font_Descriptor *next;	// linked list for this Fl_Fontdesc
 #  ifdef WIN32
   HFONT fid;
   int width[256];
   TEXTMETRIC metr;
-  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Fontsize size);
+  FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
 #  elif defined(__APPLE_QD__)
-  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Fontsize size);
+  FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
   short font, face, size;
   short ascent, descent;
   short width[256];
   bool knowMetrics;
 #  elif defined(__APPLE_QUARTZ__)
-  FL_EXPORT Fl_FontSize(const char* fontname, Fl_Fontsize size);
+  FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
   ATSUTextLayout layout;
   ATSUStyle style;
   short ascent, descent, q_width;
@@ -71,25 +71,25 @@ public:
   XftFont* font;
   const char* encoding;
   Fl_Fontsize size;
-  FL_EXPORT Fl_FontSize(const char* xfontname);
+  FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
 #  else
   XFontStruct* font;	// X font information
-  FL_EXPORT Fl_FontSize(const char* xfontname);
+  FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
 #  endif
   Fl_Fontsize minsize;		// smallest point size that should use this
   Fl_Fontsize maxsize;		// largest point size that should use this
 #  if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
 #  endif
-  FL_EXPORT ~Fl_FontSize();
+  FL_EXPORT ~Fl_Font_Descriptor();
 };
 
-extern FL_EXPORT Fl_FontSize *fl_fontsize; // the currently selected one
+extern FL_EXPORT Fl_Font_Descriptor *fl_fontsize; // the currently selected one
 
 struct Fl_Fontdesc {
   const char *name;
   char fontname[128];	// "Pretty" font name
-  Fl_FontSize *first;	// linked list of sizes of this style
+  Fl_Font_Descriptor *first;	// linked list of sizes of this style
 #  ifndef WIN32
   char **xlist;		// matched X font names
   int n;		// size of xlist, negative = don't free xlist!

@@ -93,7 +93,7 @@ Fl_Fontsize fl_size_ = 0;
 XFontStruct* fl_xfont = 0;
 void *fl_xftfont = 0;
 const char* fl_encoding_ = "iso8859-1";
-Fl_FontSize* fl_fontsize = 0;
+Fl_Font_Descriptor* fl_fontsize = 0;
 
 void fl_font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) { // special case to stop font caching
@@ -106,14 +106,14 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size) {
     return;
   fl_font_ = fnum; fl_size_ = size;
   Fl_Fontdesc *font = fl_fonts + fnum;
-  Fl_FontSize* f;
+  Fl_Font_Descriptor* f;
   // search the fontsizes we have generated already
   for (f = font->first; f; f = f->next) {
     if (f->size == size && !strcasecmp(f->encoding, fl_encoding_))
       break;
   }
   if (!f) {
-    f = new Fl_FontSize(font->name);
+    f = new Fl_Font_Descriptor(font->name);
     f->next = font->first;
     font->first = f;
   }
@@ -231,7 +231,7 @@ static XftFont* fontopen(const char* name, bool core) {
   }
 } // end of fontopen
 
-Fl_FontSize::Fl_FontSize(const char* name) {
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
   encoding = fl_encoding_;
   size = fl_size_;
 #if HAVE_GL
@@ -240,7 +240,7 @@ Fl_FontSize::Fl_FontSize(const char* name) {
   font = fontopen(name, false);
 }
 
-Fl_FontSize::~Fl_FontSize() {
+Fl_Font_Descriptor::~Fl_Font_Descriptor() {
   if (this == fl_fontsize) fl_fontsize = 0;
 //  XftFontClose(fl_display, font);
 }

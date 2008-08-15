@@ -65,8 +65,8 @@ void Fl::set_font(Fl_Font fnum, const char* name) {
 #if !defined(WIN32) && !defined(__APPLE__)
     if (s->xlist && s->n >= 0) XFreeFontNames(s->xlist);
 #endif
-    for (Fl_FontSize* f = s->first; f;) {
-      Fl_FontSize* n = f->next; delete f; f = n;
+    for (Fl_Font_Descriptor* f = s->first; f;) {
+      Fl_Font_Descriptor* n = f->next; delete f; f = n;
     }
     s->first = 0;
   }
