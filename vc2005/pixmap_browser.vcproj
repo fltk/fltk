@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib"
+				AdditionalDependencies="comctl32.lib"
 				OutputFile="../test/pixmap_browserd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -166,7 +166,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib"
+				AdditionalDependencies="comctl32.lib"
 				OutputFile="../test/pixmap_browser.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

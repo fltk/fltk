@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib fltkd.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib fltkd.lib comctl32.lib"
 				OutputFile="../test/fullscreend.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -166,7 +166,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib fltk.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib fltk.lib comctl32.lib"
 				OutputFile="../test/fullscreen.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

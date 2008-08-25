@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="opengl32.lib comctl32.lib"
 				OutputFile="fltkdll.dll"
 				Version="1.0"
 				LinkIncremental="1"
@@ -167,7 +167,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="opengl32.lib comctl32.lib"
 				OutputFile="fltkdlld.dll"
 				Version="1.0"
 				LinkIncremental="1"
