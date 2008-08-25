@@ -64,6 +64,30 @@
 
 //#define USE_ASYNC_SELECT
 
+// dynamic wsock dll handling api:
+#if 1
+#define WSCK_DLL_NAME "WS2_32.DLL"
+#else
+#define WSCK_DLL_NAME "WSOCK32.DLL"
+#endif
+typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const struct timeval*);
+typedef int (WINAPI* fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
+typedef int (WINAPI* fl_wsk_async_select_f)(SOCKET,HWND,u_int,long);
+typedef int (WINAPI* fl_wsk_startup_f)(WORD,LPWSADATA);
+static HMODULE s_wsock_mod = 0;
+static fl_wsk_select_f s_wsock_select=0;
+static fl_wsk_fd_is_set_f fl_wsk_fd_is_set=0;
+static fl_wsk_async_select_f fl_wsk_async_select=0;
+
+static HMODULE get_wsock_mod() {
+	if (!s_wsock_mod) {
+		s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
+        s_wsock_select = (fl_wsk_select_f) GetProcAddress(s_wsock_mod, "select");
+        fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f) GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
+        fl_wsk_async_select = (fl_wsk_async_select_f) GetProcAddress(s_wsock_mod, "WSAAsyncSelect");
+	}
+  return s_wsock_mod;
+}
 
 //
 // USE_TRACK_MOUSE - define it if you have TrackMouseEvent()...
@@ -160,7 +184,7 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   if (events & POLLIN) mask |= FD_READ;
   if (events & POLLOUT) mask |= FD_WRITE;
   if (events & POLLERR) mask |= FD_CLOSE;
-  WSAAsyncSelect(n, fl_window, WM_FLSELECT, mask);
+  if (get_wsock_mod()) fl_wsk_async_select(n, fl_window, WM_FLSELECT, mask);
 #else
   if (events & POLLIN) FD_SET((unsigned)n, &fdsets[0]);
   if (events & POLLOUT) FD_SET((unsigned)n, &fdsets[1]);
@@ -190,7 +214,7 @@ void Fl::remove_fd(int n, int events) {
   nfds = j;
 
 #ifdef USE_ASYNC_SELECT
-  WSAAsyncSelect(n, 0, 0, 0);
+  if (get_wsock_mod()) fl_wsk_async_select(n, 0, 0, 0);
 #else
   if (events & POLLIN) FD_CLR(unsigned(n), &fdsets[0]);
   if (events & POLLOUT) FD_CLR(unsigned(n), &fdsets[1]);
@@ -243,17 +267,18 @@ int fl_wait(double time_to_wait) {
     t.tv_usec = 0;
 
     fd_set fdt[3];
-    fdt[0] = fdsets[0];
-    fdt[1] = fdsets[1];
-    fdt[2] = fdsets[2];
-    if (::select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t)) {
+    memcpy(&fdt[0],&fdsets[0], sizeof fd_set);
+    memcpy(&fdt[1],&fdsets[1], sizeof fd_set);
+    memcpy(&fdt[2],&fdsets[2], sizeof fd_set);
+    if (get_wsock_mod()&& s_wsock_select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t)) {
       // We got something - do the callback!
       for (int i = 0; i < nfds; i ++) {
-	int f = fd[i].fd;
+	SOCKET f = fd[i].fd;
 	short revents = 0;
-	if (FD_ISSET(f,&fdt[0])) revents |= POLLIN;
-	if (FD_ISSET(f,&fdt[1])) revents |= POLLOUT;
-	if (FD_ISSET(f,&fdt[2])) revents |= POLLERR;
+	int ret=0;
+	if (fl_wsk_fd_is_set(f, &fdt[0])) revents |= POLLIN;
+	if (fl_wsk_fd_is_set(f, &fdt[1])) revents |= POLLOUT;
+	if (fl_wsk_fd_is_set(f, &fdt[2])) revents |= POLLERR;
 	if (fd[i].events & revents) fd[i].cb(f, fd[i].arg);
       }
       time_to_wait = 0.0; // just peek for any messages
@@ -330,7 +355,7 @@ int fl_ready() {
   fdt[0] = fdsets[0];
   fdt[1] = fdsets[1];
   fdt[2] = fdsets[2];
-  return ::select(0,&fdt[0],&fdt[1],&fdt[2],&t);
+  return get_wsock_mod() && s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t);
 #endif // USE_ASYNC_SELECT
 }
 
