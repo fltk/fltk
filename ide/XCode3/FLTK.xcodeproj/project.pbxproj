@@ -148,7 +148,6 @@
 		C977420B0DD9D3570047C1BF /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C977420F0DD9D36C0047C1BF /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C977420D0DD9D36C0047C1BF /* demo.menu */; };
 		C97742100DD9D36C0047C1BF /* demo.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C977420E0DD9D36C0047C1BF /* demo.cxx */; };
-		C97742520DD9D3F00047C1BF /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */; };
 		C97742680DD9D8280047C1BF /* doublebuffer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97742670DD9D8280047C1BF /* doublebuffer.cxx */; };
 		C97742720DD9DD3E0047C1BF /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C99CF52C0DD78BBA0094BD10 /* CubeMain.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C99CF52B0DD78BBA0094BD10 /* CubeMain.cxx */; };
@@ -456,6 +455,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
+		01AA1C120E630B7700E0A684 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.menu";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+			);
+			script = "cp -f ${INPUT_FILE_DIR}../../test/demo.menu ${TARGET_BUILD_DIR}";
+		};
 		C918DB780DD9EF6800167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
@@ -466,7 +475,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C918DD680DD9F53E00167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -478,7 +487,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C918DDD80DD9F66C00167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -490,7 +499,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C918DE7C0DD9F85E00167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -502,7 +511,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C918DFD50DD9FC8900167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -514,7 +523,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C918E0020DD9FD0E00167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -526,7 +535,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C918E0590DD9FDE400167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -538,7 +547,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C918E13F0DDA11B500167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -550,7 +559,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C918E1CA0DDA131700167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -562,7 +571,7 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 		C99CF5350DD78C640094BD10 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
@@ -574,11 +583,25 @@
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
 				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
 			);
-			script = "export DYLD_FRAMEWORK_PATH=../ide/XCode3/build/Debug/ && cd ../../test && ../ide/XCode3/build/Debug/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
 		};
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		017614DF0E6307DE00B12D51 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9A3EC6D0DD6397400486E4F;
+			remoteInfo = fltk_forms;
+		};
+		01FBE4930E630405009E95B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
+			remoteInfo = fltk;
+		};
 		C918DB3D0DD9EE4600167E99 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
@@ -1426,13 +1449,6 @@
 			remoteGlobalIDString = C9C873730DD7772000A9793F;
 			remoteInfo = Fluid;
 		};
-		C977421C0DD9D3BA0047C1BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9A3EC6D0DD6397400486E4F;
-			remoteInfo = fltk_forms;
-		};
 		C977421E0DD9D3BA0047C1BF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
@@ -1803,13 +1819,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = C9A3EC990DD639E600486E4F;
 			remoteInfo = fltk_jpeg;
-		};
-		C9FB9AA40DE34B3900026BB1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
-			remoteInfo = fltk;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -2742,7 +2751,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C97742520DD9D3F00047C1BF /* fltk_forms.framework in Frameworks */,
+				C97741F00DD9D3240047C1BF /* fltk.framework in Frameworks */,
+				C9A3EE300DD6485F00486E4F /* fltk_forms.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4439,11 +4449,12 @@
 				C9FB9A980DE34AB200026BB1 /* CopyFiles */,
 			);
 			buildRules = (
+				01AA1C120E630B7700E0A684 /* PBXBuildRule */,
 			);
 			dependencies = (
 				C97742190DD9D3BA0047C1BF /* PBXTargetDependency */,
-				C9FB9AA50DE34B3900026BB1 /* PBXTargetDependency */,
-				C977421D0DD9D3BA0047C1BF /* PBXTargetDependency */,
+				01FBE4940E630405009E95B1 /* PBXTargetDependency */,
+				017614E00E6307DE00B12D51 /* PBXTargetDependency */,
 				C977421F0DD9D3BA0047C1BF /* PBXTargetDependency */,
 				C97742210DD9D3BA0047C1BF /* PBXTargetDependency */,
 				C97742230DD9D3BA0047C1BF /* PBXTargetDependency */,
@@ -6357,6 +6368,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		017614E00E6307DE00B12D51 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9A3EC6D0DD6397400486E4F /* fltk_forms */;
+			targetProxy = 017614DF0E6307DE00B12D51 /* PBXContainerItemProxy */;
+		};
+		01FBE4940E630405009E95B1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9A3E9500DD6336500486E4F /* fltk */;
+			targetProxy = 01FBE4930E630405009E95B1 /* PBXContainerItemProxy */;
+		};
 		C918DB3E0DD9EE4600167E99 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C9A3E9500DD6336500486E4F /* fltk */;
@@ -6962,11 +6983,6 @@
 			target = C9C873730DD7772000A9793F /* Fluid */;
 			targetProxy = C97742180DD9D3BA0047C1BF /* PBXContainerItemProxy */;
 		};
-		C977421D0DD9D3BA0047C1BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9A3EC6D0DD6397400486E4F /* fltk_forms */;
-			targetProxy = C977421C0DD9D3BA0047C1BF /* PBXContainerItemProxy */;
-		};
 		C977421F0DD9D3BA0047C1BF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C9A3EC780DD6398C00486E4F /* fltk_images */;
@@ -7231,11 +7247,6 @@
 			isa = PBXTargetDependency;
 			target = C9A3EC990DD639E600486E4F /* fltk_jpeg */;
 			targetProxy = C9DD583B0DD7888200A896B4 /* PBXContainerItemProxy */;
-		};
-		C9FB9AA50DE34B3900026BB1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9A3E9500DD6336500486E4F /* fltk */;
-			targetProxy = C9FB9AA40DE34B3900026BB1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

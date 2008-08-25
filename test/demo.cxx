@@ -301,8 +301,18 @@ int load_the_menu(const char* fname)
   fin = fopen(fname,"r");
   if (fin == NULL)
   {
-//    fl_show_message("ERROR","","Cannot read the menu description file.");
-    return 0;
+#if defined ( __APPLE__ )
+	// mac os bundle menu detection:
+	  char* pos = strrchr(fname,'/');
+	  if (!pos) return 0;
+	  *pos='\0';
+	  pos = strrchr(fname,'/');
+	  if (!pos) return 0;
+	  strcpy(pos,"/Resources/demo.menu");
+	  fin  = fopen(fname,"r");
+	  if (fin == NULL)
+#endif
+	  return 0;
   }
   for (;;) {
     if (fgets(line,256,fin) == NULL) break;
