@@ -73,7 +73,7 @@
 typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const struct timeval*);
 typedef int (WINAPI* fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
 typedef int (WINAPI* fl_wsk_async_select_f)(SOCKET,HWND,u_int,long);
-typedef int (WINAPI* fl_wsk_startup_f)(WORD,LPWSADATA);
+//typedef int (WINAPI* fl_wsk_startup_f)(WORD,LPWSADATA);
 static HMODULE s_wsock_mod = 0;
 static fl_wsk_select_f s_wsock_select=0;
 static fl_wsk_fd_is_set_f fl_wsk_fd_is_set=0;
@@ -267,9 +267,7 @@ int fl_wait(double time_to_wait) {
     t.tv_usec = 0;
 
     fd_set fdt[3];
-    memcpy(&fdt[0],&fdsets[0], sizeof fd_set);
-    memcpy(&fdt[1],&fdsets[1], sizeof fd_set);
-    memcpy(&fdt[2],&fdsets[2], sizeof fd_set);
+    memcpy(fdt, fdsets, sizeof fdt); // one shot faster fdt init
     if (get_wsock_mod()&& s_wsock_select(maxfd+1,&fdt[0],&fdt[1],&fdt[2],&t)) {
       // We got something - do the callback!
       for (int i = 0; i < nfds; i ++) {
@@ -352,10 +350,8 @@ int fl_ready() {
   t.tv_sec = 0;
   t.tv_usec = 0;
   fd_set fdt[3];
-  fdt[0] = fdsets[0];
-  fdt[1] = fdsets[1];
-  fdt[2] = fdsets[2];
-  return get_wsock_mod() && s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t);
+  memcpy(fdt, fdsets, sizeof fdt);
+  return get_wsock_mod() ? s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t) : 0;
 #endif // USE_ASYNC_SELECT
 }
 
