@@ -893,7 +893,10 @@ Fl_Help_View::draw()
 	    if (img) {
 	      img->draw(xx + x() - leftline_,
 	                yy + y() - fl_height() + fl_descent() + 2);
-	      img->release();
+#if !defined(WIN32) && !defined(__APPLE__)
+	      if ((void*)img != &broken_image)
+#endif 
+		if(img->refcount()>0) img->release();
 	    }
 
 	    xx += ww;
@@ -2370,8 +2373,10 @@ Fl_Help_View::free_data() {
 	  if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
 	    // Release the image twice to free it from memory...
 	    img = get_image(attr, width, height);
-	    img->release();
-	    img->release();
+#if !defined(WIN32) && !defined(__APPLE__)
+	    if ((void*)img!=&broken_image)
+#endif 
+	      while (img->refcount()>0) img->release();
 	  }
 	}
       }
