@@ -4,7 +4,7 @@
 # 
 # FLTK configuration utility.
 #
-# Copyright 2000-2007 by Bill Spitzak and others.
+# Copyright 2000-2008 by Bill Spitzak and others.
 # Original version Copyright 2000 by James Dean Palmer
 # Adapted by Vincent Penne and Michael Sweet
 #
@@ -283,7 +283,7 @@ if test -n "$post"; then
 	    # Make a shell script that runs the bundled executable
 	    echo "#!/bin/sh" >"$post"
 	    echo 'dir="`dirname $0`"' >>"$post"
-	    echo 'exec "$dir/'"$post.app/Contents/MacOS/$post"'" $*' >>"$post"
+	    echo 'exec "$dir/'"$post.app/Contents/MacOS/$post"'" "$@"' >>"$post"
 	    chmod +x "$post"
 
 	    # Make the simplest Info.plist needed for an application
