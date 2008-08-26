@@ -35,7 +35,7 @@ VERSION="$MAJOR_VERSION.$MINOR_VERSION.$PATCH_VERSION"
 APIVERSION="$MAJOR_VERSION.$MINOR_VERSION"
 
 ### BEGIN fltk-config
-selfdir=`dirname $0`
+selfdir=`dirname "$0"`
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@
@@ -282,7 +282,7 @@ if test -n "$post"; then
 
 	    # Make a shell script that runs the bundled executable
 	    echo "#!/bin/sh" >"$post"
-	    echo 'dir="`dirname $0`"' >>"$post"
+	    echo 'dir="`dirname '"'"'$0'"'"'`"' >>"$post"
 	    echo 'exec "$dir/'"$post.app/Contents/MacOS/$post"'" "$@"' >>"$post"
 	    chmod +x "$post"
 
