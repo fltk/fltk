@@ -230,9 +230,11 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
   case FL_CURSOR_DEFAULT:
   default: break;
   }
-  SetCursor( *icrsr );
-  if (i) {
-    i->cursor = icrsr;
+  if (icrsr) { // make sure we have a non null icrsr before updating cursor state
+    SetCursor( *icrsr );
+    if (i) {
+      i->cursor = icrsr;
+    }
   }
 }
 
