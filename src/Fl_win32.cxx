@@ -44,7 +44,13 @@
 #  include <sys/time.h>
 #  include <unistd.h>
 #else
+# if !defined(USE_WSOCK1)
+#  define WSCK_DLL_NAME "WS2_32.DLL"
+#  include <winsock2.h>
+#else
+#  define WSCK_DLL_NAME "WSOCK32.DLL"
 #  include <winsock.h>
+# endif
 #endif
 #include <winuser.h>
 #include <commctrl.h>
@@ -65,11 +71,6 @@
 //#define USE_ASYNC_SELECT
 
 // dynamic wsock dll handling api:
-#if 1
-#define WSCK_DLL_NAME "WS2_32.DLL"
-#else
-#define WSCK_DLL_NAME "WSOCK32.DLL"
-#endif
 typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const struct timeval*);
 typedef int (WINAPI* fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
 typedef int (WINAPI* fl_wsk_async_select_f)(SOCKET,HWND,u_int,long);
@@ -82,6 +83,10 @@ static fl_wsk_async_select_f fl_wsk_async_select=0;
 static HMODULE get_wsock_mod() {
 	if (!s_wsock_mod) {
 		s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
+		if (s_wsock_mod==NULL){
+			fprintf(stderr,"FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n",WSCK_DLL_NAME);
+			exit(1);
+		}
         s_wsock_select = (fl_wsk_select_f) GetProcAddress(s_wsock_mod, "select");
         fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f) GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
         fl_wsk_async_select = (fl_wsk_async_select_f) GetProcAddress(s_wsock_mod, "WSAAsyncSelect");
@@ -273,7 +278,6 @@ int fl_wait(double time_to_wait) {
       for (int i = 0; i < nfds; i ++) {
 	SOCKET f = fd[i].fd;
 	short revents = 0;
-	int ret=0;
 	if (fl_wsk_fd_is_set(f, &fdt[0])) revents |= POLLIN;
 	if (fl_wsk_fd_is_set(f, &fdt[1])) revents |= POLLOUT;
 	if (fl_wsk_fd_is_set(f, &fdt[2])) revents |= POLLERR;
