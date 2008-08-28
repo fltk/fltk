@@ -618,7 +618,7 @@ case $uname in
 	CXXFLAGS="-mwindows -DWIN32 $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
 	DSOFLAGS="-mwindows $DSOFLAGS"
-	LIBS="$LIBS -lole32 -luuid -lcomctl32 -lwsock32"
+	LIBS="$LIBS -lole32 -luuid -lcomctl32"
 	if test "x$with_optim" = x; then
 	    dnl Avoid -Os optimization on Cygwin/Mingw
 	    with_optim="-O3"

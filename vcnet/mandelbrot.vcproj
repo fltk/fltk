@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glu32.lib opengl32.lib fltkd.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="glu32.lib opengl32.lib fltkd.lib comctl32.lib"
 				OutputFile="../test/mandelbrotd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glu32.lib opengl32.lib fltk.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="glu32.lib opengl32.lib fltk.lib comctl32.lib"
 				OutputFile="../test/mandelbrot.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

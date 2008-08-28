@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltkd.lib comctl32.lib wsock32.lib"
+				AdditionalDependencies="fltkd.lib comctl32.lib"
 				OutputFile="../test/adjusterd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltk.lib comctl32.lib wsock32.lib"
+				AdditionalDependencies="fltk.lib comctl32.lib"
 				OutputFile="../test/adjuster.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

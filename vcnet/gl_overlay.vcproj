@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glu32.lib opengl32.lib comctl32.lib wsock32.lib"
+				AdditionalDependencies="glu32.lib opengl32.lib comctl32.lib"
 				OutputFile="../test/gl_overlay.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -99,7 +99,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glu32.lib opengl32.lib comctl32.lib wsock32.lib"
+				AdditionalDependencies="glu32.lib opengl32.lib comctl32.lib"
 				OutputFile="../test/gl_overlayd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

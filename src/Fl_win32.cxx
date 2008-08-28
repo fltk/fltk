@@ -83,10 +83,8 @@ static fl_wsk_async_select_f fl_wsk_async_select=0;
 static HMODULE get_wsock_mod() {
 	if (!s_wsock_mod) {
 		s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
-		if (s_wsock_mod==NULL){
-			fprintf(stderr,"FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n",WSCK_DLL_NAME);
-			exit(1);
-		}
+		if (s_wsock_mod==NULL)
+		  Fl::fatal("FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n",WSCK_DLL_NAME);
         s_wsock_select = (fl_wsk_select_f) GetProcAddress(s_wsock_mod, "select");
         fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f) GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
         fl_wsk_async_select = (fl_wsk_async_select_f) GetProcAddress(s_wsock_mod, "WSAAsyncSelect");

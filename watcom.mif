@@ -133,7 +133,7 @@ LIBS = $(LIBNAME) $(LIBNAMEFL) $(LIBNAMEGL) $(LIBNAMEIMG)
 !ifeqi TARGET  nt                   # WINDOWS 32 bit
 SYSDEF= -DWIN32
 ASYSDEF=
-SYSLIBS=wsock32.lib mpr.lib glu32.lib opengl32.lib
+SYSLIBS=mpr.lib glu32.lib opengl32.lib
 EXEEXT=.exe
 
 !else ifeqi TARGET linux            # Linux Intel 32 bit generic

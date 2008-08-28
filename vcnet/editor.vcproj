@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib"
+				AdditionalDependencies="comctl32.lib"
 				OutputFile="../test/editor.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -100,7 +100,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib comctl32.lib"
+				AdditionalDependencies="comctl32.lib"
 				OutputFile="../test/editord.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib fltk.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="opengl32.lib fltk.lib comctl32.lib"
 				OutputFile="../test/shape.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -99,7 +99,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib fltkd.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="opengl32.lib fltkd.lib comctl32.lib"
 				OutputFile="../test/shaped.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

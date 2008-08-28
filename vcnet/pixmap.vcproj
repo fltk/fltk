@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltk.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="fltk.lib comctl32.lib"
 				OutputFile="../test/pixmap.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -99,7 +99,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltkd.lib wsock32.lib comctl32.lib"
+				AdditionalDependencies="fltkd.lib comctl32.lib"
 				OutputFile="../test/pixmapd.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
