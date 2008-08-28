@@ -246,16 +246,16 @@ fi
 if test -n "$compile"; then
     case "$compile" in
         *.cxx)
-            prog="`basename '$compile' .cxx`"
+            prog=$(basename "$compile" .cxx)
 	    ;;
         *.cpp)
-            prog="`basename '$compile' .cpp`"
+            prog=$(basename "$compile" .cpp)
 	    ;;
         *.cc)
-            prog="`basename '$compile' .cc`"
+            prog=$(basename "$compile" .cc)
 	    ;;
         *.C)
-            prog="`basename '$compile' .C`"
+            prog=$(basename "$compile" .C)
 	    ;;
 	*)
 	    echo "ERROR: Unknown/bad C++ source file extension on \"$compile\"!"
