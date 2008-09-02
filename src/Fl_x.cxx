@@ -249,6 +249,7 @@ int fl_wait(double time_to_wait) {
 // fl_ready() is just like fl_wait(0.0) except no callbacks are done:
 int fl_ready() {
   if (XQLength(fl_display)) return 1;
+  if (!nfds) return 0; // nothing to select or poll
 #  if USE_POLL
   return ::poll(pollfds, nfds, 0);
 #  else

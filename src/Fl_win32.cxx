@@ -64,11 +64,23 @@
 
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
-//
-// This currently doesn't appear to work; needs to be fixed!
-//
+// USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:
+/**
+   This feature was supposed to provide an efficient alternative to the current polling method,
+   but as it has been discussed (Thanks Albrecht!) :
+  - the async mode would imply to change the socket select mode to non blocking mode,
+   this can have unexpected side effects for 3rd party apps, especially if it is set on-the-fly when
+   socket service is really needed, as it is done today and on purpose, but still
+   the 3rd party developer wouldn't easily control the sequencing of socket operations.
+  - Finer granularity of events furthered by the async select is a plus only for socket 3rd party impl.,
+    it is simply not needed for the 'light' fltk use we make of wsock, so here
+    it would also be a bad point, because of all the logic add-ons necessary for
+    using this functionality, without a clear benefit.
 
-//#define USE_ASYNC_SELECT
+   So async mode select would not add benefits to fltk, worse,
+   it can slowdown fltk because of this finer granularity and instrumentation code 
+   to be added for async mode proper operation, not mentioning the side effects...
+*/
 
 // dynamic wsock dll handling api:
 typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const struct timeval*);
@@ -81,14 +93,14 @@ static fl_wsk_fd_is_set_f fl_wsk_fd_is_set=0;
 static fl_wsk_async_select_f fl_wsk_async_select=0;
 
 static HMODULE get_wsock_mod() {
-	if (!s_wsock_mod) {
-		s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
-		if (s_wsock_mod==NULL)
-		  Fl::fatal("FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n",WSCK_DLL_NAME);
-        s_wsock_select = (fl_wsk_select_f) GetProcAddress(s_wsock_mod, "select");
-        fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f) GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
-        fl_wsk_async_select = (fl_wsk_async_select_f) GetProcAddress(s_wsock_mod, "WSAAsyncSelect");
-	}
+  if (!s_wsock_mod) {
+    s_wsock_mod = LoadLibrary(WSCK_DLL_NAME);
+    if (s_wsock_mod==NULL)
+      Fl::fatal("FLTK Lib Error: %s file not found! Please check your winsock dll accessibility.\n",WSCK_DLL_NAME);
+    s_wsock_select = (fl_wsk_select_f) GetProcAddress(s_wsock_mod, "select");
+    fl_wsk_fd_is_set = (fl_wsk_fd_is_set_f) GetProcAddress(s_wsock_mod, "__WSAFDIsSet");
+    fl_wsk_async_select = (fl_wsk_async_select_f) GetProcAddress(s_wsock_mod, "WSAAsyncSelect");
+  }
   return s_wsock_mod;
 }
 
@@ -149,9 +161,7 @@ static HMODULE get_wsock_mod() {
 // select function that sends a WIN32 message when the select condition
 // exists...
 static int maxfd = 0;
-#ifndef USE_ASYNC_SELECT
 static fd_set fdsets[3];
-#endif // !USE_ASYNC_SELECT
 
 #define POLLIN 1
 #define POLLOUT 4
@@ -182,18 +192,10 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   fd[i].cb = cb;
   fd[i].arg = v;
 
-#ifdef USE_ASYNC_SELECT
-  int mask = 0;
-  if (events & POLLIN) mask |= FD_READ;
-  if (events & POLLOUT) mask |= FD_WRITE;
-  if (events & POLLERR) mask |= FD_CLOSE;
-  if (get_wsock_mod()) fl_wsk_async_select(n, fl_window, WM_FLSELECT, mask);
-#else
   if (events & POLLIN) FD_SET((unsigned)n, &fdsets[0]);
   if (events & POLLOUT) FD_SET((unsigned)n, &fdsets[1]);
   if (events & POLLERR) FD_SET((unsigned)n, &fdsets[2]);
   if (n > maxfd) maxfd = n;
-#endif // USE_ASYNC_SELECT
 }
 
 void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
@@ -216,13 +218,9 @@ void Fl::remove_fd(int n, int events) {
   }
   nfds = j;
 
-#ifdef USE_ASYNC_SELECT
-  if (get_wsock_mod()) fl_wsk_async_select(n, 0, 0, 0);
-#else
   if (events & POLLIN) FD_CLR(unsigned(n), &fdsets[0]);
   if (events & POLLOUT) FD_CLR(unsigned(n), &fdsets[1]);
   if (events & POLLERR) FD_CLR(unsigned(n), &fdsets[2]);
-#endif // USE_ASYNC_SELECT
 }
 
 void Fl::remove_fd(int n) {
@@ -261,7 +259,6 @@ int fl_wait(double time_to_wait) {
     in_idle = 0;
   }
   
-#ifndef USE_ASYNC_SELECT
   if (nfds) {
     // For WIN32 we need to poll for socket input FIRST, since
     // the event queue is not something we can select() on...
@@ -287,7 +284,6 @@ int fl_wait(double time_to_wait) {
       if (time_to_wait > .001) time_to_wait = .001;
     }
   }
-#endif // USE_ASYNC_SELECT
 
   if (Fl::idle || Fl::damage()) 
     time_to_wait = 0.0;
@@ -309,18 +305,6 @@ int fl_wait(double time_to_wait) {
   have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
   if (have_message > 0) {
     while (have_message != 0 && have_message != -1) {
-#ifdef USE_ASYNC_SELECT
-      if (fl_msg.message == WM_FLSELECT) {
-	// Got notification for socket
-	for (int i = 0; i < nfds; i ++)
-          if (fd[i].fd == (int)fl_msg.wParam) {
-	    (fd[i].cb)(fd[i].fd, fd[i].arg);
-	    break;
-	  }
-	// looks like it is best to do the dispatch-message anyway:
-      }
-#endif
-
       if (fl_msg.message == fl_wake_msg) {
         // Used for awaking wait() from another thread
 	thread_message_ = (void*)fl_msg.wParam;
@@ -345,16 +329,13 @@ int fl_wait(double time_to_wait) {
 // fl_ready() is just like fl_wait(0.0) except no callbacks are done:
 int fl_ready() {
   if (PeekMessage(&fl_msg, NULL, 0, 0, PM_NOREMOVE)) return 1;
-#ifdef USE_ASYNC_SELECT
-  return 0;
-#else
+  if (!nfds) return 0;
   timeval t;
   t.tv_sec = 0;
   t.tv_usec = 0;
   fd_set fdt[3];
   memcpy(fdt, fdsets, sizeof fdt);
   return get_wsock_mod() ? s_wsock_select(0,&fdt[0],&fdt[1],&fdt[2],&t) : 0;
-#endif // USE_ASYNC_SELECT
 }
 
 ////////////////////////////////////////////////////////////////

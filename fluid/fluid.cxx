@@ -57,6 +57,7 @@
 #  include <direct.h>
 #  include <windows.h>
 #  include <io.h>
+#  include <FCNTL.H>
 #  include <commdlg.h>
 #  include <FL/x.H>
 #  ifndef __WATCOMC__
@@ -1847,24 +1848,164 @@ void update_history(const char *flname) {
   }
 }
 
-// Shell command support...
-#if (!defined(WIN32) || defined(__CYGWIN__)) && !defined(__MWERKS__)
-// Support the full piped shell command...
-static FILE *shell_pipe = 0;
+// ********** portable process class definition **********
 
+class Fl_Process {
+public:
+  // construction / destruction
+  Fl_Process() {_fpt= NULL;}
+  ~Fl_Process() {if (_fpt) close();}
+  
+  FILE * popen	(const char *cmd, const char *mode="r");
+  //not necessary here: FILE * fopen	(const char *file, const char *mode="r");
+  int  close();
+
+  FILE * desc() const { return _fpt;} // non null if file is open
+  char * get_line(char * line, size_t s) const {return _fpt ? fgets(line, s, _fpt) : NULL;}
+
+#if defined(WIN32)  && !defined(__CYGWIN__)
+protected:
+  HANDLE pin[2], pout[2], perr[2];
+  char ptmode;
+  PROCESS_INFORMATION pi;
+  STARTUPINFO si;
+
+  static bool createPipe(HANDLE * h, BOOL bInheritHnd=TRUE);
+
+private:
+  FILE * freeHandles()  {
+    clean_close(pin[0]);    clean_close(pin[1]);
+    clean_close(pout[0]);   clean_close(pout[1]);
+    clean_close(perr[0]);   clean_close(perr[1]);
+    return NULL; // convenient for error management
+  }
+  static void clean_close(HANDLE& h);
+#endif
+
+protected:
+  FILE * _fpt;
+};
+
+#if defined(WIN32)  && !defined(__CYGWIN__)
+bool Fl_Process::createPipe(HANDLE * h, BOOL bInheritHnd) {
+  SECURITY_ATTRIBUTES sa;
+  sa.nLength = sizeof(sa);
+  sa.lpSecurityDescriptor = NULL;
+  sa.bInheritHandle = bInheritHnd; 
+  return CreatePipe (&h[0],&h[1],&sa,0) ? true : false;
+}
+#endif 
+// portable open process:
+FILE * Fl_Process::popen(const char *cmd, const char *mode) {
+#if defined(WIN32)  && !defined(__CYGWIN__) 
+  // PRECONDITIONS
+  if (!mode || !*mode || (*mode!='r' && *mode!='w') ) return NULL;
+  if (_fpt) close(); // close first before reuse
+  
+  ptmode = *mode;
+  pin[0] = pin[1] = pout[0] = pout[1] = perr[0] = perr[1] = INVALID_HANDLE_VALUE;
+  // stderr to stdout wanted ?
+  int fusion = (strstr(cmd,"2>&1") !=NULL);
+
+  // Create windows pipes
+  if (!createPipe(pin) || !createPipe(pout) || (!fusion && !createPipe(perr) ) )
+	return freeHandles(); // error
+
+  // Initialize Startup Info
+  ZeroMemory(&si, sizeof(STARTUPINFO));
+  si.cb           = sizeof(STARTUPINFO);
+  si.dwFlags    = STARTF_USESTDHANDLES;
+  si.hStdInput    = pin[0];
+  si.hStdOutput   = pout[1];
+  si.hStdError  = fusion ? pout[1] : perr [1];
+
+  if ( CreateProcess(NULL, (LPTSTR) cmd,NULL,NULL,TRUE,
+		     DETACHED_PROCESS,NULL,NULL, &si, &pi)) {
+    // don't need theses handles inherited by child process:
+    clean_close(pin[0]); clean_close(pout[1]); clean_close(perr[1]); 
+    HANDLE & h = *mode == 'r' ? pout[0] : pin[1];
+    _fpt = _fdopen(_open_osfhandle((long) h,_O_BINARY),mode);
+    h= INVALID_HANDLE_VALUE;  // reset the handle pointer that is shared 
+    // with _fpt so we don't free it twice
+  }
+
+  if (!_fpt)  freeHandles();
+  return _fpt;
+#else  
+  _fpt=::popen(cmd,mode);
+  return _fpt;
+#endif 
+}
+
+int Fl_Process::close() {
+#if defined(WIN32)  && !defined(__CYGWIN__)
+  if (_fpt) {
+    fclose(_fpt);
+    clean_close(perr[0]);
+    clean_close(pin[1]);
+    clean_close(pout[0]);
+    _fpt = NULL;
+    return 0;
+  }
+  return -1;
+#else  
+  int ret = ::pclose(_fpt);
+  _fpt=NULL;
+  return ret;
+#endif 
+}
+
+#if defined(WIN32)  && !defined(__CYGWIN__)
+void Fl_Process::clean_close(HANDLE& h) {
+  if (h!= INVALID_HANDLE_VALUE) CloseHandle(h);
+  h = INVALID_HANDLE_VALUE;
+}
+#endif
+// ********** Fl_Process class end **********
+
+static Fl_Process s_proc;
+
+// Shell command support...
+
+static bool prepare_shell_command(const char * &command)  { // common pre-shell command code all platforms
+  shell_window->hide();
+  if (s_proc.desc()) {
+    fl_alert("Previous shell command still running!");
+    return false;
+  }
+  if ((command = shell_command_input->value()) == NULL || !*command) {
+    fl_alert("No shell command entered!");
+    return false;
+  }
+  if (shell_savefl_button->value()) {
+    save_cb(0, 0);
+  }
+  if (shell_writecode_button->value()) {
+    compile_only = 1;
+    write_cb(0, 0);
+    compile_only = 0;
+  }
+  if (shell_writemsgs_button->value()) {
+    compile_only = 1;
+    write_strings_cb(0, 0);
+    compile_only = 0;
+  }
+  return true;
+}
+
+#if !defined(__MWERKS__)
+// Support the full piped shell command...
 void
 shell_pipe_cb(int, void*) {
-  char	line[1024];		// Line from command output...
+  char	line[1024]="";		// Line from command output...
 
-  if (fgets(line, sizeof(line), shell_pipe) != NULL) {
+  if (s_proc.get_line(line, sizeof(line)) != NULL) {
     // Add the line to the output list...
     shell_run_buffer->append(line);
   } else {
     // End of file; tell the parent...
-    Fl::remove_fd(fileno(shell_pipe));
-
-    pclose(shell_pipe);
-    shell_pipe = NULL;
+    Fl::remove_fd(fileno(s_proc.desc()));
+    s_proc.close();
     shell_run_buffer->append("... END SHELL COMMAND ...\n");
   }
 
@@ -1874,36 +2015,9 @@ shell_pipe_cb(int, void*) {
 
 void
 do_shell_command(Fl_Return_Button*, void*) {
-  const char	*command;	// Command to run
+  const char	*command=NULL;	// Command to run
 
-
-  shell_window->hide();
-
-  if (shell_pipe) {
-    fl_alert("Previous shell command still running!");
-    return;
-  }
-
-  if ((command = shell_command_input->value()) == NULL || !*command) {
-    fl_alert("No shell command entered!");
-    return;
-  }
-
-  if (shell_savefl_button->value()) {
-    save_cb(0, 0);
-  }
-
-  if (shell_writecode_button->value()) {
-    compile_only = 1;
-    write_cb(0, 0);
-    compile_only = 0;
-  }
-
-  if (shell_writemsgs_button->value()) {
-    compile_only = 1;
-    write_strings_cb(0, 0);
-    compile_only = 0;
-  }
+  if (!prepare_shell_command(command)) return;
 
   // Show the output window and clear things...
   shell_run_buffer->text("");
@@ -1911,7 +2025,7 @@ do_shell_command(Fl_Return_Button*, void*) {
   shell_run_buffer->append("\n");
   shell_run_window->label("Shell Command Running...");
 
-  if ((shell_pipe = popen((char *)command, "r")) == NULL) {
+  if (s_proc.popen((char *)command) == NULL) {
     fl_alert("Unable to run shell command: %s", strerror(errno));
     return;
   }
@@ -1920,9 +2034,9 @@ do_shell_command(Fl_Return_Button*, void*) {
   shell_run_window->hotspot(shell_run_display);
   shell_run_window->show();
 
-  Fl::add_fd(fileno(shell_pipe), shell_pipe_cb);
+  Fl::add_fd(fileno(s_proc.desc()), shell_pipe_cb);
 
-  while (shell_pipe) Fl::wait();
+  while (s_proc.desc()) Fl::wait();
 
   shell_run_button->activate();
   shell_run_window->label("Shell Command Complete");
@@ -1937,29 +2051,7 @@ do_shell_command(Fl_Return_Button*, void*) {
   const char	*command;	// Command to run
   int		status;		// Status from command...
 
-
-  shell_window->hide();
-
-  if ((command = shell_command_input->value()) == NULL || !*command) {
-    fl_alert("No shell command entered!");
-    return;
-  }
-
-  if (shell_savefl_button->value()) {
-    save_cb(0, 0);
-  }
-
-  if (shell_writecode_button->value()) {
-    compile_only = 1;
-    write_cb(0, 0);
-    compile_only = 0;
-  }
-
-  if (shell_writemsgs_button->value()) {
-    compile_only = 1;
-    write_strings_cb(0, 0);
-    compile_only = 0;
-  }
+  if (!prepare_shell_command(command)) return;
 
   if ((status = system(command)) != 0) {
     fl_alert("Shell command returned status %d!", status);
@@ -1967,8 +2059,7 @@ do_shell_command(Fl_Return_Button*, void*) {
     fl_message("Shell command completed successfully!");
   }
 }
-#endif // (!WIN32 || __CYGWIN__) && !__MWERKS__
-
+#endif // !__MWERKS__
 
 void
 show_shell_window() {
