@@ -42,7 +42,7 @@
 
 /**
  * <tt>Fl_Preferences </tt>provides methods to store user
- * setting between application starts. It is similar to the
+ * settings between application starts. It is similar to the
  * Registry on WIN32 and Preferences on MacOS, and provides a
  * simple configuration mechanism for UNIX.
  * 
@@ -62,8 +62,8 @@
  * Entries can be of any length. However, the size of each
  * preferences file should be kept under 100k for performance
  * reasons. One application can have multiple preferences files.
- * Extensive binary data however should be stored in seperate
- * files; see getUserdataPath()
+ * Extensive binary data however should be stored in separate
+ * files; see getUserdataPath().
  */
 class FL_EXPORT Fl_Preferences 
 {
@@ -74,7 +74,7 @@ public:
    * Define the scope of the preferences.
    */
   enum Root { 
-    SYSTEM=0,   ///< Preferences are uses system-wide
+    SYSTEM=0,   ///< Preferences are used system-wide
     USER        ///< Preferences apply only to the current user
   };
   // enum Type { win32, macos, fltk };
@@ -98,7 +98,7 @@ public:
    *
    * \param[in] root can be USER or SYSTEM for user specific or system wide preferences
    * \param[in] vendor unique text describing the company or author of this file
-   * \param[in] application unique text describing application
+   * \param[in] application unique text describing the application
    */
   Fl_Preferences( Root root, const char *vendor, const char *application );
 
@@ -110,13 +110,13 @@ public:
    * 
    * \param[in] path path to the directory that contains the preferences file
    * \param[in] vendor unique text describing the company or author of this file
-   * \param[in] application unique text describing application
+   * \param[in] application unique text describing the application
    */
   Fl_Preferences( const char *path, const char *vendor, const char *application );
 
   /**
    * This constructor generates a new group of preference entries
-   * inside the group or file <i>p</i>. The <tt>groupname</tt> argument 
+   * inside the group or file <i>parent</i>. The <tt>group</tt> argument 
    * identifies a group of entries. It can contain '/'s to get quick 
    * access to individual elements inside the hierarchy.
    *
@@ -178,7 +178,7 @@ public:
 
 
   /**
-   * Return the number of entries (name/value) pairs in a group.
+   * Returns the number of entries (name/value pairs) in a group.
    *
    * \return number of entries
    */
