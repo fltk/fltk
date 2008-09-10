@@ -31,7 +31,9 @@
 
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/fl_utf8.H>
 #include <FL/Fl_Window.H>
+#include <FL/fl_draw.H>
 #include <FL/Enumerations.H>
 #include <FL/Fl_Tooltip.H>
 #include "flstring.h"
@@ -61,6 +63,7 @@
 #  include <shellapi.h>
 #endif // !__GNUC__ || __GNUC__ >= 3
 
+#include "aimm.h"
 
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
@@ -180,6 +183,35 @@ static struct FD {
   void* arg;
 } *fd = 0;
 
+extern unsigned int fl_codepage;
+
+void fl_reset_spot()
+{
+}
+
+void fl_set_spot(int font, int size, int x, int y, int w, int h)
+{
+ 	HIMC himc = ImmGetContext(fl_msg.hwnd);
+ 	if (himc) {
+ 		Fl_Window* w = fl_find(fl_msg.hwnd);
+
+ 		while (w->parent()) w = w->window();
+
+ 		COMPOSITIONFORM	cfs;
+ 		cfs.dwStyle = CFS_POINT;
+ 		cfs.ptCurrentPos.x = x;
+ 		cfs.ptCurrentPos.y = y - w->labelsize();
+ 		MapWindowPoints(fl_msg.hwnd, fl_xid(w), &cfs.ptCurrentPos, 1);
+ 		ImmSetCompositionWindow(himc, &cfs);
+
+ 		ImmReleaseContext(fl_msg.hwnd, himc);
+ 	}
+}
+
+void fl_set_status(int x, int y, int w, int h)
+{
+}
+
 void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   remove_fd(n,events);
   int i = nfds++;
@@ -239,6 +271,7 @@ void* Fl::thread_message() {
   return r;
 }
 
+IActiveIMMApp *fl_aimm = NULL;
 MSG fl_msg;
 
 // This is never called with time_to_wait < 0.0.
@@ -302,7 +335,8 @@ int fl_wait(double time_to_wait) {
   fl_lock_function();
 
   // Execute the message we got, and all other pending messages:
-  have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+//  have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+      have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE);
   if (have_message > 0) {
     while (have_message != 0 && have_message != -1) {
       if (fl_msg.message == fl_wake_msg) {
@@ -316,8 +350,8 @@ int fl_wait(double time_to_wait) {
       }
 
       TranslateMessage(&fl_msg);
-      DispatchMessage(&fl_msg);
-      have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+      DispatchMessageW(&fl_msg);
+      have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE);
     }
   }
   Fl::flush();
@@ -386,6 +420,13 @@ char *fl_selection_buffer[2];
 int fl_selection_length[2];
 int fl_selection_buffer_length[2];
 char fl_i_own_selection[2];
+
+UINT fl_get_lcid_codepage(LCID id)
+{
+	char buf[8];
+	buf[GetLocaleInfo(id, LOCALE_IDEFAULTANSICODEPAGE, buf, 8)] = 0;
+	return atol(buf);
+}
 
 // Convert \n -> \r\n
 class Lf2CrlfConvert {
@@ -503,6 +544,24 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 }
 
 ////////////////////////////////////////////////////////////////
+char fl_is_ime = 0;
+void fl_get_codepage()
+{
+	HKL hkl = GetKeyboardLayout(0);
+	TCHAR ld[8];
+
+	GetLocaleInfo (LOWORD(hkl),
+		LOCALE_IDEFAULTANSICODEPAGE, ld, 6);
+	DWORD ccp = atol(ld);
+	fl_is_ime = 0;
+
+	fl_codepage = ccp;
+	if (fl_aimm) {
+		  fl_aimm->GetCodePageA(GetKeyboardLayout(0), &fl_codepage);
+	} else if (ImmIsIME(hkl)) {
+		fl_is_ime = 1;
+	}
+}
 
 HWND fl_capture;
 
@@ -811,6 +870,19 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     break;
 
+  case WM_INPUTLANGCHANGE:
+    fl_get_codepage();
+    break;
+  case WM_IME_COMPOSITION:
+//	if (!fl_is_nt4() && lParam & GCS_RESULTCLAUSE) {
+//		HIMC himc = ImmGetContext(hWnd);
+//		wlen = ImmGetCompositionStringW(himc, GCS_RESULTSTR,
+//			wbuf, sizeof(wbuf)) / sizeof(short);
+//		if (wlen < 0) wlen = 0;
+//		wbuf[wlen] = 0;
+//		ImmReleaseContext(hWnd, himc);
+//	}
+	break;
   case WM_KEYDOWN:
   case WM_SYSKEYDOWN:
   case WM_KEYUP:
@@ -818,7 +890,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // save the keysym until we figure out the characters:
     Fl::e_keysym = Fl::e_original_keysym = ms2fltk(wParam,lParam&(1<<24));
     // See if TranslateMessage turned it into a WM_*CHAR message:
-    if (PeekMessage(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE)) {
+    if (PeekMessageW(&fl_msg, hWnd, WM_CHAR, WM_SYSDEADCHAR, PM_REMOVE))
+    {
       uMsg = fl_msg.message;
       wParam = fl_msg.wParam;
       lParam = fl_msg.lParam;
@@ -845,10 +918,15 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     if (GetKeyState(VK_SCROLL)) state |= FL_SCROLL_LOCK;
     Fl::e_state = state;
-    static char buffer[2];
+    static char buffer[1024];
     if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
-      buffer[0] = char(wParam);
-      Fl::e_length = 1;
+
+	xchar u = (xchar) wParam;
+//	Fl::e_length = fl_unicode2utf(&u, 1, buffer);
+	Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+	buffer[Fl::e_length] = 0;
+
+
     } else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
       if (state & FL_NUM_LOCK) {
         // Convert to regular keypress...
@@ -984,14 +1062,21 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     OpenClipboard(NULL);
     // fall through...
   case WM_RENDERFORMAT: {
-    HANDLE h = GlobalAlloc(GHND, fl_selection_length[1]+1);
-    if (h) {
-      LPSTR p = (LPSTR)GlobalLock(h);
-      memcpy(p, fl_selection_buffer[1], fl_selection_length[1]);
-      p[fl_selection_length[1]] = 0;
-      GlobalUnlock(h);
-      SetClipboardData(CF_TEXT, h);
-    }
+    HANDLE h;
+
+//	int l = fl_utf_nb_char((unsigned char*)fl_selection_buffer[1], fl_selection_length[1]);
+	int l = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], NULL, 0); // Pass NULL buffer to query length required
+	h = GlobalAlloc(GHND, (l+1) * sizeof(unsigned short));
+	if (h) {
+		unsigned short *g = (unsigned short*) GlobalLock(h);
+//		fl_utf2unicode((unsigned char *)fl_selection_buffer[1], fl_selection_length[1], (xchar*)g);
+		l = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], g, (l+1));
+		g[l] = 0;
+		GlobalUnlock(h);
+		SetClipboardData(CF_UNICODETEXT, h);
+	}
+
+
     // Windoze also seems unhappy if I don't do this. Documentation very
     // unclear on what is correct:
     if (fl_msg.message == WM_RENDERALLFORMATS) CloseClipboard();
@@ -1002,7 +1087,8 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     break;
   }
 
-  return DefWindowProc(hWnd, uMsg, wParam, lParam);
+
+    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1215,30 +1301,42 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     first_class_name = class_name;
   }
 
+  const wchar_t* class_namew = L"FLTK";
+  const wchar_t* message_namew = L"FLTK::ThreadWakeup";
   if (!class_name_list.has_name(class_name)) {
     WNDCLASSEX wc;
+  WNDCLASSEXW wcw;
+
     memset(&wc, 0, sizeof(wc));
     wc.cbSize = sizeof(WNDCLASSEX);
+    memset(&wcw, 0, sizeof(wcw));
+    wcw.cbSize = sizeof(WNDCLASSEXW);
+
     // Documentation states a device context consumes about 800 bytes
     // of memory... so who cares? If 800 bytes per window is what it
     // takes to speed things up, I'm game.
     //wc.style = CS_HREDRAW | CS_VREDRAW | CS_CLASSDC | CS_DBLCLKS;
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
-    wc.lpfnWndProc = (WNDPROC)WndProc;
-    wc.hInstance = fl_display;
+    wcw.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
+    wcw.lpfnWndProc = (WNDPROC)WndProc;
+    wcw.cbClsExtra = wcw.cbWndExtra = 0;
+    wcw.hInstance = fl_display;
     if (!w->icon())
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
-    wc.hIcon = wc.hIconSm = (HICON)w->icon();
-    wc.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
+    wcw.hIcon = wcw.hIconSm = (HICON)w->icon();
+    wcw.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
     //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
     //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
-    wc.lpszClassName = class_name;
-    RegisterClassEx(&wc);
-    class_name_list.add_name(class_name);
-  }
+    wcw.hbrBackground = NULL;
+    wcw.lpszMenuName = NULL;
+    wcw.lpszClassName = class_namew;
+    wcw.cbSize = sizeof(WNDCLASSEXW);
+    RegisterClassExW(&wcw);
+	class_name_list.add_name((const char *)class_namew);
+}
 
-  const char* message_name = "FLTK::ThreadWakeup";
-  if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessage(message_name);
+//  const char* message_name = "FLTK::ThreadWakeup";
+ // if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessage(message_name);
+    if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessageW(message_namew);
 
   HWND parent;
   DWORD style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
@@ -1312,15 +1410,31 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->region = 0;
   x->private_dc = 0;
   x->cursor = fl_default_cursor;
-  x->xid = CreateWindowEx(
+  if (!fl_codepage) fl_get_codepage();
+
+    WCHAR *lab = NULL;
+    if (w->label()) {
+      int l = strlen(w->label());
+//    lab = (WCHAR*) malloc((l + 1) * sizeof(short));
+//    l = fl_utf2unicode((unsigned char*)w->label(), l, (xchar*)lab);
+//    lab[l] = 0;
+      unsigned wlen = fl_utf8toUtf16(w->label(), l, NULL, 0); // Pass NULL to query length
+      wlen++;
+      lab = (WCHAR *) malloc(sizeof(WCHAR)*wlen);
+      wlen = fl_utf8toUtf16(w->label(), l, (unsigned short*)lab, wlen);
+      lab[wlen] = 0;
+    }
+    x->xid = CreateWindowExW(
     styleEx,
-    class_name, w->label(), style,
+        class_namew, lab, style,
     xp, yp, wp, hp,
     parent,
     NULL, // menu
     fl_display,
     NULL // creation parameters
     );
+    if (lab) free(lab);
+
   x->next = Fl_X::first;
   Fl_X::first = x;
 
@@ -1345,6 +1459,16 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   if (!oleInitialized) { OleInitialize(0L); oleInitialized=1; }
 
   RegisterDragDrop(x->xid, flIDropTarget);
+  if (!fl_aimm) {
+	static char been_here = 0;
+    if (!been_here && !oleInitialized) CoInitialize(NULL);
+	been_here = 1;
+	CoCreateInstance(CLSID_CActiveIMM, NULL, CLSCTX_INPROC_SERVER,
+		IID_IActiveIMMApp, (void**) &fl_aimm);
+    if (fl_aimm) {
+	  fl_aimm->Activate(TRUE);
+    }
+  }
 #endif // !__GNUC__ || __GNUC__ >= 3
 
   if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
@@ -1423,7 +1547,7 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
                                     0, 0, 0, 0,
                                     NULL, NULL, fl_display, NULL);
         // just in case this OS won't let us create a 0x0 size window:
-        if (!s_TimerWnd) 
+        if (!s_TimerWnd)
           s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
                                     timer_class, "",
                                     WS_POPUP,
@@ -1515,9 +1639,16 @@ void Fl_Window::label(const char *name,const char *iname) {
   iconlabel_ = iname;
   if (shown() && !parent()) {
     if (!name) name = "";
-    SetWindowText(i->xid, name);
-    // if (!iname) iname = fl_filename_name(name);
-    // should do something with iname here...
+    int l = strlen(name);
+//  WCHAR *lab = (WCHAR*) malloc((l + 1) * sizeof(short));
+//  l = fl_utf2unicode((unsigned char*)name, l, (xchar*)lab);
+	unsigned wlen = fl_utf8toUtf16(name, l, NULL, 0); // Pass NULL to query length
+	wlen++;
+	unsigned short * lab = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
+	wlen = fl_utf8toUtf16(name, l, lab, wlen);
+    lab[wlen] = 0;
+    SetWindowTextW(i->xid, (WCHAR *)lab);
+    free(lab);
   }
 }
 

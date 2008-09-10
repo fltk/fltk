@@ -208,6 +208,10 @@
 	</References>
 	<Files>
 		<File
+			RelativePath="..\src\xutf8\case.c"
+			>
+		</File>
+		<File
 			RelativePath="..\src\filename_absolute.cxx"
 			>
 			<FileConfiguration
@@ -2911,6 +2915,14 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\src\fl_utf.c"
+			>
+		</File>
+		<File
+			RelativePath="..\src\fl_utf8.cxx"
+			>
+		</File>
+		<File
 			RelativePath="..\src\Fl_Valuator.cxx"
 			>
 			<FileConfiguration
@@ -3523,6 +3535,14 @@
 					PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;FL_DLL;FL_LIBRARY;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN;$(NoInherit)"
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\src\xutf8\is_right2left.c"
+			>
+		</File>
+		<File
+			RelativePath="..\src\xutf8\is_spacing.c"
+			>
 		</File>
 		<File
 			RelativePath="..\src\numericsort.c"

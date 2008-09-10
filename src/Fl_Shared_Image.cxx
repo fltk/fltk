@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/fl_utf8.H>
 #include "flstring.h"
 
 #include <FL/Fl.H>
@@ -223,7 +224,7 @@ Fl_Shared_Image::reload() {
 
   if (!name_) return;
 
-  if ((fp = fopen(name_, "rb")) != NULL) {
+  if ((fp = fl_fopen(name_, "rb")) != NULL) {
     fread(header, 1, sizeof(header), fp);
     fclose(fp);
   } else {

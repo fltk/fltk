@@ -257,7 +257,7 @@ static int to_canonical(char *to, const char *from, size_t tolen) {
   return size;
 }
 
-static int fl_free_font = FL_FREE_FONT;
+static unsigned int fl_free_font = FL_FREE_FONT;
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
   if (fl_free_font > FL_FREE_FONT) // already been here
@@ -289,13 +289,13 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
       }
       /*if (*p=='-' || i > first_xlist+1)*/ p = canon;
     }
-    int j;
+    unsigned int j;
     for (j = 0;; j++) {
-      if (j < FL_FREE_FONT) {
+      /*if (j < FL_FREE_FONT) {
 	// see if it is one of our built-in fonts:
 	// if so, set the list of x fonts, since we have it anyway
 	if (fl_fonts[j].name && !strcmp(fl_fonts[j].name, p)) break;
-      } else {
+      } else */{
 	j = fl_free_font++;
 	if (p == canon) p = strdup(p); else used_xlist = 1;
 	Fl::set_font((Fl_Font)j, p);

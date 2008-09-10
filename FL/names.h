@@ -1,5 +1,5 @@
 //
-// "$Id:$"
+// "$Id$"
 //
 // Event names header file for the Fast Light Tool Kit (FLTK).
 //
@@ -81,5 +81,5 @@ char *fl_fontnames[] =
 #endif /* FL_NAMES_H */
 
 //
-// End of "$Id:$".
+// End of "$Id$".
 //

@@ -1,0 +1,102 @@
+#
+# "$Id: Makefile,v 1.1.2.6 2004/09/08 16:04:42 easysw Exp $"
+#
+# Xutf8 library makefile for the Fast Light Toolkit (FLTK).
+#
+# Copyright 1997-2004 by Easy Software Products.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems to "fltk-bugs@fltk.org".
+#
+
+include ../makeinclude
+
+
+#
+# Object files...
+#
+
+OBJS	=	case.o imKStoUCS.o is_right2left.o is_spacing.o \
+		keysym2Ucs.o ucs2fontmap.o utf8Input.o utf8Utils.o \
+		utf8Wrap.o 
+
+XUTF8	=	../lib/libfltk_xutf8$(LIBEXT)
+
+
+#
+# Make all targets...
+#
+
+all:	$(XUTF8)
+
+
+#
+# Clean all targets and object files...
+#
+
+clean:
+	$(RM) $(OBJS)
+	$(RM) $(XUTF8)
+
+
+#
+# Install everything...
+#
+
+install: $(XUTF8)
+	echo "Installing libfltk_xutf8$(LIBEXT) in $(libdir)..."
+	-$(MKDIR) $(libdir)
+	$(RM) $(libdir)/libfltk_xutf8$(LIBEXT)
+	$(CP) $(XUTF8) $(libdir)
+	$(RANLIB) $(libdir)/libfltk_xutf8$(LIBEXT)
+
+
+#
+# Uninstall everything...
+#
+
+uninstall:
+	echo "Uninstalling libfltk_xutf8$(LIBEXT) in $(libdir)..."
+	$(RM) $(libdir)/libfltk_xutf8$(LIBEXT)
+
+
+#
+# libfltk_xutf8.a
+#
+
+$(XUTF8):	$(OBJS)
+	echo Archiving $@...
+	$(RM) $@
+	$(LIBCOMMAND) $@ $(OBJS)
+	$(RANLIB) $@
+
+#
+# Make dependencies...
+#
+
+depend:	$(OBJS:.o=.c)
+	makedepend -Y -I.. -f makedepend $(OBJS:.o=.c)
+
+include makedepend
+
+$(OBJS):	../makeinclude
+
+
+#
+# End of "$Id: Makefile,v 1.1.2.6 2004/09/08 16:04:42 easysw Exp $".
+#
+# DO NOT DELETE

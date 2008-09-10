@@ -90,9 +90,11 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 Fl_Font fl_font_ = 0;
 Fl_Fontsize fl_size_ = 0;
-XFontStruct* fl_xfont = 0;
+//XFontStruct* fl_xfont = 0;
+XUtf8FontStruct* fl_xfont = 0;
 void *fl_xftfont = 0;
-const char* fl_encoding_ = "iso8859-1";
+//const char* fl_encoding_ = "iso8859-1";
+const char* fl_encoding_ = "iso10646-1";
 Fl_Font_Descriptor* fl_fontsize = 0;
 
 void fl_font(Fl_Font fnum, Fl_Fontsize size) {
@@ -101,15 +103,15 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size) {
     return;
   }
   if (fnum == fl_font_ && size == fl_size_
-      && fl_fontsize
-      && !strcasecmp(fl_fontsize->encoding, fl_encoding_))
+      && fl_fontsize)
+//      && !strcasecmp(fl_fontsize->encoding, fl_encoding_))
     return;
   fl_font_ = fnum; fl_size_ = size;
   Fl_Fontdesc *font = fl_fonts + fnum;
   Fl_Font_Descriptor* f;
   // search the fontsizes we have generated already
   for (f = font->first; f; f = f->next) {
-    if (f->size == size && !strcasecmp(f->encoding, fl_encoding_))
+    if (f->size == size)// && !strcasecmp(f->encoding, fl_encoding_))
       break;
   }
   if (!f) {
@@ -164,7 +166,7 @@ static XftFont* fontopen(const char* name, bool core) {
     default: name--;                           // no prefix, restore name
     }
 
-    if(comma_count) { // multiple comma-spearated names were passed
+    if(comma_count) { // multiple comma-separated names were passed
       char *local_name = strdup(name); // duplicate the full name so we can edit the copy
       char *curr = local_name; // points to first name in string
       char *nxt; // next name in string
@@ -203,6 +205,7 @@ static XftFont* fontopen(const char* name, bool core) {
     XftPatternAddInteger(fnt_pat, XFT_SLANT, slant);
     XftPatternAddDouble (fnt_pat, XFT_PIXEL_SIZE, (double)fl_size_);
     XftPatternAddString (fnt_pat, XFT_ENCODING, fl_encoding_);
+
     if (core) {
       XftPatternAddBool(fnt_pat, XFT_CORE, FcTrue);
       XftPatternAddBool(fnt_pat, XFT_RENDER, FcFalse);
@@ -210,16 +213,67 @@ static XftFont* fontopen(const char* name, bool core) {
 
     XftPattern *match_pat;  // the best available match on the system
     XftResult match_result; // the result of our matching attempt
+
     // query the system to find a match for this font
     match_pat = XftFontMatch(fl_display, fl_screen, fnt_pat, &match_result);
+
+#if 0 // the XftResult never seems to get set to anything... abandon this code?
+    switch(match_result) { // how good a match is this font for our request?
+      case XftResultMatch:
+	puts("Object exists with the specified ID");
+	break;
+
+      case XftResultTypeMismatch:
+	puts("Object exists, but the type does not match");
+	break;
+
+      case XftResultNoId:
+	puts("Object exists, but has fewer values than specified");
+	break;
+
+      case FcResultOutOfMemory:
+	puts("FcResult: Malloc failed");
+	break;
+
+      case XftResultNoMatch:
+	puts("Object does not exist at all");
+	break;
+
+      default:
+	printf("Invalid XftResult status %d \n", match_result);
+	break;
+    }
+#endif
+
+#if 0 // diagnostic to print the "full name" of the font we matched. This works.
+    FcChar8 *picked_name =  FcNameUnparse(match_pat);
+    printf("Match: %s\n", picked_name);
+    free(picked_name);
+#endif
+
     // open the matched font
     the_font = XftFontOpenPattern(fl_display, match_pat);
-    // Tidy up the resources we allocated
+
+#if 0 // diagnostic to print the "full name" of the font we actually opened. This works.
+    FcChar8 *picked_name2 =  FcNameUnparse(the_font->pattern);
+    printf("Open : %s\n", picked_name2);
+    free(picked_name2);
+#endif
+
     XftPatternDestroy(fnt_pat);
 //  XftPatternDestroy(match_pat); // FontConfig will destroy this resource for us. We must not!
+
     return the_font;
   }
   else { // We were passed a font name in XLFD format
+    /* OksiD's X font code could handle being passed a comma separated list
+     * of XLFD's. It then attempted to find which font was "best" from this list.
+     * But XftFontOpenXlfd can not do this, so if a list is passed, we just
+     * terminate it at the first comma.
+     * A "better" solution might be to use XftXlfdParse() on each of the passed
+     * XLFD's to construct a "super-pattern" that incorporates attributes from all
+     * XLFD's and use that to perform a XftFontMatch(). Maybe...
+     */
     char *local_name = strdup(name);
     if(comma_count) { // This means we were passed multiple XLFD's
       char *pc = strchr(local_name, ',');
@@ -227,12 +281,18 @@ static XftFont* fontopen(const char* name, bool core) {
     }
     XftFont *the_font = XftFontOpenXlfd(fl_display, fl_screen, local_name);
     free(local_name);
+#if 0 // diagnostic to print the "full name" of the font we actually opened. This works.
+puts("Font Opened"); fflush(stdout);
+    FcChar8 *picked_name2 =  FcNameUnparse(the_font->pattern);
+    printf("Open : %s\n", picked_name2); fflush(stdout);
+    free(picked_name2);
+#endif
    return the_font;
   }
 } // end of fontopen
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
-  encoding = fl_encoding_;
+//  encoding = fl_encoding_;
   size = fl_size_;
 #if HAVE_GL
   listbase = 0;
@@ -258,12 +318,23 @@ int fl_descent() {
 double fl_width(const char *str, int n) {
   if (!current_font) return -1.0;
   XGlyphInfo i;
-  XftTextExtents8(fl_display, current_font, (XftChar8 *)str, n, &i);
+  XftTextExtentsUtf8(fl_display, current_font, (XftChar8 *)str, n, &i);
   return i.xOff;
 }
 
 double fl_width(uchar c) {
   return fl_width((const char *)(&c), 1);
+}
+
+double fl_width(FcChar32 *str, int n) {
+  if (!current_font) return -1.0;
+  XGlyphInfo i;
+  XftTextExtents32(fl_display, current_font, str, n, &i);
+  return i.xOff;
+}
+
+double fl_width(unsigned int c) {
+  return fl_width((FcChar32 *)(&c), 1);
 }
 
 #if HAVE_GL
@@ -313,6 +384,7 @@ static XFontStruct* load_xfont_for_xft2(void) {
     snprintf(xlfd, 128, "-*-*%s*-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd); // attempt to load the font at the right size
   }
+//puts(xlfd);
   free(pc); // release our copy of the font name
 
   // if we have nothing loaded, try a generic proportional font
@@ -325,6 +397,9 @@ static XFontStruct* load_xfont_for_xft2(void) {
     snprintf(xlfd, 128, "-*-courier-medium-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd);
   }
+//printf("glf: %d\n%s\n%s\n", size, xlfd, fl_fonts[fl_font_].name);
+//if(xgl_font) puts("ok");
+
   // Last chance fallback - this usually loads something...
   if (!xgl_font) xgl_font = XLoadQueryFont(fl_display, "fixed");
 
@@ -341,10 +416,10 @@ XFontStruct* fl_xxfont() {
   static int glfont = -1;
   // Do we need to load a new font?
   if ((!xgl_font) || (glsize != fl_size_) || (glfont != fl_font_)) {
-    if (xgl_font) XFreeFont(fl_display, xgl_font); // font already loaded, free it
+    // create a dummy XLFD for some font of the appropriate size...
+    if (xgl_font) XFreeFont(fl_display, xgl_font); // font already loaded, free it - this *might* be a Bad Idea
     glsize = fl_size_; // record current font size
     glfont = fl_font_; // and face
-    // create a dummy XLFD for some font of the appropriate size...
     xgl_font = load_xfont_for_xft2();
   }
   return xgl_font;
@@ -417,11 +492,80 @@ void fl_draw(const char *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString8(draw, &color, current_font, x, y, (XftChar8 *)str, n);
+  XftDrawStringUtf8(draw, &color, current_font, x, y, (XftChar8 *)str, n);
 }
 
 void fl_draw(const char* str, int n, float x, float y) {
   fl_draw(str, n, (int)x, (int)y);
+}
+
+static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
+#if USE_OVERLAY
+  XftDraw*& draw = fl_overlay ? draw_overlay : ::draw;
+  if (fl_overlay) {
+    if (!draw)
+      draw = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
+			   fl_overlay_visual->visual, fl_overlay_colormap);
+    else //if (draw_overlay_window != fl_window)
+      XftDrawChange(draw, draw_overlay_window = fl_window);
+  } else
+#endif
+  if (!draw)
+    draw = XftDrawCreate(fl_display, draw_window = fl_window,
+			 fl_visual->visual, fl_colormap);
+  else //if (draw_window != fl_window)
+    XftDrawChange(draw, draw_window = fl_window);
+
+  Region region = fl_clip_region();
+  if (region && XEmptyRegion(region)) return;
+  XftDrawSetClip(draw, region);
+
+  // Use fltk's color allocator, copy the results to match what
+  // XftCollorAllocValue returns:
+  XftColor color;
+  color.pixel = fl_xpixel(fl_color_);
+  uchar r,g,b; Fl::get_color(fl_color_, r,g,b);
+  color.color.red   = ((int)r)*0x101;
+  color.color.green = ((int)g)*0x101;
+  color.color.blue  = ((int)b)*0x101;
+  color.color.alpha = 0xffff;
+
+  XftDrawString32(draw, &color, current_font, x, y, (FcChar32 *)str, n);
+}
+
+
+void fl_rtl_draw(const char* c, int n, int x, int y) {
+#warning Need to improve this XFT right to left draw function
+// This actually draws LtoR, but aligned to R edge with the glyph order reversed...
+// but you can't just byte-rev a UTF-8 string, that isn't valid.
+// You can reverse a UCS4 string though...
+  int num_chars, wid, utf_len = strlen(c);
+  FcChar8 *u8 = (FcChar8 *)c;
+  FcBool valid = FcUtf8Len(u8, utf_len, &num_chars, &wid);
+  if (!valid)
+  {
+    // badly formed Utf-8 input string
+    return;
+  }
+  if (num_chars < n) n = num_chars; // limit drawing to usable characters in input array
+  FcChar32 *ucs_txt = new FcChar32[n+1];
+  FcChar32* pu;
+  int in, out, sz;
+  ucs_txt[n] = 0;
+  in = 0; out = n-1;
+  while ((out >= 0) && (utf_len > 0))
+  {
+    pu = &ucs_txt[out];
+    sz = FcUtf8ToUcs4(u8, pu, utf_len);
+    utf_len = utf_len - sz;
+    u8 = u8 + sz;
+    out = out - 1;
+  }
+  // Now we have a UCS4 version of the input text, reversed, in ucs_txt
+  int offs = (int)fl_width(ucs_txt, n);
+  fl_drawUCS4(ucs_txt, n, (x-offs), y);
+
+  delete[] ucs_txt;
 }
 
 //

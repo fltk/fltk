@@ -32,6 +32,7 @@
 */
 
 #include <FL/filename.H>
+#include <FL/fl_utf8.H>
 #include <stdlib.h>
 #include "flstring.h"
 #include <ctype.h>
@@ -67,7 +68,7 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
   char *temp = new char[tolen];
   const char *start = from;
 
-  a = getcwd(temp, tolen);
+  a = fl_getcwd(temp, tolen);
   if (!a) {
     strlcpy(to, from, tolen);
     delete[] temp;
@@ -133,7 +134,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   }
 
   // get the current directory and return if we can't
-  if (!getcwd(cwd_buf, sizeof(cwd_buf))) {
+  if (!fl_getcwd(cwd_buf, sizeof(cwd_buf))) {
     strlcpy(to, from, tolen);
     return 0;
   }
@@ -151,6 +152,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
 
   // test for the same drive. Return the absolute path if not
   if (tolower(*from & 255) != tolower(*cwd & 255)) {
+    // Not the same drive...
     strlcpy(to, from, tolen);
     return 0;
   }

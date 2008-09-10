@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <FL/filename.H>
+#include <FL/fl_utf8.H>
 
 
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
@@ -83,7 +84,7 @@ int fl_filename_isdir(const char* n) {
   }
 #endif
 
-  return !stat(n, &s) && (s.st_mode&0170000)==0040000;
+  return !fl_stat(n, &s) && (s.st_mode&0170000)==0040000;
 }
 
 //

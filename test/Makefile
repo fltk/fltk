@@ -48,6 +48,7 @@ CPPFILES =\
 	cursor.cxx \
 	curve.cxx \
 	demo.cxx \
+	dnd-test.cxx \
 	doublebuffer.cxx \
 	editor.cxx \
 	fast_slow.cxx \
@@ -92,7 +93,11 @@ CPPFILES =\
 	threads.cxx \
 	tile.cxx \
 	tiled_image.cxx \
-	valuators.cxx
+	valuators.cxx \
+	utf8.cxx \
+	mcast_launcher.cxx \
+	mcast_tx.cxx \
+	mcast_rx.cxx 
 
 ALL =	\
 	unittests$(EXEEXT) \
@@ -112,6 +117,7 @@ ALL =	\
 	cursor$(EXEEXT) \
 	curve$(EXEEXT) \
 	demo$(EXEEXT) \
+	dnd-test$(EXEEXT) \
 	doublebuffer$(EXEEXT) \
 	editor$(EXEEXT) \
 	fast_slow$(EXEEXT) \
@@ -151,7 +157,12 @@ ALL =	\
 	$(THREADS) \
 	tile$(EXEEXT) \
 	tiled_image$(EXEEXT) \
-	valuators$(EXEEXT)
+	valuators$(EXEEXT) \
+	utf8$(EXEEXT) \
+	mcast_launcher$(EXEEXT) \
+	mcast_tx$(EXEEXT) \
+	mcast_rx$(EXEEXT) 
+
 
 GLALL = \
 	cube$(EXEEXT) \

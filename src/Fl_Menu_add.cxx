@@ -76,7 +76,8 @@ static Fl_Menu_Item* insert(
   m->callback_ = 0;
   m->user_data_ = 0;
   m->flags = flags;
-  m->labeltype_ = m->labelfont_ = m->labelsize_ = m->labelcolor_ = 0;
+  m->labeltype_ = m->labelsize_ = m->labelcolor_ = 0;
+  m->labelfont_ = FL_HELVETICA; 
   return array;
 }
 

@@ -29,6 +29,7 @@
 // are found on the X server.  It tries to place the fonts into families
 // and to sort them so the first 4 in a family are normal, bold, italic,
 // and bold italic.
+#include <Fl/fl_utf8.H>
 
 // Bug: older versions calculated the value for *ap as a side effect of
 // making the name, and then forgot about it. To avoid having to change
@@ -61,14 +62,20 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
 static int fl_free_font = FL_FREE_FONT;
 
 static int CALLBACK
-enumcb(CONST LOGFONT    *lpelf,
-       CONST TEXTMETRIC * /*lpntm*/,
+enumcbw(CONST LOGFONTW    *lpelf,
+        CONST TEXTMETRICW * /*lpntm*/,
        DWORD            /*FontType*/,
        LPARAM           p) {
   if (!p && lpelf->lfCharSet != ANSI_CHARSET) return 1;
-  const char *n = lpelf->lfFaceName;
+  char *n = NULL;
+  int l = wcslen(lpelf->lfFaceName);
+  unsigned dstlen = fl_utf8fromwc(n, 0, (xchar*)lpelf->lfFaceName, l) + 1; // measure the string
+  n = (char*) malloc(dstlen);
+//n[fl_unicode2utf((xchar*)lpelf->lfFaceName, l, n)] = 0;
+  dstlen = fl_utf8fromwc(n, dstlen, (xchar*)lpelf->lfFaceName, l); // convert the string
+  n[dstlen] = 0;
   for (int i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
-    if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) return 1;
+	  if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) {free(n);return 1;}
   char buffer[LF_FACESIZE + 1];
   strcpy(buffer+1, n);
   buffer[0] = ' '; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
@@ -77,13 +84,16 @@ enumcb(CONST LOGFONT    *lpelf,
   buffer[0] = 'I'; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
   if (lpelf->lfWeight <= 400)
     buffer[0] = 'P', Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
+  free(n);
   return 1;
-}
+} /* enumcbw */
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
   if (fl_free_font == FL_FREE_FONT) {// if not already been called
     if (!fl_gc) fl_GetDC(0);
-    EnumFontFamilies(fl_gc, NULL, (FONTENUMPROC)enumcb, xstarname != 0);
+
+      EnumFontFamiliesW(fl_gc, NULL, (FONTENUMPROCW)enumcbw, xstarname != 0);
+
   }
   return (Fl_Font)fl_free_font;
 }
@@ -92,12 +102,12 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
 static int nbSize;
 static int cyPerInch;
 static int sizes[128];
-
 static int CALLBACK
-EnumSizeCb(CONST LOGFONT    * /*lpelf*/,
-           CONST TEXTMETRIC *lpntm,
-	   DWORD            fontType,
-	   LPARAM           /*p*/) {
+
+EnumSizeCbW(CONST LOGFONTW    * /*lpelf*/,
+           CONST TEXTMETRICW *lpntm,
+           DWORD            fontType,
+           LPARAM           /*p*/) {
   if ((fontType & RASTER_FONTTYPE) == 0) {
     sizes[0] = 0;
     nbSize = 1;
@@ -137,7 +147,18 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
   if (!fl_gc) fl_GetDC(0);
   cyPerInch = GetDeviceCaps(fl_gc, LOGPIXELSY);
   if (cyPerInch < 1) cyPerInch = 1;
-  EnumFontFamilies(fl_gc, s->name+1, (FONTENUMPROC)EnumSizeCb, 0);
+
+//  int l = fl_utf_nb_char((unsigned char*)s->name+1, strlen(s->name+1));
+//  unsigned short *b = (unsigned short*) malloc((l + 1) * sizeof(short));
+//  fl_utf2unicode((unsigned char*)s->name+1, l, (xchar*)b);
+	const char *nm = (const char*)s->name+1;
+	int len = strlen(s->name+1);
+    int l = fl_utf8toUtf16(nm, len, NULL, 0); // Pass NULL to query length required
+    unsigned short *b = (unsigned short*) malloc((l + 1) * sizeof(short));
+    l = fl_utf8toUtf16(nm, len, b, (l+1)); // Now do the conversion
+    b[l] = 0;
+    EnumFontFamiliesW(fl_gc, (WCHAR*)b, (FONTENUMPROCW)EnumSizeCbW, 0);
+	free(b);
 
   sizep = sizes;
   return nbSize;

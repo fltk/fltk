@@ -153,7 +153,8 @@ CPPFILES = \
 	fl_show_colormap.cxx \
 	fl_symbols.cxx \
 	fl_vertex.cxx \
-	screen_xywh.cxx
+	screen_xywh.cxx \
+	fl_utf8.cxx
 
 FLCPPFILES = \
 	forms_compatability.cxx \
@@ -186,13 +187,22 @@ IMGCPPFILES = \
 	Fl_PNG_Image.cxx \
 	Fl_PNM_Image.cxx
 
-CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c
+CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c fl_utf.c
+
+UTF8CFILES = \
+	xutf8/case.c \
+	xutf8/is_right2left.c \
+	xutf8/is_spacing.c \
+	xutf8/keysym2Ucs.c \
+	xutf8/utf8Input.c \
+	xutf8/utf8Utils.c \
+	xutf8/utf8Wrap.c
 
 ################################################################
 
 include ../makeinclude
 
-OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o)
+OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
 FLOBJECTS = $(FLCPPFILES:.cxx=.o)
 IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
@@ -417,9 +427,9 @@ clean:
 		libfltk_gl.dylib libfltk_images.dylib \
 		cmap core
 
-depend:	$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES)
+depend:	$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
 	makedepend -Y -I.. -f makedepend $(CPPFILES) $(FLCPPFILES) \
-		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES)
+		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
 
 # Automatically generated dependencies...
 include makedepend

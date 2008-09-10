@@ -115,6 +115,7 @@ void glutStrokeString(void* fontID, const unsigned char *string) {
   * point back to the start of the line and down one line.
   */
 
+#warning FIXME This needs to be UTF aware now
   while ((c = *string++) != 0) {
     if (c < font->Quantity) {
       if (c == '\n') {

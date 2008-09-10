@@ -208,8 +208,10 @@ inline void fl_reset_focus_object(Fl_Widget* o) {Fl::focus(o);}
 
 inline void fl_set_object_boxtype(Fl_Widget* o, Fl_Boxtype a) {o->box(a);}
 inline void fl_set_object_lsize(Fl_Widget* o,int s) {o->labelsize(s);}
+
+/* forms lib font indexes must be byte sized - extract correct byte from style word */
 inline void fl_set_object_lstyle(Fl_Widget* o,int a) {
-  o->labelfont((Fl_Font)a); o->labeltype((Fl_Labeltype)(a>>8));}
+  o->labelfont((Fl_Font)(a&0xff)); o->labeltype((Fl_Labeltype)(a>>8));}
 inline void fl_set_object_lcol(Fl_Widget* o, unsigned a) {o->labelcolor(a);}
 #define fl_set_object_lcolor  fl_set_object_lcol
 inline void fl_set_object_lalign(Fl_Widget* o, Fl_Align a) {o->align(a);}
@@ -662,7 +664,7 @@ FL_EXPORT int fl_show_choice(
     const char *b1,
     const char *b2);
 
-inline void fl_set_goodies_font(uchar a, uchar b) {fl_message_font(a,b);}
+inline void fl_set_goodies_font(Fl_Font a, Fl_Fontsize b) {fl_message_font(a,b);}
 #define fl_show_messages fl_message
 inline int fl_show_choices(const char* c,int n,const char* b1,const char* b2,
 			   const char* b3, int) {

@@ -420,17 +420,17 @@ void Fl_Group::remove(Fl_Widget &o) {
 // sizes array stores the initial positions of widgets as
 // left,right,top,bottom quads.  The first quad is the group, the
 // second is the resizable (clipped to the group), and the
-// rest are the children.  This is a convenient order for the
-// algorithm.  If you change this be sure to fix Fl_Tile which
+// rest are the children.  This is a convienent order for the
+// algorithim.  If you change this be sure to fix Fl_Tile which
 // also uses this array!
 
 void Fl_Group::init_sizes() {
   delete[] sizes_; sizes_ = 0;
 }
 
-int *Fl_Group::sizes() {
+int* Fl_Group::sizes() {
   if (!sizes_) {
-    int *p = sizes_ = new int[4*(children_+2)];
+    int* p = sizes_ = new int[4*(children_+2)];
     // first thing in sizes array is the group's size:
     if (type() < FL_WINDOW) {p[0] = x(); p[2] = y();} else {p[0] = p[2] = 0;}
     p[1] = p[0]+w(); p[3] = p[2]+h();

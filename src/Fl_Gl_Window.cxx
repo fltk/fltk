@@ -33,6 +33,7 @@
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
+#include <FL/fl_utf8.H>
 
 ////////////////////////////////////////////////////////////////
 
@@ -293,7 +294,7 @@ void Fl_Gl_Window::flush() {
 #else
       SWAP_TYPE = UNDEFINED;
 #endif
-      const char* c = getenv("GL_SWAP_TYPE");
+      const char* c = fl_getenv("GL_SWAP_TYPE");
       if (c) {
 	if (!strcmp(c,"COPY")) SWAP_TYPE = COPY;
 	else if (!strcmp(c, "NODAMAGE")) SWAP_TYPE = NODAMAGE;

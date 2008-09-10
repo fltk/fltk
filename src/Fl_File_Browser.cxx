@@ -538,13 +538,13 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
     // Open the file that contains a list of mounted filesystems...
     //
 
-    mtab = fopen("/etc/mnttab", "r");	// Fairly standard
+    mtab = fl_fopen("/etc/mnttab", "r");	// Fairly standard
     if (mtab == NULL)
-      mtab = fopen("/etc/mtab", "r");	// More standard
+      mtab = fl_fopen("/etc/mtab", "r");	// More standard
     if (mtab == NULL)
-      mtab = fopen("/etc/fstab", "r");	// Otherwise fallback to full list
+      mtab = fl_fopen("/etc/fstab", "r");	// Otherwise fallback to full list
     if (mtab == NULL)
-      mtab = fopen("/etc/vfstab", "r");	// Alternate full list file
+      mtab = fl_fopen("/etc/vfstab", "r");	// Alternate full list file
 
     if (mtab != NULL)
     {

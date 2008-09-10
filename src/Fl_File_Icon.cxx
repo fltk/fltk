@@ -43,6 +43,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/fl_utf8.H>
 #include "flstring.h"
 #include <errno.h>
 #include <sys/types.h>
@@ -203,7 +204,7 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
     else
       filetype = PLAIN;
 #else
-    if (!stat(filename, &fileinfo))
+    if (!fl_stat(filename, &fileinfo))
     {
       if (S_ISDIR(fileinfo.st_mode))
         filetype = DIRECTORY;

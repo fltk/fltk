@@ -34,6 +34,7 @@ class FL_EXPORT Fl_Input : public Fl_Input_ {
   int handle_key();
   int shift_position(int p);
   int shift_up_down_position(int p);
+  void handle_mouse(int keepmark=0);
 public:
   void draw();
   int handle(int);

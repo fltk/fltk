@@ -44,6 +44,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/fl_utf8.H>
 #include "flstring.h"
 #include <ctype.h>
 #include <errno.h>
@@ -139,7 +140,7 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 
 
   // Try to open the file...
-  if ((fp = fopen(fti, "rb")) == NULL)
+  if ((fp = fl_fopen(fti, "rb")) == NULL)
   {
     Fl::error("Fl_File_Icon::load_fti(): Unable to open \"%s\" - %s",
               fti, strerror(errno));

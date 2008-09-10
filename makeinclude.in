@@ -135,11 +135,11 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 
 .c.o:
 	echo Compiling $<...
-	$(CC) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CFLAGS) -c $<
+	$(CC) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CFLAGS) -c $< -o $@
 
 .cxx.o:
 	echo Compiling $<...
-	$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $<
+	$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $< -o $@
 
 .man.0 .man.1 .man.3 .man.6:
 	echo Formatting $<...

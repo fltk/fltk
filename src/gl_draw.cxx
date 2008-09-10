@@ -3,7 +3,7 @@
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -37,6 +37,11 @@
 #include <FL/fl_draw.H>
 #include "Fl_Gl_Choice.H"
 #include "Fl_Font.H"
+#include <FL/fl_utf8.H>
+
+#if !defined(WIN32) && !defined(__APPLE__)
+#include <FL/Xutf8.h>
+#endif
 
 #if USE_XFT
 extern XFontStruct* fl_xxfont();
@@ -48,25 +53,42 @@ double gl_width(const char* s) {return fl_width(s);}
 double gl_width(const char* s, int n) {return fl_width(s,n);}
 double gl_width(uchar c) {return fl_width(c);}
 
+static Fl_Font_Descriptor *gl_fontsize;
+
+#ifndef __APPLE__
+#  define USE_OksiD_style_GL_font_selection 1  // Most hosts except OSX
+#else
+#  undef USE_OksiD_style_GL_font_selection  // OSX
+#endif
+
+#if USE_XFT
+#  undef USE_OksiD_style_GL_font_selection  // turn this off for XFT also
+#endif
+
 void  gl_font(int fontid, int size) {
   fl_font(fontid, size);
   if (!fl_fontsize->listbase) {
-#ifdef WIN32
+
+#ifdef  USE_OksiD_style_GL_font_selection
+    fl_fontsize->listbase = glGenLists(0x10000);
+#else // Fltk-1.1.8 style GL font selection
+
+# ifdef WIN32
     int base = fl_fontsize->metr.tmFirstChar;
     int count = fl_fontsize->metr.tmLastChar-base+1;
     HFONT oldFid = (HFONT)SelectObject(fl_gc, fl_fontsize->fid);
     fl_fontsize->listbase = glGenLists(256);
-    wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base); 
+    wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
     SelectObject(fl_gc, oldFid);
-#elif defined(__APPLE_QD__)
+# elif defined(__APPLE_QD__)
     // undefined characters automatically receive an empty GL list in aglUseFont
     fl_fontsize->listbase = glGenLists(256);
     aglUseFont(aglGetCurrentContext(), fl_fontsize->font, fl_fontsize->face,
                fl_fontsize->size, 0, 256, fl_fontsize->listbase);
-#elif defined(__APPLE_QUARTZ__)
+# elif defined(__APPLE_QUARTZ__)
     short font, face, size;
-    uchar fn[256]; 
-    fn[0]=strlen(fl_fontsize->q_name); 
+    uchar fn[256];
+    fn[0]=strlen(fl_fontsize->q_name);
     strcpy((char*)(fn+1), fl_fontsize->q_name);
     GetFNum(fn, &font);
     face = 0;
@@ -74,19 +96,63 @@ void  gl_font(int fontid, int size) {
     fl_fontsize->listbase = glGenLists(256);
     aglUseFont(aglGetCurrentContext(), font, face,
                size, 0, 256, fl_fontsize->listbase);
-#else
-#  if USE_XFT
-    fl_xfont = fl_xxfont();
-#  endif // USE_XFT
-    int base = fl_xfont->min_char_or_byte2;
-    int count = fl_xfont->max_char_or_byte2-base+1;
+# else // X-windows options follow, either XFT or "plain" X
+#  if USE_XFT // XFT case
+#warning We really need a glXUseXftFont implementation here...
+//    fl_xfont = fl_xxfont();
+    XFontStruct *font = fl_xxfont();
+    int base = font->min_char_or_byte2;
+    int count = font->max_char_or_byte2-base+1;
     fl_fontsize->listbase = glGenLists(256);
-    glXUseXFont(fl_xfont->fid, base, count, fl_fontsize->listbase+base);
-#endif
+    glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
+#  else // plain X
+#warning GL font selection is basically wrong here
+/* OksiD has a fairly sophisticated scheme for storing multiple X fonts in a XUtf8FontStruct,
+ * then sorting through them at draw time (for normal X rendering) to find which one can
+ * render the current glyph... But for now, just use the first font in the list for GL...
+ */
+    XFontStruct *tmp_font = fl_fontsize->font->fonts[0];  // this is certainly wrong!
+    int base = tmp_font->min_char_or_byte2;
+    int count = tmp_font->max_char_or_byte2-base+1;
+    fl_fontsize->listbase = glGenLists(256);
+    glXUseXFont(tmp_font->fid, base, count, fl_fontsize->listbase+base);
+#  endif // USE_XFT
+# endif
+
+#endif // USE_OksiD_style_GL_font_selection
+
   }
+  gl_fontsize = fl_fontsize;
   glListBase(fl_fontsize->listbase);
 }
 
+#ifndef __APPLE__
+// The OSX build does not use this at present... It probbaly should, though...
+static void get_list(int r) {
+  gl_fontsize->glok[r] = 1;
+#ifdef WIN32
+  unsigned int ii = r * 0x400;
+  HFONT oldFid = (HFONT)SelectObject(fl_gc, gl_fontsize->fid);
+  wglUseFontBitmapsW(fl_gc, ii, ii + 0x03ff, gl_fontsize->listbase+ii);
+  SelectObject(fl_gc, oldFid);
+#elif defined(__APPLE_QD__)
+// FIXME
+#elif defined(__APPLE_QUARTZ__)
+// FIXME
+#elif USE_XFT
+// FIXME
+#else
+  unsigned int ii = r * 0x400;
+  for (int i = 0; i < 0x400; i++) {
+    XFontStruct *font = NULL;
+    unsigned short id;
+    XGetUtf8FontAndGlyph(gl_fontsize->font, ii, &font, &id);
+    if (font) glXUseXFont(font->fid, id, 1, gl_fontsize->listbase+ii);
+    ii++;
+   }
+#endif
+} // get_list
+#endif
 
 void gl_remove_displaylist_fonts()
 {
@@ -110,7 +176,7 @@ void gl_remove_displaylist_fonts()
           past->next = f->next;
         }
 
-        // It would be nice if this next line was in a descturctor somewhere
+        // It would be nice if this next line was in a desctructor somewhere
         glDeleteLists(f->listbase, 256);
 
         Fl_Font_Descriptor* tmp = f;
@@ -128,7 +194,34 @@ void gl_remove_displaylist_fonts()
 }
 
 void gl_draw(const char* str, int n) {
+#ifdef __APPLE__
+// Should be converting the text here, as for other platforms???
   glCallLists(n, GL_UNSIGNED_BYTE, str);
+#else
+  static xchar *buf = NULL;
+  static int l = 0;
+//  if (n > l) {
+//    buf = (xchar*) realloc(buf, sizeof(xchar) * (n + 20));
+//    l = n + 20;
+//  }
+//  n = fl_utf2unicode((const unsigned char*)str, n, buf);
+
+  int wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
+  if(wn >= l) {
+    buf = (xchar*) realloc(buf, sizeof(xchar) * (wn + 1));
+    l = wn + 1;
+    wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
+  }
+  n = wn;
+
+  int i;
+  for (i = 0; i < n; i++) {
+    unsigned int r;
+    r = (str[i] & 0xFC00) >> 10;
+    if (!gl_fontsize->glok[r]) get_list(r);
+  }
+  glCallLists(n, GL_UNSIGNED_SHORT, buf);
+#endif
 }
 
 void gl_draw(const char* str, int n, int x, int y) {
@@ -197,7 +290,7 @@ void gl_color(Fl_Color i) {
       else glIndexi(i);
     } else {
       glIndexi(i ? i : FL_GRAY_RAMP);
-    }    
+    }
     return;
   }
 #else
@@ -208,7 +301,7 @@ void gl_color(Fl_Color i) {
   Fl::get_color(i, red, green, blue);
   glColor3ub(red, green, blue);
 }
-  
+
 void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   if (!ld) ld = w*d;
   glPixelStorei(GL_UNPACK_ROW_LENGTH, ld/d);

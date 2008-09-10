@@ -83,6 +83,10 @@ LIB32=link.exe -lib
 # Name "fltk - Win32 Debug"
 # Begin Source File
 
+SOURCE=..\src\xutf8\case.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\filename_absolute.cxx
 # End Source File
 # Begin Source File
@@ -531,6 +535,14 @@ SOURCE=..\src\Fl_Tooltip.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_utf.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\fl_utf8.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Valuator.cxx
 # End Source File
 # Begin Source File
@@ -592,6 +604,14 @@ SOURCE=..\src\Fl_XPM_Image.cxx
 # Begin Source File
 
 SOURCE=..\src\flstring.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\xutf8\is_right2left.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\xutf8\is_spacing.c
 # End Source File
 # Begin Source File
 

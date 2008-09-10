@@ -407,7 +407,7 @@ FL_EXPORT GLUTproc glutGetProcAddress(const char *procName);
 //inline void glutVideoPan(int x, int y, int width, int height);
 
 // Font argument must be a void* for compatability, so...
-extern FL_EXPORT struct Fl_Glut_Bitmap_Font {uchar font; int size;}
+extern FL_EXPORT struct Fl_Glut_Bitmap_Font {Fl_Font font; Fl_Fontsize size;}
   glutBitmap9By15, glutBitmap8By13, glutBitmapTimesRoman10,
   glutBitmapTimesRoman24, glutBitmapHelvetica10, glutBitmapHelvetica12,
   glutBitmapHelvetica18;

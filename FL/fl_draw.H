@@ -148,11 +148,12 @@ inline int fl_height(int, int size) {return size;}
 FL_EXPORT int   fl_descent();
 FL_EXPORT double fl_width(const char*);
 FL_EXPORT double fl_width(const char*, int n);
-FL_EXPORT double fl_width(uchar);
+FL_EXPORT double fl_width(Fl_Char);
 
 // draw using current font:
 FL_EXPORT void fl_draw(const char*, int x, int y);
 FL_EXPORT void fl_draw(const char*, int n, int x, int y);
+FL_EXPORT void fl_rtl_draw(const char*, int n, int x, int y);
 FL_EXPORT void fl_measure(const char*, int& x, int& y, int draw_symbols = 1);
 FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align, Fl_Image* img=0,
                        int draw_symbols = 1);
@@ -195,6 +196,16 @@ FL_EXPORT const char* fl_shortcut_label(int);
 FL_EXPORT void fl_overlay_rect(int,int,int,int);
 FL_EXPORT void fl_overlay_clear();
 FL_EXPORT void fl_cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
+FL_EXPORT const char* fl_expand_text(const char* from, char* buf, int maxbuf,
+                                     double maxw, int& n, double &width,
+                                     int wrap, int draw_symbols = 0);
+
+// XIM:
+FL_EXPORT void fl_set_status(int X, int Y, int W, int H);
+FL_EXPORT void fl_set_spot(int font, int size, int x, int y, int w, int h);
+FL_EXPORT void fl_reset_spot(void);
+
+
 
 // XForms symbols:
 FL_EXPORT int fl_draw_symbol(const char* label,int x,int y,int w,int h, Fl_Color);

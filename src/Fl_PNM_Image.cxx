@@ -37,6 +37,7 @@
 #include <FL/Fl_PNM_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/fl_utf8.H>
 #include "flstring.h"
 
 
@@ -58,7 +59,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 		maxval;		// Maximum pixel value
 
 
-  if ((fp = fopen(name, "rb")) == NULL) return;
+  if ((fp = fl_fopen(name, "rb")) == NULL) return;
 
   //
   // Read the file header in the format:

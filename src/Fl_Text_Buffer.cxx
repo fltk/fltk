@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/fl_utf8.H>
 #include "flstring.h"
 #include <ctype.h>
 #include <FL/Fl.H>
@@ -79,6 +80,27 @@ static int undoat;	// points after insertion
 static int undocut;	// number of characters deleted there
 static int undoinsert;	// number of characters inserted
 static int undoyankcut;	// length of valid contents of buffer, even if undocut=0
+
+static int utf_len(char c)
+{
+  if (!(c & 0x80)) return 1;
+  if (c & 0x40) {
+    if (c & 0x20) {
+      if (c & 0x10) {
+        if (c & 0x08) {
+          if (c & 0x04) {
+            return 6;
+          }
+          return 5;
+        }
+        return 4;
+      }
+      return 3;
+    }
+    return 2;
+  }
+  return 0;
+}
 
 static void undobuffersize(int n) {
   if (n > undobufferlength) {
@@ -197,7 +219,7 @@ void Fl_Text_Buffer::text( const char *t ) {
 ** include the character pointed to by "end"
 */
 char * Fl_Text_Buffer::text_range( int start, int end ) {
-  char * s;
+  char * s = NULL;
   int copiedLength, part1Length;
 
   /* Make sure start and end are ok, and allocate memory for returned string.
@@ -927,8 +949,22 @@ int Fl_Text_Buffer::word_end( int pos ) {
 ** equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
 */
 int Fl_Text_Buffer::expand_character( int pos, int indent, char *outStr ) {
-  return expand_character( character( pos ), indent, outStr,
+  int ret;
+  char c = character( pos );
+  ret = expand_character( c, indent, outStr,
                            mTabDist, mNullSubsChar );
+  if (ret > 1 && (c & 0x80)) {
+    int i;
+    i = utf_len(c);
+    while (i > 1) {
+      i--;
+      pos++;
+      outStr++;
+      *outStr = character( pos );
+    }
+  }
+
+  return ret;
 }
 
 /*
@@ -962,6 +998,11 @@ int Fl_Text_Buffer::expand_character( char c, int indent, char *outStr, int tabD
   } else if ( c == nullSubsChar ) {
     sprintf( outStr, "<nul>" );
     return 5;
+  } else if ((c & 0x80) && !(c & 0x40)) {
+    return 0;
+  } else if (c & 0x80) {
+    *outStr = c;
+    return utf_len(c);
   }
 
   /* Otherwise, just return the character */
@@ -986,6 +1027,11 @@ int Fl_Text_Buffer::character_width( char c, int indent, int tabDist, char nullS
     return 5;
   else if ( c == nullSubsChar )
     return 5;
+  else if ((c & 0x80) && !(c & 0x40))
+    return 0;
+  else if (c & 0x80) {
+    return utf_len(c);
+  }
   return 1;
 }
 
@@ -2499,7 +2545,7 @@ static int min( int i1, int i2 ) {
 int
 Fl_Text_Buffer::insertfile(const char *file, int pos, int buflen) {
   FILE *fp;  int r;
-  if (!(fp = fopen(file, "r"))) return 1;
+  if (!(fp = fl_fopen(file, "r"))) return 1;
   char *buffer = new char[buflen];
   for (; (r = fread(buffer, 1, buflen - 1, fp)) > 0; pos += r) {
     buffer[r] = (char)0;
@@ -2515,7 +2561,7 @@ Fl_Text_Buffer::insertfile(const char *file, int pos, int buflen) {
 int
 Fl_Text_Buffer::outputfile(const char *file, int start, int end, int buflen) {
   FILE *fp;
-  if (!(fp = fopen(file, "w"))) return 1;
+  if (!(fp = fl_fopen(file, "w"))) return 1;
   for (int n; (n = min(end - start, buflen)); start += n) {
     const char *p = text_range(start, start + n);
     int r = fwrite(p, 1, n, fp);

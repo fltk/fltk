@@ -21,6 +21,7 @@ USA.  */
 #else
 
 #  include "flstring.h"
+#  include <FL/fl_utf8.H>
 
 #  if !HAVE_SCANDIR
 #    include <stdlib.h>
@@ -49,7 +50,7 @@ fl_scandir(const char *dir, struct dirent ***namelist,
 	   int (*select)(struct dirent *),
 	   int (*compar)(struct dirent **, struct dirent **))
 {
-  DIR *dp = opendir (dir);
+  DIR *dp = opendir (fl_utf2mbcs(dir));
   struct dirent **v = NULL;
   size_t vsize = 0, i;
   struct dirent *d;

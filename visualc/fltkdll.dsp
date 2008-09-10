@@ -91,6 +91,10 @@ LINK32=link.exe
 # Name "fltkdll - Win32 Debug"
 # Begin Source File
 
+SOURCE=..\src\xutf8\case.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\filename_absolute.cxx
 DEP_CPP_FILEN=\
 	"..\fl\filename.h"\
@@ -2123,6 +2127,14 @@ DEP_CPP_FL_TO=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\src\fl_utf.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\fl_utf8.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\src\Fl_Valuator.cxx
 DEP_CPP_FL_VA=\
 	"..\fl\enumerations.h"\
@@ -2621,7 +2633,7 @@ DEP_CPP_FORMS_T=\
 # Begin Source File
 
 SOURCE=..\src\freeglut_geometry.cxx
-DEP_CPP_GL_DR=\
+DEP_CPP_FREEG=\
 	"..\FL\gl.h"\
 	"..\FL\glut.h"\
 	"..\src\flstring.h"\
@@ -2631,7 +2643,7 @@ DEP_CPP_GL_DR=\
 # Begin Source File
 
 SOURCE=..\src\freeglut_stroke_mono_roman.cxx
-DEP_CPP_GL_DR=\
+DEP_CPP_FREEGL=\
 	"..\FL\gl.h"\
 	"..\FL\glut.h"\
 	"..\src\flstring.h"\
@@ -2641,7 +2653,7 @@ DEP_CPP_GL_DR=\
 # Begin Source File
 
 SOURCE=..\src\freeglut_stroke_roman.cxx
-DEP_CPP_GL_DR=\
+DEP_CPP_FREEGLU=\
 	"..\FL\gl.h"\
 	"..\FL\glut.h"\
 	"..\src\flstring.h"\
@@ -2651,7 +2663,7 @@ DEP_CPP_GL_DR=\
 # Begin Source File
 
 SOURCE=..\src\freeglut_teapot.cxx
-DEP_CPP_GL_DR=\
+DEP_CPP_FREEGLUT=\
 	"..\FL\gl.h"\
 	"..\FL\glut.h"\
 	"..\src\flstring.h"\
@@ -2711,7 +2723,7 @@ DEP_CPP_GLUT_=\
 	"..\fl\fl_menu_item.h"\
 	"..\fl\fl_widget.h"\
 	"..\fl\fl_window.h"\
-	"..\fl\glut.h"\
+	"..\FL\glut.h"\
 	".\config.h"\
 	
 # End Source File
@@ -2727,9 +2739,17 @@ DEP_CPP_GLUT_F=\
 	"..\fl\fl_widget.h"\
 	"..\fl\fl_window.h"\
 	"..\FL\gl.h"\
-	"..\fl\glut.h"\
+	"..\FL\glut.h"\
 	".\config.h"\
 	
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\xutf8\is_right2left.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\src\xutf8\is_spacing.c
 # End Source File
 # Begin Source File
 

@@ -55,6 +55,11 @@ void fl_draw(const char* str, int x, int y) {
   fl_draw(str, strlen(str), x, y);
 }
 
+#if !USE_XFT && !__APPLE__
+void fl_draw(const char* str, int l, float x, float y) {
+  fl_draw(str, l, (int)x, (int)y);
+}
+#endif
 //
 // End of "$Id$".
 //

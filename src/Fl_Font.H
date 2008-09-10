@@ -42,6 +42,8 @@
 
 #  if USE_XFT
 typedef struct _XftFont XftFont;
+#  elif !defined(WIN32) && !defined(__APPLE__)
+#    include <FL/Xutf8.h>
 #  endif // USE_XFT
 
 class Fl_Font_Descriptor {
@@ -49,7 +51,7 @@ public:
   Fl_Font_Descriptor *next;	// linked list for this Fl_Fontdesc
 #  ifdef WIN32
   HFONT fid;
-  int width[256];
+  int *width[64];
   TEXTMETRIC metr;
   FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
 #  elif defined(__APPLE_QD__)
@@ -63,8 +65,8 @@ public:
   ATSUTextLayout layout;
   ATSUStyle style;
   short ascent, descent, q_width;
-  short width[256];
-  bool knowWidths;
+//  short width[256];
+//  bool knowWidths;
   char *q_name;
   int size;
 #  elif USE_XFT
@@ -73,13 +75,14 @@ public:
   Fl_Fontsize size;
   FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
 #  else
-  XFontStruct* font;	// X font information
+  XUtf8FontStruct* font;	// X UTF-8 font information
   FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
 #  endif
   Fl_Fontsize minsize;		// smallest point size that should use this
   Fl_Fontsize maxsize;		// largest point size that should use this
 #  if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
+  char glok[64];
 #  endif
   FL_EXPORT ~Fl_Font_Descriptor();
 };

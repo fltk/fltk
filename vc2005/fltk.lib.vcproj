@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="fltk"
 	ProjectGUID="{E070AAFC-9D03-41A3-BC7D-30887EA0D50F}"
 	RootNamespace="fltk"
@@ -613,6 +613,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\src\xutf8\case.c"
+			>
+		</File>
 		<File
 			RelativePath="..\src\filename_absolute.cxx"
 			>
@@ -3301,6 +3305,14 @@
 			</FileConfiguration>
 		</File>
 		<File
+			RelativePath="..\src\fl_utf.c"
+			>
+		</File>
+		<File
+			RelativePath="..\src\fl_utf8.cxx"
+			>
+		</File>
+		<File
 			RelativePath="..\src\Fl_Valuator.cxx"
 			>
 			<FileConfiguration
@@ -3699,6 +3711,14 @@
 					PreprocessorDefinitions=""
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\src\xutf8\is_right2left.c"
+			>
+		</File>
+		<File
+			RelativePath="..\src\xutf8\is_spacing.c"
+			>
 		</File>
 		<File
 			RelativePath="..\src\numericsort.c"

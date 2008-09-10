@@ -50,7 +50,7 @@
 #    endif
 #    include <X11/Xatom.h>
 #    include "Fl_Window.H"
-
+#    include "Xutf8.h"
 // Mirror X definition of Region to Fl_Region, for portability...
 typedef Region Fl_Region;
 
@@ -68,7 +68,8 @@ extern FL_EXPORT Colormap fl_colormap;
 // drawing functions:
 extern FL_EXPORT GC fl_gc;
 extern FL_EXPORT Window fl_window;
-extern FL_EXPORT XFontStruct* fl_xfont;
+//extern FL_EXPORT XFontStruct* fl_xfont;
+extern FL_EXPORT XUtf8FontStruct* fl_xfont;
 extern FL_EXPORT void *fl_xftfont;
 FL_EXPORT ulong fl_xpixel(Fl_Color i);
 FL_EXPORT ulong fl_xpixel(uchar r, uchar g, uchar b);

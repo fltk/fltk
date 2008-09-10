@@ -36,6 +36,7 @@
 #include <FL/Fl_GIF_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/fl_utf8.H>
 #include "flstring.h"
 
 // Read a .gif file and convert it to a "xpm" format (actually my
@@ -82,7 +83,7 @@ Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   FILE *GifFile;	// File to read
   char **new_data;	// Data array
 
-  if ((GifFile = fopen(infname, "rb")) == NULL) {
+  if ((GifFile = fl_fopen(infname, "rb")) == NULL) {
     Fl::error("Fl_GIF_Image: Unable to open %s!", infname);
     return;
   }

@@ -56,9 +56,12 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
   GetTextMetrics(fl_gc, &metr);
 //  BOOL ret = GetCharWidthFloat(fl_gc, metr.tmFirstChar, metr.tmLastChar, font->width+metr.tmFirstChar);
 // ...would be the right call, but is not implemented into Window95! (WinNT?)
-  GetCharWidth(fl_gc, 0, 255, width);
+  //GetCharWidth(fl_gc, 0, 255, width);
+  int i;
+  for (i = 0; i < 64; i++) width[i] = NULL;
 #if HAVE_GL
   listbase = 0;
+  for (i = 0; i < 64; i++) glok[i] = 0;
 #endif
   minsize = maxsize = size;
 }
@@ -79,6 +82,8 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #endif
   if (this == fl_fontsize) fl_fontsize = 0;
   DeleteObject(fid);
+  int i;
+  for (i = 0; i < 64; i++) free(width[i]);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -145,27 +150,103 @@ int fl_descent() {
   else return -1;
 }
 
+// Unicode string buffer
+static xchar *wstr = NULL;
+static int wstr_len    = 0;
+
+
 double fl_width(const char* c, int n) {
+  int i = 0;
   if (!fl_fontsize) return -1.0;
   double w = 0.0;
-  while (n--) w += fl_fontsize->width[uchar(*c++)];
+  char *end = (char *)&c[n];
+  while (i < n) {
+    unsigned int ucs;
+//  int l = fl_utf2ucs((const unsigned char*)c + i, n - i, &ucs);
+    int l;
+    ucs = fl_utf8decode((const char*)(c + i), end, &l);
+//  if (l < 1) l = 1;
+    i += l;
+    if (!fl_nonspacing(ucs)) {
+      w += fl_width(ucs);
+    }
+  }
   return w;
 }
 
-double fl_width(uchar c) {
-  if (fl_fontsize) return fl_fontsize->width[c];
-  else return -1.0;
+double fl_width(unsigned int c) {
+  unsigned int r;
+  r = (c & 0xFC00) >> 10;
+  if (!fl_fontsize->width[r]) {
+    SelectObject(fl_gc, fl_fontsize->fid);
+    fl_fontsize->width[r] = (int*) malloc(sizeof(int) * 0x0400);
+    SIZE s;
+    unsigned short i = 0, ii = r * 0x400;
+    for (; i < 0x400; i++) {
+      GetTextExtentPoint32W(fl_gc, (WCHAR*)&ii, 1, &s);
+      fl_fontsize->width[r][i] = s.cx;
+      ii++;
+    }
+  }
+  return (double) fl_fontsize->width[r][c & 0x03FF];
 }
 
 void fl_draw(const char* str, int n, int x, int y) {
+  int i = 0;
+  int lx = 0;
+  char *end = (char *)&str[n];
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-  if (fl_fontsize) SelectObject(fl_gc, fl_fontsize->fid);
-  TextOut(fl_gc, x, y, str, n);
+   SelectObject(fl_gc, fl_fontsize->fid);
+  while (i < n) {
+    unsigned int u;
+	unsigned int u1;
+    unsigned short ucs;
+//  int l = fl_utf2ucs((const unsigned char*)str + i, n - i, &u);
+    int l;
+    u = fl_utf8decode((const char*)(str + i), end, &l);
+    if (u1 = fl_nonspacing(u)) {
+      x -= lx;
+	  u = u1;
+    } else {
+      lx = (int) fl_width(u);
+    }
+    ucs = u;
+    if (l < 1) l = 1;
+    i += l;
+    TextOutW(fl_gc, x, y, (WCHAR*)&ucs, 1);
+    x += lx;
+  }
   SetTextColor(fl_gc, oldColor);
 }
 
-void fl_draw(const char* str, int n, float x, float y) {
-  fl_draw(str, n, (int)x, (int)y);
+void fl_rtl_draw(const char* c, int n, int x, int y) {
+  int wn;
+  int i = 0;
+  int lx = 0;
+//  if (n > wstr_len) {
+//    wstr = (xchar*) realloc(wstr, sizeof(xchar) * (n + 1));
+//    wstr_len = n;
+//  }
+//wn = fl_utf2unicode((const unsigned char *)c, n, wstr);
+  wn = fl_utf8toUtf16(c, n, (unsigned short*)wstr, wstr_len);
+  if(wn >= wstr_len) {
+    wstr = (xchar*) realloc(wstr, sizeof(xchar) * (wn + 1));
+    wstr_len = wn + 1;
+    wn = fl_utf8toUtf16(c, n, (unsigned short*)wstr, wstr_len);
+  }
+
+  COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
+  SelectObject(fl_gc, fl_fontsize->fid);
+  while (i < wn) {
+    lx = (int) fl_width(wstr[i]);
+    x -= lx;
+    TextOutW(fl_gc, x, y, (WCHAR*)wstr + i, 1);
+    if (fl_nonspacing(wstr[i])) {
+      x += lx;
+    }
+    i++;
+  }
+  SetTextColor(fl_gc, oldColor);
 }
 
 //

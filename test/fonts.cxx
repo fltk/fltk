@@ -26,7 +26,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Fl_Window *form;
+Fl_Double_Window *form;
 
 class FontDisplay : public Fl_Widget {
   void draw();
@@ -102,21 +102,23 @@ void size_cb(Fl_Widget *, long) {
   textobj->redraw();
 }
 
-char label[400];
+char label[0x1000];
 
 void create_the_forms() {
-  form = new Fl_Window(550,370);
+  int n = 0;
+  form = new Fl_Double_Window(550,370);
 
   strcpy(label, "Hello, world!\n");
   int i = strlen(label);
-  uchar c;
+  ulong c;
   for (c = ' '+1; c < 127; c++) {
-    if (!(c&0x1f)) label[i++]='\n'; 
+    if (!(c&0x1f)) label[i++]='\n';
     if (c=='@') label[i++]=c;
     label[i++]=c;
   }
   label[i++] = '\n';
-  for (c = 0xA1; c; c++) {if (!(c&0x1f)) label[i++]='\n'; label[i++]=c;}
+  for (c = 0xA1; c < 0x600; c += 9) {if (!(++n&(0x1f))) label[i++]='\n';
+                          i += fl_utf8encode((unsigned int)c, label + i);}
   label[i] = 0;
 
   textobj = new FontDisplay(FL_FRAME_BOX,10,10,530,170,label);
@@ -141,11 +143,13 @@ int main(int argc, char **argv) {
   Fl::args(argc, argv);
   Fl::get_system_colors();
   create_the_forms();
-#ifdef __APPLE__
+
+// For the Unicode test, get all fonts...
+//#ifdef __APPLE__
   int i = 0;
-#else
-  int i = fl_choice("Which fonts:","-*","iso8859","All");
-#endif
+//#else
+//  int i = fl_choice("Which fonts:","-*","iso8859","All");
+//#endif
   int k = Fl::set_fonts(i ? (i>1 ? "*" : 0) : "-*");
   sizes = new int*[k];
   numsizes = new int[k];
@@ -157,6 +161,7 @@ int main(int argc, char **argv) {
       char *p = buffer;
       if (t & FL_BOLD) {*p++ = '@'; *p++ = 'b';}
       if (t & FL_ITALIC) {*p++ = '@'; *p++ = 'i';}
+	  *p++ = '@'; *p++ = '.'; // Suppress subsequent formatting - some MS fonts have '@' in their name
       strcpy(p,name);
       name = buffer;
     }

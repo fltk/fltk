@@ -36,6 +36,7 @@
 #include <FL/Fl_XPM_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
+#include <FL/fl_utf8.H>
 #include "flstring.h"
 
 
@@ -56,7 +57,7 @@ static int hexdigit(int x) {	// I - Hex digit...
 Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
   FILE *f;
 
-  if ((f = fopen(name, "rb")) == NULL) return;
+  if ((f = fl_fopen(name, "rb")) == NULL) return;
 
   // read all the c-strings out of the file:
   char** new_data = new char *[INITIALLINES];

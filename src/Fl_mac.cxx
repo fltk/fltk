@@ -115,6 +115,19 @@ extern Fl_Window* fl_xmousewin;
 enum { kEventClassFLTK = 'fltk' };
 enum { kEventFLTKBreakLoop = 1, kEventFLTKDataReady };
 
+/* fltk-utf8 placekeepers */
+void fl_reset_spot()
+{
+}
+
+void fl_set_spot(int font, int size, int x, int y, int w, int h)
+{
+}
+
+void fl_set_status(int x, int y, int w, int h)
+{
+}
+
 /**
 * Mac keyboard lookup table
  */

@@ -274,7 +274,17 @@ void dobut(Fl_Widget *, long arg)
 	
     delete[] command;
     delete[] copy_of_icommand;
-	
+
+#elif defined USING_XCODE
+
+    int icommand_length = strlen(menus[men].icommand[bn]);
+    char* command = new char[icommand_length+24]; // extraspace for  'open ../../(name).app &\0' 
+    
+    sprintf(command, "open ../../../%s.app &", menus[men].icommand[bn]);
+    system(command);
+    
+    delete[] command;
+
 #else // NON WIN32 systems.
 
     int icommand_length = strlen(menus[men].icommand[bn]);
