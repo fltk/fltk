@@ -116,7 +116,7 @@ int fl_correct_encoding(const char* name) {
 static char *find_best_font(const char *fname, int size) {
   int cnt;
   static char **list = NULL;
-// locate or create an Fl_FontSize for a given Fl_Fontdesc and size:
+// locate or create an Fl_Font_Descriptor for a given Fl_Fontdesc and size:
   if (list) XFreeFontNames(list);
   list = XListFonts(fl_display, fname, 100, &cnt);
   if (!list) return "fixed";
@@ -173,7 +173,7 @@ static char *find_best_font(const char *fname, int size) {
 //  }
 //
 //  // okay, we definately have some name, make the font:
-//  f = new Fl_FontSize(name);
+//  f = new Fl_Font_Descriptor(name);
 //  if (ptsize < size) {f->minsize = ptsize; f->maxsize = size;}
 //  else {f->minsize = size; f->maxsize = ptsize;}
 //  f->next = s->first;
@@ -229,18 +229,18 @@ char *fl_get_font_xfld(int fnum, int size) {
   return put_font_size(s->name, size);
 }
 
-// locate or create an Fl_FontSize for a given Fl_Fontdesc and size:
-static Fl_FontSize* find(int fnum, int size) {
+// locate or create an Fl_Font_Descriptor for a given Fl_Fontdesc and size:
+static Fl_Font_Descriptor* find(int fnum, int size) {
   char *name;
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use font 0 if still undefined
-  Fl_FontSize* f;
+  Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
     if (f->minsize <= size && f->maxsize >= size) return f;
   fl_open_display();
 
   name = put_font_size(s->name, size);
-  f = new Fl_FontSize(name);
+  f = new Fl_Font_Descriptor(name);
   f->minsize = size;
   f->maxsize = size;
   f->next = s->first;
