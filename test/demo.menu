@@ -50,8 +50,6 @@
 	@u:keyboard:keyboard
 	@u:fast && slow widgets:fast_slow
 	@u:inactive:inactive
-#	@u:Drag Drop:dnd-test
-#	@u:add_fd():mcast_launcher
 
 @main:Fluid\n(UI design tool):../fluid/fluid valuators.fl
 
