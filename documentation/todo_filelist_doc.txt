@@ -1,17 +1,18 @@
 File list divided into smaller workpackages for being solved by new STRs
 to visit one package of files search for 'WP'
-WP1 -> WP3 : Widgets, Image and other classes, 27-28 files per WP.
-WP4 : other documentation: 21 files.
+WP1 -> WP11 : Widgets, Image and other classes, 7 to 8 files per WP.
+WP13,14 : other documentation: 10 to 11 files per WP.
 
 WP1>----------------------------------------------------------
 Fl_Widget.html
 Fl_Group.html
 Fl_Window.html
+Fl_Single_Window.html
 Fl_Double_Window.html
+Fl_Overlay_Window.html
 Fl_Gl_Window.html
 Fl.html
-Fl_Adjuster.html
-Fl_Box.html
+WP2>----------------------------------------------------------
 Fl_Browser.html
 Fl_Browser_.html
 Fl_Check_Browser.html
@@ -20,6 +21,7 @@ Fl_Select_Browser.html
 Fl_File_Browser.html
 Fl_File_Chooser.html
 Fl_Multi_Browser.html
+WP3>----------------------------------------------------------
 Fl_Button.html
 Fl_Chart.html
 Fl_Check_Button.html
@@ -28,65 +30,69 @@ Fl_Clock.html
 Fl_Clock_Output.html
 Fl_Color_Chooser.html
 Fl_Counter.html
+WP4>----------------------------------------------------------
 Fl_Dial.html
 Fl_End.html
 Fl_File_Icon.html
 Fl_Free.html
-
-WP2>----------------------------------------------------------
+Fl_Pack.html
+Fl_Positioner.html
+Fl_Tabs.html
+Fl_Tile.html
+WP5>----------------------------------------------------------
 Fl_Bitmap.html
+Fl_Pixmap.html
 Fl_Image.html
 Fl_BMP_Image.html
 Fl_GIF_Image.html
 Fl_XBM_Image.html
 Fl_XPM_Image.html
 Fl_PNG_Image.html
+WP6>----------------------------------------------------------
 Fl_PNM_Image.html
 Fl_RGB_Image.html
 Fl_JPEG_Image.html
 Fl_Shared_Image.html
+Fl_Preferences.html
+Fl_Help_Dialog.html
+Fl_Help_View.html
 Fl_Light_Button.html
+WP7>----------------------------------------------------------
 Fl_Menu_.html
 Fl_Menu_Bar.html
 Fl_Menu_Button.html
 Fl_Menu_Item.html
 Fl_Menu_Window.html
-Fl_Overlay_Window.html
-Fl_Pack.html
-Fl_Pixmap.html
-Fl_Positioner.html
-Fl_Preferences.html
-Fl_Help_Dialog.html
-Fl_Help_View.html
 Fl_Progress.html
-Fl_Tabs.html
-Fl_Tile.html
 Fl_Timer.html
 Fl_Tooltip.html
-
-WP3>----------------------------------------------------------
-Fl_Input.html
+WP8>----------------------------------------------------------
+Fl_Repeat_Button.html
+Fl_Return_Button.html
+Fl_Round_Button.html
+Fl_Scroll.html
+Fl_Scrollbar.html
+Fl_Adjuster.html
+Fl_Box.html
+WP9>----------------------------------------------------------
 Fl_Input_.html
+Fl_Input.html
 Fl_Input_Choice.html
 Fl_Int_Input.html
 Fl_File_Input.html
 Fl_Float_Input.html
 Fl_Secret_Input.html
 Fl_Multiline_Input.html
-Fl_Multiline_Output.html
-Fl_Output.html
+WP10>----------------------------------------------------------
 Fl_Valuator.html
 Fl_Value_Input.html
+Fl_Multiline_Output.html
+Fl_Output.html
 Fl_Value_Output.html
 Fl_Value_Slider.html
-Fl_Repeat_Button.html
-Fl_Return_Button.html
 Fl_Roller.html
-Fl_Round_Button.html
-Fl_Scroll.html
-Fl_Scrollbar.html
-Fl_Single_Window.html
 Fl_Slider.html
+WP11>----------------------------------------------------------
 Fl_Spinner.html
 Fl_Text_Buffer.html
 Fl_Text_Display.html
@@ -94,8 +100,7 @@ Fl_Text_Editor.html
 Fl_Tiled_Image.html
 Fl_Toggle_Button.html
 Fl_Wizard.html
-
-WP4>----------------------------------------------------------
+WP12>----------------------------------------------------------
 advanced.html
 basics.html
 common.html
@@ -107,6 +112,7 @@ examples.html
 fluid.html
 forms.html
 functions.html
+WP13>----------------------------------------------------------
 glut.html
 index.html
 intro.html
@@ -117,6 +123,7 @@ osissues.html
 preface.html
 subclassing.html
 widgets.html
+---------------------------------------------<END OF HTML FILES
 
 -------------------------------------------------------------------
   Related Files (please remove them after each html file completion
