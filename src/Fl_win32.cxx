@@ -107,6 +107,36 @@ static HMODULE get_wsock_mod() {
   return s_wsock_mod;
 }
 
+/*
+ * Dynamic linking of imm32.dll
+ * This library is only needed for a hand full (four ATM) functions relating to 
+ * international text rendering and locales. Dynamically loading reduces initial
+ * size and link dependencies.
+ */
+static HMODULE s_imm_module = 0;
+typedef HIMC (WINAPI* flTypeImmGetContext)(HWND);
+static flTypeImmGetContext flImmGetContext = 0;
+typedef BOOL (WINAPI* flTypeImmSetCompositionWindow)(HIMC, LPCOMPOSITIONFORM);
+static flTypeImmSetCompositionWindow flImmSetCompositionWindow = 0;
+typedef BOOL (WINAPI* flTypeImmReleaseContext)(HWND, HIMC);
+static flTypeImmReleaseContext flImmReleaseContext = 0;
+typedef BOOL (WINAPI* flTypeImmIsIME)(HKL);
+static flTypeImmIsIME flImmIsIME = 0;
+
+static HMODULE get_imm_module() {
+  if (!s_imm_module) {
+    s_imm_module = LoadLibrary("IMM32.DLL");
+    if (!s_imm_module)
+      Fl::fatal("FLTK Lib Error: IMM32.DLL file not found!\n\n"
+        "Please check your input method manager library accessibility.");
+    flImmGetContext = (flTypeImmGetContext)GetProcAddress(s_imm_module, "ImmGetContext");
+    flImmSetCompositionWindow = (flTypeImmSetCompositionWindow)GetProcAddress(s_imm_module, "ImmSetCompositionWindow");
+    flImmReleaseContext = (flTypeImmReleaseContext)GetProcAddress(s_imm_module, "ImmReleaseContext");
+    flImmIsIME = (flTypeImmIsIME)GetProcAddress(s_imm_module, "ImmIsIME");
+  }
+  return s_imm_module;
+}
+
 //
 // USE_TRACK_MOUSE - define it if you have TrackMouseEvent()...
 //
@@ -191,7 +221,8 @@ void fl_reset_spot()
 
 void fl_set_spot(int font, int size, int x, int y, int w, int h)
 {
- 	HIMC himc = ImmGetContext(fl_msg.hwnd);
+	get_imm_module();
+ 	HIMC himc = flImmGetContext(fl_msg.hwnd);
  	if (himc) {
  		Fl_Window* w = fl_find(fl_msg.hwnd);
 
@@ -202,9 +233,9 @@ void fl_set_spot(int font, int size, int x, int y, int w, int h)
  		cfs.ptCurrentPos.x = x;
  		cfs.ptCurrentPos.y = y - w->labelsize();
  		MapWindowPoints(fl_msg.hwnd, fl_xid(w), &cfs.ptCurrentPos, 1);
- 		ImmSetCompositionWindow(himc, &cfs);
+ 		flImmSetCompositionWindow(himc, &cfs);
 
- 		ImmReleaseContext(fl_msg.hwnd, himc);
+ 		flImmReleaseContext(fl_msg.hwnd, himc);
  	}
 }
 
@@ -558,7 +589,7 @@ void fl_get_codepage()
 	fl_codepage = ccp;
 	if (fl_aimm) {
 		  fl_aimm->GetCodePageA(GetKeyboardLayout(0), &fl_codepage);
-	} else if (ImmIsIME(hkl)) {
+	} else if (get_imm_module() && flImmIsIME(hkl)) {
 		fl_is_ime = 1;
 	}
 }
