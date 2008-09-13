@@ -259,9 +259,36 @@ static struct {
   {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+7
 };
 
+/** Returns the X offset for the given boxtype. See box_dy(). */
 int Fl::box_dx(Fl_Boxtype t) {return fl_box_table[t].dx;}
+/**
+    Returns the Y offset for the given boxtype.
+    
+    <P>These functions return the offset values necessary for a given
+    boxtype, useful for computing the area inside a box's borders, to
+    prevent overdrawing the borders.
+    
+    <P>For instance, in the case of a boxtype like FL_DOWN_BOX
+    where the border width might be 2 pixels all around, the above 
+    functions would return 2, 2, 4, and 4 for box_dx, 
+    box_dy, box_dw, and box_dh
+    respectively.
+    
+    <P>An example to compute the area inside a widget's box():
+    <pre>
+         int X = yourwidget-&gt;x() + Fl::box_dx(yourwidget-&gt;box());
+         int Y = yourwidget-&gt;y() + Fl::box_dy(yourwidget-&gt;box());
+         int W = yourwidget-&gt;w() - Fl::box_dw(yourwidget-&gt;box());
+         int H = yourwidget-&gt;h() - Fl::box_dh(yourwidget-&gt;box());
+    </pre>
+    <P>These functions are mainly useful in the draw() code 
+    for deriving custom widgets, where one wants to avoid drawing 
+    over the widget's own border box().
+*/
 int Fl::box_dy(Fl_Boxtype t) {return fl_box_table[t].dy;}
+/** Returns the width offset for the given boxtype. See box_dy(). */
 int Fl::box_dw(Fl_Boxtype t) {return fl_box_table[t].dw;}
+/** Returns the height offset for the given boxtype. See box_dy(). */
 int Fl::box_dh(Fl_Boxtype t) {return fl_box_table[t].dh;}
 
 void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
@@ -270,11 +297,11 @@ void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
     fl_box_table[t].set = 1;
   }
 }
-
+/** Gets the current box drawing function for the specified box type. */
 Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {
   return fl_box_table[t].f;
 }
-
+/** Sets the function to call to draw a specific boxtype. */
 void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
 		      uchar a, uchar b, uchar c, uchar d) {
   fl_box_table[t].f   = f;
@@ -284,9 +311,9 @@ void Fl::set_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f,
   fl_box_table[t].dw  = c;
   fl_box_table[t].dh  = d;
 }
-
-void Fl::set_boxtype(Fl_Boxtype t, Fl_Boxtype f) {
-  fl_box_table[t] = fl_box_table[f];
+/** Copies the from boxtype. */
+void Fl::set_boxtype(Fl_Boxtype to, Fl_Boxtype from) {
+  fl_box_table[to] = fl_box_table[from];
 }
 
 void fl_draw_box(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color c) {

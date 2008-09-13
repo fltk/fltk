@@ -141,14 +141,23 @@ static void screen_init() {
 #endif // WIN32
 
 
-// Return the number of screens...
+/**
+  Gets the number of available screens.
+*/
 int Fl::screen_count() {
   if (!num_screens) screen_init();
 
   return num_screens;
 }
 
-// Return the screen bounding rect for the given mouse position...
+/**
+  Gets the bounding box of a screen. The first form gets the
+  bounding box for the screen the mouse pointer is in. The second
+  form gets the bounding box for the screen that contains the
+  specified coordinates. The last form gets the bounding box for
+  the numbered screen, where n is a number from 0 to the
+  number of screens less 1.
+*/
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
   if (!num_screens) screen_init();
 
@@ -212,7 +221,10 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
   H = Fl::h();
 }
 
-// Return the screen bounding rect for the given screen...
+/**
+  Returns the screen bounding rect for the given screen. 
+  See void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
+*/
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   if (!num_screens) screen_init();
 

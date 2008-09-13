@@ -49,6 +49,10 @@ typedef void (Fl_Box_Draw_F)(int,int,int,int, Fl_Color);
 typedef void (*Fl_Timeout_Handler)(void*);
 typedef void (*Fl_Awake_Handler)(void*);
 
+/**
+  The Fl is the FLTK global (static) containing
+  state information and global methods for the current application.
+*/
 class FL_EXPORT Fl {
   Fl() {}; // no constructor!
 
@@ -77,6 +81,9 @@ public: // should be private!
   static int compose_state;
   static int visible_focus_;
   static int dnd_text_ops_;
+  /**
+    If true then flush() will do something.
+  */
   static void damage(int d) {damage_ = d;}
 
   static void (*idle)();
@@ -102,8 +109,8 @@ public:
   // argument parsers:
   static int arg(int, char**, int&);
   static int args(int, char**, int&, int (*)(int,char**,int&) = 0);
-  static const char* const help;
   static void args(int, char**);
+  static const char* const help;
 
   // things called by initialization:
   static void display(const char*);
@@ -117,8 +124,14 @@ public:
 
   // schemes:
   static int scheme(const char*);
+  /** See void scheme(const char *name) */
   static const char* scheme() {return scheme_;}
-  static int reload_scheme();
+  /** 
+    Called by scheme according to scheme name. 
+    Loads or reloads the current scheme selection. 
+    See void scheme(const char *name) 
+  */
+  static int reload_scheme(); // platform dependent
   static int scrollbar_size();
   static void scrollbar_size(int W);
 
@@ -136,49 +149,300 @@ public:
   static void add_check(Fl_Timeout_Handler, void* = 0);
   static int  has_check(Fl_Timeout_Handler, void* = 0);
   static void remove_check(Fl_Timeout_Handler, void* = 0);
-  static void add_fd(int fd, int when, void (*cb)(int,void*),void* =0);
-  static void add_fd(int fd, void (*cb)(int, void*), void* = 0);
-  static void remove_fd(int, int when);
-  static void remove_fd(int);
+  /**
+    Add file descriptor fd to listen to.  When the fd
+    becomes ready for reading Fl::wait() will call the callback
+    and then return.  The callback is
+    passed the fd and the arbitrary void* argument.</P>
+    
+    <P>The second version takes a when bitfield, with the bits
+    FL_READ, FL_WRITE, and FL_EXCEPT defined,
+    to indicate when the callback should be done.
+    
+    <P>There can only be one callback of each type for a file descriptor. 
+    Fl::remove_fd() gets rid of <I>all</I> the callbacks for a given
+    file descriptor.
+    
+    <P>Under UNIX <I>any</I> file descriptor can be monitored (files,
+    devices, pipes, sockets, etc.) Due to limitations in Microsoft Windows,
+    WIN32 applications can only monitor sockets.
+  */
+  static void add_fd(int fd, int when, void (*cb)(int,void*),void* =0); // platform dependent
+  /** See void add_fd(int fd, int when, void (*cb)(int,void*),void* =0) */
+  static void add_fd(int fd, void (*cb)(int, void*), void* = 0); // platform dependent
+  /** Removes a file descriptor handler. */
+  static void remove_fd(int, int when); // platform dependent
+  /** Removes a file descriptor handler. */
+  static void remove_fd(int); // platform dependent
+
   static void add_idle(void (*cb)(void*), void* = 0);
   static int  has_idle(void (*cb)(void*), void* = 0);
   static void remove_idle(void (*cb)(void*), void* = 0);
+  /** If true then flush() will do something. */
   static int damage() {return damage_;}
   static void redraw();
   static void flush();
+  /** \fn void (*warning)(const char*, ...)
+  FLTK calls this to print a warning message. You can
+  override the behavior by setting the function pointer to your
+  own routine.
+  <P>Fl::warning means that there was a recoverable
+  problem, the display may be messed up but the user can probably
+  keep working - all X protocol errors call this, for example.
+  */
   static void (*warning)(const char*, ...);
+  /**
+  FLTK calls this to print a normal error message. You can
+  override the behavior by setting the function pointer to your
+  own routine.
+  <P>Fl::error means there is a recoverable error such as
+  the inability to read an image file. The default implementation
+  prints the error message to stderr and returns.
+  */
   static void (*error)(const char*, ...);
+  /**
+  FLTK calls this to print a fatal error message. You can
+  override the behavior by setting the function pointer to your
+  own routine.
+  <P>Fl::fatal must not return, as FLTK is in an unusable
+  state, however your version may be able to use longjmp
+  or an exception to continue, as long as it does not call FLTK
+  again. The default implementation prints the error message to
+  stderr and exits with status 1.
+  */
   static void (*fatal)(const char*, ...);
   static Fl_Window* first_window();
   static void first_window(Fl_Window*);
   static Fl_Window* next_window(const Fl_Window*);
+  /**
+    Returns the top-most modal() window currently shown.
+    This is the most recently 
+    shown() window with 
+    modal() true, or NULL if there are no modal()
+    windows shown().
+    The modal() window has its handle() method called
+    for all events, and no other windows will have handle()
+    called (grab() overrides this).
+  */
   static Fl_Window* modal() {return modal_;}
+  /**
+    This is used when pop-up menu systems are active.  Send all events to
+    the passed window no matter where the pointer or focus is (including
+    in other programs).  The window <I>does not have to be
+    shown()</I> , this lets the handle() method of a
+    &quot;dummy&quot; window override all event handling and allows you to
+    map and unmap a complex set of windows (under both X and WIN32
+    <I>some</I> window must be mapped because the system interface needs a
+    window id).
+    
+    <P>If grab() is on it will also affect show() of windows by
+    doing system-specific operations (on X it turns on
+    override-redirect).  These are designed to make menus popup reliably
+    and faster on the system.
+    
+    <P>To turn off grabbing do Fl::grab(0).
+    
+    <P><I>Be careful that your program does not enter an infinite loop
+    while grab() is on.  On X this will lock up your screen!</I>
+    To avoid this potential lockup, all newer operating systems seem to 
+    limit mouse pointer grabbing to the time during which a mouse button 
+    is held down. Some OS's may not support grabbing at all.
+  */
   static Fl_Window* grab() {return grab_;}
-  static void grab(Fl_Window*);
+  /** Selects the window to grab. See Fl_Window* Fl::grab() */
+  static void grab(Fl_Window*); // platform dependent
 
   // event information:
+  /**
+    Returns the last event that was processed. This can be used
+    to determine if a callback is being done in response to a
+    keypress, mouse click, etc.
+  */
   static int event()		{return e_number;}
+  /**
+    Returns the mouse position of the event relative to the Fl_Window
+    it was passed to.
+  */
   static int event_x()	{return e_x;}
+  /**
+    Returns the mouse position of the event relative to the Fl_Window
+    it was passed to.
+  */
   static int event_y()	{return e_y;}
+  /**
+    Returns the mouse position on the screen of the event.  To find the
+    absolute position of an Fl_Window on the screen, use the
+    difference between event_x_root(),event_y_root() and 
+    event_x(),event_y().
+  */
   static int event_x_root()	{return e_x_root;}
+  /**
+    Returns the mouse position on the screen of the event.  To find the
+    absolute position of an Fl_Window on the screen, use the
+    difference between event_x_root(),event_y_root() and 
+    event_x(),event_y().
+  */
   static int event_y_root()	{return e_y_root;}
+  /**
+    Returns the current horizontal mouse scrolling associated with the
+    FL_MOUSEWHEEL event. Right is positive.
+  */
   static int event_dx()	{return e_dx;}
+  /**
+    Returns the current vertical mouse scrolling assoaciated with the
+    FL_MOUSEWHEEL event. Down is positive.
+  */
   static int event_dy()	{return e_dy;}
-  static void get_mouse(int &,int &);
+  /**
+    Return where the mouse is on the screen by doing a round-trip query to
+    the server.  You should use Fl::event_x_root() and 
+    Fl::event_y_root() if possible, but this is necessary if you are
+    not sure if a mouse event has been processed recently (such as to
+    position your first window).  If the display is not open, this will
+    open it.
+  */
+  static void get_mouse(int &,int &); // platform dependent
+  /**
+    The first form returns non-zero if the most recent FL_PUSH or
+    FL_KEYBOARD was a &quot;double click&quot;.  Returns N-1 for
+    N clicks.  A double click is counted if the same button is pressed
+    again while event_is_click() is true.
+    
+    <P>The second form directly sets the number returned by 
+    Fl::event_clicks().  This can be used to set it to zero so that
+    later code does not think an item was double-clicked.
+  */
   static int event_clicks()	{return e_clicks;}
+  /**
+    See int event_clicks()
+  */
   static void event_clicks(int i) {e_clicks = i;}
+  /**
+    The first form returns non-zero if the mouse has not moved far enough
+    and not enough time has passed since the last FL_PUSH or 
+    FL_KEYBOARD event for it to be considered a &quot;drag&quot; rather than a
+    &quot;click&quot;.  You can test this on FL_DRAG, FL_RELEASE,
+    and FL_MOVE events.  The second form clears the value returned
+    by Fl::event_is_click().  Useful to prevent the <I>next</I>
+    click from being counted as a double-click or to make a popup menu
+    pick an item with a single click.  Don't pass non-zero to this.
+  */
   static int event_is_click()	{return e_is_click;}
-  static void event_is_click(int i) {e_is_click = i;} // only 0 works!
+  /**
+    Only i=0 works! See int event_is_click(). 
+  */
+  static void event_is_click(int i) {e_is_click = i;}
+  /**
+    Returns which mouse button caused te current event. This returns garbage if the
+    most recent event was not a FL_PUSH or FL_RELEASE event.
+  */
   static int event_button()	{return e_keysym-FL_Button;}
+  /**
+    This is a bitfield of what shift states were on and what mouse buttons
+    were held down during the most recent event.  The second version
+    returns non-zero if any of the passed bits are turned on.  The legal
+    bits are:
+    
+    <UL>
+    <LI>FL_SHIFT</LI>
+    <LI>FL_CAPS_LOCK</LI>
+    <LI>FL_CTRL</LI>
+    <LI>FL_ALT</LI>
+    <LI>FL_NUM_LOCK</LI>
+    <LI>FL_META</LI>
+    <LI>FL_SCROLL_LOCK</LI>
+    <LI>FL_BUTTON1</LI>
+    <LI>FL_BUTTON2</LI>
+    <LI>FL_BUTTON3</LI>
+    </UL>
+    
+    <P>X servers do not agree on shift states, and FL_NUM_LOCK, FL_META, and
+    FL_SCROLL_LOCK may not work.  The values were selected to match the
+    XFree86 server on Linux.  In addition there is a bug in the way X works
+    so that the shift state is not correctly reported until the first event <I>
+    after</I> the shift key is pressed or released.
+  */
   static int event_state()	{return e_state;}
+  /** See int event_state() */
   static int event_state(int i) {return e_state&i;}
+  /**
+    Fl::event_key() returns which key on the keyboard was last
+    pushed.  It returns zero if the last event was not a key press or release.
+    
+    <P>Fl::event_key(int) returns true if the given key was held
+    down (or pressed) <I>during</I> the last event.  This is constant until
+    the next event is read from the server.
+    
+    <P>Fl::get_key(int) returns true if the given key is held down <I>
+    now</I>.  Under X this requires a round-trip to the server and is <I>
+    much</I> slower than Fl::event_key(int).
+    
+    <P>Keys are identified by the <I>unshifted</I> values. FLTK defines a
+    set of symbols that should work on most modern machines for every key
+    on the keyboard:
+    
+    <UL>
+    <LI>All keys on the main keyboard producing a printable ASCII
+    character use the value of that ASCII character (as though shift,
+    ctrl, and caps lock were not on).  The space bar is 32. </LI>
+    <LI>All keys on the numeric keypad producing a printable ASCII
+    character use the value of that ASCII character plus FL_KP.
+    The highest possible value is FL_KP_Last so you can
+    range-check to see if something is  on the keypad. </LI>
+    <LI>All numbered function keys use the number on the function key plus 
+    FL_F.  The highest possible number is FL_F_Last, so you
+    can range-check a value. </LI>
+    <LI>Buttons on the mouse are considered keys, and use the button
+    number (where the left button is 1) plus FL_Button. </LI>
+    <LI>All other keys on the keypad have a symbol: FL_Escape,
+    FL_BackSpace, FL_Tab, FL_Enter, FL_Print, FL_Scroll_Lock, FL_Pause,
+    FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down,
+    FL_Left, FL_Up, FL_Right, FL_Down, FL_Shift_L, FL_Shift_R,
+    FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R,
+    FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter.  Be
+    careful not to confuse these with the very similar, but all-caps,
+    symbols used by Fl::event_state()
+    . </LI>
+    </UL>
+    
+    <P>On X Fl::get_key(FL_Button+n) does not work.
+    
+    <P>On WIN32 Fl::get_key(FL_KP_Enter) and 
+    Fl::event_key(FL_KP_Enter) do not work.
+  */
   static int event_key()	{return e_keysym;}
+  /**
+    If NumLock is deactivated, FLTK translates events from the 
+    numeric keypad into the corresponding arrow key events. 
+    event_key() returns the translated key code, whereas
+    event_original_key() returns the keycode before 
+    NumLock translation.
+  */
   static int event_original_key(){return e_original_keysym;}
+  /** See int event_key() */
   static int event_key(int);
-  static int get_key(int);
+  /** 
+    Returns true if the given key is held down <I>now</I>.  
+    Under X this requires a round-trip to the server and is <I>
+    much</I> slower than Fl::event_key(int). See event_key().
+  */
+  static int get_key(int); // platform dependent
+  /** Returns the text associated with the current FL_PASTE or FL_DND_RELEASE event. */
   static const char* event_text() {return e_text;}
+  /**
+    Returns the length of the text in Fl::event_text().  There
+    will always be a nul at this position in the text.  However there may
+    be a nul before that if the keystroke translates to a nul character or
+    you paste a nul character.
+  */
   static int event_length() {return e_length;}
   static int compose(int &del);
+  /**
+    If the user moves the cursor, be sure to call Fl::compose_reset().
+    The next call to Fl::compose() will start out in an initial state.  In
+    particular it will not set "del" to non-zero. This call is very fast
+    so it is ok to call it many times and in many places.
+  */
   static void compose_reset() {compose_state = 0;}
   static int event_inside(int,int,int,int);
   static int event_inside(const Fl_Widget*);
@@ -186,33 +450,61 @@ public:
 
   // event destinations:
   static int handle(int, Fl_Window*);
+  /** See Fl_Widget* belowmouse(Fl_Widget*) */
   static Fl_Widget* belowmouse() {return belowmouse_;}
   static void belowmouse(Fl_Widget*);
+  /** See Fl_Widget* pushed(Fl_Widget*) */
   static Fl_Widget* pushed()	{return pushed_;}
   static void pushed(Fl_Widget*);
+  /** See Fl_Widget* focus(Fl_Widget*) */
   static Fl_Widget* focus()	{return focus_;}
   static void focus(Fl_Widget*);
   static void add_handler(int (*h)(int));
   static void remove_handler(int (*h)(int));
 
   // cut/paste:
-  static void copy(const char* stuff, int len, int clipboard = 0);
-  static void paste(Fl_Widget &receiver, int clipboard /*=0*/);
-  static int dnd();
+  /**
+    Copies the data pointed to by stuff to the selection
+    (0) or primary (1) clipboard.  The selection clipboard is used
+    for middle-mouse pastes and for drag-and-drop selections. The
+    primary clipboard is used for traditional copy/cut/paste
+    operations.
+  */
+  static void copy(const char* stuff, int len, int clipboard = 0); // platform dependent
+  /**
+    Pastes the data from the selection (0) or primary (1) clipboard into receiver.  
+    The selection clipboard is used for middle-mouse pastes and for 
+    drag-and-drop selections. The primary clipboard is used for 
+    traditional copy/cut/paste  operations.
+  */
+  static void paste(Fl_Widget &receiver, int clipboard /*=0*/); // platform dependent
+  /**
+    Initiate a Drag And Drop operation. The clipboard should be
+    filled with relevant data before calling this method. FLTK will
+    then initiate the system wide drag and drop handling. Dropped data
+    will be marked as <i>text</i>.
+  */
+  static int dnd(); // platform dependent
   // These are for back-compatability only:
+  /** See Fl_Widget* selection_owner(Fl_Widget*) */
   static Fl_Widget* selection_owner() {return selection_owner_;}
   static void selection_owner(Fl_Widget*);
   static void selection(Fl_Widget &owner, const char*, int len);
   static void paste(Fl_Widget &receiver);
 
   // screen size:
-  static int x();
-  static int y();
-  static int w();
-  static int h();
+  /** Returns the origin of the current screen, where 0 indicates the left side of the screen. */
+  static int x(); // platform dependent
+  /** Returns the origin of the current screen, where 0 indicates the top edge of the screen.  */
+  static int y(); // platform dependent
+  /** Returns the width of the screen in pixels. */
+  static int w(); // platform dependent
+  /** Returns the height of the screen in pixels. */
+  static int h(); // platform dependent
 
   // multi-head support:
   static int screen_count();
+  /** See void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) */
   static void screen_xywh(int &X, int &Y, int &W, int &H) {
     screen_xywh(X, Y, W, H, e_x_root, e_y_root);
   }
@@ -221,22 +513,75 @@ public:
 
   // color map:
   static void	set_color(Fl_Color, uchar, uchar, uchar);
-  static void	set_color(Fl_Color, unsigned);
+  /**
+    Sets an entry in the fl_color index table.  You can set it to
+    any 8-bit RGB color.  The color is not allocated until fl_color(i)
+    is used.
+  */
+  static void	set_color(Fl_Color, unsigned); // platorm dependent
   static unsigned get_color(Fl_Color);
   static void	get_color(Fl_Color, uchar&, uchar&, uchar&);
-  static void	free_color(Fl_Color, int overlay = 0);
+  /**
+    Frees the specified color from the colormap, if applicable.
+    If overlay is non-zero then the color is freed from the
+    overlay colormap.
+  */
+  static void	free_color(Fl_Color, int overlay = 0); // platform dependent
 
   // fonts:
   static const char* get_font(Fl_Font);
+  /**
+    Get a human-readable string describing the family of this face.  This
+    is useful if you are presenting a choice to the user.  There is no
+    guarantee that each face has a different name.  The return value points
+    to a static buffer that is overwritten each call.
+    
+    <P>The integer pointed to by attributes (if the pointer is not
+    zero) is set to zero, FL_BOLD or FL_ITALIC or 
+    FL_BOLD | FL_ITALIC.  To locate a &quot;family&quot; of fonts, search
+    forward and back for a set with non-zero attributes, these faces along
+    with the face with a zero attribute before them constitute a family.
+  */
   static const char* get_font_name(Fl_Font, int* attributes = 0);
+  /**
+    Return an array of sizes in sizep.  The return value is the
+    length of this array.  The sizes are sorted from smallest to largest
+    and indicate what sizes can be given to fl_font() that will
+    be matched exactly (fl_font() will pick the closest size for
+    other sizes).  A zero in the first location of the array indicates a
+    scalable font, where any size works, although the array may list sizes
+    that work &quot;better&quot; than others.  Warning: the returned array
+    points at a static buffer that is overwritten each call.  Under X this
+    will open the display.
+  */
   static int get_font_sizes(Fl_Font, int*& sizep);
   static void set_font(Fl_Font, const char*);
   static void set_font(Fl_Font, Fl_Font);
-  static Fl_Font set_fonts(const char* = 0);
+  /**
+    FLTK will open the display, and add every fonts on the server to the
+    face table.  It will attempt to put &quot;families&quot; of faces together, so
+    that the normal one is first, followed by bold, italic, and bold
+    italic.
+    
+    <P>The optional argument is a string to describe the set of fonts to
+    add.  Passing NULL will select only fonts that have the
+    ISO8859-1 character set (and are thus usable by normal text).  Passing
+    &quot;-*&quot; will select all fonts with any encoding as long as they have
+    normal X font names with dashes in them.  Passing &quot;*&quot; will list every
+    font that exists (on X this may produce some strange output).  Other
+    values may be useful but are system dependent.  With WIN32 NULL
+    selects fonts with ISO8859-1 encoding and non-NULL selects
+    all fonts.
+    
+    <P>The return value is how many faces are in the table after this is
+    done.
+  */
+  static Fl_Font set_fonts(const char* = 0); // platform dependent
 
   // labeltypes:
   static void set_labeltype(Fl_Labeltype,Fl_Label_Draw_F*,Fl_Label_Measure_F*);
-  static void set_labeltype(Fl_Labeltype, Fl_Labeltype from);
+  /** Sets the functions to call to draw and measure a specific labeltype. */
+  static void set_labeltype(Fl_Labeltype, Fl_Labeltype from); // is it defined ?
 
   // boxtypes:
   static Fl_Box_Draw_F *get_boxtype(Fl_Boxtype);
@@ -249,35 +594,95 @@ public:
   static int draw_box_active();
 
   // back compatability:
+  /** for back compatibility. sets the (*fatal)() callback. */
   static void set_abort(void (*f)(const char*,...)) {fatal = f;}
   static void (*atclose)(Fl_Window*,void*);
   static void default_atclose(Fl_Window*,void*);
+  /** for back compatibility. sets the (*atclose)() callback. */
   static void set_atclose(void (*f)(Fl_Window*,void*)) {atclose = f;}
+  /** Returns non-zero if the Shift key is pressed. */
   static int event_shift() {return e_state&FL_SHIFT;}
+  /** Returns non-zero if the Control key is pressed. */
   static int event_ctrl() {return e_state&FL_CTRL;}
+  /** Returns non-zero if the Alt key is pressed. */
   static int event_alt() {return e_state&FL_ALT;}
+  /**
+    Returns the button state bits; if non-zero, then at least one
+    button is pressed.  This function returns the button state at the 
+    time of the event. During an FL_RELEASE event, the state 
+    of the released button will be 0. To find out, which button 
+    caused an FL_RELEASE event, you can use 
+    Fl::event_button() instead.
+  */
   static int event_buttons() {return e_state&0x7f000000;}
+  /**
+    Returns non-zero if button 1 is currently held down.
+    For more details, see Fl::event_buttons().
+  */
   static int event_button1() {return e_state&FL_BUTTON1;}
+  /**
+    Returns non-zero if button 2 is currently held down.
+    For more details, see Fl::event_buttons().
+  */
   static int event_button2() {return e_state&FL_BUTTON2;}
+  /**
+    Returns non-zero if button 3 is currently held down.
+    For more details, see Fl::event_buttons().
+  */
   static int event_button3() {return e_state&FL_BUTTON3;}
+  /**
+    Sets an idle callback.
+    <P>This method is obsolete - use the add_idle() method instead.
+  */
   static void set_idle(void (*cb)()) {idle = cb;}
+  /** See Fl_Window* grab() */
   static void grab(Fl_Window&win) {grab(&win);}
+  /** Releases the current grabbed window, equals grab(0). See Fl_Window* grab() */
   static void release() {grab(0);}
 
   // Visible focus methods...
+  /**
+    Gets or sets the visible keyboard focus on buttons and other
+    non-text widgets. The default mode is to enable keyboard focus
+    for all widgets.
+  */
   static void visible_focus(int v) { visible_focus_ = v; }
+  /**
+    Gets or sets the visible keyboard focus on buttons and other
+    non-text widgets. The default mode is to enable keyboard focus
+    for all widgets.
+  */
   static int  visible_focus() { return visible_focus_; }
 
   // Drag-n-drop text operation methods...
+  /**
+    Gets or sets whether drag and drop text operations are
+    supported. This specifically affects whether selected text can
+    be dragged from text fields or dragged within a text field as a
+    cut/paste shortcut.
+  */
   static void dnd_text_ops(int v) { dnd_text_ops_ = v; }
+  /**
+    Gets or sets whether drag and drop text operations are
+    supported. This specifically affects whether selected text can
+    be dragged from text fields or dragged within a text field as a
+    cut/paste shortcut.
+  */
   static int  dnd_text_ops() { return dnd_text_ops_; }
 
   // Multithreading support:
   static void lock();
   static void unlock();
   static void awake(void* message = 0);
+  /** See void awake(void* message=0). */
   static int awake(Fl_Awake_Handler cb, void* message = 0);
-  static void* thread_message();
+  /**
+    The thread_message() method returns the last message
+    that was sent from a child by the awake() method.
+    
+    <P>See also: multithreading
+  */
+  static void* thread_message(); // platform dependent
 
   // Widget deletion:
   static void delete_widget(Fl_Widget *w);

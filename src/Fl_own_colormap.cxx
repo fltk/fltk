@@ -37,6 +37,13 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 
+/** \fn Fl::own_colormap()
+    Makes FLTK use its own colormap.  This may make FLTK display better
+    and will reduce conflicts with other programs that want lots of colors.
+    However the colors may flash as you move the cursor between windows.
+    
+    <P>This does nothing if the current visual is not colormapped.
+*/
 #ifdef WIN32
 // There is probably something relevant to do on MSWindows 8-bit displays
 // but I don't know what it is

@@ -41,10 +41,18 @@ Fl_Group* Fl_Group::current_;
 
 // Hack: A single child is stored in the pointer to the array, while
 // multiple children are stored in an allocated array:
+/**
+  Returns a pointer to the array of children. <I>This pointer is only
+  valid until the next time a child is added or removed.</I>
+*/
 Fl_Widget*const* Fl_Group::array() const {
   return children_ <= 1 ? (Fl_Widget**)(&array_) : array_;
 }
 
+/**
+  Searches the child array for the widget and returns the index. Returns children() if the widget is 
+  NULL or not found.
+*/
 int Fl_Group::find(const Fl_Widget* o) const {
   Fl_Widget*const* a = array();
   int i; for (i=0; i < children_; i++) if (*a++ == o) break;
@@ -53,9 +61,28 @@ int Fl_Group::find(const Fl_Widget* o) const {
 
 // Metrowerks CodeWarrior and others can't export the static
 // class member: current_, so these methods can't be inlined...
+/**
+  Sets the current group so you can build the widget
+  tree by just constructing the widgets. begin() is
+  automatically called by the constructor for Fl_Group (and thus for
+  Fl_Window as well). begin() <i>is exactly the same as</i> current(this).
+  <P><I>Don't forget to end() the group or window!</I>
+*/
 void Fl_Group::begin() {current_ = this;}
+/**
+  <i>Exactly the same as</i> current(this-&gt;parent()). Any new widgets
+  added to the widget tree will be added to the parent of the group.
+*/
 void Fl_Group::end() {current_ = (Fl_Group*)parent();}
+/**
+  Returns the currently active group.  The Fl_Widget
+  constructor automatically does current()-&gt;add(widget) if this is not null.
+  To prevent new widgets from being added to a group, call Fl_Group::current(0).
+*/
 Fl_Group *Fl_Group::current() {return current_;}
+/**
+  See static Fl_Group *Fl_Group::current() 
+*/
 void Fl_Group::current(Fl_Group *g) {current_ = g;}
 
 extern Fl_Widget* fl_oldfocus; // set by Fl::focus
@@ -341,6 +368,13 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
   begin();
 }
 
+/**
+  The clear() method deletes all child widgets from
+  memory recursively.</p>
+  
+  <p>This method differs from the remove() method in that it
+  affects all child widgets and deletes them from memory.
+*/
 void Fl_Group::clear() {
   Fl_Widget*const* old_array = array();
   int old_children = children();
@@ -359,10 +393,24 @@ void Fl_Group::clear() {
   if (old_children > 1) free((void*)old_array);
 }
 
+/**
+  The destructor <I>also deletes all the children</I>. This allows a
+  whole tree to be deleted at once, without having to keep a pointer to
+  all the children in the user code. A kludge has been done so the 
+  Fl_Group and all of it's children can be automatic (local)
+  variables, but you must declare the Fl_Group <I>first</I>, so
+  that it is destroyed last.
+*/
 Fl_Group::~Fl_Group() {
   clear();
 }
 
+/**
+  The widget is removed from it's current group (if any) and then
+  inserted into this group. It is put at index n (or at the end
+  if n &gt;= children().  This can also be used to rearrange
+  the widgets inside a group.
+*/
 void Fl_Group::insert(Fl_Widget &o, int index) {
   if (o.parent()) {
     Fl_Group* g = (Fl_Group*)(o.parent());
@@ -392,8 +440,21 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
   init_sizes();
 }
 
+/**
+  The widget is removed from it's current group (if any) and then added
+  to the end of this group.
+*/
 void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
 
+/**
+  Removes a widget from the group but does not delete it. This
+  method does nothing if the widget is not a child of the
+  group.
+  
+  <p>This method differs from the clear() method in that it
+  only affects a single widget and does not delete it from
+  memory.
+*/
 void Fl_Group::remove(Fl_Widget &o) {
   if (!children_) return;
   int i = find(o);
@@ -424,6 +485,13 @@ void Fl_Group::remove(Fl_Widget &o) {
 // algorithim.  If you change this be sure to fix Fl_Tile which
 // also uses this array!
 
+/**
+  The Fl_Group widget keeps track of the original widget sizes and
+  positions when resizing occurs so that if you resize a window back to its
+  original size the widgets will be in the correct places. If you rearrange
+  the widgets in your group, call this method to register the new arrangement
+  with the Fl_Group that contains them.
+*/
 void Fl_Group::init_sizes() {
   delete[] sizes_; sizes_ = 0;
 }

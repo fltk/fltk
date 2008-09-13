@@ -30,6 +30,21 @@
 
 #include "Fl_Window.H"
 
+/**
+  The Fl_Double_Window provides a double-buffered window.
+  If possible this will use the X double buffering extension (Xdbe).  If
+  not, it will draw the window data into an off-screen pixmap, and then
+  copy it to the on-screen window.
+  <P>It is highly recommended that you put the following code before the
+  first show() of <I>any</I> window in your program: </P>
+  <UL>
+  <PRE>
+  Fl::visual(FL_DOUBLE|FL_INDEX)
+  </PRE>
+  </UL>
+  This makes sure you can use Xdbe on servers where double buffering
+  does not exist for every visual.
+*/
 class FL_EXPORT Fl_Double_Window : public Fl_Window {
 protected:
   void flush(int eraseoverlay);
@@ -41,8 +56,15 @@ public:
   void resize(int,int,int,int);
   void hide();
   ~Fl_Double_Window();
+  /**
+    Creates a new Fl_Double_Window widget using the given
+    position, size, and label (title) string.
+  */
   Fl_Double_Window(int W, int H, const char *l = 0) 
     : Fl_Window(W,H,l), force_doublebuffering_(0) { type(FL_DOUBLE_WINDOW); }
+   /**
+    See  Fl_Double_Window::Fl_Double_Window(int w, int h, const char *label = 0)
+  */
   Fl_Double_Window(int X, int Y, int W, int H, const char *l = 0)
     : Fl_Window(X,Y,W,H,l), force_doublebuffering_(0) { type(FL_DOUBLE_WINDOW); }
 };

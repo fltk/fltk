@@ -62,7 +62,11 @@ void Fl_Widget::default_callback(Fl_Widget *o, void * /*v*/) {
     if (obj_tail >= QUEUE_SIZE) obj_tail = 0;
   }
 }
-
+/**
+    All Fl_Widgets that don't have a callback defined use a
+    default callback that puts a pointer to the widget in this queue, and
+    this method reads the oldest widget out of this queue.
+*/
 Fl_Widget *Fl::readqueue() {
   if (obj_tail==obj_head) return 0;
   Fl_Widget *o = obj_queue[obj_tail++];

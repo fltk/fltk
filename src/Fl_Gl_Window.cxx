@@ -25,6 +25,21 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \fn virtual void Fl_Gl_Window::draw(void)
+  Fl_Gl_Window::draw() is a pure virtual method.  You must
+  subclass Fl_Gl_Window and provide an implementation for 
+  draw().  You may also provide an implementation of draw_overlay()
+  if you want to draw into the overlay planes.  You can avoid
+  reinitializing the viewport and lights and other things by checking 
+  valid() at the start of draw() and only doing the
+  initialization if it is false.
+  <P>The draw() method can <I>only</I> use OpenGL calls.  Do not
+  attempt to call X, any of the functions in &lt;FL/fl_draw.H&gt;, or glX
+  directly.  Do not call gl_start() or gl_finish(). </P>
+  <P>If double-buffering is enabled in the window, the back and front
+  buffers are swapped after this function is completed.
+*/
+
 #include "flstring.h"
 #if HAVE_GL
 
@@ -60,6 +75,23 @@ static char SWAP_TYPE = 0 ; // 0 = determine it from environment variable
 
 ////////////////////////////////////////////////////////////////
 
+/**
+  Returns non-zero if the hardware supports the given or current OpenGL
+  mode.
+  
+  <h4>void* Fl_Gl_Window::context() const;
+  <br>void Fl_Gl_Window::context(void*, int destroy_flag = false);</h4>
+  
+  Return or set a pointer to the GLContext that this window is
+  using. This is a system-dependent structure, but it is portable to copy
+  the context from one window to another. You can also set it to NULL,
+  which will force FLTK to recreate the context the next time make_current() is called, this is
+  useful for getting around bugs in OpenGL implementations.
+  
+  <p>If <i>destroy_flag</i> is true the context will be destroyed by
+  fltk when the window is destroyed, or when the mode() is changed, or the next time
+  context(x) is called.
+*/
 int Fl_Gl_Window::can_do(int a, const int *b) {
   return Fl_Gl_Choice::find(a,b) != 0;
 }
@@ -91,6 +123,10 @@ void Fl_Gl_Window::show() {
 #endif /* __APPLE__ */
 }
 
+/**
+  The invalidate() method turns off valid() and is
+  equivalent to calling value(0).
+*/
 void Fl_Gl_Window::invalidate() {
   valid(0);
   context_valid(0);
@@ -102,6 +138,9 @@ void Fl_Gl_Window::invalidate() {
 #endif
 }
 
+/**
+  See const int Fl_Gl_Window::mode() const 
+*/
 int Fl_Gl_Window::mode(int m, const int *a) {
   if (m == mode_ && a == alist) return 0;
 #ifndef __APPLE__
@@ -139,6 +178,12 @@ int Fl_Gl_Window::mode(int m, const int *a) {
 
 #define NON_LOCAL_CONTEXT 0x80000000
 
+/**
+  The make_current() method selects the OpenGL context for the
+  widget.  It is called automatically prior to the draw() method
+  being called and can also be used to implement feedback and/or
+  selection within the handle() method.
+*/
 void Fl_Gl_Window::make_current() {
 //  puts("Fl_Gl_Window::make_current()");
 //  printf("make_current: context_=%p\n", context_);
@@ -185,6 +230,11 @@ void Fl_Gl_Window::make_current() {
   current_ = this;
 }
 
+/**
+  Set the projection so 0,0 is in the lower left of the window and each
+  pixel is 1 unit wide/tall.  If you are drawing 2D images, your 
+  draw() method may want to call this if valid() is false.
+*/
 void Fl_Gl_Window::ortho() {
 // Alpha NT seems to have a broken OpenGL that does not like negative coords:
 #ifdef _M_ALPHA
@@ -200,6 +250,10 @@ void Fl_Gl_Window::ortho() {
 #endif
 }
 
+/**
+  The swap_buffers() method swaps the back and front buffers.
+  It is called automatically after the draw() method is called.
+*/
 void Fl_Gl_Window::swap_buffers() {
 #ifdef WIN32
 #  if HAVE_GL_OVERLAY
@@ -397,6 +451,9 @@ void Fl_Gl_Window::context(void* v, int destroy_flag) {
   else mode_ |= NON_LOCAL_CONTEXT;
 }    
 
+/**
+  Hides the window and destroys the OpenGL context.
+*/
 void Fl_Gl_Window::hide() {
   context(0);
 #if HAVE_GL_OVERLAY && defined(WIN32)
@@ -408,6 +465,10 @@ void Fl_Gl_Window::hide() {
   Fl_Window::hide();
 }
 
+/**
+  The destructor removes the widget and destroys the OpenGL context
+  associated with it.
+*/
 Fl_Gl_Window::~Fl_Gl_Window() {
   hide();
 //  delete overlay; this is done by ~Fl_Group
@@ -432,6 +493,20 @@ void Fl_Gl_Window::init() {
 #endif // 0
 }
 
+/**
+  You must implement this virtual function if you want to draw into the
+  overlay.  The overlay is cleared before this is called.  You should
+  draw anything that is not clear using OpenGL.  You must use 
+  gl_color(i) to choose colors (it allocates them from the colormap
+  using system-specific calls), and remember that you are in an indexed
+  OpenGL mode and drawing anything other than flat-shaded will probably
+  not work.
+  <P>Both this function and Fl_Gl_Window::draw() should check 
+  Fl_Gl_Window::valid() and set the same transformation.  If you
+  don't your code may not work on other systems.  Depending on the OS,
+  and on whether overlays are real or simulated, the OpenGL context may
+  be the same or different between the overlay and main window.
+*/
 void Fl_Gl_Window::draw_overlay() {}
 
 #endif

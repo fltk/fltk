@@ -443,6 +443,11 @@ void Fl_Double_Window::hide() {
   Fl_Window::hide();
 }
 
+/**
+  The destructor <I>also deletes all the children</I>. This allows a
+  whole tree to be deleted at once, without having to keep a pointer to
+  all the children in the user code.
+*/
 Fl_Double_Window::~Fl_Double_Window() {
   hide();
 }

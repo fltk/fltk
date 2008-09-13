@@ -9,8 +9,8 @@ header. Most other stuff goes into the source.
 
 In Progress Work List (add your WP and name here):
 
-  - WP1  (Fabien)
-  - WP2
+  - WP1  (Fabien) DONE
+  - WP2  (Fabien)
   - WP3
   - WP4
   - WP5
@@ -154,8 +154,6 @@ widgets.html
   covering the mainly this file
 -------------------------------------------------------------------
 Enumerations.H
-Fl.H
-Fl.cxx
 Fl_Adjuster.H
 Fl_Adjuster.cxx
 Fl_BMP_Image.H
@@ -167,7 +165,6 @@ Fl_Box.cxx
 Fl_Browser.H
 Fl_Browser.cxx
 Fl_Browser_.H
-Fl_Browser_.cxx
 Fl_Browser_load.cxx
 Fl_Button.H
 Fl_Button.cxx
@@ -187,8 +184,6 @@ Fl_Counter.H
 Fl_Counter.cxx
 Fl_Dial.H
 Fl_Dial.cxx
-Fl_Double_Window.H
-Fl_Double_Window.cxx
 Fl_Export.H
 Fl_File_Browser.H
 Fl_File_Browser.cxx
@@ -211,11 +206,6 @@ Fl_GIF_Image.H
 Fl_GIF_Image.cxx
 Fl_Gl_Choice.H
 Fl_Gl_Choice.cxx
-Fl_Gl_Overlay.cxx
-Fl_Gl_Window.H
-Fl_Gl_Window.cxx
-Fl_Group.H
-Fl_Group.cxx
 Fl_Help_Dialog.H
 Fl_Help_Dialog.cxx
 Fl_Help_View.H
@@ -259,8 +249,6 @@ Fl_Multiline_Output.H
 Fl_Nice_Slider.H
 Fl_Object.H
 Fl_Output.H
-Fl_Overlay_Window.H
-Fl_Overlay_Window.cxx
 Fl_PNG_Image.H
 Fl_PNG_Image.cxx
 Fl_PNM_Image.H
@@ -297,8 +285,6 @@ Fl_Select_Browser.H
 Fl_Shared_Image.H
 Fl_Shared_Image.cxx
 Fl_Simple_Counter.H
-Fl_Single_Window.H
-Fl_Single_Window.cxx
 Fl_Slider.H
 Fl_Slider.cxx
 Fl_Spinner.H
@@ -330,10 +316,6 @@ Fl_Value_Output.H
 Fl_Value_Output.cxx
 Fl_Value_Slider.H
 Fl_Value_Slider.cxx
-Fl_Widget.H
-Fl_Widget.cxx
-Fl_Window.H
-Fl_Window.cxx
 Fl_Window_fullscreen.cxx
 Fl_Window_hotspot.cxx
 Fl_Window_iconize.cxx
@@ -345,21 +327,10 @@ Fl_XColor.H
 Fl_XPM_Image.H
 Fl_XPM_Image.cxx
 Fl_abort.cxx
-Fl_add_idle.cxx
-Fl_arg.cxx
-Fl_compose.cxx
-Fl_display.cxx
 Fl_get_key.cxx
 Fl_get_key_mac.cxx
 Fl_get_key_win32.cxx
-Fl_get_system_colors.cxx
 Fl_grab.cxx
-Fl_lock.cxx
-Fl_mac.cxx
-Fl_own_colormap.cxx
-Fl_visual.cxx
-Fl_win32.cxx
-Fl_x.cxx
 Xutf8.h
 cgdebug.h
 cmap.cxx
@@ -378,12 +349,8 @@ fl_arc.cxx
 fl_arci.cxx
 fl_ask.H
 fl_ask.cxx
-fl_boxtype.cxx
 fl_call_main.c
 fl_cmap.h
-fl_color.cxx
-fl_color_mac.cxx
-fl_color_win32.cxx
 fl_cursor.cxx
 fl_curve.cxx
 fl_diamond_box.cxx
@@ -408,7 +375,6 @@ fl_font_x.cxx
 fl_font_xft.cxx
 fl_gtk.cxx
 fl_images_core.cxx
-fl_labeltype.cxx
 fl_line_style.cxx
 fl_message.H
 fl_open_uri.cxx
@@ -430,7 +396,6 @@ fl_set_fonts_win32.cxx
 fl_set_fonts_x.cxx
 fl_set_fonts_xft.cxx
 fl_shadow_box.cxx
-fl_shortcut.cxx
 fl_show_colormap.H
 fl_show_colormap.cxx
 fl_show_input.H
@@ -455,7 +420,6 @@ gl.h
 gl2opengl.h
 gl_draw.H
 gl_draw.cxx
-gl_start.cxx
 glu.h
 glut.H
 glut_compatability.cxx
@@ -467,7 +431,6 @@ names.h
 numericsort.c
 scandir.c
 scandir_win32.c
-screen_xywh.cxx
 slowarrow.h
 vsnprintf.c
 win32.H

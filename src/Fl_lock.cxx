@@ -78,6 +78,7 @@ static void lock_ring();
 static void unlock_ring();
 
 
+/** Adds an awake handler for use in awake(). */
 int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
 {
   int ret = 0;
@@ -100,7 +101,7 @@ int Fl::add_awake_handler_(Fl_Awake_Handler func, void *data)
   unlock_ring();
   return ret;
 }
-
+/** Gets the last stored awake handler for use in awake(). */
 int Fl::get_awake_handler_(Fl_Awake_Handler &func, void *&data)
 {
   int ret = 0;
@@ -119,9 +120,11 @@ int Fl::get_awake_handler_(Fl_Awake_Handler &func, void *&data)
 }
 
 //
-// 'Fl::awake()' - Let the main thread know an update is pending
-//                 and have it cal a specific function
-//
+/**
+  Let the main thread know an update is pending
+  and have it call a specific function
+  See void awake(void* message=0). 
+*/
 int Fl::awake(Fl_Awake_Handler func, void *data) {
   int ret = add_awake_handler_(func, data);
   Fl::awake();
@@ -130,6 +133,52 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
 
 ////////////////////////////////////////////////////////////////
 // Windows threading...
+/** \fn void Fl::lock()
+    The lock() method blocks the current thread until it
+    can safely access FLTK widgets and data. Child threads should
+    call this method prior to updating any widgets or accessing
+    data. The main thread must call lock() to initialize
+    the threading support in FLTK.
+    
+    <P>Child threads must call unlock() when they are done
+    accessing FLTK.
+    
+    <P>When the wait() method is waiting
+    for input or timeouts, child threads are given access to FLTK.
+    Similarly, when the main thread needs to do processing, it will
+    wait until all child threads have called unlock() before processing
+    additional data.
+    
+    <P>See also: multithreading
+*/
+/** \fn void Fl::unlock()
+    The unlock() method releases the lock that was set
+    using the lock() method. Child
+    threads should call this method as soon as they are finished
+    accessing FLTK.
+    
+    <P>See also: multithreading
+*/
+/** \fn void Fl::awake(void* msg)
+    The awake() method sends a message pointer to the main thread, 
+    causing any pending Fl::wait() call to 
+    terminate so that the main thread can retrieve the message and any pending 
+    redraws can be processed.
+    
+    <P>Multiple calls to Fl::awake() will queue multiple pointers 
+    for the main thread to process, up to a system-defined (typically several 
+    thousand) depth. The default message handler saves the last message which 
+    can be accessed using the 
+    Fl::thread_message() function.
+    
+    <P>The second form of awake() registers a function that will be 
+    called by the main thread during the next message handling cycle. 
+    awake() will return 0 if the callback function was registered, 
+    and -1 if registration failed. Over a thousand awake callbacks can be
+    registered simultaneously.
+    
+    <P>See also: multithreading.
+*/
 #ifdef WIN32
 #  include <windows.h>
 #  include <process.h>
@@ -174,10 +223,6 @@ static void lock_function() {
   EnterCriticalSection(&cs);
 }
 
-//
-// 'Fl::lock()' - Lock access to FLTK data structures...
-//
-
 void Fl::lock() {
   if (!main_thread) InitializeCriticalSection(&cs);
 
@@ -190,20 +235,9 @@ void Fl::lock() {
   }
 }
 
-//
-// 'Fl::unlock()' - Unlock access to FLTK data structures...
-//
-
 void Fl::unlock() {
   unlock_function();
 }
-
-
-//
-// 'Fl::awake()' - Let the main thread know an update is pending.
-//
-// When called from a thread, it causes FLTK to awake from Fl::wait()...
-//
 
 void Fl::awake(void* msg) {
   PostThreadMessage( main_thread, fl_wake_msg, (WPARAM)msg, 0);

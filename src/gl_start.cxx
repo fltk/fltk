@@ -109,7 +109,19 @@ void gl_finish() {
   glXWaitGL();
 #endif
 }
-
+/**
+    This does the same thing as
+    Fl::visual(int) but also
+    requires OpenGL drawing to work.  This <I>must</I> be done if
+    you want to draw in normal windows with OpenGL with  gl_start() and
+    gl_end().  It may be useful to call this so your X
+    windows use the same visual as an
+    Fl_Gl_Window, which on
+    some servers will reduce colormap flashing.
+    
+    <P>See Fl_Gl_Window
+    for a list of additional values for the argument.
+*/
 int Fl::gl_visual(int mode, int *alist) {
   Fl_Gl_Choice *c = Fl_Gl_Choice::find(mode,alist);
   if (!c) return 0;

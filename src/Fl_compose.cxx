@@ -87,6 +87,24 @@ static char dead_keys[] = {
 
 int Fl::compose_state = 0;
 
+/** Any text editing widget should call this for each FL_KEYBOARD event.
+    Use of this function is very simple.
+
+    <p>If <i>true</i> is returned, then it has modified the
+    Fl::event_text() and Fl::event_length() to a set of <i>bytes</i> to
+    insert (it may be of zero length!).  In will also set the "del"
+    parameter to the number of <i>bytes</i> to the left of the cursor to
+    delete, this is used to delete the results of the previous call to
+    Fl::compose().
+    
+    <p>If <i>false</i> is returned, the keys should be treated as function
+    keys, and del is set to zero. You could insert the text anyways, if
+    you don't know what else to do.
+    
+    <p>Though the current implementation returns immediately, future
+    versions may take quite awhile, as they may pop up a window or do
+    other user-interface things to allow characters to be selected.
+*/
 int Fl::compose(int& del) {
 
   del = 0;

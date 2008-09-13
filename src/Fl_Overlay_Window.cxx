@@ -25,6 +25,13 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \fn virtual void Fl_Overlay_Window::draw_overlay() = 0
+  You must subclass Fl_Overlay_Window and provide this method.
+  It is just like a draw() method, except it draws the overlay.
+  The overlay will have already been &quot;cleared&quot; when this is called.  You
+  can use any of the routines described in &lt;FL/fl_draw.H&gt;.
+*/
+
 // A window using double-buffering and able to draw an overlay
 // on top of that.  Uses the hardware to draw the overlay if
 // possible, otherwise it just draws in the front buffer.
@@ -65,6 +72,9 @@ void Fl_Overlay_Window::resize(int X, int Y, int W, int H) {
   if (overlay_ && overlay_!=this) overlay_->resize(0,0,w(),h());
 }
 
+/**
+  Destroys the window and all child widgets.
+*/
 Fl_Overlay_Window::~Fl_Overlay_Window() {
   hide();
 //  delete overlay; this is done by ~Fl_Group
@@ -74,6 +84,12 @@ Fl_Overlay_Window::~Fl_Overlay_Window() {
 
 int Fl_Overlay_Window::can_do_overlay() {return 0;}
 
+/**
+  Call this to indicate that the overlay data has changed and needs to
+  be redrawn.  The overlay will be clear until the first time this is
+  called, so if you want an initial display you must call this after
+  calling show().
+*/
 void Fl_Overlay_Window::redraw_overlay() {
   overlay_ = this;
   clear_damage((uchar)(damage()|FL_DAMAGE_OVERLAY));

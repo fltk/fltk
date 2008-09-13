@@ -71,12 +71,24 @@ static void hscrollbar_callback(Fl_Widget* s, void*) {
 // binary compatibility in 1.1.x - M. Sweet
 int Fl_Browser_::scrollbar_width_ = 16;
 
-// Get the standard scrollbar size
+/**
+    Gets the default scrollbar size that is used by the
+    Fl_Browser_,
+    Fl_Help_View,
+    Fl_Scroll, and
+    Fl_Text_Display widgets.
+*/
 int Fl::scrollbar_size() {
   return Fl_Browser_::scrollbar_width();
 }
 
-// Set the standard scrollbar size
+/**
+    Sets the default scrollbar size that is used by the
+    Fl_Browser_,
+    Fl_Help_View,
+    Fl_Scroll, and
+    Fl_Text_Display widgets.
+*/
 void Fl::scrollbar_size(int W) {
   Fl_Browser_::scrollbar_width(W);
 }

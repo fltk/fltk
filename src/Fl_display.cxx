@@ -32,6 +32,12 @@
 #include <stdlib.h>
 #include "flstring.h"
 
+/**
+    Sets the X display to use for all windows.  Actually this just sets
+    the environment variable $DISPLAY to the passed string, so this only
+    works before you show() the first window or otherwise open the display,
+    and does nothing useful under WIN32.
+*/
 void Fl::display(const char *d) {
 #if defined(__APPLE__) || defined(WIN32)
   (void)d;

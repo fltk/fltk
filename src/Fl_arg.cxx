@@ -67,7 +67,13 @@ extern const char *fl_fg;
 extern const char *fl_bg;
 extern const char *fl_bg2;
 
-// consume a switch from argv.  Returns number of words eaten, 0 on error:
+/**
+  Consume a single switch from argv, starting at word i.
+  Returns the number of words eaten (1 or 2, or 0 if it is not
+  recognized) and adds the same value to i.  You can use this
+  function if you prefer to control the incrementing through the
+  arguments yourself.
+*/
 int Fl::arg(int argc, char **argv, int &i) {
   arg_called = 1;
   const char *s = argv[i];
@@ -167,11 +173,116 @@ int Fl::arg(int argc, char **argv, int &i) {
   return 2;
 }
 
-// consume all switches from argv.  Returns number of words eaten.
-// Returns zero on error.  'i' will either point at first word that
-// does not start with '-', at the error word, or after a '--', or at
-// argc.  If your program does not take any word arguments you can
-// report an error if i < argc.
+
+/** 
+  Consume all switches from argv.  Returns number of words eaten
+  Returns zero on error.  'i' will either point at first word that
+  does not start with '-', at the error word, or after a '--', or at
+  argc.  If your program does not take any word arguments you can
+  report an error if i < argc.
+  
+  <P>FLTK provides an <I>entirely optional</I> command-line switch parser.
+  You don't have to call it if you don't like them! Everything it can do
+  can be done with other calls to FLTK.
+  
+  <P>To use the switch parser, call Fl::args(...) near the start
+  of your program.  This does <I>not</I> open the display, instead
+  switches that need the display open are stashed into static variables.
+  Then you <I>must</I> display your first window by calling 
+  window-&gt;show(argc,argv), which will do anything stored in the
+  static variables.
+  
+  <P>callback lets you define your own switches.  It is called
+  with the same argc and argv, and with i the
+  index of each word. The callback should return zero if the switch is
+  unrecognized, and not change i.  It should return non-zero if
+  the switch is recognized, and add at least 1 to i (it can add
+  more to consume words after the switch).  This function is called
+  <i>before</i> any other tests, so <i>you can override any FLTK
+  switch</i> (this is why FLTK can use very short switches instead of
+  the long ones all other toolkits force you to use).
+  
+  <P>On return i is set to the index of the first non-switch.
+  This is either:
+  
+  <UL>
+  <LI>The first word that does not start with '-'. </LI>
+  <LI>The word '-' (used by many programs to name stdin as a file) </LI>
+  <LI>The first unrecognized switch (return value is 0). </LI>
+  <LI>argc</LI>
+  </UL>
+  
+  <P>The return value is i unless an unrecognized switch is found,
+  in which case it is zero.  If your program takes no arguments other
+  than switches you should produce an error if the return value is less
+  than argc.
+  
+  <P>All switches except -bg2 may be abbreviated one letter and case is ignored:
+  
+  <UL>
+  
+  	<LI>-bg color or -background color
+  
+  	<P>Sets the background color using Fl::background().</LI>
+  
+  	<LI>-bg2 color or -background2 color
+  
+  	<P>Sets the secondary background color using Fl::background2().</LI>
+  
+  	<LI>-display host:n.n
+  
+  	<P>Sets the X display to use; this option is silently
+  	ignored under WIN32 and MacOS.</LI>
+  
+  	<LI>-dnd and -nodnd
+  
+  	<P>Enables or disables drag and drop text operations
+  	using Fl::dnd_text_ops().</LI>
+  
+  	<LI>-fg color or -foreground color
+  
+  	<P>Sets the foreground color using Fl::foreground().</LI>
+  
+  	<LI>-geometry WxH+X+Y
+  
+  	<P>Sets the initial window position and size according
+  	the the standard X geometry string.</LI>
+  
+  	<LI>-iconic
+  
+  	<P>Iconifies the window using Fl_Window::iconize().</LI>
+  
+  	<LI>-kbd and -nokbd
+  
+  	<P>Enables or disables visible keyboard focus for
+  	non-text widgets using Fl::visible_focus().</LI>
+  
+  	<LI>-name string
+  
+  	<P>Sets the window class using Fl_Window::xclass().</LI>
+  
+  	<LI>-scheme string
+  
+  	<P>Sets the widget scheme using Fl::scheme().</LI>
+  
+  	<LI>-title string
+  
+  	<P>Sets the window title using Fl_Window::label().</LI>
+  
+  	<LI>-tooltips and -notooltips
+  
+  	<P>Enables or disables tooltips using Fl_Tooltip::enable().</LI>
+  
+  </UL>
+  
+  <P>The second form of Fl::args() is useful if your program does
+  not have command line switches of its own. It parses all the switches,
+  and if any are not recognized it calls Fl::abort(Fl::help).
+  
+  <P>A usage string is displayed if Fl::args() detects an invalid
+  argument on the command-line. You can change the message by setting the
+  Fl::help pointer.
+*/
 
 int Fl::args(int argc, char** argv, int& i, int (*cb)(int,char**,int&)) {
   arg_called = 1;
@@ -283,7 +394,7 @@ static const char * const helpmsg =
 " -to[oltips]";
 
 const char * const Fl::help = helpmsg+13;
-
+/** See Fl::args(int argc, char **argv, int& i, int (*cb)(int,char**,int&)) */
 void Fl::args(int argc, char **argv) {
   int i; if (Fl::args(argc,argv,i) < argc) Fl::error(helpmsg);
 }

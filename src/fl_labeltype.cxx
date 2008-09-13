@@ -74,6 +74,7 @@ static Fl_Label_Draw_F* table[MAX_LABELTYPE] = {
 
 static Fl_Label_Measure_F* measure[MAX_LABELTYPE];
 
+/** Sets the functions to call to draw and measure a specific labeltype. */
 void Fl::set_labeltype(Fl_Labeltype t,Fl_Label_Draw_F* f,Fl_Label_Measure_F*m) 
 {
   table[t] = f; measure[t] = m;

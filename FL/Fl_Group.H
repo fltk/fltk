@@ -32,6 +32,14 @@
 #include "Fl_Widget.H"
 #endif
 
+/**
+  The Fl_Group class is the FLTK container widget. It maintains
+  an array of child widgets. These children can themselves be any widget
+  including Fl_Group. The most important subclass of Fl_Group
+  is Fl_Window, however
+  groups can also be used to control radio buttons or to enforce resize
+  behavior.
+*/
 class FL_EXPORT Fl_Group : public Fl_Widget {
 
   Fl_Widget** array_;
@@ -50,7 +58,18 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
 protected:
   enum { CLIP_CHILDREN = 2048 };
 
+  /**
+    The first method controls whether the group widget clips the drawing of
+    child widgets to its bounding box.
+    
+    <p>The second method returns the current clipping mode.
+    
+    <p>The default is to not clip (0) the drawing of child widgets.
+  */
   void clip_children(int c) { if (c) set_flag(CLIP_CHILDREN); else clear_flag(CLIP_CHILDREN); }
+  /**
+    See void Fl_Group::clip_children(int c)
+  */
   int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
 
   void draw();
@@ -68,26 +87,75 @@ public:
   static Fl_Group *current();
   static void current(Fl_Group *g);
 
+  /**
+    Returns how many child widgets the group has.
+  */
   int children() const {return children_;}
+  /**
+    Returns array()[n].  <i>No range checking is done!</i>
+  */
   Fl_Widget* child(int n) const {return array()[n];}
   int find(const Fl_Widget*) const;
+  /**
+    See int Fl_Group::find(const Fl_Widget *w) const 
+  */
   int find(const Fl_Widget& o) const {return find(&o);}
   Fl_Widget* const* array() const;
 
   void resize(int,int,int,int);
+  /**
+    Creates a new Fl_Group widget using the given position, size,
+    and label string. The default boxtype is FL_NO_BOX.
+  */
   Fl_Group(int,int,int,int, const char * = 0);
   virtual ~Fl_Group();
   void add(Fl_Widget&);
+  /**
+    See void Fl_Group::add(Fl_Widget &w) 
+  */
   void add(Fl_Widget* o) {add(*o);}
   void insert(Fl_Widget&, int i);
+  /**
+    This does insert(w, find(beforethis)).  This will append the
+    widget if beforethis is not in the group.
+  */
   void insert(Fl_Widget& o, Fl_Widget* before) {insert(o,find(before));}
   void remove(Fl_Widget&);
   void remove(Fl_Widget* o) {remove(*o);}
   void clear();
 
+  /**
+    See void Fl_Group::resizable(Fl_Widget *box) 
+  */
   void resizable(Fl_Widget& o) {resizable_ = &o;}
+  /**
+    The resizable widget defines the resizing box for the group. When the
+    group is resized it calculates a new size and position for all of its
+    children. Widgets that are horizontally or vertically inside the
+    dimensions of the box are scaled to the new size. Widgets outside the
+    box are moved.
+    <P>In these examples the gray area is the resizable:
+    <BR></P>
+    <P align=center>\image html resizebox1.gif&nbsp;&nbsp;
+    \image html resizebox2.gif</P>
+    <P>The resizable may be set to the group itself (this is the default
+    value for an Fl_Group, although NULL is the default
+    for Fl_Window and Fl_Pack), in which case all the 
+    contents are resized.
+    If the resizable is NULL then all widgets remain a fixed size
+    and distance from the top-left corner. </P>
+    <P>It is possible to achieve any type of resize behavior by using an
+    invisible Fl_Box as the resizable and/or by using a hierarchy
+    of child Fl_Group's.
+  */
   void resizable(Fl_Widget* o) {resizable_ = o;}
+  /**
+    See void Fl_Group::resizable(Fl_Widget *box) 
+  */
   Fl_Widget* resizable() const {return resizable_;}
+  /**
+    Adds a widget to the group and makes it the resizable widget.
+  */
   void add_resizable(Fl_Widget& o) {resizable_ = &o; add(o);}
   void init_sizes();
 

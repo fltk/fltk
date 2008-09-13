@@ -51,6 +51,13 @@
 #include <FL/x.H>
 #endif
 
+/**
+    Test the current event, which must be an FL_KEYBOARD or 
+    FL_SHORTCUT, against a shortcut value (described in 
+    Fl_Button).  Returns non-zero if there is a match.  Not to
+    be confused with 
+    Fl_Widget::test_shortcut().
+*/
 int Fl::test_shortcut(int shortcut) {
   if (!shortcut) return 0;
 

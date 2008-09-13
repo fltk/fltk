@@ -51,7 +51,12 @@ static char	fl_bg_set = 0;
 static char	fl_bg2_set = 0;
 static char	fl_fg_set = 0;
 
-
+/**
+    Changes fl_color(FL_BACKGROUND_COLOR) to the given color, 
+    and changes the gray ramp from 32 to 56 to black to white.  These are 
+    the colors used as backgrounds by almost all widgets and used to draw 
+    the edges of all the boxtypes.
+*/
 void Fl::background(uchar r, uchar g, uchar b) {
   fl_bg_set = 1;
 
@@ -70,13 +75,19 @@ void Fl::background(uchar r, uchar g, uchar b) {
 		  uchar(pow(gray,powb)*255+.5));
   }
 }
-
+/** Changes fl_color(FL_FOREGROUND_COLOR). */
 void Fl::foreground(uchar r, uchar g, uchar b) {
   fl_fg_set = 1;
 
   Fl::set_color(FL_FOREGROUND_COLOR,r,g,b);
 }
 
+/**
+    Changes the alternative background color. This color is used as a 
+    background by Fl_Input and other text widgets.
+    <P>This call may change fl_color(FL_FOREGROUND_COLOR) if it 
+    does not provide sufficient contrast to FL_BACKGROUND2_COLOR.
+*/
 void Fl::background2(uchar r, uchar g, uchar b) {
   fl_bg2_set = 1;
 
@@ -132,7 +143,18 @@ int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   } else return 0;
 }
 #endif // WIN32 || __APPLE__
-
+/** \fn Fl::get_system_colors()
+    Read the user preference colors from the system and use them to call
+    Fl::foreground(), Fl::background(), and 
+    Fl::background2().  This is done by
+    Fl_Window::show(argc,argv) before applying the -fg and -bg
+    switches.
+    
+    <P>On X this reads some common values from the Xdefaults database.
+    KDE users can set these values by running the "krdb" program, and
+    newer versions of KDE set this automatically if you check the "apply
+    style to other X programs" switch in their control panel.
+*/
 #if defined(WIN32)
 static void
 getsyscolor(int what, const char* arg, void (*func)(uchar,uchar,uchar))
@@ -246,6 +268,25 @@ Fl_Image	*Fl::scheme_bg_ = (Fl_Image *)0;
 
 static Fl_Pixmap	tile(tile_xpm);
 
+/**
+    Gets or sets the current widget scheme. NULL will use
+    the scheme defined in the FLTK_SCHEME environment
+    variable or the scheme resource under X11. Otherwise,
+    any of the following schemes can be used:</P>
+    
+    <ul>
+    
+    	<li>"none" - This is the default look-n-feel which resembles old
+    	Windows (95/98/Me/NT/2000) and old GTK/KDE</li>
+    
+    	<li>"plastic" - This scheme is inspired by the Aqua user interface
+    	on Mac OS X</li>
+    
+    	<li>"gtk+" - This scheme is inspired by the Red Hat Bluecurve
+    	theme</li>
+    
+    </ul>
+*/
 int Fl::scheme(const char *s) {
   if (!s) {
     if ((s = getenv("FLTK_SCHEME")) == NULL) {
