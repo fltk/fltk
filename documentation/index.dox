@@ -1,0 +1,103 @@
+/**
+
+\mainpage FLTK Programming Manual
+
+<TABLE BGCOLOR="#9f9f9f" CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="700">
+<TR>
+	<TD VALIGN="MIDDLE">
+  \image html FL200.gif
+	<TD ALIGN="CENTER" VALIGN="MIDDLE">
+	<H1>FLTK 1.3.0 Programming Manual</H1>
+	<P>Revision 8 by Michael Sweet, Craig P. Earls,<br>Matthias Melcher, and Bill Spitzak<BR>
+	Copyright 1998-2008 by Bill Spitzak and others.</P>
+	</TD>
+</TR>
+<TR>
+	<TH COLSPAN=2>This software and manual are provided under the terms of the GNU Library General Public License. Permission is granted to reproduce this manual or any portion for any purpose, provided this copyright and permission notice are preserved.</TH>
+</TR>
+</TABLE>
+
+<TABLE BGCOLOR="#9f9fef" CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="700">
+<TR>
+	<TD ALIGN="LEFT" VALIGN="TOP"><B>
+ \subpage preface
+        </B>
+	<BR>
+	<BR>
+	<B><A HREF="intro.html#intro">1 - Introduction to FLTK</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="basics.html#basics">2 - FLTK Basics</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="common.html#common">3 - Common Widgets and Attributes</A></B>
+	<UL>
+	<LI><A HREF="drawing.html#colors">Colors</A></LI>
+	<LI><A HREF="common.html#boxtypes">Box Types</A></LI>
+	<LI><A HREF="common.html#labels">Labels and Label Types</A></LI>
+	<LI><A HREF="drawing.html#images">Images</A></LI>
+	<LI><A HREF="Fl_Pixmap.html#Fl_Pixmap">class Fl_Pixmap</A></LI>
+	</UL>
+	<B><A HREF="editor.html#editor">4 - Designing a Simple Text Editor</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="drawing.html#drawing">5 - Drawing Things in FLTK</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="events.html#events">6 - Handling Events</A></B>
+	<UL>
+	<LI><A HREF="events.html#event_xxx">Fl::event_*() methods</A></LI>
+	<LI><A HREF="events.html#propagation">Event Propagation</A></LI>
+	</UL>
+	<B><A HREF="subclassing.html#subclassing">7 - Adding and Extending
+	Widgets</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="opengl.html#opengl">8 - Using OpenGL</A></B>
+	</TD>
+	<TD ALIGN=LEFT VALIGN=TOP>
+	<B><A HREF="fluid.html#FLUID">9 - Programming with FLUID</A></B>
+	<UL>
+	<LI><A HREF="fluid.html#widget_attributes">Widget Attributes</A></LI>
+	<LI><A HREF="fluid.html#widget_attributes">Selecting Moving Widgets</A></LI>
+	<LI><A HREF="fluid.html#images">Image Labels</A></LI>
+	</UL>
+	<B>
+ \subpage advanced
+ 	</B>
+	<BR>
+	<BR>
+	<B><A HREF="classes.html">A - Class Reference</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="globals_func.html">B - Function Reference</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="enumerations.html#Enumerations">C - FLTK Enumerations.H</A>
+	</B>
+	<BR>
+	<BR>
+	<B><A HREF="glut.html#glut">D - GLUT Compatibility</A></B>
+	<UL>
+	<LI><A HREF="glut.html#Fl_Glut_Window">class Fl_Glut_Window</A></LI>
+	</UL>
+	<B><A HREF="forms.html#forms">E - Forms Compatibility</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="osissues.html#osissues">F - Operating System Issues</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="migration.html">G - Migrating Code from FLTK 1.0.x</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="license.html#license">H - Software License</A></B>
+	<BR>
+	<BR>
+	<B><A HREF="examples.html#examples">I - Example Source Code</A></B>
+	</TD>
+</TR>
+</TABLE>
+
+*/
+
+

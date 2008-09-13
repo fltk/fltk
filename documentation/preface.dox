@@ -1,0 +1,107 @@
+/**
+
+ \page preface Preface
+
+<P>This manual describes the Fast Light Tool Kit (&quot;FLTK&quot;)
+version 1.3.0, a C++ Graphical User Interface
+(&quot;GUI&quot;) toolkit for UNIX, Microsoft Windows and MacOS. Each
+of the chapters in this manual is designed as a tutorial for
+using FLTK, while the appendices provide a convenient reference
+for all FLTK widgets, functions, and operating system
+interfaces.</P>
+
+<P><B>This manual may be printed, modified, and/or used under
+the terms of the FLTK license provided in <A
+HREF="license.html">Appendix A</A>.</B>
+
+<H2>Organization</H2>
+
+<P>This manual is organized into the following chapters and appendices:</P>
+
+<UL>
+
+	<LI><A HREF="intro.html#intro">Chapter 1 - Introduction to FLTK</A></LI>
+
+	<LI><A HREF="basics.html#basics">Chapter 2 - FLTK Basics</A></LI>
+
+	<LI><A HREF="common.html#common">Chapter 3 - Common Widgets and Attributes</A></LI>
+
+	<LI><A HREF="editor.html#editor">Chapter 4 - Designing a Simple Text
+	Editor</A></LI>
+
+	<LI><A HREF="drawing.html#drawing">Chapter 5 - Drawing Things in FLTK</A></LI>
+
+	<LI><A HREF="events.html#events">Chapter 6 - Handling Events</A></LI>
+
+	<LI><A HREF="subclassing.html#subclassing">Chapter 7 - Extending and
+	Adding Widgets</A></LI>
+
+	<LI><A HREF="opengl.html#opengl">Chapter 8 - Using OpenGL</A></LI>
+
+	<LI><A HREF="fluid.html#FLUID">Chapter 9 - Programming With FLUID</A></LI>
+
+	<LI><A HREF="widgets.html#widgets">Appendix A - Class Reference</A></LI>
+
+	<LI><A HREF="functions.html#functions">Appendix B - Function Reference</A></LI>
+
+	<LI><A HREF="enumerations.html#Enumerations">Appendix C - Enumeration
+	Reference</A></LI>
+
+	<LI><A HREF="glut.html#glut">Appendix D - GLUT Compatibility</A></LI>
+
+	<LI><A HREF="forms.html#forms">Appendix E - Forms Compatibility</A></LI>
+
+	<LI><A HREF="osissues.html#osissues">Appendix F - Operating System Issues</A></LI>
+
+	<LI><A HREF="migration.html">Appendix G - Migrating from FLTK 1.0.x to FLTK 1.1.x</A></LI>
+
+	<LI><A HREF="license.html#license">Appendix H - Software License</A></LI>
+
+	<LI><A HREF="examples.html#examples">Appendix I - Example Source Code</A></LI>
+
+</UL>
+
+<H2>Conventions</H2>
+
+<P>The following typeface conventions are used in this manual:</P>
+
+<UL>
+	<LI>Function and constant names are shown in <B><TT>bold courier type</TT></B></LI>
+
+	<LI>Code samples and commands are shown in <TT>regular courier type</TT></LI>
+
+</UL>
+
+<H2>Abbreviations</H2>
+
+<P>The following abbreviations are used in this manual:</P>
+
+<DL>
+
+	<DT>X11</DT>
+	<DD>The X Window System version 11.</DD>
+
+	<DT>Xlib</DT>
+	<DD>The X Window System interface library.</DD>
+
+	<DT>WIN32</DT>
+	<DD>The Microsoft Windows 32-bit Application Programmer's Interface.</DD>
+
+	<DT>MacOS</DT>
+	<DD>The Apple Macintosh OS 8.6 and later, including OS X.</DD>
+
+</DL>
+
+<H2>Copyrights and Trademarks</H2>
+
+<P>FLTK is Copyright 1998-2006 by Bill Spitzak and others.  Use and
+distribution of FLTK is governed by the GNU Library General Public
+License, located in <A HREF="license.html#license">Appendix H</A>.</P>
+
+<P>UNIX is a registered trademark of the X Open Group, Inc. 
+Microsoft and Windows are registered trademarks of Microsoft
+Corporation. OpenGL is a registered trademark of Silicon
+Graphics, Inc. Apple, Macintosh, MacOS, and Mac OS X are
+registered trademarks of Apple Computer, Inc.</P>
+
+*/
