@@ -7,15 +7,20 @@
 section. Constants whose value is zero are marked with "(0)",
 this is often useful to know when programming.
 
+ \note	This file is not actively maintained any more, but is left
+ 	here as a reference, until the doxygen documentation is
+	completed. See \ref FL/Enumerations.H.
+
+
 <H2>Version Numbers</H2>
  The FLTK version number is stored in a number of compile-time
 constants:
 <UL>
 <LI><TT>FL_MAJOR_VERSION</TT> - The major release number, currently  1. </LI>
-<LI><TT>FL_MINOR_VERSION</TT> - The minor release number, currently  1. </LI>
+<LI><TT>FL_MINOR_VERSION</TT> - The minor release number, currently  3. </LI>
 <LI><TT>FL_PATCH_VERSION</TT> - The patch release number, currently  0. </LI>
 <LI><TT>FL_VERSION</TT> - A combined floating-point version  number for
-the major, minor, and patch release numbers, currently 1.0100. </LI>
+the major, minor, and patch release numbers, currently 1.0300. </LI>
 </UL>
 <H2><A NAME="events">Events</A></H2>
  Events are identified by an <TT>Fl_Event</TT> enumeration value.  The
