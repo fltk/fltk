@@ -8,6 +8,7 @@ implementation is. So class, typedef, enum, and inline docs go in the
 header. Most other stuff goes into the source.
 
 In Progress Work List (add your WP and name here):
+
   - WP1  (Fabien)
   - WP2
   - WP3
@@ -21,6 +22,10 @@ In Progress Work List (add your WP and name here):
   - WP11
   - WP12 (Albrecht)
   - WP13 (Albrecht)
+
+Please drop a note at STR 2037, whenever you take over a WP.
+
+URL for STR 2037: http://www.fltk.org/str.php?L2037
 
 WP1>----------------------------------------------------------
 Fl_Widget.html
