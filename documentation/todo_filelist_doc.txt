@@ -1,14 +1,26 @@
 File list divided into smaller workpackages for being solved by new STRs
 to visit one package of files search for 'WP'
 WP1 -> WP11 : Widgets, Image and other classes, 7 to 8 files per WP.
-WP13,14 : other documentation: 10 to 11 files per WP.
+WP12,13 : other documentation: 10 to 11 files per WP.
 
 Note: We must put the Doxygen comments wherever the 
 implementation is. So class, typedef, enum, and inline docs go in the 
 header. Most other stuff goes into the source.
 
 In Progress Work List (add your WP and name here):
-  - WP1 (Fabien) 
+  - WP1  (Fabien)
+  - WP2
+  - WP3
+  - WP4
+  - WP5
+  - WP6
+  - WP7
+  - WP8
+  - WP9
+  - WP10
+  - WP11
+  - WP12 (Albrecht)
+  - WP13 (Albrecht)
 
 WP1>----------------------------------------------------------
 Fl_Widget.html
