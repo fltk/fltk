@@ -15,8 +15,8 @@ In Progress Work List (add your WP and name here):
   - WP4  (Fabien) DONE
   - WP5  (Fabien) DONE
   - WP6  (Fabien) DONE
-  - WP7
-  - WP8
+  - WP7  (Fabien)
+  - WP8  (Fabien)
   - WP9
   - WP10
   - WP11
@@ -89,15 +89,14 @@ Fl_Menu_Item.html
 Fl_Menu_Window.html
 Fl_Progress.html
 Fl_Timer.html
-Fl_Tooltip.html
 WP8>----------------------------------------------------------
+Fl_Valuator.html
+Fl_Box.html
 Fl_Repeat_Button.html
 Fl_Return_Button.html
 Fl_Round_Button.html
 Fl_Scroll.html
 Fl_Scrollbar.html
-Fl_Adjuster.html
-Fl_Box.html
 WP9>----------------------------------------------------------
 Fl_Input_.html
 Fl_Input.html
@@ -108,7 +107,6 @@ Fl_Float_Input.html
 Fl_Secret_Input.html
 Fl_Multiline_Input.html
 WP10>----------------------------------------------------------
-Fl_Valuator.html
 Fl_Value_Input.html
 Fl_Multiline_Output.html
 Fl_Output.html
@@ -116,8 +114,10 @@ Fl_Value_Output.html
 Fl_Value_Slider.html
 Fl_Roller.html
 Fl_Slider.html
+Fl_Adjuster.html
 WP11>----------------------------------------------------------
 Fl_Spinner.html
+Fl_Tooltip.html
 Fl_Text_Buffer.html
 Fl_Text_Display.html
 Fl_Text_Editor.html
