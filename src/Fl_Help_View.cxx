@@ -1002,10 +1002,8 @@ Fl_Help_View::draw()
 }
 
 
-//
-// 'Fl_Help_View::find()' - Find the specified string...
-//
 
+/** Find the specified string s at starting position p, return the matching pos or -1 if not found */
 int						// O - Matching position or -1 if not found
 Fl_Help_View::find(const char *s,		// I - String to find
                    int        p)		// I - Starting position
@@ -2729,12 +2727,13 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
   leftline(0);
 }
 
+/** Removes the current text selection. */
 void Fl_Help_View::clear_selection()
 {
   if (current_view==this)
     clear_global_selection();
 }
-
+/** Selects All the text in the view. */
 void Fl_Help_View::select_all()
 {
   clear_global_selection();
@@ -3007,10 +3006,10 @@ Fl_Help_View::handle(int event)	// I - Event to handle
   return (Fl_Group::handle(event));
 }
 
-//
-// 'Fl_Help_View::Fl_Help_View()' - Build a Fl_Help_View widget.
-//
-
+/** 
+  The constructor creates the Fl_Help_View widget at the specified
+  position and size.
+*/
 Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
                 	   int        yy,	// I - Top position
 			   int        ww,	// I - Width in pixels
@@ -3078,6 +3077,10 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
 //
 
 Fl_Help_View::~Fl_Help_View()
+/**
+  The destructor destroys the widget and frees all memory that has been
+  allocated for the current file.
+*/
 {
   clear_selection();
   free_data();
@@ -3090,6 +3093,7 @@ Fl_Help_View::~Fl_Help_View()
 
 int				// O - 0 on success, -1 on error
 Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
+/**  This method loads the specified file or URL.*/
 {
   FILE		*fp;		// File to read from
   long		len;		// Length of file
@@ -3211,10 +3215,7 @@ Fl_Help_View::resize(int xx,	// I - New left position
 }
 
 
-//
-// 'Fl_Help_View::topline()' - Set the top line to the named target.
-//
-
+/** Scroll the text to the indicated position,  given a named destination */
 void
 Fl_Help_View::topline(const char *n)	// I - Target name
 {
@@ -3235,10 +3236,8 @@ Fl_Help_View::topline(const char *n)	// I - Target name
 }
 
 
-//
-// 'Fl_Help_View::topline()' - Set the top line by number.
-//
 
+/** Scroll the text to the indicated position,  given a pixel line. */
 void
 Fl_Help_View::topline(int t)	// I - Top line number
 {
@@ -3260,10 +3259,9 @@ Fl_Help_View::topline(int t)	// I - Top line number
 }
 
 
-//
-// 'Fl_Help_View::leftline()' - Set the left position.
-//
 
+
+/** Sets the left position. */
 void
 Fl_Help_View::leftline(int l)	// I - Left position
 {
@@ -3283,10 +3281,7 @@ Fl_Help_View::leftline(int l)	// I - Left position
 }
 
 
-//
-// 'Fl_Help_View::value()' - Set the help text directly.
-//
-
+/** Sets the current help text buffer to the string provided and reformats the text. */
 void
 Fl_Help_View::value(const char *v)	// I - Text to view
 {

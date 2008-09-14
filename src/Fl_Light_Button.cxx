@@ -157,6 +157,11 @@ int Fl_Light_Button::handle(int event) {
   }
 }
 
+/**
+  Creates a new Fl_Light_Button widget using the given
+  position, size, and label string.
+  <P>The destructor deletes the check button.
+*/
 Fl_Light_Button::Fl_Light_Button(int X, int Y, int W, int H, const char* l)
 : Fl_Button(X, Y, W, H, l) {
   type(FL_TOGGLE_BUTTON);

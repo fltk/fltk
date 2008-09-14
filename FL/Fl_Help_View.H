@@ -90,10 +90,11 @@ struct Fl_Help_Target
   int		y;		// Y offset of target
 };
 
-//
-// Fl_Help_View class...
-//
-
+/**
+  The Fl_Help_View widget displays HTML text. Most HTML 2.0
+  elements are supported, as well as a primitive implementation of tables.
+  GIF, JPEG, and PNG images are displayed inline.
+*/
 class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 {
   enum { RIGHT = -1, CENTER, LEFT };	// Alignments
@@ -187,29 +188,64 @@ public:
 
   Fl_Help_View(int xx, int yy, int ww, int hh, const char *l = 0);
   ~Fl_Help_View();
+  /**    This method returns the current directory for the text in the buffer.  */
   const char	*directory() const { if (directory_[0]) return (directory_);
   					else return ((const char *)0); }
+  /**    This method returns the current filename for the text in the buffer.  */
   const char	*filename() const { if (filename_[0]) return (filename_);
   					else return ((const char *)0); }
   int		find(const char *s, int p = 0);
+  /**
+    This method assigns a callback function to use when a link is
+    followed or a file is loaded (via
+    Fl_Help_View::load()) that requires a different
+    file or path. The callback function receives a pointer to the
+    Fl_Help_View widget and the URI or full pathname
+    for the file in question. It must return a pathname that can be
+    opened as a local file or NULL:</P>
+    
+    <UL><PRE>
+    const char *fn(Fl_Widget *w, const char *uri);
+    </PRE></UL>
+    
+    <P>The link function can be used to retrieve remote or virtual
+    documents, returning a temporary file that contains the actual
+    data. If the link function returns NULL, the value of
+    the Fl_Help_View widget will remain unchanged.</P>
+    
+    <P>If the link callback cannot handle the URI scheme, it should
+    return the uri value unchanged or set the value() of the widget
+    before returning NULL.
+  */
   void		link(Fl_Help_Func *fn) { link_ = fn; }
   int		load(const char *f);
   void		resize(int,int,int,int);
+  /** Gets the size of the Help view */
   int		size() const { return (size_); }
   void		size(int W, int H) { Fl_Widget::size(W, H); }
+  /** Sets the default text color. */
   void		textcolor(Fl_Color c) { if (textcolor_ == defcolor_) textcolor_ = c; defcolor_ = c; }
+  /** Returns    the current default text color. */
   Fl_Color	textcolor() const { return (defcolor_); }
+  /** Sets the default text font. */
   void		textfont(Fl_Font f) { textfont_ = f; format(); }
+  /** Returns the current default text font. */
   Fl_Font       textfont() const { return (textfont_); }
+  /** Sets the default text size. */
   void		textsize(Fl_Fontsize s) { textsize_ = s; format(); }
+  /** Gets the default text size. */
   Fl_Fontsize  textsize() const { return (textsize_); }
+  /** Returns the current document title, or NULL if there is no title. */
   const char	*title() { return (title_); }
   void		topline(const char *n);
   void		topline(int);
+  /** Returns the current top line in pixels.  */
   int		topline() const { return (topline_); }
   void		leftline(int);
+  /** Gets the left position. */
   int		leftline() const { return (leftline_); }
   void		value(const char *v);
+  /** Returns the current buffer contents. */
   const char	*value() const { return (value_); }
   void          clear_selection();
   void          select_all();

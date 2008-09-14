@@ -212,9 +212,7 @@ char Fl_Preferences::deleteEntry( const char *key )
 }
 
 
-/**
- * read an entry from the group
- */
+
 char Fl_Preferences::get( const char *key, int &value, int defaultValue )
 {
   const char *v = node->get( key );
@@ -223,9 +221,7 @@ char Fl_Preferences::get( const char *key, int &value, int defaultValue )
 }
 
 
-/**
- * set an entry (name/value pair)
- */
+
 char Fl_Preferences::set( const char *key, int value )
 {
   sprintf( nameBuffer, "%d", value );
@@ -234,9 +230,7 @@ char Fl_Preferences::set( const char *key, int value )
 }
 
 
-/**
- * read an entry from the group
- */
+
 char Fl_Preferences::get( const char *key, float &value, float defaultValue )
 {
   const char *v = node->get( key );
@@ -245,9 +239,7 @@ char Fl_Preferences::get( const char *key, float &value, float defaultValue )
 }
 
 
-/**
- * set an entry (name/value pair)
- */
+
 char Fl_Preferences::set( const char *key, float value )
 {
   sprintf( nameBuffer, "%g", value );
@@ -256,9 +248,7 @@ char Fl_Preferences::set( const char *key, float value )
 }
 
 
-/**
- * set an entry (name/value pair)
- */
+
 char Fl_Preferences::set( const char *key, float value, int precision )
 {
   sprintf( nameBuffer, "%.*g", precision, value );
@@ -267,9 +257,7 @@ char Fl_Preferences::set( const char *key, float value, int precision )
 }
 
 
-/**
- * read an entry from the group
- */
+
 char Fl_Preferences::get( const char *key, double &value, double defaultValue )
 {
   const char *v = node->get( key );
@@ -278,9 +266,7 @@ char Fl_Preferences::get( const char *key, double &value, double defaultValue )
 }
 
 
-/**
- * set an entry (name/value pair)
- */
+
 char Fl_Preferences::set( const char *key, double value )
 {
   sprintf( nameBuffer, "%g", value );
@@ -289,9 +275,7 @@ char Fl_Preferences::set( const char *key, double value )
 }
 
 
-/**
- * set an entry (name/value pair)
- */
+
 char Fl_Preferences::set( const char *key, double value, int precision )
 {
   sprintf( nameBuffer, "%.*g", precision, value );
@@ -373,9 +357,7 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
 }
 
 
-/**
- * set an entry (name/value pair)
- */
+
 char Fl_Preferences::set( const char *key, const char *text )
 {
   const char *s = text ? text : "";
@@ -474,9 +456,7 @@ char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue
 }
 
 
-/**
- * set an entry (name/value pair)
- */
+
 char Fl_Preferences::set( const char *key, const void *data, int dsize )
 {
   char *buffer = (char*)malloc( dsize*2+1 ), *d = buffer;;

@@ -14,7 +14,7 @@ In Progress Work List (add your WP and name here):
   - WP3  (engelsman)
   - WP4  (Fabien) DONE
   - WP5  (Fabien) DONE
-  - WP6  (Fabien)
+  - WP6  (Fabien) DONE
   - WP7
   - WP8
   - WP9
@@ -156,10 +156,6 @@ widgets.html
 Enumerations.H		(Albrecht) work in progress !
 Fl_Adjuster.H
 Fl_Adjuster.cxx
-Fl_BMP_Image.H
-Fl_BMP_Image.cxx
-Fl_Bitmap.H
-Fl_Bitmap.cxx
 Fl_Box.H
 Fl_Box.cxx
 Fl_Button.H
@@ -185,31 +181,18 @@ Fl_Float_Input.H
 Fl_Font.H
 Fl_FormsBitmap.H
 Fl_FormsPixmap.H
-Fl_GIF_Image.H
-Fl_GIF_Image.cxx
 Fl_Gl_Choice.H
 Fl_Gl_Choice.cxx
-Fl_Help_Dialog.H
-Fl_Help_Dialog.cxx
-Fl_Help_View.H
-Fl_Help_View.cxx
-Fl_Hold_Browser.H
 Fl_Hor_Fill_Slider.H
 Fl_Hor_Nice_Slider.H
 Fl_Hor_Slider.H
 Fl_Hor_Value_Slider.H
-Fl_Image.H
-Fl_Image.cxx
 Fl_Input.H
 Fl_Input.cxx
 Fl_Input_.H
 Fl_Input_.cxx
 Fl_Input_Choice.H
 Fl_Int_Input.H
-Fl_JPEG_Image.H
-Fl_JPEG_Image.cxx
-Fl_Light_Button.H
-Fl_Light_Button.cxx
 Fl_Line_Dial.H
 Fl_Menu.H
 Fl_Menu.cxx
@@ -232,17 +215,8 @@ Fl_Multiline_Output.H
 Fl_Nice_Slider.H
 Fl_Object.H
 Fl_Output.H
-Fl_PNG_Image.H
-Fl_PNG_Image.cxx
-Fl_PNM_Image.H
-Fl_PNM_Image.cxx
-Fl_Pixmap.H
-Fl_Pixmap.cxx
-Fl_Preferences.H
-Fl_Preferences.cxx
 Fl_Progress.H
 Fl_Progress.cxx
-Fl_RGB_Image.H
 Fl_Radio_Button.H
 Fl_Radio_Light_Button.H
 Fl_Radio_Round_Button.H
@@ -261,8 +235,6 @@ Fl_Scrollbar.H
 Fl_Scrollbar.cxx
 Fl_Secret_Input.H
 Fl_Select_Browser.H
-Fl_Shared_Image.H
-Fl_Shared_Image.cxx
 Fl_Simple_Counter.H
 Fl_Slider.H
 Fl_Slider.cxx
@@ -298,11 +270,7 @@ Fl_Window_hotspot.cxx
 Fl_Window_iconize.cxx
 Fl_Wizard.H
 Fl_Wizard.cxx
-Fl_XBM_Image.H
-Fl_XBM_Image.cxx
 Fl_XColor.H
-Fl_XPM_Image.H
-Fl_XPM_Image.cxx
 Fl_abort.cxx
 Fl_get_key.cxx
 Fl_get_key_mac.cxx

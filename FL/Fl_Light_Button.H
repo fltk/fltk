@@ -30,6 +30,16 @@
 
 #include "Fl_Button.H"
 
+/**
+  <P>This subclass displays the &quot;on&quot; state by turning on a light, 
+  rather than drawing pushed in.  The shape of the  &quot;light&quot; 
+  is initially set to FL_DOWN_BOX.  The color of the light when
+  on is controlled with selection_color(), which defaults to FL_YELLOW.
+
+  Buttons generate callbacks when they are clicked by the user.  You
+  control exactly when and how by changing the values for type() and when().
+  <P ALIGN=CENTER>\image html Fl_Light_Button.gif</P>
+*/
 class FL_EXPORT Fl_Light_Button : public Fl_Button {
 protected:
     virtual void draw();
