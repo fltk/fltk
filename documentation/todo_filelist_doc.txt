@@ -14,7 +14,7 @@ In Progress Work List (add your WP and name here):
   - WP3  (engelsman)
   - WP4  (Fabien) DONE
   - WP5  (Fabien)
-  - WP6
+  - WP6  (Fabien)
   - WP7
   - WP8
   - WP9
@@ -176,12 +176,7 @@ Fl_Color_Chooser.H
 Fl_Color_Chooser.cxx
 Fl_Counter.H
 Fl_Counter.cxx
-Fl_Dial.H
-Fl_Dial.cxx
 Fl_Export.H
-Fl_File_Icon.H
-Fl_File_Icon.cxx
-Fl_File_Icon2.cxx
 Fl_File_Input.H
 Fl_File_Input.cxx
 Fl_Fill_Dial.H
@@ -190,7 +185,6 @@ Fl_Float_Input.H
 Fl_Font.H
 Fl_FormsBitmap.H
 Fl_FormsPixmap.H
-Fl_Free.H
 Fl_GIF_Image.H
 Fl_GIF_Image.cxx
 Fl_Gl_Choice.H
@@ -242,12 +236,8 @@ Fl_PNG_Image.H
 Fl_PNG_Image.cxx
 Fl_PNM_Image.H
 Fl_PNM_Image.cxx
-Fl_Pack.H
-Fl_Pack.cxx
 Fl_Pixmap.H
 Fl_Pixmap.cxx
-Fl_Positioner.H
-Fl_Positioner.cxx
 Fl_Preferences.H
 Fl_Preferences.cxx
 Fl_Progress.H
@@ -287,8 +277,6 @@ Fl_Text_Display.H
 Fl_Text_Display.cxx
 Fl_Text_Editor.H
 Fl_Text_Editor.cxx
-Fl_Tile.H
-Fl_Tile.cxx
 Fl_Tiled_Image.H
 Fl_Tiled_Image.cxx
 Fl_Timer.H
@@ -396,7 +384,6 @@ flstring.h
 forms.H
 forms_bitmap.cxx
 forms_compatability.cxx
-forms_free.cxx
 forms_fselect.cxx
 forms_pixmap.cxx
 forms_timer.cxx
