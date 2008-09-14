@@ -34,8 +34,18 @@
 
 #  include "Fl_Export.H"
 
+/** \name Version Numbers
+
+    FLTK defines some constants to help the programmer to
+    find out, for which FLTK version a program is compiled.
+    
+    The following constants are defined:
+ */
+/*@{*/
+
 /**
  * The major release version of this FLTK library.
+   \sa FL_VERSION
  */
 #define FL_MAJOR_VERSION	1
 
@@ -71,6 +81,12 @@
 #define FL_VERSION		((double)FL_MAJOR_VERSION + \
 				 (double)FL_MINOR_VERSION * 0.01 + \
 				 (double)FL_PATCH_VERSION * 0.0001)
+
+/*@}*/	// group: Version Numbers
+
+/** \name	Miscellaneous */
+/*@{*/	// group: Miscellaneous
+
 /** unsigned char */
 typedef unsigned char uchar;
 /** unsigned long */
@@ -90,6 +106,7 @@ typedef const char *Fl_CString;
 /** 24-bit Unicode character + 8-bit indicator for keyboard flags */
 typedef unsigned int Fl_Char;
  
+/*@}*/	// group: Miscellaneous
 
 /**
  *  Every time a user moves the mouse pointer, clicks a button,
@@ -303,6 +320,8 @@ enum Fl_Event {	// events
   FL_DND_RELEASE	= 23
 };
 
+/** \name When Conditions */
+/*@{*/
 /** These constants determine when a callback is performed.
  *
  *  \sa Fl_Widget::when();
@@ -319,7 +338,9 @@ enum Fl_When { // Fl_Widget::when():
   FL_WHEN_ENTER_KEY_CHANGED=11	///< ?
 };
 
-/** A mouse button; use Fl_Button + n for mouse button n. 
+/*@}*/		// group: When Conditions
+
+/** \name Mouse and Keyboard Events
 
 	This and the following constants define the non-ASCII keys on the
 	keyboard for FL_KEYBOARD and FL_SHORTCUT events.
@@ -328,9 +349,11 @@ enum Fl_When { // Fl_Widget::when():
 		(use an enum or some doxygen grouping ?)
   
 	\sa	Fl::event_key() and Fl::get_key(n) (use ascii letters for all other keys):
- 
  */
-#define FL_Button	0xfee8	// doxygen comment see above
+
+/*@{*/
+
+#define FL_Button	0xfee8	///< A mouse button; use Fl_Button + n for mouse button n.
 #define FL_BackSpace	0xff08	///< The backspace key.
 #define FL_Tab		0xff09	///< The tab key.
 #define FL_Enter	0xff0d	///< The enter key. 
@@ -366,27 +389,32 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_Alt_R	0xffea	///< The right alt key. 
 #define FL_Delete	0xffff	///< The delete key.
 
+/*@}*/	// group: Mouse and Keyboard Events
 
-
-/**
-	The left mouse button.
+/** \name Mouse Buttons
 
 	These constants define the button numbers for FL_PUSH and FL_RELEASE events.
 	
 	\sa Fl::event_button()
 */
-#define FL_LEFT_MOUSE	1	// doxygen comment see above
-#define FL_MIDDLE_MOUSE	2	///< The middle mouse button.
-#define FL_RIGHT_MOUSE	3	///< The right mouse button.
 
-/**
-	One of the shift keys is down. 
+/*@{*/
+
+#define FL_LEFT_MOUSE	1	///< The left mouse button
+#define FL_MIDDLE_MOUSE	2	///< The middle mouse button
+#define FL_RIGHT_MOUSE	3	///< The right mouse button
+
+/*@}*/		// group: Mouse Buttons
+
+
+/** \name	Event States
 
 	The following constants define bits in the Fl::event_state() value.
-	
-	\sa Fl::event_state()
 */
-#define FL_SHIFT	0x00010000	// doxygen comment see above
+
+/*@{*/		// group: Event States
+
+#define FL_SHIFT	0x00010000	///< One of the shift keys is down
 #define FL_CAPS_LOCK	0x00020000	///< The caps lock is on
 #define FL_CTRL		0x00040000	///< One of the ctrl keys is down
 #define FL_ALT		0x00080000	///< One of the alt keys is down
@@ -408,6 +436,13 @@ enum Fl_When { // Fl_Widget::when():
 #  define FL_COMMAND	FL_CTRL		///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
 #endif // __APPLE__
 
+/*@}*/		// group: Event States
+
+/** \name Box Types
+
+	\todo	Description of boxtypes still missing
+*/
+/*@{*/
 enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
   FL_NO_BOX = 0,	FL_FLAT_BOX,
 
@@ -497,6 +532,7 @@ inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
 #define FL_CIRCLE_BOX FL_ROUND_DOWN_BOX
 #define FL_DIAMOND_BOX FL_DIAMOND_DOWN_BOX
 
+/*@}*/	// group: Box Types
 
 /**
    The labeltype() method sets the type of the label.
@@ -505,13 +541,13 @@ inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
    
    \todo	The doxygen comments are incomplete, and some labeltypes
    		are starting with an underscore. Also, there are three
-		external functions undocumented:
+		external functions undocumented (yet):
 		  - fl_define_FL_SHADOW_LABEL()
 		  - fl_define_FL_ENGRAVED_LABEL()
 		  - fl_define_FL_EMBOSSED_LABEL()
 */
 enum Fl_Labeltype {	// labeltypes:
-  FL_NORMAL_LABEL	= 0,	///< draws the text
+  FL_NORMAL_LABEL	= 0,	///< draws the text (0)
   FL_NO_LABEL,			///< does nothing
   _FL_SHADOW_LABEL,		///< draws a drop shadow under the text
   _FL_ENGRAVED_LABEL,		///< draws edges as though the text is engraved
@@ -532,7 +568,7 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL fl_define_FL_EMBOSSED_LABEL()
 
 /** \name Alignment Flags */
-/**@{*/
+/*@{*/
 /** Flags to control the label alignment. 
  *  This controls how the label is displayed next to or inside the widget. 
  *  The default value is FL_ALIGN_CENTER for most widgets, which centers the label
@@ -574,51 +610,71 @@ const Fl_Align FL_ALIGN_RIGHT_TOP	= FL_ALIGN_TOP_RIGHT;
 const Fl_Align FL_ALIGN_LEFT_BOTTOM	= FL_ALIGN_BOTTOM_LEFT;
 const Fl_Align FL_ALIGN_RIGHT_BOTTOM	= FL_ALIGN_BOTTOM_RIGHT;
 const Fl_Align FL_ALIGN_NOWRAP		= (Fl_Align)0; // for back compatability
-/**@}*/
+/*@}*/
 
-/** Index into the font table.
+/** \name Font Numbers */
+/*@{*/
+/** A font number is an index into the internal font table.
+
+    The following constants define the standard FLTK fonts:
+
  */
 typedef int Fl_Font;
+
+// standard fonts
+
+const Fl_Font FL_HELVETICA              = 0;	///< Helvetica (or Arial) normal (0)
+const Fl_Font FL_HELVETICA_BOLD         = 1;	///< Helvetica (or Arial) bold
+const Fl_Font FL_HELVETICA_ITALIC       = 2;	///< Helvetica (or Arial) oblique
+const Fl_Font FL_HELVETICA_BOLD_ITALIC  = 3;	///< Helvetica (or Arial) bold-oblique
+const Fl_Font FL_COURIER                = 4;	///< Courier normal
+const Fl_Font FL_COURIER_BOLD           = 5;	///< Courier bold 
+const Fl_Font FL_COURIER_ITALIC         = 6;	///< Courier italic
+const Fl_Font FL_COURIER_BOLD_ITALIC    = 7;	///< Courier bold-italic
+const Fl_Font FL_TIMES                  = 8;	///< Times roman
+const Fl_Font FL_TIMES_BOLD             = 9;	///< Times roman bold
+const Fl_Font FL_TIMES_ITALIC           = 10;	///< Times roman italic
+const Fl_Font FL_TIMES_BOLD_ITALIC      = 11;	///< Times roman bold-italic
+const Fl_Font FL_SYMBOL                 = 12;	///< Standard symbol font
+const Fl_Font FL_SCREEN                 = 13;	///< Default monospaced screen font
+const Fl_Font FL_SCREEN_BOLD            = 14;	///< Default monospaced bold screen font
+const Fl_Font FL_ZAPF_DINGBATS          = 15;	///< Zapf-dingbats font
+
+const Fl_Font FL_FREE_FONT              = 16;	///< first one to allocate
+const Fl_Font FL_BOLD                   = 1;	///< add this to helvetica, courier, or times
+const Fl_Font FL_ITALIC                 = 2;	///< add this to helvetica, courier, or times
+const Fl_Font FL_BOLD_ITALIC            = 3;	///< add this to helvetica, courier, or times
+
+/*@}*/
 
 /** Size of a font in pixels.
  *  This is the approximate height of a font in pixels.
  */
 typedef int Fl_Fontsize;
 
-// standard fonts
-const Fl_Font FL_HELVETICA              = 0;
-const Fl_Font FL_HELVETICA_BOLD         = 1;
-const Fl_Font FL_HELVETICA_ITALIC       = 2;
-const Fl_Font FL_HELVETICA_BOLD_ITALIC  = 3;
-const Fl_Font FL_COURIER                = 4;
-const Fl_Font FL_COURIER_BOLD           = 5;
-const Fl_Font FL_COURIER_ITALIC         = 6;
-const Fl_Font FL_COURIER_BOLD_ITALIC    = 7;
-const Fl_Font FL_TIMES                  = 8;
-const Fl_Font FL_TIMES_BOLD             = 9;
-const Fl_Font FL_TIMES_ITALIC           = 10;
-const Fl_Font FL_TIMES_BOLD_ITALIC      = 11;
-const Fl_Font FL_SYMBOL                 = 12;
-const Fl_Font FL_SCREEN                 = 13;
-const Fl_Font FL_SCREEN_BOLD            = 14;
-const Fl_Font FL_ZAPF_DINGBATS          = 15;
-
-const Fl_Font FL_FREE_FONT              = 16; // first one to allocate
-const Fl_Font FL_BOLD                   = 1;  // add this to helvetica, courier, or times
-const Fl_Font FL_ITALIC                 = 2;  // add this to helvetica, courier, or times
-
 extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;
 
+/** \name Colors */
+/*@{*/
+/** The Fl_Color enumeration type holds a FLTK color value.
+
+    Colors are either 8-bit indexes into a virtual colormap
+    or 24-bit RGB color values.
+    
+    Color indices occupy the lower 8 bits of the value, while
+    RGB colors occupy the upper 24 bits, for a byte organization of RGBI.
+ */
 
 enum Fl_Color {	// standard colors
   // These are used as default colors in widgets and altered as necessary
-  FL_FOREGROUND_COLOR   = 0,
-  FL_BACKGROUND2_COLOR  = 7,
-  FL_INACTIVE_COLOR	= 8,
-  FL_SELECTION_COLOR	= 15,
+  FL_FOREGROUND_COLOR   = 0,	///< the default foreground color (0) used for labels and text
+  FL_BACKGROUND2_COLOR  = 7,	///< the default background color for text, list, and valuator widgets
+  FL_INACTIVE_COLOR	= 8,	///< the inactive foreground color
+  FL_SELECTION_COLOR	= 15,	///< the default selection/highlight color
 
   // boxtypes generally limit themselves to these colors so
   // the whole ramp is not allocated:
+
   FL_GRAY0		= 32,	// 'A'
   FL_DARK3		= 39,	// 'H'
   FL_DARK2		= 45,   // 'N'
@@ -629,6 +685,7 @@ enum Fl_Color {	// standard colors
   FL_LIGHT3		= 54,	// 'W'
 
   // FLTK provides a 5x8x5 color cube that is used with colormap visuals
+
   FL_BLACK		= 56,
   FL_RED		= 88,
   FL_GREEN		= 63,
@@ -674,6 +731,15 @@ inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
 inline Fl_Color fl_color_cube(int r, int g, int b) {
   return (Fl_Color)((b*FL_NUM_RED + r) * FL_NUM_GREEN + g + FL_COLOR_CUBE);}
 
+//*@}*/		// group: Colors
+
+/** \name Cursors
+
+    The following constants define the mouse cursors that are available in FLTK.
+    
+    The double-headed arrows are bitmaps provided by FLTK on X, the others
+    are provided by system-defined cursors.
+*/
 enum Fl_Cursor {	// standard cursors
   FL_CURSOR_DEFAULT	= 0,
   FL_CURSOR_ARROW	= 35,
