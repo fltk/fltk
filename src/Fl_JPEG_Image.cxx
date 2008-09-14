@@ -88,10 +88,10 @@ extern "C" {
 #endif // HAVE_LIBJPEG
 
 
-//
-// 'Fl_JPEG_Image::Fl_JPEG_Image()' - Load a JPEG image file.
-//
-
+/**
+  The constructor loads the JPEG image from the given jpeg filename.
+  <P>The inherited destructor free all memory and server resources that are used by  the image.
+*/
 Fl_JPEG_Image::Fl_JPEG_Image(const char *jpeg)	// I - File to load
   : Fl_RGB_Image(0,0,0) {
 #ifdef HAVE_LIBJPEG

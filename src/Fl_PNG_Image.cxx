@@ -26,6 +26,7 @@
 //     http://www.fltk.org/str.php
 //
 // Contents:
+
 //
 //   Fl_PNG_Image::Fl_PNG_Image() - Load a PNG image file.
 //
@@ -54,10 +55,11 @@ extern "C"
 }
 
 
-//
-// 'Fl_PNG_Image::Fl_PNG_Image()' - Load a PNG image file.
-//
-
+/**
+  The constructor loads the named PNG image from the given png filename.
+  <P>The destructor free all memory and server resources that are used by
+  the image.
+*/
 Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   : Fl_RGB_Image(0,0,0) {
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)

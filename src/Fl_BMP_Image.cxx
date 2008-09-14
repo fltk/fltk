@@ -59,12 +59,15 @@
 static int		read_long(FILE *fp);
 static unsigned short	read_word(FILE *fp);
 static unsigned int	read_dword(FILE *fp);
+/** \fn Fl_BMP_Image::~Fl_BMP_Image()
+*/
 
 
-//
-// 'Fl_BMP_Image::Fl_BMP_Image()' - Load a BMP image file.
-//
-
+/** 
+  The constructor loads the named BMP image from the given bmp filename.  
+  <P>The inherited destructor free all memory and server resources that are used by
+  the image.
+*/
 Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   : Fl_RGB_Image(0,0,0) {
   FILE		*fp;		// File pointer

@@ -37,6 +37,10 @@ struct Fl_Menu_Item;
 #    define explicit
 #  endif // __sgi && !_COMPILER_VERSION
 
+/**
+  The Fl_Pixmap class supports caching and drawing of colormap
+  (pixmap) images, including transparency.
+*/
 class FL_EXPORT Fl_Pixmap : public Fl_Image {
   void copy_data();
   void delete_data();
@@ -57,9 +61,13 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   unsigned mask; // for internal use (mask bitmap)
 #endif // __APPLE__ || WIN32
   
+  /**    The constructors create a new pixmap from the specified XPM data.  */
   explicit Fl_Pixmap(char * const * D) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)D); measure();}
+  /**    The constructors create a new pixmap from the specified XPM data.  */
   explicit Fl_Pixmap(uchar* const * D) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)D); measure();}
+  /**    The constructors create a new pixmap from the specified XPM data.  */
   explicit Fl_Pixmap(const char * const * D) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)D); measure();}
+  /**    The constructors create a new pixmap from the specified XPM data.  */
   explicit Fl_Pixmap(const uchar* const * D) : Fl_Image(-1,0,1), alloc_data(0), id(0), mask(0) {set_data((const char*const*)D); measure();}
   virtual ~Fl_Pixmap();
   virtual Fl_Image *copy(int W, int H);

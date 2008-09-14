@@ -36,6 +36,13 @@ typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
                                        int headerlen);
 
 // Shared images class. 
+/**
+  This class supports caching, loading,
+  and drawing of image files. Most applications will also want to
+  link against the fltk_images library and call the
+  fl_register_images()
+  function to support standard image formats such as BMP, GIF, JPEG, and PNG.
+*/
 class FL_EXPORT Fl_Shared_Image : public Fl_Image {
   protected:
 
@@ -62,8 +69,9 @@ class FL_EXPORT Fl_Shared_Image : public Fl_Image {
   void update();
 
   public:
-
+  /** Returns the filename of the shared image */
   const char	*name() { return name_; }
+  /** Returns the number of references of this shared image. When reference is below 1, the image is deleted. */
   int		refcount() { return refcount_; }
   void		release();
   void		reload();

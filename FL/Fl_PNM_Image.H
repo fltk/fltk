@@ -29,6 +29,12 @@
 #define Fl_PNM_Image_H
 #  include "Fl_Image.H"
 
+/**
+  The Fl_PNM_Image class supports loading, caching,
+  and drawing of Portable Anymap (PNM, PBM, PGM, PPM) image files. The class
+  loads bitmap, grayscale, and full-color images in both ASCII and
+  binary formats.
+*/
 class FL_EXPORT Fl_PNM_Image : public Fl_RGB_Image {
 
   public:

@@ -29,6 +29,12 @@
 #define Fl_PNG_Image_H
 #  include "Fl_Image.H"
 
+/**
+  The Fl_PNG_Image class supports loading, caching,
+  and drawing of Portable Network Graphics (PNG) image files. The
+  class loads colormapped and full-color images and handles color-
+  and alpha-based transparency.
+*/
 class FL_EXPORT Fl_PNG_Image : public Fl_RGB_Image {
 
   public:

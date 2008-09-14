@@ -43,9 +43,18 @@ void fl_restore_clip(); // from fl_rect.cxx
 // Base image class...
 //
 
+/**
+  The destructor is a virtual method that frees all memory used
+  by the image.
+*/
 Fl_Image::~Fl_Image() {
 }
 
+/**
+  If the image has been cached for display, delete the cache
+  data. This allows you to change the data used for the image and
+  then redraw it without recreating an image object.
+*/
 void Fl_Image::uncache() {
 }
 
@@ -53,6 +62,11 @@ void Fl_Image::draw(int XP, int YP, int, int, int, int) {
   draw_empty(XP, YP);
 }
 
+/**
+  The protected method draw_empty() draws a box with
+  an X in it. It can be used to draw any image that lacks image
+  data.
+*/
 void Fl_Image::draw_empty(int X, int Y) {
   if (w() > 0 && h() > 0) {
     fl_color(FL_FOREGROUND_COLOR);
@@ -62,20 +76,56 @@ void Fl_Image::draw_empty(int X, int Y) {
   }
 }
 
+/**
+  The copy() method creates a copy of the specified
+  image. If the width and height are provided, the image is
+  resized to the specified size. The image should be deleted (or in
+  the case of Fl_Shared_Image, released) when you are done
+  with it.
+*/
 Fl_Image *Fl_Image::copy(int W, int H) {
   return new Fl_Image(W, H, d());
 }
 
+/**
+  The color_average() method averages the colors in
+  the image with the FLTK color value c. The i
+  argument specifies the amount of the original image to combine
+  with the color, so a value of 1.0 results in no color blend, and
+  a value of 0.0 results in a constant image of the specified
+  color. <I>The original image data is not altered by this
+  method.</I>
+*/
 void Fl_Image::color_average(Fl_Color, float) {
 }
 
+/**
+  The desaturate() method converts an image to
+  grayscale. If the image contains an alpha channel (depth = 4),
+  the alpha channel is preserved. <I>This method does not alter
+  the original image data.</I>
+*/
 void Fl_Image::desaturate() {
 }
 
+/**
+  The label() methods are an obsolete way to set the
+  image attribute of a widget or menu item. Use the
+  image() or deimage() methods of the
+  Fl_Widget and Fl_Menu_Item classes
+  instead.
+*/
 void Fl_Image::label(Fl_Widget* widget) {
   widget->image(this);
 }
 
+/**
+  The label() methods are an obsolete way to set the
+  image attribute of a widget or menu item. Use the
+  image() or deimage() methods of the
+  Fl_Widget and Fl_Menu_Item classes
+  instead.
+*/
 void Fl_Image::label(Fl_Menu_Item* m) {
   Fl::set_labeltype(_FL_IMAGE_LABEL, labeltype, measure);
   m->label(_FL_IMAGE_LABEL, (const char*)this);
@@ -122,7 +172,7 @@ Fl_Image::measure(const Fl_Label *lo,		// I - Label
 //
 // RGB image class...
 //
-
+/**  The destructor free all memory and server resources that are used by  the image. */
 Fl_RGB_Image::~Fl_RGB_Image() {
   uncache();
   if (alloc_array) delete[] (uchar *)array;

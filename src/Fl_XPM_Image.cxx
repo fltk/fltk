@@ -53,7 +53,11 @@ static int hexdigit(int x) {	// I - Hex digit...
 
 #define MAXSIZE 2048
 #define INITIALLINES 256
-
+/**
+  The constructor loads the XPM image from the name filename.
+  <P>The destructor free all memory and server resources that are used by
+  the image.
+*/
 Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
   FILE *f;
 

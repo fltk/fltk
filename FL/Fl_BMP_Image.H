@@ -29,6 +29,10 @@
 #define Fl_BMP_Image_H
 #  include "Fl_Image.H"
 
+/**
+  The Fl_BMP_Image class supports loading, caching,
+  and drawing of Windows Bitmap (BMP) image files.
+*/
 class FL_EXPORT Fl_BMP_Image : public Fl_RGB_Image {
 
   public:

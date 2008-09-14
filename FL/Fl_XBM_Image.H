@@ -29,6 +29,10 @@
 #define Fl_XBM_Image_H
 #  include "Fl_Bitmap.H"
 
+/**
+  The Fl_XBM_Image class supports loading, caching,
+  and drawing of X Bitmap (XBM) bitmap files.
+*/
 class FL_EXPORT Fl_XBM_Image : public Fl_Bitmap {
 
   public:

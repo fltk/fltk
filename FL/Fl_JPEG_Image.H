@@ -29,6 +29,12 @@
 #define Fl_JPEG_Image_H
 #  include "Fl_Image.H"
 
+/**
+  The Fl_JPEG_Image class supports loading, caching,
+  and drawing of Joint Photographic Experts Group (JPEG) File
+  Interchange Format (JFIF) images. The class supports grayscale
+  and color (RGB) JPEG image files.
+*/
 class FL_EXPORT Fl_JPEG_Image : public Fl_RGB_Image {
 
   public:

@@ -25,6 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 // Contents:
+
 //
 //   Fl_PNM_Image::Fl_PNM_Image() - Load a PNM image...
 //
@@ -44,6 +45,11 @@
 //
 // 'Fl_PNM_Image::Fl_PNM_Image()' - Load a PNM image...
 //
+
+/** 
+  The constructor loads the named PNM image. 
+  <P>The inherited destructor free all memory and server resources that are used by the image.
+*/
 
 Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
   : Fl_RGB_Image(0,0,0) {

@@ -79,6 +79,11 @@ typedef unsigned char uchar;
 #define NEXTBYTE (uchar)getc(GifFile)
 #define GETSHORT(var) var = NEXTBYTE; var += NEXTBYTE << 8
 
+/**  
+  The constructor loads the named GIF image.
+  <P>The inherited destructor free all memory and server resources that are used by
+  the image.
+*/
 Fl_GIF_Image::Fl_GIF_Image(const char *infname) : Fl_Pixmap((char *const*)0) {
   FILE *GifFile;	// File to read
   char **new_data;	// Data array

@@ -32,6 +32,10 @@
 class Fl_Widget;
 struct Fl_Menu_Item;
 
+/**
+  The Fl_Bitmap class supports caching and drawing of mono-color
+  (bitmap) images. Images are drawn using the current color.
+*/
 class FL_EXPORT Fl_Bitmap : public Fl_Image {
   public:
 
@@ -42,9 +46,10 @@ class FL_EXPORT Fl_Bitmap : public Fl_Image {
 #else
   unsigned id; // for internal use
 #endif // __APPLE__ || WIN32
-  
+  /** The constructors create a new bitmap from the specified bitmap data */
   Fl_Bitmap(const uchar *bits, int W, int H) :
     Fl_Image(W,H,0), array(bits), alloc_array(0), id(0) {data((const char **)&array, 1);}
+  /** The constructors create a new bitmap from the specified bitmap data */
   Fl_Bitmap(const char *bits, int W, int H) :
     Fl_Image(W,H,0), array((const uchar *)bits), alloc_array(0), id(0) {data((const char **)&array, 1);}
   virtual ~Fl_Bitmap();

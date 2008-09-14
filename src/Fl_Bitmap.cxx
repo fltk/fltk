@@ -25,6 +25,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \fn Fl_Bitmap::Fl_Bitmap(const char *array, int W, int H)
+  The constructors create a new bitmap from the specified bitmap data.*/
+
+/** \fn Fl_Bitmap::Fl_Bitmap(const unsigned char *array, int W, int H)
+  The constructors create a new bitmap from the specified bitmap data.*/
+
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
@@ -414,6 +420,10 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 #endif
 }
 
+/**
+  The destructor free all memory and server resources that are used by
+  the bitmap.
+*/
 Fl_Bitmap::~Fl_Bitmap() {
   uncache();
   if (alloc_array) delete[] (uchar *)array;
