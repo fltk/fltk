@@ -150,8 +150,7 @@ custom window.  To keep things simple we will have a
 the &quot;replace next &quot; button is a
 <TT>Fl_Return_Button</TT> widget:</P>
 
-<P ALIGN="CENTER"><IMG src="editor-replace.gif" ALT="The search and replace dialog."><BR>
-<I>Figure 4-1: The search and replace dialog.</I></P>
+\image html editor-replace.gif "Figure 4-1: The search and replace dialog"
 
 <UL><PRE>
 Fl_Window *replace_dlg = new Fl_Window(300, 105, &quot;Replace&quot;);
@@ -618,8 +617,7 @@ or <TT>c++</TT> on your system.
 
 The final editor window should look like the image in Figure 4-2.
 
-<P ALIGN="CENTER"><IMG src="editor.gif" ALT="The completed editor window."><BR>
-<I>Figure 4-2: The completed editor window</I></P>
+\image html editor.gif "Figure 4-2: The completed editor window"
 
 <H2>Advanced Features</H2>
 
