@@ -1091,13 +1091,121 @@ static unsigned short keycode_to_sym( UInt32 keyCode, UInt32 mods, unsigned shor
   return deflt;
 }
 
+/*
+ *
+ */
+static int keycodeToUnicode(
+                char * uniChars, int maxChars,
+                EventKind eKind,
+                UInt32 keycode, UInt32 modifiers,
+                UInt32 * deadKeyStatePtr)
+{
+  // first get the keyboard mapping in a post 10.2 way
+  
+  Ptr resource;
+  TextEncoding encoding;
+  static TextEncoding lastEncoding = kTextEncodingMacRoman;
+  int len = 0;
+  KeyboardLayoutRef currentLayout = NULL;
+  static KeyboardLayoutRef lastLayout = NULL;
+  SInt32 currentLayoutId = 0;
+  static SInt32 lastLayoutId;
+  int hasLayoutChanged = false;
+  static Ptr uchr = NULL;
+  static Ptr KCHR = NULL;
+  ScriptCode currentKeyScript;
+  
+  KLGetCurrentKeyboardLayout(&currentLayout);
+  if (currentLayout) {
+    KLGetKeyboardLayoutProperty(currentLayout, kKLIdentifier, (const void**)&currentLayoutId);
+    if ( (lastLayout != currentLayout) || (lastLayoutId != currentLayoutId) ) {
+      lastLayout = currentLayout;
+      lastLayoutId = currentLayoutId;
+      uchr = NULL;
+      KCHR = NULL;
+      if ((KLGetKeyboardLayoutProperty(currentLayout, kKLuchrData, (const void**)&uchr) == noErr) && (uchr != NULL)) {
+        // done
+      } else if ((KLGetKeyboardLayoutProperty(currentLayout, kKLKCHRData, (const void**)&KCHR) == noErr) && (KCHR != NULL)) {
+        // done
+      }
+      // FIXME No Layout property found. Now we have a problem. 
+    }
+  }
+  if (hasLayoutChanged) {
+    //deadKeyStateUp = deadKeyStateDown = 0;
+    if (KCHR != NULL) {
+      // FIXME this must not happen
+    } else if (uchr == NULL) {
+      KCHR = (Ptr) GetScriptManagerVariable(smKCHRCache);
+    }
+  }
+  if (uchr != NULL) {
+    // this is what I expect
+    resource = uchr;
+  } else {
+    resource = KCHR;
+    encoding = lastEncoding;
+    // this is actually not supported by the following code and will likely crash
+  }
+  
+  // now apply that keyboard mapping to our keycode
+  
+  int action;
+  //OptionBits options = 0;
+  OptionBits options = kUCKeyTranslateNoDeadKeysMask;
+  unsigned long keyboardType;
+  keycode &= 0xFF;
+  modifiers = (modifiers >> 8) & 0xFF;
+  keyboardType = LMGetKbdType();
+  OSStatus status;
+  UniCharCount actuallength;
+  UniChar utext[10];
+  
+  switch(eKind) {     
+    case kEventRawKeyDown:    action = kUCKeyActionDown; break;
+    case kEventRawKeyUp:      action = kUCKeyActionUp; break;
+    case kEventRawKeyRepeat:  action = kUCKeyActionAutoKey; break;
+    default: return 0;
+  }
+  
+  status = UCKeyTranslate(
+                          (const UCKeyboardLayout *) uchr,
+                          keycode, action, modifiers, keyboardType,
+                          options, deadKeyStatePtr,
+                          10, &actuallength, utext);
+  
+  if ((0 == actuallength) && (0 != *deadKeyStatePtr)) {
+    /*
+     * More data later
+     */
+    
+    return 0; 
+  }
+  
+  *deadKeyStatePtr = 0; 
+  
+  if (noErr != status) {
+    fprintf(stderr,"UCKeyTranslate failed: %d", (int) status);
+    actuallength = 0;
+  }
+  // FIXME no bounds check (see maxchars)
+  int i;
+  for (i=0; i<actuallength; ++i) {
+    len += fl_utf8encode(utext[i], uniChars+len);
+  }
+  uniChars[len] = 0;
+  
+  return actuallength;
+}
+
+
 /**
  * handle carbon keyboard events
  */
 pascal OSStatus carbonKeyboardHandler( 
   EventHandlerCallRef nextHandler, EventRef event, void *userData )
 {
-  static char buffer[5];
+  static char buffer[32];
   int sendEvent = 0;
   Fl_Window *window = (Fl_Window*)userData;
   Fl::first_window(window);
@@ -1171,11 +1279,12 @@ pascal OSStatus carbonKeyboardHandler(
       sym = macKeyLookUp[ keyCode & 0x7f ];
     Fl::e_keysym = Fl::e_original_keysym = sym;
     // Handle FL_KP_Enter on regular keyboards and on Powerbooks
-    if ( keyCode==0x4c || keyCode==0x34) key=0x0d;
+    if ( keyCode==0x4c || keyCode==0x34) key=0x0d;    
     // Matt: the Mac has no concept of a NumLock key, or at least not visible
     // Matt: to Carbon. The kEventKeyModifierNumLockMask is only set when
     // Matt: a numeric keypad key is pressed and does not correspond with
     // Matt: the NumLock light in PowerBook keyboards.
+#if 0
     if ( (sym >= FL_KP && sym <= FL_KP_Last) || !(sym & 0xff00) ||
             sym == FL_Tab || sym == FL_Enter) {
       buffer[0] = key;
@@ -1184,6 +1293,11 @@ pascal OSStatus carbonKeyboardHandler(
       buffer[0] = 0;
       Fl::e_length = 0;
     }
+#else
+    // Matt: attempt to get the correct Unicode character(S) from our keycode
+    static UInt32 deadKeyState = 0; // must be cleared when losing focus
+    Fl::e_length = keycodeToUnicode(buffer, 31, kind, keyCode, mods, &deadKeyState);
+#endif
     Fl::e_text = buffer;
     // insert UnicodeHandling here!
     break;
