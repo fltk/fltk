@@ -30,6 +30,14 @@
 #include <stdio.h>
 #include <FL/fl_utf8.H>
 
+/**
+  Clears the browser and reads the file, adding each line from the file
+  to the browser.  If the filename is NULL or a zero-length
+  string then this just clears the browser.  This returns zero if there
+  was any error in opening or reading the file, in which case errno
+  is set to the system error.  The data() of each line is set
+  to NULL.
+*/
 int Fl_Browser::load(const char *filename) {
 #define MAXFL_BLINE 1024
     char newtext[MAXFL_BLINE];

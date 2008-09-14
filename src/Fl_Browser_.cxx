@@ -94,6 +94,10 @@ void Fl::scrollbar_size(int W) {
 }
 
 // return where to draw the actual box:
+/**
+  This method returns the bounding box for the interior of the list, inside
+  the scrollbars.
+*/
 void Fl_Browser_::bbox(int& X, int& Y, int& W, int& H) const {
   Fl_Boxtype b = box() ? box() : FL_DOWN_BOX;
   X = x()+Fl::box_dx(b);
@@ -112,6 +116,10 @@ void Fl_Browser_::bbox(int& X, int& Y, int& W, int& H) const {
   if (H < 0) H = 0;
 }
 
+/**
+  This method returns the X position of the left edge of the list area
+  after adjusting for the scrollbar and border, if any.
+*/
 int Fl_Browser_::leftedge() const {
   int X, Y, W, H; bbox(X, Y, W, H);
   return X;
@@ -120,6 +128,7 @@ int Fl_Browser_::leftedge() const {
 // The scrollbars may be moved again by draw(), since each one's size
 // depends on whether the other is visible or not.  This skips over
 // Fl_Group::resize since it moves the scrollbars uselessly.
+/**  Repositions and/or resizes the browser.*/
 void Fl_Browser_::resize(int X, int Y, int W, int H) {
   Fl_Widget::resize(X, Y, W, H);
   // move the scrollbars so they can respond to events:
@@ -133,6 +142,10 @@ void Fl_Browser_::resize(int X, int Y, int W, int H) {
 }
 
 // Cause minimal update to redraw the given item:
+/**
+  This method should be called when the contents of an item have changed
+  but not changed the height of the item.
+*/
 void Fl_Browser_::redraw_line(void* l) {
   if (!redraw1 || redraw1 == l) {redraw1 = l; damage(FL_DAMAGE_EXPOSE);}
   else if (!redraw2 || redraw2 == l) {redraw2 = l; damage(FL_DAMAGE_EXPOSE);}
@@ -195,6 +208,11 @@ void Fl_Browser_::update_top() {
 
 // Change position(), top() will update when update_top() is called
 // (probably by draw() or handle()):
+/**
+  Gets or sets the vertical scrolling position of the list,
+  which is the pixel offset of the list items within the list
+  area.
+*/
 void Fl_Browser_::position(int yy) {
   if (yy < 0) yy = 0;
   if (yy == position_) return;
@@ -202,6 +220,11 @@ void Fl_Browser_::position(int yy) {
   if (yy != real_position_) redraw_lines();
 }
 
+/**
+  Gets or sets the horizontal scrolling position of the list,
+  which is the pixel offset of the list items within the list
+  area.
+*/
 void Fl_Browser_::hposition(int xx) {
   if (xx < 0) xx = 0;
   if (xx == hposition_) return;
@@ -210,6 +233,10 @@ void Fl_Browser_::hposition(int xx) {
 }
 
 // Tell whether item is currently displayed:
+/**
+  This method returns non-zero if item p is currently visible in
+  the list.
+*/
 int Fl_Browser_::displayed(void* p) const {
   int X, Y, W, H; bbox(X, Y, W, H);
   int yy = H+offset_;
@@ -222,6 +249,7 @@ int Fl_Browser_::displayed(void* p) const {
 
 // Ensure this item is displayed:
 // Messy because we have no idea if it is before top or after bottom:
+/**  Displays item p, scrolling the list as necessary.*/
 void Fl_Browser_::display(void* p) {
 
   // First special case - want to display first item in the list?
@@ -304,6 +332,12 @@ void Fl_Browser_::display(void* p) {
 
 // redraw, has side effect of updating top and setting scrollbar:
 
+/**
+  The first form draws the list within the normal widget bounding box.
+  
+  <P>The second form draws the contents of the browser within the
+  specified bounding box.
+*/
 void Fl_Browser_::draw() {
   int drawsquare = 0;
   update_top();
@@ -455,6 +489,11 @@ J1:
 }
 
 // Quick way to delete and reset everything:
+/**
+  This method should be called when the list data is completely replaced
+  or cleared. It informs the Fl_Browser_ widget that any cached
+  information it has concerning the items is invalid.
+*/
 void Fl_Browser_::new_list() {
   top_ = 0;
   position_ = real_position_ = 0;
@@ -468,6 +507,11 @@ void Fl_Browser_::new_list() {
 
 // Tell it that this item is going away, and that this must remove
 // all pointers to it:
+/**
+  This method should be used when an item is deleted from the list.
+  It allows the Fl_Browser_ to discard any cached data it has
+  on the item.
+*/
 void Fl_Browser_::deleting(void* l) {
   if (displayed(l)) {
     redraw_lines();
@@ -487,6 +531,10 @@ void Fl_Browser_::deleting(void* l) {
   if (l == max_width_item) {max_width_item = 0; max_width = 0;}
 }
 
+/**
+  This method should be used when an item is replaced in the list.
+  It allows the Fl_Browser_ to update its cache data as needed.
+*/
 void Fl_Browser_::replacing(void* a, void* b) {
   redraw_line(a);
   if (a == selection_) selection_ = b;
@@ -503,11 +551,19 @@ void Fl_Browser_::swapping(void* a, void* b) {
   else if (b == top_) top_ = a;
 }
 
+/**
+  This method should be used when an item is added to the list.
+  It allows the Fl_Browser_ to update its cache data as needed.
+*/
 void Fl_Browser_::inserting(void* a, void* b) {
   if (displayed(a)) redraw_lines();
   if (a == top_) top_ = b;
 }
 
+/**
+  This method returns the item under mouse at my. If no item is
+  displayed at that position then NULL is returned.
+*/
 void* Fl_Browser_::find_item(int my) {
   update_top();
   int X, Y, W, H; bbox(X, Y, W, H);
@@ -521,6 +577,13 @@ void* Fl_Browser_::find_item(int my) {
   return 0;
 }
 
+/**
+  Sets the selection state of item p to s and
+  returns 1 if the state changed or 0 if it did not.
+  
+  <P>If docb is non-zero, select tries to call the callback
+  function for the widget.
+*/
 int Fl_Browser_::select(void* l, int i, int docallbacks) {
   if (type() == FL_MULTI_BROWSER) {
     if (selection_ != l) {
@@ -553,6 +616,13 @@ int Fl_Browser_::select(void* l, int i, int docallbacks) {
   return 1;
 }
 
+/**
+  Deselects all items in the list and returns 1 if the state changed
+  or 0 if it did not.
+  
+  <P>If docb is non-zero, deselect tries to call the
+  callback function for the widget.
+*/
 int Fl_Browser_::deselect(int docallbacks) {
   if (type() == FL_MULTI_BROWSER) {
     int change = 0;
@@ -568,6 +638,13 @@ int Fl_Browser_::deselect(int docallbacks) {
   }
 }
 
+/**
+  Selects item p and returns 1 if the state changed or 0 if it did
+  not. Any other items in the list are deselected.
+  
+  <P>If docb is non-zero, select_only tries to call the
+  callback function for the widget.
+*/
 int Fl_Browser_::select_only(void* l, int docallbacks) {
   if (!l) return deselect(docallbacks);
   int change = 0;
@@ -579,7 +656,7 @@ int Fl_Browser_::select_only(void* l, int docallbacks) {
   display(l);
   return change;
 }
-
+/** Handles an event within the normal widget bounding box. */
 int Fl_Browser_::handle(int event) {
   // must do shortcuts first or the scrollbar will get them...
   if (event == FL_ENTER || event == FL_LEAVE) return 1;
@@ -796,6 +873,7 @@ J1:
   return 0;
 }
 
+/** The constructor makes an empty browser.*/
 Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* l)
   : Fl_Group(X, Y, W, H, l),
     scrollbar(0, 0, 0, 0, 0), // they will be resized by draw()
@@ -826,14 +904,32 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* l)
 
 // Default versions of some of the virtual functions:
 
+/**
+  This method may be provided by the subclass to return the height of the
+  item p in pixels.  Allow for two additional pixels for the list
+  selection box.  This method differs from
+  item_height in that it is only
+  called for selection and scrolling operations. The default implementation
+  calls item_height.
+*/
 int Fl_Browser_::item_quick_height(void* l) const {
   return item_height(l);
 }
 
+/**
+  This method may be provided to return the average height of all items, to
+  be used for scrolling. The default implementation uses the height of the first
+  item.
+*/
 int Fl_Browser_::incr_height() const {
   return item_quick_height(item_first());
 }
 
+/**
+  This method may be provided by the subclass to indicate the full height
+  of the item list in pixels. The default implementation computes the full
+  height from the item heights.
+*/
 int Fl_Browser_::full_height() const {
   int t = 0;
   for (void* p = item_first(); p; p = item_next(p))
@@ -841,12 +937,27 @@ int Fl_Browser_::full_height() const {
   return t;
 }
 
+/**
+  This method may be provided by the subclass to indicate the full width
+  of the item list in pixels. The default implementation computes the full
+  width from the item widths.
+*/
 int Fl_Browser_::full_width() const {
   return max_width;
 }
 
+/**
+  This method must be implemented by the subclass if it supports
+  multiple selections in the browser. The s argument specifies the
+  selection state for item p: 0 = off, 1 = on.
+*/
 void Fl_Browser_::item_select(void*, int) {}
 
+/**
+  This method must be implemented by the subclass if it supports
+  multiple selections in the browser. The method should return 1 if p
+  is selected and 0 otherwise.
+*/
 int Fl_Browser_::item_selected(void* l) const {return l==selection_;}
 
 //

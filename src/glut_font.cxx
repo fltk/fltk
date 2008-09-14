@@ -114,8 +114,10 @@ void glutStrokeString(void* fontID, const unsigned char *string) {
   * A newline will simply translate the next character's insertion
   * point back to the start of the line and down one line.
   */
-
+#if !defined(WIN32) || defined(CYGWIN)
 #warning FIXME This needs to be UTF aware now
+#endif
+
   while ((c = *string++) != 0) {
     if (c < font->Quantity) {
       if (c == '\n') {

@@ -10,7 +10,7 @@ header. Most other stuff goes into the source.
 In Progress Work List (add your WP and name here):
 
   - WP1  (Fabien) DONE
-  - WP2  (Fabien)
+  - WP2  (Fabien) DONE
   - WP3
   - WP4
   - WP5

@@ -31,6 +31,10 @@
 #include "Fl.H"
 #include "Fl_Browser_.H"
 
+/**
+  The Fl_Check_Browser widget displays a scrolling list of text
+  lines that may be selected and/or checked by the user.
+*/
 class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
   /* required routines for Fl_Browser_ subclass: */
 
@@ -69,6 +73,7 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
   public:
 
   Fl_Check_Browser(int x, int y, int w, int h, const char *l = 0);
+   /** The destructor deletes all list items and destroys the browser. */
   ~Fl_Check_Browser() { clear(); }
   int add(char *s);               // add an (unchecked) item
   int add(char *s, int b);        // add an item and set checked
@@ -76,14 +81,22 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
   int remove(int item);           // delete an item. Returns nitems()
 
   // inline const char * methods to avoid breaking binary compatibility...
+   /** See int Fl_Check_Browser::add(char *s) */
   int add(const char *s) { return add((char *)s); }
+  /** See int Fl_Check_Browser::add(char *s) */
   int add(const char *s, int b) { return add((char *)s, b); }
 
   void clear();                   // delete all items
+  /**
+    Returns how many lines are in the browser.  The last line number is equal to
+    this.
+  */
   int nitems() const { return nitems_; }
+  /**    Returns how many items are currently checked.  */
   int nchecked() const { return nchecked_; }
   int checked(int item) const;
   void checked(int item, int b);
+  /**    Equivalent to Fl_Check_Browser::checked(item, 1).  */
   void set_checked(int item) { checked(item, 1); }
   void check_all();
   void check_none();

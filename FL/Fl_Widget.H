@@ -811,7 +811,8 @@ public:
   void damage(uchar c, int x, int y, int w, int h);
 
   void draw_label(int, int, int, int, Fl_Align) const;
-  void measure_label(int& xx, int& yy) {label_.measure(xx,yy);}
+  /** Sets width ww, height hh accordingly with the labeltype size, label with images will return w() h() of the image. */
+  void measure_label(int& ww, int& hh) {label_.measure(ww, hh);}
 
   /** Returns a pointer to the primary Fl_Window widget.
    *  \retval  NULL if no window is associated with this widget.  
