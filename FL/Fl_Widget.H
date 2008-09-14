@@ -265,7 +265,7 @@ public:
   /** Gets the label alignment.
    *  \return label alignment
    *  \see label(), align(Fl_Align), Fl_Align
-   *  \todo This function should not take ucahr as an argument. Apart from the fact that ucahr is too short 
+   *  \todo This function should not take uchar as an argument. Apart from the fact that uchar is too short 
    *        with only 8 bits, it does not provide type safety (in which case we don't need to declare Fl_Type
    *        an enum to begin with).
    */

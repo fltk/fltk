@@ -71,14 +71,24 @@
 #define FL_VERSION		((double)FL_MAJOR_VERSION + \
 				 (double)FL_MINOR_VERSION * 0.01 + \
 				 (double)FL_PATCH_VERSION * 0.0001)
-
+/** unsigned char */
 typedef unsigned char uchar;
+/** unsigned long */
 typedef unsigned long ulong;
 
-// FIXME: temporarary (?) typedef to mark UTF8 and Unicode conversions
-typedef char *Fl_String; // flexible length utf8 Unicode text
-typedef const char *Fl_CString; // flexible length utf8 Unicode read-only string
-typedef unsigned int Fl_Char; // 24-bit Unicode character + 8-bit indicatur for keyboard flags
+/** Flexible length utf8 Unicode text
+ *
+ *  \todo FIXME: temporary (?) typedef to mark UTF8 and Unicode conversions
+ */
+typedef char *Fl_String;
+
+/** Flexible length utf8 Unicode read-only string
+ *  \sa Fl_String
+ */
+typedef const char *Fl_CString;
+
+/** 24-bit Unicode character + 8-bit indicator for keyboard flags */
+typedef unsigned int Fl_Char;
  
 
 /**
@@ -93,8 +103,11 @@ typedef unsigned int Fl_Char; // 24-bit Unicode character + 8-bit indicatur for 
  *  calling the Fl::event_*() methods. This static information remains 
  *  valid until the next event is read from the window system, so it 
  *  is ok to look at it outside of the handle() method.
+ *
+ *  \sa Fl::event_text(), Fl::event_key(), class Fl::
  */
 enum Fl_Event {	// events
+  /** No event. */
   FL_NO_EVENT		= 0,
 
   /** A mouse button has gone down with the mouse pointing at this
@@ -284,83 +297,115 @@ enum Fl_Event {	// events
   FL_DND_LEAVE		= 22,
 
   /** The user has released the mouse button dropping data into the widget. 
-   *  If the widget returns 1, it will receive the data in the immediatly 
+   *  If the widget returns 1, it will receive the data in the immediately 
    *  following FL_PASTE event.
    */
   FL_DND_RELEASE	= 23
 };
 
+/** These constants determine when a callback is performed.
+ *
+ *  \sa Fl_Widget::when();
+ *  \todo doxygen comments for values are incomplete and maybe wrong or unclear
+ */
 enum Fl_When { // Fl_Widget::when():
-  FL_WHEN_NEVER		= 0,
-  FL_WHEN_CHANGED	= 1,
-  FL_WHEN_RELEASE	= 4,
-  FL_WHEN_RELEASE_ALWAYS= 6,
-  FL_WHEN_ENTER_KEY	= 8,
-  FL_WHEN_ENTER_KEY_ALWAYS=10,
-  FL_WHEN_ENTER_KEY_CHANGED=11,
-  FL_WHEN_NOT_CHANGED	= 2 // modifier bit to disable changed() test
+  FL_WHEN_NEVER		= 0,	///< Never call the callback
+  FL_WHEN_CHANGED	= 1,	///< Do the callback only when the widget value changes
+  FL_WHEN_NOT_CHANGED	= 2,	///< Do the callback whenever the user interacts with the widget
+  FL_WHEN_RELEASE	= 4,	///< Do the callback when the button or key is released and the value changes
+  FL_WHEN_RELEASE_ALWAYS= 6,	///< Do the callback when the button or key is released, even if the value doesn't change
+  FL_WHEN_ENTER_KEY	= 8,	///< Do the callback when the user presses the ENTER key and the value changes
+  FL_WHEN_ENTER_KEY_ALWAYS=10,	///< Do the callback when the user presses the ENTER key, even if the value doesn't change
+  FL_WHEN_ENTER_KEY_CHANGED=11	///< ?
 };
 
-// Fl::event_key() and Fl::get_key(n) (use ascii letters for all other keys):
-#define FL_Button	0xfee8 // use Fl_Button+FL_*_MOUSE
-#define FL_BackSpace	0xff08
-#define FL_Tab		0xff09
-#define FL_Enter	0xff0d
-#define FL_Pause	0xff13
-#define FL_Scroll_Lock	0xff14
-#define FL_Escape	0xff1b
-#define FL_Home		0xff50
-#define FL_Left		0xff51
-#define FL_Up		0xff52
-#define FL_Right	0xff53
-#define FL_Down		0xff54
-#define FL_Page_Up	0xff55
-#define FL_Page_Down	0xff56
-#define FL_End		0xff57
-#define FL_Print	0xff61
-#define FL_Insert	0xff63
-#define FL_Menu		0xff67 // the "menu/apps" key on XFree86
-#define FL_Help		0xff68 // the 'help' key on Mac keyboards
-#define FL_Num_Lock	0xff7f
-#define FL_KP		0xff80 // use FL_KP+'x' for 'x' on numeric keypad
-#define FL_KP_Enter	0xff8d // same as Fl_KP+'\r'
-#define FL_KP_Last	0xffbd // use to range-check keypad
-#define FL_F		0xffbd // use FL_F+n for function key n
-#define FL_F_Last	0xffe0 // use to range-check function keys
-#define FL_Shift_L	0xffe1
-#define FL_Shift_R	0xffe2
-#define FL_Control_L	0xffe3
-#define FL_Control_R	0xffe4
-#define FL_Caps_Lock	0xffe5
-#define FL_Meta_L	0xffe7 // the left MSWindows key on XFree86
-#define FL_Meta_R	0xffe8 // the right MSWindows key on XFree86
-#define FL_Alt_L	0xffe9
-#define FL_Alt_R	0xffea
-#define FL_Delete	0xffff
+/** A mouse button; use Fl_Button + n for mouse button n. 
 
-// Fl::event_button():
-#define FL_LEFT_MOUSE	1
-#define FL_MIDDLE_MOUSE	2
-#define FL_RIGHT_MOUSE	3
+	This and the following constants define the non-ASCII keys on the
+	keyboard for FL_KEYBOARD and FL_SHORTCUT events.
 
-// Fl::event_state():
-#define FL_SHIFT	0x00010000
-#define FL_CAPS_LOCK	0x00020000
-#define FL_CTRL		0x00040000
-#define FL_ALT		0x00080000
-#define FL_NUM_LOCK	0x00100000 // most X servers do this?
-#define FL_META		0x00400000 // correct for XFree86
-#define FL_SCROLL_LOCK	0x00800000 // correct for XFree86
-#define FL_BUTTON1	0x01000000
-#define FL_BUTTON2	0x02000000
-#define FL_BUTTON3	0x04000000
-#define FL_BUTTONS	0x7f000000 // All possible buttons
-#define FL_BUTTON(n)	(0x00800000<<(n))
+	\todo	FL_Button and FL_key... constants could be structured better
+		(use an enum or some doxygen grouping ?)
+  
+	\sa	Fl::event_key() and Fl::get_key(n) (use ascii letters for all other keys):
+ 
+ */
+#define FL_Button	0xfee8	// doxygen comment see above
+#define FL_BackSpace	0xff08	///< The backspace key.
+#define FL_Tab		0xff09	///< The tab key.
+#define FL_Enter	0xff0d	///< The enter key. 
+#define FL_Pause	0xff13	///< The pause key.
+#define FL_Scroll_Lock	0xff14	///< The scroll lock key.
+#define FL_Escape	0xff1b	///< The escape key.
+#define FL_Home		0xff50	///< The home key.
+#define FL_Left		0xff51	///< The left arrow key.
+#define FL_Up		0xff52	///< The up arrow key.
+#define FL_Right	0xff53	///< The right arrow key.
+#define FL_Down		0xff54	///< The down arrow key.
+#define FL_Page_Up	0xff55	///< The page-up key.
+#define FL_Page_Down	0xff56	///< The page-down key.
+#define FL_End		0xff57	///< The end key.
+#define FL_Print	0xff61	///< The print (or print-screen) key.
+#define FL_Insert	0xff63	///< The insert key. 
+#define FL_Menu		0xff67	///< The menu key.
+#define FL_Help		0xff68	///< The 'help' key on Mac keyboards
+#define FL_Num_Lock	0xff7f	///< The num lock key.
+#define FL_KP		0xff80	///< One of the keypad numbers; use FL_KP + n for number n.
+#define FL_KP_Enter	0xff8d	///< The enter key on the keypad, same as Fl_KP+'\r'.
+#define FL_KP_Last	0xffbd	///< The last keypad key; use to range-check keypad.
+#define FL_F		0xffbd	///< One of the function keys; use FL_F + n for function key n.
+#define FL_F_Last	0xffe0	///< The last function key; use to range-check function keys.
+#define FL_Shift_L	0xffe1	///< The lefthand shift key.
+#define FL_Shift_R	0xffe2	///< The righthand shift key.
+#define FL_Control_L	0xffe3	///< The lefthand control key.
+#define FL_Control_R	0xffe4	///< The righthand control key.
+#define FL_Caps_Lock	0xffe5	///< The caps lock key.
+#define FL_Meta_L	0xffe7	///< The left meta/Windows key.
+#define FL_Meta_R	0xffe8	///< The right meta/Windows key.
+#define FL_Alt_L	0xffe9	///< The left alt key.
+#define FL_Alt_R	0xffea	///< The right alt key. 
+#define FL_Delete	0xffff	///< The delete key.
+
+
+
+/**
+	The left mouse button.
+
+	These constants define the button numbers for FL_PUSH and FL_RELEASE events.
+	
+	\sa Fl::event_button()
+*/
+#define FL_LEFT_MOUSE	1	// doxygen comment see above
+#define FL_MIDDLE_MOUSE	2	///< The middle mouse button.
+#define FL_RIGHT_MOUSE	3	///< The right mouse button.
+
+/**
+	One of the shift keys is down. 
+
+	The following constants define bits in the Fl::event_state() value.
+	
+	\sa Fl::event_state()
+*/
+#define FL_SHIFT	0x00010000	// doxygen comment see above
+#define FL_CAPS_LOCK	0x00020000	///< The caps lock is on
+#define FL_CTRL		0x00040000	///< One of the ctrl keys is down
+#define FL_ALT		0x00080000	///< One of the alt keys is down
+#define FL_NUM_LOCK	0x00100000	///< The num lock is on
+					// most X servers do this?
+#define FL_META		0x00400000	///< One of the meta/Windows keys is down
+					// correct for XFree86
+#define FL_SCROLL_LOCK	0x00800000	///< The scroll lock is on
+					// correct for XFree86
+#define FL_BUTTON1	0x01000000	///< Mouse button 1 is pushed
+#define FL_BUTTON2	0x02000000	///< Mouse button 2 is pushed
+#define FL_BUTTON3	0x04000000	///< Mouse button 3 is pushed
+#define FL_BUTTONS	0x7f000000	///< Any mouse button is pushed
+#define FL_BUTTON(n)	(0x00800000<<(n)) ///< Mouse button n (n > 0) is pushed
 
 #ifdef __APPLE__
-#  define FL_COMMAND	FL_META
+#  define FL_COMMAND	FL_META		///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
 #else
-#  define FL_COMMAND	FL_CTRL
+#  define FL_COMMAND	FL_CTRL		///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
 #endif // __APPLE__
 
 enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
@@ -446,24 +491,38 @@ inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
   return (Fl_Boxtype)((b%4<2)?b:(b+2));
 }
 
-// back-compatability box types:
+// back-compatibility box types:
 #define FL_FRAME FL_ENGRAVED_FRAME
 #define FL_FRAME_BOX FL_ENGRAVED_BOX
 #define FL_CIRCLE_BOX FL_ROUND_DOWN_BOX
 #define FL_DIAMOND_BOX FL_DIAMOND_DOWN_BOX
 
-enum Fl_Labeltype {	// labeltypes:
-  FL_NORMAL_LABEL	= 0,
-  FL_NO_LABEL,
-  _FL_SHADOW_LABEL,
-  _FL_ENGRAVED_LABEL,
-  _FL_EMBOSSED_LABEL,
-  _FL_MULTI_LABEL,
-  _FL_ICON_LABEL,
-  _FL_IMAGE_LABEL,
 
-  FL_FREE_LABELTYPE
+/**
+   The labeltype() method sets the type of the label.
+   
+   The following standard label types are included:
+   
+   \todo	The doxygen comments are incomplete, and some labeltypes
+   		are starting with an underscore. Also, there are three
+		external functions undocumented:
+		  - fl_define_FL_SHADOW_LABEL()
+		  - fl_define_FL_ENGRAVED_LABEL()
+		  - fl_define_FL_EMBOSSED_LABEL()
+*/
+enum Fl_Labeltype {	// labeltypes:
+  FL_NORMAL_LABEL	= 0,	///< draws the text
+  FL_NO_LABEL,			///< does nothing
+  _FL_SHADOW_LABEL,		///< draws a drop shadow under the text
+  _FL_ENGRAVED_LABEL,		///< draws edges as though the text is engraved
+  _FL_EMBOSSED_LABEL,		///< draws edges as thought the text is raised
+  _FL_MULTI_LABEL,		///< ?
+  _FL_ICON_LABEL,		///< draws the icon associated with the text
+  _FL_IMAGE_LABEL,		///< ?
+
+  FL_FREE_LABELTYPE		///< first free labeltype to use for creating own labeltypes
 };
+
 #define FL_SYMBOL_LABEL FL_NORMAL_LABEL
 extern Fl_Labeltype FL_EXPORT fl_define_FL_SHADOW_LABEL();
 #define FL_SHADOW_LABEL fl_define_FL_SHADOW_LABEL()

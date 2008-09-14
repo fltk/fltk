@@ -2,14 +2,16 @@
 
  \page	enumerations	C - FLTK Enumerations
 
-<P>This appendix lists the enumerations provided in the
-<TT>&lt;FL/Enumerations.H&gt;</TT> header file, organized by
-section. Constants whose value is zero are marked with "(0)",
-this is often useful to know when programming.
-
  \note	This file is not actively maintained any more, but is left
  	here as a reference, until the doxygen documentation is
-	completed. See \ref FL/Enumerations.H.
+	completed.
+	
+ \sa \ref FL/Enumerations.H.
+
+<P>This appendix lists the enumerations provided in the
+<FL/Enumerations.H> header file, organized by section.
+Constants whose value is zero are marked with "(0)",
+this is often useful to know when programming.
 
 
 <H2>Version Numbers</H2>
