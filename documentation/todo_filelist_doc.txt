@@ -11,8 +11,8 @@ In Progress Work List (add your WP and name here):
 
   - WP1  (Fabien) DONE
   - WP2  (Fabien) DONE
-  - WP3
-  - WP4
+  - WP3  (Alvin)
+  - WP4  (Fabien)
   - WP5
   - WP6
   - WP7
@@ -162,16 +162,10 @@ Fl_Bitmap.H
 Fl_Bitmap.cxx
 Fl_Box.H
 Fl_Box.cxx
-Fl_Browser.H
-Fl_Browser.cxx
-Fl_Browser_.H
-Fl_Browser_load.cxx
 Fl_Button.H
 Fl_Button.cxx
 Fl_Chart.H
 Fl_Chart.cxx
-Fl_Check_Browser.H
-Fl_Check_Browser.cxx
 Fl_Check_Button.H
 Fl_Check_Button.cxx
 Fl_Choice.H
@@ -185,11 +179,6 @@ Fl_Counter.cxx
 Fl_Dial.H
 Fl_Dial.cxx
 Fl_Export.H
-Fl_File_Browser.H
-Fl_File_Browser.cxx
-Fl_File_Chooser.H
-Fl_File_Chooser.cxx
-Fl_File_Chooser2.cxx
 Fl_File_Icon.H
 Fl_File_Icon.cxx
 Fl_File_Icon2.cxx
