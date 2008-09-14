@@ -30,6 +30,32 @@
 
 #include "Fl_Group.H"
 
+/**
+  The Fl_Tabs widget is the &quot;file card tabs&quot;
+  interface that allows you to put lots and lots of buttons and
+  switches in a panel, as popularized by many toolkits.
+  
+  <P ALIGN=CENTER>\image html  src=</P>
+  
+  <P>Clicking the tab makes a child visible() by calling
+  show() on it, and all other children are made invisible
+  by calling hide() on them. Usually the children are Fl_Group widgets
+  containing several widgets themselves.
+  
+  <P>Each child makes a card, and it's label() is printed
+  on the card tab, including the label font and style.  The
+  selection color of that child is used to color the tab, while
+  the color of the child determines the background color of the
+  pane.
+  
+  <P>The size of the tabs is controlled by the bounding box of the
+  children (there should be some space between the children and
+  the edge of the Fl_Tabs), and the tabs may be placed
+  &quot;inverted&quot; on the bottom, this is determined by which
+  gap is larger. It is easiest to lay this out in fluid, using the
+  fluid browser to select each child group and resize them until
+  the tabs look the way you want them to.
+*/
 class FL_EXPORT Fl_Tabs : public Fl_Group {
   Fl_Widget *value_;
   Fl_Widget *push_;

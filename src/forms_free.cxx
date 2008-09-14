@@ -41,6 +41,34 @@ void Fl_Free::step(void *v) {
   Fl::add_timeout(.01,step,v);
 }
 
+/**
+    The constructor takes both the type and the handle
+    function. The handle function should be declared as follows:
+    <UL>
+    <PRE>
+    int
+    handle_function(Fl_Widget *w,
+                   int       event,
+    	        float     event_x,
+    		float     event_y,
+    		char      key)
+    </PRE>
+    </UL>
+    This function is called from the the handle() method in
+    response to most events, and is called by the draw() method.
+    The event argument contains the event type:
+    <UL>
+    <PRE>
+    // old event names for compatability:
+    #define FL_MOUSE		FL_DRAG
+    #define FL_DRAW			0
+    #define FL_STEP			9
+    #define FL_FREEMEM		12
+    #define FL_FREEZE		FL_UNMAP
+    #define FL_THAW			FL_MAP
+    </PRE>
+    </UL>
+*/
 Fl_Free::Fl_Free(uchar t,int X, int Y, int W, int H,const char *l,
 		 FL_HANDLEPTR hdl) :
 Fl_Widget(X,Y,W,H,l) {
@@ -51,6 +79,7 @@ Fl_Widget(X,Y,W,H,l) {
     Fl::add_timeout(.01,step,this);
 }
 
+/** The destructor will call the handle function with the event FL_FREE_MEM. */
 Fl_Free::~Fl_Free() {
   Fl::remove_timeout(step,this);
   hfunc(this,FL_FREEMEM,0,0,0);

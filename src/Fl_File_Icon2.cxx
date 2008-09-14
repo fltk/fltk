@@ -98,10 +98,7 @@ static char	*get_kde_val(char *str, const char *key);
 static const char *kdedir = NULL;
 
 
-//
-// 'Fl_File_Icon::load()' - Load an icon file...
-//
-
+/** Loads the specified icon image. The format is deduced from the filename.*/
 void
 Fl_File_Icon::load(const char *f)	// I - File to read from
 {
@@ -124,10 +121,7 @@ Fl_File_Icon::load(const char *f)	// I - File to read from
 }
 
 
-//
-// 'Fl_File_Icon::load_fti()' - Load an SGI-format FTI file...
-//
-
+/** Loads an SGI icon file.*/
 int					// O - 0 on success, non-zero on error
 Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 {
@@ -341,12 +335,8 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 }
 
 
-//
-// 'Fl_File_Icon::load_image()' - Load an image icon file...
-//
-
-int					// O - 0 on success, non-0 on error
-Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
+/** Load an image icon file from an image filename. Returns  0 on success, non-0 on error. */
+int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 {
   Fl_Shared_Image	*img;		// Image file
 
@@ -587,9 +577,14 @@ Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 }
 
 
-//
-// 'Fl_File_Icon::load_system_icons()' - Load the standard system icons/filetypes.
-
+/**  Loads all system-defined icons. This call is useful when using the
+  FileChooser widget and should be used when the application
+  starts:
+  
+  <UL><PRE>
+  Fl_File_Icon::load_system_icons();
+  </PRE></UL>
+*/
 void
 Fl_File_Icon::load_system_icons(void) {
   int		i;		// Looping var

@@ -167,8 +167,28 @@ public:
 
 // dummy class used to end child groups in constructors for complex
 // subclasses of Fl_Group:
+/**
+  This is a dummy class that allows you to end a Fl_Group in a constructor list of a
+  class:
+  <UL>
+  <PRE>class MyClass {
+   Fl_Group group;
+   Fl_Button button_in_group;
+   Fl_End end;
+   Fl_Button button_outside_group;
+   MyClass();
+  };
+  MyClass::MyClass() :
+   group(10,10,100,100),
+   button_in_group(20,20,60,30),
+   end(),
+   button_outside_group(10,120,60,30)
+  {}</PRE>
+  </UL>
+*/
 class FL_EXPORT Fl_End {
 public:
+  /** All it does is calling Fl_Group::current()->end() */
   Fl_End() {Fl_Group::current()->end();}
 };
 

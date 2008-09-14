@@ -34,6 +34,16 @@
 #include <FL/Fl_Pack.H>
 #include <FL/fl_draw.H>
 
+/**
+  Creates a new Fl_Pack widget using the given position, size,
+  and label string. The default boxtype is FL_NO_BOX.
+  <P>The destructor <I>also deletes all the children</I>. This allows a
+  whole tree to be deleted at once, without having to keep a pointer to
+  all the children in the user code. A kludge has been done so the 
+  Fl_Pack and all of it's children can be automatic (local)
+  variables, but you must declare the Fl_Pack<I>first</I>, so
+  that it is destroyed last.
+*/
 Fl_Pack::Fl_Pack(int X, int Y, int W, int H,const char *l)
 : Fl_Group(X, Y, W, H, l) {
   resizable(0);

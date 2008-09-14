@@ -12,8 +12,8 @@ In Progress Work List (add your WP and name here):
   - WP1  (Fabien) DONE
   - WP2  (Fabien) DONE
   - WP3  (engelsman)
-  - WP4  (Fabien)
-  - WP5
+  - WP4  (Fabien) DONE
+  - WP5  (Fabien)
   - WP6
   - WP7
   - WP8

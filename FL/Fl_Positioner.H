@@ -32,6 +32,13 @@
 #include "Fl_Widget.H"
 #endif
 
+/**
+  This class is provided for Forms compatibility.  It provides 2D input.
+  It would be useful if this could be put atop another widget so that the
+  crosshairs are on top, but this is not implemented.  The color of the
+  crosshairs is selection_color().
+  <P ALIGN=CENTER>\image html  src=
+*/
 class FL_EXPORT Fl_Positioner : public Fl_Widget {
 
   double xmin, ymin;
@@ -49,25 +56,40 @@ protected:
 public:
 
   int handle(int);
+  /**
+    Creates a new Fl_Positioner widget using the given position,
+    size, and label string. The default boxtype is FL_NO_BOX.
+  */
   Fl_Positioner(int x,int y,int w,int h, const char *l=0);
+  /** Gets the X axis coordinate.*/
   double xvalue() const {return xvalue_;}
+  /** Gets the Y axis coordinate.*/
   double yvalue() const {return yvalue_;}
   int xvalue(double);
   int yvalue(double);
   int value(double,double);
   void xbounds(double, double);
+  /** Gets the X axis minimum */
   double xminimum() const {return xmin;}
+  /** Same as xbounds(a, xmaximum()) */
   void xminimum(double a) {xbounds(a,xmax);}
+  /** Gets the X axis maximum */
   double xmaximum() const {return xmax;}
+  /** Same as xbounds(xminimum(), a) */
   void xmaximum(double a) {xbounds(xmin,a);}
   void ybounds(double, double);
+  /** Gets the Y axis minimum */
   double yminimum() const {return ymin;}
-  void yminimum(double a) {ybounds(a,ymax);}
+  /** Same as ybounds(a, ymaximum()) */
+  void yminimum(double a) {ybounds(a, ymax);}
+  /** Gets the Y axis maximum */
   double ymaximum() const {return ymax;}
-  void ymaximum(double a) {ybounds(ymin,a);}
+  /** Same as ybounds(ymininimum(), a) */
+  void ymaximum(double a) {ybounds(ymin, a);}
+  /** Sets the stepping value for the X axis.*/
   void xstep(double a) {xstep_ = a;}
+  /** Sets the stepping value for the Y axis.*/
   void ystep(double a) {ystep_ = a;}
-
 };
 
 #endif

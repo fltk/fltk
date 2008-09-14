@@ -25,6 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
+
 // Group of 2 or 4 "tiles" that can be resized by dragging border
 // The size of the first child determines where the resize border is.
 // The resizebox is used to limit where the border can be dragged to.
@@ -36,7 +37,10 @@
 
 // Drag the edges that were initially at oldx,oldy to newx,newy:
 // pass zero as oldx or oldy to disable drag in that direction:
-
+/** 
+  Drag the intersection at from_x,from_y to to_x,to_y.
+  This redraws all the necessary children.
+*/
 void Fl_Tile::position(int oix, int oiy, int newx, int newy) {
   Fl_Widget*const* a = array();
   int *p = sizes();

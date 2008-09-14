@@ -40,6 +40,27 @@
 
 typedef int (*FL_HANDLEPTR)(Fl_Widget *, int , float, float, char);
 
+/**
+  Emulation of the Forms &quot;free&quot; widget.  This emulation allows the free
+  demo to run, and appears to be useful for porting programs written in
+  Forms which use the free widget or make subclasses of the Forms
+  widgets.
+  <P>There are five types of free, which determine when the handle
+  function is called: </P>
+  <UL>
+  <PRE>
+  #define FL_NORMAL_FREE		1
+  #define FL_SLEEPING_FREE	2
+  #define FL_INPUT_FREE		3
+  #define FL_CONTINUOUS_FREE	4
+  #define FL_ALL_FREE		5
+  </PRE>
+  </UL>
+  <P>An FL_INPUT_FREE accepts FL_FOCUS events.  A FL_CONTINUOUS_FREE sets
+  a timeout callback 100 times a second and provides a FL_STEP event,
+  this has obvious detrimental effects on machine performance.
+  FL_ALL_FREE does both.  FL_SLEEPING_FREE are deactivated.
+*/
 class FL_EXPORT Fl_Free : public Fl_Widget {
     FL_HANDLEPTR hfunc;
     static void step(void *);
@@ -47,8 +68,8 @@ protected:
     void draw();
 public:
     int handle(int);
-    Fl_Free(uchar t,int x,int y,int w,int h,const char *l,FL_HANDLEPTR hdl);
-    ~Fl_Free();
+  Fl_Free(uchar t,int x,int y,int w,int h,const char *l,FL_HANDLEPTR hdl);
+  ~Fl_Free();
 };
 
 // old event names for compatability:

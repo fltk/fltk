@@ -81,11 +81,11 @@
 Fl_File_Icon	*Fl_File_Icon::first_ = (Fl_File_Icon *)0;
 
 
-//
-// 'Fl_File_Icon::Fl_File_Icon()' - Create a new file icon.
-//
-
-Fl_File_Icon::Fl_File_Icon(const char *p,	/* I - Filename pattern */
+/**
+  The constructor creates a new Fl_File_Icon with the specified
+  information.
+*/
+Fl_File_Icon::Fl_File_Icon(const char *p,	/**< I - Filename pattern */
                 	   int        t,	/* I - File type */
 			   int        nd,	/* I - Number of data values */
 			   short      *d)	/* I - Data values */
@@ -114,12 +114,11 @@ Fl_File_Icon::Fl_File_Icon(const char *p,	/* I - Filename pattern */
 }
 
 
-//
-// 'Fl_File_Icon::~Fl_File_Icon()' - Remove a file icon.
-//
-
-Fl_File_Icon::~Fl_File_Icon()
-{
+/**
+  The destructor destroys the icon and frees all memory that has been
+  allocated for it.
+*/
+Fl_File_Icon::~Fl_File_Icon() {
   Fl_File_Icon	*current,	// Current icon in list
 		*prev;		// Previous icon in list
 
@@ -144,10 +143,7 @@ Fl_File_Icon::~Fl_File_Icon()
 }
 
 
-//
-// 'Fl_File_Icon::add()' - Add data to an icon.
-//
-
+/** Adds a keyword value to the icon array, returning a pointer to it.*/
 short *				// O - Pointer to new data value
 Fl_File_Icon::add(short d)	// I - Data to add
 {
@@ -178,10 +174,7 @@ Fl_File_Icon::add(short d)	// I - Data to add
 }
 
 
-//
-// 'Fl_File_Icon::find()' - Find an icon based upon a given file.
-//
-
+/** Finds an icon that matches the given filename and file type.*/
 Fl_File_Icon *				// O - Matching file icon or NULL
 Fl_File_Icon::find(const char *filename,// I - Name of file */
                    int        filetype)	// I - Enumerated file type
@@ -243,11 +236,7 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
   return (current);
 }
 
-
-//
-// 'Fl_File_Icon::draw()' - Draw an icon.
-//
-
+/** Drawsan icon. */
 void
 Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
         	   int      y,		// I - Upper-lefthand Y
@@ -446,13 +435,11 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
   fl_pop_matrix();
 }
 
-
-//
-// 'Fl_File_Icon::label()' - Set the widget's label to an icon.
-//
-
-void
-Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
+/**
+  Applies the icon to the widget, registering the Fl_File_Icon
+  label type as needed.
+*/
+void Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
 {
   Fl::set_labeltype(_FL_ICON_LABEL, labeltype, 0);
   w->label(_FL_ICON_LABEL, (const char*)this);
