@@ -60,17 +60,17 @@ deimage(0);
 <H2>Protected Methods of Fl_Widget</H2>
  The following methods are provided for subclasses to use:
 <UL>
-<LI><A href=#clear_visible><TT>Fl_Widget::clear_visible</TT></A></LI>
-<LI><A href=#damage><TT>Fl_Widget::damage</TT></A></LI>
-<LI><A href=#draw_box><TT>Fl_Widget::draw_box</TT></A></LI>
-<LI><A href=#draw_focus><TT>Fl_Widget::draw_focus</TT></A></LI>
-<LI><A href=#draw_label><TT>Fl_Widget::draw_label</TT></A></LI>
-<LI><A href=#set_flag><TT>Fl_Widget::set_flag</TT></A></LI>
-<LI><A href=#set_visible><TT>Fl_Widget::set_visible</TT></A></LI>
-<LI><A href=#test_shortcut><TT>Fl_Widget::test_shortcut</TT></A></LI>
-<LI><A href=#type><TT>Fl_Widget::type</TT></A></LI>
+<LI><A href="#clear_visible"><TT>Fl_Widget::clear_visible</TT></A></LI>
+<LI><A href="#damage"><TT>Fl_Widget::damage</TT></A></LI>
+<LI><A href="#draw_box"><TT>Fl_Widget::draw_box</TT></A></LI>
+<LI><A href="#draw_focus"><TT>Fl_Widget::draw_focus</TT></A></LI>
+<LI><A href="#draw_label"><TT>Fl_Widget::draw_label</TT></A></LI>
+<LI><A href="#set_flag"><TT>Fl_Widget::set_flag</TT></A></LI>
+<LI><A href="#set_visible"><TT>Fl_Widget::set_visible</TT></A></LI>
+<LI><A href="#test_shortcut"><TT>Fl_Widget::test_shortcut</TT></A></LI>
+<LI><A href="#type"><TT>Fl_Widget::type</TT></A></LI>
 </UL>
-<H4><A name=damage>void Fl_Widget::damage(uchar mask)
+<H4><A name="damage">void Fl_Widget::damage(uchar mask)
 <BR> void Fl_Widget::damage(uchar mask, int x, int y, int w, int h)
 <BR> uchar Fl_Widget::damage()</A></H4>
 The first form indicates that a partial update of the object is
@@ -108,7 +108,7 @@ MyClass::draw() {
   if (damage() &amp; (FL_DAMAGE_ALL | 4)) draw_part3();
 }
 </PRE></UL>
-<H4><A name=draw_box>void Fl_Widget::draw_box() const
+<H4><A name="draw_box">void Fl_Widget::draw_box() const
 <BR></A>void Fl_Widget::draw_box(Fl_Boxtype b, ulong c) const</H4>
  The first form draws this widget's <TT>box()</TT>, using the
 dimensions of the widget.  The second form uses <TT>b</TT> as the box
@@ -120,7 +120,7 @@ type and <TT>c</TT> as the color for the box.
 <P>Draws a focus box inside the widgets bounding box. The second
 form allows you to specify a different bounding box.
 
-<H4><A name=draw_label>void Fl_Widget::draw_label() const
+<H4><A name="draw_label">void Fl_Widget::draw_label() const
 <BR> void Fl_Widget::draw_label(int x, int y, int w, int h) const
 <BR> void Fl_Widget::draw_label(int x, int y, int w, int h, Fl_Align
 align) const</A></H4>
@@ -135,15 +135,15 @@ feature, like a moving slider. </P>
 FL_ALIGN_INSIDE</TT> has been forced on so the label will appear inside
 the passed bounding box. This is designed for parent groups to draw
 labels with. </P>
-<H4><A name=set_flag>void Fl_Widget::set_flag(SHORTCUT_LABEL)</A></H4>
+<H4><A name="set_flag">void Fl_Widget::set_flag(SHORTCUT_LABEL)</A></H4>
 Modifies <TT>draw_label()</TT> so that '&amp;' characters cause an underscore
 to be printed under the next letter.
-<H4><A name=set_visible>void Fl_Widget::set_visible()</A>
-<BR><A name=clear_visible>void Fl_Widget::clear_visible()</A></H4>
+<H4><A name="set_visible">void Fl_Widget::set_visible()</A>
+<BR><A name="clear_visible">void Fl_Widget::clear_visible()</A></H4>
  Fast inline versions of <TT>Fl_Widget::hide()</TT> and <TT>
 Fl_Widget::show()</TT>. These do not send the <TT>FL_HIDE</TT> and <TT>
 FL_SHOW</TT> events to the widget.
-<H4><A name=test_shortcut>int Fl_Widget::test_shortcut() const
+<H4><A name="test_shortcut">int Fl_Widget::test_shortcut() const
 <BR> static int Fl_Widget::test_shortcut(const char *s)</A></H4>
  The first version tests <TT>Fl_Widget::label()</TT> against the
 current event (which should be a <TT>FL_SHORTCUT</TT> event).  If the
@@ -153,7 +153,7 @@ flag is off, if the label is <TT>NULL</TT> or does not have a
 '&amp;' character in it, or if the keypress does not match the character.
 <P>The second version lets you do this test against an arbitrary
 string. </P>
-<H4><A name=type>uchar Fl_Widget::type() const
+<H4><A name="type">uchar Fl_Widget::type() const
 <BR> void Fl_Widget::type(uchar t)</A></H4>
  The property <TT>Fl_Widget::type()</TT> can return an arbitrary 8-bit
 identifier, and can be set with the protected method <TT>type(uchar t)</TT>
@@ -175,19 +175,19 @@ range 1 to 7). </P>
 to handle each event passed to the widget. It can:
 <UL>
 <LI>Change the state of the widget. </LI>
-<LI>Call <A href=Fl_Widget.html#Fl_Widget.redraw><TT>Fl_Widget::redraw()</TT>
+<LI>Call <A href="Fl_Widget.html#Fl_Widget.redraw"><TT>Fl_Widget::redraw()</TT>
 </A> if the widget needs to be redisplayed. </LI>
-<LI>Call <A href=Fl_Widget.html#Fl_Widget.damage><TT>
+<LI>Call <A href="Fl_Widget.html#Fl_Widget.damage"><TT>
 Fl_Widget::damage(n)</TT></A> if  the widget needs a partial-update
-(assuming you provide  support for this in your <A HREF="#draw"><TT>Fl_Widget::draw()</TT></A>
+(assuming you provide  support for this in your <A href="#draw"><TT>Fl_Widget::draw()</TT></A>
  method). </LI>
-<LI>Call <A href=Fl_Widget.html#Fl_Widget.do_callback><TT>
+<LI>Call <A href="Fl_Widget.html#Fl_Widget.do_callback"><TT>
 Fl_Widget::do_callback()</TT></A> if a callback should be generated. </LI>
 <LI>Call <TT>Fl_Widget::handle()</TT> on child widgets. </LI>
 </UL>
  Events are identified by the integer argument.  Other information
 about the most recent event is stored in static locations and aquired
-by calling the <A href=events.html#events><TT>Fl::event_*()</TT></A>
+by calling the <A href="events.html#events"><TT>Fl::event_*()</TT></A>
  functions. This information remains valid until another event is
 handled.
 <P>Here is a sample <TT>handle()</TT> method for a widget that acts as
@@ -249,12 +249,12 @@ the parts whose bits are set. FLTK will turn on the
 be redrawn, e.g. for an expose event. </P>
 
 <P>Expose events (and the above <TT>damage(b,x,y,w,h)</TT>) will cause <TT>
-draw()</TT> to be called with FLTK's <A href=drawing.html#clipping>
+draw()</TT> to be called with FLTK's <A href="drawing.html#clipping">
 clipping</A> turned on.  You can greatly speed up redrawing in some
 cases by testing <TT>fl_not_clipped(x,y,w,h)</TT> or <TT>fl_clip_box(...)</TT> and
 skipping invisible parts. </P>
 <P>Besides the protected methods described above, FLTK provides a large
-number of basic drawing functions, which are described <A href=drawing.html#drawing>
+number of basic drawing functions, which are described <A href="drawing.html#drawing">
 below</A>. </P>
 <H2>Resizing the Widget</H2>
  The <TT>resize(int x, int y, int w, int h)</TT> method is called when
@@ -264,12 +264,12 @@ and <TT>h()</TT> still remain the old size.  You must call <TT>resize()</TT>
  on your base class with the same arguments to get the widget size to
 actually change.
 <P>This should <I>not</I> call <TT>redraw()</TT>, at least if only the <TT>
-x()</TT> and <TT>y()</TT> change.  This is because composite widgets like <A href=Fl_Scroll.html#Fl_Scroll>
+x()</TT> and <TT>y()</TT> change.  This is because composite widgets like <A href="Fl_Scroll.html#Fl_Scroll">
 <TT>Fl_Scroll</TT></A> may have a more efficient way of drawing the new
 position. </P>
 <H2>Making a Composite Widget</H2>
  A &quot;composite&quot; widget contains one or more &quot;child&quot; widgets.
- To make a composite widget you should subclass <A href=Fl_Group.html#Fl_Group><TT>Fl_Group</TT></A>
+ To make a composite widget you should subclass <A href="Fl_Group.html#Fl_Group"><TT>Fl_Group</TT></A>
 . It is possible to make a composite object that is not a subclass of <TT>
 Fl_Group</TT>, but you'll have to duplicate the code in <TT>Fl_Group</TT>
  anyways.
@@ -284,7 +284,7 @@ class MyClass : public Fl_Group {
  The constructor has to initialize these instances.  They are
 automatically <TT>add()</TT>ed to the group, since the <TT>Fl_Group</TT>
  constructor does <TT>begin()</TT>. <I>Don't forget to call <TT>end()</TT>
- or use the <A href=Fl_End.html#Fl_End><TT>Fl_End</TT></A> pseudo-class:</I>
+ or use the <A href="Fl_End.html#Fl_End"><TT>Fl_End</TT></A> pseudo-class:</I>
 <UL><PRE>
 MyClass::MyClass(int x, int y, int w, int h) :
   Fl_Group(x, y, w, h),
@@ -343,23 +343,23 @@ int MyClass::draw() {
 <TT>Fl_Group</TT> provides some protected methods to make drawing
 easier:
 <UL>
-<LI><A href=#draw_child>draw_child</A></LI>
-<LI><A href=#draw_outside_label>draw_outside_label</A></LI>
-<LI><A href=#update_child>update_child</A></LI>
+<LI><A href="#draw_child">draw_child</A></LI>
+<LI><A href="#draw_outside_label">draw_outside_label</A></LI>
+<LI><A href="#update_child">update_child</A></LI>
 </UL>
-<H4><A name=draw_child>void Fl_Group::draw_child(Fl_Widget&amp;)</A></H4>
+<H4><A name="draw_child">void Fl_Group::draw_child(Fl_Widget&amp;)</A></H4>
  This will force the child's <TT>damage()</TT> bits all to one and call <TT>
 draw()</TT> on it, then clear the <TT>damage()</TT>.  You should call
 this on all children if a total redraw of your widget is requested, or
 if you draw something (like a background box) that damages the child.
  Nothing is done if the child is not <TT>visible()</TT> or if it is
 clipped.
-<H4><A name=draw_outside_label>void
+<H4><A name="draw_outside_label">void
 Fl_Group::draw_outside_label(Fl_Widget&amp;) const</A></H4>
- Draw the labels that are <I>not</I> drawn by <A href=#draw_label><TT>
+ Draw the labels that are <I>not</I> drawn by <A href="#draw_label"><TT>
 draw_label()</TT></A>.  If you want more control over the label
 positions you might want to call <TT>child-&gt;draw_label(x,y,w,h,a)</TT>.
-<H4><A name=update_child>void Fl_Group::update_child(Fl_Widget&amp;)</A></H4>
+<H4><A name="update_child">void Fl_Group::update_child(Fl_Widget&amp;)</A></H4>
  Draws the child only if its <TT>damage()</TT> is non-zero.  You
 should call this on all the children if your own damage is equal to
 FL_DAMAGE_CHILD.  Nothing is done if the child is not <TT>visible()</TT>
@@ -373,7 +373,7 @@ may be UTF-8) between applications:
 <LI><A href="Fl.html#Fl.selection"><TT>Fl::selection</TT></A></LI>
 <LI><A href="Fl.html#Fl.selection_owner"><TT>Fl::selection_owner</TT></A></LI>
 </UL>
-It may be possible to cut/paste non-text data by using <A href=osissues.html#add_handler>
+It may be possible to cut/paste non-text data by using <A href="osissues.html#add_handler">
 <TT>Fl::add_handler()</TT></A>.
 
 <H2>Drag And Drop Support</H2>
