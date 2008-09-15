@@ -25,9 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-// Select a color from the colormap.
-// Pretty much unchanged from Forms.
-
 #include <FL/Fl.H>
 #include <FL/Fl_Single_Window.H>
 #include <FL/fl_draw.H>
@@ -37,6 +34,10 @@
 #define BOXSIZE 14
 #define BORDER 4
 
+/** 
+ This widget creates a modal window for selecting a color from the colormap.
+ Pretty much unchanged from Forms.
+*/
 class ColorMenu : public Fl_Window {
   Fl_Color initial;
   Fl_Color which, previous;

@@ -42,13 +42,14 @@
 
 #  include "gl.h"
 
-////////////////////////////////////////////////////////////////
-// GLUT is emulated using this window class and these static variables
-// (plus several more static variables hidden in glut_compatability.cxx):
 
 #  include "Fl.H"
 #  include "Fl_Gl_Window.H"
 
+/** 
+  GLUT is emulated using this window class and these static variables
+  (plus several more static variables hidden in glut_compatability.cxx):
+*/
 class FL_EXPORT Fl_Glut_Window : public Fl_Gl_Window {
   void _init();
   int mouse_down;

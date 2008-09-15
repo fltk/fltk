@@ -185,9 +185,11 @@ void Fl_Glut_Window::_init() {
   mode(glut_mode);
 }
 
+/** Creates a glut windows, registers to the glut windows list.*/
 Fl_Glut_Window::Fl_Glut_Window(int W, int H, const char *t) :
   Fl_Gl_Window(W,H,t) {_init();}
 
+/** Creates a glut windows, registers to the glut windows list.*/
 Fl_Glut_Window::Fl_Glut_Window(int X,int Y,int W,int H, const char *t) :
   Fl_Gl_Window(X,Y,W,H,t) {_init();}
 
@@ -215,7 +217,7 @@ void glutMainLoop() {Fl::run();}
 
 ////////////////////////////////////////////////////////////////
 
-static int initx, inity, initw=300, inith=300, initpos;
+static int initx=0, inity=0, initw=300, inith=300, initpos=0;
 
 void glutInitWindowPosition(int x, int y) {
   initx = x; inity = y; initpos = 1;
@@ -257,7 +259,7 @@ int glutCreateSubWindow(int win, int x, int y, int w, int h) {
   W->make_current();
   return W->number;
 }
-
+/** Destroys the glut window, first unregister it from the glut windows list */
 Fl_Glut_Window::~Fl_Glut_Window() {
   if (glut_window == this) glut_window = 0;
   windows[number] = 0;

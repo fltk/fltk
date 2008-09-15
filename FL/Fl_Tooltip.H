@@ -33,21 +33,21 @@
 
 /**
   The Fl_Tooltip class provides tooltip support for
-  all FLTK widgets.
+  all FLTK widgets. It contains only static methods.
 */
 class FL_EXPORT Fl_Tooltip {
 public:
   /**    Gets the tooltip delay. The default delay is 1.0 seconds.  */
-    static float delay() { return delay_; }
+  static float delay() { return delay_; }
   /**    Sets the tooltip delay. The default delay is 1.0 seconds.  */
   static void delay(float f) { delay_ = f; }
   /**
-    Gets or sets the tooltip hover delay, the delay between tooltips.
+    Gets the tooltip hover delay, the delay between tooltips.
     The default delay is 0.2 seconds.
   */
   static float hoverdelay() { return hoverdelay_; }
   /**
-    Gets or sets the tooltip hover delay, the delay between tooltips.
+    Sets the tooltip hover delay, the delay between tooltips.
     The default delay is 0.2 seconds.
   */
   static void hoverdelay(float f) { hoverdelay_ = f; }
@@ -82,18 +82,21 @@ public:
   static void textcolor(unsigned c) { textcolor_ = c; }
 
   // These should not be public, but Fl_Widget::tooltip() needs them...
+  // fabien: made it private with only a friend function access
+private:
+  friend void Fl_Widget::tooltip(const char *);
   static void enter_(Fl_Widget* w);
   static void exit_(Fl_Widget *w);
 
 private:
-  static float delay_;
-  static float hoverdelay_;
+  static float delay_; //!< delay before a tooltip is shown
+  static float hoverdelay_; //!< delay between tooltips
   static int enabled_;
   static unsigned color_;
   static unsigned textcolor_;
   static Fl_Font font_;
   static Fl_Fontsize size_;
-  static Fl_Widget* widget_;
+  static Fl_Widget* widget_; //!< Keeps track of the current target widget
 };
 
 #endif

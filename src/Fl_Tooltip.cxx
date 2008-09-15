@@ -44,15 +44,19 @@ Fl_Fontsize    Fl_Tooltip::size_ = FL_NORMAL_SIZE;
 #define MAX_WIDTH 400
 
 static const char* tip;
-
+/**
+    This widget creates a tooltip box window, with no caption.
+*/
 class Fl_TooltipBox : public Fl_Menu_Window {
 public:
+  /** Creates the box window */
   Fl_TooltipBox() : Fl_Menu_Window(0, 0) {
     set_override();
     end();
   }
   void draw();
   void layout();
+  /** Shows the tooltip windows only if a tooltip text is available. */
   void show() {
     if (tip) Fl_Menu_Window::show();
   }
