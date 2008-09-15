@@ -19,7 +19,7 @@ In Progress Work List (add your WP and name here):
   - WP8  (Fabien) DONE
   - WP9  (Fabien) DONE
   - WP10 (Fabien) DONE
-  - WP11 (Fabien) 
+  - WP11 (Fabien) DONE
   - WP12 (Albrecht) work in progress
   - WP13 (Albrecht) work in progress
 
@@ -191,29 +191,13 @@ Fl_Radio_Light_Button.H
 Fl_Radio_Round_Button.H
 Fl_Round_Clock.H
 Fl_Simple_Counter.H
-Fl_Spinner.H
 Fl_Sys_Menu_Bar.H
 Fl_Sys_Menu_Bar.cxx
 Fl_Tabs.H
 Fl_Tabs.cxx
-Fl_Text_Buffer.H
-Fl_Text_Buffer.cxx
-Fl_Text_Display.H
-Fl_Text_Display.cxx
-Fl_Text_Editor.H
-Fl_Text_Editor.cxx
-Fl_Tiled_Image.H
-Fl_Tiled_Image.cxx
-Fl_Toggle_Button.H
-Fl_Toggle_Light_Button.H
-Fl_Toggle_Round_Button.H
-Fl_Tooltip.H
-Fl_Tooltip.cxx
 Fl_Window_fullscreen.cxx
 Fl_Window_hotspot.cxx
 Fl_Window_iconize.cxx
-Fl_Wizard.H
-Fl_Wizard.cxx
 Fl_XColor.H
 Fl_abort.cxx
 Fl_get_key.cxx

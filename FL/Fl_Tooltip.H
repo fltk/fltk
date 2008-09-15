@@ -31,29 +31,55 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
 
+/**
+  The Fl_Tooltip class provides tooltip support for
+  all FLTK widgets.
+*/
 class FL_EXPORT Fl_Tooltip {
 public:
-  static float delay() { return delay_; }
+  /**    Gets the tooltip delay. The default delay is 1.0 seconds.  */
+    static float delay() { return delay_; }
+  /**    Sets the tooltip delay. The default delay is 1.0 seconds.  */
   static void delay(float f) { delay_ = f; }
+  /**
+    Gets or sets the tooltip hover delay, the delay between tooltips.
+    The default delay is 0.2 seconds.
+  */
   static float hoverdelay() { return hoverdelay_; }
+  /**
+    Gets or sets the tooltip hover delay, the delay between tooltips.
+    The default delay is 0.2 seconds.
+  */
   static void hoverdelay(float f) { hoverdelay_ = f; }
+  /**    Returns non-zero if tooltips are enabled.  */
   static int enabled() { return enabled_; }
+  /**    Enables tooltips on all widgets (or disables if <i>b</i> is false).  */
   static void enable(int b = 1) { enabled_ = b;}
+  /**    Same as enable(0), disables tooltips on all widgets.  */
   static void disable() { enabled_ = 0; }
   static void (*enter)(Fl_Widget* w);
   static void enter_area(Fl_Widget* w, int X, int Y, int W, int H, const char* tip);
   static void (*exit)(Fl_Widget *w);
+  /** Gets the current widget target */
   static Fl_Widget* current() {return widget_;}
   static void current(Fl_Widget*);
 
+  /**    Gets the typeface for the tooltip text.  */
   static Fl_Font font() { return font_; }
-  static Fl_Fontsize size() { return size_; }
+  /**    Sets the typeface for the tooltip text.  */
   static void font(Fl_Font i) { font_ = i; }
+  /**    Gets the size of the tooltip text.  */
+  static Fl_Fontsize size() { return size_; }
+  /**    Sets the size of the tooltip text.  */
   static void size(Fl_Fontsize s) { size_ = s; }
-  static void color(unsigned c) { color_ = c; }
+  /** Gets the background color for tooltips. The default background color is a pale yellow.  */
   static Fl_Color color() { return (Fl_Color)color_; }
-  static void textcolor(unsigned c) { textcolor_ = c; }
+  /** Sets the background color for tooltips. The default background color is a pale yellow.  */
+  static void color(unsigned c) { color_ = c; }
+  /** Gets the color of the text in the tooltip. The default is  black. */
   static Fl_Color textcolor() { return (Fl_Color)textcolor_; }
+  /** Sets the color of the text in the tooltip. The default is  black. */
+  static void textcolor(unsigned c) { textcolor_ = c; }
 
   // These should not be public, but Fl_Widget::tooltip() needs them...
   static void enter_(Fl_Widget* w);

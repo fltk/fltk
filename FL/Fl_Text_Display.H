@@ -36,6 +36,13 @@
 #include "Fl_Scrollbar.H"
 #include "Fl_Text_Buffer.H"
 
+/**
+  This is the FLTK text display widget. It allows the user to
+  view multiple lines of text and supports highlighting and
+  scrolling. The buffer that is displayed in the widget is managed
+  by the Fl_Text_Buffer
+  class.
+*/
 class FL_EXPORT Fl_Text_Display: public Fl_Group {
   public:
     enum {
@@ -76,13 +83,22 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
     virtual int handle(int e);
     void buffer(Fl_Text_Buffer* buf);
+  /**
+      Sets or gets the current text buffer associated with the text widget.
+    Multiple text widgets can be associated with the same text buffer.
+  */
     void buffer(Fl_Text_Buffer& buf) { buffer(&buf); }
+    /**
+      Gets the current text buffer associated with the text widget.
+      Multiple text widgets can be associated with the same text buffer.
+    */
     Fl_Text_Buffer* buffer() { return mBuffer; }
     void redisplay_range(int start, int end);
     void scroll(int topLineNum, int horizOffset);
     void insert(const char* text);
     void overstrike(const char* text);
     void insert_position(int newPos);
+    /** Gets the position of the text insertion cursor for text display */
     int insert_position() { return mCursorPos; }
     int in_selection(int x, int y);
     void show_insert_position();
@@ -98,15 +114,24 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     void next_word(void);
     void previous_word(void);
     void show_cursor(int b = 1);
+    /**    Hides the text cursor */
     void hide_cursor() { show_cursor(0); }
     void cursor_style(int style);
+    /**    Sets or gets the text cursor color.  */
     Fl_Color cursor_color() const {return mCursor_color;}
+    /**    Sets or gets the text cursor color.  */
     void cursor_color(Fl_Color n) {mCursor_color = n;}
+    /**    Sets or gets the width/height of the scrollbars.  */
     int scrollbar_width() { return scrollbar_width_; }
-    Fl_Align scrollbar_align() { return scrollbar_align_; }
+    /**    Sets or gets the width/height of the scrollbars.  */
     void scrollbar_width(int W) { scrollbar_width_ = W; }
+    /**    Gets the scrollbar alignment type */
+    Fl_Align scrollbar_align() { return scrollbar_align_; }
+    /**    Sets the scrollbar alignment type */
     void scrollbar_align(Fl_Align a) { scrollbar_align_ = a; }
+    /**    Moves the insert position to the beginning of the current word.  */
     int word_start(int pos) { return buffer()->word_start(pos); }
+    /**    Moves the insert position to the end of the current word.  */
     int word_end(int pos) { return buffer()->word_end(pos); }
 
     
@@ -118,15 +143,24 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
     int position_style(int lineStartPos, int lineLen, int lineIndex,
                        int dispIndex);
-
+    /** \todo FIXME : get set methods pointing on shortcut_ 
+     have no effects as shortcut_ is unused in this class and derived! */
     int shortcut() const {return shortcut_;}
+    /** \todo FIXME : get set methods pointing on shortcut_ 
+     have no effects as shortcut_ is unused in this class and derived! */
     void shortcut(int s) {shortcut_ = s;}
 
+    /**    Gets the default font used when drawing text in the widget.  */
     Fl_Font textfont() const {return textfont_;}
+    /**    Sets the default font used when drawing text in the widget.  */
     void textfont(Fl_Font s) {textfont_ = s;}
+    /**    Gets the default size of text in the widget.  */
     Fl_Fontsize textsize() const {return textsize_;}
+    /**    Sets the default size of text in the widget.  */
     void textsize(Fl_Fontsize s) {textsize_ = s;}
+    /**    Gets the default color of text in the widget.  */
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+    /**    Sets the default color of text in the widget.  */
     void textcolor(unsigned n) {textcolor_ = n;}
 
     int wrapped_column(int row, int column);

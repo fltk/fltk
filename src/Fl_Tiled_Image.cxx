@@ -25,17 +25,15 @@
 //     http://www.fltk.org/str.php
 //
 
+
 #include <FL/Fl.H>
 #include <FL/Fl_Tiled_Image.H>
 #include <FL/fl_draw.H>
 
-
-//
-// 'Fl_Tiled_Image::Fl_Tiled_Image()' - Constructor.
-//
-// Use a width and height of 0 to tile the whole window/widget.
-//
-
+/**
+  The constructors create a new tiled image containing the specified image.
+  Use a width and height of 0 to tile the whole window/widget.
+*/
 Fl_Tiled_Image::Fl_Tiled_Image(Fl_Image *i,	// I - Image to tile
                                int      W,	// I - Width of tiled area
 			       int      H) :	// I - Height of tiled area
@@ -46,13 +44,11 @@ Fl_Tiled_Image::Fl_Tiled_Image(Fl_Image *i,	// I - Image to tile
   if (W == 0) w(Fl::w());
   if (H == 0) h(Fl::h());
 }
-
-
-//
-// 'Fl_Tiled_Image::~Fl_Tiled_Image()' - Destructor.
-//
-
-Fl_Tiled_Image::~Fl_Tiled_Image() {
+/**
+  The destructor frees all memory and server resources that are used by
+  the tiled image.
+*/
+  Fl_Tiled_Image::~Fl_Tiled_Image() {
   if (alloc_image_) delete image_;
 }
 

@@ -31,7 +31,14 @@
 #  include "Fl_Image.H"
 
 
-// Tiled image class. 
+/**
+  This class supports tiling of images
+  over a specified area. The source (tile) image is <B>not</B>
+  copied unless you call the color_average(),
+  desaturate(),
+  or inactive()
+  methods.
+*/
 class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
   protected:
 
@@ -49,6 +56,7 @@ class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
   virtual void desaturate();
   virtual void draw(int X, int Y, int W, int H, int cx, int cy);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
+  /** Gets The image that is shared */ 
   Fl_Image *image() { return image_; }
 };
 

@@ -30,8 +30,22 @@
 
 #include "Fl_Button.H"
 
+/**
+  The toggle button is a push button that needs to be clicked once 
+  to toggle on, and one more time to toggle off.
+  The Fl_Toggle_Button subclass displays the &quot;on&quot; state by
+  drawing a pushed-in button.</P>
+  <P>Buttons generate callbacks when they are clicked by the user.  You
+  control exactly when and how by changing the values for type()
+  and when().
+*/
 class Fl_Toggle_Button : public Fl_Button {
 public:
+  /**
+    Creates a new Fl_Toggle_Button widget using the given
+    position, size, and label string.
+    <P>The inherited destructor deletes the toggle button.
+  */
     Fl_Toggle_Button(int X,int Y,int W,int H,const char *l=0)
 	: Fl_Button(X,Y,W,H,l) {type(FL_TOGGLE_BUTTON);}
 };

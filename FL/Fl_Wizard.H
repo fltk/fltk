@@ -35,10 +35,15 @@
 #  include <FL/Fl_Group.H>
 
 
-//
-// Fl_Wizard class...
-//
+/**
+    This widget is based off the Fl_Tabs
+    widget, but instead of displaying tabs it only changes "tabs" under
+    program control. Its primary purpose is to support "wizards" that
+    step a user through configuration or troubleshooting tasks.
 
+    <P>As with Fl_Tabs, wizard panes are composed of child (usually
+    Fl_Group) widgets. Navigation buttons must be added separately.
+*/
 class FL_EXPORT Fl_Wizard : public Fl_Group
 {
   Fl_Widget *value_;
