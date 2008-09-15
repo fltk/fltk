@@ -37,7 +37,7 @@
   It would be useful if this could be put atop another widget so that the
   crosshairs are on top, but this is not implemented.  The color of the
   crosshairs is selection_color().
-  <P ALIGN=CENTER>\image html  src=
+  <P ALIGN=CENTER>\image html  positioner.gif </P>
 */
 class FL_EXPORT Fl_Positioner : public Fl_Widget {
 

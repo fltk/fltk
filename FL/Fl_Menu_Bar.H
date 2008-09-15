@@ -41,7 +41,7 @@
   top level menu defines the items in the menubar, while the submenus
   define the pull-down menus. Sub-sub menus and lower pop up to the right
   of the submenus. </P>
-  <P ALIGN=CENTER>\image html  src=</P>
+  <P ALIGN=CENTER>\image html  menubar.gif</P>
   <P>If there is an item in the top menu that is not a title of a
   submenu, then it acts like a &quot;button&quot; in the menubar.  Clicking on it
   will pick it. </P>
