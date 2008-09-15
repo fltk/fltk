@@ -17,7 +17,7 @@ In Progress Work List (add your WP and name here):
   - WP6  (Fabien) DONE
   - WP7  (Fabien) DONE
   - WP8  (Fabien) DONE
-  - WP9  (Fabien)
+  - WP9  (Fabien) DONE
   - WP10 (Fabien)
   - WP11
   - WP12 (Albrecht) work in progress
@@ -171,11 +171,8 @@ Fl_Color_Chooser.cxx
 Fl_Counter.H
 Fl_Counter.cxx
 Fl_Export.H
-Fl_File_Input.H
-Fl_File_Input.cxx
 Fl_Fill_Dial.H
 Fl_Fill_Slider.H
-Fl_Float_Input.H
 Fl_Font.H
 Fl_FormsBitmap.H
 Fl_FormsPixmap.H
@@ -185,18 +182,10 @@ Fl_Hor_Fill_Slider.H
 Fl_Hor_Nice_Slider.H
 Fl_Hor_Slider.H
 Fl_Hor_Value_Slider.H
-Fl_Input.H
-Fl_Input.cxx
-Fl_Input_.H
-Fl_Input_.cxx
-Fl_Input_Choice.H
-Fl_Int_Input.H
 Fl_Line_Dial.H
 Fl_Multi_Browser.H
 Fl_Multi_Label.H
 Fl_Multi_Label.cxx
-Fl_Multiline_Input.H
-Fl_Multiline_Output.H
 Fl_Nice_Slider.H
 Fl_Object.H
 Fl_Output.H
@@ -206,7 +195,6 @@ Fl_Radio_Round_Button.H
 Fl_Roller.H
 Fl_Roller.cxx
 Fl_Round_Clock.H
-Fl_Secret_Input.H
 Fl_Select_Browser.H
 Fl_Simple_Counter.H
 Fl_Slider.H

@@ -465,6 +465,10 @@ int Fl_Input::handle(int event) {
 	w()-Fl::box_dw(b), h()-Fl::box_dh(b));
 }
 
+/**
+  Creates a new Fl_Input widget using the given position, size,
+  and label string. The default boxtype is FL_DOWN_BOX.
+*/
 Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 : Fl_Input_(X, Y, W, H, l) {
 }

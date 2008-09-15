@@ -532,8 +532,43 @@ public:
    */
   void argument(long v) {user_data_ = (void*)v;}
 
-  /** Return the conditions under which the callback is called.
-   *  \return set of flags
+  /**
+     Controls when callbacks are done. The following values are useful,
+     the default value is FL_WHEN_RELEASE:
+  
+  <UL>
+  
+  	<LI>0: The callback is not done, but
+  	changed() is turned on.</LI>
+  
+  	<LI>FL_WHEN_CHANGED: The callback is done each
+  	time the text is changed by the user.</LI>
+  
+  	<LI>FL_WHEN_RELEASE: The callback will be done
+  	when this widget loses the focus, including when the
+  	window is unmapped. This is a useful value for text
+  	fields in a panel where doing the callback on every
+  	change is wasteful. However the callback will also
+  	happen if the mouse is moved out of the window, which
+  	means it should not do anything visible (like pop up an
+  	error message). You might do better setting this to
+  	zero, and scanning all the items for changed()
+  	when the OK button on a panel is pressed.</LI>
+  
+  	<LI>FL_WHEN_ENTER_KEY: If the user types the
+  	Enter key, the entire text is selected, and the callback
+  	is done if the text has changed. Normally the Enter key
+  	will navigate to the next field (or insert a newline for
+  	a Fl_Mulitline_Input), this changes the
+  	behavior.</LI>
+  
+  	<LI>FL_WHEN_ENTER_KEY|FL_WHEN_NOT_CHANGED: The
+  	Enter key will do the callback even if the text has not
+  	changed. Useful for command fields.</LI>
+  
+  </UL>
+	Return the conditions under which the callback is called.
+        \return set of flags
    */
   Fl_When when() const {return (Fl_When)when_;}
 

@@ -48,10 +48,10 @@
 #define FL_DAMAGE_BAR	0x10
 
 
-//
-// 'Fl_File_Input::Fl_File_Input()' - Create a Fl_File_Input widget.
-//
-
+/**
+  Creates a new Fl_File_Input widget using the given position,
+  size, and label string. The default boxtype is FL_DOWN_BOX.
+*/
 Fl_File_Input::Fl_File_Input(int X, int Y, int W, int H, const char *l)
   : Fl_Input(X, Y, W, H, l) {
   buttons_[0] = 0;
@@ -62,12 +62,8 @@ Fl_File_Input::Fl_File_Input(int X, int Y, int W, int H, const char *l)
   down_box(FL_UP_BOX);
 }
 
-//
-// 'Fl_File_Input::draw_buttons()' - Draw directory buttons.
-//
-
-void
-Fl_File_Input::draw_buttons() {
+/** Draw directory buttons. */
+void Fl_File_Input::draw_buttons() {
   int	i,					// Looping var
 	X;					// Current X position
 
@@ -101,12 +97,8 @@ Fl_File_Input::draw_buttons() {
   }
 }
 
-//
-// 'Fl_File_Input::update_buttons()' - Update the sizes of the directory buttons.
-//
-
-void
-Fl_File_Input::update_buttons() {
+/** Update the sizes of the directory buttons.*/
+void Fl_File_Input::update_buttons() {
   int		i;				// Looping var
   const char	*start,				// Start of path component
 		*end;				// End of path component
@@ -141,9 +133,7 @@ Fl_File_Input::update_buttons() {
 
 
 //
-// 'Fl_File_Input::value()' - Set the value of the widget...
-//
-
+/** Sets the value of the widget given a new string value and its length, Returns non 0 on success */
 int						// O - TRUE on success
 Fl_File_Input::value(const char *str,		// I - New string value
                      int        len) {		// I - Length of value
@@ -152,6 +142,7 @@ Fl_File_Input::value(const char *str,		// I - New string value
 }
 
 
+/** Sets the value of the widget given a new string value, Returns non 0 on success  */
 int						// O - TRUE on success
 Fl_File_Input::value(const char *str) {		// I - New string value
   damage(FL_DAMAGE_BAR);
@@ -159,12 +150,8 @@ Fl_File_Input::value(const char *str) {		// I - New string value
 }
 
 
-//
-// 'Fl_File_Input::draw()' - Draw the file input widget...
-//
-
-void
-Fl_File_Input::draw() {
+/** Draws the file input widget */
+void Fl_File_Input::draw() {
   Fl_Boxtype b = box();
   if (damage() & (FL_DAMAGE_BAR | FL_DAMAGE_ALL)) draw_buttons();
   // this flag keeps Fl_Input_::drawtext from drawing a bogus box!
@@ -178,10 +165,8 @@ Fl_File_Input::draw() {
 }
 
 
-//
-// 'Fl_File_Input::handle()' - Handle events in the widget...
-//
 
+/** Handle events in the widget, return non zero if event is handled */
 int						// O - TRUE if we handled event
 Fl_File_Input::handle(int event) 		// I - Event
 {
@@ -215,10 +200,8 @@ Fl_File_Input::handle(int event) 		// I - Event
 }
 
 
-//
-// 'Fl_File_Input::handle_button()' - Handle button events in the widget...
-//
 
+/** Handles button events in the widget , return non zero if event is handled */
 int						// O - TRUE if we handled event
 Fl_File_Input::handle_button(int event)		// I - Event
 {

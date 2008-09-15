@@ -25,15 +25,26 @@
 //     http://www.fltk.org/str.php
 //
 
+
 #ifndef Fl_Secret_Input_H
 #define Fl_Secret_Input_H
 
 #include "Fl_Input.H"
 
+/**
+  The Fl_Secret_Input class is a subclass of Fl_Input
+  that displays its input as a string of asterisks.  This subclass is
+  usually used to receive passwords and other &quot;secret&quot; information.
+*/
 class Fl_Secret_Input : public Fl_Input {
 public:
-    Fl_Secret_Input(int X,int Y,int W,int H,const char *l = 0)
-	: Fl_Input(X,Y,W,H,l) {type(FL_SECRET_INPUT);}
+  /**
+    Creates a new Fl_Secret_Input widget using the given
+    position, size, and label string. The default boxtype is FL_DOWN_BOX.
+    <P>Inherited destructor destroys the widget and any value associated with it.
+  */
+  Fl_Secret_Input(int X,int Y,int W,int H,const char *l = 0)
+    : Fl_Input(X,Y,W,H,l) {type(FL_SECRET_INPUT);}
 };
 
 #endif

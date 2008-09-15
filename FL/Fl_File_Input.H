@@ -51,7 +51,9 @@ public:
   virtual int handle(int);
   virtual void draw();
 
+  /**    Gets or sets the box type to use for the navigation bar.  */
   Fl_Boxtype	down_box() const { return (Fl_Boxtype)down_box_; }
+  /**    Gets or sets the box type to use for the navigation bar.  */
   void		down_box(Fl_Boxtype b) { down_box_ = b; }
   Fl_Color	errorcolor() const { return errorcolor_; }
   void		errorcolor(Fl_Color c) { errorcolor_ = c; }

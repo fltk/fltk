@@ -175,6 +175,7 @@ int Fl_Menu_Item::add(
   if (array == local_array) local_array_size = msize;
   return m-array;
 }
+
 /**
   Adds a new menu item, with a title string,  shortcut int (or string), 
   callback, argument to the  callback, and flags.  
@@ -227,16 +228,7 @@ int Fl_Menu_Item::add(
   <P>No items must be added to a menu during a callback to the same menu.</P>
   
   
-  <h4>int Fl_Menu_::add(const char *)</H4>
-  
-  <P>The passed string is split at any '|' characters and then
-  add(s,0,0,0,0) is done with each section. This is
-  often useful if you are just using the value, and is compatible
-  with Forms and other GL programs. The section strings use the
-  same special characters as described for the long version of add()</p>
-  
-  <P>No items must be added to a menu during a callback to the same menu.
-*/
+ */
 int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
   // make this widget own the local array:
   if (this != fl_menu_array_owner) {
@@ -283,6 +275,14 @@ int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
   This is a Forms (and SGI GL library) compatible add function, it
   adds many menu items, with '|' seperating the menu items, and tab
   separating the menu item names from an optional shortcut string.
+
+  The passed string is split at any '|' characters and then
+  add(s,0,0,0,0) is done with each section. This is
+  often useful if you are just using the value, and is compatible
+  with Forms and other GL programs. The section strings use the
+  same special characters as described for the long version of add()</p>
+  
+  <P>No items must be added to a menu during a callback to the same menu.
 */
 int Fl_Menu_::add(const char *str) {
   char buf[1024];
