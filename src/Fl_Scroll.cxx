@@ -30,7 +30,7 @@
 #include <FL/Fl_Scroll.H>
 #include <FL/fl_draw.H>
 
-// Clear all but the scrollbars...
+/** Clear all but the scrollbars... */
 void Fl_Scroll::clear() {
   for (int i=children() - 1; i >= 0; i --) {
     Fl_Widget* o = child(i);
@@ -41,7 +41,7 @@ void Fl_Scroll::clear() {
   }
 }
 
-// Insure the scrollbars are the last children:
+/** Insure the scrollbars are the last children */
 void Fl_Scroll::fix_scrollbar_order() {
   Fl_Widget** a = (Fl_Widget**)array();
   if (a[children()-1] != &scrollbar) {
@@ -259,6 +259,7 @@ void Fl_Scroll::resize(int X, int Y, int W, int H) {
   }
 }
 
+/**  Moves the contents of the scroll group to a new position.*/
 void Fl_Scroll::scroll_to(int X, int Y) {
   int dx = xposition_-X;
   int dy = yposition_-Y;
@@ -284,7 +285,16 @@ void Fl_Scroll::scrollbar_cb(Fl_Widget* o, void*) {
   Fl_Scroll* s = (Fl_Scroll*)(o->parent());
   s->scroll_to(s->xposition(), int(((Fl_Scrollbar*)o)->value()));
 }
-
+/**
+  Creates a new Fl_Scroll widget using the given position,
+  size, and label string. The default boxtype is FL_NO_BOX.
+  <B>The destructor <I>also deletes all the children</I>. This allows a
+  whole tree to be deleted at once, without having to keep a pointer to
+  all the children in the user code. A kludge has been done so the 
+  Fl_Scroll and all of it's children can be automatic (local)
+  variables, but you must declare the Fl_Scroll<I>first</I>, so
+  that it is destroyed last.
+*/
 Fl_Scroll::Fl_Scroll(int X,int Y,int W,int H,const char* L)
   : Fl_Group(X,Y,W,H,L), 
     scrollbar(X+W-Fl::scrollbar_size(),Y,

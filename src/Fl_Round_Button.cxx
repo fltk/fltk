@@ -32,6 +32,10 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Round_Button.H>
 
+/**
+  Creates a new Fl_Round_Button widget using the given
+  position, size, and label string.
+*/
 Fl_Round_Button::Fl_Round_Button(int X,int Y,int W,int H, const char *l)
 : Fl_Light_Button(X,Y,W,H,l) {
   box(FL_NO_BOX);

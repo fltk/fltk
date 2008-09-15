@@ -29,11 +29,22 @@
 #define Fl_Return_Button_H
 #include "Fl_Button.H"
 
+/**
+  The Fl_Return_Button is a subclass of Fl_Button that
+  generates a callback when it is pressed or when the user presses the
+  Enter key.  A carriage-return symbol is drawn next to the button label.
+  <P ALIGN=CENTER>\image html Fl_Return_Button.gif
+*/
 class FL_EXPORT Fl_Return_Button : public Fl_Button {
 protected:
   void draw();
 public:
   int handle(int);
+  /**
+    Creates a new Fl_Return_Button widget using the given
+    position, size, and label string. The default boxtype is FL_UP_BOX
+    .
+  */
   Fl_Return_Button(int X, int Y, int W, int H,const char *l=0)
     : Fl_Button(X,Y,W,H,l) {}
 };

@@ -25,6 +25,9 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \fn virtual Fl_Repeat_Button::~Fl_Repeat_Button()
+  Deletes the button.*/
+
 #include <FL/Fl.H>
 #include <FL/Fl_Repeat_Button.H>
 

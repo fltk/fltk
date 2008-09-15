@@ -25,6 +25,9 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \fn virtual Fl_Return_Button::~Fl_Return_Button()
+  Deletes the button.*/
+
 #include <FL/Fl.H>
 #include <FL/Fl_Return_Button.H>
 #include <FL/fl_draw.H>

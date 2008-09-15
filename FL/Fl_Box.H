@@ -32,13 +32,27 @@
 #include "Fl_Widget.H"
 #endif
 
+/**
+  This widget simply draws its box, and possibly it's label.  Putting it
+  before some other widgets and making it big enough to surround them
+  will let you draw a frame around them.
+*/
 class FL_EXPORT Fl_Box : public Fl_Widget {
 protected:
   void draw();
 public:
-  Fl_Box(int X, int Y, int W, int H, const char *l=0)
+  /**
+    The first constructor sets box() to FL_NO_BOX, which
+    means it is invisible. However such widgets are useful as placeholders
+    or Fl_Group::resizable()
+    values.  To change the box to something visible, use box(n).
+    <P>The second form of the constructor sets the box to the specified box
+    type.
+  */
+    Fl_Box(int X, int Y, int W, int H, const char *l=0)
 	: Fl_Widget(X,Y,W,H,l) {}
-  Fl_Box(Fl_Boxtype b, int X, int Y, int W, int H, const char *l)
+  /**    See Fl_Box::Fl_Box(int x, int y, int w, int h, const char * = 0)   */
+    Fl_Box(Fl_Boxtype b, int X, int Y, int W, int H, const char *l)
 	: Fl_Widget(X,Y,W,H,l) {box(b);}
 
   virtual int handle(int);

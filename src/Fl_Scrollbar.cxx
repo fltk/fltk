@@ -25,6 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
+
 #include <FL/Fl.H>
 #include <FL/Fl_Scrollbar.H>
 #include <FL/fl_draw.H>
@@ -254,9 +255,13 @@ void Fl_Scrollbar::draw() {
   }
 }
 
+/**
+  Creates a new Fl_Scrollbar widget using the given position,
+  size, and label string.  You need to do type(FL_HORIZONTAL) if
+  you want a horizontal scrollbar.
+*/
 Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
-  : Fl_Slider(X, Y, W, H, L)
-{
+  : Fl_Slider(X, Y, W, H, L) {
   box(FL_FLAT_BOX);
   color(FL_DARK2);
   slider(FL_UP_BOX);
@@ -265,8 +270,8 @@ Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
   step(1);
 }
 
-Fl_Scrollbar::~Fl_Scrollbar()
-{
+/**  Destroys the Scrollbar. */
+Fl_Scrollbar::~Fl_Scrollbar() {
   if (pushed_)
     Fl::remove_timeout(timeout_cb, this);
 }

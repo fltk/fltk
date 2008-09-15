@@ -16,9 +16,9 @@ In Progress Work List (add your WP and name here):
   - WP5  (Fabien) DONE
   - WP6  (Fabien) DONE
   - WP7  (Fabien) DONE
-  - WP8  (Fabien)
-  - WP9
-  - WP10
+  - WP8  (Fabien) DONE
+  - WP9  (Fabien)
+  - WP10 (Fabien)
   - WP11
   - WP12 (Albrecht) work in progress
   - WP13 (Albrecht) work in progress
@@ -156,8 +156,6 @@ widgets.html
 Enumerations.H		(Albrecht) work in progress !
 Fl_Adjuster.H
 Fl_Adjuster.cxx
-Fl_Box.H
-Fl_Box.cxx
 Fl_Button.H
 Fl_Button.cxx
 Fl_Chart.H
@@ -205,19 +203,9 @@ Fl_Output.H
 Fl_Radio_Button.H
 Fl_Radio_Light_Button.H
 Fl_Radio_Round_Button.H
-Fl_Repeat_Button.H
-Fl_Repeat_Button.cxx
-Fl_Return_Button.H
-Fl_Return_Button.cxx
 Fl_Roller.H
 Fl_Roller.cxx
-Fl_Round_Button.H
-Fl_Round_Button.cxx
 Fl_Round_Clock.H
-Fl_Scroll.H
-Fl_Scroll.cxx
-Fl_Scrollbar.H
-Fl_Scrollbar.cxx
 Fl_Secret_Input.H
 Fl_Select_Browser.H
 Fl_Simple_Counter.H
@@ -241,8 +229,6 @@ Fl_Toggle_Light_Button.H
 Fl_Toggle_Round_Button.H
 Fl_Tooltip.H
 Fl_Tooltip.cxx
-Fl_Valuator.H
-Fl_Valuator.cxx
 Fl_Value_Input.H
 Fl_Value_Input.cxx
 Fl_Value_Output.H

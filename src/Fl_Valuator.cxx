@@ -25,6 +25,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \fn int Fl_Valuator::changed() const
+  This value is true if the user has moved the slider. It is
+  turned off by value(x) and just before doing a callback
+  (the callback can turn it back on if desired).
+*/
+
 // Base class for sliders and all other one-value "knobs"
 
 #include <FL/Fl.H>
@@ -34,7 +40,11 @@
 #include "flstring.h"
 
 Fl_Valuator::Fl_Valuator(int X, int Y, int W, int H, const char* L)
-  : Fl_Widget(X,Y,W,H,L) {
+/**
+  Creates a new Fl_Valuator widget using the given position,
+  size, and label string. The default boxtype is FL_NO_BOX.
+*/
+: Fl_Widget(X,Y,W,H,L) {
   align(FL_ALIGN_BOTTOM);
   when(FL_WHEN_CHANGED);
   value_ = 0;
@@ -47,6 +57,7 @@ Fl_Valuator::Fl_Valuator(int X, int Y, int W, int H, const char* L)
 
 const double epsilon = 4.66e-10;
 
+/**  See double Fl_Valuator::step() const */
 void Fl_Valuator::step(double s) {
   if (s < 0) s = -s;
   A = rint(s);
@@ -54,13 +65,15 @@ void Fl_Valuator::step(double s) {
   while (fabs(s-A/B) > epsilon && B<=(0x7fffffff/10)) {B *= 10; A = rint(s*B);}
 }
 
+/**  Sets the step value to 1/10<SUP>digits.*/
 void Fl_Valuator::precision(int p) {
   A = 1.0;
   for (B = 1; p--;) B *= 10;
 }
-
+/** Asks for partial redraw */
 void Fl_Valuator::value_damage() {damage(FL_DAMAGE_EXPOSE);} // by default do partial-redraw
 
+/**  See double Fl_Valuator::value() const */
 int Fl_Valuator::value(double v) {
   clear_changed();
   if (v == value_) return 0;
@@ -101,23 +114,53 @@ void Fl_Valuator::handle_release() {
   }
 }
 
+/**
+  Round the passed value to the nearest step increment.  Does
+  nothing if step is zero.
+*/
 double Fl_Valuator::round(double v) {
   if (A) return rint(v*B/A)*A/B;
   else return v;
 }
 
+/**  Clamps the passed value to the valuator range.*/
 double Fl_Valuator::clamp(double v) {
   if ((v<min)==(min<=max)) return min;
   else if ((v>max)==(min<=max)) return max;
   else return v;
 }
 
+/**
+  Adds n times the step value to the passed value. If
+  step was set to zero it uses fabs(maximum() - minimum()) /
+  100.
+*/
 double Fl_Valuator::increment(double v, int n) {
   if (!A) return v+n*(max-min)/100;
   if (min > max) n = -n;
   return (rint(v*B/A)+n)*A/B;
 }
 
+/**
+  Uses internal rules to format the fields numerical value into
+  the character array pointed to by the passed parameter.</P>
+  
+  <P>The actual format used depends on the current step value. If
+  the step value has been set to zero then a %g format is used.
+  If the step value is non-zero, then a %.*f format is used,
+  where the precision is calculated to show sufficient digits
+  for the current step value. An integer step value, such as 1
+  or 1.0, gives a precision of 0, so the formatted value will
+  appear as an integer.</P>
+  
+  <P>This method is used by the Fl_Value_... group of widgets to 
+  format the current value into a text string. 
+  The return value is the length of the formatted text.
+  The formatted value is written into in <i>buffer</i>. 
+  <i>buffer</i> should have space for at least 128 bytes.</P>
+  
+  <P>You may override this function to create your own text formatting.
+*/
 int Fl_Valuator::format(char* buffer) {
   double v = value();
   // MRS: THIS IS A HACK - RECOMMEND ADDING BUFFER SIZE ARGUMENT
