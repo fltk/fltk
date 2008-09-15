@@ -150,10 +150,10 @@ const char * fl_shortcut_label(int shortcut) {
   }
 #ifdef __APPLE__
   // \todo Mac :  we might want to change the symbols for Mac users - consider drawing Apple Symbols... .
-  if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;} //: Mac hollow up arrow
-  if (shortcut & FL_META)  {strcpy(p,"Cmd+"); p += 4;}  //: Mac 'Apple' key
-  if (shortcut & FL_ALT)   {strcpy(p,"Option+"); p += 7;}   //: Mac 'Alt/Option' or fancy switch symbol
-  if (shortcut & FL_CTRL)  {strcpy(p,"Ctrl+"); p += 5;}  //: Mac ctrl key
+  if (shortcut & FL_SHIFT) {strcpy(p,"\xe2\x87\xa7"); p += 3;} //: Mac hollow up arrow
+  if (shortcut & FL_CTRL)  {strcpy(p,"^"); p += 1;}  //: Mac ctrl key
+  if (shortcut & FL_ALT)   {strcpy(p,"\xe2\x8e\x87"); p += 3;}   //: Mac 'Alt/Option' or fancy switch symbol
+  if (shortcut & FL_META)  {strcpy(p,"\xe2\x8c\x98"); p += 3;}  //: Mac 'Apple' key
 #else
   if (shortcut & FL_META) {strcpy(p,"Meta+"); p += 5;}
   if (shortcut & FL_ALT) {strcpy(p,"Alt+"); p += 4;}
