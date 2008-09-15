@@ -30,7 +30,7 @@
 
 // A subclass of Fl_Button that always draws as a diamond box.  This
 // diamond is smaller than the widget size and can be surchecked by
-// another box type, for compatability with Forms.
+// another box type, for compatibility with Forms.
 
 Fl_Check_Button::Fl_Check_Button(int X, int Y, int W, int H, const char *l)
 : Fl_Light_Button(X, Y, W, H, l) {

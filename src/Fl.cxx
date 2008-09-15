@@ -1327,7 +1327,7 @@ int Fl_Window::handle(int ev)
 }
 
 ////////////////////////////////////////////////////////////////
-// Back compatability cut & paste functions for fltk 1.1 only:
+// Back compatibility cut & paste functions for fltk 1.1 only:
 
 /**
     The single-argument selection_owner(x) call can be used to

@@ -156,7 +156,7 @@ void Fl_Window::iconlabel(const char *iname) {
   set_flag(saveflags);
 }
 
-// the Fl::atclose pointer is provided for back compatability.  You
+// the Fl::atclose pointer is provided for back compatibility.  You
 // can now just change the callback for the window instead.
 
 /** Default callback for window widgets. It hides the window and then calls the default widget callback. */

@@ -1166,7 +1166,7 @@ int fl_handle(const XEvent& thisevent)
       Fl::e_length = len;
     } else {
       // Stupid X sends fake key-up events when a repeating key is held
-      // down, probably due to some back compatability problem. Fortunately
+      // down, probably due to some back compatibility problem. Fortunately
       // we can detect this because the repeating KeyPress event is in
       // the queue, get it and execute it instead:
       XEvent temp;

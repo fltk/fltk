@@ -87,7 +87,7 @@ void Fl_Group::current(Fl_Group *g) {current_ = g;}
 
 extern Fl_Widget* fl_oldfocus; // set by Fl::focus
 
-// For back-compatability, we must adjust all events sent to child
+// For back-compatibility, we must adjust all events sent to child
 // windows so they are relative to that window.
 
 static int send(Fl_Widget* o, int event) {

@@ -35,9 +35,9 @@
 
 
 ////////////////////////////////////////////////////////////////
-// for compatability with Forms, all widgets without callbacks are
+// for compatibility with Forms, all widgets without callbacks are
 // inserted into a "queue" when they are activated, and the forms
-// compatability interaction functions (fl_do_events, etc) will
+// compatibility interaction functions (fl_do_events, etc) will
 // read one widget at a time from this queue and return it:
 
 const int QUEUE_SIZE = 20;
@@ -47,7 +47,7 @@ static int obj_head, obj_tail;
 
 void Fl_Widget::default_callback(Fl_Widget *o, void * /*v*/) {
 #if 0
-  // This is necessary for strict forms compatability but is confusing.
+  // This is necessary for strict forms compatibility but is confusing.
   // Use the parent's callback if this widget does not have one.
   for (Fl_Widget *p = o->parent(); p; p = p->parent())
     if (p->callback() != default_callback) {

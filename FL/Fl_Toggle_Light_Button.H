@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-// provided for back-compatability only
+// provided for back-compatibility only
 
 #ifndef Fl_Toggle_Light_Button
 #include "Fl_Light_Button.H"

@@ -72,7 +72,7 @@ public:
   ~Fl_Free();
 };
 
-// old event names for compatability:
+// old event names for compatibility:
 #define FL_MOUSE		FL_DRAG
 #define FL_DRAW			100		// NOT USED
 #define FL_STEP			101

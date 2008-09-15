@@ -219,7 +219,7 @@ public:
 	else Fl_Browser_::display(find_line(n));
   }
 
-  // for back compatability only:
+  // for back compatibility only:
   void replace(int a, const char* b) {text(a, b);}
   void display(int, int=1);
 };

@@ -124,41 +124,15 @@ public:
     This box type is used to surround the currently-selected items in the
     menus.  If this is FL_NO_BOX then it acts like 
     FL_THIN_UP_BOX and selection_color() acts like 
-    FL_WHITE, for back compatability.
-    
-    
-    <h4>const Fl_Menu_Item *Fl_Menu_::find_item(const char *name);</h4>
-    
-    <p>Returns a pointer to the menu item with the given (full)
-    pathname. If no matching menu item can be found, a NULL pointer
-    is returned. This function does not search submenus that are linked
-    via FL_SUBMENU_POINTER.</p>
-    
-    
-    <h4>int Fl_Menu_::item_pathname(char *name, int namelen ) const;<br>
-    int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem) const;</h4>
-    
-    <p>Returns the 'menu pathname' (eg. "File/Quit") for the recently picked item in user supplied string 'name'. Useful in the callback function for a menu item, to determine the last picked item's 'menu pathname' string.
-    
-    <p>If finditem is specified, name will contain the 'menu pathname' for that item.
-    
-    <p>Returns:
-    
-    <ul>
-    	<li>0 - OK: 'name' has the pathname, guaranteed not longer than namelen
-    	<li>-1 - Failed: 'finditem' was not found in the menu
-    	<li>-2 - Failed: 'name' is not large enough to handle the menu names
-    </ul>
-    
-    <p>In the case of errors (-1 or -2), 'name' will be an empty string.
+    FL_WHITE, for back compatibility.    
   */
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
   /**    See Fl_Boxtype Fl_Menu_::down_box() const   */
   void down_box(Fl_Boxtype b) {down_box_ = b;}
 
-  /** For back compatability, same as selection_color() */
+  /** For back compatibility, same as selection_color() */
   Fl_Color down_color() const {return selection_color();}
-  /** For back compatability, same as selection_color() */
+  /** For back compatibility, same as selection_color() */
   void down_color(unsigned c) {selection_color(c);}
 };
 

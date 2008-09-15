@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-// this include file is for back compatability only
+// this include file is for back compatibility only
 #include "Fl_Menu_Item.H"
 
 //

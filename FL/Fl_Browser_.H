@@ -255,7 +255,7 @@ public:
   /**    Sets or gets the width of any scrollbars that are used.  */
   static int scrollbar_width() {return scrollbar_width_;}
 
-  // for back compatability:
+  // for back compatibility:
   /**    This method moves the vertical scrollbar to the righthand side of the list.  */
   void scrollbar_right() {scrollbar.align(FL_ALIGN_RIGHT);}
   /**    This method moves the vertical scrollbar to the lefthand side of the list.  */

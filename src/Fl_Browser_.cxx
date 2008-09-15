@@ -889,7 +889,7 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* l)
   selection_ = 0;
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   scrollbar.callback(scrollbar_callback);
-//scrollbar.align(FL_ALIGN_LEFT|FL_ALIGN_BOTTOM); // back compatability?
+//scrollbar.align(FL_ALIGN_LEFT|FL_ALIGN_BOTTOM); // back compatibility?
   hscrollbar.callback(hscrollbar_callback);
   hscrollbar.type(FL_HORIZONTAL);
   textfont_ = FL_HELVETICA;

@@ -393,7 +393,7 @@ static void read_children(Fl_Type *p, int paste) {
       continue;
     }
 
-    // back compatability with Vincent Penne's original class code:
+    // back compatibility with Vincent Penne's original class code:
     if (!p && !strcmp(c,"define_in_struct")) {
       Fl_Type *t = Fl_Type_make("class");
       t->name(read_word());

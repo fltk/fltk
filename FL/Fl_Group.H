@@ -159,7 +159,7 @@ public:
   void add_resizable(Fl_Widget& o) {resizable_ = &o; add(o);}
   void init_sizes();
 
-  // back compatability function:
+  // back compatibility function:
   void focus(Fl_Widget* o) {o->take_focus();}
   Fl_Widget* & _ddfdesign_kludge() {return resizable_;}
   void forms_end();

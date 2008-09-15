@@ -36,7 +36,7 @@
 #define FL_NORMAL_BUTTON	0
 #define FL_TOGGLE_BUTTON	1
 #define FL_RADIO_BUTTON		(FL_RESERVED_TYPE+2)
-#define FL_HIDDEN_BUTTON	3 // for Forms compatability
+#define FL_HIDDEN_BUTTON	3 // for Forms compatibility
 
 extern FL_EXPORT int fl_old_shortcut(const char*);
 
@@ -65,7 +65,7 @@ public:
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
   void down_box(Fl_Boxtype b) {down_box_ = b;}
 
-  // back compatability:
+  // back compatibility:
   void shortcut(const char *s) {shortcut(fl_old_shortcut(s));}
   Fl_Color down_color() const {return selection_color();}
   void down_color(unsigned c) {selection_color(c);}

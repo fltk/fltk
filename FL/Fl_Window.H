@@ -362,7 +362,7 @@ public:
   */
   void make_current();
 
-  // for back-compatability only:
+  // for back-compatibility only:
   /**
     Changes the cursor for this window.  This always calls the system, if
     you are changing the cursor a lot you may want to keep track of how

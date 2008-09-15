@@ -2482,7 +2482,7 @@ void Fl_Widget_Type::read_property(const char *c) {
     ((Fl_Button*)o)->value(atoi(value));
   } else if (!strcmp(c,"color")) {
     int n = sscanf(read_word(),"%d %d",&x,&y);
-    if (n == 2) { // back compatability...
+    if (n == 2) { // back compatibility...
       if (x != 47) o->color(x);
       o->selection_color(y);
     } else {

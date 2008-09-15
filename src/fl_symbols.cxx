@@ -94,7 +94,7 @@ int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
 
 int fl_return_arrow(int x,int y,int w,int h);
 
-// provided for back compatability:
+// provided for back compatibility:
 int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {  
   const char *p = label;
   if (*p++ != '@') return 0;

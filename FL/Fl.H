@@ -485,7 +485,7 @@ public:
     will be marked as <i>text</i>.
   */
   static int dnd(); // platform dependent
-  // These are for back-compatability only:
+  // These are for back-compatibility only:
   /** See Fl_Widget* selection_owner(Fl_Widget*) */
   static Fl_Widget* selection_owner() {return selection_owner_;}
   static void selection_owner(Fl_Widget*);
@@ -593,7 +593,7 @@ public:
   static int box_dh(Fl_Boxtype);
   static int draw_box_active();
 
-  // back compatability:
+  // back compatibility:
   /** for back compatibility. sets the (*fatal)() callback. */
   static void set_abort(void (*f)(const char*,...)) {fatal = f;}
   static void (*atclose)(Fl_Window*,void*);

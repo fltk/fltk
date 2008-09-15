@@ -59,7 +59,7 @@ void Fl_Free::step(void *v) {
     The event argument contains the event type:
     <UL>
     <PRE>
-    // old event names for compatability:
+    // old event names for compatibility:
     #define FL_MOUSE		FL_DRAG
     #define FL_DRAW			0
     #define FL_STEP			9

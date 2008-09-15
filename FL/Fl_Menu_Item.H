@@ -199,7 +199,7 @@ struct FL_EXPORT Fl_Menu_Item {
 
   /**
      Each item has space for a callback function and an argument for that
-     function.  Due to back compatability, the Fl_Menu_Item itself
+     function.  Due to back compatibility, the Fl_Menu_Item itself
      is not passed to the callback, instead you have to get it by calling 
      ((Fl_Menu_*)w)-&gt;mvalue() where w is the widget argument.
   */
@@ -350,7 +350,7 @@ struct FL_EXPORT Fl_Menu_Item {
   */
   void do_callback(Fl_Widget* o,long arg) const {callback_(o, (void*)arg);}
 
-  // back-compatability, do not use:
+  // back-compatibility, do not use:
   /** back compatibility only \deprecated. */
   int checked() const {return flags&FL_MENU_VALUE;}
   /** back compatibility only \deprecated. */
@@ -365,9 +365,9 @@ struct FL_EXPORT Fl_Menu_Item {
   int size() const ;
 };
 
-typedef Fl_Menu_Item Fl_Menu; // back compatability
+typedef Fl_Menu_Item Fl_Menu; // back compatibility
 
-enum {	// back-compatability enum:
+enum {	// back-compatibility enum:
   FL_PUP_NONE	= 0,
   FL_PUP_GREY	= FL_MENU_INACTIVE,
   FL_PUP_GRAY	= FL_MENU_INACTIVE,

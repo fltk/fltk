@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-// Forms library compatability functions.
+// Forms library compatibility functions.
 // Many more functions are defined as inlines in forms.h!
 
 #include <FL/forms.H>
@@ -140,7 +140,7 @@ void fl_set_graphics_mode(int /*r*/,int /*d*/) {}
 
 void Fl_FormsText::draw() {
   draw_box();
-  align(align()|FL_ALIGN_INSIDE); // questionable method of compatability
+  align(align()|FL_ALIGN_INSIDE); // questionable method of compatibility
   draw_label();
 }
 

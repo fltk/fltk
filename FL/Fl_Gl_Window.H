@@ -160,7 +160,6 @@ public:
   Fl_Mode mode() const {return (Fl_Mode)mode_;}
   int mode(int a) {return mode(a,0);}
   int mode(const int *a) {return mode(0, a);}
-
   void* context() const {return context_;}
   void context(void*, int destroy_flag = 0);
   void make_current();

@@ -79,18 +79,6 @@ static char SWAP_TYPE = 0 ; // 0 = determine it from environment variable
   Returns non-zero if the hardware supports the given or current OpenGL
   mode.
   
-  <h4>void* Fl_Gl_Window::context() const;
-  <br>void Fl_Gl_Window::context(void*, int destroy_flag = false);</h4>
-  
-  Return or set a pointer to the GLContext that this window is
-  using. This is a system-dependent structure, but it is portable to copy
-  the context from one window to another. You can also set it to NULL,
-  which will force FLTK to recreate the context the next time make_current() is called, this is
-  useful for getting around bugs in OpenGL implementations.
-  
-  <p>If <i>destroy_flag</i> is true the context will be destroyed by
-  fltk when the window is destroyed, or when the mode() is changed, or the next time
-  context(x) is called.
 */
 int Fl_Gl_Window::can_do(int a, const int *b) {
   return Fl_Gl_Choice::find(a,b) != 0;
@@ -444,6 +432,17 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   Fl_Window::resize(X,Y,W,H);
 }
 
+/**
+  Returns or sets a pointer to the GLContext that this window is
+  using. This is a system-dependent structure, but it is portable to copy
+  the context from one window to another. You can also set it to NULL,
+  which will force FLTK to recreate the context the next time make_current() is called, this is
+  useful for getting around bugs in OpenGL implementations.
+  
+  <p>If <i>destroy_flag</i> is true the context will be destroyed by
+  fltk when the window is destroyed, or when the mode() is changed, or the next time
+  context(x) is called.
+*/
 void Fl_Gl_Window::context(void* v, int destroy_flag) {
   if (context_ && !(mode_&NON_LOCAL_CONTEXT)) fl_delete_gl_context(context_);
   context_ = (GLContext)v;
