@@ -33,6 +33,15 @@
 #endif
 #include "Fl_Menu_Item.H"
 
+/**
+  Base class of all widgets that have a menu in FLTK.
+  Currently FLTK provides you with 
+  Fl_Menu_Button, Fl_Menu_Bar, and Fl_Choice.
+  
+  <P>The class contains a pointer to an array of structures of type  Fl_Menu_Item.  The
+  array may either be supplied directly by the user program, or it may
+  be "private": a dynamically allocated array managed by the Fl_Menu_.
+*/
 class FL_EXPORT Fl_Menu_ : public Fl_Widget {
 
   Fl_Menu_Item *menu_;
@@ -57,41 +66,99 @@ public:
   const Fl_Menu_Item* test_shortcut() {return picked(menu()->test_shortcut());}
   void global();
 
+  /**
+    Returns a pointer to the array of Fl_Menu_Items.  This will either be
+    the value passed to menu(value) or the private copy.
+  */  
   const Fl_Menu_Item *menu() const {return menu_;}
   void menu(const Fl_Menu_Item *m);
   void copy(const Fl_Menu_Item *m, void* user_data = 0);
   int  add(const char*, int shortcut, Fl_Callback*, void* = 0, int = 0);
-  int  add(const char* a, const char* b, Fl_Callback* c,
-	  void* d = 0, int e = 0) {return add(a,fl_old_shortcut(b),c,d,e);}
+  /** See int Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0)*/
+  int  add(const char* a, const char* b, Fl_Callback* c, void* d = 0, int e = 0) {
+      return add(a,fl_old_shortcut(b),c,d,e);}
+  int  add(const char *);
   int  size() const ;
   void size(int W, int H) { Fl_Widget::size(W, H); }
   void clear();
-  int  add(const char *);
   void replace(int,const char *);
   void remove(int);
+ /** Changes the shortcut of item i to n.  */
   void shortcut(int i, int s) {menu_[i].shortcut(s);}
+  /** Sets the flags of item i.  For a list of the flags, see Fl_Menu_Item.  */
   void mode(int i,int fl) {menu_[i].flags = fl;}
+  /** Gets the flags of item i.  For a list of the flags, see Fl_Menu_Item.  */
   int  mode(int i) const {return menu_[i].flags;}
 
+  /** Returns a pointer to the last menu item that was picked.  */
   const Fl_Menu_Item *mvalue() const {return value_;}
+  /** Returns the index into menu() of the last item chosen by the user.  It is zero initially. */
   int value() const {return value_ ? (int)(value_-menu_) : -1;}
   int value(const Fl_Menu_Item*);
+  /**
+    The value is the index into menu() of the last item chosen by
+    the user.  It is zero initially.  You can set it as an integer, or set
+    it with a pointer to a menu item.  The set routines return non-zero if
+    the new value is different than the old one.
+  */
   int value(int i) {return value(menu_+i);}
+  /** Returns the title of the last item chosen, or of item i.  */
   const char *text() const {return value_ ? value_->text : 0;}
+  /** Returns the title of the last item chosen, or of item i.  */
   const char *text(int i) const {return menu_[i].text;}
 
+  /** Gets the current font of menu item labels.  */
   Fl_Font textfont() const {return textfont_;}
+  /**  Sets the current font of menu item labels.  */
   void textfont(Fl_Font c) {textfont_=c;}
+  /**  Gets the font size of menu item labels.  */
   Fl_Fontsize textsize() const {return textsize_;}
+  /**  Sets the font size of menu item labels.  */
   void textsize(Fl_Fontsize c) {textsize_=c;}
+  /** Get the current color of menu item labels.  */
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+  /** Sets the current color of menu item labels. */
   void textcolor(unsigned c) {textcolor_=c;}
 
+  /**
+    This box type is used to surround the currently-selected items in the
+    menus.  If this is FL_NO_BOX then it acts like 
+    FL_THIN_UP_BOX and selection_color() acts like 
+    FL_WHITE, for back compatability.
+    
+    
+    <h4>const Fl_Menu_Item *Fl_Menu_::find_item(const char *name);</h4>
+    
+    <p>Returns a pointer to the menu item with the given (full)
+    pathname. If no matching menu item can be found, a NULL pointer
+    is returned. This function does not search submenus that are linked
+    via FL_SUBMENU_POINTER.</p>
+    
+    
+    <h4>int Fl_Menu_::item_pathname(char *name, int namelen ) const;<br>
+    int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem) const;</h4>
+    
+    <p>Returns the 'menu pathname' (eg. "File/Quit") for the recently picked item in user supplied string 'name'. Useful in the callback function for a menu item, to determine the last picked item's 'menu pathname' string.
+    
+    <p>If finditem is specified, name will contain the 'menu pathname' for that item.
+    
+    <p>Returns:
+    
+    <ul>
+    	<li>0 - OK: 'name' has the pathname, guaranteed not longer than namelen
+    	<li>-1 - Failed: 'finditem' was not found in the menu
+    	<li>-2 - Failed: 'name' is not large enough to handle the menu names
+    </ul>
+    
+    <p>In the case of errors (-1 or -2), 'name' will be an empty string.
+  */
   Fl_Boxtype down_box() const {return (Fl_Boxtype)down_box_;}
+  /**    See Fl_Boxtype Fl_Menu_::down_box() const   */
   void down_box(Fl_Boxtype b) {down_box_ = b;}
 
-  // back compatability:
+  /** For back compatability, same as selection_color() */
   Fl_Color down_color() const {return selection_color();}
+  /** For back compatability, same as selection_color() */
   void down_color(unsigned c) {selection_color(c);}
 };
 

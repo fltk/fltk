@@ -40,6 +40,16 @@ static int handler(int e) {
   return the_widget->handle(e);
 }
 
+/**
+  Make the shortcuts for this menu work no matter what window has the
+  focus when you type it.  This is done by using 
+  Fl::add_handler().  This Fl_Menu_ widget does not
+  have to be visible (ie the window it is in can be hidden, or it does
+  not have to be put in a window at all).
+  <P>Currently there can be only one global()menu.  Setting a new
+  one will replace the old one.  There is no way to remove the 
+  global() setting (so don't destroy the widget!)
+*/
 void Fl_Menu_::global() {
   if (!the_widget) Fl::add_handler(handler);
   the_widget = this;

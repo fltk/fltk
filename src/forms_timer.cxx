@@ -126,11 +126,28 @@ int Fl_Timer::handle(int event) {
   return 0;
 }
 
+/**
+ Destroys the timer and removes the timeout.
+*/
 Fl_Timer::~Fl_Timer() {
   Fl::remove_timeout(stepcb, this);
 }
 
+/**
+  Creates a new Fl_Timer widget using the given type, position,
+  size, and label string. The type parameter can be any of the
+  following symbolic constants:
+  <UL>
+  <LI>FL_NORMAL_TIMER - The timer just does the callback  and
+  displays the string &quot;Timer&quot; in the widget. </LI>
+  <LI>FL_VALUE_TIMER - The timer does the callback and  displays
+  the current timer value in the widget. </LI>
+  <LI>FL_HIDDEN_TIMER - The timer just does the callback  and
+  does not display anything. </LI>
+  </UL>
+*/
 Fl_Timer::Fl_Timer(uchar t, int X, int Y, int W, int H, const char* l)
+
 : Fl_Widget(X, Y, W, H, l) {
   box(FL_DOWN_BOX);
   selection_color(FL_RED);
@@ -141,7 +158,7 @@ Fl_Timer::Fl_Timer(uchar t, int X, int Y, int W, int H, const char* l)
   if (t == FL_HIDDEN_TIMER) clear_visible();
   if (t == FL_VALUE_TIMER) align(FL_ALIGN_LEFT);
 }
-
+/** Sets the current timer value */
 void Fl_Timer::value(double d) {
   delay = total = d;
   on = (d > 0.0);
@@ -151,6 +168,7 @@ void Fl_Timer::value(double d) {
   if (on) Fl::add_timeout(FL_TIMER_BLINKRATE, stepcb, this);
 }
 
+/** Gets or sets whether the timer is suspended.*/
 void Fl_Timer::suspended(char d) {
   if (!d) {
     if (on) return;

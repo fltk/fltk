@@ -25,6 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 // Contents:
+
 //
 //   Fl_Progress::draw()        - Draw the check button.
 //   Fl_Progress::Fl_Progress() - Construct a Fl_Progress widget.
@@ -49,6 +50,7 @@
 // 'Fl_Progress::draw()' - Draw the check button.
 //
 
+/** Draws the check button. */
 void Fl_Progress::draw()
 {
   int	progress;	// Size of progress bar...
@@ -96,13 +98,13 @@ void Fl_Progress::draw()
 }
 
 
-//
-// 'Fl_Progress::Fl_Progress()' - Construct a Fl_Progress widget.
-//
-
+/**  
+    The constructor creates the progress bar using the position,
+    size, and label.
+    <P> The inherited destructor removes the progress bar.
+*/
 Fl_Progress::Fl_Progress(int X, int Y, int W, int H, const char* l)
-: Fl_Widget(X, Y, W, H, l)
-{
+: Fl_Widget(X, Y, W, H, l) {
   align(FL_ALIGN_INSIDE);
   box(FL_DOWN_BOX);
   color(FL_BACKGROUND2_COLOR, FL_YELLOW);

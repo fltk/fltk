@@ -15,7 +15,7 @@ In Progress Work List (add your WP and name here):
   - WP4  (Fabien) DONE
   - WP5  (Fabien) DONE
   - WP6  (Fabien) DONE
-  - WP7  (Fabien)
+  - WP7  (Fabien) DONE
   - WP8  (Fabien)
   - WP9
   - WP10
@@ -194,19 +194,6 @@ Fl_Input_.cxx
 Fl_Input_Choice.H
 Fl_Int_Input.H
 Fl_Line_Dial.H
-Fl_Menu.H
-Fl_Menu.cxx
-Fl_Menu_.H
-Fl_Menu_.cxx
-Fl_Menu_Bar.H
-Fl_Menu_Bar.cxx
-Fl_Menu_Button.H
-Fl_Menu_Button.cxx
-Fl_Menu_Item.H
-Fl_Menu_Window.H
-Fl_Menu_Window.cxx
-Fl_Menu_add.cxx
-Fl_Menu_global.cxx
 Fl_Multi_Browser.H
 Fl_Multi_Label.H
 Fl_Multi_Label.cxx
@@ -215,8 +202,6 @@ Fl_Multiline_Output.H
 Fl_Nice_Slider.H
 Fl_Object.H
 Fl_Output.H
-Fl_Progress.H
-Fl_Progress.cxx
 Fl_Radio_Button.H
 Fl_Radio_Light_Button.H
 Fl_Radio_Round_Button.H
@@ -251,7 +236,6 @@ Fl_Text_Editor.H
 Fl_Text_Editor.cxx
 Fl_Tiled_Image.H
 Fl_Tiled_Image.cxx
-Fl_Timer.H
 Fl_Toggle_Button.H
 Fl_Toggle_Light_Button.H
 Fl_Toggle_Round_Button.H
@@ -354,7 +338,6 @@ forms_bitmap.cxx
 forms_compatability.cxx
 forms_fselect.cxx
 forms_pixmap.cxx
-forms_timer.cxx
 freeglut_geometry.cxx
 freeglut_stroke_mono_roman.cxx
 freeglut_stroke_roman.cxx

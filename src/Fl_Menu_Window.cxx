@@ -78,6 +78,7 @@ void Fl_Menu_Window::flush() {
 #endif
 }
 
+/** Erases the window, does nothing if HAVE_OVERLAY is not defined config.h */
 void Fl_Menu_Window::erase() {
 #if HAVE_OVERLAY
   if (!gc || !shown()) return;
@@ -94,6 +95,7 @@ void Fl_Menu_Window::hide() {
   Fl_Single_Window::hide();
 }
 
+/**  Destroys the window and all of its children.*/
 Fl_Menu_Window::~Fl_Menu_Window() {
   hide();
 }

@@ -47,6 +47,13 @@ void Fl_Menu_Button::draw() {
   fl_line(X+H, Y, X+H/2, Y+H);
 }
 
+/**
+  Act exactly as though the user clicked the button or typed the
+  shortcut key.  The menu appears, it waits for the user to pick an item,
+  and if they pick one it sets value() and does the callback or
+  sets changed() as described above.  The menu item is returned
+  or NULL if the user dismisses the menu.
+*/
 const Fl_Menu_Item* Fl_Menu_Button::popup() {
   const Fl_Menu_Item* m;
   pressed_menu_button_ = this;
@@ -101,6 +108,12 @@ int Fl_Menu_Button::handle(int e) {
   }
 }
 
+/**
+  Creates a new Fl_Menu_Button widget using the given position,
+  size, and label string. The default boxtype is FL_UP_BOX.
+  <P>The constructor sets menu() to NULL.  See 
+  Fl_Menu_ for the methods to set or change the menu.
+*/
 Fl_Menu_Button::Fl_Menu_Button(int X,int Y,int W,int H,const char *l)
 : Fl_Menu_(X,Y,W,H,l) {
   down_box(FL_NO_BOX);

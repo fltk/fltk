@@ -41,7 +41,7 @@
 #ifdef __APPLE__
 #  include <Carbon/Carbon.h>
 #endif
-
+/** Size of the menu starting from this menu item */
 int Fl_Menu_Item::size() const {
   const Fl_Menu_Item* m = this;
   int nest = 0;
@@ -56,6 +56,11 @@ int Fl_Menu_Item::size() const {
   }
 }
 
+/**
+  Advance a pointer by n items through a menu array, skipping
+  the contents of submenus and invisible items.  There are two calls so
+  that you can advance through const and non-const data.
+*/
 const Fl_Menu_Item* Fl_Menu_Item::next(int n) const {
   if (n < 0) return 0; // this is so selected==-1 returns NULL
   const Fl_Menu_Item* m = this;
@@ -118,7 +123,10 @@ public:
 
 extern char fl_draw_shortcut;
 
-// width of label, including effect of & characters:
+/** 
+  Measures width of label, including effect of & characters. 
+  Optionally, can get height if hp is not NULL. 
+*/
 int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   Fl_Label l;
   l.value   = text;
@@ -136,6 +144,7 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   return w;
 }
 
+/** Draws the menu item in bounding box x,y,w,h, optionally selects the item. */
 void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 			int selected) const {
   Fl_Label l;
@@ -745,13 +754,22 @@ int menuwindow::early_hide_handle(int e) {
   return Fl_Window::handle(e);
 }
 
+/**
+  Pulldown() is similar to popup(), but a rectangle is
+  provided to position the menu.  The menu is made at least W
+  wide, and the picked item is centered over the rectangle
+  (like Fl_Choice uses).  If picked is zero or not
+  found, the menu is aligned just below the rectangle (like a pulldown
+  menu).
+  <P>The title and menubar arguments are used
+  internally by the Fl_Menu_Bar widget.
+*/
 const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     int X, int Y, int W, int H,
     const Fl_Menu_Item* initial_item,
     const Fl_Menu_* pbutton,
     const Fl_Menu_Item* t,
-    int menubar) const
-{
+    int menubar) const {
   Fl_Group::current(0); // fix possible user error...
 
   button = pbutton;
@@ -894,21 +912,39 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   return m;
 }
 
-const Fl_Menu_Item*
-Fl_Menu_Item::popup(
+/**
+  This method is called by widgets that want to display menus.  The menu
+  stays up until the user picks an item or dismisses it.  The selected
+  item (or NULL if none) is returned. <I>This does not do the
+  callbacks or change the state of check or radio items.</I>
+  <P>X,Y is the position of the mouse cursor, relative to the
+  window that got the most recent event (usually you can pass 
+  Fl::event_x() and Fl::event_y() unchanged here). </P>
+  <P>title is a character string title for the menu.  If
+  non-zero a small box appears above the menu with the title in it. </P>
+  <P>The menu is positioned so the cursor is centered over the item 
+  picked.  This will work even if picked is in a submenu.
+  If picked is zero or not in the menu item table the menu is
+  positioned with the cursor in the top-left corner. </P>
+  <P>button is a pointer to an 
+  Fl_Menu_ from which the color and boxtypes for the menu are
+  pulled.  If NULL then defaults are used.
+*/
+const Fl_Menu_Item* Fl_Menu_Item::popup(
   int X, int Y,
   const char* title,
   const Fl_Menu_Item* picked,
   const Fl_Menu_* but
-  ) const
-{
+  ) const {
   static Fl_Menu_Item dummy; // static so it is all zeros
   dummy.text = title;
   return pulldown(X, Y, 0, 0, picked, but, title ? &dummy : 0);
 }
 
-// Search only the top level menu for a shortcut.  Either &x in the
-// label or the shortcut fields are used:
+/**
+  Search only the top level menu for a shortcut.  
+  Either &x in the label or the shortcut fields are used. 
+*/
 const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
   const Fl_Menu_Item* m = first();
   if (m) for (int ii = 0; m->text; m = m->next(), ii++) {
@@ -925,6 +961,14 @@ const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
 
 // Recursive search of all submenus for anything with this key as a
 // shortcut.  Only uses the shortcut field, ignores &x in the labels:
+/**
+  This is designed to be called by a widgets handle() method in
+  response to a FL_SHORTCUT event.  If the current event matches
+  one of the items shortcut, that item is returned.  If the keystroke
+  does not match any shortcuts then NULL is returned.  This only
+  matches the shortcut() fields, not the letters in the title
+  preceeded by '
+*/
 const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
   const Fl_Menu_Item* m = first();
   const Fl_Menu_Item* ret = 0;
