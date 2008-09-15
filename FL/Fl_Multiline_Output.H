@@ -25,15 +25,26 @@
 //     http://www.fltk.org/str.php
 //
 
+
 #ifndef Fl_Multiline_Output_H
 #define Fl_Multiline_Output_H
 
 #include "Fl_Output.H"
 
+/**
+  This widget is a subclass of Fl_Output that displays multiple
+  lines of text. It also displays tab characters as whitespace to the
+  next column.
+*/
 class Fl_Multiline_Output : public Fl_Output {
 public:
-    Fl_Multiline_Output(int X,int Y,int W,int H,const char *l = 0)
-	: Fl_Output(X,Y,W,H,l) {type(FL_MULTILINE_OUTPUT);}
+  /**
+    Creates a new Fl_Multiline_Output widget using the given
+    position, size, and label string. The default boxtype is FL_DOWN_BOX
+    <P> Inherited destructor destroys the widget and any value associated with it.
+  */
+  Fl_Multiline_Output(int X,int Y,int W,int H,const char *l = 0)
+    : Fl_Output(X,Y,W,H,l) {type(FL_MULTILINE_OUTPUT);}
 };
 
 #endif

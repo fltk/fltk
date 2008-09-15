@@ -71,19 +71,16 @@ protected:
 
 public:
 
-  /**
-    Sets the minimum (a) and maximum (b) values for
-    the valuator widget.
-  */
+    /**    Sets the minimum (a) and maximum (b) values for the valuator widget. */
     void bounds(double a, double b) {min=a; max=b;}
-  /**    Gets or sets the minimum value for the valuator.  */
+    /**    Gets the minimum value for the valuator.  */
     double minimum() const {return min;}
-  /**    Gets or sets the minimum value for the valuator.  */
+    /**    Sets the minimum value for the valuator.  */
     void minimum(double a) {min = a;}
-  /**    Gets or sets the maximum value for the valuator.  */
-  double maximum() const {return max;}
-  /**    Gets or sets the maximum value for the valuator.  */
-  void maximum(double a) {max = a;}
+    /**    Gets the maximum value for the valuator.  */
+    double maximum() const {return max;}
+    /**    Sets the maximum value for the valuator.  */
+    void maximum(double a) {max = a;}
   /**
     Sets the minimum and maximum values for the valuator. When
     the user manipulates the widget, the value is limited to this

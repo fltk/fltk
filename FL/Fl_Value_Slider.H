@@ -30,6 +30,11 @@
 
 #include "Fl_Slider.H"
 
+/**
+  The Fl_Value_Slider widget is a Fl_Slider widget
+  with a box displaying the current value.
+  <P ALIGN=CENTER>\image html value_slider.gif
+*/
 class FL_EXPORT Fl_Value_Slider : public Fl_Slider {
     Fl_Font textfont_;
     Fl_Fontsize textsize_;
@@ -38,11 +43,17 @@ public:
     void draw();
     int handle(int);
     Fl_Value_Slider(int x,int y,int w,int h, const char *l = 0);
+    /**    Gets the typeface of the text in the value box.  */
     Fl_Font textfont() const {return textfont_;}
+    /**    Sets the typeface of the text in the value box.  */
     void textfont(Fl_Font s) {textfont_ = s;}
+    /**    Gets the size of the text in the value box.  */
     Fl_Fontsize textsize() const {return textsize_;}
+    /**    Sets the size of the text in the value box.  */
     void textsize(Fl_Fontsize s) {textsize_ = s;}
+    /**    Gets the color of the text in the value box.  */
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+    /**    Sets the color of the text in the value box.  */
     void textcolor(unsigned s) {textcolor_ = s;}
 };
 

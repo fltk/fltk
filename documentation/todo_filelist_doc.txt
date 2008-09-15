@@ -18,8 +18,8 @@ In Progress Work List (add your WP and name here):
   - WP7  (Fabien) DONE
   - WP8  (Fabien) DONE
   - WP9  (Fabien) DONE
-  - WP10 (Fabien)
-  - WP11
+  - WP10 (Fabien) DONE
+  - WP11 (Fabien) 
   - WP12 (Albrecht) work in progress
   - WP13 (Albrecht) work in progress
 
@@ -154,8 +154,6 @@ widgets.html
   covering the mainly this file
 -------------------------------------------------------------------
 Enumerations.H		(Albrecht) work in progress !
-Fl_Adjuster.H
-Fl_Adjuster.cxx
 Fl_Button.H
 Fl_Button.cxx
 Fl_Chart.H
@@ -188,17 +186,11 @@ Fl_Multi_Label.H
 Fl_Multi_Label.cxx
 Fl_Nice_Slider.H
 Fl_Object.H
-Fl_Output.H
 Fl_Radio_Button.H
 Fl_Radio_Light_Button.H
 Fl_Radio_Round_Button.H
-Fl_Roller.H
-Fl_Roller.cxx
 Fl_Round_Clock.H
-Fl_Select_Browser.H
 Fl_Simple_Counter.H
-Fl_Slider.H
-Fl_Slider.cxx
 Fl_Spinner.H
 Fl_Sys_Menu_Bar.H
 Fl_Sys_Menu_Bar.cxx
@@ -217,12 +209,6 @@ Fl_Toggle_Light_Button.H
 Fl_Toggle_Round_Button.H
 Fl_Tooltip.H
 Fl_Tooltip.cxx
-Fl_Value_Input.H
-Fl_Value_Input.cxx
-Fl_Value_Output.H
-Fl_Value_Output.cxx
-Fl_Value_Slider.H
-Fl_Value_Slider.cxx
 Fl_Window_fullscreen.cxx
 Fl_Window_hotspot.cxx
 Fl_Window_iconize.cxx

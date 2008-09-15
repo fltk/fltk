@@ -25,7 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-
 #include <FL/Fl.H>
 #include <FL/Fl_Adjuster.H>
 #include <FL/Fl_Bitmap.H>
@@ -157,6 +156,12 @@ int Fl_Adjuster::handle(int event) {
   return 0;
 }
 
+/**
+  Creates a new Fl_Adjuster widget using the given position,
+  size, and label string. It looks best if one of the dimensions is 3
+  times the other.
+  <P> Inherited destructor destroys the Valuator.
+*/
 Fl_Adjuster::Fl_Adjuster(int X, int Y, int W, int H, const char* l)
   : Fl_Valuator(X, Y, W, H, l) {
   box(FL_UP_BOX);

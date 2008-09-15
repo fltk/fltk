@@ -169,6 +169,11 @@ void Fl_Roller::draw() {
   if (Fl::focus() == this) draw_focus(FL_THIN_UP_FRAME, x(), y(), w(), h());
 }
 
+/**
+  Creates a new Fl_Roller widget using the given position,
+  size, and label string. The default boxtype is FL_NO_BOX.
+  <P>Inherited destructor destroys the valuator.
+*/
 Fl_Roller::Fl_Roller(int X,int Y,int W,int H,const char* L)
   : Fl_Valuator(X,Y,W,H,L) {
   box(FL_UP_BOX);

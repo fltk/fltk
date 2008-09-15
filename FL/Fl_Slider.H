@@ -40,6 +40,30 @@
 #define FL_VERT_NICE_SLIDER	4
 #define FL_HOR_NICE_SLIDER	5
 
+/**
+  The Fl_Slider widget contains a sliding knob inside a box. It
+  if often used as a scrollbar.  Moving the box all the way to the
+  top/left sets it to the minimum(), and to the bottom/right to
+  the maximum().  The minimum() may be greater than the 
+  maximum() to reverse the slider direction.
+
+  <P>Use void Fl_Widget::type(int) to set how the slider is drawn, 
+  which can be one of the following:
+  <UL>
+  <LI>FL_VERTICAL - Draws a vertical slider (this is the
+  default). </LI>
+  <LI>FL_HORIZONTAL - Draws a horizontal slider. </LI>
+  <LI>FL_VERT_FILL_SLIDER - Draws a filled vertical  slider,
+  useful as a progress or value meter. </LI>
+  <LI>FL_HOR_FILL_SLIDER - Draws a filled horizontal  slider,
+  useful as a progress or value meter. </LI>
+  <LI>FL_VERT_NICE_SLIDER - Draws a vertical slider with  a nice
+  looking control knob. </LI>
+  <LI>FL_HOR_NICE_SLIDER - Draws a horizontal slider with  a
+  nice looking control knob. </LI>
+  </UL>
+  <P ALIGN=CENTER>\image html slider.gif
+*/
 class FL_EXPORT Fl_Slider : public Fl_Valuator {
 
   float slider_size_;
@@ -62,9 +86,20 @@ public:
 
   int scrollvalue(int windowtop,int windowsize,int first,int totalsize);
   void bounds(double a, double b);
+  /**
+    Get or set the dimensions of the moving piece of slider.  This is the
+    fraction of the size of the entire widget.  If you set this to 1 then
+    the slider cannot move.  The default value is .08.
+    <P>For the &quot;fill&quot; sliders this is the size of the area around the end
+    that causes a drag effect rather than causing the slider to jump to the
+    mouse.
+  */
   float slider_size() const {return slider_size_;}
+  /** See float slider_size() const  */
   void slider_size(double v);
+  /** Gets the slider box type. */
   Fl_Boxtype slider() const {return (Fl_Boxtype)slider_;}
+  /** Sets the slider box type. */
   void slider(Fl_Boxtype c) {slider_ = c;}
 };
 

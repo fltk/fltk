@@ -36,12 +36,20 @@ void Fl_Slider::_Fl_Slider() {
   slider_ = 0; // FL_UP_BOX;
 }
 
+/**
+  Creates a new Fl_Slider widget using the given position,
+  size, and label string. The default boxtype is FL_DOWN_BOX.
+*/
 Fl_Slider::Fl_Slider(int X, int Y, int W, int H, const char* l)
 : Fl_Valuator(X, Y, W, H, l) {
   box(FL_DOWN_BOX);
   _Fl_Slider();
 }
 
+/**
+  Creates a new Fl_Slider widget using the given position,
+  size, and label string. The default boxtype is FL_DOWN_BOX.
+*/
 Fl_Slider::Fl_Slider(uchar t, int X, int Y, int W, int H, const char* l)
   : Fl_Valuator(X, Y, W, H, l) {
   type(t);
@@ -50,6 +58,7 @@ Fl_Slider::Fl_Slider(uchar t, int X, int Y, int W, int H, const char* l)
   _Fl_Slider();
 }
 
+/** See float Fl_Slider::slider_size() const */
 void Fl_Slider::slider_size(double v) {
   if (v <  0) v = 0;
   if (v > 1) v = 1;
@@ -59,6 +68,10 @@ void Fl_Slider::slider_size(double v) {
   }
 }
 
+/** 
+  Sets the minimum (a) and maximum (b) values for the valuator widget. 
+  if at least one of the values is changed, a partial redraw is asked.
+*/
 void Fl_Slider::bounds(double a, double b) {
   if (minimum() != a || maximum() != b) {
     Fl_Valuator::bounds(a, b); 
@@ -66,6 +79,7 @@ void Fl_Slider::bounds(double a, double b) {
   }
 }
 
+/**  Returns   Fl_Scrollbar::value(). */
 int Fl_Slider::scrollvalue(int p, int W, int t, int l) {
 //	p = position, first line displayed
 //	w = window, number of lines displayed

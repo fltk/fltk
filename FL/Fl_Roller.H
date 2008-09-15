@@ -32,6 +32,11 @@
 #include "Fl_Valuator.H"
 #endif
 
+/**
+  The Fl_Roller widget is a &quot;dolly&quot; control commonly used to
+  move 3D objects.
+  <P ALIGN=CENTER>\image html Fl_Roller.gif
+*/
 class FL_EXPORT Fl_Roller : public Fl_Valuator {
 protected:
   void draw();

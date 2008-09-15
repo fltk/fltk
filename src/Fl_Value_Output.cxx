@@ -88,6 +88,11 @@ int Fl_Value_Output::handle(int event) {
   }
 }
 
+/**
+  Creates a new Fl_Value_Output widget using the given
+  position, size, and label string. The default boxtype is FL_NO_BOX.
+  <P> Inherited destructor destroys the Valuator.
+*/
 Fl_Value_Output::Fl_Value_Output(int X, int Y, int W, int H,const char *l)
 : Fl_Valuator(X,Y,W,H,l) {
   box(FL_NO_BOX);
