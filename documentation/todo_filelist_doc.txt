@@ -20,8 +20,8 @@ In Progress Work List (add your WP and name here):
   - WP9  (Fabien) DONE
   - WP10 (Fabien) DONE
   - WP11 (Fabien) DONE
-  - WP12 (Albrecht) work in progress
-  - WP13 (Albrecht) work in progress
+  - WP12 (Albrecht) DONE (usable, but links must still be checked)
+  - WP13 (Albrecht) DONE (usable, but links must still be checked)
 
 Please drop a note at STR 2037, whenever you take over a WP.
 
@@ -153,7 +153,8 @@ widgets.html
   Related Files (please remove them after each html file completion
   covering the mainly this file
 -------------------------------------------------------------------
-Enumerations.H		(Albrecht) work in progress !
+Enumerations.H		(Albrecht) DONE, as far as I can.
+			Somebody else for the rest ?
 Fl_Button.H
 Fl_Button.cxx
 Fl_Chart.H

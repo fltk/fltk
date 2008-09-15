@@ -246,9 +246,9 @@ button->labelcolor(FL_WHITE);
 
 <H2><A NAME="boxtypes">Box Types</A></H2>
 
-<P>The type <TT>Fl_Boxtype</TT> stored and returned in
-<A href="Fl_Widget.html#Fl_Widget.box"><TT>Fl_Widget::box()</TT></A>
-is an enumeration defined in <A href="enumerations.html#Enumerations"><TT><Enumerations.H></TT></A>.
+<P>The type <TT>Fl_Boxtype</TT> stored and returned in Fl_Widget::box()
+is an enumeration defined in Enumerations.H.
+
 Figure 3-3 shows the standard box types included with FLTK.</P>
 
 \image html boxtypes.gif "Figure 3-3: FLTK box types"

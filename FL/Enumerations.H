@@ -348,7 +348,7 @@ enum Fl_When { // Fl_Widget::when():
 	\todo	FL_Button and FL_key... constants could be structured better
 		(use an enum or some doxygen grouping ?)
   
-	\sa	Fl::event_key() and Fl::get_key(n) (use ascii letters for all other keys):
+	\sa	Fl::event_key() and Fl::get_key(int) (use ascii letters for all other keys):
  */
 
 /*@{*/
@@ -439,37 +439,73 @@ enum Fl_When { // Fl_Widget::when():
 /*@}*/		// group: Event States
 
 /** \name Box Types
+    \brief FLTK standard box types
+    
+    This enum defines the standard box types included with FLTK.
+    
+    FL_NO_BOX means nothing is drawn at all, so whatever is already 
+    on the screen remains. The FL_..._FRAME types only draw their edges, 
+    leaving the interior unchanged. The blue color in Figure 1 
+    is the area that is not drawn by the frame types.
+    
+    \image html boxtypes.gif "Figure 1: FLTK standard box types"
 
-	\todo	Description of boxtypes still missing
+    \todo	Description of boxtypes is incomplete.
+    		See below for the defined enum Fl_Boxtype.
+		\see src/Fl_get_system_colors.cxx
 */
 /*@{*/
 enum Fl_Boxtype { // boxtypes (if you change these you must fix fl_boxtype.C):
-  FL_NO_BOX = 0,	FL_FLAT_BOX,
 
-  FL_UP_BOX,		FL_DOWN_BOX,
-  FL_UP_FRAME,		FL_DOWN_FRAME,
-  FL_THIN_UP_BOX,	FL_THIN_DOWN_BOX,
-  FL_THIN_UP_FRAME,	FL_THIN_DOWN_FRAME,
-  FL_ENGRAVED_BOX,	FL_EMBOSSED_BOX,
-  FL_ENGRAVED_FRAME,	FL_EMBOSSED_FRAME,
-  FL_BORDER_BOX,	_FL_SHADOW_BOX,
-  FL_BORDER_FRAME,	_FL_SHADOW_FRAME,
-  _FL_ROUNDED_BOX,	_FL_RSHADOW_BOX,
-  _FL_ROUNDED_FRAME,	_FL_RFLAT_BOX,
-  _FL_ROUND_UP_BOX,	_FL_ROUND_DOWN_BOX,
-  _FL_DIAMOND_UP_BOX,	_FL_DIAMOND_DOWN_BOX,
-  _FL_OVAL_BOX,		_FL_OSHADOW_BOX,
-  _FL_OVAL_FRAME,	_FL_OFLAT_BOX,
-  _FL_PLASTIC_UP_BOX,	_FL_PLASTIC_DOWN_BOX,
-  _FL_PLASTIC_UP_FRAME,	_FL_PLASTIC_DOWN_FRAME,
-  _FL_PLASTIC_THIN_UP_BOX,	_FL_PLASTIC_THIN_DOWN_BOX,
-  _FL_PLASTIC_ROUND_UP_BOX,	_FL_PLASTIC_ROUND_DOWN_BOX,
-  _FL_GTK_UP_BOX,	_FL_GTK_DOWN_BOX,
-  _FL_GTK_UP_FRAME,	_FL_GTK_DOWN_FRAME,
-  _FL_GTK_THIN_UP_BOX,	_FL_GTK_THIN_DOWN_BOX,
-  _FL_GTK_THIN_UP_FRAME,	_FL_GTK_THIN_DOWN_FRAME,
-  _FL_GTK_ROUND_UP_BOX,	_FL_GTK_ROUND_DOWN_BOX,
-  FL_FREE_BOXTYPE
+  FL_NO_BOX = 0,		///< nothing is drawn at all, this box is invisible
+  FL_FLAT_BOX,			///< a flat box
+  FL_UP_BOX,			///< see figure 1
+  FL_DOWN_BOX,			///< see figure 1
+  FL_UP_FRAME,			///< see figure 1
+  FL_DOWN_FRAME,		///< see figure 1
+  FL_THIN_UP_BOX,		///< see figure 1
+  FL_THIN_DOWN_BOX,		///< see figure 1
+  FL_THIN_UP_FRAME,		///< see figure 1
+  FL_THIN_DOWN_FRAME,		///< see figure 1
+  FL_ENGRAVED_BOX,		///< see figure 1
+  FL_EMBOSSED_BOX,		///< see figure 1
+  FL_ENGRAVED_FRAME,		///< see figure 1
+  FL_EMBOSSED_FRAME,		///< see figure 1
+  FL_BORDER_BOX,		///< see figure 1
+  _FL_SHADOW_BOX,		///< see figure 1
+  FL_BORDER_FRAME,		///< see figure 1
+  _FL_SHADOW_FRAME,		///< see figure 1
+  _FL_ROUNDED_BOX,		///< see figure 1
+  _FL_RSHADOW_BOX,		///< see figure 1
+  _FL_ROUNDED_FRAME,		///< see figure 1
+  _FL_RFLAT_BOX,		///< see figure 1
+  _FL_ROUND_UP_BOX,		///< see figure 1
+  _FL_ROUND_DOWN_BOX,		///< see figure 1
+  _FL_DIAMOND_UP_BOX,		///< see figure 1
+  _FL_DIAMOND_DOWN_BOX,		///< see figure 1
+  _FL_OVAL_BOX,			///< see figure 1
+  _FL_OSHADOW_BOX,		///< see figure 1
+  _FL_OVAL_FRAME,		///< see figure 1
+  _FL_OFLAT_BOX,		///< see figure 1
+  _FL_PLASTIC_UP_BOX,		///< plastic version of FL_UP_BOX
+  _FL_PLASTIC_DOWN_BOX,		///< plastic version of FL_DOWN_BOX
+  _FL_PLASTIC_UP_FRAME,		///< plastic version of FL_UP_FRAME
+  _FL_PLASTIC_DOWN_FRAME,	///< plastic version of FL_DOWN_FRAME
+  _FL_PLASTIC_THIN_UP_BOX,	///< plastic version of FL_THIN_UP_BOX
+  _FL_PLASTIC_THIN_DOWN_BOX,	///< plastic version of FL_THIN_DOWN_BOX
+  _FL_PLASTIC_ROUND_UP_BOX,	///< plastic version of FL_ROUND_UP_BOX
+  _FL_PLASTIC_ROUND_DOWN_BOX,	///< plastic version of FL_ROUND_DOWN_BOX
+  _FL_GTK_UP_BOX,		///< gtk+ version of FL_UP_BOX
+  _FL_GTK_DOWN_BOX,		///< gtk+ version of FL_DOWN_BOX
+  _FL_GTK_UP_FRAME,		///< gtk+ version of FL_UP_FRAME
+  _FL_GTK_DOWN_FRAME,		///< gtk+ version of FL_DOWN_RAME
+  _FL_GTK_THIN_UP_BOX,		///< gtk+ version of FL_THIN_UP_BOX
+  _FL_GTK_THIN_DOWN_BOX,	///< gtk+ version of FL_THIN_DOWN_BOX
+  _FL_GTK_THIN_UP_FRAME,	///< gtk+ version of FL_UP_FRAME
+  _FL_GTK_THIN_DOWN_FRAME,	///< gtk+ version of FL_THIN_DOWN_FRAME
+  _FL_GTK_ROUND_UP_BOX,		///< gtk+ version of FL_ROUND_UP_BOX
+  _FL_GTK_ROUND_DOWN_BOX,	///< gtk+ version of FL_ROUND_DOWN_BOX
+  FL_FREE_BOXTYPE		///< the first free box type for creation of new box types
 };
 extern FL_EXPORT Fl_Boxtype fl_define_FL_ROUND_UP_BOX();
 #define FL_ROUND_UP_BOX fl_define_FL_ROUND_UP_BOX()
@@ -663,6 +699,9 @@ extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;
     
     Color indices occupy the lower 8 bits of the value, while
     RGB colors occupy the upper 24 bits, for a byte organization of RGBI.
+    
+    \todo	enum Fl_Color needs some more comments for values,
+    		see Fl/Enumerations.H
  */
 
 enum Fl_Color {	// standard colors
@@ -739,6 +778,9 @@ inline Fl_Color fl_color_cube(int r, int g, int b) {
     
     The double-headed arrows are bitmaps provided by FLTK on X, the others
     are provided by system-defined cursors.
+    
+    \todo	enum Fl_Cursor needs some more comments for values
+    		(and maybe an image), see Fl/Enumerations.H
 */
 enum Fl_Cursor {	// standard cursors
   FL_CURSOR_DEFAULT	= 0,
