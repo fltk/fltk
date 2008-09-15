@@ -204,9 +204,9 @@ public:
     for the file in question. It must return a pathname that can be
     opened as a local file or NULL:</P>
     
-    <UL><PRE>
+    \code
     const char *fn(Fl_Widget *w, const char *uri);
-    </PRE></UL>
+    \endcode
     
     <P>The link function can be used to retrieve remote or virtual
     documents, returning a temporary file that contains the actual

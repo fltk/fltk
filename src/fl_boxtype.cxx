@@ -51,7 +51,8 @@ static uchar inactive_ramp[24] = {
   49, 49, 50, 50,
   51, 51, 52, 52};
 static int draw_it_active = 1;
-
+/** Determines if the current draw box is active or inactive. 
+    If inactive, the box color is changed by the inactive color. */
 int Fl::draw_box_active() { return draw_it_active; }
 
 uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
@@ -275,12 +276,12 @@ int Fl::box_dx(Fl_Boxtype t) {return fl_box_table[t].dx;}
     respectively.
     
     <P>An example to compute the area inside a widget's box():
-    <pre>
+    \code
          int X = yourwidget-&gt;x() + Fl::box_dx(yourwidget-&gt;box());
          int Y = yourwidget-&gt;y() + Fl::box_dy(yourwidget-&gt;box());
          int W = yourwidget-&gt;w() - Fl::box_dw(yourwidget-&gt;box());
          int H = yourwidget-&gt;h() - Fl::box_dh(yourwidget-&gt;box());
-    </pre>
+    \endcode
     <P>These functions are mainly useful in the draw() code 
     for deriving custom widgets, where one wants to avoid drawing 
     over the widget's own border box().

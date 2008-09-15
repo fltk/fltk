@@ -581,9 +581,9 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
   FileChooser widget and should be used when the application
   starts:
   
-  <UL><PRE>
+  \code
   Fl_File_Icon::load_system_icons();
-  </PRE></UL>
+  \endcode
 */
 void
 Fl_File_Icon::load_system_icons(void) {

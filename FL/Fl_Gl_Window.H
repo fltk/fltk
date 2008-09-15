@@ -85,7 +85,7 @@ public:
     after</I> draw() is called.  You can use this inside your 
     draw() method to avoid unneccessarily initializing the OpenGL
     context.  Just do this:
-    <UL><PRE>
+    \code
     void mywindow::draw() {
      if (!valid()) {
        glViewport(0,0,w(),h());
@@ -97,7 +97,7 @@ public:
      }
      ... draw your geometry here ...
     }
-    </PRE></UL>
+    \endcode
     
     You can turn valid() on by calling valid(1).  You
     should only do this after fixing the transformation inside a draw()

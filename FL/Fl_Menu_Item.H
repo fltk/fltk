@@ -54,8 +54,7 @@ class Fl_Menu_;
 /**
   The Fl_Menu_Item structure defines a single menu item that
   is used by the Fl_Menu_ class.  
-  <UL>
-  <PRE>
+  \code
   struct Fl_Menu_Item {
    const char*	        text; // label()
    ulong		shortcut_;
@@ -79,10 +78,9 @@ class Fl_Menu_;
    FL_MENU_DIVIDER	= 0x80,
    FL_MENU_HORIZONTAL	= 0x100
   };
-  </PRE>
-  </UL>
+  \endcode
   Typically menu items are statically defined; for example:
-  <UL><PRE>
+  \code
   Fl_Menu_Item popup[] = {
    {&quot;&alpha&quot;,   FL_ALT+'a', the_cb, (void*)1},
    {&quot;&beta&quot;,    FL_ALT+'b', the_cb, (void*)2},
@@ -101,7 +99,7 @@ class Fl_Menu_;
    {&quot;check&quot;,    FL_ALT+'i', 0, 0, FL_MENU_TOGGLE|FL_MENU_VALUE},
    {&quot;box&quot;,      FL_ALT+'i', 0, 0, FL_MENU_TOGGLE},
    {0}};
-  </PRE></UL>
+  \endcode
   produces:
   <P ALIGN=CENTER>\image html  menu.gif </P>
   

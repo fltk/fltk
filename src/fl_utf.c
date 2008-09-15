@@ -81,7 +81,7 @@ static unsigned short cp1252[32] = {
     standards recommend), adding a test to see if the length is
     unexpectedly 1 will work:
 
-\code
+    \code
     if (*p & 0x80) { // what should be a multibyte encoding
       code = fl_utf8decode(p,end,&len);
       if (len<2) code = 0xFFFD; // Turn errors into REPLACEMENT CHARACTER
@@ -89,7 +89,7 @@ static unsigned short cp1252[32] = {
       code = *p;
       len = 1;
     }
-\endcode
+    \endcode
 
     Direct testing for the 1-byte case (as shown above) will also
     speed up the scanning of strings where the majority of characters

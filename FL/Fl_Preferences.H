@@ -41,12 +41,12 @@
 
 
 /**
-   <tt>Fl_Preferences </tt>provides methods to store user
+   Fl_Preferences provides methods to store user
    settings between application starts. It is similar to the
    Registry on WIN32 and Preferences on MacOS, and provides a
    simple configuration mechanism for UNIX.
    
-   <tt>Fl_Preferences </tt>uses a hierarchy to store data. It
+   Fl_Preferences uses a hierarchy to store data. It
    bundles similar data into groups and manages entries into those
    groups as name/value pairs.
    
@@ -82,18 +82,18 @@ public:
   /**
      The constructor creates a group that manages name/value pairs and
      child groups. Groups are ready for reading and writing at any time.
-     The <tt>root</tt> argument is either <tt>Fl_Preferences::USER</tt>
-     or <tt>Fl_Preferences::SYSTEM</tt>.
+     The root argument is either Fl_Preferences::USER
+     or Fl_Preferences::SYSTEM.
      
      This constructor creates the <i>base</i> instance for all
      following entries and reads existing databases into memory. The
-     <tt>vendor</tt> argument is a unique text string identifying the
+     vendor argument is a unique text string identifying the
      development team or vendor of an application.  A domain name or
      an EMail address are great unique names, e.g.
      "researchATmatthiasm.com" or "fltk.org". The
-     <tt>application</tt> argument can be the working title or final
-     name of your application. Both <tt>vendor</tt> and
-     <tt>application</tt> must be valid relative UNIX pathnames and
+     application argument can be the working title or final
+     name of your application. Both vendor and
+     application must be valid relative UNIX pathnames and
      may contain '/'s to create deeper file structures.
     
      \param[in] root can be USER or SYSTEM for user specific or system wide preferences
@@ -105,7 +105,7 @@ public:
   /**
      This constructor is used to create or read a preferences file at an
      arbitrary position in the file system. The file name is generated
-     as <tt><i>path</i>/<i>application</i>.prefs</tt>. If <i>application</i>
+     as <i>path</i>/<i>application</i>.prefs. If <i>application</i>
      is 0, <i>path</i> must contain the full file name.
      
      \param[in] path path to the directory that contains the preferences file
@@ -116,7 +116,7 @@ public:
 
   /**
      This constructor generates a new group of preference entries
-     inside the group or file <i>parent</i>. The <tt>group</tt> argument 
+     inside the group or file <i>parent</i>. The group argument 
      identifies a group of entries. It can contain '/'s to get quick 
      access to individual elements inside the hierarchy.
     
@@ -150,7 +150,7 @@ public:
   /**
      Returns the name of the Nth group. There is no guaranteed
      order  of group names. The index must be within the range given
-     by <tt>groups()</tt>.
+     by groups().
      
      \param[in] index number indexing the requested group
      \return cstring pointer to the group name
@@ -160,8 +160,8 @@ public:
   /**
      Returns non-zero if a group with this name exists.
      Groupnames are relative to the Preferences node and can contain a path.
-     <tt>"."</tt> describes the current node, <tt>"./"</tt> describes the topmost node.
-     By preceding a groupname with a <tt>"./"</tt>, its path becomes relative to the topmost node.
+     "." describes the current node, "./" describes the topmost node.
+     By preceding a groupname with a "./", its path becomes relative to the topmost node.
      
      \param[in] group name of group that is searched for
      \return 0 if group was not found
@@ -187,7 +187,7 @@ public:
   /**
      Returns the name of an entry. There is no guaranteed order of
      entry names. The index must be within the range given by
-     <tt>entries()</tt>.
+     entries().
     
      \param[in] index number indexing the requested entry
      \return pointer to value cstring
@@ -339,7 +339,7 @@ public:
      supplied. The return value indicates if the value was available
      (non-zero) or the default was used (0). get() allocates memory of
      sufficient size to hold the value. The buffer must be free'd by 
-     the developer using '<tt>free(value)</tt>'. 
+     the developer using 'free(value)'. 
     
      \param[in] entry name of entry
      \param[out] value returned from preferences or default value if none was set
@@ -352,7 +352,7 @@ public:
      Reads an entry from the group. A default value must be
      supplied. The return value indicates if the value was available
      (non-zero) or the default was used (0). 
-     '<tt>maxSize</tt>' is the maximum length of text that will be read. 
+     'maxSize' is the maximum length of text that will be read. 
      The text buffer must allow for one additional byte for a trailling zero.
     
      \param[in] entry name of entry
@@ -368,7 +368,7 @@ public:
      supplied. The return value indicates if the value was available
      (non-zero) or the default was used (0). get() allocates memory of
      sufficient size to hold the value. The buffer must be free'd by 
-     the developer using '<tt>free(value)</tt>'. 
+     the developer using 'free(value)'. 
     
      \param[in] entry name of entry
      \param[out] value returned from preferences or default value if none was set
@@ -382,7 +382,7 @@ public:
      Reads an entry from the group. A default value must be
      supplied. The return value indicates if the value was available
      (non-zero) or the default was used (0). 
-     '<tt>maxSize</tt>' is the maximum length of text that will be read. 
+     'maxSize' is the maximum length of text that will be read. 
     
      \param[in] entry name of entry
      \param[out] value returned from preferences or default value if none was set
@@ -429,11 +429,11 @@ public:
      'Name' provides a simple method to create numerical or more complex 
      procedural names for entries and groups on the fly.
      
-     Example: <tt>prefs.set(Fl_Preferences::Name("File%d",i),file[i]);</tt>. 
+     Example: prefs.set(Fl_Preferences::Name("File%d",i),file[i]);. 
     
-     See <tt>test/preferences.cxx</tt> as a sample for writing arrays into preferences.<p>
+     See test/preferences.cxx as a sample for writing arrays into preferences.<p>
      'Name' is actually implemented as a class inside Fl_Preferences. It casts
-     into <tt>const char*</tt> and gets automatically destroyed after the enclosing call
+     into const char* and gets automatically destroyed after the enclosing call
      ends.
    */
   class FL_EXPORT Name {

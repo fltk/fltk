@@ -186,57 +186,11 @@ static void elapse_timeouts() {
 // time interval:
 static double missed_timeout_by;
 
-/**
-  Add a one-shot timeout callback.  The function will be called by
-  Fl::wait() at <i>t</i> seconds after this function is called.
-  The optional void* argument is passed to the callback.
-  
-  <P>You can have multiple timeout callbacks. To remove an timeout
-  callback use Fl::remove_timeout().
-  
-  <p>If you need more accurate, repeated timeouts, use Fl::repeat_timeout() to
-  reschedule the subsequent timeouts.</p>
-  
-  <p>The following code will print &quot;TICK&quot; each second on
-  stdout with a fair degree of accuracy:</p>
-  
-  <PRE>
-     void callback(void*) {
-       puts("TICK");
-       Fl::repeat_timeout(1.0, callback);
-     }
-  
-     int main() {
-       Fl::add_timeout(1.0, callback);
-       return Fl::run();
-     }
-  </PRE>
-*/
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   elapse_timeouts();
   repeat_timeout(time, cb, argp);
 }
 
-/**
-  This method repeats a timeout callback from the expiration of the
-  previous timeout, allowing for more accurate timing. You may only call
-  this method inside a timeout callback.
-  
-  <p>The following code will print &quot;TICK&quot; each second on
-  stdout with a fair degree of accuracy:</p>
-  
-  <PRE>
-     void callback(void*) {
-       puts("TICK");
-       Fl::repeat_timeout(1.0, callback);
-     }
-  
-     int main() {
-       Fl::add_timeout(1.0, callback);
-       return Fl::run();
-     }
-  </PRE>
-*/
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   time += missed_timeout_by; if (time < -.05) time = 0;
   Timeout* t = free_timeout;
@@ -316,7 +270,7 @@ static Check *first_check, *next_check, *free_check;
   
   <p>Sample code:
   
-  <UL><PRE>
+  \code
   bool state_changed; // anything that changes the display turns this on
   
   void callback(void*) {
@@ -330,7 +284,7 @@ static Check *first_check, *next_check, *free_check;
    Fl::add_check(callback);
    return Fl::run();
   }
-  </PRE></UL>
+  \endcode
 */
 void Fl::add_check(Fl_Timeout_Handler cb, void *argp) {
   Check* t = free_check;
@@ -543,13 +497,13 @@ int Fl::wait() {
   Same as Fl::wait(0).  Calling this during a big calculation
   will keep the screen up to date and the interface responsive:
   
-  <UL><PRE>
+  \code
   while (!calculation_done()) {
   calculate();
   Fl::check();
   if (user_hit_abort_button()) break;
   }
-  </PRE></UL>
+  \endcode
   
   <P>The returns non-zero if any windows are displayed, and 0 if no
   windows are displayed (this is likely to change in future versions of
@@ -567,7 +521,7 @@ int Fl::check() {
   true if Fl::check() would do anything (it will continue to
   return true until you call Fl::check() or Fl::wait()).
   
-  <UL><PRE>
+  \code
   while (!calculation_done()) {
   calculate();
   if (Fl::ready()) {
@@ -576,7 +530,7 @@ int Fl::check() {
     if (user_hit_abort_button()) break;
   }
   }
-  </PRE></UL>
+  \endcode
 */
 int Fl::ready() {
 #if ! defined( WIN32 )  &&  ! defined(__APPLE__)
@@ -1537,9 +1491,11 @@ void Fl::delete_widget(Fl_Widget *wi) {
   num_dwidgets ++;
 }
 
-
-void
-Fl::do_widget_deletion() {
+/** 
+    Deletes widgets previously scheduled for deletion.
+    See void Fl::delete_widget(Fl_Widget *wi) 
+*/
+void Fl::do_widget_deletion() {
   if (!num_dwidgets) return;
 
   for (int i = 0; i < num_dwidgets; i ++)
@@ -1551,7 +1507,9 @@ Fl::do_widget_deletion() {
 static Fl_Widget ***widget_watch = 0;
 static int num_widget_watch = 0;
 static int max_widget_watch = 0;
-
+/** Adds a widget pointer to the watch list. 
+   \todo explain the role of the watch list, 
+   it may be related to invalid widget deletion crash fixes... */
 void Fl::watch_widget_pointer(Fl_Widget *&w) 
 {
   Fl_Widget **wp = &w;
@@ -1572,6 +1530,7 @@ void Fl::watch_widget_pointer(Fl_Widget *&w)
   widget_watch[num_widget_watch++] = wp;
 }
 
+/** Releases a widget pointer to the watch list */
 void Fl::release_widget_pointer(Fl_Widget *&w)
 {
   Fl_Widget **wp = &w;
@@ -1583,7 +1542,7 @@ void Fl::release_widget_pointer(Fl_Widget *&w)
     }
   }
 }
-
+/** Clears a widget pointer in the watch list */
 void Fl::clear_widget_pointer(Fl_Widget const *w) 
 {
   if (w==0L) return;

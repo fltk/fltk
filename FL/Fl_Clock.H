@@ -47,11 +47,11 @@
 /**
  * This widget can be used to display a program-supplied time.
  * The time shown on the clock is not updated. 
- * To display the current time, use <TT>Fl_Clock</A></TT> instead.
+ * To display the current time, use Fl_Clock</A> instead.
  *
- * \image html clock.gif 
+ * <table align=CENTER border=5 cellpadding=5 ><TR><TD> \image html clock.gif  </TD>
  *
- * \image html round_clock.gif
+ * <TD> \image html round_clock.gif </TD> </TR> </table>
  */
 class FL_EXPORT Fl_Clock_Output : public Fl_Widget {
   int hour_, minute_, second_;
@@ -63,9 +63,9 @@ protected:
 public:
   
   /**
-   * Creates a new <tt>Fl_Clock_Output</tt> widget.
-   * Create an <tt>Fl_Clock_Output</tt> widget using the given position, 
-   * size, and label string. The default boxtype is <tt>FL_NO_BOX</tt>.
+   * Creates a new Fl_Clock_Output widget.
+   * Create an Fl_Clock_Output widget using the given position, 
+   * size, and label string. The default boxtype is FL_NO_BOX.
    *
    * \param[in] x, y, w, h position and size of the widget
    * \param[in] label widget label, default is no label
@@ -120,12 +120,12 @@ public:
 
 /**
  * This widget provides a round analog clock display.
- * <tt>Fl_Clock</tt> is provided for Forms compatibility. 
- * It installs a 1-second timeout callback using <tt>Fl::add_timeout()</tt>.
+ * Fl_Clock is provided for Forms compatibility. 
+ * It installs a 1-second timeout callback using Fl::add_timeout().
  *
- * \image html clock.gif 
+ * <table align=CENTER border=5 cellpadding=5 ><TR><TD>\image html clock.gif </TD>
  * 
- * \image html round_clock.gif
+ * <TD> \image html round_clock.gif </TD></TR></table>
  */
 class FL_EXPORT Fl_Clock : public Fl_Clock_Output {
 public:
@@ -133,9 +133,9 @@ public:
   void update();
 
   /**
-   * Creates a new <tt>Fl_Clock</tt> widget.
-   * Create an <tt>Fl_Clock</tt> widget using the given position, 
-   * size, and label string. The default boxtype is <tt>FL_NO_BOX</tt>.
+   * Creates a new Fl_Clock widget.
+   * Create an Fl_Clock widget using the given position, 
+   * size, and label string. The default boxtype is FL_NO_BOX.
    *
    * \param[in] x, y, w, h position and size of the widget
    * \param[in] label widget label, default is no label
@@ -143,8 +143,8 @@ public:
   Fl_Clock(int x,int y,int w,int h, const char *l = 0);
   
   /**
-   * Creates a new <tt>Fl_Clock</tt> widget.
-   * Create an <tt>Fl_Clock</tt> widget using the given position, 
+   * Creates a new Fl_Clock widget.
+   * Create an Fl_Clock widget using the given position, 
    * size, and label string.
    *
    * \param[in] t boxtype

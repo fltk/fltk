@@ -37,11 +37,9 @@
   copy it to the on-screen window.
   <P>It is highly recommended that you put the following code before the
   first show() of <I>any</I> window in your program: </P>
-  <UL>
-  <PRE>
+  \code
   Fl::visual(FL_DOUBLE|FL_INDEX)
-  </PRE>
-  </UL>
+  \endcode
   This makes sure you can use Xdbe on servers where double buffering
   does not exist for every visual.
 */

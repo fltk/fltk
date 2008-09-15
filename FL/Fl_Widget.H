@@ -344,7 +344,7 @@ public:
    *  The label is shown somewhere on or next to the widget. The passed pointer 
    *  is stored unchanged in the widget (the string is \em not copied), so if 
    *  you need to set the label to a formatted value, make sure the buffer is 
-   *  <tt>static</tt>, global, or allocated. The copy_label() method can be used 
+   *  static, global, or allocated. The copy_label() method can be used 
    *  to make a copy of the label string automatically.
    *  \param[in] text pointer to new label text
    *  \see copy_label()
@@ -466,13 +466,13 @@ public:
   /** Sets the current tooltip text. 
    *  Sets a string of text to display in a popup tooltip window when the user 
    *  hovers the mouse over the widget. The string is <I>not</I> copied, so 
-   *  make sure any formatted string is stored in a <TT>static</TT>, global, 
+   *  make sure any formatted string is stored in a static, global, 
    *  or allocated buffer.
    * 
    *  If no tooltip is set, the tooltip of the parent is inherited. Setting a 
    *  tooltip for a group and setting no tooltip for a child will show the 
    *  group's tooltip instead. To avoid this behavior, you can set the child's 
-   *  tooltip to an empty string (<tt>&quot;&quot;</tt>).
+   *  tooltip to an empty string (&quot;&quot;).
    *  \param[in] t new tooltip
    */
   void tooltip(const char *t);
@@ -510,14 +510,14 @@ public:
   void callback(Fl_Callback1*cb, long p=0) {callback_=(Fl_Callback*)cb; user_data_=(void*)p;}
 
   /** Gets the user data for this widget.
-   *  Gets the current user data (<TT>void *</TT>) argument
+   *  Gets the current user data (void *) argument
    *  that is passed to the callback function.
    *  \return user data as a pointer
    */
   void* user_data() const {return user_data_;}
 
   /** Sets the user data for this widget.
-   *  Sets the new user data (<TT>void *</TT>) argument
+   *  Sets the new user data (void *) argument
    *  that is passed to the callback function.
    *  \param[in] v new user data
    */
@@ -573,11 +573,11 @@ public:
   Fl_When when() const {return (Fl_When)when_;}
 
   /** Flags used to decide when a callback is called.
-   *  <TT>Fl_Widget::when()</TT> is a set of bitflags used by subclasses of 
-   *  <TT> Fl_Widget</TT> to decide when to do the callback.  If the value 
+   *  Fl_Widget::when() is a set of bitflags used by subclasses of 
+   *   Fl_Widget to decide when to do the callback.  If the value 
    *  is zero then the callback is never done.  Other values are described 
    *  in the individual widgets.  This field is in the base class so that 
-   *  you can scan a panel and <TT>do_callback()</TT> on all the ones that 
+   *  you can scan a panel and do_callback() on all the ones that 
    *  don't do their own callbacks in response to an &quot;OK&quot; button.
    *  \param[in] i set of flags 
    */
@@ -597,15 +597,15 @@ public:
 
   /** Makes a widget visible.
    *  An invisible widget never gets redrawn and does not get events.  
-   *  The <TT>visible()</TT> method returns true if the widget is set to be  
-   *  visible. The <TT>visible_r()</TT> method returns true if the widget and 
+   *  The visible() method returns true if the widget is set to be  
+   *  visible. The visible_r() method returns true if the widget and 
    *  all of its parents are visible. A widget is only visible if 
-   *  <TT>visible()</TT> is true on it <I>and all of its parents</I>. 
+   *  visible() is true on it <I>and all of its parents</I>. 
    * 
-   *  Changing it will send <TT>FL_SHOW</TT> or <TT>FL_HIDE</TT> events to 
+   *  Changing it will send FL_SHOW or FL_HIDE events to 
    *  the widget. <I>Do not change it if the parent is not visible, as this 
-   *  will send false <TT>FL_SHOW</TT> or <TT>FL_HIDE</TT> events to the 
-   *  widget</I>. <TT>redraw()</TT> is called if necessary on this or the parent.
+   *  will send false FL_SHOW or FL_HIDE events to the 
+   *  widget</I>. redraw() is called if necessary on this or the parent.
    *  
    *  \see hide(), visible(), visible_r()
    */
@@ -684,8 +684,8 @@ public:
   void clear_output() {flags_ &= ~OUTPUT;}
 
   /** Returns if the widget is able to take events.
-   *  This is the same as <TT>(active() && !output()
-   *  && visible())</TT> but is faster.
+   *  This is the same as (active() && !output()
+   *  && visible()) but is faster.
    *  \retval 0 if the widget takes no events
    */ 
   int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
@@ -716,8 +716,8 @@ public:
 
   /** Give the widget the keyboard focus.
    *  Tries to make this widget be the Fl::focus() widget, by first sending 
-   *  it an <TT>FL_FOCUS</TT> event, and if it returns non-zero, setting 
-   *  <TT>Fl::focus()</TT> to this widget.  You should use this method to 
+   *  it an FL_FOCUS event, and if it returns non-zero, setting 
+   *  Fl::focus() to this widget.  You should use this method to 
    *  assign the focus to a widget.  
    *  \return true if the widget accepted the focus.
    */
@@ -851,7 +851,7 @@ public:
 
   /** Returns a pointer to the primary Fl_Window widget.
    *  \retval  NULL if no window is associated with this widget.  
-   *  \note for an <TT>Fl_Window</TT> widget, this returns its <I>parent</I> window (if any), not <I>this</I> window.
+   *  \note for an Fl_Window widget, this returns its <I>parent</I> window (if any), not <I>this</I> window.
    */
   Fl_Window* window() const ;
 

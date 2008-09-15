@@ -118,9 +118,9 @@
   "Description text (patterns)" or just "patterns". A file chooser
   that provides filters for HTML and image files might look like:
   
-  <UL><PRE>
+  \code
   "HTML Files (*.html)\tImage Files (*.{bmp,gif,jpg,png})"
-  </PRE></UL>
+  \endcode
   
   <P>The file chooser will automatically add the "All Files (*)"
   pattern to the end of the string you pass if you do not provide
@@ -253,13 +253,13 @@
   Fl_File_Chooser::count().
   
   <P>This sample code loops through all selected files:
-  <PRE>
+  \code
   // Get list of filenames user selected from a MULTI chooser
   for ( int t=1; t&lt;=chooser-&gt;count(); t++ ) {
      const char *filename = chooser-&gt;value(t);
      ..
   }
-  </PRE>
+  \endcode
 */
 
 /** \fn const char *Fl_File_Chooser::value(int file)

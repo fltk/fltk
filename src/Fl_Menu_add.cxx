@@ -207,19 +207,19 @@ int Fl_Menu_Item::add(
   <P>Shortcut can be 0L, or either a modifier/key combination (for example
   FL_CTRL+'A') or a string describing the shortcut in one of two ways:</p>
   
-  <pre>
+  \code
    [#+^]&lt;ascii_value&gt;    eg. "97", "^97", "+97", "#97"
    [#+^]&lt;ascii_char&gt;     eg. "a", "^a", "+a", "#a"
-  </pre>
+  \endcode
   ..where &lt;ascii_value&gt; is a decimal value representing an
   ascii character (eg. 97 is the ascii for 'a'), and the optional
   prefixes enhance the value  that follows. Multiple prefixes must
   appear in the above order.
-  <pre>
+  \code
    # - Alt
    + - Shift
    ^ - Control
-  </pre>
+  \endcode
   Text shortcuts are converted to integer shortcut by calling 
   int fl_old_shortcut(const char*).
   

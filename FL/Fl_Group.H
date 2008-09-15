@@ -170,8 +170,8 @@ public:
 /**
   This is a dummy class that allows you to end a Fl_Group in a constructor list of a
   class:
-  <UL>
-  <PRE>class MyClass {
+  \code 
+   class MyClass {
    Fl_Group group;
    Fl_Button button_in_group;
    Fl_End end;
@@ -183,8 +183,8 @@ public:
    button_in_group(20,20,60,30),
    end(),
    button_outside_group(10,120,60,30)
-  {}</PRE>
-  </UL>
+  {} 
+  \endcode
 */
 class FL_EXPORT Fl_End {
 public:

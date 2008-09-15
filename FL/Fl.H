@@ -115,7 +115,20 @@ public:
   // things called by initialization:
   static void display(const char*);
   static int visual(int);
-  static int gl_visual(int, int *alist=0);
+  /**
+    This does the same thing as
+    Fl::visual(int) but also
+    requires OpenGL drawing to work.  This <I>must</I> be done if
+    you want to draw in normal windows with OpenGL with  gl_start() and
+    gl_end().  It may be useful to call this so your X
+    windows use the same visual as an
+    Fl_Gl_Window, which on
+    some servers will reduce colormap flashing.
+    
+    <P>See Fl_Gl_Window
+    for a list of additional values for the argument.
+  */
+  static int gl_visual(int, int *alist=0); // platform dependent
   static void own_colormap();
   static void get_system_colors();
   static void foreground(uchar, uchar, uchar);
@@ -142,8 +155,54 @@ public:
   static int ready();
   static int run();
   static Fl_Widget* readqueue();
-  static void add_timeout(double t, Fl_Timeout_Handler,void* = 0);
-  static void repeat_timeout(double t, Fl_Timeout_Handler,void* = 0);
+  /**
+  Adds a one-shot timeout callback.  The function will be called by
+  Fl::wait() at <i>t</i> seconds after this function is called.
+  The optional void* argument is passed to the callback.
+  
+  <P>You can have multiple timeout callbacks. To remove an timeout
+  callback use Fl::remove_timeout().
+  
+  <p>If you need more accurate, repeated timeouts, use Fl::repeat_timeout() to
+  reschedule the subsequent timeouts.</p>
+  
+  <p>The following code will print &quot;TICK&quot; each second on
+  stdout with a fair degree of accuracy:</p>
+  
+  \code
+     void callback(void*) {
+       puts("TICK");
+       Fl::repeat_timeout(1.0, callback);
+     }
+  
+     int main() {
+       Fl::add_timeout(1.0, callback);
+       return Fl::run();
+     }
+  \endcode
+  */
+  static void add_timeout(double t, Fl_Timeout_Handler,void* = 0); // platform dependent
+  /**
+  This method repeats a timeout callback from the expiration of the
+  previous timeout, allowing for more accurate timing. You may only call
+  this method inside a timeout callback.
+  
+  <p>The following code will print &quot;TICK&quot; each second on
+  stdout with a fair degree of accuracy:</p>
+  
+  \code
+     void callback(void*) {
+       puts("TICK");
+       Fl::repeat_timeout(1.0, callback);
+     }
+  
+     int main() {
+       Fl::add_timeout(1.0, callback);
+       return Fl::run();
+     }
+  \endcode
+  */
+  static void repeat_timeout(double t, Fl_Timeout_Handler,void* = 0); // platform dependent
   static int  has_timeout(Fl_Timeout_Handler, void* = 0);
   static void remove_timeout(Fl_Timeout_Handler, void* = 0);
   static void add_check(Fl_Timeout_Handler, void* = 0);
