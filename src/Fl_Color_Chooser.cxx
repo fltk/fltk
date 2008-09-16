@@ -3,7 +3,7 @@
 //
 // Color chooser for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -47,6 +47,11 @@
 // you get this by defining this:
 #define UPDATE_HUE_BOX 1
 
+/**
+  This \e static method converts HSV colors to RGB colorspace.
+  \param[in] H, S, V color components
+  \param[out] R, G, B color components
+ */
 void Fl_Color_Chooser::hsv2rgb(
 	double H, double S, double V, double& R, double& G, double& B) {
   if (S < 5.0e-6) {
@@ -68,6 +73,11 @@ void Fl_Color_Chooser::hsv2rgb(
   }
 }
 
+/**
+  This \e static method converts RGB colors to HSV colorspace.
+  \param[in] R, G, B color components
+  \param[out] H, S, V color components
+ */
 void Fl_Color_Chooser::rgb2hsv(
 	double R, double G, double B, double& H, double& S, double& V) {
   double maxv = R > G ? R : G; if (B > maxv) maxv = B;
@@ -119,6 +129,12 @@ void Fl_Color_Chooser::set_valuators() {
   }
 }
 
+/**
+  Sets the current rgb color values.
+  Does not do the callback. Does not clamp (but out of range values will
+  produce psychedelic effects in the hue selector).
+  \param[in] R, G, B color components.
+ */
 int Fl_Color_Chooser::rgb(double R, double G, double B) {
   if (R == r_ && G == g_ && B == b_) return 0;
   r_ = R; g_ = G; b_ = B;
@@ -140,6 +156,12 @@ int Fl_Color_Chooser::rgb(double R, double G, double B) {
   return 1;
 }
 
+/**
+  Set the hsv values.
+  The passed values are clamped (or for hue, modulus 6 is used) to get
+  legal values. Does not do the callback.
+  \param[in] H, S, V color components.
+ */
 int Fl_Color_Chooser::hsv(double H, double S, double V) {
   H = fmod(H,6.0); if (H < 0.0) H += 6.0;
   if (S < 0.0) S = 0.0; else if (S > 1.0) S = 1.0;
@@ -413,6 +435,13 @@ void Fl_Color_Chooser::mode_cb(Fl_Widget* o, void*) {
 
 ////////////////////////////////////////////////////////////////
 
+/**
+  Creates a new Fl_Color_Chooser widget using the given position, size, and
+  label string.
+  The recommended dimensions are 200x95. The color is initialized to black.
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ */
 Fl_Color_Chooser::Fl_Color_Chooser(int X, int Y, int W, int H, const char* L)
   : Fl_Group(0,0,195,115,L),
     huebox(0,0,115,115),

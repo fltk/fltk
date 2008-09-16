@@ -3,7 +3,7 @@
 //
 // Counter header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -38,6 +38,19 @@
 #define FL_NORMAL_COUNTER	0
 #define FL_SIMPLE_COUNTER	1
 
+/**
+  \class Fl_Counter
+  \brief Fl_Counter widget for Forms compatibility.
+
+  The Fl_Counter widget is provided for forms compatibility.
+  It controls a single floating point value.
+
+  \todo Refactor the doxygen comments for Fl_Counter type() documentation.
+
+  The type of an Fl_Counter object can be set using type(uchar t) to:
+  \li \c FL_NORMAL_COUNTER: Displays a counter with 4 arrow buttons.
+  \li \c FL_SIMPLE_COUNTER: Displays a counter with only 2 arrow buttons.
+ */
 class FL_EXPORT Fl_Counter : public Fl_Valuator {
 
   Fl_Font textfont_;
@@ -56,9 +69,17 @@ protected:
 public:
 
   int handle(int);
-  Fl_Counter(int,int,int,int,const char * = 0);
+
+  Fl_Counter(int X, int Y, int W, int H, const char* L = 0);
   ~Fl_Counter();
+
+  /**
+    Set the increment for the double-arrow buttons.
+    The default value is 1.0.
+    \param[in] a increment value
+   */
   void lstep(double a) {lstep_ = a;}
+
   void step(double a,double b) {Fl_Valuator::step(a); lstep_ = b;}
   void step(double a) {Fl_Valuator::step(a);}
   Fl_Font textfont() const {return textfont_;}

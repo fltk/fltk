@@ -3,7 +3,7 @@
 //
 // Counter widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -174,12 +174,21 @@ int Fl_Counter::handle(int event) {
   }
 }
 
+/**
+  Destroys the valuator.
+ */
 Fl_Counter::~Fl_Counter() {
   Fl::remove_timeout(repeat_callback, this);
 }
 
-Fl_Counter::Fl_Counter(int X, int Y, int W, int H, const char* l)
-  : Fl_Valuator(X, Y, W, H, l) {
+/**
+  Creates a new Fl_Counter widget using the given position, size, and label
+  string. The default type is FL_NORMAL_COUNTER.
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ */
+Fl_Counter::Fl_Counter(int X, int Y, int W, int H, const char* L)
+  : Fl_Valuator(X, Y, W, H, L) {
   box(FL_UP_BOX);
   selection_color(FL_INACTIVE_COLOR); // was FL_BLUE
   align(FL_ALIGN_BOTTOM);

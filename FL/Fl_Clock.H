@@ -3,7 +3,7 @@
 //
 // Clock header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -42,16 +42,16 @@
 #define FL_ANALOG_CLOCK FL_SQUARE_CLOCK
 #define FL_DIGITAL_CLOCK FL_SQUARE_CLOCK // nyi
 
-// a Fl_Clock_Output can be used to display a program-supplied time:
-
 /**
- * This widget can be used to display a program-supplied time.
- * The time shown on the clock is not updated. 
- * To display the current time, use Fl_Clock</A> instead.
- *
- * <table align=CENTER border=5 cellpadding=5 ><TR><TD> \image html clock.gif  </TD>
- *
- * <TD> \image html round_clock.gif </TD> </TR> </table>
+  \class Fl_Clock_Output
+  \brief This widget can be used to display a program-supplied time.
+  
+  The time shown on the clock is not updated. To display the current time,
+  use Fl_Clock instead.
+
+  \image html clock.gif 
+ 
+  \image html round_clock.gif
  */
 class FL_EXPORT Fl_Clock_Output : public Fl_Widget {
   int hour_, minute_, second_;
@@ -61,57 +61,35 @@ protected:
   void draw(int, int, int, int);
   void draw();
 public:
-  
-  /**
-   * Creates a new Fl_Clock_Output widget.
-   * Create an Fl_Clock_Output widget using the given position, 
-   * size, and label string. The default boxtype is FL_NO_BOX.
-   *
-   * \param[in] x, y, w, h position and size of the widget
-   * \param[in] label widget label, default is no label
-   */
-  Fl_Clock_Output(int x,int y,int w,int h, const char *l = 0);
 
-  /**
-   * Set the displayed time.
-   * Set the time in seconds since the UNIX epoch (January 1, 1970).
-   * \see value()
-   */
+  Fl_Clock_Output(int X, int Y, int W, int H, const char *L = 0);
+
   void value(ulong v);	// set to this Unix time
   
+  void value(int H, int m, int s);
+
   /**
-   * Set the displayed time.
-   * Set the time in hours, minutes, and seconds.
-   * \param[in] hour, minute, second displayed time
-   * \see hour(), minute(), second()
-   */
-  void value(int hour, int minute, int second);
-  
-  /**
-   * Returns the displayed time.
-   * Returns the time in seconds since the UNIX epoch (January 1, 1970).
-   * \see value(ulong)
+    Returns the displayed time.
+    Returns the time in seconds since the UNIX epoch (January 1, 1970).
+    \see value(ulong)
    */
   ulong value() const {return value_;}
 
   /**
-   * Returns the displayed time.
-   * Returns the displayed hour (0 to 23).
-   * \see value(), minute(), second()
+    Returns the displayed hour (0 to 23).
+    \see value(), minute(), second()
    */
   int hour() const {return hour_;}
 
   /**
-   * Returns the displayed time.
-   * Returns the displayed minute (0 to 59).
-   * \see value(), hour(), second()
+    Returns the displayed minute (0 to 59).
+    \see value(), hour(), second()
    */
   int minute() const {return minute_;}
 
   /**
-   * Returns the displayed time.
-   * Returns the displayed second (0 to 60, 60=leap second).
-   * \see value(), hour(), minute()
+    Returns the displayed second (0 to 60, 60=leap second).
+    \see value(), hour(), minute()
    */
   int second() const {return second_;}
 };
@@ -119,43 +97,25 @@ public:
 // a Fl_Clock displays the current time always by using a timeout:
 
 /**
- * This widget provides a round analog clock display.
- * Fl_Clock is provided for Forms compatibility. 
- * It installs a 1-second timeout callback using Fl::add_timeout().
- *
- * <table align=CENTER border=5 cellpadding=5 ><TR><TD>\image html clock.gif </TD>
- * 
- * <TD> \image html round_clock.gif </TD></TR></table>
+  \class Fl_Clock
+  \brief This widget provides a round analog clock display.
+
+  Fl_Clock is provided for Forms compatibility. 
+  It installs a 1-second timeout callback using Fl::add_timeout().
+
+  \image html clock.gif 
+
+  \image html round_clock.gif
  */
 class FL_EXPORT Fl_Clock : public Fl_Clock_Output {
 public:
   int handle(int);
   void update();
 
-  /**
-   * Creates a new Fl_Clock widget.
-   * Create an Fl_Clock widget using the given position, 
-   * size, and label string. The default boxtype is FL_NO_BOX.
-   *
-   * \param[in] x, y, w, h position and size of the widget
-   * \param[in] label widget label, default is no label
-   */
-  Fl_Clock(int x,int y,int w,int h, const char *l = 0);
+  Fl_Clock(int X, int Y, int W, int H,  const char *L = 0);
   
-  /**
-   * Creates a new Fl_Clock widget.
-   * Create an Fl_Clock widget using the given position, 
-   * size, and label string.
-   *
-   * \param[in] t boxtype
-   * \param[in] x, y, w, h position and size of the widget
-   * \param[in] label widget label, default is no label
-   */
-  Fl_Clock(uchar t,int x,int y,int w,int h, const char *l);
+  Fl_Clock(uchar t, int X, int Y, int W, int H, const char *L);
   
-  /**
-   * The destructor removes the clock.
-   */
   ~Fl_Clock();
 };
 

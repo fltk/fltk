@@ -3,7 +3,7 @@
 //
 // Color chooser header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -66,6 +66,19 @@ public:
   Flcc_Value_Input(int X, int Y, int W, int H) : Fl_Value_Input(X,Y,W,H) {}
 };
 
+/**
+  \class Fl_Color_Chooser
+  \brief The Fl_Color_Chooser widget provides a standard RGB color chooser.
+
+  You can place any number of these into a panel of your own design. This
+  widget contains the hue box, value slider, and rgb input fields from the
+  above diagram (it does not have the color chips or the Cancel or OK buttons).
+  The callback is done every time the user changes the rgb value. It is not
+  done if they move the hue control in a way that produces the \e same rgb
+  value, such as when saturation or value is zero.
+
+  \image html fl_color_chooser.jpg
+ */
 class FL_EXPORT Fl_Color_Chooser : public Fl_Group {
   Flcc_HueBox huebox;
   Flcc_ValueBox valuebox;
@@ -81,17 +94,54 @@ class FL_EXPORT Fl_Color_Chooser : public Fl_Group {
   static void mode_cb(Fl_Widget*, void*);
 public:
   int mode() {return choice.value();}
+
+  /**
+    Returns the current hue.
+    0 <= hue < 6. Zero is red, one is yellow, two is green, etc.
+    <em>This value is convienent for the internal calculations - some other
+    systems consider hue to run from zero to one, or from 0 to 360.</em>
+   */
   double hue() const {return hue_;}
+
+  /**
+    Returns the saturation.
+    0 <= saturation <= 1.
+   */
   double saturation() const {return saturation_;}
+
+  /**
+    Returns the value/brightness.
+    0 <= value <= 1.
+   */
   double value() const {return value_;}
+
+  /**
+    Returns the current red value.
+    0 <= r <= 1.
+   */
   double r() const {return r_;}
+
+  /**
+    Returns the current green value.
+    0 <= g <= 1.
+   */
   double g() const {return g_;}
+
+  /**
+    Returns the current blue value.
+    0 <= b <= 1.
+   */
   double b() const {return b_;}
-  int hsv(double,double,double);
-  int rgb(double,double,double);
-  static void hsv2rgb(double, double, double,double&,double&,double&);
-  static void rgb2hsv(double, double, double,double&,double&,double&);
-  Fl_Color_Chooser(int,int,int,int,const char* = 0);
+
+  int hsv(double H, double S, double V);
+
+  int rgb(double R, double G, double B);
+
+  static void hsv2rgb(double H, double S, double V, double& R, double& G, double& B);
+
+  static void rgb2hsv(double R, double G, double B, double& H, double& S, double& V);
+
+  Fl_Color_Chooser(int X, int Y, int W, int H, const char *L = 0);
 };
 
 FL_EXPORT int fl_color_chooser(const char* name, double& r, double& g, double& b);

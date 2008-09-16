@@ -3,7 +3,7 @@
 //
 // Choice widget for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2006 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -112,8 +112,18 @@ void Fl_Choice::draw() {
   draw_label();
 }
 
-Fl_Choice::Fl_Choice(int X, int Y, int W, int H, const char *l)
-: Fl_Menu_(X,Y,W,H,l) {
+/**
+  Create a new Fl_Choice widget using the given position, size and label string.
+  The default boxtype is \c FL_UP_BOX.
+
+  The constructor sets menu() to NULL.
+  See Fl_Menu_ for the methods to set or change the menu.
+
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ */
+Fl_Choice::Fl_Choice(int X, int Y, int W, int H, const char *L)
+: Fl_Menu_(X,Y,W,H,L) {
   align(FL_ALIGN_LEFT);
   when(FL_WHEN_RELEASE);
   textfont(FL_HELVETICA);
@@ -121,12 +131,24 @@ Fl_Choice::Fl_Choice(int X, int Y, int W, int H, const char *l)
   down_box(FL_BORDER_BOX);
 }
 
+/**
+  Sets the currently selected value using a pointer to menu item.
+  Changing the selected value causes a redraw().
+  \param[in] v pointer to menu item in the menu item array.
+  \returns non-zero if the new value is different to the old one.
+ */
 int Fl_Choice::value(const Fl_Menu_Item *v) {
   if (!Fl_Menu_::value(v)) return 0;
   redraw();
   return 1;
 }
 
+/**
+  Sets the currently selected value using the index into the menu item array.
+  Changing the selected value causes a redraw().
+  \param[in] v index of value in the menu item array.
+  \returns non-zero if the new value is different to the old one.
+ */
 int Fl_Choice::value(int v) {
   if (v == -1) return value((const Fl_Menu_Item *)0);
   if (v < 0 || v >= (size() - 1)) return 0;

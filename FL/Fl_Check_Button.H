@@ -3,7 +3,7 @@
 //
 // Check button header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -30,9 +30,24 @@
 
 #include "Fl_Light_Button.H"
 
+/**
+  \class Fl_Check_Button
+  \brief A button with an "checkmark" to show its status.
+
+  \image html Fl_Check_Button.gif
+
+  Buttons generate callbacks when they are clicked by the user. You control
+  exactly when and how by changing the values for type() and when().
+
+  The Fl_Check_Button subclass displays its "ON" state by showing a "checkmark"
+  rather than drawing itself pushed in.
+  
+  \todo Refactor Fl_Check_Button doxygen comments (add color() info etc?)
+  \todo Generate Fl_Check_Button.gif with visible checkmark.
+ */
 class FL_EXPORT Fl_Check_Button : public Fl_Light_Button {
 public:
-  Fl_Check_Button(int x,int y,int w,int h,const char *l = 0);
+  Fl_Check_Button(int X, int Y, int W, int H, const char *L = 0);
 };
 
 #endif

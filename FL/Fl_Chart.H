@@ -3,7 +3,7 @@
 //
 // Forms chart header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -52,6 +52,28 @@ struct FL_CHART_ENTRY {
    char str[FL_CHART_LABEL_MAX+1];
 };
 
+/**
+  \class Fl_Chart
+  \brief Fl_Chart displays simple charts.
+  It is provided for Forms compatibility.
+
+  \image html charts.gif
+
+  \todo Refactor Fl_Chart::type() information.
+
+  The type of an Fl_Chart object can be set using type(uchar t) to:
+  \li \c FL_BAR_CHART: Each sample value is drawn as a vertical bar.
+  \li \c FL_FILLED_CHART: The chart is filled from the bottom of the graph
+         to the sample values.
+  \li \c FL_HORBAR_CHART: Each sample value is drawn as a horizontal bar.
+  \li \c FL_LINE_CHART: The chart is drawn as a polyline with vertices at
+         each sample value.
+  \li \c FL_PIE_CHART: A pie chart is drawn with each sample value being
+         drawn as a proportionate slice in the circle.
+  \li \c FL_SPECIALPIE_CHART: Like \c FL_PIE_CHART, but the first slice is
+         separated from the pie.
+  \li \c FL_SPIKE_CHART: Each sample value is drawn as a vertical line.
+ */
 class FL_EXPORT Fl_Chart : public Fl_Widget {
     int numb;
     int maxnumb;
@@ -65,25 +87,57 @@ class FL_EXPORT Fl_Chart : public Fl_Widget {
 protected:
     void draw();
 public:
-    Fl_Chart(int,int,int,int,const char * = 0);
+    Fl_Chart(int X, int Y, int W, int H, const char *L = 0);
+
     ~Fl_Chart();
+
     void clear();
-    void add(double, const char * =0, unsigned=0);
-    void insert(int, double, const char * =0, unsigned=0);
-    void replace(int, double, const char * =0, unsigned=0);
+
+    void add(double val, const char *str = 0, unsigned col = 0);
+
+    void insert(int ind, double val, const char *str = 0, unsigned col = 0);
+
+    void replace(int ind, double val, const char *str = 0, unsigned col = 0);
+
+    /**
+      Gets the lower and upper bounds of the chart values.
+      \param[out] a, b are set to lower, upper
+     */
     void bounds(double *a,double *b) const {*a = min; *b = max;}
+
     void bounds(double a,double b);
+
+    /**
+      Returns the number of data values in the chart.
+     */
     int size() const {return numb;}
+
     void size(int W, int H) { Fl_Widget::size(W, H); }
+
+    /**
+      Get the maximum number of data values for a chart.
+     */
     int maxsize() const {return maxnumb;}
-    void maxsize(int);
+
+    void maxsize(int m);
+
     Fl_Font textfont() const {return textfont_;}
     void textfont(Fl_Font s) {textfont_ = s;}
     Fl_Fontsize textsize() const {return textsize_;}
     void textsize(Fl_Fontsize s) {textsize_ = s;}
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
     void textcolor(unsigned n) {textcolor_ = n;}
+
+    /**
+      Get whether the chart will automatically adjust the bounds of the chart.
+      \returns non-zero if auto-sizing is enabled and zero if disabled.
+     */
     uchar autosize() const {return autosize_;}
+
+    /**
+      Set whether the chart will automatically adjust the bounds of the chart.
+      \param n non-zero to enable automatic resizing, zero to disable.
+     */
     void autosize(uchar n) {autosize_ = n;}
 };
 
