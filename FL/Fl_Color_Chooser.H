@@ -25,6 +25,9 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+   Fl_Color_Chooser widget . */
+
 // The color chooser object and the color chooser popup.  The popup
 // is just a window containing a single color chooser and some boxes
 // to indicate the current and cancelled color.

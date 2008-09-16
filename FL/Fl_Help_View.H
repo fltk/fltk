@@ -26,6 +26,9 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+   Fl_Help_View widget . */
+
 #ifndef Fl_Help_View_H
 #  define Fl_Help_View_H
 

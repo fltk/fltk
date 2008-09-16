@@ -27,6 +27,9 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+   Fl_Text_Display widget . */
+
 #ifndef FL_TEXT_DISPLAY_H
 #define FL_TEXT_DISPLAY_H
 

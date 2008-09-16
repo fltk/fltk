@@ -7,7 +7,7 @@
 //           | input area   || \/ |
 //           |______________||____|
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
 //
 // This library is free software; you can redistribute it and/or
@@ -29,6 +29,9 @@
 //
 //     http://www.fltk.org/str.php
 //
+
+/** \file
+   Fl_Input_Choice widget . */
 
 
 

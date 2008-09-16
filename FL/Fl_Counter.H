@@ -25,6 +25,9 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+   Fl_Counter widget . */
+
 // A numerical value with up/down step buttons.  From Forms.
 
 #ifndef Fl_Counter_H

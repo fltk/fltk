@@ -3,7 +3,7 @@
 //
 // Multi line output header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -25,6 +25,8 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+   Fl_Multiline_Output widget . */
 
 #ifndef Fl_Multiline_Output_H
 #define Fl_Multiline_Output_H

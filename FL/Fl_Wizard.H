@@ -25,6 +25,9 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+   Fl_Wizard widget . */
+
 //
 // Include necessary header files...
 //

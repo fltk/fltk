@@ -27,6 +27,9 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+   Fl_Text_Editor widget . */
+
 
 #ifndef FL_TEXT_EDITOR_H
 #define FL_TEXT_EDITOR_H

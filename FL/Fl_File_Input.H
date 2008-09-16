@@ -3,7 +3,7 @@
 //
 // File_Input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2008 by Bill Spitzak and others.
 // Original version Copyright 1998 by Curtis Edwards.
 //
 // This library is free software; you can redistribute it and/or
@@ -25,6 +25,9 @@
 //
 //     http://www.fltk.org/str.php
 //
+
+/** \file
+   Fl_File_Input widget . */
 
 #ifndef Fl_File_Input_H
 #  define Fl_File_Input_H

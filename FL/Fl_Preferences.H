@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// Preferences definitions for the Fast Light Tool Kit (FLTK).
+// Preferences .
 //
 // Copyright 2002-2005 by Matthias Melcher.
 //
@@ -26,8 +26,7 @@
 //
 
 /** \file
-   Preferences definitions for the Fast Light Tool Kit (FLTK).
- */
+   Fl_Preferences class . */
 
 #ifndef Fl_Preferences_H
 #  define Fl_Preferences_H

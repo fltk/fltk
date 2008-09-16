@@ -26,8 +26,7 @@
 //
 
 /** \file
- * Fl_Clock widget definitions for the Fast Light Tool Kit (FLTK).
- */
+   Fl_Clock, Fl_Clock_Output widgets . */
 
 #ifndef Fl_Clock_H
 #define Fl_Clock_H
