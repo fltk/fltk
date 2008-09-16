@@ -506,6 +506,43 @@ static void chooser_cb(Fl_Object* o, void* vv) {
 extern const char* fl_ok;
 extern const char* fl_cancel;
 
+/**
+  \defgroup fl_color_chooser_group fl_color_chooser()
+
+  \code #include <FL/Fl_Color_Chooser.H> \endcode
+
+  The double version takes RGB values in the range 0.0 to 1.0.
+  The uchar version takes RGB values in the range 0 to 255.
+  The \p name argument specifies the label (title) for the window.
+
+  \image html fl_color_chooser.jpg
+
+  fl_color_chooser() pops up a window to let the user pick an arbitrary RGB
+  color. They can pick the hue and saturation in the "hue box" on the left
+  (hold down CTRL to just change the saturation), and the brighness using
+  the vertical slider. Or they can type the 8-bit numbers into the RGB
+  Fl_Value_Input fields, or drag the mouse across them to adjust them.
+  The pull-down menu lets the user set the input fields to show RGB, HSV,
+  or 8-bit RGB (0 to 255).
+
+  This returns non-zero if the user picks ok, and updates the RGB values.
+  If the user picks cancel or closes the window this returns zero and leaves
+  RGB unchanged.
+
+  If you use the color chooser on an 8-bit screen, it will allocate all the
+  available colors, leaving you no space to exactly represent the color the
+  user picks! You can however use fl_rectf() to fill a region with a simulated
+  color using dithering.
+ */
+
+/**
+  \ingroup fl_color_chooser_group
+  \fn int fl_color_chooser(const char* name, double& r, double& g, double& b)
+  \brief Pops up a window to let the user pick an arbitrary RGB color.
+  
+  \param[in] name title label for the window
+  \param[in] r, g, b color components in the range 0.0 to 1.0.
+ */
 int fl_color_chooser(const char* name, double& r, double& g, double& b) {
   Fl_Window window(215,200,name);
   Fl_Color_Chooser chooser(10, 10, 195, 115);
@@ -540,6 +577,14 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b) {
   return 0;
 }
 
+/**
+  \ingroup fl_color_chooser_group
+  \fn int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b)
+  \brief Pops up a window to let the user pick an arbitrary RGB color.
+  
+  \param[in] name title label for the window
+  \param[in] r, g, b color components in the range 0 to 255.
+ */
 int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
   double dr = r/255.0;
   double dg = g/255.0;
