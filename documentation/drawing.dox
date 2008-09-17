@@ -645,7 +645,7 @@ if this source will be compiled on multiple platforms.
 <P>Assuming that the following source code was written on MS Windows, 
 this example will output the correct label on OS X and X11 as well.
 Without the conversion call, the label on OS X would read 
-<tt>Fahrvergn&cedil;gen</tt> with a deformed umlaut u.
+<tt>Fahrvergn\\&cedil;gen</tt> with a deformed umlaut u.
 \code
   btn = new Fl_Button(10, 10, 300, 25);
   btn->copy_label(fl_latin1_to_local("Fahrvergn&uuml;gen"));
