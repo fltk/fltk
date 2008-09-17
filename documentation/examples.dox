@@ -295,8 +295,8 @@ the window. The ESC key will not work.
 <h3><a name="label">label</h3>
 Every FLTK widget can have a label attached to it. The <tt>label</tt> 
 demo shows alignment, clipping and wrapping of text labels. Labels
-can contain symbols at the start and end of the text, like <i>@FLTK</i>
-or <i>@circle uh-huh @square</i>.
+can contain symbols at the start and end of the text, like <i>\@FLTK</i>
+or <i>\@circle uh-huh \@square</i>.
 
 <h3><a name="line_style">line_style</h3>
 Advanced line drawing can be tested with <tt>line_style</tt>. 

@@ -2,8 +2,8 @@
 
  \page intro	1 - Introduction to FLTK
 
-<P>The Fast Light Tool Kit (&quot;FLTK&quot;, pronounced
-&quot;fulltick&quot;) is a cross-platform C++ GUI toolkit for
+<P>The Fast Light Tool Kit ("FLTK", pronounced
+"fulltick") is a cross-platform C++ GUI toolkit for
 UNIX&reg;/Linux&reg; (X11), Microsoft&reg; Windows&reg;, and
 MacOS&reg; X. FLTK provides modern GUI functionality without the
 bloat and supports 3D graphics via OpenGL&reg; and its built-in
@@ -25,7 +25,7 @@ tried to push their own baroque toolkit instead.</P>
 
 <P>Many of the ideas in FLTK were developed on a NeXT (but
 <I>not</I> using NextStep) in 1987 in a C toolkit Bill called
-&quot;views&quot;. Here he came up with passing events downward
+"views". Here he came up with passing events downward
 in the tree and having the handle routine return a value
 indicating whether it used the event, and the table-driven menus. In
 general he was trying to prove that complex UI ideas could be
@@ -35,19 +35,19 @@ or support by the system.</P>
 <P>After going to film school for a few years, Bill worked at
 Sun Microsystems on the (doomed) NeWS project. Here he found an
 even better and cleaner windowing system, and he reimplemented
-&quot;views&quot; atop that. NeWS did have an unnecessarily
+"views" atop that. NeWS did have an unnecessarily
 complex method of delivering events which hurt it. But the
 designers did admit that perhaps the user could write just as
 good of a button as they could, and officially exposed the lower
 level interface.</P>
 
 <P>With the death of NeWS Bill realized that he would have to
-live with X. The biggest problem with X is the &quot;window
-manager&quot;, which means that the toolkit can no longer
+live with X. The biggest problem with X is the "window
+manager", which means that the toolkit can no longer
 control the window borders or drag the window around.</P>
 
 <P>At Digital Domain Bill discovered another toolkit,
-&quot;Forms&quot;. Forms was similar to his work, but provided
+"Forms". Forms was similar to his work, but provided
 many more widgets, since it was used in many real applications,
 rather then as theoretical work. He decided to use Forms, except
 he integrated his table-driven menus into it. Several very large
@@ -91,8 +91,8 @@ is now included with several Linux distributions.</P>
 
 	<LI>sizeof(Fl_Widget) == 64 to 92.</LI>
 
-	<LI>The &quot;core&quot; (the &quot;hello&quot; program
-	compiled &amp; linked with a static FLTK library using
+	<LI>The "core" (the "hello" program
+	compiled & linked with a static FLTK library using
 	gcc on a 486 and then stripped) is 114K.</LI>
 
 	<LI>The FLUID program (which includes every widget) is
@@ -112,7 +112,7 @@ is now included with several Linux distributions.</P>
 	<LI>Support for overlay hardware, with emulation if none
 	is available.</LI>
 
-	<LI>Very small &amp; fast portable 2-D drawing library
+	<LI>Very small & fast portable 2-D drawing library
 	to hide Xlib, WIN32, or QuickDraw.</LI>
 
 	<LI>OpenGL/Mesa drawing area widget.</LI>
@@ -120,7 +120,7 @@ is now included with several Linux distributions.</P>
 	<LI>Support for OpenGL overlay hardware on both X11 and
 	WIN32, with emulation if none is available.</LI>
 
-	<LI>Text widgets with Emacs key bindings, X cut &amp;
+	<LI>Text widgets with Emacs key bindings, X cut &
 	paste, and  foreign letter compose!</LI>
 
 	<LI>Compatibility header file for the GLUT library.</LI>
@@ -137,23 +137,23 @@ General Public License</A> with exceptions that allow for static
 linking. Contrary to popular belief, it can be used in
 commercial software - even Bill Gates could use it!</P>
 
-<H2>What Does &quot;FLTK&quot; Mean?</H2>
+<H2>What Does "FLTK" Mean?</H2>
 
 <P>FLTK was originally designed to be compatible with the Forms
 Library written for SGI machines. In that library all the
-functions and structures started with &quot;fl_&quot;. This
+functions and structures started with "fl_". This
 naming was extended to all new  methods and widgets in the C++
 library, and this prefix was taken as the name of the library.
-It is almost impossible to search for &quot;FL&quot; on the
+It is almost impossible to search for "FL" on the
 Internet, due to the fact that it is also the abbreviation for
 Florida. After much debating and searching for a new name for
 the toolkit, which was already in use by several people, Bill
-came up with &quot;FLTK&quot;, including a bogus excuse that it
-stands for &quot;The Fast Light Toolkit&quot;.</P>
+came up with "FLTK", including a bogus excuse that it
+stands for "The Fast Light Toolkit".</P>
 
 <H2>Building and Installing FLTK Under UNIX and MacOS X</H2>
 
-<P>In most cases you can just type &quot;make&quot;. This will
+<P>In most cases you can just type "make". This will
 run configure with the default of no options and then compile
 everything.</P>
 
@@ -165,36 +165,36 @@ locations you'll need to define the <tt>CFLAGS</tt>,
 <tt>CXXFLAGS</tt>, and <tt>LDFLAGS</tt> environment variables.
 For the Bourne and Korn shells you'd use:</P>
 
-<UL><PRE>
-CFLAGS=-I<I>includedir</I>; export CFLAGS
-CXXFLAGS=-I<I>includedir</I>; export CXXFLAGS
-LDFLAGS=-L<I>libdir</I>; export LDFLAGS
-</PRE></UL>
+\code
+CFLAGS=-Iincludedir; export CFLAGS
+CXXFLAGS=-Iincludedir; export CXXFLAGS
+LDFLAGS=-Llibdir; export LDFLAGS
+\endcode
 
 <P>For C shell and tcsh, use:</P>
 
-<UL><PRE>
-setenv CFLAGS "-I<I>includedir</I>"
-setenv CXXFLAGS "-I<I>includedir</I>"
-setenv LDFLAGS "-L<I>libdir</I>"
-</PRE></UL>
+\code
+setenv CFLAGS "-Iincludedir"
+setenv CXXFLAGS "-Iincludedir"
+setenv LDFLAGS "-Llibdir"
+\endcode
 
 <P>By default configure will look for a C++ compiler named
 <tt>CC</tt>, <tt>c++</tt>, <tt>g++</tt>, or <tt>gcc</tt> in that
 order. To use another compiler you need to set the <tt>CXX</tt>
 environment variable:</P>
 
-<UL><PRE>
+\code
 CXX=xlC; export CXX
 setenv CXX "xlC"
-</PRE></UL>
+\endcode
 
 <P>The <tt>CC</tt> environment variable can also be used to
 override the default C compiler (<tt>cc</tt> or <tt>gcc</tt>),
 which is used for a few FLTK source files.</P>
 
 <P>You can run configure yourself to get the exact setup you
-need. Type  &quot;./configure &lt;options&gt;&quot;, where
+need. Type  "./configure &lt;options&gt;", where
 options are:</P>
 
 <DL>
@@ -203,7 +203,7 @@ options are:</P>
 	<DD>Enable the Cygwin libraries under WIN32</DD>
 
 	<DT>--enable-debug</DT>
-	<DD>Enable debugging code &amp; symbols</DD>
+	<DD>Enable debugging code & symbols</DD>
 
 	<DT>--disable-gl</DT>
 	<DD>Disable OpenGL support</DD>
@@ -241,45 +241,45 @@ options are:</P>
 </DL>
 
 <P>When the configure script is done you can just run the
-&quot;make&quot; command. This will build the library, FLUID
+"make" command. This will build the library, FLUID
 tool, and all of the test programs.</P>
 
-<P>To install the library, become root and type &quot;make
-install&quot;. This will copy the &quot;fluid&quot; executable
-to &quot;bindir&quot;, the header files to
-&quot;includedir&quot;, and the library files to
-&quot;libdir&quot;.</P>
+<P>To install the library, become root and type "make
+install". This will copy the "fluid" executable
+to "bindir", the header files to
+"includedir", and the library files to
+"libdir".</P>
 
 <H2>Building FLTK Under Microsoft Windows</H2>
 
 <P>There are three ways to build FLTK under Microsoft Windows.
 The first is to use the Visual C++ 5.0 project files under the
-&quot;visualc&quot; directory. Just open (or double-click on)
-the &quot;fltk.dsw&quot; file to get the whole shebang.</P>
+"visualc" directory. Just open (or double-click on)
+the "fltk.dsw" file to get the whole shebang.</P>
 
 <P>The second method is to use the <TT>configure</TT> script
 included with the FLTK software; this has only been tested with
 the CygWin tools:</P>
 
-<UL><PRE>
+\code
 sh configure --prefix=C:/FLTK
 make
-</PRE></UL>
+\endcode
 
 <P>The final method is to use a GNU-based development tool with
-the files in the &quot;makefiles&quot; directory. To build
+the files in the "makefiles" directory. To build
 using one of these tools simply copy the appropriate
 makeinclude and config files to the main directory and do a
 make:</P>
 
-<UL><PRE>
-copy makefiles\Makefile.&lt;env&gt; Makefile
+\code
+copy makefiles\Makefile.<env> Makefile
 make
-</PRE></UL>
+\endcode
 
 <H3>Using the Visual C++ DLL Library</H3>
 
-<P>The &quot;fltkdll.dsp&quot; project file builds a DLL-version
+<P>The "fltkdll.dsp" project file builds a DLL-version
 of the FLTK library. Because of name mangling differences
 between PC compilers (even between different versions of Visual
 C++!) you can only use the DLL that is generated with the same
@@ -304,10 +304,10 @@ is installed.
 <P>To build the XFree86 version of FLTK for OS/2, copy the appropriate
 makeinclude and config files to the main directory and do a make: </P>
 
-<UL><PRE>
+\code
 copy makefiles\Makefile.os2x Makefile
 make
-</PRE></UL>
+\endcode
 
 <H2>Internet Resources</H2>
 
@@ -341,20 +341,20 @@ make
 </DL>
 
 <P>To send a message to the FLTK mailing list
-(&quot;fltk@fltk.org&quot;) you  must first join the list.
+("fltk@fltk.org") you  must first join the list.
 Non-member submissions are blocked to avoid  problems with
 unsolicited email.</P>
 
 <P>To join the FLTK mailing list, send a message to
-&quot;majordomo@fltk.org&quot; with &quot;subscribe fltk&quot;
+"majordomo@fltk.org" with "subscribe fltk"
 in the message body. A digest of this list is available by
-subscribing to the &quot;fltk-digest&quot; mailing list.</P>
+subscribing to the "fltk-digest" mailing list.</P>
 
 <H2>Reporting Bugs</H2>
 
 <P>To report a bug in FLTK, send an email to
-&quot;fltk-bugs@fltk.org&quot;. Please include the FLTK version,
-operating system &amp; version, and compiler that you are using
+"fltk-bugs@fltk.org". Please include the FLTK version,
+operating system & version, and compiler that you are using
 when describing the bug or problem. We will be unable to provide
 any kind of help without that basic information.</P>
 
@@ -362,6 +362,6 @@ any kind of help without that basic information.</P>
 SourceForge bug tracker pages.</P>
 
 <P>For general support and questions, please use the FLTK mailing list
-at &quot;fltk@fltk.org&quot; or one of the newsgroups.</P>
+at "fltk@fltk.org" or one of the newsgroups.</P>
 
 */

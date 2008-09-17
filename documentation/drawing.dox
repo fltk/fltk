@@ -546,7 +546,7 @@ Fl_Align align, Fl_Image *img = 0, int draw_symbols = 1)</H4>
 
 <P>Fancy string drawing function which is used to draw all the
 labels. The string is formatted and aligned inside the passed
-box.  Handles '\t' and '\n', expands all other control
+box.  Handles '\\t' and '\\n', expands all other control
 characters to ^X, and aligns inside or against the edges of the
 box described by <i>x</i>, <i>y</i>, <i>w</i> and <i>h</i>. See <A
 href="Fl_Widget.html#Fl_Widget.align"><TT>Fl_Widget::align()</TT></A>
