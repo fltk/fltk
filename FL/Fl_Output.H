@@ -42,9 +42,9 @@
   <P>There is a single subclass, 
   Fl_Multiline_Output, which allows you to display multiple lines of
   text. </P>
-  <P>The text may contain any characters except \0, and will correctly
+  <P>The text may contain any characters except \\0, and will correctly
   display anything, using ^X notation for unprintable control characters
-  and \nnn notation for unprintable characters with the high bit set. It
+  and \\nnn notation for unprintable characters with the high bit set. It
   assumes the font can draw any characters in the ISO-Latin1 character
   set.
 */

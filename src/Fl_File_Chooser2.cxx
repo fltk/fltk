@@ -114,7 +114,7 @@
   <P>The pattern argument can be a NULL
   string or "*" to list all files, or it can be a
   series of descriptions and filter strings separated by tab
-  characters (\t). The format of filters is either
+  characters (\\t). The format of filters is either
   "Description text (patterns)" or just "patterns". A file chooser
   that provides filters for HTML and image files might look like:
   

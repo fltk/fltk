@@ -152,32 +152,32 @@ public:
 
   /**
     The first form gets the current format code prefix character, which by
-    default is @. A string of formatting codes at the start of
+    default is '\@'. A string of formatting codes at the start of
     each column are stripped off and used to modify how the rest of the
     line is printed:
     <UL>
-    <LI>@. Print rest of line, don't look for more '@' signs </LI>
-    <LI>@@ Print rest of line starting with '@' </LI>
-    <LI>@l Use a <BIG>large</BIG> (24 point) font </LI>
-    <LI>@m Use a <BIG>medium large</BIG> (18 point) font </LI>
-    <LI>@s Use a <SMALL>small</SMALL> (11 point) font </LI>
-    <LI>@b Use a <B>bold</B> font (adds FL_BOLD to font) </LI>
-    <LI>@i Use an <I>italic</I> font (adds FL_ITALIC to font) </LI>
-    <LI>@f or @t Use a fixed-pitch
+    <LI><tt>'\@.'</tt> Print rest of line, don't look for more '\@' signs </LI>
+    <LI><tt>'\@\@'</tt> Print rest of line starting with '\@' </LI>
+    <LI><tt>'\@l'</tt> Use a <BIG>large</BIG> (24 point) font </LI>
+    <LI><tt>'\@m'</tt> Use a <BIG>medium large</BIG> (18 point) font </LI>
+    <LI><tt>'\@s'</tt> Use a <SMALL>small</SMALL> (11 point) font </LI>
+    <LI><tt>'\@b'</tt> Use a <B>bold</B> font (adds FL_BOLD to font) </LI>
+    <LI><tt>'\@i'</tt> Use an <I>italic</I> font (adds FL_ITALIC to font) </LI>
+    <LI><tt>'\@f' or \@t</tt> Use a fixed-pitch
     font (sets font to FL_COURIER) </LI>
-    <LI>@c Center the line horizontally </LI>
-    <LI>@r Right-justify the text </LI>
-    <LI>@B0, @B1, ... @B255 Fill the backgound with
+    <LI><tt>'\@c'</tt> Center the line horizontally </LI>
+    <LI><tt>'\@r'</tt> Right-justify the text </LI>
+    <LI><tt>'\@B0', '\@B1', ... '\@B255'</tt> Fill the backgound with
     fl_color(n) </LI>
-    <LI>@C0, @C1, ... @C255 Use fl_color(n) to draw the text </LI>
-    <LI>@F0, @F1, ...  Use fl_font(n) to draw the text </LI>
-    <LI>@S1, @S2, ...  Use point size n to draw the text </LI>
-    <LI>@u or @_ Underline the text. </LI>
-    <LI>@- draw an engraved line through the middle. </LI>
+    <LI><tt>'\@C0', '\@C1', ... '\@C255'</tt> Use fl_color(n) to draw the text </LI>
+    <LI><tt>'\@F0', '\@F1', ...</tt> Use fl_font(n) to draw the text </LI>
+    <LI><tt>'\@S1', '\@S2', ...</tt> Use point size n to draw the text </LI>
+    <LI><tt>'\@u' or '\@_'</tt> Underline the text. </LI>
+    <LI><tt>'\@-'</tt> draw an engraved line through the middle. </LI>
     </UL>
-    Notice that the @. command can be used to reliably
+    Notice that the '\@.' command can be used to reliably
     terminate the parsing.  To print a random string in a random color, use 
-    sprintf(&quot;@C%d@.%s&quot;, color, string) and it will work even if the
+    sprintf("\@C%d\@.%s", color, string) and it will work even if the
     string starts with a digit or has the format character in it.
     <P>The second form sets the current prefix to c.  Set the
     prefix to 0 to disable formatting.
@@ -187,14 +187,14 @@ public:
   void format_char(char c) {format_char_ = c;}
   /**
     The first form gets the current column separator character. By default
-    this is '\t' (tab).
+    this is '\\t' (tab).
     <P>The second form sets the column separator to c. This will
     only have an effect if you also set column_widths().
   */
   char column_char() const {return column_char_;}
   /**
     The first form gets the current column separator character. By default
-    this is '\t' (tab).
+    this is '\\t' (tab).
     <P>The second form sets the column separator to c. This will
     only have an effect if you also set column_widths().
   */

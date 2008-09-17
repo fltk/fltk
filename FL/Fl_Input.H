@@ -38,7 +38,7 @@
   of text and lets the user edit it. Normally it is drawn with an
   inset box and a white background. The text may contain any
   characters (even 0), and will correctly display anything, using
-  ^X notation for unprintable control characters and \nnn notation
+  ^X notation for unprintable control characters and \\nnn notation
   for unprintable characters with the high bit set. It assumes the
   font can draw any characters in the ISO-8859-1 character set.</P>
   
@@ -67,8 +67,8 @@
   or deletes the selected region.</TD></TR>
   <TR><TD><B>^E or End</B></TD><TD>Go to the end of line.</TD></TR>
   <TR><TD><B>^F or Right</B></TD><TD>Move right</TD></TR>
-  <TR><TD><B>^K</B></TD><TD>Delete to the end of line (next \n character)
-  or deletes a single \n character.  These deletions are all concatenated
+  <TR><TD><B>^K</B></TD><TD>Delete to the end of line (next \\n character)
+  or deletes a single \\n character.  These deletions are all concatenated
   into the clipboard.</TD></TR>
   <TR><TD><B>^N or Down</B></TD><TD>Move down (for Fl_Multiline_Input
   only, otherwise it moves to the next input field).</TD></TR>
