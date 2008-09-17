@@ -7,7 +7,15 @@ Note: We must put the Doxygen comments wherever the
 implementation is. So class, typedef, enum, and inline docs go in the 
 header. Most other stuff goes into the source.
 
-In Progress Work List (add your WP and name here):
+- TODO in next batch command:
+==============================
+   - replace all &quote; by "
+   - check escape chars like \\r instead of \r
+    [add more fixes to apply in batch here]
+
+
+- In Progress Work List (add your WP and name here): ALL DONE
+====================================================
 
   - WP1  (Fabien) DONE
   - WP2  (Fabien) DONE
