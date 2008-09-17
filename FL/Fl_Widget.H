@@ -173,7 +173,10 @@ public:
    *  it when the user interacts with the widget.
    * 
    *  When implemented in a new widget, this function must return 0 if the 
-   *  widget does not use the event or 1 if it uses the event.
+   *  widget does not use the event or 1 otherwise.<BR>
+   *  Most of the time, you want to call the inherited handle() method in 
+   *  your overriden method so that you don't short-circuit events that you 
+   *  don't handle. In this last case you should return the callee retval.
    *
    *  \param[in] event the kind of event received
    *  \retval 0 if the event was not used or understood
@@ -192,33 +195,33 @@ public:
   /** Internal use only. Use Fl_Group::add(Fl_Widget*) instead. */
   void parent(Fl_Group* p) {parent_ = p;} // for hacks only, Fl_Group::add()
 
-  /** Returns the widget type.
+  /** Gets the widget type.
    *  Returns the widget type value, which is used for Forms
    *  compatibility and to simulate RTTI.
    */
   uchar type() const {return type_;}
 
-  /** Sets tye widget type.
+  /** Sets the widget type.
    *  This is used for Forms compatibility.
    */
   void type(uchar t) {type_ = t;}
 
-  /** Return the widget position in its window.
+  /** Gets the widget position in its window.
    *  \return the x position relative to the window
    */
   int x() const {return x_;}
 
-  /** Return the widget position in its window.
+  /** Gets the widget position in its window.
    *  \return the y position relative to the window
    */
   int y() const {return y_;}
 
-  /** Return the widget width.
+  /** Gets the widget width.
    *  \return the width of the widget in pixels.
    */
   int w() const {return w_;}
 
-  /** Return the widget height.
+  /** Gets the widget height.
    *  \return the height of the widget in pixels.
    */
   int h() const {return h_;}
