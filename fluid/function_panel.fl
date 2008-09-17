@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0300 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -46,8 +46,7 @@ decl {extern void select_only(Fl_Type*);} {}
 Function {make_function_panel()} {} {
   Fl_Window function_panel {
     label {Function/Method Properties} open
-    xywh {412 442 290 150} type Double resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
+    xywh {394 671 343 232} type Double resizable modal visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -95,26 +94,31 @@ Function {make_function_panel()} {} {
     }
     Fl_Input f_name_input {
       label {Name(args): (blank for main())}
-      tooltip {The name of the function or method.} xywh {10 50 270 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
+      tooltip {The name of the function or method.} xywh {10 50 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Input f_return_type_input {
       label {Return Type: (blank to return outermost widget)}
-      tooltip {The return type of the function or method.} xywh {10 90 270 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+      tooltip {The return type of the function or method.} xywh {10 90 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Group {} {
-      xywh {10 120 270 20}
+      xywh {10 200 320 20}
     } {
       Fl_Return_Button f_panel_ok {
         label OK
-        tooltip {Apply the changes.} xywh {170 120 50 20} labelsize 11 hotspot
+        tooltip {Apply the changes.} xywh {220 200 50 20} labelsize 11 hotspot
       }
       Fl_Button f_panel_cancel {
         label Cancel
-        tooltip {Cancel the changes.} xywh {230 120 50 20} shortcut 0xff1b labelsize 11
+        tooltip {Cancel the changes.} xywh {280 200 50 20} shortcut 0xff1b labelsize 11
       }
       Fl_Box {} {
-        xywh {10 120 150 20} resizable
+        xywh {10 200 205 20} resizable
       }
+    }
+    Fl_Text_Editor f_comment_input {
+      label {Comment:}
+      tooltip {Function comment in Doxygen format} xywh {10 125 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {f_comment_input->buffer(new Fl_Text_Buffer());}
     }
   }
 } 
@@ -237,12 +241,10 @@ Function {make_declblock_panel()} {} {
   }
 } 
 
-Function {make_decl_panel()} {selected
-} {
+Function {make_decl_panel()} {} {
   Fl_Window decl_panel {
     label {Declaration Properties} open
-    xywh {501 185 290 150} type Double align 80 resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} visible
+    xywh {395 411 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
   } {
     Fl_Group {} {open
       xywh {10 10 270 20}
@@ -288,23 +290,28 @@ Function {make_decl_panel()} {selected
       }
     }
     Fl_Input decl_input {
-      label {Can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".}
-      tooltip {Declaration text.} xywh {10 40 270 20} labelsize 11 align 134 when 0 textfont 4 textsize 11 resizable
+      label {This can be any declaration, like "int x;", an external symbol like "extern int foo();", a \#directive like "\#include <foo.h>", a comment like "//foo" or "/*foo*/", or typedef like "typedef char byte;" or "using std::list;".}
+      tooltip {Declaration text.} xywh {10 40 320 20} labelsize 11 align 134 when 0 textfont 4 textsize 11
     }
     Fl_Group {} {open
-      xywh {10 120 270 20}
+      xywh {10 205 320 20}
     } {
       Fl_Return_Button decl_panel_ok {
         label OK
-        xywh {150 120 60 20} labelsize 11 hotspot
+        xywh {200 205 60 20} labelsize 11 hotspot
       }
       Fl_Button decl_panel_cancel {
         label Cancel
-        xywh {220 120 60 20} shortcut 0xff1b labelsize 11
+        xywh {270 205 60 20} shortcut 0xff1b labelsize 11
       }
       Fl_Box {} {
-        xywh {10 120 130 20} resizable
+        xywh {10 205 185 20} resizable
       }
+    }
+    Fl_Text_Editor decl_comment_input {
+      label {Comment:}
+      tooltip {Declaration comment in Doxygen format} xywh {10 130 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {decl_comment_input->buffer(new Fl_Text_Buffer());}
     }
   }
 } 
@@ -312,8 +319,7 @@ Function {make_decl_panel()} {selected
 Function {make_class_panel()} {} {
   Fl_Window class_panel {
     label {Class Properties} open
-    xywh {449 218 300 115} type Double labelsize 11 resizable
-    code0 {o->size_range(o->w(), o->h(), Fl::w(), o->h());} modal visible
+    xywh {395 191 342 196} type Double labelsize 11 resizable modal size_range {343 188 0 0} visible
   } {
     Fl_Group {} {open
       xywh {10 10 280 20} hide
@@ -328,25 +334,30 @@ Function {make_class_panel()} {} {
     }
     Fl_Input c_name_input {
       label {Name:}
-      tooltip {Name of class.} xywh {10 20 280 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11 resizable
+      tooltip {Name of class.} xywh {10 20 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
     }
     Fl_Input c_subclass_input {
       label {Subclass of (text between : and \{)}
-      tooltip {Name of subclass.} xywh {10 55 280 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+      tooltip {Name of subclass.} xywh {10 55 320 20} labelfont 1 labelsize 11 align 5 when 0 textfont 4 textsize 11
+    }
+    Fl_Text_Editor c_comment_input {
+      label {Comment:}
+      tooltip {Class comment in Doxygen format} xywh {10 90 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {c_comment_input->buffer(new Fl_Text_Buffer());}
     }
     Fl_Group {} {open
-      xywh {10 85 280 20}
+      xywh {10 165 320 20}
     } {
       Fl_Return_Button c_panel_ok {
         label OK
-        xywh {160 85 60 20} labelsize 11 hotspot
+        xywh {200 165 60 20} labelsize 11 hotspot
       }
       Fl_Button c_panel_cancel {
         label Cancel
-        xywh {230 85 60 20} shortcut 0xff1b labelsize 11
+        xywh {270 165 60 20} shortcut 0xff1b labelsize 11
       }
       Fl_Box {} {
-        xywh {10 85 140 20} resizable
+        xywh {10 165 185 20} resizable
       }
     }
   }
@@ -354,7 +365,7 @@ Function {make_class_panel()} {} {
 
 Function {make_comment_panel()} {} {
   Fl_Window comment_panel {
-    label {Comment Properties}
+    label {Comment Properties} open
     xywh {422 190 550 280} type Double labelsize 11 resizable
     code0 {o->size_range(320, 180);} modal visible
   } {
@@ -418,7 +429,8 @@ Function {type_make_cb(Fl_Widget*,void*d)} {return_type void
   }} {}
 } 
 
-Function {make_widgetbin()} {} {
+Function {make_widgetbin()} {selected
+} {
   Fl_Window widgetbin_panel {
     label {Widget Bin}
     xywh {411 171 550 85} type Single align 80 non_modal visible
@@ -752,7 +764,17 @@ Function {make_widgetbin()} {} {
   }
 } 
 
-Function {make_sourceview()} {} {
+Function {make_sourceview()} {
+  comment {Create a preview window for the C++ source code.
+
+This function creates a dialog box with two tabs
+for previewing thw header and source file that will
+be generated from the current database.
+
+The created window is modal.
+
+\\return the newly created dialog window}
+} {
   Fl_Window sourceview_panel {
     label {Code View}
     callback toggle_sourceview_cb

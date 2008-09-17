@@ -3,7 +3,7 @@
 //
 // Code dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2008 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -64,8 +64,10 @@ Fl_Return_Button *f_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *f_panel_cancel=(Fl_Button *)0;
 
+Fl_Text_Editor *f_comment_input=(Fl_Text_Editor *)0;
+
 Fl_Double_Window* make_function_panel() {
-  { Fl_Double_Window* o = function_panel = new Fl_Double_Window(290, 150, "Function/Method Properties");
+  { function_panel = new Fl_Double_Window(343, 232, "Function/Method Properties");
     { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
       { f_public_member_choice = new Fl_Choice(10, 10, 75, 20);
         f_public_member_choice->tooltip("Change member access attribute.");
@@ -92,42 +94,51 @@ Fl_Double_Window* make_function_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { f_name_input = new Fl_Input(10, 50, 270, 20, "Name(args): (blank for main())");
+    { f_name_input = new Fl_Input(10, 50, 320, 20, "Name(args): (blank for main())");
       f_name_input->tooltip("The name of the function or method.");
       f_name_input->labelfont(1);
       f_name_input->labelsize(11);
       f_name_input->textfont(4);
       f_name_input->textsize(11);
-      f_name_input->align(FL_ALIGN_TOP_LEFT);
+      f_name_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       f_name_input->when(FL_WHEN_NEVER);
-      Fl_Group::current()->resizable(f_name_input);
     } // Fl_Input* f_name_input
-    { f_return_type_input = new Fl_Input(10, 90, 270, 20, "Return Type: (blank to return outermost widget)");
+    { f_return_type_input = new Fl_Input(10, 90, 320, 20, "Return Type: (blank to return outermost widget)");
       f_return_type_input->tooltip("The return type of the function or method.");
       f_return_type_input->labelfont(1);
       f_return_type_input->labelsize(11);
       f_return_type_input->textfont(4);
       f_return_type_input->textsize(11);
-      f_return_type_input->align(FL_ALIGN_TOP_LEFT);
+      f_return_type_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       f_return_type_input->when(FL_WHEN_NEVER);
     } // Fl_Input* f_return_type_input
-    { Fl_Group* o = new Fl_Group(10, 120, 270, 20);
-      { f_panel_ok = new Fl_Return_Button(170, 120, 50, 20, "OK");
+    { Fl_Group* o = new Fl_Group(10, 200, 320, 20);
+      { f_panel_ok = new Fl_Return_Button(220, 200, 50, 20, "OK");
         f_panel_ok->tooltip("Apply the changes.");
         f_panel_ok->labelsize(11);
         f_panel_ok->window()->hotspot(f_panel_ok);
       } // Fl_Return_Button* f_panel_ok
-      { f_panel_cancel = new Fl_Button(230, 120, 50, 20, "Cancel");
+      { f_panel_cancel = new Fl_Button(280, 200, 50, 20, "Cancel");
         f_panel_cancel->tooltip("Cancel the changes.");
         f_panel_cancel->shortcut(0xff1b);
         f_panel_cancel->labelsize(11);
       } // Fl_Button* f_panel_cancel
-      { Fl_Box* o = new Fl_Box(10, 120, 150, 20);
+      { Fl_Box* o = new Fl_Box(10, 200, 205, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    o->size_range(o->w(), o->h(), Fl::w(), o->h());
+    { f_comment_input = new Fl_Text_Editor(10, 125, 320, 65, "Comment:");
+      f_comment_input->tooltip("Function comment in Doxygen format");
+      f_comment_input->box(FL_DOWN_BOX);
+      f_comment_input->labelfont(1);
+      f_comment_input->labelsize(11);
+      f_comment_input->textfont(4);
+      f_comment_input->textsize(11);
+      f_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      Fl_Group::current()->resizable(f_comment_input);
+      f_comment_input->buffer(new Fl_Text_Buffer());
+    } // Fl_Text_Editor* f_comment_input
     function_panel->set_modal();
     function_panel->end();
   } // Fl_Double_Window* function_panel
@@ -155,7 +166,7 @@ Fl_Double_Window* make_code_panel() {
       code_input->labelcolor(FL_FOREGROUND_COLOR);
       code_input->textfont(4);
       code_input->textsize(11);
-      code_input->align(FL_ALIGN_TOP);
+      code_input->align(Fl_Align(FL_ALIGN_TOP));
       code_input->when(FL_WHEN_RELEASE);
       Fl_Group::current()->resizable(code_input);
       o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
@@ -201,7 +212,7 @@ Fl_Double_Window* make_codeblock_panel() {
       code_before_input->labelsize(11);
       code_before_input->textfont(4);
       code_before_input->textsize(11);
-      code_before_input->align(FL_ALIGN_TOP_LEFT);
+      code_before_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       code_before_input->when(FL_WHEN_NEVER);
     } // Fl_Input* code_before_input
     { code_after_input = new Fl_Input(10, 55, 280, 20, "\"{...child code...}\" is inserted here");
@@ -209,7 +220,7 @@ Fl_Double_Window* make_codeblock_panel() {
       code_after_input->labelsize(11);
       code_after_input->textfont(4);
       code_after_input->textsize(11);
-      code_after_input->align(FL_ALIGN_TOP_LEFT);
+      code_after_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       code_after_input->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(code_after_input);
     } // Fl_Input* code_after_input
@@ -282,7 +293,7 @@ Fl_Double_Window* make_declblock_panel() {
       decl_before_input->labelsize(11);
       decl_before_input->textfont(4);
       decl_before_input->textsize(11);
-      decl_before_input->align(FL_ALIGN_TOP_LEFT);
+      decl_before_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       decl_before_input->when(FL_WHEN_NEVER);
       Fl_Group::current()->resizable(decl_before_input);
     } // Fl_Input* decl_before_input
@@ -291,7 +302,7 @@ Fl_Double_Window* make_declblock_panel() {
       decl_after_input->labelsize(11);
       decl_after_input->textfont(4);
       decl_after_input->textsize(11);
-      decl_after_input->align(FL_ALIGN_TOP_LEFT);
+      decl_after_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       decl_after_input->when(FL_WHEN_NEVER);
     } // Fl_Input* decl_after_input
     { Fl_Group* o = new Fl_Group(10, 105, 280, 20);
@@ -342,9 +353,11 @@ Fl_Return_Button *decl_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *decl_panel_cancel=(Fl_Button *)0;
 
+Fl_Text_Editor *decl_comment_input=(Fl_Text_Editor *)0;
+
 Fl_Double_Window* make_decl_panel() {
-  { Fl_Double_Window* o = decl_panel = new Fl_Double_Window(290, 150, "Declaration Properties");
-    decl_panel->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+  { decl_panel = new Fl_Double_Window(343, 237, "Declaration Properties");
+    decl_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
       { Fl_Box* o = new Fl_Box(200, 10, 80, 20);
         Fl_Group::current()->resizable(o);
@@ -363,32 +376,43 @@ Fl_Double_Window* make_decl_panel() {
       } // Fl_Choice* decl_class_choice
       o->end();
     } // Fl_Group* o
-    { decl_input = new Fl_Input(10, 40, 270, 20, "Can be any declaration, like \"int x;\", an external symbol like \"extern int\
- foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\" or\
- \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list;\".");
+    { decl_input = new Fl_Input(10, 40, 320, 20, "This can be any declaration, like \"int x;\", an external symbol like \"exter\
+n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\
+\" or \"/*foo*/\", or typedef like \"typedef char byte;\" or \"using std::list\
+;\".");
       decl_input->tooltip("Declaration text.");
       decl_input->labelsize(11);
       decl_input->textfont(4);
       decl_input->textsize(11);
-      decl_input->align(134);
+      decl_input->align(Fl_Align(134));
       decl_input->when(FL_WHEN_NEVER);
-      Fl_Group::current()->resizable(decl_input);
     } // Fl_Input* decl_input
-    { Fl_Group* o = new Fl_Group(10, 120, 270, 20);
-      { decl_panel_ok = new Fl_Return_Button(150, 120, 60, 20, "OK");
+    { Fl_Group* o = new Fl_Group(10, 205, 320, 20);
+      { decl_panel_ok = new Fl_Return_Button(200, 205, 60, 20, "OK");
         decl_panel_ok->labelsize(11);
         decl_panel_ok->window()->hotspot(decl_panel_ok);
       } // Fl_Return_Button* decl_panel_ok
-      { decl_panel_cancel = new Fl_Button(220, 120, 60, 20, "Cancel");
+      { decl_panel_cancel = new Fl_Button(270, 205, 60, 20, "Cancel");
         decl_panel_cancel->shortcut(0xff1b);
         decl_panel_cancel->labelsize(11);
       } // Fl_Button* decl_panel_cancel
-      { Fl_Box* o = new Fl_Box(10, 120, 130, 20);
+      { Fl_Box* o = new Fl_Box(10, 205, 185, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    o->size_range(o->w(), o->h(), Fl::w(), o->h());
+    { decl_comment_input = new Fl_Text_Editor(10, 130, 320, 65, "Comment:");
+      decl_comment_input->tooltip("Declaration comment in Doxygen format");
+      decl_comment_input->box(FL_DOWN_BOX);
+      decl_comment_input->labelfont(1);
+      decl_comment_input->labelsize(11);
+      decl_comment_input->textfont(4);
+      decl_comment_input->textsize(11);
+      decl_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      Fl_Group::current()->resizable(decl_comment_input);
+      decl_comment_input->buffer(new Fl_Text_Buffer());
+    } // Fl_Text_Editor* decl_comment_input
+    decl_panel->size_range(343, 237);
     decl_panel->end();
   } // Fl_Double_Window* decl_panel
   return decl_panel;
@@ -402,12 +426,14 @@ Fl_Input *c_name_input=(Fl_Input *)0;
 
 Fl_Input *c_subclass_input=(Fl_Input *)0;
 
+Fl_Text_Editor *c_comment_input=(Fl_Text_Editor *)0;
+
 Fl_Return_Button *c_panel_ok=(Fl_Return_Button *)0;
 
 Fl_Button *c_panel_cancel=(Fl_Button *)0;
 
 Fl_Double_Window* make_class_panel() {
-  { Fl_Double_Window* o = class_panel = new Fl_Double_Window(300, 115, "Class Properties");
+  { class_panel = new Fl_Double_Window(342, 196, "Class Properties");
     class_panel->labelsize(11);
     { Fl_Group* o = new Fl_Group(10, 10, 280, 20);
       o->hide();
@@ -422,41 +448,51 @@ Fl_Double_Window* make_class_panel() {
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    { c_name_input = new Fl_Input(10, 20, 280, 20, "Name:");
+    { c_name_input = new Fl_Input(10, 20, 320, 20, "Name:");
       c_name_input->tooltip("Name of class.");
       c_name_input->labelfont(1);
       c_name_input->labelsize(11);
       c_name_input->textfont(4);
       c_name_input->textsize(11);
-      c_name_input->align(FL_ALIGN_TOP_LEFT);
+      c_name_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       c_name_input->when(FL_WHEN_NEVER);
-      Fl_Group::current()->resizable(c_name_input);
     } // Fl_Input* c_name_input
-    { c_subclass_input = new Fl_Input(10, 55, 280, 20, "Subclass of (text between : and {)");
+    { c_subclass_input = new Fl_Input(10, 55, 320, 20, "Subclass of (text between : and {)");
       c_subclass_input->tooltip("Name of subclass.");
       c_subclass_input->labelfont(1);
       c_subclass_input->labelsize(11);
       c_subclass_input->textfont(4);
       c_subclass_input->textsize(11);
-      c_subclass_input->align(FL_ALIGN_TOP_LEFT);
+      c_subclass_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       c_subclass_input->when(FL_WHEN_NEVER);
     } // Fl_Input* c_subclass_input
-    { Fl_Group* o = new Fl_Group(10, 85, 280, 20);
-      { c_panel_ok = new Fl_Return_Button(160, 85, 60, 20, "OK");
+    { c_comment_input = new Fl_Text_Editor(10, 90, 320, 65, "Comment:");
+      c_comment_input->tooltip("Class comment in Doxygen format");
+      c_comment_input->box(FL_DOWN_BOX);
+      c_comment_input->labelfont(1);
+      c_comment_input->labelsize(11);
+      c_comment_input->textfont(4);
+      c_comment_input->textsize(11);
+      c_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      Fl_Group::current()->resizable(c_comment_input);
+      c_comment_input->buffer(new Fl_Text_Buffer());
+    } // Fl_Text_Editor* c_comment_input
+    { Fl_Group* o = new Fl_Group(10, 165, 320, 20);
+      { c_panel_ok = new Fl_Return_Button(200, 165, 60, 20, "OK");
         c_panel_ok->labelsize(11);
         c_panel_ok->window()->hotspot(c_panel_ok);
       } // Fl_Return_Button* c_panel_ok
-      { c_panel_cancel = new Fl_Button(230, 85, 60, 20, "Cancel");
+      { c_panel_cancel = new Fl_Button(270, 165, 60, 20, "Cancel");
         c_panel_cancel->shortcut(0xff1b);
         c_panel_cancel->labelsize(11);
       } // Fl_Button* c_panel_cancel
-      { Fl_Box* o = new Fl_Box(10, 85, 140, 20);
+      { Fl_Box* o = new Fl_Box(10, 165, 185, 20);
         Fl_Group::current()->resizable(o);
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
-    o->size_range(o->w(), o->h(), Fl::w(), o->h());
     class_panel->set_modal();
+    class_panel->size_range(343, 188);
     class_panel->end();
   } // Fl_Double_Window* class_panel
   return class_panel;
@@ -491,7 +527,7 @@ Fl_Double_Window* make_comment_panel() {
       comment_input->labelcolor(FL_FOREGROUND_COLOR);
       comment_input->textfont(4);
       comment_input->textsize(11);
-      comment_input->align(FL_ALIGN_TOP);
+      comment_input->align(Fl_Align(FL_ALIGN_TOP));
       comment_input->when(FL_WHEN_RELEASE);
       Fl_Group::current()->resizable(comment_input);
       o->when(FL_WHEN_ENTER_KEY_CHANGED|FL_WHEN_RELEASE);
@@ -561,7 +597,7 @@ Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
 Fl_Window* make_widgetbin() {
   { widgetbin_panel = new Fl_Window(550, 85, "Widget Bin");
-    widgetbin_panel->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+    widgetbin_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { Fl_Group* o = new Fl_Group(3, 3, 79, 79);
       { Fl_Button* o = new Fl_Button(5, 5, 24, 24);
         o->tooltip("Function");
@@ -898,10 +934,21 @@ Fl_Light_Button *sv_autorefresh=(Fl_Light_Button *)0;
 
 Fl_Light_Button *sv_autoposition=(Fl_Light_Button *)0;
 
+/**
+   Create a preview window for the C++ source code.
+   
+   This function creates a dialog box with two tabs
+   for previewing thw header and source file that will
+   be generated from the current database.
+   
+   The created window is modal.
+   
+   \return the newly created dialog window
+*/
 Fl_Double_Window* make_sourceview() {
   { sourceview_panel = new Fl_Double_Window(520, 490, "Code View");
     sourceview_panel->callback((Fl_Callback*)toggle_sourceview_cb);
-    sourceview_panel->align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE);
+    sourceview_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { sv_tab = new Fl_Tabs(10, 10, 500, 440);
       sv_tab->selection_color((Fl_Color)4);
       sv_tab->labelcolor(FL_BACKGROUND2_COLOR);
@@ -919,7 +966,7 @@ Fl_Double_Window* make_sourceview() {
           sv_source->labelcolor(FL_FOREGROUND_COLOR);
           sv_source->textfont(4);
           sv_source->textsize(11);
-          sv_source->align(FL_ALIGN_TOP);
+          sv_source->align(Fl_Align(FL_ALIGN_TOP));
           sv_source->when(FL_WHEN_RELEASE);
           Fl_Group::current()->resizable(sv_source);
         } // CodeViewer* sv_source
@@ -938,7 +985,7 @@ Fl_Double_Window* make_sourceview() {
           sv_header->labelcolor(FL_FOREGROUND_COLOR);
           sv_header->textfont(4);
           sv_header->textsize(11);
-          sv_header->align(FL_ALIGN_TOP);
+          sv_header->align(Fl_Align(FL_ALIGN_TOP));
           sv_header->when(FL_WHEN_RELEASE);
           Fl_Group::current()->resizable(sv_header);
         } // CodeViewer* sv_header

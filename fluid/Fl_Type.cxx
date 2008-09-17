@@ -232,6 +232,15 @@ int Widget_Browser::item_selected(void *l) const {return ((Fl_Type*)l)->new_sele
 void Widget_Browser::item_select(void *l,int v) {((Fl_Type*)l)->new_selected = v;}
 
 int Widget_Browser::item_height(void *l) const {
+  Fl_Type *t = (Fl_Type*)l;
+  if (t->visible) {
+    if (t->comment())
+      return textsize()*2+1;
+    else
+      return textsize()+2;
+  } else {
+    return 0;
+  }
   return ((Fl_Type *)l)->visible ? textsize()+2 : 0;
 }
 
@@ -250,6 +259,24 @@ extern const char* subclassname(Fl_Type*);
 void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   Fl_Type *l = (Fl_Type *)v;
   X += 3 + 18 + l->level * 12;
+  int comment_incr = 0;
+  if (l->comment()) {
+    char buf[82], *d = buf;
+    const char *s = l->comment();
+    for (int i=0; i<80; i++) {
+      char c = *s++;
+      if (c==0 || c=='\n') break;
+      *d++ = c;
+    }
+    *d = 0;
+    comment_incr = textsize()-1;
+    if (l->new_selected) fl_color(fl_contrast(FL_DARK_GREEN,FL_SELECTION_COLOR));
+    else fl_color(fl_contrast(FL_DARK_GREEN,color()));
+    fl_font(textfont()+FL_ITALIC, textsize()-2);
+    fl_draw(buf, (l->is_parent())?X+12:X, Y+12);
+    Y += comment_incr/2;
+    comment_incr -= comment_incr/2;
+  }
   if (l->new_selected) fl_color(fl_contrast(FL_FOREGROUND_COLOR,FL_SELECTION_COLOR));
   else fl_color(FL_FOREGROUND_COLOR);
   Fl_Pixmap *pm = pixmap[l->pixmapID()];
@@ -261,19 +288,20 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   if (l->is_parent()) {
     if (!l->next || l->next->level <= l->level) {
       if (l->open_!=(l==pushedtitle)) {
-	fl_loop(X,Y+7,X+5,Y+12,X+10,Y+7);
+        fl_loop(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
-	fl_loop(X+2,Y+2,X+7,Y+7,X+2,Y+12);
+        fl_loop(X+2,Y+2,X+7,Y+7,X+2,Y+12);
       }
     } else {
       if (l->open_!=(l==pushedtitle)) {
-	fl_polygon(X,Y+7,X+5,Y+12,X+10,Y+7);
+        fl_polygon(X,Y+7,X+5,Y+12,X+10,Y+7);
       } else {
-	fl_polygon(X+2,Y+2,X+7,Y+7,X+2,Y+12);
+        fl_polygon(X+2,Y+2,X+7,Y+7,X+2,Y+12);
       }
     }
     X += 10;
   }
+  Y += comment_incr;
   if (l->is_widget() || l->is_class()) {
     const char* c = subclassname(l);
     if (!strncmp(c,"Fl_",3)) c += 3;
@@ -288,8 +316,8 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
       char buf[50]; char* p = buf;
       *p++ = '"';
       for (int i = 20; i--;) {
-	if (! (*c & -32)) break;
-	*p++ = *c++;
+        if (! (*c & -32)) break;
+        *p++ = *c++;
       }
       if (*c) {strcpy(p,"..."); p+=3;}
       *p++ = '"';
@@ -438,6 +466,7 @@ Fl_Type::Fl_Type() {
   user_data_ = 0;
   user_data_type_ = 0;
   callback_ = 0;
+  comment_ = 0;
   rtti = 0;
   level = 0;
   code_line = header_line = -1;
@@ -606,6 +635,10 @@ void Fl_Type::user_data(const char *n) {
 
 void Fl_Type::user_data_type(const char *n) {
   storestring(n,user_data_type_);
+}
+
+void Fl_Type::comment(const char *n) {
+  storestring(n, comment_, 1);
 }
 
 void Fl_Type::open() {
@@ -790,7 +823,7 @@ void Fl_Type::write() {
     if (is_class()) {
       const char * p = 	((Fl_Class_Type*)this)->prefix();
       if (p &&	strlen(p))
-	write_word(p);
+        write_word(p);
     }
 
     write_word(name());
@@ -827,6 +860,11 @@ void Fl_Type::write_properties() {
     write_word("callback");
     write_word(callback());
   }
+  if (comment()) {
+    write_indent(level+1);
+    write_word("comment");
+    write_word(comment());
+  }
   if (is_parent() && open_) write_word("open");
   if (selected) write_word("selected");
 }
@@ -840,6 +878,8 @@ void Fl_Type::read_property(const char *c) {
     user_data_type(read_word());
   else if (!strcmp(c,"callback"))
     callback(read_word());
+  else if (!strcmp(c,"comment"))
+    comment(read_word());
   else if (!strcmp(c,"open"))
     open_ = 1;
   else if (!strcmp(c,"selected"))
@@ -863,6 +903,52 @@ int has_toplevel_function(const char *rtype, const char *sig) {
     }
   }
   return 0;
+}
+
+/**
+ * Write a comment inot the header file.
+ */
+void Fl_Type::write_comment_h(const char *pre)
+{
+  if (comment()) {
+    write_h("%s/**\n", pre);
+    const char *s = comment();
+    write_h("%s   ", pre);
+    while(*s) {
+      if (*s=='\n') {
+        if (s[1]) {
+          write_h("\n%s   ", pre);
+        }
+      } else {
+        write_h("%c", *s); // FIXME this is much too slow!
+      }
+      s++;
+    }
+    write_h("\n%s*/\n", pre);
+  }
+}
+
+/**
+ * Write a comment inot the header file.
+ */
+void Fl_Type::write_comment_c(const char *pre)
+{
+  if (comment()) {
+    write_c("%s/**\n", pre);
+    const char *s = comment();
+    write_c("%s   ", pre);
+    while(*s) {
+      if (*s=='\n') {
+        if (s[1]) {
+          write_c("\n%s   ", pre);
+        }
+      } else {
+        write_c("%c", *s); // FIXME this is much too slow!
+      }
+      s++;
+    }
+    write_c("\n%s*/\n", pre);
+  }
 }
 
 /**

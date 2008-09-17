@@ -46,6 +46,8 @@ extern Fl_Input *f_return_type_input;
 extern Fl_Return_Button *f_panel_ok;
 #include <FL/Fl_Button.H>
 extern Fl_Button *f_panel_cancel;
+#include <FL/Fl_Text_Editor.H>
+extern Fl_Text_Editor *f_comment_input;
 Fl_Double_Window* make_function_panel();
 extern Fl_Menu_Item menu_f_public_member_choice[];
 extern Fl_Menu_Item menu_f_public_choice[];
@@ -76,6 +78,7 @@ extern Fl_Choice *decl_class_choice;
 extern Fl_Input *decl_input;
 extern Fl_Return_Button *decl_panel_ok;
 extern Fl_Button *decl_panel_cancel;
+extern Fl_Text_Editor *decl_comment_input;
 Fl_Double_Window* make_decl_panel();
 extern Fl_Menu_Item menu_decl_choice[];
 extern Fl_Menu_Item menu_decl_class_choice[];
@@ -83,6 +86,7 @@ extern Fl_Double_Window *class_panel;
 extern Fl_Light_Button *c_public_button;
 extern Fl_Input *c_name_input;
 extern Fl_Input *c_subclass_input;
+extern Fl_Text_Editor *c_comment_input;
 extern Fl_Return_Button *c_panel_ok;
 extern Fl_Button *c_panel_cancel;
 Fl_Double_Window* make_class_panel();

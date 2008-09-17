@@ -57,6 +57,7 @@ protected:
   const char *callback_;
   const char *user_data_;
   const char *user_data_type_;
+  const char *comment_;
 
 public:	// things that should not be public:
 
@@ -99,6 +100,8 @@ public:
   void user_data(const char *);
   const char *user_data_type() const {return user_data_type_;}
   void user_data_type(const char *);
+  const char *comment() { return comment_; }
+  void comment(const char *);
 
   virtual Fl_Type* click_test(int,int);
   virtual void add_child(Fl_Type*, Fl_Type* beforethis);
@@ -118,6 +121,8 @@ public:
   virtual void write_static(); // write static stuff to .c file
   virtual void write_code1(); // code and .h before children
   virtual void write_code2(); // code and .h after children
+  void write_comment_h(const char *ind=""); // write the commentary text into the header file
+  void write_comment_c(const char *ind=""); // write the commentary text into the source file
 
   // live mode
   virtual Fl_Widget *enter_live_mode(int top=0); // build wdgets needed for live mode

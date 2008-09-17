@@ -178,6 +178,8 @@ void Fl_Function_Type::open() {
     f_public_member_choice->hide();
   }
   f_c_button->value(cdecl_);
+  const char *c = comment();
+  f_comment_input->buffer()->text(c?c:"");
   function_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -218,6 +220,15 @@ void Fl_Function_Type::open() {
       mod = 1;
       cdecl_ = f_c_button->value();
     }
+    c = f_comment_input->buffer()->text();
+    if (c && *c) {
+      if (!comment() || strcmp(c, comment())) redraw_browser();
+      comment(c);
+    } else {
+      if (comment()) redraw_browser();
+      comment(0);
+    }
+    if (c) free((void*)c);
     if (mod) set_modflag(1);
     break;
   }
@@ -256,109 +267,111 @@ void Fl_Function_Type::write_code1() {
     }
     if (!rtype) {
       if (havewidgets) {
-	rtype = subclassname(child);
-	star = "*";
+        rtype = subclassname(child);
+        star = "*";
       } else rtype = "void";
     }
-
+    
     const char* k = class_name(0);
     if (k) {
+      write_comment_c();
       write_public(public_);
       if (name()[0] == '~')
-	constructor = 1;
+        constructor = 1;
       else {
-	size_t n = strlen(k);
-	if (!strncmp(name(), k, n) && name()[n] == '(') constructor = 1;
+        size_t n = strlen(k);
+        if (!strncmp(name(), k, n) && name()[n] == '(') constructor = 1;
       }
       write_h("  ");
       if (is_static) write_h("static ");
       if (is_virtual) write_h("virtual ");
       if (!constructor) {
         write_h("%s%s ", rtype, star);
-	write_c("%s%s ", rtype, star);
+        write_c("%s%s ", rtype, star);
       }
-
+      
       // if this is a subclass, only write_h() the part before the ':'
       char s[1024], *sptr = s;
       char *nptr = (char *)name();
-
+      
       while (*nptr) {
         if (*nptr == ':') {
-	  if (nptr[1] != ':') break;
-	  // Copy extra ":" for "class::member"...
+          if (nptr[1] != ':') break;
+          // Copy extra ":" for "class::member"...
           *sptr++ = *nptr++;
         }	  
         *sptr++ = *nptr++;
       }
       *sptr = '\0';
-
+      
       write_h("%s;\n", s);
       // skip all function default param. init in body:
       int skips=0,skipc=0;
       int nc=0,plevel=0;
       for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
-	if (!skips && *nptr=='(') plevel++;
-	else if (!skips && *nptr==')') plevel--;
-	if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') ) 
-	  skips = skips ? 0 : 1;
-	else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
-	  skipc = skipc ? 0 : 1;
-	if(!skips && !skipc && plevel==1 && *nptr =='=' && 
-	   !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
-	  while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || plevel!=1) )) {
-	    if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
-	      skips = skips ? 0 : 1;
-	    else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
-	      skipc = skipc ? 0 : 1;
-	    if (!skips && !skipc && *nptr=='(') plevel++;
-	    else if (!skips && *nptr==')') plevel--;
-	  }
-
-	if (sptr < (s + sizeof(s) - 1))	*sptr++ = *nptr;
+        if (!skips && *nptr=='(') plevel++;
+        else if (!skips && *nptr==')') plevel--;
+        if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') ) 
+          skips = skips ? 0 : 1;
+        else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
+          skipc = skipc ? 0 : 1;
+        if(!skips && !skipc && plevel==1 && *nptr =='=' && 
+           !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
+          while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || plevel!=1) )) {
+            if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
+              skips = skips ? 0 : 1;
+            else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
+              skipc = skipc ? 0 : 1;
+            if (!skips && !skipc && *nptr=='(') plevel++;
+            else if (!skips && *nptr==')') plevel--;
+          }
+        
+        if (sptr < (s + sizeof(s) - 1))	*sptr++ = *nptr;
       }
       *sptr = '\0';
- 
+      
       write_c("%s::%s {\n", k, s);
     } else {
+      write_comment_c();
       if (public_) {
-	if (cdecl_)
-	  write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
-	else
-	  write_h("%s%s %s;\n", rtype, star, name());
+        if (cdecl_)
+          write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
+        else
+          write_h("%s%s %s;\n", rtype, star, name());
       }
       else write_c("static ");
-
+      
       // write everything but the default parameters (if any)
       char s[1024], *sptr;
       char *nptr;
       int skips=0,skipc=0;
       int nc=0,plevel=0;
       for (sptr=s,nptr=(char*)name(); *nptr; nc++,nptr++) {
-	if (!skips && *nptr=='(') plevel++;
-	else if (!skips && *nptr==')') plevel--;
-	if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') ) 
-	  skips = skips ? 0 : 1;
-	else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
-	  skipc = skipc ? 0 : 1;
-	if(!skips && !skipc && plevel==1 && *nptr =='=' && 
-	   !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
-	  while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || plevel!=1) )) {
-	    if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
-	      skips = skips ? 0 : 1;
-	    else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
-	      skipc = skipc ? 0 : 1;
-	    if (!skips && !skipc && *nptr=='(') plevel++;
-	    else if (!skips && *nptr==')') plevel--;
-	  }
-
-	if (sptr < (s + sizeof(s) - 1))	*sptr++ = *nptr;
+        if (!skips && *nptr=='(') plevel++;
+        else if (!skips && *nptr==')') plevel--;
+        if ( *nptr=='"' &&  !(nc &&  *(nptr-1)=='\\') ) 
+          skips = skips ? 0 : 1;
+        else if(!skips && *nptr=='\'' &&  !(nc &&  *(nptr-1)=='\\'))
+          skipc = skipc ? 0 : 1;
+        if(!skips && !skipc && plevel==1 && *nptr =='=' && 
+           !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
+          while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || plevel!=1) )) {
+            if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
+              skips = skips ? 0 : 1;
+            else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
+              skipc = skipc ? 0 : 1;
+            if (!skips && !skipc && *nptr=='(') plevel++;
+            else if (!skips && *nptr==')') plevel--;
+          }
+        
+        if (sptr < (s + sizeof(s) - 1))	*sptr++ = *nptr;
       }
       *sptr = '\0';
- 
+      
       write_c("%s%s %s {\n", rtype, star, s);
     }
   }
-
+  
   if (havewidgets && !child->name()) write_c("  %s* w;\n", subclassname(child));
   indentation += 2;
 }
@@ -570,6 +583,8 @@ void Fl_Decl_Type::open() {
     decl_choice->show();
     decl_class_choice->hide();
   }
+  const char *c = comment();
+  decl_comment_input->buffer()->text(c?c:"");
   decl_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
@@ -600,6 +615,15 @@ void Fl_Decl_Type::open() {
         static_ = ((decl_choice->value()>>1)&1);
       }
     }
+    c = decl_comment_input->buffer()->text();
+    if (c && *c) {
+      if (!comment() || strcmp(c, comment())) redraw_browser();
+      comment(c);
+    } else {
+      if (comment()) redraw_browser();
+      comment(0);
+    }
+    if (c) free((void*)c);
     break;
   }
  BREAK2:
@@ -619,6 +643,7 @@ void Fl_Decl_Type::write_code1() {
       || !strncmp(c,"struct",6) && isspace(c[6])
       ) ) {
     write_public(public_);
+    write_comment_h("  ");
     write_h("  %s\n", c);
     return;
   }
@@ -631,10 +656,13 @@ void Fl_Decl_Type::write_code1() {
       || !strncmp(c,"FL_EXPORT",9) && isspace(c[9])
 //    || !strncmp(c,"struct",6) && isspace(c[6])
       ) {
-    if (public_)
+    if (public_) {
+      write_comment_h();
       write_h("%s\n", c);
-    else
+    } else {
+      write_comment_c();
       write_c("%s\n", c);
+    }
     return;
   }
   // find the first C++ style comment
@@ -646,15 +674,21 @@ void Fl_Decl_Type::write_code1() {
   while (e>c && e[-1]==';') e--;
   if (class_name(1)) {
     write_public(public_);
+    write_comment_h("  ");
     write_h("  %.*s; %s\n", (int)(e-c), c, csc);
   } else {
     if (public_) {
       if (static_) 
         write_h("extern ");
+      else
+        write_comment_h();
       write_h("%.*s; %s\n", (int)(e-c), c, csc);
-      if (static_)
+      if (static_) {
+        write_comment_c();
         write_c("%.*s; %s\n", (int)(e-c), c, csc);
+      }
     } else {
+      write_comment_c();
       if (static_) 
         write_c("static ");
       write_c("%.*s; %s\n", (int)(e-c), c, csc);
@@ -1081,6 +1115,8 @@ void Fl_Class_Type::open() {
   c_name_input->static_value(fullname);
   c_subclass_input->static_value(subclass_of);
   c_public_button->value(public_);
+  const char *c = comment();
+  c_comment_input->buffer()->text(c?c:"");
   class_panel->show();
   const char* message = 0;
 
@@ -1124,6 +1160,15 @@ void Fl_Class_Type::open() {
       public_ = c_public_button->value();
       set_modflag(1);
     }
+    c = c_comment_input->buffer()->text();
+    if (c && *c) {
+      if (!comment() || strcmp(c, comment())) redraw_browser();
+      comment(c);
+    } else {
+      if (comment()) redraw_browser();
+      comment(0);
+    }
+    if (c) free((void*)c);
     break;
   }
  BREAK2:
@@ -1151,10 +1196,12 @@ void Fl_Class_Type::write_code1() {
   parent_class = current_class;
   current_class = this;
   write_public_state = 0;
+  write_h("\n");
+  write_comment_h();
   if (prefix() && strlen(prefix()))
-      write_h("\nclass %s %s ", prefix(), name());
+      write_h("class %s %s ", prefix(), name());
   else
-      write_h("\nclass %s ", name());
+      write_h("class %s ", name());
   if (subclass_of) write_h(": %s ", subclass_of);
   write_h("{\n");
 }
