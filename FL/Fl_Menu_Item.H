@@ -82,22 +82,22 @@ class Fl_Menu_;
   Typically menu items are statically defined; for example:
   \code
   Fl_Menu_Item popup[] = {
-   {&quot;&alpha&quot;,   FL_ALT+'a', the_cb, (void*)1},
-   {&quot;&beta&quot;,    FL_ALT+'b', the_cb, (void*)2},
-   {&quot;gamma&quot;,    FL_ALT+'c', the_cb, (void*)3, FL_MENU_DIVIDER},
-   {&quot;&strange&quot;,  0,   strange_cb},
-   {&quot;&charm&quot;,    0,   charm_cb},
-   {&quot;&truth&quot;,    0,   truth_cb},
-   {&quot;b&eauty&quot;,   0,   beauty_cb},
-   {&quot;sub&menu&quot;,  0,   0, 0, FL_SUBMENU},
-   {&quot;one&quot;},
-   {&quot;two&quot;},
-   {&quot;three&quot;},
+   {"&alpha",   FL_ALT+'a', the_cb, (void*)1},
+   {"&beta",    FL_ALT+'b', the_cb, (void*)2},
+   {"gamma",    FL_ALT+'c', the_cb, (void*)3, FL_MENU_DIVIDER},
+   {"&strange",  0,   strange_cb},
+   {"&charm",    0,   charm_cb},
+   {"&truth",    0,   truth_cb},
+   {"b&eauty",   0,   beauty_cb},
+   {"sub&menu",  0,   0, 0, FL_SUBMENU},
+   {"one"},
+   {"two"},
+   {"three"},
    {0},
-   {&quot;inactive&quot;, FL_ALT+'i', 0, 0, FL_MENU_INACTIVE|FL_MENU_DIVIDER},
-   {&quot;invisible&quot;,FL_ALT+'i', 0, 0, FL_MENU_INVISIBLE},
-   {&quot;check&quot;,    FL_ALT+'i', 0, 0, FL_MENU_TOGGLE|FL_MENU_VALUE},
-   {&quot;box&quot;,      FL_ALT+'i', 0, 0, FL_MENU_TOGGLE},
+   {"inactive", FL_ALT+'i', 0, 0, FL_MENU_INACTIVE|FL_MENU_DIVIDER},
+   {"invisible",FL_ALT+'i', 0, 0, FL_MENU_INVISIBLE},
+   {"check",    FL_ALT+'i', 0, 0, FL_MENU_TOGGLE|FL_MENU_VALUE},
+   {"box",      FL_ALT+'i', 0, 0, FL_MENU_TOGGLE},
    {0}};
   \endcode
   produces:
@@ -143,7 +143,7 @@ struct FL_EXPORT Fl_Menu_Item {
     This is the title of the item.  A NULL here indicates the end
     of the menu (or of a submenu).  A '&' in the item will print an
     underscore under the next letter, and if the menu is popped up that
-    letter will be a &quot;shortcut&quot; to pick that item.  To get a
+    letter will be a "shortcut" to pick that item.  To get a
     real '&' put two
     in a row.
   */
@@ -247,7 +247,7 @@ struct FL_EXPORT Fl_Menu_Item {
     <P>The shift flags can be any set of values accepted by 
     Fl::event_state().  If the bit is on that shift key must
     be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
-    the shift flags (zero for the other bits indicates a &quot;don't care&quot;
+    the shift flags (zero for the other bits indicates a "don't care"
     setting).
   */
   void shortcut(int s) {shortcut_ = s;}
@@ -267,7 +267,7 @@ struct FL_EXPORT Fl_Menu_Item {
   int checkbox() const {return flags&FL_MENU_TOGGLE;}
   /**
     Returns true if this item is a radio item.  When a radio button is
-    selected all &quot;adjacent&quot; radio buttons are turned off.  A set of radio
+    selected all "adjacent" radio buttons are turned off.  A set of radio
     items is delimited by an item that has radio() false, or by an
     item with FL_MENU_DIVIDER turned on.
   */
@@ -275,12 +275,12 @@ struct FL_EXPORT Fl_Menu_Item {
   /**    Returns the current value of the check or radio item.  */
   int value() const {return flags&FL_MENU_VALUE;}
   /**
-    Turns the check or radio item &quot;on&quot; for the menu item. Note that this
+    Turns the check or radio item "on" for the menu item. Note that this
     does not turn off any adjacent radio items like set_only()
     does.
   */
   void set() {flags |= FL_MENU_VALUE;}
-  /**    Turns the check or radio item &quot;off&quot; for the menu item.  */
+  /**    Turns the check or radio item "off" for the menu item.  */
   void clear() {flags &= ~FL_MENU_VALUE;}
   void setonly();
   /**    Gets the visibility of an item.  */

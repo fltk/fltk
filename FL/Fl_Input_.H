@@ -134,7 +134,7 @@ public:
       
       <P>The second two forms change the text and set the mark and the
       point to the end of it. The string is copied to the internal
-      buffer. Passing NULL is the same as &quot;&quot;. 
+      buffer. Passing NULL is the same as "". 
       This returns non-zero if the new value is different than the
       current one.  You can use the second version to directly set the
       length if you know it already or want to put nul's in the
@@ -159,8 +159,8 @@ char index(int i) const {return value_[i];}
   void maximum_size(int m) {maximum_size_ = m;}
   /**
     The input widget maintains two pointers into the string. The
-    &quot;position&quot; is where the cursor is. The
-    &quot;mark&quot; is the other end of the selected text. If they
+    "position" is where the cursor is. The
+    "mark" is the other end of the selected text. If they
     are equal then there is no selection. Changing this does not
     affect the clipboard (use copy() to do that).
     
@@ -222,7 +222,7 @@ char index(int i) const {return value_[i];}
     <P>The shift flags can be any set of values accepted by 
     Fl::event_state().  If the bit is on that shift key must
     be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
-    the shift flags (zero for the other bits indicates a &quot;don't care&quot;
+    the shift flags (zero for the other bits indicates a "don't care"
     setting).
   */
   int shortcut() const {return shortcut_;}

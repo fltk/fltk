@@ -36,7 +36,7 @@
 /**
   The toggle button is a push button that needs to be clicked once 
   to toggle on, and one more time to toggle off.
-  The Fl_Toggle_Button subclass displays the &quot;on&quot; state by
+  The Fl_Toggle_Button subclass displays the "on" state by
   drawing a pushed-in button.</P>
   <P>Buttons generate callbacks when they are clicked by the user.  You
   control exactly when and how by changing the values for type()

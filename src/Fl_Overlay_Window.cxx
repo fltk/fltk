@@ -28,7 +28,7 @@
 /** \fn virtual void Fl_Overlay_Window::draw_overlay() = 0
   You must subclass Fl_Overlay_Window and provide this method.
   It is just like a draw() method, except it draws the overlay.
-  The overlay will have already been &quot;cleared&quot; when this is called.  You
+  The overlay will have already been "cleared" when this is called.  You
   can use any of the routines described in &lt;FL/fl_draw.H&gt;.
 */
 

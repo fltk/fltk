@@ -139,7 +139,7 @@ Fl_Timer::~Fl_Timer() {
   following symbolic constants:
   <UL>
   <LI>FL_NORMAL_TIMER - The timer just does the callback  and
-  displays the string &quot;Timer&quot; in the widget. </LI>
+  displays the string "Timer" in the widget. </LI>
   <LI>FL_VALUE_TIMER - The timer does the callback and  displays
   the current timer value in the widget. </LI>
   <LI>FL_HIDDEN_TIMER - The timer just does the callback  and

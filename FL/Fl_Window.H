@@ -41,7 +41,7 @@ class Fl_X;
 /**
   This widget produces an actual window.  This can either be a main
   window, with a border and title and all the window management controls,
-  or a &quot;subwindow&quot; inside a window.  This is controlled by whether or not
+  or a "subwindow" inside a window.  This is controlled by whether or not
   the window has a parent().
   <P>Once you create a window, you usually add children Fl_Widget
   's to it by using window-&gt;add(child) for each new widget.  See Fl_Group for more information
@@ -174,10 +174,10 @@ public:
   /** Returns non zero if FL_OVERRIDE flag is set, 0 otherwise. */
   int override() const  { return flags()&FL_OVERRIDE; }
   /**
-    A &quot;modal&quot; window, when shown(), will prevent any events from
+    A "modal" window, when shown(), will prevent any events from
     being delivered to other windows in the same program, and will also
     remain on top of the other windows (if the X window manager supports
-    the &quot;transient for&quot; property).  Several modal windows may be shown at
+    the "transient for" property).  Several modal windows may be shown at
     once, in which case only the last one shown gets events.  You can See
     which window (if any) is modal by calling 
     Fl::modal().
@@ -188,7 +188,7 @@ public:
   */
   int modal() const	{return flags() & FL_MODAL;}
   /**
-    A &quot;non-modal&quot; window (terminology borrowed from Microsoft Windows)
+    A "non-modal" window (terminology borrowed from Microsoft Windows)
     acts like a modal() one in that it remains on top, but it has
     no effect on event delivery.  There are <I>three</I> states for a
     window: modal, non-modal, and normal.
@@ -285,8 +285,8 @@ public:
     this identifies the picture to draw in the icon. <I>Under X, this is
     turned into a XA_WM_CLASS pair by truncating at the first
     non-alphanumeric character and capitalizing the first character, and
-    the second one if the first is 'x'.  Thus &quot;foo&quot; turns into &quot;foo, Foo&quot;,
-    and &quot;xprog.1&quot; turns into &quot;xprog, XProg&quot;.</I> This only works if called <I>
+    the second one if the first is 'x'.  Thus "foo" turns into "foo, Foo",
+    and "xprog.1" turns into "xprog, XProg".</I> This only works if called <I>
     before</I> calling show().
     <P>Under Microsoft Windows this string is used as the name of the
     WNDCLASS structure, though it is not clear if this can have any

@@ -171,7 +171,7 @@ public:
   <p>If you need more accurate, repeated timeouts, use Fl::repeat_timeout() to
   reschedule the subsequent timeouts.</p>
   
-  <p>The following code will print &quot;TICK&quot; each second on
+  <p>The following code will print "TICK" each second on
   stdout with a fair degree of accuracy:</p>
   
   \code
@@ -192,7 +192,7 @@ public:
   previous timeout, allowing for more accurate timing. You may only call
   this method inside a timeout callback.
   
-  <p>The following code will print &quot;TICK&quot; each second on
+  <p>The following code will print "TICK" each second on
   stdout with a fair degree of accuracy:</p>
   
   \code
@@ -294,7 +294,7 @@ public:
     the passed window no matter where the pointer or focus is (including
     in other programs).  The window <I>does not have to be
     shown()</I> , this lets the handle() method of a
-    &quot;dummy&quot; window override all event handling and allows you to
+    "dummy" window override all event handling and allows you to
     map and unmap a complex set of windows (under both X and WIN32
     <I>some</I> window must be mapped because the system interface needs a
     window id).
@@ -368,7 +368,7 @@ public:
   static void get_mouse(int &,int &); // platform dependent
   /**
     The first form returns non-zero if the most recent FL_PUSH or
-    FL_KEYBOARD was a &quot;double click&quot;.  Returns N-1 for
+    FL_KEYBOARD was a "double click".  Returns N-1 for
     N clicks.  A double click is counted if the same button is pressed
     again while event_is_click() is true.
     
@@ -384,8 +384,8 @@ public:
   /**
     The first form returns non-zero if the mouse has not moved far enough
     and not enough time has passed since the last FL_PUSH or 
-    FL_KEYBOARD event for it to be considered a &quot;drag&quot; rather than a
-    &quot;click&quot;.  You can test this on FL_DRAG, FL_RELEASE,
+    FL_KEYBOARD event for it to be considered a "drag" rather than a
+    "click".  You can test this on FL_DRAG, FL_RELEASE,
     and FL_MOVE events.  The second form clears the value returned
     by Fl::event_is_click().  Useful to prevent the <I>next</I>
     click from being counted as a double-click or to make a popup menu
@@ -602,7 +602,7 @@ public:
     
     <P>The integer pointed to by attributes (if the pointer is not
     zero) is set to zero, FL_BOLD or FL_ITALIC or 
-    FL_BOLD | FL_ITALIC.  To locate a &quot;family&quot; of fonts, search
+    FL_BOLD | FL_ITALIC.  To locate a "family" of fonts, search
     forward and back for a set with non-zero attributes, these faces along
     with the face with a zero attribute before them constitute a family.
   */
@@ -614,7 +614,7 @@ public:
     be matched exactly (fl_font() will pick the closest size for
     other sizes).  A zero in the first location of the array indicates a
     scalable font, where any size works, although the array may list sizes
-    that work &quot;better&quot; than others.  Warning: the returned array
+    that work "better" than others.  Warning: the returned array
     points at a static buffer that is overwritten each call.  Under X this
     will open the display.
   */
@@ -623,15 +623,15 @@ public:
   static void set_font(Fl_Font, Fl_Font);
   /**
     FLTK will open the display, and add every fonts on the server to the
-    face table.  It will attempt to put &quot;families&quot; of faces together, so
+    face table.  It will attempt to put "families" of faces together, so
     that the normal one is first, followed by bold, italic, and bold
     italic.
     
     <P>The optional argument is a string to describe the set of fonts to
     add.  Passing NULL will select only fonts that have the
     ISO8859-1 character set (and are thus usable by normal text).  Passing
-    &quot;-*&quot; will select all fonts with any encoding as long as they have
-    normal X font names with dashes in them.  Passing &quot;*&quot; will list every
+    "-*" will select all fonts with any encoding as long as they have
+    normal X font names with dashes in them.  Passing "*" will list every
     font that exists (on X this may produce some strange output).  Other
     values may be useful but are system dependent.  With WIN32 NULL
     selects fonts with ISO8859-1 encoding and non-NULL selects

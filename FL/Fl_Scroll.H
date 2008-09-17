@@ -69,7 +69,7 @@
   considered. The flags in hscrollbar however are ignored.
 
   <P>This widget can also be used to pan around a single child widget
-  &quot;canvas&quot;.  This child widget should be of your own class, with a 
+  "canvas".  This child widget should be of your own class, with a 
   draw() method that draws the contents.  The scrolling is done by
   changing the x() and y() of the widget, so this child
   must use the x() and y() to position it's drawing.

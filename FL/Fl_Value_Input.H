@@ -77,7 +77,7 @@ public:
   /** See void Fl_Value_Input::soft(char s) */
   void soft(char s) {soft_ = s;}
   /**
-    If &quot;soft&quot; is turned on, the user is allowed to drag
+    If "soft" is turned on, the user is allowed to drag
     the value outside the range. If they drag the value to one of
     the ends, let go, then grab again and continue to drag, they can
     get to any value. The default is true.
@@ -96,7 +96,7 @@ public:
     <P>The shift flags can be any set of values accepted by 
     Fl::event_state().  If the bit is on that shift key must
     be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
-    the shift flags (zero for the other bits indicates a &quot;don't care&quot;
+    the shift flags (zero for the other bits indicates a "don't care"
     setting).
   */
   int shortcut() const {return input.shortcut();}

@@ -265,9 +265,6 @@
 /** \fn const char *Fl_File_Chooser::value(int file)
   See const char *value(const char *pathname)*/
 
-/** \fn const char *Fl_File_Chooser::value()
-  See const char *value(const char *pathname)*/
-
 /** \fn int Fl_File_Chooser::visible()
   Returns 1 if the Fl_File_Chooser window is visible.*/
 

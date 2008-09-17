@@ -93,7 +93,7 @@ public:
     Get or set the dimensions of the moving piece of slider.  This is the
     fraction of the size of the entire widget.  If you set this to 1 then
     the slider cannot move.  The default value is .08.
-    <P>For the &quot;fill&quot; sliders this is the size of the area around the end
+    <P>For the "fill" sliders this is the size of the area around the end
     that causes a drag effect rather than causing the slider to jump to the
     mouse.
   */

@@ -474,7 +474,7 @@ public:
    *  If no tooltip is set, the tooltip of the parent is inherited. Setting a 
    *  tooltip for a group and setting no tooltip for a child will show the 
    *  group's tooltip instead. To avoid this behavior, you can set the child's 
-   *  tooltip to an empty string (&quot;&quot;).
+   *  tooltip to an empty string ("").
    *  \param[in] t new tooltip
    */
   void tooltip(const char *t);
@@ -580,7 +580,7 @@ public:
    *  is zero then the callback is never done.  Other values are described 
    *  in the individual widgets.  This field is in the base class so that 
    *  you can scan a panel and do_callback() on all the ones that 
-   *  don't do their own callbacks in response to an &quot;OK&quot; button.
+   *  don't do their own callbacks in response to an "OK" button.
    *  \param[in] i set of flags 
    */
   void when(uchar i) {when_ = i;}

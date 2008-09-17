@@ -34,7 +34,7 @@
 #include "Fl_Group.H"
 
 /**
-  The Fl_Tabs widget is the &quot;file card tabs&quot;
+  The Fl_Tabs widget is the "file card tabs"
   interface that allows you to put lots and lots of buttons and
   switches in a panel, as popularized by many toolkits.
   
@@ -54,7 +54,7 @@
   <P>The size of the tabs is controlled by the bounding box of the
   children (there should be some space between the children and
   the edge of the Fl_Tabs), and the tabs may be placed
-  &quot;inverted&quot; on the bottom, this is determined by which
+  "inverted" on the bottom, this is determined by which
   gap is larger. It is easiest to lay this out in fluid, using the
   fluid browser to select each child group and resize them until
   the tabs look the way you want them to.

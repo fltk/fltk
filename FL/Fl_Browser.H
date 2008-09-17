@@ -45,7 +45,7 @@ struct FL_BLINE;
   editor or spreadsheet!  But it is useful for showing a vertical list of
   named objects to the user.
   <P>Each line in the browser is identified by number. <I>The numbers
-  start at one</I> (this is so that zero can be reserved for &quot;no line&quot; in
+  start at one</I> (this is so that zero can be reserved for "no line" in
   the selective browsers). <I>Unless otherwise noted, the methods do not
   check to see if the passed line number is in range and legal.  It must
   always be greater than zero and &lt;= size().</I></P>

@@ -59,14 +59,14 @@ protected:
 public:
   Fl_Adjuster(int X,int Y,int W,int H,const char *l=0);
   /**
-    If &quot;soft&quot; is turned on, the user is allowed to drag the value outside
+    If "soft" is turned on, the user is allowed to drag the value outside
     the range.  If they drag the value to one of the ends, let go, then
     grab again and continue to drag, they can get to any value.  Default is
     one.
   */
   void soft(int s) {soft_ = s;}
   /**
-    If &quot;soft&quot; is turned on, the user is allowed to drag the value outside
+    If "soft" is turned on, the user is allowed to drag the value outside
     the range.  If they drag the value to one of the ends, let go, then
     grab again and continue to drag, they can get to any value.  Default is
     one.

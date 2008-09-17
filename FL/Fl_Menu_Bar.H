@@ -46,14 +46,14 @@
   of the submenus. </P>
   <P ALIGN=CENTER>\image html  menubar.gif</P>
   <P>If there is an item in the top menu that is not a title of a
-  submenu, then it acts like a &quot;button&quot; in the menubar.  Clicking on it
+  submenu, then it acts like a "button" in the menubar.  Clicking on it
   will pick it. </P>
   <P>When the user picks an item off the menu, the item's callback is
   done with the menubar as the Fl_Widget* argument.  If the item
   does not have a callback the menubar's callback is done instead. </P>
   <P>Submenus will also pop up in response to shortcuts indicated by
   putting a '&' character in the name field of the menu item. If you put a
-  '&' character in a top-level &quot;button&quot; then the shortcut picks it.  The
+  '&' character in a top-level "button" then the shortcut picks it.  The
   '&' character in submenus is ignored until the menu is popped up. </P>
   <P>Typing the shortcut() of any of the menu items will cause
   callbacks exactly the same as when you pick the item with the mouse.

@@ -45,12 +45,13 @@ protected:
   void draw();
 public:
   /**
-    The first constructor sets box() to FL_NO_BOX, which
+    - The first constructor sets box() to FL_NO_BOX, which
     means it is invisible. However such widgets are useful as placeholders
     or Fl_Group::resizable()
     values.  To change the box to something visible, use box(n).
-    <P>The second form of the constructor sets the box to the specified box
+    - The second form of the constructor sets the box to the specified box
     type.
+    <P>The destructor removes the box.
   */
     Fl_Box(int X, int Y, int W, int H, const char *l=0)
 	: Fl_Widget(X,Y,W,H,l) {}

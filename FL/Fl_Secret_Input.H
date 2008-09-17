@@ -36,7 +36,7 @@
 /**
   The Fl_Secret_Input class is a subclass of Fl_Input
   that displays its input as a string of asterisks.  This subclass is
-  usually used to receive passwords and other &quot;secret&quot; information.
+  usually used to receive passwords and other "secret" information.
 */
 class Fl_Secret_Input : public Fl_Input {
 public:

@@ -48,7 +48,7 @@
   <P>In the above diagram each box surrounds an actual subclass.  These
   are further differentiated by setting the 
   type() of the widget to the symbolic value labeling the
-  widget.  The ones labelled &quot;0&quot; are the default versions with a 
+  widget.  The ones labelled "0" are the default versions with a 
   type(0).  For consistency the symbol FL_VERTICAL is
   defined as zero.
 */
@@ -92,11 +92,11 @@ public:
     the step).
     
     <P>The minimum may be greater than the maximum. This has the
-    effect of &quot;reversing&quot; the object so the larger values
+    effect of "reversing" the object so the larger values
     are in the opposite direction. This also switches which end of
     the filled sliders is filled.</P>
     
-    <P>Some widgets consider this a &quot;soft&quot; range.  This
+    <P>Some widgets consider this a "soft" range.  This
     means they will stop at the range, but if the user releases and
     grabs the control again and tries to move it further, it is
     allowed.</P>

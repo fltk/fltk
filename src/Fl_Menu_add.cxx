@@ -189,9 +189,9 @@ int Fl_Menu_Item::add(
   character in the string. Labels starting with the "_" character
   cause a divider to be placed after that menu item.</p>
   
-  <p>A label of the form &quot;foo/bar/baz&quot; will create a
-  submenus called &quot;foo&quot; and &quot;bar&quot; with an
-  entry called &quot;baz&quot;. The "/" character is ignored if it
+  <p>A label of the form "foo/bar/baz" will create a
+  submenus called "foo" and "bar" with an
+  entry called "baz". The "/" character is ignored if it
   appears as the first character of the label string, e.g.
   "/foo/bar/baz".</p>
   

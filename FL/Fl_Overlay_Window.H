@@ -35,13 +35,13 @@
 
 /**
   This window provides double buffering and also the ability to draw the
-  &quot;overlay&quot; which is another picture placed on top of the main image. The
+  "overlay" which is another picture placed on top of the main image. The
   overlay is designed to be a rapidly-changing but simple graphic such as
   a mouse selection box. Fl_Overlay_Window uses the overlay
   planes provided by your graphics hardware if they are available.
   <P>If no hardware support is found the overlay is simulated by drawing
   directly into the on-screen copy of the double-buffered window, and
-  &quot;erased&quot; by copying the backbuffer over it again.  This means the
+  "erased" by copying the backbuffer over it again.  This means the
   overlay will blink if you change the image in the window.
 */
 class FL_EXPORT Fl_Overlay_Window : public Fl_Double_Window {

@@ -41,7 +41,7 @@ class Fl_Gl_Choice; // structure to hold result of glXChooseVisual
 
 /**
   The Fl_Gl_Window widget sets things up so OpenGL works, and
-  also keeps an OpenGL &quot;context&quot; for that window, so that changes to the
+  also keeps an OpenGL "context" for that window, so that changes to the
   lighting and projection may be reused between redraws. Fl_Gl_Window
   also flushes the OpenGL streams and swaps buffers after draw()
   returns.
@@ -149,7 +149,7 @@ public:
     <LI>FL_MULTISAMPLE - multisample antialiasing </LI>
     </UL>
     FL_RGB and FL_SINGLE have a value of zero, so they
-    are &quot;on&quot; unless you give FL_INDEX or FL_DOUBLE.
+    are "on" unless you give FL_INDEX or FL_DOUBLE.
     <P>If the desired combination cannot be done, FLTK will try turning off 
     FL_MULTISAMPLE.  If this also fails the show() will call 
     Fl::error() and not show the window. </P>

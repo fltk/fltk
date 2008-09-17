@@ -80,7 +80,7 @@
   delete it.</TD></TR>
   <TR><TD><B>^Z or ^_</B></TD><TD>Undo.  This is a single-level undo
   mechanism, but all adjacent deletions and insertions are concatenated
-  into a single &quot;undo&quot;.  Often this will undo a lot more than you
+  into a single "undo".  Often this will undo a lot more than you
   expected.</TD></TR>
   <TR><TD><B>Shift+move</B></TD><TD>Move the cursor but also extend the
   selection.</TD></TR>

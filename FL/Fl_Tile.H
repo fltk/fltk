@@ -46,10 +46,10 @@
   Fl_Tile.
   
   <P>Fl_Tile does not normailly draw any graphics of its own.
-  The &quot;borders&quot; which can be seen in the snapshot above
+  The "borders" which can be seen in the snapshot above
   are actually part of the children. Their boxtypes have been set
   to FL_DOWN_BOX creating the impression of 
-  &quot;ridges&quot; where the boxes touch. What you see are 
+  "ridges" where the boxes touch. What you see are 
   actually two adjacent FL_DOWN_BOX's drawn next to each 
   other. All neighboring widgets share the same edge - the widget's 
   thick borders make it appear as though the widgets aren't actually
@@ -68,7 +68,7 @@
   want.
 
   <P>Note on resizable(Fl_Widget &w) :
-  The &quot;resizable&quot; child widget (which should be invisible) limits where the
+  The "resizable" child widget (which should be invisible) limits where the
   border can be dragged to.  If you don't set it, it will be possible to
   drag the borders right to the edge, and thus resize objects on the edge
   to zero width or height.  The resizable() widget is not

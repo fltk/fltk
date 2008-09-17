@@ -57,7 +57,7 @@
   prev() functions are used to index, it works best as a linked list
   or as a large block of characters in which the line breaks must be
   searched for. </P>
-  <P>A great deal of work has been done so that the &quot;height&quot; of a data
+  <P>A great deal of work has been done so that the "height" of a data
   object does not need to be determined until it is drawn.  This is
   useful if actually figuring out the size of an object requires
   accessing image data or doing stat() on a file or doing some

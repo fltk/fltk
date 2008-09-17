@@ -156,7 +156,7 @@ const Fl_Menu_Item* Fl_Menu_::picked(const Fl_Menu_Item* v) {
   return v;
 }
 
-/** Turns the radio item &quot;on&quot; for the menu item and turns off adjacent radio items set. */
+/** Turns the radio item "on" for the menu item and turns off adjacent radio items set. */
 void Fl_Menu_Item::setonly() {
   flags |= FL_MENU_RADIO | FL_MENU_VALUE;
   Fl_Menu_Item* j;

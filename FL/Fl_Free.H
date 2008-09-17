@@ -44,7 +44,7 @@
 typedef int (*FL_HANDLEPTR)(Fl_Widget *, int , float, float, char);
 
 /**
-  Emulation of the Forms &quot;free&quot; widget.  This emulation allows the free
+  Emulation of the Forms "free" widget.  This emulation allows the free
   demo to run, and appears to be useful for porting programs written in
   Forms which use the free widget or make subclasses of the Forms
   widgets.
