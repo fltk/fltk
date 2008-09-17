@@ -31,7 +31,7 @@
   The Fl_Help_Dialog widget displays a standard help dialog window
   using the Fl_Help_View widget.
   
-  <CENTER>\image html Fl_Help_Dialog.gif</CENTER>
+  <P ALIGN=CENTER> \image html Fl_Help_Dialog.gif </P>
 */
 
 /** \fn Fl_Help_Dialog::Fl_Help_Dialog()

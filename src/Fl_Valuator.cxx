@@ -25,11 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \fn int Fl_Valuator::changed() const
-  This value is true if the user has moved the slider. It is
-  turned off by value(x) and just before doing a callback
-  (the callback can turn it back on if desired).
-*/
 
 // Base class for sliders and all other one-value "knobs"
 
@@ -65,7 +60,7 @@ void Fl_Valuator::step(double s) {
   while (fabs(s-A/B) > epsilon && B<=(0x7fffffff/10)) {B *= 10; A = rint(s*B);}
 }
 
-/**  Sets the step value to 1/10<SUP>digits.*/
+/**  Sets the step value to 1/10<SUP>digits</SUP>.*/
 void Fl_Valuator::precision(int p) {
   A = 1.0;
   for (B = 1; p--;) B *= 10;
@@ -73,7 +68,16 @@ void Fl_Valuator::precision(int p) {
 /** Asks for partial redraw */
 void Fl_Valuator::value_damage() {damage(FL_DAMAGE_EXPOSE);} // by default do partial-redraw
 
-/**  See double Fl_Valuator::value() const */
+/**
+    Sets the current value. The new value is <I>not</I>
+    clamped or otherwise changed before storing it. Use
+    clamp() or round() to modify the value before
+    calling value(). The widget is redrawn if the new value
+    is different than the current one. The initial value is zero.
+    <P>changed() will return true if the user has moved the slider,
+    but it will be turned off by value(x) and just before doing a callback
+    (the callback can turn it back on if desired).
+*/
 int Fl_Valuator::value(double v) {
   clear_changed();
   if (v == value_) return 0;

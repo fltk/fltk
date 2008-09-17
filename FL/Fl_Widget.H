@@ -249,9 +249,9 @@ public:
   int damage_resize(int,int,int,int);
 
   /** Reposition the window or widget.
-   *  position(x,y) is a shortcut for resize(x,y,w(),h()).
+   *  position(X,Y) is a shortcut for resize(X,Y,w(),h()).
    *
-   *  \param[in] x, y new position relative to the parent window 
+   *  \param[in] X, Y new position relative to the parent window 
    *  \see resize(int, int, int, int), size(int, int)
    */
   void position(int X,int Y) {resize(X,Y,w_,h_);}

@@ -142,9 +142,9 @@ int Fl_Preferences::groups()
  * - the index must be within the range given by groups()
  * example: printf( "Group(%d)='%s'\n", ix, base.group(ix) );
  */
-const char *Fl_Preferences::group( int ix )
+const char *Fl_Preferences::group( int num_group )
 {
-  return node->child( ix );
+  return node->child( num_group );
 }
 
 

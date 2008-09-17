@@ -315,25 +315,28 @@ make
 
 <DL>
 
-	<DT>WWW
-	<DD><A href="http://www.fltk.org/">http://www.fltk.org/</A>
-	<DD><A href="http://www.fltk.org/str.php">http://www.fltk.org/str.php</A> 
+	<DT>WWW</DT>
+	<DD>
+	<A href="http://www.fltk.org/">http://www.fltk.org/</A>
+	<A href="http://www.fltk.org/str.php">http://www.fltk.org/str.php</A> 
 	  [for reporting bugs]
-	<DD><A href="http://www.fltk.org/software.php">http://www.fltk.org/software.php</A> 
+	<A href="http://www.fltk.org/software.php">http://www.fltk.org/software.php</A> 
 	  [source code]
-
-	<DT>FTP
-	<DD><A HREF="ftp://ftp.fltk.org/pub/fltk">California, USA (ftp.fltk.org)</A>
-	<DD><A HREF="ftp://ftp2.fltk.org/pub/fltk">Maryland, USA (ftp2.fltk.org)</A>
-	<DD><A HREF="ftp://ftp.funet.fi/pub/mirrors/ftp.fltk.org/pub/fltk">Espoo, Finland (ftp.funet.fi)</A>
-	<DD><A HREF="ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk">Germany (linux.mathematik.tu-darmstadt.de)</A>
-	<DD><A HREF="ftp://gd.tuwien.ac.at/hci/fltk">Austria (gd.tuwien.ac.at)</A>
+	</DD>
+	<DT>FTP</DT>
+    <DD>
+    <A HREF="ftp://ftp.fltk.org/pub/fltk">California, USA (ftp.fltk.org)</A>
+	<A HREF="ftp://ftp2.fltk.org/pub/fltk">Maryland, USA (ftp2.fltk.org)</A>
+	<A HREF="ftp://ftp.funet.fi/pub/mirrors/ftp.fltk.org/pub/fltk">Espoo, Finland (ftp.funet.fi)</A>
+	<A HREF="ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk">Germany (linux.mathematik.tu-darmstadt.de)</A>
+	<A HREF="ftp://gd.tuwien.ac.at/hci/fltk">Austria (gd.tuwien.ac.at)</A>
+	</DD>
 
 	<DT>EMail</DT>
-	<DD><A href="mailto:fltk@fltk.org">fltk@fltk.org</A> [see
-	instructions below]
-	<DD><A href="mailto:fltk-bugs@fltk.org">fltk-bugs@fltk.org</A> [for
-	reporting bugs]
+	<DD>
+	<A href="mailto:fltk@fltk.org">fltk@fltk.org</A> [see instructions below]
+	<A href="mailto:fltk-bugs@fltk.org">fltk-bugs@fltk.org</A> [for	reporting bugs]
+	</DD>
 
 	<DT>NNTP Newsgroups</DT>
 	<DD>news.easysw.com</DD>

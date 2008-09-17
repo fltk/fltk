@@ -25,7 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-
 #include "flstring.h"
 #if HAVE_GL
 

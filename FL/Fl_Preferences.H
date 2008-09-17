@@ -151,10 +151,10 @@ public:
      order  of group names. The index must be within the range given
      by groups().
      
-     \param[in] index number indexing the requested group
+     \param[in] num_group number indexing the requested group
      \return cstring pointer to the group name
    */
-  const char *group( int index );
+  const char *group( int num_group );
   
   /**
      Returns non-zero if a group with this name exists.
@@ -162,10 +162,10 @@ public:
      "." describes the current node, "./" describes the topmost node.
      By preceding a groupname with a "./", its path becomes relative to the topmost node.
      
-     \param[in] group name of group that is searched for
+     \param[in] key name of group that is searched for
      \return 0 if group was not found
    */
-  char groupExists( const char *group );
+  char groupExists( const char *key );
 
   /**
      Deletes a group.
@@ -196,10 +196,10 @@ public:
   /**
      Returns non-zero if an entry with this name exists.
      
-     \param[in] entry name of entry that is searched for
+     \param[in] key name of entry that is searched for
      \return 0 if entry was not found
    */
-  char entryExists( const char *entry );
+  char entryExists( const char *key );
   
   /**
      Removes a single entry (name/value pair).

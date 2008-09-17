@@ -32,8 +32,7 @@
 
 /**
   Creates a new Fl_Value_Slider widget using the given
-  position, size, and label string. The default boxtype is FL_DOWN_BOX
-  .
+  position, size, and label string. The default boxtype is FL_DOWN_BOX.
 */
 Fl_Value_Slider::Fl_Value_Slider(int X, int Y, int W, int H, const char*l)
 : Fl_Slider(X,Y,W,H,l) {

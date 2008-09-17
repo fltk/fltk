@@ -45,8 +45,8 @@ public:
   int handle(int);
   /**
     Creates a new Fl_Return_Button widget using the given
-    position, size, and label string. The default boxtype is FL_UP_BOX
-    .
+    position, size, and label string. The default boxtype is FL_UP_BOX.
+    <P> The inherited destructor deletes the button.
   */
   Fl_Return_Button(int X, int Y, int W, int H,const char *l=0)
     : Fl_Button(X,Y,W,H,l) {}

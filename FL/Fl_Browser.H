@@ -158,8 +158,8 @@ public:
     <UL>
     <LI><tt>'\@.'</tt> Print rest of line, don't look for more '\@' signs </LI>
     <LI><tt>'\@\@'</tt> Print rest of line starting with '\@' </LI>
-    <LI><tt>'\@l'</tt> Use a <BIG>large</BIG> (24 point) font </LI>
-    <LI><tt>'\@m'</tt> Use a <BIG>medium large</BIG> (18 point) font </LI>
+    <LI><tt>'\@l'</tt> Use a LARGE (24 point) font </LI>
+    <LI><tt>'\@m'</tt> Use a medium large (18 point) font </LI>
     <LI><tt>'\@s'</tt> Use a <SMALL>small</SMALL> (11 point) font </LI>
     <LI><tt>'\@b'</tt> Use a <B>bold</B> font (adds FL_BOLD to font) </LI>
     <LI><tt>'\@i'</tt> Use an <I>italic</I> font (adds FL_ITALIC to font) </LI>

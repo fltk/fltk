@@ -31,7 +31,7 @@
   The Fl_File_Chooser widget displays a standard file selection
   dialog that supports various selection modes.
   
-  <CENTER>\image html Fl_File_Chooser.jpg</CENTER>
+    <P ALIGN=CENTER>\image html Fl_File_Chooser.jpg</P>
   
   <P>The Fl_File_Chooser class also exports several static values
   that may be used to localize or customize the appearance of all file chooser
@@ -100,7 +100,6 @@
   	<TD>fl_numericsort</TD>
   </TR>
   </TABLE></CENTER>
-  
   <P>The sort member specifies the sort function that is
   used when loading the contents of a directory.
 */

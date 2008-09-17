@@ -288,7 +288,7 @@ void Fl_Scroll::scrollbar_cb(Fl_Widget* o, void*) {
 /**
   Creates a new Fl_Scroll widget using the given position,
   size, and label string. The default boxtype is FL_NO_BOX.
-  <B>The destructor <I>also deletes all the children</I>. This allows a
+  <P>The destructor <I>also deletes all the children</I>. This allows a
   whole tree to be deleted at once, without having to keep a pointer to
   all the children in the user code. A kludge has been done so the 
   Fl_Scroll and all of it's children can be automatic (local)

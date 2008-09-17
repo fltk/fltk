@@ -43,14 +43,13 @@
   The Fl_Valuator class controls a single floating-point value
   and provides a consistent interface to set the value, range, and step,
   and insures that callbacks are done the same for every object.
-  <P>There are probably more of these classes in FLTK than any others: </P>
+  <P>There are probably more of these classes in FLTK than any others:
   <P ALIGN=CENTER>\image html  valuators.gif</P>
   <P>In the above diagram each box surrounds an actual subclass.  These
-  are further differentiated by setting the 
-  type() of the widget to the symbolic value labeling the
-  widget.  The ones labelled "0" are the default versions with a 
-  type(0).  For consistency the symbol FL_VERTICAL is
-  defined as zero.
+  are further differentiated by setting the type() of the widget t
+  o the symbolic value labeling the widget.  
+  The ones labelled "0" are the default versions with a type(0).  
+  For consistency the symbol FL_VERTICAL is defined as zero.
 */
 class FL_EXPORT Fl_Valuator : public Fl_Widget {
 
@@ -124,13 +123,7 @@ public:
   double step() const {return A/B;}
   void precision(int);
 
-  /**
-    Gets or sets the current value. The new value is <I>not</I>
-    clamped or otherwise changed before storing it. Use
-    clamp() or round() to modify the value before
-    calling value(). The widget is redrawn if the new value
-    is different than the current one. The initial value is zero.
-  */
+  /** Gets the floating point(double) value. See int value(double) */
   double value() const {return value_;}
   int value(double);
 
