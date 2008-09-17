@@ -163,7 +163,7 @@ public:
     <LI><tt>'\@s'</tt> Use a <SMALL>small</SMALL> (11 point) font </LI>
     <LI><tt>'\@b'</tt> Use a <B>bold</B> font (adds FL_BOLD to font) </LI>
     <LI><tt>'\@i'</tt> Use an <I>italic</I> font (adds FL_ITALIC to font) </LI>
-    <LI><tt>'\@f' or \@t</tt> Use a fixed-pitch
+    <LI><tt>'\@f' or '\@t'</tt> Use a fixed-pitch
     font (sets font to FL_COURIER) </LI>
     <LI><tt>'\@c'</tt> Center the line horizontally </LI>
     <LI><tt>'\@r'</tt> Right-justify the text </LI>
@@ -177,7 +177,7 @@ public:
     </UL>
     Notice that the '\@.' command can be used to reliably
     terminate the parsing.  To print a random string in a random color, use 
-    sprintf("\@C%d\@.%s", color, string) and it will work even if the
+    <tt>sprintf("\@C%d\@.%s", color, string)</tt> and it will work even if the
     string starts with a digit or has the format character in it.
     <P>The second form sets the current prefix to c.  Set the
     prefix to 0 to disable formatting.
