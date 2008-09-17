@@ -1127,6 +1127,8 @@ INCLUDE_FILE_PATTERNS  =
 # instead of the = operator.
 
 PREDEFINED             = FL_DOXYGEN \
+		       	 HAVE_GL \
+			 HAVE_GL_OVERLAY \
                          FL_EXPORT:=
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 

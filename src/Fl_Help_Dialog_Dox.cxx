@@ -59,7 +59,7 @@
 /** \fn void Fl_Help_Dialog::show()
   Shows the Fl_Help_Dialog window.*/
 
-/** \fn void Fl_Help_Dialog::textsize(uchar s)
+/** \fn void Fl_Help_Dialog::textsize(Fl_Fontsize s)
   Sets or gets the default text size for the help view.*/
 
 /** \fn uchar Fl_Help_Dialog::textsize()

@@ -202,6 +202,9 @@ public:
   Fl_Gl_Window(int W, int H, const char *l=0) : Fl_Window(W,H,l) {init();}
   Fl_Gl_Window(int X, int Y, int W, int H, const char *l=0)
     : Fl_Window(X,Y,W,H,l) {init();}
+
+  // you *must* override the draw method
+  virtual void draw();
 };
 
 #endif

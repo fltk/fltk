@@ -25,9 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \fn Fl_Box::~Fl_Box(void)
-  The destructor removes the box.*/
-
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Box.H>
 

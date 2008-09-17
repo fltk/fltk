@@ -25,20 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \fn virtual void Fl_Gl_Window::draw(void)
-  Fl_Gl_Window::draw() is a pure virtual method.  You must
-  subclass Fl_Gl_Window and provide an implementation for 
-  draw().  You may also provide an implementation of draw_overlay()
-  if you want to draw into the overlay planes.  You can avoid
-  reinitializing the viewport and lights and other things by checking 
-  valid() at the start of draw() and only doing the
-  initialization if it is false.
-  <P>The draw() method can <I>only</I> use OpenGL calls.  Do not
-  attempt to call X, any of the functions in &lt;FL/fl_draw.H&gt;, or glX
-  directly.  Do not call gl_start() or gl_finish(). </P>
-  <P>If double-buffering is enabled in the window, the back and front
-  buffers are swapped after this function is completed.
-*/
 
 #include "flstring.h"
 #if HAVE_GL
@@ -510,6 +496,22 @@ void Fl_Gl_Window::draw_overlay() {}
 
 #endif
 
+  /**
+  You <b>must</b> subclass Fl_Gl_Window and provide an implementation for 
+  draw().  You may also provide an implementation of draw_overlay()
+  if you want to draw into the overlay planes.  You can avoid
+  reinitializing the viewport and lights and other things by checking 
+  valid() at the start of draw() and only doing the
+  initialization if it is false.
+  <P>The draw() method can <I>only</I> use OpenGL calls.  Do not
+  attempt to call X, any of the functions in &lt;FL/fl_draw.H&gt;, or glX
+  directly.  Do not call gl_start() or gl_finish(). </P>
+  <P>If double-buffering is enabled in the window, the back and front
+  buffers are swapped after this function is completed.
+*/
+void Fl_Gl_Window::draw() {
+    Fl::fatal("Fl_Gl_Window::draw() *must* be overriden. Please refer to the documentation.");
+}
 //
 // End of "$Id$".
 //
