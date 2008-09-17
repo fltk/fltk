@@ -1,0 +1,95 @@
+/**
+
+ \page development I - Developer Information
+
+<P>This chapter describes FLTK development and documentation.
+</P>
+
+\note	documentation with doxygen will be described here.
+
+
+<H2>Example</H2>
+
+\note
+
+In the following code example(s) "*" will be replaced by "#"
+as a temporary solution.
+
+\code
+
+
+/## \file
+   Fl_Clock, Fl_Clock_Output widgets . #/
+
+
+/##
+  \class Fl_Clock_Output
+  \brief This widget can be used to display a program-supplied time.
+  
+  The time shown on the clock is not updated. To display the current time,
+  use Fl_Clock instead.
+
+  \image html clock.gif 
+ 
+  \image html round_clock.gif
+ #/
+
+  /##
+    Returns the displayed time.
+    Returns the time in seconds since the UNIX epoch (January 1, 1970).
+    \see value(ulong)
+   #/
+  ulong value() const {return value_;}
+
+/##
+  Set the displayed time.
+  Set the time in seconds since the UNIX epoch (January 1, 1970).
+  \param[in] v seconds since epoch
+  \see value()
+ #/
+void Fl_Clock_Output::value(ulong v) {
+ [...]
+}
+
+/##
+  Create an Fl_Clock widget using the given position, size, and label string.
+  The default boxtype is \c FL_NO_BOX.
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ #/
+Fl_Clock::Fl_Clock(int X, int Y, int W, int H, const char #L)
+  : Fl_Clock_Output(X, Y, W, H, L) {}
+
+/##
+  Create an Fl_Clock widget using the given boxtype, position, size, and
+  label string.
+  \param[in] t boxtype
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ #/
+Fl_Clock::Fl_Clock(uchar t, int X, int Y, int W, int H, const char #L)
+  : Fl_Clock_Output(X, Y, W, H, L) {
+  type(t);
+  box(t==FL_ROUND_CLOCK ? FL_NO_BOX : FL_UP_BOX);
+}
+
+
+\endcode
+
+
+\note
+
+From Duncan: (will be removed later, just for now as a reminder)
+
+5. I've just added comments for the fl_color_chooser() functions, and
+   in order to keep them and the general Function Reference information
+   for them together, I created a new doxygen group, and used \ingroup
+   in the three comment blocks. This creates a new Modules page (which
+   may not be what we want) with links to it from the File Members and
+   Fl_Color_Chooser.H pages. It needs a bit more experimentation on my
+   part unless someone already knows how this should be handled. (Maybe
+   we can add it to a functions.dox file that defines a functions group
+   and do that for all of the function documentation?)
+
+
+*/
