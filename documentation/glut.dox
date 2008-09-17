@@ -4,7 +4,7 @@
 
 <P>This appendix describes the GLUT compatibility header file supplied with FLTK. FLTK's GLUT compatibility is based on the original GLUT 3.7 and the follow-on FreeGLUT 2.4.0 libraries.</P>
 <H2>Using the GLUT Compatibility Header File</H2>
-<P>You should be able to compile existing GLUT source code by including <TT>&lt;FL/glut.H&gt;</TT> instead of <TT>&lt;GL/glut.h&gt;</TT>.  This can be done by editing the source, by changing the <TT>-I</TT> switches to the compiler, or by providing a symbolic link from <TT>GL/glut.h</TT> to <TT>FL/glut.H</TT>.</P>
+<P>You should be able to compile existing GLUT source code by including <TT><FL/glut.H></TT> instead of <TT><GL/glut.h></TT>.  This can be done by editing the source, by changing the <TT>-I</TT> switches to the compiler, or by providing a symbolic link from <TT>GL/glut.h</TT> to <TT>FL/glut.H</TT>.</P>
 <P><I>All files calling GLUT procedures must be compiled with C++</I>. You may have to alter them slightly to get them to compile without warnings, and you may have to rename them to get make to use the C++ compiler.</P>
 <P>You must link with the FLTK library. Most of <TT>FL/glut.H</TT> is inline functions.  You should take a look at it (and maybe at <TT>test/glpuzzle.cxx</TT> in the FLTK source) if you are having trouble porting your GLUT program. </P>
 <P>This has been tested with most of the demo programs that come with the GLUT and FreeGLUT distributions.</P>
@@ -54,7 +54,7 @@ small crosshair. </P>
 <P><TT>glutInit(argc,argv)</TT> will consume different switches than
 GLUT does.  It accepts the switches recognized by <A href="Fl.html#Fl.args">
 <TT>Fl::args()</TT></A>, and will accept any abbreviation of these
-switches (such as &quot;-di&quot; for &quot;-display&quot;). </P>
+switches (such as "-di" for "-display"). </P>
 <H2>Mixing GLUT and FLTK Code</H2>
  You can make your GLUT window a child of a <TT>Fl_Window</TT> with the
 following scheme.  The biggest trick is that GLUT insists on <TT>show()</TT>
@@ -66,12 +66,12 @@ Fl_Window</TT> parent window must already be shown.
 blank area in the window for your GLUT window. </LI>
 <LI><TT>show()</TT> the <TT>Fl_Window</TT>.  Perhaps call <TT>
 show(argc,argv)</TT>. </LI>
-<LI>Call <TT>window-&gt;begin()</TT> so that the GLUT window will  be
+<LI>Call <TT>window->begin()</TT> so that the GLUT window will  be
 automatically added to it. </LI>
 <LI>Use <TT>glutInitWindowSize()</TT> and <TT>glutInitWindowPosition()</TT>
  to set the location in the  parent window to put the GLUT window. </LI>
 <LI>Put your GLUT code next.  It probably does not need many changes.
- Call <TT>window-&gt;end()</TT> immediately after the <TT>
+ Call <TT>window->end()</TT> immediately after the <TT>
 glutCreateWindow()</TT>! </LI>
 <LI>You can call either <TT>glutMainLoop()</TT>, <TT>Fl::run()</TT>, or
 loop calling <TT>Fl::wait()</TT> to run  the program. </LI>
@@ -80,19 +80,18 @@ loop calling <TT>Fl::wait()</TT> to run  the program. </LI>
 <H2><A name=Fl_Glut_Window>class Fl_Glut_Window</A></H2>
 <HR>
 <H3>Class Hierarchy</H3>
-<UL>
-<PRE>
+\code
 <A href=Fl_Gl_Window.html#Fl_Gl_Window>Fl_Gl_Window</A>
    |
    +----<B>Fl_Glut_Window</B>
-</PRE>
-</UL>
+\endcode
+
 <H3>Include Files</H3>
-<UL>
-<PRE>
-#include &lt;FL/glut.H&gt;
-</PRE>
-</UL>
+
+\code
+#include <FL/glut.H>
+\endcode
+
 <H3>Description</H3>
  Each GLUT window is an instance of this class.  You may find it useful
 to manipulate instances directly rather than use GLUT window id's.
@@ -103,7 +102,7 @@ glut_window</TT>. </P>
 <P><TT>new Fl_Glut_Window(...)</TT> is the same as <TT>
 glutCreateWindow()</TT> except it does not <TT>show()</TT> the window
 or make the window current. </P>
-<P><TT>window-&gt;make_current()</TT> is the same as <TT>
+<P><TT>window->make_current()</TT> is the same as <TT>
 glutSetWindow(number)</TT>.  If the window has not had <TT>show()</TT>
  called on it yet, some functions that assumme an OpenGL context will
 not work.  If you do <TT>show()</TT> the window, call <TT>make_current()</TT>

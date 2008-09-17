@@ -15,7 +15,7 @@ They are not meant to be great achievements in clean C++ programming, but merely
 a test platform to verify the functionality of the FLTK library.</P>
 
 <table width=100% border=0>
-<tr><td colspan=4><font size=+1><b>Example Applications</b></font></td>
+<tr><td colspan=4><H3><b>Example Applications</b></H3></td>
 <tr>
 <td><a href="#adjuster"><tt>adjuster</tt></a></td>
 <td><a href="#arc"><tt>arc</tt></a></td>

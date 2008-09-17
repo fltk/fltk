@@ -20,10 +20,10 @@ href="#gl_start"><TT>gl_start()</TT></A> and <A
 href=#gl_finish><TT>gl_finish()</TT></A> functions around your
 OpenGL code.</P>
 
-<P>You must include FLTK's <TT>&lt;FL/gl.h&gt;</TT> header
-file. It will include the file <TT>&lt;GL/gl.h&gt;</TT>, define
+<P>You must include FLTK's <TT><FL/gl.h></TT> header
+file. It will include the file <TT><GL/gl.h></TT>, define
 some extra drawing functions provided by FLTK, and include the
-<TT>&lt;windows.h&gt;</TT> header file needed by WIN32
+<TT><windows.h></TT> header file needed by WIN32
 applications.</P>
 
 <H2>Making a Subclass of Fl_Gl_Window</H2>
@@ -47,7 +47,7 @@ in the value returned by <tt>damage()</tt>. For double-buffered
 windows you will need to surround the drawing code with the
 following code to make sure that both buffers are redrawn:
 
-<UL><PRE>
+\code
 #ifndef MESA
 glDrawBuffer(GL_FRONT_AND_BACK);
 #endif // !MESA
@@ -55,7 +55,7 @@ glDrawBuffer(GL_FRONT_AND_BACK);
 #ifndef MESA
 glDrawBuffer(GL_BACK);
 #endif // !MESA
-</PRE></UL>
+\endcode
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
@@ -77,7 +77,7 @@ glDrawBuffer(GL_BACK);
 <P>To define the subclass you just subclass the
 <TT>Fl_Gl_Window</TT> class:
 
-<UL><PRE>
+\code
 class MyWindow : public Fl_Gl_Window {
   void draw();
   int handle(int);
@@ -86,7 +86,7 @@ public:
   MyWindow(int X, int Y, int W, int H, const char *L)
     : Fl_Gl_Window(X, Y, W, H, L) {}
 };
-</PRE></UL>
+\endcode
 
 <P>The <TT>draw()</TT> and <TT>handle()</TT> methods are
 described below. Like any widget, you can include additional
@@ -98,7 +98,7 @@ information, etc.)
 <P>The <TT>draw()</TT> method is where you actually do your
 OpenGL drawing:
 
-<UL><PRE>
+\code
 void MyWindow::draw() {
   if (!valid()) {
     ... set up projection, viewport, etc ...
@@ -107,14 +107,14 @@ void MyWindow::draw() {
   }
   ... draw ...
 }
-</PRE></UL>
+\endcode
 
 <H3>The handle() Method</H3>
 
 <P>The <TT>handle()</TT> method handles mouse and keyboard
 events for the window:
 
-<UL><PRE>
+\code
 int MyWindow::handle(int event) {
   switch(event) {
   case FL_PUSH:
@@ -144,7 +144,7 @@ int MyWindow::handle(int event) {
     return Fl_Gl_Window::handle(event);
   }
 }
-</PRE></UL>
+\endcode
 
 <P>When <TT>handle()</TT> is called, the OpenGL context is not
 set up! If your display changes, you should call
@@ -154,16 +154,18 @@ call any OpenGL drawing functions from inside <TT>handle()</TT>!
 <P>You can call <I>some</I> OpenGL stuff like hit detection and texture
 loading functions by doing: </P>
 
-<UL><PRE>
+\code
   case FL_PUSH:
-    make_current(); // make OpenGL context current
+    make_current();	// make OpenGL context current
     if (!valid()) {
+
       ... set up projection exactly the same as draw ...
-      valid(1); // stop it from doing this next time
+
+      valid(1);		// stop it from doing this next time
     }
     ... ok to call NON-DRAWING OpenGL code here, such as hit
     detection, loading textures, etc...
-</PRE></UL>
+\endcode
 
 <P>Your main program can now create one of your windows by doing
 <TT>new MyWindow(...)</TT>.  You can also use <A
@@ -176,17 +178,17 @@ href="fluid.html#FLUID">FLUID</A> by:
 
 	<LI>Creating a <tt>Fl_Box</tt> widget in FLUID.</LI>
 
-	<LI>In the widget panel fill in the &quot;class&quot;
+	<LI>In the widget panel fill in the "class"
 	field with <tt>MyWindow</tt>. This will make FLUID
 	produce constructors for your new class.</LI>
 
-	<LI>In the &quot;Extra Code&quot; field put <TT>#include
-	&quot;MyWindow.H&quot;</TT>, so that the FLUID output
+	<LI>In the "Extra Code" field put <TT>\#include
+	"MyWindow.H"</TT>, so that the FLUID output
 	file will compile.</LI>
 
 </OL>
 
-<P>You must put <TT>glwindow-&gt;show()</TT> in your main code
+<P>You must put <TT>glwindow->show()</TT> in your main code
 after calling <TT>show()</TT> on the window containing the
 OpenGL window.
 
@@ -201,22 +203,21 @@ care.
 <P>Most importantly, before you show <I>any</I> windows,
 including those that don't have OpenGL drawing, you <B>must</B>
 initialize FLTK so that it knows it is going to use OpenGL. You
-may use any of the symbols described for <A
-href="Fl_Gl_Window.html#Fl_Gl_Window.mode"><TT>Fl_Gl_Window::mode()</TT></A>
+may use any of the symbols described for Fl_Gl_Window::mode()
 to describe how you intend to use OpenGL:</P>
 
-<UL><PRE>
+\code
 Fl::gl_visual(FL_RGB);
-</PRE></UL>
+\endcode
 
 <P>You can then put OpenGL drawing code anywhere you can draw
 normally by surrounding it with:
 
-<UL><PRE>
+\code
 gl_start();
 ... put your OpenGL code here ...
 gl_finish();
-</PRE></UL>
+\endcode
 
 <P><A name="gl_start"><TT>gl_start()</TT></A> and <A
 name="gl_finish"><TT>gl_finish()</TT></A> set up an OpenGL
@@ -231,7 +232,7 @@ the projection transformation or anything else you should use
 <TT>glPushMatrix()</TT> and <TT>glPopMatrix()</TT> functions to
 put the state back before calling <TT>gl_finish()</TT>.</P>
 
-<P>You may want to use <TT>Fl_Window::current()-&gt;h()</TT> to
+<P>You may want to use Fl_Window::current()->h() to
 get the drawable height so that you can flip the Y
 coordinates.</P>
 
@@ -240,26 +241,23 @@ adhere to for maximum portability: </P>
 
 <UL>
 
-	<LI>You must choose a default visual with <A
-	href="Fl.html#Fl.gl_visual"><TT>Fl::gl_visual()</TT></A>.</LI>
+	<LI>You must choose a default visual with Fl::gl_visual().</LI>
 
-	<LI>You cannot pass <TT>FL_DOUBLE</TT> to
-	<TT>Fl::gl_visual()</TT>.</LI>
+	<LI>You cannot pass <TT>FL_DOUBLE</TT> to Fl::gl_visual().</LI>
 
-	<LI>You cannot use <TT>Fl_Double_Window</TT> or
-	<TT>Fl_Overlay_Window</TT>.</LI>
+	<LI>You cannot use Fl_Double_Window or Fl_Overlay_Window.</LI>
 
 </UL>
 
 <P>Do <I>not</I> call <TT>gl_start()</TT> or
-<TT>gl_finish()</TT> when drawing into an <TT>Fl_Gl_Window</TT>!
+<TT>gl_finish()</TT> when drawing into an Fl_Gl_Window !
 
 <H2>OpenGL Drawing Functions</H2>
 
 <P>FLTK provides some useful OpenGL drawing functions. They can
 be freely mixed with any OpenGL calls, and are defined by
-including <TT>&lt;FL/gl.H&gt;</TT> which you should include
-instead of the OpenGL header <TT>&lt;GL/gl.h&gt;</TT>.
+including <FL/gl.H> which you should include
+instead of the OpenGL header <TT><GL/gl.h></TT>.
 
 <H4>void gl_color(Fl_Color)</H4>
 
@@ -270,10 +268,9 @@ only right if this window uses the default colormap!</I>
 <H4>void gl_rect(int x, int y, int w, int h)
 <BR>void gl_rectf(int x, int y, int w, int h)</H4>
 
-<P>Outlines or fills a rectangle with the current color. If <A
-HREF="Fl_Gl_Window.html#Fl_Gl_Window.ortho"><TT>Fl_Gl_Window::ortho()</TT></A>
-has been called, then the rectangle will exactly fill the pixel
-rectangle passed.
+<P>Outlines or fills a rectangle with the current color. If 
+Fl_Gl_Window::ortho() has been called, then the rectangle will exactly
+fill the pixel rectangle passed.
 
 <H4>void gl_font(Fl_Font fontid, int size)</H4>
 
@@ -361,7 +358,7 @@ to view large scenes without writing a lot of OpenGL code.
 subclass of <TT>Fl_Gl_Widget</TT> that includes several state
 variables:
 
-<UL><PRE>
+\code
 class OptimizerWindow : public Fl_Gl_Window {
   csContext *context_; // Initialized to 0 and set by draw()...
   csDrawAction *draw_action_; // Draw action...
@@ -384,13 +381,13 @@ public:
   void camera(csCamera *c) {
     camera_ = c;
     if (context_) {
-      draw_action_-&gt;setCamera(camera_);
-      camera_-&gt;draw(draw_action_);
+      draw_action_->setCamera(camera_);
+      camera_->draw(draw_action_);
       redraw();
     }
   }
 };
-</PRE></UL>
+\endcode
 
 <H4>The camera() Method</H4>
 
@@ -403,7 +400,7 @@ this call.
 <P>The <TT>draw()</TT> method performs the needed initialization and does
 the actual drawing:
 
-<UL><PRE>
+\code
 void OptimizerWindow::draw() {
   if (!context_) {
     // This is the first time we've been asked to draw; create the
@@ -411,12 +408,12 @@ void OptimizerWindow::draw() {
 
 #ifdef WIN32
     context_ = new csContext((HDC)fl_getHDC());
-    context_-&gt;ref();
-    context_-&gt;makeCurrent((HDC)fl_getHDC());
+    context_->ref();
+    context_->makeCurrent((HDC)fl_getHDC());
 #else
     context_ = new csContext(fl_display, fl_visual);
-    context_-&gt;ref();
-    context_-&gt;makeCurrent(fl_display, fl_window);
+    context_->ref();
+    context_->makeCurrent(fl_display, fl_window);
 #endif // WIN32
 
     ... perform other context setup as desired ...   
@@ -425,24 +422,24 @@ void OptimizerWindow::draw() {
 
     draw_action_ = new csDrawAction;
     if (camera_) {
-      draw_action_-&gt;setCamera(camera_);
-      camera_-&gt;draw(draw_action_);
+      draw_action_->setCamera(camera_);
+      camera_->draw(draw_action_);
     }
   } else {
 #ifdef WIN32
-    context_-&gt;makeCurrent((HDC)fl_getHDC());
+    context_->makeCurrent((HDC)fl_getHDC());
 #else
-    context_-&gt;makeCurrent(fl_display, fl_window);
+    context_->makeCurrent(fl_display, fl_window);
 #endif // WIN32
   }
 
   if (!valid()) {
     // Update the viewport for this context...
-    context_-&gt;setViewport(0, 0, w(), h());
+    context_->setViewport(0, 0, w(), h());
   }
 
   // Clear the window...
-  context_-&gt;clear(csContext::COLOR_CLEAR | csContext::DEPTH_CLEAR,
+  context_->clear(csContext::COLOR_CLEAR | csContext::DEPTH_CLEAR,
                   0.0f,		// Red
 		  0.0f,		// Green
 		  0.0f,		// Blue
@@ -450,9 +447,9 @@ void OptimizerWindow::draw() {
 
   // Then draw the scene (if any)...
   if (scene_)
-    draw_action_-&gt;apply(scene_);
+    draw_action_->apply(scene_);
 }
-</PRE></UL>
+\endcode
 
 <H4>The scene() Method</H4>
 

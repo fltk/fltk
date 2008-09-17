@@ -57,7 +57,7 @@ exceptions:</P>
 
 <HR>
 
-<P ALIGN=CENTER><BIG>GNU LIBRARY GENERAL PUBLIC LICENSE</BIG></P>
+<P ALIGN=CENTER><B>GNU LIBRARY GENERAL PUBLIC LICENSE</B></P>
 <P ALIGN=CENTER>Version 2, June 1991
 <BR> Copyright (C) 1991 Free Software Foundation, Inc.
 <BR> 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA
@@ -65,7 +65,7 @@ exceptions:</P>
 this license document, but changing it is not allowed.
 <BR> [This is the first released version of the library GPL.  It is
 numbered 2 because it goes with version 2 of the ordinary GPL.] </P>
-<P><BIG>Preamble</BIG></P>
+<P><B>Preamble</B></P>
  The licenses for most software are designed to take away your freedom
 to share and change it.  By contrast, the GNU General Public Licenses
 are intended to guarantee your freedom to share and change free
@@ -140,8 +140,8 @@ former contains code derived from the library, while the latter only
 works together with the library. </P>
 <P>Note that it is possible for a library to be covered by the ordinary
 General Public License rather than by this special one. </P>
-<P ALIGN="CENTER"><BIG>TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND
-MODIFICATION</BIG></P>
+<P ALIGN="CENTER"><B>TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND
+MODIFICATION</B></P>
 <STRONG>0.</STRONG> This License Agreement applies to any software
 library which contains a notice placed by the copyright holder or other
 authorized party saying it may be distributed under the terms of this
@@ -181,7 +181,7 @@ fee. </P>
 <P><STRONG>2.</STRONG> You may modify your copy or copies of the
 Library or any portion of it, thus forming a work based on the Library,
 and copy and distribute such modifications or work under the terms of
-Section 1 above, provided that you also meet all of these conditions: <BLOCKQUOTE>
+Section 1 above, provided that you also meet all of these conditions:
 <STRONG>a)</STRONG> The modified work must itself be a software
 library.
 <P><STRONG>b)</STRONG> You must cause the files modified to carry
@@ -203,7 +203,7 @@ purpose that is entirely well-defined independent of the application.
 function or table used by this function must be optional: if the
 application does not supply it, the square root function must still
 compute square roots.) </P>
-</BLOCKQUOTE>
+
 <P>These requirements apply to the modified work as a whole.
 If identifiable sections of that work are not derived from the
 Library, and can be reasonably considered independent and separate
@@ -284,7 +284,7 @@ this License.  You must supply a copy of this License.  If the work
 during execution displays copyright notices, you must include the
 copyright notice for the Library among them, as well as a reference
 directing the user to the copy of this License.  Also, you must do one
-of these things: <BLOCKQUOTE><STRONG>a)</STRONG> Accompany the work
+of these things: <STRONG>a)</STRONG> Accompany the work
 with the complete corresponding  machine-readable source code for the
 Library including whatever  changes were used in the work (which must
 be distributed under  Sections 1 and 2 above); and, if the work is an
@@ -304,7 +304,7 @@ access to copy  from a designated place, offer equivalent access to
 copy the above  specified materials from the same place. </P>
 <P><STRONG>d)</STRONG> Verify that the user has already received a copy
 of these  materials or that you have already sent this user a copy. </P>
-</BLOCKQUOTE>
+
 <P>For an executable, the required form of the &quot;work that
 uses the Library&quot; must include any data and utility programs needed for
 reproducing the executable from it.  However, as a special exception,
@@ -323,16 +323,16 @@ based on the Library side-by-side in a single library together with
 other library facilities not covered by this License, and distribute
 such a combined library, provided that the separate distribution of the
 work based on the Library and of the other library facilities is
-otherwise permitted, and provided that you do these two things: <BLOCKQUOTE>
+otherwise permitted, and provided that you do these two things:
 <STRONG>a)</STRONG> Accompany the combined library with a copy of the
 same work  based on the Library, uncombined with any other library
  facilities.  This must be distributed under the terms of the  Sections
 above.
 <P><STRONG>b)</STRONG> Give prominent notice with the combined library
-of the fact  that part of it is a work based on the Library, and
-explaining  where to find the accompanying uncombined form of the same
+of the fact that part of it is a work based on the Library, and
+explaining where to find the accompanying uncombined form of the same
 work. </P>
-</BLOCKQUOTE>
+
 <P><STRONG>8.</STRONG> You may not copy, modify, sublicense,
 link with, or distribute the Library except as expressly provided under
 this License.  Any attempt otherwise to copy, modify, sublicense, link
@@ -412,7 +412,7 @@ Software Foundation; we sometimes make exceptions for this.  Our
 decision will be guided by the two goals of preserving the free status
 of all derivatives of our free software and of promoting the sharing
 and reuse of software generally. </P>
-<P ALIGN="CENTER"><BIG>NO WARRANTY</BIG></P>
+<P ALIGN="CENTER"><B>NO WARRANTY</B></P>
 <P><STRONG>15.</STRONG> BECAUSE THE LIBRARY IS LICENSED FREE OF CHARGE,
 THERE IS NO WARRANTY FOR THE LIBRARY, TO THE EXTENT PERMITTED BY
 APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
@@ -432,6 +432,6 @@ RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
 FAILURE OF THE LIBRARY TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
 SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGES. </P>
-<P ALIGN="CENTER"><BIG>END OF TERMS AND CONDITIONS</BIG></P>
+<P ALIGN="CENTER"><B>END OF TERMS AND CONDITIONS</B></P>
 
 */

@@ -44,16 +44,16 @@ class.</P>
 
 <P>Some function names have changed from FLTK 1.0.x to 1.1.x in
 order to avoid name space collisions. You can still use the old
-function names by defining the <CODE>FLTK_1_0_COMPAT</CODE>
+function names by defining the <TT>FLTK_1_0_COMPAT</TT>
 symbol on the command-line when you compile
-(<CODE>-DFLTK_1_0_COMPAT</CODE>) or in your source, e.g.:
+(<TT>-DFLTK_1_0_COMPAT</TT>) or in your source, e.g.:
 
-<UL><PRE>
+\code
 #define FLTK_1_0_COMPAT
-#include &lt;FL/Fl.H&gt;
-#include &lt;FL/Enumerations.H&gt;
-#include &lt;FL/filename.H&gt;
-</PRE></UL>
+#include <FL/Fl.H>
+#include <FL/Enumerations.H>
+#include <FL/filename.H>
+\endcode
 
 <P>The following table shows the old and new function names:</P>
 
@@ -151,8 +151,8 @@ text widgets get keyboard focus, call the <A
 HREF="Fl.html#Fl.visible_focus"><CODE>Fl::visible_focus()</CODE></A>
 method to disable it:
 
-<UL><PRE>
+\code
 Fl::visible_focus(0);
-</PRE></UL>
+\endcode
 
 */

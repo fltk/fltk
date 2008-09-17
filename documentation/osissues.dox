@@ -9,9 +9,9 @@
 <P>All programs that need to access the operating system
 specific interfaces must include the following header file:
 
-<UL><PRE>
-#include &lt;FL/x.H&gt;
-</PRE></UL>
+\code
+#include <FL/x.H>
+\endcode
 
 <P>Despite the name, this header file will define the
 appropriate interface for your environment. The pages that
@@ -78,7 +78,7 @@ XID, or <TT>NULL</TT> if not found. This function uses a cache
 so it is slightly faster than iterating through the windows
 yourself.</P>
 
-<H4><A name="fl_handle">int fl_handle(const XEvent &amp;)</A></H4>
+<H4><A name="fl_handle">int fl_handle(const XEvent &)</A></H4>
 
 <P>This call allows you to supply the X events to FLTK, which
 may allow FLTK to cooperate with another toolkit or library. The
@@ -104,21 +104,21 @@ HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A> is
 called, or by <A
 href="Fl_Window.html#Fl_Window.make_current"><TT>Fl_Window::make_current()</TT></A>:
 
-<UL><PRE>
+\code
 extern Display *fl_display;
 extern Window fl_window;
 extern GC fl_gc;
 extern int fl_screen;
 extern XVisualInfo *fl_visual;
 extern Colormap fl_colormap;
-</PRE></UL>
+\endcode
 
 <P>You must use them to produce Xlib calls.  Don't attempt to change
 them. A typical X drawing call is written like this:
 
-<UL><PRE>
+\code
 XDrawSomething(fl_display, fl_window, fl_gc, ...);
-</PRE></UL>
+\endcode
 
 <P>Other information such as the position or size of the X
 window can be found by looking at <A
@@ -132,11 +132,11 @@ unsigned long fl_xpixel(uchar r, uchar g, uchar b)</A></H4>
 index or RGB color. This is the X pixel that <A
 href="drawing.html#fl_color"><TT>fl_color()</TT></A> would use.
 
-<H4><A name="fl_parse_color">int fl_parse_color(const char* p, uchar&amp; r, uchar&amp; g, uchar&amp; b)</A></H4>
+<H4><A name="fl_parse_color">int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)</A></H4>
 
 <P>Convert a name into the red, green, and blue values of a color
 by parsing the X11 color names. On other systems, <tt>fl_parse_color</tt>
-can only convert names in hexadecimal encoding, for example <tt>#ff8083</tt>.
+can only convert names in hexadecimal encoding, for example <tt>\#ff8083</tt>.
  
 <H4><A name="fl_xfont">extern XFontStruct *fl_xfont</A></H4>
 
@@ -170,7 +170,7 @@ visual.
 <H4><A name="display">int Fl::display(const char *)</A></H4>
 
 <P>Set which X display to use.  This actually does
-<TT>putenv(&quot;DISPLAY=...&quot;)</TT> so that child programs
+<TT>putenv("DISPLAY=...")</TT> so that child programs
 will display on the same screen if called with <TT>exec()</TT>.
 This must be done before the display is opened. This call is
 provided under MacOS and WIN32 but it has no effect.
@@ -206,7 +206,7 @@ probably cannot call any FLTK functions.
 <TT>fl_open_display()</TT> to the default screen. You can change
 it by setting this to a different value immediately afterwards.
 It can also be set by changing the last number in the
-<TT>Fl::display()</TT> string to &quot;host:0.#&quot;.
+<TT>Fl::display()</TT> string to "host:0.#".
 
 <H4><A name="fl_visual">extern XVisualInfo *fl_visual</A><BR>
 <A name="fl_colormap">extern Colormap fl_colormap</A></H4>
@@ -217,15 +217,15 @@ visual and colormap. You can change them before calling
 <TT>show()</TT> on the first window. Typical code for changing
 the default visual is:
 
-<UL><PRE>
+\code
 Fl::args(argc, argv); // do this first so $DISPLAY is set
 fl_open_display();
 fl_visual = find_a_good_visual(fl_display, fl_screen);
-if (!fl_visual) Fl::abort(&quot;No good visual&quot;);
-fl_colormap = make_a_colormap(fl_display, fl_visual-&gt;visual, fl_visual-&gt;depth);
+if (!fl_visual) Fl::abort("No good visual");
+fl_colormap = make_a_colormap(fl_display, fl_visual->visual, fl_visual->depth);
 // it is now ok to show() windows:
-window-&gt;show(argc, argv);
-</PRE></UL>
+window->show(argc, argv);
+\endcode
 
 <H3>Using a Subclass of Fl_Window for Special X Stuff</H3>
 
@@ -252,7 +252,7 @@ implementation must call either <TT>Fl_X::set_xid()</TT> or
 
 <P>An example:</P>
 
-<UL><PRE>
+\code
 void MyWindow::show() {
   if (shown()) {Fl_Window::show(); return;}  // you must do this!
   fl_open_display();	// necessary if this is first window
@@ -262,11 +262,11 @@ void MyWindow::show() {
   if (!visual) {
     visual = figure_out_visual();
     colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
-                               vis-&gt;visual, AllocNone);
+                               vis->visual, AllocNone);
   }
   Fl_X::make_xid(this, visual, colormap);
 }
-</PRE></UL>
+\endcode
 
 <H4>Fl_X *Fl_X::set_xid(Fl_Window *, Window xid)</H4>
 
@@ -293,7 +293,7 @@ your own windows you might just want to put all the drawing code
 in here.
 
 <P>The X region that is a combination of all <TT>damage()</TT>
-calls done so far is in <TT>Fl_X::i(this)-&gt;region</TT>. If
+calls done so far is in <TT>Fl_X::i(this)->region</TT>. If
 <TT>NULL</TT> then you should redraw the entire window. The
 undocumented function <TT>fl_clip_region(XRegion)</TT> will
 initialize the FLTK clip stack with a region or <TT>NULL</TT>
@@ -301,20 +301,20 @@ for no clipping. You must set region to <TT>NULL</TT> afterwards
 as <TT>fl_clip_region()</TT> will own and delete it when
 done.</P>
 
-<P>If <TT>damage() &amp; FL_DAMAGE_EXPOSE</TT> then only X
+<P>If <TT>damage() & FL_DAMAGE_EXPOSE</TT> then only X
 expose events have happened. This may be useful if you have an
 undamaged image (such as a backing buffer) around.</P>
 
 <P>Here is a sample where an undamaged image is kept somewhere:</P>
 
-<UL><PRE>
+\code
 void MyWindow::flush() {
-  fl_clip_region(Fl_X::i(this)-&gt;region);
-  Fl_X::i(this)-&gt;region = 0;
+  fl_clip_region(Fl_X::i(this)->region);
+  Fl_X::i(this)->region = 0;
   if (damage() != 2) {... draw things into backing store ...}
   ... copy backing store to window ...
 }
-</PRE></UL>
+\endcode
 
 <H4>virtual void Fl_Window::hide()</H4>
 
@@ -324,7 +324,7 @@ window, and then call <TT>Fl_Window::hide()</TT> to get rid of
 the main window identified by <TT>xid()</TT>. If you override
 this, you must also override the destructor as shown:
 
-<UL><PRE>
+\code
 void MyWindow::hide() {
   if (mypixmap) {
     XFreePixmap(fl_display,mypixmap);
@@ -332,7 +332,7 @@ void MyWindow::hide() {
   }
   Fl_Window::hide(); // you must call this
 }
-</PRE></UL>
+\endcode
 
 <H4>virtual void Fl_Window::~Fl_Window()</H4>
 
@@ -340,11 +340,11 @@ void MyWindow::hide() {
 you <I>must</I> override the destructor as well (otherwise only
 the base class <TT>hide()</TT> is called):
 
-<UL><PRE>
+\code
 MyWindow::~MyWindow() {
   hide();
 }
-</PRE></UL>
+\endcode
 
 <H3>Setting the Icon of a Window</H3>
 
@@ -358,33 +358,33 @@ need to cast the icon <TT>Pixmap</TT> to a <TT>char *</TT> when
 calling this method. To set a monochrome icon using a bitmap compiled
 with your application use:
 
-<UL><PRE>
-#include &quot;icon.xbm&quot;
+\code
+#include "icon.xbm"
 
 fl_open_display(); // needed if display has not been previously opened
 
 Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
                                  icon_bits, icon_width, icon_height);
 
-window-&gt;icon((char *)p);
-</PRE></UL>
+window->icon((char *)p);
+\endcode
 
 <P>To use a multi-colored icon, the XPM format and library
 should be used as follows:
 
-<UL><PRE>
-#include &lt;X11/xpm.h&gt;
-#include &quot;icon.xpm&quot;
+\code
+#include <X11/xpm.h>
+#include "icon.xpm"
 
 fl_open_display();                // needed if display has not been previously opened
 
 Pixmap p, mask;
 
 XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
-                                 icon_xpm, &amp;p, &amp;mask, NULL);
+                                 icon_xpm, &p, &mask, NULL);
 
-window-&gt;icon((char *)p);
-</PRE></UL>
+window->icon((char *)p);
+\endcode
 
 <p>When using the Xpm library, be sure to include it in the list
 of libraries that are used to link the application (usually
@@ -453,7 +453,7 @@ state information and data structures.
 
 <H3>Handling Other WIN32 Messages</H3>
 
-<P>By default a single WNDCLASSEX called &quot;FLTK&quot; is
+<P>By default a single WNDCLASSEX called "FLTK" is
 created. All <TT>Fl_Window</TT>'s are of this class unless you
 use <TT>Fl_Window::xclass()</TT>. The window class is created
 the first time <TT>Fl_Window::show()</TT> is called.
@@ -505,14 +505,14 @@ HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A> is
 called, FLTK stores all the silly extra arguments you need to
 make a proper GDI call in some global variables:
 
-<UL><PRE>
+\code
 extern HINSTANCE fl_display;
 extern HWND fl_window;
 extern HDC fl_gc;
 COLORREF fl_RGB();
 HPEN fl_pen();
 HBRUSH fl_brush();
-</PRE></UL>
+\endcode
 
 <P>These global variables are set before <TT>draw()</TT> is
 called, or by <A
@@ -523,9 +523,9 @@ the current color set by <TT>fl_color()</TT> and are created as
 needed and cached. A typical GDI drawing call is written like
 this:
 
-<UL><PRE>
+\code
 DrawSomething(fl_gc, ..., fl_brush());
-</PRE></UL>
+\endcode
 
 <P>It may also be useful to refer to <A
 href="Fl_Window.html#Fl_Window.make_current"><TT>Fl_Window::current()</TT></A>
@@ -543,9 +543,9 @@ need to cast the <TT>HICON</TT> handle to a <TT>char *</TT> when
 calling this method. To set the icon using an icon resource
 compiled with your application use:
 
-<UL><PRE>
-window-&gt;icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
-</PRE></UL>
+\code
+window->icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
+\endcode
 
 <P>You can also use the <TT>LoadImage()</TT> and related
 functions to load specific resolutions or create the icon from
@@ -572,9 +572,9 @@ executables that controls whether or not to make a console
 window.
 
 <P>To always get a console window you simply create a console
-application (the &quot;/SUBSYSTEM:CONSOLE&quot; option for the
+application (the "/SUBSYSTEM:CONSOLE" option for the
 linker). For a GUI-only application create a WIN32 application
-(the &quot;/SUBSYSTEM:WINDOWS&quot; option for the linker).</P>
+(the "/SUBSYSTEM:WINDOWS" option for the linker).</P>
 
 <P>FLTK includes a <TT>WinMain()</TT> function that calls the
 ANSI standard <TT>main()</TT> entry point for you. <I>This
@@ -707,7 +707,7 @@ applications
 will NOT copy any resource forks! For copying and moving use
 CpMac and MvMac respectively. For creating a tar archive, all
 executables need to be stripped from their Resource Fork before
-packing, e.g. "DeRez fluid &gt; fluid.r". After unpacking the
+packing, e.g. "DeRez fluid > fluid.r". After unpacking the
 Resource Fork needs to be reattached, e.g. "Rez fluid.r -o
 fluid".
 </TD></TR></TABLE></CENTER>

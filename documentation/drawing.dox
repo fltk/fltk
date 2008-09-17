@@ -13,26 +13,23 @@ behavior!
 <UL>
 
 	<LI>The most common place is inside the virtual method
-	<A
-	href="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A>. 
+	<A href="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A>. 
 	To write code here, you must subclass one of the
-	existing <TT>Fl_Widget</TT> classes and implement your
-	own version of <TT>draw()</TT>.</LI>
+	existing Fl_Widget classes and implement your
+	own version of draw().</LI>
 
 	<LI>You can also write <A
 	href="common.html#boxtypes">boxtypes</A> and <A
 	href="common.html#labeltypes">labeltypes</A>. These are
 	small procedures that can be called by existing <A
 	HREF="subclassing.html#draw"><TT>Fl_Widget::draw()</TT></A>
-	methods. These &quot;types&quot; are identified by an 
+	methods. These "types" are identified by an 
 	8-bit index that is stored in the widget's
-	<TT>box()</TT>, <TT>labeltype()</TT>, and possibly other
+	box(), labeltype(), and possibly other
 	properties.</LI>
 
-	<LI>You can call <A
-	href="Fl_Window.html#Fl_Window.make_current"><TT>Fl_Window::make_current()</TT></A>
-	to do incremental update of a widget. Use <A
-	href=Fl_Widget.html#Fl_Widget.window><TT>Fl_Widget::window()</TT></A>
+	<LI>You can call Fl_Window::make_current() to do incremental 
+	update of a widget. Use Fl_Widget::window()
 	to find the window.</LI>
 
 </UL>
@@ -40,7 +37,7 @@ behavior!
 <H2>FLTK Drawing Functions</H2>
 
 <P>To use the drawing functions you must first include the
-<TT>&lt;FL/fl_draw.H&gt;</TT> header file. FLTK provides the
+<FL/fl_draw.H> header file. FLTK provides the
 following types of drawing functions:
 
 <UL>
@@ -111,7 +108,7 @@ not a multiple of 4 characters in length are undefined.
 <H3><A name="clipping">Clipping</A></H3>
 
 <P>You can limit all your drawing to a rectangular region by calling
-<TT>fl_push_clip</TT>, and put the drawings back by using <TT>fl_pop_clip</TT>.
+fl_push_clip(), and put the drawings back by using fl_pop_clip.
 This rectangle is measured in pixels and is unaffected by the current
 transformation matrix.
 
@@ -125,11 +122,11 @@ void fl_push_clip(int x, int y, int w, int h)</H4>
 region onto the stack. The <CODE>fl_clip()</CODE> name is deprecated and
 will be removed from future releases.
 
-<H4><A NAME=fl_push_no_clip>void fl_push_no_clip()</A></H4>
+<H4><A NAME="fl_push_no_clip">void fl_push_no_clip()</A></H4>
 
 <P>Pushes an empty clip region on the stack so nothing will be clipped.
 
-<H4><A NAME=fl_pop_clip>void fl_pop_clip()</A></H4>
+<H4><A NAME="fl_pop_clip">void fl_pop_clip()</A></H4>
 
 <P>Restore the previous clip region.
 
@@ -137,8 +134,8 @@ will be removed from future releases.
 <TR>
 	<TD><B>Note:</B>
 
-	<P>You must call <TT>fl_pop_clip()</TT> once for every
-	time you call <TT>fl_push_clip()</TT>. If you return to FLTK
+	<P>You must call fl_pop_clip() once for every
+	time you call fl_push_clip(). If you return to FLTK
 	with the clip stack not empty unpredictable results
 	occur.
 
@@ -146,7 +143,7 @@ will be removed from future releases.
 </TR>
 </TABLE></CENTER>
 
-<H4><A NAME=fl_not_clipped>int fl_not_clipped(int x, int y, int w, int h)</A></H4>
+<H4><A NAME="fl_not_clipped">int fl_not_clipped(int x, int y, int w, int h)</A></H4>
 
 <P>Returns non-zero if any of the rectangle intersects the current clip
 region. If this returns 0 you don't have to draw the object.
@@ -162,8 +159,8 @@ region. If this returns 0 you don't have to draw the object.
 </TR>
 </TABLE></CENTER>
 
-<H4><A NAME=fl_clip_box>int fl_clip_box(int x, int y, int w, int h, int &amp;X, int &amp;Y, int &amp;W,
-int &amp;H)</A></H4>
+<H4><A NAME="fl_clip_box">int fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W,
+int &H)</A></H4>
 
 <P>Intersect the rectangle <TT>x,y,w,h</TT> with the current
 clip region and returns the bounding box of the result in
@@ -172,7 +169,7 @@ different than the original. This can be used to limit the
 necessary drawing to a rectangle. <TT>W</TT> and <TT>H</TT> are
 set to zero if the rectangle is completely outside the region.
 
-<H4><A NAME=fl_clip_region>void fl_clip_region(Fl_Region r)
+<H4><A NAME="fl_clip_region">void fl_clip_region(Fl_Region r)
 <BR>Fl_Region fl_clip_region()</A></H4>
 
 <P>Replace the top of the clip stack with a clipping region of any shape.
@@ -184,10 +181,10 @@ the current clipping region.
 <P>FLTK manages colors as 32-bit unsigned integers. Values from
 0 to 255 represent colors from the FLTK 1.0.x standard colormap
 and are allocated as needed on screens without TrueColor
-support. The <TT>Fl_Color</TT> enumeration type defines the
+support. The Fl_Color enumeration type defines the
 standard colors and color cube for the first 256 colors. All of
 these are named with symbols in <A
-href="enumerations.html#colors"><TT>&lt;FL/Enumerations.H&gt;</TT></A>.
+href="enumerations.html#colors"><TT><FL/Enumerations.H></TT></A>.
 
 <P>Color values greater than 255 are treated as 24-bit RGB
 values. These are mapped to the closest color supported by the
@@ -208,7 +205,7 @@ the closest color.</P>
 
 <H4>Fl_Color fl_color()</H4>
 
-<P>Returns the last <TT>fl_color()</TT> that was set. This can
+<P>Returns the last fl_color() that was set. This can
 be used for state save/restore.
 
 <H4>void fl_color(uchar r, uchar g, uchar b)</H4>
@@ -229,7 +226,7 @@ systems provide.
 
 <P>Set how to draw lines (the "pen").  If you change this it is your
 responsibility to set it back to the default with
-<tt>fl_line_style(0)</tt>.
+fl_line_style(0).
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
@@ -249,7 +246,7 @@ values. If you don't specify a dash type you will get a solid
 line. If you don't specify a cap or join type you will get a
 system-defined default of whatever value is fastest.
 
-<ul>
+<UL>
 
 	<li><tt>FL_SOLID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -------</tt>
 
@@ -273,7 +270,7 @@ system-defined default of whatever value is fastest.
 
 	<li><tt>FL_JOIN_BEVEL</tt> (flat)
 
-</ul>
+</UL>
 
 <P><i>width</i> is the number of pixels thick to draw the lines.
 Zero results in the system-defined default, which on both X and
@@ -310,60 +307,60 @@ href="#complex">transformation matrix</A>, so you should only
 call these while the matrix is set to the identity matrix (the
 default).
 
-<H4><A NAME=fl_point>void fl_point(int x, int y)</A></H4>
+<H4><A NAME="fl_point">void fl_point(int x, int y)</A></H4>
 
 <P>Draw a single pixel at the given coordinates.
 
-<H4><A NAME=fl_rectf>void fl_rectf(int x, int y, int w, int h)
+<H4><A NAME="fl_rectf">void fl_rectf(int x, int y, int w, int h)
 <BR>void fl_rectf(int x, int y, int w, int h)</A></H4>
 
 <P>Color a rectangle that exactly fills the given bounding box.
 
 <H4>void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b)</H4>
 
-<P>Color a rectangle with &quot;exactly&quot; the passed
+<P>Color a rectangle with "exactly" the passed
 <TT>r,g,b</TT> color. On screens with less than 24 bits of
 color this is done by drawing a solid-colored block using <A
 href="#fl_draw_image"><TT>fl_draw_image()</TT></A> so that
 the correct color shade is produced.
 
-<H4><A NAME=fl_rect>void fl_rect(int x, int y, int w, int h)
+<H4><A NAME="fl_rect">void fl_rect(int x, int y, int w, int h)
 <BR>void fl_rect(int x, int y, int w, int h, Fl_Color c)</A></H4>
 
 <P>Draw a 1-pixel border <I>inside</I> this bounding box.
 
-<H4><A NAME=fl_line>void fl_line(int x, int y, int x1, int y1)
+<H4><A NAME="fl_line">void fl_line(int x, int y, int x1, int y1)
 <BR>void fl_line(int x, int y, int x1, int y1, int x2, int y2)</A></H4>
 
 <P>Draw one or two lines between the given points.
 
-<H4><A NAME=fl_loop>void fl_loop(int x, int y, int x1, int y1, int x2, int y2)
+<H4><A NAME="fl_loop">void fl_loop(int x, int y, int x1, int y1, int x2, int y2)
 <BR>void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3,
 int y3)</A></H4>
 
 <P>Outline a 3 or 4-sided polygon with lines.
 
-<H4><A NAME=fl_polygon>void fl_polygon(int x, int y, int x1, int y1, int x2, int y2)
+<H4><A NAME="fl_polygon">void fl_polygon(int x, int y, int x1, int y1, int x2, int y2)
 <BR>void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int
 x3, int y3)</A></H4>
 
 <P>Fill a 3 or 4-sided polygon. The polygon must be convex.
 
-<H4><A NAME=fl_xyline>void fl_xyline(int x, int y, int x1)
+<H4><A NAME="fl_xyline">void fl_xyline(int x, int y, int x1)
 <BR>void fl_xyline(int x, int y, int x1, int y2)
 <BR>void fl_xyline(int x, int y, int x1, int y2, int x3)</A></H4>
 
 <P>Draw horizontal and vertical lines. A horizontal line is
 drawn first, then a vertical, then a horizontal.
 
-<H4><A NAME=fl_yxline>void fl_yxline(int x, int y, int y1)
+<H4><A NAME="fl_yxline">void fl_yxline(int x, int y, int y1)
 <BR>void fl_yxline(int x, int y, int y1, int x2)
 <BR>void fl_yxline(int x, int y, int y1, int x2, int y3)</A></H4>
 
 <P>Draw vertical and horizontal lines. A vertical line is drawn
 first, then a horizontal, then a vertical.
 
-<H4><A NAME=fl_pie>void fl_arc(int x, int y, int w, int h, double a1, double a2)
+<H4><A NAME="fl_pie">void fl_arc(int x, int y, int w, int h, double a1, double a2)
 <BR>void fl_pie(int x, int y, int w, int h, double a1, double a2)</A></H4>
 
 <P>Draw ellipse sections using integer coordinates. These
@@ -379,16 +376,16 @@ box. The two angles are measured in degrees counterclockwise from
 3'oclock and are the starting and ending angle of the arc, <TT>a2</TT>
 must be greater or equal to <TT>a1</TT>.</P>
 
-<P><TT>fl_arc()</TT> draws a series of lines to approximate the arc.
-Notice that the integer version of <TT>fl_arc()</TT> has a different
+<P>fl_arc() draws a series of lines to approximate the arc.
+Notice that the integer version of fl_arc() has a different
 number of arguments than the <A href="#fl_arc"><TT>fl_arc()</TT></A>
 function described later in this chapter.</P>
 
-<P><TT>fl_pie()</TT> draws a filled-in pie slice. This slice may
-extend outside the line drawn by <TT>fl_arc</TT>; to avoid this
+<P>fl_pie() draws a filled-in pie slice. This slice may
+extend outside the line drawn by fl_arc(); to avoid this
 use <TT>w - 1</TT> and <TT>h - 1</TT>.</P>
 
-<h4><a name=fl_scroll>void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
+<h4><a name="fl_scroll">void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
 void (*draw_area)(void*, int,int,int,int), void* data)</a></h4>
 
 <P>Scroll a rectangle and draw the newly exposed portions. The contents
@@ -409,13 +406,13 @@ severely limits the accuracy of these functions for complex
 graphics, so use OpenGL when greater accuracy and/or performance
 is required.
 
-<H4><A NAME=fl_push_matrix>void fl_push_matrix()
+<H4><A NAME="fl_push_matrix">void fl_push_matrix()
 <BR>void fl_pop_matrix()</A></H4>
 
 <P>Save and restore the current transformation.  The maximum
 depth of the stack is 4.
 
-<H4><A NAME=fl_scale>void fl_scale(float x, float y)
+<H4><A NAME="fl_scale">void fl_scale(float x, float y)
 <BR>void fl_scale(float x)
 <BR>void fl_translate(float x, float y)
 <BR>void fl_rotate(float d)
@@ -425,7 +422,7 @@ x, float y)</A></H4>
 <P>Concatenate another transformation onto the current one. The rotation
 angle is in degrees (not radians) and is counter-clockwise.
 
-<H4><A NAME=fl_transform>double fl_transform_x(double x, double y)
+<H4><A NAME="fl_transform">double fl_transform_x(double x, double y)
 <BR>double fl_transform_y(double x, double y)
 <BR>double fl_transform_dx(double x, double y)
 <BR>double fl_transform_dy(double x, double y)
@@ -435,36 +432,36 @@ angle is in degrees (not radians) and is counter-clockwise.
 After transforming a coordinate pair, it can be added to the vertex
 list without any forther translations using <tt>fl_transformed_vertex</tt>.
 
-<H4><A NAME=fl_begin_points>void fl_begin_points()
+<H4><A NAME="fl_begin_points">void fl_begin_points()
 <BR>void fl_end_points()</A></H4>
 
 <P>Start and end drawing a list of points. Points are added to
 the list with <tt>fl_vertex</tt>.
 
-<H4><A NAME=fl_begin_line>void fl_begin_line()
+<H4><A NAME="fl_begin_line">void fl_begin_line()
 <BR>void fl_end_line()</A></H4>
 
 <P>Start and end drawing lines.
 
-<H4><A NAME=fl_begin_loop>void fl_begin_loop()
+<H4><A NAME="fl_begin_loop">void fl_begin_loop()
 <BR> void fl_end_loop()</A></H4>
 
 <P>Start and end drawing a closed sequence of lines.
 
-<H4><A NAME=fl_begin_polygon>void fl_begin_polygon()
+<H4><A NAME="fl_begin_polygon">void fl_begin_polygon()
 <BR>void fl_end_polygon()</A></H4>
 
 <P>Start and end drawing a convex filled polygon.
 
-<H4><A NAME=fl_begin_complex_polygon>void fl_begin_complex_polygon()
+<H4><A NAME="fl_begin_complex_polygon">void fl_begin_complex_polygon()
 <BR>void fl_gap()
 <BR>void fl_end_complex_polygon()</A></H4>
 
 <P>Start and end drawing a complex filled polygon. This polygon
 may be concave, may have holes in it, or may be several
-disconnected pieces. Call <TT>fl_gap()</TT> to seperate loops of
+disconnected pieces. Call fl_gap() to separate loops of
 the path. It is unnecessary but harmless to call
-<TT>fl_gap()</TT> before the first vertex, after the last one,
+fl_gap() before the first vertex, after the last one,
 or several times in a row.
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
@@ -472,8 +469,8 @@ or several times in a row.
 	<TD><B>Note:</B>
 
 	<P>For portability, you should only draw polygons that
-	appear the same whether &quot;even/odd&quot; or
-	&quot;non-zero&quot; winding rules are used to fill
+	appear the same whether "even/odd" or
+	"non-zero" winding rules are used to fill
 	them. Holes should be drawn in the opposite direction of
 	the outside loop.
 
@@ -481,16 +478,16 @@ or several times in a row.
 </TR>
 </TABLE></CENTER>
 
-<P><TT>fl_gap()</TT> should only be called between <TT>
-fl_begin_complex_polygon()</TT> and
-<TT>fl_end_complex_polygon()</TT>. To outline the polygon, use
-<TT>fl_begin_loop()</TT> and replace each <TT>fl_gap()</TT> with
-<TT>fl_end_loop();fl_begin_loop()</TT>.</P>
+<P>fl_gap() should only be called between 
+fl_begin_complex_polygon() and
+fl_end_complex_polygon(). To outline the polygon, use
+fl_begin_loop() and replace each fl_gap() with
+fl_end_loop();fl_begin_loop().</P>
 
-<H4><A NAME=fl_vertex>void fl_vertex(float x, float y)</A></H4>
+<H4><A NAME="fl_vertex">void fl_vertex(float x, float y)</A></H4>
 Add a single vertex to the current path.
 
-<H4><A NAME=fl_curve>void fl_curve(float x, float y, float x1, float y1, float x2, float
+<H4><A NAME="fl_curve">void fl_curve(float x, float y, float x1, float y1, float x2, float
 y2, float x3, float y3)</A></H4>
 
 <P>Add a series of points on a Bezier curve to the path.  The curve ends
@@ -500,24 +497,24 @@ y2, float x3, float y3)</A></H4>
 
 <P>Add a series of points to the current path on the arc of a
 circle; you can get elliptical paths by using scale and rotate
-before calling <TT>fl_arc()</TT>. <TT>x,y</TT> are the center of
-the circle, and <TT>r</TT> is its radius. <TT>fl_arc()</TT>
+before calling fl_arc(). <TT>x,y</TT> are the center of
+the circle, and <TT>r</TT> is its radius. fl_arc()
 takes <TT>start</TT> and <TT>end</TT> angles that are measured
 in degrees counter-clockwise from 3 o'clock.  If <TT>end</TT> is
 less than <TT>start</TT> then it draws the arc in a clockwise
 direction.
 
-<H4><A NAME=fl_circle>void fl_circle(float x, float y, float r)</A></H4>
+<H4><A NAME="fl_circle">void fl_circle(float x, float y, float r)</A></H4>
 
-<P><TT>fl_circle()</TT> is equivalent to <TT>fl_arc(...,0,360)</TT> but
+<P>fl_circle() is equivalent to fl_arc(...,0,360) but
 may be faster. It must be the <I>only</I> thing in the path: if you
-want a circle as part of a complex polygon you must use <TT>fl_arc()</TT>.
+want a circle as part of a complex polygon you must use fl_arc().
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
 <TR>
 	<TD><B>Note:</B>
 
-	<P><TT>fl_circle()</TT> draws incorrectly if the
+	<P>fl_circle() draws incorrectly if the
 	transformation is both rotated and non-square scaled.
 
 	</TD>
@@ -530,7 +527,7 @@ want a circle as part of a complex polygon you must use <TT>fl_arc()</TT>.
 It is undefined whether this location or the characters are
 modified by the current transformation.
 
-<H4><A NAME=fl_draw>void fl_draw(const char *, int x, int y)
+<H4><A NAME="fl_draw">void fl_draw(const char *, int x, int y)
 <BR>void fl_draw(const char *, int n, int x, int y)</A></H4>
 
 <P>Draw a nul-terminated string or an array of <TT>n</TT> characters
@@ -548,9 +545,8 @@ Fl_Align align, Fl_Image *img = 0, int draw_symbols = 1)</H4>
 labels. The string is formatted and aligned inside the passed
 box.  Handles '\\t' and '\\n', expands all other control
 characters to ^X, and aligns inside or against the edges of the
-box described by <i>x</i>, <i>y</i>, <i>w</i> and <i>h</i>. See <A
-href="Fl_Widget.html#Fl_Widget.align"><TT>Fl_Widget::align()</TT></A>
-for values for <TT>align</TT>. The value
+box described by <i>x</i>, <i>y</i>, <i>w</i> and <i>h</i>. See 
+Fl_Widget::align() for values for <TT>align</TT>. The value
 <TT>FL_ALIGN_INSIDE</TT> is ignored, as this function always
 prints inside the box.
 
@@ -563,39 +559,36 @@ to look for symbol names starting with the "@" character.
 
 <P>The text length is limited to 1024 caracters per line.
 
-<H4><A NAME=fl_measure>void fl_measure(const char *, int &amp;w, 
-int &amp;h, int draw_symbols = 1)</A></H4>
+<H4><A NAME="fl_measure">void fl_measure(const char *, int &w, 
+int &h, int draw_symbols = 1)</A></H4>
 
 <P>Measure how wide and tall the string will be when printed by
 the <TT>fl_draw(...align)</TT> function. If the incoming
 <TT>w</TT> is non-zero it will wrap to that width.
 
-<H4><A NAME=fl_height>int fl_height()</A></H4>
+<H4><A NAME="fl_height">int fl_height()</A></H4>
 
 <P>Recommended minimum line spacing for the current font.  You
 can also just use the value of <TT>size</TT> passed to <A
-href=#fl_font><TT>fl_font()</TT></A>.
+href="#fl_font"><TT>fl_font()</TT></A>.
 
-<H4><A NAME=fl_descent>int fl_descent()</A></H4>
+<H4><A NAME="fl_descent">int fl_descent()</A></H4>
 
 <P>Recommended distance above the bottom of a
-<TT>fl_height()</TT> tall box to draw the text at so it looks
+fl_height() tall box to draw the text at so it looks
 centered vertically in that box.
 
-<H4><A NAME=fl_width>float fl_width(const char*)
+<H4><A NAME="fl_width">float fl_width(const char*)
 <BR>float fl_width(const char*, int n)
 <BR>float fl_width(uchar)</A></H4>
 
 <P>Return the pixel width of a nul-terminated string, a sequence of <TT>n</TT>
 characters, or a single character in the current font.
 
-<H4><A NAME=fl_shortcut_label>const char *fl_shortcut_label(ulong)</A></H4>
+<H4><A NAME="fl_shortcut_label">const char *fl_shortcut_label(ulong)</A></H4>
 
-<P>Unparse a shortcut value as used by <A
-href="Fl_Button.html#Fl_Button.shortcut"><TT>Fl_Button</TT></A>
-or <A
-href="Fl_Menu_Item.html#Fl_Menu_Item"><TT>Fl_Menu_Item</TT></A>
-into a human-readable string like &quot;Alt+N&quot;.  This only
+<P>Unparse a shortcut value as used by Fl_Button or Fl_Menu_Item
+into a human-readable string like "Alt+N".  This only
 works if the shortcut is a character key or a numbered function
 key. If the shortcut is zero an empty string is returned. The
 return value points at a static buffer that is overwritten with
@@ -609,18 +602,18 @@ custom fonts that your application may load. Each font is
 accessed by an index into a font table.
 
 <P>Initially only the first 16 faces are filled in. There are
-symbolic names for them: <TT>FL_HELVETICA</TT>,
-<TT>FL_TIMES</TT>, <TT>FL_COURIER</TT>, and modifier values
-<TT>FL_BOLD</TT> and <TT>FL_ITALIC</TT> which can be added to
-these, and <TT>FL_SYMBOL</TT> and <TT>FL_ZAPF_DINGBATS</TT>.
-Faces greater than 255 cannot be used in <TT>Fl_Widget</TT>
-labels, since <TT>Fl_Widget</TT> stores the index as a byte.</P>
+symbolic names for them: FL_HELVETICA,
+FL_TIMES, FL_COURIER, and modifier values
+FL_BOLD and FL_ITALIC which can be added to
+these, and FL_SYMBOL and FL_ZAPF_DINGBATS.
+Faces greater than 255 cannot be used in Fl_Widget
+labels, since Fl_Widget stores the index as a byte.</P>
 
 <H4><A name="fl_font">void fl_font(int face, int size)</A></H4>
 
 <P>Set the current font, which is then used by the routines
 described above. You may call this outside a draw context if
-necessary to call <TT>fl_width()</TT>, but on X this will open
+necessary to call fl_width(), but on X this will open
 the display.
 
 <P>The font is identified by a <TT>face</TT> and a
@@ -628,23 +621,23 @@ the display.
 <TT>pixels</TT> and not "points". Lines should be spaced
 <TT>size</TT> pixels apart or more.</P>
 
-<H4><A NAME=fl_size>int fl_font()
+<H4><A NAME="fl_size">int fl_font()
 <BR>int fl_size()</A></H4>
 
 <P>Returns the face and size set by the most recent call to
-<TT>fl_font(a,b)</TT>. This can be used to save/restore the
+fl_font(a,b). This can be used to save/restore the
 font.
 
-<H3><A NAME=character_encoding>Character Encoding</A></H3>
+<H3><A NAME="character_encoding">Character Encoding</A></H3>
 
 <P>FLTK 1 supports western character sets using the eight bit encoding
 of the user-selected global code page. For MS Windows and X11, the code
 page is assumed to be Windows-1252/Latin1, a superset to ISO 8859-1. 
 On Mac OS X, we assume MacRoman.
 
-<P>FLTK provides the functions <tt>fl_latin1_to_local</tt>, 
-<tt>fl_local_to_latin1</tt>, <tt>fl_mac_roman_to_local</tt>, and
-<tt>fl_local_to_mac_roman</tt> to convert strings between both
+<P>FLTK provides the functions fl_latin1_to_local(), 
+fl_local_to_latin1(), fl_mac_roman_to_local(), and
+fl_local_to_mac_roman() to convert strings between both
 encodings. These functions are only required if your source
 code contains "C"-strings with international characters and 
 if this source will be compiled on multiple platforms.
@@ -653,10 +646,10 @@ if this source will be compiled on multiple platforms.
 this example will output the correct label on OS X and X11 as well.
 Without the conversion call, the label on OS X would read 
 <tt>Fahrvergn&cedil;gen</tt> with a deformed umlaut u.
-<PRE>
+\code
   btn = new Fl_Button(10, 10, 300, 25);
-  btn-&gt;copy_label(fl_latin1_to_local("Fahrvergn&uuml;gen"));
-</PRE>
+  btn->copy_label(fl_latin1_to_local("Fahrvergn&uuml;gen"));
+\endcode
 
 <P>If your application uses characters that are not part of both
 encodings, or it will be used in areas that commonly use different
@@ -672,24 +665,23 @@ outline over a window.
 <H4>void fl_overlay_rect(int x, int y, int w, int h);
 <BR>void fl_overlay_clear();</H4>
 
-<P><TT>fl_overlay_rect()</TT> draws a selection rectangle, erasing any
-previous rectangle by XOR'ing it first. <TT>fl_overlay_clear()</TT>
+<P>fl_overlay_rect() draws a selection rectangle, erasing any
+previous rectangle by XOR'ing it first. fl_overlay_clear()
 will erase the rectangle without drawing a new one.
 
 <P>Using these functions is tricky. You should make a widget
-with both a <TT>handle()</TT> and <TT>draw()</TT> method.
-<TT>draw()</TT> should call <TT>fl_overlay_clear()</TT> before
-doing anything else.  Your <TT>handle()</TT> method should call
-<TT>window()-&gt;make_current()</TT> and then
-<TT>fl_overlay_rect()</TT> after <TT>FL_DRAG</TT> events, and
-should call <TT>fl_overlay_clear()</TT> after a
-<TT>FL_RELEASE</TT> event.</P>
+with both a handle() and draw() method.
+draw() should call fl_overlay_clear() before
+doing anything else.  Your handle() method should call
+window()->make_current() and then
+fl_overlay_rect() after FL_DRAG events, and
+should call fl_overlay_clear() after a
+FL_RELEASE event.</P>
 
 <H2><A name="images">Drawing Images</A></H2>
 
 <P>To draw images, you can either do it directly from data in
-your memory, or you can create a <A
-href="#Fl_Image"><TT>Fl_Image</TT></A> object. The advantage of
+your memory, or you can create a Fl_Image object. The advantage of
 drawing directly is that it is more intuitive, and it is faster
 if the image data changes more often than it is redrawn. The
 advantage of using the object is that FLTK will cache translated
@@ -708,7 +700,7 @@ should only draw images when the matrix is set to the identity.
 int D = 1, int LD = 0)</A></H4>
 
 <P>Draw an 8-bit per color RGB or luminance image.  The pointer
-points at the &quot;r&quot; data of the top-left pixel. Color
+points at the "r" data of the top-left pixel. Color
 data must be in <TT>r,g,b</TT> order. <TT>X,Y</TT> are where to
 put the top-left corner. <TT>W</TT> and <TT>H</TT> define the
 size of the image. <TT>D</TT> is the delta to add to the pointer
@@ -720,16 +712,16 @@ be larger than <TT>W * D</TT> to crop data, or negative to flip
 the image vertically.
 
 <P>It is highly recommended that you put the following code before the
-first <TT>show()</TT> of <I>any</I> window in your program to get rid
+first show() of <I>any</I> window in your program to get rid
 of the dithering if possible: </P>
 
-<UL><PRE>
+\code
 Fl::visual(FL_RGB);
-</PRE></UL>
+\endcode
 
 <P>Gray scale (1-channel) images may be drawn. This is done if
 <TT>abs(D)</TT> is less than 3, or by calling
-<TT>fl_draw_image_mono()</TT>. Only one 8-bit sample is used for
+fl_draw_image_mono(). Only one 8-bit sample is used for
 each pixel, and on screens with different numbers of bits for
 red, green, and blue only gray colors are used. Setting
 <TT>D</TT> greater than 1 will let you display one channel of a
@@ -785,7 +777,7 @@ the first one may be greater than zero.</P>
 <P>If <TT>D</TT> is 4 or more, you must fill in the unused bytes
 with zero.</P>
 
-<H4><A NAME=fl_draw_pixmap>int fl_draw_pixmap(char **data, int X, int Y, Fl_Color = FL_GRAY)</A></H4>
+<H4><A NAME="fl_draw_pixmap">int fl_draw_pixmap(char **data, int X, int Y, Fl_Color = FL_GRAY)</A></H4>
 
 <P>Draws XPM image data, with the top-left corner at the given position.
 The image is dithered on 8-bit displays so you won't lose color space
@@ -794,17 +786,17 @@ zero if there was any error decoding the XPM data.
 
 <P>To use an XPM, do:</P>
 
-<UL><PRE>
-#include &quot;foo.xpm&quot;
+\code
+#include "foo.xpm"
 ...
 fl_draw_pixmap(foo, X, Y);
-</PRE></UL>
+\endcode
 
 <P>Transparent colors are replaced by the optional
-<TT>Fl_Color</TT> argument. To draw with true transparency you must
-use the <A HREF="Fl_Pixmap.html"><TT>Fl_Pixmap</TT></A> class.
+Fl_Color argument. To draw with true transparency you must
+use the Fl_Pixmap class.
 
-<H4><A NAME=fl_measure_pixmap>int fl_measure_pixmap(char **data, int &amp;w, int &amp;h)</A></H4>
+<H4><A NAME="fl_measure_pixmap">int fl_measure_pixmap(char **data, int &w, int &h)</A></H4>
 
 <P>An XPM image contains the dimensions in its data. This
 function finds and returns the width and height. The return
@@ -832,49 +824,43 @@ channel. If 0, no alpha channel is generated.</p>
 
 <H3><A name="Fl_Image">Image Classes</A></H3>
 
-<P>FLTK provides a base image class called <A
-HREF="Fl_Image.html"><TT>Fl_Image</TT></A> which supports
+<P>FLTK provides a base image class called Fl_Image which supports
 creating, copying, and drawing images of various kinds, along
 with some basic color operations. Images can be used as labels
-for widgets using the <A
-HREF="Fl_Widget.html#Fl_Widget.image"><TT>image()</TT></A> and
-<A
-HREF="Fl_Widget.html#Fl_Widget.deimage"><TT>deimage()</TT></A>
-methods or drawn directly.
+for widgets using the image() and deimage() methods or drawn directly.
 
-<P>The <TT>Fl_Image</TT> class
-does almost nothing by itself, but is instead supported by three
-basic image types:
+<P>The Fl_Image class does almost nothing by itself, but is instead 
+supported by three basic image types:
 
 <UL>
 
-	<LI><A HREF="Fl_Bitmap.html"><TT>Fl_Bitmap</TT></A></LI>
+	<LI>Fl_Bitmap</LI>
 
-	<LI><A HREF="Fl_Pixmap.html"><TT>Fl_Pixmap</TT></A></LI>
+	<LI>Fl_Pixmap</LI>
 
-	<LI><A HREF="Fl_RGB_Image.html"><TT>Fl_RGB_Image</TT></A></LI>
+	<LI>Fl_RGB_Image</LI>
 
 </UL>
 
-<P>The <TT>Fl_Bitmap</TT> class encapsulates a mono-color bitmap image.
-The <TT>draw()</TT> method draws the image using the current drawing
+<P>The Fl_Bitmap class encapsulates a mono-color bitmap image.
+The draw() method draws the image using the current drawing
 color.
 
-<P>The <TT>Fl_Pixmap</TT> class encapsulates a colormapped image.
-The <TT>draw()</TT> method draws the image using the colors in the
+<P>The Fl_Pixmap class encapsulates a colormapped image.
+The draw() method draws the image using the colors in the
 file, and masks off any transparent colors automatically.
 
-<P>The <TT>Fl_RGB_Image</TT> class encapsulates a full-color 
+<P>The Fl_RGB_Image class encapsulates a full-color 
 (or grayscale) image with 1 to 4 color components. Images with 
 an even number of components are assumed to contain an 
 alpha channel that is used for transparency. The transparency 
-provided by the <TT>draw()</TT> method is either a 24-bit 
+provided by the draw() method is either a 24-bit 
 blend against the existing window contents or a "screen door" 
 transparency mask, depending on the platform and screen color depth. 
 
-<H4><A NAME=fl_can_do_alpha_blending>char fl_can_do_alpha_blending()</A></H4>
+<H4><A NAME="fl_can_do_alpha_blending">char fl_can_do_alpha_blending()</A></H4>
 
-<P><TT>fl_can_do_alpha_blending()</TT> will return 1, if your
+<P>fl_can_do_alpha_blending() will return 1, if your
 platform supports true alpha blending for RGBA images, or 0, 
 if FLTK will use screen door transparency.
 
@@ -883,42 +869,39 @@ standard image types for common file formats:
 
 <UL>
 
-	<LI><A HREF="Fl_GIF_Image.html"><TT>Fl_GIF_Image</TT></A></LI>
+	<LI>Fl_GIF_Image</LI>
 
-	<LI><A HREF="Fl_JPEG_Image.html"><TT>Fl_JPEG_Image</TT></A></LI>
+	<LI>Fl_JPEG_Image</LI>
 
-	<LI><A HREF="Fl_PNG_Image.html"><TT>Fl_PNG_Image</TT></A></LI>
+	<LI>Fl_PNG_Image</LI>
 
-	<LI><A HREF="Fl_PNM_Image.html"><TT>Fl_PNM_Image</TT></A></LI>
+	<LI>Fl_PNM_Image</LI>
 
-	<LI><A HREF="Fl_XBM_Image.html"><TT>Fl_XBM_Image</TT></A></LI>
+	<LI>Fl_XBM_Image</LI>
 
-	<LI><A HREF="Fl_XPM_Image.html"><TT>Fl_XPM_Image</TT></A></LI>
+	<LI>Fl_XPM_Image</LI>
 
 </UL>
 
 <P>Each of these image classes load a named file of the
-corresponding format. The <A
-HREF="Fl_Shared_Image.html"><TT>Fl_Shared_Image</TT></A> class
+corresponding format. The Fl_Shared_Image class
 can be used to load any type of image file - the class examines
 the file and constructs an image of the appropriate type.
 
-<P>Finally, FLTK provides a special image class called <A
-HREF="Fl_Tiled_Image.html"><TT>Fl_Tiled_Image</TT></A> to tile
-another image object in the specified area. This class can be
-used to tile a background image in a <TT>Fl_Group</TT> widget,
-for example.
+<P>Finally, FLTK provides a special image class called Fl_Tiled_Image to
+tile another image object in the specified area. This class can be
+used to tile a background image in a Fl_Group widget, for example.
 
 <H4>virtual void copy();<BR>
 virtual void copy(int w, int h);</H4>
 
-<P>The <TT>copy()</TT> method creates a copy of the image. The second form
+<P>The copy() method creates a copy of the image. The second form
 specifies the new size of the image - the image is resized using the
 nearest-neighbor algorithm.
 
 <H4>void draw(int x, int y, int w, int h, int ox = 0, int oy = 0);</H4>
 
-<P>The <TT>draw()</TT> method draws the image object.
+<P>The draw() method draws the image object.
 <TT>x,y,w,h</TT> indicates a destination rectangle.
 <TT>ox,oy,w,h</TT> is a source rectangle. This source rectangle
 is copied to the destination. The source rectangle may extend
@@ -929,36 +912,36 @@ image, and this area is left unchanged.
 <H4>void draw(int x, int y)</H4>
 
 <P>Draws the image with the upper-left corner at <TT>x,y</TT>.
-This is the same as doing <TT>draw(x,y,img-&gt;w(),img-&gt;h(),0,0)</TT>.
+This is the same as doing draw(x,y,img->w(),img->h(),0,0).
 
-<h3><A NAME=offscreen>Offscreen Drawing</A></h3>
+<h3><A NAME="offscreen">Offscreen Drawing</A></h3>
 
 Sometimes it can be very useful to generate a complex drawing
 in memory first and copy it to the screen at a later point in 
 time. This technique can significantly reduce the amount of
-repeated drawing. <tt>Fl_Double_Window</tt> uses offscreen rendering
+repeated drawing. Fl_Double_Window uses offscreen rendering
 to avoid flickering on systems that don't support 
 double-buffering natively.
 
-<H4><A NAME=fl_create_offscreen>Fl_Offscreen fl_create_offscreen(int w, int h)</A></H4>
+<H4><A NAME="fl_create_offscreen">Fl_Offscreen fl_create_offscreen(int w, int h)</A></H4>
 
 <P>Create an RGB offscreen buffer with <tt>w*h</tt> pixels.
 
-<H4><A NAME=fl_delete_offscreen>void fl_delete_offscreen(Fl_Offscreen)</A></H4>
+<H4><A NAME="fl_delete_offscreen">void fl_delete_offscreen(Fl_Offscreen)</A></H4>
 
 <P>Delete a previously created offscreen buffer. All drawings are lost.
 
-<H4><A NAME=fl_begin_offscreen>void fl_begin_offscreen(Fl_Offscreen)</A></H4>
+<H4><A NAME="fl_begin_offscreen">void fl_begin_offscreen(Fl_Offscreen)</A></H4>
 
 <P>Send all subsequent drawing commands to this offscreen buffer. 
 FLTK can draw into a buffer at any time. There is no need to wait for 
 an Fl_Widget::draw() to occur.
 
-<H4><A NAME=fl_end_offscreen>void fl_end_offscreen()</A></H4>
+<H4><A NAME="fl_end_offscreen">void fl_end_offscreen()</A></H4>
 
 <P>Quit sending drawing commands to this offscreen buffer.
 
-<H4><A NAME=fl_copy_offscreen>void fl_copy_offscreen(int x, int y,
+<H4><A NAME="fl_copy_offscreen">void fl_copy_offscreen(int x, int y,
 int w, int h, Fl_Offscreen osrc, int srcx, int srcy)</A></H4>
 
 <P>Copy a rectangular area of the size <tt>w*h</tt> from <tt>srcx, srcy</tt> in the offscreen

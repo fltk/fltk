@@ -194,7 +194,7 @@ override the default C compiler (<tt>cc</tt> or <tt>gcc</tt>),
 which is used for a few FLTK source files.</P>
 
 <P>You can run configure yourself to get the exact setup you
-need. Type  "./configure &lt;options&gt;", where
+need. Type  "./configure <options>", where
 options are:</P>
 
 <DL>

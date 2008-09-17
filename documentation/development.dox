@@ -83,7 +83,7 @@ From Duncan: (will be removed later, just for now as a reminder)
 
 5. I've just added comments for the fl_color_chooser() functions, and
    in order to keep them and the general Function Reference information
-   for them together, I created a new doxygen group, and used \ingroup
+   for them together, I created a new doxygen group, and used \\ingroup
    in the three comment blocks. This creates a new Modules page (which
    may not be what we want) with links to it from the File Members and
    Fl_Color_Chooser.H pages. It needs a bit more experimentation on my
