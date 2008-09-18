@@ -72,25 +72,22 @@ struct Fl_Help_Block
 //
 // Fl_Help_Link structure...
 //
-
+/** Definition of a link for the html viewer*/
 struct Fl_Help_Link
 {
-  char		filename[192],	// Reference filename
-		name[32];	// Link target (blank if none)
-  int		x,		// X offset of link text
-		y,		// Y offset of link text
-		w,		// Width of link text
-		h;		// Height of link text
+  char		filename[192],	///< Reference filename
+		name[32];	///< Link target (blank if none)
+  int		x,		///< X offset of link text
+		y,		///< Y offset of link text
+		w,		///< Width of link text
+		h;		///< Height of link text
 };
 
-//
-// Fl_Help_Target structure...
-//
-
+/** Fl_Help_Target structure */
 struct Fl_Help_Target
 {
-  char		name[32];	// Target name
-  int		y;		// Y offset of target
+  char		name[32];	///< Target name
+  int		y;		///< Y offset of target
 };
 
 /**
@@ -100,43 +97,43 @@ struct Fl_Help_Target
 */
 class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
 {
-  enum { RIGHT = -1, CENTER, LEFT };	// Alignments
+  enum { RIGHT = -1, CENTER, LEFT };	///< Alignments
 
-  char		title_[1024];		// Title string
-  Fl_Color	defcolor_,		// Default text color
-		bgcolor_,		// Background color
-		textcolor_,		// Text color
-		linkcolor_;		// Link color
-  Fl_Font       textfont_;		// Default font for text
-  Fl_Fontsize  textsize_;		// Default font size
-  const char	*value_;		// HTML text value
+  char		title_[1024];		///< Title string
+  Fl_Color	defcolor_,		///< Default text color
+		bgcolor_,		///< Background color
+		textcolor_,		///< Text color
+		linkcolor_;		///< Link color
+  Fl_Font       textfont_;		///< Default font for text
+  Fl_Fontsize  textsize_;		///< Default font size
+  const char	*value_;		///< HTML text value
 
-  int		nblocks_,		// Number of blocks/paragraphs
-		ablocks_;		// Allocated blocks
-  Fl_Help_Block	*blocks_;		// Blocks
+  int		nblocks_,		///< Number of blocks/paragraphs
+		ablocks_;		///< Allocated blocks
+  Fl_Help_Block	*blocks_;		///< Blocks
 
-  int		nfonts_;		// Number of fonts in stack
-  Fl_Font       fonts_[100];		// Font stack
-  Fl_Fontsize  font_sizes_[100];       // Font Size stack
+  int		nfonts_;		///< Number of fonts in stack
+  Fl_Font       fonts_[100];		///< Font stack
+  Fl_Fontsize  font_sizes_[100];        ///< Font Size stack
 
-  Fl_Help_Func	*link_;			// Link transform function
+  Fl_Help_Func	*link_;			///< Link transform function
 
-  int		nlinks_,		// Number of links
-		alinks_;		// Allocated links
-  Fl_Help_Link	*links_;		// Links
+  int		nlinks_,		///< Number of links
+		alinks_;		///< Allocated links
+  Fl_Help_Link	*links_;		///< Links
 
-  int		ntargets_,		// Number of targets
-		atargets_;		// Allocated targets
-  Fl_Help_Target *targets_;		// Targets
+  int		ntargets_,		///< Number of targets
+		atargets_;		///< Allocated targets
+  Fl_Help_Target *targets_;		///< Targets
 
-  char		directory_[1024];	// Directory for current file
-  char		filename_[1024];	// Current filename
-  int		topline_,		// Top line in document
-		leftline_,		// Lefthand position
-		size_,			// Total document length
-		hsize_;			// Maximum document width
-  Fl_Scrollbar	scrollbar_,		// Vertical scrollbar for document
-		hscrollbar_;		// Horizontal scrollbar
+  char		directory_[1024];	///< Directory for current file
+  char		filename_[1024];	///< Current filename
+  int		topline_,		///< Top line in document
+		leftline_,		///< Lefthand position
+		size_,			///< Total document length
+		hsize_;			///< Maximum document width
+  Fl_Scrollbar	scrollbar_,		///< Vertical scrollbar for document
+		hscrollbar_;		///< Horizontal scrollbar
 
   static int    selection_first;
   static int    selection_last;

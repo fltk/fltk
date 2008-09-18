@@ -85,7 +85,7 @@ int Fl_Valuator::value(double v) {
   value_damage();
   return 1;
 }
-
+/** Clamps the value, but accepts v if the previous value is not already out of range */
 double Fl_Valuator::softclamp(double v) {
   int which = (min<=max);
   double p = previous_value_;
@@ -95,7 +95,7 @@ double Fl_Valuator::softclamp(double v) {
 }
 
 // inline void Fl_Valuator::handle_push() {previous_value_ = value_;}
-
+/** Called during a drag operation, after an FL_WHEN_CHANGED event is received and before the callback. */
 void Fl_Valuator::handle_drag(double v) {
   if (v != value_) {
     value_ = v;
@@ -104,7 +104,7 @@ void Fl_Valuator::handle_drag(double v) {
     if (when() & FL_WHEN_CHANGED) do_callback();
   }
 }
-
+/** Called after an FL_WHEN_RELEASE event is received and before the callback. */
 void Fl_Valuator::handle_release() {
   if (when()&FL_WHEN_RELEASE) {
     // insure changed() is off even if no callback is done.  It may have

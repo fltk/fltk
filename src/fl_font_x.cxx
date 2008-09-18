@@ -24,6 +24,7 @@
 //
 //     http://www.fltk.org/str.php
 //
+#ifndef FL_DOXYGEN
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
   font = XCreateUtf8FontStruct(fl_display, name);
@@ -316,7 +317,7 @@ void fl_rtl_draw(const char* c, int n, int x, int y) {
   }
   XUtf8DrawRtlString(fl_display, fl_window, fl_xfont, fl_gc, x, y, c, n);
 }
-
+#endif // FL_DOXYGEN
 //
 // End of "$Id$".
 //

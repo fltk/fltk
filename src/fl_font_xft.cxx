@@ -61,6 +61,7 @@
 // itself. You should edit the ~/.xftconfig file to "fix" things, there
 // are several web pages of information on how to do this.
 //
+#ifndef FL_DOXYGEN
 
 #include <X11/Xft/Xft.h>
 
@@ -567,6 +568,7 @@ void fl_rtl_draw(const char* c, int n, int x, int y) {
 
   delete[] ucs_txt;
 }
+#endif
 
 //
 // End of "$Id$"

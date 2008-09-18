@@ -29,6 +29,7 @@
 // include this file if WIN32 is defined.  This is to encourage
 // portability of even the system-specific code...
 
+#ifndef FL_DOXYGEN
 #ifndef Fl_X_H
 #  error "Never use <FL/win32.H> directly; include <FL/x.H> instead."
 #endif // !Fl_X_H
@@ -146,7 +147,7 @@ extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 inline void fl_open_callback(void (*)(const char *)) {}
 
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
-
+#endif // FL_DOXYGEN
 //
 // End of "$Id$".
 //

@@ -36,10 +36,12 @@
 #endif
 
 // values for type()
-#define FL_NORMAL_BUTTON	0
-#define FL_TOGGLE_BUTTON	1
-#define FL_RADIO_BUTTON		(FL_RESERVED_TYPE+2)
-#define FL_HIDDEN_BUTTON	3 // for Forms compatibility
+#define FL_NORMAL_BUTTON	0   ///< value() remains unchanged after button press.
+#define FL_TOGGLE_BUTTON	1   ///< value() is inverted after button press.
+#define FL_RADIO_BUTTON		(FL_RESERVED_TYPE+2) /**< is set to 1 after button press, and all other
+				    buttons in the current group with <tt>type() == FL_RADIO_BUTTON</tt>
+				    are set to zero.*/
+#define FL_HIDDEN_BUTTON	3   ///< for Forms compatibility
 
 extern FL_EXPORT int fl_old_shortcut(const char*);
 
@@ -76,7 +78,6 @@ extern FL_EXPORT int fl_old_shortcut(const char*);
          (when the user pushes and releases the button, and as the mouse is
 	 dragged around in and out of the button).
 */
-
 class FL_EXPORT Fl_Button : public Fl_Widget {
 
   int shortcut_;

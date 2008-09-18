@@ -166,14 +166,15 @@ void Fl::default_atclose(Fl_Window* window, void* v) {
 }
 
 void (*Fl::atclose)(Fl_Window*, void*) = default_atclose;
-
+/**
+   Sets the default callback v for win to call on close event.
+   <P> For back compatibility only.
+*/
 void Fl_Window::default_callback(Fl_Window* win, void* v) {
   Fl::atclose(win, v);
 }
 
-/**
-  Returns the last window that was made current.
-*/
+/**  Returns the last window that was made current. */
 Fl_Window *Fl_Window::current() {
   return current_;
 }

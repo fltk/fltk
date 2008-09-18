@@ -275,10 +275,7 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y)
 }
 
 
-//
-// 'Fl_Help_View::add_block()' - Add a text block to the list.
-//
-
+/** Add a text block to the list. */
 Fl_Help_Block *					// O - Pointer to new block
 Fl_Help_View::add_block(const char   *s,	// I - Pointer to start of block text
                 	int           xx,	// I - X position of block
@@ -319,12 +316,8 @@ Fl_Help_View::add_block(const char   *s,	// I - Pointer to start of block text
 }
 
 
-//
-// 'Fl_Help_View::add_link()' - Add a new link to the list.
-//
-
-void
-Fl_Help_View::add_link(const char *n,	// I - Name of link
+/** Add a new link to the list. */
+void Fl_Help_View::add_link(const char *n,	// I - Name of link
                       int        xx,	// I - X position of link
 		      int        yy,	// I - Y position of link
 		      int        ww,	// I - Width of link text
@@ -365,12 +358,8 @@ Fl_Help_View::add_link(const char *n,	// I - Name of link
 }
 
 
-//
-// 'Fl_Help_View::add_target()' - Add a new target to the list.
-//
-
-void
-Fl_Help_View::add_target(const char *n,	// I - Name of target
+/** Adds a new target to the list. */
+void Fl_Help_View::add_target(const char *n,	// I - Name of target
                 	int        yy)	// I - Y position of target
 {
   Fl_Help_Target	*temp;			// New target
@@ -394,11 +383,7 @@ Fl_Help_View::add_target(const char *n,	// I - Name of target
   ntargets_ ++;
 }
 
-
-//
-// 'Fl_Help_View::compare_targets()' - Compare two targets.
-//
-
+/** Compare two targets.*/
 int							// O - Result of comparison
 Fl_Help_View::compare_targets(const Fl_Help_Target *t0,	// I - First target
                              const Fl_Help_Target *t1)	// I - Second target
@@ -406,11 +391,7 @@ Fl_Help_View::compare_targets(const Fl_Help_Target *t0,	// I - First target
   return (strcasecmp(t0->name, t1->name));
 }
 
-
-//
-// 'Fl_Help_View::do_align()' - Compute the alignment for a line in a block.
-//
-
+/** Compute the alignment for a line in a block.*/
 int						// O - New line
 Fl_Help_View::do_align(Fl_Help_Block *block,	// I - Block to add to
                       int          line,	// I - Current line
@@ -449,11 +430,7 @@ Fl_Help_View::do_align(Fl_Help_Block *block,	// I - Block to add to
   return (line);
 }
 
-
-//
-// 'Fl_Help_View::draw()' - Draw the Fl_Help_View widget.
-//
-
+/** Draw the Fl_Help_View widget.*/
 void
 Fl_Help_View::draw()
 {
@@ -1003,7 +980,8 @@ Fl_Help_View::draw()
 
 
 
-/** Find the specified string s at starting position p, return the matching pos or -1 if not found */
+/** Find the specified string s at starting position p, return the matching pos 
+    or -1 if not found */
 int						// O - Matching position or -1 if not found
 Fl_Help_View::find(const char *s,		// I - String to find
                    int        p)		// I - Starting position
@@ -1061,14 +1039,8 @@ Fl_Help_View::find(const char *s,		// I - String to find
   return (-1);
 }
 
-
-//
-// 'Fl_Help_View::format()' - Format the help text.
-//
-
-void
-Fl_Help_View::format()
-{
+/** Format the help text.*/
+void Fl_Help_View::format() {
   int		i;		// Looping var
   int		done;		// Are we done yet?
   Fl_Help_Block	*block,		// Current block
@@ -1878,10 +1850,7 @@ Fl_Help_View::format()
 }
 
 
-//
-// 'Fl_Help_View::format_table()' - Format a table...
-//
-
+/** Format a table */
 void
 Fl_Help_View::format_table(int        *table_width,	// O - Total table width
                            int        *columns,		// O - Column widths
@@ -2315,10 +2284,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 }
 
 
-//
-// 'Fl_Help_View::free_data()' - Free memory used for the document.
-//
-
+/** Free memory used for the document. */
 void
 Fl_Help_View::free_data() {
   // Release all images...
@@ -2424,10 +2390,7 @@ Fl_Help_View::free_data() {
   }
 }
 
-//
-// 'Fl_Help_View::get_align()' - Get an alignment attribute.
-//
-
+/** Get an alignment attribute. */
 int					// O - Alignment
 Fl_Help_View::get_align(const char *p,	// I - Pointer to start of attrs
                         int        a)	// I - Default alignment
@@ -2447,10 +2410,7 @@ Fl_Help_View::get_align(const char *p,	// I - Pointer to start of attrs
 }
 
 
-//
-// 'Fl_Help_View::get_attr()' - Get an attribute value from the string.
-//
-
+/** Get an attribute value from the string. */
 const char *					// O - Pointer to buf or NULL
 Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
                       const char *n,		// I - Name of attribute
@@ -2522,10 +2482,7 @@ Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
 }
 
 
-//
-// 'Fl_Help_View::get_color()' - Get an alignment attribute.
-//
-
+/** Get an alignment attribute. */
 Fl_Color				// O - Color value
 Fl_Help_View::get_color(const char *n,	// I - Color name
                         Fl_Color   c)	// I - Default color value
@@ -2584,10 +2541,7 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
 }
 
 
-//
-// 'Fl_Help_View::get_image()' - Get an inline image.
-//
-
+/** Gets an inline image. */
 Fl_Shared_Image *
 Fl_Help_View::get_image(const char *name, int W, int H) {
   const char	*localname;		// Local filename
@@ -2635,10 +2589,7 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
 }
 
 
-//
-// 'Fl_Help_View::get_length()' - Get a length value, either absolute or %.
-//
-
+/** Gets a length value, either absolute or %. */
 int
 Fl_Help_View::get_length(const char *l) {	// I - Value
   int	val;					// Integer value
@@ -2920,10 +2871,7 @@ void Fl_Help_View::end_selection(int clipboard)
 
 #define ctrl(x) ((x)&0x1f)
 
-//
-// 'Fl_Help_View::handle()' - Handle events in the widget.
-//
-
+/** Handle events in the widget. */
 int				// O - 1 if we handled it, 0 otherwise
 Fl_Help_View::handle(int event)	// I - Event to handle
 {
@@ -3072,10 +3020,7 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
 }
 
 
-//
-// 'Fl_Help_View::~Fl_Help_View()' - Destroy a Fl_Help_View widget.
-//
-
+/** Destroy a Fl_Help_View widget. */
 Fl_Help_View::~Fl_Help_View()
 /**
   The destructor destroys the widget and frees all memory that has been
@@ -3087,9 +3032,7 @@ Fl_Help_View::~Fl_Help_View()
 }
 
 
-//
-// 'Fl_Help_View::load()' - Load the specified file.
-//
+/** Load the specified file. */
 
 int				// O - 0 on success, -1 on error
 Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
@@ -3188,9 +3131,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 }
 
 
-//
-// 'Fl_Help_View::resize()' - Resize the help widget.
-//
+/** Resize the help widget. */
 
 void
 Fl_Help_View::resize(int xx,	// I - New left position
@@ -3306,10 +3247,7 @@ Fl_Help_View::value(const char *v)	// I - Text to view
 // part b in the table seems to be mac_roman - beku
 # define ENC(a, b) a
 
-//
-// 'quote_char()' - Return the character code associated with a quoted char.
-//
-
+/** Return the character code associated with a quoted char. */
 static int			// O - Code or -1 on error
 quote_char(const char *p) {	// I - Quoted string
   int	i;			// Looping var
@@ -3439,10 +3377,7 @@ quote_char(const char *p) {	// I - Quoted string
 }
 
 
-//
-// 'scrollbar_callback()' - A callback for the scrollbar.
-//
-
+/** The scrollbar callback. */
 static void
 scrollbar_callback(Fl_Widget *s, void *)
 {
@@ -3450,10 +3385,7 @@ scrollbar_callback(Fl_Widget *s, void *)
 }
 
 
-//
-// 'hscrollbar_callback()' - A callback for the horizontal scrollbar.
-//
-
+/** The horizontal scrollbar callback . */
 static void
 hscrollbar_callback(Fl_Widget *s, void *)
 {

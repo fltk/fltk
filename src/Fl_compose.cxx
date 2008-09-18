@@ -85,7 +85,9 @@ static char dead_keys[] = {
 };
 #endif // !WIN32 && OLD_DEAD_KEY_CODE
 
+#ifndef FL_DOXYGEN
 int Fl::compose_state = 0;
+#endif
 
 /** Any text editing widget should call this for each FL_KEYBOARD event.
     Use of this function is very simple.

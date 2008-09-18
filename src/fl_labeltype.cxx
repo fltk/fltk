@@ -82,12 +82,12 @@ void Fl::set_labeltype(Fl_Labeltype t,Fl_Label_Draw_F* f,Fl_Label_Measure_F*m)
 
 ////////////////////////////////////////////////////////////////
 
-// draw label with arbitrary alignment in arbitrary box:
+/** draw label with arbitrary alignment in arbitrary box */
 void Fl_Label::draw(int X, int Y, int W, int H, Fl_Align align) const {
   if (!value && !image) return;
   table[type](this, X, Y, W, H, align);
 }
-
+/** Gets the size of the label W and H contains the calculated size at return. */
 void Fl_Label::measure(int& W, int& H) const {
   if (!value && !image) {
     W = H = 0;
@@ -98,7 +98,7 @@ void Fl_Label::measure(int& W, int& H) const {
   f(this, W, H);
 }
 
-// The normal call for a draw() method:
+/** The normal call for a draw() method */
 void Fl_Widget::draw_label() const {
   int X = x_+Fl::box_dx(box());
   int W = w_-Fl::box_dw(box());
@@ -106,14 +106,14 @@ void Fl_Widget::draw_label() const {
   draw_label(X, y_+Fl::box_dy(box()), W, h_-Fl::box_dh(box()));
 }
 
-// draw() can use this instead to change the bounding box:
+/** draw() can use this instead to change the bounding box */
 void Fl_Widget::draw_label(int X, int Y, int W, int H) const {
   // quit if we are not drawing a label inside the widget:
   if ((align()&15) && !(align() & FL_ALIGN_INSIDE)) return;
   draw_label(X,Y,W,H,align());
 }
 
-// Anybody can call this to force the label to draw anywhere:
+/** Anybody can call this to force the label to draw anywhere */
 void Fl_Widget::draw_label(int X, int Y, int W, int H, Fl_Align a) const {
   if (flags()&SHORTCUT_LABEL) fl_draw_shortcut = 1;
   Fl_Label l1 = label_;

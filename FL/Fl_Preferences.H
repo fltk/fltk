@@ -458,7 +458,7 @@ public:
     operator const char *() { return data_; }
     ~Name();
   };
-
+  /** An entry associates a preference name to its corresponding value */
   struct Entry
   {
     char *name, *value;

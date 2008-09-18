@@ -114,7 +114,7 @@ static void undobuffersize(int n) {
   }
 }
 
-/*
+/**
    Create an empty text buffer of a pre-determined size (use this to
    avoid unnecessary re-allocation if you know exactly how much the buffer
    will need to hold
@@ -210,14 +210,11 @@ void Fl_Text_Buffer::text(const char *t) {
   free((void *)deletedText);
 }
 
-/*
+/**
    Return a copy of the text between "start" and "end" character positions
    from text buffer "buf".  Positions start at 0, and the range does not
    include the character pointed to by "end"
-*/
-/**
-  Returns the text from the range of characters. When you are
-  done with the text, free it using the free() function.
+   When you are done with the text, free it using the free() function.
 */
 char * Fl_Text_Buffer::text_range(int start, int end) {
   char * s = NULL;
@@ -254,10 +251,8 @@ char * Fl_Text_Buffer::text_range(int start, int end) {
   return s;
 }
 
-/*
-   Return the character at buffer position "pos".  Positions start at 0.
-*/
-/**  Returns the character at the specified position in the buffer.*/
+/**  Returns the character at the specified position pos in the buffer.
+     Positions start at 0 */
 char Fl_Text_Buffer::character(int pos) {
   if (pos < 0 || pos >= mLength)
     return '\0';
@@ -284,11 +279,10 @@ void Fl_Text_Buffer::insert(int pos, const char *s) {
   call_modify_callbacks(pos, 0, nInserted, 0, NULL);
 }
 
-/*
-   Delete the characters between "start" and "end", and insert the
-   null-terminated string "text" in their place in in "buf"
+/**
+   DeleteS the characters between "start" and "end", and inserts the
+   null-terminated string "s" in their place in the buffer.
 */
-/**  Replaces the text in the specified range of characters in the buffer.*/
 void Fl_Text_Buffer::replace(int start, int end, const char *s) {
   const char * deletedText;
   int nInserted;
@@ -611,11 +605,10 @@ char * Fl_Text_Buffer::text_in_rectangle(int start, int end,
   return retabbedStr;
 }
 
-/*
-   Set the hardware tab distance used by all displays for this buffer,
+/**
+   Set the hardware tab distance (width) used by all displays for this buffer,
    and used in computing offsets for rectangular selection operations.
 */
-/**  Gets or sets the tab width.*/
 void Fl_Text_Buffer::tab_distance(int tabDist) {
   const char * deletedText;
 
@@ -974,17 +967,15 @@ int Fl_Text_Buffer::word_end(int pos) {
   return pos;
 }
 
-/*
-   Get a character from the text buffer expanded into it's screen
+/**
+   Expands the given character to a displayable format. Tabs and
+   other control characters are given special treatment.
+   Get a character from the text buffer expanded into its screen
    representation (which may be several characters for a tab or a
    control code).  Returns the number of characters written to "outStr".
    "indent" is the number of characters from the start of the line
    for figuring tabs.  Output string is guranteed to be shorter or
    equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
-*/
-/**
-  Expands the given character to a displayable format. Tabs and
-  other control characters are given special treatment.
 */
 int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) {
   int ret;
@@ -1049,7 +1040,7 @@ int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDi
   return 1;
 }
 
-/*
+/**
    Return the length in displayed characters of character "c" expanded
    for display (as discussed above in BufGetExpandedChar).  If the
    buffer for which the character width is being measured is doing null
@@ -1171,13 +1162,11 @@ int Fl_Text_Buffer::skip_lines(int startPos, int nLines) {
   return pos;
 }
 
-/*
-   Find the position of the first character of the line "nLines" backwards
+/**
+   Finds and returns the position of the first character of the line "nLines" backwards
    from "startPos" (not counting the character pointed to by "startpos" if
-   that is a newline) in "buf".  nLines == 0 means find the beginning of
-   the line
+   that is a newline) in "buf".  nLines == 0 means find the beginning of the line
 */
-/**  Returns the buffer position for the Nth previous line.*/
 int Fl_Text_Buffer::rewind_lines(int startPos, int nLines) {
   int pos, gapLen = mGapEnd - mGapStart;
   int lineCount = -1;
@@ -2225,8 +2214,8 @@ void Fl_Text_Buffer::move_gap(int pos) {
   mGapStart += pos - mGapStart;
 }
 
-/*
-   reallocate the text storage in "buf" to have a gap starting at "newGapStart"
+/**
+   Reallocates the text storage in "buf" to have a gap starting at "newGapStart"
    and a gap size of "newGapLen", preserving the buffer's current contents.
 */
 void Fl_Text_Buffer::reallocate_with_gap(int newGapStart, int newGapLen) {
@@ -2258,7 +2247,7 @@ void Fl_Text_Buffer::reallocate_with_gap(int newGapStart, int newGapLen) {
 #endif
 }
 
-/*
+/**
    Update all of the selections in "buf" for changes in the buffer's text
 */
 void Fl_Text_Buffer::update_selections(int pos, int nDeleted,
@@ -2268,7 +2257,7 @@ void Fl_Text_Buffer::update_selections(int pos, int nDeleted,
   mHighlight.update(pos, nDeleted, nInserted);
 }
 
-/*
+/**
    Update an individual selection for changes in the corresponding text
 */
 void Fl_Text_Selection::update(int pos, int nDeleted,
@@ -2414,11 +2403,11 @@ static int textWidth(const char *text, int tabDist, char nullSubsChar) {
   return maxWidth;
 }
 
-/*
+/**
    Find the first and last character position in a line within a rectangular
    selection (for copying).  Includes tabs which cross rectStart, but not
    control characters which do so.  Leaves off tabs which cross rectEnd.
-**
+
    Technically, the calling routine should convert tab characters which
    cross the right boundary of the selection to spaces which line up with
    the edge of the selection.  Unfortunately, the additional memory

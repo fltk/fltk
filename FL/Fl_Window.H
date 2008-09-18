@@ -33,8 +33,8 @@
 
 #include "Fl_Group.H"
 
-#define FL_WINDOW 0xF0	// all subclasses have type() >= this
-#define FL_DOUBLE_WINDOW 0xF1
+#define FL_WINDOW 0xF0		///< window type id all subclasses have type() >= this
+#define FL_DOUBLE_WINDOW 0xF1   ///< double window type id
 
 class Fl_X;
 
@@ -85,6 +85,7 @@ class FL_EXPORT Fl_Window : public Fl_Group {
 
 protected:
 
+ /**  Stores the last window that was made current. See current() const */
   static Fl_Window *current_;
   virtual void draw();
   /** Forces the window to be drawn, this window is also made current and calls draw(). */
@@ -165,9 +166,7 @@ public:
     off. It only works before show() is called.
   */
   void clear_border()	{set_flag(FL_NOBORDER);}
-  /**
-    See int Fl_Window::border(int) 
-  */
+  /** See int Fl_Window::border(int) */
   int border() const	{return !(flags() & FL_NOBORDER);}
   /** Activate the flags FL_NOBORDER|FL_OVERRIDE */
   void set_override()	{set_flag(FL_NOBORDER|FL_OVERRIDE);}
@@ -183,9 +182,7 @@ public:
     Fl::modal().
   */
   void set_modal()	{set_flag(FL_MODAL);}
-  /**
-    Returns true if this window is modal.
-  */
+  /**  Returns true if this window is modal.  */
   int modal() const	{return flags() & FL_MODAL;}
   /**
     A "non-modal" window (terminology borrowed from Microsoft Windows)
@@ -194,9 +191,7 @@ public:
     window: modal, non-modal, and normal.
   */
   void set_non_modal()	{set_flag(FL_NON_MODAL);}
-  /**
-    Returns true if this window is modal or non-modal.
-  */
+  /**  Returns true if this window is modal or non-modal. */
   int non_modal() const {return flags() & (FL_NON_MODAL|FL_MODAL);}
 
   /**
@@ -207,13 +202,9 @@ public:
     does not work with some X window managers). \see position()
   */
   void hotspot(int x, int y, int offscreen = 0);
-  /**
-    See void Fl_Window::hotspot(int x, int y, int offscreen = 0) 
-  */
+  /** See void Fl_Window::hotspot(int x, int y, int offscreen = 0) */
   void hotspot(const Fl_Widget*, int offscreen = 0);
-  /**
-    See void Fl_Window::hotspot(int x, int y, int offscreen = 0) 
-  */
+  /** See void Fl_Window::hotspot(int x, int y, int offscreen = 0) */
   void hotspot(const Fl_Widget& p, int offscreen = 0) {hotspot(&p,offscreen);}
   /**
     Undoes the effect of a previous resize() or show()
@@ -258,27 +249,18 @@ public:
   void size_range(int a, int b, int c=0, int d=0, int e=0, int f=0, int g=0) {
     minw=a; minh=b; maxw=c; maxh=d; dw=e; dh=f; aspect=g; size_range_();}
 
-  /**
-    See void Fl_Window::label(const char*) 
-  */
+  /** See void Fl_Window::label(const char*)   */
   const char* label() const	{return Fl_Widget::label();}
-  /**
-    See void Fl_Window::iconlabel(const char*) 
-  */
+  /**  See void Fl_Window::iconlabel(const char*)   */
   const char* iconlabel() const	{return iconlabel_;}
-  /**
-    Gets or sets the window title bar label.
-  */
+  /** Sets the window title bar label.  */
   void label(const char*);
-  /**
-    Gets or sets the icon label.
-  */
+  /** Sets the icon label. */
   void iconlabel(const char*);
-  void label(const char* label, const char* iconlabel);
+  /** Gets or sets the icon label. */
+  void label(const char* label, const char* iconlabel); // platform dependent 
   void copy_label(const char* a);
-  /**
-    See void Fl_Window::xclass(const char*) 
-  */
+  /** See void Fl_Window::xclass(const char*) */
   const char* xclass() const	{return xclass_;}
   /**
     A string used to tell the system what type of window this is. Mostly
@@ -353,7 +335,7 @@ public:
   int x_root() const ;
   int y_root() const ;
 
-  static Fl_Window *current();
+ static Fl_Window *current();
   /**
     Sets things up so that the drawing functions in &lt;FL/fl_draw.H&gt; will go into this
     window. This is useful for incremental update of windows, such as in an
@@ -370,14 +352,15 @@ public:
     Changes the cursor for this window.  This always calls the system, if
     you are changing the cursor a lot you may want to keep track of how
     you set it in a static varaible and call this only if the new cursor
-    is different.
-    
+    is different. 
+
     <P>The type Fl_Cursor is an enumeration defined in  &lt;Enumerations.H&gt;.
     (Under X you can get any XC_cursor value by passing 
     Fl_Cursor((XC_foo/2)+1)).  The colors only work on X, they are
     not implemented on WIN32.
+    <P> For back compatibility only. 
   */
-  void cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
+  void cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE); // platform dependent
   void default_cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
   static void default_callback(Fl_Window*, void* v);
 

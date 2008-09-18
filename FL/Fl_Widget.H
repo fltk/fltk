@@ -38,9 +38,13 @@ class Fl_Window;
 class Fl_Group;
 class Fl_Image;
 
+/** Default callback type definition for all fltk widgets (by far the most used) */
 typedef void (Fl_Callback )(Fl_Widget*, void*);
+/** Default callback type pointer definition for all fltk widgets */
 typedef Fl_Callback* Fl_Callback_p; // needed for BORLAND
+/** One parameter Callback type definition passing only the widget */
 typedef void (Fl_Callback0)(Fl_Widget*);
+/** Callback type definition passing the widget and a long data value */
 typedef void (Fl_Callback1)(Fl_Widget*, long);
 
 
@@ -133,16 +137,28 @@ protected:
   void w(int v) {w_ = v;}
   /** Internal use only. Use position(int,int), size(int, int) or resize(int,int,int,int) instead. */
   void h(int v) {h_ = v;}
-
+  /** Gets the widget flags mask */
   int flags() const {return flags_;}
+  /** Sets a flag in the flags mask */
   void set_flag(int c) {flags_ |= c;}
+  /** Clears a flag in the flags mask */
   void clear_flag(int c) {flags_ &= ~c;}
-  enum {INACTIVE=1, INVISIBLE=2, OUTPUT=4, SHORTCUT_LABEL=64,
-        CHANGED=128, VISIBLE_FOCUS=512, COPIED_LABEL = 1024};
-
+  /** flags possible values enumeration.
+      See activate(),output(), visible(), changed(), set_visible_focus()
+  */
+  enum {
+        INACTIVE=1,	    ///< the widget can't receive focus, and is disabled but potentially visible
+        INVISIBLE=2,	    ///< the widget is not drawn but can receive events
+        OUTPUT=4,           ///< for output only
+        SHORTCUT_LABEL=64,  ///< the label contains a shortcut we need to draw
+        CHANGED=128,	    ///< the widget value changed
+        VISIBLE_FOCUS=512,  ///< accepts keyboard focus navigation if the widget can have the focus
+        COPIED_LABEL = 1024 ///< the widget label is internally copied, its destruction is handled by the widget
+       };
   void draw_box() const;
   void draw_box(Fl_Boxtype, Fl_Color) const;
   void draw_box(Fl_Boxtype, int,int,int,int, Fl_Color) const;
+  /** draws a focus rectangle around the widget */
   void draw_focus() {draw_focus(box(),x(),y(),w(),h());}
   void draw_focus(Fl_Boxtype, int,int,int,int) const;
   void draw_label() const;
@@ -864,9 +880,11 @@ public:
   void color2(unsigned a) {color2_ = a;}
 };
 
-// reserved type numbers (necessary for my cheapo RTTI) start here.
-// grep the header files for "RESERVED_TYPE" to find the next available
-// number.
+/**
+    Reserved type numbers (necessary for my cheapo RTTI) start here.
+    grep the header files for "RESERVED_TYPE" to find the next available
+    number.
+*/
 #define FL_RESERVED_TYPE 100
 
 #endif

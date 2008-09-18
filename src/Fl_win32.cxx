@@ -29,6 +29,7 @@
 // in.  Search other files for "WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
+#ifndef FL_DOXYGEN
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/fl_utf8.H>
@@ -1850,7 +1851,7 @@ void fl_cleanup_dc_list(void) {          // clean up the list
     t = win_DC_list;
   } while(t);
 }
-
+#endif // FL_DOXYGEN
 
 //
 // End of "$Id$".

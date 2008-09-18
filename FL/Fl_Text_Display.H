@@ -48,6 +48,7 @@
 */
 class FL_EXPORT Fl_Text_Display: public Fl_Group {
   public:
+    /** text display cursor shapes enumeration */
     enum {
       NORMAL_CURSOR, CARET_CURSOR, DIM_CURSOR,
       BLOCK_CURSOR, HEAVY_CURSOR
@@ -57,9 +58,10 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
       CURSOR_POS, CHARACTER_POS
     };
 
-    // drag types- they match Fl::event_clicks() so that single clicking to
-    // start a collection selects by character, double clicking selects by
-    // word and triple clicking selects by line.
+    /** drag types- they match Fl::event_clicks() so that single clicking to
+        start a collection selects by character, double clicking selects by
+        word and triple clicking selects by line.
+    */
     enum {
       DRAG_CHAR = 0, DRAG_WORD = 1, DRAG_LINE = 2
     };
@@ -67,13 +69,14 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
     typedef void (*Unfinished_Style_Cb)(int, void *);
 
-    // style attributes - currently not implemented!
+    /** style attributes - currently not implemented! */
     enum {
       ATTR_NONE = 0,
       ATTR_UNDERLINE = 1,
       ATTR_HIDDEN = 2
     };
-
+    /** This structure associates the color,font,size of a string to draw
+        with an attribute mask matching attr */
     struct Style_Table_Entry {
       Fl_Color	color;
       Fl_Font	font;

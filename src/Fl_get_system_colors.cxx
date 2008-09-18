@@ -263,8 +263,8 @@ extern void	fl_down_frame(int, int, int, int, Fl_Color);
 extern void	fl_thin_up_frame(int, int, int, int, Fl_Color);
 extern void	fl_thin_down_frame(int, int, int, int, Fl_Color);
 
-const char	*Fl::scheme_ = (const char *)0;
-Fl_Image	*Fl::scheme_bg_ = (Fl_Image *)0;
+const char	*Fl::scheme_ = (const char *)0;	    ///< current scheme 
+Fl_Image	*Fl::scheme_bg_ = (Fl_Image *)0;    ///< current background image for the scheme
 
 static Fl_Pixmap	tile(tile_xpm);
 

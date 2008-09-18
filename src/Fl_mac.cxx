@@ -46,6 +46,8 @@
 // we don't need the following definition because we deliver only
 // true mouse moves.  On very slow systems however, this flag may
 // still be useful.
+#ifndef FL_DOXYGEN
+
 #define CONSOLIDATE_MOTION 0
 extern "C" {
 #include <pthread.h>
@@ -2592,6 +2594,7 @@ void MacUnmapWindow(Fl_Window *w, WindowPtr p) {
   if (w && Fl_X::i(w)) 
     MacUnlinkWindow(Fl_X::i(w));
 }
+#endif // FL_DOXYGEN
 
 //
 // End of "$Id$".

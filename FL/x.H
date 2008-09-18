@@ -30,7 +30,7 @@
 // need to call Xlib directly.  These symbols may not exist on non-X
 // systems.
 
-#ifndef Fl_X_H
+#if !defined(Fl_X_H) && !defined(FL_DOXYGEN) 
 #  define Fl_X_H
 
 #  include "Enumerations.H"

@@ -276,36 +276,36 @@ class FL_EXPORT Fl_Text_Buffer {
 
     void update_selections(int pos, int nDeleted, int nInserted);
 
-    Fl_Text_Selection mPrimary; /* highlighted areas */
-    Fl_Text_Selection mSecondary;
-    Fl_Text_Selection mHighlight;
-    int mLength;                /* length of the text in the buffer (the length
+    Fl_Text_Selection mPrimary;   /**< highlighted areas */
+    Fl_Text_Selection mSecondary; /**< highlighted areas */
+    Fl_Text_Selection mHighlight; /**< highlighted areas */
+    int mLength;                /**< length of the text in the buffer (the length
                                    of the buffer itself must be calculated:
                                    gapEnd - gapStart + length) */
-    char* mBuf;                 /* allocated memory where the text is stored */
-    int mGapStart;              /* points to the first character of the gap */
-    int mGapEnd;                /* points to the first char after the gap */
+    char* mBuf;                 /**< allocated memory where the text is stored */
+    int mGapStart;              /**< points to the first character of the gap */
+    int mGapEnd;                /**< points to the first char after the gap */
     // The hardware tab distance used by all displays for this buffer,
     // and used in computing offsets for rectangular selection operations.
-    int mTabDist;               /* equiv. number of characters in a tab */
-    int mUseTabs;               /* True if buffer routines are allowed to use
+    int mTabDist;               /**< equiv. number of characters in a tab */
+    int mUseTabs;               /**< True if buffer routines are allowed to use
                                    tabs for padding in rectangular operations */
-    int mNModifyProcs;          /* number of modify-redisplay procs attached */
-    Fl_Text_Modify_Cb*          /* procedures to call when buffer is */
-    mNodifyProcs;               /* modified to redisplay contents */
-    void** mCbArgs;             /* caller arguments for modifyProcs above */
-    int mNPredeleteProcs;	/* number of pre-delete procs attached */
-    Fl_Text_Predelete_Cb*	/* procedure to call before text is deleted */
-	 mPredeleteProcs;	/* from the buffer; at most one is supported. */
-    void **mPredeleteCbArgs;	/* caller argument for pre-delete proc above */
-    int mCursorPosHint;         /* hint for reasonable cursor position after
+    int mNModifyProcs;          /**< number of modify-redisplay procs attached */
+    Fl_Text_Modify_Cb*          /**< procedures to call when buffer is */
+    mNodifyProcs;               /**< modified to redisplay contents */
+    void** mCbArgs;             /**< caller arguments for modifyProcs above */
+    int mNPredeleteProcs;	/**< number of pre-delete procs attached */
+    Fl_Text_Predelete_Cb*	/**< procedure to call before text is deleted */
+	 mPredeleteProcs;	/**< from the buffer; at most one is supported. */
+    void **mPredeleteCbArgs;	/**< caller argument for pre-delete proc above */
+    int mCursorPosHint;         /**< hint for reasonable cursor position after
                                    a buffer modification operation */
-    char mNullSubsChar;         /* NEdit is based on C null-terminated strings,
+    char mNullSubsChar;         /**< NEdit is based on C null-terminated strings,
                                    so ascii-nul characters must be substituted
                                    with something else.  This is the else, but
                                    of course, things get quite messy when you
                                    use it */
-    char mCanUndo;		/* if this buffer is used for attributes, it must
+    char mCanUndo;		/**< if this buffer is used for attributes, it must
 				   not do any undo calls */
 };
 

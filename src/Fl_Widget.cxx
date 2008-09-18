@@ -80,6 +80,7 @@ int Fl_Widget::handle(int) {
   return 0;
 }
 
+/** default font size for widgets */
 Fl_Fontsize FL_NORMAL_SIZE = 14;
 
 Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
@@ -132,10 +133,13 @@ int Fl_Widget::take_focus() {
 
 extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
 
-// Destruction does not remove from any parent group!  And groups when
-// destroyed destroy all their children.  This is convienent and fast.
-// However, it is only legal to destroy a "root" such as an Fl_Window,
-// and automatic destructors may be called.
+/**
+   Destroys the widget, taking care of throwing focus before if any.
+   Destruction does not remove from any parent group!  And groups when
+   destroyed destroy all their children.  This is convienent and fast.
+   However, it is only legal to destroy a "root" such as an Fl_Window,
+   and automatic destructors may be called.
+*/
 Fl_Widget::~Fl_Widget() {
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
@@ -143,7 +147,7 @@ Fl_Widget::~Fl_Widget() {
   fl_throw_focus(this);
 }
 
-// draw a focus box for the widget...
+/** Draws a focus box for the widget at position X,Y and SIZE W,H . */
 void
 Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
   if (!Fl::visible_focus()) return;

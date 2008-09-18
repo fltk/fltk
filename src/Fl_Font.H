@@ -30,11 +30,6 @@
 // Fl_Fontdesc: an entry into the fl_font() table.  There is one of these
 // for each fltk font number.
 //
-// Fl_Font_Descriptor: a structure for an actual system font, with junk to
-// help choose it and info on character sizes.  Each Fl_Fontdesc has a
-// linked list of these.  These are created the first time each system
-// font/size combination is used.
-
 #ifndef FL_FONT_
 #define FL_FONT_
 
@@ -46,9 +41,17 @@ typedef struct _XftFont XftFont;
 #    include <FL/Xutf8.h>
 #  endif // USE_XFT
 
+/**
+   This a structure for an actual system font, with junk to
+   help choose it and info on character sizes.  Each Fl_Fontdesc has a
+   linked list of these.  These are created the first time each system
+   font/size combination is used.
+*/
 class Fl_Font_Descriptor {
 public:
-  Fl_Font_Descriptor *next;	// linked list for this Fl_Fontdesc
+  /** linked list for this Fl_Fontdesc */
+  Fl_Font_Descriptor *next;	
+#ifndef FL_DOXYGEN // don't bother with platorm dependant details in the doc. 
 #  ifdef WIN32
   HFONT fid;
   int *width[64];
@@ -84,7 +87,10 @@ public:
   unsigned int listbase;// base of display list, 0 = none
   char glok[64];
 #  endif
+
   FL_EXPORT ~Fl_Font_Descriptor();
+
+#endif // FL_DOXYGEN
 };
 
 extern FL_EXPORT Fl_Font_Descriptor *fl_fontsize; // the currently selected one

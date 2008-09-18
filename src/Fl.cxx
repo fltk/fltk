@@ -56,7 +56,7 @@ void fl_cleanup_dc_list(void);
 //
 // Globals...
 //
-
+#ifndef FL_DOXYGEN
 Fl_Widget	*Fl::belowmouse_,
 		*Fl::pushed_,
 		*Fl::focus_,
@@ -79,11 +79,12 @@ int		Fl::e_length;
 int		Fl::visible_focus_ = 1,
 		Fl::dnd_text_ops_ = 1;
 
-
 Fl_Window *fl_xfocus;	// which window X thinks has focus
 Fl_Window *fl_xmousewin;// which window X thinks has FL_ENTER
 Fl_Window *Fl::grab_;	// most recent Fl::grab()
 Fl_Window *Fl::modal_;	// topmost modal() window
+
+#endif // FL_DOXYGEN
 
 //
 // 'Fl::version()' - Return the API version number...

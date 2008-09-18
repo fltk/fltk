@@ -114,15 +114,15 @@ class Fl_Menu_;
   releases of FLTK.
 */
 struct FL_EXPORT Fl_Menu_Item {
-  const char *text;	// label()
-  int shortcut_;
-  Fl_Callback *callback_;
-  void *user_data_;
-  int flags;
-  uchar labeltype_;
-  Fl_Font labelfont_;
-  Fl_Fontsize labelsize_;
-  unsigned labelcolor_;
+  const char *text;	    ///< menu item text, returned by label()
+  int shortcut_;	    ///<  menu item shortcut
+  Fl_Callback *callback_;   ///<  menu item callback
+  void *user_data_;	    ///<  menu item user_data for 3rd party apps
+  int flags;		    ///<  menu item flags like FL_MENU_TOGGLE,FL_MENU_RADIO
+  uchar labeltype_;	    ///<  how the menu item text looks like
+  Fl_Font labelfont_;	    ///<  which font for this menu item text
+  Fl_Fontsize labelsize_;   ///<  size of menu item text
+  unsigned labelcolor_;	    ///<  menu item text color 
 
   // advance N items, skipping submenus:
   const Fl_Menu_Item *next(int=1) const;

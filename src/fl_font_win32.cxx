@@ -24,7 +24,7 @@
 //
 //     http://www.fltk.org/str.php
 //
-
+#ifndef FL_DOXYGEN
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
   int weight = FW_NORMAL;
   int italic = 0;
@@ -248,7 +248,7 @@ void fl_rtl_draw(const char* c, int n, int x, int y) {
   }
   SetTextColor(fl_gc, oldColor);
 }
-
+#endif
 //
 // End of "$Id$".
 //

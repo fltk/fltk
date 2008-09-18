@@ -595,6 +595,10 @@ enum Fl_Labeltype {	// labeltypes:
   FL_FREE_LABELTYPE		///< first free labeltype to use for creating own labeltypes
 };
 
+/** 
+  Sets the current  label type end return its corresponding Fl_Labeltype value. 
+  @{
+*/
 #define FL_SYMBOL_LABEL FL_NORMAL_LABEL
 extern Fl_Labeltype FL_EXPORT fl_define_FL_SHADOW_LABEL();
 #define FL_SHADOW_LABEL fl_define_FL_SHADOW_LABEL()
@@ -602,6 +606,7 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_ENGRAVED_LABEL();
 #define FL_ENGRAVED_LABEL fl_define_FL_ENGRAVED_LABEL()
 extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL fl_define_FL_EMBOSSED_LABEL()
+/** @} */
 
 /** \name Alignment Flags */
 /*@{*/

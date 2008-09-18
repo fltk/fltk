@@ -63,6 +63,8 @@
 */
 class FL_EXPORT Fl_Value_Input : public Fl_Valuator {
 public:
+  /* This is the encapsulated Fl_input attribute to which 
+  this class delegates the value font, color and shortcut */
   Fl_Input input;
 private:
   char soft_;

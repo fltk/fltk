@@ -36,8 +36,8 @@
 #endif
 
 // shared type() values for classes that work in both directions:
-#define FL_VERTICAL		0
-#define FL_HORIZONTAL		1
+#define FL_VERTICAL		0 ///< The valuator can work vertically
+#define FL_HORIZONTAL		1 ///< The valuator can work horizontally
 
 /**
   The Fl_Valuator class controls a single floating-point value
@@ -59,16 +59,19 @@ class FL_EXPORT Fl_Valuator : public Fl_Widget {
   double A; int B; // rounds to multiples of A/B, or no rounding if A is zero
 
 protected:
-
-  int horizontal() const {return type()&1;}
+  /** Tells if the valuator is an FL_HORIZONTAL one */
+  int horizontal() const {return type()& FL_HORIZONTAL;}
   Fl_Valuator(int X, int Y, int W, int H, const char* L);
 
+  /** Gets the previous floating point value before an event changed it */
   double previous_value() const {return previous_value_;}
+  /** Stores the current value in the previous value */
   void handle_push() {previous_value_ = value_;}
   double softclamp(double);
   void handle_drag(double newvalue);
   void handle_release(); // use drag() value
   virtual void value_damage(); // cause damage() due to value() changing
+  /** Sets the current floating point value. */
   void set_value(double v) {value_ = v;}
 
 public:

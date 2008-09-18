@@ -322,7 +322,7 @@ void fl_draw_box(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color c) {
 }
 
 //extern Fl_Widget *fl_boxcheat; // hack set by Fl_Window.cxx
-
+/** Draws the widget box according its box style */
 void Fl_Widget::draw_box() const {
   int t = box_;
   if (!t) return;
@@ -333,13 +333,12 @@ void Fl_Widget::draw_box() const {
 //   }
   draw_box((Fl_Boxtype)t, x_, y_, w_, h_, (Fl_Color)color_);
 }
-
+/** Draws a box of type b, of color c at the widget position and size. */
 void Fl_Widget::draw_box(Fl_Boxtype b, Fl_Color c) const {
   draw_box(b, x_, y_, w_, h_, c);
 }
-
-void Fl_Widget::draw_box(Fl_Boxtype b, int X, int Y, int W, int H, Fl_Color c)
-const {
+/** Draws a box of type b, of color c at the widget position X,Y and size W,H. */
+void Fl_Widget::draw_box(Fl_Boxtype b, int X, int Y, int W, int H, Fl_Color c) const {
   draw_it_active = active_r();
   fl_box_table[b].f(X, Y, W, H, c);
   draw_it_active = 1;

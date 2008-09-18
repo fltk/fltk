@@ -28,8 +28,9 @@
 // Do not directly include this file, instead use <FL/x.H>.  It will
 // include this file if "__APPLE__" is defined.  This is to encourage
 // portability of even the system-specific code...
+#ifndef FL_DOXYGEN
 
-#ifndef Fl_X_H
+#if !defined(Fl_X_H)
 #  error "Never use <FL/mac.H> directly; include <FL/x.H> instead."
 #endif // !Fl_X_H
 
@@ -129,7 +130,7 @@ extern void fl_open_display();
 extern void fl_open_callback(void (*cb)(const char *));
 
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
-
+#endif // FL_DOXYGEN
 //
 // End of "$Id$".
 //

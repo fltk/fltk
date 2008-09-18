@@ -67,13 +67,15 @@
    returns the most recent value!
 */
 
+#ifndef FL_DOXYGEN
 Fl_Awake_Handler *Fl::awake_ring_;
 void **Fl::awake_data_;
 int Fl::awake_ring_size_;
 int Fl::awake_ring_head_;
 int Fl::awake_ring_tail_;
-static const int AWAKE_RING_SIZE = 1024;
+#endif
 
+static const int AWAKE_RING_SIZE = 1024;
 static void lock_ring();
 static void unlock_ring();
 

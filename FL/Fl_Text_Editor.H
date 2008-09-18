@@ -48,13 +48,15 @@
 */
 class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
   public:
+    /** Key function binding callback type */
     typedef int (*Key_Func)(int key, Fl_Text_Editor* editor);
 
+    /** Simple linked list associating a key/state to a function */
     struct Key_Binding {
-      int          key;
-      int          state;
-      Key_Func     function;
-      Key_Binding* next;
+      int          key;		///< the key pressed
+      int          state;	///< the state of key modifiers
+      Key_Func     function;	///< associated function
+      Key_Binding* next;	///< next key binding in the list
     };
 
     Fl_Text_Editor(int X, int Y, int W, int H, const char* l = 0);
@@ -121,10 +123,12 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
     int handle_key();
     void maybe_do_callback();
 
+#ifndef FL_DOXYGEN
     int insert_mode_;
     Key_Binding* key_bindings;
     static Key_Binding* global_key_bindings;
     Key_Func default_key_function_;
+#endif
 };
 
 #endif

@@ -32,9 +32,10 @@
 #define Fl_Fill_Slider_H
 
 #include "Fl_Slider.H"
-
+/** Widget that draws a filled horizontal  slider,  useful as a progress or value meter*/
 class Fl_Fill_Slider : public Fl_Slider {
 public:
+    /** Creates the slider from its position,size and optional title. */
     Fl_Fill_Slider(int x,int y,int w,int h,const char *l=0)
 	: Fl_Slider(x,y,w,h,l) {type(FL_VERT_FILL_SLIDER);}
 };

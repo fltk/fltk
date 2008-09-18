@@ -29,7 +29,7 @@
 //#  include "Fl_win32.cxx"
 #elif defined(__APPLE__)
 //#  include "Fl_mac.cxx"
-#else
+#elif !defined(FL_DOXYGEN)
 
 #  define CONSOLIDATE_MOTION 1
 /**** Define this if your keyboard lacks a backspace key... ****/
