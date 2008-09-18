@@ -409,7 +409,7 @@ FL_EXPORT GLUTproc glutGetProcAddress(const char *procName);
 
 // Font argument must be a void* for compatability, so...
 /** fltk glut font/size attributes used in the glutXXX functions */
-Fl_Glut_Bitmap_Font {Fl_Font font; Fl_Fontsize size;}
+struct Fl_Glut_Bitmap_Font {Fl_Font font; Fl_Fontsize size;};
 
 extern FL_EXPORT struct Fl_Glut_Bitmap_Font
   glutBitmap9By15, glutBitmap8By13, glutBitmapTimesRoman10,
