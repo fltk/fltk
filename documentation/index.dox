@@ -69,6 +69,8 @@
 
  \subpage advanced
 
+ \subpage unicode
+
 	<B><A HREF="classes.html">A - Class Reference</A></B>
 
 	<B><A HREF="globals_func.html">B - Function Reference</A></B>

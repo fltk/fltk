@@ -1,0 +1,84 @@
+/**
+
+ \page unicode 11 - Unicode and utf-8 Support
+
+<P>This chapter explains how FLTK handles international 
+text via Unicode and utf-8.</P>
+
+<P>Unicode support was only recently added to FLTK and is
+still incomplete. This chapter is Work in Progress, reflecting
+the current state of Unicode support.</P>
+
+<H2>About Unicode and utf-8</H2>
+
+The Unicode Standard is a worldwide accepted charatcer encoding 
+standard. Unicode provides access to over 100,000 characters 
+used in all the major languages written today.
+
+Utf-8 encodes all Unicode characters into variable length 
+sequences of bytes. Unicode characters in the 7-bit ASCII 
+range map to the same value in utf-8, making the transformation
+to Unicode quick and easy.
+
+Moving from ASCII encoding to Unicode will allow all new FLTK
+applications to be easily internationalized and and used all
+over the world. By choosing utf-8 encoding, FLTK remains 
+largely source-code compatible to previous iteration of the 
+library.
+
+<H2>Unicode in FLTK</H2>
+
+FLTK will be entirely converted to Unicode in utf-8 encoding.
+If a different encoding is required by the underlying operatings
+system, FLTK will convert string as needed.
+
+TODO:
+
+<UL>
+<LI> more doc on unicode, add links
+<LI> write something about filename encoding on OS X...
+<LI> explain the fl_utf8_... commands
+</UL>
+
+DONE:
+
+<UL>
+<LI> initial transfer of the Ian/O'ksi'D patch
+<LI> adapted Makefiles and IDEs for available platforms
+<LI> hacked some Unicode keybard entry for OS X
+</UL>
+
+ISSUES:
+
+<UL>
+<LI> IDEs:
+  <UL>
+  <LI> Makefile support: tested on Fedora Core 5 and OS X, but heaven knows  
+     on which platforms this may fail
+  <LI> Xcode: tested, seems to be working (but see comments below on OS X)
+  <LI> VisualC (VC6): tested, test/utf8 works, but may have had some issues  
+     during merge. Some additional work needed (imm32.lib)
+  <LI> VisualStudio2005: tested, test/utf8 works, some addtl. work needed  
+     (imm32.lib)
+  <LI> VisualCNet: sorry, I have no longer access to that IDE
+  <LI> Borland and other compiler: sorry, I can't update those
+  </UL>
+<LI> Platforms:
+  <UL>
+  <LI> you will encounter problems on all platforms!
+  <LI> X11: many characters are missing, but that may be related to bad  
+     fonts on my machine. I also could not do any keyboard tests yet.  
+     Rendering seems to generally work ok.
+  <LI> Win32: US and German keyboard worked ok, but no compositing was  
+     tested. Rendering looks pretty good.
+  <LI> OS X: redering looks good. Keyboard is completely messed up, even in  
+     US setting (with Alt key)
+  <LI> all: while merging I have seen plenty of places that are not  
+     entirley utf8-safe, particularly Fl_Input, Fl_Text_Editor, and  
+     Fl_Help_View. Keycodes from the keyboard conflict with Unicode  
+     characters. Right-to-left rendered text can not be marked or edited,  
+     and probably much more.
+  </UL>
+</UL>
+
+*/
