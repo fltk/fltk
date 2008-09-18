@@ -2,7 +2,7 @@
 
 \mainpage FLTK Programming Manual
 
-<TABLE BGCOLOR="#9f9f9f" CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="700">
+<TABLE BGCOLOR="#9f9f9f" CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="700" BORDER="0">
 <TR>
 	<TD VALIGN="MIDDLE">
   \image html FL200.gif
@@ -13,11 +13,11 @@
 	</TD>
 </TR>
 <TR>
-	<TH COLSPAN=2>This software and manual are provided under the terms of the GNU Library General Public License. Permission is granted to reproduce this manual or any portion for any purpose, provided this copyright and permission notice are preserved.</TH>
+	<TH COLSPAN="2">This software and manual are provided under the terms of the GNU Library General Public License. Permission is granted to reproduce this manual or any portion for any purpose, provided this copyright and permission notice are preserved.</TH>
 </TR>
 </TABLE>
 
-<TABLE BGCOLOR="#9f9fef" CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="700">
+<TABLE BGCOLOR="#9f9fef" CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="700" BORDER="0">
 <TR>
 	<TD ALIGN="LEFT" VALIGN="TOP">
 
@@ -54,10 +54,6 @@
 
  \subpage opengl
 
-	</TD>
-
-	<TD ALIGN=LEFT VALIGN=TOP>
-
  \subpage fluid
  	<B>
 	<UL>
@@ -66,6 +62,10 @@
 	<LI><A HREF="fluid.html#images">Image Labels</A></LI>
 	</UL>
 	</B>
+
+</TD>
+
+<TD ALIGN="LEFT" VALIGN="TOP">
 
  \subpage advanced
 
