@@ -692,7 +692,8 @@ public:
    */ 
   int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
 
-  /** Check if the widget value changed since the last callback.
+  /** 
+   *  Check if the widget value changed since the last callback.
    *  "Changed" is a flag that is turned on when the user changes the value stored 
    *  in the widget. This is only used by subclasses of Fl_Widget that store values, 
    *  but is in the base class so it is easier to scan all the widgets in a panel 

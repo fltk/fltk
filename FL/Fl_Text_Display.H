@@ -252,7 +252,7 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     int wrap_uses_character(int lineEndPos);
     int range_touches_selection(Fl_Text_Selection *sel, int rangeStart,
                                  int rangeEnd);
-
+#ifndef FL_DOXYGEN
     int damage_range1_start, damage_range1_end;
     int damage_range2_start, damage_range2_end;
     int mCursorPos;
@@ -331,6 +331,7 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 	 // can implement line numbers without breaking binary compatibility.
     int mLineNumLeft, mLineNumWidth;
 				/* Line number margin and width */
+#endif
 };
 
 #endif

@@ -535,7 +535,7 @@ extern const char* fl_cancel;
   color using dithering.
  */
 
-/**
+/** \relatesalso Fl_Color_Chooser
   \ingroup fl_color_chooser_group
   \fn int fl_color_chooser(const char* name, double& r, double& g, double& b)
   \brief Pops up a window to let the user pick an arbitrary RGB color.
@@ -577,7 +577,7 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b) {
   return 0;
 }
 
-/**
+/** \relatesalso Fl_Color_Chooser
   \ingroup fl_color_chooser_group
   \fn int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b)
   \brief Pops up a window to let the user pick an arbitrary RGB color.

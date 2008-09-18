@@ -43,23 +43,25 @@ static void callback(Fl_File_Chooser *, void*) {
 }
 
 
-// Set the file chooser callback
+/** \relatesalso Fl_File_Chooser
+    Set the file chooser callback
+*/
 void fl_file_chooser_callback(void (*cb)(const char*)) {
   current_callback = cb;
 }
 
 
-// Set the "OK" button label
+/** \relatesalso Fl_File_Chooser
+    Set the "OK" button label
+*/
 void fl_file_chooser_ok_label(const char *l) {
   if (l) current_label = l;
   else current_label = fl_ok;
 }
 
-
-//
-// 'fl_file_chooser()' - Show a file chooser dialog and get a filename.
-//
-
+/** \relatesalso Fl_File_Chooser
+    Show a file chooser dialog and get a filename. 
+*/
 char *					// O - Filename or NULL
 fl_file_chooser(const char *message,	// I - Message in titlebar
                 const char *pat,	// I - Filename pattern
@@ -134,10 +136,9 @@ fl_file_chooser(const char *message,	// I - Message in titlebar
   else return 0;
 }
 
-
-//
-// 'fl_dir_chooser()' - Show a file chooser dialog and get a directory.
-//
+/**  \relatesalso Fl_File_Chooser
+    Show a file chooser dialog and get a directory.
+*/
 
 char *					// O - Directory or NULL
 fl_dir_chooser(const char *message,	// I - Message for titlebar
