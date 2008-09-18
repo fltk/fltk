@@ -62,7 +62,7 @@ class FL_EXPORT Fl {
   Fl() {}; // no constructor!
 
 public: // should be private!
-
+#ifndef FL_DOXYGEN
   static int e_number;
   static int e_x;
   static int e_y;
@@ -86,6 +86,7 @@ public: // should be private!
   static int compose_state;
   static int visible_focus_;
   static int dnd_text_ops_;
+#endif
   /**
     If true then flush() will do something.
   */
@@ -246,6 +247,9 @@ public:
   static int damage() {return damage_;}
   static void redraw();
   static void flush();
+  /** \defgroup  fl_windows fltk windows handling functions
+      Windows and standard dialogs handling
+    @{ */
   /** \fn void (*warning)(const char*, ...)
   FLTK calls this to print a warning message. You can
   override the behavior by setting the function pointer to your
@@ -315,7 +319,12 @@ public:
   static Fl_Window* grab() {return grab_;}
   /** Selects the window to grab. See Fl_Window* Fl::grab() */
   static void grab(Fl_Window*); // platform dependent
+  /** @} */
 
+  /** \defgroup fl_events fltk global events handling functions
+	Fl class events handling API
+	@{
+  */
   // event information:
   /**
     Returns the last event that was processed. This can be used
@@ -500,6 +509,7 @@ public:
     you paste a nul character.
   */
   static int event_length() {return e_length;}
+
   static int compose(int &del);
   /**
     If the user moves the cursor, be sure to call Fl::compose_reset().
@@ -525,7 +535,11 @@ public:
   static void focus(Fl_Widget*);
   static void add_handler(int (*h)(int));
   static void remove_handler(int (*h)(int));
+  /** @} */
 
+  /** \defgroup  fl_clipboard  fltk selection/clipboard functions
+	fl global copy/cut/paste functions
+   @{ */
   // cut/paste:
   /**
     Copies the data pointed to by stuff to the selection
@@ -549,13 +563,17 @@ public:
     will be marked as <i>text</i>.
   */
   static int dnd(); // platform dependent
+
   // These are for back-compatibility only:
   /** See Fl_Widget* selection_owner(Fl_Widget*) */
   static Fl_Widget* selection_owner() {return selection_owner_;}
   static void selection_owner(Fl_Widget*);
   static void selection(Fl_Widget &owner, const char*, int len);
   static void paste(Fl_Widget &receiver);
-
+/** @} */
+/** \defgroup  fl_screen  fltk screen functions
+	fl global screen functions
+     @{ */
   // screen size:
   /** Returns the origin of the current screen, where 0 indicates the left side of the screen. */
   static int x(); // platform dependent
@@ -574,6 +592,12 @@ public:
   }
   static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
   static void screen_xywh(int &X, int &Y, int &W, int &H, int n);
+
+  /**   @} */
+
+  /** \defgroup  fl_attributes  fltk color,font functions
+	fl global color, font functions
+     @{ */
 
   // color map:
   static void	set_color(Fl_Color, uchar, uchar, uchar);
@@ -642,6 +666,8 @@ public:
   */
   static Fl_Font set_fonts(const char* = 0); // platform dependent
 
+  /**   @} */
+
   // labeltypes:
   static void set_labeltype(Fl_Labeltype,Fl_Label_Draw_F*,Fl_Label_Measure_F*);
   /** Sets the functions to call to draw and measure a specific labeltype. */
@@ -659,11 +685,17 @@ public:
 
   // back compatibility:
   /** for back compatibility. sets the (*fatal)() callback. */
+  /** \addtogroup fl_windows 
+    @{ */
   static void set_abort(void (*f)(const char*,...)) {fatal = f;}
   static void (*atclose)(Fl_Window*,void*);
   static void default_atclose(Fl_Window*,void*);
   /** for back compatibility. sets the (*atclose)() callback. */
   static void set_atclose(void (*f)(Fl_Window*,void*)) {atclose = f;}
+  /**   @} */
+
+  /** \addtogroup fl_events 
+    @{ */
   /** Returns non-zero if the Shift key is pressed. */
   static int event_shift() {return e_state&FL_SHIFT;}
   /** Returns non-zero if the Control key is pressed. */
@@ -694,6 +726,8 @@ public:
     For more details, see Fl::event_buttons().
   */
   static int event_button3() {return e_state&FL_BUTTON3;}
+  /**   @} */
+
   /**
     Sets an idle callback.
     <P>This method is obsolete - use the add_idle() method instead.
@@ -733,6 +767,9 @@ public:
     cut/paste shortcut.
   */
   static int  dnd_text_ops() { return dnd_text_ops_; }
+  /** \defgroup fl_multithread fltk multithreading support functions
+	fl multithreading support functions
+   @{ */
 
   // Multithreading support:
   static void lock();
@@ -747,13 +784,19 @@ public:
     <P>See also: multithreading
   */
   static void* thread_message(); // platform dependent
+  /** @} */
 
+  /** \defgroup fl_del_widget fltk safe widget deletion support functions
+	fl multithreading support functions
+   @{ */
   // Widget deletion:
   static void delete_widget(Fl_Widget *w);
   static void do_widget_deletion();
   static void watch_widget_pointer(Fl_Widget *&w);
   static void release_widget_pointer(Fl_Widget *&w);
   static void clear_widget_pointer(Fl_Widget const *w);
+  /** @} */
+
 };
 
 #endif // !Fl_H
