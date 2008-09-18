@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0300 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -34,7 +34,7 @@ comment {//
 decl {void show_help(const char *name);} {public
 } 
 
-Function {make_about_panel()} {open
+Function {make_about_panel()} {selected
 } {
   Fl_Window about_panel {
     label {About FLUID} open
@@ -51,7 +51,7 @@ Version 1.3.0}
     }
     Fl_Box {} {
       label {Copyright 1998-2008 by
-Bill Spitzak and others} selected
+Bill Spitzak and others}
       xywh {135 89 170 42} align 148
     }
     Fl_Button {} {

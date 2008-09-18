@@ -98,6 +98,7 @@ int gridx = 5;
 int gridy = 5;
 int snap = 1;
 int show_guides = 1;
+int show_comments = 1;
 
 // File history info...
 char	absolute_history[10][1024];
@@ -1747,6 +1748,7 @@ void make_main_window() {
   fluid_prefs.get("gridy", gridy, 5);
   fluid_prefs.get("show_guides", show_guides, 0);
   fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
+  fluid_prefs.get("show_comments", show_comments, 1);
 
   load_history();
 

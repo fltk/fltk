@@ -165,6 +165,8 @@ Fl_Pixmap *pixmap[] = { 0, &window_pixmap, &button_pixmap, &checkbutton_pixmap, 
  &dial_pixmap, &roller_pixmap, &valueinput_pixmap, &valueoutput_pixmap, &comment_pixmap,             /* 42..46 */
  &spinner_pixmap, &widgetclass_pixmap /* 47..48 */ };
 
+extern int show_comments;
+
 ////////////////////////////////////////////////////////////////
 
 class Widget_Browser : public Fl_Browser_ {
@@ -234,7 +236,7 @@ void Widget_Browser::item_select(void *l,int v) {((Fl_Type*)l)->new_selected = v
 int Widget_Browser::item_height(void *l) const {
   Fl_Type *t = (Fl_Type*)l;
   if (t->visible) {
-    if (t->comment())
+    if (show_comments && t->comment())
       return textsize()*2+1;
     else
       return textsize()+2;
@@ -260,7 +262,7 @@ void Widget_Browser::item_draw(void *v, int X, int Y, int, int) const {
   Fl_Type *l = (Fl_Type *)v;
   X += 3 + 18 + l->level * 12;
   int comment_incr = 0;
-  if (l->comment()) {
+  if (show_comments && l->comment()) {
     char buf[82], *d = buf;
     const char *s = l->comment();
     for (int i=0; i<80; i++) {

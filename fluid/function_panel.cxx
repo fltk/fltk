@@ -934,17 +934,6 @@ Fl_Light_Button *sv_autorefresh=(Fl_Light_Button *)0;
 
 Fl_Light_Button *sv_autoposition=(Fl_Light_Button *)0;
 
-/**
-   Create a preview window for the C++ source code.
-   
-   This function creates a dialog box with two tabs
-   for previewing thw header and source file that will
-   be generated from the current database.
-   
-   The created window is modal.
-   
-   \return the newly created dialog window
-*/
 Fl_Double_Window* make_sourceview() {
   { sourceview_panel = new Fl_Double_Window(520, 490, "Code View");
     sourceview_panel->callback((Fl_Callback*)toggle_sourceview_cb);

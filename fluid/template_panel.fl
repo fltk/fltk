@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0300 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -47,7 +47,7 @@ decl {\#include <FL/Fl_Shared_Image.H>} {}
 
 decl {\#include <FL/Fl_Preferences.H>} {} 
 
-declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {selected after {\#endif // WIN32 && !__CYGWIN__}
+declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {after {\#endif // WIN32 && !__CYGWIN__}
 } {
   decl {\#include <io.h>} {}
   decl {\#else} {}
@@ -56,8 +56,7 @@ declblock {\#if defined(WIN32) && !defined(__CYGWIN__)} {selected after {\#endif
 
 decl {extern Fl_Preferences fluid_prefs;} {} 
 
-Function {make_template_panel()} {open
-} {
+Function {make_template_panel()} {} {
   Fl_Window template_panel {
     label {New/Save Template}
     callback {Fl_Shared_Image *img = (Fl_Shared_Image *)template_preview->image();
@@ -182,7 +181,7 @@ template_browser->deselect();
 template_browser->clear();} {}
 } 
 
-Function {template_delete_cb(Fl_Button *, void *)} {return_type void
+Function {template_delete_cb(Fl_Button *, void *)} {selected return_type void
 } {
   code {int item = template_browser->value();
 if (item < 1) return;
@@ -203,7 +202,7 @@ template_browser->remove(item);
 template_browser->do_callback();} {}
 } 
 
-Function {template_load()} {open return_type void
+Function {template_load()} {return_type void
 } {
   code {int i;
 char name[1024], filename[1024], path[1024], *ptr;

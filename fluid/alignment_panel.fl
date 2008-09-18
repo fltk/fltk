@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0300 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -40,7 +40,13 @@ decl {\#include <FL/Fl_Text_Display.H>} {public
 decl {extern void load_history();} {public
 } 
 
-Function {make_project_window()} {open
+decl {extern void redraw_browser();} {public
+} 
+
+decl {extern int show_comments;} {public
+} 
+
+Function {make_project_window()} {selected
 } {
   Fl_Window project_window {
     label {Project Settings}
@@ -83,7 +89,7 @@ Function {make_project_window()} {open
         }
         Fl_Check_Button use_FL_COMMAND_button {
           label {Generate menu shortcuts using FL_COMMAND}
-          callback use_FL_COMMAND_button_cb selected
+          callback use_FL_COMMAND_button_cb
           tooltip {Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.} xywh {95 130 245 20} down_box DOWN_BOX labelsize 11
         }
       }
@@ -150,7 +156,7 @@ Function {make_settings_window()} {open
 } {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {326 145 340 225} type Double non_modal visible
+    xywh {393 191 342 242} type Double non_modal visible
   } {
     Fl_Choice scheme_choice {
       label {Scheme:}
@@ -185,13 +191,13 @@ Function {make_settings_window()} {open
 
 
 } open
-      xywh {116 45 215 100} labelfont 1 align 4
+      xywh {70 40 266 128} labelfont 1 align 4
     } {
       Fl_Check_Button tooltips_button {
         label {Show Tooltips}
         callback {Fl_Tooltip::enable(tooltips_button->value());
 fluid_prefs.set("show_tooltips", tooltips_button->value());}
-        xywh {116 45 113 25} down_box DOWN_BOX
+        xywh {116 40 113 25} down_box DOWN_BOX
         code0 {int b;}
         code1 {fluid_prefs.get("show_tooltips", b, 1);}
         code2 {tooltips_button->value(b);}
@@ -200,7 +206,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button completion_button {
         label {Show Completion Dialogs}
         callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
-        xywh {116 70 186 25} down_box DOWN_BOX
+        xywh {116 65 186 25} down_box DOWN_BOX
         code0 {int b;}
         code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
         code2 {completion_button->value(b);}
@@ -208,7 +214,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button openlast_button {
         label {Open Previous File on Startup}
         callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
-        xywh {116 95 215 25} down_box DOWN_BOX
+        xywh {115 90 215 25} down_box DOWN_BOX
         code0 {int b;}
         code1 {fluid_prefs.get("open_previous_file", b, 0);}
         code2 {openlast_button->value(b);}
@@ -216,26 +222,35 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button prevpos_button {
         label {Remember Window Positions}
         callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
-        xywh {116 120 210 25} down_box DOWN_BOX
+        xywh {115 115 210 25} down_box DOWN_BOX
         code0 {int b;}
         code1 {fluid_prefs.get("prev_window_pos", b, 1);}
         code2 {prevpos_button->value(b);}
       }
-    }
-    Fl_Button {} {
-      label Close
-      callback {settings_window->hide();}
-      tooltip {Close this dialog.} xywh {266 190 64 25}
+      Fl_Check_Button show_comments_button {
+        label {Show Comments in Browser}
+        callback {show_comments = show_comments_button->value();
+fluid_prefs.set("show_comments", show_comments);
+redraw_browser();}
+        xywh {115 140 210 25} down_box DOWN_BOX
+        code1 {fluid_prefs.get("show_comments", show_comments, 1);}
+        code2 {show_comments_button->value(show_comments);}
+      }
     }
     Fl_Spinner recent_spinner {
       label {\# Recent Files:}
       callback {fluid_prefs.set("recent_files", recent_spinner->value());
 load_history();}
-      xywh {116 155 40 25} labelfont 1 when 1 value 1
+      xywh {115 170 40 25} labelfont 1 when 1 value 1
       code0 {int c;}
       code1 {fluid_prefs.get("recent_files", c, 5);}
       code2 {recent_spinner->maximum(10);}
       code3 {recent_spinner->value(c);}
+    }
+    Fl_Button {} {
+      label Close
+      callback {settings_window->hide();}
+      tooltip {Close this dialog.} xywh {266 205 64 25}
     }
   }
 } 
@@ -309,7 +324,7 @@ Function {make_shell_window()} {open
 Function {make_layout_window()} {open
 } {
   Fl_Window grid_window {
-    label {Layout Settings}
+    label {Layout Settings} open
     xywh {676 337 285 245} type Double non_modal visible
   } {
     Fl_Input horizontal_input {

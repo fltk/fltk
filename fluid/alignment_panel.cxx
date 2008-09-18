@@ -3,7 +3,7 @@
 //
 // Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2008 by Bill Spitzak and others.
+// Copyright 1998-2005 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -74,7 +74,7 @@ Fl_Double_Window* make_project_window() {
         o->labelsize(11);
         { Fl_Box* o = new Fl_Box(15, 40, 325, 15, "Use \"name.ext\" to set name or just \".ext\" to set extension.");
           o->labelsize(11);
-          o->align(FL_ALIGN_WRAP|FL_ALIGN_INSIDE);
+          o->align(Fl_Align(FL_ALIGN_WRAP|FL_ALIGN_INSIDE));
         } // Fl_Box* o
         { header_file_input = new Fl_Input(96, 60, 228, 20, "Header File:");
           header_file_input->tooltip("The name of the generated header file.");
@@ -209,8 +209,12 @@ static void cb_prevpos_button(Fl_Check_Button*, void*) {
   fluid_prefs.set("prev_window_pos", prevpos_button->value());
 }
 
-static void cb_Close1(Fl_Button*, void*) {
-  settings_window->hide();
+Fl_Check_Button *show_comments_button=(Fl_Check_Button *)0;
+
+static void cb_show_comments_button(Fl_Check_Button*, void*) {
+  show_comments = show_comments_button->value();
+fluid_prefs.set("show_comments", show_comments);
+redraw_browser();
 }
 
 Fl_Spinner *recent_spinner=(Fl_Spinner *)0;
@@ -220,8 +224,12 @@ static void cb_recent_spinner(Fl_Spinner*, void*) {
 load_history();
 }
 
+static void cb_Close1(Fl_Button*, void*) {
+  settings_window->hide();
+}
+
 Fl_Double_Window* make_settings_window() {
-  { settings_window = new Fl_Double_Window(340, 225, "GUI Settings");
+  { settings_window = new Fl_Double_Window(342, 242, "GUI Settings");
     { scheme_choice = new Fl_Choice(116, 10, 115, 25, "Scheme:");
       scheme_choice->down_box(FL_BORDER_BOX);
       scheme_choice->labelfont(1);
@@ -232,10 +240,10 @@ Fl_Double_Window* make_settings_window() {
       scheme_choice->value(s);
       scheme_cb(0, 0);
     } // Fl_Choice* scheme_choice
-    { Fl_Group* o = new Fl_Group(116, 45, 215, 100, "Options:\n\n\n\n\n");
+    { Fl_Group* o = new Fl_Group(70, 40, 266, 128, "Options:\n\n\n\n\n");
       o->labelfont(1);
-      o->align(FL_ALIGN_LEFT);
-      { tooltips_button = new Fl_Check_Button(116, 45, 113, 25, "Show Tooltips");
+      o->align(Fl_Align(FL_ALIGN_LEFT));
+      { tooltips_button = new Fl_Check_Button(116, 40, 113, 25, "Show Tooltips");
         tooltips_button->down_box(FL_DOWN_BOX);
         tooltips_button->callback((Fl_Callback*)cb_tooltips_button);
         int b;
@@ -243,34 +251,36 @@ Fl_Double_Window* make_settings_window() {
         tooltips_button->value(b);
         Fl_Tooltip::enable(b);
       } // Fl_Check_Button* tooltips_button
-      { completion_button = new Fl_Check_Button(116, 70, 186, 25, "Show Completion Dialogs");
+      { completion_button = new Fl_Check_Button(116, 65, 186, 25, "Show Completion Dialogs");
         completion_button->down_box(FL_DOWN_BOX);
         completion_button->callback((Fl_Callback*)cb_completion_button);
         int b;
         fluid_prefs.get("show_completion_dialogs", b, 1);
         completion_button->value(b);
       } // Fl_Check_Button* completion_button
-      { openlast_button = new Fl_Check_Button(116, 95, 215, 25, "Open Previous File on Startup");
+      { openlast_button = new Fl_Check_Button(115, 90, 215, 25, "Open Previous File on Startup");
         openlast_button->down_box(FL_DOWN_BOX);
         openlast_button->callback((Fl_Callback*)cb_openlast_button);
         int b;
         fluid_prefs.get("open_previous_file", b, 0);
         openlast_button->value(b);
       } // Fl_Check_Button* openlast_button
-      { prevpos_button = new Fl_Check_Button(116, 120, 210, 25, "Remember Window Positions");
+      { prevpos_button = new Fl_Check_Button(115, 115, 210, 25, "Remember Window Positions");
         prevpos_button->down_box(FL_DOWN_BOX);
         prevpos_button->callback((Fl_Callback*)cb_prevpos_button);
         int b;
         fluid_prefs.get("prev_window_pos", b, 1);
         prevpos_button->value(b);
       } // Fl_Check_Button* prevpos_button
+      { show_comments_button = new Fl_Check_Button(115, 140, 210, 25, "Show Comments in Browser");
+        show_comments_button->down_box(FL_DOWN_BOX);
+        show_comments_button->callback((Fl_Callback*)cb_show_comments_button);
+        fluid_prefs.get("show_comments", show_comments, 1);
+        show_comments_button->value(show_comments);
+      } // Fl_Check_Button* show_comments_button
       o->end();
     } // Fl_Group* o
-    { Fl_Button* o = new Fl_Button(266, 190, 64, 25, "Close");
-      o->tooltip("Close this dialog.");
-      o->callback((Fl_Callback*)cb_Close1);
-    } // Fl_Button* o
-    { recent_spinner = new Fl_Spinner(116, 155, 40, 25, "# Recent Files:");
+    { recent_spinner = new Fl_Spinner(115, 170, 40, 25, "# Recent Files:");
       recent_spinner->labelfont(1);
       recent_spinner->value(1);
       recent_spinner->callback((Fl_Callback*)cb_recent_spinner);
@@ -280,6 +290,10 @@ Fl_Double_Window* make_settings_window() {
       recent_spinner->maximum(10);
       recent_spinner->value(c);
     } // Fl_Spinner* recent_spinner
+    { Fl_Button* o = new Fl_Button(266, 205, 64, 25, "Close");
+      o->tooltip("Close this dialog.");
+      o->callback((Fl_Callback*)cb_Close1);
+    } // Fl_Button* o
     settings_window->set_non_modal();
     settings_window->end();
   } // Fl_Double_Window* settings_window
@@ -331,7 +345,7 @@ Fl_Double_Window* make_shell_window() {
     { shell_command_input = new Fl_Input(10, 27, 347, 25, "Command:");
       shell_command_input->labelfont(1);
       shell_command_input->callback((Fl_Callback*)cb_shell_command_input);
-      shell_command_input->align(FL_ALIGN_TOP_LEFT);
+      shell_command_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       char buf[1024];
       fluid_prefs.get("shell_command", buf, "", sizeof(buf));
       shell_command_input->value(buf);
@@ -404,7 +418,7 @@ Fl_Double_Window* make_layout_window() {
       horizontal_input->type(2);
       horizontal_input->box(FL_THIN_DOWN_BOX);
       horizontal_input->callback((Fl_Callback*)grid_cb, (void*)(1));
-      horizontal_input->align(FL_ALIGN_RIGHT);
+      horizontal_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     } // Fl_Input* horizontal_input
     { Fl_Input* o = vertical_input = new Fl_Input(166, 10, 50, 25, "pixels");
@@ -412,7 +426,7 @@ Fl_Double_Window* make_layout_window() {
       vertical_input->type(2);
       vertical_input->box(FL_THIN_DOWN_BOX);
       vertical_input->callback((Fl_Callback*)grid_cb, (void*)(2));
-      vertical_input->align(FL_ALIGN_RIGHT);
+      vertical_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     } // Fl_Input* vertical_input
     { Fl_Input* o = snap_input = new Fl_Input(106, 45, 50, 25, "pixel snap");
@@ -420,7 +434,7 @@ Fl_Double_Window* make_layout_window() {
       snap_input->type(2);
       snap_input->box(FL_THIN_DOWN_BOX);
       snap_input->callback((Fl_Callback*)grid_cb, (void*)(3));
-      snap_input->align(FL_ALIGN_RIGHT);
+      snap_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
     } // Fl_Input* snap_input
     { guides_toggle = new Fl_Check_Button(106, 80, 110, 25, "Show Guides");
@@ -434,11 +448,11 @@ Fl_Double_Window* make_layout_window() {
     } // Fl_Button* o
     { Fl_Box* o = new Fl_Box(26, 10, 70, 25, "Grid:");
       o->labelfont(1);
-      o->align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
     } // Fl_Box* o
     { Fl_Box* o = new Fl_Box(-1, 115, 97, 25, "Widget Size:");
       o->labelfont(1);
-      o->align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE);
+      o->align(Fl_Align(FL_ALIGN_RIGHT|FL_ALIGN_INSIDE));
     } // Fl_Box* o
     { Fl_Group* o = new Fl_Group(105, 115, 170, 75);
       { def_widget_size[0] = new Fl_Round_Button(105, 115, 70, 25);
@@ -448,7 +462,7 @@ Fl_Double_Window* make_layout_window() {
       } // Fl_Round_Button* def_widget_size[0]
       { Fl_Box* o = new Fl_Box(120, 115, 50, 25, "tiny");
         o->labelsize(8);
-        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
       { def_widget_size[1] = new Fl_Round_Button(180, 115, 70, 25);
         def_widget_size[1]->type(102);
@@ -457,7 +471,7 @@ Fl_Double_Window* make_layout_window() {
       } // Fl_Round_Button* def_widget_size[1]
       { Fl_Box* o = new Fl_Box(195, 115, 50, 25, "small");
         o->labelsize(11);
-        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
       { def_widget_size[2] = new Fl_Round_Button(105, 140, 70, 25);
         def_widget_size[2]->type(102);
@@ -465,7 +479,7 @@ Fl_Double_Window* make_layout_window() {
         def_widget_size[2]->callback((Fl_Callback*)default_widget_size_cb, (void*)(14));
       } // Fl_Round_Button* def_widget_size[2]
       { Fl_Box* o = new Fl_Box(120, 140, 50, 25, "normal");
-        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
       { def_widget_size[3] = new Fl_Round_Button(180, 140, 90, 25);
         def_widget_size[3]->type(102);
@@ -474,7 +488,7 @@ Fl_Double_Window* make_layout_window() {
       } // Fl_Round_Button* def_widget_size[3]
       { Fl_Box* o = new Fl_Box(195, 140, 68, 25, "medium");
         o->labelsize(18);
-        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
       { def_widget_size[4] = new Fl_Round_Button(105, 165, 75, 25);
         def_widget_size[4]->type(102);
@@ -483,7 +497,7 @@ Fl_Double_Window* make_layout_window() {
       } // Fl_Round_Button* def_widget_size[4]
       { Fl_Box* o = new Fl_Box(120, 165, 64, 25, "large");
         o->labelsize(24);
-        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
       { def_widget_size[5] = new Fl_Round_Button(180, 165, 95, 25);
         def_widget_size[5]->type(102);
@@ -492,7 +506,7 @@ Fl_Double_Window* make_layout_window() {
       } // Fl_Round_Button* def_widget_size[5]
       { Fl_Box* o = new Fl_Box(195, 165, 76, 25, "huge");
         o->labelsize(32);
-        o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
+        o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
       } // Fl_Box* o
       o->end();
     } // Fl_Group* o
