@@ -60,11 +60,7 @@ static char SWAP_TYPE = 0 ; // 0 = determine it from environment variable
 
 ////////////////////////////////////////////////////////////////
 
-/**
-  Returns non-zero if the hardware supports the given or current OpenGL
-  mode.
-  
-*/
+/**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
 int Fl_Gl_Window::can_do(int a, const int *b) {
   return Fl_Gl_Choice::find(a,b) != 0;
 }

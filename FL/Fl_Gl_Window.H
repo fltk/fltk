@@ -127,11 +127,11 @@ public:
   */
   void context_valid(char v) {if (v) valid_f_ |= 2; else valid_f_ &= 0xfd;}
 
+/**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
   static int can_do(int m) {return can_do(m,0);}
+/**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
   static int can_do(const int *m) {return can_do(0, m);}
-  /**
-    See static int Fl_Gl_Window::can_do(int) 
-  */
+ /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
   int can_do() {return can_do(mode_,alist);}
   /**
     Set or change the OpenGL capabilites of the window.  The value can be
@@ -162,8 +162,11 @@ public:
     window a child of another window if you wish to do this!
   */
   Fl_Mode mode() const {return (Fl_Mode)mode_;}
+  /** See Fl_Mode mode() const */
   int mode(int a) {return mode(a,0);}
+  /** See Fl_Mode mode() const */
   int mode(const int *a) {return mode(0, a);}
+  /** void See void context(void* v, int destroy_flag) */
   void* context() const {return context_;}
   void context(void*, int destroy_flag = 0);
   void make_current();
@@ -195,11 +198,16 @@ public:
 
   ~Fl_Gl_Window();
   /**
+    Creates a new Fl_Gl_Window widget using the given size, and label string. 
+    The default boxtype is FL_NO_BOX. The default mode is FL_RGB|FL_DOUBLE|FL_DEPTH.
+  */
+  Fl_Gl_Window(int W, int H, const char *l=0) : Fl_Window(W,H,l) {init();}
+  /**
     Creates a new Fl_Gl_Window widget using the given position,
     size, and label string. The default boxtype is FL_NO_BOX. The
     default mode is FL_RGB|FL_DOUBLE|FL_DEPTH.
   */
-  Fl_Gl_Window(int W, int H, const char *l=0) : Fl_Window(W,H,l) {init();}
+
   Fl_Gl_Window(int X, int Y, int W, int H, const char *l=0)
     : Fl_Window(X,Y,W,H,l) {init();}
 
