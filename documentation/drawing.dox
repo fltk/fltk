@@ -642,19 +642,36 @@ encodings. These functions are only required if your source
 code contains "C"-strings with international characters and 
 if this source will be compiled on multiple platforms.
 
+<!-- Editor's note:
+   ** Caution: the following text contains utf-8 encoded characters.
+   ** be careful when using non-utf-8-aware editors !
+-->
+
 <P>Assuming that the following source code was written on MS Windows, 
 this example will output the correct label on OS X and X11 as well.
 Without the conversion call, the label on OS X would read 
-<tt>Fahrvergn\\&cedil;gen</tt> with a deformed umlaut u.
+<tt>Fahrvergn¸gen</tt> with a deformed umlaut u ("cedille",
+html "&cedil;").
 \code
   btn = new Fl_Button(10, 10, 300, 25);
-  btn->copy_label(fl_latin1_to_local("Fahrvergn&uuml;gen"));
+  btn->copy_label(fl_latin1_to_local("Fahrvergnügen"));
 \endcode
 
-<P>If your application uses characters that are not part of both
-encodings, or it will be used in areas that commonly use different
-code pages, yoou might consider upgrading to FLTK 2 which supports
-UTF-8 encoding. 
+\note	If your application uses characters that are not part of both
+	encodings, or it will be used in areas that commonly use different
+	code pages, you might consider upgrading to FLTK 2 which supports
+	UTF-8 encoding. 
+
+\todo	drawing.dox: I fixed the above encoding problem of these \&cedil;
+	and umlaut characters, but this text is obsoleted by FLTK 1.3
+	with utf-8 encoding, or must be rewritten accordingly:
+	How to use native (e.g. Windows "ANSI", or ISO-8859-x)
+	encoding in embedded strings for labels, error messages
+	and more. Please check this (utf-8) encoding on different
+	OS'es and with different language and font environments.
+
+For more information about character encoding, unicode and utf-8
+see chapter \ref unicode.
 
 <H3><A name="overlay">Drawing Overlays</A></H3>
 

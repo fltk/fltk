@@ -92,4 +92,94 @@ From Duncan: (will be removed later, just for now as a reminder)
    and do that for all of the function documentation?)
 
 
+<H3>Example comment:</H3>
+
+\code
+The following text is a comment within a doxygen comment block and
+will not appear in the generated document:
+<!-- Editor's note:
+   ** Caution: the following text contains utf-8 encoded characters.
+-->
+This will be visible again.
+\endcode
+
+The following text is a comment within a doxygen comment block and
+will not appear in the generated document:
+<!-- Editor's note:
+   ** Caution: the following text contains utf-8 encoded characters.
+-->
+This will be visible again.
+
+\code
+<H1>Headline in big text</H1>
+<H2>Headline in big text</H2>
+<H3>Headline in big text</H3>
+<H4>Headline in big text</H4>
+\endcode
+
+<H1>Headline in big text</H1>
+<H2>Headline in big text</H2>
+<H3>Headline in big text</H3>
+<H4>Headline in big text</H4>
+
+
+<P>Assuming that the following source code was written on MS Windows, 
+this example will output the correct label on OS X and X11 as well.
+Without the conversion call, the label on OS X would read 
+<tt>Fahrvergn¸gen</tt> with a deformed umlaut u ("cedille",
+html "&cedil;").
+\code
+  btn = new Fl_Button(10, 10, 300, 25);
+  btn->copy_label(fl_latin1_to_local("Fahrvergnügen"));
+\endcode
+
+\note	If your application uses characters that are not part of both
+	encodings, or it will be used in areas that commonly use different
+	code pages, you might consider upgrading to FLTK 2 which supports
+	UTF-8 encoding. 
+
+\todo	This is an example todo entry, please ignore !
+
+\code
+
+<!-- Editor's note:
+   ** Caution: the following text contains utf-8 encoded characters.
+   ** be careful when using non-utf-8-aware editors !
+-->
+
+<P>Assuming that the following source code was written on MS Windows, 
+this example will output the correct label on OS X and X11 as well.
+Without the conversion call, the label on OS X would read 
+<tt>Fahrvergn¸gen</tt> with a deformed umlaut u ("cedille",
+html "&cedil;").
+\code
+  btn = new Fl_Button(10, 10, 300, 25);
+  btn->copy_label(fl_latin1_to_local("Fahrvergnügen"));
+\endcode
+
+\note	If your application uses characters that are not part of both
+	encodings, or it will be used in areas that commonly use different
+	code pages, you might consider upgrading to FLTK 2 which supports
+	UTF-8 encoding. 
+
+\todo	This is an example todo entry, please ignore !
+
+\endcode
+
+
+<H2>Creating Links</H2>
+
+\code
+see chapter \ref unicode creates a link to the named chapter unicode
+that has been created with a \subpage statement.
+	
+see <a href="drawing.html#character_encoding">chapter 5</a> creates
+a link to a named html anchor "character_encoding" within the same file.
+\endcode
+see chapter \ref unicode creates a link to the named chapter unicode
+that has been created with a \subpage statement.
+	
+see <a href="drawing.html#character_encoding">chapter 5</a> creates
+a link to a named html anchor "character_encoding" within the same file.
+
 */
