@@ -148,7 +148,7 @@ inline int fl_height(int, int size) {return size;}
 FL_EXPORT int   fl_descent();
 FL_EXPORT double fl_width(const char*);
 FL_EXPORT double fl_width(const char*, int n);
-FL_EXPORT double fl_width(Fl_Char);
+FL_EXPORT double fl_width(Fl_Unichar);
 
 // draw using current font:
 FL_EXPORT void fl_draw(const char*, int x, int y);
