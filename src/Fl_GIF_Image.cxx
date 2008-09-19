@@ -36,7 +36,7 @@
 #include <FL/Fl_GIF_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include "flstring.h"
 
 // Read a .gif file and convert it to a "xpm" format (actually my

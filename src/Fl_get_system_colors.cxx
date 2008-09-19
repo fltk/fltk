@@ -29,7 +29,7 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 #include <FL/math.h>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include "flstring.h"
 #include <stdio.h>
 #include <stdlib.h>

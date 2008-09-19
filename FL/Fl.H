@@ -33,7 +33,7 @@
 #ifndef Fl_H
 #  define Fl_H
 
-#  include "fl_utf8.H"
+#  include "fl_utf8.h"
 #  include "Enumerations.H"
 #  ifndef Fl_Object
 #    define Fl_Object Fl_Widget

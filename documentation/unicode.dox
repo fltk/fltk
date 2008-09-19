@@ -38,6 +38,8 @@ TODO:
 <LI> more doc on unicode, add links
 <LI> write something about filename encoding on OS X...
 <LI> explain the fl_utf8_... commands
+<LI> explain issues with Fl_Preferences
+<LI> why FLTK has no Fl_String class
 </UL>
 
 DONE:

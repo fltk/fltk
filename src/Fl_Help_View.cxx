@@ -61,7 +61,7 @@
 #include <FL/x.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include "flstring.h"
 #include <ctype.h>
 #include <errno.h>

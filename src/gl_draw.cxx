@@ -37,7 +37,7 @@
 #include <FL/fl_draw.H>
 #include "Fl_Gl_Choice.H"
 #include "Fl_Font.H"
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 
 #if !defined(WIN32) && !defined(__APPLE__)
 #include <FL/Xutf8.h>

@@ -28,7 +28,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Browser.H>
 #include <stdio.h>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 
 /**
   Clears the browser and reads the file, adding each line from the file

@@ -33,7 +33,7 @@
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 
 ////////////////////////////////////////////////////////////////
 

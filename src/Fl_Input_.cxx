@@ -44,7 +44,7 @@
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
 #include <math.h>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include "flstring.h"
 #include <stdlib.h>
 #include <ctype.h>

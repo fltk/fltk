@@ -37,7 +37,7 @@
 #include <FL/Fl_XBM_Image.H>
 #include <stdio.h>
 #include <stdlib.h>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include "flstring.h"
 
 //

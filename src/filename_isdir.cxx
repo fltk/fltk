@@ -32,7 +32,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <FL/filename.H>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 
 
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)

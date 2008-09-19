@@ -34,7 +34,7 @@
 #  include "Fl_Gl_Choice.H"
 #  include <FL/gl_draw.H>
 #  include "flstring.h"
-#  include <FL/fl_utf8.H>
+#  include <FL/fl_utf8.h>
 
 #  ifdef __APPLE__
 #    include <FL/Fl_Window.H>

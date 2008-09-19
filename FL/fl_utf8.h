@@ -28,53 +28,21 @@
 /*** NOTE : all functions are LIMITED to 24 bits Unicode values !!! ***/
 
 #ifndef _HAVE_FL_UTF8_HDR_
-#  define _HAVE_FL_UTF8_HDR_
-#  include <stdio.h>
-#  include <string.h>
-#  include <stdlib.h>
+#define _HAVE_FL_UTF8_HDR_
 
-#  ifndef FL_EXPORT
-#    if defined(FL_DLL) && defined(_MSC_VER)
-#      ifdef FL_LIBRARY
-#        define FL_EXPORT   __declspec(dllexport)
-#      else
-#        define FL_EXPORT   __declspec(dllimport)
-#      endif /* FL_LIBRARY */
-#    else
-#      define FL_EXPORT
-#   endif /* FL_DLL && _MSC_VER */
-#  endif /* FL_EXPORT */
+#include "FL/Fl_Export.H"
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-
-#  if __APPLE__
-#    include <wchar.h>
-#    include <sys/stat.h>
-#  else
-#    include <sys/types.h>
-#    include <sys/stat.h>
-#    ifndef _WIN32
-#      include "Xutf8.h"
-#      include <X11/Xlocale.h>
-#      include <X11/Xlib.h>
-#    endif
-#    include <locale.h>
-#  endif
-
-
-
-#  if defined(WIN32)
-#    include <ctype.h>
-#    define xchar wchar_t
-#  else
-#   if __APPLE__
-#     define xchar wchar_t
-#   else
-#     define xchar unsigned short
-#   endif
-#  endif
-
-#  if defined(WIN32) && !defined(FL_DLL)
+#ifdef WIN32
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <locale.h>
+#  include <ctype.h>
+#  define xchar wchar_t
+#  ifndef FL_DLL
 #    undef strdup
 #    define strdup _strdup
 #    undef putenv
@@ -88,6 +56,19 @@
 #    undef chdir
 #    define chdir _chdir
 #  endif
+#elif defined(__APPLE__)
+#  include <wchar.h>
+#  include <sys/stat.h>
+#  define xchar wchar_t
+#else /* X11 */
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include "Xutf8.h"
+#  include <X11/Xlocale.h>
+#  include <X11/Xlib.h>
+#  include <locale.h>
+#  define xchar unsigned short
+#endif
 
 #  ifdef __cplusplus
 extern "C" {

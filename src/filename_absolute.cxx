@@ -32,7 +32,7 @@
 */
 
 #include <FL/filename.H>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include <stdlib.h>
 #include "flstring.h"
 #include <ctype.h>

@@ -39,7 +39,7 @@
 #  include <FL/Fl.H>
 #  include <FL/x.H>
 #  include <FL/Fl_Window.H>
-#  include <FL/fl_utf8.H>
+#  include <FL/fl_utf8.h>
 #  include <FL/Fl_Tooltip.H>
 #  include <stdio.h>
 #  include <stdlib.h>

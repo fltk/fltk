@@ -33,7 +33,7 @@
 // Aligns them against the inside of the box.
 
 #define min(a,b) ((a)<(b)?(a):(b))
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>

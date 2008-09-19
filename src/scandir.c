@@ -21,7 +21,7 @@ USA.  */
 #else
 
 #  include "flstring.h"
-#  include <FL/fl_utf8.H>
+#  include <FL/fl_utf8.h>
 
 #  if !HAVE_SCANDIR
 #    include <stdlib.h>

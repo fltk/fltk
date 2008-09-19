@@ -19,14 +19,45 @@
 
 // Modified to obey rfc3629, which limits unicode to 0-0x10ffff
 
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include <string.h>
 #include <stdlib.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+  
+  /** 
+   \defgroup fl_unichar FLTK Unicode Character Functions
+   Global Functions Handling Single Unicode Characters
+   @{ */
+  
+  /**
+   Convert a Unicode character into a utf-8 sequnece.
+   \param uc[in] Unicode characte
+   \param text[out] utf-8 sequence will be written here; if this pointer is
+   \c NULL, only the length of the utf-8 sequence is calculated
+   \return length of the sequence in bytes
+   */
+  //FL_EXPORT int fl_unichar_to_utf8(Fl_Unichar uc, char *text);  
+  
+  /** @} */  
+  
+  /** 
+   \defgroup fl_utf8 FLTK Unicode String Functions
+   Global Functions Handling Unicode Text
+   @{ */
+  
+  /**
+   Calculate the size of a utf-8 sequnce for a Unnicode character.
+   \param uc[in] Unicode characte
+   \return length of the sequence in bytes
+   */
+  //FL_EXPORT int fl_utf8_size(Fl_Unichar uc);
+  
+  /** @} */  
+  
+  
 /* Set to 1 to turn bad UTF8 bytes into ISO-8859-1. If this is to zero
    they are instead turned into the Unicode REPLACEMENT CHARACTER, of
    value 0xfffd.

@@ -35,7 +35,7 @@
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Output.H>
 #include <FL/fl_draw.H>
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 
 #include <stdio.h>
 #include <stdlib.h>

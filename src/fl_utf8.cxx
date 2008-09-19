@@ -62,6 +62,8 @@ extern "C" {
 # include <unistd.h>
 # include <wchar.h>
 # include <stdlib.h>
+#   include <sys/types.h>
+# include <sys/stat.h>
 
 extern "C" {
   int XUtf8Tolower(int ucs);
@@ -77,7 +79,7 @@ extern "C" {
 # include <unistd.h>
 #endif // WIN32
 
-#include <FL/fl_utf8.H>
+#include <FL/fl_utf8.h>
 #include <string.h>
 #include <stdlib.h>
 
