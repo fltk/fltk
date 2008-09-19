@@ -91,6 +91,28 @@ From Duncan: (will be removed later, just for now as a reminder)
    we can add it to a functions.dox file that defines a functions group
    and do that for all of the function documentation?)
 
+\b Update: the trick is not to create duplicate entries in a new group, but
+   to move the function information into the doxygen comments for the
+   class, and use the navigation links provided. Simply using \\relatesalso
+   as the first doxygen command in the function's comment puts it in the
+   appropriate place. There is no need to have \\defgroup and \\ingroup as
+   well, and indeed they don't work. So, to summarize:
+\code
+Gizmo.H
+  /## \class Gizmo
+      A gizmo that does everything
+    #/
+  class Gizmo {
+    etc
+  };
+  extern int popup_gizmo(...);
+
+Gizmo.cxx:
+  /## \relatesalso Gizmo
+      Pops up a gizmo dialog with a Gizmo in it
+    #/
+  int popup_gizmo(...);
+\endcode
 
 <H3>Example comment:</H3>
 

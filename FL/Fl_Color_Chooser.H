@@ -73,14 +73,33 @@ public:
   \class Fl_Color_Chooser
   \brief The Fl_Color_Chooser widget provides a standard RGB color chooser.
 
-  You can place any number of these into a panel of your own design. This
-  widget contains the hue box, value slider, and rgb input fields from the
-  above diagram (it does not have the color chips or the Cancel or OK buttons).
+  \image html fl_color_chooser.jpg
+
+  You can place any number of the widgets into a panel of your own design.
+  The diagram shows the widget as part of a color chooser dialog created by
+  the fl_color_chooser() function. The Fl_Color_Chooser widget contains the
+  hue box, value slider, and rgb input fields from the above diagram (it
+  does not have the color chips or the Cancel or OK buttons).
   The callback is done every time the user changes the rgb value. It is not
   done if they move the hue control in a way that produces the \e same rgb
   value, such as when saturation or value is zero.
 
-  \image html fl_color_chooser.jpg
+  The fl_color_chooser() function pops up a window to let the user pick an
+  arbitrary RGB color. They can pick the hue and saturation in the "hue box"
+  on the left (hold down CTRL to just change the saturation), and the
+  brightness using the vertical slider. Or they can type the 8-bit numbers
+  into the RGB Fl_Value_Input fields, or drag the mouse across them to adjust
+  them.  The pull-down menu lets the user set the input fields to show RGB,
+  HSV, or 8-bit RGB (0 to 255).
+
+  fl_color_chooser() returns non-zero if the user picks ok, and updates the
+  RGB values.  If the user picks cancel or closes the window this returns
+  zero and leaves RGB unchanged.
+
+  If you use the color chooser on an 8-bit screen, it will allocate all the
+  available colors, leaving you no space to exactly represent the color the
+  user picks! You can however use fl_rectf() to fill a region with a simulated
+  color using dithering.
  */
 class FL_EXPORT Fl_Color_Chooser : public Fl_Group {
   Flcc_HueBox huebox;
