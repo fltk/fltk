@@ -154,8 +154,10 @@ protected:
   /**
     Handles the specified event, plus 4 extra parameters!
     \todo Find the implementation, if any, and document it there!
-  */
+    fabien: I guess the answer is there is no implementation (yet?), 
+       so let's comment out this method that does not exist.
   int handle(int,int,int,int,int);
+  */
 
   void draw();
   Fl_Browser_(int,int,int,int,const char * = 0);
