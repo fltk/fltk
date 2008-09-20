@@ -68,6 +68,9 @@ void Fl_Browser::item_select(void* l, int v) {
   else ((FL_BLINE*)l)->flags &= ~SELECTED;
 }
 
+/**
+  Return entry for line number \p line.
+*/
 FL_BLINE* Fl_Browser::find_line(int line) const {
   int n; FL_BLINE* l;
   if (line == cacheline) return cache;
@@ -85,6 +88,10 @@ FL_BLINE* Fl_Browser::find_line(int line) const {
   return l;
 }
 
+/**
+  Returns line number corresponding to data \p v,
+  zero if not found.
+*/
 int Fl_Browser::lineno(void* v) const {
   FL_BLINE* l = (FL_BLINE*)v;
   if (!l) return 0;
@@ -112,6 +119,11 @@ int Fl_Browser::lineno(void* v) const {
   return n;
 }
 
+/**
+  Remove entry for given line number.
+  \param[in] line line number. Must be in range!
+  \returns pointer to browser entry.
+*/
 FL_BLINE* Fl_Browser::_remove(int line) {
   FL_BLINE* ttt = find_line(line);
   deleting(ttt);
@@ -128,14 +140,16 @@ FL_BLINE* Fl_Browser::_remove(int line) {
   return(ttt);
 }
 
-/**  Remove line n and make the browser one line shorter.*/
+/**
+  Remove line n and make the browser one line shorter.
+*/
 void Fl_Browser::remove(int line) {
   if (line < 1 || line > lines) return;
   free(_remove(line));
 }
 
 /**
-  Insert a new line <I>before</I> line n.  If n &gt; 
+  Insert a new line \p t \e before line \p n.  If \p n &gt; 
   size() then the line is added to the end.
 */
 void Fl_Browser::insert(int line, FL_BLINE* t) {
@@ -168,6 +182,12 @@ void Fl_Browser::insert(int line, FL_BLINE* t) {
   redraw_line(t);
 }
 
+/**
+  Insert a new entry \e before given line.
+  \param[in] line if \p line > size(), the entry will be added at the end.
+  \param[in] newtext text entry for the new line.
+  \param[in] d pointer to data associated with the new line.
+*/
 void Fl_Browser::insert(int line, const char* newtext, void* d) {
   int l = strlen(newtext);
   FL_BLINE* t = (FL_BLINE*)malloc(sizeof(FL_BLINE)+l);
@@ -188,14 +208,8 @@ void Fl_Browser::move(int to, int from) {
 }
 
 /**
-  The first form returns the text for line n.  If n is
-  out of range it returns NULL.
-  <P>The second form sets the text for line n.
-*/
-/**
-  The first form returns the text for line n.  If n is
-  out of range it returns NULL.
-  <P>The second form sets the text for line n.
+  Sets the text for line \p line to text \p newtext.
+  Does nothing if \p line is out of range.
 */
 void Fl_Browser::text(int line, const char* newtext) {
   if (line < 1 || line > lines) return;
@@ -220,20 +234,17 @@ void Fl_Browser::text(int line, const char* newtext) {
 }
 
 /**
-  The first form returns the data for line n.  If n is
-  out of range this returns NULL.
-  <P>The second form sets the data for line n.
-*/
-/**
-  The first form returns the data for line n.  If n is
-  out of range this returns NULL.
-  <P>The second form sets the data for line n.
+  Sets the data for line \p n to \p d.
+  Does nothing if \n is out of range.
 */
 void Fl_Browser::data(int line, void* d) {
   if (line < 1 || line > lines) return;
   find_line(line)->data = d;
 }
 
+/**
+  Returns height of line \p lv.
+*/
 int Fl_Browser::item_height(void* lv) const {
   FL_BLINE* l = (FL_BLINE*)lv;
   if (l->flags & NOTDISPLAYED) return 0;
@@ -421,9 +432,13 @@ void Fl_Browser::item_draw(void* v, int X, int Y, int W, int H) const {
 
 static const int no_columns[1] = {0};
 
-/**  The constructor makes an empty browser.*/
-Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char*l)
-: Fl_Browser_(X, Y, W, H, l) {
+/**
+  The constructor makes an empty browser.
+  \param[in] X,Y,W,H position and size.
+  \param[in] L label string, may be NULL.
+*/
+Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char*L)
+: Fl_Browser_(X, Y, W, H, L) {
   column_widths_ = no_columns;
   lines = 0;
   full_height_ = 0;
@@ -433,6 +448,11 @@ Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char*l)
   first = last = cache = 0;
 }
 
+/**
+  Update browser so that line is shown at given position.
+  \param[in] line line number.
+  \param[in] pos position.
+*/
 void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
   if (line<1) line = 1;
   if (line>lines) line = lines;
@@ -458,15 +478,16 @@ void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
 }
 
 /**
-  The first form returns the current top line in the browser. If there
+  Returns the current top line in the browser. If there
   is no vertical scrollbar then this will always return 1.
-  <P>The second form scrolls the browser so the top line in the browser is n.
 */
 int Fl_Browser::topline() const {
   return lineno(top());
 }
 
-/**  Remove all the lines in the browser.*/
+/**
+  Remove all the lines in the browser.
+*/
 void Fl_Browser::clear() {
   for (FL_BLINE* l = first; l;) {
     FL_BLINE* n = l->next;
@@ -490,16 +511,28 @@ void Fl_Browser::add(const char* newtext, void* d) {
   //Fl_Browser_::display(last);
 }
 
+/**
+  Returns data entry for line \p line, or NULL if out of range.
+*/
 const char* Fl_Browser::text(int line) const {
   if (line < 1 || line > lines) return 0;
   return find_line(line)->txt;
 }
 
+/**
+  Returns the data for line \p n, or NULL is \p n is out of range.
+*/
 void* Fl_Browser::data(int line) const {
   if (line < 1 || line > lines) return 0;
   return find_line(line)->data;
 }
 
+/**
+  Sets the selection state of entry.
+  \param[in] line line number.
+  \param[in] v new selection state.
+  \returns 1 if the state changed, 0 if not.
+*/
 int Fl_Browser::select(int line, int v) {
   if (line < 1 || line > lines) return 0;
   return Fl_Browser_::select(find_line(line), v);
@@ -534,22 +567,33 @@ void Fl_Browser::hide(int line) {
   }
 }
 
+/**
+  For back compatibility.
+*/
 void Fl_Browser::display(int line, int v) {
   if (line < 1 || line > lines) return;
   if (v) show(line); else hide(line);
 }
 
-/**  Returns a non-zero value if line n is visible.*/
+/**
+  Returns a non-zero value if line is visible.
+*/
 int Fl_Browser::visible(int line) const {
   if (line < 1 || line > lines) return 0;
   return !(find_line(line)->flags&NOTDISPLAYED);
 }
 
+/**
+  Gets browser value.
+  \returns line number of current selection, or 0 if no selection.
+*/
 int Fl_Browser::value() const {
   return lineno(selection());
 }
 
-// SWAP TWO LINES
+/**
+  Swap two lines, \p a and \p b
+*/
 void Fl_Browser::swap(FL_BLINE *a, FL_BLINE *b) {
 
   if ( a == b || !a || !b) return;          // nothing to do

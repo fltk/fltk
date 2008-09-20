@@ -42,12 +42,16 @@ struct Fl_Menu_Item;
 class FL_EXPORT Fl_Bitmap : public Fl_Image {
   public:
 
+  /** pointer to raw bitmap data */
   const uchar *array;
-  int alloc_array; // Non-zero if data was allocated
+  /** Non-zero if array points to bitmap data allocated internally */
+  int alloc_array;
 #if defined(__APPLE__) || defined(WIN32)
-  void *id; // for internal use
+  /** for internal use */
+  void *id;
 #else
-  unsigned id; // for internal use
+  /** for internal use */
+  unsigned id;
 #endif // __APPLE__ || WIN32
   /** The constructors create a new bitmap from the specified bitmap data */
   Fl_Bitmap(const uchar *bits, int W, int H) :

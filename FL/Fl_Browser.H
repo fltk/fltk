@@ -118,13 +118,10 @@ public:
   void size(int W, int H) { Fl_Widget::size(W, H); }
 
   int topline() const ;
+  /** For internal use only? */
   enum Fl_Line_Position { TOP, BOTTOM, MIDDLE };
   void lineposition(int, Fl_Line_Position);
-  /**
-    The first form returns the current top line in the browser. If there
-    is no vertical scrollbar then this will always return 1.
-    <P>The second form scrolls the browser so the top line in the browser is n.
-  */
+  /** Scrolls the browser so the top line in the browser is n.  */
   void topline(int l) { lineposition(l, TOP); }
   /**    Scrolls the browser so the bottom line in the browser is n.  */
   void bottomline(int l) { lineposition(l, BOTTOM); }
@@ -140,6 +137,7 @@ public:
   int visible(int n) const ;
 
   int value() const ;
+  /** Sets the browser's value, i.e. selected line, to \p v */
   void value(int v) {select(v);}
   const char* text(int) const ;
   void text(int, const char*);
@@ -151,79 +149,86 @@ public:
   ~Fl_Browser() { clear(); }
 
   /**
-    The first form gets the current format code prefix character, which by
-    default is '\@'. A string of formatting codes at the start of
-    each column are stripped off and used to modify how the rest of the
-    line is printed:
-    <UL>
-    <LI><tt>'\@.'</tt> Print rest of line, don't look for more '\@' signs </LI>
-    <LI><tt>'\@\@'</tt> Print rest of line starting with '\@' </LI>
-    <LI><tt>'\@l'</tt> Use a LARGE (24 point) font </LI>
-    <LI><tt>'\@m'</tt> Use a medium large (18 point) font </LI>
-    <LI><tt>'\@s'</tt> Use a <SMALL>small</SMALL> (11 point) font </LI>
-    <LI><tt>'\@b'</tt> Use a <B>bold</B> font (adds FL_BOLD to font) </LI>
-    <LI><tt>'\@i'</tt> Use an <I>italic</I> font (adds FL_ITALIC to font) </LI>
-    <LI><tt>'\@f' or '\@t'</tt> Use a fixed-pitch
-    font (sets font to FL_COURIER) </LI>
-    <LI><tt>'\@c'</tt> Center the line horizontally </LI>
-    <LI><tt>'\@r'</tt> Right-justify the text </LI>
-    <LI><tt>'\@B0', '\@B1', ... '\@B255'</tt> Fill the backgound with
-    fl_color(n) </LI>
-    <LI><tt>'\@C0', '\@C1', ... '\@C255'</tt> Use fl_color(n) to draw the text </LI>
-    <LI><tt>'\@F0', '\@F1', ...</tt> Use fl_font(n) to draw the text </LI>
-    <LI><tt>'\@S1', '\@S2', ...</tt> Use point size n to draw the text </LI>
-    <LI><tt>'\@u' or '\@_'</tt> Underline the text. </LI>
-    <LI><tt>'\@-'</tt> draw an engraved line through the middle. </LI>
-    </UL>
+    Gets the current format code prefix character, which by default is '\@'.
+    A string of formatting codes at the start of each column are stripped off
+    and used to modify how the rest of the line is printed:
+    
+    \li <tt>'\@.'</tt> Print rest of line, don't look for more '\@' signs
+    \li <tt>'\@\@'</tt> Print rest of line starting with '\@'
+    \li <tt>'\@l'</tt> Use a LARGE (24 point) font
+    \li <tt>'\@m'</tt> Use a medium large (18 point) font
+    \li <tt>'\@s'</tt> Use a <SMALL>small</SMALL> (11 point) font
+    \li <tt>'\@b'</tt> Use a <B>bold</B> font (adds FL_BOLD to font)
+    \li <tt>'\@i'</tt> Use an <I>italic</I> font (adds FL_ITALIC to font)
+    \li <tt>'\@f' or '\@t'</tt> Use a fixed-pitch
+    font (sets font to FL_COURIER)
+    \li <tt>'\@c'</tt> Center the line horizontally
+    \li <tt>'\@r'</tt> Right-justify the text
+    \li <tt>'\@B0', '\@B1', ... '\@B255'</tt> Fill the backgound with
+    fl_color(n)
+    \li <tt>'\@C0', '\@C1', ... '\@C255'</tt> Use fl_color(n) to draw the text
+    \li <tt>'\@F0', '\@F1', ...</tt> Use fl_font(n) to draw the text
+    \li <tt>'\@S1', '\@S2', ...</tt> Use point size n to draw the text
+    \li <tt>'\@u' or '\@_'</tt> Underline the text.
+    \li <tt>'\@-'</tt> draw an engraved line through the middle.
+
     Notice that the '\@.' command can be used to reliably
     terminate the parsing.  To print a random string in a random color, use 
     <tt>sprintf("\@C%d\@.%s", color, string)</tt> and it will work even if the
     string starts with a digit or has the format character in it.
-    <P>The second form sets the current prefix to c.  Set the
-    prefix to 0 to disable formatting.
   */
   char format_char() const {return format_char_;}
-  /**    See uchar Fl_Browser::format_char() const   */
+  /**
+    Sets the current format code prefix character to \p c.
+    The default prefix is '\@'.  Set the prefix to 0 to disable formatting.
+    \see uchar Fl_Browser::format_char() const
+  */
   void format_char(char c) {format_char_ = c;}
   /**
-    The first form gets the current column separator character. By default
-    this is '\\t' (tab).
-    <P>The second form sets the column separator to c. This will
-    only have an effect if you also set column_widths().
+    Gets the current column separator character.
+    By default this is '\\t' (tab).
   */
   char column_char() const {return column_char_;}
   /**
-    The first form gets the current column separator character. By default
-    this is '\\t' (tab).
-    <P>The second form sets the column separator to c. This will
-    only have an effect if you also set column_widths().
+    Sets the column separator to c.
+    This will only have an effect if you also set column_widths().
   */
   void column_char(char c) {column_char_ = c;}
   /**
-    The first form gets the current column width array.  This array is
+    Gets the current column width array.  This array is
     zero-terminated and specifies the widths in pixels of each column. The
     text is split at each column_char() and each part is formatted
     into it's own column.  After the last column any remaining text is
     formatted into the space between the last column and the right edge of
-    the browser, even if the text contains instances of column_char()
-    .  The default value is a one-element array of just a zero, which makes
+    the browser, even if the text contains instances of column_char() .
+    The default value is a one-element array of just a zero, which means
     there are no columns.
-    <P>The second form sets the current array to w.  Make sure the
-    last entry is zero.
   */
   const int* column_widths() const {return column_widths_;}
-  /**    See const int *Fl_Browser::column_widths() const   */
+  /**
+    Sets the current array to w.  Make sure the last entry is zero.
+    \see const int *Fl_Browser::column_widths() const
+  */
   void column_widths(const int* l) {column_widths_ = l;}
 
+  /**
+    Returns non-zero if line \p n is visible.
+  */
   int displayed(int n) const {return Fl_Browser_::displayed(find_line(n));}
+
+  /**
+    Redisplays so that line \p n is visible.
+    If \p n is out of range, redisplay top or botton of list as appropriate.
+  */
   void make_visible(int n) {
   	if (n < 1) Fl_Browser_::display(find_line(1));
 	else if (n > lines) Fl_Browser_::display(find_line(lines));
 	else Fl_Browser_::display(find_line(n));
   }
 
-  // for back compatibility only:
+  /** For back compatibility only. */
   void replace(int a, const char* b) {text(a, b);}
+
   void display(int, int=1);
 };
 
