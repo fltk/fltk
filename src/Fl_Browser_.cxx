@@ -333,10 +333,7 @@ void Fl_Browser_::display(void* p) {
 // redraw, has side effect of updating top and setting scrollbar:
 
 /**
-  The first form draws the list within the normal widget bounding box.
-  
-  <P>The second form draws the contents of the browser within the
-  specified bounding box.
+  Draws the list within the normal widget bounding box.
 */
 void Fl_Browser_::draw() {
   int drawsquare = 0;
@@ -542,6 +539,9 @@ void Fl_Browser_::replacing(void* a, void* b) {
   if (a == max_width_item) {max_width_item = 0; max_width = 0;}
 }
 
+/**
+  Exchange pointers \p a and \p b.
+*/
 void Fl_Browser_::swapping(void* a, void* b) {
   redraw_line(a);
   redraw_line(b);

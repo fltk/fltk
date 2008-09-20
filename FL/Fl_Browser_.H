@@ -43,21 +43,23 @@
 #endif
 #include "Fl_Scrollbar.H"
 
-#define FL_NORMAL_BROWSER	0
-#define FL_SELECT_BROWSER	1
-#define FL_HOLD_BROWSER		2
-#define FL_MULTI_BROWSER	3
+#define FL_NORMAL_BROWSER	0	/**< type() of Fl_Browser */
+#define FL_SELECT_BROWSER	1	/**< type() of FL_Select_Browser */
+#define FL_HOLD_BROWSER		2	/**< type() of Fl_Hold_Browser */
+#define FL_MULTI_BROWSER	3	/**< type() of Fl_Multi_Browser */
 
 /**
   This is the base for browsers.  To be useful it must be
   subclassed and several virtual functions defined.  The Forms-compatible
   browser and the file chooser's browser are subclassed off of this.
-  <P>This has been designed so that the subhas complete control
+
+  This has been designed so that the subclass has complete control
   over the storage of the data, although because next() and 
   prev() functions are used to index, it works best as a linked list
   or as a large block of characters in which the line breaks must be
-  searched for. </P>
-  <P>A great deal of work has been done so that the "height" of a data
+  searched for.
+
+  A great deal of work has been done so that the "height" of a data
   object does not need to be determined until it is drawn.  This is
   useful if actually figuring out the size of an object requires
   accessing image data or doing stat() on a file or doing some
@@ -143,13 +145,16 @@ protected:
   void bbox(int&,int&,int&,int&) const;
   int leftedge() const;	// x position after scrollbar & border
   void *find_item(int my); // item under mouse
+  
   /**
-    The first form draws the list within the normal widget bounding box.
-    
-    <P>The second form draws the contents of the browser within the
-    specified bounding box.
+    Draws the contents of the browser within the specified bounding box.
+    \todo Find the implementation, if any, and document it there!
   */
   void draw(int,int,int,int);
+  /**
+    Handles the specified event, plus 4 extra parameters!
+    \todo Find the implementation, if any, and document it there!
+  */
   int handle(int,int,int,int,int);
 
   void draw();
@@ -157,8 +162,10 @@ protected:
 
 public:
 
-  Fl_Scrollbar scrollbar;		// Vertical scrollbar
-  Fl_Scrollbar hscrollbar;		// Horizontal scrollbar
+  /** Vertical scrollbar. */
+  Fl_Scrollbar scrollbar;
+  /** Horizontal scrollbar */
+  Fl_Scrollbar hscrollbar;
 
   int handle(int);
   void resize(int,int,int,int);
@@ -188,28 +195,21 @@ public:
     disappear if the data will fit in the widget.  has_scrollbar() changes
     this based on the value of h:
   
-    <UL>
+    \li 0 - No scrollbars.
   
-  	<LI>0 - No scrollbars.
+    \li Fl_Browser_::HORIZONTAL - Only a horizontal scrollbar.
   
-  	<LI>Fl_Browser_::HORIZONTAL - Only a horizontal
-  	scrollbar.
+    \li Fl_Browser_::VERTICAL - Only a vertical scrollbar.
   
-  	<LI>Fl_Browser_::VERTICAL - Only a vertical
-  	scrollbar.
+    \li Fl_Browser_::BOTH - The default is both scrollbars.
   
-  	<LI>Fl_Browser_::BOTH - The default is both
-  	scrollbars.
+    \li Fl_Browser_::HORIZONTAL_ALWAYS - Horizontal scrollbar always on,
+        vertical always off.
   
-  	<LI>Fl_Browser_::HORIZONTAL_ALWAYS - Horizontal
-  	scrollbar always on, vertical always off.
+    \li Fl_Browser_::VERTICAL_ALWAYS - Vertical scrollbar always on,
+        horizontal always off.
   
-  	<LI>Fl_Browser_::VERTICAL_ALWAYS - Vertical
-  	scrollbar always on, horizontal always off.
-  
-  	<LI>Fl_Browser_::BOTH_ALWAYS - Both always on.
-  
-    </UL>
+    \li Fl_Browser_::BOTH_ALWAYS - Both always on.
   */
   void has_scrollbar(uchar i) {has_scrollbar_ = i;}
   enum { // values for has_scrollbar()
@@ -223,45 +223,50 @@ public:
   };
 
   /**
-    The first form gets the default text font for the lines in the
-    browser.
-    
-    <P>The second form sets the default text font to font
+    Gets the default text font for the lines in the browser.
   */
   Fl_Font textfont() const {return textfont_;}
   /**
-    The first form gets the default text font for the lines in the
-    browser.
-    
-    <P>The second form sets the default text font to font
+    Sets the default text font to font \p s
   */
   void textfont(Fl_Font s) {textfont_ = s;}
+
   /**
-    The first form gets the default text size for the lines in the
-    browser.
-    
-    <P>The second form sets the default text size to size
+    Gets the default text size for the lines in the browser.
   */
   Fl_Fontsize textsize() const {return textsize_;}
-  void textsize(Fl_Fontsize s) {textsize_ = s;}
   /**
-    The first form gets the default text color for the lines in the
-    browser.
-    
-    <P>The second form sets the default text color to color
+    Sets the default text size to size \p s.
+  */
+  void textsize(Fl_Fontsize s) {textsize_ = s;}
+
+  /**
+    Gets the default text color for the lines in the browser.
   */
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+  /**
+    Sets the default text color to color \p n.
+  */
   void textcolor(unsigned n) {textcolor_ = n;}
 
-  /**    Sets or gets the width of any scrollbars that are used.  */
-  static void scrollbar_width(int b) {scrollbar_width_ = b;}
-  /**    Sets or gets the width of any scrollbars that are used.  */
+  /**
+    Gets the width of any scrollbars that are used.
+  */
   static int scrollbar_width() {return scrollbar_width_;}
+  /**
+    Sets the width of any scrollbars that are used to \p b.
+  */
+  static void scrollbar_width(int b) {scrollbar_width_ = b;}
 
-  // for back compatibility:
-  /**    This method moves the vertical scrollbar to the righthand side of the list.  */
+  /**
+    Moves the vertical scrollbar to the righthand side of the list.
+    For back compatibility.
+  */
   void scrollbar_right() {scrollbar.align(FL_ALIGN_RIGHT);}
-  /**    This method moves the vertical scrollbar to the lefthand side of the list.  */
+  /**
+    Moves the vertical scrollbar to the lefthand side of the list.
+    For back compatibility.
+  */
   void scrollbar_left() {scrollbar.align(FL_ALIGN_LEFT);}
 
 };

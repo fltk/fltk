@@ -36,23 +36,24 @@
 #endif
 
 // values for type()
-#define FL_BAR_CHART		0
-#define FL_HORBAR_CHART		1
-#define FL_LINE_CHART		2
-#define FL_FILL_CHART		3
-#define FL_SPIKE_CHART		4
-#define FL_PIE_CHART		5
-#define FL_SPECIALPIE_CHART	6
+#define FL_BAR_CHART		0	/**< type() for Bar Chart variant */
+#define FL_HORBAR_CHART		1	/**< type() for Horizontal Bar Chart variant */
+#define FL_LINE_CHART		2	/**< type() for Line Chart variant */
+#define FL_FILL_CHART		3	/**< type() for Fill Line Chart variant */
+#define FL_SPIKE_CHART		4	/**< type() for Spike Chart variant */
+#define FL_PIE_CHART		5	/**< type() for Pie Chart variant */
+#define FL_SPECIALPIE_CHART	6	/**< type() for Special Pie Chart variant */
 
-#define FL_FILLED_CHART  FL_FILL_CHART	// compatibility
+#define FL_FILLED_CHART  FL_FILL_CHART	/**< for compatibility */
 
-#define FL_CHART_MAX		128
-#define FL_CHART_LABEL_MAX	18
+#define FL_CHART_MAX		128	/**< max entries per chart */
+#define FL_CHART_LABEL_MAX	18	/**< max label length for entry */
 
+/** For internal use only */
 struct FL_CHART_ENTRY {
-   float val;
-   unsigned col;
-   char str[FL_CHART_LABEL_MAX+1];
+   float val;				/**< For internal use only. */
+   unsigned col;			/**< For internal use only. */
+   char str[FL_CHART_LABEL_MAX+1];	/**< For internal use only. */
 };
 
 /**
@@ -118,17 +119,25 @@ public:
     void size(int W, int H) { Fl_Widget::size(W, H); }
 
     /**
-      Get the maximum number of data values for a chart.
+      Gets the maximum number of data values for a chart.
      */
     int maxsize() const {return maxnumb;}
 
     void maxsize(int m);
 
+    /** Gets the chart's text font */
     Fl_Font textfont() const {return textfont_;}
+    /** Sets the chart's text font to \p s. */
     void textfont(Fl_Font s) {textfont_ = s;}
+
+    /** Gets the chart's text size */
     Fl_Fontsize textsize() const {return textsize_;}
+    /** gets the chart's text size to \p s. */
     void textsize(Fl_Fontsize s) {textsize_ = s;}
+
+    /** Gets the chart's text color */
     Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+    /** gets the chart's text color to \p n. */
     void textcolor(unsigned n) {textcolor_ = n;}
 
     /**

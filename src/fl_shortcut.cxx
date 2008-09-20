@@ -202,6 +202,10 @@ const char * fl_shortcut_label(int shortcut) {
 
 // Emulation of XForms named shortcuts
 #include <stdlib.h>
+/**
+  Emulation of XForms named shortcuts.
+  \todo Why does doxygen display fl_old_shortcut() on Fl_Button page?
+*/
 int fl_old_shortcut(const char* s) {
   if (!s || !*s) return 0;
   int n = 0;
