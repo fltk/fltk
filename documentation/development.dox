@@ -116,92 +116,177 @@ Gizmo.cxx:
 
 <H3>Example comment:</H3>
 
-\code
-The following text is a comment within a doxygen comment block and
-will not appear in the generated document:
-<!-- Editor's note:
-   ** Caution: the following text contains utf-8 encoded characters.
--->
-This will be visible again.
-\endcode
+You can use HTML comment statements to embed comments in doxygen comment blocks.
+These comments will not be visible in the generated document.
 
-The following text is a comment within a doxygen comment block and
-will not appear in the generated document:
-<!-- Editor's note:
-   ** Caution: the following text contains utf-8 encoded characters.
--->
-This will be visible again.
+    The following text is a developer comment.
+    <!-- *** This *** is *** invisible *** -->
+    This will be visible again.
 
 \code
-<H1>Headline in big text</H1>
-<H2>Headline in big text</H2>
-<H3>Headline in big text</H3>
-<H4>Headline in big text</H4>
-\endcode
-
-<H1>Headline in big text</H1>
-<H2>Headline in big text</H2>
-<H3>Headline in big text</H3>
-<H4>Headline in big text</H4>
-
-
-<P>Assuming that the following source code was written on MS Windows, 
-this example will output the correct label on OS X and X11 as well.
-Without the conversion call, the label on OS X would read 
-<tt>Fahrvergn¸gen</tt> with a deformed umlaut u ("cedille",
-html "&cedil;").
-\code
-  btn = new Fl_Button(10, 10, 300, 25);
-  btn->copy_label(fl_latin1_to_local("Fahrvergnügen"));
-\endcode
-
-\note	If your application uses characters that are not part of both
-	encodings, or it will be used in areas that commonly use different
-	code pages, you might consider upgrading to FLTK 2 which supports
-	UTF-8 encoding. 
-
-\todo	This is an example todo entry, please ignore !
-
-\code
-
-<!-- Editor's note:
-   ** Caution: the following text contains utf-8 encoded characters.
-   ** be careful when using non-utf-8-aware editors !
--->
-
-<P>Assuming that the following source code was written on MS Windows, 
-this example will output the correct label on OS X and X11 as well.
-Without the conversion call, the label on OS X would read 
-<tt>Fahrvergn¸gen</tt> with a deformed umlaut u ("cedille",
-html "&cedil;").
-\code
-  btn = new Fl_Button(10, 10, 300, 25);
-  btn->copy_label(fl_latin1_to_local("Fahrvergnügen"));
-\endcode
-
-\note	If your application uses characters that are not part of both
-	encodings, or it will be used in areas that commonly use different
-	code pages, you might consider upgrading to FLTK 2 which supports
-	UTF-8 encoding. 
-
-\todo	This is an example todo entry, please ignore !
-
+    The following text is a developer comment.
+    <!-- *** This *** is *** invisible *** -->
+    This will be visible again.
 \endcode
 
 
-<H2>Creating Links</H2>
+<H3>Different Headlines:</H3>
 
 \code
-see chapter \ref unicode creates a link to the named chapter unicode
-that has been created with a \subpage statement.
-	
-see <a href="drawing.html#character_encoding">chapter 5</a> creates
-a link to a named html anchor "character_encoding" within the same file.
+    <H1>Headline in big text (H1)</H1>
+    <H2>Headline in big text (H2)</H2>
+    <H3>Headline in big text (H3)</H3>
+    <H4>Headline in big text (H4)</H4>
 \endcode
-see chapter \ref unicode creates a link to the named chapter unicode
-that has been created with a \subpage statement.
-	
-see <a href="drawing.html#character_encoding">chapter 5</a> creates
-a link to a named html anchor "character_encoding" within the same file.
 
+    <H1>Headline in big text (H1)</H1>
+    <H2>Headline in big text (H2)</H2>
+    <H3>Headline in big text (H3)</H3>
+    <H4>Headline in big text (H4)</H4>
+
+
+\section development_non-ascii Non-ASCII characters
+
+	if you came here from below: back to \ref development_links
+
+\code
+    Doxygen understands many HTML quoting characters like
+    &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
+\endcode
+
+This will appear in the document:
+
+    Doxygen understands many HTML quoting characters like
+    &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
+
+For further informations about quoting see 
+    \b http://www.stack.nl/~dimitri/doxygen/htmlcmds.html
+
+<H3>Example with UTF-8 encoded text</H3>
+
+\code
+
+    <P>Assuming that the following source code was written on MS Windows, 
+    this example will output the correct label on OS X and X11 as well.
+    Without the conversion call, the label on OS X would read 
+    <tt>Fahrvergn¸gen</tt> with a deformed umlaut u ("cedille",
+    html "&cedil;").
+    \#code
+      btn = new Fl_Button(10, 10, 300, 25);
+      btn->copy_label(fl_latin1_to_local("Fahrvergnügen"));
+    \#endcode
+
+    \note   If your application uses characters that are not part of both
+	    encodings, or it will be used in areas that commonly use different
+	    code pages, you might consider upgrading to FLTK 2 which supports
+	    UTF-8 encoding. 
+
+    \todo   This is an example todo entry, please ignore !
+
+\endcode
+
+This will appear in the document:
+
+    <P>Assuming that the following source code was written on MS Windows, 
+    this example will output the correct label on OS X and X11 as well.
+    Without the conversion call, the label on OS X would read 
+    <tt>Fahrvergn¸gen</tt> with a deformed umlaut u ("cedille",
+    html "&cedil;").
+    \#code
+      btn = new Fl_Button(10, 10, 300, 25);
+      btn->copy_label(fl_latin1_to_local("Fahrvergnügen"));
+    \#endcode
+
+    \note   If your application uses characters that are not part of both
+	    encodings, or it will be used in areas that commonly use different
+	    code pages, you might consider upgrading to FLTK 2 which supports
+	    UTF-8 encoding. 
+
+    \todo   This is an example todo entry, please ignore !
+
+\section development_structure Document Structure
+
+  \li	\b \\page	creates a named page
+  \li	\b \\section	creates a named section within that page
+  \li	\b \\subsection	creates a named subsection within that page
+
+The page, section, and subsection titles are formatted in blue color and
+a size like \b "<H1>", \b "<H2>", and \b "<H3>", respectively.
+
+By <b>FLTK documentation convention</b>, a file like this one with a doxygen
+documentation chapter has the name <b>"<chapter>.dox".</b>
+The \b \\page statement at the top of the page is 
+<b>"\page <chapter> This is the title"</b>.
+Sections within a documentation page must be called \b "<chapter>_<section>",
+where \b "<chapter>" is the name part of the file, and \b "<section>" is a
+unique section name within the page that can be referenced in links.
+
+These doxygen page and section commands work only in special documentation
+chapters, not within normal source or header documentation blocks. However,
+links to documentation sections \b should work.
+
+\todo	Verify, that links in (from) source documentation to documentation
+	pages and sections or subsections work.
+
+This page has
+  \code
+	\page development I - Developer Information
+  \endcode
+at its top.
+
+This section is
+  \code
+	\section development_structure Document structure
+  \endcode
+
+The following section is
+  \code
+	\section development_links Creating Links
+  \endcode
+
+\section development_links Creating Links
+
+Links to other documents and external links can be embedded with
+  \li	normal HTML links
+  \li	HTML links without markup - doxygen creates "http://..."
+  	links automatically
+  \li	links to other doxygen chapters with the \\ref statments
+  \li	links to named sections within the same or other doxygen chapters,
+  	if they are defined there with a \\section statement
+
+\code
+    see chapter \ref unicode creates a link to the named chapter unicode
+    that has been created with a \subpage statement.
+
+    see <a href="drawing.html#character_encoding">chapter 5</a> creates
+    a link to a named html anchor "character_encoding" within the same file.
+
+    For further informations about quoting see
+    http://www.stack.nl/~dimitri/doxygen/htmlcmds.html
+
+    Bold link text: you can see the <b>\e old online documentation</b>
+    of FLTK 1.3 at \b http://www.fltk.org/doc-1.3/toc.html
+    
+    see section \ref development_non-ascii
+\endcode
+
+appears as:
+
+    see chapter \ref unicode creates a link to the named chapter unicode
+    that has been created with a \\subpage statement.
+
+    see <a href="drawing.html#character_encoding">chapter 5</a> creates
+    a link to a named html anchor "character_encoding" within the same file.
+
+    For further informations about quoting see
+    http://www.stack.nl/~dimitri/doxygen/htmlcmds.html
+
+    Bold link text: you can see the <b>\e old online documentation</b>
+    of FLTK 1.3 at \b http://www.fltk.org/doc-1.3/toc.html
+    
+    see section \ref development_non-ascii
+
+  \subsection development_subsection_01 Subsection Number 1
+
+    Text in Subsection Number 1.
 */

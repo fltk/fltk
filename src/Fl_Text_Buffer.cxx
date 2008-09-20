@@ -213,7 +213,13 @@ void Fl_Text_Buffer::text(const char *t) {
 /**
    Return a copy of the text between "start" and "end" character positions
    from text buffer "buf".  Positions start at 0, and the range does not
-   include the character pointed to by "end"
+   include the character pointed to by "end".
+
+ - - -
+ 
+   Return a copy of the text between \a start and \a end character positions
+   from text buffer \a buf. Positions start at 0, and the range does not
+   include the character pointed to by \a end.
    When you are done with the text, free it using the free() function.
 */
 char * Fl_Text_Buffer::text_range(int start, int end) {
@@ -1327,7 +1333,7 @@ int Fl_Text_Buffer::findchars_backward(int startPos, const char *searchChars,
    The primary routine for integrating new text into a text buffer with
    substitution of another character for ascii nuls.  This substitutes null
    characters in the string in preparation for being copied or replaced
-   into the buffer, and if neccessary, adjusts the buffer as well, in the
+   into the buffer, and if necessary, adjusts the buffer as well, in the
    event that the string contains the character it is currently using for
    substitution.  Returns 0, if substitution is no longer possible
    because all non-printable characters are already in use.

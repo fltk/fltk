@@ -120,7 +120,7 @@ public:
   /**
     Returns the current hue.
     0 <= hue < 6. Zero is red, one is yellow, two is green, etc.
-    <em>This value is convienent for the internal calculations - some other
+    <em>This value is convenient for the internal calculations - some other
     systems consider hue to run from zero to one, or from 0 to 360.</em>
    */
   double hue() const {return hue_;}
