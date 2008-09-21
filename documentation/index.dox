@@ -29,12 +29,10 @@
 
  \subpage common
 
-    <b>
 	\li \ref drawing_colors
 	\li \ref common_boxtypes
 	\li \ref common_labels
 	\li \ref drawing_images
-    </b>
 
  \subpage editor
 
@@ -42,10 +40,8 @@
 
  \subpage events
 
-    <b>
 	\li \ref events_event_xxx
 	\li \ref events_propagation
-    </b>
 
  \subpage subclassing
 
@@ -53,11 +49,9 @@
 
  \subpage fluid
 
-    <b>
 	\li \ref fluid_widget_attributes
 	\li \ref fluid_selecting_moving
 	\li \ref fluid_images
-    </b>
 
 </TD>
 
@@ -75,10 +69,8 @@
 
  \subpage glut
 
-    <b>
 	\li \ref glut_Fl_Glut_Window
 	<!-- \li Fl_Glut_Window (not yet commented ?) -->
-    </b>
 
  \subpage forms
 
