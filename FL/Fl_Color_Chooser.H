@@ -41,6 +41,9 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Value_Input.H>
 
+#ifndef FL_DOXYGEN
+
+/** For internal use only */
 class FL_EXPORT Flcc_HueBox : public Fl_Widget {
   int px, py;
 protected:
@@ -52,6 +55,7 @@ public:
   px = py = 0;}
 };
 
+/** For internal use only */
 class FL_EXPORT Flcc_ValueBox : public Fl_Widget {
   int py;
 protected:
@@ -63,11 +67,14 @@ public:
   py = 0;}
 };
 
+/** For internal use only */
 class FL_EXPORT Flcc_Value_Input : public Fl_Value_Input {
 public:
   int format(char*);
   Flcc_Value_Input(int X, int Y, int W, int H) : Fl_Value_Input(X,Y,W,H) {}
 };
+
+#endif // !FL_DOXYGEN
 
 /**
   \class Fl_Color_Chooser
@@ -115,6 +122,7 @@ class FL_EXPORT Fl_Color_Chooser : public Fl_Group {
   static void rgb_cb(Fl_Widget*, void*);
   static void mode_cb(Fl_Widget*, void*);
 public:
+  /** Returns which Fl_Color_Chooser variant is currently active */
   int mode() {return choice.value();}
 
   /**

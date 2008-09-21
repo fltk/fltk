@@ -93,7 +93,13 @@ void Fl_Color_Chooser::rgb2hsv(
   }
 }
 
-enum {M_RGB, M_BYTE, M_HEX, M_HSV}; // modes
+/** Fl_Color_Chooser modes */
+enum {
+  M_RGB,	/**< mode() of Fl_Color_Chooser showing RGB values */
+  M_BYTE,	/**< mode() of Fl_Color_Chooser showing byte values */
+  M_HEX,	/**< mode() of Fl_Color_Chooser showing hex values */
+  M_HSV		/**< mode() of Fl_Color_Chooser showing HSV values */
+};
 static Fl_Menu_Item mode_menu[] = {
   {"rgb"},
   {"byte"},
