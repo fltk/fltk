@@ -223,7 +223,8 @@ unique section name within the page that can be referenced in links.
 
 These doxygen page and section commands work only in special documentation
 chapters, not within normal source or header documentation blocks. However,
-links to documentation sections \b should work.
+links \b from normal (e.g. class) documentation \b to documentation sections
+\b do \b work.
 
 \todo	Verify, that links in (from) source documentation to documentation
 	pages and sections or subsections work.
@@ -286,7 +287,27 @@ appears as:
     
     see section \ref development_non-ascii
 
-  \subsection development_subsection_01 Subsection Number 1
+\section navigation_elements Example Navigation Elements
 
-    Text in Subsection Number 1.
+<hr>
+\link migration_1_3 [ Back ] \endlink
+<b>    [ <a href="index.html">Index</a> ]    </b>
+<b> Next: </b> \ref license
+<hr>
+<b>[ <a href="index.html">Index</a> ]    </b>
+<b>   Back: </b> \ref migration_1_3
+<b>   Next: </b> \ref license
+<hr>
+<b>[ <a href="index.html">Index</a> ]    </b><br>
+<b>   Back: </b> \ref migration_1_3 <br>
+<b>   Next: </b> \ref license
+<hr>
+<b>[ <a href="index.html">Index</a> ]    </b>
+   Back:  \ref migration_1_3
+   Next:  \ref license
+<hr>
+\link migration_1_3 [ Back ] \endlink
+<b>    [ <a href="index.html">Top</a> ]    </b>
+\link license [ Next ] \endlink
+
 */
