@@ -124,6 +124,10 @@ public:
   */
   void insert(Fl_Widget& o, Fl_Widget* before) {insert(o,find(before));}
   void remove(Fl_Widget&);
+  /**
+    Removes the widget \a o from the group.
+    \sa void remove(Fl_Widget&)
+  */
   void remove(Fl_Widget* o) {remove(*o);}
   void clear();
 
