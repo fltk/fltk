@@ -176,7 +176,9 @@ set to zero if the rectangle is completely outside the region.
 Fl_Region is an operating system specific type. The second form returns 
 the current clipping region.
 
-<H3><A name="colors">Colors</A></H3>
+
+<A NAME="colors"></A> <!-- For old HTML links only ! -->
+\section drawing_colors Colors
 
 <P>FLTK manages colors as 32-bit unsigned integers. Values from
 0 to 255 represent colors from the FLTK 1.0.x standard colormap
@@ -695,7 +697,9 @@ fl_overlay_rect() after FL_DRAG events, and
 should call fl_overlay_clear() after a
 FL_RELEASE event.</P>
 
-<H2><A name="images">Drawing Images</A></H2>
+
+<A NAME="images"></A> <!-- For old HTML links only ! -->
+\section drawing_images Drawing Images
 
 <P>To draw images, you can either do it directly from data in
 your memory, or you can create a Fl_Image object. The advantage of

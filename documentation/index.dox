@@ -28,40 +28,36 @@
  \subpage basics
 
  \subpage common
-	<B>
-	<UL>
-	<LI><A HREF="drawing.html#colors">Colors</A></LI>
-	<LI><A HREF="common.html#boxtypes">Box Types</A></LI>
-	<LI><A HREF="common.html#labels">Labels and Label Types</A></LI>
-	<LI><A HREF="drawing.html#images">Images</A></LI>
-	<LI>class Fl_Pixmap</LI>
-	</UL>
-	</B>
+
+    <b>
+	\li \ref drawing_colors
+	\li \ref common_boxtypes
+	\li \ref common_labels
+	\li \ref drawing_images
+    </b>
 
  \subpage editor
 
  \subpage drawing
 
  \subpage events
- 	<B>
-	<UL>
-	<LI><A HREF="events.html#event_xxx">Fl::event_*() methods</A></LI>
-	<LI><A HREF="events.html#propagation">Event Propagation</A></LI>
-	</UL>
-	</B>
+
+    <b>
+	\li \ref events_event_xxx
+	\li \ref events_propagation
+    </b>
 
  \subpage subclassing
 
  \subpage opengl
 
  \subpage fluid
- 	<B>
-	<UL>
-	<LI><A HREF="fluid.html#widget_attributes">Widget Attributes</A></LI>
-	<LI><A HREF="fluid.html#widget_attributes">Selecting Moving Widgets</A></LI>
-	<LI><A HREF="fluid.html#images">Image Labels</A></LI>
-	</UL>
-	</B>
+
+    <b>
+	\li \ref fluid_widget_attributes
+	\li \ref fluid_selecting_moving
+	\li \ref fluid_images
+    </b>
 
 </TD>
 
@@ -71,18 +67,18 @@
 
  \subpage unicode
 
-	<B><A HREF="classes.html">A - Class Reference</A></B>
+	<b><A HREF="classes.html">A - Class Reference</A></b>
 
-	<B><A HREF="globals_func.html">B - Function Reference</A></B>
+	<b><A HREF="globals_func.html">B - Function Reference</A></b>
 
  \subpage enumerations
 
  \subpage glut
- 	<B>
-	<UL>
-	<LI><A HREF="glut.html#Fl_Glut_Window">class Fl_Glut_Window</A></LI>
-	</UL>
-	</B>
+
+    <b>
+	\li \ref glut_Fl_Glut_Window
+	<!-- \li Fl_Glut_Window (not yet commented ?) -->
+    </b>
 
  \subpage forms
 

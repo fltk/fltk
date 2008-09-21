@@ -825,7 +825,7 @@ undone, however.
 
  \image html fluid_widget_gui.gif "Figure 9-8: The FLUID widget GUI attributes"
 
-<H3><A name="widget_attributes">GUI Attributes</A></H3>
+\section fluid_widget_attributes GUI Attributes
 
 <H4>Label (text field)</H4>
 
@@ -1100,7 +1100,7 @@ the extra code fields to put these values in.</P>
 <P>The <B>No Change</B> button means the callback is done on the
 matching event even if the data is not changed.
 
-<H3>Selecting and Moving Widgets</H3>
+\section fluid_selecting_moving Selecting and Moving Widgets
 
 <P>Double-clicking a window name in the browser will display it,
 if not displayed yet.  From this display you can select widgets,
@@ -1155,7 +1155,7 @@ different.</P>
 it) is almost identical to the panel for any other Fl_Widget. 
 There are three extra items:</P>
 
-<H3><A name="images">Images</A></H3>
+\section fluid_images Image Labels
 
 <P>The <I>contents</I> of the image files in the <B>Image</B>
 and <B>Inactive</B> text fields are written to the <TT>.cxx</TT>

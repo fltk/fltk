@@ -244,7 +244,8 @@ method:</P>
 button->labelcolor(FL_WHITE);
 \endcode
 
-<H2><A NAME="boxtypes">Box Types</A></H2>
+<A NAME="boxtypes"></A> <!-- For old HTML links only ! -->
+\section common_boxtypes Box Types
 
 <P>The type <TT>Fl_Boxtype</TT> stored and returned in Fl_Widget::box()
 is an enumeration defined in Enumerations.H.
@@ -342,7 +343,8 @@ value evenly divideable by two.
 <TT><A HREF="#fl_frame">fl_frame(Fl_Boxtype)</A></TT> 
 expects the <TT>UP_BOX</TT> design at a value divideable by four.</P>
 
-<H2><A NAME="labels">Labels and Label Types</A></H2>
+<A NAME="labels"></A> <!-- For old HTML links only ! -->
+\section common_labels Labels and Label Types
 
 <P>The <TT>label()</TT>, <TT>align()</TT>, <TT>labelfont()</TT>,
 <TT>labelsize()</TT>, <TT>labeltype()</TT>, <TT>image()</TT>, and

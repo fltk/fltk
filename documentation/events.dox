@@ -15,11 +15,10 @@ window manager.
 <P>Events are identified by the integer argument passed to the
 <A href="subclassing.html#handle"><TT>Fl_Widget::handle()</TT></A> virtual
 method. Other information about the most recent event is stored in
-static locations and acquired  by calling the <A
-href="#event_xxx"><TT>Fl::event_*()</TT></A> methods. This static
-information remains valid until the next event is read from the window
-system, so it is ok to look at it outside of the <TT>handle()</TT>
-method.
+static locations and acquired by calling the \ref events_event_xxx
+methods. This static information remains valid until the next event
+is read from the window system, so it is ok to look at it outside 
+of the <TT>handle()</TT> method.
 
 <H2>Mouse Events</H2>
 
@@ -271,7 +270,8 @@ the immediatly following FL_PASTE event.
 
 <!-- NEED 6in -->
 
-<H2><A name="event_xxx">Fl::event_*() methods</A></H2>
+<A NAME="event_xxx"></A> <!-- For old HTML links only ! -->
+\section events_event_xxx Fl::event_*() methods
 
 <P>FLTK keeps the information about the most recent event in
 static storage. This information is good until the next event is
@@ -318,7 +318,8 @@ processed. Thus it is valid inside <TT>handle()</TT> and
 
 </UL>
 
-<H2><A name=propagation>Event Propagation</A></H2>
+<A NAME="event_xxx"></A> <!-- For old HTML links only ! -->
+\section events_propagation Event Propagation
 
 <P>FLTK follows very simple and unchangeable rules for sending
 events. The major innovation is that widgets can indicate (by

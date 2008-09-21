@@ -77,7 +77,8 @@ glutCreateWindow()</TT>! </LI>
 loop calling <TT>Fl::wait()</TT> to run  the program. </LI>
 </UL>
 <HR break>
-<H2><A name=Fl_Glut_Window>class Fl_Glut_Window</A></H2>
+   <A NAME="Fl_Glut_Window"></A> <!-- For old HTML links only ! -->
+   \section glut_Fl_Glut_Window class Fl_Glut_Window
 <HR>
 <H3>Class Hierarchy</H3>
 \code
