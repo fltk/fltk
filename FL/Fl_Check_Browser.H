@@ -54,6 +54,7 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
 
   public: // IRIX 5.3 C++ compiler doesn't support private structures...
 
+#ifndef FL_DOXYGEN
   /** For internal use only. */
   struct cb_item {
 	  cb_item *next;	/**< For internal use only. */
@@ -62,6 +63,7 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
 	  char selected;	/**< For internal use only. */
 	  char *text;		/**< For internal use only. */
   };
+#endif // !FL_DOXYGEN
 
   private:
 
