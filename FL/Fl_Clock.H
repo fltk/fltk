@@ -36,10 +36,10 @@
 #endif
 
 // values for type:
-#define FL_SQUARE_CLOCK		0
-#define FL_ROUND_CLOCK		1
-#define FL_ANALOG_CLOCK FL_SQUARE_CLOCK
-#define FL_DIGITAL_CLOCK FL_SQUARE_CLOCK // nyi
+#define FL_SQUARE_CLOCK		0	/**< type() of Square Clock variant */
+#define FL_ROUND_CLOCK		1	/**< type() of Round Clock variant */
+#define FL_ANALOG_CLOCK FL_SQUARE_CLOCK	/**< An analog clock is square */
+#define FL_DIGITAL_CLOCK FL_SQUARE_CLOCK /**< Not yet implemented */
 
 /**
   \class Fl_Clock_Output
@@ -57,8 +57,8 @@ class FL_EXPORT Fl_Clock_Output : public Fl_Widget {
   ulong value_;
   void drawhands(Fl_Color,Fl_Color); // part of draw
 protected:
-  void draw(int, int, int, int);
   void draw();
+  void draw(int X, int Y, int W, int H);
 public:
 
   Fl_Clock_Output(int X, int Y, int W, int H, const char *L = 0);
@@ -109,6 +109,10 @@ public:
 class FL_EXPORT Fl_Clock : public Fl_Clock_Output {
 public:
   int handle(int);
+  /**
+    Undefined.
+    \todo Find Fl_Clock::update() implementation, if any, and document it.
+  */
   void update();
 
   Fl_Clock(int X, int Y, int W, int H,  const char *L = 0);

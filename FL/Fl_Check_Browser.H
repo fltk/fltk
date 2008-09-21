@@ -54,12 +54,13 @@ class FL_EXPORT Fl_Check_Browser : public Fl_Browser_ {
 
   public: // IRIX 5.3 C++ compiler doesn't support private structures...
 
+  /** For internal use only. */
   struct cb_item {
-	  cb_item *next;
-	  cb_item *prev;
-	  char checked;
-	  char selected;
-	  char *text;
+	  cb_item *next;	/**< For internal use only. */
+	  cb_item *prev;	/**< For internal use only. */
+	  char checked;		/**< For internal use only. */
+	  char selected;	/**< For internal use only. */
+	  char *text;		/**< For internal use only. */
   };
 
   private:

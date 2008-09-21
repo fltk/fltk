@@ -74,6 +74,10 @@ static void rect(double x, double y, double w, double h) {
   fl_end_polygon();
 }
 
+/**
+  Draw clock with the given position and size.
+  \param[in] X, Y, W, H position and size
+*/
 void Fl_Clock_Output::draw(int X, int Y, int W, int H) {
   Fl_Color box_color = type()==FL_ROUND_CLOCK ? FL_GRAY : color();
   Fl_Color shadow_color = fl_color_average(box_color, FL_BLACK, 0.5);
@@ -107,6 +111,9 @@ void Fl_Clock_Output::draw(int X, int Y, int W, int H) {
   fl_pop_matrix();
 }
 
+/**
+  Draw clock with current position and size.
+*/
 void Fl_Clock_Output::draw() {
   draw(x(), y(), w(), h());
   draw_label();
