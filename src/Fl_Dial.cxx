@@ -32,7 +32,10 @@
 #include <FL/math.h>
 
 // All angles are measured with 0 to the right and counter-clockwise
-
+/**
+  Draws dial at given position and size.
+  \param[in] X, Y, W, H position and size
+*/
 void Fl_Dial::draw(int X, int Y, int W, int H) {
   if (damage()&FL_DAMAGE_ALL) draw_box(box(), X, Y, W, H, color());
   X += Fl::box_dx(box());
@@ -92,11 +95,18 @@ void Fl_Dial::draw(int X, int Y, int W, int H) {
   fl_pop_matrix();
 }
 
+/**
+  Draws dial at current position and size.
+*/
 void Fl_Dial::draw() {
   draw(x(), y(), w(), h());
   draw_label();
 }
 
+/**
+  Allow subclasses to handle event based on given position and size.
+  \param[in] X, Y, W, H position and size
+*/
 int Fl_Dial::handle(int event, int X, int Y, int W, int H) {
   switch (event) {
   case FL_PUSH:
@@ -130,6 +140,9 @@ int Fl_Dial::handle(int event, int X, int Y, int W, int H) {
   }
 }
 
+/**
+  Allow subclasses to handle event based on current position and size.
+*/
 int Fl_Dial::handle(int e) {
   return handle(e, x(), y(), w(), h());
 }

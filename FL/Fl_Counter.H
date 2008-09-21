@@ -38,8 +38,8 @@
 #endif
 
 // values for type():
-#define FL_NORMAL_COUNTER	0
-#define FL_SIMPLE_COUNTER	1
+#define FL_NORMAL_COUNTER	0	/**< type() for counter with fast buttons */
+#define FL_SIMPLE_COUNTER	1	/**< type() for counter without fast buttons */
 
 /**
   \class Fl_Counter
@@ -77,19 +77,36 @@ public:
   ~Fl_Counter();
 
   /**
-    Set the increment for the double-arrow buttons.
+    Set the increment for the large step buttons.
     The default value is 1.0.
-    \param[in] a increment value
+    \param[in] a large step increment.
    */
   void lstep(double a) {lstep_ = a;}
 
+  /**
+    Set the increments for the normal and large step buttons.
+    \param[in] a, b normal and large step increments.
+  */
   void step(double a,double b) {Fl_Valuator::step(a); lstep_ = b;}
+  /**
+    Set the increment for the normal step buttons.
+    \param[in] a normal step increment.
+  */
   void step(double a) {Fl_Valuator::step(a);}
+
+  /** Gets the text font */
   Fl_Font textfont() const {return textfont_;}
+  /** Sets the text font to \a s */
   void textfont(Fl_Font s) {textfont_ = s;}
+
+  /** Gets the font size */
   Fl_Fontsize textsize() const {return textsize_;}
+  /** Sets the font size to \a s */
   void textsize(Fl_Fontsize s) {textsize_ = s;}
+
+  /** Gets the font color */
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+  /** Sets the font color to \p a */
   void textcolor(unsigned s) {textcolor_ = s;}
 
 };

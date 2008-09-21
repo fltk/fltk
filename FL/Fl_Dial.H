@@ -36,9 +36,9 @@
 #endif
 
 // values for type():
-#define FL_NORMAL_DIAL	0
-#define FL_LINE_DIAL	1
-#define FL_FILL_DIAL	2
+#define FL_NORMAL_DIAL	0	/**< type() for dial variant with dot */
+#define FL_LINE_DIAL	1	/**< type() for dial variant with line */
+#define FL_FILL_DIAL	2	/**< type() for dial variant with filled arc */
 
 /**
   The Fl_Dial widget provides a circular dial to control a
@@ -59,8 +59,8 @@ class FL_EXPORT Fl_Dial : public Fl_Valuator {
 protected:
 
   // these allow subclasses to put the dial in a smaller area:
-  void draw(int, int, int, int);
-  int handle(int, int, int, int, int);
+  void draw(int X, int Y, int W, int H);
+  int handle(int event, int X, int Y, int W, int H);
   void draw();
 
 public:
