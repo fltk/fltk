@@ -49,7 +49,11 @@
 class FL_EXPORT Fl_Double_Window : public Fl_Window {
 protected:
   void flush(int eraseoverlay);
-  char force_doublebuffering_; // force db, even if the OS already buffers windows (overlays need that on MacOS and Windows2000)
+  /**
+    Force double buffering, even if the OS already buffers windows
+    (overlays need that on MacOS and Windows2000)
+  */
+  char force_doublebuffering_;
 public:
   void show();
   void show(int a, char **b) {Fl_Window::show(a,b);}

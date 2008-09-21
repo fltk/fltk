@@ -327,12 +327,19 @@ char fl_can_do_alpha_blending() {
 
 #endif
 
-// Fl_Overlay_Window relies on flush(1) copying the back buffer to the
-// front everywhere, even if damage() == 0, thus erasing the overlay,
-// and leaving the clip region set to the entire window.
-
+/**
+  Forces the window to be redrawn.
+*/
 void Fl_Double_Window::flush() {flush(0);}
 
+/**
+  Forces the window to be redrawn.
+  \param[in] eraseoverlay non-zero to erase overlay, zero to ignore
+
+  Fl_Overlay_Window relies on flush(1) copying the back buffer to the
+  front everywhere, even if damage() == 0, thus erasing the overlay,
+  and leaving the clip region set to the entire window.
+*/
 void Fl_Double_Window::flush(int eraseoverlay) {
   make_current(); // make sure fl_gc is non-zero
   Fl_X *myi = Fl_X::i(this);
