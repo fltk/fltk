@@ -39,6 +39,11 @@
 
 #include "Fl_Export.H"
 
+/** \class Fl_Text_Selection
+    This is an internal class for Fl_Text_Buffer to manage text selections.
+    
+    \todo	members must be documented
+ */
 class FL_EXPORT Fl_Text_Selection {
   friend class Fl_Text_Buffer;
 
