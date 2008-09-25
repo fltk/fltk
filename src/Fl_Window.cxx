@@ -29,7 +29,7 @@
 // This is the system-independent portions.  The huge amount of 
 // crap you need to do to communicate with X is in Fl_x.cxx, the
 // equivalent (but totally different) crap for MSWindows is in Fl_win32.cxx
-
+#include "config.h"
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <stdlib.h>
@@ -132,6 +132,10 @@ void Fl_Window::draw() {
   set_flag(saveflags);
   y(savey);
   x(savex);
+
+# if defined(HAVE_CAIRO)
+  Fl::cairo_make_current(this); // checkout if an update is necessary
+# endif
 }
 
 void Fl_Window::label(const char *name) {

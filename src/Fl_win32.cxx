@@ -1737,6 +1737,7 @@ HDC fl_GetDC(HWND w) {
   // calling GetDC seems to always reset these: (?)
   SetTextAlign(fl_gc, TA_BASELINE|TA_LEFT);
   SetBkMode(fl_gc, TRANSPARENT);
+
   return fl_gc;
 }
 
@@ -1755,6 +1756,8 @@ void Fl_Window::make_current() {
 
   current_ = this;
   fl_clip_region(0);
+
+
 }
 
 /* Make sure that all allocated fonts are released. This works only if 

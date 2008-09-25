@@ -530,7 +530,7 @@ AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, defaul
     [if test x$enable_localpng = xyes; then
 	ac_cv_lib_png_png_set_tRNS_to_alpha=no
     fi])
-
+ 
 AC_CHECK_LIB(png,png_set_tRNS_to_alpha, [
     PNGINC=""
     PNG=""
@@ -560,6 +560,17 @@ LIBS="$SAVELIBS"
 
 dnl See if we need a .exe extension on executables...
 AC_EXEEXT
+
+dnl Check for Cairo library unless disabled...
+AC_ARG_ENABLE(cairo,[  --enable-cairo          use Cairo graphics (default=no)])
+if test x$enable_cairo = xyes; then
+	  AC_DEFINE(HAVE_CAIRO)
+	  dnl FIXME This part should be fixed so configure do not depend on
+	  dnl we do not rely on pkg-config .
+          CXXFLAGS="`pkg-config --cflags cairo` $CXXFLAGS"
+          CAIROLIBS="-lcairo -lpixman-1" 
+	  LIBS="-lcairo -lpixman-1 $LIBS"
+fi
 
 dnl Check for pthreads for multi-threaded apps...
 have_pthread=no
@@ -703,12 +714,12 @@ case $uname in
 	    AC_MSG_WARN(Ignoring libraries \"$X_PRE_LIBS\" requested by configure.)
 	fi
 
-	LIBS="$LIBS -lXext -lX11 $X_EXTRA_LIBS"
+	LIBS="$LIBS -lX11 $X_EXTRA_LIBS"
 	CFLAGS="$CFLAGS $X_CFLAGS"
 	CXXFLAGS="$CXXFLAGS $X_CFLAGS"
 	LDFLAGS="$X_LIBS $LDFLAGS"
 	DSOFLAGS="$X_LIBS $DSOFLAGS"
-
+	AC_DEFINE(USE_X11)
 	if test "x$x_includes" != x; then
 	    ac_cpp="$ac_cpp -I$x_includes"
 	fi
@@ -781,6 +792,8 @@ case $uname in
 	if test x$enable_xdbe != xno; then
 	    AC_CHECK_HEADER(X11/extensions/Xdbe.h, AC_DEFINE(HAVE_XDBE),,
 	        [#include <X11/Xlib.h>])
+	    AC_CHECK_LIB(Xext, XdbeQueryExtension, 
+		LIBS="-lXext $LIBS")
 	fi
 
 	dnl Check for overlay visuals...
@@ -1124,6 +1137,10 @@ if test x$ZLIB = x; then
 else
     echo "                 ZLIB=Builtin"
 fi
+if test x$enable_cairo = xyes; then
+    echo "                 CAIRO=System"
+fi
+
 
 if test x$enable_largefile != xno; then
     echo "    Large Files: YES"

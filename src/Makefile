@@ -34,6 +34,7 @@ CPPFILES = \
 	Fl_Browser_load.cxx \
 	Fl_Box.cxx \
 	Fl_Button.cxx \
+	Fl_Cairo.cxx \
 	Fl_Chart.cxx \
 	Fl_Check_Browser.cxx \
 	Fl_Check_Button.cxx \

@@ -38,6 +38,7 @@ CPPFILES =\
 	browser.cxx \
 	button.cxx \
 	buttons.cxx \
+	cairo_test.cxx \
 	checkers.cxx \
 	clock.cxx \
 	colbrowser.cxx \
@@ -106,6 +107,7 @@ ALL =	\
 	browser$(EXEEXT) \
 	button$(EXEEXT) \
 	buttons$(EXEEXT) \
+	cairo_test$(EXEEXT) \
 	checkers$(EXEEXT) \
 	clock$(EXEEXT) \
 	colbrowser$(EXEEXT) \
@@ -461,6 +463,7 @@ shape$(EXEEXT): shape.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 
+cairo_test$(EXEEXT): cairo_test.o
 
 #
 # End of "$Id$".

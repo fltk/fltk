@@ -67,7 +67,12 @@ void Fl_Menu_Window::flush() {
   if (!fl_overlay_visual || !overlay()) {Fl_Single_Window::flush(); return;}
   Fl_X *myi = Fl_X::i(this);
   fl_window = myi->xid;
-  if (!gc) gc = XCreateGC(fl_display, myi->xid, 0, 0);
+  if (!gc) {
+	  gc = XCreateGC(fl_display, myi->xid, 0, 0);
+# if defined(HAVE_CAIRO)
+      Fl::cairo_make_current(gc); // capture gc changes automatically to update the cairo context adequately
+# endif
+  }
   fl_gc = gc;
   fl_overlay = 1;
   fl_clip_region(myi->region); myi->region = 0; current_ = this;

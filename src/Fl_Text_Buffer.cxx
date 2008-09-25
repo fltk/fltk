@@ -64,8 +64,15 @@ static char *expandTabs(const char *text, int startIndent, int tabDist,
                          char nullSubsChar, int *newLen);
 static char *unexpandTabs(char *text, int startIndent, int tabDist,
                            char nullSubsChar, int *newLen);
-static int max(int i1, int i2);
-static int min(int i1, int i2);
+#ifndef min
+static int max(int i1, int i2) {
+  return i1 >= i2 ? i1 : i2;
+}
+
+static int min(int i1, int i2) {
+  return i1 <= i2 ? i1 : i2;
+}
+#endif
 
 static const char *ControlCodeTable[ 32 ] = {
   "nul", "soh", "stx", "etx", "eot", "enq", "ack", "bel",
@@ -2567,14 +2574,6 @@ static char *unexpandTabs(char *text, int startIndent, int tabDist,
   *outPtr = '\0';
   *newLen = outPtr - outStr;
   return outStr;
-}
-
-static int max(int i1, int i2) {
-  return i1 >= i2 ? i1 : i2;
-}
-
-static int min(int i1, int i2) {
-  return i1 <= i2 ? i1 : i2;
 }
 
 int

@@ -2312,10 +2312,18 @@ void Fl_Window::make_current()
   fl_gc = i->gc;
   CGContextSaveGState(fl_gc);
   Fl_X::q_fill_context();
+#if defined(HAVE_CAIRO) && defined (__APPLE_QUARTZ__)
+   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
+#endif
+
 #endif
   fl_clip_region( 0 );
   SetPortClipRegion( GetWindowPort(i->xid), fl_window_region );
-  return;
+
+#if defined(__APPLE_QUARTZ__) && defined(HAVE_CAIRO)
+  // update the cairo_t context
+  if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this);
+#endif
 }
 
 // helper function to manage the current CGContext fl_gc
@@ -2363,6 +2371,9 @@ void Fl_X::q_release_context(Fl_X *x) {
       fprintf(stderr, "Error %d in QDEndCGContext\n", (int)err);
   }
   fl_gc = 0;
+#if defined(HAVE_CAIRO) && defined (__APPLE_QUARTZ__)
+  Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
+#endif
 }
 
 void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {

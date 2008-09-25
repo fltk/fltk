@@ -130,6 +130,16 @@
 #undef __APPLE_QUARTZ__
 #undef __APPLE_QD__
 
+
+/*
+ * USE_X11
+ *
+ * Should we use X11 for the current platform
+ *
+ */
+
+#undef USE_X11
+
 /*
  * HAVE_OVERLAY:
  *
@@ -235,6 +245,14 @@
 #undef HAVE_LIBPNG
 #undef HAVE_LIBZ
 #undef HAVE_LIBJPEG
+
+/*
+ * HAVE_CAIRO
+ *
+ * Do we have the cairo library available?
+ */
+
+#undef HAVE_CAIRO
 
 /*
  * Which header file do we include for libpng?

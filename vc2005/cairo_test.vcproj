@@ -2,8 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="button"
-	ProjectGUID="{0363AC35-F325-4C24-9DB9-E83337D55787}"
+	Name="cairo_test"
+	ProjectGUID="{CF98E92E-C789-47E6-A2DA-398EB7991A2B}"
+	RootNamespace="cairo_test"
 	>
 	<Platforms>
 		<Platform
@@ -14,11 +15,11 @@
 	</ToolFiles>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory=".\button_"
-			IntermediateDirectory=".\button_"
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -36,34 +37,33 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
+				PreprocessorDefinitions="NDEBUG"
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\button_/button.tlb"
+				TypeLibraryName=".\Release/cairo_test.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories="..\vc2005;..\zlib;..\png;..\jpeg;.."
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\button_/button.pch"
-				AssemblerListingLocation=".\button_/"
-				ObjectFile=".\button_/"
-				ProgramDataBaseFileName=".\button_/"
+				Optimization="4"
+				InlineFunctionExpansion="2"
+				FavorSizeOrSpeed="2"
+				AdditionalIncludeDirectories=".,.."
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
+				RuntimeLibrary="2"
+				PrecompiledHeaderFile=".\Release/cairo_test.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
+				PreprocessorDefinitions="NDEBUG"
 				Culture="1033"
 			/>
 			<Tool
@@ -71,14 +71,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltkd.lib comctl32.lib"
-				OutputFile="../test/buttond.exe"
+				AdditionalDependencies="cairo.lib fltkd.lib comctl32.lib"
+				OutputFile="../test/cairo_test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib"
 				IgnoreDefaultLibraryNames="libcd"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\button_/buttond.pdb"
+				ProgramDatabaseFile=".\Release/cairo_test.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -93,6 +92,8 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile=".\Release/cairo_test.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -108,11 +109,11 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			Name="Debug|Win32"
+			OutputDirectory=".\cairo_test_"
+			IntermediateDirectory=".\cairo_test_"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -130,35 +131,33 @@
 			/>
 			<Tool
 				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
+				PreprocessorDefinitions="_DEBUG"
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Release/button.tlb"
+				TypeLibraryName=".\cairo_test_/cairo_test.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="4"
-				InlineFunctionExpansion="2"
-				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories="..\vc2005;..\zlib;..\png;..\jpeg;.."
-				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/button.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				Optimization="0"
+				AdditionalIncludeDirectories=".,.."
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
+				MinimalRebuild="true"
+				RuntimeLibrary="3"
+				PrecompiledHeaderFile=".\cairo_test_/cairo_test.pch"
+				AssemblerListingLocation=".\cairo_test_/"
+				ObjectFile=".\cairo_test_/"
+				ProgramDataBaseFileName=".\cairo_test_/"
 				SuppressStartupBanner="true"
-				CompileAs="0"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
+				PreprocessorDefinitions="_DEBUG"
 				Culture="1033"
 			/>
 			<Tool
@@ -166,13 +165,14 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltk.lib comctl32.lib"
-				OutputFile="../test/button.exe"
-				LinkIncremental="1"
+				AdditionalDependencies="cairo.lib fltkd.lib comctl32.lib"
+				OutputFile="../test/cairo_testd.exe"
+				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib"
 				IgnoreDefaultLibraryNames="libcd"
-				ProgramDatabaseFile=".\Release/button.pdb"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile=".\cairo_test_/cairo_testd.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -187,6 +187,8 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile=".\cairo_test_/cairo_test.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -206,7 +208,7 @@
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -228,23 +230,22 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\button_/button.tlb"
+				TypeLibraryName=".\cairo_test_/cairo_test.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\vc2005;..\zlib;..\png;..\jpeg;.."
+				AdditionalIncludeDirectories=".,.."
 				PreprocessorDefinitions="HAVE_CAIRO=1;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
+				MinimalRebuild="true"
 				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\button_/button.pch"
-				AssemblerListingLocation=".\button_/"
-				ObjectFile=".\button_/"
-				ProgramDataBaseFileName=".\button_/"
+				PrecompiledHeaderFile=".\cairo_test_/cairo_test.pch"
+				AssemblerListingLocation=".\cairo_test_/"
+				ObjectFile=".\cairo_test_/"
+				ProgramDataBaseFileName=".\cairo_test_/"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -260,13 +261,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cairo.lib fltkd.lib comctl32.lib"
-				OutputFile="../test/buttond.exe"
-				LinkIncremental="1"
+				OutputFile="../test/cairo_testd.exe"
+				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib"
 				IgnoreDefaultLibraryNames="libcd"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\button_/buttond.pdb"
+				ProgramDatabaseFile=".\cairo_test_/cairo_testd.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -281,6 +282,8 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile=".\cairo_test_/cairo_test.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -300,7 +303,7 @@
 			OutputDirectory="$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			>
@@ -322,7 +325,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Release/button.tlb"
+				TypeLibraryName=".\Release/cairo_test.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -330,16 +333,14 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories="..\vc2005;..\zlib;..\png;..\jpeg;.."
-				PreprocessorDefinitions="HAVE_CAIRO=1,_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
+				AdditionalIncludeDirectories=".,.."
+				PreprocessorDefinitions="HAVE_CAIRO=1,WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile=".\Release/button.pch"
+				PrecompiledHeaderFile=".\Release/cairo_test.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
 				SuppressStartupBanner="true"
-				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -354,13 +355,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fltk.lib comctl32.lib cairo.lib"
-				OutputFile="../test/button.exe"
+				AdditionalDependencies="cairo.lib fltkd.lib comctl32.lib cairo.lib"
+				OutputFile="../test/cairo_test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\lib"
 				IgnoreDefaultLibraryNames="libcd"
-				ProgramDatabaseFile=".\Release/button.pdb"
+				ProgramDatabaseFile=".\Release/cairo_test.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -375,6 +376,8 @@
 			/>
 			<Tool
 				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile=".\Release/cairo_test.bsc"
 			/>
 			<Tool
 				Name="VCFxCopTool"
@@ -394,20 +397,19 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\test\button.cxx"
+			RelativePath="..\test\cairo_test.cxx"
 			>
 			<FileConfiguration
-				Name="Debug|Win32"
+				Name="Release|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
-					Optimization="0"
 					AdditionalIncludeDirectories=""
 					PreprocessorDefinitions=""
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release|Win32"
+				Name="Debug|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"
@@ -420,7 +422,6 @@
 				>
 				<Tool
 					Name="VCCLCompilerTool"
-					Optimization="0"
 					AdditionalIncludeDirectories=""
 					PreprocessorDefinitions=""
 				/>
