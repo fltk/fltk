@@ -900,4 +900,11 @@ style_parse(const char *text,
 }
 \endcode
 
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="common.html">[Previous]</a>&nbsp;
+     \ref common &nbsp;&nbsp;
+<a class="el" href="drawing.html">[Next]</a>&nbsp;
+     \ref drawing
+
 */

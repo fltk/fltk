@@ -737,4 +737,11 @@ MacOS version of FLTK:
 
 </UL>
 
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="forms.html">[Previous]</a>&nbsp;
+     \ref forms &nbsp;&nbsp;
+<a class="el" href="migration_1_1.html">[Next]</a>&nbsp;
+     \ref migration_1_1
+
 */

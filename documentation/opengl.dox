@@ -457,4 +457,11 @@ void OptimizerWindow::draw() {
 a collection of 3D objects in a <TT>csGroup</TT>.  The scene is redrawn
 after this call.
 
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="subclassing.html">[Previous]</a>&nbsp;
+     \ref subclassing &nbsp;&nbsp;
+<a class="el" href="fluid.html">[Next]</a>&nbsp;
+     \ref fluid
+
 */

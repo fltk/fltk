@@ -346,4 +346,11 @@ better and can be used with the "optimized for speed" setting.</P>
 	#include <Fl/fl_xyz.h>
 	\endcode
 
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="intro.html">[Previous]</a>&nbsp;
+     \ref intro &nbsp;&nbsp;
+<a class="el" href="common.html">[Next]</a>&nbsp;
+     \ref common
+
 */

@@ -190,4 +190,11 @@ Fl_Glut_Window::~Fl_Glut_Window()</A></H4>
 <H4><A name="Fl_Glut_Window.make_current">void Fl_Glut_Window::make_current()</A></H4>
 Switches all drawing functions to the GLUT window.
 
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="enumerations.html">[Previous]</a>&nbsp;
+     \ref enumerations &nbsp;&nbsp;
+<a class="el" href="forms.html">[Next]</a>&nbsp;
+     \ref forms
+
 */

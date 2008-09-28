@@ -308,4 +308,10 @@ cursors.</P>
 <LI><TT>FL_DAMAGE_ALL</TT> - Everything needs to be redrawn. </LI>
 </UL>
 
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="globals_func.html">[Previous] B - Function Reference</a>&nbsp;
+<a class="el" href="glut.html">[Next]</a>&nbsp;
+     \ref glut
+
 */

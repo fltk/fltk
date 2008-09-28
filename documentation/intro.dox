@@ -367,4 +367,11 @@ SourceForge bug tracker pages.</P>
 <P>For general support and questions, please use the FLTK mailing list
 at "fltk@fltk.org" or one of the newsgroups.</P>
 
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="preface.html">[Previous]</a>&nbsp;
+     \ref preface &nbsp;&nbsp;
+<a class="el" href="basics.html">[Next]</a>&nbsp;
+     \ref basics
+
 */

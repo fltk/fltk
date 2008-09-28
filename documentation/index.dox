@@ -61,9 +61,9 @@
 
  \subpage unicode
 
-	<b><A HREF="classes.html">A - Class Reference</A></b>
+	<b><a class="el" href="classes.html">A - Class Reference</a></b>
 
-	<b><A HREF="globals_func.html">B - Function Reference</A></b>
+	<b><a class="el" href="globals_func.html">B - Function Reference</a></b>
 
  \subpage enumerations
 
