@@ -166,9 +166,17 @@ public:
   void add_resizable(Fl_Widget& o) {resizable_ = &o; add(o);}
   void init_sizes();
 
-  // back compatibility function:
-  void focus(Fl_Widget* o) {o->take_focus();}
+  // back compatibility functions:
+
+  /**
+    \deprecated This is for backwards compatibility only. You should use
+    \e W->%take_focus() instead.
+    \sa Fl_Widget::take_focus();
+  */
+  void focus(Fl_Widget* W) {W->take_focus();}
+  /** This is for forms compatibility only */
   Fl_Widget* & _ddfdesign_kludge() {return resizable_;}
+  /** This is for forms compatibility only */
   void forms_end();
 };
 

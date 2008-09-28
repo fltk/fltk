@@ -486,16 +486,37 @@ void Fl_Group::remove(Fl_Widget &o) {
 // also uses this array!
 
 /**
+  This resets the internal array of widget sizes and positions.
+  
   The Fl_Group widget keeps track of the original widget sizes and
   positions when resizing occurs so that if you resize a window back to its
   original size the widgets will be in the correct places. If you rearrange
   the widgets in your group, call this method to register the new arrangement
   with the Fl_Group that contains them.
+  
+  If you add or remove widgets, this will be done automatically.
+  
+  \note The internal array of widget sizes and positions will be allocated and
+  filled when the next resize() occurs.
+  
+  \sa sizes()
 */
 void Fl_Group::init_sizes() {
   delete[] sizes_; sizes_ = 0;
 }
 
+/**
+  This returns the internal array of widget sizes and positions.
+  
+  If the sizes() array does not exist, it will be allocated and filled
+  with the current widget sizes and positions.
+  
+  \note You should never need to use this method directly, unless you have
+  special needs to rearrange the children of a Fl_Group. Fl_Tile uses
+  this to rearrange its widget positions.
+  
+  \todo should the internal representation of the sizes() array be documented?
+*/  
 int* Fl_Group::sizes() {
   if (!sizes_) {
     int* p = sizes_ = new int[4*(children_+2)];
@@ -528,7 +549,17 @@ int* Fl_Group::sizes() {
   }
   return sizes_;
 }
-
+/**
+  This resizes the Fl_Group widget and all of its children.
+  
+  The Fl_Group widget first resizes itself, and then it moves and resizes
+  all its children according to the rules documented for
+  Fl_Group::resizable(Fl_Widget*)
+  
+  \sa Fl_Group::resizable(Fl_Widget*)
+  \sa Fl_Group::resizable()
+  \sa Fl_Widget::resize(int,int,int,int)
+*/
 void Fl_Group::resize(int X, int Y, int W, int H) {
 
   int dx = X-x();
@@ -603,6 +634,13 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
   }
 }
 
+/**
+  This draws all children of the group.
+  
+  This is useful, if you derived a widget from Fl_Group and want to draw a special
+  border or background. You can call draw_children() from the derived draw() method
+  after drawing the box, border, or background.
+*/
 void Fl_Group::draw_children() {
   Fl_Widget*const* a = array();
 
@@ -634,7 +672,13 @@ void Fl_Group::draw() {
   draw_children();
 }
 
-// Draw a child only if it needs it:
+/**
+  Draws a child only if it needs it.
+  This draws a child widget, if it is not clipped \em and if any damage() bits
+  are set. The damage bits are cleared after drawing.
+  
+  \sa Fl_Group::draw_child(Fl_Widget& widget) const
+*/
 void Fl_Group::update_child(Fl_Widget& widget) const {
   if (widget.damage() && widget.visible() && widget.type() < FL_WINDOW &&
       fl_not_clipped(widget.x(), widget.y(), widget.w(), widget.h())) {
@@ -643,7 +687,11 @@ void Fl_Group::update_child(Fl_Widget& widget) const {
   }
 }
 
-// Force a child to redraw:
+
+/** Forces a child to redraw.
+  This draws a child widget, if it is not clipped.
+  The damage bits are cleared after drawing.
+*/
 void Fl_Group::draw_child(Fl_Widget& widget) const {
   if (widget.visible() && widget.type() < FL_WINDOW &&
       fl_not_clipped(widget.x(), widget.y(), widget.w(), widget.h())) {
@@ -655,7 +703,7 @@ void Fl_Group::draw_child(Fl_Widget& widget) const {
 
 extern char fl_draw_shortcut;
 
-// Parents normally call this to draw outside labels:
+/** Parents normally call this to draw outside labels of child widgets. */
 void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
   if (!widget.visible()) return;
   // skip any labels that are inside the widget:

@@ -537,7 +537,7 @@ public:
   /** See Fl_Widget* pushed(Fl_Widget*) */
   static Fl_Widget* pushed()	{return pushed_;}
   static void pushed(Fl_Widget*);
-  /** See Fl_Widget* focus(Fl_Widget*) */
+  /** Gets the current Fl::focus() widget. \sa Fl::focus(Fl_Widget*) */
   static Fl_Widget* focus()	{return focus_;}
   static void focus(Fl_Widget*);
   static void add_handler(int (*h)(int));

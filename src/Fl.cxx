@@ -712,14 +712,16 @@ static int send_handlers(int e) {
 Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
 
 /**
-    Get or set the widget that will receive FL_KEYBOARD events.
+    Sets the widget that will receive FL_KEYBOARD events.
     
-    <P>If you change Fl::focus(), the previous widget and all
+    If you change Fl::focus(), the previous widget and all
     parents (that don't contain the new widget) are sent FL_UNFOCUS
-    events.  Changing the focus does <I>not</I> send FL_FOCUS to
-    this or any widget, because sending FL_FOCUS is supposed to <I>
-    test</I> if the widget wants the focus (by it returning non-zero from
+    events.  Changing the focus does \e not send FL_FOCUS to
+    this or any widget, because sending FL_FOCUS is supposed to
+    \e test if the widget wants the focus (by it returning non-zero from
     handle()).
+    
+    \sa Fl_Widget::take_focus()
 */
 void Fl::focus(Fl_Widget *o) {
   if (o && !o->visible_focus()) return;
