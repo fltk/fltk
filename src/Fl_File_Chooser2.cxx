@@ -100,8 +100,13 @@
   	<TD>fl_numericsort</TD>
   </TR>
   </TABLE></CENTER>
-  <P>The sort member specifies the sort function that is
-  used when loading the contents of a directory.
+  <P>The Fl_File_Chooser::sort member specifies the sort function that is
+  used when loading the contents of a directory and can be customized
+  at run-time.
+  <P>The Fl_File_Chooser class also exports the Fl_File_Chooser::newButton
+  and Fl_File_Chooser::previewButton widgets so that application developers
+  can control their appearance and use.  For more complex customization,
+  consider copying the FLTK file chooser code and changing it accordingly.
 */
 
 /** \fn Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int type, const char *title)
@@ -143,6 +148,16 @@
   
   <P>The title argument is used to set the title bar text for the
   Fl_File_Chooser window.
+*/
+
+/** \var Fl_File_Chooser::newButton
+  The "new directory" button is exported so that application developers
+  can control the appearance and use.
+*/
+
+/** \var Fl_File_Chooser::previewButton
+  The "preview" button is exported so that application developers can
+  control the appearance and use.
 */
 
 /** \fn Fl_File_Chooser::~Fl_File_Chooser()

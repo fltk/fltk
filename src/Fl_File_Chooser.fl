@@ -379,33 +379,48 @@ else
   } {
     code {return window->visible();} {}
   }
-  decl {static const char *add_favorites_label;} {public
+  decl {static const char *add_favorites_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *all_files_label;} {public
+  decl {static const char *all_files_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *custom_filter_label;} {public
+  decl {static const char *custom_filter_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *existing_file_label;} {public
+  decl {static const char *existing_file_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *favorites_label;} {public
+  decl {static const char *favorites_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *filename_label;} {public
+  decl {static const char *filename_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *filesystems_label;} {public
+  decl {static const char *filesystems_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *manage_favorites_label;} {public
+  decl {static const char *manage_favorites_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *new_directory_label;} {public
+  decl {static const char *new_directory_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *new_directory_tooltip;} {public
+  decl {static const char *new_directory_tooltip;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *preview_label;} {public
+  decl {static const char *preview_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *save_label;} {public
+  decl {static const char *save_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static const char *show_label;} {public
+  decl {static const char *show_label;} {
+    comment {[standard text may be customized at run-time]} public
   }
-  decl {static Fl_File_Sort_F *sort;} {public
+  decl {static Fl_File_Sort_F *sort;} {
+    comment {the sort function that is used when loading
+the contents of a directory.} public
   }
   decl {Fl_Widget* ext_group;} {}
   decl {bool ext_managed;} {}
