@@ -31,9 +31,9 @@
   The Fl_File_Chooser widget displays a standard file selection
   dialog that supports various selection modes.
   
-    <P ALIGN=CENTER>\image html Fl_File_Chooser.jpg</P>
+  \image html Fl_File_Chooser.jpg
   
-  <P>The Fl_File_Chooser class also exports several static values
+  The Fl_File_Chooser class also exports several static values
   that may be used to localize or customize the appearance of all file chooser
   dialogs:
   
@@ -100,22 +100,24 @@
   	<TD>fl_numericsort</TD>
   </TR>
   </TABLE></CENTER>
-  <P>The Fl_File_Chooser::sort member specifies the sort function that is
+
+  The Fl_File_Chooser::sort member specifies the sort function that is
   used when loading the contents of a directory and can be customized
   at run-time.
-  <P>The Fl_File_Chooser class also exports the Fl_File_Chooser::newButton
+
+  The Fl_File_Chooser class also exports the Fl_File_Chooser::newButton
   and Fl_File_Chooser::previewButton widgets so that application developers
   can control their appearance and use.  For more complex customization,
   consider copying the FLTK file chooser code and changing it accordingly.
 */
 
 /** \fn Fl_File_Chooser::Fl_File_Chooser(const char *pathname, const char *pattern, int type, const char *title)
-  The constructor creates the Fl_File_Chooser dialog pictured
-  above. The pathname argument can be a directory name or a
+  The constructor creates the Fl_File_Chooser dialog shown.
+  The pathname argument can be a directory name or a
   complete file name (in which case the corresponding file is highlighted
   in the list and in the filename input field.)
   
-  <P>The pattern argument can be a NULL
+  The pattern argument can be a NULL
   string or "*" to list all files, or it can be a
   series of descriptions and filter strings separated by tab
   characters (\\t). The format of filters is either
@@ -126,27 +128,22 @@
   "HTML Files (*.html)\tImage Files (*.{bmp,gif,jpg,png})"
   \endcode
   
-  <P>The file chooser will automatically add the "All Files (*)"
+  The file chooser will automatically add the "All Files (*)"
   pattern to the end of the string you pass if you do not provide
   one. The first filter in the string is the default filter.
   
-  <P>See the FLTK documentation on fl_filename_match()
+  See the FLTK documentation on fl_filename_match()
   for the kinds of pattern strings that are supported.
   
-  <P>The type argument can be one of the following:
+  The type argument can be one of the following:
   
-  <UL>
-  	<LI>SINGLE - allows the user to select a
-  	single, existing file.
-  	<LI>MULTI - allows the user to select one
-  	or more existing files.
-  	<LI>CREATE - allows the user to select a
-  	single, existing file or specify a new filename.
-  	<LI>DIRECTORY - allows the user to select a
-  	single, existing directory.
-  </UL>
+  \li \c SINGLE - allows the user to select a single, existing file.
+  \li \c MULTI - allows the user to select one or more existing files.
+  \li \c CREATE - allows the user to select a single, existing file or
+         specify a new filename.
+  \li \c DIRECTORY - allows the user to select a single, existing directory.
   
-  <P>The title argument is used to set the title bar text for the
+  The title argument is used to set the title bar text for the
   Fl_File_Chooser window.
 */
 
@@ -182,9 +179,11 @@
   Sets or gets the current filename filter patterns. The filter
   patterns use fl_filename_match().
   Multiple patterns can be used by separating them with tabs, like
-  "*.jpg\t*.png\t*.gif\t*". In addition, you can provide
+  <tt>"*.jpg\t*.png\t*.gif\t*"</tt>. In addition, you can provide
   human-readable labels with the patterns inside parenthesis, like
-  "JPEG&nbsp;Files&nbsp;(*.jpg)\tPNG&nbsp;Files&nbsp;(*.png)\tGIF&nbsp;Files&nbsp;(*.gif)\tAll&nbsp;Files&nbsp;(*)".
+  <tt>"JPEG Files (*.jpg)\tPNG Files (*.png)\tGIF Files (*.gif)\tAll Files (*)"
+  </tt>.
+
   Use filter(NULL) to show all files.
 */
 
@@ -217,13 +216,11 @@
   Sets or gets the title bar text for the Fl_File_Chooser.*/
 
 /** \fn void Fl_File_Chooser::ok_label(const char *l)
-  Sets or gets the label for the "ok" button in the
-  Fl_File_Chooser.
+  Sets or gets the label for the "ok" button in the Fl_File_Chooser.
 */
 
 /** \fn const char *Fl_File_Chooser::ok_label()
-  Sets or gets the label for the "ok" button in the
-  Fl_File_Chooser.
+  Sets or gets the label for the "ok" button in the Fl_File_Chooser.
 */
 
 /** \fn int Fl_File_Chooser::preview() const
@@ -262,16 +259,16 @@
 /** \fn const char *Fl_File_Chooser::value(const char *pathname)
   Sets or gets the current value of the selected file.
   
-  <P>In the second form, <i>file</i> is a <i>1</i>-based index into a list of
+  In the second form, \p file is a \c 1-based index into a list of
   file names. The number of selected files is returned by
   Fl_File_Chooser::count().
   
-  <P>This sample code loops through all selected files:
+  This sample code loops through all selected files:
   \code
   // Get list of filenames user selected from a MULTI chooser
-  for ( int t=1; t&lt;=chooser-&gt;count(); t++ ) {
-     const char *filename = chooser-&gt;value(t);
-     ..
+  for ( int t=1; t>=chooser->count(); t++ ) {
+     const char *filename = chooser->value(t);
+     ...
   }
   \endcode
 */
@@ -285,9 +282,11 @@
 /** \fn Fl_Widget* Fl_File_Chooser::add_extra(Fl_Widget*)
   Adds extra widget at the bottom of Fl_File_Chooser window.
   Returns pointer for previous extra widget or NULL if not set previously.
-  If argument is NULL only remove previous extra widget.<BR>
-  <I>NOTE! Fl_File_Chooser doesn't delete extra widget in destructor! To prevent memory leakage don't forget
-   delete unused extra widgets by yourself.</I>
+  If argument is NULL only remove previous extra widget.
+
+  <I>NOTE! Fl_File_Chooser doesn't delete extra widget in destructor!
+     To prevent memory leakage don't forget delete unused extra widgets
+     by yourself.</I>
 */
   /** \fn int Fl_File_Chooser::shown()
     Returns non-zero if the file chooser main window show() has been called (but not hide()
