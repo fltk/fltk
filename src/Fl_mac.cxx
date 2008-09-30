@@ -1115,7 +1115,7 @@ static int keycodeToUnicode(
   int hasLayoutChanged = false;
   static Ptr uchr = NULL;
   static Ptr KCHR = NULL;
-  ScriptCode currentKeyScript;
+  // ScriptCode currentKeyScript;
   
   KLGetCurrentKeyboardLayout(&currentLayout);
   if (currentLayout) {
@@ -1191,7 +1191,7 @@ static int keycodeToUnicode(
     actuallength = 0;
   }
   // FIXME no bounds check (see maxchars)
-  int i;
+  unsigned i;
   for (i=0; i<actuallength; ++i) {
     len += fl_utf8encode(utext[i], uniChars+len);
   }
@@ -1617,6 +1617,46 @@ void handleUpdateEvent( WindowPtr xid )
   SetPort( oldPort );
 }     
 
+// Gets the border sizes and the titlebar size
+static void get_window_frame_sizes(int &bx, int &by, int &bt) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
+	HIRect contentRect = { {50,50}, {100,100} }; // a rect to stand in for the content rect of a real window
+	HIThemeWindowDrawInfo metrics= {0, 
+		kThemeStateActive, kThemeDocumentWindow,
+		kThemeWindowHasFullZoom + kThemeWindowHasCloseBox + 
+		kThemeWindowHasCollapseBox + kThemeWindowHasTitleText, 
+		0, 0};
+	HIShapeRef shape1=0, shape2=0, shape3=0;
+	HIRect rect1, rect2, rect3;
+	OSStatus	status;
+	status  = HIThemeGetWindowShape(&contentRect, &metrics, kWindowStructureRgn, &shape1);
+	status |= HIThemeGetWindowShape(&contentRect, &metrics, kWindowContentRgn, &shape2);
+	status |= HIThemeGetWindowShape(&contentRect, &metrics, kWindowTitleBarRgn, &shape3);
+    
+	if (!status) 
+	{
+		HIShapeGetBounds(shape1, &rect1);
+		HIShapeGetBounds(shape2, &rect2);
+		HIShapeGetBounds(shape3, &rect3);
+		bt = rect3.size.height;
+		bx = rect2.origin.x  - rect1.origin.x;
+		by = rect2.origin.y  - rect1.origin.y - bt;
+		// fprintf(stderr, "GetThemeWindowRegion succeeded bx=%d by=%d bt=%d\n", bx, by, bt);
+	}		
+	else 
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
+	{
+		// sets default dimensions
+		bx = by = 6;
+		bt = 22;
+		// fprintf(stderr, "GetThemeWindowRegion failed, bx=%d by=%d bt=%d\n", bx, by, bt);
+	}
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
+	if (shape1) free((void*) shape1); // we must free HIThemeGetWindowShape() (copied) handles 
+	if (shape2) free((void*) shape2); 
+	if (shape3) free((void*) shape3); 	
+#endif // MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
+}
 
 /**
  * \todo this is a leftover from OS9 times. Please check how much applies to Carbon!
@@ -1627,14 +1667,19 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   if (w->border() && !w->parent()) {
     if (w->maxw != w->minw || w->maxh != w->minh) {
       ret = 2;
-      bx = 6; // \todo Mac : GetSystemMetrics(SM_CXSIZEFRAME);
-      by = 6; // \todo Mac : get Mac window frame size GetSystemMetrics(SM_CYSIZEFRAME);
+      get_window_frame_sizes(bx, by, bt);
+      /*
+        bx = 6; // \todo Mac : GetSystemMetrics(SM_CXSIZEFRAME);
+        by = 6; // \todo Mac : get Mac window frame size GetSystemMetrics(SM_CYSIZEFRAME);
+      */
     } else {
       ret = 1;
-      bx = 6; // \todo Mac : GetSystemMetrics(SM_CXFIXEDFRAME);
-      by = 6; // \todo Mac : GetSystemMetrics(SM_CYFIXEDFRAME);
+      get_window_frame_sizes(bx, by, bt);
+      /*
+        bx = 6; // \todo Mac : GetSystemMetrics(SM_CXFIXEDFRAME);
+        by = 6; // \todo Mac : GetSystemMetrics(SM_CYFIXEDFRAME);
+      */
     }
-    bt = 22; // \todo Mac : GetSystemMetrics(SM_CYCAPTION);
   }
   //The coordinates of the whole window, including non-client area
   xoff = bx;
