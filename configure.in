@@ -55,7 +55,7 @@ if test "x$uname" = x; then
     uname="CYGWIN"
 fi
 
-dnl Don't automatically add "-g" to compiler options...
+dnl Do not automatically add "-g" to compiler options...
 ARCHFLAGS="${ARCHFLAGS:=}"
 CFLAGS="${CFLAGS:=}"
 CPPFLAGS="${CPPFLAGS:=}"
@@ -85,7 +85,7 @@ case $uname in
 	;;
 esac
 
-dnl Define the libraries and link options we'll need.
+dnl Define the libraries and link options we will need.
 LINKFLTK="../lib/libfltk.a"
 LINKFLTKFORMS="../lib/libfltk_forms.a"
 LINKFLTKGL="../lib/libfltk_gl.a"
@@ -568,7 +568,7 @@ if test x$enable_cairo = xyes; then
 	  dnl FIXME This part should be fixed so configure do not depend on
 	  dnl we do not rely on pkg-config .
           CXXFLAGS="`pkg-config --cflags cairo` $CXXFLAGS"
-          CAIROLIBS="-lcairo -lpixman-1" 
+          CAIROLIBS="-lcairo -lpixman-1"
 	  LIBS="-lcairo -lpixman-1 $LIBS"
 fi
 
