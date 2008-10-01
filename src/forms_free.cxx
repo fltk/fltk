@@ -42,32 +42,38 @@ void Fl_Free::step(void *v) {
 }
 
 /**
-    The constructor takes both the type and the handle
-    function. The handle function should be declared as follows:
-    \code
-    int
-    handle_function(Fl_Widget *w,
-                   int       event,
-    	        float     event_x,
-    		float     event_y,
-    		char      key)
-    \endcode
-    This function is called from the the handle() method in
-    response to most events, and is called by the draw() method.
-    The event argument contains the event type:
-    \code
-    // old event names for compatibility:
-    #define FL_MOUSE		FL_DRAG
-    #define FL_DRAW		0
-    #define FL_STEP		9
-    #define FL_FREEMEM		12
-    #define FL_FREEZE		FL_UNMAP
-    #define FL_THAW		FL_MAP
-    \endcode
+  Create a new Fl_Free widget with type, position, size, label and handler.
+  \param[in] t type
+  \param[in] X, Y, W, H position and size
+  \param[in] L widget label
+  \param[in] hdl handler function
+
+  The constructor takes both the type and the handle function. The handle
+  function should be declared as follows:
+  \code
+  int handle_function(Fl_Widget *w,
+                      int       event,
+     	              float     event_x,
+    		      float     event_y,
+    		      char      key)
+  \endcode
+  This function is called from the the handle() method in response to most
+  events, and is called by the draw() method.
+
+  The event argument contains the event type:
+  \code
+  // old event names for compatibility:
+  #define FL_MOUSE		FL_DRAG
+  #define FL_DRAW		0
+  #define FL_STEP		9
+  #define FL_FREEMEM		12
+  #define FL_FREEZE		FL_UNMAP
+  #define FL_THAW		FL_MAP
+  \endcode
 */
-Fl_Free::Fl_Free(uchar t,int X, int Y, int W, int H,const char *l,
+Fl_Free::Fl_Free(uchar t,int X, int Y, int W, int H,const char *L,
 		 FL_HANDLEPTR hdl) :
-Fl_Widget(X,Y,W,H,l) {
+Fl_Widget(X,Y,W,H,L) {
   type(t);
   hfunc = hdl;
   if (t == FL_SLEEPING_FREE) set_flag(INACTIVE);
@@ -75,7 +81,9 @@ Fl_Widget(X,Y,W,H,l) {
     Fl::add_timeout(.01,step,this);
 }
 
-/** The destructor will call the handle function with the event FL_FREE_MEM. */
+/**
+  The destructor will call the handle function with the event FL_FREE_MEM.
+*/
 Fl_Free::~Fl_Free() {
   Fl::remove_timeout(step,this);
   hfunc(this,FL_FREEMEM,0,0,0);
