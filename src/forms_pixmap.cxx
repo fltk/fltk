@@ -27,15 +27,26 @@
 
 #include <FL/forms.H>
 
+/**
+  Creates a new Fl_FormsPixmap widet using the given box type, position,
+  size and label string.
+  \param[in] t box type
+  \param[in] X, Y, W, H position and size
+  \param[in] L widget label, default is no label
+*/
 Fl_FormsPixmap::Fl_FormsPixmap(
-  Fl_Boxtype t, int X, int Y, int W, int H, const char* l)
-: Fl_Widget(X, Y, W, H, l) {
+  Fl_Boxtype t, int X, int Y, int W, int H, const char* L)
+: Fl_Widget(X, Y, W, H, L) {
   box(t);
   b = 0;
   color(FL_BLACK);
   align(FL_ALIGN_BOTTOM);
 }
 
+/**
+  Set/create the internal pixmap using raw data.
+  \param[in] bits raw data
+*/
 void Fl_FormsPixmap::set(char*const* bits) {
   delete b;
   b = new Fl_Pixmap(bits);
