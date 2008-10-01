@@ -34,7 +34,15 @@
 
 #  include <FL/Fl_Input.H>
 
+/**
+  \class Fl_File_Input
+  \brief This widget displays a pathname in a text input field.
 
+  A navigation bar located above the input field allows the user to
+  navigate upward in the directory tree.
+
+  \image html Fl_File_Input.gif
+*/
 class FL_EXPORT Fl_File_Input : public Fl_Input
 {
   Fl_Color	errorcolor_;
@@ -49,19 +57,31 @@ class FL_EXPORT Fl_File_Input : public Fl_Input
 
 public:
 
-  Fl_File_Input(int,int,int,int,const char *t=0);
+  Fl_File_Input(int X, int Y, int W, int H, const char *L=0);
 
-  virtual int handle(int);
+  virtual int handle(int event);
   virtual void draw();
 
-  /**    Gets or sets the box type to use for the navigation bar.  */
+  /** Gets the box type used for the navigation bar. */
   Fl_Boxtype	down_box() const { return (Fl_Boxtype)down_box_; }
-  /**    Gets or sets the box type to use for the navigation bar.  */
+  /** Sets the box type to use for the navigation bar.  */
   void		down_box(Fl_Boxtype b) { down_box_ = b; }
+
+  /**
+    Gets the current error color.
+    \todo Better docs for Fl_File_Input::errorcolor() - is it even used?
+  */
   Fl_Color	errorcolor() const { return errorcolor_; }
+  /** Sets the current error color to \a c */
   void		errorcolor(Fl_Color c) { errorcolor_ = c; }
-  int	value(const char*);
-  int	value(const char*, int);
+
+  int	value(const char *str);
+  int	value(const char *str, int len);
+
+  /**
+    Returns the current value, which is a pointer to an internal buffer
+    and is valid only until the next event is handled.
+  */
   const char	*value() { return Fl_Input_::value(); }
 };
 
