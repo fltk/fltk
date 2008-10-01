@@ -26,7 +26,7 @@
 //
 
 /** \file
-    Hanling transparently platform dependent cairo include files 
+    Handling transparently platform dependent cairo include files 
 */
 
 #ifndef FL_CAIRO_H
@@ -68,7 +68,7 @@ public:
 
     // access attributes
     cairo_t* cc() const {return cc_;}		 ///< Gets the current cairo context
-    bool autolink() const {return autolink_;}	 ///< Sets the autolink option \see Fl:cairo_autolink_context(bool)
+    bool autolink() const {return autolink_;}	 ///< Sets the autolink option \see Fl::cairo_autolink_context(bool)
     void cc(cairo_t* c, bool own=true)  {	 ///< Sets the current cairo context, \a own indicates cc deletion is made by us
 	if (cc_ && own_cc_) cairo_destroy(cc_); 
 	cc_=c;
@@ -76,9 +76,9 @@ public:
 	own_cc_=own;
     }
     void  autolink(bool b)  {autolink_ = b;}	///< Gets the autolink option
-    void  window(void* w)  {window_=w;}		///< Sets the window \w to keep track on
+    void  window(void* w)  {window_=w;}		///< Sets the window \a w to keep track on
     void* window() const {return window_;}	///< Gets the last window attached to a cc
-    void  gc(void* c)  {gc_=c;}		        ///< Sets the gc \c to keep track on
+    void  gc(void* c)  {gc_=c;}		        ///< Sets the gc \a c to keep track on
     void* gc() const {return gc_;}		///< Gets the last gc attached to a cc
 
 private:

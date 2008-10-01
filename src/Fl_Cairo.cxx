@@ -37,7 +37,7 @@ Fl_Cairo_State Fl::cairo_state_;	///< contains all necesary info for current cai
 // Fl cairo features implementation
 
 /** 
-    Provides a corresponding cairo context for Window \a w.
+    Provides a corresponding cairo context for window \a wi.
     This is needed in a draw() override if Fl::cairo_autolink_context() 
     returns false, which is the default.
     The cairo_context() does not need to be freed as it is freed every time 
@@ -93,7 +93,7 @@ static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 }
 
 /** 
-  Creates a cairo context from a \a gc only, get its window size  or offscreen size if fl_window is null 
+  Creates a cairo context from a \a gc only, get its window size or offscreen size if fl_window is null.
    \note Only available when configure has the --enable-cairo option
 */
 cairo_t * Fl::cairo_make_current(void *gc) {
