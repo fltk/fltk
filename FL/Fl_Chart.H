@@ -148,7 +148,7 @@ public:
 
     /**
       Set whether the chart will automatically adjust the bounds of the chart.
-      \param n non-zero to enable automatic resizing, zero to disable.
+      \param[in] n non-zero to enable automatic resizing, zero to disable.
      */
     void autosize(uchar n) {autosize_ = n;}
 };

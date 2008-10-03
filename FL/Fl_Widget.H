@@ -389,7 +389,7 @@ public:
    *  This is generally used for special effects such as embossing or for using 
    *  the label() pointer as another form of data such as an icon. The value 
    *  FL_NORMAL_LABEL prints the label as plain text.
-   *  \param a new label type
+   *  \param[in] a new label type
    *  \see Fl_Labeltype
    */
   void labeltype(Fl_Labeltype a) {label_.type = a;}
@@ -767,8 +767,8 @@ public:
   /** Sets the default callback for all widgets.
    *  Sets the default callback, which puts a pointer to the widget on the queue 
    *  returned by Fl::readqueue(). You may want to call this from your own callback.
-   *  \param cb the new callback
-   *  \param d user data associated with that callback
+   *  \param[in] cb the new callback
+   *  \param[in] d user data associated with that callback
    *  \see callback(), do_callback(), Fl::readqueu()
    */
   static void default_callback(Fl_Widget *cb, void *d);
@@ -783,8 +783,8 @@ public:
   /** Call the widget callback.
    *  Causes a widget to invoke its callback function, optionally
    *  with arbitrary arguments.
-   *  \param o call the callback with \em o as the widget argument
-   *  \param arg call the callback with \em arg as the user data argument
+   *  \param[in] o call the callback with \em o as the widget argument
+   *  \param[in] arg call the callback with \em arg as the user data argument
    *  \see callback()
    */
   void do_callback(Fl_Widget* o,void* arg=0) {callback_(o,arg); if (callback_ != default_callback) clear_changed();}
@@ -792,8 +792,8 @@ public:
   /** Call the widget callback.
    *  Causes a widget to invoke its callback function, optionally
    *  with arbitrary arguments.
-   *  \param o call the callback with \em o as the widget argument
-   *  \param arg call the callback with \em arg as the user data argument
+   *  \param[in] o call the callback with \em o as the widget argument
+   *  \param[in] arg call the callback with \em arg as the user data argument
    *  \see callback()
    */
   void do_callback(Fl_Widget* o,long arg) {callback_(o,(void*)arg); if (callback_ != default_callback) clear_changed();}
@@ -855,7 +855,7 @@ public:
   /** Set the damage bits for an area inside the widget.
    *  Setting damage bits will schedule the widget for the next redraw.
    *  \param[in] c bitmask of flags to set
-   *  \param x, y, w, h size of damaged area
+   *  \param[in] x, y, w, h size of damaged area
    *  \see damage(), clear_damage(uchar)
    */
   void damage(uchar c, int x, int y, int w, int h);

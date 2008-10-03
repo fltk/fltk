@@ -64,10 +64,10 @@ void fl_file_chooser_ok_label(const char *l) {
 /** \relates Fl_File_Chooser
     Shows a file chooser dialog and get a filename. 
     \image html Fl_File_Chooser.jpg
-    \param message text in title bar
-    \param pat filename pattern filter
-    \param fname initial/default filename selection
-    \param relative 0 for absolute path name, relative path name otherwise
+    \param[in] message text in title bar
+    \param[in] pat filename pattern filter
+    \param[in] fname initial/default filename selection
+    \param[in] relative 0 for absolute path name, relative path name otherwise
     \return the user selected filename, in absolute or relative format 
             or NULL if user cancels
 */

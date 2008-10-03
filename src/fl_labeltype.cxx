@@ -89,7 +89,7 @@ void Fl_Label::draw(int X, int Y, int W, int H, Fl_Align align) const {
 }
 /** 
     Measures the size of the label.
-    \param W, H in out : this is the requested size for the label text plus image;
+    \param[in,out] W, H : this is the requested size for the label text plus image;
          on return, this will contain the size needed to fit the label
 */
 void Fl_Label::measure(int& W, int& H) const {

@@ -289,7 +289,7 @@ void fl_beep(int type) {
 #endif // WIN32
 }
 /** Shows  an information message dialog box
-   \param fmt can be used as an sprintf-like format and variables for the message text
+   \param[in] fmt can be used as an sprintf-like format and variables for the message text
  */
 void fl_message(const char *fmt, ...) {
   va_list ap;
@@ -304,7 +304,7 @@ void fl_message(const char *fmt, ...) {
 }
 
 /** Shows an alert message dialog box
-   \param fmt can be used as an sprintf-like format and variables for the message text
+   \param[in] fmt can be used as an sprintf-like format and variables for the message text
  */
 void fl_alert(const char *fmt, ...) {
   va_list ap;
@@ -319,7 +319,7 @@ void fl_alert(const char *fmt, ...) {
 }
 /** Shows a dialog displaying the \a fmt message,
     this dialog features 2 yes/no buttons
-   \param fmt can be used as an sprintf-like format and variables for the message text
+   \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \retval 0 if the no button is selected
    \retval 1 if yes is selected
  */
@@ -337,7 +337,10 @@ int fl_ask(const char *fmt, ...) {
 
 /** Shows a dialog displaying the \a fmt message,
     this dialog features up to 3 customizable choice buttons
-   \param fmt can be used as an sprintf-like format and variables for the message text
+   \param[in] fmt can be used as an sprintf-like format and variables for the message text
+   \param[in] b0 text label of button 0
+   \param[in] b1 text label of button 1
+   \param[in] b2 text label of button 2
    \retval 0 if the first button with \a b0 text is selected
    \retval 1 if the second button with \a b1 text is selected
    \retval 2 if the third button with \a b2 text is selected
@@ -374,8 +377,8 @@ static const char* input_innards(const char* fmt, va_list ap,
 }
 
 /** Shows an input dialog displaying the \a fmt message
-   \param fmt can be used as an sprintf-like format and variables for the message text
-   \param defstr defines the default returned string if no text is entered
+   \param[in] fmt can be used as an sprintf-like format and variables for the message text
+   \param[in] defstr defines the default returned string if no text is entered
    \return the user string input
  */
 const char* fl_input(const char *fmt, const char *defstr, ...) {
@@ -391,8 +394,8 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
 /** Shows an input dialog displaying the \a fmt message,
     like fl_input except the input text is not shown,
     '*' characters are displayed instead
-   \param fmt can be used as an sprintf-like format and variables for the message text
-   \param defstr defines the default returned string if no text is entered
+   \param[in] fmt can be used as an sprintf-like format and variables for the message text
+   \param[in] defstr defines the default returned string if no text is entered
    \return the user string input
  */
 const char *fl_password(const char *fmt, const char *defstr, ...) {
