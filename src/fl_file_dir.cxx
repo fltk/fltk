@@ -42,6 +42,8 @@ static void callback(Fl_File_Chooser *, void*) {
     (*current_callback)(fc->value());
 }
 
+/** \addtogroup  group_comdlg 
+    @{ */
 
 /** \relatesalso Fl_File_Chooser
     Set the file chooser callback
@@ -59,8 +61,15 @@ void fl_file_chooser_ok_label(const char *l) {
   else current_label = fl_ok;
 }
 
-/** \relatesalso Fl_File_Chooser
-    Show a file chooser dialog and get a filename. 
+/** \relates Fl_File_Chooser
+    Shows a file chooser dialog and get a filename. 
+    \image html Fl_File_Chooser.jpg
+    \param message text in title bar
+    \param pat filename pattern filter
+    \param fname initial/default filename selection
+    \param relative 0 for absolute path name, relative path name otherwise
+    \return the user selected filename, in absolute or relative format 
+            or NULL if user cancels
 */
 char *					// O - Filename or NULL
 fl_file_chooser(const char *message,	// I - Message in titlebar
@@ -136,8 +145,12 @@ fl_file_chooser(const char *message,	// I - Message in titlebar
   else return 0;
 }
 
-/**  \relatesalso Fl_File_Chooser
-    Show a file chooser dialog and get a directory.
+/**  \relates Fl_File_Chooser
+    Shows a file chooser dialog and get a directory.
+    \param[in] message title bar text
+    \param[in] fname initial/default directory name
+    \param[in] relative 0 for absolute path return, relative otherwise
+    \return the directory path string choosen by the user or NULL if user cancels
 */
 
 char *					// O - Directory or NULL
@@ -172,6 +185,7 @@ fl_dir_chooser(const char *message,	// I - Message for titlebar
   } else if (fc->value()) return (char *)fc->value();
   else return 0;
 }
+/** @} */
 
 
 //

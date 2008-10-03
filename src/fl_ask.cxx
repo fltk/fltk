@@ -228,14 +228,21 @@ static int innards(const char* fmt, va_list ap,
   return r;
 }
 
+ /** \addtogroup group_comdlg
+    @{ */
+ 
 // pointers you can use to change FLTK to a foreign language:
-const char* fl_no = "No";
-const char* fl_yes= "Yes";
-const char* fl_ok = "OK";
-const char* fl_cancel= "Cancel";
-const char* fl_close= "Close";
+const char* fl_no = "No";        ///< string pointer used in common dialogs, you can change it to a foreign language
+const char* fl_yes= "Yes";       ///< string pointer used in common dialogs, you can change it to a foreign language
+const char* fl_ok = "OK";        ///< string pointer used in common dialogs, you can change it to a foreign language
+const char* fl_cancel= "Cancel"; ///< string pointer used in common dialogs, you can change it to a foreign language
+const char* fl_close= "Close";   ///< string pointer used in common dialogs, you can change it to a foreign language
 
 // fltk functions:
+
+/**
+   Emits a system beep message.
+ */
 void fl_beep(int type) {
 #ifdef WIN32
   switch (type) {
@@ -281,7 +288,9 @@ void fl_beep(int type) {
   }
 #endif // WIN32
 }
-
+/** Shows  an information message dialog box
+   \param fmt can be used as an sprintf-like format and variables for the message text
+ */
 void fl_message(const char *fmt, ...) {
   va_list ap;
 
@@ -294,6 +303,9 @@ void fl_message(const char *fmt, ...) {
   iconlabel = "?";
 }
 
+/** Shows an alert message dialog box
+   \param fmt can be used as an sprintf-like format and variables for the message text
+ */
 void fl_alert(const char *fmt, ...) {
   va_list ap;
 
@@ -305,7 +317,12 @@ void fl_alert(const char *fmt, ...) {
   va_end(ap);
   iconlabel = "?";
 }
-
+/** Shows a dialog displaying the \a fmt message,
+    this dialog features 2 yes/no buttons
+   \param fmt can be used as an sprintf-like format and variables for the message text
+   \retval 0 if the no button is selected
+   \retval 1 if yes is selected
+ */
 int fl_ask(const char *fmt, ...) {
   va_list ap;
 
@@ -318,6 +335,13 @@ int fl_ask(const char *fmt, ...) {
   return r;
 }
 
+/** Shows a dialog displaying the \a fmt message,
+    this dialog features up to 3 customizable choice buttons
+   \param fmt can be used as an sprintf-like format and variables for the message text
+   \retval 0 if the first button with \a b0 text is selected
+   \retval 1 if the second button with \a b1 text is selected
+   \retval 2 if the third button with \a b2 text is selected
+ */
 int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
   va_list ap;
 
@@ -328,7 +352,10 @@ int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
   va_end(ap);
   return r;
 }
-
+/** Gets the Fl_Box icon container of the current default dialog used in 
+    many common dialogs like fl_message(), fl_alert(), 
+    fl_ask(), fl_choice(), fl_input(), fl_password() 
+*/ 
 Fl_Widget *fl_message_icon() {makeform(); return icon;}
 
 static const char* input_innards(const char* fmt, va_list ap,
@@ -346,6 +373,11 @@ static const char* input_innards(const char* fmt, va_list ap,
   return r ? input->value() : 0;
 }
 
+/** Shows an input dialog displaying the \a fmt message
+   \param fmt can be used as an sprintf-like format and variables for the message text
+   \param defstr defines the default returned string if no text is entered
+   \return the user string input
+ */
 const char* fl_input(const char *fmt, const char *defstr, ...) {
   fl_beep(FL_BEEP_QUESTION);
 
@@ -356,6 +388,13 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
   return r;
 }
 
+/** Shows an input dialog displaying the \a fmt message,
+    like fl_input except the input text is not shown,
+    '*' characters are displayed instead
+   \param fmt can be used as an sprintf-like format and variables for the message text
+   \param defstr defines the default returned string if no text is entered
+   \return the user string input
+ */
 const char *fl_password(const char *fmt, const char *defstr, ...) {
   fl_beep(FL_BEEP_PASSWORD);
 
@@ -365,6 +404,8 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
   va_end(ap);
   return r;
 }
+
+/** @} */
 
 //
 // End of "$Id$".

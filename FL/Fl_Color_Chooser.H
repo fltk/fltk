@@ -76,6 +76,9 @@ public:
 
 #endif // !FL_DOXYGEN
 
+/** \addtogroup group_comdlg 
+    @{ */
+
 /**
   \class Fl_Color_Chooser
   \brief The Fl_Color_Chooser widget provides a standard RGB color chooser.
@@ -108,6 +111,7 @@ public:
   user picks! You can however use fl_rectf() to fill a region with a simulated
   color using dithering.
  */
+/** @} */
 class FL_EXPORT Fl_Color_Chooser : public Fl_Group {
   Flcc_HueBox huebox;
   Flcc_ValueBox valuebox;

@@ -526,12 +526,16 @@ static void chooser_cb(Fl_Object* o, void* vv) {
 extern const char* fl_ok;
 extern const char* fl_cancel;
 
+/** \addtogroup  group_comdlg 
+    @{ */
 /**
-  \relatesalso Fl_Color_Chooser
-  \fn int fl_color_chooser(const char* name, double& r, double& g, double& b)
   \brief Pops up a window to let the user pick an arbitrary RGB color.
-  \param[in] name title label for the window
-  \param[in] r, g, b color components in the range 0.0 to 1.0.
+  \image html fl_color_chooser.jpg
+  \param[in,out] name title label for the window
+  \param[in,out] r, g, b color components in the range 0.0 to 1.0.
+  \retval 1 if user confirms the selection 
+  \retval 0 if user cancels the dialog
+  \relates Fl_Color_Chooser
  */
 int fl_color_chooser(const char* name, double& r, double& g, double& b) {
   Fl_Window window(215,200,name);
@@ -568,11 +572,13 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b) {
 }
 
 /**
-  \relatesalso Fl_Color_Chooser
-  \fn int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b)
   \brief Pops up a window to let the user pick an arbitrary RGB color.
-  \param[in] name title label for the window
-  \param[in] r, g, b color components in the range 0 to 255.
+  \image html fl_color_chooser.jpg
+  \param[in,out] name title label for the window
+  \param[in,out] r, g, b color components in the range 0 to 255.
+  \retval 1 if user confirms the selection 
+  \retval 0 if user cancels the dialog
+  \relates Fl_Color_Chooser
  */
 int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
   double dr = r/255.0;
@@ -586,7 +592,7 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
   }
   return 0;
 }
-
+/** @} */
 //
 // End of "$Id$".
 //

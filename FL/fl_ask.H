@@ -31,7 +31,7 @@
 #  include "Enumerations.H"
 
 class Fl_Widget;
-
+/** Different system beeps available. \relatesalso fl_beep(int) */
 enum {
   FL_BEEP_DEFAULT = 0,
   FL_BEEP_MESSAGE,
@@ -73,7 +73,6 @@ extern FL_EXPORT const char* fl_yes;
 extern FL_EXPORT const char* fl_ok;
 extern FL_EXPORT const char* fl_cancel;
 extern FL_EXPORT const char* fl_close;
-
 #endif // !fl_ask_H
 
 //

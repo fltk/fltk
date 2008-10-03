@@ -254,10 +254,9 @@ public:
   static int damage() {return damage_;}
   static void redraw();
   static void flush();
-  /** \defgroup  fl_windows Windows handling functions
-      Windows and standard dialogs handling
+  /** \addtogroup group_comdlg
     @{ */
-  /** \fn void (*warning)(const char*, ...)
+  /**
   FLTK calls this to print a warning message. You can
   override the behavior by setting the function pointer to your
   own routine.
@@ -272,7 +271,7 @@ public:
   own routine.
   <P>Fl::error means there is a recoverable error such as
   the inability to read an image file. The default implementation
-  prints the error message to stderr and returns.
+  shows an error dialog to stderr and returns.
   */
   static void (*error)(const char*, ...);
   /**
@@ -282,13 +281,19 @@ public:
   <P>Fl::fatal must not return, as FLTK is in an unusable
   state, however your version may be able to use longjmp
   or an exception to continue, as long as it does not call FLTK
-  again. The default implementation prints the error message to
-  stderr and exits with status 1.
+  again. The default implementation shows a fatal dialog box
+  and exits with status 1.
   */
   static void (*fatal)(const char*, ...);
+  /** @} */
+
+  /** \defgroup  fl_windows Windows handling functions
+      Windows and standard dialogs handling
+    @{ */
   static Fl_Window* first_window();
   static void first_window(Fl_Window*);
   static Fl_Window* next_window(const Fl_Window*);
+
   /**
     Returns the top-most modal() window currently shown.
     This is the most recently 
@@ -805,7 +810,7 @@ public:
   /** @} */
 
 #ifdef HAVE_CAIRO
-  /** \defgroup group_cairo Cairo functions support 
+  /** \defgroup group_cairo Cairo support functions and classes 
       @{ 
   */
 public:
