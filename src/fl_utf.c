@@ -28,7 +28,7 @@ extern "C" {
 #endif
   
   /** 
-   \defgroup fl_unichar FLTK Unicode Character Functions
+   \defgroup fl_unichar Unicode Character Functions
    Global Functions Handling Single Unicode Characters
    @{ */
   
@@ -44,7 +44,7 @@ extern "C" {
   /** @} */  
   
   /** 
-   \defgroup fl_utf8 FLTK Unicode String Functions
+   \defgroup fl_utf8 Unicode String Functions
    Global Functions Handling Unicode Text
    @{ */
   

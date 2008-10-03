@@ -254,7 +254,7 @@ public:
   static int damage() {return damage_;}
   static void redraw();
   static void flush();
-  /** \defgroup  fl_windows fltk windows handling functions
+  /** \defgroup  fl_windows Windows handling functions
       Windows and standard dialogs handling
     @{ */
   /** \fn void (*warning)(const char*, ...)
@@ -328,7 +328,7 @@ public:
   static void grab(Fl_Window*); // platform dependent
   /** @} */
 
-  /** \defgroup fl_events fltk global events handling functions
+  /** \defgroup fl_events Events handling functions
 	Fl class events handling API
 	@{
   */
@@ -544,7 +544,7 @@ public:
   static void remove_handler(int (*h)(int));
   /** @} */
 
-  /** \defgroup  fl_clipboard  fltk selection/clipboard functions
+  /** \defgroup  fl_clipboard  Selection & Clipboard functions
 	fl global copy/cut/paste functions
    @{ */
   // cut/paste:
@@ -578,7 +578,7 @@ public:
   static void selection(Fl_Widget &owner, const char*, int len);
   static void paste(Fl_Widget &receiver);
 /** @} */
-/** \defgroup  fl_screen  fltk screen functions
+/** \defgroup  fl_screen  Screen functions
 	fl global screen functions
      @{ */
   // screen size:
@@ -602,7 +602,7 @@ public:
 
   /**   @} */
 
-  /** \defgroup  fl_attributes  fltk color,font functions
+  /** \defgroup  fl_attributes  Color & Font functions
 	fl global color, font functions
      @{ */
 
@@ -774,7 +774,7 @@ public:
     cut/paste shortcut.
   */
   static int  dnd_text_ops() { return dnd_text_ops_; }
-  /** \defgroup fl_multithread fltk multithreading support functions
+  /** \defgroup fl_multithread Multithreading support functions
 	fl multithreading support functions
    @{ */
 
@@ -793,7 +793,7 @@ public:
   static void* thread_message(); // platform dependent
   /** @} */
 
-  /** \defgroup fl_del_widget fltk safe widget deletion support functions
+  /** \defgroup fl_del_widget Safe widget deletion support functions
 	fl multithreading support functions
    @{ */
   // Widget deletion:
