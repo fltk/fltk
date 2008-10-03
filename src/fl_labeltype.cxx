@@ -87,7 +87,11 @@ void Fl_Label::draw(int X, int Y, int W, int H, Fl_Align align) const {
   if (!value && !image) return;
   table[type](this, X, Y, W, H, align);
 }
-/** Gets the size of the label W and H contains the calculated size at return. */
+/** 
+    Measures the size of the label.
+    \param W, H in out : this is the requested size for the label text plus image;
+         on return, this will contain the size needed to fit the label
+*/
 void Fl_Label::measure(int& W, int& H) const {
   if (!value && !image) {
     W = H = 0;

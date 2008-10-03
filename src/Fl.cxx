@@ -548,7 +548,9 @@ int Fl::ready() {
 ////////////////////////////////////////////////////////////////
 // Window list management:
 
+#ifndef FL_DOXYGEN
 Fl_X* Fl_X::first;
+#endif
 
 Fl_Window* fl_find(Window xid) {
   Fl_X *window;

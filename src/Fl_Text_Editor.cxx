@@ -69,7 +69,9 @@ Fl_Text_Editor::Fl_Text_Editor(int X, int Y, int W, int H,  const char* l)
   default_key_function(kf_default);
 }
 
+#ifndef FL_DOXYGEN
 Fl_Text_Editor::Key_Binding* Fl_Text_Editor::global_key_bindings = 0;
+#endif
 
 // These are the default key bindings every widget should start with
 static struct {

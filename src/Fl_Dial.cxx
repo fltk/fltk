@@ -104,8 +104,8 @@ void Fl_Dial::draw() {
 }
 
 /**
-  Allow subclasses to handle event based on given position and size.
-  \param[in] X, Y, W, H position and size
+  Allows subclasses to handle event based on given position and size.
+  \param[in] event, X, Y, W, H event to handle, related position and size.
 */
 int Fl_Dial::handle(int event, int X, int Y, int W, int H) {
   switch (event) {

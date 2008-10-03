@@ -72,10 +72,6 @@ struct FL_EXPORT Fl_Label {
   unsigned color;
   /** draw the label aligned to the given box */
   void draw(int,int,int,int, Fl_Align) const ;
-  /** measure the size of the label.
-   *  \param w, h on input, this is the requested size for the label text plus image;
-   *                on return, this will contain the size needed to fit the label
-   */
   void measure(int &w, int &h) const ;
 };
 
