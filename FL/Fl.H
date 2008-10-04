@@ -604,7 +604,12 @@ public:
 
   // multi-head support:
   static int screen_count();
-  /** See void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) */
+  /** 
+      Gets the bounding box of a screen 
+      that contains the mouse pointer in.
+      \param[out]  X,Y,W,H the corresponding screen bounding box
+      \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
+  */
   static void screen_xywh(int &X, int &Y, int &W, int &H) {
     screen_xywh(X, Y, W, H, e_x_root, e_y_root);
   }

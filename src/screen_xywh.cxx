@@ -152,9 +152,9 @@ int Fl::screen_count() {
 
 /**
   Gets the bounding box of a screen 
-  where the mouse pointer is in. 
+  that contains the specified screen position \a mx, \a my
   \param[out]  X,Y,W,H the corresponding screen bounding box
-  \param[in] mx, my the mouse absolute screen position
+  \param[in] mx, my the absolute screen position
 */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
   if (!num_screens) screen_init();
