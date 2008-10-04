@@ -39,7 +39,7 @@
 #  include "fl_utf8.h"
 #  include "Enumerations.H"
 #  ifndef Fl_Object
-#    define Fl_Object Fl_Widget
+#    define Fl_Object Fl_Widget	/**< for back compatibility - use Fl_Widget! */
 #  endif
 
 #  ifdef check
@@ -51,11 +51,20 @@ class Fl_Widget;
 class Fl_Window;
 class Fl_Image;
 struct Fl_Label;
+
+/** signature of some label drawing functions passed as parameters */
 typedef void (Fl_Label_Draw_F)(const Fl_Label*, int,int,int,int, Fl_Align);
+
+/** signature of some label measurement functions passed as parameters */
 typedef void (Fl_Label_Measure_F)(const Fl_Label*, int&, int&);
+
+/** signature of some box drawing functions passed as parameters */
 typedef void (Fl_Box_Draw_F)(int,int,int,int, Fl_Color);
 
+/** signature of some timeout callback functions passed as parameters */
 typedef void (*Fl_Timeout_Handler)(void*);
+
+/** signature of some wakeup callback functions passed as parameters */
 typedef void (*Fl_Awake_Handler)(void*);
 
 /**
@@ -96,6 +105,13 @@ public: // should be private!
   */
   static void damage(int d) {damage_ = d;}
 
+  /**
+    The currently executing idle callback function: DO NOT USE THIS DIRECTLY!
+    
+    This is now used as part of a higher level system allowing multiple
+    idle callback functions to be called.
+    \see add_idle(), remove_idle()
+  */
   static void (*idle)();
 
 #ifndef FL_DOXYGEN
@@ -123,6 +139,10 @@ public:
   static int arg(int, char**, int&);
   static int args(int, char**, int&, int (*)(int,char**,int&) = 0);
   static void args(int, char**);
+  /**
+    Usage string displayed if Fl::args() detects an invalid argument.
+    This may be changed to point to customized text at run-time.
+  */
   static const char* const help;
 
   // things called by initialization:
@@ -247,9 +267,9 @@ public:
   /** Removes a file descriptor handler. */
   static void remove_fd(int); // platform dependent
 
-  static void add_idle(void (*cb)(void*), void* = 0);
-  static int  has_idle(void (*cb)(void*), void* = 0);
-  static void remove_idle(void (*cb)(void*), void* = 0);
+  static void add_idle(void (*cb)(void*), void* data = 0);
+  static int  has_idle(void (*cb)(void*), void* data = 0);
+  static void remove_idle(void (*cb)(void*), void* data = 0);
   /** If true then flush() will do something. */
   static int damage() {return damage_;}
   static void redraw();

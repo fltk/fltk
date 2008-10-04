@@ -34,6 +34,9 @@
 #include "Fl_Window.H"
 
 #ifndef GLContext
+/**
+  opaque pointer type to hide system specific implementation.
+*/
 typedef void* GLContext; // actually a GLXContext or HGLDC
 #endif
 

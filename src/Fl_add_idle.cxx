@@ -50,21 +50,21 @@ static void call_idle() {
 }
 
 /**
-    Adds a callback function that is called every time by
-    Fl::wait() and also makes it act as though the timeout is
-    zero (this makes Fl::wait() return immediately, so if it is
-    in a loop it is called repeatedly, and thus the idle fucntion is
-    called repeatedly).  The idle function can be used to get background
-    processing done.
+  Adds a callback function that is called every time by Fl::wait() and also
+  makes it act as though the timeout is zero (this makes Fl::wait() return
+  immediately, so if it is in a loop it is called repeatedly, and thus the
+  idle fucntion is called repeatedly).  The idle function can be used to get
+  background processing done.
     
-    <P>You can have multiple idle callbacks. To remove an idle callback use Fl::remove_idle().
+  You can have multiple idle callbacks. To remove an idle callback use
+  Fl::remove_idle().
     
-    <P>Fl::wait() and Fl::check() call idle callbacks,
-    but Fl::ready() does not.
+  Fl::wait() and Fl::check() call idle callbacks, but Fl::ready() does not.
     
-    <P>The idle callback can call any FLTK functions, including
-    Fl::wait(), Fl::check(), and Fl::ready().
-    FLTK will not recursively call the idle callback.
+  The idle callback can call any FLTK functions, including Fl::wait(),
+  Fl::check(), and Fl::ready().
+
+  FLTK will not recursively call the idle callback.
 */
 void Fl::add_idle(void (*cb)(void*), void* data) {
   idle_cb* p = freelist;
@@ -83,7 +83,9 @@ void Fl::add_idle(void (*cb)(void*), void* data) {
   }
 }
 
-/** Returns true if the specified idle callback is currently installed. */
+/**
+  Returns true if the specified idle callback is currently installed.
+*/
 int Fl::has_idle(void (*cb)(void*), void* data) {
   idle_cb* p = first;
   if (!p) return 0;
@@ -93,7 +95,9 @@ int Fl::has_idle(void (*cb)(void*), void* data) {
   }
 }
 
-/** Removes the specified idle callback, if it is installed. */
+/**
+  Removes the specified idle callback, if it is installed.
+*/
 void Fl::remove_idle(void (*cb)(void*), void* data) {
   idle_cb* p = first;
   if (!p) return;
