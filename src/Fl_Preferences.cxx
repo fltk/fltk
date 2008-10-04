@@ -666,7 +666,6 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
       free(b);
   }
 #else
-#warning CHECKME (Cygwin) this should probably be UTF8 aware as well
   if (!filename[0]) strcpy(filename, "C:\\FLTK");
 #endif
   snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),

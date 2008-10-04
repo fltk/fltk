@@ -29,7 +29,10 @@
 // are found on the X server.  It tries to place the fonts into families
 // and to sort them so the first 4 in a family are normal, bold, italic,
 // and bold italic.
-#include <Fl/fl_utf8.h>
+#include <FL/fl_utf8.h>
+#ifdef __CYGWIN__
+# include <wchar.h>
+#endif
 
 // Bug: older versions calculated the value for *ap as a side effect of
 // making the name, and then forgot about it. To avoid having to change
