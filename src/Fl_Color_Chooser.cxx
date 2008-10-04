@@ -142,6 +142,7 @@ void Fl_Color_Chooser::set_valuators() {
   Does not do the callback. Does not clamp (but out of range values will
   produce psychedelic effects in the hue selector).
   \param[in] R, G, B color components.
+  \return 1 if a new rgb value was set, 0 if the rgb value was the previous one.
  */
 int Fl_Color_Chooser::rgb(double R, double G, double B) {
   if (R == r_ && G == g_ && B == b_) return 0;
@@ -169,7 +170,8 @@ int Fl_Color_Chooser::rgb(double R, double G, double B) {
   The passed values are clamped (or for hue, modulus 6 is used) to get
   legal values. Does not do the callback.
   \param[in] H, S, V color components.
- */
+  \return 1 if a new hsv value was set, 0 if the hsv value was the previous one.
+*/
 int Fl_Color_Chooser::hsv(double H, double S, double V) {
   H = fmod(H,6.0); if (H < 0.0) H += 6.0;
   if (S < 0.0) S = 0.0; else if (S > 1.0) S = 1.0;
