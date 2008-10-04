@@ -5,7 +5,7 @@
 //
 // KDE icon code donated by Maarten De Boer.
 //
-// Copyright 1999-2005 by Michael Sweet.
+// Copyright 1999-2008 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -82,10 +82,13 @@ Fl_File_Icon	*Fl_File_Icon::first_ = (Fl_File_Icon *)0;
 
 
 /**
-  The constructor creates a new Fl_File_Icon with the specified
-  information.
+  Creates a new Fl_File_Icon with the specified information.
+  \param[in] p filename pattern
+  \param[in] t file type
+  \param[in] nd number of data values
+  \param[in] d data values
 */
-Fl_File_Icon::Fl_File_Icon(const char *p,	/**< I - Filename pattern */
+Fl_File_Icon::Fl_File_Icon(const char *p,	/* I - Filename pattern */
                 	   int        t,	/* I - File type */
 			   int        nd,	/* I - Number of data values */
 			   short      *d)	/* I - Data values */
@@ -143,7 +146,10 @@ Fl_File_Icon::~Fl_File_Icon() {
 }
 
 
-/** Adds a keyword value to the icon array, returning a pointer to it.*/
+/**
+  Adds a keyword value to the icon array, returning a pointer to it.
+  \param[in] d data value
+*/
 short *				// O - Pointer to new data value
 Fl_File_Icon::add(short d)	// I - Data to add
 {
@@ -174,7 +180,12 @@ Fl_File_Icon::add(short d)	// I - Data to add
 }
 
 
-/** Finds an icon that matches the given filename and file type.*/
+/**
+  Finds an icon that matches the given filename and file type.
+  \param[in] filename name of file
+  \param[in] filetype enumerated file type
+  \return matching file icon or NULL
+*/
 Fl_File_Icon *				// O - Matching file icon or NULL
 Fl_File_Icon::find(const char *filename,// I - Name of file */
                    int        filetype)	// I - Enumerated file type
@@ -236,7 +247,12 @@ Fl_File_Icon::find(const char *filename,// I - Name of file */
   return (current);
 }
 
-/** Drawsan icon. */
+/**
+  Draws an icon in the indicated area.
+  \param[in] x, y, w, h position and size
+  \param[in] ic icon color
+  \param[in] active status, default is active [non-zero]
+*/
 void
 Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
         	   int      y,		// I - Upper-lefthand Y
@@ -438,6 +454,7 @@ Fl_File_Icon::draw(int      x,		// I - Upper-lefthand X
 /**
   Applies the icon to the widget, registering the Fl_File_Icon
   label type as needed.
+  \param[in] w widget for which this icon will become the label
 */
 void Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
 {
@@ -446,10 +463,12 @@ void Fl_File_Icon::label(Fl_Widget *w)	// I - Widget to label
 }
 
 
-//
-// 'Fl_File_Icon::labeltype()' - Draw the icon label.
-//
-
+/**
+  Draw the icon label.
+  \param[in] o label data
+  \param[in] x, y, w, h position and size of label
+  \param[in] a label alignment [not used]
+*/
 void
 Fl_File_Icon::labeltype(const Fl_Label *o,	// I - Label data
                 	int            x,	// I - X position of label

@@ -5,7 +5,7 @@
 //
 // KDE icon code donated by Maarten De Boer.
 //
-// Copyright 1999-2005 by Michael Sweet.
+// Copyright 1999-2008 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -98,7 +98,10 @@ static char	*get_kde_val(char *str, const char *key);
 static const char *kdedir = NULL;
 
 
-/** Loads the specified icon image. The format is deduced from the filename.*/
+/**
+  Loads the specified icon image. The format is deduced from the filename.
+  \param[in] f filename
+*/
 void
 Fl_File_Icon::load(const char *f)	// I - File to read from
 {
@@ -121,7 +124,11 @@ Fl_File_Icon::load(const char *f)	// I - File to read from
 }
 
 
-/** Loads an SGI icon file.*/
+/**
+  Loads an SGI icon file.
+  \param[in] fti icon filename
+  \return 0 on success, non-zero on error
+*/
 int					// O - 0 on success, non-zero on error
 Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 {
@@ -335,7 +342,11 @@ Fl_File_Icon::load_fti(const char *fti)	// I - File to read from
 }
 
 
-/** Load an image icon file from an image filename. Returns  0 on success, non-0 on error. */
+/**
+  Load an image icon file from an image filename.
+  \param[in] ifile image filename
+  \return 0 on success, non-zero on error
+*/
 int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 {
   Fl_Shared_Image	*img;		// Image file
@@ -577,9 +588,9 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 }
 
 
-/**  Loads all system-defined icons. This call is useful when using the
-  FileChooser widget and should be used when the application
-  starts:
+/**
+  Loads all system-defined icons. This call is useful when using the
+  FileChooser widget and should be used when the application starts:
   
   \code
   Fl_File_Icon::load_system_icons();
