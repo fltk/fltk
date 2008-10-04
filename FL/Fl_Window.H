@@ -343,7 +343,7 @@ public:
     draws a slow graphic. <B>Danger: incremental update is very hard to
     debug and maintain!</B>
     <P>This method only works for the Fl_Window and 
-    Fl_Gl_Window classes.
+    Fl_Gl_Window derived classes.
   */
   void make_current();
 

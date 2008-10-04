@@ -388,18 +388,20 @@ public:
   */
   static void get_mouse(int &,int &); // platform dependent
   /**
-    The first form returns non-zero if the most recent FL_PUSH or
-    FL_KEYBOARD was a "double click".  Returns N-1 for
-    N clicks.  A double click is counted if the same button is pressed
+    Returns non zero if we had a double click event.
+    \retval Non-zero if the most recent FL_PUSH or FL_KEYBOARD was a "double click".  
+    \retval  N-1 for  N clicks. 
+    A double click is counted if the same button is pressed
     again while event_is_click() is true.
     
-    <P>The second form directly sets the number returned by 
-    Fl::event_clicks().  This can be used to set it to zero so that
-    later code does not think an item was double-clicked.
-  */
+   */
   static int event_clicks()	{return e_clicks;}
   /**
-    See int event_clicks()
+    Manually sets the number returned by Fl::event_clicks().  
+    This can be used to set it to zero so that
+    later code does not think an item was double-clicked.
+    \param[in] i correspond to no double-click if 0, i+1 mouse clicks otherwise
+    \see int event_clicks()
   */
   static void event_clicks(int i) {e_clicks = i;}
   /**
@@ -418,8 +420,10 @@ public:
   */
   static void event_is_click(int i) {e_is_click = i;}
   /**
-    Returns which mouse button caused te current event. This returns garbage if the
-    most recent event was not a FL_PUSH or FL_RELEASE event.
+    Gets which particular mouse button caused the current event. 
+    This returns garbage if the most recent event was not a FL_PUSH or FL_RELEASE event.
+    \retval FL_LEFT_MOUSE \retval FL_MIDDLE_MOUSE \retval FL_RIGHT_MOUSE.
+    \see Fl::event_buttons()
   */
   static int event_button()	{return e_keysym-FL_Button;}
   /**
@@ -450,11 +454,20 @@ public:
   static int event_state()	{return e_state;}
   /** See int event_state() */
   static int event_state(int i) {return e_state&i;}
+  /** Gets which key on the keyboard was last pushed.
+      \retval 0 if the last event was not a key press or release.
+    \see int event_key(int) */
+  static int event_key()	{return e_keysym;}
   /**
-    Fl::event_key() returns which key on the keyboard was last
-    pushed.  It returns zero if the last event was not a key press or release.
-    
-    <P>Fl::event_key(int) returns true if the given key was held
+    If NumLock is deactivated, FLTK translates events from the 
+    numeric keypad into the corresponding arrow key events. 
+    event_key() returns the translated key code, whereas
+    event_original_key() returns the keycode before 
+    NumLock translation.
+  */
+  static int event_original_key(){return e_original_keysym;}
+  /** 
+    Returns true if the given \a key was held
     down (or pressed) <I>during</I> the last event.  This is constant until
     the next event is read from the server.
     
@@ -495,23 +508,13 @@ public:
     <P>On WIN32 Fl::get_key(FL_KP_Enter) and 
     Fl::event_key(FL_KP_Enter) do not work.
   */
-  static int event_key()	{return e_keysym;}
-  /**
-    If NumLock is deactivated, FLTK translates events from the 
-    numeric keypad into the corresponding arrow key events. 
-    event_key() returns the translated key code, whereas
-    event_original_key() returns the keycode before 
-    NumLock translation.
-  */
-  static int event_original_key(){return e_original_keysym;}
-  /** See int event_key() */
-  static int event_key(int);
+  static int event_key(int key);
   /** 
-    Returns true if the given key is held down <I>now</I>.  
+    Returns true if the given \a key is held down <I>now</I>.  
     Under X this requires a round-trip to the server and is <I>
-    much</I> slower than Fl::event_key(int). See event_key().
+    much</I> slower than Fl::event_key(int). \see event_key(int)
   */
-  static int get_key(int); // platform dependent
+  static int get_key(int key); // platform dependent
   /** Returns the text associated with the current FL_PASTE or FL_DND_RELEASE event. */
   static const char* event_text() {return e_text;}
   /**
@@ -536,10 +539,12 @@ public:
 
   // event destinations:
   static int handle(int, Fl_Window*);
-  /** See Fl_Widget* belowmouse(Fl_Widget*) */
+  /**  Gets the widget that is below the mouse. 
+       \see  belowmouse(Fl_Widget*) */
   static Fl_Widget* belowmouse() {return belowmouse_;}
   static void belowmouse(Fl_Widget*);
-  /** See Fl_Widget* pushed(Fl_Widget*) */
+  /** Sets the widget that is being pushed 
+      \see Fl_Widget* pushed(Fl_Widget*) */
   static Fl_Widget* pushed()	{return pushed_;}
   static void pushed(Fl_Widget*);
   /** Gets the current Fl::focus() widget. \sa Fl::focus(Fl_Widget*) */
@@ -577,7 +582,8 @@ public:
   static int dnd(); // platform dependent
 
   // These are for back-compatibility only:
-  /** See Fl_Widget* selection_owner(Fl_Widget*) */
+  /**  back-compatibility only: Gets the widget owning the current selection  
+       \see Fl_Widget* selection_owner(Fl_Widget*) */
   static Fl_Widget* selection_owner() {return selection_owner_;}
   static void selection_owner(Fl_Widget*);
   static void selection(Fl_Widget &owner, const char*, int len);
@@ -696,13 +702,14 @@ public:
   static int draw_box_active();
 
   // back compatibility:
-  /** for back compatibility. sets the (*fatal)() callback. */
   /** \addtogroup fl_windows 
     @{ */
+  /** For back compatibility, sets the void Fl::fatal handler callback */
   static void set_abort(void (*f)(const char*,...)) {fatal = f;}
   static void (*atclose)(Fl_Window*,void*);
   static void default_atclose(Fl_Window*,void*);
-  /** for back compatibility. sets the (*atclose)() callback. */
+  /** For back compatibility, sets the Fl::atclose handler callback. You
+      can now simply change the callback for the window instead \see Fl_Window::callback(Fl_Callback*) */
   static void set_atclose(void (*f)(Fl_Window*,void*)) {atclose = f;}
   /**   @} */
 
@@ -715,16 +722,16 @@ public:
   /** Returns non-zero if the Alt key is pressed. */
   static int event_alt() {return e_state&FL_ALT;}
   /**
-    Returns the button state bits; if non-zero, then at least one
-    button is pressed.  This function returns the button state at the 
+    Returns the mouse buttons state bits; if non-zero, then at least one
+    button is pressed now.  This function returns the button state at the 
     time of the event. During an FL_RELEASE event, the state 
     of the released button will be 0. To find out, which button 
-    caused an FL_RELEASE event, you can use 
-    Fl::event_button() instead.
+    caused an FL_RELEASE event, you can use Fl::event_button() instead.
+    \return a bit mask value like { [FL_BUTTON1] | [FL_BUTTON2] | [FL_BUTTON3] }
   */
   static int event_buttons() {return e_state&0x7f000000;}
   /**
-    Returns non-zero if button 1 is currently held down.
+    Returns non-zero if mouse button 1 is currently held down.
     For more details, see Fl::event_buttons().
   */
   static int event_button1() {return e_state&FL_BUTTON1;}

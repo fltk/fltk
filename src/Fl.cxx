@@ -754,7 +754,7 @@ void Fl::focus(Fl_Widget *o) {
 static char dnd_flag = 0; // make 'belowmouse' send DND_LEAVE instead of LEAVE
 
 /**
-    Get or set the widget that is below the mouse.  This is for
+    Sets the widget that is below the mouse.  This is for
     highlighting buttons.  It is not used to send FL_PUSH or 
     FL_MOVE directly, for several obscure reasons, but those events
     typically go to this widget.  This is also the first widget tried for 
@@ -782,7 +782,7 @@ void Fl::belowmouse(Fl_Widget *o) {
 }
 
 /**
-    Get or set the widget that is being pushed. FL_DRAG or 
+    Sets the widget that is being pushed. FL_DRAG or 
     FL_RELEASE (and any more FL_PUSH) events will be sent to
     this widget.
     
@@ -1291,8 +1291,7 @@ int Fl_Window::handle(int ev)
 ////////////////////////////////////////////////////////////////
 // Back compatibility cut & paste functions for fltk 1.1 only:
 
-/**
-    The single-argument selection_owner(x) call can be used to
+/** Back-compatibility only: The single-argument call can be used to
     move the selection to another widget or to set the owner to
     NULL, without changing the actual text of the
     selection. FL_SELECTIONCLEAR is sent to the previous
@@ -1318,7 +1317,7 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
   Fl::copy(text, len, 0);
 }
 
-/**
+/** Backward compatibility only:
   Set things up so the receiver widget will be called with an  FL_PASTE event some
   time in the future for the specified clipboard. The reciever
   should be prepared to be called <I>directly</I> by this, or for
@@ -1326,6 +1325,7 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
   allows the window system to take as long as necessary to retrieve
   the paste buffer (or even to screw up completely) without complex
   and error-prone synchronization code in FLTK.
+  \see Fl::paste(Fl_Widget &receiver, int clipboard)
 */
 void Fl::paste(Fl_Widget &receiver) {
   Fl::paste(receiver, 0);

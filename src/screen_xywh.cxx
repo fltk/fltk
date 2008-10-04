@@ -151,12 +151,10 @@ int Fl::screen_count() {
 }
 
 /**
-  Gets the bounding box of a screen. The first form gets the
-  bounding box for the screen the mouse pointer is in. The second
-  form gets the bounding box for the screen that contains the
-  specified coordinates. The last form gets the bounding box for
-  the numbered screen, where n is a number from 0 to the
-  number of screens less 1.
+  Gets the bounding box of a screen 
+  where the mouse pointer is in. 
+  \param[out]  X,Y,W,H the corresponding screen bounding box
+  \param[in] mx, my the mouse absolute screen position
 */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
   if (!num_screens) screen_init();
@@ -222,8 +220,10 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
 }
 
 /**
-  Returns the screen bounding rect for the given screen. 
-  See void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
+  Gets the screen bounding rect for the given screen. 
+  \param[out]  X,Y,W,H the corresponding screen bounding box
+  \param[in] n the screen number (0 to Fl::screen_count() - 1)
+  \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
 */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   if (!num_screens) screen_init();
