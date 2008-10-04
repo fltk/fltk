@@ -379,7 +379,7 @@ static const char* input_innards(const char* fmt, va_list ap,
 /** Shows an input dialog displaying the \a fmt message
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] defstr defines the default returned string if no text is entered
-   \return the user string input
+   \return the user string input if OK was pushed, NULL if Cancel was pushed
  */
 const char* fl_input(const char *fmt, const char *defstr, ...) {
   fl_beep(FL_BEEP_QUESTION);
@@ -396,7 +396,7 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
     '*' characters are displayed instead
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] defstr defines the default returned string if no text is entered
-   \return the user string input
+   \return the user string input if OK was pushed, NULL if Cancel was pushed
  */
 const char *fl_password(const char *fmt, const char *defstr, ...) {
   fl_beep(FL_BEEP_PASSWORD);

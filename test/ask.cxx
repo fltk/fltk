@@ -43,28 +43,43 @@
 #include <FL/fl_ask.H>
 #include <stdlib.h>
 
-void rename_me(Fl_Widget*o) {
-  const char *input = fl_input("Input:", o->label());
-
+void update_input_text(Fl_Widget* o, const char *input) {
   if (input) {
     o->copy_label(input);
     o->redraw();
   }
 }
 
+void rename_me(Fl_Widget*o) {
+  const char *input = fl_input("Input:", o->label());
+  update_input_text(o, input);
+}
+
+void rename_me_pwd(Fl_Widget*o) {
+  const char *input = fl_password("Input PWD:", o->label());
+  update_input_text(o, input);
+}
+
 void window_callback(Fl_Widget*, void*) {
-  if (!fl_choice("Are you sure you want to quit?", "Cancel", "Quit", 0L)) return;
-  exit(0);
+  int rep = fl_choice("Are you sure you want to quit?", 
+		      "Cancel", "Quit", "Dunno");
+  if (rep==1) 
+    exit(0);
+  else if (rep==2)
+    fl_message("Well, maybe you should know before we quit.");
 }
 
 int main(int argc, char **argv) {
-  char buffer[128] = "test text";
+  char buffer[128] = "Test text";
+  char buffer2[128] = "MyPassword";
 
 // this is a test to make sure automatic destructors work.  Pop up
-// the question dialog several times and make sure it don't crash.
+// the question dialog several times and make sure it doesn't crash.
+// fc: added more fl_ask common dialogs for test cases purposes.
 
-  Fl_Window window(200, 55);
+  Fl_Window window(200, 105);
   Fl_Return_Button b(20, 10, 160, 35, buffer); b.callback(rename_me);
+  Fl_Button b2(20, 50, 160, 35, buffer2); b2.callback(rename_me_pwd);
   window.end();
   window.resizable(&b);
   window.show(argc, argv);

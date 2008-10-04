@@ -531,7 +531,7 @@ extern const char* fl_cancel;
 /**
   \brief Pops up a window to let the user pick an arbitrary RGB color.
   \image html fl_color_chooser.jpg
-  \param[in,out] name title label for the window
+  \param[in] name title label for the window
   \param[in,out] r, g, b color components in the range 0.0 to 1.0.
   \retval 1 if user confirms the selection 
   \retval 0 if user cancels the dialog
@@ -574,7 +574,7 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b) {
 /**
   \brief Pops up a window to let the user pick an arbitrary RGB color.
   \image html fl_color_chooser.jpg
-  \param[in,out] name title label for the window
+  \param[in] name title label for the window
   \param[in,out] r, g, b color components in the range 0 to 255.
   \retval 1 if user confirms the selection 
   \retval 0 if user cancels the dialog
