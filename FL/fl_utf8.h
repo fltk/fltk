@@ -43,7 +43,7 @@
 #  include <locale.h>
 #  include <ctype.h>
 #  define xchar wchar_t
-#  ifndef FL_DLL
+#  if !defined(FL_DLL) && !defined(__CYGWIN__)
 #    undef strdup
 #    define strdup _strdup
 #    undef putenv

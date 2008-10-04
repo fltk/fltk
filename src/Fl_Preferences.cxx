@@ -655,6 +655,7 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   }
 
 
+#ifndef __CYGWIN__
     if (!filename[1] && !filename[0]) {
     strcpy(filename, "C:\\FLTK");
     } else {
@@ -664,7 +665,10 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
       filename[len] = 0;
       free(b);
   }
-
+#else
+#warning CHECKME (Cygwin) this should probably be UTF8 aware as well
+  if (!filename[0]) strcpy(filename, "C:\\FLTK");
+#endif
   snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
            "/%s/%s.prefs", vendor, application);
   for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';

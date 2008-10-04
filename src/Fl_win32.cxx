@@ -48,12 +48,15 @@
 #  include <unistd.h>
 #else
 # if !defined(USE_WSOCK1)
-#  define WSCK_DLL_NAME "WS2_32.DLL"
 #  include <winsock2.h>
 #else
-#  define WSCK_DLL_NAME "WSOCK32.DLL"
 #  include <winsock.h>
 # endif
+#endif
+#if !defined(USE_WSOCK1)
+#  define WSCK_DLL_NAME "WS2_32.DLL"
+#else
+#  define WSCK_DLL_NAME "WSOCK32.DLL"
 #endif
 #include <winuser.h>
 #include <commctrl.h>
@@ -87,10 +90,12 @@
 */
 
 // dynamic wsock dll handling api:
+#if defined(__CYGWIN__) && !defined(SOCKET)
+# define SOCKET int
+#endif
 typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const struct timeval*);
 typedef int (WINAPI* fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
 typedef int (WINAPI* fl_wsk_async_select_f)(SOCKET,HWND,u_int,long);
-//typedef int (WINAPI* fl_wsk_startup_f)(WORD,LPWSADATA);
 static HMODULE s_wsock_mod = 0;
 static fl_wsk_select_f s_wsock_select=0;
 static fl_wsk_fd_is_set_f fl_wsk_fd_is_set=0;
