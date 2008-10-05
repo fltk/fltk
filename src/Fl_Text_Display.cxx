@@ -1591,7 +1591,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   stdCharWidth = TMPFONTWIDTH;   //mFontStruct->max_bounds.width;
   if ( stdCharWidth <= 0 ) {
     Fl::error("Fl_Text_Display::draw_vline(): bad font measurement");
-    free((void *)lineStr);
+    if (lineStr) free((void *)lineStr);
     return;
   }
 
