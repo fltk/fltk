@@ -278,7 +278,7 @@ Fl_File_Input::handle_button(int event)		// I - Event
 
     // Then do the callbacks, if necessary...
     set_changed();
-    if (when() & FL_WHEN_CHANGED) do_callback();
+    if (when() & (FL_WHEN_CHANGED|FL_WHEN_RELEASE) ) do_callback();
   }
 
   return 1;

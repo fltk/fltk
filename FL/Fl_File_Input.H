@@ -40,8 +40,15 @@
 
   A navigation bar located above the input field allows the user to
   navigate upward in the directory tree.
-
-  \image html Fl_File_Input.gif
+  You may want to handle FL_WHEN_CHANGED events for tracking text changes
+  and also FL_WHEN_RELEASE for button release when changing to parent dir.
+  FL_WHEN_RELEASE callback won't be called if the directory clicked 
+  is the same that the current one.
+  <P align=CENTER> \image html Fl_File_Input.gif </P>
+  \note As all Fl_Input derived objects, Fl_File_Input may call its callback
+  when loosing focus (see FL_UNFOCUS) to update its state like its cursor shape.
+  One resulting side effect is that you should call clear_changed() early in your callback
+  to avoid reentrant calls if you plan to show another window or dialog box in the callback.
 */
 class FL_EXPORT Fl_File_Input : public Fl_Input
 {
