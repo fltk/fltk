@@ -42,18 +42,17 @@
 #define FL_SIMPLE_COUNTER	1	/**< type() for counter without fast buttons */
 
 /**
-  \class Fl_Counter
-  \brief Fl_Counter widget for Forms compatibility.
-
-  The Fl_Counter widget is provided for forms compatibility.
-  It controls a single floating point value.
+  Controls a single floating point value with button (or keyboard) arrows.
+  Double arrows buttons achieve larger steps than simple arrows.
+  \see Fl_Spinner for value input with vertical step arrows.
+  <P align=center>\image html counter.gif</P>
 
   \todo Refactor the doxygen comments for Fl_Counter type() documentation.
 
   The type of an Fl_Counter object can be set using type(uchar t) to:
   \li \c FL_NORMAL_COUNTER: Displays a counter with 4 arrow buttons.
   \li \c FL_SIMPLE_COUNTER: Displays a counter with only 2 arrow buttons.
- */
+*/
 class FL_EXPORT Fl_Counter : public Fl_Valuator {
 
   Fl_Font textfont_;
@@ -77,19 +76,19 @@ public:
   ~Fl_Counter();
 
   /**
-    Set the increment for the large step buttons.
+    Sets the increment for the large step buttons.
     The default value is 1.0.
     \param[in] a large step increment.
-   */
+  */
   void lstep(double a) {lstep_ = a;}
 
   /**
-    Set the increments for the normal and large step buttons.
+    Sets the increments for the normal and large step buttons.
     \param[in] a, b normal and large step increments.
   */
   void step(double a,double b) {Fl_Valuator::step(a); lstep_ = b;}
   /**
-    Set the increment for the normal step buttons.
+    Sets the increment for the normal step buttons.
     \param[in] a normal step increment.
   */
   void step(double a) {Fl_Valuator::step(a);}
@@ -106,7 +105,7 @@ public:
 
   /** Gets the font color */
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
-  /** Sets the font color to \p a */
+  /** Sets the font color to \a s */
   void textcolor(unsigned s) {textcolor_ = s;}
 
 };
