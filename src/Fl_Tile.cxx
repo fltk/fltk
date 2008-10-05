@@ -136,7 +136,10 @@ int Fl_Tile::handle(int event) {
 
   case FL_MOVE:
   case FL_ENTER:
-  case FL_PUSH: {
+  case FL_PUSH:
+    // don't potentially change the mouse cursor if inactive:
+    if (!active()) break; // will cascade inherited handle()
+    {
     int mindx = 100;
     int mindy = 100;
     int oldx = 0;

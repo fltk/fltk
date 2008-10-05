@@ -30,6 +30,8 @@
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Box.H>
 
+//#define TEST_INACTIVE
+
 int main(int argc, char** argv) {
   Fl_Window window(300,300);
   window.box(FL_NO_BOX);
@@ -82,6 +84,9 @@ int main(int argc, char** argv) {
 
   tile.end();
   window.end();
+#ifdef TEST_INACTIVE // test inactive case 
+  tile.deactivate();
+#endif
   w1.show();
   window.show(argc,argv);
   return Fl::run();
