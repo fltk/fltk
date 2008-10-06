@@ -1620,8 +1620,8 @@ void handleUpdateEvent( WindowPtr xid )
 // Gets the border sizes and the titlebar size
 static void get_window_frame_sizes(int &bx, int &by, int &bt) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
-	HIRect contentRect = { {50,50}, {100,100} }; // a rect to stand in for the content rect of a real window
-	HIThemeWindowDrawInfo metrics= {0, 
+	static HIRect contentRect = { {50,50}, {100,100} }; // a rect to stand in for the content rect of a real window
+	static HIThemeWindowDrawInfo metrics= {0, 
 		kThemeStateActive, kThemeDocumentWindow,
 		kThemeWindowHasFullZoom + kThemeWindowHasCloseBox + 
 		kThemeWindowHasCollapseBox + kThemeWindowHasTitleText, 
@@ -1641,7 +1641,7 @@ static void get_window_frame_sizes(int &bx, int &by, int &bt) {
 		bt = rect3.size.height;
 		bx = rect2.origin.x  - rect1.origin.x;
 		by = rect2.origin.y  - rect1.origin.y - bt;
-		// fprintf(stderr, "GetThemeWindowRegion succeeded bx=%d by=%d bt=%d\n", bx, by, bt);
+		// fprintf(stderr, "HIThemeGetWindowShape succeeded bx=%d by=%d bt=%d\n", bx, by, bt);
 	}		
 	else 
 #endif // MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
@@ -1649,12 +1649,12 @@ static void get_window_frame_sizes(int &bx, int &by, int &bt) {
 		// sets default dimensions
 		bx = by = 6;
 		bt = 22;
-		// fprintf(stderr, "GetThemeWindowRegion failed, bx=%d by=%d bt=%d\n", bx, by, bt);
+		// fprintf(stderr, "HIThemeGetWindowShape failed, bx=%d by=%d bt=%d\n", bx, by, bt);
 	}
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
-	if (shape1) free((void*) shape1); // we must free HIThemeGetWindowShape() (copied) handles 
-	if (shape2) free((void*) shape2); 
-	if (shape3) free((void*) shape3); 	
+	CFRelease(shape1); // we must free HIThemeGetWindowShape() (copied) handles 
+	CFRelease(shape2);
+	CFRelease(shape3);
 #endif // MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
 }
 
