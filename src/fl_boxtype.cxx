@@ -25,6 +25,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+  \file fl_boxtype.cxx
+  \brief drawing code for common box types.
+*/
+
 // Box drawing code for the common box types and the table of
 // boxtypes.  Other box types are in seperate files so they are not
 // linked in if not used.
@@ -51,12 +56,27 @@ static uchar inactive_ramp[24] = {
   49, 49, 50, 50,
   51, 51, 52, 52};
 static int draw_it_active = 1;
-/** Determines if the current draw box is active or inactive. 
-    If inactive, the box color is changed by the inactive color. */
+
+/**
+  Determines if the current draw box is active or inactive. 
+  If inactive, the box color is changed by the inactive color.
+*/
 int Fl::draw_box_active() { return draw_it_active; }
 
 uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
 
+/**
+  Draws a series of line segments around the given box.
+  The string \a s must contain groups of 4 letters which specify one of 24
+  standard grayscale values, where 'A' is black and 'X' is white.
+  The order of each set of 4 characters is: top, left, bottom, right.
+  The resuls of calling fl_frame() with a string that is not a multiple
+  of 4 characters in length is undefined.
+  The only difference between this function and fl_frame2() is the order
+  of the line segments.
+  \param[in] s sets of 4 grayscale values in top, left, bottom, right order
+  \param[in] x, y, w, h position and size
+*/
 void fl_frame(const char* s, int x, int y, int w, int h) {
   uchar *g = fl_gray_ramp();
   if (h > 0 && w > 0) for (;*s;) {
@@ -79,6 +99,18 @@ void fl_frame(const char* s, int x, int y, int w, int h) {
   }
 }
 
+/**
+  Draws a series of line segments around the given box.
+  The string \a s must contain groups of 4 letters which specify one of 24
+  standard grayscale values, where 'A' is black and 'X' is white.
+  The order of each set of 4 characters is: bottom, right, top, left.
+  The resuls of calling fl_frame2() with a string that is not a multiple
+  of 4 characters in length is undefined.
+  The only difference between this function and fl_frame() is the order
+  of the line segments.
+  \param[in] s sets of 4 grayscale values in bottom, right, top, left order
+  \param[in] x, y, w, h position and size
+*/
 void fl_frame2(const char* s, int x, int y, int w, int h) {
   uchar *g = fl_gray_ramp();
   if (h > 0 && w > 0) for (;*s;) {
@@ -101,28 +133,34 @@ void fl_frame2(const char* s, int x, int y, int w, int h) {
   }
 }
 
+/** Draws a box of type FL_NO_BOX */
 void fl_no_box(int, int, int, int, Fl_Color) {}
 
+/** Draws a frame of type FL_THIN_DOWN_FRAME */
 void fl_thin_down_frame(int x, int y, int w, int h, Fl_Color) {
   fl_frame2("WWHH",x,y,w,h);
 }
 
+/** Draws a box of type FL_THIN_DOWN_BOX */
 void fl_thin_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_thin_down_frame(x,y,w,h,c);
   fl_color(draw_it_active ? c : fl_inactive(c));
   fl_rectf(x+1, y+1, w-2, h-2);
 }
 
+/** Draws a frame of type FL_THIN_UP_FRAME */
 void fl_thin_up_frame(int x, int y, int w, int h, Fl_Color) {
   fl_frame2("HHWW",x,y,w,h);
 }
 
+/** Draws a box of type FL_THIN_UP_BOX */
 void fl_thin_up_box(int x, int y, int w, int h, Fl_Color c) {
   fl_thin_up_frame(x,y,w,h,c);
   fl_color(draw_it_active ? c : fl_inactive(c));
   fl_rectf(x+1, y+1, w-2, h-2);
 }
 
+/** Draws a frame of type FL_UP_FRAME */
 void fl_up_frame(int x, int y, int w, int h, Fl_Color) {
 #if BORDER_WIDTH == 1
   fl_frame2("HHWW",x,y,w,h);
@@ -138,12 +176,14 @@ void fl_up_frame(int x, int y, int w, int h, Fl_Color) {
 #define D1 BORDER_WIDTH
 #define D2 (BORDER_WIDTH+BORDER_WIDTH)
 
+/** Draws a box of type FL_UP_BOX */
 void fl_up_box(int x, int y, int w, int h, Fl_Color c) {
   fl_up_frame(x,y,w,h,c);
   fl_color(draw_it_active ? c : fl_inactive(c));
   fl_rectf(x+D1, y+D1, w-D2, h-D2);
 }
 
+/** Draws a frame of type FL_DOWN_FRAME */
 void fl_down_frame(int x, int y, int w, int h, Fl_Color) {
 #if BORDER_WIDTH == 1
   fl_frame2("WWHH",x,y,w,h);
@@ -156,39 +196,51 @@ void fl_down_frame(int x, int y, int w, int h, Fl_Color) {
 #endif
 }
 
+/** Draws a box of type FL_DOWN_BOX */
 void fl_down_box(int x, int y, int w, int h, Fl_Color c) {
   fl_down_frame(x,y,w,h,c);
   fl_color(c); fl_rectf(x+D1, y+D1, w-D2, h-D2);
 }
 
+/** Draws a frame of type FL_ENGRAVED_FRAME */
 void fl_engraved_frame(int x, int y, int w, int h, Fl_Color) {
   fl_frame("HHWWWWHH",x,y,w,h);
 }
 
+/** Draws a box of type FL_ENGRAVED_BOX */
 void fl_engraved_box(int x, int y, int w, int h, Fl_Color c) {
   fl_engraved_frame(x,y,w,h,c);
   fl_color(draw_it_active ? c : fl_inactive(c));
   fl_rectf(x+2, y+2, w-4, h-4);
 }
 
+/** Draws a frame of type FL_EMBOSSED_FRAME */
 void fl_embossed_frame(int x, int y, int w, int h, Fl_Color) {
   fl_frame("WWHHHHWW",x,y,w,h);
 }
 
+/** Draws a box of type FL_EMBOSSED_BOX */
 void fl_embossed_box(int x, int y, int w, int h, Fl_Color c) {
   fl_embossed_frame(x,y,w,h,c);
   fl_color(draw_it_active ? c : fl_inactive(c));
   fl_rectf(x+2, y+2, w-4, h-4);
 }
 
+/**
+  Draws a bounded rectangle with a given position, size and color,
+  Equivalent to drawing a box of type FL_BORDER_BOX.
+*/
 void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
   fl_color(draw_it_active ? FL_BLACK : fl_inactive(FL_BLACK));
   fl_rect(x, y, w, h);
   fl_color(draw_it_active ? bgcolor : fl_inactive(bgcolor));
   fl_rectf(x+1, y+1, w-2, h-2);
 }
-#define fl_border_box fl_rectbound
+#define fl_border_box fl_rectbound	/**< allow consistent naming */
 
+/**
+  Draws a frame of type FL_BORDER_FRAME.
+*/
 void fl_border_frame(int x, int y, int w, int h, Fl_Color c) {
   fl_color(draw_it_active ? c : fl_inactive(c));
   fl_rect(x, y, w, h);
@@ -260,44 +312,62 @@ static struct {
   {fl_down_box,		3,3,6,6,0}, // FL_FREE_BOX+7
 };
 
-/** Returns the X offset for the given boxtype. See box_dy(). */
+/**
+  Returns the X offset for the given boxtype.
+  \see box_dy()
+*/
 int Fl::box_dx(Fl_Boxtype t) {return fl_box_table[t].dx;}
+
 /**
     Returns the Y offset for the given boxtype.
     
-    <P>These functions return the offset values necessary for a given
+    These functions return the offset values necessary for a given
     boxtype, useful for computing the area inside a box's borders, to
     prevent overdrawing the borders.
     
-    <P>For instance, in the case of a boxtype like FL_DOWN_BOX
+    For instance, in the case of a boxtype like FL_DOWN_BOX
     where the border width might be 2 pixels all around, the above 
     functions would return 2, 2, 4, and 4 for box_dx, 
     box_dy, box_dw, and box_dh
     respectively.
     
-    <P>An example to compute the area inside a widget's box():
+    An example to compute the area inside a widget's box():
     \code
          int X = yourwidget-&gt;x() + Fl::box_dx(yourwidget-&gt;box());
          int Y = yourwidget-&gt;y() + Fl::box_dy(yourwidget-&gt;box());
          int W = yourwidget-&gt;w() - Fl::box_dw(yourwidget-&gt;box());
          int H = yourwidget-&gt;h() - Fl::box_dh(yourwidget-&gt;box());
     \endcode
-    <P>These functions are mainly useful in the draw() code 
+    These functions are mainly useful in the draw() code 
     for deriving custom widgets, where one wants to avoid drawing 
     over the widget's own border box().
 */
 int Fl::box_dy(Fl_Boxtype t) {return fl_box_table[t].dy;}
-/** Returns the width offset for the given boxtype. See box_dy(). */
+
+/**
+  Returns the width offset for the given boxtype.
+  \see box_dy().
+*/
 int Fl::box_dw(Fl_Boxtype t) {return fl_box_table[t].dw;}
-/** Returns the height offset for the given boxtype. See box_dy(). */
+
+/**
+  Returns the height offset for the given boxtype.
+  \see box_dy().
+*/
 int Fl::box_dh(Fl_Boxtype t) {return fl_box_table[t].dh;}
 
+/**
+  Set the drawing function for a given box type.
+  \param[in] t box type
+  \param[in] f box drawing function
+*/
 void fl_internal_boxtype(Fl_Boxtype t, Fl_Box_Draw_F* f) {
   if (!fl_box_table[t].set) {
     fl_box_table[t].f   = f;
     fl_box_table[t].set = 1;
   }
 }
+
 /** Gets the current box drawing function for the specified box type. */
 Fl_Box_Draw_F *Fl::get_boxtype(Fl_Boxtype t) {
   return fl_box_table[t].f;
@@ -317,6 +387,12 @@ void Fl::set_boxtype(Fl_Boxtype to, Fl_Boxtype from) {
   fl_box_table[to] = fl_box_table[from];
 }
 
+/**
+  Draw box using given type, position, size and color
+  \param[in] t box type
+  \param[in] x, y, w, h position and size
+  \param[in] c color
+*/
 void fl_draw_box(Fl_Boxtype t, int x, int y, int w, int h, Fl_Color c) {
   if (t && fl_box_table[t].f) fl_box_table[t].f(x,y,w,h,c);
 }
