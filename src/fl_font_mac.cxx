@@ -30,6 +30,9 @@
 /* from fl_utf.c */
 extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short* dst, unsigned dstlen);
 
+// if no font has been selected yet by the user, get one.
+#define check_default_font() {if (!fl_fontsize) fl_font(0, 12);}
+
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
 #  if HAVE_GL
@@ -255,6 +258,7 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
 Fl_Font fl_font_ = 0;
 Fl_Fontsize fl_size_ = 0;
 
+
 void fl_font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) {
     fl_font_ = 0; 
@@ -281,7 +285,7 @@ double fl_width(const UniChar* txt, int n) {
   return (double)TextWidth( txt, 0, n );
 #else
   if (!fl_fontsize) {
-    fl_font(0, 12); // avoid a crash!
+    check_default_font(); // avoid a crash!
     if (!fl_fontsize)
       return 8*n; // user must select a font first!
   }
@@ -341,7 +345,10 @@ void fl_draw(const char *str, int n, float x, float y) {
   OSStatus err;
     // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
-    // now collect our ATSU resources
+  
+  // avoid a crash if no font has been selected by user yet !
+  check_default_font();
+  // now collect our ATSU resources
   ATSUTextLayout layout = fl_fontsize->layout;
 
   ByteCount iSize = sizeof(CGContextRef);
