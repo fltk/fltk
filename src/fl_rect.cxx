@@ -25,6 +25,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+  \file fl_rect.cxx
+  \brief Drawing and clipping routines for rectangles.
+*/
+
 // These routines from fl_draw.H are used by the standard boxtypes
 // and thus are always linked into an fltk program.
 // Also all fl_clip routines, since they are always linked in so
@@ -514,7 +519,11 @@ void fl_restore_clip() {
 #endif
 }
 
-// Replace the top of the clip stack:
+/**
+  Replace te top of the clipping stack with a clipping region of any shape.
+  Fl_Region is an operating system specific type.
+  \param[in] r clipping region
+*/
 void fl_clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
   if (oldr) XDestroyRegion(oldr);
@@ -522,12 +531,18 @@ void fl_clip_region(Fl_Region r) {
   fl_restore_clip();
 }
 
-// Return the current clip region...
+/**
+  \returns the current clipping region.
+*/
 Fl_Region fl_clip_region() {
   return rstack[rstackptr];
 }
 
-// Intersect & push a new clip rectangle:
+/**
+  Intersect the current clip region with a rectangle and push this
+  new region onto the stack.
+  \param[in] x,y,w,h position and size
+*/
 void fl_push_clip(int x, int y, int w, int h) {
   Fl_Region r;
   if (w > 0 && h > 0) {
@@ -566,6 +581,9 @@ void fl_push_clip(int x, int y, int w, int h) {
 }
 
 // make there be no clip (used by fl_begin_offscreen() only!)
+/**
+  Pushes an empty clip region onto the stack so nothing will be clipped.
+*/
 void fl_push_no_clip() {
   if (rstackptr < STACK_MAX) rstack[++rstackptr] = 0;
   else Fl::warning("fl_push_no_clip: clip stack overflow!\n");
@@ -573,6 +591,12 @@ void fl_push_no_clip() {
 }
 
 // pop back to previous clip:
+/**
+  Restore the previious clip region.
+  You must call fl_pop_clip() omce for every time you call fl_push_clip().
+  Unpredictable results may occur if the clip stack is not empty when
+  you return to FLTK.
+*/
 void fl_pop_clip() {
   if (rstackptr > 0) {
     Fl_Region oldr = rstack[rstackptr--];
@@ -581,7 +605,16 @@ void fl_pop_clip() {
   fl_restore_clip();
 }
 
-// does this rectangle intersect current clip?
+/**
+  Does the rectangle intersect the current clip region?
+  \param[in] x,y,w,h position and size of rectangle
+  \returns non-zero if any of the rectangle intersects the current clip
+  region, If this returns 0 you don't have to draw the object.
+
+  \note
+  Under X this returns 2 if the rectangle is partially clipped, 
+  and 1 is it is entirely inside the clip region.
+*/
 int fl_not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
   Fl_Region r = rstack[rstackptr];
@@ -606,6 +639,19 @@ int fl_not_clipped(int x, int y, int w, int h) {
 }
 
 // return rectangle surrounding intersection of this rectangle and clip:
+/**
+  Intersect the rectangle with the current clip region and return the
+  bounding box of the result.
+  Returns non-zero if the resulting rectangle is different to the original.
+  Ths can be used to limit the necessary drawing to a rectangle.
+  \a W and \a H are set to zero if the rectangle is completely outside
+  the region.
+  \param[in] x,y,w,h position and size of rectangle
+  \param[out] X,Y,W,H position and size of resulting bounding box.
+              \a W and \a H are set to zero if the rectangle is
+	      completely outside the region.
+  \returns Non-zero if the resulting rectangle is different to the original.
+*/
 int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
   Fl_Region r = rstack[rstackptr];

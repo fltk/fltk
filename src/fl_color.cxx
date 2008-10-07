@@ -25,6 +25,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+  \file fl_color.cxx
+  \brief Color handling
+*/
+
 // Implementation of fl_color(i), fl_color(r,g,b).
 
 #ifdef WIN32
@@ -137,6 +142,14 @@ ulong fl_xpixel(uchar r,uchar g,uchar b) {
      ) >> fl_extrashift;
 }
 
+/**
+  Set the color for all subsequent drawing operations.
+  The closest possible match to the RGB color is used.
+  The RGB color is used directly on TrueColor displays.
+  For colormap visuals the nearest index in the gray
+  ramp or color cube is used.
+  \param[in] r,g,b color components
+*/
 void fl_color(uchar r,uchar g,uchar b) {
   fl_color_ = fl_rgb_color(r, g, b);
   XSetForeground(fl_display, fl_gc, fl_xpixel(r,g,b));
@@ -277,6 +290,13 @@ ulong fl_xpixel(Fl_Color i) {
 
 Fl_Color fl_color_;
 
+/**
+  Sets the color for all subsequent drawing operations.
+  For colormapped displays, a color cell will be allocated out of
+  \a fl_colormap the first time you use a color. If the colormap fills up
+  then a least-squares algorithm is used to find the closest color.
+  \param[in] i color 
+*/
 void fl_color(Fl_Color i) {
   if (i & 0xffffff00) {
     unsigned rgb = (unsigned)i;

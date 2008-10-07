@@ -25,6 +25,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+  \file fl_draw.H
+  \brief utility header to pull drawing functions together
+*/
+
 #ifndef fl_draw_H
 #define fl_draw_H
 
@@ -37,14 +42,19 @@ class Fl_Image;
 FL_EXPORT extern char fl_draw_shortcut;
 
 // Colors:
-FL_EXPORT void	fl_color(Fl_Color); // select indexed color
+FL_EXPORT void	fl_color(Fl_Color i); // select indexed color
 inline void fl_color(int c) {fl_color((Fl_Color)c);} // for back compatibility
-FL_EXPORT void	fl_color(uchar, uchar, uchar); // select actual color
+FL_EXPORT void	fl_color(uchar r, uchar g, uchar b); // select actual color
 extern FL_EXPORT Fl_Color fl_color_;
+/**
+  Returns the last fl_color() that was set.
+  This can be used for state save/restore.
+*/
 inline Fl_Color fl_color() {return fl_color_;}
 
 // clip:
 FL_EXPORT void fl_push_clip(int x, int y, int w, int h);
+/** The fl_clip() name is deprecated and will be removed from future releases */
 #define fl_clip fl_push_clip
 FL_EXPORT void fl_push_no_clip();
 FL_EXPORT void fl_pop_clip();
