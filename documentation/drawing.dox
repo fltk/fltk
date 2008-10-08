@@ -4,7 +4,7 @@
 
 This chapter covers the drawing functions that are provided with FLTK.
 
-<H2>When Can You Draw Things in FLTK?</H2>
+\section sect_WhenCanYouDraw When Can You Draw Things in FLTK?
 
 There are only certain places you can execute drawing code in FLTK.
 Calling these functions at other places will result in undefined behavior!
@@ -29,13 +29,13 @@ Calling these functions at other places will result in undefined behavior!
     widget. Use Fl_Widget::window() to find the window.
 
 
-<H2>FLTK Drawing Functions</H2>
+\section sect_DrawingFunctions Drawing Functions
 
 To use the drawing functions you must first include the <FL/fl_draw.H>
 header file. FLTK provides the following types of drawing functions:
 
-\li <A href="#boxdraw">Boxes</A>
-\li <A href="#clipping">Clipping</A>
+\li \ref ssect_Boxes
+\li \ref ssect_Clipping
 \li <A href="#colors">Colors</A>
 \li <A href="#lines">Line dashes and thickness</A>
 \li <A href="#fast">Fast Shapes</A>
@@ -45,52 +45,55 @@ header file. FLTK provides the following types of drawing functions:
 \li <A href="#overlay">Overlay</A>
 \li <A href="#offscreen">Offscreen Drawing</A>
 
-<H3><A name="boxdraw">Boxes</A></H3>
+<A name="boxdraw"></A> <!-- For old HTML links only ! -->
+\subsection ssect_Boxes Boxes
 
 FLTK provides three functions that can be used to draw boxes for buttons
 and other UI controls. Each function uses the supplied upper-lefthand corner
 and width and height to determine where to draw the box.
 
-<H4><A NAME="fl_draw_box">
+<A NAME="fl_draw_box"> </A> <!-- For old HTML links only ! -->
 void fl_draw_box(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color c);
-</A></H4>
 
-The first box drawing function is <tt>fl_draw_box()</tt>
+\par
+The first box drawing function is fl_draw_box()
 which draws a standard boxtype \a b in the specified color \a c .
 
-<H4><A NAME="fl_frame">
-void fl_frame(const char *s, int x, int y, int w, int h);
-</A></H4>
+<A NAME="fl_frame"></A> <!-- For old HTML links only ! -->
+void fl_frame(const char *s, int x, int y, int w, int h)
 
-The <tt>fl_frame()</tt> function draws a series of line segments around the
+\par
+The fl_frame() function draws a series of line segments around the
 given box. The string \a s must contain groups of 4 letters which specify
 one of 24 standard grayscale values, where 'A' is black and 'X' is white.
 The order of each set of 4 characters is: top, left, bottom, right. The
-results of calling <tt>fl_frame()</tt> with a string that is not a multiple
+results of calling fl_frame() with a string that is not a multiple
 of 4 characters in length are undefined.
 
-The only difference between this function and <tt>fl_frame2()</tt> is the
+\par
+The only difference between this function and fl_frame2() is the
 order of the line segments.
 
+\par
 See also: <A HREF="common.html#fl_frame">fl_frame boxtype</A>.
 
-<H4><A NAME="fl_frame2">
+<A NAME="fl_frame2"></A> <!-- For old HTML links only ! -->
 void fl_frame2(const char *s, int x, int y, int w, int h);
-</A></H4>
 
-The <tt>fl_frame2()</tt> function draws a series of line segments around
+\par
+The fl_frame2() function draws a series of line segments around
 the given box. The string \a s must contain groups of 4 letters which
 specify one of 24 standard grayscale values, where 'A' is black and 'X' is
 white. The order of each set of 4 characters is: bottom, right, top, left.
-The results of calling <tt>fl_frame2()</tt> with a string that is
+The results of calling fl_frame2() with a string that is
 not a multiple of 4 characters in length are undefined.
 
-The only difference between this function and <tt>fl_frame()</tt>
+\par
+The only difference between this function and fl_frame()
 is the order of the line segments.
 
-<H3><A name="clipping">
-Clipping
-</A></H3>
+<A name="clipping"></A> <!-- For old HTML links only ! -->
+\subsection ssect_Clipping Clipping
 
 You can limit all your drawing to a rectangular region by calling
 fl_push_clip(), and put the drawings back by using fl_pop_clip().
@@ -100,49 +103,50 @@ transformation matrix.
 In addition, the system may provide clipping when updating windows
 which may be more complex than a simple rectangle.
 
-<H4><A name="fl_push_clip">
+<A name="fl_push_clip"></A> <!-- For old HTML links only ! -->
 void fl_clip(int x, int y, int w, int h)
-</A></H4>
-<H4>
-void fl_push_clip(int x, int y, int w, int h)
-</H4>
 
+void fl_push_clip(int x, int y, int w, int h)
+
+\par
 Intersect the current clip region with a rectangle and push this new
-region onto the stack. The <tt>fl_clip()</tt> name is deprecated and
+region onto the stack. The fl_clip() name is deprecated and
 will be removed from future releases.
 
-<H4><A NAME="fl_push_no_clip">
+<A NAME="fl_push_no_clip"></A> <!-- For old HTML links only ! -->
 void fl_push_no_clip()
-</A></H4>
 
+\par
 Pushes an empty clip region on the stack so nothing will be clipped.
 
-<H4><A NAME="fl_pop_clip">
+<A NAME="fl_pop_clip"></A> <!-- For old HTML links only ! -->
 void fl_pop_clip()
-</A></H4>
 
+\par
 Restore the previous clip region.
 
-\note
+\par
+\b Note:
 You must call fl_pop_clip() once for every time you call fl_push_clip().
 If you return to FLTK with the clip stack not empty unpredictable results
 occur.
 
-<H4><A NAME="fl_not_clipped">
+<A NAME="fl_not_clipped"></A> <!-- For old HTML links only ! -->
 int fl_not_clipped(int x, int y, int w, int h)
-</A></H4>
 
+\par
 Returns non-zero if any of the rectangle intersects the current clip
 region. If this returns 0 you don't have to draw the object.
 
-\note
+\par
+\b Note:
 Under X this returns 2 if the rectangle is partially clipped,
 and 1 if it is entirely inside the clip region.
 
-<H4><A NAME="fl_clip_box">
+<A NAME="fl_clip_box"></A> <!-- For old HTML links only ! -->
 int fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H)
-</A></H4>
 
+\par
 Intersect the rectangle <tt>x,y,w,h</tt> with the current
 clip region and returns the bounding box of the result in
 <tt>X,Y,W,H</tt>. Returns non-zero if the resulting rectangle is
@@ -150,13 +154,12 @@ different than the original. This can be used to limit the
 necessary drawing to a rectangle. \c W and \c H are
 set to zero if the rectangle is completely outside the region.
 
-<H4><A NAME="fl_clip_region">
+<A NAME="fl_clip_region"></A> <!-- For old HTML links only ! -->
 void fl_clip_region(Fl_Region r)
-</A></H4>
-<H4>
-Fl_Region fl_clip_region()
-</H4>
 
+Fl_Region fl_clip_region()
+
+\par
 Replace the top of the clip stack with a clipping region of any shape.
 Fl_Region is an operating system specific type. The second form returns 
 the current clipping region.
