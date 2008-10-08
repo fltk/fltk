@@ -36,14 +36,14 @@ header file. FLTK provides the following types of drawing functions:
 
 \li \ref ssect_Boxes
 \li \ref ssect_Clipping
-\li <A href="#colors">Colors</A>
-\li <A href="#lines">Line dashes and thickness</A>
-\li <A href="#fast">Fast Shapes</A>
-\li <A href="#complex">Complex Shapes</A>
-\li <A href="#text">Text</A>
-\li <A href="#images">Images</A>
-\li <A href="#overlay">Overlay</A>
-\li <A href="#offscreen">Offscreen Drawing</A>
+\li \ref drawing_colors
+\li \ref ssect_Lines
+\li \ref ssect_Fast
+\li \ref ssect_Complex
+\li \ref ssect_Text
+\li \ref ssect_Fl_Image
+\li \ref ssect_Overlay
+\li \ref ssect_Offscreen
 
 <A name="boxdraw"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Boxes Boxes
@@ -104,8 +104,7 @@ In addition, the system may provide clipping when updating windows
 which may be more complex than a simple rectangle.
 
 <A name="fl_push_clip"></A> <!-- For old HTML links only ! -->
-void fl_clip(int x, int y, int w, int h)
-
+void fl_clip(int x, int y, int w, int h) <br>
 void fl_push_clip(int x, int y, int w, int h)
 
 \par
@@ -155,8 +154,7 @@ necessary drawing to a rectangle. \c W and \c H are
 set to zero if the rectangle is completely outside the region.
 
 <A NAME="fl_clip_region"></A> <!-- For old HTML links only ! -->
-void fl_clip_region(Fl_Region r)
-
+void fl_clip_region(Fl_Region r) <br>
 Fl_Region fl_clip_region()
 
 \par
@@ -284,8 +282,7 @@ void fl_point(int x, int y)
 Draw a single pixel at the given coordinates.
 
 <A NAME="fl_rectf"></A> <!-- For old HTML links only ! -->
-void fl_rectf(int x, int y, int w, int h)
-
+void fl_rectf(int x, int y, int w, int h) <br>
 void fl_rectf(int x, int y, int w, int h)
 
 \par
@@ -301,42 +298,36 @@ color this is done by drawing a solid-colored block using
 so that the correct color shade is produced.
 
 <A NAME="fl_rect"></A> <!-- For old HTML links only ! -->
-void fl_rect(int x, int y, int w, int h)
-
+void fl_rect(int x, int y, int w, int h) <br>
 void fl_rect(int x, int y, int w, int h, Fl_Color c)
 
 \par
 Draw a 1-pixel border <I>inside</I> this bounding box.
 
 <A NAME="fl_line"></A> <!-- For old HTML links only ! -->
-void fl_line(int x, int y, int x1, int y1)
-
+void fl_line(int x, int y, int x1, int y1) <br>
 void fl_line(int x, int y, int x1, int y1, int x2, int y2)
 
 \par
 Draw one or two lines between the given points.
 
 <A NAME="fl_loop"></A> <!-- For old HTML links only ! -->
-void fl_loop(int x, int y, int x1, int y1, int x2, int y2)
-
+void fl_loop(int x, int y, int x1, int y1, int x2, int y2) <br>
 void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3)
 
 \par
 Outline a 3 or 4-sided polygon with lines.
 
 <A NAME="fl_polygon"></A> <!-- For old HTML links only ! -->
-void fl_polygon(int x, int y, int x1, int y1, int x2, int y2)
-
+void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) <br>
 void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3)
 
 \par
 Fill a 3 or 4-sided polygon. The polygon must be convex.
 
 <A NAME="fl_xyline"></A> <!-- For old HTML links only ! -->
-void fl_xyline(int x, int y, int x1)
-
-void fl_xyline(int x, int y, int x1, int y2)
-
+void fl_xyline(int x, int y, int x1) <br>
+void fl_xyline(int x, int y, int x1, int y2) <br>
 void fl_xyline(int x, int y, int x1, int y2, int x3)
 
 \par
@@ -344,10 +335,8 @@ Draw horizontal and vertical lines. A horizontal line is
 drawn first, then a vertical, then a horizontal.
 
 <A NAME="fl_yxline"></A> <!-- For old HTML links only ! -->
-void fl_yxline(int x, int y, int y1)
-
-void fl_yxline(int x, int y, int y1, int x2)
-
+void fl_yxline(int x, int y, int y1) <br>
+void fl_yxline(int x, int y, int y1, int x2) <br>
 void fl_yxline(int x, int y, int y1, int x2, int y3)
 
 \par
@@ -355,8 +344,7 @@ Draw vertical and horizontal lines. A vertical line is drawn
 first, then a horizontal, then a vertical.
 
 <A NAME="fl_pie"></A> <!-- For old HTML links only ! -->
-void fl_arc(int x, int y, int w, int h, double a1, double a2)
-
+void fl_arc(int x, int y, int w, int h, double a1, double a2) <br>
 void fl_pie(int x, int y, int w, int h, double a1, double a2)
 
 \par
@@ -409,8 +397,7 @@ graphics, so use OpenGL when greater accuracy and/or performance
 is required.
 
 <A NAME="fl_push_matrix"></A> <!-- For old HTML links only ! -->
-void fl_push_matrix()
-
+void fl_push_matrix() <br>
 void fl_pop_matrix()
 
 \par
@@ -418,14 +405,10 @@ Save and restore the current transformation.  The maximum
 depth of the stack is 4.
 
 <A NAME="fl_scale"></A> <!-- For old HTML links only ! -->
-void fl_scale(float x, float y)
-
-void fl_scale(float x)
-
-void fl_translate(float x, float y)
-
-void fl_rotate(float d)
-
+void fl_scale(float x, float y) <br>
+void fl_scale(float x) <br>
+void fl_translate(float x, float y) <br>
+void fl_rotate(float d) <br>
 void fl_mult_matrix(float a, float b, float c, float d, float x, float y)
 
 \par
@@ -433,14 +416,10 @@ Concatenate another transformation onto the current one. The rotation
 angle is in degrees (not radians) and is counter-clockwise.
 
 <A NAME="fl_transform"></A> <!-- For old HTML links only ! -->
-double fl_transform_x(double x, double y)
-
-double fl_transform_y(double x, double y)
-
-double fl_transform_dx(double x, double y)
-
-double fl_transform_dy(double x, double y)
-
+double fl_transform_x(double x, double y) <br>
+double fl_transform_y(double x, double y) <br>
+double fl_transform_dx(double x, double y) <br>
+double fl_transform_dy(double x, double y) <br>
 void fl_transformed_vertex(double xf, double yf)
 
 \par
@@ -449,8 +428,7 @@ After transforming a coordinate pair, it can be added to the vertex
 list without any forther translations using <tt>fl_transformed_vertex</tt>.
 
 <A NAME="fl_begin_points"></A> <!-- For old HTML links only ! -->
-void fl_begin_points()
-
+void fl_begin_points() <br>
 void fl_end_points()
 
 \par
@@ -458,34 +436,29 @@ Start and end drawing a list of points. Points are added to
 the list with <tt>fl_vertex</tt>.
 
 <A NAME="fl_begin_line"></A> <!-- For old HTML links only ! -->
-void fl_begin_line()
-
+void fl_begin_line() <br>
 void fl_end_line()
 
 \par
 Start and end drawing lines.
 
 <A NAME="fl_begin_loop"></A> <!-- For old HTML links only ! -->
-void fl_begin_loop()
-
+void fl_begin_loop() <br>
 void fl_end_loop()
 
 \par
 Start and end drawing a closed sequence of lines.
 
 <A NAME="fl_begin_polygon"></A> <!-- For old HTML links only ! -->
-void fl_begin_polygon()
-
+void fl_begin_polygon() <br>
 void fl_end_polygon()
 
 \par
 Start and end drawing a convex filled polygon.
 
 <A NAME="fl_begin_complex_polygon"></A> <!-- For old HTML links only ! -->
-void fl_begin_complex_polygon()
-
-void fl_gap()
-
+void fl_begin_complex_polygon() <br>
+void fl_gap() <br>
 void fl_end_complex_polygon()
 
 \par
@@ -558,8 +531,7 @@ It is undefined whether this location or the characters are
 modified by the current transformation.
 
 <A NAME="fl_draw"></A> <!-- For old HTML links only ! -->
-void fl_draw(const char *, int x, int y)
-
+void fl_draw(const char *, int x, int y) <br>
 void fl_draw(const char *, int n, int x, int y)
 
 \par
@@ -620,10 +592,8 @@ Recommended distance above the bottom of a fl_height() tall box to draw
 the text at so it looks centered vertically in that box.
 
 <A NAME="fl_width"></A> <!-- For old HTML links only ! -->
-float fl_width(const char*)
-
-float fl_width(const char*, int n)
-
+float fl_width(const char*) <br>
+float fl_width(const char*, int n) <br>
 float fl_width(uchar)
 
 \par
@@ -673,8 +643,7 @@ The font is identified by a <tt>face</tt> and a
 <tt>size</tt> pixels apart or more.
 
 <A NAME="fl_size"></A> <!-- For old HTML links only ! -->
-int fl_font()
-
+int fl_font() <br>
 int fl_size()
 
 \par
@@ -734,8 +703,7 @@ These functions allow you to draw interactive selection rectangles
 without using the overlay hardware. FLTK will XOR a single rectangle
 outline over a window.
 
-void fl_overlay_rect(int x, int y, int w, int h);
-
+void fl_overlay_rect(int x, int y, int w, int h); <br>
 void fl_overlay_clear();
 
 \par
@@ -772,9 +740,8 @@ transformation matrix is not the identity is not defined, so you
 should only draw images when the matrix is set to the identity.
 
 <A NAME="fl_draw_image"></A> <!-- For old HTML links only ! -->
-void fl_draw_image(const uchar *, int X, int Y, int W, int H, int D
-= 3, int LD = 0)
-
+void fl_draw_image(const uchar *, int X, int Y, int W, int H,
+int D = 3, int LD = 0) <br>
 void fl_draw_image_mono(const uchar *, int X, int Y, int W, int H,
 int D = 1, int LD = 0)
 
@@ -816,13 +783,11 @@ If FLTK cannot draw the image in the current visual it
 will abort. FLTK supports any visual of 8 bits or less,
 and all common TrueColor visuals up to 32 bits.
 
-typedef void (*fl_draw_image_cb)(void *, int x, int y, int w, uchar *)
-
-void fl_draw_image(fl_draw_image_cb, void *, int X, int Y, int W,
-int H, int D = 3)
-
-void fl_draw_image_mono(fl_draw_image_cb, void *, int X, int Y,
-int W, int H, int D = 1)
+typedef void (*fl_draw_image_cb)(void *, int x, int y, int w, uchar *) <br>
+void fl_draw_image(fl_draw_image_cb, void *, int X, int Y, int W, int H,
+int D = 3) <br>
+void fl_draw_image_mono(fl_draw_image_cb, void *, int X, int Y, int W, int H,
+int D = 1)
 
 \par
 Call the passed function to provide each scan line of the
@@ -970,8 +935,7 @@ Finally, FLTK provides a special image class called Fl_Tiled_Image to
 tile another image object in the specified area. This class can be
 used to tile a background image in a Fl_Group widget, for example.
 
-virtual void copy();
-
+virtual void copy(); <br>
 virtual void copy(int w, int h);
 
 \par
