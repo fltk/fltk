@@ -13,93 +13,67 @@ interfaces.
 <B>This manual may be printed, modified, and/or used under
 the terms of the FLTK license provided in \ref license.</B>
 
-<H2>Organization</H2>
+\section preface_organisation Organization
 
 This manual is organized into the following chapters and appendices:
 
-	\li \ref intro
+\li \ref intro
+\li \ref basics
+\li \ref common
+\li \ref editor
+\li \ref drawing
+\li \ref events
+\li \ref subclassing
+\li \ref opengl
+\li \ref fluid
+\li \ref advanced
+\li \ref unicode
+\li <A class="el" HREF="classes.html">A - Class Reference</A>
+\li <A class="el" HREF="functions.html#functions">B - Function Reference</A>
+\li \ref enumerations
+\li \ref glut
+\li \ref forms
+\li \ref osissues
+\li \ref migration_1_1
+\li \ref migration_1_3
+\li \ref development
+\li \ref license
+\li \ref examples
 
-	\li \ref basics
+\section preface_conventions Conventions
 
-	\li \ref common
+The following typeface conventions are used in this manual:
 
-	\li \ref editor
+\li Function and constant names are shown in <B><TT>bold courier type</TT></B>
+\li Code samples and commands are shown in <TT>regular courier type</TT>
 
-	\li \ref drawing
+\section preface_abbreviations Abbreviations
 
-	\li \ref events
+The following abbreviations are used in this manual:
 
-	\li \ref subclassing
+\par  X11
+The X Window System version 11.
 
-	\li \ref opengl
+\par Xlib
+The X Window System interface library.
 
-	\li \ref fluid
+\par WIN32
+The Microsoft Windows 32-bit Application Programmer's Interface.
 
-	\li \ref advanced
+\par MacOS
+The Apple Macintosh OS 8.6 and later, including OS X.
 
-	\li \ref unicode
+\section preface_copyrights Copyrights and Trademarks
 
-	\li <A class="el" HREF="classes.html">A - Class Reference</A>
-
-	\li <A class="el" HREF="functions.html#functions">B - Function Reference</A>
-
-	\li \ref enumerations
-
-	\li \ref glut
-
-	\li \ref forms
-
-	\li \ref osissues
-
-	\li \ref migration_1_1
-
-	\li \ref migration_1_3
-
-	\li \ref development
-
-	\li \ref license
-
-	\li \ref examples
-
-<H2>Conventions</H2>
-
-<P>The following typeface conventions are used in this manual:</P>
-
-	\li Function and constant names are shown in <B><TT>bold courier type</TT></B>
-
-	\li Code samples and commands are shown in <TT>regular courier type</TT>
-
-<H2>Abbreviations</H2>
-
-<P>The following abbreviations are used in this manual:</P>
-
-<DL>
-
-	<DT>X11</DT>
-	<DD>The X Window System version 11.</DD>
-
-	<DT>Xlib</DT>
-	<DD>The X Window System interface library.</DD>
-
-	<DT>WIN32</DT>
-	<DD>The Microsoft Windows 32-bit Application Programmer's Interface.</DD>
-
-	<DT>MacOS</DT>
-	<DD>The Apple Macintosh OS 8.6 and later, including OS X.</DD>
-
-</DL>
-
-<H2>Copyrights and Trademarks</H2>
-
-<P>FLTK is Copyright 1998-2008 by Bill Spitzak and others.  Use and
+FLTK is Copyright 1998-2008 by Bill Spitzak and others.  Use and
 distribution of FLTK is governed by the GNU Library General Public
-License with 4 exceptions, located in \ref license.</P>
+License with 4 exceptions, located in \ref license.
 
-<P>UNIX is a registered trademark of the X Open Group, Inc. 
+UNIX is a registered trademark of the X Open Group, Inc. 
 Microsoft and Windows are registered trademarks of Microsoft
 Corporation. OpenGL is a registered trademark of Silicon
 Graphics, Inc. Apple, Macintosh, MacOS, and Mac OS X are
-registered trademarks of Apple Computer, Inc.</P>
+registered trademarks of Apple Computer, Inc.
 
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
