@@ -2,33 +2,29 @@
 
  \page	editor	4 - Designing a Simple Text Editor
 
-<P>This chapter takes you through the design of a simple
+This chapter takes you through the design of a simple
 FLTK-based text editor.
 
-<H2>Determining the Goals of the Text Editor</H2>
+\section editor_goals Determining the Goals of the Text Editor
 
-<P>Since this will be the first big project you'll be doing with FLTK,
+Since this will be the first big project you'll be doing with FLTK,
 lets define what we want our text editor to do:
 
-<OL>
-
-	<LI>Provide a menubar/menus for all functions.</LI>
-	<LI>Edit a single text file, possibly with multiple views.</LI>
-	<LI>Load from a file.</LI>
-	<LI>Save to a file.</LI>
-	<LI>Cut/copy/delete/paste functions.</LI>
-	<LI>Search and replace functions.</LI>
-	<LI>Keep track of when the file has been changed.</LI>
-
-</OL>
+-# Provide a menubar/menus for all functions.
+-# Edit a single text file, possibly with multiple views.
+-# Load from a file.
+-# Save to a file.
+-# Cut/copy/delete/paste functions.
+-# Search and replace functions.
+-# Keep track of when the file has been changed.
 
 <!-- NEED 4in -->
 
-<H2>Designing the Main Window</H2>
+\section editor_main_window Designing the Main Window
 
-<P>Now that we've outlined the goals for our editor, we can begin with
+Now that we've outlined the goals for our editor, we can begin with
 the design of our GUI. Obviously the first thing that we need is a
-window, which we'll place inside a class called <TT>EditorWindow</TT>:
+window, which we'll place inside a class called <tt>EditorWindow</tt>:
 
 \code
 class EditorWindow : public Fl_Double_Window {
@@ -48,10 +44,9 @@ class EditorWindow : public Fl_Double_Window {
 };
 \endcode
 
-<H2>Variables</H2>
+\section editor_variables Variables
 
-<P>Our text editor will need some global variables to keep track of
-things:
+Our text editor will need some global variables to keep track of things:
 
 \code
 int            changed = 0;
@@ -59,16 +54,16 @@ char           filename[256] = "";
 Fl_Text_Buffer *textbuf;
 \endcode
 
-<P>The <TT>textbuf</TT> variable is the text editor buffer for
+The <tt>textbuf</tt> variable is the text editor buffer for
 our window class described previously. We'll cover the other
-variables as we build the application.</P>
+variables as we build the application.
 
-<H2>Menubars and Menus</H2>
+\section editor_menubars Menubars and Menus
 
-<P>The first goal requires us to use a menubar and menus that
-define each function the editor needs to perform. The <A
-href="Fl_Menu_Item.html"><TT>Fl_Menu_Item</TT></A> structure is
-used to define the menus and items in a menubar:</P>
+The first goal requires us to use a menubar and menus that
+define each function the editor needs to perform. The
+<A href="Fl_Menu_Item.html"><tt>Fl_Menu_Item</tt></A>
+structure is used to define the menus and items in a menubar:
 
 \code
 Fl_Menu_Item menuitems[] = {
@@ -102,20 +97,20 @@ Fl_Menu_Item menuitems[] = {
 };
 \endcode
 
-<P>Once we have the menus defined we can create the
-<TT>Fl_Menu_Bar</TT> widget and assign the menus to it with:</P>
+Once we have the menus defined we can create the
+<tt>Fl_Menu_Bar</tt> widget and assign the menus to it with:
 
 \code
 Fl_Menu_Bar *m = new Fl_Menu_Bar(0, 0, 640, 30);
 m->copy(menuitems);
 \endcode
 
-<P>We'll define the callback functions later.
+We'll define the callback functions later.
 
-<H2>Editing the Text</H2>
+\section editor_editing Editing the Text
 
-<P>To keep things simple our text editor will use the
-<A HREF="Fl_Text_Editor.html"><TT>Fl_Text_Editor</TT></A>
+To keep things simple our text editor will use the
+<A HREF="Fl_Text_Editor.html"><tt>Fl_Text_Editor</tt></A>
 widget to edit the text:
 
 \code
@@ -123,32 +118,32 @@ w->editor = new Fl_Text_Editor(0, 30, 640, 370);
 w->editor->buffer(textbuf);
 \endcode
 
-<P>So that we can keep track of changes to the file, we also want to add
-a "modify" callback:</P>
+So that we can keep track of changes to the file, we also want to add
+a "modify" callback:
 
 \code
 textbuf->add_modify_callback(changed_cb, w);
 textbuf->call_modify_callbacks();
 \endcode
 
-<P>Finally, we want to use a mono-spaced font like <TT>FL_COURIER</TT>:
+Finally, we want to use a mono-spaced font like <tt>FL_COURIER</tt>:
 
 \code
 w->editor->textfont(FL_COURIER);
 \endcode
 
-<H2>The Replace Dialog</H2>
+\section editor_replace_dialog The Replace Dialog
 
-<P>We can use the FLTK convenience functions for many of the
+We can use the FLTK convenience functions for many of the
 editor's dialogs, however the replace dialog needs its own
 custom window.  To keep things simple we will have a
 "find" string, a "replace" string, and
 "replace all", "replace next", and
 "cancel" buttons.  The strings are just
-<TT>Fl_Input</TT> widgets, the "replace all" and
-"cancel" buttons are <TT>Fl_Button</TT> widgets, and
+<tt>Fl_Input</tt> widgets, the "replace all" and
+"cancel" buttons are <tt>Fl_Button</tt> widgets, and
 the "replace next " button is a
-<TT>Fl_Return_Button</TT> widget:</P>
+<tt>Fl_Return_Button</tt> widget:
 
 \image html editor-replace.gif "Figure 4-1: The search and replace dialog"
 
@@ -161,15 +156,15 @@ Fl_Button *replace_next = new Fl_Button(105, 70, 120, 25, "Replace Next");
 Fl_Button *replace_cancel = new Fl_Button(230, 70, 60, 25, "Cancel");
 \endcode
 
-<H2>Callbacks</H2>
+\section editor_callbacks Callbacks
 
-<P>Now that we've defined the GUI components of our editor, we
-need to define our callback functions.</P>
+Now that we've defined the GUI components of our editor, we
+need to define our callback functions.
 
-<H3>changed_cb()</H3>
+\subsection editor_changed_cb changed_cb()
 
-<P>This function will be called whenever the user changes any text in the
-<TT>editor</TT> widget:
+This function will be called whenever the user changes any text in the
+<tt>editor</tt> widget:
 
 \code
 void changed_cb(int, int nInserted, int nDeleted,int, const char*, void* v) {
@@ -180,16 +175,16 @@ void changed_cb(int, int nInserted, int nDeleted,int, const char*, void* v) {
 }
 \endcode
 
-<P>The <TT>set_title()</TT> function is one that we will write to set
+The <tt>set_title()</tt> function is one that we will write to set
 the changed status on the current file.  We're doing it this way
 because we want to show the changed status in the window's
 title bar.
 
-<H3>copy_cb()</H3>
+\subsection editor_copy_cb copy_cb()
 
-<P>This callback function will call <A
-href="Fl_Text_Editor.html#Fl_Text_Editor.kf_copy"><TT>kf_copy()</TT></A>
-to copy the currently selected text to the clipboard:</P>
+This callback function will call
+<A href="Fl_Text_Editor.html#Fl_Text_Editor.kf_copy"><tt>kf_copy()</tt></A>
+to copy the currently selected text to the clipboard:
 
 \code
 void copy_cb(Fl_Widget*, void* v) {
@@ -198,11 +193,11 @@ void copy_cb(Fl_Widget*, void* v) {
 }
 \endcode
 
-<H3>cut_cb()</H3>
+\subsection editor_cut_cb cut_cb()
 
-<P>This callback function will call <A
-href="Fl_Text_Editor.html#Fl_Text_Editor.kf_cut"><TT>kf_cut()</TT></A>
-to cut the currently selected text to the clipboard:</P>
+This callback function will call
+<A href="Fl_Text_Editor.html#Fl_Text_Editor.kf_cut"><tt>kf_cut()</tt></A>
+to cut the currently selected text to the clipboard:
 
 \code
 void cut_cb(Fl_Widget*, void* v) {
@@ -211,11 +206,12 @@ void cut_cb(Fl_Widget*, void* v) {
 }
 \endcode
 
-<H3>delete_cb()</H3>
+\subsection editor_delete_cb delete_cb()
 
-<P>This callback function will call <A
-href="Fl_Text_Buffer.html#Fl_Text_Buffer.remove_selection"><TT>remove_selection()</TT></A>
-to delete the currently selected text to the clipboard:</P>
+This callback function will call
+<A href="Fl_Text_Buffer.html#Fl_Text_Buffer.remove_selection">
+<tt>remove_selection()</tt></A>
+to delete the currently selected text to the clipboard:
 
 \code
 void delete_cb(Fl_Widget*, void* v) {
@@ -223,11 +219,11 @@ void delete_cb(Fl_Widget*, void* v) {
 }
 \endcode
 
-<H3>find_cb()</H3>
+\subsection editor_find_cb find_cb()
 
-<P>This callback function asks for a search string using the <A
-href="functions.html#fl_input2"><TT>fl_input()</TT></A>
-convenience function and then calls the <TT>find2_cb()</TT>
+This callback function asks for a search string using the
+<A href="functions.html#fl_input2"><tt>fl_input()</tt></A>
+convenience function and then calls the <tt>find2_cb()</tt>
 function to find the string:
 
 \code
@@ -243,9 +239,9 @@ void find_cb(Fl_Widget* w, void* v) {
   }
 \endcode
 
-<H3>find2_cb()</H3>
+\subsection editor_find2_cb find2_cb()
 
-<P>This function will find the next occurrence of the search
+This function will find the next occurrence of the search
 string. If the search string is blank then we want to pop up the
 search dialog:
 
@@ -270,13 +266,14 @@ void find2_cb(Fl_Widget* w, void* v) {
 }
 \endcode
 
-<P>If the search string cannot be found we use the <A
-href="functions.html#fl_alert"><TT>fl_alert()</TT></A>
+If the search string cannot be found we use the
+<A href="functions.html#fl_alert"><tt>fl_alert()</tt></A>
 convenience function to display a message to that effect.
 
-<H3>new_cb()</H3>
-<P>This callback function will clear the editor widget and current
-filename. It also calls the <TT>check_save()</TT> function to give the
+\subsection editor_new_cb new_cb()
+
+This callback function will clear the editor widget and current
+filename. It also calls the <tt>check_save()</tt> function to give the
 user the opportunity to save the current file first as needed:
 
 \code
@@ -291,11 +288,11 @@ void new_cb(Fl_Widget*, void*) {
 }
 \endcode
 
-<H3>open_cb()</H3>
+\subsection editor_open_cb open_cb()
 
-<P>This callback function will ask the user for a filename and then load
+This callback function will ask the user for a filename and then load
 the specified file into the input widget and current filename. It also
-calls the <TT>check_save()</TT> function to give the user the
+calls the <tt>check_save()</tt> function to give the user the
 opportunity to save the current file first as needed:
 
 \code
@@ -307,13 +304,13 @@ void open_cb(Fl_Widget*, void*) {
 }
 \endcode
 
-<P>We call the <TT>load_file()</TT> function to actually load the file.
+We call the <tt>load_file()</tt> function to actually load the file.
 
-<H3>paste_cb()</H3>
+\subsection editor_paste_cb paste_cb()
 
-<P>This callback function will call <A
-href="Fl_Text_Editor.html#Fl_Text_Editor.kf_paste"><TT>kf_paste()</TT></A>
-to paste the clipboard at the current position:</P>
+This callback function will call
+<A href="Fl_Text_Editor.html#Fl_Text_Editor.kf_paste"><tt>kf_paste()</tt></A>
+to paste the clipboard at the current position:
 
 \code
 void paste_cb(Fl_Widget*, void* v) {
@@ -322,9 +319,9 @@ void paste_cb(Fl_Widget*, void* v) {
 }
 \endcode
 
-<H3>quit_cb()</H3>
+\subsection editor_quit_cb quit_cb()
 
-<P>The quit callback will first see if the current file has been
+The quit callback will first see if the current file has been
 modified, and if so give the user a chance to save it. It then exits
 from the program:
 
@@ -337,9 +334,9 @@ void quit_cb(Fl_Widget*, void*) {
 }
 \endcode
 
-<H3>replace_cb()</H3>
+\subsection editor_replace_cb replace_cb()
 
-<P>The replace callback just shows the replace dialog:
+The replace callback just shows the replace dialog:
 
 \code
 void replace_cb(Fl_Widget*, void* v) {
@@ -348,9 +345,9 @@ void replace_cb(Fl_Widget*, void* v) {
 }
 \endcode
 
-<H3>replace2_cb()</H3>
+\subsection editor_replace2_cb replace2_cb()
 
-<P>This callback will replace the next occurrence of the replacement
+This callback will replace the next occurrence of the replacement
 string. If nothing has been entered for the replacement string, then
 the replace dialog is displayed instead:
 
@@ -384,9 +381,9 @@ void replace2_cb(Fl_Widget*, void* v) {
 }
 \endcode
 
-<H3>replall_cb()</H3>
+\subsection editor_replall_cb replall_cb()
 
-<P>This callback will replace all occurrences of the search
+This callback will replace all occurrences of the search
 string in the file:
 
 \code
@@ -428,9 +425,9 @@ void replall_cb(Fl_Widget*, void* v) {
 }
 \endcode
 
-<H3>replcan_cb()</H3>
+\subsection editor_replcan_cb replcan_cb()
 
-<P>This callback just hides the replace dialog:
+This callback just hides the replace dialog:
 
 \code
 void replcan_cb(Fl_Widget*, void* v) {
@@ -439,9 +436,9 @@ void replcan_cb(Fl_Widget*, void* v) {
 }
 \endcode
 
-<H3>save_cb()</H3>
+\subsection editor_save_cb save_cb()
 
-<P>This callback saves the current file.  If the current filename is
+This callback saves the current file.  If the current filename is
 blank it calls the "save as" callback:
 
 \code
@@ -455,12 +452,12 @@ void save_cb(void) {
 }
 \endcode
 
-<P>The <TT>save_file()</TT> function saves the current file to the
+The <tt>save_file()</tt> function saves the current file to the
 specified filename.
 
-<H3>saveas_cb()</H3>
+\subsection editor_saveas_cb saveas_cb()
 
-<P>This callback asks the user for a filename and saves the current file:
+This callback asks the user for a filename and saves the current file:
 
 \code
 void saveas_cb(void) {
@@ -471,17 +468,17 @@ void saveas_cb(void) {
 }
 \endcode
 
-<P>The <TT>save_file()</TT> function saves the current file to the
+The <tt>save_file()</tt> function saves the current file to the
 specified filename.
 
-<H2>Other Functions</H2>
+\section editor_other_functions Other Functions
 
-<P>Now that we've defined the callback functions, we need our support
+Now that we've defined the callback functions, we need our support
 functions to make it all work:
 
-<H3>check_save()</H3>
+\subsection editor_check_save check_save()
 
-<P>This function checks to see if the current file needs to be saved.  If
+This function checks to see if the current file needs to be saved.  If
 so, it asks the user if they want to save it:
 
 \code
@@ -501,9 +498,9 @@ int check_save(void) {
 }
 \endcode
 
-<H3>load_file()</H3>
+\subsection editor_load_file load_file()
 
-<P>This function loads the specified file into the <TT>textbuf</TT> class:
+This function loads the specified file into the <tt>textbuf</tt> class:
 
 \code
 int loading = 0;
@@ -524,15 +521,15 @@ void load_file(char *newfile, int ipos) {
 }
 \endcode
 
-<P>When loading the file we use the <A
-href="Fl_Text_Buffer.html#Fl_Text_Buffer.loadfile"><TT>loadfile()</TT></A>
-method to "replace" the text in the buffer, or the <A
-href="Fl_Text_Buffer.html#Fl_Text_Buffer.insertfile"><TT>insertfile()</TT></A>
+When loading the file we use the
+<A href="Fl_Text_Buffer.html#Fl_Text_Buffer.loadfile"><tt>loadfile()</tt></A>
+method to "replace" the text in the buffer, or the
+<A href="Fl_Text_Buffer.html#Fl_Text_Buffer.insertfile"><tt>insertfile()</tt></A>
 method to insert text in the buffer from the named file.
 
-<H3>save_file()</H3>
+\subsection editor_save_file save_file()
 
-<P>This function saves the current buffer to the specified file:
+This function saves the current buffer to the specified file:
 
 \code
 void save_file(char *newfile) {
@@ -545,9 +542,9 @@ void save_file(char *newfile) {
 }
 \endcode
 
-<H3>set_title()</H3>
+\subsection editor_set_title set_title()
 
-<P>This function checks the <TT>changed</TT> variable and updates the
+This function checks the <tt>changed</tt> variable and updates the
 window label accordingly:
 \code
 void set_title(Fl_Window* w) {
@@ -568,11 +565,11 @@ void set_title(Fl_Window* w) {
 }
 \endcode
 
-<H2>The main() Function</H2>
+\section editor_main_function The main() Function
 
-<P>Once we've created all of the support functions, the only thing left
-is to tie them all together with the <TT>main()</TT> function.
-The <TT>main()</TT> function creates a new text buffer, creates a
+Once we've created all of the support functions, the only thing left
+is to tie them all together with the <tt>main()</tt> function.
+The <tt>main()</tt> function creates a new text buffer, creates a
 new view (window) for the text, shows the window, loads the file on
 the command-line (if any), and then enters the FLTK event loop:
 
@@ -590,9 +587,10 @@ int main(int argc, char **argv) {
 }
 \endcode
 
-<H2>Compiling the Editor</H2>
+\section editor_compiling Compiling the Editor
 
-<P>The complete source for our text editor can be found in the <TT>test/editor.cxx</TT> source file.  Both the Makefile and Visual C++
+The complete source for our text editor can be found in the
+<tt>test/editor.cxx</tt> source file.  Both the Makefile and Visual C++
 workspace include the necessary rules to build the editor.  You can
 also compile it using a standard compiler with:
 
@@ -600,41 +598,44 @@ also compile it using a standard compiler with:
 CC -o editor editor.cxx -lfltk -lXext -lX11 -lm
 \endcode
 
-<P>or by using the <TT>fltk-config</TT> script with:
+or by using the <tt>fltk-config</tt> script with:
 
 \code
 fltk-config --compile editor.cxx
 \endcode
 
-<P>As noted in <A href="basics.html">Chapter 1</A>, you may need to
+As noted in
+<A href="basics.html">Chapter 1</A>,
+you may need to
 include compiler and linker options to tell them where to find the FLTK
-library. Also, the <TT>CC</TT> command may also be called <TT>gcc</TT>
-or <TT>c++</TT> on your system.
+library. Also, the <tt>CC</tt> command may also be called <tt>gcc</tt>
+or <tt>c++</tt> on your system.
 
-<P>Congratulations, you've just built your own text editor!</P>
+Congratulations, you've just built your own text editor!
 
-<H2>The Final Product</H2>
+\section editor_final_product The Final Product
 
 The final editor window should look like the image in Figure 4-2.
 
 \image html editor.gif "Figure 4-2: The completed editor window"
 
-<H2>Advanced Features</H2>
+\section editor_advanced_features Advanced Features
 
-<P>Now that we've implemented the basic functionality, it is
+Now that we've implemented the basic functionality, it is
 time to show off some of the advanced features of the
 <CODE>Fl_Text_Editor</CODE> widget.
 
-<H3>Syntax Highlighting</H3>
+\subsection editor_syntax Syntax Highlighting
 
-<P>The <CODE>Fl_Text_Editor</CODE> widget supports highlighting
+The <CODE>Fl_Text_Editor</CODE> widget supports highlighting
 of text with different fonts, colors, and sizes. The
-implementation is based on the excellent <A
-HREF="http://www.nedit.org/">NEdit</A> text editor core, which
+implementation is based on the excellent
+<A HREF="http://www.nedit.org/">NEdit</A>
+text editor core, which
 uses a parallel "style" buffer which tracks the font, color, and
 size of the text that is drawn.
 
-<P>Styles are defined using the
+Styles are defined using the
 <CODE>Fl_Text_Display::Style_Table_Entry</CODE> structure
 defined in <CODE><FL/Fl_Text_Display.H></CODE>:
 
@@ -647,12 +648,12 @@ struct Style_Table_Entry {
 };
 \endcode
 
-<P>The <CODE>color</CODE> member sets the color for the text,
+The <CODE>color</CODE> member sets the color for the text,
 the <CODE>font</CODE> member sets the FLTK font index to use,
 and the <CODE>size</CODE> member sets the pixel size of the
 text. The <CODE>attr</CODE> member is currently not used.
 
-<P>For our text editor we'll define 7 styles for plain code,
+For our text editor we'll define 7 styles for plain code,
 comments, keywords, and preprocessor directives:
 
 \code
@@ -667,11 +668,11 @@ Fl_Text_Display::Style_Table_Entry styletable[] = {     // Style table
 };
 \endcode
 
-<P>You'll notice that the comments show a letter next to each
+You'll notice that the comments show a letter next to each
 style - each style in the style buffer is referenced using a
 character starting with the letter 'A'.
 
-<P>You call the <CODE>highlight_data()</CODE> method to associate the
+You call the <CODE>highlight_data()</CODE> method to associate the
 style data and buffer with the text editor widget:
 
 \code
@@ -682,14 +683,14 @@ w->editor->highlight_data(stylebuf, styletable,
                           'A', style_unfinished_cb, 0);
 \endcode
 
-<P>Finally, you need to add a callback to the main text buffer so
+Finally, you need to add a callback to the main text buffer so
 that changes to the text buffer are mirrored in the style buffer:
 
 \code
 textbuf->add_modify_callback(style_update, w->editor);
 \endcode
 
-<P>The <CODE>style_update()</CODE> function, like the <CODE>change_cb()</CODE>
+The <CODE>style_update()</CODE> function, like the <CODE>change_cb()</CODE>
 function described earlier, is called whenever text is added or removed from
 the text buffer. It mirrors the changes in the style buffer and then updates
 the style data as necessary:
@@ -774,7 +775,7 @@ style_update(int        pos,          // I - Position of update
 }
 \endcode
 
-<P>The <CODE>style_parse()</CODE> function scans a copy of the
+The <CODE>style_parse()</CODE> function scans a copy of the
 text in the buffer and generates the necessary style characters
 for display. It assumes that parsing begins at the start of a line:
 
