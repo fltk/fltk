@@ -227,7 +227,7 @@ and shows OpenGL text.
 \subsection examples_cursor cursor
 
 \par
-The \c cursor demo show all mouse cursor shapes that come standard
+The \c cursor demo shows all mouse cursor shapes that come standard
 with FLTK. The <i>fgcolor</i> and <i>bgcolor</i> sliders work only
 on few systems (some version of Irix for example).
 
@@ -262,7 +262,7 @@ to not tripple buffer a window in that case.
 
 \par
 FLTK has two very different text input widgets. Fl_Input 
-and derived classes are rather leight weight, however 
+and derived classes are rather light weight, however 
 Fl_Text_Editor is a complete port of <i>nedit</i> (with permission). 
 The \c editor test is almost a full application, showing custom
 syntax highlighting and dialog creation. 
@@ -271,7 +271,7 @@ syntax highlighting and dialog creation.
 \subsection examples_fast_slow fast_slow
 
 \par
-\c fast_slow shows how an application can use then when()
+\c fast_slow shows how an application can use the Fl_Widget::when()
 setting to receive different kinds of callbacks.
 
 <a name="file_chooser"></a> <!-- For old HTML links only ! -->
@@ -286,7 +286,7 @@ browser and a fast light implementation.
 \subsection examples_fonts fonts
 
 \par
-\c fonts show all available text fonts on the host system.
+\c fonts shows all available text fonts on the host system.
 If your machine still has some pixmap based fonts, the supported
 sizes will be shown in bold face. Only the first 256 fonts will 
 be listed.
@@ -297,7 +297,7 @@ be listed.
 \par
 \c forms is an XForms program with very few changes.
 Search for "fltk" to find all changes necessary to port to fltk.
-This demo show the different boxtypes. Note that some
+This demo shows the different boxtypes. Note that some
 boxtypes are not appropriate for some objects.
 
 <a name="fractals"></a> <!-- For old HTML links only ! -->
@@ -306,7 +306,7 @@ boxtypes are not appropriate for some objects.
 \par
 \c fractals shows how to mix OpenGL, Glut and FLTK code.
 FLTK supports a rather large subset of Glut, so that many Glut
-application compile just fine.
+applications compile just fine.
 
 <a name="fullscreen"></a> <!-- For old HTML links only ! -->
 \subsection examples_fullscreen fullscreen
@@ -448,7 +448,7 @@ arbitrary sub menu depth, and global shortcuts.
 \subsection examples_message message
 
 \par
-\c message pops up a few of FLTK's standars message boxes.
+\c message pops up a few of FLTK's standard message boxes.
 
 <a name="minimum"></a> <!-- For old HTML links only ! -->
 \subsection examples_minimum minimum
@@ -479,7 +479,7 @@ selected from the FLTK standard list of fonts.
 
 \par
 The \c overlay test app show how easy an FLTK window can
-be layered to display cursor and manipulator style elemnts. This
+be layered to display cursor and manipulator style elements. This
 example derives a new class from Fl_Overlay_Window and 
 provides a new function to draw custom overlays.
 
@@ -563,7 +563,7 @@ and write that flight simulator you always dreamt of.
 \par
 The \c subwindow demo tests messaging and drawing between 
 the main window and 'true' sub windows. A sub window is different
-to a group by resetting the FLTK coordinate stystem to 0, 0 in the
+to a group by resetting the FLTK coordinate system to 0, 0 in the
 top left corner. On Win32 and X11, subwindows have their own 
 operating system specific handle.
 
@@ -604,7 +604,7 @@ for direct comparison of these two panel management widgets.
 \par
 FLTK can be used in a multithreading environment. There are some
 limitations, mostly due to the underlying operating system. 
-\c threads show how to use Fl::lock(), 
+\c threads shows how to use Fl::lock(), 
 Fl::unlock(), and Fl::awake() in secondary threads 
 to keep FLTK happy. Although locking works on all platforms, 
 this demo is not available on every machine.
@@ -623,7 +623,7 @@ To test correct resizing of subwindows, the widget for region
 \par
 The \c tiled_image demo uses an image as the background
 for a window by repeating it over the full size of the widget.
-Thw window is resizable and shows how the image gets repeated.
+The window is resizable and shows how the image gets repeated.
 
 <a name="valuators"></a> <!-- For old HTML links only ! -->
 \subsection examples_valuators valuators
