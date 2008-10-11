@@ -2,448 +2,644 @@
 
  \page	examples	K - Example Source Code
 
-<P ALIGN="RIGHT">March 19, 2005</P>
+\par March 19, 2005
 
-<P>The FLTK distribution contains over 60 sample applications written
+The FLTK distribution contains over 60 sample applications written
 in, or ported to, FLTK. If the FLTK archive you received does not
 contain a 'test' directory, you can download the complete FLTK
-distribution from 
-<a href="http://fltk.org/software.php">http://fltk.org/software.php</a>.</P>
+distribution from \b http://fltk.org/software.php .
 
-<P>Most of the example programs were created while testing a group of widgets. 
-They are not meant to be great achievements in clean C++ programming, but merely
-a test platform to verify the functionality of the FLTK library.</P>
+Most of the example programs were created while testing a group of widgets. 
+They are not meant to be great achievements in clean C++ programming, but
+merely a test platform to verify the functionality of the FLTK library.
+
+\section example_applications  Example Applications
 
 <table width=100% border=0>
-<tr><td colspan=4><H3><b>Example Applications</b></H3></td>
 <tr>
-<td><a href="#adjuster"><tt>adjuster</tt></a></td>
-<td><a href="#arc"><tt>arc</tt></a></td>
-<td><a href="#ask"><tt>ask</tt></a></td>
-<td><a href="#bitmap"><tt>bitmap</tt></a></td>
-<td><a href="#blocks"><tt>blocks</tt></a></td>
-<td><a href="#boxtype"><tt>boxtype</tt></a></td>
+<td> \ref examples_adjuster        </td>
+<td> \ref examples_arc             </td>
+<td> \ref examples_ask             </td>
+<td> \ref examples_bitmap          </td>
+<td> \ref examples_blocks          </td>
+<td> \ref examples_boxtype         </td>
 </tr>
 <tr>
-<td><a href="#browser"><tt>browser</tt></a></td>
-<td><a href="#button"><tt>button</tt></a></td>
-<td><a href="#buttons"><tt>buttons</tt></a></td>
-<td><a href="#checkers"><tt>checkers</tt></a></td>
-<td><a href="#clock"><tt>clock</tt></a></td>
-<td><a href="#colbrowser"><tt>colbrowser</tt></a></td>
+<td> \ref examples_browser         </td>
+<td> \ref examples_button          </td>
+<td> \ref examples_buttons         </td>
+<td> \ref examples_checkers        </td>
+<td> \ref examples_clock           </td>
+<td> \ref examples_colbrowser      </td>
 </tr>
 <tr>
-<td><a href="#color_chooser"><tt>color_chooser</tt></a></td>
-<td><a href="#cube"><tt>cube</tt></a></td>
-<td><a href="#CubeView"><tt>CubeView</tt></a></td>
-<td><a href="#cursor"><tt>cursor</tt></a></td>
-<td><a href="#curve"><tt>curve</tt></a></td>
-<td><a href="#demo"><tt>demo</tt></a></td>
+<td> \ref examples_color_chooser   </td>
+<td> \ref examples_cube            </td>
+<td> \ref examples_CubeView        </td>
+<td> \ref examples_cursor          </td>
+<td> \ref examples_curve           </td>
+<td> \ref examples_demo            </td>
 </tr>
 <tr>
-<td><a href="#doublebuffer"><tt>doublebuffer</tt></a></td>
-<td><a href="#editor"><tt>editor</tt></a></td>
-<td><a href="#fast_slow"><tt>fast_slow</tt></a></td>
-<td><a href="#file_chooser"><tt>file_chooser</tt></a></td>
-<td><a href="#fluid"><tt>fluid</tt></a></td>
-<td><a href="#fonts"><tt>fonts</tt></a></td>
+<td> \ref examples_doublebuffer    </td>
+<td> \ref examples_editor          </td>
+<td> \ref examples_fast_slow       </td>
+<td> \ref examples_file_chooser    </td>
+<td> \ref examples_fluid           </td>
+<td> \ref examples_fonts           </td>
 </tr>
 <tr>
-<td><a href="#forms"><tt>forms</tt></a></td>
-<td><a href="#fractals"><tt>fractals</tt></a></td>
-<td><a href="#fullscreen"><tt>fullscreen</tt></a></td>
-<td><a href="#gl_overlay"><tt>gl_overlay</tt></a></td>
-<td><a href="#glpuzzle"><tt>glpuzzle</tt></a></td>
-<td><a href="#hello"><tt>hello</tt></a></td>
+<td> \ref examples_forms           </td>
+<td> \ref examples_fractals        </td>
+<td> \ref examples_fullscreen      </td>
+<td> \ref examples_gl_overlay      </td>
+<td> \ref examples_glpuzzle        </td>
+<td> \ref examples_hello           </td>
 </tr>
 <tr>
-<td><a href="#help"><tt>help</tt></a></td>
-<td><a href="#iconize"><tt>iconize</tt></a></td>
-<td><a href="#image"><tt>image</tt></a></td>
-<td><a href="#inactive"><tt>inactive</tt></a></td>
-<td><a href="#input"><tt>input</tt></a></td>
-<td><a href="#input_choice"><tt>input_choice</tt></a></td>
+<td> \ref examples_help            </td>
+<td> \ref examples_iconize         </td>
+<td> \ref examples_image           </td>
+<td> \ref examples_inactive        </td>
+<td> \ref examples_input           </td>
+<td> \ref examples_input_choice    </td>
 </tr>
 <tr>
-<td><a href="#keyboard"><tt>keyboard</tt></a></td>
-<td><a href="#label"><tt>label</tt></a></td>
-<td><a href="#line_style"><tt>line_style</tt></a></td>
-<td><a href="#list_visuals"><tt>list_visuals</tt></a></td>
-<td><a href="#mandelbrot"><tt>mandelbrot</tt></a></td>
-<td><a href="#menubar"><tt>menubar</tt></a></td>
+<td> \ref examples_keyboard        </td>
+<td> \ref examples_label           </td>
+<td> \ref examples_line_style      </td>
+<td> \ref examples_list_visuals    </td>
+<td> \ref examples_mandelbrot      </td>
+<td> \ref examples_menubar         </td>
 </tr>
 <tr>
-<td><a href="#message"><tt>message</tt></a></td>
-<td><a href="#minimum"><tt>minimum</tt></a></td>
-<td><a href="#navigation"><tt>navigation</tt></a></td>
-<td><a href="#output"><tt>output</tt></a></td>
-<td><a href="#overlay"><tt>overlay</tt></a></td>
-<td><a href="#pack"><tt>pack</tt></a></td>
+<td> \ref examples_message         </td>
+<td> \ref examples_minimum         </td>
+<td> \ref examples_navigation      </td>
+<td> \ref examples_output          </td>
+<td> \ref examples_overlay         </td>
+<td> \ref examples_pack            </td>
 </tr>
 <tr>
-<td><a href="#pixmap_browser"><tt>pixmap_browser</tt></a></td>
-<td><a href="#pixmap"><tt>pixmap</tt></a></td>
-<td><a href="#preferences"><tt>preferences</tt></a></td>
-<td><a href="#radio"><tt>radio</tt></a></td>
-<td><a href="#resizebox"><tt>resizebox</tt></a></td>
-<td><a href="#resize"><tt>resize</tt></a></td>
+<td> \ref examples_pixmap_browser  </td>
+<td> \ref examples_pixmap          </td>
+<td> \ref examples_preferences     </td>
+<td> \ref examples_radio           </td>
+<td> \ref examples_resizebox       </td>
+<td> \ref examples_resize          </td>
 </tr>
 <tr>
-<td><a href="#scroll"><tt>scroll</tt></a></td>
-<td><a href="#shape"><tt>shape</tt></a></td>
-<td><a href="#subwindow"><tt>subwindow</tt></a></td>
-<td><a href="#sudoku"><tt>sudoku</tt></a></td>
-<td><a href="#symbols"><tt>symbols</tt></a></td>
-<td><a href="#tabs"><tt>tabs</tt></a></td>
+<td> \ref examples_scroll          </td>
+<td> \ref examples_shape           </td>
+<td> \ref examples_subwindow       </td>
+<td> \ref examples_sudoku          </td>
+<td> \ref examples_symbols         </td>
+<td> \ref examples_tabs            </td>
 </tr>
 <tr>
-<td><a href="#threads"><tt>threads</tt></a></td>
-<td><a href="#tile"><tt>tile</tt></a></td>
-<td><a href="#tiled_image"><tt>tiled_image</tt></a></td>
-<td><a href="#valuators"><tt>valuators</tt></a></td>
+<td> \ref examples_threads         </td>
+<td> \ref examples_tile            </td>
+<td> \ref examples_tiled_image     </td>
+<td> \ref examples_valuators       </td>
+<td>      &nbsp;                   </td>
+<td>      &nbsp;                   </td>
 </tr>
 </table>
 
-<h3><a name="adjuster">adjuster</h3>
-<tt>adjuster</tt> shows a nifty little widget for quickly
+<a name="adjuster"></a> <!-- For old HTML links only ! -->
+\subsection examples_adjuster adjuster
+
+\par
+\c adjuster shows a nifty little widget for quickly
 setting values in a great range.
 
-<h3><a name="arc">arc</h3>
-The <tt>arc</tt> demo explains how to derive your own widget to
+<a name="arc"></a> <!-- For old HTML links only ! -->
+\subsection examples_arc arc
+
+\par
+The \c arc demo explains how to derive your own widget to
 generate some custom drawings. The sample drawings use the matrix
 based arc drawing for some fun effects.
 
-<h3><a name="ask">ask</h3>
-<tt>ask</tt> shows some of FLTK's standard dialog boxes. Click
+<a name="ask"></a> <!-- For old HTML links only ! -->
+\subsection examples_ask ask
+
+\par
+\c ask shows some of FLTK's standard dialog boxes. Click
 the correct answers or you may end up in a loop, or you may end 
 up in a loop, or you... .
 
-<h3><a name="bitmap">bitmap</h3>
+<a name="bitmap"></a> <!-- For old HTML links only ! -->
+\subsection examples_bitmap bitmap
+
+\par
 This simple test shows the use of a single color bitmap as a
 label for a box widget. Bitmaps are stored in the X11 '.bmp' 
 file format and can be part of the source code.
 
-<h3><a name="blocks">blocks</h3>
+<a name="blocks"></a> <!-- For old HTML links only ! -->
+\subsection examples_blocks blocks
+
+\par
 A wonderful and addictive game that shows the usage of FLTK
 timers, graphics, and how to implement sound on all platforms.
-<tt>blocks</tt> is also a good example for the Mac OS X specific
+\c blocks is also a good example for the Mac OS X specific
 bundle format.
  
-<h3><a name="boxtype">boxtype</h3>
-<tt>boxtype</tt> gives an overview of readily available boxes and
+<a name="boxtype"></a> <!-- For old HTML links only ! -->
+\subsection examples_boxtype boxtype
+
+\par
+\c boxtype gives an overview of readily available boxes and
 frames in FLTK. More types can be added by the application programmer. 
 When using themes, FLTK shuffles boxtypes around to give your program
 a new look.
 
-<h3><a name="browser">browser</h3>
-<tt>browser</tt> shows the capabilities of the <tt>Fl_Browser</tt> widget. 
+<a name="browser"></a> <!-- For old HTML links only ! -->
+\subsection examples_browser browser
+
+\par
+\c browser shows the capabilities of the Fl_Browser widget. 
 Important features tested are loading of files, line formatting, and
 correct positioning of the browser data window.
 
-<h3><a name="button">button</h3>
-The <tt>button</tt> test is a simple demo of push-buttons and callbacks.
+<a name="button"></a> <!-- For old HTML links only ! -->
+\subsection examples_button button
 
-<h3><a name="buttons">buttons</h3>
-<tt>buttons</tt> shows a sample of FLTK button types.
+\par
+The \c button test is a simple demo of push-buttons and callbacks.
 
-<h3><a name="checkers">checkers</h3>
-Written by Steve Poulsen in early 1979, <tt>checkers</tt> shows
+<a name="buttons"></a> <!-- For old HTML links only ! -->
+\subsection examples_buttons buttons
+
+\par
+\c buttons shows a sample of FLTK button types.
+
+<a name="checkers"></a> <!-- For old HTML links only ! -->
+\subsection examples_checkers checkers
+
+\par
+Written by Steve Poulsen in early 1979, \c checkers shows
 how to convert a VT100 text-terminal based program into a neat
 application with a graphical UI. Check out the code that drags the
 pieces, and how the pieces are drawn by layering. Then tell me 
 how to beat the computer at Checkers.
 
-<h3><a name="clock">clock</h3>
-The <tt>clock</tt> demo shows two analog clocks. The innards of
-the <tt>Fl_Clock</tt> widget are pretty interesting, explaining
+<a name="clock"></a> <!-- For old HTML links only ! -->
+\subsection examples_clock clock
+
+\par
+The \c clock demo shows two analog clocks. The innards of
+the Fl_Clock widget are pretty interesting, explaining
 the use of timeouts and matrix based drawing.
 
-<h3><a name="colbrowser">colbrowser</h3>
-<tt>colbrowser</tt> runs only on X11 systems. It reads 
+<a name="colbrowser"></a> <!-- For old HTML links only ! -->
+\subsection examples_colbrowser colbrowser
+
+\par
+\c colbrowser runs only on X11 systems. It reads 
 <i>/usr/lib/X11/rgb.txt</i> to show the color representation
 of every text entry in the file. This is beautiful, but
 only moderatly useful unless your UI is written in <i>Motif</i>.
 
-<h3><a name="color_chooser">color_chooser</h3>
-The <tt>color_chooser</tt> gives a short demo of FLTK's palette based
+<a name="color_chooser"></a> <!-- For old HTML links only ! -->
+\subsection examples_color_chooser color_chooser
+
+\par
+The \c color_chooser gives a short demo of FLTK's palette based
 color chooser and of the RGB based color wheel.
 
-<h3><a name="cube">cube</h3>
-The <tt>cube</tt> demo shows the speed of OpenGL. It also tests
+<a name="cube"></a> <!-- For old HTML links only ! -->
+\subsection examples_cube cube
+
+\par
+The \c cube demo shows the speed of OpenGL. It also tests
 the ability to render two OpenGL buffers into a single window, 
 and shows OpenGL text.
 
-<h3><a name="CubeView">CubeView</h3>
-<tt>CubeView</tt> shows how to create a UI containing OpenGL with Fluid.
+<a name="CubeView"></a> <!-- For old HTML links only ! -->
+\subsection examples_CubeView CubeView
 
-<h3><a name="cursor">cursor</h3>
-The <tt>cursor</tt> demo show all mouse cursor shapes that come standard
+\par
+\c CubeView shows how to create a UI containing OpenGL with Fluid.
+
+<a name="cursor"></a> <!-- For old HTML links only ! -->
+\subsection examples_cursor cursor
+
+\par
+The \c cursor demo show all mouse cursor shapes that come standard
 with FLTK. The <i>fgcolor</i> and <i>bgcolor</i> sliders work only
 on few systems (some version of Irix for example).
 
-<h3><a name="curve">curve</h3>
-<tt>curve</tt> draws a nice Bezier curve into a custom widget. The 
+<a name="curve"></a> <!-- For old HTML links only ! -->
+\subsection examples_curve curve
+
+\par
+\c curve draws a nice Bezier curve into a custom widget. The 
 <i>points</i> option for splines is not supported on all platforms.
 
-<h3><a name="demo">demo</h3>
-This tool allows quick access to all programs in the <tt>test</tt> directory. 
-<tt>demo</tt> is based on the visuals of the IrixGL demo program. The menu 
+<a name="demo"></a> <!-- For old HTML links only ! -->
+\subsection examples_demo demo
+
+\par
+This tool allows quick access to all programs in the \c test directory. 
+\c demo is based on the visuals of the IrixGL demo program. The menu 
 tree can be changed by editing <tt>test/demo.menu</tt>.
 
-<h3><a name="doublebuffer">doublebuffer</h3>
-The <tt>doublebuffer</tt> demo show the difference between a single
+<a name="doublebuffer"></a> <!-- For old HTML links only ! -->
+\subsection examples_doublebuffer doublebuffer
+
+\par
+The \c doublebuffer demo show the difference between a single
 buffered window, which may flicker during a slow redraw, and a 
 double buffered window, which never flickers, but uses twice the
 amount of RAM. Some modern OS's double buffer all windows automatically
 to allow transparency and shadows on the desktop. FLTK is smart enough
 to not tripple buffer a window in that case.
 
-<h3><a name="editor">editor</h3>
-FLTK has two very different text input widgets. <tt>Fl_Input</tt> 
+<a name="editor"></a> <!-- For old HTML links only ! -->
+\subsection examples_editor editor
+
+\par
+FLTK has two very different text input widgets. Fl_Input 
 and derived classes are rather leight weight, however 
-<tt>Fl_Text_Editor</tt> is a complete port of <i>nedit</i> (with permission). 
-The <tt>editor</tt> test is almost a full application, showing custom
+Fl_Text_Editor is a complete port of <i>nedit</i> (with permission). 
+The \c editor test is almost a full application, showing custom
 syntax highlighting and dialog creation. 
 
-<h3><a name="fast_slow">fast_slow</h3>
-<tt>fast_slow</tt> shows how an application can use then <tt>when()</tt>
+<a name="fast_slow"></a> <!-- For old HTML links only ! -->
+\subsection examples_fast_slow fast_slow
+
+\par
+\c fast_slow shows how an application can use then when()
 setting to receive different kinds of callbacks.
 
-<h3><a name="file_chooser">file_chooser</h3>
-The standard FLTK <tt>file_chooser</tt> is the result of many
+<a name="file_chooser"></a> <!-- For old HTML links only ! -->
+\subsection examples_file_chooser file_chooser
+
+\par
+The standard FLTK \c file_chooser is the result of many
 iterations, trying to find a middle ground between a complex 
 browser and a fast light implementation.
 
-<h3><a name="fonts">fonts</h3>
-<tt>fonts</tt> show all available text fonts on the host system.
+<a name="fonts"></a> <!-- For old HTML links only ! -->
+\subsection examples_fonts fonts
+
+\par
+\c fonts show all available text fonts on the host system.
 If your machine still has some pixmap based fonts, the supported
 sizes will be shown in bold face. Only the first 256 fonts will 
 be listed.
 
-<h3><a name="forms">forms</h3>
-<tt>forms</tt> is an XForms program with very few changes.
+<a name="forms"></a> <!-- For old HTML links only ! -->
+\subsection examples_forms forms
+
+\par
+\c forms is an XForms program with very few changes.
 Search for "fltk" to find all changes necessary to port to fltk.
 This demo show the different boxtypes. Note that some
 boxtypes are not appropriate for some objects.
 
-<h3><a name="fractals">fractals</h3>
-<tt>fractals</tt> shows how to mix OpenGL, Glut and FLTK code.
+<a name="fractals"></a> <!-- For old HTML links only ! -->
+\subsection examples_fractals fractals
+
+\par
+\c fractals shows how to mix OpenGL, Glut and FLTK code.
 FLTK supports a rather large subset of Glut, so that many Glut
 application compile just fine.
 
-<h3><a name="fullscreen">fullscreen</h3>
+<a name="fullscreen"></a> <!-- For old HTML links only ! -->
+\subsection examples_fullscreen fullscreen
+
+\par
 This demo shows how to do many of the window manipulations that
 are popular for games.
 You can toggle the border on/off, switch between single- 
 and double-buffered rendering, and take over the entire
 screen. More information in the source code.
 
-<h3><a name="gl_overlay">gl_overlay</h3>
-<tt>gl_overlay</tt> shows OpenGL overlay plane rendering. If no
+<a name="gl_overlay"></a> <!-- For old HTML links only ! -->
+\subsection examples_gl_overlay gl_overlay
+
+\par
+\c gl_overlay shows OpenGL overlay plane rendering. If no
 hardware overlay plane is available, FLTK will simulate it
 for you.
 
-<h3><a name="glpuzzle">glpuzzle</h3>
-The <tt>glpuzzle</tt> test shows how most Glut source code compiles
+<a name="glpuzzle"></a> <!-- For old HTML links only ! -->
+\subsection examples_glpuzzle glpuzzle
+
+\par
+The \c glpuzzle test shows how most Glut source code compiles
 easily under FLTK.
 
-<h3><a name="hello">hello</h3>
-<tt>hello</tt>: Hello, World. Need I say maore? Well, maybe. This 
+<a name="hello"></a> <!-- For old HTML links only ! -->
+\subsection examples_hello hello
+
+\par
+\c hello: Hello, World. Need I say more? Well, maybe. This 
 tiny demo shows how little is needed to get a functioning application
 running with FLTK. Quite impressive, I'd say.
 
-<h3><a name="help">help</h3>
-<tt>help</tt> displays the built-in FLTK help browser. The 
-<tt>Fl_Help_Dialog</tt> understands a subset of html and renders
+<a name="help"></a> <!-- For old HTML links only ! -->
+\subsection examples_help help
+
+\par
+\c help displays the built-in FLTK help browser. The 
+Fl_Help_Dialog understands a subset of html and renders
 various image formats. This widget makes it easy to provide help
 pages to the user without depending on the operating system's 
 html browser.
 
-<h3><a name="iconize">iconize</h3>
-<tt>iconize</tt> demonstrates the effect of the window functions
-<tt>hide()</tt>, <tt>iconize()</tt>, and <tt>show()</tt>.
+<a name="iconize"></a> <!-- For old HTML links only ! -->
+\subsection examples_iconize iconize
 
-<h3><a name="image">image</h3>
-The <tt>image</tt> demo shows how an image can be created on the fly.
+\par
+\c iconize demonstrates the effect of the window functions
+hide(), iconize(), and show().
+
+<a name="image"></a> <!-- For old HTML links only ! -->
+\subsection examples_image image
+
+\par
+The \c image demo shows how an image can be created on the fly.
 This generated image contains an alpha (transparency) channel which
 lets previous renderings 'shine through', either via true 
 transparency or by using screen door transparency (pixelation).
 
-<h3><a name="inactive">inactive</h3>
-<tt>inactive</tt> tests the correct rendering of inactive widgets.
+<a name="inactive"></a> <!-- For old HTML links only ! -->
+\subsection examples_inactive inactive
+
+\par
+\c inactive tests the correct rendering of inactive widgets.
 To see the inactive version of images, you can check out the pixmap 
 or image test.
 
-<h3><a name="input">input</h3>
-This tool shows and tests different types of text input fields based on
-<tt>Fl_Input_</tt>. The <tt>input</tt> program also tests various 
-settings of <tt>Fl_Input::when()</tt>.
+<a name="input"></a> <!-- For old HTML links only ! -->
+\subsection examples_input input
 
-<h3><a name="input_choice">input_choice</h3>
-<tt>input_choice</tt> tests the latest addition to FLTK1, a text input 
+\par
+This tool shows and tests different types of text input fields based on
+Fl_Input_. The \c input program also tests various 
+settings of Fl_Input::when().
+
+<a name="input_choice"></a> <!-- For old HTML links only ! -->
+\subsection examples_input_choice input_choice
+
+\par
+\c input_choice tests the latest addition to FLTK1, a text input 
 field with an attached pulldown menu. Windows users will recognize 
-similarities to the 'ComboBox'. <tt>input_choice</tt> starts up in 
+similarities to the 'ComboBox'. \c input_choice starts up in 
 'plastic' scheme, but the traditional scheme is also supported.
 
-<h3><a name="keyboard">keyboard</h3>
-FLTK unifies keyboard events for all platforms. The <tt>keyboard</tt>
-test can be used to check the return values of <tt>Fl::event_key()</tt>
-and <tt>Fl::event_text()</tt>. It is also great to see the modifier 
+<a name="keyboard"></a> <!-- For old HTML links only ! -->
+\subsection examples_keyboard keyboard
+
+\par
+FLTK unifies keyboard events for all platforms. The \c keyboard
+test can be used to check the return values of Fl::event_key()
+and Fl::event_text(). It is also great to see the modifier 
 buttons and the scroll wheel at work. Quit this application by closing
 the window. The ESC key will not work. 
 
-<h3><a name="label">label</h3>
-Every FLTK widget can have a label attached to it. The <tt>label</tt> 
+<a name="label"></a> <!-- For old HTML links only ! -->
+\subsection examples_label label
+
+\par
+Every FLTK widget can have a label attached to it. The \c label 
 demo shows alignment, clipping and wrapping of text labels. Labels
 can contain symbols at the start and end of the text, like <i>\@FLTK</i>
 or <i>\@circle uh-huh \@square</i>.
 
-<h3><a name="line_style">line_style</h3>
-Advanced line drawing can be tested with <tt>line_style</tt>. 
+<a name="line_style"></a> <!-- For old HTML links only ! -->
+\subsection examples_line_style line_style
+
+\par
+Advanced line drawing can be tested with \c line_style. 
 Not all platforms support all line styles.
 
-<h3><a name="list_visuals">list_visuals</h3>
+<a name="list_visuals"></a> <!-- For old HTML links only ! -->
+\subsection examples_list_visuals list_visuals
+
+\par
 This little app finds all available pixel formats for the current X11
 screen. But since you are now an FLTK user, you don't have to worry 
 about any of this.
 
-<h3><a name="mandelbrot">mandelbrot</h3>
-<tt>mandelbrot</tt> shows two advanced topics in one test. It creates
+<a name="mandelbrot"></a> <!-- For old HTML links only ! -->
+\subsection examples_mandelbrot mandelbrot
+
+\par
+\c mandelbrot shows two advanced topics in one test. It creates
 grayscale images on the fly, updating them via the <i>idle</i> callback
 system. This is one of the few occasions where the <i>idle</i> callback
 is very useful by giving all available processor time to the application
 without blocking the UI or other apps.
 
-<h3><a name="menubar">menubar</h3>
-The <tt>menubar</tt> tests many aspects of FLTK's popup menu system.
+<a name="menubar"></a> <!-- For old HTML links only ! -->
+\subsection examples_menubar menubar
+
+\par
+The \c menubar tests many aspects of FLTK's popup menu system.
 Among the features are radio buttons, menus taller than the screen,
 arbitrary sub menu depth, and global shortcuts.
 
-<h3><a name="message">message</h3>
-<tt>message</tt> pops up a few of FLTK's standars message boxes.
+<a name="message"></a> <!-- For old HTML links only ! -->
+\subsection examples_message message
 
-<h3><a name="minimum">minimum</h3>
-The <tt>minimum</tt> test program verifies that the update regions
+\par
+\c message pops up a few of FLTK's standars message boxes.
+
+<a name="minimum"></a> <!-- For old HTML links only ! -->
+\subsection examples_minimum minimum
+
+\par
+The \c minimum test program verifies that the update regions
 are set correctly. In a real life application, the trail would
 be avoided by choosing a smaller label or by setting label clipping
 differently. 
 
-<h3><a name="navigation">navigation</h3>
-<tt>navigation</tt> demonstrates how the text cursor moves from
+<a name="navigation"></a> <!-- For old HTML links only ! -->
+\subsection examples_navigation navigation
+
+\par
+\c navigation demonstrates how the text cursor moves from
 text field to text field when using the arrow keys, tab, and shift-tab.
 
-<h3><a name="output">output</h3>
-<tt>output</tt> shows the difference between the single line and
-multi line mode of the <tt>Fl_Output</tt> widget. Fonts can be
+<a name="output"></a> <!-- For old HTML links only ! -->
+\subsection examples_output output
+
+\par
+\c output shows the difference between the single line and
+multi line mode of the Fl_Output widget. Fonts can be
 selected from the FLTK standard list of fonts.
 
-<h3><a name="overlay">overlay</h3>
-The <tt>overlay</tt> test app show how easy an FLTK window can
+<a name="overlay"></a> <!-- For old HTML links only ! -->
+\subsection examples_overlay overlay
+
+\par
+The \c overlay test app show how easy an FLTK window can
 be layered to display cursor and manipulator style elemnts. This
-example derives a new class from <tt>Fl_Overly_WIndow</tt> and 
+example derives a new class from Fl_Overlay_Window and 
 provides a new function to draw custom overlays.
 
-<h3><a name="pack">pack</h3>
-The <tt>pack</tt> test program demonstrates the resizing
-and repositioning of children of the <tt>Fl_Pack</tt> group.
-Putting an <tt>Fl_Pack</tt> into an <tt>Fl_Scroll</tt> is 
+<a name="pack"></a> <!-- For old HTML links only ! -->
+\subsection examples_pack pack
+
+\par
+The \c pack test program demonstrates the resizing
+and repositioning of children of the Fl_Pack group.
+Putting an Fl_Pack into an Fl_Scroll is 
 a useful way to create a browser for large sets of data.
 
-<h3><a name="pixmap_browser">pixmap_browser</h3>
-<tt>pixmap_browser</tt> tests the shared-image interface. When using
-the same image multiple times, <tt>Fl_Shared_Image</tt> will keep it
+<a name="pixmap_browser"></a> <!-- For old HTML links only ! -->
+\subsection examples_pixmap_browser pixmap_browser
+
+\par
+\c pixmap_browser tests the shared-image interface. When using
+the same image multiple times, Fl_Shared_Image will keep it
 only once in memory.
 
-<h3><a name="pixmap">pixmap</h3>
+<a name="pixmap"></a> <!-- For old HTML links only ! -->
+\subsection examples_pixmap pixmap
+
+\par
 This simple test shows the use of a LUT based pixmap as a
 label for a box widget. Pixmaps are stored in the X11 '.xpm' 
 file format and can be part of the source code. Pixmaps support
 one transparent color.
 
-<h3><a name="preferences">preferences</h3>
-I do have my <tt>preferences</tt> in the morning, but sometimes I
-just can't remember a thing. This is where the <tt>Fl_Preferences</tt>
+<a name="preferences"></a> <!-- For old HTML links only ! -->
+\subsection examples_preferences preferences
+
+\par
+I do have my \c preferences in the morning, but sometimes I
+just can't remember a thing. This is where the Fl_Preferences
 come in handy. They remember any kind of data between program launches.
 
-<h3><a name="radio">radio</h3>
-The <tt>radio</tt> tool was created entirely with <i>fluid</i>. It
+<a name="radio"></a> <!-- For old HTML links only ! -->
+\subsection examples_radio radio
+
+\par
+The \c radio tool was created entirely with <i>fluid</i>. It
 shows some of the available button types and tests radio 
 button behavior.
 
-<h3><a name="resizebox">resizebox</h3>
-<tt>resizebox</tt> shows some possible ways of FLTK's automatic
+<a name="resizebox"></a> <!-- For old HTML links only ! -->
+\subsection examples_resizebox resizebox
+
+\par
+\c resizebox shows some possible ways of FLTK's automatic
 resize bahavior..
 
-<h3><a name="resize">resize</h3>
-The <tt>resize</tt> demo tests size and position functions with
+<a name="resize"></a> <!-- For old HTML links only ! -->
+\subsection examples_resize resize
+
+\par
+The \c resize demo tests size and position functions with
 the given window manager.
 
-<h3><a name="scroll">scroll</h3>
-<tt>scroll</tt> shows how to scroll an area of widgets, one of
-them beeing a slow custom drawing. <tt>Fl_Scroll</tt> uses 
+<a name="scroll"></a> <!-- For old HTML links only ! -->
+\subsection examples_scroll scroll
+
+\par
+\c scroll shows how to scroll an area of widgets, one of
+them beeing a slow custom drawing. Fl_Scroll uses 
 clipping and smart window area copying to improve redraw speed.
 The buttons at the bottom of the window control decoration rendering
 and updates.
 
-<h3><a name="shape">shape</h3>
-<tt>shape</tt> is a very minimal demo that shows how to create
+<a name="shape"></a> <!-- For old HTML links only ! -->
+\subsection examples_shape shape
+
+\par
+\c shape is a very minimal demo that shows how to create
 your own OpenGL rendering widget. Now that you know that, go ahead 
 and write that flight simulator you always dreamt of.
 
-<h3><a name="subwindow">subwindow</h3>
-The <tt>subwindow</tt> demo tests messaging and drawing between 
+<a name="subwindow"></a> <!-- For old HTML links only ! -->
+\subsection examples_subwindow subwindow
+
+\par
+The \c subwindow demo tests messaging and drawing between 
 the main window and 'true' sub windows. A sub window is different
 to a group by resetting the FLTK coordinate stystem to 0, 0 in the
 top left corner. On Win32 and X11, subwindows have their own 
 operating system specific handle.
 
-<h3><a name="sudoku">sudoku</h3>
+<a name="sudoku"></a> <!-- For old HTML links only ! -->
+\subsection examples_sudoku sudoku
+
+\par
 Another highly addictive game - don't play it, I warned you.
 The implementation shows how to create application icons,
 how to deal with OS specifics, and how to generate sound.
 
-<h3><a name="symbols">symbols</h3>
-<tt>symbols</tt> are a speciality of FLTK. These little vector 
+<a name="symbols"></a> <!-- For old HTML links only ! -->
+\subsection examples_symbols symbols
+
+\par
+\c symbols are a speciality of FLTK. These little vector 
 drawings can be integrated into labels. They scale and rotate,
 and with a little patience, you can define your own. The rotation 
 number refers to 45 degree rotations if you were looking at a 
 numeric keypad (2 is down, 6 is right, etc.).
 
-<h3><a name="tabs">tabs</h3>
-The <tt>tabs</tt> tool was created with <i>fluid</i>. It tests
+<a name="tabs"></a> <!-- For old HTML links only ! -->
+\subsection examples_tabs tabs
+
+\par
+The \c tabs tool was created with <i>fluid</i>. It tests
 correct hiding and redisplaying of tabs, navigation across tabs, 
 resize behavior, and no unneeded redrawing of invisible widgets.
 
-<P>The <tt>tabs</tt> application shows the <tt>Fl_Tabs</tt> widget
-on the left and the <tt>Fl_Wizard</tt> widget on the right side 
+\par
+The \c tabs application shows the Fl_Tabs widget
+on the left and the Fl_Wizard widget on the right side 
 for direct comparison of these two panel management widgets.
 
-<h3><a name="threads">threads</h3>
+<a name="threads"></a> <!-- For old HTML links only ! -->
+\subsection examples_threads threads
+
+\par
 FLTK can be used in a multithreading environment. There are some
 limitations, mostly due to the underlying operating system. 
-<tt>threads</tt> show how to use <tt>Fl::lock()</tt>, 
-<tt>Fl::unlock()</tt>, and <tt>Fl::awake()</tt> in secondary threads 
+\c threads show how to use Fl::lock(), 
+Fl::unlock(), and Fl::awake() in secondary threads 
 to keep FLTK happy. Although locking works on all platforms, 
 this demo is not available on every machine.
 
-<h3><a name="tile">tile</h3>
-The <tt>tile</tt> tool shows a nice way of using <tt>Fl_Tile</tt>.
-To test correct resizing of subwindows, the widget for region 
-1 is created from an <tt>Fl_Window</tt> class.
+<a name="tile"></a> <!-- For old HTML links only ! -->
+\subsection examples_tile tile
 
-<h3><a name="tiled_image">tiled_image</h3>
-The <tt>tiled_image</tt> demo uses an image as the background
+\par
+The \c tile tool shows a nice way of using Fl_Tile.
+To test correct resizing of subwindows, the widget for region 
+1 is created from an Fl_Window class.
+
+<a name="tiled_image"></a> <!-- For old HTML links only ! -->
+\subsection examples_tiled_image tiled_image
+
+\par
+The \c tiled_image demo uses an image as the background
 for a window by repeating it over the full size of the widget.
 Thw window is resizable and shows how the image gets repeated.
 
-<h3><a name="valuators">valuators</h3>
-<tt>valuators</tt> shows all of FLTK's nifty widgets to change
+<a name="valuators"></a> <!-- For old HTML links only ! -->
+\subsection examples_valuators valuators
+
+\par
+\c valuators shows all of FLTK's nifty widgets to change
 numeric values.
 
-<h3><a name="fluid">fluid</h3>
-<tt>fuid</tt> is not only a big test program, but also a very 
-useful visual UI designer. Many parts of <tt>fluid</tt> were 
-created using <tt>fluid</tt>.
+<a name="fluid"></a> <!-- For old HTML links only ! -->
+\subsection examples_fluid fluid
+
+\par
+\c fluid is not only a big test program, but also a very 
+useful visual UI designer. Many parts of \c fluid were 
+created using \c fluid. See the \link fluid Fluid Tutorial \endlink
+for more details.
 
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
