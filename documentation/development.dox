@@ -2,8 +2,7 @@
 
  \page development I - Developer Information
 
-<P>This chapter describes FLTK development and documentation.
-</P>
+This chapter describes FLTK development and documentation.
 
 \note	documentation with doxygen will be described here.
 
@@ -247,6 +246,7 @@ The following section is
 	\section development_links Creating Links
   \endcode
 
+
 \section development_links Creating Links
 
 Links to other documents and external links can be embedded with
@@ -340,6 +340,68 @@ becomes:
     </b>
 
 \endcode
+
+
+\section development_paragraphs Paragraph Layout
+
+There is no real need to use HTML \<P\> and \</P\> tags within the text
+to tell doxygen to start or stop a paragraph. In most cases, when doxygen
+encounters a blank line or some, but not all, \b \\commands in the text it
+knows that it as reached the start or end of a paragraph. Doxygen also
+offers the \b \\par command for special paragraph handling. It can be used
+to provide a paragraph title and also to indent a paragraph. Unfortunately
+\b \\par won't do what you expect if you want to have doxygen links and
+sometimes html tags don't work either.
+
+  <!-- use verbatim rather than code to avoid links to code reference -->
+  \verbatim
+    \par Normal Paragraph with title
+
+    This paragraph will have a title, but because there is a blank line
+    between the \par and the text, it will have the normal layout.
+
+    \par Indented Paragraph with title
+    This paragraph will also have a title, but because there is no blank
+    line between the \par and the text, it will be indented.
+
+    \par
+    It is also possible to have an indented paragraph without title.
+    This is how you indent subsequent paragraphs.
+
+    \par No link to Fl_Widget::draw()
+    Note that the paragraph title is treated as plain text.
+    Doxygen type links will not work.
+    HTML characters and tags may or may not work.
+
+    Fl_Widget::draw() links and &quot;html&quot; tags work<br>
+    \par
+    Use a single line ending with <br> for complicated paragraph titles.
+  \endverbatim
+
+The above code produces the following paragraphs:
+
+    \par Normal Paragraph with title
+
+    This paragraph will have a title, but because there is a blank line
+    between the \\par and the text, it will have the normal layout.
+
+    \par Indented Paragraph with title
+    This paragraph will also have a title, but because there is no blank
+    line between the \\par and the text, it will be indented.
+
+    \par
+    It is also possible to have an indented paragraph without title.
+    This is how you indent subsequent paragraphs.
+
+    \par No link to Fl_Widget::draw()
+    Note that the paragraph title is treated as plain text.
+    Doxygen type links will not work.
+    HTML characters and tags may or may not work.
+
+    Fl_Widget::draw() links and &quot;html&quot; tags work<br>
+    \par
+    Use a single line ending with \<br\> for complicated paragraph titles.
+
 
 \section development_html_footer Hack for missing "tiny.gif" file
 
