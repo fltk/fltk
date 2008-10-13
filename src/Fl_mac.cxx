@@ -165,7 +165,7 @@ static unsigned short macKeyLookUp[128] =
 /**
  * convert the current mouse chord into the FLTK modifier state
  */
-static void mods_to_e_state( UInt32 mods )
+static unsigned int mods_to_e_state( UInt32 mods )
 {
   long state = 0;
   if ( mods & kEventKeyModifierNumLockMask ) state |= FL_NUM_LOCK;
@@ -174,8 +174,10 @@ static void mods_to_e_state( UInt32 mods )
   if ( mods & (controlKey|rightControlKey) ) state |= FL_CTRL;
   if ( mods & (shiftKey|rightShiftKey) ) state |= FL_SHIFT;
   if ( mods & alphaLock ) state |= FL_CAPS_LOCK;
-  Fl::e_state = ( Fl::e_state & 0xff000000 ) | state;
+  unsigned int ret = ( Fl::e_state & 0xff000000 ) | state;
+  Fl::e_state = ret;
   //printf( "State 0x%08x (%04x)\n", Fl::e_state, mods );
+  return ret;
 }
 
 
@@ -1212,7 +1214,7 @@ pascal OSStatus carbonKeyboardHandler(
   Fl_Window *window = (Fl_Window*)userData;
   Fl::first_window(window);
   UInt32 mods;
-  static UInt32 prevMods = 0xffffffff;
+  static UInt32 prevMods = mods_to_e_state( GetCurrentKeyModifiers() );
 
   fl_lock_function();
   
@@ -1221,7 +1223,6 @@ pascal OSStatus carbonKeyboardHandler(
   // get the modifiers for any of the events
   GetEventParameter( event, kEventParamKeyModifiers, typeUInt32, 
                      NULL, sizeof(UInt32), NULL, &mods );
-  if ( prevMods == 0xffffffff ) prevMods = mods;
   
   // get the key code only for key events
   UInt32 keyCode = 0;

@@ -23,10 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  
+#if 0
   /** 
    \defgroup fl_unichar Unicode Character Functions
    Global Functions Handling Single Unicode Characters
@@ -56,7 +53,7 @@ extern "C" {
   //FL_EXPORT int fl_utf8_size(Fl_Unichar uc);
   
   /** @} */  
-  
+#endif // 0
   
 /* Set to 1 to turn bad UTF8 bytes into ISO-8859-1. If this is to zero
    they are instead turned into the Unicode REPLACEMENT CHARACTER, of
@@ -839,7 +836,3 @@ int fl_utf8test(const char* src, unsigned srclen) {
   }
   return ret;
 }
-
-#ifdef __cplusplus
-}
-#endif

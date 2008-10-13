@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.3.0
 
+	- Fixed first modifier key event (STR #1952)
 	- Fl_Group and Fl_Scroll now resize themselves before
 	  resizing their children (STR #2032)
 	- "fltk-config --post foo" now creates an application

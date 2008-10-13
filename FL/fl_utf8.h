@@ -75,6 +75,8 @@
 extern "C" {
 #  endif
 
+int fl_unichar_to_utf8_size(Fl_Unichar);
+  
 /* F2: comes from FLTK2 */
 /* OD: comes from OksiD */
 
