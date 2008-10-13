@@ -45,9 +45,7 @@
 #ifdef WIN32
 #  include <FL/math.h>
 #endif
-#ifdef __APPLE__
-#  include <config.h>
-#endif
+#include <config.h>
 
 /**
   Draw ellipse sections using integer coordinates.

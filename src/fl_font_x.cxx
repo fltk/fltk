@@ -114,7 +114,7 @@ int fl_correct_encoding(const char* name) {
   return (*c++ && !strcmp(c,fl_encoding));
 }
 
-static char *find_best_font(const char *fname, int size) {
+static const char *find_best_font(const char *fname, int size) {
   int cnt;
   static char **list = NULL;
 // locate or create an Fl_Font_Descriptor for a given Fl_Fontdesc and size:
@@ -189,7 +189,7 @@ static char *put_font_size(const char *n, int size)
         int i = 0;
         char *buf;
         const char *ptr;
-        char *f;
+        const char *f;
         char *name;
         int nbf = 1;
         name = strdup(n);

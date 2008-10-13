@@ -38,9 +38,7 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 
-#ifdef __APPLE__
 #include <config.h>
-#endif 
 
 void Fl_Window::border(int b) {
   if (b) {

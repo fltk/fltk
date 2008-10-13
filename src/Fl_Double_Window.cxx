@@ -64,7 +64,7 @@ void Fl_Double_Window::show() {
   Fl_Window::show();
 }
 
-#if defined(X11)
+#if defined(USE_X11)
 
 // maybe someone feels inclined to implement alpha blending on X11?
 char fl_can_do_alpha_blending() {
