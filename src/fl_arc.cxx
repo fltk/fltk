@@ -25,6 +25,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+  \file fl_arc.cxx
+  \brief Utility functions for drawing arcs and circles.
+*/
+
 // Utility for drawing arcs and circles.  They are added to
 // the current fl_begin/fl_vertex/fl_end path.
 // Incremental math implementation:
@@ -38,7 +43,14 @@ static double _fl_hypot(double x, double y) {
   return sqrt(x*x + y*y);
 }
 
-
+/**
+  Add a series of points to the current path on the arc of a circle; you
+  can get elliptical paths by using scale and rotate before calling fl_arc().
+  \param[in] x,y,r center and radius of circular arc
+  \param[in] start,end angles of start and end of arc measured in degrees
+             counter-clockwise from 3 o'clock. If \a end is less than \a start
+	     then it draws the ark in a clockwise direction.
+*/
 void fl_arc(double x, double y, double r, double start, double end) {
 
   // draw start point accurately:

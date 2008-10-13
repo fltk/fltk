@@ -84,21 +84,23 @@ enum {
 
 // rectangles tweaked to exactly fill the pixel rectangle:
 FL_EXPORT void fl_rect(int x, int y, int w, int h);
+/** Draw a 1-pixel border \e inside the given bounding box */
 inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rect(x,y,w,h);}
 FL_EXPORT void fl_rectf(int x, int y, int w, int h);
+/** Color a rectangle that exactly fills the given bounding box */
 inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rectf(x,y,w,h);}
 
 // line segments:
-FL_EXPORT void fl_line(int,int, int,int);
-FL_EXPORT void fl_line(int,int, int,int, int,int);
+FL_EXPORT void fl_line(int x, int y, int x1, int y1);
+FL_EXPORT void fl_line(int x, int y, int x1, int y1, int x2, int y2);
 
 // closed line segments:
-FL_EXPORT void fl_loop(int,int, int,int, int,int);
-FL_EXPORT void fl_loop(int,int, int,int, int,int, int,int);
+FL_EXPORT void fl_loop(int x, int y, int x1, int y1, int x2, int y2);
+FL_EXPORT void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3);
 
 // filled polygons
-FL_EXPORT void fl_polygon(int,int, int,int, int,int);
-FL_EXPORT void fl_polygon(int,int, int,int, int,int, int,int);
+FL_EXPORT void fl_polygon(int x, int y, int x1, int y1, int x2, int y2);
+FL_EXPORT void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3);
 
 // draw rectilinear lines, horizontal segment first:
 FL_EXPORT void fl_xyline(int x, int y, int x1);

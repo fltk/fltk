@@ -45,6 +45,9 @@
 extern float fl_quartz_line_width_;
 #endif
 
+/**
+  Draw a 1-pixel border \e inside the given bounding box
+*/
 void fl_rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
 #ifdef WIN32
@@ -67,6 +70,9 @@ void fl_rect(int x, int y, int w, int h) {
 #endif
 }
 
+/**
+  Color a rectangle that exactly files the given bounding box
+*/
 void fl_rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
 #ifdef WIN32
@@ -88,6 +94,9 @@ void fl_rectf(int x, int y, int w, int h) {
 #endif
 }
 
+/**
+  Draw horizontal line from x,y to x1,y
+*/
 void fl_xyline(int x, int y, int x1) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
@@ -104,6 +113,9 @@ void fl_xyline(int x, int y, int x1) {
 #endif
 }
 
+/**
+  Draw horizontal line from x,y to x1,y, then vertical from x1,y to x1,y2
+*/
 void fl_xyline(int x, int y, int x1, int y2) {
 #ifdef WIN32
   if (y2 < y) y2--;
@@ -130,6 +142,10 @@ void fl_xyline(int x, int y, int x1, int y2) {
 #endif
 }
 
+/**
+  Draw horizontal line from x,y to x1,y then a vertical from x1,y to x1,y2
+  and then another horizontal from x1,y2 to x3,y2
+*/
 void fl_xyline(int x, int y, int x1, int y2, int x3) {
 #ifdef WIN32
   if(x3 < x1) x3--;
@@ -160,6 +176,9 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
 #endif
 }
 
+/**
+  Draw a vertical line from x,y to x,y1
+*/
 void fl_yxline(int x, int y, int y1) {
 #ifdef WIN32
   if (y1 < y) y1--;
@@ -178,6 +197,9 @@ void fl_yxline(int x, int y, int y1) {
 #endif
 }
 
+/**
+  Draw a vertical line from x,y to x,y1 then a horizontal from x,y1 to x2,y1
+*/
 void fl_yxline(int x, int y, int y1, int x2) {
 #ifdef WIN32
   if (x2 > x) x2++;
@@ -204,6 +226,10 @@ void fl_yxline(int x, int y, int y1, int x2) {
 #endif
 }
 
+/**
+  Draw a vertical line from x,y to x,y1 then a horizontal from x,y1 to x2,y1
+  then another vertical from x2,y1 to x2,y3
+*/
 void fl_yxline(int x, int y, int y1, int x2, int y3) {
 #ifdef WIN32
   if(y3<y1) y3--;
@@ -234,6 +260,9 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
 #endif
 }
 
+/**
+  Draw a line from x,y to x1,y1
+*/
 void fl_line(int x, int y, int x1, int y1) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); 
@@ -255,6 +284,9 @@ void fl_line(int x, int y, int x1, int y1) {
 #endif
 }
 
+/**
+  Draw a line from x,y to x1,y1 and another from x1,y1 to x2,y2
+*/
 void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); 
@@ -283,6 +315,9 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
 #endif
 }
 
+/**
+  Outline a 3-sided polygon with lines
+*/
 void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); 
@@ -310,6 +345,9 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
 #endif
 }
 
+/**
+  Outline a 4-sided polygon with lines
+*/
 void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 #ifdef WIN32
   MoveToEx(fl_gc, x, y, 0L); 
@@ -341,6 +379,9 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 #endif
 }
 
+/**
+  Fill a 3-sided polygon. The polygon must be convex.
+*/
 void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
   XPoint p[4];
   p[0].x = x;  p[0].y = y;
@@ -372,6 +413,9 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
 #endif
 }
 
+/**
+  Fill a 4-sided polygon. The polygon must be convex.
+*/
 void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   XPoint p[5];
   p[0].x = x;  p[0].y = y;
@@ -406,6 +450,9 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 #endif
 }
 
+/**
+  Draw a single pixel at the given coordinates
+*/
 void fl_point(int x, int y) {
 #ifdef WIN32
   SetPixel(fl_gc, x, y, fl_RGB());

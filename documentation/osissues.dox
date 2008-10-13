@@ -640,7 +640,7 @@ version of FLTK:
 	as -O2 and -O3 seem to work OK. More details can be found
 	in STR#1656
 
-\subject osissues_macos The MacOS Interface
+\section osissues_macos The MacOS Interface
 
 FLTK supports MacOS X using the Apple Carbon library. Older
 versions of MacOS are <I>not</I> supported.

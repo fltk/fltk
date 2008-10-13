@@ -670,7 +670,7 @@ const Fl_Font FL_BOLD_ITALIC            = 3;	///< add this to helvetica, courier
  */
 typedef int Fl_Fontsize;
 
-extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;
+extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
 
 /** \name Colors */
 /*@{*/
