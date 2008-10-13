@@ -2237,7 +2237,7 @@ void Fl_Widget_Type::write_widget_code() {
       write_c("%s%s->maximum(%g);\n", indent(), var, v->maximum());
     if (v->step()!=f->step())
       write_c("%s%s->step(%g);\n", indent(), var, v->step());
-    if (v->value())
+    if (v->value()!=1.0f)
       write_c("%s%s->value(%g);\n", indent(), var, v->value());
   }
 
@@ -2404,7 +2404,7 @@ void Fl_Widget_Type::write_properties() {
     if (v->minimum()!=f->minimum()) write_string("minimum %g",v->minimum());
     if (v->maximum()!=f->maximum()) write_string("maximum %g",v->maximum());
     if (v->step()!=f->step()) write_string("step %g",v->step());
-    if (v->value()!=0.0) write_string("value %g",v->value());
+    if (v->value()!=1.0) write_string("value %g",v->value());
   }
   {Fl_Font ff; int fs; Fl_Color fc; if (textstuff(4,ff,fs,fc)) {
     Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
