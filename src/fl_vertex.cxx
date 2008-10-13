@@ -150,10 +150,10 @@ void fl_vertex(double x,double y) {
 }
 
 void fl_end_points() {
-#ifdef WIN32
+#if defined(USE_X11)
+  if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
+#elif defined(WIN32)
   for (int i=0; i<n; i++) SetPixel(fl_gc, p[i].x, p[i].y, fl_RGB());
-#elif defined(__APPLE_QD__)
-  for (int i=0; i<n; i++) { MoveTo(p[i].x, p[i].y); Line(0, 0); } 
 #elif defined(__APPLE_QUARTZ__)
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
   for (int i=0; i<n; i++) { 
@@ -163,7 +163,7 @@ void fl_end_points() {
   }
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #else
-  if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
+# error unsupported platform
 #endif
 }
 
@@ -172,12 +172,10 @@ void fl_end_line() {
     fl_end_points();
     return;
   }
-#ifdef WIN32
+#if defined(USE_X11)
+  if (n>1) XDrawLines(fl_display, fl_window, fl_gc, p, n, 0);
+#elif defined(WIN32)
   if (n>1) Polyline(fl_gc, p, n);
-#elif defined(__APPLE_QD__)
-  if (n<=1) return;
-  MoveTo(p[0].x, p[0].y);
-  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
 #elif defined(__APPLE_QUARTZ__)
   if (n<=1) return;
   CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
@@ -185,7 +183,7 @@ void fl_end_line() {
     CGContextAddLineToPoint(fl_gc, p[i].x, p[i].y);
   CGContextStrokePath(fl_gc);
 #else
-  if (n>1) XDrawLines(fl_display, fl_window, fl_gc, p, n, 0);
+# error unsupported platform
 #endif
 }
 
@@ -205,19 +203,13 @@ void fl_end_polygon() {
     fl_end_line();
     return;
   }
-#ifdef WIN32
+#if defined(USE_X11)
+  if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, Convex, 0);
+#elif defined(WIN32)
   if (n>2) {
     SelectObject(fl_gc, fl_brush());
     Polygon(fl_gc, p, n);
   }
-#elif defined(__APPLE_QD__)
-  if (n<=1) return;
-  PolyHandle ph = OpenPoly();
-  MoveTo(p[0].x, p[0].y);
-  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
-  ClosePoly();
-  PaintPoly(ph);
-  KillPoly(ph);
 #elif defined(__APPLE_QUARTZ__)
   if (n<=1) return;
   CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
@@ -226,12 +218,12 @@ void fl_end_polygon() {
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
 #else
-  if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, Convex, 0);
+# error unsupported platform
 #endif
 }
 
 static int gap;
-#ifdef WIN32
+#if defined(WIN32)
 static int counts[20];
 static int numcount;
 #endif
@@ -239,7 +231,7 @@ static int numcount;
 void fl_begin_complex_polygon() {
   fl_begin_polygon();
   gap = 0;
-#ifdef WIN32
+#if defined(WIN32)
   numcount = 0;
 #endif
 }
@@ -248,7 +240,7 @@ void fl_gap() {
   while (n>gap+2 && p[n-1].x == p[gap].x && p[n-1].y == p[gap].y) n--;
   if (n > gap+2) {
     fl_transformed_vertex((COORD_T)p[gap].x, (COORD_T)p[gap].y);
-#ifdef WIN32
+#if defined(WIN32)
     counts[numcount++] = n-gap;
 #endif
     gap = n;
@@ -263,19 +255,13 @@ void fl_end_complex_polygon() {
     fl_end_line();
     return;
   }
-#ifdef WIN32
+#if defined(USE_X11)
+  if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, 0, 0);
+#elif defined(WIN32)
   if (n>2) {
     SelectObject(fl_gc, fl_brush());
     PolyPolygon(fl_gc, p, counts, numcount);
   }
-#elif defined(__APPLE_QD__)
-  if (n<=1) return;
-  PolyHandle ph = OpenPoly();
-  MoveTo(p[0].x, p[0].y);
-  for (int i=1; i<n; i++) LineTo(p[i].x, p[i].y);
-  ClosePoly();
-  PaintPoly(ph);
-  KillPoly(ph);
 #elif defined(__APPLE_QUARTZ__)
   if (n<=1) return;
   CGContextMoveToPoint(fl_gc, p[0].x, p[0].y);
@@ -284,7 +270,7 @@ void fl_end_complex_polygon() {
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
 #else
-  if (n>2) XFillPolygon(fl_display, fl_window, fl_gc, p, n, 0, 0);
+# error unsupported platform
 #endif
 }
 
@@ -301,22 +287,22 @@ void fl_circle(double x, double y,double r) {
   int w = (int)rint(xt+rx)-llx;
   int lly = (int)rint(yt-ry);
   int h = (int)rint(yt+ry)-lly;
-#ifdef WIN32
+
+#if defined(USE_X11)
+  (what == POLYGON ? XFillArc : XDrawArc)
+    (fl_display, fl_window, fl_gc, llx, lly, w, h, 0, 360*64);
+#elif defined(WIN32)
   if (what==POLYGON) {
     SelectObject(fl_gc, fl_brush());
     Pie(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
   } else
     Arc(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
-#elif defined(__APPLE_QD__)
-  Rect rt; rt.left=llx; rt.right=llx+w; rt.top=lly; rt.bottom=lly+h;
-  (what == POLYGON ? PaintOval : FrameOval)(&rt);
 #elif defined(__APPLE_QUARTZ__)
   // Quartz warning : circle won't scale to current matrix!
   CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 1);
   (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
 #else
-  (what == POLYGON ? XFillArc : XDrawArc)
-    (fl_display, fl_window, fl_gc, llx, lly, w, h, 0, 360*64);
+# error unsupported platform
 #endif
 }
 

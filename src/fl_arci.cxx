@@ -73,7 +73,10 @@
 */
 void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
-#ifdef WIN32
+
+#if defined(USE_X11)
+  XDrawArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
+#elif defined(WIN32)
   int xa = x+w/2+int(w*cos(a1/180.0*M_PI));
   int ya = y+h/2-int(h*sin(a1/180.0*M_PI));
   int xb = x+w/2+int(w*cos(a2/180.0*M_PI));
@@ -82,10 +85,6 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
     if (xa == xb && ya == yb) SetPixel(fl_gc, xa, ya, fl_RGB());
     else Arc(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb);
   } else Arc(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb);
-#elif defined(__APPLE_QD__)
-  Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
-  a1 = a2-a1; a2 = 450-a2;
-  FrameArc(&r, (short int)a2, (short int)a1);
 #elif defined(__APPLE_QUARTZ__)
   a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
   float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
@@ -101,7 +100,7 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   }
   CGContextStrokePath(fl_gc);
 #else
-  XDrawArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
+# error unsupported platform
 #endif
 }
 
@@ -119,7 +118,10 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
 */
 void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
-#ifdef WIN32
+
+#if defined(USE_X11)
+  XFillArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
+#elif defined(WIN32)
   if (a1 == a2) return;
   int xa = x+w/2+int(w*cos(a1/180.0*M_PI));
   int ya = y+h/2-int(h*sin(a1/180.0*M_PI));
@@ -133,10 +135,6 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
       SetPixel(fl_gc, xa, ya, fl_RGB());
     } else Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb);
   } else Pie(fl_gc, x, y, x+w, y+h, xa, ya, xb, yb); 
-#elif defined(__APPLE_QD__)
-  Rect r; r.left=x; r.right=x+w; r.top=y; r.bottom=y+h;
-  a1 = a2-a1; a2 = 450-a2;
-  PaintArc(&r, (short int)a2, (short int)a1);
 #elif defined(__APPLE_QUARTZ__)
   a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
   float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
@@ -156,7 +154,7 @@ void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   }
   CGContextFillPath(fl_gc);
 #else
-  XFillArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
+# error unsupported platform
 #endif
 }
 

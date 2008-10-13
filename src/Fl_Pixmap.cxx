@@ -118,45 +118,8 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_end_offscreen();
 #endif
   }
-#ifdef WIN32
-  if (mask) {
-    HDC new_gc = CreateCompatibleDC(fl_gc);
-    int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)mask);
-    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
-    SelectObject(new_gc, (void*)id);
-    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
-    RestoreDC(new_gc,save);
-    DeleteDC(new_gc);
-  } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
-  }
-#elif defined(__APPLE_QD__)
-  if (mask) {
-    Rect src, dst;
-    src.left = cx; src.right = cx+W;
-    src.top = cy; src.bottom = cy+H;
-    dst.left = X; dst.right = X+W;
-    dst.top = Y; dst.bottom = Y+H;
-    RGBColor rgb, oldfg, oldbg;
-    GetForeColor(&oldfg);
-    GetBackColor(&oldbg);
-    rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
-    RGBBackColor(&rgb);
-    rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
-    RGBForeColor(&rgb);
-    CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
-	     GetPortBitMapForCopyBits((GrafPtr)mask), 
-	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
-             &src, &src, &dst);
-    RGBBackColor(&oldbg);
-    RGBForeColor(&oldfg);
-  } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
-  }
-#elif defined(__APPLE_QUARTZ__)
-  fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
-#else
+
+#if defined(USE_X11)
   if (mask) {
     // I can't figure out how to combine a mask with existing region,
     // so cut the image down to a clipped rectangle:
@@ -175,6 +138,23 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     XSetClipOrigin(fl_display, fl_gc, 0, 0);
     fl_restore_clip();
   }
+#elif defined(WIN32)
+  if (mask) {
+    HDC new_gc = CreateCompatibleDC(fl_gc);
+    int save = SaveDC(new_gc);
+    SelectObject(new_gc, (void*)mask);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
+    SelectObject(new_gc, (void*)id);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    RestoreDC(new_gc,save);
+    DeleteDC(new_gc);
+  } else {
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  }
+#elif defined(__APPLE_QUARTZ__)
+  fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+#else
+# error unsupported platform
 #endif
 }
 

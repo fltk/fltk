@@ -73,18 +73,34 @@ void  gl_font(int fontid, int size) {
     fl_fontsize->listbase = glGenLists(0x10000);
 #else // Fltk-1.1.8 style GL font selection
 
-# ifdef WIN32
+#if defined (USE_X11) // X-windows options follow, either XFT or "plain" X
+#  if USE_XFT // XFT case
+#    warning We really need a glXUseXftFont implementation here...
+//    fl_xfont = fl_xxfont();
+    XFontStruct *font = fl_xxfont();
+    int base = font->min_char_or_byte2;
+    int count = font->max_char_or_byte2-base+1;
+    fl_fontsize->listbase = glGenLists(256);
+    glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
+#  else // plain X
+#    warning GL font selection is basically wrong here
+/* OksiD has a fairly sophisticated scheme for storing multiple X fonts in a XUtf8FontStruct,
+ * then sorting through them at draw time (for normal X rendering) to find which one can
+ * render the current glyph... But for now, just use the first font in the list for GL...
+ */
+    XFontStruct *tmp_font = fl_fontsize->font->fonts[0];  // this is certainly wrong!
+    int base = tmp_font->min_char_or_byte2;
+    int count = tmp_font->max_char_or_byte2-base+1;
+    fl_fontsize->listbase = glGenLists(256);
+    glXUseXFont(tmp_font->fid, base, count, fl_fontsize->listbase+base);
+#  endif // USE_XFT
+# elif defined(WIN32)
     int base = fl_fontsize->metr.tmFirstChar;
     int count = fl_fontsize->metr.tmLastChar-base+1;
     HFONT oldFid = (HFONT)SelectObject(fl_gc, fl_fontsize->fid);
     fl_fontsize->listbase = glGenLists(256);
     wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
     SelectObject(fl_gc, oldFid);
-# elif defined(__APPLE_QD__)
-    // undefined characters automatically receive an empty GL list in aglUseFont
-    fl_fontsize->listbase = glGenLists(256);
-    aglUseFont(aglGetCurrentContext(), fl_fontsize->font, fl_fontsize->face,
-               fl_fontsize->size, 0, 256, fl_fontsize->listbase);
 # elif defined(__APPLE_QUARTZ__)
     short font, face, size;
     uchar fn[256];
@@ -96,27 +112,8 @@ void  gl_font(int fontid, int size) {
     fl_fontsize->listbase = glGenLists(256);
     aglUseFont(aglGetCurrentContext(), font, face,
                size, 0, 256, fl_fontsize->listbase);
-# else // X-windows options follow, either XFT or "plain" X
-#  if USE_XFT // XFT case
-#warning We really need a glXUseXftFont implementation here...
-//    fl_xfont = fl_xxfont();
-    XFontStruct *font = fl_xxfont();
-    int base = font->min_char_or_byte2;
-    int count = font->max_char_or_byte2-base+1;
-    fl_fontsize->listbase = glGenLists(256);
-    glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
-#  else // plain X
-#warning GL font selection is basically wrong here
-/* OksiD has a fairly sophisticated scheme for storing multiple X fonts in a XUtf8FontStruct,
- * then sorting through them at draw time (for normal X rendering) to find which one can
- * render the current glyph... But for now, just use the first font in the list for GL...
- */
-    XFontStruct *tmp_font = fl_fontsize->font->fonts[0];  // this is certainly wrong!
-    int base = tmp_font->min_char_or_byte2;
-    int count = tmp_font->max_char_or_byte2-base+1;
-    fl_fontsize->listbase = glGenLists(256);
-    glXUseXFont(tmp_font->fid, base, count, fl_fontsize->listbase+base);
-#  endif // USE_XFT
+# else 
+#   error unsupported platform
 # endif
 
 #endif // USE_OksiD_style_GL_font_selection
@@ -130,18 +127,10 @@ void  gl_font(int fontid, int size) {
 // The OSX build does not use this at present... It probbaly should, though...
 static void get_list(int r) {
   gl_fontsize->glok[r] = 1;
-#ifdef WIN32
-  unsigned int ii = r * 0x400;
-  HFONT oldFid = (HFONT)SelectObject(fl_gc, gl_fontsize->fid);
-  wglUseFontBitmapsW(fl_gc, ii, ii + 0x03ff, gl_fontsize->listbase+ii);
-  SelectObject(fl_gc, oldFid);
-#elif defined(__APPLE_QD__)
+#if defined(USE_X11)
+# if USE_XFT
 // FIXME
-#elif defined(__APPLE_QUARTZ__)
-// FIXME
-#elif USE_XFT
-// FIXME
-#else
+# else
   unsigned int ii = r * 0x400;
   for (int i = 0; i < 0x400; i++) {
     XFontStruct *font = NULL;
@@ -150,6 +139,16 @@ static void get_list(int r) {
     if (font) glXUseXFont(font->fid, id, 1, gl_fontsize->listbase+ii);
     ii++;
    }
+# endif
+#elif defined(WIN32)
+  unsigned int ii = r * 0x400;
+  HFONT oldFid = (HFONT)SelectObject(fl_gc, gl_fontsize->fid);
+  wglUseFontBitmapsW(fl_gc, ii, ii + 0x03ff, gl_fontsize->listbase+ii);
+  SelectObject(fl_gc, oldFid);
+#elif defined(__APPLE_QUARTZ__)
+// FIXME
+#else
+#  error unsupported platform
 #endif
 } // get_list
 #endif
@@ -279,7 +278,7 @@ extern int fl_overlay_depth;
 
 void gl_color(Fl_Color i) {
 #if HAVE_GL_OVERLAY
-#ifdef WIN32
+#if defined(WIN32)
   if (fl_overlay && fl_overlay_depth) {
     if (fl_overlay_depth < 8) {
       // only black & white produce the expected colors.  This could

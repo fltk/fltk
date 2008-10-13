@@ -38,25 +38,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
 #  if HAVE_GL
   listbase = 0;
 #  endif
-#if defined(__APPLE_QD__) 
-  knowMetrics = 0;
-  switch (*name++) {
-  case 'I': face = italic; break;
-  case 'P': face = italic | bold; break;
-  case 'B': face = bold; break;
-  default: face = 0; break;
-  }
-  unsigned char fn[80]; 
-  fn[0] = strlen(name); strcpy((char*)(fn+1), name);
-  GetFNum(fn, &font);
-  size = Size;
-  FMInput fIn = { font, size, face, 0, 0, { 1, 1}, { 1, 1} };
-  FMOutput *fOut = FMSwapFont(&fIn);
-  ascent = fOut->ascent;	//: the following three lines give only temporary aproimations
-  descent = fOut->descent;
-  for (int i=0; i<256; i++) width[i] = fOut->widMax;
-  minsize = maxsize = size;
-#elif defined(__APPLE_QUARTZ__)
+
 //  knowWidths = 0;
     // OpenGL needs those for its font handling
   q_name = strdup(name);
@@ -130,7 +112,6 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   // cause ATSU to find a suitable font to render any chars the current font can't do...
   ATSUSetTransientFontMatching (layout, true);
 # endif
-#endif // defined(__APPLE_QD__) 
 }
 
 Fl_Font_Descriptor* fl_fontsize = 0L;
@@ -151,33 +132,13 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #endif
   */
   if (this == fl_fontsize) fl_fontsize = 0;
-#ifdef __APPLE_QUARTZ__
   ATSUDisposeTextLayout(layout);
   ATSUDisposeStyle(style);
-#endif
 }
 
 ////////////////////////////////////////////////////////////////
 
 static Fl_Fontdesc built_in_table[] = {
-#ifdef __APPLE_QD__
-{" Arial"},
-{"BArial"},
-{"IArial"},
-{"PArial"},
-{" Courier New"},
-{"BCourier New"},
-{"ICourier New"},
-{"PCourier New"},
-{" Times New Roman"},
-{"BTimes New Roman"},
-{"ITimes New Roman"},
-{"PTimes New Roman"},
-{" Symbol"},
-{" Chicago"},
-{"BChicago"},
-{" Webdings"},
-#elif defined(__APPLE_QUARTZ__)
 {"Arial"},
 {"Arial Bold"},
 {"Arial Italic"},
@@ -194,7 +155,6 @@ static Fl_Fontdesc built_in_table[] = {
 {"Monaco"},
 {"Andale Mono"}, // there is no bold Monaco font on standard Mac
 {"Webdings"},
-#endif
 };
 
 static UniChar *utfWbuf = 0;
@@ -218,22 +178,7 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 void fl_font(Fl_Font_Descriptor* s) {
   fl_fontsize = s;
-#ifdef __APPLE_QD__
-  if (fl_window) SetPort( GetWindowPort(fl_window) );
-  TextFont(fl_fontsize->font);	//: select font into current QuickDraw GC
-  TextFace(fl_fontsize->face);
-  TextSize(fl_fontsize->size);
-  if (!fl_fontsize->knowMetrics) {	//: get the true metrics for the current GC 
-                                        //: (fails on multiple monitors with different dpi's!)
-    FontInfo fi; GetFontInfo(&fi);
-    fl_fontsize->ascent = fi.ascent;
-    fl_fontsize->descent = fi.descent;
-    FMetricRec mr; FontMetrics(&mr);
-    short *f = (short*)*mr.wTabHandle; //: get the char size table
-    for (int i=0; i<256; i++) fl_fontsize->width[i] = f[2*i];
-    fl_fontsize->knowMetrics = 1;
-  }
-#elif defined(__APPLE_QUARTZ__)
+#if defined(__APPLE_QUARTZ__)
   // we will use fl_fontsize later to access the required style and layout
 #else
 # error : need to defined either Quartz or Quickdraw
@@ -281,9 +226,6 @@ int fl_descent() {
 }
 
 double fl_width(const UniChar* txt, int n) {
-#ifdef __APPLE_QD__
-  return (double)TextWidth( txt, 0, n );
-#else
   if (!fl_fontsize) {
     check_default_font(); // avoid a crash!
     if (!fl_fontsize)
@@ -310,7 +252,6 @@ double fl_width(const UniChar* txt, int n) {
   // If err is OK then return length, else return 0. Or something...
   int len = FixedToInt(bAfter);
   return len;
-#endif
 }
 
 double fl_width(const char* txt, int n) {
@@ -330,18 +271,10 @@ double fl_width(unsigned int wc) {
 void fl_draw(const char *str, int n, float x, float y);
 
 void fl_draw(const char* str, int n, int x, int y) {
-#ifdef __APPLE_QD__
-  MoveTo(x, y);
-  DrawText((const char *)str, 0, n);
-#elif defined(__APPLE_QUARTZ__)
   fl_draw(str, n, (float)x-0.0f, (float)y-0.5f);
-#endif
 }
 
 void fl_draw(const char *str, int n, float x, float y) {
-#ifdef __APPLE_QD__
-  fl_draw(str, n, (int)x, (int)y); // FIXME no utf8 rtl impl for QD
-#elif defined(__APPLE_QUARTZ__)
   OSStatus err;
     // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
@@ -358,15 +291,9 @@ void fl_draw(const char *str, int n, float x, float y) {
 
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
-#else
-#  error : neither Quartz no Quickdraw chosen
-#endif
 }
 
 void fl_rtl_draw(const char* c, int n, int x, int y) {
-#if defined __APPLE_QD__
-  fl_draw(c, n, x, y);
-#elif defined __APPLE_QUARTZ__
 // I guess with ATSU the thing to do is force the layout mode to RTL and let ATSU draw the text...
   double offs = fl_width(c, n);
   OSStatus err;
@@ -383,9 +310,6 @@ void fl_rtl_draw(const char* c, int n, int x, int y) {
 
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x-offs), FloatToFixed(y));
-#else
-#  error : neither Quartz no Quickdraw chosen
-#endif
 }
 
 //

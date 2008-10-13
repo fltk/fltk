@@ -122,22 +122,23 @@ int Fl_Gl_Window::mode(int m, const int *a) {
   mode_ = m; alist = a;
   if (shown()) {
     g = Fl_Gl_Choice::find(m, a);
-#if defined(WIN32)
-    if (!g || (oldmode^m)&(FL_DOUBLE|FL_STEREO)) {
-      hide();
-      show();
-    }
-#elif defined(__APPLE_QD__)
-    redraw();
-#elif defined(__APPLE_QUARTZ__)
-    // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-    redraw();
-#else
+
+#if defined(USE_X11)
     // under X, if the visual changes we must make a new X window (yuck!):
     if (!g || g->vis->visualid!=oldg->vis->visualid || (oldmode^m)&FL_DOUBLE) {
       hide();
       show();
     }
+#elif defined(WIN32)
+    if (!g || (oldmode^m)&(FL_DOUBLE|FL_STEREO)) {
+      hide();
+      show();
+    }
+#elif defined(__APPLE_QUARTZ__)
+    // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
+    redraw();
+#else
+#  error unsupported platform
 #endif
   } else {
     g = 0;
@@ -224,7 +225,9 @@ void Fl_Gl_Window::ortho() {
   It is called automatically after the draw() method is called.
 */
 void Fl_Gl_Window::swap_buffers() {
-#ifdef WIN32
+#if defined(USE_X11)
+  glXSwapBuffers(fl_display, fl_xid(this));
+#elif defined(WIN32)
 #  if HAVE_GL_OVERLAY
   // Do not swap the overlay, to match GLX:
   BOOL ret = wglSwapLayerBuffers(Fl_X::i(this)->private_dc, WGL_SWAP_MAIN_PLANE);
@@ -232,13 +235,11 @@ void Fl_Gl_Window::swap_buffers() {
 #  else
   SwapBuffers(Fl_X::i(this)->private_dc);
 #  endif
-#elif defined(__APPLE_QD__)
-  aglSwapBuffers((AGLContext)context_);
 #elif defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   aglSwapBuffers((AGLContext)context_);
 #else
-  glXSwapBuffers(fl_display, fl_xid(this));
+# error unsupported platform
 #endif
 }
 
@@ -253,15 +254,7 @@ void Fl_Gl_Window::flush() {
   uchar save_valid_f = valid_f_;
 #endif
 
-#ifdef __APPLE_QD__
-  //: clear previous clipping in this shared port
-  GrafPtr port = GetWindowPort( fl_xid(this) );
-  Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
-  GrafPtr old; GetPort( &old );
-  SetPort( port );
-  ClipRect( &rect );
-  SetPort( old );
-#elif defined(__APPLE_QUARTZ__)
+#if defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   //: clear previous clipping in this shared port
   GrafPtr port = GetWindowPort( fl_xid(this) );
@@ -309,9 +302,7 @@ void Fl_Gl_Window::flush() {
     glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
-#ifdef __APPLE_QD__
-      SWAP_TYPE = COPY;
-#elif defined __APPLE_QUARTZ__
+#if defined __APPLE_QUARTZ__
       // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
       SWAP_TYPE = COPY;
 #else

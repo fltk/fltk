@@ -79,14 +79,12 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
     gc is an HDC context in  WIN32, a CGContext* in Quartz, a display on X11
  */
 static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
-# if defined(USE_X11) // X11
+# if defined(USE_X11)
     return cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
 # elif   defined(WIN32)
     return cairo_win32_surface_create((HDC) gc);
 # elif defined(__APPLE_QUARTZ__)
     return cairo_quartz_surface_create_for_cg_context((CGContext*) gc, W, H);
-# elif defined(__APPLE_QD__)
-#  error Cairo is not supported under Apple Quickdraw, please use Apple Quartz.
 # else
 #  error Cairo is not supported under this platform.
 # endif

@@ -555,12 +555,12 @@ Fl_X* Fl_X::first;
 Fl_Window* fl_find(Window xid) {
   Fl_X *window;
   for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next)
-#ifdef __APPLE_QD__
-    if (window->xid == xid && !window->w->window()) {
+#if defined(WIN32) || defined(USE_X11)
+   if (window->xid == xid) {
 #elif defined(__APPLE_QUARTZ__)
     if (window->xid == xid && !window->w->window()) {
 #else
-    if (window->xid == xid) {
+# error unsupported platform
 #endif // __APPLE__
       if (window != Fl_X::first && !Fl::modal()) {
 	// make this window be first to speed up searches
@@ -632,19 +632,15 @@ void Fl::flush() {
       if (i->region) {XDestroyRegion(i->region); i->region = 0;}
     }
   }
-
-#ifdef WIN32
+#if defined(USE_X11)
+  if (fl_display) XFlush(fl_display);
+#elif defined(WIN32)
   GdiFlush();
-#elif defined(__APPLE_QD__)
-  GrafPtr port;
-  GetPort( &port );
-  if ( port )
-    QDFlushPortBuffer( port, 0 );
 #elif defined (__APPLE_QUARTZ__)
   if (fl_gc)
     CGContextFlush(fl_gc);
 #else
-  if (fl_display) XFlush(fl_display);
+# error unsupported platform
 #endif
 }
 
@@ -1170,7 +1166,7 @@ void Fl_Window::hide() {
   fl_throw_focus(this);
   handle(FL_HIDE);
 
-#ifdef WIN32
+#if defined(WIN32)
   // this little trick keeps the current clipboard alive, even if we are about
   // to destroy the window that owns the selection.
   if (GetClipboardOwner()==ip->xid) {
@@ -1192,9 +1188,6 @@ void Fl_Window::hide() {
       if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif
     }
-#elif defined(__APPLE_QD__)
-  if ( ip->xid == fl_window && !parent() )
-    fl_window = 0;
 #elif defined(__APPLE_QUARTZ__)
   Fl_X::q_release_context(ip);
   if ( ip->xid == fl_window && !parent() )
@@ -1203,7 +1196,12 @@ void Fl_Window::hide() {
 
   if (ip->region) XDestroyRegion(ip->region);
 
-#ifdef WIN32
+#if defined(USE_X11)
+# if USE_XFT
+  fl_destroy_xft_draw(ip->xid);
+# endif
+  XDestroyWindow(fl_display, ip->xid);
+#elif defined(WIN32)
   // this little trickery seems to avoid the popup window stacking problem
   HWND p = GetForegroundWindow();
   if (p==GetParent(ip->xid)) {
@@ -1211,15 +1209,10 @@ void Fl_Window::hide() {
     ShowWindow(p, SW_SHOWNA);
   }
   XDestroyWindow(fl_display, ip->xid);
-#elif defined(__APPLE_QD__)
-  MacDestroyWindow(this, ip->xid);
 #elif defined(__APPLE_QUARTZ__)
   MacDestroyWindow(this, ip->xid);
 #else
-# if USE_XFT
-  fl_destroy_xft_draw(ip->xid);
-# endif
-  XDestroyWindow(fl_display, ip->xid);
+# error unsupported platform
 #endif
   
 #ifdef WIN32
@@ -1249,12 +1242,12 @@ int Fl_Window::handle(int ev)
     case FL_SHOW:
       if (!shown()) show();
       else {
-#ifdef __APPLE_QD__
-        MacMapWindow(this, fl_xid(this));
+#if defined(USE_X11) || defined(WIN32)
+        XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
 #elif defined(__APPLE_QUARTZ__)
         MacMapWindow(this, fl_xid(this));
 #else
-        XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
+# error unsupported platform
 #endif // __APPLE__
       }
       break;
@@ -1271,13 +1264,13 @@ int Fl_Window::handle(int ev)
 	 Fl_Widget* p = parent(); for (;p->visible();p = p->parent()) {}
 	 if (p->type() >= FL_WINDOW) break; // don't do the unmap
 	}
-#ifdef __APPLE_QD__
-	MacUnmapWindow(this, fl_xid(this));
+#if defined(USE_X11) || defined(WIN32)
+	XUnmapWindow(fl_display, fl_xid(this));
 #elif defined(__APPLE_QUARTZ__)
 	MacUnmapWindow(this, fl_xid(this));
 #else
-	XUnmapWindow(fl_display, fl_xid(this));
-#endif // __APPLE__
+# error platform unsupported
+#endif
       }
       break;
     }
@@ -1418,24 +1411,21 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
   if (wi->damage()) {
     // if we already have damage we must merge with existing region:
     if (i->region) {
-#ifdef WIN32
+#if defined(USE_X11)
+      XRectangle R;
+      R.x = X; R.y = Y; R.width = W; R.height = H;
+      XUnionRectWithRegion(&R, i->region, i->region);
+#elif defined(WIN32)
       Fl_Region R = XRectangleRegion(X, Y, W, H);
       CombineRgn(i->region, i->region, R, RGN_OR);
       XDestroyRegion(R);
-#elif defined(__APPLE_QD__)
-      Fl_Region R = NewRgn(); 
-      SetRectRgn(R, X, Y, X+W, Y+H);
-      UnionRgn(R, i->region, i->region);
-      DisposeRgn(R);
 #elif defined(__APPLE_QUARTZ__)
       Fl_Region R = NewRgn();
       SetRectRgn(R, X, Y, X+W, Y+H);
       UnionRgn(R, i->region, i->region);
       DisposeRgn(R);
 #else
-      XRectangle R;
-      R.x = X; R.y = Y; R.width = W; R.height = H;
-      XUnionRectWithRegion(&R, i->region, i->region);
+# error unsupported platform
 #endif
     }
     wi->damage_ |= fl;

@@ -164,7 +164,12 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
 
   fl_color(fl_contrast(FL_BLACK, color()));
 
-#if defined(WIN32) || defined(__APPLE_QD__)
+#if defined(USE_X11) || defined(__APPLE_QUARTZ__)
+  fl_line_style(FL_DOT);
+  fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
+          W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
+  fl_line_style(FL_SOLID);
+#elif defined(WIN32) 
   // Windows 95/98/ME do not implement the dotted line style, so draw
   // every other pixel around the focus area...
   //
@@ -183,10 +188,7 @@ Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
   for (xx = W; xx > 0; xx --, i ++) if (i & 1) fl_point(X + xx, Y + H);
   for (yy = H; yy > 0; yy --, i ++) if (i & 1) fl_point(X, Y + yy);
 #else
-  fl_line_style(FL_DOT);
-  fl_rect(X + Fl::box_dx(B), Y + Fl::box_dy(B),
-          W - Fl::box_dw(B) - 1, H - Fl::box_dh(B) - 1);
-  fl_line_style(FL_SOLID);
+# error unsupported platform
 #endif // WIN32
 }
 

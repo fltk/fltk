@@ -72,7 +72,20 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
     clip_y = Y+src_h;
     clip_h = H-src_h;
   }
-#ifdef WIN32
+
+#if defined(USE_X11)
+  XCopyArea(fl_display, fl_window, fl_window, fl_gc,
+	    src_x, src_y, src_w, src_h, dest_x, dest_y);
+  // we have to sync the display and get the GraphicsExpose events! (sigh)
+  for (;;) {
+    XEvent e; XWindowEvent(fl_display, fl_window, ExposureMask, &e);
+    if (e.type == NoExpose) break;
+    // otherwise assumme it is a GraphicsExpose event:
+    draw_area(data, e.xexpose.x, e.xexpose.y,
+	      e.xexpose.width, e.xexpose.height);
+    if (!e.xgraphicsexpose.count) break;
+  }
+#elif defined(WIN32)
   typedef int (WINAPI* fl_GetRandomRgn_func)(HDC, HRGN, INT);
   static fl_GetRandomRgn_func fl_GetRandomRgn = 0L;
   static char first_time = 1;
@@ -126,13 +139,6 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   // Great, we can do an accelerated scroll insteasd of re-rendering
   BitBlt(fl_gc, dest_x, dest_y, src_w, src_h, fl_gc, src_x, src_y,SRCCOPY);
 
-#elif defined(__APPLE_QD__)
-  Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
-  Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
-  static RGBColor bg = { 0xffff, 0xffff, 0xffff }; RGBBackColor( &bg );
-  static RGBColor fg = { 0x0000, 0x0000, 0x0000 }; RGBForeColor( &fg );
-  CopyBits( GetPortBitMapForCopyBits( GetWindowPort(fl_window) ),
-            GetPortBitMapForCopyBits( GetWindowPort(fl_window) ), &src, &dst, srcCopy, 0L);
 #elif defined(__APPLE_QUARTZ__)
   // warning: there does not seem to be an equivalent to this function in Quartz
   // ScrollWindowRect is a QuickDraw function and won't work here.
@@ -145,17 +151,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   CopyBits( GetPortBitMapForCopyBits( GetWindowPort(fl_window) ),
             GetPortBitMapForCopyBits( GetWindowPort(fl_window) ), &src, &dst, srcCopy, 0L);
 #else
-  XCopyArea(fl_display, fl_window, fl_window, fl_gc,
-	    src_x, src_y, src_w, src_h, dest_x, dest_y);
-  // we have to sync the display and get the GraphicsExpose events! (sigh)
-  for (;;) {
-    XEvent e; XWindowEvent(fl_display, fl_window, ExposureMask, &e);
-    if (e.type == NoExpose) break;
-    // otherwise assumme it is a GraphicsExpose event:
-    draw_area(data, e.xexpose.x, e.xexpose.y,
-	      e.xexpose.width, e.xexpose.height);
-    if (!e.xgraphicsexpose.count) break;
-  }
+# error unsupported platform
 #endif
   if (dx) draw_area(data, clip_x, dest_y, clip_w, src_h);
   if (dy) draw_area(data, X, clip_y, W, clip_h);

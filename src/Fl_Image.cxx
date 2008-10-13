@@ -482,56 +482,8 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     }
 #endif
   }
-#ifdef WIN32
-  if (mask) {
-    HDC new_gc = CreateCompatibleDC(fl_gc);
-    int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)mask);
-    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
-    SelectObject(new_gc, (void*)id);
-    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
-    RestoreDC(new_gc,save);
-    DeleteDC(new_gc);
-  } else if (d()==2 || d()==4) {
-    fl_copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
-  } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
-  }
-#elif defined(__APPLE_QD__)
-  if (mask) {
-    Rect src, dst;
-    // MRS: STR #114 says we should be using cx, cy, W, and H...
-//    src.left = 0; src.right = w();
-//    src.top = 0; src.bottom = h();
-//    dst.left = X; dst.right = X+w();
-//    dst.top = Y; dst.bottom = Y+h();
-    src.left = cx; src.right = cx+W;
-    src.top = cy; src.bottom = cy+H;
-    dst.left = X; dst.right = X+W;
-    dst.top = Y; dst.bottom = Y+H;
-    RGBColor rgb;
-    rgb.red = 0xffff; rgb.green = 0xffff; rgb.blue = 0xffff;
-    RGBBackColor(&rgb);
-    rgb.red = 0x0000; rgb.green = 0x0000; rgb.blue = 0x0000;
-    RGBForeColor(&rgb);
 
-    CopyMask(GetPortBitMapForCopyBits((GrafPtr)id),
-	     GetPortBitMapForCopyBits((GrafPtr)mask), 
-	     GetPortBitMapForCopyBits(GetWindowPort(fl_window)),
-             &src, &src, &dst);
-  } else if (id) fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
-  else {
-    // Composite image with alpha manually each time...
-    alpha_blend(this, X, Y, W, H, cx, cy);
-  }
-#elif defined(__APPLE_QUARTZ__)
-  if (id && fl_gc) {
-    CGRect rect = { { X, Y }, { W, H } };
-    Fl_X::q_begin_image(rect, cx, cy, w(), h());
-    CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
-    Fl_X::q_end_image();
-  }
-#else
+#if defined(USE_X11)
   if (id) {
     if (mask) {
       // I can't figure out how to combine a mask with existing region,
@@ -557,6 +509,30 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     // Composite image with alpha manually each time...
     alpha_blend(this, X, Y, W, H, cx, cy);
   }
+#elif defined(WIN32)
+  if (mask) {
+    HDC new_gc = CreateCompatibleDC(fl_gc);
+    int save = SaveDC(new_gc);
+    SelectObject(new_gc, (void*)mask);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
+    SelectObject(new_gc, (void*)id);
+    BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
+    RestoreDC(new_gc,save);
+    DeleteDC(new_gc);
+  } else if (d()==2 || d()==4) {
+    fl_copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  } else {
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  }
+#elif defined(__APPLE_QUARTZ__)
+  if (id && fl_gc) {
+    CGRect rect = { { X, Y }, { W, H } };
+    Fl_X::q_begin_image(rect, cx, cy, w(), h());
+    CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
+    Fl_X::q_end_image();
+  }
+#else
+# error unsupported platform
 #endif
 }
 

@@ -64,17 +64,16 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
 void gl_start() {
   if (!context) {
-#ifdef WIN32
+#if defined(USE_X11)
+    context = fl_create_gl_context(fl_visual);
+#elif defined(WIN32)
     if (!gl_choice) Fl::gl_visual(0);
-    context = fl_create_gl_context(Fl_Window::current(), gl_choice);
-#elif defined(__APPLE_QD__)
-    // \todo Mac : We need to check the code and verify it with Apple Sample code. The 'shiny'-test should at least work with the software OpenGL emulator
     context = fl_create_gl_context(Fl_Window::current(), gl_choice);
 #elif defined(__APPLE_QUARTZ__)
     // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
     context = fl_create_gl_context(Fl_Window::current(), gl_choice);
 #else
-    context = fl_create_gl_context(fl_visual);
+#  error Unsupported platform
 #endif
   }
   fl_set_gl_context(Fl_Window::current(), context);
@@ -109,23 +108,23 @@ void gl_finish() {
   glXWaitGL();
 #endif
 }
+
 int Fl::gl_visual(int mode, int *alist) {
   Fl_Gl_Choice *c = Fl_Gl_Choice::find(mode,alist);
   if (!c) return 0;
-#ifdef WIN32
-  gl_choice = c;
-#elif defined(__APPLE_QD__)
+#if defined(USE_X11)
+  fl_visual = c->vis;
+  fl_colormap = c->colormap;
+#elif defined(WIN32)
   gl_choice = c;
 #elif defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   gl_choice = c;
 #else
-  fl_visual = c->vis;
-  fl_colormap = c->colormap;
+#  error Unsupported platform
 #endif
   return 1;
 }
-
 #endif
 
 //

@@ -50,15 +50,15 @@ void Fl_Window::border(int b) {
     if (!border()) return;
     set_flag(FL_NOBORDER);
   }
-#ifdef WIN32
+#if defined(USE_X11)
+  if (shown()) Fl_X::i(this)->sendxjunk();
+#elif defined(WIN32)
   // not yet implemented, but it's possible
   // for full fullscreen we have to make the window topmost as well
-#elif defined(__APPLE_QD__)
-  // warning: not implemented in Quickdraw/Carbon
 #elif defined(__APPLE_QUARTZ__)
   // warning: not implemented in Quartz/Carbon
 #else
-  if (shown()) Fl_X::i(this)->sendxjunk();
+# error unsupported platform
 #endif
 }
 

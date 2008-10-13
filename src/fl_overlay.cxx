@@ -48,24 +48,22 @@ static int bgx, bgy, bgw, bgh;
 
 static void draw_current_rect() {
 #ifdef USE_XOR
-# ifdef WIN32
+# if defined(USE_X11)
+  XSetFunction(fl_display, fl_gc, GXxor);
+  XSetForeground(fl_display, fl_gc, 0xffffffff);
+  XDrawRectangle(fl_display, fl_window, fl_gc, px, py, pw, ph);
+  XSetFunction(fl_display, fl_gc, GXcopy);
+# elif defined(WIN32)
   int old = SetROP2(fl_gc, R2_NOT);
   fl_rect(px, py, pw, ph);
   SetROP2(fl_gc, old);
-# elif defined(__APPLE_QD__)
-  PenMode( patXor );
-  fl_rect(px, py, pw, ph);
-  PenMode( patCopy );
 # elif defined(__APPLE_QUARTZ__)
   // warning: Quartz does not support xor drawing
   // Use the Fl_Overlay_Window instead.
   fl_color(FL_WHITE);
   fl_rect(px, py, pw, ph);
 # else
-  XSetFunction(fl_display, fl_gc, GXxor);
-  XSetForeground(fl_display, fl_gc, 0xffffffff);
-  XDrawRectangle(fl_display, fl_window, fl_gc, px, py, pw, ph);
-  XSetFunction(fl_display, fl_gc, GXcopy);
+#  error unsupported platform
 # endif
 #else
   if (bgN) { free(bgN); bgN = 0L; }

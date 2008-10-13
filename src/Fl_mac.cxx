@@ -680,7 +680,7 @@ static pascal void do_timer(EventLoopTimerRef timer, void* data)
  */
 static double do_queued_events( double time = 0.0 ) 
 {
-  static bool been_here = 0;
+  static bool been_here = false;
   static RgnHandle rgn;
   
   // initialize events and a region that enables mouse move events
@@ -690,7 +690,7 @@ static double do_queued_events( double time = 0.0 )
     GetMouse(&mp);
     SetRectRgn(rgn, mp.h, mp.v, mp.h, mp.v);
     SetEventMask(everyEvent);
-    been_here = 1;
+    been_here = true;
   }
   OSStatus ret;
   static EventTargetRef target = 0;
@@ -1569,15 +1569,8 @@ unsigned short mac2fltk(ulong macKey)
 void Fl_X::flush()
 {
   w->flush();
-#ifdef __APPLE_QD__
-  GrafPtr port; 
-  GetPort( &port );
-  if ( port )
-    QDFlushPortBuffer( port, 0 );
-#elif defined (__APPLE_QUARTZ__)
   if (fl_gc) 
     CGContextFlush(fl_gc);
-#endif          
   SetOrigin( 0, 0 );
 }
 

@@ -44,9 +44,6 @@
 #  include <cairo-win32.h>
 # elif defined(__APPLE_QUARTZ__)
 #  include <cairo-quartz.h>
-# elif defined(__APPLE_QD__)
-#  error Apple Quartz is necessary for Cairo upport.
-# else
 #  error Cairo is not supported on that platform.
 # endif
 
