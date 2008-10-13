@@ -306,7 +306,8 @@ extern Fl_Window *main_window;
 // Read an image of the overlay window
 uchar *Overlay_Window::read_image(int &ww, int &hh) {
   // Create an off-screen buffer for the window...
-  main_window->make_current();
+  //main_window->make_current();
+  make_current();
 
   ww = w();
   hh = h();
@@ -329,7 +330,7 @@ uchar *Overlay_Window::read_image(int &ww, int &hh) {
 
   // Cleanup and return...
   fl_delete_offscreen(offscreen);
-
+  main_window->make_current();
   return pixels;
 }
 
