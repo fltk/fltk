@@ -2245,7 +2245,7 @@ void Fl_Widget_Type::write_widget_code() {
     Fl_Font f; int s; Fl_Color c; textstuff(0,f,s,c);
     if (f != ff) write_c("%s%s->textfont(%d);\n", indent(), var, f);
     if (s != fs) write_c("%s%s->textsize(%d);\n", indent(), var, s);
-    if (c != fc) write_c("%s%s->textcolor(%d);\n",indent(), var, c);
+    if (c != fc) write_color("textcolor", c);
   }}
   const char* ud = user_data();
   if (class_name(1) && !parent->is_widget()) ud = "this";
