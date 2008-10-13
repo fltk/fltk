@@ -1,6 +1,8 @@
 CHANGES IN FLTK 1.1.10
 
 	- Fixed first modifier key event (STR #1952)
+	- Fixed wrong default value of Fl_Spinner in 
+	  Fluid (STR #1991)
 
 CHANGES IN FLTK 1.1.9
 
