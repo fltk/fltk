@@ -257,10 +257,13 @@ AC_ARG_WITH(optim, [  --with-optim="flags"    use custom optimization flags])
 AC_ARG_WITH(archflags, [  --with-archflags="flags"
                           use custom architecture flags],
     ARCHFLAGS="$withval")
-
+case $uname in
+    Darwin*)
 # QD is not supported anymore since 1.3
-AC_DEFINE(USE_QUARTZ, 1)
-AC_DEFINE(__APPLE_QUARTZ__)
+	AC_DEFINE(USE_QUARTZ, 1)
+	AC_DEFINE(__APPLE_QUARTZ__)
+	;;
+esac
 
 dnl Find commands...
 AC_PROG_CC
