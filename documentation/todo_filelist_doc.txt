@@ -3,16 +3,23 @@ to visit one package of files search for 'WP'
 WP1 -> WP11 : Widgets, Image and other classes, 7 to 8 files per WP.
 WP12,13 : other documentation: 10 to 11 files per WP.
 
-Note: We must put the Doxygen comments wherever the 
-implementation is. So class, typedef, enum, and inline docs go in the 
-header. Most other stuff goes into the source.
+Developer Notes:
+===============
+- We must put the Doxygen comments wherever the implementation is. 
+So class, typedef, enum, and inline docs go in the 
+header. 
+Most other stuff goes into the source.
+- The doxygen comments syntaxs used are:
+/** */ for standard comments and ///< for post decl. short comments
+- We use \a for parameters citation in the description
+- We must not use doxygen tags between a \htmlonly \endhmltonly pair of tags
 
-- TODO in next batch command:
-==============================
-   - replace all &quote; by "
-   - check escape chars like \\r instead of \r
-    [add more fixes to apply in batch here]
-
+TODO in pdf gen:
+================
+   - Fix the batchmode not currently working
+   - Fix the 2 pages garbage at the beginning
+   - Improve pdf
+   - Improve Makefile
 
 - In Progress Work List (add your WP and name here): ALL DONE
 ====================================================
