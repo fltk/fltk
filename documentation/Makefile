@@ -43,176 +43,92 @@ MEDIA		=	--size universal
 #MEDIA		=	--size 7x8.5in --fontsize 9.0
 
 # These are the HTML "source" files...
-HTMLFILES	= \
-		preface.html \
-		intro.html \
-		basics.html \
-		common.html \
-		editor.html \
-		drawing.html \
-		events.html \
-		subclassing.html \
-		opengl.html \
-		fluid.html \
-		advanced.html \
-		widgets.html \
-		Fl.html \
-		Fl_Adjuster.html \
-		Fl_Bitmap.html \
-		Fl_BMP_Image.html \
-		Fl_Box.html \
-		Fl_Browser_.html \
-		Fl_Browser.html \
-		Fl_Button.html \
-		Fl_Chart.html \
-		Fl_Check_Browser.html \
-		Fl_Check_Button.html \
-		Fl_Choice.html \
-		Fl_Clock.html \
-		Fl_Clock_Output.html \
-		Fl_Color_Chooser.html \
-		Fl_Counter.html \
-		Fl_Dial.html \
-		Fl_Double_Window.html \
-		Fl_End.html \
-		Fl_File_Browser.html \
-		Fl_File_Chooser.html \
-		Fl_File_Icon.html \
-		Fl_File_Input.html \
-		Fl_Float_Input.html \
-		Fl_Free.html \
-		Fl_GIF_Image.html \
-		Fl_Gl_Window.html \
-		Fl_Group.html \
-		Fl_Help_Dialog.html \
-		Fl_Help_View.html \
-		Fl_Hold_Browser.html \
-		Fl_Image.html \
-		Fl_Input.html \
-		Fl_Input_.html \
-		Fl_Input_Choice.html \
-		Fl_Int_Input.html \
-		Fl_JPEG_Image.html \
-		Fl_Light_Button.html \
-		Fl_Menu_.html \
-		Fl_Menu_Bar.html \
-		Fl_Menu_Button.html \
-		Fl_Menu_Item.html \
-		Fl_Menu_Window.html \
-		Fl_Multi_Browser.html \
-		Fl_Multiline_Input.html \
-		Fl_Multiline_Output.html \
-		Fl_Output.html \
-		Fl_Overlay_Window.html \
-		Fl_Pack.html \
-		Fl_Pixmap.html \
-		Fl_PNG_Image.html \
-		Fl_PNM_Image.html \
-		Fl_Positioner.html \
-		Fl_Preferences.html \
-		Fl_Progress.html \
-		Fl_Repeat_Button.html \
-		Fl_RGB_Image.html \
-		Fl_Return_Button.html \
-		Fl_Roller.html \
-		Fl_Round_Button.html \
-		Fl_Scroll.html \
-		Fl_Scrollbar.html \
-		Fl_Secret_Input.html \
-		Fl_Select_Browser.html \
-		Fl_Shared_Image.html \
-		Fl_Single_Window.html \
-		Fl_Slider.html \
-		Fl_Spinner.html \
-		Fl_Tabs.html \
-		Fl_Text_Buffer.html \
-		Fl_Text_Display.html \
-		Fl_Text_Editor.html \
-		Fl_Tile.html \
-		Fl_Tiled_Image.html \
-		Fl_Timer.html \
-		Fl_Toggle_Button.html \
-		Fl_Tooltip.html \
-		Fl_Valuator.html \
-		Fl_Value_Input.html \
-		Fl_Value_Output.html \
-		Fl_Value_Slider.html \
-		Fl_Widget.html \
-		Fl_Window.html \
-		Fl_Wizard.html \
-		Fl_XBM_Image.html \
-		Fl_XPM_Image.html \
-		functions.html \
-		enumerations.html \
-		glut.html \
-		forms.html \
-		osissues.html \
-		migration.html \
-		license.html \
-		examples.html
+HTMLFILES	=	 html/index.html \
+                    	 src/index.dox \
+                         src/preface.dox \
+                         src/intro.dox \
+                         src/basics.dox \
+                         src/common.dox \
+                         src/drawing.dox \
+                         src/editor.dox \
+                         src/events.dox \
+                         src/subclassing.dox \
+                         src/opengl.dox \
+                         src/fluid.dox \
+                         src/advanced.dox \
+                         src/unicode.dox \
+                         src/enumerations.dox \
+                         src/glut.dox \
+                         src/forms.dox \
+                         src/osissues.dox \
+                         src/migration_1_1.dox \
+                         src/migration_1_3.dox \
+                         src/development.dox \
+                         src/license.dox \
+                         src/examples.dox
 
 IMAGEFILES	= \
-		adjuster1.gif \
-		boxtypes.gif \
-		buttons.gif \
-		charts.gif \
-		choice.gif \
-		clock.gif \
-		counter.gif \
-		cubeview.gif \
-		dial.gif \
-		editor.gif \
-		editor-replace.gif \
-		fl_alert.gif \
-		fl_ask.gif \
-		Fl_Check_Button.gif \
-		fl_choice.gif \
-		fl_color_chooser.jpg \
-		Fl_File_Chooser.jpg \
-		Fl_File_Input.gif \
-		FL.gif \
-		Fl_Help_Dialog.gif \
-		fl_input.gif \
-		Fl_Light_Button.gif \
-		fl_message.gif \
-		fl_password.gif \
-		Fl_Return_Button.gif \
-		Fl_Roller.gif \
-		Fl_Round_Button.gif \
-		Fl_Scroll.gif \
-		fl_show_colormap.gif \
-		Fl_Tile.gif \
-		fluid1.gif \
-		fluid2.gif \
-		fluid3-cxx.gif \
-		fluid3-gui.gif \
-		fluid3-style.gif \
-		fluid4.gif \
-		fluid-catgets.gif \
-		fluid-gettext.gif \
-		fluid-org.gif \
-		fluid_prefs.gif \
-		fluid_widget_cxx.gif \
-		fluid_widget_gui.gif \
-		fluid_widget_style.gif \
-		Fl_Value_Input.gif \
-		Fl_Value_Output.gif \
-		hello.C.gif \
-		input_choice.jpg \
-		menubar.gif \
-		menu_button.gif \
-		menu.gif \
-		positioner.gif \
-		resizebox1.gif \
-		resizebox2.gif \
-		round_clock.gif \
-		scrollbar.gif \
-		slider.gif \
-		symbols.gif \
-		tabs.gif \
-		text.gif \
-		valuators.gif \
-		value_slider.gif
+		src/adjuster1.gif \
+		src/boxtypes.gif \
+		src/buttons.gif \
+		src/charts.gif \
+		src/choice.gif \
+		src/clock.gif \
+		src/counter.gif \
+		src/cubeview.gif \
+		src/dial.gif \
+		src/editor.gif \
+		src/editor-replace.gif \
+		src/fl_alert.gif \
+		src/fl_ask.gif \
+		src/Fl_Check_Button.gif \
+		src/fl_choice.gif \
+		src/fl_color_chooser.jpg \
+		src/Fl_File_Chooser.jpg \
+		src/Fl_File_Input.gif \
+		src/FL.gif \
+		src/Fl_Help_Dialog.gif \
+		src/fl_input.gif \
+		src/Fl_Light_Button.gif \
+		src/fl_message.gif \
+		src/fl_password.gif \
+		src/Fl_Return_Button.gif \
+		src/Fl_Roller.gif \
+		src/Fl_Round_Button.gif \
+		src/Fl_Scroll.gif \
+		src/fl_show_colormap.gif \
+		src/Fl_Tile.gif \
+		src/fluid1.gif \
+		src/fluid2.gif \
+		src/fluid3-cxx.gif \
+		src/fluid3-gui.gif \
+		src/fluid3-style.gif \
+		src/fluid4.gif \
+		src/fluid-catgets.gif \
+		src/fluid-gettext.gif \
+		src/fluid-org.gif \
+		src/fluid_prefs.gif \
+		src/fluid_widget_cxx.gif \
+		src/fluid_widget_gui.gif \
+		src/fluid_widget_style.gif \
+		src/Fl_Value_Input.gif \
+		src/Fl_Value_Output.gif \
+		src/hello.C.gif \
+		src/input_choice.jpg \
+		src/menubar.gif \
+		src/menu_button.gif \
+		src/menu.gif \
+		src/positioner.gif \
+		src/resizebox1.gif \
+		src/resizebox2.gif \
+		src/round_clock.gif \
+		src/scrollbar.gif \
+		src/slider.gif \
+		src/symbols.gif \
+		src/tabs.gif \
+		src/text.gif \
+		src/valuators.gif \
+		src/value_slider.gif
 
 
 MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT) \
@@ -220,12 +136,12 @@ MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT) \
 
 all:	$(MANPAGES)
 
-alldocs:	fltk.ps fltk.pdf fltk.d/index.html $(MANPAGES)
+alldocs:	refman.pdf html/index.html $(MANPAGES)
 
 clean:
-	$(RM) fltk.ps
-	$(RM) fltk.pdf
-	$(RMDIR) fltk.d
+#	$(RM) fltk.ps
+	$(RM) refman.pdf
+	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bck
 
 depend:
@@ -278,21 +194,21 @@ uninstall-linux uninstall-osx:
 
 # Base html files are now the readable ones, so this target is not make by
 # default...
-fltk.d/index.html: $(HTMLFILES) $(IMAGEFILES)
+html/index.html: $(IMAGEFILES)
 	echo "Generating HTML documentation..."
-	-$(RMDIR) fltk.d
-	-$(INSTALL_DIR) fltk.d
-	-$(HTMLDOC) --verbose --batch fltk.book -d fltk.d -t html
+	-$(RMDIR) html
+	-$(INSTALL_DIR) html
+	-$(HTMLDOC)
 
-fltk.ps: $(HTMLFILES) $(IMAGEFILES)
-	echo "Generating PostScript documentation..."
-	$(RM) fltk.ps
-	-$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.ps
+#fltk.ps: $(HTMLFILES) $(IMAGEFILES)
+#	echo "Generating PostScript documentation..."
+#	$(RM) fltk.ps
+#	-$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.ps
 
-fltk.pdf: $(HTMLFILES) $(IMAGEFILES)
+refman.pdf: html/index.html latex/intro.tex $(HTMLFILES) $(IMAGEFILES)
 	echo "Generating PDF documentation..."
-	$(RM) fltk.pdf
-	-$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.pdf
+	$(RM) refman.pdf
+	(cd latex; make; cp refman.pdf ..)
 
 #
 # End of "$Id$".
