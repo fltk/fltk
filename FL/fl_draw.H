@@ -115,6 +115,7 @@ FL_EXPORT void fl_yxline(int x, int y, int y1, int x2, int y3);
 // circular lines and pie slices (code in fl_arci.C):
 FL_EXPORT void fl_arc(int x, int y, int w, int h, double a1, double a2);
 FL_EXPORT void fl_pie(int x, int y, int w, int h, double a1, double a2);
+/** fl_chord declaration is a place holder - the function does not yet exist */
 FL_EXPORT void fl_chord(int x, int y, int w, int h, double a1, double a2); // nyi
 
 // scalable drawing code (code in fl_vertex.C and fl_arc.C):
@@ -130,7 +131,7 @@ FL_EXPORT void fl_begin_line();
 FL_EXPORT void fl_begin_loop();
 FL_EXPORT void fl_begin_polygon();
 FL_EXPORT void fl_vertex(double x, double y);
-FL_EXPORT void fl_curve(double, double, double, double, double, double, double, double);
+FL_EXPORT void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
 FL_EXPORT void fl_arc(double x, double y, double r, double start, double a);
 FL_EXPORT void fl_circle(double x, double y, double r);
 FL_EXPORT void fl_end_points();

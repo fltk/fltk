@@ -25,6 +25,16 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+  \file fl_curve.cxx
+  \brief Utility for drawing Bezier curves, adding the points to the
+         current fl_begin/fl_vertex/fl_end path.
+
+  Incremental math implementation:
+  I very much doubt this is optimal!  From Foley/vanDam page 511.
+  If anybody has a better algorithim, please send it!
+*/
+
 // Utility for drawing Bezier curves, adding the points to
 // the current fl_begin/fl_vertex/fl_end path.
 // Incremental math implementation:
@@ -34,6 +44,14 @@
 #include <FL/fl_draw.H>
 #include <math.h>
 
+/**
+  Add a series of points on a Bezier curve to the path.
+  The curve ends (and two of the points) are at X0,Y0 and X3,Y3.
+  \param[in] X0,Y0 curve start point
+  \param[in] X1,Y1 curve control point
+  \param[in] X2,Y2 curve control point
+  \param[in] X3,Y3 curve end point
+*/
 void fl_curve(double X0, double Y0,
 	      double X1, double Y1,
 	      double X2, double Y2,
