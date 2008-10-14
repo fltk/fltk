@@ -1004,11 +1004,10 @@ Fl_Offscreen osrc, int srcx, int srcy)
 Copy a rectangular area of the size <tt>w*h</tt> from <tt>srcx, srcy</tt>
 in the offscreen buffer into the current buffer at <tt>x, y</tt>.
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="editor.html">[Previous]</a>&nbsp;
-     \ref editor &nbsp;&nbsp;
-<a class="el" href="events.html">[Next]</a>&nbsp;
-     \ref events
-
+<a class="el" href="editor.html">[Previous]&nbsp; 4 - Designing a Simple Text Editor</a>&nbsp;
+<a class="el" href="events.html">[Next]&nbsp; 6 - Handling Events</a>&nbsp;
+\endhtmlonly
 */

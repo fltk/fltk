@@ -160,6 +160,7 @@ method to disable it:
 Fl::visible_focus(0);
 \endcode
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="osissues.html">[Previous]</a>&nbsp;
@@ -167,4 +168,5 @@ Fl::visible_focus(0);
 <a class="el" href="migration_1_3.html">[Next]</a>&nbsp;
      \ref migration_1_3
 
+\endhtmlonly
 */

@@ -235,6 +235,7 @@ fl_font_name(10,"*bookman-demi-r-no*");
 fl_font_name(11,"*bookman-light-i-no*");
 \endcode
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="glut.html">[Previous]</a>&nbsp;
@@ -242,4 +243,5 @@ fl_font_name(11,"*bookman-light-i-no*");
 <a class="el" href="osissues.html">[Next]</a>&nbsp;
      \ref osissues
 
+\endhtmlonly
 */

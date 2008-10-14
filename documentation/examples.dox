@@ -641,9 +641,11 @@ useful visual UI designer. Many parts of \c fluid were
 created using \c fluid. See the \link fluid Fluid Tutorial \endlink
 for more details.
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="license.html">[Previous]</a>&nbsp;
      \ref license &nbsp;&nbsp;
 
+\endhtmlonly
 */

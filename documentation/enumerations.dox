@@ -290,10 +290,12 @@ The following damage mask bits are used by the standard FLTK widgets:
 \li <tt>FL_DAMAGE_USER2</tt> - Second user-defined damage bit. 
 \li <tt>FL_DAMAGE_ALL</tt> - Everything needs to be redrawn. 
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="globals_func.html">[Previous] B - Function Reference</a>&nbsp;
 <a class="el" href="glut.html">[Next]</a>&nbsp;
      \ref glut
 
+\endhtmlonly
 */

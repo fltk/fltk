@@ -608,11 +608,11 @@ or one of the special keys like
 combined with any modifiers like <KBD>Shift</KBD>,
 <KBD>Alt</KBD>, and <KBD>Control</KBD>.
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="basics.html">[Previous]</a>&nbsp;
-     \ref basics &nbsp;&nbsp;
-<a class="el" href="editor.html">[Next]</a>&nbsp;
-     \ref editor
+<a class="el" href="basics.html">[Previous]&nbsp; 2 - FLTK Basics</a>&nbsp;
+<a class="el" href="editor.html">[Next]&nbsp; 4 - Designing a Simple Text Editor</a>&nbsp;
 
+\endhtmlonly
 */

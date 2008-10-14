@@ -450,11 +450,10 @@ The <tt>scene()</tt> method sets the scene to be drawn.  The scene is
 a collection of 3D objects in a <tt>csGroup</tt>.  The scene is redrawn
 after this call.
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="subclassing.html">[Previous]</a>&nbsp;
-     \ref subclassing &nbsp;&nbsp;
-<a class="el" href="fluid.html">[Next]</a>&nbsp;
-     \ref fluid
-
+<a class="el" href="subclassing.html">[Previous]&nbsp; 7 - Adding and Extending Widgets</a>&nbsp;
+<a class="el" href="fluid.html">[Next]&nbsp; 9 - Programming with FLUID</a>&nbsp;
+\endhtmlonly
 */

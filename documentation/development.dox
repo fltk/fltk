@@ -416,6 +416,7 @@ The above code produces the following paragraphs:
 
 \section development_navigation_test 5 Navigation Proposals
 
+\htmlonly
 <hr>
 \link migration_1_3 [ Previous ] \endlink
 <b>    [ <a href="index.html">Index</a> ]    </b>
@@ -456,4 +457,5 @@ See below.
 <a class="el" href="license.html">[Next]</a>&nbsp;
      \ref license
 
+\endhtmlonly
 */

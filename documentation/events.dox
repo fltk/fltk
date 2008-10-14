@@ -380,11 +380,10 @@ The following methods are provided for character composition:
 
 \li <A HREF="Fl.html#Fl.compose_reset"><tt>Fl::compose_reset()</tt></A>
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="drawing.html">[Previous]</a>&nbsp;
-     \ref drawing &nbsp;&nbsp;
-<a class="el" href="subclassing.html">[Next]</a>&nbsp;
-     \ref subclassing
-
+<a class="el" href="drawing.html">[Previous]&nbsp; 5 - Drawing Things in FLTK</a>&nbsp;
+<a class="el" href="subclassing.html">[Next]&nbsp; 7 - Adding and Extending Widgets</a>&nbsp;
+\endhtmlonly
 */

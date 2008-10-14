@@ -522,11 +522,10 @@ the windows. See
 <A href="osissues.html">"Appendix F - Operating System Issues"</A>
 for more information.
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="events.html">[Previous]</a>&nbsp;
-     \ref events &nbsp;&nbsp;
-<a class="el" href="opengl.html">[Next]</a>&nbsp;
-     \ref opengl
-
+<a class="el" href="events.html">[Previous]&nbsp; 6 - Handling Events</a>&nbsp;
+<a class="el" href="opengl.html">[Next]&nbsp; 8 - Using OpenGL</a>&nbsp;
+\endhtmlonly
 */

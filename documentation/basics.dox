@@ -343,11 +343,10 @@ include lines:</i>
 #include <Fl/fl_xyz.h>
 \endcode
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="intro.html">[Previous]</a>&nbsp;
-     \ref intro &nbsp;&nbsp;
-<a class="el" href="common.html">[Next]</a>&nbsp;
-     \ref common
-
+<a class="el" href="intro.html">[Previous]&nbsp; 1 - Introduction to FLTK</a>&nbsp;
+<a class="el" href="common.html">[Next]&nbsp; 3 - Common Widgets and Attributes</a>&nbsp;
+\endhtmlonly
 */

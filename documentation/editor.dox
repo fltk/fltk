@@ -901,11 +901,10 @@ style_parse(const char *text,
 }
 \endcode
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="common.html">[Previous]</a>&nbsp;
-     \ref common &nbsp;&nbsp;
-<a class="el" href="drawing.html">[Next]</a>&nbsp;
-     \ref drawing
-
+<a class="el" href="common.html">[Previous]&nbsp; 3 - Common Widgets and Attributes</a>&nbsp;
+<a class="el" href="drawing.html">[Next]&nbsp; 5 - Drawing Things in FLTK</a>&nbsp;
+\endhtmlonly
 */

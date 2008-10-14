@@ -75,9 +75,11 @@ Corporation. OpenGL is a registered trademark of Silicon
 Graphics, Inc. Apple, Macintosh, MacOS, and Mac OS X are
 registered trademarks of Apple Computer, Inc.
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="intro.html">[Next]</a>&nbsp;
      \ref intro
 
+\endhtmlonly
 */

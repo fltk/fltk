@@ -104,11 +104,10 @@ See also:
 <a href="Fl.html#Fl.thread_message">void *thread_message()</A>,
 <a href="Fl.html#Fl.unlock">void unlock()</A>.
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="fluid.html">[Previous]</a>&nbsp;
-     \ref fluid &nbsp;&nbsp;
-<a class="el" href="unicode.html">[Next]</a>&nbsp;
-     \ref unicode
-
+<a class="el" href="fluid.html">[Previous]&nbsp; 9 - Programming with FLUID</a>&nbsp;
+<a class="el" href="unicode.html">[Next]&nbsp; 11 - Unicode and utf-8 Support</a>&nbsp;
+\endhtmlonly
 */
