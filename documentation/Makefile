@@ -136,13 +136,13 @@ MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT) \
 
 all:	$(MANPAGES)
 
-alldocs:	refman.pdf html/index.html $(MANPAGES)
+alldocs: pdf html $(MANPAGES)
 
 clean:
 #	$(RM) fltk.ps
 	$(RM) refman.pdf
 	$(RMDIR) html latex
-	$(RM) *~ *.bck *.bck
+	$(RM) *~ *.bck *.bck *.bak
 
 depend:
 
@@ -194,6 +194,9 @@ uninstall-linux uninstall-osx:
 
 # Base html files are now the readable ones, so this target is not make by
 # default...
+
+html: html/index.html
+
 html/index.html: $(IMAGEFILES)
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
@@ -205,10 +208,23 @@ html/index.html: $(IMAGEFILES)
 #	$(RM) fltk.ps
 #	-$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.ps
 
-refman.pdf: html/index.html latex/intro.tex $(HTMLFILES) $(IMAGEFILES)
-	echo "Generating PDF documentation..."
-	$(RM) refman.pdf
-	(cd latex; make; cp refman.pdf ..)
+pdf: refman.pdf
+
+refman.pdf: latex/refman.tex
+	(cd latex; pdflatex refman.tex)
+	(cd latex; makeindex refman.idx)
+	(cd latex; pdflatex refman.tex)
+	latex_count=5; \
+	cd latex ; \
+	while egrep -s 'Rerun (LaTeX|to get cross-references right)' refman.log && [ $$latex_count -gt 0 ] ;\
+	    do \
+	      echo "Rerunning latex...." ;\
+	      pdflatex refman.tex ;\
+	      latex_count=`expr $$latex_count - 1` ;\
+	    done ; \
+	cd .. 
+
+latex/refman.tex: html/index.html
 
 #
 # End of "$Id$".
