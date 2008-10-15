@@ -43,8 +43,8 @@ MEDIA		=	--size universal
 #MEDIA		=	--size 7x8.5in --fontsize 9.0
 
 # These are the HTML "source" files...
-HTMLFILES	=	 html/index.html \
-                    	 src/index.dox \
+HTMLFILES	= 	 \
+			 src/index.dox \
                          src/preface.dox \
                          src/intro.dox \
                          src/basics.dox \
@@ -130,13 +130,77 @@ IMAGEFILES	= \
 		src/valuators.gif \
 		src/value_slider.gif
 
+EPSFILES =	\
+		src/FL.eps \
+		src/FL200.eps\
+		src/Fl_Check_Button.eps \
+		src/Fl_File_Chooser.eps \
+		src/Fl_File_Input.eps \
+		src/Fl_Help_Dialog.eps \
+		src/Fl_Light_Button.eps \
+		src/Fl_Return_Button.eps \
+		src/Fl_Roller.eps \
+		src/Fl_Round_Button.eps \
+		src/Fl_Scroll.eps \
+		src/Fl_Tile.eps \
+		src/Fl_Value_Input.eps \
+		src/Fl_Value_Output.eps \
+		src/adjuster1.eps \
+		src/boxtypes.eps \
+		src/buttons.eps \
+		src/charts.eps \
+		src/choice.eps \
+		src/clock.eps \
+		src/counter.eps \
+		src/cubeview.eps \
+		src/dial.eps \
+		src/editor-replace.eps \
+		src/editor.eps \
+		src/fl_alert.eps \
+		src/fl_ask.eps \
+		src/fl_choice.eps \
+		src/fl_color_chooser.eps \
+		src/fl_input.eps \
+		src/fl_message.eps \
+		src/fl_password.eps \
+		src/fl_show_colormap.eps \
+		src/fluid-catgets.eps \
+		src/fluid-gettext.eps \
+		src/fluid-org.eps \
+		src/fluid1.eps \
+		src/fluid2.eps \
+		src/fluid3-cxx.eps \
+		src/fluid3-gui.eps \
+		src/fluid3-style.eps \
+		src/fluid4.eps \
+		src/fluid_prefs.eps \
+		src/fluid_widget_cxx.eps \
+		src/fluid_widget_gui.eps \
+		src/fluid_widget_style.eps \
+		src/hello.C.eps \
+		src/input_choice.eps \
+		src/menu.eps \
+		src/menu_button.eps \
+		src/menubar.eps \
+		src/positioner.eps \
+		src/resizebox1.eps \
+		src/resizebox2.eps \
+		src/round_clock.eps \
+		src/scrollbar.eps \
+		src/slider.eps \
+		src/symbols.eps \
+		src/tabs.eps \
+		src/text.eps \
+		src/tiny.eps \
+		src/valuators.eps \
+		src/value_slider.eps
 
 MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT) \
 		blocks.$(CAT6EXT) checkers.$(CAT6EXT) sudoku.$(CAT6EXT)
 
 all:	$(MANPAGES)
 
-alldocs: pdf html $(MANPAGES)
+alldocs: pdf-dist html $(MANPAGES)
 
 clean:
 #	$(RM) fltk.ps
@@ -197,7 +261,7 @@ uninstall-linux uninstall-osx:
 
 html: html/index.html
 
-html/index.html: $(IMAGEFILES)
+html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
@@ -208,9 +272,12 @@ html/index.html: $(IMAGEFILES)
 #	$(RM) fltk.ps
 #	-$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.ps
 
-pdf: refman.pdf
+pdf-dist : latex/refman.pdf
+	cp -f latex/refman.pdf fltk.pdf
 
-refman.pdf: latex/refman.tex
+pdf: 	latex/refman.pdf
+
+latex/refman.pdf: latex/refman.tex Doxyfile $(EPSFILES)
 	echo "Generating PDF documentation..."
 	(cd latex ;\
 	pdflatex --interaction=nonstopmode refman.tex ;\
@@ -224,10 +291,9 @@ refman.pdf: latex/refman.tex
 	      pdflatex --interaction=nonstopmode refman.tex ;\
 	      latex_count=`expr $$latex_count - 1` ;\
 	    done ; \
-	cp -f refman.pdf ../fltk.pdf ; \
 	cd ..) > pdfall.log
 
-latex/refman.tex: html/index.html
+latex/refman.tex: html/index.html $(EPSFILES)
 
 #
 # End of "$Id$".
