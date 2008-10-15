@@ -211,15 +211,15 @@ html/index.html: $(IMAGEFILES)
 pdf: refman.pdf
 
 refman.pdf: latex/refman.tex
-	(cd latex; pdflatex refman.tex)
+	(cd latex; pdflatex --interaction=batchmode refman.tex )
 	(cd latex; makeindex refman.idx)
-	(cd latex; pdflatex refman.tex)
+	(cd latex; pdflatex --interaction=batchmode refman.tex )
 	latex_count=5; \
 	cd latex ; \
 	while egrep -s 'Rerun (LaTeX|to get cross-references right)' refman.log && [ $$latex_count -gt 0 ] ;\
 	    do \
 	      echo "Rerunning latex...." ;\
-	      pdflatex refman.tex ;\
+	      pdflatex --interaction=batchmode refman.tex  ;\
 	      latex_count=`expr $$latex_count - 1` ;\
 	    done ; \
 	cd .. 
