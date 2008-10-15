@@ -59,7 +59,8 @@
   of numbers are limited to integers instead of floating point
   values.
   
-  <P ALIGN="CENTER">\image html Fl_Value_Input.gif
+  <P ALIGN="CENTER">\image html Fl_Value_Input.gif 
+  \image latex  Fl_Value_Input.eps "Fl_Value_Input" width=8cm
 */
 class FL_EXPORT Fl_Value_Input : public Fl_Valuator {
 public:

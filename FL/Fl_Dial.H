@@ -43,7 +43,8 @@
 /**
   The Fl_Dial widget provides a circular dial to control a
   single floating point value.
-  <P ALIGN=CENTER>\image html dial.gif
+  <P ALIGN=CENTER>\image html dial.gif 
+  \image latex dial.eps "Fl_Dial" width=4cm
   Use type() to set the type of the dial to:
   <UL>
   <LI>FL_NORMAL_DIAL - Draws a normal dial with a knob. </LI>

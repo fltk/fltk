@@ -61,8 +61,8 @@ struct FL_CHART_ENTRY {
   \brief Fl_Chart displays simple charts.
   It is provided for Forms compatibility.
 
-  \image html charts.gif
-
+  \image html charts.gif  
+  \image latex charts.eps  "Fl_Chart" width=10cm
   \todo Refactor Fl_Chart::type() information.
 
   The type of an Fl_Chart object can be set using type(uchar t) to:

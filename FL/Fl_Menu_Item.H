@@ -102,7 +102,7 @@ class Fl_Menu_;
   \endcode
   produces:
   <P ALIGN=CENTER>\image html  menu.gif </P>
-  
+  \image latex  menu.eps "menu" width=10cm
   A submenu title is identified by the bit FL_SUBMENU in the 
   flags field, and ends with a label() that is NULL.
   You can nest menus to any depth.  A pointer to the first item in the

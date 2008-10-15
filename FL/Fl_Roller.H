@@ -38,7 +38,8 @@
 /**
   The Fl_Roller widget is a "dolly" control commonly used to
   move 3D objects.
-  <P ALIGN=CENTER>\image html Fl_Roller.gif
+  <P ALIGN=CENTER>\image html Fl_Roller.gif 
+  \image latex Fl_Roller.eps "Fl_Roller" width=4cm
 */
 class FL_EXPORT Fl_Roller : public Fl_Valuator {
 protected:

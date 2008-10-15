@@ -145,6 +145,8 @@ public:
     <BR></P>
     <P align=center>\image html resizebox1.gif&nbsp;&nbsp;
     \image html resizebox2.gif</P>
+    \image latex resizebox1.eps  "before resize"  width=4cm
+    \image latex resizebox2.eps "after resize"  width=4cm
     <P>The resizable may be set to the group itself (this is the default
     value for an Fl_Group, although NULL is the default
     for Fl_Window and Fl_Pack), in which case all the 

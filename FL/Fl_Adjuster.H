@@ -40,7 +40,8 @@
 /**
   The Fl_Adjuster widget was stolen from Prisms, and has proven
   to be very useful for values that need a large dynamic range.
-  <P ALIGN=CENTER>\image html adjuster1.gif</P>
+  \image html adjuster1.gif 
+  \image latex adjuster1.eps "Fl_Adjuster" width=4cm
   <P>When you  press a button and drag to the right the value increases.
   When you drag  to the left it decreases.  The largest button adjusts by
   100 *  step(), the next by 10 * step() and that

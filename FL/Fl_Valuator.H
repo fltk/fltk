@@ -44,7 +44,8 @@
   and provides a consistent interface to set the value, range, and step,
   and insures that callbacks are done the same for every object.
   <P>There are probably more of these classes in FLTK than any others:
-  <P ALIGN=CENTER>\image html  valuators.gif</P>
+  <P ALIGN=CENTER>\image html  valuators.gif</P> 
+  \image latex   valuators.eps "Valuators derived from Fl_Valuators" width=10cm
   <P>In the above diagram each box surrounds an actual subclass.  These
   are further differentiated by setting the type() of the widget t
   o the symbolic value labeling the widget.  

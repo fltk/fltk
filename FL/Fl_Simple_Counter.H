@@ -34,7 +34,8 @@
 #include "Fl_Counter.H"
 /** 
   This widget creates a counter with only 2 arrow buttons 
-  <P align=center>\image html counter.gif</P>
+  <P align=center>\image html counter.gif</P> 
+  \image latex  counter.eps "Fl_Simple_Counter" width=4cm
 */
 class Fl_Simple_Counter : public Fl_Counter {
 public:

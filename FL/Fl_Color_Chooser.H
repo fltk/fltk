@@ -84,6 +84,7 @@ public:
   \brief The Fl_Color_Chooser widget provides a standard RGB color chooser.
 
   \image html fl_color_chooser.jpg
+  \image latex fl_color_chooser.eps "fl_color_chooser()" width=5cm
 
   You can place any number of the widgets into a panel of your own design.
   The diagram shows the widget as part of a color chooser dialog created by

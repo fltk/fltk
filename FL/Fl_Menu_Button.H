@@ -38,6 +38,7 @@
   menus) defined by an array of 
   Fl_Menu_Item objects.
   <P ALIGN=CENTER>\image html  menu_button.gif</P>
+  \image latex  menu_button.eps " menu_button" width=5cm
   <P>Normally any mouse button will pop up a menu and it is lined up
   below the button as shown in the picture.  However an Fl_Menu_Button
   may also control a pop-up menu.  This is done by setting the type()

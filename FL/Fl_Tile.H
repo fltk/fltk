@@ -37,7 +37,8 @@
   The Fl_Tile class lets you resize the children by dragging
   the border between them:
   
-  <P ALIGN=CENTER>\image html Fl_Tile.gif </P>
+  <P ALIGN=CENTER>\image html Fl_Tile.gif </P> 
+  \image latex  Fl_Tile.eps "Fl_Tile" width=4cm
   
   <P>For the tiling to work correctly, the children of an 
   Fl_Tile must cover the entire area of the widget, but not

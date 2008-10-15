@@ -44,7 +44,8 @@
   integers). If desired you can set the step() to non-integer
   values.  You will then have to use casts to get at the floating-point
   versions of value() from Fl_Slider. </P>
-  <P ALIGN=CENTER>\image html scrollbar.gif
+  <P ALIGN=CENTER>\image html scrollbar.gif 
+  \image latex  scrollbar.eps "Fl_Scrollbar" width=4cm
 */
 class FL_EXPORT Fl_Scrollbar : public Fl_Slider {
 

@@ -38,7 +38,7 @@
   \brief A button with an "checkmark" to show its status.
 
   \image html Fl_Check_Button.gif
-
+  \image latex Fl_Check_Button.eps  "Fl_Check_Button" width=4cm
   Buttons generate callbacks when they are clicked by the user. You control
   exactly when and how by changing the values for type() and when().
 

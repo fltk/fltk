@@ -532,7 +532,8 @@ extern const char* fl_cancel;
     @{ */
 /**
   \brief Pops up a window to let the user pick an arbitrary RGB color.
-  \image html fl_color_chooser.jpg
+  \image html fl_color_chooser.jpg 
+  \image latex  fl_color_chooser.eps "fl_color_chooser" width=8cm
   \param[in] name title label for the window
   \param[in,out] r, g, b color components in the range 0.0 to 1.0.
   \retval 1 if user confirms the selection 
@@ -575,7 +576,8 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b) {
 
 /**
   \brief Pops up a window to let the user pick an arbitrary RGB color.
-  \image html fl_color_chooser.jpg
+  \image html fl_color_chooser.jpg 
+  \image latex  fl_color_chooser.eps "fl_color_chooser" width=8cm
   \param[in] name title label for the window
   \param[in,out] r, g, b color components in the range 0 to 255.
   \retval 1 if user confirms the selection 

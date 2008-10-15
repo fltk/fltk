@@ -45,6 +45,7 @@
   define the pull-down menus. Sub-sub menus and lower pop up to the right
   of the submenus. </P>
   <P ALIGN=CENTER>\image html  menubar.gif</P>
+  \image latex  menubar.eps " menubar" width=12cm
   <P>If there is an item in the top menu that is not a title of a
   submenu, then it acts like a "button" in the menubar.  Clicking on it
   will pick it. </P>
