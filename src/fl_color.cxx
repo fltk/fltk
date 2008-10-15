@@ -307,6 +307,11 @@ void fl_color(Fl_Color i) {
   }
 }
 
+/**
+  Free color \a i if used, and clear mapping table entry.
+  \param[in] i color index
+  \param[in] overlay 0 for normal, 1 for overlay color
+*/
 void Fl::free_color(Fl_Color i, int overlay) {
 #  if HAVE_OVERLAY
 #  else
@@ -326,6 +331,11 @@ void Fl::free_color(Fl_Color i, int overlay) {
   }
 }
 
+/**
+  Set color mapping table entry \a i to color \a c
+  \param[in] i color index
+  \param[in] c color
+*/
 void Fl::set_color(Fl_Color i, unsigned c) {
   if (fl_cmap[i] != c) {
     free_color(i,0);
@@ -344,7 +354,7 @@ void Fl::set_color(Fl_Color i, unsigned c) {
     in the next 8 bits, and the blue value in bits 8-15.  The lower
     8 bits will always be 0.
     
-    <P>The second form returns the red, green, and blue values
+    The second form returns the red, green, and blue values
     separately in referenced variables.
 */
 unsigned Fl::get_color(Fl_Color i) {

@@ -382,7 +382,7 @@ void fl_end_complex_polygon() {
 // See fl_arc.c for portable version.
 
 /**
-  fl_circle() is equivalent to fl_arc(...,0,360) but may be faster.
+  fl_circle() is equivalent to fl_arc(x,y,r,0,360) but may be faster.
   It must be the \e only thing in the path: if you want a circle as part of
   a complex polygon you must use fl_arc()
   \param[in] x,y,r center and radius of circle

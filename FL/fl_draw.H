@@ -43,7 +43,8 @@ FL_EXPORT extern char fl_draw_shortcut;
 
 // Colors:
 FL_EXPORT void	fl_color(Fl_Color i); // select indexed color
-inline void fl_color(int c) {fl_color((Fl_Color)c);} // for back compatibility
+/** for back compatibility - use fl_color(Fl_Color c) instead */
+inline void fl_color(int c) {fl_color((Fl_Color)c);}
 FL_EXPORT void	fl_color(uchar r, uchar g, uchar b); // select actual color
 extern FL_EXPORT Fl_Color fl_color_;
 /**
