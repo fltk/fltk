@@ -288,7 +288,8 @@ if test "x$NROFF" = "x:"; then
         NROFF="$GROFF -T ascii"
     fi
 fi
-AC_PATH_PROG(HTMLDOC,doxygen)
+AC_PATH_PROG(HTMLDOC,htmldoc)
+AC_PATH_PROG(DOXYDOC,doxygen)
 
 dnl How do we make libraries?
 AC_PROG_RANLIB

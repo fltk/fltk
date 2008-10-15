@@ -201,7 +201,7 @@ html/index.html: $(IMAGEFILES)
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
-	-$(HTMLDOC)
+	-$(DOXYDOC)
 
 #fltk.ps: $(HTMLFILES) $(IMAGEFILES)
 #	echo "Generating PostScript documentation..."

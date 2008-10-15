@@ -1,4 +1,4 @@
-# Doxyfile 1.5.7
+# Doxyfile 1.5.5
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -233,8 +233,8 @@ SIP_SUPPORT            = NO
 # documentation. This will only work if the methods are indeed getting or 
 # setting a simple type. If this is not the case, or you want to show the 
 # methods anyway, you should set this option to NO.
-
-IDL_PROPERTY_SUPPORT   = YES
+# 1.5.7
+#IDL_PROPERTY_SUPPORT   = YES
 
 # If member grouping is used in the documentation and the DISTRIBUTE_GROUP_DOC 
 # tag is set to YES, then doxygen will reuse the documentation of the first 
@@ -274,8 +274,8 @@ TYPEDEF_HIDES_STRUCT   = NO
 # memory usage. The cache size is given by this formula: 
 # 2^(16+SYMBOL_CACHE_SIZE). The valid range is 0..9, the default is 0, 
 # corresponding to a cache size of 2^16 = 65536 symbols
-
-SYMBOL_CACHE_SIZE      = 0
+# 1.5.7
+# SYMBOL_CACHE_SIZE      = 0
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -464,14 +464,14 @@ SHOW_DIRECTORIES       = NO
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page.
 # This will remove the Files entry from the Quick Index and from the 
 # Folder Tree View (if specified). The default is YES.
-
-SHOW_FILES             = YES
+# 1.5.7
+# SHOW_FILES             = YES
 
 # Set the SHOW_NAMESPACES tag to NO to disable the generation of the 
 # Namespaces page.  This will remove the Namespaces entry from the Quick Index
 # and from the Folder Tree View (if specified). The default is YES.
-
-SHOW_NAMESPACES        = YES
+# 1.5.7
+# SHOW_NAMESPACES        = YES
 
 # The FILE_VERSION_FILTER tag can be used to specify a program or script that 
 # doxygen should invoke to get the current version for each file (typically from 
@@ -489,8 +489,8 @@ FILE_VERSION_FILTER    =
 # doxygen's defaults, run doxygen with the -l option. You can optionally specify a 
 # file name after the option, if omitted DoxygenLayout.xml will be used as the name 
 # of the layout file.
-
-LAYOUT_FILE            = 
+# 1.5.7
+# LAYOUT_FILE            = 
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -873,8 +873,8 @@ GENERATE_CHI           = NO
 # If the GENERATE_HTMLHELP tag is set to YES, the CHM_INDEX_ENCODING
 # is used to encode HtmlHelp index (hhk), content (hhc) and project file
 # content.
-
-CHM_INDEX_ENCODING     = 
+# 1.5.7
+# CHM_INDEX_ENCODING     = 
 
 # If the GENERATE_HTMLHELP tag is set to YES, the BINARY_TOC flag 
 # controls whether a binary table of contents is generated (YES) or a 
@@ -891,33 +891,33 @@ TOC_EXPAND             = NO
 # are set, an additional index file will be generated that can be used as input for 
 # Qt's qhelpgenerator to generate a Qt Compressed Help (.qch) of the generated 
 # HTML documentation.
-
-GENERATE_QHP           = NO
+# 1.5.7
+# GENERATE_QHP           = NO
 
 # If the QHG_LOCATION tag is specified, the QCH_FILE tag can 
 # be used to specify the file name of the resulting .qch file. 
 # The path specified is relative to the HTML output folder.
-
-QCH_FILE               = 
+# 1.5.7
+# QCH_FILE               = 
 
 # The QHP_NAMESPACE tag specifies the namespace to use when generating 
 # Qt Help Project output. For more information please see 
 # <a href="http://doc.trolltech.com/qthelpproject.html#namespace">Qt Help Project / Namespace</a>.
-
-QHP_NAMESPACE          = org.doxygen.Project
+# 1.5.7
+# QHP_NAMESPACE          = org.doxygen.Project
 
 # The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating 
 # Qt Help Project output. For more information please see 
 # <a href="http://doc.trolltech.com/qthelpproject.html#virtual-folders">Qt Help Project / Virtual Folders</a>.
-
-QHP_VIRTUAL_FOLDER     = doc
+# 1.5.7
+# QHP_VIRTUAL_FOLDER     = doc
 
 # If the GENERATE_QHP tag is set to YES, the QHG_LOCATION tag can 
 # be used to specify the location of Qt's qhelpgenerator. 
 # If non-empty doxygen will try to run qhelpgenerator on the generated 
 # .qhp file .
-
-QHG_LOCATION           = 
+# 1.5.7
+# QHG_LOCATION           = 
 
 # The DISABLE_INDEX tag can be used to turn on/off the condensed index at 
 # top of each HTML page. The value NO (the default) enables the index and 
@@ -958,8 +958,8 @@ TREEVIEW_WIDTH         = 250
 # when you change the font size after a successful doxygen run you need 
 # to manually remove any form_*.png images from the HTML output directory 
 # to force them to be regenerated.
-
-FORMULA_FONTSIZE       = 10
+# 1.5.7
+# FORMULA_FONTSIZE       = 10
 
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
@@ -1343,15 +1343,15 @@ HAVE_DOT               = NO
 # which can be done by putting it in a standard location or by setting the 
 # DOTFONTPATH environment variable or by setting DOT_FONTPATH to the directory 
 # containing the font.
-
-DOT_FONTNAME           = FreeSans
+# 1.5.7
+# DOT_FONTNAME           = FreeSans
 
 # By default doxygen will tell dot to use the output directory to look for the 
 # FreeSans.ttf font (which doxygen will put there itself). If you specify a 
 # different font using DOT_FONTNAME you can set the path where dot 
 # can find it using this tag.
-
-DOT_FONTPATH           = 
+# 1.5.7
+# DOT_FONTPATH           = 
 
 # If the CLASS_GRAPH and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for each documented class showing the direct and 

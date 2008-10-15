@@ -39,6 +39,7 @@ VPATH		= @srcdir@
 
 # programs we use...
 HTMLDOC		= @HTMLDOC@
+DOXYDOC		= @DOXYDOC@
 INSTALL		= @INSTALL@
 LN		= ln -s
 NROFF		= @NROFF@
