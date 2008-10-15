@@ -45,7 +45,6 @@ exceptions:
 	<I>[program/widget] is based in part on the work of
 	the FLTK project (http://www.fltk.org).</I>
 
-\htmlonly
 <HR>
 
 \par GNU LIBRARY GENERAL PUBLIC LICENSE
@@ -491,11 +490,12 @@ DAMAGES.
 
 \par END OF TERMS AND CONDITIONS
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="development.html">[Previous]</a>&nbsp;
+<a class="el" href="development.html">[Previous]&nbsp; I - Developer Information</a>&nbsp;
      \ref development &nbsp;&nbsp;
-<a class="el" href="examples.html">[Next]</a>&nbsp;
+<a class="el" href="examples.html">[Next]&nbsp; K - Example Source Code</a>&nbsp;
      \ref examples
 
 \endhtmlonly

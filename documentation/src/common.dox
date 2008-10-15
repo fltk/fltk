@@ -24,7 +24,7 @@ FLTK provides many types of buttons:
 \li Fl_Round_Button - A button with a radio circle.
 
 \image html buttons.gif "Figure 3-1: FLTK Button Widgets"
-
+\image latex buttons.eps "FLTK Button Widgets" width=10cm
 All of these buttons just need the corresponding
 <tt><FL/Fl_xyz_Button.H></tt> header file. The constructor
 takes the bounding box of the button and optionally a label
@@ -110,7 +110,7 @@ strings. FLTK provides the following valuators:
 \li Fl_Value_Slider - A slider that shows the current value.
 
 \image html valuators.gif "Figure 3-2: FLTK valuator widgets"
-
+\image latex valuators.eps "FLTK valuator widgets" width=10cm
 The <tt>value()</tt> method gets and sets the current value 
 of the widget. The <tt>minimum()</tt> and <tt>maximum()</tt>
 methods set the range of values that are reported by the
@@ -234,7 +234,7 @@ is an enumeration defined in Enumerations.H.
 Figure 3-3 shows the standard box types included with FLTK.
 
 \image html boxtypes.gif "Figure 3-3: FLTK box types"
-
+\image latex boxtypes.eps "FLTK box types" width=12cm
 <tt>FL_NO_BOX</tt> means nothing is drawn at all, so whatever is
 already on the screen remains. The <tt>FL_..._FRAME</tt> types only
 draw their edges, leaving the interior unchanged. The blue color in
