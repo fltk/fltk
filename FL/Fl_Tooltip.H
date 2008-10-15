@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Tooltip widget . */
 
 #ifndef Fl_Tooltip_H

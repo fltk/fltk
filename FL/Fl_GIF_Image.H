@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_GIF_Image widget . */
 
 #ifndef Fl_GIF_Image_H

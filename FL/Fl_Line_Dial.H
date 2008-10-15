@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Line_Dial widget . */
 
 #ifndef Fl_Line_Dial_H

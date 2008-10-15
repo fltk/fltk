@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Chart widget . */
 
 #ifndef Fl_Chart_H

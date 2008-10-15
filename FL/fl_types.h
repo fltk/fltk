@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/** \file 
  *  This file contains simple "C"-style type definitions.
  */
 

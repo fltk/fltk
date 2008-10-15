@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Progress widget . */
 
 #ifndef _Fl_Progress_H_

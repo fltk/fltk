@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Value_Output widget . */
 
 #ifndef Fl_Value_Output_H

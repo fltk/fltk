@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Clock, Fl_Clock_Output widgets . */
 
 #ifndef Fl_Clock_H

@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Pack widget . */
 
 #ifndef Fl_Pack_H

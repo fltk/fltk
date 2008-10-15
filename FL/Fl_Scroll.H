@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Scroll widget . */
 
 #ifndef Fl_Scroll_H

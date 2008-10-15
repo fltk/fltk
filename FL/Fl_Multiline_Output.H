@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Multiline_Output widget . */
 
 #ifndef Fl_Multiline_Output_H

@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Group, Fl_End classes . */
 
 #ifndef Fl_Group_H

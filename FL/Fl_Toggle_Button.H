@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Toggle_Button widget . */
 
 #ifndef Fl_Toggle_Button_H

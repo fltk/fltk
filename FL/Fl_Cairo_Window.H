@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
     Fl_Cairo_Window Handling transparently a fltk window incorporte a cairo draw callback.
 */
 

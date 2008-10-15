@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Spinner widget . */
 
 #ifndef Fl_Spinner_H

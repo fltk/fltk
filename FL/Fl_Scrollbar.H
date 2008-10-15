@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Scrollbar widget . */
 
 #ifndef Fl_Scrollbar_H

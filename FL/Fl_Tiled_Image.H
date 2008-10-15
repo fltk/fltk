@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Tiled_Image widget . */
 
 #ifndef Fl_Tiled_Image_H

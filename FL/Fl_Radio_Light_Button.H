@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Radio_Light_Button widget . */
 
 #ifndef Fl_Radio_Light_Button_H

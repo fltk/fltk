@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Hold_Browser widget . */
 
 #ifndef Fl_Hold_Browser_H

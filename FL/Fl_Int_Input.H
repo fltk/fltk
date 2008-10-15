@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Int_Input widget . */
 
 #ifndef Fl_Int_Input_H

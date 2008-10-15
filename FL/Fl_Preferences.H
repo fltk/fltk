@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Preferences class . */
 
 #ifndef Fl_Preferences_H

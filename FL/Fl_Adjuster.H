@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Adjuster widget . */
 
 // 3-button "slider", made for Nuke

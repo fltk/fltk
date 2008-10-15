@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Roller widget . */
 
 #ifndef Fl_Roller_H

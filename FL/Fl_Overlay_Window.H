@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Overlay_Window class . */
 
 #ifndef Fl_Overlay_Window_H

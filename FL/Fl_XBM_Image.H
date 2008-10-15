@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_XBM_Image class . */
 
 #ifndef Fl_XBM_Image_H

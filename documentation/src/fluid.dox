@@ -42,7 +42,7 @@ These <tt>.cxx</tt> files must <tt>\#include</tt> the <tt>.h</tt> file or they c
 file.
 
  \image html fluid-org.gif "Figure 9-1: FLUID organization"
-\Image latex fluid-org.eps "FLUID organization" width=12cm 
+ \image latex fluid-org.eps "FLUID organization" width=12cm 
 Normally the FLUID file defines one or more functions or classes which
 output C++ code.  Each function defines a one or more FLTK
 windows, and all the widgets that go inside those windows.

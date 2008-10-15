@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Nice_Slider widget . */
 
 #ifndef Fl_Nice_Slider_H

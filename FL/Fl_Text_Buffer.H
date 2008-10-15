@@ -27,7 +27,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Text_Buffer, Fl_Text_Selection widget . */
 
 #ifndef FL_TEXT_BUFFER_H

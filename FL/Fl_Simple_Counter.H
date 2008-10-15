@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Simple_Counter widget . */
 
 #ifndef Fl_Simple_Counter_H

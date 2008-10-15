@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
     Handling transparently platform dependent cairo include files 
 */
 

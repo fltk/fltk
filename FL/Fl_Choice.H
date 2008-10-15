@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Choice widget . */
 
 #ifndef Fl_Choice_H

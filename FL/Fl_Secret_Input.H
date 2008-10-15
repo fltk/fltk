@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Secret_Input widget . */
 
 #ifndef Fl_Secret_Input_H

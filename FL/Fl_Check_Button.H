@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Check_Button widget . */
 
 #ifndef Fl_Check_Button_H

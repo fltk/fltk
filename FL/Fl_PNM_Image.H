@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_PNM_Image class . */
 
 #ifndef Fl_PNM_Image_H

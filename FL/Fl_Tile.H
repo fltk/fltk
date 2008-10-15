@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Tile widget . */
 
 #ifndef Fl_Tile_H

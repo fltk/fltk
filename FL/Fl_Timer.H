@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Timer widget . */
 
 #ifndef Fl_Timer_H

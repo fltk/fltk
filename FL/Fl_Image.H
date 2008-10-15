@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Image, Fl_RGB_Image classes . */
 
 #ifndef Fl_Image_H

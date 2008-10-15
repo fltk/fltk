@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Pixmap widget . */
 
 #ifndef Fl_Pixmap_H

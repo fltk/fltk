@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Browser_ widget . */
 
 // This is the base class for browsers.  To be useful it must

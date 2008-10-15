@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_JPEG_Image class . */
 
 #ifndef Fl_JPEG_Image_H

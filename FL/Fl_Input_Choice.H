@@ -30,7 +30,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Input_Choice widget . */
 
 

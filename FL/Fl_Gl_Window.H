@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Gl_Window widget . */
 
 #ifndef Fl_Gl_Window_H

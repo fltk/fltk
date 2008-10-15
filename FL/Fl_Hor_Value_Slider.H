@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Hor_Value_Slider widget . */
 
 #ifndef Fl_Hor_Value_Slider_H

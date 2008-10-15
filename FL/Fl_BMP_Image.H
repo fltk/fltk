@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_BMP_Image widget . */
 
 #ifndef Fl_BMP_Image_H

@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \file
+/* \file
    Fl_Single_Window class . */
 
 #ifndef Fl_Single_Window_H
