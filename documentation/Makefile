@@ -211,18 +211,21 @@ html/index.html: $(IMAGEFILES)
 pdf: refman.pdf
 
 refman.pdf: latex/refman.tex
-	(cd latex; pdflatex --interaction=batchmode refman.tex )
-	(cd latex; makeindex refman.idx)
-	(cd latex; pdflatex --interaction=batchmode refman.tex )
-	latex_count=5; \
-	cd latex ; \
-	while egrep -s 'Rerun (LaTeX|to get cross-references right)' refman.log && [ $$latex_count -gt 0 ] ;\
+	echo "Generating PDF documentation..."
+	(cd latex ;\
+	pdflatex --interaction=nonstopmode refman.tex ;\
+	makeindex refman.idx ;\
+	pdflatex --interaction=nonstopmode refman.tex ;\
+	latex_count=5;\
+	while egrep -s 'Rerun (LaTeX|to get cross-references right)' refman.log \
+		&& [ $$latex_count -gt 0 ] ;\
 	    do \
 	      echo "Rerunning latex...." ;\
-	      pdflatex --interaction=batchmode refman.tex  ;\
+	      pdflatex --interaction=nonstopmode refman.tex ;\
 	      latex_count=`expr $$latex_count - 1` ;\
 	    done ; \
-	cd .. 
+	cp -f refman.pdf ../fltk.pdf ; \
+	cd ..) > pdfall.log
 
 latex/refman.tex: html/index.html
 
