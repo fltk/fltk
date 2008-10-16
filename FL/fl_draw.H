@@ -68,19 +68,19 @@ FL_EXPORT void fl_point(int x, int y);
 // line type:
 FL_EXPORT void fl_line_style(int style, int width=0, char* dashes=0);
 enum {
-  FL_SOLID	= 0,
-  FL_DASH	= 1,
-  FL_DOT	= 2,
-  FL_DASHDOT	= 3,
-  FL_DASHDOTDOT	= 4,
+  FL_SOLID	= 0,		///< line style: <tt>___________</tt>
+  FL_DASH	= 1,		///< line style: <tt>_ _ _ _ _ _</tt>
+  FL_DOT	= 2,		///< line style: <tt>. . . . . .</tt>
+  FL_DASHDOT	= 3,		///< line style: <tt>_ . _ . _ .</tt>
+  FL_DASHDOTDOT	= 4,		///< line style: <tt>_ . . _ . .</tt>
 
-  FL_CAP_FLAT	= 0x100,
-  FL_CAP_ROUND	= 0x200,
-  FL_CAP_SQUARE	= 0x300,
+  FL_CAP_FLAT	= 0x100,	///< cap style: end is flat
+  FL_CAP_ROUND	= 0x200,	///< cap style: end is round
+  FL_CAP_SQUARE	= 0x300,	///< cap style: end wraps end point
 
-  FL_JOIN_MITER	= 0x1000,
-  FL_JOIN_ROUND	= 0x2000,
-  FL_JOIN_BEVEL	= 0x3000
+  FL_JOIN_MITER	= 0x1000,	///< join style: line join extends to a point
+  FL_JOIN_ROUND	= 0x2000,	///< join style: line join is rounded
+  FL_JOIN_BEVEL	= 0x3000	///< join style: line join is tidied
 };
 
 // rectangles tweaked to exactly fill the pixel rectangle:
@@ -187,9 +187,10 @@ FL_EXPORT void fl_frame2(const char* s, int x, int y, int w, int h);
 FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
 
 // images:
+/** signature of some image drawing functions passed as parameters */
+typedef void (*Fl_Draw_Image_Cb)(void*,int,int,int,uchar*);
 FL_EXPORT void fl_draw_image(const uchar*, int,int,int,int, int delta=3, int ldelta=0);
 FL_EXPORT void fl_draw_image_mono(const uchar*, int,int,int,int, int delta=1, int ld=0);
-typedef void (*Fl_Draw_Image_Cb)(void*,int,int,int,uchar*);
 FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=3);
 FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=1);
 FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);

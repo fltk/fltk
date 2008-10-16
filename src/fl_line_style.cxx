@@ -25,6 +25,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+  \file fl_line_style.cxx
+  \brief Line style drawing utility hiding  different platforms.
+*/
+
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
@@ -45,6 +50,33 @@ void fl_quartz_restore_line_style_() {
 }
 #endif
 
+/**
+  Set how to draw lines (the "pen").
+  If you change this it is your responsibility to set it back to the default
+  using \c fl_line_style(0).
+
+  \param[in] style A bitmask which is a bitwise-OR of a line style, a cap
+             style, and a join style. If you don't specify a dash type you
+	     will get a solid line. If you don't specify a cap or join type
+	     you will get a system-defined default of whatever value is
+	     fastest.
+  \param[in] width The thickness of the lines in pixels. Zero results in the
+             system defined default, which on both X and Windows is somewhat
+	     different and nicer than 1.
+  \param[in] dashes A pointer to an array of dash lengths, measured in pixels.
+             The first location is how long to draw a solid portion, the next
+	     is how long to draw the fap, then the solid, etc. It is terminated
+	     with a zero-length entry. A \c NULL pointer or a zero-length
+	     array results in a solid line. Odd array sizes are not supported
+	     and result in undefined behavior.
+
+  \note      Because of how line styles are implemented on Win32 systems,
+             you \e must set the line style \e after setting the drawing
+	     color. If you set the color after the line style you will lose
+	     the line style settings.
+  \note      The \a dashes array does not work under Windows 95, 98 or Me,
+             since those operating systems do not support complex line styles.
+*/
 void fl_line_style(int style, int width, char* dashes) {
 
 #if defined(USE_X11)
