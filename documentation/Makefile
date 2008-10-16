@@ -213,7 +213,7 @@ depend:
 install: $(MANPAGES)
 	echo "Installing documentation files in $(DESTDIR)$(docdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(docdir)
-	for file in $(HTMLFILES) $(IMAGEFILES) index.html; do \
+	for file in fltk.pdf html/* ; do \
 		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir); \
 	done
 	echo "Installing man pages in $(DESTDIR)$(mandir)..."
