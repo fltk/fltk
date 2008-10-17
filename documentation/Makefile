@@ -32,7 +32,7 @@ include ../makeinclude
 
 # "Universal" size - minimum of US Letter and A4
 MEDIA		=	--size universal
-
+SRC_DOCDIR      = 	./src
 # Standard US Letter
 #MEDIA		=	--size letter
 
@@ -44,159 +44,160 @@ MEDIA		=	--size universal
 
 # These are the HTML "source" files...
 HTMLFILES	= 	 \
-			 src/index.dox \
-                         src/preface.dox \
-                         src/intro.dox \
-                         src/basics.dox \
-                         src/common.dox \
-                         src/drawing.dox \
-                         src/editor.dox \
-                         src/events.dox \
-                         src/subclassing.dox \
-                         src/opengl.dox \
-                         src/fluid.dox \
-                         src/advanced.dox \
-                         src/unicode.dox \
-                         src/enumerations.dox \
-                         src/glut.dox \
-                         src/forms.dox \
-                         src/osissues.dox \
-                         src/migration_1_1.dox \
-                         src/migration_1_3.dox \
-                         src/development.dox \
-                         src/license.dox \
-                         src/examples.dox
+			 $(SRC_DOCDIR)/index.dox \
+                         $(SRC_DOCDIR)/preface.dox \
+                         $(SRC_DOCDIR)/intro.dox \
+                         $(SRC_DOCDIR)/basics.dox \
+                         $(SRC_DOCDIR)/common.dox \
+                         $(SRC_DOCDIR)/drawing.dox \
+                         $(SRC_DOCDIR)/editor.dox \
+                         $(SRC_DOCDIR)/events.dox \
+                         $(SRC_DOCDIR)/subclassing.dox \
+                         $(SRC_DOCDIR)/opengl.dox \
+                         $(SRC_DOCDIR)/fluid.dox \
+                         $(SRC_DOCDIR)/advanced.dox \
+                         $(SRC_DOCDIR)/unicode.dox \
+                         $(SRC_DOCDIR)/enumerations.dox \
+                         $(SRC_DOCDIR)/glut.dox \
+                         $(SRC_DOCDIR)/forms.dox \
+                         $(SRC_DOCDIR)/osissues.dox \
+                         $(SRC_DOCDIR)/migration_1_1.dox \
+                         $(SRC_DOCDIR)/migration_1_3.dox \
+                         $(SRC_DOCDIR)/development.dox \
+                         $(SRC_DOCDIR)/license.dox \
+                         $(SRC_DOCDIR)/examples.dox
 
 IMAGEFILES	= \
-		src/adjuster1.gif \
-		src/boxtypes.gif \
-		src/buttons.gif \
-		src/charts.gif \
-		src/choice.gif \
-		src/clock.gif \
-		src/counter.gif \
-		src/cubeview.gif \
-		src/dial.gif \
-		src/editor.gif \
-		src/editor-replace.gif \
-		src/fl_alert.gif \
-		src/fl_ask.gif \
-		src/Fl_Check_Button.gif \
-		src/fl_choice.gif \
-		src/fl_color_chooser.jpg \
-		src/Fl_File_Chooser.jpg \
-		src/Fl_File_Input.gif \
-		src/FL.gif \
-		src/Fl_Help_Dialog.gif \
-		src/fl_input.gif \
-		src/Fl_Light_Button.gif \
-		src/fl_message.gif \
-		src/fl_password.gif \
-		src/Fl_Return_Button.gif \
-		src/Fl_Roller.gif \
-		src/Fl_Round_Button.gif \
-		src/Fl_Scroll.gif \
-		src/fl_show_colormap.gif \
-		src/Fl_Tile.gif \
-		src/fluid1.gif \
-		src/fluid2.gif \
-		src/fluid3-cxx.gif \
-		src/fluid3-gui.gif \
-		src/fluid3-style.gif \
-		src/fluid4.gif \
-		src/fluid-catgets.gif \
-		src/fluid-gettext.gif \
-		src/fluid-org.gif \
-		src/fluid_prefs.gif \
-		src/fluid_widget_cxx.gif \
-		src/fluid_widget_gui.gif \
-		src/fluid_widget_style.gif \
-		src/Fl_Value_Input.gif \
-		src/Fl_Value_Output.gif \
-		src/hello.C.gif \
-		src/input_choice.jpg \
-		src/menubar.gif \
-		src/menu_button.gif \
-		src/menu.gif \
-		src/positioner.gif \
-		src/resizebox1.gif \
-		src/resizebox2.gif \
-		src/round_clock.gif \
-		src/scrollbar.gif \
-		src/slider.gif \
-		src/symbols.gif \
-		src/tabs.gif \
-		src/text.gif \
-		src/valuators.gif \
-		src/value_slider.gif
+		$(SRC_DOCDIR)/adjuster1.gif \
+		$(SRC_DOCDIR)/boxtypes.gif \
+		$(SRC_DOCDIR)/buttons.gif \
+		$(SRC_DOCDIR)/charts.gif \
+		$(SRC_DOCDIR)/choice.gif \
+		$(SRC_DOCDIR)/clock.gif \
+		$(SRC_DOCDIR)/counter.gif \
+		$(SRC_DOCDIR)/cubeview.gif \
+		$(SRC_DOCDIR)/dial.gif \
+		$(SRC_DOCDIR)/editor.gif \
+		$(SRC_DOCDIR)/editor-replace.gif \
+		$(SRC_DOCDIR)/fl_alert.gif \
+		$(SRC_DOCDIR)/fl_ask.gif \
+		$(SRC_DOCDIR)/Fl_Check_Button.gif \
+		$(SRC_DOCDIR)/fl_choice.gif \
+		$(SRC_DOCDIR)/fl_color_chooser.jpg \
+		$(SRC_DOCDIR)/Fl_File_Chooser.jpg \
+		$(SRC_DOCDIR)/Fl_File_Input.gif \
+		$(SRC_DOCDIR)/FL.gif \
+		$(SRC_DOCDIR)/Fl_Help_Dialog.gif \
+		$(SRC_DOCDIR)/fl_input.gif \
+		$(SRC_DOCDIR)/Fl_Light_Button.gif \
+		$(SRC_DOCDIR)/fl_message.gif \
+		$(SRC_DOCDIR)/fl_password.gif \
+		$(SRC_DOCDIR)/Fl_Return_Button.gif \
+		$(SRC_DOCDIR)/Fl_Roller.gif \
+		$(SRC_DOCDIR)/Fl_Round_Button.gif \
+		$(SRC_DOCDIR)/Fl_Scroll.gif \
+		$(SRC_DOCDIR)/fl_show_colormap.gif \
+		$(SRC_DOCDIR)/Fl_Tile.gif \
+		$(SRC_DOCDIR)/fluid1.gif \
+		$(SRC_DOCDIR)/fluid2.gif \
+		$(SRC_DOCDIR)/fluid3-cxx.gif \
+		$(SRC_DOCDIR)/fluid3-gui.gif \
+		$(SRC_DOCDIR)/fluid3-style.gif \
+		$(SRC_DOCDIR)/fluid4.gif \
+		$(SRC_DOCDIR)/fluid-catgets.gif \
+		$(SRC_DOCDIR)/fluid-gettext.gif \
+		$(SRC_DOCDIR)/fluid-org.gif \
+		$(SRC_DOCDIR)/fluid_prefs.gif \
+		$(SRC_DOCDIR)/fluid_widget_cxx.gif \
+		$(SRC_DOCDIR)/fluid_widget_gui.gif \
+		$(SRC_DOCDIR)/fluid_widget_style.gif \
+		$(SRC_DOCDIR)/Fl_Value_Input.gif \
+		$(SRC_DOCDIR)/Fl_Value_Output.gif \
+		$(SRC_DOCDIR)/hello.C.gif \
+		$(SRC_DOCDIR)/input_choice.jpg \
+		$(SRC_DOCDIR)/menubar.gif \
+		$(SRC_DOCDIR)/menu_button.gif \
+		$(SRC_DOCDIR)/menu.gif \
+		$(SRC_DOCDIR)/positioner.gif \
+		$(SRC_DOCDIR)/resizebox1.gif \
+		$(SRC_DOCDIR)/resizebox2.gif \
+		$(SRC_DOCDIR)/round_clock.gif \
+		$(SRC_DOCDIR)/scrollbar.gif \
+		$(SRC_DOCDIR)/slider.gif \
+		$(SRC_DOCDIR)/symbols.gif \
+		$(SRC_DOCDIR)/tabs.gif \
+		$(SRC_DOCDIR)/text.gif \
+		$(SRC_DOCDIR)/valuators.gif \
+		$(SRC_DOCDIR)/value_slider.gif
 
 EPSFILES =	\
-		src/FL.eps \
-		src/FL200.eps\
-		src/Fl_Check_Button.eps \
-		src/Fl_File_Chooser.eps \
-		src/Fl_File_Input.eps \
-		src/Fl_Help_Dialog.eps \
-		src/Fl_Light_Button.eps \
-		src/Fl_Return_Button.eps \
-		src/Fl_Roller.eps \
-		src/Fl_Round_Button.eps \
-		src/Fl_Scroll.eps \
-		src/Fl_Tile.eps \
-		src/Fl_Value_Input.eps \
-		src/Fl_Value_Output.eps \
-		src/adjuster1.eps \
-		src/boxtypes.eps \
-		src/buttons.eps \
-		src/charts.eps \
-		src/choice.eps \
-		src/clock.eps \
-		src/counter.eps \
-		src/cubeview.eps \
-		src/dial.eps \
-		src/editor-replace.eps \
-		src/editor.eps \
-		src/fl_alert.eps \
-		src/fl_ask.eps \
-		src/fl_choice.eps \
-		src/fl_color_chooser.eps \
-		src/fl_input.eps \
-		src/fl_message.eps \
-		src/fl_password.eps \
-		src/fl_show_colormap.eps \
-		src/fluid-catgets.eps \
-		src/fluid-gettext.eps \
-		src/fluid-org.eps \
-		src/fluid1.eps \
-		src/fluid2.eps \
-		src/fluid3-cxx.eps \
-		src/fluid3-gui.eps \
-		src/fluid3-style.eps \
-		src/fluid4.eps \
-		src/fluid_prefs.eps \
-		src/fluid_widget_cxx.eps \
-		src/fluid_widget_gui.eps \
-		src/fluid_widget_style.eps \
-		src/hello.C.eps \
-		src/input_choice.eps \
-		src/menu.eps \
-		src/menu_button.eps \
-		src/menubar.eps \
-		src/positioner.eps \
-		src/resizebox1.eps \
-		src/resizebox2.eps \
-		src/round_clock.eps \
-		src/scrollbar.eps \
-		src/slider.eps \
-		src/symbols.eps \
-		src/tabs.eps \
-		src/text.eps \
-		src/tiny.eps \
-		src/valuators.eps \
-		src/value_slider.eps
+		$(SRC_DOCDIR)/FL.eps \
+		$(SRC_DOCDIR)/FL200.eps\
+		$(SRC_DOCDIR)/Fl_Check_Button.eps \
+		$(SRC_DOCDIR)/Fl_File_Chooser.eps \
+		$(SRC_DOCDIR)/Fl_File_Input.eps \
+		$(SRC_DOCDIR)/Fl_Help_Dialog.eps \
+		$(SRC_DOCDIR)/Fl_Light_Button.eps \
+		$(SRC_DOCDIR)/Fl_Return_Button.eps \
+		$(SRC_DOCDIR)/Fl_Roller.eps \
+		$(SRC_DOCDIR)/Fl_Round_Button.eps \
+		$(SRC_DOCDIR)/Fl_Scroll.eps \
+		$(SRC_DOCDIR)/Fl_Tile.eps \
+		$(SRC_DOCDIR)/Fl_Value_Input.eps \
+		$(SRC_DOCDIR)/Fl_Value_Output.eps \
+		$(SRC_DOCDIR)/adjuster1.eps \
+		$(SRC_DOCDIR)/boxtypes.eps \
+		$(SRC_DOCDIR)/buttons.eps \
+		$(SRC_DOCDIR)/charts.eps \
+		$(SRC_DOCDIR)/choice.eps \
+		$(SRC_DOCDIR)/clock.eps \
+		$(SRC_DOCDIR)/counter.eps \
+		$(SRC_DOCDIR)/cubeview.eps \
+		$(SRC_DOCDIR)/dial.eps \
+		$(SRC_DOCDIR)/editor-replace.eps \
+		$(SRC_DOCDIR)/editor.eps \
+		$(SRC_DOCDIR)/fl_alert.eps \
+		$(SRC_DOCDIR)/fl_ask.eps \
+		$(SRC_DOCDIR)/fl_choice.eps \
+		$(SRC_DOCDIR)/fl_color_chooser.eps \
+		$(SRC_DOCDIR)/fl_input.eps \
+		$(SRC_DOCDIR)/fl_message.eps \
+		$(SRC_DOCDIR)/fl_password.eps \
+		$(SRC_DOCDIR)/fl_show_colormap.eps \
+		$(SRC_DOCDIR)/fluid-catgets.eps \
+		$(SRC_DOCDIR)/fluid-gettext.eps \
+		$(SRC_DOCDIR)/fluid-org.eps \
+		$(SRC_DOCDIR)/fluid1.eps \
+		$(SRC_DOCDIR)/fluid2.eps \
+		$(SRC_DOCDIR)/fluid3-cxx.eps \
+		$(SRC_DOCDIR)/fluid3-gui.eps \
+		$(SRC_DOCDIR)/fluid3-style.eps \
+		$(SRC_DOCDIR)/fluid4.eps \
+		$(SRC_DOCDIR)/fluid_prefs.eps \
+		$(SRC_DOCDIR)/fluid_widget_cxx.eps \
+		$(SRC_DOCDIR)/fluid_widget_gui.eps \
+		$(SRC_DOCDIR)/fluid_widget_style.eps \
+		$(SRC_DOCDIR)/hello.C.eps \
+		$(SRC_DOCDIR)/input_choice.eps \
+		$(SRC_DOCDIR)/menu.eps \
+		$(SRC_DOCDIR)/menu_button.eps \
+		$(SRC_DOCDIR)/menubar.eps \
+		$(SRC_DOCDIR)/positioner.eps \
+		$(SRC_DOCDIR)/resizebox1.eps \
+		$(SRC_DOCDIR)/resizebox2.eps \
+		$(SRC_DOCDIR)/round_clock.eps \
+		$(SRC_DOCDIR)/scrollbar.eps \
+		$(SRC_DOCDIR)/slider.eps \
+		$(SRC_DOCDIR)/symbols.eps \
+		$(SRC_DOCDIR)/tabs.eps \
+		$(SRC_DOCDIR)/text.eps \
+		$(SRC_DOCDIR)/tiny.eps \
+		$(SRC_DOCDIR)/valuators.eps \
+		$(SRC_DOCDIR)/value_slider.eps
 
-MANPAGES =	fltk.$(CAT3EXT) fltk-config.$(CAT1EXT) fluid.$(CAT1EXT) \
-		blocks.$(CAT6EXT) checkers.$(CAT6EXT) sudoku.$(CAT6EXT)
+MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
+		$(SRC_DOCDIR)/fluid.$(CAT1EXT) $(SRC_DOCDIR)/blocks.$(CAT6EXT) \
+		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT)
 
 all:	$(MANPAGES)
 
@@ -218,25 +219,25 @@ install: $(MANPAGES)
 	done
 	echo "Installing man pages in $(DESTDIR)$(mandir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat1
-	$(INSTALL_MAN) fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
-	$(INSTALL_MAN) fltk-config.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat3
-	$(INSTALL_MAN) fltk.$(CAT3EXT) $(DESTDIR)$(mandir)/cat3
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.$(CAT3EXT) $(DESTDIR)$(mandir)/cat3
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man1
-	$(INSTALL_MAN) fluid.man $(DESTDIR)$(mandir)/man1/fluid.1
-	$(INSTALL_MAN) fltk-config.man $(DESTDIR)$(mandir)/man1/fltk-config.1
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.man $(DESTDIR)$(mandir)/man1/fluid.1
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.man $(DESTDIR)$(mandir)/man1/fltk-config.1
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man3
-	$(INSTALL_MAN) fltk.man $(DESTDIR)$(mandir)/man3/fltk.3
+	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk.man $(DESTDIR)$(mandir)/man3/fltk.3
 
 install-linux install-osx:
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat6
-	$(INSTALL_MAN) blocks.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
-	$(INSTALL_MAN) checkers.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
-	$(INSTALL_MAN) sudoku.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
+	$(INSTALL_MAN) $(SRC_DOCDIR)/blocks.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
+	$(INSTALL_MAN) $(SRC_DOCDIR)/checkers.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
+	$(INSTALL_MAN) $(SRC_DOCDIR)/sudoku.$(CAT6EXT) $(DESTDIR)$(mandir)/cat6
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/man6
-	$(INSTALL_MAN) blocks.man $(DESTDIR)$(mandir)/man6/blocks.6
-	$(INSTALL_MAN) checkers.man $(DESTDIR)$(mandir)/man6/checkers.6
-	$(INSTALL_MAN) sudoku.man $(DESTDIR)$(mandir)/man6/sudoku.6
+	$(INSTALL_MAN) $(SRC_DOCDIR)/blocks.man $(DESTDIR)$(mandir)/man6/blocks.6
+	$(INSTALL_MAN) $(SRC_DOCDIR)/checkers.man $(DESTDIR)$(mandir)/man6/checkers.6
+	$(INSTALL_MAN) $(SRC_DOCDIR)/sudoku.man $(DESTDIR)$(mandir)/man6/sudoku.6
 
 
 uninstall:
@@ -270,7 +271,7 @@ html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
 #fltk.ps: $(HTMLFILES) $(IMAGEFILES)
 #	echo "Generating PostScript documentation..."
 #	$(RM) fltk.ps
-#	-$(HTMLDOC) --verbose --batch fltk.book $(MEDIA) -f fltk.ps
+#	-$(HTMLDOC) --verbose --batch $(SRC_DOCDIR)/fltk.book $(MEDIA) -f fltk.ps
 
 pdf-dist : latex/refman.pdf
 	cp -f latex/refman.pdf fltk.pdf
