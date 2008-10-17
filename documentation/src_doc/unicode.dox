@@ -1,0 +1,82 @@
+/**
+
+ \page unicode 11 - Unicode and utf-8 Support
+
+This chapter explains how FLTK handles international 
+text via Unicode and utf-8.
+
+Unicode support was only recently added to FLTK and is
+still incomplete. This chapter is Work in Progress, reflecting
+the current state of Unicode support.
+
+\section unicode_about About Unicode and utf-8
+
+The Unicode Standard is a worldwide accepted charatcer encoding 
+standard. Unicode provides access to over 100,000 characters 
+used in all the major languages written today.
+
+Utf-8 encodes all Unicode characters into variable length 
+sequences of bytes. Unicode characters in the 7-bit ASCII 
+range map to the same value in utf-8, making the transformation
+to Unicode quick and easy.
+
+Moving from ASCII encoding to Unicode will allow all new FLTK
+applications to be easily internationalized and and used all
+over the world. By choosing utf-8 encoding, FLTK remains 
+largely source-code compatible to previous iteration of the 
+library.
+
+\section unicode_in_fltk Unicode in FLTK
+
+FLTK will be entirely converted to Unicode in utf-8 encoding.
+If a different encoding is required by the underlying operatings
+system, FLTK will convert string as needed.
+
+\par TODO:
+
+\li more doc on unicode, add links
+\li write something about filename encoding on OS X...
+\li explain the fl_utf8_... commands
+\li explain issues with Fl_Preferences
+\li why FLTK has no Fl_String class
+
+\par DONE:
+
+\li initial transfer of the Ian/O'ksi'D patch
+\li adapted Makefiles and IDEs for available platforms
+\li hacked some Unicode keybard entry for OS X
+
+\par ISSUES:
+
+\li  IDEs:
+    - Makefile support: tested on Fedora Core 5 and OS X, but heaven knows  
+      on which platforms this may fail
+    - Xcode: tested, seems to be working (but see comments below on OS X)
+    - VisualC (VC6): tested, test/utf8 works, but may have had some issues  
+      during merge. Some additional work needed (imm32.lib)
+    - VisualStudio2005: tested, test/utf8 works, some addtl. work needed  
+     (imm32.lib)
+    - VisualCNet: sorry, I have no longer access to that IDE
+    - Borland and other compiler: sorry, I can't update those
+
+\li  Platforms:
+    - you will encounter problems on all platforms!
+    - X11: many characters are missing, but that may be related to bad  
+      fonts on my machine. I also could not do any keyboard tests yet.  
+      Rendering seems to generally work ok.
+    - Win32: US and German keyboard worked ok, but no compositing was  
+      tested. Rendering looks pretty good.
+    - OS X: redering looks good. Keyboard is completely messed up, even in  
+      US setting (with Alt key)
+    - all: while merging I have seen plenty of places that are not  
+      entirley utf8-safe, particularly Fl_Input, Fl_Text_Editor, and  
+      Fl_Help_View. Keycodes from the keyboard conflict with Unicode  
+      characters. Right-to-left rendered text can not be marked or edited,  
+      and probably much more.
+\htmlonly
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="advanced.html">[Previous]&nbsp; 10 - Advanced FLTK </a>&nbsp;
+<a class="el" href="classes.html">[Next]&nbsp; A - Class Reference</a>
+\endhtmlonly
+*/

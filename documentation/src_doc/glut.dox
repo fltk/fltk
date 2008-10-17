@@ -1,0 +1,248 @@
+/**
+
+ \page	glut	D - GLUT Compatibility
+
+This appendix describes the GLUT compatibility header file supplied with
+FLTK. FLTK's GLUT compatibility is based on the original GLUT 3.7 and
+the follow-on FreeGLUT 2.4.0 libraries.
+
+\section glut_using Using the GLUT Compatibility Header File
+
+You should be able to compile existing GLUT source code by including
+<tt><FL/glut.H></tt> instead of <tt><GL/glut.h></tt>.  This can be
+done by editing the source, by changing the <tt>-I</tt> switches to
+the compiler, or by providing a symbolic link from <tt>GL/glut.h</tt>
+to <tt>FL/glut.H</tt>.
+
+<I>All files calling GLUT procedures must be compiled with C++</I>. You
+may have to alter them slightly to get them to compile without warnings,
+and you may have to rename them to get make to use the C++ compiler.
+
+You must link with the FLTK library. Most of <tt>FL/glut.H</tt>
+is inline functions.  You should take a look at it (and maybe at
+<tt>test/glpuzzle.cxx</tt> in the FLTK source) if you are having trouble
+porting your GLUT program.
+
+This has been tested with most of the demo programs that come with
+the GLUT and FreeGLUT distributions.
+
+\section glut_known_problems Known Problems
+
+The following functions and/or arguments to functions are missing,
+and you will have to replace them or comment them out for your code
+to compile:
+
+\li <tt>glutGet(GLUT_ELAPSED_TIME)</tt>
+\li <tt>glutGet(GLUT_SCREEN_HEIGHT_MM)</tt>
+\li <tt>glutGet(GLUT_SCREEN_WIDTH_MM)</tt>
+\li <tt>glutGet(GLUT_WINDOW_NUM_CHILDREN)</tt>
+\li <tt>glutInitDisplayMode(GLUT_LUMINANCE)</tt>
+\li <tt>glutLayerGet(GLUT_HAS_OVERLAY)</tt>
+\li <tt>glutLayerGet(GLUT_LAYER_IN_USE)</tt>
+\li <tt>glutPushWindow()</tt>
+\li <tt>glutSetColor(), glutGetColor(), glutCopyColormap()</tt>
+\li <tt>glutVideoResize()</tt> missing. 
+\li <tt>glutWarpPointer()</tt>
+\li <tt>glutWindowStatusFunc()</tt>
+\li Spaceball, buttonbox, dials, and tablet functions
+
+Most of the symbols/enumerations have different values than GLUT uses.
+This will break code that relies on the actual values. The only
+symbols guaranteed to have the same values are true/false pairs like <tt>
+GLUT_DOWN</tt> and <tt>GLUT_UP</tt>, mouse buttons <tt>
+GLUT_LEFT_BUTTON, GLUT_MIDDLE_BUTTON, GLUT_RIGHT_BUTTON</tt>, and <tt>
+GLUT_KEY_F1</tt> thru <tt>F12</tt>.
+
+The strings passed as menu labels are not copied.
+
+<tt>glutPostRedisplay()</tt> does not work if called from inside a
+display function.  You must use <tt>glutIdleFunc()</tt> if you want
+your display to update continuously.
+
+<tt>glutSwapBuffers()</tt> does not work from inside a display
+function.  This is on purpose, because FLTK swaps the buffers for you.
+
+<tt>glutUseLayer()</tt> does not work well, and should only be used
+to initialize transformations inside a resize callback.  You should
+redraw overlays by using <tt>glutOverlayDisplayFunc()</tt>.
+
+Overlays are cleared before the overlay display function is called. <tt>
+glutLayerGet(GLUT_OVERLAY_DAMAGED)</tt> always returns true for
+compatibility with some GLUT overlay programs.  You must rewrite your
+code so that <tt>gl_color()</tt> is used to choose colors in an
+overlay, or you will get random overlay colors.
+
+<tt>glutSetCursor(GLUT_CURSOR_FULL_CROSSHAIR)</tt> just results in a
+small crosshair.
+
+The fonts used by <tt>glutBitmapCharacter() and glutBitmapWidth()</tt>
+may be different.
+
+<tt>glutInit(argc,argv)</tt> will consume different switches than
+GLUT does.  It accepts the switches recognized by <A href="Fl.html#Fl.args">
+<tt>Fl::args()</tt></A>, and will accept any abbreviation of these
+switches (such as "-di" for "-display").
+
+\section glut_mixing Mixing GLUT and FLTK Code
+
+You can make your GLUT window a child of a <tt>Fl_Window</tt> with the
+following scheme.  The biggest trick is that GLUT insists on
+<tt>show()</tt>'ing the window at the point it is created, which means the
+<tt>Fl_Window</tt> parent window must already be shown.
+
+\li Don't call <tt>glutInit()</tt>. 
+\li Create your <tt>Fl_Window</tt>, and any FLTK widgets.  Leave a
+    blank area in the window for your GLUT window. 
+\li <tt>show()</tt> the <tt>Fl_Window</tt>.  Perhaps call <tt>
+    show(argc,argv)</tt>. 
+\li Call <tt>window->begin()</tt> so that the GLUT window will  be
+    automatically added to it. 
+\li Use <tt>glutInitWindowSize()</tt> and <tt>glutInitWindowPosition()</tt>
+    to set the location in the  parent window to put the GLUT window. 
+\li Put your GLUT code next.  It probably does not need many changes.
+    Call <tt>window->end()</tt> immediately after the
+    <tt>glutCreateWindow()</tt>! 
+\li You can call either <tt>glutMainLoop()</tt>, <tt>Fl::run()</tt>,
+    or loop calling <tt>Fl::wait()</tt> to run  the program. 
+
+<HR break>
+   <A NAME="Fl_Glut_Window"></A> <!-- For old HTML links only ! -->
+   \section glut_Fl_Glut_Window class Fl_Glut_Window
+\htmlonly
+<HR>
+
+\subsection glut_class_hierarchy Class Hierarchy
+
+\code
+Fl_Gl_Window
+   |
+   +----Fl_Glut_Window
+\endcode
+
+\subsection glut_include_files Include Files
+
+\code
+#include <FL/glut.H>
+\endcode
+
+\subsection glut_description Description
+
+Each GLUT window is an instance of this class.  You may find it useful
+to manipulate instances directly rather than use GLUT window id's.
+These may be created without opening the display, and thus can fit
+better into FLTK's method of creating windows.
+
+The current GLUT window is available in the global variable <tt>
+glut_window</tt>. </P>
+
+<tt>new Fl_Glut_Window(...)</tt> is the same as <tt>
+glutCreateWindow()</tt> except it does not <tt>show()</tt> the window
+or make the window current. </P>
+
+<tt>window->make_current()</tt> is the same as <tt>glutSetWindow(number)</tt>.
+If the window has not had <tt>show()</tt> called on it yet, some functions
+that assumme an OpenGL context will not work. 
+If you do <tt>show()</tt> the window, call <tt>make_current()</tt>
+again to set the context. </P>
+
+<tt>~Fl_Glut_Window()</tt> is the same as <tt>glutDestroyWindow()</tt>.
+
+\subsection glut_members Members
+
+The <tt>Fl_Glut_Window</tt> class contains several public members that can
+be altered directly:
+
+<CENTER><TABLE WIDTH="80%" BORDER="1" ALT="Fl_Glut_Window public members.">
+<TR>
+	<TH>member</TH>
+	<TH>description</TH>
+</TR>
+<TR>
+	<TD>display</TD>
+	<TD>A pointer to the function to call to draw the normal planes.</TD>
+</TR>
+<TR>
+	<TD>entry</TD>
+	<TD>A pointer to the function to call when the mouse moves into
+	or out of the window.</TD>
+</TR>
+<TR>
+	<TD>keyboard</TD>
+	<TD>A pointer to the function to call when a regular key is pressed.</TD>
+</TR>
+<TR>
+	<TD>menu[3]</TD>
+	<TD>The menu to post when one of the mouse buttons is pressed.</TD>
+</TR>
+<TR>
+	<TD>mouse</TD>
+	<TD>A pointer to the function to call when a button is pressed or
+	released.</TD>
+</TR>
+<TR>
+	<TD>motion</TD>
+	<TD>A pointer to the function to call when the mouse is moved with
+	a button down.</TD>
+</TR>
+<TR>
+	<TD>overlaydisplay</TD>
+	<TD>A pointer to the function to call to draw the overlay planes.</TD>
+</TR>
+<TR>
+	<TD>passivemotion</TD>
+	<TD>A pointer to the function to call when the mouse is moved with
+	no buttons down.</TD>
+</TR>
+<TR>
+	<TD>reshape</TD>
+	<TD>A pointer to the function to call when the window is resized.</TD>
+</TR>
+<TR>
+	<TD>special</TD>
+	<TD>A pointer to the function to call when a special key is pressed.</TD>
+</TR>
+<TR>
+	<TD>visibility</TD>
+	<TD>A pointer to the function to call when the window is iconified
+	or restored (made visible.)</TD>
+</TR>
+</TABLE></CENTER>
+
+\subsection glut_methods Methods
+
+\li <A href=#Fl_Glut_Window.Fl_Glut_Window>Fl_Glut_Window</A>
+\li <A href=#Fl_Glut_Window.~Fl_Glut_Window>~Fl_Glut_Window</A>
+\li <A href=#Fl_Glut_Window.make_current>make_current</A>
+
+<A name="Fl_Glut_Window.Fl_Glut_Window"></A> <!-- For old HTML links only ! -->
+Fl_Glut_Window::Fl_Glut_Window(int x, int y, int w, int h, const char
+*title = 0) <br>
+Fl_Glut_Window::Fl_Glut_Window(int w, int h, const char *title = 0)
+
+\par
+The first constructor takes 4 int arguments to create the window with
+a preset position and size.  The second constructor with 2 arguments
+will create the window with a preset size, but the window manager will
+choose the position according to it's own whims.
+
+<A name="Fl_Glut_Window.~Fl_Glut_Window"> </A> <!-- For old HTML links only ! -->
+virtual Fl_Glut_Window::~Fl_Glut_Window()
+
+\par
+Destroys the GLUT window.
+
+<A name="Fl_Glut_Window.make_current"> </A> <!-- For old HTML links only ! -->
+void Fl_Glut_Window::make_current()
+
+\par
+Switches all drawing functions to the GLUT window.
+
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="enumerations.html">[Previous]</a>&nbsp;
+     \ref enumerations &nbsp;&nbsp;
+<a class="el" href="forms.html">[Next]</a>&nbsp;
+     \ref forms
+
+\endhtmlonly
+*/
