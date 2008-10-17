@@ -29,9 +29,10 @@ as a temporary solution.
   use Fl_Clock instead.
 
   \image html clock.gif 
- 
+  \image latex clock.eps "" width=10cm 
   \image html round_clock.gif
- #/
+  \image latex clock.eps "" width=10cm 
+  \image html round_clock.eps "" width=10cm #/
 
   /##
     Returns the displayed time.
@@ -412,7 +413,7 @@ The above code produces the following paragraphs:
 	the HTML footer.
 
   \image html tiny.gif
-
+  \image latex tiny.eps "" width=2cm	
 
 \section development_navigation_test 5 Navigation Proposals
 
