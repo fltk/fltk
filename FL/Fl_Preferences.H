@@ -401,18 +401,34 @@ public:
    */
   int size( const char *entry );
 
-
   /**
-     Creates a path that is related to the preferences file and
-     that is usable for application data beyond what is covered by
-     Fl_Preferences.
-    
-     \param[out] path buffer for user data path
-     \param[in] pathlen size of path buffer
-     \return 0 if path was not created or pathname can't fit into buffer
-   */
-  char getUserdataPath( char *path, int pathlen );
+  \brief Creates a path that is related to the preferences file and
+  that is usable for additional application data.
 
+  This function creates a directory that is named after the preferences
+  database without the \c .prefs extension and located in the same directory.
+  It then fills the given buffer with the complete path name.
+
+  Exmaple:
+  \code
+   Fl_Preferences prefs( USER, "matthiasm.com", "test" );
+   char path[FL_PATH_MAX];
+   prefs.getUserdataPath( path );
+  \endcode
+  creates the preferences database in (MS Windows):
+  \code
+  c:/Documents and Settings/matt/Application Data/matthiasm.com/test.prefs
+  \endcode
+  and returns the userdata path:
+  \code
+  c:/Documents and Settings/matt/Application Data/matthiasm.com/test/
+  \endcode
+    
+  \param[out] path buffer for user data path
+  \param[in] pathlen size of path buffer (should be at least \c FL_PATH_MAX)
+  \return 0 if path was not created or pathname can't fit into buffer
+  */
+  char getUserdataPath( char *path, int pathlen );
 
   /**
      Write all preferences to disk. This function works only with

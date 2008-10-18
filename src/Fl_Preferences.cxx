@@ -484,20 +484,6 @@ int Fl_Preferences::size( const char *key )
   return v ? strlen( v ) : 0 ;
 }
 
-/**
- * creates a path that is related to the preferences file
- * and that is usable for application data beyond what is covered 
- * by Fl_Preferences.
- * - 'getUserdataPath' actually creates the directory
- * - 'path' must be large enough to receive a complete file path
- * example:
- *   Fl_Preferences prefs( USER, "matthiasm.com", "test" );
- *   char path[FL_PATH_MAX];
- *   prefs.getUserdataPath( path );
- * sample returns:
- *   Win32: c:/Documents and Settings/matt/Application Data/matthiasm.com/test/
- *   prefs: c:/Documents and Settings/matt/Application Data/matthiasm.com/test.prefs
- */
 char Fl_Preferences::getUserdataPath( char *path, int pathlen )
 {
   if ( rootNode )
