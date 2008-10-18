@@ -130,39 +130,44 @@ public:
   */
   void context_valid(char v) {if (v) valid_f_ |= 2; else valid_f_ &= 0xfd;}
 
-/**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
+  /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
   static int can_do(int m) {return can_do(m,0);}
-/**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
+  /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
   static int can_do(const int *m) {return can_do(0, m);}
- /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
+  /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
   int can_do() {return can_do(mode_,alist);}
   /**
     Set or change the OpenGL capabilites of the window.  The value can be
     any of the following OR'd together:
-    <UL>
-    <LI>FL_RGB - RGB color (not indexed) </LI>
-    <LI>FL_RGB8 - RGB color with at least 8 bits of each color </LI>
-    <LI>FL_INDEX - Indexed mode </LI>
-    <LI>FL_SINGLE - not double buffered </LI>
-    <LI>FL_DOUBLE - double buffered </LI>
-    <LI>FL_ACCUM - accumulation buffer </LI>
-    <LI>FL_ALPHA - alpha channel in color </LI>
-    <LI>FL_DEPTH - depth buffer </LI>
-    <LI>FL_STENCIL - stencil buffer </LI>
-    <LI>FL_MULTISAMPLE - multisample antialiasing </LI>
-    </UL>
+
+    - \c FL_RGB - RGB color (not indexed)
+    - \c FL_RGB8 - RGB color with at least 8 bits of each color
+    - \c FL_INDEX - Indexed mode
+    - \c FL_SINGLE - not double buffered
+    - \c FL_DOUBLE - double buffered
+    - \c FL_ACCUM - accumulation buffer
+    - \c FL_ALPHA - alpha channel in color
+    - \c FL_DEPTH - depth buffer
+    - \c FL_STENCIL - stencil buffer
+    - \c FL_MULTISAMPLE - multisample antialiasing
+
     FL_RGB and FL_SINGLE have a value of zero, so they
     are "on" unless you give FL_INDEX or FL_DOUBLE.
-    <P>If the desired combination cannot be done, FLTK will try turning off 
+
+    If the desired combination cannot be done, FLTK will try turning off 
     FL_MULTISAMPLE.  If this also fails the show() will call 
-    Fl::error() and not show the window. </P>
-    <P>You can change the mode while the window is displayed.  This is most
+    Fl::error() and not show the window.
+
+    You can change the mode while the window is displayed.  This is most
     useful for turning double-buffering on and off.  Under X this will
     cause the old X window to be destroyed and a new one to be created.  If
     this is a top-level window this will unfortunately also cause the
     window to blink, raise to the top, and be de-iconized, and the xid()
     will change, possibly breaking other code.  It is best to make the GL
     window a child of another window if you wish to do this!
+
+    mode() must not be called within draw() since it
+    changes the current context.
   */
   Fl_Mode mode() const {return (Fl_Mode)mode_;}
   /** See Fl_Mode mode() const */
