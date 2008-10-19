@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Fl_Group::clip_children() is now public (STR #2017)
 	- Fixed first modifier key event (STR #1952)
 	- Fixed wrong default value of Fl_Spinner in 
 	  Fluid (STR #1991)
