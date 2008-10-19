@@ -23,7 +23,7 @@
 # Please report all bugs and problems to "fltk-bugs@fltk.org".
 #
 
-include ../makeinclude
+include ../../makeinclude
 
 
 #
@@ -47,7 +47,7 @@ endif # end of OSX options
 
 
 
-XUTF8	=	../lib/libfltk_xutf8$(LIBEXT)
+XUTF8	=	../../lib/libfltk_xutf8$(LIBEXT)
 
 
 #
@@ -121,7 +121,7 @@ depend:	$(OBJS:.o=.c)
 
 include makedepend
 
-$(OBJS):	../makeinclude
+$(OBJS):	../../makeinclude
 
 
 #
