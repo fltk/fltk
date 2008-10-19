@@ -33,12 +33,12 @@
 Drawing_Window mbrot;
 Drawing_Window jbrot;
 
-void idle() {
-  if (!mbrot.d->idle() && !(jbrot.d && jbrot.d->idle())) Fl::set_idle(0);
+void idle(void*) {
+  if (!mbrot.d->idle() && !(jbrot.d && jbrot.d->idle())) Fl::remove_idle(idle);
 }
 
 void set_idle() {
-  Fl::set_idle(idle);
+  Fl::add_idle(idle);
 }
 
 static void window_callback(Fl_Widget*, void*) {exit(0);}

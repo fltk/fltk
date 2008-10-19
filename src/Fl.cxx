@@ -381,6 +381,8 @@ double Fl::wait(double time_to_wait) {
     if (idle) time_to_wait = 0.0;
   }
   flush();
+  if (idle && !in_idle) // 'idle' may have been set within flush()
+    time_to_wait = 0.0;
   return fl_wait(time_to_wait);
 
 #else
@@ -427,6 +429,8 @@ double Fl::wait(double time_to_wait) {
   } else {
     // do flush first so that user sees the display:
     flush();
+    if (idle && !in_idle) // 'idle' may have been set within flush()
+      time_to_wait = 0.0;
     return fl_wait(time_to_wait);
   }
 #endif
