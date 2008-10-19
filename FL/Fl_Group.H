@@ -61,20 +61,6 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
 protected:
   enum { CLIP_CHILDREN = 2048 };
 
-  /**
-    The first method controls whether the group widget clips the drawing of
-    child widgets to its bounding box.
-    
-    <p>The second method returns the current clipping mode.
-    
-    <p>The default is to not clip (0) the drawing of child widgets.
-  */
-  void clip_children(int c) { if (c) set_flag(CLIP_CHILDREN); else clear_flag(CLIP_CHILDREN); }
-  /**
-    See void Fl_Group::clip_children(int c)
-  */
-  int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
-
   void draw();
   void draw_child(Fl_Widget&) const;
   void draw_children();
@@ -167,6 +153,25 @@ public:
   */
   void add_resizable(Fl_Widget& o) {resizable_ = &o; add(o);}
   void init_sizes();
+
+  /**
+    Controls whether the group widget clips the drawing of
+    child widgets to its bounding box.
+    
+    Set \a c to 1 if you want to clip the child widgets to the
+    bounding box.
+
+    The default is to not clip (0) the drawing of child widgets.
+  */
+  void clip_children(int c) { if (c) set_flag(CLIP_CHILDREN); else clear_flag(CLIP_CHILDREN); }
+  /**
+    Returns the current clipping mode.
+
+    \return true, if clipping is enabled, false otherwise.
+
+    \see void Fl_Group::clip_children(int c)
+  */
+  int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
 
   // back compatibility functions:
 
