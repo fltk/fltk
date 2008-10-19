@@ -82,7 +82,6 @@ distclean: clean
 	$(RM) documentation/*.$(CAT1EXT)
 	$(RM) documentation/*.$(CAT3EXT)
 	$(RM) documentation/*.$(CAT6EXT)
-	$(RM) documentation/fltk.pdf
 	$(RM) documentation/fltk.ps
 	$(RM) -r documentation/fltk.d
 	for file in test/*.fl; do\

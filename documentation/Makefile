@@ -207,7 +207,7 @@ clean:
 #	$(RM) fltk.ps
 	$(RM) refman.pdf
 	$(RMDIR) html latex
-	$(RM) *~ *.bck *.bck *.bak
+	$(RM) *~ *.bck *.bck *.bak *.log
 
 depend:
 
