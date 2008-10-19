@@ -9,6 +9,8 @@ CHANGES IN FLTK 1.1.10
 	  function (STR #1945)
 	- Fl_Group and Fl_Scroll now resize themselves before
 	  resizing their children (STR #2032)
+	- Fixed adding an idle handler during
+	  a draw() call (STR #1950)
 
 CHANGES IN FLTK 1.1.9
 
