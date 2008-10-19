@@ -6,6 +6,8 @@ CHANGES IN FLTK 1.1.10
 	- Fixed Fluid textcolor output (STR #1992)
 	- Added clarification to Fl_GL_Window mode 
 	  function (STR #1945)
+	- Fl_Group and Fl_Scroll now resize themselves before
+	  resizing their children (STR #2032)
 
 CHANGES IN FLTK 1.1.9
 

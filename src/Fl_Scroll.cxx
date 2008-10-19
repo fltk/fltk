@@ -237,14 +237,15 @@ void Fl_Scroll::draw() {
 }
 
 void Fl_Scroll::resize(int X, int Y, int W, int H) {
+  int dx = X-x(), dy = Y-y();
+  Fl_Widget::resize(X,Y,W,H); // resize _before_ moving children around
   fix_scrollbar_order();
   // move all the children:
   Fl_Widget*const* a = array();
   for (int i=children()-2; i--;) {
     Fl_Object* o = *a++;
-    o->position(o->x()+X-x(), o->y()+Y-y());
+    o->position(o->x()+dx, o->y()+dy);
   }
-  Fl_Widget::resize(X,Y,W,H);
 }
 
 void Fl_Scroll::position(int X, int Y) {
