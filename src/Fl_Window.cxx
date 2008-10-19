@@ -133,7 +133,7 @@ void Fl_Window::draw() {
   y(savey);
   x(savex);
 
-# if defined(HAVE_CAIRO)
+# if defined(USE_CAIRO)
   Fl::cairo_make_current(this); // checkout if an update is necessary
 # endif
 }

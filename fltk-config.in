@@ -56,6 +56,7 @@ CXXFLAGS="@CXXFLAGS@ @LARGEFILE@ @PTHREAD_FLAGS@"
 LDFLAGS="@LDFLAGS@"
 LDLIBS="@LIBS@"
 OPTIM="@OPTIM@"
+CAIROFLAGS="@CAIROFLAGS@"
 
 # Check for local invocation, and update paths accordingly...
 if test -f "$selfdir/FL/Fl_Window.H"; then
@@ -84,11 +85,17 @@ if test -d $includedir/FL/images; then
 	CXXFLAGS="-I$includedir/FL/images $CXXFLAGS"
 fi
 
+if test -f "$libdir/libfltk_cairo.a"; then
+	CFLAGS="$CAIROFLAGS $CFLAGS"
+	CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
+fi
+
 # libraries to link with:
 LIBNAME="@LIBNAME@"
 DSONAME="@DSONAME@"
 DSOLINK="@DSOLINK@"
 IMAGELIBS="@IMAGELIBS@"
+CAIROLIBS="@CAIROLIBS@"
 SHAREDSUFFIX="@SHAREDSUFFIX@"
 
 usage ()
@@ -103,6 +110,7 @@ Options telling what we are doing:
 	[--use-images]    use extra image formats (PNG, JPEG)
 	[--use-glut]      use glut compatibility layer
 	[--use-forms]     use forms compatibility layer
+	[--use-cairo]     use cairo graphics lib
 
 Options telling what information we request:
 	[--cc]            return C compiler used to compile FLTK
@@ -170,6 +178,9 @@ do
 	--use-images)
 	    use_images=yes
 	    ;;
+	--use-cairo)
+	    use_cairo=yes
+	    ;;
 	--cflags)
 	    echo_cflags=yes
 	    ;;
@@ -233,6 +244,11 @@ fi
 if test x$use_images = xyes; then
     LDLIBS="-lfltk_images$SHAREDSUFFIX $IMAGELIBS $LDLIBS"
     LDSTATIC="$libdir/libfltk_images.a $IMAGELIBS $LDSTATIC"
+fi
+
+if test x$use_cairo = xyes; then
+    LDLIBS="-lfltk_cairo$SHAREDSUFFIX $CAIROLIBS $LDLIBS"
+    LDSTATIC="$libdir/libfltk_cairo.a $CAIROLIBS $LDSTATIC"
 fi
 
 LDLIBS="$DSOLINK $LDFLAGS $libs $LDLIBS"
@@ -349,6 +365,10 @@ if test "$echo_libs" = "yes"; then
 
     if test x$use_gl = xyes; then
         echo $libdir/libfltk_gl.a
+    fi
+
+    if test x$use_cairo = xyes; then
+        echo $libdir/libfltk_cairo.a
     fi
 
     if test x$use_images = xyes; then

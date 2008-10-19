@@ -258,7 +258,7 @@
 				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="..\vc2005;..\zlib;..\png;..\jpeg;.."
 				PreprocessorDefinitions="HAVE_CAIRO=1, _CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
-				RuntimeLibrary= "2"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/fltk.lib.pch"
 				AssemblerListingLocation=".\Release/"
@@ -1772,7 +1772,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\src\Fl_Cairo.cxx"
+			RelativePath="..\cairo\Fl_Cairo.cxx"
 			>
 		</File>
 		<File

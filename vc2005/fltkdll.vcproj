@@ -1367,8 +1367,44 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\src\Fl_Cairo.cxx"
+			RelativePath="..\cairo\Fl_Cairo.cxx"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					ObjectFile="$(IntDir)\$(InputName)1.obj"
+					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					ObjectFile="$(IntDir)\$(InputName)1.obj"
+					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug Cairo|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					ObjectFile="$(IntDir)\$(InputName)1.obj"
+					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release Cairo|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					ObjectFile="$(IntDir)\$(InputName)1.obj"
+					XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\src\Fl_Chart.cxx"

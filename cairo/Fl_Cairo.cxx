@@ -34,7 +34,20 @@
 
 // static Fl module initialization :
 Fl_Cairo_State Fl::cairo_state_;	///< contains all necesary info for current cairo context mapping
+
+
 // Fl cairo features implementation
+
+// Fl_Cairo_State class impl
+
+void  Fl_Cairo_State::autolink(bool b)  {
+#ifdef USE_CAIRO
+  autolink_ = b;
+#else
+  Fl::fatal("In Fl::autolink(bool) : Cairo autolink() feature is only "
+	   "available with the enable-cairoext configure option, now quitting.");
+#endif
+}
 
 /** 
     Provides a corresponding cairo context for window \a wi.
@@ -142,6 +155,10 @@ cairo_t * Fl::cairo_make_current(void *gc, int W, int H) {
     Fl::cairo_cc(c);
     return c;
 }
+#else
+// just don't leave the libfltk_cairo lib empty to avoid warnings
+#include <FL/Fl_Export.H>
+FL_EXPORT int fltk_cairo_dummy() { return 1;}
 #endif // HAVE_CAIRO
 
 //

@@ -44,6 +44,7 @@
 #  include <cairo-win32.h>
 # elif defined(__APPLE_QUARTZ__)
 #  include <cairo-quartz.h>
+# else
 #  error Cairo is not supported on that platform.
 # endif
 
@@ -65,7 +66,7 @@ public:
 
     // access attributes
     cairo_t* cc() const {return cc_;}		 ///< Gets the current cairo context
-    bool autolink() const {return autolink_;}	 ///< Sets the autolink option. See Fl::cairo_autolink_context(bool)
+    bool autolink() const {return autolink_;}	 ///< Gets the autolink option. See Fl::cairo_autolink_context(bool)
     /** Sets the current cairo context, \a own indicates cc deletion is handle externally by user */
     void cc(cairo_t* c, bool own=true)  {	 
 	if (cc_ && own_cc_) cairo_destroy(cc_); 
@@ -73,7 +74,7 @@ public:
 	if (!cc_) window_=0;
 	own_cc_=own;
     }
-    void  autolink(bool b)  {autolink_ = b;}	///< Gets the autolink option
+    void  autolink(bool b);                     ///< Sets the autolink option, only available with --enable-cairoext
     void  window(void* w)  {window_=w;}		///< Sets the window \a w to keep track on
     void* window() const {return window_;}	///< Gets the last window attached to a cc
     void  gc(void* c)  {gc_=c;}		        ///< Sets the gc \a c to keep track on

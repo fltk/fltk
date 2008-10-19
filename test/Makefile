@@ -155,6 +155,7 @@ ALL =	\
 	tile$(EXEEXT) \
 	tiled_image$(EXEEXT) \
 	valuators$(EXEEXT) \
+	cairotest$(EXEEXT) \
 	utf8$(EXEEXT) 
 
 
@@ -464,6 +465,8 @@ shape$(EXEEXT): shape.o
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)
 
 cairo_test$(EXEEXT): cairo_test.o
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(CAIROFLAGS) $(LDFLAGS) -o $@ cairo_test.o $(LINKFLTK) $(LINKFLTKCAIRO) $(GLDLIBS)
 
 #
 # End of "$Id$".

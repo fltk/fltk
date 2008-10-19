@@ -97,11 +97,13 @@ LIBNAME="../lib/libfltk.a"
 FLLIBNAME="../lib/libfltk_forms.a"
 GLLIBNAME="../lib/libfltk_gl.a"
 IMGLIBNAME="../lib/libfltk_images.a"
+CAIROLIBNAME="../lib/libfltk_cairo.a"
 
 AC_SUBST(FLLIBNAME)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIBNAME)
 AC_SUBST(IMGLIBNAME)
+AC_SUBST(CAIROLIBNAME)
 AC_SUBST(LIBEXT)
 AC_SUBST(LIBNAME)
 AC_SUBST(LINKFLTK)
@@ -131,6 +133,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.$FL_API_VERSION.dylib"
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
             IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
+            CAIRODSONAME="libfltk_cairo.$FL_API_VERSION.dylib"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -dynamiclib -lc -o"
 	    ;;
 
@@ -139,6 +142,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-R$libdir"
@@ -149,6 +153,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.sl.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.sl.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.sl.$FL_API_VERSION"
+            CAIRODSONAME="libfltk_cairo.sl.$FL_API_VERSION"
 	    DSOCOMMAND="ld \$(DSOFLAGS) -b -z +h \$@ $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -159,6 +164,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@,-set_version,sgi1.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -169,6 +175,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -179,6 +186,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -189,6 +197,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms_s.a"
             GLDSONAME="libfltk_gl_s.a"
             IMGDSONAME="libfltk_images_s.a"
+            CAIRODSONAME="libfltk_cairo_s.a"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
             SHAREDSUFFIX="_s"
             ;;
@@ -199,11 +208,13 @@ if test x$enable_shared = xyes; then
 		FLDSONAME="mgwfltknox_forms-$FL_API_VERSION.dll"
 		GLDSONAME="mgwfltknox_gl-$FL_API_VERSION.dll"
 		IMGDSONAME="mgwfltknox_images-$FL_API_VERSION.dll"
+		CAIRODSONAME="mgwfltknox_cairo-$FL_API_VERSION.dll"
 	    else
 		DSONAME="cygfltknox-$FL_API_VERSION.dll"
 		FLDSONAME="cygfltknox_forms-$FL_API_VERSION.dll"
 		GLDSONAME="cygfltknox_gl-$FL_API_VERSION.dll"
 		IMGDSONAME="cygfltknox_images-$FL_API_VERSION.dll"
+		CAIRODSONAME="cygfltknox_cairo-$FL_API_VERSION.dll"
 	    fi
 	    #-----------------------------------------------------------
 	    # -Wl,--enable-runtime-pseudo-reloc: See str 1585
@@ -221,11 +232,12 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
+            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    ;;
     esac
 
-    LINKSHARED="-L../src -lfltk_images$SHAREDSUFFIX -lfltk_forms$SHAREDSUFFIX -lfltk$SHAREDSUFFIX"
+    LINKSHARED="-L../src -lfltk_cairo$SHAREDSUFFIX -lfltk_images$SHAREDSUFFIX -lfltk_forms$SHAREDSUFFIX -lfltk$SHAREDSUFFIX"
 else
     DSOCOMMAND="echo"
     DSOLINK=""
@@ -233,10 +245,11 @@ else
     FLDSONAME=""
     GLDSONAME=""
     IMGDSONAME=""
+    CAIRODSONAME=""
     PICFLAG=0
     SHAREDSUFFIX=""
     FLUID="fluid"
-    LINKSHARED="../lib/libfltk_images.a ../lib/libfltk_forms.a ../lib/libfltk.a"
+    LINKSHARED="../lib/libfltk_cairo.a ../lib/libfltk_images.a ../lib/libfltk_forms.a ../lib/libfltk.a"
 fi
 
 AC_SUBST(DSOCOMMAND)
@@ -246,6 +259,7 @@ AC_SUBST(DSONAME)
 AC_SUBST(FLDSONAME)
 AC_SUBST(GLDSONAME)
 AC_SUBST(IMGDSONAME)
+AC_SUBST(CAIRODSONAME)
 AC_SUBST(SHAREDSUFFIX)
 AC_SUBST(LINKSHARED)
 AC_SUBST(FLUID)
@@ -558,15 +572,41 @@ dnl See if we need a .exe extension on executables...
 AC_EXEEXT
 
 dnl Check for Cairo library unless disabled...
-AC_ARG_ENABLE(cairo,[  --enable-cairo          use Cairo graphics (default=no)])
+CAIRODIR=""
+CAIROFLAGS=""
+LINKFLTKCAIRO=""
+CAIROLIBS=""
+
+AC_ARG_ENABLE(cairo,[  --enable-cairoext          use fltk code instrumentation for cairo extended use (default=no)])
+if test x$enable_cairoext = xyes; then
+	  AC_DEFINE(USE_CAIRO)
+	  AC_DEFINE(HAVE_CAIRO)
+	  dnl FIXME This part should be fixed so configure do not depend on
+	  dnl we do not rely on pkg-config .
+	  CAIRODIR="cairo"
+          CAIROFLAGS="`pkg-config --cflags cairo`"
+          CAIROLIBS="-lcairo -lpixman-1"
+          CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
+	  LINKFLTKCAIRO="../lib/libfltk_cairo.a"
+	  LIBS="$CAIROLIBS $LINKFLTKCAIRO $LIBS"
+fi
+
+dnl Check for Cairo library unless disabled...
+AC_ARG_ENABLE(cairo,[  --enable-cairo          use lib Cairo  (default=no)])
 if test x$enable_cairo = xyes; then
 	  AC_DEFINE(HAVE_CAIRO)
 	  dnl FIXME This part should be fixed so configure do not depend on
 	  dnl we do not rely on pkg-config .
-          CXXFLAGS="`pkg-config --cflags cairo` $CXXFLAGS"
+	  CAIRODIR="cairo"
+          CAIROFLAGS="`pkg-config --cflags cairo`"
           CAIROLIBS="-lcairo -lpixman-1"
-	  LIBS="-lcairo -lpixman-1 $LIBS"
+          CXXFLAGS="$CAIROFLAGS $CXXFLAGS"
+	  LINKFLTKCAIRO="../lib/libfltk_cairo.a"
 fi
+AC_SUBST(CAIRODIR)
+AC_SUBST(CAIROFLAGS)
+AC_SUBST(CAIROLIBS)
+AC_SUBST(LINKFLTKCAIRO)
 
 dnl Check for pthreads for multi-threaded apps...
 have_pthread=no
@@ -1130,7 +1170,10 @@ else
     echo "                 ZLIB=Builtin"
 fi
 if test x$enable_cairo = xyes; then
-    echo "                 CAIRO=System"
+    echo "                 CAIRO=lib"
+fi
+if test x$enable_cairoext = xyes; then
+    echo "                 CAIRO=internal_use"
 fi
 
 

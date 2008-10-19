@@ -69,8 +69,8 @@ void Fl_Menu_Window::flush() {
   fl_window = myi->xid;
   if (!gc) {
 	  gc = XCreateGC(fl_display, myi->xid, 0, 0);
-# if defined(HAVE_CAIRO)
-      Fl::cairo_make_current(gc); // capture gc changes automatically to update the cairo context adequately
+# if defined(USE_CAIRO)
+	  if(Fl::autolink_context()) Fl::cairo_make_current(gc); // capture gc changes automatically to update the cairo context adequately
 # endif
   }
   fl_gc = gc;

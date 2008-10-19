@@ -247,6 +247,15 @@
 #undef HAVE_LIBJPEG
 
 /*
+ * USE_CAIRO
+ *
+ * Do we have the cairo library available and want extended cairo use in fltk ?
+ * will implies to link cairo.lib in all fltk based apps.
+ */
+
+#undef USE_CAIRO
+
+/*
  * HAVE_CAIRO
  *
  * Do we have the cairo library available?

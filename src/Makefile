@@ -34,7 +34,6 @@ CPPFILES = \
 	Fl_Browser_load.cxx \
 	Fl_Box.cxx \
 	Fl_Button.cxx \
-	Fl_Cairo.cxx \
 	Fl_Chart.cxx \
 	Fl_Check_Browser.cxx \
 	Fl_Check_Button.cxx \
@@ -188,6 +187,7 @@ IMGCPPFILES = \
 	Fl_PNG_Image.cxx \
 	Fl_PNM_Image.cxx
 
+
 CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c fl_utf.c
 
 UTF8CFILES = \
@@ -211,7 +211,7 @@ IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
 all:	$(LIBNAME) $(DSONAME) \
 	$(FLLIBNAME) $(FLDSONAME) \
 	$(GLLIBNAME) $(GLDSONAME) \
-	$(IMGLIBNAME) $(IMGDSONAME)
+	$(IMGLIBNAME) $(IMGDSONAME) 
 
 $(LIBNAME): $(OBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -418,7 +418,7 @@ mgwfltknox_images-1.3.dll: $(IMGLIBNAME) mgwfltknox-1.3.dll
 			$(IMAGELIBS) $(LDLIBS)
 
 clean:
-	-$(RM) *.o *.dll.a core.* *~ *.bck *.bck
+	-$(RM) *.o *.dll.a core.* *~ *.bak *.bck
 	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \
@@ -500,7 +500,7 @@ gl_start.o:	../FL/mac.H ../FL/win32.H
 install: $(LIBNAME) $(DSONAME) \
 	$(FLLIBNAME) $(FLDSONAME) \
 	$(GLLIBNAME) $(GLDSONAME) \
-	$(IMGLIBNAME) $(IMGDSONAME)
+	$(IMGLIBNAME) $(IMGDSONAME) 
 	echo "Installing libraries in $(DESTDIR)$(libdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
@@ -640,6 +640,7 @@ install: $(LIBNAME) $(DSONAME) \
 		$(INSTALL_LIB) libfltk_images.dll.a $(DESTDIR)$(libdir); \
 	fi
 
+
 uninstall:
 	echo "Uninstalling libraries..."
 	$(RM) $(DESTDIR)$(libdir)/$(LIBNAME)
@@ -730,7 +731,6 @@ uninstall:
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
 	fi
-
 
 #
 # End of "$Id$".

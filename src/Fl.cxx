@@ -1184,7 +1184,7 @@ void Fl_Window::hide() {
       fl_release_dc(fl_window, fl_gc);
       fl_window = (HWND)-1;
       fl_gc = 0;
-# ifdef HAVE_CAIRO
+# ifdef USE_CAIRO
       if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0);
 # endif
     }
