@@ -1,7 +1,7 @@
 #
 # "$Id: Makefile 5667 2007-02-07 02:35:44Z mike $"
 #
-# PNG library makefile for the Fast Light Toolkit (FLTK).
+# CAIRO library makefile for the Fast Light Toolkit (FLTK).
 #
 # Copyright 1997-2007 by Easy Software Products.
 #
@@ -28,8 +28,14 @@ include ../makeinclude
 #
 # Object files...
 #
+CAIROCPPFILES   = Fl_Cairo.cxx
+CAIROOBJECTS	= $(CAIROCPPFILES:.cxx=.o)
 
-CAIROOBJECTS	=	Fl_Cairo.o
+#
+# Make all of the targets...
+#
+
+all:	$(CAIROLIBNAME) $(CAIRODSONAME)
 
 $(CAIROLIBNAME): $(CAIROOBJECTS)
 	echo $(LIBCOMMAND) $@ ...
@@ -37,15 +43,15 @@ $(CAIROLIBNAME): $(CAIROOBJECTS)
 	$(LIBCOMMAND) $@ $(CAIROOBJECTS)
 	$(RANLIB) $@
 
-$(CAIRODSONAME): $(CAIROOBJECTS) ../src/libfltk.so.1.3
+../src/libfltk_cairo.so.1.3: $(CAIROOBJECTS) ../src/libfltk.so.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src $(IMAGELIBS) -lfltk
+	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk
 	$(RM) ../src/libfltk_cairo.so
 	$(LN) $(CAIRODSONAME) ../src/libfltk_cairo.so
 
 ../src/libfltk_cairo.sl.1.3: $(CAIROOBJECTS) ../src/libfltk.sl.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src $(IMAGELIBS) -lfltk
+	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src -lfltk
 	$(RM) ../src/libfltk_cairo.sl
 	$(LN) ../src/libfltk_cairo.sl.1.3 ../src/libfltk_cairo.sl
 
@@ -55,7 +61,7 @@ $(CAIRODSONAME): $(CAIROOBJECTS) ../src/libfltk.so.1.3
 		-install_name $(libdir)/$@ \
 		-current_version 1.3.0 \
 		-compatibility_version 1.3.0 \
-		$(CAIROOBJECTS)  -L../src $(LDLIBS) $(IMAGELIBS) -lfltk
+		$(CAIROOBJECTS)  -L../src $(LDLIBS) $(CAIROLIBS) -lfltk
 	$(RM) ../src/libfltk_cairo.dylib
 	$(LN) ../src/libfltk_cairo.1.3.dylib ../src/libfltk_cairo.dylib
 
@@ -79,13 +85,6 @@ $(CAIRODSONAME): $(CAIROOBJECTS) ../src/libfltk.so.1.3
 	$(DSOCOMMAND) $(CAIROLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=../src/libfltk_cairo.dll.a \
 		-L../src -lfltk $(CAIROLIBS) $(LDLIBS)
-
-#
-# Make all of the targets...
-#
-
-all:	$(CAIROLIBNAME) $(CAIRODSONAME)
-
 
 #
 # Clean all of the targets and object files...
@@ -167,6 +166,11 @@ uninstall:
 	fi
 
 $(CAIROOBJECTS):	../makeinclude
+
+depend: $(CAIROCPPFILES)
+	makedepend -Y -I.. -f makedepend $(CAIROCPPFILES)
+
+include makedepend
 
 #
 # End of "$Id: Makefile 5667 2007-02-07 02:35:44Z mike $".
