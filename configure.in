@@ -173,7 +173,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.$FL_API_VERSION.dylib"
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
             IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
-            CAIRODSONAME="libfltk_cairo.$FL_API_VERSION.dylib"
+            CAIRODSONAME="../src/libfltk_cairo.$FL_API_VERSION.dylib"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -dynamiclib -lc -o"
 	    ;;
 
@@ -182,7 +182,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
+            CAIRODSONAME="../src/libfltk_cairo.so.$FL_API_VERSION"
 	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -h \$@ \$(LDLIBS) -G $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-R$libdir"
@@ -193,7 +193,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.sl.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.sl.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.sl.$FL_API_VERSION"
-            CAIRODSONAME="libfltk_cairo.sl.$FL_API_VERSION"
+            CAIRODSONAME="../src/libfltk_cairo.sl.$FL_API_VERSION"
 	    DSOCOMMAND="ld \$(DSOFLAGS) -b -z +h \$@ $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -204,7 +204,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
+            CAIRODSONAME="../src/libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@,-set_version,sgi1.1 \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -215,7 +215,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
+            CAIRODSONAME="../src/libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib32"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -226,7 +226,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
+            CAIRODSONAME="../src/libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
 	    if test "x$libdir" != "x/usr/lib"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
@@ -237,7 +237,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms_s.a"
             GLDSONAME="libfltk_gl_s.a"
             IMGDSONAME="libfltk_images_s.a"
-            CAIRODSONAME="libfltk_cairo_s.a"
+            CAIRODSONAME="../src/libfltk_cairo_s.a"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-bexpall,-bM:SRE,-bnoentry -o"
             SHAREDSUFFIX="_s"
             ;;
@@ -248,13 +248,13 @@ if test x$enable_shared = xyes; then
 		FLDSONAME="mgwfltknox_forms-$FL_API_VERSION.dll"
 		GLDSONAME="mgwfltknox_gl-$FL_API_VERSION.dll"
 		IMGDSONAME="mgwfltknox_images-$FL_API_VERSION.dll"
-		CAIRODSONAME="mgwfltknox_cairo-$FL_API_VERSION.dll"
+		CAIRODSONAME="../src/mgwfltknox_cairo-$FL_API_VERSION.dll"
 	    else
 		DSONAME="cygfltknox-$FL_API_VERSION.dll"
 		FLDSONAME="cygfltknox_forms-$FL_API_VERSION.dll"
 		GLDSONAME="cygfltknox_gl-$FL_API_VERSION.dll"
 		IMGDSONAME="cygfltknox_images-$FL_API_VERSION.dll"
-		CAIRODSONAME="cygfltknox_cairo-$FL_API_VERSION.dll"
+		CAIRODSONAME="../src/cygfltknox_cairo-$FL_API_VERSION.dll"
 	    fi
 	    #-----------------------------------------------------------
 	    # -Wl,--enable-runtime-pseudo-reloc: See str 1585
@@ -272,7 +272,7 @@ if test x$enable_shared = xyes; then
             FLDSONAME="libfltk_forms.so.$FL_API_VERSION"
             GLDSONAME="libfltk_gl.so.$FL_API_VERSION"
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
-            CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
+            CAIRODSONAME="../src/libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared $DEBUGFLAG -o"
 	    ;;
     esac

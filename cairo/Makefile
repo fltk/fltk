@@ -37,48 +37,48 @@ $(CAIROLIBNAME): $(CAIROOBJECTS)
 	$(LIBCOMMAND) $@ $(CAIROOBJECTS)
 	$(RANLIB) $@
 
-libfltk_cairo.so.1.3: $(CAIROOBJECTS) libfltk.so.1.3
+$(CAIRODSONAME): $(CAIROOBJECTS) ../src/libfltk.so.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L. $(IMAGELIBS) -lfltk
-	$(RM) libfltk_cairo.so
-	$(LN) libfltk_cairo.so.1.3 libfltk_cairo.so
+	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src $(IMAGELIBS) -lfltk
+	$(RM) ../src/libfltk_cairo.so
+	$(LN) $(CAIRODSONAME) ../src/libfltk_cairo.so
 
-libfltk_cairo.sl.1.3: $(CAIROOBJECTS) libfltk.sl.1.3
+../src/libfltk_cairo.sl.1.3: $(CAIROOBJECTS) ../src/libfltk.sl.1.3
 	echo $(DSOCOMMAND) $@ ...
-	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L. $(IMAGELIBS) -lfltk
-	$(RM) libfltk_cairo.sl
-	$(LN) libfltk_cairo.sl.1.3 libfltk_cairo.sl
+	$(DSOCOMMAND) $@ $(CAIROOBJECTS) -L../src $(IMAGELIBS) -lfltk
+	$(RM) ../src/libfltk_cairo.sl
+	$(LN) ../src/libfltk_cairo.sl.1.3 ../src/libfltk_cairo.sl
 
-libfltk_cairo.1.3.dylib: $(CAIROOBJECTS) libfltk.1.3.dylib
+../src/libfltk_cairo.1.3.dylib: $(CAIROOBJECTS) ../src/libfltk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
 		-current_version 1.3.0 \
 		-compatibility_version 1.3.0 \
-		$(CAIROOBJECTS)  -L. $(LDLIBS) $(IMAGELIBS) -lfltk
-	$(RM) libfltk_cairo.dylib
-	$(LN) libfltk_cairo.1.3.dylib libfltk_cairo.dylib
+		$(CAIROOBJECTS)  -L../src $(LDLIBS) $(IMAGELIBS) -lfltk
+	$(RM) ../src/libfltk_cairo.dylib
+	$(LN) ../src/libfltk_cairo.1.3.dylib ../src/libfltk_cairo.dylib
 
-libfltk_cairo_s.a: $(CAIROOBJECTS)
+../src/libfltk_cairo_s.a: $(CAIROOBJECTS)
 	echo $(DSOCOMMAND) libfltk_cairo_s.o ...
-	$(DSOCOMMAND) libfltk_cairo_s.o $(CAIROOBJECTS)
-	echo $(LIBCOMMAND) libfltk_cairo_s.a libfltk_cairo_s.o
+	$(DSOCOMMAND) ../src/libfltk_cairo_s.o $(CAIROOBJECTS)
+	echo $(LIBCOMMAND) ../src/libfltk_cairo_s.a ../src/libfltk_cairo_s.o
 	$(RM) $@
-	$(LIBCOMMAND) libfltk_cairo_s.a libfltk_cairo_s.o
-	$(CHMOD) +x libfltk_cairo_s.a
+	$(LIBCOMMAND) ../src/libfltk_cairo_s.a ../src/libfltk_cairo_s.o
+	$(CHMOD) +x ../src/libfltk_cairo_s.a
 
 
-cygfltknox_cairo-1.3.dll: $(CAIROLIBNAME) cygfltknox-1.3.dll
+../src/cygfltknox_cairo-1.3.dll: $(CAIROLIBNAME) ../src/cygfltknox-1.3.dll
 	echo $(DSOCOMMAND) $(CAIROLIBNAME) ...
 	$(DSOCOMMAND) $(CAIROLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_cairo.dll.a \
-		-L. -lfltk $(CAIROLIBS) $(LDLIBS)
+		-Wl,--out-implib=../src/libfltk_cairo.dll.a \
+		-L../src -lfltk $(CAIROLIBS) $(LDLIBS)
 
-mgwfltknox_cairo-1.3.dll: $(CAIROLIBNAME) mgwfltknox-1.3.dll
+../src/mgwfltknox_cairo-1.3.dll: $(CAIROLIBNAME) ../src/mgwfltknox-1.3.dll
 	echo $(DSOCOMMAND) $(CAIROLIBNAME) ...
 	$(DSOCOMMAND) $(CAIROLIBNAME) -Wl,--no-whole-archive \
-		-Wl,--out-implib=libfltk_cairo.dll.a \
-		-L. -lfltk $(CAIROLIBS) $(LDLIBS)
+		-Wl,--out-implib=../src/libfltk_cairo.dll.a \
+		-L../src -lfltk $(CAIROLIBS) $(LDLIBS)
 
 #
 # Make all of the targets...
@@ -94,7 +94,7 @@ all:	$(CAIROLIBNAME) $(CAIRODSONAME)
 clean:
 	-$(RM) *.o *.dll.a core.* *~ *.bak *.bck
 	-$(RM) $(CAIROOBJECTS)  $(CAIROLIBNAME) $(CAIRODSONAME) \
-		libfltk_cairo.so  libfltk_cairo.sl  libfltk_cairo.dylib
+		../src/libfltk_cairo.so  ../src/libfltk_cairo.sl  ../src/libfltk_cairo.dylib
 
 #
 # Install everything...
@@ -105,36 +105,36 @@ install: $(CAIROLIBNAME) $(CAIRODSONAME)
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	$(INSTALL_LIB) $(CAIROLIBNAME) $(DESTDIR)$(libdir)
 
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.1.3; then\
+	if test x$(CAIRODSONAME) = x../src/libfltk_cairo.so.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.so*;\
-		$(INSTALL_LIB) libfltk_cairo.so.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.so.1.3 $(DESTDIR)$(libdir)/libfltk_cairo.so;\
+		$(INSTALL_LIB) ../src/libfltk_cairo.so.1.3 $(DESTDIR)$(libdir); \
+		$(LN) $(DESTDIR)$(libdir)/libfltk_cairo.so.1.3 $(DESTDIR)$(libdir)/libfltk_cairo.so;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.sl.1.3; then\
+	if test x$(CAIRODSONAME) = x../src/libfltk_cairo.sl.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.sl*;\
-		$(INSTALL_LIB) libfltk_cairo.sl.1.3 $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.sl.1.3 $(DESTDIR)$(libdir)/libfltk_cairo.sl;\
+		$(INSTALL_LIB) ../src/libfltk_cairo.sl.1.3 $(DESTDIR)$(libdir); \
+		$(LN) $(DESTDIR)$(libdir)/libfltk_cairo.sl.1.3 $(DESTDIR)$(libdir)/libfltk_cairo.sl;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.1.3.dylib; then\
+	if test x$(CAIRODSONAME) = x../src/libfltk_cairo.1.3.dylib; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.*dylib;\
-		$(INSTALL_LIB) libfltk_cairo.1.3.dylib $(DESTDIR)$(libdir); \
-		$(LN) libfltk_cairo.1.3.dylib $(DESTDIR)$(libdir)/libfltk_cairo.dylib;\
+		$(INSTALL_LIB) ../src/libfltk_cairo.1.3.dylib $(DESTDIR)$(libdir); \
+		$(LN) $(DESTDIR)$(libdir)/libfltk_cairo.1.3.dylib $(DESTDIR)$(libdir)/libfltk_cairo.dylib;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo_s.a; then\
+	if test x$(CAIRODSONAME) = x../src/libfltk_cairo_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo_s.a;\
-		$(INSTALL_LIB) libfltk_cairo_s.a $(DESTDIR)$(libdir); \
+		$(INSTALL_LIB) ../src/libfltk_cairo_s.a $(DESTDIR)$(libdir); \
 	fi
 	if test x$(CAIRODSONAME) = xcygfltknox_cairo-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(INSTALL_LIB) $(CAIRODSONAME) $(DESTDIR)$(bindir); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
-		$(INSTALL_LIB) libfltk_cairo.dll.a $(DESTDIR)$(libdir); \
+		$(INSTALL_LIB) ../src/libfltk_cairo.dll.a $(DESTDIR)$(libdir); \
 	fi
 	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(INSTALL_LIB) $(CAIRODSONAME) $(DESTDIR)$(bindir); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
-		$(INSTALL_LIB) libfltk_cairo.dll.a $(DESTDIR)$(libdir); \
+		$(INSTALL_LIB) ../src/libfltk_cairo.dll.a $(DESTDIR)$(libdir); \
 	fi
 #
 # Uninstall everything...
@@ -145,23 +145,23 @@ uninstall:
 	if test x$(CAIROLIBNAME) != x; then\
 		$(RM) $(DESTDIR)$(libdir)/$(CAIROLIBNAME);\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.so.1.3; then\
+	if test x$(CAIRODSONAME) = x../src/libfltk_cairo.so.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.so*;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.sl.1.3; then\
+	if test x$(CAIRODSONAME) = x../src/libfltk_cairo.sl.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.sl*;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo.1.3.dylib; then\
+	if test x$(CAIRODSONAME) = x../src/libfltk_cairo.1.3.dylib; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.*dylib;\
 	fi
-	if test x$(CAIRODSONAME) = xlibfltk_cairo_s.a; then\
+	if test x$(CAIRODSONAME) = x../src/libfltk_cairo_s.a; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo_s.a;\
 	fi
-	if test x$(CAIRODSONAME) = xcygfltknox_cairo-1.3.dll; then\
+	if test x$(CAIRODSONAME) = x../src/cygfltknox_cairo-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
 	fi
-	if test x$(CAIRODSONAME) = xmgwfltknox_cairo-1.3.dll; then\
+	if test x$(CAIRODSONAME) = x../src/mgwfltknox_cairo-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(CAIRODSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_cairo.dll.a;\
 	fi
