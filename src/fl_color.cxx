@@ -54,8 +54,15 @@
 // figure_out_visual() calculates masks & shifts for generating
 // pixels in true-color visuals:
 
-uchar fl_redmask, fl_greenmask, fl_bluemask;
-int fl_redshift, fl_greenshift, fl_blueshift, fl_extrashift;
+uchar fl_redmask;	/**< color mask used in current color map handling */
+uchar fl_greenmask;	/**< color mask used in current color map handling */
+uchar fl_bluemask;	/**< color mask used in current color map handling */
+
+int fl_redshift;	/**< color shift used in current color map handling */
+int fl_greenshift;	/**< color shift used in current color map handling */
+int fl_blueshift;	/**< color shift used in current color map handling */
+int fl_extrashift;	/**< color shift used in current color map handling */
+
 static uchar beenhere;
 
 static void figure_out_visual() {
@@ -103,13 +110,17 @@ static unsigned fl_cmap[256] = {
 };
 
 #  if HAVE_OVERLAY
+/** HAVE_OVERLAY determines whether fl_xmap is one or two planes */
 Fl_XColor fl_xmap[2][256];
+/** HAVE_OVERLAY determines whether fl_overlay is variable or defined as 0 */
 uchar fl_overlay;
 Colormap fl_overlay_colormap;
 XVisualInfo* fl_overlay_visual;
 ulong fl_transparent_pixel;
 #  else
+/** HAVE_OVERLAY determines whether fl_xmap is one or two planes */
 Fl_XColor fl_xmap[1][256];
+/** HAVE_OVERLAY determines whether fl_overlay is variable or defined as 0 */
 #    define fl_overlay 0
 #  endif
 
@@ -120,6 +131,12 @@ Fl_XColor fl_xmap[1][256];
 // requested before, you will get the earlier requested color, and
 // even this may be approximated if the X colormap was full.
 
+/**
+  Returns the X pixel number used to draw the given rgb color.
+  This is the X pixel that fl_color() would use.
+  \param[in] r,g,b color components
+  \return X pixel number
+*/
 ulong fl_xpixel(uchar r,uchar g,uchar b) {
   if (!beenhere) figure_out_visual();
 #  if USE_COLORMAP
@@ -180,6 +197,12 @@ static inline uchar realcolor(uchar color, uchar mask) {
 #  endif
 }
 
+/**
+  Returns the X pixel number used to draw the given FLTK color index.
+  This is the X pixel that fl_color() would use.
+  \param[in] i color index
+  \return X pixel number
+*/
 ulong fl_xpixel(Fl_Color i) {
   if (i & 0xffffff00) {
     return fl_xpixel((i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255);
@@ -288,6 +311,7 @@ ulong fl_xpixel(Fl_Color i) {
 #  endif
 }
 
+/** Current color for drawing operations */
 Fl_Color fl_color_;
 
 /**
@@ -382,6 +406,17 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
   blue  = uchar(c>>8);
 }
 
+/**
+  Returns the weighted average color between the two given colors.
+  The red, green abd blue values are averages using the following formula:
+  \code
+  color = color1 * weight  + color2 * (1 - weight)
+  \endcode
+  Thus, a \a weight value of 1.0 will return the first color, while a
+  value of 0.0 will return the second color.
+  \param[in] color1, color2 boundary colors
+  \param[in] weight weighting factor
+*/
 Fl_Color fl_color_average(Fl_Color color1, Fl_Color color2, float weight) {
   unsigned rgb1;
   unsigned rgb2;
@@ -400,10 +435,21 @@ Fl_Color fl_color_average(Fl_Color color1, Fl_Color color2, float weight) {
   return fl_rgb_color(r, g, b);
 }
 
+/**
+  Returns the inactive, dimmed version of the given color
+*/
 Fl_Color fl_inactive(Fl_Color c) {
   return fl_color_average(c, FL_GRAY, .33f);
 }
 
+/**
+  Returns a color that contrasts with the background color.
+  This will be the foreground color if it contrasts sufficiently with the
+  background color. Otherwise, returns \a FL_WHITE or \a FL_BLACK depending
+  on which color provides the best contrast.
+  \param[in] fg,bg foreground and background colors
+  \return contrasting color
+*/
 Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
   unsigned c1, c2;	// RGB colors
   int l1, l2;		// Luminosities
