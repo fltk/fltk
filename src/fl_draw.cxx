@@ -119,6 +119,11 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
   return p;
 }
 
+/**
+  The same as fl_draw(const char*,int,int,int,int,Fl_Align,Fl_Image*,int) with
+  the addition of the \a callthis parameter, which is a pointer to text drawing
+  function such as fl_draw(const char*, int, int, int) to do the real work
+*/
 void fl_draw(
     const char* str,	// the (multi-line) string
     int x, int y, int w, int h,	// bounding box
@@ -265,6 +270,19 @@ void fl_draw(
   }
 }
 
+/**
+  Fancy string drawing function which is used to draw all the labels.
+  The string is formatted and aligned inside the passed box.
+  Handles '\\t' and '\\n', exapands all other control characters to '^X',
+  and aligns inside or against the edges of the box.
+  See Fl_Widget::align() for values of \a align. The value FL_ALIGN_INSIDE
+  is ignored, as this functon always prints inside the box.
+  If \a img is provided and is not \a NULL, the image is drawn above or
+  below the text as specified by the \a align value.
+  The \a draw_symbols argument specifies whether or not to look for symbol
+  names starting with the '\@' character'
+  The text length is limited to 1024 characters per line.
+*/
 void fl_draw(
   const char* str,	// the (multi-line) string
   int x, int y, int w, int h,	// bounding box
@@ -278,6 +296,14 @@ void fl_draw(
   if (align & FL_ALIGN_CLIP) fl_pop_clip();
 }
 
+/**
+  Measure how wide and tall the string will be when printed by the
+  fl_draw() function with \a align parameter. If the incoming \a w
+  is non-zero it will wrap to that width.
+  \param[in] str nul-terminated string
+  \param[out] w,h width and height of string in current font
+  \param[in] draw_symbols non-zero to enable @symbol handling [default=1]
+*/
 void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   if (!str || !*str) {w = 0; h = 0; return;}
   h = fl_height();

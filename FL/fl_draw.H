@@ -149,31 +149,85 @@ FL_EXPORT double fl_transform_dx(double x, double y);
 FL_EXPORT double fl_transform_dy(double x, double y);
 FL_EXPORT void fl_transformed_vertex(double x, double y);
 
-// current font:
+/* NOTE: doxygen comments here to avoid triplication in os-specific sources */
+/**
+  Set the current font, which is then used in various drawing routines,
+  You may call this outside a draw context if necessary to cal fl_width(),
+  but on X this will open the display.
+
+  The font is identified by a \a face and a \a size.
+  The size of the font is measured in pixels and not "points".
+  Lines should be spaced \a size pixels apart or more.
+*/
 FL_EXPORT void fl_font(Fl_Font face, Fl_Fontsize size);
+/** current font index */
 extern FL_EXPORT Fl_Font fl_font_;
+/**
+  Returns the \a face set by the most recent call to fl_font().
+  Tgis can be used to save/restore the font.
+*/
 inline Fl_Font fl_font() {return fl_font_;}
+/** current font size */
 extern FL_EXPORT Fl_Fontsize fl_size_;
+/**
+  Returns the \a face set by the most recent call to fl_font().
+  Tgis can be used to save/restore the font.
+*/
 inline Fl_Fontsize fl_size() {return fl_size_;}
 
 // information you can get about the current font:
+/**
+  Recommended minimum line spacing for the current font.
+  You can also use the value of \a size passed to fl_font()
+*/
 FL_EXPORT int   fl_height();	// using "size" should work ok
+/**
+  Dummy passthru function called only in Fl_Text_Display that simply returns
+  the font height as given by the \a size parameter in the same call!
+
+  \todo Is fl_height(int, int size) required for Fl_Text_Dispay?
+        Why not use \a size parameter directly?
+*/
 inline int fl_height(int, int size) {return size;}
+/**
+  Recommended distance above the bottom of a fl_height() tall box to
+  draw the text at so it looks centered vertically in that box.
+*/
 FL_EXPORT int   fl_descent();
-FL_EXPORT double fl_width(const char*);
-FL_EXPORT double fl_width(const char*, int n);
+/** Return the pixel width of a nul-terminated string */
+FL_EXPORT double fl_width(const char* txt);
+/** Return the pixel width of a sequence of \a n characters */
+FL_EXPORT double fl_width(const char* txt, int n);
+/** Return the pixed width of a single character */
 FL_EXPORT double fl_width(Fl_Unichar);
 
-// draw using current font:
-FL_EXPORT void fl_draw(const char*, int x, int y);
-FL_EXPORT void fl_draw(const char*, int n, int x, int y);
+/**
+  Draw a nul-terminated string starting at the given location.
+  Text is aligned to the left and to the baseline of the font.
+  To alighn to the bottom, subtract fl_descent() from \a y.
+  To alignn to the top, subtract fl_descent() and add fl_height().
+  This version fo fl_draw provides direct access to the text drawing
+  function of the underlying OS. It does not apply any special handling
+  to control characters.
+*/
+FL_EXPORT void fl_draw(const char* str, int x, int y);
+/**
+  Draw an array of \a n characters starting at the given location.
+*/
+FL_EXPORT void fl_draw(const char* str, int n, int x, int y);
+/**
+  Draw and array of \a n characters right to left starting at given location.
+*/
 FL_EXPORT void fl_rtl_draw(const char*, int n, int x, int y);
-FL_EXPORT void fl_measure(const char*, int& x, int& y, int draw_symbols = 1);
-FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align, Fl_Image* img=0,
-                       int draw_symbols = 1);
-FL_EXPORT void fl_draw(const char*, int,int,int,int, Fl_Align,
-	               void (*callthis)(const char *, int n, int x, int y),
-		       Fl_Image* img=0, int draw_symbols = 1);
+FL_EXPORT void fl_measure(const char* str, int& x, int& y,
+                          int draw_symbols = 1);
+FL_EXPORT void fl_draw(const char* str, int x, int y, int w, int h,
+                       Fl_Align align,
+                       Fl_Image* img=0, int draw_symbols = 1);
+FL_EXPORT void fl_draw(const char* str, int x, int y, int w, int h,
+                       Fl_Align align,
+                       void (*callthis)(const char *,int,int,int),
+                       Fl_Image* img=0, int draw_symbols = 1);
 
 // font encoding:
 FL_EXPORT const char *fl_latin1_to_local(const char *, int n=-1);
