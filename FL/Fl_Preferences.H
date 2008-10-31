@@ -100,232 +100,26 @@ public:
   char entryExists( const char *key );
   char deleteEntry( const char *entry );
 
-  /** 
-     Sets an entry (name/value pair). The return value indicates if there
-     was a problem storing the data in memory. However it does not
-     reflect if the value was actually stored in the preferences
-     file.
-    
-     \param[in] entry name of entry
-     \param[in] value set this entry to \a value
-     \return 0 if setting the value failed
-   */
   char set( const char *entry, int value );
-
-  /** 
-     Sets an entry (name/value pair). The return value indicates if there
-     was a problem storing the data in memory. However it does not
-     reflect if the value was actually stored in the preferences
-     file.
-    
-     \param[in] entry name of entry
-     \param[in] value set this entry to \a value
-     \return 0 if setting the value failed
-   */
   char set( const char *entry, float value );
-
-  /** 
-     Sets an entry (name/value pair). The return value indicates if there
-     was a problem storing the data in memory. However it does not
-     reflect if the value was actually stored in the preferences
-     file.
-    
-     \param[in] entry name of entry
-     \param[in] value set this entry to \a value
-     \param[in] precision number of decimal digits to represent value
-     \return 0 if setting the value failed
-   */
   char set( const char *entry, float value, int precision );
-
-  /** 
-     Sets an entry (name/value pair). The return value indicates if there
-     was a problem storing the data in memory. However it does not
-     reflect if the value was actually stored in the preferences
-     file.
-    
-     \param[in] entry name of entry
-     \param[in] value set this entry to \a value
-     \return 0 if setting the value failed
-   */
   char set( const char *entry, double value );
-
-  /** 
-     Sets an entry (name/value pair). The return value indicates if there
-     was a problem storing the data in memory. However it does not
-     reflect if the value was actually stored in the preferences
-     file.
-    
-     \param[in] entry name of entry
-     \param[in] value set this entry to \a value
-     \param[in] precision number of decimal digits to represent value
-     \return 0 if setting the value failed
-   */
   char set( const char *entry, double value, int precision );
-
-  /** 
-     Sets an entry (name/value pair). The return value indicates if there
-     was a problem storing the data in memory. However it does not
-     reflect if the value was actually stored in the preferences
-     file.
-    
-     \param[in] entry name of entry
-     \param[in] value set this entry to \a value
-     \return 0 if setting the value failed
-   */
   char set( const char *entry, const char *value );
-
-  /** 
-     Sets an entry (name/value pair). The return value indicates if there
-     was a problem storing the data in memory. However it does not
-     reflect if the value was actually stored in the preferences
-     file.
-    
-     \param[in] entry name of entry
-     \param[in] value set this entry to \a value
-     \param[in] size of data array
-     \return 0 if setting the value failed
-   */
   char set( const char *entry, const void *value, int size ); 
-
-
-  /**
-     Reads an entry from the group. A default value must be
-     supplied. The return value indicates if the value was available
-     (non-zero) or the default was used (0).
-    
-     \param[in] entry name of entry
-     \param[out] value returned from preferences or default value if none was set
-     \param[in] defaultValue default value to be used if no preference was set
-     \return 0 if the default value was used 
-   */
-  char get( const char *entry, int &value,    int defaultValue );
-
-  /**
-     Reads an entry from the group. A default value must be
-     supplied. The return value indicates if the value was available
-     (non-zero) or the default was used (0). 
-    
-     \param[in] entry name of entry
-     \param[out] value returned from preferences or default value if none was set
-     \param[in] defaultValue default value to be used if no preference was set
-     \return 0 if the default value was used 
-   */
+  
+  char get( const char *entry, int &value, int defaultValue );
   char get( const char *entry, float &value,  float defaultValue );
-
-  /**
-     Reads an entry from the group. A default value must be
-     supplied. The return value indicates if the value was available
-     (non-zero) or the default was used (0). 
-    
-     \param[in] entry name of entry
-     \param[out] value returned from preferences or default value if none was set
-     \param[in] defaultValue default value to be used if no preference was set
-     \return 0 if the default value was used 
-   */
   char get( const char *entry, double &value, double defaultValue );
-
-  /**
-     Reads an entry from the group. A default value must be
-     supplied. The return value indicates if the value was available
-     (non-zero) or the default was used (0). get() allocates memory of
-     sufficient size to hold the value. The buffer must be free'd by 
-     the developer using 'free(value)'. 
-    
-     \param[in] entry name of entry
-     \param[out] value returned from preferences or default value if none was set
-     \param[in] defaultValue default value to be used if no preference was set
-     \return 0 if the default value was used 
-   */
   char get( const char *entry, char *&value,  const char *defaultValue );
-
-  /**
-     Reads an entry from the group. A default value must be
-     supplied. The return value indicates if the value was available
-     (non-zero) or the default was used (0). 
-     'maxSize' is the maximum length of text that will be read. 
-     The text buffer must allow for one additional byte for a trailling zero.
-    
-     \param[in] entry name of entry
-     \param[out] value returned from preferences or default value if none was set
-     \param[in] defaultValue default value to be used if no preference was set
-     \param[in] maxSize maximum length of value plus one byte for a trailing zero
-     \return 0 if the default value was used 
-   */
   char get( const char *entry, char *value,   const char *defaultValue, int maxSize );
-
-  /**
-     Reads an entry from the group. A default value must be
-     supplied. The return value indicates if the value was available
-     (non-zero) or the default was used (0). get() allocates memory of
-     sufficient size to hold the value. The buffer must be free'd by 
-     the developer using 'free(value)'. 
-    
-     \param[in] entry name of entry
-     \param[out] value returned from preferences or default value if none was set
-     \param[in] defaultValue default value to be used if no preference was set
-     \param[in] defaultSize size of default value array
-     \return 0 if the default value was used 
-   */
   char get( const char *entry, void *&value,  const void *defaultValue, int defaultSize );
-
-  /**
-     Reads an entry from the group. A default value must be
-     supplied. The return value indicates if the value was available
-     (non-zero) or the default was used (0). 
-     'maxSize' is the maximum length of text that will be read. 
-    
-     \param[in] entry name of entry
-     \param[out] value returned from preferences or default value if none was set
-     \param[in] defaultValue default value to be used if no preference was set
-     \param[in] defaultSize size of default value array
-     \param[in] maxSize maximum length of value
-     \return 0 if the default value was used 
-    
-     \todo maxSize should receive the number of bytes that were read.
-   */
   char get( const char *entry, void *value,   const void *defaultValue, int defaultSize, int maxSize );
 
-  /**
-     Returns the size of the value part of an entry.
-    
-     \return size of value
-   */
   int size( const char *entry );
 
-  /**
-  \brief Creates a path that is related to the preferences file and
-  that is usable for additional application data.
-
-  This function creates a directory that is named after the preferences
-  database without the \c .prefs extension and located in the same directory.
-  It then fills the given buffer with the complete path name.
-
-  Exmaple:
-  \code
-   Fl_Preferences prefs( USER, "matthiasm.com", "test" );
-   char path[FL_PATH_MAX];
-   prefs.getUserdataPath( path );
-  \endcode
-  creates the preferences database in (MS Windows):
-  \code
-  c:/Documents and Settings/matt/Application Data/matthiasm.com/test.prefs
-  \endcode
-  and returns the userdata path:
-  \code
-  c:/Documents and Settings/matt/Application Data/matthiasm.com/test/
-  \endcode
-    
-  \param[out] path buffer for user data path
-  \param[in] pathlen size of path buffer (should be at least \c FL_PATH_MAX)
-  \return 0 if path was not created or pathname can't fit into buffer
-  */
   char getUserdataPath( char *path, int pathlen );
 
-  /**
-     Write all preferences to disk. This function works only with
-     the base preference group. This function is rarely used as
-     deleting the base preferences flushes automatically.
-   */
   void flush();
 
   // char export( const char *filename, Type fileFormat );
@@ -348,18 +142,11 @@ public:
 
   public:
 
-    /**
-       Create a numerical name.
-     */
     Name( unsigned int n );
-
-    /**
-       Create a name using 'printf' style formatting.
-     */
     Name( const char *format, ... );
 
     /**
-       Return the Name as a c-string.
+       Return the Name as a "C" string.
        \internal
      */
     operator const char *() { return data_; }

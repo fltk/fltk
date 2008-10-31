@@ -259,7 +259,16 @@ char Fl_Preferences::deleteEntry( const char *key )
 }
 
 
-
+/**
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0).
+ 
+ \param[in] key name of entry
+ \param[out] value returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \return 0 if the default value was used 
+ */
 char Fl_Preferences::get( const char *key, int &value, int defaultValue )
 {
   const char *v = node->get( key );
@@ -268,7 +277,16 @@ char Fl_Preferences::get( const char *key, int &value, int defaultValue )
 }
 
 
-
+/** 
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preferences
+ file.
+ 
+ \param[in] key name of entry
+ \param[in] value set this entry to \a value
+ \return 0 if setting the value failed
+ */
 char Fl_Preferences::set( const char *key, int value )
 {
   sprintf( nameBuffer, "%d", value );
@@ -277,7 +295,16 @@ char Fl_Preferences::set( const char *key, int value )
 }
 
 
-
+/**
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0). 
+ 
+ \param[in] key name of entry
+ \param[out] value returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \return 0 if the default value was used 
+ */
 char Fl_Preferences::get( const char *key, float &value, float defaultValue )
 {
   const char *v = node->get( key );
@@ -286,7 +313,16 @@ char Fl_Preferences::get( const char *key, float &value, float defaultValue )
 }
 
 
-
+/** 
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preferences
+ file.
+ 
+ \param[in] key name of entry
+ \param[in] value set this entry to \a value
+ \return 0 if setting the value failed
+ */
 char Fl_Preferences::set( const char *key, float value )
 {
   sprintf( nameBuffer, "%g", value );
@@ -295,7 +331,17 @@ char Fl_Preferences::set( const char *key, float value )
 }
 
 
-
+/** 
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preferences
+ file.
+ 
+ \param[in] key name of entry
+ \param[in] value set this entry to \a value
+ \param[in] precision number of decimal digits to represent value
+ \return 0 if setting the value failed
+ */
 char Fl_Preferences::set( const char *key, float value, int precision )
 {
   sprintf( nameBuffer, "%.*g", precision, value );
@@ -304,7 +350,16 @@ char Fl_Preferences::set( const char *key, float value, int precision )
 }
 
 
-
+/**
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0). 
+ 
+ \param[in] key name of entry
+ \param[out] value returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \return 0 if the default value was used 
+ */
 char Fl_Preferences::get( const char *key, double &value, double defaultValue )
 {
   const char *v = node->get( key );
@@ -313,7 +368,16 @@ char Fl_Preferences::get( const char *key, double &value, double defaultValue )
 }
 
 
-
+/** 
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preferences
+ file.
+ 
+ \param[in] key name of entry
+ \param[in] value set this entry to \a value
+ \return 0 if setting the value failed
+ */
 char Fl_Preferences::set( const char *key, double value )
 {
   sprintf( nameBuffer, "%g", value );
@@ -322,7 +386,17 @@ char Fl_Preferences::set( const char *key, double value )
 }
 
 
-
+/** 
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preferences
+ file.
+ 
+ \param[in] key name of entry
+ \param[in] value set this entry to \a value
+ \param[in] precision number of decimal digits to represent value
+ \return 0 if setting the value failed
+ */
 char Fl_Preferences::set( const char *key, double value, int precision )
 {
   sprintf( nameBuffer, "%.*g", precision, value );
@@ -362,9 +436,17 @@ static char *decodeText( const char *src )
 
 
 /**
- * read a text entry from the group
- * the text will be moved into the given text buffer
- * text will be clipped to the buffer size
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0). 
+ 'maxSize' is the maximum length of text that will be read. 
+ The text buffer must allow for one additional byte for a trailling zero.
+ 
+ \param[in] key name of entry
+ \param[out] text returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \param[in] maxSize maximum length of value plus one byte for a trailing zero
+ \return 0 if the default value was used 
  */
 char Fl_Preferences::get( const char *key, char *text, const char *defaultValue, int maxSize )
 {
@@ -383,9 +465,16 @@ char Fl_Preferences::get( const char *key, char *text, const char *defaultValue,
 
 
 /**
- * read a text entry from the group
- * 'text' will be changed to point to a new text buffer
- * the text buffer must be deleted with 'free(text)' by the user.
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0). get() allocates memory of
+ sufficient size to hold the value. The buffer must be free'd by 
+ the developer using 'free(value)'. 
+ 
+ \param[in] key name of entry
+ \param[out] text returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \return 0 if the default value was used 
  */
 char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue )
 {
@@ -405,6 +494,16 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
 
 
 
+/** 
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preferences
+ file.
+ 
+ \param[in] key name of entry
+ \param[in] text set this entry to \a value
+ \return 0 if setting the value failed
+ */
 char Fl_Preferences::set( const char *key, const char *text )
 {
   const char *s = text ? text : "";
@@ -457,9 +556,19 @@ static void *decodeHex( const char *src, int &size )
 
 
 /**
- * read a binary entry from the group
- * the data will be moved into the given destination buffer
- * data will be clipped to the buffer size
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0). 
+ 'maxSize' is the maximum length of text that will be read. 
+ 
+ \param[in] entry name of entry
+ \param[out] value returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \param[in] defaultSize size of default value array
+ \param[in] maxSize maximum length of value
+ \return 0 if the default value was used 
+ 
+ \todo maxSize should receive the number of bytes that were read.
  */
 char Fl_Preferences::get( const char *key, void *data, const void *defaultValue, int defaultSize, int maxSize )
 {
@@ -479,9 +588,17 @@ char Fl_Preferences::get( const char *key, void *data, const void *defaultValue,
 
 
 /**
- * read a binary entry from the group
- * 'data' will be changed to point to a new data buffer
- * the data buffer must be deleted with 'free(data)' by the user.
+ Reads an entry from the group. A default value must be
+ supplied. The return value indicates if the value was available
+ (non-zero) or the default was used (0). get() allocates memory of
+ sufficient size to hold the value. The buffer must be free'd by 
+ the developer using 'free(value)'. 
+ 
+ \param[in] key name of entry
+ \param[out] data returned from preferences or default value if none was set
+ \param[in] defaultValue default value to be used if no preference was set
+ \param[in] defaultSize size of default value array
+ \return 0 if the default value was used 
  */
 char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue, int defaultSize )
 {
@@ -503,7 +620,17 @@ char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue
 }
 
 
-
+/** 
+ Sets an entry (name/value pair). The return value indicates if there
+ was a problem storing the data in memory. However it does not
+ reflect if the value was actually stored in the preferences
+ file.
+ 
+ \param[in] key name of entry
+ \param[in] data set this entry to \a value
+ \param[in] size of data array
+ \return 0 if setting the value failed
+ */
 char Fl_Preferences::set( const char *key, const void *data, int dsize )
 {
   char *buffer = (char*)malloc( dsize*2+1 ), *d = buffer;;
@@ -523,7 +650,10 @@ char Fl_Preferences::set( const char *key, const void *data, int dsize )
 
 
 /**
- * return the size of the value part of an entry
+ Returns the size of the value part of an entry.
+ 
+ \param[in] key name of entry
+ \return size of value
  */
 int Fl_Preferences::size( const char *key )
 {
@@ -531,6 +661,34 @@ int Fl_Preferences::size( const char *key )
   return v ? strlen( v ) : 0 ;
 }
 
+
+/**
+ \brief Creates a path that is related to the preferences file and
+ that is usable for additional application data.
+ 
+ This function creates a directory that is named after the preferences
+ database without the \c .prefs extension and located in the same directory.
+ It then fills the given buffer with the complete path name.
+ 
+ Exmaple:
+ \code
+ Fl_Preferences prefs( USER, "matthiasm.com", "test" );
+ char path[FL_PATH_MAX];
+ prefs.getUserdataPath( path );
+ \endcode
+ creates the preferences database in (MS Windows):
+ \code
+ c:/Documents and Settings/matt/Application Data/matthiasm.com/test.prefs
+ \endcode
+ and returns the userdata path:
+ \code
+ c:/Documents and Settings/matt/Application Data/matthiasm.com/test/
+ \endcode
+ 
+ \param[out] path buffer for user data path
+ \param[in] pathlen size of path buffer (should be at least \c FL_PATH_MAX)
+ \return 0 if path was not created or pathname can't fit into buffer
+ */
 char Fl_Preferences::getUserdataPath( char *path, int pathlen )
 {
   if ( rootNode )
@@ -539,9 +697,9 @@ char Fl_Preferences::getUserdataPath( char *path, int pathlen )
 }
 
 /**
- * write all preferences to disk
- * - this function works only with the base preference group
- * - this function is rarely used as deleting the base preferences flushes automatically
+ Write all preferences to disk. This function works only with
+ the base preference group. This function is rarely used as
+ deleting the base preferences flushes automatically.
  */
 void Fl_Preferences::flush()
 {
@@ -554,14 +712,17 @@ void Fl_Preferences::flush()
 //
 
 /**
- * create a group name or entry name on the fly
- * - this version creates a simple unsigned integer as an entry name
- * example:
+ * Create a group name or entry name on the fly.
+ * 
+ * This version creates a simple unsigned integer as an entry name.
+ *
+ * \code
  *   int n, i;
  *   Fl_Preferences prev( appPrefs, "PreviousFiles" );
  *   prev.get( "n", 0 );
  *   for ( i=0; i<n; i++ )
  *     prev.get( Fl_Preferences::Name(i), prevFile[i], "" );
+ * \endcode
  */
 Fl_Preferences::Name::Name( unsigned int n )
 {
@@ -570,14 +731,17 @@ Fl_Preferences::Name::Name( unsigned int n )
 }
 
 /**
- * create a group name or entry name on the fly
- * - this version creates entry names as in 'printf'
- * example:
+ * Create a group name or entry name on the fly.
+ *
+ * This version creates entry names as in 'printf'.
+ * 
+ * \code
  *   int n, i;
  *   Fl_Preferences prefs( USER, "matthiasm.com", "test" );
  *   prev.get( "nFiles", 0 );
  *   for ( i=0; i<n; i++ )
  *     prev.get( Fl_Preferences::Name( "File%d", i ), prevFile[i], "" );
+ *  \endcode
  */
 Fl_Preferences::Name::Name( const char *format, ... )
 {

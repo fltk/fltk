@@ -50,7 +50,7 @@
 // 'Fl_Progress::draw()' - Draw the check button.
 //
 
-/** Draws the check button. */
+/** Draws the progress bar. */
 void Fl_Progress::draw()
 {
   int	progress;	// Size of progress bar...
