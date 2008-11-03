@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="fltkdll"
 	ProjectGUID="{F0B8F4BD-955D-43CB-980C-805364D04A25}"
 	RootNamespace="fltkdll"
@@ -41,7 +41,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../test/fltkdll.tlb"
+				TypeLibraryName="../../test/fltkdll.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -49,7 +49,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;..,..\..\zlib,..\..\png,..\..\jpeg"
+				AdditionalIncludeDirectories=".,..\..,..\..\zlib,..\..\png,..\..\jpeg"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;FL_DLL;FL_LIBRARY;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -75,13 +75,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib comctl32.lib"
-				OutputFile="fltkdll.dll"
+				OutputFile="../../test/fltkdll.dll"
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile="fltkdll.pdb"
 				SubSystem="2"
-				ImportLibrary=".\../test/fltkdll.lib"
+				ImportLibrary="../../test/fltkdll.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -136,13 +136,13 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../test/fltkdll.tlb"
+				TypeLibraryName="../../test/fltkdll.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..;..\..\zlib,..\..\png,..\..\jpeg"
+				AdditionalIncludeDirectories=".;../..;..\..\zlib,..\..\png,..\..\jpeg"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;FL_DLL;FL_LIBRARY;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -167,15 +167,15 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib comctl32.lib cairo.lib"
-				OutputFile="fltkdlld.dll"
+				AdditionalDependencies="opengl32.lib comctl32.lib"
+				OutputFile="../../test/fltkdlld.dll"
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="fltkdlld.pdb"
 				SubSystem="2"
-				ImportLibrary=".\../test/fltkdlld.lib"
+				ImportLibrary="../../test/fltkdlld.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -230,13 +230,13 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../test/fltkdll.tlb"
+				TypeLibraryName="../../test/fltkdll.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..;..\..\zlib,..\..\png,..\..\jpeg"
+				AdditionalIncludeDirectories=".;../..;..\..\zlib,..\..\png,..\..\jpeg"
 				PreprocessorDefinitions="HAVE_CAIRO=1;_CRT_SECURE_NO_DEPRECATE;FL_DLL;FL_LIBRARY;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -262,14 +262,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib comctl32.lib cairo.lib"
-				OutputFile="fltkdlld.dll"
+				OutputFile="../../test/fltkdlld.dll"
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="fltkdlld.pdb"
 				SubSystem="2"
-				ImportLibrary=".\../test/fltkdlld.lib"
+				ImportLibrary="../../test/fltkdlld.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -324,7 +324,7 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../test/fltkdll.tlb"
+				TypeLibraryName="../../test/fltkdll.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
@@ -332,7 +332,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;..,..\..\zlib,..\..\png,..\..\jpeg"
+				AdditionalIncludeDirectories=".,..\..,..\..\zlib,..\..\png,..\..\jpeg"
 				PreprocessorDefinitions="HAVE_CAIRO=1,_CRT_SECURE_NO_DEPRECATE;FL_DLL;FL_LIBRARY;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -358,13 +358,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="opengl32.lib comctl32.lib cairo.lib"
-				OutputFile="fltkdll.dll"
+				OutputFile="../../test/fltkdll.dll"
 				Version="1.0"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile="fltkdll.pdb"
 				SubSystem="2"
-				ImportLibrary=".\../test/fltkdll.lib"
+				ImportLibrary="../../test/fltkdll.lib"
 				TargetMachine="1"
 			/>
 			<Tool

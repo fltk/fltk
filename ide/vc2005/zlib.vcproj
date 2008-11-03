@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="zlib"
 	ProjectGUID="{E1D9CE3F-400D-40E8-AD0D-61C29B1847FF}"
 	>
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;.."
+				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -64,7 +64,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\lib\fltkzd.lib"
+				OutputFile="..\..\lib\fltkzd.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -112,7 +112,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;.."
+				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -135,7 +135,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="..\lib\fltkz.lib"
+				OutputFile="..\..\lib\fltkz.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -181,7 +181,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;.."
+				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
 				PreprocessorDefinitions="HAVE_CAIRO=1"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -253,7 +253,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;.."
+				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

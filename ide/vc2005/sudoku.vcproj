@@ -46,7 +46,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;.."
+				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -72,7 +72,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="fltkd.lib winmm.lib comctl32.lib"
-				OutputFile="../test/sudokud.exe"
+				OutputFile="../../test/sudokud.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"
@@ -142,7 +142,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;.."
+				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -167,7 +167,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="fltk.lib winmm.lib comctl32.lib"
-				OutputFile="../test/sudoku.exe"
+				OutputFile="../../test/sudoku.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"
@@ -234,7 +234,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;.."
+				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
 				PreprocessorDefinitions="HAVE_CAIRO=1;_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
@@ -260,7 +260,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cairo.lib fltkd.lib winmm.lib comctl32.lib"
-				OutputFile="../test/sudokud.exe"
+				OutputFile="../../test/sudokud.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"
@@ -330,7 +330,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;.."
+				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
 				PreprocessorDefinitions="HAVE_CAIRO=1,_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -355,7 +355,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="fltk.lib winmm.lib comctl32.lib cairo.lib"
-				OutputFile="../test/sudoku.exe"
+				OutputFile="../../test/sudoku.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"

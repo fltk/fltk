@@ -49,7 +49,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".,.."
+				AdditionalIncludeDirectories=".,../.."
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Release/cairo_test.pch"
@@ -72,7 +72,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="fltk.lib comctl32.lib"
-				OutputFile="../test/cairo_test.exe"
+				OutputFile="../../test/cairo_test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"
@@ -141,7 +141,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,.."
+				AdditionalIncludeDirectories=".,../.."
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				MinimalRebuild="true"
 				RuntimeLibrary="3"
@@ -166,7 +166,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="fltkd.lib comctl32.lib"
-				OutputFile="../test/cairo_testd.exe"
+				OutputFile="../../test/cairo_testd.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"
@@ -236,7 +236,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".,.."
+				AdditionalIncludeDirectories=".,../.."
 				PreprocessorDefinitions="HAVE_CAIRO=1;WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				MinimalRebuild="true"
 				RuntimeLibrary="3"
@@ -261,7 +261,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cairo.lib fltkd.lib comctl32.lib"
-				OutputFile="../test/cairo_testd.exe"
+				OutputFile="../../test/cairo_testd.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"
@@ -333,7 +333,7 @@
 				Optimization="4"
 				InlineFunctionExpansion="2"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories=".,.."
+				AdditionalIncludeDirectories=".,../.."
 				PreprocessorDefinitions="HAVE_CAIRO=1,WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
 				RuntimeLibrary="2"
 				PrecompiledHeaderFile=".\Release/cairo_test.pch"
@@ -356,7 +356,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cairo.lib fltk.lib comctl32.lib"
-				OutputFile="../test/cairo_test.exe"
+				OutputFile="../../test/cairo_test.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\lib"
