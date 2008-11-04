@@ -418,7 +418,7 @@ mgwfltknox_images-1.3.dll: $(IMGLIBNAME) mgwfltknox-1.3.dll
 			$(IMAGELIBS) $(LDLIBS)
 
 clean:
-	-$(RM) *.o *.dll.a core.* *~ *.bak *.bck
+	-$(RM) *.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck
 	-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \
 		$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \
 		$(IMGLIBNAME) \
