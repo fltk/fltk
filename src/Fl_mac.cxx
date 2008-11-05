@@ -1956,7 +1956,24 @@ static pascal OSErr dndReceiveHandler( WindowPtr w, void *userData, DragReferenc
   breakMacEventLoop();
   return noErr;
 }
-
+// fc:  
+static void  q_set_window_title(Window xid, const char * name ) {
+#if 1
+    CFStringRef utf8_title = CFStringCreateWithCString(NULL, (name ? name : ""), kCFStringEncodingUTF8);
+    SetWindowTitleWithCFString(xid, utf8_title);
+    CFRelease(utf8_title);
+#else // old non-utf8 code to remove after new utf8 code approval :
+    Str255 pTitle;
+    if (name) {
+      if (strlen(name) > 255) pTitle[0] = 255;
+      else pTitle[0] = strlen(name);
+      memcpy(pTitle+1, name, pTitle[0]);
+    } 
+    else 
+      pTitle[0] = 0;
+    SetWTitle(xid, pTitle);
+#endif
+}
 
 /**
  * go ahead, create that (sub)window
@@ -2068,13 +2085,6 @@ void Fl_X::make(Fl_Window* w)
     wRect.right  = w->x() + w->w(); if (wRect.right<=wRect.left) wRect.right = wRect.left+1;
 
     const char *name = w->label();
-    Str255 pTitle; 
-    if (name) {
-      if (strlen(name) > 255) pTitle[0] = 255;
-      else pTitle[0] = strlen(name);
-
-      memcpy(pTitle+1, name, pTitle[0]);
-    } else pTitle[0] = 0;
 
     Fl_X* x = new Fl_X;
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
@@ -2087,7 +2097,7 @@ void Fl_X::make(Fl_Window* w)
 
     winattr &= GetAvailableWindowAttributes( winclass );	// make sure that the window will open
     CreateNewWindow( winclass, winattr, &wRect, &(x->xid) );
-    SetWTitle(x->xid, pTitle);
+    q_set_window_title(x->xid, name);
     MoveWindow(x->xid, wRect.left, wRect.top, 1);	// avoid Carbon Bug on old OS
     if (w->non_modal() && !w->modal()) {
       // Major kludge: this is to have the regular look, but stay above the document windows
@@ -2224,12 +2234,10 @@ const char *fl_filename_name( const char *name )
  */
 void Fl_Window::label(const char *name,const char */*iname*/) {
   Fl_Widget::label(name);
-  Str255 pTitle;
 
-  if (name) { pTitle[0] = strlen(name); memcpy(pTitle+1, name, pTitle[0]); }
-  else pTitle[0] = 0;
-
-  if (shown() || i) SetWTitle(fl_xid(this), pTitle);
+  if (shown() || i) {
+    q_set_window_title(fl_xid(this), name);
+  }
 }
 
 
