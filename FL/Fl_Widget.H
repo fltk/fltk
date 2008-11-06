@@ -623,12 +623,12 @@ public:
    *  
    *  \see hide(), visible(), visible_r()
    */
-  void show();
+  virtual void show();
   
   /** Makes a widget invisible.
    *  \see show(), visible(), visible_r()
    */
-  void hide();
+  virtual void hide();
 
   /** Makes the widget visible. 
    *  You must still redraw the parent widget to see a change in the 
