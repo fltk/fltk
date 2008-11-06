@@ -58,51 +58,54 @@ static char* underline_at;
 #define C_IN(c,a,b) ((c)>=(a) && (c)<=(b)) 
 #define C_UTF8(c)   C_IN(c,0x80,0xBF)
 
-/** fast utf8 string detection routine. \reval 0 if not utf8, 1 otherwise */
-int fl_is_valid_utf8(int& init_scan, int& scan_ret, const char* s) {
-    if (init_scan) return scan_ret; // scan only once the string
-    init_scan=1;
-    if ( !s || !(*s) ) return 0;
-
-    register const unsigned char* p=(const unsigned char*)s;
-    while (*p) {
-	if ( p[0]==0x09 || p[0]==0x0d || p[0]==0x0a || (p[0]>0x1f && p[0]<0x80) ) {
-	    p++;
-	    continue; // Ascii 
-	}
-	if ( C_IN(p[0], 0xc2, 0xdf) && C_UTF8(p[1]) ) {
-	    p+=2;
-	    continue; // non-overlong 2-byte
-	}
-	if ( p[0]==0xe0 && C_IN(p[1], 0xa0, 0xbf) && C_UTF8(p[2]) ) {
-	    p+=3;
-	    continue; //  excluding overlongs
-	}
-	if (p[0]==0xed && C_IN(p[1], 0x80, 0x9f) && C_UTF8(p[2]) ) {
-	    p+=3;
-	    continue; //  excluding surrogates
-	}
-	if (p[0]!=0xed && C_IN(p[0], 0xe1, 0xef) && C_UTF8(p[1]) && C_UTF8(p[2]) ) {
-	    p+=3;
-	    continue; // straight 3-byte
-	}
-	if (p[0]==0xf0 && C_IN(p[1], 0x90, 0xbf)   && C_UTF8(p[2]) && C_UTF8(p[3]) ) {
-	    p+=4;
-	    continue; // planes 1-3
-	}
-	if (C_IN(p[0], 0xf1, 0xf3) && C_UTF8(p[1]) && C_UTF8(p[2]) && C_UTF8(p[3]) ) {
-	    p+=4;
-	    continue; // planes 4-15
-	}
-	if (p[0]==0xf4 && C_IN(p[1], 0x80, 0x8f)   && C_UTF8(p[2]) && C_UTF8(p[3]) ) {
-	    p+=4;
-	    continue; // planes 16
-	}
-	scan_ret=0;
-	return scan_ret; // not utf8
-    }
-    scan_ret=1;
-    return scan_ret;
+/** 
+    utf8 multibyte char seq. detection an pass-thru routine.
+    \retval false if no utf8 seq detected, no change made. true if utf8 and d copied with s seq.
+    note that for n bytes copied dest incremented of n, but s of n-1 for compatible loop use see below.
+*/
+static bool handle_utf8_seq(const char * &s,char * &d) {
+  register const unsigned char* p=(const unsigned char*)s;
+  if (p[0] < 0xc2 || p[0] > 0xf4)
+    return false; // not adressed in this function
+  else if ( C_IN(p[0], 0xc2, 0xdf) && C_UTF8(p[1]) ) {
+    d[0]=s[0]; d[1]=s[1];
+    d+=2; s++;
+    // non-overlong 2-byte
+  }
+  else if ( p[0]==0xe0 && C_IN(p[1], 0xa0, 0xbf) && C_UTF8(p[2]) ) {
+    d[0]=s[0]; d[1]=s[1];d[2]=s[2];
+    d+=3; s+=2;
+    //  excluding overlongs
+  }
+  else if (p[0]==0xed && C_IN(p[1], 0x80, 0x9f) && C_UTF8(p[2]) ) {
+    d[0]=s[0]; d[1]=s[1];d[2]=s[2];
+    d+=3; s+=2;
+    //  excluding surrogates
+  }
+  else if (p[0]!=0xed && C_IN(p[0], 0xe1, 0xef) && C_UTF8(p[1]) && C_UTF8(p[2]) ) {
+    d[0]=s[0]; d[1]=s[1];d[2]=s[2];
+    d+=3; s+=2;
+    // straight 3-byte
+  }
+  else if (p[0]==0xf0 && C_IN(p[1], 0x90, 0xbf)   && C_UTF8(p[2]) && C_UTF8(p[3]) ) {
+    d[0]=s[0]; d[1]=s[1]; d[2]=s[2]; d[3]=s[3];
+    d+=4; s+=3;
+    // planes 1-3
+  }
+  else if (C_IN(p[0], 0xf1, 0xf3) && C_UTF8(p[1]) && C_UTF8(p[2]) && C_UTF8(p[3]) ) {
+    d[0]=s[0]; d[1]=s[1]; d[2]=s[2]; d[3]=s[3];
+    d+=4; s+=3;
+    // planes 4-15
+  }
+  else if (p[0]==0xf4 && C_IN(p[1], 0x80, 0x8f)   && C_UTF8(p[2]) && C_UTF8(p[3]) ) {
+    d[0]=s[0]; d[1]=s[1]; d[2]=s[2]; d[3]=s[3];
+    d+=4; s+=3;
+    // planes 16
+  } else { // non utf8 compliant, maybe CP125x or broken utf8 string
+    fprintf(stderr, "Not UTF8 char \n");
+    return false; 
+  }
+  return true; //  we did handled and copied the utf8 multibyte char seq.
 }
 
 const char*
@@ -115,8 +118,6 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
   const char* word_start = from;
   double w = 0;
 
-  int init_scan=0, scan_ret;
-  
   const char* p = from;
   for (;; p++) {
 
@@ -150,12 +151,14 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
     } else if (c < ' ' || c == 127) { // ^X
       *o++ = '^';
       *o++ = c ^ 0x40;
+    } else  if (handle_utf8_seq(p, o)) { // figure out if we have an utf8 valid sequence before we determine the nbsp test validity:
 #ifdef __APPLE__
-    } else if (c == 0xCA && !fl_is_valid_utf8(init_scan, scan_ret,from) ) { // non-breaking space in MacRoman
+    } else if (c == 0xCA) { // non-breaking space in MacRoman
 #else
-    } else if (c == 0xA0 && !fl_is_valid_utf8(init_scan, scan_ret,from) ) { // non-breaking space in ISO 8859
+    } else if (c == 0xA0) { // non-breaking space in ISO 8859
 #endif
       *o++ = ' ';
+       
     } else if (c == '@' && draw_symbols) { // Symbol???
       if (p[1] && p[1] != '@')  break;
       *o++ = c;
