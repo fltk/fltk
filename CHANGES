@@ -33,6 +33,9 @@ CHANGES IN FLTK 1.3.0
 	- Cairo support: added --enable-cairo and --enable-cairoext 
           configure options.
 	- visualc(6) & vc2005 devenv's are in the ide subdirectory
+	- hide() and show() methods are now virtual from Fl_Widget,
+	  was only virtual since Fl_Window derived classes before.
+	  So now widget->hide() will work if widget is a window.
 
 CHANGES IN FLTK 1.1.9
 
