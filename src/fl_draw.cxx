@@ -48,21 +48,14 @@ char fl_draw_shortcut;	// set by fl_labeltypes.cxx
 
 static char* underline_at;
 
-// Copy p to buf, replacing unprintable characters with ^X and \nnn
-// Stop at a newline or if MAXBUF characters written to buffer.
-// Also word-wrap if width exceeds maxw.
-// Returns a pointer to the start of the next line of caharcters.
-// Sets n to the number of characters put into the buffer.
-// Sets width to the width of the string in the current font.
-
-#define C_IN(c,a,b) ((c)>=(a) && (c)<=(b)) 
-#define C_UTF8(c)   C_IN(c,0x80,0xBF)
-
 /** 
     utf8 multibyte char seq. detection an pass-thru routine.
     \retval false if no utf8 seq detected, no change made. true if utf8 and d copied with s seq.
     note that for n bytes copied dest incremented of n, but s of n-1 for compatible loop use see below.
 */
+#define C_IN(c,a,b) ((c)>=(a) && (c)<=(b)) 
+#define C_UTF8(c)   C_IN(c,0x80,0xBF)
+
 static bool handle_utf8_seq(const char * &s,char * &d) {
   register const unsigned char* p=(const unsigned char*)s;
   if (p[0] < 0xc2 || p[0] > 0xf4)
@@ -102,12 +95,20 @@ static bool handle_utf8_seq(const char * &s,char * &d) {
     d+=4; s+=3;
     // planes 16
   } else { // non utf8 compliant, maybe CP125x or broken utf8 string
-    fprintf(stderr, "Not UTF8 char \n");
+    // fprintf(stderr, "Not UTF8 char \n");
     return false; 
   }
   return true; //  we did handled and copied the utf8 multibyte char seq.
 }
 
+/**
+ Copy \a from  to \a buf, replacing unprintable characters with ^X and \nnn
+ Stop at a newline or if MAXBUF characters written to buffer.
+ Also word-wrap if width exceeds maxw.
+ Returns a pointer to the start of the next line of caharcters.
+ Sets n to the number of characters put into the buffer.
+ Sets width to the width of the string in the current font.
+*/
 const char*
 fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n, 
 	double &width, int wrap, int draw_symbols) {
