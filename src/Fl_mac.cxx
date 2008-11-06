@@ -1287,7 +1287,7 @@ pascal OSStatus carbonKeyboardHandler(
     // Matt: to Carbon. The kEventKeyModifierNumLockMask is only set when
     // Matt: a numeric keypad key is pressed and does not correspond with
     // Matt: the NumLock light in PowerBook keyboards.
-#if 0
+#if 1
     if ( (sym >= FL_KP && sym <= FL_KP_Last) || !(sym & 0xff00) ||
             sym == FL_Tab || sym == FL_Enter) {
       buffer[0] = key;
