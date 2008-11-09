@@ -579,26 +579,23 @@ AC_CHECK_LIB(z,gzgets,
 AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, default=auto],
     [if test x$enable_localpng = xyes; then
 	ac_cv_lib_png_png_set_tRNS_to_alpha=yes
-    fi])
-
-AC_CHECK_LIB(png,png_set_tRNS_to_alpha, [
-    PNGINC=""
-    PNG=""
-    IMAGELIBS="-lpng $IMAGELIBS"
-    AC_DEFINE(HAVE_LIBPNG)
-    AC_DEFINE(HAVE_PNG_GET_VALID)
-    AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA)    AC_CHECK_HEADER(png.h, AC_DEFINE(HAVE_PNG_H))],[
-    if test x$enable_localpng = xno; then
-        PNGINC=""
-        PNG=""
-    else
 	AC_DEFINE(HAVE_LIBPNG)
-        AC_DEFINE(HAVE_PNG_H)
-        AC_DEFINE(HAVE_PNG_GET_VALID)
-        AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA)
-        PNGINC="-I../png"
-        PNG="png"
-        IMAGELIBS="-lfltk_png $IMAGELIBS"
+	AC_DEFINE(HAVE_PNG_H)
+	AC_DEFINE(HAVE_PNG_GET_VALID)
+	AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA)
+	PNGINC="-I../png"
+	PNG="png"
+	IMAGELIBS="-lfltk_png $IMAGELIBS"
+    else
+        PNGINC=""
+	PNG=""
+	IMAGELIBS="-lpng $IMAGELIBS"
+	AC_DEFINE(HAVE_LIBPNG)
+	AC_DEFINE(HAVE_PNG_GET_VALID)
+        AC_CHECK_LIB(png,png_set_tRNS_to_alpha, 
+	    AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA))
+	AC_CHECK_HEADER(png.h, 
+	    AC_DEFINE(HAVE_PNG_H))
     fi])
 
 AC_SUBST(JPEG)
