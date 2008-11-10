@@ -595,23 +595,18 @@ if test x$enable_localpng != xyes ; then
 	syspnginc_ok=yes)
     if test x$syspnginc_ok = xyes; then
 	syspnglib_ok=yes
-    else
-	syspnglib_ok=no
     fi])
 fi
-#AC_MSG_WARN("*** USING LIB OK : $syspnglib_ok")
 
 # The following is executed if the lib was not found usable or if local lib is required explicitly
 if test x$enable_localpng = xyes -o x$syspnglib_ok = xno ; then
-#    ac_cv_lib_png_png_set_tRNS_to_alpha=yes
+    PNGINC="-I../png"
+    PNG="png"
+    IMAGELIBS="-lfltk_png $IMAGELIBS"
     AC_DEFINE(HAVE_LIBPNG)
     AC_DEFINE(HAVE_PNG_H)
     AC_DEFINE(HAVE_PNG_GET_VALID)
     AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA)
-    PNGINC="-I../png"
-    PNG="png"
-    IMAGELIBS="-lfltk_png $IMAGELIBS"
-#    AC_MSG_WARN("*** USING PNG LOCAL SETUP")
 else
     PNGINC=""
     PNG=""
@@ -619,7 +614,6 @@ else
     AC_DEFINE(HAVE_LIBPNG)
     AC_CHECK_LIB(png,png_get_valid, AC_DEFINE(HAVE_PNG_GET_VALID))
     AC_CHECK_LIB(png,png_set_tRNS_to_alpha, AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA))
-#    AC_MSG_WARN("*** USING PNG LIB SETUP")
 fi
 
 AC_SUBST(JPEG)

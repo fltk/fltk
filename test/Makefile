@@ -94,8 +94,8 @@ CPPFILES =\
 	tile.cxx \
 	tiled_image.cxx \
 	valuators.cxx \
-	utf8.cxx
-
+	utf8.cxx \
+	utf8c.cxx 
 ALL =	\
 	unittests$(EXEEXT) \
 	adjuster$(EXEEXT) \
@@ -156,7 +156,8 @@ ALL =	\
 	tiled_image$(EXEEXT) \
 	valuators$(EXEEXT) \
 	cairotest$(EXEEXT) \
-	utf8$(EXEEXT) 
+	utf8$(EXEEXT) \
+	utf8c$(EXEEXT) 
 
 
 GLALL = \
