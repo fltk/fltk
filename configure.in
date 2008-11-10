@@ -581,10 +581,12 @@ AC_CHECK_LIB(z,gzgets,
 # Then we check the png lib usability with result in syspng_lib variable
 AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, default=auto])
 
-# Now check if system lib is usable, we check Lib AND include availability with inc variant
+# Now check if system lib is usable, we check Lib AND include availability with inc variant,
+# but only, if the builtin lib is not requested
 syspnglib_ok=no
 syspnginc_ok=no
-AC_CHECK_LIB(png, png_read_info, 
+if test x$enable_localpng != xyes ; then
+  AC_CHECK_LIB(png, png_read_info, 
     [AC_CHECK_HEADER(png.h, 
 	AC_DEFINE(HAVE_PNG_H)
 	syspnginc_ok=yes)
@@ -596,11 +598,12 @@ AC_CHECK_LIB(png, png_read_info,
     else
 	syspnglib_ok=no
     fi])
+fi
 #AC_MSG_WARN("*** USING LIB OK : $syspnglib_ok")
 
 # The following is executed if the lib was not found usable or if local lib is required explicitly
 if test x$enable_localpng = xyes -o x$syspnglib_ok = xno ; then
-    ac_cv_lib_png_png_set_tRNS_to_alpha=yes
+#    ac_cv_lib_png_png_set_tRNS_to_alpha=yes
     AC_DEFINE(HAVE_LIBPNG)
     AC_DEFINE(HAVE_PNG_H)
     AC_DEFINE(HAVE_PNG_GET_VALID)
@@ -614,7 +617,7 @@ else
     PNG=""
     IMAGELIBS="-lpng $IMAGELIBS"
     AC_DEFINE(HAVE_LIBPNG)
-    AC_DEFINE(HAVE_PNG_GET_VALID)
+    AC_CHECK_LIB(png,png_get_valid, AC_DEFINE(HAVE_PNG_GET_VALID))
     AC_CHECK_LIB(png,png_set_tRNS_to_alpha, AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA))
 #    AC_MSG_WARN("*** USING PNG LIB SETUP")
 fi
