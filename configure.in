@@ -563,7 +563,7 @@ if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
 else
     JPEGINC=""
     JPEG=""
-    IMAGELIBS="-ljpeg $IMAGELIBS",
+    IMAGELIBS="-ljpeg $IMAGELIBS"
     AC_DEFINE(HAVE_LIBJPEG)
 fi
 
