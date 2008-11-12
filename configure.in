@@ -543,7 +543,7 @@ sysjpeglib_ok=no
 sysjpeginc_ok=no
 if test x$enable_localjpeg != xyes; then
     AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
-	[AC_CHECK_HEADER(jpeg.h,
+	[AC_CHECK_HEADER(jpeglib.h,
 	    sysjpeginc_ok=yes)
 	    if test x$sysjpeginc_ok = xyes; then
 		sysjpeglib_ok=yes
@@ -555,7 +555,7 @@ if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
     JPEG="jpeg"
     IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
     AC_DEFINE(HAVE_LIBJPEG)
-    ac_cv_lib_jpeg_jpeg_CreateCompress=no # fc: is it still necessary ?
+    #ac_cv_lib_jpeg_jpeg_CreateCompress=no # from ima: should not be necessary
     # Finally, warn user if system lib was requested but not found
     if test x$enable_localjpeg = xno; then
 	AC_MSG_WARN(Cannot find system jpeg lib or header: choosing the local lib mode.)
