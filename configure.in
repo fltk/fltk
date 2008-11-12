@@ -598,7 +598,7 @@ else
     ZLIBINC=""
     ZLIB=""
     LIBS="-lz $LIBS"
-    IMAGELIBS="-lz $IMAGELIBS",
+    IMAGELIBS="-lz $IMAGELIBS"
     AC_DEFINE(HAVE_LIBZ)
 fi
 
