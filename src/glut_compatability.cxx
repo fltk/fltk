@@ -49,6 +49,8 @@
 #  define MAXWINDOWS 32
 static Fl_Glut_Window *windows[MAXWINDOWS+1];
 
+static void (*glut_idle_func)() = 0; // global glut idle function
+
 Fl_Glut_Window *glut_window;
 int glut_menu;
 void (*glut_menustate_function)(int);
@@ -498,6 +500,20 @@ int glutExtensionSupported( const char* extension )
     extensions = p + len;
   }
 }
+
+// Add a mechanism to handle adding/removing the glut idle function
+// without depending on the (deprecated) set_idle method.
+void glutIdleFunc(void (*f)())
+{
+  // no change
+  if(glut_idle_func == f) return;
+  // remove current idle
+  if(glut_idle_func) Fl::remove_idle((void (*)(void *))glut_idle_func);
+  // install new idle func - if one was passed
+  if(f) Fl::add_idle((void (*)(void *))f);
+  // record new idle func - even if it is NULL
+  glut_idle_func = f;
+} // glutIdleFunc
 
 #endif // HAVE_GL
 
