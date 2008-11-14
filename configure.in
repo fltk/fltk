@@ -736,7 +736,7 @@ case $uname in
 	    GLDEMOS=""
 	fi
 
-	if test "x$enable_threads" = xyes; then
+	if test "x$enable_threads" != xno; then
 	    if test x$have_pthread = xyes; then
 		AC_DEFINE(HAVE_PTHREAD)
 	    fi
