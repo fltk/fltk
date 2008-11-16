@@ -295,7 +295,8 @@ In Visual C++ you will need to tell the compiler where to
 find the  FLTK header files.  This can be done by selecting
 "Settings" from the "Project" menu and then changing the 
 "Preprocessor" settings under the "C/C++" tab. You will also 
-need to add the FLTK and WinSock2 (WS2_32.LIB) libraries to 
+need to add the FLTK (FLTK.LIB or FLTKD.LIB), the Windows Common
+Controls (COMCTRL32.LIB), and WinSock2 (WS2_32.LIB) libraries to 
 the "Link" settings.
 
 You can build your Microsoft Windows applications as Console or
