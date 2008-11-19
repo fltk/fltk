@@ -268,6 +268,48 @@ double fl_width(unsigned int wc) {
   return fl_width((const UniChar*)(&wc), 1);
 }
 
+// text extent calculation
+void fl_text_extents(const UniChar* txt, int n, int &dx, int &dy, int &w, int &h) {
+  if (!fl_fontsize) {
+    check_default_font(); // avoid a crash!
+    if (!fl_fontsize)
+      w = 8.0 * n; // user must select a font first!
+      h = 8.0;
+      return;
+  }
+  OSStatus err;
+  ATSUTextLayout layout;
+  ByteCount iSize;
+  ATSUAttributeTag iTag;
+  ATSUAttributeValuePtr iValuePtr;
+
+// Here's my ATSU text measuring attempt... This seems to do the Right Thing
+  // now collect our ATSU resources and measure our text string
+  layout = fl_fontsize->layout;
+        // activate the current GC
+  iSize = sizeof(CGContextRef);
+  iTag = kATSUCGContextTag;
+  iValuePtr = &fl_gc;
+      ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
+        // now measure the bounding box
+  err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
+  Rect bbox;
+  err = ATSUMeasureTextImage(layout, kATSUFromTextBeginning, n, 0, 0, &bbox);
+  w = bbox.right - bbox.left;
+  h = bbox.bottom - bbox.top;
+  dx = bbox.left;
+  dy = -bbox.bottom;
+//printf("r: %d l: %d t: %d b: %d w: %d h: %d\n", bbox.right, bbox.left, bbox.top, bbox.bottom, w, h);
+  return;
+} // fl_text_extents
+
+void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  int wc_len = n;
+  UniChar *uniStr = mac_Utf8_to_Utf16(c, n, &wc_len);
+  fl_text_extents(uniStr, wc_len, dx, dy, w, h);
+} // fl_text_extents
+
+
 void fl_draw(const char *str, int n, float x, float y);
 
 void fl_draw(const char* str, int n, int x, int y) {

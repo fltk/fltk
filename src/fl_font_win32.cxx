@@ -37,19 +37,19 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
   }
   fid = CreateFont(
     -size, // negative makes it use "char size"
-    0,	            // logical average character width 
-    0,	            // angle of escapement 
-    0,	            // base-line orientation angle 
+    0,	            // logical average character width
+    0,	            // angle of escapement
+    0,	            // base-line orientation angle
     weight,
     italic,
-    FALSE,	        // underline attribute flag 
-    FALSE,	        // strikeout attribute flag 
-    DEFAULT_CHARSET,    // character set identifier 
-    OUT_DEFAULT_PRECIS,	// output precision 
-    CLIP_DEFAULT_PRECIS,// clipping precision 
-    DEFAULT_QUALITY,	// output quality 
-    DEFAULT_PITCH,	// pitch and family 
-    name	        // pointer to typeface name string 
+    FALSE,	        // underline attribute flag
+    FALSE,	        // strikeout attribute flag
+    DEFAULT_CHARSET,    // character set identifier
+    OUT_DEFAULT_PRECIS,	// output precision
+    CLIP_DEFAULT_PRECIS,// clipping precision
+    DEFAULT_QUALITY,	// output quality
+    DEFAULT_PITCH,	// pitch and family
+    name	        // pointer to typeface name string
     );
   if (!fl_gc) fl_GetDC(0);
   SelectObject(fl_gc, fid);
@@ -190,6 +190,66 @@ double fl_width(unsigned int c) {
   }
   return (double) fl_fontsize->width[r][c & 0x03FF];
 }
+
+static unsigned short *ext_buff = NULL; // UTF-16 converted string
+static unsigned wc_len = 0; // current string buffer dimension
+static WORD *gi = NULL; // glyph indices array
+void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  if (!fl_fontsize) {
+    w = 0; h = 0;
+    dx = dy = 0;
+    return;
+  }
+  static const MAT2 matrix = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } };
+  GLYPHMETRICS metrics;
+  int maxw = 0, maxh = 0, dh;
+  int minx = 0, miny = -999999;
+  // now convert the string to WCHAR and measure it
+  unsigned len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
+  if(len >= wc_len) {
+    if(ext_buff) {delete [] ext_buff;}
+    if(gi) {delete [] gi;}
+	wc_len = len + 64;
+    ext_buff = new unsigned short[wc_len];
+	gi = new WORD[wc_len];
+    len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
+  }
+  SelectObject(fl_gc, fl_fontsize->fid);
+
+  if (GetGlyphIndicesW(fl_gc, (WCHAR*)ext_buff, len, gi, 0) == GDI_ERROR) {
+    // some error occured here - just return fl_measure values?
+    goto exit_error;
+  }
+
+  // now we have the glyph array we measure each glyph in turn...
+  for(unsigned idx = 0; idx < len; idx++){
+    if (GetGlyphOutlineW (fl_gc, gi[idx], GGO_METRICS | GGO_GLYPH_INDEX,
+					      &metrics, 0, NULL, &matrix) == GDI_ERROR) {
+                    goto exit_error;
+    }
+    maxw += metrics.gmCellIncX;
+	if(idx == 0) minx = metrics.gmptGlyphOrigin.x;
+    dh = metrics.gmBlackBoxY - metrics.gmptGlyphOrigin.y;
+	if(dh > maxh) maxh = dh;
+	if(miny < metrics.gmptGlyphOrigin.y) miny = metrics.gmptGlyphOrigin.y;
+  }
+
+  // for the last cell, we only want the bounding X-extent, not the glyphs increment step
+  maxw = maxw - metrics.gmCellIncX + metrics.gmBlackBoxX + metrics.gmptGlyphOrigin.x;
+  w = maxw - minx;
+  h = maxh + miny;
+  dx = minx;
+  dy = -miny;
+  return; // normal exit
+
+exit_error:
+  // some error here - just return fl_measure values
+  w = (int)fl_width(c, n);
+  h = fl_height();
+  dx = 0;
+  dy = fl_descent() - h;
+  return;
+} // fl_text_extents
 
 void fl_draw(const char* str, int n, int x, int y) {
   int i = 0;

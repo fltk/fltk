@@ -25,6 +25,17 @@
 //     http://www.fltk.org/str.php
 //
 
+#ifdef WIN32
+# define WIN32_LEAN_AND_MEAN
+/* We require Windows 2000 features such as GetGlyphIndices */
+# if !defined(WINVER) || (WINVER < 0x0500)
+#  define WINVER 0x0500
+# endif
+# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
+#  define _WIN32_WINNT 0x0500
+# endif
+#endif
+
 // Select fonts from the FLTK font table.
 #include "flstring.h"
 #include <FL/Fl.H>
@@ -54,6 +65,14 @@ double fl_width(const char* c) {
 void fl_draw(const char* str, int x, int y) {
   fl_draw(str, strlen(str), x, y);
 }
+
+void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
+  if (c) return fl_text_extents(c, strlen(c), dx, dy, w, h);
+  // else
+  w = 0; h = 0;
+  dx = 0; dy = 0;
+} // fl_text_extents
+
 
 #if !USE_XFT && !__APPLE__
 void fl_draw(const char* str, int l, float x, float y) {

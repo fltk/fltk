@@ -194,12 +194,16 @@ inline int fl_height(int, int size) {return size;}
   draw the text at so it looks centered vertically in that box.
 */
 FL_EXPORT int   fl_descent();
-/** Return the pixel width of a nul-terminated string */
+/** Return the typographical width of a nul-terminated string */
 FL_EXPORT double fl_width(const char* txt);
-/** Return the pixel width of a sequence of \a n characters */
+/** Return the typographical width of a sequence of \a n characters */
 FL_EXPORT double fl_width(const char* txt, int n);
-/** Return the pixed width of a single character */
+/** Return the typographical width of a single character */
 FL_EXPORT double fl_width(Fl_Unichar);
+/** Determine the minimum pixel dimensions of a nul-terminated string */
+FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); // NO fltk symbol expansion
+/** Determine the minimum pixel dimensions of a sequence of \a n characters */
+FL_EXPORT void fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
 
 /**
   Draw a nul-terminated string starting at the given location.

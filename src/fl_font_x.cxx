@@ -296,6 +296,16 @@ double fl_width(unsigned int c) {
   else return -1;
 }
 
+
+void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
+#warning fl_text_extents is only a test stub in Xlib build at present
+  w = 0; h = 0;
+  fl_measure(c, &w, &h, 0);
+  dx = 0;
+  dy = fl_descent() - h;
+} // fl_text_extents
+
+
 void fl_draw(const char* c, int n, int x, int y) {
   if (font_gc != fl_gc) {
     if (!fl_xfont) fl_font(FL_HELVETICA, 14);

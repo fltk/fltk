@@ -338,6 +338,22 @@ double fl_width(unsigned int c) {
   return fl_width((FcChar32 *)(&c), 1);
 }
 
+void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  if (!current_font) {
+    w = h = 0;
+    dx = dy = 0;
+    return;
+  }
+  XGlyphInfo gi;
+  XftTextExtentsUtf8(fl_display, current_font, (XftChar8 *)c, n, &gi);
+
+  w = gi.width;
+  h = gi.height;
+  dx = -gi.x;
+  dy = -gi.y;
+} // fl_text_extents
+
+
 #if HAVE_GL
 /* This code is used by opengl to get a bitmapped font. The original XFT-1 code
  * used XFT's "core" fonts methods to load an XFT font that was actually a
@@ -358,12 +374,14 @@ double fl_width(unsigned int c) {
 // If this code fails to load the requested font, it falls back through a
 // series of tried 'n tested alternatives, ultimately resorting to what the
 // original fltk code did.
-// NOTE:
-// On my test boxes (FC6, FC7) this works well for the fltk "built-in" font names.
+// NOTE: On my test boxes (FC6, FC7, FC8, ubuntu8.04) this works well for the 
+//       fltk "built-in" font names.
 static XFontStruct* load_xfont_for_xft2(void) {
   XFontStruct* xgl_font = 0;
   int size = fl_size_;
-  char *weight = "medium"; // no specifc weight requested - accept any
+  const char *wt_med = "medium";
+  const char *wt_bold = "bold";
+  char *weight = (char *)wt_med; // no specifc weight requested - accept any
   char slant = 'r';   // regular non-italic by default
   char xlfd[128];     // we will put our synthetic XLFD in here
   char *pc = strdup(fl_fonts[fl_font_].name); // what font were we asked for?
@@ -372,7 +390,7 @@ static XFontStruct* load_xfont_for_xft2(void) {
   switch (*name++) {
   case 'I': slant = 'i'; break;     // italic
   case 'P': slant = 'i';            // bold-italic (falls-through)
-  case 'B': weight = "bold"; break; // bold
+  case 'B': weight = (char*)wt_bold; break; // bold
   case ' ': break;                  // regular
   default: name--;                  // no prefix, restore name
   }
