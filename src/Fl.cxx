@@ -932,11 +932,11 @@ int Fl::handle(int e, Fl_Window* window)
     return 1;
 
   case FL_SHOW:
-    wi->show(); // this calls Fl_Widget::show(), not Fl_Window::show()
+    wi->Fl_Widget::show(); // this calls Fl_Widget::show(), not Fl_Window::show()
     return 1;
 
   case FL_HIDE:
-    wi->hide(); // this calls Fl_Widget::hide(), not Fl_Window::hide()
+    wi->Fl_Widget::hide(); // this calls Fl_Widget::hide(), not Fl_Window::hide()
     return 1;
 
   case FL_PUSH:
