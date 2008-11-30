@@ -299,10 +299,10 @@ double fl_width(unsigned int c) {
 
 void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
 #warning fl_text_extents is only a test stub in Xlib build at present
-  w = 0; h = 0;
-  fl_measure(c, &w, &h, 0);
+  W = 0; H = 0;
+  fl_measure(c, W, H, 0);
   dx = 0;
-  dy = fl_descent() - h;
+  dy = fl_descent() - H;
 } // fl_text_extents
 
 
@@ -315,7 +315,7 @@ void fl_draw(const char* c, int n, int x, int y) {
 //  XDrawString(fl_display, fl_window, fl_gc, x, y, c, n);
   XUtf8DrawString(fl_display, fl_window, fl_xfont, fl_gc, x, y, c, n);
 }
-  
+
 //void fl_draw(const char* str, int n, float x, float y) {
 //  fl_draw(str, n, (int)x, (int)y);
 //}
