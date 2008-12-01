@@ -191,9 +191,30 @@ double fl_width(unsigned int c) {
   return (double) fl_fontsize->width[r][c & 0x03FF];
 }
 
-static unsigned short *ext_buff = NULL; // UTF-16 converted string
+/* Add function pointer to allow us to access GetGlyphIndicesW on systems that have it,
+ * without crashing on systems that do not. */
+/* DWORD WINAPI GetGlyphIndicesW(HDC,LPCWSTR,int,LPWORD,DWORD) */
+typedef DWORD (WINAPI* fl_GetGlyphIndices_func)(HDC,LPCWSTR,int,LPWORD,DWORD);
+
+static fl_GetGlyphIndices_func fl_GetGlyphIndices = NULL; // used to hold a proc pointer for GetGlyphIndicesW
+static int have_loaded_GetGlyphIndices = 0; // Set this non-zero once we have tried to load GetGlyphIndices
+
+// Function that tries to dynamically load GetGlyphIndicesW at runtime
+static void GetGlyphIndices_init() {
+  // Since not all versions of Windows include GetGlyphIndicesW support,
+  // we do a run-time check for the required function.
+  HMODULE hMod = GetModuleHandle("GDI32.DLL");
+  if (hMod) {
+    // check that GetGlyphIndicesW is available
+    fl_GetGlyphIndices = (fl_GetGlyphIndices_func)GetProcAddress(hMod, "GetGlyphIndicesW");
+  }
+  have_loaded_GetGlyphIndices = -1; // set this non-zero when we have attempted to load GetGlyphIndicesW
+} // GetGlyphIndices_init function
+
+static unsigned short *ext_buff = NULL; // UTF-16 converted version of input UTF-8 string
 static unsigned wc_len = 0; // current string buffer dimension
 static WORD *gi = NULL; // glyph indices array
+// Function to determine the extent of the "inked" area of the glyphs in a string
 void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   if (!fl_fontsize) {
     w = 0; h = 0;
@@ -204,6 +225,14 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   GLYPHMETRICS metrics;
   int maxw = 0, maxh = 0, dh;
   int minx = 0, miny = -999999;
+
+  // Have we loaded the GetGlyphIndicesW function yet?
+  if (have_loaded_GetGlyphIndices == 0) {
+    GetGlyphIndices_init();
+  }
+  // Do we have a usable GetGlyphIndices function?
+  if(!fl_GetGlyphIndices) goto exit_error; // No GetGlyphIndices function, use fallback mechanism instead
+
   // now convert the string to WCHAR and measure it
   unsigned len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
   if(len >= wc_len) {
@@ -216,7 +245,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   }
   SelectObject(fl_gc, fl_fontsize->fid);
 
-  if (GetGlyphIndicesW(fl_gc, (WCHAR*)ext_buff, len, gi, 0) == GDI_ERROR) {
+  if (fl_GetGlyphIndices(fl_gc, (WCHAR*)ext_buff, len, gi, 0) == GDI_ERROR) {
     // some error occured here - just return fl_measure values?
     goto exit_error;
   }
