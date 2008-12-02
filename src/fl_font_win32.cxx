@@ -225,6 +225,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   GLYPHMETRICS metrics;
   int maxw = 0, maxh = 0, dh;
   int minx = 0, miny = -999999;
+  unsigned len = 0;
 
   // Have we loaded the GetGlyphIndicesW function yet?
   if (have_loaded_GetGlyphIndices == 0) {
@@ -234,7 +235,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   if(!fl_GetGlyphIndices) goto exit_error; // No GetGlyphIndices function, use fallback mechanism instead
 
   // now convert the string to WCHAR and measure it
-  unsigned len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
+  len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
   if(len >= wc_len) {
     if(ext_buff) {delete [] ext_buff;}
     if(gi) {delete [] gi;}
