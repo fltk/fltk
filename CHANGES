@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Fixed RGB colors for round box (STR #2097)
 	- Fixed documentation (added missing COMCTRL32.LIB
 	  dependency)
 	- Fl_Group::clip_children() is now public (STR #2017)

@@ -41,7 +41,7 @@ void fl_arc_i(int x,int y,int w,int h,double a1,double a2) {
 
 enum {UPPER_LEFT, LOWER_RIGHT, CLOSED, FILL};
 
-static void draw(int which, int x,int y,int w,int h, int inset, uchar color)
+static void draw(int which, int x,int y,int w,int h, int inset, unsigned int color)
 {
   if (inset*2 >= w) inset = (w-1)/2;
   if (inset*2 >= h) inset = (h-1)/2;
@@ -51,7 +51,7 @@ static void draw(int which, int x,int y,int w,int h, int inset, uchar color)
   h -= 2*inset;
   int d = w <= h ? w : h;
   if (d <= 1) return;
-  fl_color((Fl_Color)color);
+  fl_color(color);
   void (*f)(int,int,int,int,double,double);
   f = (which==FILL) ? fl_pie : fl_arc_i;
   if (which >= CLOSED) {
