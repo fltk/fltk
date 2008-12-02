@@ -364,7 +364,7 @@ int load_the_menu(const char* fname)
 }
 
 int main(int argc, char **argv) {
-  putenv((char *)"FLTK_DOCDIR=../documentation");
+  putenv((char *)"FLTK_DOCDIR=../documentation/html");
   char buf[256];
   strcpy(buf, argv[0]);
 #if ( defined _MSC_VER || defined __MWERKS__ ) && defined _DEBUG
