@@ -561,8 +561,8 @@ static void *decodeHex( const char *src, int &size )
  (non-zero) or the default was used (0). 
  'maxSize' is the maximum length of text that will be read. 
  
- \param[in] entry name of entry
- \param[out] value returned from preferences or default value if none was set
+ \param[in] key name of entry
+ \param[out] data value returned from preferences or default value if none was set
  \param[in] defaultValue default value to be used if no preference was set
  \param[in] defaultSize size of default value array
  \param[in] maxSize maximum length of value
@@ -628,7 +628,7 @@ char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue
  
  \param[in] key name of entry
  \param[in] data set this entry to \a value
- \param[in] size of data array
+ \param[in] dsize size of data array
  \return 0 if setting the value failed
  */
 char Fl_Preferences::set( const char *key, const void *data, int dsize )

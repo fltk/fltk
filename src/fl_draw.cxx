@@ -102,7 +102,7 @@ static bool handle_utf8_seq(const char * &s,char * &d) {
 }
 
 /**
- Copy \a from  to \a buf, replacing unprintable characters with ^X and \nnn
+ Copy \a from  to \a buf, replacing unprintable characters with ^X and \\nnn
  Stop at a newline or if MAXBUF characters written to buffer.
  Also word-wrap if width exceeds maxw.
  Returns a pointer to the start of the next line of caharcters.
@@ -358,7 +358,7 @@ void fl_draw(
   is non-zero it will wrap to that width.
   \param[in] str nul-terminated string
   \param[out] w,h width and height of string in current font
-  \param[in] draw_symbols non-zero to enable @symbol handling [default=1]
+  \param[in] draw_symbols non-zero to enable @@symbol handling [default=1]
 */
 void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   if (!str || !*str) {w = 0; h = 0; return;}

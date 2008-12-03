@@ -284,6 +284,7 @@ pdf: 	latex/refman.pdf
 
 latex/refman.pdf: latex/refman.tex Doxyfile $(EPSFILES)
 	echo "Generating PDF documentation..."
+	$(DOXYDOC) Doxybook ;\
 	(cd latex ;\
 	pdflatex --interaction=nonstopmode refman.tex ;\
 	makeindex refman.idx ;\
