@@ -182,11 +182,24 @@ double fl_width(unsigned int c) {
     fl_fontsize->width[r] = (int*) malloc(sizeof(int) * 0x0400);
     SIZE s;
     unsigned short i = 0, ii = r * 0x400;
+    // The following code is a best effort algorithm to further	a valid fl_gc
+    // if no fl_gc is available at the time we call fl_width()
+    // We first choose a gc from the first fltk window, 
+    // if it is null then the gc from the current screen (GetDC(NULL)).
+    // This should solve STR #2086
+    HDC gc = fl_gc;
+    HWND hWnd = 0;
+    if (!gc) {
+	gc = GetDC(hWnd);
+    }
+    if (!gc)
+	Fl::fatal("Invalid graphic context: fl_width() failed because no valid HDC was found!");
     for (; i < 0x400; i++) {
-      GetTextExtentPoint32W(fl_gc, (WCHAR*)&ii, 1, &s);
+      GetTextExtentPoint32W(gc, (WCHAR*)&ii, 1, &s);
       fl_fontsize->width[r][i] = s.cx;
       ii++;
     }
+    if (gc && gc!=fl_gc) ReleaseDC(hWnd, gc);
   }
   return (double) fl_fontsize->width[r][c & 0x03FF];
 }

@@ -80,7 +80,7 @@ const Fl_Menu_Item* Fl_Menu_Item::next(int n) const {
 }
 
 // appearance of current menus are pulled from this parent widget:
-static const Fl_Menu_* button;
+static const Fl_Menu_* button=0;
 
 ////////////////////////////////////////////////////////////////
 
@@ -320,7 +320,8 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (t) Wtitle = t->measure(&Htitle, button) + 12;
   int W = 0;
   if (m) for (; m->text; m = m->next()) {
-    int hh; int w1 = m->measure(&hh, button);
+    int hh; 
+    int w1 = m->measure(&hh, button);
     if (hh+LEADING>itemheight) itemheight = hh+LEADING;
     if (m->flags&(FL_SUBMENU|FL_SUBMENU_POINTER)) w1 += 14;
     if (w1 > W) W = w1;
@@ -541,7 +542,7 @@ struct menustate {
   menuwindow* fakemenu; // kludge for buttons in menubar
   int is_inside(int mx, int my);
 };
-static menustate* p;
+static menustate* p=0;
 
 // return 1 if the coordinates are inside any of the menuwindows
 int menustate::is_inside(int mx, int my) {
@@ -826,7 +827,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     if (pp.current_item == oldi) continue;}
     // only do rest if item changes:
 
-    delete pp.fakemenu; pp.fakemenu = 0; // turn off "menubar button"
+    if(pp.fakemenu) {delete pp.fakemenu; pp.fakemenu = 0;} // turn off "menubar button"
 
     if (!pp.current_item) { // pointing at nothing
       // turn off selection in deepest menu, but don't erase other menus:
@@ -834,7 +835,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
       continue;
     }
 
-    delete pp.fakemenu; pp.fakemenu = 0;
+    if(pp.fakemenu) {delete pp.fakemenu; pp.fakemenu = 0;}
     initial_item = 0; // stop the startup code
     pp.p[pp.menu_number]->autoscroll(pp.item_number);
 

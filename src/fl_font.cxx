@@ -26,7 +26,9 @@
 //
 
 #ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
+#endif
 /* We require Windows 2000 features such as GetGlyphIndices */
 # if !defined(WINVER) || (WINVER < 0x0500)
 #  define WINVER 0x0500

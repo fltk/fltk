@@ -368,7 +368,7 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   char buf[MAXBUF];
   int buflen;
   int lines;
-  double width;
+  double width=0;
   int W = 0;
   char symbol[2][255], *symptr;
   int symwidth[2], symtotal;
