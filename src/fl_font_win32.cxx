@@ -190,6 +190,7 @@ double fl_width(unsigned int c) {
     HDC gc = fl_gc;
     HWND hWnd = 0;
     if (!gc) {
+	hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
 	gc = GetDC(hWnd);
     }
     if (!gc)
