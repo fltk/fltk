@@ -1,28 +1,26 @@
-/******************************************************************************
-              Copyright 2000-2001 by O'ksi'D
-
-Permission to use, copy, modify, distribute, and sell this software
-and its documentation for any purpose is hereby granted without fee,
-provided that the above copyright notice appear in all copies and
-that both that copyright notice and this permission notice appear
-in supporting documentation, and that the name of O'ksi'D
-not be used in advertising or publicity pertaining to distribution
-of the software without specific, written prior permission.
-O'ksi'D makes no representations about the suitability of
-this software for any purpose.  It is provided "as is" without
-express or implied warranty.
-
-O'ksi'D DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
-SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,
-IN NO EVENT SHALL O'ksi'D BE LIABLE FOR ANY SPECIAL, INDIRECT
-OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
-OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
-OR PERFORMANCE OF THIS SOFTWARE.
-
-        Author: Jean-Marc Lienher ( http://oksid.ch )
-
-******************************************************************************/
+// "$Id: $"
+//
+// Author: Jean-Marc Lienher ( http://oksid.ch )
+// Copyright 2000-2003 by O'ksi'D.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
 
 /*
  * This file is required on all platforms for utf8 support

@@ -1,25 +1,27 @@
+// "$Id: $"
 //
-// Copyright 1998-2008 by Bill Spitzak and others.
+// Author: Jean-Marc Lienher ( http://oksid.ch )
+// Copyright 2000-2003 by O'ksi'D.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
 // License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version
-// with exceptions that allow sub-classing and static linking in
-// non-LGPL compliant software. These exceptions are subject to
-// conditions, see the FLTK License for more details.
+// version 2 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the FLTK
-// License for more details.
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
 //
-// You should have received a copy of the FLTK License along with
-// this library; if not, write to  OksiD Software, Jean-Marc Lienher,
-// Rue de la Cheminee 1, CH-2065 Savagnier, Switzerland.
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
 //
-// Please report all bugs and problems to "oksid@bluewin.ch".
+// Please report all bugs and problems on the following page:
 //
+//     http://www.fltk.org/str.php
+
 
 // Merged in some functionality from the fltk-2 version. IMM.
 // The following code is an attempt to merge the functions incorporated in FLTK2

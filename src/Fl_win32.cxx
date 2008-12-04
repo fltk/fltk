@@ -202,9 +202,9 @@ static HMODULE get_imm_module() {
 static int maxfd = 0;
 static fd_set fdsets[3];
 
-#define POLLIN 1
-#define POLLOUT 4
-#define POLLERR 8
+# define POLLIN 1
+# define POLLOUT 4
+# define POLLERR 8
 
 #if !defined(__GNUC__) || __GNUC__ >= 3
 extern IDropTarget *flIDropTarget;

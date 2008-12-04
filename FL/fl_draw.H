@@ -198,7 +198,9 @@ FL_EXPORT int   fl_descent();
 FL_EXPORT double fl_width(const char* txt);
 /** Return the typographical width of a sequence of \a n characters */
 FL_EXPORT double fl_width(const char* txt, int n);
-/** Return the typographical width of a single character */
+/** Return the typographical width of a single character : 
+    \note if a valid fl_gc is NOT found then it uses the first window gc, 
+    or the screen gc if no fltk window is available when called. */
 FL_EXPORT double fl_width(Fl_Unichar);
 /** Determine the minimum pixel dimensions of a nul-terminated string */
 FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); // NO fltk symbol expansion
