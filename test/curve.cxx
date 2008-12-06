@@ -40,7 +40,7 @@ int points;
 
 class Drawing : public Fl_Widget {
   void draw() {
-    fl_clip(x(),y(),w(),h());
+    fl_push_clip(x(),y(),w(),h());
     fl_color(FL_DARK3);
     fl_rectf(x(),y(),w(),h());
     fl_push_matrix();

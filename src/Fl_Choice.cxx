@@ -83,7 +83,7 @@ void Fl_Choice::draw() {
     // ERCO
     int xx = x() + dx, yy = y() + dy + 1, ww = w() - W, hh = H - 2;
 
-    fl_clip(xx, yy, ww, hh);
+    fl_push_clip(xx, yy, ww, hh);
 
     if ( Fl::scheme()) {
       Fl_Label l;

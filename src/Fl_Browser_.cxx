@@ -399,7 +399,7 @@ J1:
 
   bbox(X, Y, W, H);
 
-  fl_clip(X, Y, W, H);
+  fl_push_clip(X, Y, W, H);
   // for each line, draw it if full redraw or scrolled.  Erase background
   // if not a full redraw or if it is selected:
   void* l = top();

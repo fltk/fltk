@@ -247,7 +247,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     yscroll_ = -(H-height)/2;
   }
 
-  fl_clip(X, Y, W, H);
+  fl_push_clip(X, Y, W, H);
   Fl_Color tc = active_r() ? textcolor() : fl_inactive(textcolor());
 
   p = value();

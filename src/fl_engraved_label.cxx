@@ -39,7 +39,7 @@ static void innards(
 {
   Fl_Align a1 = align;
   if (a1 & FL_ALIGN_CLIP) {
-    fl_clip(X, Y, W, H); a1 = (Fl_Align)(a1&~FL_ALIGN_CLIP);}
+    fl_push_clip(X, Y, W, H); a1 = (Fl_Align)(a1&~FL_ALIGN_CLIP);}
   fl_font((Fl_Font)o->font, o->size);
   for (int i = 0; i < n; i++) {
     fl_color((Fl_Color)(i < n-1 ? data[i][2] : o->color));

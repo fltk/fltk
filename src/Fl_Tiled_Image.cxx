@@ -111,7 +111,7 @@ Fl_Tiled_Image::draw(int X,	// I - Starting X position
   if (W == 0) W = Fl::w();
   if (H == 0) H = Fl::h();
 
-  fl_clip(X, Y, W, H);
+  fl_push_clip(X, Y, W, H);
 
   X += cx;
   Y += cy;

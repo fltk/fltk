@@ -376,7 +376,7 @@ inline void fl_set_font_name(Fl_Font n,const char* s) {Fl::set_font(n,s);}
 
 inline void fl_mapcolor(Fl_Color c, uchar r, uchar g, uchar b) {Fl::set_color(c,r,g,b);}
 
-#define fl_set_clipping(x,y,w,h) fl_clip(x,y,w,h)
+#define fl_set_clipping(x,y,w,h) fl_push_clip(x,y,w,h)
 #define fl_unset_clipping() fl_pop_clip()
 
 ////////////////////////////////////////////////////////////////

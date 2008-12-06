@@ -78,7 +78,7 @@ void Fl_Progress::draw()
     Fl_Color c = labelcolor();
     labelcolor(fl_contrast(labelcolor(), color2()));
 
-    fl_clip(x(), y(), progress + bx, h());
+    fl_push_clip(x(), y(), progress + bx, h());
       draw_box(box(), x(), y(), w(), h(), active_r() ? color2() : fl_inactive(color2()));
       draw_label(tx, y() + by, tw, h() - bh);
     fl_pop_clip();
@@ -86,7 +86,7 @@ void Fl_Progress::draw()
     labelcolor(c);
 
     if (progress<w()) {
-      fl_clip(tx + progress, y(), w() - progress, h());
+      fl_push_clip(tx + progress, y(), w() - progress, h());
         draw_box(box(), x(), y(), w(), h(), active_r() ? color() : fl_inactive(color()));
         draw_label(tx, y() + by, tw, h() - bh);
       fl_pop_clip();

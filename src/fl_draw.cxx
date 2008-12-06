@@ -347,7 +347,7 @@ void fl_draw(
   int draw_symbols) {
   if ((!str || !*str) && !img) return;
   if (w && h && !fl_not_clipped(x, y, w, h) && (align & FL_ALIGN_INSIDE)) return;
-  if (align & FL_ALIGN_CLIP) fl_clip(x, y, w, h);
+  if (align & FL_ALIGN_CLIP) fl_push_clip(x, y, w, h);
   fl_draw(str, x, y, w, h, align, fl_draw, img, draw_symbols);
   if (align & FL_ALIGN_CLIP) fl_pop_clip();
 }

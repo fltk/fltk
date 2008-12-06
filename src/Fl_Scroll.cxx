@@ -53,7 +53,7 @@ void Fl_Scroll::fix_scrollbar_order() {
 }
 
 void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
-  fl_clip(X,Y,W,H);
+  fl_push_clip(X,Y,W,H);
   Fl_Scroll* s = (Fl_Scroll*)v;
   // erase background as needed...
   switch (s->box()) {
@@ -140,7 +140,7 @@ void Fl_Scroll::draw() {
       if (B < (Y + H)) draw_clip(this, X, B, W, Y + H - B);
     }
     if (d & FL_DAMAGE_CHILD) { // draw damaged children
-      fl_clip(X, Y, W, H);
+      fl_push_clip(X, Y, W, H);
       Fl_Widget*const* a = array();
       for (int i=children()-2; i--;) update_child(**a++);
       fl_pop_clip();
