@@ -1,0 +1,5 @@
+Borland c ide/compiler users will find in the borland subdir relevant ide project that no one on the current has anymore.
+If you happen top fix/update (and if possible move them in an ide/borland dir on the fly)  them, please report this in a new STR on fltk.org.
+We will happily update them if we find one maintainer.
+
+Note: ide/unsupported/borland subdirs were originally located on the root of the distrib and should be tested from the root if you try to fix them.
