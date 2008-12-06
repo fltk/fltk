@@ -84,88 +84,125 @@ void Fl_Button::draw() {
 int Fl_Button::handle(int event) {
   int newval;
   switch (event) {
-  case FL_ENTER:
-  case FL_LEAVE:
-//  if ((value_?selection_color():color())==FL_GRAY) redraw();
-    return 1;
-  case FL_PUSH:
-    if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
-  case FL_DRAG:
-    if (Fl::event_inside(this)) {
-      if (type() == FL_RADIO_BUTTON) newval = 1;
-      else newval = !oldval;
-    } else
-    {
-      clear_changed();
-      newval = oldval;
-    }
-    if (newval != value_) {
-      value_ = newval;
-      set_changed();
-      redraw();
-      if (when() & FL_WHEN_CHANGED) do_callback();
-    }
-    return 1;
-  case FL_RELEASE:
-    if (value_ == oldval) {
-      if (when() & FL_WHEN_NOT_CHANGED) do_callback();
+    case FL_ENTER:
+    case FL_LEAVE:
+      //  if ((value_?selection_color():color())==FL_GRAY) redraw();
       return 1;
-    }
-    set_changed();
-    if (type() == FL_RADIO_BUTTON) setonly();
-    else if (type() == FL_TOGGLE_BUTTON) oldval = value_;
-    else {
-      value(oldval);
-      set_changed();
-      if (when() & FL_WHEN_CHANGED) do_callback();
-    }
-    if (when() & FL_WHEN_RELEASE) do_callback();
-    return 1;
-  case FL_SHORTCUT:
-    if (!(shortcut() ?
-	  Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;
-    
-    if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
-
-    if (type() == FL_RADIO_BUTTON && !value_) {
-      setonly();
-      set_changed();
-      if (when() & FL_WHEN_CHANGED) do_callback();
-    } else if (type() == FL_TOGGLE_BUTTON) {
-      value(!value());
-      set_changed();
-      if (when() & FL_WHEN_CHANGED) do_callback();
-    } else if (when() & FL_WHEN_RELEASE) do_callback();
-    return 1;
-  case FL_FOCUS :
-  case FL_UNFOCUS :
-    if (Fl::visible_focus()) {
-      if (box() == FL_NO_BOX) {
-	// Widgets with the FL_NO_BOX boxtype need a parent to
-	// redraw, since it is responsible for redrawing the
-	// background...
-	int X = x() > 0 ? x() - 1 : 0;
-	int Y = y() > 0 ? y() - 1 : 0;
-	if (window()) window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
-      } else redraw();
+    case FL_PUSH:
+      if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
+    case FL_DRAG:
+      if (Fl::event_inside(this)) {
+        if (type() == FL_RADIO_BUTTON) newval = 1;
+        else newval = !oldval;
+      } else
+      {
+        clear_changed();
+        newval = oldval;
+      }
+      if (newval != value_) {
+        value_ = newval;
+        set_changed();
+        redraw();
+        if (when() & FL_WHEN_CHANGED) do_callback();
+      }
       return 1;
-    } else return 0;
-  case FL_KEYBOARD :
-    if (Fl::focus() == this && Fl::event_key() == ' ' &&
-        !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
+    case FL_RELEASE:
+      if (value_ == oldval) {
+        if (when() & FL_WHEN_NOT_CHANGED) do_callback();
+        return 1;
+      }
       set_changed();
-      if (type() == FL_RADIO_BUTTON && !value_) {
-	setonly();
-	if (when() & FL_WHEN_CHANGED) do_callback();
-      } else if (type() == FL_TOGGLE_BUTTON) {
-	value(!value());
-	if (when() & FL_WHEN_CHANGED) do_callback();
+      if (type() == FL_RADIO_BUTTON) setonly();
+      else if (type() == FL_TOGGLE_BUTTON) oldval = value_;
+      else {
+        value(oldval);
+        set_changed();
+        if (when() & FL_WHEN_CHANGED) do_callback();
       }
       if (when() & FL_WHEN_RELEASE) do_callback();
       return 1;
-    }
-  default:
-    return 0;
+    case FL_SHORTCUT:
+      if (!(shortcut() ?
+            Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;
+
+      if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
+
+      if (type() == FL_RADIO_BUTTON && !value_) {
+        setonly();
+        set_changed();
+        if (when() & FL_WHEN_CHANGED) do_callback();
+      } else if (type() == FL_TOGGLE_BUTTON) {
+        value(!value());
+        set_changed();
+        if (when() & FL_WHEN_CHANGED) do_callback();
+      } else if ( (type() == FL_NORMAL_BUTTON) && when()&FL_WHEN_CHANGED) {
+        //  Not already active by GUI push
+        if ( !value_ ) {
+          value_ = !oldval;
+          set_changed();
+          do_callback();
+        }
+      } else if (when() & FL_WHEN_RELEASE) do_callback();
+      return 1;
+    case FL_FOCUS :
+    case FL_UNFOCUS :
+      if (Fl::visible_focus()) {
+        if (box() == FL_NO_BOX) {
+          // Widgets with the FL_NO_BOX boxtype need a parent to
+          // redraw, since it is responsible for redrawing the
+          // background...
+          int X = x() > 0 ? x() - 1 : 0;
+          int Y = y() > 0 ? y() - 1 : 0;
+          if (window()) window()->damage(FL_DAMAGE_ALL, X, Y, w() + 2, h() + 2);
+        } else redraw();
+        return 1;
+      } else return 0;
+    case FL_KEYBOARD :
+      if (Fl::focus() == this && Fl::event_key() == ' ' &&
+          !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
+        set_changed();
+        if (type() == FL_RADIO_BUTTON && !value_) {
+          setonly();
+          if (when() & FL_WHEN_CHANGED) do_callback();
+        } else if (type() == FL_TOGGLE_BUTTON) {
+          value(!value());
+          if (when() & FL_WHEN_CHANGED) do_callback();
+        }
+        if (when() & FL_WHEN_RELEASE) do_callback();
+        return 1;
+      }
+      return 0;
+
+    case FL_KEYUP :
+      if ( (type() == FL_NORMAL_BUTTON) && when()&FL_WHEN_CHANGED) {
+
+        int key = Fl::event_key();
+
+        // Check for a shortcut that includes state keys(FL_SHIFT, FL_CTRL or FL_ALT) and 
+        // the state key is released
+        if ( (shortcut()&FL_SHIFT && ((key == FL_Shift_L) || (key == FL_Shift_R))) ||
+             (shortcut()&FL_CTRL && ((key == FL_Control_L) || (key == FL_Control_R))) || 
+             (shortcut()&FL_ALT && ((key == FL_Alt_L) || (key == FL_Alt_R))) ) {
+          value(oldval);
+          set_changed();
+          do_callback();
+          return 0;   //  In case multiple shortcut keys are pressed that use state keys
+        }
+        // shortcut key alone
+        else if (  !(shortcut() ?  Fl::test_shortcut(shortcut()) : test_shortcut())) {
+          return 0;
+        }
+        // disable button
+        else if ( value_ ) {
+          value(oldval);
+          set_changed();
+          do_callback();
+          return 1;
+        }
+      }
+
+    default:
+      return 0;
   }
 }
 
