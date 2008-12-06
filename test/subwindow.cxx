@@ -39,6 +39,21 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Input.H>
 
+#ifdef DEBUG
+#include <FL/names.h>
+#endif
+
+// Define DEBUG_POS for a subwindow positioning test. This will draw
+// the last typed character at the cursor position, if no input widget
+// currently has the focus.
+// Note: The typed character is saved in the derived testwindow class,
+// regardless of the definition of DEBUG_POS. Only drawing the character
+// depends on this define.
+
+#ifdef DEBUG_POS
+#include <FL/fl_draw.H>
+#endif
+
 class EnterExit : public Fl_Box {
   int handle(int);
 public:
@@ -50,30 +65,6 @@ int EnterExit::handle(int e) {
   else if (e == FL_LEAVE) {color(FL_GRAY); redraw(); return 1;}
   else return 0;
 }
-
-#ifdef DEBUG
-const char *eventnames[] = {
-"zero",
-"FL_PUSH",
-"FL_RELEASE",
-"FL_ENTER",
-"FL_LEAVE",
-"FL_DRAG",
-"FL_FOCUS",
-"FL_UNFOCUS",
-"FL_KEYBOARD",
-"9",
-"FL_MOVE",
-"FL_SHORTCUT",
-"12",
-"FL_DEACTIVATE",
-"FL_ACTIVATE",
-"FL_HIDE",
-"FL_SHOW",
-"FL_PASTE",
-"FL_SELECTIONCLEAR",
-};
-#endif
 
 class testwindow : public Fl_Window {
   int handle(int);
@@ -88,19 +79,19 @@ public:
   void use_cursor(Fl_Cursor c) { crsr = c; }
 };
 
-#include <FL/fl_draw.H>
-
 void testwindow::draw() {
 #ifdef DEBUG
   printf("%s : draw\n",label());
 #endif
   Fl_Window::draw();
+#ifdef DEBUG_POS
   if (key) fl_draw(&key, 1, cx, cy);
+#endif
 }
 
 int testwindow::handle(int e) {
 #ifdef DEBUG
-  if (e != FL_MOVE) printf("%s : %s\n",label(),eventnames[e]);
+  if (e != FL_MOVE) printf("%s : %s\n",label(),fl_eventnames[e]);
 #endif
   if (crsr!=FL_CURSOR_DEFAULT) {
     if (e == FL_ENTER) 
@@ -166,14 +157,16 @@ int main(int argc, char **argv) {
     new testwindow(FL_UP_BOX,400,400,"outer");
   new Fl_Toggle_Button(310,310,80,80,"&outer");
   new EnterExit(10,310,80,80,"enterexit");
-  new Fl_Input(150,310,150,25,"input:");
+  new Fl_Input(160,310,140,25,"input1:");
+  new Fl_Input(160,340,140,25,"input2:");
   (new Fl_Menu_Button(5,150,80,25,"menu&1"))->add(bigmess);
   testwindow *subwindow =
     new testwindow(FL_DOWN_BOX,100,100,200,200,"inner");
   new Fl_Toggle_Button(110,110,80,80,"&inner");
   new EnterExit(10,110,80,80,"enterexit");
-  (new Fl_Menu_Button(50,50,80,25,"menu&2"))->add(bigmess);
-  new Fl_Input(45,80,150,25,"input:");
+  (new Fl_Menu_Button(50,20,80,25,"menu&2"))->add(bigmess);
+  new Fl_Input(55,50,140,25,"input1:");
+  new Fl_Input(55,80,140,25,"input2:");
   subwindow->resizable(subwindow);
   window->resizable(subwindow);
   subwindow->end();
