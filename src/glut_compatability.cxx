@@ -187,11 +187,11 @@ void Fl_Glut_Window::_init() {
   mode(glut_mode);
 }
 
-/** Creates a glut windows, registers to the glut windows list.*/
+/** Creates a glut window, registers to the glut windows list.*/
 Fl_Glut_Window::Fl_Glut_Window(int W, int H, const char *t) :
   Fl_Gl_Window(W,H,t) {_init();}
 
-/** Creates a glut windows, registers to the glut windows list.*/
+/** Creates a glut window, registers to the glut windows list.*/
 Fl_Glut_Window::Fl_Glut_Window(int X,int Y,int W,int H, const char *t) :
   Fl_Gl_Window(X,Y,W,H,t) {_init();}
 
