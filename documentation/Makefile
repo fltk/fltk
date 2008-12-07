@@ -282,7 +282,7 @@ pdf-dist : latex/refman.pdf
 
 pdf: 	latex/refman.pdf
 
-latex/refman.pdf: latex/refman.tex Doxyfile $(EPSFILES)
+latex/refman.pdf: latex/refman.tex Doxybook $(EPSFILES)
 	echo "Generating PDF documentation..."
 	$(DOXYDOC) Doxybook ;\
 	(cd latex ;\
@@ -299,7 +299,7 @@ latex/refman.pdf: latex/refman.tex Doxyfile $(EPSFILES)
 	    done ; \
 	cd ..) > pdfall.log
 
-latex/refman.tex: html/index.html $(EPSFILES)
+latex/refman.tex: Doxybook $(EPSFILES)
 
 #
 # End of "$Id$".
