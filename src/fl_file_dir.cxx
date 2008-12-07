@@ -62,7 +62,7 @@ void fl_file_chooser_ok_label(const char *l) {
 }
 
 /** \relates Fl_File_Chooser
-    Shows a file chooser dialog and get a filename. 
+    Shows a file chooser dialog and gets a filename. 
     \image html Fl_File_Chooser.jpg 
     \image latex  Fl_File_Chooser.eps "Fl_File_Chooser" width=12cm
     \param[in] message text in title bar
@@ -147,11 +147,11 @@ fl_file_chooser(const char *message,	// I - Message in titlebar
 }
 
 /**  \relates Fl_File_Chooser
-    Shows a file chooser dialog and get a directory.
+    Shows a file chooser dialog and gets a directory.
     \param[in] message title bar text
     \param[in] fname initial/default directory name
     \param[in] relative 0 for absolute path return, relative otherwise
-    \return the directory path string choosen by the user or NULL if user cancels
+    \return the directory path string chosen by the user or NULL if user cancels
 */
 
 char *					// O - Directory or NULL

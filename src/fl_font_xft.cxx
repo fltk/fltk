@@ -57,7 +57,7 @@
 //
 // Unlike some other Xft packages, I tried to keep this simple and not
 // to work around the current problems in Xft by making the "patterns"
-// complicated. I belive doing this defeats our ability to improve Xft
+// complicated. I believe doing this defeats our ability to improve Xft
 // itself. You should edit the ~/.xftconfig file to "fix" things, there
 // are several web pages of information on how to do this.
 //
@@ -152,7 +152,7 @@ static XftFont* fontopen(const char* name, bool core) {
      * the BOLD and ITALIC codes as it does so - all FLTK font names are prefixed
      * by 'I' (italic) 'B' (bold) 'P' (bold italic) or ' ' (regular) modifiers.
      * This gives a fairly limited font selection ability, but is retained for
-     * compatability reasons. If you really need a more complex choice, you are best
+     * compatibility reasons. If you really need a more complex choice, you are best
      * calling Fl::set_fonts(*) then selecting the font by font-index rather than by
      * name anyway. Probably.
      * If you want to load a font who's name does actually begin with I, B or P, you
