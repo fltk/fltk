@@ -1,20 +1,20 @@
 CHANGES IN FLTK 1.1.10
 
-	- improved test/subwindow.cxx (STR #2079)
+	- Fixed a problem with TrackMouseEvent() (Windows only) that would
+	  generate wrong FL_LEAVE events with subwindows. TrackMouseEvent
+	  is now enabled by default (it was disabled for GNU compilers).
+	  It can be disabled by defining NO_TRACK_MOUSE.
+	  Improved test/subwindow.cxx (STR #2079)
 	- Fixed RGB colors for round box (STR #2097)
-	- Fixed documentation (added missing COMCTRL32.LIB
-	  dependency)
+	- Fixed documentation (added missing COMCTRL32.LIB dependency)
 	- Fl_Group::clip_children() is now public (STR #2017)
 	- Fixed first modifier key event (STR #1952)
-	- Fixed wrong default value of Fl_Spinner in 
-	  Fluid (STR #1991)
+	- Fixed wrong default value of Fl_Spinner in Fluid (STR #1991)
 	- Fixed Fluid textcolor output (STR #1992)
-	- Added clarification to Fl_GL_Window mode 
-	  function (STR #1945)
+	- Added clarification to Fl_GL_Window mode function (STR #1945)
 	- Fl_Group and Fl_Scroll now resize themselves before
 	  resizing their children (STR #2032)
-	- Fixed adding an idle handler during
-	  a draw() call (STR #1950)
+	- Fixed adding an idle handler during a draw() call (STR #1950)
 	- Improved stability of fl_read_image (STR #2021)
 	- Fixed menu position close to screen border (STR #2057)
 
