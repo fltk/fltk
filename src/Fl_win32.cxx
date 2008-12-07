@@ -143,21 +143,46 @@ static HMODULE get_imm_module() {
   return s_imm_module;
 }
 
+// USE_TRACK_MOUSE - define NO_TRACK_MOUSE if you don't have
+// TrackMouseEvent()...
 //
-// USE_TRACK_MOUSE - define it if you have TrackMouseEvent()...
+// Now (Dec. 2008) we can assume that current Cygwin/MinGW versions
+// support the TrackMouseEvent() function, but WinCE obviously doesn't
+// support it (STR 2095). Therefore, USE_TRACK_MOUSE is enabled by 
+// default, but you can disable it by defining NO_TRACK_MOUSE.
 //
-// Apparently, at least some versions of Cygwin/MingW don't provide
-// the TrackMouseEvent() function.  You can define this by hand
-// if you have it - this is only needed to support subwindow
-// enter/leave notification under Windows.
+// TrackMouseEvent is only used to support window leave notifications
+// under Windows. It can be used to get FL_LEAVE events, when the
+// mouse leaves the _main_ application window (FLTK detects subwindow
+// leave events by using normal move events).
 //
+// Implementation note: If the mouse cursor leaves one subwindow and
+// enters another window, then Windows sends a WM_MOUSEMOVE message to
+// the new window before it sends a WM_MOUSELEAVE message to the old
+// (just left) window. We save the current mouse window in a static variable,
+// and if we get a WM_MOUSELEAVE event for the current mouse window, this
+// means that the top level window has been left (otherwise we would have
+// got another WM_MOUSEMOVE message before).
 
-//#define USE_TRACK_MOUSE
+// #define NO_TRACK_MOUSE
 
-#if !defined(__GNUC__)
-#  define USE_TRACK_MOUSE
-#endif // !__GNUC__
+#if !defined(NO_TRACK_MOUSE)
+# define USE_TRACK_MOUSE
+#endif // NO_TRACK_MOUSE
 
+static Fl_Window *track_mouse_win=0;	// current TrackMouseEvent() window
+
+// USE_CAPTURE_MOUSE_WIN - this must be defined for TrackMouseEvent to work
+// correctly with subwindows - otherwise a single mouse click and release
+// (without a move) would generate phantom leave events.
+// This defines, if the current mouse window (maybe a subwindow) or the 
+// main window should get mouse events after pushing (and holding) a mouse
+// button, i.e. when dragging the mouse. This is done by calling SetCapture
+// (see below).
+
+#ifdef USE_TRACK_MOUSE
+#define USE_CAPTURE_MOUSE_WIN
+#endif // USE_TRACK_MOUSE
 
 //
 // WM_SYNCPAINT is an "undocumented" message, which is finally defined in
@@ -618,6 +643,9 @@ static int mouse_event(Fl_Window *window, int what, int button,
   ClientToScreen(fl_xid(window), &pt);
   Fl::e_x_root = pt.x;
   Fl::e_y_root = pt.y;
+#ifdef USE_CAPTURE_MOUSE_WIN
+  Fl_Window *mouse_window = window;	// save "mouse window"
+#endif
   while (window->parent()) {
     Fl::e_x += window->x();
     Fl::e_y += window->y();
@@ -641,7 +669,11 @@ static int mouse_event(Fl_Window *window, int what, int button,
   case 0: // single-click
     Fl::e_clicks = 0;
   J1:
-    if (!fl_capture) SetCapture(fl_xid(window));
+#ifdef USE_CAPTURE_MOUSE_WIN
+    if (!fl_capture) SetCapture(fl_xid(mouse_window));  // use mouse window
+#else
+    if (!fl_capture) SetCapture(fl_xid(window));	// use main window
+#endif
     Fl::e_keysym = FL_Button + button;
     Fl::e_is_click = 1;
     px = pmx = Fl::e_x_root; py = pmy = Fl::e_y_root;
@@ -861,20 +893,26 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   case WM_MOUSEMOVE:
 #ifdef USE_TRACK_MOUSE
-    if (Fl::belowmouse() != window) {
+    if (track_mouse_win != window) {
       TRACKMOUSEEVENT tme;
       tme.cbSize    = sizeof(TRACKMOUSEEVENT);
       tme.dwFlags   = TME_LEAVE;
       tme.hwndTrack = hWnd;
       _TrackMouseEvent(&tme);
+      track_mouse_win = window;
     }
 #endif // USE_TRACK_MOUSE
     mouse_event(window, 3, 0, wParam, lParam);
     return 0;
 
   case WM_MOUSELEAVE:
-    Fl::belowmouse(0);
-    if (!window->parent()) Fl::handle(FL_LEAVE, window);
+    if (track_mouse_win == window) { // we left the top level window !
+      Fl_Window *tw = window;
+      while (tw->parent()) tw = tw->window(); // find top level window
+      Fl::belowmouse(0);
+      Fl::handle(FL_LEAVE, tw);
+    }
+    track_mouse_win = 0; // force TrackMouseEvent() restart
     break;
 
   case WM_SETFOCUS:
