@@ -34,7 +34,7 @@
 // Portable drawing code for drawing arbitrary shapes with
 // simple 2D transformations.  See also fl_arc.cxx
 
-// matt: the Quartz implementation purposly doesn't use the Quartz matrix
+// matt: the Quartz implementation purposely doesn't use the Quartz matrix
 //       operations for reasons of compatibility and maintainability
 
 #include <config.h>
@@ -52,7 +52,7 @@ static matrix stack[32];
 static int sptr = 0;
 
 /**
-  Save the current transformation matrix on the stack. 
+  Saves the current transformation matrix on the stack. 
   The maximum depth of the stack is 4.
 */
 void fl_push_matrix() {
@@ -63,7 +63,7 @@ void fl_push_matrix() {
 }
 
 /**
-  Restore the current transformation matrix from the stack.
+  Restores the current transformation matrix from the stack.
 */
 void fl_pop_matrix() {
   if (sptr==0)
@@ -73,7 +73,8 @@ void fl_pop_matrix() {
 }
 
 /**
-  Concatenate another transformation onto the current one.
+  Concatenates another transformation onto the current one.
+
   \param[in] a,b,c,d,x,y transformation matrix elements such that
              <tt> X' = aX + cY + x </tt> and <tt> Y' = bX +dY + y </tt>
 */
@@ -89,25 +90,25 @@ void fl_mult_matrix(double a, double b, double c, double d, double x, double y) 
 }
 
 /**
-  Concatenate scaling transformation onto the current one.
+  Concatenates scaling transformation onto the current one.
   \param[in] x,y scale factors in x-direction and y-direction
 */
 void fl_scale(double x,double y) {fl_mult_matrix(x,0,0,y,0,0);}
 
 /**
-  Concatenate scaling transformation onto the current one.
+  Concatenates scaling transformation onto the current one.
   \param[in] x scale factor in both x-direction and y-direction
 */
 void fl_scale(double x) {fl_mult_matrix(x,0,0,x,0,0);}
 
 /**
-  Concatenate translation transformation onto the current one.
+  Concatenates translation transformation onto the current one.
   \param[in] x,y translation factor in x-direction and y-direction
 */
 void fl_translate(double x,double y) {fl_mult_matrix(1,0,0,1,x,y);}
 
 /**
-  Concatenate rotation transformation onto the current one.
+  Concatenates rotation transformation onto the current one.
   \param[in] d - rotation angle, counter-clockwise in degrees (not radians)
 */
 void fl_rotate(double d) {
@@ -144,45 +145,45 @@ static int what;
 enum {LINE, LOOP, POLYGON, POINT_};
 
 /**
-  Start drawing a list of points. Points are added to the list with fl_vertex()
+  Starts drawing a list of points. Points are added to the list with fl_vertex()
 */
 void fl_begin_points() {n = 0; what = POINT_;}
 
 /**
-  Start drawing a list of lines.
+  Starts drawing a list of lines.
 */
 void fl_begin_line() {n = 0; what = LINE;}
 
 /**
-  Start drawing a closed sequence of lines.
+  Starts drawing a closed sequence of lines.
 */
 void fl_begin_loop() {n = 0; what = LOOP;}
 
 /**
-  Start drawing a convex filled polygon.
+  Starts drawing a convex filled polygon.
 */
 void fl_begin_polygon() {n = 0; what = POLYGON;}
 
 /**
-  Transform coordinate using current transformation matrix.
+  Transforms coordinate using the current transformation matrix.
   \param[in] x,y coordinate
 */
 double fl_transform_x(double x, double y) {return x*m.a + y*m.c + m.x;}
 
 /**
-  Transform coordinate using current transformation matrix.
+  Transform coordinate using the current transformation matrix.
   \param[in] x,y coordinate
 */
 double fl_transform_y(double x, double y) {return x*m.b + y*m.d + m.y;}
 
 /**
-  Transform distance using current transformation matrix.
+  Transforms distance using current transformation matrix.
   \param[in] x,y coordinate
 */
 double fl_transform_dx(double x, double y) {return x*m.a + y*m.c;}
 
 /**
-  Transform distance using current transformation matrix.
+  Transforms distance using current transformation matrix.
   \param[in] x,y coordinate
 */
 double fl_transform_dy(double x, double y) {return x*m.b + y*m.d;}
@@ -200,7 +201,7 @@ static void fl_transformed_vertex(COORD_T x, COORD_T y) {
 }
 
 /**
-  Add coordinate pair to the vertex list without further transformations.
+  Adds coordinate pair to the vertex list without further transformations.
   \param[in] xf,yf transformed coordinate
 */
 void fl_transformed_vertex(double xf, double yf) {
@@ -212,7 +213,7 @@ void fl_transformed_vertex(double xf, double yf) {
 }
 
 /**
-  Add a single vertex to the current path.
+  Adds a single vertex to the current path.
   \param[in] x,y coordinate
 */
 void fl_vertex(double x,double y) {
@@ -220,7 +221,7 @@ void fl_vertex(double x,double y) {
 }
 
 /**
-  End list of points, and draw
+  Ends list of points, and draws.
 */
 void fl_end_points() {
 #if defined(USE_X11)
@@ -241,7 +242,7 @@ void fl_end_points() {
 }
 
 /**
-  End list of lines, and draw
+  Ends list of lines, and draws.
 */
 void fl_end_line() {
   if (n < 2) {
@@ -268,7 +269,7 @@ static void fixloop() {  // remove equal points from closed path
 }
 
 /**
-  End closed sequence of lines, and draw
+  Ends closed sequence of lines, and draws.
 */
 void fl_end_loop() {
   fixloop();
@@ -277,7 +278,7 @@ void fl_end_loop() {
 }
 
 /**
-  End convex filled polygon, and draw
+  Ends convex filled polygon, and draws.
 */
 void fl_end_polygon() {
   fixloop();
@@ -311,11 +312,12 @@ static int numcount;
 #endif
 
 /**
-  Start drawing a complex filled polygon.  The polygon may be concave, may
-  have holes in it, or may be several disconnected pieces. Call fl_gap() to
-  seperate loops of the path.
+  Starts drawing a complex filled polygon.
 
-  To outline the polygone, use fl_begin_loop() and reaplace each fl_gap()
+  The polygon may be concave, may have holes in it, or may be several
+  disconnected pieces. Call fl_gap() to separate loops of the path.
+
+  To outline the polygon, use fl_begin_loop() and replace each fl_gap()
   with fl_end_loop();fl_begin_loop() pairs.
 
   \note
@@ -333,6 +335,7 @@ void fl_begin_complex_polygon() {
 
 /**
   Call fl_gap() to separate loops of the path.
+
   It is unnecessary but harmless to call fl_gap() before the first vertex,
   after the last vertex, or several times in a row.
 */
@@ -350,7 +353,7 @@ void fl_gap() {
 }
 
 /**
-  End complex filled polygon, and draw
+  Ends complex filled polygon, and draws.
 */
 void fl_end_complex_polygon() {
   fl_gap();
@@ -382,7 +385,8 @@ void fl_end_complex_polygon() {
 // See fl_arc.c for portable version.
 
 /**
-  fl_circle() is equivalent to fl_arc(x,y,r,0,360) but may be faster.
+  fl_circle() is equivalent to fl_arc(x,y,r,0,360), but may be faster.
+
   It must be the \e only thing in the path: if you want a circle as part of
   a complex polygon you must use fl_arc()
   \param[in] x,y,r center and radius of circle

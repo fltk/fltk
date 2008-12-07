@@ -1,20 +1,25 @@
 /* This is the utf.c file from fltk2 adapted for use in my fltk1.1 port */
 
-/* Copyright 2006 by Bill Spitzak and others.
+/* Copyright 2006-2008 by Bill Spitzak and others.
  *
- * Permission to use, copy, modify, and distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
- * Please report all bugs and problems to "fltk-bugs@fltk.org".
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems on the following page:
+ *
+ *     http://www.fltk.org/str.php
  */
 
 // Modified to obey rfc3629, which limits unicode to 0-0x10ffff
@@ -30,8 +35,8 @@
    @{ */
   
   /**
-   Convert a Unicode character into a utf-8 sequnece.
-   \param[in] uc Unicode characte
+   Converts a Unicode character into a utf-8 sequence.
+   \param[in] uc Unicode character
    \param[out] text utf-8 sequence will be written here; if this pointer is
    \c NULL, only the length of the utf-8 sequence is calculated
    \return length of the sequence in bytes
@@ -46,8 +51,8 @@
    @{ */
   
   /**
-   Calculate the size of a utf-8 sequnce for a Unnicode character.
-   \param[in] uc Unicode characte
+   Calculate the size of a utf-8 sequence for a Unicode character.
+   \param[in] uc Unicode character
    \return length of the sequence in bytes
    */
   //FL_EXPORT int fl_utf8_size(Fl_Unichar uc);
@@ -497,7 +502,7 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
     possibly being "surrogate pairs" in the UTF-16 encoding used.
     On Unix wchar_t is 32 bits and each location is a character.
 
-    On Unix if a src word is greater than 0x10ffff then this is an
+    On Unix if a \a src word is greater than 0x10ffff then this is an
     illegal character according to RFC 3629. These are converted as
     though they are 0xFFFD (REPLACEMENT CHARACTER). Characters in the
     range 0xd800 to 0xdfff, or ending with 0xfffe or 0xffff are also
@@ -662,7 +667,7 @@ int fl_utf8locale(void) {
 
 /*! Convert the UTF-8 used by FLTK to the locale-specific encoding
     used for filenames (and sometimes used for data in files).
-    Unfortunatley due to stupid design you will have to do this as
+    Unfortunately due to stupid design you will have to do this as
     needed for filenames. This is a bug on both Unix and Windows.
 
     Up to \a dstlen bytes are written to \a dst, including a null
@@ -675,7 +680,8 @@ int fl_utf8locale(void) {
 
     If fl_utf8locale() returns true then this does not change the data.
     It is copied and truncated as necessary to
-    the destination buffer and \a srclen is always returned.  */
+    the destination buffer and \a srclen is always returned.
+*/
 unsigned fl_utf8to_mb(const char* src, unsigned srclen,
 		  char* dst, unsigned dstlen)
 {
@@ -800,7 +806,7 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen,
   return srclen;
 }
 
-/*! Examines the first \a srclen bytes in \a src and return a verdict
+/*! Examines the first \a srclen bytes in \a src and returns a verdict
     on whether it is UTF-8 or not.
     - Returns 0 if there is any illegal UTF-8 sequences, using the
       same rules as fl_utf8decode(). Note that some UCS values considered
