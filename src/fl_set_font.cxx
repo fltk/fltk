@@ -86,7 +86,7 @@ void Fl::set_font(Fl_Font fnum, Fl_Font from) {
   Fl::set_font(fnum, get_font(from));
 }
 /**
-    Get the string for this face.  This string is different for each
+    Gets the string for this face.  This string is different for each
     face. Under X this value is passed to XListFonts to get all the sizes
     of this face.
 */

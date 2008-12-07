@@ -27,7 +27,7 @@
 
 /**
   \file fl_line_style.cxx
-  \brief Line style drawing utility hiding  different platforms.
+  \brief Line style drawing utility hiding different platforms.
 */
 
 #include <FL/Fl.H>
@@ -51,7 +51,7 @@ void fl_quartz_restore_line_style_() {
 #endif
 
 /**
-  Set how to draw lines (the "pen").
+  Sets how to draw lines (the "pen").
   If you change this it is your responsibility to set it back to the default
   using \c fl_line_style(0).
 
@@ -65,7 +65,7 @@ void fl_quartz_restore_line_style_() {
 	     different and nicer than 1.
   \param[in] dashes A pointer to an array of dash lengths, measured in pixels.
              The first location is how long to draw a solid portion, the next
-	     is how long to draw the fap, then the solid, etc. It is terminated
+	     is how long to draw the gap, then the solid, etc. It is terminated
 	     with a zero-length entry. A \c NULL pointer or a zero-length
 	     array results in a solid line. Odd array sizes are not supported
 	     and result in undefined behavior.

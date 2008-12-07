@@ -82,7 +82,7 @@ void Fl::set_labeltype(Fl_Labeltype t,Fl_Label_Draw_F* f,Fl_Label_Measure_F*m)
 
 ////////////////////////////////////////////////////////////////
 
-/** draw label with arbitrary alignment in arbitrary box */
+/** Draws a label with arbitrary alignment in an arbitrary box. */
 void Fl_Label::draw(int X, int Y, int W, int H, Fl_Align align) const {
   if (!value && !image) return;
   table[type](this, X, Y, W, H, align);

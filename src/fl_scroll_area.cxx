@@ -136,7 +136,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
     }
   }
 
-  // Great, we can do an accelerated scroll insteasd of re-rendering
+  // Great, we can do an accelerated scroll instead of re-rendering
   BitBlt(fl_gc, dest_x, dest_y, src_w, src_h, fl_gc, src_x, src_y,SRCCOPY);
 
 #elif defined(__APPLE_QUARTZ__)

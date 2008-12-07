@@ -46,7 +46,7 @@ extern float fl_quartz_line_width_;
 #endif
 
 /**
-  Draw a 1-pixel border \e inside the given bounding box
+  Draws a 1-pixel border \e inside the given bounding box
 */
 void fl_rect(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
@@ -69,7 +69,7 @@ void fl_rect(int x, int y, int w, int h) {
 }
 
 /**
-  Color a rectangle that exactly files the given bounding box
+  Colors a rectangle that exactly fills the given bounding box
 */
 void fl_rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
@@ -91,7 +91,7 @@ void fl_rectf(int x, int y, int w, int h) {
 }
 
 /**
-  Draw horizontal line from x,y to x1,y
+  Draws a horizontal line from (x,y) to (x1,y)
 */
 void fl_xyline(int x, int y, int x1) {
 #if defined(USE_X11)
@@ -110,7 +110,7 @@ void fl_xyline(int x, int y, int x1) {
 }
 
 /**
-  Draw horizontal line from x,y to x1,y, then vertical from x1,y to x1,y2
+  Draws a horizontal line from (x,y) to (x1,y), then vertical from (x1,y) to (x1,y2)
 */
 void fl_xyline(int x, int y, int x1, int y2) {
 #if defined (USE_X11)
@@ -137,8 +137,8 @@ void fl_xyline(int x, int y, int x1, int y2) {
 }
 
 /**
-  Draw horizontal line from x,y to x1,y then a vertical from x1,y to x1,y2
-  and then another horizontal from x1,y2 to x3,y2
+  Draws a horizontal line from (x,y) to (x1,y), then a vertical from (x1,y) to (x1,y2)
+  and then another horizontal from (x1,y2) to (x3,y2)
 */
 void fl_xyline(int x, int y, int x1, int y2, int x3) {
 #if defined(USE_X11)
@@ -168,7 +168,7 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
 }
 
 /**
-  Draw a vertical line from x,y to x,y1
+  Draws a vertical line from (x,y) to (x,y1)
 */
 void fl_yxline(int x, int y, int y1) {
 #if defined(USE_X11)
@@ -189,7 +189,7 @@ void fl_yxline(int x, int y, int y1) {
 }
 
 /**
-  Draw a vertical line from x,y to x,y1 then a horizontal from x,y1 to x2,y1
+  Draws a vertical line from (x,y) to (x,y1), then a horizontal from (x,y1) to (x2,y1)
 */
 void fl_yxline(int x, int y, int y1, int x2) {
 #if defined(USE_X11)
@@ -216,8 +216,8 @@ void fl_yxline(int x, int y, int y1, int x2) {
 }
 
 /**
-  Draw a vertical line from x,y to x,y1 then a horizontal from x,y1 to x2,y1
-  then another vertical from x2,y1 to x2,y3
+  Draws a vertical line from (x,y) to (x,y1) then a horizontal from (x,y1)
+  to (x2,y1), then another vertical from (x2,y1) to (x2,y3)
 */
 void fl_yxline(int x, int y, int y1, int x2, int y3) {
 #if defined(USE_X11)
@@ -247,7 +247,7 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
 }
 
 /**
-  Draw a line from x,y to x1,y1
+  Draws a line from (x,y) to (x1,y1)
 */
 void fl_line(int x, int y, int x1, int y1) {
 #if defined(USE_X11)
@@ -270,7 +270,7 @@ void fl_line(int x, int y, int x1, int y1) {
 }
 
 /**
-  Draw a line from x,y to x1,y1 and another from x1,y1 to x2,y2
+  Draws a line from (x,y) to (x1,y1) and another from (x1,y1) to (x2,y2)
 */
 void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
 #if defined(USE_X11)
@@ -299,7 +299,7 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
 }
 
 /**
-  Outline a 3-sided polygon with lines
+  Outlines a 3-sided polygon with lines
 */
 void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
 #if defined(USE_X11)
@@ -326,7 +326,7 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
 }
 
 /**
-  Outline a 4-sided polygon with lines
+  Outlines a 4-sided polygon with lines
 */
 void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 #if defined(USE_X11)
@@ -356,7 +356,7 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 }
 
 /**
-  Fill a 3-sided polygon. The polygon must be convex.
+  Fills a 3-sided polygon. The polygon must be convex.
 */
 void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
   XPoint p[4];
@@ -382,7 +382,7 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
 }
 
 /**
-  Fill a 4-sided polygon. The polygon must be convex.
+  Fills a 4-sided polygon. The polygon must be convex.
 */
 void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   XPoint p[5];
@@ -410,7 +410,7 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 }
 
 /**
-  Draw a single pixel at the given coordinates
+  Draws a single pixel at the given coordinates
 */
 void fl_point(int x, int y) {
 #if defined(USE_X11)
@@ -496,7 +496,8 @@ void fl_restore_clip() {
 }
 
 /**
-  Replace the top of the clipping stack with a clipping region of any shape.
+  Replaces the top of the clipping stack with a clipping region of any shape.
+
   Fl_Region is an operating system specific type.
   \param[in] r clipping region
 */
@@ -515,7 +516,7 @@ Fl_Region fl_clip_region() {
 }
 
 /**
-  Intersect the current clip region with a rectangle and push this
+  Intersects the current clip region with a rectangle and pushes this
   new region onto the stack.
   \param[in] x,y,w,h position and size
 */
@@ -567,7 +568,8 @@ void fl_push_no_clip() {
 
 // pop back to previous clip:
 /**
-  Restore the previous clip region.
+  Restores the previous clip region.
+
   You must call fl_pop_clip() once for every time you call fl_push_clip().
   Unpredictable results may occur if the clip stack is not empty when
   you return to FLTK.
@@ -612,8 +614,9 @@ int fl_not_clipped(int x, int y, int w, int h) {
 
 // return rectangle surrounding intersection of this rectangle and clip:
 /**
-  Intersect the rectangle with the current clip region and return the
+  Intersects the rectangle with the current clip region and returns the
   bounding box of the result.
+
   Returns non-zero if the resulting rectangle is different to the original.
   This can be used to limit the necessary drawing to a rectangle.
   \a W and \a H are set to zero if the rectangle is completely outside
