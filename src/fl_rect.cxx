@@ -496,7 +496,7 @@ void fl_restore_clip() {
 }
 
 /**
-  Replace te top of the clipping stack with a clipping region of any shape.
+  Replace the top of the clipping stack with a clipping region of any shape.
   Fl_Region is an operating system specific type.
   \param[in] r clipping region
 */
@@ -567,8 +567,8 @@ void fl_push_no_clip() {
 
 // pop back to previous clip:
 /**
-  Restore the previious clip region.
-  You must call fl_pop_clip() omce for every time you call fl_push_clip().
+  Restore the previous clip region.
+  You must call fl_pop_clip() once for every time you call fl_push_clip().
   Unpredictable results may occur if the clip stack is not empty when
   you return to FLTK.
 */
@@ -584,11 +584,11 @@ void fl_pop_clip() {
   Does the rectangle intersect the current clip region?
   \param[in] x,y,w,h position and size of rectangle
   \returns non-zero if any of the rectangle intersects the current clip
-  region, If this returns 0 you don't have to draw the object.
+  region. If this returns 0 you don't have to draw the object.
 
   \note
   Under X this returns 2 if the rectangle is partially clipped, 
-  and 1 is it is entirely inside the clip region.
+  and 1 if it is entirely inside the clip region.
 */
 int fl_not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
@@ -615,7 +615,7 @@ int fl_not_clipped(int x, int y, int w, int h) {
   Intersect the rectangle with the current clip region and return the
   bounding box of the result.
   Returns non-zero if the resulting rectangle is different to the original.
-  Ths can be used to limit the necessary drawing to a rectangle.
+  This can be used to limit the necessary drawing to a rectangle.
   \a W and \a H are set to zero if the rectangle is completely outside
   the region.
   \param[in] x,y,w,h position and size of rectangle
