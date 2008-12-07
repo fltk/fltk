@@ -383,9 +383,10 @@ public:
 
 
 /**
- * this is the actual object that FLTK can drop somewhere
- * - the implementation is minimal, but it should work with all decent Win32 drop targets
- */
+  This is the actual object that FLTK can drop somewhere.
+
+  The implementation is minimal, but it should work with all decent Win32 drop targets
+*/
 class FLDataObject : public IDataObject
 {
   DWORD m_cRefCount;
@@ -484,10 +485,12 @@ public:
 
 
 /**
- * drag and drop whatever is in the cut-copy-paste buffer
- * - create a selection first using:
- *     Fl::copy(const char *stuff, int len, 0)
- */
+   Drag and drop whatever is in the cut-copy-paste buffer.
+
+   Create a selection first using:
+
+     Fl::copy(const char *stuff, int len, 0)
+*/
 int Fl::dnd()
 {
   DWORD dropEffect;

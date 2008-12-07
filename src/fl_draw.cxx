@@ -102,10 +102,11 @@ static bool handle_utf8_seq(const char * &s,char * &d) {
 }
 
 /**
- Copy \a from  to \a buf, replacing unprintable characters with ^X and \\nnn
+ Copy \a from to \a buf, replacing unprintable characters with ^X and \\nnn.
+
  Stop at a newline or if MAXBUF characters written to buffer.
  Also word-wrap if width exceeds maxw.
- Returns a pointer to the start of the next line of caharcters.
+ Returns a pointer to the start of the next line of characters.
  Sets n to the number of characters put into the buffer.
  Sets width to the width of the string in the current font.
 */
@@ -177,7 +178,7 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
 
 /**
   The same as fl_draw(const char*,int,int,int,int,Fl_Align,Fl_Image*,int) with
-  the addition of the \a callthis parameter, which is a pointer to text drawing
+  the addition of the \a callthis parameter, which is a pointer to a text drawing
   function such as fl_draw(const char*, int, int, int) to do the real work
 */
 void fl_draw(
@@ -328,11 +329,12 @@ void fl_draw(
 
 /**
   Fancy string drawing function which is used to draw all the labels.
+
   The string is formatted and aligned inside the passed box.
-  Handles '\\t' and '\\n', exapands all other control characters to '^X',
+  Handles '\\t' and '\\n', expands all other control characters to '^X',
   and aligns inside or against the edges of the box.
   See Fl_Widget::align() for values of \a align. The value FL_ALIGN_INSIDE
-  is ignored, as this functon always prints inside the box.
+  is ignored, as this function always prints inside the box.
   If \a img is provided and is not \a NULL, the image is drawn above or
   below the text as specified by the \a align value.
   The \a draw_symbols argument specifies whether or not to look for symbol

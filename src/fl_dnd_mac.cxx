@@ -22,8 +22,8 @@
 //
 // Please report all bugs and problems to "fltk-bugs@fltk.org
 
-// This file contains win32-specific code for fltk which is always linked
-// in.  Search other files for "WIN32" or filenames ending in _win32.cxx
+// This file contains MacOS-specific code for fltk which is always linked
+// in.  Search other files for "__APPLE__" or filenames ending in _mac.cxx
 // for other system-specific code.
 
 #include <config.h>
@@ -32,7 +32,7 @@
 #include <FL/Fl_Window.H>
 
 // warning: this function is only implemented in Quickdraw. The function
-//          below may not work If FLTK is compiled with Quartz enabled
+//          below may not work if FLTK is compiled with Quartz enabled
 
 extern EventRef fl_os_event;
 extern char *fl_selection_buffer;
