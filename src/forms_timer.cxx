@@ -137,14 +137,13 @@ Fl_Timer::~Fl_Timer() {
   Creates a new Fl_Timer widget using the given type, position,
   size, and label string. The type parameter can be any of the
   following symbolic constants:
-  <UL>
-  <LI>FL_NORMAL_TIMER - The timer just does the callback  and
-  displays the string "Timer" in the widget. </LI>
-  <LI>FL_VALUE_TIMER - The timer does the callback and  displays
-  the current timer value in the widget. </LI>
-  <LI>FL_HIDDEN_TIMER - The timer just does the callback  and
-  does not display anything. </LI>
-  </UL>
+
+  \li	FL_NORMAL_TIMER - The timer just does the callback and
+	displays the string "Timer" in the widget.
+  \li	FL_VALUE_TIMER - The timer does the callback and displays
+	the current timer value in the widget.
+  \li	FL_HIDDEN_TIMER - The timer just does the callback and
+	does not display anything.
 */
 Fl_Timer::Fl_Timer(uchar t, int X, int Y, int W, int H, const char* l)
 

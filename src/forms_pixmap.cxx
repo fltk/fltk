@@ -28,7 +28,7 @@
 #include <FL/forms.H>
 
 /**
-  Creates a new Fl_FormsPixmap widet using the given box type, position,
+  Creates a new Fl_FormsPixmap widget using the given box type, position,
   size and label string.
   \param[in] t box type
   \param[in] X, Y, W, H position and size
