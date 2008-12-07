@@ -288,7 +288,7 @@ void fl_beep(int type) {
   }
 #endif // WIN32
 }
-/** Shows  an information message dialog box
+/** Shows an information message dialog box
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
  */
 void fl_message(const char *fmt, ...) {
@@ -391,9 +391,10 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
   return r;
 }
 
-/** Shows an input dialog displaying the \a fmt message,
-    like fl_input except the input text is not shown,
-    '*' characters are displayed instead
+/** Shows an input dialog displaying the \a fmt message.
+
+    Like fl_input() except the input text is not shown,
+    '*' characters are displayed instead.
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] defstr defines the default returned string if no text is entered
    \return the user string input if OK was pushed, NULL if Cancel was pushed

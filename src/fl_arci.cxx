@@ -56,9 +56,9 @@
   much nicer small circles, since the small sizes are often hard-coded bitmaps.
 
   If a complete circle is drawn it will fit inside the passed bounding box.
-  The two angles are measured in degrees counterclockwise from 3'oclock and
-  are the starting and ending angle of the arc, a2 must be greater or equal
-  to a1.
+  The two angles are measured in degrees counterclockwise from 3 o'clock and
+  are the starting and ending angle of the arc, \a a2 must be greater or equal
+  to \a a1.
 
   fl_arc() draws a series of lines to approximate the arc. Notice that the
   integer version of fl_arc() has a different number of arguments than the
@@ -66,8 +66,8 @@
 
   \param[in] x,y,w,h bounding box of complete circle
   \param[in] a1,a2 start and end angles of arc measured in degrees
-             counter-clockwise from 3 o'clock.  a2 must be greater
-	     than or equal to a1.
+             counter-clockwise from 3 o'clock. \a a2 must be greater
+	     than or equal to \a a1.
 */
 void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
@@ -105,14 +105,14 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
 /**
   Draw filled ellipse sections using integer coordinates.
   
-  Like fl_arc, but fl_pie() draws a filled-in pie slice.
-  This slice may extend outside the line drawn by fl_arc;
+  Like fl_arc(), but fl_pie() draws a filled-in pie slice.
+  This slice may extend outside the line drawn by fl_arc();
   to avoid this use w - 1 and h - 1.
 
   \param[in] x,y,w,h bounding box of complete circle
   \param[in] a1,a2 start and end angles of arc measured in degrees
-             counter-clockwise from 3 o'clock.  a2 must be greater
-	     than or equal to a1.
+             counter-clockwise from 3 o'clock. \a a2 must be greater
+	     than or equal to \a a1.
 */
 void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;

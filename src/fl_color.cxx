@@ -408,7 +408,7 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
 
 /**
   Returns the weighted average color between the two given colors.
-  The red, green abd blue values are averages using the following formula:
+  The red, green and blue values are averages using the following formula:
   \code
   color = color1 * weight  + color2 * (1 - weight)
   \endcode

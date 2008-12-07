@@ -49,7 +49,7 @@ static double _fl_hypot(double x, double y) {
   \param[in] x,y,r center and radius of circular arc
   \param[in] start,end angles of start and end of arc measured in degrees
              counter-clockwise from 3 o'clock. If \a end is less than \a start
-	     then it draws the ark in a clockwise direction.
+	     then it draws the arc in a clockwise direction.
 */
 void fl_arc(double x, double y, double r, double start, double end) {
 
