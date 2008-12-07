@@ -70,7 +70,7 @@ uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
   The string \a s must contain groups of 4 letters which specify one of 24
   standard grayscale values, where 'A' is black and 'X' is white.
   The order of each set of 4 characters is: top, left, bottom, right.
-  The resuls of calling fl_frame() with a string that is not a multiple
+  The result of calling fl_frame() with a string that is not a multiple
   of 4 characters in length is undefined.
   The only difference between this function and fl_frame2() is the order
   of the line segments.
@@ -104,7 +104,7 @@ void fl_frame(const char* s, int x, int y, int w, int h) {
   The string \a s must contain groups of 4 letters which specify one of 24
   standard grayscale values, where 'A' is black and 'X' is white.
   The order of each set of 4 characters is: bottom, right, top, left.
-  The resuls of calling fl_frame2() with a string that is not a multiple
+  The result of calling fl_frame2() with a string that is not a multiple
   of 4 characters in length is undefined.
   The only difference between this function and fl_frame() is the order
   of the line segments.
@@ -227,7 +227,7 @@ void fl_embossed_box(int x, int y, int w, int h, Fl_Color c) {
 }
 
 /**
-  Draws a bounded rectangle with a given position, size and color,
+  Draws a bounded rectangle with a given position, size and color.
   Equivalent to drawing a box of type FL_BORDER_BOX.
 */
 void fl_rectbound(int x, int y, int w, int h, Fl_Color bgcolor) {
@@ -320,23 +320,22 @@ int Fl::box_dx(Fl_Boxtype t) {return fl_box_table[t].dx;}
 
 /**
     Returns the Y offset for the given boxtype.
-    
+
     These functions return the offset values necessary for a given
     boxtype, useful for computing the area inside a box's borders, to
     prevent overdrawing the borders.
-    
+
     For instance, in the case of a boxtype like FL_DOWN_BOX
     where the border width might be 2 pixels all around, the above 
     functions would return 2, 2, 4, and 4 for box_dx, 
-    box_dy, box_dw, and box_dh
-    respectively.
-    
+    box_dy, box_dw, and box_dh respectively.
+
     An example to compute the area inside a widget's box():
     \code
-         int X = yourwidget-&gt;x() + Fl::box_dx(yourwidget-&gt;box());
-         int Y = yourwidget-&gt;y() + Fl::box_dy(yourwidget-&gt;box());
-         int W = yourwidget-&gt;w() - Fl::box_dw(yourwidget-&gt;box());
-         int H = yourwidget-&gt;h() - Fl::box_dh(yourwidget-&gt;box());
+         int X = yourwidget->x() + Fl::box_dx(yourwidget->box());
+         int Y = yourwidget->y() + Fl::box_dy(yourwidget->box());
+         int W = yourwidget->w() - Fl::box_dw(yourwidget->box());
+         int H = yourwidget->h() - Fl::box_dh(yourwidget->box());
     \endcode
     These functions are mainly useful in the draw() code 
     for deriving custom widgets, where one wants to avoid drawing 
@@ -357,7 +356,7 @@ int Fl::box_dw(Fl_Boxtype t) {return fl_box_table[t].dw;}
 int Fl::box_dh(Fl_Boxtype t) {return fl_box_table[t].dh;}
 
 /**
-  Set the drawing function for a given box type.
+  Sets the drawing function for a given box type.
   \param[in] t box type
   \param[in] f box drawing function
 */
@@ -388,7 +387,7 @@ void Fl::set_boxtype(Fl_Boxtype to, Fl_Boxtype from) {
 }
 
 /**
-  Draw box using given type, position, size and color
+  Draws a box using given type, position, size and color.
   \param[in] t box type
   \param[in] x, y, w, h position and size
   \param[in] c color
@@ -409,11 +408,11 @@ void Fl_Widget::draw_box() const {
 //   }
   draw_box((Fl_Boxtype)t, x_, y_, w_, h_, (Fl_Color)color_);
 }
-/** Draws a box of type b, of color c at the widget position and size. */
+/** Draws a box of type b, of color c at the widget's position and size. */
 void Fl_Widget::draw_box(Fl_Boxtype b, Fl_Color c) const {
   draw_box(b, x_, y_, w_, h_, c);
 }
-/** Draws a box of type b, of color c at the widget position X,Y and size W,H. */
+/** Draws a box of type b, of color c at the position X,Y and size W,H. */
 void Fl_Widget::draw_box(Fl_Boxtype b, int X, int Y, int W, int H, Fl_Color c) const {
   draw_it_active = active_r();
   fl_box_table[b].f(X, Y, W, H, c);

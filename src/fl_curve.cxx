@@ -32,14 +32,8 @@
 
   Incremental math implementation:
   I very much doubt this is optimal!  From Foley/vanDam page 511.
-  If anybody has a better algorithim, please send it!
+  If anybody has a better algorithm, please send it!
 */
-
-// Utility for drawing Bezier curves, adding the points to
-// the current fl_begin/fl_vertex/fl_end path.
-// Incremental math implementation:
-// I very much doubt this is optimal!  From Foley/vanDam page 511.
-// If anybody has a better algorithim, please send it!
 
 #include <FL/fl_draw.H>
 #include <math.h>
