@@ -377,7 +377,7 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
 }
 
 /**
-  Deletes all child widgets from memory recursively.</p>
+  Deletes all child widgets from memory recursively.
 
   This method differs from the remove() method in that it
   affects all child widgets and deletes them from memory.
