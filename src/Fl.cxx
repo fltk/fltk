@@ -1467,10 +1467,9 @@ static Fl_Widget	**dwidgets = 0;
   Use this method to delete a widget inside a callback function. 
   To avoid early deletion of widgets, this function
   should be called toward the end of a callback and only after any call 
-  to the event loop (Fl:wait(), Fl::flush(), 
-  fl_ask(), etc).</p>
-  
-  <p>When deleting groups or windows, you must only delete the group or
+  to the event loop (Fl:wait(), Fl::flush(), fl_ask(), etc).
+
+  When deleting groups or windows, you must only delete the group or
   window widget and not the individual child widgets.
 */
 void Fl::delete_widget(Fl_Widget *wi) {
@@ -1495,7 +1494,14 @@ void Fl::delete_widget(Fl_Widget *wi) {
 
 /** 
     Deletes widgets previously scheduled for deletion.
-    See void Fl::delete_widget(Fl_Widget *wi) 
+    
+    This is for internal use only. You should never call this directly.
+
+    Fl::do_widget_deletion() is called from the FLTK event loop or whenever
+    you call Fl::wait(). The previously scheduled widgets are deleted in the
+    same order they were scheduled by calling Fl::delete_widget().
+
+    \see Fl::delete_widget(Fl_Widget *wi)
 */
 void Fl::do_widget_deletion() {
   if (!num_dwidgets) return;
@@ -1509,9 +1515,44 @@ void Fl::do_widget_deletion() {
 static Fl_Widget ***widget_watch = 0;
 static int num_widget_watch = 0;
 static int max_widget_watch = 0;
-/** Adds a widget pointer to the watch list. 
-   \todo explain the role of the watch list, 
-   it may be related to invalid widget deletion crash fixes... */
+
+/**
+  Adds a widget pointer to the widget watch list.
+
+   This should be used, if it is possible that a widget might be deleted during
+   a callback or similar function. The widget pointer must be added to the
+   watch list before calling the callback. After the callback the widget
+   pointer can be queried, if it is NULL. \e If it is NULL, then the widget has been
+   deleted during the callback and must not be accessed anymore. If the widget
+   pointer is \e not NULL, then the widget has not been deleted and can be accessed
+   safely.
+
+   After accessing the widget, the widget pointer should be released from the
+   watch list by calling Fl::release_widget_pointer().
+
+   Example for a button that is clicked (from its handle() method):
+   \code
+     Fl_Widget *wp = this;		// save 'this' in a pointer variable
+     Fl::watch_widget_pointer(wp);	// add the pointer to the watch list
+     set_changed();			// set the changed flag
+     do_callback();			// call the callback
+     if (!wp) {				// the widget has been deleted
+
+       // DO NOT ACCESS THE DELETED WIDGET !
+
+     } else {				// the widget still exists
+       clear_changed();			// reset the changed flag
+     }
+
+     Fl::release_widget_pointer(wp);	// remove the pointer from the watch list
+    \endcode
+
+    This works, because all widgets call Fl::clear_widget_pointer() in their
+    destructors.
+    
+    \see Fl::release_widget_pointer()
+    \see Fl::clear_widget_pointer()
+*/
 void Fl::watch_widget_pointer(Fl_Widget *&w) 
 {
   Fl_Widget **wp = &w;
@@ -1532,7 +1573,14 @@ void Fl::watch_widget_pointer(Fl_Widget *&w)
   widget_watch[num_widget_watch++] = wp;
 }
 
-/** Releases a widget pointer to the watch list */
+/**
+  Releases a widget pointer from the watch list.
+
+  This is used to remove a widget pointer that has been added to the watch list
+  with Fl::watch_widget_pointer(), when it is not needed anymore.
+
+  \see Fl::watch_widget_pointer()
+*/
 void Fl::release_widget_pointer(Fl_Widget *&w)
 {
   Fl_Widget **wp = &w;
@@ -1544,7 +1592,18 @@ void Fl::release_widget_pointer(Fl_Widget *&w)
     }
   }
 }
-/** Clears a widget pointer in the watch list */
+/**
+  Clears a widget pointer \e in the watch list.
+
+  This is called when a widget is destroyed (by its destructor). You should never
+  call this directly.
+  
+  This method searches the widget watch list for pointers to the widget and clears
+  all pointers that point to it. Widget pointers can be added to the widget
+  watch list by calling Fl::watch_widget_pointer().
+  
+  \see Fl::watch_widget_pointer()
+*/
 void Fl::clear_widget_pointer(Fl_Widget const *w) 
 {
   if (w==0L) return;

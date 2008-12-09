@@ -831,7 +831,19 @@ public:
   /** @} */
 
   /** \defgroup fl_del_widget Safe widget deletion support functions
-	fl multithreading support functions
+
+	These functions support deletion of widgets inside callbacks.
+
+	There are two groups of related methods:
+
+	  -# scheduled widget deletion
+	    - Fl::delete_widget() schedules widgets for deletion
+	    - Fl::do_widget_deletion() deletes all scheduled widgets
+	  -# widget watch list ("smart pointers")
+	    - Fl::watch_widget_pointer() adds a widget pointer to the watch list
+	    - Fl::release_widget_pointer() removes a widget pointer from the watch list
+	    - Fl::clear_widget_pointer() clears a widget pointer \e in the watch list
+
    @{ */
   // Widget deletion:
   static void delete_widget(Fl_Widget *w);
