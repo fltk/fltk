@@ -41,6 +41,7 @@ Fl_Group* Fl_Group::current_;
 
 // Hack: A single child is stored in the pointer to the array, while
 // multiple children are stored in an allocated array:
+
 /**
   Returns a pointer to the array of children. <I>This pointer is only
   valid until the next time a child is added or removed.</I>
@@ -50,8 +51,8 @@ Fl_Widget*const* Fl_Group::array() const {
 }
 
 /**
-  Searches the child array for the widget and returns the index. Returns children() if the widget is 
-  NULL or not found.
+  Searches the child array for the widget and returns the index. Returns children()
+  if the widget is NULL or not found.
 */
 int Fl_Group::find(const Fl_Widget* o) const {
   Fl_Widget*const* a = array();
@@ -61,25 +62,32 @@ int Fl_Group::find(const Fl_Widget* o) const {
 
 // Metrowerks CodeWarrior and others can't export the static
 // class member: current_, so these methods can't be inlined...
+
 /**
   Sets the current group so you can build the widget
-  tree by just constructing the widgets. begin() is
-  automatically called by the constructor for Fl_Group (and thus for
-  Fl_Window as well). begin() <i>is exactly the same as</i> current(this).
-  <P><I>Don't forget to end() the group or window!</I>
+  tree by just constructing the widgets.
+
+  begin() is automatically called by the constructor for Fl_Group (and thus for
+  Fl_Window as well). begin() <I>is exactly the same as</I> current(this).
+  <I>Don't forget to end() the group or window!</I>
 */
 void Fl_Group::begin() {current_ = this;}
+
 /**
-  <i>Exactly the same as</i> current(this-&gt;parent()). Any new widgets
+  <I>Exactly the same as</I> current(this->parent()). Any new widgets
   added to the widget tree will be added to the parent of the group.
 */
 void Fl_Group::end() {current_ = (Fl_Group*)parent();}
+
 /**
-  Returns the currently active group.  The Fl_Widget
-  constructor automatically does current()-&gt;add(widget) if this is not null.
-  To prevent new widgets from being added to a group, call Fl_Group::current(0).
+  Returns the currently active group.
+  
+  The Fl_Widget constructor automatically does current()->add(widget) if this
+  is not null. To prevent new widgets from being added to a group, call
+  Fl_Group::current(0).
 */
 Fl_Group *Fl_Group::current() {return current_;}
+
 /**
   See static Fl_Group *Fl_Group::current() 
 */
@@ -369,10 +377,9 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
 }
 
 /**
-  The clear() method deletes all child widgets from
-  memory recursively.</p>
-  
-  <p>This method differs from the remove() method in that it
+  Deletes all child widgets from memory recursively.</p>
+
+  This method differs from the remove() method in that it
   affects all child widgets and deletes them from memory.
 */
 void Fl_Group::clear() {
@@ -406,9 +413,9 @@ Fl_Group::~Fl_Group() {
 }
 
 /**
-  The widget is removed from it's current group (if any) and then
+  The widget is removed from its current group (if any) and then
   inserted into this group. It is put at index n (or at the end
-  if n &gt;= children().  This can also be used to rearrange
+  if n >= children(). This can also be used to rearrange
   the widgets inside a group.
 */
 void Fl_Group::insert(Fl_Widget &o, int index) {
@@ -441,19 +448,18 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
 }
 
 /**
-  The widget is removed from it's current group (if any) and then added
+  The widget is removed from its current group (if any) and then added
   to the end of this group.
 */
 void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
 
 /**
-  Removes a widget from the group but does not delete it. This
-  method does nothing if the widget is not a child of the
-  group.
-  
-  <p>This method differs from the clear() method in that it
-  only affects a single widget and does not delete it from
-  memory.
+  Removes a widget from the group but does not delete it.
+
+  This method does nothing if the widget is not a child of the group.
+
+  This method differs from the clear() method in that it only affects
+  a single widget and does not delete it from memory.
 */
 void Fl_Group::remove(Fl_Widget &o) {
   if (!children_) return;
@@ -486,8 +492,8 @@ void Fl_Group::remove(Fl_Widget &o) {
 // also uses this array!
 
 /**
-  This resets the internal array of widget sizes and positions.
-  
+  Resets the internal array of widget sizes and positions.
+
   The Fl_Group widget keeps track of the original widget sizes and
   positions when resizing occurs so that if you resize a window back to its
   original size the widgets will be in the correct places. If you rearrange
@@ -506,17 +512,17 @@ void Fl_Group::init_sizes() {
 }
 
 /**
-  This returns the internal array of widget sizes and positions.
-  
+  Returns the internal array of widget sizes and positions.
+
   If the sizes() array does not exist, it will be allocated and filled
   with the current widget sizes and positions.
-  
+
   \note You should never need to use this method directly, unless you have
   special needs to rearrange the children of a Fl_Group. Fl_Tile uses
   this to rearrange its widget positions.
-  
-  \todo should the internal representation of the sizes() array be documented?
-*/  
+
+  \todo Should the internal representation of the sizes() array be documented?
+*/
 int* Fl_Group::sizes() {
   if (!sizes_) {
     int* p = sizes_ = new int[4*(children_+2)];
@@ -549,13 +555,14 @@ int* Fl_Group::sizes() {
   }
   return sizes_;
 }
+
 /**
-  This resizes the Fl_Group widget and all of its children.
-  
+  Resizes the Fl_Group widget and all of its children.
+
   The Fl_Group widget first resizes itself, and then it moves and resizes
   all its children according to the rules documented for
   Fl_Group::resizable(Fl_Widget*)
-  
+
   \sa Fl_Group::resizable(Fl_Widget*)
   \sa Fl_Group::resizable()
   \sa Fl_Widget::resize(int,int,int,int)
@@ -635,8 +642,8 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 }
 
 /**
-  This draws all children of the group.
-  
+  Draws all children of the group.
+
   This is useful, if you derived a widget from Fl_Group and want to draw a special
   border or background. You can call draw_children() from the derived draw() method
   after drawing the box, border, or background.
@@ -674,9 +681,10 @@ void Fl_Group::draw() {
 
 /**
   Draws a child only if it needs it.
+
   This draws a child widget, if it is not clipped \em and if any damage() bits
   are set. The damage bits are cleared after drawing.
-  
+
   \sa Fl_Group::draw_child(Fl_Widget& widget) const
 */
 void Fl_Group::update_child(Fl_Widget& widget) const {
@@ -687,8 +695,9 @@ void Fl_Group::update_child(Fl_Widget& widget) const {
   }
 }
 
+/**
+  Forces a child to redraw.
 
-/** Forces a child to redraw.
   This draws a child widget, if it is not clipped.
   The damage bits are cleared after drawing.
 */
