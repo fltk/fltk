@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-// This method is in it's own source file so that stdlib and stdio
+// This method is in its own source file so that stdlib and stdio
 // do not need to be included in Fl.cxx:
 // You can also override this by redefining all of these.
 
