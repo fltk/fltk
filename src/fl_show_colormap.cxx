@@ -148,7 +148,7 @@ Fl_Color ColorMenu::run() {
   Fl::grab(*this);
   done = 0;
   while (!done) Fl::wait();
-  Fl::release();
+  Fl::grab(0);
   return which;
 }
 

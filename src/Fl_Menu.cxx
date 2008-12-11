@@ -802,7 +802,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   if (menubar) {
     // find the initial menu
     if (!mw.handle(FL_DRAG)) {
-      Fl::release();
+      Fl::grab(0);
       return 0;
     }
   }
@@ -906,7 +906,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     }
   }
   const Fl_Menu_Item* m = pp.current_item;
-  Fl::release();
+  Fl::grab(0);
   delete pp.fakemenu;
   while (pp.nummenus>1) delete pp.p[--pp.nummenus];
   mw.hide();
