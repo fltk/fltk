@@ -115,7 +115,7 @@ InputPath=..\..\test\fast_slow.fl
 InputPath=..\..\test\fast_slow.fl
 
 "..\..\test\fast_slow.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\test 
+	cd ..\..\test 
 	..\fluid\fluidd -c fast_slow.fl 
 	cd ..\ide\visualc 
 	

@@ -50,7 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\lib\fltkz.lib"
+# ADD LIB32 /nologo /out:"..\..\lib\fltkz.lib"
 
 !ELSEIF  "$(CFG)" == "zlib - Win32 Debug"
 
@@ -73,7 +73,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LIB32=link.exe -lib
 # ADD BASE LIB32 /nologo
-# ADD LIB32 /nologo /out:"..\lib\fltkzd.lib"
+# ADD LIB32 /nologo /out:"..\..\lib\fltkzd.lib"
 
 !ENDIF 
 
