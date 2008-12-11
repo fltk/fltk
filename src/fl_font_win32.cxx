@@ -239,7 +239,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   GLYPHMETRICS metrics;
   int maxw = 0, maxh = 0, dh;
   int minx = 0, miny = -999999;
-  unsigned len = 0;
+  unsigned len = 0, idx = 0;
 
   // Have we loaded the GetGlyphIndicesW function yet?
   if (have_loaded_GetGlyphIndices == 0) {
@@ -266,7 +266,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   }
 
   // now we have the glyph array we measure each glyph in turn...
-  for(unsigned idx = 0; idx < len; idx++){
+  for(idx = 0; idx < len; idx++){
     if (GetGlyphOutlineW (fl_gc, gi[idx], GGO_METRICS | GGO_GLYPH_INDEX,
 					      &metrics, 0, NULL, &matrix) == GDI_ERROR) {
                     goto exit_error;
