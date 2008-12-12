@@ -809,8 +809,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
       minimal_update(mark_, position_);
   case FL_HIDE:
     fl_reset_spot();
-    if (!readonly() &&
-	(when() & (FL_WHEN_RELEASE | FL_WHEN_NOT_CHANGED)))
+    if (!readonly() && (when() & FL_WHEN_RELEASE))
       maybe_do_callback();
     return 1;
 
