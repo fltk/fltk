@@ -230,7 +230,7 @@ void Fl_Gl_Window::make_overlay_current() {
     glDrawBuffer(GL_FRONT);
 #endif
 }
-/** Hides the  window if it is not this window, does nothing in WIN32*/
+/** Hides the  window if it is not this window, does nothing in WIN32. */
 void Fl_Gl_Window::hide_overlay() {
 #if HAVE_GL_OVERLAY
 #ifdef WIN32

@@ -448,7 +448,7 @@ Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char *L)
 }
 
 /**
-  Updates the browser so that \a line is shown at position \pos.
+  Updates the browser so that \a line is shown at position \a pos.
   \param[in] line line number.
   \param[in] pos position.
 */

@@ -179,41 +179,40 @@ int Fl_Menu_Item::add(
 /**
   Adds a new menu item, with a title string,  shortcut int (or string), 
   callback, argument to the  callback, and flags.  
-  If the menu array was directly set with menu(x) then copy() is done 
+  If the menu array was directly set with menu(x), then copy() is done 
   to make a private array.
   
-  <p>The characters "&", "/", "\", and "_" are treated as
+  The characters "&", "/", "\", and "_" are treated as
   special characters in the label string. The "&" character
   specifies that the following character is an accelerator and
   will be underlined. The "\" character is used to escape the next
   character in the string. Labels starting with the "_" character
-  cause a divider to be placed after that menu item.</p>
+  cause a divider to be placed after that menu item.
   
-  <p>A label of the form "foo/bar/baz" will create a
-  submenus called "foo" and "bar" with an
-  entry called "baz". The "/" character is ignored if it
-  appears as the first character of the label string, e.g.
-  "/foo/bar/baz".</p>
+  A label of the form "foo/bar/baz" will create submenus called 
+  "foo" and "bar" with an entry called "baz". The "/" character is 
+  ignored if it appears as the first character of the label string, e.g.
+  "/foo/bar/baz".
   
-  <p>The label string is copied to new memory and can be freed.
+  The label string is copied to new memory and can be freed.
   The other arguments (including the shortcut) are copied into the
-  menu item unchanged. </P>
+  menu item unchanged.
   
-  <P>If an item exists already with that name then it is replaced with
+  If an item exists already with that name then it is replaced with
   this new one.  Otherwise this new one is added to the end of the
   correct menu or submenu.  The return value is the offset into the array
-  that the new entry was placed at.</P>
+  that the new entry was placed at.
   
-  <P>Shortcut can be 0L, or either a modifier/key combination (for example
-  FL_CTRL+'A') or a string describing the shortcut in one of two ways:</p>
+  Shortcut can be 0L, or either a modifier/key combination (for example
+  FL_CTRL+'A') or a string describing the shortcut in one of two ways:
   
   \code
-   [#+^]&lt;ascii_value&gt;    eg. "97", "^97", "+97", "#97"
-   [#+^]&lt;ascii_char&gt;     eg. "a", "^a", "+a", "#a"
+   [#+^]<ascii_value>    e.g. "97", "^97", "+97", "#97"
+   [#+^]<ascii_char>     e.g. "a", "^a", "+a", "#a"
   \endcode
-  ..where &lt;ascii_value&gt; is a decimal value representing an
+  ..where \<ascii_value\> is a decimal value representing an
   ascii character (eg. 97 is the ascii for 'a'), and the optional
-  prefixes enhance the value  that follows. Multiple prefixes must
+  prefixes enhance the value that follows. Multiple prefixes must
   appear in the above order.
   \code
    # - Alt
@@ -223,11 +222,9 @@ int Fl_Menu_Item::add(
   Text shortcuts are converted to integer shortcut by calling 
   int fl_old_shortcut(const char*).
   
-  <P>The return value is the index into the array that the entry was put. </P>
+  The return value is the index into the array that the entry was put.
   
-  <P>No items must be added to a menu during a callback to the same menu.</P>
-  
-  
+  No items must be added to a menu during a callback to the same menu.
  */
 int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
   // make this widget own the local array:
@@ -280,9 +277,9 @@ int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
   add(s,0,0,0,0) is done with each section. This is
   often useful if you are just using the value, and is compatible
   with Forms and other GL programs. The section strings use the
-  same special characters as described for the long version of add()</p>
-  
-  <P>No items must be added to a menu during a callback to the same menu.
+  same special characters as described for the long version of add().
+
+  No items must be added to a menu during a callback to the same menu.
 */
 int Fl_Menu_::add(const char *str) {
   char buf[1024];
@@ -302,7 +299,7 @@ int Fl_Menu_::add(const char *str) {
 }
 
 /**
-  Changes the text of item n.  This is the only way to get
+  Changes the text of item \a i.  This is the only way to get
   slash into an add()'ed menu item.  If the menu array was directly set
   with menu(x) then copy() is done to make a private array.
 */
@@ -316,10 +313,10 @@ void Fl_Menu_::replace(int i, const char *str) {
   menu_[i].text = str;
 }
 /**
-  Deletes item n from the menu.  If the menu array was directly
+  Deletes item \a i from the menu.  If the menu array was directly
   set with menu(x) then copy() is done to make a private array.
   
-  <P>No items must be removed from a menu during a callback to the same menu.
+  No items must be removed from a menu during a callback to the same menu.
 */
 void Fl_Menu_::remove(int i) {
   int n = size();

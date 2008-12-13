@@ -103,7 +103,7 @@ Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char
 
 
 /**
-   \brief Gnerate or read a new group of entries within another group. 
+   \brief Generate or read a new group of entries within another group. 
 
    Use the \a group argument to name the group that you would like to access.
    \a Group can also contain a path to a group further down the hierarchy by
@@ -150,8 +150,7 @@ Fl_Preferences::~Fl_Preferences()
 
 
 /**
-   Returns the number of groups that are contained within a
-   group.
+   Returns the number of groups that are contained within a group.
   
    \return 0 for no groups at all
  */
@@ -162,9 +161,9 @@ int Fl_Preferences::groups()
 
 
 /**
-   Returns the name of the Nth group. There is no guaranteed
-   order  of group names. The index must be within the range given
-   by groups().
+   Returns the name of the Nth (\a num_group) group.
+   There is no guaranteed order of group names. The index must
+   be within the range given by groups().
      
    \param[in] num_group number indexing the requested group
    \return 'C' string pointer to the group name
@@ -193,7 +192,7 @@ char Fl_Preferences::groupExists( const char *key )
 /**
    Deletes a group.
 
-   Remove a group and all keys and groups within that group
+   Removes a group and all keys and groups within that group
    from the database.
    
    \param[in] group name of the group to delete
@@ -245,10 +244,9 @@ char Fl_Preferences::entryExists( const char *key )
 
 
 /**
-   Delete a single name/value pair.
+   Deletes a single name/value pair.
    
-   This function removes the entry from the
-   database.
+   This function removes the entry \a key from the database.
  
    \param[in] key name of entry to delete
    \return 0 if deleting the entry failed
@@ -697,8 +695,8 @@ char Fl_Preferences::getUserdataPath( char *path, int pathlen )
 }
 
 /**
- Write all preferences to disk. This function works only with
- the base preference group. This function is rarely used as
+ Writes all preferences to disk. This function works only with
+ the base preferences group. This function is rarely used as
  deleting the base preferences flushes automatically.
  */
 void Fl_Preferences::flush()
@@ -712,17 +710,17 @@ void Fl_Preferences::flush()
 //
 
 /**
- * Create a group name or entry name on the fly.
- * 
- * This version creates a simple unsigned integer as an entry name.
- *
- * \code
- *   int n, i;
- *   Fl_Preferences prev( appPrefs, "PreviousFiles" );
- *   prev.get( "n", 0 );
- *   for ( i=0; i<n; i++ )
- *     prev.get( Fl_Preferences::Name(i), prevFile[i], "" );
- * \endcode
+   Creates a group name or entry name on the fly.
+   
+   This version creates a simple unsigned integer as an entry name.
+  
+   \code
+     int n, i;
+     Fl_Preferences prev( appPrefs, "PreviousFiles" );
+     prev.get( "n", 0 );
+     for ( i=0; i<n; i++ )
+       prev.get( Fl_Preferences::Name(i), prevFile[i], "" );
+   \endcode
  */
 Fl_Preferences::Name::Name( unsigned int n )
 {
@@ -731,17 +729,17 @@ Fl_Preferences::Name::Name( unsigned int n )
 }
 
 /**
- * Create a group name or entry name on the fly.
- *
- * This version creates entry names as in 'printf'.
- * 
- * \code
- *   int n, i;
- *   Fl_Preferences prefs( USER, "matthiasm.com", "test" );
- *   prev.get( "nFiles", 0 );
- *   for ( i=0; i<n; i++ )
- *     prev.get( Fl_Preferences::Name( "File%d", i ), prevFile[i], "" );
- *  \endcode
+   Creates a group name or entry name on the fly.
+  
+   This version creates entry names as in 'printf'.
+   
+   \code
+     int n, i;
+     Fl_Preferences prefs( USER, "matthiasm.com", "test" );
+     prev.get( "nFiles", 0 );
+     for ( i=0; i<n; i++ )
+       prev.get( Fl_Preferences::Name( "File%d", i ), prevFile[i], "" );
+    \endcode
  */
 Fl_Preferences::Name::Name( const char *format, ... )
 {

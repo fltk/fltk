@@ -201,7 +201,7 @@ void Fl_Gl_Window::make_current() {
 }
 
 /**
-  Set the projection so 0,0 is in the lower left of the window and each
+  Sets the projection so 0,0 is in the lower left of the window and each
   pixel is 1 unit wide/tall.  If you are drawing 2D images, your 
   draw() method may want to call this if valid() is false.
 */
@@ -408,12 +408,12 @@ void Fl_Gl_Window::resize(int X,int Y,int W,int H) {
   Returns or sets a pointer to the GLContext that this window is
   using. This is a system-dependent structure, but it is portable to copy
   the context from one window to another. You can also set it to NULL,
-  which will force FLTK to recreate the context the next time make_current() is called, this is
-  useful for getting around bugs in OpenGL implementations.
+  which will force FLTK to recreate the context the next time make_current()
+  is called, this is useful for getting around bugs in OpenGL implementations.
   
-  <p>If <i>destroy_flag</i> is true the context will be destroyed by
-  fltk when the window is destroyed, or when the mode() is changed, or the next time
-  context(x) is called.
+  If <i>destroy_flag</i> is true the context will be destroyed by
+  fltk when the window is destroyed, or when the mode() is changed, 
+  or the next time context(x) is called.
 */
 void Fl_Gl_Window::context(void* v, int destroy_flag) {
   if (context_ && !(mode_&NON_LOCAL_CONTEXT)) fl_delete_gl_context(context_);
@@ -472,7 +472,8 @@ void Fl_Gl_Window::init() {
   using system-specific calls), and remember that you are in an indexed
   OpenGL mode and drawing anything other than flat-shaded will probably
   not work.
-  <P>Both this function and Fl_Gl_Window::draw() should check 
+
+  Both this function and Fl_Gl_Window::draw() should check 
   Fl_Gl_Window::valid() and set the same transformation.  If you
   don't your code may not work on other systems.  Depending on the OS,
   and on whether overlays are real or simulated, the OpenGL context may
@@ -483,16 +484,18 @@ void Fl_Gl_Window::draw_overlay() {}
 #endif
 
   /**
-  You <b>must</b> subclass Fl_Gl_Window and provide an implementation for 
+  You \e \b must subclass Fl_Gl_Window and provide an implementation for 
   draw().  You may also provide an implementation of draw_overlay()
   if you want to draw into the overlay planes.  You can avoid
   reinitializing the viewport and lights and other things by checking 
   valid() at the start of draw() and only doing the
   initialization if it is false.
-  <P>The draw() method can <I>only</I> use OpenGL calls.  Do not
-  attempt to call X, any of the functions in &lt;FL/fl_draw.H&gt;, or glX
-  directly.  Do not call gl_start() or gl_finish(). </P>
-  <P>If double-buffering is enabled in the window, the back and front
+
+  The draw() method can <I>only</I> use OpenGL calls.  Do not
+  attempt to call X, any of the functions in <FL/fl_draw.H>, or glX
+  directly.  Do not call gl_start() or gl_finish().
+
+  If double-buffering is enabled in the window, the back and front
   buffers are swapped after this function is completed.
 */
 void Fl_Gl_Window::draw() {

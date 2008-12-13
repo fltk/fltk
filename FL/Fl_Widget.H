@@ -588,7 +588,7 @@ public:
      
      \li 0: The callback is not done, but changed() is turned on.
      \li FL_WHEN_CHANGED: The callback is done each time the text is
-         changed by the user.</LI>
+         changed by the user.
      \li FL_WHEN_RELEASE: The callback will be done when this widget loses 
          the focus, including when the window is unmapped. This is a useful 
 	 value for text fields in a panel where doing the callback on every
