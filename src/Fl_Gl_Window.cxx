@@ -336,7 +336,7 @@ void Fl_Gl_Window::flush() {
       if (overlay == this) {
 	// don't draw if only the overlay is damaged:
 	if (damage1_ || damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
-	// we use a seperate context for the copy because rasterpos must be 0
+	// we use a separate context for the copy because rasterpos must be 0
 	// and depth test needs to be off:
 	static GLContext ortho_context = 0;
 	static Fl_Gl_Window* ortho_window = 0;

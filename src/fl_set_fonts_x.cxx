@@ -112,7 +112,7 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
       }
       *o = 0;
 
-    } else { // standard dash-seperated font:
+    } else { // standard dash-separated font:
 
       // get the family:
       const char *x = fl_font_word(p,2); if (*x) x++; if (*x=='*') x++;

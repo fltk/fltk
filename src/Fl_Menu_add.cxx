@@ -273,7 +273,7 @@ int Fl_Menu_::add(const char *t, int s, Fl_Callback *c,void *v,int f) {
 
 /**
   This is a Forms (and SGI GL library) compatible add function, it
-  adds many menu items, with '|' seperating the menu items, and tab
+  adds many menu items, with '|' separating the menu items, and tab
   separating the menu item names from an optional shortcut string.
 
   The passed string is split at any '|' characters and then

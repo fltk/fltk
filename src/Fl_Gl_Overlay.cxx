@@ -43,7 +43,7 @@ void Fl_Gl_Window::make_overlay() {overlay = this;}
 #else
 
 // Methods on Fl_Gl_Window that create an overlay window.  Because
-// many programs don't need the overlay, this is seperated into this
+// many programs don't need the overlay, this is separated into this
 // source file so it is not linked in if not used.
 
 // Under X this is done by creating another window, of class _Fl_Gl_Overlay

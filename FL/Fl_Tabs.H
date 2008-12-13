@@ -38,24 +38,23 @@
   interface that allows you to put lots and lots of buttons and
   switches in a panel, as popularized by many toolkits.
   
-  <P ALIGN=CENTER>\image html  tabs.gif </P> 
-  \image latex   tabs.eps "Fl_Tabs" width=8cm
+  \image html  tabs.gif
+  \image latex tabs.eps "Fl_Tabs" width=8cm
   
-  <P>Clicking the tab makes a child visible() by calling
+  Clicking the tab makes a child visible() by calling
   show() on it, and all other children are made invisible
   by calling hide() on them. Usually the children are Fl_Group widgets
   containing several widgets themselves.
   
-  <P>Each child makes a card, and it's label() is printed
+  Each child makes a card, and its label() is printed
   on the card tab, including the label font and style.  The
   selection color of that child is used to color the tab, while
-  the color of the child determines the background color of the
-  pane.
+  the color of the child determines the background color of the pane.
   
-  <P>The size of the tabs is controlled by the bounding box of the
+  The size of the tabs is controlled by the bounding box of the
   children (there should be some space between the children and
   the edge of the Fl_Tabs), and the tabs may be placed
-  "inverted" on the bottom, this is determined by which
+  "inverted" on the bottom - this is determined by which
   gap is larger. It is easiest to lay this out in fluid, using the
   fluid browser to select each child group and resize them until
   the tabs look the way you want them to.

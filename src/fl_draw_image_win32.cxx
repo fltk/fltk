@@ -39,7 +39,7 @@
 // Micro$oft picked a bottom-up and BGR storage format for their
 // DIB images.  I'm pretty certain there is a way around this, but
 // I can't find any other than the brute-force method of drawing
-// each line as a seperate image.  This may also need to be done
+// each line as a separate image.  This may also need to be done
 // if the delta is any amount other than 1, 3, or 4.
 
 ////////////////////////////////////////////////////////////////

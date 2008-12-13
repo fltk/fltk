@@ -1833,7 +1833,7 @@ static OSErr fillCurrentDragData(DragReference dragRef)
       GetFlavorDataSize( dragRef, itemRef, 'TEXT', &itemSize );
       GetFlavorData( dragRef, itemRef, 'TEXT', dst, &itemSize, 0L );
       dst += itemSize;
-      *dst++ = '\n'; // add our element seperator
+      *dst++ = '\n'; // add our element separator
     }
     ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
     if ( ret == noErr )
@@ -1844,7 +1844,7 @@ static OSErr fillCurrentDragData(DragReference dragRef)
       dst += itemSize;
       if ( itemSize>1 && ( hfs.fileType=='fold' || hfs.fileType=='disk' ) ) 
         *dst++ = '/';
-      *dst++ = '\n'; // add our element seperator
+      *dst++ = '\n'; // add our element separator
     }
   }
 

@@ -36,7 +36,7 @@
 // available to use this code.  You will just get normal Xlib fonts
 // (Xft calls them "core" fonts) The Xft algorithms for choosing
 // these is about as good as the FLTK ones (I hope to fix it so it is
-// exactly as good...), plus it can cache it's results and share them
+// exactly as good...), plus it can cache its results and share them
 // between programs, so using this should be a win in all cases. Also
 // it should be obvious by comparing this file and fl_font_x.cxx that
 // it is a lot easier to program with Xft than with Xlib.
@@ -172,7 +172,7 @@ static XftFont* fontopen(const char* name, bool core) {
       char *curr = local_name; // points to first name in string
       char *nxt; // next name in string
       do {
-        nxt = strchr(curr, ','); // find comma seperator
+        nxt = strchr(curr, ','); // find comma separator
         if (nxt) {
           *nxt = 0; // terminate first name
           nxt++; // first char of next name

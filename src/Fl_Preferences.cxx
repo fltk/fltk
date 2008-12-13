@@ -107,7 +107,7 @@ Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char
 
    Use the \a group argument to name the group that you would like to access.
    \a Group can also contain a path to a group further down the hierarchy by
-   seperating group names with a forward slash '/'. 
+   separating group names with a forward slash '/'. 
 
    \param[in] parent reference object for the new group
    \param[in] group name of the group to access (may contain '/'s)

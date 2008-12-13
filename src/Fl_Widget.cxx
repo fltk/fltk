@@ -64,8 +64,8 @@ void Fl_Widget::default_callback(Fl_Widget *o, void * /*v*/) {
 }
 /**
     All Fl_Widgets that don't have a callback defined use a
-    default callback that puts a pointer to the widget in this queue, and
-    this method reads the oldest widget out of this queue.
+    default callback that puts a pointer to the widget in this queue,
+    and this method reads the oldest widget out of this queue.
 */
 Fl_Widget *Fl::readqueue() {
   if (obj_tail==obj_head) return 0;
@@ -80,7 +80,7 @@ int Fl_Widget::handle(int) {
   return 0;
 }
 
-/** default font size for widgets */
+/** Default font size for widgets */
 Fl_Fontsize FL_NORMAL_SIZE = 14;
 
 Fl_Widget::Fl_Widget(int X, int Y, int W, int H, const char* L) {
@@ -147,7 +147,7 @@ Fl_Widget::~Fl_Widget() {
   fl_throw_focus(this);
 }
 
-/** Draws a focus box for the widget at position X,Y and SIZE W,H . */
+/** Draws a focus box for the widget at position X,Y with size W,H. */
 void
 Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
   if (!Fl::visible_focus()) return;

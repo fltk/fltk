@@ -26,7 +26,7 @@
 //
 
 
-// Less-used box types are in seperate files so they are not linked
+// Less-used box types are in separate files so they are not linked
 // in if not used.
 
 #include <FL/Fl.H>

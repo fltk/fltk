@@ -26,7 +26,7 @@
 //
 
 // Box drawing code for an obscure box type.
-// These box types are in seperate files so they are not linked
+// These box types are in separate files so they are not linked
 // in if not used.
 
 // The diamond box draws best if the area is square!

@@ -34,12 +34,11 @@
 
 // I modified this from the original Forms data to use a linked list
 // so that the number of items in the browser and size of those items
-// is unlimited.  The only problem is that the old browser used an
+// is unlimited. The only problem is that the old browser used an
 // index number to identify a line, and it is slow to convert from/to
-// a pointer.  I use a cache of the last match to try to speed this
-// up.
+// a pointer. I use a cache of the last match to try to speed this up.
 
-// Also added the ability to "hide" a line.  This set's it's height to
+// Also added the ability to "hide" a line. This sets its height to
 // zero, so the Fl_Browser_ cannot pick it.
 
 #define SELECTED 1
@@ -69,7 +68,7 @@ void Fl_Browser::item_select(void* l, int v) {
 }
 
 /**
-  Return entry for line number \p line.
+  Return entry for line number \a line.
 */
 FL_BLINE* Fl_Browser::find_line(int line) const {
   int n; FL_BLINE* l;
@@ -89,7 +88,7 @@ FL_BLINE* Fl_Browser::find_line(int line) const {
 }
 
 /**
-  Returns line number corresponding to data \p v,
+  Returns line number corresponding to data \a v,
   zero if not found.
 */
 int Fl_Browser::lineno(void* v) const {
@@ -141,7 +140,7 @@ FL_BLINE* Fl_Browser::_remove(int line) {
 }
 
 /**
-  Remove line n and make the browser one line shorter.
+  Remove line \a line and make the browser one line shorter.
 */
 void Fl_Browser::remove(int line) {
   if (line < 1 || line > lines) return;
@@ -149,8 +148,8 @@ void Fl_Browser::remove(int line) {
 }
 
 /**
-  Insert a new line \p t \e before line \p n.  If \p n &gt; 
-  size() then the line is added to the end.
+  Insert a new line \a t \e before line \a n.
+  If \a n > size() then the line is added to the end.
 */
 void Fl_Browser::insert(int line, FL_BLINE* t) {
   if (!first) {
@@ -184,7 +183,7 @@ void Fl_Browser::insert(int line, FL_BLINE* t) {
 
 /**
   Insert a new entry \e before given line.
-  \param[in] line if \p line > size(), the entry will be added at the end.
+  \param[in] line if \a line > size(), the entry will be added at the end.
   \param[in] newtext text entry for the new line.
   \param[in] d pointer to data associated with the new line.
 */
@@ -199,7 +198,7 @@ void Fl_Browser::insert(int line, const char* newtext, void* d) {
 }
 
 /**
-  Line from is removed and reinserted at to; to
+  Line \a from is removed and reinserted at \a to; \a to
   is calculated after the line is removed.
 */
 void Fl_Browser::move(int to, int from) {
@@ -208,8 +207,8 @@ void Fl_Browser::move(int to, int from) {
 }
 
 /**
-  Sets the text for line \p line to text \p newtext.
-  Does nothing if \p line is out of range.
+  Sets the text for line \a line to text \a newtext.
+  Does nothing if \a line is out of range.
 */
 void Fl_Browser::text(int line, const char* newtext) {
   if (line < 1 || line > lines) return;
@@ -234,8 +233,8 @@ void Fl_Browser::text(int line, const char* newtext) {
 }
 
 /**
-  Sets the data for line \p n to \p d.
-  Does nothing if \n is out of range.
+  Sets the data for line \a line to \a d.
+  Does nothing if \a line is out of range.
 */
 void Fl_Browser::data(int line, void* d) {
   if (line < 1 || line > lines) return;
@@ -300,7 +299,7 @@ int Fl_Browser::item_width(void* v) const {
   const int* i = column_widths();
   int ww = 0;
 
-  while (*i) { // add up all tab-seperated fields
+  while (*i) { // add up all tab-separated fields
     char* e;
     e = strchr(str, column_char());
     if (!e) break; // last one occupied by text
@@ -357,7 +356,7 @@ void Fl_Browser::item_draw(void* v, int X, int Y, int W, int H) const {
   char* str = ((FL_BLINE*)v)->txt;
   const int* i = column_widths();
 
-  while (W > 6) {	// do each tab-seperated field
+  while (W > 6) {	// do each tab-separated field
     int w1 = W;	// width for this field
     char* e = 0; // pointer to end of field or null if none
     if (*i) { // find end of field and temporarily replace with 0
@@ -423,7 +422,7 @@ void Fl_Browser::item_draw(void* v, int X, int Y, int W, int H) const {
     fl_color(lcol);
     fl_draw(str, X+3, Y, w1-6, H, e ? Fl_Align(talign|FL_ALIGN_CLIP) : talign, 0, 0);
     if (!e) break; // no more fields...
-    *e = column_char(); // put the seperator back
+    *e = column_char(); // put the separator back
     X += w1;
     W -= w1;
     str = e+1;
@@ -437,7 +436,7 @@ static const int no_columns[1] = {0};
   \param[in] X,Y,W,H position and size.
   \param[in] L label string, may be NULL.
 */
-Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char*L)
+Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char *L)
 : Fl_Browser_(X, Y, W, H, L) {
   column_widths_ = no_columns;
   lines = 0;
@@ -449,7 +448,7 @@ Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char*L)
 }
 
 /**
-  Update browser so that line is shown at given position.
+  Updates the browser so that \a line is shown at position \pos.
   \param[in] line line number.
   \param[in] pos position.
 */
@@ -486,7 +485,7 @@ int Fl_Browser::topline() const {
 }
 
 /**
-  Remove all the lines in the browser.
+  Removes all the lines in the browser.
 */
 void Fl_Browser::clear() {
   for (FL_BLINE* l = first; l;) {
@@ -501,9 +500,9 @@ void Fl_Browser::clear() {
 }
 
 /**
-  Add a new line to the end of the browser.  The text is copied using
+  Adds a new line to the end of the browser.  The text is copied using
   the strdup() function.  It may also be NULL to make a
-  blank line.  The void * argument is returned as the data()
+  blank line.  The void * argument \a d is returned as the data()
   of the new item.
 */
 void Fl_Browser::add(const char* newtext, void* d) {
@@ -520,7 +519,7 @@ const char* Fl_Browser::text(int line) const {
 }
 
 /**
-  Returns the data for line \p n, or NULL is \p n is out of range.
+  Returns the data for line \p line, or NULL if \p line is out of range.
 */
 void* Fl_Browser::data(int line) const {
   if (line < 1 || line > lines) return 0;
@@ -528,7 +527,7 @@ void* Fl_Browser::data(int line) const {
 }
 
 /**
-  Sets the selection state of entry.
+  Sets the selection state of entry \a line.
   \param[in] line line number.
   \param[in] v new selection state.
   \returns 1 if the state changed, 0 if not.
@@ -538,13 +537,13 @@ int Fl_Browser::select(int line, int v) {
   return Fl_Browser_::select(find_line(line), v);
 }
 
-/**  Return 1 if line n is selected, 0 if it not selected.*/
+/**  Returns 1 if line \a line is selected, 0 if it is not selected.*/
 int Fl_Browser::selected(int line) const {
   if (line < 1 || line > lines) return 0;
   return find_line(line)->flags & SELECTED;
 }
 
-/**  Makes line n visible for selection.*/
+/**  Makes line \a line visible for selection. */
 void Fl_Browser::show(int line) {
   FL_BLINE* t = find_line(line);
   if (t->flags & NOTDISPLAYED) {
@@ -555,7 +554,7 @@ void Fl_Browser::show(int line) {
 }
 
 /**
-  Makes line n invisible, preventing selection by the user.
+  Makes line \a line invisible, preventing selection by the user.
   The line can still be selected under program control.
 */
 void Fl_Browser::hide(int line) {
@@ -569,6 +568,9 @@ void Fl_Browser::hide(int line) {
 
 /**
   For back compatibility.
+  
+  This calls show(line) if \a v is true, and hide(line) otherwise.
+  \see show(int line), hide(int line)
 */
 void Fl_Browser::display(int line, int v) {
   if (line < 1 || line > lines) return;
@@ -576,7 +578,7 @@ void Fl_Browser::display(int line, int v) {
 }
 
 /**
-  Returns a non-zero value if line is visible.
+  Returns a non-zero value if line \a line is visible.
 */
 int Fl_Browser::visible(int line) const {
   if (line < 1 || line > lines) return 0;
@@ -584,7 +586,7 @@ int Fl_Browser::visible(int line) const {
 }
 
 /**
-  Gets browser value.
+  Gets the browser's value.
   \returns line number of current selection, or 0 if no selection.
 */
 int Fl_Browser::value() const {

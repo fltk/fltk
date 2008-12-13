@@ -233,7 +233,7 @@ private:
     fmt.dwAspect = DVASPECT_CONTENT;
     fmt.lindex = -1;
     fmt.cfFormat = CF_HDROP;
-    // if it is a pathname list, send an FL_PASTE with a \n seperated list of filepaths
+    // if it is a pathname list, send an FL_PASTE with a \n separated list of filepaths
     if ( data->GetData( &fmt, &medium )==S_OK )
     {
       HDROP hdrop = (HDROP)medium.hGlobal;

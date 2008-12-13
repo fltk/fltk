@@ -31,7 +31,7 @@
 */
 
 // Box drawing code for the common box types and the table of
-// boxtypes.  Other box types are in seperate files so they are not
+// boxtypes.  Other box types are in separate files so they are not
 // linked in if not used.
 
 #include <FL/Fl.H>

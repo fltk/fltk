@@ -29,7 +29,7 @@
 // This is the "file card tabs" interface to allow you to put lots and lots
 // of buttons and switches in a panel, as popularized by many toolkits.
 
-// Each child widget is a card, and it's label() is printed on the card tab.
+// Each child widget is a card, and its label() is printed on the card tab.
 // Clicking the tab makes that card visible.
 
 #include <stdio.h>
@@ -43,7 +43,7 @@
 
 // return the left edges of each tab (plus a fake left edge for a tab
 // past the right-hand one).  These position are actually of the left
-// edge of the slope.  They are either seperated by the correct distance
+// edge of the slope.  They are either separated by the correct distance
 // or by EXTRASPACE or by zero.
 // Return value is the index of the selected item.
 
@@ -411,7 +411,7 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
     <P>The destructor <I>also deletes all the children</I>. This
     allows a whole tree to be deleted at once, without having to
     keep a pointer to all the children in the user code. A kludge
-    has been done so the Fl_Tabs and all of it's children
+    has been done so the Fl_Tabs and all of its children
     can be automatic (local) variables, but you must declare the
     Fl_Tabs widget <I>first</I> so that it is destroyed last.
 */
