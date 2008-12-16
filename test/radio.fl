@@ -8,7 +8,9 @@ Function {button_cb(Fl_Button *b, void *)} {
   code {char msg[256];
 sprintf(msg, "Label: '%s'\\nValue: %d", b->label(),b->value());
 cb_info->value(msg);
-cb_info->redraw();} {}
+cb_info->redraw();
+printf("%s\\n",msg);} {selected
+  }
 } 
 
 Function {} {open
@@ -17,8 +19,13 @@ Function {} {open
     xywh {463 67 369 214} type Double visible
   } {
     Fl_Button {} {
-      label {Fl_Button &A1}
+      label {&Fl_Button A1}
       tooltip {Normal button (callback called only when released)} xywh {20 10 160 30} labelsize 13
+      code0 {o->callback((Fl_Callback*) button_cb);}
+    }
+    Fl_Button {} {
+      label {Fl_Button &A2}
+      tooltip {Normal button with callback called when changed (push and released)} xywh {20 44 160 30} labelsize 13 when 1
       code0 {o->callback((Fl_Callback*) button_cb);}
     }
     Fl_Return_Button {} {
@@ -86,13 +93,8 @@ Function {} {open
       }
     }
     Fl_Output cb_info {
-      label {callback:} selected
+      label {callback:}
       xywh {190 148 170 62} type Multiline align 133 textsize 12
-    }
-    Fl_Button {} {
-      label {Fl_Button &A2}
-      tooltip {Normal button with callback called when changed (push and released)} xywh {20 44 160 30} labelsize 13 when 1
-      code0 {o->callback((Fl_Callback*) button_cb);}
     }
   }
 } 
