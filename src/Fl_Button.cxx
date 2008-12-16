@@ -135,6 +135,13 @@ int Fl_Button::handle(int event) {
       value(!value());
       set_changed();
       if (when() & FL_WHEN_CHANGED) do_callback();
+    } else if ( (type() == FL_NORMAL_BUTTON) && when()&FL_WHEN_CHANGED) {
+      //  Not already active by GUI push
+      if ( !value_ ) {
+        value_ = !oldval;
+        set_changed();
+        do_callback();
+      }
     } else if (when() & FL_WHEN_RELEASE) do_callback();
     return 1;
   case FL_FOCUS :
@@ -164,6 +171,36 @@ int Fl_Button::handle(int event) {
       if (when() & FL_WHEN_RELEASE) do_callback();
       return 1;
     }
+    return 0;
+
+  case FL_KEYUP :
+    if ( (type() == FL_NORMAL_BUTTON) && when()&FL_WHEN_CHANGED) {
+
+      int key = Fl::event_key();
+
+      // Check for a shortcut that includes state keys(FL_SHIFT, FL_CTRL or FL_ALT) and 
+      // the state key is released
+      if ( (shortcut()&FL_SHIFT && ((key == FL_Shift_L) || (key == FL_Shift_R))) ||
+           (shortcut()&FL_CTRL && ((key == FL_Control_L) || (key == FL_Control_R))) || 
+           (shortcut()&FL_ALT && ((key == FL_Alt_L) || (key == FL_Alt_R))) ) {
+        value(oldval);
+        set_changed();
+        do_callback();
+        return 0;   //  In case multiple shortcut keys are pressed that use state keys
+      }
+      // shortcut key alone
+      else if (  !(shortcut() ?  Fl::test_shortcut(shortcut()) : test_shortcut())) {
+        return 0;
+      }
+      // disable button
+      else if ( value_ ) {
+        value(oldval);
+        set_changed();
+        do_callback();
+        return 1;
+      }
+    }
+
   default:
     return 0;
   }
