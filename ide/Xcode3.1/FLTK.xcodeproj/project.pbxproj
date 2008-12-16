@@ -10453,6 +10453,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				USER_HEADER_SEARCH_PATHS = ../../jpeg;
 			};
 			name = Debug;
 		};
@@ -10460,6 +10462,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				USER_HEADER_SEARCH_PATHS = ../../jpeg;
 			};
 			name = Release;
 		};
