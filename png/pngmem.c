@@ -1,7 +1,7 @@
 
 /* pngmem.c - stub functions for memory allocation
  *
- * Last changed in libpng 1.2.13 November 13, 2006
+ * Last changed in libpng 1.2.30 [August 15, 2008]
  * For conditions of distribution and use, see copyright notice in png.h
  * Copyright (c) 1998-2008 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -16,7 +16,6 @@
 
 #define PNG_INTERNAL
 #include "png.h"
-
 #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
 
 /* Borland DOS special memory handler */
@@ -273,6 +272,7 @@ png_malloc_default(png_structp png_ptr, png_uint_32 size)
 /* free a pointer allocated by png_malloc().  In the default
    configuration, png_ptr is not used, but is passed in case it
    is needed.  If ptr is NULL, return without taking any action. */
+
 void PNGAPI
 png_free(png_structp png_ptr, png_voidp ptr)
 {
@@ -293,7 +293,7 @@ png_free_default(png_structp png_ptr, png_voidp ptr)
 {
 #endif /* PNG_USER_MEM_SUPPORTED */
 
-   if(png_ptr == NULL) return;
+   if (png_ptr == NULL || ptr == NULL) return;
 
    if (png_ptr->offset_table != NULL)
    {
@@ -456,7 +456,7 @@ png_malloc_default(png_structp png_ptr, png_uint_32 size)
    if (size > (png_uint_32)65536L)
    {
 #ifndef PNG_USER_MEM_SUPPORTED
-      if(png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
+      if ((png_ptr->flags&PNG_FLAG_MALLOC_NULL_MEM_OK) == 0)
          png_error(png_ptr, "Cannot Allocate > 64K");
       else
 #endif
@@ -587,7 +587,8 @@ void PNGAPI
 png_set_mem_fn(png_structp png_ptr, png_voidp mem_ptr, png_malloc_ptr
   malloc_fn, png_free_ptr free_fn)
 {
-   if(png_ptr != NULL) {
+   if (png_ptr != NULL)
+   {
    png_ptr->mem_ptr = mem_ptr;
    png_ptr->malloc_fn = malloc_fn;
    png_ptr->free_fn = free_fn;

@@ -1,7 +1,7 @@
 
 /* pngerror.c - stub functions for i/o and memory allocation
  *
- * Last changed in libpng 1.2.22 [October 13, 2007]
+ * Last changed in libpng 1.2.30 [August 15, 2008]
  * For conditions of distribution and use, see copyright notice in png.h
  * Copyright (c) 1998-2008 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -15,8 +15,8 @@
 
 #define PNG_INTERNAL
 #include "png.h"
-
 #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
+
 static void /* PRIVATE */
 png_default_error PNGARG((png_structp png_ptr,
   png_const_charp error_message));
@@ -44,16 +44,17 @@ png_error(png_structp png_ptr, png_const_charp error_message)
      {
        if (*error_message == '#')
        {
+         /* Strip "#nnnn " from beginning of error message. */
            int offset;
            for (offset=1; offset<15; offset++)
-              if (*(error_message+offset) == ' ')
+              if (error_message[offset] == ' ')
                   break;
            if (png_ptr->flags&PNG_FLAG_STRIP_ERROR_TEXT)
            {
               int i;
               for (i=0; i<offset-1; i++)
                  msg[i]=error_message[i+1];
-              msg[i]='\0';
+              msg[i - 1] = '\0';
               error_message=msg;
            }
            else
@@ -111,7 +112,7 @@ png_warning(png_structp png_ptr, png_const_charp warning_message)
        if (*warning_message == '#')
        {
            for (offset=1; offset<15; offset++)
-              if (*(warning_message+offset) == ' ')
+              if (warning_message[offset] == ' ')
                   break;
        }
      }
@@ -216,19 +217,20 @@ png_default_error(png_structp png_ptr, png_const_charp error_message)
 #ifdef PNG_ERROR_NUMBERS_SUPPORTED
    if (*error_message == '#')
    {
+     /* Strip "#nnnn " from beginning of warning message. */
      int offset;
      char error_number[16];
      for (offset=0; offset<15; offset++)
      {
-         error_number[offset] = *(error_message+offset+1);
-         if (*(error_message+offset) == ' ')
+         error_number[offset] = error_message[offset + 1];
+         if (error_message[offset] == ' ')
              break;
      }
      if((offset > 1) && (offset < 15))
      {
        error_number[offset-1]='\0';
        fprintf(stderr, "libpng error no. %s: %s\n", error_number,
-          error_message+offset);
+          error_message + offset + 1);
      }
      else
        fprintf(stderr, "libpng error: %s, offset=%d\n", error_message,offset);
@@ -276,13 +278,13 @@ png_default_warning(png_structp png_ptr, png_const_charp warning_message)
      char warning_number[16];
      for (offset=0; offset<15; offset++)
      {
-        warning_number[offset]=*(warning_message+offset+1);
-        if (*(warning_message+offset) == ' ')
+        warning_number[offset] = warning_message[offset + 1];
+        if (warning_message[offset] == ' ')
             break;
      }
      if((offset > 1) && (offset < 15))
      {
-       warning_number[offset-1]='\0';
+       warning_number[offset + 1] = '\0';
        fprintf(stderr, "libpng warning no. %s: %s\n", warning_number,
           warning_message+offset);
      }

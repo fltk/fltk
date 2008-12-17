@@ -1,7 +1,7 @@
 
 /* pngtrans.c - transforms the data in a row (used by both readers and writers)
  *
- * Last changed in libpng 1.2.17 May 15, 2007
+ * Last changed in libpng 1.2.30 [August 15, 2008]
  * For conditions of distribution and use, see copyright notice in png.h
  * Copyright (c) 1998-2008 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -10,8 +10,8 @@
 
 #define PNG_INTERNAL
 #include "png.h"
-
 #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
+
 #if defined(PNG_READ_BGR_SUPPORTED) || defined(PNG_WRITE_BGR_SUPPORTED)
 /* turn on BGR-to-RGB mapping */
 void PNGAPI
@@ -652,8 +652,8 @@ png_set_user_transform_info(png_structp png_ptr, png_voidp
 png_voidp PNGAPI
 png_get_user_transform_ptr(png_structp png_ptr)
 {
-#if defined(PNG_USER_TRANSFORM_PTR_SUPPORTED)
    if (png_ptr == NULL) return (NULL);
+#if defined(PNG_USER_TRANSFORM_PTR_SUPPORTED)
    return ((png_voidp)png_ptr->user_transform_ptr);
 #else
    return (NULL);
