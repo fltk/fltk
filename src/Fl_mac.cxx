@@ -1096,13 +1096,15 @@ static unsigned short keycode_to_sym( UInt32 keyCode, UInt32 mods, unsigned shor
 }
 
 /*
- *
+ * keycode_function for post-10.5 systems, allows more sophisticated decoding of keys
  */
 static int keycodeToUnicode(
                 char * uniChars, int maxChars,
                 EventKind eKind,
                 UInt32 keycode, UInt32 modifiers,
-                UInt32 * deadKeyStatePtr)
+                UInt32 * deadKeyStatePtr,
+                unsigned char,  // not used in this function
+                unsigned short) // not used in this function
 {
   // first get the keyboard mapping in a post 10.2 way
   
@@ -1171,36 +1173,58 @@ static int keycodeToUnicode(
     case kEventRawKeyRepeat:  action = kUCKeyActionAutoKey; break;
     default: return 0;
   }
-  
+
+  UInt32 deadKeyState = *deadKeyStatePtr;
+  if ((action==kUCKeyActionUp)&&(*deadKeyStatePtr))
+    deadKeyStatePtr = &deadKeyState;
+
   status = UCKeyTranslate(
                           (const UCKeyboardLayout *) uchr,
                           keycode, action, modifiers, keyboardType,
-                          options, deadKeyStatePtr,
+                          0, deadKeyStatePtr,
                           10, &actuallength, utext);
-  
-  if ((0 == actuallength) && (0 != *deadKeyStatePtr)) {
-    /*
-     * More data later
-     */
-    
-    return 0; 
-  }
-  
-  *deadKeyStatePtr = 0; 
-  
+
   if (noErr != status) {
-    fprintf(stderr,"UCKeyTranslate failed: %d", (int) status);
+    fprintf(stderr,"UCKeyTranslate failed: %d\n", (int) status);
     actuallength = 0;
   }
+
+  // convert the list of unicode chars into utf8
   // FIXME no bounds check (see maxchars)
   unsigned i;
   for (i=0; i<actuallength; ++i) {
     len += fl_utf8encode(utext[i], uniChars+len);
   }
   uniChars[len] = 0;
-  
-  return actuallength;
+  return len;
 }
+
+/*
+ * keycode_function for pre-10.5 systems, this is the "historic" fltk Mac key handling
+ */
+static int keycode_wrap_old(
+                char * buffer,
+                int, EventKind, UInt32, // not used in this function
+                UInt32, UInt32 *,       // not used in this function
+                unsigned char key,
+                unsigned short sym)
+{
+  if ( (sym >= FL_KP && sym <= FL_KP_Last) || !(sym & 0xff00) ||
+        sym == FL_Tab || sym == FL_Enter) {
+    buffer[0] = key;
+    return 1;
+  } else {
+    buffer[0] = 0;
+    return 0;
+  }
+} /* keycode_wrap_old */
+/* 
+ * Stub pointer to select appropriate keycode_function per operating system version. This function pointer
+ * is initialised in fl_open_display, based on the runtime identification of the host OS version. This is
+ * intended to allow us to utilise 10.5 services dynamically to improve Unicode handling, whilst still 
+ * allowing code to run satisfactorily on older systems.
+ */
+static int (*keycode_function)(char*, int, EventKind, UInt32, UInt32, UInt32*, unsigned char, unsigned short) = keycode_wrap_old;
 
 
 /**
@@ -1234,7 +1258,7 @@ pascal OSStatus carbonKeyboardHandler(
     GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, 
                        NULL, sizeof(char), NULL, &key );
   }
-  /* output a human readbale event identifier for debugging
+  /* output a human readable event identifier for debugging
   const char *ev = "";
   switch (kind) {
     case kEventRawKeyDown: ev = "kEventRawKeyDown"; break;
@@ -1249,6 +1273,8 @@ pascal OSStatus carbonKeyboardHandler(
   {
   case kEventRawKeyDown:
   case kEventRawKeyRepeat:
+/*
+    // FIXME Matt: For 10.5, the keycode_function will handle all this. This is untested for ealier versions of OS X.
     // When the user presses a "dead key", no information is send about
     // which dead key symbol was created. So we need to trick Carbon into
     // giving us the code by sending a "space" after the "dead key".
@@ -1263,6 +1289,7 @@ pascal OSStatus carbonKeyboardHandler(
     } else {
       Fl::e_state &= 0xbfffffff; // clear the deadkey flag
     }
+*/
     sendEvent = FL_KEYBOARD;
     // fall through
   case kEventRawKeyUp:
@@ -1287,22 +1314,14 @@ pascal OSStatus carbonKeyboardHandler(
     // Matt: to Carbon. The kEventKeyModifierNumLockMask is only set when
     // Matt: a numeric keypad key is pressed and does not correspond with
     // Matt: the NumLock light in PowerBook keyboards.
-#if 1
-    if ( (sym >= FL_KP && sym <= FL_KP_Last) || !(sym & 0xff00) ||
-            sym == FL_Tab || sym == FL_Enter) {
-      buffer[0] = key;
-      Fl::e_length = 1;
-    } else {
-      buffer[0] = 0;
-      Fl::e_length = 0;
-    }
-#else
-    // Matt: attempt to get the correct Unicode character(S) from our keycode
+
+    // Matt: attempt to get the correct Unicode character(s) from our keycode
+    // imm:  keycode_function function pointer added to allow us to use different functions
+    // imm:  depending on which OS version we are running on (tested and set in fl_open_display)
     static UInt32 deadKeyState = 0; // must be cleared when losing focus
-    Fl::e_length = keycodeToUnicode(buffer, 31, kind, keyCode, mods, &deadKeyState);
-#endif
+    Fl::e_length = (*keycode_function)(buffer, 31, kind, keyCode, mods, &deadKeyState, key, sym);
     Fl::e_text = buffer;
-    // insert UnicodeHandling here!
+    buffer[Fl::e_length] = 0; // just in case...
     break;
   case kEventRawKeyModifiersChanged: {
     UInt32 tMods = prevMods ^ mods;
@@ -1467,12 +1486,31 @@ void fl_open_display() {
         CFRelease(execUrl);
       }
 
+    // imm: keycode handler stub setting - use Gestalt to determine the running system version,
+    // then set the keycode_function pointer accordingly
+    SInt32 MacVersion;
+    if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr)
+    {
+//      SInt32 maj, min, fix;
+//      Gestalt(gestaltSystemVersionMajor, &maj);   // e.g. 10
+//      Gestalt(gestaltSystemVersionMinor, &min);   // e.g.  4
+//      Gestalt(gestaltSystemVersionBugFix, &fix);  // e.g. 11
+      if(MacVersion >= 0x1050) { // 10.5.0 or later
+        keycode_function = keycodeToUnicode;
+      }
+      else {
+        keycode_function = keycode_wrap_old; // pre-10.5 mechanism
+      }
+    }
+    // else our default handler will be used (keycode_wrap_old)
+
+
       if( !bundle )
       {
         // Earlier versions of this code tried to use weak linking, however it
-	// appears that this does not work on 10.2.  Since 10.3 and higher provide
-	// both TransformProcessType and CPSEnableForegroundOperation, the following
-	// conditional code compiled on 10.2 will still work on newer releases...
+        // appears that this does not work on 10.2.  Since 10.3 and higher provide
+        // both TransformProcessType and CPSEnableForegroundOperation, the following
+        // conditional code compiled on 10.2 will still work on newer releases...
         OSErr err;
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
