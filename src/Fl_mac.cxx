@@ -43,6 +43,11 @@
 //          to implement clipping. This should be changed into pure
 //          Quartz calls in the near future.
 
+// FIXME moving away from Carbon, I am replacing the Scrap manager calls with Pasteboard
+//       calls that support utf8 encoding. As soon as these unction haven proven working
+//       the Scrap manager calls should be removed
+#define USE_PASTEBOARD 1
+
 // we don't need the following definition because we deliver only
 // true mouse moves.  On very slow systems however, this flag may
 // still be useful.
@@ -2489,6 +2494,14 @@ Fl_Widget *fl_selection_requestor = 0;
 char *fl_selection_buffer[2];
 int fl_selection_length[2];
 int fl_selection_buffer_length[2];
+#ifdef USE_PASTEBOARD
+static PasteboardRef myPasteboard = 0;
+static void allocatePasteboard() {
+  if (!myPasteboard)
+    PasteboardCreate(kPasteboardClipboard, &myPasteboard);
+}
+#else
+#endif
 static ScrapRef myScrap = 0;
 
 /**
@@ -2508,6 +2521,14 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
   fl_selection_length[clipboard] = len;
   if (clipboard) {
+#ifdef USE_PASTEBOARD
+    // FIXME no error checking done yet!
+    allocatePasteboard();
+    PasteboardClear(myPasteboard);
+    PasteboardSynchronize(myPasteboard);
+    CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[1], len);
+    PasteboardPutItemFlavor(myPasteboard, (PasteboardItemID)1, CFSTR("public.utf8-plain-text"), text, 0);
+#else
     ClearCurrentScrap();
     OSStatus ret = GetCurrentScrap( &myScrap );
     if ( ret != noErr ) {
@@ -2519,6 +2540,7 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
     // needed. Check to see if this is necessary on OS/X.
     PutScrapFlavor( myScrap, kScrapFlavorTypeText, 0,
 		    len, fl_selection_buffer[1] );
+#endif
   }
 }
 
@@ -2526,8 +2548,48 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
 void Fl::paste(Fl_Widget &receiver, int clipboard) {
   if (clipboard) {
     // see if we own the selection, if not go get it:
-    ScrapRef scrap = 0;
     Size len = 0;
+#ifdef USE_PASTEBOARD
+    // FIXME no error checking done yet!
+    OSStatus err = noErr;
+    allocatePasteboard();
+    PasteboardSynchronize(myPasteboard);
+    ItemCount nFlavor = 0, i;
+    err = PasteboardGetItemCount(myPasteboard, &nFlavor);
+    for (i=1; i<=nFlavor; i++) {
+      PasteboardItemID itemID;
+      CFArrayRef flavorTypeArray;
+      CFIndex flavorCount;
+      err = PasteboardGetItemIdentifier(myPasteboard, i, &itemID);
+      err = PasteboardCopyItemFlavors(myPasteboard, itemID, &flavorTypeArray);
+      flavorCount = CFArrayGetCount(flavorTypeArray);
+      for (CFIndex flavorIndex=0; flavorIndex<flavorCount; flavorIndex++) {
+        CFStringRef             flavorType;
+        CFDataRef               flavorData;
+        CFIndex                 len;
+        flavorType = (CFStringRef)CFArrayGetValueAtIndex(flavorTypeArray, flavorIndex);
+        if (UTTypeConformsTo(flavorType, CFSTR("public.utf8-plain-text"))) {
+          err = PasteboardCopyItemFlavorData( myPasteboard, itemID, CFSTR("public.utf8-plain-text"), &flavorData );
+          len = CFDataGetLength(flavorData);
+
+          if ( len >= fl_selection_buffer_length[1] ) {
+            fl_selection_buffer_length[1] = len + 32;
+            delete[] fl_selection_buffer[1];
+            fl_selection_buffer[1] = new char[len + 32];
+          }
+          fl_selection_length[1] = len; len++;
+          char *data = (char*)CFDataGetBytePtr(flavorData);
+          memcpy(fl_selection_buffer[1], data, len);
+
+          CFRelease (flavorData);
+          i = nFlavor+1;
+          break;
+        }
+      }
+      CFRelease (flavorTypeArray);
+    }
+#else
+    ScrapRef scrap = 0;
     if (GetCurrentScrap(&scrap) == noErr && scrap != myScrap &&
 	GetScrapFlavorSize(scrap, kScrapFlavorTypeText, &len) == noErr) {
       if ( len >= fl_selection_buffer_length[1] ) {
@@ -2545,6 +2607,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 	  fl_selection_buffer[1][x] = '\n';
       }
     }
+#endif
   }
   Fl::e_text = fl_selection_buffer[clipboard];
   Fl::e_length = fl_selection_length[clipboard];
