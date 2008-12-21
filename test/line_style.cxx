@@ -66,7 +66,7 @@ void test_box::draw() {
   // draw the defined fl_rect and fl_vertex first and then
   // the additional one-pixel line, if enabled
 
-  for (int i=0; i<(draw_line->value()?2:1); i++) {
+  for (int i=0; i<draw_line->value()+1; i++) {
     fl_rect(10,10,w()-20,h()-20);
     fl_begin_line();
     fl_vertex(35, 35);
@@ -116,7 +116,6 @@ void makeform(const char *) {
   sliders[0]->bounds(0,255);
   sliders[1]= new Fl_Value_Slider(280,30,180,20,"G");
   sliders[1]->bounds(0,255);
-  sliders[1]->value(255);
   sliders[2]= new Fl_Value_Slider(280,50,180,20,"B");
   sliders[2]->bounds(0,255);
   choice[0]= new Fl_Choice(280,70,180,20,"Style");
@@ -166,7 +165,6 @@ int main(int argc, char **argv) {
   form->show(argc,argv);
   return Fl::run();
 }
-
 
 //
 // End of "$Id$".
