@@ -3,7 +3,7 @@
 //
 // Line style demo for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2000-2005 by Bill Spitzak and others.
+// Copyright 2000-2008 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -30,10 +30,13 @@
 #include <FL/Fl_Value_Slider.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Choice.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Box.H>
 
 Fl_Window *form;
 Fl_Slider *sliders[8];
 Fl_Choice *choice[3];
+Fl_Check_Button *draw_line;
 
 class test_box: public Fl_Window {
   void draw();
@@ -59,15 +62,22 @@ void test_box::draw() {
     (long)(choice[2]->mvalue()->user_data()),
     (long)(sliders[3]->value()),
     buf);
-  fl_rect(10,10,w()-20,h()-20);
-  fl_begin_line();
-  fl_vertex(35, 35);
-  fl_vertex(w()-35, h()-35);
-  fl_vertex(w()-40, 35);
-  fl_vertex(35, h()/2);
-  fl_end_line();
-  // you must reset the line type when done:
-  fl_line_style(FL_SOLID);
+  
+  // draw the defined fl_rect and fl_vertex first and then
+  // the additional one-pixel line, if enabled
+
+  for (int i=0; i<(draw_line->value()?2:1); i++) {
+    fl_rect(10,10,w()-20,h()-20);
+    fl_begin_line();
+    fl_vertex(35, 35);
+    fl_vertex(w()-35, h()-35);
+    fl_vertex(w()-40, 35);
+    fl_vertex(35, h()/2);
+    fl_end_line();
+    // you must reset the line type when done:
+    fl_line_style(FL_SOLID);
+    fl_color(FL_BLACK);
+  }
 }
 
 Fl_Menu_Item style_menu[] = {
@@ -101,11 +111,12 @@ void do_redraw(Fl_Widget*,void*)
 }
 
 void makeform(const char *) {
-  form = new Fl_Window(500,210,"fl_line_style() test");
+  form = new Fl_Window(500,230,"fl_line_style() test");
   sliders[0]= new Fl_Value_Slider(280,10,180,20,"R");
   sliders[0]->bounds(0,255);
   sliders[1]= new Fl_Value_Slider(280,30,180,20,"G");
   sliders[1]->bounds(0,255);
+  sliders[1]->value(255);
   sliders[2]= new Fl_Value_Slider(280,50,180,20,"B");
   sliders[2]->bounds(0,255);
   choice[0]= new Fl_Choice(280,70,180,20,"Style");
@@ -116,14 +127,17 @@ void makeform(const char *) {
   choice[2]->menu(join_menu);
   sliders[3]= new Fl_Value_Slider(280,130,180,20,"Width");
   sliders[3]->bounds(0,20);
-  sliders[4] = new Fl_Slider(200,170,70,20,"Dash");
+  draw_line = new Fl_Check_Button(280,150,20,20,"Line");
+  draw_line->align(FL_ALIGN_LEFT);
+  new Fl_Box (300,150,160,20,"adds a 1-pixel black line");
+  sliders[4] = new Fl_Slider(200,190,70,20,"Dash");
   sliders[4]->align(FL_ALIGN_TOP_LEFT);
   sliders[4]->bounds(0,40);
-  sliders[5] = new Fl_Slider(270,170,70,20);
+  sliders[5] = new Fl_Slider(270,190,70,20);
   sliders[5]->bounds(0,40);
-  sliders[6] = new Fl_Slider(340,170,70,20);
+  sliders[6] = new Fl_Slider(340,190,70,20);
   sliders[6]->bounds(0,40);
-  sliders[7] = new Fl_Slider(410,170,70,20);
+  sliders[7] = new Fl_Slider(410,190,70,20);
   sliders[7]->bounds(0,40);
   int i;
   for (i=0;i<8;i++) {
@@ -132,6 +146,11 @@ void makeform(const char *) {
     sliders[i]->callback((Fl_Callback*)do_redraw);
     sliders[i]->step(1);
   }
+  sliders[0]->value(255); // R
+  sliders[1]->value(100); // G
+  sliders[2]->value(100); // B
+  draw_line->value(0);
+  draw_line->callback((Fl_Callback*)do_redraw);
   for (i=0;i<3;i++) {
     choice[i]->value(0);
     choice[i]->callback((Fl_Callback*)do_redraw);
