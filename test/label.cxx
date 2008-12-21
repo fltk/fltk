@@ -109,50 +109,50 @@ Fl_Menu_Item choices[] = {
 int main(int argc, char **argv) {
   window = new Fl_Double_Window(400,400);
 
-  input = new Fl_Input(50,0,350,25);
+  input = new Fl_Input(50,375,350,25);
   input->static_value("The quick brown fox jumped over the lazy dog.");
   input->when(FL_WHEN_CHANGED);
   input->callback(input_cb);
 
-  sizes= new Fl_Hor_Value_Slider(50,25,350,25,"Size:");
+  sizes= new Fl_Hor_Value_Slider(50,350,350,25,"Size:");
   sizes->align(FL_ALIGN_LEFT);
   sizes->bounds(1,64);
   sizes->step(1);
   sizes->value(14);
   sizes->callback(size_cb);
 
-  fonts=new Fl_Hor_Value_Slider(50,50,350,25,"Font:");
+  fonts=new Fl_Hor_Value_Slider(50,325,350,25,"Font:");
   fonts->align(FL_ALIGN_LEFT);
   fonts->bounds(0,15);
   fonts->step(1);
   fonts->value(0);
   fonts->callback(font_cb);
 
-  Fl_Group *g = new Fl_Group(0,0,0,0);
-  leftb = new Fl_Toggle_Button(50,75,50,25,"left");
+  Fl_Group *g = new Fl_Group(50,300,350,25);
+  leftb = new Fl_Toggle_Button(50,300,50,25,"left");
   leftb->callback(button_cb);
-  rightb = new Fl_Toggle_Button(100,75,50,25,"right");
+  rightb = new Fl_Toggle_Button(100,300,50,25,"right");
   rightb->callback(button_cb);
-  topb = new Fl_Toggle_Button(150,75,50,25,"top");
+  topb = new Fl_Toggle_Button(150,300,50,25,"top");
   topb->callback(button_cb);
-  bottomb = new Fl_Toggle_Button(200,75,50,25,"bottom");
+  bottomb = new Fl_Toggle_Button(200,300,50,25,"bottom");
   bottomb->callback(button_cb);
-  insideb = new Fl_Toggle_Button(250,75,50,25,"inside");
+  insideb = new Fl_Toggle_Button(250,300,50,25,"inside");
   insideb->callback(button_cb);
-  wrapb = new Fl_Toggle_Button(300,75,50,25,"wrap");
+  wrapb = new Fl_Toggle_Button(300,300,50,25,"wrap");
   wrapb->callback(button_cb);
-  clipb = new Fl_Toggle_Button(350,75,50,25,"clip");
+  clipb = new Fl_Toggle_Button(350,300,50,25,"clip");
   clipb->callback(button_cb);
   g->resizable(insideb);
-  g->forms_end();
+  g->end();
 
-  Fl_Choice *c = new Fl_Choice(50,100,200,25);
+  Fl_Choice *c = new Fl_Choice(50,275,200,25);
   c->menu(choices);
 
-  text= new Fl_Box(FL_FRAME_BOX,100,225,200,100,input->value());
+  text= new Fl_Box(FL_FRAME_BOX,100,75,200,100,input->value());
   text->align(FL_ALIGN_CENTER);
   window->resizable(text);
-  window->forms_end();
+  window->end();
   window->show(argc,argv);
   return Fl::run();
 }

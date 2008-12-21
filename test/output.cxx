@@ -65,19 +65,19 @@ void input_cb(Fl_Widget *,void *) {
 int main(int argc, char **argv) {
   window = new Fl_Window(400,400);
 
-  input = new Fl_Input(50,0,350,25);
+  input = new Fl_Input(50,375,350,25);
   input->static_value("The quick brown fox\njumped over\nthe lazy dog.");
   input->when(FL_WHEN_CHANGED);
   input->callback(input_cb);
 
-  sizes = new Fl_Hor_Value_Slider(50,25,350,25,"Size");
+  sizes = new Fl_Hor_Value_Slider(50,350,350,25,"Size");
   sizes->align(FL_ALIGN_LEFT);
   sizes->bounds(1,64);
   sizes->step(1);
   sizes->value(14);
   sizes->callback(size_cb);
 
-  fonts = new Fl_Hor_Value_Slider(50,50,350,25,"Font");
+  fonts = new Fl_Hor_Value_Slider(50,325,350,25,"Font");
   fonts->align(FL_ALIGN_LEFT);
   fonts->bounds(0,15);
   fonts->step(1);
@@ -90,12 +90,12 @@ int main(int argc, char **argv) {
   text2->tooltip("This is an Fl_Multiline_Output widget.");
   window->resizable(text2);
 
-  text = new Fl_Output(100,280,200,30,"Fl_Output");
+  text = new Fl_Output(100,90,200,30,"Fl_Output");
   text->value(input->value());
   text->align(FL_ALIGN_BOTTOM);
   text->tooltip("This is an Fl_Output widget.");
 
-  window->forms_end();
+  window->end();
   window->show(argc,argv);
   return Fl::run();
 }
