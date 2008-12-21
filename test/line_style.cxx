@@ -126,7 +126,7 @@ void makeform(const char *) {
   choice[2]->menu(join_menu);
   sliders[3]= new Fl_Value_Slider(280,130,180,20,"Width");
   sliders[3]->bounds(0,20);
-  draw_line = new Fl_Check_Button(280,150,20,20,"Line");
+  draw_line = new Fl_Check_Button(280,150,20,20,"&Line");
   draw_line->align(FL_ALIGN_LEFT);
   new Fl_Box (300,150,160,20,"adds a 1-pixel black line");
   sliders[4] = new Fl_Slider(200,190,70,20,"Dash");
