@@ -501,6 +501,7 @@ void Fl_Browser::clear() {
   }
   full_height_ = 0;
   first = 0;
+  last = 0;
   lines = 0;
   new_list();
 }
