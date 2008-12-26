@@ -71,7 +71,7 @@ public:
     position changes (even if in response to a callback from this
     scrollbar).  All necessary calls to redraw() are done.
   */
-  int value() {return int(Fl_Slider::value());}
+  int value() const {return int(Fl_Slider::value());}
   /**    See int Fl_Scrollbar::value()   */
   int value(int p, int s, int top, int total) {
     return scrollvalue(p, s, top, total);
