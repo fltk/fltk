@@ -77,7 +77,8 @@ Fl_Button	*top,
 		*bottom,
 		*middle,
 		*visible,
-		*swap;
+		*swap,
+		*sort;
 Fl_Int_Input	*field;
 
 void b_cb(Fl_Widget* o, void*) {
@@ -117,12 +118,16 @@ void swap_cb(Fl_Widget *, void *) {
   browser->swap(a, b);				// swap them
 }
 
+void sort_cb(Fl_Widget *, void *) {
+  browser->sort(FL_SORT_ASC);
+}
+
 int main(int argc, char **argv) {
   int i;
   if (!Fl::args(argc,argv,i)) Fl::fatal(Fl::help);
   const char* fname = (i < argc) ? argv[i] : "browser.cxx";
-  Fl_Window window(400,400,fname);
-  browser = new Fl_Select_Browser(0,0,400,350,0);
+  Fl_Window window(480,400,fname);
+  browser = new Fl_Select_Browser(0,0,480,350,0);
   browser->type(FL_MULTI_BROWSER);
   //browser->type(FL_HOLD_BROWSER);
   //browser->color(42);
@@ -155,7 +160,7 @@ int main(int argc, char **argv) {
   }
   browser->position(0);
 
-  field = new Fl_Int_Input(50, 350, 350, 25, "Line #:");
+  field = new Fl_Int_Input(50, 350, 430, 25, "Line #:");
   field->callback(show_cb);
 
   top = new Fl_Button(0, 375, 80, 25, "Top");
@@ -173,6 +178,9 @@ int main(int argc, char **argv) {
   swap = new Fl_Button(320, 375, 80, 25, "Swap");
   swap->callback(swap_cb);
   swap->tooltip("Swaps two selected lines\n(Use CTRL-click to select two lines)");
+
+  sort = new Fl_Button(400, 375, 80, 25, "Sort");
+  sort->callback(sort_cb);
 
   window.resizable(browser);
   window.show(argc,argv);

@@ -59,12 +59,18 @@ void* Fl_Browser::item_next(void* l) const {return ((FL_BLINE*)l)->next;}
 
 void* Fl_Browser::item_prev(void* l) const {return ((FL_BLINE*)l)->prev;}
 
+void* Fl_Browser::item_last() const {return last;}
+
 int Fl_Browser::item_selected(void* l) const {
   return ((FL_BLINE*)l)->flags&SELECTED;}
 
 void Fl_Browser::item_select(void* l, int v) {
   if (v) ((FL_BLINE*)l)->flags |= SELECTED;
   else ((FL_BLINE*)l)->flags &= ~SELECTED;
+}
+
+const char *Fl_Browser::item_text(void *item) const { 
+  return ((FL_BLINE*)item)->txt;
 }
 
 /**

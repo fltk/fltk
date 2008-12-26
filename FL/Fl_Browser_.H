@@ -48,6 +48,9 @@
 #define FL_HOLD_BROWSER		2	/**< type() of Fl_Hold_Browser */
 #define FL_MULTI_BROWSER	3	/**< type() of Fl_Multi_Browser */
 
+#define FL_SORT_ASC		0	/**< sort browser items in ascending alphabetic order. */
+#define FL_SORT_DESC		1	/**< sort in descending order */
+
 /**
   This is the base for browsers.  To be useful it must be
   subclassed and several virtual functions defined.  The Forms-compatible
@@ -94,6 +97,8 @@ protected:
     virtual void *item_next(void *) const = 0;
   /** This method must be provided by the subclass to return the item in the list before p. */
     virtual void *item_prev(void *) const = 0;
+  /** This method can be provided by the subclass to return the ilast item in the list. */
+    virtual void *item_last() const { return 0L; }
   /** 
     This method must be provided by the subclass to return the height of the
     item p in pixels.  Allow for two additional pixels for the list
@@ -113,6 +118,18 @@ protected:
     and h.
   */
   virtual void item_draw(void *,int,int,int,int) const = 0;
+  /**
+    This optional function returns a string that may be used for sorting. 
+   */
+  virtual const char *item_text(void *item) const { return 0L; }
+  /**
+    This optional function is required for sorting browser items.
+   */
+  virtual void item_swap(void*, void*) { }
+  /**
+    Return the item a specified index. 
+   */
+  virtual void *item_at(int) const { return 0L; }
   // you don't have to provide these but it may help speed it up:
   virtual int full_width() const ;	// current width of all items
   virtual int full_height() const ;	// current height of all items
@@ -270,6 +287,14 @@ public:
     For back compatibility.
   */
   void scrollbar_left() {scrollbar.align(FL_ALIGN_LEFT);}
+
+  /**
+   Sort the items in the browser.
+   item_swap(void*, void*) and item_text(void*) must be implemented for this call.
+   \param[in] flags no flags were defined yet. Sorting in descending order and 
+                    sorting while ignoring case come to mind.
+   */
+  void sort(int flags=0);
 
 };
 

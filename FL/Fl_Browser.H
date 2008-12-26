@@ -86,6 +86,7 @@ protected:
   void* item_first() const ;
   void* item_next(void*) const ;
   void* item_prev(void*) const ;
+  void* item_last()const ;
   int item_selected(void*) const ;
   void item_select(void*, int);
   int item_height(void*) const ;
@@ -93,6 +94,9 @@ protected:
   void item_draw(void*, int, int, int, int) const ;
   int full_height() const ;
   int incr_height() const ;
+  const char *item_text(void *item) const;
+  void item_swap(void *a, void *b) { swap((FL_BLINE*)a, (FL_BLINE*)b); }
+  void *item_at(int ix) const { return (void*)find_line(ix); }
 
   FL_BLINE* find_line(int) const ;
   FL_BLINE* _remove(int) ;

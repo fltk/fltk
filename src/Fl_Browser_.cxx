@@ -902,6 +902,43 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* l)
   end();
 }
 
+/*
+ * Simple bubble sort - pure lazyness on my side.
+ */
+void Fl_Browser_::sort(int flags) {
+  int i, j, n = -1, desc = ((flags&FL_SORT_DESC)==FL_SORT_DESC);
+  void *a =item_first(), *b, *c;
+  if (!a) return;
+  while (a) {
+    a = item_next(a);
+    n++;
+  }
+  for (i=n-1; i>0; i--) {
+    char swapped = 0;
+    a = item_first();
+    b = item_next(a);
+    for (j=0; j<i; j++) {
+      const char *ta = item_text(a);
+      const char *tb = item_text(b);
+      c = item_next(b);
+      if (desc) {
+        if (strcmp(ta, tb)<0) {
+          item_swap(a, b);
+          swapped = 1;
+        }
+      } else {
+        if (strcmp(ta, tb)>0) {
+          item_swap(a, b);
+          swapped = 1;
+        }
+      }
+      b = c; a = item_prev(b);
+    }
+    if (!swapped)
+      break;
+  }
+}
+
 // Default versions of some of the virtual functions:
 
 /**
