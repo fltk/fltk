@@ -318,6 +318,7 @@ Fl_Chart::~Fl_Chart() {
  */
 void Fl_Chart::clear() {
   numb = 0;
+  min = max = 0;
   redraw();
 }
 
