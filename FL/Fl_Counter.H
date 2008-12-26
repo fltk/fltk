@@ -88,11 +88,17 @@ public:
     \param[in] a, b normal and large step increments.
   */
   void step(double a,double b) {Fl_Valuator::step(a); lstep_ = b;}
+
   /**
     Sets the increment for the normal step buttons.
     \param[in] a normal step increment.
   */
   void step(double a) {Fl_Valuator::step(a);}
+
+  /**
+    Returns the increment for normal step buttons.
+   */
+  double step() {return Fl_Valuator::step();}
 
   /** Gets the text font */
   Fl_Font textfont() const {return textfont_;}
