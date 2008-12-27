@@ -1,12 +1,7 @@
 //
 // "$Id$"
 //
-// Forms test program for the Fast Light Tool Kit (FLTK).
-//
-// This is an XForms program from the 0.86 distribution of XForms.
-// It has been modified as little as possible to work under fltk by
-// using fltk's Forms emulation.  Search for "fltk" to find all the
-// changes
+// X Color Browser demo program for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2008 by Bill Spitzak and others.
 //
@@ -30,16 +25,35 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <FL/forms.H>	// changed for fltk
+#include <FL/Fl.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Value_Slider.H>
+#include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Box.H>
+
+#include <FL/fl_ask.h>
+#include <FL/filename.H>
+
 #include <stdlib.h>
-#include <stdio.h>	// added for fltk
-#include <string.h>	// added for fltk
+#include <stdio.h>
+#include <string.h>
+
+// some constants
 
 #define MAX_RGB 3000
 
-static FL_FORM *cl;
-static Fl_Widget *rescol, *dbobj, *colbr, *rs, *gs, *bs;
-char dbname[FL_PATH_MAX];
+#define FL_FREE_COL4    ((Fl_Color)(FL_FREE_COLOR+3))
+#define FL_INDIANRED	((Fl_Color)(164))
+
+static Fl_Double_Window *cl;
+static Fl_Box *rescol;
+static Fl_Button *dbobj;
+static Fl_Hold_Browser *colbr;
+static Fl_Value_Slider *rs, *gs, *bs;
+
+static char dbname[FL_PATH_MAX];
+
 static void create_form_cl(void);
 static int load_browser(char *);
 
@@ -50,10 +64,8 @@ static RGBdb rgbdb[MAX_RGB];
 int
 main(int argc, char *argv[])
 {
-
-    fl_initialize(&argc, argv, "FormDemo", 0, 0);
-
     create_form_cl();
+
 #ifdef USING_XCODE
   strcpy(dbname, "../../../../test/rgb.txt");
 #else
@@ -61,47 +73,38 @@ main(int argc, char *argv[])
 #endif
 
     if (load_browser(dbname))
-	fl_set_object_label(dbobj, dbname);
+      dbobj->label(dbname);
     else
-	fl_set_object_label(dbobj, "None");
+      dbobj->label("None");
+    dbobj->redraw();
 
-//    fl_set_form_minsize(cl, cl->w , cl->h); // removed for fltk
-//    fl_set_form_maxsize(cl, 2*cl->w , 2*cl->h); // removed for fltk
-    cl->size_range(cl->w(),cl->h(),2*cl->w(),2*cl->h()); // added for fltk
-    // border changed from FL_TRANSIENT for fltk:
-    // This is so Esc & the close box will close the window.
-    // (on transient windows attempting to close it just calls the callback)
-    fl_show_form(cl, FL_PLACE_FREE, 1/*FL_TRANSIENT*/, "RGB Browser");
+    cl->size_range(cl->w(),cl->h(),2*cl->w(),2*cl->h());
 
-
-    while (fl_do_forms())
-	;
-    return 0;
+    cl->label("RGB Browser");
+    cl->free_position();
+    cl->show(argc,argv);
+    
+    return Fl::run();
 }
 
 static void
 set_entry(int i)
 {
     RGBdb *db = rgbdb + i;
-
-    fl_freeze_form(cl);
-// unclear why demo is doing this.  This messes up FL:
-//    fl_mapcolor(FL_FREE_COL4+i, db->r, db->g, db->b);
-    fl_mapcolor(FL_FREE_COL4, db->r, db->g, db->b);
-    fl_set_slider_value(rs, db->r);
-    fl_set_slider_value(gs, db->g);
-    fl_set_slider_value(bs, db->b);
-    fl_redraw_object(rescol);
-    fl_unfreeze_form(cl);
+    Fl::set_color(FL_FREE_COL4, db->r, db->g, db->b);
+    rs->value(db->r);
+    gs->value(db->g);
+    bs->value(db->b);
+    rescol->redraw();
 }
 
 static void
-br_cb(Fl_Widget * ob, long)
+br_cb(Fl_Widget *ob, long)
 {
-    int r = fl_get_browser(ob);
+    int r = ((Fl_Browser *)ob)->value();
 
     if (r <= 0)
-	return;
+      return;
     set_entry(r - 1);
 }
 
@@ -148,13 +151,11 @@ load_browser(char *fname)
     if (!(fp = fopen(fname, "r")))
 #endif
     {
-	fl_show_alert("Load", fname, "Can't open", 0);
+	fl_alert("%s\n%s\n%s","Load", fname, "Can't open");
 	return 0;
     }
 
     /* read the items */
-
-    fl_freeze_form(cl);
 
     for (; db < dbs && read_entry(fp, &r, &g, &b, name);)
     {
@@ -170,7 +171,7 @@ load_browser(char *fname)
 	    lg = g;
 	    lb = b;
 	    sprintf(buf, "(%3d %3d %3d) %s", r, g, b, name);
-	    fl_addto_browser(colbr, buf);
+	    colbr->add(buf);
 	}
     }
     fclose(fp);
@@ -183,10 +184,10 @@ load_browser(char *fname)
 	db->r = 1000;
     }
 
-    fl_set_browser_topline(colbr, 1);
-    fl_select_browser_line(colbr, 1);
+    colbr->topline(1);
+    colbr->select(1,1);
     set_entry(0);
-    fl_unfreeze_form(cl);
+
     return 1;
 }
 
@@ -228,28 +229,28 @@ static void
 search_rgb(Fl_Widget *, long)
 {
     int r, g, b, i;
-    int top  = fl_get_browser_topline(colbr);
+    int top  = colbr->topline();
 
-    r = int(fl_get_slider_value(rs));
-    g = int(fl_get_slider_value(gs));
-    b = int(fl_get_slider_value(bs));
+    r = int(rs->value());
+    g = int(gs->value());
+    b = int(bs->value());
 
-    fl_freeze_form(cl);
-    fl_mapcolor(FL_FREE_COL4, r, g, b);
-    fl_redraw_object(rescol);
+    // fl_freeze_form(cl);
+    Fl::set_color(FL_FREE_COL4, r, g, b);
+    rescol->redraw();
     i = search_entry(r, g, b);
     /* change topline only if necessary */
     if(i < top || i > (top+15))
-       fl_set_browser_topline(colbr, i-8);
-    fl_select_browser_line(colbr, i + 1);
-    fl_unfreeze_form(cl);
+       colbr->topline(i-8);
+    colbr->select(i+1, 1);
+    // fl_unfreeze_form(cl);
 }
 
 /* change database */
 static void
 db_cb(Fl_Widget * ob, long)
 {
-    const char *p = fl_show_input("Enter New Database Name", dbname);
+    const char *p = fl_input("Enter New Database Name", dbname);
     char buf[512];
 
     if (!p || strcmp(p, dbname) == 0)
@@ -259,7 +260,7 @@ db_cb(Fl_Widget * ob, long)
     if (load_browser(buf))
 	strcpy(dbname, buf);
     else
-	fl_set_object_label(ob, dbname);
+	ob->label(dbname);
 }
 
 static void
@@ -271,62 +272,65 @@ done_cb(Fl_Widget *, long)
 static void
 create_form_cl(void)
 {
-    Fl_Widget *obj;
-
     if (cl)
 	return;
 
-    cl = fl_bgn_form(FL_NO_BOX, 330, 385);
-    obj = fl_add_box(FL_UP_BOX, 0, 0, 330, 385, "");
-    fl_set_object_color(obj, FL_INDIANRED, FL_COL1);
+    cl = new Fl_Double_Window(400,385);
+    cl->box(FL_UP_BOX);
+    cl->color(FL_INDIANRED, FL_GRAY);
 
-    obj = fl_add_box(FL_NO_BOX, 40, 10, 250, 30, "Color Browser");
-    fl_set_object_lcol(obj, FL_RED);
-    fl_set_object_lsize(obj, FL_HUGE_SIZE);
-    fl_set_object_lstyle(obj, FL_BOLD_STYLE + FL_SHADOW_STYLE);
+    Fl_Box *title = new Fl_Box(40, 10, 300, 30, "Color Browser");
+    title->box(FL_NO_BOX);
+    title->labelcolor(FL_RED);
+    title->labelsize(32);
+    title->labelfont(FL_HELVETICA_BOLD);
+    title->labeltype(FL_SHADOW_LABEL);
 
-    dbobj = obj = fl_add_button(FL_NORMAL_BUTTON, 40, 50, 250, 25, "");
-    fl_set_object_boxtype(obj, FL_BORDER_BOX);
-    fl_set_object_color(obj, /*fl_get_visual_depth()==1 ? FL_WHITE:*/ FL_INDIANRED,
-                        FL_INDIANRED);
-    fl_set_object_callback(obj, db_cb, 0);
-    rs = obj = fl_add_valslider(FL_VERT_FILL_SLIDER, 225, 130, 30, 200, "");
-    fl_set_object_color(obj, FL_INDIANRED, FL_RED);
-    fl_set_slider_bounds(obj, 0, 255);
-    fl_set_slider_precision(obj, 0);
-    fl_set_object_callback(obj, search_rgb, 0);
-    fl_set_slider_return(obj, 0);
+    dbobj = new Fl_Button(40, 50, 300, 25, "");
+    dbobj->type(FL_NORMAL_BUTTON);
+    dbobj->box(FL_BORDER_BOX);
+    dbobj->color(FL_INDIANRED,FL_INDIANRED);
+    dbobj->callback(db_cb, 0);
 
-    gs = obj = fl_add_valslider(FL_VERT_FILL_SLIDER, 255, 130, 30, 200, "");
-    fl_set_object_color(obj, FL_INDIANRED, FL_GREEN);
-    fl_set_slider_bounds(obj, 0, 255);
-    fl_set_slider_precision(obj, 0);
-    fl_set_object_callback(obj, search_rgb, 1);
-    fl_set_slider_return(obj, 0);
+    colbr = new Fl_Hold_Browser(10, 90, 280, 240, "");
+    colbr->textfont(FL_COURIER); 
+    colbr->callback(br_cb, 0);
+    colbr->box(FL_DOWN_BOX);
 
-    bs = obj = fl_add_valslider(FL_VERT_FILL_SLIDER, 285, 130, 30, 200, "");
-    fl_set_object_color(obj, FL_INDIANRED, FL_BLUE);
-    fl_set_slider_bounds(obj, 0, 255);
-    fl_set_slider_precision(obj, 0);
-    fl_set_object_callback(obj, search_rgb, 2);
-    fl_set_slider_return(obj, 0);
+    rescol = new Fl_Box(300, 90, 90, 35, "");
+    rescol->color(FL_FREE_COL4, FL_FREE_COL4);
+    rescol->box(FL_BORDER_BOX);
 
+    rs = new Fl_Value_Slider(300, 130, 30, 200, "");
+    rs->type(FL_VERT_FILL_SLIDER);
+    rs->color(FL_INDIANRED, FL_RED);
+    rs->bounds(0, 255);
+    rs->precision(0);
+    rs->callback(search_rgb, 0);
+    rs->when(FL_WHEN_RELEASE);
 
-    colbr = obj = fl_add_browser(FL_HOLD_BROWSER, 10, 90, 205, 240, "");
-    fl_set_browser_fontstyle(obj, FL_FIXED_STYLE); 
-    fl_set_object_callback(obj, br_cb, 0);
+    gs = new Fl_Value_Slider(330, 130, 30, 200, "");
+    gs->type(FL_VERT_FILL_SLIDER);
+    gs->color(FL_INDIANRED, FL_GREEN);
+    gs->bounds(0, 255);
+    gs->precision(0);
+    gs->callback(search_rgb, 1);
+    gs->when(FL_WHEN_RELEASE);
 
+    bs = new Fl_Value_Slider(360, 130, 30, 200, "");
+    bs->type(FL_VERT_FILL_SLIDER);
+    bs->color(FL_INDIANRED, FL_BLUE);
+    bs->bounds(0, 255);
+    bs->precision(0);
+    bs->callback(search_rgb, 2);
+    bs->when(FL_WHEN_RELEASE);
 
-    obj = fl_add_button(FL_NORMAL_BUTTON, 135, 345, 80, 30, "Done");
-    fl_set_object_callback(obj, done_cb, 0);
+    Fl_Button *done = new Fl_Button(160, 345, 80, 30, "Done");
+    done->type(FL_NORMAL_BUTTON);
+    done->callback(done_cb, 0);
 
-    rescol = obj = fl_add_box(FL_FLAT_BOX, 225, 90, 90, 35, "");
-    fl_set_object_color(obj, FL_FREE_COL4, FL_FREE_COL4);
-    fl_set_object_boxtype(obj, FL_BORDER_BOX);
-
-
-    fl_end_form();
-    fl_scale_form(cl, 1.1, 1.0);
+    cl->end();
+    cl->resizable(cl);
 }
 
 //
