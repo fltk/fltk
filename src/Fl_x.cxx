@@ -422,7 +422,7 @@ void fl_reset_spot(void)
     	//if (fl_xim_ic) XUnsetICFocus(fl_xim_ic);
 }
 
-void fl_set_spot(int font, int size, int x, int y, int w, int h)
+void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
  	int change = 0;
 	XVaNestedList preedit_attr;
@@ -435,11 +435,11 @@ void fl_set_spot(int font, int size, int x, int y, int w, int h)
 
 	if (!fl_xim_ic || !fl_is_over_the_spot) return;
     	//XSetICFocus(fl_xim_ic);
-	if (x != spot.x || y != spot.y) {
-		spot.x = x;
-		spot.y = y;
-		spot.height = h;
-		spot.width = w;
+	if (X != spot.x || Y != spot.y) {
+		spot.x = X;
+		spot.y = Y;
+		spot.height = H;
+		spot.width = W;
 		change = 1;
 	}
 	if (font != spotf || size != spots) {

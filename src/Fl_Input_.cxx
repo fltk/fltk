@@ -353,7 +353,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
   fl_pop_clip();
   if (Fl::focus() == this) {
        fl_set_spot(textfont(), textsize(),
-               (int)xpos+curx, Y+ypos-fl_descent(), W, H);
+               (int)xpos+curx, Y+ypos-fl_descent(), W, H, window());
   }
 }
 
@@ -794,7 +794,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
     return 1;
 
   case FL_FOCUS:
-    fl_set_spot(textfont(), textsize(), x(), y(), w(), h());
+    fl_set_spot(textfont(), textsize(), x(), y(), w(), h(), window());
     if (mark_ == position_) {
       minimal_update(size()+1);
     } else //if (Fl::selection_owner() != this)

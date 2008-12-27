@@ -34,6 +34,7 @@
 #define fl_draw_H
 
 #include "Enumerations.H"  // for the color names
+#include "Fl_Window.H"	   // for fl_set_spot()
 
 // Image class...
 class Fl_Image;
@@ -277,7 +278,7 @@ FL_EXPORT const char* fl_expand_text(const char* from, char* buf, int maxbuf,
 
 // XIM:
 FL_EXPORT void fl_set_status(int X, int Y, int W, int H);
-FL_EXPORT void fl_set_spot(int font, int size, int x, int y, int w, int h);
+FL_EXPORT void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win=0);
 FL_EXPORT void fl_reset_spot(void);
 
 

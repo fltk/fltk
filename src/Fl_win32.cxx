@@ -250,29 +250,23 @@ void fl_reset_spot()
 {
 }
 
-void fl_set_spot(int font, int size, int x, int y, int w, int h)
+void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
+  if (!win) return;
+  Fl_Window* tw = win;
+  while (tw->parent()) tw = tw->window(); // find top level window
+
   get_imm_module();
-  HIMC himc = flImmGetContext(fl_msg.hwnd);
+  HIMC himc = flImmGetContext(fl_xid(tw));
+
   if (himc) {
-    Fl_Window* w = fl_find(fl_msg.hwnd);
-
-    // FIXME: the following is a temporary fix for STR #2101
-    if (!w) {
-      flImmReleaseContext(fl_msg.hwnd, himc);
-      return;
-    }
-
-    while (w->parent()) w = w->window();
-
-    COMPOSITIONFORM	cfs;
+    COMPOSITIONFORM cfs;
     cfs.dwStyle = CFS_POINT;
-    cfs.ptCurrentPos.x = x;
-    cfs.ptCurrentPos.y = y - w->labelsize();
-    MapWindowPoints(fl_msg.hwnd, fl_xid(w), &cfs.ptCurrentPos, 1);
+    cfs.ptCurrentPos.x = X;
+    cfs.ptCurrentPos.y = Y - tw->labelsize();
+    MapWindowPoints(fl_xid(win), fl_xid(tw), &cfs.ptCurrentPos, 1);
     flImmSetCompositionWindow(himc, &cfs);
-
-    flImmReleaseContext(fl_msg.hwnd, himc);
+    flImmReleaseContext(fl_xid(tw), himc);
   }
 }
 

@@ -127,7 +127,7 @@ void fl_reset_spot()
 {
 }
 
-void fl_set_spot(int font, int size, int x, int y, int w, int h)
+void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 {
 }
 
