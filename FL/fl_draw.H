@@ -42,6 +42,9 @@ class Fl_Image;
 // Label flags...
 FL_EXPORT extern char fl_draw_shortcut;
 
+/** \addtogroup fl_attributes
+    @{
+*/
 // Colors:
 FL_EXPORT void	fl_color(Fl_Color i); // select indexed color
 /** for back compatibility - use fl_color(Fl_Color c) instead */
@@ -53,7 +56,11 @@ extern FL_EXPORT Fl_Color fl_color_;
   This can be used for state save/restore.
 */
 inline Fl_Color fl_color() {return fl_color_;}
+/** @} */
 
+/** \addtogroup fl_drawings
+    @{
+*/
 // clip:
 FL_EXPORT void fl_push_clip(int x, int y, int w, int h);
 /** The fl_clip() name is deprecated and will be removed from future releases */
@@ -149,7 +156,10 @@ FL_EXPORT double fl_transform_y(double x, double y);
 FL_EXPORT double fl_transform_dx(double x, double y);
 FL_EXPORT double fl_transform_dy(double x, double y);
 FL_EXPORT void fl_transformed_vertex(double x, double y);
+/** @} */
 
+/** \addtogroup  fl_attributes 
+    @{ */
 /* NOTE: doxygen comments here to avoid triplication in os-specific sources */
 /**
   Set the current font, which is then used in various drawing routines,
@@ -160,9 +170,11 @@ FL_EXPORT void fl_transformed_vertex(double x, double y);
   The size of the font is measured in pixels and not "points".
   Lines should be spaced \a size pixels apart or more.
 */
+
+// Fonts:
 FL_EXPORT void fl_font(Fl_Font face, Fl_Fontsize size);
-/** current font index */
-extern FL_EXPORT Fl_Font fl_font_;
+extern FL_EXPORT Fl_Font fl_font_; ///< current font index
+
 /**
   Returns the \a face set by the most recent call to fl_font().
   Tgis can be used to save/restore the font.
@@ -208,6 +220,15 @@ FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); /
 /** Determine the minimum pixel dimensions of a sequence of \a n characters */
 FL_EXPORT void fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
 
+// font encoding:
+FL_EXPORT const char *fl_latin1_to_local(const char *, int n=-1);
+FL_EXPORT const char *fl_local_to_latin1(const char *, int n=-1);
+FL_EXPORT const char *fl_mac_roman_to_local(const char *, int n=-1);
+FL_EXPORT const char *fl_local_to_mac_roman(const char *, int n=-1);
+/** @} */
+
+/** \addtogroup  fl_drawings
+    @{ */
 /**
   Draw a nul-terminated string starting at the given location.
   Text is aligned to the left and to the baseline of the font.
@@ -235,12 +256,6 @@ FL_EXPORT void fl_draw(const char* str, int x, int y, int w, int h,
                        Fl_Align align,
                        void (*callthis)(const char *,int,int,int),
                        Fl_Image* img=0, int draw_symbols = 1);
-
-// font encoding:
-FL_EXPORT const char *fl_latin1_to_local(const char *, int n=-1);
-FL_EXPORT const char *fl_local_to_latin1(const char *, int n=-1);
-FL_EXPORT const char *fl_mac_roman_to_local(const char *, int n=-1);
-FL_EXPORT const char *fl_local_to_mac_roman(const char *, int n=-1);
 
 // boxtypes:
 FL_EXPORT void fl_frame(const char* s, int x, int y, int w, int h);
@@ -286,6 +301,7 @@ FL_EXPORT void fl_reset_spot(void);
 // XForms symbols:
 FL_EXPORT int fl_draw_symbol(const char* label,int x,int y,int w,int h, Fl_Color);
 FL_EXPORT int fl_add_symbol(const char* name, void (*drawit)(Fl_Color), int scalable);
+/** @} */
 
 #endif
 

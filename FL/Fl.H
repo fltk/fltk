@@ -651,7 +651,7 @@ public:
   /** \defgroup  fl_attributes  Color & Font functions
 	fl global color, font functions
      @{ */
-
+ 
   // color map:
   static void	set_color(Fl_Color, uchar, uchar, uchar);
   /**
@@ -718,6 +718,11 @@ public:
   static Fl_Font set_fonts(const char* = 0); // platform dependent
 
   /**   @} */
+ /** \defgroup  fl_drawings  Drawing functions
+	fl global graphics and gui drawing functions
+     @{ */
+  // <Hack to re-order the 'Drawing functions' group>
+ /** @} */
 
   // labeltypes:
   static void set_labeltype(Fl_Labeltype,Fl_Label_Draw_F*,Fl_Label_Measure_F*);
