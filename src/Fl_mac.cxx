@@ -1163,7 +1163,7 @@ static int keycodeToUnicode(
   
   int action;
   //OptionBits options = 0;
-  OptionBits options = kUCKeyTranslateNoDeadKeysMask;
+  // not used yet: OptionBits options = kUCKeyTranslateNoDeadKeysMask;
   unsigned long keyboardType;
   keycode &= 0xFF;
   modifiers = (modifiers >> 8) & 0xFF;
@@ -2502,7 +2502,7 @@ static void allocatePasteboard() {
 }
 #else
 #endif
-static ScrapRef myScrap = 0;
+// not used yet: static ScrapRef myScrap = 0;
 
 /**
  * create a selection
@@ -2548,7 +2548,7 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
 void Fl::paste(Fl_Widget &receiver, int clipboard) {
   if (clipboard) {
     // see if we own the selection, if not go get it:
-    Size len = 0;
+    //Size len = 0;
 #ifdef USE_PASTEBOARD
     // FIXME no error checking done yet!
     OSStatus err = noErr;
