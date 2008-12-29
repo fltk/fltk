@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Fixed static linking of image libraries (STR #1962)
 	- Fixed callback would not be called when shortcut was used with
           radio and toggle buttons in default FL_RELEASE mode.
 	- Fixed a problem with TrackMouseEvent() (Windows only) that would

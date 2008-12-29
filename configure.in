@@ -481,8 +481,10 @@ AC_SUBST(AUDIOLIBS)
 dnl Check for image libraries...
 SAVELIBS="$LIBS"
 IMAGELIBS=""
+STATICIMAGELIBS=""
 
 AC_SUBST(IMAGELIBS)
+AC_SUBST(STATICIMAGELIBS)
 
 AC_ARG_ENABLE(localjpeg, [  --enable-localjpeg      use local JPEG library, default=auto],
     [if test x$enable_localjpeg = xyes; then
@@ -494,6 +496,7 @@ AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
     JPEGINC=""
     JPEG=""
     IMAGELIBS="-ljpeg $IMAGELIBS",
+    STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS"
     if test x$enable_localjpeg = xno; then
 	JPEGINC=""
 	JPEG=""
@@ -502,6 +505,7 @@ AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
 	JPEGINC="-I../jpeg"
 	JPEG="jpeg"
 	IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
+        STATICIMAGELIBS="\$libdir/libfltk_jpeg.a $STATICIMAGELIBS"
     fi)
 
 AC_ARG_ENABLE(localzlib, [  --enable-localzlib      use local ZLIB library, default=auto],
@@ -515,6 +519,7 @@ AC_CHECK_LIB(z,gzgets,
     ZLIB=""
     LIBS="-lz $LIBS"
     IMAGELIBS="-lz $IMAGELIBS",
+    STATICIMAGELIBS="-lz $STATICIMAGELIBS"
     if test x$enable_localzlib = xno; then
 	ZLIBINC=""
 	ZLIB=""
@@ -524,6 +529,7 @@ AC_CHECK_LIB(z,gzgets,
 	ZLIB="zlib"
 	LIBS="-lfltk_z $LIBS"
 	IMAGELIBS="-lfltk_z $IMAGELIBS"
+        STATICIMAGELIBS="\$libdir/libfltk_z.a $STATICIMAGELIBS"
     fi)
 
 AC_ARG_ENABLE(localpng, [  --enable-localpng       use local PNG library, default=auto],
@@ -535,6 +541,7 @@ AC_CHECK_LIB(png,png_set_tRNS_to_alpha, [
     PNGINC=""
     PNG=""
     IMAGELIBS="-lpng $IMAGELIBS"
+    STATICIMAGELIBS="-lpng $STATICIMAGELIBS"
     AC_DEFINE(HAVE_LIBPNG)
     AC_CHECK_HEADER(png.h, AC_DEFINE(HAVE_PNG_H))],[
     if test x$enable_localpng = xno; then
@@ -546,6 +553,7 @@ AC_CHECK_LIB(png,png_set_tRNS_to_alpha, [
         PNGINC="-I../png"
         PNG="png"
         IMAGELIBS="-lfltk_png $IMAGELIBS"
+        STATICIMAGELIBS="\$libdir/libfltk_png.a $STATICIMAGELIBS"
     fi])
 
 AC_SUBST(JPEG)
