@@ -504,17 +504,17 @@ install: $(LIBNAME) $(DSONAME) \
 	echo "Installing libraries in $(DESTDIR)$(libdir)..."
 	-$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	-$(INSTALL_DIR) $(DESTDIR)$(bindir)
-	$(RM) $(DESTDIR)$(libdir)/$(LIBNAME)
+	$(RM) $(DESTDIR)$(libdir)/$(LIBBASENAME)
 	$(INSTALL_LIB) $(LIBNAME) $(DESTDIR)$(libdir)
 	$(INSTALL_LIB) $(FLLIBNAME) $(DESTDIR)$(libdir)
 	$(INSTALL_LIB) $(IMGLIBNAME) $(DESTDIR)$(libdir)
-	$(RANLIB) $(DESTDIR)$(libdir)/$(LIBNAME)
-	$(RANLIB) $(DESTDIR)$(libdir)/$(FLLIBNAME)
+	$(RANLIB) $(DESTDIR)$(libdir)/$(LIBBASENAME)
+	$(RANLIB) $(DESTDIR)$(libdir)/$(FLLIBBASENAME)
 	if test x$(GLLIBNAME) != x; then \
 		$(INSTALL_LIB) $(GLLIBNAME) $(DESTDIR)$(libdir); \
-		$(RANLIB) $(DESTDIR)$(libdir)/$(GLLIBNAME); \
+		$(RANLIB) $(DESTDIR)$(libdir)/$(GLLIBBASENAME); \
 	fi
-	$(RANLIB) $(DESTDIR)$(libdir)/$(IMGLIBNAME)
+	$(RANLIB) $(DESTDIR)$(libdir)/$(IMGLIBBASENAME)
 	if test x$(DSONAME) = xlibfltk.so.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk.so*;\
 		$(INSTALL_LIB) libfltk.so.1.3 $(DESTDIR)$(libdir); \
@@ -643,7 +643,7 @@ install: $(LIBNAME) $(DSONAME) \
 
 uninstall:
 	echo "Uninstalling libraries..."
-	$(RM) $(DESTDIR)$(libdir)/$(LIBNAME)
+	$(RM) $(DESTDIR)$(libdir)/$(LIBBASENAME)
 	if test x$(DSONAME) = xlibfltk.so.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk.so*;\
 	fi
@@ -664,7 +664,7 @@ uninstall:
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
 	fi
-	$(RM) $(DESTDIR)$(libdir)/$(FLLIBNAME);
+	$(RM) $(DESTDIR)$(libdir)/$(FLLIBBASENAME);
 	if test x$(FLDSONAME) = xlibfltk_forms.so.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\
 	fi
@@ -686,7 +686,7 @@ uninstall:
 		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
 	fi
 	if test x$(GLLIBNAME) != x; then\
-		$(RM) $(DESTDIR)$(libdir)/$(GLLIBNAME);\
+		$(RM) $(DESTDIR)$(libdir)/$(GLLIBBASENAME);\
 	fi
 	if test x$(GLDSONAME) = xlibfltk_gl.so.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.so*;\
@@ -709,7 +709,7 @@ uninstall:
 		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
 	fi
 	if test x$(IMGLIBNAME) != x; then\
-		$(RM) $(DESTDIR)$(libdir)/$(IMGLIBNAME);\
+		$(RM) $(DESTDIR)$(libdir)/$(IMGLIBBASENAME);\
 	fi
 	if test x$(IMGDSONAME) = xlibfltk_images.so.1.3; then\
 		$(RM) $(DESTDIR)$(libdir)/libfltk_images.so*;\

@@ -99,6 +99,12 @@ GLLIBNAME="../lib/libfltk_gl.a"
 IMGLIBNAME="../lib/libfltk_images.a"
 CAIROLIBNAME="../lib/libfltk_cairo.a"
 
+LIBBASENAME="libfltk.a"
+FLLIBBASENAME="libfltk_forms.a"
+GLLIBBASENAME="libfltk_gl.a"
+IMGLIBBASENAME="libfltk_images.a"
+CAIROLIBBASENAME="libfltk_cairo.a"
+
 AC_SUBST(FLLIBNAME)
 AC_SUBST(GLDEMOS)
 AC_SUBST(GLLIBNAME)
@@ -110,6 +116,12 @@ AC_SUBST(LINKFLTK)
 AC_SUBST(LINKFLTKFORMS)
 AC_SUBST(LINKFLTKGL)
 AC_SUBST(LINKFLTKIMG)
+
+AC_SUBST(LIBBASENAME)
+AC_SUBST(FLLIBBASENAME)
+AC_SUBST(GLLIBBASENAME)
+AC_SUBST(IMGLIBBASENAME)
+AC_SUBST(CAIROLIBBASENAME)
 
 dnl Handle compile-time options...
 AC_ARG_ENABLE(debug, [  --enable-debug          turn on debugging [default=no]])
@@ -128,7 +140,7 @@ LINKFLTKCAIRO=""
 FLTKCAIROOPTION=""
 CAIROLIBS=""
 
-AC_ARG_ENABLE(cairo,[  --enable-cairoext          use fltk code instrumentation for cairo extended use (default=no)])
+AC_ARG_ENABLE(cairo,[  --enable-cairoext       use fltk code instrumentation for cairo extended use (default=no)])
 if test x$enable_cairoext = xyes; then
 	  AC_DEFINE(USE_CAIRO)
 	  AC_DEFINE(HAVE_CAIRO)

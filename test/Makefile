@@ -259,7 +259,7 @@ uninstall-osx:
 	../fluid/fluid$(EXEEXT) -c $<
 
 # All demos depend on the FLTK library...
-$(ALL): ../lib/$(LIBNAME)
+$(ALL): $(LIBNAME)
 
 # General demos...
 unittests$(EXEEXT): unittests.o
@@ -315,7 +315,7 @@ editor$(EXEEXT): editor.o
 fast_slow$(EXEEXT): fast_slow.o
 fast_slow.cxx:	fast_slow.fl ../fluid/fluid$(EXEEXT)
 
-file_chooser$(EXEEXT): file_chooser.o ../lib/$(IMGLIBNAME)
+file_chooser$(EXEEXT): file_chooser.o $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) file_chooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 
@@ -327,7 +327,7 @@ forms$(EXEEXT): forms.o
 
 hello$(EXEEXT): hello.o
 
-help$(EXEEXT): help.o ../lib/$(IMGLIBNAME)
+help$(EXEEXT): help.o $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 
@@ -370,7 +370,7 @@ minimum$(EXEEXT): minimum.o
 
 navigation$(EXEEXT): navigation.o
 
-output$(EXEEXT): output.o ../lib/$(FLLIBNAME)
+output$(EXEEXT): output.o $(FLLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ output.o $(LINKFLTKFORMS) $(LDLIBS)
 
@@ -380,7 +380,7 @@ pack$(EXEEXT): pack.o
 
 pixmap$(EXEEXT): pixmap.o
 
-pixmap_browser$(EXEEXT): pixmap_browser.o ../lib/$(IMGLIBNAME)
+pixmap_browser$(EXEEXT): pixmap_browser.o $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) pixmap_browser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 
@@ -427,7 +427,7 @@ valuators$(EXEEXT): valuators.o
 valuators.cxx:	valuators.fl ../fluid/fluid$(EXEEXT)
 
 # All OpenGL demos depend on the FLTK and FLTK_GL libraries...
-$(GLALL): ../lib/$(LIBNAME) ../lib/$(GLLIBNAME)
+$(GLALL): $(LIBNAME) $(GLLIBNAME)
 
 # OpenGL demos...
 CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o

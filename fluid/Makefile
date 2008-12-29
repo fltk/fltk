@@ -54,8 +54,8 @@ include ../makeinclude
 
 all:	$(FLUID) fluid$(EXEEXT)
 
-fluid$(EXEEXT):		$(OBJECTS) ../lib/$(LIBNAME) ../lib/$(FLLIBNAME) \
-			../lib/$(IMGLIBNAME)
+fluid$(EXEEXT):		$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \
+			$(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS
