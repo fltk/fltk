@@ -95,6 +95,7 @@ LIBNAME="@LIBNAME@"
 DSONAME="@DSONAME@"
 DSOLINK="@DSOLINK@"
 IMAGELIBS="@IMAGELIBS@"
+STATICIMAGELIBS="@STATICIMAGELIBS@"
 CAIROLIBS="@CAIROLIBS@"
 SHAREDSUFFIX="@SHAREDSUFFIX@"
 
@@ -243,7 +244,7 @@ if test x$use_gl = xyes; then
 fi
 if test x$use_images = xyes; then
     LDLIBS="-lfltk_images$SHAREDSUFFIX $IMAGELIBS $LDLIBS"
-    LDSTATIC="$libdir/libfltk_images.a $IMAGELIBS $LDSTATIC"
+    LDSTATIC="$libdir/libfltk_images.a $STATICIMAGELIBS $LDSTATIC"
 fi
 
 if test x$use_cairo = xyes; then

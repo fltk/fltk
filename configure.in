@@ -531,8 +531,10 @@ AC_SUBST(AUDIOLIBS)
 dnl Check for image libraries...
 SAVELIBS="$LIBS"
 IMAGELIBS=""
+STATICIMAGELIBS=""
 
 AC_SUBST(IMAGELIBS)
+AC_SUBST(STATICIMAGELIBS)
 
 # Handle the JPEG lib linking mode (use fltk local or system lib)
 # If --enable-(resp. --disable-)localjpeg parameter is not set by user
@@ -554,6 +556,7 @@ if test x$enable_localjpeg = xyes -o x$sysjpeglib_ok = xno; then
     JPEGINC="-I../jpeg"
     JPEG="jpeg"
     IMAGELIBS="-lfltk_jpeg $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libfltk_jpeg.a $STATICIMAGELIBS"
     AC_DEFINE(HAVE_LIBJPEG)
     #ac_cv_lib_jpeg_jpeg_CreateCompress=no # from ima: should not be necessary
     # Finally, warn user if system lib was requested but not found
@@ -564,6 +567,7 @@ else
     JPEGINC=""
     JPEG=""
     IMAGELIBS="-ljpeg $IMAGELIBS"
+    STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS"
     AC_DEFINE(HAVE_LIBJPEG)
 fi
 
@@ -588,6 +592,7 @@ if test x$enable_localzlib = xyes -o x$syszlib_ok = xno ; then
     ZLIB="zlib"
     LIBS="-lfltk_z $LIBS"
     IMAGELIBS="-lfltk_z $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libfltk_z.a $STATICIMAGELIBS"
     AC_DEFINE(HAVE_LIBZ)
     ac_cv_lib_z_gzgets=no # fc: is still necessary ?
     # Finally, warn user if system lib was requested but not found
@@ -599,6 +604,7 @@ else
     ZLIB=""
     LIBS="-lz $LIBS"
     IMAGELIBS="-lz $IMAGELIBS"
+    STATICIMAGELIBS="-lz $STATICIMAGELIBS"
     AC_DEFINE(HAVE_LIBZ)
 fi
 
@@ -629,6 +635,7 @@ if test x$enable_localpng = xyes -o x$syspnglib_ok = xno ; then
     PNGINC="-I../png"
     PNG="png"
     IMAGELIBS="-lfltk_png $IMAGELIBS"
+    STATICIMAGELIBS="\$libdir/libfltk_png.a $STATICIMAGELIBS"
     AC_DEFINE(HAVE_LIBPNG)
     AC_DEFINE(HAVE_PNG_H)
     AC_DEFINE(HAVE_PNG_GET_VALID)
@@ -641,6 +648,7 @@ else
     PNGINC=""
     PNG=""
     IMAGELIBS="-lpng $IMAGELIBS"
+    STATICIMAGELIBS="-lpng $STATICIMAGELIBS"
     AC_DEFINE(HAVE_LIBPNG)
     AC_CHECK_LIB(png,png_get_valid, AC_DEFINE(HAVE_PNG_GET_VALID))
     AC_CHECK_LIB(png,png_set_tRNS_to_alpha, AC_DEFINE(HAVE_PNG_SET_TRNS_TO_ALPHA))

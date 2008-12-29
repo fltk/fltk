@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.3.0
 
+	- Fixed static linking of image libraries (STR #1962)
 	- Fixed fl_set_spot() for Windows (STR #2101)
 	- Added sorting to Fl_Browser_ (STR #2113)
 	- Added utf8 support for OS X copy and paste
