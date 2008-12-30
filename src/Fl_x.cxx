@@ -41,6 +41,7 @@
 #  include <FL/Fl_Window.H>
 #  include <FL/fl_utf8.h>
 #  include <FL/Fl_Tooltip.H>
+#  include <FL/fl_draw.H>
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "flstring.h"
