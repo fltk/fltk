@@ -3,7 +3,7 @@
 //
 // Fl_Help_Dialog test program.
 //
-// Copyright 1999-2005 by Easy Software Products.
+// Copyright 1999-2009 by Easy Software Products.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

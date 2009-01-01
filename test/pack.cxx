@@ -7,7 +7,7 @@
 // Changing the type() of an Fl_Pack after it is displayed is not supported
 // so I have to do a lot of resizing of things before that.
 //
-// Copyright 1998-2008 by Bill Spitzak and others.
+// Copyright 1998-2009 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
