@@ -34,11 +34,6 @@
 #include <FL/Fl_Text_Buffer.H>
 
 
-#define PREFERRED_GAP_SIZE 1024
-/* Initial size for the buffer gap (empty space
-in the buffer where text might be inserted
-if the user is typing sequential chars) */
-
 static void histogramCharacters(const char *string, int length, char hist[ 256 ],
                                  int init);
 static void subsChars(char *string, int length, char fromChar, char toChar);
@@ -122,16 +117,21 @@ static void undobuffersize(int n) {
 }
 
 /**
-   Create an empty text buffer of a pre-determined size (use this to
-   avoid unnecessary re-allocation if you know exactly how much the buffer
-   will need to hold
+   Create an empty text buffer of a pre-determined size.
+
+   \param requestedSize use this to avoid unnecessary re-allocation 
+          if you know exactly how much the buffer will need to hold
+   \param preferredGapSize Initial size for the buffer gap (empty space
+          in the buffer where text might be inserted
+          if the user is typing sequential chars)
 */
 /**  Creates a new text buffer of the specified initial size.*/
-Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize) {
+Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize) {
   mLength = 0;
-  mBuf = (char *)malloc(requestedSize + PREFERRED_GAP_SIZE);
+  mPreferredGapSize = preferredGapSize;
+  mBuf = (char *)malloc(requestedSize + mPreferredGapSize);
   mGapStart = 0;
-  mGapEnd = PREFERRED_GAP_SIZE;
+  mGapEnd = mPreferredGapSize;
   mTabDist = 8;
   mUseTabs = 1;
   mPrimary.mSelected = 0;
@@ -197,12 +197,12 @@ void Fl_Text_Buffer::text(const char *t) {
   deletedLength = mLength;
   free((void *)mBuf);
 
-  /* Start a new buffer with a gap of PREFERRED_GAP_SIZE in the center */
+  /* Start a new buffer with a gap of mPreferredGapSize in the center */
   insertedLength = strlen(t);
-  mBuf = (char *)malloc(insertedLength + PREFERRED_GAP_SIZE);
+  mBuf = (char *)malloc(insertedLength + mPreferredGapSize);
   mLength = insertedLength;
   mGapStart = insertedLength / 2;
-  mGapEnd = mGapStart + PREFERRED_GAP_SIZE;
+  mGapEnd = mGapStart + mPreferredGapSize;
   memcpy(mBuf, t, mGapStart);
   memcpy(&mBuf[ mGapEnd ], &t[ mGapStart ], insertedLength - mGapStart);
 #ifdef PURIFY
@@ -347,9 +347,9 @@ void Fl_Text_Buffer::copy(Fl_Text_Buffer *fromBuf, int fromStart,
      the current buffer, just move the gap (if necessary) to where
      the text should be inserted.  If the new text is too large, reallocate
      the buffer with a gap large enough to accomodate the new text and a
-     gap of PREFERRED_GAP_SIZE */
+     gap of mPreferredGapSize */
   if (copiedLength > mGapEnd - mGapStart)
-    reallocate_with_gap(toPos, copiedLength + PREFERRED_GAP_SIZE);
+    reallocate_with_gap(toPos, copiedLength + mPreferredGapSize);
   else if (toPos != mGapStart)
     move_gap(toPos);
 
@@ -1439,9 +1439,9 @@ int Fl_Text_Buffer::insert_(int pos, const char *text) {
      the current buffer, just move the gap (if necessary) to where
      the text should be inserted.  If the new text is too large, reallocate
      the buffer with a gap large enough to accomodate the new text and a
-     gap of PREFERRED_GAP_SIZE */
+     gap of mPreferredGapSize */
   if (insertedLength > mGapEnd - mGapStart)
-    reallocate_with_gap(pos, insertedLength + PREFERRED_GAP_SIZE);
+    reallocate_with_gap(pos, insertedLength + mPreferredGapSize);
   else if (pos != mGapStart)
     move_gap(pos);
 

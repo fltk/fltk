@@ -97,7 +97,7 @@ typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
 */
 class FL_EXPORT Fl_Text_Buffer {
   public:
-    Fl_Text_Buffer(int requestedSize = 0);
+    Fl_Text_Buffer(int requestedSize = 0, int preferredGapSize = 1024);
     ~Fl_Text_Buffer();
 
   /**    Returns the number of characters in the buffer.  */
@@ -312,6 +312,9 @@ class FL_EXPORT Fl_Text_Buffer {
                                    use it */
     char mCanUndo;		/**< if this buffer is used for attributes, it must
 				   not do any undo calls */
+    int mPreferredGapSize;	/**< the default allocation for the text gap is 1024
+                                   bytes and should only be increased if frequent
+                                   and large changes in buffer size are expected */
 };
 
 #endif
