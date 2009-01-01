@@ -3,7 +3,7 @@
  *
  * X11 UTF-8 text drawing functions.
  *
- *      Copyright (c) 2000-2003, OksiD Software, Jean-Marc Lienher
+ *      Copyright (c) 2000-2009, OksiD Software, Jean-Marc Lienher
  *                      All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

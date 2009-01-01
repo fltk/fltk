@@ -3,7 +3,7 @@
 //
 // Header file for Fl_Text_Display class.
 //
-// Copyright 2001-2005 by Bill Spitzak and others.
+// Copyright 2001-2009 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
