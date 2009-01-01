@@ -3,8 +3,8 @@
 //
 // Fl_JPEG_Image routines.
 //
-// Copyright 1997-2005 by Easy Software Products.
-// Image support donated by Matthias Melcher, Copyright 2000.
+// Copyright 1997-2009 by Easy Software Products.
+// Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

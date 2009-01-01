@@ -3,7 +3,7 @@
 //
 // Preferences methods for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2002-2005 by Matthias Melcher.
+// Copyright 2002-2009 by Matthias Melcher.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

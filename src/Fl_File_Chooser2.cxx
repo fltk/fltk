@@ -3,7 +3,7 @@
 //
 // More Fl_File_Chooser routines.
 //
-// Copyright 1999-2005 by Michael Sweet.
+// Copyright 1999-2009 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

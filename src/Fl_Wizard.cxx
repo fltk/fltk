@@ -3,7 +3,7 @@
 //
 // Fl_Wizard widget routines.
 //
-// Copyright 1997-2005 by Easy Software Products.
+// Copyright 1997-2009 by Easy Software Products.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

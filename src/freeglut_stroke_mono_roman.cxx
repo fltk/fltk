@@ -3,7 +3,7 @@
  *
  * freeglut Monospace Roman stroke font definition
  *
- * Copyright (c) 1999-2000 Pawel W. Olszta. All Rights Reserved.
+ * Copyright (c) 1999-2009 Pawel W. Olszta. All Rights Reserved.
  * Written by Pawel W. Olszta, <olszta@sourceforge.net>
  * Creation date: Thu Dec 16 1999
  *
