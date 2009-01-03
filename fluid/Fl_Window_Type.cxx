@@ -1065,6 +1065,22 @@ void Fl_Window_Type::fix_overlay() {
   ((Overlay_Window *)(this->o))->redraw_overlay();
 }
 
+// check if we must redraw any parent of tabs/wizard type
+void check_redraw_corresponding_parent(Fl_Type *s) {
+    Fl_Widget_Type * prev_parent = 0;
+    if( !s || !s->selected || !s->is_widget()) return;
+    for (Fl_Type *i=s; i && i->parent; i=i->parent) {
+	if (i->is_group() && prev_parent && 
+	    (!strcmp(i->type_name(), "Fl_Tabs") || 
+	     !strcmp(i->type_name(), "Fl_Wizard"))) {
+	     ((Fl_Tabs*)((Fl_Widget_Type*)i)->o)->value(prev_parent->o);
+	     return;
+	}
+	if (i->is_group() && s->is_widget()) 
+	    prev_parent = (Fl_Widget_Type*)i;
+    }
+}
+ 
 // do that for every window (when selected set changes):
 void redraw_overlays() {
   for (Fl_Type *o=Fl_Type::first; o; o=o->next)

@@ -1808,6 +1808,7 @@ void Fl_Widget_Type::open() {
 Fl_Type *Fl_Type::current;
 
 extern void redraw_overlays();
+extern void check_redraw_corresponding_parent(Fl_Type*);
 extern void redraw_browser();
 extern void update_sourceview_position();
 
@@ -1839,6 +1840,7 @@ void selection_changed(Fl_Type *p) {
   }
   if (!p || !p->selected) p = q;
   Fl_Type::current = p;
+  check_redraw_corresponding_parent(p);
   redraw_overlays();
   // load the panel with the new settings:
   load_panel();
