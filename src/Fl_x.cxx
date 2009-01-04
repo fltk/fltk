@@ -330,6 +330,7 @@ void fl_new_ic()
 	XVaNestedList status_attr = NULL;
 	static XFontSet   fs = NULL;
 	char *fnt;
+	bool must_free_fnt = true;
 	char          **missing_list;
 	int           missing_count;
 	char          *def_string;
@@ -342,14 +343,14 @@ void fl_new_ic()
 #warning XFT support here
 	if (!fs) {
 		fnt = NULL;//fl_get_font_xfld(0, 14);
-		if (!fnt) fnt = "-misc-fixed-*";
+		if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
 		fs = XCreateFontSet(fl_display,	fnt, &missing_list,
 			&missing_count, &def_string);
 	}
 #else
 	if (!fs) {
 		fnt = fl_get_font_xfld(0, 14);
-		if (!fnt) fnt = "-misc-fixed-*";
+		if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
 		fs = XCreateFontSet(fl_display,	fnt, &missing_list,
 			&missing_count, &def_string);
 	}
@@ -431,7 +432,9 @@ void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 	char          **missing_list;
 	int           missing_count;
 	char          *def_string;
-	char *fnt;
+	char *fnt=NULL;
+	bool must_free_fnt=true;
+
 	static XIC ic = NULL;
 
 	if (!fl_xim_ic || !fl_is_over_the_spot) return;
@@ -452,17 +455,15 @@ void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 		}
 #if USE_XFT
 #warning XFT support here
-		fnt = NULL;//fl_get_font_xfld(font, size);
-		if (!fnt) fnt = "-misc-fixed-*";
+		fnt = NULL; // fl_get_font_xfld(font, size);
+		if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
 		fs = XCreateFontSet(fl_display,	fnt, &missing_list,
 			&missing_count, &def_string);
-		free(fnt);
 #else
 		fnt = fl_get_font_xfld(font, size);
-		if (!fnt) fnt = "-misc-fixed-*";
+		if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
 		fs = XCreateFontSet(fl_display,	fnt, &missing_list,
 			&missing_count, &def_string);
-		free(fnt);
 #endif
 	}
 	if (fl_xim_ic != ic) {
@@ -470,6 +471,7 @@ void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 		change = 1;
 	}
 
+	if (fnt && must_free_fnt) free(fnt);
 	if (!change) return;
 
 

@@ -32,7 +32,7 @@
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Box.H>
 
-#include <FL/fl_ask.h>
+#include <FL/fl_ask.H>
 #include <FL/filename.H>
 
 #include <stdlib.h>
