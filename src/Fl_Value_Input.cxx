@@ -136,6 +136,12 @@ Fl_Value_Input::Fl_Value_Input(int X, int Y, int W, int H, const char* l)
   set_flag(SHORTCUT_LABEL);
 }
 
+Fl_Value_Input::~Fl_Value_Input() {
+
+  if (input.parent() == (Fl_Group *)this)
+    input.parent(0);   // *revert* ctor kludge!
+}
+
 //
 // End of "$Id$".
 //

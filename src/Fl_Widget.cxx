@@ -135,14 +135,19 @@ extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
 
 /**
    Destroys the widget, taking care of throwing focus before if any.
-   Destruction does not remove from any parent group!  And groups when
-   destroyed destroy all their children.  This is convenient and fast.
-   However, it is only legal to destroy a "root" such as an Fl_Window,
-   and automatic destructors may be called.
+   Destruction removes the widget from any parent group! And groups when
+   destroyed destroy all their children. This is convenient and fast.
 */
 Fl_Widget::~Fl_Widget() {
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
+  // remove from parent group
+  if (parent_) parent_->remove(this);
+#ifdef DEBUG_DELETE
+  if (parent_) { // this should never happen
+    printf("*** Fl_Widget: parent_->remove(this) failed [%p,%p]\n",parent_,this);
+  }
+#endif // DEBUG_DELETE
   parent_ = 0; // Don't throw focus to a parent widget.
   fl_throw_focus(this);
 }

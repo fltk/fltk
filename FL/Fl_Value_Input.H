@@ -76,6 +76,7 @@ public:
   void draw();
   void resize(int,int,int,int);
   Fl_Value_Input(int x,int y,int w,int h,const char *l=0);
+  ~Fl_Value_Input();
 
   /** See void Fl_Value_Input::soft(char s) */
   void soft(char s) {soft_ = s;}

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.3.0
 
+	- Widgets now remove themselves from their parent group (if any),
+	  when destroyed (STR #1894)
 	- Added flexible gap size for text buffer (STR #2046)
 	- Fixed static linking of image libraries (STR #1962)
 	- Fixed fl_set_spot() for Windows (STR #2101)

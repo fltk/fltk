@@ -383,21 +383,23 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
   affects all child widgets and deletes them from memory.
 */
 void Fl_Group::clear() {
-  Fl_Widget*const* old_array = array();
-  int old_children = children();
-  // clear everything now, in case fl_fix_focus recursively calls us:
-  children_ = 0;
-  //array_ = 0; //dont do this, it will clobber old_array if only one child
   savedfocus_ = 0;
   resizable_ = this;
   init_sizes();
   // okay, now it is safe to destroy the children:
-  Fl_Widget*const* a = old_array;
-  for (int i=old_children; i--;) {
-    Fl_Widget* o = *a++;
-    if (o->parent() == this) delete o;
+  while (children_) {
+    Fl_Widget* o = child(0);	// *first* child widget
+    if (o->parent() == this) {	// should always be true
+      remove(o);		// remove child widget first
+      delete o;			// then delete it
+    } else {			// this should never happen !
+#ifdef DEBUG_CLEAR
+      printf ("Fl_Group::clear() widget:%p, parent: %p != this (%p)\n",
+	      o, o->parent(), this); fflush(stdout);
+#endif // DEBUG_CLEAR
+      remove(o);		// remove it
+    }
   }
-  if (old_children > 1) free((void*)old_array);
 }
 
 /**
@@ -466,7 +468,18 @@ void Fl_Group::remove(Fl_Widget &o) {
   int i = find(o);
   if (i >= children_) return;
   if (&o == savedfocus_) savedfocus_ = 0;
-  o.parent_ = 0;
+  if (o.parent_ == this) {	// this should always be true
+    o.parent_ = 0;
+  } 
+#ifdef DEBUG_REMOVE  
+  else {			// this should never happen !
+    printf ("Fl_Group::remove(): widget %p, parent_ (%p) != this (%p)\n",
+      &o, o.parent_, this);
+  }
+#endif // DEBUG_REMOVE
+
+  // remove the widget from the group
+
   children_--;
   if (children_ == 1) { // go from 2 to 1 child
     Fl_Widget *t = array_[!i];
