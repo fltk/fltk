@@ -12,7 +12,7 @@
 // but it was easier to implement this by using the file read/write
 // that is needed to save the setup anyways.
 //
-// Copyright 1998-2006 by Bill Spitzak and others.
+// Copyright 1998-2009 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
