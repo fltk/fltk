@@ -451,7 +451,7 @@ Fl_Help_View::draw()
 					// Box to draw...
   int			underline,	// Underline text?
                         xtra_ww;        // Extra width for underlined space between words
-
+  Fl_Color              prev_text_color=FL_RED; // Saved text color before font color modification
 
   // Draw the scrollbar(s) and box first...
   ww = w() ;
@@ -720,7 +720,8 @@ Fl_Help_View::draw()
 	  else if (strcasecmp(buf, "FONT") == 0)
 	  {
 	    if (get_attr(attrs, "COLOR", attr, sizeof(attr)) != NULL) {
-	      fl_color(get_color(attr, textcolor_));
+	      prev_text_color =  textcolor_;
+	      fl_color( (textcolor_ = get_color(attr, textcolor_)) );
 	    }
 
             if (get_attr(attrs, "FACE", attr, sizeof(attr)) != NULL) {
@@ -747,6 +748,7 @@ Fl_Help_View::draw()
 	  }
 	  else if (strcasecmp(buf, "/FONT") == 0)
 	  {
+	    textcolor_ = prev_text_color;
 	    fl_color(textcolor_);
 	    popfont(font, fsize);
 	  }
