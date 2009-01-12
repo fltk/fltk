@@ -2585,6 +2585,27 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
           i = nFlavor+1;
           break;
         }
+	// accept the utf16 copied buffers (I.e: like in ms Word (r) and other text editors 
+	else if (UTTypeConformsTo(flavorType, CFSTR("public.utf16-plain-text"))) {
+	  err = PasteboardCopyItemFlavorData( myPasteboard, itemID, CFSTR("public.utf16-plain-text"), &flavorData );
+	  if(err != noErr) continue;
+	  len = CFDataGetLength(flavorData);
+	  CFStringRef mycfs = CFStringCreateWithBytes(NULL,   CFDataGetBytePtr(flavorData), len, kCFStringEncodingUnicode, false);
+	  CFRelease (flavorData);
+	  len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(mycfs), kCFStringEncodingUTF8) + 1;
+	  if ( len > fl_selection_buffer_length[1] ) {
+	    fl_selection_buffer_length[1] = len;
+	    delete[] fl_selection_buffer[1];
+	    fl_selection_buffer[1] = new char[len];
+	  }
+	  CFStringGetCString(mycfs, fl_selection_buffer[1], len, kCFStringEncodingUTF8);
+	  CFRelease (mycfs);
+	  len = strlen(fl_selection_buffer[1]);
+	  fl_selection_length[1] = len;
+	  for(char *p=fl_selection_buffer[1]; p < fl_selection_buffer[1]+len; p++) if(*p == '\r') *p = '\n';
+          i = nFlavor+1;
+          break;
+        }
       }
       CFRelease (flavorTypeArray);
     }
