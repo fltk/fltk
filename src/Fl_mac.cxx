@@ -89,6 +89,8 @@ extern void fl_fix_focus();
 static void handleUpdateEvent( WindowPtr xid );
 //+ int fl_handle(const EventRecord &event);
 static int FSSpec2UnixPath( FSSpec *fs, char *dst );
+// converting cr lf converter function
+static void convert_crlf(char * string, size_t len);
 
 // public variables
 int fl_screen;
@@ -1810,6 +1812,12 @@ static int FSSpec2UnixPath( FSSpec *fs, char *dst )
   FSRefMakePath( &fsRef, (UInt8*)dst, 1024 );
   return strlen(dst);
 }
+static void convert_crlf(char * s, size_t len)
+{
+  // turn all \r characters into \n:
+  for (size_t x = 0; x < len; x++) if (s[x] == '\r') s[x] = '\n';
+}
+
 
 static DragReference currDragRef = 0;
 static char *currDragData = 0L;
@@ -2502,7 +2510,10 @@ static void allocatePasteboard() {
 }
 #else
 #endif
-// not used yet: static ScrapRef myScrap = 0;
+
+#ifndef USE_PASTEBOARD
+static ScrapRef myScrap = 0;
+#endif
 
 /**
  * create a selection
@@ -2602,10 +2613,28 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 	  CFRelease (mycfs);
 	  len = strlen(fl_selection_buffer[1]);
 	  fl_selection_length[1] = len;
-	  for(char *p=fl_selection_buffer[1]; p < fl_selection_buffer[1]+len; p++) if(*p == '\r') *p = '\n';
+	  convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
           i = nFlavor+1;
           break;
         }
+	else if (clipboard) { // old fltk 1.1.x way
+	  // see if we own the selection, if not go get it:
+	  ScrapRef scrap = 0;
+	  Size len = 0;
+	  if (GetCurrentScrap(&scrap) == noErr &&
+	      GetScrapFlavorSize(scrap, kScrapFlavorTypeText, &len) == noErr) {
+	    if ( len >= fl_selection_buffer_length[1] ) {
+	      fl_selection_buffer_length[1] = len + 32;
+	      delete[] fl_selection_buffer[1];
+	      fl_selection_buffer[1] = new char[len + 32];
+	    }
+	    fl_selection_length[1] = len; len++;
+	    GetScrapFlavorData( scrap, kScrapFlavorTypeText, &len,
+				fl_selection_buffer[1] );
+	    fl_selection_buffer[1][fl_selection_length[1]] = 0;
+	    convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
+	  }
+	}
       }
       CFRelease (flavorTypeArray);
     }
