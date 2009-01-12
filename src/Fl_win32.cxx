@@ -61,6 +61,10 @@
 #include <winuser.h>
 #include <commctrl.h>
 
+#if defined(__GNUC__) && __GNUC__ >= 3
+# include <wchar.h>
+#endif
+
 // The following include files require GCC 3.x or a non-GNU compiler...
 #if !defined(__GNUC__) || __GNUC__ >= 3
 #  include <ole2.h>
@@ -548,11 +552,17 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   fl_selection_length[clipboard] = len;
   if (clipboard) {
     // set up for "delayed rendering":
-    if (OpenClipboard(fl_xid(Fl::first_window()))) {
+    if (OpenClipboard(NULL)) {
       // if the system clipboard works, use it
+      int utf16_len = fl_utf8toUtf16(fl_selection_buffer[clipboard], fl_selection_length[clipboard], 0, 0);
       EmptyClipboard();
-      SetClipboardData(CF_TEXT, NULL);
+     HGLOBAL hMem = GlobalAlloc(GHND, utf16_len * 2 + 2); // moveable and zero'ed mem alloc.
+      LPVOID memLock = GlobalLock(hMem);
+      fl_utf8toUtf16(fl_selection_buffer[clipboard], fl_selection_length[clipboard], (unsigned short*) memLock, utf16_len * 2);
+      GlobalUnlock(hMem);
+      SetClipboardData(CF_UNICODETEXT, hMem);
       CloseClipboard();
+      GlobalFree(hMem);
       fl_i_own_selection[clipboard] = 0;
     } else {
       // only if it fails, instruct paste() to use the internal buffers
@@ -587,19 +597,26 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     Fl::e_text = 0;
   } else {
     if (!OpenClipboard(NULL)) return;
-    HANDLE h = GetClipboardData(CF_TEXT);
+    HANDLE h = GetClipboardData(CF_UNICODETEXT);
     if (h) {
-      Fl::e_text = (LPSTR)GlobalLock(h);
+      wchar_t *memLock = (wchar_t*) GlobalLock(h);
+    int utf16_len = 
+	wcslen(memLock);
+      Fl::e_text = (char*) malloc (utf16_len * 4 + 1);
+      int utf8_len = fl_utf8fromwc(Fl::e_text, utf16_len * 4, memLock, utf16_len);
+      *(Fl::e_text + utf8_len) = 0;
       LPSTR a,b;
       a = b = Fl::e_text;
       while (*a) { // strip the CRLF pairs ($%$#@^)
-	if (*a == '\r' && a[1] == '\n') a++;
-	else *b++ = *a++;
+        if (*a == '\r' && a[1] == '\n') a++;
+        else *b++ = *a++;
       }
       *b = 0;
       Fl::e_length = b - Fl::e_text;
       receiver.handle(FL_PASTE);
       GlobalUnlock(h);
+      free(Fl::e_text);
+      Fl::e_text = 0;
     }
     CloseClipboard();
   }
