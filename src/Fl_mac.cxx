@@ -2496,12 +2496,26 @@ void Fl_X::q_end_image() {
 #endif
 
 ////////////////////////////////////////////////////////////////
-// Cut & paste.
+// Copy & Paste fltk implementation.
+////////////////////////////////////////////////////////////////
 
+// fltk 1.3 clipboard constant support definitions:
+const CFStringRef	flavorNames[] = {
+  CFSTR("public.utf16-plain-text"), 
+  CFSTR("public.utf8-plain-text"),
+  CFSTR("com.apple.traditional-mac-plain-text") };
+const CFStringEncoding encodings[] = { 
+  kCFStringEncodingUTF16, 
+  kCFStringEncodingUTF8, 
+  kCFStringEncodingMacRoman};
+const size_t handledFlavorsCount = sizeof(encodings)/sizeof(CFStringEncoding);
+
+// clipboard variables definitions :
 Fl_Widget *fl_selection_requestor = 0;
 char *fl_selection_buffer[2];
 int fl_selection_length[2];
-int fl_selection_buffer_length[2];
+static int fl_selection_buffer_length[2];
+
 #ifdef USE_PASTEBOARD
 static PasteboardRef myPasteboard = 0;
 static void allocatePasteboard() {
@@ -2535,14 +2549,18 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
 #ifdef USE_PASTEBOARD
     // FIXME no error checking done yet!
     allocatePasteboard();
-    PasteboardClear(myPasteboard);
+    OSStatus err = PasteboardClear(myPasteboard);
+    if (err!=noErr) return; // clear did not work, maybe not owner of clipboard.
     PasteboardSynchronize(myPasteboard);
     CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[1], len);
-    PasteboardPutItemFlavor(myPasteboard, (PasteboardItemID)1, CFSTR("public.utf8-plain-text"), text, 0);
+    if (text==NULL) return; // there was a pb creating the object, abort.
+    err=PasteboardPutItemFlavor(myPasteboard, (PasteboardItemID)1, CFSTR("public.utf8-plain-text"), text, 0);
+    CFRelease(text);
 #else
-    ClearCurrentScrap();
-    OSStatus ret = GetCurrentScrap( &myScrap );
-    if ( ret != noErr ) {
+    OSStatus err = ClearCurrentScrap(); // whatever happens we should clear the current scrap.
+    if(err!=noErr) {myScrap=0; return;} // don't get current scrap if a prev err occured. 
+    err = GetCurrentScrap( &myScrap );
+    if ( err != noErr ) {
       myScrap = 0;
       return;
     }
@@ -2557,113 +2575,86 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
 
 // Call this when a "paste" operation happens:
 void Fl::paste(Fl_Widget &receiver, int clipboard) {
-  if (clipboard) {
-    // see if we own the selection, if not go get it:
-    //Size len = 0;
+    if (clipboard) {
+	// see if we own the selection, if not go get it:
+	fl_selection_length[1] = 0;
 #ifdef USE_PASTEBOARD
-    // FIXME no error checking done yet!
-    OSStatus err = noErr;
-    allocatePasteboard();
-    PasteboardSynchronize(myPasteboard);
-    ItemCount nFlavor = 0, i;
-    err = PasteboardGetItemCount(myPasteboard, &nFlavor);
-    for (i=1; i<=nFlavor; i++) {
-      PasteboardItemID itemID;
-      CFArrayRef flavorTypeArray;
-      CFIndex flavorCount;
-      err = PasteboardGetItemIdentifier(myPasteboard, i, &itemID);
-      err = PasteboardCopyItemFlavors(myPasteboard, itemID, &flavorTypeArray);
-      flavorCount = CFArrayGetCount(flavorTypeArray);
-      for (CFIndex flavorIndex=0; flavorIndex<flavorCount; flavorIndex++) {
-        CFStringRef             flavorType;
-        CFDataRef               flavorData;
-        CFIndex                 len;
-        flavorType = (CFStringRef)CFArrayGetValueAtIndex(flavorTypeArray, flavorIndex);
-        if (UTTypeConformsTo(flavorType, CFSTR("public.utf8-plain-text"))) {
-          err = PasteboardCopyItemFlavorData( myPasteboard, itemID, CFSTR("public.utf8-plain-text"), &flavorData );
-          len = CFDataGetLength(flavorData);
+	OSStatus err = noErr;
+	Boolean found=false;
+	CFDataRef flavorData;
+	CFStringEncoding encoding=0;
 
-          if ( len >= fl_selection_buffer_length[1] ) {
-            fl_selection_buffer_length[1] = len + 32;
-            delete[] fl_selection_buffer[1];
-            fl_selection_buffer[1] = new char[len + 32];
-          }
-          fl_selection_length[1] = len; len++;
-          char *data = (char*)CFDataGetBytePtr(flavorData);
-          memcpy(fl_selection_buffer[1], data, len);
-
-          CFRelease (flavorData);
-          i = nFlavor+1;
-          break;
-        }
-	// accept the utf16 copied buffers (I.e: like in ms Word (r) and other text editors 
-	else if (UTTypeConformsTo(flavorType, CFSTR("public.utf16-plain-text"))) {
-	  err = PasteboardCopyItemFlavorData( myPasteboard, itemID, CFSTR("public.utf16-plain-text"), &flavorData );
-	  if(err != noErr) continue;
-	  len = CFDataGetLength(flavorData);
-	  CFStringRef mycfs = CFStringCreateWithBytes(NULL,   CFDataGetBytePtr(flavorData), len, kCFStringEncodingUnicode, false);
-	  CFRelease (flavorData);
-	  len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(mycfs), kCFStringEncodingUTF8) + 1;
-	  if ( len > fl_selection_buffer_length[1] ) {
-	    fl_selection_buffer_length[1] = len;
-	    delete[] fl_selection_buffer[1];
-	    fl_selection_buffer[1] = new char[len];
-	  }
-	  CFStringGetCString(mycfs, fl_selection_buffer[1], len, kCFStringEncodingUTF8);
-	  CFRelease (mycfs);
-	  len = strlen(fl_selection_buffer[1]);
-	  fl_selection_length[1] = len;
-	  convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
-          i = nFlavor+1;
-          break;
-        }
-	else if (clipboard) { // old fltk 1.1.x way
-	  // see if we own the selection, if not go get it:
-	  ScrapRef scrap = 0;
-	  Size len = 0;
-	  if (GetCurrentScrap(&scrap) == noErr &&
-	      GetScrapFlavorSize(scrap, kScrapFlavorTypeText, &len) == noErr) {
+	allocatePasteboard();
+	PasteboardSynchronize(myPasteboard);
+	ItemCount nFlavor = 0, i, j;
+	err = PasteboardGetItemCount(myPasteboard, &nFlavor);
+	if (err==noErr) {
+	    for (i=1; i<=nFlavor; i++) {
+		PasteboardItemID itemID;
+		CFArrayRef flavorTypeArray;
+		CFIndex flavorCount;
+		found = false;
+		err = PasteboardGetItemIdentifier(myPasteboard, i, &itemID);
+		if (err!=noErr) continue;
+		err = PasteboardCopyItemFlavors(myPasteboard, itemID, &flavorTypeArray);
+		if (err!=noErr) continue;
+		flavorCount = CFArrayGetCount(flavorTypeArray);
+		for(j = 0; j < handledFlavorsCount; j++) {
+		    for (CFIndex flavorIndex=0; flavorIndex<flavorCount; flavorIndex++) {
+			CFStringRef flavorType;
+			flavorType = (CFStringRef)CFArrayGetValueAtIndex(flavorTypeArray, flavorIndex);
+			if (UTTypeConformsTo(flavorType, flavorNames[j])) {
+			    err = PasteboardCopyItemFlavorData( myPasteboard, itemID, flavorNames[j], &flavorData );
+			    if(err != noErr) continue;
+			    encoding = encodings[j];
+			    found = true;
+			    break;
+			}
+		    }
+		    if(found) break;
+		}
+		CFRelease (flavorTypeArray);
+	    }
+	    if(found) {
+		CFIndex len;
+		CFStringRef mycfs;
+		len = CFDataGetLength(flavorData);
+		mycfs = CFStringCreateWithBytes(NULL, CFDataGetBytePtr(flavorData), len, encoding, false);
+		CFRelease (flavorData);
+		len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(mycfs), kCFStringEncodingUTF8) + 1;
+		if ( len >= fl_selection_buffer_length[1] ) {
+		    fl_selection_buffer_length[1] = len;
+		    delete[] fl_selection_buffer[1];
+		    fl_selection_buffer[1] = new char[len];
+		}
+		CFStringGetCString(mycfs, fl_selection_buffer[1], len, kCFStringEncodingUTF8);
+		CFRelease (mycfs);
+		len = strlen(fl_selection_buffer[1]);
+		fl_selection_length[1] = len;
+		convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
+	    }
+	}
+#else
+	ScrapRef scrap = 0;
+	if (GetCurrentScrap(&scrap) == noErr && scrap != myScrap &&
+	    GetScrapFlavorSize(scrap, kScrapFlavorTypeText, &len) == noErr) {
 	    if ( len >= fl_selection_buffer_length[1] ) {
-	      fl_selection_buffer_length[1] = len + 32;
-	      delete[] fl_selection_buffer[1];
-	      fl_selection_buffer[1] = new char[len + 32];
+		fl_selection_buffer_length[1] = len + 32;
+		delete[] fl_selection_buffer[1];
+		fl_selection_buffer[1] = new char[len + 32];
 	    }
 	    fl_selection_length[1] = len; len++;
 	    GetScrapFlavorData( scrap, kScrapFlavorTypeText, &len,
-				fl_selection_buffer[1] );
+			       fl_selection_buffer[1] );
 	    fl_selection_buffer[1][fl_selection_length[1]] = 0;
-	    convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
-	  }
+	    convert_crlf(fl_selection_buffer[1],len); 
 	}
-      }
-      CFRelease (flavorTypeArray);
-    }
-#else
-    ScrapRef scrap = 0;
-    if (GetCurrentScrap(&scrap) == noErr && scrap != myScrap &&
-	GetScrapFlavorSize(scrap, kScrapFlavorTypeText, &len) == noErr) {
-      if ( len >= fl_selection_buffer_length[1] ) {
-	fl_selection_buffer_length[1] = len + 32;
-	delete[] fl_selection_buffer[1];
-	fl_selection_buffer[1] = new char[len + 32];
-      }
-      fl_selection_length[1] = len; len++;
-      GetScrapFlavorData( scrap, kScrapFlavorTypeText, &len,
-			  fl_selection_buffer[1] );
-      fl_selection_buffer[1][fl_selection_length[1]] = 0;
-      // turn all \r characters into \n:
-      for (int x = 0; x < len; x++) {
-	if (fl_selection_buffer[1][x] == '\r')
-	  fl_selection_buffer[1][x] = '\n';
-      }
-    }
 #endif
-  }
-  Fl::e_text = fl_selection_buffer[clipboard];
-  Fl::e_length = fl_selection_length[clipboard];
-  if (!Fl::e_text) Fl::e_text = (char *)"";
-  receiver.handle(FL_PASTE);
-  return;
+    }
+    Fl::e_text = fl_selection_buffer[clipboard];
+    Fl::e_length = fl_selection_length[clipboard];
+    if (!Fl::e_text) Fl::e_text = (char *)"";
+    receiver.handle(FL_PASTE);
 }
 
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
