@@ -1,10 +1,9 @@
 CHANGES IN FLTK 1.3.0
 
-	- Fl_Help_View now handles one level imbricated font color
-	  specification (STR#890) 
+	- Fl_Help_View handles HTML2 font color specification (STR#890) 
 	- Copyright dates are now updated to 2009 (STR#2036)
 	- Copy/Paste operations should now work as expected, 
-          with utf8 support and more (STR#2104,2121).
+          with utf8,16 support and fltk1.1 compatibility. (STR#2104,2121).
 	- Widgets now remove themselves from their parent group (if any),
 	  when destroyed (STR #1894)
 	- Added flexible gap size for text buffer (STR #2046)
