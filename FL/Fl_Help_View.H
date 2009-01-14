@@ -84,6 +84,59 @@ struct Fl_Help_Link
 };
 
 /** Fl_Help_Target structure */
+
+/*
+ * Fl_Help_View font stack opaque implementation
+ */
+
+/** Fl_Help_View font stack element definition */
+struct Fl_Help_Font_Style {
+  Fl_Font      f;  ///< Font
+  Fl_Fontsize  s;  ///< Font Size
+  Fl_Color     c;  ///< Font Color
+  void get(Fl_Font &afont, Fl_Fontsize &asize, Fl_Color &acolor) {afont=f; asize=s; acolor=c;} ///< Gets current font attributes
+  void set(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor) {f=afont; s=asize; c=acolor;} ///< Sets current font attributes
+  Fl_Help_Font_Style(Fl_Font afont, Fl_Fontsize asize, Fl_Color acolor) {set(afont, asize, acolor);}
+  Fl_Help_Font_Style(){} // For in table use
+};
+
+/** Fl_Help_View font stack definition */
+const size_t MAX_FL_HELP_FS_ELTS = 100;
+
+struct Fl_Help_Font_Stack {
+  /** font stack construction, initialize attributes.*/
+  Fl_Help_Font_Stack() {
+    nfonts_ = 0;
+  }
+
+  void init(Fl_Font f, Fl_Fontsize s, Fl_Color c) { 
+    nfonts_ = 0;
+    elts_[nfonts_].set(f, s, c);
+    fl_font(f, s); 
+    fl_color(c);
+  }
+  /** Gets the top (current) elt on the stack */
+  void top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { elts_[nfonts_].get(f, s, c); }
+  /** Pushes the font style triplet on the stack, also calls fl_font() & fl_color() adequately */
+  void push(Fl_Font f, Fl_Fontsize s, Fl_Color c) { 
+    if (nfonts_ <  MAX_FL_HELP_FS_ELTS-1) nfonts_ ++;
+    elts_[nfonts_].set(f, s, c);
+    fl_font(f, s); fl_color(c); 
+  }
+  /** Pops from the stack the font style triplet and calls fl_font() & fl_color() adequately */
+  void pop(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { 
+    top(f, s, c);
+    fl_font(f, s); fl_color(c);
+    if (nfonts_ > 0) nfonts_ --;
+  }
+  /** Gets the current count of font style elts in the stack */
+  size_t count() const {return nfonts_;} /// Gets the current number of fonts in the stack
+
+protected:
+  size_t nfonts_;		///< current number of fonts in stack
+  Fl_Help_Font_Style elts_[100]; ///< font eletments
+};
+
 struct Fl_Help_Target
 {
   char		name[32];	///< Target name
@@ -107,14 +160,10 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   Fl_Font       textfont_;		///< Default font for text
   Fl_Fontsize  textsize_;		///< Default font size
   const char	*value_;		///< HTML text value
-
+  Fl_Help_Font_Stack fstack_;           ///< font stack management
   int		nblocks_,		///< Number of blocks/paragraphs
 		ablocks_;		///< Allocated blocks
   Fl_Help_Block	*blocks_;		///< Blocks
-
-  int		nfonts_;		///< Number of fonts in stack
-  Fl_Font       fonts_[100];		///< Font stack
-  Fl_Fontsize  font_sizes_[100];        ///< Font Size stack
 
   Fl_Help_Func	*link_;			///< Link transform function
 
@@ -150,6 +199,12 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   static Fl_Color hv_selection_color;
   static Fl_Color hv_selection_text_color;
 
+
+  void initfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { f = textfont_; s = textsize_; c = textcolor_; fstack_.init(f, s, c); }
+  void pushfont(Fl_Font f, Fl_Fontsize s) {fstack_.push(f, s, textcolor_);}
+  void pushfont(Fl_Font f, Fl_Fontsize s, Fl_Color c) {fstack_.push(f, s, c);}
+  void popfont(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) {fstack_.pop(f, s, c);}
+
   Fl_Help_Block	*add_block(const char *s, int xx, int yy, int ww, int hh, uchar border = 0);
   void		add_link(const char *n, int xx, int yy, int ww, int hh);
   void		add_target(const char *n, int yy);
@@ -165,16 +220,6 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   Fl_Shared_Image *get_image(const char *name, int W, int H);
   int		get_length(const char *l);
   int		handle(int);
-
-  void		initfont(Fl_Font &f, Fl_Fontsize &s) { nfonts_ = 0;
-			fl_font(f = fonts_[0] = textfont_,
-			        s = font_sizes_[0] = textsize_); }
-  void		pushfont(Fl_Font f, Fl_Fontsize s) { if (nfonts_ < 99) nfonts_ ++;
-			fl_font(fonts_[nfonts_] = f,
-			        font_sizes_[nfonts_] = s); }
-  void		popfont(Fl_Font &f, Fl_Fontsize &s) { if (nfonts_ > 0) nfonts_ --;
-			fl_font(f = fonts_[nfonts_],
-			        s = font_sizes_[nfonts_]); }
 
   void          hv_draw(const char *t, int x, int y);
   char          begin_selection();

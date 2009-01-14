@@ -444,14 +444,14 @@ Fl_Help_View::draw()
   int			xx, yy, ww, hh;	// Current positions and sizes
   int			line;		// Current line
   Fl_Font               font;
-  Fl_Fontsize          fsize;          // Current font and size
+  Fl_Fontsize           fsize;          // Current font and size
+  Fl_Color              fcolor;         // current font color 
   int			head, pre,	// Flags for text
 			needspace;	// Do we need whitespace?
   Fl_Boxtype		b = box() ? box() : FL_DOWN_BOX;
 					// Box to draw...
   int			underline,	// Underline text?
                         xtra_ww;        // Extra width for underlined space between words
-  Fl_Color              prev_text_color=FL_RED; // Saved text color before font color modification
 
   // Draw the scrollbar(s) and box first...
   ww = w() ;
@@ -504,7 +504,7 @@ Fl_Help_View::draw()
       needspace = 0;
       underline = 0;
 
-      initfont(font, fsize);
+      initfont(font, fsize, fcolor);
 
       for (ptr = block->start, s = buf; ptr < block->end;)
       {
@@ -720,8 +720,7 @@ Fl_Help_View::draw()
 	  else if (strcasecmp(buf, "FONT") == 0)
 	  {
 	    if (get_attr(attrs, "COLOR", attr, sizeof(attr)) != NULL) {
-	      prev_text_color =  textcolor_;
-	      fl_color( (textcolor_ = get_color(attr, textcolor_)) );
+	      pushfont(font, fsize, (textcolor_ = get_color(attr, textcolor_)) );
 	    }
 
             if (get_attr(attrs, "FACE", attr, sizeof(attr)) != NULL) {
@@ -748,9 +747,7 @@ Fl_Help_View::draw()
 	  }
 	  else if (strcasecmp(buf, "/FONT") == 0)
 	  {
-	    textcolor_ = prev_text_color;
-	    fl_color(textcolor_);
-	    popfont(font, fsize);
+	    popfont(font, fsize, textcolor_);
 	  }
 	  else if (strcasecmp(buf, "U") == 0)
 	    underline = 1;
@@ -825,10 +822,10 @@ Fl_Help_View::draw()
 		   strcasecmp(buf, "/TT") == 0 ||
 		   strcasecmp(buf, "/KBD") == 0 ||
 		   strcasecmp(buf, "/VAR") == 0)
-	    popfont(font, fsize);
+	    popfont(font, fsize, fcolor);
 	  else if (strcasecmp(buf, "/PRE") == 0)
 	  {
-	    popfont(font, fsize);
+	    popfont(font, fsize, fcolor);
 	    pre = 0;
 	  }
 	  else if (strcasecmp(buf, "IMG") == 0)
@@ -1063,7 +1060,8 @@ void Fl_Help_View::format() {
   int		line;		// Current line in block
   int		links;		// Links for current line
   Fl_Font       font;
-  Fl_Fontsize  fsize;          // Current font and size
+  Fl_Fontsize   fsize;          // Current font and size
+  Fl_Color      fcolor;         // Current font color
   unsigned char	border;		// Draw border?
   int		talign,		// Current alignment
 		newalign,	// New alignment
@@ -1105,7 +1103,7 @@ void Fl_Help_View::format() {
       return;
 
     // Setup for formatting...
-    initfont(font, fsize);
+    initfont(font, fsize, fcolor);
 
     line         = 0;
     links        = 0;
@@ -1454,7 +1452,7 @@ void Fl_Help_View::format() {
 	  else if (strcasecmp(buf, "/CENTER") == 0)
 	    talign = LEFT;
 
-          popfont(font, fsize);
+          popfont(font, fsize, fcolor);
 
           //#warning FIXME this isspace & 255 test will probably not work on a utf8 stream... And we use it everywhere!
           while (isspace((*ptr)&255))
@@ -1604,7 +1602,7 @@ void Fl_Help_View::format() {
                   strcasecmp(buf, "/TH") == 0) && row)
 	{
           line = do_align(block, line, xx, newalign, links);
-          popfont(font, fsize);
+          popfont(font, fsize, fcolor);
 	  xx = margins.pop();
 	  talign = LEFT;
 	}
@@ -1633,7 +1631,7 @@ void Fl_Help_View::format() {
           pushfont(font, fsize);
 	}
 	else if (strcasecmp(buf, "/FONT") == 0)
-	  popfont(font, fsize);
+	  popfont(font, fsize, fcolor);
 	else if (strcasecmp(buf, "B") == 0 ||
         	 strcasecmp(buf, "STRONG") == 0)
 	  pushfont(font |= FL_BOLD, fsize);
@@ -1655,7 +1653,7 @@ void Fl_Help_View::format() {
 		 strcasecmp(buf, "/TT") == 0 ||
 		 strcasecmp(buf, "/KBD") == 0 ||
 		 strcasecmp(buf, "/VAR") == 0)
-	  popfont(font, fsize);
+	  popfont(font, fsize, fcolor);
 	else if (strcasecmp(buf, "IMG") == 0)
 	{
 	  Fl_Shared_Image	*img = 0;
@@ -1877,8 +1875,8 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 		*start;					// Start of element
   int		minwidths[MAX_COLUMNS];			// Minimum widths for each column
   Fl_Font       font;
-  Fl_Fontsize  fsize;				// Current font and size
-
+  Fl_Fontsize   fsize;				        // Current font and size
+  Fl_Color      fcolor;                                 // Currrent font color
 
   // Clear widths...
   *table_width = 0;
@@ -1893,8 +1891,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   max_width   = 0;
   pre         = 0;
   needspace   = 0;
-  font        = fonts_[nfonts_];
-  fsize       = font_sizes_[nfonts_];
+  fstack_.top(font, fsize, fcolor);
 
   // Scan the table...
   for (ptr = table, column = -1, width = 0, s = buf, incell = 0; *ptr;)
@@ -2014,7 +2011,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
         width     = 0;
 	needspace = 0;
 
-        popfont(font, fsize);
+        popfont(font, fsize, fcolor);
       }
       else if (strcasecmp(buf, "TR") == 0 || strcasecmp(buf, "/TR") == 0 ||
                strcasecmp(buf, "/TABLE") == 0)
@@ -2104,7 +2101,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
                strcasecmp(buf, "/TH") == 0)
       {
 	incell = 0;
-        popfont(font, fsize);
+        popfont(font, fsize, fcolor);
       }
       else if (strcasecmp(buf, "B") == 0 ||
                strcasecmp(buf, "STRONG") == 0)
@@ -2127,7 +2124,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 	       strcasecmp(buf, "/TT") == 0 ||
 	       strcasecmp(buf, "/KBD") == 0 ||
 	       strcasecmp(buf, "/VAR") == 0)
-	popfont(font, fsize);
+	popfont(font, fsize, fcolor);
       else if (strcasecmp(buf, "IMG") == 0 && incell)
       {
 	Fl_Shared_Image	*img = 0;
@@ -2985,8 +2982,6 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
   ablocks_      = 0;
   nblocks_      = 0;
   blocks_       = (Fl_Help_Block *)0;
-
-  nfonts_       = 0;
 
   link_         = (Fl_Help_Func *)0;
 
