@@ -2499,7 +2499,7 @@ void Fl_X::q_end_image() {
 // Copy & Paste fltk implementation.
 ////////////////////////////////////////////////////////////////
 
-// fltk 1.3 clipboard constant support definitions:
+// fltk 1.3 clipboard support constant definitions:
 const CFStringRef	flavorNames[] = {
   CFSTR("public.utf16-plain-text"), 
   CFSTR("public.utf8-plain-text"),
@@ -2597,9 +2597,12 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 		err = PasteboardGetItemIdentifier(myPasteboard, i, &itemID);
 		if (err!=noErr) continue;
 		err = PasteboardCopyItemFlavors(myPasteboard, itemID, &flavorTypeArray);
-		if (err!=noErr) continue;
+		if (err!=noErr) {
+		  if (flavorTypeArray) {CFRelease (flavorTypeArray); flavorTypeArray = NULL;}
+		  continue;
+		}
 		flavorCount = CFArrayGetCount(flavorTypeArray);
-		for(j = 0; j < handledFlavorsCount; j++) {
+		for (j = 0; j < handledFlavorsCount; j++) {
 		    for (CFIndex flavorIndex=0; flavorIndex<flavorCount; flavorIndex++) {
 			CFStringRef flavorType;
 			flavorType = (CFStringRef)CFArrayGetValueAtIndex(flavorTypeArray, flavorIndex);
@@ -2613,7 +2616,8 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 		    }
 		    if(found) break;
 		}
-		CFRelease (flavorTypeArray);
+		if (flavorTypeArray) {CFRelease (flavorTypeArray); flavorTypeArray = NULL;}
+		if (found) break;
 	    }
 	    if(found) {
 		CFIndex len;
