@@ -2580,9 +2580,9 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 	fl_selection_length[1] = 0;
 #ifdef USE_PASTEBOARD
 	OSStatus err = noErr;
-	Boolean found=false;
-	CFDataRef flavorData;
-	CFStringEncoding encoding=0;
+	Boolean found = false;
+	CFDataRef flavorData = NULL;
+	CFStringEncoding encoding = 0;
 
 	allocatePasteboard();
 	PasteboardSynchronize(myPasteboard);
@@ -2590,9 +2590,8 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 	err = PasteboardGetItemCount(myPasteboard, &nFlavor);
 	if (err==noErr) {
 	    for (i=1; i<=nFlavor; i++) {
-		PasteboardItemID itemID;
-		CFArrayRef flavorTypeArray;
-		CFIndex flavorCount;
+		PasteboardItemID itemID = 0;
+		CFArrayRef flavorTypeArray = NULL;
 		found = false;
 		err = PasteboardGetItemIdentifier(myPasteboard, i, &itemID);
 		if (err!=noErr) continue;
@@ -2601,18 +2600,19 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 		  if (flavorTypeArray) {CFRelease (flavorTypeArray); flavorTypeArray = NULL;}
 		  continue;
 		}
-		flavorCount = CFArrayGetCount(flavorTypeArray);
+		CFIndex flavorCount = CFArrayGetCount(flavorTypeArray);
 		for (j = 0; j < handledFlavorsCount; j++) {
 		    for (CFIndex flavorIndex=0; flavorIndex<flavorCount; flavorIndex++) {
-			CFStringRef flavorType;
-			flavorType = (CFStringRef)CFArrayGetValueAtIndex(flavorTypeArray, flavorIndex);
+			CFStringRef flavorType = (CFStringRef)CFArrayGetValueAtIndex(flavorTypeArray, flavorIndex);
 			if (UTTypeConformsTo(flavorType, flavorNames[j])) {
 			    err = PasteboardCopyItemFlavorData( myPasteboard, itemID, flavorNames[j], &flavorData );
 			    if(err != noErr) continue;
 			    encoding = encodings[j];
 			    found = true;
+			    if (flavorType) CFRelease(flavorType);
 			    break;
 			}
+			if (flavorType) {CFRelease(flavorType); flavorType = NULL;}
 		    }
 		    if(found) break;
 		}
@@ -2620,10 +2620,8 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 		if (found) break;
 	    }
 	    if(found) {
-		CFIndex len;
-		CFStringRef mycfs;
-		len = CFDataGetLength(flavorData);
-		mycfs = CFStringCreateWithBytes(NULL, CFDataGetBytePtr(flavorData), len, encoding, false);
+		CFIndex len = CFDataGetLength(flavorData);
+		CFStringRef mycfs = CFStringCreateWithBytes(NULL, CFDataGetBytePtr(flavorData), len, encoding, false);
 		CFRelease (flavorData);
 		len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(mycfs), kCFStringEncodingUTF8) + 1;
 		if ( len >= fl_selection_buffer_length[1] ) {
