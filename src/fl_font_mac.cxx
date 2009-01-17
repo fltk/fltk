@@ -216,16 +216,20 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 int fl_height() {
+  check_default_font();
   if (fl_fontsize) return fl_fontsize->ascent+fl_fontsize->descent;
   else return -1;
 }
 
 int fl_descent() {
-  if (fl_fontsize) return fl_fontsize->descent;
+  check_default_font();
+  if (fl_fontsize) 
+    return fl_fontsize->descent+1;
   else return -1;
 }
 
 double fl_width(const UniChar* txt, int n) {
+  check_default_font();
   if (!fl_fontsize) {
     check_default_font(); // avoid a crash!
     if (!fl_fontsize)
