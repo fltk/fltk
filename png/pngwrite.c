@@ -1,7 +1,7 @@
 
 /* pngwrite.c - general routines to write a PNG file
  *
- * Last changed in libpng 1.2.25 [February 18, 2008]
+ * Last changed in libpng 1.2.31 [August 19, 2008]
  * For conditions of distribution and use, see copyright notice in png.h
  * Copyright (c) 1998-2008 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -112,6 +112,8 @@ png_write_info_before_PLTE(png_structp png_ptr, png_infop info_ptr)
             ((up->name[3] & 0x20) || keep == PNG_HANDLE_CHUNK_ALWAYS ||
             (png_ptr->flags & PNG_FLAG_KEEP_UNSAFE_CHUNKS)))
          {
+            if (up->size == 0)
+               png_warning(png_ptr, "Writing zero-length unknown chunk");
             png_write_chunk(png_ptr, up->name, up->data, up->size);
          }
        }
@@ -391,6 +393,18 @@ png_write_end(png_structp png_ptr, png_infop info_ptr)
 
    /* write end of PNG file */
    png_write_IEND(png_ptr);
+   /* This flush, added in libpng-1.0.8, removed from libpng-1.0.9beta03,
+    * and restored again in libpng-1.2.30, may cause some applications that
+    * do not set png_ptr->output_flush_fn to crash.  If your application
+    * experiences a problem, please try building libpng with
+    * PNG_WRITE_FLUSH_AFTER_IEND_SUPPORTED defined, and report the event to
+    * png-mng-implement at lists.sf.net .  This kludge will be removed
+    * from libpng-1.4.0.
+    */
+#if defined(PNG_WRITE_FLUSH_SUPPORTED) && \
+    defined(PNG_WRITE_FLUSH_AFTER_IEND_SUPPORTED)
+   png_flush(png_ptr);
+#endif
 }
 
 #if defined(PNG_WRITE_tIME_SUPPORTED)
@@ -437,6 +451,9 @@ png_create_write_struct_2(png_const_charp user_png_ver, png_voidp error_ptr,
    png_malloc_ptr malloc_fn, png_free_ptr free_fn)
 {
 #endif /* PNG_USER_MEM_SUPPORTED */
+#ifdef PNG_SETJMP_SUPPORTED
+    volatile
+#endif
    png_structp png_ptr;
 #ifdef PNG_SETJMP_SUPPORTED
 #ifdef USE_FAR_KEYWORD
@@ -1074,7 +1091,7 @@ png_write_destroy(png_structp png_ptr)
    /* free our memory.  png_free checks NULL for us. */
    png_free(png_ptr, png_ptr->zbuf);
    png_free(png_ptr, png_ptr->row_buf);
-#ifndef PNG_NO_WRITE_FILTERING
+#ifndef PNG_NO_WRITE_FILTER
    png_free(png_ptr, png_ptr->prev_row);
    png_free(png_ptr, png_ptr->sub_row);
    png_free(png_ptr, png_ptr->up_row);
