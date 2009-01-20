@@ -50,7 +50,7 @@ main(int  argc,			// I - Number of command-line arguments
   help = new Fl_Help_Dialog;
 
   if (argc < 2)
-    help->load("../documentation/html/index.html");
+    help->load("../documentation/html/main.html");
   else
     help->load(argv[1]);
 
