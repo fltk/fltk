@@ -29,6 +29,11 @@
 
 #include <FL/filename.H>
 
+/**
+   Gets the extensions of a filename
+   \param[in] buf the filename to be parsed
+   \return a pointer to the extension (including '.') if any or NULL otherwise
+ */
 const char *fl_filename_ext(const char *buf) {
   const char *q = 0;
   const char *p = buf;

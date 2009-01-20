@@ -124,6 +124,8 @@ Fl_XColor fl_xmap[1][256];
 #    define fl_overlay 0
 #  endif
 
+/** \addtogroup  fl_attributes
+    @{ */
 ////////////////////////////////////////////////////////////////
 // Get an rgb color.  This is easy for a truecolor visual.  For
 // colormapped it picks the closest color out of the cube in the
@@ -472,7 +474,9 @@ Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg) {
   else if (l2 > 127) return FL_BLACK;
   else return FL_WHITE;
 }
-
+/**
+   @}
+*/
 //
 // End of "$Id$".
 //

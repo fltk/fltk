@@ -29,6 +29,21 @@
 #include <FL/filename.H>
 #include <ctype.h>
 
+/**
+    Checks if a string \a s matches a pattern \a p. 
+    The following syntax is used for the pattern:
+    - * matches any sequence of 0 or more characters.
+    - ? matches any single character.
+    - [set] matches any character in the set. Set can contain any single characters, or a-z to represent a range. 
+      To match ] or - they must be the first characters. To match ^ or ! they must not be the first characters.
+    - [^set] or [!set] matches any character not in the set.
+    - {X|Y|Z} or {X,Y,Z} matches any one of the subexpressions literally.
+    - \\x quotes the character x so it has no special meaning.
+    - x all other characters must be matched exactly.
+    \param[in] s the string to check for a match
+    \param[in] p the string pattern 
+    \return non zero if the string matches the pattern
+*/
 int fl_filename_match(const char *s, const char *p) {
   int matched;
 

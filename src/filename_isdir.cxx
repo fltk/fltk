@@ -47,6 +47,11 @@ int _fl_filename_isdir_quick(const char* n) {
   return fl_filename_isdir(n);
 }
 
+/**
+   Determines if a file exists and is a directory from its filename
+   \param[in] n the filename to parse
+   \return non zero if file exists and is a directory, zero otherwise
+*/
 int fl_filename_isdir(const char* n) {
   struct stat	s;
   char		fn[1024];

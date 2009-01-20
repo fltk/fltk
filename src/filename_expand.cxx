@@ -47,6 +47,13 @@ static inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #define isdirsep(c) ((c)=='/')
 #endif
 
+/**
+ * Expands a filename coontaining shell variables.
+ * \param[out] to resulting expanded filename
+ * \param[in]  tolen size of the expanded filename buffer 
+ * \param[in]  from filename containing shell variables
+ * \return 0 if no change, non zero otherwise
+ */
 int fl_filename_expand(char *to,int tolen, const char *from) {
 
   char *temp = new char[tolen];

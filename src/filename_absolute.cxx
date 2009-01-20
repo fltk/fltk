@@ -54,6 +54,13 @@ inline int isdirsep(char c) {return c=='/' || c=='\\';}
 #define isdirsep(c) ((c)=='/')
 #endif
 
+/**
+ * Makes a filename absolute from a relative filename.
+ * \param[out] to resulting absolute filename
+ * \param[in]  tolen size of the absolute filename buffer 
+ * \param[in]  from relative filename
+ * \return 0 if no change, non zero otherwise
+ */
 int fl_filename_absolute(char *to, int tolen, const char *from) {
   if (isdirsep(*from) || *from == '|'
 #if defined(WIN32) || defined(__EMX__) && !defined(__CYGWIN__)
@@ -107,10 +114,13 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
   return 1;
 }
 
-/*
- * 'fl_filename_relative()' - Make a filename relative to the current working directory.
+/**
+ * Makes a filename relative to the current working directory.
+ * \param[out] to resulting relative filename
+ * \param[in]  tolen size of the relative filename buffer 
+ * \param[in]  from absolute filename
+ * \return 0 if no change, non zero otherwise
  */
-
 int					// O - 0 if no change, 1 if changed
 fl_filename_relative(char       *to,	// O - Relative filename
                      int        tolen,	// I - Size of "to" buffer

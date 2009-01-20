@@ -59,10 +59,8 @@ static int	run_program(const char *program, char **argv, char *msg, int msglen);
 
 
 /**
- * Open the specified URI.
- *
- * fl_open_uri() opens the specified Uniform Resource Identifier (URI)
- * using an operating-system dependent program or interface. For URIs
+ * Opens the specified Uniform Resource Identifier (URI).
+ * Uses an operating-system dependent program or interface. For URIs
  * using the "ftp", "http", or "https" schemes, the system default web
  * browser is used to open the URI, while "mailto" and "news" URIs are
  * typically opened using the system default mail reader and "file" URIs
