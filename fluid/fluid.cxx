@@ -866,7 +866,7 @@ void help_cb(Fl_Widget *, void *) {
 }
 
 void manual_cb(Fl_Widget *, void *) {
-  show_help("index.html");
+  show_help("main.html");
 }
 
 
