@@ -167,10 +167,13 @@ ulong fl_xpixel(uchar r,uchar g,uchar b) {
   The RGB color is used directly on TrueColor displays.
   For colormap visuals the nearest index in the gray
   ramp or color cube is used.
+  If no valid graphical context (fl_gc) is available,
+  the foreground is not set for the current window.
   \param[in] r,g,b color components
 */
 void fl_color(uchar r,uchar g,uchar b) {
   fl_color_ = fl_rgb_color(r, g, b);
+  if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
   XSetForeground(fl_display, fl_gc, fl_xpixel(r,g,b));
 }
 
@@ -321,6 +324,8 @@ Fl_Color fl_color_;
   For colormapped displays, a color cell will be allocated out of
   \a fl_colormap the first time you use a color. If the colormap fills up
   then a least-squares algorithm is used to find the closest color.
+  If no valid graphical context (fl_gc) is available,
+  the foreground is not set for the current window.
   \param[in] i color 
 */
 void fl_color(Fl_Color i) {
@@ -329,6 +334,7 @@ void fl_color(Fl_Color i) {
     fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
   } else {
     fl_color_ = i;
+    if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
     XSetForeground(fl_display, fl_gc, fl_xpixel(i));
   }
 }
