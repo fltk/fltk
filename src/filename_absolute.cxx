@@ -131,7 +131,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   char          *cwd = cwd_buf;
 
 
-  // return if "from" is not an absolue path
+  // return if "from" is not an absolute path
 #if defined(WIN32) || defined(__EMX__)
   if (from[0] == '\0' ||
       (!isdirsep(*from) && !isalpha(*from) && from[1] != ':' &&
