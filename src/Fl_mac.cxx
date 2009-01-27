@@ -2597,7 +2597,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 		if (err!=noErr) continue;
 		err = PasteboardCopyItemFlavors(myPasteboard, itemID, &flavorTypeArray);
 		if (err!=noErr) {
-		  if (flavorTypeArray) {CFRelease (flavorTypeArray); flavorTypeArray = NULL;}
+		  if (flavorTypeArray) {CFRelease(flavorTypeArray); flavorTypeArray = NULL;}
 		  continue;
 		}
 		CFIndex flavorCount = CFArrayGetCount(flavorTypeArray);
@@ -2609,20 +2609,18 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 			    if(err != noErr) continue;
 			    encoding = encodings[j];
 			    found = true;
-			    if (flavorType) CFRelease(flavorType);
 			    break;
 			}
-			if (flavorType) {CFRelease(flavorType); flavorType = NULL;}
 		    }
 		    if(found) break;
 		}
-		if (flavorTypeArray) {CFRelease (flavorTypeArray); flavorTypeArray = NULL;}
+		if (flavorTypeArray) {CFRelease(flavorTypeArray); flavorTypeArray = NULL;}
 		if (found) break;
 	    }
 	    if(found) {
 		CFIndex len = CFDataGetLength(flavorData);
 		CFStringRef mycfs = CFStringCreateWithBytes(NULL, CFDataGetBytePtr(flavorData), len, encoding, false);
-		CFRelease (flavorData);
+		CFRelease(flavorData);
 		len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(mycfs), kCFStringEncodingUTF8) + 1;
 		if ( len >= fl_selection_buffer_length[1] ) {
 		    fl_selection_buffer_length[1] = len;
@@ -2630,7 +2628,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 		    fl_selection_buffer[1] = new char[len];
 		}
 		CFStringGetCString(mycfs, fl_selection_buffer[1], len, kCFStringEncodingUTF8);
-		CFRelease (mycfs);
+		CFRelease(mycfs);
 		len = strlen(fl_selection_buffer[1]);
 		fl_selection_length[1] = len;
 		convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
