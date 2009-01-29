@@ -62,6 +62,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
+#include <FL/filename.H>	// fl_open_uri()
 #include "flstring.h"
 #include <ctype.h>
 #include <errno.h>
@@ -3044,6 +3045,50 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   char		newname[1024];	// New filename buffer
 
 
+  if (strncmp(f, "ftp:", 4) == 0 ||
+      strncmp(f, "http:", 5) == 0 ||
+      strncmp(f, "https:", 6) == 0 ||
+      strncmp(f, "ipp:", 4) == 0 ||
+      strncmp(f, "mailto:", 7) == 0 ||
+      strncmp(f, "news:", 5) == 0) {
+    char urimsg[256];
+    if ( fl_open_uri(f, urimsg, sizeof(urimsg)) == 0 ) {
+      clear_selection();
+
+      strlcpy(newname, f, sizeof(newname));
+      if ((target = strrchr(newname, '#')) != NULL)
+	*target++ = '\0';
+
+      if (link_)
+	localname = (*link_)(this, newname);
+      else
+	localname = filename_;
+
+      if (!localname)
+	return (0);
+
+      strlcpy(filename_, newname, sizeof(filename_));
+      strlcpy(directory_, newname, sizeof(directory_));
+
+      // Note: We do not support Windows backslashes, since they are illegal
+      //       in URLs...
+      if ((slash = strrchr(directory_, '/')) == NULL)
+	directory_[0] = '\0';
+      else if (slash > directory_ && slash[-1] != '/')
+	*slash = '\0';
+
+      snprintf(error, sizeof(error),
+	       "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
+	       "<BODY><H1>Error</H1>"
+	       "<P>Unable to follow the link \"%s\" - "
+	       "%s.</P></BODY>",
+	       f, urimsg);
+      value(error);
+      //return(-1);
+    }
+    return(0);
+  }
+
   clear_selection();
 
   strlcpy(newname, f, sizeof(newname));
@@ -3074,47 +3119,28 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     value_ = NULL;
   }
 
-  if (strncmp(localname, "ftp:", 4) == 0 ||
-      strncmp(localname, "http:", 5) == 0 ||
-      strncmp(localname, "https:", 6) == 0 ||
-      strncmp(localname, "ipp:", 4) == 0 ||
-      strncmp(localname, "mailto:", 7) == 0 ||
-      strncmp(localname, "news:", 5) == 0)
+  if (strncmp(localname, "file:", 5) == 0)
+    localname += 5;	// Adjust for local filename...
+
+  if ((fp = fl_fopen(localname, "rb")) != NULL)
   {
-    // Remote link wasn't resolved...
-    snprintf(error, sizeof(error),
-             "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
-             "<BODY><H1>Error</H1>"
-	     "<P>Unable to follow the link \"%s\" - "
-	     "no handler exists for this URI scheme.</P></BODY>",
-	     localname);
-    value_ = strdup(error);
+    fseek(fp, 0, SEEK_END);
+    len = ftell(fp);
+    rewind(fp);
+
+    value_ = (const char *)calloc(len + 1, 1);
+    fread((void *)value_, 1, len, fp);
+    fclose(fp);
   }
   else
   {
-    if (strncmp(localname, "file:", 5) == 0)
-      localname += 5;	// Adjust for local filename...
-
-    if ((fp = fl_fopen(localname, "rb")) != NULL)
-    {
-      fseek(fp, 0, SEEK_END);
-      len = ftell(fp);
-      rewind(fp);
-
-      value_ = (const char *)calloc(len + 1, 1);
-      fread((void *)value_, 1, len, fp);
-      fclose(fp);
-    }
-    else
-    {
-      snprintf(error, sizeof(error),
-               "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
-               "<BODY><H1>Error</H1>"
-	       "<P>Unable to follow the link \"%s\" - "
-	       "%s.</P></BODY>",
-	       localname, strerror(errno));
-      value_ = strdup(error);
-    }
+    snprintf(error, sizeof(error),
+	     "<HTML><HEAD><TITLE>Error</TITLE></HEAD>"
+	     "<BODY><H1>Error</H1>"
+	     "<P>Unable to follow the link \"%s\" - "
+	     "%s.</P></BODY>",
+	     localname, strerror(errno));
+    value_ = strdup(error);
   }
 
   format();

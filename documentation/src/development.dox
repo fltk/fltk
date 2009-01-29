@@ -268,8 +268,8 @@ Links to other documents and external links can be embedded with
     For further informations about quoting see
     http://www.stack.nl/~dimitri/doxygen/htmlcmds.html
 
-    Bold link text: you can see the <b>\e old online documentation</b>
-    of FLTK 1.3 at \b http://www.fltk.org/doc-1.3/toc.html
+    Bold link text: you can see the <b>online documentation</b>
+    of FLTK 1.3 at \b http://www.fltk.org/doc-1.3/index.html
     
     see section \ref development_non-ascii
 \endcode
@@ -285,8 +285,8 @@ appears as:
     For further informations about quoting see
     http://www.stack.nl/~dimitri/doxygen/htmlcmds.html
 
-    Bold link text: you can see the <b>\e old online documentation</b>
-    of FLTK 1.3 at \b http://www.fltk.org/doc-1.3/toc.html
+    Bold link text: you can see the <b>online documentation</b>
+    of FLTK 1.3 at \b http://www.fltk.org/doc-1.3/index.html
     
     see section \ref development_non-ascii
 
