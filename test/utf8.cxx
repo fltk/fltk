@@ -488,7 +488,7 @@ int main(int argc, char** argv)
  * below doesn't look right any more! 
  * Store the specific latin-1 byte values here... this should be equivalent to:
  *	char *latin1 = "ABCabcàèéïâîöüã123"; */
-	char *latin1 = "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
+	const char *latin1 = "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
 	char *utf8 = (char*) malloc(strlen(latin1) * 5 + 1);
 	l = 0;
 //	l = fl_latin12utf((const unsigned char*)latin1, strlen(latin1), utf8);
@@ -559,7 +559,7 @@ int main(int argc, char** argv)
   utf8u[l] = '\0';
   i3.value(utf8u);
 
-  char *ltr_txt = "\\->e\xCC\x82=\xC3\xAA";
+  const char *ltr_txt = "\\->e\xCC\x82=\xC3\xAA";
   Fl_Input i4(5, 90, 190, 25);
   i4.value(ltr_txt);
   i4.textfont(extra_font);
@@ -595,7 +595,7 @@ int main(int argc, char** argv)
   
   // Now try Greg Ercolano's Japanese test sequence
   // SOME JAPANESE UTF8 TEXT
-  char *utfstr = "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
+  const char *utfstr = "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
                  "\x8c\xe3\x82\x8b\xe3\x80\x82"; // ä½•ã‚‚è¡Œã‚‹ã€‚
 		 
   Fl_Output o9(5, 330, 190, 45);
