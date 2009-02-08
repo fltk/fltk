@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.3.0
 
+	- Removed an XForms compatibility "feature" that prevented the down
+	  array of Fl_Menu_Button from drawing (STR #2141).
 	- New helper class Fl_Watch to simplify safe handling of widget
 	  deletion in callbacks. This is used in Fl_Widget::do_callback()
 	  to prevent accessing widgets after deletion in the callback.

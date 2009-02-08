@@ -37,7 +37,7 @@ void Fl_Menu_Button::draw() {
   draw_box(pressed_menu_button_ == this ? fl_down(box()) : box(), color());
   draw_label();
   if (Fl::focus() == this) draw_focus();
-  if (box() == FL_FLAT_BOX) return; // for XForms compatibility
+  // ** if (box() == FL_FLAT_BOX) return; // for XForms compatibility
   int H = (labelsize()-3)&-2;
   int X = x()+w()-H*2;
   int Y = y()+(h()-H)/2;
