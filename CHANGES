@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Added Fl_Scroll::bbox() documentation (STR #1893)
 	- Updated the bundled libpng to v1.2.33.
 	- Fixed static linking of image libraries (STR #1962)
 	- Fixed callback would not be called when shortcut was used with

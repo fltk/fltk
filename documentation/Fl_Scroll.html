@@ -59,6 +59,7 @@ inside another Fl_Scroll may result in drawing errors when resizing.</I></P>
 <LI><A href=#Fl_Scroll.Fl_Scroll>Fl_Scroll</A></LI>
 <LI><A href=#Fl_Scroll.~Fl_Scroll>~Fl_Scroll</A></LI>
 <LI><A href=#Fl_Scroll.align>align</A></LI>
+<LI><A href=#Fl_Scroll.bbox>bbox</A></LI>
 <LI><A href=#Fl_Scroll.position>position</A></LI>
 <LI><A href=#Fl_Scroll.type>type</A></LI>
 <LI><A href=#Fl_Scroll.xposition>xposition</A></LI>
@@ -90,16 +91,27 @@ disappear if the data will fit in the area of the scroll. <TT>type()</TT>
  horizontal always off. </LI>
 <LI><TT>Fl_Scroll::BOTH_ALWAYS</TT> - Both always on. </LI>
 </UL>
+
 <H4><A name=Fl_Scroll.align>void Fl_Scroll::scrollbar.align(int)</A></H4>
  This is used to change what side the scrollbars are drawn on.  If the <TT>
 FL_ALIGN_LEFT</TT> bit is on, the vertical scrollbar is on the left.
  If the <TT>FL_ALIGN_TOP</TT> bit is on, the horizontal scrollbar is on
 the top. Note that only the alignment flags in <TT>scrollbar</TT> are 
 considered. The flags in <TT>hscrollbar</TT> however are ignored.
+
+<H4><A NAME="Fl_Scroll.bbox">Fl_Scroll::bbox(int &amp;x, int &amp;y, int &amp;w, int &amp;h)</A></H4>
+
+<P><tt>[protected]</tt> This method returns the bounding box for the interior of the scrolling
+area, inside the scrollbars.
+
 <H4><A name=Fl_Scroll.xposition>int Fl_Scroll::xposition() const</A></H4>
  Gets the current horizontal scrolling position.
+
 <H4><A name=Fl_Scroll.yposition>int Fl_Scroll::yposition() const</A></H4>
  Gets the current vertical scrolling position.
+
 <H4><A name=Fl_Scroll.position>void Fl_Scroll::position(int w, int h)</A>
 </H4>
- Sets the upper-lefthand corner of the scrolling region. </BODY></HTML>
+ Sets the upper-lefthand corner of the scrolling region.
+
+</BODY></HTML>
