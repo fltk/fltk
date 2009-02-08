@@ -849,17 +849,31 @@ public:
 
   /** \defgroup fl_del_widget Safe widget deletion support functions
 
-	These functions support deletion of widgets inside callbacks.
+    These functions support deletion of widgets inside callbacks.
 
-	There are two groups of related methods:
+    Fl::delete_widget() should be called when deleting widgets
+    or complete widget trees (Fl_Group, Fl_Window, ...) inside
+    callbacks.
 
-	  -# scheduled widget deletion
-	    - Fl::delete_widget() schedules widgets for deletion
-	    - Fl::do_widget_deletion() deletes all scheduled widgets
-	  -# widget watch list ("smart pointers")
-	    - Fl::watch_widget_pointer() adds a widget pointer to the watch list
-	    - Fl::release_widget_pointer() removes a widget pointer from the watch list
-	    - Fl::clear_widget_pointer() clears a widget pointer \e in the watch list
+    The other functions are intended for internal use. The preferred
+    way to use them is by using the helper class Fl_Watch.
+
+    The following is to show how it works ...
+
+    There are three groups of related methods:
+
+      -# scheduled widget deletion
+	- Fl::delete_widget() schedules widgets for deletion
+	- Fl::do_widget_deletion() deletes all scheduled widgets
+      -# widget watch list ("smart pointers")
+	- Fl::watch_widget_pointer() adds a widget pointer to the watch list
+	- Fl::release_widget_pointer() removes a widget pointer from the watch list
+	- Fl::clear_widget_pointer() clears a widget pointer \e in the watch list
+      -# the class Fl_Watch:
+	- the constructor calls Fl::watch_widget_pointer()
+	- the destructor calls Fl::release_widget_pointer()
+	- the access methods can be used to test, if a widget has been deleted
+	  \see Fl_Watch.
 
    @{ */
   // Widget deletion:
@@ -916,6 +930,86 @@ public:
   /** @} */ 
 
 #endif // HAVE_CAIRO
+
+};
+
+/**
+  This class should be used to control safe widget deletion.
+
+  You can use an Fl_Watch object to watch another widget, if you
+  need to know, if this widget has been deleted during a callback.
+
+  This simplifies the use of the "safe widget deletion" methods
+  Fl::watch_widget_pointer() and Fl::release_widget_pointer() and
+  makes their use more reliable, because the destructor autmatically
+  releases the widget pointer from the widget watch list.
+
+  It is intended to be used as an automatic (local/stack) variable,
+  such that the automatic destructor is called when the object's
+  scope is left. This ensures that no stale widget pointers are
+  left in the widget watch list (see example below).
+  
+  You can also create Fl_Watch objects with \e \b new, but then it
+  is your responsibility to delete the object (and thus remove the
+  widget pointer from the watch list) when it is not needed any more.
+
+  Example:
+
+  \code
+    int MyClass::handle (int event) {
+
+      if (...) {
+	Fl_Watch wp(this);	// watch myself
+	do_callback();		// call the callback
+
+	if (wp.deleted()) return 1; // exit, if deleted
+
+	// Now we are sure that the widget has not been deleted.
+	// It is safe to access the widget
+
+	clear_changed();	// access the widget
+      }
+    }
+  \endcode
+
+*/
+class FL_EXPORT Fl_Watch {
+
+  Fl_Widget* wp_;
+
+public:
+
+  Fl_Watch(Fl_Widget *wi);
+  ~Fl_Watch();
+
+  /**
+    returns a pointer to the watched widget.
+
+    This pointer is NULL, if the widget has been deleted.
+  */
+  Fl_Widget *widget() {return wp_;}
+
+  /**
+    returns 1, if the watched widget has been deleted.
+
+    This is a convenience method. You can also use something like
+
+      if (watch.widget() == 0) // ...
+
+    where watch is an Fl_Watch object.
+  */
+  int deleted() {return wp_ == 0;}
+
+  /**
+    returns 1, if the watched widget exists (has not been deleted).
+
+    This is a convenience method. You can also use something like
+
+      if (watch.widget() != 0) // ...
+
+    where watch is an Fl_Watch object.
+  */
+  int exists()  {return wp_ != 0;}
 
 };
 

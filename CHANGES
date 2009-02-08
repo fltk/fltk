@@ -1,9 +1,12 @@
 CHANGES IN FLTK 1.3.0
 
-	- Fl_Help_View handles HTML2 font color specification (STR#890) 
-	- Copyright dates are now updated to 2009 (STR#2036)
+	- New helper class Fl_Watch to simplify safe handling of widget
+	  deletion in callbacks. This is used in Fl_Widget::do_callback()
+	  to prevent accessing widgets after deletion in the callback.
+	- Fl_Help_View handles HTML2 font color specification (STR #890) 
+	- Copyright dates are now updated to 2009 (STR #2036)
 	- Copy/Paste operations should now work as expected, 
-          with utf8,16 support and fltk1.1 compatibility. (STR#2104,2121).
+          with utf8,16 support and fltk1.1 compatibility. (STR #2104,2121).
 	- Widgets now remove themselves from their parent group (if any),
 	  when destroyed (STR #1894)
 	- Added flexible gap size for text buffer (STR #2046)
@@ -72,7 +75,7 @@ CHANGES IN FLTK 1.1.9
 
 CHANGES IN FLTK 1.1.8
 
-	- Documentation fixes (STR #1454, STR #1455, STR #1456,
+	- Documentation fixes  (STR #1454, STR #1455, STR #1456,
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578,
 	  STR #1639, STR #1645, STR #1644, STR #1792, STR #1793,
 	  STR #1742, STR #1777, STR #1794, STR #1827, STR #1843,

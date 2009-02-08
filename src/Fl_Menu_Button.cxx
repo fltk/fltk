@@ -58,8 +58,7 @@ const Fl_Menu_Item* Fl_Menu_Button::popup() {
   const Fl_Menu_Item* m;
   pressed_menu_button_ = this;
   redraw();
-  Fl_Widget *mb = this;
-  Fl::watch_widget_pointer(mb);
+  Fl_Watch mb(this);
   if (!box() || type()) {
     m = menu()->popup(Fl::event_x(), Fl::event_y(), label(), mvalue(), this);
   } else {
@@ -67,8 +66,7 @@ const Fl_Menu_Item* Fl_Menu_Button::popup() {
   }
   picked(m);
   pressed_menu_button_ = 0;
-  if (mb) mb->redraw();
-  Fl::release_widget_pointer(mb);
+  if (mb.exists()) redraw();
   return m;
 }
 

@@ -793,29 +793,20 @@ public:
   static void default_callback(Fl_Widget *cb, void *d);
 
   /** Calls the widget callback.
-      Causes a widget to invoke its callback function, optionally
-      with arbitrary arguments.
+      Causes a widget to invoke its callback function with default arguments.
       \see callback()
    */
-  void do_callback() {callback_(this,user_data_); if (callback_ != default_callback) clear_changed();}
+  void do_callback() {do_callback(this,user_data_);}
 
   /** Calls the widget callback.
-      Causes a widget to invoke its callback function, optionally
-      with arbitrary arguments.
+      Causes a widget to invoke its callback function with arbitrary arguments.
       \param[in] o call the callback with \em o as the widget argument
       \param[in] arg call the callback with \em arg as the user data argument
       \see callback()
    */
-  void do_callback(Fl_Widget* o,void* arg=0) {callback_(o,arg); if (callback_ != default_callback) clear_changed();}
+  void do_callback(Fl_Widget* o,long arg) {do_callback(o,(void*)arg);}
 
-  /** Calls the widget callback.
-      Causes a widget to invoke its callback function, optionally
-      with arbitrary arguments.
-      \param[in] o call the callback with \em o as the widget argument
-      \param[in] arg call the callback with \em arg as the user data argument
-      \see callback()
-   */
-  void do_callback(Fl_Widget* o,long arg) {callback_(o,(void*)arg); if (callback_ != default_callback) clear_changed();}
+  void do_callback(Fl_Widget* o,void* arg=0); // impl. in Fl_Widget.cxx
 
   /** Internal use only. */
   int test_shortcut();
