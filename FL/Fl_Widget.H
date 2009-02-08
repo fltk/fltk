@@ -164,11 +164,12 @@ protected:
 public:
 
   /** Destroys the widget.
-      Destroying single widgets is not very common, and it is your responsibility 
-      to either remove() them from any enclosing group or destroy that group 
-      \em immediately after destroying the children. You almost always want to 
-      destroy the parent group instead which will destroy all of the child widgets 
+      Destroying single widgets is not very common. You almost always want to 
+      destroy the parent group instead, which will destroy all of the child widgets 
       and groups in that group.
+      
+      \since FLTK 1.3, the widget's destructor removes the widget from its parent
+      group, if it is member of a group.
    */
   virtual ~Fl_Widget();
 
@@ -185,7 +186,7 @@ public:
       You normally don't call this method directly, but instead let FLTK do 
       it when the user interacts with the widget.
      
-      When implemented in a new widget, this function must return 0 if the 
+      When implemented in a widget, this function must return 0 if the 
       widget does not use the event or 1 otherwise.
 
       Most of the time, you want to call the inherited handle() method in 
@@ -208,7 +209,7 @@ public:
 
   /** Internal use only - "for hacks only".
   
-      It is \em STRONGLY recommended not to use this method, because it
+      It is \em \b STRONGLY recommended not to use this method, because it
       short-circuits Fl_Group's normal widget adding and removing methods,
       if the widget is already a child widget of another Fl_Group.
 
@@ -371,7 +372,7 @@ public:
    */
   void color(unsigned bg, unsigned sel) {color_=bg; color2_=sel;}
 
-  /** Get the current label text.
+  /** Gets the current label text.
       \return a pointer to the current label text
       \see label(Fl_CString), copy_label(Fl_CString)
    */
@@ -600,7 +601,7 @@ public:
      \li FL_WHEN_ENTER_KEY: If the user types the Enter key, the entire 
          text is selected, and the callback is done if the text has changed. 
 	 Normally the Enter key will navigate to the next field (or insert 
-	 a newline for a Fl_Mulitline_Input) - this changes the behavior.
+	 a newline for a Fl_Multiline_Input) - this changes the behavior.
      \li FL_WHEN_ENTER_KEY|FL_WHEN_NOT_CHANGED: The Enter key will do the
          callback even if the text has not changed. Useful for command fields.
       Fl_Widget::when() is a set of bitflags used by subclasses of 
@@ -898,7 +899,7 @@ public:
 
 /**
     Reserved type numbers (necessary for my cheapo RTTI) start here.
-    grep the header files for "RESERVED_TYPE" to find the next available
+    Grep the header files for "RESERVED_TYPE" to find the next available
     number.
 */
 #define FL_RESERVED_TYPE 100

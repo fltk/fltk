@@ -39,9 +39,8 @@
   The Fl_Group class is the FLTK container widget. It maintains
   an array of child widgets. These children can themselves be any widget
   including Fl_Group. The most important subclass of Fl_Group
-  is Fl_Window, however
-  groups can also be used to control radio buttons or to enforce resize
-  behavior.
+  is Fl_Window, however groups can also be used to control radio buttons 
+  or to enforce resize behavior.
 */
 class FL_EXPORT Fl_Group : public Fl_Widget {
 
@@ -105,8 +104,8 @@ public:
   void add(Fl_Widget* o) {add(*o);}
   void insert(Fl_Widget&, int i);
   /**
-    This does insert(w, find(beforethis)).  This will append the
-    widget if beforethis is not in the group.
+    This does insert(w, find(before)).  This will append the
+    widget if \a before is not in the group.
   */
   void insert(Fl_Widget& o, Fl_Widget* before) {insert(o,find(before));}
   void remove(Fl_Widget&);
@@ -127,19 +126,22 @@ public:
     children. Widgets that are horizontally or vertically inside the
     dimensions of the box are scaled to the new size. Widgets outside the
     box are moved.
-    <P>In these examples the gray area is the resizable:
-    <BR></P>
-    <P align=center>\image html resizebox1.gif&nbsp;&nbsp;
-    \image html resizebox2.gif</P>
-    \image latex resizebox1.eps  "before resize"  width=4cm
-    \image latex resizebox2.eps "after resize"  width=4cm
-    <P>The resizable may be set to the group itself (this is the default
-    value for an Fl_Group, although NULL is the default
-    for Fl_Window and Fl_Pack), in which case all the 
-    contents are resized.
+
+    In these examples the gray area is the resizable:
+
+    \image html resizebox1.gif
+    \image html resizebox2.gif
+    \image latex resizebox1.eps "before resize"  width=4cm
+    \image latex resizebox2.eps "after resize"   width=4cm
+
+    The resizable may be set to the group itself, in which case all the
+    contents are resized. This is the default value for Fl_Group,
+    although NULL is the default for Fl_Window and Fl_Pack.
+
     If the resizable is NULL then all widgets remain a fixed size
-    and distance from the top-left corner. </P>
-    <P>It is possible to achieve any type of resize behavior by using an
+    and distance from the top-left corner.
+
+    It is possible to achieve any type of resize behavior by using an
     invisible Fl_Box as the resizable and/or by using a hierarchy
     of child Fl_Group's.
   */
@@ -181,8 +183,10 @@ public:
     \sa Fl_Widget::take_focus();
   */
   void focus(Fl_Widget* W) {W->take_focus();}
+
   /** This is for forms compatibility only */
   Fl_Widget* & _ddfdesign_kludge() {return resizable_;}
+
   /** This is for forms compatibility only */
   void forms_end();
 };

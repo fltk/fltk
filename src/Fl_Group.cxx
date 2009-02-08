@@ -405,10 +405,16 @@ void Fl_Group::clear() {
 /**
   The destructor <I>also deletes all the children</I>. This allows a
   whole tree to be deleted at once, without having to keep a pointer to
-  all the children in the user code. A kludge has been done so the 
-  Fl_Group and all of it's children can be automatic (local)
-  variables, but you must declare the Fl_Group <I>first</I>, so
-  that it is destroyed last.
+  all the children in the user code.
+  
+  It is allowed that the Fl_Group and all of its children are automatic
+  (local) variables, but you must declare the Fl_Group \e first, so that
+  it is destroyed last.
+  
+  If you add static or automatic (local) variables to an Fl_Group, then it
+  is your responsibility to remove (or delete) all such static or automatic
+  child widgets \e \b before destroying the group - otherwise the child
+  widgets' destructors would be called twice!
 */
 Fl_Group::~Fl_Group() {
   clear();
@@ -416,7 +422,7 @@ Fl_Group::~Fl_Group() {
 
 /**
   The widget is removed from its current group (if any) and then
-  inserted into this group. It is put at index n (or at the end
+  inserted into this group. It is put at index n - or at the end,
   if n >= children(). This can also be used to rearrange
   the widgets inside a group.
 */
