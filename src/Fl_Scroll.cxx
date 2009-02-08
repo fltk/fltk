@@ -92,6 +92,16 @@ void Fl_Scroll::draw_clip(void* v,int X, int Y, int W, int H) {
   fl_pop_clip();
 }
 
+/**
+  Returns the bounding box for the interior of the scrolling area, inside
+  the scrollbars.
+  
+  Currently this is only reliable after draw(), and before any resizing of
+  the Fl_Scroll or any child widgets occur.
+  
+  \todo The visibility of the scrollbars ought to be checked/calculated
+  outside of the draw() method (STR #1895).
+*/
 void Fl_Scroll::bbox(int& X, int& Y, int& W, int& H) {
   X = x()+Fl::box_dx(box());
   Y = y()+Fl::box_dy(box());
