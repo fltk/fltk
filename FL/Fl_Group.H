@@ -130,8 +130,11 @@ public:
     In these examples the gray area is the resizable:
 
     \image html resizebox1.gif
+    
     \image html resizebox2.gif
+    
     \image latex resizebox1.eps "before resize"  width=4cm
+    
     \image latex resizebox2.eps "after resize"   width=4cm
 
     The resizable may be set to the group itself, in which case all the

@@ -539,6 +539,8 @@ void Fl_Group::init_sizes() {
   \note You should never need to use this method directly, unless you have
   special needs to rearrange the children of a Fl_Group. Fl_Tile uses
   this to rearrange its widget positions.
+  
+  \sa init_sizes()
 
   \todo Should the internal representation of the sizes() array be documented?
 */
