@@ -365,6 +365,10 @@ libfltk_images_s.a: $(IMGOBJECTS)
 #   against the import libraries in the src dir.
 #-----------------------------------------------------------------
 
+#-----------------------------------------------------------------
+# cygwin GDI shared libraries
+#-----------------------------------------------------------------
+
 cygfltknox-1.3.dll: $(LIBNAME)
 	echo $(DSOCOMMAND) $(LIBNAME) ...
 	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
@@ -383,6 +387,34 @@ cygfltknox_gl-1.3.dll: $(GLLIBNAME) cygfltknox-1.3.dll
 		-L. -lfltk $(GLDLIBS)
 
 cygfltknox_images-1.3.dll: $(IMGLIBNAME) cygfltknox-1.3.dll
+	echo $(DSOCOMMAND) $(IMGLIBNAME) ...
+	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_images.dll.a \
+		-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \
+			$(IMAGELIBS) $(LDLIBS)
+
+#-----------------------------------------------------------------
+# cygwin X11 shared libraries
+#-----------------------------------------------------------------
+
+cygfltk-1.3.dll: $(LIBNAME)
+	echo $(DSOCOMMAND) $(LIBNAME) ...
+	$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk.dll.a $(LDLIBS)
+
+cygfltk_forms-1.3.dll: $(FLLIBNAME) cygfltk-1.3.dll
+	echo $(DSOCOMMAND) $(FLLIBNAME) ...
+	$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_forms.dll.a \
+		-L. -lfltk $(LDLIBS)
+
+cygfltk_gl-1.3.dll: $(GLLIBNAME) cygfltk-1.3.dll
+	echo $(DSOCOMMAND) $(GLLIBNAME) ...
+	$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \
+		-Wl,--out-implib=libfltk_gl.dll.a \
+		-L. -lfltk $(GLDLIBS)
+
+cygfltk_images-1.3.dll: $(IMGLIBNAME) cygfltk-1.3.dll
 	echo $(DSOCOMMAND) $(IMGLIBNAME) ...
 	$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \
 		-Wl,--out-implib=libfltk_images.dll.a \
@@ -660,6 +692,10 @@ uninstall:
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
 	fi
+	if test x$(DSONAME) = xcygfltk-1.3.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
+	fi
 	if test x$(DSONAME) = xmgwfltknox-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\
@@ -678,6 +714,10 @@ uninstall:
 		$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\
 	fi
 	if test x$(FLDSONAME) = xcygfltknox_forms-1.3.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
+	fi
+	if test x$(FLDSONAME) = xcygfltk_forms-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\
 	fi
@@ -704,6 +744,10 @@ uninstall:
 		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
 	fi
+	if test x$(GLDSONAME) = xcygfltk_gl-1.3.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
+	fi
 	if test x$(GLDSONAME) = xmgwfltknox_gl-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\
@@ -724,6 +768,10 @@ uninstall:
 		$(RM) $(DESTDIR)$(libdir)/libfltk_images_s.a;\
 	fi
 	if test x$(IMGDSONAME) = xcygfltknox_images-1.3.dll; then\
+		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
+		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
+	fi
+	if test x$(IMGDSONAME) = xcygfltk_images-1.3.dll; then\
 		$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \
 		$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\
 	fi

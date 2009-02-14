@@ -68,10 +68,14 @@ AC_SUBST(ARCHFLAGS)
 AC_SUBST(OPTIM)
 
 dnl OS-specific pre-tests...
+dnl uname_GUI equals $uname unless we target cygwin
+dnl in combination with X11.
+uname_GUI=$uname
 case $uname in
     CYGWIN* | MINGW*)
         # Handle Cygwin option *first*, before all other tests.
-	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=no]])
+	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [(default=no)]])
+	AC_ARG_ENABLE(x11,    [  --enable-x11            use CygWin with X11 [(default=no)]])
 	if test x$enable_cygwin != xyes; then
 	    # NOTE: We can't use ARCHFLAGS for this, since it does not work
 	    #       with some of the function tests - Cygwin uses a
@@ -81,6 +85,11 @@ case $uname in
 	    CXXFLAGS="$CXXFLAGS -mno-cygwin"
 	    LDFLAGS="$LDFLAGS -mno-cygwin"
 	    DSOFLAGS="$DSOFLAGS -mno-cygwin"
+	else
+	    # we target cygwin in combination with X11
+	    if test x$enable_x11 == xyes; then
+		uname_GUI="X11$uname"
+	    fi
 	fi
 	;;
 esac
@@ -267,11 +276,19 @@ if test x$enable_shared = xyes; then
 		IMGDSONAME="mgwfltknox_images-$FL_API_VERSION.dll"
 		CAIRODSONAME="mgwfltknox_cairo-$FL_API_VERSION.dll"
 	    else
-		DSONAME="cygfltknox-$FL_API_VERSION.dll"
-		FLDSONAME="cygfltknox_forms-$FL_API_VERSION.dll"
-		GLDSONAME="cygfltknox_gl-$FL_API_VERSION.dll"
-		IMGDSONAME="cygfltknox_images-$FL_API_VERSION.dll"
-		CAIRODSONAME="cygfltknox_cairo-$FL_API_VERSION.dll"
+		if test x$enable_x11 == xyes; then
+		    DSONAME="cygfltk-$FL_API_VERSION.dll"
+		    FLDSONAME="cygfltk_forms-$FL_API_VERSION.dll"
+		    GLDSONAME="cygfltk_gl-$FL_API_VERSION.dll"
+		    IMGDSONAME="cygfltk_images-$FL_API_VERSION.dll"
+		    CAIRODSONAME="cygfltk_cairo-$FL_API_VERSION.dll"
+		else
+		    DSONAME="cygfltknox-$FL_API_VERSION.dll"
+		    FLDSONAME="cygfltknox_forms-$FL_API_VERSION.dll"
+		    GLDSONAME="cygfltknox_gl-$FL_API_VERSION.dll"
+		    IMGDSONAME="cygfltknox_images-$FL_API_VERSION.dll"
+		    CAIRODSONAME="cygfltknox_cairo-$FL_API_VERSION.dll"
+		fi
 	    fi
 	    #-----------------------------------------------------------
 	    # -Wl,--enable-runtime-pseudo-reloc: See str 1585
@@ -730,15 +747,15 @@ AC_ARG_WITH(links, [  --with-links            make header links for common missp
 INSTALL_DESKTOP=""
 UNINSTALL_DESKTOP=""
 
-case $uname in
+case $uname_GUI in
     CYGWIN* | MINGW*)
-	dnl Cygwin environment...
+	dnl Cygwin environment, using windows GDI ...
 	# Recent versions of Cygwin are seriously broken and the size
 	# checks don't work because the shell puts out \r\n instead of
 	# \n.  Here we just force U32 to be defined to "unsigned"...
         AC_DEFINE(U32,unsigned)
-	CFLAGS="-mwindows -DWIN32 $CFLAGS"
-	CXXFLAGS="-mwindows -DWIN32 $CXXFLAGS"
+	CFLAGS="-mwindows -DWIN32 -DUSE_OPENGL32 $CFLAGS"
+	CXXFLAGS="-mwindows -DWIN32 -DUSE_OPENGL32 $CXXFLAGS"
 	LDFLAGS="-mwindows $LDFLAGS"
 	DSOFLAGS="-mwindows $DSOFLAGS"
 	LIBS="$LIBS -lole32 -luuid -lcomctl32"
@@ -766,7 +783,7 @@ case $uname in
 		AC_DEFINE(HAVE_PTHREAD)
 	    fi
 
-	    THREADS="threads.exe"
+	    THREADS="threads$EXEEXT"
         fi
 
 	# Don't make symlinks since Windows is not case sensitive.
@@ -781,7 +798,7 @@ case $uname in
 
 	if test x$have_pthread = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)
-	    THREADS="threads"
+	    THREADS="threads$EXEEXT"
 	fi
 
 	if test x$enable_gl != xno; then
@@ -810,9 +827,10 @@ case $uname in
 
     *)
 	# All others are UNIX/X11...
+	# This includes cygwin target combined with X11
 	if test x$have_pthread = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)
-	    THREADS="threads"
+	    THREADS="threads$EXEEXT"
 	fi
 
 	dnl Check for X11...
@@ -891,9 +909,10 @@ case $uname in
 	        CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
 	        CXXFLAGS="`$FTCONFIG --cflags` $CXXFLAGS"
 
+	        AC_CHECK_LIB(fontconfig, FcPatternCreate)
 		AC_CHECK_HEADER(X11/Xft/Xft.h,
 		    AC_CHECK_LIB(Xft, XftDrawCreate,
-	        	AC_DEFINE(USE_XFT)
+			AC_DEFINE(USE_XFT)
 			LIBS="-lXft $LIBS"))
 	    fi
 	fi
@@ -1199,7 +1218,7 @@ echo ""
 echo "Configuration Summary"
 echo "-------------------------------------------------------------------------"
 
-case $uname in
+case $uname_GUI in
     CYGWIN* | MINGW*)
         graphics="GDI"
 	;;
