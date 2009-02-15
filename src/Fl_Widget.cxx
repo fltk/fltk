@@ -296,13 +296,14 @@ Fl_Widget::copy_label(const char *a) {
 /** Calls the widget callback.
 
   Causes a widget to invoke its callback function with arbitrary arguments.
+
   \param[in] o call the callback with \a o as the widget argument
-  \param[in] arg call the callback with \a arg as the user data argument
+  \param[in] arg use \a arg as the user data argument
   \see callback()
 */
 void
 Fl_Widget::do_callback(Fl_Widget* o,void* arg) {
-  Fl_Watch wp(o);
+  Fl_Widget_Tracker wp(o);
   callback_(o,arg); 
   if (wp.deleted()) return;
   if (callback_ != default_callback) 

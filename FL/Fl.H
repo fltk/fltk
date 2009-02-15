@@ -856,7 +856,7 @@ public:
     callbacks.
 
     The other functions are intended for internal use. The preferred
-    way to use them is by using the helper class Fl_Watch.
+    way to use them is by using the helper class Fl_Widget_Tracker.
 
     The following is to show how it works ...
 
@@ -869,11 +869,11 @@ public:
 	- Fl::watch_widget_pointer() adds a widget pointer to the watch list
 	- Fl::release_widget_pointer() removes a widget pointer from the watch list
 	- Fl::clear_widget_pointer() clears a widget pointer \e in the watch list
-      -# the class Fl_Watch:
+      -# the class Fl_Widget_Tracker:
 	- the constructor calls Fl::watch_widget_pointer()
 	- the destructor calls Fl::release_widget_pointer()
 	- the access methods can be used to test, if a widget has been deleted
-	  \see Fl_Watch.
+	  \see Fl_Widget_Tracker.
 
    @{ */
   // Widget deletion:
@@ -936,7 +936,7 @@ public:
 /**
   This class should be used to control safe widget deletion.
 
-  You can use an Fl_Watch object to watch another widget, if you
+  You can use an Fl_Widget_Tracker object to watch another widget, if you
   need to know, if this widget has been deleted during a callback.
 
   This simplifies the use of the "safe widget deletion" methods
@@ -949,7 +949,7 @@ public:
   scope is left. This ensures that no stale widget pointers are
   left in the widget watch list (see example below).
   
-  You can also create Fl_Watch objects with \e \b new, but then it
+  You can also create Fl_Widget_Tracker objects with \e \b new, but then it
   is your responsibility to delete the object (and thus remove the
   widget pointer from the watch list) when it is not needed any more.
 
@@ -959,28 +959,28 @@ public:
     int MyClass::handle (int event) {
 
       if (...) {
-	Fl_Watch wp(this);	// watch myself
-	do_callback();		// call the callback
+	Fl_Widget_Tracker wp(this);	// watch myself
+	do_callback();			// call the callback
 
-	if (wp.deleted()) return 1; // exit, if deleted
+	if (wp.deleted()) return 1;	// exit, if deleted
 
 	// Now we are sure that the widget has not been deleted.
 	// It is safe to access the widget
 
-	clear_changed();	// access the widget
+	clear_changed();		// access the widget
       }
     }
   \endcode
 
 */
-class FL_EXPORT Fl_Watch {
+class FL_EXPORT Fl_Widget_Tracker {
 
   Fl_Widget* wp_;
 
 public:
 
-  Fl_Watch(Fl_Widget *wi);
-  ~Fl_Watch();
+  Fl_Widget_Tracker(Fl_Widget *wi);
+  ~Fl_Widget_Tracker();
 
   /**
     returns a pointer to the watched widget.
@@ -994,9 +994,9 @@ public:
 
     This is a convenience method. You can also use something like
 
-      if (watch.widget() == 0) // ...
+      if (wp.widget() == 0) // ...
 
-    where watch is an Fl_Watch object.
+    where \e \b wp is an Fl_Widget_Tracker object.
   */
   int deleted() {return wp_ == 0;}
 
@@ -1005,9 +1005,9 @@ public:
 
     This is a convenience method. You can also use something like
 
-      if (watch.widget() != 0) // ...
+      if (wp.widget() != 0) // ...
 
-    where watch is an Fl_Watch object.
+    where \e \b wp is an Fl_Widget_Tracker object.
   */
   int exists()  {return wp_ != 0;}
 
