@@ -127,7 +127,7 @@ int Fl_Menu_::value(const Fl_Menu_Item* m) {
 
 /** 
  When user picks a menu item, call this.  It will do the callback.
- Unfortunatly this also casts away const for the checkboxes, but this
+ Unfortunately this also casts away const for the checkboxes, but this
  was necessary so non-checkbox menus can really be declared const...
 */
 const Fl_Menu_Item* Fl_Menu_::picked(const Fl_Menu_Item* v) {
@@ -245,7 +245,7 @@ Fl_Menu_* fl_menu_array_owner = 0;
   Same as menu(NULL), set the array pointer to null, indicating
   a zero-length menu.
   
-  <P>Menus must no be cleared during a callback to the same menu.
+  Menus must not be cleared during a callback to the same menu.
 */
 void Fl_Menu_::clear() {
   if (alloc) {

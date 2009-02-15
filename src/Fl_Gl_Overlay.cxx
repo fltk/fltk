@@ -51,7 +51,7 @@ void Fl_Gl_Window::make_overlay() {overlay = this;}
 // A pointer to this is stored in the "overlay" pointer of the Fl_Gl_Window.
 
 // Under win32 another GLX context is created to draw into the overlay
-// and it is stored in into the "overlay" pointer.
+// and it is stored in the "overlay" pointer.
 
 // In both cases if overlay hardware is unavailable, the overlay is
 // "faked" by drawing into the main layers.  This is indicated by
@@ -211,7 +211,7 @@ void Fl_Gl_Window::redraw_overlay() {
 void Fl_Gl_Window::make_overlay_current() {
   make_overlay();
 #ifdef __APPLE__
-  // this is not very useful, but unfortunatly, Apple decided
+  // this is not very useful, but unfortunately, Apple decided
   // that front buffer drawing can no longer (OS X 10.4) be 
   // supported on their platforms.
   make_current();
@@ -230,7 +230,7 @@ void Fl_Gl_Window::make_overlay_current() {
     glDrawBuffer(GL_FRONT);
 #endif
 }
-/** Hides the  window if it is not this window, does nothing in WIN32. */
+/** Hides the window if it is not this window, does nothing in WIN32. */
 void Fl_Gl_Window::hide_overlay() {
 #if HAVE_GL_OVERLAY
 #ifdef WIN32
