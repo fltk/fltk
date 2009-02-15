@@ -158,7 +158,7 @@ FL_EXPORT double fl_transform_dy(double x, double y);
 FL_EXPORT void fl_transformed_vertex(double x, double y);
 /** @} */
 
-/** \addtogroup  fl_attributes 
+/** \addtogroup  fl_attributes
     @{ */
 /* NOTE: doxygen comments here to avoid triplication in os-specific sources */
 /**
@@ -211,13 +211,22 @@ FL_EXPORT int   fl_descent();
 FL_EXPORT double fl_width(const char* txt);
 /** Return the typographical width of a sequence of \a n characters */
 FL_EXPORT double fl_width(const char* txt, int n);
-/** Return the typographical width of a single character : 
-    \note if a valid fl_gc is NOT found then it uses the first window gc, 
+/** Return the typographical width of a single character :
+    \note if a valid fl_gc is NOT found then it uses the first window gc,
     or the screen gc if no fltk window is available when called. */
 FL_EXPORT double fl_width(Fl_Unichar);
-/** Determine the minimum pixel dimensions of a nul-terminated string */
-FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); // NO fltk symbol expansion
-/** Determine the minimum pixel dimensions of a sequence of \a n characters */
+/** Determine the minimum pixel dimensions of a nul-terminated string.
+
+Usage: given a string "txt" drawn using fl_draw(txt, x, y) you would determine
+its pixel extents on the display using fl_text_extents(txt, dx, dy, wo, ho)
+such that a bounding box that exactly fits around the text could be drawn with
+fl_rect(x+dx, y+dy, wo, ho). Note the dx, dy values hold the offset of the first
+"colored in" pixel of the string, from the draw origin.
+*/
+FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); // NO fltk symbol expansion will be performed
+/** Determine the minimum pixel dimensions of a sequence of \a n characters.
+\see fl_text_extents(const char*, int& dx, int& dy, int& w, int& h)
+*/
 FL_EXPORT void fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
 
 // font encoding:
