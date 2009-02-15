@@ -182,14 +182,16 @@ double fl_width(unsigned int c) {
     fl_fontsize->width[r] = (int*) malloc(sizeof(int) * 0x0400);
     SIZE s;
     unsigned short i = 0, ii = r * 0x400;
-    // The following code is a best effort algorithm to further	a valid fl_gc
-    // if no fl_gc is available at the time we call fl_width()
-    // We first choose a gc from the first fltk window, 
-    // if it is null then the gc from the current screen (GetDC(NULL)).
-    // This should solve STR #2086
+    // The following code makes a best effort attempt to obtain a valid fl_gc.
+    // If no fl_gc is available at the time we call fl_width(), then we first
+    // try to obtain a gc from the first fltk window.
+    // If that is null then we attempt to obtain the gc from the current screen
+    // using (GetDC(NULL)).
+    // This should resolve STR #2086
     HDC gc = fl_gc;
     HWND hWnd = 0;
-    if (!gc) {
+    if (!gc) { // We have no valid gc, try and obtain one
+	// Use our first fltk window, or fallback to using the screen via GetDC(NULL)
 	hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
 	gc = GetDC(hWnd);
     }
@@ -240,6 +242,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   int maxw = 0, maxh = 0, dh;
   int minx = 0, miny = -999999;
   unsigned len = 0, idx = 0;
+  HWND hWnd = 0;
 
   // Have we loaded the GetGlyphIndicesW function yet?
   if (have_loaded_GetGlyphIndices == 0) {
@@ -247,6 +250,15 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   }
   // Do we have a usable GetGlyphIndices function?
   if(!fl_GetGlyphIndices) goto exit_error; // No GetGlyphIndices function, use fallback mechanism instead
+
+  // The following code makes a best effort attempt to obtain a valid fl_gc.
+  // See description in fl_width() above for an explanation.
+  if (!fl_gc) { // We have no valid gc, try and obtain one
+	// Use our first fltk window, or fallback to using the screen via GetDC(NULL)
+	hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
+	fl_gc = GetDC(hWnd);
+  }
+  if (!fl_gc)goto exit_error; // no valid gc, attempt to use fallback measure
 
   // now convert the string to WCHAR and measure it
   len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
