@@ -1,5 +1,8 @@
 CHANGES IN FLTK 1.3.0
 
+	- The new configure option --enable-x11 (lowercase 'x') enables
+	  cygwin builds under Windows (with --enable-cygwin) to use X11
+	  instead of GDI drawing (STR #2147) and is ignored otherwise.
 	- Added Fl_Scroll::bbox() documentation (STR #1893)
 	- Removed an XForms compatibility "feature" that prevented the down
 	  array of Fl_Menu_Button from drawing (STR #2141).
