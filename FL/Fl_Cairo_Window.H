@@ -45,7 +45,7 @@
 
 /**
    This defines a pre-configured cairo fltk window.
-   This class overloads for you the virtual draw() method,
+   This class overloads the virtual draw() method for you,
    so that the only thing you have to do is to provide your cairo code.
    All cairo context handling is achieved transparently.
    \note You can alternatively define your custom cairo fltk window,
@@ -55,23 +55,28 @@
    the current window. \see Fl_Window::current()
 */
 class FL_EXPORT Fl_Cairo_Window : public Fl_Double_Window {
+
 public:
-    Fl_Cairo_Window(int w, int h) : Fl_Double_Window(w,h),draw_cb_(0) {}
-    /** Overloaded to provide cairo callback support */
-    void draw() {
-      Fl_Double_Window::draw();
-      // manual method ? if yes explicitly get a cairo_context here
-      if (!Fl::cairo_autolink_context()) 
-	Fl::cairo_make_current(this); 
-      if (draw_cb_) draw_cb_(this, Fl::cairo_cc());
-    }
-    /** This defines the cairo draw calback prototype that you must further */
-    typedef void (*cairo_draw_cb) (Fl_Cairo_Window* self, cairo_t* def);
-    /** 
-	You must provide a draw callback which will implement your cairo rendering,
-	This method will permit you to set you \a cb cairo callback.
-    */
-    void set_draw_cb(cairo_draw_cb  cb){draw_cb_=cb;}
+  Fl_Cairo_Window(int w, int h) : Fl_Double_Window(w,h),draw_cb_(0) {}
+
+protected:
+  /** Overloaded to provide cairo callback support */
+  void draw() {
+    Fl_Double_Window::draw();
+    // manual method ? if yes explicitly get a cairo_context here
+    if (!Fl::cairo_autolink_context()) 
+      Fl::cairo_make_current(this); 
+    if (draw_cb_) draw_cb_(this, Fl::cairo_cc());
+  }
+
+public:
+  /** This defines the cairo draw callback prototype that you must further */
+  typedef void (*cairo_draw_cb) (Fl_Cairo_Window* self, cairo_t* def);
+  /** 
+    You must provide a draw callback which will implement your cairo rendering.
+    This method will permit you to set your cairo callback to \a cb.
+  */
+  void set_draw_cb(cairo_draw_cb  cb){draw_cb_=cb;}
 private:
     cairo_draw_cb draw_cb_;
 };

@@ -68,8 +68,11 @@ public:
   Fl_File_Input(int X, int Y, int W, int H, const char *L=0);
 
   virtual int handle(int event);
+
+protected:
   virtual void draw();
 
+public:
   /** Gets the box type used for the navigation bar. */
   Fl_Boxtype	down_box() const { return (Fl_Boxtype)down_box_; }
   /** Sets the box type to use for the navigation bar.  */

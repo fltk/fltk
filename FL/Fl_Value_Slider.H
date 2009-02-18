@@ -43,8 +43,9 @@ class FL_EXPORT Fl_Value_Slider : public Fl_Slider {
     Fl_Font textfont_;
     Fl_Fontsize textsize_;
     unsigned textcolor_;
-public:
+protected:
     void draw();
+public:
     int handle(int);
     Fl_Value_Slider(int x,int y,int w,int h, const char *l = 0);
     /**    Gets the typeface of the text in the value box.  */

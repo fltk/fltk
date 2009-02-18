@@ -247,8 +247,9 @@ class FL_EXPORT Fl_Input : public Fl_Input_ {
   int shift_position(int p);
   int shift_up_down_position(int p);
   void handle_mouse(int keepmark=0);
-public:
+protected:
   void draw();
+public:
   int handle(int);
   Fl_Input(int,int,int,int,const char * = 0);
 };

@@ -52,9 +52,12 @@ class FL_EXPORT Fl_Value_Output : public Fl_Valuator {
   Fl_Fontsize textsize_;
   uchar soft_;
   unsigned textcolor_;
+
+protected:
+  void draw();
+
 public:
   int handle(int);
-  void draw();
   Fl_Value_Output(int x,int y,int w,int h,const char *l=0);
 
   /**

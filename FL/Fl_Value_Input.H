@@ -73,7 +73,9 @@ private:
   virtual void value_damage(); // cause damage() due to value() changing
 public:
   int handle(int);
+protected:
   void draw();
+public:
   void resize(int,int,int,int);
   Fl_Value_Input(int x,int y,int w,int h,const char *l=0);
   ~Fl_Value_Input();

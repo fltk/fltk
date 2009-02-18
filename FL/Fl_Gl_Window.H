@@ -35,7 +35,7 @@
 
 #ifndef GLContext
 /**
-  opaque pointer type to hide system specific implementation.
+  Opaque pointer type to hide system specific implementation.
 */
 typedef void* GLContext; // actually a GLXContext or HGLDC
 #endif
@@ -43,22 +43,24 @@ typedef void* GLContext; // actually a GLXContext or HGLDC
 class Fl_Gl_Choice; // structure to hold result of glXChooseVisual
 
 /**
-  The Fl_Gl_Window widget sets things up so OpenGL works, and
-  also keeps an OpenGL "context" for that window, so that changes to the
+  The Fl_Gl_Window widget sets things up so OpenGL works.
+  
+  It also keeps an OpenGL "context" for that window, so that changes to the
   lighting and projection may be reused between redraws. Fl_Gl_Window
-  also flushes the OpenGL streams and swaps buffers after draw()
-  returns.
-  <P>OpenGL hardware typically provides some overlay bit planes, which
+  also flushes the OpenGL streams and swaps buffers after draw() returns.
+
+  OpenGL hardware typically provides some overlay bit planes, which
   are very useful for drawing UI controls atop your 3D graphics.  If the
-  overlay hardware is not provided, FLTK tries to simulate the overlay,
+  overlay hardware is not provided, FLTK tries to simulate the overlay.
   This works pretty well if your graphics are double buffered, but not
-  very well for single-buffered. </P>
-  <P>Please note that the FLTK drawing and clipping functions
+  very well for single-buffered.
+
+  Please note that the FLTK drawing and clipping functions
   will not work inside an Fl_Gl_Window. All drawing
   should be done using OpenGL calls exclusively.
   Even though Fl_Gl_Window is derived from Fl_Group, 
   it is not useful to add other FLTK Widgets as children,
-  unless those Widgets are modified to draw using OpenGL calls.
+  unless those widgets are modified to draw using OpenGL calls.
 */
 class FL_EXPORT Fl_Gl_Window : public Fl_Window {
 
@@ -87,11 +89,10 @@ public:
   void resize(int,int,int,int);
 
   /**
-    Is turned off when FLTK creates a new
-    context for this window or when the window resizes, and is turned on <I>
-    after</I> draw() is called.  You can use this inside your 
-    draw() method to avoid unneccessarily initializing the OpenGL
-    context.  Just do this:
+    Is turned off when FLTK creates a new context for this window or 
+    when the window resizes, and is turned on \e after draw() is called.
+    You can use this inside your draw() method to avoid unnecessarily
+    initializing the OpenGL context. Just do this:
     \code
     void mywindow::draw() {
      if (!valid()) {
@@ -130,11 +131,11 @@ public:
   */
   void context_valid(char v) {if (v) valid_f_ |= 2; else valid_f_ &= 0xfd;}
 
-  /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
+  /**  Returns non-zero if the hardware supports the given or current OpenGL mode. */
   static int can_do(int m) {return can_do(m,0);}
-  /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
+  /**  Returns non-zero if the hardware supports the given or current OpenGL mode. */
   static int can_do(const int *m) {return can_do(0, m);}
-  /**  Returns non-zero if the hardware supports the given or current OpenGL  mode. */
+  /**  Returns non-zero if the hardware supports the given or current OpenGL mode. */
   int can_do() {return can_do(mode_,alist);}
   /**
     Set or change the OpenGL capabilites of the window.  The value can be
@@ -188,8 +189,8 @@ public:
   */
   int can_do_overlay();
   /**
-    This method causes draw_overlay to be called at a later time.
-    Initially the overlay is clear, if you want the window to display
+    This method causes draw_overlay() to be called at a later time.
+    Initially the overlay is clear. If you want the window to display
     something in the overlay when it first appears, you must call this
     immediately after you show() your window.
   */
@@ -219,7 +220,12 @@ public:
   Fl_Gl_Window(int X, int Y, int W, int H, const char *l=0)
     : Fl_Window(X,Y,W,H,l) {init();}
 
-  // you *must* override the draw method
+protected:
+  /**
+    Draws the Fl_Gl_Window.
+
+    You \e \b must override the draw() method.
+  */
   virtual void draw();
 };
 

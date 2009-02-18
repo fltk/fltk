@@ -51,12 +51,17 @@
 */
 class FL_EXPORT Fl_Pack : public Fl_Group {
   int spacing_;
+
 public:
   enum { // values for type(int)
     VERTICAL = 0,
     HORIZONTAL = 1
   };
+
+protected:
   void draw();
+
+public:
   Fl_Pack(int x,int y,int w ,int h,const char *l = 0);
   /**
     Gets the number of extra pixels of blank space that are added
