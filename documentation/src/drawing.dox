@@ -13,17 +13,12 @@ Calling these functions at other places will result in undefined behavior!
     To write code here, you must subclass one of the existing Fl_Widget
     classes and implement your own version of draw().
 
-\li The most common place is inside the virtual method
-    <A href="subclassing.html#draw"><tt>Fl_Widget::draw()</tt></A>. 
-    To write code here, you must subclass one of the existing Fl_Widget
-    classes and implement your own version of draw().
-
 \li You can also write <A href="common.html#boxtypes">boxtypes</A> and
     <A href="common.html#labeltypes">labeltypes</A>. These are small
     procedures that can be called by existing
-    <A HREF="subclassing.html#draw"><tt>Fl_Widget::draw()</tt></A>
-    methods. These "types" are identified by an 8-bit index that is stored
-    in the widget's box(), labeltype(), and possibly other properties.
+    Fl_Widget::draw() methods. These "types" are identified by an 8-bit
+    index that is stored in the widget's box(), labeltype(), and possibly
+    other properties.
 
 \li You can call Fl_Window::make_current() to do incremental update of a
     widget. Use Fl_Widget::window() to find the window.
