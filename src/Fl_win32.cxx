@@ -76,21 +76,23 @@
 //
 // USE_ASYNC_SELECT - define it if you have WSAAsyncSelect()...
 // USE_ASYNC_SELECT is OBSOLETED in 1.3 for the following reasons:
-/**
-   This feature was supposed to provide an efficient alternative to the current polling method,
-   but as it has been discussed (Thanks Albrecht!) :
-  - the async mode would imply to change the socket select mode to non blocking mode,
-   this can have unexpected side effects for 3rd party apps, especially if it is set on-the-fly when
-   socket service is really needed, as it is done today and on purpose, but still
-   the 3rd party developer wouldn't easily control the sequencing of socket operations.
-  - Finer granularity of events furthered by the async select is a plus only for socket 3rd party impl.,
-    it is simply not needed for the 'light' fltk use we make of wsock, so here
-    it would also be a bad point, because of all the logic add-ons necessary for
-    using this functionality, without a clear benefit.
+/*
+  This feature was supposed to provide an efficient alternative to the current
+  polling method, but as it has been discussed (Thanks Albrecht!) :
+  - the async mode would imply to change the socket to non blocking mode.
+    This can have unexpected side effects for 3rd party apps, especially
+    if it is set on-the-fly when socket service is really needed, as it is 
+    done today and on purpose, but still the 3rd party developer wouldn't easily
+    control the sequencing of socket operations.
+  - Finer granularity of events furthered by the async select is a plus only 
+    for socket 3rd party impl., it is simply not needed for the 'light' fltk
+    use we make of wsock, so here it would also be a bad point, because of all
+    the logic add-ons necessary for using this functionality, without a clear
+    benefit.
 
-   So async mode select would not add benefits to fltk, worse,
-   it can slowdown fltk because of this finer granularity and instrumentation code 
-   to be added for async mode proper operation, not mentioning the side effects...
+  So async mode select would not add benefits to fltk, worse, it can slowdown
+  fltk because of this finer granularity and instrumentation code to be added
+  for async mode proper operation, not mentioning the side effects...
 */
 
 // dynamic wsock dll handling api:
@@ -388,7 +390,7 @@ int fl_wait(double time_to_wait) {
     time_to_wait = 0.0;
 
   // if there are no more windows and this timer is set
-  // to FOREVER, continue through or look up indefinetely
+  // to FOREVER, continue through or look up indefinitely
   if (!Fl::first_window() && time_to_wait==1e20)
     time_to_wait = 0.0;
 
@@ -401,8 +403,8 @@ int fl_wait(double time_to_wait) {
   fl_lock_function();
 
   // Execute the message we got, and all other pending messages:
-//  have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
-      have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE);
+  // have_message = PeekMessage(&fl_msg, NULL, 0, 0, PM_REMOVE);
+  have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE);
   if (have_message > 0) {
     while (have_message != 0 && have_message != -1) {
       if (fl_msg.message == fl_wake_msg) {
@@ -1397,7 +1399,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   const wchar_t* message_namew = L"FLTK::ThreadWakeup";
   if (!class_name_list.has_name(class_name)) {
     WNDCLASSEX wc;
-  WNDCLASSEXW wcw;
+    WNDCLASSEXW wcw;
 
     memset(&wc, 0, sizeof(wc));
     wc.cbSize = sizeof(WNDCLASSEX);
@@ -1423,12 +1425,12 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     wcw.lpszClassName = class_namew;
     wcw.cbSize = sizeof(WNDCLASSEXW);
     RegisterClassExW(&wcw);
-	class_name_list.add_name((const char *)class_namew);
-}
+    class_name_list.add_name((const char *)class_namew);
+  }
 
-//  const char* message_name = "FLTK::ThreadWakeup";
- // if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessage(message_name);
-    if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessageW(message_namew);
+  // const char* message_name = "FLTK::ThreadWakeup";
+  // if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessage(message_name);
+  if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessageW(message_namew);
 
   HWND parent;
   DWORD style = WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
@@ -1504,28 +1506,28 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->cursor = fl_default_cursor;
   if (!fl_codepage) fl_get_codepage();
 
-    WCHAR *lab = NULL;
-    if (w->label()) {
-      int l = strlen(w->label());
+  WCHAR *lab = NULL;
+  if (w->label()) {
+    int l = strlen(w->label());
 //    lab = (WCHAR*) malloc((l + 1) * sizeof(short));
 //    l = fl_utf2unicode((unsigned char*)w->label(), l, (xchar*)lab);
 //    lab[l] = 0;
-      unsigned wlen = fl_utf8toUtf16(w->label(), l, NULL, 0); // Pass NULL to query length
-      wlen++;
-      lab = (WCHAR *) malloc(sizeof(WCHAR)*wlen);
-      wlen = fl_utf8toUtf16(w->label(), l, (unsigned short*)lab, wlen);
-      lab[wlen] = 0;
-    }
-    x->xid = CreateWindowExW(
+    unsigned wlen = fl_utf8toUtf16(w->label(), l, NULL, 0); // Pass NULL to query length
+    wlen++;
+    lab = (WCHAR *) malloc(sizeof(WCHAR)*wlen);
+    wlen = fl_utf8toUtf16(w->label(), l, (unsigned short*)lab, wlen);
+    lab[wlen] = 0;
+  }
+  x->xid = CreateWindowExW(
     styleEx,
-        class_namew, lab, style,
+    class_namew, lab, style,
     xp, yp, wp, hp,
     parent,
     NULL, // menu
     fl_display,
     NULL // creation parameters
-    );
-    if (lab) free(lab);
+  );
+  if (lab) free(lab);
 
   x->next = Fl_X::first;
   Fl_X::first = x;
@@ -1552,13 +1554,13 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   RegisterDragDrop(x->xid, flIDropTarget);
   if (!fl_aimm) {
-	static char been_here = 0;
+    static char been_here = 0;
     if (!been_here && !oleInitialized) CoInitialize(NULL);
-	been_here = 1;
-	CoCreateInstance(CLSID_CActiveIMM, NULL, CLSCTX_INPROC_SERVER,
-		IID_IActiveIMMApp, (void**) &fl_aimm);
+    been_here = 1;
+    CoCreateInstance(CLSID_CActiveIMM, NULL, CLSCTX_INPROC_SERVER,
+		     IID_IActiveIMMApp, (void**) &fl_aimm);
     if (fl_aimm) {
-	  fl_aimm->Activate(TRUE);
+      fl_aimm->Activate(TRUE);
     }
   }
 #endif // !__GNUC__ || __GNUC__ >= 3
@@ -1578,104 +1580,104 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 static LRESULT CALLBACK s_TimerProc(HWND hwnd, UINT msg,
                                     WPARAM wParam, LPARAM lParam)
 {
-    switch (msg) {
-    case WM_TIMER:
-        {
-            unsigned int id = wParam - 1;
-            if (id < (unsigned int)win32_timer_used && win32_timers[id].handle) {
-                Fl_Timeout_Handler cb   = win32_timers[id].callback;
-                void*              data = win32_timers[id].data;
-                delete_timer(win32_timers[id]);
-                if (cb) {
-                    (*cb)(data);
-                }
-            }
+  switch (msg) {
+  case WM_TIMER:
+    {
+      unsigned int id = wParam - 1;
+      if (id < (unsigned int)win32_timer_used && win32_timers[id].handle) {
+        Fl_Timeout_Handler cb   = win32_timers[id].callback;
+        void*              data = win32_timers[id].data;
+        delete_timer(win32_timers[id]);
+        if (cb) {
+          (*cb)(data);
         }
-        return 0;
-
-    default:
-        break;
+      }
     }
+    return 0;
 
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+  default:
+    break;
+  }
+
+  return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
-    repeat_timeout(time, cb, data);
+  repeat_timeout(time, cb, data);
 }
 
 void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
 {
-    int timer_id = -1;
-    for (int i = 0;  i < win32_timer_used;  ++i) {
-        if ( !win32_timers[i].handle ) {
-            timer_id = i;
-            break;
-        }
+  int timer_id = -1;
+  for (int i = 0;  i < win32_timer_used;  ++i) {
+    if ( !win32_timers[i].handle ) {
+      timer_id = i;
+      break;
     }
-    if (timer_id == -1) {
-        if (win32_timer_used == win32_timer_alloc) {
-            realloc_timers();
-        }
-        timer_id = win32_timer_used++;
+  }
+  if (timer_id == -1) {
+    if (win32_timer_used == win32_timer_alloc) {
+      realloc_timers();
     }
-    unsigned int elapsed = (unsigned int)(time * 1000);
+    timer_id = win32_timer_used++;
+  }
+  unsigned int elapsed = (unsigned int)(time * 1000);
 
-    if ( !s_TimerWnd ) {
-        const char* timer_class = "FLTimer";
-        WNDCLASSEX wc;
-        memset(&wc, 0, sizeof(wc));
-        wc.cbSize = sizeof (wc);
-        wc.style = CS_CLASSDC;
-        wc.lpfnWndProc = (WNDPROC)s_TimerProc;
-        wc.hInstance = fl_display;
-        wc.lpszClassName = timer_class;
-        /*ATOM atom =*/ RegisterClassEx(&wc);
-        // create a zero size window to handle timer events
-        s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
-                                    timer_class, "",
-                                    WS_POPUP,
-                                    0, 0, 0, 0,
-                                    NULL, NULL, fl_display, NULL);
-        // just in case this OS won't let us create a 0x0 size window:
-        if (!s_TimerWnd)
-          s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
-                                    timer_class, "",
-                                    WS_POPUP,
-                                    0, 0, 1, 1,
-                                    NULL, NULL, fl_display, NULL);
-        ShowWindow(s_TimerWnd, SW_SHOWNOACTIVATE);
-    }
+  if ( !s_TimerWnd ) {
+    const char* timer_class = "FLTimer";
+    WNDCLASSEX wc;
+    memset(&wc, 0, sizeof(wc));
+    wc.cbSize = sizeof (wc);
+    wc.style = CS_CLASSDC;
+    wc.lpfnWndProc = (WNDPROC)s_TimerProc;
+    wc.hInstance = fl_display;
+    wc.lpszClassName = timer_class;
+    /*ATOM atom =*/ RegisterClassEx(&wc);
+    // create a zero size window to handle timer events
+    s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
+                                timer_class, "",
+                                WS_POPUP,
+                                0, 0, 0, 0,
+                                NULL, NULL, fl_display, NULL);
+    // just in case this OS won't let us create a 0x0 size window:
+    if (!s_TimerWnd)
+      s_TimerWnd = CreateWindowEx(WS_EX_LEFT | WS_EX_TOOLWINDOW,
+				  timer_class, "",
+				  WS_POPUP,
+				  0, 0, 1, 1,
+				  NULL, NULL, fl_display, NULL);
+    ShowWindow(s_TimerWnd, SW_SHOWNOACTIVATE);
+  }
 
-    win32_timers[timer_id].callback = cb;
-    win32_timers[timer_id].data     = data;
+  win32_timers[timer_id].callback = cb;
+  win32_timers[timer_id].data     = data;
 
-    win32_timers[timer_id].handle =
-        SetTimer(s_TimerWnd, timer_id + 1, elapsed, NULL);
+  win32_timers[timer_id].handle =
+      SetTimer(s_TimerWnd, timer_id + 1, elapsed, NULL);
 }
 
 int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
 {
-    for (int i = 0;  i < win32_timer_used;  ++i) {
-        Win32Timer& t = win32_timers[i];
-        if (t.handle  &&  t.callback == cb  &&  t.data == data) {
-            return 1;
-        }
+  for (int i = 0;  i < win32_timer_used;  ++i) {
+    Win32Timer& t = win32_timers[i];
+    if (t.handle  &&  t.callback == cb  &&  t.data == data) {
+      return 1;
     }
-    return 0;
+  }
+  return 0;
 }
 
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 {
-    int i;
-    for (i = 0;  i < win32_timer_used;  ++i) {
-        Win32Timer& t = win32_timers[i];
-        if (t.handle  &&  t.callback == cb  &&
-            (t.data == data  ||  data == NULL)) {
-            delete_timer(t);
-        }
+  int i;
+  for (i = 0;  i < win32_timer_used;  ++i) {
+    Win32Timer& t = win32_timers[i];
+    if (t.handle  &&  t.callback == cb  &&
+      (t.data == data  ||  data == NULL)) {
+      delete_timer(t);
     }
+  }
 }
 
 /// END TIMERS
@@ -1734,10 +1736,10 @@ void Fl_Window::label(const char *name,const char *iname) {
     int l = strlen(name);
 //  WCHAR *lab = (WCHAR*) malloc((l + 1) * sizeof(short));
 //  l = fl_utf2unicode((unsigned char*)name, l, (xchar*)lab);
-	unsigned wlen = fl_utf8toUtf16(name, l, NULL, 0); // Pass NULL to query length
-	wlen++;
-	unsigned short * lab = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
-	wlen = fl_utf8toUtf16(name, l, lab, wlen);
+      unsigned wlen = fl_utf8toUtf16(name, l, NULL, 0); // Pass NULL to query length
+      wlen++;
+      unsigned short * lab = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
+      wlen = fl_utf8toUtf16(name, l, lab, wlen);
     lab[wlen] = 0;
     SetWindowTextW(i->xid, (WCHAR *)lab);
     free(lab);
