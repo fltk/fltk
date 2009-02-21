@@ -491,9 +491,9 @@ char fl_i_own_selection[2];
 
 UINT fl_get_lcid_codepage(LCID id)
 {
-	char buf[8];
-	buf[GetLocaleInfo(id, LOCALE_IDEFAULTANSICODEPAGE, buf, 8)] = 0;
-	return atol(buf);
+  char buf[8];
+  buf[GetLocaleInfo(id, LOCALE_IDEFAULTANSICODEPAGE, buf, 8)] = 0;
+  return atol(buf);
 }
 
 // Convert \n -> \r\n
@@ -558,7 +558,7 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
       // if the system clipboard works, use it
       int utf16_len = fl_utf8toUtf16(fl_selection_buffer[clipboard], fl_selection_length[clipboard], 0, 0);
       EmptyClipboard();
-     HGLOBAL hMem = GlobalAlloc(GHND, utf16_len * 2 + 2); // moveable and zero'ed mem alloc.
+      HGLOBAL hMem = GlobalAlloc(GHND, utf16_len * 2 + 2); // moveable and zero'ed mem alloc.
       LPVOID memLock = GlobalLock(hMem);
       fl_utf8toUtf16(fl_selection_buffer[clipboard], fl_selection_length[clipboard], (unsigned short*) memLock, utf16_len * 2);
       GlobalUnlock(hMem);
@@ -602,8 +602,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     HANDLE h = GetClipboardData(CF_UNICODETEXT);
     if (h) {
       wchar_t *memLock = (wchar_t*) GlobalLock(h);
-    int utf16_len = 
-	wcslen(memLock);
+      int utf16_len = wcslen(memLock);
       Fl::e_text = (char*) malloc (utf16_len * 4 + 1);
       int utf8_len = fl_utf8fromwc(Fl::e_text, utf16_len * 4, memLock, utf16_len);
       *(Fl::e_text + utf8_len) = 0;
@@ -628,26 +627,25 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 char fl_is_ime = 0;
 void fl_get_codepage()
 {
-	HKL hkl = GetKeyboardLayout(0);
-	TCHAR ld[8];
+  HKL hkl = GetKeyboardLayout(0);
+  TCHAR ld[8];
 
-	GetLocaleInfo (LOWORD(hkl),
-		LOCALE_IDEFAULTANSICODEPAGE, ld, 6);
-	DWORD ccp = atol(ld);
-	fl_is_ime = 0;
+  GetLocaleInfo (LOWORD(hkl), LOCALE_IDEFAULTANSICODEPAGE, ld, 6);
+  DWORD ccp = atol(ld);
+  fl_is_ime = 0;
 
-	fl_codepage = ccp;
-	if (fl_aimm) {
-		  fl_aimm->GetCodePageA(GetKeyboardLayout(0), &fl_codepage);
-	} else if (get_imm_module() && flImmIsIME(hkl)) {
-		fl_is_ime = 1;
-	}
+  fl_codepage = ccp;
+  if (fl_aimm) {
+    fl_aimm->GetCodePageA(GetKeyboardLayout(0), &fl_codepage);
+  } else if (get_imm_module() && flImmIsIME(hkl)) {
+    fl_is_ime = 1;
+  }
 }
 
 HWND fl_capture;
 
 static int mouse_event(Fl_Window *window, int what, int button,
-			WPARAM wParam, LPARAM lParam)
+		       WPARAM wParam, LPARAM lParam)
 {
   static int px, py, pmx, pmy;
   POINT pt;
@@ -784,9 +782,9 @@ extern HPALETTE fl_select_palette(void); // in fl_color_win32.cxx
 
 struct Win32Timer
 {
-    UINT_PTR handle;
-    Fl_Timeout_Handler callback;
-    void *data;
+  UINT_PTR handle;
+  Fl_Timeout_Handler callback;
+  void *data;
 };
 static Win32Timer* win32_timers;
 static int win32_timer_alloc;
@@ -795,22 +793,22 @@ static HWND s_TimerWnd;
 
 static void realloc_timers()
 {
-    if (win32_timer_alloc == 0) {
-        win32_timer_alloc = 8;
-    }
-    win32_timer_alloc *= 2;
-    Win32Timer* new_timers = new Win32Timer[win32_timer_alloc];
-    memset(new_timers, 0, sizeof(Win32Timer) * win32_timer_used);
-    memcpy(new_timers, win32_timers, sizeof(Win32Timer) * win32_timer_used);
-    Win32Timer* delete_me = win32_timers;
-    win32_timers = new_timers;
-    delete [] delete_me;
+  if (win32_timer_alloc == 0) {
+    win32_timer_alloc = 8;
+  }
+  win32_timer_alloc *= 2;
+  Win32Timer* new_timers = new Win32Timer[win32_timer_alloc];
+  memset(new_timers, 0, sizeof(Win32Timer) * win32_timer_used);
+  memcpy(new_timers, win32_timers, sizeof(Win32Timer) * win32_timer_used);
+  Win32Timer* delete_me = win32_timers;
+  win32_timers = new_timers;
+  delete [] delete_me;
 }
 
 static void delete_timer(Win32Timer& t)
 {
-    KillTimer(s_TimerWnd, t.handle);
-    memset(&t, 0, sizeof(Win32Timer));
+  KillTimer(s_TimerWnd, t.handle);
+  memset(&t, 0, sizeof(Win32Timer));
 }
 
 /// END TIMERS
@@ -1015,10 +1013,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     static char buffer[1024];
     if (uMsg == WM_CHAR || uMsg == WM_SYSCHAR) {
 
-	xchar u = (xchar) wParam;
-//	Fl::e_length = fl_unicode2utf(&u, 1, buffer);
-	Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
-	buffer[Fl::e_length] = 0;
+      xchar u = (xchar) wParam;
+//    Fl::e_length = fl_unicode2utf(&u, 1, buffer);
+      Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+      buffer[Fl::e_length] = 0;
 
 
     } else if (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) {
@@ -1158,18 +1156,17 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   case WM_RENDERFORMAT: {
     HANDLE h;
 
-//	int l = fl_utf_nb_char((unsigned char*)fl_selection_buffer[1], fl_selection_length[1]);
-	int l = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], NULL, 0); // Pass NULL buffer to query length required
-	h = GlobalAlloc(GHND, (l+1) * sizeof(unsigned short));
-	if (h) {
-		unsigned short *g = (unsigned short*) GlobalLock(h);
-//		fl_utf2unicode((unsigned char *)fl_selection_buffer[1], fl_selection_length[1], (xchar*)g);
-		l = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], g, (l+1));
-		g[l] = 0;
-		GlobalUnlock(h);
-		SetClipboardData(CF_UNICODETEXT, h);
-	}
-
+//  int l = fl_utf_nb_char((unsigned char*)fl_selection_buffer[1], fl_selection_length[1]);
+    int l = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], NULL, 0); // Pass NULL buffer to query length required
+    h = GlobalAlloc(GHND, (l+1) * sizeof(unsigned short));
+    if (h) {
+      unsigned short *g = (unsigned short*) GlobalLock(h);
+//    fl_utf2unicode((unsigned char *)fl_selection_buffer[1], fl_selection_length[1], (xchar*)g);
+      l = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], g, (l+1));
+      g[l] = 0;
+      GlobalUnlock(h);
+      SetClipboardData(CF_UNICODETEXT, h);
+    }
 
     // Windoze also seems unhappy if I don't do this. Documentation very
     // unclear on what is correct:
@@ -1182,7 +1179,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   }
 
 
-    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+  return DefWindowProcW(hWnd, uMsg, wParam, lParam);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -1338,7 +1335,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
 /*
  * This silly little class remembers the name of all window classes 
  * we register to avoid double registration. It has the added bonus 
- * of freeing everything on application colse as well.
+ * of freeing everything on application close as well.
  */
 class NameList {
 public:
@@ -1509,9 +1506,9 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   WCHAR *lab = NULL;
   if (w->label()) {
     int l = strlen(w->label());
-//    lab = (WCHAR*) malloc((l + 1) * sizeof(short));
-//    l = fl_utf2unicode((unsigned char*)w->label(), l, (xchar*)lab);
-//    lab[l] = 0;
+//  lab = (WCHAR*) malloc((l + 1) * sizeof(short));
+//  l = fl_utf2unicode((unsigned char*)w->label(), l, (xchar*)lab);
+//  lab[l] = 0;
     unsigned wlen = fl_utf8toUtf16(w->label(), l, NULL, 0); // Pass NULL to query length
     wlen++;
     lab = (WCHAR *) malloc(sizeof(WCHAR)*wlen);
@@ -1654,7 +1651,7 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
   win32_timers[timer_id].data     = data;
 
   win32_timers[timer_id].handle =
-      SetTimer(s_TimerWnd, timer_id + 1, elapsed, NULL);
+    SetTimer(s_TimerWnd, timer_id + 1, elapsed, NULL);
 }
 
 int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
@@ -1736,10 +1733,10 @@ void Fl_Window::label(const char *name,const char *iname) {
     int l = strlen(name);
 //  WCHAR *lab = (WCHAR*) malloc((l + 1) * sizeof(short));
 //  l = fl_utf2unicode((unsigned char*)name, l, (xchar*)lab);
-      unsigned wlen = fl_utf8toUtf16(name, l, NULL, 0); // Pass NULL to query length
-      wlen++;
-      unsigned short * lab = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
-      wlen = fl_utf8toUtf16(name, l, lab, wlen);
+    unsigned wlen = fl_utf8toUtf16(name, l, NULL, 0); // Pass NULL to query length
+    wlen++;
+    unsigned short * lab = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
+    wlen = fl_utf8toUtf16(name, l, lab, wlen);
     lab[wlen] = 0;
     SetWindowTextW(i->xid, (WCHAR *)lab);
     free(lab);
