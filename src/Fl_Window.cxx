@@ -99,14 +99,16 @@ int Fl_Window::y_root() const {
 }
 
 void Fl_Window::draw() {
-  const char *savelabel = label();
-  int saveflags = flags();
-  int savex = x(); x(0);
-  int savey = y(); y(0);
-  // Make sure we don't draw the window title in the window background...
-  clear_flag(COPIED_LABEL); // do not free copied labels!
-  Fl_Widget::label(0);
-  Fl_Group::draw();
+
+  // The following is similar to Fl_Group::draw(), but ...
+  //  - we draw the box with x=0 and y=0 instead of x() and y()
+  //  - we don't draw a label
+
+  if (damage() & ~FL_DAMAGE_CHILD) {	 // draw the entire thing
+    draw_box(box(),0,0,w(),h(),color()); // draw box with x/y = 0
+  }
+  draw_children();
+
 #ifdef __APPLE_QUARTZ__
   if (!parent() && resizable() && (!size_range_set || minh!=maxh || minw!=maxw)) {
     int dx = Fl::box_dw(box())-Fl::box_dx(box());
@@ -127,11 +129,6 @@ void Fl_Window::draw() {
     }
   }
 #endif
-  // Restore the label...
-  Fl_Widget::label(savelabel);
-  set_flag(saveflags);
-  y(savey);
-  x(savex);
 
 # if defined(USE_CAIRO)
   Fl::cairo_make_current(this); // checkout if an update is necessary
