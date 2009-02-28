@@ -199,7 +199,7 @@ public:
       widget does not use the event or 1 otherwise.
 
       Most of the time, you want to call the inherited handle() method in 
-      your overriden method so that you don't short-circuit events that you 
+      your overridden method so that you don't short-circuit events that you 
       don't handle. In this last case you should return the callee retval.
     
       \param[in] event the kind of event received
@@ -286,6 +286,7 @@ public:
   int damage_resize(int,int,int,int);
 
   /** Repositions the window or widget.
+
       position(X, Y) is a shortcut for resize(X, Y, w(), h()).
     
       \param[in] X, Y new position relative to the parent window 
@@ -293,7 +294,8 @@ public:
    */
   void position(int X,int Y) {resize(X,Y,w_,h_);}
 
-  /** Change the size of the widget.
+  /** Changes the size of the widget.
+
       size(W, H) is a shortcut for resize(x(), y(), W, H).
     
       \param[in] W, H new size
@@ -302,6 +304,7 @@ public:
   void size(int W,int H) {resize(x_,y_,W,H);}
 
   /** Gets the label alignment.
+
       \return label alignment
       \see label(), align(Fl_Align), Fl_Align
       \todo This function should not take uchar as an argument. 
@@ -402,6 +405,10 @@ public:
   /** Sets the current label. 
       Unlike label(), this method allocates a copy of the label 
       string instead of using the original string pointer.
+
+      The internal copy will automatically be freed whenever you assign
+      a new label or when the widget is destroyed.
+
       \param[in] new_label the new label text
       \see label()
    */
@@ -441,18 +448,18 @@ public:
   void labelcolor(unsigned c) {label_.color=c;}
 
   /** Gets the font to use. 
-      Fonts are identified by indexes into a table. The default value uses a 
-      Helvetica typeface (Arial for Microsoft&reg; Windows&reg;). The function 
-      Fl::set_font() can define new typefaces.
+      Fonts are identified by indexes into a table. The default value
+      uses a Helvetica typeface (Arial for Microsoft&reg; Windows&reg;).
+      The function Fl::set_font() can define new typefaces.
       \return current font used by the label
       \see Fl_Font
    */
   Fl_Font labelfont() const {return label_.font;}
 
   /** Sets the font to use. 
-      Fonts are identified by indexes into a table. The default value uses a 
-      Helvetica typeface (Arial for Microsoft&reg; Windows&reg;). The 
-      function Fl::set_font() can define new typefaces.
+      Fonts are identified by indexes into a table. The default value
+      uses a Helvetica typeface (Arial for Microsoft&reg; Windows&reg;).
+      The function Fl::set_font() can define new typefaces.
       \param[in] f the new font for the label
       \see Fl_Font
    */
@@ -516,7 +523,7 @@ public:
       hovers the mouse over the widget. The string is <I>not</I> copied, so 
       make sure any formatted string is stored in a static, global, 
       or allocated buffer.
-     
+
       If no tooltip is set, the tooltip of the parent is inherited. Setting a 
       tooltip for a group and setting no tooltip for a child will show the 
       group's tooltip instead. To avoid this behavior, you can set the child's 
@@ -558,15 +565,13 @@ public:
   void callback(Fl_Callback1*cb, long p=0) {callback_=(Fl_Callback*)cb; user_data_=(void*)p;}
 
   /** Gets the user data for this widget.
-      Gets the current user data (void *) argument
-      that is passed to the callback function.
+      Gets the current user data (void *) argument that is passed to the callback function.
       \return user data as a pointer
    */
   void* user_data() const {return user_data_;}
 
   /** Sets the user data for this widget.
-      Sets the new user data (void *) argument
-      that is passed to the callback function.
+      Sets the new user data (void *) argument that is passed to the callback function.
       \param[in] v new user data
    */
   void user_data(void* v) {user_data_ = v;}
@@ -629,7 +634,7 @@ public:
       \see show(), hide(), visible_r()
    */
   int visible() const {return !(flags_&INVISIBLE);}
-  
+
   /** Returns whether a widget and all its parents are visible.
       \retval 0 if the widget or any of its parents are invisible.
       \see show(), hide(), visible()
@@ -732,7 +737,7 @@ public:
   int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
 
   /** 
-      Check if the widget value changed since the last callback.
+      Checks if the widget value changed since the last callback.
 
       "Changed" is a flag that is turned on when the user changes the value 
       stored in the widget. This is only used by subclasses of Fl_Widget that 
@@ -768,9 +773,9 @@ public:
   int take_focus();
 
   /** Enables keyboard focus navigation with this widget. 
-      Note, however, that this will not necessarily mean that the widget will 
-      accept focus, but for widgets that can accept focus, this method enables 
-      it if it has been disabled.
+      Note, however, that this will not necessarily mean that the widget
+      will accept focus, but for widgets that can accept focus, this method
+      enables it if it has been disabled.
       \see visible_focus(), clear_visible_focus(), visible_focus(int) 
    */
   void set_visible_focus() { flags_ |= VISIBLE_FOCUS; }
@@ -786,8 +791,8 @@ public:
       \see set_visible_focus(), clear_visible_focus(), visible_focus() 
    */
   void visible_focus(int v) { if (v) set_visible_focus(); else clear_visible_focus(); }
- 
-  /** Check whether this widget has a visible focus.
+
+  /** Checks whether this widget has a visible focus.
       \retval 0 if this widget has no visible focus.
       \see visible_focus(int), set_visible_focus(), clear_visible_focus()
    */
@@ -798,7 +803,7 @@ public:
       returned by Fl::readqueue(). You may want to call this from your own callback.
       \param[in] cb the new callback
       \param[in] d user data associated with that callback
-      \see callback(), do_callback(), Fl::readqueu()
+      \see callback(), do_callback(), Fl::readqueue()
    */
   static void default_callback(Fl_Widget *cb, void *d);
 
@@ -810,13 +815,15 @@ public:
 
   /** Calls the widget callback.
       Causes a widget to invoke its callback function with arbitrary arguments.
-      \param[in] o call the callback with \em o as the widget argument
-      \param[in] arg call the callback with \em arg as the user data argument
+      \param[in] o call the callback with \a o as the widget argument
+      \param[in] arg call the callback with \a arg as the user data argument
       \see callback()
    */
   void do_callback(Fl_Widget* o,long arg) {do_callback(o,(void*)arg);}
 
-  void do_callback(Fl_Widget* o,void* arg=0); // impl. in Fl_Widget.cxx
+  // Causes a widget to invoke its callback function with arbitrary arguments.
+  // Documentation and implementation in Fl_Widget.cxx
+  void do_callback(Fl_Widget* o,void* arg=0);
 
   /** Internal use only. */
   int test_shortcut();
@@ -827,14 +834,14 @@ public:
 
   /** Checks if w is a child of this widget.
       \param[in] w potential child widget
-      \return Returns 1 if \em w is a child of this widget, or is
-      equal to this widget. Returns 0 if \em w is NULL.
+      \return Returns 1 if \a w is a child of this widget, or is
+      equal to this widget. Returns 0 if \a w is NULL.
    */
   int contains(const Fl_Widget *w) const ;
 
   /** Checks if this widget is a child of w.
-      Returns 1 if this widget is a child of \em w, or is
-      equal to \em w. Returns 0 if \em w is NULL.
+      Returns 1 if this widget is a child of \a w, or is
+      equal to \a w. Returns 0 if \a w is NULL.
       \param[in] w the possible parent widget.
       \see contains()
    */
@@ -883,7 +890,7 @@ public:
 
   void draw_label(int, int, int, int, Fl_Align) const;
 
-  /** Sets width ww and height hh accordingly with the labeltype size.
+  /** Sets width ww and height hh accordingly with the label size.
       Labels with images will return w() and h() of the image.
    */
   void measure_label(int& ww, int& hh) {label_.measure(ww, hh);}
