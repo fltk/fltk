@@ -63,21 +63,38 @@ public:
   int handle(int);
 
   /**
-    The first form returns the integer value of the scrollbar. You can get
-    the floating point value with Fl_Slider::value().  The second
-    form sets value(), range(), and slider_size()
-    to make a variable-sized scrollbar. You should call this every time
-    your window changes size, your data changes size, or your scroll
-    position changes (even if in response to a callback from this
-    scrollbar).  All necessary calls to redraw() are done.
+    Gets the integer value (position) of the slider in the scrollbar.
+    You can get the floating point value with Fl_Slider::value().
+    \see Fl_Scrollbar::value(int p)
+    \see Fl_Scrollbar::value(int p, int s, int top, int total)
   */
   int value() const {return int(Fl_Slider::value());}
-  /**    See int Fl_Scrollbar::value()   */
+
+  /**
+    Sets the value (position) of the slider in the scrollbar.
+    \see Fl_Scrollbar::value()
+    \see Fl_Scrollbar::value(int p, int s, int top, int total)
+  */
   int value(int p) {return int(Fl_Slider::value((double)p));}
-  /**    See int Fl_Scrollbar::value()   */
+
+  /**
+    Sets the position, size and range of the slider in the scrollbar.
+    \param[in] p     position, first line displayed
+    \param[in] s     window size, number of lines displayed
+    \param[in] top   number of first line
+    \param[in] total total number of lines
+
+    You should call this every time your window changes size, your data
+    changes size, or your scroll position changes (even if in response
+    to a callback from this scrollbar).
+    All necessary calls to redraw() are done.
+
+    Calls Fl_Slider::scrollvalue(int p, int s, int top, int total).
+  */
   int value(int p, int s, int top, int total) {
     return scrollvalue(p, s, top, total);
   }
+
   /**
     This number controls how big the steps are that the arrow keys do.  In
     addition page up/down move by the size last sent to value()

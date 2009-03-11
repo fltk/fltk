@@ -79,12 +79,15 @@ void Fl_Slider::bounds(double a, double b) {
   }
 }
 
-/**  Returns   Fl_Scrollbar::value(). */
+/**
+  Sets the size and position of the sliding knob in the box.
+  \param[in] p position, first line displayed
+  \param[in] W window, number of lines displayed
+  \param[in] t top, number of first line
+  \param[in] l length, total number of lines
+  Returns Fl_Valuator::value(p)
+ */
 int Fl_Slider::scrollvalue(int p, int W, int t, int l) {
-//	p = position, first line displayed
-//	w = window, number of lines displayed
-//	t = top, number of first line
-//	l = length, total number of lines
   step(1, 1);
   if (p+W > t+l) l = p+W-t;
   slider_size(W >= l ? 1.0 : double(W)/double(l));
