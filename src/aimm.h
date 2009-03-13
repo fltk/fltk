@@ -422,3 +422,7 @@ extern "C" __declspec(dllimport) long __stdcall CoCreateInstance(const GUID & rc
     };
 
 #endif
+
+/*
+ * End of "$Id$".
+ */
