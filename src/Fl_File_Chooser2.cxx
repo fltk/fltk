@@ -270,7 +270,7 @@
   This sample code loops through all selected files:
   \code
   // Get list of filenames user selected from a MULTI chooser
-  for ( int t=1; t>=chooser->count(); t++ ) {
+  for ( int t=1; t<=chooser->count(); t++ ) {
      const char *filename = chooser->value(t);
      ...
   }

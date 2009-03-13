@@ -423,7 +423,6 @@ else
 the contents of a directory.} public
   }
   decl {Fl_Widget* ext_group;} {}
-  decl {bool ext_managed;} {}
   Function {add_extra(Fl_Widget* gr)} {open return_type {Fl_Widget*}
   } {
     code {Fl_Widget* ret=ext_group;} {}

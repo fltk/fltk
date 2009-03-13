@@ -220,7 +220,6 @@ public:
   static Fl_File_Sort_F *sort; 
 private:
   Fl_Widget* ext_group; 
-  bool ext_managed; 
 public:
   Fl_Widget* add_extra(Fl_Widget* gr);
 };
