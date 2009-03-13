@@ -127,3 +127,6 @@ XUtf8Toupper(
 	return table[ucs];
 }
 
+/*
+ * End of "$Id$".
+ */

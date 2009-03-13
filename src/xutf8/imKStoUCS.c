@@ -318,3 +318,7 @@ KeySymToUcs4(KeySym keysym)
     else 
 	return 0;
 }
+
+/*
+ * End of "$Id$".
+ */

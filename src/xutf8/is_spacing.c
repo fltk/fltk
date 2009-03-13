@@ -87,3 +87,6 @@ XUtf8IsNonSpacing(
 	return 0;
 }
 
+/*
+ * End of "$Id$".
+ */

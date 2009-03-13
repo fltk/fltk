@@ -80,3 +80,6 @@ XUtf8IsRightToLeft(
 	return 0;
 }
 
+/*
+ * End of "$Id$".
+ */
