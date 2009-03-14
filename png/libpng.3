@@ -1,6 +1,6 @@
-.TH LIBPNG 3 "October 31, 2008"
+.TH LIBPNG 3 "February 14, 2009"
 .SH NAME
-libpng \- Portable Network Graphics (PNG) Reference Library 1.2.33
+libpng \- Portable Network Graphics (PNG) Reference Library 1.2.35
 .SH SYNOPSIS
 \fI\fB
 
@@ -821,7 +821,7 @@ Following is a copy of the libpng.txt file that accompanies libpng.
 .SH LIBPNG.TXT
 libpng.txt - A description on how to use and modify libpng
 
- libpng version 1.2.33 - October 31, 2008
+ libpng version 1.2.35 - February 14, 2009
  Updated and distributed by Glenn Randers-Pehrson
  <glennrp at users.sourceforge.net>
  Copyright (c) 1998-2008 Glenn Randers-Pehrson
@@ -830,7 +830,7 @@ libpng.txt - A description on how to use and modify libpng
 
  Based on:
 
- libpng versions 0.97, January 1998, through 1.2.33 - October 31, 2008
+ libpng versions 0.97, January 1998, through 1.2.35 - February 14, 2009
  Updated and distributed by Glenn Randers-Pehrson
  Copyright (c) 1998-2008 Glenn Randers-Pehrson
 
@@ -1293,6 +1293,8 @@ row_pointers prior to calling png_read_png() with
          "Image is too wide to process in memory");
    row_pointers = png_malloc(png_ptr,
       height*png_sizeof(png_bytep));
+   for (int i=0; i<height, i++)
+      row_pointers[i]=NULL;  /* security precaution */
    for (int i=0; i<height, i++)
       row_pointers[i]=png_malloc(png_ptr,
          width*pixel_size);
@@ -3673,13 +3675,13 @@ application:
 
 .SH IX. Y2K Compliance in libpng
 
-October 31, 2008
+February 14, 2009
 
 Since the PNG Development group is an ad-hoc body, we can't make
 an official declaration.
 
 This is your unofficial assurance that libpng from version 0.71 and
-upward through 1.2.33 are Y2K compliant.  It is my belief that earlier
+upward through 1.2.35 are Y2K compliant.  It is my belief that earlier
 versions were also Y2K compliant.
 
 Libpng only has three year fields.  One is a 2-byte unsigned integer that
@@ -3931,6 +3933,16 @@ the first widely used release:
  1.0.41rc01          10    10041  10.so.0.41[.0]
  1.2.33              13    10233  12.so.0.33[.0]
  1.0.41              10    10041  10.so.0.41[.0]
+ 1.2.34beta01-07     13    10234  12.so.0.34[.0]
+ 1.0.42rc01          10    10042  10.so.0.42[.0]
+ 1.2.34rc01          13    10234  12.so.0.34[.0]
+ 1.0.42              10    10042  10.so.0.42[.0]
+ 1.2.34              13    10234  12.so.0.34[.0]
+ 1.2.35beta01-03     13    10235  12.so.0.35[.0]
+ 1.0.43rc01-02       10    10043  10.so.0.43[.0]
+ 1.2.35rc01-02       13    10235  12.so.0.35[.0]
+ 1.0.43              10    10043  10.so.0.43[.0]
+ 1.2.35              13    10235  12.so.0.35[.0]
 
 Henceforth the source version will match the shared-library minor
 and patch numbers; the shared-library major version number will be
@@ -3986,7 +3998,7 @@ possible without all of you.
 
 Thanks to Frank J. T. Wojcik for helping with the documentation.
 
-Libpng version 1.2.33 - October 31, 2008:
+Libpng version 1.2.35 - February 14, 2009:
 Initially created in 1995 by Guy Eric Schalnat, then of Group 42, Inc.
 Currently maintained by Glenn Randers-Pehrson (glennrp at users.sourceforge.net).
 
@@ -4007,7 +4019,7 @@ included in the libpng distribution, the latter shall prevail.)
 If you modify libpng you may insert additional notices immediately following
 this sentence.
 
-libpng versions 1.2.6, August 15, 2004, through 1.2.33, October 31, 2008, are
+libpng versions 1.2.6, August 15, 2004, through 1.2.35, February 14, 2009, are
 Copyright (c) 2004,2006-2008 Glenn Randers-Pehrson, and are
 distributed according to the same disclaimer and license as libpng-1.2.5
 with the following individual added to the list of Contributing Authors
@@ -4106,7 +4118,7 @@ certification mark of the Open Source Initiative.
 
 Glenn Randers-Pehrson
 glennrp at users.sourceforge.net
-October 31, 2008
+February 14, 2009
 
 .\" end of man page
 
