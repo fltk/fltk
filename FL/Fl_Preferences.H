@@ -31,11 +31,6 @@
 #ifndef Fl_Preferences_H
 #  define Fl_Preferences_H
 
-#  ifdef WIN32
-#    include <windows.h>
-#  endif // WIN32
-
-#  include <stdio.h>
 #  include "Fl_Export.H"
 
 
