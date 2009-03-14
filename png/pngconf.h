@@ -1,9 +1,9 @@
 
 /* pngconf.h - machine configurable file for libpng
  *
- * libpng version 1.2.33 - October 31, 2008
+ * libpng version 1.2.35 - February 14, 2009
  * For conditions of distribution and use, see copyright notice in png.h
- * Copyright (c) 1998-2008 Glenn Randers-Pehrson
+ * Copyright (c) 1998-2009 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  */
@@ -233,6 +233,8 @@
 #  include <windows.h>
    /* Console I/O functions are not supported on WindowsCE */
 #  define PNG_NO_CONSOLE_IO
+   /* abort() may not be supported on some/all Windows CE platforms */
+#  define PNG_ABORT() exit(-1)
 #  ifdef PNG_DEBUG
 #    undef PNG_DEBUG
 #  endif
@@ -798,6 +800,12 @@
 #  define PNG_USER_HEIGHT_MAX 1000000L
 #endif
 
+
+/* Added at libpng-1.2.34 and 1.4.0 */
+#ifndef PNG_STRING_NEWLINE
+#define PNG_STRING_NEWLINE "\n"
+#endif
+
 /* These are currently experimental features, define them if you want */
 
 /* very little testing */
@@ -1123,10 +1131,10 @@ typedef unsigned char png_byte;
    change (I'm not sure if you will or not, so I thought I'd be safe) */
 #ifdef PNG_SIZE_T
    typedef PNG_SIZE_T png_size_t;
-#  define png_sizeof(x) png_convert_size(sizeof (x))
+#  define png_sizeof(x) png_convert_size(sizeof(x))
 #else
    typedef size_t png_size_t;
-#  define png_sizeof(x) sizeof (x)
+#  define png_sizeof(x) sizeof(x)
 #endif
 
 /* The following is needed for medium model support.  It cannot be in the

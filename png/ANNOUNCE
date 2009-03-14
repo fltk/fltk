@@ -1,5 +1,5 @@
 
-Libpng 1.2.33 - October 31, 2008
+Libpng 1.2.35 - February 14, 2009
 
 This is a public release of libpng, intended for use in production codes.
 
@@ -8,47 +8,45 @@ Files available for download:
 Source files with LF line endings (for Unix/Linux) and with a
 "configure" script
 
-   libpng-1.2.33.tar.gz
-   libpng-1.2.33.tar.lzma
+   libpng-1.2.35.tar.gz
+   libpng-1.2.35.tar.lzma
      (Get the lzma codec from <http://tukaani.org/lzma>).
-   libpng-1.2.33.tar.bz2
+   libpng-1.2.35.tar.bz2
 
 Source files with LF line endings (for Unix/Linux) without the
 "configure" script
 
-   libpng-1.2.33-no-config.tar.gz
-   libpng-1.2.33-no-config.tar.lzma
-   libpng-1.2.33-no-config.tar.bz2
+   libpng-1.2.35-no-config.tar.gz
+   libpng-1.2.35-no-config.tar.lzma
+   libpng-1.2.35-no-config.tar.bz2
 
 Source files with CRLF line endings (for Windows), without the
 "configure" script
 
-   lpng1233.zip
-   lpng1233.7z
-   lpng1233.tar.bz2
+   lpng1235.zip
+   lpng1235.7z
+   lpng1235.tar.bz2
 
 Project files
 
-   libpng-1.2.33-project-netware.zip
-   libpng-1.2.33-project-wince.zip
+   libpng-1.2.35-project-netware.zip
+   libpng-1.2.35-project-wince.zip
 
 Other information:
 
-   libpng-1.2.33-README.txt
-   libpng-1.2.33-KNOWNBUGS.txt
-   libpng-1.2.33-LICENSE.txt
-   libpng-1.2.33-Y2K-compliance.txt
-   libpng-1.2.33-[previous version]-diff.txt
+   libpng-1.2.35-README.txt
+   libpng-1.2.35-KNOWNBUGS.txt
+   libpng-1.2.35-LICENSE.txt
+   libpng-1.2.35-Y2K-compliance.txt
+   libpng-1.2.35-[previous version]-diff.txt
 
-Changes since the last public release (1.2.32):
+Changes since the last public release (1.2.34):
 
-version 1.2.33 [October 31, 2008]
+version 1.2.35 [February 14, 2009]
 
-  Revised makefile.darwin to fix shared library numbering.
-  Change png_set_gray_1_2_4_to_8() to png_set_expand_gray_1_2_4_to_8()
-    in example.c (debian bug report)
-  Changed remaining "key" to "png_ptr->chunkdata" in png_handle_tEXt()
-    to avoid memory leak after memory failure while reading tEXt chunk.`
+  Zero out all arrays of pointers after png_malloc(). (Tavis Ormandy)
+  Use png_memset() instead of a loop to intialize pointers.  We realize
+    this will not work on platforms where the NULL pointer is not all zeroes.
 
 Send comments/corrections/commendations to png-mng-implement at lists.sf.net
 (subscription required; visit 
