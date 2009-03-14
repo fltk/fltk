@@ -271,6 +271,8 @@ html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
 	-$(DOXYDOC)
+	echo "Stripping HTML files..."
+	./strip_tags
 
 #fltk.ps: $(HTMLFILES) $(IMAGEFILES)
 #	echo "Generating PostScript documentation..."
