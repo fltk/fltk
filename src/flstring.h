@@ -51,13 +51,14 @@
 #  if defined(WIN32) && !defined(__CYGWIN__)
 #    define strcasecmp(s,t)	_stricmp((s), (t))
 #    define strncasecmp(s,t,n)	_strnicmp((s), (t), (n))
-// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...  Some of these
-// functions are also defined in ISO C99...
+/* Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
+ * on Windows, which is supposed to be POSIX compliant...  Some of these
+ * functions are also defined in ISO C99...
+ */
 #    ifndef __WATCOMC__
 #      define strdup _strdup
 #      define unlink _unlink
-#    endif // !__WATCOMC__
+#    endif /* !__WATCOMC__ */
 #  elif defined(__EMX__)
 #    define strcasecmp(s,t)	stricmp((s), (t))
 #    define strncasecmp(s,t,n)	strnicmp((s), (t), (n))

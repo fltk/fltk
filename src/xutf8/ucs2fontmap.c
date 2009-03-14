@@ -63,16 +63,16 @@ typedef struct {
 #include "headers/dingbats_.h"
   
    /*************** conv_gen.c ************/
-//const
+/*const*/
 int ucs2fontmap(char *s, unsigned int ucs, int enc)
 {
   switch(enc) {
-  case 0:	//iso10646-1
+  case 0:	/* iso10646-1 */
     s[0] = (char) ((ucs & 0xFF00) >> 8);
     s[1] = (char) (ucs & 0xFF);
     return 0;
     break;
-  case 1:	//iso8859-1
+  case 1:	/* iso8859-1 */
     if (ucs <= 0x00FF) {
       if (ucs >= 0x0001) {
         s[0] = 0;
@@ -81,7 +81,7 @@ int ucs2fontmap(char *s, unsigned int ucs, int enc)
       }
     }
     break;
-  case 2:	//iso8859-2
+  case 2:	/* iso8859-2 */
     if (ucs <= 0x00a0) {
       s[0] = 0;
       s[1] = (char) ucs;
@@ -100,102 +100,102 @@ int ucs2fontmap(char *s, unsigned int ucs, int enc)
       }	
     }
     break;
-  case 3:	//iso8859-3
+  case 3:	/* iso8859-3 */
     if (iso8859_3_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 3;
     } 
     break;
-  case 4:	//iso8859-4
+  case 4:	/* iso8859-4 */
     if (iso8859_4_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 4;
     } 
     break;
-  case 5:	//iso8859-5
+  case 5:	/* iso8859-5 */
     if (iso8859_5_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 5;
     } 
     break;
-  case 6:	//iso8859-6
+  case 6:	/* iso8859-6 */
     if (iso8859_6_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 6;
     } 
     break;
-  case 7:	//iso8859-7
+  case 7:	/* iso8859-7 */
     if (iso8859_7_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 7;
     } 
     break;
-  case 8:	//iso8859-8
+  case 8:	/* iso8859-8 */
     if (iso8859_8_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 8;
     } 
     break;
-  case 9:	//iso8859-9
+  case 9:	/* iso8859-9 */
     if (iso8859_9_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 9;
     } 
     break;
-  case 10:	//iso8859-10
+  case 10:	/* iso8859-10 */
     if (iso8859_10_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 10;
     } 
     break;
-  case 25:	//iso8859-11
+  case 25:	/* iso8859-11 */
     if (iso8859_11_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 25;
     } 
     break;
-  case 11:	//iso8859-13
+  case 11:	/* iso8859-13 */
     if (iso8859_13_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 11;
     } 
     break;
-  case 12:	//iso8859-14
+  case 12:	/* iso8859-14 */
     if (iso8859_14_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 12;
     } 
     break;
-  case 13:	//iso8859-15
+  case 13:	/* iso8859-15 */
     if (iso8859_15_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 13;
     } 
     break;
-  case 14:	//koi8-r
+  case 14:	/* koi8-r */
     if (koi8_r_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 14;
     } 
     break;
-  case 15:	//big5
+  case 15:	/* big5 */
     if (big5_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 15;
     } 
     break;
-  case 16:	//ksc5601.1987-0
+  case 16:	/* ksc5601.1987-0 */
     if (ksc5601_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 16;
     } 
     break;
-  case 17:	//gb2312.1980-0
+  case 17:	/* gb2312.1980-0 */
     if (gb2312_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 17;
     } 
     break;
-  case 18:	//jisx0201.1976-0
+  case 18:	/* jisx0201.1976-0 */
     if (jisx0201_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 18;
     } 
     break;
-  case 19:	//jisx0208.1983-0
+  case 19:	/* jisx0208.1983-0 */
     if (jisx0208_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 19;
     } 
     break;
-  case 20:	//jisx0212.1990-0
+  case 20:	/* jisx0212.1990-0 */
     if (jisx0212_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 20;
     } 
     break;
-  case 21:	//symbol
+  case 21:	/* symbol */
     if (ucs <= 0x00F7) {
       if (ucs >= 0x0020) {
         s[0] = 0;
@@ -246,7 +246,7 @@ int ucs2fontmap(char *s, unsigned int ucs, int enc)
       }
     }
     break;
-  case 22:	//dingbats
+  case 22:	/* dingbats */
     if (ucs <= 0x00A0) {
       if (ucs >= 0x0020) {
         s[0] = 0;
@@ -285,12 +285,12 @@ int ucs2fontmap(char *s, unsigned int ucs, int enc)
       }
     }
     break;
-  case 23:	//koi8-u
+  case 23:	/* koi8-u */
     if (koi8_u_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 23;
     } 
     break;
-  case 24:	//microsoft-cp1251
+  case 24:	/* microsoft-cp1251 */
     if (cp1251_wctomb(NULL, (unsigned char*)s, ucs, 2) > 0) {
       return 24;
     } 
@@ -301,7 +301,7 @@ int ucs2fontmap(char *s, unsigned int ucs, int enc)
   return -1;
 };
 
-//const
+/*const*/
 int encoding_number(const char *enc)
 {
   if (!enc || !strncmp(enc, "iso10646-1", 10)) {

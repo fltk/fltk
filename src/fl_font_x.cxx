@@ -298,7 +298,11 @@ double fl_width(unsigned int c) {
 
 
 void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
+
+#if !defined(WIN32) && !defined(sgi) || defined(CYGWIN)
 #warning fl_text_extents is only a test stub in Xlib build at present
+#endif
+
   W = 0; H = 0;
   fl_measure(c, W, H, 0);
   dx = 0;

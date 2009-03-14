@@ -64,7 +64,7 @@ extern int main(int, char *[]);
 #    define __argv _argv
 #  endif /* BORLAND5 */
 
-//static int mbcs2utf(const char *s, int l, char *dst, unsigned dstlen)
+/* static int mbcs2utf(const char *s, int l, char *dst, unsigned dstlen) */
 static int mbcs2utf(const char *s, int l, char *dst)
 {
   static xchar *mbwbuf;
@@ -73,7 +73,7 @@ static int mbcs2utf(const char *s, int l, char *dst)
   dstlen = (l * 6) + 6;
   mbwbuf = (xchar*)malloc(dstlen * sizeof(xchar));
   l = mbstowcs(mbwbuf, s, l);
-//l = fl_unicode2utf(mbwbuf, l, dst);
+/* l = fl_unicode2utf(mbwbuf, l, dst); */
   l = fl_utf8fromwc(dst, dstlen, mbwbuf, l);
   dst[l] = 0;
   free(mbwbuf);
@@ -108,17 +108,17 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     int l;
     unsigned dstlen;
     if (__wargv ) {
-      for (l = 0; __wargv[i] && __wargv[i][l]; l++) {}; // is this just wstrlen???
+      for (l = 0; __wargv[i] && __wargv[i][l]; l++) {}; /* is this just wstrlen??? */
       dstlen = (l * 5) + 1;
       ar[i] = (char*) malloc(dstlen);
-//    ar[i][fl_unicode2utf(__wargv[i], l, ar[i])] = 0;
+/*    ar[i][fl_unicode2utf(__wargv[i], l, ar[i])] = 0; */
       dstlen = fl_utf8fromwc(ar[i], dstlen, __wargv[i], l);
       ar[i][dstlen] = 0;
     } else {
       for (l = 0; __argv[i] && __argv[i][l]; l++) {};
       dstlen = (l * 5) + 1;
       ar[i] = (char*) malloc(dstlen);
-//      ar[i][mbcs2utf(__argv[i], l, ar[i], dstlen)] = 0;
+/*      ar[i][mbcs2utf(__argv[i], l, ar[i], dstlen)] = 0; */
       ar[i][mbcs2utf(__argv[i], l, ar[i])] = 0;
     }
     i++;
@@ -139,7 +139,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #elif defined(__hpux)
 /* This code to prevent "empty translation unit" or similar warnings... */
 static void dummy(void) {}
-#endif // WIN32 && !FL_DLL && !__GNUC__
+#endif /* WIN32 && !FL_DLL && !__GNUC__ */
 
 /*
  * End of "$Id$".

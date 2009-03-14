@@ -36,7 +36,7 @@ long XKeysymToUcs(KeySym keysym)
 	return (long) KeySymToUcs4(keysym);
 }
 
-#endif // X11 only
+#endif /* X11 only */
 
 /*
  * End of "$Id$".

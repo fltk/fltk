@@ -367,7 +367,7 @@ XConvertEucToUtf8(
 
 	if (strstr(locale, "ja")) {	
 		return XConvertEucJpToUtf8(buffer_return, len);
-	} else if (strstr(locale, "Big5") || strstr(locale, "big5")) { // BIG5
+	} else if (strstr(locale, "Big5") || strstr(locale, "big5")) { /* BIG5 */
 		return XConvertBig5ToUtf8(buffer_return, len);
 	} else if (strstr(locale, "zh") || strstr(locale, "chinese-")) {
 		if (strstr(locale, "TW") || strstr(locale, "chinese-t")) {
@@ -432,7 +432,7 @@ XUtf8LookupString(
         return len;
 }
 
-#endif // X11 only
+#endif /* X11 only */
 
 /*
  * End of "$Id$".

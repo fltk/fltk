@@ -1,31 +1,32 @@
-// "$Id: $"
-//
-// Author: Jean-Marc Lienher ( http://oksid.ch )
-// Copyright 2000-2009 by O'ksi'D.
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA.
-//
-// Please report all bugs and problems on the following page:
-//
-//     http://www.fltk.org/str.php
+/* "$Id: $"
+ *
+ * Author: Jean-Marc Lienher ( http://oksid.ch )
+ * Copyright 2000-2009 by O'ksi'D.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems on the following page:
+ *
+ *     http://www.fltk.org/str.php
+ */
 
-
-// Merged in some functionality from the fltk-2 version. IMM.
-// The following code is an attempt to merge the functions incorporated in FLTK2
-// with the functions provided in OksiD's fltk-1.1.6-utf8 port
+/* Merged in some functionality from the fltk-2 version. IMM.
+ * The following code is an attempt to merge the functions incorporated in FLTK2
+ * with the functions provided in OksiD's fltk-1.1.6-utf8 port
+ */
 
 /*** NOTE : all functions are LIMITED to 24 bits Unicode values !!! ***/
 
@@ -115,12 +116,12 @@ FL_EXPORT unsigned fl_utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src,
 /* F2: Convert a UTF8 string into ASCII, eliding untranslatable glyphs */
 FL_EXPORT unsigned fl_utf8toa (const char *src, unsigned srclen, char *dst, unsigned dstlen);
 /* OD: convert UTF-8 string to latin1 */
-//FL_EXPORT int fl_utf2latin1(const unsigned char *src, int srclen, char *dst);
+/* FL_EXPORT int fl_utf2latin1(const unsigned char *src, int srclen, char *dst); */
 
 /* F2: Convert 8859-1 string to UTF8 */
 FL_EXPORT unsigned fl_utf8froma (char *dst, unsigned dstlen, const char *src, unsigned srclen);
 /* OD: convert latin1 str to UTF-8 */
-//FL_EXPORT int fl_latin12utf(const unsigned char *src, int srclen, char *dst);
+/* FL_EXPORT int fl_latin12utf(const unsigned char *src, int srclen, char *dst); */
 
 /* F2: Returns true if the current O/S locale is UTF8 */
 FL_EXPORT int fl_utf8locale();
@@ -141,7 +142,7 @@ FL_EXPORT char* fl_utf2mbcs(const char *src);
 /* F2: Convert a local multi-byte encoding to UTF8 - mainly for win32? */
 FL_EXPORT unsigned fl_utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen);
 /* OD: Convert a local multi-byte encoding to UTF8 */
-//FL_EXPORT char* fl_mbcs2utf(const char *src);
+/* FL_EXPORT char* fl_mbcs2utf(const char *src); */
 
 /*****************************************************************************/
 #ifdef WIN32
@@ -152,9 +153,10 @@ FL_EXPORT char *fl_utf8_to_locale(const char *s, int len, unsigned int codepage)
 FL_EXPORT char *fl_locale_to_utf8(const char *s, int len, unsigned int codepage);
 #endif
 
-/*****************************************************************************/
-// The following functions are intended to provide portable, UTF8 aware
-// versions of standard functions
+/*****************************************************************************
+ * The following functions are intended to provide portable, UTF8 aware
+ * versions of standard functions
+ */
 
 /* OD: UTF8 aware strncasecmp - converts to lower case Unicode and tests */
 FL_EXPORT int fl_utf_strncasecmp(const char *s1, const char *s2, int n);
@@ -227,8 +229,8 @@ FL_EXPORT char fl_make_path( const char *path );
 #endif /* __cplusplus */
 
 
-#endif // _HAVE_FL_UTF8_HDR_
+#endif /* _HAVE_FL_UTF8_HDR_ */
 
-//
-// End of "$Id: $".
-//
+/*
+ * End of "$Id: $".
+ */

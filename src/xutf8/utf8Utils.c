@@ -240,7 +240,7 @@ XFastConvertUtf8ToUcs(
       return -1;
 }
 
-#endif // X11 only
+#endif /* X11 only */
 
 /*
  * End of "$Id: $".

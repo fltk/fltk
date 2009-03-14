@@ -915,7 +915,7 @@ XFreeUtf8FontStruct(
 	free(font_set);
 }
 
-#endif // X11 only 
+#endif /* X11 only */
 
 /*
  *  End of "$Id: $".

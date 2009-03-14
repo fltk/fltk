@@ -33,7 +33,7 @@
 /** \addtogroup filenames File names and URI utility functions 
     @{ */
 
-#  define FL_PATH_MAX 256 ///< all path buffers should use this length
+#  define FL_PATH_MAX 256 /**< all path buffers should use this length */
 /** Gets the file name from a path. \return a pointer to the char after the last slash, or to \a filename if there is none. */
 FL_EXPORT const char *fl_filename_name(const char * filename);
 FL_EXPORT const char *fl_filename_ext(const char *);
@@ -105,7 +105,7 @@ FL_EXPORT int fl_casenumericsort(struct dirent **, struct dirent **);
 FL_EXPORT int fl_numericsort(struct dirent **, struct dirent **);
 #  endif
 
-  typedef int (Fl_File_Sort_F)(struct dirent **, struct dirent **); ///< File sorting function. \see fl_filename_list()
+  typedef int (Fl_File_Sort_F)(struct dirent **, struct dirent **); /**< File sorting function. \see fl_filename_list() */
 
 #  if defined(__cplusplus)
 }
