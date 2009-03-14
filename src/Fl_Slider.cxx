@@ -40,25 +40,24 @@ void Fl_Slider::_Fl_Slider() {
   Creates a new Fl_Slider widget using the given position,
   size, and label string. The default boxtype is FL_DOWN_BOX.
 */
-Fl_Slider::Fl_Slider(int X, int Y, int W, int H, const char* l)
-: Fl_Valuator(X, Y, W, H, l) {
+Fl_Slider::Fl_Slider(int X, int Y, int W, int H, const char* L)
+: Fl_Valuator(X, Y, W, H, L) {
   box(FL_DOWN_BOX);
   _Fl_Slider();
 }
 
 /**
-  Creates a new Fl_Slider widget using the given position,
-  size, and label string. The default boxtype is FL_DOWN_BOX.
+  Creates a new Fl_Slider widget using the given box type, position,
+  size, and label string.
 */
-Fl_Slider::Fl_Slider(uchar t, int X, int Y, int W, int H, const char* l)
-  : Fl_Valuator(X, Y, W, H, l) {
+Fl_Slider::Fl_Slider(uchar t, int X, int Y, int W, int H, const char* L)
+  : Fl_Valuator(X, Y, W, H, L) {
   type(t);
   box(t==FL_HOR_NICE_SLIDER || t==FL_VERT_NICE_SLIDER ?
       FL_FLAT_BOX : FL_DOWN_BOX);
   _Fl_Slider();
 }
 
-/** See float Fl_Slider::slider_size() const */
 void Fl_Slider::slider_size(double v) {
   if (v <  0) v = 0;
   if (v > 1) v = 1;
@@ -81,18 +80,18 @@ void Fl_Slider::bounds(double a, double b) {
 
 /**
   Sets the size and position of the sliding knob in the box.
-  \param[in] p position, first line displayed
-  \param[in] W window, number of lines displayed
-  \param[in] t top, number of first line
-  \param[in] l length, total number of lines
+  \param[in] pos position of first line displayed
+  \param[in] size size of window in lines
+  \param[in] first number of first line
+  \param[in] total total number of lines
   Returns Fl_Valuator::value(p)
  */
-int Fl_Slider::scrollvalue(int p, int W, int t, int l) {
+int Fl_Slider::scrollvalue(int pos, int size, int first, int total) {
   step(1, 1);
-  if (p+W > t+l) l = p+W-t;
-  slider_size(W >= l ? 1.0 : double(W)/double(l));
-  bounds(t, l-W+t);
-  return value(p);
+  if (pos+size > first+total) total = pos+size-first;
+  slider_size(size >= total ? 1.0 : double(size)/double(total));
+  bounds(first, total-size+first);
+  return value(pos);
 }
 
 // All slider interaction is done as though the slider ranges from

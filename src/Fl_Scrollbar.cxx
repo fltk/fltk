@@ -256,9 +256,8 @@ void Fl_Scrollbar::draw() {
 }
 
 /**
-  Creates a new Fl_Scrollbar widget using the given position,
-  size, and label string.  You need to do type(FL_HORIZONTAL) if
-  you want a horizontal scrollbar.
+  Creates a new Fl_Scrollbar widget with given position, size, and label.
+  You need to do type(FL_HORIZONTAL) if you want a horizontal scrollbar.
 */
 Fl_Scrollbar::Fl_Scrollbar(int X, int Y, int W, int H, const char* L)
   : Fl_Slider(X, Y, W, H, L) {
