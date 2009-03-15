@@ -373,8 +373,7 @@ extend outside the line drawn by fl_arc(); to avoid this
 use <tt>w - 1</tt> and <tt>h - 1</tt>.
 
 <A name="fl_scroll"></A> <!-- For old HTML links only ! -->
-void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
-void (*draw_area)(void*, int,int,int,int), void* data)
+void fl_scroll(int X, int Y, int W, int H, int dx, int dy, void (*draw_area)(void*, int,int,int,int), void* data)
 
 \par
 Scroll a rectangle and draw the newly exposed portions. The contents
@@ -601,7 +600,7 @@ Return the pixel width of a nul-terminated string, a sequence of <tt>n</tt>
 characters, or a single character in the current font.
 
 <A NAME="fl_shortcut_label"></A> <!-- For old HTML links only ! -->
-const char *fl_shortcut_label(ulong)
+const char* fl_shortcut_label(int shortcut)
 
 \par
 Unparse a shortcut value as used by Fl_Button or Fl_Menu_Item

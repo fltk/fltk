@@ -435,10 +435,10 @@ FL_EXPORT int fl_measure_pixmap(const char* const* cdata, int &w, int &h);
 // other:
 FL_EXPORT void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
                          void (*draw_area)(void*, int,int,int,int), void* data);
-FL_EXPORT const char* fl_shortcut_label(int);
-FL_EXPORT void fl_overlay_rect(int,int,int,int);
+FL_EXPORT const char* fl_shortcut_label(int shortcut);
+FL_EXPORT void fl_overlay_rect(int x,int y,int w,int h);
 FL_EXPORT void fl_overlay_clear();
-FL_EXPORT void fl_cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
+FL_EXPORT void fl_cursor(Fl_Cursor, Fl_Color fg=FL_BLACK, Fl_Color bg=FL_WHITE);
 FL_EXPORT const char* fl_expand_text(const char* from, char* buf, int maxbuf,
                                      double maxw, int& n, double &width,
                                      int wrap, int draw_symbols = 0);

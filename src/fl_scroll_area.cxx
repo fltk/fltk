@@ -35,8 +35,19 @@
 #include <FL/fl_draw.H>
 
 // scroll a rectangle and redraw the newly exposed portions:
+/**
+  Scroll a rectangle and draw the newly exposed portions.
+  \param[in] X,Y       position of top-left of rectangle
+  \param[in] W,H       size of rectangle
+  \param[in] dx,dy     pixel offsets for shifting rectangle
+  \param[in] draw_area callback function to draw rectangular areas
+  \param[in] data      pointer to user data for callback
+  The contents of the rectangular area is first shifted by \a dx
+  and \a dy pixels. The \a draw_area callback is then called for
+  every newly exposed rectangular area.
+  */
 void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
-	       void (*draw_area)(void*, int,int,int,int), void* data)
+               void (*draw_area)(void*, int,int,int,int), void* data)
 {
   if (!dx && !dy) return;
   if (dx <= -W || dx >= W || dy <= -H || dy >= H) {

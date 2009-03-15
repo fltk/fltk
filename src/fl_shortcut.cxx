@@ -133,7 +133,15 @@ static Keyname table[] = {
 };
 #endif
 
-const char * fl_shortcut_label(int shortcut) {
+/**
+  Get a human-readable string from a shortcut value.
+  Unparse a shortcut value as used by Fl_Button or Fl_Menu_Item into
+  a human-readable string like "Alt+N". This only works if the shortcut
+  is a character key or a numbered function key. If the shortcut is
+  zero then an empty string is returned. The return value points at
+  a static buffer that is overwritten with each call.
+  */
+const char* fl_shortcut_label(int shortcut) {
   static char buf[20];
   char *p = buf;
   if (!shortcut) {*p = 0; return buf;}

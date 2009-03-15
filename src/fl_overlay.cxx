@@ -103,10 +103,16 @@ static void erase_current_rect() {
 #endif
 }
 
+/**
+  Erase a selection rectangle without drawing a new one
+  */
 void fl_overlay_clear() {
   if (pw > 0) {erase_current_rect(); pw = 0;}
 }
 
+/**
+  Draws a selection rectangle, erasing a previous one by XOR'ing it first.
+  */
 void fl_overlay_rect(int x, int y, int w, int h) {
   if (w < 0) {x += w; w = -w;} else if (!w) w = 1;
   if (h < 0) {y += h; h = -h;} else if (!h) h = 1;

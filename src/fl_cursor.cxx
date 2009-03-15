@@ -39,6 +39,10 @@
 #endif
 #include <FL/fl_draw.H>
 
+/**
+  Sets the cursor for the current window to the specified shape and colors.
+  The cursors are defined in the <FL/Enumerations.H> header file. 
+  */
 void fl_cursor(Fl_Cursor c, Fl_Color fg, Fl_Color bg) {
   if (Fl::first_window()) Fl::first_window()->cursor(c,fg,bg);
 }
