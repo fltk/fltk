@@ -444,8 +444,11 @@ FL_EXPORT const char* fl_expand_text(const char* from, char* buf, int maxbuf,
                                      int wrap, int draw_symbols = 0);
 
 // XIM:
+/** \todo provide user documentation for fl_set_status function */
 FL_EXPORT void fl_set_status(int X, int Y, int W, int H);
+/** \todo provide user documentation for fl_set_spot function */
 FL_EXPORT void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win=0);
+/** \todo provide user documentation for fl_reset_spot function*/
 FL_EXPORT void fl_reset_spot(void);
 
 

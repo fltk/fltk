@@ -77,8 +77,14 @@ static void fl_init_symbols(void);
 
 /**************** The routines seen by the user *************************/
 
+/**
+  Adds a symbol to the system.
+  \param[in] name     name of symbol (without the "@")
+  \param[in] drawit   function to draw symbol
+  \param[in] scalable set to 1 if \a drawit uses scalable vector drawing
+  \returns 1 on success, 0 on failure
+  */
 int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
-/* Adds a symbol to the system. Returns whether correct. */
 {
   fl_init_symbols();
   int pos;
@@ -94,6 +100,14 @@ int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
 
 int fl_return_arrow(int x,int y,int w,int h);
 
+/**
+  Draw the named symbol in the given rectangle using the given color
+  \param[in] label name of symbol
+  \param[in] x,y   position of symbol
+  \param[in] w,h   size of symbol
+  \param[in] col   color of symbox
+  \returns 1 on success, 0 on failure
+  */
 // provided for back compatibility:
 int fl_draw_symbol(const char *label,int x,int y,int w,int h,Fl_Color col) {  
   const char *p = label;
