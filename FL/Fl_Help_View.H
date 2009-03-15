@@ -132,7 +132,7 @@ struct Fl_Help_Font_Stack {
 
 protected:
   size_t nfonts_;		///< current number of fonts in stack
-  Fl_Help_Font_Style elts_[100]; ///< font eletments
+  Fl_Help_Font_Style elts_[100]; ///< font elements
 };
 
 /** Fl_Help_Target structure */
@@ -242,23 +242,23 @@ public:
   int		find(const char *s, int p = 0);
   /**
     This method assigns a callback function to use when a link is
-    followed or a file is loaded (via
-    Fl_Help_View::load()) that requires a different
-    file or path. The callback function receives a pointer to the
-    Fl_Help_View widget and the URI or full pathname
-    for the file in question. It must return a pathname that can be
-    opened as a local file or NULL:</P>
+    followed or a file is loaded (via Fl_Help_View::load()) that
+    requires a different file or path.
+    
+    The callback function receives a pointer to the Fl_Help_View
+    widget and the URI or full pathname for the file in question.
+    It must return a pathname that can be opened as a local file or NULL:
     
     \code
     const char *fn(Fl_Widget *w, const char *uri);
     \endcode
     
-    <P>The link function can be used to retrieve remote or virtual
+    The link function can be used to retrieve remote or virtual
     documents, returning a temporary file that contains the actual
     data. If the link function returns NULL, the value of
-    the Fl_Help_View widget will remain unchanged.</P>
+    the Fl_Help_View widget will remain unchanged.
     
-    <P>If the link callback cannot handle the URI scheme, it should
+    If the link callback cannot handle the URI scheme, it should
     return the uri value unchanged or set the value() of the widget
     before returning NULL.
   */
@@ -270,7 +270,7 @@ public:
   void		size(int W, int H) { Fl_Widget::size(W, H); }
   /** Sets the default text color. */
   void		textcolor(Fl_Color c) { if (textcolor_ == defcolor_) textcolor_ = c; defcolor_ = c; }
-  /** Returns    the current default text color. */
+  /** Returns the current default text color. */
   Fl_Color	textcolor() const { return (defcolor_); }
   /** Sets the default text font. */
   void		textfont(Fl_Font f) { textfont_ = f; format(); }
