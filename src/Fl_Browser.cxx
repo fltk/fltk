@@ -374,7 +374,9 @@ void Fl_Browser::item_draw(void* v, int X, int Y, int W, int H) const {
     Fl_Color lcol = textcolor();
     Fl_Align talign = FL_ALIGN_LEFT;
     // check for all the @-lines recognized by XForms:
+    //#if defined(__GNUC__)
     //#warning FIXME This maybe needs to be more UTF8 aware now...?
+    //#endif /*__GNUC__*/
     while (*str == format_char() && *++str && *str != format_char()) {
       switch (*str++) {
       case 'l': case 'L': tsize = 24; break;

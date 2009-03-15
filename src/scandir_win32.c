@@ -49,7 +49,9 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   if (!findIn) return -1;
   strcpy(findIn, dirname);
 
+  //#if defined(__GNUC__)
   //#warning FIXME This probably needs to be MORE UTF8 aware now
+  //#endif /*__GNUC__*/
   for (d = findIn; *d; d++) if (*d=='/') *d='\\';
   if ((len==0)) { strcpy(findIn, ".\\*"); }
   if ((len==2)&&findIn[1]==':'&&isalpha(findIn[0])) { *d++ = '\\'; *d = 0; }

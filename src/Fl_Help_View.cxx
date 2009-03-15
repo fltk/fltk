@@ -1455,7 +1455,9 @@ void Fl_Help_View::format() {
 
           popfont(font, fsize, fcolor);
 
+	  //#if defined(__GNUC__)
           //#warning FIXME this isspace & 255 test will probably not work on a utf8 stream... And we use it everywhere!
+	  //#endif /*__GNUC__*/
           while (isspace((*ptr)&255))
 	    ptr ++;
 

@@ -340,7 +340,11 @@ void fl_new_ic()
   XIMStyles* xim_styles = NULL;
 
 #if USE_XFT
+
+#if defined(__GNUC__)
 #warning XFT support here
+#endif /*__GNUC__*/
+
   if (!fs) {
     fnt = NULL;//fl_get_font_xfld(0, 14);
     if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
@@ -451,7 +455,11 @@ void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
       XFreeFontSet(fl_display, fs);
     }
 #if USE_XFT
+
+#if defined(__GNUC__)
 #warning XFT support here
+#endif /*__GNUC__*/
+
     fnt = NULL; // fl_get_font_xfld(font, size);
     if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
     fs = XCreateFontSet(fl_display, fnt, &missing_list,
