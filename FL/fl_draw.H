@@ -230,10 +230,35 @@ FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); /
 FL_EXPORT void fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
 
 // font encoding:
-FL_EXPORT const char *fl_latin1_to_local(const char *, int n=-1);
-FL_EXPORT const char *fl_local_to_latin1(const char *, int n=-1);
-FL_EXPORT const char *fl_mac_roman_to_local(const char *, int n=-1);
-FL_EXPORT const char *fl_local_to_mac_roman(const char *, int n=-1);
+// Note: doxygen comments here to avoid duplication for os-sepecific cases
+/**
+  convert text from Windows/X11 latin1 charcter set to local encoding.
+  \param[in] t character string (latin1 encoding)
+  \param[in] n optional number of characters to convert (default is all)
+  \returns pointer to internal buffer containing converted characters
+  */
+FL_EXPORT const char *fl_latin1_to_local(const char *t, int n=-1);
+/**
+  convert text from local encoding to Windowx/X11 latin1 character set.
+  \param[in] t character string (local encoding)
+  \param[in] n optional number of characters to convert (default is all)
+  \returns pointer to internal buffer containing converted characters
+  */
+FL_EXPORT const char *fl_local_to_latin1(const char *t, int n=-1);
+/**
+  convert text from Mac Roman charcter set to local encoding.
+  \param[in] t character string (Mac Roman encoding)
+  \param[in] n optional number of characters to convert (default is all)
+  \returns pointer to internal buffer containing converted characters
+  */
+FL_EXPORT const char *fl_mac_roman_to_local(const char *t, int n=-1);
+/**
+  convert text from local encoding to Mac Roman character set.
+  \param[in] t character string (local encoding)
+  \param[in] n optional number of characters to convert (default is all)
+  \returns pointer to internal buffer containing converted characters
+  */
+FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
 /** @} */
 
 /** \addtogroup  fl_drawings
@@ -273,12 +298,97 @@ FL_EXPORT void fl_frame2(const char* s, int x, int y, int w, int h);
 FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
 
 // images:
-/** signature of some image drawing functions passed as parameters */
-typedef void (*Fl_Draw_Image_Cb)(void*,int,int,int,uchar*);
-FL_EXPORT void fl_draw_image(const uchar*, int,int,int,int, int delta=3, int ldelta=0);
-FL_EXPORT void fl_draw_image_mono(const uchar*, int,int,int,int, int delta=1, int ld=0);
-FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=3);
-FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=1);
+/**
+  signature of image generation callback function.
+  \param[in]  data  user data passed to function
+  \param[in]  x,y,w position and width of scan line in image
+  \param[out] buf   buffer for generated image data. You must copy \a w
+                    pixels from scanline \a y, starting at pixel \a x
+		    to this buffer.
+  */
+typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
+
+/**
+  Draw an 8-bit per color RGB or luminance image.
+  \param[in] buf points at the "r" data of the top-left pixel.
+                 Color data must be in <tt>r,g,b</tt> order.
+  \param[in] X,Y position where to put top-left corner of image
+  \param[in] W,H size of the image
+  \param[in] D   delta to add to the pointer between pixels. it may be
+                 any value greater than or equal to 3, or it can be
+		 negative to flip the image horizontally
+  \param[in] L   delta to add to the pointer between lines (if 0 is
+                 passed it uses \a W * \a D), and may be larger than
+		 \a W * \a D to crop data, or negative to flip the
+		 image vertically
+
+  It is highly recommended that you put the following code before the
+  first <tt>show()</tt> of \e any window in your program to get rid of
+  the dithering if possible:
+  \code
+  Fl::visual(FL_RGB);
+  \endcode
+  Gray scale (1-channel) images may be drawn. This is done if
+  <tt>abs(D)</tt> is less than 3, or by calling fl_draw_image_mono().
+  Only one 8-bit sample is used for each pixel, and on screens with
+  different numbers of bits for red, green, and blue only gray colors
+  are used. Setting \a D greater than 1 will let you display one channel
+  of a color image.
+
+  \par Note:
+  The X version does not support all possible visuals. If FLTK cannot
+  draw the image in the current visual it will abort. FLTK supports
+  any visual of 8 bits or less, and all common TrueColor visuals up
+  to 32 bits.
+  */
+FL_EXPORT void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
+
+/**
+  Draw a gray-scale (1 channel) image.
+  \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
+  */
+FL_EXPORT void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
+
+/**
+  Draw image using callback function to generate image data.
+  You can generate the image as it is being drawn, or do arbitrary
+  decompression of stored data, provided it can be decompressed to
+  individual scan lines easily.
+  \param[in] cb   callback function to generate scan line data
+  \param[in] data user data passed to callback function
+  \param[in] X,Y
+  \param[in] W,H
+  \param[in] D
+  \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
+
+  The callback function \a cb is called with the <tt>void*</tt> \a data
+  user data pointer to allow access to a structure of information about
+  the image, and the \a x, \a y, and \a w of the scan line desired from
+  the image. 0,0 is the upper-left corner of the image, not \a X, \a Y.
+  A pointer to a buffer to put the data into is passed. You must copy
+  \a w pixels from scanline \a y, starting at pixel \a x, to this buffer.
+
+  Due to cropping, less than the whole image may be requested. So \a x
+  may be greater than zero, the first \a y may be greater than zero,
+  and \a w may be less than \a W. The buffer is long enough to store
+  the entire \a W * \a D pixels, this is for convenience with some
+  decompression schemes where you must decompress the entire line at
+  once: decompress it into the buffer, and then if \a x is not zero,
+  copy the data over so the \a x'th pixel is at the start of the buffer.
+
+  You can assume the \a y's will be consecutive, except the first one
+  may be greater than zero.
+
+  If \a D is 4 or more, you must fill in the unused bytes with zero.
+  */
+FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
+
+/**
+  Draw gray-scale image using callback function to generate image data.
+  \see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D)
+  */
+FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+
 FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
 FL_EXPORT char fl_can_do_alpha_blending();
 

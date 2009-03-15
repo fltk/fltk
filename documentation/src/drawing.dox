@@ -36,8 +36,13 @@ header file. FLTK provides the following types of drawing functions:
 \li \ref ssect_Fast
 \li \ref ssect_Complex
 \li \ref ssect_Text
-\li \ref ssect_Fl_Image
+\li \ref ssect_Fonts
+\li \ref ssect_CharacterEncoding
 \li \ref ssect_Overlay
+\li \ref drawing_images
+\li \ref ssect_DirectImageDrawing
+\li \ref ssect_DirectImageReading
+\li \ref ssect_Fl_Image
 \li \ref ssect_Offscreen
 
 <A name="boxdraw"></A> <!-- For old HTML links only ! -->
@@ -735,10 +740,8 @@ transformation matrix is not the identity is not defined, so you
 should only draw images when the matrix is set to the identity.
 
 <A NAME="fl_draw_image"></A> <!-- For old HTML links only ! -->
-void fl_draw_image(const uchar *, int X, int Y, int W, int H,
-int D = 3, int LD = 0) <br>
-void fl_draw_image_mono(const uchar *, int X, int Y, int W, int H,
-int D = 1, int LD = 0)
+void fl_draw_image(const uchar *buf,int X,int Y,int W,int H,int D,int L)<br>
+void fl_draw_image_mono(const uchar *buf,int X,int Y,int W,int H,int D,int L)
 
 \par
 Draw an 8-bit per color RGB or luminance image.  The pointer
@@ -748,7 +751,7 @@ put the top-left corner. <tt>W</tt> and <tt>H</tt> define the
 size of the image. <tt>D</tt> is the delta to add to the pointer
 between pixels, it may be any value greater or equal to
 <tt>3</tt>, or it can be negative to flip the image
-horizontally. <tt>LD</tt> is the delta to add to the pointer
+horizontally. <tt>L</tt> is the delta to add to the pointer
 between lines (if 0 is passed it uses <tt>W * D</tt>), and may
 be larger than <tt>W * D</tt> to crop data, or negative to flip
 the image vertically.
@@ -778,11 +781,9 @@ If FLTK cannot draw the image in the current visual it
 will abort. FLTK supports any visual of 8 bits or less,
 and all common TrueColor visuals up to 32 bits.
 
-typedef void (*fl_draw_image_cb)(void *, int x, int y, int w, uchar *) <br>
-void fl_draw_image(fl_draw_image_cb, void *, int X, int Y, int W, int H,
-int D = 3) <br>
-void fl_draw_image_mono(fl_draw_image_cb, void *, int X, int Y, int W, int H,
-int D = 1)
+typedef void (*Fl_Draw_Image_Cb)(void *data,int x,int y,int w,uchar *buf) <br>
+void fl_draw_image(Fl_Draw_Image_Cb cb,void *data,int X,int Y,int W,int H,int D) <br>
+void fl_draw_image_mono(Fl_Draw_Image_Cb cb,void *data,int X,int Y,int W,int H,int D)
 
 \par
 Call the passed function to provide each scan line of the
