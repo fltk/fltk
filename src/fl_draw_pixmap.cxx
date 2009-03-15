@@ -43,12 +43,25 @@
 
 static int ncolors, chars_per_pixel;
 
+/**
+  Get the dimensions of a pixmap.
+  An XPM image contains the dimensions in its data. This function
+  returns te width and height.
+  \param[in]  data pointer to XPM image data.
+  \param[out] w,h  width and height of image
+  \returns non-zero if the dimensions were parsed OK
+  \returns 0 if there were any problems
+  */
 int fl_measure_pixmap(/*const*/ char* const* data, int &w, int &h) {
   return fl_measure_pixmap((const char*const*)data,w,h);
 }
 
-int fl_measure_pixmap(const char * const *data, int &w, int &h) {
-  int i = sscanf(data[0],"%d%d%d%d",&w,&h,&ncolors,&chars_per_pixel);
+/**
+  Get the dimensions of a pixmap.
+  \see fl_measure_pixmap(char* const* data, int &w, int &h)
+  */
+int fl_measure_pixmap(const char * const *cdata, int &w, int &h) {
+  int i = sscanf(cdata[0],"%d%d%d%d",&w,&h,&ncolors,&chars_per_pixel);
   if (i<4 || w<=0 || h<=0 ||
       chars_per_pixel!=1 && chars_per_pixel!=2) return w=0;
   return 1;
@@ -153,14 +166,27 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
 
 uchar **fl_mask_bitmap; // if non-zero, create bitmap and store pointer here
 
+/**
+  Draw XPM image data, with the top-left corner at the given position.
+  The image is dithered on 8-bit displays so you won't lose color
+  space for programs displaying both images and pixmaps.
+  \param[in] data pointer to XPM image data
+  \param[in] x,y  position of top-left corner
+  \param[in] bg   background color
+  \returns 0 if there was any error decoding the XPM data.
+  */
 int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color bg) {
   return fl_draw_pixmap((const char*const*)data,x,y,bg);
 }
 
-int fl_draw_pixmap(const char*const* di, int x, int y, Fl_Color bg) {
+/**
+  Draw XPM image data, with the top-left corner at the given position.
+  \see fl_draw_pixmap(char* const* data, int x, int y, Fl_Color bg)
+  */
+int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   pixmap_data d;
-  if (!fl_measure_pixmap(di, d.w, d.h)) return 0;
-  const uchar*const* data = (const uchar*const*)(di+1);
+  if (!fl_measure_pixmap(cdata, d.w, d.h)) return 0;
+  const uchar*const* data = (const uchar*const*)(cdata+1);
   int transparent_index = -1;
 
   if (ncolors < 0) {	// FLTK (non standard) compressed colormap

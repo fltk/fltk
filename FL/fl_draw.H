@@ -99,6 +99,15 @@ FL_EXPORT void fl_rectf(int x, int y, int w, int h);
 /** Colors a rectangle that exactly fills the given bounding box */
 inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rectf(x,y,w,h);}
 
+/**
+  Color a rectangle with "exactly" the passed <tt>r,g,b</tt> color.
+  On screens with less than 24 bits of color this is done by drawing a
+  solid-colored block using fl_draw_image() so that the correct color
+  shade is produced.
+  */
+/* note: doxygen comment here to avoid triplication in os-speciic files */
+FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
+
 // line segments:
 FL_EXPORT void fl_line(int x, int y, int x1, int y1);
 FL_EXPORT void fl_line(int x, int y, int x1, int y1, int x2, int y2);
@@ -389,16 +398,39 @@ FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,
   */
 FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
 
-FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
+/**
+  Checks whether platform supports true alpha blending for RGBA images.
+  \returns 1 if true alpha blending supported by platform
+  \returns 0 not supported so FLTK will use screen door transparency
+  */
+/* note: doxygen comment here to avoid triplication in os-speciic files */
 FL_EXPORT char fl_can_do_alpha_blending();
 
-FL_EXPORT uchar *fl_read_image(uchar *p, int x,int y, int w, int h, int alpha=0);
+/**
+  Read an RGB(A) image from the current window or off-screen buffer.
+  \param[in] p     pixel buffer, or NULL to allocate one
+  \param[in] X,Y   position of top-left of image to read
+  \param[in] W,H   width and height of image to read
+  \param[in] alpha alpha value for image (0 fr none)
+  \returns pointer to pixel buffer, or NULL if allocation failed.
+
+  The \a p argument points to a buffer that can hold the image and must
+  be at least \a W*H*3 bytes when reading RGB images, or \a W*H*4 bytes
+  when reading RGBA images. If NULL, fl_read_image() will create an
+  array of the proper suze which can be freed using <tt>delete[]</tt>.
+
+  The \a alpha parameter controls whether an alpha channel is created
+  and the value that is placed in the alpha channel. If 0, no alpha
+  channel is generated.
+  */
+/* note: doxygen comment here to avoid triplication in os-speciic files */
+FL_EXPORT uchar *fl_read_image(uchar *p,int X,int Y,int W,int H,int alpha=0);
 
 // pixmaps:
 FL_EXPORT int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color=FL_GRAY);
+FL_EXPORT int fl_draw_pixmap(const char* const* cdata, int x,int y,Fl_Color=FL_GRAY);
 FL_EXPORT int fl_measure_pixmap(/*const*/ char* const* data, int &w, int &h);
-FL_EXPORT int fl_draw_pixmap(const char* const* data, int x,int y,Fl_Color=FL_GRAY);
-FL_EXPORT int fl_measure_pixmap(const char* const* data, int &w, int &h);
+FL_EXPORT int fl_measure_pixmap(const char* const* cdata, int &w, int &h);
 
 // other:
 FL_EXPORT void fl_scroll(int X, int Y, int W, int H, int dx, int dy,

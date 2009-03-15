@@ -821,7 +821,8 @@ If <tt>D</tt> is 4 or more, you must fill in the unused bytes
 with zero.
 
 <A NAME="fl_draw_pixmap"></A> <!-- For old HTML links only ! -->
-int fl_draw_pixmap(char **data, int X, int Y, Fl_Color = FL_GRAY)
+int fl_draw_pixmap(char* const* data, int x, int y, Fl_Color bg) <br>
+int fl_draw_pixmap(const char* const* cdata, int x, int y, Fl_Color bg)
 
 \par
 Draws XPM image data, with the top-left corner at the given position.
@@ -844,7 +845,8 @@ Fl_Color argument. To draw with true transparency you must
 use the Fl_Pixmap class.
 
 <A NAME="fl_measure_pixmap"></A> <!-- For old HTML links only ! -->
-int fl_measure_pixmap(char **data, int &w, int &h)
+int fl_measure_pixmap(char* const* data, int &w, int &h) <br>
+int fl_measure_pixmap(const char* const* cdata, int &w, int &h)
 
 \par
 An XPM image contains the dimensions in its data. This
@@ -858,7 +860,7 @@ FLTK provides a single function for reading from the current
 window or off-screen buffer into a RGB(A) image buffer.
 
 <A NAME="fl_read_image"></A> <!-- For old HTML links only ! -->
-uchar *fl_read_image(uchar *p, int X, int Y, int W, int H, int alpha = 0);
+uchar* fl_read_image(uchar *p, int X, int Y, int W, int H, int alpha)
 
 \par
 Read a RGB(A) image from the current window or off-screen
