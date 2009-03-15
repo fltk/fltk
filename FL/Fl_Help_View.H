@@ -72,7 +72,7 @@ struct Fl_Help_Block
 //
 // Fl_Help_Link structure...
 //
-/** Definition of a link for the html viewer*/
+/** Definition of a link for the html viewer. */
 struct Fl_Help_Link
 {
   char		filename[192],	///< Reference filename
@@ -82,8 +82,6 @@ struct Fl_Help_Link
 		w,		///< Width of link text
 		h;		///< Height of link text
 };
-
-/** Fl_Help_Target structure */
 
 /*
  * Fl_Help_View font stack opaque implementation
@@ -136,6 +134,8 @@ protected:
   size_t nfonts_;		///< current number of fonts in stack
   Fl_Help_Font_Style elts_[100]; ///< font eletments
 };
+
+/** Fl_Help_Target structure */
 
 struct Fl_Help_Target
 {

@@ -71,9 +71,6 @@
 #if defined(WIN32) && ! defined(__CYGWIN__)
 #  include <io.h>
 #  include <direct.h>
-// Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
-// on Windows, which is supposed to be POSIX compliant...
-#  define getcwd _getcwd
 #else
 #  include <unistd.h>
 #endif // WIN32
@@ -361,7 +358,7 @@ void Fl_Help_View::add_link(const char *n,	// I - Name of link
 
 /** Adds a new target to the list. */
 void Fl_Help_View::add_target(const char *n,	// I - Name of target
-                	int        yy)	// I - Y position of target
+			      int        yy)	// I - Y position of target
 {
   Fl_Help_Target	*temp;			// New target
 
