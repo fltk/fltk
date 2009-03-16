@@ -529,12 +529,27 @@ extern FL_EXPORT Fl_Boxtype fl_define_FL_GTK_UP_BOX();
 #define FL_GTK_ROUND_DOWN_BOX (Fl_Boxtype)(fl_define_FL_GTK_UP_BOX()+9)
 
 // conversions of box types to other boxtypes:
+/**
+  Get the filled version of a frame.
+  If no filled version of a given frame exists, the behavior of this function
+  is undefined and some random box or frame is returned,
+  */
 inline Fl_Boxtype fl_box(Fl_Boxtype b) {
   return (Fl_Boxtype)((b<FL_UP_BOX||b%4>1)?b:(b-2));
 }
+/**
+  Get the "pressed" or "down" version of a box.
+  If no "down" version of a given box exists, the behavior of this function
+  is undefined and some random box or frame is returned,
+  */
 inline Fl_Boxtype fl_down(Fl_Boxtype b) {
   return (Fl_Boxtype)((b<FL_UP_BOX)?b:(b|1));
 }
+/**
+  Get the unfilled, frame only version of a box.
+  If no frame version of a given box exists, the behavior of this function
+  is undefined and some random box or frame is returned,
+  */
 inline Fl_Boxtype fl_frame(Fl_Boxtype b) {
   return (Fl_Boxtype)((b%4<2)?b:(b+2));
 }
