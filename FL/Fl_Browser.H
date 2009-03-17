@@ -44,29 +44,46 @@ struct FL_BLINE;
   lines, and manages all the storage for the text.  This is not a text
   editor or spreadsheet!  But it is useful for showing a vertical list of
   named objects to the user.
-  <P>Each line in the browser is identified by number. <I>The numbers
+  
+  Each line in the browser is identified by number. <I>The numbers
   start at one</I> (this is so that zero can be reserved for "no line" in
   the selective browsers). <I>Unless otherwise noted, the methods do not
   check to see if the passed line number is in range and legal.  It must
-  always be greater than zero and &lt;= size().</I></P>
-  <P>Each line contains a null-terminated string of text and a void *
+  always be greater than zero and &lt;= size().</I>
+
+  Each line contains a null-terminated string of text and a void *
   data pointer.  The text string is displayed, the void *
   pointer can be used by the callbacks to reference the object the text
-  describes. </P>
-  <P>The base does nothing when the user clicks on it.  The
+  describes.
+
+  The base class does nothing when the user clicks on it.  The
   subclasses 
   Fl_Select_Browser, 
   Fl_Hold_Browser, and 
   Fl_Multi_Browser react to user clicks to select lines in
-  the browser and do callbacks. </P>
-  <P>The base called 
+  the browser and do callbacks.
+
+  The base class
   Fl_Browser_ provides the scrolling and selection mechanisms of
   this and all the subclasses, but the dimensions and appearance of each
   item are determined by the subclass. You can use Fl_Browser_
   to display information other than text, or text that is dynamically
   produced from your own data structures. If you find that loading the
   browser is a lot of work or is inefficient, you may want to make a
-  subof Fl_Browser_.
+  subclass of Fl_Browser_.
+
+  Some common coding patterns used for working with Fl_Browser:
+  \code
+      // How to loop through all the items in the browser
+      for ( int t=1; t<=browser->size(); t++ ) {       // index 1 based..!
+	  printf("item #%d, label='%s'\n", t, browser->text(t));
+      }
+  \endcode
+
+  Note: If you are <I>subclassing</I> Fl_Browser, it's more efficient
+  to use the protected methods item_first() and item_next(), since
+  Fl_Browser internally uses linked lists to manage the browser's items.
+  For more info, see find_item(int).
 */
 class FL_EXPORT Fl_Browser : public Fl_Browser_ {
 
@@ -84,39 +101,47 @@ protected:
 
   // required routines for Fl_Browser_ subclass:
   void* item_first() const ;
-  void* item_next(void*) const ;
-  void* item_prev(void*) const ;
+  void* item_next(void* item) const ;
+  void* item_prev(void* item) const ;
   void* item_last()const ;
-  int item_selected(void*) const ;
-  void item_select(void*, int);
-  int item_height(void*) const ;
-  int item_width(void*) const ;
-  void item_draw(void*, int, int, int, int) const ;
+  int item_selected(void* item) const ;
+  void item_select(void* item, int val);
+  int item_height(void* item) const ;
+  int item_width(void* item) const ;
+  void item_draw(void* item, int X, int Y, int W, int H) const ;
   int full_height() const ;
   int incr_height() const ;
   const char *item_text(void *item) const;
+  /** Swap the items \p a and \p b.
+      You must call redraw() to make any changes visible.
+      \param[in] a,b the items to be swapped.
+   */
   void item_swap(void *a, void *b) { swap((FL_BLINE*)a, (FL_BLINE*)b); }
-  void *item_at(int ix) const { return (void*)find_line(ix); }
+  /** Return the item at specified \p line.
+      \param[in] line The line of the item to return. (1 based)
+      \returns The item, or NULL if line out of range.
+   */
+  void *item_at(int line) const { return (void*)find_line(line); }
 
-  FL_BLINE* find_line(int) const ;
-  FL_BLINE* _remove(int) ;
-  void insert(int, FL_BLINE*);
-  int lineno(void*) const ;
+  FL_BLINE* find_line(int line) const ;
+  FL_BLINE* _remove(int line) ;
+  void insert(int line, FL_BLINE* item);
+  int lineno(void *item) const ;
   void swap(FL_BLINE *a, FL_BLINE *b);
 
 public:
 
-  void remove(int);
-  void add(const char*, void* = 0);
-  void insert(int, const char*, void* = 0);
+  void remove(int line);
+  void add(const char* newtext, void* d = 0);
+  void insert(int line, const char* newtext, void* d = 0);
   void move(int to, int from);
   int  load(const char* filename);
   void swap(int a, int b);
   void clear();
 
-  /**
-    Returns how many lines are in the browser.  The last line number is
-    equal to this.
+  /** Returns how many lines are in the browser.
+      The last line number is equal to this.
+      Returns 0 if browser is empty.
   */
   int size() const {return lines;}
   void size(int W, int H) { Fl_Widget::size(W, H); }
@@ -124,32 +149,36 @@ public:
   int topline() const ;
   /** For internal use only? */
   enum Fl_Line_Position { TOP, BOTTOM, MIDDLE };
-  void lineposition(int, Fl_Line_Position);
-  /** Scrolls the browser so the top line in the browser is n.  */
-  void topline(int l) { lineposition(l, TOP); }
-  /**    Scrolls the browser so the bottom line in the browser is n.  */
-  void bottomline(int l) { lineposition(l, BOTTOM); }
-  /**    Scrolls the browser so the middle line in the browser is n.  */
-  void middleline(int l) { lineposition(l, MIDDLE); }
+  void lineposition(int line, Fl_Line_Position pos);
+  /** Scrolls the browser so the top item in the browser is showing the specified \p line. */
+  void topline(int line) { lineposition(line, TOP); }
+  /** Scrolls the browser so the bottom item in the browser is showing the specified \p line. */
+  void bottomline(int line) { lineposition(line, BOTTOM); }
+  /** Scrolls the browser so the middle item in the browser is showing the specified \p line. */
+  void middleline(int line) { lineposition(line, MIDDLE); }
 
-  int select(int, int=1);
-  int selected(int) const ;
-  void show(int n);
+  int select(int line, int val=1);
+  int selected(int line) const ;
+  void show(int line);
+  /** Shows the entire Fl_Browser widget -- opposite of hide(). */
   void show() {Fl_Widget::show();}
-  void hide(int n);
+  void hide(int line);
+  /** Hides the entire Fl_Browser widget -- opposite of show(). */
   void hide() {Fl_Widget::hide();}
-  int visible(int n) const ;
+  int visible(int line) const ;
 
   int value() const ;
-  /** Sets the browser's value, i.e. selected line, to \p v */
-  void value(int v) {select(v);}
-  const char* text(int) const ;
-  void text(int, const char*);
-  void* data(int) const ;
-  void data(int, void* v);
+  /** Sets the browser's value(), which selects the specified \p line.
+      This is the same as calling select(line).
+   */
+  void value(int line) { select(line);}
+  const char* text(int line) const ;
+  void text(int line, const char* newtext);
+  void* data(int line) const ;
+  void data(int line, void* d);
 
-  Fl_Browser(int, int, int, int, const char* = 0);
-  /** The destructor deletes all list items and destroys the browser.*/
+  Fl_Browser(int X, int Y, int W, int H, const char *L = 0);
+  /** The destructor deletes all list items and destroys the browser. */
   ~Fl_Browser() { clear(); }
 
   /**
@@ -190,50 +219,65 @@ public:
   void format_char(char c) {format_char_ = c;}
   /**
     Gets the current column separator character.
-    By default this is '\\t' (tab).
+    The default is '\\t' (tab).
   */
   char column_char() const {return column_char_;}
   /**
     Sets the column separator to c.
     This will only have an effect if you also set column_widths().
+    The default is '\\t' (tab).
   */
   void column_char(char c) {column_char_ = c;}
   /**
-    Gets the current column width array.  This array is
-    zero-terminated and specifies the widths in pixels of each column. The
-    text is split at each column_char() and each part is formatted
-    into it's own column.  After the last column any remaining text is
-    formatted into the space between the last column and the right edge of
-    the browser, even if the text contains instances of column_char() .
-    The default value is a one-element array of just a zero, which means
-    there are no columns.
+    Gets the current column width array.
+    This array is zero-terminated and specifies the widths in pixels of
+    each column. The text is split at each column_char() and each part is
+    formatted into it's own column.  After the last column any remaining
+    text is formatted into the space between the last column and the
+    right edge of the browser, even if the text contains instances of
+    column_char() .  The default value is a one-element array of just
+    a zero, which means there are no columns.
+
+    Example:
+    \code
+  Fl_Browser *b = new Fl_Browser(..);
+  int widths[] = { 50, 50, 50, 70, 70, 40, 40, 70, 70, 50, 0 };  // widths for each column
+  b->column_widths(widths); // assign array to widget
+  b->column_char('\t');     // use tab as the column character
+  b->add("USER\tPID\tCPU\tMEM\tVSZ\tRSS\tTTY\tSTAT\tSTART\tTIME\tCOMMAND");
+  b->add("root\t2888\t0.0\t0.0\t1352\t0\ttty3\tSW\tAug15\t0:00\t@b@f/sbin/mingetty tty3");
+  b->add("root\t13115\t0.0\t0.0\t1352\t0\ttty2\tSW\tAug30\t0:00\t@b@f/sbin/mingetty tty2");
+  [..]
+    \endcode
   */
   const int* column_widths() const {return column_widths_;}
   /**
-    Sets the current array to w.  Make sure the last entry is zero.
+    Sets the current array to \p arr.  Make sure the last entry is zero.
     \see const int *Fl_Browser::column_widths() const
   */
-  void column_widths(const int* l) {column_widths_ = l;}
+  void column_widths(const int* arr) {column_widths_ = arr;}
 
   /**
-    Returns non-zero if line \p n is visible.
+    Returns non-zero if \p line is visible.
   */
-  int displayed(int n) const {return Fl_Browser_::displayed(find_line(n));}
+  int displayed(int line) const {return Fl_Browser_::displayed(find_line(line));}
 
   /**
-    Redisplays so that line \p n is visible.
-    If \p n is out of range, redisplay top or botton of list as appropriate.
+    Make the item at the specified \p line visible().
+    Functionally similar to show(int line).
+    If \p line is out of range, redisplay top or bottom of list as appropriate.
+    \param[in] line The line to be made visible.
+    \see show(int)
   */
-  void make_visible(int n) {
-  	if (n < 1) Fl_Browser_::display(find_line(1));
-	else if (n > lines) Fl_Browser_::display(find_line(lines));
-	else Fl_Browser_::display(find_line(n));
+  void make_visible(int line) {
+    if (line < 1) Fl_Browser_::display(find_line(1));
+    else if (line > lines) Fl_Browser_::display(find_line(lines));
+    else Fl_Browser_::display(find_line(line));
   }
 
   /** For back compatibility only. */
   void replace(int a, const char* b) {text(a, b);}
-
-  void display(int, int=1);
+  void display(int line, int val=1);
 };
 
 #endif
