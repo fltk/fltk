@@ -106,7 +106,7 @@ int Fl_Browser::item_selected(void* item) const {
 /**
   Change the selection state of \p item to the value \p val.
   \param[in] item The item to be changed.
-  \param[in] v The new selection state: 1 selects, 0 de-selects.
+  \param[in] val The new selection state: 1 selects, 0 de-selects.
 */
 void Fl_Browser::item_select(void *item, int val) {
   if (val) ((FL_BLINE*)item)->flags |= SELECTED;
@@ -227,7 +227,7 @@ void Fl_Browser::remove(int line) {
   Caveat: See efficiency note in find_line().
 
   \param[in] line  The new line will be inserted above this line (1 based).
-  \param[in] item  The the item to be added.
+  \param[in] item  The item to be added.
 */
 void Fl_Browser::insert(int line, FL_BLINE* item) {
   if (!first) {
@@ -452,7 +452,7 @@ int Fl_Browser::item_width(void *item) const {
 /**
   The height of the entire list of all visible() items in pixels.
   This returns the accumulated height of *all* the items in the browser
-  that are not hidden with hide(), including items scrolled offscreen.
+  that are not hidden with hide(), including items scrolled off screen.
   \returns The accumulated size of all the visible items in pixels.
 */
 int Fl_Browser::full_height() const {
