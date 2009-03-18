@@ -86,8 +86,9 @@
   selection.</TD></TR>
   
   <TR><TD><B>RightCtrl or
-  <BR>Compose</B></TD><TD>Start
-  a compose-character
+  <BR>Compose</B></TD><TD>
+  \anchor Fl_Input_Compose_Character
+  Start a compose-character
   sequence.  The next one or two keys typed define the character to
   insert (see table that follows.)
   
