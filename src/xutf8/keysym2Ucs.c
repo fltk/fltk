@@ -30,10 +30,8 @@
 #include "../../FL/Xutf8.h"
 #include "imKStoUCS.c"
 
-
-long XKeysymToUcs(KeySym keysym)
-{
-	return (long) KeySymToUcs4(keysym);
+long XKeysymToUcs(KeySym keysym) {
+  return (long) KeySymToUcs4(keysym);
 }
 
 #endif /* X11 only */
