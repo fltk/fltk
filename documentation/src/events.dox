@@ -12,7 +12,8 @@ or presses a key, an event is generated and sent to your
 application. Events can also come from other programs like the
 window manager.
 
-Events are identified by the integer argument passed to the
+Events are identified by the integer argument passed to a
+\p handle() method that overrides the
 Fl_Widget::handle()
 virtual method.
 Other information about the most recent event is stored in
@@ -21,13 +22,14 @@ static locations and acquired by calling the
 This static information remains valid until the next event
 is read from the window system, so it is ok to look at it outside 
 of the
-\ref Fl_Widget::handle() "handle()"
+\p handle()
 method.
 
 In the next chapter, the
 \ref subclassing_events "MyClass::handle()"
-example shows how to override this method to accept and process
-specific events.
+example shows how to override the
+Fl_Widget::handle()
+method to accept and process specific events.
 
 \section events_mouse Mouse Events
 
@@ -43,12 +45,16 @@ Fl::event_y().
 
 A widget indicates that it \e "wants" the mouse click
 by returning non-zero from its
-\ref Fl_Widget::handle() "handle()"
-method. It will then become the
+\p handle()
+method, as in the
+\ref subclassing_events "MyClass::handle()"
+example.
+It will then become the
 Fl::pushed()
 widget and will get \p FL_DRAG and
 the matching \p FL_RELEASE events.
-If \ref Fl_Widget::handle() "handle()"
+If
+\p handle()
 returns zero then FLTK will try sending the \p FL_PUSH to
 another widget. 
 
@@ -100,7 +106,7 @@ The mouse has been moved to point at this widget.  This can
 be used for highlighting feedback.  If a widget wants to
 highlight or otherwise track the mouse, it indicates this by
 returning non-zero from its
-If \ref Fl_Widget::handle() "handle()"
+\p handle()
 method. It then becomes the
 Fl::belowmouse()
 widget and will receive \p FL_MOVE and \p FL_LEAVE
@@ -119,7 +125,7 @@ This indicates an \e attempt to give a widget the keyboard focus.
 
 If a widget wants the focus, it should change itself to
 display the fact that it has the focus, and return non-zero from its
-\ref Fl_Widget::handle() "handle()"
+\p handle()
 method.  It then becomes the
 Fl::focus()
 widget and gets
@@ -149,8 +155,8 @@ The text that the key should insert can be found with
 Fl::event_text()
 and its length is in
 Fl::event_length().
-If you use the key
-\ref Fl_Widget::handle() "handle()"
+If you use the key, then 
+\p handle()
 should return 1. If you
 return zero then FLTK assumes you ignored the key and will
 then attempt to send it to a parent widget. If none of them want
@@ -160,8 +166,7 @@ To receive \p FL_KEYBOARD events you must also
 respond to the \p FL_FOCUS and \p FL_UNFOCUS
 events.
 
-If you are writing a text-editing widget you may also want to
-call the
+If you are writing a text-editing widget you may also want to call the
 Fl::compose()
 function to translate individual keystrokes into foreign characters.
 
@@ -191,12 +196,15 @@ or which one has the focus.
 \subsection events_fl_deactivate FL_DEACTIVATE
 
 This widget is no longer active, due to
-\ref Fl_Widget::activate() "activate()"
+\ref Fl_Widget::deactivate() "deactivate()"
 being called on it or one of its parents.
+Please note that although
 \ref Fl_Widget::active() "active()"
-may still be true after this, the widget is only active if
+may still return true for this widget after receiving this event,
+it is only truly active if
 \ref Fl_Widget::active() "active()"
-is true on it and all its parents (use
+is true for both it and all of its parents.
+(You can use
 \ref Fl_Widget::active_r() "active_r()"
 to check this).
 
@@ -212,10 +220,13 @@ This widget is no longer visible, due to
 \ref Fl_Widget::hide() "hide()"
 being called on it or one of its parents, or due to a parent window
 being minimized.
+Please note that although
 \ref Fl_Widget::visible() "visible()"
-may still be true after this, but the widget is visible only if
+may still return true for this widget after receiving this event,
+it is only truly visible if
 \ref Fl_Widget::visible() "visible()"
-true for it and all its parents (use
+is true for both it and all of its parents.
+(You can use
 \ref Fl_Widget::visible_r() "visible_r()"
 to check this).
 
@@ -228,7 +239,7 @@ being restored. <I>A child Fl_Window will respond to this by
 actually creating the window if not done already, so if you
 subclass a window, be sure to pass \p FL_SHOW to the base
 class
-\ref Fl_Widget::handle() "handle()"
+\p handle()
 method!</I>
 
 \section events_clipboard Clipboard Events
@@ -298,9 +309,9 @@ the immediatly following \p FL_PASTE event.
 FLTK keeps the information about the most recent event in
 static storage. This information is good until the next event is
 processed. Thus it is valid inside
-\ref Fl_Widget::handle() "handle()"
+\p handle()
 and
-\ref Fl_Widget::callback() "callback()"
+\p callback()
 methods.
 
 These are all trivial inline functions and thus very fast and small: 
@@ -329,7 +340,7 @@ These are all trivial inline functions and thus very fast and small:
 FLTK follows very simple and unchangeable rules for sending
 events. The major innovation is that widgets can indicate (by
 returning 0 from the
-\ref Fl_Widget::handle() "handle()"
+\p handle()
 method) that they are not
 interested in an event, and FLTK can then send that event
 elsewhere.  This eliminates the need for \e "interests"
@@ -337,7 +348,7 @@ elsewhere.  This eliminates the need for \e "interests"
 FLTK is much smaller than other toolkits.
 
 Most events are sent directly to the
-\ref Fl_Widget::handle() "handle()"
+\p handle()
 method
 of the Fl_Window that the window system says they
 belong to.  The window (actually the Fl_Group that
@@ -356,7 +367,7 @@ control those leaf widgets:
 \li Fl::modal()
 \li Fl::pushed()
 \li Fl::release()
-\li Fl::take_focus()
+\li Fl_Widget::take_focus()
 
 <A name="compose"></A> <!-- For old HTML links only ! -->
 \section events_compose_characters FLTK Compose-Character Sequences
@@ -364,11 +375,10 @@ control those leaf widgets:
 \todo Does Fltk Compose Character Sequences text need updating
       after the addition of UTF-8 handling to FLTK-1.3.x ?
 
-The foreign-letter compose processing done by the
-Fl_Input widget's
-\ref Fl_Input_Compose_Character "compose" key handler
-provided in a function that you can call if you are writing
-your own text editor widget.
+The foreign-letter compose processing done by the Fl_Input widget's
+\ref Fl_Input_Compose_Character "compose"
+key handler is provided in a function that you can call if you are
+writing your own text editor widget.
 
 FLTK uses its own compose processing to allow "preview" of
 the partially composed sequence, which is impossible with the
