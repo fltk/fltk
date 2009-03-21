@@ -153,11 +153,11 @@ protected:
         COPIED_LABEL=1024   ///< the widget label is internally copied, its destruction is handled by the widget
        };
   void draw_box() const;
-  void draw_box(Fl_Boxtype, Fl_Color) const;
-  void draw_box(Fl_Boxtype, int,int,int,int, Fl_Color) const;
+  void draw_box(Fl_Boxtype t, Fl_Color c) const;
+  void draw_box(Fl_Boxtype t, int x,int y,int w,int h, Fl_Color c) const;
   /** draws a focus rectangle around the widget */
   void draw_focus() {draw_focus(box(),x(),y(),w(),h());}
-  void draw_focus(Fl_Boxtype, int,int,int,int) const;
+  void draw_focus(Fl_Boxtype t, int x,int y,int w,int h) const;
   void draw_label() const;
   void draw_label(int, int, int, int) const;
 

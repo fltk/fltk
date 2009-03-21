@@ -61,10 +61,10 @@ protected:
   enum { CLIP_CHILDREN = 2048 };
 
   void draw();
-  void draw_child(Fl_Widget&) const;
+  void draw_child(Fl_Widget& widget) const;
   void draw_children();
-  void draw_outside_label(const Fl_Widget&) const ;
-  void update_child(Fl_Widget&) const;
+  void draw_outside_label(const Fl_Widget& widget) const ;
+  void update_child(Fl_Widget& widget) const;
   int  *sizes();
 
 public:

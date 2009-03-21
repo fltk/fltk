@@ -408,14 +408,14 @@ void Fl_Widget::draw_box() const {
 //   }
   draw_box((Fl_Boxtype)t, x_, y_, w_, h_, (Fl_Color)color_);
 }
-/** Draws a box of type b, of color c at the widget's position and size. */
-void Fl_Widget::draw_box(Fl_Boxtype b, Fl_Color c) const {
-  draw_box(b, x_, y_, w_, h_, c);
+/** Draws a box of type t, of color c at the widget's position and size. */
+void Fl_Widget::draw_box(Fl_Boxtype t, Fl_Color c) const {
+  draw_box(t, x_, y_, w_, h_, c);
 }
-/** Draws a box of type b, of color c at the position X,Y and size W,H. */
-void Fl_Widget::draw_box(Fl_Boxtype b, int X, int Y, int W, int H, Fl_Color c) const {
+/** Draws a box of type t, of color c at the position X,Y and size W,H. */
+void Fl_Widget::draw_box(Fl_Boxtype t, int X, int Y, int W, int H, Fl_Color c) const {
   draw_it_active = active_r();
-  fl_box_table[b].f(X, Y, W, H, c);
+  fl_box_table[t].f(X, Y, W, H, c);
   draw_it_active = 1;
 }
 

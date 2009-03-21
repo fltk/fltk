@@ -152,7 +152,7 @@ Fl_Widget::~Fl_Widget() {
   fl_throw_focus(this);
 }
 
-/** Draws a focus box for the widget at position X,Y with size W,H. */
+/** Draws a focus box for the widget at the given position and size */
 void
 Fl_Widget::draw_focus(Fl_Boxtype B, int X, int Y, int W, int H) const {
   if (!Fl::visible_focus()) return;
