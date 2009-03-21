@@ -12,17 +12,15 @@ Color values are now stored in a 32-bit unsigned integer
 instead of the unsigned character in 1.0.x. This allows for the
 specification of 24-bit RGB values or 8-bit FLTK color indices.
 
-<tt>FL_BLACK</tt> and <tt>FL_WHITE</tt> now remain black and 
-white, even if the base color of the gray ramp is changed using 
-<A HREF="Fl.html#Fl.background"><tt>Fl::background()</tt></A>.
-<tt>FL_DARK3</tt> and <tt>FL_LIGHT3</tt> can be used instead to 
+\c FL_BLACK and \c FL_WHITE now remain black and white, even if
+the base color of the gray ramp is changed using Fl::background().
+\c FL_DARK3 and \c FL_LIGHT3 can be used instead to 
 draw a very dark or a very bright background hue.
 
-Widgets use the new color symbols <tt>FL_FORGROUND_COLOR</tt>,
-<tt>FL_BACKGROUND_COLOR</tt>, <tt>FL_BACKGROUND2_COLOR</tt>, 
-<tt>FL_INACTIVE_COLOR</tt>, and <tt>FL_SELECTION_COLOR</tt>.
-More details can be found in the chapter
-<A HREF="enumerations.html#colors">Enumerations</A>.
+Widgets use the new color symbols \c FL_FORGROUND_COLOR,
+\c FL_BACKGROUND_COLOR, \c FL_BACKGROUND2_COLOR, 
+\c FL_INACTIVE_COLOR, and \c FL_SELECTION_COLOR.
+More details can be found in the chapter \ref enumerations.
 
 \section migration_1_1_cutnpaste Cut and Paste Support
 
@@ -36,18 +34,16 @@ like traditional GUI applications.
 
 The file chooser in FLTK 1.1.x is significantly different
 than the one supplied with FLTK 1.0.x. Any code that directly
-references the old <tt>FCB</tt> class or members will need
-to be ported to the new
-<A HREF="Fl_File_Chooser.html"><tt>Fl_File_Chooser</tt></A>
-class.
+references the old \c FCB class or members will need
+to be ported to the new Fl_File_Chooser class.
 
 \section migration_1_1_functions Function Names
 
 Some function names have changed from FLTK 1.0.x to 1.1.x in
 order to avoid name space collisions. You can still use the old
-function names by defining the <tt>FLTK_1_0_COMPAT</tt>
-symbol on the command-line when you compile
-(<tt>-DFLTK_1_0_COMPAT</tt>) or in your source, e.g.:
+function names by defining the \c FLTK_1_0_COMPAT symbol on
+the command-line when you compile (\c -DFLTK_1_0_COMPAT) or in
+your source, e.g.:
 
 \code
 #define FLTK_1_0_COMPAT
@@ -125,24 +121,18 @@ The following table shows the old and new function names:
 
 \section migration_1_1_images Image Support
 
-Image support in FLTK has been significantly revamped in
-1.1.x. The <A HREF="Fl_Image.html"><tt>Fl_Image</tt></A> class
-is now a proper base class, with the core image drawing
-functionality in the
-<A HREF="Fl_Bitmap.html"><tt>Fl_Bitmap</tt></A>,
-<A HREF="Fl_Pixmap.html"><tt>Fl_Pixmap</tt></A>,
-and
-<A HREF="Fl_RGB_Image.html"><tt>Fl_RGB_Image</tt></A>
-classes.
+Image support in FLTK has been significantly revamped in 1.1.x.
+The Fl_Image class is now a proper base class, with the core 
+image drawing functionality in the Fl_Bitmap, Fl_Pixmap, and
+Fl_RGB_Image classes.
 
 BMP, GIF, JPEG, PNG, XBM, and XPM image files can now be
 loaded using the appropriate image classes, and the
-<A HREF="Fl_Shared_Image.html"><tt>Fl_Shared_Image</tt></A>
-class can be used to cache images in memory.
+Fl_Shared_Image class can be used to cache images in memory.
 
 Image labels are no longer provided as an add-on label type.
-If you use the old <tt>label()</tt> methods on an image, the
-widget's <tt>image()</tt> method is called to set the image
+If you use the old \c label() methods on an image, the
+widget's \c image() method is called to set the image
 as the label.
 
 Image labels in menu items must still use the old labeltype
@@ -152,8 +142,7 @@ mechanism to preserve source compatibility.
 
 FLTK 1.1.x now supports keyboard navigation and control with
 all widgets. To restore the old FLTK 1.0.x behavior so that only
-text widgets get keyboard focus, call the
-<A HREF="Fl.html#Fl.visible_focus"><CODE>Fl::visible_focus()</CODE></A>
+text widgets get keyboard focus, call the Fl::visible_focus()
 method to disable it:
 
 \code
@@ -163,10 +152,7 @@ Fl::visible_focus(0);
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="osissues.html">[Previous]</a>&nbsp;
-     \ref osissues &nbsp;&nbsp;
-<a class="el" href="migration_1_3.html">[Next]</a>&nbsp;
-     \ref migration_1_3
-
+<a class="el" href="osissues.html">[Previous] Operating System Issues</a>&nbsp;&nbsp;
+<a class="el" href="migration_1_3.html">[Next] Migrating Code from FLTK 1.1 to 1.3</a>
 \endhtmlonly
 */

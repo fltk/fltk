@@ -415,48 +415,27 @@ The above code produces the following paragraphs:
   \image html tiny.gif
   \image latex tiny.eps "" width=2cm	
 
-\section development_navigation_test 5 Navigation Proposals
+\section development_navigation_test Navigation Elements
+
+Each introduction (tutorial) page ends with navigation elements. These
+elements must only be included in the html documentation, therefore
+they must be separated with \\htmlonly and \\endhtmlonly.
+
+Example navigation links:
+
+\verbatim
+\htmlonly
+<hr>
+<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
+<a class="el" href="migration_1_3.html">[Previous] Migrating Code from FLTK 1.1 to 1.3</a>&nbsp;&nbsp;
+<a class="el" href="license.html">[Next] Software License</a>
+\endhtmlonly
+\endverbatim
 
 \htmlonly
 <hr>
-\link migration_1_3 [ Previous ] \endlink
-<b>    [ <a href="index.html">Index</a> ]    </b>
-<b> Next: </b> \ref license
-
-<hr>
-<b>[ <a href="index.html">Index</a> ]    </b>
-<b>   Previous: </b> \ref migration_1_3
-<b>   Next: </b> \ref license
-
-<hr>
-<b>[ <a href="index.html">Index</a> ]    </b><br>
-<b>   Previous: </b> \ref migration_1_3 <br>
-<b>   Next: </b> \ref license
-
-<hr>
-<b>[ <a href="index.html">Index</a> ]    </b>
-   Previous:  \ref migration_1_3
-   Next:  \ref license
-
-<hr>
-\link migration_1_3 [ Previous ] \endlink
-<b>    [ <a href="index.html">Top</a> ]    </b>
-\link license [ Next ] \endlink
-
-<hr>
-<br>
-<br>
-
-\section development_proposed_nav Proposed (final) Navigation Elements
-
-See below.
-
-<hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="migration_1_3.html">[Previous]</a>&nbsp;
-     \ref migration_1_3 &nbsp;&nbsp;
-<a class="el" href="license.html">[Next]</a>&nbsp;
-     \ref license
-
+<a class="el" href="migration_1_3.html">[Previous] Migrating Code from FLTK 1.1 to 1.3</a>&nbsp;&nbsp;
+<a class="el" href="license.html">[Next] Software License</a>
 \endhtmlonly
 */
