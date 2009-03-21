@@ -271,6 +271,8 @@ html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
 	-$(DOXYDOC)
+
+html-dist: html
 	echo "Stripping HTML files..."
 	./strip_tags
 
@@ -279,7 +281,7 @@ html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
 #	$(RM) fltk.ps
 #	-$(HTMLDOC) --verbose --batch $(SRC_DOCDIR)/fltk.book $(MEDIA) -f fltk.ps
 
-pdf-dist : latex/refman.pdf
+pdf-dist: latex/refman.pdf
 	cp -f latex/refman.pdf fltk.pdf
 
 pdf: 	latex/refman.pdf
