@@ -756,10 +756,7 @@ MacOS version of FLTK:
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="forms.html">[Previous]</a>&nbsp;
-     \ref forms &nbsp;&nbsp;
-<a class="el" href="migration_1_1.html">[Next]</a>&nbsp;
-     \ref migration_1_1
-
+<a class="el" href="forms.html">[Previous] Forms Compatibility</a> &nbsp;&nbsp;
+<a class="el" href="migration_1_1.html">[Next] Migrating Code from FLTK 1.0 to 1.1</a>
 \endhtmlonly
 */

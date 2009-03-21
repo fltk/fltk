@@ -105,11 +105,8 @@ following scheme.  The biggest trick is that GLUT insists on
 \li You can call either <tt>glutMainLoop()</tt>, <tt>Fl::run()</tt>,
     or loop calling <tt>Fl::wait()</tt> to run  the program. 
 
-<HR break>
    <A NAME="Fl_Glut_Window"></A> <!-- For old HTML links only ! -->
    \section glut_Fl_Glut_Window class Fl_Glut_Window
-\htmlonly
-<HR>
 
 \subsection glut_class_hierarchy Class Hierarchy
 
@@ -237,12 +234,10 @@ void Fl_Glut_Window::make_current()
 \par
 Switches all drawing functions to the GLUT window.
 
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="enumerations.html">[Previous]</a>&nbsp;
-     \ref enumerations &nbsp;&nbsp;
-<a class="el" href="forms.html">[Next]</a>&nbsp;
-     \ref forms
-
+<a class="el" href="enumerations.html">[Previous] FLTK Enumerations</a> &nbsp;&nbsp;
+<a class="el" href="forms.html">[Next] Forms Compatibility</a>
 \endhtmlonly
 */

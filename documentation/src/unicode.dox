@@ -73,10 +73,11 @@ system, FLTK will convert string as needed.
       Fl_Help_View. Keycodes from the keyboard conflict with Unicode  
       characters. Right-to-left rendered text can not be marked or edited,  
       and probably much more.
+
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="advanced.html">[Previous]&nbsp; 10 - Advanced FLTK </a>&nbsp;
-<a class="el" href="classes.html">[Next]&nbsp; A - Class Reference</a>
+<a class="el" href="annotated.html">[Next]&nbsp; A - Class Reference</a>
 \endhtmlonly
 */

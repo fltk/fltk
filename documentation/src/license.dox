@@ -493,10 +493,8 @@ DAMAGES.
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="development.html">[Previous]&nbsp; I - Developer Information</a>&nbsp;
-     \ref development &nbsp;&nbsp;
-<a class="el" href="examples.html">[Next]&nbsp; K - Example Source Code</a>&nbsp;
-     \ref examples
-
+<a class="el" href="development.html">[Previous] Developer Information</a> &nbsp;&nbsp;
+<a class="el" href="examples.html">[Next] Example Source Code</a>
 \endhtmlonly
+
 */

@@ -293,9 +293,7 @@ The following damage mask bits are used by the standard FLTK widgets:
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="globals_func.html">[Previous] B - Function Reference</a>&nbsp;
-<a class="el" href="glut.html">[Next]</a>&nbsp;
-     \ref glut
-
+<a class="el" href="globals_func.html">[Previous] Function Reference</a>&nbsp;
+<a class="el" href="glut.html">[Next] GLUT Compatibility</a>&nbsp;
 \endhtmlonly
 */

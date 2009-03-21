@@ -1367,7 +1367,7 @@ be generated and likely cause compile-time warnings.
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="opengl.html">[Previous]&nbsp; 8 - Using OpenGL</a>&nbsp;
-<a class="el" href="advanced.html">[Next]&nbsp; 10 - Advanced FLTK</a>&nbsp;
+<a class="el" href="opengl.html">[Previous]&nbsp; 8 - Using OpenGL</a> &nbsp;&nbsp;
+<a class="el" href="advanced.html">[Next]&nbsp; 10 - Advanced FLTK</a>
 \endhtmlonly
 */

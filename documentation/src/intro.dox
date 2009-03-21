@@ -350,7 +350,7 @@ at "fltk@fltk.org" or one of the newsgroups.
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="preface.html">[Previous]&nbsp; Preface</a>&nbsp;
-<a class="el" href="basics.html">[Next]&nbsp; 2 - FLTK Basics</a>&nbsp;
+<a class="el" href="preface.html">[Previous] Preface</a> &nbsp;&nbsp;
+<a class="el" href="basics.html">[Next]&nbsp; 2 - FLTK Basics</a>
 \endhtmlonly
 */

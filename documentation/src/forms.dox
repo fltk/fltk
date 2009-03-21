@@ -238,10 +238,7 @@ fl_font_name(11,"*bookman-light-i-no*");
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="glut.html">[Previous]</a>&nbsp;
-     \ref glut &nbsp;&nbsp;
-<a class="el" href="osissues.html">[Next]</a>&nbsp;
-     \ref osissues
-
+<a class="el" href="glut.html">[Previous] GLUT Compatibility</a> &nbsp;&nbsp;
+<a class="el" href="osissues.html">[Next] Operating System Issues</a>
 \endhtmlonly
 */
