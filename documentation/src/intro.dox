@@ -15,16 +15,16 @@ across the world with a central repository in the US.
 
 It has always been Bill's belief that the GUI API of all
 modern  systems is much too high level. Toolkits (even FLTK) are
-<I>not</I> what  should be provided and documented as part of an
+\e not what should be provided and documented as part of an
 operating system. The  system only has to provide arbitrary
 shaped but featureless windows, a  powerful set of graphics
-drawing calls, and a simple <I>unalterable</I> method of
-delivering events to the owners of the windows. NeXT (if  you
+drawing calls, and a simple \e unalterable method of
+delivering events to the owners of the windows. NeXT (if you
 ignored NextStep) provided this, but they chose to hide it and
 tried to push their own baroque toolkit instead.
 
 Many of the ideas in FLTK were developed on a NeXT (but
-<I>not</I> using NextStep) in 1987 in a C toolkit Bill called
+\e not using NextStep) in 1987 in a C toolkit Bill called
 "views". Here he came up with passing events downward
 in the tree and having the handle routine return a value
 indicating whether it used the event, and the table-driven menus. In
@@ -49,7 +49,7 @@ control the window borders or drag the window around.
 At Digital Domain Bill discovered another toolkit,
 "Forms". Forms was similar to his work, but provided
 many more widgets, since it was used in many real applications,
-rather then as theoretical work. He decided to use Forms, except
+rather than as theoretical work. He decided to use Forms, except
 he integrated his table-driven menus into it. Several very large
 programs were created using this version of Forms.
 
@@ -58,9 +58,9 @@ desire to use C++ subclassing required a rewrite of Forms.
 This produced the first version of FLTK. The conversion to C++
 required so many changes it made it impossible to recompile any
 Forms objects. Since it was incompatible anyway, Bill decided
-to incorporate his older ideas as  much as possible by
+to incorporate his older ideas as much as possible by
 simplifying the lower level interface and the event passing
-mechanisim.
+mechanism.
 
 Bill received permission to release it for free on the
 Internet, with the GNU general public license. Response from
@@ -97,7 +97,7 @@ Here are some of the core features unique to FLTK:
 \li Written directly atop core libraries (Xlib, WIN32 or Carbon) for
     maximum speed, and carefully optimized for code size and performance.
 
-\li Precise low-level compatability between the X11, WIN32 and MacOS
+\li Precise low-level compatibility between the X11, WIN32 and MacOS
     versions - only about 10% of the code is different.
 
 \li Interactive user interface builder program. Output is human-readable
@@ -122,10 +122,11 @@ Here are some of the core features unique to FLTK:
 
 \section intro_licensing Licensing
 
-FLTK comes with complete free source code. FLTK is available
-under the terms of the <A href="license.html">GNU Library
-General Public License</A> with exceptions that allow for static
-linking. Contrary to popular belief, it can be used in
+FLTK comes with complete free source code.
+FLTK is available under the terms of the 
+\ref license "GNU Library General Public License"
+with exceptions that allow for static linking. 
+Contrary to popular belief, it can be used in
 commercial software - even Bill Gates could use it!
 
 \section intro_what What Does "FLTK" Mean?
@@ -133,7 +134,7 @@ commercial software - even Bill Gates could use it!
 FLTK was originally designed to be compatible with the Forms
 Library written for SGI machines. In that library all the
 functions and structures started with "fl_". This
-naming was extended to all new  methods and widgets in the C++
+naming was extended to all new methods and widgets in the C++
 library, and this prefix was taken as the name of the library.
 It is almost impossible to search for "FL" on the
 Internet, due to the fact that it is also the abbreviation for
@@ -152,8 +153,8 @@ FLTK uses GNU autoconf to configure itself for your UNIX
 platform. The main things that the configure script will look
 for are the X11 and OpenGL (or Mesa) header and library files.
 If these cannot be found in the standard include/library
-locations you'll need to define the <tt>CFLAGS</tt>,
-<tt>CXXFLAGS</tt>, and <tt>LDFLAGS</tt> environment variables.
+locations you'll need to define the \p CFLAGS,
+\p CXXFLAGS, and \p LDFLAGS environment variables.
 For the Bourne and Korn shells you'd use:
 
 \code
@@ -171,8 +172,8 @@ setenv LDFLAGS "-Llibdir"
 \endcode
 
 By default configure will look for a C++ compiler named
-<tt>CC</tt>, <tt>c++</tt>, <tt>g++</tt>, or <tt>gcc</tt> in that
-order. To use another compiler you need to set the <tt>CXX</tt>
+\p CC, \p c++, \p g++, or \p gcc in that
+order. To use another compiler you need to set the \p CXX
 environment variable:
 
 \code
@@ -180,8 +181,8 @@ CXX=xlC; export CXX
 setenv CXX "xlC"
 \endcode
 
-The <tt>CC</tt> environment variable can also be used to
-override the default C compiler (<tt>cc</tt> or <tt>gcc</tt>),
+The \p CC environment variable can also be used to
+override the default C compiler (\p cc or \p gcc),
 which is used for a few FLTK source files.
 
 You can run configure yourself to get the exact setup you need.
@@ -233,11 +234,9 @@ When the configure script is done you can just run the
 "make" command. This will build the library, FLUID
 tool, and all of the test programs.
 
-To install the library, become root and type "make
-install". This will copy the "fluid" executable
-to "bindir", the header files to
-"includedir", and the library files to
-"libdir".
+To install the library, become root and type "make install".
+This will copy the "fluid" executable to "bindir", the header
+files to "includedir", and the library files to "libdir".
 
 \section intro_windows Building FLTK Under Microsoft Windows
 
@@ -246,9 +245,9 @@ The first is to use the Visual C++ 5.0 project files under the
 "visualc" directory. Just open (or double-click on)
 the "fltk.dsw" file to get the whole shebang.
 
-The second method is to use the <TT>configure</TT> script
+The second method is to use the \p configure script
 included with the FLTK software; this has only been tested with
-the CygWin tools:
+the Cygwin tools:
 
 \code
 sh configure --prefix=C:/FLTK
@@ -275,7 +274,7 @@ C++!) you can only use the DLL that is generated with the same
 version compiler that you built it with.
 
 When compiling an application or DLL that uses the FLTK DLL,
-you will need to define the <tt>FL_DLL</tt> preprocessor symbol
+you will need to define the \p FL_DLL preprocessor symbol
 to get the correct linkage commands embedded within the FLTK
 header files.
 

@@ -28,7 +28,7 @@ This manual is organized into the following chapters and appendices:
 \li \ref fluid
 \li \ref advanced
 \li \ref unicode
-\li <A class="el" HREF="classes.html">A - Class Reference</A>
+\li <A class="el" HREF="annotated.html">A - Class Reference</A>
 \li <A class="el" HREF="functions.html#functions">B - Function Reference</A>
 \li \ref enumerations
 \li \ref glut

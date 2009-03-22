@@ -146,19 +146,10 @@ only common exceptions are <tt>value()</tt> which calls
 
 \subsection basics_labels Labels
 
-All widgets support labels.  In the case of window widgets,
+All widgets support labels. In the case of window widgets,
 the label is used for the label in the title bar. Our example
-program calls the <tt>labelfont()</tt>,<tt> labelsize</tt>,
-and <tt>labeltype()</tt> methods.
-
-All widgets support labels.  In the case of window widgets,
-the label  is used for the label in the title bar. Our example
-program calls the
-<A href=Fl_Widget.html#Fl_Widget.labelfont><tt>labelfont</tt></A>,
-<A href=Fl_Widget.html#Fl_Widget.labelsize><tt> labelsize</tt></A>,
-and
-<A href=Fl_Widget.html#Fl_Widget.labeltype><tt>labeltype</tt></A>
-methods.
+program calls the \p labelfont(), \p labelsize(),
+and \p labeltype() methods.
 
 The <tt>labelfont</tt> method sets the typeface and style
 that is used for the label, which for this example we are using
