@@ -85,8 +85,8 @@ The following methods are provided for subclasses to use:
 \li \ref subclassing_draw_label "draw_label()"
 \li \ref subclassing_set_flag "set_flag()"
 \li \ref subclassing_set_visible "set_visible()"
-\li \ref subclassing_test_shortcut "set_test_shortcut()"
-\li \ref subclassing_type "set_type()"
+\li \ref subclassing_test_shortcut "test_shortcut()"
+\li \ref subclassing_type "type()"
 
 <A name="damage"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_damage
@@ -129,13 +129,13 @@ MyClass::handle(int event) {
 }
 
 MyClass::draw() {
-  if (damage() &amp; FL_DAMAGE_ALL) {
+  if (damage() & FL_DAMAGE_ALL) {
     ... draw frame/box and other static stuff ...
   }
 
-  if (damage() &amp; (FL_DAMAGE_ALL | 1)) draw_part1();
-  if (damage() &amp; (FL_DAMAGE_ALL | 2)) draw_part2();
-  if (damage() &amp; (FL_DAMAGE_ALL | 4)) draw_part3();
+  if (damage() & (FL_DAMAGE_ALL | 1)) draw_part1();
+  if (damage() & (FL_DAMAGE_ALL | 2)) draw_part2();
+  if (damage() & (FL_DAMAGE_ALL | 4)) draw_part3();
 }
 \endcode
 
@@ -158,7 +158,7 @@ void Fl_Widget::draw_focus() <br>
 void Fl_Widget::draw_focus(Fl_Boxtype t, int x, int y, int w, int h) const
 
 \par
-Draws a focus box inside the widgets bounding box. The second
+Draws a focus box inside the widget's bounding box. The second
 form allows you to specify a different bounding box.
 
 <A name="draw_label"></A> <!-- For old HTML links only ! -->
@@ -168,8 +168,8 @@ void Fl_Widget::draw_label(int x, int y, int w, int h) const <br>
 void Fl_Widget::draw_label(int x, int y, int w, int h, Fl_Align align) const
 
 \par
-This is the usual function for a \p draw() method to call to
-draw the widget's label.  It does not draw the label if it is supposed
+The first form is the usual function for a \p draw() method to call to
+draw the widget's label. It does not draw the label if it is supposed
 to be outside the box (on the assumption that the enclosing group will
 draw those labels).
 
@@ -210,12 +210,12 @@ int Fl_Widget::test_shortcut() <br>
 static int Fl_Widget::test_shortcut(const char *s)
 
 \par
-The first version tests <tt>Fl_Widget::label()</tt> against the
-current event (which should be a <tt>FL_SHORTCUT</tt> event).  If the
-label contains a '&amp;' character and the character after it matches the key
-press, this returns true.  This returns false if the <tt>SHORTCUT_LABEL</tt>
-flag is off, if the label is <tt>NULL</tt> or does not have a
-'&amp;' character in it, or if the keypress does not match the character.
+The first version tests Fl_Widget::label() against the current event 
+(which should be a \p FL_SHORTCUT event).  If the label contains a '&' 
+character and the character after it matches the keypress, this returns
+true. This returns false if the \p SHORTCUT_LABEL flag is off, if the 
+label is \p NULL, or does not have a '&' character in it, or if the 
+keypress does not match the character.
 
 \par
 The second version lets you do this test against an arbitrary string. 
@@ -241,12 +241,13 @@ portability.  But this may change in the near future if RTTI becomes
 standard everywhere. 
 
 \par
-If you don't have RTTI you can use the clumsy FLTK mechanisim, by
+If you don't have RTTI you can use the clumsy FLTK mechanism, by
 having \p type() use a unique value.  These unique values must
-be greater than the symbol \p FL_RESERVED_TYPE (which is 100).
+be greater than the symbol \p FL_RESERVED_TYPE (which is 100) and
+less than \p FL_WINDOW (unless you make a subclass of Fl_Window).
 Look through the header files for \p FL_RESERVED_TYPE to find an
-unused number.  If you make a subclass of Fl_Window
-you must use \p FL_WINDOW+n (where \p n must be in the range 1 to 7). 
+unused number. If you make a subclass of Fl_Window you must use
+\p FL_WINDOW+n (where \p n must be in the range 1 to 7). 
 
 <A NAME="handle"></A> <!-- For old HTML links only ! -->
 \section subclassing_events Handling Events
@@ -330,8 +331,8 @@ the parts whose bits are set. FLTK will turn on the
 be redrawn, e.g. for an expose event. 
 
 Expose events (and the 
-\ref subclassing_damage "damage(b,x,y,w,h)" function described above)
-will cause \p draw() to be called with FLTK's
+\ref subclassing_damage "damage(mask,x,y,w,h)" function described 
+above) will cause \p draw() to be called with FLTK's
 <A href="drawing.html#clipping"> clipping</A>
 turned on.  You can greatly speed up redrawing in some
 cases by testing \p fl_not_clipped(x,y,w,h) or \p fl_clip_box(...)
@@ -437,6 +438,8 @@ int MyClass::draw() {
 }
 \endcode
 
+\todo	The new method draw_children should be documented below.
+
 Fl_Group provides some protected methods to make drawing easier:
 
 \li \ref subclassing_draw_child "draw_child()"
@@ -491,7 +494,7 @@ It may be possible to cut/paste non-text data by using
 
 FLTK provides routines to drag and drop 8-bit text between applications:
 
-Drag'n'drop operations are are initiated by copying data to the 
+Drag'n'drop operations are initiated by copying data to the 
 clipboard and calling the function Fl::dnd().
 
 Drop attempts are handled via the following events,
@@ -524,8 +527,8 @@ differences:
 -# When handling events and drawing, the upper-left corner is at
    0,0, not <tt>x(),y()</tt> as in other Fl_Widget's.
    For instance, to draw a box around the widget, call
-   \p draw_box(0,0,w(),h()), rather than
-   \p draw_box(x(),y(),w(),h()).
+   <tt>draw_box(0,0,w(),h())</tt>, rather than
+   <tt>draw_box(x(),y(),w(),h())</tt>.
 
 You may also want to subclass Fl_Window in order to
 get access to different visuals or to change other attributes of
@@ -536,7 +539,7 @@ the windows. See the
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="events.html">[Previous]&nbsp; 6 - Handling Events</a>&nbsp;
-<a class="el" href="opengl.html">[Next]&nbsp; 8 - Using OpenGL</a>&nbsp;
+<a class="el" href="events.html">[Previous] Handling Events</a>&nbsp;&nbsp;
+<a class="el" href="opengl.html">[Next] Using OpenGL</a>&nbsp;
 \endhtmlonly
 */
