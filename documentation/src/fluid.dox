@@ -1,4 +1,7 @@
 /**
+ <!-- Warning: \p .fl  does not work but <tt>.fl</tt>  does -->
+ <!-- Warning: \p .h   does not work but <tt>.h</tt>   does -->
+ <!-- Warning: \p .cxx does not work but <tt>.cxx</tt> does -->
 
  \page	fluid	9 - Programming with FLUID
 
@@ -7,14 +10,14 @@ This chapter shows how to use the Fast Light User-Interface Designer
 
 Subchapters:
 
-\li <A HREF="#what_is_fluid">What is FLUID</A>
-\li <A HREF="#fluid_under_linux">Running FLUID Under UNIX</A>
-\li <A HREF="#fluid_under_windows">Running FLUID Under Microsoft Windows</A>
-\li <A HREF="#compiling_fl_files">Compiling <tt>.fl</tt> Files</A>
-\li <A HREF="#tutorial">A Short Tutorial</A>
-\li <A HREF="#references">FLUID Reference</A>
-\li <A HREF="#I18N">Internationalization with FLUID</A>
-\li <A HREF="#limitations">Known Limitations</A>
+\li \ref fluid_what_is_fluid
+\li \ref fluid_fluid_under_unix
+\li \ref fluid_fluid_under_windows
+\li \ref fluid_compiling_fl_files
+\li \ref fluid_tutorial
+\li \ref fluid_references
+\li \ref fluid_i18n
+\li \ref fluid_limitations
 
 <A NAME="what_is_fluid"> </A> <!-- For old HTML links only ! -->
 \section fluid_what_is_fluid What is FLUID?
@@ -29,20 +32,24 @@ FLUID can "compile" the <tt>.fl</tt> file into a
 <tt>.cxx</tt> and a <tt>.h</tt> file. The <tt>.cxx</tt> file
 defines all the objects from the <tt>.fl</tt> file and the
 <tt>.h</tt> file declares all the global ones. FLUID also
-supports localization (<A HREF="#I18N">Internationalization</A>)
+supports localization (\ref fluid_i18n "Internationalization")
 of label strings using message files and the GNU gettext or
 POSIX catgets interfaces.
 
-A simple program can be made by putting all your code (including a <tt>
-main()</tt> function) into the <tt>.fl</tt> file and thus making the <tt>.cxx</tt> file a
+A simple program can be made by putting all your code (including a
+\p main() function) into the <tt>.fl</tt> file and thus making the
+<tt>.cxx</tt> file a
 single source file to compile.  Most programs are more complex than
 this, so you write other <tt>.cxx</tt> files that call the FLUID functions.
-These <tt>.cxx</tt> files must <tt>\#include</tt> the <tt>.h</tt> file or they can <tt>
-\#include</tt> the <tt>.cxx</tt> file so it still appears to be a single source
-file.
+These <tt>.cxx</tt> files must
+\p \#include
+the <tt>.h</tt> file or they can
+\p \#include
+the <tt>.cxx</tt> file so it still appears to be a single source file.
 
  \image html fluid-org.gif "Figure 9-1: FLUID organization"
  \image latex fluid-org.eps "FLUID organization" width=12cm 
+
 Normally the FLUID file defines one or more functions or classes which
 output C++ code.  Each function defines a one or more FLTK
 windows, and all the widgets that go inside those windows.
@@ -52,7 +59,8 @@ Widgets created by FLUID are either "named", "complex named" or
 name (i.e. only alphanumeric and underscore).  In this case FLUID
 defines a global variable or class member that will point at the widget
 after the function defining it is called.  A complex named object has
-punctuation such as '.' or '->' or any other symbols in its name.  In
+punctuation such as <tt>'.'</tt> or <tt>'->'</tt> or any other symbols
+in its name.  In
 this case FLUID assigns a pointer to the widget to the name, but does
 not attempt to declare it.  This can be used to get the widgets into
 structures.  An unnamed widget has a blank name and no pointer is stored.
@@ -70,7 +78,8 @@ To run FLUID under UNIX, type:
 fluid filename.fl &
 \endcode
 
-to edit the <tt>.fl</tt> file <tt>filename.fl</tt>.  If the file does not exist
+to edit the <tt>.fl</tt> file <tt>filename.fl</tt>.
+If the file does not exist
 you will get an error pop-up, but if you dismiss it you will be editing
 a blank file of that name.  You can run FLUID without any name, in
 which case you will be editing an unnamed blank setup (but you can use
@@ -96,14 +105,14 @@ Similarly, using "-scheme plastic" will show how the interface
 will look using the "plastic" scheme.
 
 In the current version, if you don't put FLUID into the
-background with '&' then you will be able to abort FLUID by
-typing <KBD>CTRL-C</KBD> on the terminal. It will exit
+background with <tt>'&'</tt> then you will be able to abort FLUID by
+typing <tt>CTRL-C</tt> on the terminal. It will exit
 immediately, losing any changes.
 
 <A NAME="fluid_under_windows"> </A> <!-- For old HTML links only ! -->
 \section fluid_fluid_under_windows Running FLUID Under Microsoft Windows
 
-To run FLUID under WIN32, double-click on the <I>FLUID.exe</I>
+To run FLUID under WIN32, double-click on the \e FLUID.exe
 file. You can also run FLUID from the Command Prompt window.
 FLUID always runs in the background under WIN32.
 
@@ -119,7 +128,7 @@ fluid -c filename.fl
 \endcode
 
 This will read the <tt>filename.fl</tt> file and write
-<I>filename.cxx</I> and <I> filename.h</I>. Any leading
+<tt>filename.cxx</tt> and <tt>filename.h</tt>. Any leading
 directory on <tt>filename.fl</tt> will be stripped, so they are
 always written to the current directory. If there are any errors
 reading or writing the files, FLUID will print the error and
@@ -152,6 +161,7 @@ FLUID that is used for the CubeView program provided with FLTK.
 
 \image html cubeview.gif "Figure 9-2: CubeView demo"
 \image latex cubeview.eps "CubeView demo" width=10cm
+
 The window is of class CubeViewUI, and is completely generated by FLUID,
 including
 class member functions. The central display of the cube is a separate
@@ -171,8 +181,8 @@ how to:
 \subsection fluid_cubeview The CubeView Class
 
 The CubeView class is a subclass of Fl_Gl_Window. It has methods for
-setting the zoom, the <i>x</i> and <i>y</i> pan, and the rotation angle
-about the <i>x</i> and <i>y</i>axes.
+setting the zoom, the \e x and \e y pan, and the rotation angle
+about the \e x and \e y axes.
 
 You can safely skip this section as long as you realize the CubeView
 is a sublass of Fl_Gl_Window and will respond to calls from
@@ -375,7 +385,7 @@ CubeView defined in the previous section using FLUID.
 \par Defining the CubeViewUI Class
 
 Once you have started FLUID, the first step in defining a class is to
-create a new class within FLUID using the \em New->Code->Class
+create a new class within FLUID using the <b>New->Code->Class</b>
 menu item. Name the class "CubeViewUI" and leave the
 subclass blank. We do not need any inheritance for this
 window. You should see the new class declaration in the FLUID
@@ -383,6 +393,7 @@ browser window.
 
 \image html fluid1.gif "Figure 9-3: FLUID file for CubeView"
 \image latex fluid1.eps "FLUID file for CubeView" width=10cm
+
 <a name="addcon"> </A> <!-- For old HTML links only ! -->
 \par Adding the Class Constructor
 
@@ -397,11 +408,11 @@ the constructor in the FLUID browser window and click on
 <b>New->Group->Window</b>. In a similar manner add the
 following to the CubeViewUI constructor:
 
-\li A horizontal roller named <tt>hrot</tt>
-\li A vertical roller named <tt>vrot</tt>
-\li A horizontal slider named <tt>xpan</tt>
-\li A vertical slider named <tt>ypan</tt>
-\li A horizontal value slider named <tt>zoom</tt>
+\li A horizontal roller named \p hrot
+\li A vertical roller named \p vrot
+\li A horizontal slider named \p xpan
+\li A vertical slider named \p ypan
+\li A horizontal value slider named \p zoom
 
 None of these additions need be public. And they shouldn't be
 unless you plan to expose them as part of the interface for
@@ -411,7 +422,8 @@ When you are finished you should have something like this:
 
 \image html fluid2.gif "Figure 9-4: FLUID window containing CubeView demo"
 \image latex fluid2.eps "FLUID window containing CubeView demo" width=10cm
-We will talk about the <tt>show()</tt> method that is highlighted
+
+We will talk about the \p show() method that is highlighted
 shortly.
 
 <a name="addcube"> </A> <!-- For old HTML links only ! -->
@@ -427,26 +439,27 @@ is created in the same way as a Fl_Box widget. Use
 This will be no ordinary box, however.
 
 The Box properties window will appear. The key to letting CubeViewUI
-display CubeView is to enter CubeView in the "Class:" text
+display CubeView is to enter CubeView in the <b>Class:</b> text
 entry box. This tells FLUID that it is not an Fl_Box, but a
 similar widget with the same constructor. 
 
-In the "Extra Code:" field enter <tt>\#include "CubeView.h"</tt>
+In the <b>Extra Code:</b> field enter <tt>\#include "CubeView.h"</tt>
 
-This <tt>\#include</tt> is important, as we have just included
+This \p \#include is important, as we have just included
 CubeView as a member of CubeViewUI, so any public CubeView methods are
 now available to CubeViewUI.
 
 \image html fluid3-cxx.gif "Figure 9-5: CubeView methods"
 \image latex fluid3-cxx.eps "CubeView methods" width=10cm
+
 <a name="defcall"> </A> <!-- For old HTML links only ! -->
 \par Defining the Callbacks
 
 Each of the widgets we defined before adding CubeView can have
 callbacks that call CubeView methods. You can call an external
-function or put in a short amount of code in the "Callback"
+function or put in a short amount of code in the <b>Callback</b>
 field of the widget panel. For example, the callback for the
-<tt>ypan</tt> slider is:
+\p ypan slider is:
 
 \code
 cube->pany(((Fl_Slider *)o)->value());
@@ -471,14 +484,15 @@ appear on the screen.
 
 Make sure the top level CubeViewUI is selected and select
 <b>New->Code->Function/Method</b>. Just use the name
-<tt>show()</tt>. We don't need a return value here, and since we will
+\p show(). We don't need a return value here, and since we will
 not be adding any widgets to this method FLUID will assign it a return
-type of <tt>void</tt>.
+type of \p void.
 
 \image html fluid4.gif "Figure 9-6: CubeView constructor"
 \image latex fluid4.eps "CubeView constructor" width=10cm
+
 Once the new method has been added, highlight its name and select
-<B>New->Code->Code.</B> Enter the method's code in the code window.
+<b>New->Code->Code.</b> Enter the method's code in the code window.
 
 <a name="addconst"> </A> <!-- For old HTML links only ! -->
 \subsection fluid_addconst Adding Constructor Initialization Code
@@ -515,35 +529,35 @@ edited is shown in the window title.
 
 The widgets are stored in a hierarchy.  You can open and close a
 level by clicking the "triangle" at the left of a widget.
-The leftmost widgets are the <I>parents</I>, and all the widgets
-listed below them are their <I>children</I>.  Parents don't have to have
+The leftmost widgets are the \e parents, and all the widgets
+listed below them are their \e children.  Parents don't have to have
 any children.
 
-The top level of the hierarchy is composed of <I>functions</I> and
-<I>classes</I>.  Each of these will produce a single C++ public
+The top level of the hierarchy is composed of \e functions and
+\e classes.  Each of these will produce a single C++ public
 function or class in the output <tt>.cxx</tt> file.  Calling the function or
 instantiating the class will create all of the child widgets.
 
-The second level of the hierarchy contains the <I>windows</I>.  Each of these
-produces an instance of class <tt>Fl_Window</tt>.
+The second level of the hierarchy contains the \e windows.
+Each of these produces an instance of class Fl_Window.
 
-Below that are either <I>widgets</I> (subclasses of <tt>Fl_Widget</tt>) or <I>
-groups</I> of widgets (including other groups).  Plain groups are for
-layout, navigation, and resize purposes. <I>Tab groups</I> provide the
+Below that are either \e widgets (subclasses of Fl_Widget) or
+\e groups of widgets (including other groups).  Plain groups are for
+layout, navigation, and resize purposes. <i>Tab groups</i> provide the
 well-known file-card tab interface.
 
-Widgets are shown in the browser by either their <I>name</I> (such
-as "main_panel" in the example), or by their <I>type</I>
-and <I>label</I> (such as "Button "the green"").
+Widgets are shown in the browser by either their \e name (such
+as "main_panel" in the example), or by their \e type
+and \e label (such as "Button "the green"").
 
-You <I>select</I> widgets by clicking on their names, which highlights
+You \e select widgets by clicking on their names, which highlights
 them (you can also select widgets from any displayed window).  You can
 select many widgets by dragging the mouse across them, or by using
 Shift+Click to toggle them on and off.  To select no widgets, click in
 the blank area under the last widget.  Note that hidden children may
 be selected even when there is no visual indication of this.
 
-You <I>open</I> widgets by double-clicking on them, or (to open several
+You \e open widgets by double-clicking on them, or (to open several
 widgets you have picked) by typing the F1 key.  A control panel will appear
 so you can change the widget(s).
 
@@ -591,7 +605,7 @@ Asks for a new filename and saves the file.
 
 "Compiles" the data into a <tt>.cxx</tt> and <tt>.h</tt>
 file. These are exactly the same as the files you get when you run
-FLUID with the <tt>-c</tt> switch.
+FLUID with the \c -c switch.
 
 The output file names are the same as the <tt>.fl</tt> file, with
 the leading  directory and trailing ".fl" stripped, and
@@ -605,7 +619,7 @@ the current file.
 The output file name is the same as the <tt>.fl</tt> file,
 with the leading  directory and trailing ".fl"
 stripped, and ".txt", ".po", or ".msg" appended depending on the
-<A HREF="#I18N">Internationalization Mode</A>.
+\ref fluid_i18n "Internationalization Mode".
 
 \par File/Quit (Ctrl+q)
 
@@ -679,12 +693,12 @@ windows within functions.
 
 \par Edit/Later (F3)
 
-<P>Moves all of the selected widgets one later in order among
+Moves all of the selected widgets one later in order among
 the children of their parent (if possible).
 
 \par Edit/Group (F7)
 
-Creates a new <tt>Fl_Group</tt> and make all the currently
+Creates a new Fl_Group and make all the currently
 selected widgets children of it.
 
 \par Edit/Ungroup (F8)
@@ -707,11 +721,12 @@ files the are generated by FLUID.  If you check the "Include .h
 from .cxx" button the code file will include the header file
 automatically.
 
-The internationalization options are described
-<A HREF="#I18N">later in this chapter</A>.
+The \ref fluid_i18n "internationalization" options are described
+later in this chapter.
 
 \image html fluid_prefs.gif "Figure 9-7: FLUID Preferences Window"
 \image latex fluid_prefs.eps "FLUID Preferences Window" width=10cm
+
 \par Edit/GUI Settings... (Shift+Ctrl+p)
 
 Displays the GUI settings panel. This panel is used
@@ -728,14 +743,14 @@ If the function contains any unnamed windows, it will be
 declared as  returning a Fl_Window pointer.  The unnamed window
 will be returned from it  (more than one unnamed window is
 useless).  If the function contains  only named windows, it will
-be declared as returning nothing (<tt>void</tt>).
+be declared as returning nothing (\c void ).
 
 It is possible to make the <tt>.cxx</tt> output be a
 self-contained program  that can be compiled and executed.  This
 is done by deleting the  function name so
-<tt>main(argc,argv)</tt> is used.  The function will call
-<tt>show()</tt> on all the windows it creates and then call
-<tt>Fl::run()</tt>.  This can also be used to test resize
+\p main(argc,argv) is used.  The function will call
+\p show() on all the windows it creates and then call
+\p Fl::run().  This can also be used to test resize
 behavior or other parts of the user  interface.
 
 You can change the function name by double-clicking on the
@@ -743,7 +758,7 @@ function.
 
 \par New/Window
 
-Creates a new <tt>Fl_Window</tt> widget.  The window is added
+Creates a new Fl_Window widget.  The window is added
 to the currently selected  function, or to the function
 containing the currently selected item.  The window will appear,
 sized to 100x100. You can resize it to whatever size you
@@ -755,7 +770,7 @@ this chapter.
 \par New/...
 
 All other items on the New menu are subclasses of
-<tt>Fl_Widget</tt>.  Creating them will add them to the
+Fl_Widget.  Creating them will add them to the
 currently selected group or window, or the group or window
 containing the currently selected widget.  The initial
 dimensions and position are chosen by copying the current
@@ -822,8 +837,8 @@ red overlay so you can see the widgets more accurately,
 especially when setting the box type.
 
 If you have several widgets selected, they may have different
-values for the fields.  In this case the value for <I>one</I> of
-the widgets is shown.  But if you change this value, <I>all</I>
+values for the fields.  In this case the value for \e one of
+the widgets is shown.  But if you change this value, \e all
 of the selected widgets are changed to the new value.
 
 Hitting "OK" makes the changes permanent. 
@@ -842,6 +857,7 @@ undone, however.
 
 \image html fluid_widget_gui.gif "Figure 9-8: The FLUID widget GUI attributes"
 \image latex fluid_widget_gui.eps "The FLUID widget GUI attributes" width=10cm
+
 \section fluid_widget_attributes GUI Attributes
 
 \par Label (text field)
@@ -861,13 +877,13 @@ embossed change the appearance of the text.
 \par Image
 
 The active image for the widget. Click on the
-<B>Browse...</B> button to pick an image file using the file
+\b Browse... button to pick an image file using the file
 chooser.
 
 \par Inactive
 
 The inactive image for the widget. Click on the
-<B>Browse...</B> button to pick an image file using the file
+\b Browse... button to pick an image file using the file
 chooser.
 
 \par Alignment (buttons)
@@ -877,9 +893,9 @@ the widget, you can combine the to put it in the corner.  The
 "box" button puts the label inside the widget, rather
 than outside.
 
-The <B>clip</B> button clips the label to the widget box, the
-<B>wrap</B> button wraps any text in the label, and the <B>text
-image</B> button puts the text over the image instead of under
+The \b clip button clips the label to the widget box, the
+\b wrap button wraps any text in the label, and the
+<b>text image</b> button puts the text over the image instead of under
 the image.
 
 \par Position (text fields)
@@ -899,15 +915,15 @@ shortcut button and press any key sequence to set the shortcut.
 
 \par Attributes (buttons)
 
-The <B>Visible</B> button controls whether the widget is
+The \b Visible button controls whether the widget is
 visible (on) or hidden (off) initially.  Don't change this for
 windows or for the immediate children of a Tabs group.
 
-The <B>Active</B> button controls whether the widget is
+The \b Active button controls whether the widget is
 activated (on) or deactivated (off) initially. Most widgets
 appear greyed out when deactivated.
 
-The <B>Resizable</B> button controls whether the window is
+The \b Resizable button controls whether the window is
 resizeable. In addition all the size changes of a window or
 group will go "into" the resizable child.  If you have
 a large data display surrounded by buttons, you probably want
@@ -915,17 +931,17 @@ that data area to be resizable. You can get more complex
 behavior by making invisible boxes the resizable widget, or by
 using hierarchies of groups.  Unfortunately the only way to test
 it is to compile the program.  Resizing the FLUID window is
-<I>not</I> the same as what will happen in the user program.
+\e not the same as what will happen in the user program.
 
-The <B>Hotspot</B> button causes the parent window to be
+The \b Hotspot button causes the parent window to be
 positioned with that widget centered on the mouse.  This
-position is determined <I>when the FLUID function is called</I>,
+position is determined <i>when the FLUID function is called</i>,
 so you should call it immediately before showing the window.  If
 you want the window to hide and then reappear at a new position,
 you should have your program set the hotspot itself just before
-<tt>show()</tt>.
+\p show().
 
-The <B>Border</B> button turns the window manager border on
+The \b Border button turns the window manager border on
 or off. On most window managers you will have to close the
 window and reopen it to see the effect.
 
@@ -938,6 +954,7 @@ and reopen it to see the effect.
 
 \image html fluid_widget_style.gif "Figure 9-9: The FLUID widget Style attributes"
 \image latex fluid_widget_style.eps "The FLUID widget Style attributes" width=10cm
+
 \subsection fluid_style_attributes Style Attributes
 
 \par Label Font (pulldown menu)
@@ -998,16 +1015,17 @@ menus, and browsers.
 
 \image html fluid_widget_cxx.gif "Figure 9-10: The FLUID widget C++ attributes"
 \image latex fluid_widget_cxx.eps "The FLUID widget C++ attributes" width=10cm
+
 \subsection fluid_cpp_attributes C++ Attributes
 
 \par Class
 
 This is how you use your own subclasses of
-<tt>Fl_Widget</tt>.  Whatever identifier you type in here will
+Fl_Widget.  Whatever identifier you type in here will
 be the class that is instantiated.
 
-In addition, no <tt>\#include</tt> header file is put in the
-<tt>.h</tt> file.  You must provide a <tt>\#include</tt> line as
+In addition, no \p \#include header file is put in the
+<tt>.h</tt> file.  You must provide a \p \#include line as
 the first line of the "Extra Code" which declares your
 subclass.
 
@@ -1016,7 +1034,7 @@ does not have to be a subclass.  It is sometimes useful to
 change this to another FLTK class. Currently the only way to get
 a double-buffered window is to change this field for the window
 to "Fl_Double_Window" and to add
-\code "#include <FL/Fl_Double_Window.h> \endcode
+\code \#include <FL/Fl_Double_Window.h> \endcode
 to the extra code.
 
 \par Type (upper-right pulldown menu)
@@ -1039,9 +1057,9 @@ that in the array must be the same type.
 
 Controls whether the widget is publicly accessible. When
 embedding widgets in a C++ class, this controls whether the
-widget is <tt>public</tt> or <tt>private</tt> in the class.
+widget is \p public or \p private in the class.
 Otherwise is controls whether the widget is declared
-<tt>static</tt> or global (<tt>extern</tt>).
+\p static or global (\p extern ).
 
 \par Extra Code (text fields)
 
@@ -1049,15 +1067,15 @@ These four fields let you type in literal lines of code to
 dump into the <tt>.h</tt> or <tt>.cxx</tt> files.
 
 If the text starts with a <tt>\#</tt> or the word
-<tt>extern</tt> then FLUID thinks this is an "include"
+\p extern then FLUID thinks this is an "include"
 line, and it is written to the <tt>.h</tt> file. If the same
 include line occurs several times then only one copy is
 written.
 
 All other lines are "code" lines.  The current
-widget is pointed to by the local variable <tt>o</tt>.  The
+widget is pointed to by the local variable \p o.  The
 window being constructed is pointed to by the local variable
-<tt>w</tt>.  You can also access any arguments passed to the
+\p w.  You can also access any arguments passed to the
 function here, and any named widgets that are before this
 one.
 
@@ -1078,10 +1096,10 @@ A name names a function in your own code.  It must be
 declared as <tt>void name(<class>*,void*)</tt>.
 
 A code snippet is inserted into a static function in the
-<tt>.cxx</tt> output  file.  The function prototype is <tt>void
-name(class *o, void *v)</tt> so that you can refer to the 
-widget as <tt>o</tt> and the <tt>user_data()</tt> as
-<tt>v</tt>.  FLUID will check for matching  parenthesis, braces,
+<tt>.cxx</tt> output  file.  The function prototype is
+<tt>void name(class *o, void *v)</tt>
+so that you can refer to the widget as \p o and the \p user_data()
+as \p v.  FLUID will check for matching  parenthesis, braces,
 and quotes, but does not do much other error  checking.  Be
 careful here, as it may be hard to figure out what widget  is
 producing an error in the compiler.
@@ -1090,31 +1108,31 @@ If the callback is blank then no callback is set.
 
 \par User Data (text field)
 
-This is a value for the <tt>user_data()</tt> of the widget. 
+This is a value for the \p user_data() of the widget. 
 If blank the default value of zero is used.  This can be any
-piece of C code that can be cast to a <tt>void</tt> pointer.
+piece of C code that can be cast to a \p void pointer.
 
 \par Type (text field)
 
-The <tt>void *</tt> in the callback function prototypes is
-replaced with this. You may want to use <tt>long</tt> for old
-XForms code.  Be warned that anything other than <tt>void *</tt>
+The \p void* in the callback function prototypes is
+replaced with this. You may want to use \p long for old
+XForms code.  Be warned that anything other than \p void*
 is not guaranteed to work! However on most architectures other
-pointer types are ok, and <tt>long</tt> is usually ok, too.
+pointer types are ok, and \p long is usually ok, too.
 
 \par When (pulldown menu)
 
-When to do the callback. This can be <B>Never</B>,
-<B>Changed</B>, <B>Release</B>, or <B>Enter Key</B>. The value of
-<B>Enter Key</B> is only useful for text input fields.
+When to do the callback. This can be \b Never,
+\b Changed, \b Release, or \b Enter Key. The value of
+<b>Enter Key</b> is only useful for text input fields.
 
 There are other rare but useful values for the
-<tt>when()</tt> field that are not in the menu. You should use
+\p when() field that are not in the menu. You should use
 the extra code fields to put these values in.
 
 \par No Change (button)
 
-The <B>No Change</B> button means the callback is done on the
+The <b>No Change</b> button means the callback is done on the
 matching event even if the data is not changed.
 
 \section fluid_selecting_moving Selecting and Moving Widgets
@@ -1122,7 +1140,7 @@ matching event even if the data is not changed.
 Double-clicking a window name in the browser will display it,
 if not displayed yet.  From this display you can select widgets,
 sets of widgets, and move or resize them.  To close a window
-either double-click it or type <KBD>ESC</KBD>.
+either double-click it or type \c ESC.
 
 To select a widget, click it. To select several widgets drag
 a rectangle around them.  Holding down shift will toggle the
@@ -1174,14 +1192,14 @@ There are three extra items:
 
 \section fluid_images Image Labels
 
-The <I>contents</I> of the image files in the <B>Image</B>
-and <B>Inactive</B> text fields are written to the <tt>.cxx</tt>
+The \e contents of the image files in the \b Image
+and \b Inactive text fields are written to the <tt>.cxx</tt>
 file. If many widgets share the same image then only one copy is
 written. Since the image data is embedded in the generated
 source code, you need only distribute the C++ code and not the
 image files themselves.
 
-However, the <I>filenames</I> are stored in the <tt>.fl</tt>
+However, the \e filenames are stored in the <tt>.fl</tt>
 file so you will need the image files as well to read the
 <tt>.fl</tt> file. Filenames are relative to the location of the
 <tt>.fl</tt> file and not necessarily the current directory. We
@@ -1230,7 +1248,7 @@ adequate job of editing bitmaps.
 
 \par XPM (X Pixmap) Files
 
-FLUID reads X pixmap files as used by the <tt>libxpm</tt>
+FLUID reads X pixmap files as used by the \p libxpm
 library. These files use C source code to define a pixmap. The
 filenames usually have the ".xpm" extension.
 
@@ -1306,8 +1324,8 @@ calling the widget constructor.
 
 FLUID's code support for GNU gettext is limited to calling a
 function or macro to retrieve the localized label; you still
-need to call <tt>setlocale()</tt> and <tt>textdomain()</tt> or
-<tt>bindtextdomain()</tt> to select the appropriate language and
+need to call \p setlocale() and \p textdomain() or
+\p bindtextdomain() to select the appropriate language and
 message file.
 
 To use GNU gettext for I18N, open the preferences window and
@@ -1318,20 +1336,22 @@ strings.
 
  \image html fluid-gettext.gif "Figure 9-11: Internationalization using GNU gettext"
  \image latex fluid-gettext.eps "Internationalization using GNU gettext" width=10cm
-The "\#include" field controls the header file to include for
+
+The \p \#include
+field controls the header file to include for
 I18N; by default this is \b <libintl.h>, the
 standard I18N file for GNU gettext.
 
 The "Function" field controls the function (or macro) that
 will retrieve the localized message; by default the
-<tt>gettext</tt> function will be called.
+\p gettext function will be called.
 
 \subsection fluid_catgets_i18n Using POSIX catgets for I18N
 
 FLUID's code support for POSIX catgets allows you to use a
 global message file for all interfaces or a file specific to
 each <tt>.fl</tt> file; you still need to call
-<tt>setlocale()</tt> to select the appropriate language.
+\p setlocale() to select the appropriate language.
 
 To use POSIX catgets for I18N, open the preferences window
 and choose "POSIX catgets" from the "Use" chooser. Three new
@@ -1341,7 +1361,9 @@ strings.
 
  \image html fluid-catgets.gif "Figure 9-12: Internationalization using POSIX catgets"
  \image latex fluid-catgets.eps "Internationalization using POSIX catgets" width=10cm
-The "\#include" field controls the header file to include for
+
+The \p \#include
+field controls the header file to include for
 I18N; by default this is \b <nl_types.h>, the
 standard I18N file for POSIX catgets.
 
