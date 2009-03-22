@@ -46,7 +46,7 @@ void fl_save_dc(HWND, HDC);
 
 static Fl_Gl_Choice *first;
 
-// this assummes one of the two arguments is zero:
+// this assumes one of the two arguments is zero:
 // We keep the list system in Win32 to stay compatible and interpret
 // the list later...
 Fl_Gl_Choice *Fl_Gl_Choice::find(int m, const int *alistp) {

@@ -91,7 +91,7 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   for (;;) {
     XEvent e; XWindowEvent(fl_display, fl_window, ExposureMask, &e);
     if (e.type == NoExpose) break;
-    // otherwise assumme it is a GraphicsExpose event:
+    // otherwise assume it is a GraphicsExpose event:
     draw_area(data, e.xexpose.x, e.xexpose.y,
 	      e.xexpose.width, e.xexpose.height);
     if (!e.xgraphicsexpose.count) break;

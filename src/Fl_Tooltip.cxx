@@ -209,7 +209,7 @@ void Fl_Tooltip::exit_(Fl_Widget *w) {
 
 // Get ready to display a tooltip. The widget and the xywh box inside
 // it define an area the tooltip is for, this along with the current
-// mouse position places the tooltip (the mouse is assummed to point
+// mouse position places the tooltip (the mouse is assumed to point
 // inside or near the box).
 /**
   You may be able to use this to provide tooltips for internal pieces

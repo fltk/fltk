@@ -191,7 +191,7 @@ static int ultrasort(const void *aa, const void *bb) {
     if (*b != '-') return -1;
   }
 
-  // skip the foundry (assumme equal):
+  // skip the foundry (assume equal):
   for (a++; *a && *a++!='-';);
   for (b++; *b && *b++!='-';);
 

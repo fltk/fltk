@@ -423,7 +423,7 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
 
   m->draw(xx, yy, ww, hh, button, n==selected);
 
-  // the shortcuts and arrows assumme fl_color() was left set by draw():
+  // the shortcuts and arrows assume fl_color() was left set by draw():
   if (m->submenu()) {
     int sz = (hh-7)&-2;
     int y1 = yy+(hh-sz)/2;

@@ -1447,7 +1447,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
 
     if (win->border()) {
       // ensure border is on screen:
-      // (assumme extremely minimal dimensions for this border)
+      // (assume extremely minimal dimensions for this border)
       const int top = 20;
       const int left = 1;
       const int right = 1;
@@ -1696,7 +1696,7 @@ void Fl_Window::label(const char *name,const char *iname) {
 //
 // On XFree86 (and prehaps all X's) this has a problem if the window
 // is resized while a save-behind window is atop it.  The previous
-// contents are restored to the area, but this assummes the area
+// contents are restored to the area, but this assumes the area
 // is cleared to background color.  So this is disabled in this version.
 // Fl_Window *fl_boxcheat;
 static inline int can_boxcheat(uchar b) {return (b==1 || (b&2) && b<=15);}

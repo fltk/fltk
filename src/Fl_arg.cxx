@@ -336,7 +336,7 @@ void Fl_Window::show(int argc, char **argv) {
       //  if (mh > gh) gh = mh;
       Fl_Widget *r = resizable();
       if (!r) resizable(this);
-      // for WIN32 we assumme window is not mapped yet:
+      // for WIN32 we assume window is not mapped yet:
       if (fl & (XValue | YValue))
 	x(-1), resize(gx,gy,gw,gh);
       else

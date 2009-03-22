@@ -302,7 +302,7 @@ ulong fl_xpixel(Fl_Color i) {
     xmap.pixel = p.pixel;
   } else {
     // However, if that XAllocColor fails, I have to give up and
-    // assumme the pixel is ok for the duration of the program.  This
+    // assume the pixel is ok for the duration of the program.  This
     // is due to bugs (?) in the Solaris X and some X terminals
     // where XAllocColor *always* fails when the colormap is full,
     // even if we ask for a color already in it...

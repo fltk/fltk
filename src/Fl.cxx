@@ -1234,7 +1234,7 @@ Fl_Window::~Fl_Window() {
 // FL_SHOW and FL_HIDE are called whenever the visibility of this widget
 // or any parent changes.  We must correctly map/unmap the system's window.
 
-// For top-level windows it is assummed the window has already been
+// For top-level windows it is assumed the window has already been
 // mapped or unmapped!!!  This is because this should only happen when
 // Fl_Window::show() or Fl_Window::hide() is called, or in response to
 // iconize/deiconize events from the system.

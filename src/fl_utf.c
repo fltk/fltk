@@ -211,8 +211,8 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
   \e start is the start of the string and is used to limit the
   backwards search for the start of a utf8 character.
 
-  \e end is the end of the string and is assummed to be a break
-  between characters. It is assummed to be greater than p.
+  \e end is the end of the string and is assumed to be a break
+  between characters. It is assumed to be greater than p.
 
   This function is for moving a pointer that was jumped to the
   middle of a string, such as when doing a binary search for
@@ -247,8 +247,8 @@ const char* fl_utf8fwd(const char* p, const char* start, const char* end)
   \e start is the start of the string and is used to limit the
   backwards search for the start of a UTF-8 character.
 
-  \e end is the end of the string and is assummed to be a break
-  between characters. It is assummed to be greater than p.
+  \e end is the end of the string and is assumed to be a break
+  between characters. It is assumed to be greater than p.
 
   If you wish to decrement a UTF-8 pointer, pass p-1 to this.
 */
@@ -655,7 +655,7 @@ int fl_utf8locale(void) {
     ret = GetACP() == CP_UTF8;
 #else
     char* s;
-    ret = 1; /* assumme UTF-8 if no locale */
+    ret = 1; /* assume UTF-8 if no locale */
     if (((s = getenv("LC_CTYPE")) && *s) ||
 	((s = getenv("LC_ALL"))   && *s) ||
 	((s = getenv("LANG"))     && *s)) {

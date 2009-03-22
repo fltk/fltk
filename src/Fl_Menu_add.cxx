@@ -120,7 +120,7 @@ int Fl_Menu_Item::add(
   // split at slashes to make submenus:
   for (;;) {
 
-    // leading slash makes us assumme it is a filename:
+    // leading slash makes us assume it is a filename:
     if (*mytext == '/') {item = mytext; break;}
 
     // leading underscore causes divider line:

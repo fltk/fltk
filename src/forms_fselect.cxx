@@ -31,7 +31,7 @@
 #include "flstring.h"
 
 static char fl_directory[1024];
-static const char *fl_pattern;  // assummed passed value is static
+static const char *fl_pattern;  // assumed passed value is static
 static char fl_filename[1024];
 
 char* fl_show_file_selector(const char *message,const char *dir,
