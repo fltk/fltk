@@ -11,24 +11,21 @@ that will help you to get the most out of FLTK.
 FLTK supports multithreaded application using a locking mechanism
 based on "pthreads". We do not provide a threading interface as part of
 the library.  However a simple example how threads can be implemented
-for all supported platforms can be found in <tt>test/threads.h</tt>
-and <tt>test/threads.cxx</tt>.
+for all supported platforms can be found in \p test/threads.h
+and \p test/threads.cxx.
 
 To use the locking mechanism, FLTK must be compiled with
-<tt>--enable-threads</tt> set during the <tt>configure</tt>
+\p --enable-threads set during the \p configure
 process. IDE-based versions of FLTK are automatically compiled with
 locking enabled if possible.
 
-In <TT>main()</TT>, call
-<a href="Fl.html#Fl.lock"><TT>Fl::lock()</TT></A> before
-<A HREF="Fl.html#Fl.run"><TT>Fl::run()</TT></A> or
-<A HREF="Fl.html#Fl.wait"><TT>Fl::wait()</TT></A>
-to start the runtime
+In \p main(), call
+Fl::lock() before
+Fl::run() or
+Fl::wait() to start the runtime
 multithreading support for your program. All callbacks and derived
-functions like <tt>handle()</tt> and <tt>draw()</tt> will now be properly
+functions like \p handle() and \p draw() will now be properly
 locked:
-
-}
 
 \code
     int main() {
@@ -44,8 +41,7 @@ locked:
 
 You can now start as many threads as you like. From within
 a thread (other than the main thread) FLTK calls must be wrapped
-with calls to <a href="Fl.html#Fl.lock"><tt>Fl::lock()</tt></a> 
-and <a href="Fl.html#Fl.unlock"><tt>Fl::unlock()</tt></a>:
+with calls to Fl::lock() and Fl::unlock():
 
 \code
     Fl::lock();      // avoid conflicting calls
@@ -54,7 +50,7 @@ and <a href="Fl.html#Fl.unlock"><tt>Fl::unlock()</tt></a>:
 \endcode
 
 You can send messages from child threads to the main thread 
-using <a href="Fl.html#Fl.awake"><tt>Fl::awake(msg)</tt></a>:</p>
+using Fl::awake(void* message):
 
 \code
     void *msg;       // "msg" is a pointer to your message
@@ -63,7 +59,7 @@ using <a href="Fl.html#Fl.awake"><tt>Fl::awake(msg)</tt></a>:</p>
 
 You can also tell the main thread to call a function for you
 as soon as possible by using
-<a href="Fl.html#Fl.awake"><tt>Fl::awake(callback, userdata)</tt></a>:</p>
+Fl::awake(Fl_Awake_Handler cb, void* userdata):
 
 \code
     void do_something(void *userdata) {
@@ -82,27 +78,27 @@ open or close windows. The safe thing to do is to adhere to the
 following rules for threads on all operating systems:
 
 
-\li Don't <tt>show()</tt> or <tt>hide()</tt>anything that contains 
-    widgets derived from <tt>Fl_Window</tt>, including dialogs, file
-    choosers, subwindows or <tt>Fl_GL_Window</tt>s
+\li Don't \p show() or \p hide() anything that contains 
+    widgets derived from Fl_Window, including dialogs, file
+    choosers, subwindows or Fl_Gl_Window's
 
-\li Don't call <tt>Fl::wait()</tt>, <tt>Fl::flush()</tt> or any 
+\li Don't call Fl::wait(), Fl::flush() or any 
     related methods that will handle system messages
 
 \li Don't start or cancel timers
 
 \li Don't change window decorations or titles
 
-\li The <tt>make_current()</tt> method may or may not work well for
-    regular windows, but should always work for <tt>Fl_GL_Window</tt>s
+\li The \p make_current() method may or may not work well for
+    regular windows, but should always work for Fl_Gl_Window's
     to allow for high speed rendering on graphics cards with multiple
     pipelines
 
 See also: 
-<a href="Fl.html#Fl.awake">void awake(void *message)</A>, 
-<a href="Fl.html#Fl.lock">void lock()</A>, 
-<a href="Fl.html#Fl.thread_message">void *thread_message()</A>,
-<a href="Fl.html#Fl.unlock">void unlock()</A>.
+Fl::awake(void* message),
+Fl::lock(),
+Fl::thread_message(),
+Fl::unlock().
 
 \htmlonly
 <hr>
