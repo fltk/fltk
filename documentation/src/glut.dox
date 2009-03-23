@@ -211,10 +211,18 @@ be altered directly:
 \li \ref glut_fl_glut_window_destructor "~Fl_Glut_Window()"
 \li \ref glut_make_current "make_current()"
 
+\todo	The following \\htmlonly is not intended to be there. Something in the
+	following text creates 2 garbage pages at the beginning of the pdf docs,
+	but I don't know yet, what it is exactly ... Instead, the html output
+	is garbled - we need to fix this ASAP (A.S.)
+
+\htmlonly
+
 <A name="Fl_Glut_Window.Fl_Glut_Window"></A> <!-- For old HTML links only ! -->
 \anchor glut_fl_glut_window_constructor
-Fl_Glut_Window::Fl_Glut_Window(int x, int y, int w, int h, const char
-*title = 0) <br>
+
+Fl_Glut_Window::Fl_Glut_Window(int x, int y, int w, int h, const char *title = 0)
+
 Fl_Glut_Window::Fl_Glut_Window(int w, int h, const char *title = 0)
 
 \par
@@ -237,7 +245,7 @@ void Fl_Glut_Window::make_current()
 \par
 Switches all drawing functions to the GLUT window.
 
-\htmlonly
+<!-- After fixing the above todo, add \htmlonly here -->
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="enumerations.html">[Previous] FLTK Enumerations</a> &nbsp;&nbsp;
