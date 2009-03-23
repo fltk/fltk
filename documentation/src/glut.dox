@@ -211,13 +211,6 @@ be altered directly:
 \li \ref glut_fl_glut_window_destructor "~Fl_Glut_Window()"
 \li \ref glut_make_current "make_current()"
 
-\todo	The following \\htmlonly is not intended to be there. Something in the
-	following text creates 2 garbage pages at the beginning of the pdf docs,
-	but I don't know yet, what it is exactly ... Instead, the html output
-	is garbled - we need to fix this ASAP (A.S.)
-
-\htmlonly
-
 <A name="Fl_Glut_Window.Fl_Glut_Window"></A> <!-- For old HTML links only ! -->
 \anchor glut_fl_glut_window_constructor
 
@@ -231,7 +224,7 @@ a preset position and size.  The second constructor with 2 arguments
 will create the window with a preset size, but the window manager will
 choose the position according to it's own whims.
 
-<A name="Fl_Glut_Window.~Fl_Glut_Window"> </A> <!-- For old HTML links only ! -->
+<A name="Fl_Glut_Window.__Fl_Glut_Window"> </A> <!-- For old HTML links only ! -->
 \anchor glut_fl_glut_window_destructor
 virtual Fl_Glut_Window::~Fl_Glut_Window()
 
@@ -245,7 +238,7 @@ void Fl_Glut_Window::make_current()
 \par
 Switches all drawing functions to the GLUT window.
 
-<!-- After fixing the above todo, add \htmlonly here -->
+\htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="enumerations.html">[Previous] FLTK Enumerations</a> &nbsp;&nbsp;
