@@ -103,7 +103,7 @@ static unsigned short cp1252[32] = {
     and \e len is set the the number of bytes in the UTF-8 encoding
     (adding \e len to \e p will point at the next character).
 
-    If \a p points at an illegal UTF-8 encoding, including one that
+    If \p p points at an illegal UTF-8 encoding, including one that
     would go past \e end, or where a code is uses more bytes than
     necessary, then *(unsigned char*)p is translated as though it is
     in the Microsoft CP1252 character set and \e len is set to 1.
@@ -203,7 +203,7 @@ unsigned fl_utf8decode(const char* p, const char* end, int* len)
   }
 }
 
-/*! Move \a p forward until it points to the start of a UTF-8
+/*! Move \p p forward until it points to the start of a UTF-8
   character. If it already points at the start of one then it
   is returned unchanged. Any UTF-8 errors are treated as though each
   byte of the error is an individual character.
@@ -239,7 +239,7 @@ const char* fl_utf8fwd(const char* p, const char* start, const char* end)
   return p;
 }
 
-/*! Move \a p backward until it points to the start of a UTF-8
+/*! Move \p p backward until it points to the start of a UTF-8
   character. If it already points at the start of one then it
   is returned unchanged. Any UTF-8 errors are treated as though each
   byte of the error is an individual character.
@@ -270,7 +270,7 @@ const char* fl_utf8back(const char* p, const char* start, const char* end)
 }
 
 /*! Returns number of bytes that utf8encode() will use to encode the
-  character \a ucs. */
+  character \p ucs. */
 int fl_utf8bytes(unsigned ucs) {
   if (ucs < 0x000080U) {
     return 1;
@@ -287,7 +287,7 @@ int fl_utf8bytes(unsigned ucs) {
 
 /*! Write the UTF-8 encoding of \e ucs into \e buf and return the
     number of bytes written. Up to 4 bytes may be written. If you know
-    that \a ucs is less than 0x10000 then at most 3 bytes will be written.
+    that \p ucs is less than 0x10000 then at most 3 bytes will be written.
     If you wish to speed this up, remember that anything less than 0x80
     is written as a single byte.
 
@@ -295,7 +295,7 @@ int fl_utf8bytes(unsigned ucs) {
     according to RFC 3629. These are converted as though they are
     0xFFFD (REPLACEMENT CHARACTER).
 
-    RFC 3629 also says many other values for \a ucs are illegal (in
+    RFC 3629 also says many other values for \p ucs are illegal (in
     the range 0xd800 to 0xdfff, or ending with 0xfffe or
     0xffff). However I encode these as though they are legal, so that
     utf8encode/fl_utf8decode will be the identity for all codes between 0
@@ -332,19 +332,19 @@ int fl_utf8encode(unsigned ucs, char* buf) {
 /*! Convert a UTF-8 sequence into an array of wchar_t. These
     are used by some system calls, especially on Windows.
 
-    \a src points at the UTF-8, and \a srclen is the number of bytes to
+    \p src points at the UTF-8, and \p srclen is the number of bytes to
     convert.
 
-    \a dst points at an array to write, and \a dstlen is the number of
-    locations in this array. At most \a dstlen-1 words will be
+    \p dst points at an array to write, and \p dstlen is the number of
+    locations in this array. At most \p dstlen-1 words will be
     written there, plus a 0 terminating word. Thus this function
     will never overwrite the buffer and will always return a
-    zero-terminated string. If \a dstlen is zero then \a dst can be
+    zero-terminated string. If \p dstlen is zero then \p dst can be
     null and no data is written, but the length is returned.
 
     The return value is the number of words that \e would be written
-    to \a dst if it were long enough, not counting the terminating
-    zero. If the return value is greater or equal to \a dstlen it
+    to \p dst if it were long enough, not counting the terminating
+    zero. If the return value is greater or equal to \p dstlen it
     indicates truncation, you can then allocate a new array of size
     return+1 and call this again.
 
@@ -442,14 +442,14 @@ unsigned fl_utf8towc(const char* src, unsigned srclen,
     fl_utf8decode() does. This allows ISO-8859-1 text mistakenly identified
     as UTF-8 to be printed correctly (and possibly CP1512 on Windows).
 
-    \a src points at the UTF-8, and \a srclen is the number of bytes to
+    \p src points at the UTF-8, and \p srclen is the number of bytes to
     convert.
 
-    Up to \a dstlen bytes are written to \a dst, including a null
+    Up to \p dstlen bytes are written to \p dst, including a null
     terminator. The return value is the number of bytes that would be
     written, not counting the null terminator. If greater or equal to
-    \a dstlen then if you malloc a new array of size n+1 you will have
-    the space needed for the entire string. If \a dstlen is zero then
+    \p dstlen then if you malloc a new array of size n+1 you will have
+    the space needed for the entire string. If \p dstlen is zero then
     nothing is written and this call just measures the storage space
     needed.
 */
@@ -490,20 +490,20 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
 /*! Turn "wide characters" as returned by some system calls
     (especially on Windows) into UTF-8.
 
-    Up to \a dstlen bytes are written to \a dst, including a null
+    Up to \p dstlen bytes are written to \p dst, including a null
     terminator. The return value is the number of bytes that would be
     written, not counting the null terminator. If greater or equal to
-    \a dstlen then if you malloc a new array of size n+1 you will have
-    the space needed for the entire string. If \a dstlen is zero then
+    \p dstlen then if you malloc a new array of size n+1 you will have
+    the space needed for the entire string. If \p dstlen is zero then
     nothing is written and this call just measures the storage space
     needed.
 
-    \a srclen is the number of words in \a src to convert. On Windows
+    \p srclen is the number of words in \p src to convert. On Windows
     this is not necessairly the number of characters, due to there
     possibly being "surrogate pairs" in the UTF-16 encoding used.
     On Unix wchar_t is 32 bits and each location is a character.
 
-    On Unix if a \a src word is greater than 0x10ffff then this is an
+    On Unix if a \p src word is greater than 0x10ffff then this is an
     illegal character according to RFC 3629. These are converted as
     though they are 0xFFFD (REPLACEMENT CHARACTER). Characters in the
     range 0xd800 to 0xdfff, or ending with 0xfffe or 0xffff are also
@@ -588,17 +588,17 @@ unsigned fl_utf8fromwc(char* dst, unsigned dstlen,
     instead. This would translate the codes in the range 0x80-0x9f
     to different characters. Currently it does not do this.
 
-    Up to \a dstlen bytes are written to \a dst, including a null
+    Up to \p dstlen bytes are written to \p dst, including a null
     terminator. The return value is the number of bytes that would be
     written, not counting the null terminator. If greater or equal to
-    \a dstlen then if you malloc a new array of size n+1 you will have
-    the space needed for the entire string. If \a dstlen is zero then
+    \p dstlen then if you malloc a new array of size n+1 you will have
+    the space needed for the entire string. If \p dstlen is zero then
     nothing is written and this call just measures the storage space
     needed.
 
-    \a srclen is the number of bytes in \a src to convert.
+    \p srclen is the number of bytes in \p src to convert.
 
-    If the return value equals \a srclen then this indicates that
+    If the return value equals \p srclen then this indicates that
     no conversion is necessary, as only ASCII characters are in the
     string.
 */
@@ -671,17 +671,17 @@ int fl_utf8locale(void) {
     Unfortunately due to stupid design you will have to do this as
     needed for filenames. This is a bug on both Unix and Windows.
 
-    Up to \a dstlen bytes are written to \a dst, including a null
+    Up to \p dstlen bytes are written to \p dst, including a null
     terminator. The return value is the number of bytes that would be
     written, not counting the null terminator. If greater or equal to
-    \a dstlen then if you malloc a new array of size n+1 you will have
-    the space needed for the entire string. If \a dstlen is zero then
+    \p dstlen then if you malloc a new array of size n+1 you will have
+    the space needed for the entire string. If \p dstlen is zero then
     nothing is written and this call just measures the storage space
     needed.
 
     If fl_utf8locale() returns true then this does not change the data.
     It is copied and truncated as necessary to
-    the destination buffer and \a srclen is always returned.
+    the destination buffer and \p srclen is always returned.
 */
 unsigned fl_utf8to_mb(const char* src, unsigned srclen,
 		  char* dst, unsigned dstlen)
@@ -744,17 +744,17 @@ unsigned fl_utf8to_mb(const char* src, unsigned srclen,
 /*! Convert a filename from the locale-specific multibyte encoding
     used by Windows to UTF-8 as used by FLTK.
 
-    Up to \a dstlen bytes are written to \a dst, including a null
+    Up to \p dstlen bytes are written to \p dst, including a null
     terminator. The return value is the number of bytes that would be
     written, not counting the null terminator. If greater or equal to
-    \a dstlen then if you malloc a new array of size n+1 you will have
-    the space needed for the entire string. If \a dstlen is zero then
+    \p dstlen then if you malloc a new array of size n+1 you will have
+    the space needed for the entire string. If \p dstlen is zero then
     nothing is written and this call just measures the storage space
     needed.
 
     On Unix or on Windows when a UTF-8 locale is in effect, this
     does not change the data. It is copied and truncated as necessary to
-    the destination buffer and \a srclen is always returned.
+    the destination buffer and \p srclen is always returned.
     You may also want to check if fl_utf8test() returns non-zero, so that
     the filesystem can store filenames in UTF-8 encoding regardless of
     the locale.
@@ -808,14 +808,14 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen,
   return srclen;
 }
 
-/*! Examines the first \a srclen bytes in \a src and returns a verdict
+/*! Examines the first \p srclen bytes in \p src and returns a verdict
     on whether it is UTF-8 or not.
     - Returns 0 if there is any illegal UTF-8 sequences, using the
       same rules as fl_utf8decode(). Note that some UCS values considered
       illegal by RFC 3629, such as 0xffff, are considered legal by this.
     - Returns 1 if there are only single-byte characters (ie no bytes
       have the high bit set). This is legal UTF-8, but also indicates
-      plain ASCII. It also returns 1 if \a srclen is zero.
+      plain ASCII. It also returns 1 if \p srclen is zero.
     - Returns 2 if there are only characters less than 0x800.
     - Returns 3 if there are only characters less than 0x10000.
     - Returns 4 if there are characters in the 0x10000 to 0x10ffff range.

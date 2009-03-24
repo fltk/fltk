@@ -322,7 +322,7 @@ Fl_Color fl_color_;
 /**
   Sets the color for all subsequent drawing operations.
   For colormapped displays, a color cell will be allocated out of
-  \a fl_colormap the first time you use a color. If the colormap fills up
+  \p fl_colormap the first time you use a color. If the colormap fills up
   then a least-squares algorithm is used to find the closest color.
   If no valid graphical context (fl_gc) is available,
   the foreground is not set for the current window.
@@ -340,7 +340,7 @@ void fl_color(Fl_Color i) {
 }
 
 /**
-  Free color \a i if used, and clear mapping table entry.
+  Free color \p i if used, and clear mapping table entry.
   \param[in] i color index
   \param[in] overlay 0 for normal, 1 for overlay color
 */
@@ -364,7 +364,7 @@ void Fl::free_color(Fl_Color i, int overlay) {
 }
 
 /**
-  Set color mapping table entry \a i to color \a c
+  Set color mapping table entry \p i to color \p c
   \param[in] i color index
   \param[in] c color
 */
@@ -420,7 +420,7 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
   \code
   color = color1 * weight  + color2 * (1 - weight)
   \endcode
-  Thus, a \a weight value of 1.0 will return the first color, while a
+  Thus, a \p weight value of 1.0 will return the first color, while a
   value of 0.0 will return the second color.
   \param[in] color1, color2 boundary colors
   \param[in] weight weighting factor
@@ -453,7 +453,7 @@ Fl_Color fl_inactive(Fl_Color c) {
 /**
   Returns a color that contrasts with the background color.
   This will be the foreground color if it contrasts sufficiently with the
-  background color. Otherwise, returns \a FL_WHITE or \a FL_BLACK depending
+  background color. Otherwise, returns \p FL_WHITE or \p FL_BLACK depending
   on which color provides the best contrast.
   \param[in] fg,bg foreground and background colors
   \return contrasting color

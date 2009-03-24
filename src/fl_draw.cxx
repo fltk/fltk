@@ -102,7 +102,7 @@ static bool handle_utf8_seq(const char * &s,char * &d) {
 }
 
 /**
- Copy \a from to \a buf, replacing unprintable characters with ^X and \\nnn.
+ Copy \p from to \p buf, replacing unprintable characters with ^X and \\nnn.
 
  Stop at a newline or if MAXBUF characters written to buffer.
  Also word-wrap if width exceeds maxw.
@@ -178,7 +178,7 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
 
 /**
   The same as fl_draw(const char*,int,int,int,int,Fl_Align,Fl_Image*,int) with
-  the addition of the \a callthis parameter, which is a pointer to a text drawing
+  the addition of the \p callthis parameter, which is a pointer to a text drawing
   function such as fl_draw(const char*, int, int, int) to do the real work
 */
 void fl_draw(
@@ -333,11 +333,11 @@ void fl_draw(
   The string is formatted and aligned inside the passed box.
   Handles '\\t' and '\\n', expands all other control characters to '^X',
   and aligns inside or against the edges of the box.
-  See Fl_Widget::align() for values of \a align. The value FL_ALIGN_INSIDE
+  See Fl_Widget::align() for values of \p align. The value FL_ALIGN_INSIDE
   is ignored, as this function always prints inside the box.
-  If \a img is provided and is not \a NULL, the image is drawn above or
-  below the text as specified by the \a align value.
-  The \a draw_symbols argument specifies whether or not to look for symbol
+  If \p img is provided and is not \p NULL, the image is drawn above or
+  below the text as specified by the \p align value.
+  The \p draw_symbols argument specifies whether or not to look for symbol
   names starting with the '\@' character'
   The text length is limited to 1024 characters per line.
 */
@@ -356,7 +356,7 @@ void fl_draw(
 
 /**
   Measure how wide and tall the string will be when printed by the
-  fl_draw() function with \a align parameter. If the incoming \a w
+  fl_draw() function with \p align parameter. If the incoming \p w
   is non-zero it will wrap to that width.
   \param[in] str nul-terminated string
   \param[out] w,h width and height of string in current font

@@ -57,8 +57,8 @@
 
   If a complete circle is drawn it will fit inside the passed bounding box.
   The two angles are measured in degrees counterclockwise from 3 o'clock and
-  are the starting and ending angle of the arc, \a a2 must be greater or equal
-  to \a a1.
+  are the starting and ending angle of the arc, \p a2 must be greater or equal
+  to \p a1.
 
   fl_arc() draws a series of lines to approximate the arc. Notice that the
   integer version of fl_arc() has a different number of arguments than the
@@ -66,8 +66,8 @@
 
   \param[in] x,y,w,h bounding box of complete circle
   \param[in] a1,a2 start and end angles of arc measured in degrees
-             counter-clockwise from 3 o'clock. \a a2 must be greater
-	     than or equal to \a a1.
+             counter-clockwise from 3 o'clock. \p a2 must be greater
+	     than or equal to \p a1.
 */
 void fl_arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
@@ -111,8 +111,8 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
 
   \param[in] x,y,w,h bounding box of complete circle
   \param[in] a1,a2 start and end angles of arc measured in degrees
-             counter-clockwise from 3 o'clock. \a a2 must be greater
-	     than or equal to \a a1.
+             counter-clockwise from 3 o'clock. \p a2 must be greater
+	     than or equal to \p a1.
 */
 void fl_pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;

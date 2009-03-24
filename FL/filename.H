@@ -34,7 +34,7 @@
     @{ */
 
 #  define FL_PATH_MAX 256 /**< all path buffers should use this length */
-/** Gets the file name from a path. \return a pointer to the char after the last slash, or to \a filename if there is none. */
+/** Gets the file name from a path. \return a pointer to the char after the last slash, or to \p filename if there is none. */
 FL_EXPORT const char *fl_filename_name(const char * filename);
 FL_EXPORT const char *fl_filename_ext(const char *);
 FL_EXPORT char *fl_filename_setext(char *to, int tolen, const char *ext);

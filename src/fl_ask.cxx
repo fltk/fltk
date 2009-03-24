@@ -317,7 +317,7 @@ void fl_alert(const char *fmt, ...) {
   va_end(ap);
   iconlabel = "?";
 }
-/** Shows a dialog displaying the \a fmt message,
+/** Shows a dialog displaying the \p fmt message,
     this dialog features 2 yes/no buttons
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \retval 0 if the no button is selected
@@ -335,15 +335,15 @@ int fl_ask(const char *fmt, ...) {
   return r;
 }
 
-/** Shows a dialog displaying the \a fmt message,
+/** Shows a dialog displaying the \p fmt message,
     this dialog features up to 3 customizable choice buttons
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] b0 text label of button 0
    \param[in] b1 text label of button 1
    \param[in] b2 text label of button 2
-   \retval 0 if the first button with \a b0 text is selected
-   \retval 1 if the second button with \a b1 text is selected
-   \retval 2 if the third button with \a b2 text is selected
+   \retval 0 if the first button with \p b0 text is selected
+   \retval 1 if the second button with \p b1 text is selected
+   \retval 2 if the third button with \p b2 text is selected
  */
 int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
   va_list ap;
@@ -376,7 +376,7 @@ static const char* input_innards(const char* fmt, va_list ap,
   return r ? input->value() : 0;
 }
 
-/** Shows an input dialog displaying the \a fmt message
+/** Shows an input dialog displaying the \p fmt message
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] defstr defines the default returned string if no text is entered
    \return the user string input if OK was pushed, NULL if Cancel was pushed
@@ -391,7 +391,7 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
   return r;
 }
 
-/** Shows an input dialog displaying the \a fmt message.
+/** Shows an input dialog displaying the \p fmt message.
 
     Like fl_input() except the input text is not shown,
     '*' characters are displayed instead.

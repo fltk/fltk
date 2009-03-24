@@ -218,9 +218,9 @@ void Fl_Text_Buffer::text(const char *t) {
 }
 
 /**
-   Return a copy of the text between \a start and \a end character positions
-   from text buffer \a buf. Positions start at 0, and the range does not
-   include the character pointed to by \a end.
+   Return a copy of the text between \p start and \p end character positions
+   from text buffer \p buf. Positions start at 0, and the range does not
+   include the character pointed to by \p end.
    When you are done with the text, free it using the free() function.
 */
 char * Fl_Text_Buffer::text_range(int start, int end) {
@@ -269,7 +269,7 @@ char Fl_Text_Buffer::character(int pos) {
     return mBuf[ pos + mGapEnd - mGapStart ];
 }
 
-/** Inserts null-terminated string \a text at position \a pos. */
+/** Inserts null-terminated string \p text at position \p pos. */
 void Fl_Text_Buffer::insert(int pos, const char *text) {
   int nInserted;
 
@@ -287,7 +287,7 @@ void Fl_Text_Buffer::insert(int pos, const char *text) {
 }
 
 /**
-   Deletes the characters between \a start and \a end, and inserts the null-terminated string \a text in their place in the buffer.
+   Deletes the characters between \p start and \p end, and inserts the null-terminated string \p text in their place in the buffer.
 */
 void Fl_Text_Buffer::replace(int start, int end, const char *text) {
   const char * deletedText;
@@ -415,12 +415,12 @@ void Fl_Text_Buffer::canUndo(char flag) {
 }
 
 /**
-   Insert \a s columnwise into buffer starting at displayed character
-   position \a column on the line beginning at \a startPos. Opens a rectangular
-   space the width and height of \a s, by moving all text to the right of
-   \a column right.  If \a charsInserted and \a charsDeleted are not NULL, the
+   Insert \p s columnwise into buffer starting at displayed character
+   position \p column on the line beginning at \p startPos. Opens a rectangular
+   space the width and height of \p s, by moving all text to the right of
+   \p column right.  If \p charsInserted and \p charsDeleted are not NULL, the
    number of characters inserted and deleted in the operation (beginning
-   at \a startPos) are returned in these arguments.
+   at \p startPos) are returned in these arguments.
 */
 void Fl_Text_Buffer::insert_column(int column, int startPos, const char *text,
                                     int *charsInserted, int *charsDeleted) {
@@ -446,10 +446,10 @@ void Fl_Text_Buffer::insert_column(int column, int startPos, const char *text,
 }
 
 /**
-   Overlay \a text between displayed character positions \a rectStart and
-   \a rectEnd on the line beginning at \a startPos.  If \a charsInserted and
-   \a charsDeleted are not NULL, the number of characters inserted and deleted
-   in the operation (beginning at \a startPos) are returned in these arguments.
+   Overlay \p text between displayed character positions \p rectStart and
+   \p rectEnd on the line beginning at \p startPos.  If \p charsInserted and
+   \p charsDeleted are not NULL, the number of characters inserted and deleted
+   in the operation (beginning at \p startPos) are returned in these arguments.
 */
 void Fl_Text_Buffer::overlay_rectangular(int startPos, int rectStart,
     int rectEnd, const char *text, int *charsInserted, int *charsDeleted) {
@@ -475,8 +475,8 @@ void Fl_Text_Buffer::overlay_rectangular(int startPos, int rectStart,
 }
 
 /**
-   Replaces a rectangular area in the buffer, given by \a start, \a end,
-   \a rectStart, and \a rectEnd, with \a text.  If \a text is vertically
+   Replaces a rectangular area in the buffer, given by \p start, \p end,
+   \p rectStart, and \p rectEnd, with \p text.  If \p text is vertically
    longer than the rectangle, add extra lines to make room for it.
 */
 void Fl_Text_Buffer::replace_rectangular(int start, int end, int rectStart,
@@ -731,7 +731,7 @@ void Fl_Text_Buffer::remove_secondary_selection() {
   remove_selection_(&mSecondary);
 }
 /**  Replaces the text from the buffer corresponding to the secondary 
-   text selection object with the new string \a text.*/
+   text selection object with the new string \p text.*/
 void Fl_Text_Buffer::replace_secondary_selection(const char *text) {
   replace_selection_(&mSecondary, text);
 }
@@ -759,7 +759,7 @@ void Fl_Text_Buffer::highlight_rectangular(int start, int end,
   mHighlight.set_rectangular(start, end, rectStart, rectEnd);
   redisplay_selection(&oldSelection, &mHighlight);
 }
-/** Highlights the specified text between \a start and \a end within the buffer.*/
+/** Highlights the specified text between \p start and \p end within the buffer.*/
 int Fl_Text_Buffer::highlight_position(int *start, int *end
                                      ) {
   return mHighlight.position(start, end);
@@ -882,7 +882,7 @@ void Fl_Text_Buffer::add_predelete_callback(Fl_Text_Predelete_Cb bufPreDeleteCB,
     mPredeleteProcs = newPreDeleteProcs;
     mPredeleteCbArgs = newCBArgs;
 }
-/** Removes a callback routine \a bufPreDeleteCB associated with argument \a cbArg 
+/** Removes a callback routine \p bufPreDeleteCB associated with argument \p cbArg 
     to be called before text is deleted from the buffer. */
 void Fl_Text_Buffer::remove_predelete_callback(
    Fl_Text_Predelete_Cb bufPreDeleteCB, void *cbArg) {
@@ -941,14 +941,14 @@ char * Fl_Text_Buffer::line_text(int pos) {
   return text_range(line_start(pos), line_end(pos));
 }
 
-/** Returns the position of the start of the line containing position \a pos. */
+/** Returns the position of the start of the line containing position \p pos. */
 int Fl_Text_Buffer::line_start(int pos) {
   if (!findchar_backward(pos, '\n', &pos))
     return 0;
   return pos + 1;
 }
 
-/** Finds and returns the position of the end of the line containing position \a pos
+/** Finds and returns the position of the end of the line containing position \p pos
    (which is either a pointer to the newline character ending the line,
    or a pointer to one character beyond the end of the buffer)
 */
@@ -979,8 +979,8 @@ int Fl_Text_Buffer::word_end(int pos) {
    other control characters are given special treatment.
    Get a character from the text buffer expanded into its screen
    representation (which may be several characters for a tab or a
-   control code).  Returns the number of characters written to \a outStr.
-   \a indent is the number of characters from the start of the line
+   control code).  Returns the number of characters written to \p outStr.
+   \p indent is the number of characters from the start of the line
    for figuring tabs.  Output string is guranteed to be shorter or
    equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
 */
@@ -1004,14 +1004,14 @@ int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) {
 }
 
 /**
-   Expand a single character \a c from the text buffer into it's displayable
+   Expand a single character \p c from the text buffer into it's displayable
    screen representation (which may be several characters for a tab or a
-   control code).  Returns the number of characters added to \a outStr.
-   \a indent is the number of characters from the start of the line
-   for figuring tabs of length \a tabDist.  Output string is guaranteed 
+   control code).  Returns the number of characters added to \p outStr.
+   \p indent is the number of characters from the start of the line
+   for figuring tabs of length \p tabDist.  Output string is guaranteed 
    to be shorter or  equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
    Tabs and  other control characters are given special treatment.
-   \a nulSubsChar represent the null character to be transformed in \<nul\>
+   \p nulSubsChar represent the null character to be transformed in \<nul\>
 */
 int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDist,
                                       char nullSubsChar) {
@@ -1049,7 +1049,7 @@ int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDi
 }
 
 /**
-   Return the length in displayed characters of character \a c expanded
+   Return the length in displayed characters of character \p c expanded
    for display (as discussed above in expand_character() ).  If the
    buffer for which the character width is being measured is doing null
    substitution, nullSubsChar should be passed as that character (or nul
@@ -1075,7 +1075,7 @@ int Fl_Text_Buffer::character_width(char c, int indent, int tabDist, char nullSu
 
 /**
    Count the number of displayed characters between buffer position
-   \a lineStartPos and \a targetPos. (displayed characters are the characters
+   \p lineStartPos and \p targetPos. (displayed characters are the characters
    shown on the screen to represent characters in the buffer, where tabs and
    control characters are expanded)
 */
@@ -1090,7 +1090,7 @@ int Fl_Text_Buffer::count_displayed_characters(int lineStartPos, int targetPos) 
 }
 
 /**
-   Count forward from buffer position \a startPos in displayed characters
+   Count forward from buffer position \p startPos in displayed characters
    (displayed characters are the characters shown on the screen to represent
    characters in the buffer, where tabs and control characters are expanded)
 */
@@ -1110,8 +1110,8 @@ int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars) {
 }
 
 /**
-   Counts the number of newlines between \a startPos and \a endPos in buffer.
-   The character at position \a endPos is not counted.
+   Counts the number of newlines between \p startPos and \p endPos in buffer.
+   The character at position \p endPos is not counted.
 */
 int Fl_Text_Buffer::count_lines(int startPos, int endPos) {
   int pos, gapLen = mGapEnd - mGapStart;
@@ -1134,7 +1134,7 @@ int Fl_Text_Buffer::count_lines(int startPos, int endPos) {
 }
 
 /**
-   Finds the first character of the line \a nLines forward from \a startPos
+   Finds the first character of the line \p nLines forward from \p startPos
    in the buffer and returns its position
 */
 int Fl_Text_Buffer::skip_lines(int startPos, int nLines) {
@@ -1163,9 +1163,9 @@ int Fl_Text_Buffer::skip_lines(int startPos, int nLines) {
 }
 
 /**
-   Finds and returns the position of the first character of the line \a nLines backwards
-   from \a startPos (not counting the character pointed to by \a startpos if
-   that is a newline) in the buffer.  \a nLines == 0 means find the beginning of the line
+   Finds and returns the position of the first character of the line \p nLines backwards
+   from \p startPos (not counting the character pointed to by \p startpos if
+   that is a newline) in the buffer.  \p nLines == 0 means find the beginning of the line
 */
 int Fl_Text_Buffer::rewind_lines(int startPos, int nLines) {
   int pos, gapLen = mGapEnd - mGapStart;
@@ -1193,8 +1193,8 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines) {
 }
 
 /**
-   Search forwards in buffer for string \a searchString, starting with the
-   character \a startPos, and returning the result in \a foundPos
+   Search forwards in buffer for string \p searchString, starting with the
+   character \p startPos, and returning the result in \p foundPos
    returns 1 if found, 0 if not.
 */
 int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
@@ -1218,7 +1218,7 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
 
 /**
    Search backwards in buffer for string <i>searchCharssearchString</i>, starting with the
-   character BEFORE \a startPos, returning the result in \a foundPos
+   character BEFORE \p startPos, returning the result in \p foundPos
    returns 1 if found, 0 if not.
 */
 int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
@@ -1242,8 +1242,8 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
 
 /**
   Finds the next occurrence of the specified characters.
-  Search forwards in buffer for characters in \a searchChars, starting
-  with the character \a startPos, and returning the result in \a foundPos
+  Search forwards in buffer for characters in \p searchChars, starting
+  with the character \p startPos, and returning the result in \p foundPos
   returns 1 if found, 0 if not.
 */
 int Fl_Text_Buffer::findchars_forward(int startPos, const char *searchChars,
@@ -1276,8 +1276,8 @@ int Fl_Text_Buffer::findchars_forward(int startPos, const char *searchChars,
 
 /** 
    Finds the previous occurrence of the specified characters.
-   Search backwards in buffer for characters in \a searchChars, starting
-   with the character BEFORE \a startPos, returning the result in \a foundPos
+   Search backwards in buffer for characters in \p searchChars, starting
+   with the character BEFORE \p startPos, returning the result in \p foundPos
    returns 1 if found, 0 if not.
 */
 int Fl_Text_Buffer::findchars_backward(int startPos, const char *searchChars,
@@ -1427,9 +1427,9 @@ static char chooseNullSubsChar(char hist[ 256 ]) {
 
 /**
    Internal (non-redisplaying) version of BufInsert. Returns the length of
-   text inserted (this is just strlen(\a text), however this calculation can be
+   text inserted (this is just strlen(\p text), however this calculation can be
    expensive and the length will be required by any caller who will continue
-   on to call redisplay). \a pos must be contiguous with the existing text in
+   on to call redisplay). \p pos must be contiguous with the existing text in
    the buffer (i.e. not past the end).
 */
 int Fl_Text_Buffer::insert_(int pos, const char *text) {
@@ -1523,9 +1523,9 @@ void Fl_Text_Buffer::remove_(int start, int end) {
 /**
    Inserts a column of text without calling the modify callbacks.  Note that
    in some pathological cases, inserting can actually decrease the size of
-   the buffer because of spaces being coalesced into tabs.  \a nDeleted and
-   \a nInserted return the number of characters deleted and inserted beginning
-   at the start of the line containing \a startPos.  \a endPos returns buffer
+   the buffer because of spaces being coalesced into tabs.  \p nDeleted and
+   \p nInserted return the number of characters deleted and inserted beginning
+   at the start of the line containing \p startPos.  \p endPos returns buffer
    position of the lower left edge of the inserted column (as a hint for
    routines which need to set a cursor position).
 */
@@ -1606,9 +1606,9 @@ void Fl_Text_Buffer::insert_column_(int column, int startPos, const char *insTex
 
 /**
    Deletes a rectangle of text without calling the modify callbacks. Returns
-   the number of characters replacing those between \a start and \a end. Note that
+   the number of characters replacing those between \p start and \p end. Note that
    in some pathological cases, deleting can actually increase the size of
-   the buffer because of tab expansions. \a endPos returns the buffer position
+   the buffer because of tab expansions. \p endPos returns the buffer position
    of the point in the last line where the text was removed (as a hint for
    routines which need to position the cursor after a delete operation)
 */
@@ -1660,9 +1660,9 @@ void Fl_Text_Buffer::remove_rectangular_(int start, int end, int rectStart,
 
 /**
    Overlay a rectangular area of text without calling the modify callbacks.
-   \a nDeleted and \a nInserted return the number of characters deleted and
-   inserted beginning at the start of the line containing \a startPos.
-   \a endPos returns buffer position of the lower left edge of the inserted
+   \p nDeleted and \p nInserted return the number of characters deleted and
+   inserted beginning at the start of the line containing \p startPos.
+   \p endPos returns buffer position of the lower left edge of the inserted
    column (as a hint for routines which need to set a cursor position).
 */
 void Fl_Text_Buffer::overlay_rectangular_(int startPos, int rectStart,
@@ -1732,9 +1732,9 @@ void Fl_Text_Buffer::overlay_rectangular_(int startPos, int rectStart,
 }
 
 /**
-   Inserts characters from single-line string \a insLine in single-line string
-   \a line at \a column, leaving \a insWidth space before continuing line.
-   \a outLen returns the number of characters written to \a outStr, \a endOffset
+   Inserts characters from single-line string \p insLine in single-line string
+   \p line at \p column, leaving \p insWidth space before continuing line.
+   \p outLen returns the number of characters written to \p outStr, \p endOffset
    returns the number of characters from the beginning of the string to
    the right edge of the inserted text (as a hint for routines which need
    to position the cursor).
@@ -1821,11 +1821,11 @@ static void insertColInLine(const char *line, char *insLine, int column, int ins
 }
 
 /**
-   Removes characters in single-line string \a line between displayed positions
-   \a rectStart and \a rectEnd, and write the result to \a outStr, which is
+   Removes characters in single-line string \p line between displayed positions
+   \p rectStart and \p rectEnd, and write the result to \p outStr, which is
    assumed to be large enough to hold the returned string.  Note that in
    certain cases, it is possible for the string to get longer due to
-   expansion of tabs.  \a endOffset returns the number of characters from
+   expansion of tabs.  \p endOffset returns the number of characters from
    the beginning of the string to the point where the characters were
    deleted (as a hint for routines which need to position the cursor).
 */
@@ -1881,9 +1881,9 @@ static void deleteRectFromLine(const char *line, int rectStart, int rectEnd,
 }
 
 /**
-   Overlay characters from single-line string \a insLine on single-line string
-   \a line between displayed character offsets \a rectStart and \a rectEnd.
-   \a outLen returns the number of characters written to \a outStr, \a endOffset
+   Overlay characters from single-line string \p insLine on single-line string
+   \p line between displayed character offsets \p rectStart and \p rectEnd.
+   \p outLen returns the number of characters written to \p outStr, \p endOffset
    returns the number of characters from the beginning of the string to
    the right edge of the inserted text (as a hint for routines which need
    to position the cursor).
@@ -2020,7 +2020,7 @@ int Fl_Text_Selection::position(int *startpos, int *endpos,
 }
 
 /**
-   Return true if position \a pos with indentation \a dispIndex is in
+   Return true if position \p pos with indentation \p dispIndex is in
    the Fl_Text_Selection.
 */
 int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) {
@@ -2050,7 +2050,7 @@ char * Fl_Text_Buffer::selection_text_(Fl_Text_Selection *sel) {
   else
     return text_range(start, end);
 }
-/**  Removes the text from the buffer corresponding to \a sel.*/
+/**  Removes the text from the buffer corresponding to \p sel.*/
 void Fl_Text_Buffer::remove_selection_(Fl_Text_Selection *sel) {
   int start, end;
   int isRect, rectStart, rectEnd;
@@ -2065,7 +2065,7 @@ void Fl_Text_Buffer::remove_selection_(Fl_Text_Selection *sel) {
   }
 }
 
-/** Replaces the \a text in selection \a sel.*/
+/** Replaces the \p text in selection \p sel.*/
 
 void Fl_Text_Buffer::replace_selection_(Fl_Text_Selection *sel, const char *text) {
   int start, end, isRect, rectStart, rectEnd;
@@ -2217,8 +2217,8 @@ void Fl_Text_Buffer::move_gap(int pos) {
 }
 
 /**
-   Reallocates the text storage in the buffer to have a gap starting at \a newGapStart
-   and a gap size of \a newGapLen, preserving the buffer's current contents.
+   Reallocates the text storage in the buffer to have a gap starting at \p newGapStart
+   and a gap size of \p newGapLen, preserving the buffer's current contents.
 */
 void Fl_Text_Buffer::reallocate_with_gap(int newGapStart, int newGapLen) {
   char * newBuf;
@@ -2285,8 +2285,8 @@ void Fl_Text_Selection::update(int pos, int nDeleted,
 
 /** 
    Finds the next occurrence of the specified character.
-   Search forwards in buffer for character \a searchChar, starting
-   with the character \a startPos, and returning the result in \a foundPos
+   Search forwards in buffer for character \p searchChar, starting
+   with the character \p startPos, and returning the result in \p foundPos
    returns 1 if found, 0 if not.  (The difference between this and
    BufSearchForward is that it's optimized for single characters.  The
    overall performance of the text widget is dependent on its ability to
@@ -2321,8 +2321,8 @@ int Fl_Text_Buffer::findchar_forward(int startPos, char searchChar,
 }
 
 /**
-   Search backwards in buffer \a buf for character \a searchChar, starting
-   with the character BEFORE \a startPos, returning the result in \a foundPos
+   Search backwards in buffer \p buf for character \p searchChar, starting
+   with the character BEFORE \p startPos, returning the result in \p foundPos
    returns 1 if found, 0 if not.  (The difference between this and
    BufSearchBackward is that it's optimized for single characters.  The
    overall performance of the text widget is dependent on its ability to
@@ -2356,9 +2356,9 @@ int Fl_Text_Buffer::findchar_backward(int startPos, char searchChar,
 }
 
 /*
-   Copies from \a text to end up to but not including newline (or end of \a text)
+   Copies from \p text to end up to but not including newline (or end of \p text)
    and return the copy as the function value, and the length of the line in
-   \a lineLen
+   \p lineLen
 */
 static char *copyLine(const char *text, int *lineLen) {
   int len = 0;
@@ -2386,7 +2386,7 @@ static int countLines(const char *string) {
 }
 
 /*
-   Measures the width in displayed characters of string \a text
+   Measures the width in displayed characters of string \p text
 */
 static int textWidth(const char *text, int tabDist, char nullSubsChar) {
   int width = 0, maxWidth = 0;
@@ -2458,9 +2458,9 @@ void Fl_Text_Buffer::rectangular_selection_boundaries(int lineStartPos,
 }
 
 /*
-   Adjust the space and tab characters from string \a text so that non-white
+   Adjust the space and tab characters from string \p text so that non-white
    characters remain stationary when the text is shifted from starting at
-   \a origIndent to starting at \a newIndent.  Returns an allocated string
+   \p origIndent to starting at \p newIndent.  Returns an allocated string
    which must be freed by the caller with XtFree.
 */
 static char *realignTabs(const char *text, int origIndent, int newIndent,
@@ -2491,8 +2491,8 @@ static char *realignTabs(const char *text, int origIndent, int newIndent,
 
 /*
    Expand tabs to spaces for a block of text.  The additional parameter
-   \a startIndent if nonzero, indicates that the text is a rectangular selection
-   beginning at column \a startIndent
+   \p startIndent if nonzero, indicates that the text is a rectangular selection
+   beginning at column \p startIndent
 */
 static char *expandTabs(const char *text, int startIndent, int tabDist,
                          char nullSubsChar, int *newLen) {

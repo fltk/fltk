@@ -33,7 +33,7 @@
 #include "flstring.h"
 
 /**
-   Replaces the extension in \a buf of max. size \a buflen with the extension in \a ext. 
+   Replaces the extension in \p buf of max. size \p buflen with the extension in \p ext. 
    \return buf itself for calling convenience.
 */
 char *fl_filename_setext(char *buf, int buflen, const char *ext) {

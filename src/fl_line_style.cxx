@@ -74,7 +74,7 @@ void fl_quartz_restore_line_style_() {
              you \e must set the line style \e after setting the drawing
 	     color. If you set the color after the line style you will lose
 	     the line style settings.
-  \note      The \a dashes array does not work under Windows 95, 98 or Me,
+  \note      The \p dashes array does not work under Windows 95, 98 or Me,
              since those operating systems do not support complex line styles.
 */
 void fl_line_style(int style, int width, char* dashes) {

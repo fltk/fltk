@@ -91,8 +91,8 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
    arbitrary position in the file system. 
 
    The file name is generated in the form
-   <tt><i>path</i>/<i>application</i>.prefs</tt>. If \a application
-   is \c NULL, \a path must contain the full file name.
+   <tt><i>path</i>/<i>application</i>.prefs</tt>. If \p application
+   is \c NULL, \p path must contain the full file name.
    
    \param[in] path path to the directory that contains the preferences file
    \param[in] vendor unique text describing the company or author of this file
@@ -108,8 +108,8 @@ Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char
 /**
    \brief Generate or read a new group of entries within another group. 
 
-   Use the \a group argument to name the group that you would like to access.
-   \a Group can also contain a path to a group further down the hierarchy by
+   Use the \p group argument to name the group that you would like to access.
+   \p Group can also contain a path to a group further down the hierarchy by
    separating group names with a forward slash '/'. 
 
    \param[in] parent reference object for the new group
@@ -164,7 +164,7 @@ int Fl_Preferences::groups()
 
 
 /**
-   Returns the name of the Nth (\a num_group) group.
+   Returns the name of the Nth (\p num_group) group.
    There is no guaranteed order of group names. The index must
    be within the range given by groups().
      
@@ -249,7 +249,7 @@ char Fl_Preferences::entryExists( const char *key )
 /**
    Deletes a single name/value pair.
    
-   This function removes the entry \a key from the database.
+   This function removes the entry \p key from the database.
  
    \param[in] key name of entry to delete
    \return 0 if deleting the entry failed
@@ -285,7 +285,7 @@ char Fl_Preferences::get( const char *key, int &value, int defaultValue )
  file.
  
  \param[in] key name of entry
- \param[in] value set this entry to \a value
+ \param[in] value set this entry to \p value
  \return 0 if setting the value failed
  */
 char Fl_Preferences::set( const char *key, int value )
@@ -321,7 +321,7 @@ char Fl_Preferences::get( const char *key, float &value, float defaultValue )
  file.
  
  \param[in] key name of entry
- \param[in] value set this entry to \a value
+ \param[in] value set this entry to \p value
  \return 0 if setting the value failed
  */
 char Fl_Preferences::set( const char *key, float value )
@@ -339,7 +339,7 @@ char Fl_Preferences::set( const char *key, float value )
  file.
  
  \param[in] key name of entry
- \param[in] value set this entry to \a value
+ \param[in] value set this entry to \p value
  \param[in] precision number of decimal digits to represent value
  \return 0 if setting the value failed
  */
@@ -376,7 +376,7 @@ char Fl_Preferences::get( const char *key, double &value, double defaultValue )
  file.
  
  \param[in] key name of entry
- \param[in] value set this entry to \a value
+ \param[in] value set this entry to \p value
  \return 0 if setting the value failed
  */
 char Fl_Preferences::set( const char *key, double value )
@@ -394,7 +394,7 @@ char Fl_Preferences::set( const char *key, double value )
  file.
  
  \param[in] key name of entry
- \param[in] value set this entry to \a value
+ \param[in] value set this entry to \p value
  \param[in] precision number of decimal digits to represent value
  \return 0 if setting the value failed
  */
@@ -502,7 +502,7 @@ char Fl_Preferences::get( const char *key, char *&text, const char *defaultValue
  file.
  
  \param[in] key name of entry
- \param[in] text set this entry to \a value
+ \param[in] text set this entry to \p value
  \return 0 if setting the value failed
  */
 char Fl_Preferences::set( const char *key, const char *text )
@@ -628,7 +628,7 @@ char Fl_Preferences::get( const char *key, void *&data, const void *defaultValue
  file.
  
  \param[in] key name of entry
- \param[in] data set this entry to \a value
+ \param[in] data set this entry to \p value
  \param[in] dsize size of data array
  \return 0 if setting the value failed
  */

@@ -152,7 +152,7 @@ int Fl::screen_count() {
 
 /**
   Gets the bounding box of a screen 
-  that contains the specified screen position \a mx, \a my
+  that contains the specified screen position \p mx, \p my
   \param[out]  X,Y,W,H the corresponding screen bounding box
   \param[in] mx, my the absolute screen position
 */

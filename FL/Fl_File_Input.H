@@ -83,7 +83,7 @@ public:
     \todo Better docs for Fl_File_Input::errorcolor() - is it even used?
   */
   Fl_Color	errorcolor() const { return errorcolor_; }
-  /** Sets the current error color to \a c */
+  /** Sets the current error color to \p c */
   void		errorcolor(Fl_Color c) { errorcolor_ = c; }
 
   int	value(const char *str);

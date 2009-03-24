@@ -67,7 +67,7 @@ uchar *fl_gray_ramp() {return (draw_it_active?active_ramp:inactive_ramp)-'A';}
 
 /**
   Draws a series of line segments around the given box.
-  The string \a s must contain groups of 4 letters which specify one of 24
+  The string \p s must contain groups of 4 letters which specify one of 24
   standard grayscale values, where 'A' is black and 'X' is white.
   The order of each set of 4 characters is: top, left, bottom, right.
   The result of calling fl_frame() with a string that is not a multiple
@@ -101,7 +101,7 @@ void fl_frame(const char* s, int x, int y, int w, int h) {
 
 /**
   Draws a series of line segments around the given box.
-  The string \a s must contain groups of 4 letters which specify one of 24
+  The string \p s must contain groups of 4 letters which specify one of 24
   standard grayscale values, where 'A' is black and 'X' is white.
   The order of each set of 4 characters is: bottom, right, top, left.
   The result of calling fl_frame2() with a string that is not a multiple

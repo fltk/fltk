@@ -619,11 +619,11 @@ int fl_not_clipped(int x, int y, int w, int h) {
 
   Returns non-zero if the resulting rectangle is different to the original.
   This can be used to limit the necessary drawing to a rectangle.
-  \a W and \a H are set to zero if the rectangle is completely outside
+  \p W and \p H are set to zero if the rectangle is completely outside
   the region.
   \param[in] x,y,w,h position and size of rectangle
   \param[out] X,Y,W,H position and size of resulting bounding box.
-              \a W and \a H are set to zero if the rectangle is
+              \p W and \p H are set to zero if the rectangle is
 	      completely outside the region.
   \returns Non-zero if the resulting rectangle is different to the original.
 */

@@ -105,12 +105,12 @@ public:
   void insert(Fl_Widget&, int i);
   /**
     This does insert(w, find(before)).  This will append the
-    widget if \a before is not in the group.
+    widget if \p before is not in the group.
   */
   void insert(Fl_Widget& o, Fl_Widget* before) {insert(o,find(before));}
   void remove(Fl_Widget&);
   /**
-    Removes the widget \a o from the group.
+    Removes the widget \p o from the group.
     \sa void remove(Fl_Widget&)
   */
   void remove(Fl_Widget* o) {remove(*o);}
@@ -163,7 +163,7 @@ public:
     Controls whether the group widget clips the drawing of
     child widgets to its bounding box.
     
-    Set \a c to 1 if you want to clip the child widgets to the
+    Set \p c to 1 if you want to clip the child widgets to the
     bounding box.
 
     The default is to not clip (0) the drawing of child widgets.

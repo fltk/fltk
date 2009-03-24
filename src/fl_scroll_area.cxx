@@ -42,8 +42,8 @@
   \param[in] dx,dy     pixel offsets for shifting rectangle
   \param[in] draw_area callback function to draw rectangular areas
   \param[in] data      pointer to user data for callback
-  The contents of the rectangular area is first shifted by \a dx
-  and \a dy pixels. The \a draw_area callback is then called for
+  The contents of the rectangular area is first shifted by \p dx
+  and \p dy pixels. The \p draw_area callback is then called for
   every newly exposed rectangular area.
   */
 void fl_scroll(int X, int Y, int W, int H, int dx, int dy,

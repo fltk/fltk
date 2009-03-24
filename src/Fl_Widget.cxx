@@ -297,8 +297,8 @@ Fl_Widget::copy_label(const char *a) {
 
   Causes a widget to invoke its callback function with arbitrary arguments.
 
-  \param[in] o call the callback with \a o as the widget argument
-  \param[in] arg use \a arg as the user data argument
+  \param[in] o call the callback with \p o as the widget argument
+  \param[in] arg use \p arg as the user data argument
   \see callback()
 */
 void

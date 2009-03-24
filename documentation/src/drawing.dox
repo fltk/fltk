@@ -57,14 +57,14 @@ void fl_draw_box(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color c);
 
 \par
 The first box drawing function is fl_draw_box()
-which draws a standard boxtype \a b in the specified color \a c .
+which draws a standard boxtype \p b in the specified color \p c .
 
 <A NAME="fl_frame"></A> <!-- For old HTML links only ! -->
 void fl_frame(const char *s, int x, int y, int w, int h)
 
 \par
 The fl_frame() function draws a series of line segments around the
-given box. The string \a s must contain groups of 4 letters which specify
+given box. The string \p s must contain groups of 4 letters which specify
 one of 24 standard grayscale values, where 'A' is black and 'X' is white.
 The order of each set of 4 characters is: top, left, bottom, right. The
 results of calling fl_frame() with a string that is not a multiple
@@ -82,7 +82,7 @@ void fl_frame2(const char *s, int x, int y, int w, int h);
 
 \par
 The fl_frame2() function draws a series of line segments around
-the given box. The string \a s must contain groups of 4 letters which
+the given box. The string \p s must contain groups of 4 letters which
 specify one of 24 standard grayscale values, where 'A' is black and 'X' is
 white. The order of each set of 4 characters is: bottom, right, top, left.
 The results of calling fl_frame2() with a string that is

@@ -102,17 +102,17 @@ public:
 
   /** Gets the text font */
   Fl_Font textfont() const {return textfont_;}
-  /** Sets the text font to \a s */
+  /** Sets the text font to \p s */
   void textfont(Fl_Font s) {textfont_ = s;}
 
   /** Gets the font size */
   Fl_Fontsize textsize() const {return textsize_;}
-  /** Sets the font size to \a s */
+  /** Sets the font size to \p s */
   void textsize(Fl_Fontsize s) {textsize_ = s;}
 
   /** Gets the font color */
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
-  /** Sets the font color to \a s */
+  /** Sets the font color to \p s */
   void textcolor(unsigned s) {textcolor_ = s;}
 
 };

@@ -175,9 +175,9 @@ FL_EXPORT void fl_transformed_vertex(double x, double y);
   You may call this outside a draw context if necessary to call fl_width(),
   but on X this will open the display.
 
-  The font is identified by a \a face and a \a size.
+  The font is identified by a \p face and a \p size.
   The size of the font is measured in pixels and not "points".
-  Lines should be spaced \a size pixels apart or more.
+  Lines should be spaced \p size pixels apart or more.
 */
 
 // Fonts:
@@ -185,14 +185,14 @@ FL_EXPORT void fl_font(Fl_Font face, Fl_Fontsize size);
 extern FL_EXPORT Fl_Font fl_font_; ///< current font index
 
 /**
-  Returns the \a face set by the most recent call to fl_font().
+  Returns the \p face set by the most recent call to fl_font().
   This can be used to save/restore the font.
 */
 inline Fl_Font fl_font() {return fl_font_;}
 /** current font size */
 extern FL_EXPORT Fl_Fontsize fl_size_;
 /**
-  Returns the \a size set by the most recent call to fl_font().
+  Returns the \p size set by the most recent call to fl_font().
   This can be used to save/restore the font.
 */
 inline Fl_Fontsize fl_size() {return fl_size_;}
@@ -200,15 +200,15 @@ inline Fl_Fontsize fl_size() {return fl_size_;}
 // information you can get about the current font:
 /**
   Returns the recommended minimum line spacing for the current font.
-  You can also use the value of \a size passed to fl_font()
+  You can also use the value of \p size passed to fl_font()
 */
 FL_EXPORT int   fl_height();	// using "size" should work ok
 /**
   Dummy passthru function called only in Fl_Text_Display that simply returns
-  the font height as given by the \a size parameter in the same call!
+  the font height as given by the \p size parameter in the same call!
 
   \todo Is fl_height(int, int size) required for Fl_Text_Dispay?
-        Why not use \a size parameter directly?
+        Why not use \p size parameter directly?
 */
 inline int fl_height(int, int size) {return size;}
 /**
@@ -218,7 +218,7 @@ inline int fl_height(int, int size) {return size;}
 FL_EXPORT int   fl_descent();
 /** Return the typographical width of a nul-terminated string */
 FL_EXPORT double fl_width(const char* txt);
-/** Return the typographical width of a sequence of \a n characters */
+/** Return the typographical width of a sequence of \p n characters */
 FL_EXPORT double fl_width(const char* txt, int n);
 /** Return the typographical width of a single character :
     \note if a valid fl_gc is NOT found then it uses the first window gc,
@@ -233,7 +233,7 @@ fl_rect(x+dx, y+dy, wo, ho). Note the dx, dy values hold the offset of the first
 "colored in" pixel of the string, from the draw origin.
 */
 FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); // NO fltk symbol expansion will be performed
-/** Determine the minimum pixel dimensions of a sequence of \a n characters.
+/** Determine the minimum pixel dimensions of a sequence of \p n characters.
 \see fl_text_extents(const char*, int& dx, int& dy, int& w, int& h)
 */
 FL_EXPORT void fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
@@ -276,7 +276,7 @@ FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
   Draws a nul-terminated string starting at the given location.
 
   Text is aligned to the left and to the baseline of the font.
-  To align to the bottom, subtract fl_descent() from \a y.
+  To align to the bottom, subtract fl_descent() from \p y.
   To align to the top, subtract fl_descent() and add fl_height().
   This version of fl_draw provides direct access to the text drawing
   function of the underlying OS. It does not apply any special handling
@@ -284,11 +284,11 @@ FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
 */
 FL_EXPORT void fl_draw(const char* str, int x, int y);
 /**
-  Draws an array of \a n characters starting at the given location.
+  Draws an array of \p n characters starting at the given location.
 */
 FL_EXPORT void fl_draw(const char* str, int n, int x, int y);
 /**
-  Draws an array of \a n characters right to left starting at given location.
+  Draws an array of \p n characters right to left starting at given location.
 */
 FL_EXPORT void fl_rtl_draw(const char*, int n, int x, int y);
 FL_EXPORT void fl_measure(const char* str, int& x, int& y,
@@ -311,8 +311,8 @@ FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
   signature of image generation callback function.
   \param[in]  data  user data passed to function
   \param[in]  x,y,w position and width of scan line in image
-  \param[out] buf   buffer for generated image data. You must copy \a w
-                    pixels from scanline \a y, starting at pixel \a x
+  \param[out] buf   buffer for generated image data. You must copy \p w
+                    pixels from scanline \p y, starting at pixel \p x
 		    to this buffer.
   */
 typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
@@ -327,8 +327,8 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
                  any value greater than or equal to 3, or it can be
 		 negative to flip the image horizontally
   \param[in] L   delta to add to the pointer between lines (if 0 is
-                 passed it uses \a W * \a D), and may be larger than
-		 \a W * \a D to crop data, or negative to flip the
+                 passed it uses \p W * \p D), and may be larger than
+		 \p W * \p D to crop data, or negative to flip the
 		 image vertically
 
   It is highly recommended that you put the following code before the
@@ -341,7 +341,7 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
   <tt>abs(D)</tt> is less than 3, or by calling fl_draw_image_mono().
   Only one 8-bit sample is used for each pixel, and on screens with
   different numbers of bits for red, green, and blue only gray colors
-  are used. Setting \a D greater than 1 will let you display one channel
+  are used. Setting \p D greater than 1 will let you display one channel
   of a color image.
 
   \par Note:
@@ -370,25 +370,25 @@ FL_EXPORT void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int
   \param[in] D
   \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
 
-  The callback function \a cb is called with the <tt>void*</tt> \a data
+  The callback function \p cb is called with the <tt>void*</tt> \p data
   user data pointer to allow access to a structure of information about
-  the image, and the \a x, \a y, and \a w of the scan line desired from
-  the image. 0,0 is the upper-left corner of the image, not \a X, \a Y.
+  the image, and the \p x, \p y, and \p w of the scan line desired from
+  the image. 0,0 is the upper-left corner of the image, not \p X, \p Y.
   A pointer to a buffer to put the data into is passed. You must copy
-  \a w pixels from scanline \a y, starting at pixel \a x, to this buffer.
+  \p w pixels from scanline \p y, starting at pixel \p x, to this buffer.
 
-  Due to cropping, less than the whole image may be requested. So \a x
-  may be greater than zero, the first \a y may be greater than zero,
-  and \a w may be less than \a W. The buffer is long enough to store
-  the entire \a W * \a D pixels, this is for convenience with some
+  Due to cropping, less than the whole image may be requested. So \p x
+  may be greater than zero, the first \p y may be greater than zero,
+  and \p w may be less than \p W. The buffer is long enough to store
+  the entire \p W * \p D pixels, this is for convenience with some
   decompression schemes where you must decompress the entire line at
-  once: decompress it into the buffer, and then if \a x is not zero,
-  copy the data over so the \a x'th pixel is at the start of the buffer.
+  once: decompress it into the buffer, and then if \p x is not zero,
+  copy the data over so the \p x'th pixel is at the start of the buffer.
 
-  You can assume the \a y's will be consecutive, except the first one
+  You can assume the \p y's will be consecutive, except the first one
   may be greater than zero.
 
-  If \a D is 4 or more, you must fill in the unused bytes with zero.
+  If \p D is 4 or more, you must fill in the unused bytes with zero.
   */
 FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
 
@@ -414,12 +414,12 @@ FL_EXPORT char fl_can_do_alpha_blending();
   \param[in] alpha alpha value for image (0 fr none)
   \returns pointer to pixel buffer, or NULL if allocation failed.
 
-  The \a p argument points to a buffer that can hold the image and must
-  be at least \a W*H*3 bytes when reading RGB images, or \a W*H*4 bytes
+  The \p p argument points to a buffer that can hold the image and must
+  be at least \p W*H*3 bytes when reading RGB images, or \p W*H*4 bytes
   when reading RGBA images. If NULL, fl_read_image() will create an
   array of the proper suze which can be freed using <tt>delete[]</tt>.
 
-  The \a alpha parameter controls whether an alpha channel is created
+  The \p alpha parameter controls whether an alpha channel is created
   and the value that is placed in the alpha channel. If 0, no alpha
   channel is generated.
   */

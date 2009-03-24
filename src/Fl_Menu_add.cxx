@@ -299,7 +299,7 @@ int Fl_Menu_::add(const char *str) {
 }
 
 /**
-  Changes the text of item \a i.  This is the only way to get
+  Changes the text of item \p i.  This is the only way to get
   slash into an add()'ed menu item.  If the menu array was directly set
   with menu(x) then copy() is done to make a private array.
 */
@@ -313,7 +313,7 @@ void Fl_Menu_::replace(int i, const char *str) {
   menu_[i].text = str;
 }
 /**
-  Deletes item \a i from the menu.  If the menu array was directly
+  Deletes item \p i from the menu.  If the menu array was directly
   set with menu(x) then copy() is done to make a private array.
   
   No items must be removed from a menu during a callback to the same menu.

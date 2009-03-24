@@ -503,7 +503,7 @@ public:
   */
   static int event_original_key(){return e_original_keysym;}
   /** 
-    Returns true if the given \a key was held
+    Returns true if the given \p key was held
     down (or pressed) <I>during</I> the last event.  This is constant until
     the next event is read from the server.
     
@@ -542,7 +542,7 @@ public:
   */
   static int event_key(int key);
   /** 
-    Returns true if the given \a key is held down <I>now</I>.  
+    Returns true if the given \p key is held down <I>now</I>.  
     Under X this requires a round-trip to the server and is <I>much</I>
     slower than Fl::event_key(int). \see event_key(int)
   */
@@ -591,7 +591,7 @@ public:
    @{ */
   // cut/paste:
   /**
-    Copies the data pointed to by \a stuff to the selection (0) or
+    Copies the data pointed to by \p stuff to the selection (0) or
     primary (1) clipboard. The selection clipboard is used for
     middle-mouse pastes and for drag-and-drop selections. The primary
     clipboard is used for traditional copy/cut/paste operations.
@@ -676,7 +676,7 @@ public:
     guarantee that each face has a different name.  The return value points
     to a static buffer that is overwritten each call.
     
-    The integer pointed to by \a attributes (if the pointer is not
+    The integer pointed to by \p attributes (if the pointer is not
     zero) is set to zero, FL_BOLD or FL_ITALIC or 
     FL_BOLD | FL_ITALIC.  To locate a "family" of fonts, search
     forward and back for a set with non-zero attributes, these faces along
@@ -684,7 +684,7 @@ public:
   */
   static const char* get_font_name(Fl_Font, int* attributes = 0);
   /**
-    Return an array of sizes in \a sizep.  The return value is the
+    Return an array of sizes in \p sizep.  The return value is the
     length of this array.  The sizes are sorted from smallest to largest
     and indicate what sizes can be given to fl_font() that will
     be matched exactly (fl_font() will pick the closest size for
@@ -900,7 +900,7 @@ public:
       FL::cairo_make_current(Fl_Window*). This will create a cairo context
       but only for this Window. 
       Still in custom cairo application it is possible to handle 
-      completely this process automatically by setting \a alink to true.
+      completely this process automatically by setting \p alink to true.
       In this last case, you don't need anymore to call Fl::cairo_make_current().
       You can use Fl::cairo_cc() to get the current cairo context anytime.
      \note Only available when configure has the --enable-cairo option
@@ -916,8 +916,8 @@ public:
   static bool cairo_autolink_context() {return cairo_state_.autolink();}
   /** Gets the current cairo context linked with a fltk window. */
   static cairo_t * cairo_cc() { return cairo_state_.cc(); }
-  /** Sets the current cairo context to \a c.
-      Set \a own to true if you want fltk to handle this cc deletion.
+  /** Sets the current cairo context to \p c.
+      Set \p own to true if you want fltk to handle this cc deletion.
      \note Only available when configure has the --enable-cairo option
 */
   static void cairo_cc(cairo_t * c, bool own=false){ cairo_state_.cc(c, own); } 

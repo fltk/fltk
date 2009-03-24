@@ -81,7 +81,7 @@ static void fl_init_symbols(void);
   Adds a symbol to the system.
   \param[in] name     name of symbol (without the "@")
   \param[in] drawit   function to draw symbol
-  \param[in] scalable set to 1 if \a drawit uses scalable vector drawing
+  \param[in] scalable set to 1 if \p drawit uses scalable vector drawing
   \returns 1 on success, 0 on failure
   */
 int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)

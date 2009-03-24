@@ -815,8 +815,8 @@ public:
 
   /** Calls the widget callback.
       Causes a widget to invoke its callback function with arbitrary arguments.
-      \param[in] o call the callback with \a o as the widget argument
-      \param[in] arg call the callback with \a arg as the user data argument
+      \param[in] o call the callback with \p o as the widget argument
+      \param[in] arg call the callback with \p arg as the user data argument
       \see callback()
    */
   void do_callback(Fl_Widget* o,long arg) {do_callback(o,(void*)arg);}
@@ -834,14 +834,14 @@ public:
 
   /** Checks if w is a child of this widget.
       \param[in] w potential child widget
-      \return Returns 1 if \a w is a child of this widget, or is
-      equal to this widget. Returns 0 if \a w is NULL.
+      \return Returns 1 if \p w is a child of this widget, or is
+      equal to this widget. Returns 0 if \p w is NULL.
    */
   int contains(const Fl_Widget *w) const ;
 
   /** Checks if this widget is a child of w.
-      Returns 1 if this widget is a child of \a w, or is
-      equal to \a w. Returns 0 if \a w is NULL.
+      Returns 1 if this widget is a child of \p w, or is
+      equal to \p w. Returns 0 if \p w is NULL.
       \param[in] w the possible parent widget.
       \see contains()
    */

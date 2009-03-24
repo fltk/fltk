@@ -74,7 +74,7 @@ public:
   typedef void (*cairo_draw_cb) (Fl_Cairo_Window* self, cairo_t* def);
   /** 
     You must provide a draw callback which will implement your cairo rendering.
-    This method will permit you to set your cairo callback to \a cb.
+    This method will permit you to set your cairo callback to \p cb.
   */
   void set_draw_cb(cairo_draw_cb  cb){draw_cb_=cb;}
 private:

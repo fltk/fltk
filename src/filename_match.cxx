@@ -30,7 +30,7 @@
 #include <ctype.h>
 
 /**
-    Checks if a string \a s matches a pattern \a p. 
+    Checks if a string \p s matches a pattern \p p. 
     The following syntax is used for the pattern:
     - * matches any sequence of 0 or more characters.
     - ? matches any single character.
