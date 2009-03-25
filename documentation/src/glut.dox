@@ -1,6 +1,6 @@
 /**
 
- \page	glut	D - GLUT Compatibility
+ \page	glut	GLUT Compatibility
 
 This appendix describes the GLUT compatibility header file supplied with
 FLTK. FLTK's GLUT compatibility is based on the original GLUT 3.7 and

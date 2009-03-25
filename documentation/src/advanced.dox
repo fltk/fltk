@@ -1,6 +1,6 @@
 /**
 
- \page advanced 10 - Advanced FLTK
+ \page advanced Advanced FLTK
 
 This chapter explains advanced programming and design topics
 that will help you to get the most out of FLTK.
@@ -103,7 +103,7 @@ Fl::unlock().
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="fluid.html">[Previous]&nbsp; 9 - Programming with FLUID</a>&nbsp;
-<a class="el" href="unicode.html">[Next]&nbsp; 11 - Unicode and utf-8 Support</a>&nbsp;
+<a class="el" href="fluid.html">[Previous]&nbsp; Programming with FLUID</a>&nbsp;
+<a class="el" href="unicode.html">[Next]&nbsp; Unicode and utf-8 Support</a>&nbsp;
 \endhtmlonly
 */

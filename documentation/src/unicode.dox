@@ -1,6 +1,6 @@
 /**
 
- \page unicode 11 - Unicode and utf-8 Support
+ \page unicode Unicode and utf-8 Support
 
 This chapter explains how FLTK handles international 
 text via Unicode and utf-8.
@@ -77,7 +77,7 @@ system, FLTK will convert string as needed.
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="advanced.html">[Previous]&nbsp; 10 - Advanced FLTK </a>&nbsp;
-<a class="el" href="annotated.html">[Next]&nbsp; A - Class Reference</a>
+<a class="el" href="advanced.html">[Previous]&nbsp; Advanced FLTK </a>&nbsp;
+<a class="el" href="enumerations.html">[Next]&nbsp; FLTK Enumerations</a>
 \endhtmlonly
 */

@@ -1,6 +1,6 @@
 /**
 
- \page	editor	4 - Designing a Simple Text Editor
+ \page	editor Designing a Simple Text Editor
 
 This chapter takes you through the design of a simple
 FLTK-based text editor.
@@ -894,7 +894,7 @@ style_parse(const char *text,
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="common.html">[Previous]&nbsp; 3 - Common Widgets and Attributes</a>&nbsp;
-<a class="el" href="drawing.html">[Next]&nbsp; 5 - Drawing Things in FLTK</a>&nbsp;
+<a class="el" href="common.html">[Previous]&nbsp; Common Widgets and Attributes</a>&nbsp;
+<a class="el" href="drawing.html">[Next]&nbsp; Drawing Things in FLTK</a>&nbsp;
 \endhtmlonly
 */

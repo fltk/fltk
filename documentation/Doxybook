@@ -557,16 +557,14 @@ INPUT                  = src/index.dox \
                          src/intro.dox \
                          src/basics.dox \
                          src/common.dox \
-                         src/drawing.dox \
                          src/editor.dox \
+                         src/drawing.dox \
                          src/events.dox \
                          src/subclassing.dox \
                          src/opengl.dox \
                          src/fluid.dox \
                          src/advanced.dox \
                          src/unicode.dox \
-                         ../FL \
-                         ../src \
                          src/enumerations.dox \
                          src/glut.dox \
                          src/forms.dox \
@@ -575,7 +573,9 @@ INPUT                  = src/index.dox \
                          src/migration_1_3.dox \
                          src/development.dox \
                          src/license.dox \
-                         src/examples.dox
+                         src/examples.dox \
+                         ../FL \
+                         ../src
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 

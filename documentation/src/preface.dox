@@ -28,8 +28,6 @@ This manual is organized into the following chapters and appendices:
 \li \ref fluid
 \li \ref advanced
 \li \ref unicode
-\li <A class="el" HREF="annotated.html">A - Class Reference</A>
-\li <A class="el" HREF="functions.html#functions">B - Function Reference</A>
 \li \ref enumerations
 \li \ref glut
 \li \ref forms
@@ -39,6 +37,10 @@ This manual is organized into the following chapters and appendices:
 \li \ref development
 \li \ref license
 \li \ref examples
+\li <A class="el" HREF="annotated.html">Class Reference</A>
+\li <A class="el" HREF="functions.html#functions">Function Reference</A>
+\todo Remove or reconfigure old HTML links as these are relative
+      to the source directories and fail in the PDF version!
 
 \section preface_conventions Conventions
 
@@ -46,6 +48,7 @@ The following typeface conventions are used in this manual:
 
 \li Function and constant names are shown in <B><TT>bold courier type</TT></B>
 \li Code samples and commands are shown in <TT>regular courier type</TT>
+\todo The old typeface conventions need to be rethought for doxygen.
 
 \section preface_abbreviations Abbreviations
 
@@ -78,7 +81,7 @@ registered trademarks of Apple Computer, Inc.
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="intro.html">[Next] 1 - Introduction to FLTK</a>
+<a class="el" href="intro.html">[Next] Introduction to FLTK</a>
 \endhtmlonly
 
 */

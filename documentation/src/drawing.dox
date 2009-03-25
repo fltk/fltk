@@ -1,6 +1,6 @@
 /**
 
- \page	drawing	5 - Drawing Things in FLTK
+ \page	drawing Drawing Things in FLTK
 
 This chapter covers the drawing functions that are provided with FLTK.
 
@@ -1004,7 +1004,7 @@ in the offscreen buffer into the current buffer at <tt>x, y</tt>.
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="editor.html">[Previous]&nbsp; 4 - Designing a Simple Text Editor</a>&nbsp;
-<a class="el" href="events.html">[Next]&nbsp; 6 - Handling Events</a>&nbsp;
+<a class="el" href="editor.html">[Previous]&nbsp; Designing a Simple Text Editor</a>&nbsp;
+<a class="el" href="events.html">[Next]&nbsp; Handling Events</a>&nbsp;
 \endhtmlonly
 */

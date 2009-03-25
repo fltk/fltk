@@ -1,6 +1,6 @@
 /**
 
- \page	common	3 - Common Widgets and Attributes
+ \page	common Common Widgets and Attributes
 
 This chapter describes many of the widgets that are provided
 with FLTK and covers how to query and set the standard
@@ -589,8 +589,8 @@ combined with any modifiers like \c Shift , \c Alt , and \c Control .
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="basics.html">[Previous]&nbsp; 2 - FLTK Basics</a>&nbsp;
-<a class="el" href="editor.html">[Next]&nbsp; 4 - Designing a Simple Text Editor</a>&nbsp;
+<a class="el" href="basics.html">[Previous]&nbsp; FLTK Basics</a>&nbsp;
+<a class="el" href="editor.html">[Next]&nbsp; Designing a Simple Text Editor</a>&nbsp;
 
 \endhtmlonly
 */

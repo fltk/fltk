@@ -36,27 +36,27 @@
  \subpage basics
 
  \subpage common
-	\li \ref drawing_colors
-	\li \ref common_boxtypes
-	\li \ref common_labels
-	\li \ref drawing_images
+	- \ref drawing_colors
+	- \ref common_boxtypes
+	- \ref common_labels
+	- \ref drawing_images
 
  \subpage editor
 
  \subpage drawing
 
  \subpage events
-	\li \ref events_event_xxx
-	\li \ref events_propagation
+	- \ref events_event_xxx
+	- \ref events_propagation
 
  \subpage subclassing
 
  \subpage opengl
 
  \subpage fluid
-	\li \ref fluid_widget_attributes
-	\li \ref fluid_selecting_moving
-	\li \ref fluid_images
+	- \ref fluid_widget_attributes
+	- \ref fluid_selecting_moving
+	- \ref fluid_images
 
 </TD>
 <TD ALIGN="LEFT" VALIGN="TOP">
@@ -65,33 +65,41 @@
 
  \subpage unicode
 
-	<b><a class="el" href="annotated.html">A - Class Reference</a></b>
+ <b>Appendices:</b>
+ 
+	- \subpage enumerations
 
-	<b><a class="el" href="globals_func.html">B - Function Reference</a></b>
+	-  \subpage glut
+		- \ref glut_Fl_Glut_Window
+		<!-- - Fl_Glut_Window (not yet commented ?) -->
 
- \subpage enumerations
+	- \subpage forms
 
- \subpage glut
-	\li \ref glut_Fl_Glut_Window
-	<!-- \li Fl_Glut_Window (not yet commented ?) -->
+	- \subpage osissues
 
- \subpage forms
+	- \subpage migration_1_1
 
- \subpage osissues
+	- \subpage migration_1_3
 
- \subpage migration_1_1
+	- \subpage development
 
- \subpage migration_1_3
+	- \subpage license
 
- \subpage development
+	- \subpage examples
 
- \subpage license
+ <b>References:</b>
 
- \subpage examples
+  - <b><a class="el" href="annotated.html">Class Reference</a></b>
+
+  - <b><a class="el" href="globals_func.html">Function Reference</a></b>
 
 </TD>
 </TR>
 </TABLE>
+
+\todo The Index link in the html navigation bar needs to be removed
+      or reconfigured as it creates a nested frame in firefox/linux
+      whereas the MainPage tab at the top of the page works properly.
 
 \htmlonly
 <hr>

@@ -1,6 +1,6 @@
 /**
 
- \page	opengl	8 - Using OpenGL
+ \page	opengl Using OpenGL
 
 This chapter discusses using FLTK for your OpenGL applications.
 
@@ -460,7 +460,7 @@ after this call.
 \htmlonly
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="subclassing.html">[Previous]&nbsp; 7 - Adding and Extending Widgets</a>&nbsp;
-<a class="el" href="fluid.html">[Next]&nbsp; 9 - Programming with FLUID</a>&nbsp;
+<a class="el" href="subclassing.html">[Previous]&nbsp; Adding and Extending Widgets</a>&nbsp;
+<a class="el" href="fluid.html">[Next]&nbsp; Programming with FLUID</a>&nbsp;
 \endhtmlonly
 */

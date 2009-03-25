@@ -557,8 +557,8 @@ INPUT                  = src/index.dox \
                          src/intro.dox \
                          src/basics.dox \
                          src/common.dox \
-                         src/drawing.dox \
                          src/editor.dox \
+                         src/drawing.dox \
                          src/events.dox \
                          src/subclassing.dox \
                          src/opengl.dox \

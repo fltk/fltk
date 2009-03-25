@@ -49,8 +49,8 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/intro.dox \
                          $(SRC_DOCDIR)/basics.dox \
                          $(SRC_DOCDIR)/common.dox \
-                         $(SRC_DOCDIR)/drawing.dox \
                          $(SRC_DOCDIR)/editor.dox \
+                         $(SRC_DOCDIR)/drawing.dox \
                          $(SRC_DOCDIR)/events.dox \
                          $(SRC_DOCDIR)/subclassing.dox \
                          $(SRC_DOCDIR)/opengl.dox \

@@ -1,6 +1,6 @@
 /**
 
- \page intro	1 - Introduction to FLTK
+ \page intro Introduction to FLTK
 
 The Fast Light Tool Kit ("FLTK", pronounced
 "fulltick") is a cross-platform C++ GUI toolkit for
@@ -350,6 +350,6 @@ at "fltk@fltk.org" or one of the newsgroups.
 <hr>
 <a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
 <a class="el" href="preface.html">[Previous] Preface</a> &nbsp;&nbsp;
-<a class="el" href="basics.html">[Next]&nbsp; 2 - FLTK Basics</a>
+<a class="el" href="basics.html">[Next]&nbsp; FLTK Basics</a>
 \endhtmlonly
 */
