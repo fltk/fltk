@@ -119,7 +119,7 @@ void swap_cb(Fl_Widget *, void *) {
 }
 
 void sort_cb(Fl_Widget *, void *) {
-  browser->sort(FL_SORT_ASC);
+  browser->sort(FL_SORT_ASCENDING);
 }
 
 int main(int argc, char **argv) {

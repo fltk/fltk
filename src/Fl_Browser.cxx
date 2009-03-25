@@ -460,7 +460,7 @@ int Fl_Browser::full_height() const {
 }
 
 /**
-  The default height of items (including spacing in-between) in pixels.
+  The default 'average' item height (including inter-item spacing) in pixels.
   This currently returns textsize() + 2.
   \returns The value in pixels.
 */
@@ -629,10 +629,10 @@ void Fl_Browser::clear() {
 /**
   Adds a new line to the end of the browser.
 
-  The text string newtext may contain format characters; see format_char() for details.
+  The text string \p newtext may contain format characters; see format_char() for details.
   \p newtext is copied using the strdup() function, and can be NULL to make a blank line.
 
-  The optional void * argument \p d will be the data() for the new item.
+  The optional void* argument \p d will be the data() for the new item.
 
   \param[in] newtext The label text used for the added item
   \param[in] d Optional user data() for the item (0 if unspecified)
@@ -753,7 +753,7 @@ int Fl_Browser::value() const {
 
 /**
   Swap the two items \p a and \p b.
-  You must call redraw() to make any changes visible.
+  Uses swapping() to ensure list updates correctly.
   \param[in] a,b The two items to be swapped.
 */
 void Fl_Browser::swap(FL_BLINE *a, FL_BLINE *b) {

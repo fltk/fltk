@@ -28,11 +28,6 @@
 /* \file
    Fl_Browser_ widget . */
 
-// This is the base class for browsers.  To be useful it must
-// be subclassed and several virtual functions defined.  The
-// Forms-compatable browser and the file chooser's browser are
-// subclassed off of this.
-
 // Yes, I know this should be a template...
 
 #ifndef Fl_Browser__H
@@ -48,11 +43,11 @@
 #define FL_HOLD_BROWSER		2	/**< type() of Fl_Hold_Browser */
 #define FL_MULTI_BROWSER	3	/**< type() of Fl_Multi_Browser */
 
-#define FL_SORT_ASC		0	/**< sort browser items in ascending alphabetic order. */
-#define FL_SORT_DESC		1	/**< sort in descending order */
+#define FL_SORT_ASCENDING	0	/**< sort browser items in ascending alphabetic order. */
+#define FL_SORT_DESCENDING	1	/**< sort in descending order */
 
 /**
-  This is the base for browsers.  To be useful it must be
+  This is the base class for browsers.  To be useful it must be
   subclassed and several virtual functions defined.  The Forms-compatible
   browser and the file chooser's browser are subclassed off of this.
 
@@ -91,211 +86,237 @@ class FL_EXPORT Fl_Browser_ : public Fl_Group {
 protected:
 
   // All of the following must be supplied by the subclass:
-  /** This method must be provided by the subclass to return the first item in  the list. */
-    virtual void *item_first() const = 0;
-  /** This method must be provided by the subclass to return the item in the list after p. */
-    virtual void *item_next(void *) const = 0;
-  /** This method must be provided by the subclass to return the item in the list before p. */
-    virtual void *item_prev(void *) const = 0;
-  /** This method can be provided by the subclass to return the ilast item in the list. */
-    virtual void *item_last() const { return 0L; }
+  /**
+    This method must be provided by the subclass 
+    to return the first item in the list.
+    \see Related methods: item_first(), item_next(), item_last(), item_prev()
+   */
+  virtual void *item_first() const = 0;
+  /**
+    This method must be provided by the subclass
+    to return the item in the list after \p item.
+    \see Related methods: item_first(), item_next(), item_last(), item_prev()
+   */
+  virtual void *item_next(void *item) const = 0;
+  /**
+    This method must be provided by the subclass
+    to return the item in the list before \p item.
+    \see Related methods: item_first(), item_next(), item_last(), item_prev()
+   */
+  virtual void *item_prev(void *item) const = 0;
+  /**
+    This method must be provided by the subclass
+    to return the last item in the list.
+    \see Related methods: item_first(), item_next(), item_last(), item_prev()
+   */
+  virtual void *item_last() const { return 0L; }
   /** 
-    This method must be provided by the subclass to return the height of the
-    item p in pixels.  Allow for two additional pixels for the list
-    selection box.
+    This method must be provided by the subclass to return 
+    the height of \p item in pixels.
+    Allow for two additional pixels for the list selection box.
+    \param[in] item The item whose height is returned.
+    \returns The height of the specified \p item in pixels.
+    \see Related methods: item_height(), item_width(), item_quick_height()
   */
-  virtual int item_height(void *) const = 0;
+  virtual int item_height(void *item) const = 0;
   /**
     This method must be provided by the subclass to return the width of the
-    item p in pixels.  Allow for two additional pixels for the list
+    \p item in pixels.  Allow for two additional pixels for the list
     selection box.
+    \param[in] item The item whose width is returned.
+    \returns The width of the item in pixels.
   */
-  virtual int item_width(void *) const = 0;
-  virtual int item_quick_height(void *) const ;
+  virtual int item_width(void *item) const = 0;
+  virtual int item_quick_height(void *item) const ;
   /**
-    This method must be provided by the subclass to draw the item
-    p in the area indicated by x, y, w,
-    and h.
+    This method must be provided by the subclass to draw the \p item
+    in the area indicated by \p X, \p Y, \p W, \p H.
   */
-  virtual void item_draw(void *,int,int,int,int) const = 0;
+  virtual void item_draw(void *item,int X,int Y,int W,int H) const = 0;
   /**
-    This optional function returns a string that may be used for sorting. 
+    This optional method returns a string (label) that may be used for sorting. 
+    \param[in] item The item whose label text is returned.
+    \returns The item's text label. (Can be NULL if blank)
    */
   virtual const char *item_text(void *item) const { return 0L; }
   /**
-    This optional function is required for sorting browser items.
+    This optional method should be provided by the subclass 
+    to efficiently swap browser items \p a and \p b, such as for sorting.
+    \param[in] a,b The two items to be swapped.
    */
-  virtual void item_swap(void*, void*) { }
+  virtual void item_swap(void *a,void *b) { }
   /**
-    Return the item a specified index. 
+    This method must be provided by the subclass 
+    to return the item for the specified \p index. 
+    \param[in] index The \p index of the item to be returned
+    \returns The item at the specified \p index.
    */
-  virtual void *item_at(int) const { return 0L; }
+  virtual void *item_at(int index) const { return 0L; }
   // you don't have to provide these but it may help speed it up:
   virtual int full_width() const ;	// current width of all items
   virtual int full_height() const ;	// current height of all items
   virtual int incr_height() const ;	// average height of an item
   // These only need to be done by subclass if you want a multi-browser:
-  virtual void item_select(void *,int=1);
-  virtual int item_selected(void *) const ;
+  virtual void item_select(void *item,int val=1);
+  virtual int item_selected(void *item) const ;
 
   // things the subclass may want to call:
-  /**  Returns the item the appears at the top of the list.  */
-  void *top() const {return top_;}
+  /**
+    Returns the item that appears at the top of the list.
+   */
+  void *top() const { return top_; }
   /**
     Returns the item currently selected, or NULL if there is no selection.
     
-    <P>For multiple selection browsers this call returns the currently focused item,
+    For multiple selection browsers this call returns the currently focused item,
     even if it is not selected. To find all selected items, call 
-    
     Fl_Multi_Browser::selected() for every item in question.
   */
-  void *selection() const {return selection_;}
+  void *selection() const { return selection_; }
   void new_list(); // completely clobber all data, as though list replaced
-  void deleting(void *a); // get rid of any pointers to a
+  void deleting(void *item); // get rid of any pointers to item
   void replacing(void *a,void *b); // change a pointers to b
   void swapping(void *a,void *b); // exchange pointers a and b
   void inserting(void *a,void *b); // insert b near a
-  int displayed(void *) const ; // true if this line is visible
-  void redraw_line(void *); // minimal update, no change in size
-  /**    This method will cause the entire list to be redrawn.  */
-  void redraw_lines() {damage(FL_DAMAGE_SCROLL);} // redraw all of them
-  void bbox(int&,int&,int&,int&) const;
-  int leftedge() const;	// x position after scrollbar & border
-  void *find_item(int my); // item under mouse
-  
+  int displayed(void *item) const ; // true if this item is visible
+  void redraw_line(void *item); // minimal update, no change in size
   /**
-    Draws the contents of the browser within the specified bounding box.
-    \todo Find the implementation, if any, and document it there!
-  */
-  void draw(int,int,int,int);
-  /*
-    Handles the specified event, plus 4 extra parameters!
-    \todo Find the implementation, if any, and document it there!
-    fabien: I guess the answer is there is no implementation (yet?), 
-       so let's comment out this method that does not exist.
-  int handle(int,int,int,int,int);
-  */
-
+    This method will cause the entire list to be redrawn.
+    \see Related methods: redraw_lines(), redraw_line()
+   */
+  void redraw_lines() { damage(FL_DAMAGE_SCROLL); } // redraw all of them
+  void bbox(int &X,int &Y,int &W,int &H) const;
+  int leftedge() const;	// x position after scrollbar & border
+  void *find_item(int ypos); // item under mouse
+  
   void draw();
-  Fl_Browser_(int,int,int,int,const char * = 0);
+  Fl_Browser_(int X,int Y,int W,int H,const char *L=0);
 
 public:
 
-  /** Vertical scrollbar. */
+  /**
+    Vertical scrollbar. Public, so that it can be accessed directly.
+   */
   Fl_Scrollbar scrollbar;
-  /** Horizontal scrollbar */
+  /**
+    Horizontal scrollbar. Public, so that it can be accessed directly.
+   */
   Fl_Scrollbar hscrollbar;
 
-  int handle(int);
-  void resize(int,int,int,int);
+  int handle(int event);
+  void resize(int X,int Y,int W,int H);
 
-  int select(void *,int=1,int docallbacks=0);
-  int select_only(void *,int docallbacks=0);
+  int select(void *item,int val=1,int docallbacks=0);
+  int select_only(void *item,int docallbacks=0);
   int deselect(int docallbacks=0);
   /**
-    Gets or sets the vertical scrolling position of the list,
-    which is the pixel offset of the list items within the list
-    area.
+    Gets the vertical scroll position of the list as a pixel position \p pos.
+    The position returned is how many pixels of the list are scrolled off the top edge
+    of the screen.  Example: A position of '3' indicates the top 3 pixels of 
+    the list are scrolled off the top edge of the screen.
+    \see Related methods: position(), hposition()
   */
-  int position() const {return position_;}
+  int position() const { return position_; }
+  void position(int pos); // scroll to here
   /**
-    Gets or sets the horizontal scrolling position of the list,
-    which is the pixel offset of the list items within the list
-    area.
+    Gets the horizontal scroll position of the list as a pixel position \p pos.
+    The position returned is how many pixels of the list are scrolled off the left edge
+    of the screen. Example: A position of '18' indicates the left 18 pixels of
+    the list are scrolled off the left edge of the screen.
+    \see Related methods: position(), hposition()
   */
-  int hposition() const {return hposition_;}
-  void position(int); // scroll to here
+  int hposition() const { return hposition_; }
   void hposition(int); // pan to here
-  void display(void*); // scroll so this item is shown
-  /** See Fl_Browser_::has_scrollbar(uchar) */
-  uchar has_scrollbar() const {return has_scrollbar_;}
+  void display(void *item); // scroll so this item is shown
+
   /**
-    By default you can scroll in both directions, and the scrollbars
-    disappear if the data will fit in the widget.  has_scrollbar() changes
-    this based on the value of h:
-  
-    \li 0 - No scrollbars.
-  
-    \li Fl_Browser_::HORIZONTAL - Only a horizontal scrollbar.
-  
-    \li Fl_Browser_::VERTICAL - Only a vertical scrollbar.
-  
-    \li Fl_Browser_::BOTH - The default is both scrollbars.
-  
-    \li Fl_Browser_::HORIZONTAL_ALWAYS - Horizontal scrollbar always on,
-        vertical always off.
-  
-    \li Fl_Browser_::VERTICAL_ALWAYS - Vertical scrollbar always on,
-        horizontal always off.
-  
-    \li Fl_Browser_::BOTH_ALWAYS - Both always on.
-  */
-  void has_scrollbar(uchar i) {has_scrollbar_ = i;}
+    Values for has_scrollbar().
+   */
   enum { // values for has_scrollbar()
-    HORIZONTAL = 1,
-    VERTICAL = 2,
-    BOTH = 3,
-    ALWAYS_ON = 4,
-    HORIZONTAL_ALWAYS = 5,
-    VERTICAL_ALWAYS = 6,
-    BOTH_ALWAYS = 7
+    HORIZONTAL = 1,		///< Only show horizontal scrollbar
+    VERTICAL = 2,		///< Only show vertical scrollbar
+    BOTH = 3,			///< Show both scrollbars (default)
+    ALWAYS_ON = 4,		///< Both scrollbars always on
+    HORIZONTAL_ALWAYS = 5,	///< horizontal scrollbar always on
+    VERTICAL_ALWAYS = 6,	///< vertical scrollbar always on
+    BOTH_ALWAYS = 7		///< both scrollbars always on
   };
+  /**
+    Returns the current scrollbar mode, see Fl_Browser_::has_scrollbar(uchar)
+   */
+  uchar has_scrollbar() const { return has_scrollbar_; }
+  /**
+    Sets whether the widget should have scrollbars or not (default Fl_Browser_::BOTH).
+    By default you can scroll in both directions, and the scrollbars
+    disappear if the data will fit in the widget.  
+    has_scrollbar() changes this based on the value of \p mode:
+  
+    - 0 - No scrollbars.
+
+    - Fl_Browser_::HORIZONTAL - Only a horizontal scrollbar.
+
+    - Fl_Browser_::VERTICAL - Only a vertical scrollbar.
+
+    - Fl_Browser_::BOTH - The default is both scrollbars.
+
+    - Fl_Browser_::HORIZONTAL_ALWAYS - Horizontal scrollbar always on,
+      vertical always off.
+
+    - Fl_Browser_::VERTICAL_ALWAYS - Vertical scrollbar always on,
+      horizontal always off.
+
+    - Fl_Browser_::BOTH_ALWAYS - Both always on.
+  */
+  void has_scrollbar(uchar mode) { has_scrollbar_ = mode; }
 
   /**
     Gets the default text font for the lines in the browser.
+    \see Related methods: textfont(), textsize(), textcolor()
   */
-  Fl_Font textfont() const {return textfont_;}
+  Fl_Font textfont() const { return textfont_; }
   /**
-    Sets the default text font to font \p s
+    Sets the default text font for the lines in the browser to \p font.
   */
-  void textfont(Fl_Font s) {textfont_ = s;}
+  void textfont(Fl_Font font) { textfont_ = font; }
 
   /**
-    Gets the default text size for the lines in the browser.
+    Gets the default text size (in pixels) for the lines in the browser.
   */
-  Fl_Fontsize textsize() const {return textsize_;}
+  Fl_Fontsize textsize() const { return textsize_; }
   /**
-    Sets the default text size to size \p s.
+    Sets the default text size (in pixels) for the lines in the browser to \p size.
   */
-  void textsize(Fl_Fontsize s) {textsize_ = s;}
+  void textsize(Fl_Fontsize size) { textsize_ = size; }
 
   /**
     Gets the default text color for the lines in the browser.
   */
-  Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+  Fl_Color textcolor() const { return (Fl_Color)textcolor_; }
   /**
-    Sets the default text color to color \p n.
+    Sets the default text color for the lines in the browser to color \p col.
   */
-  void textcolor(unsigned n) {textcolor_ = n;}
+  void textcolor(unsigned col) { textcolor_ = col; }
 
   /**
-    Gets the width of any scrollbars that are used.
+    Gets the current width of scrollbars in pixels.
   */
-  static int scrollbar_width() {return scrollbar_width_;}
+  static int scrollbar_width() { return scrollbar_width_; }
   /**
-    Sets the width of any scrollbars that are used to \p b.
+    Sets the width of scrollbars to pixel size \p width.
   */
-  static void scrollbar_width(int b) {scrollbar_width_ = b;}
+  static void scrollbar_width(int width) { scrollbar_width_ = width; }
 
   /**
     Moves the vertical scrollbar to the righthand side of the list.
     For back compatibility.
   */
-  void scrollbar_right() {scrollbar.align(FL_ALIGN_RIGHT);}
+  void scrollbar_right() { scrollbar.align(FL_ALIGN_RIGHT); }
   /**
     Moves the vertical scrollbar to the lefthand side of the list.
     For back compatibility.
   */
-  void scrollbar_left() {scrollbar.align(FL_ALIGN_LEFT);}
-
-  /**
-   Sort the items in the browser.
-   item_swap(void*, void*) and item_text(void*) must be implemented for this call.
-   \param[in] flags no flags were defined yet. Sorting in descending order and 
-                    sorting while ignoring case come to mind.
-   */
+  void scrollbar_left() { scrollbar.align(FL_ALIGN_LEFT); }
   void sort(int flags=0);
-
 };
 
 #endif

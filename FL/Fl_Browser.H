@@ -139,46 +139,61 @@ public:
   void swap(int a, int b);
   void clear();
 
-  /** Returns how many lines are in the browser.
-      The last line number is equal to this.
-      Returns 0 if browser is empty.
+  /**
+    Returns how many lines are in the browser.
+    The last line number is equal to this.
+    Returns 0 if browser is empty.
   */
-  int size() const {return lines;}
+  int size() const { return lines; }
   void size(int W, int H) { Fl_Widget::size(W, H); }
 
   int topline() const ;
   /** For internal use only? */
   enum Fl_Line_Position { TOP, BOTTOM, MIDDLE };
   void lineposition(int line, Fl_Line_Position pos);
-  /** Scrolls the browser so the top item in the browser is showing the specified \p line. */
+  /**
+    Scrolls the browser so the top item in the browser
+    is showing the specified \p line.
+    \param[in] line The line to be displayed at the top.
+   */
   void topline(int line) { lineposition(line, TOP); }
-  /** Scrolls the browser so the bottom item in the browser is showing the specified \p line. */
+  /**
+    Scrolls the browser so the bottom item in the browser
+    is showing the specified \p line.
+    \param[in] line The line to be displayed at the bottom.
+   */
   void bottomline(int line) { lineposition(line, BOTTOM); }
-  /** Scrolls the browser so the middle item in the browser is showing the specified \p line. */
+  /**
+    Scrolls the browser so the middle item in the browser
+    is showing the specified \p line.
+    \param[in] line The line to be displayed in the middle.
+   */
   void middleline(int line) { lineposition(line, MIDDLE); }
 
   int select(int line, int val=1);
   int selected(int line) const ;
   void show(int line);
   /** Shows the entire Fl_Browser widget -- opposite of hide(). */
-  void show() {Fl_Widget::show();}
+  void show() { Fl_Widget::show(); }
   void hide(int line);
   /** Hides the entire Fl_Browser widget -- opposite of show(). */
-  void hide() {Fl_Widget::hide();}
+  void hide() { Fl_Widget::hide(); }
   int visible(int line) const ;
 
   int value() const ;
   /** Sets the browser's value(), which selects the specified \p line.
       This is the same as calling select(line).
    */
-  void value(int line) { select(line);}
+  void value(int line) { select(line); }
   const char* text(int line) const ;
   void text(int line, const char* newtext);
   void* data(int line) const ;
   void data(int line, void* d);
 
   Fl_Browser(int X, int Y, int W, int H, const char *L = 0);
-  /** The destructor deletes all list items and destroys the browser. */
+  /**
+    The destructor deletes all list items and destroys the browser.
+   */
   ~Fl_Browser() { clear(); }
 
   /**
@@ -210,24 +225,24 @@ public:
     <tt>sprintf("\@C%d\@.%s", color, string)</tt> and it will work even if the
     string starts with a digit or has the format character in it.
   */
-  char format_char() const {return format_char_;}
+  char format_char() const { return format_char_; }
   /**
     Sets the current format code prefix character to \p c.
     The default prefix is '\@'.  Set the prefix to 0 to disable formatting.
     \see uchar Fl_Browser::format_char() const
   */
-  void format_char(char c) {format_char_ = c;}
+  void format_char(char c) { format_char_ = c; }
   /**
     Gets the current column separator character.
     The default is '\\t' (tab).
   */
-  char column_char() const {return column_char_;}
+  char column_char() const { return column_char_; }
   /**
     Sets the column separator to c.
     This will only have an effect if you also set column_widths().
     The default is '\\t' (tab).
   */
-  void column_char(char c) {column_char_ = c;}
+  void column_char(char c) { column_char_ = c; }
   /**
     Gets the current column width array.
     This array is zero-terminated and specifies the widths in pixels of
@@ -250,17 +265,17 @@ public:
   [..]
     \endcode
   */
-  const int* column_widths() const {return column_widths_;}
+  const int* column_widths() const { return column_widths_; }
   /**
     Sets the current array to \p arr.  Make sure the last entry is zero.
     \see const int *Fl_Browser::column_widths() const
   */
-  void column_widths(const int* arr) {column_widths_ = arr;}
+  void column_widths(const int* arr) { column_widths_ = arr; }
 
   /**
     Returns non-zero if \p line is visible.
   */
-  int displayed(int line) const {return Fl_Browser_::displayed(find_line(line));}
+  int displayed(int line) const { return Fl_Browser_::displayed(find_line(line)); }
 
   /**
     Make the item at the specified \p line visible().
@@ -276,7 +291,7 @@ public:
   }
 
   /** For back compatibility only. */
-  void replace(int a, const char* b) {text(a, b);}
+  void replace(int a, const char* b) { text(a, b); }
   void display(int line, int val=1);
 };
 
