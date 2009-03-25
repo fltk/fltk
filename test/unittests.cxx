@@ -66,7 +66,7 @@ public: CircleTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
     label("testing int drawing of circles and ovals (fl_arc, fl_pie)\n"
           "No red lines should be visible. "
           "If you see bright red pixels, the circle drawing alignment is off. "
-          "If you see dark red pixels, your syste supports anti-aliasing "
+          "If you see dark red pixels, your system supports anti-aliasing "
           "which should be of no concern. "
           "The green rectangles should not be overwritten by circle drawings.");
     align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
