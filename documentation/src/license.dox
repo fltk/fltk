@@ -490,11 +490,28 @@ DAMAGES.
 
 \par END OF TERMS AND CONDITIONS
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="development.html">[Previous] Developer Information</a> &nbsp;&nbsp;
-<a class="el" href="examples.html">[Next] Example Source Code</a>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="development.html">
+    [Prev]
+    Developer Information
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="examples.html">
+    Example Source Code
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
 
 */

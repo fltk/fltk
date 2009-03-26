@@ -149,10 +149,28 @@ method to disable it:
 Fl::visible_focus(0);
 \endcode
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="osissues.html">[Previous] Operating System Issues</a>&nbsp;&nbsp;
-<a class="el" href="migration_1_3.html">[Next] Migrating Code from FLTK 1.1 to 1.3</a>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="osissues.html">
+    [Prev]
+    Operating System Issues
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="migration_1_3.html">
+    Migrating Code from FLTK 1.1 to 1.3
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

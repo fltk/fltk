@@ -641,9 +641,26 @@ useful visual UI designer. Many parts of \c fluid were
 created using \c fluid. See the \link fluid Fluid Tutorial \endlink
 for more details.
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="license.html">[Previous] Software License</a>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="license.html">
+    [Prev]
+    Software License
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    &nbsp;
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

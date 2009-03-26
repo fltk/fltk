@@ -74,10 +74,28 @@ system, FLTK will convert string as needed.
       characters. Right-to-left rendered text can not be marked or edited,  
       and probably much more.
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="advanced.html">[Previous]&nbsp; Advanced FLTK </a>&nbsp;
-<a class="el" href="enumerations.html">[Next]&nbsp; FLTK Enumerations</a>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="advanced.html">
+    [Prev]
+    Advanced FLTK
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="enumerations.html">
+    FLTK Enumerations
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

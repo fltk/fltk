@@ -457,10 +457,28 @@ The \p >scene() method sets the scene to be drawn.  The scene is
 a collection of 3D objects in a \p csGroup.  The scene is redrawn
 after this call.
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="subclassing.html">[Previous]&nbsp; Adding and Extending Widgets</a>&nbsp;
-<a class="el" href="fluid.html">[Next]&nbsp; Programming with FLUID</a>&nbsp;
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="subclassing.html">
+    [Prev]
+    Adding and Extending Widgets
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="fluid.html">
+    Programming with FLUID
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

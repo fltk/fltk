@@ -235,10 +235,28 @@ fl_font_name(10,"*bookman-demi-r-no*");
 fl_font_name(11,"*bookman-light-i-no*");
 \endcode
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="glut.html">[Previous] GLUT Compatibility</a> &nbsp;&nbsp;
-<a class="el" href="osissues.html">[Next] Operating System Issues</a>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="glut.html">
+    [Prev]
+    GLUT Compatibility
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="osissues.html">
+    Operating System Issues
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

@@ -538,8 +538,25 @@ the windows. See the
 
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="events.html">[Previous] Handling Events</a>&nbsp;&nbsp;
-<a class="el" href="opengl.html">[Next] Using OpenGL</a>&nbsp;
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="events.html">
+    [Prev]
+    Handling Events
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="opengl.html">
+    Using OpenGL
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

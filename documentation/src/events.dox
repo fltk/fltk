@@ -395,10 +395,28 @@ The following methods are provided for character composition:
 \li Fl::compose()
 \li Fl::compose_reset()
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="drawing.html">[Previous]&nbsp; Drawing Things in FLTK</a>&nbsp;&nbsp:
-<a class="el" href="subclassing.html">[Next]&nbsp; Adding and Extending Widgets</a>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="drawing.html">
+    [Prev]
+    Drawing Things in FLTK
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="subclassing.html">
+    Adding and Extending Widgets
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

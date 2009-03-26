@@ -586,11 +586,28 @@ or one of the special keys like
 <a href="enumerations.html#key_values"><tt>FL_Enter</tt></a> -
 combined with any modifiers like \c Shift , \c Alt , and \c Control .
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="basics.html">[Previous]&nbsp; FLTK Basics</a>&nbsp;
-<a class="el" href="editor.html">[Next]&nbsp; Designing a Simple Text Editor</a>&nbsp;
-
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="basics.html">
+    [Prev]
+    FLTK Basics
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="editor.html">
+    Designing a Simple Text Editor
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

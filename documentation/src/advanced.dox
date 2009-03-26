@@ -100,10 +100,28 @@ Fl::lock(),
 Fl::thread_message(),
 Fl::unlock().
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="fluid.html">[Previous]&nbsp; Programming with FLUID</a>&nbsp;
-<a class="el" href="unicode.html">[Next]&nbsp; Unicode and utf-8 Support</a>&nbsp;
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="fluid.html">
+    [Prev]
+    Programming with FLUID
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="unicode.html">
+    Unicode and utf-8 Support
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */

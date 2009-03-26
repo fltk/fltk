@@ -373,10 +373,28 @@ include lines:</i>
 #include <Fl/fl_xyz.h>
 \endcode
 
+
 \htmlonly
 <hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="intro.html">[Previous]&nbsp; Introduction to FLTK</a>&nbsp;
-<a class="el" href="common.html">[Next]&nbsp; Common Widgets and Attributes</a>&nbsp;
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="intro.html">
+    [Prev]
+    Introduction to FLTK
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="common.html">
+    Common Widgets and Attributes
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
 \endhtmlonly
+
 */
