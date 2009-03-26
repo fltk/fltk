@@ -290,6 +290,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "label", "label.vcproj", "{C
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "line_style", "line_style.vcproj", "{8B25CCE0-0988-4999-AE65-5A5EE31BB44D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E070AAFC-9D03-41A3-BC7D-30887EA0D50F} = {E070AAFC-9D03-41A3-BC7D-30887EA0D50F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mandelbrot", "mandelbrot.vcproj", "{7BBECC0F-9381-4BF2-87CA-3FD1DA93DEAF}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -444,6 +447,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utf8", "utf8.vcproj", "{ADA
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cairo_test", "cairo_test.vcproj", "{CF98E92E-C789-47E6-A2DA-398EB7991A2B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E070AAFC-9D03-41A3-BC7D-30887EA0D50F} = {E070AAFC-9D03-41A3-BC7D-30887EA0D50F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
