@@ -115,11 +115,13 @@ protected:
   /** Swap the items \p a and \p b.
       You must call redraw() to make any changes visible.
       \param[in] a,b the items to be swapped.
+      \see swap(int,int), item_swap()
    */
   void item_swap(void *a, void *b) { swap((FL_BLINE*)a, (FL_BLINE*)b); }
   /** Return the item at specified \p line.
       \param[in] line The line of the item to return. (1 based)
       \returns The item, or NULL if line out of range.
+      \see item_at(), find_line(), lineno()
    */
   void *item_at(int line) const { return (void*)find_line(line); }
 
@@ -155,18 +157,21 @@ public:
     Scrolls the browser so the top item in the browser
     is showing the specified \p line.
     \param[in] line The line to be displayed at the top.
+    \see topline(), middleline(), bottomline(), displayed(), lineposition()
    */
   void topline(int line) { lineposition(line, TOP); }
   /**
     Scrolls the browser so the bottom item in the browser
     is showing the specified \p line.
     \param[in] line The line to be displayed at the bottom.
+    \see topline(), middleline(), bottomline(), displayed(), lineposition()
    */
   void bottomline(int line) { lineposition(line, BOTTOM); }
   /**
     Scrolls the browser so the middle item in the browser
     is showing the specified \p line.
     \param[in] line The line to be displayed in the middle.
+    \see topline(), middleline(), bottomline(), displayed(), lineposition()
    */
   void middleline(int line) { lineposition(line, MIDDLE); }
 
@@ -181,8 +186,10 @@ public:
   int visible(int line) const ;
 
   int value() const ;
-  /** Sets the browser's value(), which selects the specified \p line.
-      This is the same as calling select(line).
+  /**
+    Sets the browser's value(), which selects the specified \p line.
+    This is the same as calling select(line).
+    \see select(), selected(), value(), item_select(), item_selected()
    */
   void value(int line) { select(line); }
   const char* text(int line) const ;
@@ -222,25 +229,27 @@ public:
 
     Notice that the '\@.' command can be used to reliably
     terminate the parsing.  To print a random string in a random color, use 
-    <tt>sprintf("\@C%d\@.%s", color, string)</tt> and it will work even if the
+    <tt>sprintf("@C%d@.%s", color, string)</tt> and it will work even if the
     string starts with a digit or has the format character in it.
   */
   char format_char() const { return format_char_; }
   /**
     Sets the current format code prefix character to \p c.
     The default prefix is '\@'.  Set the prefix to 0 to disable formatting.
-    \see uchar Fl_Browser::format_char() const
+    \see format_char() for list of '\@' codes
   */
   void format_char(char c) { format_char_ = c; }
   /**
     Gets the current column separator character.
     The default is '\\t' (tab).
+    \see column_char(), column_widths()
   */
   char column_char() const { return column_char_; }
   /**
     Sets the column separator to c.
     This will only have an effect if you also set column_widths().
     The default is '\\t' (tab).
+    \see column_char(), column_widths()
   */
   void column_char(char c) { column_char_ = c; }
   /**
@@ -264,16 +273,23 @@ public:
   b->add("root\t13115\t0.0\t0.0\t1352\t0\ttty2\tSW\tAug30\t0:00\t@b@f/sbin/mingetty tty2");
   [..]
     \endcode
+    \see column_char(), column_widths()
   */
   const int* column_widths() const { return column_widths_; }
   /**
     Sets the current array to \p arr.  Make sure the last entry is zero.
-    \see const int *Fl_Browser::column_widths() const
+    \see column_char(), column_widths()
   */
   void column_widths(const int* arr) { column_widths_ = arr; }
 
   /**
-    Returns non-zero if \p line is visible.
+    Returns non-zero if \p line has been scrolled to a position where it is being displayed.
+    Checks to see if the item's vertical position is within the top and bottom
+    edges of the display window. This does NOT take into account the hide()/show()
+    status of the widget or item.
+    \param[in] line The line to be checked
+    \returns 1 if visible, 0 if not visible.
+    \see topline(), middleline(), bottomline(), displayed(), lineposition()
   */
   int displayed(int line) const { return Fl_Browser_::displayed(find_line(line)); }
 
@@ -282,7 +298,7 @@ public:
     Functionally similar to show(int line).
     If \p line is out of range, redisplay top or bottom of list as appropriate.
     \param[in] line The line to be made visible.
-    \see show(int)
+    \see show(int), hide(int), display(), visible(), make_visible()
   */
   void make_visible(int line) {
     if (line < 1) Fl_Browser_::display(find_line(1));

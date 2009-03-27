@@ -37,6 +37,9 @@
   was any error in opening or reading the file, in which case errno
   is set to the system error.  The data() of each line is set
   to NULL.
+  \param[in] filename The filename to load
+  \returns 1 if OK, 0 on error (errno has reason)
+  \see add()
 */
 int Fl_Browser::load(const char *filename) {
 #define MAXFL_BLINE 1024
@@ -54,8 +57,9 @@ int Fl_Browser::load(const char *filename) {
 	    newtext[i] = 0;
 	    add(newtext);
 	    i = 0;
-	} else
+	} else {
 	    newtext[i++] = c;
+	}
     } while (c >= 0);
     fclose(fl);
     return 1;

@@ -63,6 +63,7 @@ struct FL_BLINE {	// data is in a linked list of these
   }
   \endcode
   \returns The first item, or NULL if list is empty.
+  \see item_first(), item_last(), item_next(), item_prev()
 */
 void* Fl_Browser::item_first() const {return first;}
 
@@ -70,7 +71,7 @@ void* Fl_Browser::item_first() const {return first;}
   Returns the next item after \p item.
   \param[in] item The 'current' item
   \returns The next item after \p item, or NULL if there are none after this one.
-  \see item_first()
+  \see item_first(), item_last(), item_next(), item_prev()
 */
 void* Fl_Browser::item_next(void* item) const {return ((FL_BLINE*)item)->next;}
 
@@ -78,7 +79,7 @@ void* Fl_Browser::item_next(void* item) const {return ((FL_BLINE*)item)->next;}
   Returns the previous item before \p item.
   \param[in] item The 'current' item
   \returns The previous item before \p item, or NULL if there none before this one.
-  \see item_last()
+  \see item_first(), item_last(), item_next(), item_prev()
 */
 void* Fl_Browser::item_prev(void* item) const {return ((FL_BLINE*)item)->prev;}
 
@@ -92,6 +93,7 @@ void* Fl_Browser::item_prev(void* item) const {return ((FL_BLINE*)item)->prev;}
   }
   \endcode
   \returns The last item, or NULL if list is empty.
+  \see item_first(), item_last(), item_next(), item_prev()
 */
 void* Fl_Browser::item_last() const {return last;}
 
@@ -99,6 +101,7 @@ void* Fl_Browser::item_last() const {return last;}
   See if \p item is selected.
   \param[in] item The item whose selection state is to be checked.
   \returns 1 if selected, 0 if not.
+  \see select(), selected(), value(), item_select(), item_selected()
 */
 int Fl_Browser::item_selected(void* item) const {
   return ((FL_BLINE*)item)->flags&SELECTED;
@@ -107,6 +110,7 @@ int Fl_Browser::item_selected(void* item) const {
   Change the selection state of \p item to the value \p val.
   \param[in] item The item to be changed.
   \param[in] val The new selection state: 1 selects, 0 de-selects.
+  \see select(), selected(), value(), item_select(), item_selected()
 */
 void Fl_Browser::item_select(void *item, int val) {
   if (val) ((FL_BLINE*)item)->flags |= SELECTED;
@@ -135,6 +139,7 @@ const char *Fl_Browser::item_text(void *item) const {
 
   \param[in] line The line number of the item to return. (1 based)
   \returns The returned item.
+  \see item_at(), find_line(), lineno()
 */
 FL_BLINE* Fl_Browser::find_line(int line) const {
   int n; FL_BLINE* l;
@@ -158,6 +163,7 @@ FL_BLINE* Fl_Browser::find_line(int line) const {
   Caveat: See efficiency note in find_line().
   \param[in] item The item to be found
   \returns The line number of the item, or 0 if not found.
+  \see item_at(), find_line(), lineno()
 */
 int Fl_Browser::lineno(void *item) const {
   FL_BLINE* l = (FL_BLINE*)item;
@@ -192,6 +198,7 @@ int Fl_Browser::lineno(void *item) const {
   You must call redraw() to make any changes visible.
   \param[in] line The line number to be removed. (1 based) Must be in range!
   \returns Pointer to browser item that was removed (and is no longer valid).
+  \see add(), insert(), remove(), swap(int,int), clear()
 */
 FL_BLINE* Fl_Browser::_remove(int line) {
   FL_BLINE* ttt = find_line(line);
@@ -214,6 +221,7 @@ FL_BLINE* Fl_Browser::_remove(int line) {
   You must call redraw() to make any changes visible.
   \param[in] line Line to be removed. (1 based) \n
                   If \p line is out of range, no action is taken.
+  \see add(), insert(), remove(), swap(int,int), clear()
 */
 void Fl_Browser::remove(int line) {
   if (line < 1 || line > lines) return;
@@ -342,6 +350,8 @@ void Fl_Browser::data(int line, void* d) {
   This takes into account embedded \@ codes within the text() label.
   \param[in] item The item whose height is returned.
   \returns The height of the item in pixels.
+  \see item_height(), item_width(),\n
+       incr_height(), full_height()
 */
 int Fl_Browser::item_height(void *item) const {
   FL_BLINE* l = (FL_BLINE*)item;
@@ -398,6 +408,8 @@ int Fl_Browser::item_height(void *item) const {
   This takes into account embedded \@ codes within the text() label.
   \param[in] item The item whose width is returned.
   \returns The width of the item in pixels.
+  \see item_height(), item_width(),\n
+       incr_height(), full_height()
 */
 int Fl_Browser::item_width(void *item) const {
   char* str = ((FL_BLINE*)item)->txt;
@@ -454,6 +466,8 @@ int Fl_Browser::item_width(void *item) const {
   This returns the accumulated height of *all* the items in the browser
   that are not hidden with hide(), including items scrolled off screen.
   \returns The accumulated size of all the visible items in pixels.
+  \see item_height(), item_width(),\n
+       incr_height(), full_height()
 */
 int Fl_Browser::full_height() const {
   return full_height_;
@@ -463,6 +477,8 @@ int Fl_Browser::full_height() const {
   The default 'average' item height (including inter-item spacing) in pixels.
   This currently returns textsize() + 2.
   \returns The value in pixels.
+  \see item_height(), item_width(),\n
+       incr_height(), full_height()
 */
 int Fl_Browser::incr_height() const {
   return textsize()+2;
@@ -576,6 +592,8 @@ Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char *L)
   Updates the browser so that \p line is shown at position \p pos.
   \param[in] line line number. (1 based)
   \param[in] pos position.
+  \see topline(), middleline(), bottomline(), \n
++: Command not found.
 */
 void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
   if (line<1) line = 1;
@@ -612,6 +630,7 @@ int Fl_Browser::topline() const {
 
 /**
   Removes all the lines in the browser.
+  \see add(), insert(), remove(), swap(int,int), clear()
 */
 void Fl_Browser::clear() {
   for (FL_BLINE* l = first; l;) {
@@ -636,6 +655,7 @@ void Fl_Browser::clear() {
 
   \param[in] newtext The label text used for the added item
   \param[in] d Optional user data() for the item (0 if unspecified)
+  \see add(), insert(), remove(), swap(int,int), clear()
 */
 void Fl_Browser::add(const char* newtext, void* d) {
   insert(lines+1, newtext, d);
@@ -673,6 +693,7 @@ void* Fl_Browser::data(int line) const {
   \param[in] line The line number of the item to be changed. (1 based)
   \param[in] val The new selection state (1=select, 0=de-select).
   \returns 1 if the state changed, 0 if not.
+  \see select(), selected(), value(), item_select(), item_selected()
 */
 int Fl_Browser::select(int line, int val) {
   if (line < 1 || line > lines) return 0;
@@ -683,6 +704,7 @@ int Fl_Browser::select(int line, int val) {
   Returns 1 if specified \p line is selected, 0 if not.
   \param[in] line The line being checked (1 based)
   \returns 1 if item selected, 0 if not.
+  \see select(), selected(), value(), item_select(), item_selected()
   */
 int Fl_Browser::selected(int line) const {
   if (line < 1 || line > lines) return 0;
@@ -695,6 +717,7 @@ int Fl_Browser::selected(int line) const {
   This changes the full_height() if the state was changed.
   redraw() is called automatically if a change occurred.
   \param[in] line The line to be shown. (1 based)
+  \see show(int), hide(int), display(), visible(), make_visible()
 */
 void Fl_Browser::show(int line) {
   FL_BLINE* t = find_line(line);
@@ -712,6 +735,7 @@ void Fl_Browser::show(int line) {
   When a line is made invisible, lines below it are moved up in the display.
   redraw() is called automatically if a change occurred.
   \param[in] line The line to be hidden. (1 based)
+  \see show(int), hide(int), display(), visible(), make_visible()
 */
 void Fl_Browser::hide(int line) {
   FL_BLINE* t = find_line(line);
@@ -726,7 +750,7 @@ void Fl_Browser::hide(int line) {
   For back compatibility.
   This calls show(line) if \p val is true, and hide(line) otherwise.
   If \p val is not specified, the default is 1 (makes the line visible).
-  \see show(int line), hide(int line)
+  \see show(int), hide(int), display(), visible(), make_visible()
 */
 void Fl_Browser::display(int line, int val) {
   if (line < 1 || line > lines) return;
@@ -737,6 +761,7 @@ void Fl_Browser::display(int line, int val) {
   Returns non-zero if the specified \p line is visible, 0 if hidden.
   Use show(int), hide(int), or make_visible(int) to change an item's visible state.
   \param[in] line The line in the browser to be tested. (1 based)
+  \see show(int), hide(int), display(), visible(), make_visible()
 */
 int Fl_Browser::visible(int line) const {
   if (line < 1 || line > lines) return 0;
@@ -746,6 +771,7 @@ int Fl_Browser::visible(int line) const {
 /**
   Returns the line number of the currently selected line, or 0 if none.
   \returns The line number of current selection, or 0 if none selected.
+  \see select(), selected(), value(), item_select(), item_selected()
 */
 int Fl_Browser::value() const {
   return lineno(selection());
@@ -755,6 +781,7 @@ int Fl_Browser::value() const {
   Swap the two items \p a and \p b.
   Uses swapping() to ensure list updates correctly.
   \param[in] a,b The two items to be swapped.
+  \see swap(int,int), item_swap()
 */
 void Fl_Browser::swap(FL_BLINE *a, FL_BLINE *b) {
 
@@ -799,6 +826,7 @@ void Fl_Browser::swap(FL_BLINE *a, FL_BLINE *b) {
   Swaps two browser lines \p a and \p b.
   You must call redraw() to make any changes visible.
   \param[in] a,b The two lines to be swapped. (both 1 based)
+  \see swap(int,int), item_swap()
 */
 void Fl_Browser::swap(int a, int b) {
   if (a < 1 || a > lines || b < 1 || b > lines) return;

@@ -157,7 +157,7 @@ void Fl_Browser_::resize(int X, int Y, int W, int H) {
   This method should be called when the contents of \p item has changed,
   but not its height.
   \param[in] item The item that needs to be redrawn.
-  \see Related methods: redraw_lines(), redraw_line()
+  \see redraw_lines(), redraw_line()
 */
 void Fl_Browser_::redraw_line(void* item) {
   if (!redraw1 || redraw1 == item) {redraw1 = item; damage(FL_DAMAGE_EXPOSE);}
@@ -227,7 +227,7 @@ void Fl_Browser_::update_top() {
   of the screen. Example: A position of '3' scrolls the top three pixels of
   the list off the top edge of the screen.
   \param[in] pos The vertical position (in pixels) to scroll the browser to.
-  \see Related methods: position(), hposition()
+  \see position(), hposition()
 */
 void Fl_Browser_::position(int pos) {
   if (pos < 0) pos = 0;
@@ -242,7 +242,7 @@ void Fl_Browser_::position(int pos) {
   of the screen. Example: A position of '18' scrolls the left 18 pixels of the list
   off the left edge of the screen.
   \param[in] pos The horizontal position (in pixels) to scroll the browser to.
-  \see Related methods: position(), hposition()
+  \see position(), hposition()
 */
 void Fl_Browser_::hposition(int pos) {
   if (pos < 0) pos = 0;
@@ -259,6 +259,7 @@ void Fl_Browser_::hposition(int pos) {
   status of the widget or item.
   \param[in] item The item to check
   \returns 1 if visible, 0 if not visible.
+  \see display(), displayed()
 */
 int Fl_Browser_::displayed(void* item) const {
   int X, Y, W, H; bbox(X, Y, W, H);
@@ -275,6 +276,7 @@ int Fl_Browser_::displayed(void* item) const {
 /**
   Displays the \p item, scrolling the list as necessary.
   \param[in] item The item to be displayed.
+  \see display(), displayed()
 */
 void Fl_Browser_::display(void* item) {
 

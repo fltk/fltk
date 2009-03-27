@@ -89,25 +89,25 @@ protected:
   /**
     This method must be provided by the subclass 
     to return the first item in the list.
-    \see Related methods: item_first(), item_next(), item_last(), item_prev()
+    \see item_first(), item_next(), item_last(), item_prev()
    */
   virtual void *item_first() const = 0;
   /**
     This method must be provided by the subclass
     to return the item in the list after \p item.
-    \see Related methods: item_first(), item_next(), item_last(), item_prev()
+    \see item_first(), item_next(), item_last(), item_prev()
    */
   virtual void *item_next(void *item) const = 0;
   /**
     This method must be provided by the subclass
     to return the item in the list before \p item.
-    \see Related methods: item_first(), item_next(), item_last(), item_prev()
+    \see item_first(), item_next(), item_last(), item_prev()
    */
   virtual void *item_prev(void *item) const = 0;
   /**
     This method must be provided by the subclass
     to return the last item in the list.
-    \see Related methods: item_first(), item_next(), item_last(), item_prev()
+    \see item_first(), item_next(), item_last(), item_prev()
    */
   virtual void *item_last() const { return 0L; }
   /** 
@@ -116,7 +116,7 @@ protected:
     Allow for two additional pixels for the list selection box.
     \param[in] item The item whose height is returned.
     \returns The height of the specified \p item in pixels.
-    \see Related methods: item_height(), item_width(), item_quick_height()
+    \see item_height(), item_width(), item_quick_height()
   */
   virtual int item_height(void *item) const = 0;
   /**
@@ -182,7 +182,7 @@ protected:
   void redraw_line(void *item); // minimal update, no change in size
   /**
     This method will cause the entire list to be redrawn.
-    \see Related methods: redraw_lines(), redraw_line()
+    \see redraw_lines(), redraw_line()
    */
   void redraw_lines() { damage(FL_DAMAGE_SCROLL); } // redraw all of them
   void bbox(int &X,int &Y,int &W,int &H) const;
@@ -214,7 +214,7 @@ public:
     The position returned is how many pixels of the list are scrolled off the top edge
     of the screen.  Example: A position of '3' indicates the top 3 pixels of 
     the list are scrolled off the top edge of the screen.
-    \see Related methods: position(), hposition()
+    \see position(), hposition()
   */
   int position() const { return position_; }
   void position(int pos); // scroll to here
@@ -223,7 +223,7 @@ public:
     The position returned is how many pixels of the list are scrolled off the left edge
     of the screen. Example: A position of '18' indicates the left 18 pixels of
     the list are scrolled off the left edge of the screen.
-    \see Related methods: position(), hposition()
+    \see position(), hposition()
   */
   int hposition() const { return hposition_; }
   void hposition(int); // pan to here
@@ -232,14 +232,20 @@ public:
   /**
     Values for has_scrollbar().
    */
+  /** Anonymous enum bit flags for has_scrollbar().
+     -  bit 0: horizontal
+     -  bit 1: vertical
+     -  bit 2: 'always' (to be combined with bits 0 and 1)
+     -  bit 3-31: reserved for future use
+   */
   enum { // values for has_scrollbar()
-    HORIZONTAL = 1,		///< Only show horizontal scrollbar
-    VERTICAL = 2,		///< Only show vertical scrollbar
-    BOTH = 3,			///< Show both scrollbars (default)
-    ALWAYS_ON = 4,		///< Both scrollbars always on
-    HORIZONTAL_ALWAYS = 5,	///< horizontal scrollbar always on
-    VERTICAL_ALWAYS = 6,	///< vertical scrollbar always on
-    BOTH_ALWAYS = 7		///< both scrollbars always on
+    HORIZONTAL = 1,		///< Only show horizontal scrollbar.
+    VERTICAL = 2,		///< Only show vertical scrollbar.
+    BOTH = 3,			///< Show both scrollbars. (default)
+    ALWAYS_ON = 4,		///< Specified scrollbar(s) should 'always' be shown (to be used with HORIZONTAL/VERTICAL)
+    HORIZONTAL_ALWAYS = 5,	///< Horizontal scrollbar always on.
+    VERTICAL_ALWAYS = 6,	///< Vertical scrollbar always on.
+    BOTH_ALWAYS = 7		///< Both scrollbars always on.
   };
   /**
     Returns the current scrollbar mode, see Fl_Browser_::has_scrollbar(uchar)
@@ -271,7 +277,7 @@ public:
 
   /**
     Gets the default text font for the lines in the browser.
-    \see Related methods: textfont(), textsize(), textcolor()
+    \see textfont(), textsize(), textcolor()
   */
   Fl_Font textfont() const { return textfont_; }
   /**
