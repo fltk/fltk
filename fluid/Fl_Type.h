@@ -77,6 +77,9 @@ public:	// things that should not be public:
   int code_line, header_line;
   int code_line_end, header_line_end;
 
+protected:
+  int user_defined(const char* cbname) const;
+
 public:
 
   virtual ~Fl_Type();

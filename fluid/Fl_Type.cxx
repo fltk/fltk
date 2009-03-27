@@ -994,6 +994,24 @@ void Fl_Type::leave_live_mode() {
 void Fl_Type::copy_properties() {
 }
 
+/**
+ * Check whether callback name is declared anywhere else by the user
+ *
+ * \b Warning: this just checks that the name is declared somewhere,
+ * but it should probably also check that the name corresponds to a
+ * plain function or a member function within the same class and that
+ * the parameter types match.
+ */
+int Fl_Type::user_defined(const char* cbname) const {
+  for (Fl_Type* p = Fl_Type::first; p ; p = p->next)
+    if (strcmp(p->type_name(), "Function") == 0 && p->name() != 0)
+      if (strncmp(p->name(), cbname, strlen(cbname)) == 0)
+        if (p->name()[strlen(cbname)] == '(')
+          return 1;
+  return 0;
+}
+
+
 //
 // End of "$Id$".
 //
