@@ -37,18 +37,25 @@ This manual is organized into the following chapters and appendices:
 \li \ref development
 \li \ref license
 \li \ref examples
-\li <A class="el" HREF="annotated.html">Class Reference</A>
-\li <A class="el" HREF="functions.html#functions">Function Reference</A>
-\todo Remove or reconfigure old HTML links as these are relative
-      to the source directories and fail in the PDF version!
 
 \section preface_conventions Conventions
 
-The following typeface conventions are used in this manual:
+This manual was generated using Doxygen
+(see <a href="http://www.stack.nl/~dimitri/doxygen/">
+http://www.stack.nl/~dimitri/doxygen/</a>)
+to process the source code itself, special comments in the code,
+and additional documentation files.
+In general, Doxygen recognizes and denotes the following entities as shown:
+- classes, such as Fl_Widget,
+- methods, such as Fl_Widget::callback(Fl_Callback* cb, void* p),
+- functions, such as fl_draw(const char *str, int x, int y),
+- internal links, such as \ref preface_conventions,
+- external links, such as
+  <a href="http://www.stack.nl/~dimitri/doxygen/">
+  http://www.stack.nl/~dimitri/doxygen/
+  </a>
 
-\li Function and constant names are shown in <B><TT>bold courier type</TT></B>
-\li Code samples and commands are shown in <TT>regular courier type</TT>
-\todo The old typeface conventions need to be rethought for doxygen.
+Other code samples and commands are shown in <tt>regular courier type</tt>.
 
 \section preface_abbreviations Abbreviations
 

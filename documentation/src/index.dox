@@ -67,6 +67,8 @@
 
     \subpage unicode
 
+    &nbsp;
+
     <b>Appendices:</b>
  
 	- \subpage enumerations
@@ -88,12 +90,6 @@
 	- \subpage license
 
 	- \subpage examples
-
-    <b>References:</b>
-
-	- <b><a class="el" href="annotated.html">Class Reference</a></b>
-
-	- <b><a class="el" href="globals_func.html">Function Reference</a></b>
 
   </TD>
 </TR>
