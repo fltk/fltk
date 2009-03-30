@@ -19,7 +19,7 @@ FLTK provides many types of buttons:
 \li Fl_Repeat_Button - A push button that repeats when held.
 
 \li Fl_Return_Button - A push button that is activated by the
-    \c Enter key.
+    \p Enter key.
 
 \li Fl_Round_Button - A button with a radio circle.
 
@@ -37,7 +37,7 @@ Fl_Light_Button *lbutton = new Fl_Light_Button(x, y, width, height);
 Fl_Round_Button *rbutton = new Fl_Round_Button(x, y, width, height, "label");
 \endcode
 
-Each button has an associated \c type() which allows
+Each button has an associated \p type() which allows
 it to behave as a push button, toggle button, or radio button:
 
 \code
@@ -46,11 +46,11 @@ lbutton->type(FL_TOGGLE_BUTTON);
 rbutton->type(FL_RADIO_BUTTON);
 \endcode
 
-For toggle and radio buttons, the \c value() method returns 
-the current button state (0 = off, 1 = on). The \c set() and
-\c clear() methods can be used on toggle buttons to turn a 
+For toggle and radio buttons, the \p value() method returns 
+the current button state (0 = off, 1 = on). The \p set() and
+\p clear() methods can be used on toggle buttons to turn a 
 toggle button on or off, respectively. 
-Radio buttons can be turned on with the \c setonly()
+Radio buttons can be turned on with the \p setonly()
 method; this will also turn off other radio buttons in the same
 group.
 
@@ -76,7 +76,7 @@ The Fl_Output and Fl_Multiline_Output
 widgets allow the user to copy text from the output field but
 not change it.
 
-The \c value() method is used to get or set the 
+The \p value() method is used to get or set the 
 string that is displayed:
 
 \code
@@ -85,7 +85,7 @@ input->value("Now is the time for all good men...");
 \endcode
 
 The string is copied to the widget's own storage when you set
-the \c value() of the widget.
+the \p value() of the widget.
 
 The Fl_Text_Display and Fl_Text_Editor
 widgets use an associated Fl_Text_Buffer class for the
@@ -113,8 +113,8 @@ strings. FLTK provides the following valuators:
 \image html valuators.gif "Figure 3-2: FLTK valuator widgets"
 \image latex valuators.eps "FLTK valuator widgets" width=10cm
 
-The \c value() method gets and sets the current value 
-of the widget. The \c minimum() and \c maximum()
+The \p value() method gets and sets the current value 
+of the widget. The \p minimum() and \p maximum()
 methods set the range of values that are reported by the
 widget.
 
@@ -150,11 +150,11 @@ with FLTK:
 \section common_sizeposition Setting the Size and Position of Widgets
 
 The size and position of widgets is usually set when you create them.
-You can access them with the \c x(), \c y(), \c w(), and \c h()
+You can access them with the \p x(), \p y(), \p w(), and \p h()
 methods.
 
-You can change the size and position by using the \c position(),
-\c resize(), and \c size() methods:
+You can change the size and position by using the \p position(),
+\p resize(), and \p size() methods:
 
 \code
 button->position(x, y);
@@ -163,7 +163,7 @@ window->size(width, height);
 \endcode
 
 If you change a widget's size or position after it is
-displayed you will have to call \c redraw() on the
+displayed you will have to call \p redraw() on the
 widget's parent.
 
 <A NAME="colors"></A> <!-- For old HTML links only ! -->
@@ -177,38 +177,39 @@ fixed contents.
 
 There are symbols for naming some of the more common colors:
 
-\li \c FL_BLACK
-\li \c FL_RED
-\li \c FL_GREEN
-\li \c FL_YELLOW
-\li \c FL_BLUE
-\li \c FL_MAGENTA
-\li \c FL_CYAN
-\li \c FL_WHITE
-\li \c FL_WHITE
+\li \p FL_BLACK
+\li \p FL_RED
+\li \p FL_GREEN
+\li \p FL_YELLOW
+\li \p FL_BLUE
+\li \p FL_MAGENTA
+\li \p FL_CYAN
+\li \p FL_WHITE
+\li \p FL_WHITE
 
 These symbols are the default colors for all FLTK widgets. They are
-explained in more detail in the chapter 
-<A HREF="enumerations.html#colors">Enumerations</A>
+explained in more detail under
+\ref enumerations_colors in
+\ref enumerations.
 
-\li \c FL_FOREGROUND_COLOR
-\li \c FL_BACKGROUND_COLOR
-\li \c FL_INACTIVE_COLOR
-\li \c FL_SELECTION_COLOR
+\li \p FL_FOREGROUND_COLOR
+\li \p FL_BACKGROUND_COLOR
+\li \p FL_INACTIVE_COLOR
+\li \p FL_SELECTION_COLOR
 
-RGB colors can be set using the \c fl_rgb_color() function:
+RGB colors can be set using the \p fl_rgb_color() function:
 
 \code
 Fl_Color c = fl_rgb_color(85, 170, 255);
 \endcode
 
-The widget color is set using the \c color() method:
+The widget color is set using the \p color() method:
 
 \code
 button->color(FL_RED);
 \endcode
 
-Similarly, the label color is set using the \c labelcolor() method:
+Similarly, the label color is set using the \p labelcolor() method:
 
 \code
 button->labelcolor(FL_WHITE);
@@ -225,12 +226,12 @@ Figure 3-3 shows the standard box types included with FLTK.
 \image html boxtypes.gif "Figure 3-3: FLTK box types"
 \image latex boxtypes.eps "FLTK box types" width=12cm
 
-\c FL_NO_BOX means nothing is drawn at all, so whatever is
+\p FL_NO_BOX means nothing is drawn at all, so whatever is
 already on the screen remains. The <tt>FL_..._FRAME</tt> types only
 draw their edges, leaving the interior unchanged. The blue color in
 Figure 3-3 is the area that is not drawn by the frame types.
 
-\subsection common_boxtypes Making Your Own Boxtypes
+\subsection common_custom_boxtypes Making Your Own Boxtypes
 
 You can define your own boxtypes by making a small function that draws
 the box and adding it to the table of boxtypes.
@@ -272,28 +273,31 @@ void xyz_draw(int x, int y, int w, int h, Fl_Color c) {
 \anchor common_fl_down
 Fl_Boxtype fl_down(Fl_Boxtype b)
 
+\par
 fl_down() returns the "pressed" or "down" version of a box.
 If no "down" version of a given box exists, the behavior of this function
 is undefined and some random box or frame is returned.
-See also: <A HREF="drawing.html#fl_frame">fl_frame drawing</A>.
+See \ref drawing_fl_frame "Drawing Functions" for more details.
 
 <A name="fl_frame"></A>  <!-- For old HTML links only ! -->
 \anchor common_fl_frame
 Fl_Boxtype fl_frame(Fl_Boxtype b)
 
+\par
 fl_frame() returns the unfilled, frame-only version of a box.
 If no frame version of a given box exists, the behavior of this function
 is undefined and some random box or frame is returned.
-See also: <A HREF="drawing.html#fl_frame">fl_frame drawing</A>.
+See \ref drawing_fl_frame "Drawing Functions" for more details.
 
 <A name="fl_box"></A> <!-- For old HTML links only ! -->
 \anchor common_fl_box
 Fl_Boxtype fl_box(Fl_Boxtype b)
 
+\par
 fl_box() returns the filled version of a frame.
 If no filled version of a given frame exists, the behavior of this function
 is undefined and some random box or frame is returned.
-See also: <tt><A HREF="#fl_frame">fl_frame</A></tt>.
+See \ref drawing_fl_frame "Drawing Functions" for more details.
 
 \par Adding Your Box Type
 
@@ -305,7 +309,7 @@ The Fl::set_boxtype() method adds or replaces the specified box type:
 Fl::set_boxtype(XYZ_BOX, xyz_draw, 1, 1, 2, 2);
 \endcode
 The last 4 arguments to Fl::set_boxtype() are the
-offsets for the x, y, width, and height values that should be
+offsets for the \p x, \p y, \p width, and \p height values that should be
 subtracted when drawing the label inside the box.
 
 A complete box design contains four box types in this order: 
@@ -313,29 +317,28 @@ a filled, neutral box (<tt>UP_BOX</tt>),
 a filled, depressed box (<tt>DOWN_BOX</tt>),
 and the same as outlines only (<tt>UP_FRAME</tt> and <tt>DOWN_FRAME</tt>).
 The function
-<tt><A HREF="#fl_down">fl_down(Fl_Boxtype)</A></tt> 
+\ref common_fl_down "fl_down(Fl_Boxtype)"
 expects the neutral design on a boxtype with a numerical 
 value evenly divideable by two. 
-<tt><A HREF="#fl_frame">fl_frame(Fl_Boxtype)</A></tt> 
-expects the <tt>UP_BOX</tt> design at a value divideable by four.
+\ref common_fl_frame "fl_frame(Fl_Boxtype)"
+expects the \p UP_BOX design at a value divideable by four.
 
 <A NAME="labels"></A> <!-- For old HTML links only ! -->
 \section common_labels Labels and Label Types
 
-\todo correct signatures for label() and friends to produce links in common.dox
-
-The \c label(), \c align(), \c labelfont(), \c labelsize(),
-\c labeltype(), \c image(), and \c deimage() methods control the
+The \p label(), \p align(), \p labelfont(), \p labelsize(),
+\p labeltype(), \p image(), and \p deimage() methods control the
 labeling of widgets.
 
 \par label()
 
-The \c label() method sets the string that is displayed
+The \p label() method sets the string that is displayed
 for the label. Symbols can be included with the label string by
 escaping them using the "@" symbol - "@@" displays a single at
 sign. Figure 3-4 shows the available symbols.
 
 \image html symbols.gif "Figure 3-4: FLTK label symbols"
+\image latex symbols.eps "FLTK label symbols" width=10cm
 
 <!-- NEED 2in -->
 
@@ -358,42 +361,44 @@ label string "@+92->".
 
 \par align()
 
-The \c align() method positions the label. The following
+The \p align() method positions the label. The following
 constants are defined and may be OR'd together as needed:
 
-\li \c FL_ALIGN_CENTER - center the label in the widget.
-\li \c FL_ALIGN_TOP - align the label at the top of the widget.
-\li \c FL_ALIGN_BOTTOM - align the label at the bottom of the widget.
-\li \c FL_ALIGN_LEFT - align the label to the left of the widget.
-\li \c FL_ALIGN_RIGHT - align the label to the right of the widget.
-\li \c FL_ALIGN_INSIDE - align the label inside the widget.
-\li \c FL_ALIGN_CLIP - clip the label to the widget's bounding box.
-\li \c FL_ALIGN_WRAP - wrap the label text as needed.
-\li \c FL_TEXT_OVER_IMAGE - show the label text over the image.
-\li \c FL_IMAGE_OVER_TEXT - show the label image over the text (default).
+\li \p FL_ALIGN_CENTER - center the label in the widget.
+\li \p FL_ALIGN_TOP - align the label at the top of the widget.
+\li \p FL_ALIGN_BOTTOM - align the label at the bottom of the widget.
+\li \p FL_ALIGN_LEFT - align the label to the left of the widget.
+\li \p FL_ALIGN_RIGHT - align the label to the right of the widget.
+\li \p FL_ALIGN_INSIDE - align the label inside the widget.
+\li \p FL_ALIGN_CLIP - clip the label to the widget's bounding box.
+\li \p FL_ALIGN_WRAP - wrap the label text as needed.
+\li \p FL_TEXT_OVER_IMAGE - show the label text over the image.
+\li \p FL_IMAGE_OVER_TEXT - show the label image over the text (default).
 
 <A NAME="labeltypes"></A> <!-- For old HTML links only ! -->
+\anchor common_labeltype
 \par labeltype()
 
-The \c labeltype() method sets the type of the label.  The
+The \p labeltype() method sets the type of the label.  The
 following standard label types are included:
 
-\li \c FL_NORMAL_LABEL - draws the text.
-\li \c FL_NO_LABEL - does nothing.
-\li \c FL_SHADOW_LABEL - draws a drop shadow under the text.
-\li \c FL_ENGRAVED_LABEL - draws edges as though the text is engraved.
-\li \c FL_EMBOSSED_LABEL - draws edges as thought the text is raised.
-\li \c FL_ICON_LABEL - draws the icon associated with the text.
+\li \p FL_NORMAL_LABEL - draws the text.
+\li \p FL_NO_LABEL - does nothing.
+\li \p FL_SHADOW_LABEL - draws a drop shadow under the text.
+\li \p FL_ENGRAVED_LABEL - draws edges as though the text is engraved.
+\li \p FL_EMBOSSED_LABEL - draws edges as thought the text is raised.
+\li \p FL_ICON_LABEL - draws the icon associated with the text.
 
+\anchor common_image_deimage
 \par image() and deimage()
 
-The \c image() and \c deimage() methods set an image that
-will be displayed with the widget. The \c deimage() method sets the
-image that is shown when the widget is inactive, while the \c image()
+The \p image() and \p deimage() methods set an image that
+will be displayed with the widget. The \p deimage() method sets the
+image that is shown when the widget is inactive, while the \p image()
 method sets the image that is shown when the widget is active.
 
 To make an image you use a subclass of
-<A HREF="drawing.html#Fl_Image"><tt>Fl_Image</tt></A>.
+\ref ssect_Fl_Image "Fl_Image".
 
 \par Making Your Own Label Types
 
@@ -426,8 +431,8 @@ void xyz_draw(const Fl_Label *label, int x, int y, int w, int h, Fl_Align align)
 \endcode
 
 The label should be drawn \e inside this bounding box,
-even if \c FL_ALIGN_INSIDE is not enabled. The function
-is not called if the label value is \c NULL.
+even if \p FL_ALIGN_INSIDE is not enabled. The function
+is not called if the label value is \p NULL.
 
 The measure function is called with a pointer to a
 Fl_Label structure and references to the width and
@@ -440,11 +445,11 @@ void xyz_measure(const Fl_Label *label, int &w, int &h) {
 \endcode
 
 The function should measure the size of the label and set
-\c w and \c h to the size it will occupy.
+\p w and \p h to the size it will occupy.
 
 \par Adding Your Label Type
 
-The Fl::set_labeltype method creates a label type
+The Fl::set_labeltype() method creates a label type
 using your draw and measure functions:
 
 \code
@@ -453,13 +458,13 @@ using your draw and measure functions:
 Fl::set_labeltype(XYZ_LABEL, xyz_draw, xyz_measure);
 \endcode
 
-The label type number \c n can be any integer value
-starting at the constant \c FL_FREE_LABELTYPE. Once you
-have added the label type you can use the \c labeltype()
+The label type number \p n can be any integer value
+starting at the constant \p FL_FREE_LABELTYPE. Once you
+have added the label type you can use the \p labeltype()
 method to select your label type.
 
-The Fl::set_labeltype method can also be used to overload
-an existing label type such as \c FL_NORMAL_LABEL.
+The Fl::set_labeltype() method can also be used to overload
+an existing label type such as \p FL_NORMAL_LABEL.
 
 <A NAME="add_symbol"></A> <!-- For old HTML links only ! -->
 \par Making your own symbols
@@ -470,7 +475,7 @@ any label.
 
 To create a new symbol, you implement a drawing function 
 <tt>void drawit(Fl_Color c)</tt> which typically uses the
-<a href="drawing.html#complex">complex drawing functions</a>
+functions described in \ref ssect_Complex
 to generate a vector shape inside a two-by-two units sized box
 around the origin. This function is then linked into the symbols
 table using fl_add_symbol():
@@ -479,7 +484,7 @@ table using fl_add_symbol():
 int fl_add_symbol(const char *name, void (*drawit)(Fl_Color), int scalable)
 \endcode
 
-\c name is the name of the symbol without the "@"; \c scalable
+\p name is the name of the symbol without the "@"; \p scalable
 must be set to 1 if the symbol is generated using scalable vector drawing
 functions.
 
@@ -502,7 +507,7 @@ void xyz_callback(Fl_Widget *w, void *data) {
 }
 \endcode
 
-The \c callback() method sets the callback function for a
+The \p callback() method sets the callback function for a
 widget. You can optionally pass a pointer to some data needed for the
 callback:
 
@@ -530,25 +535,25 @@ button->when(FL_WHEN_CHANGED | FL_WHEN_NOT_CHANGED);
 <TR>
 	<TD><B>Note:</B>
 
-	<P>You cannot delete a widget inside a callback, as the
+	You cannot delete a widget inside a callback, as the
 	widget may still be accessed by FLTK after your callback
 	is completed. Instead, use the Fl::delete_widget()
 	method to mark your widget for deletion when it is safe
 	to do so.
 
-	<p><B>Hint:</B>
+	<B>Hint:</B>
 
-	<P>Many programmers new to FLTK or C++ try to use a
+	Many programmers new to FLTK or C++ try to use a
 	non-static class method instead of a static class method
 	or function for their callback. Since callbacks are done
 	outside a C++ class, the <tt>this</tt> pointer is not
 	initialized for class methods.
 
-	<P>To work around this problem, define a static method
+	To work around this problem, define a static method
 	in your class that accepts a pointer to the class, and
 	then have the static method call the class method(s) as
 	needed. The data pointer you provide to the
-	\c callback() method of the widget can be a
+	\p callback() method of the widget can be a
 	pointer to the instance of your class.
 
 \code
@@ -569,7 +574,7 @@ w->callback(my_static_callback, (void *)this);
 \section common_shortcuts Shortcuts
 
 Shortcuts are key sequences that activate widgets such as
-buttons or menu items. The \c shortcut() method sets the
+buttons or menu items. The \p shortcut() method sets the
 shortcut for a widget:
 
 \code
@@ -582,9 +587,9 @@ button->shortcut(0); // no shortcut
 \endcode
 
 The shortcut value is the key event value - the ASCII value
-or one of the special keys like
-<a href="enumerations.html#key_values"><tt>FL_Enter</tt></a> -
-combined with any modifiers like \c Shift , \c Alt , and \c Control .
+or one of the special keys described in
+\ref enumerations_event_key
+combined with any modifiers like \p Shift , \p Alt , and \p Control.
 
 
 \htmlonly

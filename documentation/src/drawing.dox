@@ -60,6 +60,7 @@ The first box drawing function is fl_draw_box()
 which draws a standard boxtype \p b in the specified color \p c .
 
 <A NAME="fl_frame"></A> <!-- For old HTML links only ! -->
+\anchor drawing_fl_frame
 void fl_frame(const char *s, int x, int y, int w, int h)
 
 \par
