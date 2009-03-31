@@ -30,7 +30,7 @@
 #ifndef FL_NAMES_H
 #define FL_NAMES_H
 
-char *fl_eventnames[] =
+const char *fl_eventnames[] =
 {
   "FL_NO_EVENT",
   "FL_PUSH",
@@ -58,7 +58,7 @@ char *fl_eventnames[] =
   "FL_DND_RELEASE",
 };
 
-char *fl_fontnames[] =
+const char *fl_fontnames[] =
 {
   "FL_HELVETICA",
   "FL_HELVETICA_BOLD",
