@@ -124,7 +124,7 @@ textbuf->add_modify_callback(changed_cb, w);
 textbuf->call_modify_callbacks();
 \endcode
 
-Finally, we want to use a mono-spaced font like FL_COURIER:
+Finally, we want to use a mono-spaced font like \p FL_COURIER:
 
 \code
 w->editor->textfont(FL_COURIER);
@@ -217,7 +217,7 @@ void delete_cb(Fl_Widget*, void* v) {
 \subsection editor_find_cb find_cb()
 
 This callback function asks for a search string using the
-fl_input() convenience function and then calls the \c find2_cb()
+fl_input() convenience function and then calls the \p find2_cb()
 function to find the string:
 
 \code
@@ -595,7 +595,7 @@ or by using the \p fltk-config script with:
 fltk-config --compile editor.cxx
 \endcode
 
-As noted in \ref basics "FLTK Basics", you may need to
+As noted in \ref basics_standard_compiler, you may need to
 include compiler and linker options to tell them where to find the FLTK
 library. Also, the \p CC command may also be called \p gcc
 or \p c++ on your system.
@@ -662,7 +662,7 @@ You'll notice that the comments show a letter next to each
 style - each style in the style buffer is referenced using a
 character starting with the letter 'A'.
 
-You call the highlight_data() method to associate the
+You call the \p highlight_data() method to associate the
 style data and buffer with the text editor widget:
 
 \code
