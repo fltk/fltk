@@ -31,6 +31,7 @@
 #ifndef Fl_Preferences_H
 #  define Fl_Preferences_H
 
+#  include <stdio.h>
 #  include "Fl_Export.H"
 
 
