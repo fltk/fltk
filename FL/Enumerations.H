@@ -755,10 +755,12 @@ FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
 FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 inline Fl_Color fl_lighter(Fl_Color c) { return fl_color_average(c, FL_WHITE, .67f); }
 inline Fl_Color fl_darker(Fl_Color c) { return fl_color_average(c, FL_BLACK, .67f); }
+/** return 24-bit color value closest to \p r, \p g, \p b. */
 inline Fl_Color fl_rgb_color(uchar r, uchar g, uchar b) {
   if (!r && !g && !b) return FL_BLACK;
   else return (Fl_Color)(((((r << 8) | g) << 8) | b) << 8);
 }
+/** return 24-bit color value closest to \p grayscale */
 inline Fl_Color fl_rgb_color(uchar g) {
   if (!g) return FL_BLACK;
   else return (Fl_Color)(((((g << 8) | g) << 8) | g) << 8);

@@ -342,8 +342,8 @@ void fl_draw(
   The text length is limited to 1024 characters per line.
 */
 void fl_draw(
-  const char* str,	// the (multi-line) string
-  int x, int y, int w, int h,	// bounding box
+  const char* str,
+  int x, int y, int w, int h,
   Fl_Align align,
   Fl_Image* img,
   int draw_symbols) {
