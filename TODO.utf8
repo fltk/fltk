@@ -14,6 +14,8 @@ Functionalities to be added / sorted out:
 
     * New functions helpers to count chars for Fl_Text_Display and others.
 
+    * Rendering and measuring of non-utf8-conforming text
+
     * (add your items here)
 
 
