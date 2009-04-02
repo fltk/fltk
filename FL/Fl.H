@@ -124,6 +124,7 @@ public: // should be private!
   static Fl_Image* scheme_bg_;
 
   static int e_original_keysym; // late addition
+  static int scrollbar_size_;
 #endif
 
 

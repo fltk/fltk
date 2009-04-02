@@ -73,7 +73,9 @@ int		Fl::damage_,
 		Fl::e_clicks,
 		Fl::e_is_click,
 		Fl::e_keysym,
-                Fl::e_original_keysym;
+                Fl::e_original_keysym,
+		Fl::scrollbar_size_ = 16;
+
 char		*Fl::e_text = (char *)"";
 int		Fl::e_length;
 int		Fl::visible_focus_ = 1,
@@ -97,6 +99,30 @@ double
 */
 Fl::version() {
   return FL_VERSION;
+}
+
+/**
+  Gets the default scrollbar size used by 
+  Fl_Browser_,
+  Fl_Help_View,
+  Fl_Scroll, and
+  Fl_Text_Display widgets.
+  \returns The default size for widget scrollbars, in pixels.
+*/
+int Fl::scrollbar_size() {
+  return scrollbar_size_;
+}
+
+/**
+  Sets the default scrollbar size that is used by the
+  Fl_Browser_,
+  Fl_Help_View,
+  Fl_Scroll, and
+  Fl_Text_Display widgets.
+  \param[in] W The new default size for widget scrollbars, in pixels.
+*/
+void Fl::scrollbar_size(int W) {
+  scrollbar_size_ = W;
 }
 
 

@@ -37,6 +37,7 @@
 #include "Fl_Group.H"
 #endif
 #include "Fl_Scrollbar.H"
+#include <FL/Fl.H>		// Fl::scrollbar_size()
 
 #define FL_NORMAL_BROWSER	0	/**< type() of Fl_Browser */
 #define FL_SELECT_BROWSER	1	/**< type() of FL_Select_Browser */
@@ -78,8 +79,7 @@ class FL_EXPORT Fl_Browser_ : public Fl_Group {
   void* selection_;	// which is selected (except for FL_MULTI_BROWSER)
   void *redraw1,*redraw2; // minimal update pointers
   void* max_width_item;	// which item has max_width_
-
-  static int scrollbar_width_;
+  int scrollbar_size_;	// size of scrollbar trough
 
   void update_top();
 
@@ -304,14 +304,60 @@ public:
   void textcolor(unsigned col) { textcolor_ = col; }
 
   /**
-    Gets the current width of scrollbars in pixels.
-  */
-  static int scrollbar_width() { return scrollbar_width_; }
-  /**
-    Sets the width of scrollbars to pixel size \p width.
-  */
-  static void scrollbar_width(int width) { scrollbar_width_ = width; }
+    Gets the current size of the scrollbars' troughs, in pixels.
 
+    If this value is zero (default), this widget will use the 
+    Fl::scrollbar_size() value as the scrollbar's width.
+  
+    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
+    \see Fl::scrollbar_size(int)
+  */
+  int scrollbar_size() const {
+      return(scrollbar_size_);
+  }
+  /**
+    Sets the pixel size of the scrollbars' troughs to the \p size, in pixels.
+
+    Normally you should not need this method, and should use
+    Fl::scrollbar_size(int) instead to manage the size of ALL 
+    your widgets' scrollbars. This ensures your application 
+    has a consistent UI, is the default behavior, and is normally
+    what you want.
+
+    Only use THIS method if you really need to override the global
+    scrollbar size. The need for this should be rare.
+    
+    Setting \p size to the special value of 0 causes the widget to
+    track the global Fl::scrollbar_size(), which is the default.
+    
+    \param[in] size Sets the scrollbar size in pixels.\n
+                    If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
+    \see Fl::scrollbar_size()
+  */
+  void scrollbar_size(int size) {
+      scrollbar_size_ = size;
+  }   
+  /**
+    This method has been deprecated, existing for backwards compatibility only.
+    Use scrollbar_size() instead.
+    This method always returns the global value Fl::scrollbar_size().
+    \returns Always returns the global value Fl::scrollbar_size().
+    \todo This method should eventually be removed in 1.4+
+  */
+  int scrollbar_width() const {
+      return(Fl::scrollbar_size());
+  }
+  /**
+    This method has been deprecated, existing for backwards compatibility only.
+    Use scrollbar_size(int) instead.
+    This method sets the global Fl::scrollbar_size(), and forces this
+    instance of the widget to use it.
+    \todo This method should eventually be removed in 1.4+
+  */
+  void scrollbar_width(int width) {
+      Fl::scrollbar_size(width);
+      scrollbar_size_ = 0;
+  }
   /**
     Moves the vertical scrollbar to the righthand side of the list.
     For back compatibility.

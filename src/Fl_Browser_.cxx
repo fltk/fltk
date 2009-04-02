@@ -67,36 +67,6 @@ static void hscrollbar_callback(Fl_Widget* s, void*) {
   ((Fl_Browser_*)(s->parent()))->hposition(int(((Fl_Scrollbar*)s)->value()));
 }
 
-// Scrollbar size should be part of the Fl class, but is left here for
-// binary compatibility in 1.1.x - M. Sweet
-int Fl_Browser_::scrollbar_width_ = 16;
-
-/**
-  Gets the default scrollbar size used by 
-  Fl_Browser_,
-  Fl_Help_View,
-  Fl_Scroll, and
-  Fl_Text_Display widgets.
-  \returns The default size for widget scrollbars, in pixels.
-  \todo The source code for this method needs to be moved from Fl_Browser_.cxx to Fl.cxx
-*/
-int Fl::scrollbar_size() {
-  return Fl_Browser_::scrollbar_width();
-}
-
-/**
-  Sets the default scrollbar size that is used by the
-  Fl_Browser_,
-  Fl_Help_View,
-  Fl_Scroll, and
-  Fl_Text_Display widgets.
-  \param[in] W The new default size for widget scrollbars, in pixels.
-  \todo The source code for this method needs to be moved from Fl_Browser_.cxx to Fl.cxx
-*/
-void Fl::scrollbar_size(int W) {
-  Fl_Browser_::scrollbar_width(W);
-}
-
 // return where to draw the actual box:
 /**
   Returns the bounding box for the interior of the list's display window, inside
@@ -105,19 +75,20 @@ void Fl::scrollbar_size(int W) {
                       (The original contents of these parameters are overwritten)
 */
 void Fl_Browser_::bbox(int& X, int& Y, int& W, int& H) const {
+  int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
   Fl_Boxtype b = box() ? box() : FL_DOWN_BOX;
   X = x()+Fl::box_dx(b);
   Y = y()+Fl::box_dy(b);
   W = w()-Fl::box_dw(b);
   H = h()-Fl::box_dh(b);
   if (scrollbar.visible()) {
-    W -= scrollbar_width_;
-    if (scrollbar.align() & FL_ALIGN_LEFT) X += scrollbar_width_;
+    W -= scrollsize;
+    if (scrollbar.align() & FL_ALIGN_LEFT) X += scrollsize;
   }
   if (W < 0) W = 0;
   if (hscrollbar.visible()) {
-    H -= scrollbar_width_;
-    if (scrollbar.align() & FL_ALIGN_TOP) Y += scrollbar_width_;
+    H -= scrollsize;
+    if (scrollbar.align() & FL_ALIGN_TOP) Y += scrollsize;
   }
   if (H < 0) H = 0;
 }
@@ -141,15 +112,16 @@ int Fl_Browser_::leftedge() const {
   \param[in] X,Y,W,H The new position and size for the browser, in pixels.
 */
 void Fl_Browser_::resize(int X, int Y, int W, int H) {
+  int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
   Fl_Widget::resize(X, Y, W, H);
   // move the scrollbars so they can respond to events:
   bbox(X,Y,W,H);
   scrollbar.resize(
-	scrollbar.align()&FL_ALIGN_LEFT ? X-scrollbar_width_ : X+W,
-	Y, scrollbar_width_, H);
+	scrollbar.align()&FL_ALIGN_LEFT ? X-scrollsize : X+W,
+	Y, scrollsize, H);
   hscrollbar.resize(
-	X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollbar_width_ : Y+H,
-	W, scrollbar_width_);
+	X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollsize : Y+H,
+	W, scrollsize);
 }
 
 // Cause minimal update to redraw the given item:
@@ -483,11 +455,12 @@ J1:
   }
 
   // update the scrollbars and redraw them:
+  int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
   int dy = top_ ? item_quick_height(top_) : 0; if (dy < 10) dy = 10;
   if (scrollbar.visible()) {
     scrollbar.damage_resize(
-	scrollbar.align()&FL_ALIGN_LEFT ? X-scrollbar_width_ : X+W,
-	Y, scrollbar_width_, H);
+	scrollbar.align()&FL_ALIGN_LEFT ? X-scrollsize : X+W,
+	Y, scrollsize, H);
     scrollbar.value(position_, H, 0, full_height_);
     scrollbar.linesize(dy);
     if (drawsquare) draw_child(scrollbar);
@@ -495,8 +468,8 @@ J1:
   }
   if (hscrollbar.visible()) {
     hscrollbar.damage_resize(
-	X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollbar_width_ : Y+H,
-	W, scrollbar_width_);
+	X, scrollbar.align()&FL_ALIGN_TOP ? Y-scrollsize : Y+H,
+	W, scrollsize);
     hscrollbar.value(hposition_, W, 0, full_width_);
     hscrollbar.linesize(dy);
     if (drawsquare) draw_child(hscrollbar);
@@ -506,7 +479,7 @@ J1:
   // draw that little square between the scrollbars:
   if (drawsquare && scrollbar.visible() && hscrollbar.visible()) {
     fl_color(parent()->color());
-    fl_rectf(scrollbar.x(), hscrollbar.y(), scrollbar_width_,scrollbar_width_);
+    fl_rectf(scrollbar.x(), hscrollbar.y(), scrollsize, scrollsize);
   }
 
   real_hposition_ = hposition_;
@@ -964,6 +937,7 @@ Fl_Browser_::Fl_Browser_(int X, int Y, int W, int H, const char* L)
   has_scrollbar_ = BOTH;
   max_width = 0;
   max_width_item = 0;
+  scrollbar_size_ = 0;
   redraw1 = redraw2 = 0;
   end();
 }
