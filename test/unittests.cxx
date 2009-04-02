@@ -1,3 +1,29 @@
+//
+// "$Id$"
+//
+// Unit tests for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2009 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
 // Fltk unit tests
 // v0.1 - Greg combines Matthias + Ian's tests
 // v0.2 - Ian's 02/12/09 fixes applied
@@ -79,15 +105,15 @@ public: CircleTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
     fl_color(FL_BLACK); fl_pie(a+55, b+65, 31, 31, 150.0, 300.0);
     //---- oval testing (horizontal squish)
     a +=120; b += 0; fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
-    fl_color(FL_GREEN); 
+    fl_color(FL_GREEN);
     fl_rect(a+19, b+9, 63, 33); fl_rect(a+19, b+59, 63, 33);
-    fl_color(FL_BLACK); 
+    fl_color(FL_BLACK);
     fl_arc(a+20, b+10, 61, 31, 0, 360); fl_pie(a+20, b+60, 61, 31, 0, 360);
     //---- oval testing (horizontal squish)
     a += 120; b += 0; fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
-    fl_color(FL_GREEN); 
-    fl_rect(a+9, b+19, 33, 63); fl_rect(a+59, b+19, 33, 63);    
-    fl_color(FL_BLACK); 
+    fl_color(FL_GREEN);
+    fl_rect(a+9, b+19, 33, 63); fl_rect(a+59, b+19, 33, 63);
+    fl_color(FL_BLACK);
     fl_arc(a+10, b+20, 31, 61, 0, 360); fl_pie(a+60, b+20, 31, 61, 0, 360);
   }
 };
@@ -121,7 +147,7 @@ public: PointTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
   void draw() {
     Fl_Box::draw();
     int a = x()+10, b = y()+10; fl_color(FL_BLACK); fl_rect(a, b, 90, 90);
-    fl_point(a+10, b+10); fl_point(a+20, b+20); 
+    fl_point(a+10, b+10); fl_point(a+20, b+20);
     fl_point(a+10, b+20); fl_point(a+20, b+10);
     fl_color(FL_RED); a = x()+70;
     fl_point(a+10, b+10); fl_point(a+20, b+20);
@@ -313,11 +339,9 @@ void unittest_viewport_test_cb(const char *action, Fl_Group *grp) {
 class TextExtentsTest : public Fl_Widget
 {
   void DrawTextAndBoxes(const char *txt, int X, int Y) {
-//ALBRECHT    // draw text
-//ALBRECHT    fl_color(FL_BLACK);
-//ALBRECHT    fl_draw(txt, X, Y);
     int wo = 0, ho = 0;
     int dx, dy;
+    // First, we draw the bounding boxes (fl_measure and fl_text_extents)
     // draw fl_measure() typographical bounding box
     fl_measure(txt, wo, ho, 0);
     int desc = fl_descent();
@@ -325,12 +349,11 @@ class TextExtentsTest : public Fl_Widget
     fl_rect(X, Y-ho+desc, wo, ho);
     // draw fl_text_extents() glyph bounding box
     fl_text_extents(txt, dx, dy, wo, ho);
-//ALBRECHT    fl_color(FL_BLUE);
-    fl_color(FL_GREEN);			// ALBRECHT
+    fl_color(FL_GREEN);
     fl_rect(X+dx, Y+dy, wo, ho);
-    // draw text			// ALBRECHT
-    fl_color(FL_BLACK);			// ALBRECHT
-    fl_draw(txt, X, Y);			// ALBRECHT
+    // Then we draw the text to show how it fits insode each of the two boxes
+    fl_color(FL_BLACK);
+    fl_draw(txt, X, Y);
   }
 public: TextExtentsTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
   void draw(void) {
@@ -340,13 +363,13 @@ public: TextExtentsTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
     int h0 = h();
     fl_push_clip(x0, y0, w0, h0); // reset local clipping
     {
-      // set the background colour
-      fl_color(FL_WHITE);
+      // set the background colour - slightly off-white to enhance the green bounding box
+      fl_color(fl_gray_ramp(FL_NUM_GRAY - 3));
       fl_rectf(x0, y0, w0, h0);
 
       fl_font(FL_HELVETICA, 30);
-      int xx = x()+55;
-      int yy = y()+40;
+      int xx = x0+55;
+      int yy = y0+40;
       DrawTextAndBoxes("!abcdeABCDE\"#A", xx, yy); yy += 50;	// mixed string
       DrawTextAndBoxes("oacs",     xx, yy); xx += 100;		// small glyphs
       DrawTextAndBoxes("qjgIPT",   xx, yy); yy += 50; xx -= 100;	// glyphs with descenders
@@ -356,8 +379,13 @@ public: TextExtentsTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
 
       fl_font(FL_HELVETICA, 14);
       fl_color(FL_RED);  fl_draw("fl_measure bounding box in RED",       xx, yy); yy += 20;
-//ALBRECHT      fl_color(FL_BLUE); fl_draw("fl_text_extents bounding box in BLUE", xx, yy); yy += 20;
-      fl_color(FL_GREEN); fl_draw("fl_text_extents bounding box in GREEN", xx, yy); yy += 20;	//ALBRECHT
+      fl_color(FL_GREEN); fl_draw("fl_text_extents bounding box in GREEN", xx, yy);
+      fl_color(FL_BLACK);
+      xx = x0 + 10;  yy += 30;
+      fl_draw("NOTE: On systems with text anti-aliasing (e.g. OSX Quartz)", xx, yy);
+      w0 = h0 = 0; fl_measure("NOTE: ", w0, h0, 0);
+      xx += w0; yy += h0;
+      fl_draw("text may leach slightly outside the fl_text_extents()", xx, yy);
     }
     fl_pop_clip(); // remove the local clip
   }
@@ -478,3 +506,7 @@ int main(int argc, char **argv) {
   Browser_CB(browser,0);
   return(Fl::run());
 }
+
+//
+// End of "$Id$".
+//
