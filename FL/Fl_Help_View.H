@@ -180,7 +180,8 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
   int		topline_,		///< Top line in document
 		leftline_,		///< Lefthand position
 		size_,			///< Total document length
-		hsize_;			///< Maximum document width
+		hsize_,			///< Maximum document width
+  		scrollbar_size_;	///< Size for both scrollbars
   Fl_Scrollbar	scrollbar_,		///< Vertical scrollbar for document
 		hscrollbar_;		///< Horizontal scrollbar
 
@@ -294,6 +295,40 @@ public:
   const char	*value() const { return (value_); }
   void          clear_selection();
   void          select_all();
+  /**
+    Gets the current size of the scrollbars' troughs, in pixels.
+
+    If this value is zero (default), this widget will use the 
+    Fl::scrollbar_size() value as the scrollbar's width.
+  
+    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
+    \see Fl::scrollbar_size(int)
+  */
+  int scrollbar_size() const {
+      return(scrollbar_size_);
+  }
+  /**
+    Sets the pixel size of the scrollbars' troughs to the \p size, in pixels.
+
+    Normally you should not need this method, and should use
+    Fl::scrollbar_size(int) instead to manage the size of ALL 
+    your widgets' scrollbars. This ensures your application 
+    has a consistent UI, is the default behavior, and is normally
+    what you want.
+
+    Only use THIS method if you really need to override the global
+    scrollbar size. The need for this should be rare.
+    
+    Setting \p size to the special value of 0 causes the widget to
+    track the global Fl::scrollbar_size(), which is the default.
+    
+    \param[in] size Sets the scrollbar size in pixels.\n
+                    If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
+    \see Fl::scrollbar_size()
+  */
+  void scrollbar_size(int size) {
+      scrollbar_size_ = size;
+  }   
 };
 
 #endif // !Fl_Help_View_H

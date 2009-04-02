@@ -452,27 +452,40 @@ Fl_Help_View::draw()
                         xtra_ww;        // Extra width for underlined space between words
 
   // Draw the scrollbar(s) and box first...
-  ww = w() ;
+  ww = w();
   hh = h();
   i  = 0;
 
   draw_box(b, x(), y(), ww, hh, bgcolor_);
 
-  int ss = Fl::scrollbar_size();
-  if (hscrollbar_.visible()) {
-    draw_child(hscrollbar_);
-    hh -= ss;
-    i ++;
-  }
-  if (scrollbar_.visible()) {
-    draw_child(scrollbar_);
-    ww -= ss;
-    i ++;
-  }
-  if (i == 2) {
-    fl_color(FL_GRAY);
-    fl_rectf(x() + ww - Fl::box_dw(b) + Fl::box_dx(b),
-             y() + hh - Fl::box_dh(b) + Fl::box_dy(b), ss, ss);
+  if ( hscrollbar_.visible() || scrollbar_.visible() ) {
+    int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
+    int hor_vis = hscrollbar_.visible();
+    int ver_vis = scrollbar_.visible();
+    // Scrollbar corner
+    int scorn_x = x() + ww - (ver_vis?scrollsize:0) - Fl::box_dw(b) + Fl::box_dx(b);
+    int scorn_y = y() + hh - (hor_vis?scrollsize:0) - Fl::box_dh(b) + Fl::box_dy(b);
+    if ( hor_vis ) {
+      if ( hscrollbar_.h() != scrollsize ) {		// scrollsize changed?
+	hscrollbar_.resize(x(), scorn_y, scorn_x - x(), scrollsize);
+	init_sizes();
+      }
+      draw_child(hscrollbar_);
+      hh -= scrollsize;
+    }
+    if ( ver_vis ) {
+      if ( scrollbar_.w() != scrollsize ) {		// scrollsize changed?
+	scrollbar_.resize(scorn_x, y(), scrollsize, scorn_y - y());
+	init_sizes();
+      }
+      draw_child(scrollbar_);
+      ww -= scrollsize;
+    }
+    if ( hor_vis && ver_vis ) {
+      // Both scrollbars visible? Draw little gray box in corner
+      fl_color(FL_GRAY);
+      fl_rectf(scorn_x, scorn_y, scrollsize, scrollsize);
+    }
   }
 
   if (!value_)
@@ -1078,7 +1091,8 @@ void Fl_Help_View::format() {
 
 
   // Reset document width...
-  hsize_ = w() - Fl::scrollbar_size() - Fl::box_dw(b);
+  int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
+  hsize_ = w() - scrollsize - Fl::box_dw(b);
 
   done = 0;
   while (!done)
@@ -1803,7 +1817,7 @@ void Fl_Help_View::format() {
 
   int dx = Fl::box_dw(b) - Fl::box_dx(b);
   int dy = Fl::box_dh(b) - Fl::box_dy(b);
-  int ss = Fl::scrollbar_size();
+  int ss = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
   int dw = Fl::box_dw(b) + ss;
   int dh = Fl::box_dh(b);
 
@@ -2221,8 +2235,9 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
   // Adjust the width if needed...
   int scale_width = *table_width;
 
+  int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
   if (scale_width == 0) {
-    if (width > (hsize_ - Fl::scrollbar_size())) scale_width = hsize_ - Fl::scrollbar_size();
+    if (width > (hsize_ - scrollsize)) scale_width = hsize_ - scrollsize;
     else scale_width = width;
   }
 
@@ -2600,7 +2615,8 @@ Fl_Help_View::get_length(const char *l) {	// I - Value
     if (val > 100) val = 100;
     else if (val < 0) val = 0;
 
-    val = val * (hsize_ - Fl::scrollbar_size()) / 100;
+    int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
+    val = val * (hsize_ - scrollsize) / 100;
   }
 
   return val;
@@ -3000,6 +3016,7 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
   leftline_     = 0;
   size_         = 0;
   hsize_        = 0;
+  scrollbar_size_ = 0;
 
   scrollbar_.value(0, hh, 0, 1);
   scrollbar_.step(8.0);
@@ -3167,12 +3184,12 @@ Fl_Help_View::resize(int xx,	// I - New left position
 
   Fl_Widget::resize(xx, yy, ww, hh);
 
-  int ss = Fl::scrollbar_size();
-  scrollbar_.resize(x() + w() - ss - Fl::box_dw(b) + Fl::box_dx(b),
-                    y() + Fl::box_dy(b), ss, h() - ss - Fl::box_dh(b));
+  int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
+  scrollbar_.resize(x() + w() - scrollsize - Fl::box_dw(b) + Fl::box_dx(b),
+                    y() + Fl::box_dy(b), scrollsize, h() - scrollsize - Fl::box_dh(b));
   hscrollbar_.resize(x() + Fl::box_dx(b),
-                     y() + h() - ss - Fl::box_dh(b) + Fl::box_dy(b),
-                     w() - ss - Fl::box_dw(b), ss);
+                     y() + h() - scrollsize - Fl::box_dh(b) + Fl::box_dy(b),
+                     w() - scrollsize - Fl::box_dw(b), scrollsize);
 
   format();
 }
@@ -3207,14 +3224,15 @@ Fl_Help_View::topline(int t)	// I - Top line number
   if (!value_)
     return;
 
-  if (size_ < (h() - Fl::scrollbar_size()) || t < 0)
+  int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
+  if (size_ < (h() - scrollsize) || t < 0)
     t = 0;
   else if (t > size_)
     t = size_;
 
   topline_ = t;
 
-  scrollbar_.value(topline_, h() - Fl::scrollbar_size(), 0, size_);
+  scrollbar_.value(topline_, h() - scrollsize, 0, size_);
 
   do_callback();
 
@@ -3231,14 +3249,15 @@ Fl_Help_View::leftline(int l)	// I - Left position
   if (!value_)
     return;
 
-  if (hsize_ < (w() - Fl::scrollbar_size()) || l < 0)
+  int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
+  if (hsize_ < (w() - scrollsize) || l < 0)
     l = 0;
   else if (l > hsize_)
     l = hsize_;
 
   leftline_ = l;
 
-  hscrollbar_.value(leftline_, w() - Fl::scrollbar_size(), 0, hsize_);
+  hscrollbar_.value(leftline_, w() - scrollsize, 0, hsize_);
 
   redraw();
 }
