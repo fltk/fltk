@@ -296,11 +296,12 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   }
   color(button && !Fl::scheme() ? button->color() : FL_GRAY);
   selected = -1;
-  {int j = 0;
-  if (m) for (const Fl_Menu_Item* m1=m; ; m1 = m1->next(), j++) {
-    if (picked) {
-      if (m1 == picked) {selected = j; picked = 0;}
-      else if (m1 > picked) {selected = j-1; picked = 0; Wp = Hp = 0;}
+  {
+    int j = 0;
+    if (m) for (const Fl_Menu_Item* m1=m; ; m1 = m1->next(), j++) {
+      if (picked) {
+        if (m1 == picked) {selected = j; picked = 0;}
+        else if (m1 > picked) {selected = j-1; picked = 0; Wp = Hp = 0;}
     }
     if (!m1->text) break;
   }
@@ -340,24 +341,25 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (X < scr_x) X = scr_x; if (X > scr_x+scr_w-W) X = right_edge-W; //X= scr_x+scr_w-W;
   x(X); w(W);
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);
-  if (selected >= 0)
+  if (selected >= 0) {
     Y = Y+(Hp-itemheight)/2-selected*itemheight-BW;
-  else {
+  } else {
     Y = Y+Hp;
     // if the menu hits the bottom of the screen, we try to draw
     // it above the menubar instead. We will not adjust any menu
     // that has a selected item.
     if (Y+h()>scr_y+scr_h && Y-h()>=scr_y) {
-      if (Hp>1) 
+      if (Hp>1) {
         // if we know the height of the Fl_Menu_, use it
         Y = Y-Hp-h();
-      else if (t)
+      } else if (t) {
         // assume that the menubar item height relates to the first
         // menuitem as well
         Y = Y-itemheight-h()-Fl::box_dh(box());
-      else
+      } else {
         // draw the menu to the right
         Y = Y-h()+itemheight+Fl::box_dy(box());
+      }
     }
   }
   if (m) y(Y); else {y(Y-2); w(1); h(1);}
@@ -372,8 +374,9 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
       int ht = Htitle+2*BW+3;
       title = new menutitle(X, Y-ht-dy, Wtitle, ht, t);
     }
-  } else
+  } else {
     title = 0;
+  }
 }
 
 menuwindow::~menuwindow() {
@@ -674,65 +677,71 @@ int menuwindow::early_hide_handle(int e) {
       return 1;
     }
     break;
-  case FL_SHORTCUT: {
-    for (int mymenu = pp.nummenus; mymenu--;) {
-      menuwindow &mw = *(pp.p[mymenu]);
-      int item; const Fl_Menu_Item* m = mw.menu->find_shortcut(&item);
-      if (m) {
-	setitem(m, mymenu, item);
-	if (!m->submenu()) pp.state = DONE_STATE;
-	return 1;
+  case FL_SHORTCUT: 
+    {
+      for (int mymenu = pp.nummenus; mymenu--;) {
+	menuwindow &mw = *(pp.p[mymenu]);
+	int item; const Fl_Menu_Item* m = mw.menu->find_shortcut(&item);
+	if (m) {
+	  setitem(m, mymenu, item);
+	  if (!m->submenu()) pp.state = DONE_STATE;
+	  return 1;
+	}
       }
-    }} break;
+    }
+    break;
   case FL_ENTER:
   case FL_MOVE:
   case FL_PUSH:
-  case FL_DRAG: {
+  case FL_DRAG:
+    {
 #ifdef __QNX__
-    // STR 704: workaround QNX X11 bug - in QNX a FL_MOVE event is sent
-    // right after FL_RELEASE...
-    if (pp.state == DONE_STATE) return 1;
+      // STR 704: workaround QNX X11 bug - in QNX a FL_MOVE event is sent
+      // right after FL_RELEASE...
+      if (pp.state == DONE_STATE) return 1;
 #endif // __QNX__
-    int mx = Fl::event_x_root();
-    int my = Fl::event_y_root();
-    int item=0; int mymenu = pp.nummenus-1;
-    // Clicking or dragging outside menu cancels it...
-    if ((!pp.menubar || mymenu) && !pp.is_inside(mx, my)) {
-      setitem(0, -1, 0);
-      if (e==FL_PUSH)
-        pp.state = DONE_STATE;
-      return 1;
-    }
-    for (mymenu = pp.nummenus-1; ; mymenu--) {
-      item = pp.p[mymenu]->find_selected(mx, my);
-      if (item >= 0) 
-        break;
-      if (mymenu <= 0) {
-        // buttons in menubars must be deselected if we move outside of them!
-        if (pp.menu_number==-1 && e==FL_PUSH) {
-          pp.state = DONE_STATE;
-          return 1;
-        }
-        if (pp.current_item && pp.menu_number==0 && !pp.current_item->submenu()) {
-          if (e==FL_PUSH)
-            pp.state = DONE_STATE;
-          setitem(0, -1, 0);
-          return 1;
-        }
-        // all others can stay selected
-        return 0;
+      int mx = Fl::event_x_root();
+      int my = Fl::event_y_root();
+      int item=0; int mymenu = pp.nummenus-1;
+      // Clicking or dragging outside menu cancels it...
+      if ((!pp.menubar || mymenu) && !pp.is_inside(mx, my)) {
+	setitem(0, -1, 0);
+	if (e==FL_PUSH)
+	  pp.state = DONE_STATE;
+	return 1;
+      }
+      for (mymenu = pp.nummenus-1; ; mymenu--) {
+	item = pp.p[mymenu]->find_selected(mx, my);
+	if (item >= 0) 
+	  break;
+	if (mymenu <= 0) {
+	  // buttons in menubars must be deselected if we move outside of them!
+	  if (pp.menu_number==-1 && e==FL_PUSH) {
+	    pp.state = DONE_STATE;
+	    return 1;
+	  }
+	  if (pp.current_item && pp.menu_number==0 && !pp.current_item->submenu()) {
+	    if (e==FL_PUSH)
+	      pp.state = DONE_STATE;
+	    setitem(0, -1, 0);
+	    return 1;
+	  }
+	  // all others can stay selected
+	  return 0;
+	}
+      }
+      if (my == 0 && item > 0) setitem(mymenu, item - 1);
+      else setitem(mymenu, item);
+      if (e == FL_PUSH) {
+	if (pp.current_item && pp.current_item->submenu() // this is a menu title
+	    && item != pp.p[mymenu]->selected // and it is not already on
+	    && !pp.current_item->callback_) // and it does not have a callback
+	  pp.state = MENU_PUSH_STATE;
+	else
+	  pp.state = PUSH_STATE;
       }
     }
-    if (my == 0 && item > 0) setitem(mymenu, item - 1);
-    else setitem(mymenu, item);
-    if (e == FL_PUSH) {
-      if (pp.current_item && pp.current_item->submenu() // this is a menu title
-	  && item != pp.p[mymenu]->selected // and it is not already on
-	  && !pp.current_item->callback_) // and it does not have a callback
-	pp.state = MENU_PUSH_STATE;
-      else
-	pp.state = PUSH_STATE;
-    }} return 1;
+    return 1;
   case FL_RELEASE:
     // Mouse must either be held down/dragged some, or this must be
     // the second click (not the one that popped up the menu):
@@ -813,20 +822,24 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   for (;;) {
 
     // make sure all the menus are shown:
-    {for (int k = menubar; k < pp.nummenus; k++)
-      if (!pp.p[k]->shown()) {
-	if (pp.p[k]->title) pp.p[k]->title->show();
-	pp.p[k]->show();
+    {
+      for (int k = menubar; k < pp.nummenus; k++) {
+        if (!pp.p[k]->shown()) {
+	  if (pp.p[k]->title) pp.p[k]->title->show();
+	  pp.p[k]->show();
+        }
       }
     }
 
     // get events:
-    {const Fl_Menu_Item* oldi = pp.current_item;
-    Fl::wait();
-    if (pp.state == DONE_STATE) break; // done.
-    if (pp.current_item == oldi) continue;}
-    // only do rest if item changes:
+    {
+      const Fl_Menu_Item* oldi = pp.current_item;
+      Fl::wait();
+      if (pp.state == DONE_STATE) break; // done.
+      if (pp.current_item == oldi) continue;
+    }
 
+    // only do rest if item changes:
     if(pp.fakemenu) {delete pp.fakemenu; pp.fakemenu = 0;} // turn off "menubar button"
 
     if (!pp.current_item) { // pointing at nothing
