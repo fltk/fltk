@@ -123,9 +123,9 @@ struct Fl_Help_Font_Stack {
   }
   /** Pops from the stack the font style triplet and calls fl_font() & fl_color() adequately */
   void pop(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { 
+    if (nfonts_ > 0) nfonts_ --;
     top(f, s, c);
     fl_font(f, s); fl_color(c);
-    if (nfonts_ > 0) nfonts_ --;
   }
   /** Gets the current count of font style elts in the stack */
   size_t count() const {return nfonts_;} /// Gets the current number of fonts in the stack

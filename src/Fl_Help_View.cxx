@@ -731,7 +731,7 @@ Fl_Help_View::draw()
 	  else if (strcasecmp(buf, "FONT") == 0)
 	  {
 	    if (get_attr(attrs, "COLOR", attr, sizeof(attr)) != NULL) {
-	      pushfont(font, fsize, (textcolor_ = get_color(attr, textcolor_)) );
+	      textcolor_ = get_color(attr, textcolor_);
 	    }
 
             if (get_attr(attrs, "FACE", attr, sizeof(attr)) != NULL) {
