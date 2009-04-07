@@ -97,6 +97,11 @@ static int	quote_char(const char *);
 static void	scrollbar_callback(Fl_Widget *s, void *);
 static void	hscrollbar_callback(Fl_Widget *s, void *);
 
+//
+// global flag for image loading (see get_image).
+//
+
+static char initial_load = 0;
 
 //
 // Broken image...
@@ -892,7 +897,6 @@ Fl_Help_View::draw()
 	    if (img) {
 	      img->draw(xx + x() - leftline_,
 	                yy + y() - fl_height() + fl_descent() + 2);
-	      img->release();
 	    }
 
 	    xx += ww;
@@ -2305,7 +2309,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 
 void
 Fl_Help_View::free_data() {
-  // Releae all images...
+  // Release all images...
   if (value_) {
     const char	*ptr,		// Pointer into block
 		*attrs;		// Pointer to start of element attributes
@@ -2314,7 +2318,6 @@ Fl_Help_View::free_data() {
 		attr[1024],	// Attribute buffer
 		wattr[1024],	// Width attribute buffer
 		hattr[1024];	// Height attribute buffer
-
 
     for (ptr = value_; *ptr;)
     {
@@ -2358,17 +2361,17 @@ Fl_Help_View::free_data() {
 	  int		width;
 	  int		height;
 
-
           get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
           get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
 	  width  = get_length(wattr);
 	  height = get_length(hattr);
 
 	  if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
-	    // Release the image twice to free it from memory...
+	    // Get and release the image to free it from memory...
 	    img = get_image(attr, width, height);
-	    img->release();
-	    img->release();
+	    if ((void*)img != &broken_image) {
+	      img->release();
+	    }
 	  }
 	}
       }
@@ -2505,7 +2508,7 @@ Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
 
 
 //
-// 'Fl_Help_View::get_color()' - Get an alignment attribute.
+// 'Fl_Help_View::get_color()' - Get a color attribute.
 //
 
 Fl_Color				// O - Color value
@@ -2570,6 +2573,48 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
 // 'Fl_Help_View::get_image()' - Get an inline image.
 //
 
+/** Gets an inline image.
+
+  The image reference count is maintained accordingly, such that
+  the image can be released exactly once when the document is closed.
+
+  \return a pointer to a cached Fl_Shared_Image, if the image can be loaded,
+  	  otherwise a pointer to an internal Fl_Pixmap (broken_image).
+
+  \todo Fl_Help_View::get_image() returns a pointer to the internal
+  Fl_Pixmap broken_image, but this is _not_ compatible with the
+  return type Fl_Shared_Image (release() must not be called).
+*/
+
+/* Implementation note: (A.S. Apr 05, 2009)
+
+  Fl_Help_View::get_image() uses a static global flag (initial_load)
+  to determine, if it is called from the initial loading of a document
+  (load() or value()), or from resize() or draw().
+
+  A better solution would be to manage all loaded images in an own
+  structure like Fl_Help_Target (Fl_Help_Image ?) to avoid using this
+  global flag, but this would break the ABI !
+
+  This should be fixed in FLTK 1.3 !
+
+
+  If initial_load is true, then Fl_Shared_Image::get() is called to
+  load the image, and the reference count of the shared image is
+  increased by one.
+
+  If initial_load is false, then Fl_Shared_Image::find() is called to
+  load the image, and the image is released immediately. This avoids
+  increasing the reference count when calling get_image() from draw()
+  or resize().
+
+  Calling Fl_Shared_Image::find() instead of Fl_Shared_Image::get() avoids
+  doing unnecessary i/o for "broken images" within each resize/redraw.
+
+  Each image must be released exactly once in the destructor or before
+  a new document is loaded: see free_data().
+*/
+
 Fl_Shared_Image *
 Fl_Help_View::get_image(const char *name, int W, int H) {
   const char	*localname;		// Local filename
@@ -2610,8 +2655,17 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
 
   if (strncmp(localname, "file:", 5) == 0) localname += 5;
 
-  if ((ip = Fl_Shared_Image::get(localname, W, H)) == NULL)
-    ip = (Fl_Shared_Image *)&broken_image;
+  if (initial_load) {
+    if ((ip = Fl_Shared_Image::get(localname, W, H)) == NULL) {
+      ip = (Fl_Shared_Image *)&broken_image;
+    }
+  } else { // draw or resize
+    if ((ip = Fl_Shared_Image::find(localname, W, H)) == NULL) {
+      ip = (Fl_Shared_Image *)&broken_image;
+    } else {
+      ip->release();
+    }
+  }
 
   return ip;
 }
@@ -2656,6 +2710,7 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
   char		target[32];	// Current target
 
   clear_selection();
+  free_data();
 
   strlcpy(target, linkp->name, sizeof(target));
 
@@ -3079,8 +3134,8 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   char		error[1024];	// Error buffer
   char		newname[1024];	// New filename buffer
 
-
   clear_selection();
+  free_data();
 
   strlcpy(newname, f, sizeof(newname));
   if ((target = strrchr(newname, '#')) != NULL)
@@ -3103,12 +3158,6 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     directory_[0] = '\0';
   else if (slash > directory_ && slash[-1] != '/')
     *slash = '\0';
-
-  if (value_ != NULL)
-  {
-    free((void *)value_);
-    value_ = NULL;
-  }
 
   if (strncmp(localname, "ftp:", 4) == 0 ||
       strncmp(localname, "http:", 5) == 0 ||
@@ -3153,7 +3202,9 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     }
   }
 
+  initial_load = 1;
   format();
+  initial_load = 0;
 
   if (target)
     topline(target);
@@ -3279,7 +3330,9 @@ Fl_Help_View::value(const char *v)	// I - Text to view
 
   value_ = strdup(v);
 
+  initial_load = 1;
   format();
+  initial_load = 0;
 
   topline(0);
   leftline(0);
