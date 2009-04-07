@@ -96,6 +96,11 @@ static int	quote_char(const char *);
 static void	scrollbar_callback(Fl_Widget *s, void *);
 static void	hscrollbar_callback(Fl_Widget *s, void *);
 
+//
+// global flag for image loading (see get_image).
+//
+
+static char initial_load = 0;
 
 //
 // Broken image...
@@ -273,7 +278,7 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y)
 }
 
 
-/** Add a text block to the list. */
+/** Adds a text block to the list. */
 Fl_Help_Block *					// O - Pointer to new block
 Fl_Help_View::add_block(const char   *s,	// I - Pointer to start of block text
                 	int           xx,	// I - X position of block
@@ -314,7 +319,7 @@ Fl_Help_View::add_block(const char   *s,	// I - Pointer to start of block text
 }
 
 
-/** Add a new link to the list. */
+/** Adds a new link to the list. */
 void Fl_Help_View::add_link(const char *n,	// I - Name of link
                       int        xx,	// I - X position of link
 		      int        yy,	// I - Y position of link
@@ -381,7 +386,7 @@ void Fl_Help_View::add_target(const char *n,	// I - Name of target
   ntargets_ ++;
 }
 
-/** Compare two targets.*/
+/** Compares two targets.*/
 int							// O - Result of comparison
 Fl_Help_View::compare_targets(const Fl_Help_Target *t0,	// I - First target
                              const Fl_Help_Target *t1)	// I - Second target
@@ -389,7 +394,7 @@ Fl_Help_View::compare_targets(const Fl_Help_Target *t0,	// I - First target
   return (strcasecmp(t0->name, t1->name));
 }
 
-/** Compute the alignment for a line in a block.*/
+/** Computes the alignment for a line in a block.*/
 int						// O - New line
 Fl_Help_View::do_align(Fl_Help_Block *block,	// I - Block to add to
                       int          line,	// I - Current line
@@ -428,7 +433,7 @@ Fl_Help_View::do_align(Fl_Help_Block *block,	// I - Block to add to
   return (line);
 }
 
-/** Draw the Fl_Help_View widget.*/
+/** Draws the Fl_Help_View widget. */
 void
 Fl_Help_View::draw()
 {
@@ -881,10 +886,6 @@ Fl_Help_View::draw()
 	    if (img) {
 	      img->draw(xx + x() - leftline_,
 	                yy + y() - fl_height() + fl_descent() + 2);
-#if !defined(WIN32) && !defined(__APPLE__)
-	      if ((void*)img != &broken_image)
-#endif 
-		if(img->refcount()>0) img->release();
 	    }
 
 	    xx += ww;
@@ -990,8 +991,10 @@ Fl_Help_View::draw()
 
 
 
-/** Find the specified string s at starting position p, return the matching pos 
-    or -1 if not found */
+/** Finds the specified string \p s at starting position \p p.
+
+    \return the matching position or -1 if not found
+*/
 int						// O - Matching position or -1 if not found
 Fl_Help_View::find(const char *s,		// I - String to find
                    int        p)		// I - Starting position
@@ -1049,7 +1052,7 @@ Fl_Help_View::find(const char *s,		// I - String to find
   return (-1);
 }
 
-/** Format the help text.*/
+/** Formats the help text. */
 void Fl_Help_View::format() {
   int		i;		// Looping var
   int		done;		// Are we done yet?
@@ -1864,7 +1867,7 @@ void Fl_Help_View::format() {
 }
 
 
-/** Format a table */
+/** Formats a table */
 void
 Fl_Help_View::format_table(int        *table_width,	// O - Total table width
                            int        *columns,		// O - Column widths
@@ -2298,7 +2301,7 @@ Fl_Help_View::format_table(int        *table_width,	// O - Total table width
 }
 
 
-/** Free memory used for the document. */
+/** Frees memory used for the document. */
 void
 Fl_Help_View::free_data() {
   // Release all images...
@@ -2310,7 +2313,6 @@ Fl_Help_View::free_data() {
 		attr[1024],	// Attribute buffer
 		wattr[1024],	// Width attribute buffer
 		hattr[1024];	// Height attribute buffer
-
 
     for (ptr = value_; *ptr;)
     {
@@ -2354,19 +2356,17 @@ Fl_Help_View::free_data() {
 	  int		width;
 	  int		height;
 
-
           get_attr(attrs, "WIDTH", wattr, sizeof(wattr));
           get_attr(attrs, "HEIGHT", hattr, sizeof(hattr));
 	  width  = get_length(wattr);
 	  height = get_length(hattr);
 
 	  if (get_attr(attrs, "SRC", attr, sizeof(attr))) {
-	    // Release the image twice to free it from memory...
+	    // Get and release the image to free it from memory...
 	    img = get_image(attr, width, height);
-#if !defined(__APPLE__)
-	    if ((void*)img!=&broken_image)
-#endif 
-	      while (img->refcount()>0) img->release();
+	    if ((void*)img != &broken_image) {
+	      img->release();
+	    }
 	  }
 	}
       }
@@ -2404,7 +2404,7 @@ Fl_Help_View::free_data() {
   }
 }
 
-/** Get an alignment attribute. */
+/** Gets an alignment attribute. */
 int					// O - Alignment
 Fl_Help_View::get_align(const char *p,	// I - Pointer to start of attrs
                         int        a)	// I - Default alignment
@@ -2424,7 +2424,7 @@ Fl_Help_View::get_align(const char *p,	// I - Pointer to start of attrs
 }
 
 
-/** Get an attribute value from the string. */
+/** Gets an attribute value from the string. */
 const char *					// O - Pointer to buf or NULL
 Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
                       const char *n,		// I - Name of attribute
@@ -2496,7 +2496,7 @@ Fl_Help_View::get_attr(const char *p,		// I - Pointer to start of attributes
 }
 
 
-/** Get an alignment attribute. */
+/** Gets a color attribute. */
 Fl_Color				// O - Color value
 Fl_Help_View::get_color(const char *n,	// I - Color name
                         Fl_Color   c)	// I - Default color value
@@ -2555,7 +2555,48 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
 }
 
 
-/** Gets an inline image. */
+/** Gets an inline image.
+
+  The image reference count is maintained accordingly, such that
+  the image can be released exactly once when the document is closed.
+
+  \return a pointer to a cached Fl_Shared_Image, if the image can be loaded,
+  	  otherwise a pointer to an internal Fl_Pixmap (broken_image).
+
+  \todo Fl_Help_View::get_image() returns a pointer to the internal
+  Fl_Pixmap broken_image, but this is _not_ compatible with the
+  return type Fl_Shared_Image (release() must not be called).
+*/
+
+/* Implementation note: (A.S. Apr 05, 2009)
+
+  Fl_Help_View::get_image() uses a static global flag (initial_load)
+  to determine, if it is called from the initial loading of a document
+  (load() or value()), or from resize() or draw().
+
+  A better solution would be to manage all loaded images in an own
+  structure like Fl_Help_Target (Fl_Help_Image ?) to avoid using this
+  global flag, but this would break the ABI !
+
+  This should be fixed in FLTK 1.3 !
+
+
+  If initial_load is true, then Fl_Shared_Image::get() is called to
+  load the image, and the reference count of the shared image is
+  increased by one.
+
+  If initial_load is false, then Fl_Shared_Image::find() is called to
+  load the image, and the image is released immediately. This avoids
+  increasing the reference count when calling get_image() from draw()
+  or resize().
+
+  Calling Fl_Shared_Image::find() instead of Fl_Shared_Image::get() avoids
+  doing unnecessary i/o for "broken images" within each resize/redraw.
+
+  Each image must be released exactly once in the destructor or before
+  a new document is loaded: see free_data().
+*/
+
 Fl_Shared_Image *
 Fl_Help_View::get_image(const char *name, int W, int H) {
   const char	*localname;		// Local filename
@@ -2596,8 +2637,17 @@ Fl_Help_View::get_image(const char *name, int W, int H) {
 
   if (strncmp(localname, "file:", 5) == 0) localname += 5;
 
-  if ((ip = Fl_Shared_Image::get(localname, W, H)) == NULL)
-    ip = (Fl_Shared_Image *)&broken_image;
+  if (initial_load) {
+    if ((ip = Fl_Shared_Image::get(localname, W, H)) == NULL) {
+      ip = (Fl_Shared_Image *)&broken_image;
+    }
+  } else { // draw or resize
+    if ((ip = Fl_Shared_Image::find(localname, W, H)) == NULL) {
+      ip = (Fl_Shared_Image *)&broken_image;
+    } else {
+      ip->release();
+    }
+  }
 
   return ip;
 }
@@ -2640,6 +2690,7 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
   char		target[32];	// Current target
 
   clear_selection();
+  free_data();
 
   strlcpy(target, linkp->name, sizeof(target));
 
@@ -2699,7 +2750,7 @@ void Fl_Help_View::clear_selection()
   if (current_view==this)
     clear_global_selection();
 }
-/** Selects All the text in the view. */
+/** Selects all the text in the view. */
 void Fl_Help_View::select_all()
 {
   clear_global_selection();
@@ -2886,7 +2937,7 @@ void Fl_Help_View::end_selection(int clipboard)
 
 #define ctrl(x) ((x)&0x1f)
 
-/** Handle events in the widget. */
+/** Handles events in the widget. */
 int				// O - 1 if we handled it, 0 otherwise
 Fl_Help_View::handle(int event)	// I - Event to handle
 {
@@ -3034,23 +3085,24 @@ Fl_Help_View::Fl_Help_View(int        xx,	// I - Left position
 }
 
 
-/** Destroy a Fl_Help_View widget. */
-Fl_Help_View::~Fl_Help_View()
-/**
+/** Destroys the Fl_Help_View widget.
+
   The destructor destroys the widget and frees all memory that has been
-  allocated for the current file.
+  allocated for the current document.
 */
+Fl_Help_View::~Fl_Help_View()
 {
   clear_selection();
   free_data();
 }
 
 
-/** Load the specified file. */
+/** Loads the specified file.
 
+  This method loads the specified file or URL.
+*/
 int				// O - 0 on success, -1 on error
 Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
-/**  This method loads the specified file or URL.*/
 {
   FILE		*fp;		// File to read from
   long		len;		// Length of file
@@ -3060,6 +3112,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   char		error[1024];	// Error buffer
   char		newname[1024];	// New filename buffer
 
+  // printf("load(%s)\n",f); fflush(stdout);
 
   if (strncmp(f, "ftp:", 4) == 0 ||
       strncmp(f, "http:", 5) == 0 ||
@@ -3082,6 +3135,8 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 
       if (!localname)
 	return (0);
+
+      free_data();
 
       strlcpy(filename_, newname, sizeof(filename_));
       strlcpy(directory_, newname, sizeof(directory_));
@@ -3106,6 +3161,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   }
 
   clear_selection();
+  free_data();
 
   strlcpy(newname, f, sizeof(newname));
   if ((target = strrchr(newname, '#')) != NULL)
@@ -3128,12 +3184,6 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     directory_[0] = '\0';
   else if (slash > directory_ && slash[-1] != '/')
     *slash = '\0';
-
-  if (value_ != NULL)
-  {
-    free((void *)value_);
-    value_ = NULL;
-  }
 
   if (strncmp(localname, "file:", 5) == 0)
     localname += 5;	// Adjust for local filename...
@@ -3159,7 +3209,9 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     value_ = strdup(error);
   }
 
+  initial_load = 1;
   format();
+  initial_load = 0;
 
   if (target)
     topline(target);
@@ -3170,7 +3222,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 }
 
 
-/** Resize the help widget. */
+/** Resizes the help widget. */
 
 void
 Fl_Help_View::resize(int xx,	// I - New left position
@@ -3195,7 +3247,10 @@ Fl_Help_View::resize(int xx,	// I - New left position
 }
 
 
-/** Scroll the text to the indicated position,  given a named destination */
+/** Scrolls the text to the indicated position, given a named destination.
+
+  \param[in] n target name
+*/
 void
 Fl_Help_View::topline(const char *n)	// I - Target name
 {
@@ -3216,21 +3271,26 @@ Fl_Help_View::topline(const char *n)	// I - Target name
 }
 
 
+/** Scrolls the text to the indicated position, given a pixel line.
 
-/** Scroll the text to the indicated position,  given a pixel line. */
+  If the given pixel value \p top is out of range, then the text is
+  scrolled to the top or bottom of the document, resp.
+
+  \param[in] top top line number in pixels (0 = start of document)
+*/
 void
-Fl_Help_View::topline(int t)	// I - Top line number
+Fl_Help_View::topline(int top)	// I - Top line number
 {
   if (!value_)
     return;
 
   int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
-  if (size_ < (h() - scrollsize) || t < 0)
-    t = 0;
-  else if (t > size_)
-    t = size_;
+  if (size_ < (h() - scrollsize) || top < 0)
+    top = 0;
+  else if (top > size_)
+    top = size_;
 
-  topline_ = t;
+  topline_ = top;
 
   scrollbar_.value(topline_, h() - scrollsize, 0, size_);
 
@@ -3240,22 +3300,26 @@ Fl_Help_View::topline(int t)	// I - Top line number
 }
 
 
+/** Scrolls the text to the indicated position, given a pixel column.
 
+  If the given pixel value \p left is out of range, then the text is
+  scrolled to the left or right side of the document, resp.
 
-/** Sets the left position. */
+  \param[in] left left column number in pixels (0 = left side)
+*/
 void
-Fl_Help_View::leftline(int l)	// I - Left position
+Fl_Help_View::leftline(int left)	// I - Left position
 {
   if (!value_)
     return;
 
   int scrollsize = scrollbar_size_ ? scrollbar_size_ : Fl::scrollbar_size();
-  if (hsize_ < (w() - scrollsize) || l < 0)
-    l = 0;
-  else if (l > hsize_)
-    l = hsize_;
+  if (hsize_ < (w() - scrollsize) || left < 0)
+    left = 0;
+  else if (left > hsize_)
+    left = hsize_;
 
-  leftline_ = l;
+  leftline_ = left;
 
   hscrollbar_.value(leftline_, w() - scrollsize, 0, hsize_);
 
@@ -3263,24 +3327,33 @@ Fl_Help_View::leftline(int l)	// I - Left position
 }
 
 
-/** Sets the current help text buffer to the string provided and reformats the text. */
+/** Sets the current help text buffer to the string provided and reformats the text.
+
+  The provided character string \p val is copied internally and will be
+  freed when value() is called again, or when the widget is destroyed.
+
+  If \p val is NULL, then the widget is cleared.
+*/
 void
-Fl_Help_View::value(const char *v)	// I - Text to view
+Fl_Help_View::value(const char *val)	// I - Text to view
 {
   clear_selection();
   free_data();
   set_changed();
 
-  if (!v)
+  if (!val)
     return;
 
-  value_ = strdup(v);
+  value_ = strdup(val);
 
+  initial_load = 1;
   format();
+  initial_load = 0;
 
   topline(0);
   leftline(0);
 }
+
 
 #ifdef ENC
 # undef ENC
@@ -3288,7 +3361,8 @@ Fl_Help_View::value(const char *v)	// I - Text to view
 // part b in the table seems to be mac_roman - beku
 # define ENC(a, b) a
 
-/** Return the character code associated with a quoted char. */
+
+/** Returns the character code associated with a quoted char. */
 static int			// O - Code or -1 on error
 quote_char(const char *p) {	// I - Quoted string
   int	i;			// Looping var
@@ -3418,7 +3492,7 @@ quote_char(const char *p) {	// I - Quoted string
 }
 
 
-/** The scrollbar callback. */
+/** The vertical scrollbar callback. */
 static void
 scrollbar_callback(Fl_Widget *s, void *)
 {
@@ -3426,7 +3500,7 @@ scrollbar_callback(Fl_Widget *s, void *)
 }
 
 
-/** The horizontal scrollbar callback . */
+/** The horizontal scrollbar callback. */
 static void
 hscrollbar_callback(Fl_Widget *s, void *)
 {

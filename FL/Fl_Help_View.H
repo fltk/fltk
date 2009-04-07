@@ -87,7 +87,7 @@ struct Fl_Help_Link
  * Fl_Help_View font stack opaque implementation
  */
 
-/** Fl_Help_View font stack element definition */
+/** Fl_Help_View font stack element definition. */
 struct Fl_Help_Font_Style {
   Fl_Font      f;  ///< Font
   Fl_Fontsize  s;  ///< Font Size
@@ -98,11 +98,11 @@ struct Fl_Help_Font_Style {
   Fl_Help_Font_Style(){} // For in table use
 };
 
-/** Fl_Help_View font stack definition */
+/** Fl_Help_View font stack definition. */
 const size_t MAX_FL_HELP_FS_ELTS = 100;
 
 struct Fl_Help_Font_Stack {
-  /** font stack construction, initialize attributes.*/
+  /** font stack construction, initialize attributes. */
   Fl_Help_Font_Stack() {
     nfonts_ = 0;
   }
@@ -113,7 +113,7 @@ struct Fl_Help_Font_Stack {
     fl_font(f, s); 
     fl_color(c);
   }
-  /** Gets the top (current) elt on the stack */
+  /** Gets the top (current) element on the stack. */
   void top(Fl_Font &f, Fl_Fontsize &s, Fl_Color &c) { elts_[nfonts_].get(f, s, c); }
   /** Pushes the font style triplet on the stack, also calls fl_font() & fl_color() adequately */
   void push(Fl_Font f, Fl_Fontsize s, Fl_Color c) { 
@@ -127,8 +127,8 @@ struct Fl_Help_Font_Stack {
     top(f, s, c);
     fl_font(f, s); fl_color(c);
   }
-  /** Gets the current count of font style elts in the stack */
-  size_t count() const {return nfonts_;} /// Gets the current number of fonts in the stack
+  /** Gets the current count of font style elements in the stack. */
+  size_t count() const {return nfonts_;} // Gets the current number of fonts in the stack
 
 protected:
   size_t nfonts_;		///< current number of fonts in stack
@@ -148,7 +148,7 @@ struct Fl_Help_Target
   elements are supported, as well as a primitive implementation of tables.
   GIF, JPEG, and PNG images are displayed inline.
 */
-class FL_EXPORT Fl_Help_View : public Fl_Group	//// Help viewer widget
+class FL_EXPORT Fl_Help_View : public Fl_Group	// Help viewer widget
 {
   enum { RIGHT = -1, CENTER, LEFT };	///< Alignments
 
@@ -234,10 +234,10 @@ public:
 
   Fl_Help_View(int xx, int yy, int ww, int hh, const char *l = 0);
   ~Fl_Help_View();
-  /**    This method returns the current directory for the text in the buffer.  */
+  /** Returns the current directory for the text in the buffer. */
   const char	*directory() const { if (directory_[0]) return (directory_);
   					else return ((const char *)0); }
-  /**    This method returns the current filename for the text in the buffer.  */
+  /** Returns the current filename for the text in the buffer. */
   const char	*filename() const { if (filename_[0]) return (filename_);
   					else return ((const char *)0); }
   int		find(const char *s, int p = 0);
@@ -266,7 +266,7 @@ public:
   void		link(Fl_Help_Func *fn) { link_ = fn; }
   int		load(const char *f);
   void		resize(int,int,int,int);
-  /** Gets the size of the Help view */
+  /** Gets the size of the help view. */
   int		size() const { return (size_); }
   void		size(int W, int H) { Fl_Widget::size(W, H); }
   /** Sets the default text color. */
@@ -285,12 +285,12 @@ public:
   const char	*title() { return (title_); }
   void		topline(const char *n);
   void		topline(int);
-  /** Returns the current top line in pixels.  */
+  /** Returns the current top line in pixels. */
   int		topline() const { return (topline_); }
   void		leftline(int);
-  /** Gets the left position. */
+  /** Gets the left position in pixels. */
   int		leftline() const { return (leftline_); }
-  void		value(const char *v);
+  void		value(const char *val);
   /** Returns the current buffer contents. */
   const char	*value() const { return (value_); }
   void          clear_selection();
@@ -301,7 +301,7 @@ public:
     If this value is zero (default), this widget will use the 
     Fl::scrollbar_size() value as the scrollbar's width.
   
-    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
+    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollbar_size() is being used.
     \see Fl::scrollbar_size(int)
   */
   int scrollbar_size() const {
