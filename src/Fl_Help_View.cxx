@@ -2710,7 +2710,6 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
   char		target[32];	// Current target
 
   clear_selection();
-  free_data();
 
   strlcpy(target, linkp->name, sizeof(target));
 
@@ -3135,7 +3134,6 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   char		newname[1024];	// New filename buffer
 
   clear_selection();
-  free_data();
 
   strlcpy(newname, f, sizeof(newname));
   if ((target = strrchr(newname, '#')) != NULL)
@@ -3148,6 +3146,8 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
 
   if (!localname)
     return (0);
+
+  free_data();
 
   strlcpy(filename_, newname, sizeof(filename_));
   strlcpy(directory_, newname, sizeof(directory_));
