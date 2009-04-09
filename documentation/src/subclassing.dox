@@ -41,7 +41,7 @@ MyClass(int x, int y, int w, int h, const char *label = 0);
 \endcode
 
 This will allow the class to be used in
-<A href="fluid.html#FLUID">FLUID</A>
+\ref fluid "FLUID"
 without problems.
 
 The constructor must call the constructor for the base class and
@@ -88,7 +88,6 @@ The following methods are provided for subclasses to use:
 \li \ref subclassing_test_shortcut "test_shortcut()"
 \li \ref subclassing_type "type()"
 
-<A name="damage"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_damage
 void Fl_Widget::damage(uchar mask) <br>
 void Fl_Widget::damage(uchar mask, int x, int y, int w, int h) <br>
@@ -108,7 +107,7 @@ but the implementation of your widget can call the public
 The second form indicates that a region is damaged.  If only these
 calls are done in a window (no calls to \p damage(n)) then FLTK
 will clip to the union of all these calls before drawing anything.
- This can greatly speed up incremental displays.  The mask bits are
+This can greatly speed up incremental displays.  The mask bits are
 OR'd into \p damage() unless this is a Fl_Window widget. 
 
 \par
@@ -142,7 +141,6 @@ MyClass::draw() {
 \todo Clarify Fl_Window::damage(n) handling - seems confused/wrong?
       ORing value doesn't match setting behaviour in FL_Widget.H!
 
-<A name="draw_box"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_draw_box
 void Fl_Widget::draw_box() const <br>
 void Fl_Widget::draw_box(Fl_Boxtype t, Fl_Color c) const
@@ -152,7 +150,6 @@ The first form draws this widget's \p box(), using the
 dimensions of the widget.  The second form uses \p t as the box
 type and \p c as the color for the box.
 
-<A name="draw_focus"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_draw_focus
 void Fl_Widget::draw_focus() <br>
 void Fl_Widget::draw_focus(Fl_Boxtype t, int x, int y, int w, int h) const
@@ -161,7 +158,6 @@ void Fl_Widget::draw_focus(Fl_Boxtype t, int x, int y, int w, int h) const
 Draws a focus box inside the widget's bounding box. The second
 form allows you to specify a different bounding box.
 
-<A name="draw_label"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_draw_label
 void Fl_Widget::draw_label() const <br>
 void Fl_Widget::draw_label(int x, int y, int w, int h) const <br>
@@ -184,7 +180,6 @@ The third form draws the label anywhere. It acts as though
 the passed bounding box. This is designed for parent groups to draw
 labels with. 
 
-<A name="set_flag"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_set_flag
 void Fl_Widget::set_flag(int c) <br>
 
@@ -193,7 +188,6 @@ Calling \p set_flag(SHORTCUT_LABEL) modifies the behavior of
 \ref subclassing_draw_label "draw_label()" so that '\&' characters
 cause an underscore to be printed under the next letter.
 
-<A name="set_visible"></A> <!-- For old HTML links only ! -->
 <A name="clear_visible"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_clear_visible
 \anchor subclassing_set_visible
@@ -204,7 +198,6 @@ void Fl_Widget::clear_visible()
 Fast inline versions of Fl_Widget::hide() and Fl_Widget::show().
 These do not send the \p FL_HIDE and \p FL_SHOW events to the widget.
 
-<A name="test_shortcut"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_test_shortcut
 int Fl_Widget::test_shortcut() <br>
 static int Fl_Widget::test_shortcut(const char *s)
@@ -223,14 +216,13 @@ The second version lets you do this test against an arbitrary string.
 \todo Clarify Fl_Widget::test_shortcut() explanations. Fl_Widget.h
       says Internal Use only, but subclassing chapter gives details!
 
-<A name="type"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_type
 uchar Fl_Widget::type() const <br>
 void Fl_Widget::type(uchar t)
 
 \par
 The property Fl_Widget::type() can return an arbitrary 8-bit
-identifier, and can be set with the protected method \p type(uchar t).
+identifier, and can be set with the protected method <tt>type(uchar t)</tt>.
 This value had to be provided for Forms compatibility, but you can
 use it for any purpose you want.  Try to keep the value less than 100
 to not interfere with reserved values.
@@ -247,9 +239,8 @@ be greater than the symbol \p FL_RESERVED_TYPE (which is 100) and
 less than \p FL_WINDOW (unless you make a subclass of Fl_Window).
 Look through the header files for \p FL_RESERVED_TYPE to find an
 unused number. If you make a subclass of Fl_Window you must use
-\p FL_WINDOW+n (where \p n must be in the range 1 to 7). 
+<tt>FL_WINDOW + n</tt> (where \p n must be in the range 1 to 7). 
 
-<A NAME="handle"></A> <!-- For old HTML links only ! -->
 \section subclassing_events Handling Events
 
 The virtual method Fl_Widget::handle(int event) is called
@@ -265,13 +256,13 @@ to handle each event passed to the widget. It can:
 \li Call Fl_Widget::handle() on child widgets. 
 
 Events are identified by the integer argument.  Other information
-about the most recent event is stored in static locations and aquired
+about the most recent event is stored in static locations and acquired
 by calling the
 \ref events_event_xxx.
 This information remains valid until another event is handled.
 
 Here is a sample \p handle() method for a widget that acts as
-a pushbutton and also accepts the keystroke 'x' to cause the callback: 
+a pushbutton and also accepts the keystroke \p 'x' to cause the callback: 
 
 \code
 int MyClass::handle(int event) {
@@ -333,14 +324,14 @@ be redrawn, e.g. for an expose event.
 Expose events (and the 
 \ref subclassing_damage "damage(mask,x,y,w,h)" function described 
 above) will cause \p draw() to be called with FLTK's
-<A href="drawing.html#clipping"> clipping</A>
+\ref ssect_Clipping "clipping"
 turned on.  You can greatly speed up redrawing in some
-cases by testing \p fl_not_clipped(x,y,w,h) or \p fl_clip_box(...)
+cases by testing \p fl_not_clipped(x,y,w,h) or \p %fl_clip_box()
 and skipping invisible parts. 
 
 Besides the protected methods described above, FLTK provides a large
-number of basic drawing functions, which are described in the
-\ref drawing chapter.
+number of basic drawing functions, which are described in the chapter
+\ref drawing.
 
 \section subclassing_resizing Resizing the Widget
 
@@ -438,15 +429,13 @@ int MyClass::draw() {
 }
 \endcode
 
-\todo	The new method draw_children should be documented below.
-
 Fl_Group provides some protected methods to make drawing easier:
 
 \li \ref subclassing_draw_child "draw_child()"
+\li \ref subclassing_draw_children "draw_children()"
 \li \ref subclassing_draw_outside_label "draw_outside_label()"
 \li \ref subclassing_update_child "update_child()"
 
-<A name="draw_child"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_draw_child
 void Fl_Group::draw_child(Fl_Widget &widget) const
 
@@ -458,9 +447,17 @@ if you draw something (like a background box) that damages the child.
 Nothing is done if the child is not \p visible() or if it is
 clipped.
 
-<A name="draw_outside_label"></A> <!-- For old HTML links only ! -->
+\anchor subclassing_draw_children
+void Fl_Group::draw_children()
+
+\par
+A convenience function that draws all children of the group.
+This is useful if you derived a widget from Fl_Group and want to draw
+a special border or background. You can call \p draw_children() from the
+derived  \p draw() method after drawing the box, border, or background.
+
 \anchor subclassing_draw_outside_label
-void Fl_Group::draw_outside_label(Fl_Widget &widget) const
+void Fl_Group::draw_outside_label(const Fl_Widget &widget) const
 
 \par
 Draw the labels that are \e not drawn by
@@ -468,9 +465,8 @@ Draw the labels that are \e not drawn by
 If you want more control over the label positions you might want to call
 <tt>child->draw_label(x,y,w,h,a)</tt>.
 
-<A name="update_child"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_update_child
-void Fl_Group::update_child(Fl_Widget &widget)
+void Fl_Group::update_child(Fl_Widget& widget) const
 
 \par
 Draws the child only if its \p damage() is non-zero.  You
@@ -521,7 +517,7 @@ switch a subclass back and forth. Watch out for the following
 differences: 
 
 -# Fl_Window is a subclass of Fl_Group so
-   <I>make sure your constructor calls \p end()</I>
+   <I>make sure your constructor calls</I> \p end()
    unless you actually want children added to your window.
 
 -# When handling events and drawing, the upper-left corner is at
