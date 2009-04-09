@@ -62,6 +62,7 @@ static Fl_Gl_Choice* gl_choice;
 
 Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
+/** Creates an OpenGL context */
 void gl_start() {
   if (!context) {
 #if defined(USE_X11)
@@ -102,6 +103,7 @@ void gl_start() {
   }
 }
 
+/** Releases an OpenGL context */
 void gl_finish() {
   glFlush();
 #if !defined(WIN32) && !defined(__APPLE__)

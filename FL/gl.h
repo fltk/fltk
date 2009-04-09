@@ -32,6 +32,22 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file gl.h
+ *  This file defines wrapper functions for OpenGL in FLTK
+ *
+ *  To use OpenGL from within an FLTK application you MUST use gl_visual()
+ *  to select the default visual before doing show() on any windows. Mesa
+ *  will crash if yoy try to use a visual not returned by glxChooseVidual.
+ *
+ *  This does not work with Fl_Double_Window's!  It will try to draw
+ *  into the front buffer.  Depending on the system this will either
+ *  crash or do nothing (when pixmaps are being used as back buffer
+ *  and GL is being done by hardware), work correctly (when GL is done
+ *  with software, such as Mesa), or draw into the front buffer and
+ *  be erased when the buffers are swapped (when double buffer hardware
+ *  is being used)
+ */
+
 #ifndef FL_gl_H
 #  define FL_gl_H
 
@@ -56,10 +72,15 @@
 FL_EXPORT void gl_start();
 FL_EXPORT void gl_finish();
 
-FL_EXPORT void gl_color(Fl_Color);
-inline void gl_color(int c) {gl_color((Fl_Color)c);} // back compatability
+FL_EXPORT void gl_color(Fl_Color i);
+/** back compatability */
+inline void gl_color(int c) {gl_color((Fl_Color)c);}
 
 FL_EXPORT void gl_rect(int x,int y,int w,int h);
+/**
+  Fills the given rectangle with the current color.
+  \see gl_rect(int x, int y, int w, int h)
+  */
 inline void gl_rectf(int x,int y,int w,int h) {glRecti(x,y,x+w,y+h);}
 
 FL_EXPORT void gl_font(int fontid, int size);

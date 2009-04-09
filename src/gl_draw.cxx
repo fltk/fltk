@@ -47,10 +47,15 @@
 extern XFontStruct* fl_xxfont();
 #endif // USE_XFT
 
+/** Returns the current font's height */
 int   gl_height() {return fl_height();}
+/** Returns the current font's descent */
 int   gl_descent() {return fl_descent();}
+/** Returns the width of the string in the current fnt */
 double gl_width(const char* s) {return fl_width(s);}
+/** Returns the width of n characters of the string in the current font */
 double gl_width(const char* s, int n) {return fl_width(s,n);}
+/** Returns the width of the character in the current font */
 double gl_width(uchar c) {return fl_width(c);}
 
 static Fl_Font_Descriptor *gl_fontsize;
@@ -65,6 +70,9 @@ static Fl_Font_Descriptor *gl_fontsize;
 #  undef USE_OksiD_style_GL_font_selection  // turn this off for XFT also
 #endif
 
+/**
+  Sets the current OpenGL font to the same font as calling fl_font()
+  */
 void  gl_font(int fontid, int size) {
   fl_font(fontid, size);
   if (!fl_fontsize->listbase) {
@@ -192,6 +200,10 @@ void gl_remove_displaylist_fonts()
 #endif
 }
 
+/**
+  Draws an array of n characters of the string in the current font
+  at the current position.
+  */
 void gl_draw(const char* str, int n) {
 #ifdef __APPLE__
 // Should be converting the text here, as for other platforms???
@@ -223,24 +235,39 @@ void gl_draw(const char* str, int n) {
 #endif
 }
 
+/**
+  Draws n charachters of the string in the current font at the given position 
+  */
 void gl_draw(const char* str, int n, int x, int y) {
   glRasterPos2i(x, y);
   gl_draw(str, n);
 }
 
+/**
+  Draws n charachters of the string in the current font at the given position 
+  */
 void gl_draw(const char* str, int n, float x, float y) {
   glRasterPos2f(x, y);
   gl_draw(str, n);
 }
 
+/**
+  Draws a nul-terminated string in the current font at the current position
+  */
 void gl_draw(const char* str) {
   gl_draw(str, strlen(str));
 }
 
+/**
+  Draws a nul-terminated string in the current font at the given position 
+  */
 void gl_draw(const char* str, int x, int y) {
   gl_draw(str, strlen(str), x, y);
 }
 
+/**
+  Draws a nul-terminated string in the current font at the given position 
+  */
 void gl_draw(const char* str, float x, float y) {
   gl_draw(str, strlen(str), x, y);
 }
@@ -250,6 +277,11 @@ static void gl_draw_invert(const char* str, int n, int x, int y) {
   gl_draw(str, n);
 }
 
+/**
+  Draws a string formatted into a box, with newlines and tabs expanded,
+  other control characters changed to ^X. and aligned with the edges or
+  center. Exactly the same output as fl_draw().
+  */
 void gl_draw(
   const char* str, 	// the (multi-line) string
   int x, int y, int w, int h, 	// bounding box
@@ -259,6 +291,11 @@ void gl_draw(
 
 void gl_measure(const char* str, int& x, int& y) {fl_measure(str,x,y);}
 
+/**
+  Outlines the given rectangle with the current color.
+  If Fl_Gl_Window::ortho() has been called, then the rectangle will
+  exactly fill the given pixel rectangle.
+  */
 void gl_rect(int x, int y, int w, int h) {
   if (w < 0) {w = -w; x = x-w;}
   if (h < 0) {h = -h; y = y-h;}
@@ -276,6 +313,12 @@ extern uchar fl_overlay;
 extern int fl_overlay_depth;
 #endif
 
+/**
+  Sets the curent OpenGL color to an FLTK color.
+
+  For color-index modes it will use fl_xpixel(c), which is only
+  right if the window uses the default colormap!
+  */
 void gl_color(Fl_Color i) {
 #if HAVE_GL_OVERLAY
 #if defined(WIN32)

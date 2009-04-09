@@ -20,11 +20,6 @@ drawing your widgets.  To do this you use the
 \ref opengl_gl_finish "gl_finish()"
 functions around your OpenGL code.
 
-<A href="#gl_start"><tt>gl_start()</tt></A>
-and
-<A href=#gl_finish><tt>gl_finish()</tt></A>
-functions around your OpenGL code.
-
 You must include FLTK's \p <FL/gl.h> header
 file. It will include the file \p <GL/gl.h>, define
 some extra drawing functions provided by FLTK, and include the
@@ -167,6 +162,7 @@ Your main program can now create one of your windows by doing
 <tt>new MyWindow(...)</tt>.
 
 You can also use your new window class in
+\ref fluid "FLUID"
 <A href="fluid.html#FLUID">FLUID</A>
 by:
 
@@ -189,11 +185,6 @@ in the previous chapter, or into the code for a
 \ref common_boxtypes "boxtype"
 or other places with some care.
 
-<A href="subclassing.html#draw"><tt>Fl_Widget::draw()</tt></A>
-method or into the code for a
-<A href="common.html#boxtypes">boxtype</A>
-or other places with some care.
-
 Most importantly, before you show \e any windows,
 including those that don't have OpenGL drawing, you <B>must</B>
 initialize FLTK so that it knows it is going to use OpenGL. You
@@ -204,8 +195,16 @@ to describe how you intend to use OpenGL:
 Fl::gl_visual(FL_RGB);
 \endcode
 
+\anchor opengl_gl_start
+\anchor opengl_gl_finish
 You can then put OpenGL drawing code anywhere you can draw
-normally by surrounding it with:
+normally by surrounding it with
+gl_start() and gl_finish() to set up, and later release, an OpenGL
+context with an orthographic projection so that 0,0 is the
+lower-left corner of the window and each pixel is one unit. The
+current clipping is reproduced with OpenGL \p glScissor()
+commands. These functions also synchronize the OpenGL graphics stream
+with the drawing done by other X, WIN32, or FLTK functions.
 
 \code
 gl_start();
@@ -213,21 +212,12 @@ gl_start();
 gl_finish();
 \endcode
 
-\anchor opengl_gl_start
-\anchor opengl_gl_finish
-\p gl_start() and \p gl_finish() set up an OpenGL
-context with an orthographic projection so that 0,0 is the
-lower-left corner of the window and each pixel is one unit. The
-current clipping is reproduced with OpenGL \p glScissor()
-commands. These functions also synchronize the OpenGL graphics stream
-with the drawing done by other X, WIN32, or FLTK functions.
-
 The same context is reused each time. If your code changes
 the projection transformation or anything else you should use
 \p glPushMatrix() and \p glPopMatrix() functions to
 put the state back before calling \p gl_finish().
 
-You may want to use <tt>Fl_Window::current()->h()</tt> to
+You may want to use <tt>Fl_Window::current()-\>h()</tt> to
 get the drawable height so that you can flip the Y
 coordinates.
 
@@ -273,31 +263,31 @@ Sets the current OpenGL font to the same font you get by calling
 
 int gl_height() <br>
 int gl_descent() <br>
-float gl_width(const char *) <br>
-float gl_width(const char *, int n) <br>
-float gl_width(uchar)
+float gl_width(const char *s) <br>
+float gl_width(const char *s, int n) <br>
+float gl_width(uchar c)
 
 \par
 Returns information about the current OpenGL font.
 
-void gl_draw(const char *) <br>
-void gl_draw(const char *, int n)
+void gl_draw(const char *s) <br>
+void gl_draw(const char *s, int n)
 
 \par
-Draws a nul-terminated string or an array of \p n<
+Draws a nul-terminated string or an array of \p n
 characters in the current OpenGL font at the current raster
 position.
 
-void gl_draw(const char *, int x, int y) <br>
-void gl_draw(const char *, int n, int x, int y) <br>
-void gl_draw(const char *, float x, float y) <br>
-void gl_draw(const char *, int n, float x, float y)
+void gl_draw(const char *s, int x, int y) <br>
+void gl_draw(const char *s, int n, int x, int y) <br>
+void gl_draw(const char *s, float x, float y) <br>
+void gl_draw(const char *s, int n, float x, float y)
 
 \par
 Draws a nul-terminated string or an array of \p n
 characters in the current OpenGL font at the given position.
 
-void gl_draw(const char *, int x, int y, int w, int h, Fl_Align)
+void gl_draw(const char *s, int x, int y, int w, int h, Fl_Align)
 
 \par
 Draws a string formatted into a box, with newlines and tabs
@@ -316,7 +306,7 @@ you do a swapbuffers.
 \li <tt>setenv GL_SWAP_TYPE COPY</tt> <br>
     <br>
     This indicates that the back buffer is copied to the
-    front buffer, and still contains it's old data. This is
+    front buffer, and still contains its old data. This is
     true of many hardware implementations.  Setting this
     will speed up emulation of overlays, and widgets that
     can do partial update can take advantage of this as
@@ -333,7 +323,7 @@ you do a swapbuffers.
     setting the variable, cause FLTK to assume that the
     back buffer must be completely redrawn after a swap.
 
-This is easily tested by running the \p gl_overlay demo
+This is easily tested by running the \ref examples_gl_overlay demo
 program and seeing if the display is correct when you drag
 another window over it or if you drag the window off the screen
 and back on. You have to exit and run the program again for it
@@ -453,7 +443,7 @@ void OptimizerWindow::draw() {
 \par The scene() Method
 
 \par
-The \p >scene() method sets the scene to be drawn.  The scene is
+The \p scene() method sets the scene to be drawn.  The scene is
 a collection of 3D objects in a \p csGroup.  The scene is redrawn
 after this call.
 
