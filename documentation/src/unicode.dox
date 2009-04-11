@@ -1,36 +1,160 @@
 /**
 
- \page unicode Unicode and utf-8 Support
+ \page unicode Unicode and UTF-8 Support
 
 This chapter explains how FLTK handles international 
-text via Unicode and utf-8.
+text via Unicode and UTF-8.
 
 Unicode support was only recently added to FLTK and is
 still incomplete. This chapter is Work in Progress, reflecting
 the current state of Unicode support.
 
-\section unicode_about About Unicode and utf-8
+\section unicode_about About Unicode, ISO 10646 and UTF-8
 
-The Unicode Standard is a worldwide accepted charatcer encoding 
-standard. Unicode provides access to over 100,000 characters 
-used in all the major languages written today.
+The summary of Unicode, ISO 10646 and UTF-8 given below is
+deliberately brief, and provides just enough information for
+the rest of this chapter.
+For further information, please see:
+- http://www.unicode.org
+- http://www.iso.org
+- http://en.wikipedia.org/wiki/Unicode
+- http://www.cl.cam.ac.uk/~mgk25/unicode.html
 
-Utf-8 encodes all Unicode characters into variable length 
+\par The Unicode Standard
+
+The Unicode Standard was originally developed by a consortium of mainly
+US computer manufacturers and developers of mult-lingual software.
+It has now become a defacto standard for character encoding,
+and is supported by most of the major computing companies in the world.
+
+Before Unicode, many different systems, on different platforms,
+had been developed for encoding characters for different languages,
+but no single encoding could satisfy all languages.
+Unicode provides access to over 100,000 characters 
+used in all the major languages written today,
+and is independent of platform and language.
+
+Unicode also provides higher-level concepts needed for text processing
+and typographic publishing systems, such as algorithms for sorting and
+comparing text, composite character and text rendering, right-to-left
+and bi-directional text handling.
+
+<i>There are currently no plans to add this extra functionality to FLTK.</i>
+
+\par ISO 10646
+
+The International Organisation for Standardization (ISO) had also
+been trying to develop a single unified character set.
+Although both ISO and the Unicode Consortium continue to publish
+their own standards, they have agreed to coordinate their work so
+that specific versions of the Unicode and ISO 10646 standards are
+compatible with each other.
+
+The international standard ISO 10646 defines the
+<b>Universal Character Set</b> (UCS)
+which contains the characters required for almost all known languages.
+The standard also defines three different implementation levels specifying
+how these characters can be combined.
+
+<i>There are currently no plans for handling the different implementation
+levels or the combining characters in FLTK.</i>
+
+In UCS, characters have a unique numerical code and an official name,
+and are usually shown using 'U+' and the code in hexadecimal,
+e.g. U+0041 is the "Latin capital letter A".
+The UCS characters U+0000 to U+007F correspond to US-ASCII,
+and U+0000 to U+00FF correspond to ISO 8859-1 (Latin1).
+The UCS also defines various methods of encoding characters as
+a sequence of bytes.
+
+UCS-2 encodes Unicode characters into two bytes,
+which is wasteful if you are only dealing with ASCII or Latin1 text,
+and insufficient if you need characters above U+00FFFF.
+UCS-4 uses four bytes, which lets it handle higher characters,
+but this is even more wasteful for ASCII or Latin1.
+
+\par UTF-8
+
+The Unicode standard defines various UCS Transformation Formats.
+UTF-16 and UTF-32 are based on units of two and four bytes.
+
+UTF-8 encodes all Unicode characters into variable length 
 sequences of bytes. Unicode characters in the 7-bit ASCII 
-range map to the same value in utf-8, making the transformation
-to Unicode quick and easy.
+range map to the same value and are represented as a single byte,
+making the transformation to Unicode quick and easy.
+
+All UCS characters above U+007F are encoded as a sequence of
+several bytes. The top bits of the first byte are set to show
+the length of the byte sequence, and subseqent bytes are
+always in the range 0x80 to 8x8F. This combination provides
+some level of synchronisation and error detection.
+
+<table summary="Unicode character byte sequences" align="center">
+<tr>
+ <td>Unicode range</td>
+ <td>Byte sequences</td>
+</tr>
+<tr>
+ <td><tt>U+00000000 - U+0000007F</tt></td>
+ <td><tt>0xxxxxxx</tt></td>
+</tr>
+<tr>
+ <td><tt>U+00000080 - U+000007FF</tt></td>
+ <td><tt>110xxxxx 10xxxxxx</tt></td>
+</tr>
+<tr>
+ <td><tt>U+00000800 - U+0000FFFF</tt></td>
+ <td><tt>1110xxxx 10xxxxxx 10xxxxxx</tt></td>
+</tr>
+<tr>
+ <td><tt>U+00010000 - U+001FFFFF</tt></td>
+ <td><tt>11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</tt></td>
+</tr>
+<tr>
+ <td><tt>U+00200000 - U+03FFFFFF</tt></td>
+ <td><tt>111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx</tt></td>
+</tr>
+<tr>
+ <td><tt>U+04000000 - U+7FFFFFFF</tt></td>
+ <td><tt>1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx</tt></td>
+</tr>
+</table>
 
 Moving from ASCII encoding to Unicode will allow all new FLTK
 applications to be easily internationalized and and used all
-over the world. By choosing utf-8 encoding, FLTK remains 
+over the world. By choosing UTF-8 encoding, FLTK remains 
 largely source-code compatible to previous iteration of the 
 library.
 
 \section unicode_in_fltk Unicode in FLTK
 
-FLTK will be entirely converted to Unicode in utf-8 encoding.
+FLTK will be entirely converted to Unicode in UTF-8 encoding.
 If a different encoding is required by the underlying operatings
 system, FLTK will convert string as needed.
+
+It is important to note that the initial implementation of
+Unicode and UTF-8 in FLTK involves three important areas:
+
+- provision of Unicode character tables and some simple related functions;
+
+- conversion of char* variables and function parameters from single byte
+  per character representation to UTF-8 variable length characters;
+
+- modifications to the display font interface to accept general
+  Unicode character or UCS code numbers instead of just ASCII or Latin1
+  characters.
+
+The current implementation of Unicode / UTF-8 in FLTK will impose
+the following limitations:
+
+- FLTK will only handle single characters, so composed characters
+  consisting of a base character and floating accent characters
+  will be treated as multiple characters; 
+
+- FLTK will only compare or sort strings on a byte by byte basis
+  and not on a general Unicode character basis;
+
+- FLTK will not handle right-to-left or bi-directional text;
 
 \par TODO:
 
