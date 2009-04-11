@@ -5,7 +5,6 @@
 This chapter explains advanced programming and design topics
 that will help you to get the most out of FLTK.
 
-<A NAME="multithreading"> </A> <!-- For old HTML links only ! -->
 \section advanced_multithreading Multithreading
 
 FLTK supports multithreaded application using a locking mechanism
@@ -72,15 +71,15 @@ Fl::awake(Fl_Awake_Handler cb, void* userdata):
 \endcode
 
       
-FLTK supports multiple platforms, some of them which do not 
-allow any other but the main thread to handle system events and
+FLTK supports multiple platforms, some of which allow only the
+the main thread to handle system events and
 open or close windows. The safe thing to do is to adhere to the 
 following rules for threads on all operating systems:
 
 
 \li Don't \p show() or \p hide() anything that contains 
     widgets derived from Fl_Window, including dialogs, file
-    choosers, subwindows or Fl_Gl_Window's
+    choosers, subwindows or those using Fl_Gl_Window.
 
 \li Don't call Fl::wait(), Fl::flush() or any 
     related methods that will handle system messages
@@ -90,7 +89,7 @@ following rules for threads on all operating systems:
 \li Don't change window decorations or titles
 
 \li The \p make_current() method may or may not work well for
-    regular windows, but should always work for Fl_Gl_Window's
+    regular windows, but should always work for a Fl_Gl_Window
     to allow for high speed rendering on graphics cards with multiple
     pipelines
 
