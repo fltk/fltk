@@ -122,11 +122,6 @@ public:
 class FL_EXPORT Fl_Clock : public Fl_Clock_Output {
 public:
   int handle(int);
-  /**
-    Undefined.
-    \todo Find Fl_Clock::update() implementation, if any, and document it.
-  */
-  void update();
 
   Fl_Clock(int X, int Y, int W, int H,  const char *L = 0);
   
