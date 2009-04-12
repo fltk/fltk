@@ -51,7 +51,7 @@ int Fl::dnd()
   result = NewDrag( &dragRef );
   if ( result != noErr ) return false;
   
-  result = AddDragItemFlavor( dragRef, 1, 'TEXT', fl_selection_buffer, fl_selection_length, 0 );
+  result = AddDragItemFlavor( dragRef, 1, 'utf8', fl_selection_buffer, fl_selection_length, 0 );
   if ( result != noErr ) { DisposeDrag( dragRef ); return false; }
   
   Point mp;

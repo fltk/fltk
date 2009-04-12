@@ -480,6 +480,41 @@ void i7_cb(Fl_Widget *w, void *d)
   i8->value(buf);
 }
 
+class UCharDropBox : public Fl_Output {
+public:
+  UCharDropBox(int x, int y, int w, int h, const char *label=0) :
+    Fl_Output(x, y, w, h, label) { }
+  int handle(int event) {
+    switch (event) {
+      case FL_DND_ENTER: return 1;
+      case FL_DND_DRAG: return 1;
+      case FL_DND_RELEASE: return 1;
+      case FL_PASTE:
+        {
+          const char *t = Fl::event_text();
+          int i, n;
+          fl_utf8decode(t, t+Fl::event_length(), &n);
+          if (n==0) {
+            value("");
+            return 1;
+          }
+          char buffer[200], *d = buffer;
+          for (i=0; i<n; i++) *d++ = t[i];
+          *d++ = ' ';
+          for (i=0; i<n; i++) {
+            const char lut[] = "0123456789abcdef";
+            *d++ = '\\'; *d++ = 'x';
+            *d++ = lut[(t[i]>>4)&0x0f]; *d++ = lut[t[i]&0x0f];
+          }
+          *d++ = 0;
+          value(buffer);
+        }
+        return 1;
+    }
+    return Fl_Output::handle(event);
+  }
+};
+
 /********************************************************************************************/
 int main(int argc, char** argv)
 {
@@ -597,6 +632,10 @@ int main(int argc, char** argv)
   // SOME JAPANESE UTF8 TEXT
   const char *utfstr = "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
                  "\x8c\xe3\x82\x8b\xe3\x80\x82"; // 何も行る。
+
+  UCharDropBox db(5, 300, 190, 30);
+  db.textsize(16);
+  db.value("unichar drop box");
 		 
   Fl_Output o9(5, 330, 190, 45);
   o9.textfont(extra_font);

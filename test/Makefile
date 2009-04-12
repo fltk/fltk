@@ -264,6 +264,9 @@ $(ALL): $(LIBNAME)
 # General demos...
 unittests$(EXEEXT): unittests.o
 
+unittests.cxx: unittest_about.cxx unittest_points.cxx unittest_lines.cxx unittest_circles.cxx \
+	unittest_rects.cxx unittest_text.cxx unittest_viewport.cxx unittest_images.cxx
+
 adjuster$(EXEEXT): adjuster.o
 
 arc$(EXEEXT): arc.o

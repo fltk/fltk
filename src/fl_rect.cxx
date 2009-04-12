@@ -419,8 +419,8 @@ void fl_point(int x, int y) {
   SetPixel(fl_gc, x, y, fl_RGB());
 #elif defined(__APPLE_QUARTZ__)
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-  CGContextMoveToPoint(fl_gc, x, y);
-  CGContextAddLineToPoint(fl_gc, x, y);
+  CGContextMoveToPoint(fl_gc, x-.5, y); // Quartz needs a line that is one pixel long, or it will not draw anything
+  CGContextAddLineToPoint(fl_gc, x+.5, y);
   CGContextStrokePath(fl_gc);
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #else

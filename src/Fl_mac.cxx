@@ -156,7 +156,7 @@ static unsigned short macKeyLookUp[128] =
     0/*FL_Shift_L*/, 0/*FL_Caps_Lock*/, 0/*FL_Alt_L*/, 0/*FL_Control_L*/, 
     0/*FL_Shift_R*/, 0/*FL_Alt_R*/, 0/*FL_Control_R*/, 0,
 
-    0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Num_Lock,
+    0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Delete,
     FL_Down, 0, 0, FL_KP+'/', FL_KP_Enter, FL_Up, FL_KP+'-', 0,
 
     0, FL_KP+'=', FL_KP+'0', FL_KP+'1', FL_KP+'2', FL_KP+'3', FL_KP+'4', FL_KP+'5',
@@ -1234,6 +1234,34 @@ static int keycode_wrap_old(
 static int (*keycode_function)(char*, int, EventKind, UInt32, UInt32, UInt32*, unsigned char, unsigned short) = keycode_wrap_old;
 
 
+// EXPERIMENTAL!
+pascal OSStatus carbonTextHandler( 
+  EventHandlerCallRef nextHandler, EventRef event, void *userData )
+{
+  Fl_Window *window = (Fl_Window*)userData;
+  Fl::first_window(window);
+  fl_lock_function();
+  int kind = GetEventKind(event);
+  unsigned short buf[200];
+  ByteCount size;
+  GetEventParameter( event, kEventParamTextInputSendText, typeUnicodeText, 
+                     NULL, 100, &size, &buf );
+//  printf("TextEvent: %02x %02x %02x %02x\n", buf[0], buf[1], buf[2], buf[3]);
+  // FIXME: oversimplified!
+  unsigned ucs = buf[0];
+  char utf8buf[20];
+  int len = fl_utf8encode(ucs, utf8buf);
+  Fl::e_length = len;
+  Fl::e_text = utf8buf;
+  while (window->parent()) window = window->window();
+  Fl::handle(FL_KEYBOARD, window);
+  fl_unlock_function();
+  fl_lock_function();
+  Fl::handle(FL_KEYUP, window);
+  fl_unlock_function();
+  return noErr;
+}  
+
 /**
  * handle carbon keyboard events
  */
@@ -1256,7 +1284,7 @@ pascal OSStatus carbonKeyboardHandler(
                      NULL, sizeof(UInt32), NULL, &mods );
   
   // get the key code only for key events
-  UInt32 keyCode = 0;
+  UInt32 keyCode = 0, maskedKeyCode = 0;
   unsigned char key = 0;
   unsigned short sym = 0;
   if (kind!=kEventRawKeyModifiersChanged) {
@@ -1265,7 +1293,12 @@ pascal OSStatus carbonKeyboardHandler(
     GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, 
                        NULL, sizeof(char), NULL, &key );
   }
-  /* output a human readable event identifier for debugging
+  // extended keyboards can also send sequences on key-up to generate Kanji etc. codes.
+  // Some observed prefixes are 0x81 to 0x83, followed by an 8 bit keycode.
+  // In this mode, there seem to be no key-down codes
+// printf("%08x %08x %08x\n", keyCode, mods, key);
+  maskedKeyCode = keyCode & 0x7f;
+  /* output a human readable event identifier for debugging */
   const char *ev = "";
   switch (kind) {
     case kEventRawKeyDown: ev = "kEventRawKeyDown"; break;
@@ -1274,8 +1307,8 @@ pascal OSStatus carbonKeyboardHandler(
     case kEventRawKeyModifiersChanged: ev = "kEventRawKeyModifiersChanged"; break;
     default: ev = "unknown";
   }
-  printf("%08x %08x %08x '%c' %s \n", mods, keyCode, key, key, ev);
-  */
+//  printf("%08x %08x %08x '%c' %s \n", mods, keyCode, key, key, ev);
+//  */
   switch (kind)
   {
   case kEventRawKeyDown:
@@ -1311,12 +1344,13 @@ pascal OSStatus carbonKeyboardHandler(
     else if ( Fl::e_state&FL_CTRL && key<32 )
       sym = key+96;
     else if ( Fl::e_state&FL_ALT ) // find the keycap of this key
-      sym = keycode_to_sym( keyCode & 0x7f, 0, macKeyLookUp[ keyCode & 0x7f ] );
+      sym = keycode_to_sym( maskedKeyCode, 0, macKeyLookUp[ maskedKeyCode ] );
     else
-      sym = macKeyLookUp[ keyCode & 0x7f ];
+      sym = macKeyLookUp[ maskedKeyCode ];
     Fl::e_keysym = Fl::e_original_keysym = sym;
     // Handle FL_KP_Enter on regular keyboards and on Powerbooks
-    if ( keyCode==0x4c || keyCode==0x34) key=0x0d;    
+    if ( maskedKeyCode==0x4c || maskedKeyCode==0x34) key=0x0d;    
+    // Handle the Delete key on the keypad
     // Matt: the Mac has no concept of a NumLock key, or at least not visible
     // Matt: to Carbon. The kEventKeyModifierNumLockMask is only set when
     // Matt: a numeric keypad key is pressed and does not correspond with
@@ -1850,19 +1884,36 @@ static OSErr fillCurrentDragData(DragReference dragRef)
   FlavorFlags flags;
   Size itemSize, size = 0;
   CountDragItems( dragRef, &nItem );
+
   for ( i = 1; i <= nItem; i++ )
   {
     GetDragItemReferenceNumber( dragRef, i, &itemRef );
+    ret = GetFlavorFlags( dragRef, itemRef, 'utf8', &flags );
+    if ( ret == noErr )
+    {
+      GetFlavorDataSize( dragRef, itemRef, 'utf8', &itemSize );
+      size += itemSize;
+      continue;
+    }
+    ret = GetFlavorFlags( dragRef, itemRef, 'utxt', &flags );
+    if ( ret == noErr )
+    {
+      GetFlavorDataSize( dragRef, itemRef, 'utxt', &itemSize );
+      size += itemSize;
+      continue;
+    }
     ret = GetFlavorFlags( dragRef, itemRef, 'TEXT', &flags );
     if ( ret == noErr )
     {
       GetFlavorDataSize( dragRef, itemRef, 'TEXT', &itemSize );
       size += itemSize;
+      continue;
     }
     ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
     if ( ret == noErr )
     {
       size += 1024; //++ ouch! We should create the full pathname and figure out its length
+      continue;
     }
   }
 
@@ -1878,6 +1929,25 @@ static OSErr fillCurrentDragData(DragReference dragRef)
   for ( i = 1; i <= nItem; i++ )
   {
     GetDragItemReferenceNumber( dragRef, i, &itemRef );
+    ret = GetFlavorFlags( dragRef, itemRef, 'utf8', &flags );
+    if ( ret == noErr )
+    {
+      GetFlavorDataSize( dragRef, itemRef, 'utf8', &itemSize );
+      GetFlavorData( dragRef, itemRef, 'utf8', dst, &itemSize, 0L );
+      dst += itemSize;
+      *dst++ = '\n'; // add our element separator
+      continue;
+    }
+    GetDragItemReferenceNumber( dragRef, i, &itemRef );
+    ret = GetFlavorFlags( dragRef, itemRef, 'utxt', &flags );
+    if ( ret == noErr )
+    {
+      GetFlavorDataSize( dragRef, itemRef, 'utxt', &itemSize );
+      GetFlavorData( dragRef, itemRef, 'utxt', dst, &itemSize, 0L );
+      dst += itemSize;
+      *dst++ = '\n'; // add our element separator
+      continue;
+    }
     ret = GetFlavorFlags( dragRef, itemRef, 'TEXT', &flags );
     if ( ret == noErr )
     {
@@ -1885,17 +1955,19 @@ static OSErr fillCurrentDragData(DragReference dragRef)
       GetFlavorData( dragRef, itemRef, 'TEXT', dst, &itemSize, 0L );
       dst += itemSize;
       *dst++ = '\n'; // add our element separator
+      continue;
     }
     ret = GetFlavorFlags( dragRef, itemRef, 'hfs ', &flags );
     if ( ret == noErr )
     {
       HFSFlavor hfs; itemSize = sizeof( hfs );
       GetFlavorData( dragRef, itemRef, 'hfs ', &hfs, &itemSize, 0L );
-      itemSize = FSSpec2UnixPath( &hfs.fileSpec, dst );
+      itemSize = FSSpec2UnixPath( &hfs.fileSpec, dst ); // return the path name in UTF8
       dst += itemSize;
       if ( itemSize>1 && ( hfs.fileType=='fold' || hfs.fileType=='disk' ) ) 
         *dst++ = '/';
       *dst++ = '\n'; // add our element separator
+      continue;
     }
   }
 
@@ -2185,6 +2257,7 @@ void Fl_X::make(Fl_Window* w)
         { kEventClassMouse, kEventMouseMoved },
         { kEventClassMouse, kEventMouseDragged } };
       ret = InstallWindowEventHandler( x->xid, mouseHandler, 4, mouseEvents, w, 0L );
+
       EventHandlerUPP keyboardHandler = NewEventHandlerUPP( carbonKeyboardHandler ); // will not be disposed by Carbon...
       static EventTypeSpec keyboardEvents[] = {
         { kEventClassKeyboard, kEventRawKeyDown },
@@ -2192,6 +2265,12 @@ void Fl_X::make(Fl_Window* w)
         { kEventClassKeyboard, kEventRawKeyUp },
         { kEventClassKeyboard, kEventRawKeyModifiersChanged } };
       ret = InstallWindowEventHandler( x->xid, keyboardHandler, 4, keyboardEvents, w, 0L );
+
+      EventHandlerUPP textHandler = NewEventHandlerUPP( carbonTextHandler ); // will not be disposed by Carbon...
+      static EventTypeSpec textEvents[] = {
+        { kEventClassTextInput, kEventTextInputUnicodeForKeyEvent } };
+      ret = InstallWindowEventHandler( x->xid, textHandler, 1, textEvents, w, 0L );
+
       EventHandlerUPP windowHandler = NewEventHandlerUPP( carbonWindowHandler ); // will not be disposed by Carbon...
       static EventTypeSpec windowEvents[] = {
         { kEventClassWindow, kEventWindowDrawContent },
