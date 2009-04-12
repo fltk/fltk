@@ -198,11 +198,13 @@ Fl_File_Input::handle(int event) 		// I - Event
       return 1;
 
     case FL_PUSH :
+      inButtonBar = (Fl::event_y() < (y() + DIR_HEIGHT));
     case FL_RELEASE :
     case FL_DRAG :
-      if (Fl::event_y() < (y() + DIR_HEIGHT) || pressed_ >= 0) return handle_button(event);
-
-      return Fl_Input::handle(event);
+      if (inButtonBar)
+        return handle_button(event);
+      else
+        return Fl_Input::handle(event);
 
     default :
       if (Fl_Input::handle(event)) {

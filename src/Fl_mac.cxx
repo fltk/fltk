@@ -544,8 +544,11 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
     switch (GetEventKind( event ) )
     {
       case kEventCommandProcess:
-        GetEventParameter( event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd );
-        ret = HandleMenu( &cmd );
+        ret = GetEventParameter( event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd );
+        if (ret == noErr && (cmd.attributes & kHICommandFromMenu) != 0) 
+          ret = HandleMenu( &cmd );
+        else 
+          ret = eventNotHandledErr;
         break;
     }
     break;
