@@ -181,8 +181,8 @@ public:
       Override this function to draw your own widgets.
 
       If you ever need to call another widget's draw method <I>from within your
-      own draw method</I>, e.g. for an embedded scrollbar, you must upcast the
-      embedded widget's pointer to Fl_Widget* and call the virtual draw() method.
+      own draw() method</I>, e.g. for an embedded scrollbar, you can do it
+      (because draw() is virtual) like this:
 
       \code
         Fl_Widget *s = &scroll;		// scroll is an embedded Fl_Scrollbar
