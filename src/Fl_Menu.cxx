@@ -106,6 +106,7 @@ public:
   int numitems;
   int selected;
   int drawn_selected;	// last redraw has this selected
+  int shortcutWidth;
   const Fl_Menu_Item* menu;
   menuwindow(const Fl_Menu_Item* m, int X, int Y, int W, int H,
 	     const Fl_Menu_Item* picked, const Fl_Menu_Item* title,
@@ -316,6 +317,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   itemheight = 1;
 
   int hotKeysw = 0;
+  int hotModsw = 0;
   int Wtitle = 0;
   int Htitle = 0;
   if (t) Wtitle = t->measure(&Htitle, button) + 12;
@@ -327,14 +329,18 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
     if (m->flags&(FL_SUBMENU|FL_SUBMENU_POINTER)) w1 += 14;
     if (w1 > W) W = w1;
     if (m->shortcut_) {
-      w1 = int(fl_width(fl_shortcut_label(m->shortcut_))) + 8;
+      const char *k, *s = fl_shortcut_label(m->shortcut_, &k);
+      w1 = int(fl_width(s, k-s));
+      if (w1 > hotModsw) hotModsw = w1;
+      w1 = int(fl_width(k))+4;
       if (w1 > hotKeysw) hotKeysw = w1;
     }
     if (m->labelcolor_ || Fl::scheme() || m->labeltype_ > FL_NO_LABEL) clear_overlay();
   }
+  shortcutWidth = hotKeysw;
   if (selected >= 0 && !Wp) X -= W/2;
   int BW = Fl::box_dx(box());
-  W += hotKeysw+2*BW+7;
+  W += hotKeysw+hotModsw+2*BW+7;
   if (Wp > W) W = Wp;
   if (Wtitle > W) W = Wtitle;
 
@@ -437,7 +443,10 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
                     button ? button->textfont() : FL_HELVETICA;
     fl_font(f, m->labelsize_ ? m->labelsize_ :
                    button ? button->textsize() : FL_NORMAL_SIZE);
-    fl_draw(fl_shortcut_label(m->shortcut_), xx, yy, ww-3, hh, FL_ALIGN_RIGHT);
+    const char *k, *s = fl_shortcut_label(m->shortcut_, &k);
+    char buf[32]; strcpy(buf, s); buf[k-s] = 0;
+    fl_draw(buf, xx, yy, ww-shortcutWidth, hh, FL_ALIGN_RIGHT);
+    fl_draw(  k, xx+ww-shortcutWidth, yy, shortcutWidth, hh, FL_ALIGN_LEFT);
   }
 
   if (m->flags & FL_MENU_DIVIDER) {

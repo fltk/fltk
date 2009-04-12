@@ -169,15 +169,32 @@ static Keyname table[] = {
 
 /**
   Get a human-readable string from a shortcut value.
+
   Unparse a shortcut value as used by Fl_Button or Fl_Menu_Item into
   a human-readable string like "Alt+N". This only works if the shortcut
   is a character key or a numbered function key. If the shortcut is
   zero then an empty string is returned. The return value points at
   a static buffer that is overwritten with each call.
+
+  \param [in] shortcut the integer value containing the ascii charcter or extended keystroke plus modifiers
+  \return a pointer to a static buffer containing human readable text for the shortcut
   */
 const char* fl_shortcut_label(int shortcut) {
+  return fl_shortcut_label(shortcut, 0L);
+}
+
+/** 
+  Get a human-readable string from a shortcut value.
+
+  \param [in] shortcut the integer value containing the ascii charcter or extended keystroke plus modifiers
+  \param [in] eom if this pointer is set, it will receive a pointer to the end of the modifier text
+  \return a pointer to a static buffer containing human readable text for the shortcut
+  \see fl_shortcut_label(int shortcut)
+  */
+const char* fl_shortcut_label(int shortcut, const char **eom) {
   static char buf[20];
   char *p = buf;
+  if (eom) *eom = p;
   if (!shortcut) {*p = 0; return buf;}
   // fix upper case shortcuts
   int v = shortcut & 0xffff;
@@ -202,6 +219,7 @@ const char* fl_shortcut_label(int shortcut) {
   if (shortcut & FL_SHIFT) {strcpy(p,"Shift+"); p += 6;}
   if (shortcut & FL_CTRL) {strcpy(p,"Ctrl+"); p += 5;}
 #endif // __APPLE__
+  if (eom) *eom = p;
   int key = shortcut & 0xFFFF;
 #if defined(WIN32) || defined(__APPLE__) // if not X
   if (key >= FL_F && key <= FL_F_Last) {
@@ -215,8 +233,14 @@ const char* fl_shortcut_label(int shortcut) {
     while (a < b) {
       int c = (a+b)/2;
       if (table[c].key == key) {
-	if (p > buf) {strcpy(p,table[c].name); return buf;}
-	return table[c].name;
+	if (p > buf) {
+          strcpy(p,table[c].name); 
+          return buf;
+        } else {
+          const char *sp = table[c].name;
+          if (eom) *eom = sp;
+          return sp;
+        }
       }
       if (table[c].key < key) a = c+1;
       else b = c;
@@ -238,7 +262,13 @@ const char* fl_shortcut_label(int shortcut) {
   else if (key > 32 && key < 0x100) q = 0;
   else q = XKeysymToString(key);
   if (!q) {*p++ = uchar(toupper(key & 255)); *p = 0; return buf;}
-  if (p > buf) {strcpy(p,q); return buf;} else return q;
+  if (p > buf) {
+    strcpy(p,q); 
+    return buf;
+  } else {
+    if (eom) *eom = q;
+    return q;
+  }
 #endif
 }
 

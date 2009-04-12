@@ -566,8 +566,11 @@ static pascal OSStatus carbonDispatchHandler( EventHandlerCallRef nextHandler, E
     switch (GetEventKind( event ) )
     {
       case kEventCommandProcess:
-        GetEventParameter( event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd );
-        ret = HandleMenu( &cmd );
+        ret = GetEventParameter( event, kEventParamDirectObject, typeHICommand, NULL, sizeof(HICommand), NULL, &cmd );
+        if (ret == noErr && (cmd.attributes & kHICommandFromMenu) != 0) 
+          ret = HandleMenu( &cmd );
+        else 
+          ret = eventNotHandledErr;
         break;
     }
     break;
@@ -1241,7 +1244,7 @@ pascal OSStatus carbonTextHandler(
   Fl_Window *window = (Fl_Window*)userData;
   Fl::first_window(window);
   fl_lock_function();
-  int kind = GetEventKind(event);
+  //int kind = GetEventKind(event);
   unsigned short buf[200];
   ByteCount size;
   GetEventParameter( event, kEventParamTextInputSendText, typeUnicodeText, 
@@ -1259,6 +1262,9 @@ pascal OSStatus carbonTextHandler(
   fl_lock_function();
   Fl::handle(FL_KEYUP, window);
   fl_unlock_function();
+  // for some reason, the window does not redraw until the next mouse move or button push
+  // sending a 'redraw()' or 'awake()' does not solve the issue!
+  Fl::flush();
   return noErr;
 }  
 
