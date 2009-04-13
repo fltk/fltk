@@ -55,6 +55,47 @@ static int utf_len(char c)
   return 0;
 }
 
+/* Keyboard Control Matrix
+
+key\modifier   plain  Ctrl   Alt  Meta  
+  left          1/1  13/9   0/13  0/9  
+  right         2/2  14/10  0/14  0/10  
+  up            3/19 21/7   0/15  0/17 
+  down          4/20 22/8   0/16  0/18
+  home          9/5  17/0   0/0   0/0
+  end          10/6  18/0   0/0   0/0
+  page up      11/7  23/0   0/11  0/0
+  page down    12/8  24/0   0/12  0/0
+    (FLTK action / OS X action)
+    (adding the shift key extends the selection, all other combinations are no-op)
+
+  0: no-op
+  1: move cursor to the left, at line beginning wrap to end of prev line, at doc start no-op
+  2: move cursor to the right, at line end move to beginning of the next line, at doc end no-op
+  3: move cursor up, at doc top no-op
+  4: move cursor down, at doc bottom no-op
+  5: scroll display to top of text (cursor unchanged)
+  6: scroll display to end of text (cursor unchanged)
+  7: scroll text down one page (cursor unchanged)
+  8: scroll text up one page (cursor unchanged)
+  9: move cursor to beginning of line
+ 10: move cursor to end of line
+ 11: move cursor up one page and scroll down
+ 12: move cursor down one page and scroll up
+ 13: move to the beginning of the word or the previous word
+ 14: move to the end of the word or the next word
+ 15: if start of line: start of prev line, else start of this line
+ 16: if end of line: end of next line, else end of this line
+ 17: move cursor to the beginning of the document
+ 18: move cursor to the end of the document
+ 19: move cursor up, at doc top: home, at doc start: no-op)
+ 20: move cursor down, at doc bot: end, at doc end: no-op)
+ 21: scroll text down one line (cursor unchanged)
+ 22: scroll text up one line (cursor unchanged)
+ 23: move cursor to the beginning of the top of the screen
+ 24: move cursor to the beginning of the bottom of the window
+*/
+
 /**  The constructor creates a new text editor widget.*/
 Fl_Text_Editor::Fl_Text_Editor(int X, int Y, int W, int H,  const char* l)
     : Fl_Text_Display(X, Y, W, H, l) {
