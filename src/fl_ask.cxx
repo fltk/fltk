@@ -56,6 +56,8 @@ static const char *iconlabel = "?";
 Fl_Font fl_message_font_ = FL_HELVETICA;
 Fl_Fontsize fl_message_size_ = 14;
 
+static char avoidRecursion = 0;
+
 static Fl_Window *makeform() {
  if (message_form) {
    message_form->size(410,103);
@@ -176,8 +178,8 @@ static int innards(const char* fmt, va_list ap,
   const char *b1,
   const char *b2)
 {
-  static char avoidRecursion = 0;
-  if (avoidRecursion) return -1;
+  Fl::pushed(0); // stop dragging (STR #2159)
+
   avoidRecursion = 1;
 
   makeform();
@@ -215,7 +217,7 @@ static int innards(const char* fmt, va_list ap,
   Fl_Window* g = Fl::grab();
   if (g) // do an alternative grab to avoid floating menus, if possible
     Fl::grab(message_form);
-  int r;
+  int r = 0;
   for (;;) {
     Fl_Widget *o = Fl::readqueue();
     if (!o) Fl::wait();
@@ -296,11 +298,14 @@ void fl_beep(int type) {
 /** Shows an information message dialog box.
 
    \note Common dialog boxes are application modal. No more than one common dialog box
-   can be open at any time. Request for additional dialog boxes are ignored.
+   can be open at any time. Requests for additional dialog boxes are ignored.
 
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
  */
 void fl_message(const char *fmt, ...) {
+
+  if (avoidRecursion) return;
+
   va_list ap;
 
   fl_beep(FL_BEEP_MESSAGE);
@@ -315,11 +320,14 @@ void fl_message(const char *fmt, ...) {
 /** Shows an alert message dialog box
 
    \note Common dialog boxes are application modal. No more than one common dialog box
-   can be open at any time. Request for additional dialog boxes are ignored.
+   can be open at any time. Requests for additional dialog boxes are ignored.
 
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
  */
 void fl_alert(const char *fmt, ...) {
+
+  if (avoidRecursion) return;
+
   va_list ap;
 
   fl_beep(FL_BEEP_ERROR);
@@ -334,13 +342,16 @@ void fl_alert(const char *fmt, ...) {
     this dialog features 2 yes/no buttons
 
    \note Common dialog boxes are application modal. No more than one common dialog box
-   can be open at any time. Request for additional dialog boxes are ignored.
+   can be open at any time. Requests for additional dialog boxes are ignored.
 
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \retval 0 if the no button is selected or another dialog box is still open
    \retval 1 if yes is selected
  */
 int fl_ask(const char *fmt, ...) {
+
+  if (avoidRecursion) return 0;
+
   va_list ap;
 
   fl_beep(FL_BEEP_QUESTION);
@@ -356,7 +367,7 @@ int fl_ask(const char *fmt, ...) {
     this dialog features up to 3 customizable choice buttons
 
    \note Common dialog boxes are application modal. No more than one common dialog box
-   can be open at any time. Request for additional dialog boxes are ignored.
+   can be open at any time. Requests for additional dialog boxes are ignored.
 
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] b0 text label of button 0
@@ -367,6 +378,9 @@ int fl_ask(const char *fmt, ...) {
    \retval 2 if the third button with \p b2 text is selected
  */
 int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
+
+  if (avoidRecursion) return 0;
+
   va_list ap;
 
   fl_beep(FL_BEEP_QUESTION);
@@ -400,13 +414,16 @@ static const char* input_innards(const char* fmt, va_list ap,
 /** Shows an input dialog displaying the \p fmt message
 
    \note Common dialog boxes are application modal. No more than one common dialog box
-   can be open at any time. Request for additional dialog boxes are ignored.
+   can be open at any time. Requests for additional dialog boxes are ignored.
 
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] defstr defines the default returned string if no text is entered
    \return the user string input if OK was pushed, NULL if Cancel was pushed or another dialog box was still open
  */
 const char* fl_input(const char *fmt, const char *defstr, ...) {
+
+  if (avoidRecursion) return 0;
+
   fl_beep(FL_BEEP_QUESTION);
 
   va_list ap;
@@ -422,13 +439,16 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
     '*' characters are displayed instead.
 
    \note Common dialog boxes are application modal. No more than one common dialog box
-   can be open at any time. Request for additional dialog boxes are ignored.
+   can be open at any time. Requests for additional dialog boxes are ignored.
 
    \param[in] fmt can be used as an sprintf-like format and variables for the message text
    \param[in] defstr defines the default returned string if no text is entered
    \return the user string input if OK was pushed, NULL if Cancel was pushed or aother dialog box was still open
  */
 const char *fl_password(const char *fmt, const char *defstr, ...) {
+
+  if (avoidRecursion) return 0;
+
   fl_beep(FL_BEEP_PASSWORD);
 
   va_list ap;
