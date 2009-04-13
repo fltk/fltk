@@ -133,37 +133,38 @@ static Keyname table[] = {
 };
 #elif defined(__APPLE__) 
 static Keyname table[] = {
+                                 // v - this column contains utf8 characters
   {' ', "Space"},
-  {FL_BackSpace,"\xe2\x8c\xab"},
-  {FL_Tab,	"\xe2\x87\xa5"},
-  {0xff0b/*XK_Clear*/, "Clear"},
-  {FL_Enter,	"\xe2\x86\xa9"}, 
+  {FL_BackSpace,"\xe2\x8c\xab"}, // ⌫  erase to the left
+  {FL_Tab,	"\xe2\x87\xa5"}, // ⇥  rightwards arrow to bar
+  {0xff0b,      "\xe2\x8c\xa6"}, // ⌦  erase to the right
+  {FL_Enter,	"\xe2\x86\xa9"}, // ↩  leftwards arrow with hook
   {FL_Pause,	"Pause"},
   {FL_Scroll_Lock, "Scroll_Lock"},
   {FL_Escape,	"\xe2\x90\x9b"},
-  {FL_Home,	"\xe2\x86\x96"},
-  {FL_Left,	"\xe2\x86\x90"},
-  {FL_Up,	"\xe2\x86\x91"},
-  {FL_Right,	"\xe2\x86\x92"},
-  {FL_Down,	"\xe2\x86\x93"},
-  {FL_Page_Up,	"\xe2\x87\x9e"}, // utf8 arrow up with two strokes
-  {FL_Page_Down,"\xe2\x87\x9f"}, // utf8 arrow down with two strokes
-  {FL_End,	"\xe2\x86\x98"},
+  {FL_Home,	"\xe2\x86\x96"}, // ↖  north west arrow
+  {FL_Left,	"\xe2\x86\x90"}, // ←  leftwards arrow
+  {FL_Up,	"\xe2\x86\x91"}, // ↑  upwards arrow
+  {FL_Right,	"\xe2\x86\x92"}, // →  rightwards arrow
+  {FL_Down,	"\xe2\x86\x93"}, // ↓  downwards arrow
+  {FL_Page_Up,	"\xe2\x87\x9e"}, // ⇞  upwards arrow with double stroke
+  {FL_Page_Down,"\xe2\x87\x9f"}, // ⇟  downward arrow with double stroke
+  {FL_End,	"\xe2\x86\x98"}, // ↘  south east arrow
   {FL_Print,	"Print"},
   {FL_Insert,	"Insert"},
   {FL_Menu,	"Menu"},
   {FL_Num_Lock,	"Num_Lock"},
-  {FL_KP_Enter,	"\xe2\x86\xb5"},
+  {FL_KP_Enter,	"\xe2\x8c\xa4"}, // ⌤ up arrow head between two horizontal bars
   {FL_Shift_L,	"Shift_L"},
   {FL_Shift_R,	"Shift_R"},
   {FL_Control_L,"Control_L"},
   {FL_Control_R,"Control_R"},
-  {FL_Caps_Lock,"\xe2\x87\xaa"}, // utf8 Caps Lock symbol
+  {FL_Caps_Lock,"\xe2\x87\xaa"}, // ⇪  upwards white arrow from bar
   {FL_Meta_L,	"Meta_L"},
   {FL_Meta_R,	"Meta_R"},
   {FL_Alt_L,	"Alt_L"},
   {FL_Alt_R,	"Alt_R"},
-  {FL_Delete,	"\xe2\x8c\xa7"}
+  {FL_Delete,	"\xe2\x8c\xa7"}  // ⌧  x in a rectangle box
 };
 #endif
 
@@ -208,11 +209,11 @@ const char* fl_shortcut_label(int shortcut, const char **eom) {
     }
   }
 #ifdef __APPLE__
-  // \todo Mac :  we might want to change the symbols for Mac users - consider drawing Apple Symbols... .
-  if (shortcut & FL_SHIFT) {strcpy(p,"\xe2\x87\xa7"); p += 3;}  //: Mac hollow up arrow
-  if (shortcut & FL_CTRL)  {strcpy(p,"\xe2\x8c\x83"); p += 3;}  //: Mac ctrl key
-  if (shortcut & FL_ALT)   {strcpy(p,"\xe2\x8e\x87"); p += 3;}  //: Mac 'Alt/Option' or fancy switch symbol
-  if (shortcut & FL_META)  {strcpy(p,"\xe2\x8c\x98"); p += 3;}  //: Mac 'Apple' key
+  //                        this column contains utf8 characters - v
+  if (shortcut & FL_SHIFT) {strcpy(p,"\xe2\x87\xa7"); p += 3;}  // ⇧  upwards white arrow
+  if (shortcut & FL_CTRL)  {strcpy(p,"\xe2\x8c\x83"); p += 3;}  // ⌃  up arrowhead
+  if (shortcut & FL_ALT)   {strcpy(p,"\xe2\x8e\x87"); p += 3;}  // ⎇  alternative key symbol
+  if (shortcut & FL_META)  {strcpy(p,"\xe2\x8c\x98"); p += 3;}  // ⌘  place of interest sign
 #else
   if (shortcut & FL_META) {strcpy(p,"Meta+"); p += 5;}
   if (shortcut & FL_ALT) {strcpy(p,"Alt+"); p += 4;}
