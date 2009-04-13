@@ -186,13 +186,16 @@ int						// O - TRUE if we handled event
 Fl_File_Input::handle(int event) 		// I - Event
 {
 //  printf("handle(event = %d)\n", event);
+  static char inButtonBar = 0;
 
   switch (event) {
     case FL_MOVE :
     case FL_ENTER :
       if (active_r()) {
-	if (Fl::event_y() < (y() + DIR_HEIGHT)) window()->cursor(FL_CURSOR_DEFAULT);
-	else window()->cursor(FL_CURSOR_INSERT);
+	if (Fl::event_y() < (y() + DIR_HEIGHT)) 
+          window()->cursor(FL_CURSOR_DEFAULT);
+	else 
+          window()->cursor(FL_CURSOR_INSERT);
       }
 
       return 1;
