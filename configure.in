@@ -944,7 +944,15 @@ case $uname_GUI in
 	    AC_DEFINE(HAVE_OVERLAY)
 	fi
 
-	# Make symlinks since UNIX/Linux is case sensitive.
+	# Make symlinks since UNIX/Linux is case sensitive,
+	# but cygwin in general not.
+	case $uname in
+	    CYGWIN*)
+		HLINKS="#"
+	    ;;
+	    *)
+	    ;;
+	esac
 	if test "x$with_links" = xno; then
 		HLINKS="#"
 	fi
