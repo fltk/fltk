@@ -197,8 +197,10 @@ Fl_File_Input::handle(int event) 		// I - Event
     case FL_MOVE :
     case FL_ENTER :
       if (active_r()) {
-	if (Fl::event_y() < (y() + DIR_HEIGHT)) window()->cursor(FL_CURSOR_DEFAULT);
-	else window()->cursor(FL_CURSOR_INSERT);
+	if (Fl::event_y() < (y() + DIR_HEIGHT)) 
+          window()->cursor(FL_CURSOR_DEFAULT);
+	else 
+          window()->cursor(FL_CURSOR_INSERT);
       }
 
       return 1;

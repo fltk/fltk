@@ -1304,7 +1304,7 @@ pascal OSStatus carbonKeyboardHandler(
   // In this mode, there seem to be no key-down codes
 // printf("%08x %08x %08x\n", keyCode, mods, key);
   maskedKeyCode = keyCode & 0x7f;
-  /* output a human readable event identifier for debugging */
+  /* output a human readable event identifier for debugging 
   const char *ev = "";
   switch (kind) {
     case kEventRawKeyDown: ev = "kEventRawKeyDown"; break;
@@ -1313,8 +1313,8 @@ pascal OSStatus carbonKeyboardHandler(
     case kEventRawKeyModifiersChanged: ev = "kEventRawKeyModifiersChanged"; break;
     default: ev = "unknown";
   }
-//  printf("%08x %08x %08x '%c' %s \n", mods, keyCode, key, key, ev);
-//  */
+  printf("%08x %08x %08x '%c' %s \n", mods, keyCode, key, key, ev);
+  */
   switch (kind)
   {
   case kEventRawKeyDown:
@@ -1345,14 +1345,13 @@ pascal OSStatus carbonKeyboardHandler(
     }
     // if the user pressed alt/option, event_key should have the keycap, 
     // but event_text should generate the international symbol
+    sym = macKeyLookUp[maskedKeyCode];
     if ( isalpha(key) )
       sym = tolower(key);
-    else if ( Fl::e_state&FL_CTRL && key<32 )
+    else if ( Fl::e_state&FL_CTRL && key<32 && sym<0xff00)
       sym = key+96;
-    else if ( Fl::e_state&FL_ALT ) // find the keycap of this key
+    else if ( Fl::e_state&FL_ALT && sym<0xff00) // find the keycap of this key
       sym = keycode_to_sym( maskedKeyCode, 0, macKeyLookUp[ maskedKeyCode ] );
-    else
-      sym = macKeyLookUp[ maskedKeyCode ];
     Fl::e_keysym = Fl::e_original_keysym = sym;
     // Handle FL_KP_Enter on regular keyboards and on Powerbooks
     if ( maskedKeyCode==0x4c || maskedKeyCode==0x34) key=0x0d;    

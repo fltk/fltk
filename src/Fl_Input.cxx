@@ -150,21 +150,57 @@ int Fl_Input::handle_key() {
     else ascii = ctrl('D');
     break;    
   case FL_Left:
-    ascii = ctrl('B'); break;
+    ascii = ctrl('B'); 
+#ifdef __APPLE__
+    if (Fl::event_state() & (FL_META|FL_CTRL) ) ascii = ctrl('A');
+    // FIXME backward one word is missing (Alt-Left)
+#endif // __APPLE__
+    break;
   case FL_Right:
-    ascii = ctrl('F'); break;
+    ascii = ctrl('F'); 
+#ifdef __APPLE__
+    if (Fl::event_state() & (FL_META|FL_CTRL) ) ascii = ctrl('E');
+    // FIXME advance one word is missing (Alt-Right)
+#endif // __APPLE__
+    break;
   case FL_Page_Up:
     fl_font(textfont(),textsize()); //ensure current font is set to ours
     repeat_num=h()/fl_height(); // number of lines to scroll
     if (!repeat_num) repeat_num=1;
   case FL_Up:
-    ascii = ctrl('P'); break;
+    ascii = ctrl('P'); 
+#ifdef __APPLE__
+    if (Fl::event_state() & (FL_META) ) {
+      shift_position(0);
+      return 1;
+    }
+    if (Fl::event_state() & (FL_ALT) ) {
+      if (line_start(position())==position() && position()>0)
+        return shift_position(line_start(position()-1)) + NORMAL_INPUT_MOVE;
+      else
+        return shift_position(line_start(position())) + NORMAL_INPUT_MOVE;
+    }
+#endif // __APPLE__
+    break;
   case FL_Page_Down:
     fl_font(textfont(),textsize());
     repeat_num=h()/fl_height();
     if (!repeat_num) repeat_num=1;
   case FL_Down:
-    ascii = ctrl('N'); break;
+    ascii = ctrl('N'); 
+#ifdef __APPLE__
+    if (Fl::event_state() & (FL_META) ) {
+      shift_position(size());
+      return 1;
+    }
+    if (Fl::event_state() & (FL_ALT) ) {
+      if (line_end(position())==position() && position()<size())
+        return shift_position(line_end(position()+1)) + NORMAL_INPUT_MOVE;
+      else
+        return shift_position(line_end(position())) + NORMAL_INPUT_MOVE;
+    }
+#endif // __APPLE__
+    break;
   case FL_Home:
     if (Fl::event_state() & FL_CTRL) {
       shift_position(0);
@@ -212,13 +248,13 @@ int Fl_Input::handle_key() {
 
   int i;
   switch (ascii) {
-  case ctrl('A'):
+  case ctrl('A'): // go to the beginning of the current line
     return shift_position(line_start(position())) + NORMAL_INPUT_MOVE;
-  case ctrl('B'):
+  case ctrl('B'): // go one character backward
     return shift_position(position()-1) + NORMAL_INPUT_MOVE;
   case ctrl('C'): // copy
     return copy(1);
-  case ctrl('D'):
+  case ctrl('D'): // cut the next character
   case ctrl('?'):
     if (readonly()) {
       fl_beep();
@@ -226,11 +262,11 @@ int Fl_Input::handle_key() {
     }
     if (mark() != position()) return cut();
     else return cut(1);
-  case ctrl('E'):
+  case ctrl('E'): // go to the end of the line
     return shift_position(line_end(position())) + NORMAL_INPUT_MOVE;
-  case ctrl('F'):
+  case ctrl('F'): // go to the next character
     return shift_position(position()+1) + NORMAL_INPUT_MOVE;
-  case ctrl('H'):
+  case ctrl('H'): // cut the previous character
     if (readonly()) {
       fl_beep();
       return 1;
@@ -238,7 +274,7 @@ int Fl_Input::handle_key() {
     if (mark() != position()) cut();
     else cut(-1);
     return 1;
-  case ctrl('K'):
+  case ctrl('K'): // cut to the end of the line
     if (readonly()) {
       fl_beep();
       return 1;
@@ -248,7 +284,7 @@ int Fl_Input::handle_key() {
     if (i == position() && i < size()) i++;
     cut(position(), i);
     return copy_cuts();
-  case ctrl('N'):
+  case ctrl('N'): // go down one line
     i = position();
     if (line_end(i) >= size()) return NORMAL_INPUT_MOVE;
     while (repeat_num--) {  
@@ -258,7 +294,7 @@ int Fl_Input::handle_key() {
     }
     shift_up_down_position(i);
     return 1;
-  case ctrl('P'):
+  case ctrl('P'): // go up one line
     i = position();
     if (!line_start(i)) return NORMAL_INPUT_MOVE;
     while(repeat_num--) {
@@ -268,13 +304,13 @@ int Fl_Input::handle_key() {
     }
     shift_up_down_position(line_start(i));
     return 1;
-  case ctrl('U'):
+  case ctrl('U'): // clear the whole document? 
     if (readonly()) {
       fl_beep();
       return 1;
     }
     return cut(0, size());
-  case ctrl('V'):
+  case ctrl('V'): // paste text
   case ctrl('Y'):
     if (readonly()) {
       fl_beep();
@@ -282,7 +318,7 @@ int Fl_Input::handle_key() {
     }
     Fl::paste(*this, 1);
     return 1;
-  case ctrl('X'):
+  case ctrl('X'): // cut the selected text
   case ctrl('W'):
     if (readonly()) {
       fl_beep();
@@ -290,14 +326,14 @@ int Fl_Input::handle_key() {
     }
     copy(1);
     return cut();
-  case ctrl('Z'):
+  case ctrl('Z'): // undo
   case ctrl('_'):
     if (readonly()) {
       fl_beep();
       return 1;
     }
     return undo();
-  case ctrl('I'):
+  case ctrl('I'): // insert literal
   case ctrl('J'):
   case ctrl('L'):
   case ctrl('M'):
