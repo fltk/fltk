@@ -364,6 +364,7 @@ static int isword(char c) {
 int Fl_Input_::word_end(int i) const {
   if (input_type() == FL_SECRET_INPUT) return size();
   //while (i < size() && !isword(index(i))) i++;
+  while (i < size() && !isword(index(i))) i++;
   while (i < size() && isword(index(i))) i++;
   return i;
 }
@@ -372,6 +373,7 @@ int Fl_Input_::word_start(int i) const {
   if (input_type() == FL_SECRET_INPUT) return 0;
 //   if (i >= size() || !isword(index(i)))
 //     while (i > 0 && !isword(index(i-1))) i--;
+  while (i > 0 && !isword(index(i-1))) i--;
   while (i > 0 && isword(index(i-1))) i--;
   return i;
 }

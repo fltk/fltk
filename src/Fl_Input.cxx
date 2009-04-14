@@ -140,83 +140,157 @@ int Fl_Input::handle_key() {
     return 1;
   }
 
+  unsigned int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT);
   switch (Fl::event_key()) {
   case FL_Insert:
     if (Fl::event_state() & FL_CTRL) ascii = ctrl('C');
     else if (Fl::event_state() & FL_SHIFT) ascii = ctrl('V');
     break;
-  case FL_Delete:
+  case FL_Delete: // FIXME
     if (Fl::event_state() & FL_SHIFT) ascii = ctrl('X');
     else ascii = ctrl('D');
     break;    
   case FL_Left:
-    ascii = ctrl('B'); 
 #ifdef __APPLE__
-    if (Fl::event_state() & (FL_META|FL_CTRL) ) ascii = ctrl('A');
-    // FIXME backward one word is missing (Alt-Left)
-#endif // __APPLE__
+    if (mods==0) { // char left
+      ascii = ctrl('B'); 
+    } else if (mods==FL_ALT) { // word left
+      shift_position(word_start(position()));
+      return 1; 
+    } else if (mods==FL_CTRL || mods==FL_META) { // start of line
+      shift_position(line_start(position()));
+      return 1;
+    } else return 1;
+#else
+    if (mods==0) { // char left
+      ascii = ctrl('B'); 
+    } else if (mods==FL_CTRL) { // word left
+      shift_position(word_start(position()));
+      return 1;
+    } else return 1;
+#endif
     break;
   case FL_Right:
-    ascii = ctrl('F'); 
 #ifdef __APPLE__
-    if (Fl::event_state() & (FL_META|FL_CTRL) ) ascii = ctrl('E');
-    // FIXME advance one word is missing (Alt-Right)
+    if (mods==0) { // char right
+      ascii = ctrl('F'); 
+    } else if (mods==FL_ALT) { // word right
+      shift_position(word_end(position()));
+      return 1;
+    } else if (mods==FL_CTRL || mods==FL_META) { // end of line
+      shift_position(line_end(position()));
+      return 1;
+    } else return 1;
+#else
+    if (mods==0) { // char right
+      ascii = ctrl('F'); 
+    } else if (mods==FL_CTRL) { // word right
+      shift_position(word_end(position()));
+      return 1;
+    } else return 1;
 #endif // __APPLE__
     break;
-  case FL_Page_Up:
+  case FL_Page_Up: // FIXME
     fl_font(textfont(),textsize()); //ensure current font is set to ours
     repeat_num=h()/fl_height(); // number of lines to scroll
     if (!repeat_num) repeat_num=1;
   case FL_Up:
-    ascii = ctrl('P'); 
 #ifdef __APPLE__
-    if (Fl::event_state() & (FL_META) ) {
-      shift_position(0);
-      return 1;
-    }
-    if (Fl::event_state() & (FL_ALT) ) {
+    if (mods==0) { // line up
+      ascii = ctrl('P');
+    } else if (mods==FL_CTRL) {
+      return 1; // FIXME scroll text down one page
+                // FIXME Fl_Inut_ does not support an independent scroll value 
+                //       (heck, it doesn't even support a scrollbar - what do you expect ;-)
+    } else if (mods==FL_ALT) { // line start and up
       if (line_start(position())==position() && position()>0)
         return shift_position(line_start(position()-1)) + NORMAL_INPUT_MOVE;
       else
         return shift_position(line_start(position())) + NORMAL_INPUT_MOVE;
-    }
-#endif // __APPLE__
+    } else if (mods==FL_META) { // start of document
+      shift_position(0);
+      return 1;
+    } else return 1;
+#else
+    if (mods==0) { // line up
+      ascii = ctrl('P');
+    } else if (mods==FL_CTRL) {
+      return 1; // FIXME scroll text down one line
+    } else return 1;
+#endif
     break;
-  case FL_Page_Down:
+  case FL_Page_Down: // FIXME
     fl_font(textfont(),textsize());
     repeat_num=h()/fl_height();
     if (!repeat_num) repeat_num=1;
   case FL_Down:
-    ascii = ctrl('N'); 
 #ifdef __APPLE__
-    if (Fl::event_state() & (FL_META) ) {
-      shift_position(size());
-      return 1;
-    }
-    if (Fl::event_state() & (FL_ALT) ) {
+    if (mods==0) { // line down
+      ascii = ctrl('N');
+    } else if (mods==FL_CTRL) {
+      return 1; // FIXME scroll text up one page
+    } else if (mods==FL_ALT) { // line end and down
       if (line_end(position())==position() && position()<size())
         return shift_position(line_end(position()+1)) + NORMAL_INPUT_MOVE;
       else
         return shift_position(line_end(position())) + NORMAL_INPUT_MOVE;
-    }
-#endif // __APPLE__
+    } else if (mods==FL_META) { // end of document
+      shift_position(size());
+      return 1;
+    } else return 1;
+#else
+    if (mods==0) { // line down
+      ascii = ctrl('N');
+    } else if (mods==FL_CTRL) {
+      return 1; // FIXME scroll text up one line
+    } else return 1;
+#endif
     break;
   case FL_Home:
-    if (Fl::event_state() & FL_CTRL) {
+#ifdef __APPLE__
+    if (mods==0) {
+      return 1; // FIXME scroll display to the top
+    } else return 1;
+#else
+    if (mods==0) {
+      ascii = ctrl('A');
+    } else if (mods==FL_CTRL) {
       shift_position(0);
       return 1;
     }
-    ascii = ctrl('A');
+#endif
     break;
   case FL_End:
-    if (Fl::event_state() & FL_CTRL) {
+#ifdef __APPLE__
+    if (mods==0) {
+      return 1; // FIXME scroll display to the bottom
+    } else return 1;
+#else
+    if (mods==0) {
+      ascii = ctrl('E');
+    } else if (mods==FL_CTRL) {
       shift_position(size());
       return 1;
-    }
-    ascii = ctrl('E'); break;
-    
+    } else return 1;
+#endif
+    break;
   case FL_BackSpace:
-    ascii = ctrl('H'); break;
+#ifdef __APPLE__
+    if (mods==0 || mods==FL_CTRL) { // delete previous char
+      ascii = ctrl('H');
+    } else if (mods==FL_ALT) { // delete previous word
+      if (mark() != position()) return cut();
+      cut(word_start(position()), position());
+      return 1;
+    } else if (mods==FL_META) { // delete to the beginning of the line
+      if (mark() != position()) return cut();
+      cut(line_start(position()), position());
+      return 1;
+    } else return 1;
+#else
+    ascii = ctrl('H'); 
+#endif
+    break;
   case FL_Enter:
   case FL_KP_Enter:
     if (when() & FL_WHEN_ENTER_KEY) {
