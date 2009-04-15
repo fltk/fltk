@@ -76,6 +76,10 @@ extern "C" {
 
 #undef fl_open
 
+/** \addtogroup fl_unicode
+    @{
+*/
+
 /*** NOTE : all functions are LIMITED to 24 bits Unicode values !!! ***/
 /***        but only 16 bits are really used under Linux and win32  ***/
 
@@ -792,6 +796,8 @@ void fl_make_path_for_file( const char *path )
   fl_make_path( p );
   free( p );
 }
+
+/** @} */
 
 //
 // End of "$Id: $".

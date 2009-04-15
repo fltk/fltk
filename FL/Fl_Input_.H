@@ -145,7 +145,7 @@ public:
       Same as value()[n], but may be faster in plausible
       implementations. No bounds checking is done. 
   */
-char index(int i) const {return value_[i];}
+  char index(int i) const {return value_[i];}
   /**
       Returns the number of characters in value(). This
       may be greater than strlen(value()) if there are nul
@@ -265,6 +265,10 @@ char index(int i) const {return value_[i];}
   */
   void wrap(int b) { if (b) type((uchar)(type() | FL_INPUT_WRAP));
                          else type((uchar)(type() & ~FL_INPUT_WRAP)); }
+  /**
+    Return the number of lines displayed on a single page.
+   */
+  int linesPerPage();
 };
 
 #endif 

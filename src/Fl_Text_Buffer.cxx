@@ -83,27 +83,6 @@ static int undocut;	// number of characters deleted there
 static int undoinsert;	// number of characters inserted
 static int undoyankcut;	// length of valid contents of buffer, even if undocut=0
 
-static int utf_len(char c)
-{
-  if (!(c & 0x80)) return 1;
-  if (c & 0x40) {
-    if (c & 0x20) {
-      if (c & 0x10) {
-        if (c & 0x08) {
-          if (c & 0x04) {
-            return 6;
-          }
-          return 5;
-        }
-        return 4;
-      }
-      return 3;
-    }
-    return 2;
-  }
-  return 0;
-}
-
 static void undobuffersize(int n) {
   if (n > undobufferlength) {
     if (undobuffer) {
@@ -991,7 +970,7 @@ int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) {
                            mTabDist, mNullSubsChar);
   if (ret > 1 && (c & 0x80)) {
     int i;
-    i = utf_len(c);
+    i = fl_utf8len(c);
     while (i > 1) {
       i--;
       pos++;
@@ -1040,7 +1019,7 @@ int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDi
     return 0;
   } else if (c & 0x80) {
     *outStr = c;
-    return utf_len(c);
+    return fl_utf8len(c);
   }
 
   /* Otherwise, just return the character */
@@ -1068,7 +1047,7 @@ int Fl_Text_Buffer::character_width(char c, int indent, int tabDist, char nullSu
   else if ((c & 0x80) && !(c & 0x40))
     return 0;
   else if (c & 0x80) {
-    return utf_len(c);
+    return fl_utf8len(c);
   }
   return 1;
 }

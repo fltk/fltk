@@ -146,10 +146,27 @@ int Fl_Input::handle_key() {
     if (Fl::event_state() & FL_CTRL) ascii = ctrl('C');
     else if (Fl::event_state() & FL_SHIFT) ascii = ctrl('V');
     break;
-  case FL_Delete: // FIXME
-    if (Fl::event_state() & FL_SHIFT) ascii = ctrl('X');
-    else ascii = ctrl('D');
-    break;    
+  case FL_Delete:
+#ifdef __APPLE__
+    if (mods==0 || mods==FL_CTRL) { // delete next char
+      ascii = ctrl('D');
+    } else if (mods==FL_ALT) { // delete next word
+      if (mark() != position()) return cut();
+      cut(position(), word_end(position()));
+      return 1;
+    } else if (mods==FL_META) { // delete to the end of the line
+      if (mark() != position()) return cut();
+      cut(position(), line_end(position()));
+      return 1;
+    } else return 1;
+#else
+    if (mods==0) {
+      ascii = ctrl('D'); 
+    } else if (mods==FL_SHIFT) {
+      ascii = ctrl('X');
+    } else return 1;
+#endif
+    break;
   case FL_Left:
 #ifdef __APPLE__
     if (mods==0) { // char left
@@ -190,18 +207,31 @@ int Fl_Input::handle_key() {
     } else return 1;
 #endif // __APPLE__
     break;
-  case FL_Page_Up: // FIXME
-    fl_font(textfont(),textsize()); //ensure current font is set to ours
-    repeat_num=h()/fl_height(); // number of lines to scroll
-    if (!repeat_num) repeat_num=1;
+  case FL_Page_Up:
+#ifdef __APPLE__
+    if (mods==0) { // scroll text one page
+      // OS X scrolls the view, but does not move the cursor
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      repeat_num = linesPerPage();
+      ascii = ctrl('P');
+    } else if (mods==FL_ALT) { // move cursor one page
+      repeat_num = linesPerPage();
+      ascii = ctrl('P');
+    } else return 1;
+    break;
+#else
+    repeat_num = linesPerPage();
+    // fall through
+#endif
   case FL_Up:
 #ifdef __APPLE__
     if (mods==0) { // line up
       ascii = ctrl('P');
-    } else if (mods==FL_CTRL) {
-      return 1; // FIXME scroll text down one page
-                // FIXME Fl_Inut_ does not support an independent scroll value 
-                //       (heck, it doesn't even support a scrollbar - what do you expect ;-)
+    } else if (mods==FL_CTRL) { // scroll text down one page
+      // OS X scrolls the view, but does not move the cursor
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      repeat_num = linesPerPage();
+      ascii = ctrl('P');
     } else if (mods==FL_ALT) { // line start and up
       if (line_start(position())==position() && position()>0)
         return shift_position(line_start(position()-1)) + NORMAL_INPUT_MOVE;
@@ -214,21 +244,37 @@ int Fl_Input::handle_key() {
 #else
     if (mods==0) { // line up
       ascii = ctrl('P');
-    } else if (mods==FL_CTRL) {
-      return 1; // FIXME scroll text down one line
+    } else if (mods==FL_CTRL) { // scroll text down one line
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      ascii = ctrl('P');
     } else return 1;
 #endif
     break;
-  case FL_Page_Down: // FIXME
-    fl_font(textfont(),textsize());
-    repeat_num=h()/fl_height();
-    if (!repeat_num) repeat_num=1;
+  case FL_Page_Down:
+#ifdef __APPLE__
+    if (mods==0) { // scroll text one page
+      // OS X scrolls the view, but does not move the cursor
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      repeat_num = linesPerPage();
+      ascii = ctrl('N');
+    } else if (mods==FL_ALT) { // move cursor one page
+      repeat_num = linesPerPage();
+      ascii = ctrl('N');
+    } else return 1;
+    break;
+#else
+    repeat_num = linesPerPage();
+    // fall through
+#endif
   case FL_Down:
 #ifdef __APPLE__
     if (mods==0) { // line down
       ascii = ctrl('N');
     } else if (mods==FL_CTRL) {
-      return 1; // FIXME scroll text up one page
+      // OS X scrolls the view, but does not move the cursor
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      repeat_num = linesPerPage();
+      ascii = ctrl('N');
     } else if (mods==FL_ALT) { // line end and down
       if (line_end(position())==position() && position()<size())
         return shift_position(line_end(position()+1)) + NORMAL_INPUT_MOVE;
@@ -241,15 +287,19 @@ int Fl_Input::handle_key() {
 #else
     if (mods==0) { // line down
       ascii = ctrl('N');
-    } else if (mods==FL_CTRL) {
-      return 1; // FIXME scroll text up one line
+    } else if (mods==FL_CTRL) { // scroll text up one line
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      ascii = ctrl('N');
     } else return 1;
 #endif
     break;
   case FL_Home:
 #ifdef __APPLE__
-    if (mods==0) {
-      return 1; // FIXME scroll display to the top
+    if (mods==0) { // scroll display to the top
+      // OS X scrolls the view, but does not move the cursor
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      shift_position(0);
+      return 1;
     } else return 1;
 #else
     if (mods==0) {
@@ -262,8 +312,11 @@ int Fl_Input::handle_key() {
     break;
   case FL_End:
 #ifdef __APPLE__
-    if (mods==0) {
-      return 1; // FIXME scroll display to the bottom
+    if (mods==0) { // scroll display to the bottom
+      // OS X scrolls the view, but does not move the cursor
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      shift_position(size());
+      return 1; 
     } else return 1;
 #else
     if (mods==0) {

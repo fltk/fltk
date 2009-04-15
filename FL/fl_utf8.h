@@ -30,6 +30,11 @@
 
 /*** NOTE : all functions are LIMITED to 24 bits Unicode values !!! ***/
 
+/**
+  \file fl_utf8.h
+  \brief header for Unicode and UTF8 chracter handling
+*/
+
 #ifndef _HAVE_FL_UTF8_HDR_
 #define _HAVE_FL_UTF8_HDR_
 
@@ -78,12 +83,20 @@
 extern "C" {
 #  endif
 
+/** \addtogroup fl_unicode
+    @{
+*/
+
 int fl_unichar_to_utf8_size(Fl_Unichar);
   
 /* F2: comes from FLTK2 */
 /* OD: comes from OksiD */
 
-/* F2: How many bytes will be used to encode this wide character as UTF8? */
+/**
+  Return the number of bytes needed to encode the given UCS4 character in UTF8.
+  \param [in] ucs UCS4 encoded character
+  \return number of bytes required
+ */
 FL_EXPORT int fl_utf8bytes(unsigned ucs);
 
 /* OD: returns the byte length of the first UTF-8 char sequence (returns -1 if not valid) */
@@ -221,6 +234,9 @@ FL_EXPORT void fl_make_path_for_file( const char *path );
 
 /* OD: recursively create a path in the file system */
 FL_EXPORT char fl_make_path( const char *path );
+
+
+/** @} */
 
 /*****************************************************************************/
 

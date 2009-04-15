@@ -28,6 +28,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+/** \addtogroup fl_unicode
+    @{
+*/
+
+
 #if 0
   /** 
    \defgroup fl_unichar Unicode Character Functions
@@ -844,3 +849,5 @@ int fl_utf8test(const char* src, unsigned srclen) {
   }
   return ret;
 }
+
+/** @} */

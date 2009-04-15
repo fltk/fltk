@@ -1024,6 +1024,16 @@ Fl_Input_::~Fl_Input_() {
   if (bufsize) free((void*)buffer);
 }
 
+int Fl_Input_::linesPerPage() {
+  int n = 1;
+  if (input_type() == FL_MULTILINE_INPUT) {
+    fl_font(textfont(),textsize()); //ensure current font is set to ours
+    n = h()/fl_height(); // number of lines to scroll
+    if (n<=0) n = 1;
+  }
+  return n;
+}
+
 //
 // End of "$Id$".
 //

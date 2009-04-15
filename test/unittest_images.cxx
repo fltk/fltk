@@ -42,10 +42,10 @@ public:
     drgba = img_rgba = (uchar*)malloc(128*128*4);
     for (y=0; y<128; y++) {
       for (x=0; x<128; x++) {
-        *drgb++ = *drgba = *dg++ = *dga++ = y<<1;
-        *drgb++ = *drgba = x<<1;
-        *drgb++ = *drgba = (127-x)<<1;
-        *dga++ = *drgba = x+y;
+        *drgba++ = *drgb++ = *dga++ = *dg++ = y<<1;
+        *drgba++ = *drgb++                  = x<<1;
+        *drgba++ = *drgb++                  = (127-x)<<1;
+        *drgba++           = *dga++         = x+y;
       }
     }
     return new ImageTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
@@ -64,20 +64,24 @@ public:
   }
   void draw() {
     Fl_Box::draw();
+
     int xx = x()+10, yy = y()+10;
     fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);
     fl_draw_image(img_rgb, xx+1, yy+1, 128, 128, 3);
     fl_draw("RGB", xx+134, yy+64);
+
     xx = x()+10; yy = y()+10+134;
     fl_color(FL_BLACK); fl_rectf(xx, yy, 130, 130);
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 64, 64);
     fl_color(FL_WHITE); fl_rectf(xx+65, yy+65, 64, 64);
     fl_draw_image(img_rgba, xx+1, yy+1, 128, 128, 4);
     fl_color(FL_BLACK); fl_draw("RGBA", xx+134, yy+64);
+
     xx = x()+10+200; yy = y()+10;
     fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);
     fl_draw_image(img_gray, xx+1, yy+1, 128, 128, 1);
     fl_draw("Gray", xx+134, yy+64);
+
     xx = x()+10+200; yy = y()+10+134;
     fl_color(FL_BLACK); fl_rectf(xx, yy, 130, 130);
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 64, 64);

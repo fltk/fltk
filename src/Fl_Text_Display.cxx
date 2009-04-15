@@ -77,27 +77,6 @@ static int scroll_x = 0;
 // CET - FIXME
 #define TMPFONTWIDTH 6
 
-static int utf_len(char c)
-{
-  if (!(c & 0x80)) return 1;
-  if (c & 0x40) {
-    if (c & 0x20) {
-      if (c & 0x10) {
-        if (c & 0x08) {
-         if (c & 0x04) {
-            return 6;
-          }
-          return 5;
-        }
-        return 4;
-      }
-      return 3;
-    }
-    return 2;
-  }
-  return 0;
-}
-
 /**  Creates a new text display widget.*/
 Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
     : Fl_Group(X, Y, W, H, l) {
@@ -872,7 +851,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) {
               mBuffer->tab_distance(), mBuffer->null_substitution_character() );
     if (charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
-      i = utf_len(lineStr[ charIndex ]);
+      i = fl_utf8len(lineStr[ charIndex ]);
       while (i > 1) {
         i--;
         ii++;
@@ -1626,7 +1605,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
                                                 expandedChar, buf->tab_distance(), buf->null_substitution_character() );
     if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
-      i = utf_len(lineStr[ charIndex ]);
+      i = fl_utf8len(lineStr[ charIndex ]);
       while (i > 1) {
         i--;
         ii++;
@@ -1664,7 +1643,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
                                                 buf->tab_distance(), buf->null_substitution_character() );
     if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
-      i = utf_len(lineStr[ charIndex ]);
+      i = fl_utf8len(lineStr[ charIndex ]);
       while (i > 1) {
         i--;
         ii++;
@@ -1687,7 +1666,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
         *outPtr = expandedChar[ i ];
         int l = 1;
         if (*outPtr & 0x80) {
-          l = utf_len(*outPtr);
+          l = fl_utf8len(*outPtr);
         }
         charWidth = string_width( &expandedChar[ i ], l, charStyle );
       } else
@@ -1711,7 +1690,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
                                                 buf->tab_distance(), buf->null_substitution_character() );
     if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
-      i = utf_len(lineStr[ charIndex ]);
+      i = fl_utf8len(lineStr[ charIndex ]);
       while (i > 1) {
         i--;
         ii++;
@@ -1734,7 +1713,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
         *outPtr = expandedChar[ i ];
         int l = 1;
         if (*outPtr & 0x80) {
-          l = utf_len(*outPtr);
+          l = fl_utf8len(*outPtr);
         }
         charWidth = string_width( &expandedChar[ i ], l, charStyle );
       } else
@@ -2071,7 +2050,7 @@ int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) {
               mBuffer->tab_distance(), mBuffer->null_substitution_character() );
     if (charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
-      i = utf_len(lineStr[ charIndex ]);
+      i = fl_utf8len(lineStr[ charIndex ]);
       while (i > 1) {
         i--;
         ii++;

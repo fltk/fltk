@@ -34,26 +34,6 @@
 #include <FL/Fl_Text_Editor.H>
 #include <FL/fl_ask.H>
 
-static int utf_len(char c)
-{
-  if (!(c & 0x80)) return 1;
-  if (c & 0x40) {
-    if (c & 0x20) {
-      if (c & 0x10) {
-        if (c & 0x08) {
-          if (c & 0x04) {
-            return 6;
-          }
-          return 5;
-        }
-        return 4;
-      }
-      return 3;
-    }
-    return 2;
-  }
-  return 0;
-}
 
 /* Keyboard Control Matrix
 
@@ -268,7 +248,7 @@ int Fl_Text_Editor::kf_backspace(int, Fl_Text_Editor* e) {
     int l = 1;
     char c = e->buffer()->character(e->insert_position());
     if (c & 0x80 && c & 0x40) {
-      l = utf_len(c);
+      l = fl_utf8len(c);
     }
     e->buffer()->select(e->insert_position(), e->insert_position()+l);
   }
@@ -429,7 +409,7 @@ int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
     int l = 1;
     char c = e->buffer()->character(e->insert_position());
     if (c & 0x80 && c & 0x40) {
-      l = utf_len(c);
+      l = fl_utf8len(c);
     }
     e->buffer()->select(e->insert_position(), e->insert_position()+l);
   }
