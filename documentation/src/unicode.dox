@@ -156,6 +156,89 @@ the following limitations:
 
 - FLTK will not handle right-to-left or bi-directional text;
 
+\section unicode_fltk_calls FLTK Unicode and UTF8 functions
+
+- unsigned int fl_nonspacing(unsigned int ucs)
+  \b OksiD
+- int fl_tolower(unsigned int ucs)
+  \b OksiD
+- int fl_toupper(unsigned int ucs)
+  \b OksiD
+- int fl_unichar_to_utf8_size(Fl_Unichar)
+- char* fl_utf2mbcs (const char *src)
+  \b OksiD
+- const char* fl_utf8back(const char *pos, const char *start, const char *end)
+  \b FLTK2
+- int fl_utf8bytes(unsigned ucs)
+- unsigned int fl_utf8decode(const char *start, const char *end, int *len)
+  \b FLTK2
+- int fl_utf8encode(unsigned ucs, char *buf)
+- unsigned int fl_utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen)
+  \b FLTK2
+- unsigned int fl_utf8froma(char *dst, unsigned dstlen, const char *src, unsigned srclen)
+  \b FLTK2
+- unsigned int fl_utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen)
+  \b FLTK2
+- const char* fl_utf8fwd(const char *pos, const char *start, const char *end)
+  \b FLTK2
+- int fl_utf8len(char c)
+- int fl_utf8locale()
+  \b FLTK2
+- int fl_utf8test(const char *src, unsigned len)
+  \b FLTK2
+- unsigned int fl_utf8to_mb(const char *src, unsigned srclen, char *dst, unsigned dstlen)
+  \b FLTK2
+- unsigned int fl_utf8toa(const char *src, unsigned srclen, char *dst, unsigned dstlen)
+- unsigned int fl_utf8toUtf16(const char *src, unsigned srclen, unsigned short *dst, unsigned dstlen)
+  \b FLTK2
+- unsigned int fl_utf8towc(const char *src, unsigned srclen, wchar_t *dst, unsigned dstlen)
+  \b FLTK2
+- int fl_utf_nb_char(const unsigned char *buf, int len)
+  \b OksiD
+- int fl_utf_strcasecmp(const char *s1, const char *s2)
+  \b OksiD
+- int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
+  \b OksiD
+- int fl_utf_tolower(const unsigned char *str, int len, char *buf)
+  \b OksiD
+- int fl_utf_toupper(const unsigned char *str, int len, char *buf)
+  \b OksiD
+- int fl_utf8len(char c)
+  \b OksiD
+
+\section unicode_system_calls FLTK Unicode versions of system calls
+
+- int fl_access(const char* f, int mode)
+  \b OksiD
+- int fl_chmod(const char* f, int mode)
+  \b OksiD
+- int fl_execvp(const char* file, char* const* argv)
+  \b OksiD
+- FILE* fl_fopen(cont char* f, const char* mode)
+  \b OksiD
+- char* fl_getcwd(char* buf, int maxlen)
+  \b OksiD
+- char* fl_getenv(const char* name)
+  \b OksiD
+- char fl_make_path(const char* path)	- returns char ?
+  \b OksiD
+- void fl_make_path_for_file(const char* path)
+  \b OksiD
+- int fl_mkdir(const char* f, int mode)
+  \b OksiD
+- int fl_open(const  char* f, int o, ...)
+  \b OksiD
+- int fl_rename(const char* f, const char* t)
+  \b OksiD
+- int fl_rmdir(const char* f)
+  \b OksiD
+- int fl_stat(const char* path, struct stat* buffer)
+  \b OksiD
+- int fl_system(const char* f)
+  \b OksiD
+- int fl_unlink(const char* f)
+  \b OksiD
+
 \par TODO:
 
 \li more doc on unicode, add links

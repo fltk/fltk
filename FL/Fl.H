@@ -1015,7 +1015,7 @@ public:
 };
 
  /** \defgroup  fl_unicode  Unicode and UTF-8 functions
-	fl global Unicode and UTF-8 ahndling functions
+	fl global Unicode and UTF-8 handling functions
      @{ */
  /** @} */
 
