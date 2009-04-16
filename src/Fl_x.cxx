@@ -813,11 +813,7 @@ int fl_handle(const XEvent& thisevent)
       fl_xim_im = NULL;
       fl_init_xim();
     } else {
-     // XCloseIM(xim_im); FIXME
-        /* XFree86 has a bug when closing IM it crashes in
-         * _XlcCreateDefaultCharSet() !  So don't close it.
-         * This will cause a memory leak :-(
-         */
+      XCloseIM(xim_im);	// see STR 2185 for comment
     }
     return 0;
   }
