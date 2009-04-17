@@ -403,8 +403,12 @@ unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
 }
 
 
-/* This function generates 32-bit wchar_t (e.g. "ucs4" as it were) except on win32 where
-   it returns Utf16 with surrogate pairs where required. */
+/**
+  Converts a UTF-8 string into a wide character string.
+
+  This function generates 32-bit wchar_t (e.g. "ucs4" as it were) except
+  on win32 where it returns Utf16 with surrogate pairs where required.
+  */
 unsigned fl_utf8towc(const char* src, unsigned srclen,
 		  wchar_t* dst, unsigned dstlen)
 {

@@ -87,6 +87,7 @@ extern "C" {
     @{
 */
 
+/** is this even defined anywhere? */
 int fl_unichar_to_utf8_size(Fl_Unichar);
   
 /* F2: comes from FLTK2 */

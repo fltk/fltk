@@ -110,8 +110,9 @@ Toupper(
 	return table[ucs];
 }
 
-/*** returns the byte length of the first UTF-8 char ***/
-/*** (returns -1 if not valid) ***/
+/**
+  returns the byte length of the first UTF-8 char sequence or -1 is not valid.
+  */
 int fl_utf8len(char c)
 {
   if (!(c & 0x80)) return 1;
@@ -144,7 +145,9 @@ int fl_utflen(
 }
 #endif
 
-/**** returns the number of Unicode chars in the UTF-8 string ***/
+/**
+  returns the number of Unicode chars in the UTF-8 string
+  */
 int
 fl_utf_nb_char(
 	const unsigned char 	*buf,
@@ -167,6 +170,11 @@ fl_utf_nb_char(
  * return 1 if s1 is greater than s2
  * return -1 if s1 is less than s2
  */
+/**
+  UTF-8 aware strncasecmp - converts to lower case Unicode and tests.
+
+  \todo Correct the incorrect logic where length of strings tested
+  */
 int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
 {
         int i;
@@ -212,6 +220,11 @@ int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
  * return 1 if s1 is greater than s2
  * return -1 if s1 is less than s2
  */
+/**
+  UTF-8 aware strcasecmp - converts to Unicode and tests.
+
+  \todo Correct the incorrect logic where length of strings tested
+  */
 int fl_utf_strcasecmp(const char *s1, const char *s2)
 {
 	int s1_l = strlen(s1);
@@ -225,26 +238,26 @@ int fl_utf_strcasecmp(const char *s1, const char *s2)
 	return fl_utf_strncasecmp(s1, s2, s1_l);
 }
 
-/*
- * return the Unicode lower case value of ucs
- */
+/**
+  return the Unicode lower case value of \p ucs
+  */
 int fl_tolower(unsigned int ucs)
 {
 	return XUtf8Tolower(ucs);
 }
 
-/*
- * return the Unicode upper case value of ucs
- */
+/**
+  return the Unicode upper case value of \p ucs
+  */
 int fl_toupper(unsigned int ucs)
 {
 	return Toupper(ucs);
 }
 
-/*
- * converts the str string to the lower case equivalent into buf.
- * Warning: to be safe buf length must be at least 3 * len
- */
+/**
+  converts the str string to the lower case equivalent into buf.
+  Warning: to be safe buf length must be at least 3 * len [for 24-bit Unicode]
+  */
 int fl_utf_tolower(const unsigned char *str, int len, char *buf)
 {
 	int i;
@@ -272,10 +285,10 @@ int fl_utf_tolower(const unsigned char *str, int len, char *buf)
 	return l;
 }
 
-/*
- * converts the str string to the upper case equivalent into buf.
- * Warning: to be safe buf length must be at least 3 * len
- */
+/**
+  converts the str string to the upper case equivalent into buf.
+  Warning: to be safe buf length must be at least 3 * len [for 24-bit Unicode]
+  */
 int fl_utf_toupper(const unsigned char *str, int len, char *buf)
 {
 	int i;
@@ -356,6 +369,10 @@ int fl_latin12utf(const unsigned char *str, int len, char *buf)
 }
 #endif
 
+/**
+  returns true if the character is non-spacing.
+  \todo explain what non-spacing means.
+  */
 unsigned int fl_nonspacing(unsigned int ucs)
 {
 #ifdef __APPLE__
@@ -428,6 +445,9 @@ char *fl_locale_to_utf8(const char *s, int len, UINT codepage)
 }
 #endif
 
+/**
+  converts UTF8 to a local multi-byte character string.
+  */
 char * fl_utf2mbcs(const char *s)
 {
 	if (!s) return NULL;
