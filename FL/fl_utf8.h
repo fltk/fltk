@@ -107,16 +107,16 @@ FL_EXPORT int fl_utf8len(char c);
 FL_EXPORT int fl_utf_nb_char(const unsigned char *buf, int len);
 
 /* F2: Convert the next UTF8 char-sequence into a Unicode value (and say how many bytes were used) */
-FL_EXPORT unsigned fl_utf8decode(const char* start, const char* end, int* len);
+FL_EXPORT unsigned fl_utf8decode(const char* p, const char* end, int* len);
 
 /* F2: Encode a Unicode value into a UTF8 sequence, return the number of bytes used */
 FL_EXPORT int fl_utf8encode(unsigned ucs, char* buf);
 
 /* F2: Move forward to the next valid UTF8 sequence start betwen start and end */
-FL_EXPORT const char* fl_utf8fwd(const char* pos, const char* start, const char* end);
+FL_EXPORT const char* fl_utf8fwd(const char* p, const char* start, const char* end);
 
 /* F2: Move backward to the previous valid UTF8 sequence start */
-FL_EXPORT const char* fl_utf8back(const char* pos, const char* start, const char* end);
+FL_EXPORT const char* fl_utf8back(const char* p, const char* start, const char* end);
 
 /* F2: Convert a UTF8 string into UTF16 */
 FL_EXPORT unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short* dst, unsigned dstlen);

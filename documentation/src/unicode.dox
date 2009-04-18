@@ -147,6 +147,10 @@ Unicode and UTF-8 in FLTK involves three important areas:
 The current implementation of Unicode / UTF-8 in FLTK will impose
 the following limitations:
 
+- An implementation note in the code says that all functions are
+  LIMITED to 24 bit Unicode values, but also says that only 16 bits
+  are really used under linux and win32.
+
 - FLTK will only handle single characters, so composed characters
   consisting of a base character and floating accent characters
   will be treated as multiple characters; 
@@ -155,56 +159,229 @@ the following limitations:
   and not on a general Unicode character basis;
 
 - FLTK will not handle right-to-left or bi-directional text;
+  
+  \todo
+  Verify 16/24 bit Unicode limit for different character sets?
+  OksiD's code appears limited to 16-bit whereas the FLTK2 code
+  appears to handle a wider set. What about illegal characters?
+  See comments in fl_utf8fromwc() and fl_utf8toUtf16().
+
 
 \section unicode_fltk_calls FLTK Unicode and UTF8 functions
 
-- unsigned int fl_nonspacing(unsigned int ucs)
+This section currently provides a brief overview of the functions.
+For more details, consult the main text for each function via its link.
+
+int fl_utf8locale()
+  \b FLTK2
+  <br>
+\par
+\p %fl_utf8locale() returns true if the "locale" seems to indicate
+that UTF-8 encoding is used.
+\par
+<i>It is highly recommended that your change your system so this does return
+true!</i>
+
+
+int fl_utf8test(const char *src, unsigned len)
+  \b FLTK2
+  <br>
+\par
+\p %fl_utf8test() examines the first \p len bytes of \p src.
+It returns 0 if there are any illegal UTF-8 sequences;
+1 if \p src contains plain ASCII or if \p len is zero;
+or 2, 3 or 4 to indicate the range of Unicode characters found.
+
+
+int fl_utf_nb_char(const unsigned char *buf, int len)
   \b OksiD
-- int fl_tolower(unsigned int ucs)
+  <br>
+\par
+Returns the number of UTF-8 character in the first \p len bytes of \p buf.
+
+
+int fl_unichar_to_utf8_size(Fl_Unichar)
+  <br>
+int fl_utf8bytes(unsigned ucs)
+  <br>
+\par
+Returns the number of bytes needed to encode \p ucs in UTF-8.
+
+
+int fl_utf8len(char c)
   \b OksiD
-- int fl_toupper(unsigned int ucs)
+  <br>
+\par
+If \p c is a valid first byte of a UTF-8 encoded character sequence,
+\p %fl_utf8len() will return the number of bytes in that sequence.
+It returns -1 if \p c is not a valid first byte.
+
+
+unsigned int fl_nonspacing(unsigned int ucs)
   \b OksiD
-- int fl_unichar_to_utf8_size(Fl_Unichar)
-- char* fl_utf2mbcs (const char *src)
+  <br>
+\par
+Returns true if \p ucs is a non-spacing character.
+<b>[What are non-spacing characters?]</b>
+
+
+const char* fl_utf8back(const char *p, const char *start, const char *end)
+  \b FLTK2
+  <br>
+const char* fl_utf8fwd(const char *p, const char *start, const char *end)
+  \b FLTK2
+  <br>
+\par
+If \p p already points to the start of a UTF-8 character sequence,
+these functions will return \p p.
+Otherwise \p %fl_utf8back() searches backwards from \p p
+and \p %fl_utf8fwd() searches forwards from \p p,
+within the \p start and \p end limits,
+looking for the start of a UTF-8 character.
+
+
+unsigned int fl_utf8decode(const char *p, const char *end, int *len)
+  \b FLTK2
+  <br>
+int fl_utf8encode(unsigned ucs, char *buf)
+  \b FLTK2
+  <br>
+\par
+\p %fl_utf8decode() attempts to decode the UTF-8 character that starts
+at \p p and may not extend past \p end.
+It returns the Unicode value, and the length of the UTF-8 character sequence
+is returned via the \p len argument.
+\p %fl_utf8encode() writes the UTF-8 encoding of \p ucs into \p buf
+and returns the number of bytes in the sequence.
+See the main documentation for the treatment of illegal Unicode
+and UTF-8 sequences.
+
+
+unsigned int fl_utf8froma(char *dst, unsigned dstlen, const char *src, unsigned srclen)
+  \b FLTK2
+  <br>
+unsigned int fl_utf8toa(const char *src, unsigned srclen, char *dst, unsigned dstlen)
+  \b FLTK2
+  <br>
+\par
+\p %fl_utf8froma() converts a character string containing single bytes
+per character (i.e. ASCII or ISO-8859-1) into UTF-8.
+If the \p src string contains only ASCII characters, the return value will
+be the same as \p srclen.
+\par
+\p %fl_utf8toa() converts a string containing UTF-8 characters into
+single byte characters. UTF-8 characters do not correspond to ASCII
+or ISO-8859-1 characters below 0xFF are replaced with '?'.
+
+\par
+Both functions return the number of bytes that would be written, not
+counting the null terminator.
+\p destlen provides a means of limiting the number of bytes written,
+so setting \p destlen to zero is a means of measuring how much storage
+would be needed before doing the real conversion.
+
+
+char* fl_utf2mbcs(const char *src)
   \b OksiD
-- const char* fl_utf8back(const char *pos, const char *start, const char *end)
+  <br>
+\par
+converts a UTF-8 string to a local multi-byte character string.
+<b>[More info required here!]</b>
+
+unsigned int fl_utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen)
   \b FLTK2
-- int fl_utf8bytes(unsigned ucs)
-- unsigned int fl_utf8decode(const char *start, const char *end, int *len)
+  <br>
+unsigned int fl_utf8towc(const char *src, unsigned srclen, wchar_t *dst, unsigned dstlen)
   \b FLTK2
-- int fl_utf8encode(unsigned ucs, char *buf)
-- unsigned int fl_utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen)
+  <br>
+unsigned int fl_utf8toUtf16(const char *src, unsigned srclen, unsigned short *dst, unsigned dstlen)
   \b FLTK2
-- unsigned int fl_utf8froma(char *dst, unsigned dstlen, const char *src, unsigned srclen)
+  <br>
+\par
+These routines convert between UTF-8 and \p wchar_t or "wide character"
+strings.
+The difficulty lies in the fact \p sizeof(wchar_t) is 2 on Windows
+and 4 on Linux and most other systems.
+Therefore some "wide characters" on Windows may be represented
+as "surrogate pairs" of more than one \p wchar_t.
+
+\par
+\p %fl_utf8fromwc() converts from a "wide character" string to UTF-8.
+Note that \p srclen is the number of \p wchar_t elements in the source
+string and on Windows and this might be larger than the number of characters.
+\p dstlen specifies the maximum number of \b bytes to copy, including
+the null terminator.
+
+\par
+\p %fl_utf8towc() converts a UTF-8 string into a "wide character" string.
+Note that on Windows, some "wide characters" might result in "surrogate
+pairs" and therefore the return value might be more than the number of
+characters.
+\p dstlen specifies the maximum number of \b wchar_t elements to copy,
+including a zero terminating element.
+<b>[Is this all worded correctly?]</b>
+
+\par
+\p %fl_utf8toUtf16() converts a UTF-8 string into a "wide character"
+string using UTF-16 encoding to handle the "surrogate pairs" on Windows.
+\p dstlen specifies the maximum number of \b wchar_t elements to copy,
+including a zero terminating element.
+<b>[Is this all worded correctly?]</b>
+
+\par
+These routines all return the number of elements that would be required
+for a full conversion of the \p src string, including the zero terminator.
+Therefore setting \p dstlen to zero is a way of measuring how much storage
+would be needed before doing the real conversion.
+
+
+unsigned int fl_utf8from_mb(char *dst, unsigned dstlen, const char *src, unsigned srclen)
   \b FLTK2
-- unsigned int fl_utf8fromwc(char *dst, unsigned dstlen, const wchar_t *src, unsigned srclen)
+  <br>
+unsigned int fl_utf8to_mb(const char *src, unsigned srclen, char *dst, unsigned dstlen)
   \b FLTK2
-- const char* fl_utf8fwd(const char *pos, const char *start, const char *end)
-  \b FLTK2
-- int fl_utf8len(char c)
-- int fl_utf8locale()
-  \b FLTK2
-- int fl_utf8test(const char *src, unsigned len)
-  \b FLTK2
-- unsigned int fl_utf8to_mb(const char *src, unsigned srclen, char *dst, unsigned dstlen)
-  \b FLTK2
-- unsigned int fl_utf8toa(const char *src, unsigned srclen, char *dst, unsigned dstlen)
-- unsigned int fl_utf8toUtf16(const char *src, unsigned srclen, unsigned short *dst, unsigned dstlen)
-  \b FLTK2
-- unsigned int fl_utf8towc(const char *src, unsigned srclen, wchar_t *dst, unsigned dstlen)
-  \b FLTK2
-- int fl_utf_nb_char(const unsigned char *buf, int len)
+  <br>
+\par
+These functions convert between UTF-8 and the locale-specific multi-byte
+encodings used on some systems for filenames, etc.
+If fl_utf8locale() returns true, these functions don't do anything useful.
+<b>[Is this all worded correctly?]</b>
+
+
+int fl_tolower(unsigned int ucs)
   \b OksiD
-- int fl_utf_strcasecmp(const char *s1, const char *s2)
+  <br>
+int fl_toupper(unsigned int ucs)
   \b OksiD
-- int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
+  <br>
+int fl_utf_tolower(const unsigned char *str, int len, char *buf)
   \b OksiD
-- int fl_utf_tolower(const unsigned char *str, int len, char *buf)
+  <br>
+int fl_utf_toupper(const unsigned char *str, int len, char *buf)
   \b OksiD
-- int fl_utf_toupper(const unsigned char *str, int len, char *buf)
+  <br>
+\par
+\p %fl_tolower() and \p %fl_toupper() convert a single Unicode character
+from upper to lower case, and vice versa.
+\p %fl_utf_tolower() and \p %fl_utf_toupper() convert a string of bytes,
+some of which may be multi-byte UTF-8 encodings of Unicode characters,
+from upper to lower case, and vice versa.
+\par
+Warning: to be safe, \p buf length must be at least \p 3*len
+[for 16-bit Unicode]
+
+
+int fl_utf_strcasecmp(const char *s1, const char *s2)
   \b OksiD
-- int fl_utf8len(char c)
+  <br>
+int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
   \b OksiD
+  <br>
+\par
+\p %fl_utf_strcasecmp() is a UTF-8 aware string comparison function that
+converts the strings to lower case Unicode as part of the comparison.
+\p %flt_utf_strncasecmp() only compares the first \p n characters [bytes?]
+
 
 \section unicode_system_calls FLTK Unicode versions of system calls
 

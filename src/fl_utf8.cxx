@@ -111,7 +111,8 @@ Toupper(
 }
 
 /**
-  returns the byte length of the first UTF-8 char sequence or -1 is not valid.
+  return the byte length of the UTF-8 sequence with first byte \p c,
+  or -1 if \p c is not valid.
   */
 int fl_utf8len(char c)
 {
@@ -174,6 +175,7 @@ fl_utf_nb_char(
   UTF-8 aware strncasecmp - converts to lower case Unicode and tests.
 
   \todo Correct the incorrect logic where length of strings tested
+  \todo Clarify whether n means number of bytes, or characters.
   */
 int fl_utf_strncasecmp(const char *s1, const char *s2, int n)
 {
@@ -256,7 +258,7 @@ int fl_toupper(unsigned int ucs)
 
 /**
   converts the str string to the lower case equivalent into buf.
-  Warning: to be safe buf length must be at least 3 * len [for 24-bit Unicode]
+  Warning: to be safe buf length must be at least 3 * len [for 16-bit Unicode]
   */
 int fl_utf_tolower(const unsigned char *str, int len, char *buf)
 {
@@ -287,7 +289,7 @@ int fl_utf_tolower(const unsigned char *str, int len, char *buf)
 
 /**
   converts the str string to the upper case equivalent into buf.
-  Warning: to be safe buf length must be at least 3 * len [for 24-bit Unicode]
+  Warning: to be safe buf length must be at least 3 * len [for 16-bit Unicode]
   */
 int fl_utf_toupper(const unsigned char *str, int len, char *buf)
 {
