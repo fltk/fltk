@@ -223,7 +223,7 @@ FL_EXPORT double fl_width(const char* txt, int n);
 /** Return the typographical width of a single character :
     \note if a valid fl_gc is NOT found then it uses the first window gc,
     or the screen gc if no fltk window is available when called. */
-FL_EXPORT double fl_width(Fl_Unichar);
+FL_EXPORT double fl_width(Fl_Char);
 /** Determine the minimum pixel dimensions of a nul-terminated string.
 
 Usage: given a string "txt" drawn using fl_draw(txt, x, y) you would determine

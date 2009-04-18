@@ -50,14 +50,17 @@
 #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
 
 /**
-  This is a virtual base class below Fl_Input. It has all
-  the same interfaces, but lacks the handle() and
-  draw() method. You may want to subclass it if you are
+  This class provides a low-overhead text input field.
+
+  This is a virtual base class below \c Fl_Input. It has all
+  the same interfaces, but lacks the \c handle() and
+  \c draw() method. You may want to subclass it if you are
   one of those people who likes to change how the editing keys
-  work.
+  work. It may also be useful for adding scrollbars
+  to the input field.
   
-  <P>This can act like any of the subclasses of Fl_Input, by
-  setting type() to one of the following values:</P>
+  This can act like any of the subclasses of \c Fl_Input, by
+  setting \c type() to one of the following values:
   
   \code
   #define FL_NORMAL_INPUT	   0
@@ -73,202 +76,364 @@
   #define FL_MULTILINE_INPUT_WRAP  (FL_MULTILINE_INPUT | FL_INPUT_WRAP)
   #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
   \endcode
+
+  \see \c Fl_Text_Display, \c Fl_Text_Editor for more powerful text handling widgets
 */
 class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
+  /** \internal Storage for the text field. */
   const char* value_;
+
+  /** \internal Buffer memory for expanded text. \see expand() */
   char* buffer;
 
+  /** \internal Size of text in bytes in the \p value_ field. */
   int size_;
+
+  /** \internal Please document me! */
   int bufsize;
+  
+  /** \internal Positin of the cursor in the document */
   int position_;
+
+  /** \internal Position of the other and of the selected text. If \p position_ equals 
+      \p mark_, no text is selected */
   int mark_;
+
+  /** \internal Offset to text origin within wdget bounds */
   int xscroll_, yscroll_;
+
+  /** \internal Minimal update pointer. Display requirs redraw from here to the end
+      of the buffer. */
   int mu_p;
+
+  /** \internal Maximum size of buffer. \todo Is this really needed? */
   int maximum_size_;
+
+  /** \internal Shorcut key that will get this widget the focus. */
   int shortcut_;
 
+  /** \internal This is set if no text but only the cursor needs updating. */
   uchar erase_cursor_only;
+
+  /** \internal The font used for the entire text. */
   Fl_Font textfont_;
+
+  /** \internal Height of the font used for the entire text. */
   Fl_Fontsize textsize_;
+
+  /** \internal color of the entire text */
   unsigned textcolor_;
+
+  /** \internal color of the text cursor */
   unsigned cursor_color_;
 
+  /** \internal Horizontal cursor position in pixels while movin up or down.  */
+  static double up_down_pos;
+
+  /** \internal Flag to remeber last cursor move. */
+  static int was_up_down;
+
+  /* Convert a given text segment into the text that will be rendered on screen. */
   const char* expand(const char*, char*) const;
+
+  /* Calculates the width in pixels of part of a text buffer. */
   double expandpos(const char*, const char*, const char*, int*) const;
+
+  /* Mark a range of characters for update. */
   void minimal_update(int, int);
+
+  /* Mark a range of characters for update. */
   void minimal_update(int p);
+
+  /* Copy the value from a possibly static entry into the internal buffer. */
   void put_in_buffer(int newsize);
 
+  /* Set the current font and font size. */
   void setfont() const;
 
 protected:
 
+  /* Finds the start of a word. */
   int word_start(int i) const;
+
+  /* Finds the end of a word. */
   int word_end(int i) const;
+
+  /* Finds the start of a line. */
   int line_start(int i) const;
+  
+  /* Finds the end of a line. */
   int line_end(int i) const;
+
+  /* Draw the text in the passed bounding box. */
   void drawtext(int, int, int, int);
+
+  /* Move the cursor to the column given by up_down_pos. */
   int up_down_position(int, int keepmark=0);
+
+  /* Handle mouse clicks and mose moves. */
   void handle_mouse(int, int, int, int, int keepmark=0);
+
+  /* Handle all kinds of text field related events. */
   int handletext(int e, int, int, int, int);
+
+  /* Check the when() field and do a callback if indicated. */
   void maybe_do_callback();
+
+  /** \internal Horizontal offset of text to left edge of widget. */
   int xscroll() const {return xscroll_;}
+
+  /** \internal Vertical offset of text to top edge of widget. */
   int yscroll() const {return yscroll_;}
+
+  /* Return the number of lines displayed on a single page.  */
+  int linesPerPage();
 
 public:
 
+  /* Change the size of the widget. */
   void resize(int, int, int, int);
 
+  /* Creator */
   Fl_Input_(int, int, int, int, const char* = 0);
+
+  /* Destructor */
   ~Fl_Input_();
 
+  /* Changes the widget text. */
   int value(const char*);
+
+  /* Changes the widget text. */
   int value(const char*, int);
+
+  /* Changes the widget text. */
   int static_value(const char*);
+
+  /* Changes the widget text. */
   int static_value(const char*, int);
+
   /**
-      The first form returns the current value, which is a pointer
+      Returns the text displayed in the widget.
+
+      This function returns the current value, which is a pointer
       to the internal buffer and is valid only until the next event is
       handled.
-      
-      <P>The second two forms change the text and set the mark and the
-      point to the end of it. The string is copied to the internal
-      buffer. Passing NULL is the same as "". 
-      This returns non-zero if the new value is different than the
-      current one.  You can use the second version to directly set the
-      length if you know it already or want to put nul's in the
-      text.
+  
+      \return pointer to an internal buffer - do not \c free() this    
+      \see \c Fl_Input_::value(const char*)
   */
   const char* value() const {return value_;}
+
   /**
-      Same as value()[n], but may be faster in plausible
-      implementations. No bounds checking is done. 
+    Returns the character at index \p i.
+
+    This function returns the utf8 character that is closest to \p i 
+    as a ucs4 character code.
+    
+    \param [in] i index into the value field
+    \return the character at index \p i
+    \todo Not yet utf8 aware
   */
   char index(int i) const {return value_[i];}
+
   /**
-      Returns the number of characters in value(). This
-      may be greater than strlen(value()) if there are nul
-      characters in it.
+    Returns the number of bytes in \c value(). 
+  
+    This may be greater than <tt>strlen(value())</tt> if there are 
+    \c nul characters in the text.
+
+    \return number of bytes in the text
   */
   int size() const {return size_;}
+
+  /** Sets the width and height of this widget.
+    \param [in] W, H new width and height
+    \see \c Fl_Widget::size(int, int) */
   void size(int W, int H) { Fl_Widget::size(W, H); }
-  /** Gets the maximum length of the input field.  */
+
+  /** Gets the maximum length of the input field.  
+    \todo It is not clear if this function is actually required */
   int maximum_size() const {return maximum_size_;}
-  /** Sets the maximum length of the input field.  */
+
+  /** Sets the maximum length of the input field. 
+    \todo It is not clear if this function is actually required */
   void maximum_size(int m) {maximum_size_ = m;}
-  /**
-    The input widget maintains two pointers into the string. The
-    "position" is where the cursor is. The
-    "mark" is the other end of the selected text. If they
-    are equal then there is no selection. Changing this does not
-    affect the clipboard (use copy() to do that).
-    
-    <P>Changing these values causes a redraw(). The new
-    values are bounds checked. The return value is non-zero if the
-    new position is different than the old one. position(n)
-    is the same as position(n,n). mark(n) is the
-    same as position(position(),n).
+
+  /** Gets the position of the text cursor.
+    \return the cursor position as an index
+    \see \c position(int, int)
   */
   int position() const {return position_;}
-  /** Gets the current selection mark. mark(n) is  the same as position(position(),n).*/
+
+  /** Gets the current selection mark. 
+    \return index into the text */
   int mark() const {return mark_;}
+
+  /* Sets the index for the cursor and mark. */
   int position(int p, int m);
-   /**  See int Fl_Input_::position() const */
+
+  /** Set the cursor position and mark.
+    \c position(n) is the same as <tt>position(n, n)</tt>.
+    \param p new index for cursor and mark
+    \return \c 0 if no positions changed
+    \see \c position(int, int), \c position(), \c mark(int)
+  */
   int position(int p) {return position(p, p);}
-  /** Sets the current selection mark. mark(n) is  the same as position(position(),n).*/
+
+  /** Sets the current selection mark. 
+    \c mark(n) is  the same as <tt>position(position(),n)</tt>.
+    \param m new index of the mark 
+    \return \c 0 if the mark did not change
+    \see \c position(), \c position(int, int) */
   int mark(int m) {return position(position(), m);}
+
+  /* Deletes text from b to e and inserts the new string text. */
   int replace(int, int, const char*, int=0);
+
   /**
     Deletes the current selection.
-    cut(n) deletes n characters after the
-    position(). cut(-n) deletes n
-    characters before the position(). cut(a,b)
-    deletes the characters between offsets a and
-    b. A, b, and n are all
-    clamped to the size of the string. The mark and point are left
-    where the deleted text was.
-    
-    <P>If you want the data to go into the clipboard, do
-    Fl_Input_::copy() before calling
-    Fl_Input_::cut(), or do Fl_Input_::copy_cuts()
-    afterwards.
+
+    This function deletes the currently selected text
+    \e without storing it in the clipboard. To use the clipboard,
+    you may call \c copy() first or \c copy_cuts() after
+    this call.
+
+    \return \c 0 if no data was copied
   */
   int cut() {return replace(position(), mark(), 0);}
-  /**    See int Fl_Input_::cut()   */
-  int cut(int n) {return replace(position(), position()+n, 0);}
-  /**    See int Fl_Input_::cut()   */
-  int cut(int a, int b) {return replace(a, b, 0);}
+
   /**
-    Insert the string t at the current position, and
-    leave the mark and position after it. If l is not zero
-    then it is assumed to be strlen(t).
+    Deletes the next \p n bytes rounded to characters before or after the cursor.
+
+    This function deletes the currently selected text
+    \e without storing it in the clipboard. To use the clipboard,
+    you may call \c copy() first or \c copy_cuts() after
+    this call.
+
+    \param n number of bytes rounded to full characters and clamped to the buffer.
+           A negative number will cut characters to the left of the cursor.
+    \return \c 0 if no data was copied
+  */
+  int cut(int n) {return replace(position(), position()+n, 0);}
+
+  /**
+    Deletes all characters between index \p a and \p b.
+
+    This function deletes the currently selected text
+    \e without storing it in the clipboard. To use the clipboard,
+    you may call \c copy() first or \c copy_cuts() after
+    this call.
+
+    \param a, b range of bytes rounded to full characters and clamped to the buffer
+    \return \c 0 if no data was copied
+  */
+  int cut(int a, int b) {return replace(a, b, 0);}
+
+  /**
+    Inserts text at the cursor position.
+
+    This function inserts the string in \p t at the cursor
+    \c position() and moves the new position and mark to
+    the end of the inserted text.
+
+    \param [in] t text that will be inserted
+    \param [in] l length of text, or \c 0 if the string is terminated by \c NUL.
+    \return \c 0 if no text was inserted
   */
   int insert(const char* t, int l=0){return replace(position_, mark_, t, l);}
+
+  /* Put the current selection into the clipboard. */
   int copy(int clipboard);
+
+  /* Undo previous changes to the text buffer. */
   int undo();
+
+  /* Copy the yank buffer to the clipboard. */
   int copy_cuts();
 
-  /**
-    The first form returns the current shortcut key for the Input.
-    <P>The second form sets the shortcut key to key. Setting this
-    overrides the use of '&' in the label().  The value is a bitwise
-    OR of a key and a set of shift flags, for example FL_ALT | 'a'
-    , FL_ALT | (FL_F + 10), or just 'a'.  A value
-    of 0 disables the shortcut. </P>
-    <P>The key can be any value returned by 
-    Fl::event_key(), but will usually be an ASCII letter.  Use
-    a lower-case letter unless you require the shift key to be held down. </P>
-    <P>The shift flags can be any set of values accepted by 
-    Fl::event_state().  If the bit is on that shift key must
-    be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
-    the shift flags (zero for the other bits indicates a "don't care"
-    setting).
-  */
+  /** Return the shortcut key associtaed with this widget.
+    \return shortcut keystroke
+    \see Fl_Button::shortcut() */
   int shortcut() const {return shortcut_;}
-  /** See int shortcut() const */
+
+  /** 
+    Sets the shortcut key associtaed with this widget.
+    Pressing the shortcut key gives text editing focus to this widget.
+    \param [in] s new shortcut keystroke 
+    \see Fl_Button::shortcut() 
+  */
   void shortcut(int s) {shortcut_ = s;}
 
-  /** Gets the font of the text in the input field.*/
+  /** Gets the font of the text in the input field.
+    \return the current \c Fl_Font index */
   Fl_Font textfont() const {return textfont_;}
-  /** Sets the font of the text in the input field.*/
+
+  /** Sets the font of the text in the input field.
+    The text font defaults to \c FL_HELVETICA.
+    \param [in] s the new text font */
   void textfont(Fl_Font s) {textfont_ = s;}
-  /** Gets the size of the text in the input field.*/
+
+  /** Gets the size of the text in the input field.
+    \return the text height in pixels */
   Fl_Fontsize textsize() const {return textsize_;}
-  /** Sets the size of the text in the input field.*/
+
+  /** Sets the size of the text in the input field.
+    The text height defaults to \c FL_NORMAL_SIZE.
+    \param [in] s the new font height in pixel units */
   void textsize(Fl_Fontsize s) {textsize_ = s;}
-  /** Gets the color of the text in the input field.*/
+
+  /** Gets the color of the text in the input field.
+    \return the text color
+    \see \c textcolor(unsigned) */
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
-  /** Sets the color of the text in the input field.*/
+
+  /** Sets the color of the text in the input field.
+    The text color defaults to \c FL_FOREGROUND_COLOR.
+    \param [in] n new text color
+    \see \c textcolor() */
   void textcolor(unsigned n) {textcolor_ = n;}
-  /** Gets the color of the cursor.  This is black by default.*/
+
+  /** Gets the color of the cursor.  
+    \return the current cursor color */
   Fl_Color cursor_color() const {return (Fl_Color)cursor_color_;}
-  /** Sets the color of the cursor.  This is black by default.*/
+
+  /** Sets the color of the cursor.  
+    The default color for the cursor is \c FL_BLACK.
+    \param [in] n the new cursor color */
   void cursor_color(unsigned n) {cursor_color_ = n;}
-  /** Gets the input field type. */
+
+  /** Gets the input field type. 
+    \return the current input type */
   int input_type() const {return type() & FL_INPUT_TYPE; }
-  /** Sets the input field type. */
+
+  /** Sets the input field type. 
+    A \c redraw() is required to reformat the input field.
+    \param [in] t new input type */
   void input_type(int t) { type((uchar)(t | readonly())); }
-  /** Gets the read-only state of the input field.  */
+
+  /** Gets the read-only state of the input field.  
+    \return non-zero if this widget is read-only */
   int readonly() const { return type() & FL_INPUT_READONLY; }
-  /** Sets the read-only state of the input field.  */
+
+  /** Sets the read-only state of the input field.  
+    \param [in] b if \p b is \c 0, the text in this widget can be edited by the user */
   void readonly(int b) { if (b) type((uchar)(type() | FL_INPUT_READONLY));
                          else type((uchar)(type() & ~FL_INPUT_READONLY)); }
+
   /**
-    Gets  the word wrapping state of the input field. Word
-    wrap is only functional with multi-line input fields.
+    Gets  the word wrapping state of the input field. 
+    Word wrap is only functional with multi-line input fields.
   */
   int wrap() const { return type() & FL_INPUT_WRAP; }
+
   /**
-    Sets the word wrapping state of the input field. Word
-    wrap is only functional with multi-line input fields.
+    Sets the word wrapping state of the input field. 
+    Word wrap is only functional with multi-line input fields.
   */
   void wrap(int b) { if (b) type((uchar)(type() | FL_INPUT_WRAP));
                          else type((uchar)(type() & ~FL_INPUT_WRAP)); }
-  /**
-    Return the number of lines displayed on a single page.
-   */
-  int linesPerPage();
+
 };
 
 #endif 

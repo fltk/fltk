@@ -52,7 +52,7 @@ typedef char *Fl_String;
 typedef const char *Fl_CString;
 
 /** 24-bit Unicode character + 8-bit indicator for keyboard flags */
-typedef unsigned int Fl_Unichar;
+typedef unsigned int Fl_Char;
  
 /*@}*/	/* group: Miscellaneous */
 
