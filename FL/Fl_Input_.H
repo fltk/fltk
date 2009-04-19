@@ -52,15 +52,15 @@
 /**
   This class provides a low-overhead text input field.
 
-  This is a virtual base class below \c Fl_Input. It has all
-  the same interfaces, but lacks the \c handle() and
-  \c draw() method. You may want to subclass it if you are
+  This is a virtual base class below Fl_Input. It has all
+  the same interfaces, but lacks the handle() and
+  draw() method. You may want to subclass it if you are
   one of those people who likes to change how the editing keys
   work. It may also be useful for adding scrollbars
   to the input field.
   
-  This can act like any of the subclasses of \c Fl_Input, by
-  setting \c type() to one of the following values:
+  This can act like any of the subclasses of Fl_Input, by
+  setting type() to one of the following values:
   
   \code
   #define FL_NORMAL_INPUT	   0
@@ -77,7 +77,7 @@
   #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
   \endcode
 
-  \see \c Fl_Text_Display, \c Fl_Text_Editor for more powerful text handling widgets
+  \see Fl_Text_Display, Fl_Text_Editor for more powerful text handling widgets
 */
 class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
@@ -220,8 +220,8 @@ public:
       to the internal buffer and is valid only until the next event is
       handled.
   
-      \return pointer to an internal buffer - do not \c free() this    
-      \see \c Fl_Input_::value(const char*)
+      \return pointer to an internal buffer - do not free() this    
+      \see Fl_Input_::value(const char*)
   */
   const char* value() const {return value_;}
 
@@ -238,7 +238,7 @@ public:
   char index(int i) const {return value_[i];}
 
   /**
-    Returns the number of bytes in \c value(). 
+    Returns the number of bytes in value(). 
   
     This may be greater than <tt>strlen(value())</tt> if there are 
     \c nul characters in the text.
@@ -249,7 +249,7 @@ public:
 
   /** Sets the width and height of this widget.
     \param [in] W, H new width and height
-    \see \c Fl_Widget::size(int, int) */
+    \see Fl_Widget::size(int, int) */
   void size(int W, int H) { Fl_Widget::size(W, H); }
 
   /** Gets the maximum length of the input field.  
@@ -262,7 +262,7 @@ public:
 
   /** Gets the position of the text cursor.
     \return the cursor position as an index
-    \see \c position(int, int)
+    \see position(int, int)
   */
   int position() const {return position_;}
 
@@ -274,18 +274,18 @@ public:
   int position(int p, int m);
 
   /** Set the cursor position and mark.
-    \c position(n) is the same as <tt>position(n, n)</tt>.
+    position(n) is the same as <tt>position(n, n)</tt>.
     \param p new index for cursor and mark
-    \return \c 0 if no positions changed
-    \see \c position(int, int), \c position(), \c mark(int)
+    \return 0 if no positions changed
+    \see position(int, int), position(), mark(int)
   */
   int position(int p) {return position(p, p);}
 
   /** Sets the current selection mark. 
-    \c mark(n) is  the same as <tt>position(position(),n)</tt>.
+    mark(n) is  the same as <tt>position(position(),n)</tt>.
     \param m new index of the mark 
-    \return \c 0 if the mark did not change
-    \see \c position(), \c position(int, int) */
+    \return 0 if the mark did not change
+    \see position(), position(int, int) */
   int mark(int m) {return position(position(), m);}
 
   /* Deletes text from b to e and inserts the new string text. */
@@ -296,10 +296,10 @@ public:
 
     This function deletes the currently selected text
     \e without storing it in the clipboard. To use the clipboard,
-    you may call \c copy() first or \c copy_cuts() after
+    you may call copy() first or copy_cuts() after
     this call.
 
-    \return \c 0 if no data was copied
+    \return 0 if no data was copied
   */
   int cut() {return replace(position(), mark(), 0);}
 
@@ -308,12 +308,12 @@ public:
 
     This function deletes the currently selected text
     \e without storing it in the clipboard. To use the clipboard,
-    you may call \c copy() first or \c copy_cuts() after
+    you may call copy() first or copy_cuts() after
     this call.
 
     \param n number of bytes rounded to full characters and clamped to the buffer.
            A negative number will cut characters to the left of the cursor.
-    \return \c 0 if no data was copied
+    \return 0 if no data was copied
   */
   int cut(int n) {return replace(position(), position()+n, 0);}
 
@@ -322,11 +322,11 @@ public:
 
     This function deletes the currently selected text
     \e without storing it in the clipboard. To use the clipboard,
-    you may call \c copy() first or \c copy_cuts() after
+    you may call copy() first or copy_cuts() after
     this call.
 
     \param a, b range of bytes rounded to full characters and clamped to the buffer
-    \return \c 0 if no data was copied
+    \return 0 if no data was copied
   */
   int cut(int a, int b) {return replace(a, b, 0);}
 
@@ -334,12 +334,12 @@ public:
     Inserts text at the cursor position.
 
     This function inserts the string in \p t at the cursor
-    \c position() and moves the new position and mark to
+    position() and moves the new position and mark to
     the end of the inserted text.
 
     \param [in] t text that will be inserted
-    \param [in] l length of text, or \c 0 if the string is terminated by \c NUL.
-    \return \c 0 if no text was inserted
+    \param [in] l length of text, or 0 if the string is terminated by \c nul.
+    \return 0 if no text was inserted
   */
   int insert(const char* t, int l=0){return replace(position_, mark_, t, l);}
 
@@ -366,7 +366,7 @@ public:
   void shortcut(int s) {shortcut_ = s;}
 
   /** Gets the font of the text in the input field.
-    \return the current \c Fl_Font index */
+    \return the current Fl_Font index */
   Fl_Font textfont() const {return textfont_;}
 
   /** Sets the font of the text in the input field.
@@ -385,13 +385,13 @@ public:
 
   /** Gets the color of the text in the input field.
     \return the text color
-    \see \c textcolor(unsigned) */
+    \see textcolor(unsigned) */
   Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
 
   /** Sets the color of the text in the input field.
     The text color defaults to \c FL_FOREGROUND_COLOR.
     \param [in] n new text color
-    \see \c textcolor() */
+    \see textcolor() */
   void textcolor(unsigned n) {textcolor_ = n;}
 
   /** Gets the color of the cursor.  
@@ -408,7 +408,7 @@ public:
   int input_type() const {return type() & FL_INPUT_TYPE; }
 
   /** Sets the input field type. 
-    A \c redraw() is required to reformat the input field.
+    A redraw() is required to reformat the input field.
     \param [in] t new input type */
   void input_type(int t) { type((uchar)(t | readonly())); }
 
@@ -417,7 +417,7 @@ public:
   int readonly() const { return type() & FL_INPUT_READONLY; }
 
   /** Sets the read-only state of the input field.  
-    \param [in] b if \p b is \c 0, the text in this widget can be edited by the user */
+    \param [in] b if \p b is 0, the text in this widget can be edited by the user */
   void readonly(int b) { if (b) type((uchar)(type() | FL_INPUT_READONLY));
                          else type((uchar)(type() & ~FL_INPUT_READONLY)); }
 
