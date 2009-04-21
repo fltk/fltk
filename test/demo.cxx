@@ -40,7 +40,7 @@
 #  include <unistd.h>
 #endif
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Choice.H>
@@ -56,12 +56,12 @@ void doscheme(Fl_Choice *c, void *) {
   Fl::scheme(c->text(c->value()));
 }
 
-Fl_Window *form;
+Fl_Double_Window *form;
 Fl_Button *but[9];
 
 void create_the_forms() {
   Fl_Widget *obj;
-  form = new Fl_Window(350, 440);
+  form = new Fl_Double_Window(350, 440);
   obj = new Fl_Box(FL_FRAME_BOX,10,15,330,40,"FLTK Demonstration");
   obj->color(FL_GRAY-4);
   obj->labelsize(24);

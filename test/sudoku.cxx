@@ -27,7 +27,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Enumerations.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Group.H>
 #include <FL/fl_ask.H>
@@ -162,7 +162,7 @@ class SudokuCell : public Fl_Widget {
 
 
 // Sudoku window class...
-class Sudoku : public Fl_Window {
+class Sudoku : public Fl_Double_Window {
   Fl_Sys_Menu_Bar *menubar_;
   Fl_Group	*grid_;
   time_t	seed_;
@@ -627,7 +627,7 @@ Fl_Preferences	Sudoku::prefs_(Fl_Preferences::USER, "fltk.org", "sudoku");
 
 // Create a Sudoku game window...
 Sudoku::Sudoku()
-  : Fl_Window(GROUP_SIZE * 3, GROUP_SIZE * 3 + MENU_OFFSET, "Sudoku")
+  : Fl_Double_Window(GROUP_SIZE * 3, GROUP_SIZE * 3 + MENU_OFFSET, "Sudoku")
 {
   int j, k;
   Fl_Group *g;
@@ -1215,7 +1215,7 @@ Sudoku::reset_cb(Fl_Widget *widget, void *) {
 void
 Sudoku::resize(int X, int Y, int W, int H) {
   // Resize the window...
-  Fl_Window::resize(X, Y, W, H);
+  Fl_Double_Window::resize(X, Y, W, H);
 
   // Save the new window geometry...
   prefs_.set("x", X);

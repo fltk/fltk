@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Return_Button.H>
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 // the question dialog several times and make sure it doesn't crash.
 // fc: added more fl_ask common dialogs for test cases purposes.
 
-  Fl_Window window(200, 105);
+  Fl_Double_Window window(200, 105);
   Fl_Return_Button b(20, 10, 160, 35, buffer); b.callback(rename_me);
   Fl_Button b2(20, 50, 160, 35, buffer2); b2.callback(rename_me_pwd);
   window.end();

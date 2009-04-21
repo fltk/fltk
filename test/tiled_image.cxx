@@ -26,7 +26,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tiled_Image.H>
@@ -37,7 +37,7 @@
 #include "pixmaps/tile.xpm"
 
 Fl_Button *b;
-Fl_Window *w;
+Fl_Double_Window *w;
 
 void button_cb(Fl_Widget *,void *) {
   w->hide();
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
   }
 #endif
 
-  Fl_Window window(400,400); ::w = &window;
+  Fl_Double_Window window(400,400); ::w = &window;
   Fl_Group group(0,0,400,400);
   group.image(new Fl_Tiled_Image(new Fl_Pixmap((const char * const *)tile_xpm)));
   group.align(FL_ALIGN_INSIDE);

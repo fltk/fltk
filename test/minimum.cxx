@@ -44,13 +44,13 @@
 
 #include <stdlib.h>
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Slider.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Return_Button.H>
 
 int main(int argc, char **argv) {
-  Fl_Window *window = new Fl_Window(400,320,argv[0]);
+  Fl_Double_Window *window = new Fl_Double_Window(400,320,argv[0]);
   window->resizable(*(new Fl_Box(FL_ENGRAVED_FRAME,10,10,300,300,
 "MINIMUM UPDATE TEST\n"
 "\n"

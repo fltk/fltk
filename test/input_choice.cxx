@@ -23,7 +23,7 @@
 
 #include <stdio.h>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Input_Choice.H>
 
 void buttcb(Fl_Widget*,void*data) {
@@ -44,7 +44,7 @@ void input_choice_cb(Fl_Widget*,void*data) {
 }
 
 int main(int argc, char **argv) {
-    Fl_Window win(300, 200);
+    Fl_Double_Window win(300, 200);
 
     Fl_Input_Choice in(40,40,100,28,"Test");
     in.callback(input_choice_cb, (void*)&in);

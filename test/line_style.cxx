@@ -26,27 +26,27 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Value_Slider.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Box.H>
 
-Fl_Window *form;
+Fl_Double_Window *form;
 Fl_Slider *sliders[8];
 Fl_Choice *choice[3];
 Fl_Check_Button *draw_line;
 
-class test_box: public Fl_Window {
+class test_box: public Fl_Double_Window {
   void draw();
 public:
   test_box(int x,int y,int w,int h,const char *l=0)
-    : Fl_Window(x,y,w,h,l) {}
+    : Fl_Double_Window(x,y,w,h,l) {}
 }*test;
 
 void test_box::draw() {
-  Fl_Window::draw();
+  Fl_Double_Window::draw();
   fl_color((uchar)(sliders[0]->value()),
 	   (uchar)(sliders[1]->value()),
 	   (uchar)(sliders[2]->value()));
@@ -111,7 +111,7 @@ void do_redraw(Fl_Widget*,void*)
 }
 
 void makeform(const char *) {
-  form = new Fl_Window(500,230,"fl_line_style() test");
+  form = new Fl_Double_Window(500,230,"fl_line_style() test");
   sliders[0]= new Fl_Value_Slider(280,10,180,20,"R");
   sliders[0]->bounds(0,255);
   sliders[1]= new Fl_Value_Slider(280,30,180,20,"G");

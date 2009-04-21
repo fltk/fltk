@@ -29,7 +29,7 @@
 
 #if HAVE_PTHREAD || defined(WIN32)
 #  include <FL/Fl.H>
-#  include <FL/Fl_Window.H>
+#  include <FL/Fl_Double_Window.H>
 #  include <FL/Fl_Browser.H>
 #  include <FL/Fl_Value_Output.H>
 #  include <FL/fl_ask.H>
@@ -120,13 +120,13 @@ void* prime_func(void* p)
 
 int main(int argc, char **argv)
 {
-  Fl_Window* w = new Fl_Window(200, 200, "Single Thread");
+  Fl_Double_Window* w = new Fl_Double_Window(200, 200, "Single Thread");
   browser1 = new Fl_Browser(0, 0, 200, 175);
   w->resizable(browser1);
   value1 = new Fl_Value_Output(100, 175, 200, 25, "Max Prime:");
   w->end();
   w->show(argc, argv);
-  w = new Fl_Window(200, 200, "Six Threads");
+  w = new Fl_Double_Window(200, 200, "Six Threads");
   browser2 = new Fl_Browser(0, 0, 200, 175);
   w->resizable(browser2);
   value2 = new Fl_Value_Output(100, 175, 200, 25, "Max Prime:");

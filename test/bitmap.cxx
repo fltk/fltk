@@ -26,7 +26,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Bitmap.H>
 #include <stdio.h>
@@ -102,7 +102,7 @@ static uchar sorceress_bits[] = {
 
 Fl_Toggle_Button *leftb,*rightb,*topb,*bottomb,*insideb,*overb,*inactb;
 Fl_Button *b;
-Fl_Window *w;
+Fl_Double_Window *w;
 
 void button_cb(Fl_Widget *,void *) {
   int i = 0;
@@ -119,7 +119,7 @@ void button_cb(Fl_Widget *,void *) {
 }
 
 int main(int argc, char **argv) {
-  w = new Fl_Window(400,400);
+  w = new Fl_Double_Window(400,400);
   b = new Fl_Button(140,160,120,120,"Bitmap");
   b->image(new Fl_Bitmap(sorceress_bits,sorceress_width,sorceress_height));
   leftb = new Fl_Toggle_Button(25,50,50,25,"left");

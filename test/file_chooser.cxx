@@ -48,6 +48,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_PNM_Image.H>
 #include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Double_Window.H>
 #include <string.h>
 
 
@@ -91,9 +92,9 @@ int			// O - Exit status
 main(int  argc,		// I - Number of command-line arguments
      char *argv[])	// I - Command-line arguments
 {
-  Fl_Window	*window;// Main window
-  Fl_Button	*button;// Buttons
-  Fl_File_Icon	*icon;	// New file icon
+  Fl_Double_Window	*window;// Main window
+  Fl_Button		*button;// Buttons
+  Fl_File_Icon		*icon;	// New file icon
 
 
   // Make the file chooser...
@@ -108,7 +109,7 @@ main(int  argc,		// I - Number of command-line arguments
   Fl_Shared_Image::add_handler(ps_check);
 
   // Make the main window...
-  window = new Fl_Window(400, 215, "File Chooser Test");
+  window = new Fl_Double_Window(400, 215, "File Chooser Test");
 
   filter = new Fl_Input(50, 10, 315, 25, "Filter:");
   if (argc > 1)

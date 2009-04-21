@@ -27,7 +27,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Shared_Image.H>
 #include <string.h>
@@ -36,7 +36,7 @@
 #include <FL/fl_message.H>
 
 Fl_Box *b;
-Fl_Window *w;
+Fl_Double_Window *w;
 Fl_Shared_Image *img;
 
 
@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
 
   Fl::args(argc,argv,i,arg);
 
-  Fl_Window window(400,435); ::w = &window;
+  Fl_Double_Window window(400,435); ::w = &window;
   Fl_Box b(10,45,380,380); ::b = &b;
   b.box(FL_THIN_DOWN_BOX);
   b.align(FL_ALIGN_INSIDE|FL_ALIGN_CENTER);

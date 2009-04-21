@@ -26,7 +26,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Pixmap.H>
 #include <stdio.h>
@@ -37,7 +37,7 @@
 
 Fl_Toggle_Button *leftb,*rightb,*topb,*bottomb,*insideb,*overb,*inactb;
 Fl_Button *b;
-Fl_Window *w;
+Fl_Double_Window *w;
 
 void button_cb(Fl_Widget *,void *) {
   int i = 0;
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
   if (Fl::args(argc,argv,i,arg) < argc)
     Fl::fatal(" -8 # : use default visual\n%s\n",Fl::help);
 
-  Fl_Window window(400,400); ::w = &window;
+  Fl_Double_Window window(400,400); ::w = &window;
   Fl_Button b(140,160,120,120,"Pixmap"); ::b = &b;
   Fl_Pixmap *pixmap = new Fl_Pixmap(porsche_xpm);
   Fl_Pixmap *depixmap;

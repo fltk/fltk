@@ -100,7 +100,7 @@ struct keycode_table{int n; const char* text;} table[] = {
 
 int main(int argc, char** argv) {
   Fl::add_handler(handle);
-  Fl_Window *window = make_window();
+  MyWindow *window = make_window();
   window->show(argc,argv);
   while (Fl::wait()) {
     const char *str;

@@ -36,7 +36,7 @@ int N = 0;
 #define H 50
 #define ROWS 14
 
-Fl_Window *window;
+Fl_Double_Window *window;
 
 void bt(const char *name, Fl_Boxtype type, int square=0) {
   int x = N%4;

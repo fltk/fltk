@@ -30,13 +30,13 @@
 #define W3 (5*W1+6*B)
 
 #include <FL/Fl.H>
-#include <FL/Fl_Single_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Radio_Button.H>
 #include <FL/fl_draw.H>
 #include <FL/fl_message.H>
 
-Fl_Single_Window *window;
+Fl_Double_Window *window;
 Fl_Box *box;
 
 int big = 0;
@@ -64,7 +64,7 @@ void b_cb(Fl_Widget *,long w) {
 }
 
 int main(int argc, char **argv) {
-  window = new Fl_Single_Window(W3,W3);
+  window = new Fl_Double_Window(W3,W3);
   window->box(FL_NO_BOX);
   Fl_Box *n;
   for (int x = 0; x<4; x++) for (int y = 0; y<4; y++) {

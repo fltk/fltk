@@ -33,7 +33,7 @@
 //#define TEST_INACTIVE
 
 int main(int argc, char** argv) {
-  Fl_Window window(300,300);
+  Fl_Double_Window window(300,300);
   window.box(FL_NO_BOX);
   window.resizable(window);
   Fl_Tile tile(0,0,300,300);
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   box0.color(9);
   box0.labelsize(36);
   box0.align(FL_ALIGN_CLIP);
-  Fl_Window w1(150,0,150,150,"1");
+  Fl_Double_Window w1(150,0,150,150,"1");
   w1.box(FL_NO_BOX);
   Fl_Box box1(0,0,150,150,"1\nThis is a\nchild\nwindow");
   box1.box(FL_DOWN_BOX);

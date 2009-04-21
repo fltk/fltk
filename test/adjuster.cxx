@@ -27,7 +27,7 @@
 
 #include <stdlib.h>
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Adjuster.H>
 #include <FL/Fl_Box.H>
 
@@ -39,7 +39,7 @@ void adjcb(Fl_Widget *o, void *v) {
 }
 
 int main(int argc, char ** argv) {
-   Fl_Window window(320,100,argv[0]);
+   Fl_Double_Window window(320,100,argv[0]);
 
    char buf1[100];
    Fl_Box b1(FL_DOWN_BOX,20,30,80,25,buf1);

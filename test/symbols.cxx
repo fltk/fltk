@@ -30,7 +30,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <FL/Fl.H>
-#include <FL/Fl_Single_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Value_Slider.H>
 #include <FL/fl_draw.H>
@@ -41,7 +41,7 @@ int N = 0;
 #define ROWS 6
 #define COLS 6
 
-Fl_Window *window;
+Fl_Double_Window *window;
 Fl_Value_Slider *orientation;
 Fl_Value_Slider *size;
 
@@ -93,7 +93,7 @@ void bt(const char *name) {
 }
 
 int main(int argc, char ** argv) {
-  window = new Fl_Single_Window(COLS*W,ROWS*H+60);
+  window = new Fl_Double_Window(COLS*W,ROWS*H+60);
 bt("@->");
 bt("@>");
 bt("@>>");

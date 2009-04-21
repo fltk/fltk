@@ -32,7 +32,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Light_Button.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Scroll.H>
 #include <FL/Fl_Value_Slider.H>
 #include <FL/Fl_Pack.H>
@@ -57,8 +57,8 @@ void spacing_cb(Fl_Value_Slider*o, long) {
 }
 
 int main(int argc, char **argv) {
- Fl_Window *w;
- {Fl_Window* o = new Fl_Window(360, 370);
+ Fl_Double_Window *w;
+ {Fl_Double_Window* o = new Fl_Double_Window(360, 370);
   w = o;
   scroll = new Fl_Scroll(10,10,340,285);
  {Fl_Pack* o = new Fl_Pack(10, 10, 340, 285);

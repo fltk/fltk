@@ -30,7 +30,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Image.H>
 #include <stdio.h>
@@ -65,7 +65,7 @@ void make_image() {
 
 Fl_Toggle_Button *leftb,*rightb,*topb,*bottomb,*insideb,*overb,*inactb;
 Fl_Button *b;
-Fl_Window *w;
+Fl_Double_Window *w;
 
 void button_cb(Fl_Widget *,void *) {
   int i = 0;
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
   }
 #endif
 
-  Fl_Window window(400,400); ::w = &window;
+  Fl_Double_Window window(400,400); ::w = &window;
   window.color(FL_WHITE);
   Fl_Button b(140,160,120,120,"Image w/Alpha"); ::b = &b;
 

@@ -26,7 +26,7 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Hor_Value_Slider.H>
 #include <FL/Fl_Choice.H>
 #include <FL/fl_draw.H>
@@ -100,7 +100,7 @@ public:
 };
 
 int main(int argc, char **argv) {
-  Fl_Window window(400,300);
+  Fl_Double_Window window(400,300);
 
   Fl_Choice choice(80,100,200,25,"Cursor:");
   choice.menu(choices);

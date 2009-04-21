@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
   int i;
   if (!Fl::args(argc,argv,i)) Fl::fatal(Fl::help);
   const char* fname = (i < argc) ? argv[i] : "browser.cxx";
-  Fl_Window window(480,400,fname);
+  Fl_Double_Window window(480,400,fname);
   browser = new Fl_Select_Browser(0,0,480,350,0);
   browser->type(FL_MULTI_BROWSER);
   //browser->type(FL_HOLD_BROWSER);

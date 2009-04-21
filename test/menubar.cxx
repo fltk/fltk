@@ -27,7 +27,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Toggle_Button.H>
 #include <FL/Fl_Menu_Button.H>
@@ -39,7 +39,7 @@
 
 void window_cb(Fl_Widget* w, void*) {
   puts("window callback called");
-  ((Fl_Window *)w)->hide();
+  ((Fl_Double_Window *)w)->hide();
 }
 
 void test_cb(Fl_Widget* w, void*) {
@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
     sprintf(buf,"item %d",i);
     hugemenu[i].text = strdup(buf);
   }
-  Fl_Window window(WIDTH,400);
+  Fl_Double_Window window(WIDTH,400);
   window.callback(window_cb);
   Fl_Menu_Bar menubar(0,0,WIDTH,30); menubar.menu(menutable);
   menubar.callback(test_cb);
