@@ -29,7 +29,7 @@
 #include <FL/fl_draw.H>
 
 //
-//------- test the line drawing capabilities of this implementation ----------
+//------- test the image drawing capabilities of this implementation ----------
 //
 class ImageTest : public Fl_Box {
 public: 
@@ -48,12 +48,16 @@ public:
         *drgba++           = *dga++         = x+y;
       }
     }
+    i_rgba = new Fl_RGB_Image (img_rgba,128,128,4);
+    i_ga = new Fl_RGB_Image (img_gray_a,128,128,2);
     return new ImageTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
   static uchar *img_gray;
   static uchar *img_gray_a;
   static uchar *img_rgb;
   static uchar *img_rgba;
+  static Fl_RGB_Image *i_rgba;
+  static Fl_RGB_Image *i_ga;
   ImageTest(int x, int y, int w, int h) : Fl_Box(x, y, w, h) {
     label("Testing Image Drawing\n\n"
 	"This test renders four images, two of them with a checker board\n"
@@ -74,7 +78,8 @@ public:
     fl_color(FL_BLACK); fl_rectf(xx, yy, 130, 130);
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 64, 64);
     fl_color(FL_WHITE); fl_rectf(xx+65, yy+65, 64, 64);
-    fl_draw_image(img_rgba, xx+1, yy+1, 128, 128, 4);
+    // fl_draw_image(img_rgba, xx+1, yy+1, 128, 128, 4);
+    i_rgba->draw(xx+1,yy+1);
     fl_color(FL_BLACK); fl_draw("RGBA", xx+134, yy+64);
 
     xx = x()+10+200; yy = y()+10;
@@ -86,7 +91,8 @@ public:
     fl_color(FL_BLACK); fl_rectf(xx, yy, 130, 130);
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 64, 64);
     fl_color(FL_WHITE); fl_rectf(xx+65, yy+65, 64, 64);
-    fl_draw_image(img_gray_a, xx+1, yy+1, 128, 128, 2);
+    // fl_draw_image(img_gray_a, xx+1, yy+1, 128, 128, 2);
+    i_ga->draw(xx+1,yy+1);
     fl_color(FL_BLACK); fl_draw("Gray+Alpha", xx+134, yy+64);
   }
 };
@@ -95,6 +101,8 @@ uchar *ImageTest::img_gray = 0;
 uchar *ImageTest::img_gray_a = 0;
 uchar *ImageTest::img_rgb = 0;
 uchar *ImageTest::img_rgba = 0;
+Fl_RGB_Image *ImageTest::i_rgba = 0;
+Fl_RGB_Image *ImageTest::i_ga = 0;
 
 UnitTest images("drawing images", ImageTest::create);
 

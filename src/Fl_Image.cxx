@@ -452,7 +452,11 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (H <= 0) return;
   if (!id) {
 #ifdef __APPLE_QUARTZ__
-    CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+    CGColorSpaceRef lut = 0;
+    if (d()<=2)
+      lut = CGColorSpaceCreateDeviceGray();
+    else
+      lut = CGColorSpaceCreateDeviceRGB();
     CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, w()*h()*d(), 0L);
     id = CGImageCreate( w(), h(), 8, d()*8, ld()?ld():w()*d(),
         lut, (d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
