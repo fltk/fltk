@@ -32,7 +32,7 @@
 // v1.1 - Matthias seperated all tests into multiple source files for hopefully easier handling
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Help_View.H>
 #include <FL/Fl_Group.H>
@@ -105,10 +105,10 @@ UnitTest *UnitTest::fTest[];
 
 // The main window needs an additional drawing feature in order to support 
 // the viewport alignment test.
-class MainWindow : public Fl_Window {
+class MainWindow : public Fl_Double_Window {
 public:
   MainWindow(int w, int h, const char *l=0L) :
-    Fl_Window(w, h, l),
+    Fl_Double_Window(w, h, l),
     fTestAlignment(0)
   { }
   // this code is used by the viewport alignment test
@@ -136,7 +136,7 @@ public:
     fl_color(FL_BLACK); fl_rect(w()-sze-1, 3, sze-2, sze-2);
   }
   void draw() {
-    Fl_Window::draw();
+    Fl_Double_Window::draw();
     if (fTestAlignment) {
       drawAlignmentIndicators();
     }
