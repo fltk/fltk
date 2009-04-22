@@ -1740,7 +1740,9 @@ void Fl_Help_View::format() {
       else if (isspace((*ptr)&255))
       {
 	needspace = 1;
-
+	if ( pre ) {
+	  xx += (int)fl_width(' ');
+        }
 	ptr ++;
       }
       else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
