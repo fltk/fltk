@@ -1138,11 +1138,13 @@ void Fl_Help_View::format() {
     linkdest[0]  = '\0';
     table_offset = 0;
 
+    // Html text character loop
     for (ptr = value_, s = buf; *ptr;)
     {
+      // End of word?
       if ((*ptr == '<' || isspace((*ptr)&255)) && s > buf)
       {
-        // Get width...
+        // Get width of word parsed so far...
         *s = '\0';
         ww = (int)fl_width(buf);
 
@@ -1231,6 +1233,7 @@ void Fl_Help_View::format() {
 
       if (*ptr == '<')
       {
+	// Handle html tags..
 	start = ptr;
 	ptr ++;
 
@@ -1747,6 +1750,7 @@ void Fl_Help_View::format() {
       }
       else if (*ptr == '&' && s < (buf + sizeof(buf) - 1))
       {
+        // Handle html '&' codes, eg. "&amp;"
 	ptr ++;
 
         int qch = quote_char(ptr);
