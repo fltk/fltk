@@ -1239,6 +1239,21 @@ int Fl_Input_::linesPerPage() {
   return n;
 }
 
+/**
+  Returns the character at index \p i.
+
+  This function returns the utf8 character at \p i 
+  as a ucs4 character code.
+  
+  \param [in] i index into the value field
+  \return the character at index \p i
+*/
+Fl_Char Fl_Input_::index(int i) const 
+{
+  int len = 0;
+  return fl_utf8decode(value_+i, value_+size_, &len);
+}
+
 //
 // End of "$Id$".
 //

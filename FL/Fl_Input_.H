@@ -77,7 +77,27 @@
   #define FL_MULTILINE_OUTPUT_WRAP (FL_MULTILINE_INPUT | FL_INPUT_READONLY | FL_INPUT_WRAP)
   \endcode
 
+  All variables that represent an index into a text buffer are byte-oriented,
+  not character oriented. Since utf8 characters can be up to six bytes long, 
+  simply incrementing such an index will not reliably advance to the next character
+  in the text buffer. 
+
+  Indices and pointers into the text buffer shoudl always point at an 7 bit ASCII 
+  character or the beginning of a utf8 character sequence. Behavior for false
+  utf8 sequences and pointers into the middle of a seqeunce are undefined.
+
   \see Fl_Text_Display, Fl_Text_Editor for more powerful text handling widgets
+
+  \internal
+  When porting this widget from ASCII to UTF8, previously legal pointers into 
+  the text of this widget can become illegal by pointing into the middle of
+  a UTF8 seuence. This is not a big problem for Fl_Input_ because all code
+  in this module is quite tolerant. It could be problematic though when deriving
+  from this class because no feedback for illegal pointers is given. Additionaly,
+  a careless "copy" call can put partial UTF8 sequnces into the clipboard.
+
+  None of these issues should be desasterous. Nevertheless, we should 
+  discuss how FLTK should handle false UTF8 suequences and pointers.
 */
 class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
@@ -90,7 +110,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
   /** \internal Size of text in bytes in the \p value_ field. */
   int size_;
 
-  /** \internal Please document me! */
+  /** \internal \todo Please document me! */
   int bufsize;
   
   /** \internal Positin of the cursor in the document */
@@ -225,17 +245,8 @@ public:
   */
   const char* value() const {return value_;}
 
-  /**
-    Returns the character at index \p i.
-
-    This function returns the utf8 character that is closest to \p i 
-    as a ucs4 character code.
-    
-    \param [in] i index into the value field
-    \return the character at index \p i
-    \todo Not yet utf8 aware
-  */
-  char index(int i) const {return value_[i];}
+  /* Returns the character at index \p i. */
+  Fl_Char index(int i) const;
 
   /**
     Returns the number of bytes in value(). 

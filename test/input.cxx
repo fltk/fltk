@@ -52,6 +52,10 @@ void toggle_cb(Fl_Widget *o, long v) {
 void test(Fl_Input *i) {
   if (i->changed()) {
     i->clear_changed(); printf("%s '%s'\n",i->label(),i->value());
+    char utf8buf[10];
+    int last = fl_utf8encode(i->index(i->position()), utf8buf);
+    utf8buf[last] = 0;
+    printf("Symbol at cursor position: %s\n", utf8buf);
   }
 }
 
