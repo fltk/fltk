@@ -62,11 +62,11 @@ class Rotated_Label_Box : public Fl_Widget{
     if(rt_align&FL_ALIGN_LEFT){
       dx=dy=0;
     }else if(rt_align&FL_ALIGN_RIGHT){
-      dy=(int)-sin(M_PI*(double)(rt_angle+180)/180.)*(double)dx;
-      dx=(int)cos(M_PI*(double)(rt_angle+180)/180.)*(double)dx;
+      dy=(int)(-sin(M_PI*(double)(rt_angle+180)/180.)*(double)dx);
+      dx=(int)(cos(M_PI*(double)(rt_angle+180)/180.)*(double)dx);
     }else{
-      dy=(int)sin(M_PI*(double)rt_angle/180.)*(double)dx;
-      dx=(int)-cos(M_PI*(double)rt_angle/180.)*(double)dx;
+      dy=(int)(sin(M_PI*(double)rt_angle/180.)*(double)dx);
+      dx=(int)(-cos(M_PI*(double)rt_angle/180.)*(double)dx);
       dx/=2;dy/=2;
     }
     if(labeltype()==FL_SHADOW_LABEL)shadow_label(x()+w()/2+dx,y()+h()/2+dy);
