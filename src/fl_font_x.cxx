@@ -319,7 +319,10 @@ void fl_draw(const char* c, int n, int x, int y) {
 //  XDrawString(fl_display, fl_window, fl_gc, x, y, c, n);
   XUtf8DrawString(fl_display, fl_window, fl_xfont, fl_gc, x, y, c, n);
 }
-
+void fl_draw(int angle, const char *str, int n, int x, int y) {
+  fprintf(stderr,"ROTATING TEXT NOT IMPLIMENTED\n");
+  fl_draw(str, n, (int)x, (int)y);
+}
 //void fl_draw(const char* str, int n, float x, float y) {
 //  fl_draw(str, n, (int)x, (int)y);
 //}

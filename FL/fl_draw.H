@@ -284,9 +284,22 @@ FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
 */
 FL_EXPORT void fl_draw(const char* str, int x, int y);
 /**
+  Draws a nul-terminated string starting at the given location and 
+  rotating \p angle degrees counterclockwise.
+  This version of fl_draw provides direct access to the text drawing
+  function of the underlying OS and suported for Xft, Win32 and MacOS
+  fltk subset.
+*/
+FL_EXPORT void fl_draw(int angle,const char* str, int x, int y);
+/**
   Draws an array of \p n characters starting at the given location.
 */
 FL_EXPORT void fl_draw(const char* str, int n, int x, int y);
+/**
+  Draws an array of \p n characters starting at the given location,
+  rotating \p angle degrees counterclockwise.
+*/
+FL_EXPORT void fl_draw(int angle,const char* str, int n, int x, int y);
 /**
   Draws an array of \p n characters right to left starting at given location.
 */

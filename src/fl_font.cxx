@@ -68,6 +68,10 @@ void fl_draw(const char* str, int x, int y) {
   fl_draw(str, strlen(str), x, y);
 }
 
+void fl_draw(int angle, const char* str, int x, int y) {
+  fl_draw(angle, str, strlen(str), x, y);//must be fixed!
+}
+
 void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
   if (c)  fl_text_extents(c, strlen(c), dx, dy, w, h);
   else {

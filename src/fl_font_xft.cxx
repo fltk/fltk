@@ -65,6 +65,8 @@
 
 #include <X11/Xft/Xft.h>
 
+#include <math.h>
+
 // The predefined fonts that FLTK has:
 static Fl_Fontdesc built_in_table[] = {
 {" sans"},
@@ -91,6 +93,7 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 Fl_Font fl_font_ = 0;
 Fl_Fontsize fl_size_ = 0;
+int fl_angle_ = 0; // internal for rotating text support
 //XFontStruct* fl_xfont = 0;
 XUtf8FontStruct* fl_xfont = 0;
 void *fl_xftfont = 0;
@@ -98,21 +101,23 @@ void *fl_xftfont = 0;
 const char* fl_encoding_ = "iso10646-1";
 Fl_Font_Descriptor* fl_fontsize = 0;
 
-void fl_font(Fl_Font fnum, Fl_Fontsize size) {
+
+
+void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // special case to stop font caching
-    fl_font_ = 0; fl_size_ = 0;
+    fl_font_ = 0; fl_size_ = 0; fl_angle_ = 0;
     return;
   }
-  if (fnum == fl_font_ && size == fl_size_
+  if (fnum == fl_font_ && size == fl_size_ && angle == fl_angle_
       && fl_fontsize)
 //      && !strcasecmp(fl_fontsize->encoding, fl_encoding_))
     return;
-  fl_font_ = fnum; fl_size_ = size;
+  fl_font_ = fnum; fl_size_ = size; fl_angle_ = angle;
   Fl_Fontdesc *font = fl_fonts + fnum;
   Fl_Font_Descriptor* f;
   // search the fontsizes we have generated already
   for (f = font->first; f; f = f->next) {
-    if (f->size == size)// && !strcasecmp(f->encoding, fl_encoding_))
+    if (f->size == size && f->angle == angle)// && !strcasecmp(f->encoding, fl_encoding_))
       break;
   }
   if (!f) {
@@ -127,7 +132,11 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size) {
   fl_xftfont = (void*)f->font;
 }
 
-static XftFont* fontopen(const char* name, bool core) {
+void fl_font(Fl_Font fnum, Fl_Fontsize size) {
+  fl_font(fnum,size,0);
+}
+
+static XftFont* fontopen(const char* name, bool core, int angle) {
   // Check: does it look like we have been passed an old-school XLFD fontname?
   bool is_xlfd = false;
   int hyphen_count = 0;
@@ -206,6 +215,14 @@ static XftFont* fontopen(const char* name, bool core) {
     XftPatternAddInteger(fnt_pat, XFT_SLANT, slant);
     XftPatternAddDouble (fnt_pat, XFT_PIXEL_SIZE, (double)fl_size_);
     XftPatternAddString (fnt_pat, XFT_ENCODING, fl_encoding_);
+
+    // rotate font if fl_angle_!=0
+    if (fl_angle_ !=0) {
+      XftMatrix m;
+      XftMatrixInit(&m);
+      XftMatrixRotate(&m,cos(M_PI*fl_angle_/180.),sin(M_PI*fl_angle_/180.));
+      XftPatternAddMatrix (fnt_pat, XFT_MATRIX,&m);
+    }
 
     if (core) {
       XftPatternAddBool(fnt_pat, XFT_CORE, FcTrue);
@@ -295,10 +312,11 @@ puts("Font Opened"); fflush(stdout);
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
 //  encoding = fl_encoding_;
   size = fl_size_;
+  angle = fl_angle_;
 #if HAVE_GL
   listbase = 0;
 #endif // HAVE_GL
-  font = fontopen(name, false);
+  font = fontopen(name, false, angle);
 }
 
 Fl_Font_Descriptor::~Fl_Font_Descriptor() {
@@ -512,6 +530,12 @@ void fl_draw(const char *str, int n, int x, int y) {
   color.color.alpha = 0xffff;
 
   XftDrawStringUtf8(draw, &color, current_font, x, y, (XftChar8 *)str, n);
+}
+
+void fl_draw(int angle, const char *str, int n, int x, int y) {
+  fl_font(fl_font_, fl_size_, angle);
+  fl_draw(str, n, (int)x, (int)y);
+  fl_font(fl_font_, fl_size_);
 }
 
 void fl_draw(const char* str, int n, float x, float y) {

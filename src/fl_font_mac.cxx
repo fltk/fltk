@@ -339,6 +339,29 @@ void fl_draw(const char *str, int n, float x, float y) {
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
 }
 
+void fl_draw(int angle, const char *str, int n, int x, int y) {
+  OSStatus err;
+    // convert to UTF-16 first
+  UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
+  
+  // avoid a crash if no font has been selected by user yet !
+  check_default_font();
+  // now collect our ATSU resources
+  ATSUTextLayout layout = fl_fontsize->layout;
+
+  Fixed ang = IntToFixed(-angle);
+  ByteCount iSize[] = {sizeof(Fixed), sizeof(CGContextRef)};
+  ATSUAttributeTag iTag[] = {kATSULineRotationTag, kATSUCGContextTag};
+  ATSUAttributeValuePtr aAttr[] = { &ang,  &fl_gc};
+  ATSUSetLayoutControls(layout, 2, iTag, iSize, aAttr);
+
+  err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
+  err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
+  //restore layout baseline
+  ang = IntToFixed(0);
+  ATSUSetLayoutControls(layout, 2, iTag, iSize, aAttr);
+}
+
 void fl_rtl_draw(const char* c, int n, int x, int y) {
 // I guess with ATSU the thing to do is force the layout mode to RTL and let ATSU draw the text...
   double offs = fl_width(c, n);

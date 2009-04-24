@@ -24,6 +24,8 @@
 //
 //     http://www.fltk.org/str.php
 //
+static int fl_angle_ = 0;
+
 #ifndef FL_DOXYGEN
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
   int weight = FW_NORMAL;
@@ -38,8 +40,8 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
   fid = CreateFont(
     -size, // negative makes it use "char size"
     0,	            // logical average character width
-    0,	            // angle of escapement
-    0,	            // base-line orientation angle
+    fl_angle_*10,	            // angle of escapement
+    fl_angle_*10,	            // base-line orientation angle
     weight,
     italic,
     FALSE,	        // underline attribute flag
@@ -51,6 +53,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
     DEFAULT_PITCH,	// pitch and family
     name	        // pointer to typeface name string
     );
+  angle = fl_angle_;
   if (!fl_gc) fl_GetDC(0);
   SelectObject(fl_gc, fid);
   GetTextMetrics(fl_gc, &metr);
@@ -111,12 +114,12 @@ static Fl_Fontdesc built_in_table[] = {
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
-static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
+static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size, int angle) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
-    if (f->minsize <= size && f->maxsize >= size) return f;
+    if (f->minsize <= size && f->maxsize >= size && f->angle == angle) return f;
   f = new Fl_Font_Descriptor(s->name, size);
   f->next = s->first;
   s->first = f;
@@ -130,14 +133,18 @@ Fl_Font fl_font_ = 0;
 Fl_Fontsize fl_size_ = 0;
 //static HDC font_gc;
 
-void fl_font(Fl_Font fnum, Fl_Fontsize size) {
+void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // just make sure that we will load a new font next time
-    fl_font_ = 0; fl_size_ = 0;
+    fl_font_ = 0; fl_size_ = 0; fl_angle_ = 0;
     return;
   }
-  if (fnum == fl_font_ && size == fl_size_) return;
-  fl_font_ = fnum; fl_size_ = size;
-  fl_fontsize = find(fnum, size);
+  if (fnum == fl_font_ && size == fl_size_ && angle == fl_angle_) return;
+  fl_font_ = fnum; fl_size_ = size; fl_angle_ = angle;
+  fl_fontsize = find(fnum, size, angle);
+}
+
+void fl_font(Fl_Font fnum, Fl_Fontsize size) {
+  fl_font(fnum, size, 0);
 }
 
 int fl_height() {
@@ -333,6 +340,30 @@ void fl_draw(const char* str, int n, int x, int y) {
     x += lx;
   }
   SetTextColor(fl_gc, oldColor);
+}
+
+void fl_draw(int angle, const char* str, int n, int x, int y) {
+  fl_font(fl_font_, fl_size_, angle);
+//  fl_draw(str, n, (int)x, (int)y);
+  int i = 0, i2=0;
+  char *end = (char *)&str[n];
+  COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
+  SelectObject(fl_gc, fl_fontsize->fid);
+  //unsigned short ucs[n]; //only GCC, but not MSVC
+  unsigned short* ucs = new unsigned short[n];
+  while (i < n) {
+    unsigned int u;
+    int l;
+    u = fl_utf8decode((const char*)(str + i), end, &l);
+    ucs[i2] = u;
+    if (l < 1) l = 1;
+    i += l;
+    ++i2;
+  }
+  TextOutW(fl_gc, x, y, (WCHAR*)ucs, i2);
+  delete[] ucs;
+  SetTextColor(fl_gc, oldColor);
+  fl_font(fl_font_, fl_size_);
 }
 
 void fl_rtl_draw(const char* c, int n, int x, int y) {

@@ -56,6 +56,7 @@ public:
   HFONT fid;
   int *width[64];
   TEXTMETRIC metr;
+  int angle;
   FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
 #  elif defined(__APPLE_QD__)
   FL_EXPORT Fl_Font_Descriptor(const char* fontname, Fl_Fontsize size);
@@ -76,6 +77,7 @@ public:
   XftFont* font;
   const char* encoding;
   Fl_Fontsize size;
+  int angle;
   FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
 #  else
   XUtf8FontStruct* font;	// X UTF-8 font information

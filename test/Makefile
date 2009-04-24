@@ -84,6 +84,7 @@ CPPFILES =\
 	radio.cxx \
 	resizebox.cxx \
 	resize.cxx \
+	rotated_text.cxx \
 	scroll.cxx \
 	shape.cxx \
 	subwindow.cxx \
@@ -146,6 +147,7 @@ ALL =	\
 	radio$(EXEEXT) \
 	resize$(EXEEXT) \
 	resizebox$(EXEEXT) \
+	rotated_text$(EXEEXT) \
 	scroll$(EXEEXT) \
 	subwindow$(EXEEXT) \
 	sudoku$(EXEEXT) \
@@ -397,6 +399,8 @@ resize$(EXEEXT): resize.o
 resize.cxx:	resize.fl ../fluid/fluid$(EXEEXT)
 
 resizebox$(EXEEXT): resizebox.o
+
+rotated_text$(EXEEXT): rotated_text.o
 
 scroll$(EXEEXT): scroll.o
 

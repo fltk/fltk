@@ -28,6 +28,8 @@ Bugs that have to be fixed before an RC
 
     * Make consistent use of fltk's utf8 functions for e.g. all string handling (see Ian's post on 03/25/09)
 
+    * fix fl_draw(cons char*, int n, int x, int y) and related for drawing realy n unicode characters 
+
     * (add your items here)
 
 
