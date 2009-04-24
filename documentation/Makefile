@@ -208,6 +208,7 @@ clean:
 	$(RM) refman.pdf
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bck *.bak *.log
+	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
 
 depend:
 
