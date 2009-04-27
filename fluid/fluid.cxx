@@ -1018,6 +1018,14 @@ void print_menu_cb(Fl_Widget *, void *) {
     win    = (Fl_Window *)(windows[winpage]->o);
     pixels = windows[winpage]->read_image(w, h);
 
+    // Swap colors: FLTK uses R-G-B --> Windows GDI uses B-G-R
+
+    { uchar *p = pixels;
+      for (int i=0; i<w*h; i++, p+=3) {
+	uchar temp = p[0]; p[0] = p[2]; p[2] = temp;
+      }
+    }
+
     // Figure out the window size, first at 100 PPI and then scaled
     // down if that is too big...
     ww = w * xdpi / 100;
