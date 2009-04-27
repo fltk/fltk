@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Fluid printing used wrong colors under Windows (STR #2195)
 	- Fixed bad system menu hadling in OS X (STR #2153)
 	- Fixed File Input mouse pointer dragging (STR #2181)
 	- Updated the bundled libpng to v1.2.35 (released 18 Feb. 2009)
