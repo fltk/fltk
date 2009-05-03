@@ -56,6 +56,8 @@ static const char *iconlabel = "?";
 Fl_Font fl_message_font_ = FL_HELVETICA;
 uchar fl_message_size_ = 14;
 
+static char avoidRecursion = 0;
+
 static Fl_Window *makeform() {
  if (message_form) {
    message_form->size(410,103);
@@ -176,6 +178,10 @@ static int innards(const char* fmt, va_list ap,
   const char *b1,
   const char *b2)
 {
+  Fl::pushed(0); // stop dragging (STR #2159)
+
+  avoidRecursion = 1;
+
   makeform();
   char buffer[1024];
   if (!strcmp(fmt,"%s")) {
@@ -212,7 +218,7 @@ static int innards(const char* fmt, va_list ap,
   Fl_Window* g = Fl::grab();
   if (g) // do an alternative grab to avoid floating menus, if possible
     Fl::grab(message_form);
-  int r;
+  int r = 0;
   for (;;) {
     Fl_Widget *o = Fl::readqueue();
     if (!o) Fl::wait();
@@ -225,6 +231,8 @@ static int innards(const char* fmt, va_list ap,
     Fl::grab(g);
   message_form->hide();
   icon->label(prev_icon_label);
+
+  avoidRecursion = 0;
   return r;
 }
 
@@ -283,6 +291,9 @@ void fl_beep(int type) {
 }
 
 void fl_message(const char *fmt, ...) {
+
+  if (avoidRecursion) return;
+
   va_list ap;
 
   fl_beep(FL_BEEP_MESSAGE);
@@ -295,6 +306,9 @@ void fl_message(const char *fmt, ...) {
 }
 
 void fl_alert(const char *fmt, ...) {
+
+  if (avoidRecursion) return;
+
   va_list ap;
 
   fl_beep(FL_BEEP_ERROR);
@@ -307,6 +321,9 @@ void fl_alert(const char *fmt, ...) {
 }
 
 int fl_ask(const char *fmt, ...) {
+
+  if (avoidRecursion) return 0;
+
   va_list ap;
 
   fl_beep(FL_BEEP_QUESTION);
@@ -319,6 +336,9 @@ int fl_ask(const char *fmt, ...) {
 }
 
 int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
+
+  if (avoidRecursion) return 0;
+
   va_list ap;
 
   fl_beep(FL_BEEP_QUESTION);
@@ -347,6 +367,9 @@ static const char* input_innards(const char* fmt, va_list ap,
 }
 
 const char* fl_input(const char *fmt, const char *defstr, ...) {
+
+  if (avoidRecursion) return 0;
+
   fl_beep(FL_BEEP_QUESTION);
 
   va_list ap;
@@ -357,6 +380,9 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
 }
 
 const char *fl_password(const char *fmt, const char *defstr, ...) {
+
+  if (avoidRecursion) return 0;
+
   fl_beep(FL_BEEP_PASSWORD);
 
   va_list ap;

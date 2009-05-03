@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.1.10
 
+	- Fix for multiple popups, when dragging and calling fl_alert()
+	  and friends from the callback (STR #2159)
+	- Avoiding crashes for recursive common dialogs (this does not 
+	  fix the issue at hand yet) (STR 2150)
 	- Fluid printing used wrong colors under Windows (STR #2195)
 	- Fixed bad system menu hadling in OS X (STR #2153)
 	- Fixed File Input mouse pointer dragging (STR #2181)
