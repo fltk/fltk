@@ -288,14 +288,14 @@ static Check *first_check, *next_check, *free_check;
   is only called once, then FLTK calls the system and tells it not to
   return until an event happens.
   
-  <p>This can be used by code that wants to monitor the
+  This can be used by code that wants to monitor the
   application's state, such as to keep a display up to date. The
   advantage of using a check callback is that it is called only when no
   events are pending. If events are coming in quickly, whole blocks of
   them will be processed before this is called once. This can save
   significant time and avoid the application falling behind the events.
   
-  <p>Sample code:
+  Sample code:
   
   \code
   bool state_changed; // anything that changes the display turns this on
@@ -499,21 +499,21 @@ static Fl_Win32_At_Exit win32_at_exit;
   each time after this returns, which is quite useful for managing
   program state.
   
-  <P>What this really does is call all idle callbacks, all elapsed
+  What this really does is call all idle callbacks, all elapsed
   timeouts, call Fl::flush() to get the screen to update, and
   then wait some time (zero if there are idle callbacks, the shortest of
   all pending timeouts, or infinity), for any events from the user or
   any Fl::add_fd() callbacks.  It then handles the events and
   calls the callbacks and then returns.
   
-  <P>The return value of the first form is non-zero if there are
+  The return value of the first form is non-zero if there are
   any visible windows - this may change in future versions of
   FLTK.
   
-  <P>The second form waits a maximum of <i>time</i>
+  The second form waits a maximum of <i>time</i>
   seconds.  <i>It can return much sooner if something happens.</i>
   
-  <P>The return value is positive if an event or fd happens before the
+  The return value is positive if an event or fd happens before the
   time elapsed.  It is zero if nothing happens (on Win32 this will only
   return zero if <i>time</i> is zero).  It is negative if an error
   occurs (this will happen on UNIX if a signal happens).
@@ -536,7 +536,7 @@ int Fl::wait() {
   }
   \endcode
   
-  <P>The returns non-zero if any windows are displayed, and 0 if no
+  The returns non-zero if any windows are displayed, and 0 if no
   windows are displayed (this is likely to change in future versions of
   FLTK).
 */
@@ -546,7 +546,7 @@ int Fl::check() {
 }
 
 /**
-  This is similar to Fl::check() except this does <I>not</I>
+  This is similar to Fl::check() except this does \e not
   call Fl::flush() or any callbacks, which is useful if your
   program is in a state where such callbacks are illegal.  This returns
   true if Fl::check() would do anything (it will continue to
@@ -609,7 +609,7 @@ Fl_Window* fl_find(Window xid) {
   a modal() window is shown this is the top-most modal window, otherwise
   it is the most recent window to get an event.
   
-  <P>The second form sets the window that is returned by
+  The second form sets the window that is returned by
   first_window.  The window is removed from wherever it is in the
   list and inserted at the top.  This is not done if Fl::modal()
   is on or if the window is not shown(). Because the first window
@@ -647,8 +647,14 @@ void Fl::redraw() {
 
 /**
   Causes all the windows that need it to be redrawn and graphics forced
-  out through the pipes.  This is what wait() does before
-  looking for events.
+  out through the pipes.
+  
+  This is what wait() does before looking for events.
+
+  Note: in multi-threaded applications you should only call Fl::flush()
+  from the main thread. If a child thread needs to trigger a redraw event,
+  it should instead call Fl::awake() to get the main thread to process the
+  event queue.
 */
 void Fl::flush() {
   if (damage()) {
@@ -691,15 +697,12 @@ static handler_link *handlers = 0;
   them returns non zero then the event is ignored.  Events that cause
   this to be called are:
   
-  <UL>
-  <LI>FL_SHORTCUT events that are not recognized by any  widget.
-  This lets you provide global shortcut keys. </LI>
-  <LI>System events that FLTK does not recognize.  See 
-  fl_xevent. </LI>
-  <LI><I>Some</I> other events when the widget FLTK selected  returns
-  zero from its handle() method.  Exactly which  ones may change
-  in future versions, however. </LI>
-  </UL>
+  - FL_SHORTCUT events that are not recognized by any  widget.
+    This lets you provide global shortcut keys.
+  - System events that FLTK does not recognize.  See fl_xevent.
+  - \e Some other events when the widget FLTK selected  returns
+    zero from its handle() method.  Exactly which  ones may change
+    in future versions, however.
 */
 void Fl::add_handler(int (*ha)(int)) {
   handler_link *l = new handler_link;
@@ -786,10 +789,10 @@ static char dnd_flag = 0; // make 'belowmouse' send DND_LEAVE instead of LEAVE
     typically go to this widget.  This is also the first widget tried for 
     FL_SHORTCUT events.
     
-    <P>If you change the belowmouse widget, the previous one and all
+    If you change the belowmouse widget, the previous one and all
     parents (that don't contain the new widget) are sent FL_LEAVE
-    events.  Changing this does <I>not</I> send FL_ENTER to this
-    or any widget, because sending FL_ENTER is supposed to <I>test</I>
+    events.  Changing this does \e not send FL_ENTER to this
+    or any widget, because sending FL_ENTER is supposed to \e test
     if the widget wants the mouse (by it returning non-zero from 
     handle()).
 */
@@ -812,10 +815,10 @@ void Fl::belowmouse(Fl_Widget *o) {
     FL_RELEASE (and any more FL_PUSH) events will be sent to
     this widget.
     
-    <P>If you change the pushed widget, the previous one and all parents
+    If you change the pushed widget, the previous one and all parents
     (that don't contain the new widget) are sent FL_RELEASE
-    events.  Changing this does <I>not</I> send FL_PUSH to this
-    or any widget, because sending FL_PUSH is supposed to <I>test</I>
+    events.  Changing this does \e not send FL_PUSH to this
+    or any widget, because sending FL_PUSH is supposed to \e test
     if the widget wants the mouse (by it returning non-zero from 
     handle()).
 */
@@ -1320,18 +1323,18 @@ int Fl_Window::handle(int ev)
     selection. FL_SELECTIONCLEAR is sent to the previous
     selection owner, if any.
     
-    <P><I>Copying the buffer every time the selection is changed is
+    <i>Copying the buffer every time the selection is changed is
     obviously wasteful, especially for large selections.  An interface will
     probably be added in a future version to allow the selection to be made
     by a callback function.  The current interface will be emulated on top
-    of this.</I>
+    of this.</i>
 */
 void Fl::selection_owner(Fl_Widget *owner) {selection_owner_ = owner;}
 
 /**
   Changes the current selection.  The block of text is
   copied to an internal buffer by FLTK (be careful if doing this in
-  response to an FL_PASTE as this <I>may</I> be the same buffer
+  response to an FL_PASTE as this \e may be the same buffer
   returned by event_text()).  The selection_owner()
   widget is set to the passed owner.
 */
@@ -1343,8 +1346,8 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
 /** Backward compatibility only:
   Set things up so the receiver widget will be called with an  FL_PASTE event some
   time in the future for the specified clipboard. The reciever
-  should be prepared to be called <I>directly</I> by this, or for
-  it to happen <I>later</I>, or possibly <I>not at all</I>.  This
+  should be prepared to be called \e directly by this, or for
+  it to happen \e later, or possibly <i>not at all</i>.  This
   allows the window system to take as long as necessary to retrieve
   the paste buffer (or even to screw up completely) without complex
   and error-prone synchronization code in FLTK.

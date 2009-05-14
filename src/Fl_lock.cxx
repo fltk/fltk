@@ -142,16 +142,16 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
     data. The main thread must call lock() to initialize
     the threading support in FLTK.
     
-    <P>Child threads must call unlock() when they are done
+    Child threads must call unlock() when they are done
     accessing FLTK.
     
-    <P>When the wait() method is waiting
+    When the wait() method is waiting
     for input or timeouts, child threads are given access to FLTK.
     Similarly, when the main thread needs to do processing, it will
     wait until all child threads have called unlock() before processing
     additional data.
     
-    <P>See also: multithreading
+    See also: \ref advanced_multithreading
 */
 /** \fn void Fl::unlock()
     The unlock() method releases the lock that was set
@@ -159,7 +159,7 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
     threads should call this method as soon as they are finished
     accessing FLTK.
     
-    <P>See also: multithreading
+    See also: \ref advanced_multithreading
 */
 /** \fn void Fl::awake(void* msg)
     The awake() method sends a message pointer to the main thread, 
@@ -167,19 +167,24 @@ int Fl::awake(Fl_Awake_Handler func, void *data) {
     terminate so that the main thread can retrieve the message and any pending 
     redraws can be processed.
     
-    <P>Multiple calls to Fl::awake() will queue multiple pointers 
+    Multiple calls to Fl::awake() will queue multiple pointers 
     for the main thread to process, up to a system-defined (typically several 
     thousand) depth. The default message handler saves the last message which 
     can be accessed using the 
     Fl::thread_message() function.
     
-    <P>The second form of awake() registers a function that will be 
+    The second form of awake() registers a function that will be 
     called by the main thread during the next message handling cycle. 
     awake() will return 0 if the callback function was registered, 
     and -1 if registration failed. Over a thousand awake callbacks can be
     registered simultaneously.
+
+    In the context of a threaded application, a call to Fl::awake() with no
+    argument will trigger event loop handling in the main thread. Since
+    it is not possible to call Fl::flush() from a subsidiary thread,
+    Fl::awake() is the best (and only, really) substitute.
     
-    <P>See also: multithreading.
+    See also: \ref advanced_multithreading
 */
 #ifdef WIN32
 #  include <windows.h>
