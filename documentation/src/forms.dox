@@ -1,4 +1,5 @@
 /**
+ <!-- Warning: \p .fd  does not work but <tt>.fd</tt>  does -->
 
  \page	forms	Forms Compatibility
 
@@ -6,7 +7,8 @@ This appendix describes the Forms compatibility included with FLTK.
 
 \section forms_importing Importing Forms Layout Files
 
-<A href=fluid.html#FLUID>FLUID</A> can read the .fd files put out by
+\ref fluid "FLUID"
+can read the <tt>.fd</tt> files put out by
 all versions of Forms and XForms fdesign.  However, it will mangle them
 a bit, but it prints a warning message about anything it does not
 understand.  FLUID cannot write fdesign files, so you should save to a
@@ -14,16 +16,18 @@ new name so you don't write over the old one.
 
 You will need to edit your main code considerably to get it to link
 with the output from FLUID.  If you are not interested in this you may
-have more immediate luck with the forms compatibility header, <tt>
-<FL/forms.H></tt>. 
+have more immediate luck with the forms compatibility header, <FL/forms.H>. 
 
 \section forms_using Using the Compatibility Header File
 
 You should be able to compile existing Forms or XForms source code by
-changing the include directory switch to your compiler so that the <tt>
-forms.h</tt> file supplied with FLTK is included.  Take a look at <tt>
-forms.h</tt> to see how it works, but the basic trick is lots of inline
-functions. Most of the XForms demo programs work without changes.
+changing the include directory switch to your compiler so that the
+\c forms.h file supplied with FLTK is included.
+The \c forms.h file simply pulls in <FL/forms.H> so you don't need to
+change your source code.
+Take a look at <FL/forms.H> to see how it works, but the basic trick
+is lots of inline functions. Most of the XForms demo programs work
+without changes.
 
 You will also have to compile your Forms or XForms program using a
 C++ compiler.  The FLTK library does not provide C bindings or header
@@ -44,34 +48,32 @@ even Digital Domain's inhouse code still uses <tt>forms.H</tt> a lot.
 
 \section forms_problems Problems You Will Encounter
 
-Many parts of XForms use X-specific structures like <tt>XEvent</tt>
+Many parts of XForms use X-specific structures like \c XEvent
 in their interface.  I did not emulate these!  Unfortunately these
 features (such as the "canvas" widget) are needed by most large
 programs.  You will need to rewrite these to use FLTK subclasses. 
 
-<A href=Fl_Free.html#Fl_Free><tt>Fl_Free</tt></A> widgets emulate
-the <I>old</I> Forms "free" widget.  It may be useful for porting
-programs that change the <tt>handle()</tt> function on widgets, but you
-will still need to rewrite things. 
+Fl_Free widgets emulate the \e old Forms "free" widget.
+It may be useful for porting programs that change the \c handle()
+function on widgets, but you will still need to rewrite things. 
 
-<A href=Fl_Timer.html#Fl_Timer><tt>Fl_Timer</tt></A> widgets are
+Fl_Timer widgets are
 provided to emulate the XForms timer.  These work, but are quite
-inefficient and inaccurate compared to using <A href="Fl.html#Fl.add_timeout">
-<tt>Fl::add_timeout()</tt></A>. 
+inefficient and inaccurate compared to using Fl::add_timeout().
 
 <I>All instance variables are hidden.</I> If you directly refer to
-the x, y, w, h, label, or other fields of your Forms widgets you will
-have to add empty parenthesis after each reference.  The easiest way to
-do this is to globally replace "->x" with "->x()", etc.  Replace
-"boxtype" with "box()". 
+the \p x, \p y, \p w, \p h, \p label, or other fields of your Forms
+widgets you will have to add empty parenthesis after each reference.
+The easiest way to do this is to globally replace <tt>"->x"</tt>
+with <tt>"->x()"</tt>, etc.
+Replace <tt>"boxtype"</tt> with <tt>"box()"</tt>. 
 
 <tt>const char *</tt> arguments to most FLTK methods are simply
-stored, while Forms would <tt>strdup()</tt> the passed string.  This is
+stored, while Forms would \c strdup() the passed string.  This is
 most noticable with the label of widgets.  Your program must always
-pass static data such as a string constant or malloc'd buffer to <tt>
-label()</tt>.  If you are using labels to display program output you
-may want to try the <A href=Fl_Output.html#Fl_Output><tt>Fl_Output</tt></A>
-widget. 
+pass static data such as a string constant or malloc'd buffer to
+\c label().  If you are using labels to display program output you
+may want to try the Fl_Output widget. 
 
 The default fonts and sizes are matched to the older GL version of
 Forms, so all labels will draw somewhat larger than an XForms program
@@ -79,55 +81,55 @@ does.
 
 fdesign outputs a setting of a "fdui" instance variable to the main
 window.  I did not emulate this because I wanted all instance variables
-to be hidden.  You can store the same information in the <tt>user_data()</tt>
- field of a window.  To do this,  search through the fdesign output for
-all occurances of "->fdui" and edit to use "->user_data()" instead.
-This will require casts and is not trivial. 
+to be hidden.  You can store the same information in the \c user_data()
+field of a window.  To do this,  search through the fdesign output for all
+occurances of <tt>"->fdui"</tt> and edit to use <tt>"->user_data()"</tt>
+instead.  This will require casts and is not trivial. 
 
-The prototype for the functions passed to <tt>fl_add_timeout()</tt>
-and <tt>fl_set_idle_callback()</tt> callback are different. 
+The prototype for the functions passed to \c fl_add_timeout()
+and \c fl_set_idle_callback() callback are different. 
 
 <B>All the following XForms calls are missing:</B>
 
-\li <tt>FL_REVISION</tt>, <tt>fl_library_version()</tt>
-\li <tt>FL_RETURN_DBLCLICK</tt> (use <tt>Fl::event_clicks()</tt>) 
-\li <tt>fl_add_signal_callback()</tt>
-\li <tt>fl_set_form_atactivate()</tt> <tt>fl_set_form_atdeactivate()</tt>
-\li <tt>fl_set_form_property()</tt>
-\li <tt>fl_set_app_mainform()</tt>, <tt>fl_get_app_mainform()</tt>
-\li <tt>fl_set_form_minsize()</tt>, <tt>fl_set_form_maxsize()</tt>
-\li <tt>fl_set_form_event_cmask()</tt>, <tt>fl_get_form_event_cmask()</tt>
-\li <tt>fl_set_form_dblbuffer()</tt>, <tt>fl_set_object_dblbuffer()</tt>
-    (use an <tt>Fl_Double_Window</tt> instead) 
-\li <tt>fl_adjust_form_size()</tt>
-\li <tt>fl_register_raw_callback()</tt>
-\li <tt>fl_set_object_bw()</tt>, <tt>fl_set_border_width()</tt>
-\li <tt>fl_set_object_resize()</tt>, <tt>fl_set_object_gravity()</tt>
-\li <tt>fl_set_object_shortcutkey()</tt>
-\li <tt>fl_set_object_automatic()</tt>
-\li <tt>fl_get_object_bbox()</tt> (maybe FLTK should do this) 
-\li <tt>fl_set_object_prehandler()</tt>, <tt>fl_set_object_posthandler()</tt>
-\li <tt>fl_enumerate_fonts()</tt>
+\li \c FL_REVISION, \c fl_library_version()
+\li \c FL_RETURN_DBLCLICK (use Fl::event_clicks()) 
+\li \c fl_add_signal_callback()
+\li \c fl_set_form_atactivate() \c fl_set_form_atdeactivate()
+\li \c fl_set_form_property()
+\li \c fl_set_app_mainform(), \c fl_get_app_mainform()
+\li \c fl_set_form_minsize(), \c fl_set_form_maxsize()
+\li \c fl_set_form_event_cmask(), \c fl_get_form_event_cmask()
+\li \c fl_set_form_dblbuffer(), \c fl_set_object_dblbuffer()
+    (use an Fl_Double_Window instead) 
+\li \c fl_adjust_form_size()
+\li \c fl_register_raw_callback()
+\li \c fl_set_object_bw(), \c fl_set_border_width()
+\li \c fl_set_object_resize(), \c fl_set_object_gravity()
+\li \c fl_set_object_shortcutkey()
+\li \c fl_set_object_automatic()
+\li \c fl_get_object_bbox() (maybe FLTK should do this) 
+\li \c fl_set_object_prehandler(), \c fl_set_object_posthandler()
+\li \c fl_enumerate_fonts()
 \li Most drawing functions 
-\li <tt>fl_set_coordunit()</tt> (FLTK uses pixels all the time) 
-\li <tt>fl_ringbell()</tt>
-\li <tt>fl_gettime()</tt>
-\li <tt>fl_win*()</tt> (all these functions) 
-\li <tt>fl_initialize(argc,argv,x,y,z)</tt> ignores last 3 arguments 
-\li <tt>fl_read_bitmapfile()</tt>, <tt>fl_read_pixmapfile()</tt>
-\li <tt>fl_addto_browser_chars()</tt>
-\li <tt>FL_MENU_BUTTON</tt> just draws normally 
-\li <tt>fl_set_bitmapbutton_file()</tt>, <tt>fl_set_pixmapbutton_file()</tt>
-\li <tt>FL_CANVAS</tt> objects 
-\li <tt>FL_DIGITAL_CLOCK</tt> (comes out analog) 
-\li <tt>fl_create_bitmap_cursor()</tt>, <tt>fl_set_cursor_color()</tt>
-\li <tt>fl_set_dial_angles()</tt>
-\li <tt>fl_show_oneliner()</tt>
-\li <tt>fl_set_choice_shortcut(a,b,c) </tt>
+\li \c fl_set_coordunit() (FLTK uses pixels all the time) 
+\li \c fl_ringbell()
+\li \c fl_gettime()
+\li \c fl_win*() (all these functions) 
+\li \c fl_initialize(argc,argv,x,y,z) ignores last 3 arguments 
+\li \c fl_read_bitmapfile(), \c fl_read_pixmapfile()
+\li \c fl_addto_browser_chars()
+\li \c FL_MENU_BUTTON just draws normally 
+\li \c fl_set_bitmapbutton_file(), \c fl_set_pixmapbutton_file()
+\li \c FL_CANVAS objects 
+\li \c FL_DIGITAL_CLOCK (comes out analog) 
+\li \c fl_create_bitmap_cursor(), \c fl_set_cursor_color()
+\li \c fl_set_dial_angles()
+\li \c fl_show_oneliner()
+\li \c fl_set_choice_shortcut(a,b,c) 
 \li command log 
 \li Only some of file selector is emulated 
-\li <tt>FL_DATE_INPUT</tt>
-\li <tt>fl_pup*()</tt> (all these functions) 
+\li \c FL_DATE_INPUT
+\li \c fl_pup*() (all these functions) 
 \li textbox object (should be easy but I had no sample programs) 
 \li xyplot object 
 
@@ -155,37 +157,35 @@ this out by having the value FL_EVENT returned from the call to Forms.
 None of this works with FLTK.  Nor will it compile, the necessary
 calls are not in the interface. 
 
-You have to make a subclass of <A href=Fl_Gl_Window.html#Fl_Gl_Window>
-<tt>Fl_Gl_Window</tt></A> and write a <tt>draw()</tt> method and <tt>
-handle()</tt> method.  This may require anywhere from a trivial to a
+You have to make a subclass of Fl_Gl_Window and write a \c draw() method
+and \c handle() method.  This may require anywhere from a trivial to a
 major rewrite. 
 
-If you draw into the overlay planes you will have to also write a <tt>
-draw_overlay()</tt> method and call <tt>redraw_overlay()</tt> on the
+If you draw into the overlay planes you will have to also write a
+\c draw_overlay() method and call \c redraw_overlay() on the
 OpenGL window. 
 
-One easy way to hack your program so it works is to make the <tt>
-draw()</tt> and <tt>handle()</tt> methods on your window set some
-static variables, storing what event happened.  Then in the main loop
-of your program, call <tt>Fl::wait()</tt> and then check these
-variables, acting on them as though they are events read from <tt>
-fl_queue</tt>. 
+One easy way to hack your program so it works is to make the \c draw()
+and \c handle() methods on your window set some static variables, storing
+what event happened.  Then in the main loop of your program, call
+Fl::wait() and then check these variables, acting on them as though
+they are events read from \c fl_queue.
 
 \par You Must Use OpenGL to Draw Everything
 
-The file <tt><FL/gl.h></tt> defines replacements for a lot of IRISGL
+The file <FL/gl.h> defines replacements for a lot of IRISGL
 calls, translating them to OpenGL.  There are much better translators
 available that you might want to investigate. 
 
 \par You Cannot Make Forms Subclasses
 
-Programs that call <tt>fl_make_object</tt> or directly setting the
+Programs that call \c fl_make_object or directly setting the
 handle routine will not compile.  You have to rewrite them to use a
-subclass of <tt>Fl_Widget</tt>.  It is important to note that the <tt>
-handle()</tt> method is not exactly the same as the <tt>handle()</tt>
-function of Forms.  Where a Forms <tt>handle()</tt> returned non-zero,
-your <tt>handle()</tt> must call <tt>do_callback()</tt>. And your <tt>
-handle()</tt> must return non-zero if it "understood" the event.
+subclass of Fl_Widget.  It is important to note that the \c handle()
+method is not exactly the same as the \c handle() function of Forms.
+Where a Forms \c handle() returned non-zero, your \c handle() must
+call \c do_callback(). And your \c handle() must return non-zero
+if it "understood" the event.
 
 An attempt has been made to emulate the "free" widget.  This appears
 to work quite well.  It may be quicker to modify your subclass into a
@@ -214,7 +214,7 @@ lot of errors about "getvaluator".  You should substitute:
 </TABLE>
 </CENTER>
 
-Anything else in <tt>getvaluator</tt> and you are on your own...
+Anything else in \c getvaluator and you are on your own...
 
 \par Font Numbers Are Different
 
