@@ -105,8 +105,8 @@ Fl_Window parent window must already be shown.
 \li You can call either \p glutMainLoop(), Fl::run(),
     or loop calling Fl::wait() to run  the program. 
 
-   <A NAME="Fl_Glut_Window"></A> <!-- For old HTML links only ! -->
-   \section glut_Fl_Glut_Window class Fl_Glut_Window
+
+\section glut_Fl_Glut_Window class Fl_Glut_Window
 
 \subsection glut_class_hierarchy Class Hierarchy
 
@@ -132,7 +132,7 @@ better into FLTK's method of creating windows.
 The current GLUT window is available in the global variable
 \p glut_window.
 
-<tt>new Fl_Glut_Window(...)</tt> is the same as
+<tt>new %Fl_Glut_Window(...)</tt> is the same as
 \p glutCreateWindow() except it does not \p show() the window
 or make the window current.
 
@@ -207,15 +207,7 @@ be altered directly:
 
 \subsection glut_methods Methods
 
-\li \ref glut_fl_glut_window_constructor "Fl_Glut_Window()"
-\li \ref glut_fl_glut_window_destructor "~Fl_Glut_Window()"
-\li \ref glut_make_current "make_current()"
-
-<A name="Fl_Glut_Window.Fl_Glut_Window"></A> <!-- For old HTML links only ! -->
-\anchor glut_fl_glut_window_constructor
-
-Fl_Glut_Window::Fl_Glut_Window(int x, int y, int w, int h, const char *title = 0)
-
+Fl_Glut_Window::Fl_Glut_Window(int x, int y, int w, int h, const char *title = 0) <br>
 Fl_Glut_Window::Fl_Glut_Window(int w, int h, const char *title = 0)
 
 \par
@@ -224,15 +216,11 @@ a preset position and size.  The second constructor with 2 arguments
 will create the window with a preset size, but the window manager will
 choose the position according to it's own whims.
 
-<A name="Fl_Glut_Window.__Fl_Glut_Window"> </A> <!-- For old HTML links only ! -->
-\anchor glut_fl_glut_window_destructor
 virtual Fl_Glut_Window::~Fl_Glut_Window()
 
 \par
 Destroys the GLUT window.
 
-<A name="Fl_Glut_Window.make_current"> </A> <!-- For old HTML links only ! -->
-\anchor glut_make_current
 void Fl_Glut_Window::make_current()
 
 \par
