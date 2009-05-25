@@ -13,6 +13,7 @@ This appendix lists the enumerations provided in the
 Constants whose value are zero are marked with "(0)",
 this is often useful to know when programming.
 
+
 \section enumerations_versions Version Numbers
 
 The FLTK version number is stored in a number of compile-time constants:
@@ -23,7 +24,7 @@ The FLTK version number is stored in a number of compile-time constants:
 \li FL_VERSION - A combined floating-point version  number for
     the major, minor, and patch release numbers, currently 1.0300. 
 
-<A NAME="events"> </A> <!-- For old HTML links only ! -->
+
 \section enumerations_events Events
 
 Events are identified by an \p Fl_Event enumeration value.  The
@@ -57,7 +58,7 @@ following events are currently defined:
     data. 
 \li FL_DND_RELEASE - Dragged data is about to be dropped. 
 
-<a name="when"> </A> <!-- For old HTML links only ! -->
+
 \section enumerations_when Callback "When" Conditions
 
 The following constants determine when a callback is performed:
@@ -76,7 +77,7 @@ The following constants determine when a callback is performed:
 \li FL_WHEN_ENTER_KEY_ALWAYS - Do the callback when the user
     presses the ENTER key, even if the value doesn't change. 
 
-<A NAME="button_values"> </A> <!-- For old HTML links only ! -->
+
 \section enumeration_button_values Fl::event_button() Values
 
 The following constants define the button numbers for FL_PUSH and
@@ -86,7 +87,7 @@ FL_RELEASE events:
 \li FL_MIDDLE_MOUSE - the middle mouse button
 \li FL_RIGHT_MOUSE - the right mouse button
 
-<A NAME="key_values"> </A> <!-- For old HTML links only ! -->
+
 \section enumerations_event_key Fl::event_key() Values
 
 The following constants define the non-ASCII keys on the keyboard for 
@@ -128,6 +129,7 @@ FL_KEYBOARD and FL_SHORTCUT events:
 \li FL_Alt_R - The right alt key. 
 \li FL_Delete - The delete key. 
 
+
 \section enumerations_event_state Fl::event_state() Values
 
 The following constants define bits in the Fl::event_state()
@@ -150,7 +152,7 @@ value:
 
 <!-- NEED 4in -->
 
-<a name="align"> </A> <!-- For old HTML links only ! -->
+
 \section enumerations_alignment Alignment Values
 
 The following constants define bits that can be used with
@@ -175,7 +177,7 @@ to control the positioning of the label:
 \li FL_ALIGN_INSIDE - 'or' this with other values to put
     label inside the widget. 
 
-<a name="fonts"> </A> <!-- For old HTML links only ! -->
+
 \section enumerations_fonts Fonts
 
 The following constants define the standard FLTK fonts:
@@ -197,7 +199,7 @@ The following constants define the standard FLTK fonts:
 \li FL_SCREEN_BOLD - Default monospaced bold screen font. 
 \li FL_ZAPF_DINGBATS - Zapf-dingbats font.
 
-<a name="colors"> </A> <!-- For old HTML links only ! -->
+
 \section enumerations_colors Colors
 
 The Fl_Color enumeration type holds a FLTK color value.
@@ -242,10 +244,14 @@ FLTK standard color cube:
 \li FL_YELLOW
 
 The inline methods for getting a grayscale, color cube, or
-RGB color value are described in
-<A HREF="functions.html#functions">Appendix B - Function Reference</A>.
+RGB color value are described in the
+\ref drawing_colors
+section of the
+\ref drawing
+chapter, or in the generated
+<a href="functions_func.html">Function Reference</A> pages.
 
-<a name="cursor"> </A> <!-- For old HTML links only ! -->
+
 \section enumerations_cursors Cursors
 
 The following constants define the mouse cursors that are available in
@@ -268,6 +274,7 @@ cursors.
 \li FL_CURSOR_NESW - diagonal arrow 
 \li FL_CURSOR_NONE - invisible 
 
+
 \section enumerations_file_when FD "When" Conditions
 
 \li FL_READ - Call the callback when there is data to be
@@ -277,7 +284,7 @@ cursors.
 \li FL_EXCEPT - Call the callback if an exception occurs on
     the file.
 
-<a name="damage"> </A> <!-- For old HTML links only ! -->
+
 \section enumerations_damage Damage Masks
 
 The following damage mask bits are used by the standard FLTK widgets:
