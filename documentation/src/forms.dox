@@ -5,6 +5,17 @@
 
 This appendix describes the Forms compatibility included with FLTK.
 
+<center>
+<table border="1" width="90%">
+<tr>
+<th align="center">
+Warning: The Forms compatility is deprecated and no longer maintained in FLTK1,
+and is likely to be removed completely after the next official release.
+</th>
+</tr>
+</table>
+</center>
+
 \section forms_importing Importing Forms Layout Files
 
 \ref fluid "FLUID"
