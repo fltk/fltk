@@ -6,7 +6,7 @@
 This appendix describes the Forms compatibility included with FLTK.
 
 <center>
-<table border="1" width="90%">
+<table border="1" width="90%" bgcolor="#cccccc">
 <tr>
 <th align="center">
 Warning: The Forms compatility is deprecated and no longer maintained in FLTK1,

@@ -483,8 +483,9 @@ may be UTF-8) between applications:
 \li Fl::selection()
 \li Fl::selection_owner()
 
-It may be possible to cut/paste non-text data by using
-<A href="osissues.html#add_handler"><tt>Fl::add_handler()</tt></A>.
+It may be possible to cut/paste non-text data by using Fl::add_handler().
+Note that handling events beyond those provided by FLTK may be operating
+system specific. See \ref osissues for more details.
 
 \section subclassing_dragndrop Drag And Drop Support
 
