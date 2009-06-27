@@ -285,9 +285,7 @@ native  Presentation Manager version has not been implemented
 yet (volunteers  are welcome!).
 
 The current set of Makefiles/configuration failes assumes that EMX 0.9d
-and libExt (from
-<A HREF="http://posix2.sourceforge.net">posix2.sourceforge.net</A>)
-is installed.
+and libExt (from http://posix2.sourceforge.net) is installed.
 
 To build the XFree86 version of FLTK for OS/2, copy the appropriate
 makeinclude and config files to the main directory and do a make: 
@@ -302,21 +300,19 @@ make
 FLTK is available on the 'net in a bunch of locations:
 
 \par WWW
-<A href="http://www.fltk.org/">http://www.fltk.org/</A> <BR>
-<A href="http://www.fltk.org/str.php">http://www.fltk.org/str.php</A> 
-	  [for reporting bugs]<BR> 
-<A href="http://www.fltk.org/software.php">http://www.fltk.org/software.php</A> 
-	  [source code]
+http://www.fltk.org/ <br>
+http://www.fltk.org/str.php [for reporting bugs] <br> 
+http://www.fltk.org/software.php [source code]
 
 \par FTP
-<A HREF="ftp://ftp.fltk.org/pub/fltk">California, USA (ftp.fltk.org)</A><BR> 
-<A HREF="ftp://ftp2.fltk.org/pub/fltk">Maryland, USA (ftp2.fltk.org)</A><BR> 
-<A HREF="ftp://ftp.funet.fi/pub/mirrors/ftp.fltk.org/pub/fltk">Espoo, Finland (ftp.funet.fi)</A><BR> 
-<A HREF="ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk">Germany (linux.mathematik.tu-darmstadt.de)</A><BR>
-<A HREF="ftp://gd.tuwien.ac.at/hci/fltk">Austria (gd.tuwien.ac.at)</A>
+ftp://ftp.fltk.org/pub/fltk [California, USA] <br>
+ftp://ftp2.fltk.org/pub/fltk [Maryland, USA] <br>
+ftp://ftp.funet.fi/pub/mirrors/ftp.fltk.org/pub/fltk [Espoo, Finland] <br>
+ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk [Germany] <br>
+ftp://gd.tuwien.ac.at/hci/fltk [Austria]
 
 \par EMail
-<A href="mailto:fltk@fltk.org">fltk@fltk.org</A> [see instructions below]<BR> 
+<A href="mailto:fltk@fltk.org">fltk@fltk.org</A> [see instructions below]<br> 
 <A href="mailto:fltk-bugs@fltk.org">fltk-bugs@fltk.org</A> [for	reporting bugs]
 
 \par NNTP Newsgroups

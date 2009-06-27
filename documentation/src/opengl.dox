@@ -163,7 +163,6 @@ Your main program can now create one of your windows by doing
 
 You can also use your new window class in
 \ref fluid "FLUID"
-<A href="fluid.html#FLUID">FLUID</A>
 by:
 
 -# Putting your class definition in a \p MyWindow.H file.
@@ -259,7 +258,7 @@ void gl_font(Fl_Font fontid, int size)
 
 \par
 Sets the current OpenGL font to the same font you get by calling
-<A href="drawing.html#fl_font"><tt>fl_font()</tt></A>.
+\ref ssect_Fonts "fl_font()".
 
 int gl_height() <br>
 int gl_descent() <br>
@@ -293,7 +292,7 @@ void gl_draw(const char *s, int x, int y, int w, int h, Fl_Align)
 Draws a string formatted into a box, with newlines and tabs
 expanded, other control characters changed to ^X, and aligned
 with the edges or center. Exactly the same output as
-<A href="drawing.html#text"><tt>fl_draw()</tt></A>.
+\ref ssect_Text "fl_draw()".
 
 \section opengl_speed Speeding up OpenGL
 

@@ -248,8 +248,7 @@ RGB color value are described in the
 \ref drawing_colors
 section of the
 \ref drawing
-chapter, or in the generated
-<a href="functions_func.html">Function Reference</A> pages.
+chapter.
 
 
 \section enumerations_cursors Cursors
@@ -305,7 +304,7 @@ The following damage mask bits are used by the standard FLTK widgets:
   <td width="45%" align="LEFT">
     <a class="el" href="unicode.html">
     [Prev]
-    Unicode and utf-8 Support
+    Unicode and UTF-8 Support
     </a>
   </td>
   <td width="10%" align="CENTER">

@@ -251,96 +251,36 @@ The following section is
 \section development_links Creating Links
 
 Links to other documents and external links can be embedded with
-  \li	normal HTML links
-  \li	HTML links without markup - doxygen creates "http://..."
-  	links automatically
-  \li	links to other doxygen chapters with the \\ref statments
-  \li	links to named sections within the same or other doxygen chapters,
-  	if they are defined there with a \\section statement
+
+- doxygen \\ref links to other doxygen \\page, \\section,
+  \\subsection and \\anchor locations
+- HTML links without markup - doxygen creates "http://..."
+  links automatically
+- standard, non-Doxygen, HTML links
 
 \code
-    see chapter \ref unicode creates a link to the named chapter unicode
-    that has been created with a \subpage statement.
 
-    see <a href="drawing.html#character_encoding">chapter 5</a> creates
-    a link to a named html anchor "character_encoding" within the same file.
+-   see chapter \ref unicode creates a link to the named chapter
+    unicode that has been created with a \page statement.
 
-    For further informations about quoting see
+-   For further informations about quoting see
     http://www.stack.nl/~dimitri/doxygen/htmlcmds.html
 
-    Bold link text: you can see the <b>online documentation</b>
-    of FLTK 1.3 at \b http://www.fltk.org/doc-1.3/index.html
-    
-    see section \ref development_non-ascii
+-   see <a href="http://www.nedit.org/">Nedit</a> creates
+    a standard HTML link
+
 \endcode
 
 appears as:
 
-    see chapter \ref unicode creates a link to the named chapter unicode
-    that has been created with a \\subpage statement.
+-   see chapter \ref unicode creates a link to the named chapter
+    unicode that has been created with a \\page statement.
 
-    see <a href="drawing.html#character_encoding">chapter 5</a> creates
-    a link to a named html anchor "character_encoding" within the same file.
-
-    For further informations about quoting see
+-   For further informations about quoting see
     http://www.stack.nl/~dimitri/doxygen/htmlcmds.html
 
-    Bold link text: you can see the <b>online documentation</b>
-    of FLTK 1.3 at \b http://www.fltk.org/doc-1.3/index.html
-    
-    see section \ref development_non-ascii
-
-\section development_old-links Changing Old Links
-
-Old HTML links and anchors in text documentation pages should be changed
-as follows:
-
-\code
-<H2><A name="event_xxx">Fl::event_*() methods</A></H2>
-
-becomes:
-
-<A NAME="event_xxx"></A> <!-- For old HTML links only ! -->
-\section events_event_xxx Fl::event_*() methods
-\endcode
-
-The additional HTML "<A NAME=...>" statement is temporary needed, until
-all links (references) are modified, then:
-
-\code
-<H2><A name="event_xxx">Fl::event_*() methods</A></H2>
-
-becomes:
-
-\section events_event_xxx Fl::event_*() methods
-\endcode
-
-The "\section" statement can also be a "\subsection" or "\subsubsection"
-statement.
-
-The references (in this example from index.dox) are changed as follows:
-
-\code
-
- \subpage events
-
-    <B>
-      <UL>
-	<LI><A HREF="events.html#event_xxx">Fl::event_*() methods</A></LI>
-	<LI><A HREF="events.html#propagation">Event Propagation</A></LI>
-      </UL>
-    </B>
-
-becomes:
-
- \subpage events
-
-    <b>
-	\li \ref events_event_xxx
-	\li \ref events_propagation
-    </b>
-
-\endcode
+-   see <a href="http://www.nedit.org/">Nedit</a> creates
+    a standard HTML link
 
 
 \section development_paragraphs Paragraph Layout
@@ -421,18 +361,8 @@ Each introduction (tutorial) page ends with navigation elements. These
 elements must only be included in the html documentation, therefore
 they must be separated with \\htmlonly and \\endhtmlonly.
 
-Example navigation links:
+The following code gives the navigation bar at the bottom of this page:
 
-\verbatim
-\htmlonly
-<hr>
-<a class="el" href="index.html">[Index]</a> &nbsp;&nbsp;
-<a class="el" href="migration_1_3.html">[Previous] Migrating Code from FLTK 1.1 to 1.3</a>&nbsp;&nbsp;
-<a class="el" href="license.html">[Next] Software License</a>
-\endhtmlonly
-\endverbatim
-
-Now replaced by:
 \verbatim
 \htmlonly
 <hr>

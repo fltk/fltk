@@ -44,22 +44,18 @@ header file. FLTK provides the following types of drawing functions:
 \li \ref ssect_Fl_Image
 \li \ref ssect_Offscreen
 
-<A name="boxdraw"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Boxes Boxes
 
 FLTK provides three functions that can be used to draw boxes for buttons
 and other UI controls. Each function uses the supplied upper-lefthand corner
 and width and height to determine where to draw the box.
 
-<A NAME="fl_draw_box"> </A> <!-- For old HTML links only ! -->
 void fl_draw_box(Fl_Boxtype b, int x, int y, int w, int h, Fl_Color c);
 
 \par
 The \p %fl_draw_box() function draws a standard boxtype \p b
 in the specified color \p c.
 
-<A NAME="fl_frame"></A> <!-- For old HTML links only ! -->
-<A NAME="fl_frame2"></A> <!-- For old HTML links only ! -->
 \anchor drawing_fl_frame
 void fl_frame(const char *s, int x, int y, int w, int h) <br>
 void fl_frame2(const char *s, int x, int y, int w, int h)
@@ -86,7 +82,6 @@ Note that
 is described in the \ref common_boxtypes section.
 
 
-<A name="clipping"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Clipping Clipping
 
 You can limit all your drawing to a rectangular region by calling
@@ -98,7 +93,6 @@ transformation matrix.
 In addition, the system may provide clipping when updating windows
 which may be more complex than a simple rectangle.
 
-<A name="fl_push_clip"></A> <!-- For old HTML links only ! -->
 void fl_push_clip(int x, int y, int w, int h) <br>
 void fl_clip(int x, int y, int w, int h)
 
@@ -110,13 +104,11 @@ region onto the stack.
 The \p %fl_clip() version is deprecated and
 will be removed from future releases.
 
-<A NAME="fl_push_no_clip"></A> <!-- For old HTML links only ! -->
 void fl_push_no_clip()
 
 \par
 Pushes an empty clip region on the stack so nothing will be clipped.
 
-<A NAME="fl_pop_clip"></A> <!-- For old HTML links only ! -->
 void fl_pop_clip()
 
 \par
@@ -129,7 +121,6 @@ You must call \p %fl_pop_clip() once for every time you call
 If you return to FLTK with the clip stack not empty unpredictable results
 occur.
 
-<A NAME="fl_not_clipped"></A> <!-- For old HTML links only ! -->
 int fl_not_clipped(int x, int y, int w, int h)
 
 \par
@@ -141,7 +132,6 @@ region. If this returns 0 you don't have to draw the object.
 Under X this returns 2 if the rectangle is partially clipped,
 and 1 if it is entirely inside the clip region.
 
-<A NAME="fl_clip_box"></A> <!-- For old HTML links only ! -->
 int fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H)
 
 \par
@@ -152,7 +142,6 @@ different than the original. This can be used to limit the
 necessary drawing to a rectangle. \c W and \c H are
 set to zero if the rectangle is completely outside the region.
 
-<A NAME="fl_clip_region"></A> <!-- For old HTML links only ! -->
 void fl_clip_region(Fl_Region r) <br>
 Fl_Region fl_clip_region()
 
@@ -162,7 +151,6 @@ Fl_Region is an operating system specific type. The second form returns
 the current clipping region.
 
 
-<A NAME="colors"></A> <!-- For old HTML links only ! -->
 \section drawing_colors Colors
 
 FLTK manages colors as 32-bit unsigned integers. Values from
@@ -182,7 +170,6 @@ fl_rgb_color(uchar r, uchar b, uchar c) and
 fl_rgb_color(uchar grayscale)
 functions.
 
-<A name="fl_color"></A> <!-- For old HTML links only ! -->
 void fl_color(Fl_Color c) <br>
 void fl_color(int c)
 
@@ -211,7 +198,6 @@ closest possible match to the RGB color is used. The RGB color
 is used directly on TrueColor displays. For colormap visuals the
 nearest index in the gray ramp or color cube is used.
 
-<A name="lines"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Lines Line Dashes and Thickness
 
 FLTK supports drawing of lines with different styles and
@@ -219,7 +205,6 @@ widths. Full functionality is not available under Windows 95, 98,
 and Me due to the reduced drawing functionality these operating
 systems provide.
 
-<A NAME="fl_line_style"></A> <!-- For old HTML links only ! -->
 void fl_line_style(int style, int width, char* dashes)
 
 \par
@@ -272,7 +257,6 @@ The dashes array does not work under Windows 95, 98, or Me, since those
 operating systems do not support complex line styles.
 
 
-<A name="fast"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Fast Drawing Fast Shapes
 
 These functions are used to draw almost all the FLTK widgets.
@@ -283,13 +267,11 @@ ported. It is undefined whether these are affected by the
 so you should only call these while the matrix is set to the
 identity matrix (the default).
 
-<A NAME="fl_point"></A> <!-- For old HTML links only ! -->
 void fl_point(int x, int y)
 
 \par
 Draw a single pixel at the given coordinates.
 
-<A NAME="fl_rectf"></A> <!-- For old HTML links only ! -->
 void fl_rectf(int x, int y, int w, int h) <br>
 void fl_rectf(int x, int y, int w, int h)
 
@@ -305,35 +287,30 @@ color this is done by drawing a solid-colored block using
 \ref drawing_fl_draw_image "fl_draw_image()"
 so that the correct color shade is produced.
 
-<A NAME="fl_rect"></A> <!-- For old HTML links only ! -->
 void fl_rect(int x, int y, int w, int h) <br>
 void fl_rect(int x, int y, int w, int h, Fl_Color c)
 
 \par
 Draw a 1-pixel border \e inside this bounding box.
 
-<A NAME="fl_line"></A> <!-- For old HTML links only ! -->
 void fl_line(int x, int y, int x1, int y1) <br>
 void fl_line(int x, int y, int x1, int y1, int x2, int y2)
 
 \par
 Draw one or two lines between the given points.
 
-<A NAME="fl_loop"></A> <!-- For old HTML links only ! -->
 void fl_loop(int x, int y, int x1, int y1, int x2, int y2) <br>
 void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3)
 
 \par
 Outline a 3 or 4-sided polygon with lines.
 
-<A NAME="fl_polygon"></A> <!-- For old HTML links only ! -->
 void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) <br>
 void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3)
 
 \par
 Fill a 3 or 4-sided polygon. The polygon must be convex.
 
-<A NAME="fl_xyline"></A> <!-- For old HTML links only ! -->
 void fl_xyline(int x, int y, int x1) <br>
 void fl_xyline(int x, int y, int x1, int y2) <br>
 void fl_xyline(int x, int y, int x1, int y2, int x3)
@@ -342,7 +319,6 @@ void fl_xyline(int x, int y, int x1, int y2, int x3)
 Draw horizontal and vertical lines. A horizontal line is
 drawn first, then a vertical, then a horizontal.
 
-<A NAME="fl_yxline"></A> <!-- For old HTML links only ! -->
 void fl_yxline(int x, int y, int y1) <br>
 void fl_yxline(int x, int y, int y1, int x2) <br>
 void fl_yxline(int x, int y, int y1, int x2, int y3)
@@ -351,7 +327,6 @@ void fl_yxline(int x, int y, int y1, int x2, int y3)
 Draw vertical and horizontal lines. A vertical line is drawn
 first, then a horizontal, then a vertical.
 
-<A NAME="fl_pie"></A> <!-- For old HTML links only ! -->
 void fl_arc(int x, int y, int w, int h, double a1, double a2) <br>
 void fl_pie(int x, int y, int w, int h, double a1, double a2)
 
@@ -386,7 +361,6 @@ use \p w-1 and \p h-1.
 \todo
 add an Fl_Draw_Area_Cb typedef to allow fl_scroll(...) to be doxygenated?
 
-<A name="fl_scroll"></A> <!-- For old HTML links only ! -->
 void fl_scroll(int X, int Y, int W, int H, int dx, int dy, void (*draw_area)(void*, int,int,int,int), void* data)
 
 \par
@@ -396,7 +370,6 @@ of the rectangular area is first shifted by \p dx and
 exposed rectangular area,
 
 
-<A name="complex"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Complex Drawing Complex Shapes
 
 The complex drawing functions let you draw arbitrary shapes
@@ -410,7 +383,6 @@ severely limits the accuracy of these functions for complex
 graphics, so use OpenGL when greater accuracy and/or performance
 is required.
 
-<A NAME="fl_push_matrix"></A> <!-- For old HTML links only ! -->
 void fl_push_matrix() <br>
 void fl_pop_matrix()
 
@@ -418,7 +390,6 @@ void fl_pop_matrix()
 Save and restore the current transformation.  The maximum
 depth of the stack is 4.
 
-<A NAME="fl_scale"></A> <!-- For old HTML links only ! -->
 void fl_scale(double x,double y) <br>
 void fl_scale(double x) <br>
 void fl_translate(double x,double y) <br>
@@ -429,7 +400,6 @@ void fl_mult_matrix(double a,double b,double c,double d,double x,double y)
 Concatenate another transformation onto the current one. The rotation
 angle is in degrees (not radians) and is counter-clockwise.
 
-<A NAME="fl_transform"></A> <!-- For old HTML links only ! -->
 double fl_transform_x(double x, double y) <br>
 double fl_transform_y(double x, double y) <br>
 double fl_transform_dx(double x, double y) <br>
@@ -441,7 +411,6 @@ Transform a coordinate or a distance using the current transformation matrix.
 After transforming a coordinate pair, it can be added to the vertex
 list without any forther translations using \p %fl_transformed_vertex().
 
-<A NAME="fl_begin_points"></A> <!-- For old HTML links only ! -->
 void fl_begin_points() <br>
 void fl_end_points()
 
@@ -449,28 +418,24 @@ void fl_end_points()
 Start and end drawing a list of points. Points are added to
 the list with \p %fl_vertex().
 
-<A NAME="fl_begin_line"></A> <!-- For old HTML links only ! -->
 void fl_begin_line() <br>
 void fl_end_line()
 
 \par
 Start and end drawing lines.
 
-<A NAME="fl_begin_loop"></A> <!-- For old HTML links only ! -->
 void fl_begin_loop() <br>
 void fl_end_loop()
 
 \par
 Start and end drawing a closed sequence of lines.
 
-<A NAME="fl_begin_polygon"></A> <!-- For old HTML links only ! -->
 void fl_begin_polygon() <br>
 void fl_end_polygon()
 
 \par
 Start and end drawing a convex filled polygon.
 
-<A NAME="fl_begin_complex_polygon"></A> <!-- For old HTML links only ! -->
 void fl_begin_complex_polygon() <br>
 void fl_gap() <br>
 void fl_end_complex_polygon()
@@ -498,20 +463,17 @@ For portability, you should only draw polygons that appear the same whether
 "even/odd" or "non-zero" winding rules are used to fill them. Holes should
 be drawn in the opposite direction of the outside loop.
 
-<A NAME="fl_vertex"></A> <!-- For old HTML links only ! -->
 void fl_vertex(double x,double y)
 
 \par
 Add a single vertex to the current path.
 
-<A NAME="fl_curve"></A> <!-- For old HTML links only ! -->
 void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3)
 
 \par
 Add a series of points on a Bezier curve to the path.  The curve ends
 (and two of the points) are at <tt>X0,Y0</tt> and <tt>X3,Y3</tt>.
 
-<A NAME="fl_arc"></A> <!-- For old HTML links only ! -->
 \anchor drawing_fl_arc
 void fl_arc(double x, double y, double r, double start, double end)
 
@@ -527,7 +489,6 @@ in degrees counter-clockwise from 3 o'clock.
 If \p end is less than \p start then it draws the arc in a clockwise
 direction.
 
-<A NAME="fl_circle"></A> <!-- For old HTML links only ! -->
 void fl_circle(double x, double y, double r)
 
 \par
@@ -540,7 +501,6 @@ a circle as part of a complex polygon you must use \p %fl_arc().
 \p %fl_circle() draws incorrectly if the transformation is both rotated and
 non-square scaled.
 
-<A name="text"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Text Drawing Text
 
 All text is drawn in the
@@ -548,7 +508,6 @@ All text is drawn in the
 It is undefined whether this location or the characters are
 modified by the current transformation.
 
-<A NAME="fl_draw"></A> <!-- For old HTML links only ! -->
 void fl_draw(const char *, int x, int y) <br>
 void fl_draw(const char *, int n, int x, int y)
 
@@ -586,7 +545,6 @@ to look for symbol names starting with the "@" character.
 \par
 The text length is limited to 1024 characters per line.
 
-<A NAME="fl_measure"></A> <!-- For old HTML links only ! -->
 void fl_measure(const char *str, int& w, int& h, int draw_symbols)
 
 \par
@@ -594,23 +552,19 @@ Measure how wide and tall the string will be when printed by
 the \p fl_draw(...align) function.
 If the incoming \p w is non-zero it will wrap to that width.
 
-<A NAME="fl_height"></A> <!-- For old HTML links only ! -->
 int fl_height()
 
 \par
 Recommended minimum line spacing for the current font.  You
 can also just use the value of \p size passed to
 \ref drawing_fl_font "fl_font()".
-<A href="#fl_font"><tt>fl_font()</tt></A>.
 
-<A NAME="fl_descent"></A> <!-- For old HTML links only ! -->
 int fl_descent()
 
 \par
 Recommended distance above the bottom of a \p %fl_height() tall box to draw
 the text at so it looks centered vertically in that box.
 
-<A NAME="fl_width"></A> <!-- For old HTML links only ! -->
 double fl_width(const char* txt) <br>
 double fl_width(const char* txt, int n) <br>
 double fl_width(Fl_Unichar)
@@ -619,7 +573,6 @@ double fl_width(Fl_Unichar)
 Return the pixel width of a nul-terminated string, a sequence of \p n
 characters, or a single character in the current font.
 
-<A NAME="fl_shortcut_label"></A> <!-- For old HTML links only ! -->
 const char* fl_shortcut_label(int shortcut)
 
 \par
@@ -630,7 +583,6 @@ key. If the shortcut is zero an empty string is returned. The
 return value points at a static buffer that is overwritten with
 each call.
 
-<A name="fonts"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Fonts Fonts
 
 FLTK supports a set of standard fonts based on the Times,
@@ -646,7 +598,6 @@ these, and FL_SYMBOL and FL_ZAPF_DINGBATS.
 Faces greater than 255 cannot be used in Fl_Widget
 labels, since Fl_Widget stores the index as a byte.
 
-<A name="fl_font"></A> <!-- For old HTML links only ! -->
 \anchor drawing_fl_font
 void fl_font(int face, int size)
 
@@ -661,7 +612,6 @@ The font is identified by a \p face and a \p size.
 The size of the font is measured in \p pixels and not "points".
 Lines should be spaced \p size pixels apart or more.
 
-<A NAME="fl_size"></A> <!-- For old HTML links only ! -->
 int fl_font() <br>
 int fl_size()
 
@@ -669,7 +619,6 @@ int fl_size()
 Returns the face and size set by the most recent call to
 \p fl_font(a,b). This can be used to save/restore the font.
 
-<A NAME="character_encoding"></A> <!-- For old HTML links only ! -->
 \subsection ssect_CharacterEncoding Character Encoding
 
 \todo
@@ -709,16 +658,15 @@ html "&cedil;").
 
 \todo	drawing.dox: I fixed the above encoding problem of these \&cedil;
 	and umlaut characters, but this text is obsoleted by FLTK 1.3
-	with utf-8 encoding, or must be rewritten accordingly:
+	with UTF-8 encoding, or must be rewritten accordingly:
 	How to use native (e.g. Windows "ANSI", or ISO-8859-x)
 	encoding in embedded strings for labels, error messages
-	and more. Please check this (utf-8) encoding on different
+	and more. Please check this (UTF-8) encoding on different
 	OS'es and with different language and font environments.
 
-For more information about character encoding, unicode and utf-8
-see chapter \ref unicode.
+For more information about character encodings, see the chapter on
+\ref unicode.
 
-<A name="overlay"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Overlay Drawing Overlays
 
 These functions allow you to draw interactive selection rectangles
@@ -744,7 +692,6 @@ should call \p %fl_overlay_clear() after a
 FL_RELEASE event.
 
 
-<A NAME="images"></A> <!-- For old HTML links only ! -->
 \section drawing_images Drawing Images
 
 To draw images, you can either do it directly from data in
@@ -761,7 +708,6 @@ The behavior when drawing images when the current
 transformation matrix is not the identity is not defined, so you
 should only draw images when the matrix is set to the identity.
 
-<A NAME="fl_draw_image"></A> <!-- For old HTML links only ! -->
 \anchor drawing_fl_draw_image
 void fl_draw_image(const uchar *buf,int X,int Y,int W,int H,int D,int L)<br>
 void fl_draw_image_mono(const uchar *buf,int X,int Y,int W,int H,int D,int L)
@@ -844,7 +790,6 @@ the first one may be greater than zero.
 If \p D is 4 or more, you must fill in the unused bytes
 with zero.
 
-<A NAME="fl_draw_pixmap"></A> <!-- For old HTML links only ! -->
 int fl_draw_pixmap(char* const* data, int x, int y, Fl_Color bg) <br>
 int fl_draw_pixmap(const char* const* cdata, int x, int y, Fl_Color bg)
 
@@ -868,7 +813,6 @@ Transparent colors are replaced by the optional
 Fl_Color argument. To draw with true transparency you must
 use the Fl_Pixmap class.
 
-<A NAME="fl_measure_pixmap"></A> <!-- For old HTML links only ! -->
 int fl_measure_pixmap(char* const* data, int &w, int &h) <br>
 int fl_measure_pixmap(const char* const* cdata, int &w, int &h)
 
@@ -883,7 +827,6 @@ there was any problem.
 FLTK provides a single function for reading from the current
 window or off-screen buffer into a RGB(A) image buffer.
 
-<A NAME="fl_read_image"></A> <!-- For old HTML links only ! -->
 uchar* fl_read_image(uchar *p, int X, int Y, int W, int H, int alpha)
 
 \par
@@ -899,7 +842,6 @@ The \p alpha parameter controls whether an alpha
 channel is created and the value that is placed in the alpha
 channel. If 0, no alpha channel is generated.
 
-<A name="Fl_Image"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Fl_Image Image Classes
 
 FLTK provides a base image class called Fl_Image which supports
@@ -930,7 +872,6 @@ provided by the draw() method is either a 24-bit
 blend against the existing window contents or a "screen door" 
 transparency mask, depending on the platform and screen color depth. 
 
-<A NAME="fl_can_do_alpha_blending"></A> <!-- For old HTML links only ! -->
 char fl_can_do_alpha_blending()
 
 \par
@@ -982,7 +923,6 @@ void Fl_Tiled_Image::draw(int x, int y)
 Draws the image with the upper-left corner at <tt>x,y</tt>.
 This is the same as doing \p draw(x,y,img->w(),img->h(),0,0).
 
-<A NAME="offscreen"></A> <!-- For old HTML links only ! -->
 \subsection ssect_Offscreen Offscreen Drawing
 
 \todo
@@ -995,19 +935,16 @@ repeated drawing. Fl_Double_Window uses offscreen rendering
 to avoid flickering on systems that don't support 
 double-buffering natively.
 
-<A NAME="fl_create_offscreen"></A> <!-- For old HTML links only ! -->
 Fl_Offscreen fl_create_offscreen(int w, int h)
 
 \par
 Create an RGB offscreen buffer with \p w*h pixels.
 
-<A NAME="fl_delete_offscreen"></A> <!-- For old HTML links only ! -->
 void fl_delete_offscreen(Fl_Offscreen)
 
 \par
 Delete a previously created offscreen buffer. All drawings are lost.
 
-<A NAME="fl_begin_offscreen"></A> <!-- For old HTML links only ! -->
 void fl_begin_offscreen(Fl_Offscreen)
 
 \par
@@ -1015,13 +952,11 @@ Send all subsequent drawing commands to this offscreen buffer.
 FLTK can draw into a buffer at any time. There is no need to wait for 
 an Fl_Widget::draw() to occur.
 
-<A NAME="fl_end_offscreen"></A> <!-- For old HTML links only ! -->
 void fl_end_offscreen()
 
 \par
 Quit sending drawing commands to this offscreen buffer.
 
-<A NAME="fl_copy_offscreen"></A> <!-- For old HTML links only ! -->
 void fl_copy_offscreen(int x, int y, int w, int h,
 Fl_Offscreen osrc, int srcx, int srcy)
 

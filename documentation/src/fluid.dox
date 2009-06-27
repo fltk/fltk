@@ -1470,7 +1470,6 @@ file to be used for all of the windows defined in your
 The \b Set: field controls the set number in the catalog file.
 The default set is 1 and rarely needs to be changed.
 
-<A NAME="limitations"> </A> <!-- For old HTML links only ! -->
 \section fluid_limitations Known limitations
 
 Declaration Blocks can be used to temporarily block out already

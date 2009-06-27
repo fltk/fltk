@@ -166,7 +166,6 @@ If you change a widget's size or position after it is
 displayed you will have to call \p redraw() on the
 widget's parent.
 
-<A NAME="colors"></A> <!-- For old HTML links only ! -->
 \section common_colors Colors
 
 FLTK stores the colors of widgets as an 32-bit unsigned
@@ -215,7 +214,6 @@ Similarly, the label color is set using the \p labelcolor() method:
 button->labelcolor(FL_WHITE);
 \endcode
 
-<A NAME="boxtypes"></A> <!-- For old HTML links only ! -->
 \section common_boxtypes Box Types
 
 The type Fl_Boxtype stored and returned in Fl_Widget::box()
@@ -269,7 +267,6 @@ void xyz_draw(int x, int y, int w, int h, Fl_Color c) {
 }
 \endcode
 
-<A name="fl_down"></A>  <!-- For old HTML links only ! -->
 \anchor common_fl_down
 Fl_Boxtype fl_down(Fl_Boxtype b)
 
@@ -279,7 +276,6 @@ If no "down" version of a given box exists, the behavior of this function
 is undefined and some random box or frame is returned.
 See \ref drawing_fl_frame "Drawing Functions" for more details.
 
-<A name="fl_frame"></A>  <!-- For old HTML links only ! -->
 \anchor common_fl_frame
 Fl_Boxtype fl_frame(Fl_Boxtype b)
 
@@ -289,8 +285,6 @@ If no frame version of a given box exists, the behavior of this function
 is undefined and some random box or frame is returned.
 See \ref drawing_fl_frame "Drawing Functions" for more details.
 
-<A name="fl_box"></A> <!-- For old HTML links only ! -->
-\anchor common_fl_box
 Fl_Boxtype fl_box(Fl_Boxtype b)
 
 \par
@@ -323,7 +317,6 @@ value evenly divideable by two.
 \ref common_fl_frame "fl_frame(Fl_Boxtype)"
 expects the \p UP_BOX design at a value divideable by four.
 
-<A NAME="labels"></A> <!-- For old HTML links only ! -->
 \section common_labels Labels and Label Types
 
 The \p label(), \p align(), \p labelfont(), \p labelsize(),
@@ -375,7 +368,6 @@ constants are defined and may be OR'd together as needed:
 \li \p FL_TEXT_OVER_IMAGE - show the label text over the image.
 \li \p FL_IMAGE_OVER_TEXT - show the label image over the text (default).
 
-<A NAME="labeltypes"></A> <!-- For old HTML links only ! -->
 \anchor common_labeltype
 \par labeltype()
 
@@ -389,7 +381,6 @@ following standard label types are included:
 \li \p FL_EMBOSSED_LABEL - draws edges as thought the text is raised.
 \li \p FL_ICON_LABEL - draws the icon associated with the text.
 
-\anchor common_image_deimage
 \par image() and deimage()
 
 The \p image() and \p deimage() methods set an image that
@@ -466,7 +457,6 @@ method to select your label type.
 The Fl::set_labeltype() method can also be used to overload
 an existing label type such as \p FL_NORMAL_LABEL.
 
-<A NAME="add_symbol"></A> <!-- For old HTML links only ! -->
 \par Making your own symbols
 
 It is also possible to define your own drawings and add

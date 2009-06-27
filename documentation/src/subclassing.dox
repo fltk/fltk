@@ -188,7 +188,6 @@ Calling \p set_flag(SHORTCUT_LABEL) modifies the behavior of
 \ref subclassing_draw_label "draw_label()" so that '\&' characters
 cause an underscore to be printed under the next letter.
 
-<A name="clear_visible"></A> <!-- For old HTML links only ! -->
 \anchor subclassing_clear_visible
 \anchor subclassing_set_visible
 void Fl_Widget::set_visible() <br>
@@ -304,7 +303,6 @@ You must return non-zero if your \p handle() method
 uses the event. If you return zero, the parent widget will try
 sending the event to another widget.
 
-<A NAME="draw"></A> <!-- For old HTML links only ! -->
 \section subclassing_drawing Drawing the Widget
 
 The \p draw() virtual method is called when FLTK wants

@@ -261,7 +261,6 @@ widget. This indicates that some other widget or program has
 claimed the selection. Motif programs used this to clear the
 selection indication. Most modern programs ignore this.
 
-<A NAME="dnd"></A> <!-- For old HTML links only ! -->
 \section events_dnd Drag and Drop Events
 
 FLTK supports drag and drop of text and files from any 
@@ -303,7 +302,6 @@ the immediatly following \p FL_PASTE event.
 
 <!-- NEED 6in -->
 
-<A NAME="event_xxx"></A> <!-- For old HTML links only ! -->
 \section events_event_xxx Fl::event_*() methods
 
 FLTK keeps the information about the most recent event in
@@ -334,7 +332,6 @@ These are all trivial inline functions and thus very fast and small:
 \li Fl::get_mouse()
 \li Fl::test_shortcut()
 
-<A NAME="event_xxx"></A> <!-- For old HTML links only ! -->
 \section events_propagation Event Propagation
 
 FLTK follows very simple and unchangeable rules for sending
@@ -369,7 +366,6 @@ control those leaf widgets:
 \li Fl::release()
 \li Fl_Widget::take_focus()
 
-<A name="compose"></A> <!-- For old HTML links only ! -->
 \section events_compose_characters FLTK Compose-Character Sequences
 
 \todo Does Fltk Compose Character Sequences text need updating

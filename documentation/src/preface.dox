@@ -41,8 +41,7 @@ This manual is organized into the following chapters and appendices:
 \section preface_conventions Conventions
 
 This manual was generated using Doxygen
-(see <a href="http://www.stack.nl/~dimitri/doxygen/">
-http://www.stack.nl/~dimitri/doxygen/</a>)
+(see http://www.stack.nl/~dimitri/doxygen/)
 to process the source code itself, special comments in the code,
 and additional documentation files.
 In general, Doxygen recognizes and denotes the following entities as shown:
@@ -50,10 +49,7 @@ In general, Doxygen recognizes and denotes the following entities as shown:
 - methods, such as Fl_Widget::callback(Fl_Callback* cb, void* p),
 - functions, such as fl_draw(const char *str, int x, int y),
 - internal links, such as \ref preface_conventions,
-- external links, such as
-  <a href="http://www.stack.nl/~dimitri/doxygen/">
-  http://www.stack.nl/~dimitri/doxygen/
-  </a>
+- external links, such as http://www.stack.nl/~dimitri/doxygen/
 
 Other code samples and commands are shown in <tt>regular courier type</tt>.
 
