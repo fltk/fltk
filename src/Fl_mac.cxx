@@ -1105,7 +1105,7 @@ pascal OSStatus carbonKeyboardHandler(
                      NULL, sizeof(UInt32), NULL, &mods );
   
   // get the key code only for key events
-  UInt32 keyCode = 0;
+  UInt32 keyCode = 0, maskedKeyCode = 0;
   unsigned char key = 0;
   unsigned short sym = 0;
   if (kind!=kEventRawKeyModifiersChanged) {
@@ -1114,6 +1114,7 @@ pascal OSStatus carbonKeyboardHandler(
     GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, 
                        NULL, sizeof(char), NULL, &key );
   }
+  maskedKeyCode = keyCode & 0x7f;
   /* output a human readbale event identifier for debugging
   const char *ev = "";
   switch (kind) {
@@ -1152,17 +1153,16 @@ pascal OSStatus carbonKeyboardHandler(
     }
     // if the user pressed alt/option, event_key should have the keycap, 
     // but event_text should generate the international symbol
+    sym = macKeyLookUp[ maskedKeyCode ];
     if ( isalpha(key) )
       sym = tolower(key);
-    else if ( Fl::e_state&FL_CTRL && key<32 )
+    else if ( Fl::e_state&FL_CTRL && key<32 && sym<0xff00)
       sym = key+96;
-    else if ( Fl::e_state&FL_ALT ) // find the keycap of this key
-      sym = keycode_to_sym( keyCode & 0x7f, 0, macKeyLookUp[ keyCode & 0x7f ] );
-    else
-      sym = macKeyLookUp[ keyCode & 0x7f ];
+    else if ( Fl::e_state&FL_ALT && sym<0xff00) // find the keycap of this key
+      sym = keycode_to_sym( maskedKeyCode, 0, macKeyLookUp[ maskedKeyCode ] );
     Fl::e_keysym = Fl::e_original_keysym = sym;
     // Handle FL_KP_Enter on regular keyboards and on Powerbooks
-    if ( keyCode==0x4c || keyCode==0x34) key=0x0d;
+    if ( maskedKeyCode==0x4c || maskedKeyCode==0x34) key=0x0d;
     // Matt: the Mac has no concept of a NumLock key, or at least not visible
     // Matt: to Carbon. The kEventKeyModifierNumLockMask is only set when
     // Matt: a numeric keypad key is pressed and does not correspond with

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.10
 
+	- Fixed wrong identifier for special keys combined with 
+	  modifier (STR #2196)
 	- Fixed documentation for Fl_Progress (STR #2209)
 	- Fix for multiple popups, when dragging and calling fl_alert()
 	  and friends from the callback (STR #2159)
