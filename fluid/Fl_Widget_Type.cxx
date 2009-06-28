@@ -2124,7 +2124,8 @@ void Fl_Widget_Type::write_color(const char* field, Fl_Color color) {
   }
   const char *var = is_class() ? "this" : name() ? name() : "o";
   if (color_name) {
-    write_c("%s%s->%s(%s);\n", indent(), var, field, color_name);
+    write_c("%s%s->%s((Fl_Color)%s);\n", indent(), var, field, color_name);
+    // we still must cast ^^^^^ here because a few widgets have the wrong argument type. Ouch!
   } else {
     write_c("%s%s->%s((Fl_Color)%d);\n", indent(), var, field, color);
   }

@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Added cast to Fl_Color in all Fluid code (STR #2206)
 	- Fixed wrong identifier for special keys combined with 
 	  modifier (STR #2196)
 	- Fixed documentation for Fl_Progress (STR #2209)
