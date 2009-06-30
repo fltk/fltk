@@ -38,6 +38,9 @@ public:
   About(int x, int y, int w, int h) : Fl_Help_View(x, y, w, h) {
     value(
 "<htmL><body><h2>About Unit Testing...</h2>\n"
+"The Unit Testing application can be used to verify correct graphis rendering "
+"on the current platform. The core developer team uses this program to make sure that the "
+"FLTK user experience is identical on all supprted graphics systems."
 "<h3>the UI Designer</h3>\n"
 "<p>Designing a good user interface is an art. Widgets must be selected and carefully positioned "
 "to create a consistent look and feel for the user. Text must fit into given boxes and graphic "
@@ -51,7 +54,7 @@ public:
 "in the same order in which a new graphics driver could be implemented. Most tests rely "
 "on the previous test to function correctly, so sticking to the given order is a good idea.</p>\n"
 "<h3>Conventions</h3>\n"
-"<p>In most tests, two layers of graphics are drawn for most test. The lower layer contains "
+"<p>Two layers of graphics are drawn for most test. The lower layer contains "
 "red and green pixels. The upper layer contains black pixels. The test is rendered correctly "
 "if all red pixels are covered, but none of the green pixels. The top graphics layer can be "
 "switched on and off.</p>"
