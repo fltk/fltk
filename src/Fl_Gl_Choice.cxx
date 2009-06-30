@@ -264,7 +264,7 @@ static void del_context(GLContext ctx) {
 
 GLContext fl_create_gl_context(XVisualInfo* vis) {
   GLContext shared_ctx = 0;
-  if (context_list && nContext) shared_context = context_list[0];
+  if (context_list && nContext) shared_ctx = context_list[0];
   GLContext context = glXCreateContext(fl_display, vis, shared_ctx, 1);
   if (context)
     add_context(context);
