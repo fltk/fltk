@@ -324,7 +324,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   GLContext context =
     layer ? wglCreateLayerContext(hdc, layer) : wglCreateContext(hdc);
   if (context) {
-    if (context_list && context_list[0]) 
+    if (context_list && nContext) 
       wglShareLists(context_list[0], context);
     add_context(context);
   }
@@ -333,7 +333,8 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 
 #  elif defined(__APPLE_QD__)
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
-    GLContext context, shared_ctx = context_list ? context_list[0] : 0;
+    GLContext context, shared_ctx = 0;
+    if (context_list && nContext) shared_ctx = context_list[0];
     context = aglCreateContext( g->pixelformat, shared_ctx);
     if (!context) return 0;
     add_context((GLContext)context);
@@ -349,7 +350,8 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 #  elif defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
-    GLContext context, shared_ctx = context_list ? context_list[0] : 0;
+    GLContext context, shared_ctx = 0;
+    if (context_list && nContext) shared_ctx = context_list[0];
     context = aglCreateContext( g->pixelformat, shared_ctx);
     if (!context) return 0;
     add_context((GLContext)context);
@@ -365,7 +367,8 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 #  else
 
 GLContext fl_create_gl_context(XVisualInfo* vis) {
-  GLContext shared_ctx = context_list ? context_list[0] : 0;
+  GLContext shared_ctx = 0;
+  if (context_list && nContext) shared_context = context_list[0];
   GLContext context = glXCreateContext(fl_display, vis, shared_ctx, 1);
   if (context)
     add_context(context);
@@ -414,9 +417,13 @@ void fl_no_gl_context() {
 #  ifdef WIN32
   wglMakeCurrent(0, 0);
 #  elif defined(__APPLE_QD__)
+  AGLContext ctx = aglGetCurrentContext();
+  if (ctx) aglSetDrawable(ctx, NULL);    
   aglSetCurrentContext(0);
 #  elif defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
+  AGLContext ctx = aglGetCurrentContext();
+  if (ctx) aglSetDrawable(ctx, NULL);    
   aglSetCurrentContext(0);
 #  else
   glXMakeCurrent(fl_display, 0, 0);
@@ -428,13 +435,9 @@ void fl_delete_gl_context(GLContext context) {
 #  ifdef WIN32
   wglDeleteContext(context);
 #  elif defined(__APPLE_QD__)
-  aglSetCurrentContext( NULL );
-  aglSetDrawable( context, NULL );    
   aglDestroyContext( context );
 #  elif defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-  aglSetCurrentContext( NULL );
-  aglSetDrawable( context, NULL );
   aglDestroyContext( context );
 #  else
   glXDestroyContext(fl_display, context);
