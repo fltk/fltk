@@ -181,8 +181,8 @@ void Fl_Gl_Window::make_current() {
   xywh[2] = w();
   xywh[3] = h();
 
-  aglEnable(context_, AGL_BUFFER_RECT);
   aglSetInteger(context_, AGL_BUFFER_RECT, xywh);
+  aglEnable(context_, AGL_BUFFER_RECT);
 //  printf("make_current: xywh=[%d %d %d %d]\n", xywh[0], xywh[1], xywh[2], xywh[3]);
 #endif // __APPLE__
 
