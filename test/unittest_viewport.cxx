@@ -1,5 +1,5 @@
 //
-// "$Id: $"
+// "$Id$"
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //

@@ -1,5 +1,5 @@
 //
-// "$Id: $"
+// "$Id$"
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
@@ -62,5 +62,5 @@ public:
 UnitTest rects("rectangles", RectTest::create);
 
 //
-// End of "$Id: $"
+// End of "$Id$"
 //

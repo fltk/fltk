@@ -1,5 +1,5 @@
 //
-// "$Id: $"
+// "$Id$"
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
@@ -71,5 +71,5 @@ public:
 UnitTest lines("drawing lines", LineTest::create);
 
 //
-// End of "$Id: $"
+// End of "$Id$"
 //
