@@ -57,7 +57,7 @@ void Fl_Free::step(void *v) {
     		      float     event_y,
     		      char      key)
   \endcode
-  This function is called from the the handle() method in response to most
+  This function is called from the handle() method in response to most
   events, and is called by the draw() method.
 
   The event argument contains the event type:
