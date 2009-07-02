@@ -1,6 +1,6 @@
 README.win32 - Building FLTK under Windows
 ------------------------------------------
-Last Update: May 2007 for release 1.1.8
+Last Update: May 2009 for release 1.1.10
 
 INTRODUCTION
 
@@ -89,19 +89,15 @@ RECOMMENDED BUILD ENVIRONMENTS
 	1. Get the current Cygwin toolset.
 
 	   This can either produce executables that do or do not
-	   rely on the Cygwin DLL (check licensing) at your
-	   choice.
+	   rely on the Cygwin DLL (check licensing) at your choice.
 
-	2. Get the latest MinGW toolset. It is recommended that
-	   you also get the MSYS shell and the msysDTK developer
-	   toolset.
+	2. Get the latest MinGW toolset. It is recommended that you
+	   also get the MSYS shell and the msysDTK developer toolset.
 
-	   This will only produce normal Windows native
-	   executables without any Unix or POSIX compatibility
-	   layer.
+	   This will only produce normal Windows native executables
+	   without any Unix or POSIX compatibility layer.
 
-
-	   See the links section below for more information.
+    See the links section below for more information.
 
     Either option can generate windows-native executables and
     option 1 can provide a Unix-like POSIX portability layer that
@@ -164,7 +160,7 @@ BUILDING FLTK WITH CYGWIN OR MINGW
     compilation instructions.
 
 
-WHY DOES A CONSOLE WINDOW APPEAR WHEN I RUN MY PROGRAM
+WHY DOES A CONSOLE WINDOW APPEAR WHEN I RUN MY PROGRAM?
 
     Windows has a flag that determines whether an application
     runs in the foreground with a console or in the background
@@ -193,14 +189,3 @@ HOW DO I GET OPENGL TO WORK?
         #define HAVE_GL 1
 
     will change this to compile and link in OpenGL.
-
-
-
-
-
-
-
-
-
-
-

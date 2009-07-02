@@ -7,7 +7,7 @@ comment {//
 //
 // About dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2006 by Bill Spitzak and others.
+// Copyright 1998-2009 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -46,11 +46,11 @@ Function {make_about_panel()} {open
     Fl_Box {} {
       label {FLTK User
 Interface Designer
-Version 1.1.9}
+Version 1.1.10}
       xywh {135 10 170 69} color 12 selection_color 47 labelfont 1 labelsize 18 align 21
     }
     Fl_Box {} {
-      label {Copyright 1998-2008 by
+      label {Copyright 1998-2009 by
 Bill Spitzak and others} selected
       xywh {135 89 170 42} align 148
     }

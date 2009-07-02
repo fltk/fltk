@@ -5,7 +5,7 @@ dnl "$Id$"
 dnl
 dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
-dnl Copyright 1998-2007 by Bill Spitzak and others.
+dnl Copyright 1998-2009 by Bill Spitzak and others.
 dnl
 dnl This library is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU Library General Public
@@ -36,7 +36,7 @@ AC_INIT(src/Fl.cxx)
 dnl FLTK library versions...
 FL_MAJOR_VERSION=1
 FL_MINOR_VERSION=1
-FL_PATCH_VERSION=9
+FL_PATCH_VERSION=10
 FL_API_VERSION=${FL_MAJOR_VERSION}.${FL_MINOR_VERSION}
 
 AC_SUBST(FL_MAJOR_VERSION)

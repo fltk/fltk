@@ -3,7 +3,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2009 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -47,7 +47,7 @@
 
 #define FL_MAJOR_VERSION	1
 #define FL_MINOR_VERSION	1
-#define FL_PATCH_VERSION	9
+#define FL_PATCH_VERSION	10
 #define FL_VERSION		((double)FL_MAJOR_VERSION + \
 				 (double)FL_MINOR_VERSION * 0.01 + \
 				 (double)FL_PATCH_VERSION * 0.0001)
