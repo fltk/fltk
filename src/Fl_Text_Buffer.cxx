@@ -202,7 +202,7 @@ void Fl_Text_Buffer::text(const char *t) {
    include the character pointed to by \p end.
    When you are done with the text, free it using the free() function.
 */
-char * Fl_Text_Buffer::text_range(int start, int end) {
+char * Fl_Text_Buffer::text_range(int start, int end) const {
   char * s = NULL;
   int copiedLength, part1Length;
 
@@ -239,7 +239,7 @@ char * Fl_Text_Buffer::text_range(int start, int end) {
 
 /**  Returns the character at the specified position pos in the buffer.
      Positions start at 0 */
-char Fl_Text_Buffer::character(int pos) {
+char Fl_Text_Buffer::character(int pos) const {
   if (pos < 0 || pos >= mLength)
     return '\0';
   if (pos < mGapStart)
@@ -1177,7 +1177,7 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines) {
    returns 1 if found, 0 if not.
 */
 int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
-                                    int *foundPos, int matchCase)
+                                    int *foundPos, int matchCase) const
 {
   if (!searchString) return 0;
   int bp;
@@ -1201,7 +1201,7 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
    returns 1 if found, 0 if not.
 */
 int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
-                                     int *foundPos, int matchCase)
+                                     int *foundPos, int matchCase) const
 {
   if (!searchString) return 0;
   int bp;
@@ -1226,7 +1226,7 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
   returns 1 if found, 0 if not.
 */
 int Fl_Text_Buffer::findchars_forward(int startPos, const char *searchChars,
-                                    int *foundPos) {
+                                    int *foundPos) const {
   int pos, gapLen = mGapEnd - mGapStart;
   const char *c;
 
@@ -1260,7 +1260,7 @@ int Fl_Text_Buffer::findchars_forward(int startPos, const char *searchChars,
    returns 1 if found, 0 if not.
 */
 int Fl_Text_Buffer::findchars_backward(int startPos, const char *searchChars,
-                                     int *foundPos) {
+                                     int *foundPos) const {
   int pos, gapLen = mGapEnd - mGapStart;
   const char *c;
 
@@ -1975,7 +1975,7 @@ void Fl_Text_Selection::set_rectangular(int startpos, int endpos,
   mRectEnd = rectEnd;
 }
 
-int Fl_Text_Selection::position(int *startpos, int *endpos) {
+int Fl_Text_Selection::position(int *startpos, int *endpos) const {
   if (!mSelected)
     return 0;
   *startpos = mStart;
@@ -1985,7 +1985,7 @@ int Fl_Text_Selection::position(int *startpos, int *endpos) {
 }
 
 int Fl_Text_Selection::position(int *startpos, int *endpos,
-                                 int *isRect, int *rectStart, int *rectEnd) {
+                                 int *isRect, int *rectStart, int *rectEnd) const {
   if (!mSelected)
     return 0;
   *isRect = mRectangular;
@@ -2002,7 +2002,7 @@ int Fl_Text_Selection::position(int *startpos, int *endpos,
    Return true if position \p pos with indentation \p dispIndex is in
    the Fl_Text_Selection.
 */
-int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) {
+int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) const {
   return selected() &&
          ((!rectangular() && pos >= start() && pos < end()) ||
            (rectangular() && pos >= start() && lineStartPos <= end() &&
@@ -2272,7 +2272,7 @@ void Fl_Text_Selection::update(int pos, int nDeleted,
    count lines quickly, hence searching for a single character: newline)
 */
 int Fl_Text_Buffer::findchar_forward(int startPos, char searchChar,
-                                    int *foundPos) {
+                                    int *foundPos) const {
   int pos, gapLen = mGapEnd - mGapStart;
 
   if (startPos < 0 || startPos >= mLength) {
@@ -2308,7 +2308,7 @@ int Fl_Text_Buffer::findchar_forward(int startPos, char searchChar,
    count lines quickly, hence searching for a single character: newline)
 */
 int Fl_Text_Buffer::findchar_backward(int startPos, char searchChar,
-                                     int *foundPos) {
+                                     int *foundPos) const{
   int pos, gapLen = mGapEnd - mGapStart;
 
   if (startPos <= 0 || startPos > mLength) {

@@ -51,20 +51,20 @@ class FL_EXPORT Fl_Text_Selection {
     void set(int start, int end);
     void set_rectangular(int start, int end, int rectStart, int rectEnd);
     void update(int pos, int nDeleted, int nInserted);
-    char rectangular() { return mRectangular; }
-    int start() { return mStart; }
-    int end() { return mEnd; }
-    int rect_start() { return mRectStart; }
-    int rect_end() { return mRectEnd; }
+    char rectangular() const { return mRectangular; }
+    int start() const { return mStart; }
+    int end() const { return mEnd; }
+    int rect_start() const { return mRectStart; }
+    int rect_end() const { return mRectEnd; }
     /**
        Returns a non-zero number if any text has been selected, or 0
        if no text is selected.
     */
-    char selected() { return mSelected; }
+    char selected() const { return mSelected; }
     void selected(char b) { mSelected = b; }
-    int includes(int pos, int lineStartPos, int dispIndex);
-    int position(int* start, int* end);
-    int position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd);
+    int includes(int pos, int lineStartPos, int dispIndex) const;
+    int position(int* start, int* end) const;
+    int position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd) const;
 
 
   protected:
@@ -101,11 +101,11 @@ class FL_EXPORT Fl_Text_Buffer {
     ~Fl_Text_Buffer();
 
   /**    Returns the number of characters in the buffer.  */
-    int length() { return mLength; }
+    int length() const { return mLength; }
     char* text() const;
     void text(const char* text);
-    char* text_range(int start, int end);
-    char character(int pos);
+    char* text_range(int start, int end) const;
+    char character(int pos) const;
     char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);
     void insert(int pos, const char* text);
   /**    Appends the text string to the end of the buffer.  */
@@ -145,11 +145,11 @@ class FL_EXPORT Fl_Text_Buffer {
     void remove_rectangular(int start, int end, int rectStart, int rectEnd);
     void clear_rectangular(int start, int end, int rectStart, int rectEnd);
     /** Gets the tab width.  */
-    int tab_distance() { return mTabDist; }
+    int tab_distance() const { return mTabDist; }
     void tab_distance(int tabDist);
     void select(int start, int end);
     /** Returns a non 0 value if text has been selected, 0 otherwise */
-    int selected() { return mPrimary.selected(); }
+    int selected() const { return mPrimary.selected(); }
     void unselect();
     void select_rectangular(int start, int end, int rectStart, int rectEnd);
     int selection_position(int* start, int* end);
@@ -226,16 +226,16 @@ class FL_EXPORT Fl_Text_Buffer {
     int count_lines(int startPos, int endPos);
     int skip_lines(int startPos, int nLines);
     int rewind_lines(int startPos, int nLines);
-    int findchar_forward(int startPos, char searchChar, int* foundPos);
-    int findchar_backward(int startPos, char searchChar, int* foundPos);
-    int findchars_forward(int startPos, const char* searchChars, int* foundPos);
-    int findchars_backward(int startPos, const char* searchChars, int* foundPos);
+    int findchar_forward(int startPos, char searchChar, int* foundPos) const;
+    int findchar_backward(int startPos, char searchChar, int* foundPos) const;
+    int findchars_forward(int startPos, const char* searchChars, int* foundPos) const;
+    int findchars_backward(int startPos, const char* searchChars, int* foundPos) const;
 
     int search_forward(int startPos, const char* searchString, int* foundPos,
-                       int matchCase = 0);
+                       int matchCase = 0) const;
 
     int search_backward(int startPos, const char* searchString, int* foundPos,
-                        int matchCase = 0);
+                        int matchCase = 0) const;
 
     int substitute_null_characters(char* string, int length);
     void unsubstitute_null_characters(char* string);
