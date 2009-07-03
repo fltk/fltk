@@ -122,7 +122,7 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize) {
   mHighlight.mSelected = 0;
   mHighlight.mStart = mHighlight.mEnd = 0;
   mHighlight.mRectangular = 0;
-  mNodifyProcs = NULL;
+  mModifyProcs = NULL;
   mCbArgs = NULL;
   mNModifyProcs = 0;
   mNPredeleteProcs = 0;
@@ -140,7 +140,7 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize) {
 Fl_Text_Buffer::~Fl_Text_Buffer() {
   free(mBuf);
   if (mNModifyProcs != 0) {
-    delete[] mNodifyProcs;
+    delete[] mModifyProcs;
     delete[] mCbArgs;
   }
   if (mNPredeleteProcs != 0) {
@@ -153,10 +153,10 @@ Fl_Text_Buffer::~Fl_Text_Buffer() {
    Get the entire contents of a text buffer.  Memory is allocated to contain
    the returned string, which the caller must free.
 */
-char * Fl_Text_Buffer::text() {
+char * Fl_Text_Buffer::text() const {
   char *t;
 
-  t = (char *)malloc(mLength + 1);
+  t = (char *)malloc(mLength + 1);  // FIX ME UTF8: we alloc from a string len, is len the strlen or the string buffer size ?
   memcpy(t, mBuf, mGapStart);
   memcpy(&t[ mGapStart ], &mBuf[ mGapEnd ],
           mLength - mGapStart);
@@ -777,17 +777,17 @@ void Fl_Text_Buffer::add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB,
   newModifyProcs = new Fl_Text_Modify_Cb [ mNModifyProcs + 1 ];
   newCBArgs = new void * [ mNModifyProcs + 1 ];
   for (i = 0; i < mNModifyProcs; i++) {
-    newModifyProcs[ i + 1 ] = mNodifyProcs[ i ];
+    newModifyProcs[ i + 1 ] = mModifyProcs[ i ];
     newCBArgs[ i + 1 ] = mCbArgs[ i ];
   }
   if (mNModifyProcs != 0) {
-    delete [] mNodifyProcs;
+    delete [] mModifyProcs;
     delete [] mCbArgs;
   }
   newModifyProcs[ 0 ] = bufModifiedCB;
   newCBArgs[ 0 ] = cbArg;
   mNModifyProcs++;
-  mNodifyProcs = newModifyProcs;
+  mModifyProcs = newModifyProcs;
   mCbArgs = newCBArgs;
 }
 /**   Removes a modify callback.*/
@@ -799,7 +799,7 @@ void Fl_Text_Buffer::remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB,
 
   /* find the matching callback to remove */
   for (i = 0; i < mNModifyProcs; i++) {
-    if (mNodifyProcs[ i ] == bufModifiedCB && mCbArgs[ i ] == cbArg) {
+    if (mModifyProcs[ i ] == bufModifiedCB && mCbArgs[ i ] == cbArg) {
       toRemove = i;
       break;
     }
@@ -814,8 +814,8 @@ void Fl_Text_Buffer::remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB,
   mNModifyProcs--;
   if (mNModifyProcs == 0) {
     mNModifyProcs = 0;
-    delete[] mNodifyProcs;
-    mNodifyProcs = NULL;
+    delete[] mModifyProcs;
+    mModifyProcs = NULL;
     delete[] mCbArgs;
     mCbArgs = NULL;
     return;
@@ -825,16 +825,16 @@ void Fl_Text_Buffer::remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB,
 
   /* copy out the remaining members and free the old lists */
   for (i = 0; i < toRemove; i++) {
-    newModifyProcs[ i ] = mNodifyProcs[ i ];
+    newModifyProcs[ i ] = mModifyProcs[ i ];
     newCBArgs[ i ] = mCbArgs[ i ];
   }
   for (; i < mNModifyProcs; i++) {
-    newModifyProcs[ i ] = mNodifyProcs[ i + 1 ];
+    newModifyProcs[ i ] = mModifyProcs[ i + 1 ];
     newCBArgs[ i ] = mCbArgs[ i + 1 ];
   }
-  delete[] mNodifyProcs;
+  delete[] mModifyProcs;
   delete[] mCbArgs;
-  mNodifyProcs = newModifyProcs;
+  mModifyProcs = newModifyProcs;
   mCbArgs = newCBArgs;
 }
 
@@ -2102,7 +2102,7 @@ void Fl_Text_Buffer::call_modify_callbacks(int pos, int nDeleted,
   int i;
 
   for (i = 0; i < mNModifyProcs; i++)
-    (*mNodifyProcs[ i ]) (pos, nInserted, nDeleted, nRestyled,
+    (*mModifyProcs[ i ]) (pos, nInserted, nDeleted, nRestyled,
                              deletedText, mCbArgs[ i ]);
 }
 

@@ -102,7 +102,7 @@ class FL_EXPORT Fl_Text_Buffer {
 
   /**    Returns the number of characters in the buffer.  */
     int length() { return mLength; }
-    char* text();
+    char* text() const;
     void text(const char* text);
     char* text_range(int start, int end);
     char character(int pos);
@@ -297,7 +297,7 @@ class FL_EXPORT Fl_Text_Buffer {
                                    tabs for padding in rectangular operations */
     int mNModifyProcs;          /**< number of modify-redisplay procs attached */
     Fl_Text_Modify_Cb*          /**< procedures to call when buffer is */
-    mNodifyProcs;               /**< modified to redisplay contents */
+    mModifyProcs;               /**< modified to redisplay contents */
     void** mCbArgs;             /**< caller arguments for modifyProcs above */
     int mNPredeleteProcs;	/**< number of pre-delete procs attached */
     Fl_Text_Predelete_Cb*	/**< procedure to call before text is deleted */
