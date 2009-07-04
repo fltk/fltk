@@ -2963,7 +2963,7 @@ int Fl_Text_Display::measure_proportional_character(char c, int colNum, int pos)
    the way back to the beginning of the line.
 */
 void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
-    	int *lineEnd, int *nextLineStart) {
+    	int *lineEnd, int *nextLineStart) const {
     int retLines, retLineStart;
     
     /* if we're not wrapping use more efficient BufEndOfLine */
