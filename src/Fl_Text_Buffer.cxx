@@ -557,7 +557,7 @@ void Fl_Text_Buffer::clear_rectangular(int start, int end, int rectStart,
   with the text, free it using the free() function.
 */
 char * Fl_Text_Buffer::text_in_rectangle(int start, int end,
-    int rectStart, int rectEnd) {
+    int rectStart, int rectEnd) const {
   int lineStart, selLeft, selRight, len;
   char *textOut, *outPtr, *retabbedStr;
   const char *textIn;
@@ -916,12 +916,12 @@ void Fl_Text_Buffer::remove_predelete_callback(
   character position. When you are done with the text, free it
   using the free() function.
 */
-char * Fl_Text_Buffer::line_text(int pos) {
+char * Fl_Text_Buffer::line_text(int pos) const {
   return text_range(line_start(pos), line_end(pos));
 }
 
 /** Returns the position of the start of the line containing position \p pos. */
-int Fl_Text_Buffer::line_start(int pos) {
+int Fl_Text_Buffer::line_start(int pos) const {
   if (!findchar_backward(pos, '\n', &pos))
     return 0;
   return pos + 1;
@@ -931,13 +931,13 @@ int Fl_Text_Buffer::line_start(int pos) {
    (which is either a pointer to the newline character ending the line,
    or a pointer to one character beyond the end of the buffer)
 */
-int Fl_Text_Buffer::line_end(int pos) {
+int Fl_Text_Buffer::line_end(int pos) const {
   if (!findchar_forward(pos, '\n', &pos))
     pos = mLength;
   return pos;
 }
 /** Returns the position corresponding to the start of the word */
-int Fl_Text_Buffer::word_start(int pos) {
+int Fl_Text_Buffer::word_start(int pos) const {
   while (pos && (isalnum(character(pos)) || character(pos) == '_')) {
     pos--;
   }
@@ -946,7 +946,7 @@ int Fl_Text_Buffer::word_start(int pos) {
 }
 
 /**  Returns the position corresponding to the end of the word.*/
-int Fl_Text_Buffer::word_end(int pos) {
+int Fl_Text_Buffer::word_end(int pos) const {
   while (pos < length() && (isalnum(character(pos)) || character(pos) == '_')) {
     pos++;
   }
@@ -963,7 +963,7 @@ int Fl_Text_Buffer::word_end(int pos) {
    for figuring tabs.  Output string is guranteed to be shorter or
    equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
 */
-int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) {
+int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) const {
   int ret;
   char c = character(pos);
   ret = expand_character(c, indent, outStr,
@@ -1058,7 +1058,7 @@ int Fl_Text_Buffer::character_width(char c, int indent, int tabDist, char nullSu
    shown on the screen to represent characters in the buffer, where tabs and
    control characters are expanded)
 */
-int Fl_Text_Buffer::count_displayed_characters(int lineStartPos, int targetPos) {
+int Fl_Text_Buffer::count_displayed_characters(int lineStartPos, int targetPos) const {
   int pos, charCount = 0;
   char expandedChar[ FL_TEXT_MAX_EXP_CHAR_LEN ];
 
@@ -1092,7 +1092,7 @@ int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars) {
    Counts the number of newlines between \p startPos and \p endPos in buffer.
    The character at position \p endPos is not counted.
 */
-int Fl_Text_Buffer::count_lines(int startPos, int endPos) {
+int Fl_Text_Buffer::count_lines(int startPos, int endPos) const {
   int pos, gapLen = mGapEnd - mGapStart;
   int lineCount = 0;
 
@@ -2012,7 +2012,7 @@ int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) const 
 
 
 
-char * Fl_Text_Buffer::selection_text_(Fl_Text_Selection *sel) {
+char * Fl_Text_Buffer::selection_text_(Fl_Text_Selection *sel) const {
   int start, end, isRect, rectStart, rectEnd;
   char *s;
 
@@ -2098,7 +2098,7 @@ static void addPadding(char *string, int startIndent, int toIndent,
    changed area(s) on the screen and any other listeners.
 */
 void Fl_Text_Buffer::call_modify_callbacks(int pos, int nDeleted,
-    int nInserted, int nRestyled, const char *deletedText) {
+    int nInserted, int nRestyled, const char *deletedText) const {
   int i;
 
   for (i = 0; i < mNModifyProcs; i++)
@@ -2110,7 +2110,7 @@ void Fl_Text_Buffer::call_modify_callbacks(int pos, int nDeleted,
    Calls the stored pre-delete callback procedure(s) for this buffer to update 
    the changed area(s) on the screen and any other listeners.
 */
-void Fl_Text_Buffer::call_predelete_callbacks(int pos, int nDeleted) {
+void Fl_Text_Buffer::call_predelete_callbacks(int pos, int nDeleted) const {
     int i;
     
     for (i=0; i<mNPredeleteProcs; i++)
@@ -2122,7 +2122,7 @@ void Fl_Text_Buffer::call_predelete_callbacks(int pos, int nDeleted) {
    screen for a change in a selection.
 */
 void Fl_Text_Buffer::redisplay_selection(Fl_Text_Selection *oldSelection,
-    Fl_Text_Selection *newSelection) {
+    Fl_Text_Selection *newSelection) const {
   int oldStart, oldEnd, newStart, newEnd, ch1Start, ch1End, ch2Start, ch2End;
 
   /* If either selection is rectangular, add an additional character to
@@ -2399,7 +2399,7 @@ static int textWidth(const char *text, int tabDist, char nullSubsChar) {
    margin for subsequent columnar pastes of this data.
 */
 void Fl_Text_Buffer::rectangular_selection_boundaries(int lineStartPos,
-    int rectStart, int rectEnd, int *selStart, int *selEnd) {
+    int rectStart, int rectEnd, int *selStart, int *selEnd) const {
   int pos, width, indent = 0;
   char c;
 

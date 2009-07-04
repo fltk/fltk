@@ -106,7 +106,7 @@ class FL_EXPORT Fl_Text_Buffer {
     void text(const char* text);
     char* text_range(int start, int end) const;
     char character(int pos) const;
-    char* text_in_rectangle(int start, int end, int rectStart, int rectEnd);
+    char* text_in_rectangle(int start, int end, int rectStart, int rectEnd) const;
     void insert(int pos, const char* text);
   /**    Appends the text string to the end of the buffer.  */
     void append(const char* t) { insert(length(), t); }
@@ -210,20 +210,20 @@ class FL_EXPORT Fl_Text_Buffer {
    */
    void call_predelete_callbacks() { call_predelete_callbacks(0, 0); }
 
-    char* line_text(int pos);
-    int line_start(int pos);
-    int line_end(int pos);
-    int word_start(int pos);
-    int word_end(int pos);
-    int expand_character(int pos, int indent, char *outStr);
+    char* line_text(int pos) const;
+    int line_start(int pos) const;
+    int line_end(int pos) const;
+    int word_start(int pos) const;
+    int word_end(int pos) const;
+    int expand_character(int pos, int indent, char *outStr) const;
 
     static int expand_character(char c, int indent, char* outStr, int tabDist,
                                 char nullSubsChar);
 
     static int character_width(char c, int indent, int tabDist, char nullSubsChar);
-    int count_displayed_characters(int lineStartPos, int targetPos);
+    int count_displayed_characters(int lineStartPos, int targetPos) const;
     int skip_displayed_characters(int lineStartPos, int nChars);
-    int count_lines(int startPos, int endPos);
+    int count_lines(int startPos, int endPos) const;
     int skip_lines(int startPos, int nLines);
     int rewind_lines(int startPos, int nLines);
     int findchar_forward(int startPos, char searchChar, int* foundPos) const;
@@ -240,7 +240,7 @@ class FL_EXPORT Fl_Text_Buffer {
     int substitute_null_characters(char* string, int length);
     void unsubstitute_null_characters(char* string);
     /**    Returns the current nul substitution character.  */
-    char null_substitution_character() { return mNullSubsChar; }
+    char null_substitution_character() const { return mNullSubsChar; }
     /**    Returns the primary selection.  */
     Fl_Text_Selection* primary_selection() { return &mPrimary; }
     /**    Returns the secondary selection.  */
@@ -250,8 +250,8 @@ class FL_EXPORT Fl_Text_Buffer {
 
   protected:
     void call_modify_callbacks(int pos, int nDeleted, int nInserted,
-                               int nRestyled, const char* deletedText);
-    void call_predelete_callbacks(int pos, int nDeleted);
+                               int nRestyled, const char* deletedText) const;
+    void call_predelete_callbacks(int pos, int nDeleted) const;
 
     int insert_(int pos, const char* text);
     void remove_(int start, int end);
@@ -267,17 +267,17 @@ class FL_EXPORT Fl_Text_Buffer {
                               int* nInserted, int* endPos);
 
     void redisplay_selection(Fl_Text_Selection* oldSelection,
-                             Fl_Text_Selection* newSelection);
+                             Fl_Text_Selection* newSelection) const;
 
     void move_gap(int pos);
     void reallocate_with_gap(int newGapStart, int newGapLen);
-    char* selection_text_(Fl_Text_Selection* sel);
+    char* selection_text_(Fl_Text_Selection* sel) const;
     void remove_selection_(Fl_Text_Selection* sel);
     void replace_selection_(Fl_Text_Selection* sel, const char* text);
 
     void rectangular_selection_boundaries(int lineStartPos, int rectStart,
                                           int rectEnd, int* selStart,
-                                          int* selEnd);
+                                          int* selEnd) const;
 
     void update_selections(int pos, int nDeleted, int nInserted);
 
