@@ -253,8 +253,8 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
                          int *nextLineStart);
     int measure_proportional_character(char c, int colNum, int pos);
     int wrap_uses_character(int lineEndPos);
-    int range_touches_selection(Fl_Text_Selection *sel, int rangeStart,
-                                 int rangeEnd);
+    int range_touches_selection(const Fl_Text_Selection *sel, int rangeStart,
+                                 int rangeEnd) const;
 #ifndef FL_DOXYGEN
     int damage_range1_start, damage_range1_end;
     int damage_range2_start, damage_range2_end;

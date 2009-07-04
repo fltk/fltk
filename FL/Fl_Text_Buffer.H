@@ -242,11 +242,13 @@ class FL_EXPORT Fl_Text_Buffer {
     /**    Returns the current nul substitution character.  */
     char null_substitution_character() const { return mNullSubsChar; }
     /**    Returns the primary selection.  */
+    const Fl_Text_Selection* primary_selection() const { return &mPrimary; }
+    /**    Returns the primary selection.  */
     Fl_Text_Selection* primary_selection() { return &mPrimary; }
     /**    Returns the secondary selection.  */
-    Fl_Text_Selection* secondary_selection() { return &mSecondary; }
+    const Fl_Text_Selection* secondary_selection() const { return &mSecondary; }
     /**    Returns the current highlight selection.  */
-    Fl_Text_Selection* highlight_selection() { return &mHighlight; }
+    const Fl_Text_Selection* highlight_selection() const { return &mHighlight; }
 
   protected:
     void call_modify_callbacks(int pos, int nDeleted, int nInserted,

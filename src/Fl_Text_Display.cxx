@@ -3011,8 +3011,8 @@ int Fl_Text_Display::wrap_uses_character(int lineEndPos) {
    Return true if the selection "sel" is rectangular, and touches a
    buffer position withing "rangeStart" to "rangeEnd"
 */
-int Fl_Text_Display::range_touches_selection(Fl_Text_Selection *sel,
-   int rangeStart, int rangeEnd) {
+int Fl_Text_Display::range_touches_selection(const Fl_Text_Selection *sel,
+   int rangeStart, int rangeEnd) const {
     return sel->selected() && sel->rectangular() && sel->end() >= rangeStart &&
     	    sel->start() <= rangeEnd;
 }
