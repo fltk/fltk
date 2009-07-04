@@ -375,6 +375,10 @@ void fl_alert(const char *, ...);
 
 <P>Same as <tt>fl_message()</tt> except for the &quot;!&quot; symbol.
 
+<p><b>Note:&nbsp;</b>Common dialog boxes are application modal.
+No more than one common dialog box can be open at any time.
+Requests for additional dialog boxes are ignored.</p>
+
 <P ALIGN=CENTER><IMG src="fl_alert.gif" ALT="The fl_alert window">
 
 
@@ -399,16 +403,22 @@ int fl_ask(const char *, ...);
 
 <P>Displays a printf-style message in a pop-up box with an
 &quot;Yes&quot; and &quot;No&quot; button and waits for the user
-to hit a button. The return value is 1 if the user hits Yes, 0
-if they pick No. The enter key is a shortcut for Yes and ESC is
-a shortcut for No.
+to hit a button. The return value is 1 if the user hits Yes,
+0 if they pick No or another dialog box is still open.
+
+The enter key is a shortcut for Yes and ESC is a shortcut for No.
+
+<p><b>Note:&nbsp;</b>Common dialog boxes are application modal. 
+No more than one common dialog box can be open at any time.
+Requests for additional dialog boxes are ignored.</p>
+
 
 <P ALIGN="CENTER"><IMG SRC="fl_ask.gif" ALT="The fl_ask window.">
 
-<p><b>Note:</b> Use of this function is <i>strongly</i>
-discouraged, and it will be removed in FLTK 2.0. Instead, use <a
-href='#fl_choice2'><tt>fl_choice()</tt></a> instead and provide
-unambiguous verbs in place of "Yes" and "No".</p>
+<p><b>Note:&nbsp;</b>Use of this function is <i>strongly</i>
+discouraged, and it will be removed in a later FLTK release.
+Instead, use <a href='#fl_choice2'><tt>fl_choice()</tt></a> and
+provide unambiguous verbs in place of "Yes" and "No".</p>
 
 <!-- NEED 4in -->
 <H2><A name="fl_beep">fl_beep</A></H2>
@@ -476,10 +486,15 @@ int fl_choice(const char *q, const char *b0, const char *b1, const char *b2, ...
 
 <P>Shows the message with three buttons below it marked with the
 strings <tt> b0</tt>, <tt>b1</tt>, and <tt>b2</tt>. Returns 0,
-1, or 2 depending on which button is hit. ESC is a shortcut for
+if button 0 is hit or another dialog box is still open. Returns
+1 or 2 for buttons 1 or 2, respectively. ESC is a shortcut for
 button 0 and the enter key is a shortcut for button 1. Notice
 the buttons are positioned &quot;backwards&quot;. You can hide
 buttons by passing <tt>NULL</tt> as their labels.
+
+<p><b>Note:&nbsp;</b>Common dialog boxes are application modal.
+No more than one common dialog box can be open at any time.
+Requests for additional dialog boxes are ignored.</p>
 
 <P ALIGN="CENTER"><IMG SRC="fl_choice.gif" ALT="The fl_choice window.">
 
@@ -1212,12 +1227,17 @@ const char *fl_input(const char *label, const char *deflt = 0, ...);
 
 <H3>Description</H3>
 
-<P>Pops up a window displaying a string, lets the user edit it,
-and return the new value. The cancel button returns
-<tt>NULL</tt>. <I>The returned pointer is only valid until the
-next time <tt>fl_input()</tt> is called</I>. Due to
-back-compatability, the arguments to any printf commands in the
-label are after the default value.
+<P>Pops up a window displaying a string, lets the user edit it, and
+returns the new value. The function returns <tt>NULL</tt> if the
+<b>Cancel</b> button is hit or another dialog box is still open.
+<I>The returned pointer is only valid until the
+next time <tt>fl_input()</tt> is called</I>.
+Due to back-compatibility, the arguments to any printf commands
+in the label are after the default value.
+
+<p><b>Note:&nbsp;</b>Common dialog boxes are application modal.
+No more than one common dialog box can be open at any time.
+Requests for additional dialog boxes are ignored.</p>
 
 <P ALIGN=CENTER><IMG SRC="fl_input.gif" ALT="The fl_input window.">
 
@@ -1269,12 +1289,11 @@ The message will wrap to fit the window, or may be many lines by
 putting <tt>\n</tt> characters into it. The enter key is a
 shortcut for the OK button.
 
-<P>A message text can be further formatted with html tags by 
-adding <tt>&lt;html&gt;</tt> at the beginning of the message.
-See <tt><a href="Fl_Help_View.html">Fl_Help_View</a></tt> for
-details.
-
 <P>The message text is limited to 1024 characters.
+
+<p><b>Note:&nbsp;</b>Common dialog boxes are application modal.
+No more than one common dialog box can be open at any time.
+Requests for additional dialog boxes are ignored.</p>
 
 <P ALIGN="CENTER"><IMG src="fl_message.gif" ALT="The fl_message window.">
 
@@ -1371,9 +1390,13 @@ const char *fl_password(const char *label, const char *deflt = 0, ...);
 
 <H3>Description</H3>
 
-<P>Same as <tt>fl_input()</tt>, except an <A
-href=Fl_Secret_Input.html><tt>Fl_Secret_Input</tt></A> field is
-used.
+<P>Same as <tt>fl_input()</tt>, except an
+<A href=Fl_Secret_Input.html><tt>Fl_Secret_Input</tt></A>
+field is used.
+
+<p><b>Note:&nbsp;</b>Common dialog boxes are application modal.
+No more than one common dialog box can be open at any time.
+Requests for additional dialog boxes are ignored.</p>
 
 
 <!-- NEED 4in -->
