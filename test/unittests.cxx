@@ -158,6 +158,7 @@ public:
 #include "unittest_text.cxx"
 #include "unittest_images.cxx"
 #include "unittest_viewport.cxx"
+#include "unittest_scrollbarsize.cxx"
 
 
 // callback whenever the browser value changes
