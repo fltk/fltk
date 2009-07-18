@@ -39,6 +39,7 @@ class ScrollBarSizeTest : public Fl_Group {
 	Fl_Browser *b = new Fl_Browser(X,Y,W,H,L);
 	b->type(FL_MULTI_BROWSER);
 	b->add("Papa");     b->add("Delta"); b->add("Hotel");
+        b->add("Long entry will show h-bar");
 	b->add("Charlie");  b->add("Echo");  b->add("Foxtrot");
 	b->add("Golf");     b->add("Lima");  b->add("Victor");
 	b->add("Alpha");    b->add("Xray");  b->add("Yankee");
@@ -105,7 +106,7 @@ public:
 	    "Scrollbar's size should change interactively as size sliders are changed.\n"
             "Changing 'Global Scroll Size' should affect all three browser's scrollbars UNLESS\n"
 	    "the 'A: Scroll Size' slider is changed, in which case its value will take precedence\n"
-	    "for 'Browser A', and the global size will only affect Browser A + B.");
+	    "for 'Browser A', and the global size will only affect Browser B and C.");
       labelsize(12);
       align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     }
