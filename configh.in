@@ -180,7 +180,8 @@
 #undef U64
 
 /*
- * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H, HAVE_SCANDIR:
+ * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H,
+ * HAVE_SCANDIR, HAVE_SCANDIR_POSIX:
  *
  * Where is <dirent.h> (used only by fl_file_chooser and scandir).
  */
@@ -190,6 +191,7 @@
 #undef HAVE_SYS_DIR_H
 #undef HAVE_NDIR_H
 #undef HAVE_SCANDIR
+#undef HAVE_SCANDIR_POSIX
 
 /*
  * Possibly missing sprintf-style functions:
