@@ -546,11 +546,14 @@ window and then calls the default widget callback.</p>
 <H4><A NAME="Fl.delete_widget">void delete_widget(Fl_Widget*);</A></H4>
 
 <p>Schedules a widget for deletion at the next call to the event loop.
-Use this method to delete a widget inside a callback function. 
-To avoid early deletion of widgets, this function
+Use this method to delete a widget inside a callback function. As with
+normal widget deletion it is your responsibility to remove() the widget
+from any parent group or window before calling this.</p>
+
+<p>To avoid early deletion of widgets, this function
 should be called toward the end of a callback and only after any call 
-to the event loop (<tt>Fl:wait()</tt>, <tt>Fl::flush()</tt>, 
-<tt>fl_ask()</tt>, etc).</p>
+to the event loop (<tt>Fl::wait()</tt>, <tt>Fl::flush()</tt>, 
+<tt>Fl::check()</tt>, <tt>fl_ask()</tt>, etc.).</p>
 
 <p>When deleting groups or windows, you must only delete the group or
 window widget and not the individual child widgets.</p>
