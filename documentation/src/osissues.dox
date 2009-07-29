@@ -274,7 +274,7 @@ An example:
 void MyWindow::show() {
   if (shown()) {Fl_Window::show(); return;}  // you must do this!
   fl_open_display();	// necessary if this is first window
-  // we only calcualte the necessary visual colormap once:
+  // we only calculate the necessary visual colormap once:
   static XVisualInfo *visual;
   static Colormap colormap;
   if (!visual) {

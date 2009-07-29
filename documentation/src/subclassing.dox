@@ -14,11 +14,10 @@ typically Fl_Widget for controls and Fl_Group for composite widgets.
 A control widget typically interacts with the user to receive and/or
 display a value of some sort. 
 
-A composite widget widget holds a list of child widgets and handles moving,
-sizing, showing, or hiding them as needed. Fl_Group is the
-main composite widget widget class in FLTK, and all of the other composite
-widgets (Fl_Pack, Fl_Scroll, Fl_Tabs,
-Fl_Tile, and Fl_Window) are subclasses of it. 
+A composite widget holds a list of child widgets and handles moving,
+sizing, showing, or hiding them as needed. Fl_Group is the main
+composite widget class in FLTK, and all of the other composite widgets
+(Fl_Pack, Fl_Scroll, Fl_Tabs, Fl_Tile, and Fl_Window) are subclasses of it. 
 
 You can also subclass other existing widgets to provide a different
 look or user-interface. For example, the button widgets are all
@@ -518,7 +517,6 @@ differences:
 -# Fl_Window is a subclass of Fl_Group so
    <I>make sure your constructor calls</I> \p end()
    unless you actually want children added to your window.
-
 -# When handling events and drawing, the upper-left corner is at
    0,0, not <tt>x(),y()</tt> as in other Fl_Widget's.
    For instance, to draw a box around the widget, call
