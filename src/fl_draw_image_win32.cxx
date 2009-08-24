@@ -115,8 +115,10 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    int delta, int linedelta, int depth,
 		    Fl_Draw_Image_Cb cb, void* userdata)
 {
+  char indexed = 0;
+
 #if USE_COLORMAP
-  char indexed = (fl_palette != 0);
+  indexed = (fl_palette != 0);
 #endif
 
   if (depth==0) depth = 3;
