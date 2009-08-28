@@ -203,14 +203,7 @@ inline Fl_Fontsize fl_size() {return fl_size_;}
   You can also use the value of \p size passed to fl_font()
 */
 FL_EXPORT int   fl_height();	// using "size" should work ok
-/**
-  Dummy passthru function called only in Fl_Text_Display that simply returns
-  the font height as given by the \p size parameter in the same call!
-
-  \todo Is fl_height(int, int size) required for Fl_Text_Dispay?
-        Why not use \p size parameter directly?
-*/
-inline int fl_height(int, int size) {return size;}
+FL_EXPORT int fl_height(int font, int size);
 /**
   Returns the recommended distance above the bottom of a fl_height() tall box to
   draw the text at so it looks centered vertically in that box.
