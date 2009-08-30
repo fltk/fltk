@@ -83,6 +83,7 @@ CREATE_EXAMPLE(threads threads.cxx fltk)
 CREATE_EXAMPLE(tile tile.cxx fltk)
 CREATE_EXAMPLE(tiled_image tiled_image.cxx fltk)
 CREATE_EXAMPLE(valuators valuators.fl fltk)
+CREATE_EXAMPLE(unittests unittests.cxx fltk)
 
 # OpenGL demos...
 IF(OPENGL_FOUND)

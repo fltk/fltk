@@ -126,6 +126,8 @@ SET(CPPFILES
   fl_vertex.cxx
   screen_xywh.cxx
   fl_utf8.cxx
+  fl_encoding_latin1.cxx
+  fl_encoding_mac_roman.cxx
   )
 SET(FLCPPFILES
   forms_compatability.cxx
@@ -171,6 +173,7 @@ SET(CFILES
   xutf8/utf8Input.c
   xutf8/utf8Utils.c
   xutf8/utf8Wrap.c
+  xutf8/keysym2Ucs.c
   fl_utf.c
   )
 
