@@ -30,7 +30,7 @@ SET(CPPFILES
   Fl_Menu.cxx
   Fl_Menu_.cxx
   Fl_Menu_Bar.cxx
-	Fl_Sys_Menu_Bar.cxx
+  Fl_Sys_Menu_Bar.cxx
   Fl_Menu_Button.cxx
   Fl_Menu_Window.cxx
   Fl_Menu_add.cxx
@@ -124,7 +124,8 @@ SET(CPPFILES
   fl_show_colormap.cxx
   fl_symbols.cxx
   fl_vertex.cxx
-	screen_xywh.cxx
+  screen_xywh.cxx
+  fl_utf8.cxx
   )
 SET(FLCPPFILES
   forms_compatability.cxx
@@ -164,6 +165,13 @@ SET(CFILES
   scandir.c
   numericsort.c
   vsnprintf.c
+  xutf8/is_right2left.c
+  xutf8/is_spacing.c
+  xutf8/case.c
+  xutf8/utf8Input.c
+  xutf8/utf8Utils.c
+  xutf8/utf8Wrap.c
+  fl_utf.c
   )
 
 ADD_LIBRARY(fltk ${CPPFILES} ${CFILES})
