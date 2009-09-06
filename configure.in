@@ -92,6 +92,17 @@ case $uname in
 	    fi
 	fi
 	;;
+
+    Darwin*)
+        # Starting with 10.6 (Snow Leopard), OS X does not support
+        # Carbon calls anymore. We patch this until we are completely Cocoa compliant
+        # by limiting ourselves to 32 bit Intel compiles
+        if test `sw_vers -productVersion` = "10.6"; then
+            CFLAGS="$CFLAGS -arch i386"
+            CXXFLAGS="$CXXFLAGS -arch i386"
+            LDFLAGS="$LDFLAGS -arch i386"
+        fi
+        ;;
 esac
 
 dnl Define the libraries and link options we will need.
