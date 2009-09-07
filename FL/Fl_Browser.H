@@ -36,6 +36,7 @@
 #define Fl_Browser_H
 
 #include "Fl_Browser_.H"
+#include "Fl_Image.H"
 
 struct FL_BLINE;
 
@@ -305,6 +306,11 @@ public:
     else if (line > lines) Fl_Browser_::display(find_line(lines));
     else Fl_Browser_::display(find_line(line));
   }
+
+  // icon support
+  void icon(int line, Fl_Image* icon);
+  Fl_Image* icon(int line) const;
+  void remove_icon(int line);
 
   /** For back compatibility only. */
   void replace(int a, const char* b) { text(a, b); }
