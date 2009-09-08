@@ -864,20 +864,27 @@ void Fl_Browser::swap(int a, int b) {
                   If NULL, any previous icon is removed.
 */
 void Fl_Browser::icon(int line, Fl_Image* icon) {
-  if (icon==0) {
-      remove_icon(line);
-  } else if (line>0 && line<=lines) {
-    // Update full_height_
-    FL_BLINE* l = find_line(line);
-    int dh = icon->h() - item_height(l) + 2;	// leave 2px above/below
-    l->icon = icon;				// define icon AFTER item_height() check
-    if (dh>0) {
-      full_height_ += dh;
-      redraw();					// icon larger than item? must redraw widget
-    } else {
-      redraw_line(l);				// icon same or smaller? can redraw just this line
-    }
+
+  if (line<1 || line > lines) return;
+
+  FL_BLINE* bl = find_line(line);
+
+  int old_h = bl->icon ? bl->icon->h()+2 : 0;	// init with *old* icon height
+  bl->icon = 0;					// remove icon, if any
+  int th = item_height(bl);			// height of text only
+  int new_h = icon ? icon->h()+2 : 0;		// init with *new* icon height
+  if (th > old_h) old_h = th;
+  if (th > new_h) new_h = th;
+  int dh = new_h - old_h;
+  full_height_ += dh;				// do this *always*
+
+  bl->icon = icon;				// set new icon
+  if (dh>0) {
+    redraw();					// icon larger than item? must redraw widget
+  } else {
+    redraw_line(bl);				// icon same or smaller? can redraw just this line
   }
+  replacing(bl,bl);				// recalc Fl_Browser_::max_width et al
 }
 
 /**
@@ -897,20 +904,7 @@ Fl_Image* Fl_Browser::icon(int line) const {
   \param[in] line The line whose icon is to be removed.
 */
 void Fl_Browser::remove_icon(int line) { 
-  if (line>0 && line<=lines) {
-    FL_BLINE* bl = find_line(line);
-    if (!bl->icon) return;
-    int dh = bl->icon->h()+2;	// leave 2px above/below
-    bl->icon=0; 
-    // update_full_height_
-    dh -= item_height(bl);
-    if (dh>0) {
-      full_height_ -= dh; 
-      redraw();			// if icon was larger, must redraw window
-    } else {
-      redraw_line(bl); 		// if icon same size or smaller, can just redraw line
-    }
-  }
+  icon(line,0);
 }
 
 //
