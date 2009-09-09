@@ -44,6 +44,11 @@
 #define SELECTED 1
 #define NOTDISPLAYED 2
 
+// WARNING:
+//       Fl_File_Chooser.cxx also has a definition of this structure (FL_BLINE).
+//       Changes to FL_BLINE *must* be reflected in Fl_File_Chooser.cxx as well.
+//       This hack in Fl_File_Chooser should be solved.
+//
 struct FL_BLINE {	// data is in a linked list of these
   FL_BLINE* prev;
   FL_BLINE* next;
@@ -367,8 +372,7 @@ int Fl_Browser::item_height(void *item) const {
     fl_font(textfont(), textsize());
     int hh = fl_height();
     if (hh > hmax) hmax = hh;
-  }
-  else {
+  } else {
     const int* i = column_widths();
     // do each column separately as they may all set different fonts:
     for (char* str = l->txt; str && *str; str++) {

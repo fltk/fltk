@@ -81,6 +81,11 @@
 #define SELECTED 1
 #define NOTDISPLAYED 2
 
+// TODO -- Warning: The definition of FL_BLINE here is a hack.
+//    Fl_File_Browser should not do this. PLEASE FIX.
+//    FL_BLINE should be private to Fl_Browser, and not re-defined here.
+//    For now, make sure this struct is precisely consistent with Fl_Browser.cxx.
+//
 struct FL_BLINE			// data is in a linked list of these
 {
   FL_BLINE	*prev;		// Previous item in list
