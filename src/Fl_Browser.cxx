@@ -144,7 +144,8 @@ const char *Fl_Browser::item_text(void *item) const {
   item_next(), etc. to access the internal linked list more efficiently.
 
   \param[in] line The line number of the item to return. (1 based)
-  \returns The returned item.
+  \retval item that was found.
+  \retval NULL if line is out of range.
   \see item_at(), find_line(), lineno()
 */
 FL_BLINE* Fl_Browser::find_line(int line) const {
