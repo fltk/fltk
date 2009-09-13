@@ -1,7 +1,6 @@
 CHANGES IN FLTK 1.3.0
 
 	- Setting a default font for Xft (STR #2216)
-	- Avoiding lockup if two popups collide (STR #1986)
 	- Temporarily limited builds to 32-bit on OX S to stay
 	  compatible to Snow Leopard
 	- Fixed Windows compile bug with "#define USE_COLORMAP 0"
