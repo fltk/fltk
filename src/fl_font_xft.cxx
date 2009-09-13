@@ -499,6 +499,9 @@ void fl_destroy_xft_draw(Window id) {
 }
 
 void fl_draw(const char *str, int n, int x, int y) {
+  if ( !current_font ) {
+    fl_font(FL_HELVETICA, 14);
+  }
 #if USE_OVERLAY
   XftDraw*& draw = fl_overlay ? draw_overlay : ::draw;
   if (fl_overlay) {
