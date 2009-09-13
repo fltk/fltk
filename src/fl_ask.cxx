@@ -215,8 +215,7 @@ static int innards(const char* fmt, va_list ap,
   message_form->show();
   // deactivate Fl::grab(), because it is incompatible with Fl::readqueue()
   Fl_Window* g = Fl::grab();
-  if (g) // do an alternative grab to avoid floating menus, if possible
-    Fl::grab(message_form);
+  if (g) Fl::grab(0);
   int r = 0;
   for (;;) {
     Fl_Widget *o = Fl::readqueue();
