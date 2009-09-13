@@ -70,6 +70,9 @@ void Fl_Pack::draw() {
         rh += spacing_;
       }
   }
+
+  if (clip_children()) fl_push_clip(tx,ty,tw,th);
+
   for (int i = children(); i--;) {
     Fl_Widget* o = *a++;
     if (o->visible()) {
@@ -115,7 +118,9 @@ void Fl_Pack::draw() {
       current_position += spacing_;
     }
   }
-  
+
+  if (clip_children()) fl_pop_clip();
+
   if (horizontal()) {
     if (maximum_position < tx+tw && box()) {
       fl_color(color());
