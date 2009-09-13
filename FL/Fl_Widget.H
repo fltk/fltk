@@ -866,9 +866,16 @@ public:
    */
   uchar damage() const {return damage_;}
 
-  /** Clears the damage flags.
+  /** Clears or sets the damage flags.
       Damage flags are cleared when parts of the widget drawing is repaired.
-      \param[in] c bitmask of flags to clear
+
+      The optional argument \p c specifies the bits that <b>are set</b>
+      after the call (default: 0) and \b not the bits that are cleared!
+
+      \note Therefore it is possible to set damage bits with this method, but
+      this should be avoided. Use damage(uchar) instead.
+      
+      \param[in] c new bitmask of damage flags (default: 0)
       \see damage(uchar), damage()
    */
   void clear_damage(uchar c = 0) {damage_ = c;}
