@@ -305,9 +305,10 @@ http://www.fltk.org/str.php [for reporting bugs] <br>
 http://www.fltk.org/software.php [source code]
 
 \par FTP
-ftp://ftp.fltk.org/pub/fltk [California, USA] <br>
-ftp://ftp2.fltk.org/pub/fltk [Maryland, USA] <br>
-ftp://ftp.funet.fi/pub/mirrors/ftp.fltk.org/pub/fltk [Espoo, Finland] <br>
+http://ftp.easysw.com/pub/fltk [California, USA, via http]<br>
+ftp://ftp.easysw.com/pub/fltk [California, USA via ftp]<br>
+ftp://ftp2.easysw.com/pub/fltk [Maryland, USA]<br>
+ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub/fltk [Espoo, Finland]<br>
 ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk [Germany] <br>
 ftp://gd.tuwien.ac.at/hci/fltk [Austria]
 
