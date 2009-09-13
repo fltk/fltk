@@ -1496,10 +1496,10 @@ void fl_open_display() {
     beenHereDoneThat = 1;
     
     FlushEvents(everyEvent,0);
-
+    
     MoreMasters(); // \todo Carbon suggests MoreMasterPointers()
     AEInstallEventHandler( kCoreEventClass, kAEQuitApplication, NewAEEventHandlerUPP((AEEventHandlerProcPtr)QuitAppleEventHandler), 0, false );
-
+    
     // create the Mac Handle for the default cursor (a pointer to a pointer)
     GetQDGlobalsArrow(&default_cursor);
     default_cursor_ptr = &default_cursor;
@@ -1508,12 +1508,12 @@ void fl_open_display() {
     ClearMenuBar();
     AppendResMenu( GetMenuHandle( 1 ), 'DRVR' );
     DrawMenuBar();
-
+    
     // bring the application into foreground without a 'CARB' resource
     Boolean same_psn;
     ProcessSerialNumber cur_psn, front_psn;
     if( !GetCurrentProcess( &cur_psn ) && !GetFrontProcess( &front_psn ) &&
-        !SameProcess( &front_psn, &cur_psn, &same_psn ) && !same_psn )
+       !SameProcess( &front_psn, &cur_psn, &same_psn ) && !same_psn )
     {
       // only transform the application type for unbundled apps
       CFBundleRef bundle = CFBundleGetMainBundle();
@@ -1522,35 +1522,16 @@ void fl_open_display() {
       	FSRef execFs;
       	CFURLRef execUrl = CFBundleCopyExecutableURL( bundle );
       	CFURLGetFSRef( execUrl, &execFs );
-
+        
       	FSRef bundleFs;
       	GetProcessBundleLocation( &cur_psn, &bundleFs );
-
+        
       	if( !FSCompareFSRefs( &execFs, &bundleFs ) )
           bundle = NULL;
-
+        
         CFRelease(execUrl);
       }
-
-    // imm: keycode handler stub setting - use Gestalt to determine the running system version,
-    // then set the keycode_function pointer accordingly
-    SInt32 MacVersion;
-    if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr)
-    {
-//      SInt32 maj, min, fix;
-//      Gestalt(gestaltSystemVersionMajor, &maj);   // e.g. 10
-//      Gestalt(gestaltSystemVersionMinor, &min);   // e.g.  4
-//      Gestalt(gestaltSystemVersionBugFix, &fix);  // e.g. 11
-      if(MacVersion >= 0x1050) { // 10.5.0 or later
-        keycode_function = keycodeToUnicode;
-      }
-      else {
-        keycode_function = keycode_wrap_old; // pre-10.5 mechanism
-      }
-    }
-    // else our default handler will be used (keycode_wrap_old)
-
-
+      
       if( !bundle )
       {
         // Earlier versions of this code tried to use weak linking, however it
@@ -1558,17 +1539,28 @@ void fl_open_display() {
         // both TransformProcessType and CPSEnableForegroundOperation, the following
         // conditional code compiled on 10.2 will still work on newer releases...
         OSErr err;
-
+        
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
         if (TransformProcessType != NULL) {
-	  err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
-	} else
+          err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
+        } else
 #endif // MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
-        err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
-
+          err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
+        
         if (err == noErr) {
-	  SetFrontProcess( &cur_psn );
+          SetFrontProcess( &cur_psn );
         }
+      }
+    }
+    
+    // imm: keycode handler stub setting - use Gestalt to determine the running system version,
+    // then set the keycode_function pointer accordingly
+    keycode_function = keycode_wrap_old; // default to pre-10.5 mechanism
+    SInt32 MacVersion;
+    if (Gestalt(gestaltSystemVersion, &MacVersion) == noErr)
+    {
+      if(MacVersion >= 0x1050) { // 10.5.0 or later
+        keycode_function = keycodeToUnicode;
       }
     }
   }
