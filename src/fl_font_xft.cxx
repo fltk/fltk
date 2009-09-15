@@ -291,11 +291,11 @@ double fl_width(uchar c) {
 static XFontStruct* load_xfont_for_xft2(void) {
   XFontStruct* xgl_font = 0;
   int size = fl_size_;
-  char *weight = "medium"; // no specifc weight requested - accept any
+  const char *weight = "medium"; // no specifc weight requested - accept any
   char slant = 'r';   // regular non-italic by default
   char xlfd[128];     // we will put our synthetic XLFD in here
   char *pc = strdup(fl_fonts[fl_font_].name); // what font were we asked for?
-  char *name = pc;    // keep a handle to the original name for freeing later
+  const char *name = pc;    // keep a handle to the original name for freeing later
   // Parse the "fltk-name" of the font
   switch (*name++) {
   case 'I': slant = 'i'; break;     // italic
@@ -303,6 +303,19 @@ static XFontStruct* load_xfont_for_xft2(void) {
   case 'B': weight = "bold"; break; // bold
   case ' ': break;                  // regular
   default: name--;                  // no prefix, restore name
+  }
+
+  // map generic Xft names to customary XLFD faces
+  if (!strcmp(name, "sans")) {
+    name = "helvetica";
+  } else if (!strcmp(name, "mono")) {
+    name = "courier";
+  } else if (!strcmp(name, "serif")) {
+    name = "times";
+  } else if (!strcmp(name, "screen")) {
+    name = "lucidatypewriter";
+  } else if (!strcmp(name, "dingbats")) {
+    name = "zapf dingbats";
   }
 
   // first, we do a query with no prefered size, to see if the font exists at all
