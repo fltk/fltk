@@ -67,7 +67,11 @@ void Fl_Choice::draw() {
       fl_yxline(x1 - 6, y1 - 8, y1 + 8);
     }
   } else {
-    draw_box(FL_DOWN_BOX, FL_BACKGROUND2_COLOR);
+    if (fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) == textcolor()) {
+      draw_box(FL_DOWN_BOX, FL_BACKGROUND2_COLOR);
+    } else {
+      draw_box(FL_DOWN_BOX, fl_lighter(color()));
+    }
     draw_box(FL_UP_BOX,X,Y,W,H,color());
 
     fl_color(active_r() ? labelcolor() : fl_inactive(labelcolor()));
@@ -171,7 +175,8 @@ int Fl_Choice::handle(int e) {
   case FL_PUSH:
     if (Fl::visible_focus()) Fl::focus(this);
   J1:
-    if (Fl::scheme()) {
+    if (Fl::scheme()
+	|| fl_contrast(textcolor(), FL_BACKGROUND2_COLOR) != textcolor()) {
       v = menu()->pulldown(x(), y(), w(), h(), mvalue(), this);
     } else {
       // In order to preserve the old look-n-feel of "white" menus,
