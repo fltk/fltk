@@ -47,7 +47,7 @@ enum { // values for flags:
   FL_MENU_HORIZONTAL = 0x100	///< ??? -- reserved
 };
 
-extern FL_EXPORT int fl_old_shortcut(const char*);
+extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
 
 class Fl_Menu_;
 

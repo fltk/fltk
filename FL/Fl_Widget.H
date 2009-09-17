@@ -828,7 +828,7 @@ public:
   /** Internal use only. */
   int test_shortcut();
   /** Internal use only. */
-  static char label_shortcut(const char *t);
+  static Fl_Shortcut label_shortcut(const char *t);
   /** Internal use only. */
   static int test_shortcut(const char*);
 

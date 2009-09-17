@@ -330,6 +330,8 @@ enum Fl_When { // Fl_Widget::when():
 
 /*@{*/
 
+// FIXME: These codes collide with valid Unicode keys
+
 #define FL_Button	0xfee8	///< A mouse button; use Fl_Button + n for mouse button n.
 #define FL_BackSpace	0xff08	///< The backspace key.
 #define FL_Tab		0xff09	///< The tab key.
@@ -391,6 +393,9 @@ enum Fl_When { // Fl_Widget::when():
 
 /*@{*/		// group: Event States
 
+// FIXME: it would be nice to have the modifiers in the upper 8 bit so that
+//        a unicode ke (24bit) can be sent as an unsigned with the modifiers.
+
 #define FL_SHIFT	0x00010000	///< One of the shift keys is down
 #define FL_CAPS_LOCK	0x00020000	///< The caps lock is on
 #define FL_CTRL		0x00040000	///< One of the ctrl keys is down
@@ -406,6 +411,9 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_BUTTON3	0x04000000	///< Mouse button 3 is pushed
 #define FL_BUTTONS	0x7f000000	///< Any mouse button is pushed
 #define FL_BUTTON(n)	(0x00800000<<(n)) ///< Mouse button n (n > 0) is pushed
+
+#define FL_KEY_MASK 0x0000ffff  ///< All keys are 16 bit for now 
+                                //   FIXME: Unicode needs 24 bits!
 
 #ifdef __APPLE__
 #  define FL_COMMAND	FL_META   ///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X

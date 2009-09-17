@@ -45,7 +45,7 @@
 #define FL_HIDDEN_BUTTON	3   ///< for Forms compatibility
 
 #ifndef FL_DOXYGEN
-extern FL_EXPORT int fl_old_shortcut(const char*);
+extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
 #endif
 
 /**

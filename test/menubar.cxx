@@ -145,11 +145,13 @@ Fl_Menu_Item menutable[] = {
     {"Sharp Ess",0x0000df},
     {"A Umlaut",0x0000c4},
     {"a Umlaut",0x0000e4},
-    {"Euro currency",0x0020ac},
-    {"the &ü Umlaut"},
-    {"the capital &Ü"},
-    {"convert ¥ to &£"},
-    {"convert £ to &¥"},
+    {"Euro currency",FL_COMMAND+0x0020ac},
+    {"the &\xc3\xbc Umlaut"},  // &uuml;
+    {"the capital &\xc3\x9c"}, // &Uuml;
+    {"convert \xc2\xa5 to &\xc2\xa3"}, // Yen to GBP
+    {"convert \xc2\xa5 to &\xe2\x82\xac"}, // Yen to Euro
+    {"Hangul character Sios &\xe3\x85\x85"},
+    {"Hangul character Cieuc", 0x003148},
     {0},
   {"E&mpty",0,0,0,FL_SUBMENU},
     {0},

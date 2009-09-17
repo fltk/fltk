@@ -568,7 +568,7 @@ public:
   static void compose_reset() {compose_state = 0;}
   static int event_inside(int,int,int,int);
   static int event_inside(const Fl_Widget*);
-  static int test_shortcut(int);
+  static int test_shortcut(Fl_Shortcut);
 
   // event destinations:
   static int handle(int, Fl_Window*);
