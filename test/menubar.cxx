@@ -141,6 +141,16 @@ Fl_Menu_Item menutable[] = {
     {"Shadow",	0, 0, 0, 0, FL_SHADOW_LABEL},
     {"@->",	0, 0, 0, 0, FL_SYMBOL_LABEL},
     {0},
+  {"&International",0,0,0,FL_SUBMENU},
+    {"Sharp Ess",0x0000df},
+    {"A Umlaut",0x0000c4},
+    {"a Umlaut",0x0000e4},
+    {"Euro currency",0x0020ac},
+    {"the &ü Umlaut"},
+    {"the capital &Ü"},
+    {"convert ¥ to &£"},
+    {"convert £ to &¥"},
+    {0},
   {"E&mpty",0,0,0,FL_SUBMENU},
     {0},
   {"&Inactive", 0,	0, 0, FL_MENU_INACTIVE|FL_SUBMENU},
@@ -167,7 +177,7 @@ Fl_Menu_Item pulldown[] = {
   {0}
 };
 
-#define WIDTH 600
+#define WIDTH 700
 
 Fl_Menu_* menus[4];
 

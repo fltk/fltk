@@ -490,9 +490,10 @@ public:
       case FL_DND_RELEASE: return 1;
       case FL_PASTE:
         {
+          static const char lut[] = "0123456789abcdef";
           const char *t = Fl::event_text();
           int i, n;
-          fl_utf8decode(t, t+Fl::event_length(), &n);
+          unsigned int ucode = fl_utf8decode(t, t+Fl::event_length(), &n);
           if (n==0) {
             value("");
             return 1;
@@ -501,10 +502,15 @@ public:
           for (i=0; i<n; i++) *d++ = t[i];
           *d++ = ' ';
           for (i=0; i<n; i++) {
-            const char lut[] = "0123456789abcdef";
             *d++ = '\\'; *d++ = 'x';
             *d++ = lut[(t[i]>>4)&0x0f]; *d++ = lut[t[i]&0x0f];
           }
+          *d++ = ' ';
+          *d++ = '0';
+          *d++ = 'x';
+          *d++ = lut[(ucode>>20)&0x0f]; *d++ = lut[(ucode>>16)&0x0f];
+          *d++ = lut[(ucode>>12)&0x0f]; *d++ = lut[(ucode>>8)&0x0f];
+          *d++ = lut[(ucode>>4)&0x0f]; *d++ = lut[ucode&0x0f];
           *d++ = 0;
           value(buffer);
         }

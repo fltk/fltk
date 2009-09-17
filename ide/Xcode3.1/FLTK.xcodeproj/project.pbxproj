@@ -3928,9 +3928,9 @@
 		C9A3E9590DD6338B00486E4F /* Library Sources */ = {
 			isa = PBXGroup;
 			children = (
-				C9A3EAD60DD634CC00486E4F /* Fl_get_system_colors.cxx */,
-				C9A3EAD70DD634CC00486E4F /* Fl_get_key_win32.cxx */,
 				C9A3EAD80DD634CC00486E4F /* Fl_get_key_mac.cxx */,
+				C9A3EAD70DD634CC00486E4F /* Fl_get_key_win32.cxx */,
+				C9A3EAD60DD634CC00486E4F /* Fl_get_system_colors.cxx */,
 				C9A3EAD90DD634CC00486E4F /* Fl_get_key.cxx */,
 				C9A3EADA0DD634CC00486E4F /* fl_font_xft.cxx */,
 				C9A3EADB0DD634CC00486E4F /* fl_font_x.cxx */,
