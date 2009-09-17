@@ -408,9 +408,11 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_BUTTON(n)	(0x00800000<<(n)) ///< Mouse button n (n > 0) is pushed
 
 #ifdef __APPLE__
-#  define FL_COMMAND	FL_META		///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
+#  define FL_COMMAND	FL_META   ///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
+#  define FL_CONTROL  FL_CTRL   ///< An alias for FL_META on WIN32 and X11, or FL_META on MacOS X
 #else
 #  define FL_COMMAND	FL_CTRL		///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
+#  define FL_CONTROL  FL_META   ///< An alias for FL_META on WIN32 and X11, or FL_META on MacOS X
 #endif // __APPLE__
 
 /*@}*/		// group: Event States

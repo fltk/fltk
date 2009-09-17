@@ -5846,13 +5846,16 @@
 /* Begin PBXProject section */
 		C9A3E93C0DD6332D00486E4F /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+			};
 			buildConfigurationList = C9A3E93F0DD6332D00486E4F /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 0;
 			mainGroup = C9A3E93A0DD6332D00486E4F;
 			productRefGroup = C9A3E9520DD6336500486E4F /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
+			projectRoot = ../..;
 			targets = (
 				C97741FE0DD9D33B0047C1BF /* Demo */,
 				C9C873730DD7772000A9793F /* Fluid */,
