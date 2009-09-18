@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Updated the bundled libpng to v1.2.40 (released Sep. 10, 2009)
 	- Fixed Fl_Choice contrast with light-on-dark settings (STR #2219)
 	- Added Xft2 font lookup table (STR #2215)
 	- Fixed X server "lock", if a modal dialog window is opened
@@ -26,7 +27,6 @@ CHANGES IN FLTK 1.1.10
 	- Fluid printing used wrong colors under Windows (STR #2195)
 	- Fixed bad system menu hadling in OS X (STR #2153)
 	- Fixed File Input mouse pointer dragging (STR #2181)
-	- Updated the bundled libpng to v1.2.35 (released 18 Feb. 2009)
 	- Added Fl_Scroll::bbox() documentation (STR #1893)
 	- Fixed static linking of image libraries (STR #1962)
 	- Fixed callback would not be called when shortcut was used with
