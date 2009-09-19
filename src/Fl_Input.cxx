@@ -621,6 +621,18 @@ int Fl_Input::handle(int event) {
     take_focus();
     return 1;
 
+/* TODO: this will scroll the area, but stop if the cursor would become invisible.
+         That clipping happens in drawtext(). Do we change the clipping or should 
+         we move the cursor (ouch)?
+  case FL_MOUSEWHEEL:
+    if (Fl::e_dy > 0) {
+      yscroll( yscroll() - Fl::e_dy*15 );
+    } else if (Fl::e_dy < 0) {
+      yscroll( yscroll() - Fl::e_dy*15 );
+    }
+    return 1;
+*/
+
   }
   Fl_Boxtype b = box();
   return Fl_Input_::handletext(event,

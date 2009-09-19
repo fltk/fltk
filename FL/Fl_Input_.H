@@ -120,7 +120,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
       \p mark_, no text is selected */
   int mark_;
 
-  /** \internal Offset to text origin within wdget bounds */
+  /** \internal Offset to text origin within widget bounds */
   int xscroll_, yscroll_;
 
   /** \internal Minimal update pointer. Display requirs redraw from here to the end
@@ -206,6 +206,7 @@ protected:
 
   /** \internal Vertical offset of text to top edge of widget. */
   int yscroll() const {return yscroll_;}
+  void yscroll(int y) { yscroll_ = y; damage(FL_DAMAGE_EXPOSE);}
 
   /* Return the number of lines displayed on a single page.  */
   int linesPerPage();
