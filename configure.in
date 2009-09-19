@@ -538,8 +538,8 @@ AC_CHECK_LIB(jpeg,jpeg_CreateCompress,
     AC_DEFINE(HAVE_LIBJPEG)
     JPEGINC=""
     JPEG=""
-    IMAGELIBS="-ljpeg $IMAGELIBS",
-    STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS"
+    IMAGELIBS="-ljpeg $IMAGELIBS"
+    STATICIMAGELIBS="-ljpeg $STATICIMAGELIBS",
     if test x$enable_localjpeg = xno; then
 	JPEGINC=""
 	JPEG=""
@@ -561,8 +561,8 @@ AC_CHECK_LIB(z,gzgets,
     ZLIBINC=""
     ZLIB=""
     LIBS="-lz $LIBS"
-    IMAGELIBS="-lz $IMAGELIBS",
-    STATICIMAGELIBS="-lz $STATICIMAGELIBS"
+    IMAGELIBS="-lz $IMAGELIBS"
+    STATICIMAGELIBS="-lz $STATICIMAGELIBS",
     if test x$enable_localzlib = xno; then
 	ZLIBINC=""
 	ZLIB=""

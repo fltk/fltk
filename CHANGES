@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Fixed missing jpeg and z lib in static config (STR #2203)
 	- Updated the bundled libpng to v1.2.40 (released Sep. 10, 2009)
 	- Fixed Fl_Choice contrast with light-on-dark settings (STR #2219)
 	- Added Xft2 font lookup table (STR #2215)
