@@ -134,7 +134,7 @@ double Fl_Input_::expandpos(
     if (c < ' ' || c == 127) {
       if (c == '\t' && input_type()==FL_MULTILINE_INPUT) {
          n += 8-(chr%8);
-         chr += 8-(chr%8);
+         chr += 7-(chr%8);
       } else n += 2;
     } else {
       n++;
