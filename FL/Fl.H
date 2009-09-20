@@ -489,9 +489,17 @@ public:
   static int event_state()	{return e_state;}
   /** See int event_state() */
   static int event_state(int i) {return e_state&i;}
-  /** Gets which key on the keyboard was last pushed.
-      \retval 0 if the last event was not a key press or release.
-    \see int event_key(int) */
+  /**
+    Gets which key on the keyboard was last pushed.
+
+    The returned integer 'key code' is not necessarily a text
+    equivalent for the keystroke. For instance: if someone presses '5' on the 
+    numeric keypad with numlock on, Fl::event_key() may return the 'key code'
+    for this key, and NOT the character '5'. To always get the '5', use Fl::event_text() instead.
+    
+    \returns an integer 'key code', or 0 if the last event was not a key press or release.
+    \see int event_key(int), event_text(), compose(int&).
+  */
   static int event_key()	{return e_keysym;}
   /**
     Returns the keycode of the last key event, regardless of the NumLock state.
@@ -500,15 +508,6 @@ public:
     numeric keypad into the corresponding arrow key events. 
     event_key() returns the translated key code, whereas
     event_original_key() returns the keycode before NumLock translation.
-
-    Note: The returned integer 'key code' are not necessarily text equivalents
-    for the keystroke. For text equivalent of keys, use Fl::event_text().
-
-    For instance: if someone presses '5' on the numeric keypad with numlock on,
-    Fl::event_key() may return the 'key code' for this key, and NOT the character '5'.
-    To get the '5', use Fl::event_text() instead.
-
-    \returns the 'key code' for the last keyboard event.
   */
   static int event_original_key(){return e_original_keysym;}
   /** 
