@@ -156,6 +156,14 @@ static struct {
   { 'c',          FL_COMMAND,               Fl_Text_Editor::kf_copy       },
   { 'v',          FL_COMMAND,               Fl_Text_Editor::kf_paste      },
   { 'a',          FL_COMMAND,               Fl_Text_Editor::kf_select_all },
+  { FL_Left,      FL_COMMAND,               Fl_Text_Editor::kf_meta_move  },
+  { FL_Right,     FL_COMMAND,               Fl_Text_Editor::kf_meta_move  },
+  { FL_Up,        FL_COMMAND,               Fl_Text_Editor::kf_meta_move  },
+  { FL_Down,      FL_COMMAND,               Fl_Text_Editor::kf_meta_move  },
+  { FL_Left,      FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
+  { FL_Right,     FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
+  { FL_Up,        FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
+  { FL_Down,      FL_COMMAND|FL_SHIFT,      Fl_Text_Editor::kf_m_s_move   },
 #endif // __APPLE__
 
   { 0,            0,                        0                             }
@@ -349,6 +357,40 @@ int Fl_Text_Editor::kf_ctrl_move(int c, Fl_Text_Editor* e) {
       e->insert_position(e->mLineStarts[e->mNVisibleLines-2]);
       break;
   }
+  return 1;
+}
+
+/** Moves the current text cursor in the direction indicated by meta key */
+int Fl_Text_Editor::kf_meta_move(int c, Fl_Text_Editor* e) {
+  if (!e->buffer()->selected())
+    e->dragPos = e->insert_position();
+  if (c != FL_Up && c != FL_Down) {
+    e->buffer()->unselect();
+    e->show_insert_position();
+  }
+  switch (c) {
+    case FL_Up:				// top of buffer
+      e->insert_position(0);
+      e->scroll(0, 0);
+      break;
+    case FL_Down:			// end of buffer
+      e->insert_position(e->buffer()->length());
+      e->scroll(e->count_lines(0, e->buffer()->length(), 1), 0);
+      break;
+    case FL_Left:			// beginning of line
+      e->insert_position(e->buffer()->line_start(e->insert_position()));
+      break;
+    case FL_Right:			// end of line
+      e->insert_position(e->buffer()->line_end(e->insert_position()));
+      break;
+  }
+  return 1;
+}
+
+/** Extends the current selection in the direction indicated by meta key c. */
+int Fl_Text_Editor::kf_m_s_move(int c, Fl_Text_Editor* e) {
+  kf_meta_move(c, e);
+  fl_text_drag_me(e->insert_position(), e);
   return 1;
 }
 

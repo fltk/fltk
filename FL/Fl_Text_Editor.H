@@ -103,6 +103,8 @@ class FL_EXPORT Fl_Text_Editor : public Fl_Text_Display {
     static int kf_shift_move(int c, Fl_Text_Editor* e);
     static int kf_ctrl_move(int c, Fl_Text_Editor* e);
     static int kf_c_s_move(int c, Fl_Text_Editor* e);
+    static int kf_meta_move(int c, Fl_Text_Editor* e);
+    static int kf_m_s_move(int c, Fl_Text_Editor* e);
     static int kf_home(int, Fl_Text_Editor* e);
     static int kf_end(int c, Fl_Text_Editor* e);
     static int kf_left(int c, Fl_Text_Editor* e);
