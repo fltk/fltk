@@ -378,10 +378,10 @@ int Fl_Text_Editor::kf_meta_move(int c, Fl_Text_Editor* e) {
       e->scroll(e->count_lines(0, e->buffer()->length(), 1), 0);
       break;
     case FL_Left:			// beginning of line
-      e->insert_position(e->buffer()->line_start(e->insert_position()));
+      kf_move(FL_Home, e);
       break;
     case FL_Right:			// end of line
-      e->insert_position(e->buffer()->line_end(e->insert_position()));
+      kf_move(FL_End, e);
       break;
   }
   return 1;
