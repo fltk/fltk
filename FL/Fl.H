@@ -495,12 +495,20 @@ public:
   static int event_key()	{return e_keysym;}
   /**
     Returns the keycode of the last key event, regardless of the NumLock state.
-
+      
     If NumLock is deactivated, FLTK translates events from the 
     numeric keypad into the corresponding arrow key events. 
     event_key() returns the translated key code, whereas
-    event_original_key() returns the keycode before 
-    NumLock translation.
+    event_original_key() returns the keycode before NumLock translation.
+
+    Note: The returned integer 'key code' are not necessarily text equivalents
+    for the keystroke. For text equivalent of keys, use Fl::event_text().
+
+    For instance: if someone presses '5' on the numeric keypad with numlock on,
+    Fl::event_key() may return the 'key code' for this key, and NOT the character '5'.
+    To get the '5', use Fl::event_text() instead.
+
+    \returns the 'key code' for the last keyboard event.
   */
   static int event_original_key(){return e_original_keysym;}
   /** 
@@ -548,7 +556,20 @@ public:
     slower than Fl::event_key(int). \see event_key(int)
   */
   static int get_key(int key); // platform dependent
-  /** Returns the text associated with the current FL_PASTE or FL_DND_RELEASE event. */
+  /** 
+    Returns the text associated with the current event, including FL_PASTE or FL_DND_RELEASE events.
+    This can be used in response to FL_KEYUP, FL_KEYDOWN, FL_PASTE, FL_DND_RELEASE.
+
+    When responding to FL_KEYUP/FL_KEYDOWN, use this function instead of Fl::event_key()
+    to get the text equivalent of keystrokes suitable for inserting into strings 
+    and text widgets.
+
+    The returned string is guaranteed to be be NULL terminated.
+    However, see Fl::event_length() for the actual length of the string,
+    in case the string itself contains NULLs that are part of the text data.
+
+    \returns A NULL terminated text string equivalent of the last keystroke.
+   */
   static const char* event_text() {return e_text;}
   /**
     Returns the length of the text in Fl::event_text(). There
