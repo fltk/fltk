@@ -617,8 +617,7 @@ Fl_Browser::Fl_Browser(int X, int Y, int W, int H, const char *L)
   Updates the browser so that \p line is shown at position \p pos.
   \param[in] line line number. (1 based)
   \param[in] pos position.
-  \see topline(), middleline(), bottomline(), \n
-+: Command not found.
+  \see topline(), middleline(), bottomline()
 */
 void Fl_Browser::lineposition(int line, Fl_Line_Position pos) {
   if (line<1) line = 1;
