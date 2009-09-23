@@ -1332,10 +1332,37 @@ Fl_File_Chooser::update_preview()
     window->cursor(FL_CURSOR_DEFAULT);
     Fl::check();
 
-    // Scan the buffer for printable chars...
-    for (ptr = preview_text_;
+    // Scan the buffer for printable UTF8 chars...
+    for (ptr = preview_text_; *ptr; ptr++) {
+      uchar c = uchar(*ptr);
+      if ( (c&0x80)==0 ) {
+        if (!isprint(c&255) && !isspace(c&255)) break;
+      } else if ( (c&0xe0)==0xc0 ) {
+        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        ptr++;
+      } else if ( (c&0xf0)==0xe0 ) {
+        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        ptr++;
+        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        ptr++;
+      } else if ( (c&0xf8)==0xf0 ) {
+        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        ptr++;
+        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        ptr++;
+        if (ptr[1] && (ptr[1]&0xc0)!=0x80) break;
+        ptr++;
+      }
+    } 
+//         *ptr && (isprint(*ptr & 255) || isspace(*ptr & 255));
+//	 ptr ++);
+
+    // Scan the buffer for printable characters in 8 bit
+    if (*ptr || ptr == preview_text_) {
+      for (ptr = preview_text_;
          *ptr && (isprint(*ptr & 255) || isspace(*ptr & 255));
 	 ptr ++);
+    }
 
     if (*ptr || ptr == preview_text_) {
       // Non-printable file, just show a big ?...
