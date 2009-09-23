@@ -1751,18 +1751,20 @@ void toggle_sourceview_b_cb(Fl_Button*, void *) {
 }
 
 void make_main_window() {
-  fluid_prefs.get("snap", snap, 1);
-  fluid_prefs.get("gridx", gridx, 5);
-  fluid_prefs.get("gridy", gridy, 5);
-  fluid_prefs.get("show_guides", show_guides, 0);
-  fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
-  fluid_prefs.get("show_comments", show_comments, 1);
+  if (!compile_only) {
+    fluid_prefs.get("snap", snap, 1);
+    fluid_prefs.get("gridx", gridx, 5);
+    fluid_prefs.get("gridy", gridy, 5);
+    fluid_prefs.get("show_guides", show_guides, 0);
+    fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
+    fluid_prefs.get("show_comments", show_comments, 1);
 
-  load_history();
+    load_history();
 
-  make_layout_window();
-  make_settings_window();
-  make_shell_window();
+    make_layout_window();
+    make_settings_window();
+    make_shell_window();
+  }
 
   if (!main_window) {
     Fl_Widget *o;
