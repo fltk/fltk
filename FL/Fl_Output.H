@@ -42,7 +42,8 @@
   \image latex text.eps "Fl_Output" width=8cm
   <P>There is a single subclass, 
   Fl_Multiline_Output, which allows you to display multiple lines of
-  text. </P>
+  text. Fl_Multiline_Output does not provide scroll bars. If a more 
+  complete text editing widget is needed, use Fl_Text_Display instead.</P>
   <P>The text may contain any characters except \\0, and will correctly
   display anything, using ^X notation for unprintable control characters
   and \\nnn notation for unprintable characters with the high bit set. It
