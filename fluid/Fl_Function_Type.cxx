@@ -244,15 +244,23 @@ void Fl_Function_Type::write_code1() {
   constructor=0;
   havewidgets = 0;
   Fl_Type *child;
-  for (child = next; child && child->level > level; child = child->next)
+  // if the function has no children (hence no body), Fluid will not generate
+  // the function either. This is great if you decide to implement that function
+  // inside another module
+  char havechildren = 0;
+  for (child = next; child && child->level > level; child = child->next) {
+    havechildren = 1;
     if (child->is_widget()) {
       havewidgets = 1;
       break;
     }
-  write_c("\n");
-  if (ismain())
-    write_c("int main(int argc, char **argv) {\n");
-  else {
+  }
+  if (havechildren)
+    write_c("\n");
+  if (ismain()) {
+    if (havechildren)
+      write_c("int main(int argc, char **argv) {\n");
+  } else {
     const char* rtype = return_type;
     const char* star = "";
     // from matt: let the user type "static " at the start of type
@@ -274,7 +282,8 @@ void Fl_Function_Type::write_code1() {
     
     const char* k = class_name(0);
     if (k) {
-      write_comment_c();
+      if (havechildren)
+        write_comment_c();
       write_public(public_);
       if (name()[0] == '~')
         constructor = 1;
@@ -287,7 +296,8 @@ void Fl_Function_Type::write_code1() {
       if (is_virtual) write_h("virtual ");
       if (!constructor) {
         write_h("%s%s ", rtype, star);
-        write_c("%s%s ", rtype, star);
+        if (havechildren)
+          write_c("%s%s ", rtype, star);
       }
       
       // if this is a subclass, only write_h() the part before the ':'
@@ -330,16 +340,20 @@ void Fl_Function_Type::write_code1() {
       }
       *sptr = '\0';
       
-      write_c("%s::%s {\n", k, s);
+      if (havechildren)
+        write_c("%s::%s {\n", k, s);
     } else {
-      write_comment_c();
+      if (havechildren)
+        write_comment_c();
       if (public_) {
         if (cdecl_)
           write_h("extern \"C\" { %s%s %s; }\n", rtype, star, name());
         else
           write_h("%s%s %s;\n", rtype, star, name());
+      } else {
+        if (havechildren)
+          write_c("static ");
       }
-      else write_c("static ");
       
       // write everything but the default parameters (if any)
       char s[1024], *sptr;
@@ -368,7 +382,8 @@ void Fl_Function_Type::write_code1() {
       }
       *sptr = '\0';
       
-      write_c("%s%s %s {\n", rtype, star, s);
+      if (havechildren)
+        write_c("%s%s %s {\n", rtype, star, s);
     }
   }
   
@@ -379,16 +394,20 @@ void Fl_Function_Type::write_code1() {
 void Fl_Function_Type::write_code2() {
   Fl_Type *child;
   const char *var = "w";
-  for (child = next; child && child->level > level; child = child->next)
+  char havechildren = 0;
+  for (child = next; child && child->level > level; child = child->next) {
+    havechildren = 1;
     if (child->is_window() && child->name()) var = child->name();
+  }
 
   if (ismain()) {
     if (havewidgets) write_c("  %s->show(argc, argv);\n", var);
-    write_c("  return Fl::run();\n");
+    if (havechildren) write_c("  return Fl::run();\n");
   } else if (havewidgets && !constructor && !return_type) {
     write_c("  return %s;\n", var);
   }
-  write_c("}\n");
+  if (havechildren)
+    write_c("}\n");
   indentation = 0;
 }
 
