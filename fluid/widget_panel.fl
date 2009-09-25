@@ -53,7 +53,8 @@ Function {make_widget_panel()} {open
         } {
           Fl_Input {} {
             callback label_cb
-            tooltip {The label text for the widget.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
+            tooltip {The label text for the widget.
+Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 textsize 11 resizable
           }
           Fl_Choice {} {
             callback labeltype_cb open
@@ -319,7 +320,8 @@ Function {make_widget_panel()} {open
         Fl_Input {} {
           label {Tooltip:}
           callback tooltip_cb
-          tooltip {The tooltip text for the widget.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize 11
+          tooltip {The tooltip text for the widget.
+Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize 11
         }
         Fl_Box {} {
           xywh {95 305 300 5} labelsize 11 resizable

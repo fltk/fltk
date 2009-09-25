@@ -82,7 +82,7 @@ Fl_Double_Window* make_widget_panel() {
           o->callback((Fl_Callback*)propagate_load);
           o->align(FL_ALIGN_LEFT);
           { Fl_Input* o = new Fl_Input(95, 40, 190, 20);
-            o->tooltip("The label text for the widget.");
+            o->tooltip("The label text for the widget.\nUse Ctrl-J for newlines.");
             o->labelfont(1);
             o->labelsize(11);
             o->textsize(11);
@@ -454,7 +454,7 @@ ive to the origin at construction time");
           o->end();
         } // Fl_Group* o
         { Fl_Input* o = new Fl_Input(95, 285, 310, 20, "Tooltip:");
-          o->tooltip("The tooltip text for the widget.");
+          o->tooltip("The tooltip text for the widget.\nUse Ctrl-J for newlines.");
           o->labelfont(1);
           o->labelsize(11);
           o->textsize(11);
