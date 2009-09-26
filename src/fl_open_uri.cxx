@@ -117,9 +117,9 @@ fl_open_uri(const char *uri, char *msg, int msglen) {
 #elif defined(__APPLE__)
   char	*argv[3];			// Command-line arguments
 
-  argv[0] = "open";
-  argv[1] = (char *)uri;
-  argv[2] = 0;
+  argv[0] = (char*)"open";
+  argv[1] = (char*)uri;
+  argv[2] = (char*)0;
 
   if (msg) snprintf(msg, msglen, "open %s", uri);
 
