@@ -10196,7 +10196,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "/Users/matt/dev/fltk-1.3-utf8/ide/Xcode3.0/plists/symbols-Info copy.plist";
+				INFOPLIST_FILE = "plists/utf8-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -10408,7 +10408,7 @@
 		C99E1EB70E78628800AECCF6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -10416,6 +10416,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/curve-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -10430,14 +10431,15 @@
 		C99E1EB80E78628800AECCF6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = "curve-Info.plist";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/curve-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -11535,7 +11537,7 @@
 		C9EAC2DF0E786726004F64F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -11544,6 +11546,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
+				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/colbrowser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -11558,7 +11561,7 @@
 		C9EAC2E00E786726004F64F7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -11566,7 +11569,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
-				INFOPLIST_FILE = "colbrowser-Info.plist";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/colbrowser-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",

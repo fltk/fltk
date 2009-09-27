@@ -58,7 +58,7 @@ class FL_EXPORT Fl_Counter : public Fl_Valuator {
 
   Fl_Font textfont_;
   Fl_Fontsize textsize_;
-  unsigned textcolor_;
+  Fl_Color textcolor_;
   double lstep_;
   uchar mouseobj;
   static void repeat_callback(void *);
@@ -111,9 +111,9 @@ public:
   void textsize(Fl_Fontsize s) {textsize_ = s;}
 
   /** Gets the font color */
-  Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+  Fl_Color textcolor() const {return textcolor_;}
   /** Sets the font color to \p s */
-  void textcolor(unsigned s) {textcolor_ = s;}
+  void textcolor(Fl_Color s) {textcolor_ = s;}
 
 };
 

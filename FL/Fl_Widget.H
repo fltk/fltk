@@ -69,7 +69,7 @@ struct FL_EXPORT Fl_Label {
   /** size of label font */
   Fl_Fontsize size;
   /** text color */
-  unsigned color;
+  Fl_Color color;
   /** Draws the label aligned to the given box */
   void draw(int,int,int,int, Fl_Align) const ;
   void measure(int &w, int &h) const ;
@@ -97,8 +97,8 @@ class FL_EXPORT Fl_Widget {
   int x_,y_,w_,h_;
   Fl_Label label_;
   int flags_;
-  unsigned color_;
-  unsigned color2_;
+  Fl_Color color_;
+  Fl_Color color2_;
   uchar type_;
   uchar damage_;
   uchar box_;
@@ -343,9 +343,9 @@ public:
 
   /** Gets the background color of the widget.
       \return current background color
-      \see color(unsigned), color(unsigned, unsigned)
+      \see color(Fl_Color), color(Fl_Color, Fl_Color)
    */
-  Fl_Color color() const {return (Fl_Color)color_;}
+  Fl_Color color() const {return color_;}
 
   /** Sets the background color of the widget. 
       The color is passed to the box routine. The color is either an index into 
@@ -355,25 +355,25 @@ public:
       The default for most widgets is FL_BACKGROUND_COLOR. Use Fl::set_color()
       to redefine colors in the color map.
       \param[in] bg background color
-      \see color(), color(unsigned, unsigned), selection_color(unsigned)
+      \see color(), color(Fl_Color, Fl_Color), selection_color(Fl_Color)
    */
-  void color(unsigned bg) {color_ = bg;}
+  void color(Fl_Color bg) {color_ = bg;}
 
   /** Gets the selection color.
       \return the current selection color
-      \see selection_color(unsigned), color(unsigned, unsigned)
+      \see selection_color(Fl_Color), color(Fl_Color, Fl_Color)
    */
-  Fl_Color selection_color() const {return (Fl_Color)color2_;}
+  Fl_Color selection_color() const {return color2_;}
 
   /** Sets the selection color.
       The selection color is defined for Forms compatibility and is usually 
       used to color the widget when it is selected, although some widgets 
       use this color for other purposes. You can set both colors at once 
-      with color(unsigned bg, unsigned sel).
+      with color(Fl_Color bg, Fl_Color sel).
       \param[in] a the new selection color
-      \see selection_color(), color(unsigned, unsigned)
+      \see selection_color(), color(Fl_Color, Fl_Color)
    */
-  void selection_color(unsigned a) {color2_ = a;}
+  void selection_color(Fl_Color a) {color2_ = a;}
 
   /** Sets the background and selection color of the widget. 
 
@@ -382,7 +382,7 @@ public:
       \param[in] sel selection color
       \see color(unsigned), selection_color(unsigned)
    */
-  void color(unsigned bg, unsigned sel) {color_=bg; color2_=sel;}
+  void color(Fl_Color bg, Fl_Color sel) {color_=bg; color2_=sel;}
 
   /** Gets the current label text.
       \return a pointer to the current label text
@@ -439,13 +439,13 @@ public:
       The default color is FL_FOREGROUND_COLOR. 
       \return the current label color
    */
-  Fl_Color labelcolor() const {return (Fl_Color)label_.color;}
+  Fl_Color labelcolor() const {return label_.color;}
 
   /** Sets the label color. 
       The default color is FL_FOREGROUND_COLOR. 
       \param[in] c the new label color
    */
-  void labelcolor(unsigned c) {label_.color=c;}
+  void labelcolor(Fl_Color c) {label_.color=c;}
 
   /** Gets the font to use. 
       Fonts are identified by indexes into a table. The default value

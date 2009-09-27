@@ -143,10 +143,10 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
   Fl_Fontsize textsize_;
 
   /** \internal color of the entire text */
-  unsigned textcolor_;
+  Fl_Color textcolor_;
 
   /** \internal color of the text cursor */
-  unsigned cursor_color_;
+  Fl_Color cursor_color_;
 
   /** \internal Horizontal cursor position in pixels while movin up or down.  */
   static double up_down_pos;
@@ -397,23 +397,23 @@ public:
 
   /** Gets the color of the text in the input field.
     \return the text color
-    \see textcolor(unsigned) */
-  Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+    \see textcolor(Fl_Color) */
+  Fl_Color textcolor() const {return textcolor_;}
 
   /** Sets the color of the text in the input field.
     The text color defaults to \c FL_FOREGROUND_COLOR.
     \param [in] n new text color
     \see textcolor() */
-  void textcolor(unsigned n) {textcolor_ = n;}
+  void textcolor(Fl_Color n) {textcolor_ = n;}
 
   /** Gets the color of the cursor.  
     \return the current cursor color */
-  Fl_Color cursor_color() const {return (Fl_Color)cursor_color_;}
+  Fl_Color cursor_color() const {return cursor_color_;}
 
   /** Sets the color of the cursor.  
     The default color for the cursor is \c FL_BLACK.
     \param [in] n the new cursor color */
-  void cursor_color(unsigned n) {cursor_color_ = n;}
+  void cursor_color(Fl_Color n) {cursor_color_ = n;}
 
   /** Gets the input field type. 
     \return the current input type */

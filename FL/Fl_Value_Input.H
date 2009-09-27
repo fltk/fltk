@@ -120,11 +120,11 @@ public:
   /** Gets the color of the text in the value box.  */
   Fl_Color textcolor() const {return input.textcolor();}
   /** Sets the color of the text in the value box.*/
-  void textcolor(unsigned n) {input.textcolor(n);}
+  void textcolor(Fl_Color n) {input.textcolor(n);}
   /** Gets the color of the text cursor. The text cursor is black by default. */
   Fl_Color cursor_color() const {return input.cursor_color();}
   /** Sets the color of the text cursor. The text cursor is black by default. */
-  void cursor_color(unsigned n) {input.cursor_color(n);}
+  void cursor_color(Fl_Color n) {input.cursor_color(n);}
 
 };
 

@@ -406,7 +406,7 @@ void Fl_Widget::draw_box() const {
 //     if (t == FL_FLAT_BOX) return;
 //     t += 2; // convert box to frame
 //   }
-  draw_box((Fl_Boxtype)t, x_, y_, w_, h_, (Fl_Color)color_);
+  draw_box((Fl_Boxtype)t, x_, y_, w_, h_, color_);
 }
 /** Draws a box of type t, of color c at the widget's position and size. */
 void Fl_Widget::draw_box(Fl_Boxtype t, Fl_Color c) const {

@@ -76,13 +76,13 @@ public:
   /**    Sets the size of the tooltip text.  */
   static void size(Fl_Fontsize s) { size_ = s; }
   /** Gets the background color for tooltips. The default background color is a pale yellow.  */
-  static Fl_Color color() { return (Fl_Color)color_; }
+  static Fl_Color color() { return color_; }
   /** Sets the background color for tooltips. The default background color is a pale yellow.  */
-  static void color(unsigned c) { color_ = c; }
+  static void color(Fl_Color c) { color_ = c; }
   /** Gets the color of the text in the tooltip. The default is  black. */
-  static Fl_Color textcolor() { return (Fl_Color)textcolor_; }
+  static Fl_Color textcolor() { return textcolor_; }
   /** Sets the color of the text in the tooltip. The default is  black. */
-  static void textcolor(unsigned c) { textcolor_ = c; }
+  static void textcolor(Fl_Color c) { textcolor_ = c; }
 
   // These should not be public, but Fl_Widget::tooltip() needs them...
   // fabien: made it private with only a friend function access
@@ -95,8 +95,8 @@ private:
   static float delay_; //!< delay before a tooltip is shown
   static float hoverdelay_; //!< delay between tooltips
   static int enabled_;
-  static unsigned color_;
-  static unsigned textcolor_;
+  static Fl_Color color_;
+  static Fl_Color textcolor_;
   static Fl_Font font_;
   static Fl_Fontsize size_;
   static Fl_Widget* widget_; //!< Keeps track of the current target widget

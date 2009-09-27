@@ -87,7 +87,7 @@ class FL_EXPORT Fl_Chart : public Fl_Widget {
     uchar autosize_;
     Fl_Font textfont_;
     Fl_Fontsize textsize_;
-    unsigned textcolor_;
+    Fl_Color textcolor_;
 protected:
     void draw();
 public:
@@ -136,9 +136,9 @@ public:
     void textsize(Fl_Fontsize s) {textsize_ = s;}
 
     /** Gets the chart's text color */
-    Fl_Color textcolor() const {return (Fl_Color)textcolor_;}
+    Fl_Color textcolor() const {return textcolor_;}
     /** gets the chart's text color to \p n. */
-    void textcolor(unsigned n) {textcolor_ = n;}
+    void textcolor(Fl_Color n) {textcolor_ = n;}
 
     /**
       Get whether the chart will automatically adjust the bounds of the chart.

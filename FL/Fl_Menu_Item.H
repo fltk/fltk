@@ -124,7 +124,7 @@ struct FL_EXPORT Fl_Menu_Item {
   uchar labeltype_;	    ///< how the menu item text looks like
   Fl_Font labelfont_;	    ///< which font for this menu item text
   Fl_Fontsize labelsize_;   ///< size of menu item text
-  unsigned labelcolor_;	    ///< menu item text color 
+  Fl_Color labelcolor_;	    ///< menu item text color 
 
   // advance N items, skipping submenus:
   const Fl_Menu_Item *next(int=1) const;
@@ -181,10 +181,10 @@ struct FL_EXPORT Fl_Menu_Item {
     color is not black fltk will <I>not</I> use overlay bitplanes to draw
     the menu - this is so that images put in the menu draw correctly.
   */
-  Fl_Color labelcolor() const {return (Fl_Color)labelcolor_;}
+  Fl_Color labelcolor() const {return labelcolor_;}
 
   /** See Fl_Color Fl_Menu_Item::labelcolor() const */
-  void labelcolor(unsigned a) {labelcolor_ = a;}
+  void labelcolor(Fl_Color a) {labelcolor_ = a;}
   /**
     Fonts are identified by small 8-bit indexes into a table. See the 
     enumeration list for predefined fonts. The default value is a
