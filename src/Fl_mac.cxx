@@ -2177,7 +2177,7 @@ void Fl_X::make(Fl_Window* w)
       wp += 2*bx;
       hp += 2*by+bt;
     }
-    if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
+    if (!(w->flags() & Fl_Widget::FORCE_POSITION)) {
       // use the Carbon functions below for default window positioning
       w->x(xyPos+Fl::x());
       w->y(xyPos+Fl::y());
@@ -2224,7 +2224,7 @@ void Fl_X::make(Fl_Window* w)
       SetWindowClass(x->xid, kFloatingWindowClass);
       SetWindowActivationScope(x->xid, kWindowActivationScopeAll);
     }
-    if (!(w->flags() & Fl_Window::FL_FORCE_POSITION))
+    if (!(w->flags() & Fl_Widget::FORCE_POSITION))
     {
       WindowRef pw = Fl_X::first ? Fl_X::first->xid : 0 ;
       if (w->modal()) {
@@ -2404,7 +2404,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   int is_a_resize = (W != w() || H != h());
 //  printf("Fl_Winodw::resize(X=%d, Y=%d, W=%d, H=%d), is_a_resize=%d, resize_from_system=%p, this=%p\n",
 //         X, Y, W, H, is_a_resize, resize_from_system, this);
-  if (X != x() || Y != y()) set_flag(FL_FORCE_POSITION);
+  if (X != x() || Y != y()) set_flag(FORCE_POSITION);
   else if (!is_a_resize) return;
   if ( (resize_from_system!=this) && (!parent()) && shown()) {
     if (is_a_resize) {

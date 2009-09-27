@@ -1292,7 +1292,7 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   int resize_from_program = (this != resize_bug_fix);
   if (!resize_from_program) resize_bug_fix = 0;
   if (X != x() || Y != y()) {
-    set_flag(FL_FORCE_POSITION);
+    set_flag(FORCE_POSITION);
   } else {
     if (!is_a_resize) return;
     flags |= SWP_NOMOVE;
@@ -1474,7 +1474,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
       wp += 2*bx;
       hp += 2*by+bt;
     }
-    if (!(w->flags() & Fl_Window::FL_FORCE_POSITION)) {
+    if (!(w->flags() & Fl_Widget::FORCE_POSITION)) {
       xp = yp = CW_USEDEFAULT;
     } else {
       if (!Fl::grab()) {

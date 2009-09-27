@@ -66,7 +66,7 @@ Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l)
   cursor_bg      = FL_WHITE;
 
   _Fl_Window();
-  set_flag(FL_FORCE_POSITION);
+  set_flag(FORCE_POSITION);
 }
 
 Fl_Window::Fl_Window(int W, int H, const char *l)

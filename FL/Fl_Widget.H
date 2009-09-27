@@ -144,14 +144,21 @@ protected:
       See activate(), output(), visible(), changed(), set_visible_focus()
   */
   enum {
-        INACTIVE=1,           ///< the widget can't receive focus, and is disabled but potentially visible
-        INVISIBLE=2,          ///< the widget is not drawn but can receive events
-        OUTPUT=4,             ///< for output only
-        SHORTCUT_LABEL=64,    ///< the label contains a shortcut we need to draw
-        CHANGED=128,          ///< the widget value changed
-        VISIBLE_FOCUS=512,    ///< accepts keyboard focus navigation if the widget can have the focus
-        COPIED_LABEL=1024,    ///< the widget label is internally copied, its destruction is handled by the widget
-        CLIP_CHILDREN = 2048  ///< all drawing within this widget will be clipped (Fl_Group)
+        INACTIVE = 1,         ///< the widget can't receive focus, and is disabled but potentially visible
+        INVISIBLE,            ///< the widget is not drawn but can receive events
+        OUTPUT,               ///< for output only
+        NOBORDER,             ///< don't draw a decoration (Fl_Window)
+        FORCE_POSITION,       ///< don't let the window manager position thi window (Fl_Window)
+        NON_MODAL,            ///< thisis a hovering toolbar window (Fl_Window)
+        SHORTCUT_LABEL,       ///< the label contains a shortcut we need to draw
+        CHANGED,              ///< the widget value changed
+        OVERRIDE,             ///< position window on top (Fl_Window)
+        VISIBLE_FOCUS,        ///< accepts keyboard focus navigation if the widget can have the focus
+        COPIED_LABEL,         ///< the widget label is internally copied, its destruction is handled by the widget
+        CLIP_CHILDREN,        ///< all drawing within this widget will be clipped (Fl_Group)
+        MENU_WINDOW,          ///< a temporary popup window, dismissed by clicking outside (Fl_Window)
+        TOOLTIP_WINDOW,       ///< a temporary popup, transparent to events, and dismissed easily (Fl_Window)
+        MODAL,                ///< a window blocking input to all other winows (Fl_Window)
   };
   void draw_box() const;
   void draw_box(Fl_Boxtype t, Fl_Color c) const;
