@@ -680,7 +680,7 @@ public:
     8-bit RGB color. The color is not allocated until fl_color(i) is used.
   */
   static void	set_color(Fl_Color, unsigned); // platform dependent
-  static unsigned get_color(Fl_Color);
+  static Fl_Color get_color(Fl_Color);
   static void	get_color(Fl_Color, uchar&, uchar&, uchar&);
   /**
     Frees the specified color from the colormap, if applicable.

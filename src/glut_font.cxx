@@ -115,7 +115,8 @@ void glutStrokeString(void* fontID, const unsigned char *string) {
   * point back to the start of the line and down one line.
   */
 
-#if defined(__GNUC__)#warning FIXME This needs to be UTF aware now
+#if defined(__GNUC__)
+#warning FIXME This needs to be UTF aware now
 #endif /*__GNUC__*/
 
   while ((c = *string++) != 0) {
