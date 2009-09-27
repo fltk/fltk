@@ -151,8 +151,7 @@ void Fl_Window::copy_label(const char *a) {
 
 
 void Fl_Window::iconlabel(const char *iname) {
-  // FIXME: 'flags' is 32 bit large!
-  uchar saveflags = flags();
+  unsigned saveflags = flags();
   label(label(), iname);
   set_flag(saveflags);
 }

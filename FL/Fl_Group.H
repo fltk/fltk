@@ -58,8 +58,6 @@ class FL_EXPORT Fl_Group : public Fl_Widget {
   Fl_Group& operator=(const Fl_Group&);
 
 protected:
-  enum { CLIP_CHILDREN = 2048 };
-
   void draw();
   void draw_child(Fl_Widget& widget) const;
   void draw_children();

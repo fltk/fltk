@@ -144,14 +144,15 @@ protected:
       See activate(), output(), visible(), changed(), set_visible_focus()
   */
   enum {
-        INACTIVE=1,	    ///< the widget can't receive focus, and is disabled but potentially visible
-        INVISIBLE=2,	    ///< the widget is not drawn but can receive events
-        OUTPUT=4,           ///< for output only
-        SHORTCUT_LABEL=64,  ///< the label contains a shortcut we need to draw
-        CHANGED=128,	    ///< the widget value changed
-        VISIBLE_FOCUS=512,  ///< accepts keyboard focus navigation if the widget can have the focus
-        COPIED_LABEL=1024   ///< the widget label is internally copied, its destruction is handled by the widget
-       };
+        INACTIVE=1,           ///< the widget can't receive focus, and is disabled but potentially visible
+        INVISIBLE=2,          ///< the widget is not drawn but can receive events
+        OUTPUT=4,             ///< for output only
+        SHORTCUT_LABEL=64,    ///< the label contains a shortcut we need to draw
+        CHANGED=128,          ///< the widget value changed
+        VISIBLE_FOCUS=512,    ///< accepts keyboard focus navigation if the widget can have the focus
+        COPIED_LABEL=1024,    ///< the widget label is internally copied, its destruction is handled by the widget
+        CLIP_CHILDREN = 2048  ///< all drawing within this widget will be clipped (Fl_Group)
+  };
   void draw_box() const;
   void draw_box(Fl_Boxtype t, Fl_Color c) const;
   void draw_box(Fl_Boxtype t, int x,int y,int w,int h, Fl_Color c) const;

@@ -172,11 +172,11 @@ void Fl_Menu_Item::setonly() {
   }
 }
 
-Fl_Menu_::Fl_Menu_(int X,int Y,int W,int H,const char* l)
 /**
-  Creates a new Fl_Menu_ widget using the given position, size,
-  and label string.  menu() is initialized to null.
-*/
+ Creates a new Fl_Menu_ widget using the given position, size,
+ and label string.  menu() is initialized to null.
+ */
+Fl_Menu_::Fl_Menu_(int X,int Y,int W,int H,const char* l)
 : Fl_Widget(X,Y,W,H,l) {
   set_flag(SHORTCUT_LABEL);
   box(FL_UP_BOX);
