@@ -144,21 +144,25 @@ protected:
       See activate(), output(), visible(), changed(), set_visible_focus()
   */
   enum {
-        INACTIVE = 1,         ///< the widget can't receive focus, and is disabled but potentially visible
-        INVISIBLE,            ///< the widget is not drawn but can receive events
-        OUTPUT,               ///< for output only
-        NOBORDER,             ///< don't draw a decoration (Fl_Window)
-        FORCE_POSITION,       ///< don't let the window manager position thi window (Fl_Window)
-        NON_MODAL,            ///< thisis a hovering toolbar window (Fl_Window)
-        SHORTCUT_LABEL,       ///< the label contains a shortcut we need to draw
-        CHANGED,              ///< the widget value changed
-        OVERRIDE,             ///< position window on top (Fl_Window)
-        VISIBLE_FOCUS,        ///< accepts keyboard focus navigation if the widget can have the focus
-        COPIED_LABEL,         ///< the widget label is internally copied, its destruction is handled by the widget
-        CLIP_CHILDREN,        ///< all drawing within this widget will be clipped (Fl_Group)
-        MENU_WINDOW,          ///< a temporary popup window, dismissed by clicking outside (Fl_Window)
-        TOOLTIP_WINDOW,       ///< a temporary popup, transparent to events, and dismissed easily (Fl_Window)
-        MODAL,                ///< a window blocking input to all other winows (Fl_Window)
+        INACTIVE        = 1<<0,   ///< the widget can't receive focus, and is disabled but potentially visible
+        INVISIBLE       = 1<<1,   ///< the widget is not drawn but can receive events
+        OUTPUT          = 1<<2,   ///< for output only
+        NOBORDER        = 1<<3,   ///< don't draw a decoration (Fl_Window)
+        FORCE_POSITION  = 1<<4,   ///< don't let the window manager position thi window (Fl_Window)
+        NON_MODAL       = 1<<5,   ///< thisis a hovering toolbar window (Fl_Window)
+        SHORTCUT_LABEL  = 1<<6,   ///< the label contains a shortcut we need to draw
+        CHANGED         = 1<<7,   ///< the widget value changed
+        OVERRIDE        = 1<<8,   ///< position window on top (Fl_Window)
+        VISIBLE_FOCUS   = 1<<9,   ///< accepts keyboard focus navigation if the widget can have the focus
+        COPIED_LABEL    = 1<<10,  ///< the widget label is internally copied, its destruction is handled by the widget
+        CLIP_CHILDREN   = 1<<11,  ///< all drawing within this widget will be clipped (Fl_Group)
+        MENU_WINDOW     = 1<<12,  ///< a temporary popup window, dismissed by clicking outside (Fl_Window)
+        TOOLTIP_WINDOW  = 1<<13,  ///< a temporary popup, transparent to events, and dismissed easily (Fl_Window)
+        MODAL           = 1<<14,  ///< a window blocking input to all other winows (Fl_Window)
+        // (space for more flags)
+        USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
+        USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
+        USERFLAG1       = 1<<31   ///< reserved for 3rd party extensions
   };
   void draw_box() const;
   void draw_box(Fl_Boxtype t, Fl_Color c) const;
