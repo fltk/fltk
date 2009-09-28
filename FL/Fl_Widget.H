@@ -159,6 +159,7 @@ protected:
         MENU_WINDOW     = 1<<12,  ///< a temporary popup window, dismissed by clicking outside (Fl_Window)
         TOOLTIP_WINDOW  = 1<<13,  ///< a temporary popup, transparent to events, and dismissed easily (Fl_Window)
         MODAL           = 1<<14,  ///< a window blocking input to all other winows (Fl_Window)
+        NO_OVERLAY      = 1<<15,  ///< window not using a hardware overlay plane (Fl_Menu_Window)
         // (space for more flags)
         USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
