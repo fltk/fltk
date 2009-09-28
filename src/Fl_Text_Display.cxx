@@ -387,8 +387,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
     mMaxsize = max(mMaxsize, fl_height(mStyleTable[i].font, mStyleTable[i].size));
 
   // did we have scrollbars initially?
-  int hscrollbarvisible = mHScrollBar->visible();
-  int vscrollbarvisible = mVScrollBar->visible();
+  unsigned int hscrollbarvisible = mHScrollBar->visible();
+  unsigned int vscrollbarvisible = mVScrollBar->visible();
 
   // try without scrollbars first
   mVScrollBar->clear_visible();
