@@ -159,11 +159,11 @@ public:
   */
   void clear_border()	{set_flag(NOBORDER);}
   /** See int Fl_Window::border(int) */
-  int border() const	{return !(flags() & NOBORDER);}
+  unsigned int border() const	{return !(flags() & NOBORDER);}
   /** Activate the flags NOBORDER|FL_OVERRIDE */
   void set_override()	{set_flag(NOBORDER|OVERRIDE);}
   /** Returns non zero if FL_OVERRIDE flag is set, 0 otherwise. */
-  int override() const  { return flags()&OVERRIDE; }
+  unsigned int override() const  { return flags()&OVERRIDE; }
   /**
     A "modal" window, when shown(), will prevent any events from
     being delivered to other windows in the same program, and will also
@@ -175,7 +175,7 @@ public:
   */
   void set_modal()	{set_flag(MODAL);}
   /**  Returns true if this window is modal.  */
-  int modal() const	{return flags() & MODAL;}
+  unsigned int modal() const	{return flags() & MODAL;}
   /**
     A "non-modal" window (terminology borrowed from Microsoft Windows)
     acts like a modal() one in that it remains on top, but it has
@@ -184,7 +184,7 @@ public:
   */
   void set_non_modal()	{set_flag(NON_MODAL);}
   /**  Returns true if this window is modal or non-modal. */
-  int non_modal() const {return flags() & (NON_MODAL|MODAL);}
+  unsigned int non_modal() const {return flags() & (NON_MODAL|MODAL);}
 
   /**
     Marks the window as a menu window.
@@ -202,7 +202,7 @@ public:
   void set_menu_window()	{set_flag(MENU_WINDOW);}
 
   /**  Returns true if this window is a menu window. */
-  int menu_window() const {return flags() & MENU_WINDOW;}
+  unsigned int menu_window() const {return flags() & MENU_WINDOW;}
 
   /**
     Marks the window as a tooltip window.
@@ -223,7 +223,7 @@ public:
   void set_tooltip_window()	{ set_flag(TOOLTIP_WINDOW);
 				  clear_flag(MENU_WINDOW); }
   /**  Returns true if this window is a tooltip window. */
-  int tooltip_window() const {return flags() & TOOLTIP_WINDOW;}
+  unsigned int tooltip_window() const {return flags() & TOOLTIP_WINDOW;}
 
   /**
     Position the window so that the mouse is pointing at the

@@ -174,7 +174,7 @@ public:
 
     \see void Fl_Group::clip_children(int c)
   */
-  int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
+  unsigned int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
 
   // back compatibility functions:
 

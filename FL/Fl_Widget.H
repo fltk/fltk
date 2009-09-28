@@ -96,7 +96,7 @@ class FL_EXPORT Fl_Widget {
   void* user_data_;
   int x_,y_,w_,h_;
   Fl_Label label_;
-  int flags_;
+  unsigned int flags_;
   Fl_Color color_;
   Fl_Color color2_;
   uchar type_;
@@ -135,11 +135,11 @@ protected:
   /** Internal use only. Use position(int,int), size(int,int) or resize(int,int,int,int) instead. */
   void h(int v) {h_ = v;}
   /** Gets the widget flags mask */
-  int flags() const {return flags_;}
+  unsigned int flags() const {return flags_;}
   /** Sets a flag in the flags mask */
-  void set_flag(int c) {flags_ |= c;}
+  void set_flag(unsigned int c) {flags_ |= c;}
   /** Clears a flag in the flags mask */
-  void clear_flag(int c) {flags_ &= ~c;}
+  void clear_flag(unsigned int c) {flags_ &= ~c;}
   /** flags possible values enumeration.
       See activate(), output(), visible(), changed(), set_visible_focus()
   */
@@ -645,7 +645,7 @@ public:
       \retval 0 if the widget is not drawn and hence invisible.
       \see show(), hide(), visible_r()
    */
-  int visible() const {return !(flags_&INVISIBLE);}
+  unsigned int visible() const {return !(flags_&INVISIBLE);}
 
   /** Returns whether a widget and all its parents are visible.
       \retval 0 if the widget or any of its parents are invisible.
@@ -690,7 +690,7 @@ public:
       \retval 0 if the widget is inactive
       \see active_r(), activate(), deactivate()
    */
-  int active() const {return !(flags_&INACTIVE);}
+  unsigned int active() const {return !(flags_&INACTIVE);}
 
   /** Returns whether the widget and all of its parents are active. 
       \retval 0 if this or any of the parent widgets are inactive
@@ -729,7 +729,7 @@ public:
       \retval 0 if the widget is used for input and output
       \see set_output(), clear_output() 
    */
-  int output() const {return (flags_&OUTPUT);}
+  unsigned int output() const {return (flags_&OUTPUT);}
 
   /** Sets a widget to output only.
       \see output(), clear_output() 
@@ -746,7 +746,7 @@ public:
       && visible()) but is faster.
       \retval 0 if the widget takes no events
    */ 
-  int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
+  unsigned int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
 
   /** 
       Checks if the widget value changed since the last callback.
@@ -763,7 +763,7 @@ public:
      \retval 0 if the value did not change
      \see set_changed(), clear_changed()
    */
-  int changed() const {return flags_&CHANGED;}
+  unsigned int changed() const {return flags_&CHANGED;}
 
   /** Marks the value of the widget as changed.
       \see changed(), clear_changed()
@@ -808,7 +808,7 @@ public:
       \retval 0 if this widget has no visible focus.
       \see visible_focus(int), set_visible_focus(), clear_visible_focus()
    */
-  int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
+  unsigned int  visible_focus() { return flags_ & VISIBLE_FOCUS; }
 
   /** Sets the default callback for all widgets.
       Sets the default callback, which puts a pointer to the widget on the queue 
