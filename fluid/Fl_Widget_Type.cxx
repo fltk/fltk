@@ -2431,7 +2431,7 @@ void Fl_Widget_Type::write_properties() {
 }
 
 int pasteoffset;
-
+extern double read_version;
 void Fl_Widget_Type::read_property(const char *c) {
   int x,y,w,h; Fl_Font f; int s; Fl_Color cc;
   if (!strcmp(c,"private")) {
@@ -2442,6 +2442,11 @@ void Fl_Widget_Type::read_property(const char *c) {
     if (sscanf(read_word(),"%d %d %d %d",&x,&y,&w,&h) == 4) {
       x += pasteoffset;
       y += pasteoffset;
+      // FIXME temporary change!
+      if (read_version>=2.0 && o->parent() && o->parent()!=o->window()) {
+        x += o->parent()->x();
+        y += o->parent()->y();
+      }
       o->resize(x,y,w,h);
     }
   } else if (!strcmp(c,"tooltip")) {
@@ -2483,12 +2488,18 @@ void Fl_Widget_Type::read_property(const char *c) {
     const char* value = read_word();
     ((Fl_Button*)o)->value(atoi(value));
   } else if (!strcmp(c,"color")) {
-    int n = sscanf(read_word(),"%d %d",&x,&y);
-    if (n == 2) { // back compatibility...
-      if (x != 47) o->color(x);
-      o->selection_color(y);
-    } else {
+    const char *cw = read_word();
+    if (cw[0]=='0' && cw[1]=='x') {
+      sscanf(cw,"0x%x",&x);
       o->color(x);
+    } else {
+      int n = sscanf(cw,"%d %d",&x,&y);
+      if (n == 2) { // back compatibility...
+        if (x != 47) o->color(x);
+        o->selection_color(y);
+      } else {
+        o->color(x);
+      }
     }
   } else if (!strcmp(c,"selection_color")) {
     if (sscanf(read_word(),"%d",&x)) o->selection_color(x);
@@ -2553,9 +2564,12 @@ void Fl_Widget_Type::read_property(const char *c) {
     if (!strncmp(c,"code",4)) {
       int n = atoi(c+4);
       if (n >= 0 && n <= NUM_EXTRA_CODE) {
-	extra_code(n,read_word());
-	return;
+        extra_code(n,read_word());
+        return;
       }
+    } else if (!strcmp(c,"extra_code")) {
+      extra_code(0,read_word());
+      return;
     }
     Fl_Type::read_property(c);
   }
