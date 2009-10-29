@@ -87,8 +87,8 @@ static int n_buf = 0;
 
 const char *fl_local_to_mac_roman(const char *t, int n)  
 {
-  if (n==-1) n = strlen(t);
-  if (n<=n_buf) {
+  if (n==-1) n = strlen(t)+1;
+  if (n>=n_buf) {
     n_buf = (n + 257) & 0x7fffff00;
     if (buf) free(buf);
     buf = (char*)malloc(n_buf);
@@ -98,9 +98,9 @@ const char *fl_local_to_mac_roman(const char *t, int n)
   for ( ; n>0; n--) {
     uchar c = *src;
     if (c>127) 
-      *dst = latin2roman[c-128];
+      *dst++ = latin2roman[c-128];
     else
-      *dst = c;
+      *dst++ = c;
   }
   //*dst = 0; // this would be wrong!
   return buf;
@@ -108,8 +108,8 @@ const char *fl_local_to_mac_roman(const char *t, int n)
 
 const char *fl_mac_roman_to_local(const char *t, int n)
 {
-  if (n==-1) n = strlen(t);
-  if (n<=n_buf) {
+  if (n==-1) n = strlen(t)+1;
+  if (n>=n_buf) {
     n_buf = (n + 257) & 0x7fffff00;
     if (buf) free(buf);
     buf = (char*)malloc(n_buf);
