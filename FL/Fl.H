@@ -235,7 +235,7 @@ public:
 
   // labeltypes:
   static void set_labeltype(Fl_Labeltype,Fl_Label_Draw_F*,Fl_Label_Measure_F*);
-  static void set_labeltype(Fl_Labeltype, Fl_Labeltype from);
+  /* static void set_labeltype(Fl_Labeltype, Fl_Labeltype from); (not implemented) */
 
   // boxtypes:
   static Fl_Box_Draw_F *get_boxtype(Fl_Boxtype);
