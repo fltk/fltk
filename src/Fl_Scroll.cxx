@@ -281,8 +281,8 @@ Fl_Scroll::Fl_Scroll(int X,int Y,int W,int H,const char* L)
     hscrollbar(X,Y+H-Fl::scrollbar_size(),
                W-Fl::scrollbar_size(),Fl::scrollbar_size()) {
   type(BOTH);
-  xposition_ = 0;
-  yposition_ = 0;
+  xposition_ = oldx = 0;
+  yposition_ = oldy = 0;
   hscrollbar.type(FL_HORIZONTAL);
   hscrollbar.callback(hscrollbar_cb);
   scrollbar.callback(scrollbar_cb);
