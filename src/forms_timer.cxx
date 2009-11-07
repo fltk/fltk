@@ -137,6 +137,7 @@ Fl_Timer::Fl_Timer(uchar t, int X, int Y, int W, int H, const char* l)
   delay = 0;
   on = 0;
   direction_ = 0;
+  lastsec = lastusec = total = 0;
   type(t);
   if (t == FL_HIDDEN_TIMER) clear_visible();
   if (t == FL_VALUE_TIMER) align(FL_ALIGN_LEFT);
