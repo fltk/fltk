@@ -53,7 +53,8 @@ ColorMenu::ColorMenu(Fl_Color oldcol) :
   Fl_Window(BOXSIZE*8+1+2*BORDER, BOXSIZE*32+1+2*BORDER) {
   clear_border();
   set_modal();
-  initial = which = oldcol;
+  initial = which = previous = oldcol;
+  done = 0;
 }
 
 void ColorMenu::drawbox(Fl_Color c) {
