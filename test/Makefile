@@ -95,6 +95,7 @@ CPPFILES =\
 	threads.cxx \
 	tile.cxx \
 	tiled_image.cxx \
+	tree.cxx \
 	valuators.cxx \
 	utf8.cxx
 
@@ -158,6 +159,7 @@ ALL =	\
 	$(THREADS) \
 	tile$(EXEEXT) \
 	tiled_image$(EXEEXT) \
+	tree$(EXEEXT) \
 	valuators$(EXEEXT) \
 	cairotest$(EXEEXT) \
 	utf8$(EXEEXT) 
@@ -420,6 +422,8 @@ sudoku.exe: sudoku.o sudoku.rc
 
 symbols$(EXEEXT): symbols.o
 
+table$(EXEEXT): table.o
+
 tabs$(EXEEXT): tabs.o
 tabs.cxx:	tabs.fl ../fluid/fluid$(EXEEXT)
 
@@ -431,6 +435,8 @@ threads.o:	threads.h
 tile$(EXEEXT): tile.o
 
 tiled_image$(EXEEXT): tiled_image.o
+
+tree$(EXEEXT): tree.o
 
 valuators$(EXEEXT): valuators.o
 valuators.cxx:	valuators.fl ../fluid/fluid$(EXEEXT)

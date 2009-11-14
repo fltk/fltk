@@ -21,6 +21,7 @@
 	@x:more...:@xm
 		@xm:Fl_Menu:menubar
 		@xm:Fl_Table:table
+		@xm:Fl_Tree:tree
 
 @main:Window\nTests:@w
 	@w:overlay:overlay

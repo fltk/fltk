@@ -64,19 +64,19 @@ void Fl_Table::col_position(int col) {
 
 // Find scroll position of a row (in pixels)
 long Fl_Table::row_scroll_position(int row) {
-    int startrow = 0;
-    long scroll = 0; 
-    // OPTIMIZATION: 
-    //     Attempt to use precomputed row scroll position
-    //
-    if ( toprow_scrollpos != -1 && row >= toprow ) {
-      scroll = toprow_scrollpos;
-      startrow = toprow;
-    }
-    for ( int t=startrow; t<row; t++ ) {
-      scroll += row_height(t);
-    }
-    return(scroll);
+  int startrow = 0;
+  long scroll = 0; 
+  // OPTIMIZATION: 
+  //     Attempt to use precomputed row scroll position
+  //
+  if ( toprow_scrollpos != -1 && row >= toprow ) {
+    scroll = toprow_scrollpos;
+    startrow = toprow;
+  }
+  for ( int t=startrow; t<row; t++ ) {
+    scroll += row_height(t);
+  }
+  return(scroll);
 }
 
 // Find scroll position of a column (in pixels)
@@ -133,36 +133,36 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
   current_row       = -1;
   select_row        = -1;
   select_col        = -1;
-
+  
   box(FL_THIN_DOWN_FRAME);
-
+  
   vscrollbar = new Fl_Scrollbar(x()+w()-SCROLLBAR_SIZE, y(),
-				SCROLLBAR_SIZE, h()-SCROLLBAR_SIZE);
+                                SCROLLBAR_SIZE, h()-SCROLLBAR_SIZE);
   vscrollbar->type(FL_VERTICAL);
   vscrollbar->callback(scroll_cb, (void*)this);
-
+  
   hscrollbar = new Fl_Scrollbar(x(), y()+h()-SCROLLBAR_SIZE,
-				w(), SCROLLBAR_SIZE);
+                                w(), SCROLLBAR_SIZE);
   hscrollbar->type(FL_HORIZONTAL);
   hscrollbar->callback(scroll_cb, (void*)this);
-
+  
   table = new Fl_Scroll(x(), y(), w(), h());
   table->box(FL_NO_BOX);
   table->type(0);		// don't show Fl_Scroll's scrollbars -- use our own
   table->hide();		// hide unless children are present
   table->end();
-
+  
   table_resized();
   redraw();
-
+  
   Fl_Group::end();		// end the group's begin()
-
+  
   table->begin();		// leave with fltk children getting added to the scroll
 }
 
 // Dtor
 Fl_Table::~Fl_Table() {
-    // The parent Fl_Group takes care of destroying scrollbars
+  // The parent Fl_Group takes care of destroying scrollbars
 }
 
 // Set height of a row
@@ -225,12 +225,12 @@ int Fl_Table::row_col_clamp(TableContext context, int &R, int &C) {
       // Allow col headers to draw even if no rows
       if ( R >= _rows && R != 0 ) { R = _rows - 1; clamped = 1; }
       break;
-
+      
     case CONTEXT_ROW_HEADER:
       // Allow row headers to draw even if no columns
       if ( C >= _cols && C != 0 ) { C = _cols - 1; clamped = 1; }
       break;
-
+      
     case CONTEXT_CELL:
     default:
       // CLAMP R/C TO _rows/_cols
@@ -251,7 +251,7 @@ void Fl_Table::get_bounds(TableContext context, int &X, int &Y, int &W, int &H) 
       W = tow;
       H = col_header_height();
       return;
-
+      
     case CONTEXT_ROW_HEADER:
       // Row header clipping.
       X = wix;
@@ -259,13 +259,13 @@ void Fl_Table::get_bounds(TableContext context, int &X, int &Y, int &W, int &H) 
       W = row_header_width();
       H = toh;
       return;
-
+      
     case CONTEXT_TABLE:
       // Table inner dimensions
       X = tix; Y = tiy; W = tiw; H = tih;
       return;
-
-    // TODO: Add other contexts..
+      
+      // TODO: Add other contexts..
     default:
       fprintf(stderr, "Fl_Table::get_bounds(): context %d unimplemented\n", (int)context);
       return;
@@ -290,18 +290,18 @@ Fl_Table::TableContext Fl_Table::cursor2rowcol(int &R, int &C, ResizeFlag &resiz
     if ( Fl::event_inside(X, Y, W, H) ) {
       // Scan visible rows until found
       for ( R = toprow; R <= botrow; R++ ) {
-	find_cell(CONTEXT_ROW_HEADER, R, 0, X, Y, W, H);
-	if ( Fl::event_y() >= Y && Fl::event_y() < (Y+H) ) {
-	  // Found row?
-	  //     If cursor over resize boundary, and resize enabled,
-	  //     enable the appropriate resize flag.
-	  //
-	  if ( row_resize() ) {
-	      if ( Fl::event_y() <= (Y+3-0) ) { resizeflag = RESIZE_ROW_ABOVE; }
-	      if ( Fl::event_y() >= (Y+H-3) ) { resizeflag = RESIZE_ROW_BELOW; }
-	  }
-	  return(CONTEXT_ROW_HEADER);
-	}
+        find_cell(CONTEXT_ROW_HEADER, R, 0, X, Y, W, H);
+        if ( Fl::event_y() >= Y && Fl::event_y() < (Y+H) ) {
+          // Found row?
+          //     If cursor over resize boundary, and resize enabled,
+          //     enable the appropriate resize flag.
+          //
+          if ( row_resize() ) {
+            if ( Fl::event_y() <= (Y+3-0) ) { resizeflag = RESIZE_ROW_ABOVE; }
+            if ( Fl::event_y() >= (Y+H-3) ) { resizeflag = RESIZE_ROW_BELOW; }
+          }
+          return(CONTEXT_ROW_HEADER);
+        }
       }
       // Must be in row header dead zone
       return(CONTEXT_NONE);
@@ -314,18 +314,18 @@ Fl_Table::TableContext Fl_Table::cursor2rowcol(int &R, int &C, ResizeFlag &resiz
     if ( Fl::event_inside(X, Y, W, H) ) {
       // Scan visible columns until found
       for ( C = leftcol; C <= rightcol; C++ ) {
-	find_cell(CONTEXT_COL_HEADER, 0, C, X, Y, W, H);
-	if ( Fl::event_x() >= X && Fl::event_x() < (X+W) ) {
-	  // Found column?
-	  //     If cursor over resize boundary, and resize enabled,
-	  //     enable the appropriate resize flag.
-	  //
-	  if ( col_resize() ) {
-	    if ( Fl::event_x() <= (X+3-0) ) { resizeflag = RESIZE_COL_LEFT; }
-	    if ( Fl::event_x() >= (X+W-3) ) { resizeflag = RESIZE_COL_RIGHT; }
-	  }
-	  return(CONTEXT_COL_HEADER);
-	}
+        find_cell(CONTEXT_COL_HEADER, 0, C, X, Y, W, H);
+        if ( Fl::event_x() >= X && Fl::event_x() < (X+W) ) {
+          // Found column?
+          //     If cursor over resize boundary, and resize enabled,
+          //     enable the appropriate resize flag.
+          //
+          if ( col_resize() ) {
+            if ( Fl::event_x() <= (X+3-0) ) { resizeflag = RESIZE_COL_LEFT; }
+            if ( Fl::event_x() >= (X+W-3) ) { resizeflag = RESIZE_COL_RIGHT; }
+          }
+          return(CONTEXT_COL_HEADER);
+        }
       }
       // Must be in column header dead zone
       return(CONTEXT_NONE);
@@ -340,10 +340,10 @@ Fl_Table::TableContext Fl_Table::cursor2rowcol(int &R, int &C, ResizeFlag &resiz
       if ( Fl::event_y() < Y ) break;		// OPT: thanks lars
       if ( Fl::event_y() >= (Y+H) ) continue;	// OPT: " "
       for ( C = leftcol; C <= rightcol; C++ ) {
-	find_cell(CONTEXT_CELL, R, C, X, Y, W, H);
-	if ( Fl::event_inside(X, Y, W, H) ) {
-	  return(CONTEXT_CELL);			// found it
-	}
+        find_cell(CONTEXT_CELL, R, C, X, Y, W, H);
+        if ( Fl::event_inside(X, Y, W, H) ) {
+          return(CONTEXT_CELL);			// found it
+        }
       }
     }
     // Must be in a dead zone of the table
@@ -367,25 +367,25 @@ int Fl_Table::find_cell(TableContext context, int R, int C, int &X, int &Y, int 
   Y = row_scroll_position(R) - vscrollbar->value() + tiy;
   W = col_width(C);
   H = row_height(R);
-
+  
   switch ( context ) {
     case CONTEXT_COL_HEADER:
       Y = wiy;
       H = col_header_height();
       return(0);
-
+      
     case CONTEXT_ROW_HEADER:
       X = wix;
       W = row_header_width();
       return(0);
-
+      
     case CONTEXT_CELL:
       return(0);
-
+      
     case CONTEXT_TABLE:
       return(0);
-
-    // TODO -- HANDLE OTHER CONTEXTS
+      
+      // TODO -- HANDLE OTHER CONTEXTS
     default:
       fprintf(stderr, "Fl_Table::find_cell: unknown context %d\n", (int)context);
       return(-1);
@@ -416,14 +416,14 @@ void Fl_Table::_auto_drag_cb() {
   int lx = Fl::e_x;
   int ly = Fl::e_y;
   if (_selecting == CONTEXT_COL_HEADER)
-    { ly = y() + col_header_height(); }
+  { ly = y() + col_header_height(); }
   else if (_selecting == CONTEXT_ROW_HEADER)
-    { lx = x() + row_header_width(); }
+  { lx = x() + row_header_width(); }
   if (lx > x() + w() - 20) {
     Fl::e_x = x() + w() - 20;
     if (hscrollbar->visible())
-	((Fl_Slider*)hscrollbar)->value(
-	    hscrollbar->clamp(hscrollbar->value() + 30));
+      ((Fl_Slider*)hscrollbar)->value(
+                                      hscrollbar->clamp(hscrollbar->value() + 30));
     hscrollbar->do_callback();
     _dragging_x = Fl::e_x - 30;
   }
@@ -562,25 +562,25 @@ void Fl_Table::table_resized() {
     vscrollbar->precision(10);
     vscrollbar->slider_size(vscrolltab);
     vscrollbar->resize(wix+wiw-SCROLLBAR_SIZE, wiy,
-		       SCROLLBAR_SIZE, 
-		       wih - ((hscrollbar->visible())?SCROLLBAR_SIZE:0));
+                       SCROLLBAR_SIZE, 
+                       wih - ((hscrollbar->visible())?SCROLLBAR_SIZE:0));
     vscrollbar->Fl_Valuator::value(vscrollbar->clamp(vscrollbar->value()));	
     // Horizontal scrollbar
     hscrollbar->bounds(0, table_w-tiw);
     hscrollbar->precision(10);
     hscrollbar->slider_size(hscrolltab);
     hscrollbar->resize(wix, wiy+wih-SCROLLBAR_SIZE,
-		       wiw - ((vscrollbar->visible())?SCROLLBAR_SIZE:0), 
-		       SCROLLBAR_SIZE);
+                       wiw - ((vscrollbar->visible())?SCROLLBAR_SIZE:0), 
+                       SCROLLBAR_SIZE);
     hscrollbar->Fl_Valuator::value(hscrollbar->clamp(hscrollbar->value()));
   }
-
+  
   // Tell FLTK child widgets were resized
   Fl_Group::init_sizes();
-
+  
   // Recalc top/bot/left/right
   table_scrolled();
-
+  
   // DO *NOT* REDRAW -- LEAVE THIS UP TO THE CALLER
   // redraw();
 }
@@ -606,7 +606,7 @@ void Fl_Table::rows(int val) {
     }
   }
   table_resized();
-
+  
   // OPTIMIZATION: redraw only if change is visible.
   if ( val >= oldrows && oldrows > botrow ) {
     // NO REDRAW
@@ -690,7 +690,7 @@ int Fl_Table::move_cursor(int R, int C) {
 #ifdef DEBUG
 #include "eventnames.h"
 #define PRINTEVENT \
-    fprintf(stderr,"Table %s: ** Event: %s --\n", (label()?label():"none"), eventnames[event]);
+fprintf(stderr,"Table %s: ** Event: %s --\n", (label()?label():"none"), eventnames[event]);
 #else
 #define PRINTEVENT
 #endif
@@ -710,303 +710,303 @@ int Fl_Table::handle(int event) {
   switch ( event ) {
     case FL_PUSH:
       if (Fl::event_button() == 1 && !Fl::event_clicks()) {
-	if (Fl::focus() != this) {
-	  take_focus();
-	  do_callback(CONTEXT_TABLE, -1, -1);
-	  ret = 1;
-	}
-	damage_zone(current_row, current_col, select_row, select_col, R, C);
-	if (context == CONTEXT_CELL) {
-	  current_row = select_row = R;
-	  current_col = select_col = C;
-	  _selecting = CONTEXT_CELL;
-	} else {
-	  current_row = select_row = -1;
-	  current_col = select_col = -1;
-	}
+        if (Fl::focus() != this) {
+          take_focus();
+          do_callback(CONTEXT_TABLE, -1, -1);
+          ret = 1;
+        }
+        damage_zone(current_row, current_col, select_row, select_col, R, C);
+        if (context == CONTEXT_CELL) {
+          current_row = select_row = R;
+          current_col = select_col = C;
+          _selecting = CONTEXT_CELL;
+        } else {
+          current_row = select_row = -1;
+          current_col = select_col = -1;
+        }
       }
       // Need this for eg. right click to pop up a menu
       if ( Fl_Widget::callback() &&		// callback defined?
-	   resizeflag == RESIZE_NONE ) {	// not resizing?
-	do_callback(context, R, C);		// do callback
+          resizeflag == RESIZE_NONE ) {	// not resizing?
+        do_callback(context, R, C);		// do callback
       }
       switch ( context ) {
-	case CONTEXT_CELL:
-	  // FL_PUSH on a cell?
-	  ret = 1; 			// express interest in FL_RELEASE
-	  break;
-
-	case CONTEXT_NONE:
-	  // FL_PUSH on table corner?
-	  if ( Fl::event_button() == 1 && 
-	       Fl::event_x() < x() + row_header_width()) {
-	      current_col = 0;
-	      select_col = cols() - 1;
-	      current_row = 0;
-	      select_row = rows() - 1;				
-	      damage_zone(current_row, current_col, select_row, select_col);
-	      ret = 1;
-	  }
-	  break;
-
-	case CONTEXT_COL_HEADER:
-	  // FL_PUSH on a column header?
-	  if ( Fl::event_button() == 1) {
-	    // Resizing? Handle it
-	    if ( resizeflag ) {
-	      // Start resize if left click on column border.
-	      //    "ret=1" ensures we get drag events from now on.
-	      //    (C-1) is used if mouse is over the left hand side 
-	      //    of cell, so we resize the next column on the left.
-	      //
-	      _resizing_col = ( resizeflag & RESIZE_COL_LEFT ) ? C-1 : C; 
-	      _resizing_row = -1;
-	      _dragging_x = Fl::event_x(); 
-	      ret = 1;
-	    } else {
-	      // Not resizing? Select the column
-	      current_col = select_col = C;
-	      current_row = 0;
-	      select_row = rows() - 1;
-	      _selecting = CONTEXT_COL_HEADER;
-	      damage_zone(current_row, current_col, select_row, select_col);
-	      ret = 1;
-	    }
-	  }
-	  break;
-
-	case CONTEXT_ROW_HEADER:
-	  // FL_PUSH on a row header?
-	  if ( Fl::event_button() == 1 ) {
-	    // Resizing? Handle it
-	    if ( resizeflag ) {
-	      // Start resize if left mouse clicked on row border.
-	      //    "ret = 1" ensures we get drag events from now on.
-	      //    (R-1) is used if mouse is over the top of the cell,
-	      //    so that we resize the row above.
-	      //
-	      _resizing_row = ( resizeflag & RESIZE_ROW_ABOVE ) ? R-1 : R; 
-	      _resizing_col = -1;
-	      _dragging_y = Fl::event_y(); 
-	      ret = 1;
-	    } else {
-	      // Not resizing? Select the row
-	      current_row = select_row = R;
-	      current_col = 0;
-	      select_col = cols() - 1;
-	      _selecting = CONTEXT_ROW_HEADER;
-	      damage_zone(current_row, current_col, select_row, select_col);
-	      ret = 1;
-	    }
-	  }
-	  break;
-
-	default:
-	  ret = 0;		// express disinterest
-	  break;
+        case CONTEXT_CELL:
+          // FL_PUSH on a cell?
+          ret = 1; 			// express interest in FL_RELEASE
+          break;
+          
+        case CONTEXT_NONE:
+          // FL_PUSH on table corner?
+          if ( Fl::event_button() == 1 && 
+              Fl::event_x() < x() + row_header_width()) {
+            current_col = 0;
+            select_col = cols() - 1;
+            current_row = 0;
+            select_row = rows() - 1;				
+            damage_zone(current_row, current_col, select_row, select_col);
+            ret = 1;
+          }
+          break;
+          
+        case CONTEXT_COL_HEADER:
+          // FL_PUSH on a column header?
+          if ( Fl::event_button() == 1) {
+            // Resizing? Handle it
+            if ( resizeflag ) {
+              // Start resize if left click on column border.
+              //    "ret=1" ensures we get drag events from now on.
+              //    (C-1) is used if mouse is over the left hand side 
+              //    of cell, so we resize the next column on the left.
+              //
+              _resizing_col = ( resizeflag & RESIZE_COL_LEFT ) ? C-1 : C; 
+              _resizing_row = -1;
+              _dragging_x = Fl::event_x(); 
+              ret = 1;
+            } else {
+              // Not resizing? Select the column
+              current_col = select_col = C;
+              current_row = 0;
+              select_row = rows() - 1;
+              _selecting = CONTEXT_COL_HEADER;
+              damage_zone(current_row, current_col, select_row, select_col);
+              ret = 1;
+            }
+          }
+          break;
+          
+        case CONTEXT_ROW_HEADER:
+          // FL_PUSH on a row header?
+          if ( Fl::event_button() == 1 ) {
+            // Resizing? Handle it
+            if ( resizeflag ) {
+              // Start resize if left mouse clicked on row border.
+              //    "ret = 1" ensures we get drag events from now on.
+              //    (R-1) is used if mouse is over the top of the cell,
+              //    so that we resize the row above.
+              //
+              _resizing_row = ( resizeflag & RESIZE_ROW_ABOVE ) ? R-1 : R; 
+              _resizing_col = -1;
+              _dragging_y = Fl::event_y(); 
+              ret = 1;
+            } else {
+              // Not resizing? Select the row
+              current_row = select_row = R;
+              current_col = 0;
+              select_col = cols() - 1;
+              _selecting = CONTEXT_ROW_HEADER;
+              damage_zone(current_row, current_col, select_row, select_col);
+              ret = 1;
+            }
+          }
+          break;
+          
+        default:
+          ret = 0;		// express disinterest
+          break;
       }
       _last_row = R;
       break;
-
+      
     case FL_DRAG:
       if (_auto_drag == 1) {
-	ret = 1;
-	break;
+        ret = 1;
+        break;
       } 
       if ( _resizing_col > -1 ) {
-	// Dragging column?
-	//
-	//    Let user drag even /outside/ the row/col widget.
-	//    Don't allow column width smaller than 1.
-	//    Continue to show FL_CURSOR_WE at all times during drag.
-	//
-	int offset = _dragging_x - Fl::event_x();
-	int new_w = col_width(_resizing_col) - offset;
-	if ( new_w < _col_resize_min ) new_w = _col_resize_min;
-	col_width(_resizing_col, new_w);
-	_dragging_x = Fl::event_x();
-	table_resized();
-	redraw();
-	change_cursor(FL_CURSOR_WE);
-	ret = 1;
-	if ( Fl_Widget::callback() && when() & FL_WHEN_CHANGED ) {
-	  do_callback(CONTEXT_RC_RESIZE, R, C);
-	}
+        // Dragging column?
+        //
+        //    Let user drag even /outside/ the row/col widget.
+        //    Don't allow column width smaller than 1.
+        //    Continue to show FL_CURSOR_WE at all times during drag.
+        //
+        int offset = _dragging_x - Fl::event_x();
+        int new_w = col_width(_resizing_col) - offset;
+        if ( new_w < _col_resize_min ) new_w = _col_resize_min;
+        col_width(_resizing_col, new_w);
+        _dragging_x = Fl::event_x();
+        table_resized();
+        redraw();
+        change_cursor(FL_CURSOR_WE);
+        ret = 1;
+        if ( Fl_Widget::callback() && when() & FL_WHEN_CHANGED ) {
+          do_callback(CONTEXT_RC_RESIZE, R, C);
+        }
       }
       else if ( _resizing_row > -1 ) {
-	// Dragging row?
-	//
-	//    Let user drag even /outside/ the row/col widget.
-	//    Don't allow row width smaller than 1.
-	//    Continue to show FL_CURSOR_NS at all times during drag.
-	//
-	int offset = _dragging_y - Fl::event_y();
-	int new_h = row_height(_resizing_row) - offset;
-	if ( new_h < _row_resize_min ) new_h = _row_resize_min;
-	row_height(_resizing_row, new_h);
-	_dragging_y = Fl::event_y();
-	table_resized();
-	redraw();
-	change_cursor(FL_CURSOR_NS);
-	ret = 1;
-	if ( Fl_Widget::callback() && when() & FL_WHEN_CHANGED ) {
-	  do_callback(CONTEXT_RC_RESIZE, R, C);
-	}
+        // Dragging row?
+        //
+        //    Let user drag even /outside/ the row/col widget.
+        //    Don't allow row width smaller than 1.
+        //    Continue to show FL_CURSOR_NS at all times during drag.
+        //
+        int offset = _dragging_y - Fl::event_y();
+        int new_h = row_height(_resizing_row) - offset;
+        if ( new_h < _row_resize_min ) new_h = _row_resize_min;
+        row_height(_resizing_row, new_h);
+        _dragging_y = Fl::event_y();
+        table_resized();
+        redraw();
+        change_cursor(FL_CURSOR_NS);
+        ret = 1;
+        if ( Fl_Widget::callback() && when() & FL_WHEN_CHANGED ) {
+          do_callback(CONTEXT_RC_RESIZE, R, C);
+        }
       } else {
-	if (Fl::event_button() == 1 && 
-	    _selecting == CONTEXT_CELL &&
-	    context == CONTEXT_CELL) {
-	  if (select_row != R || select_col != C) {
-	    damage_zone(current_row, current_col, select_row, select_col, R, C);
-	  }
-	  select_row = R;
-	  select_col = C;
-	  ret = 1;
-	}
-	else if (Fl::event_button() == 1 && 
-		 _selecting == CONTEXT_ROW_HEADER && 
-		 context & (CONTEXT_ROW_HEADER|CONTEXT_COL_HEADER|CONTEXT_CELL)) {
-	  if (select_row != R) {
-	     damage_zone(current_row, current_col, select_row, select_col, R, C);
-	  }
-	  select_row = R;
-	  ret = 1;
-	}
-	else if (Fl::event_button() == 1 && 
-		 _selecting == CONTEXT_COL_HEADER 
-		 && context & (CONTEXT_ROW_HEADER|CONTEXT_COL_HEADER|CONTEXT_CELL)) {
-	  if (select_col != C) {
-	    damage_zone(current_row, current_col, select_row, select_col, R, C);
-	  }
-	  select_col = C;
-	  ret = 1;
-	}
+        if (Fl::event_button() == 1 && 
+            _selecting == CONTEXT_CELL &&
+            context == CONTEXT_CELL) {
+          if (select_row != R || select_col != C) {
+            damage_zone(current_row, current_col, select_row, select_col, R, C);
+          }
+          select_row = R;
+          select_col = C;
+          ret = 1;
+        }
+        else if (Fl::event_button() == 1 && 
+                 _selecting == CONTEXT_ROW_HEADER && 
+                 context & (CONTEXT_ROW_HEADER|CONTEXT_COL_HEADER|CONTEXT_CELL)) {
+          if (select_row != R) {
+            damage_zone(current_row, current_col, select_row, select_col, R, C);
+          }
+          select_row = R;
+          ret = 1;
+        }
+        else if (Fl::event_button() == 1 && 
+                 _selecting == CONTEXT_COL_HEADER 
+                 && context & (CONTEXT_ROW_HEADER|CONTEXT_COL_HEADER|CONTEXT_CELL)) {
+          if (select_col != C) {
+            damage_zone(current_row, current_col, select_row, select_col, R, C);
+          }
+          select_col = C;
+          ret = 1;
+        }
       }
       // Enable autodrag if not resizing, and mouse has moved off table edge
       if ( _resizing_row < 0 && _resizing_col < 0 && _auto_drag == 0 && 
-	  ( Fl::event_x() > x() + w() - 20 ||
-	    Fl::event_x() < x() + row_header_width() || 
-	    Fl::event_y() > y() + h() - 20 ||
-	    Fl::event_y() < y() + col_header_height()
-	  ) ) {
-	_start_auto_drag();
-      }
+          ( Fl::event_x() > x() + w() - 20 ||
+           Fl::event_x() < x() + row_header_width() || 
+           Fl::event_y() > y() + h() - 20 ||
+           Fl::event_y() < y() + col_header_height()
+           ) ) {
+            _start_auto_drag();
+          }
       break;
-
+      
     case FL_RELEASE:
       _stop_auto_drag();
       switch ( context ) {
-	case CONTEXT_ROW_HEADER:		// release on row header
-	case CONTEXT_COL_HEADER:		// release on col header
-	case CONTEXT_CELL:			// release on a cell
-	case CONTEXT_TABLE:			// release on dead zone
-	  if ( _resizing_col == -1 &&		// not resizing a column
-	       _resizing_row == -1 &&		// not resizing a row
-	       Fl_Widget::callback() && 	// callback defined
-	       when() & FL_WHEN_RELEASE && 	// on button release
-	       _last_row == R ) {		// release on same row PUSHed?
-	    // Need this for eg. left clicking on a cell to select it
-	    do_callback(context, R, C);
-	  }
-	  break;
-
-	default:
-	  break;
+        case CONTEXT_ROW_HEADER:		// release on row header
+        case CONTEXT_COL_HEADER:		// release on col header
+        case CONTEXT_CELL:			// release on a cell
+        case CONTEXT_TABLE:			// release on dead zone
+          if ( _resizing_col == -1 &&		// not resizing a column
+              _resizing_row == -1 &&		// not resizing a row
+              Fl_Widget::callback() && 	// callback defined
+              when() & FL_WHEN_RELEASE && 	// on button release
+              _last_row == R ) {		// release on same row PUSHed?
+            // Need this for eg. left clicking on a cell to select it
+            do_callback(context, R, C);
+          }
+          break;
+          
+        default:
+          break;
       }
       if ( Fl::event_button() == 1 ) {
-	change_cursor(FL_CURSOR_DEFAULT);
-	_resizing_col = -1;
-	_resizing_row = -1;
-	ret = 1;
+        change_cursor(FL_CURSOR_DEFAULT);
+        _resizing_col = -1;
+        _resizing_row = -1;
+        ret = 1;
       }
       break;
-
+      
     case FL_MOVE:
       if ( context == CONTEXT_COL_HEADER && 		// in column header?
-	   resizeflag ) {				// resize + near boundary?
-	change_cursor(FL_CURSOR_WE);			// show resize cursor
+          resizeflag ) {				// resize + near boundary?
+        change_cursor(FL_CURSOR_WE);			// show resize cursor
       }
       else if ( context == CONTEXT_ROW_HEADER && 	// in row header?
-	        resizeflag ) {				// resize + near boundary?
-	change_cursor(FL_CURSOR_NS);			// show resize cursor
+               resizeflag ) {				// resize + near boundary?
+        change_cursor(FL_CURSOR_NS);			// show resize cursor
       } else {
         change_cursor(FL_CURSOR_DEFAULT);		// normal cursor
       }
       ret = 1;
       break;
-
+      
     case FL_ENTER:		// See FLTK event docs on the FL_ENTER widget
       if (!ret) take_focus();
       ret = 1;
       //FALLTHROUGH
-
+      
     case FL_LEAVE:		// We want to track the mouse if resizing is allowed.
       if ( resizeflag ) {
         ret = 1;
       }
       if ( event == FL_LEAVE ) {
-	_stop_auto_drag();
-	change_cursor(FL_CURSOR_DEFAULT);
+        _stop_auto_drag();
+        change_cursor(FL_CURSOR_DEFAULT);
       }
       break;
-
+      
     case FL_FOCUS:
       Fl::focus(this);
       //FALLTHROUGH
-
+      
     case FL_UNFOCUS:
       _stop_auto_drag();
       ret = 1;
       break;
-
+      
     case FL_KEYBOARD: {
       ret = 0;
       int is_row = select_row;
       int is_col = select_col;
       switch(Fl::event_key()) {
-	case FL_Home:
-	  ret = move_cursor(0, -1000000);
-	  break;
-	case FL_End:
-	  ret = move_cursor(0, 1000000);
-	  break;
-	case FL_Page_Up:
-	  ret = move_cursor(-(botrow - toprow - 1), 0);
-	  break;
-	case FL_Page_Down:
-	  ret = move_cursor(botrow - toprow - 1 , 0);
-	  break;
-	case FL_Left:
-	  ret = move_cursor(0, -1);
-	  break;
-	case FL_Right:
-	  ret = move_cursor(0, 1);
-	  break;
-	case FL_Up:
-	  ret = move_cursor(-1, 0);
-	  break;
-	case FL_Down:
-	  ret = move_cursor(1, 0);
-	  break;
+        case FL_Home:
+          ret = move_cursor(0, -1000000);
+          break;
+        case FL_End:
+          ret = move_cursor(0, 1000000);
+          break;
+        case FL_Page_Up:
+          ret = move_cursor(-(botrow - toprow - 1), 0);
+          break;
+        case FL_Page_Down:
+          ret = move_cursor(botrow - toprow - 1 , 0);
+          break;
+        case FL_Left:
+          ret = move_cursor(0, -1);
+          break;
+        case FL_Right:
+          ret = move_cursor(0, 1);
+          break;
+        case FL_Up:
+          ret = move_cursor(-1, 0);
+          break;
+        case FL_Down:
+          ret = move_cursor(1, 0);
+          break;
       }
       if (ret && Fl::focus() != this) {
-	do_callback(CONTEXT_TABLE, -1, -1);
-	take_focus();
+        do_callback(CONTEXT_TABLE, -1, -1);
+        take_focus();
       }
       //if (!ret && Fl_Widget::callback() && when() & FL_WHEN_NOT_CHANGED  )
       if ( Fl_Widget::callback() && 
-	   (
-	     ( !ret && when() & FL_WHEN_NOT_CHANGED ) || 
-	     ( is_row!= select_row || is_col!= select_col ) 
-	   )
-	 ) {
-	do_callback(CONTEXT_CELL, select_row, select_col); 
-	//damage_zone(current_row, current_col, select_row, select_col);
-	ret = 1;
+          (
+           ( !ret && when() & FL_WHEN_NOT_CHANGED ) || 
+           ( is_row!= select_row || is_col!= select_col ) 
+           )
+          ) {
+        do_callback(CONTEXT_CELL, select_row, select_col); 
+        //damage_zone(current_row, current_col, select_row, select_col);
+        ret = 1;
       }
       break;
     }
-
+      
     default:
       change_cursor(FL_CURSOR_DEFAULT);
       break;
@@ -1018,23 +1018,23 @@ int Fl_Table::handle(int event) {
 //     Handle resize events if user resizes parent window.
 //
 void Fl_Table::resize(int X, int Y, int W, int H) {
-    // Tell group to resize, and recalc our own widget as well
-    Fl_Group::resize(X, Y, W, H);
-    table_resized();
-    redraw();
+  // Tell group to resize, and recalc our own widget as well
+  Fl_Group::resize(X, Y, W, H);
+  table_resized();
+  redraw();
 }
 
 // Draw a cell
 void Fl_Table::_redraw_cell(TableContext context, int r, int c) {
-    if ( r < 0 || c < 0 ) return;
-    int X,Y,W,H;
-    find_cell(context, r, c, X, Y, W, H);	// find positions of cell
-    draw_cell(context, r, c, X, Y, W, H);	// call users' function to draw it
+  if ( r < 0 || c < 0 ) return;
+  int X,Y,W,H;
+  find_cell(context, r, c, X, Y, W, H);	// find positions of cell
+  draw_cell(context, r, c, X, Y, W, H);	// call users' function to draw it
 }
 
 int Fl_Table::is_selected(int r, int c) {
   int s_left, s_right, s_top, s_bottom;
-
+  
   if (select_col > current_col) {
     s_left = current_col;
     s_right = select_col;
@@ -1087,8 +1087,8 @@ void Fl_Table::set_selection(int s_top, int s_left, int s_bottom, int s_right) {
 //
 void Fl_Table::draw() {   
   draw_cell(CONTEXT_STARTPAGE, 0, 0,	 	// let user's drawing routine
-	    tix, tiy, tiw, tih);		// prep new page
-
+            tix, tiy, tiw, tih);		// prep new page
+  
   // Let fltk widgets draw themselves first. Do this after
   // draw_cell(CONTEXT_STARTPAGE) in case user moves widgets around.
   // Use window 'inner' clip to prevent drawing into table border.
@@ -1099,10 +1099,10 @@ void Fl_Table::draw() {
     Fl_Group::draw();
   }
   fl_pop_clip();
-
+  
   // Explicitly draw border around widget, if any
   draw_box(box(), x(), y(), w(), h(), color());
-
+  
   // If Fl_Scroll 'table' is hidden, draw its box
   //    Do this after Fl_Group::draw() so we draw over scrollbars
   //    that leak around the border.
@@ -1119,9 +1119,9 @@ void Fl_Table::draw() {
     if ( ! ( damage() & FL_DAMAGE_ALL ) && _redraw_leftcol != -1 ) {
       fl_push_clip(tix, tiy, tiw, tih);
       for ( int c = _redraw_leftcol; c <= _redraw_rightcol; c++ ) {
-	for ( int r = _redraw_toprow; r <= _redraw_botrow; r++ ) { 
-	    _redraw_cell(CONTEXT_CELL, r, c);
-	}
+        for ( int r = _redraw_toprow; r <= _redraw_botrow; r++ ) { 
+          _redraw_cell(CONTEXT_CELL, r, c);
+        }
       }
       fl_pop_clip();
     }
@@ -1129,21 +1129,21 @@ void Fl_Table::draw() {
       int X,Y,W,H;
       // Draw row headers, if any
       if ( row_header() ) {
-	get_bounds(CONTEXT_ROW_HEADER, X, Y, W, H);
-	fl_push_clip(X,Y,W,H);
-	for ( int r = toprow; r <= botrow; r++ ) {
-	    _redraw_cell(CONTEXT_ROW_HEADER, r, 0);
-	}
-	fl_pop_clip();
+        get_bounds(CONTEXT_ROW_HEADER, X, Y, W, H);
+        fl_push_clip(X,Y,W,H);
+        for ( int r = toprow; r <= botrow; r++ ) {
+          _redraw_cell(CONTEXT_ROW_HEADER, r, 0);
+        }
+        fl_pop_clip();
       }
       // Draw column headers, if any
       if ( col_header() ) {
-	get_bounds(CONTEXT_COL_HEADER, X, Y, W, H);
-	fl_push_clip(X,Y,W,H);
-	for ( int c = leftcol; c <= rightcol; c++ ) {
-	    _redraw_cell(CONTEXT_COL_HEADER, 0, c);
-	}
-	fl_pop_clip();
+        get_bounds(CONTEXT_COL_HEADER, X, Y, W, H);
+        fl_push_clip(X,Y,W,H);
+        for ( int c = leftcol; c <= rightcol; c++ ) {
+          _redraw_cell(CONTEXT_COL_HEADER, 0, c);
+        }
+        fl_pop_clip();
       } 
       // Draw all cells.
       //    This includes cells partially obscured off edges of table.
@@ -1152,66 +1152,66 @@ void Fl_Table::draw() {
       //    drawing over deadzones; prevent deadzones by sizing columns.
       //
       fl_push_clip(tix, tiy, tiw, tih); {
-	for ( int r = toprow; r <= botrow; r++ ) {
-	  for ( int c = leftcol; c <= rightcol; c++ ) {
-	      _redraw_cell(CONTEXT_CELL, r, c); 
-	  }
-	}
+        for ( int r = toprow; r <= botrow; r++ ) {
+          for ( int c = leftcol; c <= rightcol; c++ ) {
+            _redraw_cell(CONTEXT_CELL, r, c); 
+          }
+        }
       }
       fl_pop_clip(); 
       // Draw little rectangle in corner of headers
       if ( row_header() && col_header() ) {
         fl_rectf(wix, wiy, row_header_width(), col_header_height(), color());
       }
-
+      
       // Table has a boxtype? Close those few dead pixels
       if ( table->box() ) {
-	if ( col_header() ) {
-	  fl_rectf(tox, wiy, Fl::box_dx(table->box()), col_header_height(), color());
-	}
-	if ( row_header() ) {
-	  fl_rectf(wix, toy, row_header_width(), Fl::box_dx(table->box()), color());
-	}
+        if ( col_header() ) {
+          fl_rectf(tox, wiy, Fl::box_dx(table->box()), col_header_height(), color());
+        }
+        if ( row_header() ) {
+          fl_rectf(wix, toy, row_header_width(), Fl::box_dx(table->box()), color());
+        }
       }
-
+      
       // Table width smaller than window? Fill remainder with rectangle
       if ( table_w < tiw ) {
-	fl_rectf(tix + table_w, tiy, tiw - table_w, tih, color()); 
-	// Col header? fill that too
-	if ( col_header() ) {
-	  fl_rectf(tix + table_w, 
-		   wiy, 
-		   // get that corner just right..
-		   (tiw - table_w + Fl::box_dw(table->box()) - 
-				    Fl::box_dx(table->box())),
-		   col_header_height(),
-		   color());
-	}
+        fl_rectf(tix + table_w, tiy, tiw - table_w, tih, color()); 
+        // Col header? fill that too
+        if ( col_header() ) {
+          fl_rectf(tix + table_w, 
+                   wiy, 
+                   // get that corner just right..
+                   (tiw - table_w + Fl::box_dw(table->box()) - 
+                    Fl::box_dx(table->box())),
+                   col_header_height(),
+                   color());
+        }
       } 
       // Table height smaller than window? Fill remainder with rectangle
       if ( table_h < tih ) {
-	fl_rectf(tix, tiy + table_h, tiw, tih - table_h, color()); 
-	if ( row_header() ) {
-	  // NOTE:
-	  //     Careful with that lower corner; don't use tih; when eg. 
-	  //     table->box(FL_THIN_UPFRAME) and hscrollbar hidden, 
-	  //     leaves a row of dead pixels.
-	  //
-	  fl_rectf(wix, tiy + table_h, row_header_width(), 
-		   (wiy+wih) - (tiy+table_h) - 
-		   ( hscrollbar->visible() ? SCROLLBAR_SIZE : 0),
-		   color());
-	}
+        fl_rectf(tix, tiy + table_h, tiw, tih - table_h, color()); 
+        if ( row_header() ) {
+          // NOTE:
+          //     Careful with that lower corner; don't use tih; when eg. 
+          //     table->box(FL_THIN_UPFRAME) and hscrollbar hidden, 
+          //     leaves a row of dead pixels.
+          //
+          fl_rectf(wix, tiy + table_h, row_header_width(), 
+                   (wiy+wih) - (tiy+table_h) - 
+                   ( hscrollbar->visible() ? SCROLLBAR_SIZE : 0),
+                   color());
+        }
       }
     } 
     // Both scrollbars? Draw little box in lower right
     if ( vscrollbar->visible() && hscrollbar->visible() ) {
       fl_rectf(vscrollbar->x(), hscrollbar->y(), 
-	       vscrollbar->w(), hscrollbar->h(), color());
+               vscrollbar->w(), hscrollbar->h(), color());
     } 
     draw_cell(CONTEXT_ENDPAGE, 0, 0,		// let user's drawing
-	      tix, tiy, tiw, tih);		// routines cleanup
-
+              tix, tiy, tiw, tih);		// routines cleanup
+    
     _redraw_leftcol = _redraw_rightcol = _redraw_toprow = _redraw_botrow = -1;
   }
   fl_pop_clip();

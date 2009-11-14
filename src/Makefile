@@ -86,6 +86,10 @@ CPPFILES = \
 	Fl_Text_Editor.cxx \
 	Fl_Tile.cxx \
 	Fl_Tiled_Image.cxx \
+	Fl_Tree.cxx \
+	Fl_Tree_Item.cxx \
+	Fl_Tree_Item_Array.cxx \
+	Fl_Tree_Prefs.cxx \
 	Fl_Tooltip.cxx \
 	Fl_Valuator.cxx \
 	Fl_Value_Input.cxx \

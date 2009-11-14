@@ -98,7 +98,7 @@ private:
     void size(int count) {
       if ( count != _size ) {
         arr = (char*)realloc(arr, count * sizeof(char));
-	_size = count;
+        _size = count;
       }
     }
     char pop_back() {
@@ -116,7 +116,7 @@ private:
     }
   };
   CharVector _rowselect;		// selection flag for each row
-
+  
   // handle() state variables.
   //    Put here instead of local statics in handle(), so more
   //    than one instance can exist without crosstalk between.
@@ -126,22 +126,22 @@ private:
   int _last_y;			// last event's Y position
   int _last_push_x;		// last PUSH event's X position
   int _last_push_y;		// last PUSH event's Y position
-
+  
   TableRowSelectMode _selectmode;
-
+  
 protected:
   int handle(int event);
   int find_cell(TableContext context,		// find cell's x/y/w/h given r/c
-	       int R, int C, int &X, int &Y, int &W, int &H) {
+                int R, int C, int &X, int &Y, int &W, int &H) {
     return(Fl_Table::find_cell(context, R, C, X, Y, W, H));
   }
-
+  
 public:
   /**
    The constructor for the Fl_Table_Row.
    This creates an empty table with no rows or columns,
    with headers and row/column resize behavior disabled.
-  */   
+   */   
   Fl_Table_Row(int X, int Y, int W, int H, const char *l=0) : Fl_Table(X,Y,W,H,l) {
     _dragging_select = 0;
     _last_row        = -1;
@@ -168,7 +168,7 @@ public:
    - \p Fl_Table_Row::SELECT_NONE - No selection allowed
    - \p Fl_Table_Row::SELECT_SINGLE - Only single rows can be selected
    - \p Fl_Table_Row::SELECT_MULTI - Multiple rows can be selected
-    */
+   */
   void type(TableRowSelectMode val);	// set selection mode
   
   TableRowSelectMode type() const {	// get selection mode
@@ -187,7 +187,7 @@ public:
    of 'flag'.  0=deselected, 1=select, 2=toggle existing state.
    */
   int select_row(int row, int flag=1);	// select state for row: flag:0=off, 1=on, 2=toggle
-				        // returns: 0=no change, 1=changed, -1=range err
+  // returns: 0=no change, 1=changed, -1=range err
   
   /**
    This convenience function changes the selection state 
