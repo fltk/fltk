@@ -18,7 +18,9 @@
 	@x:Fl_Tile:tile
 	@x:Fl_Scroll:scroll
 	@x:Fl_Pack:pack
-	@x:Fl_Menu:menubar
+	@x:more...:@xm
+		@xm:Fl_Menu:menubar
+		@xm:Fl_Table:table
 
 @main:Window\nTests:@w
 	@w:overlay:overlay

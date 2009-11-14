@@ -78,6 +78,8 @@ CPPFILES = \
 	Fl_Shared_Image.cxx \
 	Fl_Single_Window.cxx \
 	Fl_Slider.cxx \
+	Fl_Table.cxx \
+	Fl_Table_Row.cxx \
 	Fl_Tabs.cxx \
 	Fl_Text_Buffer.cxx \
 	Fl_Text_Display.cxx \

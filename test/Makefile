@@ -90,6 +90,7 @@ CPPFILES =\
 	subwindow.cxx \
 	sudoku.cxx \
 	symbols.cxx \
+	table.cxx \
 	tabs.cxx \
 	threads.cxx \
 	tile.cxx \
@@ -152,6 +153,7 @@ ALL =	\
 	subwindow$(EXEEXT) \
 	sudoku$(EXEEXT) \
 	symbols$(EXEEXT) \
+	table$(EXEEXT) \
 	tabs$(EXEEXT) \
 	$(THREADS) \
 	tile$(EXEEXT) \
