@@ -43,6 +43,61 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Scrollbar.H>
 
+/**
+ \brief This is the base class for table widgets.
+ 
+ To be useful it must be subclassed and several virtual functions defined.
+ Normally applications use widgets derived from this widget, and do not use this 
+ widget directly; this widget is usually too low level to be used directly by 
+ applications.
+
+ This widget does \em not handle the data in the table. The draw_cell()
+ method must be overridden by a subclass to manage drawing the contents of 
+ the cells.
+
+ This widget can be used in several ways:
+ 
+  - As a custom widget; see test/testtablerow.cxx. Very optimal for even 
+    extremely large tables.
+  - As a table made up of a single FLTK widget instanced all over the table;
+    see test/singleinput.cxx. Very optimal for even extremely large tables;
+  - As a regular container of FLTK widgets, one widget per cell.
+    See test/widgettable.cxx. \em Not recommended for large tables.
+
+ When acting as part of a custom widget, events on the cells and/or headings
+ generate callbacks when they are clicked by the user. You control when events 
+ are generated based on the setting for Fl_Table::when().
+
+ When acting as a container for FLTK widgets, the FLTK widgets maintain 
+ themselves. Although the draw_cell() method must be overridden, its contents 
+ can be very simple. See the draw_cell() code in test/widgettable.cxx.
+ 
+ The following variables are available to classes deriving from Fl_Table:
+ 
+ \image html table-dimensions.gif
+
+ <table border=0>
+ <tr><td>x()/y()/w()/h()</td>
+ <td>Fl_Table widget's outer dimension. The outer edge of the border of the 
+ Fl_Table. (Red in the diagram above)</td></tr>
+ 
+ <tr><td>wix/wiy/wiw/wih</td>
+ <td>Fl_Table widget's inner dimension. The inner edge of the border of the 
+ Fl_Table. eg. if the Fl_Table's box() is FL_NO_BOX, these values are the same 
+ as x()/y()/w()/h(). (Yellow in the diagram above)</td></tr>
+ 
+ <tr><td>tox/toy/tow/toh</td>
+ <td>The table's outer dimension. The outer edge of the border around the cells,
+ but inside the row/col headings and scrollbars. (Green in the diagram above)
+ </td></tr>
+ 
+ <tr><td>tix/tiy/tiw/tih</td>
+ <td>The table's inner dimension. The inner edge of the border around the cells,
+ but inside the row/col headings and scrollbars. AKA the table's clip region. 
+ eg. if the table_box() is FL_NO_BOX, these values are the same as
+ tox/toyy/tow/toh. (Blue in the diagram above)
+ </td></tr></table>
+ */
 class Fl_Table : public Fl_Group {
 public:
   enum TableContext {
@@ -189,7 +244,109 @@ protected:
   int row_col_clamp(TableContext context, int &R, int &C);
 					        // clamp r/c to known universe
 
-  // Called to draw cells
+  /**
+   Subclass should override this method to handle drawing the cells.
+   
+   This method will be called whenever the table is redrawn, once per cell.
+
+   Only cells that are completely (or partially) visible will be told to draw.
+
+   \p context will be one of the following:
+   
+   <table border=1>
+   <tr>
+   <td>\p Fl_Table::CONTEXT_STARTPAGE</td>
+   <td> When table, or parts of the table, are about to be redrawn.
+   Use to initialize static data, such as font selections.
+   r/c will be zero, x/y/w/h will be the dimensions of the
+   table's entire data area.
+   (Useful for locking a database before accessing; see
+   also visible_cells())</td>
+   </tr><tr>
+   <td>\p Fl_Table::CONTEXT_ENDPAGE</td>
+   <td>When table has completed being redrawn.
+   r/c will be zero, x/y/w/h dimensions of table's data area.
+   (Useful for unlocking a database after accessing)</td>
+   </tr><tr>
+   <td>\p Fl_Table::CONTEXT_ROW_HEADER</td>
+   <td>Whenever a row header cell needs to be drawn.</td>
+   </tr><tr>
+   <td>\p Fl_Table::CONTEXT_COL_HEADER</td>
+   <td>Whenever a column header cell needs to be drawn.</td>
+   </tr><tr>
+   <td>\p Fl_Table::CONTEXT_CELL</td>
+   <td>Whenever a data cell in the table needs to be drawn.</td>
+   </tr><tr>
+   <td>\p Fl_Table::CONTEXT_RC_RESIZE</td>
+   <td>Whenever table or row/column is resized or scrolled,
+   either interactively or via col_width() or row_height().
+   
+   Useful for fltk containers that need to resize or move
+   the child fltk widgets.</td>
+   </tr>
+   </table>
+   
+   \p row and \p col will be set to the row and column number
+   the user clicked on. In the case of row headers, \p col will be \a 0.
+   In the case of column headers, \p row will be \a 0.
+   
+   <tt>x/y/w/h</tt> will be the position and dimensions of where the cell
+   should be drawn.
+   
+   In the case of custom widgets, a minimal draw_cell() override might
+   look like the following. With custom widgets it is up to the caller to handle
+   drawing everything within the dimensions of the cell, including handling the
+   selection color.  Note all clipping must be handled as well; this allows drawing
+   outside the dimensions of the cell if so desired for 'custom effects'.
+   
+   \code
+   // This is called whenever Fl_Table wants you to draw a cell
+   void MyTable::draw_cell(TableContext context, int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0)
+   {
+     static char s[40];
+     sprintf(s, "%d/%d", R, C);              // text for each cell
+     switch ( context )
+     {
+       case CONTEXT_STARTPAGE:             // Fl_Table telling us its starting to draw page
+         fl_font(FL_HELVETICA, 16);
+         return;
+        
+       case CONTEXT_ROW_HEADER:            // Fl_Table telling us it's draw row/col headers
+       case CONTEXT_COL_HEADER:
+         fl_push_clip(X, Y, W, H);
+       {
+         fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, color());
+         fl_color(FL_BLACK);
+         fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
+       }
+         fl_pop_clip();
+         return;
+        
+       case CONTEXT_CELL:                  // Fl_Table telling us to draw cells
+         fl_push_clip(X, Y, W, H);
+       {
+         // BG COLOR
+         fl_color( row_selected(R) ? selection_color() : FL_WHITE);
+         fl_rectf(X, Y, W, H);
+        
+         // TEXT
+         fl_color(FL_BLACK);
+         fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
+         
+         // BORDER
+         fl_color(FL_LIGHT2);
+         fl_rect(X, Y, W, H);
+       }
+         fl_pop_clip();
+         return;
+        
+       default:
+         return;
+     }
+     //NOTREACHED
+   }
+   \endcode
+   */
   virtual void draw_cell(TableContext context, int R=0, int C=0, 
 			 int X=0, int Y=0, int W=0, int H=0)
       { }					// overridden by deriving class
@@ -225,139 +382,361 @@ protected:
   }
 
 public:
+  /**
+   The constructor for the Fl_Table.
+   This creates an empty table with no rows or columns,
+   with headers and row/column resize behavior disabled.
+   */
   Fl_Table(int X, int Y, int W, int H, const char *l=0);
+
+  /**
+   The destructor for the Fl_Table.
+   Destroys the table and its associated widgets.
+   */
   ~Fl_Table();
 
+  /**
+   Clears the table to zero rows, zero columns.
+   Same as rows(0); cols(0);
+   \see rows(int), cols(int)
+   */
   virtual void clear() { rows(0); cols(0); }
 
   // topline()
   // middleline()
   // bottomline()
 
+  /**
+   Sets the kind of box drawn around the data table,
+   the default being FL_NO_BOX. Changing this value will cause the table
+   to redraw.
+   */
   inline void table_box(Fl_Boxtype val) {
     table->box(val);
     table_resized();
   }
+  
+  /**
+   Returns the current box type used for the data table.
+   */
   inline Fl_Boxtype table_box( void ) {
     return(table->box());
   }
+  
+  /**
+   Sets the number of rows in the table, and the table is redrawn.
+   */
   virtual void rows(int val);			// set/get number of rows
+  
+  /**
+   Returns the number of rows in the table.
+   */
   inline int rows() {
     return(_rows);
   }
+  
+  /**
+   Set the number of columns in the table and redraw.
+   */
   virtual void cols(int val);			// set/get number of columns
+  
+  /** 
+   Get the number of columns in the table.
+   */
   inline int cols() {
     return(_cols);
   }
+  
+  /**
+   Returns the range of row and column numbers for all the
+   visible (and partially visible) cells in the table.
+  
+   These values can be used e.g. by your draw_cell() routine during
+   CONTEXT_STARTPAGE to figure out what cells are about to be redrawn,
+   for the purposes of locking the data from a database before it's drawn.
+   
+   \code
+             leftcol             rightcol
+             :                   :
+   toprow .. .-------------------.
+             |                   |
+             |  V I S I B L E    |
+             |                   |
+             |    T A B L E      |
+             |                   |
+   botrow .. '-------------------`
+   \endcode
+   
+   e.g. in a table where the visible rows are 5-20, and the
+   visible columns are 100-120, then those variables would be:
+   
+    - toprow = 5
+    - botrow = 20
+    - leftcol = 100
+    - rightcol = 120
+   */
   inline void visible_cells(int& r1, int& r2, int& c1, int& c2) {
     r1 = toprow;
     r2 = botrow;
     c1 = leftcol;
     c2 = rightcol;
   } 
-  // Interactive resizing happening?
+  
+  /**
+   Returns 1 if someone is interactively resizing a row or column.
+   You can currently call this only from within your callback().
+   */
   int is_interactive_resize() {
     return(_resizing_row != -1 || _resizing_col != -1);
   } 
+  
+  /**
+   Returns the current value of this flag.
+   */
   inline int row_resize() {
     return(_row_resize);
   }
+  
+  /**
+   Allows/disallows row resizing by the user.
+   1=allow interactive resizing, 0=disallow interactive resizing.
+   Since interactive resizing is done via the row headers,
+   row_header() must also be enabled to allow resizing.
+   */   
   void row_resize(int flag) {			// enable row resizing
     _row_resize = flag;
   }
+  
+  /**
+   Returns the current value of this flag.
+   */
   inline int col_resize() {
     return(_col_resize);
   }
+  /**
+   Allows/disallows column resizing by the user.
+   1=allow interactive resizing, 0=disallow interactive resizing.
+   Since interactive resizing is done via the column headers,
+   \p col_header() must also be enabled to allow resizing.
+   */
   void col_resize(int flag) {			// enable col resizing
     _col_resize = flag;
   }
+  
+  /**
+   Sets the current column minimum resize value.
+   This is used to prevent the user from interactively resizing
+   any column to be smaller than 'pixels'. Must be a value >=1.
+   */
   inline int col_resize_min() {			// column minimum resizing width
     return(_col_resize_min);
   }
+  
+  /**
+   Returns the current column minimum resize value.
+   */
   void col_resize_min(int val) {
     _col_resize_min = ( val < 1 ) ? 1 : val;
   } 
+  
+  /**
+   Returns the current row minimum resize value.
+   */
   inline int row_resize_min() {			// column minimum resizing width
     return(_row_resize_min);
   }
+  
+  /**
+   Sets the current row minimum resize value.
+   This is used to prevent the user from interactively resizing
+   any row to be smaller than 'pixels'. Must be a value >=1.
+   */
   void row_resize_min(int val) {
     _row_resize_min = ( val < 1 ) ? 1 : val;
   }
+  
+  /**
+   Returns the value of this flag.
+   */
   inline int row_header() {			// set/get row header enable flag
     return(_row_header);
   }
+  
+  /**
+   Enables/disables showing the row headers. 1=enabled, 0=disabled.
+   If changed, the table is redrawn.
+   */
   void row_header(int flag) {
     _row_header = flag;
     table_resized();
     redraw();
   }
+  
+  /**
+   Returns if column headers are enabled or not.
+   */
   inline int col_header() {			// set/get col header enable flag
     return(_col_header);
   }
+  
+  /**
+   Enable or disable column headers.
+   If changed, the table is redrawn.
+   */
   void col_header(int flag) {
     _col_header = flag;
     table_resized();
     redraw();
   }
+  
+  /**
+   Sets the height in pixels for column headers and redraws the table.
+   */
   inline void col_header_height(int height) {	// set/get col header height
     _col_header_h = height;
     table_resized();
     redraw();
   }
+  
+  /**
+   Gets the column header height.
+   */
   inline int col_header_height() {
     return(_col_header_h);
   }
+  
+  /**
+   Sets the row header width to n and causes the screen to redraw.
+   */
   inline void row_header_width(int width) {	// set/get row header width
     _row_header_w = width;
     table_resized();
     redraw();
   }
+  
+  /**
+   Returns the current row header width (in pixels).
+   */
   inline int row_header_width() {
     return(_row_header_w);
   }
+  
+  /**
+   Sets the row header color and causes the screen to redraw.
+   */
   inline void row_header_color(Fl_Color val) {	// set/get row header color
     _row_header_color = val;
     redraw();
   }
+  
+  /**
+   Returns the current row header color.
+   */
   inline Fl_Color row_header_color() {
     return(_row_header_color);
   } 
+  
+  /**
+   Sets the color for column headers and redraws the table.
+   */
   inline void col_header_color(Fl_Color val) {	// set/get col header color
     _col_header_color = val;
     redraw();
   }
+  
+  /**
+   Gets the color for column headers.
+   */
   inline Fl_Color col_header_color() {
     return(_col_header_color);
   }
+  
+  /**
+   Sets the height of the specified row in pixels,
+   and the table is redrawn.
+   callback() will be invoked with CONTEXT_RC_RESIZE
+   if the row's height was actually changed, and when() is FL_WHEN_CHANGED.
+   */
   void row_height(int row, int height);		// set/get row height
+  
+  /**
+   Returns the current height of the specified row as a value in pixels.
+   */
   inline int row_height(int row) {
     return((row<0 || row>=(int)_rowheights.size()) ? 0 : _rowheights[row]);
   }
+
+  /**
+   Sets the width of the specified column in pixels, and the table is redrawn.
+   callback() will be invoked with CONTEXT_RC_RESIZE
+   if the column's width was actually changed, and when() is FL_WHEN_CHANGED.
+   */   
   void col_width(int col, int width);		// set/get a column's width
+  
+  /**
+   Returns the current width of the specified column in pixels.
+   */
   inline int col_width(int col) {
     return((col<0 || col>=(int)_colwidths.size()) ? 0 : _colwidths[col]);
   }
+  
+  /**
+   Convenience method to set the height of all rows to the
+   same value, in pixels. The screen is redrawn.
+   */
   void row_height_all(int height) {		// set all row/col heights
     for ( int r=0; r<rows(); r++ ) {
       row_height(r, height);
     }
   }
+  
+  /**
+   Convenience method to set the width of all columns to the
+   same value, in pixels. The screen is redrawn.
+   */
   void col_width_all(int width) {
     for ( int c=0; c<cols(); c++ ) {
       col_width(c, width);
     }
   }
+  
+  /**
+   Sets the row scroll position to 'row', and causes the screen to redraw.
+   */
   void row_position(int row);			// set/get table's current scroll position
+  
+  /** 
+   Sets the column scroll position to column 'col', and causes the screen to redraw.
+   */
   void col_position(int col);
+  
+  /**
+   Returns the current row scroll position as a row number.
+   */
   int row_position() {				// current row position
     return(_row_position);
   }
+  
+  /**
+   Returns the current column scroll position as a column number.
+   */
   int col_position() {				// current col position
     return(_col_position);
   }
+  
+  /**
+   Sets which row should be at the top of the table,
+   scrolling as necessary, and the table is redrawn. If the table
+   cannot be scrolled that far, it is scrolled as far as possible.
+   */
   inline void top_row(int row) {		// set/get top row (deprecated)
     row_position(row);
   }
+  
+  /**
+   Returns the current top row shown in the table.
+   This row may be partially obscured.
+   */
   inline int top_row() {
     return(row_position());
   }
@@ -366,6 +745,9 @@ public:
   void set_selection(int s_top, int s_left, int s_bottom, int s_right);
   int move_cursor(int R, int C);
 
+  /**
+   Changes the size of the Fl_Table, causing it to redraw.
+   */
   void resize(int X, int Y, int W, int H);	// fltk resize() override
   void draw(void);				// fltk draw() override
 
@@ -418,9 +800,34 @@ public:
   Fl_Widget * const *array() {
     return(table->array());
   }
+  
+  /**
+   Returns the child widget by an index.
+   
+   When using the Fl_Table as a container for FLTK widgets, this method returns 
+   the widget pointer from the internal array of widgets in the container.
+   
+   Typically used in loops, eg:
+   \code
+   for ( int i=0; i<children(); i++ )
+   {
+     Fl_Widget *w = child(i);
+     [..]
+   }
+   \endcode
+   */
   Fl_Widget *child(int n) const {
     return(table->child(n));
   }
+  
+  /**
+   Returns the number of children in the table.
+   
+   When using the Fl_Table as a container for FLTK widgets, this method returns 
+   how many child widgets the table has.
+   
+   \see child(int)
+   */
   int children() const {
     return(table->children()-2);    // -2: skip Fl_Scroll's h/v scrollbar widgets
   }
@@ -431,21 +838,156 @@ public:
     return(table->find(w));
   } 
   // CALLBACKS
+  
+  /**
+   * Returns the current row the event occurred on.
+   *
+   * This function should only be used from within the user's callback function
+   */
   int callback_row() {
     return(_callback_row);
   }
+  
+  /**
+   * Returns the current column the event occurred on.
+   *
+   * This function should only be used from within the user's callback function
+   */
   int callback_col() {
     return(_callback_col);
   }
+  
+  /**
+   * Returns the current 'table context'.
+   *
+   * This function should only be used from within the user's callback function
+   */
   TableContext callback_context() {
     return(_callback_context);
   }
+  
   void do_callback(TableContext context, int row, int col) {
     _callback_context = context;
     _callback_row = row;
     _callback_col = col;
     Fl_Widget::do_callback();
   }
+  
+#if DOXYGEN
+  /**
+   The Fl_Widget::when() function is used to set a group of flags, determining
+   when the widget callback is called:
+   
+   <table border=1>
+   <tr>
+   <td>\p FL_WHEN_CHANGED</td>
+   <td>
+   callback() will be called when rows or columns are resized (interactively or 
+   via col_width() or row_height()), passing CONTEXT_RC_RESIZE via 
+   callback_context().
+   </td>
+   </tr><tr>
+   <td>\p FL_WHEN_RELEASE</td>
+   <td>
+   callback() will be called during FL_RELEASE events, such as when someone 
+   releases a mouse button somewhere on the table.
+   </td>
+   </tr>
+   </table>
+   
+   The callback() routine is sent a TableContext that indicates the context the 
+   event occurred in, such as in a cell, in a header, or elsewhere on the table.  
+   When an event occurs in a cell or header, callback_row() and 
+   callback_col() can be used to determine the row and column. The callback can 
+   also look at the regular fltk event values (ie. Fl::event() and Fl::button()) 
+   to determine what kind of event is occurring.
+   */
+  void when(Fl_When flags);
+#endif
+  
+#if DOXYGEN
+  /**
+  Callbacks will be called depending on the setting of Fl_Widget::when().
+  
+  Callback functions should use the following functions to determine the 
+  context/row/column:
+  
+  * Fl_Table::callback_row() returns current row
+  * Fl_Table::callback_col() returns current column
+  * Fl_Table::callback_context() returns current table context
+  
+  callback_row() and callback_col() will be set to the row and column number the 
+  event occurred on. If someone clicked on a row header, \p col will be \a 0.  
+  If someone clicked on a column header, \p row will be \a 0.
+  
+  callback_context() will return one of the following:
+  
+  <table border=1>
+  <tr><td><tt>Fl_Table::CONTEXT_ROW_HEADER</tt></td>
+  <td>Someone clicked on a row header. Excludes resizing.</td>
+  </tr><tr>
+  <td><tt>Fl_Table::CONTEXT_COL_HEADER</tt></td>
+  <td>Someone clicked on a column header. Excludes resizing.</td>
+  </tr><tr>
+  <td><tt>Fl_Table::CONTEXT_CELL</tt></td>
+  <td>
+  Someone clicked on a cell.
+  
+  To receive callbacks for FL_RELEASE events, you must set
+    when(FL_WHEN_RELEASE).
+    </td>
+    </tr><tr>
+    <td><tt>Fl_Table::CONTEXT_RC_RESIZE</tt></td>
+    <td>
+    Someone is resizing rows/columns either interactively,
+    or via the col_width() or row_height() API.
+    
+    Use is_interactive_resize()
+    to determine interactive resizing.
+    
+    If resizing a column, R=0 and C=column being resized.
+    
+    If resizing a row, C=0 and R=row being resized.
+    
+    NOTE: To receive resize events, you must set when(FL_WHEN_CHANGED).
+    </td>
+    </tr>
+    </table>
+    
+    \code
+    class MyTable
+  {
+    [..]
+  private:
+    // Handle events that happen on the table
+    void event_callback2()
+    {
+      int R = callback_row(),                     // row where event occurred
+      C = callback_col();                         // column where event occurred
+      TableContext context = callback_context();  // which part of table
+      fprintf(stderr, "callback: Row=%d Col=%d Context=%d Event=%d\n",
+              R, C, (int)context, (int)Fl::event());
+    }
+    
+    // Actual static callback
+    static void event_callback(Fl_Widget*, void* data)
+    {
+      MyTable *o = (MyTable*)data;
+      o-&gt;event_callback2();
+    }
+    
+  public:
+    MyTable()                      // Constructor
+    {
+      [..]
+      table.callback(&event_callback, (void*)this);       // setup callback
+      table.when(FL_WHEN_CHANGED|FL_WHEN_RELEASE);        // when to call it
+    }
+  };
+  \endcode
+  */
+  void callback(Fl_Widget*, void*);
+#endif
 };
 
 #endif /*_FL_TABLE_H*/
