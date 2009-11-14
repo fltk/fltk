@@ -44,7 +44,9 @@
 #include <FL/Fl_Scrollbar.H>
 
 /**
- \brief This is the base class for table widgets.
+ A table of widgets or other content.
+ 
+ This is the base class for table widgets.
  
  To be useful it must be subclassed and several virtual functions defined.
  Normally applications use widgets derived from this widget, and do not use this 
@@ -97,6 +99,72 @@
  eg. if the table_box() is FL_NO_BOX, these values are the same as
  tox/toyy/tow/toh. (Blue in the diagram above)
  </td></tr></table>
+ 
+ CORE DEVELOPERS
+ 
+ - Greg Ercolano : 12/16/2002 - initial implementation 12/16/02. Fl_Table, Fl_Table_Row, docs.
+ - Jean-Marc Lienher : 02/22/2004 - added keyboard nav + mouse selection, and ported Fl_Table into fltk-utf8-1.1.4
+ 
+ OTHER CONTRIBUTORS
+ 
+ - Inspired by the Feb 2000 version of FLVW's Flvw_Table widget. Mucho thanks to those folks.
+ - Mister Satan : 04/07/2003 - MinGW porting mods, and singleinput.cxx; a cool Fl_Input oriented spreadsheet example
+ - Marek Paliwoda : 01/08/2003 - Porting mods for Borland
+ - Ori Berger : 03/16/2006 - Optimizations for >500k rows/cols
+ 
+ LICENSE
+ 
+ Greg added the following license to the original distribution of Fl_Table. He 
+ kindly gave his permission to integrate Fl_Table and Fl_Table_row into FLTK,
+ allowing FLTK license to apply while his widgets are part of the library.
+ 
+ If used on its own, this is the license that applies:
+ 
+ Fl_Table License
+ December 16, 2002
+ 
+ The Fl_Table library and included programs are provided under the terms
+ of the GNU Library General Public License (LGPL) with the following
+ exceptions:
+ 
+ 1. Modifications to the Fl_Table configure script, config
+ header file, and makefiles by themselves to support
+ a specific platform do not constitute a modified or
+ derivative work.
+ 
+ The authors do request that such modifications be
+ contributed to the Fl_Table project - send all
+ contributions to "erco at seriss dot com".
+ 
+ 2. Widgets that are subclassed from Fl_Table widgets do not
+ constitute a derivative work.
+ 
+ 3. Static linking of applications and widgets to the
+ Fl_Table library does not constitute a derivative work
+ and does not require the author to provide source
+ code for the application or widget, use the shared
+ Fl_Table libraries, or link their applications or
+ widgets against a user-supplied version of Fl_Table.
+ 
+ If you link the application or widget to a modified
+ version of Fl_Table, then the changes to Fl_Table must be
+ provided under the terms of the LGPL in sections
+ 1, 2, and 4.
+ 
+ 4. You do not have to provide a copy of the Fl_Table license
+ with programs that are linked to the Fl_Table library, nor
+ do you have to identify the Fl_Table license in your
+ program or documentation as required by section 6
+ of the LGPL.
+ 
+ However, programs must still identify their use of Fl_Table.
+ The following example statement can be included in user
+ documentation to satisfy this requirement:
+ 
+ [program/widget] is based in part on the work of
+ the Fl_Table project http://seriss.com/people/erco/fltk/Fl_Table/
+ 
+ 
  */
 class Fl_Table : public Fl_Group {
 public:
