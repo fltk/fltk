@@ -30,6 +30,25 @@
 
 #include "Fl_Table.H"
 
+/**
+ A table with row selection capabilities.
+ 
+ This class implements a simple table of rows and columns that specializes in 
+ the selection of rows. This widget is similar in behavior to a "mail subject 
+ browser", similar to that found in mozilla, netscape and outlook mail browsers.
+ 
+ Most methods of importance will be found in the Fl_Table widget, such as 
+ Fl_Table::rows() and Fl_Table::cols().
+ 
+ To be useful it must be subclassed and at minimum the draw_cell()
+ method must be overridden to provide the content of the cells. This widget
+ does \em not manage the cell's data content; it is up to the parent
+ class's draw_cell() method override to provide this.
+ 
+ Events on the cells and/or headings generate callbacks when they are 
+ clicked by the user.  You control when events are generated based on
+ the values you supply for Fl_Table::when().
+ */
 class Fl_Table_Row : public Fl_Table {
 public:
   enum TableRowSelectMode {
@@ -118,6 +137,11 @@ protected:
   }
 
 public:
+  /**
+   The constructor for the Fl_Table_Row.
+   This creates an empty table with no rows or columns,
+   with headers and row/column resize behavior disabled.
+  */   
   Fl_Table_Row(int X, int Y, int W, int H, const char *l=0) : Fl_Table(X,Y,W,H,l) {
     _dragging_select = 0;
     _last_row        = -1;
@@ -126,20 +150,51 @@ public:
     _last_push_y     = -1;
     _selectmode      = SELECT_MULTI;
   }
+  
+  /**
+   The destructor for the Fl_Table_Row.
+   Destroys the table and its associated widgets.
+   */
   ~Fl_Table_Row() { }
   
   void rows(int val);			// set number of rows
   int rows() {				// get number of rows
     return(Fl_Table::rows());
   }
+  
+  /**
+   Sets the table selection mode.
+   
+   - \p Fl_Table_Row::SELECT_NONE - No selection allowed
+   - \p Fl_Table_Row::SELECT_SINGLE - Only single rows can be selected
+   - \p Fl_Table_Row::SELECT_MULTI - Multiple rows can be selected
+    */
   void type(TableRowSelectMode val);	// set selection mode
+  
   TableRowSelectMode type() const {	// get selection mode
     return(_selectmode);
   }
+  
+  /**
+   Checks to see if 'row' is selected. Returns 1 if selected, 0 if not. You can
+   change the selection of a row by clicking on it, or by using
+   select_row(row, flag)
+   */
   int row_selected(int row);		// is row selected? (0=no, 1=yes, -1=range err)
+  
+  /**
+   Changes the selection state for 'row', depending on the value
+   of 'flag'.  0=deselected, 1=select, 2=toggle existing state.
+   */
   int select_row(int row, int flag=1);	// select state for row: flag:0=off, 1=on, 2=toggle
 				        // returns: 0=no change, 1=changed, -1=range err
+  
+  /**
+   This convenience function changes the selection state 
+   for \em all rows based on 'flag'. 0=deselect, 1=select, 2=toggle existing state.
+   */
   void select_all_rows(int flag=1);	// all rows to a known state
+  
   void clear() {
     rows(0);		// implies clearing selection
     cols(0);
