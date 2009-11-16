@@ -746,7 +746,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C904DE7110AEDD3700266003 /* table */;
+			remoteGlobalIDString = C904DE7110AEDD3700266003;
 			remoteInfo = table;
 		};
 		C904DF2D10AEFF4A00266003 /* PBXContainerItemProxy */ = {
@@ -760,7 +760,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C904DF2B10AEFF4A00266003 /* tree */;
+			remoteGlobalIDString = C904DF2B10AEFF4A00266003;
 			remoteInfo = tree;
 		};
 		C918DB3D0DD9EE4600167E99 /* PBXContainerItemProxy */ = {
@@ -10441,6 +10441,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/valuators-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -10464,6 +10465,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/valuators-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
