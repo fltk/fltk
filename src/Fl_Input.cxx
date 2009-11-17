@@ -119,13 +119,16 @@ int Fl_Input::handle_key() {
       }
 #endif // HAVE_LOCALECONV
 
+      // find the insert position
+      int ip = position()<mark() ? position() : mark();
       // This is complex to allow "0xff12" hex to be typed:
-      if (!position() && (ascii == '+' || ascii == '-') ||
-	  (ascii >= '0' && ascii <= '9') ||
-	  (position()==1 && index(0)=='0' && (ascii=='x' || ascii == 'X')) ||
-	  (position()>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X')
-	   && (ascii>='A'&& ascii<='F' || ascii>='a'&& ascii<='f')) ||
-	  input_type()==FL_FLOAT_INPUT && ascii && strchr(legal_fp_chars, ascii)) {
+      if (!ip && (ascii == '+' || ascii == '-') 
+          || (ascii >= '0' && ascii <= '9') 
+          || (ip==1 && index(0)=='0' && (ascii=='x' || ascii == 'X')) 
+          || (ip>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X')
+             && (ascii>='A'&& ascii<='F' || ascii>='a'&& ascii<='f')) 
+          || input_type()==FL_FLOAT_INPUT && ascii && strchr(legal_fp_chars, ascii)) 
+      {
 	if (readonly()) fl_beep();
 	else replace(position(), mark(), &ascii, 1);
       }
