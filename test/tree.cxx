@@ -92,7 +92,7 @@ static void cb_tree(Fl_Tree*, void*) {
   //tree->redraw();
   fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%d\n",
           item->label(),
-          (int)tree->user_data());
+          (long)tree->user_data());
 }
 
 Fl_Value_Slider *labelsize_slider=(Fl_Value_Slider *)0;
