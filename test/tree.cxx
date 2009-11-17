@@ -90,7 +90,7 @@ static void cb_tree(Fl_Tree*, void*) {
   Fl_Tree_Item *item = tree->item_clicked();
   //item->select( item->is_selected() ? 0 : 1);
   //tree->redraw();
-  fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%d\n",
+  fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld\n",
           item->label(),
           (long)tree->user_data());
 }
