@@ -1,3 +1,7 @@
+//
+// "$Id$"
+//
+
 #ifndef FL_TREE_PREFS_H
 #define FL_TREE_PREFS_H
 
@@ -351,3 +355,7 @@ public:
 };
 
 #endif /*FL_TREE_PREFS_H*/
+
+//
+// End of "$Id$".
+//

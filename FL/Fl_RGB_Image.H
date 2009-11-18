@@ -1,5 +1,5 @@
 //
-// "$Id:$"
+// "$Id$"
 //
 // RGB Image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -31,5 +31,5 @@
 #endif // !Fl_RGB_Image_H
 
 //
-// End of "$Id:$".
+// End of "$Id$".
 //

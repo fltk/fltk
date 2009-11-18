@@ -1,3 +1,7 @@
+//
+// "$Id$"
+//
+
 #ifndef _FL_TABLE_ROW_H
 #define _FL_TABLE_ROW_H
 
@@ -203,3 +207,7 @@ public:
 };
 
 #endif /*_FL_TABLE_ROW_H*/
+
+//
+// End of "$Id$".
+//

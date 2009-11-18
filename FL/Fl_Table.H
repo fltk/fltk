@@ -1,4 +1,6 @@
 //
+// "$Id$"
+//
 // Fl_Table -- A table widget
 //
 // Copyright 2002 by Greg Ercolano.
@@ -1059,3 +1061,7 @@ public:
 };
 
 #endif /*_FL_TABLE_H*/
+
+//
+// End of "$Id$".
+//

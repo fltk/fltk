@@ -1,3 +1,7 @@
+//
+// "$Id$"
+//
+
 #ifndef _FL_TREE_ITEM_ARRAY_H
 #define _FL_TREE_ITEM_ARRAY_H
 
@@ -78,3 +82,7 @@ public:
 };
 
 #endif /*_FL_TREE_ITEM_ARRAY_H*/
+
+//
+// End of "$Id$".
+//
