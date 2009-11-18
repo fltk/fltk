@@ -1,5 +1,5 @@
 //
-// "$Id"
+// "$Id$"
 //
 // Fl_Help_Dialog dialog for the Fast Light Tool Kit (FLTK).
 //
@@ -116,5 +116,5 @@
   Delegates call to encapsulated view_ void Fl_Help_View::textsize(Fl_Fontsize s) instance method */
 
 //
-// End of "$Id".
+// End of "$Id$".
 //

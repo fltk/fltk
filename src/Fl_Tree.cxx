@@ -1,3 +1,7 @@
+//
+// "$Id$"
+//
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -352,3 +356,7 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem) {
   if ( changed ) redraw();				// anything changed? redraw
   return(changed);
 }
+
+//
+// End of "$Id$".
+//

@@ -1,5 +1,5 @@
 //
-// "$Id:$"
+// "$Id$"
 //
 // OS X Core Graphics debugging help for the Fast Light Tool Kit (FLTK).
 //
@@ -210,6 +210,5 @@ inline void dbgCGContextRestoreGState(CGContextRef context)
 #endif
 
 //
-// End of "$Id:$".
+// End of "$Id$".
 //
-

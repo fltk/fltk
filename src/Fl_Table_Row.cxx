@@ -1,4 +1,6 @@
 //
+// "$Id$"
+//
 // Fl_Table_Row -- A row oriented table widget
 //
 //    A class specializing in a table of rows.
@@ -315,3 +317,7 @@ int Fl_Table_Row::handle(int event) {
   _last_y = Fl::event_y();
   return(ret);
 }
+
+//
+// End of "$Id$".
+//

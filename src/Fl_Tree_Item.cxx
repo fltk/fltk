@@ -1,3 +1,7 @@
+//
+// "$Id$"
+//
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -705,3 +709,7 @@ Fl_Tree_Item *Fl_Tree_Item::prev() {
   }
   return(p);
 }
+
+//
+// End of "$Id$".
+//

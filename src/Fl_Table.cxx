@@ -1,4 +1,6 @@
 //
+// "$Id$"
+//
 // Fl_Table -- A table widget
 //
 // Copyright 2002 by Greg Ercolano.
@@ -1216,3 +1218,7 @@ void Fl_Table::draw() {
   }
   fl_pop_clip();
 }
+
+//
+// End of "$Id$".
+//

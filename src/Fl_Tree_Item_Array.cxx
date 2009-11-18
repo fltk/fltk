@@ -1,3 +1,7 @@
+//
+// "$Id$"
+//
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -147,3 +151,7 @@ int Fl_Tree_Item_Array::remove(Fl_Tree_Item *item) {
   }
   return(-1);
 }
+
+//
+// End of "$Id$".
+//

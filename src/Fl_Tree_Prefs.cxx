@@ -1,3 +1,7 @@
+//
+// "$Id$"
+//
+
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tree_Prefs.H>
@@ -120,3 +124,7 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
     }
   }
 }
+
+//
+// End of "$Id$".
+//
