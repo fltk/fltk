@@ -181,7 +181,7 @@ and shows OpenGL text.
 <tt>CubeView</tt> shows how to create a UI containing OpenGL with Fluid.
 
 <h3><a name="cursor">cursor</h3>
-The <tt>cursor</tt> demo show all mouse cursor shapes that come standard
+The <tt>cursor</tt> demo shows all mouse cursor shapes that come standard
 with FLTK. The <i>fgcolor</i> and <i>bgcolor</i> sliders work only
 on few systems (some version of Irix for example).
 
@@ -195,7 +195,7 @@ This tool allows quick access to all programs in the <tt>test</tt> directory.
 tree can be changed by editing <tt>test/demo.menu</tt>.
 
 <h3><a name="doublebuffer">doublebuffer</h3>
-The <tt>doublebuffer</tt> demo show the difference between a single
+The <tt>doublebuffer</tt> demo shows the difference between a single
 buffered window, which may flicker during a slow redraw, and a 
 double buffered window, which never flickers, but uses twice the
 amount of RAM. Some modern OS's double buffer all windows automatically
@@ -210,7 +210,7 @@ The <tt>editor</tt> test is almost a full application, showing custom
 syntax highlighting and dialog creation. 
 
 <h3><a name="fast_slow">fast_slow</h3>
-<tt>fast_slow</tt> shows how an application can use then <tt>when()</tt>
+<tt>fast_slow</tt> shows how an application can use the <tt>when()</tt>
 setting to receive different kinds of callbacks.
 
 <h3><a name="file_chooser">file_chooser</h3>
@@ -219,7 +219,7 @@ iterations, trying to find a middle ground between a complex
 browser and a fast light implementation.
 
 <h3><a name="fonts">fonts</h3>
-<tt>fonts</tt> show all available text fonts on the host system.
+<tt>fonts</tt> shows all available text fonts on the host system.
 If your machine still has some pixmap based fonts, the supported
 sizes will be shown in bold face. Only the first 256 fonts will 
 be listed.
@@ -227,13 +227,13 @@ be listed.
 <h3><a name="forms">forms</h3>
 <tt>forms</tt> is an XForms program with very few changes.
 Search for "fltk" to find all changes necessary to port to fltk.
-This demo show the different boxtypes. Note that some
+This demo shows the different boxtypes. Note that some
 boxtypes are not appropriate for some objects.
 
 <h3><a name="fractals">fractals</h3>
 <tt>fractals</tt> shows how to mix OpenGL, Glut and FLTK code.
 FLTK supports a rather large subset of Glut, so that many Glut
-application compile just fine.
+applications compile just fine.
 
 <h3><a name="fullscreen">fullscreen</h3>
 This demo shows how to do many of the window manipulations that
@@ -252,7 +252,7 @@ The <tt>glpuzzle</tt> test shows how most Glut source code compiles
 easily under FLTK.
 
 <h3><a name="hello">hello</h3>
-<tt>hello</tt>: Hello, World. Need I say maore? Well, maybe. This 
+<tt>hello</tt>: Hello, World. Need I say more? Well, maybe. This 
 tiny demo shows how little is needed to get a functioning application
 running with FLTK. Quite impressive, I'd say.
 
@@ -298,7 +298,7 @@ the window. The ESC key will not work.
 
 <h3><a name="label">label</h3>
 Every FLTK widget can have a label attached to it. The <tt>label</tt> 
-demo shows alignment, clipping and wrapping of text labels. Labels
+demo shows alignment, clipping, and wrapping of text labels. Labels
 can contain symbols at the start and end of the text, like <i>@FLTK</i>
 or <i>@circle uh-huh @square</i>.
 
@@ -324,7 +324,7 @@ Among the features are radio buttons, menus taller than the screen,
 arbitrary sub menu depth, and global shortcuts.
 
 <h3><a name="message">message</h3>
-<tt>message</tt> pops up a few of FLTK's standars message boxes.
+<tt>message</tt> pops up a few of FLTK's standard message boxes.
 
 <h3><a name="minimum">minimum</h3>
 The <tt>minimum</tt> test program verifies that the update regions
@@ -342,9 +342,9 @@ multi line mode of the <tt>Fl_Output</tt> widget. Fonts can be
 selected from the FLTK standard list of fonts.
 
 <h3><a name="overlay">overlay</h3>
-The <tt>overlay</tt> test app show how easy an FLTK window can
-be layered to display cursor and manipulator style elemnts. This
-example derives a new class from <tt>Fl_Overly_WIndow</tt> and 
+The <tt>overlay</tt> test app shows how easy an FLTK window can
+be layered to display cursor and manipulator style elements. This
+example derives a new class from <tt>Fl_Overlay_WIndow</tt> and 
 provides a new function to draw custom overlays.
 
 <h3><a name="pack">pack</h3>
@@ -384,7 +384,7 @@ the given window manager.
 
 <h3><a name="scroll">scroll</h3>
 <tt>scroll</tt> shows how to scroll an area of widgets, one of
-them beeing a slow custom drawing. <tt>Fl_Scroll</tt> uses 
+them being a slow custom drawing. <tt>Fl_Scroll</tt> uses 
 clipping and smart window area copying to improve redraw speed.
 The buttons at the bottom of the window control decoration rendering
 and updates.
@@ -397,7 +397,7 @@ and write that flight simulator you always dreamt of.
 <h3><a name="subwindow">subwindow</h3>
 The <tt>subwindow</tt> demo tests messaging and drawing between 
 the main window and 'true' sub windows. A sub window is different
-to a group by resetting the FLTK coordinate stystem to 0, 0 in the
+to a group by resetting the FLTK coordinate system to 0, 0 in the
 top left corner. On Win32 and X11, subwindows have their own 
 operating system specific handle.
 
@@ -425,7 +425,7 @@ for direct comparison of these two panel management widgets.
 <h3><a name="threads">threads</h3>
 FLTK can be used in a multithreading environment. There are some
 limitations, mostly due to the underlying operating system. 
-<tt>threads</tt> show how to use <tt>Fl::lock()</tt>, 
+<tt>threads</tt> shows how to use <tt>Fl::lock()</tt>, 
 <tt>Fl::unlock()</tt>, and <tt>Fl::awake()</tt> in secondary threads 
 to keep FLTK happy. Although locking works on all platforms, 
 this demo is not available on every machine.
@@ -438,14 +438,14 @@ To test correct resizing of subwindows, the widget for region
 <h3><a name="tiled_image">tiled_image</h3>
 The <tt>tiled_image</tt> demo uses an image as the background
 for a window by repeating it over the full size of the widget.
-Thw window is resizable and shows how the image gets repeated.
+The window is resizable and shows how the image gets repeated.
 
 <h3><a name="valuators">valuators</h3>
 <tt>valuators</tt> shows all of FLTK's nifty widgets to change
 numeric values.
 
 <h3><a name="fluid">fluid</h3>
-<tt>fuid</tt> is not only a big test program, but also a very 
+<tt>fluid</tt> is not only a big test program, but also a very 
 useful visual UI designer. Many parts of <tt>fluid</tt> were 
 created using <tt>fluid</tt>.
 
