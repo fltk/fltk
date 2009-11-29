@@ -231,7 +231,7 @@ tree can be changed by editing <tt>test/demo.menu</tt>.
 \subsection examples_doublebuffer doublebuffer
 
 \par
-The \c doublebuffer demo show the difference between a single
+The \c doublebuffer demo shows the difference between a single
 buffered window, which may flicker during a slow redraw, and a 
 double buffered window, which never flickers, but uses twice the
 amount of RAM. Some modern OS's double buffer all windows automatically
@@ -370,7 +370,7 @@ the window. The ESC key will not work.
 
 \par
 Every FLTK widget can have a label attached to it. The \c label 
-demo shows alignment, clipping and wrapping of text labels. Labels
+demo shows alignment, clipping, and wrapping of text labels. Labels
 can contain symbols at the start and end of the text, like <i>\@FLTK</i>
 or <i>\@circle uh-huh \@square</i>.
 
@@ -432,7 +432,7 @@ selected from the FLTK standard list of fonts.
 \subsection examples_overlay overlay
 
 \par
-The \c overlay test app show how easy an FLTK window can
+The \c overlay test app shows how easy an FLTK window can
 be layered to display cursor and manipulator style elements. This
 example derives a new class from Fl_Overlay_Window and 
 provides a new function to draw custom overlays.
@@ -490,7 +490,7 @@ the given window manager.
 
 \par
 \c scroll shows how to scroll an area of widgets, one of
-them beeing a slow custom drawing. Fl_Scroll uses 
+them being a slow custom drawing. Fl_Scroll uses 
 clipping and smart window area copying to improve redraw speed.
 The buttons at the bottom of the window control decoration rendering
 and updates.
