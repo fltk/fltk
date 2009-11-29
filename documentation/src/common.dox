@@ -313,9 +313,9 @@ and the same as outlines only (<tt>UP_FRAME</tt> and <tt>DOWN_FRAME</tt>).
 The function
 \ref common_fl_down "fl_down(Fl_Boxtype)"
 expects the neutral design on a boxtype with a numerical 
-value evenly divideable by two. 
+value evenly dividable by two. 
 \ref common_fl_frame "fl_frame(Fl_Boxtype)"
-expects the \p UP_BOX design at a value divideable by four.
+expects the \p UP_BOX design at a value dividable by four.
 
 \section common_labels Labels and Label Types
 
@@ -342,7 +342,7 @@ The @ sign may also be followed by the following optional
 
 \li +[1-9] or -[1-9] tweaks the scaling a little bigger or smaller.
 
-\li '$' flips the symbol horizontaly, '%' flips it verticaly.
+\li '$' flips the symbol horizontally, '%' flips it vertically.
 
 \li [0-9] - rotates by a multiple of 45 degrees. '5' and '6' do no rotation
     while the others point in the direction of that key on a numeric keypad.
@@ -396,7 +396,7 @@ To make an image you use a subclass of
 Label types are actually indexes into a table of functions
 that draw them. The primary purpose of this is to use this to
 draw the labels in ways inaccessible through the
-fl_font() mechanisim (e.g. <tt>FL_ENGRAVED_LABEL</tt>) or
+fl_font() mechanism (e.g. <tt>FL_ENGRAVED_LABEL</tt>) or
 with program-generated letters or symbology.
 
 <CENTER><TABLE WIDTH="80%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">

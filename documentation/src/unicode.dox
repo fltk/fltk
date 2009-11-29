@@ -23,7 +23,7 @@ For further information, please see:
 \par The Unicode Standard
 
 The Unicode Standard was originally developed by a consortium of mainly
-US computer manufacturers and developers of mult-lingual software.
+US computer manufacturers and developers of multi-lingual software.
 It has now become a defacto standard for character encoding,
 and is supported by most of the major computing companies in the world.
 
@@ -121,7 +121,7 @@ some level of synchronisation and error detection.
 </table>
 
 Moving from ASCII encoding to Unicode will allow all new FLTK
-applications to be easily internationalized and and used all
+applications to be easily internationalized and used all
 over the world. By choosing UTF-8 encoding, FLTK remains 
 largely source-code compatible to previous iteration of the 
 library.
@@ -428,7 +428,7 @@ converts the strings to lower case Unicode as part of the comparison.
 
 \li initial transfer of the Ian/O'ksi'D patch
 \li adapted Makefiles and IDEs for available platforms
-\li hacked some Unicode keybard entry for OS X
+\li hacked some Unicode keyboard entry for OS X
 
 \par ISSUES:
 

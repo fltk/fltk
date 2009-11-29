@@ -226,7 +226,7 @@ use it for any purpose you want.  Try to keep the value less than 100
 to not interfere with reserved values.
 
 \par
-FLTK does not use RTTI (Run Time Typing Infomation), to enhance
+FLTK does not use RTTI (Run Time Typing Information), to enhance
 portability.  But this may change in the near future if RTTI becomes
 standard everywhere. 
 

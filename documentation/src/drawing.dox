@@ -409,7 +409,7 @@ void fl_transformed_vertex(double xf, double yf)
 \par
 Transform a coordinate or a distance using the current transformation matrix.
 After transforming a coordinate pair, it can be added to the vertex
-list without any forther translations using \p %fl_transformed_vertex().
+list without any further translations using \p %fl_transformed_vertex().
 
 void fl_begin_points() <br>
 void fl_end_points()

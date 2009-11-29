@@ -188,7 +188,7 @@ the use of timeouts and matrix based drawing.
 \c colbrowser runs only on X11 systems. It reads 
 <i>/usr/lib/X11/rgb.txt</i> to show the color representation
 of every text entry in the file. This is beautiful, but
-only moderatly useful unless your UI is written in <i>Motif</i>.
+only moderately useful unless your UI is written in <i>Motif</i>.
 
 \subsection examples_color_chooser color_chooser
 
@@ -478,7 +478,7 @@ button behavior.
 
 \par
 \c resizebox shows some possible ways of FLTK's automatic
-resize bahavior..
+resize behavior.
 
 \subsection examples_resize resize
 

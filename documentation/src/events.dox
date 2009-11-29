@@ -266,7 +266,7 @@ selection indication. Most modern programs ignore this.
 FLTK supports drag and drop of text and files from any 
 application on the desktop. Text is transfered using
 the current code page. Files are received as a list of full path
-and file names, seperated by newline. On some platforms, path
+and file names, separated by newline. On some platforms, path
 names are prepended with <tt>%file://</tt>.
 
 The drag and drop data is available in Fl::event_text()
@@ -298,7 +298,7 @@ The mouse has moved out of the widget.
 
 The user has released the mouse button dropping data into 
 the widget. If the widget returns 1, it will receive the data in
-the immediatly following \p FL_PASTE event.
+the immediately following \p FL_PASTE event.
 
 <!-- NEED 6in -->
 
