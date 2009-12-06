@@ -110,6 +110,9 @@ void  gl_font(int fontid, int size) {
     wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
     SelectObject(fl_gc, oldFid);
 # elif defined(__APPLE_QUARTZ__)
+#if ! __LP64__
+//AGL is not supported for use in 64-bit applications:
+//http://developer.apple.com/mac/library/documentation/Carbon/Conceptual/Carbon64BitGuide/OtherAPIChanges/OtherAPIChanges.html
     short font, face, size;
     uchar fn[256];
     fn[0]=strlen(fl_fontsize->q_name);
@@ -118,8 +121,9 @@ void  gl_font(int fontid, int size) {
     face = 0;
     size = fl_fontsize->size;
     fl_fontsize->listbase = glGenLists(256);
-    aglUseFont(aglGetCurrentContext(), font, face,
+	aglUseFont(aglGetCurrentContext(), font, face,
                size, 0, 256, fl_fontsize->listbase);
+#endif
 # else 
 #   error unsupported platform
 # endif
@@ -128,7 +132,9 @@ void  gl_font(int fontid, int size) {
 
   }
   gl_fontsize = fl_fontsize;
+#if !( defined(__APPLE__) &&  __LP64__ )
   glListBase(fl_fontsize->listbase);
+#endif
 }
 
 #ifndef __APPLE__
@@ -204,10 +210,20 @@ void gl_remove_displaylist_fonts()
   Draws an array of n characters of the string in the current font
   at the current position.
   */
+#if defined(__APPLE__) && __LP64__
+static void gl_draw_cocoa(const char* str, int n);
+#endif
+
 void gl_draw(const char* str, int n) {
 #ifdef __APPLE__
+  
+#if __LP64__
+  gl_draw_cocoa(str, n);
+#else
 // Should be converting the text here, as for other platforms???
   glCallLists(n, GL_UNSIGNED_BYTE, str);
+#endif
+  
 #else
   static xchar *buf = NULL;
   static int l = 0;
@@ -236,7 +252,7 @@ void gl_draw(const char* str, int n) {
 }
 
 /**
-  Draws n charachters of the string in the current font at the given position 
+  Draws n characters of the string in the current font at the given position 
   */
 void gl_draw(const char* str, int n, int x, int y) {
   glRasterPos2i(x, y);
@@ -244,7 +260,7 @@ void gl_draw(const char* str, int n, int x, int y) {
 }
 
 /**
-  Draws n charachters of the string in the current font at the given position 
+  Draws n characters of the string in the current font at the given position 
   */
 void gl_draw(const char* str, int n, float x, float y) {
   glRasterPos2f(x, y);
@@ -350,6 +366,95 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   glRasterPos2i(x,y);
   glDrawPixels(w,h,d<4?GL_RGB:GL_RGBA,GL_UNSIGNED_BYTE,(const ulong*)b);
 }
+
+#if defined(__APPLE__) && defined(__APPLE_COCOA__) && __LP64__
+
+#include <FL/glu.h>
+
+static void gl_draw_cocoa(const char* str, int n) 
+{
+//setup matrices
+  GLint matrixMode;
+  glGetIntegerv (GL_MATRIX_MODE, &matrixMode);
+  glMatrixMode (GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity ();
+  glMatrixMode (GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity ();
+  float winw = Fl_Window::current()->w();
+  float winh = Fl_Window::current()->h();
+  glScalef (2.0f / winw, 2.0f /  winh, 1.0f);
+  glTranslatef (-winw / 2.0f, -winh / 2.0f, 0.0f);
+//write str to a bitmap just big enough  
+  int w = 0, h = 0;
+  fl_measure(str, w, h, 0);
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  void *base = calloc(4*w, h);
+  if(base == NULL) return;
+  fl_gc = CGBitmapContextCreate(base, w, h, 8, w*4, lut, kCGImageAlphaPremultipliedLast);
+  CGColorSpaceRelease(lut);
+  fl_fontsize = gl_fontsize;
+  fl_draw(str, 0, h - fl_descent());
+//put this bitmap in a texture  
+  static GLuint texName = 0;
+  glPushAttrib(GL_TEXTURE_BIT);
+  if (0 == texName) glGenTextures (1, &texName);
+  glBindTexture (GL_TEXTURE_RECTANGLE_EXT, texName);
+  glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_RECTANGLE_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA, w, h, 0,  GL_RGBA, GL_UNSIGNED_BYTE, base);
+  glPopAttrib();
+  CGContextRelease(fl_gc);
+  fl_gc = NULL;
+  free(base);
+  GLfloat pos[4];
+  glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);
+  if (texName) {//write the texture on screen
+	CGRect bounds = CGRectMake (pos[0], pos[1] - fl_descent(), w, h);
+	glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT); // GL_COLOR_BUFFER_BIT for glBlendFunc, GL_ENABLE_BIT for glEnable / glDisable
+	
+	glDisable (GL_DEPTH_TEST); // ensure text is not removed by depth buffer test.
+	glEnable (GL_BLEND); // for text fading
+	glBlendFunc (GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // ditto
+	glEnable (GL_TEXTURE_RECTANGLE_EXT);	
+	
+	glBindTexture (GL_TEXTURE_RECTANGLE_EXT, texName);
+	glBegin (GL_QUADS);
+	glTexCoord2f (0.0f, 0.0f); // draw lower left in world coordinates
+	glVertex2f (bounds.origin.x, bounds.origin.y);
+	
+	glTexCoord2f (0.0f, h); // draw upper left in world coordinates
+	glVertex2f (bounds.origin.x, bounds.origin.y + bounds.size.height);
+	
+	glTexCoord2f (w, h); // draw upper right in world coordinates
+	glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height);
+	
+	glTexCoord2f (w, 0.0f); // draw lower right in world coordinates
+	glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y);
+	glEnd ();
+	
+	glPopAttrib();
+	glDeleteTextures(1, &texName);
+  }
+  // reset original matrices
+  glPopMatrix(); // GL_MODELVIEW
+  glMatrixMode (GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode (matrixMode);
+//set the raster position to end of string
+  pos[0] += w;
+  GLdouble modelmat[16];
+  glGetDoublev (GL_MODELVIEW_MATRIX, modelmat);
+  GLdouble projmat[16];
+  glGetDoublev (GL_PROJECTION_MATRIX, projmat);
+  GLdouble objX, objY, objZ;
+  GLint viewport[4];
+  glGetIntegerv (GL_VIEWPORT, viewport);
+  gluUnProject(pos[0], pos[1], pos[2], modelmat, projmat, viewport, &objX, &objY, &objZ);
+  glRasterPos2d(objX, objY);
+}
+#endif
 
 #endif
 

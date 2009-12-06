@@ -154,7 +154,7 @@ int b2n[][9] = {
 	{  0, -1,  1,  2,  3,  4,  5, -1,  6},
 	{  0,  1,  2,  3, -1,  4,  5,  6,  7},
 	{  0,  1,  2,  3,  4,  5,  6,  7,  8}
-  };
+};
 int n2b[][9] = { 
 	{  4, -1, -1, -1, -1, -1, -1, -1, -1},
 	{  3,  5, -1, -1, -1, -1, -1, -1, -1},
@@ -165,17 +165,17 @@ int n2b[][9] = {
 	{  0,  2,  3,  4,  5,  6,  8, -1, -1},
 	{  0,  1,  2,  3,  5,  6,  7,  8, -1},
 	{  0,  1,  2,  3,  4,  5,  6,  7,  8}
-  };
+};
 
 int but2numb(int bnumb, int maxnumb)
 /* Transforms a button number to an item number when there are
-   maxnumb items in total. -1 if the button should not exist. */
- { return b2n[maxnumb][bnumb]; }
+ maxnumb items in total. -1 if the button should not exist. */
+{ return b2n[maxnumb][bnumb]; }
 
 int numb2but(int inumb, int maxnumb)
 /* Transforms an item number to a button number when there are
-   maxnumb items in total. -1 if the item should not exist. */
- { return n2b[maxnumb][inumb]; }
+ maxnumb items in total. -1 if the item should not exist. */
+{ return n2b[maxnumb][inumb]; }
 
 /* Pushing and Popping menus */
 
@@ -222,33 +222,33 @@ void dobut(Fl_Widget *, long arg)
   if (menus[men].icommand[bn][0] == '@')
     push_menu(menus[men].icommand[bn]);
   else {
-
+    
 #ifdef WIN32
     STARTUPINFO		suInfo;		// Process startup information
     PROCESS_INFORMATION	prInfo;		// Process information
-
+    
     memset(&suInfo, 0, sizeof(suInfo));
     suInfo.cb = sizeof(suInfo);
-
+    
     int icommand_length = strlen(menus[men].icommand[bn]);
-
+    
     char* copy_of_icommand = new char[icommand_length+1];
     strcpy(copy_of_icommand,menus[men].icommand[bn]);
-
+    
     // On WIN32 the .exe suffix needs to be appended to the command
     // whilst leaving any additional parameters unchanged - this
     // is required to handle the correct conversion of cases such as : 
     // `../fluid/fluid valuators.fl' to '../fluid/fluid.exe valuators.fl'.
-
+    
     // skip leading spaces.
     char* start_command = copy_of_icommand;
     while(*start_command == ' ') ++start_command;
-
+    
     // find the space between the command and parameters if one exists.
     char* start_parameters = strchr(start_command,' ');
-
+    
     char* command = new char[icommand_length+6]; // 6 for extra 'd.exe\0'
-
+    
     if (start_parameters==NULL) { // no parameters required.
 #  ifdef _DEBUG
       sprintf(command, "%sd.exe", start_command);
@@ -261,38 +261,46 @@ void dobut(Fl_Widget *, long arg)
       *start_parameters = 0;
       // move start_paremeters to skip over the intermediate space.
       ++start_parameters;
-
+      
 #  ifdef _DEBUG
       sprintf(command, "%sd.exe %s", start_command, start_parameters);
 #  else
       sprintf(command, "%s.exe %s", start_command, start_parameters);
 #  endif // _DEBUG
     }
-
+    
     CreateProcess(NULL, command, NULL, NULL, FALSE,
                   NORMAL_PRIORITY_CLASS, NULL, NULL, &suInfo, &prInfo);
-	
+    
     delete[] command;
     delete[] copy_of_icommand;
-
-#elif defined USING_XCODE
-
-    int icommand_length = strlen(menus[men].icommand[bn]);
-    char* command = new char[icommand_length+24]; // extraspace for  'open ../../(name).app &\0' 
     
-    sprintf(command, "open ../../../%s.app &", menus[men].icommand[bn]);
+#elif defined USING_XCODE
+    char *cmd = strdup(menus[men].icommand[bn]);
+    char *arg = strchr(cmd, ' ');
+    
+    char command[2048];
+    if (arg) {
+      *arg = 0;
+      if (strcmp(cmd, "../fluid/fluid")==0)
+        sprintf(command, "open ../../../Fluid.app --args %s", arg+1);
+      else
+        sprintf(command, "open ../../../%s.app --args %s", cmd, arg+1);
+    } else {
+      sprintf(command, "open ../../../%s.app", cmd);
+    }
+    puts(command);    
     system(command);
     
-    delete[] command;
-
+    free(cmd);
 #else // NON WIN32 systems.
-
+    
     int icommand_length = strlen(menus[men].icommand[bn]);
     char* command = new char[icommand_length+5]; // 5 for extra './' and ' &\0' 
-
+    
     sprintf(command, "./%s &", menus[men].icommand[bn]);
     system(command);
-
+    
     delete[] command;
 #endif // WIN32
   }
@@ -312,7 +320,7 @@ int load_the_menu(const char* fname)
   if (fin == NULL)
   {
 #if defined ( __APPLE__ )
-	// mac os bundle menu detection:
+    // mac os bundle menu detection:
 	  char* pos = strrchr(fname,'/');
 	  if (!pos) return 0;
 	  *pos='\0';
@@ -322,7 +330,7 @@ int load_the_menu(const char* fname)
 	  fin  = fopen(fname,"r");
 	  if (fin == NULL)
 #endif
-	  return 0;
+      return 0;
   }
   for (;;) {
     if (fgets(line,256,fin) == NULL) break;
@@ -345,10 +353,10 @@ int load_the_menu(const char* fname)
     while (line[i] != ':' && line[i] != '\n')
     {
       if (line[i] == '\\') {
-	i++;
-	if (line[i] == 'n') iname[j++] = '\n';
-	else iname[j++] = line[i];
-	i++;
+        i++;
+        if (line[i] == 'n') iname[j++] = '\n';
+        else iname[j++] = line[i];
+        i++;
       } else
         iname[j++] = line[i++];
     }
@@ -378,9 +386,9 @@ int main(int argc, char **argv) {
   if (!Fl::args(argc,argv,i) || i < argc-1)
     Fl::fatal("Usage: %s <switches> <menufile>\n%s",argv[0],Fl::help);
   if (i < argc) fname = argv[i];
-
+  
   create_the_forms();
-
+  
   if (!load_the_menu(fname)) Fl::fatal("Can't open %s",fname);
   if (buf!=fname)
     strcpy(buf,fname);

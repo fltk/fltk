@@ -383,9 +383,9 @@ Fl_Widget.o: ../FL/Fl_Tooltip.H ../FL/fl_draw.H ../FL/Fl_Window.H flstring.h
 Fl_Widget.o: ../config.h
 Fl_Window.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Window.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
-Fl_Window.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
-Fl_Window.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H flstring.h ../FL/fl_draw.H
-Fl_Window.o: ../FL/Fl_Window.H
+Fl_Window.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H ../FL/Fl_Window.H
+Fl_Window.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H flstring.h
+Fl_Window.o: ../FL/fl_draw.H
 Fl_Window_fullscreen.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Window_fullscreen.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Window_fullscreen.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H
@@ -423,7 +423,7 @@ Fl_arg.o: ../FL/Fl_Widget.H ../FL/filename.H ../FL/fl_draw.H flstring.h
 Fl_arg.o: ../config.h
 Fl_compose.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_compose.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
-Fl_compose.o: ../FL/fl_types.h
+Fl_compose.o: ../FL/fl_types.h ../FL/x.H ../FL/Fl_Window.H
 Fl_display.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_display.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_display.o: ../FL/fl_types.h flstring.h ../config.h

@@ -7,18 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C904DE6E10AEDD2A00266003 /* Fl_Table_Row.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C904DE6C10AEDD2A00266003 /* Fl_Table_Row.cxx */; };
-		C904DE6F10AEDD2A00266003 /* Fl_Table.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C904DE6D10AEDD2A00266003 /* Fl_Table.cxx */; };
-		C904DE7910AEDD3700266003 /* table.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918E1410DDA11BA00167E99 /* table.cxx */; };
-		C904DE7B10AEDD3700266003 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
-		C904DE7D10AEDD3700266003 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
-		C904DF2610AEFF3E00266003 /* Fl_Tree_Item_Array.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C904DF2210AEFF3E00266003 /* Fl_Tree_Item_Array.cxx */; };
-		C904DF2710AEFF3E00266003 /* Fl_Tree_Item.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C904DF2310AEFF3E00266003 /* Fl_Tree_Item.cxx */; };
-		C904DF2810AEFF3E00266003 /* Fl_Tree_Prefs.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C904DF2410AEFF3E00266003 /* Fl_Tree_Prefs.cxx */; };
-		C904DF2910AEFF3E00266003 /* Fl_Tree.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C904DF2510AEFF3E00266003 /* Fl_Tree.cxx */; };
-		C904DF3210AEFF4A00266003 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
-		C904DF3410AEFF4A00266003 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
-		C904DF5A10AF003400266003 /* tree.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C904DF5910AF003400266003 /* tree.cxx */; };
+		7FC9BFFE10AA191B00646185 /* fltk_gl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC830DD639A200486E4F /* fltk_gl.framework */; };
 		C918DB410DD9EE7500167E99 /* editor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918DB400DD9EE7500167E99 /* editor.cxx */; };
 		C918DB4D0DD9EE8F00167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918DB5F0DD9EED100167E99 /* fast_slow.fl in Resources */ = {isa = PBXBuildFile; fileRef = C918DB5E0DD9EED100167E99 /* fast_slow.fl */; };
@@ -35,7 +24,7 @@
 		C918DC230DD9F14400167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918DC240DD9F14600167E99 /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */; };
 		C918DC400DD9F1AC00167E99 /* fractals.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918DC3F0DD9F1AC00167E99 /* fractals.cxx */; };
-		C918DC4A0DD9F1C000167E99 /* fltk_gl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC830DD639A200486E4F /* fltk_gl.framework */; };
+		C918DC4A0DD9F1C000167E99 /* fltk_gl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3EC830DD639A200486E4F /* fltk_gl.framework */; };
 		C918DC4C0DD9F1C300167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918DC4E0DD9F1D000167E99 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C872160DD7757700A9793F /* OpenGL.framework */; };
 		C918DC4F0DD9F1D100167E99 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9C872120DD7756600A9793F /* AGL.framework */; };
@@ -136,7 +125,7 @@
 		C918E1180DD9FFB900167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918E1320DDA117700167E99 /* tabs.fl in Resources */ = {isa = PBXBuildFile; fileRef = C918E1310DDA117700167E99 /* tabs.fl */; };
 		C918E1390DDA11AF00167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
-		C918E1420DDA11BA00167E99 /* table.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918E1410DDA11BA00167E99 /* table.cxx */; };
+		C918E1420DDA11BA00167E99 /* tabs.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918E1410DDA11BA00167E99 /* tabs.cxx */; };
 		C918E15C0DDA11FE00167E99 /* threads.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918E15B0DDA11FE00167E99 /* threads.cxx */; };
 		C918E1630DDA120800167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918E17C0DDA124500167E99 /* tile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918E17B0DDA124500167E99 /* tile.cxx */; };
@@ -324,7 +313,7 @@
 		C9A3ED5C0DD63E4C00486E4F /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3ED5B0DD63E4C00486E4F /* CoreAudio.framework */; };
 		C9A3ED750DD63E9B00486E4F /* boxtype.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3ED740DD63E9B00486E4F /* boxtype.cxx */; };
 		C9A3ED770DD63EAB00486E4F /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
-		C9A3ED900DD63EFF00486E4F /* browser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3ED8F0DD63EFF00486E4F /* browser.cxx */; };
+		C9A3ED900DD63EFF00486E4F /* browser.cxx in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3ED8F0DD63EFF00486E4F /* browser.cxx */; };
 		C9A3ED920DD63F0D00486E4F /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C9A3EDB70DD6459800486E4F /* button.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3EDB60DD6459800486E4F /* button.cxx */; };
 		C9A3EDB90DD645A500486E4F /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
@@ -342,6 +331,18 @@
 		C9A3EE290DD6482000486E4F /* forms_timer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3EB120DD634CC00486E4F /* forms_timer.cxx */; };
 		C9A3EE2D0DD6485000486E4F /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C9A3EE300DD6485F00486E4F /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */; };
+		C9B4E27D10CC25EE00DA2F05 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		C9B4E27F10CC25EE00DA2F05 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		C9B4E2B010CC273400DA2F05 /* Fl_Table_Row.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2AA10CC273400DA2F05 /* Fl_Table_Row.cxx */; };
+		C9B4E2B110CC273400DA2F05 /* Fl_Table.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2AB10CC273400DA2F05 /* Fl_Table.cxx */; };
+		C9B4E2B210CC273400DA2F05 /* Fl_Tree_Item_Array.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2AC10CC273400DA2F05 /* Fl_Tree_Item_Array.cxx */; };
+		C9B4E2B310CC273400DA2F05 /* Fl_Tree_Item.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2AD10CC273400DA2F05 /* Fl_Tree_Item.cxx */; };
+		C9B4E2B410CC273400DA2F05 /* Fl_Tree_Prefs.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2AE10CC273400DA2F05 /* Fl_Tree_Prefs.cxx */; };
+		C9B4E2B510CC273400DA2F05 /* Fl_Tree.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2AF10CC273400DA2F05 /* Fl_Tree.cxx */; };
+		C9B4E2C610CC275F00DA2F05 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		C9B4E2C810CC275F00DA2F05 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		C9B4E2E210CC39E800DA2F05 /* tree.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2E110CC39E800DA2F05 /* tree.cxx */; };
+		C9B4E3F510CC522700DA2F05 /* browser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3ED8F0DD63EFF00486E4F /* browser.cxx */; };
 		C9C870C90DD7724200A9793F /* color_chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9C870C80DD7724200A9793F /* color_chooser.cxx */; };
 		C9C870CC0DD7724C00A9793F /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C9C871F30DD7740800A9793F /* cube.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9C871F20DD7740800A9793F /* cube.cxx */; };
@@ -574,30 +575,6 @@
 			);
 			script = "cp -f ${INPUT_FILE_DIR}../../test/demo.menu ${TARGET_BUILD_DIR}";
 		};
-		C904DE7E10AEDD3700266003 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.fl";
-			fileType = pattern.proxy;
-			isEditable = 1;
-			outputFiles = (
-				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
-				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
-			);
-			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
-		};
-		C904DF3510AEFF4A00266003 /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.fl";
-			fileType = pattern.proxy;
-			isEditable = 1;
-			outputFiles = (
-				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
-				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
-			);
-			script = "export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
-		};
 		C918DB780DD9EF6800167E99 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
@@ -734,34 +711,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
 			remoteInfo = fltk;
-		};
-		C904DE7510AEDD3700266003 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
-			remoteInfo = fltk;
-		};
-		C904DEB810AEE0BD00266003 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C904DE7110AEDD3700266003;
-			remoteInfo = table;
-		};
-		C904DF2D10AEFF4A00266003 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
-			remoteInfo = fltk;
-		};
-		C904DF4A10AEFFB900266003 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C904DF2B10AEFF4A00266003;
-			remoteInfo = tree;
 		};
 		C918DB3D0DD9EE4600167E99 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1778,6 +1727,34 @@
 			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
 			remoteInfo = fltk;
 		};
+		C9B4E27810CC25EE00DA2F05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
+			remoteInfo = fltk;
+		};
+		C9B4E2C110CC275F00DA2F05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
+			remoteInfo = fltk;
+		};
+		C9B4E2EF10CC3B9200DA2F05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9B4E2BF10CC275F00DA2F05;
+			remoteInfo = tree;
+		};
+		C9B4E2F110CC3B9200DA2F05 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9B4E27610CC25EE00DA2F05;
+			remoteInfo = table;
+		};
 		C9C870D50DD772AA00A9793F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
@@ -1991,26 +1968,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		C904DE7C10AEDD3700266003 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				C904DE7D10AEDD3700266003 /* fltk.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C904DF3310AEFF4A00266003 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				C904DF3410AEFF4A00266003 /* fltk.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C94A76BC0E76D4A800AAA38E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2018,6 +1975,36 @@
 			dstSubfolderSpec = 7;
 			files = (
 				C94A76BD0E76D52C00AAA38E /* demo.menu in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B4E27E10CC25EE00DA2F05 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C9B4E27F10CC25EE00DA2F05 /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B4E2C710CC275F00DA2F05 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C9B4E2C810CC275F00DA2F05 /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B4E3F710CC523600DA2F05 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				C9A3ED900DD63EFF00486E4F /* browser.cxx in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2289,6 +2276,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				C918DC4A0DD9F1C000167E99 /* fltk_gl.framework in CopyFiles */,
 				C9FF1E380E7C4193001149A6 /* fltk_forms.framework in CopyFiles */,
 				C9FF1E390E7C4193001149A6 /* fltk.framework in CopyFiles */,
 			);
@@ -2705,17 +2693,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		C904DE6C10AEDD2A00266003 /* Fl_Table_Row.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Table_Row.cxx; path = ../../src/Fl_Table_Row.cxx; sourceTree = SOURCE_ROOT; };
-		C904DE6D10AEDD2A00266003 /* Fl_Table.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Table.cxx; path = ../../src/Fl_Table.cxx; sourceTree = SOURCE_ROOT; };
-		C904DE8210AEDD3700266003 /* table.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = table.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C904DE8F10AEDD3800266003 /* tabs-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "tabs-Info copy.plist"; path = "plists/tabs-Info copy.plist"; sourceTree = "<group>"; };
-		C904DF2210AEFF3E00266003 /* Fl_Tree_Item_Array.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree_Item_Array.cxx; path = ../../src/Fl_Tree_Item_Array.cxx; sourceTree = SOURCE_ROOT; };
-		C904DF2310AEFF3E00266003 /* Fl_Tree_Item.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree_Item.cxx; path = ../../src/Fl_Tree_Item.cxx; sourceTree = SOURCE_ROOT; };
-		C904DF2410AEFF3E00266003 /* Fl_Tree_Prefs.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree_Prefs.cxx; path = ../../src/Fl_Tree_Prefs.cxx; sourceTree = SOURCE_ROOT; };
-		C904DF2510AEFF3E00266003 /* Fl_Tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree.cxx; path = ../../src/Fl_Tree.cxx; sourceTree = SOURCE_ROOT; };
-		C904DF3910AEFF4A00266003 /* tree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tree.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C904DF4010AEFF4A00266003 /* table-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "table-Info copy.plist"; path = "plists/table-Info copy.plist"; sourceTree = "<group>"; };
-		C904DF5910AF003400266003 /* tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree.cxx; path = ../../test/tree.cxx; sourceTree = SOURCE_ROOT; };
+		7FFE8BBF10C907B600A11F75 /* Fl_cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_cocoa.mm; path = ../../src/Fl_cocoa.mm; sourceTree = SOURCE_ROOT; };
 		C918DB370DD9EE4100167E99 /* editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = editor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C918DB390DD9EE4100167E99 /* editor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "editor-Info.plist"; path = "plists/editor-Info.plist"; sourceTree = "<group>"; };
 		C918DB400DD9EE7500167E99 /* editor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = editor.cxx; path = ../../test/editor.cxx; sourceTree = SOURCE_ROOT; };
@@ -2843,7 +2821,7 @@
 		C918E1260DDA112A00167E99 /* tabs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tabs.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C918E1280DDA112B00167E99 /* tabs-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "tabs-Info.plist"; path = "plists/tabs-Info.plist"; sourceTree = "<group>"; };
 		C918E1310DDA117700167E99 /* tabs.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tabs.fl; path = ../../test/tabs.fl; sourceTree = SOURCE_ROOT; };
-		C918E1410DDA11BA00167E99 /* table.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = table.cxx; path = ../../test/table.cxx; sourceTree = SOURCE_ROOT; };
+		C918E1410DDA11BA00167E99 /* tabs.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tabs.cxx; path = ../../test/tabs.cxx; sourceTree = SOURCE_ROOT; };
 		C918E1520DDA11E400167E99 /* threads.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = threads.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C918E1540DDA11E400167E99 /* threads-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "threads-Info.plist"; path = "plists/threads-Info.plist"; sourceTree = "<group>"; };
 		C918E15B0DDA11FE00167E99 /* threads.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = threads.cxx; path = ../../test/threads.cxx; sourceTree = SOURCE_ROOT; };
@@ -2920,7 +2898,7 @@
 		C9A3EAF10DD634CC00486E4F /* fl_set_fonts_win32.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_set_fonts_win32.cxx; path = ../../src/fl_set_fonts_win32.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EAF20DD634CC00486E4F /* fl_set_fonts_mac.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_set_fonts_mac.cxx; path = ../../src/fl_set_fonts_mac.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EAF30DD634CC00486E4F /* fl_set_fonts.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_set_fonts.cxx; path = ../../src/fl_set_fonts.cxx; sourceTree = SOURCE_ROOT; };
-		C9A3EAF40DD634CC00486E4F /* Fl_Window_fullscreen.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Window_fullscreen.cxx; path = ../../src/Fl_Window_fullscreen.cxx; sourceTree = SOURCE_ROOT; };
+		C9A3EAF40DD634CC00486E4F /* Fl_Window_fullscreen.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Fl_Window_fullscreen.cxx; path = ../../src/Fl_Window_fullscreen.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EAF50DD634CC00486E4F /* Fl_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Window.cxx; path = ../../src/Fl_Window.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EAF60DD634CC00486E4F /* Fl_win32.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_win32.cxx; path = ../../src/Fl_win32.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EAF70DD634CC00486E4F /* Fl_Widget.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Widget.cxx; path = ../../src/Fl_Widget.cxx; sourceTree = SOURCE_ROOT; };
@@ -2943,7 +2921,7 @@
 		C9A3EB080DD634CC00486E4F /* flstring.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = flstring.c; path = ../../src/flstring.c; sourceTree = SOURCE_ROOT; };
 		C9A3EB090DD634CC00486E4F /* Fl_PNG_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_PNG_Image.cxx; path = ../../src/Fl_PNG_Image.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB0A0DD634CC00486E4F /* Fl_grab.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_grab.cxx; path = ../../src/Fl_grab.cxx; sourceTree = SOURCE_ROOT; };
-		C9A3EB0B0DD634CC00486E4F /* Fl_Gl_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Window.cxx; path = ../../src/Fl_Gl_Window.cxx; sourceTree = SOURCE_ROOT; };
+		C9A3EB0B0DD634CC00486E4F /* Fl_Gl_Window.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Fl_Gl_Window.cxx; path = ../../src/Fl_Gl_Window.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB0C0DD634CC00486E4F /* Fl_arg.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_arg.cxx; path = ../../src/Fl_arg.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB0D0DD634CC00486E4F /* cmap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cmap.cxx; path = ../../src/cmap.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB0E0DD634CC00486E4F /* Fl_XPM_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_XPM_Image.cxx; path = ../../src/Fl_XPM_Image.cxx; sourceTree = SOURCE_ROOT; };
@@ -2967,7 +2945,7 @@
 		C9A3EB200DD634CC00486E4F /* freeglut_stroke_mono_roman.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = freeglut_stroke_mono_roman.cxx; path = ../../src/freeglut_stroke_mono_roman.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB210DD634CC00486E4F /* Fl_Multi_Label.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Multi_Label.cxx; path = ../../src/Fl_Multi_Label.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB220DD634CC00486E4F /* Fl_Menu_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu_Window.cxx; path = ../../src/Fl_Menu_Window.cxx; sourceTree = SOURCE_ROOT; };
-		C9A3EB230DD634CC00486E4F /* Fl.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl.cxx; path = ../../src/Fl.cxx; sourceTree = SOURCE_ROOT; };
+		C9A3EB230DD634CC00486E4F /* Fl.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Fl.cxx; path = ../../src/Fl.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB240DD634CC00486E4F /* Fl_Dial.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Dial.cxx; path = ../../src/Fl_Dial.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB250DD634CC00486E4F /* fl_curve.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_curve.cxx; path = ../../src/fl_curve.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB260DD634CC00486E4F /* Fl_Menu_global.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu_global.cxx; path = ../../src/Fl_Menu_global.cxx; sourceTree = SOURCE_ROOT; };
@@ -3043,7 +3021,7 @@
 		C9A3EB6C0DD634CC00486E4F /* glut_font.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glut_font.cxx; path = ../../src/glut_font.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB6D0DD634CC00486E4F /* glut_compatability.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glut_compatability.cxx; path = ../../src/glut_compatability.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB6E0DD634CC00486E4F /* gl_start.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gl_start.cxx; path = ../../src/gl_start.cxx; sourceTree = SOURCE_ROOT; };
-		C9A3EB6F0DD634CC00486E4F /* gl_draw.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gl_draw.cxx; path = ../../src/gl_draw.cxx; sourceTree = SOURCE_ROOT; };
+		C9A3EB6F0DD634CC00486E4F /* gl_draw.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = gl_draw.cxx; path = ../../src/gl_draw.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EB700DD634CC00486E4F /* scandir.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = scandir.c; path = ../../src/scandir.c; sourceTree = SOURCE_ROOT; };
 		C9A3EB710DD634CC00486E4F /* numericsort.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = numericsort.c; path = ../../src/numericsort.c; sourceTree = SOURCE_ROOT; };
 		C9A3EB720DD634CC00486E4F /* Fl_Box.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Box.cxx; path = ../../src/Fl_Box.cxx; sourceTree = SOURCE_ROOT; };
@@ -3120,6 +3098,18 @@
 		C9A3EE180DD646F100486E4F /* colbrowser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colbrowser.cxx; path = ../../test/colbrowser.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EE780DD64AE700486E4F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		C9A3EE790DD64B0200486E4F /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
+		C9B4E28510CC25EE00DA2F05 /* tabs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tabs.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9B4E28710CC25EF00DA2F05 /* symbols-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "symbols-Info copy.plist"; path = "plists/symbols-Info copy.plist"; sourceTree = "<group>"; };
+		C9B4E2A610CC26EC00DA2F05 /* table.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = table.cxx; path = ../../test/table.cxx; sourceTree = SOURCE_ROOT; };
+		C9B4E2AA10CC273400DA2F05 /* Fl_Table_Row.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Table_Row.cxx; path = ../../src/Fl_Table_Row.cxx; sourceTree = SOURCE_ROOT; };
+		C9B4E2AB10CC273400DA2F05 /* Fl_Table.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Table.cxx; path = ../../src/Fl_Table.cxx; sourceTree = SOURCE_ROOT; };
+		C9B4E2AC10CC273400DA2F05 /* Fl_Tree_Item_Array.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree_Item_Array.cxx; path = ../../src/Fl_Tree_Item_Array.cxx; sourceTree = SOURCE_ROOT; };
+		C9B4E2AD10CC273400DA2F05 /* Fl_Tree_Item.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree_Item.cxx; path = ../../src/Fl_Tree_Item.cxx; sourceTree = SOURCE_ROOT; };
+		C9B4E2AE10CC273400DA2F05 /* Fl_Tree_Prefs.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree_Prefs.cxx; path = ../../src/Fl_Tree_Prefs.cxx; sourceTree = SOURCE_ROOT; };
+		C9B4E2AF10CC273400DA2F05 /* Fl_Tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree.cxx; path = ../../src/Fl_Tree.cxx; sourceTree = SOURCE_ROOT; };
+		C9B4E2CE10CC275F00DA2F05 /* tree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tree.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9B4E2D510CC276000DA2F05 /* tabs-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "tabs-Info copy.plist"; path = "plists/tabs-Info copy.plist"; sourceTree = "<group>"; };
+		C9B4E2E110CC39E800DA2F05 /* tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree.cxx; path = ../../test/tree.cxx; sourceTree = SOURCE_ROOT; };
 		C9C870BE0DD7721700A9793F /* color_chooser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = color_chooser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9C870C00DD7721700A9793F /* color_chooser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "color_chooser-Info.plist"; path = "plists/color_chooser-Info.plist"; sourceTree = "<group>"; };
 		C9C870C80DD7724200A9793F /* color_chooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color_chooser.cxx; path = ../../test/color_chooser.cxx; sourceTree = SOURCE_ROOT; };
@@ -3216,22 +3206,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		C904DE7A10AEDD3700266003 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C904DE7B10AEDD3700266003 /* fltk.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C904DF3110AEFF4A00266003 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C904DF3210AEFF4A00266003 /* fltk.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C918DB350DD9EE4100167E99 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3280,7 +3254,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C918DC4A0DD9F1C000167E99 /* fltk_gl.framework in Frameworks */,
+				7FC9BFFE10AA191B00646185 /* fltk_gl.framework in Frameworks */,
 				C918DC4C0DD9F1C300167E99 /* fltk.framework in Frameworks */,
 				C918DC4E0DD9F1D000167E99 /* OpenGL.framework in Frameworks */,
 				C918DC4F0DD9F1D100167E99 /* AGL.framework in Frameworks */,
@@ -3810,6 +3784,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C9B4E27C10CC25EE00DA2F05 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9B4E27D10CC25EE00DA2F05 /* fltk.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B4E2C510CC275F00DA2F05 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9B4E2C610CC275F00DA2F05 /* fltk.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C9C870BC0DD7721700A9793F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3877,7 +3867,6 @@
 				C9DD58060DD7834400A896B4 /* libs */,
 				C9A3E9520DD6336500486E4F /* Products */,
 				C9A3EE790DD64B0200486E4F /* TODO */,
-				C904DF4010AEFF4A00266003 /* table-Info copy.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3955,8 +3944,8 @@
 				C94A76DA0E77F59F00AAA38E /* utf8.app */,
 				C99E1EAE0E78628600AECCF6 /* curve.app */,
 				C9EAC2DC0E786725004F64F7 /* colbrowser.app */,
-				C904DE8210AEDD3700266003 /* table.app */,
-				C904DF3910AEFF4A00266003 /* tree.app */,
+				C9B4E28510CC25EE00DA2F05 /* tabs.app */,
+				C9B4E2CE10CC275F00DA2F05 /* tree.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4035,7 +4024,8 @@
 				C9A3E9610DD633C300486E4F /* hello-Info.plist */,
 				C9A3E9530DD6336500486E4F /* fltk-Info.plist */,
 				C94A76DD0E77F5A800AAA38E /* symbols-Info copy.plist */,
-				C904DE8F10AEDD3800266003 /* tabs-Info copy.plist */,
+				C9B4E28710CC25EF00DA2F05 /* symbols-Info copy.plist */,
+				C9B4E2D510CC276000DA2F05 /* tabs-Info copy.plist */,
 			);
 			name = plists;
 			sourceTree = "<group>";
@@ -4043,12 +4033,13 @@
 		C9A3E9590DD6338B00486E4F /* Library Sources */ = {
 			isa = PBXGroup;
 			children = (
-				C904DF2210AEFF3E00266003 /* Fl_Tree_Item_Array.cxx */,
-				C904DF2310AEFF3E00266003 /* Fl_Tree_Item.cxx */,
-				C904DF2410AEFF3E00266003 /* Fl_Tree_Prefs.cxx */,
-				C904DF2510AEFF3E00266003 /* Fl_Tree.cxx */,
-				C904DE6C10AEDD2A00266003 /* Fl_Table_Row.cxx */,
-				C904DE6D10AEDD2A00266003 /* Fl_Table.cxx */,
+				C9B4E2AA10CC273400DA2F05 /* Fl_Table_Row.cxx */,
+				C9B4E2AB10CC273400DA2F05 /* Fl_Table.cxx */,
+				C9B4E2AC10CC273400DA2F05 /* Fl_Tree_Item_Array.cxx */,
+				C9B4E2AD10CC273400DA2F05 /* Fl_Tree_Item.cxx */,
+				C9B4E2AE10CC273400DA2F05 /* Fl_Tree_Prefs.cxx */,
+				C9B4E2AF10CC273400DA2F05 /* Fl_Tree.cxx */,
+				7FFE8BBF10C907B600A11F75 /* Fl_cocoa.mm */,
 				C9A3EAD80DD634CC00486E4F /* Fl_get_key_mac.cxx */,
 				C9A3EAD70DD634CC00486E4F /* Fl_get_key_win32.cxx */,
 				C9A3EAD60DD634CC00486E4F /* Fl_get_system_colors.cxx */,
@@ -4243,12 +4234,11 @@
 		C9A3E95A0DD6339500486E4F /* Test Sources */ = {
 			isa = PBXGroup;
 			children = (
-				C94A76E40E77F66200AAA38E /* utf8.cxx */,
-				C9A3EDB60DD6459800486E4F /* button.cxx */,
 				C9A3ECAA0DD63A9E00486E4F /* adjuster.cxx */,
 				C9A3ED090DD63CC900486E4F /* arc.cxx */,
 				C9A3ED210DD63D4C00486E4F /* ask.cxx */,
 				C9A3ED3A0DD63D9E00486E4F /* bitmap.cxx */,
+				C9A3EDB60DD6459800486E4F /* button.cxx */,
 				C9A3ED540DD63DEF00486E4F /* blocks.cxx */,
 				C9A3ED740DD63E9B00486E4F /* boxtype.cxx */,
 				C9A3ED8F0DD63EFF00486E4F /* browser.cxx */,
@@ -4316,12 +4306,14 @@
 				C918E0C20DD9FEAC00167E99 /* subwindow.cxx */,
 				C918E0E10DD9FF2C00167E99 /* sudoku.cxx */,
 				C918E1100DD9FFAD00167E99 /* symbols.cxx */,
+				C9B4E2A610CC26EC00DA2F05 /* table.cxx */,
 				C918E1310DDA117700167E99 /* tabs.fl */,
-				C918E1410DDA11BA00167E99 /* table.cxx */,
+				C918E1410DDA11BA00167E99 /* tabs.cxx */,
 				C918E15B0DDA11FE00167E99 /* threads.cxx */,
 				C918E17B0DDA124500167E99 /* tile.cxx */,
 				C918E1A10DDA128900167E99 /* tiled_image.cxx */,
-				C904DF5910AF003400266003 /* tree.cxx */,
+				C9B4E2E110CC39E800DA2F05 /* tree.cxx */,
+				C94A76E40E77F66200AAA38E /* utf8.cxx */,
 				C918E1CB0DDA132100167E99 /* valuators.fl */,
 				C918E1DA0DDA133400167E99 /* valuators.cxx */,
 			);
@@ -4496,46 +4488,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		C904DE7110AEDD3700266003 /* table */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C904DE7F10AEDD3700266003 /* Build configuration list for PBXNativeTarget "table" */;
-			buildPhases = (
-				C904DE7610AEDD3700266003 /* Resources */,
-				C904DE7810AEDD3700266003 /* Sources */,
-				C904DE7A10AEDD3700266003 /* Frameworks */,
-				C904DE7C10AEDD3700266003 /* CopyFiles */,
-			);
-			buildRules = (
-				C904DE7E10AEDD3700266003 /* PBXBuildRule */,
-			);
-			dependencies = (
-				C904DE7410AEDD3700266003 /* PBXTargetDependency */,
-			);
-			name = table;
-			productName = tabs;
-			productReference = C904DE8210AEDD3700266003 /* table.app */;
-			productType = "com.apple.product-type.application";
-		};
-		C904DF2B10AEFF4A00266003 /* tree */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C904DF3610AEFF4A00266003 /* Build configuration list for PBXNativeTarget "tree" */;
-			buildPhases = (
-				C904DF2E10AEFF4A00266003 /* Resources */,
-				C904DF2F10AEFF4A00266003 /* Sources */,
-				C904DF3110AEFF4A00266003 /* Frameworks */,
-				C904DF3310AEFF4A00266003 /* CopyFiles */,
-			);
-			buildRules = (
-				C904DF3510AEFF4A00266003 /* PBXBuildRule */,
-			);
-			dependencies = (
-				C904DF2C10AEFF4A00266003 /* PBXTargetDependency */,
-			);
-			name = tree;
-			productName = tabs;
-			productReference = C904DF3910AEFF4A00266003 /* tree.app */;
-			productType = "com.apple.product-type.application";
-		};
 		C918DB360DD9EE4100167E99 /* editor */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C918DB3C0DD9EE4100167E99 /* Build configuration list for PBXNativeTarget "editor" */;
@@ -5506,12 +5458,12 @@
 				C918E2300DDA13BC00167E99 /* PBXTargetDependency */,
 				C918E2320DDA13BC00167E99 /* PBXTargetDependency */,
 				C918E2340DDA13BC00167E99 /* PBXTargetDependency */,
-				C904DEB910AEE0BD00266003 /* PBXTargetDependency */,
 				C918E2360DDA13BC00167E99 /* PBXTargetDependency */,
+				C9B4E2F210CC3B9200DA2F05 /* PBXTargetDependency */,
+				C9B4E2F010CC3B9200DA2F05 /* PBXTargetDependency */,
 				C918E2380DDA13BC00167E99 /* PBXTargetDependency */,
 				C918E23A0DDA13BC00167E99 /* PBXTargetDependency */,
 				C918E23C0DDA13BC00167E99 /* PBXTargetDependency */,
-				C904DF4B10AEFFB900266003 /* PBXTargetDependency */,
 				C9EAC41F0E78730F004F64F7 /* PBXTargetDependency */,
 				C918E23E0DDA13BC00167E99 /* PBXTargetDependency */,
 				C9FF1F9B0E7C48EE001149A6 /* PBXTargetDependency */,
@@ -5836,6 +5788,7 @@
 				C9A3ED820DD63EDC00486E4F /* Sources */,
 				C9A3ED830DD63EDC00486E4F /* Frameworks */,
 				C9EAC46B0E78765E004F64F7 /* CopyFiles */,
+				C9B4E3F710CC523600DA2F05 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -5921,6 +5874,44 @@
 			name = clock;
 			productName = clock;
 			productReference = C9A3EDF90DD6467E00486E4F /* clock.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C9B4E27610CC25EE00DA2F05 /* table */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9B4E28010CC25EE00DA2F05 /* Build configuration list for PBXNativeTarget "table" */;
+			buildPhases = (
+				C9B4E27910CC25EE00DA2F05 /* Resources */,
+				C9B4E27A10CC25EE00DA2F05 /* Sources */,
+				C9B4E27C10CC25EE00DA2F05 /* Frameworks */,
+				C9B4E27E10CC25EE00DA2F05 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9B4E27710CC25EE00DA2F05 /* PBXTargetDependency */,
+			);
+			name = table;
+			productName = symbols;
+			productReference = C9B4E28510CC25EE00DA2F05 /* tabs.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C9B4E2BF10CC275F00DA2F05 /* tree */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9B4E2C910CC275F00DA2F05 /* Build configuration list for PBXNativeTarget "tree" */;
+			buildPhases = (
+				C9B4E2C210CC275F00DA2F05 /* Resources */,
+				C9B4E2C310CC275F00DA2F05 /* Sources */,
+				C9B4E2C510CC275F00DA2F05 /* Frameworks */,
+				C9B4E2C710CC275F00DA2F05 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C9B4E2C010CC275F00DA2F05 /* PBXTargetDependency */,
+			);
+			name = tree;
+			productName = symbols;
+			productReference = C9B4E2CE10CC275F00DA2F05 /* tree.app */;
 			productType = "com.apple.product-type.application";
 		};
 		C9C870BD0DD7721700A9793F /* color_chooser */ = {
@@ -6083,12 +6074,12 @@
 				C918E0B80DD9FE9500167E99 /* subwindow */,
 				C918E0D70DD9FED700167E99 /* sudoku */,
 				C918E1060DD9FF9300167E99 /* symbols */,
-				C904DE7110AEDD3700266003 /* table */,
+				C9B4E27610CC25EE00DA2F05 /* table */,
 				C918E1250DDA112A00167E99 /* tabs */,
 				C918E1510DDA11E400167E99 /* threads */,
 				C918E1710DDA122D00167E99 /* tile */,
 				C918E1910DDA126E00167E99 /* tiled_image */,
-				C904DF2B10AEFF4A00266003 /* tree */,
+				C9B4E2BF10CC275F00DA2F05 /* tree */,
 				C94A76CF0E77F59E00AAA38E /* utf8 */,
 				C918E1BD0DDA12CF00167E99 /* valuators */,
 			);
@@ -6096,20 +6087,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		C904DE7610AEDD3700266003 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C904DF2E10AEFF4A00266003 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C918DB330DD9EE4100167E99 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6582,6 +6559,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C9B4E27910CC25EE00DA2F05 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B4E2C210CC275F00DA2F05 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C9C870BA0DD7721700A9793F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6621,22 +6612,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C904DE7810AEDD3700266003 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C904DE7910AEDD3700266003 /* table.cxx in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C904DF2F10AEFF4A00266003 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C904DF5A10AF003400266003 /* tree.cxx in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C918DB340DD9EE4100167E99 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6948,7 +6923,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C918E1420DDA11BA00167E99 /* table.cxx in Sources */,
+				C918E1420DDA11BA00167E99 /* tabs.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7177,12 +7152,12 @@
 				C99E1E9B0E78620B00AECCF6 /* case.c in Sources */,
 				C99E1E9C0E78620B00AECCF6 /* is_right2left.c in Sources */,
 				C99E1E9D0E78620B00AECCF6 /* is_spacing.c in Sources */,
-				C904DE6E10AEDD2A00266003 /* Fl_Table_Row.cxx in Sources */,
-				C904DE6F10AEDD2A00266003 /* Fl_Table.cxx in Sources */,
-				C904DF2610AEFF3E00266003 /* Fl_Tree_Item_Array.cxx in Sources */,
-				C904DF2710AEFF3E00266003 /* Fl_Tree_Item.cxx in Sources */,
-				C904DF2810AEFF3E00266003 /* Fl_Tree_Prefs.cxx in Sources */,
-				C904DF2910AEFF3E00266003 /* Fl_Tree.cxx in Sources */,
+				C9B4E2B010CC273400DA2F05 /* Fl_Table_Row.cxx in Sources */,
+				C9B4E2B110CC273400DA2F05 /* Fl_Table.cxx in Sources */,
+				C9B4E2B210CC273400DA2F05 /* Fl_Tree_Item_Array.cxx in Sources */,
+				C9B4E2B310CC273400DA2F05 /* Fl_Tree_Item.cxx in Sources */,
+				C9B4E2B410CC273400DA2F05 /* Fl_Tree_Prefs.cxx in Sources */,
+				C9B4E2B510CC273400DA2F05 /* Fl_Tree.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7366,7 +7341,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9A3ED900DD63EFF00486E4F /* browser.cxx in Sources */,
+				C9B4E3F510CC522700DA2F05 /* browser.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7399,6 +7374,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9A3EE010DD6469C00486E4F /* clock.cxx in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B4E27A10CC25EE00DA2F05 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9B4E2C310CC275F00DA2F05 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9B4E2E210CC39E800DA2F05 /* tree.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7464,26 +7454,6 @@
 			isa = PBXTargetDependency;
 			target = C9A3E9500DD6336500486E4F /* fltk */;
 			targetProxy = 01FBE4930E630405009E95B1 /* PBXContainerItemProxy */;
-		};
-		C904DE7410AEDD3700266003 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9A3E9500DD6336500486E4F /* fltk */;
-			targetProxy = C904DE7510AEDD3700266003 /* PBXContainerItemProxy */;
-		};
-		C904DEB910AEE0BD00266003 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C904DE7110AEDD3700266003 /* table */;
-			targetProxy = C904DEB810AEE0BD00266003 /* PBXContainerItemProxy */;
-		};
-		C904DF2C10AEFF4A00266003 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9A3E9500DD6336500486E4F /* fltk */;
-			targetProxy = C904DF2D10AEFF4A00266003 /* PBXContainerItemProxy */;
-		};
-		C904DF4B10AEFFB900266003 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C904DF2B10AEFF4A00266003 /* tree */;
-			targetProxy = C904DF4A10AEFFB900266003 /* PBXContainerItemProxy */;
 		};
 		C918DB3E0DD9EE4600167E99 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8210,6 +8180,26 @@
 			target = C9A3E9500DD6336500486E4F /* fltk */;
 			targetProxy = C9A3EE630DD64A5100486E4F /* PBXContainerItemProxy */;
 		};
+		C9B4E27710CC25EE00DA2F05 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9A3E9500DD6336500486E4F /* fltk */;
+			targetProxy = C9B4E27810CC25EE00DA2F05 /* PBXContainerItemProxy */;
+		};
+		C9B4E2C010CC275F00DA2F05 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9A3E9500DD6336500486E4F /* fltk */;
+			targetProxy = C9B4E2C110CC275F00DA2F05 /* PBXContainerItemProxy */;
+		};
+		C9B4E2F010CC3B9200DA2F05 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9B4E2BF10CC275F00DA2F05 /* tree */;
+			targetProxy = C9B4E2EF10CC3B9200DA2F05 /* PBXContainerItemProxy */;
+		};
+		C9B4E2F210CC3B9200DA2F05 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9B4E27610CC25EE00DA2F05 /* table */;
+			targetProxy = C9B4E2F110CC3B9200DA2F05 /* PBXContainerItemProxy */;
+		};
 		C9C870D60DD772AA00A9793F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C9A3E9500DD6336500486E4F /* fltk */;
@@ -8363,7 +8353,285 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		C904DE8010AEDD3700266003 /* Debug */ = {
+		7F31A7DA10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = ppc;
+				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_TRIGRAPHS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PFE_FILE_C_DIALECTS = "c c++";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SDKROOT)/System/Library/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.3.9.sdk";
+				USER_HEADER_SEARCH_PATHS = ../../jpeg;
+				WARNING_CFLAGS = "";
+			};
+			name = DebugPPC;
+		};
+		7F31A7DB10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1.3;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/Demo-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Demo;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7DC10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3/,
+					../../,
+					../../png,
+				);
+				INFOPLIST_FILE = "plists/Fluid-Info.plist";
+				INSTALL_PATH = /Applications;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Fluid;
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7DD10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj";
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PFE_FILE_C_DIALECTS = "c c++ objective-c++";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3/,
+					../../,
+				);
+				INFOPLIST_FILE = "plists/fltk-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+					"-framework",
+					Cocoa,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk;
+				USER_HEADER_SEARCH_PATHS = "";
+				WARNING_CFLAGS = "-Wno-format-nonliteral";
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7DE10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3,
+					../../,
+				);
+				INFOPLIST_FILE = "plists/fltk_forms-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_forms;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7DF10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3,
+					../../,
+					../../png/,
+				);
+				INFOPLIST_FILE = "plists/fltk_images-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_images;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7E010C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../,
+					"\"$(SRCROOT)/../../../CocoaGL\"",
+				);
+				INFOPLIST_FILE = "plists/fltk_gl-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_gl;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7E110C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3,
+					../../,
+					../../png/,
+				);
+				INFOPLIST_FILE = "plists/fltk_png-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_png;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7E210C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INFOPLIST_FILE = "plists/fltk_jpeg-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_jpeg;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7E310C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/adjuster-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = adjuster;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7E410C2AF6400AD8587 /* DebugPPC */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -8374,43 +8642,44 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "plists/table-Info.plist";
+				INFOPLIST_FILE = "plists/arc-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = table;
+				PRODUCT_NAME = arc;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
-			name = Debug;
+			name = DebugPPC;
 		};
-		C904DE8110AEDD3700266003 /* Release */ = {
+		7F31A7E510C2AF6400AD8587 /* DebugPPC */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "plists/table-Info.plist";
+				HEADER_SEARCH_PATHS = ../..;
+				INFOPLIST_FILE = "plists/ask-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = table;
+				PRODUCT_NAME = ask;
 				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
+				ZERO_LINK = YES;
 			};
-			name = Release;
+			name = DebugPPC;
 		};
-		C904DF3710AEFF4A00266003 /* Debug */ = {
+		7F31A7E610C2AF6400AD8587 /* DebugPPC */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -8421,41 +8690,3208 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "plists/tree-Info.plist";
+				INFOPLIST_FILE = "plists/bitmap-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = tree;
+				PRODUCT_NAME = bitmap;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
-			name = Debug;
+			name = DebugPPC;
 		};
-		C904DF3810AEFF4A00266003 /* Release */ = {
+		7F31A7E710C2AF6400AD8587 /* DebugPPC */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				HEADER_SEARCH_PATHS = ../../;
-				INFOPLIST_FILE = "plists/tree-Info.plist";
+				INFOPLIST_FILE = "plists/blocks-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = tree;
+				PRODUCT_NAME = blocks;
 				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
+				ZERO_LINK = YES;
 			};
-			name = Release;
+			name = DebugPPC;
+		};
+		7F31A7E810C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/boxtype-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = boxtype;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7E910C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/browser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = browser;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7EA10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/button-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = button;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7EB10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/buttons-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = buttons;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7EC10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/checkers-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = checkers;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7ED10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/clock-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = clock;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7EE10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/colbrowser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = colbrowser;
+			};
+			name = DebugPPC;
+		};
+		7F31A7EF10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/color_chooser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = color_chooser;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F010C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/cube-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = cube;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F110C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/CubeView-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = CubeView;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F210C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/cursor-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = cursor;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F310C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/curve-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = curve;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F410C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/doublebuffer-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = doublebuffer;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F510C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/editor-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = editor;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F610C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fast_slow-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fast_slow;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F710C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/file_chooser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = file_chooser;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F810C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fonts-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fonts;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7F910C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/forms-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = forms;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7FA10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fractals-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fractals;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7FB10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fullscreen-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fullscreen;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7FC10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/gl_overlay-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = gl_overlay;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7FD10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/glpuzzle-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = glpuzzle;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7FE10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/hello-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = hello;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A7FF10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/help-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = help;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80010C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/iconize-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = iconize;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80110C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/image-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = image;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80210C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/inactive-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = inactive;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80310C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/input-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = input;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80410C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/input_choice-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = input_choice;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80510C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/keyboard-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = keyboard;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80610C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/label-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = label;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80710C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/line_style-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = line_style;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80810C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/list_visuals-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = list_visuals;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80910C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/mandelbrot-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = mandelbrot;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80A10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/menubar-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = menubar;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80B10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/message-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = message;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80C10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/minimum-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = minimum;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80D10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/navigation-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = navigation;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80E10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/output-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = output;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A80F10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/overlay-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = overlay;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81010C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/pack-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = pack;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81110C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/pixmap_browser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = pixmap_browser;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81210C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/pixmap-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = pixmap;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81310C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/preferences-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = preferences;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81410C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/radio-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = radio;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81510C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/resizebox-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = resizebox;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81610C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/resize-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = resize;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81710C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/scroll-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = scroll;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81810C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/shape-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = shape;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81910C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/subwindow-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = subwindow;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81A10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/sudoku-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = sudoku;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81B10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/symbols-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = symbols;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81C10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tabs-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tabs;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81D10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/threads-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = threads;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81E10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tile-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tile;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A81F10C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tiled_image-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tiled_image;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A82010C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/utf8-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = utf8;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F31A82110C2AF6400AD8587 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/valuators-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = valuators;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		7F600B9710A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PFE_FILE_C_DIALECTS = "c c++";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SDKROOT)/System/Library/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				USER_HEADER_SEARCH_PATHS = ../../jpeg;
+				WARNING_CFLAGS = "";
+			};
+			name = Debug64;
+		};
+		7F600B9810A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1.3;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/Demo-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Demo;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600B9910A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3/,
+					../../,
+					../../png,
+				);
+				INFOPLIST_FILE = "plists/Fluid-Info.plist";
+				INSTALL_PATH = /Applications;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Fluid;
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600B9A10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj";
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PFE_FILE_C_DIALECTS = "c c++ objective-c++";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3.1/,
+					../../,
+				);
+				INFOPLIST_FILE = "plists/fltk-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+					"-framework",
+					Cocoa,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk;
+				USER_HEADER_SEARCH_PATHS = "";
+				WARNING_CFLAGS = "-Wno-format-nonliteral";
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600B9B10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3,
+					../../,
+				);
+				INFOPLIST_FILE = "plists/fltk_forms-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_forms;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600B9C10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3,
+					../../,
+					../../png/,
+				);
+				INFOPLIST_FILE = "plists/fltk_images-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_images;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600B9D10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fltk_gl-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_gl;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600B9E10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = (
+					../../ide/XCode3,
+					../../,
+					../../png/,
+				);
+				INFOPLIST_FILE = "plists/fltk_png-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_png;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600B9F10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INFOPLIST_FILE = "plists/fltk_jpeg-Info.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fltk_jpeg;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA010A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/adjuster-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = adjuster;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA110A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/arc-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = arc;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA210A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../..;
+				INFOPLIST_FILE = "plists/ask-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = ask;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA310A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/bitmap-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = bitmap;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA410A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/blocks-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = blocks;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA510A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/boxtype-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = boxtype;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA610A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/browser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = browser;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA710A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/button-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = button;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA810A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/buttons-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = buttons;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BA910A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/checkers-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = checkers;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BAA10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/clock-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = clock;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BAB10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/colbrowser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = colbrowser;
+			};
+			name = Debug64;
+		};
+		7F600BAC10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/color_chooser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = color_chooser;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BAD10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GENERATE_PROFILING_CODE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					../../,
+				);
+				INFOPLIST_FILE = "plists/cube-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = cube;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug64;
+		};
+		7F600BAE10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/CubeView-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = CubeView;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BAF10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/cursor-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = cursor;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB010A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/curve-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = curve;
+			};
+			name = Debug64;
+		};
+		7F600BB110A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/doublebuffer-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = doublebuffer;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB210A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/editor-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = editor;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB310A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fast_slow-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fast_slow;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB410A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/file_chooser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = file_chooser;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB510A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fonts-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fonts;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB610A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/forms-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = forms;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB710A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fractals-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fractals;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB810A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/fullscreen-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = fullscreen;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BB910A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/gl_overlay-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = gl_overlay;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BBA10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/glpuzzle-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = glpuzzle;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BBB10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/hello-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = hello;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BBC10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/help-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = help;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BBD10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/iconize-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = iconize;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BBE10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/image-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = image;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BBF10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/inactive-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = inactive;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC010A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/input-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = input;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC110A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/input_choice-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = input_choice;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC210A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/keyboard-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = keyboard;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC310A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/label-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = label;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC410A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/line_style-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = line_style;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC510A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/list_visuals-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = list_visuals;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC610A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/mandelbrot-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = mandelbrot;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC710A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/menubar-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = menubar;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC810A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/message-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = message;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BC910A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/minimum-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = minimum;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BCA10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/navigation-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = navigation;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BCB10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/output-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = output;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BCC10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/overlay-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = overlay;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BCD10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/pack-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = pack;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BCE10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/pixmap_browser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = pixmap_browser;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BCF10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/pixmap-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = pixmap;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD010A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/preferences-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = preferences;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD110A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/radio-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = radio;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD210A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/resizebox-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = resizebox;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD310A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/resize-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = resize;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD410A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = x86_64;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/scroll-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = scroll;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD510A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/shape-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = shape;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD610A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/subwindow-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = subwindow;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD710A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/sudoku-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = sudoku;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD810A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/symbols-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = symbols;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BD910A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tabs-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tabs;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BDA10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/threads-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = threads;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BDB10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tile-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tile;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BDC10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tiled_image-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tiled_image;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BDD10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/utf8-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = utf8;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		7F600BDE10A1F88F00E39A6B /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/valuators-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = valuators;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
 		};
 		C918DB3A0DD9EE4100167E99 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -10441,7 +13877,6 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/valuators-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -10465,7 +13900,6 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				GCC_WARN_ABOUT_RETURN_TYPE = NO;
 				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/valuators-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -10773,7 +14207,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_TRIGRAPHS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PFE_FILE_C_DIALECTS = "c c++";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SDKROOT)/System/Library/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				USER_HEADER_SEARCH_PATHS = ../../jpeg;
 				WARNING_CFLAGS = "";
 			};
@@ -10782,8 +14223,16 @@
 		C9A3E93E0DD6332D00486E4F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "ppc i386 ppc64 x86_64";
 				COPY_PHASE_STRIP = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PFE_FILE_C_DIALECTS = "c c++";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SDKROOT)/System/Library/Frameworks/Carbon.framework/Headers/Carbon.h";
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.3;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 				USER_HEADER_SEARCH_PATHS = ../../jpeg;
 				WARNING_CFLAGS = "";
 			};
@@ -10802,8 +14251,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PFE_FILE_C_DIALECTS = "c c++ objective-c++";
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -10813,10 +14261,11 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
+					"-framework",
+					Cocoa,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = fltk;
-				SDKROOT = "";
 				USER_HEADER_SEARCH_PATHS = "";
 				WARNING_CFLAGS = "-Wno-format-nonliteral";
 				ZERO_LINK = YES;
@@ -10835,15 +14284,17 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PFE_FILE_C_DIALECTS = "c c++ objective-c++";
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
 				);
 				INFOPLIST_FILE = "plists/fltk-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
 					"-framework",
 					Carbon,
 				);
@@ -11032,7 +14483,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				HEADER_SEARCH_PATHS = ../../;
+				HEADER_SEARCH_PATHS = (
+					../../,
+					"\"$(SRCROOT)/../../../CocoaGL\"",
+				);
 				INFOPLIST_FILE = "plists/fltk_gl-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
@@ -11701,6 +15155,196 @@
 			};
 			name = Release;
 		};
+		C9B4E28110CC25EE00DA2F05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tabs-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tabs;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C9B4E28210CC25EE00DA2F05 /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tabs-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tabs;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		C9B4E28310CC25EE00DA2F05 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tabs-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tabs;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		C9B4E28410CC25EE00DA2F05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tabs-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tabs;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C9B4E2CA10CC275F00DA2F05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tree-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tree;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		C9B4E2CB10CC275F00DA2F05 /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tree-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tree;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug64;
+		};
+		C9B4E2CC10CC275F00DA2F05 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tree-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tree;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = DebugPPC;
+		};
+		C9B4E2CD10CC275F00DA2F05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				HEADER_SEARCH_PATHS = ../../;
+				INFOPLIST_FILE = "plists/tree-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = tree;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C9C870C10DD7721700A9793F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11903,671 +15547,819 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C904DE7F10AEDD3700266003 /* Build configuration list for PBXNativeTarget "table" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C904DE8010AEDD3700266003 /* Debug */,
-				C904DE8110AEDD3700266003 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C904DF3610AEFF4A00266003 /* Build configuration list for PBXNativeTarget "tree" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C904DF3710AEFF4A00266003 /* Debug */,
-				C904DF3810AEFF4A00266003 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		C918DB3C0DD9EE4100167E99 /* Build configuration list for PBXNativeTarget "editor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DB3A0DD9EE4100167E99 /* Debug */,
+				7F600BB210A1F88F00E39A6B /* Debug64 */,
+				7F31A7F510C2AF6400AD8587 /* DebugPPC */,
 				C918DB3B0DD9EE4100167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DB5C0DD9EEB800167E99 /* Build configuration list for PBXNativeTarget "fast_slow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DB5A0DD9EEB800167E99 /* Debug */,
+				7F600BB310A1F88F00E39A6B /* Debug64 */,
+				7F31A7F610C2AF6400AD8587 /* DebugPPC */,
 				C918DB5B0DD9EEB800167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DBA40DD9EFFB00167E99 /* Build configuration list for PBXNativeTarget "file_chooser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DBA20DD9EFFB00167E99 /* Debug */,
+				7F600BB410A1F88F00E39A6B /* Debug64 */,
+				7F31A7F710C2AF6400AD8587 /* DebugPPC */,
 				C918DBA30DD9EFFB00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DBF00DD9F0C200167E99 /* Build configuration list for PBXNativeTarget "fonts" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DBEE0DD9F0C100167E99 /* Debug */,
+				7F600BB510A1F88F00E39A6B /* Debug64 */,
+				7F31A7F810C2AF6400AD8587 /* DebugPPC */,
 				C918DBEF0DD9F0C100167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DC120DD9F11D00167E99 /* Build configuration list for PBXNativeTarget "forms" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DC100DD9F11C00167E99 /* Debug */,
+				7F600BB610A1F88F00E39A6B /* Debug64 */,
+				7F31A7F910C2AF6400AD8587 /* DebugPPC */,
 				C918DC110DD9F11C00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DC380DD9F19300167E99 /* Build configuration list for PBXNativeTarget "fractals" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DC360DD9F19200167E99 /* Debug */,
+				7F600BB710A1F88F00E39A6B /* Debug64 */,
+				7F31A7FA10C2AF6400AD8587 /* DebugPPC */,
 				C918DC370DD9F19200167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DC6B0DD9F25500167E99 /* Build configuration list for PBXNativeTarget "fullscreen" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DC690DD9F25500167E99 /* Debug */,
+				7F600BB810A1F88F00E39A6B /* Debug64 */,
+				7F31A7FB10C2AF6400AD8587 /* DebugPPC */,
 				C918DC6A0DD9F25500167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DC920DD9F31500167E99 /* Build configuration list for PBXNativeTarget "gl_overlay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DC900DD9F31500167E99 /* Debug */,
+				7F600BB910A1F88F00E39A6B /* Debug64 */,
+				7F31A7FC10C2AF6400AD8587 /* DebugPPC */,
 				C918DC910DD9F31500167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DCB70DD9F36800167E99 /* Build configuration list for PBXNativeTarget "glpuzzle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DCB50DD9F36800167E99 /* Debug */,
+				7F600BBA10A1F88F00E39A6B /* Debug64 */,
+				7F31A7FD10C2AF6400AD8587 /* DebugPPC */,
 				C918DCB60DD9F36800167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DCDF0DD9F3C200167E99 /* Build configuration list for PBXNativeTarget "help" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DCDD0DD9F3C200167E99 /* Debug */,
+				7F600BBC10A1F88F00E39A6B /* Debug64 */,
+				7F31A7FF10C2AF6400AD8587 /* DebugPPC */,
 				C918DCDE0DD9F3C200167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DD0E0DD9F43000167E99 /* Build configuration list for PBXNativeTarget "iconize" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DD0C0DD9F42F00167E99 /* Debug */,
+				7F600BBD10A1F88F00E39A6B /* Debug64 */,
+				7F31A80010C2AF6400AD8587 /* DebugPPC */,
 				C918DD0D0DD9F42F00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DD2D0DD9F47B00167E99 /* Build configuration list for PBXNativeTarget "image" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DD2B0DD9F47A00167E99 /* Debug */,
+				7F600BBE10A1F88F00E39A6B /* Debug64 */,
+				7F31A80110C2AF6400AD8587 /* DebugPPC */,
 				C918DD2C0DD9F47A00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DD610DD9F4EF00167E99 /* Build configuration list for PBXNativeTarget "inactive" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DD5F0DD9F4EF00167E99 /* Debug */,
+				7F600BBF10A1F88F00E39A6B /* Debug64 */,
+				7F31A80210C2AF6400AD8587 /* DebugPPC */,
 				C918DD600DD9F4EF00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DD900DD9F58300167E99 /* Build configuration list for PBXNativeTarget "input" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DD8E0DD9F58200167E99 /* Debug */,
+				7F600BC010A1F88F00E39A6B /* Debug64 */,
+				7F31A80310C2AF6400AD8587 /* DebugPPC */,
 				C918DD8F0DD9F58200167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DDAF0DD9F5D100167E99 /* Build configuration list for PBXNativeTarget "input_choice" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DDAD0DD9F5D100167E99 /* Debug */,
+				7F600BC110A1F88F00E39A6B /* Debug64 */,
+				7F31A80410C2AF6400AD8587 /* DebugPPC */,
 				C918DDAE0DD9F5D100167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DDD00DD9F62200167E99 /* Build configuration list for PBXNativeTarget "keyboard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DDCE0DD9F62200167E99 /* Debug */,
+				7F600BC210A1F88F00E39A6B /* Debug64 */,
+				7F31A80510C2AF6400AD8587 /* DebugPPC */,
 				C918DDCF0DD9F62200167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DE070DD9F70600167E99 /* Build configuration list for PBXNativeTarget "label" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DE050DD9F70600167E99 /* Debug */,
+				7F600BC310A1F88F00E39A6B /* Debug64 */,
+				7F31A80610C2AF6400AD8587 /* DebugPPC */,
 				C918DE060DD9F70600167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DE2C0DD9F75800167E99 /* Build configuration list for PBXNativeTarget "line_style" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DE2A0DD9F75800167E99 /* Debug */,
+				7F600BC410A1F88F00E39A6B /* Debug64 */,
+				7F31A80710C2AF6400AD8587 /* DebugPPC */,
 				C918DE2B0DD9F75800167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DE4B0DD9F7C000167E99 /* Build configuration list for PBXNativeTarget "list_visuals" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DE490DD9F7C000167E99 /* Debug */,
+				7F600BC510A1F88F00E39A6B /* Debug64 */,
+				7F31A80810C2AF6400AD8587 /* DebugPPC */,
 				C918DE4A0DD9F7C000167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DE6B0DD9F80500167E99 /* Build configuration list for PBXNativeTarget "mandelbrot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DE690DD9F80500167E99 /* Debug */,
+				7F600BC610A1F88F00E39A6B /* Debug64 */,
+				7F31A80910C2AF6400AD8587 /* DebugPPC */,
 				C918DE6A0DD9F80500167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DE940DD9F8BA00167E99 /* Build configuration list for PBXNativeTarget "menubar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DE920DD9F8BA00167E99 /* Debug */,
+				7F600BC710A1F88F00E39A6B /* Debug64 */,
+				7F31A80A10C2AF6400AD8587 /* DebugPPC */,
 				C918DE930DD9F8BA00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DEB60DD9F9A000167E99 /* Build configuration list for PBXNativeTarget "message" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DEB40DD9F9A000167E99 /* Debug */,
+				7F600BC810A1F88F00E39A6B /* Debug64 */,
+				7F31A80B10C2AF6400AD8587 /* DebugPPC */,
 				C918DEB50DD9F9A000167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DED50DD9F9F900167E99 /* Build configuration list for PBXNativeTarget "minimum" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DED30DD9F9F900167E99 /* Debug */,
+				7F600BC910A1F88F00E39A6B /* Debug64 */,
+				7F31A80C10C2AF6400AD8587 /* DebugPPC */,
 				C918DED40DD9F9F900167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DEF40DD9FA5000167E99 /* Build configuration list for PBXNativeTarget "navigation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DEF20DD9FA5000167E99 /* Debug */,
+				7F600BCA10A1F88F00E39A6B /* Debug64 */,
+				7F31A80D10C2AF6400AD8587 /* DebugPPC */,
 				C918DEF30DD9FA5000167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DF140DD9FA9200167E99 /* Build configuration list for PBXNativeTarget "output" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DF120DD9FA9200167E99 /* Debug */,
+				7F600BCB10A1F88F00E39A6B /* Debug64 */,
+				7F31A80E10C2AF6400AD8587 /* DebugPPC */,
 				C918DF130DD9FA9200167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DF400DD9FAF900167E99 /* Build configuration list for PBXNativeTarget "overlay" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DF3E0DD9FAF800167E99 /* Debug */,
+				7F600BCC10A1F88F00E39A6B /* Debug64 */,
+				7F31A80F10C2AF6400AD8587 /* DebugPPC */,
 				C918DF3F0DD9FAF800167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DF620DD9FB4800167E99 /* Build configuration list for PBXNativeTarget "pack" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DF600DD9FB4800167E99 /* Debug */,
+				7F600BCD10A1F88F00E39A6B /* Debug64 */,
+				7F31A81010C2AF6400AD8587 /* DebugPPC */,
 				C918DF610DD9FB4800167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DF810DD9FB8E00167E99 /* Build configuration list for PBXNativeTarget "pixmap_browser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DF7F0DD9FB8E00167E99 /* Debug */,
+				7F600BCE10A1F88F00E39A6B /* Debug64 */,
+				7F31A81110C2AF6400AD8587 /* DebugPPC */,
 				C918DF800DD9FB8E00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DFB00DD9FC0000167E99 /* Build configuration list for PBXNativeTarget "pixmap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DFAE0DD9FC0000167E99 /* Debug */,
+				7F600BCF10A1F88F00E39A6B /* Debug64 */,
+				7F31A81210C2AF6400AD8587 /* DebugPPC */,
 				C918DFAF0DD9FC0000167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DFCF0DD9FC4300167E99 /* Build configuration list for PBXNativeTarget "preferences" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DFCD0DD9FC4300167E99 /* Debug */,
+				7F600BD010A1F88F00E39A6B /* Debug64 */,
+				7F31A81310C2AF6400AD8587 /* DebugPPC */,
 				C918DFCE0DD9FC4300167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918DFFC0DD9FCCF00167E99 /* Build configuration list for PBXNativeTarget "radio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918DFFA0DD9FCCF00167E99 /* Debug */,
+				7F600BD110A1F88F00E39A6B /* Debug64 */,
+				7F31A81410C2AF6400AD8587 /* DebugPPC */,
 				C918DFFB0DD9FCCF00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E0280DD9FD4700167E99 /* Build configuration list for PBXNativeTarget "resizebox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E0260DD9FD4700167E99 /* Debug */,
+				7F600BD210A1F88F00E39A6B /* Debug64 */,
+				7F31A81510C2AF6400AD8587 /* DebugPPC */,
 				C918E0270DD9FD4700167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E0470DD9FD8B00167E99 /* Build configuration list for PBXNativeTarget "resize" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E0450DD9FD8B00167E99 /* Debug */,
+				7F600BD310A1F88F00E39A6B /* Debug64 */,
+				7F31A81610C2AF6400AD8587 /* DebugPPC */,
 				C918E0460DD9FD8B00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E0720DD9FE0700167E99 /* Build configuration list for PBXNativeTarget "scroll" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E0700DD9FE0700167E99 /* Debug */,
+				7F600BD410A1F88F00E39A6B /* Debug64 */,
+				7F31A81710C2AF6400AD8587 /* DebugPPC */,
 				C918E0710DD9FE0700167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E0960DD9FE4400167E99 /* Build configuration list for PBXNativeTarget "shape" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E0940DD9FE4400167E99 /* Debug */,
+				7F600BD510A1F88F00E39A6B /* Debug64 */,
+				7F31A81810C2AF6400AD8587 /* DebugPPC */,
 				C918E0950DD9FE4400167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E0BE0DD9FE9600167E99 /* Build configuration list for PBXNativeTarget "subwindow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E0BC0DD9FE9600167E99 /* Debug */,
+				7F600BD610A1F88F00E39A6B /* Debug64 */,
+				7F31A81910C2AF6400AD8587 /* DebugPPC */,
 				C918E0BD0DD9FE9600167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E0DD0DD9FED800167E99 /* Build configuration list for PBXNativeTarget "sudoku" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E0DB0DD9FED800167E99 /* Debug */,
+				7F600BD710A1F88F00E39A6B /* Debug64 */,
+				7F31A81A10C2AF6400AD8587 /* DebugPPC */,
 				C918E0DC0DD9FED800167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E10C0DD9FF9400167E99 /* Build configuration list for PBXNativeTarget "symbols" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E10A0DD9FF9300167E99 /* Debug */,
+				7F600BD810A1F88F00E39A6B /* Debug64 */,
+				7F31A81B10C2AF6400AD8587 /* DebugPPC */,
 				C918E10B0DD9FF9300167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E12B0DDA112C00167E99 /* Build configuration list for PBXNativeTarget "tabs" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E1290DDA112B00167E99 /* Debug */,
+				7F600BD910A1F88F00E39A6B /* Debug64 */,
+				7F31A81C10C2AF6400AD8587 /* DebugPPC */,
 				C918E12A0DDA112B00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E1570DDA11E500167E99 /* Build configuration list for PBXNativeTarget "threads" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E1550DDA11E400167E99 /* Debug */,
+				7F600BDA10A1F88F00E39A6B /* Debug64 */,
+				7F31A81D10C2AF6400AD8587 /* DebugPPC */,
 				C918E1560DDA11E400167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E1770DDA122E00167E99 /* Build configuration list for PBXNativeTarget "tile" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E1750DDA122E00167E99 /* Debug */,
+				7F600BDB10A1F88F00E39A6B /* Debug64 */,
+				7F31A81E10C2AF6400AD8587 /* DebugPPC */,
 				C918E1760DDA122E00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E1970DDA127000167E99 /* Build configuration list for PBXNativeTarget "tiled_image" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E1950DDA126F00167E99 /* Debug */,
+				7F600BDC10A1F88F00E39A6B /* Debug64 */,
+				7F31A81F10C2AF6400AD8587 /* DebugPPC */,
 				C918E1960DDA126F00167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C918E1C30DDA12D000167E99 /* Build configuration list for PBXNativeTarget "valuators" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C918E1C10DDA12D000167E99 /* Debug */,
+				7F600BDE10A1F88F00E39A6B /* Debug64 */,
+				7F31A82110C2AF6400AD8587 /* DebugPPC */,
 				C918E1C20DDA12D000167E99 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C94A76D70E77F59E00AAA38E /* Build configuration list for PBXNativeTarget "utf8" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C94A76D80E77F59E00AAA38E /* Debug */,
+				7F600BDD10A1F88F00E39A6B /* Debug64 */,
+				7F31A82010C2AF6400AD8587 /* DebugPPC */,
 				C94A76D90E77F59E00AAA38E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C977418A0DD9D1910047C1BF /* Build configuration list for PBXNativeTarget "cursor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C97741880DD9D1910047C1BF /* Debug */,
+				7F600BAF10A1F88F00E39A6B /* Debug64 */,
+				7F31A7F210C2AF6400AD8587 /* DebugPPC */,
 				C97741890DD9D1910047C1BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C97742040DD9D33C0047C1BF /* Build configuration list for PBXNativeTarget "Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C97742020DD9D33C0047C1BF /* Debug */,
+				7F600B9810A1F88F00E39A6B /* Debug64 */,
+				7F31A7DB10C2AF6400AD8587 /* DebugPPC */,
 				C97742030DD9D33C0047C1BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C97742620DD9D8110047C1BF /* Build configuration list for PBXNativeTarget "doublebuffer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C97742600DD9D8110047C1BF /* Debug */,
+				7F600BB110A1F88F00E39A6B /* Debug64 */,
+				7F31A7F410C2AF6400AD8587 /* DebugPPC */,
 				C97742610DD9D8110047C1BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C99CF5290DD78B550094BD10 /* Build configuration list for PBXNativeTarget "CubeView" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C99CF5270DD78B550094BD10 /* Debug */,
+				7F600BAE10A1F88F00E39A6B /* Debug64 */,
+				7F31A7F110C2AF6400AD8587 /* DebugPPC */,
 				C99CF5280DD78B550094BD10 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C99E1EB90E78628800AECCF6 /* Build configuration list for PBXNativeTarget "curve" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C99E1EB70E78628800AECCF6 /* Debug */,
+				7F600BB010A1F88F00E39A6B /* Debug64 */,
+				7F31A7F310C2AF6400AD8587 /* DebugPPC */,
 				C99E1EB80E78628800AECCF6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3E93F0DD6332D00486E4F /* Build configuration list for PBXProject "FLTK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3E93D0DD6332D00486E4F /* Debug */,
+				7F600B9710A1F88F00E39A6B /* Debug64 */,
+				7F31A7DA10C2AF6400AD8587 /* DebugPPC */,
 				C9A3E93E0DD6332D00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3E9570DD6336500486E4F /* Build configuration list for PBXNativeTarget "fltk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3E9550DD6336500486E4F /* Debug */,
+				7F600B9A10A1F88F00E39A6B /* Debug64 */,
+				7F31A7DD10C2AF6400AD8587 /* DebugPPC */,
 				C9A3E9560DD6336500486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3E9640DD633C300486E4F /* Build configuration list for PBXNativeTarget "hello" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3E9620DD633C300486E4F /* Debug */,
+				7F600BBB10A1F88F00E39A6B /* Debug64 */,
+				7F31A7FE10C2AF6400AD8587 /* DebugPPC */,
 				C9A3E9630DD633C300486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EC720DD6397400486E4F /* Build configuration list for PBXNativeTarget "fltk_forms" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EC700DD6397400486E4F /* Debug */,
+				7F600B9B10A1F88F00E39A6B /* Debug64 */,
+				7F31A7DE10C2AF6400AD8587 /* DebugPPC */,
 				C9A3EC710DD6397400486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EC7D0DD6398D00486E4F /* Build configuration list for PBXNativeTarget "fltk_images" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EC7B0DD6398D00486E4F /* Debug */,
+				7F600B9C10A1F88F00E39A6B /* Debug64 */,
+				7F31A7DF10C2AF6400AD8587 /* DebugPPC */,
 				C9A3EC7C0DD6398D00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EC880DD639A300486E4F /* Build configuration list for PBXNativeTarget "fltk_gl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EC860DD639A300486E4F /* Debug */,
+				7F600B9D10A1F88F00E39A6B /* Debug64 */,
+				7F31A7E010C2AF6400AD8587 /* DebugPPC */,
 				C9A3EC870DD639A300486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EC930DD639CE00486E4F /* Build configuration list for PBXNativeTarget "fltk_png" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EC910DD639CE00486E4F /* Debug */,
+				7F600B9E10A1F88F00E39A6B /* Debug64 */,
+				7F31A7E110C2AF6400AD8587 /* DebugPPC */,
 				C9A3EC920DD639CE00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EC9E0DD639E600486E4F /* Build configuration list for PBXNativeTarget "fltk_jpeg" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EC9C0DD639E600486E4F /* Debug */,
+				7F600B9F10A1F88F00E39A6B /* Debug64 */,
+				7F31A7E210C2AF6400AD8587 /* DebugPPC */,
 				C9A3EC9D0DD639E600486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3ECA90DD63A5300486E4F /* Build configuration list for PBXNativeTarget "adjuster" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3ECA70DD63A5200486E4F /* Debug */,
+				7F600BA010A1F88F00E39A6B /* Debug64 */,
+				7F31A7E310C2AF6400AD8587 /* DebugPPC */,
 				C9A3ECA80DD63A5200486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3ED070DD63C8C00486E4F /* Build configuration list for PBXNativeTarget "arc" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3ED050DD63C8C00486E4F /* Debug */,
+				7F600BA110A1F88F00E39A6B /* Debug64 */,
+				7F31A7E410C2AF6400AD8587 /* DebugPPC */,
 				C9A3ED060DD63C8C00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3ED1F0DD63D2900486E4F /* Build configuration list for PBXNativeTarget "ask" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3ED1D0DD63D2900486E4F /* Debug */,
+				7F600BA210A1F88F00E39A6B /* Debug64 */,
+				7F31A7E510C2AF6400AD8587 /* DebugPPC */,
 				C9A3ED1E0DD63D2900486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3ED380DD63D8600486E4F /* Build configuration list for PBXNativeTarget "bitmap" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3ED360DD63D8600486E4F /* Debug */,
+				7F600BA310A1F88F00E39A6B /* Debug64 */,
+				7F31A7E610C2AF6400AD8587 /* DebugPPC */,
 				C9A3ED370DD63D8600486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3ED520DD63DD200486E4F /* Build configuration list for PBXNativeTarget "blocks" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3ED500DD63DD200486E4F /* Debug */,
+				7F600BA410A1F88F00E39A6B /* Debug64 */,
+				7F31A7E710C2AF6400AD8587 /* DebugPPC */,
 				C9A3ED510DD63DD200486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3ED720DD63E8000486E4F /* Build configuration list for PBXNativeTarget "boxtype" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3ED700DD63E7F00486E4F /* Debug */,
+				7F600BA510A1F88F00E39A6B /* Debug64 */,
+				7F31A7E810C2AF6400AD8587 /* DebugPPC */,
 				C9A3ED710DD63E7F00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3ED8A0DD63EDD00486E4F /* Build configuration list for PBXNativeTarget "browser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3ED880DD63EDD00486E4F /* Debug */,
+				7F600BA610A1F88F00E39A6B /* Debug64 */,
+				7F31A7E910C2AF6400AD8587 /* DebugPPC */,
 				C9A3ED890DD63EDD00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EDB40DD6457A00486E4F /* Build configuration list for PBXNativeTarget "button" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EDB20DD6457A00486E4F /* Debug */,
+				7F600BA710A1F88F00E39A6B /* Debug64 */,
+				7F31A7EA10C2AF6400AD8587 /* DebugPPC */,
 				C9A3EDB30DD6457A00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EDCC0DD645C300486E4F /* Build configuration list for PBXNativeTarget "buttons" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EDCA0DD645C300486E4F /* Debug */,
+				7F600BA810A1F88F00E39A6B /* Debug64 */,
+				7F31A7EB10C2AF6400AD8587 /* DebugPPC */,
 				C9A3EDCB0DD645C300486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EDE30DD6460A00486E4F /* Build configuration list for PBXNativeTarget "checkers" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EDE10DD6460A00486E4F /* Debug */,
+				7F600BA910A1F88F00E39A6B /* Debug64 */,
+				7F31A7EC10C2AF6400AD8587 /* DebugPPC */,
 				C9A3EDE20DD6460A00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9A3EDFE0DD6467F00486E4F /* Build configuration list for PBXNativeTarget "clock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9A3EDFC0DD6467E00486E4F /* Debug */,
+				7F600BAA10A1F88F00E39A6B /* Debug64 */,
+				7F31A7ED10C2AF6400AD8587 /* DebugPPC */,
 				C9A3EDFD0DD6467E00486E4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
+		};
+		C9B4E28010CC25EE00DA2F05 /* Build configuration list for PBXNativeTarget "table" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9B4E28110CC25EE00DA2F05 /* Debug */,
+				C9B4E28210CC25EE00DA2F05 /* Debug64 */,
+				C9B4E28310CC25EE00DA2F05 /* DebugPPC */,
+				C9B4E28410CC25EE00DA2F05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C9B4E2C910CC275F00DA2F05 /* Build configuration list for PBXNativeTarget "tree" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9B4E2CA10CC275F00DA2F05 /* Debug */,
+				C9B4E2CB10CC275F00DA2F05 /* Debug64 */,
+				C9B4E2CC10CC275F00DA2F05 /* DebugPPC */,
+				C9B4E2CD10CC275F00DA2F05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 		C9C870C30DD7721700A9793F /* Build configuration list for PBXNativeTarget "color_chooser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9C870C10DD7721700A9793F /* Debug */,
+				7F600BAC10A1F88F00E39A6B /* Debug64 */,
+				7F31A7EF10C2AF6400AD8587 /* DebugPPC */,
 				C9C870C20DD7721700A9793F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9C871ED0DD773E700A9793F /* Build configuration list for PBXNativeTarget "cube" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9C871EB0DD773E700A9793F /* Debug */,
+				7F600BAD10A1F88F00E39A6B /* Debug64 */,
+				7F31A7F010C2AF6400AD8587 /* DebugPPC */,
 				C9C871EC0DD773E700A9793F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9C873790DD7772100A9793F /* Build configuration list for PBXNativeTarget "Fluid" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9C873770DD7772100A9793F /* Debug */,
+				7F600B9910A1F88F00E39A6B /* Debug64 */,
+				7F31A7DC10C2AF6400AD8587 /* DebugPPC */,
 				C9C873780DD7772100A9793F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C9EAC2E10E786726004F64F7 /* Build configuration list for PBXNativeTarget "colbrowser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C9EAC2DF0E786726004F64F7 /* Debug */,
+				7F600BAB10A1F88F00E39A6B /* Debug64 */,
+				7F31A7EE10C2AF6400AD8587 /* DebugPPC */,
 				C9EAC2E00E786726004F64F7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

@@ -152,7 +152,11 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 
 .cxx.o:
 	echo Compiling $<...
-	$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $< -o $@
+	@if [ $< = Fl.cxx ]; then \
+		$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -x objective-c++ -c $< -o $@; \
+	else \
+		$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $< -o $@; \
+	fi
 
 .man.0 .man.1 .man.3 .man.6:
 	echo Formatting $<...

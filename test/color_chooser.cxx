@@ -63,7 +63,7 @@ class Pens : public Fl_Box {
   void draw();
 public:
   Pens(int X, int Y, int W, int H, const char* L)
-    : Fl_Box(X,Y,W,H,L) {}
+  : Fl_Box(X,Y,W,H,L) {}
 };
 void Pens::draw() {
   // use every color in the gray ramp:
@@ -112,11 +112,11 @@ int main(int argc, char ** argv) {
   Pens p(80,200,3*8,120,"lines");
   p.align(FL_ALIGN_TOP);
   int i = 1;
-  if (!Fl::args(argc,argv,i) || i != argc-1) {
+  if (!Fl::args(argc,argv,i) || i < argc-1) {
     printf("usage: %s <switches> visual-number\n"
-	   " - : default visual\n"
-	   " r : call Fl::visual(FL_RGB)\n"
-	   " c : call Fl::own_colormap()\n",argv[0]);
+           " - : default visual\n"
+           " r : call Fl::visual(FL_RGB)\n"
+           " c : call Fl::own_colormap()\n",argv[0]);
 #if !defined(WIN32) && !defined(__APPLE__)
     printf(" # : use this visual with an empty colormap:\n");
     list_visuals();
@@ -124,24 +124,26 @@ int main(int argc, char ** argv) {
     puts(Fl::help);
     exit(1);
   }
-  if (argv[i][0] == 'r') {
-    if (!Fl::visual(FL_RGB)) printf("Fl::visual(FL_RGB) returned false.\n");
-  } else if (argv[i][0] == 'c') {
-    Fl::own_colormap();
-  } else if (argv[i][0] != '-') {
+  if (i!=argc) {
+    if (argv[i][0] == 'r') {
+      if (!Fl::visual(FL_RGB)) printf("Fl::visual(FL_RGB) returned false.\n");
+    } else if (argv[i][0] == 'c') {
+      Fl::own_colormap();
+    } else if (argv[i][0] != '-') {
 #if !defined(WIN32) && !defined(__APPLE__)
-    int visid = atoi(argv[i]);
-    fl_open_display();
-    XVisualInfo templt; int num;
-    templt.visualid = visid;
-    fl_visual = XGetVisualInfo(fl_display, VisualIDMask, &templt, &num);
-    if (!fl_visual) Fl::fatal("No visual with id %d",visid);
-    fl_colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
-				  fl_visual->visual, AllocNone);
-    fl_xpixel(FL_BLACK); // make sure black is allocated
+      int visid = atoi(argv[i]);
+      fl_open_display();
+      XVisualInfo templt; int num;
+      templt.visualid = visid;
+      fl_visual = XGetVisualInfo(fl_display, VisualIDMask, &templt, &num);
+      if (!fl_visual) Fl::fatal("No visual with id %d",visid);
+      fl_colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
+                                    fl_visual->visual, AllocNone);
+      fl_xpixel(FL_BLACK); // make sure black is allocated
 #else
-    Fl::fatal("Visual id's not supported on MSWindows or MacOS.");
+      Fl::fatal("Visual id's not supported on MSWindows or MacOS.");
 #endif
+    }
   }
   window.show(argc,argv);
   return Fl::run();

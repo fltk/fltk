@@ -161,6 +161,10 @@ void fullscreen_cb(Fl_Widget *o, void *p) {
     py = w->y();
     pw = w->w();
     ph = w->h();
+#ifndef WIN32//necessary because fullscreen removes border
+	border_button->value(0);
+	border_button->do_callback();
+#endif
     w->fullscreen();
   } else {
     w->fullscreen_off(px,py,pw,ph);

@@ -148,13 +148,17 @@ int main(int argc, char **argv) {
 #elif defined(USING_XCODE)
     if ( i == argc ) 
     {
-      fname = "../../../../test/browser.cxx";
-      done = browser->load(fname);
+      char buf[2048];
+      strcpy(buf, argv[0]);
+      char *slash = strrchr(buf, '/');
+      if (slash)
+        strcpy(slash, "/../Resources/browser.cxx");
+      done = browser->load(buf);
     }
 #endif
     if ( !done )
     {
-      printf("Can't load %s, %s\n", fname, strerror(errno));
+      fl_message("Can't load %s, %s\n", fname, strerror(errno));
       exit(1);
     }
   }

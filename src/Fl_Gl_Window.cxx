@@ -66,6 +66,9 @@ int Fl_Gl_Window::can_do(int a, const int *b) {
 }
 
 void Fl_Gl_Window::show() {
+#if defined(__APPLE__) && defined(__APPLE_COCOA__)
+  int need_redraw = 0;
+#endif
   if (!shown()) {
     if (!g) {
       g = Fl_Gl_Choice::find(mode_,alist);
@@ -83,12 +86,19 @@ void Fl_Gl_Window::show() {
 #if !defined(WIN32) && !defined(__APPLE__)
     Fl_X::make_xid(this, g->vis, g->colormap);
     if (overlay && overlay != this) ((Fl_Gl_Window*)overlay)->show();
+#elif defined(__APPLE__) && defined(__APPLE_COCOA__)
+	extern void MACsetContainsGLsubwindow(Fl_Window *);
+	if( ! parent() ) need_redraw=1;
+	else MACsetContainsGLsubwindow( window() );
 #endif
   }
   Fl_Window::show();
 
 #ifdef __APPLE__
   set_visible();
+#ifdef __APPLE_COCOA__
+  if(need_redraw) redraw();//necessary only after creation of a top-level GL window
+#endif
 #endif /* __APPLE__ */
 }
 
@@ -154,6 +164,7 @@ int Fl_Gl_Window::mode(int m, const int *a) {
   being called and can also be used to implement feedback and/or
   selection within the handle() method.
 */
+
 void Fl_Gl_Window::make_current() {
 //  puts("Fl_Gl_Window::make_current()");
 //  printf("make_current: context_=%p\n", context_);
@@ -237,6 +248,15 @@ void Fl_Gl_Window::swap_buffers() {
 #  endif
 #elif defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
+#ifdef __APPLE_COCOA__
+  if(overlay != NULL) {
+    //aglSwapBuffers does not work well with overlays under cocoa
+    glReadBuffer(GL_BACK);
+    glDrawBuffer(GL_FRONT);
+    glCopyPixels(0,0,w(),h(),GL_COLOR);
+    }
+  else
+#endif
   aglSwapBuffers((AGLContext)context_);
 #else
 # error unsupported platform
@@ -248,6 +268,7 @@ uchar fl_overlay; // changes how fl_color() works
 int fl_overlay_depth = 0;
 #endif
 
+
 void Fl_Gl_Window::flush() {
   uchar save_valid = valid_f_ & 1;
 #if HAVE_GL_OVERLAY && defined(WIN32)
@@ -257,12 +278,18 @@ void Fl_Gl_Window::flush() {
 #if defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   //: clear previous clipping in this shared port
+#if ! __LP64__
+#ifdef __APPLE_COCOA__
+  GrafPtr port = GetWindowPort( MACwindowRef(this) );
+#else
   GrafPtr port = GetWindowPort( fl_xid(this) );
+#endif
   Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
   GrafPtr old; GetPort( &old );
   SetPort( port );
   ClipRect( &rect );
   SetPort( old );
+#endif
 #endif
 
 #if HAVE_GL_OVERLAY && defined(WIN32)
@@ -327,7 +354,7 @@ void Fl_Gl_Window::flush() {
 
       // don't draw if only the overlay is damaged:
       if (damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
-      swap_buffers();
+	  swap_buffers();
 
     } else { // SWAP_TYPE == UNDEFINED
 
