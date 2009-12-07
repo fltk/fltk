@@ -129,6 +129,7 @@
 
 #define USE_QUARTZ 1
 #define __APPLE_QUARTZ__ 1
+#define __APPLE_COCOA__ 1
 /* #undef __APPLE_QD__ */
 
 /*

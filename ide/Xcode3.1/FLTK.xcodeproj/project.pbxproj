@@ -152,6 +152,7 @@
 		C97742100DD9D36C0047C1BF /* demo.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C977420E0DD9D36C0047C1BF /* demo.cxx */; };
 		C97742680DD9D8280047C1BF /* doublebuffer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C97742670DD9D8280047C1BF /* doublebuffer.cxx */; };
 		C97742720DD9DD3E0047C1BF /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		C97DC0B910CD92F800CD05F3 /* table.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2A610CC26EC00DA2F05 /* table.cxx */; };
 		C99CF52C0DD78BBA0094BD10 /* CubeMain.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C99CF52B0DD78BBA0094BD10 /* CubeMain.cxx */; };
 		C99CF52E0DD78BD50094BD10 /* CubeViewUI.fl in Resources */ = {isa = PBXBuildFile; fileRef = C99CF52D0DD78BD50094BD10 /* CubeViewUI.fl */; };
 		C99CF5440DD78E690094BD10 /* CubeView.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C99CF5430DD78E690094BD10 /* CubeView.cxx */; };
@@ -7381,6 +7382,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C97DC0B910CD92F800CD05F3 /* table.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
