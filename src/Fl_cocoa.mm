@@ -61,6 +61,13 @@ extern "C" {
 #include <stdarg.h>
 
 #import <Cocoa/Cocoa.h>
+#include <AvailabilityMacros.h>
+#if defined(__LP64__) && __LP64__
+typedef double CGFloat;
+#else
+typedef float CGFloat;
+#endif
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
 typedef long NSInteger;
 typedef unsigned long NSUInteger;
@@ -803,7 +810,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       // fall through
 	  case NSLeftMouseDragged:
 	  case NSRightMouseDragged:
-	  case NSOtherMouseDragged:
+	  case NSOtherMouseDragged: {
       if (suppressed) break;
       if ( !sendEvent ) {
         sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
@@ -817,7 +824,9 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       Fl::e_x = pos.x;
       Fl::e_y = pos.y;
       Fl::handle( sendEvent, window );
-      break;
+          } break;
+	default:
+	  break;
   }
   
   fl_unlock_function();
@@ -1090,7 +1099,7 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   if([s length] == 0) {//this is a dead key that must be combined with the next key to be pressed
     while (window->parent()) window = window->window();
     Fl::e_keysym = FL_Control_R;//first simulate pressing of the compose key (FL_Control_R)
-    Fl::e_text = "";
+    Fl::e_text = (char*)"";
     Fl::e_length = 0;
     Fl::handle(FL_KEYBOARD, window); 
     compose=YES;
@@ -1129,7 +1138,7 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
     case NSKeyDown:
       sendEvent = FL_KEYBOARD;
       // fall through
-    case NSKeyUp:
+    case NSKeyUp: {
       if ( !sendEvent ) {
         sendEvent = FL_KEYUP;
         Fl::e_state &= 0xbfffffff; // clear the deadkey flag
@@ -1155,7 +1164,10 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
       Fl::e_length = strlen(buffer);
       Fl::e_text = buffer;
       buffer[Fl::e_length] = 0; // just in case...
-      break;
+      } break;
+	default:
+	  fl_unlock_function();
+	  return eventNotHandledErr;
   }
   while (window->parent()) window = window->window();
   if (sendEvent && Fl::handle(sendEvent,window)) {
