@@ -289,7 +289,7 @@ void dobut(Fl_Widget *, long arg)
     } else {
       sprintf(command, "open ../../../%s.app", cmd);
     }
-    puts(command);    
+//    puts(command);    
     system(command);
     
     free(cmd);
