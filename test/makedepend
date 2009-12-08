@@ -505,12 +505,12 @@ tree.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
 tree.o: ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/Fl_Group.H ../FL/Fl_Tree.H
 tree.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 tree.o: ../FL/fl_draw.H ../FL/Fl_Tree_Item.H ../FL/Fl_Widget.H
-tree.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H ../FL/fl_ask.H
-tree.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-tree.o: ../FL/Fl_Widget.H ../FL/Fl_Value_Slider.H ../FL/Fl_Check_Button.H
-tree.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H ../FL/Fl_Choice.H
-tree.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/Fl_Button.H
-tree.o: ../FL/Fl_Light_Button.H
+tree.o: ../FL/Fl_Image.H ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H
+tree.o: ../FL/fl_ask.H ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
+tree.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Value_Slider.H
+tree.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
+tree.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
+tree.o: ../FL/Fl_Button.H ../FL/Fl_Light_Button.H
 valuators.o: valuators.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 valuators.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 valuators.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Double_Window.H

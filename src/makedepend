@@ -334,20 +334,20 @@ Fl_Tree.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Tree.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Group.H
 Fl_Tree.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_Tree.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Fl_Window.H
-Fl_Tree.o: ../FL/Fl_Tree_Item.H ../FL/Fl_Widget.H ../FL/Fl_Pixmap.H
-Fl_Tree.o: ../FL/Fl_Image.H ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H
+Fl_Tree.o: ../FL/Fl_Tree_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
+Fl_Tree.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H
 Fl_Tree_Item.o: ../FL/Fl_Widget.H ../FL/Fl_Tree_Item.H ../FL/Fl.H
 Fl_Tree_Item.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Tree_Item.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
-Fl_Tree_Item.o: ../FL/fl_types.h ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
-Fl_Tree_Item.o: ../FL/fl_draw.H ../FL/Fl_Window.H ../FL/Fl_Tree_Item_Array.H
+Fl_Tree_Item.o: ../FL/fl_types.h ../FL/Fl_Image.H ../FL/fl_draw.H
+Fl_Tree_Item.o: ../FL/Fl_Window.H ../FL/Fl_Tree_Item_Array.H
 Fl_Tree_Item.o: ../FL/Fl_Tree_Prefs.H
 Fl_Tree_Item_Array.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Item.H
 Fl_Tree_Item_Array.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Tree_Item_Array.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Tree_Item_Array.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Widget.H
-Fl_Tree_Item_Array.o: ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/fl_draw.H
-Fl_Tree_Item_Array.o: ../FL/Fl_Window.H ../FL/Fl_Tree_Prefs.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Image.H ../FL/fl_draw.H ../FL/Fl_Window.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Tree_Prefs.H
 Fl_Tree_Prefs.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Tree_Prefs.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Tree_Prefs.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Pixmap.H
@@ -385,7 +385,6 @@ Fl_Window.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Window.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Window.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H ../FL/Fl_Window.H
 Fl_Window.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H flstring.h
-Fl_Window.o: ../FL/fl_draw.H
 Fl_Window_fullscreen.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Window_fullscreen.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Window_fullscreen.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H
@@ -542,7 +541,7 @@ fl_font.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H
 fl_font.o: ../FL/fl_utf8.h ../FL/fl_types.h ../FL/Xutf8.h
 fl_font.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
 fl_font.o: ../FL/fl_draw.H ../FL/Fl_Window.H ../FL/x.H Fl_Font.H
-fl_font.o: ../FL/Xutf8.h fl_font_x.cxx
+fl_font.o: fl_font_xft.cxx
 fl_gtk.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_gtk.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_gtk.o: ../FL/fl_types.h ../FL/fl_draw.H ../FL/Fl_Window.H
@@ -585,11 +584,11 @@ fl_rounded_box.o: ../FL/Fl_Window.H
 fl_set_font.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_set_font.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_set_font.o: ../FL/fl_types.h ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
-fl_set_font.o: flstring.h ../config.h Fl_Font.H ../FL/Xutf8.h
+fl_set_font.o: flstring.h ../config.h Fl_Font.H
 fl_set_fonts.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_set_fonts.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_set_fonts.o: ../FL/fl_types.h ../FL/x.H ../FL/Fl_Window.H Fl_Font.H
-fl_set_fonts.o: ../config.h ../FL/Xutf8.h flstring.h fl_set_fonts_x.cxx
+fl_set_fonts.o: ../config.h flstring.h fl_set_fonts_xft.cxx
 fl_scroll_area.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 fl_scroll_area.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 fl_scroll_area.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H
@@ -761,7 +760,7 @@ gl_draw.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H
 gl_draw.o: ../FL/fl_utf8.h ../FL/fl_types.h ../FL/Xutf8.h
 gl_draw.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h ../FL/gl.h
 gl_draw.o: ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H Fl_Gl_Choice.H
-gl_draw.o: Fl_Font.H ../FL/Xutf8.h ../FL/fl_utf8.h
+gl_draw.o: Fl_Font.H ../FL/fl_utf8.h ../FL/Xutf8.h
 gl_start.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 gl_start.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 gl_start.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
