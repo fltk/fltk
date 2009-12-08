@@ -7,7 +7,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Widget.H>
-#include <FL/Fl_Pixmap.H>
+#include <FL/Fl_Image.H>
 #include <FL/fl_draw.H>
 
 #include <FL/Fl_Tree_Item_Array.H>
@@ -70,9 +70,10 @@ class Fl_Tree_Item {
   int                     _collapse_xywh[4];	// xywh of collapse icon (if any)
   int                     _label_xywh[4];	// xywh of label
   Fl_Widget              *_widget;		// item's label widget (optional)
-  Fl_Pixmap              *_usericon;		// item's user-specific icon (optional)
+  Fl_Image               *_usericon;		// item's user-specific icon (optional)
   Fl_Tree_Item_Array      _children;		// array of child items
   Fl_Tree_Item           *_parent;		// parent item (=0 if root)
+  void                   *_userdata;    	// user data that can be associated with an item
 protected:
   void show_widgets();
   void hide_widgets();
@@ -81,11 +82,17 @@ protected:
 public:
   Fl_Tree_Item(const Fl_Tree_Prefs &prefs);	// CTOR
   ~Fl_Tree_Item();				// DTOR
-  Fl_Tree_Item(const Fl_Tree_Item *o);	// COPY CTOR
+  Fl_Tree_Item(const Fl_Tree_Item *o);		// COPY CTOR
   void draw(int X, int &Y, int W, Fl_Widget *tree, const Fl_Tree_Prefs &prefs, int lastchild=1);
   void show_self(const char *indent = "") const;
   void label(const char *val);
   const char *label() const;
+
+  /// Set a user-data value for the item.
+  inline void user_data( void* data ) { _userdata = data; }
+
+  /// Retrieve the user-data value that has been assigned to the item.
+  inline void* user_data() const { return _userdata; }
   
   /// Set item's label font face.
   void labelfont(int val) {
@@ -209,9 +216,9 @@ public:
   /// Toggle the item's selection state.
   void select_toggle() {
     if ( is_selected() ) {
-	    deselect();		// deselect if selected
+      deselect();		// deselect if selected
     } else {
-	    select();		// select if deselected
+      select();		// select if deselected
     }
   }
   /// Disable the item's selection state.
@@ -225,11 +232,11 @@ public:
   int deselect_all() {
     int count = 0;
     if ( is_selected() ) {
-	    deselect();
-	    ++count;
+      deselect();
+      ++count;
     }
     for ( int t=0; t<children(); t++ ) {
-	    count += child(t)->deselect_all();
+      count += child(t)->deselect_all();
     }
     return(count);
   }
@@ -249,12 +256,12 @@ public:
   void activate(int val=1) {
     _active = val;
     if ( _widget && val != (int)_widget->active() ) {
-	    if ( val ) {
-        _widget->activate();
-	    } else {
-        _widget->deactivate();
-	    }
-	    _widget->redraw();
+      if ( val ) {
+	_widget->activate();
+      } else {
+	_widget->deactivate();
+      }
+      _widget->redraw();
     }
   }
   /// Deactivate the item; the callback() won't be invoked when clicked.
@@ -271,12 +278,12 @@ public:
   char is_active() const {
     return(_active);
   }
-  /// Set the user icon's pixmap. '0' will disable.
-  void usericon(Fl_Pixmap *val) {
+  /// Set the user icon's image. '0' will disable.
+  void usericon(Fl_Image *val) {
     _usericon = val;
   }
   /// Get the user icon. Returns '0' if disabled.
-  Fl_Pixmap *usericon() const {
+  Fl_Image *usericon() const {
     return(_usericon);
   }
   //////////////////

@@ -101,12 +101,12 @@
 ///
 
 class Fl_Tree : public Fl_Group {
-  Fl_Tree_Item  *_root;		// can be null!
+  Fl_Tree_Item  *_root;					// can be null!
   Fl_Tree_Item  *_item_clicked;
-  Fl_Tree_Prefs  _prefs;		// all the tree's settings
+  Fl_Tree_Prefs  _prefs;				// all the tree's settings
   Fl_Scrollbar  *_vscroll;
   
-protected:
+public:
   /// Find the item that was clicked.
   /// You probably want to use item_clicked() instead, which is fast.
   ///
@@ -122,6 +122,7 @@ protected:
     if ( ! _root ) return(0);
     return(_root->find_clicked(_prefs));
   }
+protected:
   /// Set the item that was last clicked.
   /// Should only be used by subclasses needing to change this value.
   /// Normally Fl_Tree manages this value.
@@ -157,7 +158,9 @@ public:
   // Item creation/removal methods
   ////////////////////////////////
   Fl_Tree_Item *add(const char *path);
+  Fl_Tree_Item* add(Fl_Tree_Item *item, const char *name);
   Fl_Tree_Item *insert_above(Fl_Tree_Item *above, const char *name);
+  Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos);
   
   /// Remove the specified 'item' from the tree.
   /// If it has children, all those are removed too.
@@ -166,11 +169,11 @@ public:
   int remove(Fl_Tree_Item *item) {
     if ( !item ) return(0);
     if ( item == _root ) {
-	    clear();
+      clear();
     } else {
-	    Fl_Tree_Item *parent = item->parent();	// find item's parent
-	    if ( ! parent ) return(-1);
-	    parent->remove_child(item);			// remove child + children
+      Fl_Tree_Item *parent = item->parent();		// find item's parent
+      if ( ! parent ) return(-1);
+      parent->remove_child(item);			// remove child + children
     }
     return(0);
   } 
@@ -185,8 +188,8 @@ public:
   /// Clear all the children of a particular node in the tree.
   void clear_children(Fl_Tree_Item *item) {
     if ( item->has_children() ) {
-	    item->clear_children();
-	    redraw();			// redraw only if there were children to clear
+      item->clear_children();
+      redraw();						// redraw only if there were children to clear
     }
   } 
   
@@ -242,7 +245,7 @@ public:
     if ( ! _root ) return(0);
     Fl_Tree_Item *item = _root;
     while ( item->has_children() ) {
-	    item = item->child(item->children()-1);
+      item = item->child(item->children()-1);
     }
     return(item);
   }
@@ -257,8 +260,8 @@ public:
   ///
   void open(Fl_Tree_Item *item) {
     if ( ! item->is_open() ) {
-	    item->open();
-	    redraw();
+      item->open();
+      redraw();
     }
   }
   /// Opens the item specified by a 'menu item' style pathname (eg: "Parent/child/item").
@@ -272,8 +275,8 @@ public:
   int open(const char *path) {
     Fl_Tree_Item *item = find_item(path);
     if ( item ) {
-	    open(item);
-	    return(0);
+      open(item);
+      return(0);
     }
     return(-1);
   }
@@ -282,8 +285,8 @@ public:
   ///
   void close(Fl_Tree_Item *item) {
     if ( ! item->is_close() ) {
-	    item->close();
-	    redraw();
+      item->close();
+      redraw();
     }
   }
   /// Closes the item specified by 'path', eg: "Parent/child/item".
@@ -297,8 +300,8 @@ public:
   int close(const char *path) {
     Fl_Tree_Item *item = find_item(path);
     if ( item ) {
-	    close(item);
-	    return(0);
+      close(item);
+      return(0);
     }
     return(-1);
   }
@@ -359,8 +362,8 @@ public:
   ///
   void select(Fl_Tree_Item *item) {
     if ( ! item->is_selected() ) {
-	    item->select();
-	    redraw();
+      item->select();
+      redraw();
     }
   }
   /// Select an item specified by 'path' (eg: "Parent/child/item").
@@ -373,8 +376,8 @@ public:
   int select(const char *path) {
     Fl_Tree_Item *item = find_item(path);
     if ( item ) {
-	    select(item);
-	    return(0);
+      select(item);
+      return(0);
     }
     return(-1);
   }
@@ -390,8 +393,8 @@ public:
   ///
   void deselect(Fl_Tree_Item *item) {
     if ( item->is_selected() ) {
-	    item->deselect();
-	    redraw();
+      item->deselect();
+      redraw();
     }
   }
   /// De-select an item specified by 'path' (eg: "Parent/child/item").
@@ -404,8 +407,8 @@ public:
   int deselect(const char *path) {
     Fl_Tree_Item *item = find_item(path);
     if ( item ) {
-	    deselect(item);
-	    return(0);
+      deselect(item);
+      return(0);
     }
     return(-1);
   }
@@ -524,22 +527,22 @@ public:
     _prefs.connectorwidth(val);
     redraw();
   }
-  /// Returns the Fl_Pixmap being used as the default user icon for newly created items.
+  /// Returns the Fl_Image being used as the default user icon for newly created items.
   /// Returns zero if no icon has been set, which is the default.
   ///
-  Fl_Pixmap *usericon() const {
+  Fl_Image *usericon() const {
     return(_prefs.usericon());
   }
-  /// Sets the Fl_Pixmap to be used as the default user icon for all
+  /// Sets the Fl_Image to be used as the default user icon for all
   /// newly created items.
   ///
   /// If you want to specify user icons on a per-item basis,
   /// use Fl_Tree_Item::usericon() instead.
   ///
-  /// \param[in] val -- The new pixmap to be used, or
+  /// \param[in] val -- The new image to be used, or
   ///                   zero to disable user icons.
   ///
-  void usericon(Fl_Pixmap *val) {
+  void usericon(Fl_Image *val) {
     _prefs.usericon(val);
     redraw();
   }
@@ -547,15 +550,15 @@ public:
   /// If none was set, the internal default is returned,
   /// a simple '[+]' icon.
   ///
-  Fl_Pixmap *openicon() const {
+  Fl_Image *openicon() const {
     return(_prefs.openicon());
   }
   /// Sets the icon to be used as the 'open' icon.
   /// This overrides the built in default '[+]' icon.
   ///
-  /// \param[in] val -- The new pixmap, or zero to use the default [+] icon.
+  /// \param[in] val -- The new image, or zero to use the default [+] icon.
   ///
-  void openicon(Fl_Pixmap *val) {
+  void openicon(Fl_Image *val) {
     _prefs.openicon(val);
     redraw();
   }
@@ -563,15 +566,15 @@ public:
   /// If none was set, the internal default is returned,
   /// a simple '[-]' icon.
   ///
-  Fl_Pixmap *closeicon() const {
+  Fl_Image *closeicon() const {
     return(_prefs.closeicon());
   }
   /// Sets the icon to be used as the 'close' icon.
   /// This overrides the built in default '[-]' icon.
   ///
-  /// \param[in] val -- The new pixmap, or zero to use the default [-] icon.
+  /// \param[in] val -- The new image, or zero to use the default [-] icon.
   ///
-  void closeicon(Fl_Pixmap *val) {
+  void closeicon(Fl_Image *val) {
     _prefs.closeicon(val);
     redraw();
   }

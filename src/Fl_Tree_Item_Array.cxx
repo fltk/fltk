@@ -68,8 +68,8 @@ Fl_Tree_Item_Array::Fl_Tree_Item_Array(const Fl_Tree_Item_Array* o) {
 void Fl_Tree_Item_Array::clear() {
   if ( _items ) {
     for ( int t=0; t<_total; t++ ) {
-	    delete _items[t];
-	    _items[t] = 0;
+      delete _items[t];
+      _items[t] = 0;
     }
     free((void*)_items); _items = 0;
   }
@@ -88,9 +88,9 @@ void Fl_Tree_Item_Array::enlarge(int count) {
     int newsize = _size + _chunksize;
     Fl_Tree_Item **newitems = (Fl_Tree_Item**)malloc(newsize * sizeof(Fl_Tree_Item*));
     if ( _items ) { 
-	    // Copy old array -> new, delete old
-	    memmove(newitems, _items, _size * sizeof(Fl_Tree_Item*));
-	    free((void*)_items); _items = 0;
+      // Copy old array -> new, delete old
+      memmove(newitems, _items, _size * sizeof(Fl_Tree_Item*));
+      free((void*)_items); _items = 0;
     }
     // Adjust items/sizeitems
     _items = newitems;
@@ -145,8 +145,8 @@ void Fl_Tree_Item_Array::remove(int index) {
 int Fl_Tree_Item_Array::remove(Fl_Tree_Item *item) {
   for ( int t=0; t<_total; t++ ) {
     if ( item == _items[t] ) {
-	    remove(t);
-	    return(0);
+      remove(t);
+      return(0);
     }
   }
   return(-1);

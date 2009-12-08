@@ -73,19 +73,19 @@ static Fl_Pixmap L_closepixmap(L_close_xpm);
 /// when items are add()ed to the tree.
 /// This overrides the built in default '[+]' icon.
 ///
-/// \param[in] val -- The new pixmap, or zero to use the default [+] icon.
+/// \param[in] val -- The new image, or zero to use the default [+] icon.
 ///
-void Fl_Tree_Prefs::openicon(Fl_Pixmap *val) {
-  _openpixmap = val ? val : &L_openpixmap;
+void Fl_Tree_Prefs::openicon(Fl_Image *val) {
+  _openimage = val ? val : &L_openpixmap;
 }
 
 /// Sets the icon to be used as the 'close' icon.
 /// This overrides the built in default '[-]' icon.
 ///
-/// \param[in] val -- The new pixmap, or zero to use the default [-] icon.
+/// \param[in] val -- The new image, or zero to use the default [-] icon.
 ///
-void Fl_Tree_Prefs::closeicon(Fl_Pixmap *val) {
-  _closepixmap = val ? val : &L_closepixmap;
+void Fl_Tree_Prefs::closeicon(Fl_Image *val) {
+  _closeimage = val ? val : &L_closepixmap;
 }
 
 /// Fl_Tree_Prefs constructor
@@ -106,9 +106,9 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _inactivecolor          = FL_GRAY;
   _connectorcolor         = Fl_Color(43);
   _connectorstyle         = FL_TREE_CONNECTOR_DOTTED;
-  _openpixmap             = &L_openpixmap;
-  _closepixmap            = &L_closepixmap;
-  _userpixmap             = 0;
+  _openimage              = &L_openpixmap;
+  _closeimage             = &L_closepixmap;
+  _userimage              = 0;
   _showcollapse           = 1;
   _showroot               = 1;
   _connectorwidth         = 17;
@@ -118,9 +118,9 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   // Let fltk's current 'scheme' affect defaults
   if ( Fl::scheme() ) {
     if ( strcmp(Fl::scheme(), "gtk+") == 0 ) {
-	    _selectbox = _FL_GTK_THIN_UP_BOX;
+      _selectbox = _FL_GTK_THIN_UP_BOX;
     } else if ( strcmp(Fl::scheme(), "plastic") == 0 ) {
-	    _selectbox = _FL_PLASTIC_THIN_UP_BOX;
+      _selectbox = _FL_PLASTIC_THIN_UP_BOX;
     }
   }
 }

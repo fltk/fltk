@@ -6,11 +6,11 @@
 #define _FL_TREE_ITEM_ARRAY_H
 
 class Fl_Tree_Item;		// forward decl must *precede* first doxygen comment block
-// or doxygen will not document our class..
+				// or doxygen will not document our class..
 
-//////////////////////
+//////////////////////////
 // FL/Fl_Tree_Item_Array.H
-//////////////////////
+//////////////////////////
 //
 // Fl_Tree -- This file is part of the Fl_Tree widget for FLTK
 // Copyright (C) 2009 by Greg Ercolano.

@@ -88,11 +88,11 @@ class Fl_Tree_Prefs {
   int _margintop;			// -- 
   int _marginleft;			//   |- tree's margins
   //int _marginright;			//   |
-  //int _marginbottom;		// --
-  int _openchild_marginbottom;	// extra space below an open child tree
+  //int _marginbottom;			// --
+  int _openchild_marginbottom;		// extra space below an open child tree
   int _usericonmarginleft;		// space to left of user icon (if any)
-  int _labelmarginleft;		// space to left of label
-  int _connectorwidth;		// connector width (right of open/close icon)
+  int _labelmarginleft;			// space to left of label
+  int _connectorwidth;			// connector width (right of open/close icon)
   int _linespacing;			// vertical space between lines
   // Colors
   Fl_Color _fgcolor;			// label's foreground color
@@ -101,9 +101,9 @@ class Fl_Tree_Prefs {
   Fl_Color _inactivecolor;		// inactive color
   Fl_Color _connectorcolor;		// connector dotted line color
   Fl_Tree_Connector _connectorstyle;	// connector line style
-  Fl_Pixmap *_openpixmap;		// the 'open' icon [+]
-  Fl_Pixmap *_closepixmap;		// the 'close' icon [-]
-  Fl_Pixmap *_userpixmap;		// user's own icon
+  Fl_Image *_openimage;			// the 'open' icon [+]
+  Fl_Image *_closeimage;		// the 'close' icon [-]
+  Fl_Image *_userimage;			// user's own icon
   char _showcollapse;			// 1=show collapse icons, 0=don't
   char _showroot;			// show the root item as part of the tree
   Fl_Tree_Sort   _sortorder;		// none, ascening, descending, etc.
@@ -268,28 +268,28 @@ public:
   // Icons
   ////////////////////////////
   /// Get the current default 'open' icon.
-  ///     Returns the Fl_Pixmap* of the icon, or 0 if none.
+  ///     Returns the Fl_Image* of the icon, or 0 if none.
   ///
-  inline Fl_Pixmap *openicon() const {
-    return(_openpixmap);
+  inline Fl_Image *openicon() const {
+    return(_openimage);
   }
-  void openicon(Fl_Pixmap *val);
+  void openicon(Fl_Image *val);
   /// Gets the default 'close' icon
-  ///     Returns the Fl_Pixmap* of the icon, or 0 if none.
+  ///     Returns the Fl_Image* of the icon, or 0 if none.
   ///
-  inline Fl_Pixmap *closeicon() const {
-    return(_closepixmap);
+  inline Fl_Image *closeicon() const {
+    return(_closeimage);
   }
-  void closeicon(Fl_Pixmap *val);
+  void closeicon(Fl_Image *val);
   /// Gets the default 'user icon' (default is 0)
-  inline Fl_Pixmap *usericon() const {
-    return(_userpixmap);
+  inline Fl_Image *usericon() const {
+    return(_userimage);
   }
   /// Sets the default 'user icon'
-  ///     Returns the Fl_Pixmap* of the icon, or 0 if none (default).
+  ///     Returns the Fl_Image* of the icon, or 0 if none (default).
   ///
-  inline void usericon(Fl_Pixmap *val) {
-    _userpixmap = val;
+  inline void usericon(Fl_Image *val) {
+    _userimage = val;
   }
   
   ////////////////////////////

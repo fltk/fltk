@@ -123,6 +123,18 @@ Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
   return(above->insert_above(_prefs, name));
 }
 
+/// Insert a new item into a tree-item's children at a specified position.
+/// \returns the item that was added.
+Fl_Tree_Item* Fl_Tree::insert(Fl_Tree_Item *item, const char *name, int pos) {
+  return(item->insert(_prefs, name, pos));
+}
+
+/// Add a new child to a tree-item.
+/// \returns the item that was added.
+Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *item, const char *name) {
+  return(item->add(_prefs, name));
+}
+
 /// Find the item, given a menu style path, eg: "/Parent/Child/item".
 ///
 /// There is both a const and non-const version of this method.
@@ -209,11 +221,11 @@ int Fl_Tree::handle(int e) {
   if ( ! _root ) return(ret);
   switch ( e ) {
     case FL_PUSH: {
-	    lastselect = 0;
-	    item_clicked(0);	// assume no item was clicked
-	    Fl_Tree_Item *o = _root->find_clicked(_prefs);
-	    if ( o ) {
-        ret |= 1;					// handled
+      lastselect = 0;
+      item_clicked(0);				// assume no item was clicked
+      Fl_Tree_Item *o = _root->find_clicked(_prefs);
+      if ( o ) {
+        ret |= 1;				// handled
         if ( Fl::event_button() == FL_LEFT_MOUSE ) {
           // Was collapse icon clicked?
           if ( o->event_on_collapse_icon(_prefs) ) {
@@ -226,9 +238,10 @@ int Fl_Tree::handle(int e) {
                    callback() &&
                    (!_vscroll->visible() || !Fl::event_inside(_vscroll)) ) {
             item_clicked(o);			// save item clicked
+
             // Handle selection behavior
             switch ( _prefs.selectmode() ) {
-              case FL_TREE_SELECT_NONE: {		// no selection changes
+              case FL_TREE_SELECT_NONE: {	// no selection changes
                 break;
               }
               case FL_TREE_SELECT_SINGLE: {
@@ -243,7 +256,7 @@ int Fl_Tree::handle(int e) {
                     changed = 1;		// changed
                   }
                 } else if ( state & FL_CTRL ) {
-                  changed = 1;		// changed
+                  changed = 1;			// changed
                   o->select_toggle();		// toggle selection state
                   lastselect = o;		// save we toggled it (prevents oscillation)
                 } else {
@@ -252,8 +265,9 @@ int Fl_Tree::handle(int e) {
                 break;
               }
             }
+
             if ( changed ) {
-              redraw();				// make change(s) visible
+              redraw();						// make change(s) visible
               if ( when() & FL_WHEN_CHANGED ) {
                 set_changed();
                 do_callback((Fl_Widget*)this, user_data());	// item callback
@@ -261,22 +275,22 @@ int Fl_Tree::handle(int e) {
             }
           }
         }
-	    }
-	    break;
+      }
+      break;
     }
     case FL_DRAG: {
-	    Fl_Tree_Item *o = _root->find_clicked(_prefs);
-	    if ( o ) {
+      Fl_Tree_Item *o = _root->find_clicked(_prefs);
+      if ( o ) {
         ret |= 1;				// handled
         // Item's label clicked?
         if ( o->event_on_label(_prefs) && 
-            (!o->widget() || !Fl::event_inside(o->widget())) &&
-            callback() &&
-            (!_vscroll->visible() || !Fl::event_inside(_vscroll)) ) {
+	  (!o->widget() || !Fl::event_inside(o->widget())) &&
+	  callback() &&
+	  (!_vscroll->visible() || !Fl::event_inside(_vscroll)) ) {
           item_clicked(o);			// save item clicked
           // Handle selection behavior
           switch ( _prefs.selectmode() ) {
-            case FL_TREE_SELECT_NONE: {	// no selection changes
+            case FL_TREE_SELECT_NONE: {		// no selection changes
               break;
             }
             case FL_TREE_SELECT_SINGLE: {
@@ -301,20 +315,20 @@ int Fl_Tree::handle(int e) {
             }
           }
           if ( changed ) {
-            redraw();				// make change(s) visible
+            redraw();			// make change(s) visible
             if ( when() & FL_WHEN_CHANGED ) {
               set_changed();
               do_callback((Fl_Widget*)this, user_data());	// item callback
             }
           }
         }
-	    }
+      }
     }
     case FL_RELEASE: {
-	    if ( Fl::event_button() == FL_LEFT_MOUSE ) {
+      if ( Fl::event_button() == FL_LEFT_MOUSE ) {
         ret |= 1;
-	    }
-	    break;
+      }
+      break;
     }
   }
   return(ret);
@@ -327,7 +341,7 @@ int Fl_Tree::handle(int e) {
 ///     ie. how many items were "changed".
 ///
 int Fl_Tree::deselect_all(Fl_Tree_Item *item) {
-  item = item ? item : root();		// NULL? use root()
+  item = item ? item : root();			// NULL? use root()
   int count = item->deselect_all();
   if ( count ) redraw();			// anything changed? cause redraw
   return(count);
@@ -343,17 +357,17 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem) {
   int changed = 0;
   for ( Fl_Tree_Item *item = first(); item; item = item->next() ) {
     if ( item == selitem ) {
-	    if ( item->is_selected() ) continue;	// don't count if already selected
-	    item->select();
-	    ++changed;
+      if ( item->is_selected() ) continue;	// don't count if already selected
+      item->select();
+      ++changed;
     } else {
-	    if ( item->is_selected() ) {
+      if ( item->is_selected() ) {
         item->deselect();
         ++changed;
-	    }
+      }
     }
   }
-  if ( changed ) redraw();				// anything changed? redraw
+  if ( changed ) redraw();			// anything changed? redraw
   return(changed);
 }
 
