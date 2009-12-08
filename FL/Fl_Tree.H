@@ -415,6 +415,7 @@ public:
   
   int deselect_all(Fl_Tree_Item *item=0);
   int select_only(Fl_Tree_Item *selitem);
+    int select_all(Fl_Tree_Item *item=0);
   
   /// See if the specified item is selected.
   /// \return

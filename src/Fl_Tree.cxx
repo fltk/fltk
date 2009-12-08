@@ -347,6 +347,19 @@ int Fl_Tree::deselect_all(Fl_Tree_Item *item) {
   return(count);
 }
 
+/// Select item and all its children.
+///     If item is NULL, root() is used.
+///     Handles calling redraw() if anything was changed.
+///     Returns count of how many items were in the 'deselected' state,
+///     ie. how many items were "changed".
+///
+int Fl_Tree::select_all(Fl_Tree_Item *item) {
+  item = item ? item : root();			// NULL? use root()
+  int count = item->select_all();
+  if ( count ) redraw();			// anything changed? cause redraw
+  return(count);
+}
+
 /// Select only this item.
 ///     If item is NULL, root() is used.
 ///     Handles calling redraw() if anything was changed.

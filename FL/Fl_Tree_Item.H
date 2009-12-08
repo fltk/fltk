@@ -221,6 +221,21 @@ public:
       select();		// select if deselected
     }
   }
+  /// Select self and all children
+  ///     Returns count of how many items were in the 'deselected' state,
+  ///     ie. how many items were "changed".
+  ///
+  int select_all() {
+    int count = 0;
+    if ( ! is_selected() ) {
+      select();
+      ++count;
+    }
+    for ( int t=0; t<children(); t++ ) {
+      count += child(t)->select_all();
+    }
+    return(count);
+  }
   /// Disable the item's selection state.
   void deselect() {
     _selected = 0;

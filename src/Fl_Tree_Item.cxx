@@ -64,6 +64,7 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
   _label_xywh[2]    = 0;
   _label_xywh[3]    = 0;
   _usericon         = 0;
+  _userdata         = 0;
   _parent           = 0;
 }
 
@@ -103,7 +104,7 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
   _label_xywh[2]    = o->_label_xywh[2];
   _label_xywh[3]    = o->_label_xywh[3];
   _usericon         = o->usericon();
-  _userdata         = 0;
+  _userdata         = o->user_data();
   _parent           = o->_parent;
 }
 
