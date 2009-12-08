@@ -36,10 +36,34 @@
 
 // Standard MacOS Carbon API includes...
 #include <Carbon/Carbon.h>
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5) && !__LP64__
+#include <config.h>
+
+#ifdef __APPLE_COCOA__
+#ifndef MAC_OS_X_VERSION_10_3
+#define MAC_OS_X_VERSION_10_3 1030
+#endif
+#ifndef MAC_OS_X_VERSION_10_4
+#define MAC_OS_X_VERSION_10_4 1040
+#endif
+#ifndef MAC_OS_X_VERSION_10_5
+#define MAC_OS_X_VERSION_10_5 1050
+#endif
+#ifndef MAC_OS_X_VERSION_10_6
+#define MAC_OS_X_VERSION_10_6 1060
+#endif
+#ifndef MAC_OS_X_VERSION_MAX_ALLOWED
+#define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_3
+#endif
+
+#ifndef CGFLOAT_DEFINED //appears with 10.5 in CGBase.h
+#if defined(__LP64__) && __LP64__
+typedef double CGFloat;
+#else
 typedef float CGFloat;
 #endif
-#include <config.h>
+#endif
+
+#endif
 
 // Now make some fixes to the headers...
 #undef check			// Dunno where this comes from...

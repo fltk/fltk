@@ -61,16 +61,15 @@ extern "C" {
 #include <stdarg.h>
 
 #import <Cocoa/Cocoa.h>
-#include <AvailabilityMacros.h>
-#if defined(__LP64__) && __LP64__
-typedef double CGFloat;
-#else
-typedef float CGFloat;
-#endif
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+#ifndef NSINTEGER_DEFINED //appears with 10.5 in NSObjCRuntime.h
+#if defined(__LP64__) && __LP64__
 typedef long NSInteger;
 typedef unsigned long NSUInteger;
+#else
+typedef int NSInteger;
+typedef unsigned int NSUInteger;
+#endif
 #endif
 
 
@@ -105,15 +104,15 @@ static void cocoaMouseHandler(NSEvent *theEvent);
 // public variables
 int fl_screen;
 CGContextRef fl_gc = 0;
-void *fl_system_menu;				// this is really a NSMenu*
+void *fl_system_menu;                   // this is really a NSMenu*
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
-void *fl_default_cursor;			// this is really a NSCursor*
-void *fl_capture = 0;				// (NSWindow*) we need this to compensate for a missing(?) mouse capture
-//ulong fl_event_time;                 // the last timestamp from an x event
-char fl_key_vector[32];              // used by Fl::get_key()
-bool fl_show_iconic;                 // true if called from iconize() - shows the next created window in collapsed state
-int fl_disable_transient_for;        // secret method of removing TRANSIENT_FOR
-//const Fl_Window* fl_modal_for;       // parent of modal() window
+void *fl_default_cursor;		// this is really a NSCursor*
+void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
+//ulong fl_event_time;                  // the last timestamp from an x event
+char fl_key_vector[32];                 // used by Fl::get_key()
+bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
+int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
+//const Fl_Window* fl_modal_for;        // parent of modal() window
 Fl_Region fl_window_region = 0;
 Window fl_window;
 Fl_Window *Fl_Window::current_;
@@ -660,8 +659,8 @@ static double do_queued_events( double time = 0.0 )
     } 
   }
   NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask 
-																			untilDate:[NSDate dateWithTimeIntervalSinceNow:time] 
-																				 inMode:NSDefaultRunLoopMode dequeue:YES];  
+                                      untilDate:[NSDate dateWithTimeIntervalSinceNow:time] 
+                                         inMode:NSDefaultRunLoopMode dequeue:YES];  
   BOOL needSendEvent = YES;
   if([event type] == NSLeftMouseDown) {
 	  Fl_Window *grab = Fl::grab();
@@ -1255,7 +1254,11 @@ extern "C" {
                                             UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
 }
 
-@interface FLDelegate : NSObject {
+@interface FLDelegate : NSObject 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+<NSWindowDelegate, NSApplicationDelegate>
+#endif
+{
 }
 - (void)windowDidMove:(NSNotification *)notif;
 - (void)windowDidResize:(NSNotification *)notif;
@@ -1413,7 +1416,7 @@ void fl_open_display() {
         // conditional code compiled on 10.2 will still work on newer releases...
         OSErr err;
 #if __LP64__
-				err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
+        err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
 #else
         
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_2
@@ -2746,6 +2749,23 @@ int MACscreen_init(XRectangle screens[])
   return num_screens;
 }
 
+@interface FLaboutItemTarget : NSObject 
+{
+}
+- (void)showPanel;
+@end
+@implementation FLaboutItemTarget
+- (void)showPanel
+{
+    NSDictionary *options;
+    options = [NSDictionary dictionaryWithObjectsAndKeys:
+                	     [NSString stringWithFormat:@" FLTK %d.%d Cocoa", FL_MAJOR_VERSION,
+                              FL_MINOR_VERSION ], @"Copyright",
+                	     nil];
+    [NSApp  orderFrontStandardAboutPanelWithOptions:options];
+  }
+@end
+
 static NSMenu *appleMenu;
 static void createAppleMenu(void)
 {
@@ -2763,7 +2783,9 @@ static void createAppleMenu(void)
   appleMenu = [[NSMenu alloc] initWithTitle:@""];
   /* Add menu items */
   title = [@"About " stringByAppendingString:(NSString*)nsappname];
-  [appleMenu addItemWithTitle:title action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
+  [appleMenu addItemWithTitle:title action:@selector(showPanel) keyEquivalent:@""];
+  FLaboutItemTarget *about = [[FLaboutItemTarget alloc] init];
+  [[appleMenu itemAtIndex:0] setTarget:about];
   [appleMenu addItem:[NSMenuItem separatorItem]];
   // Services Menu
   services = [[[NSMenu alloc] init] autorelease];
@@ -2818,7 +2840,7 @@ static void createAppleMenu(void)
 }
 - (void) doCallback:(id)obj
 {
-  cb((Fl_Widget*)obj, data);
+  if (cb) cb((Fl_Widget*)obj, data);
 }
 - (void*)getItemData
 {
@@ -2865,6 +2887,26 @@ void MACsetAboutMenu( Fl_Callback *cb, void *data )
   [item setTarget:item];
 }
 
+static char *remove_ampersand(const char *s)
+{
+  char *ret = strdup(s);
+  const char *p = s;
+  char *q = ret;
+  while(*p != 0) {
+    if (p[0]=='&') {
+      if (p[1]=='&') {
+        *q++ = '&'; p+=2;
+      } else {
+        p++;
+      }
+    } else {
+      *q++ = *p++;
+    }
+  }
+  *q = 0;
+  return ret;
+}
+
 void *MACMenuOrItemOperation(const char *operation, ...)
 /* these operations apply to menus, submenus, or menu items
  */
@@ -2881,7 +2923,7 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     menu = va_arg(ap, NSMenu*);
     value = va_arg(ap, int);
     retval = (void *)[menu itemAtIndex:value];
-	}
+  }
   else if(strcmp(operation, "setKeyEquivalent") == 0) {//arguments: NSMenuItem*, int
     item = va_arg(ap, NSMenuItem*);
     value = va_arg(ap, int);
@@ -2898,16 +2940,17 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     if ( value & FL_ALT ) macMod |= NSAlternateKeyMask;
     if ( value & FL_CTRL ) macMod |= NSControlKeyMask;
     [item setKeyEquivalentModifierMask:macMod];
-	}
+  }
   else if(strcmp(operation, "setState") == 0) {//arguments: NSMenuItem*, int
     item = va_arg(ap, NSMenuItem*);
     value = va_arg(ap, int);
     [item setState:(value ? NSOnState : NSOffState)];
-	}
+  }
   else if(strcmp(operation, "initWithTitle") == 0) {//arguments: const char*title. Returns the newly created menu
-    //creates a new (sub)menu
-    pter = va_arg(ap, void *);
-    CFStringRef title = CFStringCreateWithCString(NULL, (const char *)pter, kCFStringEncodingUTF8);
+                                                    //creates a new (sub)menu
+    char *ts = remove_ampersand(va_arg(ap, char *));
+    CFStringRef title = CFStringCreateWithCString(NULL, ts, kCFStringEncodingUTF8);
+    free(ts);
     NSMenu *menu = [[NSMenu alloc] initWithTitle:(NSString*)title];
     CFRelease(title);
     [menu setAutoenablesItems:NO];
@@ -2915,13 +2958,13 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     [menu autorelease];
   }
   else if(strcmp(operation, "numberOfItems") == 0) {//arguments: NSMenu *menu, int *pcount
-    //upon return, *pcount is set to menu's item count
+                                                    //upon return, *pcount is set to menu's item count
     menu = va_arg(ap, NSMenu*);
     pter = va_arg(ap, void *);
     *(int*)pter = [menu numberOfItems];
   }
   else if(strcmp(operation, "setSubmenu") == 0) {//arguments: NSMenuItem *item, NSMenu *menu
-    //sets 'menu' as submenu attached to 'item'
+                                                 //sets 'menu' as submenu attached to 'item'
     item = va_arg(ap, NSMenuItem*);
     menu = va_arg(ap, NSMenu*);
     [item setSubmenu:menu];
@@ -2937,8 +2980,9 @@ void *MACMenuOrItemOperation(const char *operation, ...)
   }
   else if(strcmp(operation, "setTitle") == 0) {//arguments: NSMenuItem*, const char *
     item = va_arg(ap, NSMenuItem*);
-    pter = va_arg(ap, void *);
-    CFStringRef title = CFStringCreateWithCString(NULL, (const char *)pter, kCFStringEncodingUTF8);
+    char *ts = remove_ampersand(va_arg(ap, char *));
+    CFStringRef title = CFStringCreateWithCString(NULL, ts, kCFStringEncodingUTF8);
+    free(ts);
     [item setTitle:(NSString*)title];
     CFRelease(title);
   }
@@ -2948,7 +2992,7 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     [menu removeItem:[menu itemAtIndex:value]];
   }
   else if(strcmp(operation, "getItemData") == 0) {//arguments: NSMenu*, int. Returns the item's data
-    //items can have a callback and a data pointer attached to them. This returns the data pointer
+                                                  //items can have a callback and a data pointer attached to them. This returns the data pointer
     menu = va_arg(ap, NSMenu*);
     value = va_arg(ap, int);
     retval = [(FLMenuItem *)[menu itemAtIndex:value] getItemData];
@@ -2959,11 +3003,12 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     //attaches callback 'cb' and data pointer 'data' to it
     //upon return, puts the rank of the new item in *prank unless prank is NULL
     menu = va_arg(ap, NSMenu*);
-    const char *name = va_arg(ap, const char*);
+    char *name = remove_ampersand(va_arg(ap, const char*));
     Fl_Callback *cb = va_arg(ap, Fl_Callback*);
     pter = va_arg(ap, void *);
     int *prank = va_arg(ap, int*);
     CFStringRef cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
+    free(name);
     FLMenuItem *item = [FLMenuItem alloc];
     [item initWithTitle:(NSString*)cfname action:@selector(doCallback:) keyEquivalent:@""];
     [item putData:cb pter:pter];
