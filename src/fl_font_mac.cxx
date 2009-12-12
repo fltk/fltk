@@ -483,9 +483,15 @@ else {
   ATSUAttributeTag iTag = kATSUCGContextTag;
   ATSUAttributeValuePtr iValuePtr=&fl_gc;
   ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
-
+  
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
+#if defined(__APPLE_COCOA__)
+  CGContextSetShouldAntialias(fl_gc, true);
+#endif
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
+#if defined(__APPLE_COCOA__)
+  CGContextSetShouldAntialias(fl_gc, false);
+#endif
 #endif
 #if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
@@ -520,7 +526,13 @@ else {
   ATSUSetLayoutControls(layout, 2, iTag, iSize, aAttr);
 
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
+#if defined(__APPLE_COCOA__)
+  CGContextSetShouldAntialias(fl_gc, true);
+#endif
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
+#if defined(__APPLE_COCOA__)
+  CGContextSetShouldAntialias(fl_gc, false);
+#endif
   //restore layout baseline
   ang = IntToFixed(0);
   ATSUSetLayoutControls(layout, 2, iTag, iSize, aAttr);
@@ -553,7 +565,13 @@ else {
   ATSUSetLayoutControls (layout, 2, iTag, iSize, aAttr );
 
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
+#if defined(__APPLE_COCOA__)
+  CGContextSetShouldAntialias(fl_gc, true);
+#endif
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x-offs), FloatToFixed(y));
+#if defined(__APPLE_COCOA__)
+  CGContextSetShouldAntialias(fl_gc, false);
+#endif
 #endif
 #if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
