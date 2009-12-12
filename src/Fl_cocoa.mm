@@ -123,6 +123,7 @@ static int got_events = 0;
 static Fl_Window* resize_from_system;
 static NSView *viewWithLockedFocus = nil;
 static SInt32 MACsystemVersion;
+void *MACMenuOrItemOperation(const char *operation, ...);
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -2824,27 +2825,33 @@ static void createAppleMenu(void)
 }
 
 @interface FLMenuItem : NSMenuItem {
-  Fl_Callback *cb;
-  void *data;
+  const Fl_Menu_Item *item;
 }
-- (FLMenuItem*) putData:(Fl_Callback*)callback pter:(void*)d;
-- (void) doCallback:(id)obj;
-- (void*)getItemData;
-@end
+- (void) setFlMenuItem:(const Fl_Menu_Item*)flItem;
+- (void) doCallback:(id)unused;
+- (void) directCallback:(id)unused;
+- (Fl_Menu_Item*)getFlMenuItem;@end
 @implementation FLMenuItem
-- (FLMenuItem*) putData:(Fl_Callback*)callback pter:(void*)d
+- (void) setFlMenuItem:(const Fl_Menu_Item*)flItem
 {
-  cb = callback;
-  data = d;
-  return self;
+  item = flItem;
 }
-- (void) doCallback:(id)obj
+- (void) doCallback:(id)unused
 {
-  if (cb) cb((Fl_Widget*)obj, data);
+  if(item) {
+    fl_sys_menu_bar->picked(item);
+    if ( item->flags & FL_MENU_TOGGLE ) {// update the menu toggle symbol
+      [(NSMenuItem*)unused setState:(item->value() ? NSOnState : NSOffState)];
+    }
+  }
 }
-- (void*)getItemData
+- (void) directCallback:(id)unused
 {
-  return data;
+  if( item && item->callback() ) item->do_callback(NULL);
+}
+- (const Fl_Menu_Item*)getFlMenuItem
+{
+  return item;
 }
 @end
 
@@ -2873,16 +2880,26 @@ void *MACcreateMenu(const char *name)
   return (void *)mymenu;
 }
 
-void MACsetAboutMenu( Fl_Callback *cb, void *data )
-// attaches a callback to the "About myprog" item of the application menu
+void fl_mac_set_about(  Fl_Menu_Item *flItem ) 
+/** 
+ * Mac OS: attaches an Fl_Menu_Item to the "About myprog" item of the system application menu.
+ * \note Only the shortcut_, callback_ and user_data_ fields of the Fl_Menu_Item* \p flItem are used.
+ *
+ * \author Manolo Gouy
+ *
+ * \param[in] flItem is a const Fl_Menu_Item*
+ */
 {
   fl_open_display();
   CFStringRef cfname = CFStringCreateCopy(NULL, (CFStringRef)[[appleMenu itemAtIndex:0] title]);
   [appleMenu removeItemAtIndex:0];
   FLMenuItem *item = [[FLMenuItem alloc] autorelease];
-  [item initWithTitle:(NSString*)cfname action:@selector(doCallback:) keyEquivalent:@""];
-  [item putData:cb pter:data];
-  [appleMenu insertItem:item atIndex:0];
+  [item initWithTitle:(NSString*)cfname action:@selector(directCallback:) keyEquivalent:@""];
+  if(flItem->shortcut()) {
+    MACMenuOrItemOperation("setKeyEquivalent", item, flItem->shortcut() & 0xff);
+    MACMenuOrItemOperation("setKeyEquivalentModifierMask", item, flItem->shortcut() );
+  }
+  [item setFlMenuItem:flItem];  [appleMenu insertItem:item atIndex:0];
   CFRelease(cfname);
   [item setTarget:item];
 }
@@ -2991,27 +3008,24 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     value = va_arg(ap, int);
     [menu removeItem:[menu itemAtIndex:value]];
   }
-  else if(strcmp(operation, "getItemData") == 0) {//arguments: NSMenu*, int. Returns the item's data
-                                                  //items can have a callback and a data pointer attached to them. This returns the data pointer
-    menu = va_arg(ap, NSMenu*);
+  else if(strcmp(operation, "getFlMenuItem") == 0) {//arguments: NSMenu*, int. Returns the item's Fl_Menu_Item*    menu = va_arg(ap, NSMenu*);
     value = va_arg(ap, int);
-    retval = [(FLMenuItem *)[menu itemAtIndex:value] getItemData];
+    retval = [(FLMenuItem *)[menu itemAtIndex:value] getFlMenuItem];
   }
   else if(strcmp(operation, "addNewItem") == 0) {
-    //arguments: NSMenu *menu, const char *name, Fl_Callback *cb, void *data, int *prank
-    //creates a new menu item named 'name' at the end of 'menu'
-    //attaches callback 'cb' and data pointer 'data' to it
+    //arguments: NSMenu *menu, const Fl_Menu_Item* flItem, int *prank
+    //creates a new menu item at the end of 'menu'
+    //attaches the Fl_Menu_Item *flItem to it    
     //upon return, puts the rank of the new item in *prank unless prank is NULL
     menu = va_arg(ap, NSMenu*);
-    char *name = remove_ampersand(va_arg(ap, const char*));
-    Fl_Callback *cb = va_arg(ap, Fl_Callback*);
-    pter = va_arg(ap, void *);
+    const Fl_Menu_Item *flItem = va_arg(ap, const Fl_Menu_Item*);
+    char *name = remove_ampersand(flItem->label());
     int *prank = va_arg(ap, int*);
     CFStringRef cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
     free(name);
     FLMenuItem *item = [FLMenuItem alloc];
     [item initWithTitle:(NSString*)cfname action:@selector(doCallback:) keyEquivalent:@""];
-    [item putData:cb pter:pter];
+    [item setFlMenuItem:flItem];
     [menu addItem:item];
     CFRelease(cfname);
     [item setTarget:item];
