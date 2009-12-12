@@ -483,7 +483,7 @@ else {
   ATSUAttributeTag iTag = kATSUCGContextTag;
   ATSUAttributeValuePtr iValuePtr=&fl_gc;
   ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
-  
+
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
 #if defined(__APPLE_COCOA__)
   CGContextSetShouldAntialias(fl_gc, true);

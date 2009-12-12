@@ -108,11 +108,11 @@ void *fl_system_menu;                   // this is really a NSMenu*
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
 void *fl_default_cursor;		// this is really a NSCursor*
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
-                                        //ulong fl_event_time;                  // the last timestamp from an x event
+//ulong fl_event_time;                  // the last timestamp from an x event
 char fl_key_vector[32];                 // used by Fl::get_key()
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
 int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
-                                        //const Fl_Window* fl_modal_for;        // parent of modal() window
+//const Fl_Window* fl_modal_for;        // parent of modal() window
 Fl_Region fl_window_region = 0;
 Window fl_window;
 Fl_Window *Fl_Window::current_;
@@ -487,31 +487,31 @@ void Fl::remove_fd(int n)
  */
 int fl_ready()
 {
-  NSEvent *retval = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
+	NSEvent *retval = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:[NSDate dateWithTimeIntervalSinceNow:0]
                                           inMode:NSDefaultRunLoopMode dequeue:NO];
-  if(retval != nil) [retval release];
-  return retval != nil;
+	if(retval != nil) [retval release];
+	return retval != nil;
 }
 
 
 static void processFLTKEvent(void) {
-  dataready.CancelThread(DEBUGTEXT("DATA READY EVENT\n"));
-  
-  // CHILD THREAD TELLS US DATA READY
-  //     Check to see what's ready, and invoke user's cb's
-  //
-  fd_set r,w,x;
-  switch(dataready.CheckData(r,w,x))
-  {
-    case 0:	// NO DATA
-      break;
-    case -1:	// ERROR
-      break;
-    default:	// DATA READY
-      dataready.HandleData(r,w,x);
-      break;
-  }
-  return;
+	dataready.CancelThread(DEBUGTEXT("DATA READY EVENT\n"));
+	
+	// CHILD THREAD TELLS US DATA READY
+	//     Check to see what's ready, and invoke user's cb's
+	//
+	fd_set r,w,x;
+	switch(dataready.CheckData(r,w,x))
+	{
+	  case 0:	// NO DATA
+	    break;
+	  case -1:	// ERROR
+	    break;
+	  default:	// DATA READY
+	    dataready.HandleData(r,w,x);
+	    break;
+	}
+	return;
 }
 
 
@@ -582,7 +582,7 @@ static void do_timer(EventLoopTimerRef timer, void* data)
       break;
     }
   }
-  breakMacEventLoop();
+	breakMacEventLoop();
 }
 
 
@@ -644,21 +644,7 @@ static double do_queued_events( double time = 0.0 )
   { dataready.StartThread((void*)GetCurrentEventQueue()); }
   
   fl_unlock_function();
-  
-  //necessary so that after closing a non-FLTK window (e.g., Fl_Native_File_Chooser)
-  //the front window turns main again
-  Fl_Window *w = Fl::first_window();
-  if (w) {
-    NSWindow *cw = (NSWindow*)Fl_X::i(w)->xid;
-    if([cw isVisible] && ![cw isMiniaturized] && ([cw styleMask] & NSTitledWindowMask) ) {
-      if(![cw isKeyWindow]) {//always make Fl::first_window() the key window
-        [cw makeKeyAndOrderFront:nil];
-      }
-      if(![cw isMainWindow]) {//always make Fl::first_window() the main window
-        [cw makeMainWindow];
-      }
-    } 
-  }
+	
   //necessary so that after closing a non-FLTK window (e.g., Fl_Native_File_Chooser)
   //the front window turns key again
   if([NSApp keyWindow] == nil) {
@@ -666,9 +652,9 @@ static double do_queued_events( double time = 0.0 )
     if (w) {
       NSWindow *cw = (NSWindow*)Fl_X::i(w)->xid;
       if([cw isVisible] && ![cw isMiniaturized] && ([cw styleMask] & NSTitledWindowMask) ) {
-        if(![cw isKeyWindow]) {//always make Fl::first_window() the key window
-          [cw makeKeyWindow];
-        }
+	if(![cw isKeyWindow]) {//always make Fl::first_window() the key window
+	  [cw makeKeyWindow];
+	}
       } 
     }
   }
@@ -677,19 +663,19 @@ static double do_queued_events( double time = 0.0 )
                                          inMode:NSDefaultRunLoopMode dequeue:YES];  
   BOOL needSendEvent = YES;
   if([event type] == NSLeftMouseDown) {
-    Fl_Window *grab = Fl::grab();
-    if(grab && grab != [(FLWindow *)[event window] getFl_Window]) {
-      //a click event out of a menu window, so we should close this menu
-      //done here to catch also clicks on window title bar/resize box 
-      cocoaMouseHandler(event);
+	  Fl_Window *grab = Fl::grab();
+	  if(grab && grab != [(FLWindow *)[event window] getFl_Window]) {
+			//a click event out of a menu window, so we should close this menu
+			//done here to catch also clicks on window title bar/resize box 
+			cocoaMouseHandler(event);
     }
   }
   else if([event type] == NSApplicationDefined) {
-    if([event subtype] == FLTKDataReadyEvent) {
-      processFLTKEvent();
+		if([event subtype] == FLTKDataReadyEvent) {
+			processFLTKEvent();
     }
-    needSendEvent = NO;
-  }
+		needSendEvent = NO;
+	}
   if(needSendEvent) [NSApp sendEvent:event]; 
   fl_lock_function();
   
@@ -784,11 +770,11 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   NSUInteger mods = [theEvent modifierFlags];  
   int sendEvent = 0;
   
-  switch ( [theEvent type] )
+	switch ( [theEvent type] )
   {
-    case NSLeftMouseDown:
-    case NSRightMouseDown:
-    case NSOtherMouseDown:
+	  case NSLeftMouseDown:
+	  case NSRightMouseDown:
+	  case NSOtherMouseDown:
       suppressed = 0;
       sendEvent = FL_PUSH;
       Fl::e_is_click = 1; 
@@ -801,9 +787,9 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       else
         Fl::e_clicks = 0;
       // fall through
-    case NSLeftMouseUp:
-    case NSRightMouseUp:
-    case NSOtherMouseUp:
+	  case NSLeftMouseUp:
+	  case NSRightMouseUp:
+	  case NSOtherMouseUp:
       Fl::e_state &=  0xff0000;
       if (suppressed) {
         suppressed = 0;
@@ -815,15 +801,15 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       }
       Fl::e_keysym = keysym[ btn ];
       // fall through
-    case NSMouseMoved:
+	  case NSMouseMoved:
       suppressed = 0;
       if ( !sendEvent ) { 
         sendEvent = FL_MOVE; 
       }
       // fall through
-    case NSLeftMouseDragged:
-    case NSRightMouseDragged:
-    case NSOtherMouseDragged: {
+	  case NSLeftMouseDragged:
+	  case NSRightMouseDragged:
+	  case NSOtherMouseDragged: {
       if (suppressed) break;
       if ( !sendEvent ) {
         sendEvent = FL_MOVE; // Fl::handle will convert into FL_DRAG
@@ -837,9 +823,9 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       Fl::e_x = pos.x;
       Fl::e_y = pos.y;
       Fl::handle( sendEvent, window );
-    } break;
-    default:
-      break;
+          } break;
+	default:
+	  break;
   }
   
   fl_unlock_function();
@@ -1034,11 +1020,11 @@ static void processCompositionSequence(CFStringRef s, Fl_Window *window)
   UniChar first = CFStringGetCharacterAtIndex(s, 0);
   CFStringGetCString(s, buffer, sizeof(buffer), kCFStringEncodingUTF8);
   for(unsigned int i = 0; i < sizeof(asciis)/sizeof(char); i++) {
-    if(first == unicodes[i]) {
-      //replace the 2-byte utf8 of a non-ascii unicode by the corresponding 1-byte ascii
-      memmove(buffer+1, buffer+2, 2);
-      *buffer = asciis[i];	  
-      break;
+		if(first == unicodes[i]) {
+			//replace the 2-byte utf8 of a non-ascii unicode by the corresponding 1-byte ascii
+			memmove(buffer+1, buffer+2, 2);
+			*buffer = asciis[i];	  
+			break;
     }
   }
   Fl::e_keysym = 0;
@@ -1085,8 +1071,8 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   static int countevents;
   static CFMutableStringRef sequence;//will contain the two characters of the composition sequence
   if(compose) {//we are in a composition sequence
-               //the only benefit of sending events to the NSText object edit is that the deadkey becomes visible
-               //at its keyUp event; without this, the deadkey remains invisible
+    //the only benefit of sending events to the NSText object edit is that the deadkey becomes visible
+    //at its keyUp event; without this, the deadkey remains invisible
     if([s length] == 0) {//occurs if 2 deadkeys are typed successively by error
       compose = NO;
       [edit setString:@""];
@@ -1123,13 +1109,13 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
     sequence = CFStringCreateMutable(NULL, 2);
     fl_unlock_function();
     return noErr;
-  }
+	}
   else {
     char buff[10];
     CFStringGetCString((CFStringRef)s, buff, sizeof(buff), kCFStringEncodingUnicode);
     key = *(unichar*)buff;
     keychar = buff[0];
-  }
+	}
   // extended keyboards can also send sequences on key-up to generate Kanji etc. codes.
   // Some observed prefixes are 0x81 to 0x83, followed by an 8 bit keycode.
   // In this mode, there seem to be no key-down codes
@@ -1146,7 +1132,7 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
    }
    printf("%08x %08x %08x '%c' %s \n", mods, keyCode, key, key, ev);
    */
-  switch([theEvent type])
+	switch([theEvent type])
   {
     case NSKeyDown:
       sendEvent = FL_KEYBOARD;
@@ -1157,8 +1143,8 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
         Fl::e_state &= 0xbfffffff; // clear the deadkey flag
       }
       mods_to_e_state( mods ); //we process modifier keys at the same time
-                               // if the user pressed alt/option, event_key should have the keycap, 
-                               // but event_text should generate the international symbol
+      // if the user pressed alt/option, event_key should have the keycap, 
+      // but event_text should generate the international symbol
       sym = macKeyLookUp[maskedKeyCode];
       if ( isalpha(key) )
         sym = tolower(key);
@@ -1177,10 +1163,10 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
       Fl::e_length = strlen(buffer);
       Fl::e_text = buffer;
       buffer[Fl::e_length] = 0; // just in case...
-    } break;
-    default:
-      fl_unlock_function();
-      return eventNotHandledErr;
+      } break;
+	default:
+	  fl_unlock_function();
+	  return eventNotHandledErr;
   }
   while (window->parent()) window = window->window();
   if (sendEvent && Fl::handle(sendEvent,window)) {
@@ -1233,7 +1219,7 @@ static void	(*open_cb)(const char *) = 0;
       
       (*open_cb)(filename);
     }
-  }
+	}
   
   // Unlock access to FLTK for all threads...
   fl_unlock_function();
@@ -1247,7 +1233,7 @@ void fl_open_callback(void (*cb)(const char *)) {
   if(!aeventmgr) {
     aeventmgr = [NSAppleEventManager sharedAppleEventManager];
     handler = [[FLAppleEventHandler alloc] init];
-  }
+	}
   
   open_cb = cb;
   if (cb) {
@@ -1301,7 +1287,7 @@ extern "C" {
   window->position(pt2.x, [[nsw screen] frame].size.height - pt2.y);
   if([nsw containsGLsubwindow] ) {
     [nsw display];//redraw window after moving if it contains OpenGL subwindows
-  }
+	}
 }
 - (void)windowDidResize:(NSNotification *)notif
 {
@@ -1376,14 +1362,14 @@ void fl_open_display() {
   static char beenHereDoneThat = 0;
   if ( !beenHereDoneThat )  {
     beenHereDoneThat = 1;
-    
+	  
     [NSApplication sharedApplication];
     NSAutoreleasePool *localPool;
     localPool = [[NSAutoreleasePool alloc] init]; 
     mydelegate = [[FLDelegate alloc] init];
     [NSApp setDelegate:mydelegate];
     [NSApp finishLaunching];
-    
+		
     FlushEvents(everyEvent,0);
     
     fl_default_cursor = [NSCursor arrowCursor];
@@ -1540,11 +1526,11 @@ void Fl_X::flush()
   w->flush();
   if (fl_gc) {
     CGContextFlush(fl_gc);
-    if(viewWithLockedFocus) {
-      [viewWithLockedFocus unlockFocus];
-      viewWithLockedFocus = nil;
+		if(viewWithLockedFocus) {
+			[viewWithLockedFocus unlockFocus];
+			viewWithLockedFocus = nil;
     }
-  }
+	}
 }
 
 
@@ -1684,7 +1670,7 @@ Fl_Window *fl_dnd_target_window = 0;
 
 static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   CFStringRef utf8_title = CFStringCreateWithCString(NULL, (name ? name : ""), kCFStringEncodingUTF8);
-  [nsw setTitle:(NSString*)utf8_title ];
+	[nsw setTitle:(NSString*)utf8_title ];
   CFRelease(utf8_title);
 }
 
@@ -1812,20 +1798,20 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   Fl::e_y_root = [[[self window] screen] frame].size.height - Fl::e_y_root;
   if(DragData) { free(DragData); DragData = NULL; }
   if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
-    CFArrayRef files = (CFArrayRef)[pboard propertyListForType:NSFilenamesPboardType];
-    CFStringRef all = CFStringCreateByCombiningStrings(NULL, files, CFSTR("\n"));
-    int l = CFStringGetMaximumSizeForEncoding(CFStringGetLength(all), kCFStringEncodingUTF8);
-    DragData = (char *)malloc(l + 1);
-    CFStringGetCString(all, DragData, l + 1, kCFStringEncodingUTF8);
-    CFRelease(all);
-  }
+		CFArrayRef files = (CFArrayRef)[pboard propertyListForType:NSFilenamesPboardType];
+		CFStringRef all = CFStringCreateByCombiningStrings(NULL, files, CFSTR("\n"));
+		int l = CFStringGetMaximumSizeForEncoding(CFStringGetLength(all), kCFStringEncodingUTF8);
+		DragData = (char *)malloc(l + 1);
+		CFStringGetCString(all, DragData, l + 1, kCFStringEncodingUTF8);
+		CFRelease(all);
+	}
   else if ( [[pboard types] containsObject:NSStringPboardType] ) {
-    NSData *data = [pboard dataForType:NSStringPboardType];
-    DragData = (char *)malloc([data length] + 1);
-    [data getBytes:DragData];
-    DragData[[data length]] = 0;
-    convert_crlf(DragData, strlen(DragData));
-  }
+		NSData *data = [pboard dataForType:NSStringPboardType];
+		DragData = (char *)malloc([data length] + 1);
+		[data getBytes:DragData];
+		DragData[[data length]] = 0;
+		convert_crlf(DragData, strlen(DragData));
+	}
   else return NO;
   Fl::e_text = DragData;
   Fl::e_length = strlen(DragData);
@@ -1842,8 +1828,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 {
   if ( fl_dnd_target_window )
   {
-    Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );
-    fl_dnd_target_window = 0;
+		Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );
+		fl_dnd_target_window = 0;
   }
 }
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
@@ -1881,12 +1867,12 @@ void Fl_X::make(Fl_Window* w)
       x->xidNext = xo->xidChildren;
       x->xidChildren = 0L;
       xo->xidChildren = x;
-      x->xid = win->i->xid;
+			x->xid = win->i->xid;
       x->w = w; w->i = x;
       x->wait_for_expose = 0;
-      Fl_X *z = xo->next; //we don't want a subwindow in Fl_X::first
-      xo->next = x;
-      x->next = z;
+			Fl_X *z = xo->next; //we don't want a subwindow in Fl_X::first
+			xo->next = x;
+			x->next = z;
       int old_event = Fl::e_number;
       w->handle(Fl::e_number = FL_SHOW);
       Fl::e_number = old_event;
@@ -1896,14 +1882,14 @@ void Fl_X::make(Fl_Window* w)
   }
   else // create a desktop window
   {
-    NSAutoreleasePool *localPool;
-    localPool = [[NSAutoreleasePool alloc] init]; 
+		NSAutoreleasePool *localPool;
+		localPool = [[NSAutoreleasePool alloc] init]; 
     Fl_Group::current(0);
     fl_open_display();
-    NSInteger winlevel = NSNormalWindowLevel;
-    NSUInteger winstyle;
-    if(w->border()) winstyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
-    else winstyle = NSBorderlessWindowMask;
+		NSInteger winlevel = NSNormalWindowLevel;
+		NSUInteger winstyle;
+		if(w->border()) winstyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
+		else winstyle = NSBorderlessWindowMask;
     int xp = w->x();
     int yp = w->y();
     int wp = w->w();
@@ -1912,12 +1898,12 @@ void Fl_X::make(Fl_Window* w)
       if ( w->minh != w->maxh || w->minw != w->maxw)
         winstyle |= NSResizableWindowMask;
     } else {
-      if (w->resizable()) {
+			if (w->resizable()) {
         Fl_Widget *o = w->resizable();
         int minw = o->w(); if (minw > 100) minw = 100;
         int minh = o->h(); if (minh > 100) minh = 100;
         w->size_range(w->w() - o->w() + minw, w->h() - o->h() + minh, 0, 0);
-        winstyle |= NSResizableWindowMask;
+				winstyle |= NSResizableWindowMask;
       } else {
         w->size_range(w->w(), w->h(), w->w(), w->h());
       }
@@ -1981,7 +1967,7 @@ void Fl_X::make(Fl_Window* w)
     x->xidChildren = 0;
     x->xidNext = 0;
     x->gc = 0;
-    
+	  
     FLWindow *cw = [[FLWindow alloc] initWithFl_W:w];
     NSRect srect = [[NSScreen mainScreen] frame];
     NSRect crect;
@@ -2065,9 +2051,9 @@ void Fl_Window::size_range_() {
   NSSize minSize = { minw, minh + bt };
   NSSize maxSize = { maxw?maxw:32000, maxh?maxh + bt:32000 };
   if (i && i->xid) {
-    [(NSWindow*)i->xid setMinSize:minSize];
-    [(NSWindow*)i->xid setMaxSize:maxSize];
-  }
+		[(NSWindow*)i->xid setMinSize:minSize];
+		[(NSWindow*)i->xid setMaxSize:maxSize];
+	}
 }
 
 
@@ -2120,17 +2106,17 @@ void Fl_Window::show() {
   if (!shown() || !i) {
     Fl_X::make(this);
   } else {
-    if ( !parent() )
-    {
-      if([(NSWindow*)i->xid isMiniaturized]) {
-        i->w->redraw();
-        [(NSWindow*)i->xid deminiaturize:nil];
-      }
+		if ( !parent() )
+		{
+			if([(NSWindow*)i->xid isMiniaturized]) {
+				i->w->redraw();
+				[(NSWindow*)i->xid deminiaturize:nil];
+			}
       
-      if (!fl_capture) {
-        [(NSWindow*)i->xid makeKeyAndOrderFront:nil];
+			if (!fl_capture) {
+				[(NSWindow*)i->xid makeKeyAndOrderFront:nil];
       }
-    }
+		}
   }
 }
 
@@ -2215,13 +2201,13 @@ void Fl_Window::make_current()
   }
   else {
     fl_window_region = XRectangleRegion(0, 0, w(), h());
-    for ( Fl_X *cx = i->xidChildren; cx; cx = cx->xidNext )
-    {//clip-out all sub-windows
-      Fl_Window *cw = cx->w;
-      Fl_Region from = fl_window_region;
-      fl_window_region = MacRegionMinusRect(from, cw->x(), cw->y(), cw->w(), cw->h() );
-      XDestroyRegion(from);
-    }
+		for ( Fl_X *cx = i->xidChildren; cx; cx = cx->xidNext )
+		{//clip-out all sub-windows
+			Fl_Window *cw = cx->w;
+			Fl_Region from = fl_window_region;
+			fl_window_region = MacRegionMinusRect(from, cw->x(), cw->y(), cw->w(), cw->h() );
+			XDestroyRegion(from);
+		}
   }
   
   //antialiasing must be deactivated because it applies to rectangles too
@@ -2253,7 +2239,7 @@ void Fl_X::q_fill_context() {
   if (!fl_gc) return;
   int hgt = 0;
   if (fl_window) {
-    hgt = [[(NSWindow*)Fl_X::i(Fl_Window::current_)->xid contentView] frame].size.height;
+		hgt = [[(NSWindow*)Fl_X::i(Fl_Window::current_)->xid contentView] frame].size.height;
   } else {
     hgt = CGBitmapContextGetHeight(fl_gc);
   }
@@ -2267,8 +2253,8 @@ void Fl_X::q_fill_context() {
     while(w && w->window()) {
       CGContextTranslateCTM(fl_gc, w->x(), w->y());
       w = w->window();
-    }
-  }
+	  }
+	}
 }
 
 // The only way to reset clipping to its original state is to pop the current graphics
@@ -2387,7 +2373,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     ItemCount nFlavor = 0, i, j;
     err = PasteboardGetItemCount(myPasteboard, &nFlavor);
     if (err==noErr) {
-      for (i=1; i<=nFlavor; i++) {
+	    for (i=1; i<=nFlavor; i++) {
         PasteboardItemID itemID = 0;
         CFArrayRef flavorTypeArray = NULL;
         found = false;
@@ -2414,8 +2400,8 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
         }
         if (flavorTypeArray) {CFRelease(flavorTypeArray); flavorTypeArray = NULL;}
         if (found) break;
-      }
-      if(found) {
+	    }
+	    if(found) {
         CFIndex len = CFDataGetLength(flavorData);
         CFStringRef mycfs = CFStringCreateWithBytes(NULL, CFDataGetBytePtr(flavorData), len, encoding, false);
         CFRelease(flavorData);
@@ -2430,7 +2416,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
         len = strlen(fl_selection_buffer[1]);
         fl_selection_length[1] = len;
         convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
-      }
+	    }
     }
   }
   Fl::e_text = fl_selection_buffer[clipboard];
@@ -2513,7 +2499,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
       delete_timer(t);
     }
   }
-  breakMacEventLoop();
+	breakMacEventLoop();
 }
 
 int MacUnlinkWindow(Fl_X *ip, Fl_X *start) {
@@ -2558,15 +2544,15 @@ static void MacRelinkWindow(Fl_X *x, Fl_X *p) {
 void MacDestroyWindow(Fl_Window *w, void *p) {
   MacUnmapWindow(w, p);
   if (w && !w->parent() && p) {
-    [[(NSWindow *)p contentView] release];
-    [(NSWindow *)p close];
-  }
+		[[(NSWindow *)p contentView] release];
+		[(NSWindow *)p close];
+	}
 }
 
 void MacMapWindow(Fl_Window *w, void *p) {
   if (w && p) {
-    [(NSWindow *)p orderFront:nil];
-  }
+		[(NSWindow *)p orderFront:nil];
+	}
   //+ link to window list
   if (w && w->parent()) {
     MacRelinkWindow(Fl_X::i(w), Fl_X::i(w->window()));
@@ -2576,8 +2562,8 @@ void MacMapWindow(Fl_Window *w, void *p) {
 
 void MacUnmapWindow(Fl_Window *w, void *p) {
   if (w && !w->parent() && p) {
-    [(NSWindow *)p orderOut:nil];
-  }
+		[(NSWindow *)p orderOut:nil];
+	}
   if (w && Fl_X::i(w)) 
     MacUnlinkWindow(Fl_X::i(w));
 }
@@ -2591,40 +2577,40 @@ Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h)
   outr->count = 0;
   CGRect rect = CGRectMake(x,y,w - 1,h - 1);
   for( int i = 0; i < r->count; i++) {
-    CGRect A = r->rects[i];
-    CGRect test = CGRectIntersection(A, rect);
-    if(CGRectIsEmpty(test)) {
-      outr->rects[(outr->count)++] = A;
+		CGRect A = r->rects[i];
+		CGRect test = CGRectIntersection(A, rect);
+		if(CGRectIsEmpty(test)) {
+			outr->rects[(outr->count)++] = A;
     }
-    else {
-      const CGFloat verylarge = 100000.;
-      CGRect side = CGRectMake(0,0,rect.origin.x,verylarge);//W side
-      test = CGRectIntersection(A, side);
-      if( ! CGRectIsEmpty(test)) {
+		else {
+			const CGFloat verylarge = 100000.;
+			CGRect side = CGRectMake(0,0,rect.origin.x,verylarge);//W side
+			test = CGRectIntersection(A, side);
+			if( ! CGRectIsEmpty(test)) {
         outr->rects[(outr->count)++] = test;
-      }
-      side = CGRectMake(0,rect.origin.y + rect.size.height,verylarge,verylarge);//N side
-      test = CGRectIntersection(A, side);
-      if( ! CGRectIsEmpty(test)) {
+			}
+			side = CGRectMake(0,rect.origin.y + rect.size.height,verylarge,verylarge);//N side
+			test = CGRectIntersection(A, side);
+			if( ! CGRectIsEmpty(test)) {
         outr->rects[(outr->count)++] = test;
-      }
-      side = CGRectMake(rect.origin.x + rect.size.width, 0, verylarge, verylarge);//E side
-      test = CGRectIntersection(A, side);
-      if( ! CGRectIsEmpty(test)) {
+			}
+			side = CGRectMake(rect.origin.x + rect.size.width, 0, verylarge, verylarge);//E side
+			test = CGRectIntersection(A, side);
+			if( ! CGRectIsEmpty(test)) {
         outr->rects[(outr->count)++] = test;
-      }
-      side = CGRectMake(0, 0, verylarge, rect.origin.y);//S side
-      test = CGRectIntersection(A, side);
-      if( ! CGRectIsEmpty(test)) {
+			}
+			side = CGRectMake(0, 0, verylarge, rect.origin.y);//S side
+			test = CGRectIntersection(A, side);
+			if( ! CGRectIsEmpty(test)) {
         outr->rects[(outr->count)++] = test;
-      }
-    }
-  }
+			}
+		}
+	}
   if(outr->count == 0) {
-    free(outr->rects);
-    free(outr);
-    outr = XRectangleRegion(0,0,0,0);
-  }
+		free(outr->rects);
+		free(outr);
+		outr = XRectangleRegion(0,0,0,0);
+	}
   else outr->rects = (CGRect*)realloc(outr->rects, outr->count * sizeof(CGRect));
   return outr;
 }
@@ -2640,16 +2626,16 @@ Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h)
   outr->rects =(CGRect*)malloc(outr->count * sizeof(CGRect));
   int j = 0;
   for(int i = 0; i < current->count; i++) {
-    CGRect test = CGRectIntersection(current->rects[i], r);
-    if(!CGRectIsEmpty(test)) outr->rects[j++] = test;
+	  CGRect test = CGRectIntersection(current->rects[i], r);
+	  if(!CGRectIsEmpty(test)) outr->rects[j++] = test;
   }
   if(j) {
-    outr->count = j;
-    outr->rects = (CGRect*)realloc(outr->rects, outr->count * sizeof(CGRect));
+	  outr->count = j;
+	  outr->rects = (CGRect*)realloc(outr->rects, outr->count * sizeof(CGRect));
   }
   else {
-    XDestroyRegion(outr);
-    outr = XRectangleRegion(0,0,0,0);
+	  XDestroyRegion(outr);
+	  outr = XRectangleRegion(0,0,0,0);
   }
   return outr;
 }
@@ -2751,14 +2737,14 @@ int MACscreen_init(XRectangle screens[])
   NSRect r; 
   int i, num_screens = 0;
   for( i = 0; i < count; i++) {
-    r = [[a objectAtIndex:i] frame];
+		r = [[a objectAtIndex:i] frame];
     screens[num_screens].x      = r.origin.x;
     screens[num_screens].y      = r.size.height - (r.origin.y + r.size.height);
     screens[num_screens].width  = r.size.width;
     screens[num_screens].height = r.size.height;
     num_screens ++;
     if (num_screens >= 16) break;
-  }
+	}
   [localPool release];
   return num_screens;
 }
@@ -2771,13 +2757,13 @@ int MACscreen_init(XRectangle screens[])
 @implementation FLaboutItemTarget
 - (void)showPanel
 {
-  NSDictionary *options;
-  options = [NSDictionary dictionaryWithObjectsAndKeys:
-             [NSString stringWithFormat:@" FLTK %d.%d Cocoa", FL_MAJOR_VERSION,
-              FL_MINOR_VERSION ], @"Copyright",
-             nil];
-  [NSApp  orderFrontStandardAboutPanelWithOptions:options];
-}
+    NSDictionary *options;
+    options = [NSDictionary dictionaryWithObjectsAndKeys:
+                	     [NSString stringWithFormat:@" FLTK %d.%d Cocoa", FL_MAJOR_VERSION,
+                              FL_MINOR_VERSION ], @"Copyright",
+                	     nil];
+    [NSApp  orderFrontStandardAboutPanelWithOptions:options];
+  }
 @end
 
 static NSMenu *appleMenu;
@@ -2823,11 +2809,11 @@ static void createAppleMenu(void)
   [menuItem setSubmenu:appleMenu];
   mainmenu = [[NSMenu alloc] initWithTitle:@""];
   [mainmenu addItem:menuItem];
-  if(MACsystemVersion < 0x1060) {
+	if(MACsystemVersion < 0x1060) {
     //	[NSApp setAppleMenu:appleMenu];
     //	to avoid compiler warning raised by use of undocumented setAppleMenu	:
-    [NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
-  }
+		[NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
+	}
   [NSApp setServicesMenu:services];
   [NSApp setMainMenu:mainmenu];
   CFRelease(nsappname);
@@ -2843,7 +2829,8 @@ static void createAppleMenu(void)
 - (void) setFlMenuItem:(const Fl_Menu_Item*)flItem;
 - (void) doCallback:(id)unused;
 - (void) directCallback:(id)unused;
-- (Fl_Menu_Item*)getFlMenuItem;@end
+- (Fl_Menu_Item*)getFlMenuItem;
+@end
 @implementation FLMenuItem
 - (void) setFlMenuItem:(const Fl_Menu_Item*)flItem
 {
@@ -2855,7 +2842,7 @@ static void createAppleMenu(void)
     fl_sys_menu_bar->picked(item);
     if ( item->flags & FL_MENU_TOGGLE ) {// update the menu toggle symbol
       [(NSMenuItem*)unused setState:(item->value() ? NSOnState : NSOffState)];
-    }
+      }
   }
 }
 - (void) directCallback:(id)unused
@@ -2893,7 +2880,7 @@ void *MACcreateMenu(const char *name)
   return (void *)mymenu;
 }
 
-void fl_mac_set_about(  Fl_Menu_Item *flItem ) 
+void fl_mac_set_about( const Fl_Menu_Item *flItem ) 
 /** 
  * Mac OS: attaches an Fl_Menu_Item to the "About myprog" item of the system application menu.
  * \note Only the shortcut_, callback_ and user_data_ fields of the Fl_Menu_Item* \p flItem are used.
@@ -2911,8 +2898,9 @@ void fl_mac_set_about(  Fl_Menu_Item *flItem )
   if(flItem->shortcut()) {
     MACMenuOrItemOperation("setKeyEquivalent", item, flItem->shortcut() & 0xff);
     MACMenuOrItemOperation("setKeyEquivalentModifierMask", item, flItem->shortcut() );
-  }
-  [item setFlMenuItem:flItem];  [appleMenu insertItem:item atIndex:0];
+    }
+  [item setFlMenuItem:flItem];
+  [appleMenu insertItem:item atIndex:0];
   CFRelease(cfname);
   [item setTarget:item];
 }
@@ -3021,14 +3009,15 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     value = va_arg(ap, int);
     [menu removeItem:[menu itemAtIndex:value]];
   }
-  else if(strcmp(operation, "getFlMenuItem") == 0) {//arguments: NSMenu*, int. Returns the item's Fl_Menu_Item*    menu = va_arg(ap, NSMenu*);
+  else if(strcmp(operation, "getFlMenuItem") == 0) {//arguments: NSMenu*, int. Returns the item's Fl_Menu_Item*
+    menu = va_arg(ap, NSMenu*);
     value = va_arg(ap, int);
     retval = [(FLMenuItem *)[menu itemAtIndex:value] getFlMenuItem];
   }
   else if(strcmp(operation, "addNewItem") == 0) {
     //arguments: NSMenu *menu, const Fl_Menu_Item* flItem, int *prank
     //creates a new menu item at the end of 'menu'
-    //attaches the Fl_Menu_Item *flItem to it    
+    //attaches the Fl_Menu_Item *flItem to it
     //upon return, puts the rank of the new item in *prank unless prank is NULL
     menu = va_arg(ap, NSMenu*);
     const Fl_Menu_Item *flItem = va_arg(ap, const Fl_Menu_Item*);
@@ -3081,12 +3070,12 @@ int MACpreparedrag(void)
     w2 = fl_width(p, q - p);
     if(w2 > width) width = w2;
     p = q + 1; 
-  }
+	}
   if(fl_selection_buffer[0][ fl_selection_length[0] - 1] != '\n') {
     nl++;
     w2 = fl_width(p);
     if(w2 > width) width = w2;
-  }
+	}
   height = nl * fl_height() + 3;
   width += 6;
   Fl_Offscreen off = fl_create_offscreen_with_alpha(width, height);
@@ -3102,10 +3091,10 @@ int MACpreparedrag(void)
     else {
       fl_draw(p, 3, y);
       break;
-    }
+	  }
     y += fl_height();
     p = q + 1;
-  }
+	}
   fl_end_offscreen();
   NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off );
   fl_delete_offscreen( off );
@@ -3131,9 +3120,9 @@ unsigned char *MACbitmapFromRectOfWindow(Fl_Window *win, int x, int y, int w, in
 //delete the returned pointer after use
 {
   while(win->window()) {
-    x += win->x();
-    y += win->y();
-    win = win->window();
+		x += win->x();
+		y += win->y();
+		win = win->window();
   }
   NSView *myview = [(NSWindow*)Fl_X::i(win)->xid contentView];
   [myview lockFocus];
@@ -3180,7 +3169,7 @@ void MACsetContainsGLsubwindow(Fl_Window *w)
 
 WindowRef MACwindowRef(Fl_Window *w)
 {
-  return (WindowRef)[(FLWindow*)Fl_X::i(w)->xid windowRef];
+	return (WindowRef)[(FLWindow*)Fl_X::i(w)->xid windowRef];
 }
 #endif // FL_DOXYGEN
 
