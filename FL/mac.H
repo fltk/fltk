@@ -54,6 +54,7 @@
 #ifndef MAC_OS_X_VERSION_MAX_ALLOWED
 #define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_3
 #endif
+#endif //__APPLE_COCOA__
 
 #ifndef CGFLOAT_DEFINED //appears with 10.5 in CGBase.h
 #if defined(__LP64__) && __LP64__
@@ -61,9 +62,8 @@ typedef double CGFloat;
 #else
 typedef float CGFloat;
 #endif
-#endif
+#endif //CGFLOAT_DEFINED
 
-#endif
 
 // Now make some fixes to the headers...
 #undef check			// Dunno where this comes from...

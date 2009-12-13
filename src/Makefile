@@ -476,7 +476,7 @@ include makedepend
 # These dependencies aren't part of the makedepend file since
 # they are part of the WIN32 and MacOS code base...
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
-Fl.o:		Fl_mac.cxx Fl_win32.cxx
+Fl.o:		Fl_mac.cxx Fl_win32.cxx Fl_cocoa.mm
 fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
 fl_dnd.o:	fl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
@@ -492,7 +492,7 @@ Fl_Bitmap.o:	../FL/mac.H ../FL/win32.H
 fl_color.o:	../FL/mac.H ../FL/win32.H
 fl_cursor.o:	../FL/mac.H ../FL/win32.H
 fl_dnd.o:	../FL/mac.H ../FL/win32.H
-Fl.o:	../FL/mac.H ../FL/win32.H Fl_win32.cxx Fl_mac.cxx
+Fl.o:	../FL/mac.H ../FL/win32.H Fl_win32.cxx Fl_mac.cxx Fl_cocoa.mm
 Fl_Double_Window.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image.o:	../FL/mac.H ../FL/win32.H
 fl_draw_image_mac.o:	../FL/mac.H ../FL/win32.H
@@ -511,6 +511,7 @@ Fl_grab.o:	../FL/mac.H ../FL/win32.H
 Fl_Image.o:	../FL/mac.H ../FL/win32.H
 fl_line_style.o:	../FL/mac.H ../FL/win32.H
 Fl_mac.o:	../FL/mac.H ../FL/win32.H
+Fl_cocoa.o:	../FL/mac.H ../FL/win32.H
 Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H
 fl_overlay.o:	../FL/mac.H ../FL/win32.H
 fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H

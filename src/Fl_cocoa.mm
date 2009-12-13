@@ -54,6 +54,7 @@ extern "C" {
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 #include <FL/Fl_Sys_Menu_Bar.H>
+#include <FL/Fl_Input_.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -1268,14 +1269,9 @@ extern "C" {
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (void)windowWillClose:(NSNotification *)notif;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 
 @end
 @implementation FLDelegate
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
-  fl_system_menu = [NSApp mainMenu];
-}
 - (void)windowDidMove:(NSNotification *)notif
 {
   FLWindow *nsw = (FLWindow*)[notif object];
@@ -1882,14 +1878,14 @@ void Fl_X::make(Fl_Window* w)
   }
   else // create a desktop window
   {
-		NSAutoreleasePool *localPool;
-		localPool = [[NSAutoreleasePool alloc] init]; 
+    NSAutoreleasePool *localPool;
+    localPool = [[NSAutoreleasePool alloc] init]; 
     Fl_Group::current(0);
     fl_open_display();
-		NSInteger winlevel = NSNormalWindowLevel;
-		NSUInteger winstyle;
-		if(w->border()) winstyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
-		else winstyle = NSBorderlessWindowMask;
+    NSInteger winlevel = NSNormalWindowLevel;
+    NSUInteger winstyle;
+    if(w->border()) winstyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
+    else winstyle = NSBorderlessWindowMask;
     int xp = w->x();
     int yp = w->y();
     int wp = w->w();
@@ -2809,11 +2805,11 @@ static void createAppleMenu(void)
   [menuItem setSubmenu:appleMenu];
   mainmenu = [[NSMenu alloc] initWithTitle:@""];
   [mainmenu addItem:menuItem];
-	if(MACsystemVersion < 0x1060) {
+  if(MACsystemVersion < 0x1060) {
     //	[NSApp setAppleMenu:appleMenu];
     //	to avoid compiler warning raised by use of undocumented setAppleMenu	:
-		[NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
-	}
+  [NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
+  }
   [NSApp setServicesMenu:services];
   [NSApp setMainMenu:mainmenu];
   CFRelease(nsappname);
@@ -2821,23 +2817,19 @@ static void createAppleMenu(void)
   [mainmenu release];
   [appleMenu release];
   [menuItem release];
+  fl_system_menu = [NSApp mainMenu];
 }
 
 @interface FLMenuItem : NSMenuItem {
-  const Fl_Menu_Item *item;
 }
-- (void) setFlMenuItem:(const Fl_Menu_Item*)flItem;
 - (void) doCallback:(id)unused;
 - (void) directCallback:(id)unused;
-- (Fl_Menu_Item*)getFlMenuItem;
 @end
 @implementation FLMenuItem
-- (void) setFlMenuItem:(const Fl_Menu_Item*)flItem
-{
-  item = flItem;
-}
 - (void) doCallback:(id)unused
 {
+  int flRank = [self tag];
+  const Fl_Menu_Item *item = fl_sys_menu_bar->Fl_Menu_::menu() + flRank;
   if(item) {
     fl_sys_menu_bar->picked(item);
     if ( item->flags & FL_MENU_TOGGLE ) {// update the menu toggle symbol
@@ -2847,62 +2839,45 @@ static void createAppleMenu(void)
 }
 - (void) directCallback:(id)unused
 {
+  Fl_Menu_Item *item = (Fl_Menu_Item *)[(NSData*)[self representedObject] bytes];
   if( item && item->callback() ) item->do_callback(NULL);
-}
-- (const Fl_Menu_Item*)getFlMenuItem
-{
-  return item;
 }
 @end
 
-void *MACmainMenu(void)
-{
-  return (void *)[NSApp mainMenu];
-}
 
-void *MACcreateMenu(const char *name)
-// to create a new top-level menu in the apple menu bar
-// returns the created menu (NSMenu*)
-{
-  fl_open_display();
-  NSMenu *mymenu;
-  NSMenuItem *menuItem;
-  CFStringRef cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
-  mymenu = [[NSMenu alloc] initWithTitle:(NSString*)cfname];
-  CFRelease(cfname);
-  // Put menu into the menubar 
-  menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
-  [menuItem setSubmenu:mymenu];
-  [[NSApp mainMenu] addItem:menuItem];
-  [menuItem release];
-  [mymenu setAutoenablesItems:NO];
-  [mymenu release];
-  return (void *)mymenu;
-}
-
-void fl_mac_set_about( const Fl_Menu_Item *flItem ) 
+void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0) 
 /** 
- * Mac OS: attaches an Fl_Menu_Item to the "About myprog" item of the system application menu.
- * \note Only the shortcut_, callback_ and user_data_ fields of the Fl_Menu_Item* \p flItem are used.
+ * Mac OS: attaches a callback to the "About myprog" item of the system application menu.
  *
  * \author Manolo Gouy
  *
- * \param[in] flItem is a const Fl_Menu_Item*
+ * \param[in] cb   a callback that will be called by "About myprog" menu item
+ * \param[in] user_data   a pointer transmitted as 2nd argument to the callback
+ * \param[in] shortcut    optional shortcut to attach to the "About myprog" menu item (e.g., FL_META+'a')
  */
 {
+  NSAutoreleasePool *localPool;
+  localPool = [[NSAutoreleasePool alloc] init]; 
   fl_open_display();
+  Fl_Menu_Item aboutItem;
+  memset(&aboutItem, 0, sizeof(Fl_Menu_Item));
+  aboutItem.callback(cb);
+  aboutItem.user_data(user_data);
+  aboutItem.shortcut(shortcut);
   CFStringRef cfname = CFStringCreateCopy(NULL, (CFStringRef)[[appleMenu itemAtIndex:0] title]);
   [appleMenu removeItemAtIndex:0];
   FLMenuItem *item = [[FLMenuItem alloc] autorelease];
   [item initWithTitle:(NSString*)cfname action:@selector(directCallback:) keyEquivalent:@""];
-  if(flItem->shortcut()) {
-    MACMenuOrItemOperation("setKeyEquivalent", item, flItem->shortcut() & 0xff);
-    MACMenuOrItemOperation("setKeyEquivalentModifierMask", item, flItem->shortcut() );
+  if(aboutItem.shortcut()) {
+    MACMenuOrItemOperation("setKeyEquivalent", item, aboutItem.shortcut() & 0xff);
+    MACMenuOrItemOperation("setKeyEquivalentModifierMask", item, aboutItem.shortcut() );
     }
-  [item setFlMenuItem:flItem];
+  NSData *pointer = [NSData dataWithBytes:&aboutItem length:sizeof(Fl_Menu_Item)];
+  [item setRepresentedObject:pointer];
   [appleMenu insertItem:item atIndex:0];
   CFRelease(cfname);
   [item setTarget:item];
+  [localPool release];
 }
 
 static char *remove_ampersand(const char *s)
@@ -2929,6 +2904,8 @@ void *MACMenuOrItemOperation(const char *operation, ...)
 /* these operations apply to menus, submenus, or menu items
  */
 {
+  NSAutoreleasePool *localPool;
+  localPool = [[NSAutoreleasePool alloc] init]; 
   NSMenu *menu;
   NSMenuItem *item;
   int value;
@@ -2945,7 +2922,8 @@ void *MACMenuOrItemOperation(const char *operation, ...)
   else if(strcmp(operation, "setKeyEquivalent") == 0) {//arguments: NSMenuItem*, int
     item = va_arg(ap, NSMenuItem*);
     value = va_arg(ap, int);
-    NSString *equiv = [[NSString alloc] initWithBytes:&value length:1 encoding:NSASCIIStringEncoding];
+    char key = value;
+    NSString *equiv = [[NSString alloc] initWithBytes:&key length:1 encoding:NSASCIIStringEncoding];
     [item setKeyEquivalent:equiv];
     [equiv release];
   }
@@ -2973,7 +2951,6 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     CFRelease(title);
     [menu setAutoenablesItems:NO];
     retval = (void *)menu;
-    [menu autorelease];
   }
   else if(strcmp(operation, "numberOfItems") == 0) {//arguments: NSMenu *menu, int *pcount
                                                     //upon return, *pcount is set to menu's item count
@@ -2986,6 +2963,7 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     item = va_arg(ap, NSMenuItem*);
     menu = va_arg(ap, NSMenu*);
     [item setSubmenu:menu];
+    [menu release];
   }
   else if(strcmp(operation, "setEnabled") == 0) {//arguments: NSMenuItem*, int
     item = va_arg(ap, NSMenuItem*);
@@ -3009,38 +2987,118 @@ void *MACMenuOrItemOperation(const char *operation, ...)
     value = va_arg(ap, int);
     [menu removeItem:[menu itemAtIndex:value]];
   }
-  else if(strcmp(operation, "getFlMenuItem") == 0) {//arguments: NSMenu*, int. Returns the item's Fl_Menu_Item*
-    menu = va_arg(ap, NSMenu*);
-    value = va_arg(ap, int);
-    retval = [(FLMenuItem *)[menu itemAtIndex:value] getFlMenuItem];
-  }
-  else if(strcmp(operation, "addNewItem") == 0) {
-    //arguments: NSMenu *menu, const Fl_Menu_Item* flItem, int *prank
+  else if(strcmp(operation, "addNewItem") == 0) {//arguments: NSMenu *menu, int flrank, int *prank
     //creates a new menu item at the end of 'menu'
-    //attaches the Fl_Menu_Item *flItem to it
-    //upon return, puts the rank of the new item in *prank unless prank is NULL
+    //attaches the item of rank flrank (counted in Fl_Menu_) of fl_sys_menu_bar to it
+    //upon return, puts the rank (counted in NSMenu) of the new item in *prank unless prank is NULL
     menu = va_arg(ap, NSMenu*);
-    const Fl_Menu_Item *flItem = va_arg(ap, const Fl_Menu_Item*);
-    char *name = remove_ampersand(flItem->label());
+    int flRank = va_arg(ap, int);
+    char *name = remove_ampersand( (fl_sys_menu_bar->Fl_Menu_::menu() + flRank)->label());
     int *prank = va_arg(ap, int*);
     CFStringRef cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
     free(name);
     FLMenuItem *item = [FLMenuItem alloc];
     [item initWithTitle:(NSString*)cfname action:@selector(doCallback:) keyEquivalent:@""];
-    [item setFlMenuItem:flItem];
+    [item setTag:flRank];
     [menu addItem:item];
     CFRelease(cfname);
     [item setTarget:item];
     if(prank != NULL) *prank = [menu indexOfItem:item];
     [item release];
+    }
+  else if(strcmp(operation, "renameItem") == 0) {//arguments: int rank, const char *newname
+    //renames the system menu item numbered rank in fl_sys_menu_bar->menu()
+    int rank = va_arg(ap, int);
+    char *newname = remove_ampersand( va_arg(ap, const char *) );
+    int countmenus = [(NSMenu*)fl_system_menu numberOfItems];
+    bool found = NO;
+    NSMenuItem *macitem;
+    for(int i = 1; (!found) && i < countmenus; i++) {
+      NSMenuItem *item = [(NSMenu*)fl_system_menu itemAtIndex:i];
+      NSMenu *submenu = [item submenu];
+      if(submenu == nil) continue;
+      int countitems = [submenu numberOfItems];
+      for(int j = 0; j < countitems; j++) {
+	macitem = [submenu itemAtIndex:j];
+	if([macitem tag] == rank) { found = YES; break; }
+      }
+    }
+    if(found) {
+      [macitem setTitle:[[[NSString alloc] initWithUTF8String:newname] autorelease]];
+    }
+    free(newname);
   }
   va_end(ap);
+  [localPool release];
   return retval;
 }
 
 void MACsetkeywindow(void *nsw)
 {
   [(NSWindow*)nsw makeKeyAndOrderFront:nil];
+}
+
+static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
+{
+  const char *p, *q;
+  int width = 0, height, w2, ltext = strlen(text);
+  fl_font(FL_HELVETICA, 10);
+  p = text;
+  int nl = 0;
+  while((q=strchr(p, '\n')) != NULL) { 
+    nl++; 
+    w2 = fl_width(p, q - p);
+    if(w2 > width) width = w2;
+    p = q + 1; 
+  }
+  if(text[ ltext - 1] != '\n') {
+    nl++;
+    w2 = fl_width(p);
+    if(w2 > width) width = w2;
+  }
+  height = nl * fl_height() + 3;
+  width += 6;
+  Fl_Offscreen off = fl_create_offscreen_with_alpha(width, height);
+  fl_begin_offscreen(off);
+  CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
+  fl_rectf(0,0,width,height);
+  fl_color(FL_BLACK);
+  p = text;
+  int y = fl_height();
+  while(TRUE) {
+    q = strchr(p, '\n');
+    if(q) fl_draw(p, q - p, 3, y);
+    else {
+      fl_draw(p, 3, y);
+      break;
+    }
+    y += fl_height();
+    p = q + 1;
+  }
+  fl_end_offscreen();
+  NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off );
+  fl_delete_offscreen( off );
+  *pwidth = width;
+  *pheight = height;
+  return image;
+}
+
+static NSImage *defaultDragImage(int *pwidth, int *pheight)
+{
+  const int width = 16, height = 16;
+  Fl_Offscreen off = fl_create_offscreen_with_alpha(width, height);
+  fl_begin_offscreen(off);
+  CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
+  fl_rectf(0,0,width,height);
+  CGContextSetRGBStrokeColor( (CGContextRef)off, 0,0,0,0.6);
+  fl_rect(0,0,width,height);
+  fl_rect(2,2,width-4,height-4);
+  fl_end_offscreen();
+  NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off );
+  fl_delete_offscreen( off );
+  *pwidth = width;
+  *pheight = height;
+  return image;
 }
 
 int MACpreparedrag(void)
@@ -3055,49 +3113,21 @@ int MACpreparedrag(void)
   CFRelease(text);
   Fl_Widget *w = Fl::pushed();
   Fl_Window *win = w->window();
-  while(win->window()) win = win->window();
+  if(win == NULL) { win = (Fl_Window*)w; }
+  else { while(win->window()) win = win->window(); }
   NSView *myview = [(NSWindow*)Fl_X::i(win)->xid contentView];
   NSEvent *theEvent = [NSApp currentEvent];
   
-  char *p, *q;
-  int width = 0, height, w2;
-  fl_font(FL_HELVETICA, 10);
-  fl_selection_buffer[0][ fl_selection_length[0] ] = 0;
-  p = fl_selection_buffer[0];
-  int nl = 0;
-  while((q=strchr(p, '\n')) != NULL) { 
-    nl++; 
-    w2 = fl_width(p, q - p);
-    if(w2 > width) width = w2;
-    p = q + 1; 
-	}
-  if(fl_selection_buffer[0][ fl_selection_length[0] - 1] != '\n') {
-    nl++;
-    w2 = fl_width(p);
-    if(w2 > width) width = w2;
-	}
-  height = nl * fl_height() + 3;
-  width += 6;
-  Fl_Offscreen off = fl_create_offscreen_with_alpha(width, height);
-  fl_begin_offscreen(off);
-  CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
-  fl_rectf(0,0,width,height);
-  fl_color(FL_BLACK);
-  p = fl_selection_buffer[0];
-  int y = fl_height();
-  while(TRUE) {
-    q = strchr(p, '\n');
-    if(q) fl_draw(p, q - p, 3, y);
-    else {
-      fl_draw(p, 3, y);
-      break;
-	  }
-    y += fl_height();
-    p = q + 1;
-	}
-  fl_end_offscreen();
-  NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off );
-  fl_delete_offscreen( off );
+  int width, height;
+  NSImage *image;
+  if( dynamic_cast<Fl_Input_*>(w) != NULL) {
+    fl_selection_buffer[0][ fl_selection_length[0] ] = 0;
+    image = imageFromText(fl_selection_buffer[0], &width, &height);
+    }
+  else {
+    image = defaultDragImage(&width, &height);
+    }
+  
   static NSSize offset={0,0};
   NSPoint pt = [theEvent locationInWindow];
   pt.x -= width/2;

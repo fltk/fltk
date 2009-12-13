@@ -65,7 +65,6 @@
 
 #ifdef __APPLE_COCOA__
 extern void *MACMenuOrItemOperation(const char *operation, ...);
-extern void *MACmainMenu(void);
 #define MenuHandle void *
 #endif
 
@@ -149,7 +148,7 @@ static void setMenuShortcut( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
   
 #ifdef __APPLE_COCOA__
   void *menuItem = MACMenuOrItemOperation("itemAtIndex", mh, miCnt);
-  MACMenuOrItemOperation("setKeyEquivalent", menuItem, key );
+  MACMenuOrItemOperation("setKeyEquivalent", menuItem, m->shortcut_ & 0xff );
   MACMenuOrItemOperation("setKeyEquivalentModifierMask", menuItem, m->shortcut_ );
 #else
   long macMod = kMenuNoCommandModifier;
@@ -223,20 +222,21 @@ static void createSubMenu( void * mh, pFl_Menu_Item &mm )
   menuItem = MACMenuOrItemOperation("itemAtIndex", mh, cnt);
   MACMenuOrItemOperation("setSubmenu", menuItem, submenu);
   if ( mm->flags & FL_MENU_INACTIVE ) {
-	MACMenuOrItemOperation("setEnabled", menuItem, 0);
+    MACMenuOrItemOperation("setEnabled", menuItem, 0);
   }
   mm++;
   
   while ( mm->text )
   {
-	MACMenuOrItemOperation("addNewItem", submenu, mm, &miCnt);
+    int flRank = mm - fl_sys_menu_bar->Fl_Menu_::menu();
+    MACMenuOrItemOperation("addNewItem", submenu, flRank, &miCnt);
     setMenuFlags( submenu, miCnt, mm );
     setMenuShortcut( submenu, miCnt, mm );
-	if ( mm->flags & FL_MENU_INACTIVE ) {
-	  void *item = MACMenuOrItemOperation("itemAtIndex", submenu, miCnt);
-	  MACMenuOrItemOperation("setEnabled", item, 0);
-	}
-	flags = mm->flags;
+    if ( mm->flags & FL_MENU_INACTIVE ) {
+      void *item = MACMenuOrItemOperation("itemAtIndex", submenu, miCnt);
+      MACMenuOrItemOperation("setEnabled", item, 0);
+    }
+    flags = mm->flags;
     if ( mm->flags & FL_SUBMENU )
     {
       createSubMenu( submenu, mm );
@@ -247,8 +247,8 @@ static void createSubMenu( void * mh, pFl_Menu_Item &mm )
       createSubMenu( submenu, smm );
     }
     if ( flags & FL_MENU_DIVIDER ) {
-	  MACMenuOrItemOperation("addSeparatorItem", submenu);
-	}
+      MACMenuOrItemOperation("addSeparatorItem", submenu);
+      }
     mm++;
   }
 }
@@ -259,9 +259,9 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
 //ALL PREVIOUS SYSTEM MENUS, EXCEPT APPLICATION MENU, ARE REPLACED BY THE NEW DATA
 {
   int count;//first, delete all existing system menus
-  MACMenuOrItemOperation("numberOfItems", MACmainMenu(), &count);
+  MACMenuOrItemOperation("numberOfItems", fl_system_menu, &count);
   for(int i = count - 1; i > 0; i--) {
-	  MACMenuOrItemOperation("removeItem", MACmainMenu(), i);
+	  MACMenuOrItemOperation("removeItem", fl_system_menu, i);
   }
   //now convert FLTK stuff into MacOS menus
   for (;;)
@@ -269,13 +269,14 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
     if ( !mm || !mm->text )
       break;
     char visible = mm->visible() ? 1 : 0;
-		MACMenuOrItemOperation("addNewItem", MACmainMenu(), mm, NULL);
+    int flRank = mm - fl_sys_menu_bar->Fl_Menu_::menu();
+    MACMenuOrItemOperation("addNewItem", fl_system_menu, flRank, NULL);
 		
     if ( mm->flags & FL_SUBMENU )
-      createSubMenu( MACmainMenu(), mm );
+      createSubMenu( fl_system_menu, mm );
     else if ( mm->flags & FL_SUBMENU_POINTER ) {
       const Fl_Menu_Item *smm = (Fl_Menu_Item*)mm->user_data_;
-      createSubMenu( MACmainMenu(), smm );
+      createSubMenu( fl_system_menu, smm );
     }
     if ( visible ) {
       //      InsertMenu( mh, 0 );
@@ -315,12 +316,25 @@ int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void 
 /**
  * remove an item from the system menu bar
  *
- * @param n		the rank of the item to remove
+ * @param rank		the rank of the item to remove
  */
-void Fl_Sys_Menu_Bar::remove(int n)
+void Fl_Sys_Menu_Bar::remove(int rank)
 {
-  Fl_Menu_::remove(n);
+  Fl_Menu_::remove(rank);
   convertToMenuBar(Fl_Menu_::menu());
+}
+
+
+/**
+ * rename an item from the system menu bar
+ *
+ * @param rank		the rank of the item to rename
+ * @param name		the new item name as a UTF8 string
+ */
+void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
+{
+  MACMenuOrItemOperation("renameItem", rank, name);
+  fl_sys_menu_bar->Fl_Menu_::replace(rank, name);
 }
 
 #else
