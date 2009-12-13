@@ -583,7 +583,7 @@ static void do_timer(EventLoopTimerRef timer, void* data)
       break;
     }
   }
-	breakMacEventLoop();
+  breakMacEventLoop();
 }
 
 
@@ -1538,6 +1538,20 @@ static void handleUpdateEvent( Fl_Window *window )
   if ( !window ) return;
   Fl_X *i = Fl_X::i( window );
   i->wait_for_expose = 0;
+
+  // FIXME: this is in the Carbon version. Does it need to be here?
+  if ( i->xid && window->damage() ) {
+    NSView *view = [(NSWindow*)i->xid contentView];
+    if ( view && i->region ) {
+      int ix;
+      Fl_Region rgn = i->region;
+      for (ix=0; ix<rgn->count; ix++) {
+        NSRect rect = NSRectFromCGRect(rgn->rects[ix]);
+        [view setNeedsDisplayInRect:rect];
+      }
+    }
+  }
+   
   if ( i->region ) {
     XDestroyRegion(i->region);
     i->region = 0;
@@ -1761,8 +1775,9 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   Fl::e_y_root = [[self window] frame].origin.y + pt.y;
   Fl::e_y_root = [[[self window] screen] frame].size.height - Fl::e_y_root;
   fl_dnd_target_window = target;
-  Fl::handle( FL_DND_ENTER, target );
-  return NSDragOperationGeneric;
+  int ret = Fl::handle( FL_DND_ENTER, target );
+  breakMacEventLoop();
+  return ret ? NSDragOperationCopy : NSDragOperationNone;
 }
 - (NSDragOperation)draggingUpdated:(id < NSDraggingInfo >)sender
 {
@@ -1774,14 +1789,18 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   Fl::e_y_root = [[self window] frame].origin.y + pt.y;
   Fl::e_y_root = [[[self window] screen] frame].size.height - Fl::e_y_root;
   fl_dnd_target_window = target;
-  Fl::handle( FL_DND_DRAG, target );
-  return NSDragOperationGeneric;
+  int ret = Fl::handle( FL_DND_DRAG, target );
+  breakMacEventLoop();
+  return ret ? NSDragOperationCopy : NSDragOperationNone;
 }
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender 
 {
   static char *DragData = NULL;
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
-  if ( !Fl::handle( FL_DND_RELEASE, target ) ) { return NO; }
+  if ( !Fl::handle( FL_DND_RELEASE, target ) ) { 
+    breakMacEventLoop();
+    return NO;
+  }
   NSPasteboard *pboard;
   //NSDragOperation sourceDragMask;
   //sourceDragMask = [sender draggingSourceOperationMask];
@@ -1808,7 +1827,10 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 		DragData[[data length]] = 0;
 		convert_crlf(DragData, strlen(DragData));
 	}
-  else return NO;
+  else {
+    breakMacEventLoop();
+    return NO;
+  }
   Fl::e_text = DragData;
   Fl::e_length = strlen(DragData);
   int old_event = Fl::e_number;
@@ -1818,14 +1840,15 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   Fl::e_text = NULL;
   Fl::e_length = 0;
   fl_dnd_target_window = NULL;
+  breakMacEventLoop();
   return YES;
 }
 - (void)draggingExited:(id < NSDraggingInfo >)sender
 {
   if ( fl_dnd_target_window )
   {
-		Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );
-		fl_dnd_target_window = 0;
+    Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );
+    fl_dnd_target_window = 0;
   }
 }
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
@@ -2495,7 +2518,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
       delete_timer(t);
     }
   }
-	breakMacEventLoop();
+  breakMacEventLoop();
 }
 
 int MacUnlinkWindow(Fl_X *ip, Fl_X *start) {
