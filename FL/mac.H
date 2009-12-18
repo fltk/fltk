@@ -163,6 +163,7 @@ extern void MacUnmapWindow(Fl_Window*,void *);
 extern WindowRef MACwindowRef(Fl_Window *w);
 extern Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h);
 extern void MacCollapseWindow(Window w);
+extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0);
 #else
 extern void MacDestroyWindow(Fl_Window*,WindowPtr);
 extern void MacMapWindow(Fl_Window*,WindowPtr);

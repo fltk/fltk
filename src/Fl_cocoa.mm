@@ -973,11 +973,13 @@ static int (*keycode_function)(char*, int, EventKind, UInt32, UInt32, UInt32*, u
 //this gets called by CJK character palette input
 OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, void *unused )
 {
+  //make sure the key window is an FLTK window
+  NSWindow *keywindow = [NSApp keyWindow];
+  if(keywindow == nil || ![keywindow isMemberOfClass:[FLWindow class]]) return eventNotHandledErr;
   //under 10.5 this gets called only after character palette inputs
   //but under 10.6 this gets also called by interpretKeyEvents 
   //during character composition when we don't want to run it
-  if([[NSApp currentEvent] type] == NSKeyDown) return noErr;
-  if( [NSApp keyWindow] == nil) return noErr;
+  if([[NSApp currentEvent] type] != NSSystemDefined) return eventNotHandledErr;
   Fl_Window *window = [(FLWindow*)[NSApp keyWindow] getFl_Window];
   fl_lock_function();
   //int kind = GetEventKind(event);
@@ -1539,7 +1541,12 @@ static void handleUpdateEvent( Fl_Window *window )
   Fl_X *i = Fl_X::i( window );
   i->wait_for_expose = 0;
 
-  // FIXME: this is in the Carbon version. Does it need to be here?
+  // FIXME: Matt: This is in the Carbon version. Does it need to be here?
+  /* 
+  //I don't think so (MG). This function gets called only when a full
+  //redraw is needed (creation, resize, deminiaturization)
+  //and later in it we set damages to DAMAGE_ALL, so there is no
+  //point in limiting redraw to i->region
   if ( i->xid && window->damage() ) {
     NSView *view = [(NSWindow*)i->xid contentView];
     if ( view && i->region ) {
@@ -1551,6 +1558,7 @@ static void handleUpdateEvent( Fl_Window *window )
       }
     }
   }
+  */
    
   if ( i->region ) {
     XDestroyRegion(i->region);
@@ -2868,16 +2876,18 @@ static void createAppleMenu(void)
 @end
 
 
-void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0) 
 /** 
  * Mac OS: attaches a callback to the "About myprog" item of the system application menu.
+ * \note  #include <FL/x.H>
  *
  * \author Manolo Gouy
  *
  * \param[in] cb   a callback that will be called by "About myprog" menu item
- * \param[in] user_data   a pointer transmitted as 2nd argument to the callback
+ *		   with NULL 1st argument.
+ * \param[in] user_data   a pointer transmitted as 2nd argument to the callback.
  * \param[in] shortcut    optional shortcut to attach to the "About myprog" menu item (e.g., FL_META+'a')
  */
+void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
 {
   NSAutoreleasePool *localPool;
   localPool = [[NSAutoreleasePool alloc] init]; 

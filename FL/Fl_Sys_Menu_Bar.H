@@ -39,13 +39,15 @@ protected:
 public:
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0)
       : Fl_Menu_Bar(x,y,w,h,l) {
-		deactivate();			// don't let the old area take events
-		fl_sys_menu_bar = this;
-	  }
+    deactivate();			// don't let the old area take events
+    fl_sys_menu_bar = this;
+  }
   void menu(const Fl_Menu_Item *m);
+#ifdef __APPLE_COCOA__
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
   void remove(int n);
   void replace(int rank, const char *name);
+#endif
 };
 
 #else
