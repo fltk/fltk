@@ -667,7 +667,7 @@ Sudoku::Sudoku()
   prefs_.get("difficulty", difficulty_, 0);
   if (difficulty_ < 0 || difficulty_ > 3) difficulty_ = 0;
 
-  items[8 + difficulty_].flags |= FL_MENU_VALUE;
+  items[10 + difficulty_].flags |= FL_MENU_VALUE;
 
   menubar_ = new Fl_Sys_Menu_Bar(0, 0, 3 * GROUP_SIZE, 25);
   menubar_->menu(items);
