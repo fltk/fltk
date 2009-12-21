@@ -47,6 +47,10 @@ public:
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
   void remove(int n);
   void replace(int rank, const char *name);
+  enum menuOrItemOperation { itemAtIndex, setKeyEquivalent, setKeyEquivalentModifierMask, setState, initWithTitle,
+    numberOfItems, setSubmenu, setEnabled, addSeparatorItem, setTitle, removeItem, addNewItem, renameItem };
+  // function doMenuOrItemOperation is in file Fl_cocoa.mm because it contains objective-c code
+  static void *doMenuOrItemOperation( menuOrItemOperation operation, ...);
 #endif
 };
 

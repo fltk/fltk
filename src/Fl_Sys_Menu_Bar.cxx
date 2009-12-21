@@ -64,7 +64,6 @@
 #include <stdarg.h>
 
 #ifdef __APPLE_COCOA__
-extern void *MACMenuOrItemOperation(const char *operation, ...);
 #define MenuHandle void *
 #endif
 
@@ -147,9 +146,9 @@ static void setMenuShortcut( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
     return;
   
 #ifdef __APPLE_COCOA__
-  void *menuItem = MACMenuOrItemOperation("itemAtIndex", mh, miCnt);
-  MACMenuOrItemOperation("setKeyEquivalent", menuItem, m->shortcut_ & 0xff );
-  MACMenuOrItemOperation("setKeyEquivalentModifierMask", menuItem, m->shortcut_ );
+  void *menuItem = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::itemAtIndex, mh, miCnt);
+  Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setKeyEquivalent, menuItem, m->shortcut_ & 0xff );
+  Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setKeyEquivalentModifierMask, menuItem, m->shortcut_ );
 #else
   long macMod = kMenuNoCommandModifier;
   if ( m->shortcut_ & FL_META ) macMod = kMenuNoModifiers;
@@ -190,15 +189,18 @@ static void setMenuFlags( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
   if ( m->flags & FL_MENU_TOGGLE )
   {
 #ifdef __APPLE_COCOA__
-	void *menuItem = MACMenuOrItemOperation("itemAtIndex", mh, miCnt);
-	MACMenuOrItemOperation("setState", menuItem, m->flags & FL_MENU_VALUE );
+	void *menuItem = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::itemAtIndex, mh, miCnt);
+	Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setState, menuItem, m->flags & FL_MENU_VALUE );
 #else
 	SetItemMark( mh, miCnt, ( m->flags & FL_MENU_VALUE ) ? 0x12 : 0 );
 #endif
   }
   else if ( m->flags & FL_MENU_RADIO ) {
-#ifndef __APPLE_COCOA__
-	SetItemMark( mh, miCnt, ( m->flags & FL_MENU_VALUE ) ? 0x13 : 0 );
+#ifdef __APPLE_COCOA__
+    void *menuItem = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::itemAtIndex, mh, miCnt);
+    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setState, menuItem, m->flags & FL_MENU_VALUE );
+#else
+    SetItemMark( mh, miCnt, ( m->flags & FL_MENU_VALUE ) ? 0x13 : 0 );
 #endif	
   }
 }
@@ -215,26 +217,26 @@ static void createSubMenu( void * mh, pFl_Menu_Item &mm )
   int miCnt, flags;
   
   void *menuItem;
-  submenu = MACMenuOrItemOperation("initWithTitle", mm->text);
+  submenu = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::initWithTitle, mm->text);
   int cnt;
-  MACMenuOrItemOperation("numberOfItems", mh, &cnt);
+  Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::numberOfItems, mh, &cnt);
   cnt--;
-  menuItem = MACMenuOrItemOperation("itemAtIndex", mh, cnt);
-  MACMenuOrItemOperation("setSubmenu", menuItem, submenu);
+  menuItem = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::itemAtIndex, mh, cnt);
+  Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setSubmenu, menuItem, submenu);
   if ( mm->flags & FL_MENU_INACTIVE ) {
-    MACMenuOrItemOperation("setEnabled", menuItem, 0);
+    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setEnabled, menuItem, 0);
   }
   mm++;
   
   while ( mm->text )
   {
     int flRank = mm - fl_sys_menu_bar->Fl_Menu_::menu();
-    MACMenuOrItemOperation("addNewItem", submenu, flRank, &miCnt);
+    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::addNewItem, submenu, flRank, &miCnt);
     setMenuFlags( submenu, miCnt, mm );
     setMenuShortcut( submenu, miCnt, mm );
     if ( mm->flags & FL_MENU_INACTIVE ) {
-      void *item = MACMenuOrItemOperation("itemAtIndex", submenu, miCnt);
-      MACMenuOrItemOperation("setEnabled", item, 0);
+      void *item = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::itemAtIndex, submenu, miCnt);
+      Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setEnabled, item, 0);
     }
     flags = mm->flags;
     if ( mm->flags & FL_SUBMENU )
@@ -247,7 +249,7 @@ static void createSubMenu( void * mh, pFl_Menu_Item &mm )
       createSubMenu( submenu, smm );
     }
     if ( flags & FL_MENU_DIVIDER ) {
-      MACMenuOrItemOperation("addSeparatorItem", submenu);
+      Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::addSeparatorItem, submenu);
       }
     mm++;
   }
@@ -259,9 +261,9 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
 //ALL PREVIOUS SYSTEM MENUS, EXCEPT APPLICATION MENU, ARE REPLACED BY THE NEW DATA
 {
   int count;//first, delete all existing system menus
-  MACMenuOrItemOperation("numberOfItems", fl_system_menu, &count);
+  Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::numberOfItems, fl_system_menu, &count);
   for(int i = count - 1; i > 0; i--) {
-	  MACMenuOrItemOperation("removeItem", fl_system_menu, i);
+	  Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::removeItem, fl_system_menu, i);
   }
   //now convert FLTK stuff into MacOS menus
   for (;;)
@@ -270,7 +272,7 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
       break;
     char visible = mm->visible() ? 1 : 0;
     int flRank = mm - fl_sys_menu_bar->Fl_Menu_::menu();
-    MACMenuOrItemOperation("addNewItem", fl_system_menu, flRank, NULL);
+    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::addNewItem, fl_system_menu, flRank, NULL);
 		
     if ( mm->flags & FL_SUBMENU )
       createSubMenu( fl_system_menu, mm );
@@ -333,7 +335,7 @@ void Fl_Sys_Menu_Bar::remove(int rank)
  */
 void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
 {
-  MACMenuOrItemOperation("renameItem", rank, name);
+  doMenuOrItemOperation(renameItem, rank, name);
   fl_sys_menu_bar->Fl_Menu_::replace(rank, name);
 }
 
