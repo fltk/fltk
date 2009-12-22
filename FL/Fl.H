@@ -779,6 +779,8 @@ public:
   static int event_shift() {return e_state&FL_SHIFT;}
   /** Returns non-zero if the Control key is pressed. */
   static int event_ctrl() {return e_state&FL_CTRL;}
+  /** Returns non-zero if the FL_COMMAND key is pressed, either FL_CTRL or on OSX FL_META. */
+  static int event_command() {return e_state&FL_COMMAND;}
   /** Returns non-zero if the Alt key is pressed. */
   static int event_alt() {return e_state&FL_ALT;}
   /**
