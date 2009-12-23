@@ -47,7 +47,7 @@ static int obj_head, obj_tail;
 
 void Fl_Widget::default_callback(Fl_Widget *o, void * /*v*/) {
 #if 0
-  // This is necessary for strict forms compatability but is confusing.
+  // This is necessary for strict forms compatibility but is confusing.
   // Use the parent's callback if this widget does not have one.
   for (Fl_Widget *p = o->parent(); p; p = p->parent())
     if (p->callback() != default_callback) {
@@ -62,14 +62,46 @@ void Fl_Widget::default_callback(Fl_Widget *o, void * /*v*/) {
     if (obj_tail >= QUEUE_SIZE) obj_tail = 0;
   }
 }
-
+/*
+    All Fl_Widgets that don't have a callback defined use a
+    default callback that puts a pointer to the widget in this queue,
+    and this method reads the oldest widget out of this queue.
+*/
 Fl_Widget *Fl::readqueue() {
   if (obj_tail==obj_head) return 0;
   Fl_Widget *o = obj_queue[obj_tail++];
   if (obj_tail >= QUEUE_SIZE) obj_tail = 0;
   return o;
 }
-    
+/*
+    This static internal function removes all pending callbacks for a
+    specific widget from the default callback queue (Fl::readqueue()).
+    It is only called from Fl_Widget's destructor if the widget
+    doesn't have an own callback.
+    Note: There's no need to have this in the Fl:: namespace.
+*/
+static void cleanup_readqueue(Fl_Widget *w) {
+
+  if (obj_tail==obj_head) return;
+  
+  // Read the entire queue and copy over all valid entries.
+  // The new head will be determined after the last copied entry.
+
+  int old_head = obj_head;	// save newest entry
+  int entry = obj_tail;		// oldest entry
+  obj_head = obj_tail;		// new queue start
+  for (;;) {
+    Fl_Widget *o = obj_queue[entry++];
+    if (entry >= QUEUE_SIZE) entry = 0;
+    if (o != w) { // valid entry
+      obj_queue[obj_head++] = o;
+      if (obj_head >= QUEUE_SIZE) obj_head = 0;
+    } // valid entry
+    if (entry == old_head) break;
+  }
+  return;
+}
+
 ////////////////////////////////////////////////////////////////
 
 int Fl_Widget::handle(int) {
@@ -137,6 +169,8 @@ Fl_Widget::~Fl_Widget() {
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
   parent_ = 0; // Don't throw focus to a parent widget.
   fl_throw_focus(this);
+  // remove stale entries from default callback queue (Fl::readqueue())
+  if (callback_ == default_callback) cleanup_readqueue(this);
 }
 
 // draw a focus box for the widget...

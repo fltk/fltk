@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.10
 
+	- Widgets now remove stale entries from the default callback
+	  queue when they are deleted (STR #2302)
 	- Fixed selection bug in Fl_Int_Input (STR #2292)
 	- Fixed character set conversion functions (STR #2268)
 	- Fixed image lib configure and fltk-config issues by backporting
