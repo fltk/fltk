@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.3.0
 
+	- Widgets now remove stale entries from the default callback
+	  queue when they are deleted (STR #2302)
 	- Moved OS X code base to the more moder Cocoa toolkit thanks
 	  to the awesome work of Manolo Gouy (STR #2221)
 	- Added template to generate new projects with Xcode.

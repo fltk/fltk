@@ -73,7 +73,34 @@ Fl_Widget *Fl::readqueue() {
   if (obj_tail >= QUEUE_SIZE) obj_tail = 0;
   return o;
 }
-    
+/*
+    This static internal function removes all pending callbacks for a
+    specific widget from the default callback queue (Fl::readqueue()).
+    It is only called from Fl_Widget's destructor if the widget
+    doesn't have an own callback.
+    Note: There's no need to have this in the Fl:: namespace.
+*/
+static void cleanup_readqueue(Fl_Widget *w) {
+
+  if (obj_tail==obj_head) return;
+  
+  // Read the entire queue and copy over all valid entries.
+  // The new head will be determined after the last copied entry.
+
+  int old_head = obj_head;	// save newest entry
+  int entry = obj_tail;		// oldest entry
+  obj_head = obj_tail;		// new queue start
+  for (;;) {
+    Fl_Widget *o = obj_queue[entry++];
+    if (entry >= QUEUE_SIZE) entry = 0;
+    if (o != w) { // valid entry
+      obj_queue[obj_head++] = o;
+      if (obj_head >= QUEUE_SIZE) obj_head = 0;
+    } // valid entry
+    if (entry == old_head) break;
+  }
+  return;
+}
 ////////////////////////////////////////////////////////////////
 
 int Fl_Widget::handle(int) {
@@ -150,6 +177,8 @@ Fl_Widget::~Fl_Widget() {
 #endif // DEBUG_DELETE
   parent_ = 0; // Don't throw focus to a parent widget.
   fl_throw_focus(this);
+  // remove stale entries from default callback queue (Fl::readqueue())
+  if (callback_ == default_callback) cleanup_readqueue(this);
 }
 
 /** Draws a focus box for the widget at the given position and size */
