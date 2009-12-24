@@ -117,7 +117,7 @@ you may want to change this to <TT>FL_UP_BOX</TT>.</P>
  The destructor <I>also deletes all the children</I>. This allows a
 whole tree to be deleted at once, without having to keep a pointer to
 all the children in the user code. A kludge has been done so the <TT>
-Fl_Window</TT> and all of it's children can be automatic (local)
+Fl_Window</TT> and all of its children can be automatic (local)
 variables, but you must declare the <TT>Fl_Window</TT> <I>first</I> so
 that it is destroyed last.
 <H4><A name=Fl_Window.size_range>void Fl_Window::size_range(int minw,
@@ -136,7 +136,7 @@ be constrained to widths of <TT>minw + N * dw</TT>,  where <TT>N</TT>
  is any non-negative integer.  If these are  less or equal to 1 they
 are ignored.  (this is ignored on WIN32)</LI>
 <LI><TT>aspect</TT> is a flag that indicates that the window should
- preserve it's aspect ratio.  This only works if both the maximum and
+ preserve its aspect ratio.  This only works if both the maximum and
  minimum have the same aspect ratio.  (ignored on WIN32 and by many X
  window managers)</LI>
 </UL>
@@ -158,7 +158,7 @@ constraints passed to <TT>size_range()</TT>.
 <BR> void Fl_Window::show(int argc, char **argv)</A></H4>
 Put the window on the screen.  Usually this has the side effect of
 opening the display. The second form is used for top-level
-windows and allow standard arguments to be parsed from the
+windows and allows standard arguments to be parsed from the
 command-line.
 <P>If the window is already shown then it is restored and raised to the
 top.  This is really convenient because your program can call <TT>show()</TT>
@@ -170,7 +170,7 @@ has not been shown then this does nothing and is harmless.
 <H4><A name=Fl_Window.shown>int Fl_Window::shown() const</A></H4>
  Returns non-zero if <TT>show()</TT> has been called (but not <TT>hide()</TT>
 ). You can tell if a window is iconified with <TT>(w-&gt;shown()
-&amp;!w-&gt;visible())</TT>.
+&amp;&amp; !w-&gt;visible())</TT>.
 <H4><A name=Fl_Window.iconize>void Fl_Window::iconize()</A></H4>
  Iconifies the window.  If you call this when <TT>shown()</TT> is false
 it will <TT>show()</TT> it as an icon.  If the window is already
@@ -278,11 +278,11 @@ Fl_Gl_Window</TT> classes. </P>
 <H4><A name=Fl_Window.cursor>void Fl_Window::cursor(Fl_Cursor, Fl_Color = FL_WHITE, Fl_Color = FL_BLACK)</A></H4>
 Change the cursor for this window.  This always calls the system, if
 you are changing the cursor a lot you may want to keep track of how
-you set it in a static varaible and call this only if the new cursor
+you set it in a static variable and call this only if the new cursor
 is different.
 
 <P>The type <TT>Fl_Cursor</TT> is an enumeration defined in <A
-href=enumerations.html#cursor> <TT>&lt;Enumerations.H&gt;</TT></A>.
+href=enumerations.html#cursor> <TT>&lt;FL/Enumerations.H&gt;</TT></A>.
 (Under X you can get any XC_cursor value by passing <TT>
 Fl_Cursor((XC_foo/2)+1)</TT>).  The colors only work on X, they are
 not implemented on WIN32.
