@@ -1705,7 +1705,6 @@ void scheme_cb(Fl_Choice *, void *) {
 void toggle_widgetbin_cb(Fl_Widget *, void *) {
   if (!widgetbin_panel) {
     make_widgetbin();
-    widgetbin_panel->callback(toggle_widgetbin_cb);
     if (!position_window(widgetbin_panel,"widgetbin_pos", 1, 320, 30)) return;
   }
 

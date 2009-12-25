@@ -43,6 +43,12 @@ decl {extern class Fl_Type *Fl_Type_make(const char*);} {}
 
 decl {extern void select_only(Fl_Type*);} {} 
 
+decl {extern void exit_cb(Fl_Widget*, void*);} {global
+} 
+
+decl {extern void toggle_widgetbin_cb(Fl_Widget*, void*);} {global
+} 
+
 Function {make_function_panel()} {} {
   Fl_Window function_panel {
     label {Function/Method Properties} open
@@ -432,7 +438,11 @@ Function {type_make_cb(Fl_Widget*,void*d)} {return_type void
 Function {make_widgetbin()} {} {
   Fl_Window widgetbin_panel {
     label {Widget Bin}
-    xywh {411 171 550 85} type Single align 80 non_modal visible
+    callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
+  exit_cb((Fl_Widget*)o, v);
+else  
+  toggle_widgetbin_cb((Fl_Widget*)o, v);} open selected
+    xywh {410 171 550 85} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
       xywh {3 3 79 79}
@@ -763,8 +773,7 @@ Function {make_widgetbin()} {} {
   }
 } 
 
-Function {make_sourceview()} {selected
-} {
+Function {make_sourceview()} {} {
   Fl_Window sourceview_panel {
     label {Code View}
     callback toggle_sourceview_cb

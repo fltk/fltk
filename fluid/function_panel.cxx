@@ -34,6 +34,8 @@
 extern class Fl_Pixmap *pixmap[];
 extern class Fl_Type *Fl_Type_make(const char*);
 extern void select_only(Fl_Type*);
+extern void exit_cb(Fl_Widget*, void*);
+extern void toggle_widgetbin_cb(Fl_Widget*, void*);
 
 Fl_Double_Window *function_panel=(Fl_Double_Window *)0;
 
@@ -595,8 +597,16 @@ void type_make_cb(Fl_Widget*,void*d) {
 
 Fl_Window *widgetbin_panel=(Fl_Window *)0;
 
+static void cb_widgetbin_panel(Fl_Window* o, void* v) {
+  if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
+  exit_cb((Fl_Widget*)o, v);
+else  
+  toggle_widgetbin_cb((Fl_Widget*)o, v);
+}
+
 Fl_Window* make_widgetbin() {
   { widgetbin_panel = new Fl_Window(550, 85, "Widget Bin");
+    widgetbin_panel->callback((Fl_Callback*)cb_widgetbin_panel);
     widgetbin_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { Fl_Group* o = new Fl_Group(3, 3, 79, 79);
       { Fl_Button* o = new Fl_Button(5, 5, 24, 24);
