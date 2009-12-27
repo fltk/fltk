@@ -79,13 +79,25 @@ public:
     SYSTEM=0,   ///< Preferences are used system-wide
     USER        ///< Preferences apply only to the current user
   };
+  
+  static const char *newUUID();
 
   Fl_Preferences( Root root, const char *vendor, const char *application );
   Fl_Preferences( const char *path, const char *vendor, const char *application );
   Fl_Preferences( Fl_Preferences &parent, const char *group );
-  Fl_Preferences( Fl_Preferences*, const char *group );
+  Fl_Preferences( Fl_Preferences *parent, const char *group );
+  Fl_Preferences( Fl_Preferences &parent, int groupIndex );
+  Fl_Preferences( Fl_Preferences *parent, int groupIndex );
   ~Fl_Preferences();
 
+  /** Return the name of this entry.
+   */
+  const char *name() { return node->name(); }
+  
+  /** Return the the full path to this entry.
+   */
+  const char *path() { return node->path(); }
+  
   int groups();
   const char *group( int num_group );
   char groupExists( const char *key );
@@ -163,6 +175,7 @@ private:
   Fl_Preferences &operator=(const Fl_Preferences&);
 
   static char nameBuffer[128];
+  static char uuidBuffer[40];
 
   class FL_EXPORT Node // a node contains a list to all its entries 
   {          // and all means to manage the tree structure
@@ -174,6 +187,8 @@ private:
     ~Node();
     // node methods
     int write( FILE *f );
+    const char *name();
+    const char *path() { return path_; }
     Node *find( const char *path );
     Node *search( const char *path, int offset=0 );
     Node *addChild( const char *path );
@@ -184,6 +199,7 @@ private:
     // entry methods
     int nChildren();
     const char *child( int ix );
+    Node *childNode( int ix );
     void set( const char *name, const char *value );
     void set( const char *line );
     void add( const char *line );
