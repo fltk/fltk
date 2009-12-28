@@ -161,8 +161,8 @@ const char *Fl_Preferences::newUUID()
 */
 Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application )
 {
-  rootNode = new RootNode( this, root, vendor, application );
   node = new Node( "." );
+  rootNode = new RootNode( this, root, vendor, application );
   node->setRoot(rootNode);
 }
 
@@ -181,8 +181,8 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
  */
 Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char *application )
 {
-  rootNode = new RootNode( this, path, vendor, application );
   node = new Node( "." );
+  rootNode = new RootNode( this, path, vendor, application );
   node->setRoot(rootNode);
 }
 

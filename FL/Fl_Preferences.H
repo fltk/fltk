@@ -100,7 +100,9 @@ public:
   Fl_Preferences( ID id );
   ~Fl_Preferences();
   
-  ID id();
+  /** Return an ID that can later be reused to open more references to this dataset.
+   */
+  ID id() { return (ID)node; }
 
   /** Return the name of this entry.
    */
@@ -212,7 +214,7 @@ private:
     Node *search( const char *path, int offset=0 );
     Node *addChild( const char *path );
     void setParent( Node *parent );
-    Node *parent() { return top_?parent_:0L; }
+    Node *parent() { return top_?0L:parent_; }
     void setRoot(RootNode *r) { root_ = r; top_ = 1; }
     RootNode *findRoot();
     char remove();
