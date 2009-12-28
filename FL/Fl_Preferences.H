@@ -80,6 +80,15 @@ public:
     USER        ///< Preferences apply only to the current user
   };
   
+  /**
+   Every Fl_Preferences-Group has a uniqe ID.
+   
+   ID's can be retrieved from an Fl_Preferences-Group and can then be used
+   to create more Fl_Preference references to the same data set, as long as the 
+   databse remains open.
+   */
+  typedef void *ID;
+  
   static const char *newUUID();
 
   Fl_Preferences( Root root, const char *vendor, const char *application );
@@ -88,7 +97,10 @@ public:
   Fl_Preferences( Fl_Preferences *parent, const char *group );
   Fl_Preferences( Fl_Preferences &parent, int groupIndex );
   Fl_Preferences( Fl_Preferences *parent, int groupIndex );
+  Fl_Preferences( ID id );
   ~Fl_Preferences();
+  
+  ID id();
 
   /** Return the name of this entry.
    */
@@ -177,11 +189,18 @@ private:
   static char nameBuffer[128];
   static char uuidBuffer[40];
 
+  class RootNode;
+  
   class FL_EXPORT Node // a node contains a list to all its entries 
   {          // and all means to manage the tree structure
-    Node *child_, *next_, *parent_;
+    Node *child_, *next_;
+    union { // these two are mutually exclusive
+      Node *parent_;    // top_ bit clear
+      RootNode *root_;  // top_ bit set
+    };
     char *path_;
-    char dirty_;
+    char dirty_:1;
+    char top_:1;
   public:
     Node( const char *path );
     ~Node();
@@ -193,7 +212,9 @@ private:
     Node *search( const char *path, int offset=0 );
     Node *addChild( const char *path );
     void setParent( Node *parent );
-    Node *parent() { return parent_; }
+    Node *parent() { return top_?parent_:0L; }
+    void setRoot(RootNode *r) { root_ = r; top_ = 1; }
+    RootNode *findRoot();
     char remove();
     char dirty();
     // entry methods

@@ -102,6 +102,7 @@ const char *Fl_Preferences::newUUID()
   b[10] = (unsigned char)(a>>16);
   b[11] = (unsigned char)(a>>24);
   char name[80]; // last four bytes
+  // BOOL GetComputerName(LPTSTR  lpBuffer, LPDWORD  nSize);
   gethostname(name, 79);
   memcpy(b+12, name, 4);
   sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
@@ -160,8 +161,9 @@ const char *Fl_Preferences::newUUID()
 */
 Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *application )
 {
-  node = new Node( "." );
   rootNode = new RootNode( this, root, vendor, application );
+  node = new Node( "." );
+  node->setRoot(rootNode);
 }
 
 
@@ -179,8 +181,9 @@ Fl_Preferences::Fl_Preferences( Root root, const char *vendor, const char *appli
  */
 Fl_Preferences::Fl_Preferences( const char *path, const char *vendor, const char *application )
 {
-  node = new Node( "." );
   rootNode = new RootNode( this, path, vendor, application );
+  node = new Node( "." );
+  node->setRoot(rootNode);
 }
 
 
@@ -243,6 +246,24 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, int groupIndex )
   } else {
     node = parent->node->childNode( groupIndex );
   }
+}
+
+
+/**
+ Create a new dataset access point using a dataset ID.
+ 
+ ID's are a great way to remember shortcuts to database entries that are deeply
+ nested in a preferences database, as long as the databse root is not deleted.
+ An ID can be retrieved from any Fl_Preferences dataset, and can then be used
+ to create multiple new references to the same dataset.
+ 
+ ID's can be put very helpful when put into the <tt>user_data()</tt> field of 
+ widget callbacks.
+ */
+Fl_Preferences::Fl_Preferences( Fl_Preferences::ID id )
+{
+  node = (Node*)id;
+  rootNode = node->findRoot();
 }
 
 
@@ -1166,6 +1187,7 @@ Fl_Preferences::Node::Node( const char *path )
   entry = 0;
   nEntry = NEntry = 0;
   dirty_ = 0;
+  top_ = 0;
 }
 
 // delete this and all depending nodes
@@ -1258,6 +1280,19 @@ void Fl_Preferences::Node::setParent( Node *pn )
   sprintf( nameBuffer, "%s/%s", pn->path_, path_ );
   free( path_ );
   path_ = strdup( nameBuffer );
+}
+
+// find the corresponding root node
+Fl_Preferences::RootNode *Fl_Preferences::Node::findRoot()
+{
+  Node *n = this;
+  do {
+    if (n->top_)
+      return n->root_;
+    n = n->parent_;
+    
+  } while (n);
+  return 0L;
 }
 
 // add a child to this node and set its path (try to find it first...)
