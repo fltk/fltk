@@ -40,6 +40,12 @@
     - {X|Y|Z} or {X,Y,Z} matches any one of the subexpressions literally.
     - \\x quotes the character x so it has no special meaning.
     - x all other characters must be matched exactly.
+
+    \b Include:
+    \code
+    #include <FL/filename.H>
+    \endcode
+
     \param[in] s the string to check for a match
     \param[in] p the string pattern 
     \return non zero if the string matches the pattern

@@ -58,6 +58,12 @@ int fl_casealphasort(struct dirent **a, struct dirent **b) {
    The number of entries is given as a return value. 
    If there is an error reading the directory a number less than zero is returned, 
    and errno has the reason; errno does not work under WIN32. 
+
+   \b Include:
+   \code
+   #include <FL/filename.H>
+   \endcode
+
    \param[in] d the name of the directory to list.  It does not matter if it has a trailing slash.
    \param[out] list table containing the resulting directory listing
    \param[in] sort sorting functor:

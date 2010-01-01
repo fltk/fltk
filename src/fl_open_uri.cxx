@@ -71,6 +71,18 @@ static int	run_program(const char *program, char **argv, char *msg, int msglen);
  *
  * On failure, the msg buffer is filled with an English error message.
  *
+ * \b Example
+ * \code
+ * #include <FL/filename.H>
+ * [..]
+ * char errmsg[512];
+ * if ( !fl_open_uri("http://google.com/", errmsg, sizeof(errmsg)) ) {
+ *     char warnmsg[768];
+ *     sprintf(warnmsg, "Error: %s", errmsg);
+ *     fl_alert(warnmsg);
+ * }
+ * \endcode
+ *
  * @param uri The URI to open
  * @param msg Optional buffer which contains the command or error message
  * @param msglen Length of optional buffer

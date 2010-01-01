@@ -29,8 +29,14 @@
 
 #include <FL/filename.H>
 
-/**
-   Gets the extensions of a filename
+/** Gets the extensions of a filename.
+   \code
+   #include <FL/filename.H>
+   [..]
+   const char *out;
+   out = fl_filename_ext("/some/path/foo.txt");        // result: ".txt"
+   out = fl_filename_ext("/some/path/foo");            // result: NULL
+   \endcode
    \param[in] buf the filename to be parsed
    \return a pointer to the extension (including '.') if any or NULL otherwise
  */

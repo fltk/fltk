@@ -34,9 +34,23 @@
     @{ */
 
 #  define FL_PATH_MAX 256 /**< all path buffers should use this length */
-/** Gets the file name from a path. \return a pointer to the char after the last slash, or to \p filename if there is none. */
+/** Gets the file name from a path. 
+    Similar to basename(3), exceptions shown below.
+    \code
+    #include <FL/filename.H>
+    [..]
+    const char *out;
+    out = fl_filename_name("/usr/lib");     // out="lib"
+    out = fl_filename_name("/usr/");        // out=""      (basename(3) returns "usr" instead)
+    out = fl_filename_name("/usr");         // out="usr"
+    out = fl_filename_name("/");            // out=""      (basename(3) returns "/" instead)
+    out = fl_filename_name(".");            // out="."
+    out = fl_filename_name("..");           // out=".."
+    \endcode
+    \return a pointer to the char after the last slash, or to \p filename if there is none.
+ */
 FL_EXPORT const char *fl_filename_name(const char * filename);
-FL_EXPORT const char *fl_filename_ext(const char *);
+FL_EXPORT const char *fl_filename_ext(const char *buf);
 FL_EXPORT char *fl_filename_setext(char *to, int tolen, const char *ext);
 FL_EXPORT int fl_filename_expand(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from);
