@@ -2896,19 +2896,26 @@ static void createAppleMenu(void)
     fl_sys_menu_bar->picked(item);
     if ( item->flags & FL_MENU_TOGGLE ) {// update the menu toggle symbol
       [self setState:(item->value() ? NSOnState : NSOffState)];
-      }
+    }
     else if ( item->flags & FL_MENU_RADIO ) {// update the menu radio symbols
       int from = flRank;
-      while(from > 0 && items[from - 1].flags & FL_MENU_RADIO) from--;
+      while( from > 0 && items[from - 1].label() && (items[from - 1].flags & FL_MENU_RADIO) &&
+            !(items[from - 1].flags & FL_MENU_DIVIDER) ) {
+        from--;
+      }
       int to = flRank;
-      while(items[to + 1].flags & FL_MENU_RADIO) to++;
+      while( !(items[to].flags & FL_MENU_DIVIDER) && items[to + 1].label() && 
+            (items[to + 1].flags & FL_MENU_RADIO) ) {
+        to++;
+      }
       NSMenu *nsmenu = [self menu];
       int nsrank = (int)[nsmenu indexOfItem:self];
       for(int i =  from - flRank + nsrank ; i <= to - flRank + nsrank; i++) {
-	[[nsmenu itemAtIndex:i] setState:NSOffState];
-	}
-      if(item->value()) [self setState:NSOnState];    
+        NSMenuItem *nsitem = [nsmenu itemAtIndex:i];
+        if(nsitem != self) [nsitem setState:NSOffState];
+        else [nsitem setState:(item->value() ? NSOnState : NSOffState) ];
       }
+    }
   }
 }
 - (void) directCallback:(id)unused
