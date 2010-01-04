@@ -103,7 +103,9 @@ const char *Fl_Preferences::newUUID()
   b[11] = (unsigned char)(a>>24);
   char name[80]; // last four bytes
   // BOOL GetComputerName(LPTSTR  lpBuffer, LPDWORD  nSize);
-  gethostname(name, 79);
+#warning gethostbyname needs winsock!
+  // gethostname(name, 79);	// A.S. temporarily replaced by:
+  strcpy (name,"localhost");	// A.S. fix gethostbyname
   memcpy(b+12, name, 4);
   sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
           b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], 
@@ -135,6 +137,8 @@ const char *Fl_Preferences::newUUID()
           b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], 
           b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
 #endif
+
+  return uuidBuffer;
 }
 
 
