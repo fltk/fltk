@@ -82,7 +82,9 @@ const char *Fl_Preferences::newUUID()
           b.byte8, b.byte9, b.byte10, b.byte11, b.byte12, b.byte13, b.byte14, b.byte15);
   CFRelease(theUUID);
 #elif defined (WIN32)
+#if defined (__GNUC__)
 #warning MSWindows implementation missing!
+#endif // (__GNUC__)
   // UUID b;
   // UuidCreate(&b);
   unsigned char b[16];
@@ -103,9 +105,11 @@ const char *Fl_Preferences::newUUID()
   b[11] = (unsigned char)(a>>24);
   char name[80]; // last four bytes
   // BOOL GetComputerName(LPTSTR  lpBuffer, LPDWORD  nSize);
-#warning gethostbyname needs winsock!
+#if defined (__GNUC__)
+#warning gethostname needs winsock!
+#endif // (__GNUC__)
   // gethostname(name, 79);	// A.S. temporarily replaced by:
-  strcpy (name,"localhost");	// A.S. fix gethostbyname
+  strcpy (name,"localhost");	// A.S. FIXME: gethostname
   memcpy(b+12, name, 4);
   sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
           b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], 
