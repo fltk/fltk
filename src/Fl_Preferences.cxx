@@ -229,6 +229,9 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *group )
  If the given index is invalid (negative or too high), a new group is created
  with a UUID as a name.
  
+ The index needs to be fixed. It is currently backward. Index 0 points
+ to the last member in the 'list' of preferences.
+ 
  \param[in] parent reference object for the new group
  \param[in] groupIndex zero based index into child groups
  */
@@ -1297,7 +1300,7 @@ Fl_Preferences::RootNode *Fl_Preferences::Node::findRoot()
   do {
     if (n->top_)
       return n->root_;
-    n = n->parent_;
+    n = n->parent();
     
   } while (n);
   return 0L;
@@ -1465,7 +1468,7 @@ Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path, int offset
       else if ( path[1] == '/' )
       {
 	Node *nn = this;
-	while ( nn->parent_ ) nn = nn->parent_;
+	while ( nn->parent() ) nn = nn->parent();
 	if ( path[2]==0 )
 	{ // user is searching for root ( "./" )
 	  return nn;
@@ -1543,9 +1546,9 @@ Fl_Preferences::Node *Fl_Preferences::Node::childNode( int ix )
 char Fl_Preferences::Node::remove()
 {
   Node *nd = 0, *np;
-  if ( parent_ )
+  if ( parent() )
   {
-    nd = parent_->child_; np = 0L;
+    nd = parent()->child_; np = 0L;
     for ( ; nd; np = nd, nd = nd->next_ )
     {
       if ( nd == this )
@@ -1553,11 +1556,11 @@ char Fl_Preferences::Node::remove()
 	if ( np ) 
 	  np->next_ = nd->next_; 
 	else 
-	  parent_->child_ = nd->next_;
+	  parent()->child_ = nd->next_;
 	break;
       }
     }
-    parent_->dirty_ = 1;
+    parent()->dirty_ = 1;
   }
   delete this;
   return ( nd != 0 );

@@ -201,8 +201,8 @@ private:
       RootNode *root_;  // top_ bit set
     };
     char *path_;
-    char dirty_:1;
-    char top_:1;
+    unsigned char dirty_:1;
+    unsigned char top_:1;
   public:
     Node( const char *path );
     ~Node();
