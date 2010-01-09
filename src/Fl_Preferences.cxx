@@ -54,6 +54,10 @@
 
 #ifdef WIN32
 #  include <windows.h>
+#  include <rpc.h>
+// function pointer for the UuidCreate Function
+// RPC_STATUS RPC_ENTRY UuidCreate(UUID __RPC_FAR *Uuid);
+typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
 #else
 #  include <sys/time.h>
 #endif // WIN32
@@ -83,39 +87,70 @@ const char *Fl_Preferences::newUUID()
   CFRelease(theUUID);
 #elif defined (WIN32)
 #if defined (__GNUC__)
-#warning MSWindows implementation missing!
+#  warning MSWindows implementation incomplete!
 #endif // (__GNUC__)
-  // UUID b;
-  // UuidCreate(&b);
-  unsigned char b[16];
-  time_t t = time(0); // first 4 byte
-  b[0] = (unsigned char)t;
-  b[1] = (unsigned char)(t>>8);
-  b[2] = (unsigned char)(t>>16);
-  b[3] = (unsigned char)(t>>24);
-  int r = rand(); // four more bytes
-  b[4] = (unsigned char)r;
-  b[5] = (unsigned char)(r>>8);
-  b[6] = (unsigned char)(r>>16);
-  b[7] = (unsigned char)(r>>24);
-  unsigned int a = (unsigned int)&t; // four more bytes
-  b[8] = (unsigned char)a;
-  b[9] = (unsigned char)(a>>8);
-  b[10] = (unsigned char)(a>>16);
-  b[11] = (unsigned char)(a>>24);
-  char name[80]; // last four bytes
-  // BOOL GetComputerName(LPTSTR  lpBuffer, LPDWORD  nSize);
-#if defined (__GNUC__)
-#warning gethostname needs winsock!
-#endif // (__GNUC__)
-  // gethostname(name, 79);	// A.S. temporarily replaced by:
-  strcpy (name,"localhost");	// A.S. FIXME: gethostname
-  memcpy(b+12, name, 4);
-  sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-          b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], 
-          b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
+  // First try and use the win API function UuidCreate(), but if that is not
+  // available, fall back to making something up from scratch.
+  // We do not want to link against the Rpcrt4.dll, as we will rarely use it,
+  // so we load the DLL dynamically, if it is available, and work from there.
+  static HMODULE hMod = NULL;
+  UUID ud;
+  UUID *pu = &ud;
+  int got_uuid = 0;
+
+  if(!hMod){ // first time in?
+    hMod = LoadLibrary("Rpcrt4.dll");
+  }
+
+  if(hMod){ // do we have a usable handle to Rpcrt4.dll?
+    uuid_func uuid_crt = (uuid_func)GetProcAddress(hMod, "UuidCreate");
+    if(uuid_crt != NULL) {
+      RPC_STATUS rpc_res = uuid_crt(pu);
+      if( // is the return status OK for our needs?
+          (rpc_res == RPC_S_OK) || // all is well
+          (rpc_res == RPC_S_UUID_LOCAL_ONLY) || // only unique to this machine
+          (rpc_res == RPC_S_UUID_NO_ADDRESS) // probably only locally unique
+        ) {
+        got_uuid = -1;
+        sprintf(uuidBuffer, "%08lX-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+            pu->Data1, pu->Data2, pu->Data3, pu->Data4[0], pu->Data4[1],
+            pu->Data4[2], pu->Data4[3], pu->Data4[4],
+            pu->Data4[5], pu->Data4[6], pu->Data4[7]);
+      }
+    }
+  }
+  if(got_uuid == 0) { // did not make a UUID - use fallback logic
+    unsigned char b[16];
+    time_t t = time(0); // first 4 byte
+    b[0] = (unsigned char)t;
+    b[1] = (unsigned char)(t>>8);
+    b[2] = (unsigned char)(t>>16);
+    b[3] = (unsigned char)(t>>24);
+    int r = rand(); // four more bytes
+    b[4] = (unsigned char)r;
+    b[5] = (unsigned char)(r>>8);
+    b[6] = (unsigned char)(r>>16);
+    b[7] = (unsigned char)(r>>24);
+    unsigned int a = (unsigned int)&t; // four more bytes
+    b[8] = (unsigned char)a;
+    b[9] = (unsigned char)(a>>8);
+    b[10] = (unsigned char)(a>>16);
+    b[11] = (unsigned char)(a>>24);
+    TCHAR name[MAX_COMPUTERNAME_LENGTH + 1]; // only used to make last four bytes
+    DWORD nSize = MAX_COMPUTERNAME_LENGTH + 1;
+    // GetComputerName() does not depend on any extra libs, and returns something
+    // analogous to gethostname()
+    GetComputerName(name, &nSize);
+    //  use the first 4 TCHAR's of the name to create the last 4 bytes of our UUID
+    for(int ii = 0; ii < 4; ii++){
+      b[12 + ii] = (unsigned char)name[ii];
+    }
+    sprintf(uuidBuffer, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+            b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+            b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
+  }
 #else
-#warning Unix implementation missing!
+#warning Unix implementation incomplete!
   // #include <uuid/uuid.h>
   // void uuid_generate(uuid_t out);
   unsigned char b[16];
