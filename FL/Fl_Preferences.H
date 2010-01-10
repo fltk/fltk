@@ -146,6 +146,8 @@ public:
 
   // char export( const char *filename, Type fileFormat );
   // char import( const char *filename );
+  
+  char copyTo(class Fl_Tree*);
 
   /**
      'Name' provides a simple method to create numerical or more complex 
@@ -206,12 +208,14 @@ private:
   public:
     Node( const char *path );
     ~Node();
+    char copyTo(class Fl_Tree*, class Fl_Tree_Item*);
     // node methods
     int write( FILE *f );
     const char *name();
     const char *path() { return path_; }
     Node *find( const char *path );
     Node *search( const char *path, int offset=0 );
+    Node *childNode( int ix );
     Node *addChild( const char *path );
     void setParent( Node *parent );
     Node *parent() { return top_?0L:parent_; }
@@ -222,7 +226,6 @@ private:
     // entry methods
     int nChildren();
     const char *child( int ix );
-    Node *childNode( int ix );
     void set( const char *name, const char *value );
     void set( const char *line );
     void add( const char *line );

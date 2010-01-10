@@ -94,7 +94,7 @@
 ///     Fl_Tree_Item::closeicon(),
 ///     Fl_Tree_Item::usericon().
 ///
-///     Various default preferences can be manipulated vi Fl_Tree_Prefs, including
+///     Various default preferences can be manipulated via Fl_Tree_Prefs, including
 ///     colors, margins, connection lines. 
 ///
 ///     \image html tree-elements.png

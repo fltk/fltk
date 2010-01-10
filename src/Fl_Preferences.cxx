@@ -28,6 +28,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
+#include <FL/Fl_Tree.H>
 #include <FL/filename.H>
 
 #include <stdio.h>
@@ -330,6 +331,15 @@ Fl_Preferences::~Fl_Preferences()
   // Valgrind does not complain (Cygwind does though)
   node = 0L;
   rootNode = 0L;
+}
+
+
+/**
+  Copy the databse hierarchy to an Fl_Tree browser from this node down.
+ */
+char Fl_Preferences::copyTo(Fl_Tree *tree)
+{
+  return node->copyTo(tree, tree->root());
 }
 
 
@@ -1601,6 +1611,25 @@ char Fl_Preferences::Node::remove()
   return ( nd != 0 );
 }
 
+char Fl_Preferences::Node::copyTo(Fl_Tree *tree, Fl_Tree_Item *ti) 
+{
+  ti->label(name());
+  ti->user_data(this);
+  Node *nd = child_;
+  for ( ; nd; nd = nd->next_) {
+    Fl_Tree_Item *tic = tree->insert(ti, 0, 0);
+    nd->copyTo(tree, tic);
+    tic->close();
+  }
+  int i, n = nEntry;
+  for (i=0; i<n; i++) {
+    char buf[80];
+    const char *name = entry[i].name;
+    const char *value = entry[i].value;
+    fl_snprintf(buf, 80, "%s: %s", name, value);
+    Fl_Tree_Item *tic = tree->add(ti, buf);
+  }
+}
 
 //
 // End of "$Id$".
