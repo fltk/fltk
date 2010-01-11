@@ -1627,8 +1627,9 @@ char Fl_Preferences::Node::copyTo(Fl_Tree *tree, Fl_Tree_Item *ti)
     const char *name = entry[i].name;
     const char *value = entry[i].value;
     fl_snprintf(buf, 80, "%s: %s", name, value);
-    Fl_Tree_Item *tic = tree->add(ti, buf);
+    tree->add(ti, buf);
   }
+  return 0;
 }
 
 //
