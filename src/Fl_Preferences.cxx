@@ -339,6 +339,8 @@ Fl_Preferences::~Fl_Preferences()
  */
 char Fl_Preferences::copyTo(Fl_Tree *tree)
 {
+  if (!tree->root())
+    tree->add(name());
   return node->copyTo(tree, tree->root());
 }
 
