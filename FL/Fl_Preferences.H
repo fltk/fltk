@@ -57,7 +57,7 @@
    yet exist.
    
    Entries can be of any length. However, the size of each
-   preferences file should be kept under 100k for performance
+   preferences file should be kept small for performance
    reasons. One application can have multiple preferences files.
    Extensive binary data however should be stored in separate
    files: see getUserdataPath().
@@ -116,11 +116,15 @@ public:
   const char *group( int num_group );
   char groupExists( const char *key );
   char deleteGroup( const char *group );
+  char deleteAllGroups();
 
   int entries();
   const char *entry( int index );
   char entryExists( const char *key );
   char deleteEntry( const char *entry );
+  char deleteAllEntries();
+  
+  char clear();
 
   char set( const char *entry, int value );
   char set( const char *entry, float value );
@@ -223,6 +227,7 @@ private:
     RootNode *findRoot();
     char remove();
     char dirty();
+    void deleteAllChildren();
     // entry methods
     int nChildren();
     const char *child( int ix );
@@ -232,6 +237,7 @@ private:
     const char *get( const char *name );
     int getEntry( const char *name );
     char deleteEntry( const char *name );
+    void deleteAllEntries();
     // public values
     Entry *entry;
     int nEntry, NEntry;

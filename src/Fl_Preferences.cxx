@@ -401,6 +401,14 @@ char Fl_Preferences::deleteGroup( const char *group )
   return 0;
 }
 
+/**
+ Delete all groups.
+ */
+char Fl_Preferences::deleteAllGroups()
+{
+  node->deleteAllChildren();
+  return 1;
+}
 
 /**
    Returns the number of entries (name/value pairs) in a group.
@@ -452,6 +460,24 @@ char Fl_Preferences::deleteEntry( const char *key )
   return node->deleteEntry( key );
 }
 
+/**
+ Delete all entries.
+ */
+char Fl_Preferences::deleteAllEntries()
+{
+  node->deleteAllEntries();
+  return 1;
+}
+
+/**
+ Delete all groups and all entries.
+ */
+char Fl_Preferences::clear() 
+{
+  char ret1 = deleteAllGroups();
+  char ret2 = deleteAllEntries();
+  return ret1 & ret2;
+}
 
 /**
  Reads an entry from the group. A default value must be
@@ -1248,8 +1274,7 @@ Fl_Preferences::Node::Node( const char *path )
   top_ = 0;
 }
 
-// delete this and all depending nodes
-Fl_Preferences::Node::~Node()
+void Fl_Preferences::Node::deleteAllChildren() 
 {
   Node *nx;
   for ( Node *nd = child_; nd; nd = nx )
@@ -1258,6 +1283,10 @@ Fl_Preferences::Node::~Node()
     delete nd;
   }
   child_ = 0L;
+}
+
+void Fl_Preferences::Node::deleteAllEntries() 
+{
   if ( entry )
   {
     for ( int i = 0; i < nEntry; i++ )
@@ -1275,6 +1304,13 @@ Fl_Preferences::Node::~Node()
     entry = 0L;
     nEntry = 0;
   }
+}
+
+// delete this and all depending nodes
+Fl_Preferences::Node::~Node()
+{
+  deleteAllChildren();
+  deleteAllEntries();
   if ( path_ ) {
     free( path_ );
     path_ = 0L;
