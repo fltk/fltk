@@ -1283,6 +1283,7 @@ void Fl_Preferences::Node::deleteAllChildren()
     delete nd;
   }
   child_ = 0L;
+  dirty_ = 1;
 }
 
 void Fl_Preferences::Node::deleteAllEntries() 
@@ -1303,7 +1304,9 @@ void Fl_Preferences::Node::deleteAllEntries()
     free( entry );
     entry = 0L;
     nEntry = 0;
+    NEntry = 0;
   }
+  dirty_ = 1;
 }
 
 // delete this and all depending nodes
