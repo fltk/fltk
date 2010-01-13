@@ -62,6 +62,7 @@ ALL =   &
     $(ODIR)/menubar$(EXEEXT) &
     $(ODIR)/message$(EXEEXT) &
     $(ODIR)/minimum$(EXEEXT) &
+    $(ODIR)/native-filechooser$(EXEEXT) &
     $(ODIR)/navigation$(EXEEXT) &
     $(ODIR)/output$(EXEEXT) &
     $(ODIR)/overlay$(EXEEXT) &
@@ -178,6 +179,8 @@ $(ODIR)/menubar$(EXEEXT) :        $(ODIR)/menubar.obj
 $(ODIR)/message$(EXEEXT) :        $(ODIR)/message.obj
 
 $(ODIR)/minimum$(EXEEXT) :        $(ODIR)/minimum.obj
+
+$(ODIR)/native-filechooser$(EXEEXT) :     $(ODIR)/native-filechooser.obj
 
 $(ODIR)/navigation$(EXEEXT) :     $(ODIR)/navigation.obj
 

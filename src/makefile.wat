@@ -61,6 +61,7 @@ CPPFILES = &
     Fl_Menu_add.obj &
     Fl_Menu_global.obj &
     Fl_Multi_Label.obj &
+    Fl_Native_File_Chooser.obj &
     Fl_Overlay_Window.obj &
     Fl_Pack.obj &
     Fl_Pixmap.obj &

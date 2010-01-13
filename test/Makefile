@@ -74,6 +74,7 @@ CPPFILES =\
 	menubar.cxx \
 	message.cxx \
 	minimum.cxx \
+	native-filechooser.cxx \
 	navigation.cxx \
 	output.cxx \
 	overlay.cxx \
@@ -139,6 +140,7 @@ ALL =	\
 	menubar$(EXEEXT) \
 	message$(EXEEXT) \
 	minimum$(EXEEXT) \
+	native-filechooser$(EXEEXT) \
 	navigation$(EXEEXT) \
 	output$(EXEEXT) \
 	overlay$(EXEEXT) \
@@ -376,6 +378,8 @@ menubar$(EXEEXT): menubar.o
 message$(EXEEXT): message.o
 
 minimum$(EXEEXT): minimum.o
+
+native-filechooser$(EXEEXT): native-filechooser.o
 
 navigation$(EXEEXT): navigation.o
 

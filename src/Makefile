@@ -63,6 +63,7 @@ CPPFILES = \
 	Fl_Menu_add.cxx \
 	Fl_Menu_global.cxx \
 	Fl_Multi_Label.cxx \
+	Fl_Native_File_Chooser.cxx \
 	Fl_Overlay_Window.cxx \
 	Fl_Pack.cxx \
 	Fl_Pixmap.cxx \
@@ -476,6 +477,8 @@ include makedepend
 # These dependencies aren't part of the makedepend file since
 # they are part of the WIN32 and MacOS code base...
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
+Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_MAC.cxx Fl_Native_File_Chooser_WIN32.cxx \
+	Fl_Native_File_Chooser_FLTK.cxx
 Fl.o:		Fl_mac.cxx Fl_win32.cxx Fl_cocoa.mm
 fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
 fl_dnd.o:	fl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx
@@ -512,6 +515,9 @@ Fl_Image.o:	../FL/mac.H ../FL/win32.H
 fl_line_style.o:	../FL/mac.H ../FL/win32.H
 Fl_mac.o:	../FL/mac.H ../FL/win32.H
 Fl_cocoa.o:	../FL/mac.H ../FL/win32.H
+Fl_Native_File_Chooser_MAC.o: ../FL/Fl_Native_File_Chooser.H ../FL/Fl_Native_File_Chooser_MAC.H
+Fl_Native_File_Chooser_WIN32.o: ../FL/Fl_Native_File_Chooser.H ../FL/Fl_Native_File_Chooser_WIN32.H
+Fl_Native_File_Chooser_FLTK.o: ../FL/Fl_Native_File_Chooser.H ../FL/Fl_Native_File_Chooser_FLTK.H
 Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H
 fl_overlay.o:	../FL/mac.H ../FL/win32.H
 fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H

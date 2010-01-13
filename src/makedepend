@@ -215,6 +215,8 @@ Fl_Multi_Label.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Multi_Label.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Widget.H
 Fl_Multi_Label.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
 Fl_Multi_Label.o: ../FL/Fl_Multi_Label.H
+Fl_Native_File_Chooser.o: ../config.h Fl_Native_File_Chooser_common.cxx \
+	../FL/Fl_Native_File_Chooser.H ../FL/Fl.H ../FL/filename.H
 Fl_Overlay_Window.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Overlay_Window.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Overlay_Window.o: ../FL/Fl_Export.H ../FL/fl_types.h
