@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
   ////       no icons will be shown. However, this means you do not need to link in the
   ////       fltk_images library, potentially reducing the size of your executable.
   //// Loading the system icons is not required by the OSX or Windows native file choosers.
-#if !(defined WIN32) && !(defined __APPLE__)
+#if !(defined WIN32) && !defined(__APPLE__)
   Fl_File_Icon::load_system_icons();
 #endif
 
