@@ -71,16 +71,9 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   Fl_Group::current(w);		// adds a "Show hidden files" check button in _file_chooser's window
   show_hidden = new Fl_Check_Button(b->x() + b->w() + 10, b->y(), 145, b->h(), "Show hidden files");
   show_hidden->callback((Fl_Callback*)show_hidden_cb, this);
-  // This is a hack to bypass the fact that fileList is a private member of _file_chooser.
-  // Find it as 1st child of 2nd child of _file_chooser's window.
-  Fl_Group *g = (Fl_Group *)w->array()[1];
-  my_fileList = (Fl_File_Browser *)g->array()[0];
+  my_fileList = _file_chooser->browser();
   _old_dir = 0;						// to detect directory changes
   prev_filtervalue = _file_chooser->filter_value();	// to detect filter changes
-  // Hack to get _file_chooser's showChoice widget.
-  // Find it as 1st child of 1st child of _file_chooser's window.
-  g = (Fl_Group *)w->array()[0];
-  showChoice = (Fl_Choice *)g->array()[0];
 } 
 
 /**

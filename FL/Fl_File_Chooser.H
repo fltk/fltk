@@ -222,6 +222,7 @@ private:
   Fl_Widget* ext_group; 
 public:
   Fl_Widget* add_extra(Fl_Widget* gr);
+  Fl_File_Browser *browser(void) {return fileList; };
 };
 FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);
 FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);

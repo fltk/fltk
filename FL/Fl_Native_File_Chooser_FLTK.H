@@ -135,8 +135,6 @@ public:
   const char* preset_file() const;
   const char *errmsg() const;
   int show();
-  // added by MG
-  Fl_Choice *showChoice;
 };
 
 //

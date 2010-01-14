@@ -304,6 +304,9 @@
 
   /** \fn void * Fl_File_Chooser::user_data() const
     Gets the file chooser user data d */
+
+  /** \fn Fl_File_Browser* Fl_File_Chooser::browser()
+   returns a pointer to the underlying Fl_File_Browser object */
 // *** END OF OUT OF SOURCE DOC ***
 
 // Contents:
