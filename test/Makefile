@@ -379,7 +379,9 @@ message$(EXEEXT): message.o
 
 minimum$(EXEEXT): minimum.o
 
-native-filechooser$(EXEEXT): native-filechooser.o
+native-filechooser$(EXEEXT): native-filechooser.o $(IMGLIBNAME)
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(LDFLAGS) native-filechooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 
 navigation$(EXEEXT): navigation.o
 

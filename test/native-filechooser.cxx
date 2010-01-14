@@ -60,12 +60,15 @@ void Butt_CB(Fl_Widget*, void*) {
 }
 
 int main(int argc, char **argv) {
-  //// For a nicer looking browser under linux, uncomment the following line.
+  //// For a nicer looking browser under linux, call Fl_File_Icon::load_system_icons();
   //// (If you do this, you'll need to link with fltk_images)
-  ////
-  //// Fl_File_Icon::load_system_icons();
+  //// NOTE: If you do not load the system icons, the file chooser will still work, but
+  ////       no icons will be shown. However, this means you do not need to link in the
+  ////       fltk_images library, potentially reducing the size of your executable.
+  //// Loading the system icons is not required by the OSX or Windows native file choosers.
+  Fl_File_Icon::load_system_icons();
 
-  Fl_Window *win = new Fl_Window(600, 100, "FLTK Window");
+  Fl_Window *win = new Fl_Window(600, 100, "Native File Chooser Test");
   win->begin();
   {
     int y = 10;
@@ -81,3 +84,8 @@ int main(int argc, char **argv) {
   win->show();
   return(Fl::run());
 }
+
+//
+// End of "$Id$".
+//
+

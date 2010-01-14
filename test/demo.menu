@@ -68,6 +68,7 @@
 @main:Other\nTests:@o
 	@o:Color Choosers:color_chooser r
 	@o:File Chooser:file_chooser
+	@o:Native File Chooser:native-filechooser
 	@o:Font Tests:@of
 		@of:Fonts:fonts
 		@of:UTF-8:utf8
