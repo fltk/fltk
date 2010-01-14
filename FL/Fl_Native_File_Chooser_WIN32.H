@@ -1,6 +1,9 @@
 //
-// Fl_Native_File_Chooser_WINDOWS.H -- FLTK native OS file chooser widget
+// "$Id$"
 //
+// FLTK native OS file chooser widget
+//
+// Copyright 1998-2005 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
 // April 2005 - API changes, improved filter processing by Nathan Vander Wilt
 //
@@ -19,6 +22,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
+// Please report all bugs and problems to:
+//
+//     http://www.fltk.org/str.php
+//
+
+#ifndef FL_DOXYGEN		// PREVENT DOXYGEN'S USE OF THIS FILE
 
 // #define _WIN32_WINNT	0x0501	// needed for OPENFILENAME's 'FlagsEx'
 #include <stdio.h>
@@ -104,8 +113,8 @@ public:
   const char *errmsg() const;
   int show();
 };
+#endif /*!FL_DOXYGEN*/
 
 //
 // End of "$Id$".
 //
-

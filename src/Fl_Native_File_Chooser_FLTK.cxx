@@ -28,8 +28,6 @@
 
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Icon.H>
-#define FNFC_CLASS Fl_Native_File_Chooser
-#define FNFC_CTOR  Fl_Native_File_Chooser
 #define FLTK_CHOOSER_SINGLE    Fl_File_Chooser::SINGLE
 #define FLTK_CHOOSER_DIRECTORY Fl_File_Chooser::DIRECTORY
 #define FLTK_CHOOSER_MULTI     Fl_File_Chooser::MULTI
@@ -37,11 +35,16 @@
 
 #include "Fl_Native_File_Chooser_common.cxx"
 #include <sys/stat.h>
+#include <string.h>
 
-// CTOR
-FNFC_CLASS::FNFC_CTOR(int val) {
+/**
+  The constructor. Internally allocates the native widgets.
+  Optional \p val presets the type of browser this will be, 
+  which can also be changed with type().
+*/
+Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   //// CANT USE THIS -- MESSES UP LINKING/CREATES DEPENDENCY ON fltk_images.
-  //// Have user call this from app instead.
+  //// Have app call this from main() instead.
   ////
   ////  static int init = 0;		// 'first time' initialize flag
   ////  if ( init == 0 ) {
@@ -58,47 +61,51 @@ FNFC_CLASS::FNFC_CTOR(int val) {
   _prevvalue   = NULL;
   _directory   = NULL;
   _errmsg      = NULL;
-  file_chooser = new Fl_File_Chooser(NULL, NULL, 0, NULL);
-  type(val);		// do this after file_chooser created
+  _file_chooser = new Fl_File_Chooser(NULL, NULL, 0, NULL);
+  type(val);		// do this after _file_chooser created
   _nfilters    = 0;
 
   // Added by MG
-  Fl_Button *b = file_chooser->previewButton;
+  Fl_Button *b = _file_chooser->previewButton;
   Fl_Window *w = b->window();
-  Fl_Group::current(w);		// adds a "Show hidden files" check button in file_chooser's window
+  Fl_Group::current(w);		// adds a "Show hidden files" check button in _file_chooser's window
   show_hidden = new Fl_Check_Button(b->x() + b->w() + 10, b->y(), 145, b->h(), "Show hidden files");
   show_hidden->callback((Fl_Callback*)show_hidden_cb, this);
-  // This is a hack to bypass the fact that fileList is a private member of file_chooser.
-  // Find it as 1st child of 2nd child of file_chooser's window.
+  // This is a hack to bypass the fact that fileList is a private member of _file_chooser.
+  // Find it as 1st child of 2nd child of _file_chooser's window.
   Fl_Group *g = (Fl_Group *)w->array()[1];
   my_fileList = (Fl_File_Browser *)g->array()[0];
-  old_dir[0] = 0;					// to detect directory changes
-  prev_filtervalue = file_chooser->filter_value();	// to detect filter changes
-  // Hack to get file_chooser's showChoice widget.
-  // Find it as 1st child of 1st child of file_chooser's window.
+  _old_dir = 0;						// to detect directory changes
+  prev_filtervalue = _file_chooser->filter_value();	// to detect filter changes
+  // Hack to get _file_chooser's showChoice widget.
+  // Find it as 1st child of 1st child of _file_chooser's window.
   g = (Fl_Group *)w->array()[0];
   showChoice = (Fl_Choice *)g->array()[0];
 } 
 
-// DTOR
-FNFC_CLASS::~FNFC_CTOR() {
-  delete file_chooser;
+/**
+  Destructor. 
+  Deallocates any resources allocated to this widget.
+*/
+Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
+  delete _file_chooser;
   _filter      = strfree(_filter);
   _parsedfilt  = strfree(_parsedfilt);
   _preset_file = strfree(_preset_file);
   _prevvalue   = strfree(_prevvalue);
   _directory   = strfree(_directory);
   _errmsg      = strfree(_errmsg);
+  _old_dir     = strfree(_old_dir);
 }
 
 // PRIVATE: SET ERROR MESSAGE
-void FNFC_CLASS::errmsg(const char *msg) {
+void Fl_Native_File_Chooser::errmsg(const char *msg) {
   _errmsg = strfree(_errmsg);
   _errmsg = strnew(msg);
 }
 
 // PRIVATE: translate Native types to Fl_File_Chooser types
-int FNFC_CLASS::type_fl_file(int val) {
+int Fl_Native_File_Chooser::type_fl_file(int val) {
   switch (val) {
     case BROWSE_FILE:
       return(FLTK_CHOOSER_SINGLE);
@@ -117,85 +124,107 @@ int FNFC_CLASS::type_fl_file(int val) {
   }
 }
 
-void FNFC_CLASS::type(int val) {
+/**
+  Sets the current Fl_Native_File_Chooser::Type of browser.
+ */
+void Fl_Native_File_Chooser::type(int val) {
   _btype = val;
-  file_chooser->type(type_fl_file(val));
+  _file_chooser->type(type_fl_file(val));
 }
 
-int FNFC_CLASS::type() const {
+/**
+  Gets the current Fl_Native_File_Chooser::Type of browser.
+ */
+int Fl_Native_File_Chooser::type() const {
   return(_btype);
 }
 
-// SET OPTIONS
-void FNFC_CLASS::options(int val) {
+/**
+  Sets the platform specific chooser options to \p val.
+  \p val is expected to be one or more Fl_Native_File_Chooser::Option flags ORed together.
+  Some platforms have OS-specific functions that can be enabled/disabled via this method.
+  <P>
+  \code
+  Flag              Description                                       Win       Mac       Other
+  --------------    -----------------------------------------------   -------   -------   -------
+  NEW_FOLDER        Shows the 'New Folder' button.                    Ignored   Used      Used
+  PREVIEW           Enables the 'Preview' mode by default.            Ignored   Ignored   Used
+  SAVEAS_CONFIRM    Confirm dialog if BROWSE_SAVE_FILE file exists.   Ignored   Used      Ignored
+  \endcode
+*/
+void Fl_Native_File_Chooser::options(int val) {
   _options = val;
 }
 
-// GET OPTIONS
-int FNFC_CLASS::options() const {
+/**
+  Gets the platform specific Fl_Native_File_Chooser::Option flags.
+*/
+int Fl_Native_File_Chooser::options() const {
   return(_options);
 }
 
-// Show chooser, blocks until done.
-// RETURNS:
-//    0 - user picked a file
-//    1 - user cancelled
-//   -1 - failed; errmsg() has reason
-//
-int FNFC_CLASS::show() {
+/**
+  Post the chooser's dialog. Blocks until dialog has been completed or cancelled.
+  \returns
+     - 0  -- user picked a file
+     - 1  -- user cancelled
+     - -1 -- failed; errmsg() has reason
+*/
+int Fl_Native_File_Chooser::show() {
   // FILTER
   if ( _parsedfilt ) {
-    file_chooser->filter(_parsedfilt);
+    _file_chooser->filter(_parsedfilt);
   }
 
   // FILTER VALUE
   //     Set this /after/ setting the filter
   //
-  file_chooser->filter_value(_filtvalue);
+  _file_chooser->filter_value(_filtvalue);
 
   // DIRECTORY
   if ( _directory && _directory[0] ) {
-    file_chooser->directory(_directory);
+    _file_chooser->directory(_directory);
   } else {
-    file_chooser->directory(_prevvalue);
+    _file_chooser->directory(_prevvalue);
   }
 
   // PRESET FILE
   if ( _preset_file ) {
-    file_chooser->value(_preset_file);
+    _file_chooser->value(_preset_file);
   }
 
   // OPTIONS: PREVIEW
-  file_chooser->preview( (options() & PREVIEW) ? 1 : 0);
+  _file_chooser->preview( (options() & PREVIEW) ? 1 : 0);
 
   // OPTIONS: NEW FOLDER
   if ( options() & NEW_FOLDER )
-    file_chooser->type(file_chooser->type() | FLTK_CHOOSER_CREATE);	// on
+    _file_chooser->type(_file_chooser->type() | FLTK_CHOOSER_CREATE);	// on
 
   // SHOW
-  file_chooser->show();
+  _file_chooser->show();
 
   // BLOCK WHILE BROWSER SHOWN
-  while ( file_chooser->shown() ) {
-    if(strcmp(old_dir, file_chooser->directory()) != 0) {
-      strcpy(old_dir, file_chooser->directory());
-      if(!show_hidden->value()) remove_hidden_files(my_fileList);
-    } else if(prev_filtervalue != file_chooser->filter_value() ) {
-      prev_filtervalue = file_chooser->filter_value();
-      if(!show_hidden->value() ) remove_hidden_files(my_fileList);
+  while ( _file_chooser->shown() ) {
+    if (_old_dir==0 || strcmp(_old_dir, _file_chooser->directory()) != 0) {
+      _old_dir = strfree(_old_dir);
+      _old_dir = strnew(_file_chooser->directory());
+      if (!show_hidden->value()) remove_hidden_files(my_fileList);
+    } else if (prev_filtervalue != _file_chooser->filter_value() ) {
+      prev_filtervalue = _file_chooser->filter_value();
+      if (!show_hidden->value() ) remove_hidden_files(my_fileList);
     }
     Fl::wait();
   }
 
-  if ( file_chooser->value() && file_chooser->value()[0] ) {
+  if ( _file_chooser->value() && _file_chooser->value()[0] ) {
     _prevvalue = strfree(_prevvalue);
-    _prevvalue = strnew(file_chooser->value());
-    _filtvalue = file_chooser->filter_value();	// update filter value
+    _prevvalue = strnew(_file_chooser->value());
+    _filtvalue = _file_chooser->filter_value();	// update filter value
 
     // HANDLE SHOWING 'SaveAs' CONFIRM
     if ( options() & SAVEAS_CONFIRM && type() == BROWSE_SAVE_FILE ) {
       struct stat buf;
-      if ( stat(file_chooser->value(), &buf) != -1 ) {
+      if ( stat(_file_chooser->value(), &buf) != -1 ) {
 	if ( buf.st_mode & S_IFREG ) {		// Regular file + exists?
 	  if ( exist_dialog() == 0 ) {
 	    return(1);
@@ -205,87 +234,160 @@ int FNFC_CLASS::show() {
     }
   }
 
-  if ( file_chooser->count() ) return(0);
+  if ( _file_chooser->count() ) return(0);
   else return(1);
 }
 
-// RETURN ERROR MESSAGE
-const char *FNFC_CLASS::errmsg() const {
+/**
+  Returns a system dependent error message for the last method that failed. 
+  This message should at least be flagged to the user in a dialog box, or to some kind of error log. 
+  Contents will be valid only for methods that document errmsg() will have info on failures.
+ */
+const char *Fl_Native_File_Chooser::errmsg() const {
   return(_errmsg ? _errmsg : "No error");
 }
 
-// GET FILENAME
-const char* FNFC_CLASS::filename() const {
-  if ( file_chooser->count() > 0 ) return(file_chooser->value());
+/**
+  Return the filename the user choose.
+  Use this if only expecting a single filename.
+  If more than one filename is expected, use filename(int) instead.
+  Return value may be "" if no filename was chosen (eg. user cancelled).
+ */
+const char* Fl_Native_File_Chooser::filename() const {
+  if ( _file_chooser->count() > 0 ) return(_file_chooser->value());
   return("");
 }
 
-// GET FILENAME FROM LIST OF FILENAMES
-const char* FNFC_CLASS::filename(int i) const {
-  if ( i < file_chooser->count() )
-    return(file_chooser->value(i+1));	// convert fltk 1 based to our 0 based
+/**
+  Return one of the filenames the user selected.
+  Use count() to determine how many filenames the user selected.
+  <P>
+  \b Example:
+  \code
+  if ( fnfc->show() == 0 ) {
+      // Print all filenames user selected
+      for (int n=0; n<fnfc->count(); n++ ) {
+	  printf("%d) '%s'\n", n, fnfc->filename(n));
+      }
+  }
+  \endcode
+ */
+const char* Fl_Native_File_Chooser::filename(int i) const {
+  if ( i < _file_chooser->count() )
+    return(_file_chooser->value(i+1));	// convert fltk 1 based to our 0 based
   return("");
 }
 
-// SET TITLE
-//     Can be NULL if no title desired.
-//
-void FNFC_CLASS::title(const char *val) {
-  file_chooser->label(val);
+/**
+  Set the title of the file chooser's dialog window.
+  Can be NULL if no title desired.
+  The default title varies according to the platform, so you are advised to set the title explicitly.
+*/
+void Fl_Native_File_Chooser::title(const char *val) {
+  _file_chooser->label(val);
 }
 
-// GET TITLE
-//    Can return NULL if none set.
-//
-const char *FNFC_CLASS::title() const {
-  return(file_chooser->label());
+/**
+  Get the title of the file chooser's dialog window.
+  Return value may be NULL if no title was set.
+*/
+const char *Fl_Native_File_Chooser::title() const {
+  return(_file_chooser->label());
 }
 
-// SET FILTER
-//     Can be NULL if no filter needed
-//
-void FNFC_CLASS::filter(const char *val) {
+/**
+  Sets the filename filters used for browsing. 
+  The default is NULL, which browses all files.
+  <P>
+  The filter string can be any of:
+  <P>
+    - A single wildcard (eg. "*.txt")
+    - Multiple wildcards (eg. "*.{cxx,h,H}")
+    - A descriptive name followed by a "\t" and a wildcard (eg. "Text Files\t*.txt")
+    - A list of separate wildcards with a "\n" between each (eg. "*.{cxx,H}\n*.txt")
+    - A list of descriptive names and wildcards (eg. "C++ Files\t*.{cxx,H}\nTxt Files\t*.txt")
+  <P>
+  The format of each filter is a wildcard, or an optional user description 
+  followed by '\\t' and the wildcard.
+  <P>
+  On most platforms, each filter is available to the user via a pulldown menu 
+  in the file chooser. The 'All Files' option is always available to the user. 
+*/
+void Fl_Native_File_Chooser::filter(const char *val) {
   _filter = strfree(_filter);
   _filter = strnew(val);
   parse_filter();
 }
 
-// GET FILTER
-const char *FNFC_CLASS::filter() const {
+/**
+  Returns the filter string last set.
+  Can be NULL if no filter was set.
+ */
+const char *Fl_Native_File_Chooser::filter() const {
   return(_filter);
 }
 
-// SET SELECTED FILTER
-void FNFC_CLASS::filter_value(int val) {
+/**
+Gets how many filters were available, not including "All Files" 
+*/
+int Fl_Native_File_Chooser::filters() const {
+  return(_nfilters);
+}
+
+/**
+  Sets which filter will be initially selected.
+
+  The first filter is indexed as 0. 
+  If filter_value()==filters(), then "All Files" was chosen. 
+  If filter_value() > filters(), then a custom filter was set.
+ */
+void Fl_Native_File_Chooser::filter_value(int val) {
   _filtvalue = val;
 }
 
-// RETURN SELECTED FILTER
-int FNFC_CLASS::filter_value() const {
+/**
+  Returns which filter value was last selected by the user.
+  This is only valid if the chooser returns success.
+ */
+int Fl_Native_File_Chooser::filter_value() const {
   return(_filtvalue);
 }
 
-// GET TOTAL FILENAMES CHOSEN
-int FNFC_CLASS::count() const {
-  return(file_chooser->count());
+/**
+  Returns the number of filenames (or directory names) the user selected.
+  <P>
+  \b Example:
+  \code
+  if ( fnfc->show() == 0 ) {
+      // Print all filenames user selected
+      for (int n=0; n<fnfc->count(); n++ ) {
+	  printf("%d) '%s'\n", n, fnfc->filename(n));
+      }
+  }
+  \endcode
+*/
+int Fl_Native_File_Chooser::count() const {
+  return(_file_chooser->count());
 }
 
-// PRESET PATHNAME
-//     Can be NULL if no preset is desired.
-//
-void FNFC_CLASS::directory(const char *val) {
+/**
+  Preset the directory the browser will show when opened.
+  If \p val is NULL, or no directory is specified, the chooser will attempt
+  to use the last non-cancelled folder.
+*/
+void Fl_Native_File_Chooser::directory(const char *val) {
   _directory = strfree(_directory);
   _directory = strnew(val);
 }
 
-// GET PRESET PATHNAME
-//    Can return NULL if none set.
-//
-const char *FNFC_CLASS::directory() const {
+/**
+  Returns the current preset directory() value.
+*/
+const char *Fl_Native_File_Chooser::directory() const {
   return(_directory);
 }
 
-// Convert our filter format to fltk's chooser format
+// PRIVATE: Convert our filter format to fltk's chooser format
 //     FROM                                     TO (FLTK)
 //     -------------------------                --------------------------
 //     "*.cxx"                                  "*.cxx Files(*.cxx)"
@@ -295,7 +397,7 @@ const char *FNFC_CLASS::directory() const {
 //     Returns a modified version of the filter that the caller is responsible
 //     for freeing with strfree().
 //
-void FNFC_CLASS::parse_filter() {
+void Fl_Native_File_Chooser::parse_filter() {
   _parsedfilt = strfree(_parsedfilt);	// clear previous parsed filter (if any)
   _nfilters = 0;
   char *in = _filter;
@@ -358,36 +460,50 @@ void FNFC_CLASS::parse_filter() {
   //NOTREACHED
 }
 
-// SET PRESET FILENAME
-void FNFC_CLASS::preset_file(const char* val) {
+/**
+  Sets the default filename for the chooser.
+  Use directory() to set the default directory.
+  Mainly used to preset the filename for save dialogs, 
+  and on most platforms can be used for opening files as well. 
+ */
+void Fl_Native_File_Chooser::preset_file(const char* val) {
   _preset_file = strfree(_preset_file);
   _preset_file = strnew(val);
 }
 
-// GET PRESET FILENAME
-const char* FNFC_CLASS::preset_file() const {
+/**
+  Get the preset filename.
+  */
+const char* Fl_Native_File_Chooser::preset_file() const {
   return(_preset_file);
 }
 
-void FNFC_CLASS::show_hidden_cb(Fl_Check_Button *o, void *data)
+void Fl_Native_File_Chooser::show_hidden_cb(Fl_Check_Button *o, void *data)
 {
   Fl_Native_File_Chooser *mychooser = (Fl_Native_File_Chooser *)data;
-  if(o->value()) {
-    mychooser->my_fileList->load(mychooser->file_chooser->directory());
+  if (o->value()) {
+    mychooser->my_fileList->load(mychooser->_file_chooser->directory());
   } else {
     remove_hidden_files(mychooser->my_fileList);
     mychooser->my_fileList->redraw();
   }
 }
 
-void FNFC_CLASS::remove_hidden_files(Fl_File_Browser *my_fileList)
+// PRIVATE: Don't show hidden files
+void Fl_Native_File_Chooser::remove_hidden_files(Fl_File_Browser *my_fileList)
 {
   int count = my_fileList->size();
   for(int num = count; num >= 1; num--) {
     const char *p = my_fileList->text(num);
-    if(*p == '.' && strcmp(p, "../") != 0) my_fileList->remove(num);
+    if (*p == '.' && strcmp(p, "../") != 0) my_fileList->remove(num);
   }
   my_fileList->topline(1);
+}
+
+// PRIVATE: Don't show hidden files
+int Fl_Native_File_Chooser::exist_dialog() {
+  return(fl_choice("File exists. Are you sure you want to overwrite?", 
+		   "Cancel", "   OK   ", NULL));
 }
 
 //

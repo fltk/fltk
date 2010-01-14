@@ -30,6 +30,8 @@
 //     http://www.codeproject.com/dialog/selectfolder.asp
 //
 
+#ifndef FL_DOXYGEN		// PREVENT DOXYGEN'S USE OF THIS FILE
+
 #include <stdio.h>		// debugging
 #include <wchar.h>		//MG
 #include "Fl_Native_File_Chooser_common.cxx"		// strnew/strfree/strapp/chrcat
@@ -38,8 +40,6 @@ LPCWSTR utf8towchar(const char *in); //MG
 char *wchartoutf8(LPCWSTR in);  //MG
 
 #include <FL/Fl_Native_File_Chooser.H>
-#define FNFC_CLASS Fl_Native_File_Chooser
-#define FNFC_CTOR  Fl_Native_File_Chooser
 
 #define LCURLY_CHR	'{'
 #define RCURLY_CHR	'}'
@@ -125,7 +125,7 @@ static void dnullcat(char*&wp, const char *string, int n = -1 ) {
 }
 
 // CTOR
-FNFC_CLASS::FNFC_CTOR(int val) {
+Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   _btype           = val;
   _options         = NO_OPTIONS;
   memset((void*)&_ofn, 0, sizeof(OPENFILENAMEW));
@@ -144,7 +144,7 @@ FNFC_CLASS::FNFC_CTOR(int val) {
 }
 
 // DTOR
-FNFC_CLASS::~FNFC_CTOR() {
+Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
   //_pathnames                // managed by clear_pathnames()
   //_tpathnames               // managed by clear_pathnames()
   _directory   = strfree(_directory);
@@ -161,33 +161,33 @@ FNFC_CLASS::~FNFC_CTOR() {
 }
 
 // SET TYPE OF BROWSER
-void FNFC_CLASS::type(int val) {
+void Fl_Native_File_Chooser::type(int val) {
   _btype = val;
 }
 
 // GET TYPE OF BROWSER
-int FNFC_CLASS::type() const {
+int Fl_Native_File_Chooser::type() const {
   return( _btype );
 }
 
 // SET OPTIONS
-void FNFC_CLASS::options(int val) {
+void Fl_Native_File_Chooser::options(int val) {
   _options = val;
 }
 
 // GET OPTIONS
-int FNFC_CLASS::options() const {
+int Fl_Native_File_Chooser::options() const {
   return(_options);
 }
 
 // PRIVATE: SET ERROR MESSAGE
-void FNFC_CLASS::errmsg(const char *val) {
+void Fl_Native_File_Chooser::errmsg(const char *val) {
   _errmsg = strfree(_errmsg);
   _errmsg = strnew(val);
 }
 
 // FREE PATHNAMES ARRAY, IF IT HAS ANY CONTENTS
-void FNFC_CLASS::clear_pathnames() {
+void Fl_Native_File_Chooser::clear_pathnames() {
   if ( _pathnames ) {
     while ( --_tpathnames >= 0 ) {
       _pathnames[_tpathnames] = strfree(_pathnames[_tpathnames]);
@@ -199,7 +199,7 @@ void FNFC_CLASS::clear_pathnames() {
 }
 
 // SET A SINGLE PATHNAME
-void FNFC_CLASS::set_single_pathname(const char *s) {
+void Fl_Native_File_Chooser::set_single_pathname(const char *s) {
   clear_pathnames();
   _pathnames = new char*[1];
   _pathnames[0] = strnew(s);
@@ -207,7 +207,7 @@ void FNFC_CLASS::set_single_pathname(const char *s) {
 }
 
 // ADD PATHNAME TO EXISTING ARRAY
-void FNFC_CLASS::add_pathname(const char *s) {
+void Fl_Native_File_Chooser::add_pathname(const char *s) {
   if ( ! _pathnames ) {
     // Create first element in array
     ++_tpathnames;
@@ -225,7 +225,7 @@ void FNFC_CLASS::add_pathname(const char *s) {
 }
 
 // FREE A PIDL (Pointer to IDentity List)
-void FNFC_CLASS::FreePIDL(ITEMIDLIST *pidl) {
+void Fl_Native_File_Chooser::FreePIDL(ITEMIDLIST *pidl) {
   IMalloc *imalloc = NULL;
   if ( SUCCEEDED(SHGetMalloc(&imalloc)) ) {
     imalloc->Free(pidl);
@@ -235,7 +235,7 @@ void FNFC_CLASS::FreePIDL(ITEMIDLIST *pidl) {
 }
 
 // CLEAR MICROSOFT OFN (OPEN FILE NAME) CLASS
-void FNFC_CLASS::ClearOFN() {
+void Fl_Native_File_Chooser::ClearOFN() {
   // Free any previously allocated lpstrFile before zeroing out _ofn
   if ( _ofn.lpstrFile ) {
     delete [] _ofn.lpstrFile;
@@ -253,7 +253,7 @@ void FNFC_CLASS::ClearOFN() {
 }
 
 // CLEAR MICROSOFT BINF (BROWSER INFO) CLASS
-void FNFC_CLASS::ClearBINF() {
+void Fl_Native_File_Chooser::ClearBINF() {
   if ( _binf.pidlRoot ) {
     FreePIDL((ITEMIDLIST*)_binf.pidlRoot);
     _binf.pidlRoot = NULL;
@@ -262,19 +262,19 @@ void FNFC_CLASS::ClearBINF() {
 }
 
 // CONVERT WINDOWS BACKSLASHES TO UNIX FRONTSLASHES
-void FNFC_CLASS::Win2Unix(char *s) {
+void Fl_Native_File_Chooser::Win2Unix(char *s) {
   for ( ; *s; s++ )
     if ( *s == '\\' ) *s = '/';
 }
 
 // CONVERT UNIX FRONTSLASHES TO WINDOWS BACKSLASHES
-void FNFC_CLASS::Unix2Win(char *s) {
+void Fl_Native_File_Chooser::Unix2Win(char *s) {
   for ( ; *s; s++ )
     if ( *s == '/' ) *s = '\\';
 }
 
 // SHOW FILE BROWSER
-int FNFC_CLASS::showfile() {
+int Fl_Native_File_Chooser::showfile() {
   ClearOFN();
   clear_pathnames();
   size_t fsize = MAX_PATH;
@@ -437,7 +437,7 @@ int FNFC_CLASS::showfile() {
 // Ref: Usenet: microsoft.public.vc.mfc, Dec 8 2000, 1:38p David Lowndes
 //              Subject: How to specify to select an initial folder .."
 //
-int CALLBACK FNFC_CLASS::Dir_CB(HWND win, UINT msg, LPARAM param, LPARAM data) {
+int CALLBACK Fl_Native_File_Chooser::Dir_CB(HWND win, UINT msg, LPARAM param, LPARAM data) {
   switch (msg) {
     case BFFM_INITIALIZED:
       if (data) ::SendMessage(win, BFFM_SETSELECTION, TRUE, data);
@@ -462,7 +462,7 @@ int CALLBACK FNFC_CLASS::Dir_CB(HWND win, UINT msg, LPARAM param, LPARAM data) {
 }
 
 // SHOW DIRECTORY BROWSER
-int FNFC_CLASS::showdir() {
+int Fl_Native_File_Chooser::showdir() {
   OleInitialize(NULL);		// init needed by BIF_USENEWUI
   ClearBINF();
   clear_pathnames();
@@ -531,7 +531,7 @@ int FNFC_CLASS::showdir() {
 //    1 - user cancelled
 //   -1 - failed; errmsg() has reason
 //
-int FNFC_CLASS::show() {
+int Fl_Native_File_Chooser::show() {
   if ( _btype == BROWSE_DIRECTORY || 
        _btype == BROWSE_MULTI_DIRECTORY || 
        _btype == BROWSE_SAVE_DIRECTORY ) {
@@ -542,31 +542,31 @@ int FNFC_CLASS::show() {
 }
 
 // RETURN ERROR MESSAGE
-const char *FNFC_CLASS::errmsg() const {
+const char *Fl_Native_File_Chooser::errmsg() const {
   return(_errmsg ? _errmsg : "No error");
 }
 
 // GET FILENAME
-const char* FNFC_CLASS::filename() const {
+const char* Fl_Native_File_Chooser::filename() const {
   if ( _pathnames && _tpathnames > 0 ) return(_pathnames[0]);
   return("");
 }
 
 // GET FILENAME FROM LIST OF FILENAMES
-const char* FNFC_CLASS::filename(int i) const {
+const char* Fl_Native_File_Chooser::filename(int i) const {
   if ( _pathnames && i < _tpathnames ) return(_pathnames[i]);
   return("");
 }
 
 // GET TOTAL FILENAMES CHOSEN
-int FNFC_CLASS::count() const {
+int Fl_Native_File_Chooser::count() const {
   return(_tpathnames);
 }
 
 // PRESET PATHNAME
 //     Can be NULL if no preset is desired.
 //
-void FNFC_CLASS::directory(const char *val) {
+void Fl_Native_File_Chooser::directory(const char *val) {
   _directory = strfree(_directory);
   _directory = strnew(val);
 }
@@ -574,14 +574,14 @@ void FNFC_CLASS::directory(const char *val) {
 // GET PRESET PATHNAME
 //    Can return NULL if none set.
 //
-const char *FNFC_CLASS::directory() const {
+const char *Fl_Native_File_Chooser::directory() const {
   return(_directory);
 }
 
 // SET TITLE
 //     Can be NULL if no title desired.
 //
-void FNFC_CLASS::title(const char *val) {
+void Fl_Native_File_Chooser::title(const char *val) {
   _title = strfree(_title);
   _title = strnew(val);
 }
@@ -589,14 +589,14 @@ void FNFC_CLASS::title(const char *val) {
 // GET TITLE
 //    Can return NULL if none set.
 //
-const char *FNFC_CLASS::title() const {
+const char *Fl_Native_File_Chooser::title() const {
   return(_title);
 }
 
 // SET FILTER
 //     Can be NULL if no filter needed
 //
-void FNFC_CLASS::filter(const char *val) {
+void Fl_Native_File_Chooser::filter(const char *val) {
   _filter = strfree(_filter);
   clear_filters();
   if ( val ) {
@@ -613,18 +613,18 @@ void FNFC_CLASS::filter(const char *val) {
 // GET FILTER
 //    Can return NULL if none set.
 //
-const char *FNFC_CLASS::filter() const {
+const char *Fl_Native_File_Chooser::filter() const {
   return(_filter);
 }
 
 // CLEAR FILTERS
-void FNFC_CLASS::clear_filters() {
+void Fl_Native_File_Chooser::clear_filters() {
   _nfilters = 0;
   _parsedfilt = strfree(_parsedfilt);
 }
 
 // ADD A FILTER
-void FNFC_CLASS::add_filter(const char *name_in,	// name of filter (optional: can be null)
+void Fl_Native_File_Chooser::add_filter(const char *name_in,	// name of filter (optional: can be null)
 	                    const char *winfilter) {    // windows style filter (eg. "*.cxx;*.h")
   // No name? Make one..
   char name[1024];
@@ -662,7 +662,7 @@ void FNFC_CLASS::add_filter(const char *name_in,	// name of filter (optional: ca
 //             \_____/  \_______/
 //              Name     Wildcard
 //
-void FNFC_CLASS::parse_filter(const char *in) {
+void Fl_Native_File_Chooser::parse_filter(const char *in) {
   clear_filters();
   if ( ! in ) return;
 
@@ -795,23 +795,23 @@ void FNFC_CLASS::parse_filter(const char *in) {
 }
 
 // SET 'CURRENTLY SELECTED FILTER'
-void FNFC_CLASS::filter_value(int i) {
+void Fl_Native_File_Chooser::filter_value(int i) {
   _ofn.nFilterIndex = i + 1;
 }
 
 // RETURN VALUE OF 'CURRENTLY SELECTED FILTER'
-int FNFC_CLASS::filter_value() const {
+int Fl_Native_File_Chooser::filter_value() const {
   return(_ofn.nFilterIndex ? _ofn.nFilterIndex-1 : _nfilters+1);
 }
 
 // PRESET FILENAME FOR 'SAVE AS' CHOOSER
-void FNFC_CLASS::preset_file(const char* val) {
+void Fl_Native_File_Chooser::preset_file(const char* val) {
   _preset_file = strfree(_preset_file);
   _preset_file = strnew(val);
 }
 
 // GET PRESET FILENAME FOR 'SAVE AS' CHOOSER
-const char* FNFC_CLASS::preset_file() const {
+const char* Fl_Native_File_Chooser::preset_file() const {
   return(_preset_file);
 }
 
@@ -842,6 +842,8 @@ LPCWSTR utf8towchar(const char *in)
   MultiByteToWideChar(CP_UTF8, 0, in, -1, wout, wlen);
   return wout;
 }
+
+#endif /*!FL_DOXYGEN*/
 
 //
 // End of "$Id$".

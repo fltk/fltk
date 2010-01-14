@@ -26,28 +26,66 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <FL/Fl_File_Chooser.H>
-#include <string.h>
+/* \file
+   Fl_Native_File_Chooser widget. */
 
+#include <FL/Fl_File_Chooser.H>
+#include <unistd.h>		// _POSIX_NAME_MAX
+
+/**
+  This class lets an FLTK application easily and consistently access 
+  the operating system's native file chooser. Some operating systems 
+  have very complex and specific file choosers that many users want 
+  access to specifically, instead of FLTK's default file chooser(s). 
+  <P>
+  In cases where there is no native file browser, FLTK's own file browser
+  is used instead.
+  <P>
+  \code
+  // Create and post the local native file chooser
+  #include <FL/Fl_Native_File_Chooser.H>
+  [..]
+  Fl_Native_File_Chooser fnfc;
+  fnfc.title("Pick a file");
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fnfc.filter("Text\t*.txt\n"
+              "C Files\t*.{cxx,h,c}");
+  fnfc.directory("/var/tmp");
+  // Show native chooser
+  switch ( fnfc.show() ) {
+    case -1: printf("ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
+    case  1: printf("CANCEL\n");                      break;  // CANCEL
+    default: printf("PICKED: %s\n", fnfc.filename()); break;  // FILE CHOSEN
+  }
+  \endcode
+  <P>
+  <B>Platform Specific Caveats</B>
+  <P>
+  - Under X windows, it's best if you call Fl_File_Icon::load_system_icons()
+    at the start of main(), to enable the nicer looking file browser widgets.
+  - Some operating systems support certain OS specific options; see 
+    Fl_Native_File_Chooser::options() for a list.
+*/
 class Fl_Native_File_Chooser {
 public:
   enum Type {
-    BROWSE_FILE = 0,
-    BROWSE_DIRECTORY,
-    BROWSE_MULTI_FILE,
-    BROWSE_MULTI_DIRECTORY,
-    BROWSE_SAVE_FILE,
-    BROWSE_SAVE_DIRECTORY
+    BROWSE_FILE = 0,			///< browse files (lets user choose one file)
+    BROWSE_DIRECTORY,			///< browse directories (lets user choose one directory)
+    BROWSE_MULTI_FILE,			///< browse files (lets user choose multiple files)
+    BROWSE_MULTI_DIRECTORY,		///< browse directories (lets user choose multiple directories)
+    BROWSE_SAVE_FILE,			///< browse to save a file
+    BROWSE_SAVE_DIRECTORY		///< browse to save a directory
   };
   enum Option {
-    NO_OPTIONS     = 0x0000,	// no options enabled
-    SAVEAS_CONFIRM = 0x0001,	// Show native 'Save As' overwrite confirm dialog (if supported)
-    NEW_FOLDER     = 0x0002,	// Show 'New Folder' icon (if supported)
-    PREVIEW        = 0x0004	// enable preview mode
+    NO_OPTIONS     = 0x0000,		///< no options enabled
+    SAVEAS_CONFIRM = 0x0001,		///< Show native 'Save As' overwrite confirm dialog (if supported)
+    NEW_FOLDER     = 0x0002,		///< Show 'New Folder' icon (if supported)
+    PREVIEW        = 0x0004,		///< enable preview mode
   };
 private:
   int   _btype;			// kind-of browser to show()
   int   _options;		// general options
+  int   _nfilters;
   char *_filter;		// user supplied filter
   char *_parsedfilt;		// parsed filter
   int   _filtvalue;		// selected filter
@@ -55,22 +93,12 @@ private:
   char *_prevvalue;		// Returned filename
   char *_directory;
   char *_errmsg;		// error message
-  Fl_File_Chooser *file_chooser;
+  char *_old_dir;
+  Fl_File_Chooser *_file_chooser;
 
-  int exist_dialog() {
-    return(fl_choice("File exists. Are you sure you want to overwrite?", 
-		     "Cancel", "   OK   ", NULL));
-  }
-  void load_system_icons() {
-    Fl_File_Icon::load_system_icons();
-  }
-
-  int _nfilters;
-
-  //added by MG
+  // added by MG
   Fl_File_Browser *my_fileList;
   Fl_Check_Button *show_hidden;
-  char old_dir[300];
   int prev_filtervalue;
   static void show_hidden_cb(Fl_Check_Button *o, void *data);
   static void remove_hidden_files(Fl_File_Browser *my_fileList);
@@ -80,6 +108,7 @@ private:
   int type_fl_file(int);
   void parse_filter();
   void keeplocation();
+  int exist_dialog();
 
 public:
   Fl_Native_File_Chooser(int val=BROWSE_FILE);
@@ -99,7 +128,7 @@ public:
   const char* title() const;
   const char *filter() const;
   void filter(const char *);
-  int filters() const { return(_nfilters); }
+  int filters() const;
   void filter_value(int i);
   int filter_value() const;
   void preset_file(const char*);
@@ -113,4 +142,3 @@ public:
 //
 // End of "$Id$".
 //
-

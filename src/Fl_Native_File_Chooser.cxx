@@ -26,7 +26,7 @@
 //
 
 // Use Windows' chooser
-#ifdef _WIN32
+#ifdef WIN32
 #include "Fl_Native_File_Chooser_WIN32.cxx"
 #endif
 
@@ -36,7 +36,7 @@
 #endif
 
 // All else falls back to FLTK's own chooser
-#if ! defined(__APPLE__) && !defined(_WIN32)
+#if ! defined(__APPLE__) && !defined(WIN32)
 #include "Fl_Native_File_Chooser_FLTK.cxx"
 #endif
 

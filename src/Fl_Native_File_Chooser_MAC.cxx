@@ -30,6 +30,8 @@
 //        Possibly 'preset_file' could be used to select the filename.
 //
 
+#ifndef FL_DOXYGEN		// PREVENT DOXYGEN'S USE OF THIS FILE
+
 #include "Fl_Native_File_Chooser_common.cxx"		// strnew/strfree/strapp/chrcat
 #include <libgen.h>		// dirname(3)
 #include <sys/types.h>		// stat(2)
@@ -39,8 +41,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/filename.H>
-#define FNFC_CLASS Fl_Native_File_Chooser
-#define FNFC_CTOR  Fl_Native_File_Chooser
 
 #ifndef __APPLE_COCOA__
 // TRY TO CONVERT AN AEDesc TO AN FSRef
@@ -65,19 +65,19 @@ static int AEDescToFSRef(const AEDesc* desc, FSRef* fsref) {
 }
 
 // NAVREPLY: CTOR
-FNFC_CLASS::NavReply::NavReply() {
+Fl_Native_File_Chooser::NavReply::NavReply() {
   _valid_reply = 0;
 }
 
 // NAVREPLY: DTOR
-FNFC_CLASS::NavReply::~NavReply() {
+Fl_Native_File_Chooser::NavReply::~NavReply() {
   if ( _valid_reply ) {
     NavDisposeReply(&_reply);
   }
 }
 
 // GET REPLY FROM THE NAV* DIALOG
-int FNFC_CLASS::NavReply::get_reply(NavDialogRef& ref) {
+int Fl_Native_File_Chooser::NavReply::get_reply(NavDialogRef& ref) {
   if ( _valid_reply ) {
     NavDisposeReply(&_reply);	// dispose of previous
     _valid_reply = 0;
@@ -90,7 +90,7 @@ int FNFC_CLASS::NavReply::get_reply(NavDialogRef& ref) {
 }
 
 // RETURN THE BASENAME USER WANTS TO 'Save As'
-int FNFC_CLASS::NavReply::get_saveas_basename(char *s, int slen) {
+int Fl_Native_File_Chooser::NavReply::get_saveas_basename(char *s, int slen) {
   if (CFStringGetCString(_reply.saveFileName, s, slen-1, kCFStringEncodingUTF8) == false) {
     s[0] = '\0';
     return(-1);
@@ -101,7 +101,7 @@ int FNFC_CLASS::NavReply::get_saveas_basename(char *s, int slen) {
 // RETURN THE DIRECTORY NAME
 //    Returns 0 on success, -1 on error.
 //
-int FNFC_CLASS::NavReply::get_dirname(char *s, int slen) {
+int Fl_Native_File_Chooser::NavReply::get_dirname(char *s, int slen) {
   FSRef fsref;
   if ( AEDescToFSRef(&_reply.selection, &fsref) != noErr ) {
     // Conversion failed? Return empty name
@@ -116,7 +116,7 @@ int FNFC_CLASS::NavReply::get_dirname(char *s, int slen) {
 //     Returns: 0 on success with pathnames[] containing pathnames selected,
 //             -1 on error
 //
-int FNFC_CLASS::NavReply::get_pathnames(char **&pathnames, int& tpathnames) {
+int Fl_Native_File_Chooser::NavReply::get_pathnames(char **&pathnames, int& tpathnames) {
   // How many items selected?
   long count = 0;
   if ( AECountItems(&_reply.selection, &count) != noErr ) {
@@ -151,7 +151,7 @@ int FNFC_CLASS::NavReply::get_pathnames(char **&pathnames, int& tpathnames) {
 #endif /* !__APPLE_COCOA__ */
 
 // FREE PATHNAMES ARRAY, IF IT HAS ANY CONTENTS
-void FNFC_CLASS::clear_pathnames() {
+void Fl_Native_File_Chooser::clear_pathnames() {
   if ( _pathnames ) {
     while ( --_tpathnames >= 0 ) {
       _pathnames[_tpathnames] = strfree(_pathnames[_tpathnames]);
@@ -163,7 +163,7 @@ void FNFC_CLASS::clear_pathnames() {
 }
 
 // SET A SINGLE PATHNAME
-void FNFC_CLASS::set_single_pathname(const char *s) {
+void Fl_Native_File_Chooser::set_single_pathname(const char *s) {
   clear_pathnames();
   _pathnames = new char*[1];
   _pathnames[0] = strnew(s);
@@ -175,7 +175,7 @@ void FNFC_CLASS::set_single_pathname(const char *s) {
 //    Returns -1 on error, errmsg() has reason, filename == "".
 //             0 if OK, filename() has filename chosen.
 //
-int FNFC_CLASS::get_saveas_basename(NavDialogRef& ref) {
+int Fl_Native_File_Chooser::get_saveas_basename(NavDialogRef& ref) {
   if ( ref == NULL ) {
     errmsg("get_saveas_basename: ref is NULL");
     return(-1);
@@ -216,7 +216,7 @@ int FNFC_CLASS::get_saveas_basename(NavDialogRef& ref) {
 //         -1 -- error, errmsg() has reason, filename == ""
 //          0 -- OK, pathnames()/filename() has pathname(s) chosen
 //
-int FNFC_CLASS::get_pathnames(NavDialogRef& ref) {
+int Fl_Native_File_Chooser::get_pathnames(NavDialogRef& ref) {
   if ( ref == NULL ) {
     errmsg("get_saveas_basename: ref is NULL");
     return(-1);
@@ -278,10 +278,10 @@ static void PreselectPathname(NavCBRecPtr cbparm, const char *path) {
 }
 
 // NAV CALLBACK EVENT HANDLER
-void FNFC_CLASS::event_handler(NavEventCallbackMessage callBackSelector, 
+void Fl_Native_File_Chooser::event_handler(NavEventCallbackMessage callBackSelector, 
 			       NavCBRecPtr cbparm,
 			       void *data) {
-  FNFC_CLASS *nfb = (FNFC_CLASS*)data;
+  Fl_Native_File_Chooser *nfb = (Fl_Native_File_Chooser*)data;
   switch (callBackSelector) {
     case kNavCBStart:
     {
@@ -381,7 +381,7 @@ void FNFC_CLASS::event_handler(NavEventCallbackMessage callBackSelector,
 #endif /* !__APPLE_COCOA__ */
 
 // CONSTRUCTOR
-FNFC_CLASS::FNFC_CTOR(int val) {
+Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   _btype          = val;
 #ifdef __APPLE_COCOA__
   _panel = NULL;
@@ -407,7 +407,7 @@ FNFC_CLASS::FNFC_CTOR(int val) {
 }
 
 // DESTRUCTOR
-FNFC_CLASS::~FNFC_CTOR() {
+Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
   // _opts			// nothing to manage
 #ifndef __APPLE_COCOA__
   if (_ref) { NavDialogDispose(_ref); _ref = NULL; }
@@ -430,23 +430,23 @@ FNFC_CLASS::~FNFC_CTOR() {
 
 #ifndef __APPLE_COCOA__
 // SET THE TYPE OF BROWSER
-void FNFC_CLASS::type(int val) {
+void Fl_Native_File_Chooser::type(int val) {
   _btype = val;
 }
 #endif /* !__APPLE_COCOA__ */
 
 // GET TYPE OF BROWSER
-int FNFC_CLASS::type() const {
+int Fl_Native_File_Chooser::type() const {
   return(_btype);
 }
 
 // SET OPTIONS
-void FNFC_CLASS::options(int val) {
+void Fl_Native_File_Chooser::options(int val) {
   _options = val;
 }
 
 // GET OPTIONS
-int FNFC_CLASS::options() const {
+int Fl_Native_File_Chooser::options() const {
   return(_options);
 }
 
@@ -456,7 +456,7 @@ int FNFC_CLASS::options() const {
 //         1 - user cancelled
 //        -1 - failed; errmsg() has reason
 //
-int FNFC_CLASS::show() {
+int Fl_Native_File_Chooser::show() {
 
   // Make sure fltk interface updates before posting our dialog
   Fl::flush();
@@ -520,7 +520,7 @@ int FNFC_CLASS::show() {
 }
 
 #ifndef __APPLE_COCOA__
-int FNFC_CLASS::post() {
+int Fl_Native_File_Chooser::post() {
 
   // INITIALIZE BROWSER
   OSStatus err;
@@ -612,37 +612,37 @@ int FNFC_CLASS::post() {
 // SET ERROR MESSAGE
 //     Internal use only.
 //
-void FNFC_CLASS::errmsg(const char *msg) {
+void Fl_Native_File_Chooser::errmsg(const char *msg) {
   _errmsg = strfree(_errmsg);
   _errmsg = strnew(msg);
 }
 
 // RETURN ERROR MESSAGE
-const char *FNFC_CLASS::errmsg() const {
+const char *Fl_Native_File_Chooser::errmsg() const {
   return(_errmsg ? _errmsg : "No error");
 }
 
 // GET FILENAME
-const char* FNFC_CLASS::filename() const {
+const char* Fl_Native_File_Chooser::filename() const {
   if ( _pathnames && _tpathnames > 0 ) return(_pathnames[0]);
   return("");
 }
 
 // GET FILENAME FROM LIST OF FILENAMES
-const char* FNFC_CLASS::filename(int i) const {
+const char* Fl_Native_File_Chooser::filename(int i) const {
   if ( _pathnames && i < _tpathnames ) return(_pathnames[i]);
   return("");
 }
 
 // GET TOTAL FILENAMES CHOSEN
-int FNFC_CLASS::count() const {
+int Fl_Native_File_Chooser::count() const {
   return(_tpathnames);
 }
 
 // PRESET PATHNAME
 //     Value can be NULL for none.
 //
-void FNFC_CLASS::directory(const char *val) {
+void Fl_Native_File_Chooser::directory(const char *val) {
   _directory = strfree(_directory);
   _directory = strnew(val);
 }
@@ -650,14 +650,14 @@ void FNFC_CLASS::directory(const char *val) {
 // GET PRESET PATHNAME
 //     Returned value can be NULL if none set.
 //
-const char* FNFC_CLASS::directory() const {
+const char* Fl_Native_File_Chooser::directory() const {
   return(_directory);
 }
 
 // SET TITLE
 //     Value can be NULL if no title desired.
 //
-void FNFC_CLASS::title(const char *val) {
+void Fl_Native_File_Chooser::title(const char *val) {
   _title = strfree(_title);
   _title = strnew(val);
 }
@@ -665,14 +665,14 @@ void FNFC_CLASS::title(const char *val) {
 // GET TITLE
 //     Returned value can be NULL if none set.
 //
-const char *FNFC_CLASS::title() const {
+const char *Fl_Native_File_Chooser::title() const {
   return(_title);
 }
 
 // SET FILTER
 //     Can be NULL if no filter needed
 //
-void FNFC_CLASS::filter(const char *val) {
+void Fl_Native_File_Chooser::filter(const char *val) {
   _filter = strfree(_filter);
   _filter = strnew(val);
 
@@ -689,14 +689,14 @@ void FNFC_CLASS::filter(const char *val) {
 // GET FILTER
 //     Returned value can be NULL if none set.
 //
-const char *FNFC_CLASS::filter() const {
+const char *Fl_Native_File_Chooser::filter() const {
   return(_filter);
 }
 
 // CLEAR ALL FILTERS
 //    Internal use only.
 //
-void FNFC_CLASS::clear_filters() {
+void Fl_Native_File_Chooser::clear_filters() {
   _filt_names = strfree(_filt_names);
   for (int i=0; i<_filt_total; i++) {
     _filt_patt[i] = strfree(_filt_patt[i]);
@@ -724,7 +724,7 @@ void FNFC_CLASS::clear_filters() {
 //             \_____/  \_______/
 //              Name     Wildcard
 //
-void FNFC_CLASS::parse_filter(const char *in) {
+void Fl_Native_File_Chooser::parse_filter(const char *in) {
   clear_filters();
   if ( ! in ) return;
   int has_name = strchr(in, '\t') ? 1 : 0;
@@ -799,11 +799,11 @@ void FNFC_CLASS::parse_filter(const char *in) {
 
 #ifndef __APPLE_COCOA__
 // STATIC: FILTER CALLBACK
-Boolean FNFC_CLASS::filter_proc_cb(AEDesc *theItem,
+Boolean Fl_Native_File_Chooser::filter_proc_cb(AEDesc *theItem,
 				   void *info,
 				   void *callBackUD,
 				   NavFilterModes filterMode) {
-  return((FNFC_CLASS*)callBackUD)->filter_proc_cb2(theItem,
+  return((Fl_Native_File_Chooser*)callBackUD)->filter_proc_cb2(theItem,
 						   info,
 						   callBackUD,
 						   filterMode);
@@ -813,7 +813,7 @@ Boolean FNFC_CLASS::filter_proc_cb(AEDesc *theItem,
 //     Return true if match,
 //            false if no match.
 //
-Boolean FNFC_CLASS::filter_proc_cb2(AEDesc *theItem,
+Boolean Fl_Native_File_Chooser::filter_proc_cb2(AEDesc *theItem,
 				    void *info,
 				    void *callBackUD,
 				    NavFilterModes filterMode) {
@@ -838,7 +838,7 @@ Boolean FNFC_CLASS::filter_proc_cb2(AEDesc *theItem,
 // SET PRESET FILE
 //     Value can be NULL for none.
 //
-void FNFC_CLASS::preset_file(const char* val) {
+void Fl_Native_File_Chooser::preset_file(const char* val) {
   _preset_file = strfree(_preset_file);
   _preset_file = strnew(val);
 }
@@ -846,7 +846,7 @@ void FNFC_CLASS::preset_file(const char* val) {
 // PRESET FILE
 //     Returned value can be NULL if none set.
 //
-const char* FNFC_CLASS::preset_file() {
+const char* Fl_Native_File_Chooser::preset_file() {
   return(_preset_file);
 }
 
@@ -854,7 +854,7 @@ const char* FNFC_CLASS::preset_file() {
 #import <Cocoa/Cocoa.h>
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
 
-int FNFC_CLASS::get_saveas_basename(void) {
+int Fl_Native_File_Chooser::get_saveas_basename(void) {
   char *q = strdup( [[(NSSavePanel*)_panel filename] fileSystemRepresentation] );
   id delegate = [(NSSavePanel*)_panel delegate];
   if(delegate != nil) {
@@ -870,7 +870,7 @@ int FNFC_CLASS::get_saveas_basename(void) {
 }
 
 // SET THE TYPE OF BROWSER
-void FNFC_CLASS::type(int val) {
+void Fl_Native_File_Chooser::type(int val) {
   _btype = val;
   switch (_btype) {
     case BROWSE_FILE:
@@ -966,7 +966,7 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
 //         1 - user cancelled
 //        -1 - failed; errmsg() has reason
 //     
-int FNFC_CLASS::post() {
+int Fl_Native_File_Chooser::post() {
   // INITIALIZE BROWSER
   if ( _filt_total == 0 ) {	// Make sure they match
     _filt_value = 0;		// TBD: move to someplace more logical?
@@ -1081,6 +1081,7 @@ int FNFC_CLASS::post() {
 }
 
 #endif //__APPLE_COCOA__
+#endif /*!FL_DOXYGEN*/
 
 //
 // End of "$Id$".
