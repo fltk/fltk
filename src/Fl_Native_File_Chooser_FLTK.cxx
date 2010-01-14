@@ -391,5 +391,5 @@ void FNFC_CLASS::remove_hidden_files(Fl_File_Browser *my_fileList)
 }
 
 //
-// End of "$Id:".
+// End of "$Id$".
 //

@@ -844,5 +844,5 @@ LPCWSTR utf8towchar(const char *in)
 }
 
 //
-// End of "$Id:".
+// End of "$Id$".
 //

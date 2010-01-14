@@ -109,3 +109,8 @@ public:
   // added by MG
   Fl_Choice *showChoice;
 };
+
+//
+// End of "$Id$".
+//
+

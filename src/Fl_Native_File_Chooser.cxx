@@ -41,5 +41,5 @@
 #endif
 
 //
-// End of "$Id:".
+// End of "$Id$".
 //

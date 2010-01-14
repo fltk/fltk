@@ -79,5 +79,5 @@ static void chrcat(char *s, char c) {
 }
 
 //
-// End of "$Id:".
+// End of "$Id$".
 //

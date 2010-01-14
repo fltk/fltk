@@ -1083,5 +1083,5 @@ int FNFC_CLASS::post() {
 #endif //__APPLE_COCOA__
 
 //
-// End of "$Id:".
+// End of "$Id$".
 //
