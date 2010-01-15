@@ -26,6 +26,8 @@
 //     http://www.fltk.org/str.php
 //
 
+#ifndef FL_DOXYGEN		// PREVENT DOXYGEN'S USE OF THIS FILE
+
 // OSX-SPECIFIC NATIVE BROWSER
 #ifdef __APPLE_CC__
 #include <Carbon/Carbon.h>
@@ -154,6 +156,8 @@ public:
   const char *errmsg() const;
   int show();
 };
+
+#endif /*!FL_DOXYGEN*/
 
 //
 // End of "$Id$".
