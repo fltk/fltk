@@ -100,10 +100,9 @@ char fl_can_do_alpha_blending() {
   fl_alpha_blend = (fl_alpha_blend_func)GetProcAddress(hMod, "AlphaBlend");
   // give up if we can't find it (Win95)
   if (!fl_alpha_blend) return 0;
-  // we have the  call, but does our display support alpha blending?
-  HDC dc = 0L;//fl_gc;
-  // get the current or the desktop's device context
-  if (!dc) dc = GetDC(0L);
+  // we have the call, but does our display support alpha blending?
+  // get the desktop's device context
+  HDC dc = GetDC(0L);
   if (!dc) return 0;
   // check the device capabilities flags. However GetDeviceCaps
   // does not return anything useful, so we have to do it manually:
@@ -117,8 +116,8 @@ char fl_can_do_alpha_blending() {
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
   DeleteObject(bm);
+  ReleaseDC(0L, dc);
 
-  if (!fl_gc) ReleaseDC(0L, dc);
   if (alpha_ok) can_do = 1;
   return can_do;
 }
