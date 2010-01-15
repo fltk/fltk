@@ -36,6 +36,7 @@ SET(CPPFILES
   Fl_Menu_add.cxx
   Fl_Menu_global.cxx
   Fl_Multi_Label.cxx
+  Fl_Native_File_Chooser.cxx
   Fl_Overlay_Window.cxx
   Fl_Pack.cxx
   Fl_Pixmap.cxx
@@ -51,6 +52,8 @@ SET(CPPFILES
   Fl_Shared_Image.cxx
   Fl_Single_Window.cxx
   Fl_Slider.cxx
+  Fl_Table.cxx
+  Fl_Table_Row.cxx
   Fl_Tabs.cxx
   Fl_Text_Buffer.cxx
   Fl_Text_Display.cxx
@@ -58,6 +61,10 @@ SET(CPPFILES
   Fl_Tile.cxx
   Fl_Tiled_Image.cxx
   Fl_Tooltip.cxx
+  Fl_Tree.cxx
+  Fl_Tree_Item_Array.cxx
+  Fl_Tree_Item.cxx
+  Fl_Tree_Prefs.cxx
   Fl_Valuator.cxx
   Fl_Value_Input.cxx
   Fl_Value_Output.cxx
