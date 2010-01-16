@@ -162,7 +162,8 @@
 #cmakedefine U64 @U64@
 
 /*
- * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H, HAVE_SCANDIR:
+ * HAVE_DIRENT_H, HAVE_SYS_NDIR_H, HAVE_SYS_DIR_H, HAVE_NDIR_H,
+ * HAVE_SCANDIR, HAVE_SCANDIR_POSIX:
  *
  * Where is <dirent.h> (used only by fl_file_chooser and scandir).
  */
@@ -172,6 +173,7 @@
 #cmakedefine HAVE_SYS_DIR_H @HAVE_SYS_DIR_H@
 #cmakedefine HAVE_NDIR_H @HAVE_NDIR_H@
 #cmakedefine HAVE_SCANDIR @HAVE_SCANDIR@
+#cmakedefine HAVE_SCANDIR_POSIX @HAVE_SCANDIR_POSIX@
 
 /*
  * Possibly missing sprintf-style functions:

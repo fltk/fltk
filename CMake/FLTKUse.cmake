@@ -1,3 +1,30 @@
+#
+# "$Id$"
+#
+# CMake support file to build the FLTK project using CMake (www.cmake.org)
+#
+# Copyright 1998-2010 by Bill Spitzak and others.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems on the following page:
+#
+#     http:#www.fltk.org/str.php
+#
+
 IF(NOT FLTK11_FOUND)
   MESSAGE(FATAL_ERROR "Something went wrong. You are including FLTKUse.cmake but FLTK was not found")
 ENDIF(NOT FLTK11_FOUND)
@@ -66,3 +93,6 @@ SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${FLTK_REQUIRED_EXE_LINKER
 SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${FLTK_REQUIRED_SHARED_LINKER_FLAGS}")
 SET(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${FLTK_REQUIRED_MODULE_LINKER_FLAGS}")
 
+#
+# End of "$Id$".
+#
