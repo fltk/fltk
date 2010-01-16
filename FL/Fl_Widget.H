@@ -47,7 +47,6 @@ typedef void (Fl_Callback0)(Fl_Widget*);
 /** Callback type definition passing the widget and a long data value */
 typedef void (Fl_Callback1)(Fl_Widget*, long);
 
-
 /** This struct stores all information for a text or mixed graphics label.
 
     \todo For FLTK 1.3, the Fl_Label type will become a widget by itself. That way
@@ -62,14 +61,17 @@ struct FL_EXPORT Fl_Label {
   Fl_Image* image;
   /** optional image for a deactivated label */
   Fl_Image* deimage;
-  /** type of label. \see Fl_Labeltype */
-  uchar type;
   /** label font used in text */
   Fl_Font font;
   /** size of label font */
   Fl_Fontsize size;
   /** text color */
   Fl_Color color;
+  /** alignment of label */
+  Fl_Align align_;
+  /** type of label. \see Fl_Labeltype */
+  uchar type;
+
   /** Draws the label aligned to the given box */
   void draw(int,int,int,int, Fl_Align) const ;
   void measure(int &w, int &h) const ;
@@ -102,7 +104,6 @@ class FL_EXPORT Fl_Widget {
   uchar type_;
   uchar damage_;
   uchar box_;
-  Fl_Align align_:8;
   uchar when_;
 
   const char *tooltip_;
@@ -329,7 +330,7 @@ public:
 	    Fl_Align is (typedef'd to be) "unsigned" (int), but Fl_Widget's
 	    "align_" member variable is a bit field of 8 bits only !
    */
-  Fl_Align align() const {return align_;}
+  Fl_Align align() const {return label_.align_;}
 
   /** Sets the label alignment.
       This controls how the label is displayed next to or inside the widget. 
@@ -338,7 +339,7 @@ public:
       \param[in] alignment new label alignment
       \see align(), Fl_Align
    */
-  void align(Fl_Align alignment) {align_ = alignment;}
+  void align(Fl_Align alignment) {label_.align_ = alignment;}
 
   /** Gets the box type of the widget.
       \return the current box type
