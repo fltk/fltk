@@ -68,9 +68,9 @@ private:
   void 	         *_panel;
 #else
   NavDialogRef    _ref;		        // file navigation reference
-#endif
   NavActionState  _keepstate;		// holds button permissions
   NavMenuItemSpec _tempitem;   	        // Popup menu selection
+#endif
   char          **_pathnames;		// array of pathnames
   int             _tpathnames;	        // total pathnames
   char           *_directory;		// default pathname to use
@@ -116,11 +116,10 @@ private:
   int get_saveas_basename(void);
 #else
   int get_saveas_basename(NavDialogRef& ref);
-#endif
   int get_pathnames(NavDialogRef& ref);
   static void event_handler(NavEventCallbackMessage callBackSelector, 
 			    NavCBRecPtr cbparm, void *data);
-
+#endif
   void clear_filters();
   void add_filter(const char *, const char *);
   void parse_filter(const char *from);

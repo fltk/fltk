@@ -389,9 +389,10 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   NavGetDefaultDialogCreationOptions(&_opts);
   _opts.optionFlags |= kNavDontConfirmReplacement;	// no confirms for "save as"
   _ref            = NULL;
+  _keepstate      = kNavNormalState;
+  memset(&_tempitem, 0, sizeof(_tempitem));
 #endif
   _options        = NO_OPTIONS;
-  memset(&_tempitem, 0, sizeof(_tempitem));
   _pathnames      = NULL;
   _tpathnames     = 0;
   _title          = NULL;
@@ -403,7 +404,6 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   _directory      = NULL;
   _preset_file    = NULL;
   _errmsg         = NULL;
-  _keepstate      = kNavNormalState;
 }
 
 // DESTRUCTOR
@@ -461,8 +461,8 @@ int Fl_Native_File_Chooser::show() {
   // Make sure fltk interface updates before posting our dialog
   Fl::flush();
 
-  _keepstate = kNavNormalState;
 #ifndef __APPLE_COCOA__
+  _keepstate = kNavNormalState;
   // BROWSER TITLE
   CFStringRef cfs_title;
   cfs_title = CFStringCreateWithCString(NULL,
@@ -853,6 +853,9 @@ const char* Fl_Native_File_Chooser::preset_file() {
 #ifdef __APPLE_COCOA__
 #import <Cocoa/Cocoa.h>
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
+#ifndef MAC_OS_X_VERSION_10_6
+#define MAC_OS_X_VERSION_10_6 1060
+#endif
 
 int Fl_Native_File_Chooser::get_saveas_basename(void) {
   char *q = strdup( [[(NSSavePanel*)_panel filename] fileSystemRepresentation] );
@@ -886,7 +889,11 @@ void Fl_Native_File_Chooser::type(int val) {
   }
 }
   
-@interface FLopenDelegate : NSObject {
+@interface FLopenDelegate : NSObject 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+<NSOpenSavePanelDelegate>
+#endif
+{
   NSPopUpButton *nspopup;
   char **filter_pattern;
 }
@@ -910,7 +917,11 @@ void Fl_Native_File_Chooser::type(int val) {
 }
 @end
 
-@interface FLsaveDelegate : NSObject {
+@interface FLsaveDelegate : NSObject 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+<NSOpenSavePanelDelegate>
+#endif
+{
 }
 - (NSString *)panel:(id)sender userEnteredFilename:(NSString *)filename confirmed:(BOOL)okFlag;
 @end
