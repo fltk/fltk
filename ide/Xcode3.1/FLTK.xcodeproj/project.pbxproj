@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		7FC9BFFE10AA191B00646185 /* fltk_gl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC830DD639A200486E4F /* fltk_gl.framework */; };
+		7FEC034911033AC400BC057C /* Fl_Native_File_Chooser_MAC.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FEC034811033AC400BC057C /* Fl_Native_File_Chooser_MAC.cxx */; };
+		7FEC037611033C9E00BC057C /* native-filechooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FEC037511033C9E00BC057C /* native-filechooser.cxx */; };
+		7FEC03861103487300BC057C /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		7FEC038E110348DE00BC057C /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918DB410DD9EE7500167E99 /* editor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C918DB400DD9EE7500167E99 /* editor.cxx */; };
 		C918DB4D0DD9EE8F00167E99 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C918DB5F0DD9EED100167E99 /* fast_slow.fl in Resources */ = {isa = PBXBuildFile; fileRef = C918DB5E0DD9EED100167E99 /* fast_slow.fl */; };
@@ -707,6 +711,13 @@
 			remoteInfo = fltk_forms;
 		};
 		01FBE4930E630405009E95B1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
+			remoteInfo = fltk;
+		};
+		7FEC035911033BAD00BC057C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
 			proxyType = 1;
@@ -1969,6 +1980,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		7FEC03821103482500BC057C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7FEC03861103487300BC057C /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C94A76BC0E76D4A800AAA38E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2694,6 +2715,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7FEC034811033AC400BC057C /* Fl_Native_File_Chooser_MAC.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Fl_Native_File_Chooser_MAC.cxx; path = ../../src/Fl_Native_File_Chooser_MAC.cxx; sourceTree = SOURCE_ROOT; };
+		7FEC035111033B9800BC057C /* native-filechooser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "native-filechooser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7FEC037511033C9E00BC057C /* native-filechooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "native-filechooser.cxx"; path = "../../test/native-filechooser.cxx"; sourceTree = SOURCE_ROOT; };
+		7FEC03AF110359DD00BC057C /* native-filechooser-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "native-filechooser-Info.plist"; path = "plists/native-filechooser-Info.plist"; sourceTree = "<group>"; };
 		7FFE8BBF10C907B600A11F75 /* Fl_cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_cocoa.mm; path = ../../src/Fl_cocoa.mm; sourceTree = SOURCE_ROOT; };
 		C918DB370DD9EE4100167E99 /* editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = editor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C918DB390DD9EE4100167E99 /* editor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "editor-Info.plist"; path = "plists/editor-Info.plist"; sourceTree = "<group>"; };
@@ -2840,7 +2865,6 @@
 		C94A76390E76CF5B00AAA38E /* fl_utf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = fl_utf.c; path = ../../src/fl_utf.c; sourceTree = SOURCE_ROOT; };
 		C94A763A0E76CF6200AAA38E /* fl_utf8.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_utf8.cxx; path = ../../src/fl_utf8.cxx; sourceTree = SOURCE_ROOT; };
 		C94A76DA0E77F59F00AAA38E /* utf8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = utf8.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C94A76DD0E77F5A800AAA38E /* symbols-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "symbols-Info copy.plist"; path = "plists/symbols-Info copy.plist"; sourceTree = "<group>"; };
 		C94A76E40E77F66200AAA38E /* utf8.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = utf8.cxx; path = ../../test/utf8.cxx; sourceTree = SOURCE_ROOT; };
 		C97741850DD9D1910047C1BF /* cursor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cursor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97741870DD9D1910047C1BF /* cursor-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "cursor-Info.plist"; path = "plists/cursor-Info.plist"; sourceTree = "<group>"; };
@@ -3100,7 +3124,6 @@
 		C9A3EE780DD64AE700486E4F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		C9A3EE790DD64B0200486E4F /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		C9B4E28510CC25EE00DA2F05 /* tabs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tabs.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9B4E28710CC25EF00DA2F05 /* symbols-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "symbols-Info copy.plist"; path = "plists/symbols-Info copy.plist"; sourceTree = "<group>"; };
 		C9B4E2A610CC26EC00DA2F05 /* table.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = table.cxx; path = ../../test/table.cxx; sourceTree = SOURCE_ROOT; };
 		C9B4E2AA10CC273400DA2F05 /* Fl_Table_Row.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Table_Row.cxx; path = ../../src/Fl_Table_Row.cxx; sourceTree = SOURCE_ROOT; };
 		C9B4E2AB10CC273400DA2F05 /* Fl_Table.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Table.cxx; path = ../../src/Fl_Table.cxx; sourceTree = SOURCE_ROOT; };
@@ -3109,7 +3132,6 @@
 		C9B4E2AE10CC273400DA2F05 /* Fl_Tree_Prefs.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree_Prefs.cxx; path = ../../src/Fl_Tree_Prefs.cxx; sourceTree = SOURCE_ROOT; };
 		C9B4E2AF10CC273400DA2F05 /* Fl_Tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree.cxx; path = ../../src/Fl_Tree.cxx; sourceTree = SOURCE_ROOT; };
 		C9B4E2CE10CC275F00DA2F05 /* tree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tree.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9B4E2D510CC276000DA2F05 /* tabs-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "tabs-Info copy.plist"; path = "plists/tabs-Info copy.plist"; sourceTree = "<group>"; };
 		C9B4E2E110CC39E800DA2F05 /* tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree.cxx; path = ../../test/tree.cxx; sourceTree = SOURCE_ROOT; };
 		C9C870BE0DD7721700A9793F /* color_chooser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = color_chooser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9C870C00DD7721700A9793F /* color_chooser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "color_chooser-Info.plist"; path = "plists/color_chooser-Info.plist"; sourceTree = "<group>"; };
@@ -3207,6 +3229,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7FEC034F11033B9800BC057C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FEC038E110348DE00BC057C /* fltk.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C918DB350DD9EE4100167E99 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3947,6 +3977,7 @@
 				C9EAC2DC0E786725004F64F7 /* colbrowser.app */,
 				C9B4E28510CC25EE00DA2F05 /* tabs.app */,
 				C9B4E2CE10CC275F00DA2F05 /* tree.app */,
+				7FEC035111033B9800BC057C /* native-filechooser.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4024,9 +4055,7 @@
 				C9A3ECA60DD63A5200486E4F /* adjuster-Info.plist */,
 				C9A3E9610DD633C300486E4F /* hello-Info.plist */,
 				C9A3E9530DD6336500486E4F /* fltk-Info.plist */,
-				C94A76DD0E77F5A800AAA38E /* symbols-Info copy.plist */,
-				C9B4E28710CC25EF00DA2F05 /* symbols-Info copy.plist */,
-				C9B4E2D510CC276000DA2F05 /* tabs-Info copy.plist */,
+				7FEC03AF110359DD00BC057C /* native-filechooser-Info.plist */,
 			);
 			name = plists;
 			sourceTree = "<group>";
@@ -4133,6 +4162,7 @@
 				C9A3EB270DD634CC00486E4F /* Fl_Menu_Button.cxx */,
 				C9A3EB280DD634CC00486E4F /* Fl_Menu_Bar.cxx */,
 				C9A3EB290DD634CC00486E4F /* Fl_Menu_add.cxx */,
+				7FEC034811033AC400BC057C /* Fl_Native_File_Chooser_MAC.cxx */,
 				C9A3EB580DD634CC00486E4F /* Fl_mac.cxx */,
 				C9A3EB040DD634CC00486E4F /* fl_overlay_visual.cxx */,
 				C9A3EB190DD634CC00486E4F /* Fl_Overlay_Window.cxx */,
@@ -4290,6 +4320,7 @@
 				C918DEBA0DD9F9B800167E99 /* message.cxx */,
 				C918DED90DD9FA1000167E99 /* minimum.cxx */,
 				C918DEF80DD9FA6600167E99 /* navigation.cxx */,
+				7FEC037511033C9E00BC057C /* native-filechooser.cxx */,
 				C918DF1F0DD9FAB600167E99 /* output.cxx */,
 				C918DF440DD9FB1000167E99 /* overlay.cxx */,
 				C918DF660DD9FB6400167E99 /* pack.cxx */,
@@ -4489,6 +4520,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		7FEC035011033B9800BC057C /* native-filechooser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7FEC035811033B9A00BC057C /* Build configuration list for PBXNativeTarget "native-filechooser" */;
+			buildPhases = (
+				7FEC034D11033B9800BC057C /* Resources */,
+				7FEC034E11033B9800BC057C /* Sources */,
+				7FEC034F11033B9800BC057C /* Frameworks */,
+				7FEC03821103482500BC057C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7FEC035A11033BAD00BC057C /* PBXTargetDependency */,
+			);
+			name = "native-filechooser";
+			productName = "native-filechooser";
+			productReference = 7FEC035111033B9800BC057C /* native-filechooser.app */;
+			productType = "com.apple.product-type.application";
+		};
 		C918DB360DD9EE4100167E99 /* editor */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C918DB3C0DD9EE4100167E99 /* Build configuration list for PBXNativeTarget "editor" */;
@@ -6061,6 +6111,7 @@
 				C918DEB00DD9F99F00167E99 /* message */,
 				C918DECF0DD9F9F800167E99 /* minimum */,
 				C918DEEE0DD9FA4F00167E99 /* navigation */,
+				7FEC035011033B9800BC057C /* native-filechooser */,
 				C918DF0E0DD9FA9100167E99 /* output */,
 				C918DF3A0DD9FAF800167E99 /* overlay */,
 				C918DF5C0DD9FB4700167E99 /* pack */,
@@ -6088,6 +6139,13 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7FEC034D11033B9800BC057C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C918DB330DD9EE4100167E99 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6613,6 +6671,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7FEC034E11033B9800BC057C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FEC037611033C9E00BC057C /* native-filechooser.cxx in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C918DB340DD9EE4100167E99 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7159,6 +7225,7 @@
 				C9B4E2B310CC273400DA2F05 /* Fl_Tree_Item.cxx in Sources */,
 				C9B4E2B410CC273400DA2F05 /* Fl_Tree_Prefs.cxx in Sources */,
 				C9B4E2B510CC273400DA2F05 /* Fl_Tree.cxx in Sources */,
+				7FEC034911033AC400BC057C /* Fl_Native_File_Chooser_MAC.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7456,6 +7523,11 @@
 			isa = PBXTargetDependency;
 			target = C9A3E9500DD6336500486E4F /* fltk */;
 			targetProxy = 01FBE4930E630405009E95B1 /* PBXContainerItemProxy */;
+		};
+		7FEC035A11033BAD00BC057C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9A3E9500DD6336500486E4F /* fltk */;
+			targetProxy = 7FEC035911033BAD00BC057C /* PBXContainerItemProxy */;
 		};
 		C918DB3E0DD9EE4600167E99 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11895,6 +11967,104 @@
 			};
 			name = Debug64;
 		};
+		7FEC035411033B9900BC057C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../\"",
+					"\"$(SRCROOT)/\"",
+				);
+				INFOPLIST_FILE = "plists/native-filechooser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "native-filechooser";
+			};
+			name = Debug;
+		};
+		7FEC035511033B9900BC057C /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../\"",
+					"\"$(SRCROOT)/\"",
+				);
+				INFOPLIST_FILE = "plists/native-filechooser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "native-filechooser";
+			};
+			name = Debug64;
+		};
+		7FEC035611033B9900BC057C /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../\"",
+					"\"$(SRCROOT)/\"",
+				);
+				INFOPLIST_FILE = "plists/native-filechooser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "native-filechooser";
+			};
+			name = DebugPPC;
+		};
+		7FEC035711033B9900BC057C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../\"",
+					"\"$(SRCROOT)/\"",
+				);
+				INFOPLIST_FILE = "plists/native-filechooser-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "native-filechooser";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		C918DB3A0DD9EE4100167E99 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -15550,6 +15720,17 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7FEC035811033B9A00BC057C /* Build configuration list for PBXNativeTarget "native-filechooser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7FEC035411033B9900BC057C /* Debug */,
+				7FEC035511033B9900BC057C /* Debug64 */,
+				7FEC035611033B9900BC057C /* DebugPPC */,
+				7FEC035711033B9900BC057C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		C918DB3C0DD9EE4100167E99 /* Build configuration list for PBXNativeTarget "editor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
