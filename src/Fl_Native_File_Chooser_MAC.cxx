@@ -292,9 +292,9 @@ void Fl_Native_File_Chooser::event_handler(NavEventCallbackMessage callBackSelec
       }
       if ( nfb->_btype == BROWSE_SAVE_FILE && nfb->preset_file() ) {
 	const char *p, *q;
-	p = nfb->preset_file();//don't use the path part of preset_file
+	p = nfb->preset_file();				// don't use the path part of preset_file
 	q = strrchr(p, '/');
-	if(q == NULL) q = p; else q++;
+	if (q == NULL) q = p; else q++;
 	CFStringRef namestr = CFStringCreateWithCString(NULL,
 							q,
 							kCFStringEncodingUTF8);
@@ -314,7 +314,7 @@ void Fl_Native_File_Chooser::event_handler(NavEventCallbackMessage callBackSelec
 	nfb->_tempitem.version = kNavMenuItemSpecVersion;
 	nfb->_tempitem.menuCreator = 'extn';
 	nfb->_tempitem.menuType = nfb->_filt_value;
-	*nfb->_tempitem.menuItemName = '\0';	// needed on 10.3+
+	*nfb->_tempitem.menuItemName = '\0';		// needed on 10.3+
 	NavCustomControl(cbparm->context,
 			 kNavCtlSelectCustomType,
 			 &(nfb->_tempitem));
@@ -408,11 +408,11 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
 
 // DESTRUCTOR
 Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
-  // _opts			// nothing to manage
+  // _opts		// nothing to manage
 #ifndef __APPLE_COCOA__
   if (_ref) { NavDialogDispose(_ref); _ref = NULL; }
 #endif
-  // _options			// nothing to manage
+  // _options		// nothing to manage
   // _keepstate		// nothing to manage
   // _tempitem		// nothing to manage
   clear_pathnames();
@@ -421,7 +421,7 @@ Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
   _preset_file = strfree(_preset_file);
   _filter      = strfree(_filter);
   //_filt_names		// managed by clear_filters()
-  //_filt_patt[i]		// managed by clear_filters()
+  //_filt_patt[i]	// managed by clear_filters()
   //_filt_total		// managed by clear_filters()
   clear_filters();
   //_filt_value		// nothing to manage
@@ -566,7 +566,7 @@ int Fl_Native_File_Chooser::post() {
       // Prompt user for filename to 'save as'
       if ((err = NavCreatePutFileDialog(&_opts,			// options
 					0,			// file types
-					kNavGenericSignature,	//file creator
+					kNavGenericSignature,	// file creator
 					event_handler,		// event handler
 					(void*)this,		// callback data
 					&_ref)) != noErr ) {	// dialog ref
@@ -800,13 +800,13 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
 #ifndef __APPLE_COCOA__
 // STATIC: FILTER CALLBACK
 Boolean Fl_Native_File_Chooser::filter_proc_cb(AEDesc *theItem,
-				   void *info,
-				   void *callBackUD,
-				   NavFilterModes filterMode) {
+					       void *info,
+					       void *callBackUD,
+					       NavFilterModes filterMode) {
   return((Fl_Native_File_Chooser*)callBackUD)->filter_proc_cb2(theItem,
-						   info,
-						   callBackUD,
-						   filterMode);
+							       info,
+							       callBackUD,
+							       filterMode);
 }
 
 // FILTER CALLBACK
@@ -814,9 +814,9 @@ Boolean Fl_Native_File_Chooser::filter_proc_cb(AEDesc *theItem,
 //            false if no match.
 //
 Boolean Fl_Native_File_Chooser::filter_proc_cb2(AEDesc *theItem,
-				    void *info,
-				    void *callBackUD,
-				    NavFilterModes filterMode) {
+						void *info,
+						void *callBackUD,
+						NavFilterModes filterMode) {
   // All files chosen or no filters
   if ( _filt_value == _filt_total ) return(true);
   
@@ -860,11 +860,11 @@ const char* Fl_Native_File_Chooser::preset_file() {
 int Fl_Native_File_Chooser::get_saveas_basename(void) {
   char *q = strdup( [[(NSSavePanel*)_panel filename] fileSystemRepresentation] );
   id delegate = [(NSSavePanel*)_panel delegate];
-  if(delegate != nil) {
+  if (delegate != nil) {
     const char *d = [[(NSSavePanel*)_panel directory] fileSystemRepresentation];
     int l = strlen(d) + 1;
     int lu = strlen(UNLIKELYPREFIX);
-    //remove UNLIKELYPREFIX between directory and filename parts
+    // Remove UNLIKELYPREFIX between directory and filename parts
     memmove(q + l, q + l + lu, strlen(q + l + lu) + 1);
   }
   set_single_pathname( q );
@@ -909,7 +909,7 @@ void Fl_Native_File_Chooser::type(int val) {
 }
 - (BOOL)panel:(id)sender shouldShowFilename:(NSString *)filename
 {
-  if( [nspopup indexOfSelectedItem] == [nspopup numberOfItems] - 1) return YES;
+  if ( [nspopup indexOfSelectedItem] == [nspopup numberOfItems] - 1) return YES;
   const char *pathname = [filename fileSystemRepresentation];
   if ( fl_filename_isdir(pathname) ) return YES;
   if ( fl_filename_match(pathname, filter_pattern[ [nspopup indexOfSelectedItem] ]) ) return YES;
@@ -928,7 +928,7 @@ void Fl_Native_File_Chooser::type(int val) {
 @implementation FLsaveDelegate
 - (NSString *)panel:(id)sender userEnteredFilename:(NSString *)filename confirmed:(BOOL)okFlag
 {
-  if(! okFlag) return filename;
+  if (! okFlag) return filename;
   // User has clicked save, and no overwrite confirmation should occur.
   // To get the latter, we need to change the name we return (hence the prefix):
   return [@ UNLIKELYPREFIX stringByAppendingString:filename];
@@ -961,7 +961,7 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
   CFRelease(tab);
   [popup addItemsWithTitles:(NSArray*)array];
   NSMenuItem *item = [popup itemWithTitle:@""];
-  if(item) [popup removeItemWithTitle:@""];
+  if (item) [popup removeItemWithTitle:@""];
   CFRelease(array);
   [popup selectItemAtIndex:rank];
   [panel setAccessoryView:view];
@@ -1002,18 +1002,18 @@ int Fl_Native_File_Chooser::post() {
   }
   
   // SHOW THE DIALOG
-  if( [(NSSavePanel*)_panel isKindOfClass:[NSOpenPanel class]] ) {
+  if ( [(NSSavePanel*)_panel isKindOfClass:[NSOpenPanel class]] ) {
     NSPopUpButton *popup = nil;
-    if(_filt_total) {
+    if (_filt_total) {
       char *p; p = _filter;
       char *q; q = new char[strlen(p) + 1];
       char *r, *s, *t;
       t = q;
-      do {	//copy to t what is in _filter removing what is between \t and \n, if any
+      do {	// copy to t what is in _filter removing what is between \t and \n, if any
 	r = strchr(p, '\n');
-	if(!r) r = p + strlen(p) - 1;
+	if (!r) r = p + strlen(p) - 1;
 	s = strchr(p, '\t');
-	if(s && s < r) { memcpy(q, p, s - p); q += s - p; *(q++) = '\n'; }
+	if (s && s < r) { memcpy(q, p, s - p); q += s - p; *(q++) = '\n'; }
 	else { memcpy(q, p, r - p + 1); q += r - p + 1; }
 	*q = 0;
 	p = r + 1;
@@ -1025,7 +1025,7 @@ int Fl_Native_File_Chooser::post() {
       [popup setAction:@selector(validateVisibleColumns)];
       [popup setTarget:(NSObject*)_panel];
       static FLopenDelegate *openDelegate = nil;
-      if(openDelegate == nil) {
+      if (openDelegate == nil) {
 	// not to be ever freed
 	openDelegate = [[FLopenDelegate alloc] init];
       }
@@ -1035,17 +1035,17 @@ int Fl_Native_File_Chooser::post() {
     NSString *dir = nil;
     NSString *fname = nil;
     NSString *preset = nil;
-    if(_preset_file) {
+    if (_preset_file) {
       preset = [[NSString alloc] initWithUTF8String:_preset_file];
-      if(strchr(_preset_file, '/') != NULL) 
+      if (strchr(_preset_file, '/') != NULL) 
 	dir = [[NSString alloc] initWithString:[preset stringByDeletingLastPathComponent]];
       fname = [preset lastPathComponent];
     }
-    if(_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
+    if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
     retval = [(NSOpenPanel*)_panel runModalForDirectory:dir file:fname types:nil];	
     [dir release];
     [preset release];
-    if(_filt_total) {
+    if (_filt_total) {
       _filt_value = [popup indexOfSelectedItem];
     }
     if ( retval == NSOKButton ) {
@@ -1063,24 +1063,24 @@ int Fl_Native_File_Chooser::post() {
     NSString *fname = nil;
     NSString *preset = nil;
     NSPopUpButton *popup = nil;
-    if( !(_options & SAVEAS_CONFIRM) ) {
+    if ( !(_options & SAVEAS_CONFIRM) ) {
       static FLsaveDelegate *saveDelegate = nil;
-      if(saveDelegate == nil)saveDelegate = [[FLsaveDelegate alloc] init];//not to be ever freed
+      if (saveDelegate == nil)saveDelegate = [[FLsaveDelegate alloc] init]; // not to be ever freed
       [(NSSavePanel*)_panel setDelegate:saveDelegate];
     }
-    if(_preset_file) {
+    if (_preset_file) {
       preset = [[NSString alloc] initWithUTF8String:_preset_file];
-      if(strchr(_preset_file, '/') != NULL) {
+      if (strchr(_preset_file, '/') != NULL) {
 	dir = [[NSString alloc] initWithString:[preset stringByDeletingLastPathComponent]];
       }
       fname = [preset lastPathComponent];
     }
-    if(_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
-    if(_filt_total) {
+    if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
+    if (_filt_total) {
       popup = createPopupAccessory((NSSavePanel*)_panel, _filter, "Format:", _filt_value);
     }
     retval = [(NSSavePanel*)_panel runModalForDirectory:dir file:fname];
-    if(_filt_total) {
+    if (_filt_total) {
       _filt_value = [popup indexOfSelectedItem];
     }
     [dir release];

@@ -62,7 +62,7 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   _directory   = NULL;
   _errmsg      = NULL;
   _file_chooser = new Fl_File_Chooser(NULL, NULL, 0, NULL);
-  type(val);		// do this after _file_chooser created
+  type(val);			// do this after _file_chooser created
   _nfilters    = 0;
 
   // Added by MG
@@ -142,7 +142,7 @@ int Fl_Native_File_Chooser::type() const {
   --------------    -----------------------------------------------   -------   -------   -------
   NEW_FOLDER        Shows the 'New Folder' button.                    Ignored   Used      Used
   PREVIEW           Enables the 'Preview' mode by default.            Ignored   Ignored   Used
-  SAVEAS_CONFIRM    Confirm dialog if BROWSE_SAVE_FILE file exists.   Ignored   Used      Ignored
+  SAVEAS_CONFIRM    Confirm dialog if BROWSE_SAVE_FILE file exists.   Ignored   Used      Used
   \endcode
 */
 void Fl_Native_File_Chooser::options(int val) {
@@ -258,10 +258,10 @@ const char* Fl_Native_File_Chooser::filename() const {
   \b Example:
   \code
   if ( fnfc->show() == 0 ) {
-      // Print all filenames user selected
-      for (int n=0; n<fnfc->count(); n++ ) {
-	  printf("%d) '%s'\n", n, fnfc->filename(n));
-      }
+    // Print all filenames user selected
+    for (int n=0; n<fnfc->count(); n++ ) {
+      printf("%d) '%s'\n", n, fnfc->filename(n));
+    }
   }
   \endcode
  */
@@ -352,10 +352,10 @@ int Fl_Native_File_Chooser::filter_value() const {
   \b Example:
   \code
   if ( fnfc->show() == 0 ) {
-      // Print all filenames user selected
-      for (int n=0; n<fnfc->count(); n++ ) {
-	  printf("%d) '%s'\n", n, fnfc->filename(n));
-      }
+    // Print all filenames user selected
+    for (int n=0; n<fnfc->count(); n++ ) {
+      printf("%d) '%s'\n", n, fnfc->filename(n));
+    }
   }
   \endcode
 */
@@ -412,33 +412,33 @@ void Fl_Native_File_Chooser::parse_filter() {
     switch (*in) {
       // FINISHED PARSING NAME?
       case '\t':
-	  if ( mode != 'n' ) goto regchar;
-	  mode = 'w';
-	  break; 
+        if ( mode != 'n' ) goto regchar;
+        mode = 'w';
+        break; 
       // ESCAPE NEXT CHAR
       case '\\':
-	  ++in;
-	  goto regchar; 
+	++in;
+	goto regchar; 
       // FINISHED PARSING ONE OF POSSIBLY SEVERAL FILTERS?
       case '\r':
       case '\n':
       case '\0':
-	  // APPEND NEW FILTER TO LIST
-	  if ( wildcard[0] ) {
-	      // OUT: "name(wild)\tname(wild)"
-	      char comp[2048];
-	      sprintf(comp, "%s%.511s(%.511s)", ((_parsedfilt)?"\t":""),
-						name, wildcard);
-	      _parsedfilt = strapp(_parsedfilt, comp);
-	      _nfilters++;
-	      //DEBUG printf("DEBUG: PARSED FILT NOW <%s>\n", _parsedfilt);
-	  }
-	  // RESET
-	  wildcard[0] = name[0] = '\0';
-	  mode = strchr(in, '\t') ? 'n' : 'w';
-	  // DONE?
-	  if ( *in == '\0' ) return;	// done
-	  else continue;			// not done yet, more filters
+	// APPEND NEW FILTER TO LIST
+	if ( wildcard[0] ) {
+	  // OUT: "name(wild)\tname(wild)"
+	  char comp[2048];
+	  sprintf(comp, "%s%.511s(%.511s)", ((_parsedfilt)?"\t":""),
+					    name, wildcard);
+	  _parsedfilt = strapp(_parsedfilt, comp);
+	  _nfilters++;
+	  //DEBUG printf("DEBUG: PARSED FILT NOW <%s>\n", _parsedfilt);
+	}
+	// RESET
+	wildcard[0] = name[0] = '\0';
+	mode = strchr(in, '\t') ? 'n' : 'w';
+	// DONE?
+	if ( *in == '\0' ) return;	// done
+	else continue;			// not done yet, more filters
 
       // Parse all other chars
       default:				// handle all non-special chars

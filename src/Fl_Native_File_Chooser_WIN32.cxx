@@ -108,11 +108,12 @@ static void dnullcat(char*&wp, const char *string, int n = -1 ) {
   //
   char *wp2 = wp;
   if ( *(wp2+0) != '\0' && *(wp2+1) != '\0' ) {
-    for ( ; 1; wp2++ )
+    for ( ; 1; wp2++ ) {
       if ( *(wp2+0) == '\0' && *(wp2+1) == '\0' ) {
         wp2++;
         break;
       }
+    }
   }
 
   if ( n == -1 ) n = strlen(string);
@@ -278,7 +279,7 @@ int Fl_Native_File_Chooser::showfile() {
   ClearOFN();
   clear_pathnames();
   size_t fsize = MAX_PATH;
-  _ofn.Flags |= OFN_NOVALIDATE;	// prevent disabling of front slashes
+  _ofn.Flags |= OFN_NOVALIDATE;		// prevent disabling of front slashes
   _ofn.Flags |= OFN_HIDEREADONLY;	// hide goofy readonly flag
   // USE NEW BROWSER
   _ofn.Flags |= OFN_EXPLORER;		// use newer explorer windows
@@ -394,41 +395,41 @@ int Fl_Native_File_Chooser::showfile() {
   switch ( _btype ) {
     case BROWSE_FILE: 
     case BROWSE_SAVE_FILE:
-	set_single_pathname(wchartoutf8(_ofn.lpstrFile));
-        // Win2Unix(_pathnames[_tpathnames-1]);
-	break;
-      case BROWSE_MULTI_FILE: {
-	// EXTRACT MULTIPLE FILENAMES
-	const WCHAR *dirname = _ofn.lpstrFile;
-	int dirlen = wcslen(dirname);
-	if ( dirlen > 0 ) {
-	  // WALK STRING SEARCHING FOR 'DOUBLE-NULL'
-	  //     eg. "/dir/name\0foo1\0foo2\0foo3\0\0"
-	  //
-	  char pathname[MAX_PATH]; 
-	  for ( const WCHAR *s = dirname + dirlen + 1; 
-		   *s; s+= (wcslen(s)+1)) {
-		  strcpy(pathname, wchartoutf8(dirname));
-		  strcat(pathname, "\\");
-		  strcat(pathname, wchartoutf8(s));
-		  add_pathname(pathname);
-	  }
-	}
-	// XXX
-	//    Work around problem where pasted forward-slash pathname
-	//    into the file browser causes new "Explorer" interface
-	//    not to grok forward slashes, passing back as a 'filename'..!
+      set_single_pathname(wchartoutf8(_ofn.lpstrFile));
+      // Win2Unix(_pathnames[_tpathnames-1]);
+      break;
+    case BROWSE_MULTI_FILE: {
+      // EXTRACT MULTIPLE FILENAMES
+      const WCHAR *dirname = _ofn.lpstrFile;
+      int dirlen = wcslen(dirname);
+      if ( dirlen > 0 ) {
+	// WALK STRING SEARCHING FOR 'DOUBLE-NULL'
+	//     eg. "/dir/name\0foo1\0foo2\0foo3\0\0"
 	//
-	if ( _tpathnames == 0 ) {
-	  add_pathname(wchartoutf8(dirname)); 
-          // Win2Unix(_pathnames[_tpathnames-1]);
+	char pathname[MAX_PATH]; 
+	for ( const WCHAR *s = dirname + dirlen + 1; 
+		 *s; s+= (wcslen(s)+1)) {
+		strcpy(pathname, wchartoutf8(dirname));
+		strcat(pathname, "\\");
+		strcat(pathname, wchartoutf8(s));
+		add_pathname(pathname);
 	}
-	break;
       }
-      case BROWSE_DIRECTORY:
-      case BROWSE_MULTI_DIRECTORY:
-      case BROWSE_SAVE_DIRECTORY:
-	abort();			// never happens: handled by showdir()
+      // XXX
+      //    Work around problem where pasted forward-slash pathname
+      //    into the file browser causes new "Explorer" interface
+      //    not to grok forward slashes, passing back as a 'filename'..!
+      //
+      if ( _tpathnames == 0 ) {
+	add_pathname(wchartoutf8(dirname)); 
+	// Win2Unix(_pathnames[_tpathnames-1]);
+      }
+      break;
+    }
+    case BROWSE_DIRECTORY:
+    case BROWSE_MULTI_DIRECTORY:
+    case BROWSE_SAVE_DIRECTORY:
+      abort();			// never happens: handled by showdir()
   }
   return(0);
 }
@@ -447,7 +448,7 @@ int CALLBACK Fl_Native_File_Chooser::Dir_CB(HWND win, UINT msg, LPARAM param, LP
       if ( SHGetPathFromIDList((ITEMIDLIST*)param, path) ) {
 	::SendMessage(win, BFFM_ENABLEOK, 0, 1);
       } else {
-	//disable ok button if not a path
+	// disable ok button if not a path
 	::SendMessage(win, BFFM_ENABLEOK, 0, 0);
       }
       break;
@@ -625,7 +626,7 @@ void Fl_Native_File_Chooser::clear_filters() {
 
 // ADD A FILTER
 void Fl_Native_File_Chooser::add_filter(const char *name_in,	// name of filter (optional: can be null)
-	                    const char *winfilter) {    // windows style filter (eg. "*.cxx;*.h")
+	                    const char *winfilter) {    	// windows style filter (eg. "*.cxx;*.h")
   // No name? Make one..
   char name[1024];
   if ( !name_in || name_in[0] == '\0' ) {
