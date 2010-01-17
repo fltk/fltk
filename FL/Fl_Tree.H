@@ -65,6 +65,8 @@
 ///
 ///     The simple way to define a tree:
 /// \code
+///    #include <FL/Fl_Tree.H>
+///    [..]
 ///    Fl_Tree tree(X,Y,W,H);
 ///    tree.begin();
 ///      tree.add("Flintstones/Fred");
