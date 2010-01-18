@@ -379,6 +379,10 @@ SOURCE=..\..\src\Fl_Multi_Label.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\Fl_Native_File_Chooser.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\fl_open_uri.cxx
 # End Source File
 # Begin Source File
@@ -507,6 +511,14 @@ SOURCE=..\..\src\fl_symbols.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\Fl_Table.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Table_Row.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\Fl_Tabs.cxx
 # End Source File
 # Begin Source File
@@ -532,6 +544,22 @@ SOURCE=..\..\src\Fl_Tiled_Image.cxx
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Tooltip.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Tree.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Tree_Item.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Tree_Item_Array.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Tree_Prefs.cxx
 # End Source File
 # Begin Source File
 

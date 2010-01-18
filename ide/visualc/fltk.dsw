@@ -390,6 +390,9 @@ Package=<4>
     Project_Dep_Name minimum
     End Project Dependency
     Begin Project Dependency
+    Project_Dep_Name native-filechooser
+    End Project Dependency
+    Begin Project Dependency
     Project_Dep_Name navigation
     End Project Dependency
     Begin Project Dependency
@@ -429,7 +432,13 @@ Package=<4>
     Project_Dep_Name tabs
     End Project Dependency
     Begin Project Dependency
+    Project_Dep_Name table
+    End Project Dependency
+    Begin Project Dependency
     Project_Dep_Name tile
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name tree
     End Project Dependency
     Begin Project Dependency
     Project_Dep_Name valuators
@@ -1023,6 +1032,21 @@ Package=<4>
 
 ###############################################################################
 
+Project: "native-filechooser"=".\native-filechooser.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name fltk
+    End Project Dependency
+}}}
+
+###############################################################################
+
 Project: "navigation"=".\navigation.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -1287,6 +1311,21 @@ Package=<4>
 
 ###############################################################################
 
+Project: "table"=".\table.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name fltk
+    End Project Dependency
+}}}
+
+###############################################################################
+
 Project: "tabs"=".\tabs.dsp" - Package Owner=<4>
 
 Package=<5>
@@ -1336,6 +1375,21 @@ Package=<4>
 ###############################################################################
 
 Project: "tiled_image"=".\tiled_image.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name fltk
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "tree"=".\tree.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{

@@ -1791,6 +1791,21 @@ DEP_CPP_FL_MU=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\Fl_Native_File_Chooser.cxx
+DEP_CPP_FL_NA=\
+	"..\..\FL\enumerations.h"\
+	"..\..\FL\fl.h"\
+	"..\..\FL\fl_draw.h"\
+	"..\..\FL\fl_export.h"\
+	"..\..\FL\fl_group.h"\
+	"..\..\FL\Fl_Native_File_Chooser.H"\
+	"..\..\FL\Fl_Native_File_Chooser_WIN32.H"\
+	"..\..\FL\fl_widget.h"\
+	".\config.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\fl_open_uri.cxx
 DEP_CPP_FL_OP=\
 	"..\..\FL\filename.h"\
@@ -2431,6 +2446,31 @@ NODEP_CPP_FL_SY=\
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\Fl_Table.cxx
+DEP_CPP_FL_TABLE=\
+	"..\..\FL\enumerations.h"\
+	"..\..\FL\fl.h"\
+	"..\..\FL\fl_export.h"\
+	"..\..\FL\fl_group.h"\
+	"..\..\FL\Fl_Table.H"\
+	"..\..\FL\Fl_Table_Row.H"\
+	"..\..\FL\fl_widget.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Table_Row.cxx
+DEP_CPP_FL_TABLE_ROW=\
+	"..\..\FL\enumerations.h"\
+	"..\..\FL\fl.h"\
+	"..\..\FL\fl_export.h"\
+	"..\..\FL\fl_group.h"\
+	"..\..\FL\Fl_Table_Row.H"\
+	"..\..\FL\fl_widget.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\Fl_Tabs.cxx
 DEP_CPP_FL_TA=\
 	"..\..\FL\enumerations.h"\
@@ -2564,6 +2604,58 @@ DEP_CPP_FL_TO=\
 	"..\..\FL\fl_widget.h"\
 	"..\..\FL\fl_window.h"\
 	"..\..\FL\Xutf8.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Tree.cxx
+DEP_CPP_FL_TREE=\
+	"..\..\FL\enumerations.h"\
+	"..\..\FL\fl.h"\
+	"..\..\FL\fl_export.h"\
+	"..\..\FL\fl_group.h"\
+	"..\..\FL\Fl_Tree.H"\
+	"..\..\FL\Fl_Tree_Item.H"\
+	"..\..\FL\Fl_Tree_Item_Array.H"\
+	"..\..\FL\Fl_Tree_Prefs.H"\
+	"..\..\FL\fl_widget.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Tree_Item.cxx
+DEP_CPP_FL_TREE_I=\
+	"..\..\FL\enumerations.h"\
+	"..\..\FL\fl.h"\
+	"..\..\FL\fl_export.h"\
+	"..\..\FL\fl_group.h"\
+	"..\..\FL\Fl_Tree_Item.H"\
+	"..\..\FL\fl_widget.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Tree_Item_Array.cxx
+DEP_CPP_FL_TREE_ITEM_A=\
+	"..\..\FL\enumerations.h"\
+	"..\..\FL\fl.h"\
+	"..\..\FL\fl_export.h"\
+	"..\..\FL\fl_group.h"\
+	"..\..\FL\Fl_Tree_Item_Array.H"\
+	"..\..\FL\fl_widget.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Tree_Prefs.cxx
+DEP_CPP_FL_TREE_P=\
+	"..\..\FL\enumerations.h"\
+	"..\..\FL\fl.h"\
+	"..\..\FL\fl_export.h"\
+	"..\..\FL\fl_group.h"\
+	"..\..\FL\Fl_Tree_Prefs.H"\
+	"..\..\fl\fl_types.h"\
+	"..\..\FL\fl_widget.h"\
 	
 # End Source File
 # Begin Source File
