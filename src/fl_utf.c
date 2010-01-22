@@ -776,13 +776,13 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen,
 {
   if (!fl_utf8locale()) {
 #ifdef _WIN32
+#warning _WIN32 alarm
     wchar_t lbuf[1024];
     wchar_t* buf = lbuf;
     unsigned length;
     unsigned ret;
-    length =
-      MultiByteToWideChar(GetACP(), 0, src, srclen, buf, 1024);
-    if (length >= 1024) {
+    length = MultiByteToWideChar(GetACP(), 0, src, srclen, buf, 1024);
+    if ((length == 0)&&(GetLastError()==ERROR_INSUFFICIENT_BUFFER)) {
       length = MultiByteToWideChar(GetACP(), 0, src, srclen, 0, 0);
       buf = (wchar_t*)(malloc(length*sizeof(wchar_t)));
       MultiByteToWideChar(GetACP(), 0, src, srclen, buf, length);
@@ -798,7 +798,7 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen,
     length = mbstowcs(buf, src, 1024);
     if (length >= 1024) {
       length = mbstowcs(0, src, 0)+1;
-      buf = (wchar_t*)(malloc(length*sizeof(unsigned short)));
+      buf = (wchar_t*)(malloc(length*sizeof(wchar_t)));
       mbstowcs(buf, src, length);
     }
     if (length >= 0) {
