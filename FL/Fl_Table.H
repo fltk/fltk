@@ -33,11 +33,11 @@
 
 #include <sys/types.h>
 #include <string.h>		// memcpy
-#ifdef _WIN32
+#ifdef WIN32
 #include <malloc.h>		// WINDOWS: malloc/realloc
-#else /*_WIN32*/
+#else /*WIN32*/
 #include <stdlib.h>		// UNIX: malloc/realloc
-#endif /*_WIN32*/
+#endif /*WIN32*/
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
