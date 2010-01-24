@@ -110,7 +110,7 @@ void  gl_font(int fontid, int size) {
     wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
     SelectObject(fl_gc, oldFid);
 # elif defined(__APPLE_QUARTZ__)
-#if ! __LP64__
+#if ! defined(__APPLE_COCOA__)
 //AGL is not supported for use in 64-bit applications:
 //http://developer.apple.com/mac/library/documentation/Carbon/Conceptual/Carbon64BitGuide/OtherAPIChanges/OtherAPIChanges.html
     short font, face, size;
@@ -132,7 +132,7 @@ void  gl_font(int fontid, int size) {
 
   }
   gl_fontsize = fl_fontsize;
-#if !( defined(__APPLE__) &&  __LP64__ )
+#if !( defined(__APPLE__) &&  defined(__APPLE_COCOA__) )
   glListBase(fl_fontsize->listbase);
 #endif
 }
@@ -210,14 +210,14 @@ void gl_remove_displaylist_fonts()
   Draws an array of n characters of the string in the current font
   at the current position.
   */
-#if defined(__APPLE__) && __LP64__
+#if defined(__APPLE__) && defined(__APPLE_COCOA__)
 static void gl_draw_cocoa(const char* str, int n);
 #endif
 
 void gl_draw(const char* str, int n) {
 #ifdef __APPLE__
   
-#if __LP64__
+#if defined(__APPLE_COCOA__)
   gl_draw_cocoa(str, n);
 #else
 // Should be converting the text here, as for other platforms???
@@ -367,7 +367,7 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   glDrawPixels(w,h,d<4?GL_RGB:GL_RGBA,GL_UNSIGNED_BYTE,(const ulong*)b);
 }
 
-#if defined(__APPLE__) && defined(__APPLE_COCOA__) && __LP64__
+#if defined(__APPLE__) && defined(__APPLE_COCOA__)
 
 #include <FL/glu.h>
 
