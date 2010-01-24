@@ -61,7 +61,7 @@
    reasons. One application can have multiple preferences files.
    Extensive binary data however should be stored in separate
    files: see getUserdataPath().
-
+ 
    \note Starting with FLTK 1.3, preference databases are expected to 
    be in utf8 encoding. Previous databases were stored in the 
    current chracter set or code page which renders them incompatible
@@ -97,12 +97,17 @@ public:
   Fl_Preferences( Fl_Preferences *parent, const char *group );
   Fl_Preferences( Fl_Preferences &parent, int groupIndex );
   Fl_Preferences( Fl_Preferences *parent, int groupIndex );
+  Fl_Preferences(const Fl_Preferences&);
   Fl_Preferences( ID id );
   ~Fl_Preferences();
   
   /** Return an ID that can later be reused to open more references to this dataset.
    */
   ID id() { return (ID)node; }
+  
+  /** Remove the group with this ID from a databse.
+   */
+  static char remove(ID id) { return ((Node*)id)->remove(); }
 
   /** Return the name of this entry.
    */
@@ -189,13 +194,12 @@ public:
 
 private:
 
-  // make the following functions unavailable
-  Fl_Preferences(); 
-  Fl_Preferences(const Fl_Preferences&); 
+  Fl_Preferences() : node(0), rootNode(0) { }
   Fl_Preferences &operator=(const Fl_Preferences&);
 
   static char nameBuffer[128];
   static char uuidBuffer[40];
+  static Fl_Preferences *runtimePrefs;
 
   class RootNode;
   
@@ -253,6 +257,7 @@ private:
   public:
     RootNode( Fl_Preferences *, Root root, const char *vendor, const char *application );
     RootNode( Fl_Preferences *, const char *path, const char *vendor, const char *application );
+    RootNode( Fl_Preferences * );
     ~RootNode();
     int read();
     int write();
@@ -260,9 +265,10 @@ private:
   };
   friend class RootNode;
 
+protected:
+  
   Node *node;
   RootNode *rootNode;
-  
 };
 
 
