@@ -83,7 +83,7 @@ inline Fl_Region XRectangleRegion(int x, int y, int w, int h) {
   Fl_Region R = (Fl_Region)malloc(sizeof(*R));
   R->count = 1;
   R->rects = (CGRect *)malloc(sizeof(CGRect));
-  *(R->rects) = CGRectMake(x, y, w - 1, h - 1);
+  *(R->rects) = CGRectMake(x, y, w > 0 ? w - 0.9 : 0, h > 0 ? h - 0.9 : 0);
   return R;
 }
 inline void XDestroyRegion(Fl_Region r) {

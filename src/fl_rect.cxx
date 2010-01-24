@@ -684,10 +684,10 @@ void fl_push_clip(int x, int y, int w, int h) {
     r = CreateRectRgn(0,0,0,0);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-		r = NULL;
+    r = XRectangleRegion(0,0,0,0);
 #else
-		r = NewRgn();
-		SetEmptyRgn(r);
+    r = NewRgn();
+    SetEmptyRgn(r);
 #endif
 #else
 # error unsupported platform
@@ -747,12 +747,12 @@ int fl_not_clipped(int x, int y, int w, int h) {
 #elif defined(__APPLE_QUARTZ__)
   if (!r) return 1;
 #ifdef __APPLE_COCOA__
-	CGRect arg = CGRectMake(x,y,w - 1,h - 1);
-	for(int i = 0; i < r->count; i++) {
-		CGRect test = CGRectIntersection(r->rects[i], arg);
-		if( ! CGRectIsEmpty(test)) return 1;
-	}
-	return 0;
+  CGRect arg = CGRectMake(x, y, w - 0.9, h - 0.9);
+  for(int i = 0; i < r->count; i++) {
+    CGRect test = CGRectIntersection(r->rects[i], arg);
+    if( ! CGRectIsEmpty(test)) return 1;
+  }
+  return 0;
 #else
   Rect rect;
   rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
@@ -825,7 +825,7 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   return ret;
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-	CGRect arg = CGRectMake(x,y,w - 1,h - 1);
+	CGRect arg = CGRectMake(x, y, w - 0.9, h - 0.9);
 	CGRect u = CGRectMake(0,0,0,0);
 	CGRect test;
 	for(int i = 0; i < r->count; i++) {
@@ -837,8 +837,8 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
 		}
 	X = u.origin.x;
 	Y = u.origin.y;
-	W = u.size.width;
-	H = u.size.height;
+	W = u.size.width + 1;
+	H = u.size.height + 1;
 	if(CGRectIsEmpty(u)) W = H = 0;
 	return ! CGRectEqualToRect(arg, u);
 #else

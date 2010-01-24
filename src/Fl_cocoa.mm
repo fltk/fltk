@@ -122,7 +122,6 @@ Fl_Window *Fl_Window::current_;
 // forward declarations of variables in this file
 static int got_events = 0;
 static Fl_Window* resize_from_system;
-static NSView *viewWithLockedFocus = nil;
 static SInt32 MACsystemVersion;
 
 #if CONSOLIDATE_MOTION
@@ -198,9 +197,9 @@ static unsigned int mods_to_e_state( NSUInteger mods )
 
 
 /*
- * convert the current mouse chord into the FLTK keysym
+ * convert the current key chord into the FLTK keysym
  */
-/*
+
  static void mods_to_e_keysym( NSUInteger mods )
  {
  if ( mods & NSCommandKeyMask ) Fl::e_keysym = FL_Meta_L;
@@ -212,7 +211,7 @@ static unsigned int mods_to_e_state( NSUInteger mods )
  else Fl::e_keysym = 0;
  //printf( "to sym 0x%08x (%04x)\n", Fl::e_keysym, mods );
  }
- */
+
 // these pointers are set by the Fl::lock() function:
 static void nothing() {}
 void (*fl_lock_function)() = nothing;
@@ -774,7 +773,19 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   NSUInteger mods = [theEvent modifierFlags];  
   int sendEvent = 0;
   
-  switch ( [theEvent type] ) {
+  NSEventType etype = [theEvent type];
+  if (etype == NSLeftMouseDown || etype == NSRightMouseDown || etype == NSOtherMouseDown) {
+    if (btn == 1) Fl::e_state |= FL_BUTTON1;
+    else if (btn == 3) Fl::e_state |= FL_BUTTON2;
+    else if (btn == 2) Fl::e_state |= FL_BUTTON3;
+  }
+  else if (etype == NSLeftMouseUp || etype == NSRightMouseUp || etype == NSOtherMouseUp) {
+    if (btn == 1) Fl::e_state &= ~FL_BUTTON1;
+    else if (btn == 3) Fl::e_state &= ~FL_BUTTON2;
+    else if (btn == 2) Fl::e_state &= ~FL_BUTTON3;
+    }
+    
+  switch ( etype ) {
     case NSLeftMouseDown:
     case NSRightMouseDown:
     case NSOtherMouseDown:
@@ -782,9 +793,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       sendEvent = FL_PUSH;
       Fl::e_is_click = 1; 
       px = (int)pos.x; py = (int)pos.y;
-      if (btn == 1) Fl::e_state |= FL_BUTTON1;
-      else if (btn == 3) Fl::e_state |= FL_BUTTON2;
-      else if (btn == 2) Fl::e_state |= FL_BUTTON3;
       if (clickCount>1) 
         Fl::e_clicks++;
       else
@@ -793,7 +801,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     case NSLeftMouseUp:
     case NSRightMouseUp:
     case NSOtherMouseUp:
-      Fl::e_state &=  0xff0000;
       if (suppressed) {
         suppressed = 0;
         break;
@@ -1533,13 +1540,7 @@ void Fl::get_mouse(int &x, int &y)
 void Fl_X::flush()
 {
   w->flush();
-  if (fl_gc) {
-    CGContextFlush(fl_gc);
-    if (viewWithLockedFocus) {
-      [viewWithLockedFocus unlockFocus];
-      viewWithLockedFocus = nil;
-    }
-  }
+  if (fl_gc) CGContextFlush(fl_gc);
 }
 
 /*
@@ -1717,6 +1718,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 - (void)scrollWheel:(NSEvent *)theEvent;
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)keyUp:(NSEvent *)theEvent;
+- (void)flagsChanged:(NSEvent *)theEvent;
 - (NSDragOperation)draggingEntered:(id < NSDraggingInfo >)sender;
 - (NSDragOperation)draggingUpdated:(id < NSDraggingInfo >)sender;
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender;
@@ -1779,6 +1781,27 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 - (void)keyUp:(NSEvent *)theEvent {
   cocoaKeyboardHandler(theEvent);
+}
+- (void)flagsChanged:(NSEvent *)theEvent {
+  fl_lock_function();
+  static UInt32 prevMods = mods_to_e_state( GetCurrentKeyModifiers() );
+  NSUInteger mods = [theEvent modifierFlags];
+  Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
+  UInt32 tMods = prevMods ^ mods;
+  int sendEvent = 0;
+  if ( tMods )
+  {
+    mods_to_e_keysym( tMods );
+    if ( Fl::e_keysym ) 
+      sendEvent = ( prevMods<mods ) ? FL_KEYBOARD : FL_KEYUP;
+    Fl::e_length = 0;
+    Fl::e_text = "";
+    prevMods = mods;
+  }
+  mods_to_e_state( mods );
+  while (window->parent()) window = window->window();
+  if (sendEvent) Fl::handle(sendEvent,window);
+  fl_unlock_function();
 }
 - (NSDragOperation)draggingEntered:(id < NSDraggingInfo >)sender
 {
@@ -2222,8 +2245,8 @@ void Fl_Window::make_current()
     win = (Fl_Window*)win->window();
   }
   
-  viewWithLockedFocus = [(NSWindow*)i->xid contentView];
-  [viewWithLockedFocus lockFocusIfCanDraw];// important
+  [[NSView focusView] unlockFocus];
+  [[(NSWindow*)i->xid contentView]  lockFocus];
   i->gc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
   fl_gc = i->gc;
   if ( fl_window_region ) XDestroyRegion(fl_window_region);
@@ -2604,7 +2627,7 @@ Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h)
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->rects = (CGRect*)malloc(4 * r->count * sizeof(CGRect));
   outr->count = 0;
-  CGRect rect = CGRectMake(x,y,w - 1,h - 1);
+  CGRect rect = CGRectMake(x,y,w - 0.9,h - 0.9);
   for( int i = 0; i < r->count; i++) {
     CGRect A = r->rects[i];
     CGRect test = CGRectIntersection(A, rect);
@@ -2649,7 +2672,7 @@ Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h)
  */
 {
   if (current == NULL) return XRectangleRegion(x,y,w,h);
-  CGRect r = CGRectMake(x, y, w - 1, h - 1);
+  CGRect r = CGRectMake(x, y, w - 0.9, h - 0.9);
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->count = current->count;
   outr->rects =(CGRect*)malloc(outr->count * sizeof(CGRect));
@@ -3213,8 +3236,6 @@ unsigned char *MACbitmapFromRectOfWindow(Fl_Window *win, int x, int y, int w, in
     y += win->y();
     win = win->window();
   }
-  NSView *myview = [(NSWindow*)Fl_X::i(win)->xid contentView];
-  [myview lockFocus];
   CGFloat epsilon = 0;
   if (MACsystemVersion >= 0x1060) epsilon = 0.001;
   // The epsilon offset is absolutely necessary under 10.6. Without it, the top pixel row and
@@ -3222,10 +3243,23 @@ unsigned char *MACbitmapFromRectOfWindow(Fl_Window *win, int x, int y, int w, in
   // Under 10.5, we want no offset.
   NSRect rect = NSMakeRect(x - epsilon, y - epsilon, w, h);
   NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
-  [myview unlockFocus];
   *bytesPerPixel = [bitmap bitsPerPixel]/8;
+  int bpp = (int)[bitmap bytesPerPlane];
+  int bpr = (int)[bitmap bytesPerRow];
+  int hh = bpp/bpr; // sometimes hh = h-1 for unclear reason
+  int ww = bpr/(*bytesPerPixel); // sometimes ww = w-1
   unsigned char *data = new unsigned char[w * h *  *bytesPerPixel];
-  memcpy(data, [bitmap bitmapData], w * h *  *bytesPerPixel);
+  if (w == ww) {
+    memcpy(data, [bitmap bitmapData], w * hh *  *bytesPerPixel);
+  } else {
+    unsigned char *p = [bitmap bitmapData];
+    unsigned char *q = data;
+    for(int i = 0;i < hh; i++) {
+      memcpy(q, p, *bytesPerPixel * ww);
+      p += bpr;
+      q += w * *bytesPerPixel;
+      }
+  }
   [bitmap release];
   return data;
 }
