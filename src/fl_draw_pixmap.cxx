@@ -336,7 +336,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
       }
     } else {
       for (int X = 0; X < d.w; X++) {
-        U32* colors = d.byte1[*p++];
+        U32* colors = (U32*)d.byte1[*p++];
         *q++ = colors[*p++];
       }
     }
