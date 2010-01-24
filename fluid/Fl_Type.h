@@ -36,6 +36,7 @@
 
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu.H>
+#include <FL/Fl_Plugin.H>
 #include "Fluid_Image.h"
 #include <FL/fl_draw.H>
 
@@ -791,6 +792,23 @@ int storestring(const char *n, const char * & p, int nostrip=0);
 
 extern int include_H_from_C;
 extern int use_FL_COMMAND;
+
+/*
+ * This class is needed for additional command line plugins.
+ */
+class Fl_Commandline_Plugin : public Fl_Plugin {
+public:
+  Fl_Commandline_Plugin(const char *name)
+  : Fl_Plugin(klass(), name) { }
+  virtual const char *klass() { return "commandline"; }
+  // return a unique name for this plugin
+  virtual const char *name() = 0;
+  // return a help text for all supported commands
+  virtual const char *help() = 0;
+  // handle a command and return the number of args used, or 0
+  virtual int arg(int argc, char **argv, int &i) = 0;
+};
+
 
 //
 // End of "$Id$".

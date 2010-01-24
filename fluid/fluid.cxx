@@ -34,6 +34,7 @@
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Input.H>
+#include <FL/Fl_Plugin.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_File_Chooser.H>
@@ -632,6 +633,7 @@ void new_cb(Fl_Widget *, void *v) {
   undo_clear();
 }
 
+int exit_early = 0;
 int compile_only = 0;
 int compile_strings = 0;
 int header_file_set = 0;
@@ -2247,6 +2249,13 @@ static int arg(int argc, char** argv, int& i) {
     i += 2;
     return 2;
   }
+  Fl_Plugin_Manager pm("commandline");
+  int j, n = pm.plugins();
+  for (j=0; j<n; j++) {
+    Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(j);
+    int r = pi->arg(argc, argv, i);
+    if (r) return r;
+  }
   return 0;
 }
 
@@ -2272,17 +2281,30 @@ static void sigint(SIGARG) {
 }
 #endif
 
+
 int main(int argc,char **argv) {
   int i = 1;
+  
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
-    fprintf(stderr,"usage: %s <switches> name.fl\n"
+    fprintf(stderr,
+"usage: %s <switches> name.fl\n"
 " -c : write .cxx and .h and exit\n"
 " -cs : write .cxx and .h and strings and exit\n"
 " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
 " -h <name> : .h output filename, or extension if <name> starts with '.'\n"
-"%s\n", argv[0], Fl::help);
+            , argv[0]);
+    Fl_Plugin_Manager pm("commandline");
+    int i, n = pm.plugins();
+    for (i=0; i<n; i++) {
+      Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
+      if (pi) puts(pi->help());
+    }
+    fprintf(stderr, "%s\n", Fl::help);
     return 1;
   }
+  if (exit_early)
+    exit(0);
+  
   const char *c = argv[i];
 
   fl_register_images();
