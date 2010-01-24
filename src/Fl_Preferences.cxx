@@ -1840,7 +1840,7 @@ int Fl_Plugin_Manager::load(const char *filename)
 {
   // the functions below will autmaticaly load plugins that are defined:
   // Fl_My_Plugin plugin();
-#ifdef WIN32
+#if defined(WIN32) && !defined(__CYGWIN__)
   HMODULE dl = LoadLibrary(filename);
 #else
   void * dl = dlopen(filename, RTLD_LAZY);
