@@ -34,6 +34,9 @@ extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short*
 #define check_default_font() {if (!fl_fontsize) fl_font(0, 12);}
 
 static const CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
+#if defined(__APPLE_COCOA__)
+static SInt32 MACsystemVersion = 0;
+#endif
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
@@ -47,7 +50,9 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   size = Size;
   minsize = maxsize = Size;
 #if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(CTFontCreateWithName != NULL) {
+  if(MACsystemVersion == 0) Gestalt(gestaltSystemVersion, &MACsystemVersion);
+
+if(MACsystemVersion >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   fontref = CTFontCreateWithName(str, size, NULL);
   CGGlyph glyph[2];
@@ -58,11 +63,11 @@ if(CTFontCreateWithName != NULL) {
   CTFontGetAdvancesForGlyphs(fontref, kCTFontHorizontalOrientation, glyph, advances, 2);
   w = advances[0].width;
   if( abs(advances[0].width - advances[1].width) < 1E-2 ) {//this is a fixed-width font
-	//slightly rescale fixed-width fonts so the character width has an integral value
-	CFRelease(fontref);
-	CGFloat fsize = size / ( w/floor(w + 0.5) );
-	fontref = CTFontCreateWithName(str, fsize, NULL);
-	w = CTFontGetAdvancesForGlyphs(fontref, kCTFontHorizontalOrientation, glyph, NULL, 1);
+    //slightly rescale fixed-width fonts so the character width has an integral value
+    CFRelease(fontref);
+    CGFloat fsize = size / ( w/floor(w + 0.5) );
+    fontref = CTFontCreateWithName(str, fsize, NULL);
+    w = CTFontGetAdvancesForGlyphs(fontref, kCTFontHorizontalOrientation, glyph, NULL, 1);
   }
   CFRelease(str);
   ascent = (short)(CTFontGetAscent(fontref) + 0.5);
@@ -165,7 +170,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
   */
   if (this == fl_fontsize) fl_fontsize = 0;
 #if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if(CTFontCreateWithName != NULL)  CFRelease(fontref);
+  if(MACsystemVersion >= 0x1050)  CFRelease(fontref);
 #else
 	/*  ATSUDisposeTextLayout(layout);
   ATSUDisposeStyle(style); */
@@ -272,7 +277,7 @@ double fl_width(const UniChar* txt, int n) {
       return 8*n; // user must select a font first!
   }
 #if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(CTFontCreateWithName != NULL) {
+if(MACsystemVersion >= 0x1050) {
   CTFontRef fontref = fl_fontsize->fontref;
   CFStringRef str = CFStringCreateWithBytes(NULL, (const UInt8*)txt, n * sizeof(UniChar), kCFStringEncodingUTF16, false);
   CFAttributedStringRef astr = CFAttributedStringCreate(NULL, str, NULL);
@@ -340,7 +345,7 @@ void fl_text_extents(const UniChar* txt, int n, int &dx, int &dy, int &w, int &h
       return;
   }
 #if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(CTFontCreateWithName != NULL) {
+if(MACsystemVersion >= 0x1050) {
   CTFontRef fontref = fl_fontsize->fontref;
   CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)txt, n *sizeof(UniChar), kCFStringEncodingUTF16, false);
   CFAttributedStringRef astr = CFAttributedStringCreate(NULL, str16, NULL);
@@ -408,32 +413,20 @@ void fl_draw(const char* str, int n, int x, int y) {
 
 
 #if defined(__APPLE_COCOA__)
-static unsigned fl_cmap[256] = {
-#include "fl_cmap.h" // this is a file produced by "cmap.cxx":
-};
-CGColorRef flcolortocgcolor(Fl_Color i)
+static CGColorRef flcolortocgcolor(Fl_Color i)
 {
-  int index;
   uchar r, g, b;
-  if (i & 0xFFFFFF00) {
-    // translate rgb colors into color index
-    r = i>>24;
-    g = i>>16;
-    b = i>> 8;
-  } else {
-    // translate index into rgb:
-    index = i;
-    unsigned c = fl_cmap[i];
-    r = c>>24;
-    g = c>>16;
-    b = c>> 8;
-  }
+  Fl::get_color(i, r, g, b);
   CGFloat components[4] = {r/255.0f, g/255.0f, b/255.0f, 1.};
-#if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  return CGColorCreate(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB), components);
+  static CGColorSpaceRef cspace = NULL;
+  if(cspace == NULL) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+    cspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 #else
-  return CGColorCreate(CGColorSpaceCreateWithName(kCGColorSpaceUserRGB), components);
+    cspace = CGColorSpaceCreateWithName(kCGColorSpaceUserRGB);
 #endif
+    }
+  return CGColorCreate(cspace, components);
 }
 #endif
 
@@ -444,7 +437,7 @@ void fl_draw(const char *str, int n, float x, float y) {
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if(CTFontCreateWithName != NULL) {
+  if(MACsystemVersion >= 0x1050) {
     CFStringRef keys[2];
     CFTypeRef values[2];  
     CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)uniStr, n * sizeof(UniChar), kCFStringEncodingUTF16, false);
