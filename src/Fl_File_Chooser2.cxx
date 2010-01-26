@@ -1287,24 +1287,48 @@ void
 Fl_File_Chooser::update_preview()
 {
   const char		*filename;	// Current filename
-  Fl_Shared_Image	*image,		// New image
+  const char            *newlabel = 0;  // New label text
+  Fl_Shared_Image	*image = 0,		// New image
 			*oldimage;	// Old image
   int			pbw, pbh;	// Width and height of preview box
   int			w, h;		// Width and height of preview image
+  int                   set = 0;        // Set this flag as soon as a decent preview is found
 
 
   if (!previewButton->value()) return;
 
-  if ((filename = value()) == NULL || fl_filename_isdir(filename)) image = NULL;
-  else {
-    window->cursor(FL_CURSOR_WAIT);
-    Fl::check();
-
-    image = Fl_Shared_Image::get(filename);
-
-    if (image) {
-      window->cursor(FL_CURSOR_DEFAULT);
-      Fl::check();
+  filename = value();
+  if (filename == NULL) {
+    // no file name at all, so we have an empty preview
+    set = 1;
+  } else if (fl_filename_isdir(filename)) {
+    // filename is a directory, show a folder icon
+    newlabel = "@fileopen";
+    set = 1;
+  } else {
+    struct stat s;
+    if (fl_stat(filename, &s)==0) {
+      if ((s.st_mode&S_IFMT)!=S_IFREG) {
+        // this is no regular file, probably some kind of device
+        newlabel = "@-3refresh"; // a cross
+        set = 1;
+      } else if (s.st_size==0) {
+        // this file is emty
+        newlabel = "<empty file>";
+        set = 1;
+      } else {
+        // if this file is an image, try to load it
+        window->cursor(FL_CURSOR_WAIT);
+        Fl::check();
+        
+        image = Fl_Shared_Image::get(filename);
+        
+        if (image) {
+          window->cursor(FL_CURSOR_DEFAULT);
+          Fl::check();
+          set = 1;
+        }
+      }
     }
   }
 
@@ -1314,7 +1338,7 @@ Fl_File_Chooser::update_preview()
 
   previewBox->image(0);
 
-  if (!image) {
+  if (!set) {
     FILE	*fp;
     int		bytes;
     char	*ptr;
@@ -1371,7 +1395,7 @@ Fl_File_Chooser::update_preview()
       // Non-printable file, just show a big ?...
       previewBox->label(filename ? "?" : 0);
       previewBox->align(FL_ALIGN_CLIP);
-      previewBox->labelsize(100);
+      previewBox->labelsize(75);
       previewBox->labelfont(FL_HELVETICA);
     } else {
       // Show the first 1k of text...
@@ -1385,7 +1409,7 @@ Fl_File_Chooser::update_preview()
       previewBox->labelsize(size);
       previewBox->labelfont(FL_COURIER);
     }
-  } else {
+  } else if (image) {
     pbw = previewBox->w() - 20;
     pbh = previewBox->h() - 20;
 
@@ -1408,6 +1432,11 @@ Fl_File_Chooser::update_preview()
 
     previewBox->align(FL_ALIGN_CLIP);
     previewBox->label(0);
+  } else if (newlabel) {
+    previewBox->label(newlabel);
+    previewBox->align(FL_ALIGN_CLIP);
+    previewBox->labelsize(newlabel[0]=='@'?75:12);
+    previewBox->labelfont(FL_HELVETICA);
   }
 
   previewBox->redraw();
