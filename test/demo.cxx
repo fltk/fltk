@@ -283,11 +283,14 @@ void dobut(Fl_Widget *, long arg)
     if (arg) {
       *arg = 0;
       if (strcmp(cmd, "../fluid/fluid")==0)
-        sprintf(command, "open ../../../Fluid.app --args %s", arg+1);
+//        sprintf(command, "open ../../../Fluid.app --args %s", arg+1);
+	sprintf(command, "../../../Fluid.app/Contents/MacOS/Fluid  ../../../../../../../test/%s", arg+1);
       else
-        sprintf(command, "open ../../../%s.app --args %s", cmd, arg+1);
+//        sprintf(command, "open ../../../%s.app --args %s", cmd, arg+1);
+	sprintf(command, "../../../%s.app/Contents/MacOS/%s ../../../../../../../test/%s", cmd, cmd, arg+1);
     } else {
-      sprintf(command, "open ../../../%s.app", cmd);
+//      sprintf(command, "open ../../../%s.app", cmd);
+      sprintf(command, "../../../%s.app/Contents/MacOS/%s", cmd, cmd);
     }
 //    puts(command);    
     system(command);

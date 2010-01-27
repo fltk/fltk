@@ -66,7 +66,7 @@
 	@e:Sudoku:sudoku
 
 @main:Other\nTests:@o
-	@o:Color Choosers:color_chooser r
+	@o:Color Choosers:color_chooser
 	@o:File Chooser:file_chooser
 	@o:Native File Chooser:native-filechooser
 	@o:Font Tests:@of

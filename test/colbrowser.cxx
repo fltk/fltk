@@ -67,7 +67,7 @@ main(int argc, char *argv[])
     create_form_cl();
 
 #ifdef USING_XCODE
-  strcpy(dbname, "../../../../test/rgb.txt");
+  strcpy(dbname, "../../../../../../../test/rgb.txt");
 #else
   strcpy(dbname, "rgb.txt");
 #endif
