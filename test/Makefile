@@ -383,6 +383,8 @@ native-filechooser$(EXEEXT): native-filechooser.o $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) native-filechooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 
+native-filechooser.o: ../FL/Fl_Native_File_Chooser_WIN32.H ../FL/Fl_Native_File_Chooser_MAC.H
+
 navigation$(EXEEXT): navigation.o
 
 output$(EXEEXT): output.o $(FLLIBNAME)

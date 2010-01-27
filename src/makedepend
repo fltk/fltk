@@ -215,8 +215,30 @@ Fl_Multi_Label.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Multi_Label.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Widget.H
 Fl_Multi_Label.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
 Fl_Multi_Label.o: ../FL/Fl_Multi_Label.H
-Fl_Native_File_Chooser.o: ../config.h Fl_Native_File_Chooser_common.cxx \
-	../FL/Fl_Native_File_Chooser.H ../FL/Fl.H ../FL/filename.H
+Fl_Native_File_Chooser.o: Fl_Native_File_Chooser_FLTK.cxx
+Fl_Native_File_Chooser.o: ../FL/Fl_Native_File_Chooser.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Native_File_Chooser_FLTK.H
+Fl_Native_File_Chooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Native_File_Chooser.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+Fl_Native_File_Chooser.o: ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Native_File_Chooser.o: ../FL/fl_types.h ../FL/Fl_Double_Window.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Image.H ../FL/Fl_Menu_Button.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Tile.H ../FL/Fl_Group.H
+Fl_Native_File_Chooser.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_Native_File_Chooser.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
+Fl_Native_File_Chooser.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+Fl_Native_File_Chooser.o: ../FL/fl_ask.H ../FL/Fl_File_Icon.H
+Fl_Native_File_Chooser.o: Fl_Native_File_Chooser_common.cxx
+Fl_Native_File_Chooser.o: ../FL/Enumerations.H
 Fl_Overlay_Window.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Overlay_Window.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Overlay_Window.o: ../FL/Fl_Export.H ../FL/fl_types.h
@@ -238,7 +260,13 @@ Fl_Positioner.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Fl_Window.H
 Fl_Preferences.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Preferences.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Preferences.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Preferences.H
-Fl_Preferences.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h ../config.h
+Fl_Preferences.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Tree.H
+Fl_Preferences.o: ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_Preferences.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl_Preferences.o: ../FL/Fl_Window.H ../FL/Fl_Tree_Item.H ../FL/Fl_Widget.H
+Fl_Preferences.o: ../FL/Fl_Image.H ../FL/Fl_Tree_Item_Array.H
+Fl_Preferences.o: ../FL/Fl_Tree_Prefs.H ../FL/filename.H ../FL/fl_utf8.h
+Fl_Preferences.o: flstring.h ../config.h
 Fl_Progress.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Progress.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Progress.o: ../FL/fl_types.h ../FL/Fl_Progress.H ../FL/Fl_Widget.H
@@ -482,9 +510,9 @@ fl_boxtype.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_boxtype.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 fl_boxtype.o: ../FL/fl_types.h ../FL/Fl_Widget.H ../FL/fl_draw.H
 fl_boxtype.o: ../FL/Fl_Window.H ../config.h
-fl_color.o: Fl_XColor.H ../config.h ../FL/Enumerations.H ../FL/Fl_Export.H
-fl_color.o: ../FL/fl_types.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
-fl_color.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H
+fl_color.o: Fl_XColor.H ../config.h ../FL/Enumerations.H ../FL/Fl.H
+fl_color.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+fl_color.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H
 fl_color.o: ../FL/Fl_Window.H ../FL/fl_draw.H fl_cmap.h
 fl_cursor.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_cursor.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
