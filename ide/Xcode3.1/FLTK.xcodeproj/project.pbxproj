@@ -717,6 +717,13 @@
 			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
 			remoteInfo = fltk;
 		};
+		7FDAEB921110E51A00E34599 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7FEC035011033B9800BC057C;
+			remoteInfo = "native-filechooser";
+		};
 		7FEC035911033BAD00BC057C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
@@ -3123,7 +3130,7 @@
 		C9A3EE180DD646F100486E4F /* colbrowser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colbrowser.cxx; path = ../../test/colbrowser.cxx; sourceTree = SOURCE_ROOT; };
 		C9A3EE780DD64AE700486E4F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		C9A3EE790DD64B0200486E4F /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
-		C9B4E28510CC25EE00DA2F05 /* tabs.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tabs.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9B4E28510CC25EE00DA2F05 /* table.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = table.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B4E2A610CC26EC00DA2F05 /* table.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = table.cxx; path = ../../test/table.cxx; sourceTree = SOURCE_ROOT; };
 		C9B4E2AA10CC273400DA2F05 /* Fl_Table_Row.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Table_Row.cxx; path = ../../src/Fl_Table_Row.cxx; sourceTree = SOURCE_ROOT; };
 		C9B4E2AB10CC273400DA2F05 /* Fl_Table.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Table.cxx; path = ../../src/Fl_Table.cxx; sourceTree = SOURCE_ROOT; };
@@ -3975,7 +3982,7 @@
 				C94A76DA0E77F59F00AAA38E /* utf8.app */,
 				C99E1EAE0E78628600AECCF6 /* curve.app */,
 				C9EAC2DC0E786725004F64F7 /* colbrowser.app */,
-				C9B4E28510CC25EE00DA2F05 /* tabs.app */,
+				C9B4E28510CC25EE00DA2F05 /* table.app */,
 				C9B4E2CE10CC275F00DA2F05 /* tree.app */,
 				7FEC035111033B9800BC057C /* native-filechooser.app */,
 			);
@@ -5494,6 +5501,7 @@
 				C918E2120DDA13BC00167E99 /* PBXTargetDependency */,
 				C918E2140DDA13BC00167E99 /* PBXTargetDependency */,
 				C918E2160DDA13BC00167E99 /* PBXTargetDependency */,
+				7FDAEB931110E51A00E34599 /* PBXTargetDependency */,
 				C918E2180DDA13BC00167E99 /* PBXTargetDependency */,
 				C918E21A0DDA13BC00167E99 /* PBXTargetDependency */,
 				C918E21C0DDA13BC00167E99 /* PBXTargetDependency */,
@@ -5943,7 +5951,7 @@
 			);
 			name = table;
 			productName = symbols;
-			productReference = C9B4E28510CC25EE00DA2F05 /* tabs.app */;
+			productReference = C9B4E28510CC25EE00DA2F05 /* table.app */;
 			productType = "com.apple.product-type.application";
 		};
 		C9B4E2BF10CC275F00DA2F05 /* tree */ = {
@@ -6058,7 +6066,7 @@
 			mainGroup = C9A3E93A0DD6332D00486E4F;
 			productRefGroup = C9A3E9520DD6336500486E4F /* Products */;
 			projectDirPath = "";
-			projectRoot = "";
+			projectRoot = ../..;
 			targets = (
 				C97741FE0DD9D33B0047C1BF /* Demo */,
 				C9C873730DD7772000A9793F /* Fluid */,
@@ -7523,6 +7531,11 @@
 			isa = PBXTargetDependency;
 			target = C9A3E9500DD6336500486E4F /* fltk */;
 			targetProxy = 01FBE4930E630405009E95B1 /* PBXContainerItemProxy */;
+		};
+		7FDAEB931110E51A00E34599 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7FEC035011033B9800BC057C /* native-filechooser */;
+			targetProxy = 7FDAEB921110E51A00E34599 /* PBXContainerItemProxy */;
 		};
 		7FEC035A11033BAD00BC057C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -12498,6 +12511,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_PREPROCESSOR_DEFINITIONS = USING_XCODE;
 				HEADER_SEARCH_PATHS = ../../;
 				INFOPLIST_FILE = "plists/help-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -15346,7 +15360,7 @@
 					Carbon,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = tabs;
+				PRODUCT_NAME = table;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
