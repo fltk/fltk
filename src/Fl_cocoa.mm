@@ -99,7 +99,7 @@ extern CGContextRef CreateNoneImage(void);
 // converting cr lf converter function
 static void convert_crlf(char * string, size_t len);
 static void createAppleMenu(void);
-Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h);
+static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h);
 static void cocoaMouseHandler(NSEvent *theEvent);
 
 // public variables
@@ -2620,14 +2620,14 @@ void MacUnmapWindow(Fl_Window *w, void *p) {
     MacUnlinkWindow(Fl_X::i(w));
 }
 
-Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h)
+static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h)
 /* removes x,y,w,h rectangle from region r and returns result as a new Fl_Region
  */
 {
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->rects = (CGRect*)malloc(4 * r->count * sizeof(CGRect));
   outr->count = 0;
-  CGRect rect = CGRectMake(x,y,w - 0.9,h - 0.9);
+  CGRect rect = FL_CGRECTMAKE_COCOA(x, y, w, h);
   for( int i = 0; i < r->count; i++) {
     CGRect A = r->rects[i];
     CGRect test = CGRectIntersection(A, rect);
@@ -2672,7 +2672,7 @@ Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h)
  */
 {
   if (current == NULL) return XRectangleRegion(x,y,w,h);
-  CGRect r = CGRectMake(x, y, w - 0.9, h - 0.9);
+  CGRect r = FL_CGRECTMAKE_COCOA(x, y, w, h);
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->count = current->count;
   outr->rects =(CGRect*)malloc(outr->count * sizeof(CGRect));

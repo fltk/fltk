@@ -1474,8 +1474,8 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
       XDestroyRegion(R);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-	  CGRect arg = CGRectMake(X, Y, W - 0.9, H - 0.9);
-	  int j;//don't add a rectangle totally inside the Fl_Region
+	  CGRect arg = FL_CGRECTMAKE_COCOA(X, Y, W, H);
+	  int j; // don't add a rectangle totally inside the Fl_Region
 	  for(j = 0; j < i->region->count; j++) {
 		if(CGRectContainsRect(i->region->rects[j], arg)) break;
 		}

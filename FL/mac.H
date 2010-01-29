@@ -54,7 +54,7 @@
 #ifndef MAC_OS_X_VERSION_MAX_ALLOWED
 #define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_3
 #endif
-#endif //__APPLE_COCOA__
+#endif // __APPLE_COCOA__
 
 #ifndef CGFLOAT_DEFINED //appears with 10.5 in CGBase.h
 #if defined(__LP64__) && __LP64__
@@ -62,7 +62,7 @@ typedef double CGFloat;
 #else
 typedef float CGFloat;
 #endif
-#endif //CGFLOAT_DEFINED
+#endif // CGFLOAT_DEFINED
 
 
 // Now make some fixes to the headers...
@@ -73,9 +73,11 @@ struct XPoint { int x, y; };
 struct XRectangle {int x, y, width, height;};
 
 #ifdef __APPLE_COCOA__
+// necessary so a CGRect matches exactly what is denoted x,y,w,h for clipping purposes
+#define FL_CGRECTMAKE_COCOA(x,y,w,h)  CGRectMake(x, y, w > 0 ? w - 0.9 : 0, h > 0 ? h - 0.9 : 0)
 
-typedef void *Window; //this is really a pter to the subclass FLWindow of NSWindow
-typedef struct flCocoaRegion{
+typedef void *Window; // this is really a pter to the subclass FLWindow of NSWindow
+typedef struct flCocoaRegion {
   int count;
   CGRect *rects;
 } *Fl_Region;  // a region is the union of a series of rectangles
@@ -83,7 +85,7 @@ inline Fl_Region XRectangleRegion(int x, int y, int w, int h) {
   Fl_Region R = (Fl_Region)malloc(sizeof(*R));
   R->count = 1;
   R->rects = (CGRect *)malloc(sizeof(CGRect));
-  *(R->rects) = CGRectMake(x, y, w > 0 ? w - 0.9 : 0, h > 0 ? h - 0.9 : 0);
+  *(R->rects) = FL_CGRECTMAKE_COCOA(x, y, w, h);
   return R;
 }
 inline void XDestroyRegion(Fl_Region r) {
@@ -145,10 +147,6 @@ public:
   void flush();
   // Quartz additions:
   CGContextRef gc;                 // graphics context (NULL when using QD)
-#ifndef __APPLE_COCOA__
-  static ATSUTextLayout atsu_layout; // windows share a global font
-  static ATSUStyle      atsu_style;
-#endif
   static void q_fill_context();    // fill a Quartz context with current FLTK state
   static void q_clear_clipping();  // remove all clipping from a Quartz context
   static void q_release_context(Fl_X *x=0); // free all resources associated with fl_gc

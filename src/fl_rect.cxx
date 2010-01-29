@@ -747,7 +747,7 @@ int fl_not_clipped(int x, int y, int w, int h) {
 #elif defined(__APPLE_QUARTZ__)
   if (!r) return 1;
 #ifdef __APPLE_COCOA__
-  CGRect arg = CGRectMake(x, y, w - 0.9, h - 0.9);
+  CGRect arg = FL_CGRECTMAKE_COCOA(x, y, w, h);
   for(int i = 0; i < r->count; i++) {
     CGRect test = CGRectIntersection(r->rects[i], arg);
     if( ! CGRectIsEmpty(test)) return 1;
@@ -825,7 +825,7 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   return ret;
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-	CGRect arg = CGRectMake(x, y, w - 0.9, h - 0.9);
+	CGRect arg = FL_CGRECTMAKE_COCOA(x, y, w, h);
 	CGRect u = CGRectMake(0,0,0,0);
 	CGRect test;
 	for(int i = 0; i < r->count; i++) {
