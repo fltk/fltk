@@ -713,6 +713,18 @@ int fl_wait( double time )
   return (got_events);
 }
 
+// updates Fl::e_x, Fl::e_y, Fl::e_x_root, and Fl::e_y_root
+static void update_e_xy_and_e_xy_root(NSWindow *nsw)
+{
+  NSPoint pt;
+  pt = [nsw mouseLocationOutsideOfEventStream];
+  Fl::e_x = pt.x;
+  Fl::e_y = [[nsw contentView] frame].size.height - pt.y;
+  pt = [NSEvent mouseLocation];
+  Fl::e_x_root = pt.x;
+  Fl::e_y_root = [[nsw screen] frame].size.height - pt.y;
+}
+
 /*
  * Cocoa Mousewheel handler
  */
@@ -827,11 +839,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
           Fl::e_is_click = 0;
       }
       mods_to_e_state( mods );
-      NSPoint screen = [[theEvent window] convertBaseToScreen:[theEvent locationInWindow]];
-      Fl::e_x_root = screen.x;
-      Fl::e_y_root = [[[theEvent window] screen] frame].size.height - screen.y;
-      Fl::e_x = pos.x;
-      Fl::e_y = pos.y;
+      update_e_xy_and_e_xy_root([theEvent window]);
       Fl::handle( sendEvent, window );
       }
       break;
@@ -1301,6 +1309,7 @@ extern "C" {
   if ([nsw containsGLsubwindow] ) {
     [nsw display];// redraw window after moving if it contains OpenGL subwindows
   }
+  update_e_xy_and_e_xy_root(nsw);
 }
 - (void)windowDidResize:(NSNotification *)notif
 {
@@ -1316,6 +1325,7 @@ extern "C" {
                  (int)([[nsw screen] frame].size.height - pt2.y),
 		 (int)r.size.width,
 		 (int)r.size.height);
+  update_e_xy_and_e_xy_root(nsw);
 }
 - (void)windowDidBecomeKey:(NSNotification *)notif
 {
@@ -1328,12 +1338,14 @@ extern "C" {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   Fl::first_window(window);
+  update_e_xy_and_e_xy_root(nsw);
 }
 - (void)windowDidDeminiaturize:(NSNotification *)notif
 {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   window->set_visible();
+  update_e_xy_and_e_xy_root(nsw);
 }
 - (void)windowDidMiniaturize:(NSNotification *)notif
 {
@@ -1806,12 +1818,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 - (NSDragOperation)draggingEntered:(id < NSDraggingInfo >)sender
 {
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
-  NSPoint pt = [sender draggingLocation];
-  Fl::e_x = pt.x;
-  Fl::e_y = [self frame].size.height - pt.y;
-  Fl::e_x_root = [[self window] frame].origin.x + Fl::e_x;
-  Fl::e_y_root = [[self window] frame].origin.y + pt.y;
-  Fl::e_y_root = [[[self window] screen] frame].size.height - Fl::e_y_root;
+  update_e_xy_and_e_xy_root([self window]);
   fl_dnd_target_window = target;
   int ret = Fl::handle( FL_DND_ENTER, target );
   breakMacEventLoop();
@@ -1820,12 +1827,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 - (NSDragOperation)draggingUpdated:(id < NSDraggingInfo >)sender
 {
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
-  NSPoint pt = [sender draggingLocation];
-  Fl::e_x = pt.x;
-  Fl::e_y = [self frame].size.height - pt.y;
-  Fl::e_x_root = [[self window] frame].origin.x + Fl::e_x;
-  Fl::e_y_root = [[self window] frame].origin.y + pt.y;
-  Fl::e_y_root = [[[self window] screen] frame].size.height - Fl::e_y_root;
+  update_e_xy_and_e_xy_root([self window]);
   fl_dnd_target_window = target;
   int ret = Fl::handle( FL_DND_DRAG, target );
   breakMacEventLoop();
@@ -1843,12 +1845,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   // NSDragOperation sourceDragMask;
   // sourceDragMask = [sender draggingSourceOperationMask];
   pboard = [sender draggingPasteboard];
-  NSPoint pt = [sender draggingLocation];
-  Fl::e_x = pt.x;
-  Fl::e_y = [self frame].size.height - pt.y;
-  Fl::e_x_root = [[self window] frame].origin.x + Fl::e_x;
-  Fl::e_y_root = [[self window] frame].origin.y + pt.y;
-  Fl::e_y_root = [[[self window] screen] frame].size.height - Fl::e_y_root;
+  update_e_xy_and_e_xy_root([self window]);
   if (DragData) { free(DragData); DragData = NULL; }
   if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
     CFArrayRef files = (CFArrayRef)[pboard propertyListForType:NSFilenamesPboardType];
