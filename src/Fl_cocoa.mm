@@ -114,7 +114,6 @@ char fl_key_vector[32];                 // used by Fl::get_key()
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
 int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
 //const Fl_Window* fl_modal_for;        // parent of modal() window
-Fl_Region fl_window_region = 0;
 Window fl_window;
 Fl_Window *Fl_Window::current_;
 //EventRef fl_os_event;		// last (mouse) event
@@ -2246,11 +2245,8 @@ void Fl_Window::make_current()
   [[(NSWindow*)i->xid contentView]  lockFocus];
   i->gc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
   fl_gc = i->gc;
-  if ( fl_window_region ) XDestroyRegion(fl_window_region);
-  if (this->window()) {
-    fl_window_region = XRectangleRegion(0,0,w(),h());
-  } else {
-    fl_window_region = XRectangleRegion(0, 0, w(), h());
+  Fl_Region fl_window_region = XRectangleRegion(0,0,w(),h());
+  if ( ! this->window() ) {
     for ( Fl_X *cx = i->xidChildren; cx; cx = cx->xidNext ) {	// clip-out all sub-windows
       Fl_Window *cw = cx->w;
       Fl_Region from = fl_window_region;
@@ -2262,8 +2258,19 @@ void Fl_Window::make_current()
   // antialiasing must be deactivated because it applies to rectangles too
   // and escapes even clipping!!!
   // it gets activated when needed (e.g., draw text)
-  CGContextSetShouldAntialias(fl_gc, false);
-  // this is the native view context with origin at bottom left
+  CGContextSetShouldAntialias(fl_gc, false);  
+  CGFloat hgt = [[(NSWindow*)fl_window contentView] frame].size.height;
+  CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
+  CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the window
+  win = this;
+  while(win && win->window()) { // translate to subwindow origin if this is a subwindow context
+    CGContextTranslateCTM(fl_gc, win->x(), win->y());
+    win = win->window();
+  }
+  //apply window's clip
+  CGContextClipToRects(fl_gc, fl_window_region->rects, fl_window_region->count );
+  XDestroyRegion(fl_window_region);
+// this is the context with origin at top left of (sub)window clipped out of its subwindows if any
   CGContextSaveGState(fl_gc); 
 #if defined(USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
@@ -2286,24 +2293,14 @@ extern void fl_quartz_restore_line_style_();
 // current Quartz context
 void Fl_X::q_fill_context() {
   if (!fl_gc) return;
-  int hgt = 0;
-  if (fl_window) {
-    hgt = [[(NSWindow*)Fl_X::i(Fl_Window::current_)->xid contentView] frame].size.height;
-  } else {
-    hgt = CGBitmapContextGetHeight(fl_gc);
-  }
-  CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
-  CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the context
+  if ( ! fl_window) { // a bitmap context
+    size_t hgt = CGBitmapContextGetHeight(fl_gc);
+    CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
+    CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the context
+    }
   fl_font(fl_fontsize);
   fl_color(fl_color_);
   fl_quartz_restore_line_style_();
-  if (fl_window) {			// translate to subwindow origin if this is a subwindow context
-    Fl_Window *w = Fl_Window::current_;
-    while(w && w->window()) {
-      CGContextTranslateCTM(fl_gc, w->x(), w->y());
-      w = w->window();
-    }
-  }
 }
 
 // The only way to reset clipping to its original state is to pop the current graphics

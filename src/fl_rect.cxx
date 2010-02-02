@@ -564,7 +564,6 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 // warning: the Quartz implementation currently uses Quickdraw calls to achieve
 //          clipping. A future version should instead use 'CGContectClipToRect'
 //          and friends.
-extern Fl_Region fl_window_region;
 #endif
 
 /** Undoes any clobbering of clip done by your program */
@@ -577,19 +576,17 @@ void fl_restore_clip() {
 #elif defined(WIN32)
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
 #elif defined(__APPLE_QUARTZ__)
-  if ( fl_window ) // clipping for a true window
-  {
+  if ( fl_window ) { // clipping for a true window
 #ifdef __APPLE_COCOA__
-	Fl_X::q_clear_clipping();
-	Fl_X::q_fill_context();//flip coords and translate if subwindow
-	//apply window's clip
-	CGContextClipToRects(fl_gc, fl_window_region->rects, fl_window_region->count );
-	//apply additional program clip
-	if(r) {
-	  CGContextClipToRects(fl_gc, r->rects, r->count);
-	}
+    Fl_X::q_clear_clipping();
+    Fl_X::q_fill_context();//flip coords if bitmap context
+    //apply program clip
+    if(r) {
+      CGContextClipToRects(fl_gc, r->rects, r->count);
+    }
 #else
-	GrafPtr port = GetWindowPort( fl_window );
+    extern Fl_Region fl_window_region;
+    GrafPtr port = GetWindowPort( fl_window );
     if ( port ) { 
       RgnHandle portClip = NewRgn();
       CopyRgn( fl_window_region, portClip ); // changed
@@ -603,20 +600,20 @@ void fl_restore_clip() {
     }
 #endif
   } else if (fl_gc) { // clipping for an offscreen drawing world (CGBitmap)
-	  Rect portRect;
-	  portRect.top = 0;
-	  portRect.left = 0;
-	  portRect.bottom = CGBitmapContextGetHeight(fl_gc);
-	  portRect.right = CGBitmapContextGetWidth(fl_gc);
-	  Fl_X::q_clear_clipping();
-	  if (r) {
+    Fl_X::q_clear_clipping();
+    if (r) {
 #ifdef __APPLE_COCOA__
-			CGContextClipToRects(fl_gc, r->rects, r->count);
+      CGContextClipToRects(fl_gc, r->rects, r->count);
 #else
-			ClipCGContextToRegion(fl_gc, &portRect, r);
+      Rect portRect;
+      portRect.top = 0;
+      portRect.left = 0;
+      portRect.bottom = CGBitmapContextGetHeight(fl_gc);
+      portRect.right = CGBitmapContextGetWidth(fl_gc);
+      ClipCGContextToRegion(fl_gc, &portRect, r);
 #endif
-		}
-	  Fl_X::q_fill_context();
+      }
+    Fl_X::q_fill_context();
   }
 #else
 # error unsupported platform
