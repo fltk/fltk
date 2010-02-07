@@ -382,33 +382,24 @@ Fl_Group::Fl_Group(int X,int Y,int W,int H,const char *l)
   This method differs from the remove() method in that it
   affects all child widgets and deletes them from memory.
 */
-/* Implementation note:
-  This is optimized and does not remove children _during_ the loop.
-  However, deleting one child may also delete other children in the
-  group because a child widget can destroy other children in the same
-  group in its destructor or simply remove them from the parent group.
-  Because of this we must walk forwards through the array of children.
-  The allocated array_ of children is freed after the loop.
-*/
 void Fl_Group::clear() {
   savedfocus_ = 0;
   resizable_ = this;
   init_sizes();
   // okay, now it is safe to destroy the children:
-  int i;
-  for (i=0; i<children_; i++) {	// delete all children
-    Fl_Widget* o = child(i);	// get child widget
-    if (o->parent()==this) {	// should always be true
-      o->parent_ = 0;		// reset child's parent
-      delete o;			// delete it
+  while (children_) {
+    Fl_Widget* o = child(0);	// *first* child widget
+    if (o->parent() == this) {	// should always be true
+      remove(o);		// remove child widget first
+      delete o;			// then delete it
+    } else {			// this should never happen !
+#ifdef DEBUG_CLEAR
+      printf ("Fl_Group::clear() widget:%p, parent: %p != this (%p)\n",
+	      o, o->parent(), this); fflush(stdout);
+#endif // DEBUG_CLEAR
+      remove(o);		// remove it
     }
   }
-  // now free the array_ of children (if any)
-  if (children_ > 1) {
-    free((void*)array_);
-  }
-  array_ = 0;
-  children_ = 0;
 }
 
 /**
@@ -478,8 +469,6 @@ void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
   This method differs from the clear() method in that it only affects
   a single widget and does not delete it from memory.
 */
-// Note: if you change this, be sure to do similar changes in
-// Fl_Group::clear() as well, if applicable.
 void Fl_Group::remove(Fl_Widget &o) {
   if (!children_) return;
   int i = find(o);
