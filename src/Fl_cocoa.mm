@@ -53,7 +53,13 @@ extern "C" {
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
+#if __GNUC__ == 3 // because Fl_Image.H uses a private variable name id that's illegal under GCC 3
+#define id id_
+#endif
 #include <FL/Fl_Sys_Menu_Bar.H>
+#ifdef id
+#undef id
+#endif
 #include <FL/Fl_Input_.H>
 #include <stdio.h>
 #include <stdlib.h>
