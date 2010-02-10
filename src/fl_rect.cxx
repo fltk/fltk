@@ -660,20 +660,15 @@ void fl_push_clip(int x, int y, int w, int h) {
       CombineRgn(r,r,current,RGN_AND);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-			XDestroyRegion(r);
-			r = MacRectRegionIntersect(current, x,y,w,h);
+      XDestroyRegion(r);
+      r = MacRectRegionIntersect(current, x,y,w,h);
 #else
-			SectRgn(r, current, r);
+      SectRgn(r, current, r);
 #endif
 #else
 # error unsupported platform
 #endif
     }
-#if defined(__APPLE_QUARTZ__)
-		else {
-			r = XRectangleRegion(x,y,w,h);
-			}
-#endif
   } else { // make empty clip region:
 #if defined(USE_X11)
     r = XCreateRegion();
