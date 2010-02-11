@@ -53,7 +53,9 @@ extern "C" {
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
-#if __GNUC__ == 3 // because Fl_Image.H uses a private variable name id that's illegal under GCC 3
+#if __GNUC__ == 3 
+// because Fl_Image.H, included by Fl_Sys_Menu_Bar.H, uses a private variable name id 
+// that's illegal under GCC 3 -x -objective-c++
 #define id id_
 #endif
 #include <FL/Fl_Sys_Menu_Bar.H>
@@ -1310,11 +1312,11 @@ extern "C" {
   pt.x = 0;
   pt.y = [[nsw contentView] frame].size.height;
   pt2 = [nsw convertBaseToScreen:pt];
+  update_e_xy_and_e_xy_root(nsw);
   window->position((int)pt2.x, (int)([[nsw screen] frame].size.height - pt2.y));
   if ([nsw containsGLsubwindow] ) {
     [nsw display];// redraw window after moving if it contains OpenGL subwindows
   }
-  update_e_xy_and_e_xy_root(nsw);
 }
 - (void)windowDidResize:(NSNotification *)notif
 {
@@ -1326,11 +1328,11 @@ extern "C" {
   pt.y = [[nsw contentView] frame].size.height;
   pt2 = [nsw convertBaseToScreen:pt];
   resize_from_system = window;
+  update_e_xy_and_e_xy_root(nsw);
   window->resize((int)pt2.x, 
                  (int)([[nsw screen] frame].size.height - pt2.y),
 		 (int)r.size.width,
 		 (int)r.size.height);
-  update_e_xy_and_e_xy_root(nsw);
 }
 - (void)windowDidBecomeKey:(NSNotification *)notif
 {
