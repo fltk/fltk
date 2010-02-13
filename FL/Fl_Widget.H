@@ -924,6 +924,22 @@ public:
    */
   Fl_Window* window() const ;
 
+  /** Returns an Fl_Group pointer if this widget is an Fl_Group.
+  
+      \retval NULL if this widget is not derived from Fl_Group.
+      \note This method is provided to avoid dynamic_cast.
+      \todo More documentation ...
+   */
+  virtual Fl_Group* as_group() const {return 0;}
+
+  /** Returns an Fl_Window pointer if this widget is an Fl_Window.
+  
+      \retval NULL if this widget is not derived from Fl_Window.
+      \note This method is provided to avoid dynamic_cast.
+      \todo More documentation ...
+   */
+  virtual Fl_Window* as_window() const {return 0;}
+
   /** For back compatibility only.
       \deprecated Use selection_color() instead.
   */
