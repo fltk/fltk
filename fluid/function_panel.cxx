@@ -420,6 +420,112 @@ n int foo();\", a #directive like \"#include <foo.h>\", a comment like \"//foo\
   return decl_panel;
 }
 
+Fl_Double_Window *data_panel=(Fl_Double_Window *)0;
+
+Fl_Choice *data_choice=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_data_choice[] = {
+ {"in source file only", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"in header file only", 0,  0, 0, 16, FL_NORMAL_LABEL, 0, 11, 0},
+ {"\"static\" in source file", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"in source and \"extern\" in header", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+Fl_Choice *data_class_choice=(Fl_Choice *)0;
+
+Fl_Menu_Item menu_data_class_choice[] = {
+ {"private", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"public", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"protected", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
+};
+
+Fl_Input *data_input=(Fl_Input *)0;
+
+Fl_Input *data_filename=(Fl_Input *)0;
+
+Fl_Button *data_filebrowser=(Fl_Button *)0;
+
+Fl_Return_Button *data_panel_ok=(Fl_Return_Button *)0;
+
+Fl_Button *data_panel_cancel=(Fl_Button *)0;
+
+Fl_Text_Editor *data_comment_input=(Fl_Text_Editor *)0;
+
+Fl_Double_Window* make_data_panel() {
+  { data_panel = new Fl_Double_Window(343, 237, "Binary Data Properties");
+    data_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
+    { Fl_Group* o = new Fl_Group(10, 10, 270, 20);
+      { Fl_Box* o = new Fl_Box(200, 10, 80, 20);
+        Fl_Group::current()->resizable(o);
+      } // Fl_Box* o
+      { data_choice = new Fl_Choice(10, 10, 185, 20);
+        data_choice->down_box(FL_BORDER_BOX);
+        data_choice->labelsize(11);
+        data_choice->textsize(11);
+        data_choice->menu(menu_data_choice);
+      } // Fl_Choice* data_choice
+      { data_class_choice = new Fl_Choice(10, 10, 75, 20);
+        data_class_choice->down_box(FL_BORDER_BOX);
+        data_class_choice->labelsize(11);
+        data_class_choice->textsize(11);
+        data_class_choice->menu(menu_data_class_choice);
+      } // Fl_Choice* data_class_choice
+      o->end();
+    } // Fl_Group* o
+    { data_input = new Fl_Input(10, 52, 320, 20, "Variable Name:");
+      data_input->tooltip("Binary Data variables are declared \"const unsigned char []\".");
+      data_input->labelfont(1);
+      data_input->labelsize(11);
+      data_input->textfont(4);
+      data_input->textsize(11);
+      data_input->align(Fl_Align(133));
+      data_input->when(FL_WHEN_NEVER);
+    } // Fl_Input* data_input
+    { data_filename = new Fl_Input(10, 90, 280, 20, "Filename:");
+      data_filename->tooltip("Name and path of binary file that will be included.");
+      data_filename->labelfont(1);
+      data_filename->labelsize(11);
+      data_filename->textfont(4);
+      data_filename->textsize(11);
+      data_filename->align(Fl_Align(133));
+      data_filename->when(FL_WHEN_NEVER);
+    } // Fl_Input* data_filename
+    { data_filebrowser = new Fl_Button(290, 90, 40, 20, "@fileopen");
+      data_filebrowser->labelcolor((Fl_Color)134);
+    } // Fl_Button* data_filebrowser
+    { Fl_Group* o = new Fl_Group(10, 205, 320, 20);
+      { data_panel_ok = new Fl_Return_Button(200, 205, 60, 20, "OK");
+        data_panel_ok->labelsize(11);
+        data_panel_ok->window()->hotspot(data_panel_ok);
+      } // Fl_Return_Button* data_panel_ok
+      { data_panel_cancel = new Fl_Button(270, 205, 60, 20, "Cancel");
+        data_panel_cancel->shortcut(0xff1b);
+        data_panel_cancel->labelsize(11);
+      } // Fl_Button* data_panel_cancel
+      { Fl_Box* o = new Fl_Box(10, 205, 185, 20);
+        Fl_Group::current()->resizable(o);
+      } // Fl_Box* o
+      o->end();
+    } // Fl_Group* o
+    { data_comment_input = new Fl_Text_Editor(10, 130, 320, 65, "Comment:");
+      data_comment_input->tooltip("Declaration comment in Doxygen format");
+      data_comment_input->box(FL_DOWN_BOX);
+      data_comment_input->labelfont(1);
+      data_comment_input->labelsize(11);
+      data_comment_input->textfont(4);
+      data_comment_input->textsize(11);
+      data_comment_input->align(Fl_Align(FL_ALIGN_TOP_LEFT));
+      Fl_Group::current()->resizable(data_comment_input);
+      data_comment_input->buffer(new Fl_Text_Buffer());
+    } // Fl_Text_Editor* data_comment_input
+    data_panel->size_range(343, 237);
+    data_panel->end();
+  } // Fl_Double_Window* data_panel
+  return data_panel;
+}
+
 Fl_Double_Window *class_panel=(Fl_Double_Window *)0;
 
 Fl_Light_Button *c_public_button=(Fl_Light_Button *)0;
@@ -656,6 +762,12 @@ Fl_Window* make_widgetbin() {
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("declblock"));
         o->image(pixmap[11]);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(55, 55, 24, 24);
+        o->tooltip("Binary Data");
+        o->box(FL_THIN_UP_BOX);
+        o->callback((Fl_Callback*)type_make_cb, (void*)("data"));
+        o->image(pixmap[49]);
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o

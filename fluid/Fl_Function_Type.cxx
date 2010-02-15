@@ -30,6 +30,7 @@
 #include <FL/Fl_File_Chooser.H>
 #include "Fl_Type.h"
 #include <FL/fl_show_input.H>
+#include <FL/Fl_File_Chooser.H>
 #include "../src/flstring.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,7 +42,11 @@ extern const char* i18n_file;
 extern const char* i18n_set;
 extern char i18n_program[];
 
+extern int compile_only;
+
 extern void redraw_browser();
+extern void goto_source_dir();
+extern void leave_source_dir();
 
 ////////////////////////////////////////////////////////////////
 // quick check of any C code for legality, returns an error message
@@ -51,14 +56,14 @@ static char buffer[128]; // for error messages
 // check a quoted string ending in either " or ' or >:
 const char *_q_check(const char * & c, int type) {
   for (;;) switch (*c++) {
-  case '\0':
-    sprintf(buffer,"missing %c",type);
-    return buffer;
-  case '\\':
-    if (*c) c++;
-    break;
-  default:
-    if (*(c-1) == type) return 0;
+    case '\0':
+      sprintf(buffer,"missing %c",type);
+      return buffer;
+    case '\\':
+      if (*c) c++;
+      break;
+    default:
+      if (*(c-1) == type) return 0;
   }
 }
 
@@ -66,50 +71,50 @@ const char *_q_check(const char * & c, int type) {
 const char *_c_check(const char * & c, int type) {
   const char *d;
   for (;;) switch (*c++) {
-  case 0:
-    if (!type) return 0;
-    sprintf(buffer, "missing %c", type);
-    return buffer;
-  case '/':
-    // Skip comments as needed...
-    if (*c == '/') {
-      while (*c != '\n' && *c) c++;
-    } else if (*c == '*') {
-      c++;
-      while ((*c != '*' || c[1] != '/') && *c) c++;
-      if (*c == '*') c+=2;
-      else {
-        return "missing '*/'";
+    case 0:
+      if (!type) return 0;
+      sprintf(buffer, "missing %c", type);
+      return buffer;
+    case '/':
+      // Skip comments as needed...
+      if (*c == '/') {
+        while (*c != '\n' && *c) c++;
+      } else if (*c == '*') {
+        c++;
+        while ((*c != '*' || c[1] != '/') && *c) c++;
+        if (*c == '*') c+=2;
+        else {
+          return "missing '*/'";
+        }
       }
-    }
-    break;
-  case '#':
-    // treat cpp directives as a comment:
-    while (*c != '\n' && *c) c++;
-    break;
-  case '{':
-    if (type==')') goto UNEXPECTED;
-    d = _c_check(c,'}');
-    if (d) return d;
-    break;
-  case '(':
-    d = _c_check(c,')');
-    if (d) return d;
-    break;
-  case '\"':
-    d = _q_check(c,'\"');
-    if (d) return d;
-    break;
-  case '\'':
-    d = _q_check(c,'\'');
-    if (d) return d;
-    break;
-  case '}':
-  case ')':
-  UNEXPECTED:
-    if (type == *(c-1)) return 0;
-    sprintf(buffer, "unexpected %c", *(c-1));
-    return buffer;
+      break;
+    case '#':
+      // treat cpp directives as a comment:
+      while (*c != '\n' && *c) c++;
+      break;
+    case '{':
+      if (type==')') goto UNEXPECTED;
+      d = _c_check(c,'}');
+      if (d) return d;
+      break;
+    case '(':
+      d = _c_check(c,')');
+      if (d) return d;
+      break;
+    case '\"':
+      d = _q_check(c,'\"');
+      if (d) return d;
+      break;
+    case '\'':
+      d = _q_check(c,'\'');
+      if (d) return d;
+      break;
+    case '}':
+    case ')':
+    UNEXPECTED:
+      if (type == *(c-1)) return 0;
+      sprintf(buffer, "unexpected %c", *(c-1));
+      return buffer;
   }
 }
 
@@ -232,7 +237,7 @@ void Fl_Function_Type::open() {
     if (mod) set_modflag(1);
     break;
   }
- BREAK2:
+BREAK2:
   function_panel->hide();
 }
 
@@ -399,7 +404,7 @@ void Fl_Function_Type::write_code2() {
     havechildren = 1;
     if (child->is_window() && child->name()) var = child->name();
   }
-
+  
   if (ismain()) {
     if (havewidgets) write_c("  %s->show(argc, argv);\n", var);
     if (havechildren) write_c("  return Fl::run();\n");
@@ -457,7 +462,7 @@ void Fl_Code_Type::open() {
     free(c);
     break;
   }
- BREAK2:
+BREAK2:
   code_panel->hide();
 }
 
@@ -526,7 +531,7 @@ void Fl_CodeBlock_Type::open() {
     storestring(c, after);
     break;
   }
- BREAK2:
+BREAK2:
   codeblock_panel->hide();
 }
 
@@ -548,13 +553,13 @@ void Fl_CodeBlock_Type::write_code2() {
 
 int Fl_Decl_Type::is_public() const 
 {
- Fl_Type *p = parent;
- while (p && !p->is_decl_block()) p = p->parent;
- if(p && p->is_public() && public_)
-   return public_;
- else if(!p)
-   return public_;
- return 0;
+  Fl_Type *p = parent;
+  while (p && !p->is_decl_block()) p = p->parent;
+  if(p && p->is_public() && public_)
+    return public_;
+  else if(!p)
+    return public_;
+  return 0;
 }
 
 Fl_Type *Fl_Decl_Type::make() {
@@ -572,17 +577,25 @@ Fl_Type *Fl_Decl_Type::make() {
 void Fl_Decl_Type::write_properties() {
   Fl_Type::write_properties();
   switch (public_) {
+    case 0: write_string("private"); break;
     case 1: write_string("public"); break;
     case 2: write_string("protected"); break;
   }
-  if (!static_) write_string("global");
+  if (static_) 
+    write_string("local");
+  else
+    write_string("global");
 }
 
 void Fl_Decl_Type::read_property(const char *c) {
   if (!strcmp(c,"public")) {
     public_ = 1;
+  } else if (!strcmp(c,"private")) {
+    public_ = 0;
   } else if (!strcmp(c,"protected")) {
     public_ = 2;
+  } else if (!strcmp(c,"local")) {
+    static_ = 1;
   } else if (!strcmp(c,"global")) {
     static_ = 0;
   } else {
@@ -645,7 +658,7 @@ void Fl_Decl_Type::open() {
     if (c) free((void*)c);
     break;
   }
- BREAK2:
+BREAK2:
   decl_panel->hide();
 }
 
@@ -656,11 +669,11 @@ void Fl_Decl_Type::write_code1() {
   if (!c) return;
   // handle a few keywords differently if inside a class
   if (is_in_class() && (
-         !strncmp(c,"class",5) && isspace(c[5])
-      || !strncmp(c,"typedef",7) && isspace(c[7])
-      || !strncmp(c,"FL_EXPORT",9) && isspace(c[9])
-      || !strncmp(c,"struct",6) && isspace(c[6])
-      ) ) {
+                        !strncmp(c,"class",5) && isspace(c[5])
+                        || !strncmp(c,"typedef",7) && isspace(c[7])
+                        || !strncmp(c,"FL_EXPORT",9) && isspace(c[9])
+                        || !strncmp(c,"struct",6) && isspace(c[6])
+                        ) ) {
     write_public(public_);
     write_comment_h("  ");
     write_h("  %s\n", c);
@@ -673,7 +686,7 @@ void Fl_Decl_Type::write_code1() {
       || !strncmp(c,"typedef",7) && isspace(c[7])
       || !strncmp(c,"using",5) && isspace(c[5])
       || !strncmp(c,"FL_EXPORT",9) && isspace(c[9])
-//    || !strncmp(c,"struct",6) && isspace(c[6])
+      //    || !strncmp(c,"struct",6) && isspace(c[6])
       ) {
     if (public_) {
       write_comment_h();
@@ -688,7 +701,7 @@ void Fl_Decl_Type::write_code1() {
   const char* e = c+strlen(c), *csc = c;
   while (csc<e && (csc[0]!='/' || csc[1]!='/')) csc++;
   if (csc!=e) e = csc; // comment found
-  // lose all trailing semicolons so I can add one:
+                       // lose all trailing semicolons so I can add one:
   while (e>c && e[-1]==' ') e--;
   while (e>c && e[-1]==';') e--;
   if (class_name(1)) {
@@ -716,6 +729,211 @@ void Fl_Decl_Type::write_code1() {
 }
 
 void Fl_Decl_Type::write_code2() {}
+
+////////////////////////////////////////////////////////////////
+
+Fl_Type *Fl_Data_Type::make() {
+  Fl_Type *p = Fl_Type::current;
+  while (p && !p->is_decl_block()) p = p->parent;
+  Fl_Data_Type *o = new Fl_Data_Type();
+  o->public_ = 1;
+  o->static_ = 1;
+  o->filename_ = 0;
+  char buf[32]; sprintf(buf, "data_%08x", (unsigned int)o);
+  o->name(buf);
+  o->add(p);
+  o->factory = this;
+  return o;
+}
+
+void Fl_Data_Type::write_properties() {
+  Fl_Decl_Type::write_properties();
+  if (filename_) {
+    write_string("filename");
+    write_word(filename_);
+  }
+}
+
+void Fl_Data_Type::read_property(const char *c) {
+  if (!strcmp(c,"filename")) {
+    storestring(read_word(), filename_, 1);
+  } else {
+    Fl_Decl_Type::read_property(c);
+  }
+}
+
+void Fl_Data_Type::open() {
+  if (!data_panel) make_data_panel();
+  data_input->static_value(name());
+  if (is_in_class()) {
+    data_class_choice->value(public_);
+    data_class_choice->show();
+    data_choice->hide();
+  } else {
+    data_choice->value((public_&1)|((static_&1)<<1));
+    data_choice->show();
+    data_class_choice->hide();
+  }
+  data_filename->value(filename_?filename_:"");
+  const char *c = comment();
+  data_comment_input->buffer()->text(c?c:"");
+  data_panel->show();
+  const char* message = 0;
+  for (;;) { // repeat as long as there are errors
+    if (message) fl_alert(message);
+    for (;;) {
+      Fl_Widget* w = Fl::readqueue();
+      if (w == data_panel_cancel) goto BREAK2;
+      else if (w == data_panel_ok) break;
+      else if (w == data_filebrowser) {
+        goto_source_dir();
+        const char *fn = fl_file_chooser("Load Binary Data", 0L, data_filename->value(), 1);
+        leave_source_dir();
+        if (fn) {
+          if (strcmp(fn, data_filename->value()))
+            set_modflag(1); 
+          data_filename->value(fn);
+        }
+      }
+      else if (!w) Fl::wait();
+    }
+    // store the variable name:
+    const char*c = data_input->value();
+    char *s = strdup(c), *p = s, *q, *n;
+    for (;;++p) {
+      if (!isspace((unsigned char)(*p))) break;
+    }
+    n = p;
+    if ( (!isalpha((unsigned char)(*p))) && ((*p)!='_') && ((*p)!=':') ) goto OOPS;
+    ++p;
+    for (;;++p) {
+      if ( (!isalnum((unsigned char)(*p))) && ((*p)!='_') && ((*p)!=':') ) break;
+    }
+    q = p;
+    for (;;++q) {
+      if (!*q) break;
+      if (!isspace((unsigned char)(*q))) goto OOPS;
+    }		
+    if (n==q) {
+    OOPS: message = "variable name must be a C identifier";
+      free((void*)s);
+      continue;
+    }
+    *p = 0;
+    name(n);
+    free(s);
+    // store flags
+    if (is_in_class()) {
+      if (public_!=data_class_choice->value()) {
+        set_modflag(1);
+        public_ = data_class_choice->value();
+      }
+    } else {
+      if (public_!=(data_choice->value()&1)) {
+        set_modflag(1);
+        public_ = (data_choice->value()&1);
+      }
+      if (static_!=((data_choice->value()>>1)&1)) {
+        set_modflag(1);
+        static_ = ((data_choice->value()>>1)&1);
+      }
+    }
+    // store the filename
+    c = data_filename->value();
+    if (filename_ && strcmp(filename_, data_filename->value()))
+      set_modflag(1); 
+    else if (!filename_ && *c)
+      set_modflag(1);
+    if (filename_) { free((void*)filename_); filename_ = 0L; }
+    if (c && *c) filename_ = strdup(c);
+    // store the comment
+    c = data_comment_input->buffer()->text();
+    if (c && *c) {
+      if (!comment() || strcmp(c, comment())) redraw_browser();
+      comment(c);
+    } else {
+      if (comment()) redraw_browser();
+      comment(0);
+    }
+    if (c) free((void*)c);
+    break;
+  }
+BREAK2:
+  data_panel->hide();
+}
+
+Fl_Data_Type Fl_Data_type;
+
+void Fl_Data_Type::write_code1() {
+  const char *message = 0;
+  const char *c = name();
+  if (!c) return;
+  const char *fn = filename_;
+  char *data = 0;
+  size_t nData = -1;
+  // path should be set correctly already
+  if (filename_ && !write_sourceview) {
+    FILE *f = fopen(filename_, "rb");
+    if (!f) {
+      message = "Can't include binary file. Can't open";
+    } else {
+      fseek(f, 0, SEEK_END);
+      nData = ftell(f);
+      fseek(f, 0, SEEK_SET);
+      if (nData) {
+        data = (char*)calloc(nData, 1);
+        fread(data, nData, 1, f);
+      }
+      fclose(f);
+    }
+  } else {
+    fn = "<no filename>";
+  }
+  if (is_in_class()) {
+    write_public(public_);
+    write_comment_h("  ");
+    write_h("  static unsigned char %s[];\n", c);
+    write_c("unsigned char %s::%s[] = /* binary data included from %s */\n", class_name(1), c, fn);
+    if (message) write_c("#error %s %s\n", message, fn);
+    write_cdata(data, nData);
+    write_c(";\n");
+  } else {
+    // the "header only" option does not apply here!
+    if (public_) {
+      if (static_) {
+        write_h("extern unsigned char %s[];\n", c);
+        write_comment_c();
+        write_c("unsigned char %s[] = /* binary data included from %s */\n", c, fn);
+        if (message) write_c("#error %s %s\n", message, fn);
+        write_cdata(data, nData);
+        write_c(";\n");
+      } else {
+        write_comment_h();
+        write_h("#error Unsupported declaration loading binary data %s\n", fn);
+        write_h("unsigned char %s[] = { 1, 2, 3 };\n", c);
+      }
+    } else {
+      write_comment_c();
+      if (static_) 
+        write_c("static ");
+      write_c("unsigned char %s[] = /* binary data included from %s */\n", c, fn);
+      if (message) write_c("#error %s %s\n", message, fn);
+      write_cdata(data, nData);
+      write_c(";\n");
+    }
+  }
+  // if we are in interactive mode, we pop up a warning dialog 
+  // giving the error: (compile_only && !write_sourceview)
+  if (message && !write_sourceview) {
+    if (compile_only)
+      fprintf(stderr, "FLUID ERROR: %s %s\n", message, fn);
+    else
+      fl_alert("%s\n%s\n", message, fn);
+  }
+  if (data) free(data);
+}
+
+void Fl_Data_Type::write_code2() {}
 
 ////////////////////////////////////////////////////////////////
 
@@ -787,7 +1005,7 @@ void Fl_DeclBlock_Type::open() {
     }
     break;
   }
- BREAK2:
+BREAK2:
   declblock_panel->hide();
 }
 
@@ -796,14 +1014,14 @@ Fl_DeclBlock_Type Fl_DeclBlock_type;
 void Fl_DeclBlock_Type::write_code1() {
   const char* c = name();
   if (public_)
-     write_h("%s\n", c);
+    write_h("%s\n", c);
   write_c("%s\n", c);
 }
 
 void Fl_DeclBlock_Type::write_code2() {
   const char* c = after;
   if (public_)
-     write_h("%s\n", c);
+    write_h("%s\n", c);
   write_c("%s\n", c);
 }
 
@@ -895,9 +1113,9 @@ void Fl_Comment_Type::open() {
         if (comment_predefined->value()==1) {
           // add the current comment to the database
           const char *xname = fl_input(
-            "Please enter a name to reference the current\ncomment in your database.\n\n"
-            "Use forward slashes '/' to create submenus.", 
-            "My Comment");
+                                       "Please enter a name to reference the current\ncomment in your database.\n\n"
+                                       "Use forward slashes '/' to create submenus.", 
+                                       "My Comment");
           if (xname) {
             char *name = strdup(xname);
             for (char*s=name;*s;s++) if (*s==':') *s = ';';
@@ -973,7 +1191,7 @@ void Fl_Comment_Type::open() {
     if (mod) set_modflag(1);
     break;
   }
- BREAK2:
+BREAK2:
   title_buf[0] = 0;
   comment_panel->hide();
 }
@@ -1138,9 +1356,9 @@ void Fl_Class_Type::open() {
   c_comment_input->buffer()->text(c?c:"");
   class_panel->show();
   const char* message = 0;
-
+  
   char *na=0,*pr=0,*p=0; // name and prefix substrings
-
+  
   for (;;) { // repeat as long as there are errors
     if (message) fl_alert(message);
     for (;;) {
@@ -1158,7 +1376,7 @@ void Fl_Class_Type::open() {
     if (p<s) goto OOPS;
     while (p>=s && is_id(*p)) p--;
     if ( (p<s && !is_id(*(p+1))) || !*(p+1) ) {
-      OOPS: message = "class name must be C++ identifier";
+    OOPS: message = "class name must be C++ identifier";
       free((void*)s);
       continue;
     }
@@ -1190,7 +1408,7 @@ void Fl_Class_Type::open() {
     if (c) free((void*)c);
     break;
   }
- BREAK2:
+BREAK2:
   class_panel->hide();
 }
 
@@ -1218,9 +1436,9 @@ void Fl_Class_Type::write_code1() {
   write_h("\n");
   write_comment_h();
   if (prefix() && strlen(prefix()))
-      write_h("class %s %s ", prefix(), name());
+    write_h("class %s %s ", prefix(), name());
   else
-      write_h("class %s ", name());
+    write_h("class %s ", name());
   if (subclass_of) write_h(": %s ", subclass_of);
   write_h("{\n");
 }

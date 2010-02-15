@@ -1288,7 +1288,7 @@ Fl_File_Chooser::update_preview()
 {
   const char		*filename;	// Current filename
   const char            *newlabel = 0;  // New label text
-  Fl_Shared_Image	*image = 0,		// New image
+  Fl_Shared_Image	*image = 0,     // New image
 			*oldimage;	// Old image
   int			pbw, pbh;	// Width and height of preview box
   int			w, h;		// Width and height of preview image

@@ -31,22 +31,28 @@ comment {//
 } {in_source in_header
 } 
 
-decl {\#include <FL/Fl_Pixmap.H>} {} 
-
-decl {\#include "Fl_Type.h"} {} 
-
-decl {\#include "undo.h"} {} 
-
-decl {extern class Fl_Pixmap *pixmap[];} {} 
-
-decl {extern class Fl_Type *Fl_Type_make(const char*);} {} 
-
-decl {extern void select_only(Fl_Type*);} {} 
-
-decl {extern void exit_cb(Fl_Widget*, void*);} {global
+decl {\#include <FL/Fl_Pixmap.H>} {private local
 } 
 
-decl {extern void toggle_widgetbin_cb(Fl_Widget*, void*);} {global
+decl {\#include "Fl_Type.h"} {private local
+} 
+
+decl {\#include "undo.h"} {private local
+} 
+
+decl {extern class Fl_Pixmap *pixmap[];} {private local
+} 
+
+decl {extern class Fl_Type *Fl_Type_make(const char*);} {private local
+} 
+
+decl {extern void select_only(Fl_Type*);} {private local
+} 
+
+decl {extern void exit_cb(Fl_Widget*, void*);} {private global
+} 
+
+decl {extern void toggle_widgetbin_cb(Fl_Widget*, void*);} {private global
 } 
 
 Function {make_function_panel()} {} {
@@ -322,6 +328,90 @@ Function {make_decl_panel()} {} {
   }
 } 
 
+Function {make_data_panel()} {open
+} {
+  Fl_Window data_panel {
+    label {Binary Data Properties} open
+    xywh {414 355 343 237} type Double align 80 resizable size_range {343 237 0 0} visible
+  } {
+    Fl_Group {} {open
+      xywh {10 10 270 20}
+    } {
+      Fl_Box {} {
+        xywh {200 10 80 20} resizable
+      }
+      Fl_Choice data_choice {open
+        xywh {10 10 185 20} down_box BORDER_BOX labelsize 11 textsize 11
+      } {
+        MenuItem {} {
+          label {in source file only}
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {in header file only}
+          xywh {0 0 100 20} labelsize 11 hide
+        }
+        MenuItem {} {
+          label {"static" in source file}
+          xywh {0 0 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label {in source and "extern" in header}
+          xywh {0 0 100 20} labelsize 11
+        }
+      }
+      Fl_Choice data_class_choice {open
+        xywh {10 10 75 20} down_box BORDER_BOX labelsize 11 textsize 11
+      } {
+        MenuItem {} {
+          label private
+          xywh {10 10 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label public
+          xywh {10 10 100 20} labelsize 11
+        }
+        MenuItem {} {
+          label protected
+          xywh {10 10 100 20} labelsize 11
+        }
+      }
+    }
+    Fl_Input data_input {
+      label {Variable Name:}
+      tooltip {Binary Data variables are declared "const unsigned char []".} xywh {10 52 320 20} labelfont 1 labelsize 11 align 133 when 0 textfont 4 textsize 11
+    }
+    Fl_Input data_filename {
+      label {Filename:}
+      tooltip {Name and path of binary file that will be included.} xywh {10 90 280 20} labelfont 1 labelsize 11 align 133 when 0 textfont 4 textsize 11
+    }
+    Fl_Button data_filebrowser {
+      label {@fileopen}
+      xywh {290 90 40 20} labelcolor 134
+    }
+    Fl_Group {} {open
+      xywh {10 205 320 20}
+    } {
+      Fl_Return_Button data_panel_ok {
+        label OK selected
+        xywh {200 205 60 20} labelsize 11 hotspot
+      }
+      Fl_Button data_panel_cancel {
+        label Cancel
+        xywh {270 205 60 20} shortcut 0xff1b labelsize 11
+      }
+      Fl_Box {} {
+        xywh {10 205 185 20} resizable
+      }
+    }
+    Fl_Text_Editor data_comment_input {
+      label {Comment:}
+      tooltip {Declaration comment in Doxygen format} xywh {10 130 320 65} box DOWN_BOX labelfont 1 labelsize 11 align 5 textfont 4 textsize 11 resizable
+      code0 {data_comment_input->buffer(new Fl_Text_Buffer());}
+    }
+  }
+} 
+
 Function {make_class_panel()} {} {
   Fl_Window class_panel {
     label {Class Properties} open
@@ -441,7 +531,7 @@ Function {make_widgetbin()} {} {
     callback {if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape)
   exit_cb((Fl_Widget*)o, v);
 else  
-  toggle_widgetbin_cb((Fl_Widget*)o, v);} open selected
+  toggle_widgetbin_cb((Fl_Widget*)o, v);}
     xywh {410 171 550 85} type Single align 80 non_modal visible
   } {
     Fl_Group {} {
@@ -494,6 +584,12 @@ else
         callback type_make_cb
         tooltip {Declaration Block} xywh {30 55 24 24} box THIN_UP_BOX
         code0 {o->image(pixmap[11]);}
+      }
+      Fl_Button {} {
+        user_data {"data"}
+        callback type_make_cb
+        tooltip {Binary Data} xywh {55 55 24 24} box THIN_UP_BOX
+        code0 {o->image(pixmap[49]);}
       }
     }
     Fl_Group {} {

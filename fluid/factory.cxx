@@ -915,6 +915,7 @@ int Fl_Value_Slider_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
 extern class Fl_Function_Type Fl_Function_type;
 extern class Fl_Code_Type Fl_Code_type;
 extern class Fl_CodeBlock_Type Fl_CodeBlock_type;
+extern class Fl_Data_Type Fl_Data_type;
 extern class Fl_Decl_Type Fl_Decl_type;
 extern class Fl_DeclBlock_Type Fl_DeclBlock_type;
 extern class Fl_Comment_Type Fl_Comment_type;
@@ -988,6 +989,7 @@ Fl_Menu_Item New_Menu[] = {
   {"Class",0,cb,(void*)&Fl_Class_type},
   {"Widget Class",0,cb,(void*)&Fl_Widget_Class_type},
   {"Comment",0,cb,(void*)&Fl_Comment_type},
+  {"Binary Data",0,cb,(void*)&Fl_Data_type},
 {0},
 {"Group",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Window_type},
