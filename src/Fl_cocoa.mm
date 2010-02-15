@@ -1,7 +1,7 @@
 //
 // "$Id: Fl_cocoa.mm 6971 2009-04-13 07:32:01Z matt $"
 //
-// MacOS specific code for the Fast Light Tool Kit (FLTK).
+// MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2009 by Bill Spitzak and others.
 //
@@ -1908,11 +1908,6 @@ void Fl_X::make(Fl_Window* w)
   static int xyPos = 100;
   if ( w->parent() ) {		// create a subwindow
     Fl_Group::current(0);
-    Rect wRect;
-    wRect.top    = w->y();
-    wRect.left   = w->x();
-    wRect.bottom = w->y() + w->h(); if (wRect.bottom<=wRect.top) wRect.bottom = wRect.top+1;
-    wRect.right  = w->x() + w->w(); if (wRect.right<=wRect.left) wRect.right = wRect.left+1;
     // our subwindow needs this structure to know about its clipping. 
     Fl_X* x = new Fl_X;
     x->other_xid = 0;
@@ -2011,12 +2006,6 @@ void Fl_X::make(Fl_Window* w)
       Fl_Window* w = Fl_X::first->w;
       while (w->parent()) w = w->window(); // todo: this code does not make any sense! (w!=w??)
     }
-    
-    Rect wRect;
-    wRect.top    = w->y();
-    wRect.left   = w->x();
-    wRect.bottom = w->y() + w->h(); if (wRect.bottom<=wRect.top) wRect.bottom = wRect.top+1;
-    wRect.right  = w->x() + w->w(); if (wRect.right<=wRect.left) wRect.right = wRect.left+1;
     
     const char *name = w->label();
     
