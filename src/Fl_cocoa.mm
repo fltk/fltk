@@ -1391,6 +1391,29 @@ extern "C" {
 }
 @end
 
+@interface FLApplication : NSApplication
+{
+}
+- (void)sendEvent:(NSEvent *)theEvent;
+@end
+@implementation FLApplication
+// The default sendEvent turns key downs into performKeyEquivalent when
+// modifiers are down, but swallows the key up if the modifiers include
+// command.  This one makes all modifiers consistent by always sending key ups.
+// FLView treats performKeyEquivalent to keyDown, but performKeyEquivalent is
+// still needed for the system menu.
+- (void)sendEvent:(NSEvent *)theEvent
+{
+    NSEventType type = [theEvent type];
+    NSWindow *key = [self keyWindow];
+    if (key && type == NSKeyUp) {
+        [key sendEvent:theEvent];
+    } else {
+        [super sendEvent:theEvent];
+    }
+}
+@end
+
 static FLDelegate *mydelegate;
 
 void fl_open_display() {
@@ -1398,7 +1421,7 @@ void fl_open_display() {
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
 	  
-    [NSApplication sharedApplication];
+    [FLApplication sharedApplication];
     NSAutoreleasePool *localPool;
     localPool = [[NSAutoreleasePool alloc] init]; 
     mydelegate = [[FLDelegate alloc] init];
