@@ -1,5 +1,5 @@
 //
-// "$Id: ide_support.cxx 6981 2009-12-25 20:53:22Z matt $"
+// "$Id$"
 //
 // IDE and Build File generation for the Fast Light Tool Kit (FLTK).
 //
@@ -105,9 +105,9 @@
 #include "ide_support.h"
 
 #include <FL/Fl.H>
-#include <FL/fl_ask.h>
+#include <FL/fl_ask.H>
 #include <FL/Fl_Widget.H>
-#include <FL/filename.h>
+#include <FL/filename.H>
 
 #include "Fl_Type.h"
 
@@ -636,5 +636,5 @@ public:
 Fl_FltkDB_Plugin FltkDB_Plugin;
 
 //
-// End of "$Id: ide_support.cxx 6981 2009-12-25 20:53:22Z matt $".
+// End of "$Id$".
 //

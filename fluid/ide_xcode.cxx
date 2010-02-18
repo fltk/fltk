@@ -1,5 +1,5 @@
 //
-// "$Id: ide_xcode.cxx 6981 2009-12-25 20:53:22Z matt $"
+// "$Id$"
 //
 // IDE and Build FIle generation for the Fast Light Tool Kit (FLTK).
 //
@@ -92,8 +92,8 @@
 
 #include "ide_support.h"
 
-#include <FL/filename.h>
-#include <FL/fl_ask.h>
+#include <FL/filename.H>
+#include <FL/fl_ask.H>
 
 #include "Fl_Type.h"
 
@@ -1385,5 +1385,5 @@ Fl_IDE_Xcode_Plugin IDE_Xcode_Plugin;
 */
 
 //
-// End of "$Id: ide_xcode.cxx 6981 2009-12-25 20:53:22Z matt $".
+// End of "$Id$".
 //
