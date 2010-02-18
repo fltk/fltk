@@ -44,7 +44,7 @@
 //          Quartz calls in the near future.
 
 // FIXME moving away from Carbon, I am replacing the Scrap manager calls with Pasteboard
-//       calls that support utf8 encoding. As soon as these unction haven proven working
+//       calls that support utf8 encoding. As soon as these function haven proven working
 //       the Scrap manager calls should be removed
 #define USE_PASTEBOARD 1
 
