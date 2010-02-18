@@ -40,9 +40,10 @@
 */
 class FL_EXPORT Fl_JPEG_Image : public Fl_RGB_Image {
 
-  public:
+public:
 
-  Fl_JPEG_Image(const char* filename);
+  Fl_JPEG_Image(const char *filename);
+  Fl_JPEG_Image(const char *name, const unsigned char *data);
 };
 
 #endif

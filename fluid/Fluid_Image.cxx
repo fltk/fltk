@@ -49,6 +49,7 @@ void Fluid_Image::deimage(Fl_Widget *o) {
 static int pixmap_header_written = 0;
 static int bitmap_header_written = 0;
 static int image_header_written = 0;
+static int jpeg_header_written = 0;
 
 void Fluid_Image::write_static() {
   if (!img) return;
@@ -100,6 +101,37 @@ void Fluid_Image::write_static() {
 	    unique_id(this, "image", fl_filename_name(name()), 0),
 	    unique_id(this, "idata", fl_filename_name(name()), 0),
 	    img->w(), img->h());
+  } else if (strcmp(fl_filename_ext(name()), ".jpg")==0) {
+    // Write jpeg image data...
+    write_c("\n");
+    if (jpeg_header_written != write_number) {
+      write_c("#include <FL/Fl_JPEG_Image.H>\n");
+      jpeg_header_written = write_number;
+    }
+    write_c("static unsigned char %s[] =\n",
+	    unique_id(this, "idata", fl_filename_name(name()), 0));
+        
+    FILE *f = fopen(name(), "rb");
+    if (!f) {
+      // message = "Can't include binary file. Can't open";
+    } else {
+      fseek(f, 0, SEEK_END);
+      size_t nData = ftell(f);
+      fseek(f, 0, SEEK_SET);
+      if (nData) {
+        char *data = (char*)calloc(nData, 1);
+        fread(data, nData, 1, f);
+        write_cdata(data, nData);
+        free(data);
+      }
+      fclose(f);
+    }
+    
+    write_c(";\n");
+    write_c("static Fl_JPEG_Image %s(\"%s\", %s);\n",
+	    unique_id(this, "image", fl_filename_name(name()), 0),
+	    fl_filename_name(name()),
+	    unique_id(this, "idata", fl_filename_name(name()), 0));
   } else {
     // Write image data...
     write_c("\n");
