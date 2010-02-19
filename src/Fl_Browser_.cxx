@@ -962,7 +962,7 @@ void Fl_Browser_::sort(int flags) {
     a = item_next(a);
     n++;
   }
-  for (i=n-1; i>0; i--) {
+  for (i=n; i>0; i--) {
     char swapped = 0;
     a = item_first();
     b = item_next(a);
@@ -981,6 +981,7 @@ void Fl_Browser_::sort(int flags) {
           swapped = 1;
         }
       }
+      if (!c) break;
       b = c; a = item_prev(b);
     }
     if (!swapped)
