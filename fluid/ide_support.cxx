@@ -569,7 +569,6 @@ int create_new_database(const char *filename)
     fluid_app.add_lib(fltk_images_lib);
     fluid_app.add_lib(fltk_jpeg_lib);
     fluid_app.add_lib(fltk_png_lib);
-    fluid_app.add_external_lib(files_db, "z");
   }
   
   // --- create test applications
@@ -724,6 +723,7 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "forms"));
     db.add_source(files_db, "test/forms.cxx");
     db.add_lib(fltk_lib); 
+    db.add_lib(fltk_forms_lib); 
     demo_db.depends_on(db);
   }  
   
