@@ -1301,6 +1301,8 @@ extern "C" {
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (void)windowWillClose:(NSNotification *)notif;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
+- (void)applicationDidBecomeActive:(NSNotification *)notify;
+- (void)applicationWillResignActive:(NSNotification *)notify;
 
 @end
 @implementation FLDelegate
@@ -1388,6 +1390,83 @@ extern "C" {
   }
   fl_unlock_function();
   return reply;
+}
+/**
+ * Cocoa organizes the Z depth of windows on a global priority. FLTK however
+ * expectes the window manager to organize Z level by application. The trickery
+ * below will change Z order during activation and deactivation.
+ */
+- (void)applicationDidBecomeActive:(NSNotification *)notify
+{
+  Fl_X *x;
+  FLWindow *top = 0, *topModal = 0, *topNonModal = 0;
+  for (x = Fl_X::first;x;x = x->next) {
+    FLWindow *cw = (FLWindow*)x->xid;
+    Fl_Window *win = x->w;
+    if (win && cw) {
+      if (win->modal()) {
+        [cw setLevel:NSModalPanelWindowLevel];
+        if (topModal) 
+          [cw orderWindow:NSWindowBelow relativeTo:[topModal windowNumber]];
+        else
+          topModal = cw;
+      } else if (win->non_modal()) {
+        [cw setLevel:NSFloatingWindowLevel];
+        if (topNonModal) 
+          [cw orderWindow:NSWindowBelow relativeTo:[topNonModal windowNumber]];
+        else
+          topNonModal = cw;
+      } else {
+        if (top) 
+          ;
+        else
+          top = cw;
+      }
+    }
+  }
+}
+- (void)applicationWillResignActive:(NSNotification *)notify
+{
+  Fl_X *x;
+  FLWindow *top = 0;
+  // sort in all regular windows
+  for (x = Fl_X::first;x;x = x->next) {
+    FLWindow *cw = (FLWindow*)x->xid;
+    Fl_Window *win = x->w;
+    if (win && cw) {
+      if (win->modal()) {
+      } else if (win->non_modal()) {
+      } else {
+        if (!top) top = cw;
+      }
+    }
+  }
+  // now sort in all modals
+  for (x = Fl_X::first;x;x = x->next) {
+    FLWindow *cw = (FLWindow*)x->xid;
+    Fl_Window *win = x->w;
+    if (win && cw) {
+      if (win->modal()) {
+        [cw setLevel:NSNormalWindowLevel];
+        if (top) [cw orderWindow:NSWindowAbove relativeTo:[top windowNumber]];
+      } else if (win->non_modal()) {
+      } else {
+      }
+    }
+  }
+  // finally all non-modals
+  for (x = Fl_X::first;x;x = x->next) {
+    FLWindow *cw = (FLWindow*)x->xid;
+    Fl_Window *win = x->w;
+    if (win && cw) {
+      if (win->modal()) {
+      } else if (win->non_modal()) {
+        [cw setLevel:NSNormalWindowLevel];
+        if (top) [cw orderWindow:NSWindowAbove relativeTo:[top windowNumber]];
+      } else {
+      }
+    }
+  }
 }
 @end
 
