@@ -67,6 +67,10 @@ typedef RPC_STATUS (WINAPI* uuid_func)(UUID __RPC_FAR *Uuid);
 #  include <sys/time.h>
 #endif // WIN32
 
+#ifdef __CYGWIN__
+#  include <wchar.h>
+#endif
+
 char Fl_Preferences::nameBuffer[128];
 char Fl_Preferences::uuidBuffer[40];
 Fl_Preferences *Fl_Preferences::runtimePrefs = 0;
@@ -1121,19 +1125,23 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
   }
 
 
-#ifndef __CYGWIN__
-    if (!filename[1] && !filename[0]) {
+  if (!filename[1] && !filename[0]) {
     strcpy(filename, "C:\\FLTK");
-    } else {
-      xchar *b = (xchar*)_wcsdup((xchar*)filename);
-//    filename[fl_unicode2utf(b, wcslen((xchar*)b), filename)] = 0;
-      unsigned len = fl_utf8fromwc(filename, (FL_PATH_MAX-1), b, wcslen((xchar*)b));
-      filename[len] = 0;
-      free(b);
-  }
+  } else {
+#if 0
+    xchar *b = (xchar*)_wcsdup((xchar *)filename);
 #else
-  if (!filename[0]) strcpy(filename, "C:\\FLTK");
+    // cygwin does not come with _wcsdup. Use malloc +  wcscpy.
+    // For implementation of wcsdup functionality See
+    // - http://linenum.info/p/glibc/2.7/wcsmbs/wcsdup.c
+    xchar *b = (xchar*) malloc((wcslen((xchar *) filename) + 1) * sizeof(xchar));
+    wcscpy(b, (xchar *) filename);
 #endif
+    //  filename[fl_unicode2utf(b, wcslen((xchar*)b), filename)] = 0;
+    unsigned len = fl_utf8fromwc(filename, (FL_PATH_MAX-1), b, wcslen(b));
+    filename[len] = 0;
+    free(b);
+  }
   snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
            "/%s/%s.prefs", vendor, application);
   for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
