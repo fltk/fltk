@@ -609,14 +609,19 @@ void paste_cb(Fl_Widget*, void* v) {
 int num_windows = 0;
 
 void close_cb(Fl_Widget*, void* v) {
-  Fl_Window* w = (Fl_Window*)v;
-  if (num_windows == 1 && !check_save()) {
-    return;
+  EditorWindow* w = (EditorWindow*)v;
+
+  if (num_windows == 1) {
+    if (!check_save())
+      return;
   }
 
   w->hide();
+  w->editor->buffer(0);
+  textbuf->remove_modify_callback(style_update, w->editor);
   textbuf->remove_modify_callback(changed_cb, w);
   Fl::delete_widget(w);
+  
   num_windows--;
   if (!num_windows) exit(0);
 }
