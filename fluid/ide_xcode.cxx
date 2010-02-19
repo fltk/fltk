@@ -188,6 +188,16 @@ public:
       fprintf(out, "\t\t%s /* %s.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* %s.framework */; };\n", xcBuildFrameworkID, name, xcProductID, name);
       fprintf(out, "\t\t%s /* %s.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = %s /* %s.framework */; };\n", xcCopyFrameworkID, name, xcProductID, name);
     }
+    Fl_Preferences extsDB(targetDB, "externals"); n = extsDB.groups();
+    for (i=0; i<n; i++) {
+      Fl_Preferences extDB(extsDB, i);
+      GET_UUID(refUUID, extDB);
+      MAKE_XCID(xcBuildFrameworkID, extDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      MAKE_XCID(xcFileID, fileDB);
+      const char *name = fileDB.fileName();
+      fprintf(out, "\t\t%s /* lib%s.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* lib%s.dylib */; };\n", xcBuildFrameworkID, name, xcFileID, name);
+    }
     return 0;
   }
   
@@ -417,52 +427,24 @@ public:
         filetype = "sourcecode.c.c";
       } else if (strcmp(ext, ".mm")==0) {
         filetype = "sourcecode.cpp.objcpp";
+      } else if (strcmp(ext, ".lib")==0) {
+        fprintf(out,
+                "\t\t%s /* lib%s.dylib */ = {isa = PBXFileReference; "
+                "lastKnownFileType = \"compiled.mach-o.dylib\"; "
+                "name = lib%s.dylib; path = /usr/lib/libz.dylib; "
+                "sourceTree = \"<absolute>\"; };\n", 
+                xcFileID, fileDB.fileName(), fileDB.fileName() );
+        filetype = 0L;
       } else if (strcmp(ext, ".plist")==0) {
         filetype = "text.plist.xml";
       }
-      fprintf(out,
+      if (filetype)
+        fprintf(out,
               "\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; "
               "lastKnownFileType = %s; name = %s; "
               "path = ../../%s; sourceTree = SOURCE_ROOT; };\n", 
               xcFileID, fullName, filetype, fullName, pathAndName);
     }
-#if 0    
-    // write all sources from the given target
-    Fl_Preferences sourcesDB(targetDB, "sources");
-    int i, n = sourcesDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences sourceDB(sourcesDB, i);
-      GET_UUID(refUUID, sourceDB);
-      MAKE_XCID(xcBuildFileID, sourceDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      MAKE_XCID(xcFileID, fileDB);
-      const char *fullName = fileDB.fullName();
-      fprintf(out, "\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildSourceID, fullName, xcFileID, fullName);
-    }
-    
-    
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcAppFileID, targetDB);
-      fprintf(out, 
-              "%s /* %s.app */ = {isa = PBXFileReference; "
-              "explicitFileType = wrapper.application; includeInIndex = 0; "
-              "path = %s.app; sourceTree = BUILT_PRODUCTS_DIR; };\n", 
-              xcAppFileID, name, name);
-    }
-    /*
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeFrameworksBuildPhase(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeFrameworksBuildPhase(out, targetDB);
-    }
-     */
-    // FIXME: .cxx .app .plist .fl .dylib .framework etc.
-#endif
     fprintf(out, "/* End PBXFileReference section */\n\n");
     return 0;
   }
@@ -483,8 +465,18 @@ public:
       GET_UUID(refUUID, libDB);
       MAKE_XCID(xcBuildFrameworkID, libDB);
       Fl_Preferences tgtLibDB(tgtLibsDB, refUUID);
-      char name[80]; tgtLibDB.get("name", name, "DBERROR", 80);;
+      char name[80]; tgtLibDB.get("name", name, "DBERROR", 80);
       fprintf(out, "\t\t\t\t%s /* %s.framework in Frameworks */,\n", xcBuildFrameworkID, name);
+    }
+    Fl_Preferences extsDB(targetDB, "externals");
+    n = extsDB.groups();
+    for (i=0; i<n; i++) {
+      Fl_Preferences extDB(extsDB, i);
+      GET_UUID(refUUID, extDB);
+      MAKE_XCID(xcBuildFrameworkID, extDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      const char *name = fileDB.fileName();
+      fprintf(out, "\t\t\t\t%s /* lib%s.dylib in Frameworks */,\n", xcBuildFrameworkID, name);
     }
     fprintf(out, "\t\t\t);\n");
     fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
@@ -539,6 +531,16 @@ public:
       MAKE_XCID(xcFileID, fileDB);
       const char *fullName = fileDB.fullName();
       fprintf(out, "\t\t\t\t%s /* %s */,\n", xcFileID, fullName);
+    }
+    Fl_Preferences extsDB(targetDB, "externals");
+    n = extsDB.groups();
+    for (j=0; j<n; j++) {
+      Fl_Preferences extDB(extsDB, j);
+      GET_UUID(refUUID, extDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      MAKE_XCID(xcFileID, fileDB);
+      const char *name = fileDB.fileName();
+      fprintf(out, "\t\t\t\t%s /* lib%s.dylib */,\n", xcFileID, name);
     }
   }
   
@@ -992,6 +994,7 @@ public:
     fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
     fprintf(out, "\t\t\t\t\t../../,\n");
     fprintf(out, "\t\t\t\t\t../../png,\n");
+    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
     fprintf(out, "\t\t\t\tINSTALL_PATH = /Applications;\n");
@@ -1022,6 +1025,7 @@ public:
     fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
     fprintf(out, "\t\t\t\t\t../../,\n");
     fprintf(out, "\t\t\t\t\t../../png,\n");
+    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
     fprintf(out, "\t\t\t\tINSTALL_PATH = /Applications;\n");
@@ -1062,6 +1066,8 @@ public:
     fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
     fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
     fprintf(out, "\t\t\t\t\t../../,\n");
+    fprintf(out, "\t\t\t\t\t../../png,\n");
+    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
     fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");
@@ -1096,6 +1102,8 @@ public:
     fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
     fprintf(out, "\t\t\t\t../../ide/XCode3/,\n");
     fprintf(out, "\t\t\t\t../../,\n");
+    fprintf(out, "\t\t\t\t\t../../png,\n");
+    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
     fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");

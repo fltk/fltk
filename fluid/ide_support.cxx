@@ -191,13 +191,13 @@ Fl_Target_Prefs::Fl_Target_Prefs(Fl_Preferences::ID id)
 Fl_Preferences::ID Fl_Target_Prefs::add_source(Fl_IDE_Prefs &fdb, const char *pathAndName) {
   Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", pathAndName));
   Fl_IDE_Prefs p(*this, "sources");
-  p.add_with_key("refUUID", file.name());
+  return p.add_with_key("refUUID", file.name());
 }
 
 Fl_Preferences::ID Fl_Target_Prefs::add_fl(Fl_IDE_Prefs &fdb, const char *pathAndName) {
   Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", pathAndName));
   Fl_IDE_Prefs p(*this, "fl");
-  p.add_with_key("refUUID", file.name());
+  return p.add_with_key("refUUID", file.name());
 }
 
 Fl_Preferences::ID Fl_Target_Prefs::depends_on(Fl_IDE_Prefs &dep) {
@@ -206,9 +206,16 @@ Fl_Preferences::ID Fl_Target_Prefs::depends_on(Fl_IDE_Prefs &dep) {
 }
 
 Fl_Preferences::ID Fl_Target_Prefs::add_lib(Fl_IDE_Prefs &lib) {
-  Fl_IDE_Prefs p(*this, "libs");
-  p.add_with_key("refUUID", lib.name());
   this->depends_on(lib);
+  Fl_IDE_Prefs p(*this, "libs");
+  return p.add_with_key("refUUID", lib.name());
+}
+
+Fl_Preferences::ID Fl_Target_Prefs::add_external_lib(Fl_IDE_Prefs &fdb, const char *name) {
+  char buf[1024]; sprintf(buf, "%s.lib", name);
+  Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", buf));
+  Fl_IDE_Prefs p(*this, "externals");
+  return p.add_with_key("refUUID", file.name());
 }
 
 
@@ -479,6 +486,7 @@ int create_new_database(const char *filename)
     fltk_png_lib.add_source(files_db, "png/pngrutil.c");
     fltk_png_lib.add_source(files_db, "png/pngpread.c");
     fltk_png_lib.add_source(files_db, "png/pngrtran.c");
+    fltk_png_lib.add_external_lib(files_db, "z");
     fltk_images_lib.add_lib(fltk_png_lib);
   }
   Fl_Target_Prefs fltk_jpeg_lib(libs_db.add_with_key("name", "fltk_jpeg")); {
@@ -535,72 +543,472 @@ int create_new_database(const char *filename)
   Fl_IDE_Prefs apps_db(targets_db, "apps"); 
   
   Fl_Target_Prefs fluid_app(apps_db.add_with_key("name", "Fluid")); {
+    fluid_app.add_source(files_db, "fluid/about_panel.cxx");
+    fluid_app.add_source(files_db, "fluid/align_widget.cxx");
     fluid_app.add_source(files_db, "fluid/alignment_panel.cxx");
-    fluid_app.add_source(files_db, "fluid/Fluid_Image.cxx");
-    fluid_app.add_source(files_db, "fluid/fluid.cxx");
     fluid_app.add_source(files_db, "fluid/code.cxx");
-    fluid_app.add_source(files_db, "fluid/template_panel.cxx");
-    fluid_app.add_source(files_db, "fluid/Fl_Window_Type.cxx");
-    fluid_app.add_source(files_db, "fluid/print_panel.cxx");
+    fluid_app.add_source(files_db, "fluid/CodeEditor.cxx");
+    fluid_app.add_source(files_db, "fluid/factory.cxx");
     fluid_app.add_source(files_db, "fluid/file.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Function_Type.cxx");
+    fluid_app.add_source(files_db, "fluid/Fl_Group_Type.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Menu_Type.cxx");
-    fluid_app.add_source(files_db, "fluid/function_panel.cxx");
-    fluid_app.add_source(files_db, "fluid/align_widget.cxx");
-    fluid_app.add_source(files_db, "fluid/factory.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Type.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Widget_Type.cxx");
+    fluid_app.add_source(files_db, "fluid/Fl_Window_Type.cxx");
+    fluid_app.add_source(files_db, "fluid/fluid.cxx");
+    fluid_app.add_source(files_db, "fluid/Fluid_Image.cxx");
+    fluid_app.add_source(files_db, "fluid/function_panel.cxx");
     fluid_app.add_source(files_db, "fluid/ide_support.cxx");
-    fluid_app.add_source(files_db, "fluid/CodeEditor.cxx");
+    fluid_app.add_source(files_db, "fluid/ide_xcode.cxx");
+    fluid_app.add_source(files_db, "fluid/template_panel.cxx");
     fluid_app.add_source(files_db, "fluid/undo.cxx");
-    fluid_app.add_source(files_db, "fluid/Fl_Group_Type.cxx");
-    fluid_app.add_source(files_db, "fluid/about_panel.cxx");
     fluid_app.add_source(files_db, "fluid/widget_panel.cxx");
     fluid_app.add_lib(fltk_lib);
+    fluid_app.add_lib(fltk_forms_lib);
+    fluid_app.add_lib(fltk_images_lib);
+    fluid_app.add_lib(fltk_jpeg_lib);
+    fluid_app.add_lib(fltk_png_lib);
+    fluid_app.add_external_lib(files_db, "z");
   }
   
   // --- create test applications
   Fl_IDE_Prefs tests_db(targets_db, "tests"); 
   
-#if 0
-  Fl_Target_Prefs demo_db(tests_db.add_with_key("name", "xDemo")); {
+  Fl_Target_Prefs demo_db(tests_db.add_with_key("name", "Demo")); {
     demo_db.add_source(files_db, "test/demo.cxx");
     demo_db.add_lib(fltk_lib); 
   }
   
-  { Fl_Target_Prefs db(tests_db.add_with_key("name", "matt"));
-    db.add_source(files_db, "test/matt.cxx");
-    db.add_lib(fltk_lib); 
-    // --- Dependency on Fluid files - does not imply matt_ui.cxx and .h!
-    //ab.add_fl("test/matt_ui.fl")
-    // --- This looks silly. Should we have predefined library sets (db.add_sound_libs())
-    //db.add_external_OSX("audio.framework");
-    //db.add_external_UX("libaudio.so");
-    //db.add_external_MSWIN("directsound.dll");
-    // --- Create dependencies. Library dependencies are implied?!
-    //demo_db.depends_on(db);
-  }
-  { Fl_Target_Prefs db(tests_db.add_with_key("name", "moop"));
-    db.add_source(files_db, "test/hello.cxx");
-    db.add_lib(fltk_lib); 
-    demo_db.depends_on(db);
-  }
-#endif
-  
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "adjuster"));
     db.add_source(files_db, "test/adjuster.cxx");
     db.add_lib(fltk_lib); 
-    //demo_db.depends_on(db);
+    demo_db.depends_on(db);
   }  
   
-  { Fl_Target_Prefs db(tests_db.add_with_key("name", "valuator"));
-    db.add_fl(files_db, "test/valuator.fl");
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "arc"));
+    db.add_source(files_db, "test/arc.cxx");
     db.add_lib(fltk_lib); 
-    //demo_db.depends_on(db);
+    demo_db.depends_on(db);
   }  
   
-  // TODO: add all test apps here
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "ask"));
+    db.add_source(files_db, "test/ask.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+    
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "bitmap"));
+    db.add_source(files_db, "test/bitmap.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
   
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "blocks"));
+    db.add_source(files_db, "test/blocks.cxx");
+    db.add_lib(fltk_lib); 
+    //db.add_lib(fltk_audio_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "boxtype"));
+    db.add_source(files_db, "test/boxtype.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "browser"));
+    db.add_source(files_db, "test/browser.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "button"));
+    db.add_source(files_db, "test/button.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "buttons"));
+    db.add_source(files_db, "test/buttons.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "checkers"));
+    db.add_source(files_db, "test/checkers.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "clock"));
+    db.add_source(files_db, "test/clock.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "colbrowser"));
+    db.add_source(files_db, "test/colbrowser.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_forms_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "color_chooser"));
+    db.add_source(files_db, "test/color_chooser.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "cube"));
+    db.add_source(files_db, "test/cube.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_gl_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "CubeView"));
+    db.add_source(files_db, "test/CubeView.cxx");
+    db.add_source(files_db, "test/CubeMain.cxx");
+    db.add_fl(files_db, "test/CubeViewUI.fl");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_gl_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "cursor"));
+    db.add_source(files_db, "test/cursor.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "curve"));
+    db.add_source(files_db, "test/curve.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "doublebuffer"));
+    db.add_source(files_db, "test/doublebuffer.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "editor"));
+    db.add_source(files_db, "test/editor.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "fast_slow"));
+    db.add_fl(files_db, "test/fast_slow.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "file_chooser"));
+    db.add_source(files_db, "test/file_chooser.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_images_lib); 
+    db.add_lib(fltk_jpeg_lib); 
+    db.add_lib(fltk_png_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "fonts"));
+    db.add_source(files_db, "test/fonts.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "forms"));
+    db.add_source(files_db, "test/forms.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "fractals"));
+    db.add_source(files_db, "test/fractals.cxx");
+    db.add_source(files_db, "test/fracviewer.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_gl_lib); 
+    db.add_lib(fltk_forms_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "fullscreen"));
+    db.add_source(files_db, "test/fullscreen.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_gl_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "gl_overlay"));
+    db.add_source(files_db, "test/gl_overlay.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_gl_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "glpuzzle"));
+    db.add_source(files_db, "test/glpuzzle.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_gl_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "hello"));
+    db.add_source(files_db, "test/hello.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "help"));
+    db.add_source(files_db, "test/help.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_images_lib); 
+    db.add_lib(fltk_jpeg_lib); 
+    db.add_lib(fltk_png_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "iconize"));
+    db.add_source(files_db, "test/iconize.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "image"));
+    db.add_source(files_db, "test/image.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "inactive"));
+    db.add_fl(files_db, "test/inactive.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "input"));
+    db.add_source(files_db, "test/input.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "input_choice"));
+    db.add_source(files_db, "test/input_choice.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "keyboard"));
+    db.add_source(files_db, "test/keyboard.cxx");
+    db.add_fl(files_db, "test/keyboard_ui.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "label"));
+    db.add_source(files_db, "test/label.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_forms_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "line_style"));
+    db.add_source(files_db, "test/line_style.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "list_visuals"));
+    db.add_source(files_db, "test/list_visuals.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "mandelbrot"));
+    db.add_source(files_db, "test/mandelbrot.cxx");
+    db.add_fl(files_db, "test/mandelbrot_ui.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "menubar"));
+    db.add_source(files_db, "test/menubar.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "message"));
+    db.add_source(files_db, "test/message.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "minimum"));
+    db.add_source(files_db, "test/minimum.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "navigation"));
+    db.add_source(files_db, "test/navigation.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "native-filechooser"));
+    db.add_source(files_db, "test/native-filechooser.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "output"));
+    db.add_source(files_db, "test/output.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_forms_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "overlay"));
+    db.add_source(files_db, "test/overlay.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "pack"));
+    db.add_source(files_db, "test/pack.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "pixmap_browser"));
+    db.add_source(files_db, "test/pixmap_browser.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_images_lib); 
+    db.add_lib(fltk_jpeg_lib); 
+    db.add_lib(fltk_png_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "pixmap"));
+    db.add_source(files_db, "test/pixmap.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "preferences"));
+    db.add_fl(files_db, "test/preferences.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "radio"));
+    db.add_fl(files_db, "test/radio.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "resizebox"));
+    db.add_source(files_db, "test/resizebox.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "resize"));
+    db.add_fl(files_db, "test/resize.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "scroll"));
+    db.add_source(files_db, "test/scroll.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "shape"));
+    db.add_source(files_db, "test/shape.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_gl_lib); 
+    demo_db.depends_on(db);
+  }  
+
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "subwindow"));
+    db.add_source(files_db, "test/subwindow.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "sudoku"));
+    db.add_source(files_db, "test/sudoku.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_images_lib); 
+    db.add_lib(fltk_jpeg_lib); 
+    db.add_lib(fltk_png_lib); 
+    //db.add_lib(fltk_audio_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "symbols"));
+    db.add_source(files_db, "test/symbols.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "table"));
+    db.add_source(files_db, "test/table.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "tabs"));
+    db.add_fl(files_db, "test/tabs.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "threads"));
+    db.add_source(files_db, "test/threads.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "tile"));
+    db.add_source(files_db, "test/tile.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "tiled_image"));
+    db.add_source(files_db, "test/tiled_image.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_images_lib); 
+    db.add_lib(fltk_jpeg_lib); 
+    db.add_lib(fltk_png_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "tree"));
+    db.add_source(files_db, "test/tree.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "utf8"));
+    db.add_source(files_db, "test/utf8.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "valuators"));
+    db.add_fl(files_db, "test/valuators.fl");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+    
   db->flush();    
 }
 

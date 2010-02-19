@@ -76,6 +76,7 @@ public:
   Fl_Preferences::ID add_fl(Fl_IDE_Prefs &fdb, const char *pathAndName);
   Fl_Preferences::ID depends_on(Fl_IDE_Prefs &dep);
   Fl_Preferences::ID add_lib(Fl_IDE_Prefs &lib);
+  Fl_Preferences::ID add_external_lib(Fl_IDE_Prefs &fdb, const char *name);
 };
 
 
