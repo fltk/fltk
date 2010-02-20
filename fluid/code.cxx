@@ -235,17 +235,17 @@ void write_cdata(const char *s, int length) {
     varused = 1;
     return;
   }
-	if (write_sourceview) {
-		if (length>=0)
-			fprintf(code_file, "{ /* ... %d bytes of binary data... */ }", length);
-		else
-			fprintf(code_file, "{ /* ... binary data... */ }");
-		return;
-	}
-	if (length==-1) {
-		fprintf(code_file, "{ /* ... undefined size binary data... */ }");
-		return;
-	}
+  if (write_sourceview) {
+    if (length>=0)
+      fprintf(code_file, "{ /* ... %d bytes of binary data... */ }", length);
+    else
+      fprintf(code_file, "{ /* ... binary data... */ }");
+    return;
+  }
+  if (length==-1) {
+    fprintf(code_file, "{ /* ... undefined size binary data... */ }");
+    return;
+  }
   const unsigned char *w = (const unsigned char *)s;
   const unsigned char *e = w+length;
   int linelength = 1;
