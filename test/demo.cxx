@@ -25,6 +25,104 @@
 //     http://www.fltk.org/str.php
 //
 
+const char *default_menu[] = {
+  "# Menu description file for the generic demo program\n",
+  "#\n",
+  "# Each line consists of three fields, separated by :\n",
+  "#\n",
+  "# - menu name	: To which the item belongs (starts with @)\n",
+  "# - item name	: Placed on button. (use \\n for newline)\n",
+  "# - command name: To be executed. Use a menu name to define a submenu.\n",
+  "#\n",
+  "# @main indicates the main menu.\n",
+  "#\n",
+  "\n",
+  "@main:Widget\\nTests:@x\n",
+  "@x:Fl_Browser:browser\n",
+  "@x:Fl_Input:input\n",
+  "@x:Fl_Output:output\n",
+  "@x:Fl_Button:radio\n",
+  "@x:Fl_Tabs:tabs\n",
+  "@x:Fl_Tile:tile\n",
+  "@x:Fl_Scroll:scroll\n",
+  "@x:Fl_Pack:pack\n",
+  "@x:more...:@xm\n",
+  "@xm:Fl_Menu:menubar\n",
+  "@xm:Fl_Table:table\n",
+  "@xm:Fl_Tree:tree\n",
+  "\n",
+  "@main:Window\\nTests:@w\n",
+  "@w:overlay:overlay\n",
+  "@w:subwindow:subwindow\n",
+  "@w:double\\nbuffer:doublebuffer\n",
+  "@w:GL window:cube\n",
+  "@w:GL overlay:gl_overlay\n",
+  "@w:iconize:iconize\n",
+  "@w:fullscreen:fullscreen\n",
+  "@w:resizable:resizebox\n",
+  "@w:resize:resize\n",
+  "\n",
+  "@main:Drawing\\nTests:@d\n",
+  "@d:Images:@di\n",
+  "@di:Fl_Bitmap:bitmap\n",
+  "@di:Fl_Pixmap:pixmap\n",
+  "@di:Fl_RGB\\n_Image:image\n",
+  "@di:Fl_Shared\\n_Image:pixmap_browser\n",
+  "@di:Fl_Tiled\\n_Image:tiled_image\n",
+  "@d:cursor:cursor\n",
+  "@d:labels:label\n",
+  "@d:fl_arc:arc\n",
+  "@d:fl_curve:curve\n",
+  "@d:fl_line_style:line_style\n",
+  "\n",
+  "@main:Events:@u\n",
+  "@u:navigation:navigation\n",
+  "@u:minimum update:minimum\n",
+  "@u:keyboard:keyboard\n",
+  "@u:fast && slow widgets:fast_slow\n",
+  "@u:inactive:inactive\n",
+  "\n",
+  "@main:Fluid\\n(UI design tool):../fluid/fluid valuators.fl\n",
+  "\n",
+  "@main:Cool\\nDemos:@e\n",
+  "@e:X Color\\nBrowser:colbrowser\n",
+  "@e:Mandelbrot:mandelbrot\n",
+  "@e:Fractals:fractals\n",
+  "@e:Puzzle:glpuzzle\n",
+  "@e:Block\\nAttack!:blocks\n",
+  "@e:Checkers:checkers\n",
+  "@e:Sudoku:sudoku\n",
+  "\n",
+  "@main:Other\\nTests:@o\n",
+  "@o:Color Choosers:color_chooser\n",
+  "@o:File Chooser:file_chooser\n",
+  "@o:Native File Chooser:native-filechooser\n",
+  "@o:Font Tests:@of\n",
+  "@of:Fonts:fonts\n",
+  "@of:UTF-8:utf8\n",
+  "@o:HelpDialog:help\n",
+  "@o:Input Choice:input_choice\n",
+  "@o:Preferences:preferences\n",
+  "@o:Threading:threads\n",
+  "@o:XForms Emulation:forms\n",
+  "\n",
+  "@main:Tutorial\\nfrom\\nManual:@j\n",
+  "@j:ask\\n(modified):ask\n",
+  "@j:button:button\n",
+  "@j:CubeView:CubeView\n",
+  "@j:editor:editor editor.cxx\n",
+  "@j:hello:hello\n",
+  "@j:shape:shape\n",
+  "\n",
+  "@main:Images\\nfor\\nManual:@i\n",
+  "@i:valuators:valuators\n",
+  "@i:symbols:symbols\n",
+  "@i:buttons:buttons\n",
+  "@i:clock:clock\n",
+  "@i:popups:message\n",
+  "@i:boxtypes:boxtype\n",
+  0 };
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -316,9 +414,9 @@ void doexit(Fl_Widget *, void *) {exit(0);}
 int load_the_menu(const char* fname)
 /* Loads the menu file. Returns whether successful. */
 {
-  FILE *fin;
+  FILE *fin = 0;
   char line[256], mname[64],iname[64],cname[64];
-  int i,j;
+  int i,j, mi = 0;
   fin = fopen(fname,"r");
   if (fin == NULL)
   {
@@ -333,10 +431,15 @@ int load_the_menu(const char* fname)
 	  fin  = fopen(fname,"r");
 	  if (fin == NULL)
 #endif
-      return 0;
   }
   for (;;) {
-    if (fgets(line,256,fin) == NULL) break;
+    if (fin) {
+      if (fgets(line,256,fin) == NULL) break;
+    } else {
+      const char *m = default_menu[mi++];
+      if (!m) break;
+      strcpy(line, m);
+    }
     // remove all carriage returns that Cygwin may have inserted
     char *s = line, *d = line;
     for (;;++d) {
@@ -370,7 +473,8 @@ int load_the_menu(const char* fname)
     cname[j] = '\0';
     addto_menu(mname,iname,cname);
   }
-  fclose(fin);
+  if (fin)
+    fclose(fin);
   return 1;
 }
 

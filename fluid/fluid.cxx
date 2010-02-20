@@ -1572,6 +1572,32 @@ void print_cb(Fl_Return_Button *, void *) {
 }
 #endif // WIN32 && !__CYGWIN__
 
+void fltkdb_cb(Fl_Widget*, void*)
+{
+  int i;
+  Fl_Plugin_Manager pm("commandline");  
+  for (i=0; i<pm.plugins(); i++) {
+    Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
+    if (strcmp(pi->name(), "FltkDB.fluid.fltk.org")==0) {
+      pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db");
+      break;
+    }
+  }
+}
+
+void dbxcode_cb(Fl_Widget*, void*)
+{
+  int i;
+  Fl_Plugin_Manager pm("commandline");  
+  for (i=0; i<pm.plugins(); i++) {
+    Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
+    if (strcmp(pi->name(), "ideXcode.fluid.fltk.org")==0) {
+      pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-test");
+      break;
+    }
+  }
+}
+
 ////////////////////////////////////////////////////////////////
 
 extern Fl_Menu_Item New_Menu[];
@@ -1666,6 +1692,8 @@ Fl_Menu_Item Main_Menu[] = {
 {"&Shell",0,0,0,FL_SUBMENU},
   {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
   {"Execute &Again...",FL_ALT+'g',(Fl_Callback *)do_shell_command},
+  {"--fltkdb",0,(Fl_Callback *)fltkdb_cb,0,FL_MENU_INVISIBLE},
+  {"--dbxcode",0,(Fl_Callback *)dbxcode_cb,0,FL_MENU_INVISIBLE},
   {0},
 {"&Help",0,0,0,FL_SUBMENU},
   {"&About FLUID...",0,about_cb},

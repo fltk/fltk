@@ -116,7 +116,9 @@ class Xcode3_IDE {
   XCID xcBuildConfigurationListID;
   XCID xcMainGroupID;
   XCID xcProductsGroupID;
-  XCID xcFilesGroupID;
+  XCID xcAppsGroupID;
+  XCID xcLibsGroupID;
+  XCID xcTestsGroupID;
   XCID xcBuildConfigurationDebugID;
   XCID xcBuildConfigurationReleaseID;
 public:
@@ -137,7 +139,9 @@ public:
     getXCID(ideDB, "xcBuildConfigurationListID", xcBuildConfigurationListID);
     getXCID(ideDB, "xcMainGroupID", xcMainGroupID);
     getXCID(ideDB, "xcProductsGroupID", xcProductsGroupID);
-    getXCID(ideDB, "xcFilesGroupID", xcFilesGroupID);
+    getXCID(ideDB, "xcAppsGroupID", xcAppsGroupID);
+    getXCID(ideDB, "xcLibsGroupID", xcLibsGroupID);
+    getXCID(ideDB, "xcTestsGroupID", xcTestsGroupID);    
     getXCID(ideDB, "xcBuildConfigurationDebugID", xcBuildConfigurationDebugID);
     getXCID(ideDB, "xcBuildConfigurationReleaseID", xcBuildConfigurationReleaseID);
   }
@@ -195,8 +199,8 @@ public:
       MAKE_XCID(xcBuildFrameworkID, extDB);
       Fl_File_Prefs fileDB(filesDB, refUUID);
       MAKE_XCID(xcFileID, fileDB);
-      const char *name = fileDB.fileName();
-      fprintf(out, "\t\t%s /* lib%s.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* lib%s.dylib */; };\n", xcBuildFrameworkID, name, xcFileID, name);
+      const char *fullName = fileDB.fullName();
+      fprintf(out, "\t\t%s /* %s in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFrameworkID, fullName, xcFileID, fullName);
     }
     return 0;
   }
@@ -240,6 +244,7 @@ public:
     fprintf(out, "\t\t\t);\n");
     fprintf(out, "\t\t\tscript = \"export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}\";\n");
     fprintf(out, "\t\t};\n");
+    return 0;
   }
 
   /*
@@ -374,7 +379,7 @@ public:
    * A list of all files that are somehow referenced in this project
    */
   int writeFileReferenceSection(FILE *out) {
-    int i, j;
+    int i;
     fprintf(out, "/* Begin PBXFileReference section */\n");  
     // --- list of all Application target results
     for (i=0; i<nTgtApps; i++) {
@@ -419,7 +424,8 @@ public:
       const char *filetype = "test";
       const char *ext = fileDB.fileExt();
       if (!ext) {
-      } else if (strcmp(pathAndName, "src/Fl.cxx")==0) { // FIXME: bad hack!
+      } else if (strcmp(pathAndName, "src/Fl.cxx")==0
+               ||strcmp(pathAndName, "src/Fl_Native_File_Chooser.cxx")==0) { // FIXME: bad hack!
         filetype = "sourcecode.cpp.objcpp";
       } else if (strcmp(ext, ".cxx")==0) {
         filetype = "sourcecode.cpp.cpp";
@@ -427,13 +433,21 @@ public:
         filetype = "sourcecode.c.c";
       } else if (strcmp(ext, ".mm")==0) {
         filetype = "sourcecode.cpp.objcpp";
-      } else if (strcmp(ext, ".lib")==0) {
+      } else if (strcmp(ext, ".dylib")==0) {
         fprintf(out,
-                "\t\t%s /* lib%s.dylib */ = {isa = PBXFileReference; "
+                "\t\t%s /* %s */ = {isa = PBXFileReference; "
                 "lastKnownFileType = \"compiled.mach-o.dylib\"; "
-                "name = lib%s.dylib; path = /usr/lib/libz.dylib; "
+                "name = %s; path = %s; "
                 "sourceTree = \"<absolute>\"; };\n", 
-                xcFileID, fileDB.fileName(), fileDB.fileName() );
+                xcFileID, fullName, fullName, pathAndName );
+        filetype = 0L;
+      } else if (strcmp(ext, ".framework")==0) {
+        fprintf(out,
+                "\t\t%s /* %s */ = {isa = PBXFileReference; "
+                "lastKnownFileType = \"wrapper.framework\"; "
+                "name = %s; path = %s; "
+                "sourceTree = \"<absolute>\"; };\n", 
+                xcFileID, fullName, fullName, pathAndName );
         filetype = 0L;
       } else if (strcmp(ext, ".plist")==0) {
         filetype = "text.plist.xml";
@@ -510,7 +524,13 @@ public:
    *
    */
   int writeTargetFiles(FILE *out, Fl_Preferences &targetDB) {
-    char name[80]; targetDB.get("name", name, "DBERROR", 80);
+    char name[80];
+    MAKE_XCID(xcTargetGroupID, targetDB);    
+    targetDB.get("name", name, "DBERROR", 80);
+    fprintf(out, "\t\t%s /* %s */ = {\n", xcTargetGroupID, name);
+    fprintf(out, "\t\t\tisa = PBXGroup;\n");
+    fprintf(out, "\t\t\tchildren = (\n");
+    
     MAKE_XCID(xcProductID, targetDB);
     Fl_Preferences sourcesDB(targetDB, "sources");
     int j, n = sourcesDB.groups();
@@ -539,23 +559,32 @@ public:
       GET_UUID(refUUID, extDB);
       Fl_File_Prefs fileDB(filesDB, refUUID);
       MAKE_XCID(xcFileID, fileDB);
-      const char *name = fileDB.fileName();
-      fprintf(out, "\t\t\t\t%s /* lib%s.dylib */,\n", xcFileID, name);
+      const char *fullName = fileDB.fullName();
+      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcFileID, fullName);
     }
+    
+    fprintf(out, "\t\t\t);\n");
+    fprintf(out, "\t\t\tname = %s;\n", name);
+    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
+    fprintf(out, "\t\t};\n");
+    return 0;
   }
   
   /*
    * Groups define the folder hierarchy in the "Groups & Files" panel
    */
   int writeGroupSection(FILE *out) {
-    int i, j;
+    int i;
+    char name[80];
     fprintf(out, "/* Begin PBXGroup section */\n");
     // --- FIXME: missing "icons" group
     // --- main group
     fprintf(out, "\t\t%s = {\n", xcMainGroupID);
     fprintf(out, "\t\t\tisa = PBXGroup;\n");
     fprintf(out, "\t\t\tchildren = (\n");
-    fprintf(out, "\t\t\t\t%s /* Files */,\n", xcFilesGroupID); // link to "Files" group
+    fprintf(out, "\t\t\t\t%s /* Applications */,\n", xcAppsGroupID);
+    fprintf(out, "\t\t\t\t%s /* Frameworks */,\n", xcLibsGroupID);
+    fprintf(out, "\t\t\t\t%s /* Tests */,\n", xcTestsGroupID);
     fprintf(out, "\t\t\t\t%s /* Products */,\n", xcProductsGroupID); // link to "Products" group
     fprintf(out, "\t\t\t);\n");
     fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
@@ -594,28 +623,63 @@ public:
     // --- FIXME: missing "jpeg Sources" group
     // --- FIXME: missing "png Sources" group
     // --- FIXME: missing "libs" group
-    
-    // --- "Files" group for testing
-    fprintf(out, "\t\t%s /* Files */ = {\n", xcFilesGroupID);
+
+    // --- "Applications" group for testing
+    fprintf(out, "\t\t%s /* Applications */ = {\n", xcAppsGroupID);
     fprintf(out, "\t\t\tisa = PBXGroup;\n");
     fprintf(out, "\t\t\tchildren = (\n");
     for (i=0; i<nTgtApps; i++) {
       Fl_Preferences targetDB(tgtAppsDB, i);
+      MAKE_XCID(xcTargetGroupID, targetDB);
+      targetDB.get("name", name, "DBERROR", 80);
+      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetGroupID, name);
+    }
+    fprintf(out, "\t\t\t);\n");
+    fprintf(out, "\t\t\tname = Applications;\n");
+    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
+    fprintf(out, "\t\t};\n");
+    for (i=0; i<nTgtApps; i++) {
+      Fl_Preferences targetDB(tgtAppsDB, i);
       writeTargetFiles(out, targetDB);
     }
+    // --- "Frameworks" group for testing
+    fprintf(out, "\t\t%s /* Frameworks */ = {\n", xcLibsGroupID);
+    fprintf(out, "\t\t\tisa = PBXGroup;\n");
+    fprintf(out, "\t\t\tchildren = (\n");
+    for (i=0; i<nTgtLibs; i++) {
+      Fl_Preferences targetDB(tgtLibsDB, i);
+      MAKE_XCID(xcTargetGroupID, targetDB);
+      targetDB.get("name", name, "DBERROR", 80);
+      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetGroupID, name);
+    }
+    fprintf(out, "\t\t\t);\n");
+    fprintf(out, "\t\t\tname = Frameworks;\n");
+    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
+    fprintf(out, "\t\t};\n");
     for (i=0; i<nTgtLibs; i++) {
       Fl_Preferences targetDB(tgtLibsDB, i);
       writeTargetFiles(out, targetDB);
     }
+    // --- "Tests" group for testing
+    fprintf(out, "\t\t%s /* Tests */ = {\n", xcTestsGroupID);
+    fprintf(out, "\t\t\tisa = PBXGroup;\n");
+    fprintf(out, "\t\t\tchildren = (\n");
+    for (i=0; i<nTgtTests; i++) {
+      Fl_Preferences targetDB(tgtTestsDB, i);
+      MAKE_XCID(xcTargetGroupID, targetDB);
+      targetDB.get("name", name, "DBERROR", 80);
+      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetGroupID, name);
+    }
+    fprintf(out, "\t\t\t);\n");
+    fprintf(out, "\t\t\tname = Tests;\n");
+    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
+    fprintf(out, "\t\t};\n");
     for (i=0; i<nTgtTests; i++) {
       Fl_Preferences targetDB(tgtTestsDB, i);
       writeTargetFiles(out, targetDB);
     }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tname = Files;\n");
-    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
-    fprintf(out, "\t\t};\n");
     // --- done
+    
     fprintf(out, "/* End PBXGroup section */\n\n");
     return 0;
   }
@@ -831,7 +895,6 @@ public:
       GET_UUID(refUUID, sourceDB);
       MAKE_XCID(xcBuildFileID, sourceDB);
       Fl_File_Prefs fileDB(filesDB, refUUID);
-      const char *fullName = fileDB.fullName();      
       fprintf(out, "\t\t\t\t%s /* %s in Sources */,\n", xcBuildFileID, fileDB.fullName());
     }
     Fl_Preferences flsDB(targetDB, "fl");
@@ -841,7 +904,6 @@ public:
       GET_UUID(refUUID, flDB);
       MAKE_XCID(xcBuildFileID, flDB);
       Fl_File_Prefs fileDB(filesDB, refUUID);
-      const char *fullName = fileDB.fullName();      
       fprintf(out, "\t\t\t\t%s /* %s in Sources */,\n", xcBuildFileID, fileDB.fullName());
     }
     fprintf(out, "\t\t\t);\n");
@@ -941,7 +1003,7 @@ public:
     fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
     fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++\";\n");
     fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"$(SDKROOT)/System/Library/Frameworks/Carbon.framework/Headers/Carbon.h\";\n");
+    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
     fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;\n");
     fprintf(out, "\t\t\t\tMACOSX_DEPLOYMENT_TARGET = 10.2;\n");
     fprintf(out, "\t\t\t\tSDKROOT = \"$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk\";\n");
@@ -960,7 +1022,7 @@ public:
     fprintf(out, "\t\t\t\tGCC_GENERATE_DEBUGGING_SYMBOLS = NO;\n");
     fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++\";\n");
     fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"$(SDKROOT)/System/Library/Frameworks/Carbon.framework/Headers/Carbon.h\";\n");
+    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
     fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;\n");
     fprintf(out, "\t\t\t\tMACOSX_DEPLOYMENT_TARGET = 10.3;\n");
     fprintf(out, "\t\t\t\tSDKROOT = \"$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk\";\n");
@@ -988,7 +1050,7 @@ public:
     fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
     fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
     fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h\";\n");
+    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
     fprintf(out, "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"USING_XCODE=1\";\n");
     fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
     fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
@@ -1000,11 +1062,14 @@ public:
     fprintf(out, "\t\t\t\tINSTALL_PATH = /Applications;\n");
     fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
     fprintf(out, "\t\t\t\t\t\"-framework\",\n");
+    fprintf(out, "\t\t\t\t\tCocoa,\n");
+    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
     fprintf(out, "\t\t\t\t\tCarbon,\n");
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
+    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-security\";\n");
     fprintf(out, "\t\t\t\tWRAPPER_EXTENSION = app;\n");
     fprintf(out, "\t\t\t\tZERO_LINK = YES;\n");
     fprintf(out, "\t\t\t};\n");
@@ -1019,7 +1084,7 @@ public:
     fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = NO;\n");
     fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
     fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h\";\n");
+    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
     fprintf(out, "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"USING_XCODE=1\";\n");
     fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
     fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
@@ -1031,16 +1096,20 @@ public:
     fprintf(out, "\t\t\t\tINSTALL_PATH = /Applications;\n");
     fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
     fprintf(out, "\t\t\t\t\t\"-framework\",\n");
+    fprintf(out, "\t\t\t\t\tCocoa,\n");
+    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
     fprintf(out, "\t\t\t\t\tCarbon,\n");
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
+    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-security\";\n");
     fprintf(out, "\t\t\t\tWRAPPER_EXTENSION = app;\n");
     fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Release;\n");
     fprintf(out, "\t\t};\n");
+    return 0;
   }
     
   /*
@@ -1073,14 +1142,14 @@ public:
     fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");
     fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
     fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
     fprintf(out, "\t\t\t\t\tCocoa,\n");
+    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
+    fprintf(out, "\t\t\t\t\tCarbon,\n");
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-nonliteral\";\n");
+    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-security\";\n");
     fprintf(out, "\t\t\t\tZERO_LINK = YES;\n");
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Debug;\n");
@@ -1111,18 +1180,19 @@ public:
     fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
     fprintf(out, "\t\t\t\t\"-framework\",\n");
     fprintf(out, "\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\tCarbon,\n");
+    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
+    fprintf(out, "\t\t\t\t\tCarbon,\n");
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tSDKROOT = \"\";\n");
     fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-nonliteral\";\n");
+    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-security\";\n");
     fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Release;\n");
     fprintf(out, "\t\t};\n");
+    return 0;
   }
   
   /*
@@ -1161,6 +1231,7 @@ public:
     fprintf(out, "\t\t\tdefaultConfigurationIsVisible = 0;\n");
     fprintf(out, "\t\t\tdefaultConfigurationName = Debug;\n");
     fprintf(out, "\t\t};\n");
+    return 0;
   }
     
   /*
@@ -1246,8 +1317,36 @@ public:
     return 0;
   }
   
-  int writeConfigH(const char *filepath) {
-    // FIXME: LATER: do we want to do that?
+  int writeConfigH(const char *filename) {
+    FILE *f = fopen(filename, "wb");
+    fputs("/*\n * \"$Id$\"\n"
+          " *\n * Configuration file for the Fast Light Tool Kit (FLTK).\n *\n"
+          " * Copyright 1998-2010 by Bill Spitzak and others.\n */\n\n", f);
+    fputs("#define FLTK_DATADIR \"/usr/local/share/fltk\"\n"
+          "#define FLTK_DOCDIR \"/usr/local/share/doc/fltk\"\n"
+          "#define BORDER_WIDTH 2\n#define HAVE_GL 1\n#define HAVE_GL_GLU_H 1\n"
+          "#define USE_COLORMAP 1\n#define HAVE_XINERAMA 0\n#define USE_XFT 0\n"
+          "#define HAVE_XDBE 0\n#define USE_XDBE HAVE_XDBE\n", f);
+    fputs("#define USE_QUARTZ 1\n#define __APPLE_QUARTZ__ 1\n"
+          "#define __APPLE_COCOA__ 1\n#define HAVE_OVERLAY 0\n"
+          "#define HAVE_GL_OVERLAY HAVE_OVERLAY\n#define WORDS_BIGENDIAN 0\n"
+          "#define U16 unsigned short\n#define U32 unsigned\n"
+          "#define HAVE_DIRENT_H 1\n#define HAVE_SCANDIR 1\n"
+          "#define HAVE_VSNPRINTF 1\n", f);
+    fputs("#define HAVE_SNPRINTF 1\n#define HAVE_STRINGS_H 1\n"
+          "#define HAVE_STRCASECMP 1\n#define HAVE_STRLCAT 1\n"
+          "#define HAVE_STRLCPY 1\n#define HAVE_LOCALE_H 1\n"
+          "#define HAVE_LOCALECONV 1\n#define HAVE_SYS_SELECT_H 1\n"
+          "#define USE_POLL 0\n#define HAVE_LIBPNG 1\n#define HAVE_LIBZ 1\n"
+          "#define HAVE_LIBJPEG 1\n#define HAVE_PNG_H 1\n", f);
+    fputs("#define HAVE_PTHREAD 1\n#define HAVE_PTHREAD_H 1\n"
+          "#define HAVE_LONG_LONG 1\n#define FLTK_LLFMT \"%lld\"\n"
+          "#define FLTK_LLCAST (long long)\n#define HAVE_STRTOLL 1\n"
+          "#define HAVE_DLFCN_H 1\n#define HAVE_DLSYM 1\n\n", f);
+    fputs("/*\n"
+          " * End of \"$Id$\".\n"
+          " */", f);
+    fclose(f);
     return 0;
   }
   
@@ -1322,7 +1421,8 @@ public:
     // --- create project.pbxproj
     sprintf(filepath, "%s/ide/Xcode3/FLTK.xcodeproj", rootDir); fl_mkdir(filepath, 0777);
     writeProjectFile(filepath);
-    // --- FIXME: LATER: should we create config.h here?
+    // --- create a valid config.h
+    sprintf(filepath, "%s/ide/Xcode3/config.h", rootDir);
     writeConfigH(filepath);
     // --- FIXME: LATER: create default icons (maybe import icons for apps?)
     sprintf(filepath, "%s/ide/Xcode3/icons", rootDir); fl_mkdir(filepath, 0777);
@@ -1375,6 +1475,10 @@ public:
         return 1;
       }
     }
+    return 0;
+  }
+  int test(const char *a1, const char *a2, const char *a3) {
+    generate_fltk_Xcode3_support(a1, a2);
     return 0;
   }
 };

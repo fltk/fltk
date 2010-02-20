@@ -202,7 +202,7 @@ Fl_Preferences::ID Fl_Target_Prefs::add_fl(Fl_IDE_Prefs &fdb, const char *pathAn
 
 Fl_Preferences::ID Fl_Target_Prefs::depends_on(Fl_IDE_Prefs &dep) {
   Fl_IDE_Prefs p(*this, "deps");
-  Fl_Preferences d(p.add_with_key("refUUID", dep.name()));
+  return p.add_with_key("refUUID", dep.name());
 }
 
 Fl_Preferences::ID Fl_Target_Prefs::add_lib(Fl_IDE_Prefs &lib) {
@@ -211,9 +211,8 @@ Fl_Preferences::ID Fl_Target_Prefs::add_lib(Fl_IDE_Prefs &lib) {
   return p.add_with_key("refUUID", lib.name());
 }
 
-Fl_Preferences::ID Fl_Target_Prefs::add_external_lib(Fl_IDE_Prefs &fdb, const char *name) {
-  char buf[1024]; sprintf(buf, "%s.lib", name);
-  Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", buf));
+Fl_Preferences::ID Fl_Target_Prefs::add_external_lib(Fl_IDE_Prefs &fdb, const char *pathAndName) {
+  Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", pathAndName));
   Fl_IDE_Prefs p(*this, "externals");
   return p.add_with_key("refUUID", file.name());
 }
@@ -271,6 +270,11 @@ const char *Fl_File_Prefs::fileExt() {
   return pExt;
 }
 
+void osx_only(Fl_Preferences::ID id) {
+  Fl_Preferences p(id);
+  p.set("only", "OS:OSX*"); // type:name#ver  # is >, >=, <, <=, ==, !=, *
+}
+
 //==============================================================================
 
 // TODO: Find a good standard position for the database
@@ -291,152 +295,253 @@ int create_new_database(const char *filename)
   
   Fl_Target_Prefs fltk_lib(libs_db.add_with_key("name", "fltk")); {
     fltk_lib.add_source(files_db, "src/Fl.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_get_system_colors.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_get_key.cxx");
-    fltk_lib.add_source(files_db, "src/fl_font.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_File_Input.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_File_Icon.cxx");
-    fltk_lib.add_source(files_db, "src/fl_file_dir.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_File_Chooser2.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_File_Chooser.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_File_Browser.cxx");
-    fltk_lib.add_source(files_db, "src/fl_engraved_label.cxx");
-    fltk_lib.add_source(files_db, "src/fl_encoding_mac_roman.cxx");
-    fltk_lib.add_source(files_db, "src/fl_draw_pixmap.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Adjuster.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Bitmap.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Box.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Browser.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Browser_.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Browser_load.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Button.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Chart.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Check_Browser.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Check_Button.cxx");
-    fltk_lib.add_source(files_db, "src/fl_dnd.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_display.cxx");
-    fltk_lib.add_source(files_db, "src/fl_diamond_box.cxx");
-    fltk_lib.add_source(files_db, "src/fl_set_fonts.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Window_fullscreen.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Window.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Widget.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_visual.cxx");
-    fltk_lib.add_source(files_db, "src/fl_vertex.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Round_Button.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Tooltip.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Window_iconize.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Window_hotspot.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Text_Display.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Scroll.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Choice.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Clock.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Color_Chooser.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Counter.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Dial.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Double_Window.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_File_Browser.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_File_Chooser.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_File_Chooser2.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_File_Icon.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_File_Input.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Group.cxx");
-    fltk_lib.add_source(files_db, "src/fl_rounded_box.cxx");
-    fltk_lib.add_source(files_db, "src/fl_overlay_visual.cxx");
-    fltk_lib.add_source(files_db, "src/fl_shortcut.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Shared_Image.cxx");
-    fltk_lib.add_source(files_db, "src/flstring.c");
-    fltk_lib.add_source(files_db, "src/Fl_grab.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_arg.cxx");
-    fltk_lib.add_source(files_db, "src/cmap.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_XPM_Image.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Help_View.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Image.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Input.cxx");
-    fltk_lib.add_source(files_db, "src/fl_scroll_area.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Tiled_Image.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Tile.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Text_Editor.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Overlay_Window.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_own_colormap.cxx");
-    fltk_lib.add_source(files_db, "src/filename_expand.cxx");
-    fltk_lib.add_source(files_db, "src/filename_absolute.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Menu_.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Menu.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Multi_Label.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Menu_Window.cxx");
-    fltk_lib.add_source(files_db, "src/Fl.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Dial.cxx");
-    fltk_lib.add_source(files_db, "src/fl_curve.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Menu_global.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Menu_Button.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Menu_Bar.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Menu_add.cxx");
-    fltk_lib.add_source(files_db, "src/filename_list.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Browser.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Value_Input.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Valuator.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Button.cxx");
-    fltk_lib.add_source(files_db, "src/fl_read_image.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Progress.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Preferences.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Positioner.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Sys_Menu_Bar.cxx");
-    fltk_lib.add_source(files_db, "src/fl_symbols.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Light_Button.cxx");
-    fltk_lib.add_source(files_db, "src/fl_labeltype.cxx");
-    fltk_lib.add_source(files_db, "src/fl_draw.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Double_Window.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_XBM_Image.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_x.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Wizard.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Help_View.cxx");
-    fltk_lib.add_source(files_db, "src/fl_open_uri.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Input_.cxx");
-    fltk_lib.add_source(files_db, "src/fl_line_style.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Adjuster.cxx");
-    fltk_lib.add_source(files_db, "src/fl_rect.cxx");
-    fltk_lib.add_source(files_db, "src/fl_arc.cxx");
-    fltk_lib.add_source(files_db, "src/filename_ext.cxx");
-    fltk_lib.add_source(files_db, "src/fl_set_font.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Scrollbar.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_abort.cxx");
-    fltk_lib.add_source(files_db, "src/fl_overlay.cxx");
-    fltk_lib.add_source(files_db, "src/fl_oval_box.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Text_Buffer.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Tabs.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_lock.cxx");
-    fltk_lib.add_source(files_db, "src/fl_cursor.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Counter.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Check_Browser.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Bitmap.cxx");
-    fltk_lib.add_source(files_db, "src/filename_isdir.cxx");
-    fltk_lib.add_source(files_db, "src/filename_match.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Slider.cxx");
-    fltk_lib.add_source(files_db, "src/fl_draw_image.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Browser_load.cxx");
-    fltk_lib.add_source(files_db, "src/fl_round_box.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Roller.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Return_Button.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Repeat_Button.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_add_idle.cxx");
-    fltk_lib.add_source(files_db, "src/fl_plastic.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Pixmap.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Light_Button.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Menu.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Menu_.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Menu_Bar.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Menu_Button.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Menu_Window.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Menu_add.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Menu_global.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Multi_Label.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Native_File_Chooser.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Native_File_Chooser_common.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Overlay_Window.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Pack.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Browser_.cxx");
-    fltk_lib.add_source(files_db, "src/scandir.c");
-    fltk_lib.add_source(files_db, "src/numericsort.c");
-    fltk_lib.add_source(files_db, "src/Fl_Box.cxx");
-    fltk_lib.add_source(files_db, "src/fl_call_main.c");
-    fltk_lib.add_source(files_db, "src/vsnprintf.c");
-    fltk_lib.add_source(files_db, "src/screen_xywh.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Pixmap.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Positioner.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Preferences.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Progress.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Repeat_Button.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Return_Button.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Roller.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Round_Button.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Scroll.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Scrollbar.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Shared_Image.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Single_Window.cxx");
-    fltk_lib.add_source(files_db, "src/fl_show_colormap.cxx");
-    fltk_lib.add_source(files_db, "src/fl_encoding_latin1.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Chart.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Value_Slider.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Slider.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Sys_Menu_Bar.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Table.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Table_Row.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Tabs.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Text_Buffer.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Text_Display.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Text_Editor.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Tile.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Tiled_Image.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Tooltip.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Tree.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Tree_Item.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Tree_Item_Array.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Tree_Prefs.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Valuator.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Value_Input.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Value_Output.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Color_Chooser.cxx");
-    fltk_lib.add_source(files_db, "src/fl_color.cxx");
-    fltk_lib.add_source(files_db, "src/fl_arci.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Value_Slider.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Widget.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Window.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Window_fullscreen.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Window_hotspot.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Window_iconize.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Wizard.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_XBM_Image.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_XPM_Image.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_abort.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_add_idle.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_arg.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_compose.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_display.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_get_key.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_get_system_colors.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_grab.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_lock.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_own_colormap.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_visual.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_x.cxx");
+    fltk_lib.add_source(files_db, "src/cmap.cxx");
+    fltk_lib.add_source(files_db, "src/filename_absolute.cxx");
+    fltk_lib.add_source(files_db, "src/filename_expand.cxx");
+    fltk_lib.add_source(files_db, "src/filename_ext.cxx");
+    fltk_lib.add_source(files_db, "src/filename_isdir.cxx");
+    fltk_lib.add_source(files_db, "src/filename_list.cxx");
+    fltk_lib.add_source(files_db, "src/filename_match.cxx");
     fltk_lib.add_source(files_db, "src/filename_setext.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Clock.cxx");
+    fltk_lib.add_source(files_db, "src/fl_arc.cxx");
+    fltk_lib.add_source(files_db, "src/fl_arci.cxx");
     fltk_lib.add_source(files_db, "src/fl_ask.cxx");
     fltk_lib.add_source(files_db, "src/fl_boxtype.cxx");
+    fltk_lib.add_source(files_db, "src/fl_call_main.c");
+    fltk_lib.add_source(files_db, "src/fl_color.cxx");
+    fltk_lib.add_source(files_db, "src/fl_cursor.cxx");
+    fltk_lib.add_source(files_db, "src/fl_curve.cxx");
+    fltk_lib.add_source(files_db, "src/fl_diamond_box.cxx");
+    fltk_lib.add_source(files_db, "src/fl_dnd.cxx");
+    fltk_lib.add_source(files_db, "src/fl_draw.cxx");
+    fltk_lib.add_source(files_db, "src/fl_draw_image.cxx");
+    fltk_lib.add_source(files_db, "src/fl_draw_pixmap.cxx");
+    fltk_lib.add_source(files_db, "src/fl_encoding_latin1.cxx");
+    fltk_lib.add_source(files_db, "src/fl_encoding_mac_roman.cxx");
+    fltk_lib.add_source(files_db, "src/fl_engraved_label.cxx");
+    fltk_lib.add_source(files_db, "src/fl_file_dir.cxx");
+    fltk_lib.add_source(files_db, "src/fl_font.cxx");
     fltk_lib.add_source(files_db, "src/fl_gtk.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_compose.cxx");
+    fltk_lib.add_source(files_db, "src/fl_labeltype.cxx");
+    fltk_lib.add_source(files_db, "src/fl_line_style.cxx");
+    fltk_lib.add_source(files_db, "src/fl_open_uri.cxx");
+    fltk_lib.add_source(files_db, "src/fl_oval_box.cxx");
+    fltk_lib.add_source(files_db, "src/fl_overlay.cxx");
+    fltk_lib.add_source(files_db, "src/fl_overlay_visual.cxx");
+    fltk_lib.add_source(files_db, "src/fl_plastic.cxx");
+    fltk_lib.add_source(files_db, "src/fl_read_image.cxx");
+    fltk_lib.add_source(files_db, "src/fl_rect.cxx");
+    fltk_lib.add_source(files_db, "src/fl_round_box.cxx");
+    fltk_lib.add_source(files_db, "src/fl_rounded_box.cxx");
+    fltk_lib.add_source(files_db, "src/fl_scroll_area.cxx");
+    fltk_lib.add_source(files_db, "src/fl_set_font.cxx");
+    fltk_lib.add_source(files_db, "src/fl_set_fonts.cxx");
     fltk_lib.add_source(files_db, "src/fl_shadow_box.cxx");
+    fltk_lib.add_source(files_db, "src/fl_shortcut.cxx");
+    fltk_lib.add_source(files_db, "src/fl_show_colormap.cxx");
+    fltk_lib.add_source(files_db, "src/fl_symbols.cxx");
     fltk_lib.add_source(files_db, "src/fl_utf.c");
     fltk_lib.add_source(files_db, "src/fl_utf8.cxx");
+    fltk_lib.add_source(files_db, "src/fl_vertex.cxx");
+    fltk_lib.add_source(files_db, "src/flstring.c");
+    fltk_lib.add_source(files_db, "src/numericsort.c");
+    fltk_lib.add_source(files_db, "src/scandir.c");
+    fltk_lib.add_source(files_db, "src/screen_xywh.cxx");
+    fltk_lib.add_source(files_db, "src/vsnprintf.c");
     fltk_lib.add_source(files_db, "src/xutf8/case.c");
     fltk_lib.add_source(files_db, "src/xutf8/is_right2left.c");
     fltk_lib.add_source(files_db, "src/xutf8/is_spacing.c");
-    fltk_lib.add_source(files_db, "src/Fl_Table_Row.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Table.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Tree_Item_Array.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Tree_Item.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Tree_Prefs.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Tree.cxx");
   }
+  
+  Fl_Target_Prefs fltk_gl_lib(libs_db.add_with_key("name", "fltk_gl")); {
+    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Choice.cxx");
+    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Overlay.cxx");
+    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Window.cxx");
+    fltk_gl_lib.add_source(files_db, "src/freeglut_geometry.cxx");
+    fltk_gl_lib.add_source(files_db, "src/freeglut_stroke_mono_roman.cxx");
+    fltk_gl_lib.add_source(files_db, "src/freeglut_stroke_roman.cxx");
+    fltk_gl_lib.add_source(files_db, "src/freeglut_teapot.cxx");
+    fltk_gl_lib.add_source(files_db, "src/gl_draw.cxx");
+    fltk_gl_lib.add_source(files_db, "src/glut_compatability.cxx");
+    fltk_gl_lib.add_source(files_db, "src/glut_font.cxx");
+    osx_only(fltk_gl_lib.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    osx_only(fltk_gl_lib.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    fltk_gl_lib.add_lib(fltk_lib);
+  }
+  
+  Fl_Target_Prefs fltk_images_lib(libs_db.add_with_key("name", "fltk_images")); {
+    fltk_images_lib.add_source(files_db, "src/Fl_BMP_Image.cxx");
+    fltk_images_lib.add_source(files_db, "src/Fl_File_Icon2.cxx");
+    fltk_images_lib.add_source(files_db, "src/Fl_GIF_Image.cxx");
+    fltk_images_lib.add_source(files_db, "src/Fl_Help_Dialog.cxx");
+    fltk_images_lib.add_source(files_db, "src/Fl_JPEG_Image.cxx");
+    fltk_images_lib.add_source(files_db, "src/Fl_PNG_Image.cxx");
+    fltk_images_lib.add_source(files_db, "src/Fl_PNM_Image.cxx");
+    fltk_images_lib.add_source(files_db, "src/fl_images_core.cxx");
+    fltk_images_lib.add_lib(fltk_lib);
+    fltk_gl_lib.depends_on(fltk_lib);
+  }
+  
+  Fl_Target_Prefs fltk_png_lib(libs_db.add_with_key("name", "fltk_png")); {
+    fltk_png_lib.add_source(files_db, "png/png.c");
+    fltk_png_lib.add_source(files_db, "png/pngerror.c");
+    fltk_png_lib.add_source(files_db, "png/pngget.c");
+    fltk_png_lib.add_source(files_db, "png/pngmem.c");
+    fltk_png_lib.add_source(files_db, "png/pngpread.c");
+    fltk_png_lib.add_source(files_db, "png/pngread.c");
+    fltk_png_lib.add_source(files_db, "png/pngrio.c");
+    fltk_png_lib.add_source(files_db, "png/pngrtran.c");
+    fltk_png_lib.add_source(files_db, "png/pngrutil.c");
+    fltk_png_lib.add_source(files_db, "png/pngset.c");
+    fltk_png_lib.add_source(files_db, "png/pngtrans.c");
+    fltk_png_lib.add_source(files_db, "png/pngwio.c");
+    fltk_png_lib.add_source(files_db, "png/pngwrite.c");
+    fltk_png_lib.add_source(files_db, "png/pngwtran.c");
+    fltk_png_lib.add_source(files_db, "png/pngwutil.c");
+    osx_only(fltk_png_lib.add_external_lib(files_db, "/usr/lib/libz.dylib"));
+    fltk_images_lib.add_lib(fltk_png_lib);
+  }
+  
+  Fl_Target_Prefs fltk_jpeg_lib(libs_db.add_with_key("name", "fltk_jpeg")); {
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcapimin.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcapistd.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jccoefct.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jccolor.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcdctmgr.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jchuff.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcinit.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcmainct.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcmarker.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcmaster.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcomapi.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcparam.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcphuff.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcprepct.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jcsample.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jctrans.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdapimin.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdapistd.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdatadst.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdatasrc.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdcoefct.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdcolor.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jddctmgr.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdhuff.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdinput.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdmainct.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdmarker.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdmaster.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdmerge.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdphuff.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdpostct.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdsample.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jdtrans.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jerror.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jfdctflt.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jfdctfst.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jfdctint.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jidctflt.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jidctfst.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jidctint.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jidctred.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jmemmgr.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jmemnobs.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jquant1.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jquant2.c");
+    fltk_jpeg_lib.add_source(files_db, "jpeg/jutils.c");
+    fltk_images_lib.add_lib(fltk_jpeg_lib);
+  }
+  
   Fl_Target_Prefs fltk_forms_lib(libs_db.add_with_key("name", "fltk_forms")); {
     fltk_forms_lib.add_source(files_db, "src/forms_bitmap.cxx");
     fltk_forms_lib.add_source(files_db, "src/forms_compatability.cxx");
@@ -446,120 +551,30 @@ int create_new_database(const char *filename)
     fltk_forms_lib.add_source(files_db, "src/forms_timer.cxx");
     fltk_forms_lib.add_lib(fltk_lib);
   }
-  Fl_Target_Prefs fltk_images_lib(libs_db.add_with_key("name", "fltk_images")); {
-    fltk_images_lib.add_source(files_db, "src/fl_images_core.cxx");
-    fltk_images_lib.add_source(files_db, "src/Fl_BMP_Image.cxx");
-    fltk_images_lib.add_source(files_db, "src/Fl_File_Icon2.cxx");
-    fltk_images_lib.add_source(files_db, "src/Fl_GIF_Image.cxx");
-    fltk_images_lib.add_source(files_db, "src/Fl_Help_Dialog.cxx");
-    fltk_images_lib.add_source(files_db, "src/Fl_JPEG_Image.cxx");
-    fltk_images_lib.add_source(files_db, "src/Fl_PNG_Image.cxx");
-    fltk_images_lib.add_source(files_db, "src/Fl_PNM_Image.cxx");
-    fltk_images_lib.add_lib(fltk_lib);
-  }
-  Fl_Target_Prefs fltk_gl_lib(libs_db.add_with_key("name", "fltk_gl")); {
-    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Choice.cxx");
-    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Overlay.cxx");
-    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Window.cxx");
-    fltk_gl_lib.add_source(files_db, "src/gl_draw.cxx");
-    fltk_gl_lib.add_source(files_db, "src/freeglut_stroke_roman.cxx");
-    fltk_gl_lib.add_source(files_db, "src/freeglut_teapot.cxx");
-    fltk_gl_lib.add_source(files_db, "src/freeglut_geometry.cxx");
-    fltk_gl_lib.add_source(files_db, "src/glut_font.cxx");
-    fltk_gl_lib.add_source(files_db, "src/freeglut_stroke_mono_roman.cxx");
-    fltk_gl_lib.add_source(files_db, "src/glut_compatability.cxx");
-    fltk_gl_lib.add_lib(fltk_lib);
-  }
-  Fl_Target_Prefs fltk_png_lib(libs_db.add_with_key("name", "fltk_png")); {
-    fltk_png_lib.add_source(files_db, "png/pngmem.c");
-    fltk_png_lib.add_source(files_db, "png/png.c");
-    fltk_png_lib.add_source(files_db, "png/pngwio.c");
-    fltk_png_lib.add_source(files_db, "png/pngwtran.c");
-    fltk_png_lib.add_source(files_db, "png/pngset.c");
-    fltk_png_lib.add_source(files_db, "png/pngwutil.c");
-    fltk_png_lib.add_source(files_db, "png/pngwrite.c");
-    fltk_png_lib.add_source(files_db, "png/pngrio.c");
-    fltk_png_lib.add_source(files_db, "png/pngget.c");
-    fltk_png_lib.add_source(files_db, "png/pngerror.c");
-    fltk_png_lib.add_source(files_db, "png/pngtrans.c");
-    fltk_png_lib.add_source(files_db, "png/pngread.c");
-    fltk_png_lib.add_source(files_db, "png/pngrutil.c");
-    fltk_png_lib.add_source(files_db, "png/pngpread.c");
-    fltk_png_lib.add_source(files_db, "png/pngrtran.c");
-    fltk_png_lib.add_external_lib(files_db, "z");
-    fltk_images_lib.add_lib(fltk_png_lib);
-  }
-  Fl_Target_Prefs fltk_jpeg_lib(libs_db.add_with_key("name", "fltk_jpeg")); {
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jidctflt.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jfdctint.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcmarker.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdhuff.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdatasrc.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jerror.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jidctred.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcomapi.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jfdctfst.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jfdctflt.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jutils.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jquant2.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jquant1.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcphuff.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdpostct.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdphuff.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdmarker.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdmaster.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdatadst.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jidctint.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jidctfst.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdapimin.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jccolor.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdapistd.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcmainct.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdmerge.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jddctmgr.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdtrans.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdsample.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jmemnobs.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jmemmgr.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdinput.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdmainct.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcinit.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jccoefct.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcapistd.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdcolor.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcsample.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcdctmgr.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcmaster.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcapimin.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jdcoefct.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcparam.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jchuff.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jcprepct.c");
-    fltk_jpeg_lib.add_source(files_db, "jpeg/jctrans.c");
-    fltk_images_lib.add_lib(fltk_jpeg_lib);
-  }
-  
+
   // --- create applications
   Fl_IDE_Prefs apps_db(targets_db, "apps"); 
   
   Fl_Target_Prefs fluid_app(apps_db.add_with_key("name", "Fluid")); {
-    fluid_app.add_source(files_db, "fluid/about_panel.cxx");
-    fluid_app.add_source(files_db, "fluid/align_widget.cxx");
-    fluid_app.add_source(files_db, "fluid/alignment_panel.cxx");
-    fluid_app.add_source(files_db, "fluid/code.cxx");
     fluid_app.add_source(files_db, "fluid/CodeEditor.cxx");
-    fluid_app.add_source(files_db, "fluid/factory.cxx");
-    fluid_app.add_source(files_db, "fluid/file.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Function_Type.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Group_Type.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Menu_Type.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Type.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Widget_Type.cxx");
     fluid_app.add_source(files_db, "fluid/Fl_Window_Type.cxx");
-    fluid_app.add_source(files_db, "fluid/fluid.cxx");
     fluid_app.add_source(files_db, "fluid/Fluid_Image.cxx");
+    fluid_app.add_source(files_db, "fluid/about_panel.cxx");
+    fluid_app.add_source(files_db, "fluid/align_widget.cxx");
+    fluid_app.add_source(files_db, "fluid/alignment_panel.cxx");
+    fluid_app.add_source(files_db, "fluid/code.cxx");
+    fluid_app.add_source(files_db, "fluid/factory.cxx");
+    fluid_app.add_source(files_db, "fluid/file.cxx");
+    fluid_app.add_source(files_db, "fluid/fluid.cxx");
     fluid_app.add_source(files_db, "fluid/function_panel.cxx");
     fluid_app.add_source(files_db, "fluid/ide_support.cxx");
+    fluid_app.add_source(files_db, "fluid/ide_support.cxx");
+    fluid_app.add_source(files_db, "fluid/ide_xcode.cxx");
     fluid_app.add_source(files_db, "fluid/ide_xcode.cxx");
     fluid_app.add_source(files_db, "fluid/template_panel.cxx");
     fluid_app.add_source(files_db, "fluid/undo.cxx");
@@ -606,7 +621,7 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "blocks"));
     db.add_source(files_db, "test/blocks.cxx");
     db.add_lib(fltk_lib); 
-    //db.add_lib(fltk_audio_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
     demo_db.depends_on(db);
   }  
   
@@ -663,6 +678,8 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/cube.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
     demo_db.depends_on(db);
   }  
   
@@ -672,6 +689,9 @@ int create_new_database(const char *filename)
     db.add_fl(files_db, "test/CubeViewUI.fl");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
@@ -702,6 +722,7 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "fast_slow"));
     db.add_fl(files_db, "test/fast_slow.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
@@ -732,6 +753,8 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/fracviewer.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
     db.add_lib(fltk_forms_lib); 
     demo_db.depends_on(db);
   }  
@@ -740,6 +763,8 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/fullscreen.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
     demo_db.depends_on(db);
   }  
   
@@ -747,6 +772,8 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/gl_overlay.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
     demo_db.depends_on(db);
   }  
   
@@ -754,6 +781,8 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/glpuzzle.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
     demo_db.depends_on(db);
   }  
   
@@ -787,6 +816,7 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "inactive"));
     db.add_fl(files_db, "test/inactive.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
@@ -806,6 +836,7 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/keyboard.cxx");
     db.add_fl(files_db, "test/keyboard_ui.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
@@ -832,6 +863,7 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/mandelbrot.cxx");
     db.add_fl(files_db, "test/mandelbrot_ui.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
@@ -902,12 +934,14 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "preferences"));
     db.add_fl(files_db, "test/preferences.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "radio"));
     db.add_fl(files_db, "test/radio.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
@@ -920,6 +954,7 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "resize"));
     db.add_fl(files_db, "test/resize.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
@@ -933,6 +968,8 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/shape.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
     demo_db.depends_on(db);
   }  
 
@@ -948,7 +985,7 @@ int create_new_database(const char *filename)
     db.add_lib(fltk_images_lib); 
     db.add_lib(fltk_jpeg_lib); 
     db.add_lib(fltk_png_lib); 
-    //db.add_lib(fltk_audio_lib); 
+    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
     demo_db.depends_on(db);
   }  
   
@@ -967,6 +1004,7 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "tabs"));
     db.add_fl(files_db, "test/tabs.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   
@@ -1006,10 +1044,12 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "valuators"));
     db.add_fl(files_db, "test/valuators.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
     
   db->flush();    
+  return 0;
 }
 
 
@@ -1037,6 +1077,10 @@ public:
         return 1;
       }
     }
+    return 0;
+  }
+  int test(const char *a1, const char *a2, const char *a3) {
+    create_new_database(a1);
     return 0;
   }
 };

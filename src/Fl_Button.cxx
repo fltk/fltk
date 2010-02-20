@@ -60,7 +60,7 @@ int Fl_Button::value(int v) {
  */
 void Fl_Button::setonly() { // set this radio button on, turn others off
   value(1);
-  Fl_Group* g = (Fl_Group*)parent();
+  Fl_Group* g = parent();
   Fl_Widget*const* a = g->array();
   for (int i = g->children(); i--;) {
     Fl_Widget* o = *a++;

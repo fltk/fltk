@@ -821,6 +821,10 @@ public:
   virtual const char *help() = 0;
   // handle a command and return the number of args used, or 0
   virtual int arg(int argc, char **argv, int &i) = 0;
+  // optional test the plugin
+  virtual int test(const char *a1=0L, const char *a2=0L, const char *a3=0L) { 
+    return 0;
+  }
 };
 
 

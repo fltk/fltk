@@ -466,7 +466,7 @@ char Fl_Preferences::deleteAllGroups()
  */
 int Fl_Preferences::entries()
 {
-  return node->nEntry;
+  return node->nEntry();
 }
 
 
@@ -480,7 +480,7 @@ int Fl_Preferences::entries()
  */
 const char *Fl_Preferences::entry( int index )
 {
-  return node->entry[index].name;
+  return node->entry(index).name;
 }
 
 
@@ -1350,10 +1350,13 @@ Fl_Preferences::Node::Node( const char *path )
 {
   if ( path ) path_ = strdup( path ); else path_ = 0;
   child_ = 0; next_ = 0; parent_ = 0;
-  entry = 0;
-  nEntry = NEntry = 0;
+  entry_ = 0;
+  nEntry_ = NEntry_ = 0;
   dirty_ = 0;
   top_ = 0;
+  indexed_ = 0;
+  index_ = 0;
+  nIndex_ = NIndex_ = 0;
 }
 
 void Fl_Preferences::Node::deleteAllChildren() 
@@ -1366,27 +1369,28 @@ void Fl_Preferences::Node::deleteAllChildren()
   }
   child_ = 0L;
   dirty_ = 1;
+  updateIndex();
 }
 
 void Fl_Preferences::Node::deleteAllEntries() 
 {
-  if ( entry )
+  if ( entry_ )
   {
-    for ( int i = 0; i < nEntry; i++ )
+    for ( int i = 0; i < nEntry_; i++ )
     {
-      if ( entry[i].name ) {
-	free( entry[i].name );
-	entry[i].name = 0L;
+      if ( entry_[i].name ) {
+	free( entry_[i].name );
+	entry_[i].name = 0L;
       }
-      if ( entry[i].value ) {
-	free( entry[i].value );
-	entry[i].value = 0L;
+      if ( entry_[i].value ) {
+	free( entry_[i].value );
+	entry_[i].value = 0L;
       }
     }
-    free( entry );
-    entry = 0L;
-    nEntry = 0;
-    NEntry = 0;
+    free( entry_ );
+    entry_ = 0L;
+    nEntry_ = 0;
+    NEntry_ = 0;
   }
   dirty_ = 1;
 }
@@ -1396,6 +1400,7 @@ Fl_Preferences::Node::~Node()
 {
   deleteAllChildren();
   deleteAllEntries();
+  deleteIndex();
   if ( path_ ) {
     free( path_ );
     path_ = 0L;
@@ -1420,12 +1425,12 @@ int Fl_Preferences::Node::write( FILE *f )
 {
   if ( next_ ) next_->write( f );
   fprintf( f, "\n[%s]\n\n", path_ );
-  for ( int i = 0; i < nEntry; i++ )
+  for ( int i = 0; i < nEntry_; i++ )
   {
-    char *src = entry[i].value;
+    char *src = entry_[i].value;
     if ( src )
     { // hack it into smaller pieces if needed
-      fprintf( f, "%s:", entry[i].name );
+      fprintf( f, "%s:", entry_[i].name );
       int cnt;
       for ( cnt = 0; cnt < 60; cnt++ )
 	if ( src[cnt]==0 ) break;
@@ -1443,7 +1448,7 @@ int Fl_Preferences::Node::write( FILE *f )
       }
     }
     else
-      fprintf( f, "%s\n", entry[i].name );
+      fprintf( f, "%s\n", entry_[i].name );
   }
   if ( child_ ) child_->write( f );
   dirty_ = 0;
@@ -1482,37 +1487,38 @@ Fl_Preferences::Node *Fl_Preferences::Node::addChild( const char *path )
   Node *nd = find( name );
   free( name );
   dirty_ = 1;
+  updateIndex();
   return nd;
 }
 
 // create and set, or change an entry within this node
 void Fl_Preferences::Node::set( const char *name, const char *value )
 {
-  for ( int i=0; i<nEntry; i++ )
+  for ( int i=0; i<nEntry_; i++ )
   {
-    if ( strcmp( name, entry[i].name ) == 0 )
+    if ( strcmp( name, entry_[i].name ) == 0 )
     {
       if ( !value ) return; // annotation
-      if ( strcmp( value, entry[i].value ) != 0 )
+      if ( strcmp( value, entry_[i].value ) != 0 )
       {
-	if ( entry[i].value )
-	  free( entry[i].value );
-	entry[i].value = strdup( value );
+	if ( entry_[i].value )
+	  free( entry_[i].value );
+	entry_[i].value = strdup( value );
 	dirty_ = 1;
       }
       lastEntrySet = i;
       return;
     }
   }
-  if ( NEntry==nEntry )
+  if ( NEntry_==nEntry_ )
   {
-    NEntry = NEntry ? NEntry*2 : 10;
-    entry = (Entry*)realloc( entry, NEntry * sizeof(Entry) );
+    NEntry_ = NEntry_ ? NEntry_*2 : 10;
+    entry_ = (Entry*)realloc( entry_, NEntry_ * sizeof(Entry) );
   }
-  entry[ nEntry ].name = strdup( name );
-  entry[ nEntry ].value = value?strdup( value ):0;
-  lastEntrySet = nEntry;
-  nEntry++;
+  entry_[ nEntry_ ].name = strdup( name );
+  entry_[ nEntry_ ].value = value?strdup( value ):0;
+  lastEntrySet = nEntry_;
+  nEntry_++;
   dirty_ = 1;
 }
 
@@ -1546,8 +1552,8 @@ void Fl_Preferences::Node::set( const char *line )
 // add more data to an existing entry
 void Fl_Preferences::Node::add( const char *line )
 {
-  if ( lastEntrySet<0 || lastEntrySet>=nEntry ) return;
-  char *&dst = entry[ lastEntrySet ].value;
+  if ( lastEntrySet<0 || lastEntrySet>=nEntry_ ) return;
+  char *&dst = entry_[ lastEntrySet ].value;
   int a = strlen( dst );
   int b = strlen( line );
   dst = (char*)realloc( dst, a+b+1 );
@@ -1559,15 +1565,15 @@ void Fl_Preferences::Node::add( const char *line )
 const char *Fl_Preferences::Node::get( const char *name )
 {
   int i = getEntry( name );
-  return i>=0 ? entry[i].value : 0 ;
+  return i>=0 ? entry_[i].value : 0 ;
 }
 
 // find the index of an entry, returns -1 if no such entry
 int Fl_Preferences::Node::getEntry( const char *name )
 {
-  for ( int i=0; i<nEntry; i++ )
+  for ( int i=0; i<nEntry_; i++ )
   {
-    if ( strcmp( name, entry[i].name ) == 0 )
+    if ( strcmp( name, entry_[i].name ) == 0 )
     {
       return i;
     }
@@ -1580,8 +1586,8 @@ char Fl_Preferences::Node::deleteEntry( const char *name )
 {
   int ix = getEntry( name );
   if ( ix == -1 ) return 0;
-  memmove( entry+ix, entry+ix+1, (nEntry-ix-1) * sizeof(Entry) );
-  nEntry--;
+  memmove( entry_+ix, entry_+ix+1, (nEntry_-ix-1) * sizeof(Entry) );
+  nEntry_--;
   dirty_ = 1;
   return 1;
 }
@@ -1670,10 +1676,14 @@ Fl_Preferences::Node *Fl_Preferences::Node::search( const char *path, int offset
 // return the number of child nodes (groups)
 int Fl_Preferences::Node::nChildren()
 {
-  int cnt = 0;
-  for ( Node *nd = child_; nd; nd = nd->next_ )
-    cnt++;
-  return cnt;
+  if (indexed_) {
+    return nIndex_;
+  } else {
+    int cnt = 0;
+    for ( Node *nd = child_; nd; nd = nd->next_ )
+      cnt++;
+    return cnt;
+  }
 }
 
 // return the node name
@@ -1688,7 +1698,7 @@ const char *Fl_Preferences::Node::name()
   }
 }
 
-// return the n'th child node
+// return the n'th child node's name
 const char *Fl_Preferences::Node::child( int ix )
 {
   Node *nd = childNode( ix );
@@ -1701,13 +1711,22 @@ const char *Fl_Preferences::Node::child( int ix )
 // return the n'th child node
 Fl_Preferences::Node *Fl_Preferences::Node::childNode( int ix )
 {
-  Node *nd;
-  for ( nd = child_; nd; nd = nd->next_ )
-  {
-    if ( !ix-- ) break;
-    if ( !nd ) break;
+  createIndex();
+  if (indexed_) {
+    // usually faster access in correct order, but needing more memory
+    return index_[ix];
+  } else {
+    // slow access and reverse order
+    int n = nChildren();
+    ix = n - ix -1;
+    Node *nd;
+    for ( nd = child_; nd; nd = nd->next_ )
+    {
+      if ( !ix-- ) break;
+      if ( !nd ) break;
+    }
+    return nd;
   }
-  return nd;
 }
 
 // remove myself from the list and delete me (and all children)
@@ -1729,9 +1748,37 @@ char Fl_Preferences::Node::remove()
       }
     }
     parent()->dirty_ = 1;
+    parent()->updateIndex();
   }
   delete this;
   return ( nd != 0 );
+}
+
+void Fl_Preferences::Node::createIndex() {
+  if (indexed_) return;
+  int n = nChildren();
+  if (n>NIndex_) {
+    NIndex_ = n + 16;
+    index_ = (Node**)realloc(index_, NIndex_*sizeof(Node**));
+  }
+  Node *nd;
+  int i = 0;
+  for (nd = child_; nd; nd = nd->next_, i++) {
+    index_[n-i-1] = nd;
+  }
+  nIndex_ = n;
+  indexed_ = 1;
+}
+
+void Fl_Preferences::Node::updateIndex() {
+  indexed_ = 0;
+}
+
+void Fl_Preferences::Node::deleteIndex() {
+  if (index_) free(index_);
+  NIndex_ = nIndex_ = 0;
+  index_ = 0;
+  indexed_ = 0;
 }
 
 char Fl_Preferences::Node::copyTo(Fl_Tree *tree, Fl_Tree_Item *ti) 
@@ -1744,11 +1791,11 @@ char Fl_Preferences::Node::copyTo(Fl_Tree *tree, Fl_Tree_Item *ti)
     nd->copyTo(tree, tic);
     tic->close();
   }
-  int i, n = nEntry;
+  int i, n = nEntry_;
   for (i=0; i<n; i++) {
     char buf[80];
-    const char *name = entry[i].name;
-    const char *value = entry[i].value;
+    const char *name = entry_[i].name;
+    const char *value = entry_[i].value;
     fl_snprintf(buf, 80, "%s: %s", name, value);
     tree->add(ti, buf);
   }

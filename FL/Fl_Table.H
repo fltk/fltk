@@ -865,7 +865,7 @@ public:
     } else {
       table->hide();
     } 
-    Fl_Group::current((Fl_Group*)(Fl_Group::parent()));
+    Fl_Group::current(Fl_Group::parent());
   }
   Fl_Widget * const *array() {
     return(table->array());

@@ -126,7 +126,7 @@ Fl_Value_Input::Fl_Value_Input(int X, int Y, int W, int H, const char* l)
 : Fl_Valuator(X, Y, W, H, l), input(X, Y, W, H, 0) {
   soft_ = 0;
   if (input.parent())  // defeat automatic-add
-    ((Fl_Group*)input.parent())->remove(input);
+    input.parent()->remove(input);
   input.parent((Fl_Group *)this); // kludge!
   input.callback(input_cb, this);
   input.when(FL_WHEN_CHANGED);

@@ -77,7 +77,7 @@ void Fl_Group::begin() {current_ = this;}
   <I>Exactly the same as</I> current(this->parent()). Any new widgets
   added to the widget tree will be added to the parent of the group.
 */
-void Fl_Group::end() {current_ = (Fl_Group*)parent();}
+void Fl_Group::end() {current_ = parent();}
 
 /**
   Returns the currently active group.
@@ -429,7 +429,7 @@ Fl_Group::~Fl_Group() {
 */
 void Fl_Group::insert(Fl_Widget &o, int index) {
   if (o.parent()) {
-    Fl_Group* g = (Fl_Group*)(o.parent());
+    Fl_Group* g = o.parent();
     int n = g->find(o);
     if (g == this) {
       if (index > n) index--;

@@ -38,6 +38,47 @@
 // One Compile to copy them all and in the bundle bind them,
 // in the Land of MacOS X where the Drop-Shadows lie."
 
+/*
+ TODO: The following messages point to the last Carbon remainders. We should 
+ really remove these as well, so we can stop linking to Carbon alltogether.
+ 
+ "_GetKeys", referenced from:
+ Fl::get_key(int)  in Fl_get_key.o
+ 
+ "_GetCurrentEventQueue", referenced from:
+ do_queued_events(double)in Fl.o
+ 
+ "_InstallEventLoopTimer", referenced from:
+ Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
+ 
+ "_FlushEvents", referenced from:
+ fl_open_display()     in Fl.o
+ 
+ "_GetEventParameter", referenced from:
+ carbonTextHandler(OpaqueEventHandlerCallRef*, OpaqueEventRef*, void*) in Fl.o
+ 
+ "_InstallEventHandler", referenced from:
+ fl_open_display()     in Fl.o
+ 
+ "_GetEventDispatcherTarget", referenced from:
+ fl_open_display()     in Fl.o
+ 
+ "_SetEventLoopTimerNextFireTime", referenced from:
+ Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
+ 
+ "_RemoveEventLoopTimer", referenced from:
+ Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
+ delete_timer(MacTimeout&)       in Fl.o
+ 
+ "_GetMainEventLoop", referenced from:
+ Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
+ 
+ "_GetCurrentKeyModifiers", referenced from:
+ -[FLView flagsChanged:] in Fl.o
+ 
+ */
+
+
 // we don't need the following definition because we deliver only
 // true mouse moves.  On very slow systems however, this flag may
 // still be useful.
@@ -1918,7 +1959,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
     if ( Fl::e_keysym ) 
       sendEvent = ( prevMods<mods ) ? FL_KEYBOARD : FL_KEYUP;
     Fl::e_length = 0;
-    Fl::e_text = "";
+    Fl::e_text = (char*)"";
     prevMods = mods;
   }
   mods_to_e_state( mods );

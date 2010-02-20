@@ -239,13 +239,12 @@ inline void fl_redraw_object(Fl_Widget* o) {o->redraw();}
 inline void fl_show_object(Fl_Widget* o) {o->show();}
 inline void fl_hide_object(Fl_Widget* o) {o->hide();}
 inline void fl_free_object(Fl_Widget* x) {delete x;}
-inline void fl_delete_object(Fl_Widget* o) {((Fl_Group*)(o->parent()))->remove(*o);}
+inline void fl_delete_object(Fl_Widget* o) {o->parent()->remove(*o);}
 inline void fl_activate_object(Fl_Widget* o) {o->activate();}
 inline void fl_deactivate_object(Fl_Widget* o) {o->deactivate();}
 
 inline void fl_add_object(Fl_Window* f, Fl_Widget* x) {f->add(x);}
-inline void fl_insert_object(Fl_Widget* o, Fl_Widget* b) {
-    ((Fl_Group*)(b->parent()))->insert(*o,b);}
+inline void fl_insert_object(Fl_Widget* o, Fl_Widget* b) {b->parent()->insert(*o,b);}
 
 inline Fl_Window* FL_ObjWin(Fl_Widget* o) {return o->window();}
 

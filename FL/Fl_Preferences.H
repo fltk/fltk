@@ -211,8 +211,19 @@ private:
       RootNode *root_;  // top_ bit set
     };
     char *path_;
+    Entry *entry_;
+    int nEntry_, NEntry_;
     unsigned char dirty_:1;
     unsigned char top_:1;
+    unsigned char indexed_:1;
+    // indexing routines
+    Node **index_;
+    int nIndex_, NIndex_;
+    void createIndex();
+    void updateIndex();
+    void deleteIndex();
+  public:
+    static int lastEntrySet;
   public:
     Node( const char *path );
     ~Node();
@@ -242,10 +253,8 @@ private:
     int getEntry( const char *name );
     char deleteEntry( const char *name );
     void deleteAllEntries();
-    // public values
-    Entry *entry;
-    int nEntry, NEntry;
-    static int lastEntrySet;
+    int nEntry() { return nEntry_; }
+    Entry &entry(int i) { return entry_[i]; }
   };
   friend class Node;
 
