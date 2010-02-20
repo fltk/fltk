@@ -2689,7 +2689,6 @@ static void MacRelinkWindow(Fl_X *x, Fl_X *p) {
 }
 
 void MacDestroyWindow(Fl_Window *w, void *p) {
-  MacUnmapWindow(w, p);
   if (w && !w->parent() && p) {
     [[(NSWindow *)p contentView] release];
     [(NSWindow *)p close];
