@@ -739,7 +739,7 @@ Fl_Type *Fl_Data_Type::make() {
   o->public_ = 1;
   o->static_ = 1;
   o->filename_ = 0;
-  char buf[32]; sprintf(buf, "data_%016x", (unsigned long int)o);
+  char buf[32]; sprintf(buf, "data_%016lx", (unsigned long int)o);
   o->name(buf);
   o->add(p);
   o->factory = this;
