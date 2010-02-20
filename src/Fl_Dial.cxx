@@ -109,8 +109,10 @@ void Fl_Dial::draw() {
 */
 int Fl_Dial::handle(int event, int X, int Y, int W, int H) {
   switch (event) {
-  case FL_PUSH:
+  case FL_PUSH: {
+    Fl_Widget_Tracker wp(this);  
     handle_push();
+    if (wp.deleted()) return 1; }
   case FL_DRAG: {
     int mx = (Fl::event_x()-X-W/2)*H;
     int my = (Fl::event_y()-Y-H/2)*W;

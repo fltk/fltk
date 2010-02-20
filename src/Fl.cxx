@@ -44,9 +44,9 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(DEBUG_WATCH)
 #  include <stdio.h>
-#endif // DEBUG
+#endif // DEBUG || DEBUG_WATCH
 
 #ifdef WIN32
 #  include <ole2.h>
@@ -1648,11 +1648,11 @@ void Fl::watch_widget_pointer(Fl_Widget *&w)
     widget_watch = (Fl_Widget***)realloc(widget_watch, sizeof(Fl_Widget**)*max_widget_watch);
   }
   widget_watch[num_widget_watch++] = wp;
-#ifdef DEBUG
+#ifdef DEBUG_WATCH
   printf ("\nwatch_widget_pointer:   (%d/%d) %8p => %8p\n",
     num_widget_watch,num_widget_watch,wp,*wp);
   fflush(stdout);
-#endif // DEBUG
+#endif // DEBUG_WATCH
 }
 
 /**
@@ -1674,18 +1674,18 @@ void Fl::release_widget_pointer(Fl_Widget *&w)
       if (j<i) widget_watch[j] = widget_watch[i]; // fill gap
       j++;
     }
-#ifdef DEBUG
+#ifdef DEBUG_WATCH
     else { // found widget pointer
       printf ("release_widget_pointer: (%d/%d) %8p => %8p\n",
 	i+1,num_widget_watch,wp,*wp);
     }
-#endif //DEBUG
+#endif //DEBUG_WATCH
   }
   num_widget_watch = j;
-#ifdef DEBUG
+#ifdef DEBUG_WATCH
   printf ("                        num_widget_watch = %d\n\n",num_widget_watch);
   fflush(stdout);
-#endif // DEBUG
+#endif // DEBUG_WATCH
   return;
 }
 /**

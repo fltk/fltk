@@ -227,8 +227,9 @@ int Fl_Group::handle(int event) {
     for (i = children(); i--;) {
       o = a[i];
       if (o->takesevents() && Fl::event_inside(o)) {
+	Fl_Widget_Tracker wp(o);
 	if (send(o,FL_PUSH)) {
-	  if (Fl::pushed() && !o->contains(Fl::pushed())) Fl::pushed(o);
+	  if (Fl::pushed() && wp.exists() && !o->contains(Fl::pushed())) Fl::pushed(o);
 	  return 1;
 	}
       }

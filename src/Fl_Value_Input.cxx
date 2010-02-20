@@ -100,8 +100,10 @@ int Fl_Value_Input::handle(int event) {
     if (value() != previous_value() || !Fl::event_is_click())
       handle_release();
     else {
+      Fl_Widget_Tracker wp(&input);
       input.handle(FL_PUSH);
-      input.handle(FL_RELEASE);
+      if (wp.exists())
+	input.handle(FL_RELEASE);
     }
     return 1;
   case FL_FOCUS:

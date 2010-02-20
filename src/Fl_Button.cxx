@@ -117,7 +117,11 @@ int Fl_Button::handle(int event) {
     else {
       value(oldval);
       set_changed();
-      if (when() & FL_WHEN_CHANGED) do_callback();
+      if (when() & FL_WHEN_CHANGED) {
+	Fl_Widget_Tracker wp(this);
+        do_callback();
+        if (wp.deleted()) return 1;
+      }
     }
     if (when() & FL_WHEN_RELEASE) do_callback();
     return 1;
@@ -156,6 +160,7 @@ int Fl_Button::handle(int event) {
     if (Fl::focus() == this && Fl::event_key() == ' ' &&
         !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
       set_changed();
+      Fl_Widget_Tracker wp(this);
       if (type() == FL_RADIO_BUTTON && !value_) {
 	setonly();
 	if (when() & FL_WHEN_CHANGED) do_callback();
@@ -163,6 +168,7 @@ int Fl_Button::handle(int event) {
 	value(!value());
 	if (when() & FL_WHEN_CHANGED) do_callback();
       }
+      if (wp.deleted()) return 1;
       if (when() & FL_WHEN_RELEASE) do_callback();
       return 1;
     }

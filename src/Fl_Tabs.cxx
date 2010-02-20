@@ -161,8 +161,10 @@ int Fl_Tabs::handle(int event) {
         redraw_tabs();
       }
       if (o && value(o)) {
+        Fl_Widget_Tracker wp(o);
         set_changed();
 	do_callback();
+	if (wp.deleted()) return 1;
       }
       Fl_Tooltip::current(o);
     } else {
