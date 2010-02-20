@@ -196,11 +196,17 @@ public:
     for (i=0; i<n; i++) {
       Fl_Preferences extDB(extsDB, i);
       GET_UUID(refUUID, extDB);
-      MAKE_XCID(xcBuildFrameworkID, extDB);
       Fl_File_Prefs fileDB(filesDB, refUUID);
       MAKE_XCID(xcFileID, fileDB);
       const char *fullName = fileDB.fullName();
-      fprintf(out, "\t\t%s /* %s in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFrameworkID, fullName, xcFileID, fullName);
+      //-- TODO: test
+      if (strcmp(fileDB.fileExt(), ".icns")==0) {
+        MAKE_XCID(xcCopyResourceID, extDB);
+        fprintf(out, "\t\t%s /* %s in Resources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcCopyResourceID, fullName, xcFileID, fullName);
+      } else {
+        MAKE_XCID(xcBuildFrameworkID, extDB);
+        fprintf(out, "\t\t%s /* %s in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFrameworkID, fullName, xcFileID, fullName);
+      }
     }
     return 0;
   }
@@ -242,7 +248,7 @@ public:
     fprintf(out, "\t\t\t\t\"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx\",\n");
     fprintf(out, "\t\t\t\t\"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h\",\n");
     fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tscript = \"export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ../../test && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}\";\n");
+    fprintf(out, "\t\t\tscript = \"export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ${INPUT_FILE_DIR} && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}\";\n");
     fprintf(out, "\t\t};\n");
     return 0;
   }
@@ -449,6 +455,14 @@ public:
                 "sourceTree = \"<absolute>\"; };\n", 
                 xcFileID, fullName, fullName, pathAndName );
         filetype = 0L;
+      } else if (strcmp(ext, ".icns")==0) {
+        fprintf(out,
+                "\t\t%s /* %s */ = {isa = PBXFileReference; "
+                "lastKnownFileType = \"image.icns\"; "
+                "name = %s; path = %s; "
+                "sourceTree = \"<group>\"; };\n", 
+                xcFileID, fullName, fullName, pathAndName );
+        filetype = 0L;
       } else if (strcmp(ext, ".plist")==0) {
         filetype = "text.plist.xml";
       }
@@ -489,8 +503,10 @@ public:
       GET_UUID(refUUID, extDB);
       MAKE_XCID(xcBuildFrameworkID, extDB);
       Fl_File_Prefs fileDB(filesDB, refUUID);
-      const char *name = fileDB.fileName();
-      fprintf(out, "\t\t\t\t%s /* lib%s.dylib in Frameworks */,\n", xcBuildFrameworkID, name);
+      const char *fullName = fileDB.fullName();
+      if (strcmp(fileDB.fileExt(), ".icns")!=0) {
+        fprintf(out, "\t\t\t\t%s /* %s in Frameworks */,\n", xcBuildFrameworkID, fullName);
+      }
     }
     fprintf(out, "\t\t\t);\n");
     fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
@@ -616,15 +632,8 @@ public:
     fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
     fprintf(out, "\t\t};\n");
     // --- FIXME: missing "plists" group
-    // --- FIXME: missing "Library Sources" group
-    // --- FIXME: missing "Test Sources" group
-    // --- FIXME: missing "Frameworks" group
-    // --- FIXME: missing "Fluid Sources" group
-    // --- FIXME: missing "jpeg Sources" group
-    // --- FIXME: missing "png Sources" group
-    // --- FIXME: missing "libs" group
 
-    // --- "Applications" group for testing
+    // --- "Applications" group
     fprintf(out, "\t\t%s /* Applications */ = {\n", xcAppsGroupID);
     fprintf(out, "\t\t\tisa = PBXGroup;\n");
     fprintf(out, "\t\t\tchildren = (\n");
@@ -642,7 +651,7 @@ public:
       Fl_Preferences targetDB(tgtAppsDB, i);
       writeTargetFiles(out, targetDB);
     }
-    // --- "Frameworks" group for testing
+    // --- "Frameworks" group
     fprintf(out, "\t\t%s /* Frameworks */ = {\n", xcLibsGroupID);
     fprintf(out, "\t\t\tisa = PBXGroup;\n");
     fprintf(out, "\t\t\tchildren = (\n");
@@ -660,7 +669,7 @@ public:
       Fl_Preferences targetDB(tgtLibsDB, i);
       writeTargetFiles(out, targetDB);
     }
-    // --- "Tests" group for testing
+    // --- "Tests" group
     fprintf(out, "\t\t%s /* Tests */ = {\n", xcTestsGroupID);
     fprintf(out, "\t\t\tisa = PBXGroup;\n");
     fprintf(out, "\t\t\tchildren = (\n");
@@ -850,6 +859,17 @@ public:
     fprintf(out, "\t\t\tisa = PBXResourcesBuildPhase;\n");
     fprintf(out, "\t\t\tbuildActionMask = 2147483647;\n");
     fprintf(out, "\t\t\tfiles = (\n");
+    Fl_Preferences extsDB(targetDB, "externals");
+    int i, n = extsDB.groups();
+    for (i=0; i<n; i++) {
+      Fl_Preferences extDB(extsDB, i);
+      GET_UUID(refUUID, extDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      if (strcmp(fileDB.fileExt(), ".icns")==0) {
+        MAKE_XCID(xcCopyResourceID, extDB);
+        fprintf(out, "\t\t\t\t%s /* %s in Resources */,\n", xcCopyResourceID, fileDB.fullName());
+      }
+    }
     fprintf(out, "\t\t\t);\n");
     fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
     fprintf(out, "\t\t};\n");
@@ -1069,7 +1089,7 @@ public:
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-security\";\n");
+    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
     fprintf(out, "\t\t\t\tWRAPPER_EXTENSION = app;\n");
     fprintf(out, "\t\t\t\tZERO_LINK = YES;\n");
     fprintf(out, "\t\t\t};\n");
@@ -1103,7 +1123,7 @@ public:
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-security\";\n");
+    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
     fprintf(out, "\t\t\t\tWRAPPER_EXTENSION = app;\n");
     fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
     fprintf(out, "\t\t\t};\n");
@@ -1149,7 +1169,7 @@ public:
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-security\";\n");
+    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
     fprintf(out, "\t\t\t\tZERO_LINK = YES;\n");
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Debug;\n");
@@ -1187,7 +1207,7 @@ public:
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tSDKROOT = \"\";\n");
     fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"-Wno-format-security\";\n");
+    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
     fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Release;\n");
@@ -1371,6 +1391,18 @@ public:
     fprintf(f, "\t<string>English</string>\n");
     fprintf(f, "\t<key>CFBundleExecutable</key>\n");
     fprintf(f, "\t<string>${EXECUTABLE_NAME}</string>\n");
+    // find the first suitable icon file if there is one
+    Fl_Preferences extsDB(target_db, "externals");
+    int i, n = extsDB.groups();
+    for (i=0; i<n; i++) {
+      Fl_Preferences extDB(extsDB, i);
+      GET_UUID(refUUID, extDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      if (strcmp(fileDB.fileExt(), ".icns")==0) {
+        fprintf(f, "\t<key>CFBundleIconFile</key>\n\t<string>%s</string>", fileDB.fileName());
+        break;
+      }
+    }
     fprintf(f, "\t<key>CFBundleIdentifier</key>\n");
     fprintf(f, "\t<string>org.fltk.%s</string>\n", name);
     fprintf(f, "\t<key>CFBundleInfoDictionaryVersion</key>\n");

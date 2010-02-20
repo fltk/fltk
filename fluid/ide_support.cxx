@@ -584,6 +584,7 @@ int create_new_database(const char *filename)
     fluid_app.add_lib(fltk_images_lib);
     fluid_app.add_lib(fltk_jpeg_lib);
     fluid_app.add_lib(fltk_png_lib);
+    osx_only(fluid_app.add_external_lib(files_db, "icons/fluid.icns"));
   }
   
   // --- create test applications
