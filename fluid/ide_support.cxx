@@ -331,7 +331,6 @@ int create_new_database(const char *filename)
     fltk_lib.add_source(files_db, "src/Fl_Menu_global.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Multi_Label.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Native_File_Chooser.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Native_File_Chooser_common.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Overlay_Window.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Pack.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Pixmap.cxx");
