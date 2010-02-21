@@ -2464,6 +2464,7 @@ void Fl_X::q_release_context(Fl_X *x) {
 #endif
 }
 
+/* the former implementation
 void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
   CGContextSaveGState(fl_gc);
   CGAffineTransform mx = CGContextGetCTM(fl_gc);
@@ -2477,6 +2478,20 @@ void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
   rect.origin.y =  (mx.ty+0.5f) - rect.origin.y - h + cy;
   rect.size.width = w;
   rect.size.height = h; 
+}
+*/
+void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
+  CGContextSaveGState(fl_gc);
+  CGRect r2 = rect;
+  r2.origin.x -= 0.5f;
+  r2.origin.y -= 0.5f;
+  CGContextClipToRect(fl_gc, r2);
+  // move graphics context to origin of vertically reversed image 
+  CGContextTranslateCTM(fl_gc, rect.origin.x - cx - 0.5, rect.origin.y - cy + h - 0.5);
+  CGContextScaleCTM(fl_gc, 1, -1);
+  rect.origin.x = rect.origin.y = 0;
+  rect.size.width = w;
+  rect.size.height = h;
 }
 
 void Fl_X::q_end_image() {
