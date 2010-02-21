@@ -422,16 +422,17 @@ int load_the_menu(const char* fname)
   {
 #if defined ( __APPLE__ )
     // mac os bundle menu detection:
-	  char* pos = strrchr(fname,'/');
-	  if (!pos) return 0;
-	  *pos='\0';
-	  pos = strrchr(fname,'/');
-	  if (!pos) return 0;
-	  strcpy(pos,"/Resources/demo.menu");
-	  fin  = fopen(fname,"r");
-	  if (fin == NULL)
+    char* pos = strrchr(fname,'/');
+    if (!pos) return 0;
+    *pos='\0';
+    pos = strrchr(fname,'/');
+    if (!pos) return 0;
+    strcpy(pos,"/Resources/demo.menu");
+    fin  = fopen(fname,"r");
 #endif
   }
+  // if "fin" is still NULL, we will read the menu from the string array in the 
+  // beginning of the file.
   for (;;) {
     if (fin) {
       if (fgets(line,256,fin) == NULL) break;
