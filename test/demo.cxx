@@ -38,7 +38,7 @@ const char *default_menu[] = {
   "#\n",
   "\n",
   "@main:Widget\\nTests:@x\n",
-  "@x:Fl_Browser:browser\n",
+  "@x:Fl_Browser:browser browser.cxx\n",
   "@x:Fl_Input:input\n",
   "@x:Fl_Output:output\n",
   "@x:Fl_Button:radio\n",
@@ -377,18 +377,33 @@ void dobut(Fl_Widget *, long arg)
     char *cmd = strdup(menus[men].icommand[bn]);
     char *arg = strchr(cmd, ' ');
     
-    char command[2048];
+    char command[2048], path[2048], app_path[2048];
+    
+    // this neat litle block of cose ensures that the current directory is set 
+    // to the location of the Demo application.
+    CFBundleRef app = CFBundleGetMainBundle();
+    CFURLRef url = CFBundleCopyBundleURL(app);    
+    CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
+    CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
+    if (*app_path) {
+      char *n = strrchr(app_path, '/');
+      if (n) {
+        *n = 0;
+        chdir(app_path);
+      }
+    }
+    
     if (arg) {
       *arg = 0;
-      if (strcmp(cmd, "../fluid/fluid")==0)
-//        sprintf(command, "open ../../../Fluid.app --args %s", arg+1);
-	sprintf(command, "../../../Fluid.app/Contents/MacOS/Fluid  ../../../../../../../test/%s", arg+1);
-      else
-//        sprintf(command, "open ../../../%s.app --args %s", cmd, arg+1);
-	sprintf(command, "../../../%s.app/Contents/MacOS/%s ../../../../../../../test/%s", cmd, cmd, arg+1);
+      if (strcmp(cmd, "../fluid/fluid")==0) {
+        fl_filename_absolute(path, 2048, "../../../../test/");
+	sprintf(command, "open Fluid.app --args %s%s", path, arg+1);
+      } else {
+        fl_filename_absolute(path, 2048, "../../../../test/");
+	sprintf(command, "open %s.app --args %s%s", cmd, path, arg+1);
+      }
     } else {
-//      sprintf(command, "open ../../../%s.app", cmd);
-      sprintf(command, "../../../%s.app/Contents/MacOS/%s", cmd, cmd);
+      sprintf(command, "open %s.app", cmd);
     }
 //    puts(command);    
     system(command);
