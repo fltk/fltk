@@ -62,7 +62,7 @@ int Fl::test_shortcut(unsigned int shortcut) {
   if (!shortcut) return 0;
 
   unsigned int v = shortcut & FL_KEY_MASK;
-  if (fl_tolower(v)!=v) {
+  if (((unsigned)fl_tolower(v))!=v) {
     shortcut |= FL_SHIFT;
   }
 
@@ -77,7 +77,7 @@ int Fl::test_shortcut(unsigned int shortcut) {
   unsigned int key = shortcut & FL_KEY_MASK;
 
   // if shift is also correct, check for exactly equal keysyms:
-  if (!(mismatch&(FL_SHIFT)) && key == Fl::event_key()) return 1;
+  if (!(mismatch&(FL_SHIFT)) && key == (unsigned)Fl::event_key()) return 1;
 
   // try matching utf8, ignore shift:
   unsigned int firstChar = fl_utf8decode(Fl::event_text(), Fl::event_text()+Fl::event_length(), 0);
@@ -90,7 +90,7 @@ int Fl::test_shortcut(unsigned int shortcut) {
 }
 
 // This table must be in numeric order by fltk (X) keysym number:
-struct Keyname {int key; const char* name;};
+struct Keyname {unsigned int key; const char* name;};
 #if defined(WIN32)
 static Keyname table[] = {
   {' ', "Space"},
@@ -193,7 +193,7 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
   if (!shortcut) {*p = 0; return buf;}
   // fix upper case shortcuts
   unsigned int v = shortcut & FL_KEY_MASK;
-  if (fl_tolower(v)!=v) {
+  if (((unsigned)fl_tolower(v))!=v) {
     shortcut |= FL_SHIFT;
   }
 #ifdef __APPLE__

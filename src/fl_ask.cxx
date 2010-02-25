@@ -47,6 +47,10 @@
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 
+#ifdef __APPLE__
+//# include <AudioToolbox/AudioToolbox.h>
+#endif
+
 static Fl_Window *message_form;
 static Fl_Box *message;
 static Fl_Box *icon;
@@ -273,8 +277,11 @@ void fl_beep(int type) {
   switch (type) {
     case FL_BEEP_DEFAULT :
     case FL_BEEP_ERROR :
-//      SysBeep(30);
-			AlertSoundPlay();
+      // How Apple is not any better than Microsoft:
+      /* MacOS 8 */   // SysBeep(30);
+      /* OS X 10.1 */    AlertSoundPlay();
+      /* OS X 10.5 */ // AudioServicesPlayAlertSound(kUserPreferredAlert);
+      /* OS X 10.6 */ // AudioServicesPlayAlertSound(kSystemSoundID_UserPreferredAlert);
       break;
     default :
       break;

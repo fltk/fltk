@@ -319,6 +319,7 @@ else {
 #if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
 #endif
+  return 0; // FIXME: I do not understand the shuffeling of the above ifdef's and why they are here!
 }
 
 double fl_width(const char* txt, int n) {

@@ -869,7 +869,7 @@ void Fl_Data_Type::write_code1() {
   if (!c) return;
   const char *fn = filename_;
   char *data = 0;
-  size_t nData = -1;
+  int nData = -1;
   // path should be set correctly already
   if (filename_ && !write_sourceview) {
     FILE *f = fopen(filename_, "rb");

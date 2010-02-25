@@ -82,7 +82,7 @@ void ColorMenu::draw() {
 }
 
 int ColorMenu::handle(int e) {
-  int c = which;
+  Fl_Color c = which;
   switch (e) {
   case FL_PUSH:
   case FL_DRAG: {

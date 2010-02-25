@@ -680,6 +680,7 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/blocks.cxx");
     db.add_lib(fltk_lib); 
     xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
+    visualc_only(db.add_external_lib(files_db, "winmm.lib"));
     demo_db.depends_on(db);
   }  
   
@@ -1058,6 +1059,7 @@ int create_new_database(const char *filename)
     db.add_lib(fltk_jpeg_lib); 
     db.add_lib(fltk_png_lib); 
     xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
+    visualc_only(db.add_external_lib(files_db, "winmm.lib"));
     demo_db.depends_on(db);
   }  
   

@@ -76,43 +76,22 @@ class VisualC6_IDE {
   Fl_Preferences filesDB;
   int nFiles;
   Fl_Preferences ideDB;
-  /*
-   XCID xcRootNodeID;
-   XCID xcBuildConfigurationListID;
-   XCID xcMainGroupID;
-   XCID xcProductsGroupID;
-   XCID xcAppsGroupID;
-   XCID xcLibsGroupID;
-   XCID xcTestsGroupID;
-   XCID xcBuildConfigurationDebugID;
-   XCID xcBuildConfigurationReleaseID;
-   */
 public:
   VisualC6_IDE(Fl_Preferences &db, const char *rootDirA)
   : rootDir(strdup(rootDirA)),
-  tgtAppsDB(db, "targets/apps"),
-  tgtLibsDB(db, "targets/libs"),
-  tgtTestsDB(db, "targets/tests"),
-  filesDB(db, "files"),
-  ideDB(db, "ide/VisualC")
+    tgtAppsDB(db, "targets/apps"),
+    tgtLibsDB(db, "targets/libs"),
+    tgtTestsDB(db, "targets/tests"),
+    filesDB(db, "files"),
+    ideDB(db, "ide/VisualC")
   {
     db.get("projectName", projectName, "Unnamed", 80);
     nTgtApps = tgtAppsDB.groups();
     nTgtLibs = tgtLibsDB.groups();
     nTgtTests = tgtTestsDB.groups();
     nFiles = filesDB.groups();
-    /*
-     getXCID(ideDB, "xcRootNodeID", xcRootNodeID);
-     getXCID(ideDB, "xcBuildConfigurationListID", xcBuildConfigurationListID);
-     getXCID(ideDB, "xcMainGroupID", xcMainGroupID);
-     getXCID(ideDB, "xcProductsGroupID", xcProductsGroupID);
-     getXCID(ideDB, "xcAppsGroupID", xcAppsGroupID);
-     getXCID(ideDB, "xcLibsGroupID", xcLibsGroupID);
-     getXCID(ideDB, "xcTestsGroupID", xcTestsGroupID);    
-     getXCID(ideDB, "xcBuildConfigurationDebugID", xcBuildConfigurationDebugID);
-     getXCID(ideDB, "xcBuildConfigurationReleaseID", xcBuildConfigurationReleaseID);
-     */
   }
+  
   ~VisualC6_IDE() {
     if (rootDir) free(rootDir);
   }
@@ -179,7 +158,7 @@ public:
     for (i=0; i<nTgtLibs; i++) {
       Fl_Preferences targetDB(tgtLibsDB, i);
       writeProjectSection(f, targetDB);
-      writeProjectSection(f, targetDB, 1);
+      //writeProjectSection(f, targetDB, 1);
     }
     for (i=0; i<nTgtTests; i++) {
       Fl_Preferences targetDB(tgtTestsDB, i);
@@ -4364,7 +4343,7 @@ public:
    */
   int writeApplicationTarget(const char *filepath, Fl_Preferences &targetDB, const char *dir=0) {
     char name[80]; targetDB.get("name", name, "DBERROR", 80);
-    if (dir) dir = name;
+    if (!dir) dir = name;
     char filename[2048];
     fl_snprintf(filename, 2047, "%s/%s.dsp", filepath, name);
     FILE *f = fopen(filename, "wb");
@@ -4491,10 +4470,12 @@ public:
     n = extsDB.groups();
     for (i=0; i<n; i++) {
       Fl_Preferences extDB(extsDB, i);
-      GET_UUID(refUUID, extDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      char pathAndName[1024]; fileDB.get("pathAndName", pathAndName, "DBERROR/DBERROR.DBERR", 1024);
-      fprintf(f, "%s ", pathAndName);
+      if (with_visualc(extDB.id())) {
+        GET_UUID(refUUID, extDB);
+        Fl_File_Prefs fileDB(filesDB, refUUID);
+        char pathAndName[1024]; fileDB.get("pathAndName", pathAndName, "DBERROR/DBERROR.DBERR", 1024);
+        fprintf(f, "%s ", pathAndName);
+      }
     }
     fprintf(f, "comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:\"libcd\" /out:\"../../%s/%sd.exe\" /pdbtype:sept /libpath:\"..\\..\\lib\"\r\n", dir, name);
     
@@ -4531,8 +4512,12 @@ public:
       char cxx_pathname[1024]; strcpy(cxx_pathname, pathAndName);
       DOSPath(pathAndName);
       fl_filename_setext(cxx_pathname, 1024, ".cxx");
+      DOSPath(cxx_pathname);
       const char *path_fl = fileDB.filePath();
-      // FIXME: fill in variables
+      fprintf(f, "# Begin Source File\r\n");
+      fprintf(f, "\r\n");
+      fprintf(f, "SOURCE=..\\..\\%s\r\n", cxx_pathname);
+      fprintf(f, "# End Source File\r\n");
       fprintf(f, "# Begin Source File\r\n");
       fprintf(f, "\r\n");
       fprintf(f, "SOURCE=..\\..\\%s\r\n", pathAndName);
@@ -4579,7 +4564,7 @@ public:
    */
   int writeStaticLibTarget(const char *filepath, Fl_Preferences &targetDB, const char *dir=0) {
     char name[80]; targetDB.get("name", name, "DBERROR", 80);
-    if (dir) dir = name;
+    if (!dir) dir = name;
     char filename[2048];
     fl_snprintf(filename, 2047, "%s/%s.dsp", filepath, name);
     FILE *f = fopen(filename, "wb");
@@ -4696,8 +4681,12 @@ public:
       char cxx_pathname[1024]; strcpy(cxx_pathname, pathAndName);
       DOSPath(pathAndName);
       fl_filename_setext(cxx_pathname, 1024, ".cxx");
+      DOSPath(cxx_pathname);
       const char *path_fl = fileDB.filePath();
-      // FIXME: fill in variables
+      fprintf(f, "# Begin Source File\r\n");
+      fprintf(f, "\r\n");
+      fprintf(f, "SOURCE=..\\..\\%s\r\n", cxx_pathname);
+      fprintf(f, "# End Source File\r\n");
       fprintf(f, "# Begin Source File\r\n");
       fprintf(f, "\r\n");
       fprintf(f, "SOURCE=..\\..\\%s\r\n", pathAndName);
@@ -4738,7 +4727,7 @@ public:
   }
   
   /*
-   * Write a .dsp target file
+   * TODO: Write a .dsp target file
    */
   int writeDynamicLibTarget(const char *filepath, Fl_Preferences &targetDB, const char *dir=0) {
     char name[80]; targetDB.get("name", name, "DBERROR", 80);
@@ -4749,7 +4738,7 @@ public:
       fl_alert("Can't open file:\n%s", filename);
       return -1;
     }
-    // TODO: fill this
+    // fill this
     fclose(f);
     return 0;
   }
@@ -4766,7 +4755,7 @@ public:
     for (i=0; i<nTgtLibs; i++) {
       Fl_Preferences targetDB(tgtLibsDB, i);
       writeStaticLibTarget(filepath, targetDB, "src");
-      writeDynamicLibTarget(filepath, targetDB, "src");
+      // TODO: writeDynamicLibTarget(filepath, targetDB, "src");
     }
     for (i=0; i<nTgtTests; i++) {
       Fl_Preferences targetDB(tgtTestsDB, i);
