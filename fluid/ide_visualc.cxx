@@ -46,6 +46,7 @@
 
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
+#include "../src/flstring.h"
 
 #include "Fl_Type.h"
 
@@ -161,7 +162,7 @@ public:
    */
   int writeProjectFile(const char *filepath) {
     char filename[2048];
-    snprintf(filename, 2047, "%s/%s.dsw", filepath, "fltk");
+    fl_snprintf(filename, 2047, "%s/%s.dsw", filepath, "fltk");
     FILE *f = fopen(filename, "wb");
     if (!f) {
       fl_alert("Can't open file:\n%s", filename);
@@ -4365,7 +4366,7 @@ public:
     char name[80]; targetDB.get("name", name, "DBERROR", 80);
     if (dir) dir = name;
     char filename[2048];
-    snprintf(filename, 2047, "%s/%s.dsp", filepath, name);
+    fl_snprintf(filename, 2047, "%s/%s.dsp", filepath, name);
     FILE *f = fopen(filename, "wb");
     if (!f) {
       fl_alert("Can't open file:\n%s", filename);
@@ -4442,10 +4443,12 @@ public:
     n = extsDB.groups();
     for (i=0; i<n; i++) {
       Fl_Preferences extDB(extsDB, i);
-      GET_UUID(refUUID, extDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      const char *fullName = fileDB.fullName();
-      fprintf(f, "%s ", fullName);
+      if (with_visualc(extDB.id())) {
+        GET_UUID(refUUID, extDB);
+        Fl_File_Prefs fileDB(filesDB, refUUID);
+        char pathAndName[1024]; fileDB.get("pathAndName", pathAndName, "DBERROR/DBERROR.DBERR", 1024);
+        fprintf(f, "%s ", pathAndName);
+      }
     }
     fprintf(f, "comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:\"libcd\" /out:\"../../%s/%sd.exe\" /pdbtype:sept /libpath:\"..\\..\\lib\"\r\n", dir, name);
     
@@ -4490,13 +4493,8 @@ public:
       Fl_Preferences extDB(extsDB, i);
       GET_UUID(refUUID, extDB);
       Fl_File_Prefs fileDB(filesDB, refUUID);
-/*#if 0
-      const char *fullName = fileDB.fullName();
-      fprintf(f, "%s ", fullName);
-#else
-      char pathAndName[1024]; get("pathAndName", pathAndName, "DBERROR/DBERROR.DBERR", 1024);
+      char pathAndName[1024]; fileDB.get("pathAndName", pathAndName, "DBERROR/DBERROR.DBERR", 1024);
       fprintf(f, "%s ", pathAndName);
-#endif*/
     }
     fprintf(f, "comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:\"libcd\" /out:\"../../%s/%sd.exe\" /pdbtype:sept /libpath:\"..\\..\\lib\"\r\n", dir, name);
     
@@ -4583,7 +4581,7 @@ public:
     char name[80]; targetDB.get("name", name, "DBERROR", 80);
     if (dir) dir = name;
     char filename[2048];
-    snprintf(filename, 2047, "%s/%s.dsp", filepath, name);
+    fl_snprintf(filename, 2047, "%s/%s.dsp", filepath, name);
     FILE *f = fopen(filename, "wb");
     if (!f) {
       fl_alert("Can't open file:\n%s", filename);
@@ -4745,7 +4743,7 @@ public:
   int writeDynamicLibTarget(const char *filepath, Fl_Preferences &targetDB, const char *dir=0) {
     char name[80]; targetDB.get("name", name, "DBERROR", 80);
     char filename[2048];
-    snprintf(filename, 2047, "%s/%s_dll.dsp", filepath, name);
+    fl_snprintf(filename, 2047, "%s/%s_dll.dsp", filepath, name);
     FILE *f = fopen(filename, "wb");
     if (!f) {
       fl_alert("Can't open file:\n%s", filename);
@@ -4831,9 +4829,6 @@ public:
     // --- create a valid config.h
     sprintf(filepath, "%s/ide/VisualC6/config.h", rootDir);
     writeConfigH(filepath);
-    // --- TODO: create default icons (maybe import icons for apps?)
-    //sprintf(filepath, "%s/ide/Xcode3/icons", rootDir); fl_mkdir(filepath, 0777);
-    //createIcons(filepath);
     // --- close and finish
     return 0;
   }

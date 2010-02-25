@@ -270,22 +270,64 @@ const char *Fl_File_Prefs::fileExt() {
   return pExt;
 }
 
-void osx_only(Fl_Preferences::ID id) {
+void xcode_only(Fl_Preferences::ID id) {
   Fl_Preferences p(id);
-  p.set("only", "OS:OSX*"); // type:name#ver  # is >, >=, <, <=, ==, !=, *
+  p.set("only", "xcode");
 }
+
+char with_xcode(Fl_Preferences::ID id) {
+  Fl_Preferences p(id);
+  if (p.entryExists("only")) {
+    char os[16];
+    p.get("only", os, "xcode", 15);
+    return (strcmp(os, "xcode")==0);
+  } else {
+    return 1;
+  }
+}
+
+void visualc_only(Fl_Preferences::ID id) {
+  Fl_Preferences p(id);
+  p.set("only", "visualc");
+}
+
+char with_visualc(Fl_Preferences::ID id) {
+  Fl_Preferences p(id);
+  if (p.entryExists("only")) {
+    char os[16];
+    p.get("only", os, "visualc", 15);
+    return (strcmp(os, "visualc")==0);
+  } else {
+    return 1;
+  }
+}
+
+void makefile_only(Fl_Preferences::ID id) {
+  Fl_Preferences p(id);
+  p.set("only", "makefile");
+}
+
+char with_makefile(Fl_Preferences::ID id) {
+  Fl_Preferences p(id);
+  if (p.entryExists("only")) {
+    char os[16];
+    p.get("only", os, "makefile", 15);
+    return (strcmp(os, "makefile")==0);
+  } else {
+    return 1;
+  }
+}
+
 
 //==============================================================================
 
-// TODO: Find a good standard position for the database
-// for testing, we used "/Users/matt/dev/fltk-1.3.0/fltk.db"
 
 int create_new_database(const char *filename)
 {
   Fl_Preferences *db = new Fl_Preferences(filename, "fltk.org", 0);
   db->clear();
   
-  db->set("projectName", "FLTK");
+  db->set("projectName", "fltk");
   
   Fl_Preferences targets_db(db, "targets");
   Fl_IDE_Prefs files_db(*db, "files");
@@ -442,7 +484,7 @@ int create_new_database(const char *filename)
     fltk_lib.add_source(files_db, "src/xutf8/is_spacing.c");
   }
   
-  Fl_Target_Prefs fltk_gl_lib(libs_db.add_with_key("name", "fltk_gl")); {
+  Fl_Target_Prefs fltk_gl_lib(libs_db.add_with_key("name", "fltkgl")); {
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Choice.cxx");
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Overlay.cxx");
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Window.cxx");
@@ -453,12 +495,12 @@ int create_new_database(const char *filename)
     fltk_gl_lib.add_source(files_db, "src/gl_draw.cxx");
     fltk_gl_lib.add_source(files_db, "src/glut_compatability.cxx");
     fltk_gl_lib.add_source(files_db, "src/glut_font.cxx");
-    osx_only(fltk_gl_lib.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
-    osx_only(fltk_gl_lib.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    xcode_only(fltk_gl_lib.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    xcode_only(fltk_gl_lib.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
     fltk_gl_lib.add_lib(fltk_lib);
   }
   
-  Fl_Target_Prefs fltk_images_lib(libs_db.add_with_key("name", "fltk_images")); {
+  Fl_Target_Prefs fltk_images_lib(libs_db.add_with_key("name", "fltkimages")); {
     fltk_images_lib.add_source(files_db, "src/Fl_BMP_Image.cxx");
     fltk_images_lib.add_source(files_db, "src/Fl_File_Icon2.cxx");
     fltk_images_lib.add_source(files_db, "src/Fl_GIF_Image.cxx");
@@ -468,10 +510,9 @@ int create_new_database(const char *filename)
     fltk_images_lib.add_source(files_db, "src/Fl_PNM_Image.cxx");
     fltk_images_lib.add_source(files_db, "src/fl_images_core.cxx");
     fltk_images_lib.add_lib(fltk_lib);
-    fltk_gl_lib.depends_on(fltk_lib);
   }
   
-  Fl_Target_Prefs fltk_png_lib(libs_db.add_with_key("name", "fltk_png")); {
+  Fl_Target_Prefs fltk_png_lib(libs_db.add_with_key("name", "fltkpng")); {
     fltk_png_lib.add_source(files_db, "png/png.c");
     fltk_png_lib.add_source(files_db, "png/pngerror.c");
     fltk_png_lib.add_source(files_db, "png/pngget.c");
@@ -487,11 +528,11 @@ int create_new_database(const char *filename)
     fltk_png_lib.add_source(files_db, "png/pngwrite.c");
     fltk_png_lib.add_source(files_db, "png/pngwtran.c");
     fltk_png_lib.add_source(files_db, "png/pngwutil.c");
-    osx_only(fltk_png_lib.add_external_lib(files_db, "/usr/lib/libz.dylib"));
+    xcode_only(fltk_png_lib.add_external_lib(files_db, "/usr/lib/libz.dylib"));
     fltk_images_lib.add_lib(fltk_png_lib);
   }
   
-  Fl_Target_Prefs fltk_jpeg_lib(libs_db.add_with_key("name", "fltk_jpeg")); {
+  Fl_Target_Prefs fltk_jpeg_lib(libs_db.add_with_key("name", "fltkjpeg")); {
     fltk_jpeg_lib.add_source(files_db, "jpeg/jcapimin.c");
     fltk_jpeg_lib.add_source(files_db, "jpeg/jcapistd.c");
     fltk_jpeg_lib.add_source(files_db, "jpeg/jccoefct.c");
@@ -538,10 +579,11 @@ int create_new_database(const char *filename)
     fltk_jpeg_lib.add_source(files_db, "jpeg/jquant1.c");
     fltk_jpeg_lib.add_source(files_db, "jpeg/jquant2.c");
     fltk_jpeg_lib.add_source(files_db, "jpeg/jutils.c");
+    fltk_jpeg_lib.add_lib(fltk_lib);
     fltk_images_lib.add_lib(fltk_jpeg_lib);
   }
   
-  Fl_Target_Prefs fltk_forms_lib(libs_db.add_with_key("name", "fltk_forms")); {
+  Fl_Target_Prefs fltk_forms_lib(libs_db.add_with_key("name", "fltkforms")); {
     fltk_forms_lib.add_source(files_db, "src/forms_bitmap.cxx");
     fltk_forms_lib.add_source(files_db, "src/forms_compatability.cxx");
     fltk_forms_lib.add_source(files_db, "src/forms_free.cxx");
@@ -550,7 +592,22 @@ int create_new_database(const char *filename)
     fltk_forms_lib.add_source(files_db, "src/forms_timer.cxx");
     fltk_forms_lib.add_lib(fltk_lib);
   }
-
+  
+  Fl_Target_Prefs fltk_z_lib(libs_db.add_with_key("name", "zlib")); {
+    fltk_z_lib.add_source(files_db, "zlib/adler32.c");
+    fltk_z_lib.add_source(files_db, "zlib/compress.c");
+    fltk_z_lib.add_source(files_db, "zlib/crc32.c");
+    fltk_z_lib.add_source(files_db, "zlib/deflate.c");
+    fltk_z_lib.add_source(files_db, "zlib/gzio.c");
+    fltk_z_lib.add_source(files_db, "zlib/inffast.c");
+    fltk_z_lib.add_source(files_db, "zlib/inflate.c");
+    fltk_z_lib.add_source(files_db, "zlib/inftrees.c");
+    fltk_z_lib.add_source(files_db, "zlib/trees.c");
+    fltk_z_lib.add_source(files_db, "zlib/uncompr.c");
+    fltk_z_lib.add_source(files_db, "zlib/zutil.c");
+    fltk_png_lib.add_lib(fltk_z_lib);
+  }
+  
   // --- create applications
   Fl_IDE_Prefs apps_db(targets_db, "apps"); 
   
@@ -572,8 +629,7 @@ int create_new_database(const char *filename)
     fluid_app.add_source(files_db, "fluid/fluid.cxx");
     fluid_app.add_source(files_db, "fluid/function_panel.cxx");
     fluid_app.add_source(files_db, "fluid/ide_support.cxx");
-    fluid_app.add_source(files_db, "fluid/ide_support.cxx");
-    fluid_app.add_source(files_db, "fluid/ide_xcode.cxx");
+    fluid_app.add_source(files_db, "fluid/ide_visualc.cxx");
     fluid_app.add_source(files_db, "fluid/ide_xcode.cxx");
     fluid_app.add_source(files_db, "fluid/template_panel.cxx");
     fluid_app.add_source(files_db, "fluid/undo.cxx");
@@ -583,7 +639,8 @@ int create_new_database(const char *filename)
     fluid_app.add_lib(fltk_images_lib);
     fluid_app.add_lib(fltk_jpeg_lib);
     fluid_app.add_lib(fltk_png_lib);
-    osx_only(fluid_app.add_external_lib(files_db, "icons/fluid.icns"));
+    visualc_only(fluid_app.add_lib(fltk_z_lib));
+    xcode_only(fluid_app.add_external_lib(files_db, "icons/fluid.icns"));
   }
   
   // --- create test applications
@@ -592,6 +649,7 @@ int create_new_database(const char *filename)
   Fl_Target_Prefs demo_db(tests_db.add_with_key("name", "Demo")); {
     demo_db.add_source(files_db, "test/demo.cxx");
     demo_db.add_lib(fltk_lib); 
+    demo_db.depends_on(fluid_app); 
   }
   
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "adjuster"));
@@ -621,7 +679,7 @@ int create_new_database(const char *filename)
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "blocks"));
     db.add_source(files_db, "test/blocks.cxx");
     db.add_lib(fltk_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
     demo_db.depends_on(db);
   }  
   
@@ -678,8 +736,10 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/cube.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    visualc_only(db.add_external_lib(files_db, "glu32.lib"));
+    visualc_only(db.add_external_lib(files_db, "opengl32.lib"));
     demo_db.depends_on(db);
   }  
   
@@ -689,8 +749,10 @@ int create_new_database(const char *filename)
     db.add_fl(files_db, "test/CubeViewUI.fl");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    visualc_only(db.add_external_lib(files_db, "glu32.lib"));
+    visualc_only(db.add_external_lib(files_db, "opengl32.lib"));
     db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
@@ -753,8 +815,10 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/fracviewer.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    visualc_only(db.add_external_lib(files_db, "glu32.lib"));
+    visualc_only(db.add_external_lib(files_db, "opengl32.lib"));
     db.add_lib(fltk_forms_lib); 
     demo_db.depends_on(db);
   }  
@@ -763,8 +827,10 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/fullscreen.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    visualc_only(db.add_external_lib(files_db, "glu32.lib"));
+    visualc_only(db.add_external_lib(files_db, "opengl32.lib"));
     demo_db.depends_on(db);
   }  
   
@@ -772,8 +838,10 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/gl_overlay.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    visualc_only(db.add_external_lib(files_db, "glu32.lib"));
+    visualc_only(db.add_external_lib(files_db, "opengl32.lib"));
     demo_db.depends_on(db);
   }  
   
@@ -781,8 +849,10 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/glpuzzle.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    visualc_only(db.add_external_lib(files_db, "glu32.lib"));
+    visualc_only(db.add_external_lib(files_db, "opengl32.lib"));
     demo_db.depends_on(db);
   }  
   
@@ -968,8 +1038,10 @@ int create_new_database(const char *filename)
     db.add_source(files_db, "test/shape.cxx");
     db.add_lib(fltk_lib); 
     db.add_lib(fltk_gl_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
+    visualc_only(db.add_external_lib(files_db, "glu32.lib"));
+    visualc_only(db.add_external_lib(files_db, "opengl32.lib"));
     demo_db.depends_on(db);
   }  
 
@@ -985,7 +1057,7 @@ int create_new_database(const char *filename)
     db.add_lib(fltk_images_lib); 
     db.add_lib(fltk_jpeg_lib); 
     db.add_lib(fltk_png_lib); 
-    osx_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
+    xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
     demo_db.depends_on(db);
   }  
   

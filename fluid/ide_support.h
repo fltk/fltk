@@ -95,7 +95,13 @@ public:
   const char *fileExt();
 };
 
-void osx_only(Fl_Preferences::ID id);
+void xcode_only(Fl_Preferences::ID id);
+void visualc_only(Fl_Preferences::ID id);
+void makefile_only(Fl_Preferences::ID id);
+
+char with_xcode(Fl_Preferences::ID id);
+char with_visualc(Fl_Preferences::ID id);
+char with_makefile(Fl_Preferences::ID id);
 
 #endif
 

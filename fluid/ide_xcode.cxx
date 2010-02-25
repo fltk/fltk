@@ -96,6 +96,7 @@
 
 #include <FL/filename.H>
 #include <FL/fl_ask.H>
+#include "../src/flstring.h"
 
 #include "Fl_Type.h"
 
@@ -197,17 +198,18 @@ public:
     Fl_Preferences extsDB(targetDB, "externals"); n = extsDB.groups();
     for (i=0; i<n; i++) {
       Fl_Preferences extDB(extsDB, i);
-      GET_UUID(refUUID, extDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      MAKE_XCID(xcFileID, fileDB);
-      const char *fullName = fileDB.fullName();
-      //-- TODO: test
-      if (strcmp(fileDB.fileExt(), ".icns")==0) {
-        MAKE_XCID(xcCopyResourceID, extDB);
-        fprintf(out, "\t\t%s /* %s in Resources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcCopyResourceID, fullName, xcFileID, fullName);
-      } else {
-        MAKE_XCID(xcBuildFrameworkID, extDB);
-        fprintf(out, "\t\t%s /* %s in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFrameworkID, fullName, xcFileID, fullName);
+      if (with_xcode(extDB.id())) {
+        GET_UUID(refUUID, extDB);
+        Fl_File_Prefs fileDB(filesDB, refUUID);
+        MAKE_XCID(xcFileID, fileDB);
+        const char *fullName = fileDB.fullName();
+        if (strcmp(fileDB.fileExt(), ".icns")==0) {
+          MAKE_XCID(xcCopyResourceID, extDB);
+          fprintf(out, "\t\t%s /* %s in Resources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcCopyResourceID, fullName, xcFileID, fullName);
+        } else {
+          MAKE_XCID(xcBuildFrameworkID, extDB);
+          fprintf(out, "\t\t%s /* %s in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFrameworkID, fullName, xcFileID, fullName);
+        }
       }
     }
     return 0;
@@ -502,12 +504,14 @@ public:
     n = extsDB.groups();
     for (i=0; i<n; i++) {
       Fl_Preferences extDB(extsDB, i);
-      GET_UUID(refUUID, extDB);
-      MAKE_XCID(xcBuildFrameworkID, extDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      const char *fullName = fileDB.fullName();
-      if (strcmp(fileDB.fileExt(), ".icns")!=0) {
-        fprintf(out, "\t\t\t\t%s /* %s in Frameworks */,\n", xcBuildFrameworkID, fullName);
+      if (with_xcode(extDB.id())) {
+        GET_UUID(refUUID, extDB);
+        MAKE_XCID(xcBuildFrameworkID, extDB);
+        Fl_File_Prefs fileDB(filesDB, refUUID);
+        const char *fullName = fileDB.fullName();
+        if (strcmp(fileDB.fileExt(), ".icns")!=0) {
+          fprintf(out, "\t\t\t\t%s /* %s in Frameworks */,\n", xcBuildFrameworkID, fullName);
+        }
       }
     }
     fprintf(out, "\t\t\t);\n");
@@ -574,11 +578,13 @@ public:
     n = extsDB.groups();
     for (j=0; j<n; j++) {
       Fl_Preferences extDB(extsDB, j);
-      GET_UUID(refUUID, extDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      MAKE_XCID(xcFileID, fileDB);
-      const char *fullName = fileDB.fullName();
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcFileID, fullName);
+      if (with_xcode(extDB.id())) {
+        GET_UUID(refUUID, extDB);
+        Fl_File_Prefs fileDB(filesDB, refUUID);
+        MAKE_XCID(xcFileID, fileDB);
+        const char *fullName = fileDB.fullName();
+        fprintf(out, "\t\t\t\t%s /* %s */,\n", xcFileID, fullName);
+      }
     }
     
     fprintf(out, "\t\t\t);\n");
@@ -865,11 +871,13 @@ public:
     int i, n = extsDB.groups();
     for (i=0; i<n; i++) {
       Fl_Preferences extDB(extsDB, i);
-      GET_UUID(refUUID, extDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      if (strcmp(fileDB.fileExt(), ".icns")==0) {
-        MAKE_XCID(xcCopyResourceID, extDB);
-        fprintf(out, "\t\t\t\t%s /* %s in Resources */,\n", xcCopyResourceID, fileDB.fullName());
+      if (with_xcode(extDB.id())) {
+        GET_UUID(refUUID, extDB);
+        Fl_File_Prefs fileDB(filesDB, refUUID);
+        if (strcmp(fileDB.fileExt(), ".icns")==0) {
+          MAKE_XCID(xcCopyResourceID, extDB);
+          fprintf(out, "\t\t\t\t%s /* %s in Resources */,\n", xcCopyResourceID, fileDB.fullName());
+        }
       }
     }
     fprintf(out, "\t\t\t);\n");
@@ -1441,7 +1449,7 @@ public:
    */
   int writeProjectFile(const char *filepath) {
     char filename[2048];
-    snprintf(filename, 2047, "%s/project.pbxproj", filepath);
+    fl_snprintf(filename, 2047, "%s/project.pbxproj", filepath);
     FILE *out = fopen(filename, "wb");
     if (!out) {
       fl_alert("Can't open file:\n%s", filename);
@@ -1526,7 +1534,7 @@ public:
   int writePList(const char *filepath, Fl_Preferences &target_db, int fmwk=0) {
     char name[80]; target_db.get("name", name, "DBERROR", 79);
     char filename[2048]; 
-    snprintf(filename, 2047, "%s/%s-Info.plist", filepath, name);
+    fl_snprintf(filename, 2047, "%s/%s-Info.plist", filepath, name);
     FILE *f = fopen(filename, "wb");
     fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     fprintf(f, "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n");
@@ -1566,11 +1574,13 @@ public:
     int i, n = extsDB.groups();
     for (i=0; i<n; i++) {
       Fl_Preferences extDB(extsDB, i);
-      GET_UUID(refUUID, extDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      if (strcmp(fileDB.fileExt(), ".icns")==0) {
-        fprintf(f, "\t<key>CFBundleIconFile</key>\n\t<string>%s</string>", fileDB.fileName());
-        break;
+      if (with_xcode(extDB.id())) {
+        GET_UUID(refUUID, extDB);
+        Fl_File_Prefs fileDB(filesDB, refUUID);
+        if (strcmp(fileDB.fileExt(), ".icns")==0) {
+          fprintf(f, "\t<key>CFBundleIconFile</key>\n\t<string>%s</string>", fileDB.fileName());
+          break;
+        }
       }
     }
     fprintf(f, "\t<key>CFBundleIdentifier</key>\n");
@@ -1670,7 +1680,7 @@ public:
   int arg(int argc, char **argv, int &i) {
     if (argc>=i+1 && strcmp(argv[i], "--dbxcode3")==0) {
       if (argc>=i+3 && argv[i+1][0]!='-' && argv[i+2][0]!='-') {
-        fprintf(stderr, "Creating Xcode3 IDE form %s in %s\n", argv[i+1], argv[i+2]);
+        fprintf(stderr, "Creating Xcode 3.0 IDE from %s in %s\n", argv[i+1], argv[i+2]);
         exit_early = 1;
         generate_fltk_Xcode3_support(argv[i+1], argv[i+2]);
         i = i+3;
