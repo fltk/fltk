@@ -48,11 +48,11 @@
       Fl_Menu_Bar *menubar = 0;
       void my_menu_callback(Fl_Widget*,void*) {
         char name[80];
-	if ( menubar->item_pathname(name, sizeof(name)-1) == 0 ) {		// recently picked item
-	  if ( strcmp(name, "File/&Open") == 0 ) { /# open invoked #/ }
-	  if ( strcmp(name, "File/&Save") == 0 ) { /# save invoked #/ }
-	  if ( strcmp(name, "Edit/&Copy") == 0 ) { /# copy invoked #/ }
-	}
+        if ( menubar->item_pathname(name, sizeof(name)-1) == 0 ) {   // recently picked item
+          if ( strcmp(name, "File/&Open") == 0 ) { .. }              // open invoked
+          if ( strcmp(name, "File/&Save") == 0 ) { .. }              // save invoked
+          if ( strcmp(name, "Edit/&Copy") == 0 ) { .. }              // copy invoked
+        }
       }
       int main() {
         [..]
