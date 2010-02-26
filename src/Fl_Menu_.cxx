@@ -39,12 +39,36 @@
 
 #define SAFE_STRCAT(s) { len += strlen(s); if ( len >= namelen ) { *name='\0'; return(-2); } else strcat(name,(s)); }
 
-/** Set 'pathname' of specified menuitem
-    If finditem==NULL, mvalue() is used (the most recently picked menuitem)
-    Returns:
-    -   0 : OK
-    -  -1 : item not found (name="")
-    -  -2 : 'name' not large enough (name="")
+/** Get the menu 'pathname' for the specified menuitem.
+
+    If finditem==NULL, mvalue() is used (the most recently picked menuitem).
+
+    \b Example:
+    \code
+      Fl_Menu_Bar *menubar = 0;
+      void my_menu_callback(Fl_Widget*,void*) {
+        char name[80];
+	if ( menubar->item_pathname(name, sizeof(name)-1) == 0 ) {		// recently picked item
+	  if ( strcmp(name, "File/&Open") == 0 ) { /* open invoked */ }
+	  if ( strcmp(name, "File/&Save") == 0 ) { /* save invoked */ }
+	  if ( strcmp(name, "Edit/&Copy") == 0 ) { /* copy invoked */ }
+	}
+      }
+      int main() {
+        [..]
+        menubar = new Fl_Menu_Bar(..);
+        menubar->add("File/&Open",  0, my_menu_callback);
+        menubar->add("File/&Save",  0, my_menu_callback);
+        menubar->add("Edit/&Copy",  0, my_menu_callback);
+        [..]
+      }
+    \endcode
+
+    \returns
+	-   0 : OK (name has menuitem's pathname)
+	-  -1 : item not found (name="")
+	-  -2 : 'name' not large enough (name="")
+    \see find_item()
 */
 int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem) const {
     int len = 0;
@@ -75,10 +99,30 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
 }
 
 /**
-  Find menu item index, given menu pathname
-     eg. "Edit/Copy"
-     Will also return submenus, eg. "Edit"
-     Returns NULL if not found.
+  Find menu item index, given a menu pathname such as "Edit/Copy".
+
+  Will also return submenu items, eg. "Edit".
+
+  Returns NULL if not found.
+
+  \b Example:
+  \code
+    Fl_Menu_Bar *menubar = new Fl_Menu_Bar(..);
+    menubar->add("File/&Open");
+    menubar->add("File/&Save");
+    menubar->add("Edit/&Copy");
+    // [..]
+    Fl_Menu_Item *item;
+    if ( ( item = (Fl_Menu_Item*)menubar->find_item("File/&Open") ) != NULL ) {
+	item->labelcolor(FL_RED);
+    }
+    if ( ( item = (Fl_Menu_Item*)menubar->find_item("Edit/&Copy") ) != NULL ) {
+	item->labelcolor(FL_GREEN);
+    }
+  \endcode
+  \returns The item found, or NULL if not found.
+  \see item_pathname()
+
 */
 const Fl_Menu_Item * Fl_Menu_::find_item(const char *name) {
   char menupath[1024] = "";	// File/Export
