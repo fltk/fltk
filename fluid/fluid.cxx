@@ -25,6 +25,8 @@
 //     http://www.fltk.org/str.php
 //
 
+#define IDE_SUPPORT
+
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
@@ -1706,9 +1708,11 @@ Fl_Menu_Item Main_Menu[] = {
 {"&Shell",0,0,0,FL_SUBMENU},
   {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
   {"Execute &Again...",FL_ALT+'g',(Fl_Callback *)do_shell_command},
-  {"--fltkdb",0,(Fl_Callback *)fltkdb_cb,0,FL_MENU_INVISIBLE},
-  {"--dbxcode3",0,(Fl_Callback *)dbxcode_cb,0,FL_MENU_INVISIBLE},
-  {"--dbvisualc6",0,(Fl_Callback *)dbvisualc_cb,0,FL_MENU_INVISIBLE},
+#ifdef IDE_SUPPORT
+  {"--fltkdb",0,(Fl_Callback *)fltkdb_cb},
+  {"--dbxcode3",0,(Fl_Callback *)dbxcode_cb},
+  {"--dbvisualc6",0,(Fl_Callback *)dbvisualc_cb},
+#endif
   {0},
 {"&Help",0,0,0,FL_SUBMENU},
   {"&About FLUID...",0,about_cb},
