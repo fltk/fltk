@@ -1468,18 +1468,32 @@ void Fl_Widget_Class_Type::write_code1() {
     write_h("public:\n");
     write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
     write_h("  %s(int W, int H, const char *L = 0);\n", name());
+    write_h("  %s();\n", name());
 
+    // a constructor with all four dimensions plus label
     write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), name());
     write_c("  : %s(X, Y, W, H, L) {\n", c);
     write_c("  _%s();\n", name());
     write_c("}\n\n");
 
+    // a constructor with just the size and label. The window manager will position the window
     write_c("%s::%s(int W, int H, const char *L)\n", name(), name());
     write_c("  : %s(0, 0, W, H, L) {\n", c);
     write_c("  clear_flag(16);\n");
     write_c("  _%s();\n", name());
     write_c("}\n\n");
-
+    
+    // a constructor that takes size and label from the Fluid database
+    write_c("%s::%s()\n", name(), name());
+    write_c("  : %s(0, 0, %d, %d, ", c, o->w(), o->h());
+    const char *cstr = label();
+    if (cstr) write_cstring(cstr);
+    else write_c("0");
+    write_c(") {\n");
+    write_c("  clear_flag(16);\n");
+    write_c("  _%s();\n", name());
+    write_c("}\n\n");
+    
     write_c("void %s::_%s() {\n", name(), name());
 //    write_c("  %s *w = this;\n", name());
   } else {
