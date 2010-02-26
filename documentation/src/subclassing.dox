@@ -302,6 +302,16 @@ You must return non-zero if your \p handle() method
 uses the event. If you return zero, the parent widget will try
 sending the event to another widget.
 
+For debugging purposes, event numbers can be printed as their actual event names 
+using the fl_eventnames[] array, e.g.:
+\code
+  #include <FL/names.h>		// defines fl_eventnames[]
+  [..]
+  int MyClass::handle(int e) {
+      printf("Event was %s (%d)\n", fl_eventnames[e], e);     // e.g. "Event was FL_PUSH (1)"
+      [..]
+\endcode
+
 \section subclassing_drawing Drawing the Widget
 
 The \p draw() virtual method is called when FLTK wants

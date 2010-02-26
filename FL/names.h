@@ -42,10 +42,9 @@
   \b Example:
   \code
   #include <FL/names.h>		// array will be defined here
-  // MyWidget's event handler
-  int MyWidget::handle(int e) {
+  int MyClass::handle(int e) {
       printf("Event was %s (%d)\n", fl_eventnames[e], e);
-      /* ..resulting output might be e.g. "Event was FL_PUSH (1)".. */
+      // ..resulting output might be e.g. "Event was FL_PUSH (1)"..
       [..]
   }
   \endcode
@@ -86,11 +85,11 @@ const char * const fl_eventnames[] =
   \b Example:
   \code
   #include <FL/names.h>		// array will be defined here
-  int MyWidget::my_callback(Fl_Widget *w, void*) {
+  int MyClass::my_callback(Fl_Widget *w, void*) {
       int fnum = w->labelfont();
       // Resulting output might be e.g. "Label's font is FL_HELVETICA (0)"
       printf("Label's font is %s (%d)\n", fl_fontnames[fnum], fnum);
-      /* ..resulting output might be e.g. "Label's font is FL_HELVETICA (0)".. */
+      // ..resulting output might be e.g. "Label's font is FL_HELVETICA (0)"..
       [..]
   }
   \endcode

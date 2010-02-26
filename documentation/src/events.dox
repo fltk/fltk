@@ -25,6 +25,9 @@ of the
 \p handle()
 method.
 
+Event numbers can be converted to their actual names using the \ref fl_eventnames[] array
+defined in \#include &lt;FL/names.h&gt;; see next chapter for details.
+
 In the next chapter, the
 \ref subclassing_events "MyClass::handle()"
 example shows how to override the
