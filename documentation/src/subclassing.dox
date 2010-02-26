@@ -303,7 +303,7 @@ uses the event. If you return zero, the parent widget will try
 sending the event to another widget.
 
 For debugging purposes, event numbers can be printed as their actual event names 
-using the fl_eventnames[] array, e.g.:
+using the \ref fl_eventnames[] array, e.g.:
 \code
   #include <FL/names.h>		// defines fl_eventnames[]
   [..]
