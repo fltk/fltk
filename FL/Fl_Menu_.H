@@ -65,6 +65,7 @@ public:
   int item_pathname(char *name, int namelen, const Fl_Menu_Item *finditem=0) const;
   const Fl_Menu_Item* picked(const Fl_Menu_Item*);
   const Fl_Menu_Item* find_item(const char *name);
+  const Fl_Menu_Item* find_item(Fl_Callback*);
 
   const Fl_Menu_Item* test_shortcut() {return picked(menu()->test_shortcut());}
   void global();

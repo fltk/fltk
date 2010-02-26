@@ -111,6 +111,11 @@ void	update_history(const char *);
 // Shell command support...
 void	show_shell_window();
 
+Fl_Menu_Item *save_item = 0L;
+Fl_Menu_Item *history_item = 0L;
+Fl_Menu_Item *widgetbin_item = 0L;
+Fl_Menu_Item *sourceview_item = 0L;
+
 ////////////////////////////////////////////////////////////////
 
 static const char *filename;
@@ -1623,7 +1628,6 @@ Fl_Menu_Item Main_Menu[] = {
   {"&New...", FL_COMMAND+'n', new_cb, 0},
   {"&Open...", FL_COMMAND+'o', open_cb, 0},
   {"&Insert...", FL_COMMAND+'i', open_cb, (void*)1, FL_MENU_DIVIDER},
-#define SAVE_ITEM 4
   {"&Save", FL_COMMAND+'s', save_cb, 0},
   {"Save &As...", FL_COMMAND+FL_SHIFT+'s', save_cb, (void*)1},
   {"Sa&ve A Copy...", 0, save_cb, (void*)2},
@@ -1632,7 +1636,6 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Print...", FL_COMMAND+'p', print_menu_cb},
   {"Write &Code...", FL_COMMAND+FL_SHIFT+'c', write_cb, 0},
   {"&Write Strings...", FL_COMMAND+FL_SHIFT+'w', write_strings_cb, 0, FL_MENU_DIVIDER},
-#define HISTORY_ITEM 12
   {relative_history[0], FL_COMMAND+'0', open_history_cb, absolute_history[0]},
   {relative_history[1], FL_COMMAND+'1', open_history_cb, absolute_history[1]},
   {relative_history[2], FL_COMMAND+'2', open_history_cb, absolute_history[2]},
@@ -1662,9 +1665,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"&Group", FL_F+7, group_cb},
   {"Ung&roup", FL_F+8, ungroup_cb,0, FL_MENU_DIVIDER},
   {"Hide O&verlays",FL_COMMAND+FL_SHIFT+'o',toggle_overlays},
-#define WIDGETBIN_ITEM 41
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
-#define SOURCEVIEW_ITEM 42
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
   {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
@@ -1754,10 +1755,10 @@ void toggle_widgetbin_cb(Fl_Widget *, void *) {
 
   if (widgetbin_panel->visible()) {
     widgetbin_panel->hide();
-    Main_Menu[WIDGETBIN_ITEM].label("Show Widget &Bin...");
+    widgetbin_item->label("Show Widget &Bin...");
   } else {
     widgetbin_panel->show();
-    Main_Menu[WIDGETBIN_ITEM].label("Hide Widget &Bin");
+    widgetbin_item->label("Hide Widget &Bin");
   }
 }
 
@@ -1781,10 +1782,10 @@ void toggle_sourceview_cb(Fl_Double_Window *, void *) {
 
   if (sourceview_panel->visible()) {
     sourceview_panel->hide();
-    Main_Menu[SOURCEVIEW_ITEM].label("Show Source Code...");
+    sourceview_item->label("Show Source Code...");
   } else {
     sourceview_panel->show();
-    Main_Menu[SOURCEVIEW_ITEM].label("Hide Source Code...");
+    sourceview_item->label("Hide Source Code...");
     update_sourceview_cb(0,0);
   }
 }
@@ -1801,9 +1802,6 @@ void make_main_window() {
     fluid_prefs.get("show_guides", show_guides, 0);
     fluid_prefs.get("widget_size", Fl_Widget_Type::default_size, 14);
     fluid_prefs.get("show_comments", show_comments, 1);
-
-    load_history();
-
     make_layout_window();
     make_settings_window();
     make_shell_window();
@@ -1819,9 +1817,18 @@ void make_main_window() {
     main_window->resizable(o);
     main_menubar = new Fl_Menu_Bar(0,0,BROWSERWIDTH,MENUHEIGHT);
     main_menubar->menu(Main_Menu);
+    // quick access to all dynamic menu items
+    save_item = (Fl_Menu_Item*)main_menubar->find_item(save_cb);
+    history_item = (Fl_Menu_Item*)main_menubar->find_item(open_history_cb);
+    widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
+    sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
     main_menubar->global();
     fill_in_New_Menu();
     main_window->end();
+  }
+
+  if (!compile_only) {
+    load_history();
   }
 }
 
@@ -1841,14 +1848,14 @@ void load_history() {
       fl_filename_relative(relative_history[i], sizeof(relative_history[i]),
                            absolute_history[i]);
 
-      if (i == 9) Main_Menu[i + HISTORY_ITEM].flags = FL_MENU_DIVIDER;
-      else Main_Menu[i + HISTORY_ITEM].flags = 0;
+      if (i == 9) history_item[i].flags = FL_MENU_DIVIDER;
+      else history_item[i].flags = 0;
     } else break;
   }
 
   for (; i < 10; i ++) {
-    if (i) Main_Menu[i + HISTORY_ITEM - 1].flags |= FL_MENU_DIVIDER;
-    Main_Menu[i + HISTORY_ITEM].hide();
+    if (i) history_item[i-1].flags |= FL_MENU_DIVIDER;
+    history_item[i].hide();
   }
 }
 
@@ -1891,15 +1898,15 @@ void update_history(const char *flname) {
   for (i = 0; i < max_files; i ++) {
     fluid_prefs.set( Fl_Preferences::Name("file%d", i), absolute_history[i]);
     if (absolute_history[i][0]) {
-      if (i == 9) Main_Menu[i + HISTORY_ITEM].flags = FL_MENU_DIVIDER;
-      else Main_Menu[i + HISTORY_ITEM].flags = 0;
+      if (i == 9) history_item[i].flags = FL_MENU_DIVIDER;
+      else history_item[i].flags = 0;
     } else break;
   }
 
   for (; i < 10; i ++) {
     fluid_prefs.set( Fl_Preferences::Name("file%d", i), "");
-    if (i) Main_Menu[i + HISTORY_ITEM - 1].flags |= FL_MENU_DIVIDER;
-    Main_Menu[i + HISTORY_ITEM].hide();
+    if (i) history_item[i-1].flags |= FL_MENU_DIVIDER;
+    history_item[i].hide();
   }
 }
 
@@ -2270,8 +2277,8 @@ void set_modflag(int mf) {
   }
 
   // Enable/disable the Save menu item...
-  if (modflag) Main_Menu[SAVE_ITEM].activate();
-  else Main_Menu[SAVE_ITEM].deactivate();
+  if (modflag) save_item->activate();
+  else save_item->deactivate();
 }
 
 ////////////////////////////////////////////////////////////////

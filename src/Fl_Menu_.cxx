@@ -99,11 +99,10 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
 }
 
 /**
-  Find menu item index, given a menu pathname such as "Edit/Copy".
-
-  Will also return submenu items, eg. "Edit".
-
-  Returns NULL if not found.
+ Find menu item index, given a menu pathname such as "Edit/Copy".
+ 
+ This method finds a menu item in a menu array, also traversing submenus, but
+ not submenu pointers.
 
   \b Example:
   \code
@@ -121,8 +120,11 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
     }
   \endcode
   \returns The item found, or NULL if not found.
-  \see item_pathname()
+  \see 
 
+ \param name path and name of the menu item
+ \return NULL if not found
+ \see Fl_Menu_::find_item(Fl_Callback*), item_pathname() 
 */
 const Fl_Menu_Item * Fl_Menu_::find_item(const char *name) {
   char menupath[1024] = "";	// File/Export
@@ -154,6 +156,28 @@ const Fl_Menu_Item * Fl_Menu_::find_item(const char *name) {
     }
   }
 
+  return (const Fl_Menu_Item *)0;
+}
+
+/**
+ Find menu item index given a callback.
+ 
+ This method finds a menu item in a menu array, also traversing submenus, but
+ not submenu pointers. This is useful if an application uses 
+ internationalisation and a menu item can not be found using its label. This
+ search is also much faster.
+ 
+ \param cb find the first item with this callback
+ \return NULL if not found
+ \see Fl_Menu_::find_item(const char*)
+ */
+const Fl_Menu_Item * Fl_Menu_::find_item(Fl_Callback *cb) {
+  for ( int t=0; t < size(); t++ ) {
+    const Fl_Menu_Item *m = menu_ + t;
+    if (m->callback_==cb) {
+      return m;
+    }
+  }
   return (const Fl_Menu_Item *)0;
 }
 
