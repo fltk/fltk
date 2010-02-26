@@ -101,7 +101,7 @@ public:
    */
   int writeProjectSection(FILE *f, Fl_Preferences &targetDB, char dll=0) {
     char name[80]; targetDB.get("name", name, "DBERROR", 80);
-    if (dll) strcat(name, "_dll");
+    if (dll) strcat(name, "dll");
     fprintf(f, "###############################################################################\r\n");
     fprintf(f, "\r\n");
     fprintf(f, "Project: \"%s\"=\".\\%s.dsp\" - Package Owner=<4>\r\n", name, name);

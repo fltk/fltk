@@ -138,7 +138,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "fltk_dll"=".\fltk_dll.dsp" - Package Owner=<4>
+Project: "fltkdll"=".\fltkdll.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -150,7 +150,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "fltkgl_dll"=".\fltkgl_dll.dsp" - Package Owner=<4>
+Project: "fltkgldll"=".\fltkgldll.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -165,7 +165,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "fltkimages_dll"=".\fltkimages_dll.dsp" - Package Owner=<4>
+Project: "fltkimagesdll"=".\fltkimagesdll.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -186,7 +186,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "fltkpng_dll"=".\fltkpng_dll.dsp" - Package Owner=<4>
+Project: "fltkpngdll"=".\fltkpngdll.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -201,7 +201,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "fltkjpeg_dll"=".\fltkjpeg_dll.dsp" - Package Owner=<4>
+Project: "fltkjpegdll"=".\fltkjpegdll.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -216,7 +216,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "fltkforms_dll"=".\fltkforms_dll.dsp" - Package Owner=<4>
+Project: "fltkformsdll"=".\fltkformsdll.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -231,7 +231,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "zlib_dll"=".\zlib_dll.dsp" - Package Owner=<4>
+Project: "zlibdll"=".\zlibdll.dsp" - Package Owner=<4>
 
 Package=<5>
 {{{
