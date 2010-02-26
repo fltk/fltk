@@ -73,7 +73,7 @@ const Fl_Menu_Item* Fl_Menu_Button::popup() {
 int Fl_Menu_Button::handle(int e) {
   if (!menu() || !menu()->text) return 0;
   switch (e) {
-  case FL_ENTER:
+  case FL_ENTER: /* FALLTHROUGH */
   case FL_LEAVE:
     return (box() && !type()) ? 1 : 0;
   case FL_PUSH:
@@ -95,7 +95,7 @@ int Fl_Menu_Button::handle(int e) {
   case FL_SHORTCUT:
     if (Fl_Widget::test_shortcut()) {popup(); return 1;}
     return test_shortcut() != 0;
-  case FL_FOCUS:
+  case FL_FOCUS: /* FALLTHROUGH */
   case FL_UNFOCUS:
     if (box() && Fl::visible_focus()) {
       redraw();

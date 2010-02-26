@@ -114,6 +114,7 @@ int fl_filename_match(const char *s, const char *p) {
 
     case '\\':	// quote next character
       if (*p) p++;
+      /* FALLTHROUGH */
     default:
       if (tolower(*s) != tolower(*(p-1))) return 0;
       s++;

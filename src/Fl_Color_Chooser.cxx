@@ -123,7 +123,7 @@ void Fl_Color_Chooser::set_valuators() {
     gvalue.range(0,1); gvalue.step(1,1000); gvalue.value(g_);
     bvalue.range(0,1); bvalue.step(1,1000); bvalue.value(b_);
     break;
-  case M_BYTE:
+  case M_BYTE: /* FALLTHROUGH */
   case M_HEX:
     rvalue.range(0,255); rvalue.step(1); rvalue.value(int(255*r_+.5));
     gvalue.range(0,255); gvalue.step(1); gvalue.value(int(255*g_+.5));
@@ -233,7 +233,7 @@ int Flcc_HueBox::handle(int e) {
     if (Fl::event_state(FL_CTRL)) H = ih;
     if (c->hsv(H, S, c->value())) c->do_callback();
     } return 1;
-  case FL_FOCUS :
+  case FL_FOCUS : /* FALLTHROUGH */
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
       redraw();
@@ -354,7 +354,7 @@ int Flcc_ValueBox::handle(int e) {
     if (fabs(Yf-iv)<(3*1.0/h())) Yf = iv;
     if (c->hsv(c->hue(),c->saturation(),Yf)) c->do_callback();
     } return 1;
-  case FL_FOCUS :
+  case FL_FOCUS : /* FALLTHROUGH */
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
       redraw();

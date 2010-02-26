@@ -102,7 +102,7 @@ static int send(Fl_Widget* o, int event) {
   if (o->type() < FL_WINDOW) return o->handle(event);
   switch ( event )
   {
-  case FL_DND_ENTER:
+  case FL_DND_ENTER: /* FALLTHROUGH */
   case FL_DND_DRAG:
     // figure out correct type of event:
     event = (o->contains(Fl::belowmouse())) ? FL_DND_DRAG : FL_DND_ENTER;
@@ -114,7 +114,7 @@ static int send(Fl_Widget* o, int event) {
   Fl::e_x = save_x;
   switch ( event )
   {
-  case FL_ENTER:
+  case FL_ENTER: /* FALLTHROUGH */
   case FL_DND_ENTER:
     // Successful completion of FL_ENTER means the widget is now the
     // belowmouse widget, but only call Fl::belowmouse if the child

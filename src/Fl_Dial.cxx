@@ -134,7 +134,7 @@ int Fl_Dial::handle(int event, int X, int Y, int W, int H) {
   case FL_RELEASE:
     handle_release();
     return 1;
-  case FL_ENTER :
+  case FL_ENTER : /* FALLTHROUGH */
   case FL_LEAVE :
     return 1;
   default:

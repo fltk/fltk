@@ -165,13 +165,13 @@ int Fl_Counter::handle(int event) {
         return 0;
     }
     // break not required because of switch...
-  case FL_FOCUS :
+  case FL_FOCUS : /* FALLTHROUGH */
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
       redraw();
       return 1;
     } else return 0;
-  case FL_ENTER :
+  case FL_ENTER : /* FALLTHROUGH */
   case FL_LEAVE :
     return 1;
   default:

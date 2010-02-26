@@ -151,6 +151,7 @@ int Fl_Tabs::handle(int event) {
     } else {
       if (Fl::event_y() < y()+h()+H) return Fl_Group::handle(event);
     }}
+    /* FALLTHROUGH */
   case FL_DRAG:
   case FL_RELEASE:
     o = which(Fl::event_x(), Fl::event_y());

@@ -84,7 +84,7 @@ void Fl_Button::draw() {
 int Fl_Button::handle(int event) {
   int newval;
   switch (event) {
-  case FL_ENTER:
+  case FL_ENTER: /* FALLTHROUGH */
   case FL_LEAVE:
 //  if ((value_?selection_color():color())==FL_GRAY) redraw();
     return 1;
@@ -143,7 +143,7 @@ int Fl_Button::handle(int event) {
 	  do_callback();
     } else if (when() & FL_WHEN_RELEASE) do_callback();
     return 1;
-  case FL_FOCUS :
+  case FL_FOCUS : /* FALLTHROUGH */
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
       if (box() == FL_NO_BOX) {
