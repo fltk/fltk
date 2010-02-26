@@ -30,6 +30,26 @@
 #ifndef FL_NAMES_H
 #define FL_NAMES_H
 
+/** \defgroup fl_events Events handling functions
+    @{
+ */
+
+/**
+  This is an array of event names you can use to convert event numbers into names.
+
+  The array gets defined inline wherever your '\#include &lt;FL/names.h&gt;' appears.
+
+  \b Example:
+  \code
+  #include <FL/names.h>		// array will be defined here
+  // MyWidget's event handler
+  int MyWidget::handle(int e) {
+      printf("Event was %s (%d)\n", fl_eventnames[e], e);
+      /* ..resulting output might be e.g. "Event was FL_PUSH (1)".. */
+      [..]
+  }
+  \endcode
+ */
 const char * const fl_eventnames[] =
 {
   "FL_NO_EVENT",
@@ -58,6 +78,23 @@ const char * const fl_eventnames[] =
   "FL_DND_RELEASE",
 };
 
+/**
+  This is an array of font names you can use to convert font numbers into names.
+
+  The array gets defined inline wherever your '\#include &lt;FL/names.h&gt;' appears.
+
+  \b Example:
+  \code
+  #include <FL/names.h>		// array will be defined here
+  int MyWidget::my_callback(Fl_Widget *w, void*) {
+      int fnum = w->labelfont();
+      // Resulting output might be e.g. "Label's font is FL_HELVETICA (0)"
+      printf("Label's font is %s (%d)\n", fl_fontnames[fnum], fnum);
+      /* ..resulting output might be e.g. "Label's font is FL_HELVETICA (0)".. */
+      [..]
+  }
+  \endcode
+ */
 const char * const fl_fontnames[] =
 {
   "FL_HELVETICA",
@@ -77,6 +114,8 @@ const char * const fl_fontnames[] =
   "FL_SCREEN_BOLD",
   "FL_ZAPF_DINGBATS",
 };
+
+/** @} */
 
 #endif /* FL_NAMES_H */
 
