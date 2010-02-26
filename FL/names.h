@@ -37,7 +37,7 @@
 /**
   This is an array of event names you can use to convert event numbers into names.
 
-  The array gets defined inline wherever your '\#include &lt;FL/names.h&gt;' appears.
+  The array gets defined inline wherever your '\#include <FL/names.h>' appears.
 
   \b Example:
   \code
@@ -80,7 +80,7 @@ const char * const fl_eventnames[] =
 /**
   This is an array of font names you can use to convert font numbers into names.
 
-  The array gets defined inline wherever your '\#include &lt;FL/names.h&gt;' appears.
+  The array gets defined inline wherever your '\#include <FL/names.h>' appears.
 
   \b Example:
   \code
