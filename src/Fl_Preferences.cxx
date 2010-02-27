@@ -1858,6 +1858,23 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(int index)
 }
 
 /**
+ * \brief Return the address of a plugin by name.
+ */
+Fl_Plugin *Fl_Plugin_Manager::plugin(const char *name) 
+{
+  char buf[32];
+  Fl_Plugin *ret = 0;
+  if (groupExists(name)) {
+    Fl_Preferences pin(this, name);
+    pin.get("address", buf, "@0", 32);
+    sscanf(buf, "@%p", &ret);
+    return ret;
+  } else {
+    return 0L;
+  }
+}
+
+/**
  * \brief This function adds a new plugin to the databse.
  *
  * There is no need to call this function explicitly. Every Fl_Plugin constructor

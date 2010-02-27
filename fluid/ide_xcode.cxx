@@ -1664,6 +1664,7 @@ void generate_fltk_Xcode3_support(const char *filename, const char *targetpath)
     new Fl_Preferences(filename, "fltk.org", 0);
   Xcode3_IDE ide(*db, targetpath);
   ide.write();
+  delete db;
   return;
 }
 

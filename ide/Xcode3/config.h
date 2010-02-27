@@ -1,5 +1,5 @@
 /*
- * "$Id: config.g 7131 2010-02-21 21:38:02Z matt $"
+ * "$Id: ide_xcode.cxx 7146 2010-02-25 21:21:04Z matt $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -50,5 +50,5 @@
 #define HAVE_DLSYM 1
 
 /*
- * End of "$Id: config.h 7131 2010-02-21 21:38:02Z matt $".
+ * End of "$Id: ide_xcode.cxx 7146 2010-02-25 21:21:04Z matt $".
  */

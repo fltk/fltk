@@ -159,6 +159,10 @@ SOURCE=..\..\fluid\ide_support.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\fluid\ide_support_ui.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\fluid\ide_visualc.cxx
 # End Source File
 # Begin Source File

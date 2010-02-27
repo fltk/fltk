@@ -90,6 +90,7 @@ public:
    */
   int plugins() { return groups(); }
   Fl_Plugin *plugin(int index);
+  Fl_Plugin *plugin(const char *name);
   Fl_Preferences::ID addPlugin(const char *name, Fl_Plugin *plugin);
   
   static void removePlugin(Fl_Preferences::ID id);

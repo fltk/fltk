@@ -825,6 +825,8 @@ public:
   virtual int test(const char *a1=0L, const char *a2=0L, const char *a3=0L) { 
     return 0;
   }
+  // show a GUI panel to edit some data
+  virtual void show_panel() { }
 };
 
 

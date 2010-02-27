@@ -764,6 +764,7 @@ void generate_fltk_VisualC6_support(const char *filename, const char *targetpath
     new Fl_Preferences(filename, "fltk.org", 0);
   VisualC6_IDE ide(*db, targetpath);
   ide.write();
+  delete db;
   return;
 }
 

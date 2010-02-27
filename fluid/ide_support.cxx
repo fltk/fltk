@@ -103,6 +103,7 @@
  */
 
 #include "ide_support.h"
+#include "ide_support_ui.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
@@ -632,6 +633,7 @@ int create_new_database(const char *filename)
     fluid_app.add_source(files_db, "fluid/fluid.cxx");
     fluid_app.add_source(files_db, "fluid/function_panel.cxx");
     fluid_app.add_source(files_db, "fluid/ide_support.cxx");
+    fluid_app.add_source(files_db, "fluid/ide_support_ui.cxx");
     fluid_app.add_source(files_db, "fluid/ide_visualc.cxx");
     fluid_app.add_source(files_db, "fluid/ide_xcode.cxx");
     fluid_app.add_source(files_db, "fluid/template_panel.cxx");
@@ -1125,8 +1127,18 @@ int create_new_database(const char *filename)
     demo_db.depends_on(db);
   }  
     
-  db->flush();    
+  db->flush();
+  delete db;
   return 0;
+}
+
+
+void ui_load_database(const char *filename)
+{
+  Fl_Preferences *db = new Fl_Preferences(filename, "fltk.org", 0);
+  db->copyTo(dbmanager_tree);
+  dbmanager_tree->redraw();
+  delete db;
 }
 
 
@@ -1159,6 +1171,11 @@ public:
   int test(const char *a1, const char *a2, const char *a3) {
     create_new_database(a1);
     return 0;
+  }
+  void show_panel() {
+    if (!dbmanager_window)
+      make_dbmanager_window();
+    dbmanager_window->show();
   }
 };
 

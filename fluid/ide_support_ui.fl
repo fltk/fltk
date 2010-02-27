@@ -1,0 +1,90 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+comment {//
+// "$Id: ide_support_ui.fl 6614 2009-01-01 16:11:32Z matt $"
+//
+// Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2009 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+} {in_source in_header
+} 
+
+decl {\#include <FL/Fl_Tree.H>} {public local
+} 
+
+decl {\#include "ide_support.h"} {private global
+} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {selected private global
+} 
+
+Function {make_dbmanager_window()} {open
+} {
+  Fl_Window dbmanager_window {open
+    xywh {459 167 409 510} type Double resizable visible
+  } {
+    Fl_File_Input {} {
+      label {Database:}
+      xywh {80 4 280 36}
+    }
+    Fl_Button {} {
+      label {@fileopen}
+      callback {const char *filename = fl_file_chooser("Load Database", "*.db", 0, 0);
+if (filename) {
+  ui_load_database(filename);
+}}
+      xywh {360 14 36 26} labelcolor 94
+    }
+    Fl_Box dbmanager_tree {
+      xywh {12 52 208 444} box DOWN_BOX color 55 resizable
+      code0 {dbmanager_tree->showroot(0);}
+      code1 {dbmanager_tree->labelsize(12);}
+      class Fl_Tree
+    }
+    Fl_Group {} {open
+      xywh {232 52 164 444}
+    } {
+      Fl_Button {} {
+        label Close
+        xywh {304 468 92 28}
+      }
+      Fl_Group {} {open
+        xywh {232 128 164 340} resizable
+      } {}
+      Fl_Box {} {
+        label {Show editor
+for selected
+Item here}
+        xywh {232 52 164 76} box THIN_DOWN_BOX
+      }
+    }
+  }
+} 
+
+comment {
+//
+// End of "$Id: ide_support_ui.fl 6614 2009-01-01 16:11:32Z matt $".
+//} {in_source in_header
+} 

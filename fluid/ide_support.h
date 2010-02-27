@@ -103,6 +103,8 @@ char with_xcode(Fl_Preferences::ID id);
 char with_visualc(Fl_Preferences::ID id);
 char with_makefile(Fl_Preferences::ID id);
 
+void ui_load_database(const char *filename);
+
 #endif
 
 //

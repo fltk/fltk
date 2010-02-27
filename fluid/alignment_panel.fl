@@ -31,26 +31,31 @@ comment {//
 } {in_source in_header
 } 
 
-decl {\#include <FL/Fl_Text_Buffer.H>} {public
+decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 } 
 
-decl {\#include <FL/Fl_Text_Display.H>} {public
+decl {\#include <FL/Fl_Text_Display.H>} {public local
 } 
 
-decl {extern void load_history();} {public
+decl {extern void load_history();} {public local
 } 
 
-decl {extern void redraw_browser();} {public
+decl {extern void redraw_browser();} {public local
 } 
 
-decl {extern int show_comments;} {public
+decl {extern int show_comments;} {public local
 } 
 
-Function {make_project_window()} {selected
-} {
+decl {extern int show_coredevmenus;} {public local
+} 
+
+decl {extern class Fl_Menu_Item *dbmanager_item;} {public local
+} 
+
+Function {make_project_window()} {} {
   Fl_Window project_window {
     label {Project Settings}
-    xywh {312 395 358 207} type Double
+    xywh {393 460 358 207} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
@@ -140,26 +145,25 @@ Function {make_project_window()} {selected
   }
 } 
 
-decl {extern void i18n_cb(Fl_Choice *,void *);} {public
+decl {extern void i18n_cb(Fl_Choice *,void *);} {public local
 } 
 
-decl {extern Fl_Preferences fluid_prefs;} {public
+decl {extern Fl_Preferences fluid_prefs;} {public local
 } 
 
-decl {Fl_Text_Buffer *shell_run_buffer;} {public
+decl {Fl_Text_Buffer *shell_run_buffer;} {public local
 } 
 
-decl {void scheme_cb(Fl_Choice *, void *);} {public
+decl {void scheme_cb(Fl_Choice *, void *);} {public local
 } 
 
-Function {make_settings_window()} {open
-} {
+Function {make_settings_window()} {} {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {393 191 342 242} type Double non_modal visible
+    xywh {393 191 342 269} type Double non_modal visible
   } {
     Fl_Choice scheme_choice {
-      label {Scheme:}
+      label {Scheme: }
       callback scheme_cb open
       xywh {116 10 115 25} down_box BORDER_BOX labelfont 1
       code0 {int s;}
@@ -184,20 +188,18 @@ Function {make_settings_window()} {open
         xywh {10 10 35 25}
       }
     }
-    Fl_Group {} {
-      label {Options:
-
-
-
-
-} open
-      xywh {70 40 266 128} labelfont 1 align 4
+    Fl_Group {} {open
+      xywh {116 43 220 149} labelfont 1 align 4
     } {
+      Fl_Box {} {
+        label {Options: }
+        xywh {116 43 1 25} labelfont 1 align 4
+      }
       Fl_Check_Button tooltips_button {
         label {Show Tooltips}
         callback {Fl_Tooltip::enable(tooltips_button->value());
 fluid_prefs.set("show_tooltips", tooltips_button->value());}
-        xywh {116 40 113 25} down_box DOWN_BOX
+        xywh {116 43 113 25} down_box DOWN_BOX
         code0 {int b;}
         code1 {fluid_prefs.get("show_tooltips", b, 1);}
         code2 {tooltips_button->value(b);}
@@ -206,7 +208,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button completion_button {
         label {Show Completion Dialogs}
         callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
-        xywh {116 65 186 25} down_box DOWN_BOX
+        xywh {116 68 186 25} down_box DOWN_BOX
         code0 {int b;}
         code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
         code2 {completion_button->value(b);}
@@ -214,7 +216,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button openlast_button {
         label {Open Previous File on Startup}
         callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
-        xywh {115 90 215 25} down_box DOWN_BOX
+        xywh {116 93 214 25} down_box DOWN_BOX
         code0 {int b;}
         code1 {fluid_prefs.get("open_previous_file", b, 0);}
         code2 {openlast_button->value(b);}
@@ -222,7 +224,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button prevpos_button {
         label {Remember Window Positions}
         callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
-        xywh {115 115 210 25} down_box DOWN_BOX
+        xywh {116 118 209 25} down_box DOWN_BOX
         code0 {int b;}
         code1 {fluid_prefs.get("prev_window_pos", b, 1);}
         code2 {prevpos_button->value(b);}
@@ -232,16 +234,29 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
         callback {show_comments = show_comments_button->value();
 fluid_prefs.set("show_comments", show_comments);
 redraw_browser();}
-        xywh {115 140 210 25} down_box DOWN_BOX
+        xywh {116 143 209 25} down_box DOWN_BOX
         code1 {fluid_prefs.get("show_comments", show_comments, 1);}
         code2 {show_comments_button->value(show_comments);}
       }
+      Fl_Check_Button show_coredevmenus_button {
+        label {Show Core Developer Menus}
+        callback {show_coredevmenus = show_coredevmenus_button->value();
+fluid_prefs.set("show_coredevmenus", show_coredevmenus);
+if (show_coredevmenus) 
+  dbmanager_item->show(); 
+else 
+  dbmanager_item->hide();}
+        xywh {116 167 209 25} down_box DOWN_BOX
+        code1 {fluid_prefs.get("show_coredevmenus", show_coredevmenus, 0);}
+        code2 {show_coredevmenus_button->value(show_coredevmenus);}
+        code3 {if (!show_coredevmenus) dbmanager_item->hide();}
+      }
     }
     Fl_Spinner recent_spinner {
-      label {\# Recent Files:}
+      label {\# Recent Files: }
       callback {fluid_prefs.set("recent_files", recent_spinner->value());
 load_history();}
-      xywh {115 170 40 25} labelfont 1 when 1 value 1
+      xywh {115 199 40 25} labelfont 1 when 1
       code0 {int c;}
       code1 {fluid_prefs.get("recent_files", c, 5);}
       code2 {recent_spinner->maximum(10);}
@@ -250,16 +265,15 @@ load_history();}
     Fl_Button {} {
       label Close
       callback {settings_window->hide();}
-      tooltip {Close this dialog.} xywh {266 205 64 25}
+      tooltip {Close this dialog.} xywh {266 231 64 25}
     }
   }
 } 
 
-Function {make_shell_window()} {open
-} {
+Function {make_shell_window()} {} {
   Fl_Window shell_window {
     label {Shell Command}
-    xywh {682 167 365 125} type Double visible
+    xywh {741 195 365 125} type Double visible
   } {
     Fl_Input shell_command_input {
       label {Command:}
@@ -321,11 +335,10 @@ Function {make_shell_window()} {open
   }
 } 
 
-Function {make_layout_window()} {open
-} {
+Function {make_layout_window()} {} {
   Fl_Window grid_window {
     label {Layout Settings} open
-    xywh {676 337 285 245} type Double non_modal visible
+    xywh {760 427 285 245} type Double non_modal visible
   } {
     Fl_Input horizontal_input {
       label x

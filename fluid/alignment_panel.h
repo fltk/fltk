@@ -35,6 +35,8 @@
 extern void load_history();
 extern void redraw_browser();
 extern int show_comments;
+extern int show_coredevmenus;
+extern class Fl_Menu_Item *dbmanager_item;
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>
@@ -75,6 +77,7 @@ extern Fl_Check_Button *completion_button;
 extern Fl_Check_Button *openlast_button;
 extern Fl_Check_Button *prevpos_button;
 extern Fl_Check_Button *show_comments_button;
+extern Fl_Check_Button *show_coredevmenus_button;
 #include <FL/Fl_Spinner.H>
 extern Fl_Spinner *recent_spinner;
 Fl_Double_Window* make_settings_window();

@@ -217,6 +217,17 @@ fluid_prefs.set("show_comments", show_comments);
 redraw_browser();
 }
 
+Fl_Check_Button *show_coredevmenus_button=(Fl_Check_Button *)0;
+
+static void cb_show_coredevmenus_button(Fl_Check_Button*, void*) {
+  show_coredevmenus = show_coredevmenus_button->value();
+fluid_prefs.set("show_coredevmenus", show_coredevmenus);
+if (show_coredevmenus) 
+  dbmanager_item->show(); 
+else 
+  dbmanager_item->hide();
+}
+
 Fl_Spinner *recent_spinner=(Fl_Spinner *)0;
 
 static void cb_recent_spinner(Fl_Spinner*, void*) {
@@ -229,8 +240,8 @@ static void cb_Close1(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_settings_window() {
-  { settings_window = new Fl_Double_Window(342, 242, "GUI Settings");
-    { scheme_choice = new Fl_Choice(116, 10, 115, 25, "Scheme:");
+  { settings_window = new Fl_Double_Window(342, 269, "GUI Settings");
+    { scheme_choice = new Fl_Choice(116, 10, 115, 25, "Scheme: ");
       scheme_choice->down_box(FL_BORDER_BOX);
       scheme_choice->labelfont(1);
       scheme_choice->callback((Fl_Callback*)scheme_cb);
@@ -240,10 +251,14 @@ Fl_Double_Window* make_settings_window() {
       scheme_choice->value(s);
       scheme_cb(0, 0);
     } // Fl_Choice* scheme_choice
-    { Fl_Group* o = new Fl_Group(70, 40, 266, 128, "Options:\n\n\n\n\n");
+    { Fl_Group* o = new Fl_Group(116, 43, 220, 149);
       o->labelfont(1);
       o->align(Fl_Align(FL_ALIGN_LEFT));
-      { tooltips_button = new Fl_Check_Button(116, 40, 113, 25, "Show Tooltips");
+      { Fl_Box* o = new Fl_Box(116, 43, 1, 25, "Options: ");
+        o->labelfont(1);
+        o->align(Fl_Align(FL_ALIGN_LEFT));
+      } // Fl_Box* o
+      { tooltips_button = new Fl_Check_Button(116, 43, 113, 25, "Show Tooltips");
         tooltips_button->down_box(FL_DOWN_BOX);
         tooltips_button->callback((Fl_Callback*)cb_tooltips_button);
         int b;
@@ -251,38 +266,44 @@ Fl_Double_Window* make_settings_window() {
         tooltips_button->value(b);
         Fl_Tooltip::enable(b);
       } // Fl_Check_Button* tooltips_button
-      { completion_button = new Fl_Check_Button(116, 65, 186, 25, "Show Completion Dialogs");
+      { completion_button = new Fl_Check_Button(116, 68, 186, 25, "Show Completion Dialogs");
         completion_button->down_box(FL_DOWN_BOX);
         completion_button->callback((Fl_Callback*)cb_completion_button);
         int b;
         fluid_prefs.get("show_completion_dialogs", b, 1);
         completion_button->value(b);
       } // Fl_Check_Button* completion_button
-      { openlast_button = new Fl_Check_Button(115, 90, 215, 25, "Open Previous File on Startup");
+      { openlast_button = new Fl_Check_Button(116, 93, 214, 25, "Open Previous File on Startup");
         openlast_button->down_box(FL_DOWN_BOX);
         openlast_button->callback((Fl_Callback*)cb_openlast_button);
         int b;
         fluid_prefs.get("open_previous_file", b, 0);
         openlast_button->value(b);
       } // Fl_Check_Button* openlast_button
-      { prevpos_button = new Fl_Check_Button(115, 115, 210, 25, "Remember Window Positions");
+      { prevpos_button = new Fl_Check_Button(116, 118, 209, 25, "Remember Window Positions");
         prevpos_button->down_box(FL_DOWN_BOX);
         prevpos_button->callback((Fl_Callback*)cb_prevpos_button);
         int b;
         fluid_prefs.get("prev_window_pos", b, 1);
         prevpos_button->value(b);
       } // Fl_Check_Button* prevpos_button
-      { show_comments_button = new Fl_Check_Button(115, 140, 210, 25, "Show Comments in Browser");
+      { show_comments_button = new Fl_Check_Button(116, 143, 209, 25, "Show Comments in Browser");
         show_comments_button->down_box(FL_DOWN_BOX);
         show_comments_button->callback((Fl_Callback*)cb_show_comments_button);
         fluid_prefs.get("show_comments", show_comments, 1);
         show_comments_button->value(show_comments);
       } // Fl_Check_Button* show_comments_button
+      { show_coredevmenus_button = new Fl_Check_Button(116, 167, 209, 25, "Show Core Developer Menus");
+        show_coredevmenus_button->down_box(FL_DOWN_BOX);
+        show_coredevmenus_button->callback((Fl_Callback*)cb_show_coredevmenus_button);
+        fluid_prefs.get("show_coredevmenus", show_coredevmenus, 0);
+        show_coredevmenus_button->value(show_coredevmenus);
+        if (!show_coredevmenus) dbmanager_item->hide();
+      } // Fl_Check_Button* show_coredevmenus_button
       o->end();
     } // Fl_Group* o
-    { recent_spinner = new Fl_Spinner(115, 170, 40, 25, "# Recent Files:");
+    { recent_spinner = new Fl_Spinner(115, 199, 40, 25, "# Recent Files: ");
       recent_spinner->labelfont(1);
-      recent_spinner->value(1);
       recent_spinner->callback((Fl_Callback*)cb_recent_spinner);
       recent_spinner->when(FL_WHEN_CHANGED);
       int c;
@@ -290,7 +311,7 @@ Fl_Double_Window* make_settings_window() {
       recent_spinner->maximum(10);
       recent_spinner->value(c);
     } // Fl_Spinner* recent_spinner
-    { Fl_Button* o = new Fl_Button(266, 205, 64, 25, "Close");
+    { Fl_Button* o = new Fl_Button(266, 231, 64, 25, "Close");
       o->tooltip("Close this dialog.");
       o->callback((Fl_Callback*)cb_Close1);
     } // Fl_Button* o
