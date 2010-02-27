@@ -325,7 +325,10 @@ char with_makefile(Fl_Preferences::ID id) {
 int create_new_database(const char *filename)
 {
   Fl_Preferences *db = new Fl_Preferences(filename, "fltk.org", 0);
-  db->clear();
+  // TODO: we do not clear the database anymore! This shoudl keep UUID's 
+  // consistent and reduce the size of check-ins. When removing items from
+  // the db, we have to do that manually!
+  //db->clear();
   
   db->set("projectName", "fltk");
   

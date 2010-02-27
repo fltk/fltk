@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#define IDE_SUPPORT
+#undef IDE_SUPPORT
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
