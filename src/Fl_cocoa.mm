@@ -1526,13 +1526,13 @@ extern "C" {
 // still needed for the system menu.
 - (void)sendEvent:(NSEvent *)theEvent
 {
-    NSEventType type = [theEvent type];
-    NSWindow *key = [self keyWindow];
-    if (key && type == NSKeyUp) {
-        [key sendEvent:theEvent];
-    } else {
-        [super sendEvent:theEvent];
-    }
+  NSEventType type = [theEvent type];
+  NSWindow *key = [self keyWindow];
+  if (key && type == NSKeyUp) {
+    [key sendEvent:theEvent];
+  } else {
+    [super sendEvent:theEvent];
+  }
 }
 @end
 
