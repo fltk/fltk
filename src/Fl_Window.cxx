@@ -156,9 +156,7 @@ void Fl_Window::copy_label(const char *a) {
 
 
 void Fl_Window::iconlabel(const char *iname) {
-  unsigned saveflags = flags();
   label(label(), iname);
-  set_flag(saveflags);
 }
 
 // the Fl::atclose pointer is provided for back compatibility.  You
