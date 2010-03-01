@@ -33,24 +33,25 @@
 
 Fl_Double_Window *dbmanager_window=(Fl_Double_Window *)0;
 
-static void cb_fileopen(Fl_Button*, void*) {
+Fl_Tree *dbmanager_tree=(Fl_Tree *)0;
+
+static void cb_Open(Fl_Button*, void*) {
   const char *filename = fl_file_chooser("Load Database", "*.db", 0, 0);
 if (filename) {
   ui_load_database(filename);
 };
 }
 
-Fl_Tree *dbmanager_tree=(Fl_Tree *)0;
+static void cb_New(Fl_Button*, void*) {
+  const char *filename = fl_file_chooser("Load Database", "*.db", 0, 0);
+if (filename) {
+  ui_load_database(filename);
+};
+}
 
 Fl_Double_Window* make_dbmanager_window() {
-  { dbmanager_window = new Fl_Double_Window(409, 510);
-    { new Fl_File_Input(80, 4, 280, 36, "Database:");
-    } // Fl_File_Input* o
-    { Fl_Button* o = new Fl_Button(360, 14, 36, 26, "@fileopen");
-      o->labelcolor((Fl_Color)94);
-      o->callback((Fl_Callback*)cb_fileopen);
-    } // Fl_Button* o
-    { dbmanager_tree = new Fl_Tree(12, 52, 208, 444);
+  { dbmanager_window = new Fl_Double_Window(427, 500);
+    { dbmanager_tree = new Fl_Tree(8, 8, 200, 480);
       dbmanager_tree->box(FL_DOWN_BOX);
       dbmanager_tree->color((Fl_Color)55);
       dbmanager_tree->selection_color(FL_BACKGROUND_COLOR);
@@ -64,18 +65,27 @@ Fl_Double_Window* make_dbmanager_window() {
       dbmanager_tree->showroot(0);
       dbmanager_tree->labelsize(12);
     } // Fl_Tree* dbmanager_tree
-    { Fl_Group* o = new Fl_Group(232, 52, 164, 444);
-      { new Fl_Button(304, 468, 92, 28, "Close");
-      } // Fl_Button* o
-      { Fl_Group* o = new Fl_Group(232, 128, 164, 340);
+    { Fl_Group* o = new Fl_Group(216, 8, 200, 444);
+      o->box(FL_ENGRAVED_BOX);
+      { Fl_Group* o = new Fl_Group(224, 271, 184, 172);
         o->end();
         Fl_Group::current()->resizable(o);
       } // Fl_Group* o
-      { Fl_Box* o = new Fl_Box(232, 52, 164, 76, "Show editor\nfor selected\nItem here");
+      { Fl_Box* o = new Fl_Box(224, 108, 184, 160, "Show editor\nfor selected\nItem here");
         o->box(FL_THIN_DOWN_BOX);
       } // Fl_Box* o
+      { Fl_Button* o = new Fl_Button(242, 60, 148, 28, "Open Database...");
+        o->callback((Fl_Callback*)cb_Open);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(242, 24, 148, 28, " (New Database... )");
+        o->callback((Fl_Callback*)cb_New);
+        o->deactivate();
+      } // Fl_Button* o
       o->end();
     } // Fl_Group* o
+    { Fl_Button* o = new Fl_Button(324, 460, 92, 28, "( Close )");
+      o->deactivate();
+    } // Fl_Button* o
     dbmanager_window->end();
   } // Fl_Double_Window* dbmanager_window
   return dbmanager_window;

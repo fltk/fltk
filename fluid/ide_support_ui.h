@@ -33,11 +33,10 @@
 #include <FL/Fl_Tree.H>
 #include <FL/Fl_Double_Window.H>
 extern Fl_Double_Window *dbmanager_window;
-#include <FL/Fl_File_Input.H>
-#include <FL/Fl_Button.H>
 extern Fl_Tree *dbmanager_tree;
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
 Fl_Double_Window* make_dbmanager_window();
 #endif
 

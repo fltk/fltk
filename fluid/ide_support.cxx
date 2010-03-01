@@ -331,7 +331,10 @@ int create_new_database(const char *filename)
   // the db, we have to do that manually!
   //db->clear();
   
+  db->set("databaseFormat", "FLUID_IDE_DB");
+  db->set("databaseVersion", "1.0");
   db->set("projectName", "fltk");
+  db->set("projectVersion", "1.3.0");
   
   Fl_Preferences targets_db(db, "targets");
   Fl_IDE_Prefs files_db(*db, "files");
@@ -1135,8 +1138,83 @@ int create_new_database(const char *filename)
 
 void ui_load_database(const char *filename)
 {
+  char buf[1024];
+  float v = 0.0f;
+  int i, j;
+  
+  // FIXME: must be global, so we can close it
   Fl_Preferences *db = new Fl_Preferences(filename, "fltk.org", 0);
-  db->copyTo(dbmanager_tree);
+
+  // Check if this is a database
+  if (db->entries()==0) {
+    fl_alert("%s\nis not a database", filename);
+    delete db;
+    return;
+  }
+  
+  // Check if the database has the correct format
+  if (!db->entryExists("databaseFormat")) {
+    fl_alert("%s\nis not a Fluid database", filename);
+    delete db;
+    return;
+  }
+  db->get("databaseFormat", buf, "", 1024);
+  if (strcmp(buf, "FLUID_IDE_DB")!=0) {
+    fl_alert("%s\nis not a Fluid IDE database", filename);
+    delete db;
+    return;
+  }
+  db->get("databaseVersion", buf, "", 1024);
+  sscanf(buf, "%f", &v);
+  if (v>1.0f) {
+    fl_alert("The Fluid IDE database\n%s\nversion %f is not suported.", filename, v);
+    delete db;
+    return;
+  }
+  
+  // set the dialog label to the project name
+  char *name; db->get("projectName", name, "unnamed");
+  char *vers; db->get("projectVersion", vers, "0.1");
+  sprintf(buf, "%s V%s", name, vers);
+  dbmanager_window->label(buf);
+  free(vers); free(name);
+  
+  Fl_Preferences targetsDB(db, "targets");
+  Fl_Preferences filesDB(db, "files");
+  Fl_Tree_Item *ti;
+  
+  // load all tests
+  ti = dbmanager_tree->add("Applications");
+  
+  // load all tests
+  ti = dbmanager_tree->add("Libraries & Frameworks");
+  
+  // load all tests
+  ti = dbmanager_tree->add("Test Applications");
+  Fl_Preferences testsDB(targetsDB, "tests");
+  for (i=0; i<testsDB.groups(); i++) {
+    Fl_Preferences testDB(testsDB, i);
+    testDB.get("name", buf, "DB-Error", 1024);
+    Fl_Tree_Item *tt = dbmanager_tree->add(ti, buf); tt->close();
+    
+    if (testDB.groupExists("sources")) {
+      Fl_Tree_Item *ts = dbmanager_tree->add(tt, "Sources"); ts->close();
+      Fl_Preferences srcsDB(testDB, "sources");
+      for (j=0; j<srcsDB.groups(); j++) {
+        Fl_Preferences srcDB(srcsDB, j);
+        srcDB.get("refUUID", buf, "DBERROR", 1024);
+        Fl_File_Prefs fileDB(filesDB, buf);
+        Fl_Tree_Item *tb = dbmanager_tree->add(ts, fileDB.fullName());
+        tb->user_data(0L); // TODO: add the callback information here
+      }
+    }
+    
+    //ts = dbmanager_tree->add(tt, "Dependencies");
+    //ts = dbmanager_tree->add(tt, "Libraries");
+    //ts = dbmanager_tree->add(tt, "Externals");
+  }
+  
+
   dbmanager_tree->redraw();
   delete db;
 }
@@ -1175,6 +1253,7 @@ public:
   void show_panel() {
     if (!dbmanager_window)
       make_dbmanager_window();
+    dbmanager_window->label("IDE Database Manager");
     dbmanager_window->show();
   }
 };
