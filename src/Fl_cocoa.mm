@@ -790,13 +790,18 @@ void cocoaMouseWheelHandler(NSEvent *theEvent)
   }
   Fl::first_window(window);
   
+  // Under OSX, single mousewheel increments are 0.1,
+  // so make sure they show up as at least 1..
+  //
+  float dx = [theEvent deltaX]; if ( fabs(dx) < 1.0 ) dx = (dx > 0) ? 1.0 : -1.0;
+  float dy = [theEvent deltaY]; if ( fabs(dy) < 1.0 ) dy = (dy > 0) ? 1.0 : -1.0;
   if ([theEvent deltaX] != 0) {
-    Fl::e_dx = (int)-[theEvent deltaX];
+    Fl::e_dx = (int)-dx;
     Fl::e_dy = 0;
     if ( Fl::e_dx) Fl::handle( FL_MOUSEWHEEL, window );
   } else if ([theEvent deltaY] != 0) {
     Fl::e_dx = 0;
-    Fl::e_dy = (int)-[theEvent deltaY];
+    Fl::e_dy = (int)-dy;
     if ( Fl::e_dy) Fl::handle( FL_MOUSEWHEEL, window );
   } else {
     fl_unlock_function();
@@ -1879,6 +1884,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 - (void)rightMouseDown:(NSEvent *)theEvent;
 - (void)otherMouseDown:(NSEvent *)theEvent;
 - (void)mouseDragged:(NSEvent *)theEvent;
+- (void)rightMouseDragged:(NSEvent *)theEvent;
+- (void)otherMouseDragged:(NSEvent *)theEvent;
 - (void)scrollWheel:(NSEvent *)theEvent;
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)keyUp:(NSEvent *)theEvent;
@@ -1935,6 +1942,12 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   cocoaMouseHandler(theEvent);
 }
 - (void)mouseDragged:(NSEvent *)theEvent {
+  cocoaMouseHandler(theEvent);
+}
+- (void)rightMouseDragged:(NSEvent *)theEvent {
+  cocoaMouseHandler(theEvent);
+}
+- (void)otherMouseDragged:(NSEvent *)theEvent {
   cocoaMouseHandler(theEvent);
 }
 - (void)scrollWheel:(NSEvent *)theEvent {
