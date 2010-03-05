@@ -304,7 +304,7 @@ print_choice->value(0);
 
 defname[0] = '\\0';
 
-if ((lpstat = popen("lpstat -p -d", "r")) != NULL) {
+if ((lpstat = popen("LC_MESSAGES=C LANG=C lpstat -p -d", "r")) != NULL) {
   while (fgets(line, sizeof(line), lpstat)) {
     if (!strncmp(line, "printer ", 8) &&
         sscanf(line + 8, "%s", name) == 1) {
