@@ -5296,6 +5296,7 @@
 				40C91D1AB7051A0D4BF38884 /* file.cxx */,
 				80B8A51F1B0E64482CB2723F /* fluid.cxx */,
 				1C0E3777F229938969F8E0E7 /* function_panel.cxx */,
+				B65FCD2B8489E2BBAA3F695A /* ide_maketools.cxx */,
 				77759BD79A674B0703F21C3E /* ide_support.cxx */,
 				BE8AEC5B94A33E971A141F65 /* ide_support_ui.cxx */,
 				B50524F41B3A568F8AD761C9 /* ide_visualc.cxx */,
@@ -5303,7 +5304,6 @@
 				82D70F7B9460C9797FF03089 /* template_panel.cxx */,
 				3F148981EF92A30C3D6D698E /* undo.cxx */,
 				B0CFC7002EFFC3DD3E191940 /* widget_panel.cxx */,
-				B65FCD2B8489E2BBAA3F695A /* ide_maketools.cxx */,
 				BDC84124E6CDF9D25B9505B6 /* fluid.icns */,
 			);
 			name = Fluid;
