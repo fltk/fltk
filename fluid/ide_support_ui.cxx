@@ -49,6 +49,26 @@ if (filename) {
 };
 }
 
+Fl_Wizard *dbm_wizard=(Fl_Wizard *)0;
+
+Fl_Group *dbm_empty=(Fl_Group *)0;
+
+Fl_Group *dbm_app=(Fl_Group *)0;
+
+Fl_Input *dbm_app_name=(Fl_Input *)0;
+
+Fl_Group *dbm_lib=(Fl_Group *)0;
+
+Fl_Input *dbm_lib_name=(Fl_Input *)0;
+
+Fl_Group *dbm_test=(Fl_Group *)0;
+
+Fl_Input *dbm_test_name=(Fl_Input *)0;
+
+Fl_Group *dbm_sources=(Fl_Group *)0;
+
+Fl_Group *dbm_source=(Fl_Group *)0;
+
 Fl_Double_Window* make_dbmanager_window() {
   { dbmanager_window = new Fl_Double_Window(427, 500);
     { dbmanager_tree = new Fl_Tree(8, 8, 200, 480);
@@ -60,27 +80,124 @@ Fl_Double_Window* make_dbmanager_window() {
       dbmanager_tree->labelsize(14);
       dbmanager_tree->labelcolor(FL_FOREGROUND_COLOR);
       dbmanager_tree->align(Fl_Align(FL_ALIGN_CENTER));
-      dbmanager_tree->when(FL_WHEN_RELEASE);
+      dbmanager_tree->when(FL_WHEN_CHANGED);
       Fl_Group::current()->resizable(dbmanager_tree);
       dbmanager_tree->showroot(0);
-      dbmanager_tree->labelsize(12);
     } // Fl_Tree* dbmanager_tree
     { Fl_Group* o = new Fl_Group(216, 8, 200, 444);
-      o->box(FL_ENGRAVED_BOX);
-      { Fl_Group* o = new Fl_Group(224, 271, 184, 172);
+      { Fl_Group* o = new Fl_Group(224, 364, 184, 79);
         o->end();
         Fl_Group::current()->resizable(o);
       } // Fl_Group* o
-      { Fl_Box* o = new Fl_Box(224, 108, 184, 160, "Show editor\nfor selected\nItem here");
-        o->box(FL_THIN_DOWN_BOX);
-      } // Fl_Box* o
-      { Fl_Button* o = new Fl_Button(242, 60, 148, 28, "Open Database...");
+      { Fl_Button* o = new Fl_Button(240, 52, 152, 28, "Open Database...");
         o->callback((Fl_Callback*)cb_Open);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(242, 24, 148, 28, " (New Database... )");
+      { Fl_Button* o = new Fl_Button(240, 16, 152, 28, " (New Database... )");
         o->callback((Fl_Callback*)cb_New);
         o->deactivate();
       } // Fl_Button* o
+      { dbm_wizard = new Fl_Wizard(216, 92, 200, 272);
+        dbm_wizard->box(FL_ENGRAVED_BOX);
+        { dbm_empty = new Fl_Group(216, 92, 200, 272);
+          dbm_empty->hide();
+          dbm_empty->end();
+        } // Fl_Group* dbm_empty
+        { dbm_app = new Fl_Group(216, 92, 200, 272);
+          dbm_app->hide();
+          { dbm_app_name = new Fl_Input(280, 108, 111, 24, "(Name:)");
+            dbm_app_name->deactivate();
+          } // Fl_Input* dbm_app_name
+          { Fl_Button* o = new Fl_Button(240, 140, 152, 28, " (New Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 176, 152, 28, " (Add Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 212, 152, 28, " (Add Library... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 248, 152, 28, " (Add Dependency... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 284, 152, 28, " (Add External Item... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 320, 152, 28, " (Remove Test...)");
+            o->deactivate();
+          } // Fl_Button* o
+          dbm_app->end();
+        } // Fl_Group* dbm_app
+        { dbm_lib = new Fl_Group(216, 92, 200, 272);
+          dbm_lib->hide();
+          { dbm_lib_name = new Fl_Input(280, 108, 111, 24, "(Name:)");
+            dbm_lib_name->deactivate();
+          } // Fl_Input* dbm_lib_name
+          { Fl_Button* o = new Fl_Button(240, 140, 152, 28, " (New Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 176, 152, 28, " (Add Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 212, 152, 28, " (Add Library... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 248, 152, 28, " (Add Dependency... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 284, 152, 28, " (Add External Item... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 320, 152, 28, " (Remove Test...)");
+            o->deactivate();
+          } // Fl_Button* o
+          dbm_lib->end();
+        } // Fl_Group* dbm_lib
+        { dbm_test = new Fl_Group(216, 92, 200, 272);
+          dbm_test->hide();
+          { dbm_test_name = new Fl_Input(280, 108, 111, 24, "(Name:)");
+            dbm_test_name->deactivate();
+          } // Fl_Input* dbm_test_name
+          { Fl_Button* o = new Fl_Button(240, 140, 152, 28, " (New Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 176, 152, 28, " (Add Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 212, 152, 28, " (Add Library... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 248, 152, 28, " (Add Dependency... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 284, 152, 28, " (Add External Item... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 320, 152, 28, " (Remove Test...)");
+            o->deactivate();
+          } // Fl_Button* o
+          dbm_test->end();
+        } // Fl_Group* dbm_test
+        { dbm_sources = new Fl_Group(216, 92, 200, 128);
+          dbm_sources->hide();
+          { Fl_Button* o = new Fl_Button(240, 104, 152, 28, " (New Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 140, 152, 28, " (Add Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          { Fl_Button* o = new Fl_Button(240, 176, 152, 28, " (Remove All Sources...)");
+            o->deactivate();
+          } // Fl_Button* o
+          dbm_sources->end();
+        } // Fl_Group* dbm_sources
+        { dbm_source = new Fl_Group(216, 92, 200, 52);
+          { Fl_Button* o = new Fl_Button(240, 104, 152, 28, " (Remove Source... )");
+            o->deactivate();
+          } // Fl_Button* o
+          dbm_source->end();
+        } // Fl_Group* dbm_source
+        dbm_wizard->end();
+      } // Fl_Wizard* dbm_wizard
       o->end();
     } // Fl_Group* o
     { Fl_Button* o = new Fl_Button(324, 460, 92, 28, "( Close )");

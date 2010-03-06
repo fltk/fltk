@@ -35,8 +35,19 @@
 extern Fl_Double_Window *dbmanager_window;
 extern Fl_Tree *dbmanager_tree;
 #include <FL/Fl_Group.H>
-#include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Wizard.H>
+extern Fl_Wizard *dbm_wizard;
+extern Fl_Group *dbm_empty;
+extern Fl_Group *dbm_app;
+#include <FL/Fl_Input.H>
+extern Fl_Input *dbm_app_name;
+extern Fl_Group *dbm_lib;
+extern Fl_Input *dbm_lib_name;
+extern Fl_Group *dbm_test;
+extern Fl_Input *dbm_test_name;
+extern Fl_Group *dbm_sources;
+extern Fl_Group *dbm_source;
 Fl_Double_Window* make_dbmanager_window();
 #endif
 

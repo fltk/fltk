@@ -635,6 +635,7 @@ int create_new_database(const char *filename)
     fluid_app.add_source(files_db, "fluid/file.cxx");
     fluid_app.add_source(files_db, "fluid/fluid.cxx");
     fluid_app.add_source(files_db, "fluid/function_panel.cxx");
+    fluid_app.add_source(files_db, "fluid/ide_maketools.cxx");
     fluid_app.add_source(files_db, "fluid/ide_support.cxx");
     fluid_app.add_source(files_db, "fluid/ide_support_ui.cxx");
     fluid_app.add_source(files_db, "fluid/ide_visualc.cxx");
@@ -1135,12 +1136,39 @@ int create_new_database(const char *filename)
   return 0;
 }
 
+class Item_Manager {
+  Fl_Preferences::ID id;
+public:
+  Item_Manager(Fl_Preferences::ID idA) { id = idA; }
+  virtual ~Item_Manager() { }
+  virtual void select(Fl_Tree_Item *) { dbm_wizard->value(dbm_empty); }
+};
+
+class Test_Item_Manager : public Item_Manager {
+  Fl_Preferences::ID id;
+public:
+  Test_Item_Manager(Fl_Preferences::ID idA) : Item_Manager(idA) { }
+  virtual void select(Fl_Tree_Item *ti) { 
+    dbm_wizard->value(dbm_test);
+    dbm_test_name->value(ti->label());
+  }
+};
+
+void tree_item_cb(Fl_Tree *t, void *) {
+  Fl_Tree_Item *ti = t->item_clicked();
+  Item_Manager *im = (Item_Manager*)ti->user_data();
+  if (im) {
+    im->select(ti);
+  }
+}
 
 void ui_load_database(const char *filename)
 {
   char buf[1024];
   float v = 0.0f;
   int i, j;
+  
+  dbmanager_tree->callback((Fl_Callback*)tree_item_cb);
   
   // FIXME: must be global, so we can close it
   Fl_Preferences *db = new Fl_Preferences(filename, "fltk.org", 0);
@@ -1185,17 +1213,21 @@ void ui_load_database(const char *filename)
   
   // load all tests
   ti = dbmanager_tree->add("Applications");
+  ti->user_data(new Item_Manager(0L));
   
   // load all tests
   ti = dbmanager_tree->add("Libraries & Frameworks");
+  ti->user_data(new Item_Manager(0L));
   
   // load all tests
   ti = dbmanager_tree->add("Test Applications");
+  ti->user_data(new Item_Manager(0L));
   Fl_Preferences testsDB(targetsDB, "tests");
   for (i=0; i<testsDB.groups(); i++) {
     Fl_Preferences testDB(testsDB, i);
     testDB.get("name", buf, "DB-Error", 1024);
     Fl_Tree_Item *tt = dbmanager_tree->add(ti, buf); tt->close();
+    tt->user_data(new Test_Item_Manager(testDB.id()));
     
     if (testDB.groupExists("sources")) {
       Fl_Tree_Item *ts = dbmanager_tree->add(tt, "Sources"); ts->close();
@@ -1205,7 +1237,6 @@ void ui_load_database(const char *filename)
         srcDB.get("refUUID", buf, "DBERROR", 1024);
         Fl_File_Prefs fileDB(filesDB, buf);
         Fl_Tree_Item *tb = dbmanager_tree->add(ts, fileDB.fullName());
-        tb->user_data(0L); // TODO: add the callback information here
       }
     }
     
