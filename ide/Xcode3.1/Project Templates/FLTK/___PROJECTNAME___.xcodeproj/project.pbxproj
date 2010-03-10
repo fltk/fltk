@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
+		C936A1ED1147964D00B7FBF4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C936A1EC1147964D00B7FBF4 /* Cocoa.framework */; };
 		C9601DD510B1FA9C0018BADE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9601DD410B1FA9C0018BADE /* Carbon.framework */; };
 		C9601E9910B1FAED0018BADE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9601E9810B1FAED0018BADE /* main.cpp */; };
 		C9601EA810B1FB5B0018BADE /* libfltk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9601EA210B1FB5A0018BADE /* libfltk.a */; };
@@ -34,6 +35,7 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* ___PROJECTNAMEASIDENTIFIER___-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "___PROJECTNAMEASIDENTIFIER___-Info.plist"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* ___PROJECTNAME___.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "___PROJECTNAME___.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C936A1EC1147964D00B7FBF4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		C9601DCB10B1FA890018BADE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		C9601DCC10B1FA890018BADE /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		C9601DD410B1FA9C0018BADE /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -58,6 +60,7 @@
 			files = (
 				C9601DD510B1FA9C0018BADE /* Carbon.framework in Frameworks */,
 				C9601EA810B1FB5B0018BADE /* libfltk.a in Frameworks */,
+				C936A1ED1147964D00B7FBF4 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				C9601DD410B1FA9C0018BADE /* Carbon.framework */,
+				C936A1EC1147964D00B7FBF4 /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -89,7 +93,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		29B97314FDCFA39411CA2CEA /* ___PROJECTNAME___ */ = {
+		29B97314FDCFA39411CA2CEA /* ___PROJECTNAMEASXML___ */ = {
 			isa = PBXGroup;
 			children = (
 				C9601E9410B1FADC0018BADE /* Sources */,
