@@ -99,6 +99,9 @@ class SudokuSound {
   // Private, OS-specific data...
 #ifdef __APPLE__
   AudioDeviceID device;
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  AudioDeviceIOProcID audio_proc_id;
+#  endif
   AudioStreamBasicDescription format;
   short *data;
   int remaining;
@@ -245,12 +248,15 @@ SudokuSound::SudokuSound() {
   // Check we got linear pcm - what to do if we did not ???
   if (format.mFormatID != kAudioFormatLinearPCM) return;
 
-  // Attach the callback
+  // Attach the callback and start the device
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  if (AudioDeviceCreateIOProcID(device, audio_cb, (void *)this, &audio_proc_id) != noErr) return;
+  AudioDeviceStart(device, audio_proc_id);
+#  else
   if (AudioDeviceAddIOProc(device, audio_cb, (void *)this) != noErr) return;
-
-  // Start the device...
   AudioDeviceStart(device, audio_cb);
-
+#  endif
+  
   sample_size = (int)format.mSampleRate / 20;
 
 #elif defined(WIN32)
@@ -349,8 +355,13 @@ SudokuSound::SudokuSound() {
 SudokuSound::~SudokuSound() {
 #ifdef __APPLE__
   if (sample_size) {
+#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+    AudioDeviceStop(device, audio_proc_id);
+    AudioDeviceDestroyIOProcID(device, audio_proc_id);
+#  else
     AudioDeviceStop(device, audio_cb);
     AudioDeviceRemoveIOProc(device, audio_cb);
+#  endif
   }
 
 #elif defined(WIN32)
