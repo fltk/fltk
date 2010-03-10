@@ -16,14 +16,6 @@ Enjoy!
 
  -  Matthias
 
-PS: due to recent changes in FLTK, you will need to add another 
-Framework manually to the project: 
-- open the "> Targets" item on the left
-- right-click on your application
-- click on "Add > Existing Frameworks..."
-- choose the Cocoa.framework from the OS X frameworks
-- recompile
-
 Please send me an EMail if you find errors or would like to suggest
 improvement: mm@matthiasm.com
 
