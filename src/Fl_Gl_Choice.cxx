@@ -380,7 +380,11 @@ void fl_no_gl_context() {
 #  elif defined(__APPLE_QUARTZ__)
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   AGLContext ctx = aglGetCurrentContext();
+#   if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+  if (ctx) aglSetWindowRef(ctx, NULL);
+#    else
   if (ctx) aglSetDrawable(ctx, NULL);
+#    endif
   aglSetCurrentContext(0);
 #  else
 #    error unsupported platform
