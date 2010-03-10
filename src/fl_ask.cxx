@@ -48,7 +48,9 @@
 #include <FL/fl_draw.H>
 
 #ifdef __APPLE__
-//# include <AudioToolbox/AudioToolbox.h>
+# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#  include <AudioToolbox/AudioServices.h>
+# endif
 #endif
 
 static Fl_Window *message_form;
@@ -279,9 +281,24 @@ void fl_beep(int type) {
     case FL_BEEP_ERROR :
       // How Apple is not any better than Microsoft:
       /* MacOS 8 */   // SysBeep(30);
-      /* OS X 10.1 */    AlertSoundPlay();
+      /* OS X 10.1 */ // AlertSoundPlay();
       /* OS X 10.5 */ // AudioServicesPlayAlertSound(kUserPreferredAlert);
       /* OS X 10.6 */ // AudioServicesPlayAlertSound(kSystemSoundID_UserPreferredAlert);
+# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+      if (AudioServicesPlayAlertSound!=0L)
+#   if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+        AudioServicesPlayAlertSound(kSystemSoundID_UserPreferredAlert);
+#   else
+        AudioServicesPlayAlertSound(kUserPreferredAlert);
+#   endif
+      else
+# endif
+#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
+        AlertSoundPlay();
+#else
+    {
+    }
+#endif
       break;
     default :
       break;
