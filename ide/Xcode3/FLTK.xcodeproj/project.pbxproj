@@ -438,6 +438,7 @@
 		C84D499C11BC81C1A4336044 /* Fl_Single_Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 45E8C30F9147F7F23B15E75F /* Fl_Single_Window.cxx */; };
 		C8C88B82EBB4DFA43BB3A147 /* jmemnobs.c in Sources */ = {isa = PBXBuildFile; fileRef = D278AF96FBF5F474BE2C348D /* jmemnobs.c */; };
 		C9039A6D472AFBDB4D5D3581 /* fltkgl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4AED96DAF2EDB1950E04795 /* fltkgl.framework */; };
+		C9B8D15D11484E8E003D0E73 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B8D15C11484E8E003D0E73 /* AudioToolbox.framework */; };
 		C9C84B2983DC793B141DDC70 /* ide_maketools.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B65FCD2B8489E2BBAA3F695A /* ide_maketools.cxx */; };
 		CA0BD11A864DD8E6018DDC43 /* Fl_File_Input.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 19E46DC28A1945E3BB3FA0EC /* Fl_File_Input.cxx */; };
 		CA29F412020993F3D156CA64 /* jdinput.c in Sources */ = {isa = PBXBuildFile; fileRef = E28D295E888C8D18A99E45DB /* jdinput.c */; };
@@ -3811,6 +3812,7 @@
 		C7F31D0DB5A326C914FBFE48 /* fl_file_dir.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_file_dir.cxx; path = ../../src/fl_file_dir.cxx; sourceTree = SOURCE_ROOT; };
 		C8320D29ED1BA62DF881FD21 /* jidctred.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jidctred.c; path = ../../jpeg/jidctred.c; sourceTree = SOURCE_ROOT; };
 		C8FCAB4E2E2C4369C61BFD12 /* Fluid_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fluid_Image.cxx; path = ../../fluid/Fluid_Image.cxx; sourceTree = SOURCE_ROOT; };
+		C9B8D15C11484E8E003D0E73 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		C9F70AA7DF730564A9DD1BFD /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwtran.c; path = ../../png/pngwtran.c; sourceTree = SOURCE_ROOT; };
 		CA38333A14E4BA43F4E01CAA /* fl_show_colormap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_show_colormap.cxx; path = ../../src/fl_show_colormap.cxx; sourceTree = SOURCE_ROOT; };
 		CA39566FD1F25D47C83DE042 /* glut_font.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glut_font.cxx; path = ../../src/glut_font.cxx; sourceTree = SOURCE_ROOT; };
@@ -4384,6 +4386,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9B8D15D11484E8E003D0E73 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5120,6 +5123,7 @@
 				2F51AF9376F9742B795012D0 /* case.c */,
 				78080C8ABD6D3BAFFC7F7A30 /* is_right2left.c */,
 				66D525B9A0312CF58C18AB45 /* is_spacing.c */,
+				C9B8D15C11484E8E003D0E73 /* AudioToolbox.framework */,
 			);
 			name = fltk;
 			sourceTree = "<group>";

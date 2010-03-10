@@ -348,6 +348,7 @@
 		C9B4E2C810CC275F00DA2F05 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C9B4E2E210CC39E800DA2F05 /* tree.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9B4E2E110CC39E800DA2F05 /* tree.cxx */; };
 		C9B4E3F510CC522700DA2F05 /* browser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3ED8F0DD63EFF00486E4F /* browser.cxx */; };
+		C9B8D1D611485C8E003D0E73 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9B8D1D211485B7E003D0E73 /* AudioToolbox.framework */; };
 		C9C870C90DD7724200A9793F /* color_chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9C870C80DD7724200A9793F /* color_chooser.cxx */; };
 		C9C870CC0DD7724C00A9793F /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		C9C871F30DD7740800A9793F /* cube.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9C871F20DD7740800A9793F /* cube.cxx */; };
@@ -3140,6 +3141,7 @@
 		C9B4E2AF10CC273400DA2F05 /* Fl_Tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree.cxx; path = ../../src/Fl_Tree.cxx; sourceTree = SOURCE_ROOT; };
 		C9B4E2CE10CC275F00DA2F05 /* tree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tree.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9B4E2E110CC39E800DA2F05 /* tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree.cxx; path = ../../test/tree.cxx; sourceTree = SOURCE_ROOT; };
+		C9B8D1D211485B7E003D0E73 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		C9C870BE0DD7721700A9793F /* color_chooser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = color_chooser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9C870C00DD7721700A9793F /* color_chooser-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "color_chooser-Info.plist"; path = "plists/color_chooser-Info.plist"; sourceTree = "<group>"; };
 		C9C870C80DD7724200A9793F /* color_chooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color_chooser.cxx; path = ../../test/color_chooser.cxx; sourceTree = SOURCE_ROOT; };
@@ -3678,6 +3680,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9B8D1D611485C8E003D0E73 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4362,6 +4365,7 @@
 		C9A3ED5A0DD63E3200486E4F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C9B8D1D211485B7E003D0E73 /* AudioToolbox.framework */,
 				C9C872160DD7757700A9793F /* OpenGL.framework */,
 				C9C872120DD7756600A9793F /* AGL.framework */,
 				C9A3ED5B0DD63E4C00486E4F /* CoreAudio.framework */,
