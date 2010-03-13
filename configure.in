@@ -67,6 +67,16 @@ OPTIM="${OPTIM:=}"
 AC_SUBST(ARCHFLAGS)
 AC_SUBST(OPTIM)
 
+dnl in case of cross-compiling mingw32 under linux we must change uname for Win32 GUI
+dnl run ./configure --host=i686-pc-ming32 try use X11 without change uname
+if test "x$cross_compiling" != xno ; then
+  case $host_alias in
+    *mingw*)
+    uname=MINGW
+    ;;
+  esac
+fi
+
 dnl OS-specific pre-tests...
 dnl uname_GUI equals $uname unless we target cygwin
 dnl in combination with X11.
