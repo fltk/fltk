@@ -435,7 +435,8 @@ public:
       const char *ext = fileDB.fileExt();
       if (!ext) {
       } else if (strcmp(pathAndName, "src/Fl.cxx")==0
-               ||strcmp(pathAndName, "src/Fl_Native_File_Chooser.cxx")==0) { // FIXME: bad hack!
+               ||strcmp(pathAndName, "src/Fl_Native_File_Chooser.cxx")==0
+               ||strcmp(pathAndName, "src/Fl_Printer.cxx")==0) { // FIXME: bad hack!
         filetype = "sourcecode.cpp.objcpp";
       } else if (strcmp(ext, ".cxx")==0) {
         filetype = "sourcecode.cpp.cpp";

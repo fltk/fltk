@@ -4,8 +4,8 @@
 
 This file listst the differences between FLTK 1 and FLTK 2 with annotations
 for a possible implementation of FLTK 3. The all new and improved FLTK 3
-needs to be compatible with 1 and 2. It must have a modern API, a complete set of
-widgets, lots of options, customization at run-time, but still be easily 
+needs to be compatible with 1 and 2. It must have a modern API, a complete set 
+of widgets, lots of options, customization at run-time, but still be easily 
 portable, fast, and, of course, light.
 
 FLTK 1 has evolved to be a great starting point for the first steps in GUI 
@@ -45,7 +45,8 @@ hierarchical by nature, were instead implemented as a list with lots of
 tricks and kludges to make them usable. FLTK 2 went half way by using the
 existing Windget/Group relation to create menus, however, menu items are 
 still specialized widgets. For FLTK 3, I would like to allow any widget
-inside a pulldown menu, using the hierarchical nature of the FLTK base class Fl_Widget. 
+inside a pulldown menu, using the hierarchical nature of the FLTK base class 
+Fl_Widget. 
 
 (3) Browsers and Tree Views: Browsers in FLTK1 are implemented even worse
 than Pulldown Menus. FLTK 2 solved the issues in a similar way, and here
@@ -68,8 +69,9 @@ any widget can call "layout()" which will query children for their preferred
 size and propagate the information up. This is a great concept that FLTK 3
 should adapt, plus it is compatible.
 
-(6) Rectangle: FLTK uses discrete coordinates and sizes. FLTK 2's base class is fltk::Rectangle. This is nice and
-easy to implement. The API is pretty much the same in both versions.
+(6) Rectangle: FLTK uses discrete coordinates and sizes. FLTK 2's base class is
+fltk::Rectangle. This is nice and easy to implement. The API is pretty much the
+same in both versions.
 
 (7) Styles: FLTK 2 uses a minimal number of styles to define the basic 
 (and often repeated) parameters of every widget. API's are similar though,
@@ -686,4 +688,10 @@ correspond, and how they could be implemented in FLTK 3.
 1: 
 2: struct NamedStyle
 
+---
+
+This is how to output all symbols in a library (interestingly, this seems 
+to output symbols for functions that are likely inlined as well)
+
+> nm -g -j lib/libfltk.a | c++filt | sort -u | more
 

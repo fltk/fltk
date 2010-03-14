@@ -217,7 +217,7 @@ void Fl_PSfile_Device::draw_scaled_image(const uchar *data, double x, double y, 
 
   fprintf(output,"save\n");
 
-  char * interpol;
+  const char * interpol;
   if(lang_level_>1){
     if(interpolate_)
       interpol="true";
@@ -276,7 +276,7 @@ void Fl_PSfile_Device::draw_scaled_image(Fl_Draw_Image_Cb call, void *data, doub
   int level2_mask = 0;
   fprintf(output,"save\n");
   int i,j,k;
-  char * interpol;
+  const char * interpol;
   if (lang_level_ > 1) {
     if (interpolate_) interpol="true";
     else interpol="false";
@@ -365,7 +365,7 @@ void Fl_PSfile_Device::draw_scaled_image_mono(const uchar *data, double x, doubl
 
   int i,j, k;
 
-  char * interpol;
+  const char * interpol;
   if(lang_level_>1){
     if(interpolate_)
       interpol="true";
@@ -424,7 +424,7 @@ void Fl_PSfile_Device::draw_scaled_image_mono(Fl_Draw_Image_Cb call, void *data,
 
   fprintf(output,"save\n");
   int i,j,k;
-  char * interpol;
+  const char * interpol;
   if(lang_level_>1){
     if(interpolate_) interpol="true";
     else interpol="false";

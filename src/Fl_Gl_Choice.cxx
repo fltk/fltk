@@ -38,6 +38,7 @@
 
 #  ifdef __APPLE__
 #    include <FL/Fl_Window.H>
+#    include <Carbon/Carbon.h>
 #  endif
 
 #  ifdef WIN32
@@ -317,12 +318,20 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 #if defined(__APPLE_COCOA__) 
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (aglSetWindowRef != NULL) {
+#if __LP64__
+  // 64 bit version
+  aglSetWindowRef(context, MACwindowRef(window) );
+#else
+  // 32 bit version >= 10.5
+  if (aglSetWindowRef != NULL)
     aglSetWindowRef(context, MACwindowRef(window) );
-    }
   else
+    aglSetDrawable( context, GetWindowPort( MACwindowRef(window) ) );
 #endif
+#else
+  // 32 bit version < 10.5
   aglSetDrawable( context, GetWindowPort( MACwindowRef(window) ) );
+#endif
 
 #else
   aglSetDrawable( context, GetWindowPort( fl_xid(window) ) );

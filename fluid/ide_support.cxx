@@ -358,6 +358,7 @@ int create_new_database(const char *filename)
     fltk_lib.add_source(files_db, "src/Fl_Clock.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Color_Chooser.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Counter.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Device.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Dial.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Double_Window.cxx");
     fltk_lib.add_source(files_db, "src/Fl_File_Browser.cxx");
@@ -384,6 +385,7 @@ int create_new_database(const char *filename)
     fltk_lib.add_source(files_db, "src/Fl_Pack.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Pixmap.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Positioner.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Printer.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Preferences.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Progress.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Repeat_Button.cxx");
@@ -483,17 +485,20 @@ int create_new_database(const char *filename)
     fltk_lib.add_source(files_db, "src/fl_vertex.cxx");
     fltk_lib.add_source(files_db, "src/flstring.c");
     fltk_lib.add_source(files_db, "src/numericsort.c");
+    fltk_lib.add_source(files_db, "src/ps_image.cxx");
     fltk_lib.add_source(files_db, "src/scandir.c");
     fltk_lib.add_source(files_db, "src/screen_xywh.cxx");
     fltk_lib.add_source(files_db, "src/vsnprintf.c");
     fltk_lib.add_source(files_db, "src/xutf8/case.c");
     fltk_lib.add_source(files_db, "src/xutf8/is_right2left.c");
     fltk_lib.add_source(files_db, "src/xutf8/is_spacing.c");
+    xcode_only(fltk_lib.add_external_lib(files_db, "/System/Library/Frameworks/AudioToolbox.framework"));
   }
   
   Fl_Target_Prefs fltk_gl_lib(libs_db.add_with_key("name", "fltkgl")); {
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Choice.cxx");
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Overlay.cxx");
+    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Printer.cxx");
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Window.cxx");
     fltk_gl_lib.add_source(files_db, "src/freeglut_geometry.cxx");
     fltk_gl_lib.add_source(files_db, "src/freeglut_stroke_mono_roman.cxx");
@@ -1236,7 +1241,7 @@ void ui_load_database(const char *filename)
         Fl_Preferences srcDB(srcsDB, j);
         srcDB.get("refUUID", buf, "DBERROR", 1024);
         Fl_File_Prefs fileDB(filesDB, buf);
-        Fl_Tree_Item *tb = dbmanager_tree->add(ts, fileDB.fullName());
+        /* Fl_Tree_Item *tb = */ dbmanager_tree->add(ts, fileDB.fullName());
       }
     }
     
