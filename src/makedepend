@@ -313,6 +313,7 @@ Fl_Printer.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H print_panel.cxx
 Fl_Printer.o: print_panel.h ../FL/Fl_Round_Button.H ../FL/Fl_Spinner.H
 Fl_Printer.o: ../FL/Enumerations.H ../FL/Fl_Repeat_Button.H
 Fl_Printer.o: ../FL/Fl_Progress.H ../src/flstring.h ../config.h
+Fl_Printer.o: ../FL/Fl_Int_Input.H ../FL/Fl_Input.H
 Fl_Progress.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Progress.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Progress.o: ../FL/fl_types.h ../FL/Fl_Progress.H ../FL/Fl_Widget.H
