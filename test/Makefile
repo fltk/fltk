@@ -49,6 +49,7 @@ CPPFILES =\
 	cursor.cxx \
 	curve.cxx \
 	demo.cxx \
+	device.cxx \
 	doublebuffer.cxx \
 	editor.cxx \
 	fast_slow.cxx \
@@ -82,6 +83,7 @@ CPPFILES =\
 	pixmap_browser.cxx \
 	pixmap.cxx \
 	preferences.cxx \
+	device.cxx \
 	radio.cxx \
 	resizebox.cxx \
 	resize.cxx \
@@ -119,6 +121,7 @@ ALL =	\
 	cursor$(EXEEXT) \
 	curve$(EXEEXT) \
 	demo$(EXEEXT) \
+	device$(EXEEXT) \
 	doublebuffer$(EXEEXT) \
 	editor$(EXEEXT) \
 	fast_slow$(EXEEXT) \
@@ -148,6 +151,7 @@ ALL =	\
 	pixmap$(EXEEXT) \
 	pixmap_browser$(EXEEXT) \
 	preferences$(EXEEXT) \
+	device$(EXEEXT) \
 	radio$(EXEEXT) \
 	resize$(EXEEXT) \
 	resizebox$(EXEEXT) \
@@ -317,6 +321,10 @@ demo$(EXEEXT): demo.o
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ demo.o $(LINKFLTKFORMS) $(LDLIBS)
 
+device$(EXEEXT): device.o $(IMGLIBNAME)
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(LDFLAGS) device.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
+
 doublebuffer$(EXEEXT): doublebuffer.o
 
 editor$(EXEEXT): editor.o
@@ -403,6 +411,8 @@ pixmap_browser$(EXEEXT): pixmap_browser.o $(IMGLIBNAME)
 
 preferences$(EXEEXT):	preferences.o
 preferences.cxx:	preferences.fl ../fluid/fluid$(EXEEXT)
+
+device$(EXEEXT): device.o
 
 radio$(EXEEXT): radio.o
 radio.cxx:	radio.fl ../fluid/fluid$(EXEEXT)

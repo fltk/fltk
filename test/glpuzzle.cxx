@@ -1420,9 +1420,38 @@ menu(int choice)
    }
 }
 
+// added to demo printing
+#include <FL/Fl_Sys_Menu_Bar.H>
+#include <FL/Fl_Gl_Printer.H>
+
+void print_cb(Fl_Widget *w, void *data)
+{
+  Fl_Gl_Printer printer;
+  Fl_Window *win = Fl::first_window();
+  if(!win) return;
+  if( printer.start_job(1) ) return;
+  if( printer.start_page() ) return;
+  printer.scale(0.68,0.68);
+  printer.print_gl_window( (Fl_Gl_Window*)win );
+  printer.end_page();
+  printer.end_job();
+}
+// end of printing demo 
+
 int
 main(int argc, char **argv)
 {
+  // added to demo printing
+  static Fl_Menu_Item	items[] = {
+    { "Menu", 0, 0, 0, FL_SUBMENU },
+    { "Print", 0, print_cb, 0, 0 },
+    { 0 },
+    { 0 }
+  };
+  Fl_Sys_Menu_Bar *menubar_;
+  menubar_ = new Fl_Sys_Menu_Bar(0, 0, 1, 25);
+  menubar_->menu(items);
+ // end of printing demo 
   long i;
 
   glutInit(&argc, argv);

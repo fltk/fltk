@@ -132,7 +132,7 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   fl_xftfont = (void*)f->font;
 }
 
-void fl_font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_Device::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(fnum,size,0);
 }
 
@@ -482,7 +482,7 @@ extern XVisualInfo* fl_overlay_visual;
 // still exists in an XftDraw structure. It would be nice if this is not
 // true, a lot of junk is needed to try to stop this:
 
-static XftDraw* draw;
+static XftDraw* draw_;
 static Window draw_window;
 #if USE_OVERLAY
 static XftDraw* draw_overlay;
@@ -491,36 +491,36 @@ static Window draw_overlay_window;
 
 void fl_destroy_xft_draw(Window id) {
   if (id == draw_window)
-    XftDrawChange(draw, draw_window = fl_message_window);
+    XftDrawChange(draw_, draw_window = fl_message_window);
 #if USE_OVERLAY
   if (id == draw_overlay_window)
     XftDrawChange(draw_overlay, draw_overlay_window = fl_message_window);
 #endif
 }
 
-void fl_draw(const char *str, int n, int x, int y) {
+void Fl_Device::draw(const char *str, int n, int x, int y) {
   if ( !current_font ) {
     fl_font(FL_HELVETICA, 14);
   }
 #if USE_OVERLAY
-  XftDraw*& draw = fl_overlay ? draw_overlay : ::draw;
+  XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
   if (fl_overlay) {
-    if (!draw)
-      draw = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
+    if (!draw_)
+      draw_ = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
 			   fl_overlay_visual->visual, fl_overlay_colormap);
     else //if (draw_overlay_window != fl_window)
-      XftDrawChange(draw, draw_overlay_window = fl_window);
+      XftDrawChange(draw_, draw_overlay_window = fl_window);
   } else
 #endif
-  if (!draw)
-    draw = XftDrawCreate(fl_display, draw_window = fl_window,
+  if (!draw_)
+    draw_ = XftDrawCreate(fl_display, draw_window = fl_window,
 			 fl_visual->visual, fl_colormap);
   else //if (draw_window != fl_window)
-    XftDrawChange(draw, draw_window = fl_window);
+    XftDrawChange(draw_, draw_window = fl_window);
 
   Region region = fl_clip_region();
   if (region && XEmptyRegion(region)) return;
-  XftDrawSetClip(draw, region);
+  XftDrawSetClip(draw_, region);
 
   // Use fltk's color allocator, copy the results to match what
   // XftCollorAllocValue returns:
@@ -532,10 +532,10 @@ void fl_draw(const char *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawStringUtf8(draw, &color, current_font, x, y, (XftChar8 *)str, n);
+  XftDrawStringUtf8(draw_, &color, current_font, x, y, (XftChar8 *)str, n);
 }
 
-void fl_draw(int angle, const char *str, int n, int x, int y) {
+void Fl_Device::draw(int angle, const char *str, int n, int x, int y) {
   fl_font(fl_font_, fl_size_, angle);
   fl_draw(str, n, (int)x, (int)y);
   fl_font(fl_font_, fl_size_);
@@ -547,24 +547,24 @@ void fl_draw(const char* str, int n, float x, float y) {
 
 static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
 #if USE_OVERLAY
-  XftDraw*& draw = fl_overlay ? draw_overlay : ::draw;
+  XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
   if (fl_overlay) {
-    if (!draw)
-      draw = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
+    if (!draw_)
+      draw_ = XftDrawCreate(fl_display, draw_overlay_window = fl_window,
 			   fl_overlay_visual->visual, fl_overlay_colormap);
     else //if (draw_overlay_window != fl_window)
-      XftDrawChange(draw, draw_overlay_window = fl_window);
+      XftDrawChange(draw_, draw_overlay_window = fl_window);
   } else
 #endif
-  if (!draw)
-    draw = XftDrawCreate(fl_display, draw_window = fl_window,
+  if (!draw_)
+    draw_ = XftDrawCreate(fl_display, draw_window = fl_window,
 			 fl_visual->visual, fl_colormap);
   else //if (draw_window != fl_window)
-    XftDrawChange(draw, draw_window = fl_window);
+    XftDrawChange(draw_, draw_window = fl_window);
 
   Region region = fl_clip_region();
   if (region && XEmptyRegion(region)) return;
-  XftDrawSetClip(draw, region);
+  XftDrawSetClip(draw_, region);
 
   // Use fltk's color allocator, copy the results to match what
   // XftCollorAllocValue returns:
@@ -576,7 +576,7 @@ static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw, &color, current_font, x, y, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, current_font, x, y, (FcChar32 *)str, n);
 }
 
 

@@ -95,6 +95,10 @@
   for async mode proper operation, not mentioning the side effects...
 */
 
+static Fl_GDI_Display fl_gdi_device;
+FL_EXPORT Fl_Display *fl_display_device = (Fl_Display*)&fl_gdi_device; // does not change
+FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_gdi_device; // the current target device of graphics operations
+
 // dynamic wsock dll handling api:
 #if defined(__CYGWIN__) && !defined(SOCKET)
 # define SOCKET int
@@ -1777,6 +1781,8 @@ void Fl_Window::show() {
     if (!fl_capture) BringWindowToTop(i->xid);
     //ShowWindow(i->xid,fl_capture?SW_SHOWNOACTIVATE:SW_RESTORE);
   }
+void preparePrintFront(void);
+preparePrintFront();
 }
 
 Fl_Window *Fl_Window::current_;
@@ -1914,6 +1920,63 @@ void fl_cleanup_dc_list(void) {          // clean up the list
     delete (t);
     t = win_DC_list;
   } while(t);
+}
+
+Fl_Region XRectangleRegion(int x, int y, int w, int h) {
+  if (Fl_Device::current()->type() < 256) return CreateRectRgn(x,y,x+w,y+h);
+  // because rotation may apply, the rectangle becomes a polygon in device coords
+  POINT pt[4] = { {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h} };
+  LPtoDP(fl_gc, pt, 4);
+  return CreatePolygonRgn(pt, 4, ALTERNATE);
+}
+
+// temporary for testing purposes of the Fl_Printer class
+// contains also preparePrintFront call above
+#include <FL/Fl_Printer.H>
+#include <FL/Fl_Button.H>
+void printFront(Fl_Widget *o, void *data)
+{
+  Fl_Printer printer;
+  o->window()->hide();
+  Fl_Window *win = Fl::first_window();
+  if(!win) return;
+  int w, h;
+  if( printer.start_job(1) ) { o->window()->show(); return; }
+  if( printer.start_page() ) { o->window()->show(); return; }
+  printer.printable_rect(&w,&h);
+  // scale the printer device so that the window fits on the page
+  float scale = 1;
+  if (win->w() > w || win->h() > h) {
+    scale = (float)w/win->w();
+    if ((float)h/win->h() < scale) scale = (float)h/win->h();
+    printer.scale(scale, scale);
+  }
+// #define ROTATE 20.0
+#ifdef ROTATE
+  printer.scale(scale * 0.8, scale * 0.8);
+  printer.printable_rect(&w, &h);
+  printer.origin(w/2, h/2 );
+  printer.rotate(ROTATE);
+  printer.print_widget( win, - win->w()/2, - win->h()/2 );
+#else
+  printer.print_widget( win );
+#endif
+  //printer.print_window_part( win, 0,0, win->w(), win->h(), - win->w()/2, - win->h()/2 );
+  printer.end_page();
+  printer.end_job();
+  o->window()->show();
+}
+
+void preparePrintFront(void)
+{
+  static BOOL first=TRUE;
+  if(!first) return;
+  first=FALSE;
+  static Fl_Window w(0,0,120,30);
+  static Fl_Button b(0,0,w.w(),w.h(), "Print front window");
+  b.callback(printFront);
+  w.end();
+  w.show();
 }
 #endif // FL_DOXYGEN
 

@@ -143,7 +143,7 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   fl_fontsize = find(fnum, size, angle);
 }
 
-void fl_font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_Device::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(fnum, size, 0);
 }
 
@@ -234,6 +234,21 @@ static void GetGlyphIndices_init() {
   have_loaded_GetGlyphIndices = -1; // set this non-zero when we have attempted to load GetGlyphIndicesW
 } // GetGlyphIndices_init function
 
+static void on_printer_extents_update(int &dx, int &dy, int &w, int &h)
+// converts text extents from device coords to logical coords
+{
+  POINT pt[3] = { {0, 0}, {dx, dy}, {dx+w, dy+h} };
+  DPtoLP(fl_gc, pt, 3);
+  w = pt[2].x - pt[1].x;
+  h = pt[2].y - pt[1].y;
+  dx = pt[1].x - pt[0].x;
+  dy = pt[1].y - pt[0].y;
+}
+
+// if printer context, extents shd be converted to logical coords
+#define EXTENTS_UPDATE(x,y,w,h) \
+  if (Fl_Device::current()->type() == Fl_Device::gdi_printer) { on_printer_extents_update(x,y,w,h); }
+
 static unsigned short *ext_buff = NULL; // UTF-16 converted version of input UTF-8 string
 static unsigned wc_len = 0; // current string buffer dimension
 static WORD *gi = NULL; // glyph indices array
@@ -303,6 +318,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
   h = maxh + miny;
   dx = minx;
   dy = -miny;
+  EXTENTS_UPDATE(dx, dy, w, h);
   return; // normal exit
 
 exit_error:
@@ -311,10 +327,11 @@ exit_error:
   h = fl_height();
   dx = 0;
   dy = fl_descent() - h;
+  EXTENTS_UPDATE(dx, dy, w, h);
   return;
 } // fl_text_extents
 
-void fl_draw(const char* str, int n, int x, int y) {
+void Fl_Device::draw(const char* str, int n, int x, int y) {
   int i = 0;
   int lx = 0;
   char *end = (char *)&str[n];
@@ -342,7 +359,7 @@ void fl_draw(const char* str, int n, int x, int y) {
   SetTextColor(fl_gc, oldColor);
 }
 
-void fl_draw(int angle, const char* str, int n, int x, int y) {
+void Fl_Device::draw(int angle, const char* str, int n, int x, int y) {
   fl_font(fl_font_, fl_size_, angle);
 //  fl_draw(str, n, (int)x, (int)y);
   int i = 0, i2=0;

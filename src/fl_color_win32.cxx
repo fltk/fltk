@@ -94,7 +94,7 @@ static void set_xmap(Fl_XMap& xmap, COLORREF c) {
 
 Fl_Color fl_color_;
 
-void fl_color(Fl_Color i) {
+void Fl_Device::color(Fl_Color i) {
   if (i & 0xffffff00) {
     unsigned rgb = (unsigned)i;
     fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
@@ -118,7 +118,7 @@ void fl_color(Fl_Color i) {
   }
 }
 
-void fl_color(uchar r, uchar g, uchar b) {
+void Fl_Device::color(uchar r, uchar g, uchar b) {
   static Fl_XMap xmap;
   COLORREF c = RGB(r,g,b);
   fl_color_ = fl_rgb_color(r, g, b);

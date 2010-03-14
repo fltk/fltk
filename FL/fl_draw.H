@@ -35,21 +35,25 @@
 
 #include "Enumerations.H"  // for the color names
 #include "Fl_Window.H"	   // for fl_set_spot()
+#include "Fl_Device.H"
 
 // Image class...
 class Fl_Image;
 
 // Label flags...
 FL_EXPORT extern char fl_draw_shortcut;
+extern Fl_Device *fl_device;
 
 /** \addtogroup fl_attributes
     @{
 */
 // Colors:
-FL_EXPORT void	fl_color(Fl_Color i); // select indexed color
+//FL_EXPORT void	fl_color(Fl_Color i); // select indexed color
+inline void	fl_color(Fl_Color i) {fl_device->color(i); }; // select indexed color
 /** for back compatibility - use fl_color(Fl_Color c) instead */
 inline void fl_color(int c) {fl_color((Fl_Color)c);}
-FL_EXPORT void	fl_color(uchar r, uchar g, uchar b); // select actual color
+//FL_EXPORT void	fl_color(uchar r, uchar g, uchar b); // select actual color
+inline void	fl_color(uchar r, uchar g, uchar b) {fl_device->color(r,g,b); }; // select actual color
 extern FL_EXPORT Fl_Color fl_color_;
 /**
   Returns the last fl_color() that was set.
@@ -62,19 +66,27 @@ inline Fl_Color fl_color() {return fl_color_;}
     @{
 */
 // clip:
-FL_EXPORT void fl_push_clip(int x, int y, int w, int h);
+//FL_EXPORT void fl_push_clip(int x, int y, int w, int h);
+inline void fl_push_clip(int x, int y, int w, int h) {fl_device->push_clip(x,y,w,h); };
 /** The fl_clip() name is deprecated and will be removed from future releases */
 #define fl_clip fl_push_clip
-FL_EXPORT void fl_push_no_clip();
-FL_EXPORT void fl_pop_clip();
-FL_EXPORT int fl_not_clipped(int x, int y, int w, int h);
-FL_EXPORT int fl_clip_box(int, int, int, int, int& x, int& y, int& w, int& h);
+//FL_EXPORT void fl_push_no_clip();
+inline void fl_push_no_clip() {fl_device->push_no_clip(); };
+//FL_EXPORT void fl_pop_clip();
+inline void fl_pop_clip() {fl_device->pop_clip(); };
+//FL_EXPORT int fl_not_clipped(int x, int y, int w, int h);
+inline int fl_not_clipped(int x, int y, int w, int h) {return fl_device->not_clipped(x,y,w,h); };
+//FL_EXPORT int fl_clip_box(int, int, int, int, int& x, int& y, int& w, int& h);
+inline int fl_clip_box(int x , int y, int w, int h, int& X, int& Y, int& W, int& H) 
+  {return fl_device->clip_box(x,y,w,h,X,Y,W,H); };
 
 // points:
-FL_EXPORT void fl_point(int x, int y);
+//FL_EXPORT void fl_point(int x, int y);
+inline void fl_point(int x, int y) { fl_device->point(x,y); };
 
 // line type:
-FL_EXPORT void fl_line_style(int style, int width=0, char* dashes=0);
+//FL_EXPORT void fl_line_style(int style, int width=0, char* dashes=0);
+inline void fl_line_style(int style, int width=0, char* dashes=0) {fl_device->line_style(style,width,dashes); };
 enum {
   FL_SOLID	= 0,		///< line style: <tt>___________</tt>
   FL_DASH	= 1,		///< line style: <tt>_ _ _ _ _ _</tt>
@@ -92,10 +104,12 @@ enum {
 };
 
 // rectangles tweaked to exactly fill the pixel rectangle:
-FL_EXPORT void fl_rect(int x, int y, int w, int h);
+//FL_EXPORT void fl_rect(int x, int y, int w, int h);
+inline void fl_rect(int x, int y, int w, int h) { fl_device->rect(x,y,w,h); };
 /** Draws a 1-pixel border \e inside the given bounding box */
 inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rect(x,y,w,h);}
-FL_EXPORT void fl_rectf(int x, int y, int w, int h);
+//FL_EXPORT void fl_rectf(int x, int y, int w, int h);
+inline void fl_rectf(int x, int y, int w, int h) { fl_device->rectf(x,y,w,h); };
 /** Colors a rectangle that exactly fills the given bounding box */
 inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rectf(x,y,w,h);}
 
@@ -109,30 +123,46 @@ inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_re
 FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
 
 // line segments:
-FL_EXPORT void fl_line(int x, int y, int x1, int y1);
-FL_EXPORT void fl_line(int x, int y, int x1, int y1, int x2, int y2);
+//FL_EXPORT void fl_line(int x, int y, int x1, int y1);
+inline void fl_line(int x, int y, int x1, int y1) {fl_device->line(x,y,x1,y1); };
+//FL_EXPORT void fl_line(int x, int y, int x1, int y1, int x2, int y2);
+inline void fl_line(int x, int y, int x1, int y1, int x2, int y2) {fl_device->line(x,y,x1,y1,x2,y2); };
 
 // closed line segments:
-FL_EXPORT void fl_loop(int x, int y, int x1, int y1, int x2, int y2);
-FL_EXPORT void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3);
+//FL_EXPORT void fl_loop(int x, int y, int x1, int y1, int x2, int y2);
+inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {fl_device->loop(x,y,x1,y1,x2,y2); };
+//FL_EXPORT void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3);
+inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) 
+  {fl_device->loop(x,y,x1,y1,x2,y2,x3,y3); };
 
 // filled polygons
-FL_EXPORT void fl_polygon(int x, int y, int x1, int y1, int x2, int y2);
-FL_EXPORT void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3);
+//FL_EXPORT void fl_polygon(int x, int y, int x1, int y1, int x2, int y2);
+inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {fl_device->polygon(x,y,x1,y1,x2,y2); };
+//FL_EXPORT void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3);
+inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) 
+  { fl_device->polygon(x,y,x1,y1,x2,y2,x3,y3); };
 
 // draw rectilinear lines, horizontal segment first:
-FL_EXPORT void fl_xyline(int x, int y, int x1);
-FL_EXPORT void fl_xyline(int x, int y, int x1, int y2);
-FL_EXPORT void fl_xyline(int x, int y, int x1, int y2, int x3);
+//FL_EXPORT void fl_xyline(int x, int y, int x1);
+inline void fl_xyline(int x, int y, int x1) {fl_device->xyline(x,y,x1);};
+//FL_EXPORT void fl_xyline(int x, int y, int x1, int y2);
+inline void fl_xyline(int x, int y, int x1, int y2) {fl_device->xyline(x,y,x1,y2);};
+//FL_EXPORT void fl_xyline(int x, int y, int x1, int y2, int x3);
+inline void fl_xyline(int x, int y, int x1, int y2, int x3) {fl_device->xyline(x,y,x1,y2,x3);};
 
 // draw rectilinear lines, vertical segment first:
-FL_EXPORT void fl_yxline(int x, int y, int y1);
-FL_EXPORT void fl_yxline(int x, int y, int y1, int x2);
-FL_EXPORT void fl_yxline(int x, int y, int y1, int x2, int y3);
+//FL_EXPORT void fl_yxline(int x, int y, int y1);
+inline void fl_yxline(int x, int y, int y1) {fl_device->yxline(x,y,y1);};
+//FL_EXPORT void fl_yxline(int x, int y, int y1, int x2);
+inline void fl_yxline(int x, int y, int y1, int x2) {fl_device->yxline(x,y,y1,x2);};
+//FL_EXPORT void fl_yxline(int x, int y, int y1, int x2, int y3);
+inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_device->yxline(x,y,y1,x2,y3);};
 
 // circular lines and pie slices (code in fl_arci.C):
-FL_EXPORT void fl_arc(int x, int y, int w, int h, double a1, double a2);
-FL_EXPORT void fl_pie(int x, int y, int w, int h, double a1, double a2);
+//FL_EXPORT void fl_arc(int x, int y, int w, int h, double a1, double a2);
+inline void fl_arc(int x, int y, int w, int h, double a1, double a2) {fl_device->arc(x,y,w,h,a1,a2); };
+//FL_EXPORT void fl_pie(int x, int y, int w, int h, double a1, double a2);
+inline void fl_pie(int x, int y, int w, int h, double a1, double a2) {fl_device->pie(x,y,w,h,a1,a2); };
 /** fl_chord declaration is a place holder - the function does not yet exist */
 FL_EXPORT void fl_chord(int x, int y, int w, int h, double a1, double a2); // nyi
 
@@ -144,27 +174,44 @@ FL_EXPORT void fl_scale(double x);
 FL_EXPORT void fl_translate(double x, double y);
 FL_EXPORT void fl_rotate(double d);
 FL_EXPORT void fl_mult_matrix(double a, double b, double c, double d, double x,double y);
-FL_EXPORT void fl_begin_points();
-FL_EXPORT void fl_begin_line();
-FL_EXPORT void fl_begin_loop();
-FL_EXPORT void fl_begin_polygon();
-FL_EXPORT void fl_vertex(double x, double y);
-FL_EXPORT void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
-FL_EXPORT void fl_arc(double x, double y, double r, double start, double a);
-FL_EXPORT void fl_circle(double x, double y, double r);
-FL_EXPORT void fl_end_points();
-FL_EXPORT void fl_end_line();
-FL_EXPORT void fl_end_loop();
-FL_EXPORT void fl_end_polygon();
-FL_EXPORT void fl_begin_complex_polygon();
-FL_EXPORT void fl_gap();
-FL_EXPORT void fl_end_complex_polygon();
+//FL_EXPORT void fl_begin_points();
+inline void fl_begin_points() {fl_device->begin_points(); };
+//FL_EXPORT void fl_begin_line();
+inline void fl_begin_line() {fl_device->begin_line(); };
+//FL_EXPORT void fl_begin_loop();
+inline void fl_begin_loop() {fl_device->begin_loop(); };
+//FL_EXPORT void fl_begin_polygon();
+inline void fl_begin_polygon() {fl_device->begin_polygon(); };
+//FL_EXPORT void fl_vertex(double x, double y);
+inline void fl_vertex(double x, double y) {fl_device->vertex(x,y); };
+//FL_EXPORT void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
+inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3)
+  {fl_device->curve(X0,Y0,X1,Y1,X2,Y2,X3,Y3); };
+//FL_EXPORT void fl_arc(double x, double y, double r, double start, double a);
+inline void fl_arc(double x, double y, double r, double start, double a) {fl_device->arc(x,y,r,start,a); };
+//FL_EXPORT void fl_circle(double x, double y, double r);
+inline void fl_circle(double x, double y, double r) {fl_device->circle(x,y,r); };
+//FL_EXPORT void fl_end_points();
+inline void fl_end_points() {fl_device->end_points(); };
+//FL_EXPORT void fl_end_line();
+inline void fl_end_line() {fl_device->end_line(); };
+//FL_EXPORT void fl_end_loop();
+inline void fl_end_loop() {fl_device->end_loop(); };
+//FL_EXPORT void fl_end_polygon();
+inline void fl_end_polygon() {fl_device->end_polygon(); };
+//FL_EXPORT void fl_begin_complex_polygon();
+inline void fl_begin_complex_polygon() {fl_device->begin_complex_polygon(); };
+//FL_EXPORT void fl_gap();
+inline void fl_gap() {fl_device->gap(); };
+//FL_EXPORT void fl_end_complex_polygon();
+inline void fl_end_complex_polygon() {fl_device->end_complex_polygon(); };
 // get and use transformed positions:
 FL_EXPORT double fl_transform_x(double x, double y);
 FL_EXPORT double fl_transform_y(double x, double y);
 FL_EXPORT double fl_transform_dx(double x, double y);
 FL_EXPORT double fl_transform_dy(double x, double y);
-FL_EXPORT void fl_transformed_vertex(double x, double y);
+//FL_EXPORT void fl_transformed_vertex(double x, double y);
+inline void fl_transformed_vertex(double x, double y) {fl_device->transformed_vertex(x,y); };
 /** @} */
 
 /** \addtogroup  fl_attributes
@@ -181,7 +228,8 @@ FL_EXPORT void fl_transformed_vertex(double x, double y);
 */
 
 // Fonts:
-FL_EXPORT void fl_font(Fl_Font face, Fl_Fontsize size);
+//FL_EXPORT void fl_font(Fl_Font face, Fl_Fontsize size);
+inline void fl_font(Fl_Font face, Fl_Fontsize size) { fl_device->font(face,size); };
 extern FL_EXPORT Fl_Font fl_font_; ///< current font index
 
 /**
@@ -276,6 +324,7 @@ FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
   to control characters.
 */
 FL_EXPORT void fl_draw(const char* str, int x, int y);
+FL_EXPORT void fl_draw(int angle, const char* str, int x, int y);
 /**
   Draws a nul-terminated string starting at the given location and 
   rotating \p angle degrees counterclockwise.
@@ -283,16 +332,18 @@ FL_EXPORT void fl_draw(const char* str, int x, int y);
   function of the underlying OS and suported for Xft, Win32 and MacOS
   fltk subset.
 */
-FL_EXPORT void fl_draw(int angle,const char* str, int x, int y);
+//FL_EXPORT void fl_draw(int angle,const char* str, int x, int y);
 /**
   Draws an array of \p n characters starting at the given location.
 */
-FL_EXPORT void fl_draw(const char* str, int n, int x, int y);
+//FL_EXPORT void fl_draw(const char* str, int n, int x, int y);
+inline void fl_draw(const char* str, int n, int x, int y) {fl_device->draw(str,n,x,y); };
 /**
   Draws an array of \p n characters starting at the given location,
   rotating \p angle degrees counterclockwise.
 */
-FL_EXPORT void fl_draw(int angle,const char* str, int n, int x, int y);
+//FL_EXPORT void fl_draw(int angle,const char* str, int n, int x, int y);
+inline void fl_draw(int angle,const char* str, int n, int x, int y) {fl_device->draw(angle,str,n,x,y); };
 /**
   Draws an array of \p n characters right to left starting at given location.
 */
@@ -356,13 +407,17 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
   any visual of 8 bits or less, and all common TrueColor visuals up
   to 32 bits.
   */
-FL_EXPORT void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
+//FL_EXPORT void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
+inline void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0)
+  { fl_device->draw_image(buf, X, Y, W, H, D, L); };
 
 /**
   Draw a gray-scale (1 channel) image.
   \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
   */
-FL_EXPORT void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
+//FL_EXPORT void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
+inline void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0)
+  { fl_device->draw_image_mono(buf, X, Y, W, H, D, L); };
 
 /**
   Draw image using callback function to generate image data.
@@ -396,7 +451,9 @@ FL_EXPORT void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int
 
   If \p D is 4 or more, you must fill in the unused bytes with zero.
   */
-FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
+//FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
+inline void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3)
+  { fl_device->draw_image(cb, data, X, Y, W, H, D); };
 
 /**
   Draw gray-scale image using callback function to generate image data.

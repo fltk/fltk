@@ -46,7 +46,7 @@
   \param[in] X2,Y2 curve control point
   \param[in] X3,Y3 curve end point
 */
-void fl_curve(double X0, double Y0,
+void Fl_Device::curve(double X0, double Y0,
 	      double X1, double Y1,
 	      double X2, double Y2,
 	      double X3, double Y3) {

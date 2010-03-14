@@ -254,21 +254,21 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
         }            
       }
     }
-    SetDIBitsToDevice(fl_gc, x, y+j-k, w, k, 0, 0, 0, k,
-		      (LPSTR)((uchar*)buffer+(blocking-k)*linesize),
-		      &bmi,
+      SetDIBitsToDevice(fl_gc, x, y+j-k, w, k, 0, 0, 0, k,
+			(LPSTR)((uchar*)buffer+(blocking-k)*linesize),
+			&bmi,
 #if USE_COLORMAP
-		      indexed ? DIB_PAL_COLORS : DIB_RGB_COLORS
+			indexed ? DIB_PAL_COLORS : DIB_RGB_COLORS
 #else
-		      DIB_RGB_COLORS
+			DIB_RGB_COLORS
 #endif
-		      );
+			);
   }
 }
 
 static int fl_abs(int v) { return v<0 ? -v : v; }
 
-void fl_draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_Device::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
     innards(buf,x,y,w,h,d,l,fl_abs(d),0,0);
@@ -277,7 +277,7 @@ void fl_draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
   }
 }
 
-void fl_draw_image(Fl_Draw_Image_Cb cb, void* data,
+void Fl_Device::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
@@ -287,7 +287,7 @@ void fl_draw_image(Fl_Draw_Image_Cb cb, void* data,
   }
 }
 
-void fl_draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_Device::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
     innards(buf,x,y,w,h,d,l,1,0,0);
@@ -296,7 +296,7 @@ void fl_draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int
   }
 }
 
-void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
+void Fl_Device::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;

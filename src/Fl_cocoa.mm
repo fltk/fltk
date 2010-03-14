@@ -90,6 +90,7 @@ extern "C" {
 }
 
 
+#include <FL/Fl_Device.H>
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
@@ -150,6 +151,10 @@ static void convert_crlf(char * string, size_t len);
 static void createAppleMenu(void);
 static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h);
 static void cocoaMouseHandler(NSEvent *theEvent);
+
+static Fl_Quartz_Display fl_quartz_device;
+FL_EXPORT Fl_Display *fl_display_device = (Fl_Display*)&fl_quartz_device; // does not change
+FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_quartz_device; // the current target device of graphics operations
 
 // public variables
 int fl_screen;
@@ -2490,7 +2495,7 @@ void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
   rect.origin.x = -(mx.tx+0.5f) + rect.origin.x     - cx;
   rect.origin.y =  (mx.ty+0.5f) - rect.origin.y - h + cy;
   rect.size.width = w;
-  rect.size.height = h; 
+  rect.size.height = h;
 }
 */
 void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
@@ -2790,7 +2795,7 @@ static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h)
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->rects = (CGRect*)malloc(4 * r->count * sizeof(CGRect));
   outr->count = 0;
-  CGRect rect = FL_CGRECTMAKE_COCOA(x, y, w, h);
+  CGRect rect = fl_cgrectmake_cocoa(x, y, w, h);
   for( int i = 0; i < r->count; i++) {
     CGRect A = r->rects[i];
     CGRect test = CGRectIntersection(A, rect);
@@ -2835,7 +2840,7 @@ Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h)
  */
 {
   if (current == NULL) return XRectangleRegion(x,y,w,h);
-  CGRect r = FL_CGRECTMAKE_COCOA(x, y, w, h);
+  CGRect r = fl_cgrectmake_cocoa(x, y, w, h);
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->count = current->count;
   outr->rects =(CGRect*)malloc(outr->count * sizeof(CGRect));
@@ -2968,6 +2973,7 @@ int MACscreen_init(XRectangle screens[])
 {
 }
 - (void)showPanel;
+- (void)printPanel;
 @end
 @implementation FLaboutItemTarget
 - (void)showPanel
@@ -2979,6 +2985,37 @@ int MACscreen_init(XRectangle screens[])
                 	     nil];
     [NSApp  orderFrontStandardAboutPanelWithOptions:options];
   }
+#include <FL/Fl_Printer.H>
+- (void)printPanel
+{
+  Fl_Printer printer;
+//  Fl_PSfile_Device printer;
+  int w, h;
+  Fl_Window *win = Fl::first_window();
+  if(!win) return;
+  if( printer.start_job(1) ) return;
+  if( printer.start_page() ) return;
+  // scale the printer device so that the window fits on the page
+  float scale = 1;
+  printer.printable_rect(&w, &h);
+  if (win->w()>w || win->h()>h) {
+    scale = (float)w/win->w();
+    if ((float)h/win->h() < scale) scale = (float)h/win->h();
+    printer.scale(scale, scale);
+  }
+#ifdef ROTATE
+  printer.scale(scale * 0.8, scale * 0.8);
+  printer.printable_rect(&w, &h);
+  printer.origin(w/2, h/2 );
+  printer.rotate(20.);
+  printer.print_widget( win, - win->w()/2, - win->h()/2 );
+#else
+  printer.print_widget( win);
+  //printer.print_window_part( win, 0,0, win->w(), win->h() );
+#endif
+  printer.end_page();
+  printer.end_job();
+}
 @end
 
 static NSMenu *appleMenu;
@@ -2998,10 +3035,17 @@ static void createAppleMenu(void)
   appleMenu = [[NSMenu alloc] initWithTitle:@""];
   /* Add menu items */
   title = [@"About " stringByAppendingString:(NSString*)nsappname];
-  [appleMenu addItemWithTitle:title action:@selector(showPanel) keyEquivalent:@""];
+  menuItem = [appleMenu addItemWithTitle:title action:@selector(showPanel) keyEquivalent:@""];
   FLaboutItemTarget *about = [[FLaboutItemTarget alloc] init];
-  [[appleMenu itemAtIndex:0] setTarget:about];
+  [menuItem setTarget:about];
   [appleMenu addItem:[NSMenuItem separatorItem]];
+// temporary for testing Fl_Printer. Contains also printPanel of class FLaboutItemTarget.
+  menuItem = [appleMenu addItemWithTitle:@"Print front window" action:@selector(printPanel) keyEquivalent:@"p"];
+  [menuItem setTarget:about];
+  [appleMenu setAutoenablesItems:NO];
+  [menuItem setEnabled:YES];
+  [appleMenu addItem:[NSMenuItem separatorItem]];
+// end of temporary for testing Fl_Printer  
   // Services Menu
   services = [[NSMenu alloc] init];
   [appleMenu addItemWithTitle:@"Services" action:nil keyEquivalent:@""];
@@ -3457,6 +3501,13 @@ WindowRef MACwindowRef(Fl_Window *w)
 {
   return (WindowRef)[(FLWindow*)Fl_X::i(w)->xid windowRef];
 }
+
+// so a CGRect matches exactly what is denoted x,y,w,h for clipping purposes
+CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
+  if (Fl_Device::current()->type() == Fl_Device::quartz_printer) return CGRectMake(x, y, w-1.5 , h-1.5 ); 
+  return CGRectMake(x, y, w > 0 ? w - 0.9 : 0, h > 0 ? h - 0.9 : 0);
+}
+
 #endif // FL_DOXYGEN
 
 //

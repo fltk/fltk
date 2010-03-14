@@ -43,12 +43,16 @@
 
 #ifdef __APPLE_QUARTZ__
 extern float fl_quartz_line_width_;
+#ifdef __APPLE_COCOA__
+#define USINGQUARTZPRINTER  (Fl_Device::current()->type() == quartz_printer)
+#endif
 #endif
 
 /**
   Draws a 1-pixel border \e inside the given bounding box
 */
-void fl_rect(int x, int y, int w, int h) {
+void Fl_Device::rect(int x, int y, int w, int h) {
+
   if (w<=0 || h<=0) return;
 #if defined(USE_X11)
   XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
@@ -60,14 +64,14 @@ void fl_rect(int x, int y, int w, int h) {
   LineTo(fl_gc, x, y);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #endif
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(fl_gc, rect);
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #endif
@@ -79,7 +83,7 @@ void fl_rect(int x, int y, int w, int h) {
 /**
   Colors a rectangle that exactly fills the given bounding box
 */
-void fl_rectf(int x, int y, int w, int h) {
+void Fl_Device::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
 #if defined(USE_X11)
   if (w && h) XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
@@ -90,14 +94,14 @@ void fl_rectf(int x, int y, int w, int h) {
   FillRect(fl_gc, &rect, fl_brush());
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #endif
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextFillRect(fl_gc, rect);
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #endif
@@ -109,14 +113,14 @@ void fl_rectf(int x, int y, int w, int h) {
 /**
   Draws a horizontal line from (x,y) to (x1,y)
 */
-void fl_xyline(int x, int y, int x1) {
+void Fl_Device::xyline(int x, int y, int x1) {
 #if defined(USE_X11)
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y);
 #elif defined(WIN32)
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #endif
@@ -124,7 +128,7 @@ void fl_xyline(int x, int y, int x1) {
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextStrokePath(fl_gc);
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #endif
@@ -136,7 +140,7 @@ void fl_xyline(int x, int y, int x1) {
 /**
   Draws a horizontal line from (x,y) to (x1,y), then vertical from (x1,y) to (x1,y2)
 */
-void fl_xyline(int x, int y, int x1, int y2) {
+void Fl_Device::xyline(int x, int y, int x1, int y2) {
 #if defined (USE_X11)
   XPoint p[3];
   p[0].x = x;  p[0].y = p[1].y = y;
@@ -150,7 +154,7 @@ void fl_xyline(int x, int y, int x1, int y2) {
   LineTo(fl_gc, x1, y2);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #endif
@@ -159,7 +163,7 @@ void fl_xyline(int x, int y, int x1, int y2) {
   CGContextAddLineToPoint(fl_gc, x1, y2);
   CGContextStrokePath(fl_gc);
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #endif
@@ -172,7 +176,7 @@ void fl_xyline(int x, int y, int x1, int y2) {
   Draws a horizontal line from (x,y) to (x1,y), then a vertical from (x1,y) to (x1,y2)
   and then another horizontal from (x1,y2) to (x3,y2)
 */
-void fl_xyline(int x, int y, int x1, int y2, int x3) {
+void Fl_Device::xyline(int x, int y, int x1, int y2, int x3) {
 #if defined(USE_X11)
   XPoint p[4];
   p[0].x = x;  p[0].y = p[1].y = y;
@@ -188,7 +192,7 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
   LineTo(fl_gc, x3, y2);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #endif
@@ -198,7 +202,7 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
   CGContextAddLineToPoint(fl_gc, x3, y2);
   CGContextStrokePath(fl_gc);
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #endif
@@ -210,7 +214,7 @@ void fl_xyline(int x, int y, int x1, int y2, int x3) {
 /**
   Draws a vertical line from (x,y) to (x,y1)
 */
-void fl_yxline(int x, int y, int y1) {
+void Fl_Device::yxline(int x, int y, int y1) {
 #if defined(USE_X11)
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x, y1);
 #elif defined(WIN32)
@@ -219,7 +223,7 @@ void fl_yxline(int x, int y, int y1) {
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #endif
@@ -227,7 +231,7 @@ void fl_yxline(int x, int y, int y1) {
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextStrokePath(fl_gc);
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #endif
@@ -239,7 +243,7 @@ void fl_yxline(int x, int y, int y1) {
 /**
   Draws a vertical line from (x,y) to (x,y1), then a horizontal from (x,y1) to (x2,y1)
 */
-void fl_yxline(int x, int y, int y1, int x2) {
+void Fl_Device::yxline(int x, int y, int y1, int x2) {
 #if defined(USE_X11)
   XPoint p[3];
   p[0].x = p[1].x = x;  p[0].y = y;
@@ -253,7 +257,7 @@ void fl_yxline(int x, int y, int y1, int x2) {
   LineTo(fl_gc, x2, y1);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #endif
@@ -262,7 +266,7 @@ void fl_yxline(int x, int y, int y1, int x2) {
   CGContextAddLineToPoint(fl_gc, x2, y1);
   CGContextStrokePath(fl_gc);
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #endif
@@ -275,7 +279,7 @@ void fl_yxline(int x, int y, int y1, int x2) {
   Draws a vertical line from (x,y) to (x,y1) then a horizontal from (x,y1)
   to (x2,y1), then another vertical from (x2,y1) to (x2,y3)
 */
-void fl_yxline(int x, int y, int y1, int x2, int y3) {
+void Fl_Device::yxline(int x, int y, int y1, int x2, int y3) {
 #if defined(USE_X11)
   XPoint p[4];
   p[0].x = p[1].x = x;  p[0].y = y;
@@ -291,7 +295,7 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
   LineTo(fl_gc, x2, y3);
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
 #endif
@@ -301,7 +305,7 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
   CGContextAddLineToPoint(fl_gc, x2, y3);
   CGContextStrokePath(fl_gc);
 #ifdef __APPLE_COCOA__
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
   if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
 #endif
@@ -313,7 +317,7 @@ void fl_yxline(int x, int y, int y1, int x2, int y3) {
 /**
   Draws a line from (x,y) to (x1,y1)
 */
-void fl_line(int x, int y, int x1, int y1) {
+void Fl_Device::line(int x, int y, int x1, int y1) {
 #if defined(USE_X11)
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
 #elif defined(WIN32)
@@ -344,7 +348,7 @@ void fl_line(int x, int y, int x1, int y1) {
 /**
   Draws a line from (x,y) to (x1,y1) and another from (x1,y1) to (x2,y2)
 */
-void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
+void Fl_Device::line(int x, int y, int x1, int y1, int x2, int y2) {
 #if defined(USE_X11)
   XPoint p[3];
   p[0].x = x;  p[0].y = y;
@@ -381,7 +385,7 @@ void fl_line(int x, int y, int x1, int y1, int x2, int y2) {
 /**
   Outlines a 3-sided polygon with lines
 */
-void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
+void Fl_Device::loop(int x, int y, int x1, int y1, int x2, int y2) {
 #if defined(USE_X11)
   XPoint p[4];
   p[0].x = x;  p[0].y = y;
@@ -414,7 +418,7 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {
 /**
   Outlines a 4-sided polygon with lines
 */
-void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+void Fl_Device::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 #if defined(USE_X11)
   XPoint p[5];
   p[0].x = x;  p[0].y = y;
@@ -450,7 +454,7 @@ void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 /**
   Fills a 3-sided polygon. The polygon must be convex.
 */
-void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
+void Fl_Device::polygon(int x, int y, int x1, int y1, int x2, int y2) {
   XPoint p[4];
   p[0].x = x;  p[0].y = y;
   p[1].x = x1; p[1].y = y1;
@@ -482,7 +486,7 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {
 /**
   Fills a 4-sided polygon. The polygon must be convex.
 */
-void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
+void Fl_Device::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   XPoint p[5];
   p[0].x = x;  p[0].y = y;
   p[1].x = x1; p[1].y = y1;
@@ -516,7 +520,7 @@ void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 /**
   Draws a single pixel at the given coordinates
 */
-void fl_point(int x, int y) {
+void Fl_Device::point(int x, int y) {
 #if defined(USE_X11)
   XDrawPoint(fl_display, fl_window, fl_gc, x, y);
 #elif defined(WIN32)
@@ -645,7 +649,7 @@ Fl_Region fl_clip_region() {
   new region onto the stack.
   \param[in] x,y,w,h position and size
 */
-void fl_push_clip(int x, int y, int w, int h) {
+void Fl_Device::push_clip(int x, int y, int w, int h) {
   Fl_Region r;
   if (w > 0 && h > 0) {
     r = XRectangleRegion(x,y,w,h);
@@ -694,7 +698,7 @@ void fl_push_clip(int x, int y, int w, int h) {
 /**
   Pushes an empty clip region onto the stack so nothing will be clipped.
 */
-void fl_push_no_clip() {
+void Fl_Device::push_no_clip() {
   if (rstackptr < STACK_MAX) rstack[++rstackptr] = 0;
   else Fl::warning("fl_push_no_clip: clip stack overflow!\n");
   fl_restore_clip();
@@ -708,7 +712,7 @@ void fl_push_no_clip() {
   Unpredictable results may occur if the clip stack is not empty when
   you return to FLTK.
 */
-void fl_pop_clip() {
+void Fl_Device::pop_clip() {
   if (rstackptr > 0) {
     Fl_Region oldr = rstack[rstackptr--];
     if (oldr) XDestroyRegion(oldr);
@@ -726,7 +730,7 @@ void fl_pop_clip() {
   Under X this returns 2 if the rectangle is partially clipped, 
   and 1 if it is entirely inside the clip region.
 */
-int fl_not_clipped(int x, int y, int w, int h) {
+int Fl_Device::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
   Fl_Region r = rstack[rstackptr];
 #if defined (USE_X11)
@@ -734,12 +738,19 @@ int fl_not_clipped(int x, int y, int w, int h) {
 #elif defined(WIN32)
   if (!r) return 1;
   RECT rect;
-  rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
+  if (Fl_Device::current()->type() == Fl_Device::gdi_printer) { // in case of print context, convert coords from logical to device
+    POINT pt[2] = { {x, y}, {x + w, y + h} };
+    LPtoDP(fl_gc, pt, 2);
+    rect.left = pt[0].x; rect.top = pt[0].y; rect.right = pt[1].x; rect.bottom = pt[1].y;
+    }
+  else {
+    rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
+    }
   return RectInRegion(r,&rect);
 #elif defined(__APPLE_QUARTZ__)
   if (!r) return 1;
 #ifdef __APPLE_COCOA__
-  CGRect arg = FL_CGRECTMAKE_COCOA(x, y, w, h);
+  CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
   for(int i = 0; i < r->count; i++) {
     CGRect test = CGRectIntersection(r->rects[i], arg);
     if( ! CGRectIsEmpty(test)) return 1;
@@ -770,7 +781,7 @@ int fl_not_clipped(int x, int y, int w, int h) {
 	      completely outside the region.
   \returns Non-zero if the resulting rectangle is different to the original.
 */
-int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
+int Fl_Device::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
   Fl_Region r = rstack[rstackptr];
   if (!r) return 0;
@@ -806,10 +817,17 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
     ret = 2;
   } else if (EqualRgn(temp, rr)) { // complete
     ret = 0;
-  } else {	// parital intersection
+  } else {	// partial intersection
     RECT rect;
     GetRgnBox(temp, &rect);
-    X = rect.left; Y = rect.top; W = rect.right - X; H = rect.bottom - Y;
+    if(Fl_Device::current()->type() == Fl_Device::gdi_printer) { // if print context, convert coords from device to logical
+      POINT pt[2] = { {rect.left, rect.top}, {rect.right, rect.bottom} };
+      DPtoLP(fl_gc, pt, 2);
+      X = pt[0].x; Y = pt[0].y; W = pt[1].x - X; H = pt[1].y - Y;
+    }
+    else {
+      X = rect.left; Y = rect.top; W = rect.right - X; H = rect.bottom - Y;
+      }
     ret = 1;
   }
   DeleteObject(temp);
@@ -817,7 +835,7 @@ int fl_clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   return ret;
 #elif defined(__APPLE_QUARTZ__)
 #ifdef __APPLE_COCOA__
-	CGRect arg = FL_CGRECTMAKE_COCOA(x, y, w, h);
+	CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
 	CGRect u = CGRectMake(0,0,0,0);
 	CGRect test;
 	for(int i = 0; i < r->count; i++) {

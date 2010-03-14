@@ -34,6 +34,11 @@
 
 #define MAXBUFFER 0x40000 // 256k
 
+static void dataReleaseCB(void *info, const void *data, size_t size)
+{
+  delete[] (uchar *)data;
+}
+
 /**
  * draw an image based on the input parameters
  *
@@ -73,7 +78,17 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     lut = CGColorSpaceCreateDeviceGray();
   else
     lut = CGColorSpaceCreateDeviceRGB();
-  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H, 0L);
+  // a release callback is necessary when the fl_gc is a print context because the image data
+  // must be kept until the page is closed. Thus tmpBuf can't be deleted here. It's too early.
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+  typedef void (*CGDataProviderReleaseDataCallback) (
+						     void *info,
+						     const void *data,
+						     size_t size
+  );
+#endif  
+  CGDataProviderReleaseDataCallback releaseCB = ( cb ? dataReleaseCB : NULL);
+  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H, releaseCB);
   CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta,
                             //lut, delta&1?kCGImageAlphaNone:kCGImageAlphaNoneSkipLast,
                             lut, delta&1?kCGImageAlphaNone:kCGImageAlphaLast,
@@ -89,9 +104,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   }
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(src);
-  if (cb) {
-    delete[] tmpBuf;
-  }
   if (img) return; // else fall through to slow mode
   // following the very save (and very slow) way to write the image into the give port
   CGContextSetShouldAntialias(fl_gc, false);
@@ -140,17 +152,17 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 #endif
 }
 
-void fl_draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_Device::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
   innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0);
 }
-void fl_draw_image(Fl_Draw_Image_Cb cb, void* data,
+void Fl_Device::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data);
 }
-void fl_draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_Device::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
   innards(buf,x,y,w,h,d,l,1,0,0);
 }
-void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
+void Fl_Device::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,1,cb,data);
 }

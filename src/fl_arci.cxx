@@ -69,7 +69,7 @@
              counter-clockwise from 3 o'clock. \p a2 must be greater
 	     than or equal to \p a1.
 */
-void fl_arc(int x,int y,int w,int h,double a1,double a2) {
+void Fl_Device::arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
 
 #if defined(USE_X11)
@@ -120,7 +120,7 @@ void fl_arc(int x,int y,int w,int h,double a1,double a2) {
              counter-clockwise from 3 o'clock. \p a2 must be greater
 	     than or equal to \p a1.
 */
-void fl_pie(int x,int y,int w,int h,double a1,double a2) {
+void Fl_Device::pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
 
 #if defined(USE_X11)

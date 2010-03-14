@@ -124,6 +124,7 @@ int main(int argc, char **argv) {
   Fl_Double_Window window(400,400); ::w = &window;
   window.color(FL_WHITE);
   Fl_Button b(140,160,120,120,"Image w/Alpha"); ::b = &b;
+  b.color(FL_YELLOW);
 
   Fl_RGB_Image *rgb;
   Fl_Image *dergb;

@@ -49,6 +49,7 @@ struct matrix {double a, b, c, d, x, y;};
 static matrix m = {1, 0, 0, 1, 0, 0};
 
 static matrix stack[32];
+matrix * fl_matrix = &m;
 static int sptr = 0;
 
 /**
@@ -147,22 +148,22 @@ enum {LINE, LOOP, POLYGON, POINT_};
 /**
   Starts drawing a list of points. Points are added to the list with fl_vertex()
 */
-void fl_begin_points() {n = 0; what = POINT_;}
+void Fl_Device::begin_points() {n = 0; what = POINT_;}
 
 /**
   Starts drawing a list of lines.
 */
-void fl_begin_line() {n = 0; what = LINE;}
+void Fl_Device::begin_line() {n = 0; what = LINE;}
 
 /**
   Starts drawing a closed sequence of lines.
 */
-void fl_begin_loop() {n = 0; what = LOOP;}
+void Fl_Device::begin_loop() {n = 0; what = LOOP;}
 
 /**
   Starts drawing a convex filled polygon.
 */
-void fl_begin_polygon() {n = 0; what = POLYGON;}
+void Fl_Device::begin_polygon() {n = 0; what = POLYGON;}
 
 /**
   Transforms coordinate using the current transformation matrix.
@@ -204,7 +205,7 @@ static void fl_transformed_vertex(COORD_T x, COORD_T y) {
   Adds coordinate pair to the vertex list without further transformations.
   \param[in] xf,yf transformed coordinate
 */
-void fl_transformed_vertex(double xf, double yf) {
+void Fl_Device::transformed_vertex(double xf, double yf) {
 #ifdef __APPLE_QUARTZ__
   fl_transformed_vertex(COORD_T(xf), COORD_T(yf));
 #else
@@ -216,14 +217,14 @@ void fl_transformed_vertex(double xf, double yf) {
   Adds a single vertex to the current path.
   \param[in] x,y coordinate
 */
-void fl_vertex(double x,double y) {
+void Fl_Device::vertex(double x,double y) {
   fl_transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
 }
 
 /**
   Ends list of points, and draws.
 */
-void fl_end_points() {
+void Fl_Device::end_points() {
 #if defined(USE_X11)
   if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
 #elif defined(WIN32)
@@ -252,7 +253,7 @@ void fl_end_points() {
 /**
   Ends list of lines, and draws.
 */
-void fl_end_line() {
+void Fl_Device::end_line() {
   if (n < 2) {
     fl_end_points();
     return;
@@ -285,7 +286,7 @@ static void fixloop() {  // remove equal points from closed path
 /**
   Ends closed sequence of lines, and draws.
 */
-void fl_end_loop() {
+void Fl_Device::end_loop() {
   fixloop();
   if (n>2) fl_transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
   fl_end_line();
@@ -294,7 +295,7 @@ void fl_end_loop() {
 /**
   Ends convex filled polygon, and draws.
 */
-void fl_end_polygon() {
+void Fl_Device::end_polygon() {
   fixloop();
   if (n < 3) {
     fl_end_line();
@@ -325,7 +326,7 @@ void fl_end_polygon() {
 #endif
 }
 
-static int gap;
+static int gap_;
 #if defined(WIN32)
 static int counts[20];
 static int numcount;
@@ -345,9 +346,9 @@ static int numcount;
   whether "even/odd" or "non-zero" winding rules are used to fill them.
   Holes should be drawn in the opposite direction to the outside loop.
 */
-void fl_begin_complex_polygon() {
+void Fl_Device::begin_complex_polygon() {
   fl_begin_polygon();
-  gap = 0;
+  gap_ = 0;
 #if defined(WIN32)
   numcount = 0;
 #endif
@@ -359,23 +360,23 @@ void fl_begin_complex_polygon() {
   It is unnecessary but harmless to call fl_gap() before the first vertex,
   after the last vertex, or several times in a row.
 */
-void fl_gap() {
-  while (n>gap+2 && p[n-1].x == p[gap].x && p[n-1].y == p[gap].y) n--;
-  if (n > gap+2) {
-    fl_transformed_vertex((COORD_T)p[gap].x, (COORD_T)p[gap].y);
+void Fl_Device::gap() {
+  while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
+  if (n > gap_+2) {
+    fl_transformed_vertex((COORD_T)p[gap_].x, (COORD_T)p[gap_].y);
 #if defined(WIN32)
-    counts[numcount++] = n-gap;
+    counts[numcount++] = n-gap_;
 #endif
-    gap = n;
+    gap_ = n;
   } else {
-    n = gap;
+    n = gap_;
   }
 }
 
 /**
   Ends complex filled polygon, and draws.
 */
-void fl_end_complex_polygon() {
+void Fl_Device::end_complex_polygon() {
   fl_gap();
   if (n < 3) {
     fl_end_line();
@@ -417,7 +418,7 @@ void fl_end_complex_polygon() {
   a complex polygon you must use fl_arc()
   \param[in] x,y,r center and radius of circle
 */
-void fl_circle(double x, double y,double r) {
+void Fl_Device::circle(double x, double y,double r) {
   double xt = fl_transform_x(x,y);
   double yt = fl_transform_y(x,y);
   double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));

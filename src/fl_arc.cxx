@@ -51,7 +51,7 @@ static double _fl_hypot(double x, double y) {
              counter-clockwise from 3 o'clock. If \p end is less than \p start
 	     then it draws the arc in a clockwise direction.
 */
-void fl_arc(double x, double y, double r, double start, double end) {
+void Fl_Device::arc(double x, double y, double r, double start, double end) {
 
   // draw start point accurately:
   

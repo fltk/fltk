@@ -49,7 +49,7 @@ Fl_XMap* fl_current_xmap;
 
 Fl_Color fl_color_;
 
-void fl_color(Fl_Color i) {
+void Fl_Device::color(Fl_Color i) {
   fl_color_ = i;
   int index;
   uchar r, g, b;
@@ -78,7 +78,7 @@ void fl_color(Fl_Color i) {
 #endif
 }
 
-void fl_color(uchar r, uchar g, uchar b) {
+void Fl_Device::color(uchar r, uchar g, uchar b) {
   fl_color_ = fl_rgb_color(r, g, b);
 #if defined(__APPLE_QUARTZ__)
   float fr = r/255.0f;

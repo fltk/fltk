@@ -42,6 +42,7 @@ CPPFILES = \
 	Fl_Color_Chooser.cxx \
 	Fl_Counter.cxx \
 	Fl_Dial.cxx \
+	Fl_Device.cxx \
 	Fl_Double_Window.cxx \
 	Fl_File_Browser.cxx \
 	Fl_File_Chooser.cxx \
@@ -69,6 +70,7 @@ CPPFILES = \
 	Fl_Pixmap.cxx \
 	Fl_Positioner.cxx \
 	Fl_Preferences.cxx \
+	Fl_Printer.cxx \
 	Fl_Progress.cxx \
 	Fl_Repeat_Button.cxx \
 	Fl_Return_Button.cxx \
@@ -161,7 +163,8 @@ CPPFILES = \
 	fl_symbols.cxx \
 	fl_vertex.cxx \
 	screen_xywh.cxx \
-	fl_utf8.cxx
+	fl_utf8.cxx \
+	ps_image.cxx
 
 FLCPPFILES = \
 	forms_compatability.cxx \
@@ -175,6 +178,7 @@ GLCPPFILES = \
 	Fl_Gl_Choice.cxx \
 	Fl_Gl_Overlay.cxx \
 	Fl_Gl_Window.cxx \
+	Fl_Gl_Printer.cxx \
 	freeglut_geometry.cxx \
 	freeglut_stroke_mono_roman.cxx \
 	freeglut_stroke_roman.cxx \
@@ -488,6 +492,7 @@ fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx
 fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
 fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_x.cxx \
 		fl_set_fonts_xft.cxx fl_set_fonts_win32.cxx
+Fl_Printer.o:	Fl_Quartz_Printer.mm Fl_GDI_Printer.cxx Fl_PS_Printer.cxx
 
 fl_arci.o:	../FL/mac.H ../FL/win32.H
 Fl_arg.o:	../FL/mac.H ../FL/win32.H
@@ -521,6 +526,7 @@ fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H
 Fl_Overlay_Window.o:	../FL/mac.H ../FL/win32.H
 Fl_own_colormap.o:	../FL/mac.H ../FL/win32.H
 Fl_Pixmap.o:	../FL/mac.H ../FL/win32.H
+Fl_Printer.o:  ../FL/mac.H ../FL/win32.H
 fl_read_image.o:	../FL/mac.H ../FL/win32.H
 fl_read_image_mac.o:	../FL/mac.H ../FL/win32.H
 fl_read_image_win32.o:	../FL/mac.H ../FL/win32.H

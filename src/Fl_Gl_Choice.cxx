@@ -315,11 +315,15 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 	aglEnable( (GLContext)context, AGL_BUFFER_RECT );
   }
 #if defined(__APPLE_COCOA__) 
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  aglSetWindowRef(context, MACwindowRef(window) );
-#else
-  aglSetDrawable( context, GetWindowPort( MACwindowRef(window) ) );
+  if (aglSetWindowRef != NULL) {
+    aglSetWindowRef(context, MACwindowRef(window) );
+    }
+  else
 #endif
+  aglSetDrawable( context, GetWindowPort( MACwindowRef(window) ) );
+
 #else
   aglSetDrawable( context, GetWindowPort( fl_xid(window) ) );
 #endif

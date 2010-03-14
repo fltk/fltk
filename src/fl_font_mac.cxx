@@ -245,7 +245,7 @@ Fl_Font fl_font_ = 0;
 Fl_Fontsize fl_size_ = 0;
 
 
-void fl_font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_Device::font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) {
     fl_font_ = 0; 
     fl_size_ = 0;
@@ -408,7 +408,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
 
 void fl_draw(const char *str, int n, float x, float y);
 
-void fl_draw(const char* str, int n, int x, int y) {
+void Fl_Device::draw(const char* str, int n, int x, int y) {
   fl_draw(str, n, (float)x-0.0f, (float)y-0.5f);
 }
 
@@ -492,7 +492,7 @@ void fl_draw(const char *str, int n, float x, float y) {
 #endif
 }
 
-void fl_draw(int angle, const char *str, int n, int x, int y) {
+void Fl_Device::draw(int angle, const char *str, int n, int x, int y) {
 #if defined(__APPLE_COCOA__)
   CGContextSaveGState(fl_gc);
   CGContextTranslateCTM(fl_gc, x, y);

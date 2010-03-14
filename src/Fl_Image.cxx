@@ -31,6 +31,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Image.H>
+#include <FL/Fl_Printer.H>
 #include "flstring.h"
 
 #ifdef WIN32
@@ -434,6 +435,10 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
 #endif // !WIN32 && !USE_QUARTZ
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
+  if(fl_device->type() == Fl_Device::postscript_device) {
+    ((Fl_Virtual_Printer*)fl_device)->draw(this, XP, YP, WP, HP, cx, cy);
+    return;
+  }
   // Don't draw an empty image...
   if (!d() || !array) {
     draw_empty(XP, YP);

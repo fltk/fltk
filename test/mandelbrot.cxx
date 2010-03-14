@@ -27,6 +27,8 @@
 
 #include "mandelbrot_ui.h"
 #include <FL/fl_draw.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Printer.H>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -43,8 +45,30 @@ void set_idle() {
 
 static void window_callback(Fl_Widget*, void*) {exit(0);}
 
+static void print(Fl_Widget *o, void *data)
+{
+  Fl_Printer printer;
+  Fl_Window *win = o->window();
+  if(!win->visible()) return;
+  win->make_current();
+  uchar *image_data = fl_read_image(NULL, 0, 0, win->w(), win->h(), 0);
+  if( printer.start_job(1) ) return;
+  if( printer.start_page() ) return;
+  printer.scale(.7,.7);
+  fl_draw_image(image_data, 0,0, win->w(), win->h());
+  printer.end_page();
+  delete image_data;
+  printer.end_job();
+}
+
 int main(int argc, char **argv) {
   mbrot.make_window();
+    mbrot.window->begin();
+    Fl_Button* o = new Fl_Button(0, 0, 0, 0, NULL);
+    o->callback(print,NULL);
+    o->shortcut(FL_CTRL+'p');
+    mbrot.window->end();
+
   mbrot.d->X = -.75;
   mbrot.d->scale = 2.5;
   mbrot.update_label();

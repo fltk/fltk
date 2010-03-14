@@ -52,7 +52,7 @@ d->new_display();}
       }
       Fl_Box {} {
         label {left: click = zoom out, drag = zoom in
-right click: Julia set}
+right click: Julia set, ctrl-P: Print}
         xywh {240 50 190 30} labelsize 10 align 24 deactivate
       }
       Fl_Slider {} {
