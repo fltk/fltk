@@ -9,6 +9,11 @@
 #include "FL/fl_draw.H"
 #endif
 
+static void imgProviderReleaseData (void *info, const void *data, size_t size)
+{
+  free((void *)data);
+}
+
 void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
 {
 #ifdef WIN32
@@ -51,19 +56,23 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
 #ifdef WIN32
   fl_draw_image(baseAddress + (glw->h() - 1) * mByteWidth, x, y , glw->w(), glw->h(), bytesperpixel, - mByteWidth);
 #elif defined(__APPLE__)
-  CGColorSpaceRef cSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);  
-  CGContextRef bitmap = CGBitmapContextCreate(baseAddress, glw->w(), glw->h(), 8, mByteWidth, cSpace,  
-#if __BIG_ENDIAN__
-	  kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Big /* XRGB Big Endian */);
-#else
-	  kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little /* XRGB Little Endian */);
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
+#define kCGBitmapByteOrder32Big 0
+#define CGBitmapInfo CGImageAlphaInfo
 #endif
-  if(bitmap == NULL) return;
-  CFRelease(cSpace);
-  // Make an image out of our bitmap
-  CGImageRef image = CGBitmapContextCreateImage(bitmap);
+  CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();
+  CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, baseAddress, mByteWidth * glw->h(), imgProviderReleaseData);
+  CGImageRef image = CGImageCreate(glw->w(), glw->h(), 8, 8*bytesperpixel, mByteWidth, cSpace,
+#if __BIG_ENDIAN__
+		(CGBitmapInfo)(kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Big) /* XRGB Big Endian */
+#else
+		  kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little /* XRGB Little Endian */
+#endif
+   , provider, NULL, false, kCGRenderingIntentDefault);
+  CGColorSpaceRelease(cSpace);
+  CGDataProviderRelease(provider);
+  
   if(image == NULL) return;
-  CFRelease(bitmap);
   CGContextSaveGState(fl_gc);
   int w, h;
   this->printable_rect(&w, &h);
@@ -78,5 +87,7 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
 #else // FIXME Linux/Unix
   fl_draw_image(baseAddress + (glw->h() - 1) * mByteWidth, x, y , glw->w(), glw->h(), bytesperpixel, - mByteWidth);
 #endif // WIN32
+#ifndef __APPLE__
   free(baseAddress);
+#endif
 }
