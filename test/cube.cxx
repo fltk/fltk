@@ -182,8 +182,8 @@ int main(int argc, char **argv) {
   // added to demo printing
   form->begin();
   static Fl_Menu_Item	items[] = {
-    { "Menu", 0, 0, 0, FL_SUBMENU },
-    { "Print", 0, print_cb, 0, 0 },
+    { "Print", 0, 0, 0, FL_SUBMENU },
+    { "Print window", 0, print_cb, 0, 0 },
     { 0 },
     { 0 }
   };
