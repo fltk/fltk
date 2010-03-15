@@ -28,6 +28,10 @@
 #include <FL/Fl_Box.H>
 #include <FL/fl_draw.H>
 
+// Note: currently (March 2010) fl_draw_image() supports transparency with
+//	 alpha channel only on Apple (Mac OS X), but Fl_RGB_Image->draw()
+//	 supports transparency on all platforms !
+
 //
 //------- test the image drawing capabilities of this implementation ----------
 //
@@ -69,30 +73,44 @@ public:
   void draw() {
     Fl_Box::draw();
 
+    // top left: RGB
+
     int xx = x()+10, yy = y()+10;
     fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);
     fl_draw_image(img_rgb, xx+1, yy+1, 128, 128, 3);
     fl_draw("RGB", xx+134, yy+64);
 
+    // bottom left: RGBA
+
     xx = x()+10; yy = y()+10+134;
     fl_color(FL_BLACK); fl_rectf(xx, yy, 130, 130);
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 64, 64);
     fl_color(FL_WHITE); fl_rectf(xx+65, yy+65, 64, 64);
-     fl_draw_image(img_rgba, xx+1, yy+1, 128, 128, 4);
-    //i_rgba->draw(xx+1,yy+1);
+#ifdef __APPLE__
+    fl_draw_image(img_rgba, xx+1, yy+1, 128, 128, 4);	// Apple: okay w/alpha
+#else
+    i_rgba->draw(xx+1,yy+1);	// only Fl_RGB_Image->draw() works with alpha
+#endif
     fl_color(FL_BLACK); fl_draw("RGBA", xx+134, yy+64);
+    
+    // top right: Gray
 
     xx = x()+10+200; yy = y()+10;
     fl_color(FL_BLACK); fl_rect(xx, yy, 130, 130);
     fl_draw_image(img_gray, xx+1, yy+1, 128, 128, 1);
     fl_draw("Gray", xx+134, yy+64);
 
+    // bottom right: Gray+Alpha
+
     xx = x()+10+200; yy = y()+10+134;
     fl_color(FL_BLACK); fl_rectf(xx, yy, 130, 130);
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 64, 64);
     fl_color(FL_WHITE); fl_rectf(xx+65, yy+65, 64, 64);
-    // fl_draw_image(img_gray_a, xx+1, yy+1, 128, 128, 2);
-    i_ga->draw(xx+1,yy+1);
+#ifdef __APPLE__
+    fl_draw_image(img_gray_a, xx+1, yy+1, 128, 128, 2);	// Apple: okay w/alpha
+#else
+    i_ga->draw(xx+1,yy+1);	// only Fl_RGB_Image->draw() works with alpha
+#endif
     fl_color(FL_BLACK); fl_draw("Gray+Alpha", xx+134, yy+64);
   }
 };
