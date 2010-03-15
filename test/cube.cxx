@@ -38,7 +38,7 @@
 
 #if !HAVE_GL
 class cube_box : public Fl_Box {
-public:	
+public:
   double lasttime;
   int wire;
   double size;
@@ -175,7 +175,7 @@ void print_cb(Fl_Widget *w, void *data)
   printer.end_page();
   printer.end_job();
 }
-// end of printing demo 
+// end of printing demo
 
 int main(int argc, char **argv) {
   makeform(argv[0]);
@@ -188,10 +188,11 @@ int main(int argc, char **argv) {
     { 0 }
   };
   Fl_Sys_Menu_Bar *menubar_;
-  menubar_ = new Fl_Sys_Menu_Bar(0, 0, 40, 25);
+  menubar_ = new Fl_Sys_Menu_Bar(0, 0, 60, 20);
+  menubar_->box(FL_FLAT_BOX);
   menubar_->menu(items);
   form->end();
-  // end of printing demo 
+  // end of printing demo
   speed->bounds(4,0);
   speed->value(cube->speed = cube2->speed = 1.0);
   size->bounds(4,0.01);
