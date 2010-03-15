@@ -90,7 +90,6 @@ extern "C" {
 }
 
 
-#include <FL/Fl_Device.H>
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
@@ -99,8 +98,12 @@ extern "C" {
 // because Fl_Image.H, included by Fl_Sys_Menu_Bar.H, uses a private variable name id 
 // that's illegal under GCC 3 -x -objective-c++
 #define id id_
+// because Fl_Bitmap.H and Fl_Pixmap.H included by Fl_Printer.H don't compile with gcc3 and objective-c++
+#define Fl_Bitmap_H
+#define Fl_Pixmap_H
 #endif
 #include <FL/Fl_Sys_Menu_Bar.H>
+#include <FL/Fl_Printer.H>
 #ifdef id
 #undef id
 #endif
@@ -2985,11 +2988,10 @@ int MACscreen_init(XRectangle screens[])
                 	     nil];
     [NSApp  orderFrontStandardAboutPanelWithOptions:options];
   }
-#include <FL/Fl_Printer.H>
 - (void)printPanel
 {
   Fl_Printer printer;
-//  Fl_PSfile_Device printer;
+  //Fl_PSfile_Device printer;
   int w, h;
   Fl_Window *win = Fl::first_window();
   if(!win) return;
@@ -3040,7 +3042,7 @@ static void createAppleMenu(void)
   [menuItem setTarget:about];
   [appleMenu addItem:[NSMenuItem separatorItem]];
 // temporary for testing Fl_Printer. Contains also printPanel of class FLaboutItemTarget.
-  menuItem = [appleMenu addItemWithTitle:@"Print front window" action:@selector(printPanel) keyEquivalent:@"p"];
+  menuItem = [appleMenu addItemWithTitle:@"Print front window" action:@selector(printPanel) keyEquivalent:@""];
   [menuItem setTarget:about];
   [appleMenu setAutoenablesItems:NO];
   [menuItem setEnabled:YES];
