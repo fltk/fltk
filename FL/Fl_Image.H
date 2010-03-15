@@ -193,16 +193,21 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
   const uchar *array;
   int alloc_array; // Non-zero if array was allocated
 
+  private:
+
 #if defined(__APPLE__) || defined(WIN32)
-  void *id; // for internal use
-  void *mask; // for internal use (mask bitmap)
+  void *id_; // for internal use
+  void *mask_; // for internal use (mask bitmap)
 #else
-  unsigned id; // for internal use
-  unsigned mask; // for internal use (mask bitmap)
+  unsigned id_; // for internal use
+  unsigned mask_; // for internal use (mask bitmap)
 #endif // __APPLE__ || WIN32
+
+  public:
+
 /**  The constructor creates a new image from the specified data. */
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
-    Fl_Image(W,H,D), array(bits), alloc_array(0), id(0), mask(0) {data((const char **)&array, 1); ld(LD);}
+    Fl_Image(W,H,D), array(bits), alloc_array(0), id_(0), mask_(0) {data((const char **)&array, 1); ld(LD);}
   virtual ~Fl_RGB_Image();
   virtual Fl_Image *copy(int W, int H);
   Fl_Image *copy() { return copy(w(), h()); }

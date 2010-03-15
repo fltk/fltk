@@ -103,21 +103,21 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
   if (cy+H > h()) H = h()-cy;
   if (H <= 0) return;
-  if (!id) {
+  if (!id_) {
 #ifdef __APPLE_QUARTZ__
-    id = fl_create_offscreen_with_alpha(w(), h());
-    fl_begin_offscreen((Fl_Offscreen)id);
+    id_ = fl_create_offscreen_with_alpha(w(), h());
+    fl_begin_offscreen((Fl_Offscreen)id_);
     fl_draw_pixmap(data(), 0, 0, FL_GREEN);
     fl_end_offscreen();
 #else
-    id = fl_create_offscreen(w(), h());
-    fl_begin_offscreen((Fl_Offscreen)id);
+    id_ = fl_create_offscreen(w(), h());
+    fl_begin_offscreen((Fl_Offscreen)id_);
     uchar *bitmap = 0;
     fl_mask_bitmap = &bitmap;
     fl_draw_pixmap(data(), 0, 0, FL_BLACK);
     fl_mask_bitmap = 0;
     if (bitmap) {
-      mask = fl_create_bitmask(w(), h(), bitmap);
+      mask_ = fl_create_bitmask(w(), h(), bitmap);
       delete[] bitmap;
     }
     fl_end_offscreen();
@@ -125,20 +125,20 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   }
 
 #if defined(USE_X11)
-  if (mask) {
+  if (mask_) {
     // I can't figure out how to combine a mask with existing region,
     // so cut the image down to a clipped rectangle:
     int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
     cx += nx-X; X = nx;
     cy += ny-Y; Y = ny;
     // make X use the bitmap as a mask:
-    XSetClipMask(fl_display, fl_gc, mask);
+    XSetClipMask(fl_display, fl_gc, mask_);
     int ox = X-cx; if (ox < 0) ox += w();
     int oy = Y-cy; if (oy < 0) oy += h();
     XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
   }
-  fl_copy_offscreen(X, Y, W, H, id, cx, cy);
-  if (mask) {
+  fl_copy_offscreen(X, Y, W, H, id_, cx, cy);
+  if (mask_) {
     // put the old clip region back
     XSetClipOrigin(fl_display, fl_gc, 0, 0);
     fl_restore_clip();
@@ -188,23 +188,23 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
       fl_delete_offscreen(tmp_id);
     }
     else {
-      fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+      fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id_, cx, cy);
     }
   }
-  else if (mask) {
+  else if (mask_) {
     HDC new_gc = CreateCompatibleDC(fl_gc);
     int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)mask);
+    SelectObject(new_gc, (void*)mask_);
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
-    SelectObject(new_gc, (void*)id);
+    SelectObject(new_gc, (void*)id_);
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id_, cx, cy);
   }
 #elif defined(__APPLE_QUARTZ__)
-  fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+  fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id_, cx, cy);
 #else
 # error unsupported platform
 #endif
@@ -220,14 +220,14 @@ Fl_Pixmap::~Fl_Pixmap() {
 }
 
 void Fl_Pixmap::uncache() {
-  if (id) {
-    fl_delete_offscreen((Fl_Offscreen)id);
-    id = 0;
+  if (id_) {
+    fl_delete_offscreen((Fl_Offscreen)id_);
+    id_ = 0;
   }
 
-  if (mask) {
-    fl_delete_bitmask((Fl_Bitmask)mask);
-    mask = 0;
+  if (mask_) {
+    fl_delete_bitmask((Fl_Bitmask)mask_);
+    mask_ = 0;
   }
 }
 

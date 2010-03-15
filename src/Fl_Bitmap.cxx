@@ -52,12 +52,12 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
     *dst++ = ((reverse[*src & 0x0f] & 0xf0) | (reverse[(*src >> 4) & 0x0f] & 0x0f))^0xff;
   }
   CGDataProviderRef srcp = CGDataProviderCreateWithData( 0L, bmask, rowBytes*h, 0L);
-  CGImageRef id = CGImageMaskCreate( w, h, 1, 1, rowBytes, srcp, 0L, false);
+  CGImageRef id_ = CGImageMaskCreate( w, h, 1, 1, rowBytes, srcp, 0L, false);
   CGDataProviderRelease(srcp);
-  return (Fl_Bitmask)id;
+  return (Fl_Bitmask)id_;
 }
-void fl_delete_bitmask(Fl_Bitmask id) {
-  if (id) CGImageRelease((CGImageRef)id);
+void fl_delete_bitmask(Fl_Bitmask bm) {
+  if (bm) CGImageRelease((CGImageRef)bm);
 }
 #elif defined(WIN32) // Windows bitmask functions...
 // 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
@@ -69,7 +69,7 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
   uchar* newarray = new uchar[w2*h];
   const uchar* src = data;
   uchar* dest = newarray;
-  Fl_Bitmask id;
+  Fl_Bitmask bm;
   static uchar reverse[16] =	/* Bit reversal lookup table */
   	      { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
 		0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
@@ -81,18 +81,18 @@ static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
     dest += w2-w1;
   }
 
-  id = CreateBitmap(w, h, 1, 1, newarray);
+  bm = CreateBitmap(w, h, 1, 1, newarray);
 
   delete[] newarray;
 
-  return id;
+  return bm;
 }
 
 // 'fl_create_bitmask()' - Create an N-bit bitmap for masking...
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
   // this won't work when the user changes display mode during run or
   // has two screens with differnet depths
-  Fl_Bitmask id;
+  Fl_Bitmask bm;
   static uchar hiNibble[16] =
   { 0x00, 0x80, 0x40, 0xc0, 0x20, 0xa0, 0x60, 0xe0,
     0x10, 0x90, 0x50, 0xd0, 0x30, 0xb0, 0x70, 0xf0 };
@@ -141,10 +141,10 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
     dst += pad;
   }
 
-  id = CreateBitmap(w, h, np, bpp, newarray);
+  bm = CreateBitmap(w, h, np, bpp, newarray);
   delete[] newarray;
 
-  return id;
+  return bm;
 }
 
 #if 0 // This doesn't appear to be used anywhere...
@@ -156,7 +156,7 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data, int for_mask) {
   uchar* newarray = new uchar[w2*h];
   const uchar* src = data;
   uchar* dest = newarray;
-  Fl_Bitmask id;
+  Fl_Bitmask bm;
   static uchar reverse[16] =	/* Bit reversal lookup table */
   	      { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
 		0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
@@ -168,11 +168,11 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data, int for_mask) {
     dest += w2-w1;
   }
 
-  id = CreateBitmap(w, h, 1, 1, newarray);
+  bm = CreateBitmap(w, h, 1, 1, newarray);
 
   delete[] newarray;
 
-  return (id);
+  return bm;
 }
 #  endif // 0
 
@@ -193,7 +193,7 @@ void fl_delete_bitmask(Fl_Bitmask bm) {
 
 // Create a 1-bit mask used for alpha blending
 Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) {
-  Fl_Bitmask mask;
+  Fl_Bitmask bm;
   int bmw = (w + 7) / 8;
   uchar *bitmap = new uchar[bmw * h];
   uchar *bitptr, bit;
@@ -258,10 +258,10 @@ Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) 
       }
     }
 
-  mask = fl_create_bitmask(w, h, bitmap);
+  bm = fl_create_bitmask(w, h, bitmap);
   delete[] bitmap;
 
-  return (mask);
+  return (bm);
 }
 
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
@@ -286,9 +286,9 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (H <= 0) return;
 
 #if defined(USE_X11)
-  if (!id) id = fl_create_bitmask(w(), h(), array);
+  if (!id_) id_ = fl_create_bitmask(w(), h(), array);
 
-  XSetStipple(fl_display, fl_gc, id);
+  XSetStipple(fl_display, fl_gc, id_);
   int ox = X-cx; if (ox < 0) ox += w();
   int oy = Y-cy; if (oy < 0) oy += h();
   XSetTSOrigin(fl_display, fl_gc, ox, oy);
@@ -296,7 +296,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   XFillRectangle(fl_display, fl_window, fl_gc, X, Y, W, H);
   XSetFillStyle(fl_display, fl_gc, FillSolid);
 #elif defined(WIN32)
-  if (!id) id = fl_create_bitmap(w(), h(), array);
+  if (!id_) id_ = fl_create_bitmap(w(), h(), array);
 
   typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
   static fl_transp_func fl_TransparentBlt;
@@ -326,7 +326,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     fl_color(save_c); // back to bitmap's color
     tempdc = CreateCompatibleDC(fl_gc);
     save = SaveDC(tempdc);
-    SelectObject(tempdc, (HGDIOBJ)id);
+    SelectObject(tempdc, (HGDIOBJ)id_);
     SelectObject(fl_gc, fl_brush()); // use bitmap's desired color
     BitBlt(fl_gc, 0, 0, W, H, tempdc, 0, 0, 0xE20746L); // draw bitmap to offscreen
     fl_end_offscreen(); // offscreen data is in tmp_id
@@ -338,7 +338,7 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   else { // algorithm for bitmap output to display
     tempdc = CreateCompatibleDC(fl_gc);
     save = SaveDC(tempdc);
-    SelectObject(tempdc, (HGDIOBJ)id);
+    SelectObject(tempdc, (HGDIOBJ)id_);
     SelectObject(fl_gc, fl_brush());
     // secret bitblt code found in old MSWindows reference manual:
     BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
@@ -346,11 +346,11 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
 #elif defined(__APPLE_QUARTZ__)
-  if (!id) id = fl_create_bitmask(w(), h(), array);
-  if (id && fl_gc) {
+  if (!id_) id_ = fl_create_bitmask(w(), h(), array);
+  if (id_ && fl_gc) {
     CGRect rect = { { X, Y }, { W, H } };
     Fl_X::q_begin_image(rect, cx, cy, w(), h());
-    CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
+    CGContextDrawImage(fl_gc, rect, (CGImageRef)id_);
     Fl_X::q_end_image();
   }
 #else
@@ -368,13 +368,13 @@ Fl_Bitmap::~Fl_Bitmap() {
 }
 
 void Fl_Bitmap::uncache() {
-  if (id) {
+  if (id_) {
 #if defined(__APPLE__) && defined(__APPLE_COCOA__)
-    fl_delete_bitmask((Fl_Bitmask)id);
+    fl_delete_bitmask((Fl_Bitmask)id_);
 #else
-    fl_delete_bitmask((Fl_Offscreen)id);
+    fl_delete_bitmask((Fl_Offscreen)id_);
 #endif
-    id = 0;
+    id_ = 0;
   }
 }
 

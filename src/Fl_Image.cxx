@@ -181,19 +181,19 @@ Fl_RGB_Image::~Fl_RGB_Image() {
 
 void Fl_RGB_Image::uncache() {
 #ifdef __APPLE_QUARTZ__
-  if (id) {
-    CGImageRelease((CGImageRef)id);
-    id = 0;
+  if (id_) {
+    CGImageRelease((CGImageRef)id_);
+    id_ = 0;
   }
 #else
-  if (id) {
-    fl_delete_offscreen((Fl_Offscreen)id);
-    id = 0;
+  if (id_) {
+    fl_delete_offscreen((Fl_Offscreen)id_);
+    id_ = 0;
   }
 
-  if (mask) {
-    fl_delete_bitmask((Fl_Bitmask)mask);
-    mask = 0;
+  if (mask_) {
+    fl_delete_bitmask((Fl_Bitmask)mask_);
+    mask_ = 0;
   }
 #endif
 }
@@ -455,7 +455,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
   if (cy+H > h()) H = h()-cy;
   if (H <= 0) return;
-  if (!id) {
+  if (!id_) {
 #ifdef __APPLE_QUARTZ__
     CGColorSpaceRef lut = 0;
     if (d()<=2)
@@ -463,29 +463,29 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     else
       lut = CGColorSpaceCreateDeviceRGB();
     CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, w()*h()*d(), 0L);
-    id = CGImageCreate( w(), h(), 8, d()*8, ld()?ld():w()*d(),
+    id_ = CGImageCreate( w(), h(), 8, d()*8, ld()?ld():w()*d(),
         lut, (d()&1)?kCGImageAlphaNone:kCGImageAlphaLast,
         src, 0L, false, kCGRenderingIntentDefault);
     CGColorSpaceRelease(lut);
     CGDataProviderRelease(src);
 #elif defined(WIN32)
-    id = fl_create_offscreen(w(), h());
+    id_ = fl_create_offscreen(w(), h());
     if ((d() == 2 || d() == 4) && fl_can_do_alpha_blending()) {
-      fl_begin_offscreen((Fl_Offscreen)id);
+      fl_begin_offscreen((Fl_Offscreen)id_);
       fl_draw_image(array, 0, 0, w(), h(), d()|FL_IMAGE_WITH_ALPHA, ld());
       fl_end_offscreen();
     } else {
-      fl_begin_offscreen((Fl_Offscreen)id);
+      fl_begin_offscreen((Fl_Offscreen)id_);
       fl_draw_image(array, 0, 0, w(), h(), d(), ld());
       fl_end_offscreen();
       if (d() == 2 || d() == 4) {
-        mask = fl_create_alphamask(w(), h(), d(), ld(), array);
+        mask_ = fl_create_alphamask(w(), h(), d(), ld(), array);
       }
     }
 #else
     if (d() == 1 || d() == 3) {
-      id = fl_create_offscreen(w(), h());
-      fl_begin_offscreen((Fl_Offscreen)id);
+      id_ = fl_create_offscreen(w(), h());
+      fl_begin_offscreen((Fl_Offscreen)id_);
       fl_draw_image(array, 0, 0, w(), h(), d(), ld());
       fl_end_offscreen();
     }
@@ -493,23 +493,23 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   }
 
 #if defined(USE_X11)
-  if (id) {
-    if (mask) {
+  if (id_) {
+    if (mask_) {
       // I can't figure out how to combine a mask with existing region,
       // so cut the image down to a clipped rectangle:
       int nx, ny; fl_clip_box(X,Y,W,H,nx,ny,W,H);
       cx += nx-X; X = nx;
       cy += ny-Y; Y = ny;
       // make X use the bitmap as a mask:
-      XSetClipMask(fl_display, fl_gc, mask);
+      XSetClipMask(fl_display, fl_gc, mask_);
       int ox = X-cx; if (ox < 0) ox += w();
       int oy = Y-cy; if (oy < 0) oy += h();
       XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
     }
 
-    fl_copy_offscreen(X, Y, W, H, id, cx, cy);
+    fl_copy_offscreen(X, Y, W, H, id_, cx, cy);
 
-    if (mask) {
+    if (mask_) {
       // put the old clip region back
       XSetClipOrigin(fl_display, fl_gc, 0, 0);
       fl_restore_clip();
@@ -519,25 +519,25 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
     alpha_blend(this, X, Y, W, H, cx, cy);
   }
 #elif defined(WIN32)
-  if (mask) {
+  if (mask_) {
     HDC new_gc = CreateCompatibleDC(fl_gc);
     int save = SaveDC(new_gc);
-    SelectObject(new_gc, (void*)mask);
+    SelectObject(new_gc, (void*)mask_);
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCAND);
-    SelectObject(new_gc, (void*)id);
+    SelectObject(new_gc, (void*)id_);
     BitBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, SRCPAINT);
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else if (d()==2 || d()==4) {
-    fl_copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+    fl_copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)id_, cx, cy);
   } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id, cx, cy);
+    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)id_, cx, cy);
   }
 #elif defined(__APPLE_QUARTZ__)
-  if (id && fl_gc) {
+  if (id_ && fl_gc) {
     CGRect rect = { { X, Y }, { W, H } };
     Fl_X::q_begin_image(rect, cx, cy, w(), h());
-    CGContextDrawImage(fl_gc, rect, (CGImageRef)id);
+    CGContextDrawImage(fl_gc, rect, (CGImageRef)id_);
     Fl_X::q_end_image();
   }
 #else
