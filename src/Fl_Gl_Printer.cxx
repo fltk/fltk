@@ -9,10 +9,12 @@
 #include "FL/fl_draw.H"
 #endif
 
+#if defined(__APPLE__)
 static void imgProviderReleaseData (void *info, const void *data, size_t size)
 {
   free((void *)data);
 }
+#endif
 
 void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
 {
@@ -23,10 +25,11 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
   CGContextRef save_gc = fl_gc;
   const int bytesperpixel = 4;
 #else
-  _XGC *save_gc = fl_gc;		// FIXME Linux/Unix
+  _XGC *save_gc = fl_gc;
   const int bytesperpixel = 3;
 #endif
   glw->redraw();
+  fl_gc = NULL;
   Fl::check();
   glw->make_current();
   // select front buffer as our source for pixel data
@@ -53,9 +56,7 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
 	       baseAddress);
   glPopClientAttrib();
   fl_gc = save_gc;
-#ifdef WIN32
-  fl_draw_image(baseAddress + (glw->h() - 1) * mByteWidth, x, y , glw->w(), glw->h(), bytesperpixel, - mByteWidth);
-#elif defined(__APPLE__)
+#if defined(__APPLE__)
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
 #define kCGBitmapByteOrder32Big 0
 #define CGBitmapInfo CGImageAlphaInfo
@@ -69,9 +70,6 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
 		  kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little /* XRGB Little Endian */
 #endif
    , provider, NULL, false, kCGRenderingIntentDefault);
-  CGColorSpaceRelease(cSpace);
-  CGDataProviderRelease(provider);
-  
   if(image == NULL) return;
   CGContextSaveGState(fl_gc);
   int w, h;
@@ -83,11 +81,11 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
   CGContextDrawImage(fl_gc, rect, image);
   Fl_X::q_end_image();
   CGContextRestoreGState(fl_gc);
-  CFRelease(image);
-#else // FIXME Linux/Unix
+  CGImageRelease(image);
+  CGColorSpaceRelease(cSpace);
+  CGDataProviderRelease(provider);  
+#else
   fl_draw_image(baseAddress + (glw->h() - 1) * mByteWidth, x, y , glw->w(), glw->h(), bytesperpixel, - mByteWidth);
-#endif // WIN32
-#ifndef __APPLE__
   free(baseAddress);
-#endif
+#endif // __APPLE__
 }
