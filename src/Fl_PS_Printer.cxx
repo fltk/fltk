@@ -178,8 +178,11 @@ static const char * prolog =
 // width (string) x y show_pos_width
 "/show_pos_width {GS moveto dup stringwidth pop 3 2 roll exch div -1 matrix scale concat "
 "show GR } bind def\n"
-//"/show_pos_width {GS moveto dup stringwidth pop 3 2 roll exch div dup /sx exch def -1 matrix scale concat "
-//"show 6 FS sx 10 string cvs show GR } bind def\n" // displays also scaling value
+
+//"/show_pos_width {GS moveto dup stringwidth pop 3 2 roll exch div "
+//"dup 0.85 lt {pop 0.85} if "
+//"dup /sx exch def -1 matrix scale concat "
+//"show 8 FS sx 10 string cvs 0 4 getinterval 0 -3 rmoveto show GR } bind def\n" // displays also scaling value
 
 ;
 
@@ -1183,6 +1186,14 @@ int Fl_PSfile_Device::start_job (int pagecount, enum Page_Format format, enum Pa
   output = fopen(fnfc.filename(), "w");
   if(output == NULL) return 1;
   ps_filename_ = strdup(fnfc.filename());
+  return start_postscript(pagecount, format, layout);
+}
+
+int Fl_PSfile_Device::start_job (const char *fname, int pagecount, enum Page_Format format, enum Page_Layout layout)
+{
+  output = fopen(fname, "w");
+  if(output == NULL) return 1;
+  ps_filename_ = strdup(fname);
   return start_postscript(pagecount, format, layout);
 }
 

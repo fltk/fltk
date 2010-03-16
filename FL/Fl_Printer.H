@@ -66,9 +66,6 @@ public:
      /**
       @brief Starts a print job.
       *
-      Fully implemented for Mac OS X and MSWindows. For other platforms, temporarily
-      implemented as an Fl_PSfile_Device, that is, graphics go to an A4-sized local PostScript file,
-      and frompage/topage arguments are ignored.
       @param[in] pagecount the total number of pages of the job
       @param[out] frompage if non-null, *frompage is set to the first page the user wants printed
       @param[out] topage if non-null, *topage is set to the last page the user wants printed
@@ -511,16 +508,26 @@ public:
      @return 0 iff OK
      */
     int start_job(int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
+    
+    /**
+     @brief Begins the session where all graphics will go to named PostScript file.
+     *
+     @param fname The name of the output local PostScript file.
+     @param pagecount The total number of pages to be created.
+     @param format Desired page format.
+     @param layout Desired page layout.
+     @return 0 iff OK
+     */
+    int start_job(const char *fname, int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
+    
   };
 
 #ifndef FL_DOXYGEN
 
 #ifdef __APPLE__
-class Fl_Printer : public Fl_Quartz_Printer {
-};
+typedef Fl_Quartz_Printer Fl_Printer;
 #elif defined(WIN32)
-class Fl_Printer : public Fl_GDI_Printer {
-};
+typedef Fl_GDI_Printer Fl_Printer;
 #else
 class Fl_PS_Printer : public Fl_PSfile_Device {
 public:
@@ -528,8 +535,7 @@ public:
   ~Fl_PS_Printer(void) {};
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
 };
-class Fl_Printer : public Fl_PS_Printer {
-};
+typedef Fl_PS_Printer Fl_Printer;
 
 #endif  // __APPLE__
 
