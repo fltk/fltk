@@ -42,7 +42,7 @@
  * - Shortcut Characters should be English alphanumeric only, no modifiers yet
  * - no disable main menus
  * - changes to menubar in run-time don't update! 
- *     (disable, etc. - toggle and readio button do!)
+ *     (disable, etc. - toggle and radio button do!)
  *
  * No care was taken to clean up the menu bar after destruction!
  * ::menu(bar) should only be called once!
@@ -52,7 +52,7 @@
  * a bundle for the System Menu Bar (and maybe other features) to work!
  */
 
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(FL_DOXYGEN)
 
 #include <FL/x.H>
 #include <FL/Fl.H>
@@ -69,7 +69,7 @@
 
 typedef const Fl_Menu_Item *pFl_Menu_Item;
 
-/**
+/*
  * copy the text of a menuitem into a buffer.
  * Skip all '&' which would mark the shortcut in FLTK
  * Skip all Mac control characters ('(', '<', ';', '^', '!' )
@@ -91,7 +91,7 @@ typedef const Fl_Menu_Item *pFl_Menu_Item;
   *dst = 0;
 }
 
-/**
+/*
  * append a marker to identify the menu font style
  * <B, I, U, O, and S
  */
@@ -120,7 +120,7 @@ static void catMenuFont( const Fl_Menu_Item *m, char *dst )
       ; // not supported
 } 
 
-/**
+/*
  * append a marker to identify the menu shortcut
  * <B, I, U, O, and S 
 enum {
@@ -206,9 +206,9 @@ static void setMenuFlags( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
 }
 
 
-#ifdef __APPLE_COCOA__
+#if defined(__APPLE_COCOA__) || defined(FL_DOXYGEN)
 
-/**
+/*
  * create a sub menu for a specific menu handle
  */
 static void createSubMenu( void * mh, pFl_Menu_Item &mm )
@@ -288,7 +288,7 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
 }
 
 /**
- * create a system menu bar using the given list of menu structs
+ * @brief create a system menu bar using the given list of menu structs
  *
  * \author Matthias Melcher
  *
@@ -302,7 +302,9 @@ void Fl_Sys_Menu_Bar::menu(const Fl_Menu_Item *m)
 }
 
 /**
- * Adds to the system menu bar a new menu item, with a title string, shortcut int,
+ * @brief add to the system menu bar a new menu item
+ *
+ * add to the system menu bar a new menu item, with a title string, shortcut int,
  * callback, argument to the callback, and flags.
  *
  * @see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags) 
@@ -316,7 +318,7 @@ int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void 
 }
 
 /**
- * remove an item from the system menu bar
+ * @brief remove an item from the system menu bar
  *
  * @param rank		the rank of the item to remove
  */
@@ -328,7 +330,7 @@ void Fl_Sys_Menu_Bar::remove(int rank)
 
 
 /**
- * rename an item from the system menu bar
+ * @brief rename an item from the system menu bar
  *
  * @param rank		the rank of the item to rename
  * @param name		the new item name as a UTF8 string
@@ -349,7 +351,7 @@ static void catMenuFlags( const Fl_Menu_Item *m, char *dst )
     strcat( dst, "(" );
 }
 
- /**
+ /*
  * create a sub menu for a specific menu handle
  */
 static void createSubMenu( MenuHandle mh, int &cnt, pFl_Menu_Item &mm )
@@ -396,7 +398,7 @@ static void createSubMenu( MenuHandle mh, int &cnt, pFl_Menu_Item &mm )
 }
 
 
-/**
+/*
  * create a system menu bar using the given list of menu structs
  *
  * \author Matthias Melcher

@@ -31,26 +31,38 @@
 #include "Fl_Menu_Bar.H"
 #include "x.H"
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(FL_DOXYGEN)
 
+/**
+ @brief A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
+ *
+ * On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
+ */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
   void draw();
 public:
+  /**
+   @brief The constructor.
+   *
+   * On Mac OS X, all arguments are unused. On other platforms they are used as by Fl_Menu_Bar::Fl_Menu_Bar().
+   */
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0)
       : Fl_Menu_Bar(x,y,w,h,l) {
     deactivate();			// don't let the old area take events
     fl_sys_menu_bar = this;
   }
   void menu(const Fl_Menu_Item *m);
-#ifdef __APPLE_COCOA__
+#if defined(__APPLE_COCOA__) || defined(FL_DOXYGEN)
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
   void remove(int n);
   void replace(int rank, const char *name);
+#if ! defined(FL_DOXYGEN)
   enum menuOrItemOperation { itemAtIndex, setKeyEquivalent, setKeyEquivalentModifierMask, setState, initWithTitle,
     numberOfItems, setSubmenu, setEnabled, addSeparatorItem, setTitle, removeItem, addNewItem, renameItem };
   // function doMenuOrItemOperation is in file Fl_cocoa.mm because it contains objective-c code
   static void *doMenuOrItemOperation( menuOrItemOperation operation, ...);
+#endif
 #endif
 };
 
@@ -58,9 +70,9 @@ public:
 
 typedef Fl_Menu_Bar Fl_Sys_Menu_Bar;
 
-#endif
+#endif // defined(__APPLE__) || defined(FL_DOXYGEN)
 
-#endif
+#endif // Fl_Sys_Menu_Bar_H
 
 //
 // End of "$Id$".

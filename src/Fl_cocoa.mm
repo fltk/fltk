@@ -78,10 +78,6 @@
  
  */
 
-
-// we don't need the following definition because we deliver only
-// true mouse moves.  On very slow systems however, this flag may
-// still be useful.
 #ifndef FL_DOXYGEN
 
 #define CONSOLIDATE_MOTION 0
@@ -3118,18 +3114,6 @@ static void createAppleMenu(void)
 }
 @end
 
-
-/** 
- * Mac OS: attaches a callback to the "About myprog" item of the system application menu.
- * \note  #include <FL/x.H>
- *
- * \author Manolo Gouy
- *
- * \param[in] cb   a callback that will be called by "About myprog" menu item
- *		   with NULL 1st argument.
- * \param[in] user_data   a pointer transmitted as 2nd argument to the callback.
- * \param[in] shortcut    optional shortcut to attach to the "About myprog" menu item (e.g., FL_META+'a')
- */
 void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
 {
   NSAutoreleasePool *localPool;

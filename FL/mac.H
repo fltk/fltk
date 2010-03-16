@@ -161,7 +161,6 @@ extern void MacUnmapWindow(Fl_Window*,void *);
 extern WindowRef MACwindowRef(Fl_Window *w);
 extern Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h);
 extern void MacCollapseWindow(Window w);
-extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0);
 #else
 extern void MacDestroyWindow(Fl_Window*,WindowPtr);
 extern void MacMapWindow(Fl_Window*,WindowPtr);
@@ -169,7 +168,6 @@ extern void MacUnmapWindow(Fl_Window*,WindowPtr);
 #endif
 
 extern int MacUnlinkWindow(Fl_X*,Fl_X*start=0L);
-extern void fl_open_callback(void (*cb)(const char *));
 
 inline Window fl_xid(const Fl_Window*w) 
 {
@@ -205,6 +203,24 @@ extern void fl_open_callback(void (*cb)(const char *));
 
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 #endif // FL_DOXYGEN
+
+#if defined(__APPLE_COCOA__) || defined(FL_DOXYGEN)
+/** \defgroup group_macosx Mac OS X-specific functions
+ @{ */
+
+/** 
+ * \brief Mac OS X: attaches a callback to the "About myprog" item of the system application menu.
+ * \note  #include <FL/x.H>
+ *
+ * \param cb   a callback that will be called by "About myprog" menu item
+ *		   with NULL 1st argument.
+ * \param user_data   a pointer transmitted as 2nd argument to the callback.
+ * \param shortcut    optional shortcut to attach to the "About myprog" menu item (e.g., FL_META+'a')
+ */
+extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0);
+/** @} */
+#endif
+
 //
 // End of "$Id$".
 //
