@@ -52,7 +52,16 @@ void Fl_Virtual_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_
 #else
   _XGC *save_gc = fl_gc;	// FIXME
 #endif
-  widget->draw();
+  // we do some trickery to recognize OpenGL windows and draw them via a plugin
+  int drawn_by_plugin = 0;
+  if (widget->as_gl_window()) {
+    Fl_Plugin_Manager pm("fltk:device");  
+    Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
+    if (pi) drawn_by_plugin = pi->print(this, widget, 0, 0);
+  }
+  if (!drawn_by_plugin)
+    widget->draw(); 
+  
   fl_gc = save_gc;
   if (is_window) fl_pop_clip();
   // find subwindows of widget and print them

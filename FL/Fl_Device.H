@@ -7,6 +7,7 @@
 #define Fl_Device_H
 
 #include <FL/x.H>
+#include <FL/Fl_Plugin.H>
 #ifdef WIN32
 #include <Commdlg.h>
 #elif defined(__APPLE__)
@@ -19,6 +20,7 @@ class Fl_RGB_Image;
 class Fl_Pixmap;
 class Fl_Bitmap;
 class Fl_Display;
+class Fl_Virtual_Printer;
 extern Fl_Display *fl_display_device;
 typedef void (*Fl_Draw_Image_Cb)(void* ,int,int,int,uchar*);
 
@@ -199,5 +201,19 @@ public:
   Fl_Xlib_Display() { type_ = xlib_display; };
 };
 #endif
+
+/*
+ This plugin socket allows the integration of new device drivers for special
+ window or screen types. It is currently used to provide an automated printing
+ service for OpenGL windows, if linked with fltk_gl.
+ */
+class Fl_Device_Plugin : public Fl_Plugin {
+public:
+  Fl_Device_Plugin(const char *name)
+  : Fl_Plugin(klass(), name) { }
+  virtual const char *klass() { return "fltk:device"; }
+  virtual const char *name() = 0;
+  virtual int print(Fl_Virtual_Printer*, Fl_Widget*, int x, int y) { return 0; }
+};
 
 #endif // Fl_Device_H

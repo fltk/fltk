@@ -421,7 +421,7 @@ public:
       \note This method is provided to avoid dynamic_cast.
       \todo More documentation ...
    */
-  virtual Fl_Window* as_window() const { return (Fl_Window*)this; }
+  virtual Fl_Window* as_window() { return this; }
 
   // for back-compatibility only:
   /**

@@ -930,16 +930,23 @@ public:
       \note This method is provided to avoid dynamic_cast.
       \todo More documentation ...
    */
-  virtual Fl_Group* as_group() const {return 0;}
+  virtual Fl_Group* as_group() {return 0;}
 
   /** Returns an Fl_Window pointer if this widget is an Fl_Window.
-  
-      \retval NULL if this widget is not derived from Fl_Window.
-      \note This method is provided to avoid dynamic_cast.
-      \todo More documentation ...
+   
+   \retval NULL if this widget is not derived from Fl_Window.
+   \note This method is provided to avoid dynamic_cast.
+   \todo More documentation ...
    */
-  virtual Fl_Window* as_window() const {return 0;}
-
+  virtual Fl_Window* as_window() {return 0;}
+  
+  /** Returns an Fl_Gl_Window pointer if this widget is an Fl_Gl_Window.   
+   \retval NULL if this widget is not derived from Fl_Gl_Window.
+   \note This method is provided to avoid dynamic_cast.
+   \todo More documentation ...
+   */
+  virtual class Fl_Gl_Window* as_gl_window() {return 0;}
+  
   /** For back compatibility only.
       \deprecated Use selection_color() instead.
   */

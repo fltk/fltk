@@ -89,3 +89,25 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
   free(baseAddress);
 #endif // __APPLE__
 }
+
+/*
+ This class will make sure that OpenGL printing is availbale if fltk_gl
+ was linked to the programm.
+ */
+class Fl_Gl_Device_Plugin : public Fl_Device_Plugin {
+public:
+  Fl_Gl_Device_Plugin() : Fl_Device_Plugin(name()) { }
+  virtual const char *name() { return "opengl.device.fltk.org"; }
+  virtual int print(Fl_Virtual_Printer *p, Fl_Widget *w, int x, int y) {
+    Fl_Gl_Window *glw = w->as_gl_window();
+    if (!glw) return 0;
+    // FIXME: this is a dangerous cast! Remove Fl_Gl_Printer entirely and add 
+    // FIXME: a static function (may be a friend of Fl_Printer).
+    Fl_Gl_Printer *glp = (Fl_Gl_Printer*)p;
+    glp->print_gl_window(glw, x, y);
+    return 1; 
+  }
+};
+
+static Fl_Gl_Device_Plugin Gl_Device_Plugin;
+

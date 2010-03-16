@@ -182,7 +182,7 @@ public:
       \note This method is provided to avoid dynamic_cast.
       \todo More documentation ...
    */
-  virtual Fl_Group* as_group() const { return (Fl_Group*)this; }
+  virtual Fl_Group* as_group() { return this; }
 
   // back compatibility functions:
 

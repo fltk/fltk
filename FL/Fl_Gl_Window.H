@@ -205,6 +205,13 @@ public:
   */
   void make_overlay_current();
 
+  /** Returns an Fl_Gl_Window pointer if this widget is an Fl_Gl_Window.   
+   \retval NULL if this widget is not derived from Fl_Gl_Window.
+   \note This method is provided to avoid dynamic_cast.
+   \todo More documentation ...
+   */
+  virtual Fl_Gl_Window* as_gl_window() {return this;}
+  
   ~Fl_Gl_Window();
   /**
     Creates a new Fl_Gl_Window widget using the given size, and label string. 
