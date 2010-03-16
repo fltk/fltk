@@ -94,19 +94,8 @@ extern "C" {
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
-#if __GNUC__ == 3 
-// because Fl_Image.H, included by Fl_Sys_Menu_Bar.H, uses a private variable name id 
-// that's illegal under GCC 3 -x -objective-c++
-#define id id_
-// because Fl_Bitmap.H and Fl_Pixmap.H included by Fl_Printer.H don't compile with gcc3 and objective-c++
-#define Fl_Bitmap_H
-#define Fl_Pixmap_H
-#endif
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/Fl_Printer.H>
-#ifdef id
-#undef id
-#endif
 #include <FL/Fl_Input_.H>
 #include <stdio.h>
 #include <stdlib.h>
