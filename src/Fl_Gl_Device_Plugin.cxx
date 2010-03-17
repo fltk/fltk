@@ -1,8 +1,9 @@
 /*
- *  Fl_Gl_Printer.cxx
+ *  Fl_Gl_Device_Plugin.cxx
  */
 
-#include "FL/Fl_Gl_Printer.H"
+#include <FL/Fl_Printer.H>
+#include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Choice.H"
 #include "FL/Fl.H"
 #ifndef __APPLE__
@@ -16,7 +17,7 @@ static void imgProviderReleaseData (void *info, const void *data, size_t size)
 }
 #endif
 
-void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
+static void print_gl_window(Fl_Virtual_Printer *printer, Fl_Gl_Window *glw, int x, int y)
 {
 #ifdef WIN32
   HDC save_gc = fl_gc;
@@ -73,7 +74,7 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
   if(image == NULL) return;
   CGContextSaveGState(fl_gc);
   int w, h;
-  this->printable_rect(&w, &h);
+  printer->printable_rect(&w, &h);
   CGContextTranslateCTM(fl_gc, 0, h);
   CGContextScaleCTM(fl_gc, 1.0f, -1.0f);
   CGRect rect = { { x, h - y - glw->h() }, { glw->w(), glw->h() } };
@@ -90,7 +91,7 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
 #endif // __APPLE__
 }
 
-/*
+/**
  This class will make sure that OpenGL printing is available if fltk_gl
  was linked to the program.
  */
@@ -101,10 +102,7 @@ public:
   virtual int print(Fl_Virtual_Printer *p, Fl_Widget *w, int x, int y) {
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
-    // FIXME: this is a dangerous cast! Remove Fl_Gl_Printer entirely and add 
-    // FIXME: a static function (may be a friend of Fl_Printer).
-    Fl_Gl_Printer *glp = (Fl_Gl_Printer*)p;
-    glp->print_gl_window(glw, x, y);
+    print_gl_window(p, glw, x, y);
     return 1; 
   }
 };

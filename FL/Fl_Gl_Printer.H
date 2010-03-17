@@ -6,7 +6,7 @@
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Gl_Window.H>
 
-/**
+/*
  * @brief To print Fl_Gl_Window's.
  *
  Because Fl_Printer::print_widget() prints only the background of Fl_Gl_Window's,
@@ -14,12 +14,12 @@
  */
 class Fl_Gl_Printer : public Fl_Printer {
   public:
-  /** 
+  /*
    @brief The constructor.
    */
   Fl_Gl_Printer(void) : Fl_Printer() {}
 
-  /**
+  /*
    @brief Prints an Fl_Gl_Window.
    *
    Under MSWindows, take care to move the print dialog window(s) out of the target OpenGL window(s)

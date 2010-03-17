@@ -203,7 +203,7 @@ public:
 };
 #endif
 
-/*
+/**
  This plugin socket allows the integration of new device drivers for special
  window or screen types. It is currently used to provide an automated printing
  service for OpenGL windows, if linked with fltk_gl.
