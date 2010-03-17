@@ -497,8 +497,8 @@ int create_new_database(const char *filename)
   
   Fl_Target_Prefs fltk_gl_lib(libs_db.add_with_key("name", "fltkgl")); {
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Choice.cxx");
+    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Device_Plugin.cxx");
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Overlay.cxx");
-    fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Printer.cxx");
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Window.cxx");
     fltk_gl_lib.add_source(files_db, "src/freeglut_geometry.cxx");
     fltk_gl_lib.add_source(files_db, "src/freeglut_stroke_mono_roman.cxx");
