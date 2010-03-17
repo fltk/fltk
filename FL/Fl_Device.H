@@ -15,6 +15,7 @@
 #include <stdio.h>
 #endif
 
+class Fl_Widget;
 class Fl_Image;
 class Fl_RGB_Image;
 class Fl_Pixmap;
