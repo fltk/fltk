@@ -28,6 +28,10 @@
 #include "flstring.h"
 #if HAVE_GL
 
+extern int fl_gl_load_plugin;
+
+static int temp = fl_gl_load_plugin;
+
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include "Fl_Gl_Choice.H"

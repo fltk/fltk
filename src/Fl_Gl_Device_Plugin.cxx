@@ -29,8 +29,15 @@ static void print_gl_window(Fl_Virtual_Printer *printer, Fl_Gl_Window *glw, int 
   _XGC *save_gc = fl_gc;
   const int bytesperpixel = 3;
 #endif
-  glw->redraw();
   fl_gc = NULL;
+#ifdef WIN32
+  Fl::check();
+  Fl_Window *win = (Fl_Window*)glw;
+  while( win->window() ) win = win->window();
+  win->redraw();
+#else
+  glw->redraw();
+#endif
   Fl::check();
   glw->make_current();
   // select front buffer as our source for pixel data
@@ -109,3 +116,6 @@ public:
 
 static Fl_Gl_Device_Plugin Gl_Device_Plugin;
 
+// The purpose of this variable, used in Fl_Gl_Window.cxx, is only to force this file to be loaded
+// whenever Fl_Gl_Window.cxx is loaded, that is, whenever fltk_gl is.
+FL_EXPORT int fl_gl_load_plugin = 0;
