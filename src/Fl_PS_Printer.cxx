@@ -176,13 +176,10 @@ static const char * prolog =
 // show at position with desired width
 // usage:
 // width (string) x y show_pos_width
-"/show_pos_width {GS moveto dup stringwidth pop 3 2 roll exch div -1 matrix scale concat "
-"show GR } bind def\n"
-
-//"/show_pos_width {GS moveto dup stringwidth pop 3 2 roll exch div "
-//"dup 0.85 lt {pop 0.85} if "
-//"dup /sx exch def -1 matrix scale concat "
-//"show 8 FS sx 10 string cvs 0 4 getinterval 0 -3 rmoveto show GR } bind def\n" // displays also scaling value
+"/show_pos_width {GS moveto dup dup stringwidth pop exch length exch 3 index exch sub exch "
+"div 0 2 index 1 -1 scale ashow pop pop GR} bind def\n" // spacing altered to match desired width
+//"/show_pos_width {GS moveto dup stringwidth pop 3 2 roll exch div -1 matrix scale concat "
+//"show GR } bind def\n" // horizontally scaled text to match desired width
 
 ;
 
