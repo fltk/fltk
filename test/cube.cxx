@@ -170,8 +170,6 @@ void print_cb(Fl_Widget *w, void *data)
   if( printer.start_page() ) return;
   printer.scale(0.5,0.5);
   printer.print_widget( win );
-  printer.print_gl_window( cube, cube->x(), cube->y() );
-  printer.print_gl_window( cube2, cube2->x(), cube2->y() );
   printer.end_page();
   printer.end_job();
 }

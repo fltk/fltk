@@ -91,8 +91,8 @@ void Fl_Gl_Printer::print_gl_window(Fl_Gl_Window *glw, int x, int y)
 }
 
 /*
- This class will make sure that OpenGL printing is availbale if fltk_gl
- was linked to the programm.
+ This class will make sure that OpenGL printing is available if fltk_gl
+ was linked to the program.
  */
 class Fl_Gl_Device_Plugin : public Fl_Device_Plugin {
 public:

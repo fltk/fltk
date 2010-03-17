@@ -45,13 +45,6 @@ void Fl_Virtual_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_
   }
   // if widget is a window, clip all drawings to the window area
   if (is_window) fl_push_clip(0, 0, widget->w(), widget->h() );
-#ifdef __APPLE__
-  CGContextRef save_gc = fl_gc;
-#elif defined(WIN32) // && !defined(__CYGWIN__)
-  HDC save_gc = fl_gc;
-#else
-  _XGC *save_gc = fl_gc;	// FIXME
-#endif
   // we do some trickery to recognize OpenGL windows and draw them via a plugin
   int drawn_by_plugin = 0;
   if (widget->as_gl_window()) {
@@ -59,10 +52,9 @@ void Fl_Virtual_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_
     Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
     if (pi) drawn_by_plugin = pi->print(this, widget, 0, 0);
   }
-  if (!drawn_by_plugin)
-    widget->draw(); 
-  
-  fl_gc = save_gc;
+  if (!drawn_by_plugin) {
+    widget->draw();
+  }
   if (is_window) fl_pop_clip();
   // find subwindows of widget and print them
   traverse(widget);
