@@ -121,5 +121,9 @@ SOURCE=..\..\src\glut_compatability.cxx
 
 SOURCE=..\..\src\glut_font.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Gl_Device_Plugin.cxx
+# End Source File
 # End Target
 # End Project

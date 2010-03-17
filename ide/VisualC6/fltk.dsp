@@ -665,5 +665,17 @@ SOURCE=..\..\src\xutf8\is_right2left.c
 
 SOURCE=..\..\src\xutf8\is_spacing.c
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Device.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Printer.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\ps_image.cxx
+# End Source File
 # End Target
 # End Project

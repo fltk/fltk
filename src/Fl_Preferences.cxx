@@ -25,6 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
+#define FL_PLUGIN_VERBOSE
 
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
@@ -1812,6 +1813,10 @@ char Fl_Preferences::Node::copyTo(Fl_Tree *tree, Fl_Tree_Item *ti)
 Fl_Plugin::Fl_Plugin(const char *klass, const char *name)
 : id(0)
 {
+#ifdef FL_PLUGIN_VERBOSE
+  printf("Fl_Plugin: creating a plugin, class \"%s\", name \"%s\"\n",
+         klass, name);
+#endif
   Fl_Plugin_Manager pm(klass);
   id = pm.addPlugin(name, this);
 }
@@ -1821,6 +1826,9 @@ Fl_Plugin::Fl_Plugin(const char *klass, const char *name)
  */
 Fl_Plugin::~Fl_Plugin()
 {
+#ifdef FL_PLUGIN_VERBOSE
+  printf("Fl_Plugin: deleting a plugin\n");
+#endif
   if (id)
     Fl_Plugin_Manager::remove(id);
 }
@@ -1832,6 +1840,9 @@ Fl_Plugin::~Fl_Plugin()
 Fl_Plugin_Manager::Fl_Plugin_Manager(const char *klass)
 : Fl_Preferences(0, Fl_Preferences::Name("%s/%s", "plugins", klass))
 {
+#ifdef FL_PLUGIN_VERBOSE
+  printf("Fl_Plugin: creating a plugin manager for class \"%s\"\n", klass);
+#endif
 }
 
 /**
@@ -1842,6 +1853,9 @@ Fl_Plugin_Manager::Fl_Plugin_Manager(const char *klass)
  */
 Fl_Plugin_Manager::~Fl_Plugin_Manager()
 {
+#ifdef FL_PLUGIN_VERBOSE
+  printf("Fl_Plugin: deleting a plugin manager\n");
+#endif
 }
 
 /**
@@ -1854,6 +1868,9 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(int index)
   Fl_Preferences pin(this, index);
   pin.get("address", buf, "@0", 32);
   sscanf(buf, "@%p", &ret);
+#ifdef FL_PLUGIN_VERBOSE
+  printf("Fl_Plugin: returning plugin at index %d: 0x%p\n", index, ret);
+#endif
   return ret;
 }
 
@@ -1868,8 +1885,14 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(const char *name)
     Fl_Preferences pin(this, name);
     pin.get("address", buf, "@0", 32);
     sscanf(buf, "@%p", &ret);
+#ifdef FL_PLUGIN_VERBOSE
+    printf("Fl_Plugin: returning plugin named \"%s\": 0x%p\n", name, ret);
+#endif
     return ret;
   } else {
+#ifdef FL_PLUGIN_VERBOSE
+    printf("Fl_Plugin: no plugin found named \"%s\"\n", name);
+#endif
     return 0L;
   }
 }
@@ -1883,6 +1906,9 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(const char *name)
 Fl_Preferences::ID Fl_Plugin_Manager::addPlugin(const char *name, Fl_Plugin *plugin)
 {
   char buf[32];
+#ifdef FL_PLUGIN_VERBOSE
+  printf("Fl_Plugin: adding plugin named \"%s\" at 0x%p\n", name, plugin);
+#endif
   Fl_Preferences pin(this, name);
   snprintf(buf, 32, "@%p", plugin);
   pin.set("address", buf);

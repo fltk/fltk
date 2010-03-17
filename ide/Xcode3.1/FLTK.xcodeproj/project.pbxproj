@@ -338,7 +338,6 @@
 		C9A3EE300DD6485F00486E4F /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC6E0DD6397400486E4F /* fltk_forms.framework */; };
 		C9A58206114D7B6900BEFDBE /* Fl_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A58202114D7B6900BEFDBE /* Fl_Device.cxx */; };
 		C9A58208114D7B6900BEFDBE /* Fl_Printer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A58204114D7B6900BEFDBE /* Fl_Printer.cxx */; };
-		C9A5820F114D7D7400BEFDBE /* Fl_Gl_Printer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A58203114D7B6900BEFDBE /* Fl_Gl_Printer.cxx */; };
 		C9A5821D114D7E7800BEFDBE /* ps_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A5821C114D7E7800BEFDBE /* ps_image.cxx */; };
 		C9A582AE114D83AA00BEFDBE /* ide_maketools.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A582A9114D83AA00BEFDBE /* ide_maketools.cxx */; };
 		C9A582AF114D83AA00BEFDBE /* ide_support_ui.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A582AA114D83AA00BEFDBE /* ide_support_ui.cxx */; };
@@ -401,6 +400,7 @@
 		C9C873AB0DD7779500A9793F /* fltk_images.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC790DD6398C00486E4F /* fltk_images.framework */; };
 		C9C873AC0DD7779600A9793F /* fltk_jpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC9A0DD639E600486E4F /* fltk_jpeg.framework */; };
 		C9C873AD0DD7779700A9793F /* fltk_png.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC8E0DD639CE00486E4F /* fltk_png.framework */; };
+		C9DC05581151777A00F3BA04 /* Fl_Gl_Device_Plugin.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9DC05571151777A00F3BA04 /* Fl_Gl_Device_Plugin.cxx */; };
 		C9DD574C0DD780DA00A896B4 /* fl_images_core.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3EB0F0DD634CC00486E4F /* fl_images_core.cxx */; };
 		C9DD574D0DD780E200A896B4 /* Fl_BMP_Image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3EB8A0DD634CC00486E4F /* Fl_BMP_Image.cxx */; };
 		C9DD574E0DD780FB00A896B4 /* Fl_File_Icon2.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9A3EAE00DD634CC00486E4F /* Fl_File_Icon2.cxx */; };
@@ -3141,7 +3141,6 @@
 		C9A3EE780DD64AE700486E4F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		C9A3EE790DD64B0200486E4F /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		C9A58202114D7B6900BEFDBE /* Fl_Device.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Device.cxx; path = ../../src/Fl_Device.cxx; sourceTree = SOURCE_ROOT; };
-		C9A58203114D7B6900BEFDBE /* Fl_Gl_Printer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Printer.cxx; path = ../../src/Fl_Gl_Printer.cxx; sourceTree = SOURCE_ROOT; };
 		C9A58204114D7B6900BEFDBE /* Fl_Printer.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Fl_Printer.cxx; path = ../../src/Fl_Printer.cxx; sourceTree = SOURCE_ROOT; };
 		C9A5821C114D7E7800BEFDBE /* ps_image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ps_image.cxx; path = ../../src/ps_image.cxx; sourceTree = SOURCE_ROOT; };
 		C9A582A9114D83AA00BEFDBE /* ide_maketools.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_maketools.cxx; path = ../../fluid/ide_maketools.cxx; sourceTree = SOURCE_ROOT; };
@@ -3190,6 +3189,7 @@
 		C9C873900DD7777A00A9793F /* Fl_Group_Type.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Group_Type.cxx; path = ../../fluid/Fl_Group_Type.cxx; sourceTree = SOURCE_ROOT; };
 		C9C873910DD7777A00A9793F /* about_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = about_panel.cxx; path = ../../fluid/about_panel.cxx; sourceTree = SOURCE_ROOT; };
 		C9C873920DD7777A00A9793F /* widget_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = widget_panel.cxx; path = ../../fluid/widget_panel.cxx; sourceTree = SOURCE_ROOT; };
+		C9DC05571151777A00F3BA04 /* Fl_Gl_Device_Plugin.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Device_Plugin.cxx; path = ../../src/Fl_Gl_Device_Plugin.cxx; sourceTree = SOURCE_ROOT; };
 		C9DD577E0DD7825C00A896B4 /* jidctflt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jidctflt.c; path = ../../jpeg/jidctflt.c; sourceTree = SOURCE_ROOT; };
 		C9DD577F0DD7825C00A896B4 /* jfdctint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jfdctint.c; path = ../../jpeg/jfdctint.c; sourceTree = SOURCE_ROOT; };
 		C9DD57800DD7825C00A896B4 /* jcmarker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcmarker.c; path = ../../jpeg/jcmarker.c; sourceTree = SOURCE_ROOT; };
@@ -4091,9 +4091,9 @@
 		C9A3E9590DD6338B00486E4F /* Library Sources */ = {
 			isa = PBXGroup;
 			children = (
+				C9DC05571151777A00F3BA04 /* Fl_Gl_Device_Plugin.cxx */,
 				C9A5821C114D7E7800BEFDBE /* ps_image.cxx */,
 				C9A58202114D7B6900BEFDBE /* Fl_Device.cxx */,
-				C9A58203114D7B6900BEFDBE /* Fl_Gl_Printer.cxx */,
 				C9A58204114D7B6900BEFDBE /* Fl_Printer.cxx */,
 				C99E1E980E7861E600AECCF6 /* case.c */,
 				C9A3EB0D0DD634CC00486E4F /* cmap.cxx */,
@@ -7321,7 +7321,7 @@
 				C9C8720B0DD7750100A9793F /* glut_font.cxx in Sources */,
 				C9C8720C0DD7750600A9793F /* freeglut_stroke_mono_roman.cxx in Sources */,
 				C9C8720D0DD7750900A9793F /* glut_compatability.cxx in Sources */,
-				C9A5820F114D7D7400BEFDBE /* Fl_Gl_Printer.cxx in Sources */,
+				C9DC05581151777A00F3BA04 /* Fl_Gl_Device_Plugin.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

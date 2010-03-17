@@ -83,7 +83,6 @@
 		20AF0361223BCDD76EDD61C9 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F459EEE32AC6EE0087583065 /* fltk.framework */; };
 		2106BAFFE8CB7D98E4FB5031 /* Fl_Menu_add.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 307DE3A9F828C1B72F13A931 /* Fl_Menu_add.cxx */; };
 		223315BC662710BF0BB7A495 /* Fl_Browser_load.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 44859B2B09D7079C93466BB9 /* Fl_Browser_load.cxx */; };
-		2252F8C2D072099F09E9FB74 /* Fl_Gl_Printer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 20DB1B86BA838A41209BAA59 /* Fl_Gl_Printer.cxx */; };
 		226F26AEF4131F84B45FCFDE /* Fl_Browser_.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 1DEF1B17DDFD881A007E5EA3 /* Fl_Browser_.cxx */; };
 		22BEC71AF42AC078B015549D /* glut_font.cxx in Sources */ = {isa = PBXBuildFile; fileRef = CA39566FD1F25D47C83DE042 /* glut_font.cxx */; };
 		2308935FE679ADE8327AE74B /* fl_engraved_label.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B98E80F32C266E5A9E5EA0DC /* fl_engraved_label.cxx */; };
@@ -363,6 +362,7 @@
 		9BE637FBE722BBB0E2896901 /* Fl_Adjuster.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 16532B344B1865245755CAF3 /* Fl_Adjuster.cxx */; };
 		9C5AAE18A7136EEF026B00C5 /* Fl_Valuator.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 28324A042EE3A22D856FCEED /* Fl_Valuator.cxx */; };
 		9D93665CC439902AA2399F52 /* Fl_Window_Type.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6CC8BD4EDB9253ED95642350 /* Fl_Window_Type.cxx */; };
+		9D9AAF1AE62FE9C59F975DDD /* Fl_Gl_Device_Plugin.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5D188953C0E0216E287719DA /* Fl_Gl_Device_Plugin.cxx */; };
 		9DE7341A8FBC1AEFD0A18D2C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C876172C27EA252C565DBAE /* OpenGL.framework */; };
 		9F3EAEA1AD4D86F0DEB69EAE /* Fl_Window_hotspot.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7D3339A9CD9A00B8A4F6D86B /* Fl_Window_hotspot.cxx */; };
 		A0DA0F3203830340F8F4ABBD /* Fl_x.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 1CF5FD89905762B02A5F1D3A /* Fl_x.cxx */; };
@@ -3548,7 +3548,6 @@
 		1FCF605876ACDF0C37353943 /* button.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = button.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2097DF39BF487FE63A19B2DB /* Fl_Input_.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Input_.cxx; path = ../../src/Fl_Input_.cxx; sourceTree = SOURCE_ROOT; };
 		20D5080729E562F13002641C /* valuators.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = valuators.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		20DB1B86BA838A41209BAA59 /* Fl_Gl_Printer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Printer.cxx; path = ../../src/Fl_Gl_Printer.cxx; sourceTree = SOURCE_ROOT; };
 		21551346B84925242E9942CA /* jcinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcinit.c; path = ../../jpeg/jcinit.c; sourceTree = SOURCE_ROOT; };
 		21BB2D14771B842988DFB174 /* Fl_add_idle.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_add_idle.cxx; path = ../../src/Fl_add_idle.cxx; sourceTree = SOURCE_ROOT; };
 		224E58459FEDC29C5ED01B1B /* fullscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fullscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3647,6 +3646,7 @@
 		5C37D7B3EEB272272DB34687 /* fltkpng.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltkpng.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5C77424BC3FA8DD40F116E8B /* input_choice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input_choice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CF866773819FF355388C15F /* subwindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = subwindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D188953C0E0216E287719DA /* Fl_Gl_Device_Plugin.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Device_Plugin.cxx; path = ../../src/Fl_Gl_Device_Plugin.cxx; sourceTree = SOURCE_ROOT; };
 		5D7C4FE0387C6272C8157FC7 /* glpuzzle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = glpuzzle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D9BCB7ABE0DB45AAB820C1D /* pixmap_browser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pixmap_browser.cxx; path = ../../test/pixmap_browser.cxx; sourceTree = SOURCE_ROOT; };
 		5E079F4524100018D9EB37EA /* label.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = label.cxx; path = ../../test/label.cxx; sourceTree = SOURCE_ROOT; };
@@ -5234,7 +5234,7 @@
 				1240BC854CD53B386ED7AEE6 /* gl_draw.cxx */,
 				C1F192C1BDF6ABF0084A5C9C /* glut_compatability.cxx */,
 				CA39566FD1F25D47C83DE042 /* glut_font.cxx */,
-				20DB1B86BA838A41209BAA59 /* Fl_Gl_Printer.cxx */,
+				5D188953C0E0216E287719DA /* Fl_Gl_Device_Plugin.cxx */,
 				8C876172C27EA252C565DBAE /* OpenGL.framework */,
 				12104A5D9262E8DF5F955F82 /* AGL.framework */,
 			);
@@ -7946,7 +7946,7 @@
 				E0C675DD623CE6EAFDD55FF1 /* gl_draw.cxx in Sources */,
 				35A5A00A20671E8DCB8F867F /* glut_compatability.cxx in Sources */,
 				22BEC71AF42AC078B015549D /* glut_font.cxx in Sources */,
-				2252F8C2D072099F09E9FB74 /* Fl_Gl_Printer.cxx in Sources */,
+				9D9AAF1AE62FE9C59F975DDD /* Fl_Gl_Device_Plugin.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
