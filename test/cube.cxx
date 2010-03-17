@@ -159,11 +159,11 @@ void makeform(const char *name) {
 
 // added to demo printing
 #include <FL/Fl_Sys_Menu_Bar.H>
-#include <FL/Fl_Gl_Printer.H>
+#include <FL/Fl_Printer.H>
 
 void print_cb(Fl_Widget *w, void *data)
 {
-  Fl_Gl_Printer printer;
+  Fl_Printer printer;
   Fl_Window *win = Fl::first_window();
   if(!win) return;
   if( printer.start_job(1) ) return;
