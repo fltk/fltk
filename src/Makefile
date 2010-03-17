@@ -177,6 +177,7 @@ FLCPPFILES = \
 GLCPPFILES = \
 	Fl_Gl_Choice.cxx \
 	Fl_Gl_Overlay.cxx \
+	Fl_Gl_Device_Plugin.cxx \
 	Fl_Gl_Window.cxx \
 	freeglut_geometry.cxx \
 	freeglut_stroke_mono_roman.cxx \

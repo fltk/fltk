@@ -13,7 +13,7 @@
  *
  It allows to use all FLTK drawing, color, text, and clip functions, and to have them operate
  on printed page(s). There are two main, non exclusive, ways to use it.
- <ul><li>Print any widget (standard, custom, Fl_Window except Fl_Gl_Window) as it appears 
+ <ul><li>Print any widget (standard, custom, Fl_Window, Fl_Gl_Window) as it appears 
  on screen, with optional translation and scaling. This is done by calling print_widget() 
  or print_window_part().
  <li>Use a series of FLTK graphics commands (e.g., font, text, lines, colors, clip) to
@@ -21,7 +21,6 @@
  </ul>
  In both cases, begin by start_job(), start_page(), printable_rect() and origin() calls
  and finish by end_page() and end_job() calls.
- \see class Fl_Gl_Printer to print Fl_Gl_Window's.
  */
 class 
 #ifndef FL_DOXYGEN

@@ -909,6 +909,8 @@ Fl_Gl_Choice.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Gl_Choice.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H
 Fl_Gl_Choice.o: ../FL/Fl_Window.H Fl_Gl_Choice.H ../FL/gl_draw.H ../FL/gl.h
 Fl_Gl_Choice.o: flstring.h ../FL/fl_utf8.h
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Device.H ../FL/Fl_Printer.H Fl_Gl_Choice.H
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Gl_Window.H ../FL/Fl.H ../FL/fl_draw.H
 Fl_Gl_Overlay.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Gl_Overlay.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Gl_Overlay.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H
