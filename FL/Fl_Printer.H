@@ -1,9 +1,9 @@
 //
-// "$Id: Fl_Printer.H 7263 2010-03-14 18:07:24Z AlbrechtS $"
+// "$Id$"
 //
-// Rectangle drawing routines for the Fast Light Tool Kit (FLTK).
+// Printing support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2009 by Bill Spitzak and others.
+// Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -570,5 +570,5 @@ typedef Fl_PS_Printer Fl_Printer;
 #endif // Fl_Printer_H
 
 //
-// End of "$Id: Fl_Printer.H 7263 2010-03-14 18:07:24Z AlbrechtS $"
+// End of "$Id$"
 //
