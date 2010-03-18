@@ -4,7 +4,7 @@
 // Definition of classes Fl_Device, Fl_Display, Fl_Quartz_Display, Fl_GDI_Display,
 // Fl_Xlib_Display and Fl_Device_Plugin for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
