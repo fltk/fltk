@@ -49,8 +49,7 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
-//#define MAXBUFFER 0x40000 // 256k
-#define MAXBUFFER 0x100000 // 1024k
+#define MAXBUFFER 0x40000 // 256k
 
 #if USE_COLORMAP
 
@@ -258,8 +257,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     if(Fl_Device::current()->type() == Fl_Device::gdi_printer) {
       // if print context, device and logical units are not equal, so SetDIBitsToDevice
       // does not do the expected job, whereas StretchDIBits does it.
-      // TODO with Fl_Printer::print_window_part(), StretchDIBits does not work well 
-      // with large captures whereas SetDIBitsToDevice does.
       StretchDIBits(fl_gc, x, y+j-k, w, k, 0, 0, w, k,
 		    (LPSTR)((uchar*)buffer+(blocking-k)*linesize),
 		    &bmi,

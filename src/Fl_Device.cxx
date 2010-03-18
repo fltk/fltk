@@ -118,9 +118,14 @@ void Fl_Virtual_Printer::print_window_part(Fl_Window *win, int x, int y, int w, 
   uchar *image_data = fl_read_image(NULL, x, y, w, h);
   save_front->show();
   this->set_current();
+#ifdef WIN32
+  fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
+  add_image(NULL, image_data);
+#else
   Fl_RGB_Image *image = new Fl_RGB_Image(image_data, w, h);
   image->draw(delta_x, delta_y);
   add_image(image, image_data);
+#endif
 }
 
 void Fl_Virtual_Printer::add_image(Fl_Image *image, const uchar *data)
@@ -136,7 +141,7 @@ void Fl_Virtual_Printer::delete_image_list()
 {
   while(image_list_) {
     struct chain_elt *next = image_list_->next;
-    delete image_list_->image;
+    if(image_list_->image) delete image_list_->image;
     if (image_list_->data) delete image_list_->data;
     free(image_list_);
     image_list_ = next;
