@@ -40,7 +40,7 @@ static void imgProviderReleaseData (void *info, const void *data, size_t size)
 }
 #endif
 
-static void print_gl_window(Fl_Virtual_Printer *printer, Fl_Gl_Window *glw, int x, int y)
+static void print_gl_window(Fl_Abstract_Printer *printer, Fl_Gl_Window *glw, int x, int y)
 {
 #ifdef WIN32
   HDC save_gc = fl_gc;
@@ -129,7 +129,7 @@ class Fl_Gl_Device_Plugin : public Fl_Device_Plugin {
 public:
   Fl_Gl_Device_Plugin() : Fl_Device_Plugin(name()) { }
   virtual const char *name() { return "opengl.device.fltk.org"; }
-  virtual int print(Fl_Virtual_Printer *p, Fl_Widget *w, int x, int y) {
+  virtual int print(Fl_Abstract_Printer *p, Fl_Widget *w, int x, int y) {
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;
     print_gl_window(p, glw, x, y);

@@ -34,7 +34,7 @@
 
 extern HWND fl_window;
 
-Fl_GDI_Printer::Fl_GDI_Printer(void) : Fl_Virtual_Printer() {
+Fl_GDI_Printer::Fl_GDI_Printer(void) : Fl_Abstract_Printer() {
   hPr = NULL;
   type_ = gdi_printer;
 }

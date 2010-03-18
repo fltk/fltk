@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// implementation of Fl_Device and Fl_Virtual_Printer classes for the Fast Light Tool Kit (FLTK).
+// implementation of Fl_Device and Fl_Abstract_Printer classes for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010 by Bill Spitzak and others.
 //
@@ -48,7 +48,7 @@ void Fl_Device::draw(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, i
   // presently, never gets called
 }
 
-void Fl_Virtual_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y) 
+void Fl_Abstract_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y) 
 { 
   int old_x, old_y, new_x, new_y, is_window;
   if ( ! widget->visible() ) return;
@@ -87,7 +87,7 @@ void Fl_Virtual_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_
 }
 
 
-void Fl_Virtual_Printer::traverse(Fl_Widget *widget)
+void Fl_Abstract_Printer::traverse(Fl_Widget *widget)
 {
   Fl_Group *g = widget->as_group();
   if (!g) return;
@@ -102,13 +102,13 @@ void Fl_Virtual_Printer::traverse(Fl_Widget *widget)
   }
 }
 
-void Fl_Virtual_Printer::origin(int *x, int *y)
+void Fl_Abstract_Printer::origin(int *x, int *y)
 {
   if (x) *x = x_offset;
   if (y) *y = y_offset;
 }
 
-void Fl_Virtual_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
+void Fl_Abstract_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
   Fl_Device::display_device()->set_current();
   Fl_Window *save_front = Fl::first_window();
@@ -128,7 +128,7 @@ void Fl_Virtual_Printer::print_window_part(Fl_Window *win, int x, int y, int w, 
 #endif
 }
 
-void Fl_Virtual_Printer::add_image(Fl_Image *image, const uchar *data)
+void Fl_Abstract_Printer::add_image(Fl_Image *image, const uchar *data)
 {
   struct chain_elt *elt =  (struct chain_elt *)calloc(sizeof(struct chain_elt), 1);
   elt->image = image;
@@ -137,7 +137,7 @@ void Fl_Virtual_Printer::add_image(Fl_Image *image, const uchar *data)
   image_list_ = elt;
 }
 
-void Fl_Virtual_Printer::delete_image_list()
+void Fl_Abstract_Printer::delete_image_list()
 {
   while(image_list_) {
     struct chain_elt *next = image_list_->next;
@@ -148,7 +148,7 @@ void Fl_Virtual_Printer::delete_image_list()
   }
 }
 
-Fl_Device *Fl_Virtual_Printer::set_current(void)
+Fl_Device *Fl_Abstract_Printer::set_current(void)
 {
 #ifdef __APPLE__
   fl_gc = (CGContextRef)gc;
@@ -161,17 +161,17 @@ Fl_Device *Fl_Virtual_Printer::set_current(void)
 }
 
 
-int Fl_Virtual_Printer::start_job(int pagecount, int *frompage, int *topage) {return 1;}
-int Fl_Virtual_Printer::start_page (void) {return 1;}
-int Fl_Virtual_Printer::printable_rect(int *w, int *h) {return 1;}
-void Fl_Virtual_Printer::margins(int *left, int *top, int *right, int *bottom) {}
-void Fl_Virtual_Printer::origin(int x, int y) {}
-void Fl_Virtual_Printer::scale (float scale_x, float scale_y) {}
-void Fl_Virtual_Printer::rotate(float angle) {}
-int Fl_Virtual_Printer::end_page (void) {return 1;}
-void Fl_Virtual_Printer::end_job (void) {}
-void Fl_Virtual_Printer::translate(int x, int y) {}
-void Fl_Virtual_Printer::untranslate(void) {}
+int Fl_Abstract_Printer::start_job(int pagecount, int *frompage, int *topage) {return 1;}
+int Fl_Abstract_Printer::start_page (void) {return 1;}
+int Fl_Abstract_Printer::printable_rect(int *w, int *h) {return 1;}
+void Fl_Abstract_Printer::margins(int *left, int *top, int *right, int *bottom) {}
+void Fl_Abstract_Printer::origin(int x, int y) {}
+void Fl_Abstract_Printer::scale (float scale_x, float scale_y) {}
+void Fl_Abstract_Printer::rotate(float angle) {}
+int Fl_Abstract_Printer::end_page (void) {return 1;}
+void Fl_Abstract_Printer::end_job (void) {}
+void Fl_Abstract_Printer::translate(int x, int y) {}
+void Fl_Abstract_Printer::untranslate(void) {}
 
 extern Fl_Device *fl_device;
 

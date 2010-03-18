@@ -266,7 +266,7 @@ Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) 
 
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if(fl_device->type() == Fl_Device::postscript_device) {
-    ((Fl_Virtual_Printer*)fl_device)->draw(this, XP, YP, WP, HP, cx, cy);
+    ((Fl_Abstract_Printer*)fl_device)->draw(this, XP, YP, WP, HP, cx, cy);
     return;
   }
   if (!array) {

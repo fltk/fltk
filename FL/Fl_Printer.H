@@ -51,7 +51,7 @@
  */
 class 
 #ifndef FL_DOXYGEN
-  Fl_Virtual_Printer
+  Fl_Abstract_Printer
 #else
   Fl_Printer
 #endif
@@ -74,7 +74,7 @@ protected:
   void *gc; // the printer's graphics context, if there's one, NULL otherwise
   void delete_image_list(); // deletes the page image list
 #ifndef FL_DOXYGEN
-     Fl_Virtual_Printer(void) { gc = NULL; bg_r_ = bg_g_ = bg_b_ = 0; };
+     Fl_Abstract_Printer(void) { gc = NULL; bg_r_ = bg_g_ = bg_b_ = 0; };
 #endif
 public:
 #ifdef FL_DOXYGEN
@@ -234,7 +234,7 @@ public:
    };
 
 #ifdef __APPLE__
-class Fl_Quartz_Printer : public Fl_Virtual_Printer {
+class Fl_Quartz_Printer : public Fl_Abstract_Printer {
 private:
   float scale_x;
   float scale_y;
@@ -259,7 +259,7 @@ public:
 #endif
 
 #ifdef WIN32
-class Fl_GDI_Printer : public Fl_Virtual_Printer {
+class Fl_GDI_Printer : public Fl_Abstract_Printer {
 private:
   int   abortPrint;
   PRINTDLG      pd;
@@ -293,7 +293,7 @@ public:
  */
 class Fl_PSfile_Device : public 
 #ifndef FL_DOXYGEN
-  Fl_Virtual_Printer 
+  Fl_Abstract_Printer 
 #else
   Fl_Device 
 #endif

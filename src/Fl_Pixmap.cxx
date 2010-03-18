@@ -76,7 +76,7 @@ void Fl_Pixmap::measure() {
 
 void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if(fl_device->type() == Fl_Device::postscript_device) {
-    ((Fl_Virtual_Printer*)fl_device)->draw(this, XP, YP, WP, HP, cx, cy);
+    ((Fl_Abstract_Printer*)fl_device)->draw(this, XP, YP, WP, HP, cx, cy);
     return;
     }
   // ignore empty or bad pixmap data:

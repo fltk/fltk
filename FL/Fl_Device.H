@@ -44,7 +44,7 @@ class Fl_RGB_Image;
 class Fl_Pixmap;
 class Fl_Bitmap;
 class Fl_Display;
-class Fl_Virtual_Printer;
+class Fl_Abstract_Printer;
 extern Fl_Display *fl_display_device;
 typedef void (*Fl_Draw_Image_Cb)(void* ,int,int,int,uchar*);
 
@@ -237,7 +237,7 @@ public:
   : Fl_Plugin(klass(), name) { }
   virtual const char *klass() { return "fltk:device"; }
   virtual const char *name() = 0;
-  virtual int print(Fl_Virtual_Printer*, Fl_Widget*, int x, int y) { return 0; }
+  virtual int print(Fl_Abstract_Printer*, Fl_Widget*, int x, int y) { return 0; }
 };
 
 #endif // Fl_Device_H
