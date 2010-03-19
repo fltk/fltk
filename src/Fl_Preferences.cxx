@@ -1867,9 +1867,15 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(int index)
   Fl_Plugin *ret = 0;
   Fl_Preferences pin(this, index);
   pin.get("address", buf, "@0", 32);
-  sscanf(buf, "@%p", &ret);
+  // avoiding %p because it is not (fully) implemented on all machines
+  if (sizeof(void *) == sizeof(unsigned long long) )
+    sscanf(buf, "@%llx", (unsigned long long*)&ret);
+  else if (sizeof(void *) == sizeof(unsigned long) )
+    sscanf(buf, "@%lx", (unsigned long*)&ret);
+  else
+    sscanf(buf, "@%x", (unsigned int*)&ret);
 #ifdef FL_PLUGIN_VERBOSE
-  printf("Fl_Plugin: returning plugin at index %d: 0x%p\n", index, ret);
+  printf("Fl_Plugin: returning plugin at index %d: (%s) %p\n", index, buf, ret);
 #endif
   return ret;
 }
@@ -1884,9 +1890,15 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(const char *name)
   if (groupExists(name)) {
     Fl_Preferences pin(this, name);
     pin.get("address", buf, "@0", 32);
-    sscanf(buf, "@%p", &ret);
+    // avoiding %p because it is not (fully) implemented on all machines
+    if (sizeof(void *) == sizeof(unsigned long long) )
+      sscanf(buf, "@%llx", (unsigned long long*)&ret);
+    else if (sizeof(void *) == sizeof(unsigned long) )
+      sscanf(buf, "@%lx", (unsigned long*)&ret);
+    else
+      sscanf(buf, "@%x", (unsigned int*)&ret);
 #ifdef FL_PLUGIN_VERBOSE
-    printf("Fl_Plugin: returning plugin named \"%s\": 0x%p\n", name, ret);
+    printf("Fl_Plugin: returning plugin named \"%s\": (%s) %p\n", name, buf, ret);
 #endif
     return ret;
   } else {
@@ -1910,7 +1922,13 @@ Fl_Preferences::ID Fl_Plugin_Manager::addPlugin(const char *name, Fl_Plugin *plu
   printf("Fl_Plugin: adding plugin named \"%s\" at 0x%p\n", name, plugin);
 #endif
   Fl_Preferences pin(this, name);
-  snprintf(buf, 32, "@%p", plugin);
+  // avoiding %p because it is not (fully) implemented on all machines
+  if (sizeof(void *) == sizeof(long long) )
+    snprintf(buf, 31, "@%llx", (unsigned long long)plugin);
+  else if (sizeof(void *) == sizeof(long) )
+    snprintf(buf, 31, "@%lx", (unsigned long)plugin);
+  else
+    snprintf(buf, 31, "@%x", (unsigned int)plugin);
   pin.set("address", buf);
   return pin.id();
 }
