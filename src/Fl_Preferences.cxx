@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#define FL_PLUGIN_VERBOSE
+#undef FL_PLUGIN_VERBOSE
 
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
@@ -1858,22 +1858,44 @@ Fl_Plugin_Manager::~Fl_Plugin_Manager()
 #endif
 }
 
+static unsigned char x2i(char hi, char lo) {
+  return ((hi-'A')<<4) | (lo-'A');
+}
+
+static void i2x(unsigned char v, char *d) {
+  d[0] = ((v>>4)&0x0f)+'A'; d[1] = (v&0x0f)+'A';
+}
+
+static void *a2p(const char *s) {
+  union { void *ret; unsigned char d[sizeof(void*)]; } v;
+  v.ret = 0L;
+  int i=0, n=sizeof(void*);
+  for (i=0; i<n; i++) {
+    v.d[i] = x2i(s[2*i], s[2*i+1]);
+  }
+  return v.ret;
+}
+
+static void p2a(void *vp, char *d) {
+  union { void *vp; unsigned char s[sizeof(void*)]; } v;
+  v.vp = vp;
+  int i=0, n=sizeof(void*);
+  for (i=0; i<n; i++) {
+    i2x(v.s[i], d+i*2);
+  }
+  d[2*i] = 0;
+}
+
 /**
  * \brief Return the address of a plugin by index.
  */
 Fl_Plugin *Fl_Plugin_Manager::plugin(int index) 
 {
-  char buf[32];
+  char buf[34];
   Fl_Plugin *ret = 0;
   Fl_Preferences pin(this, index);
-  pin.get("address", buf, "@0", 32);
-  // avoiding %p because it is not (fully) implemented on all machines
-  if (sizeof(void *) == sizeof(unsigned long long) )
-    sscanf(buf, "@%llx", (unsigned long long*)&ret);
-  else if (sizeof(void *) == sizeof(unsigned long) )
-    sscanf(buf, "@%lx", (unsigned long*)&ret);
-  else
-    sscanf(buf, "@%x", (unsigned int*)&ret);
+  pin.get("address", buf, "", 34);
+  if (buf[0]=='@') ret = (Fl_Plugin*)a2p(buf+1);
 #ifdef FL_PLUGIN_VERBOSE
   printf("Fl_Plugin: returning plugin at index %d: (%s) %p\n", index, buf, ret);
 #endif
@@ -1885,18 +1907,12 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(int index)
  */
 Fl_Plugin *Fl_Plugin_Manager::plugin(const char *name) 
 {
-  char buf[32];
+  char buf[34];
   Fl_Plugin *ret = 0;
   if (groupExists(name)) {
     Fl_Preferences pin(this, name);
-    pin.get("address", buf, "@0", 32);
-    // avoiding %p because it is not (fully) implemented on all machines
-    if (sizeof(void *) == sizeof(unsigned long long) )
-      sscanf(buf, "@%llx", (unsigned long long*)&ret);
-    else if (sizeof(void *) == sizeof(unsigned long) )
-      sscanf(buf, "@%lx", (unsigned long*)&ret);
-    else
-      sscanf(buf, "@%x", (unsigned int*)&ret);
+    pin.get("address", buf, "", 34);
+    if (buf[0]=='@') ret = (Fl_Plugin*)a2p(buf+1);
 #ifdef FL_PLUGIN_VERBOSE
     printf("Fl_Plugin: returning plugin named \"%s\": (%s) %p\n", name, buf, ret);
 #endif
@@ -1917,18 +1933,12 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(const char *name)
  */
 Fl_Preferences::ID Fl_Plugin_Manager::addPlugin(const char *name, Fl_Plugin *plugin)
 {
-  char buf[32];
+  char buf[34];
 #ifdef FL_PLUGIN_VERBOSE
   printf("Fl_Plugin: adding plugin named \"%s\" at 0x%p\n", name, plugin);
 #endif
   Fl_Preferences pin(this, name);
-  // avoiding %p because it is not (fully) implemented on all machines
-  if (sizeof(void *) == sizeof(long long) )
-    snprintf(buf, 31, "@%llx", (unsigned long long)plugin);
-  else if (sizeof(void *) == sizeof(long) )
-    snprintf(buf, 31, "@%lx", (unsigned long)plugin);
-  else
-    snprintf(buf, 31, "@%x", (unsigned int)plugin);
+  buf[0] = '@'; p2a(plugin, buf+1);
   pin.set("address", buf);
   return pin.id();
 }
