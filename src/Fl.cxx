@@ -716,7 +716,7 @@ static handler_link *handlers = 0;
     zero from its handle() method.  Exactly which  ones may change
     in future versions, however.
 */
-void Fl::add_handler(int (*ha)(int)) {
+void Fl::add_handler(Fl_Event_Handler ha) {
   handler_link *l = new handler_link;
   l->handle = ha;
   l->next = handlers;
@@ -726,7 +726,7 @@ void Fl::add_handler(int (*ha)(int)) {
 /**
   Removes a previously added event handler.
 */
-void Fl::remove_handler(int (*ha)(int)) {
+void Fl::remove_handler(Fl_Event_Handler ha) {
   handler_link *l, *p;
 
   // Search for the handler in the list...
