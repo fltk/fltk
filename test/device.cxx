@@ -598,7 +598,6 @@ void make_image() {
 void print(Fl_Widget *, void *w) {
     Fl_Widget * g = (Fl_Widget *)w;
  
-  //Fl_Printer * p = new Fl_PS_Printer(f, 3);
   Fl_Printer * p = new Fl_Printer();
     //p->page(Fl_Printer::A4);
     //p->place(g, 70, 70, p->page_width() - 140, p->page_height() - 140,  FL_ALIGN_CENTER);
