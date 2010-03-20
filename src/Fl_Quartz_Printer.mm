@@ -37,14 +37,14 @@
 
 extern void fl_quartz_restore_line_style_();
 
-Fl_Quartz_Printer::Fl_Quartz_Printer(void)
+Fl_Printer::Fl_Printer(void)
 {
   x_offset = 0;
   y_offset = 0;
   type_ = quartz_printer;
 }
 
-int Fl_Quartz_Printer::start_job (int pagecount, int *frompage, int *topage)
+int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
 //printing using a Quartz graphics context
 //returns 0 iff OK
 {
@@ -128,7 +128,7 @@ int Fl_Quartz_Printer::start_job (int pagecount, int *frompage, int *topage)
   return 0;
 }
 
-void Fl_Quartz_Printer::margins(int *left, int *top, int *right, int *bottom)
+void Fl_Printer::margins(int *left, int *top, int *right, int *bottom)
 {
   PMPaper paper;
   PMGetPageFormatPaper(pageFormat, &paper);
@@ -150,7 +150,7 @@ void Fl_Quartz_Printer::margins(int *left, int *top, int *right, int *bottom)
   }
 }
 
-int Fl_Quartz_Printer::printable_rect(int *w, int *h)
+int Fl_Printer::printable_rect(int *w, int *h)
 //returns 0 iff OK
 {
   OSStatus status;
@@ -167,7 +167,7 @@ int Fl_Quartz_Printer::printable_rect(int *w, int *h)
   return 0;
 }
 
-void Fl_Quartz_Printer::origin(int x, int y)
+void Fl_Printer::origin(int x, int y)
 {
   x_offset = x;
   y_offset = y;
@@ -180,7 +180,7 @@ void Fl_Quartz_Printer::origin(int x, int y)
   CGContextSaveGState(fl_gc);
 }
 
-void Fl_Quartz_Printer::scale (float s_x, float s_y)
+void Fl_Printer::scale (float s_x, float s_y)
 {
   scale_x = s_x;
   scale_y = s_y;
@@ -193,7 +193,7 @@ void Fl_Quartz_Printer::scale (float s_x, float s_y)
   CGContextSaveGState(fl_gc);
 }
 
-void Fl_Quartz_Printer::rotate (float rot_angle)
+void Fl_Printer::rotate (float rot_angle)
 {
   angle = - rot_angle * M_PI / 180.;
   CGContextRestoreGState(fl_gc);
@@ -205,20 +205,20 @@ void Fl_Quartz_Printer::rotate (float rot_angle)
   CGContextSaveGState(fl_gc);
 }
 
-void Fl_Quartz_Printer::translate(int x, int y)
+void Fl_Printer::translate(int x, int y)
 {
   CGContextSaveGState(fl_gc);
   CGContextTranslateCTM(fl_gc, x, y );
   CGContextSaveGState(fl_gc);
 }
 
-void Fl_Quartz_Printer::untranslate(void)
+void Fl_Printer::untranslate(void)
 {
   CGContextRestoreGState(fl_gc);
   CGContextRestoreGState(fl_gc);
 }
 
-int Fl_Quartz_Printer::start_page (void)
+int Fl_Printer::start_page (void)
 {	
   OSStatus status = PMSessionBeginPageNoDialog(printSession, pageFormat, NULL);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -267,7 +267,7 @@ int Fl_Quartz_Printer::start_page (void)
   return status != noErr;
 }
 
-int Fl_Quartz_Printer::end_page (void)
+int Fl_Printer::end_page (void)
 {	
   CGContextFlush(fl_gc);
   CGContextRestoreGState(fl_gc);
@@ -278,7 +278,7 @@ int Fl_Quartz_Printer::end_page (void)
   return status != noErr;
 }
 
-void Fl_Quartz_Printer::end_job (void)
+void Fl_Printer::end_job (void)
 {
   OSStatus status;
   

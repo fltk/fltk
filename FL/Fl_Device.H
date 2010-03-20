@@ -161,16 +161,23 @@ protected:
   virtual   void draw(Fl_Bitmap * bmp,int XP, int YP, int WP, int HP, int cx, int cy);
   
 public:
+  /** 
+   @brief All implemented graphics output devices.
+   */
   enum device_types { 
-    xlib_display = 0, quartz_display, gdi_display, 
-    gdi_printer = 256, quartz_printer, postscript_device 
+    xlib_display = 0, /**< The X11 display. */
+    quartz_display,  /**< The Mac OS X display. */
+    gdi_display,  /**< The MSWindows display. */
+    gdi_printer = 256,  /**< The MSWindows printer. */
+    quartz_printer,  /**< The Mac OS X printer. */
+    postscript_device  /**< The PostScript device. */
   };
   /** 
-   @brief An RTTI emulation of device classes. It returns values < 256 if it is a screen device 
+   @brief An RTTI emulation of device classes. It returns values < 256 if it is a display device 
    */
   int type() {return type_;};
   /**
-   @brief Sets this device (display, local file, printer) as the target of future graphics calls.
+   @brief Sets this device (display, printer, local file) as the target of future graphics calls.
    *
    @return  The current target device of graphics calls.
    */
@@ -195,7 +202,7 @@ extern Fl_Device *fl_device;
  @brief A virtual class subclassed for OS-specific display graphics.
  */
 class Fl_Display : public Fl_Device {
-  friend class Fl_PSfile_Device; //RK: temporary hack for font sizes
+  friend class Fl_PSfile_Device;
 };
 
 #if defined(__APPLE__) || defined(FL_DOXYGEN)

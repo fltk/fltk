@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <FL/Fl_Device.H>
+#include <FL/Fl_PSfile_Device.H>
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
@@ -1248,7 +1248,7 @@ void Fl_PSfile_Device::end_job (void)
 }
 
 #if ! (defined(__APPLE__) || defined(WIN32) )
-int Fl_PS_Printer::start_job(int pages, int *firstpage, int *lastpage) {
+int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   enum Page_Format format;
   enum Page_Layout layout;
 
