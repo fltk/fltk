@@ -25,8 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-#undef FL_PLUGIN_VERBOSE
-
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Plugin.H>
