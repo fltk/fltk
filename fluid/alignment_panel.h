@@ -36,7 +36,7 @@ extern void load_history();
 extern void redraw_browser();
 extern int show_comments;
 extern int show_coredevmenus;
-extern class Fl_Menu_Item *dbmanager_item;
+extern struct Fl_Menu_Item *dbmanager_item;
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>

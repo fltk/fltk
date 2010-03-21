@@ -30,6 +30,8 @@
 #ifndef Fl_PSfile_Device_H
 #define Fl_PSfile_Device_H
 
+#define NO_PAGE_FORMATS 30 /* MSVC6 compilation fix */
+
 /**
  \brief Sends all graphics to a local PostScript file; same API as Fl_Printer class.
  *
@@ -136,7 +138,6 @@ class Fl_PSfile_Device : public  Fl_Abstract_Printer {
     
     FILE *output;
     double pw_, ph_;
-    static const int NO_PAGE_FORMATS=30;
     static const struct page_format page_formats[NO_PAGE_FORMATS];
     
     uchar bg_r, bg_g, bg_b;

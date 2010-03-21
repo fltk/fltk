@@ -142,7 +142,7 @@ void Fl_Abstract_Printer::delete_image_list()
   while(image_list_) {
     struct chain_elt *next = image_list_->next;
     if(image_list_->image) delete image_list_->image;
-    if (image_list_->data) delete image_list_->data;
+    if (image_list_->data) delete (uchar*) image_list_->data; // msvc6 compilation fix
     free(image_list_);
     image_list_ = next;
   }

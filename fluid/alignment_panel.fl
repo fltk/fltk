@@ -49,7 +49,7 @@ decl {extern int show_comments;} {public local
 decl {extern int show_coredevmenus;} {public local
 } 
 
-decl {extern class Fl_Menu_Item *dbmanager_item;} {public local
+decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
 } 
 
 Function {make_project_window()} {} {

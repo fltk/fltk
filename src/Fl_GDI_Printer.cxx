@@ -30,7 +30,7 @@
 
 
 #include <FL/fl_ask.H>
-#include <math.h>
+#include <FL/math.h>
 
 extern HWND fl_window;
 

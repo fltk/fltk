@@ -243,7 +243,7 @@ void Fl_Native_File_Chooser::ClearOFN() {
     _ofn.lpstrFile = NULL;
   }
   if ( _ofn.lpstrInitialDir ) {
-    delete [] _ofn.lpstrInitialDir;
+    delete [] (TCHAR*) _ofn.lpstrInitialDir; //msvc6 compilation fix
     _ofn.lpstrInitialDir = NULL;
   }
   _ofn.lpstrFilter = NULL;		// (deleted elsewhere)
