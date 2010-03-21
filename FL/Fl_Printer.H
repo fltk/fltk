@@ -38,7 +38,7 @@
 /**
  \brief A virtual class for print support with several platform-specific implementations.
  *
- This class has no public constructor: don't instantiate it; use Fl_Printer instead.
+ This class has no public constructor: don't instantiate it; use Fl_Printer or Fl_PSfile_Device instead.
  \see class Fl_Printer for full documentation of member functions.
  */
 class  Fl_Abstract_Printer : public Fl_Device {

@@ -56,10 +56,13 @@ typedef void (*Fl_Draw_Image_Cb)(void* ,int,int,int,uchar*);
  <br> The preferred FLTK API for drawing operations is the function collection of the 
  \ref fl_drawings and \ref fl_attributes modules. 
  <br> Alternatively, member functions of the Fl_Device class can be called
- using global variable Fl_Device *fl_device that points at all time to the single device 
+ using the global variable Fl_Device *fl_device that points at all time to the single device 
  (an instance of an Fl_Device subclass) that's currently receiving drawing requests:<br>
  <tt>fl_device->rect(x, y, w, h);</tt>
- */
+ <br>Each member function of the Fl_Device class has the same effect and parameter list as the
+ function of the \ref fl_drawings and \ref fl_attributes modules which bears the same name
+ augmented with the fl_ prefix.
+  */
 class Fl_Device {
 protected:
   /** \brief The device type */

@@ -173,8 +173,6 @@ void Fl_Abstract_Printer::end_job (void) {}
 void Fl_Abstract_Printer::translate(int x, int y) {}
 void Fl_Abstract_Printer::untranslate(void) {}
 
-extern Fl_Device *fl_device;
-
 Fl_Device *Fl_Device::set_current(void)
 {
   Fl_Device *current = fl_device;
