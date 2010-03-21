@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 fltk.lib fltkforms.lib fltkimages.lib fltkjpeg.lib fltkpng.lib zlib.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcd" /out:"../../Fluid/Fluidd.exe" /pdbtype:sept /libpath:"..\..\lib"
+# ADD LINK32 fltk.lib fltkforms.lib fltkimages.lib fltkjpeg.lib fltkpng.lib zlib.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcd" /out:"../../Fluid/Fluid.exe" /pdbtype:sept /libpath:"..\..\lib"
 # SUBTRACT LINK32 /pdb:none /incremental:yes
 
 !ELSEIF  "$(CFG)" == "Fluid - Win32 Debug"
@@ -91,7 +91,31 @@ LINK32=link.exe
 # Name "Fluid - Win32 Debug"
 # Begin Source File
 
+SOURCE=..\..\fluid\about_panel.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\fluid\align_widget.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\fluid\alignment_panel.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\fluid\code.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\fluid\CodeEditor.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\fluid\factory.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\fluid\file.cxx
 # End Source File
 # Begin Source File
 
@@ -119,39 +143,19 @@ SOURCE=..\..\fluid\Fl_Window_Type.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\fluid\Fluid_Image.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\about_panel.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\align_widget.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\alignment_panel.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\code.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\factory.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\file.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\fluid\fluid.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\fluid\Fluid_Image.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\fluid\function_panel.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\fluid\ide_maketools.cxx
 # End Source File
 # Begin Source File
 
@@ -180,10 +184,6 @@ SOURCE=..\..\fluid\undo.cxx
 # Begin Source File
 
 SOURCE=..\..\fluid\widget_panel.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\ide_maketools.cxx
 # End Source File
 # End Target
 # End Project

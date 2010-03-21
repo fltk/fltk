@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 fltk.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcd" /out:"../../test/mandelbrotd.exe" /pdbtype:sept /libpath:"..\..\lib"
+# ADD LINK32 fltk.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:"libcd" /out:"../../test/mandelbrot.exe" /pdbtype:sept /libpath:"..\..\lib"
 # SUBTRACT LINK32 /pdb:none /incremental:yes
 
 !ELSEIF  "$(CFG)" == "mandelbrot - Win32 Debug"
@@ -108,7 +108,7 @@ InputPath=..\..\test\mandelbrot_ui.fl
 
 "..\..\test\mandelbrot_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\test/ 
-	..\fluid\fluid -c mandelbrot_ui.fl
+	..\fluid\fluid -c mandelbrot_ui.fl 
 	cd ..\ide\visualc 
 	
 # End Custom Build
