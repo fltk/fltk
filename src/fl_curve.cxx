@@ -38,14 +38,6 @@
 #include <FL/fl_draw.H>
 #include <math.h>
 
-/**
-  Add a series of points on a Bezier curve to the path.
-  The curve ends (and two of the points) are at X0,Y0 and X3,Y3.
-  \param[in] X0,Y0 curve start point
-  \param[in] X1,Y1 curve control point
-  \param[in] X2,Y2 curve control point
-  \param[in] X3,Y3 curve end point
-*/
 void Fl_Device::curve(double X0, double Y0,
 	      double X1, double Y1,
 	      double X2, double Y2,

@@ -48,9 +48,6 @@ extern float fl_quartz_line_width_;
 #endif
 #endif
 
-/**
-  Draws a 1-pixel border \e inside the given bounding box
-*/
 void Fl_Device::rect(int x, int y, int w, int h) {
 
   if (w<=0 || h<=0) return;
@@ -80,9 +77,6 @@ void Fl_Device::rect(int x, int y, int w, int h) {
 #endif
 }
 
-/**
-  Colors a rectangle that exactly fills the given bounding box
-*/
 void Fl_Device::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
 #if defined(USE_X11)
@@ -110,9 +104,6 @@ void Fl_Device::rectf(int x, int y, int w, int h) {
 #endif
 }
 
-/**
-  Draws a horizontal line from (x,y) to (x1,y)
-*/
 void Fl_Device::xyline(int x, int y, int x1) {
 #if defined(USE_X11)
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y);
@@ -137,9 +128,6 @@ void Fl_Device::xyline(int x, int y, int x1) {
 #endif
 }
 
-/**
-  Draws a horizontal line from (x,y) to (x1,y), then vertical from (x1,y) to (x1,y2)
-*/
 void Fl_Device::xyline(int x, int y, int x1, int y2) {
 #if defined (USE_X11)
   XPoint p[3];
@@ -172,10 +160,6 @@ void Fl_Device::xyline(int x, int y, int x1, int y2) {
 #endif
 }
 
-/**
-  Draws a horizontal line from (x,y) to (x1,y), then a vertical from (x1,y) to (x1,y2)
-  and then another horizontal from (x1,y2) to (x3,y2)
-*/
 void Fl_Device::xyline(int x, int y, int x1, int y2, int x3) {
 #if defined(USE_X11)
   XPoint p[4];
@@ -211,9 +195,6 @@ void Fl_Device::xyline(int x, int y, int x1, int y2, int x3) {
 #endif
 }
 
-/**
-  Draws a vertical line from (x,y) to (x,y1)
-*/
 void Fl_Device::yxline(int x, int y, int y1) {
 #if defined(USE_X11)
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x, y1);
@@ -240,9 +221,6 @@ void Fl_Device::yxline(int x, int y, int y1) {
 #endif
 }
 
-/**
-  Draws a vertical line from (x,y) to (x,y1), then a horizontal from (x,y1) to (x2,y1)
-*/
 void Fl_Device::yxline(int x, int y, int y1, int x2) {
 #if defined(USE_X11)
   XPoint p[3];
@@ -275,10 +253,6 @@ void Fl_Device::yxline(int x, int y, int y1, int x2) {
 #endif
 }
 
-/**
-  Draws a vertical line from (x,y) to (x,y1) then a horizontal from (x,y1)
-  to (x2,y1), then another vertical from (x2,y1) to (x2,y3)
-*/
 void Fl_Device::yxline(int x, int y, int y1, int x2, int y3) {
 #if defined(USE_X11)
   XPoint p[4];
@@ -314,9 +288,6 @@ void Fl_Device::yxline(int x, int y, int y1, int x2, int y3) {
 #endif
 }
 
-/**
-  Draws a line from (x,y) to (x1,y1)
-*/
 void Fl_Device::line(int x, int y, int x1, int y1) {
 #if defined(USE_X11)
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y1);
@@ -345,9 +316,6 @@ void Fl_Device::line(int x, int y, int x1, int y1) {
 #endif
 }
 
-/**
-  Draws a line from (x,y) to (x1,y1) and another from (x1,y1) to (x2,y2)
-*/
 void Fl_Device::line(int x, int y, int x1, int y1, int x2, int y2) {
 #if defined(USE_X11)
   XPoint p[3];
@@ -382,9 +350,6 @@ void Fl_Device::line(int x, int y, int x1, int y1, int x2, int y2) {
 #endif
 }
 
-/**
-  Outlines a 3-sided polygon with lines
-*/
 void Fl_Device::loop(int x, int y, int x1, int y1, int x2, int y2) {
 #if defined(USE_X11)
   XPoint p[4];
@@ -415,9 +380,6 @@ void Fl_Device::loop(int x, int y, int x1, int y1, int x2, int y2) {
 #endif
 }
 
-/**
-  Outlines a 4-sided polygon with lines
-*/
 void Fl_Device::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
 #if defined(USE_X11)
   XPoint p[5];
@@ -451,9 +413,6 @@ void Fl_Device::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y
 #endif
 }
 
-/**
-  Fills a 3-sided polygon. The polygon must be convex.
-*/
 void Fl_Device::polygon(int x, int y, int x1, int y1, int x2, int y2) {
   XPoint p[4];
   p[0].x = x;  p[0].y = y;
@@ -483,9 +442,6 @@ void Fl_Device::polygon(int x, int y, int x1, int y1, int x2, int y2) {
 #endif
 }
 
-/**
-  Fills a 4-sided polygon. The polygon must be convex.
-*/
 void Fl_Device::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) {
   XPoint p[5];
   p[0].x = x;  p[0].y = y;
@@ -517,9 +473,6 @@ void Fl_Device::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, in
 #endif
 }
 
-/**
-  Draws a single pixel at the given coordinates
-*/
 void Fl_Device::point(int x, int y) {
 #if defined(USE_X11)
   XDrawPoint(fl_display, fl_window, fl_gc, x, y);
@@ -564,13 +517,6 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 }
 #endif
 
-#if defined(__APPLE_QUARTZ__)
-// warning: the Quartz implementation currently uses Quickdraw calls to achieve
-//          clipping. A future version should instead use 'CGContectClipToRect'
-//          and friends.
-#endif
-
-/** Undoes any clobbering of clip done by your program */
 void fl_restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
@@ -624,12 +570,6 @@ void fl_restore_clip() {
 #endif
 }
 
-/**
-  Replaces the top of the clipping stack with a clipping region of any shape.
-
-  Fl_Region is an operating system specific type.
-  \param[in] r clipping region
-*/
 void fl_clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
   if (oldr) XDestroyRegion(oldr);
@@ -637,18 +577,10 @@ void fl_clip_region(Fl_Region r) {
   fl_restore_clip();
 }
 
-/**
-  \returns the current clipping region.
-*/
 Fl_Region fl_clip_region() {
   return rstack[rstackptr];
 }
 
-/**
-  Intersects the current clip region with a rectangle and pushes this
-  new region onto the stack.
-  \param[in] x,y,w,h position and size
-*/
 void Fl_Device::push_clip(int x, int y, int w, int h) {
   Fl_Region r;
   if (w > 0 && h > 0) {
@@ -695,9 +627,6 @@ void Fl_Device::push_clip(int x, int y, int w, int h) {
 }
 
 // make there be no clip (used by fl_begin_offscreen() only!)
-/**
-  Pushes an empty clip region onto the stack so nothing will be clipped.
-*/
 void Fl_Device::push_no_clip() {
   if (rstackptr < STACK_MAX) rstack[++rstackptr] = 0;
   else Fl::warning("fl_push_no_clip: clip stack overflow!\n");
@@ -705,13 +634,6 @@ void Fl_Device::push_no_clip() {
 }
 
 // pop back to previous clip:
-/**
-  Restores the previous clip region.
-
-  You must call fl_pop_clip() once for every time you call fl_push_clip().
-  Unpredictable results may occur if the clip stack is not empty when
-  you return to FLTK.
-*/
 void Fl_Device::pop_clip() {
   if (rstackptr > 0) {
     Fl_Region oldr = rstack[rstackptr--];
@@ -720,16 +642,6 @@ void Fl_Device::pop_clip() {
   fl_restore_clip();
 }
 
-/**
-  Does the rectangle intersect the current clip region?
-  \param[in] x,y,w,h position and size of rectangle
-  \returns non-zero if any of the rectangle intersects the current clip
-  region. If this returns 0 you don't have to draw the object.
-
-  \note
-  Under X this returns 2 if the rectangle is partially clipped, 
-  and 1 if it is entirely inside the clip region.
-*/
 int Fl_Device::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
   Fl_Region r = rstack[rstackptr];
@@ -767,20 +679,6 @@ int Fl_Device::not_clipped(int x, int y, int w, int h) {
 }
 
 // return rectangle surrounding intersection of this rectangle and clip:
-/**
-  Intersects the rectangle with the current clip region and returns the
-  bounding box of the result.
-
-  Returns non-zero if the resulting rectangle is different to the original.
-  This can be used to limit the necessary drawing to a rectangle.
-  \p W and \p H are set to zero if the rectangle is completely outside
-  the region.
-  \param[in] x,y,w,h position and size of rectangle
-  \param[out] X,Y,W,H position and size of resulting bounding box.
-              \p W and \p H are set to zero if the rectangle is
-	      completely outside the region.
-  \returns Non-zero if the resulting rectangle is different to the original.
-*/
 int Fl_Device::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int& H){
   X = x; Y = y; W = w; H = h;
   Fl_Region r = rstack[rstackptr];

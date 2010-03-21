@@ -124,6 +124,26 @@ Fl_XColor fl_xmap[1][256];
 #    define fl_overlay 0
 #  endif
 
+/** Current color for drawing operations */
+Fl_Color fl_color_;
+
+void Fl_Device::color(Fl_Color i) {
+  if (i & 0xffffff00) {
+    unsigned rgb = (unsigned)i;
+    fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
+  } else {
+    fl_color_ = i;
+    if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
+    XSetForeground(fl_display, fl_gc, fl_xpixel(i));
+  }
+}
+
+void Fl_Device::color(uchar r,uchar g,uchar b) {
+  fl_color_ = fl_rgb_color(r, g, b);
+  if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
+  XSetForeground(fl_display, fl_gc, fl_xpixel(r,g,b));
+}
+
 /** \addtogroup  fl_attributes
     @{ */
 ////////////////////////////////////////////////////////////////
@@ -159,22 +179,6 @@ ulong fl_xpixel(uchar r,uchar g,uchar b) {
      ((g&fl_greenmask)<<fl_greenshift)+
      ((b&fl_bluemask)<< fl_blueshift)
      ) >> fl_extrashift;
-}
-
-/**
-  Set the color for all subsequent drawing operations.
-  The closest possible match to the RGB color is used.
-  The RGB color is used directly on TrueColor displays.
-  For colormap visuals the nearest index in the gray
-  ramp or color cube is used.
-  If no valid graphical context (fl_gc) is available,
-  the foreground is not set for the current window.
-  \param[in] r,g,b color components
-*/
-void Fl_Device::color(uchar r,uchar g,uchar b) {
-  fl_color_ = fl_rgb_color(r, g, b);
-  if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
-  XSetForeground(fl_display, fl_gc, fl_xpixel(r,g,b));
 }
 
 ////////////////////////////////////////////////////////////////
@@ -314,29 +318,6 @@ ulong fl_xpixel(Fl_Color i) {
   xmap.b = p.blue>>8;
   return xmap.pixel;
 #  endif
-}
-
-/** Current color for drawing operations */
-Fl_Color fl_color_;
-
-/**
-  Sets the color for all subsequent drawing operations.
-  For colormapped displays, a color cell will be allocated out of
-  \p fl_colormap the first time you use a color. If the colormap fills up
-  then a least-squares algorithm is used to find the closest color.
-  If no valid graphical context (fl_gc) is available,
-  the foreground is not set for the current window.
-  \param[in] i color 
-*/
-void Fl_Device::color(Fl_Color i) {
-  if (i & 0xffffff00) {
-    unsigned rgb = (unsigned)i;
-    fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
-  } else {
-    fl_color_ = i;
-    if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
-    XSetForeground(fl_display, fl_gc, fl_xpixel(i));
-  }
 }
 
 /**

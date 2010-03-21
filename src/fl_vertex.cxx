@@ -145,24 +145,12 @@ static int n;
 static int what;
 enum {LINE, LOOP, POLYGON, POINT_};
 
-/**
-  Starts drawing a list of points. Points are added to the list with fl_vertex()
-*/
 void Fl_Device::begin_points() {n = 0; what = POINT_;}
 
-/**
-  Starts drawing a list of lines.
-*/
 void Fl_Device::begin_line() {n = 0; what = LINE;}
 
-/**
-  Starts drawing a closed sequence of lines.
-*/
 void Fl_Device::begin_loop() {n = 0; what = LOOP;}
 
-/**
-  Starts drawing a convex filled polygon.
-*/
 void Fl_Device::begin_polygon() {n = 0; what = POLYGON;}
 
 /**
@@ -201,10 +189,6 @@ static void fl_transformed_vertex(COORD_T x, COORD_T y) {
   }
 }
 
-/**
-  Adds coordinate pair to the vertex list without further transformations.
-  \param[in] xf,yf transformed coordinate
-*/
 void Fl_Device::transformed_vertex(double xf, double yf) {
 #ifdef __APPLE_QUARTZ__
   fl_transformed_vertex(COORD_T(xf), COORD_T(yf));
@@ -213,17 +197,10 @@ void Fl_Device::transformed_vertex(double xf, double yf) {
 #endif
 }
 
-/**
-  Adds a single vertex to the current path.
-  \param[in] x,y coordinate
-*/
 void Fl_Device::vertex(double x,double y) {
   fl_transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
 }
 
-/**
-  Ends list of points, and draws.
-*/
 void Fl_Device::end_points() {
 #if defined(USE_X11)
   if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
@@ -250,9 +227,6 @@ void Fl_Device::end_points() {
 #endif
 }
 
-/**
-  Ends list of lines, and draws.
-*/
 void Fl_Device::end_line() {
   if (n < 2) {
     fl_end_points();
@@ -283,18 +257,12 @@ static void fixloop() {  // remove equal points from closed path
   while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
 
-/**
-  Ends closed sequence of lines, and draws.
-*/
 void Fl_Device::end_loop() {
   fixloop();
   if (n>2) fl_transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
   fl_end_line();
 }
 
-/**
-  Ends convex filled polygon, and draws.
-*/
 void Fl_Device::end_polygon() {
   fixloop();
   if (n < 3) {
@@ -332,20 +300,6 @@ static int counts[20];
 static int numcount;
 #endif
 
-/**
-  Starts drawing a complex filled polygon.
-
-  The polygon may be concave, may have holes in it, or may be several
-  disconnected pieces. Call fl_gap() to separate loops of the path.
-
-  To outline the polygon, use fl_begin_loop() and replace each fl_gap()
-  with fl_end_loop();fl_begin_loop() pairs.
-
-  \note
-  For portability, you should only draw polygons that appear the same
-  whether "even/odd" or "non-zero" winding rules are used to fill them.
-  Holes should be drawn in the opposite direction to the outside loop.
-*/
 void Fl_Device::begin_complex_polygon() {
   fl_begin_polygon();
   gap_ = 0;
@@ -354,12 +308,6 @@ void Fl_Device::begin_complex_polygon() {
 #endif
 }
 
-/**
-  Call fl_gap() to separate loops of the path.
-
-  It is unnecessary but harmless to call fl_gap() before the first vertex,
-  after the last vertex, or several times in a row.
-*/
 void Fl_Device::gap() {
   while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
   if (n > gap_+2) {
@@ -373,9 +321,6 @@ void Fl_Device::gap() {
   }
 }
 
-/**
-  Ends complex filled polygon, and draws.
-*/
 void Fl_Device::end_complex_polygon() {
   fl_gap();
   if (n < 3) {
@@ -411,13 +356,6 @@ void Fl_Device::end_complex_polygon() {
 // warning: these do not draw rotated ellipses correctly!
 // See fl_arc.c for portable version.
 
-/**
-  fl_circle() is equivalent to fl_arc(x,y,r,0,360), but may be faster.
-
-  It must be the \e only thing in the path: if you want a circle as part of
-  a complex polygon you must use fl_arc()
-  \param[in] x,y,r center and radius of circle
-*/
 void Fl_Device::circle(double x, double y,double r) {
   double xt = fl_transform_x(x,y);
   double yt = fl_transform_y(x,y);

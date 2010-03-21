@@ -47,28 +47,6 @@
 #endif
 #include <config.h>
 
-/**
-  Draw ellipse sections using integer coordinates.
-  
-  These functions match the rather limited circle drawing code provided by X
-  and WIN32. The advantage over using fl_arc with floating point coordinates
-  is that they are faster because they often use the hardware, and they draw
-  much nicer small circles, since the small sizes are often hard-coded bitmaps.
-
-  If a complete circle is drawn it will fit inside the passed bounding box.
-  The two angles are measured in degrees counterclockwise from 3 o'clock and
-  are the starting and ending angle of the arc, \p a2 must be greater or equal
-  to \p a1.
-
-  fl_arc() draws a series of lines to approximate the arc. Notice that the
-  integer version of fl_arc() has a different number of arguments than the
-  double version fl_arc(double x, double y, double r, double start, double a)
-
-  \param[in] x,y,w,h bounding box of complete circle
-  \param[in] a1,a2 start and end angles of arc measured in degrees
-             counter-clockwise from 3 o'clock. \p a2 must be greater
-	     than or equal to \p a1.
-*/
 void Fl_Device::arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
 
@@ -108,18 +86,6 @@ void Fl_Device::arc(int x,int y,int w,int h,double a1,double a2) {
 #endif
 }
 
-/**
-  Draw filled ellipse sections using integer coordinates.
-  
-  Like fl_arc(), but fl_pie() draws a filled-in pie slice.
-  This slice may extend outside the line drawn by fl_arc();
-  to avoid this use w - 1 and h - 1.
-
-  \param[in] x,y,w,h bounding box of complete circle
-  \param[in] a1,a2 start and end angles of arc measured in degrees
-             counter-clockwise from 3 o'clock. \p a2 must be greater
-	     than or equal to \p a1.
-*/
 void Fl_Device::pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
 

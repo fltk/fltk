@@ -36,10 +36,10 @@
 #include <stdio.h>
 
 /**
- \brief A virtual class for print support with several platform-dependent implementations.
+ \brief A virtual class for print support with several platform-specific implementations.
  *
  This class has no public constructor: don't instantiate it; use Fl_Printer instead.
- \see class Fl_Printer for most member functions documentation.
+ \see class Fl_Printer for full documentation of member functions.
  */
 class  Fl_Abstract_Printer : public Fl_Device {
    friend class Fl_Pixmap;
@@ -72,19 +72,33 @@ public:
    @return The current target device of graphics calls.
    */
    Fl_Device *set_current(void);
+  /** \brief see Fl_Printer::start_job(int pagecount, int *frompage, int *topage) */
    virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
+  /** \brief see Fl_Printer::start_page() */
    virtual int start_page(void);
+  /** \brief see Fl_Printer::printable_rect(int *w, int *h) */
    virtual int printable_rect(int *w, int *h);
+  /** \brief see Fl_Printer::margins(int *left, int *top, int *right, int *bottom) */
    virtual void margins(int *left, int *top, int *right, int *bottom);
+  /** \brief see Fl_Printer::origin(int x, int y) */
    virtual void origin(int x, int y);
+  /** \brief see Fl_Printer::origin(int *x, int *y) */
    void origin(int *x, int *y);
-   virtual void scale (float scale_x, float scale_y);
+  /** \brief see Fl_Printer::scale(float scale_x, float scale_y) */
+   virtual void scale(float scale_x, float scale_y);
+  /** \brief see Fl_Printer::rotate(float angle) */
    virtual void rotate(float angle);
+  /** \brief see Fl_Printer::translate(int x, int y) */
    virtual void translate(int x, int y);
+  /** \brief see Fl_Printer::untranslate(void) */
    virtual void untranslate(void);
+  /** \brief see Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y) */
    void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
+  /** \brief see Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y) */
    void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x = 0, int delta_y = 0);
+  /** \brief see Fl_Printer::end_page() */
    virtual int end_page (void);
+  /** \brief see Fl_Printer::end_job() */
    virtual void end_job (void);
 };
 
@@ -230,7 +244,7 @@ public:
    The widget's position on the printed page is determined by the last call to origin()
    and by the optional delta_x and delta_y arguments.
    Its dimensions are in points unless there was a previous call to scale().
-   <br>Under MSWindows, Fl_RGB_Image's are printed without transparency.
+   <br>Under MSWindows and X11, Fl_RGB_Image's are printed without transparency.
    A workaround is to use the print_window_part() call. 
    @param[in] widget Any FLTK widget (e.g., standard, custom, window).
    @param[in] delta_x Optional horizontal offset for positioning the widget relatively
