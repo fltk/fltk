@@ -38,7 +38,7 @@
  This class has the same API as class Fl_Printer except for start_job() member function.
  \see class Fl_Printer.
  */
-class Fl_PSfile_Device : public  Fl_Abstract_Printer {
+class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
   public: 
     /**
      @brief Possible page formats.

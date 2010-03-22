@@ -139,7 +139,7 @@ extern void fl_restore_clip();
  Fl_Region is an operating system specific type.
  \param[in] r clipping region
  */
-extern void fl_clip_region(Fl_Region r);
+FL_EXPORT void fl_clip_region(Fl_Region r);
 /**
  returns the current clipping region.
  */

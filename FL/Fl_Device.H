@@ -45,7 +45,7 @@ class Fl_Pixmap;
 class Fl_Bitmap;
 class Fl_Display;
 class Fl_Abstract_Printer;
-extern Fl_Display *fl_display_device;
+extern FL_EXPORT Fl_Display *fl_display_device;
 typedef void (*Fl_Draw_Image_Cb)(void* ,int,int,int,uchar*);
 
 /**
@@ -63,7 +63,7 @@ typedef void (*Fl_Draw_Image_Cb)(void* ,int,int,int,uchar*);
  function of the \ref fl_drawings and \ref fl_attributes modules which bears the same name
  augmented with the fl_ prefix.
   */
-class Fl_Device {
+class FL_EXPORT Fl_Device {
 protected:
   /** \brief The device type */
   int type_; 
@@ -116,7 +116,7 @@ protected:
   friend void fl_draw_image(const uchar*, int,int,int,int, int delta, int ldelta);
   friend void fl_draw_image_mono(const uchar*, int,int,int,int, int delta, int ld);
   friend void fl_draw_image(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta);
-  friend void fl_draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta);
+  friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta);
   
   /** \brief see fl_rect(int x, int y, int w, int h). */
   virtual void rect(int x, int y, int w, int h);
@@ -271,7 +271,7 @@ public:
   static Fl_Display *display_device() { return fl_display_device; };
   
 };
-extern Fl_Device *fl_device;
+extern FL_EXPORT Fl_Device *fl_device;
 
 /**
  @brief A virtual class subclassed for OS-specific display graphics.

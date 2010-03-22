@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="fltkgl"
 	ProjectGUID="{F7974A9C-C255-4385-96BC-E24EE0816F7C}"
 	RootNamespace="fltkgl"
@@ -258,7 +258,7 @@
 				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;..\.."
 				PreprocessorDefinitions="HAVE_CAIRO=1,_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRA_LEAN;WIN32_EXTRA_LEAN"
-				RuntimeLibrary= "2"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Release/fltkgl.pch"
 				AssemblerListingLocation=".\Release/"
@@ -347,6 +347,10 @@
 					PreprocessorDefinitions=""
 				/>
 			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\..\src\Fl_Gl_Device_Plugin.cxx"
+			>
 		</File>
 		<File
 			RelativePath="..\..\src\Fl_Gl_Overlay.cxx"
