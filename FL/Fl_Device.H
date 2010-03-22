@@ -32,7 +32,7 @@
 #include <FL/x.H>
 #include <FL/Fl_Plugin.H>
 #ifdef WIN32
-#include <Commdlg.h>
+#include <commdlg.h>
 #elif defined(__APPLE__)
 #else
 #include <stdio.h>
