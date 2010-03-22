@@ -436,50 +436,6 @@
 				/>
 			</FileConfiguration>
 		</File>
-		<File
-			RelativePath="..\..\test\tree.fl"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Create .cxx and .h file with fluidd"
-					CommandLine="cfluid /D $(InputName).fl&#x0D;&#x0A;"
-					Outputs="../../test/$(InputName).cxx"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Create $(InputName).cxx and $(InputName).h file with fluid"
-					CommandLine="cfluid $(InputName).fl&#x0D;&#x0A;"
-					Outputs="../../test/$(InputName).cxx"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug Cairo|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Create .cxx and .h file with fluidd"
-					CommandLine="cfluid /D $(InputName).fl&#x0D;&#x0A;"
-					Outputs="../../test/$(InputName).cxx"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release Cairo|Win32"
-				>
-				<Tool
-					Name="VCCustomBuildTool"
-					Description="Create .cxx and .h file with fluid"
-					CommandLine="cfluid $(InputName).fl&#x0D;&#x0A;"
-					Outputs="../../test/$(InputName).cxx"
-				/>
-			</FileConfiguration>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
