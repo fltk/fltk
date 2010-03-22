@@ -639,27 +639,29 @@ version of FLTK:
 	as -O2 and -O3 seem to work OK. More details can be found
 	in STR#1656
 
-\section osissues_macos The MacOS Interface
+\section osissues_macos The Mac OS Interface
 
-FLTK supports MacOS X using the Apple Carbon library. Older
-versions of MacOS are <I>not</I> supported.
+FLTK supports Mac OS X using the Apple Cocoa library. Older
+versions of Mac OS are <I>not</I> supported.
 
 Control, Option, and Command Modifier Keys
 
 \par
 FLTK maps the Mac 'control' key to \c FL_CTRL, the
 'option' key to \c FL_ALT and the 'Apple' key to
-\c FL_META. Keyboard events return the key name in
+\c FL_META. Furthermore, \c FL_COMMAND designates the 'Apple' key on Mac OS X
+and the 'control' key on other platforms.
+Keyboard events return the key name in
 Fl::event_key() and the keystroke translation in
 Fl::event_text(). For example, typing Option-Y on a Mac
-keyboard will set \c FL_ALT in Fl::event_state(),
+US keyboard will set \c FL_ALT in Fl::event_state(),
 set Fl::event_key() to 'y' and return the Yen symbol in
 Fl::event_text().
 
 Apple "Quit" Event
 
 \par
-When the user press Cmd-Q or requests a termination of the
+When the user presses Cmd-Q or requests a termination of the
 application, OS X will send a "Quit" Apple Event. FLTK handles
 this event by sending an \c FL_CLOSE event to all open
 windows. If all windows close, the application will terminate.
@@ -671,18 +673,19 @@ Whenever the user drops a file onto an application icon, OS X
 generates an Apple Event of the type "Open". You can have FLTK
 notify you of an Open event by setting the \c fl_open_callback
 
-WindowRef fl_xid(const Fl_Window *)
+Window fl_xid(const Fl_Window *)
 
 \par
 Returns the window reference for an Fl_Window, or
-\c NULL if the window has not been shown.
+\c NULL if the window has not been shown. This reference is a pointer
+to an instance of the subclass FLWindow of Cocoa's NSWindow class.
 
-Fl_Window *fl_find(WindowRef xid)
+Fl_Window *fl_find(Window xid)
 
 \par
-Returns the Fl_Window that corresponds to the give window handle,
+Returns the Fl_Window that corresponds to the given window reference,
 or \c NULL if not found. FLTK windows that are children of top-level
-windows share the \c WindowRef of the top-level window.
+windows share the \c Window of the top-level window.
 
 void fl_open_callback(void (*cb)(const char *))
 
@@ -690,6 +693,19 @@ void fl_open_callback(void (*cb)(const char *))
 \c cb will be called with a single Unix-style file name and path.
 If multiple files were dropped, \c fl_open_callback() will be called
 multiple times.
+
+void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
+
+\par
+Attaches the callback \c cb to the "About myprog" item of the system application menu.
+\c cb will be called with NULL first argument and \c user_data second argument.
+
+Fl_Sys_Menu_Bar class
+
+\par
+The Fl_Sys_Menu_Bar class allows to build menu bars that, on Mac OS X, are
+placed in the system menu bar (at top-left of display), and, on other platforms,
+at a user-chosen location of a user-chosen window.
 
 \subsection osissues_quickdraw Drawing Things Using QuickDraw
 
