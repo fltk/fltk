@@ -42,7 +42,7 @@ class Fl_Image;
 
 // Label flags...
 FL_EXPORT extern char fl_draw_shortcut;
-extern Fl_Device *fl_device;
+FL_EXPORT extern Fl_Device *fl_device;
 
 /** \addtogroup fl_attributes
     @{
