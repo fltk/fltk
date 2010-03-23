@@ -38,7 +38,7 @@
   #include "print_panel.cxx"
 #endif
 
-const struct Fl_PSfile_Device::page_format Fl_PSfile_Device::page_formats[NO_PAGE_FORMATS] = { // order of enum Page_Format
+const Fl_PSfile_Device::page_format Fl_PSfile_Device::page_formats[NO_PAGE_FORMATS] = { // order of enum Page_Format
 // comes from appendix B of 5003.PPD_Spec_v4.3.pdf
 
   // A* // index(Ai) = i

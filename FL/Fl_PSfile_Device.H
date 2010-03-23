@@ -1,5 +1,5 @@
 //
-// "$Id:$"
+// "$Id$"
 //
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
@@ -41,10 +41,10 @@
 class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
   public: 
     /**
-     @brief Possible page formats.
+     \brief Possible page formats.
      */
-    enum Page_Format{
-      A0 = 0, 
+    enum Page_Format {
+      A0 = 0,
       A1,
       A2,
       A3,
@@ -78,7 +78,7 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
     };
     
     /**
-     @brief Possible page layouts.
+     \brief Possible page layouts.
      */
     enum Page_Layout {PORTRAIT = 0, LANDSCAPE = 0x100, REVERSED = 0x200, ORIENTATION = 0x300};
     
@@ -128,17 +128,16 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
     float angle;
     int left_margin;
     int top_margin;
-    
   protected:
-    struct page_format {
+    typedef struct page_format {
       int width;
       int height;
       const char *name;
-    };
-    
+    } page_format;
+   
     FILE *output;
     double pw_, ph_;
-    static const struct page_format page_formats[NO_PAGE_FORMATS];
+    static const page_format page_formats[NO_PAGE_FORMATS];
     
     uchar bg_r, bg_g, bg_b;
     int start_postscript (int pagecount, enum Page_Format format, enum Page_Layout layout);
@@ -290,5 +289,5 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
 #endif // Fl_PSfile_Device_H
 
 //
-// End of "$Id:$"
+// End of "$Id$"
 //
