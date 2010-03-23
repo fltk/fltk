@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F00D26D115933A7008BECF2 /* device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F00D26C115933A7008BECF2 /* device.cxx */; };
+		7F00D27A115934E8008BECF2 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
+		7F00D29811593696008BECF2 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3E9510DD6336500486E4F /* fltk.framework */; };
 		7FC9BFFE10AA191B00646185 /* fltk_gl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9A3EC830DD639A200486E4F /* fltk_gl.framework */; };
 		7FEC034911033AC400BC057C /* Fl_Native_File_Chooser_MAC.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FEC034811033AC400BC057C /* Fl_Native_File_Chooser_MAC.cxx */; };
 		7FEC037611033C9E00BC057C /* native-filechooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7FEC037511033C9E00BC057C /* native-filechooser.cxx */; };
@@ -725,6 +728,13 @@
 			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C9A3E9500DD6336500486E4F;
+			remoteInfo = fltk;
+		};
+		7F00D272115934AD008BECF2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C9A3E93C0DD6332D00486E4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9A3E9500DD6336500486E4F /* fltk */;
 			remoteInfo = fltk;
 		};
 		7FDAEB921110E51A00E34599 /* PBXContainerItemProxy */ = {
@@ -1997,6 +2007,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		7F00D29411593667008BECF2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7F00D27A115934E8008BECF2 /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7FEC03821103482500BC057C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2732,6 +2752,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7F00D2521159335B008BECF2 /* device.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = device.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F00D26C115933A7008BECF2 /* device.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = device.cxx; path = ../../test/device.cxx; sourceTree = SOURCE_ROOT; };
 		7FEC034811033AC400BC057C /* Fl_Native_File_Chooser_MAC.cxx */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = Fl_Native_File_Chooser_MAC.cxx; path = ../../src/Fl_Native_File_Chooser_MAC.cxx; sourceTree = SOURCE_ROOT; };
 		7FEC035111033B9800BC057C /* native-filechooser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "native-filechooser.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7FEC037511033C9E00BC057C /* native-filechooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "native-filechooser.cxx"; path = "../../test/native-filechooser.cxx"; sourceTree = SOURCE_ROOT; };
@@ -3256,6 +3278,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7F00D2501159335B008BECF2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F00D29811593696008BECF2 /* fltk.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7FEC034F11033B9800BC057C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4006,6 +4036,7 @@
 				C9B4E28510CC25EE00DA2F05 /* table.app */,
 				C9B4E2CE10CC275F00DA2F05 /* tree.app */,
 				7FEC035111033B9800BC057C /* native-filechooser.app */,
+				7F00D2521159335B008BECF2 /* device.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4319,6 +4350,7 @@
 				C97741E70DD9D2ED0047C1BF /* curve.cxx */,
 				C977420D0DD9D36C0047C1BF /* demo.menu */,
 				C977420E0DD9D36C0047C1BF /* demo.cxx */,
+				7F00D26C115933A7008BECF2 /* device.cxx */,
 				C97742670DD9D8280047C1BF /* doublebuffer.cxx */,
 				C918DB400DD9EE7500167E99 /* editor.cxx */,
 				C918DB5E0DD9EED100167E99 /* fast_slow.fl */,
@@ -4558,6 +4590,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		7F00D2511159335B008BECF2 /* device */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F00D2591159335E008BECF2 /* Build configuration list for PBXNativeTarget "device" */;
+			buildPhases = (
+				7F00D24E1159335B008BECF2 /* Resources */,
+				7F00D24F1159335B008BECF2 /* Sources */,
+				7F00D2501159335B008BECF2 /* Frameworks */,
+				7F00D29411593667008BECF2 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7F00D273115934AD008BECF2 /* PBXTargetDependency */,
+			);
+			name = device;
+			productName = device;
+			productReference = 7F00D2521159335B008BECF2 /* device.app */;
+			productType = "com.apple.product-type.application";
+		};
 		7FEC035011033B9800BC057C /* native-filechooser */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7FEC035811033B9A00BC057C /* Build configuration list for PBXNativeTarget "native-filechooser" */;
@@ -6124,6 +6175,7 @@
 				C99CF5230DD78B550094BD10 /* CubeView */,
 				C97741840DD9D1910047C1BF /* cursor */,
 				C99E1EAD0E78628600AECCF6 /* curve */,
+				7F00D2511159335B008BECF2 /* device */,
 				C977425C0DD9D8110047C1BF /* doublebuffer */,
 				C918DB360DD9EE4100167E99 /* editor */,
 				C918DB560DD9EEB800167E99 /* fast_slow */,
@@ -6178,6 +6230,13 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		7F00D24E1159335B008BECF2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7FEC034D11033B9800BC057C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6710,6 +6769,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7F00D24F1159335B008BECF2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F00D26D115933A7008BECF2 /* device.cxx in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7FEC034E11033B9800BC057C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7571,6 +7638,11 @@
 			isa = PBXTargetDependency;
 			target = C9A3E9500DD6336500486E4F /* fltk */;
 			targetProxy = 01FBE4930E630405009E95B1 /* PBXContainerItemProxy */;
+		};
+		7F00D273115934AD008BECF2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9A3E9500DD6336500486E4F /* fltk */;
+			targetProxy = 7F00D272115934AD008BECF2 /* PBXContainerItemProxy */;
 		};
 		7FDAEB931110E51A00E34599 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8480,6 +8552,110 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		7F00D2551159335D008BECF2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/\"",
+					../../,
+				);
+				INFOPLIST_FILE = "plists/hello-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = device;
+			};
+			name = Debug;
+		};
+		7F00D2561159335D008BECF2 /* Debug64 */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/\"",
+					../../,
+				);
+				INFOPLIST_FILE = "plists/hello-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = device;
+			};
+			name = Debug64;
+		};
+		7F00D2571159335D008BECF2 /* DebugPPC */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/\"",
+					../../,
+				);
+				INFOPLIST_FILE = "plists/hello-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = device;
+			};
+			name = DebugPPC;
+		};
+		7F00D2581159335D008BECF2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/\"",
+					../../,
+				);
+				INFOPLIST_FILE = "plists/hello-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = device;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 		7F31A7DA10C2AF6400AD8587 /* DebugPPC */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -15774,6 +15950,17 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		7F00D2591159335E008BECF2 /* Build configuration list for PBXNativeTarget "device" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F00D2551159335D008BECF2 /* Debug */,
+				7F00D2561159335D008BECF2 /* Debug64 */,
+				7F00D2571159335D008BECF2 /* DebugPPC */,
+				7F00D2581159335D008BECF2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		7FEC035811033B9A00BC057C /* Build configuration list for PBXNativeTarget "native-filechooser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
