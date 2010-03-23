@@ -1204,9 +1204,10 @@ int Fl_PSfile_Device::start_job (int pagecount, enum Page_Format format, enum Pa
   // Show native chooser
   if ( fnfc.show() ) return 1;
   output = fopen(fnfc.filename(), "w");
-  if(output == NULL) return 1;
+  if(output == NULL) return 2;
   ps_filename_ = strdup(fnfc.filename());
-  return start_postscript(pagecount, format, layout);
+  start_postscript(pagecount, format, layout);
+  return 0;
 }
 
 int Fl_PSfile_Device::start_job (const char *fname, int pagecount, enum Page_Format format, enum Page_Layout layout)

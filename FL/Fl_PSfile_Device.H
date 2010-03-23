@@ -265,7 +265,7 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
    @param pagecount The total number of pages to be created.
    @param format Desired page format.
    @param layout Desired page layout.
-   @return 0 iff OK
+   @return 0 iff OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
    */
   int start_job(int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
   
@@ -276,7 +276,7 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
    @param pagecount The total number of pages to be created.
    @param format Desired page format.
    @param layout Desired page layout.
-   @return 0 iff OK
+   @return 0 iff OK, 1 if fopen(fname, "w") call failed.
    */
   int start_job(const char *fname, int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
   
