@@ -23,7 +23,7 @@
 // Please report all bugs and problems to "fltk-bugs@fltk.org".
 //
 
-
+#ifndef FL_DOXYGEN
 
 #include <stdio.h>
 #include <math.h>
@@ -534,6 +534,7 @@ void Fl_PSfile_Device::draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, i
   pop_clip();
 };
 
+#endif // FL_DOXYGEN
 
 //
 // End of "$Id: image.cxx 4324 2005-05-09 21:47:22Z rokan $"

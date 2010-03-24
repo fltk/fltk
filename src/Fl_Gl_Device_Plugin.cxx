@@ -128,7 +128,13 @@ static void print_gl_window(Fl_Abstract_Printer *printer, Fl_Gl_Window *glw, int
 class Fl_Gl_Device_Plugin : public Fl_Device_Plugin {
 public:
   Fl_Gl_Device_Plugin() : Fl_Device_Plugin(name()) { }
+  /** \brief Returns the plugin name */
   virtual const char *name() { return "opengl.device.fltk.org"; }
+  /** \brief Prints a widget 
+   \param p the printer
+   \param w the widget
+   \param x,y offsets where to print relatively to coordinates origin
+   */
   virtual int print(Fl_Abstract_Printer *p, Fl_Widget *w, int x, int y) {
     Fl_Gl_Window *glw = w->as_gl_window();
     if (!glw) return 0;

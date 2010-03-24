@@ -56,19 +56,23 @@ typedef void (*Fl_Draw_Image_Cb)(void* ,int,int,int,uchar*);
  <br> The preferred FLTK API for drawing operations is the function collection of the 
  \ref fl_drawings and \ref fl_attributes modules. 
  <br> Alternatively, member functions of the Fl_Device class can be called
- using the global variable Fl_Device *fl_device that points at all time to the single device 
- (an instance of an Fl_Device subclass) that's currently receiving drawing requests:<br>
- <tt>fl_device->rect(x, y, w, h);</tt>
+ using the global variable Fl_Device * \ref fl_device that points at all time to the single device 
+ (an instance of an Fl_Device subclass) that's currently receiving graphics requests:
+ \code fl_device->rect(x, y, w, h); \endcode
  <br>Each member function of the Fl_Device class has the same effect and parameter list as the
  function of the \ref fl_drawings and \ref fl_attributes modules which bears the same name
- augmented with the fl_ prefix.
+ prefixed with fl_ .
   */
 class FL_EXPORT Fl_Device {
 protected:
   /** \brief The device type */
   int type_; 
-  /** \brief color for background and/or mixing if device does not support masking or alpha */
-  uchar bg_r_, bg_g_, bg_b_; 
+  /** \brief red color for background and/or mixing if device does not support masking or alpha */
+  uchar bg_r_; 
+  /** \brief green color for background and/or mixing if device does not support masking or alpha */
+  uchar bg_g_; 
+  /** \brief blue color for background and/or mixing if device does not support masking or alpha */
+  uchar bg_b_; 
   friend void fl_rect(int x, int y, int w, int h);
   friend void fl_rectf(int x, int y, int w, int h);
   friend void fl_line_style(int style, int width, char* dashes);
@@ -95,16 +99,16 @@ protected:
   friend void fl_begin_loop();
   friend void fl_begin_polygon();
   friend void fl_vertex(double x, double y);
-  friend void fl_curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3);
+  friend void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
   friend void fl_circle(double x, double y, double r);
-  friend void fl_arc(double x, double y, double r, double start, double a);
+  friend void fl_arc(double x, double y, double r, double start, double end);
   friend void fl_arc(int x, int y, int w, int h, double a1, double a2);
   friend void fl_pie(int x, int y, int w, int h, double a1, double a2);
   friend void fl_end_points();
   friend void fl_end_line();
   friend void fl_end_loop();
   friend void fl_end_polygon();
-  friend void fl_transformed_vertex(double x, double y);
+  friend void fl_transformed_vertex(double xf, double yf);
   friend void fl_push_clip(int x, int y, int w, int h);
   friend int fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);
   friend int fl_not_clipped(int x, int y, int w, int h);
@@ -113,10 +117,10 @@ protected:
   friend void fl_begin_complex_polygon();
   friend void fl_gap();
   friend void fl_end_complex_polygon();
-  friend void fl_draw_image(const uchar*, int,int,int,int, int delta, int ldelta);
-  friend void fl_draw_image_mono(const uchar*, int,int,int,int, int delta, int ld);
-  friend void fl_draw_image(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta);
-  friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta);
+  friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
+  friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
+  friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
+  friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   
   /** \brief see fl_rect(int x, int y, int w, int h). */
   virtual void rect(int x, int y, int w, int h);
@@ -170,12 +174,12 @@ protected:
   virtual void begin_polygon();
   /** \brief see fl_vertex(double x, double y). */
   virtual void vertex(double x, double y);
-  /** \brief see fl_curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3). */
-  virtual void curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3);
+  /** \brief see fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3). */
+  virtual void curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3);
   /** \brief see fl_circle(double x, double y, double r). */
   virtual void circle(double x, double y, double r);
-  /** \brief see fl_arc(double x, double y, double r, double start, double a). */
-  virtual void arc(double x, double y, double r, double start, double a);
+  /** \brief see fl_arc(double x, double y, double r, double start, double end). */
+  virtual void arc(double x, double y, double r, double start, double end);
   /** \brief see fl_arc(int x, int y, int w, int h, double a1, double a2). */
   virtual void arc(int x, int y, int w, int h, double a1, double a2);
   /** \brief see fl_pie(int x, int y, int w, int h, double a1, double a2). */
@@ -194,8 +198,8 @@ protected:
   virtual void gap();
   /** \brief see fl_end_complex_polygon(). */
   virtual void end_complex_polygon();
-  /** \brief see fl_transformed_vertex(double x, double y). */
-  virtual void transformed_vertex(double x, double y);
+  /** \brief see fl_transformed_vertex(double xf, double yf). */
+  virtual void transformed_vertex(double xf, double yf);
   /** \brief see fl_push_clip(int x, int y, int w, int h). */
   virtual void push_clip(int x, int y, int w, int h);
   /** \brief see fl_clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H). */
@@ -207,14 +211,14 @@ protected:
   /** \brief see fl_pop_clip(). */
   virtual void pop_clip();
   // Images
-  /** \brief see fl_draw_image(const uchar*, int,int,int,int, int delta, int ldelta). */
-  virtual   void draw_image(const uchar*, int,int,int,int, int delta=3, int ldelta=0);
-  /** \brief see fl_draw_image_mono(const uchar*, int,int,int,int, int delta, int ldelta). */
-  virtual   void draw_image_mono(const uchar*, int,int,int,int, int delta=1, int ld=0);
-  /** \brief see fl_draw_image(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta). */
-  virtual   void draw_image(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=3);
-  /** \brief see fl_draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta). */
-  virtual   void draw_image_mono(Fl_Draw_Image_Cb, void*, int,int,int,int, int delta=1);
+  /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
+  virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
+  /** \brief see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
+  virtual   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
+  /** \brief see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D). */
+  virtual   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
+  /** \brief see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D). */
+  virtual   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
   // Image classes
   /** \brief Draws an Fl_Pixmap object to the device. 
    *
@@ -315,11 +319,19 @@ public:
  */
 class Fl_Device_Plugin : public Fl_Plugin {
 public:
+  /** \brief The constructor */
   Fl_Device_Plugin(const char *name)
   : Fl_Plugin(klass(), name) { }
+  /** \brief Returns the class name */
   virtual const char *klass() { return "fltk:device"; }
+  /** \brief Returns the plugin name */
   virtual const char *name() = 0;
-  virtual int print(Fl_Abstract_Printer*, Fl_Widget*, int x, int y) { return 0; }
+  /** \brief Prints a widget 
+   \param p the printer
+   \param w the widget
+   \param x,y offsets where to print relatively to coordinates origin
+   */
+  virtual int print(Fl_Abstract_Printer* p, Fl_Widget* w, int x, int y) { return 0; }
 };
 
 #endif // Fl_Device_H

@@ -25,6 +25,8 @@
 //     http://www.fltk.org/str.php
 //
 
+#ifndef FL_DOXYGEN
+
 #include <FL/Fl_PSfile_Device.H>
 
 #include <FL/Fl.H>
@@ -1323,7 +1325,9 @@ void print_cb(Fl_Return_Button *, void *) {
 }
 */
 
-#endif
+#endif // ! (defined(__APPLE__) || defined(WIN32) )
+
+#endif // FL_DOXYGEN
 
 //
 // End of "$Id$".

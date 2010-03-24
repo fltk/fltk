@@ -42,6 +42,7 @@ class Fl_Image;
 
 // Label flags...
 FL_EXPORT extern char fl_draw_shortcut;
+/** \brief The device that currently receives all graphics requests */
 FL_EXPORT extern Fl_Device *fl_device;
 
 /** \addtogroup fl_attributes
@@ -56,9 +57,9 @@ FL_EXPORT extern Fl_Device *fl_device;
  then a least-squares algorithm is used to find the closest color.
  If no valid graphical context (fl_gc) is available,
  the foreground is not set for the current window.
- \param[in] i color 
+ \param[in] c color 
  */
-inline void	fl_color(Fl_Color i) {fl_device->color(i); }; // select indexed color
+inline void	fl_color(Fl_Color c) {fl_device->color(c); }; // select indexed color
 /** for back compatibility - use fl_color(Fl_Color c) instead */
 inline void fl_color(int c) {fl_color((Fl_Color)c);}
 /**
@@ -72,6 +73,7 @@ inline void fl_color(int c) {fl_color((Fl_Color)c);}
  \param[in] r,g,b color components
  */
 inline void	fl_color(uchar r, uchar g, uchar b) {fl_device->color(r,g,b); }; // select actual color
+/** \brief The current color */
 extern FL_EXPORT Fl_Color fl_color_;
 /**
   Returns the last fl_color() that was set.
@@ -296,7 +298,7 @@ inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_device->yxline(x
  
  fl_arc() draws a series of lines to approximate the arc. Notice that the
  integer version of fl_arc() has a different number of arguments than the
- double version fl_arc(double x, double y, double r, double start, double a)
+ double version fl_arc(double x, double y, double r, double start, double end)
  
  \param[in] x,y,w,h bounding box of complete circle
  \param[in] a1,a2 start and end angles of arc measured in degrees
@@ -452,7 +454,7 @@ extern FL_EXPORT Fl_Font fl_font_; ///< current font index
   This can be used to save/restore the font.
 */
 inline Fl_Font fl_font() {return fl_font_;}
-/** current font size */
+/** \brief current font size */
 extern FL_EXPORT Fl_Fontsize fl_size_;
 /**
   Returns the \p size set by the most recent call to fl_font().
@@ -619,7 +621,6 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
   any visual of 8 bits or less, and all common TrueColor visuals up
   to 32 bits.
   */
-//FL_EXPORT void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0);
 inline void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0)
   { fl_device->draw_image(buf, X, Y, W, H, D, L); };
 
@@ -627,7 +628,6 @@ inline void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, in
   Draw a gray-scale (1 channel) image.
   \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
   */
-//FL_EXPORT void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
 inline void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0)
   { fl_device->draw_image_mono(buf, X, Y, W, H, D, L); };
 
@@ -663,7 +663,6 @@ inline void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=
 
   If \p D is 4 or more, you must fill in the unused bytes with zero.
   */
-//FL_EXPORT void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
 inline void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3)
   { fl_device->draw_image(cb, data, X, Y, W, H, D); };
 
