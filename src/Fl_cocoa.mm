@@ -1139,6 +1139,9 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   static NSText *edit;
   static int countevents;
   static CFMutableStringRef sequence;	// will contain the two characters of the composition sequence
+  if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
+    s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
+  }
   if (compose) {	// we are in a composition sequence
     // the only benefit of sending events to the NSText object edit is that the deadkey becomes visible
     // at its keyUp event; without this, the deadkey remains invisible
