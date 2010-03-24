@@ -110,22 +110,36 @@ void Fl_Abstract_Printer::origin(int *x, int *y)
 
 void Fl_Abstract_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
+  int slice, width, offset, count = 0;
   Fl_Device::display_device()->set_current();
   Fl_Window *save_front = Fl::first_window();
   win->show();
+  fl_gc = NULL;
   Fl::check();
   win->make_current();
-  uchar *image_data = fl_read_image(NULL, x, y, w, h);
+  uchar *image_data[20];
+#ifdef WIN32 // because of bug in StretchDIBits, vertically cut image in pieces of width slice
+  slice = 500;
+#else
+  slice = w;
+#endif
+  for ( offset = 0; offset < w; offset += slice) {
+    width = slice; 
+    if (offset + width > w) width = w - offset;
+    image_data[count++] = fl_read_image(NULL, x + offset, y, width, h);
+    }  
   save_front->show();
   this->set_current();
-#ifdef WIN32
-  fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
-  add_image(NULL, image_data);
+  for ( int i = 0, offset = 0; i < count; i++, offset += slice) {
+    width = slice; 
+    if (offset + width > w) width = w - offset;
+    fl_draw_image(image_data[i], delta_x + offset, delta_y, width, h, 3);
+#ifdef __APPLE__
+    add_image(NULL, image_data[i]);
 #else
-  Fl_RGB_Image *image = new Fl_RGB_Image(image_data, w, h);
-  image->draw(delta_x, delta_y);
-  add_image(image, image_data);
+    delete image_data[i];
 #endif
+  }
 }
 
 void Fl_Abstract_Printer::add_image(Fl_Image *image, const uchar *data)
