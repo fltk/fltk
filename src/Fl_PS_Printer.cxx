@@ -867,9 +867,8 @@ void Fl_PSfile_Device::transformed_draw(const char* str, int n, double x, double
     }
     i++;
     switch (*str) {
-      case '(': case ')':
-        fprintf(output, "\\%c" , *str);
-        break;
+      case '(': case ')': case '\\' :
+        fputs("\\" , output);
       default:
         fprintf(output, "%c", *str);
     }
