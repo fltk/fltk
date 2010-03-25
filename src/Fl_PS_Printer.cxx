@@ -68,7 +68,7 @@ const Fl_PSfile_Device::page_format Fl_PSfile_Device::page_formats[NO_PAGE_FORMA
   { 127,  181, "B9"},
   {  91,  127, "B10"},
 
-  // others (look at Fl_Printer.H} //
+  // others
   { 459,  649, "EnvC5"}, // envelope
   { 312,  624, "EnvDL"}, // envelope
   { 522,  756, "Executive"},

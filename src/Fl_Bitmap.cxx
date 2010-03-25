@@ -37,7 +37,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
-#include <FL/Fl_Printer.H>
 #include "flstring.h"
 
 #if defined(__APPLE_QUARTZ__)
@@ -266,7 +265,7 @@ Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) 
 
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if(fl_device->type() == Fl_Device::postscript_device) {
-    ((Fl_Abstract_Printer*)fl_device)->draw(this, XP, YP, WP, HP, cx, cy);
+    fl_device->draw(this, XP, YP, WP, HP, cx, cy);
     return;
   }
   if (!array) {

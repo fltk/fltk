@@ -234,7 +234,6 @@ int Fl_Printer::end_page (void)
       rsult = 1;
     }
   }
-  delete_image_list();
   gc = NULL;
   return rsult;
 }

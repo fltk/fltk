@@ -47,7 +47,6 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
-#include <FL/Fl_Printer.H>
 
 #include <stdio.h>
 #include "flstring.h"
@@ -76,7 +75,7 @@ void Fl_Pixmap::measure() {
 
 void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   if(fl_device->type() == Fl_Device::postscript_device) {
-    ((Fl_Abstract_Printer*)fl_device)->draw(this, XP, YP, WP, HP, cx, cy);
+    fl_device->draw(this, XP, YP, WP, HP, cx, cy);
     return;
     }
   // ignore empty or bad pixmap data:

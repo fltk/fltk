@@ -2,7 +2,7 @@
 // "$Id$"
 //
 // Definition of classes Fl_Device, Fl_Display, Fl_Quartz_Display, Fl_GDI_Display,
-// Fl_Xlib_Display and Fl_Device_Plugin for the Fast Light Tool Kit (FLTK).
+// and Fl_Xlib_Display for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010 by Bill Spitzak and others.
 //
@@ -25,12 +25,19 @@
 //
 //     http://www.fltk.org/str.php
 //
+/** \file Fl_Device.H 
+ \brief declaration of classes Fl_Device, Fl_Display.
+*/
 
 #ifndef Fl_Device_H
 #define Fl_Device_H
 
 #include <FL/x.H>
 #include <FL/Fl_Plugin.H>
+#include <FL/Fl_Image.H>
+#include <FL/Fl_Bitmap.H>
+#include <FL/Fl_Pixmap.H>
+#include <FL/Fl_RGB_Image.H>
 #ifdef WIN32
 #include <commdlg.h>
 #elif defined(__APPLE__)
@@ -39,14 +46,23 @@
 #endif
 
 class Fl_Widget;
-class Fl_Image;
-class Fl_RGB_Image;
-class Fl_Pixmap;
-class Fl_Bitmap;
+class Fl_Device;
 class Fl_Display;
 class Fl_Abstract_Printer;
-extern FL_EXPORT Fl_Display *fl_display_device;
-typedef void (*Fl_Draw_Image_Cb)(void* ,int,int,int,uchar*);
+/** \brief Points to the device that currently receives all graphics requests */
+FL_EXPORT extern Fl_Device *fl_device;
+/** \brief Points to the platform's display device */
+FL_EXPORT extern Fl_Display *fl_display_device;
+
+/**
+ signature of image generation callback function.
+ \param[in]  data  user data passed to function
+ \param[in]  x,y,w position and width of scan line in image
+ \param[out] buf   buffer for generated image data. You must copy \p w
+ pixels from scanline \p y, starting at pixel \p x
+ to this buffer.
+ */
+typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 
 /**
  \brief A pure virtual class subclassed to send the output of drawing functions to display, printers, or local files.
@@ -63,7 +79,7 @@ typedef void (*Fl_Draw_Image_Cb)(void* ,int,int,int,uchar*);
  function of the \ref fl_drawings and \ref fl_attributes modules which bears the same name
  prefixed with fl_ .
   */
-class FL_EXPORT Fl_Device {
+class Fl_Device {
 protected:
   /** \brief The device type */
   int type_; 
@@ -73,6 +89,9 @@ protected:
   uchar bg_g_; 
   /** \brief blue color for background and/or mixing if device does not support masking or alpha */
   uchar bg_b_; 
+  friend class Fl_Pixmap;
+  friend class Fl_Bitmap;
+  friend class Fl_RGB_Image;
   friend void fl_rect(int x, int y, int w, int h);
   friend void fl_rectf(int x, int y, int w, int h);
   friend void fl_line_style(int style, int width, char* dashes);
@@ -220,24 +239,9 @@ protected:
   /** \brief see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D). */
   virtual   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
   // Image classes
-  /** \brief Draws an Fl_Pixmap object to the device. 
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
-   the image offset by the cx and cy arguments.
-   */
-  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
-  /** \brief Draws an Fl_RGB_Image object to the device. 
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
-   the image offset by the cx and cy arguments.
-   */
   virtual   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
-  /** \brief Draws an Fl_Bitmap object to the device. 
-   *
-   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
-   the image offset by the cx and cy arguments.
-   */
-  virtual   void draw(Fl_Bitmap * bmp,int XP, int YP, int WP, int HP, int cx, int cy);
+  virtual   void draw(Fl_Bitmap * bmp,int XP, int YP, int WP, int HP, int cx, int cy);  
+  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
   
 public:
   /** 
@@ -254,19 +258,10 @@ public:
   /** 
    @brief An RTTI emulation of device classes. It returns values < 256 if it is a display device 
    */
-  int type() {return type_;};
-  /**
-   @brief Sets this device (display, printer, local file) as the target of future graphics calls.
-   *
-   @return  The current target device of graphics calls.
-   */
-  virtual Fl_Device *set_current();
+  inline int type() {return type_;};
+  virtual Fl_Device *set_current(void);
   
   virtual ~Fl_Device() {};
-
-  /**
-   @brief    Returns the current target device of graphics calls.
-   */
   static Fl_Device *current();
   
   /**
@@ -311,28 +306,6 @@ public:
   Fl_Xlib_Display() { type_ = xlib_display; };
 };
 #endif
-
-/**
- This plugin socket allows the integration of new device drivers for special
- window or screen types. It is currently used to provide an automated printing
- service for OpenGL windows, if linked with fltk_gl.
- */
-class Fl_Device_Plugin : public Fl_Plugin {
-public:
-  /** \brief The constructor */
-  Fl_Device_Plugin(const char *name)
-  : Fl_Plugin(klass(), name) { }
-  /** \brief Returns the class name */
-  virtual const char *klass() { return "fltk:device"; }
-  /** \brief Returns the plugin name */
-  virtual const char *name() = 0;
-  /** \brief Prints a widget 
-   \param p the printer
-   \param w the widget
-   \param x,y offsets where to print relatively to coordinates origin
-   */
-  virtual int print(Fl_Abstract_Printer* p, Fl_Widget* w, int x, int y) { return 0; }
-};
 
 #endif // Fl_Device_H
 

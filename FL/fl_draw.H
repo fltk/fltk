@@ -42,8 +42,6 @@ class Fl_Image;
 
 // Label flags...
 FL_EXPORT extern char fl_draw_shortcut;
-/** \brief The device that currently receives all graphics requests */
-FL_EXPORT extern Fl_Device *fl_device;
 
 /** \addtogroup fl_attributes
     @{
@@ -578,15 +576,6 @@ FL_EXPORT void fl_frame2(const char* s, int x, int y, int w, int h);
 FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
 
 // images:
-/**
-  signature of image generation callback function.
-  \param[in]  data  user data passed to function
-  \param[in]  x,y,w position and width of scan line in image
-  \param[out] buf   buffer for generated image data. You must copy \p w
-                    pixels from scanline \p y, starting at pixel \p x
-		    to this buffer.
-  */
-typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 
 /**
   Draw an 8-bit per color RGB or luminance image.
