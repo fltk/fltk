@@ -25,71 +25,18 @@
 //     http://www.fltk.org/str.php
 //
 /** \file Fl_Printer.H 
- \brief declaration of classes Fl_Abstract_Printer, Fl_Printer,  Fl_Device_Plugin.
+ \brief declaration of classes Fl_Printer,  Fl_Device_Plugin.
  */
 
 #ifndef Fl_Printer_H
 #define Fl_Printer_H
 
-#include <FL/Fl_Device.H>
+#include <FL/Fl_Abstract_Printer.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Bitmap.H>
 #include <stdio.h>
-
-/**
- \brief A virtual class for print support with several platform-specific implementations.
- *
- This class has no public constructor: don't instantiate it; use Fl_Printer or Fl_PSfile_Device instead.
- \see class Fl_Printer for full documentation of member functions.
- */
-class Fl_Abstract_Printer : public Fl_Device {
-   friend class Fl_Pixmap;
-   friend class Fl_RGB_Image;
-   friend class Fl_Bitmap;
-private:
-#ifdef __APPLE__
-  struct chain_elt {
-    Fl_Image *image;
-    const uchar *data;
-    struct chain_elt *next;
-  };
-  void add_image(Fl_Image *image, const uchar *data); // adds an image to the page image list
-#endif
-  void traverse(Fl_Widget *widget); // finds subwindows of widget and prints them
-protected:
-  /** \brief horizontal offset to the origin of graphics coordinates */
-  int x_offset;
-  /** \brief vertical offset to the origin of graphics coordinates */
-  int y_offset;
-  /** \brief chained list of Fl_Image's used in this page */
-  struct chain_elt *image_list_; 
-  /** \brief the printer's graphics context, if there's one, NULL otherwise */
-  void *gc; 
-  /** \brief the constructor */
-  Fl_Abstract_Printer(void) { gc = NULL; bg_r_ = bg_g_ = bg_b_ = 0; };
-#ifdef __APPLE__
-  /** \brief deletes the page image list */
-  void delete_image_list(); 
-#endif
-public:
-   Fl_Device *set_current(void);
-   virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
-   virtual int start_page(void);
-   virtual int printable_rect(int *w, int *h);
-   virtual void margins(int *left, int *top, int *right, int *bottom);
-   virtual void origin(int x, int y);
-   void origin(int *x, int *y);
-   virtual void scale(float scale_x, float scale_y);
-   virtual void rotate(float angle);
-   virtual void translate(int x, int y);
-   virtual void untranslate(void);
-   void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
-   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x = 0, int delta_y = 0);
-   virtual int end_page (void);
-   virtual void end_job (void);
-};
 
 #if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)
 /**
