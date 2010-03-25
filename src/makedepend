@@ -7,7 +7,7 @@ Fl.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
 Fl.o: flstring.h ../FL/fl_draw.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 Fl.o: ../FL/Fl_Preferences.H
 Fl_Abstract_Printer.o: ../FL/Fl_Abstract_Printer.H  ../FL/Fl_Printer.H
-Fl_Abstract_Printer.o: ../FL/Device.H  ../FL/Fl_Plugin.H
+Fl_Abstract_Printer.o: ../FL/Fl_Device.H  ../FL/Fl_Plugin.H
 Fl_Adjuster.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Adjuster.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Adjuster.o: ../FL/fl_types.h ../FL/Fl_Adjuster.H ../FL/Fl_Valuator.H
