@@ -52,6 +52,22 @@ class Fl_Window;
 class Fl_Image;
 struct Fl_Label;
 
+
+/** \defgroup  callback_functions Callback function typedefs
+    \brief Typedefs for callback or handler functions passed as function parameters.
+
+    FLTK uses callback functions as parameters for some function calls, e.g. to
+    set up global event handlers (Fl::add_handler()), to add a timeout handler
+    (Fl::add_timeout()), and many more.
+
+    The typedefs defined in this group describe the function parameters used to set
+    up or clear the callback functions and should also be referenced to define the
+    callback function to handle such events in the user's code.
+
+    \see Fl::add_handler(), Fl::add_timeout(), Fl::repeat_timeout(),
+	 Fl::remove_timeout() and others
+  @{ */
+
 /** signature of some label drawing functions passed as parameters */
 typedef void (Fl_Label_Draw_F)(const Fl_Label *label, int x, int y, int w, int h, Fl_Align align);
 
@@ -87,6 +103,8 @@ typedef void (*Fl_Atclose_Handler)(Fl_Window *window, void *data);
 
 /** signature of args functions passed as parameters */
 typedef int (*Fl_Args_Handler)(int argc, char **argv, int &i);
+
+/** @} */ /* group callback_functions */
 
 /**
   The Fl is the FLTK global (static) containing

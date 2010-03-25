@@ -138,11 +138,13 @@ Fl_Widget *fl_check_forms() {
 
 void fl_set_graphics_mode(int /*r*/,int /*d*/) {}
 
+#ifndef FL_DOXYGEN // FIXME: suppress doxygen warning
 void Fl_FormsText::draw() {
   draw_box();
   align(align()|FL_ALIGN_INSIDE); // questionable method of compatibility
   draw_label();
 }
+#endif
 
 // Create a forms button by selecting correct fltk subclass:
 

@@ -277,7 +277,7 @@ int Fl::arg(int argc, char **argv, int &i) {
   Fl::help pointer.
 */
 
-int Fl::args(int argc, char** argv, int& i, int (*cb)(int,char**,int&)) {
+int Fl::args(int argc, char** argv, int& i, Fl_Args_Handler cb) {
   arg_called = 1;
   i = 1; // skip argv[0]
   while (i < argc) {

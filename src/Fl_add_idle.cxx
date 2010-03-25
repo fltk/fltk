@@ -66,7 +66,7 @@ static void call_idle() {
 
   FLTK will not recursively call the idle callback.
 */
-void Fl::add_idle(void (*cb)(void*), void* data) {
+void Fl::add_idle(Fl_Idle_Handler cb, void* data) {
   idle_cb* p = freelist;
   if (p) freelist = p->next;
   else p = new idle_cb;
@@ -86,7 +86,7 @@ void Fl::add_idle(void (*cb)(void*), void* data) {
 /**
   Returns true if the specified idle callback is currently installed.
 */
-int Fl::has_idle(void (*cb)(void*), void* data) {
+int Fl::has_idle(Fl_Idle_Handler cb, void* data) {
   idle_cb* p = first;
   if (!p) return 0;
   for (;; p = p->next) {
@@ -98,7 +98,7 @@ int Fl::has_idle(void (*cb)(void*), void* data) {
 /**
   Removes the specified idle callback, if it is installed.
 */
-void Fl::remove_idle(void (*cb)(void*), void* data) {
+void Fl::remove_idle(Fl_Idle_Handler cb, void* data) {
   idle_cb* p = first;
   if (!p) return;
   idle_cb* l = last;
