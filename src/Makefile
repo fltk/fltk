@@ -27,6 +27,7 @@
 
 CPPFILES = \
 	Fl.cxx \
+	Fl_Abstract_Printer.cxx \
 	Fl_Adjuster.cxx \
 	Fl_Bitmap.cxx \
 	Fl_Browser.cxx \

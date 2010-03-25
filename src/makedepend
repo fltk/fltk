@@ -6,6 +6,8 @@ Fl.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 Fl.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
 Fl.o: flstring.h ../FL/fl_draw.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 Fl.o: ../FL/Fl_Preferences.H
+Fl_Abstract_Printer.o: ../FL/Fl_Abstract_Printer.H  ../FL/Fl_Printer.H
+Fl_Abstract_Printer.o: ../FL/Device.H  ../FL/Fl_Plugin.H
 Fl_Adjuster.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Adjuster.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Adjuster.o: ../FL/fl_types.h ../FL/Fl_Adjuster.H ../FL/Fl_Valuator.H
@@ -319,7 +321,7 @@ Fl_Preferences.o: ../FL/Fl_Tree_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
 Fl_Preferences.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H
 Fl_Preferences.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h ../config.h
 Fl_Printer.o: ../FL/Fl_PSfile_Device.H ../FL/Fl_Printer.H ../FL/Fl_Device.H ../FL/fl_draw.H
-Fl_Printer.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Printer.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Abstract_Printer.H
 Fl_Printer.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/x.H ../FL/Xutf8.h
 Fl_Printer.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Pixmap.H
 Fl_Printer.o: ../FL/Fl_Image.H ../FL/Fl_RGB_Image.H ../FL/Fl_Bitmap.H
