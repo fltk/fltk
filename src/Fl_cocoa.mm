@@ -45,14 +45,8 @@
  "_GetKeys", referenced from:
  Fl::get_key(int)  in Fl_get_key.o
  
- "_GetCurrentEventQueue", referenced from:
- do_queued_events(double)in Fl.o
- 
  "_InstallEventLoopTimer", referenced from:
  Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
- 
- "_FlushEvents", referenced from:
- fl_open_display()     in Fl.o
  
  "_GetEventParameter", referenced from:
  carbonTextHandler(OpaqueEventHandlerCallRef*, OpaqueEventRef*, void*) in Fl.o
@@ -72,9 +66,6 @@
  
  "_GetMainEventLoop", referenced from:
  Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
- 
- "_GetCurrentKeyModifiers", referenced from:
- -[FLView flagsChanged:] in Fl.o
  
  */
 
@@ -289,7 +280,6 @@ class DataReady
   fd_set _fdsets[3];		// r/w/x sets user wants to monitor
   int _maxfd;			// max fd count to monitor
   int _cancelpipe[2];		// pipe used to help cancel thread
-  void *_userdata;		// thread's userdata
   
 public:
   DataReady()
@@ -302,7 +292,6 @@ public:
     pthread_mutex_init(&_datalock, NULL);
     FD_ZERO(&_fdsets[0]); FD_ZERO(&_fdsets[1]); FD_ZERO(&_fdsets[2]);
     _cancelpipe[0] = _cancelpipe[1] = 0;
-    _userdata = 0;
     _maxfd = 0;
   }
   
@@ -333,7 +322,7 @@ public:
   int CheckData(fd_set& r, fd_set& w, fd_set& x);
   void HandleData(fd_set& r, fd_set& w, fd_set& x);
   static void* DataReadyThread(void *self);
-  void StartThread(void *userdata);
+  void StartThread(void);
   void CancelThread(const char *reason);
 };
 
@@ -437,7 +426,6 @@ void* DataReady::DataReadyThread(void *o)
     /*LOCK*/  fd_set r = self->GetFdset(0);
     /*LOCK*/  fd_set w = self->GetFdset(1);
     /*LOCK*/  fd_set x = self->GetFdset(2);
-    //    /*LOCK*/  void *userdata = self->_userdata;
     /*LOCK*/  int cancelpipe = self->GetCancelPipe(0);
     /*LOCK*/  if ( cancelpipe > maxfd ) maxfd = cancelpipe;
     /*LOCK*/  FD_SET(cancelpipe, &r);		// add cancelpipe to fd's to watch
@@ -474,12 +462,11 @@ void* DataReady::DataReadyThread(void *o)
 }
 
 // START 'DATA READY' THREAD RUNNING, CREATE INTER-THREAD PIPE
-void DataReady::StartThread(void *new_userdata)
+void DataReady::StartThread(void)
 {
   CancelThread(DEBUGTEXT("STARTING NEW THREAD\n"));
   DataLock();
   /*LOCK*/  pipe(_cancelpipe);	// pipe for sending cancel msg to thread
-  /*LOCK*/  _userdata = new_userdata;
   DataUnlock();
   DEBUGMSG("*** START THREAD\n");
   pthread_create(&tid, NULL, DataReadyThread, (void*)this);
@@ -695,7 +682,7 @@ static double do_queued_events( double time = 0.0 )
   
   // Start thread to watch for data ready
   if ( dataready.GetNfds() ) {
-    dataready.StartThread((void*)GetCurrentEventQueue());
+    dataready.StartThread();
   }
   
   fl_unlock_function();
@@ -1551,7 +1538,13 @@ void fl_open_display() {
     [NSApp setDelegate:mydelegate];
     [NSApp finishLaunching];
 		
-    FlushEvents(everyEvent,0);
+    // empty the event queue
+    NSEvent *ign_event;
+    do ign_event = [NSApp nextEventMatchingMask:NSAnyEventMask 
+					untilDate:[NSDate dateWithTimeIntervalSinceNow:0] 
+					   inMode:NSDefaultRunLoopMode 
+					  dequeue:YES];
+    while (ign_event);
     
     fl_default_cursor = [NSCursor arrowCursor];
     Gestalt(gestaltSystemVersion, &MACsystemVersion);
@@ -1957,7 +1950,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 - (void)flagsChanged:(NSEvent *)theEvent {
   fl_lock_function();
-  static UInt32 prevMods = mods_to_e_state( GetCurrentKeyModifiers() );
+  static UInt32 prevMods = 0;
   NSUInteger mods = [theEvent modifierFlags];
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   UInt32 tMods = prevMods ^ mods;
