@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include <FL/Fl_Printer.H>
+#include <FL/Fl_Printer.H> // must stay here
 
 #ifndef Fl_PSfile_Device_H
 #define Fl_PSfile_Device_H
