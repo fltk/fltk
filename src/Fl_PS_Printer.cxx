@@ -1255,8 +1255,6 @@ int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   enum Page_Layout layout;
 
   // first test version for print dialog
-
-  print_prefs = new Fl_Preferences(Fl_Preferences::USER, "fltk.org", "print_support");
   if (!print_panel) make_print_panel();
   print_load();
   print_selection->deactivate();
@@ -1266,7 +1264,6 @@ int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   { char tmp[10]; snprintf(tmp, sizeof(tmp), "%d", pages); print_to->value(tmp); }
   print_panel->show(); // this is modal
   while (print_panel->shown()) Fl::wait();
-  delete print_prefs;
   
   if (!print_start) // user clicked cancel
     return 1;

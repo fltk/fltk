@@ -48,8 +48,7 @@
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Int_Input.H>
 
-static Fl_Preferences *print_prefs;
-
+static Fl_Preferences print_prefs(Fl_Preferences::USER, "fltk.org", "printers");
 static Fl_Double_Window *print_panel=(Fl_Double_Window *)0;
 static Fl_Group *print_panel_controls=(Fl_Group *)0;
 static Fl_Choice *print_choice=(Fl_Choice *)0;
@@ -230,13 +229,13 @@ static void cb_Save(Fl_Return_Button*, void*) {
   const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
 
   snprintf(name, sizeof(name), "%s/page_size", printer);
-  print_prefs->set(name, print_page_size->value());
+  print_prefs.set(name, print_page_size->value());
 
   snprintf(name, sizeof(name), "%s/output_mode", printer);
   for (val = 0; val < 4; val ++) {
     if (print_output_mode[val]->value()) break;
   }
-  print_prefs->set(name, val);
+  print_prefs.set(name, val);
 }
 
 static void cb_Cancel1(Fl_Button*, void*) {
@@ -586,11 +585,11 @@ void print_update_status() {
   int val;
 
   snprintf(name, sizeof(name), "%s/page_size", printer);
-  print_prefs->get(name, val, 1);
+  print_prefs.get(name, val, 1);
   print_page_size->value(val);
 
   snprintf(name, sizeof(name), "%s/output_mode", printer);
-  print_prefs->get(name, val, 0);
+  print_prefs.get(name, val, 0);
   print_output_mode[val]->setonly();
 }
 
