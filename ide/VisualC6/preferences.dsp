@@ -104,7 +104,7 @@ InputPath=..\..\test\preferences.fl
 
 "..\..\test\preferences.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\test/ 
-	..\fluid\fluid -c preferences.fl 
+	..\fluid\fluid -c preferences.fl
 	cd ..\ide\visualc 
 	
 # End Custom Build

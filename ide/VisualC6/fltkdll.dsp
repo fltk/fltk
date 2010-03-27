@@ -685,5 +685,9 @@ SOURCE=..\..\src\Fl_Printer.cxx
 
 SOURCE=..\..\src\ps_image.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Abstract_Printer.cxx
+# End Source File
 # End Target
 # End Project

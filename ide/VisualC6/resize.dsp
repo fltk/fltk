@@ -104,7 +104,7 @@ InputPath=..\..\test\resize.fl
 
 "..\..\test\resize.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\test/ 
-	..\fluid\fluid -c resize.fl 
+	..\fluid\fluid -c resize.fl
 	cd ..\ide\visualc 
 	
 # End Custom Build

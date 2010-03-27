@@ -104,7 +104,7 @@ InputPath=..\..\test\fast_slow.fl
 
 "..\..\test\fast_slow.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\test/ 
-	..\fluid\fluid -c fast_slow.fl 
+	..\fluid\fluid -c fast_slow.fl
 	cd ..\ide\visualc 
 	
 # End Custom Build

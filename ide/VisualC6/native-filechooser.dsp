@@ -91,7 +91,7 @@ LINK32=link.exe
 # Name "native-filechooser - Win32 Debug"
 # Begin Source File
 
-SOURCE="..\..\test\native-filechooser.cxx"
+SOURCE=..\..\test\native-filechooser.cxx
 # End Source File
 # End Target
 # End Project

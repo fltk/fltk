@@ -344,6 +344,7 @@ int create_new_database(const char *filename)
   
   Fl_Target_Prefs fltk_lib(libs_db.add_with_key("name", "fltk")); {
     fltk_lib.add_source(files_db, "src/Fl.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Abstract_Printer.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Adjuster.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Bitmap.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Box.cxx");
@@ -653,6 +654,7 @@ int create_new_database(const char *filename)
     fluid_app.add_lib(fltk_images_lib);
     fluid_app.add_lib(fltk_jpeg_lib);
     fluid_app.add_lib(fltk_png_lib);
+    fluid_app.add_lib(fltk_z_lib);
     visualc_only(fluid_app.add_lib(fltk_z_lib));
     xcode_only(fluid_app.add_external_lib(files_db, "icons/fluid.icns"));
   }
@@ -784,6 +786,16 @@ int create_new_database(const char *filename)
     demo_db.depends_on(db);
   }  
   
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "device"));
+    db.add_source(files_db, "test/device.cxx");
+    db.add_lib(fltk_lib); 
+    db.add_lib(fltk_images_lib); 
+    db.add_lib(fltk_jpeg_lib); 
+    db.add_lib(fltk_png_lib); 
+    db.add_lib(fltk_z_lib);
+    demo_db.depends_on(db);
+  }  
+  
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "doublebuffer"));
     db.add_source(files_db, "test/doublebuffer.cxx");
     db.add_lib(fltk_lib); 
@@ -809,6 +821,7 @@ int create_new_database(const char *filename)
     db.add_lib(fltk_images_lib); 
     db.add_lib(fltk_jpeg_lib); 
     db.add_lib(fltk_png_lib); 
+    db.add_lib(fltk_z_lib);
     demo_db.depends_on(db);
   }  
   
@@ -883,6 +896,7 @@ int create_new_database(const char *filename)
     db.add_lib(fltk_images_lib); 
     db.add_lib(fltk_jpeg_lib); 
     db.add_lib(fltk_png_lib); 
+    db.add_lib(fltk_z_lib);
     demo_db.depends_on(db);
   }  
   
@@ -1007,6 +1021,7 @@ int create_new_database(const char *filename)
     db.add_lib(fltk_images_lib); 
     db.add_lib(fltk_jpeg_lib); 
     db.add_lib(fltk_png_lib); 
+    db.add_lib(fltk_z_lib);
     demo_db.depends_on(db);
   }  
   
@@ -1072,6 +1087,7 @@ int create_new_database(const char *filename)
     db.add_lib(fltk_images_lib); 
     db.add_lib(fltk_jpeg_lib); 
     db.add_lib(fltk_png_lib); 
+    db.add_lib(fltk_z_lib);
     xcode_only(db.add_external_lib(files_db, "/System/Library/Frameworks/CoreAudio.framework"));
     visualc_only(db.add_external_lib(files_db, "winmm.lib"));
     demo_db.depends_on(db);
@@ -1114,6 +1130,7 @@ int create_new_database(const char *filename)
     db.add_lib(fltk_images_lib); 
     db.add_lib(fltk_jpeg_lib); 
     db.add_lib(fltk_png_lib); 
+    db.add_lib(fltk_z_lib);
     demo_db.depends_on(db);
   }  
   

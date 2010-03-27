@@ -91,11 +91,11 @@ LINK32=link.exe
 # Name "CubeView - Win32 Debug"
 # Begin Source File
 
-SOURCE=..\..\test\CubeMain.cxx
+SOURCE=..\..\test\CubeView.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\test\CubeView.cxx
+SOURCE=..\..\test\CubeMain.cxx
 # End Source File
 # Begin Source File
 
@@ -112,7 +112,7 @@ InputPath=..\..\test\CubeViewUI.fl
 
 "..\..\test\CubeViewUI.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\test/ 
-	..\fluid\fluid -c CubeViewUI.fl 
+	..\fluid\fluid -c CubeViewUI.fl
 	cd ..\ide\visualc 
 	
 # End Custom Build

@@ -67,7 +67,7 @@ static char avoidRecursion = 0;
 
 // sets the global return value (ret_val) and closes the window
 static void button_cb(Fl_Widget *bt, void *val) {
-  ret_val = (int)val;
+  ret_val = (int)(long)val;
   message_form->hide();
 }
 

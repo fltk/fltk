@@ -331,7 +331,7 @@ public:
         fprintf(f, "%s ", pathAndName);
       }
     }
-    fprintf(f, "comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:\"libcd\" /out:\"../../%s/%sd.exe\" /pdbtype:sept /libpath:\"..\\..\\lib\"\r\n", dir, name);
+    fprintf(f, "comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /nodefaultlib:\"libcd\" /out:\"../../%s/%s.exe\" /pdbtype:sept /libpath:\"..\\..\\lib\"\r\n", dir, name);
     
     fprintf(f, "# SUBTRACT LINK32 /pdb:none /incremental:yes\r\n");
     fprintf(f, "\r\n");

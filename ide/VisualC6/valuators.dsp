@@ -104,7 +104,7 @@ InputPath=..\..\test\valuators.fl
 
 "..\..\test\valuators.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\test/ 
-	..\fluid\fluid -c valuators.fl 
+	..\fluid\fluid -c valuators.fl
 	cd ..\ide\visualc 
 	
 # End Custom Build

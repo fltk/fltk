@@ -104,7 +104,7 @@ InputPath=..\..\test\radio.fl
 
 "..\..\test\radio.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\test/ 
-	..\fluid\fluid -c radio.fl 
+	..\fluid\fluid -c radio.fl
 	cd ..\ide\visualc 
 	
 # End Custom Build

@@ -108,7 +108,7 @@ InputPath=..\..\test\keyboard_ui.fl
 
 "..\..\test\keyboard_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
 	cd ..\..\test/ 
-	..\fluid\fluid -c keyboard_ui.fl 
+	..\fluid\fluid -c keyboard_ui.fl
 	cd ..\ide\visualc 
 	
 # End Custom Build

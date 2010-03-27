@@ -92,6 +92,7 @@ const char *default_menu[] = {
   "@e:Block\\nAttack!:blocks\n",
   "@e:Checkers:checkers\n",
   "@e:Sudoku:sudoku\n",
+  "@e:Print\nsupport:device\n",
   "\n",
   "@main:Other\\nTests:@o\n",
   "@o:Color Choosers:color_chooser\n",
