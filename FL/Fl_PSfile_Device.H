@@ -38,7 +38,7 @@
  This class has the same API as class Fl_Printer except for start_job() member function.
  \see class Fl_Printer.
  */
-class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
+FL_EXPORT class Fl_PSfile_Device : public  Fl_Abstract_Printer {
   public: 
     /**
      \brief Possible page formats.
@@ -251,42 +251,12 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
     int end_page (void);    
     void end_job(void);
 #endif // FL_DOXYGEN
-    
-  /**
-   @brief The constructor.
-   */
   Fl_PSfile_Device(void);
-  
-  /**
-   @brief Begins the session where all graphics requests will go to a local PostScript file.
-   *
-   Opens a file dialog entitled with Fl_PSfile_Device::file_chooser_title to select an output PostScript file.
-   @param pagecount The total number of pages to be created.
-   @param format Desired page format.
-   @param layout Desired page layout.
-   @return 0 iff OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
-   */
   int start_job(int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
-  
-  /**
-   @brief Begins the session where all graphics requests will go to FILE pointer.
-   *
-   @param ps_output A writable FILE pointer that will receive PostScript output and that will be closed
-   when end_job() will be called.
-   @param pagecount The total number of pages to be created.
-   @param format Desired page format.
-   @param layout Desired page layout.
-   @return always 0.
-   */
   int start_job(FILE *ps_output, int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
-  
-  /**
-   @brief The destructor.
-   */
   virtual ~Fl_PSfile_Device();
   
-  // how to have the const value appear in Doxygen as occurs with Fl_File_Chooser ?
-  /** \brief "Select a .ps file" [this text may be customized at run-time] */
+  /** [this text may be customized at run-time] */
   static const char *file_chooser_title; 
 };
 

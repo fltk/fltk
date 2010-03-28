@@ -69,6 +69,26 @@ static Fl_Spinner *print_copies=(Fl_Spinner *)0;
 static int print_start = 0;	// 1 if print_okay has been clicked
 static int print_pipe = 0;	// 0 = file, 1 = pipe (lp)
 
+const char *Fl_Printer::dialog_title = "Print";
+const char *Fl_Printer::dialog_printer = "Printer:";
+const char *Fl_Printer::dialog_range = "Print Range";
+const char *Fl_Printer::dialog_copies = "Copies";
+const char *Fl_Printer::dialog_all = "All";
+const char *Fl_Printer::dialog_pages = "Pages";
+const char *Fl_Printer::dialog_from = "From:";
+const char *Fl_Printer::dialog_to = "To:";
+const char *Fl_Printer::dialog_properties = "Properties...";
+const char *Fl_Printer::dialog_copyNo = "# Copies:";
+const char *Fl_Printer::dialog_print_button = "Print";
+const char *Fl_Printer::dialog_cancel_button = "Cancel";
+const char *Fl_Printer::property_title = "Printer Properties";
+const char *Fl_Printer::property_pagesize = "Page Size:";
+const char *Fl_Printer::property_mode = "Output Mode:";
+const char *Fl_Printer::property_use = "Use";
+const char *Fl_Printer::property_save = "Save";
+const char *Fl_Printer::property_cancel = "Cancel";
+
+
 static void cb_print_choice(Fl_Choice*, void*) {
   print_update_status();
 }
@@ -248,31 +268,31 @@ static void cb_Use(Fl_Button*, void*) {
 }
 
 Fl_Double_Window* make_print_panel() {
-  { print_panel = new Fl_Double_Window(465, 235, "Print");
+  { print_panel = new Fl_Double_Window(465, 235, Fl_Printer::dialog_title);
     { print_panel_controls = new Fl_Group(10, 10, 447, 216);
-      { print_choice = new Fl_Choice(113, 10, 181, 25, "Printer:");
+      { print_choice = new Fl_Choice(133, 10, 181, 25, Fl_Printer::dialog_printer);
         print_choice->down_box(FL_BORDER_BOX);
         print_choice->labelfont(1);
         print_choice->callback((Fl_Callback*)cb_print_choice);
         print_choice->when(FL_WHEN_CHANGED);
       } // Fl_Choice* print_choice
-      { print_properties = new Fl_Button(294, 10, 105, 25, "Properties...");
+      { print_properties = new Fl_Button(314, 10, 115, 25, Fl_Printer::dialog_properties);
         print_properties->callback((Fl_Callback*)cb_print_properties);
       } // Fl_Button* print_properties
-      { print_status = new Fl_Box(111, 41, 288, 17, "printer/job status");
-        print_status->align(Fl_Align(68|FL_ALIGN_INSIDE));
+      { print_status = new Fl_Box(0, 41, print_panel_controls->w(), 17, "printer/job status");
+        print_status->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE|FL_ALIGN_LEFT));
       } // Fl_Box* print_status
-      { Fl_Group* o = new Fl_Group(10, 86, 227, 105, "Print Range");
+      { Fl_Group* o = new Fl_Group(10, 86, 227, 105, Fl_Printer::dialog_range);
         o->box(FL_THIN_DOWN_BOX);
         o->labelfont(1);
         o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-        { print_all = new Fl_Round_Button(20, 96, 38, 25, "All");
+        { print_all = new Fl_Round_Button(20, 96, 38, 25, Fl_Printer::dialog_all);
           print_all->type(102);
           print_all->down_box(FL_ROUND_DOWN_BOX);
           print_all->value(1);
           print_all->callback((Fl_Callback*)cb_print_all);
         } // Fl_Round_Button* print_all
-        { print_pages = new Fl_Round_Button(20, 126, 64, 25, "Pages");
+        { print_pages = new Fl_Round_Button(20, 126, 64, 25, Fl_Printer::dialog_pages);
           print_pages->type(102);
           print_pages->down_box(FL_ROUND_DOWN_BOX);
           print_pages->callback((Fl_Callback*)cb_print_pages);
@@ -282,23 +302,23 @@ Fl_Double_Window* make_print_panel() {
           print_selection->down_box(FL_ROUND_DOWN_BOX);
           print_selection->callback((Fl_Callback*)cb_print_selection);
         } // Fl_Round_Button* print_selection
-        { print_from = new Fl_Int_Input(136, 126, 28, 25, "From:");
+        { print_from = new Fl_Int_Input(136, 126, 28, 25, Fl_Printer::dialog_from);
           print_from->type(2);
           print_from->textfont(4);
           print_from->deactivate();
         } // Fl_Int_Input* print_from
-        { print_to = new Fl_Int_Input(199, 126, 28, 25, "To:");
+        { print_to = new Fl_Int_Input(199, 126, 28, 25, Fl_Printer::dialog_to);
           print_to->type(2);
           print_to->textfont(4);
           print_to->deactivate();
         } // Fl_Int_Input* print_to
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(247, 86, 210, 105, "Copies");
+      { Fl_Group* o = new Fl_Group(247, 86, 210, 105, Fl_Printer::dialog_copies);
         o->box(FL_THIN_DOWN_BOX);
         o->labelfont(1);
         o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-        { print_copies = new Fl_Spinner(321, 96, 45, 25, "# Copies:");
+        { print_copies = new Fl_Spinner(321, 96, 45, 25, Fl_Printer::dialog_copyNo);
           print_copies->callback((Fl_Callback*)cb_print_copies);
           print_copies->when(FL_WHEN_CHANGED);
         } // Fl_Spinner* print_copies
@@ -436,10 +456,10 @@ Fl_Double_Window* make_print_panel() {
         } // Fl_Group* print_collate_group[1]
         o->end();
       } // Fl_Group* o
-      { Fl_Return_Button* o = new Fl_Return_Button(309, 201, 70, 25, "Print");
+      { Fl_Return_Button* o = new Fl_Return_Button(279, 201, 100, 25, Fl_Printer::dialog_print_button);
         o->callback((Fl_Callback*)print_cb);
       } // Fl_Return_Button* o
-      { Fl_Button* o = new Fl_Button(389, 201, 68, 25, "Cancel");
+      { Fl_Button* o = new Fl_Button(389, 201, 68, 25, Fl_Printer::dialog_cancel_button);
         o->callback((Fl_Callback*)cb_Cancel);
       } // Fl_Button* o
       print_panel_controls->end();
@@ -451,15 +471,15 @@ Fl_Double_Window* make_print_panel() {
     print_panel->set_modal();
     print_panel->end();
   } // Fl_Double_Window* print_panel
-  { print_properties_panel = new Fl_Double_Window(290, 130, "Printer Properties");
+  { print_properties_panel = new Fl_Double_Window(290, 130, Fl_Printer::property_title);
     print_properties_panel->callback((Fl_Callback*)cb_print_properties_panel);
-    { print_page_size = new Fl_Choice(110, 10, 80, 25, "Page Size:");
+    { print_page_size = new Fl_Choice(150, 10, 80, 25, Fl_Printer::property_pagesize);
       print_page_size->down_box(FL_BORDER_BOX);
-      print_page_size->labelfont(1);
+      print_page_size->labelfont(FL_HELVETICA);
       print_page_size->menu(menu_print_page_size);
     } // Fl_Choice* print_page_size
-    { Fl_Group* o = new Fl_Group(110, 45, 170, 40, "Output Mode:");
-      o->labelfont(1);
+    { Fl_Group* o = new Fl_Group(110, 45, 170, 40, Fl_Printer::property_mode);
+      o->labelfont(FL_HELVETICA);
       o->align(Fl_Align(FL_ALIGN_LEFT));
       { print_output_mode[0] = new Fl_Button(110, 45, 30, 40);
         print_output_mode[0]->type(102);
@@ -496,13 +516,13 @@ Fl_Double_Window* make_print_panel() {
       } // Fl_Button* print_output_mode[3]
       o->end();
     } // Fl_Group* o
-    { Fl_Return_Button* o = new Fl_Return_Button(123, 95, 79, 25, "Save");
+    { Fl_Return_Button* o = new Fl_Return_Button(93, 95, 99, 25, Fl_Printer::property_save);
       o->callback((Fl_Callback*)cb_Save);
     } // Fl_Return_Button* o
-    { Fl_Button* o = new Fl_Button(212, 95, 68, 25, "Cancel");
+    { Fl_Button* o = new Fl_Button(202, 95, 78, 25, Fl_Printer::property_cancel);
       o->callback((Fl_Callback*)cb_Cancel1);
     } // Fl_Button* o
-    { Fl_Button* o = new Fl_Button(60, 95, 53, 25, "Use");
+    { Fl_Button* o = new Fl_Button(10, 95, 73, 25, Fl_Printer::property_use);
       o->callback((Fl_Callback*)cb_Use);
     } // Fl_Button* o
     print_properties_panel->set_modal();

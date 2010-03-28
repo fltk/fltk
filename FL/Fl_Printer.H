@@ -94,6 +94,48 @@ public:
 #endif  
   int end_page (void);
   void end_job (void);
+#ifdef FL_DOXYGEN
+  /** \name These attributes apply to the Xlib platform only.
+   \{
+   */  
+  /** [this text may be customized at run-time] */
+  static const char *dialog_title; 
+  /** [this text may be customized at run-time] */
+  static const char *dialog_printer; 
+  /** [this text may be customized at run-time] */
+  static const char *dialog_range; 
+  /** [this text may be customized at run-time] */
+  static const char *dialog_copies; 
+  /** [this text may be customized at run-time] */
+  static const char *dialog_all; 
+  /** [this text may be customized at run-time] */
+  static const char *dialog_pages;
+  /** [this text may be customized at run-time] */
+  static const char *dialog_from;
+  /** [this text may be customized at run-time] */
+  static const char *dialog_to;
+  /** "Properties..." [this text may be customized at run-time] */
+  static const char *dialog_properties;
+  /** [this text may be customized at run-time] */
+  static const char *dialog_copyNo;
+  /** [this text may be customized at run-time] */
+  static const char *dialog_print_button;
+  /** [this text may be customized at run-time] */
+  static const char *dialog_cancel_button;
+  /** [this text may be customized at run-time] */
+  static const char *property_title;
+  /** [this text may be customized at run-time] */
+  static const char *property_pagesize;
+  /** [this text may be customized at run-time] */
+  static const char *property_mode;
+  /** [this text may be customized at run-time] */
+  static const char *property_use;
+  /** [this text may be customized at run-time] */
+  static const char *property_save;
+  /** [this text may be customized at run-time] */
+  static const char *property_cancel;
+  /** \} */
+#endif
 };
 
 #else
@@ -102,6 +144,25 @@ public:
 
 class Fl_Printer : public Fl_PSfile_Device {
 public:
+  static const char *dialog_title; 
+  static const char *dialog_printer; 
+  static const char *dialog_range; 
+  static const char *dialog_copies; 
+  static const char *dialog_all; 
+  static const char *dialog_pages;
+  static const char *dialog_from;
+  static const char *dialog_to;
+  static const char *dialog_properties;
+  static const char *dialog_copyNo;
+  static const char *dialog_print_button;
+  static const char *dialog_cancel_button;
+  static const char *property_title;
+  static const char *property_pagesize;
+  static const char *property_mode;
+  static const char *property_use;
+  static const char *property_save;
+  static const char *property_cancel;
+
   Fl_Printer(void) {};
   ~Fl_Printer(void) {};
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
