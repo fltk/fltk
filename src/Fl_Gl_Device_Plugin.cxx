@@ -58,13 +58,15 @@ static void print_gl_window(Fl_Abstract_Printer *printer, Fl_Gl_Window *glw, int
   Fl_Window *win = (Fl_Window*)glw;
   while( win->window() ) win = win->window();
   win->redraw();
-#else
-  glw->redraw();
-#endif
   Fl::check();
   glw->make_current();
-  // select front buffer as our source for pixel data
-  glReadBuffer(GL_FRONT);
+#else
+  glw->make_current();
+  glw->redraw();
+  glFlush();
+  Fl::check();
+  glFinish();
+#endif
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
