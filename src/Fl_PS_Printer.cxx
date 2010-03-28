@@ -40,6 +40,8 @@
   #include "print_panel.cxx"
 #endif
 
+const char *Fl_PSfile_Device::file_chooser_title = "Select a .ps file";
+
 const Fl_PSfile_Device::page_format Fl_PSfile_Device::page_formats[NO_PAGE_FORMATS] = { // order of enum Page_Format
 // comes from appendix B of 5003.PPD_Spec_v4.3.pdf
 
@@ -1198,7 +1200,7 @@ int Fl_PSfile_Device::end_page (void)
 int Fl_PSfile_Device::start_job (int pagecount, enum Page_Format format, enum Page_Layout layout)
 {
   Fl_Native_File_Chooser fnfc;
-  fnfc.title("Create a .ps file");
+  fnfc.title(Fl_PSfile_Device::file_chooser_title);
   fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
   fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM);
   fnfc.filter("PostScript\t*.ps\n");
@@ -1211,12 +1213,12 @@ int Fl_PSfile_Device::start_job (int pagecount, enum Page_Format format, enum Pa
   return 0;
 }
 
-int Fl_PSfile_Device::start_job (const char *fname, int pagecount, enum Page_Format format, enum Page_Layout layout)
+int Fl_PSfile_Device::start_job (FILE *ps_output, int pagecount, enum Page_Format format, enum Page_Layout layout)
 {
-  output = fopen(fname, "w");
-  if(output == NULL) return 1;
-  ps_filename_ = strdup(fname);
-  return start_postscript(pagecount, format, layout);
+  output = ps_output;
+  ps_filename_ = NULL;
+  start_postscript(pagecount, format, layout);
+  return 0;
 }
 
 void Fl_PSfile_Device::end_job (void)
@@ -1232,6 +1234,10 @@ void Fl_PSfile_Device::end_job (void)
     fprintf(output, "GR\n restore\n");
   fputs("%%EOF",output);
   reset();
+  fflush(output);
+  if(ferror(output)) {
+    fl_alert ("Error during PostScript data output.");
+    }
 #if ! (defined(__APPLE__) || defined(WIN32) )
   if (print_pipe)
     pclose(output);

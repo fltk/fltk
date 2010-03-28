@@ -248,9 +248,8 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
     void rotate(float angle);
     void translate(int x, int y);
     void untranslate(void);
-    int end_page (void);
-    void end_job (void);
-    
+    int end_page (void);    
+    void end_job(void);
 #endif // FL_DOXYGEN
     
   /**
@@ -259,9 +258,9 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
   Fl_PSfile_Device(void);
   
   /**
-   @brief Begins the session where all graphics will go to a local PostScript file.
+   @brief Begins the session where all graphics requests will go to a local PostScript file.
    *
-   Opens a file dialog to select an output PostScript file.
+   Opens a file dialog entitled with Fl_PSfile_Device::file_chooser_title to select an output PostScript file.
    @param pagecount The total number of pages to be created.
    @param format Desired page format.
    @param layout Desired page layout.
@@ -270,20 +269,25 @@ class FL_EXPORT Fl_PSfile_Device : public  Fl_Abstract_Printer {
   int start_job(int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
   
   /**
-   @brief Begins the session where all graphics will go to named PostScript file.
+   @brief Begins the session where all graphics requests will go to FILE pointer.
    *
-   @param fname The name of the output local PostScript file.
+   @param ps_output A writable FILE pointer that will receive PostScript output and that will be closed
+   when end_job() will be called.
    @param pagecount The total number of pages to be created.
    @param format Desired page format.
    @param layout Desired page layout.
-   @return 0 iff OK, 1 if fopen(fname, "w") call failed.
+   @return always 0.
    */
-  int start_job(const char *fname, int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
+  int start_job(FILE *ps_output, int pagecount, enum Page_Format format = A4, enum Page_Layout layout = PORTRAIT);
   
   /**
    @brief The destructor.
    */
   virtual ~Fl_PSfile_Device();
+  
+  // how to have the const value appear in Doxygen as occurs with Fl_File_Chooser ?
+  /** \brief "Select a .ps file" [this text may be customized at run-time] */
+  static const char *file_chooser_title; 
 };
 
 #endif // Fl_PSfile_Device_H
