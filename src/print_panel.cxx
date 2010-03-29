@@ -81,6 +81,7 @@ const char *Fl_Printer::dialog_properties = "Properties...";
 const char *Fl_Printer::dialog_copyNo = "# Copies:";
 const char *Fl_Printer::dialog_print_button = "Print";
 const char *Fl_Printer::dialog_cancel_button = "Cancel";
+const char *Fl_Printer::dialog_print_to_file = "Print To File";
 const char *Fl_Printer::property_title = "Printer Properties";
 const char *Fl_Printer::property_pagesize = "Page Size:";
 const char *Fl_Printer::property_mode = "Output Mode:";
@@ -548,7 +549,7 @@ void print_load() {
   }
 
   print_choice->clear();
-  print_choice->add("Print To File", 0, 0, 0, FL_MENU_DIVIDER);
+  print_choice->add(Fl_Printer::dialog_print_to_file, 0, 0, 0, FL_MENU_DIVIDER);
   print_choice->value(0);
   
   print_start = 0;

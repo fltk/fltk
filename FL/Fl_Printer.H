@@ -52,6 +52,16 @@
  </ul>
  In both cases, begin by start_job(), start_page(), printable_rect() and origin() calls
  and finish by end_page() and end_job() calls.
+ <p>On Xlib-based platforms (<i>e.g.</i>, Linux, Unix), the static public attributes of this class
+ can be used to set the print dialog to other languages than English. For example, the "Printer:"
+ dialog item Fl_Printer::dialog_printer can be set to French with:
+ \code
+ Fl_Printer::dialog_printer = "Imprimante:";
+ Fl_Printer myprinter;
+ myprinter.start_job();
+ \endcode
+ Use Fl_PSfile_Device::file_chooser_title to customize the title of the file chooser dialog that opens
+ when using the "Print To File" option of the print dialog.
  */
 class Fl_Printer : public Fl_Abstract_Printer {
 private:
@@ -123,6 +133,8 @@ public:
   /** [this text may be customized at run-time] */
   static const char *dialog_cancel_button;
   /** [this text may be customized at run-time] */
+  static const char *dialog_print_to_file;
+  /** [this text may be customized at run-time] */
   static const char *property_title;
   /** [this text may be customized at run-time] */
   static const char *property_pagesize;
@@ -144,7 +156,7 @@ public:
 
 class Fl_Printer : public Fl_PSfile_Device {
 public:
-  static const char *dialog_title; 
+  static const char *dialog_title; // all of this must be duplicated above for correct documentation
   static const char *dialog_printer; 
   static const char *dialog_range; 
   static const char *dialog_copies; 
@@ -156,6 +168,7 @@ public:
   static const char *dialog_copyNo;
   static const char *dialog_print_button;
   static const char *dialog_cancel_button;
+  static const char *dialog_print_to_file;
   static const char *property_title;
   static const char *property_pagesize;
   static const char *property_mode;
