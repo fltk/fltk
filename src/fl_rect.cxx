@@ -424,15 +424,15 @@ void fl_restore_clip() {
     Fl_X::q_clear_clipping();
     Fl_X::q_fill_context();//flip coords if bitmap context
     //apply program clip
-    if(r) {
+    if (r) {
       CGContextClipToRects(fl_gc, r->rects, r->count);
     }
   } else if (fl_gc) { // clipping for an offscreen drawing world (CGBitmap)
     Fl_X::q_clear_clipping();
+    Fl_X::q_fill_context();
     if (r) {
       CGContextClipToRects(fl_gc, r->rects, r->count);
-      }
-    Fl_X::q_fill_context();
+    }
   }
 #else
 # error unsupported platform
