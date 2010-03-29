@@ -68,18 +68,6 @@
 extern "C" {
 #  endif /* __cplusplus */
 
-/*
- * MetroWerks' CodeWarrior put thes "non-standard" functions in
- * <extras.h> which unfortunatly does not play well otherwise
- * when included - to be resolved...
- */
-
-#  if defined(__APPLE__) && defined(__MWERKS__) && defined(_MSL_USING_MW_C_HEADERS)
-int strcasecmp(const char*,const char*);
-int strncasecmp(const char*,const char*,int);
-char *strdup(const char*);
-#  endif
-
 FL_EXPORT extern int fl_snprintf(char *, size_t, const char *, ...);
 #  if !HAVE_SNPRINTF
 #    define snprintf fl_snprintf

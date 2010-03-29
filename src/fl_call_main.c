@@ -51,11 +51,7 @@
 #  include <windows.h>
 #  include <stdio.h>
 #  include <stdlib.h>
-#include <FL/fl_utf8.h>
-
-#  ifdef __MWERKS__
-#   include <crtl.h>
-#  endif
+#  include <FL/fl_utf8.h>
 
 extern int main(int, char *[]);
 

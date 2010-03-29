@@ -37,10 +37,6 @@
 #include <FL/Fl_Tiled_Image.H>
 #include "tile.xpm"
 
-#if defined(__APPLE__) && defined(__MWERKS__)
-extern "C" int putenv(const char*);
-#endif // __APPLE__ && __MWERKS__
-
 #if defined(WIN32) && !defined(__CYGWIN__) && !defined(__WATCOMC__)
 // Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
 // on Windows, which is supposed to be POSIX compliant...
