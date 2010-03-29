@@ -38,7 +38,6 @@
 #include <Carbon/Carbon.h>
 #include <config.h>
 
-#ifdef __APPLE_COCOA__
 #ifndef MAC_OS_X_VERSION_10_3
 #define MAC_OS_X_VERSION_10_3 1030
 #endif
@@ -54,7 +53,6 @@
 #ifndef MAC_OS_X_VERSION_MAX_ALLOWED
 #define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_3
 #endif
-#endif // __APPLE_COCOA__
 
 #ifndef CGFLOAT_DEFINED //appears with 10.5 in CGBase.h
 #if defined(__LP64__) && __LP64__

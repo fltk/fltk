@@ -42,114 +42,6 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/filename.H>
 
-#ifndef __APPLE_COCOA__
-// TRY TO CONVERT AN AEDesc TO AN FSRef
-//     As per Apple Technical Q&A QA1274
-//     eg: http://developer.apple.com/qa/qa2001/qa1274.html
-//     Returns 'noErr' if OK, or an 'OSX result code' on error.
-//
-static int AEDescToFSRef(const AEDesc* desc, FSRef* fsref) {
-  OSStatus err = noErr;
-  AEDesc coerceDesc;
-  // If AEDesc isn't already an FSRef, convert it to one
-  if ( desc->descriptorType != typeFSRef ) {
-    if ( ( err = AECoerceDesc(desc, typeFSRef, &coerceDesc) ) == noErr ) {
-      // Get FSRef out of AEDesc
-      err = AEGetDescData(&coerceDesc, fsref, sizeof(FSRef));
-      AEDisposeDesc(&coerceDesc);
-    }
-  } else {
-    err = AEGetDescData(desc, fsref, sizeof(FSRef));
-  }
-  return( err );
-}
-
-// NAVREPLY: CTOR
-Fl_Native_File_Chooser::NavReply::NavReply() {
-  _valid_reply = 0;
-}
-
-// NAVREPLY: DTOR
-Fl_Native_File_Chooser::NavReply::~NavReply() {
-  if ( _valid_reply ) {
-    NavDisposeReply(&_reply);
-  }
-}
-
-// GET REPLY FROM THE NAV* DIALOG
-int Fl_Native_File_Chooser::NavReply::get_reply(NavDialogRef& ref) {
-  if ( _valid_reply ) {
-    NavDisposeReply(&_reply);	// dispose of previous
-    _valid_reply = 0;
-  }
-  if ( ref == NULL || NavDialogGetReply(ref, &_reply) != noErr ) {
-    return(-1);
-  }
-  _valid_reply = 1;
-  return(0);
-}
-
-// RETURN THE BASENAME USER WANTS TO 'Save As'
-int Fl_Native_File_Chooser::NavReply::get_saveas_basename(char *s, int slen) {
-  if (CFStringGetCString(_reply.saveFileName, s, slen-1, kCFStringEncodingUTF8) == false) {
-    s[0] = '\0';
-    return(-1);
-  }
-  return(0);
-}
-
-// RETURN THE DIRECTORY NAME
-//    Returns 0 on success, -1 on error.
-//
-int Fl_Native_File_Chooser::NavReply::get_dirname(char *s, int slen) {
-  FSRef fsref;
-  if ( AEDescToFSRef(&_reply.selection, &fsref) != noErr ) {
-    // Conversion failed? Return empty name
-    s[0] = 0;
-    return(-1);
-  }
-  FSRefMakePath(&fsref, (UInt8 *)s, slen);
-  return(0);
-}
-
-// RETURN MULTIPLE DIRECTORIES
-//     Returns: 0 on success with pathnames[] containing pathnames selected,
-//             -1 on error
-//
-int Fl_Native_File_Chooser::NavReply::get_pathnames(char **&pathnames, int& tpathnames) {
-  // How many items selected?
-  long count = 0;
-  if ( AECountItems(&_reply.selection, &count) != noErr ) {
-    return(-1);
-  }
-
-  // Allocate space for that many pathnames
-  pathnames = new char*[count];
-  memset((void*)pathnames, 0, count*sizeof(char*));
-  tpathnames = count;
-
-  // Walk list of pathnames selected
-  for (short index=1; index<=count; index++) {
-    AEKeyword keyWord;
-    AEDesc    desc;
-    if (AEGetNthDesc(&_reply.selection, index, typeFSRef, &keyWord, &desc) != noErr) {
-      pathnames[index-1] = strnew("");
-      continue;
-    }
-    FSRef fsref;
-    if (AEGetDescData(&desc, &fsref, sizeof(FSRef)) != noErr ) {
-      pathnames[index-1] = strnew("");
-      continue;
-    }
-    char s[4096];
-    FSRefMakePath(&fsref, (UInt8 *)s, sizeof(s)-1);
-    pathnames[index-1] = strnew(s);
-    AEDisposeDesc(&desc);
-  }
-  return(0);
-}
-#endif /* !__APPLE_COCOA__ */
-
 // FREE PATHNAMES ARRAY, IF IT HAS ANY CONTENTS
 void Fl_Native_File_Chooser::clear_pathnames() {
   if ( _pathnames ) {
@@ -170,228 +62,10 @@ void Fl_Native_File_Chooser::set_single_pathname(const char *s) {
   _tpathnames = 1;
 }
 
-#ifndef __APPLE_COCOA__
-// GET THE 'Save As' FILENAME
-//    Returns -1 on error, errmsg() has reason, filename == "".
-//             0 if OK, filename() has filename chosen.
-//
-int Fl_Native_File_Chooser::get_saveas_basename(NavDialogRef& ref) {
-  if ( ref == NULL ) {
-    errmsg("get_saveas_basename: ref is NULL");
-    return(-1);
-  }
-  NavReply reply;
-  OSStatus err;
-  if ((err = reply.get_reply(ref)) != noErr ) {
-    errmsg("NavReply::get_reply() failed");
-    clear_pathnames();
-    return(-1);
-  }
-
-  char pathname[4096] = "";
-  // Directory name..
-  //    -2 leaves room to append '/'
-  //
-  if ( reply.get_dirname(pathname, sizeof(pathname)-2) < 0 ) {
-    clear_pathnames();
-    errmsg("NavReply::get_dirname() failed");
-    return(-1);
-  }
-  // Append '/'
-  int len = strlen(pathname);
-  pathname[len++] = '/';
-  pathname[len] = '\0';
-  // Basename..
-  if ( reply.get_saveas_basename(pathname+len, sizeof(pathname)-len) < 0 ) {
-    clear_pathnames();
-    errmsg("NavReply::get_saveas_basename() failed");
-    return(-1);
-  }
-  set_single_pathname(pathname);
-  return(0);
-}
-
-// GET (POTENTIALLY) MULTIPLE FILENAMES
-//     Returns:
-//         -1 -- error, errmsg() has reason, filename == ""
-//          0 -- OK, pathnames()/filename() has pathname(s) chosen
-//
-int Fl_Native_File_Chooser::get_pathnames(NavDialogRef& ref) {
-  if ( ref == NULL ) {
-    errmsg("get_saveas_basename: ref is NULL");
-    return(-1);
-  }
-  NavReply reply;
-  OSStatus err;
-  if ((err = reply.get_reply(ref)) != noErr ) { 
-    errmsg("NavReply::get_reply() failed");
-    clear_pathnames();
-    return(-1);
-  }
-  // First, clear pathnames array of any previous contents
-  clear_pathnames();
-  if ( reply.get_pathnames(_pathnames, _tpathnames) < 0 ) {
-    clear_pathnames();
-    errmsg("NavReply::get_dirname() failed");
-    return(-1);
-  }
-  return(0);
-}
-
-// IS PATHNAME A DIRECTORY?
-//    1 - path is a dir
-//    0 - path not a dir or error
-//
-static int IsDir(const char *pathname) {
-  struct stat buf;
-  if ( stat(pathname, &buf) != -1 ) {
-    if ( buf.st_mode & S_IFDIR ) return(1);
-  }
-  return(0);
-}
-
-// PRESELECT PATHNAME IN BROWSER
-static void PreselectPathname(NavCBRecPtr cbparm, const char *path) {
-  // XXX: path must be a dir, or kNavCtlSetLocation fails with -50.
-  //      Why, I don't know. Let me know with a bug report. -erco
-  //
-  if ( ! IsDir(path) ) {
-    path = dirname((char*)path);
-  }
-  OSStatus err;
-  FSRef fsref;
-  err = FSPathMakeRef((const UInt8*)path, &fsref, NULL);
-  if ( err != noErr) {
-    fprintf(stderr, "FSPathMakeRef(%s) failed: err=%d\n", path, (int)err);
-    return;
-  }
-  AEDesc desc;
-  err = AECreateDesc(typeFSRef, &fsref, sizeof(FSRef), &desc);
-  if ( err != noErr) {
-    fprintf(stderr, "AECreateDesc() failed: err=%d\n", (int)err);
-  }
-  err = NavCustomControl(cbparm->context, kNavCtlSetLocation, &desc);
-  if ( err != noErr) {
-    fprintf(stderr, "NavCustomControl() failed: err=%d\n", (int)err);
-  }
-  AEDisposeDesc(&desc);
-}
-
-// NAV CALLBACK EVENT HANDLER
-void Fl_Native_File_Chooser::event_handler(NavEventCallbackMessage callBackSelector, 
-			       NavCBRecPtr cbparm,
-			       void *data) {
-  Fl_Native_File_Chooser *nfb = (Fl_Native_File_Chooser*)data;
-  switch (callBackSelector) {
-    case kNavCBStart:
-    {
-      if ( nfb->directory() ) {				// dir specified?
-	PreselectPathname(cbparm, nfb->directory());	// use it first
-      } else if ( nfb->preset_file() ) {		// file specified?
-	PreselectPathname(cbparm, nfb->preset_file());	// use if no dir
-      }
-      if ( nfb->_btype == BROWSE_SAVE_FILE && nfb->preset_file() ) {
-	const char *p, *q;
-	p = nfb->preset_file();				// don't use the path part of preset_file
-	q = strrchr(p, '/');
-	if (q == NULL) q = p; else q++;
-	CFStringRef namestr = CFStringCreateWithCString(NULL,
-							q,
-							kCFStringEncodingUTF8);
-	NavDialogSetSaveFileName(cbparm->context, namestr);
-	CFRelease(namestr);
-      }
-      NavCustomControl(cbparm->context,
-		       kNavCtlSetActionState,
-		       &nfb->_keepstate);
-      // Select the right filter in pop-up menu
-      if ( nfb->_filt_value == nfb->_filt_total ) {
-	// Select All Documents
-	NavPopupMenuItem kAll = kNavAllFiles;
-	NavCustomControl(cbparm->context, kNavCtlSelectAllType, &kAll);
-      } else if (nfb->_filt_value < nfb->_filt_total) {
-	// Select custom filter
-	nfb->_tempitem.version = kNavMenuItemSpecVersion;
-	nfb->_tempitem.menuCreator = 'extn';
-	nfb->_tempitem.menuType = nfb->_filt_value;
-	*nfb->_tempitem.menuItemName = '\0';		// needed on 10.3+
-	NavCustomControl(cbparm->context,
-			 kNavCtlSelectCustomType,
-			 &(nfb->_tempitem));
-      }
-      break;
-    }
-    case kNavCBPopupMenuSelect:
-    {
-      NavMenuItemSpecPtr ptr;
-      // they really buried this one!
-      ptr = (NavMenuItemSpecPtr)cbparm->eventData.eventDataParms.param;
-      if ( ptr->menuCreator ) {
-	// Gets index to filter ( menuCreator = 'extn' )
-	nfb->_filt_value = ptr->menuType;
-      } else {
-	// All docs filter selected ( menuCreator = '\0\0\0\0' )
-	nfb->_filt_value = nfb->_filt_total;
-      }
-      break;
-    }
-    case kNavCBSelectEntry:
-    {
-      NavActionState astate;
-      switch ( nfb->_btype ) {
-	// These don't need selection override
-	case BROWSE_MULTI_FILE:
-	case BROWSE_MULTI_DIRECTORY:
-	case BROWSE_SAVE_FILE:
-	  break;
-
-	// These need to allow only one item, so disable
-	// Open button if user tries to select multiple files
-	case BROWSE_SAVE_DIRECTORY:
-	case BROWSE_DIRECTORY:
-	case BROWSE_FILE:
-	{
-	  long selectcount;
-	  AECountItems((AEDescList*)cbparm->
-		       eventData.eventDataParms.param,
-		       &selectcount);
-	  if ( selectcount > 1 ) {
-	    NavCustomControl(cbparm->context,
-			     kNavCtlSetSelection,
-			     NULL);
-	    astate = nfb->_keepstate |
-		     kNavDontOpenState |
-		     kNavDontChooseState;
-	    NavCustomControl(cbparm->context,
-			     kNavCtlSetActionState,
-			     &astate );
-	  } else {
-	    astate= nfb->_keepstate | kNavNormalState;
-	    NavCustomControl(cbparm->context,
-			     kNavCtlSetActionState,
-			     &astate );
-	  }
-	  break;
-	}
-      }
-    }
-    break;
-  }
-}
-#endif /* !__APPLE_COCOA__ */
-
 // CONSTRUCTOR
 Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
   _btype          = val;
-#ifdef __APPLE_COCOA__
   _panel = NULL;
-#else
-  NavGetDefaultDialogCreationOptions(&_opts);
-  _opts.optionFlags |= kNavDontConfirmReplacement;	// no confirms for "save as"
-  _ref            = NULL;
-  _keepstate      = kNavNormalState;
-  memset(&_tempitem, 0, sizeof(_tempitem));
-#endif
   _options        = NO_OPTIONS;
   _pathnames      = NULL;
   _tpathnames     = 0;
@@ -409,9 +83,6 @@ Fl_Native_File_Chooser::Fl_Native_File_Chooser(int val) {
 // DESTRUCTOR
 Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
   // _opts		// nothing to manage
-#ifndef __APPLE_COCOA__
-  if (_ref) { NavDialogDispose(_ref); _ref = NULL; }
-#endif
   // _options		// nothing to manage
   // _keepstate		// nothing to manage
   // _tempitem		// nothing to manage
@@ -427,13 +98,6 @@ Fl_Native_File_Chooser::~Fl_Native_File_Chooser() {
   //_filt_value		// nothing to manage
   _errmsg = strfree(_errmsg);
 }
-
-#ifndef __APPLE_COCOA__
-// SET THE TYPE OF BROWSER
-void Fl_Native_File_Chooser::type(int val) {
-  _btype = val;
-}
-#endif /* !__APPLE_COCOA__ */
 
 // GET TYPE OF BROWSER
 int Fl_Native_File_Chooser::type() const {
@@ -460,154 +124,14 @@ int Fl_Native_File_Chooser::show() {
 
   // Make sure fltk interface updates before posting our dialog
   Fl::flush();
-
-#ifndef __APPLE_COCOA__
-  _keepstate = kNavNormalState;
-  // BROWSER TITLE
-  CFStringRef cfs_title;
-  cfs_title = CFStringCreateWithCString(NULL,
-					_title ? _title : "No Title",
-					kCFStringEncodingUTF8);
-  _opts.windowTitle = cfs_title;
-  // BROWSER FILTERS
-  CFArrayRef filter_array = NULL;
-
-  // One or more filters specified?
-  if ( _filt_total ) {
-    // NAMES -> CFArrayRef
-    CFStringRef tab = CFSTR("\t");
-    CFStringRef tmp_cfs;
-    tmp_cfs = CFStringCreateWithCString(NULL,
-					_filt_names,
-					kCFStringEncodingUTF8);
-    filter_array = CFStringCreateArrayBySeparatingStrings(NULL,
-							  tmp_cfs,
-							  tab);
-    CFRelease(tmp_cfs);
-    CFRelease(tab);
-    _opts.popupExtension = filter_array;
-    _opts.optionFlags |= kNavAllFilesInPopup;
-  } else {
-    filter_array = NULL;
-    _opts.popupExtension = NULL;
-    _opts.optionFlags |= kNavAllFilesInPopup;
-  }
-
-  // HANDLE OPTIONS WE SUPPORT
-  if ( _options & SAVEAS_CONFIRM ) {
-    _opts.optionFlags &= ~kNavDontConfirmReplacement;	// enables confirm
-  } else {
-    _opts.optionFlags |= kNavDontConfirmReplacement;	// disables confirm
-  }
-  // _opts.optionFlags |= kNavSupportPackages;		// enables *.app TODO: Make a flag to control this
-#endif /* !__APPLE_COCOA__ */
-
+  
   // POST BROWSER
   int err = post();
 
-#ifndef __APPLE_COCOA__
-  // RELEASE _FILT_ARR
-  if ( filter_array ) CFRelease(filter_array);
-  filter_array = NULL;
-  _opts.popupExtension = NULL;
-  // RELEASE TITLE
-  if ( cfs_title ) CFRelease(cfs_title);
-  cfs_title = NULL;
-#endif /* !__APPLE_COCOA__ */
   _filt_total = 0;
 
   return(err);
 }
-
-#ifndef __APPLE_COCOA__
-int Fl_Native_File_Chooser::post() {
-
-  // INITIALIZE BROWSER
-  OSStatus err;
-  if ( _filt_total == 0 ) {		// Make sure they match
-    _filt_value = 0;			// TBD: move to someplace more logical?
-  }
-
-  if ( ! ( _options & NEW_FOLDER ) ) {
-    _keepstate |= kNavDontNewFolderState;
-  }
-
-  switch (_btype) {
-    case BROWSE_FILE:
-    case BROWSE_MULTI_FILE:
-      // Prompt user for one or more files
-      if ((err = NavCreateGetFileDialog(&_opts,			// options
-					0, 			// file types
-					event_handler,		// event handler
-					0,			// preview callback
-					filter_proc_cb,		// filter callback
-					(void*)this,		// callback data
-					&_ref)) != noErr ) {	// dialog ref
-	errmsg("NavCreateGetFileDialog: failed");
-	return(-1);
-      }
-      break;
-
-    case BROWSE_DIRECTORY:
-    case BROWSE_MULTI_DIRECTORY:
-    case BROWSE_SAVE_DIRECTORY:
-      // Prompts user for one or more files or folders
-      if ((err = NavCreateChooseFolderDialog(&_opts,			// options
-					     event_handler,		// event callback
-					     0,				// filter callback
-					     (void*)this,		// callback data
-					     &_ref)) != noErr ) {	// dialog ref
-	errmsg("NavCreateChooseFolderDialog: failed");
-	return(-1);
-      }
-      break;
-
-    case BROWSE_SAVE_FILE:
-      // Prompt user for filename to 'save as'
-      if ((err = NavCreatePutFileDialog(&_opts,			// options
-					0,			// file types
-					kNavGenericSignature,	// file creator
-					event_handler,		// event handler
-					(void*)this,		// callback data
-					&_ref)) != noErr ) {	// dialog ref
-	errmsg("NavCreatePutFileDialog: failed");
-	return(-1);
-      }
-      break;
-  }
-
-  // SHOW THE DIALOG
-  if ( ( err = NavDialogRun(_ref) ) != 0 ) {
-    char msg[80];
-    sprintf(msg, "NavDialogRun: failed (err=%d)", (int)err);
-    errmsg(msg);
-    return(-1);
-  }
-
-  // WHAT ACTION DID USER CHOOSE?
-  NavUserAction act = NavDialogGetUserAction(_ref);
-  if ( act == kNavUserActionNone ) {
-    errmsg("Nothing happened yet (dialog still open)");
-    return(-1);
-  }
-  else if ( act == kNavUserActionCancel ) { 	// user chose 'cancel'
-    return(1);
-  }
-  else if ( act == kNavUserActionSaveAs ) {	// user chose 'save as'
-    return(get_saveas_basename(_ref));
-  }
-
-  // TOO MANY FILES CHOSEN?
-  int ret = get_pathnames(_ref);
-  if ( _btype == BROWSE_FILE && ret == 0 && _tpathnames != 1 ) {
-    char msg[80];
-    sprintf(msg, "Expected only one file to be chosen.. you chose %d.", (int)_tpathnames);
-    errmsg(msg);
-    return(-1);
-  }
-  return(err);
-}
-#endif /* !__APPLE_COCOA__ */
 
 // SET ERROR MESSAGE
 //     Internal use only.
@@ -797,44 +321,6 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
   //NOTREACHED
 }
 
-#ifndef __APPLE_COCOA__
-// STATIC: FILTER CALLBACK
-Boolean Fl_Native_File_Chooser::filter_proc_cb(AEDesc *theItem,
-					       void *info,
-					       void *callBackUD,
-					       NavFilterModes filterMode) {
-  return((Fl_Native_File_Chooser*)callBackUD)->filter_proc_cb2(theItem,
-							       info,
-							       callBackUD,
-							       filterMode);
-}
-
-// FILTER CALLBACK
-//     Return true if match,
-//            false if no match.
-//
-Boolean Fl_Native_File_Chooser::filter_proc_cb2(AEDesc *theItem,
-						void *info,
-						void *callBackUD,
-						NavFilterModes filterMode) {
-  // All files chosen or no filters
-  if ( _filt_value == _filt_total ) return(true);
-  
-  FSRef fsref;
-  char pathname[4096];
-  
-  // On fail, filter should return true by default
-  if ( AEDescToFSRef(theItem, &fsref) != noErr ) {
-    return(true);
-  }
-  FSRefMakePath(&fsref, (UInt8 *)pathname, sizeof(pathname)-1);
-
-  if ( fl_filename_isdir(pathname) ) return(true);
-  if ( fl_filename_match(pathname, _filt_patt[_filt_value]) ) return(true);
-  else return(false);
-}
-#endif
-
 // SET PRESET FILE
 //     Value can be NULL for none.
 //
@@ -850,7 +336,6 @@ const char* Fl_Native_File_Chooser::preset_file() {
   return(_preset_file);
 }
 
-#ifdef __APPLE_COCOA__
 #import <Cocoa/Cocoa.h>
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
 #ifndef MAC_OS_X_VERSION_10_6
@@ -1091,7 +576,6 @@ int Fl_Native_File_Chooser::post() {
   return (retval == NSOKButton ? 0 : 1);
 }
 
-#endif //__APPLE_COCOA__
 #endif /*!FL_DOXYGEN*/
 
 //

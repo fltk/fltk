@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include "flstring.h"
 
-#if defined(__APPLE__) && defined(__APPLE_COCOA__)
+#if defined(__APPLE__)
 #import <Cocoa/Cocoa.h>
 #endif
 

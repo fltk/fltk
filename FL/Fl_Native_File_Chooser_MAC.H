@@ -29,11 +29,7 @@
 #ifndef FL_DOXYGEN		// PREVENT DOXYGEN'S USE OF THIS FILE
 
 // OSX-SPECIFIC NATIVE BROWSER
-#ifdef __APPLE_CC__
 #include <Carbon/Carbon.h>
-#else /*__APPLE_CC__*/
-#include <Carbon.h>
-#endif /*__APPLE_CC__*/
 #include <config.h>
 
 #undef check // necessary for use of Fl::check()

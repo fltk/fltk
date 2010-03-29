@@ -33,11 +33,7 @@
 // directly include the systems math file. (Plus, I could not find a 
 // predefined macro for ProjectBuilder builds, so we have to define it 
 // in the project)
-#  if defined(__APPLE__) && defined(__PROJECTBUILDER__)
-#    include "/usr/include/math.h"
-#  else
-#    include <math.h>
-#  endif
+#  include <math.h>
 
 #  ifdef __EMX__
 #    include <float.h>
