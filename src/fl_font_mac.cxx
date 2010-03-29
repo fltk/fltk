@@ -403,7 +403,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
 void fl_draw(const char *str, int n, float x, float y);
 
 void Fl_Device::draw(const char* str, int n, int x, int y) {
-  fl_draw(str, n, (float)x-0.0f, (float)y-0.5f);
+  fl_draw(str, n, (float)x-0.0f, (float)y+0.5f);
 }
 
 

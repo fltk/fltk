@@ -132,7 +132,7 @@ void  gl_font(int fontid, int size) {
 
   }
   gl_fontsize = fl_fontsize;
-#ifndef __APPLE_COCOA__
+#ifndef __APPLE_QUARTZ__
   glListBase(fl_fontsize->listbase);
 #endif
 }
