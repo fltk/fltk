@@ -124,6 +124,9 @@
  * supported by Apple. If USE_QUARTZ is defined, FLTK will be
  * compiled using Quartz instead. This flag has no meaning on
  * other operating systems.
+ *
+ * USE_QUARTZ is deprecated because all Apple implementations
+ * are now based on Quartz and Cocoa. Use __APPLE__ instead.
  */
 
 #define USE_QUARTZ 0

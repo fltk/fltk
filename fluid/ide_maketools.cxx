@@ -1431,7 +1431,7 @@ public:
           "#define BORDER_WIDTH 2\n#define HAVE_GL 1\n#define HAVE_GL_GLU_H 1\n"
           "#define USE_COLORMAP 1\n#define HAVE_XINERAMA 0\n#define USE_XFT 0\n"
           "#define HAVE_XDBE 0\n#define USE_XDBE HAVE_XDBE\n", f);
-    fputs("#define USE_QUARTZ 1\n#define __APPLE_QUARTZ__ 1\n"
+    fputs("#define __APPLE_QUARTZ__ 1\n"
           "#define __APPLE_COCOA__ 1\n#define HAVE_OVERLAY 0\n"
           "#define HAVE_GL_OVERLAY HAVE_OVERLAY\n#define WORDS_BIGENDIAN 0\n"
           "#define U16 unsigned short\n#define U32 unsigned\n"
