@@ -36,7 +36,9 @@
  \brief Sends all graphics to a local PostScript file; same API as Fl_Printer class.
  *
  This class has the same API as class Fl_Printer except for start_job() member function.
- \see class Fl_Printer.
+ <p>PostScript text output is presently implemented only for the latin character set.
+ FLTK's standard fonts are output using PostScript's standard fonts: Helvetica, Courier, 
+ Times (and their bold, oblique, italic variants), Symbol, ZapfDingbats.
  */
 FL_EXPORT class Fl_PSfile_Device : public  Fl_Abstract_Printer {
   public: 

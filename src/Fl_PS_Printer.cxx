@@ -852,7 +852,7 @@ static const char *_fontNames[] = {
 "Times-BoldItalic",
 "Symbol",
 "Courier",
-"CourierBold",
+"Courier-Bold",
 "ZapfDingbats"
 };
 

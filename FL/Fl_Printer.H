@@ -52,7 +52,9 @@
  </ul>
  In both cases, begin by start_job(), start_page(), printable_rect() and origin() calls
  and finish by end_page() and end_job() calls.
- <p>On Xlib-based platforms (<i>e.g.</i>, Linux, Unix), the static public attributes of this class
+ <p>On Xlib-based platforms (<i>e.g.</i>, Linux, Unix), this class is implemented as
+ a subclass of Fl_PSfile_Device.
+ <p>On Xlib-based platforms, the static public attributes of this class
  can be used to set the print dialog to other languages than English. For example, the "Printer:"
  dialog item Fl_Printer::dialog_printer can be set to French with:
  \code
@@ -62,6 +64,7 @@
  \endcode
  Use Fl_PSfile_Device::file_chooser_title to customize the title of the file chooser dialog that opens
  when using the "Print To File" option of the print dialog.
+ \see Fl_PSfile_Device.
  */
 class Fl_Printer : public Fl_Abstract_Printer {
 private:
