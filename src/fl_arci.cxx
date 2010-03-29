@@ -64,9 +64,7 @@ void Fl_Device::arc(int x,int y,int w,int h,double a1,double a2) {
 #elif defined(__APPLE_QUARTZ__)
   a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
   float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, true);
-#endif
   if (w!=h) {
     CGContextSaveGState(fl_gc);
     CGContextTranslateCTM(fl_gc, cx, cy);
@@ -78,9 +76,7 @@ void Fl_Device::arc(int x,int y,int w,int h,double a1,double a2) {
     CGContextAddArc(fl_gc, cx, cy, r, a1, a2, 1);
   }
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, false);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -108,9 +104,7 @@ void Fl_Device::pie(int x,int y,int w,int h,double a1,double a2) {
 #elif defined(__APPLE_QUARTZ__)
   a1 = (-a1)/180.0f*M_PI; a2 = (-a2)/180.0f*M_PI;
   float cx = x + 0.5f*w - 0.5f, cy = y + 0.5f*h - 0.5f;
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, true);
-#endif
   if (w!=h) {
     CGContextSaveGState(fl_gc);
     CGContextTranslateCTM(fl_gc, cx, cy);
@@ -126,9 +120,7 @@ void Fl_Device::pie(int x,int y,int w,int h,double a1,double a2) {
     CGContextClosePath(fl_gc);
   }
   CGContextFillPath(fl_gc);
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, false);
-#endif
 #else
 # error unsupported platform
 #endif

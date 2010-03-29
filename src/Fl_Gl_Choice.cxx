@@ -304,19 +304,11 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
   if (!context) return 0;
   add_context((GLContext)context);
   if ( window->parent() ) {
-#ifdef __APPLE_COCOA__
-	int H = window->window()->h();
-	GLint rect[] = { window->x(), H-window->h()-window->y(), window->w(), window->h() };
-#else
-	Rect wrect; 
-	GetWindowPortBounds( fl_xid(window), &wrect );
-	GLint rect[] = { window->x(), wrect.bottom-window->h()-window->y(), window->w(), window->h() };
-#endif
-	aglSetInteger( (GLContext)context, AGL_BUFFER_RECT, rect );
-	aglEnable( (GLContext)context, AGL_BUFFER_RECT );
+    int H = window->window()->h();
+    GLint rect[] = { window->x(), H-window->h()-window->y(), window->w(), window->h() };
+    aglSetInteger( (GLContext)context, AGL_BUFFER_RECT, rect );
+    aglEnable( (GLContext)context, AGL_BUFFER_RECT );
   }
-#if defined(__APPLE_COCOA__) 
-
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 #if __LP64__
   // 64 bit version
@@ -331,10 +323,6 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 #else
   // 32 bit version < 10.5
   aglSetDrawable( context, GetWindowPort( MACwindowRef(window) ) );
-#endif
-
-#else
-  aglSetDrawable( context, GetWindowPort( fl_xid(window) ) );
 #endif
   return (context);
 }
@@ -356,26 +344,16 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
 #  elif defined(__APPLE_QUARTZ__)
     // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
     if ( w->parent() ) { //: resize our GL buffer rectangle
-#ifdef __APPLE_COCOA__
-	  int H = w->window()->h();
-	  GLint rect[] = { w->x(), H-w->h()-w->y(), w->w(), w->h() };
-#else
-      Rect wrect; 
-	  GetWindowPortBounds( fl_xid(w), &wrect );
-      GLint rect[] = { w->x(), wrect.bottom-w->h()-w->y(), w->w(), w->h() };
-#endif
+      int H = w->window()->h();
+      GLint rect[] = { w->x(), H-w->h()-w->y(), w->w(), w->h() };
       aglSetInteger( context, AGL_BUFFER_RECT, rect );
       aglEnable( context, AGL_BUFFER_RECT );
     }
-#if defined(__APPLE_COCOA__) 
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#     if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   aglSetWindowRef(context, MACwindowRef(w) );
-#else
+#     else
   aglSetDrawable( context, GetWindowPort( MACwindowRef(w) ) );
-#endif
-#else
-  aglSetDrawable( context, GetWindowPort( fl_xid(w) ) );
-#endif
+#     endif
     aglSetCurrentContext(context);
 #  else
 #   error unsupported platform

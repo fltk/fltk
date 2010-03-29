@@ -61,7 +61,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 {
   if (!linedelta) linedelta = W*delta;
 
-#if defined(__APPLE_QUARTZ__)
   const void *array = buf;
   uchar *tmpBuf = 0;
   if (cb) {
@@ -147,9 +146,6 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     }
   }
   CGContextSetShouldAntialias(fl_gc, true);
-#else
-# error : you must define __APPLE_QUARTZ__
-#endif
 }
 
 void Fl_Device::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){

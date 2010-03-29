@@ -410,16 +410,12 @@ double Fl::wait(double time_to_wait) {
     // the idle function may turn off idle, we can then wait:
     if (idle) time_to_wait = 0.0;
   }
-#ifdef __APPLE_COCOA__
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-#endif
   flush();
   if (idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   double retval = fl_wait(time_to_wait);
-#ifdef __APPLE_COCOA__
   [pool release];
-#endif
   return retval;
 
 #else
@@ -1290,11 +1286,7 @@ int Fl_Window::handle(int ev)
 #if defined(USE_X11) || defined(WIN32)
         XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
-		MacMapWindow(this, i->xid);
-#else
-		MacMapWindow(this, fl_xid(this));
-#endif
+        MacMapWindow(this, i->xid);
 #else
 # error unsupported platform
 #endif // __APPLE__
@@ -1316,11 +1308,7 @@ int Fl_Window::handle(int ev)
 #if defined(USE_X11) || defined(WIN32)
 	XUnmapWindow(fl_display, fl_xid(this));
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
 	MacUnmapWindow(this, i->xid);
-#else
-	MacUnmapWindow(this, fl_xid(this));
-#endif
 #else
 # error platform unsupported
 #endif
@@ -1473,22 +1461,15 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
       CombineRgn(i->region, i->region, R, RGN_OR);
       XDestroyRegion(R);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
-	  CGRect arg = fl_cgrectmake_cocoa(X, Y, W, H);
-	  int j; // don't add a rectangle totally inside the Fl_Region
-	  for(j = 0; j < i->region->count; j++) {
-		if(CGRectContainsRect(i->region->rects[j], arg)) break;
-		}
-	  if( j >= i->region->count) {
-		i->region->rects = (CGRect*)realloc(i->region->rects, (++(i->region->count)) * sizeof(CGRect));
-		i->region->rects[i->region->count - 1] = arg;
-		}
-#else
-	Fl_Region R = NewRgn();
-	SetRectRgn(R, X, Y, X+W, Y+H);
-	UnionRgn(R, i->region, i->region);
-	DisposeRgn(R);
-#endif
+      CGRect arg = fl_cgrectmake_cocoa(X, Y, W, H);
+      int j; // don't add a rectangle totally inside the Fl_Region
+      for(j = 0; j < i->region->count; j++) {
+        if(CGRectContainsRect(i->region->rects[j], arg)) break;
+      }
+      if( j >= i->region->count) {
+        i->region->rects = (CGRect*)realloc(i->region->rects, (++(i->region->count)) * sizeof(CGRect));
+        i->region->rects[i->region->count - 1] = arg;
+      }
 #else
 # error unsupported platform
 #endif
@@ -1512,11 +1493,7 @@ void Fl_Window::flush() {
 #ifdef WIN32
 #  include "Fl_win32.cxx"
 #elif defined(__APPLE__)
-#ifdef __APPLE_COCOA__
 #  include "Fl_cocoa.mm"
-#else
-#  include "Fl_mac.cxx"
-#endif
 #endif
 
 //

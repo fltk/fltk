@@ -43,9 +43,7 @@
 
 #ifdef __APPLE_QUARTZ__
 extern float fl_quartz_line_width_;
-#ifdef __APPLE_COCOA__
 #define USINGQUARTZPRINTER  (Fl_Device::current()->type() == quartz_printer)
-#endif
 #endif
 
 void Fl_Device::rect(int x, int y, int w, int h) {
@@ -60,18 +58,10 @@ void Fl_Device::rect(int x, int y, int w, int h) {
   LineTo(fl_gc, x, y+h-1);
   LineTo(fl_gc, x, y);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(fl_gc, rect);
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -87,18 +77,10 @@ void Fl_Device::rectf(int x, int y, int w, int h) {
   rect.right = x + w; rect.bottom = y + h;
   FillRect(fl_gc, &rect, fl_brush());
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextFillRect(fl_gc, rect);
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -110,19 +92,11 @@ void Fl_Device::xyline(int x, int y, int x1) {
 #elif defined(WIN32)
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -141,20 +115,12 @@ void Fl_Device::xyline(int x, int y, int x1, int y2) {
   LineTo(fl_gc, x1, y);
   LineTo(fl_gc, x1, y2);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextAddLineToPoint(fl_gc, x1, y2);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 #error unsupported platform
 #endif
@@ -175,21 +141,13 @@ void Fl_Device::xyline(int x, int y, int x1, int y2, int x3) {
   LineTo(fl_gc, x1, y2);
   LineTo(fl_gc, x3, y2);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y);
   CGContextAddLineToPoint(fl_gc, x1, y2);
   CGContextAddLineToPoint(fl_gc, x3, y2);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -203,19 +161,11 @@ void Fl_Device::yxline(int x, int y, int y1) {
   else y1++;
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x, y1);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -234,20 +184,12 @@ void Fl_Device::yxline(int x, int y, int y1, int x2) {
   LineTo(fl_gc, x, y1);
   LineTo(fl_gc, x2, y1);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextAddLineToPoint(fl_gc, x2, y1);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -268,21 +210,13 @@ void Fl_Device::yxline(int x, int y, int y1, int x2, int y3) {
   LineTo(fl_gc, x2, y1);
   LineTo(fl_gc, x2, y3);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x, y1);
   CGContextAddLineToPoint(fl_gc, x2, y1);
   CGContextAddLineToPoint(fl_gc, x2, y3);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -298,19 +232,11 @@ void Fl_Device::line(int x, int y, int x1, int y1) {
   // functions will not draw the last point ("it's a feature!"...)
   SetPixel(fl_gc, x1, y1, fl_RGB());
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -331,20 +257,12 @@ void Fl_Device::line(int x, int y, int x1, int y1, int x2, int y2) {
   // functions will not draw the last point ("it's a feature!"...)
   SetPixel(fl_gc, x2, y2, fl_RGB());
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -364,17 +282,13 @@ void Fl_Device::loop(int x, int y, int x1, int y1, int x2, int y2) {
   LineTo(fl_gc, x2, y2);
   LineTo(fl_gc, x, y);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, true);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextClosePath(fl_gc);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, false);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -396,18 +310,14 @@ void Fl_Device::loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y
   LineTo(fl_gc, x3, y3);
   LineTo(fl_gc, x, y);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, true);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextAddLineToPoint(fl_gc, x3, y3);
   CGContextClosePath(fl_gc);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, false);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -426,17 +336,13 @@ void Fl_Device::polygon(int x, int y, int x1, int y1, int x2, int y2) {
   SelectObject(fl_gc, fl_brush());
   Polygon(fl_gc, p, 3);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, true);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, false);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -456,18 +362,14 @@ void Fl_Device::polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, in
   SelectObject(fl_gc, fl_brush());
   Polygon(fl_gc, p, 4);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, true);
-#endif
   CGContextMoveToPoint(fl_gc, x, y);
   CGContextAddLineToPoint(fl_gc, x1, y1);
   CGContextAddLineToPoint(fl_gc, x2, y2);
   CGContextAddLineToPoint(fl_gc, x3, y3);
   CGContextClosePath(fl_gc);
   CGContextFillPath(fl_gc);
-#ifdef __APPLE_COCOA__
   CGContextSetShouldAntialias(fl_gc, false);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -479,19 +381,11 @@ void Fl_Device::point(int x, int y) {
 #elif defined(WIN32)
   SetPixel(fl_gc, x, y, fl_RGB());
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, false);
-#endif
   CGContextMoveToPoint(fl_gc, x-.5, y); // Quartz needs a line that is one pixel long, or it will not draw anything
   CGContextAddLineToPoint(fl_gc, x+.5, y);
   CGContextStrokePath(fl_gc);
-#ifdef __APPLE_COCOA__
   if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
-#else
-  if (fl_quartz_line_width_==1.0f) CGContextSetShouldAntialias(fl_gc, true);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -527,41 +421,16 @@ void fl_restore_clip() {
   SelectClipRgn(fl_gc, r); //if r is NULL, clip is automatically cleared
 #elif defined(__APPLE_QUARTZ__)
   if ( fl_window ) { // clipping for a true window
-#ifdef __APPLE_COCOA__
     Fl_X::q_clear_clipping();
     Fl_X::q_fill_context();//flip coords if bitmap context
     //apply program clip
     if(r) {
       CGContextClipToRects(fl_gc, r->rects, r->count);
     }
-#else
-    extern Fl_Region fl_window_region;
-    GrafPtr port = GetWindowPort( fl_window );
-    if ( port ) { 
-      RgnHandle portClip = NewRgn();
-      CopyRgn( fl_window_region, portClip ); // changed
-      if ( r )
-        SectRgn( portClip, r, portClip );
-      Rect portRect; GetPortBounds(port, &portRect);
-      Fl_X::q_clear_clipping();
-      ClipCGContextToRegion(fl_gc, &portRect, portClip );
-      Fl_X::q_fill_context();
-      DisposeRgn( portClip );
-    }
-#endif
   } else if (fl_gc) { // clipping for an offscreen drawing world (CGBitmap)
     Fl_X::q_clear_clipping();
     if (r) {
-#ifdef __APPLE_COCOA__
       CGContextClipToRects(fl_gc, r->rects, r->count);
-#else
-      Rect portRect;
-      portRect.top = 0;
-      portRect.left = 0;
-      portRect.bottom = CGBitmapContextGetHeight(fl_gc);
-      portRect.right = CGBitmapContextGetWidth(fl_gc);
-      ClipCGContextToRegion(fl_gc, &portRect, r);
-#endif
       }
     Fl_X::q_fill_context();
   }
@@ -595,12 +464,8 @@ void Fl_Device::push_clip(int x, int y, int w, int h) {
 #elif defined(WIN32)
       CombineRgn(r,r,current,RGN_AND);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
       XDestroyRegion(r);
       r = MacRectRegionIntersect(current, x,y,w,h);
-#else
-      SectRgn(r, current, r);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -611,12 +476,7 @@ void Fl_Device::push_clip(int x, int y, int w, int h) {
 #elif defined(WIN32)
     r = CreateRectRgn(0,0,0,0);
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
     r = XRectangleRegion(0,0,0,0);
-#else
-    r = NewRgn();
-    SetEmptyRgn(r);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -661,18 +521,12 @@ int Fl_Device::not_clipped(int x, int y, int w, int h) {
   return RectInRegion(r,&rect);
 #elif defined(__APPLE_QUARTZ__)
   if (!r) return 1;
-#ifdef __APPLE_COCOA__
   CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
   for(int i = 0; i < r->count; i++) {
     CGRect test = CGRectIntersection(r->rects[i], arg);
     if( ! CGRectIsEmpty(test)) return 1;
   }
   return 0;
-#else
-  Rect rect;
-  rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
-  return RectInRgn(&rect, r);
-#endif
 #else
 # error unsupported platform
 #endif
@@ -732,37 +586,22 @@ int Fl_Device::clip_box(int x, int y, int w, int h, int& X, int& Y, int& W, int&
   DeleteObject(rr);
   return ret;
 #elif defined(__APPLE_QUARTZ__)
-#ifdef __APPLE_COCOA__
-	CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
-	CGRect u = CGRectMake(0,0,0,0);
-	CGRect test;
-	for(int i = 0; i < r->count; i++) {
-		test = CGRectIntersection(r->rects[i], arg);
-		if( ! CGRectIsEmpty(test) ) {
-		  if(CGRectIsEmpty(u)) u = test;
-		  else u = CGRectUnion(u, test);
-		  }
-		}
-	X = u.origin.x;
-	Y = u.origin.y;
-	W = u.size.width + 1;
-	H = u.size.height + 1;
-	if(CGRectIsEmpty(u)) W = H = 0;
-	return ! CGRectEqualToRect(arg, u);
-#else
-  RgnHandle rr = NewRgn();
-  SetRectRgn( rr, x, y, x+w, y+h );
-  SectRgn( r, rr, rr );
-  Rect rp; GetRegionBounds(rr, &rp);
-  X = rp.left;
-  Y = rp.top;
-  W = rp.right - X;
-  H = rp.bottom - Y;
-  DisposeRgn( rr );
-  if ( H==0 ) return 2;
-  if ( h==H && w==W ) return 0;
-  return 0;
-#endif
+  CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
+  CGRect u = CGRectMake(0,0,0,0);
+  CGRect test;
+  for(int i = 0; i < r->count; i++) {
+    test = CGRectIntersection(r->rects[i], arg);
+    if( ! CGRectIsEmpty(test) ) {
+      if(CGRectIsEmpty(u)) u = test;
+      else u = CGRectUnion(u, test);
+    }
+  }
+  X = u.origin.x;
+  Y = u.origin.y;
+  W = u.size.width + 1;
+  H = u.size.height + 1;
+  if(CGRectIsEmpty(u)) W = H = 0;
+  return ! CGRectEqualToRect(arg, u);
 #else
 # error unsupported platform
 #endif

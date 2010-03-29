@@ -70,7 +70,7 @@ int Fl_Gl_Window::can_do(int a, const int *b) {
 }
 
 void Fl_Gl_Window::show() {
-#if defined(__APPLE__) && defined(__APPLE_COCOA__)
+#if defined(__APPLE__)
   int need_redraw = 0;
 #endif
   if (!shown()) {
@@ -90,7 +90,7 @@ void Fl_Gl_Window::show() {
 #if !defined(WIN32) && !defined(__APPLE__)
     Fl_X::make_xid(this, g->vis, g->colormap);
     if (overlay && overlay != this) ((Fl_Gl_Window*)overlay)->show();
-#elif defined(__APPLE__) && defined(__APPLE_COCOA__)
+#elif defined(__APPLE__)
 	extern void MACsetContainsGLsubwindow(Fl_Window *);
 	if( ! parent() ) need_redraw=1;
 	else MACsetContainsGLsubwindow( window() );
@@ -100,9 +100,7 @@ void Fl_Gl_Window::show() {
 
 #ifdef __APPLE__
   set_visible();
-#ifdef __APPLE_COCOA__
   if(need_redraw) redraw();//necessary only after creation of a top-level GL window
-#endif
 #endif /* __APPLE__ */
 }
 
@@ -251,17 +249,14 @@ void Fl_Gl_Window::swap_buffers() {
   SwapBuffers(Fl_X::i(this)->private_dc);
 #  endif
 #elif defined(__APPLE_QUARTZ__)
-  // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
-#ifdef __APPLE_COCOA__
   if(overlay != NULL) {
     //aglSwapBuffers does not work well with overlays under cocoa
     glReadBuffer(GL_BACK);
     glDrawBuffer(GL_FRONT);
     glCopyPixels(0,0,w(),h(),GL_COLOR);
-    }
+  }
   else
-#endif
-  aglSwapBuffers((AGLContext)context_);
+    aglSwapBuffers((AGLContext)context_);
 #else
 # error unsupported platform
 #endif
@@ -283,11 +278,7 @@ void Fl_Gl_Window::flush() {
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   //: clear previous clipping in this shared port
 #if ! __LP64__
-#ifdef __APPLE_COCOA__
   GrafPtr port = GetWindowPort( MACwindowRef(this) );
-#else
-  GrafPtr port = GetWindowPort( fl_xid(this) );
-#endif
   Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
   GrafPtr old; GetPort( &old );
   SetPort( port );
@@ -334,7 +325,6 @@ void Fl_Gl_Window::flush() {
 
     if (!SWAP_TYPE) {
 #if defined __APPLE_QUARTZ__
-      // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
       SWAP_TYPE = COPY;
 #else
       SWAP_TYPE = UNDEFINED;

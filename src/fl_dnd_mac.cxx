@@ -46,48 +46,8 @@ extern int fl_selection_length;
  */
 int Fl::dnd()
 {
-#ifdef __APPLE_COCOA__
   extern int MACpreparedrag(void);
   return MACpreparedrag();
-#else
-
-  OSErr result;
-  DragReference dragRef;
-  result = NewDrag( &dragRef );
-  if ( result != noErr ) return false;
-  
-  result = AddDragItemFlavor( dragRef, 1, 'utf8', fl_selection_buffer, fl_selection_length, 0 );
-  if ( result != noErr ) { DisposeDrag( dragRef ); return false; }
-  
-  Point mp;
-  GetMouse(&mp);
-  LocalToGlobal( &mp );
-  RgnHandle region = NewRgn();
-  SetRectRgn( region, mp.h-10, mp.v-10, mp.h+10, mp.v+10 );
-  RgnHandle r2 = NewRgn();
-  SetRectRgn( r2, mp.h-8, mp.v-8, mp.h+8, mp.v+8 );
-  DiffRgn( region, r2, region );
-  DisposeRgn( r2 );
-
-  EventRecord event;
-  ConvertEventRefToEventRecord( fl_os_event, &event );
-  result = TrackDrag( dragRef, &event, region );
-
-  Fl_Widget *w = Fl::pushed();
-  if ( w )
-  {
-    int old_event = Fl::e_number;
-    w->handle(Fl::e_number = FL_RELEASE);
-    Fl::e_number = old_event;
-    Fl::pushed( 0 );
-  }
-
-  if ( result != noErr ) { DisposeRgn( region ); DisposeDrag( dragRef ); return false; }
-  
-  DisposeRgn( region );
-  DisposeDrag( dragRef );
-  return true;
-#endif //__APPLE_COCOA__
 }
   
 

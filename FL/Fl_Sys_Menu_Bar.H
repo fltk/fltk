@@ -53,7 +53,6 @@ public:
     fl_sys_menu_bar = this;
   }
   void menu(const Fl_Menu_Item *m);
-#if defined(__APPLE_COCOA__) || defined(FL_DOXYGEN)
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
   void remove(int n);
   void replace(int rank, const char *name);
@@ -62,7 +61,6 @@ public:
     numberOfItems, setSubmenu, setEnabled, addSeparatorItem, setTitle, removeItem, addNewItem, renameItem };
   // function doMenuOrItemOperation is in file Fl_cocoa.mm because it contains objective-c code
   static void *doMenuOrItemOperation( menuOrItemOperation operation, ...);
-#endif
 #endif
 };
 

@@ -31,9 +31,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
-#ifdef __APPLE_COCOA__
 #import <Cocoa/Cocoa.h>
-#endif
 
 extern void fl_quartz_restore_line_style_();
 
@@ -50,7 +48,7 @@ int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
 {
   OSStatus status;
   Fl_X::q_release_context();
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 && defined(__APPLE_COCOA__)
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if( [NSPrintPanel instancesRespondToSelector:@selector(runModalWithPrintInfo:)] &&
      [NSPrintInfo instancesRespondToSelector:@selector(PMPrintSession)] ) {
     NSAutoreleasePool *localPool;
@@ -119,7 +117,7 @@ int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
     status = PMSessionBeginDocumentNoDialog(printSession, printSettings, pageFormat);
 #endif //__LP64__
     
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 && defined(__APPLE_COCOA__)
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
 #endif
   if (status != noErr) return 1;

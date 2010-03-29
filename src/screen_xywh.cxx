@@ -109,22 +109,7 @@ XRectangle screens[16];
 
 extern int MACscreen_init(XRectangle screens[]);
 static void screen_init() {
-#ifdef __APPLE_COCOA__
-	num_screens = MACscreen_init(screens);
-#else
-  GDHandle gd;
-
-  for (gd = GetDeviceList(), num_screens = 0; gd; gd = GetNextDevice(gd)) {
-    GDPtr gp = *gd;
-    screens[num_screens].x      = gp->gdRect.left;
-    screens[num_screens].y      = gp->gdRect.top;
-    screens[num_screens].width  = gp->gdRect.right - gp->gdRect.left;
-    screens[num_screens].height = gp->gdRect.bottom - gp->gdRect.top;
-
-    num_screens ++;
-    if (num_screens >= 16) break;
-  }
-#endif
+  num_screens = MACscreen_init(screens);
 }
 #elif HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>

@@ -40,6 +40,8 @@
 #include "flstring.h"
 
 #if defined(__APPLE_QUARTZ__)
+
+
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
   static uchar reverse[16] =    /* Bit reversal lookup table */
     { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee, 
@@ -58,7 +60,11 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *array) {
 void fl_delete_bitmask(Fl_Bitmask bm) {
   if (bm) CGImageRelease((CGImageRef)bm);
 }
+
+
 #elif defined(WIN32) // Windows bitmask functions...
+
+
 // 'fl_create_bitmap()' - Create a 1-bit bitmap for drawing...
 static Fl_Bitmask fl_create_bitmap(int w, int h, const uchar *data) {
   // we need to pad the lines out to words & swap the bits
@@ -146,39 +152,15 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
   return bm;
 }
 
-#if 0 // This doesn't appear to be used anywhere...
-Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data, int for_mask) {
-  // we need to pad the lines out to words & swap the bits
-  // in each byte.
-  int w1 = (w+7)/8;
-  int w2 = ((w+15)/16)*2;
-  uchar* newarray = new uchar[w2*h];
-  const uchar* src = data;
-  uchar* dest = newarray;
-  Fl_Bitmask bm;
-  static uchar reverse[16] =	/* Bit reversal lookup table */
-  	      { 0x00, 0x88, 0x44, 0xcc, 0x22, 0xaa, 0x66, 0xee,
-		0x11, 0x99, 0x55, 0xdd, 0x33, 0xbb, 0x77, 0xff };
-
-  for (int y=0; y < h; y++) {
-    for (int n = 0; n < w1; n++, src++)
-      *dest++ = (reverse[*src & 0x0f] & 0xf0) |
-	        (reverse[(*src >> 4) & 0x0f] & 0x0f);
-    dest += w2-w1;
-  }
-
-  bm = CreateBitmap(w, h, 1, 1, newarray);
-
-  delete[] newarray;
-
-  return bm;
-}
-#  endif // 0
 
 void fl_delete_bitmask(Fl_Bitmask bm) {
   DeleteObject((HGDIOBJ)bm);
 }
+
+
 #else // X11 bitmask functions
+
+
 Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
   return XCreateBitmapFromData(fl_display, fl_window, (const char *)data,
                                (w+7)&-8, h);
@@ -187,6 +169,8 @@ Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data) {
 void fl_delete_bitmask(Fl_Bitmask bm) {
   fl_delete_offscreen((Fl_Offscreen)bm);
 }
+
+
 #endif // __APPLE__
 
 
@@ -368,7 +352,7 @@ Fl_Bitmap::~Fl_Bitmap() {
 
 void Fl_Bitmap::uncache() {
   if (id_) {
-#if defined(__APPLE__) && defined(__APPLE_COCOA__)
+#ifdef __APPLE_COCOA__
     fl_delete_bitmask((Fl_Bitmask)id_);
 #else
     fl_delete_bitmask((Fl_Offscreen)id_);

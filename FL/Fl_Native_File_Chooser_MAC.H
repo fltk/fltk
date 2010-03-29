@@ -57,20 +57,10 @@ public:
     NEW_FOLDER     = 0x0002,		// Show 'New Folder' icon (if supported)
     PREVIEW        = 0x0004,		// enable preview mode
   };
-#ifndef __APPLE_COCOA__
-protected:
-  NavDialogCreationOptions _opts;	// file navigation options
-#endif
 private:
   int             _btype;		// kind-of browser to show()
   int             _options;		// general options
-#ifdef __APPLE_COCOA__
   void 	         *_panel;
-#else
-  NavDialogRef    _ref;		        // file navigation reference
-  NavActionState  _keepstate;		// holds button permissions
-  NavMenuItemSpec _tempitem;   	        // Popup menu selection
-#endif
   char          **_pathnames;		// array of pathnames
   int             _tpathnames;	        // total pathnames
   char           *_directory;		// default pathname to use
@@ -92,41 +82,14 @@ private:
   int             _filt_value;		// index of the selected filter
   char           *_errmsg;		// error message
 
-#ifndef __APPLE_COCOA__
-  // PRIVATE CLASS TO HANDLE NAVIGATION DIALOG REPLY STRUCT
-  //     Class-ified, mainly to ensure proper cleanup.
-  //
-  class NavReply {
-    int _valid_reply;
-    NavReplyRecord _reply;
-  public:
-    NavReply();
-    ~NavReply();
-    int get_reply(NavDialogRef& ref);
-    int get_saveas_basename(char *s, int slen);
-    int get_dirname(char *s, int slen);
-    int get_pathnames(char **&pathnames, int& tpathnames);
-  };
-#endif
   // Private methods
   void errmsg(const char *msg);
   void clear_pathnames();
   void set_single_pathname(const char *s);
-#ifdef __APPLE_COCOA__
   int get_saveas_basename(void);
-#else
-  int get_saveas_basename(NavDialogRef& ref);
-  int get_pathnames(NavDialogRef& ref);
-  static void event_handler(NavEventCallbackMessage callBackSelector, 
-			    NavCBRecPtr cbparm, void *data);
-#endif
   void clear_filters();
   void add_filter(const char *, const char *);
   void parse_filter(const char *from);
-#ifndef __APPLE_COCOA__
-  static Boolean filter_proc_cb(AEDesc *, void *, void *, NavFilterModes);
-  Boolean filter_proc_cb2(AEDesc*, void*, void*, NavFilterModes);
-#endif
   int post();
 
 public:

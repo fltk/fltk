@@ -72,8 +72,6 @@ typedef float CGFloat;
 struct XPoint { int x, y; };
 struct XRectangle {int x, y, width, height;};
 
-#ifdef __APPLE_COCOA__
-
 typedef void *Window; // this is really a pter to the subclass FLWindow of NSWindow
 typedef struct flCocoaRegion {
   int count;
@@ -99,25 +97,6 @@ extern void *fl_system_menu;
 typedef CGContextRef Fl_Offscreen;
 typedef CGImageRef Fl_Bitmask;
 
-#else
-
-typedef WindowRef Window;
-typedef RgnHandle Fl_Region;
-inline Fl_Region XRectangleRegion(int x, int y, int w, int h) {
-  Fl_Region R = NewRgn();
-  SetRectRgn(R, x, y, x+w, y+h);
-  return R;
-}
-inline void XDestroyRegion(Fl_Region r) {
-  DisposeRgn(r);
-}
-extern CursHandle fl_default_cursor;
-extern Handle fl_system_menu;
-typedef GWorldPtr Fl_Offscreen;
-typedef GWorldPtr Fl_Bitmask; // Carbon requires a 1-bit GWorld instead of a BitMap
-
-#endif
-
 void fl_clip_region(Fl_Region);
 
 #  include "Fl_Window.H"
@@ -135,11 +114,7 @@ public:
   Fl_X *next;              // linked tree to support subwindows
   Fl_X *xidChildren, *xidNext; // more subwindow tree
   int wait_for_expose;
-#ifdef __APPLE_COCOA__
   void *cursor;			  // is really NSCursor*
-#else
-  CursHandle cursor;
-#endif
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
@@ -154,18 +129,12 @@ public:
   static void q_end_image();
 };
 
-#ifdef __APPLE_COCOA__
 extern void MacDestroyWindow(Fl_Window*,void *);
 extern void MacMapWindow(Fl_Window*,void *);
 extern void MacUnmapWindow(Fl_Window*,void *);
 extern WindowRef MACwindowRef(Fl_Window *w);
 extern Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h);
 extern void MacCollapseWindow(Window w);
-#else
-extern void MacDestroyWindow(Fl_Window*,WindowPtr);
-extern void MacMapWindow(Fl_Window*,WindowPtr);
-extern void MacUnmapWindow(Fl_Window*,WindowPtr);
-#endif
 
 extern int MacUnlinkWindow(Fl_X*,Fl_X*start=0L);
 
@@ -204,7 +173,6 @@ extern void fl_open_callback(void (*cb)(const char *));
 extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 #endif // FL_DOXYGEN
 
-#if defined(__APPLE_COCOA__) || defined(FL_DOXYGEN)
 /** \defgroup group_macosx Mac OS X-specific functions
  @{ */
 
@@ -219,7 +187,6 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
  */
 extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0);
 /** @} */
-#endif
 
 //
 // End of "$Id$".

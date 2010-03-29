@@ -1142,7 +1142,9 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
            "/%s/%s.prefs", vendor, application);
   for (char *s = filename; *s; s++) if (*s == '\\') *s = '/';
 #elif defined ( __APPLE__ )
-#ifdef __APPLE_COCOA__
+  // TODO: verify that this is the Apple sanctioned way of finding these folders
+  // (On MSWindows, this frequently leads to issues with internationalized systems)
+  // Carbon: err = FindFolder( kLocalDomain, kPreferencesFolderType, 1, &spec.vRefNum, &spec.parID );
   switch (root) {
     case SYSTEM:
       strcpy(filename, "/Library/Preferences");
@@ -1151,23 +1153,6 @@ Fl_Preferences::RootNode::RootNode( Fl_Preferences *prefs, Root root, const char
 	  sprintf(filename, "%s/Library/Preferences", fl_getenv("HOME"));
       break;
   }
-#else
-  FSSpec spec = { 0 };
-  FSRef ref;
-  OSErr err = fnfErr;
-  switch (root) {
-    case SYSTEM:
-      err = FindFolder( kLocalDomain, kPreferencesFolderType,
-			1, &spec.vRefNum, &spec.parID );
-      break;
-    case USER:
-      err = FindFolder( kUserDomain, kPreferencesFolderType,
-			1, &spec.vRefNum, &spec.parID );
-      break;
-  }
-  FSpMakeFSRef( &spec, &ref );
-  FSRefMakePath( &ref, (UInt8*)filename, FL_PATH_MAX );
-#endif
   snprintf(filename + strlen(filename), sizeof(filename) - strlen(filename),
            "/%s/%s.prefs", vendor, application );
 #else

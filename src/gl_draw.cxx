@@ -110,7 +110,7 @@ void  gl_font(int fontid, int size) {
     wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
     SelectObject(fl_gc, oldFid);
 # elif defined(__APPLE_QUARTZ__)
-#if ! defined(__APPLE_COCOA__)
+    /* FIXME: no OpenGL Font Selection in Cocoa!
 //AGL is not supported for use in 64-bit applications:
 //http://developer.apple.com/mac/library/documentation/Carbon/Conceptual/Carbon64BitGuide/OtherAPIChanges/OtherAPIChanges.html
     short font, face, size;
@@ -123,7 +123,7 @@ void  gl_font(int fontid, int size) {
     fl_fontsize->listbase = glGenLists(256);
 	aglUseFont(aglGetCurrentContext(), font, face,
                size, 0, 256, fl_fontsize->listbase);
-#endif
+     */
 # else 
 #   error unsupported platform
 # endif
@@ -132,7 +132,7 @@ void  gl_font(int fontid, int size) {
 
   }
   gl_fontsize = fl_fontsize;
-#if !( defined(__APPLE__) &&  defined(__APPLE_COCOA__) )
+#ifndef __APPLE_COCOA__
   glListBase(fl_fontsize->listbase);
 #endif
 }
@@ -160,7 +160,7 @@ static void get_list(int r) {
   wglUseFontBitmapsW(fl_gc, ii, ii + 0x03ff, gl_fontsize->listbase+ii);
   SelectObject(fl_gc, oldFid);
 #elif defined(__APPLE_QUARTZ__)
-// FIXME
+// FIXME:
 #else
 #  error unsupported platform
 #endif
@@ -210,20 +210,13 @@ void gl_remove_displaylist_fonts()
   Draws an array of n characters of the string in the current font
   at the current position.
   */
-#if defined(__APPLE__) && defined(__APPLE_COCOA__)
+#ifdef __APPLE__
 static void gl_draw_cocoa(const char* str, int n);
 #endif
 
 void gl_draw(const char* str, int n) {
-#ifdef __APPLE__
-  
-#if defined(__APPLE_COCOA__)
-  gl_draw_cocoa(str, n);
-#else
-// Should be converting the text here, as for other platforms???
-  glCallLists(n, GL_UNSIGNED_BYTE, str);
-#endif
-  
+#ifdef __APPLE__  
+  gl_draw_cocoa(str, n);  
 #else
   static xchar *buf = NULL;
   static int l = 0;
@@ -367,7 +360,7 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   glDrawPixels(w,h,d<4?GL_RGB:GL_RGBA,GL_UNSIGNED_BYTE,(const ulong*)b);
 }
 
-#if defined(__APPLE__) && defined(__APPLE_COCOA__)
+#ifdef __APPLE__
 
 #include <FL/glu.h>
 

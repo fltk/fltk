@@ -151,8 +151,6 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   BitBlt(fl_gc, dest_x, dest_y, src_w, src_h, fl_gc, src_x, src_y,SRCCOPY);
 
 #elif defined(__APPLE_QUARTZ__)
-
-#if defined(__APPLE_COCOA__)
   extern CGImageRef MAC_CGImageFromRectOfWindow(Fl_Window*, int x, int y, int w, int h);
   CGImageRef img = MAC_CGImageFromRectOfWindow(Fl_Window::current(), src_x, src_y, src_w, src_h);
   CGRect rect = { { dest_x, dest_y }, { src_w, src_h } };
@@ -160,19 +158,6 @@ void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
   CGContextDrawImage(fl_gc, rect, img);
   Fl_X::q_end_image();
   CFRelease(img);
-#else
-  // warning: there does not seem to be an equivalent to this function in Quartz
-  // ScrollWindowRect is a QuickDraw function and won't work here.
-  // Since on OS X all windows are fully double buffered, we need not
-  // worry about offscreen or obscured areas
-  Rect src = { src_y, src_x, src_y+src_h, src_x+src_w };
-  Rect dst = { dest_y, dest_x, dest_y+src_h, dest_x+src_w };
-  static RGBColor bg = { 0xffff, 0xffff, 0xffff }; RGBBackColor( &bg );
-  static RGBColor fg = { 0x0000, 0x0000, 0x0000 }; RGBForeColor( &fg );
-  CopyBits( GetPortBitMapForCopyBits( GetWindowPort(fl_window) ),
-            GetPortBitMapForCopyBits( GetWindowPort(fl_window) ), &src, &dst, srcCopy, 0L);
-#endif
-
 #else
 # error unsupported platform
 #endif

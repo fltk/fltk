@@ -60,7 +60,7 @@ static int fl_free_font = FL_FREE_FONT;
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
 #pragma unused ( xstarname )
-#if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static SInt32 MACsystemVersion = 0;
 if(MACsystemVersion == 0) Gestalt(gestaltSystemVersion, &MACsystemVersion);
 if(MACsystemVersion >= 0x1050) {
@@ -91,26 +91,6 @@ if(MACsystemVersion >= 0x1050) {
 else {
 #endif
 #if ! __LP64__
-#if defined(OLD__APPLE_QUARTZ__)
-  ATSFontIterator it;
-  ATSFontIteratorCreate(kATSFontContextGlobal, 0L, 0L, kATSOptionFlagsUnRestrictedScope, &it);  
-  for (;;) {
-    ATSFontRef font;
-    CFStringRef fname = 0;
-    OSStatus err = ATSFontIteratorNext(it, &font);
-    if (err!=noErr) break;
-    ATSFontGetName(font, kATSOptionFlagsDefault, &fname);
-    char buf[1024];
-    CFStringGetCString(fname, buf, 1024, kCFStringEncodingUTF8);
-    int i;
-    for (i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
-      if (!strcmp(Fl::get_font_name((Fl_Font)i),buf)) break;
-    if ( i < FL_FREE_FONT ) continue;
-    Fl::set_font((Fl_Font)(fl_free_font++), strdup((char*)buf));
-  }
-  ATSFontIteratorRelease(&it);
-  return (Fl_Font)fl_free_font;
-#else
   ItemCount oFontCount, oCountAgain;
   ATSUFontID *oFontIDs;
   // How many fonts?
@@ -145,9 +125,8 @@ else {
   }
   free(oFontIDs);
   return (Fl_Font)fl_free_font;
-#endif //OLD__APPLE_QUARTZ__
 #endif //__LP64__
-#if defined(__APPLE_COCOA__) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
 #endif
   return 0; // FIXME: I do not understand the shuffeling of the above ifdef's and why they are here!
