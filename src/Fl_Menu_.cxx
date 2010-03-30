@@ -79,6 +79,7 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
 	if ( m->submenu() ) {				// submenu? descend
 	    if (*name) SAFE_STRCAT("/");
 	    if (m->label()) SAFE_STRCAT(m->label());
+	    if ( m == finditem ) return(0);		// found? done.
 	} else {
 	    if (m->label()) {				// menu item?
 		if ( m == finditem ) {			// found? tack on itemname, done.
