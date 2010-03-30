@@ -1,7 +1,0 @@
-Mac Os X platform impl. Todo List
-=================================
-
-- Remove the enable-quartz option, only quartz shall be supported in 1.3 *DONE*
-- Clean up progressivelly old QD code (related to QD compilation only) *DONE*
-- Fix OS9/QD archaisms found in the current Quartz code
-- Complete the Quartz Implemtation.
