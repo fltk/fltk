@@ -1284,7 +1284,6 @@ static void	(*open_cb)(const char *) = 0;
       (*open_cb)(filename);
     }
   }
-  
   // Unlock access to FLTK for all threads...
   fl_unlock_function();
 }
@@ -1538,9 +1537,9 @@ void fl_open_display() {
     [NSApp setDelegate:mydelegate];
     [NSApp finishLaunching];
 		
-    // empty the event queue
+    // empty the event queue but keep system events for drag&drop of files at launch
     NSEvent *ign_event;
-    do ign_event = [NSApp nextEventMatchingMask:NSAnyEventMask 
+    do ign_event = [NSApp nextEventMatchingMask:(NSAnyEventMask & ~NSSystemDefinedMask)
 					untilDate:[NSDate dateWithTimeIntervalSinceNow:0] 
 					   inMode:NSDefaultRunLoopMode 
 					  dequeue:YES];
