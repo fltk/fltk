@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="0.9">
+    <dict>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+
+	<key>CFBundleExecutable</key>
+	<string>checkers</string>
+
+	<key>CFBundleIdentifier</key>
+	<string>org.fltk.checkers</string>
+
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright 1997-2006 by Bill Spitzak and others</string>
+
+	<key>CFAppleHelpAnchor</key>
+	<string>help</string>
+
+	<key>CFBundleName</key>
+	<string>checkers</string>
+
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+
+	<key>CFBundleSignature</key>
+	<string>FLSU</string>
+
+	<key>CFBundleIconFile</key>
+	<string>checkers.icns</string>
+
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+
+	<key>CFBundleGetInfoString</key>
+	<string>1.0, Copyright 1997-2006 by Bill Spitzak and others</string>
+
+    </dict>
+</plist>

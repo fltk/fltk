@@ -1,0 +1,26 @@
+
+Default install :
+
+        tar -xvzf Xutf8.tar.gz
+        cd Xutf8
+        ./configure --prefix=/usr
+	su -c "make install"
+
+
+
+Install with tables generation :
+
+	You must have a copy of http://www.unicode.org/Public/MAPPINGS/ in
+	the ./MAPPINGS/ directory and a copy of UnicodeData-2.txt in ./
+	to generate the conversion tables.
+
+	To add a table, edit utils/tbl_gen.sh and utils/convert_map.c.
+
+	tar -xvzf Xutf8.tar.gz
+	cd Xutf8
+	./configure
+	cd utils
+	make
+	cd ..
+	su -c "make install"
+		

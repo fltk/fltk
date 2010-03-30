@@ -1,0 +1,29 @@
+/* XPM */
+static const char *protected_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"` c #000000",
+"a c #80c080",
+"b c #c0ffc0",
+"c c none",
+"d c #c0ffc0",
+"e c #408040",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccc```ccc",
+"ccccccccc`daa`cc",
+"cccccccc`da`bd`c",
+"cccccccc`a`c`d`c",
+"ccccccc`````````",
+"ccccccc`dddaaae`",
+"ccccccc`daa`aae`",
+"ccccccc`da`eaae`",
+"ccccccc`da`daee`",
+"ccccccc`````````",
+"cccccccccccccccc"
+};

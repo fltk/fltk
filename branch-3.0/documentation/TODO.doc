@@ -1,0 +1,324 @@
+File list divided into smaller workpackages for being solved by new STRs
+to visit one package of files search for 'WP'
+WP1 -> WP11 : Widgets, Image and other classes, 7 to 8 files per WP.
+WP12,13 : other documentation: 10 to 11 files per WP.
+
+Developer Notes:
+===============
+- We must put the Doxygen comments wherever the implementation is. 
+So class, typedef, enum, and inline docs go in the 
+header. 
+Most other stuff goes into the source.
+- The doxygen comments syntaxs used are:
+/** */ for standard comments and ///< for post decl. short comments
+- We use \a for parameters citation in the description
+- We must not use doxygen tags between a \htmlonly \endhmltonly pair of tags
+
+TODO in pdf gen:
+================
+   - Fix the batchmode not currently working
+   - Fix the 2 pages garbage at the beginning
+   - Improve pdf
+   - Improve Makefile
+
+- In Progress Work List (add your WP and name here): ALL DONE
+====================================================
+
+  - WP1  (Fabien) DONE
+  - WP2  (Fabien) DONE
+  - WP3  (engelsman) DONE
+  - WP4  (Fabien) DONE
+  - WP5  (Fabien) DONE
+  - WP6  (Fabien) DONE
+  - WP7  (Fabien) DONE
+  - WP8  (Fabien) DONE
+  - WP9  (Fabien) DONE
+  - WP10 (Fabien) DONE
+  - WP11 (Fabien) DONE
+  - WP12 (Albrecht) DONE (usable, but links must still be checked)
+  - WP13 (Albrecht) DONE (usable, but links must still be checked)
+
+Please drop a note at STR 2037, whenever you take over a WP.
+
+URL for STR 2037: http://www.fltk.org/str.php?L2037
+
+WP1>----------------------------------------------------------
+Fl_Widget.html
+Fl_Group.html
+Fl_Window.html
+Fl_Single_Window.html
+Fl_Double_Window.html
+Fl_Overlay_Window.html
+Fl_Gl_Window.html
+Fl.html
+WP2>----------------------------------------------------------
+Fl_Browser.html
+Fl_Browser_.html
+Fl_Check_Browser.html
+Fl_Hold_Browser.html
+Fl_Select_Browser.html
+Fl_File_Browser.html
+Fl_File_Chooser.html
+Fl_Multi_Browser.html
+WP3>----------------------------------------------------------
+Fl_Button.html
+Fl_Chart.html
+Fl_Check_Button.html
+Fl_Choice.html
+Fl_Clock.html
+Fl_Clock_Output.html
+Fl_Color_Chooser.html
+Fl_Counter.html
+WP4>----------------------------------------------------------
+Fl_Dial.html
+Fl_End.html
+Fl_File_Icon.html
+Fl_Free.html
+Fl_Pack.html
+Fl_Positioner.html
+Fl_Tabs.html
+Fl_Tile.html
+WP5>----------------------------------------------------------
+Fl_Bitmap.html
+Fl_Pixmap.html
+Fl_Image.html
+Fl_BMP_Image.html
+Fl_GIF_Image.html
+Fl_XBM_Image.html
+Fl_XPM_Image.html
+Fl_PNG_Image.html
+WP6>----------------------------------------------------------
+Fl_PNM_Image.html
+Fl_RGB_Image.html
+Fl_JPEG_Image.html
+Fl_Shared_Image.html
+Fl_Preferences.html
+Fl_Help_Dialog.html
+Fl_Help_View.html
+Fl_Light_Button.html
+WP7>----------------------------------------------------------
+Fl_Menu_.html
+Fl_Menu_Bar.html
+Fl_Menu_Button.html
+Fl_Menu_Item.html
+Fl_Menu_Window.html
+Fl_Progress.html
+Fl_Timer.html
+WP8>----------------------------------------------------------
+Fl_Valuator.html
+Fl_Box.html
+Fl_Repeat_Button.html
+Fl_Return_Button.html
+Fl_Round_Button.html
+Fl_Scroll.html
+Fl_Scrollbar.html
+WP9>----------------------------------------------------------
+Fl_Input_.html
+Fl_Input.html
+Fl_Input_Choice.html
+Fl_Int_Input.html
+Fl_File_Input.html
+Fl_Float_Input.html
+Fl_Secret_Input.html
+Fl_Multiline_Input.html
+WP10>----------------------------------------------------------
+Fl_Value_Input.html
+Fl_Multiline_Output.html
+Fl_Output.html
+Fl_Value_Output.html
+Fl_Value_Slider.html
+Fl_Roller.html
+Fl_Slider.html
+Fl_Adjuster.html
+WP11>----------------------------------------------------------
+Fl_Spinner.html
+Fl_Tooltip.html
+Fl_Text_Buffer.html
+Fl_Text_Display.html
+Fl_Text_Editor.html
+Fl_Tiled_Image.html
+Fl_Toggle_Button.html
+Fl_Wizard.html
+WP12>----------------------------------------------------------
+advanced.html
+basics.html
+common.html
+drawing.html
+editor.html
+enumerations.html
+events.html
+examples.html
+fluid.html
+forms.html
+functions.html
+WP13>----------------------------------------------------------
+glut.html
+index.html
+intro.html
+license.html
+migration.html
+opengl.html
+osissues.html
+preface.html
+subclassing.html
+widgets.html
+---------------------------------------------<END OF HTML FILES
+
+-------------------------------------------------------------------
+  Related Files (please remove them after each html file completion
+  covering the mainly this file
+-------------------------------------------------------------------
+Enumerations.H		(Albrecht) DONE, as far as I can.
+			Somebody else for the rest ?
+Fl_Button.H
+Fl_Button.cxx
+Fl_Chart.H
+Fl_Chart.cxx
+Fl_Check_Button.H
+Fl_Check_Button.cxx
+Fl_Choice.H
+Fl_Choice.cxx
+Fl_Clock.H
+Fl_Clock.cxx
+Fl_Color_Chooser.H
+Fl_Color_Chooser.cxx
+Fl_Counter.H
+Fl_Counter.cxx
+Fl_Export.H
+Fl_Fill_Dial.H
+Fl_Fill_Slider.H
+Fl_Font.H
+Fl_FormsBitmap.H
+Fl_FormsPixmap.H
+Fl_Gl_Choice.H
+Fl_Gl_Choice.cxx
+Fl_Hor_Fill_Slider.H
+Fl_Hor_Nice_Slider.H
+Fl_Hor_Slider.H
+Fl_Hor_Value_Slider.H
+Fl_Line_Dial.H
+Fl_Multi_Browser.H
+Fl_Multi_Label.H
+Fl_Multi_Label.cxx
+Fl_Nice_Slider.H
+Fl_Object.H
+Fl_Radio_Button.H
+Fl_Radio_Light_Button.H
+Fl_Radio_Round_Button.H
+Fl_Round_Clock.H
+Fl_Simple_Counter.H
+Fl_Sys_Menu_Bar.H
+Fl_Sys_Menu_Bar.cxx
+Fl_Tabs.H
+Fl_Tabs.cxx
+Fl_Window_fullscreen.cxx
+Fl_Window_hotspot.cxx
+Fl_Window_iconize.cxx
+Fl_XColor.H
+Fl_abort.cxx
+Fl_get_key.cxx
+Fl_get_key_mac.cxx
+Fl_get_key_win32.cxx
+Fl_grab.cxx
+Xutf8.h
+cgdebug.h
+cmap.cxx
+dirent.h
+dump_compose.c
+fastarrow.h
+filename.H
+filename_absolute.cxx
+filename_expand.cxx
+filename_ext.cxx
+filename_isdir.cxx
+filename_list.cxx
+filename_match.cxx
+filename_setext.cxx
+fl_arc.cxx
+fl_arci.cxx
+fl_ask.H
+fl_ask.cxx
+fl_call_main.c
+fl_cmap.h
+fl_cursor.cxx
+fl_curve.cxx
+fl_diamond_box.cxx
+fl_dnd.cxx
+fl_dnd_mac.cxx
+fl_dnd_win32.cxx
+fl_dnd_x.cxx
+fl_draw.H
+fl_draw.cxx
+fl_draw_image.cxx
+fl_draw_image_mac.cxx
+fl_draw_image_win32.cxx
+fl_draw_pixmap.cxx
+fl_encoding_latin1.cxx
+fl_encoding_mac_roman.cxx
+fl_engraved_label.cxx
+fl_file_dir.cxx
+fl_font.cxx
+fl_font_mac.cxx
+fl_font_win32.cxx
+fl_font_x.cxx
+fl_font_xft.cxx
+fl_gtk.cxx
+fl_images_core.cxx
+fl_line_style.cxx
+fl_message.H
+fl_open_uri.cxx
+fl_oval_box.cxx
+fl_overlay.cxx
+fl_overlay_visual.cxx
+fl_plastic.cxx
+fl_read_image.cxx
+fl_read_image_mac.cxx
+fl_read_image_win32.cxx
+fl_rect.cxx
+fl_round_box.cxx
+fl_rounded_box.cxx
+fl_scroll_area.cxx
+fl_set_font.cxx
+fl_set_fonts.cxx
+fl_set_fonts_mac.cxx
+fl_set_fonts_win32.cxx
+fl_set_fonts_x.cxx
+fl_set_fonts_xft.cxx
+fl_shadow_box.cxx
+fl_show_colormap.H
+fl_show_colormap.cxx
+fl_show_input.H
+fl_symbols.cxx
+fl_utf8.H
+fl_vertex.cxx
+flstring.c
+flstring.h
+forms.H
+forms_bitmap.cxx
+forms_compatability.cxx
+forms_fselect.cxx
+forms_pixmap.cxx
+freeglut_geometry.cxx
+freeglut_stroke_mono_roman.cxx
+freeglut_stroke_roman.cxx
+freeglut_teapot.cxx
+freeglut_teapot_data.h
+gl.h
+gl2opengl.h
+gl_draw.H
+gl_draw.cxx
+glu.h
+glut.H
+glut_compatability.cxx
+glut_font.cxx
+mac.H
+math.h
+mediumarrow.h
+names.h
+numericsort.c
+scandir.c
+scandir_win32.c
+slowarrow.h
+vsnprintf.c
+win32.H
+x.H

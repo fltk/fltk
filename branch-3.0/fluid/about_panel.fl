@@ -1,0 +1,74 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+comment {//
+// "$Id$"
+//
+// About dialog for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2009 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+} {in_source in_header
+} 
+
+decl {void show_help(const char *name);} {public
+} 
+
+Function {make_about_panel()} {selected
+} {
+  Fl_Window about_panel {
+    label {About FLUID} open
+    xywh {419 216 315 175} type Double color 50 selection_color 47 hotspot non_modal visible
+  } {
+    Fl_Box {} {
+      image {icons/fluid-96.xpm} xywh {10 10 115 120}
+    }
+    Fl_Box {} {
+      label {FLTK User
+Interface Designer
+Version 1.3.0}
+      xywh {135 10 170 69} color 12 selection_color 47 labelfont 1 labelsize 18 align 21
+    }
+    Fl_Box {} {
+      label {Copyright 1998-2009 by
+Bill Spitzak and others}
+      xywh {135 89 170 42} align 148
+    }
+    Fl_Button {} {
+      label {View License...}
+      callback {show_help("license.html");}
+      xywh {89 141 123 25} labelcolor 136
+    }
+    Fl_Return_Button {} {
+      label Close
+      callback {((Fl_Window*)(o->parent()))->hide();}
+      xywh {222 141 83 25}
+    }
+  }
+} 
+
+comment {
+//
+// End of "$Id$".
+//} {in_source in_header
+} 

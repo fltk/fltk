@@ -1,0 +1,214 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+comment {//
+// "$Id: ide_support_ui.fl 6614 2009-01-01 16:11:32Z matt $"
+//
+// Setting and shell dialogs for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2009 by Bill Spitzak and others.
+//
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
+//
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
+} {in_source in_header
+} 
+
+decl {\#include <FL/Fl_Tree.H>} {public local
+} 
+
+decl {\#include "ide_support.h"} {private global
+} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {private global
+} 
+
+Function {make_dbmanager_window()} {open
+} {
+  Fl_Window dbmanager_window {open
+    xywh {459 167 427 500} type Double resizable visible
+  } {
+    Fl_Box dbmanager_tree {
+      xywh {8 8 200 480} box DOWN_BOX color 55 when 1 resizable
+      code0 {dbmanager_tree->showroot(0);}
+      class Fl_Tree
+    }
+    Fl_Group {} {open
+      xywh {216 8 200 444}
+    } {
+      Fl_Group {} {open
+        xywh {224 364 184 79} resizable
+      } {}
+      Fl_Button {} {
+        label {Open Database...}
+        callback {const char *filename = fl_file_chooser("Load Database", "*.db", 0, 0);
+if (filename) {
+  ui_load_database(filename);
+}}
+        xywh {240 52 152 28}
+      }
+      Fl_Button {} {
+        label { (New Database... )}
+        callback {const char *filename = fl_file_chooser("Load Database", "*.db", 0, 0);
+if (filename) {
+  ui_load_database(filename);
+}}
+        xywh {240 16 152 28} deactivate
+      }
+      Fl_Wizard dbm_wizard {open selected
+        xywh {216 92 200 272} box ENGRAVED_BOX
+      } {
+        Fl_Group dbm_empty {open
+          xywh {216 92 200 272} hide
+        } {}
+        Fl_Group dbm_app {
+          xywh {216 92 200 272} hide
+        } {
+          Fl_Input dbm_app_name {
+            label {(Name:)}
+            xywh {280 108 111 24} deactivate
+          }
+          Fl_Button {} {
+            label { (New Source... )}
+            xywh {240 140 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Source... )}
+            xywh {240 176 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Library... )}
+            xywh {240 212 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Dependency... )}
+            xywh {240 248 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add External Item... )}
+            xywh {240 284 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Remove Test...)}
+            xywh {240 320 152 28} deactivate
+          }
+        }
+        Fl_Group dbm_lib {
+          xywh {216 92 200 272} hide
+        } {
+          Fl_Input dbm_lib_name {
+            label {(Name:)}
+            xywh {280 108 111 24} deactivate
+          }
+          Fl_Button {} {
+            label { (New Source... )}
+            xywh {240 140 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Source... )}
+            xywh {240 176 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Library... )}
+            xywh {240 212 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Dependency... )}
+            xywh {240 248 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add External Item... )}
+            xywh {240 284 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Remove Test...)}
+            xywh {240 320 152 28} deactivate
+          }
+        }
+        Fl_Group dbm_test {
+          xywh {216 92 200 272} hide
+        } {
+          Fl_Input dbm_test_name {
+            label {(Name:)}
+            xywh {280 108 111 24} deactivate
+          }
+          Fl_Button {} {
+            label { (New Source... )}
+            xywh {240 140 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Source... )}
+            xywh {240 176 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Library... )}
+            xywh {240 212 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Dependency... )}
+            xywh {240 248 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add External Item... )}
+            xywh {240 284 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Remove Test...)}
+            xywh {240 320 152 28} deactivate
+          }
+        }
+        Fl_Group dbm_sources {
+          xywh {216 92 200 128} hide
+        } {
+          Fl_Button {} {
+            label { (New Source... )}
+            xywh {240 104 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Add Source... )}
+            xywh {240 140 152 28} deactivate
+          }
+          Fl_Button {} {
+            label { (Remove All Sources...)}
+            xywh {240 176 152 28} deactivate
+          }
+        }
+        Fl_Group dbm_source {
+          xywh {216 92 200 52}
+        } {
+          Fl_Button {} {
+            label { (Remove Source... )}
+            xywh {240 104 152 28} deactivate
+          }
+        }
+      }
+    }
+    Fl_Button {} {
+      label {( Close )}
+      xywh {324 460 92 28} deactivate
+    }
+  }
+} 
+
+comment {
+//
+// End of "$Id: ide_support_ui.fl 6614 2009-01-01 16:11:32Z matt $".
+//} {in_source in_header
+} 

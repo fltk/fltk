@@ -1,0 +1,28 @@
+README
+------
+
+The documentation in this directory is in PDF format.
+To read it, please open the fltk.pdf file in this directory
+
+To generate the doxygen HTML documention,
+you should have Doxygen version 1.5.5 min.
+
+To read it, please open the "html/index.html" file. 
+A documentation version is also accessable at the FLTK web site, 
+along with PostScript(tm) and PDF versions of the manual.
+
+You can generate your own (printable) copy of the manual by typing
+"make pdf" in this directory.  
+
+For future book gen alternative (TODO or CHECK):
+You will need to have the HTMLDOC software
+installed on your system.  HTMLDOC can be downloaded from:
+    http://www.easysw.com/htmldoc
+
+The default media size is 8.27x11.0" (210x279mm), which is the lesser
+of A4 and US Letter sizes.  You can change this in the makefile by
+uncommenting the corresponding media size or defining your own.
+
+If you find any typos, things that are unclear, or would like to
+contribute an example, section, or chapter to the FLTK manual, please
+contact Michael Sweet (mike@easysw.com).

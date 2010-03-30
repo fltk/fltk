@@ -1,0 +1,323 @@
+/**
+
+ \page	enumerations	FLTK Enumerations
+
+ \note	This file is not actively maintained any more, but is left
+ 	here as a reference, until the doxygen documentation is
+	completed.
+	
+ \sa \ref FL/Enumerations.H.
+
+This appendix lists the enumerations provided in the
+<FL/Enumerations.H> header file, organized by section.
+Constants whose value are zero are marked with "(0)",
+this is often useful to know when programming.
+
+
+\section enumerations_versions Version Numbers
+
+The FLTK version number is stored in a number of compile-time constants:
+
+\li FL_MAJOR_VERSION - The major release number, currently  1. 
+\li FL_MINOR_VERSION - The minor release number, currently  3. 
+\li FL_PATCH_VERSION - The patch release number, currently  0. 
+\li FL_VERSION - A combined floating-point version  number for
+    the major, minor, and patch release numbers, currently 1.0300. 
+
+
+\section enumerations_events Events
+
+Events are identified by an \p Fl_Event enumeration value.  The
+following events are currently defined:
+
+\li FL_NO_EVENT - No event (or an event fltk does not
+    understand) occurred (0).
+\li FL_PUSH - A mouse button was pushed. 
+\li FL_RELEASE - A mouse button was released. 
+\li FL_ENTER - The mouse pointer entered a widget. 
+\li FL_LEAVE - The mouse pointer left a widget. 
+\li FL_DRAG - The mouse pointer was moved with a button pressed. 
+\li FL_FOCUS - A widget should receive keyboard focus. 
+\li FL_UNFOCUS - A widget loses keyboard focus. 
+\li FL_KEYBOARD - A key was pressed. 
+\li FL_CLOSE - A window was closed. 
+\li FL_MOVE - The mouse pointer was moved with no buttons pressed. 
+\li FL_SHORTCUT - The user pressed a shortcut key. 
+\li FL_DEACTIVATE - The widget has been deactivated. 
+\li FL_ACTIVATE - The widget has been activated. 
+\li FL_HIDE - The widget has been hidden. 
+\li FL_SHOW - The widget has been shown. 
+\li FL_PASTE - The widget should paste the contents of the
+    clipboard. 
+\li FL_SELECTIONCLEAR - The widget should clear any selections
+     made for the clipboard. 
+\li FL_MOUSEWHEEL - The horizontal or vertical mousewheel was turned. 
+\li FL_DND_ENTER - The mouse pointer entered a widget dragging data. 
+\li FL_DND_DRAG - The mouse pointer was moved dragging data. 
+\li FL_DND_LEAVE - The mouse pointer left a widget still dragging
+    data. 
+\li FL_DND_RELEASE - Dragged data is about to be dropped. 
+
+
+\section enumerations_when Callback "When" Conditions
+
+The following constants determine when a callback is performed:
+
+\li FL_WHEN_NEVER - Never call the callback (0). 
+\li FL_WHEN_CHANGED - Do the callback only when the  widget
+    value changes. 
+\li FL_WHEN_NOT_CHANGED - Do the callback whenever the  user
+    interacts with the widget. 
+\li FL_WHEN_RELEASE - Do the callback when the button or  key
+    is released and the value changes. 
+\li FL_WHEN_ENTER_KEY - Do the callback when the user presses
+    the ENTER key and the value changes. 
+\li FL_WHEN_RELEASE_ALWAYS - Do the callback when the button
+    or key is released, even if the value doesn't change. 
+\li FL_WHEN_ENTER_KEY_ALWAYS - Do the callback when the user
+    presses the ENTER key, even if the value doesn't change. 
+
+
+\section enumeration_button_values Fl::event_button() Values
+
+The following constants define the button numbers for FL_PUSH and
+FL_RELEASE events:
+
+\li FL_LEFT_MOUSE - the left mouse button
+\li FL_MIDDLE_MOUSE - the middle mouse button
+\li FL_RIGHT_MOUSE - the right mouse button
+
+
+\section enumerations_event_key Fl::event_key() Values
+
+The following constants define the non-ASCII keys on the keyboard for 
+FL_KEYBOARD and FL_SHORTCUT events:
+
+\li FL_Button - A mouse button; use <tt>Fl_Button +  n</tt>
+    for mouse button <tt>n</tt>. 
+\li FL_BackSpace - The backspace key. 
+\li FL_Tab - The tab key. 
+\li FL_Enter - The enter key. 
+\li FL_Pause - The pause key. 
+\li FL_Scroll_Lock - The scroll lock key. 
+\li FL_Escape - The escape key. 
+\li FL_Home - The home key. 
+\li FL_Left - The left arrow key. 
+\li FL_Up - The up arrow key. 
+\li FL_Right - The right arrow key. 
+\li FL_Down - The down arrow key. 
+\li FL_Page_Up - The page-up key. 
+\li FL_Page_Down - The page-down key. 
+\li FL_End - The end key. 
+\li FL_Print - The print (or print-screen) key. 
+\li FL_Insert - The insert key. 
+\li FL_Menu - The menu key. 
+\li FL_Num_Lock - The num lock key. 
+\li FL_KP - One of the keypad numbers; use <tt>FL_KP +  n</tt>
+    for number <tt>n</tt>. 
+\li FL_KP_Enter - The enter key on the keypad. 
+\li FL_F - One of the function keys; use <tt>FL_F +  n</tt>
+    for function key <tt>n</tt>. 
+\li FL_Shift_L - The lefthand shift key. 
+\li FL_Shift_R - The righthand shift key. 
+\li FL_Control_L - The lefthand control key. 
+\li FL_Control_R - The righthand control key. 
+\li FL_Caps_Lock - The caps lock key. 
+\li FL_Meta_L - The left meta/Windows key. 
+\li FL_Meta_R - The right meta/Windows key. 
+\li FL_Alt_L - The left alt key. 
+\li FL_Alt_R - The right alt key. 
+\li FL_Delete - The delete key. 
+
+
+\section enumerations_event_state Fl::event_state() Values
+
+The following constants define bits in the Fl::event_state()
+value:
+
+\li FL_SHIFT - One of the shift keys is down. 
+\li FL_CAPS_LOCK - The caps lock is on. 
+\li FL_CTRL - One of the ctrl keys is down. 
+\li FL_ALT - One of the alt keys is down. 
+\li FL_NUM_LOCK - The num lock is on. 
+\li FL_META - One of the meta/Windows keys is down. 
+\li FL_COMMAND - An alias for FL_CTRL on WIN32 and X11,
+    or FL_META on MacOS X. 
+\li FL_SCROLL_LOCK - The scroll lock is on. 
+\li FL_BUTTON1 - Mouse button 1 is pushed. 
+\li FL_BUTTON2 - Mouse button 2 is pushed. 
+\li FL_BUTTON3 - Mouse button 3 is pushed. 
+\li FL_BUTTONS - Any mouse button is pushed. 
+\li FL_BUTTON(n) - Mouse button \p n ( where <tt>n > 0</tt>) is pushed. 
+
+<!-- NEED 4in -->
+
+
+\section enumerations_alignment Alignment Values
+
+The following constants define bits that can be used with
+Fl_Widget::alighn()
+to control the positioning of the label:
+
+\li FL_ALIGN_CENTER - The label is centered (0). 
+\li FL_ALIGN_TOP - The label is top-aligned. 
+\li FL_ALIGN_BOTTOM - The label is bottom-aligned. 
+\li FL_ALIGN_LEFT - The label is left-aligned. 
+\li FL_ALIGN_RIGHT - The label is right-aligned. 
+\li FL_ALIGN_CLIP - The label is clipped to the widget. 
+\li FL_ALIGN_WRAP - The label text is wrapped as needed. 
+\li FL_ALIGN_TOP_LEFT
+\li FL_ALIGN_TOP_RIGHT
+\li FL_ALIGN_BOTTOM_LEFT
+\li FL_ALIGN_BOTTOM_RIGHT
+\li FL_ALIGN_LEFT_TOP
+\li FL_ALIGN_RIGHT_TOP
+\li FL_ALIGN_LEFT_BOTTOM
+\li FL_ALIGN_RIGHT_BOTTOM
+\li FL_ALIGN_INSIDE - 'or' this with other values to put
+    label inside the widget. 
+
+
+\section enumerations_fonts Fonts
+
+The following constants define the standard FLTK fonts:
+
+\li FL_HELVETICA - Helvetica (or Arial) normal (0). 
+\li FL_HELVETICA_BOLD - Helvetica (or Arial) bold. 
+\li FL_HELVETICA_ITALIC - Helvetica (or Arial) oblique. 
+\li FL_HELVETICA_BOLD_ITALIC - Helvetica (or Arial) bold-oblique. 
+\li FL_COURIER - Courier normal. 
+\li FL_COURIER_BOLD - Courier bold. 
+\li FL_COURIER_ITALIC - Courier italic. 
+\li FL_COURIER_BOLD_ITALIC - Courier bold-italic. 
+\li FL_TIMES - Times roman. 
+\li FL_TIMES_BOLD - Times bold. 
+\li FL_TIMES_ITALIC - Times italic. 
+\li FL_TIMES_BOLD_ITALIC - Times bold-italic. 
+\li FL_SYMBOL - Standard symbol font. 
+\li FL_SCREEN - Default monospaced screen font. 
+\li FL_SCREEN_BOLD - Default monospaced bold screen font. 
+\li FL_ZAPF_DINGBATS - Zapf-dingbats font.
+
+
+\section enumerations_colors Colors
+
+The Fl_Color enumeration type holds a FLTK color value.
+Colors are either 8-bit indexes into a virtual colormap or 24-bit RGB
+color values. Color indices occupy the lower 8 bits of the value, while
+RGB colors occupy the upper 24 bits, for a byte organization of RGBI.
+
+\subsection enumerations_color_constants Color Constants
+
+Constants are defined for the user-defined foreground and background
+colors, as well as specific colors and the start of the grayscale ramp
+and color cube in the virtual colormap. Inline functions are provided to
+retrieve specific grayscale, color cube, or RGB color values.
+
+The following color constants can be used to access the user-defined
+colors:
+
+\li FL_BACKGROUND_COLOR - the default background color
+\li FL_BACKGROUND2_COLOR - the default
+    background color for text, list, and valuator widgets
+\li FL_FOREGROUND_COLOR - the default
+    foreground color (0) used for labels and text
+\li FL_INACTIVE_COLOR - the inactive foreground color
+\li FL_SELECTION_COLOR - the default selection/highlight color
+
+The following color constants can be used to access the colors from the
+FLTK standard color cube:
+
+\li FL_BLACK
+\li FL_BLUE
+\li FL_CYAN
+\li FL_DARK_BLUE
+\li FL_DARK_CYAN
+\li FL_DARK_GREEN
+\li FL_DARK_MAGENTA
+\li FL_DARK_RED
+\li FL_DARK_YELLOW
+\li FL_GREEN
+\li FL_MAGENTA
+\li FL_RED
+\li FL_WHITE
+\li FL_YELLOW
+
+The inline methods for getting a grayscale, color cube, or
+RGB color value are described in the
+\ref drawing_colors
+section of the
+\ref drawing
+chapter.
+
+
+\section enumerations_cursors Cursors
+
+The following constants define the mouse cursors that are available in
+FLTK.  The  double-headed arrows are bitmaps
+provided by FLTK on X, the others are provided by system-defined
+cursors.
+
+
+\li FL_CURSOR_DEFAULT - the default cursor, usually an arrow (0)
+\li FL_CURSOR_ARROW - an arrow pointer 
+\li FL_CURSOR_CROSS - crosshair 
+\li FL_CURSOR_WAIT - watch or hourglass 
+\li FL_CURSOR_INSERT - I-beam 
+\li FL_CURSOR_HAND - hand (uparrow on MSWindows) 
+\li FL_CURSOR_HELP - question mark 
+\li FL_CURSOR_MOVE - 4-pointed arrow 
+\li FL_CURSOR_NS - up/down arrow 
+\li FL_CURSOR_WE - left/right arrow 
+\li FL_CURSOR_NWSE - diagonal arrow 
+\li FL_CURSOR_NESW - diagonal arrow 
+\li FL_CURSOR_NONE - invisible 
+
+
+\section enumerations_file_when FD "When" Conditions
+
+\li FL_READ - Call the callback when there is data to be
+    read.
+\li FL_WRITE - Call the callback when data can be written
+    without blocking.
+\li FL_EXCEPT - Call the callback if an exception occurs on
+    the file.
+
+
+\section enumerations_damage Damage Masks
+
+The following damage mask bits are used by the standard FLTK widgets:
+
+\li FL_DAMAGE_CHILD - A child needs to be redrawn. 
+\li FL_DAMAGE_EXPOSE - The window was exposed. 
+\li FL_DAMAGE_SCROLL - The Fl_Scroll widget was scrolled. 
+\li FL_DAMAGE_OVERLAY - The overlay planes need to be redrawn. 
+\li FL_DAMAGE_USER1 - First user-defined damage bit. 
+\li FL_DAMAGE_USER2 - Second user-defined damage bit. 
+\li FL_DAMAGE_ALL - Everything needs to be redrawn. 
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="unicode.html">
+    [Prev]
+    Unicode and UTF-8 Support
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="main.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="glut.html">
+    GLUT Compatibility
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

@@ -1,0 +1,21 @@
+
+To add FLTK projects as a new project template for Xcode 3, install the 
+included files in the directory 
+
+> cp -R ide/Xcode3.1/Project\ Templates/FLTK/* \
+    ~/Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/FLTK\ Application/FLTK/
+
+and restart Xcode.
+
+The generated projects expects fltk 1.3 as it is installed
+using the command line.
+
+> sudo make install
+
+Enjoy!
+
+ -  Matthias
+
+Please send me an EMail if you find errors or would like to suggest
+improvement: mm@matthiasm.com
+

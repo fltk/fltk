@@ -1,0 +1,75 @@
+FLTK UTF8 Todo 
+(http://docs.google.com/Doc?docid=ddsqbwmb_1dwjvgggt&hl=en) 
+
+A live document to keep track of what FLTK utf8 related issues need to be done, who is doing what, and what issues if any need to be resolved.
+
+BULLET LISTS TRICK: Hitting 'SHIFT-ENTER' will make a 'new line' *without* creating a new bullet. Useful for making bullet items that contain multiple paragraphs.
+
+
+What should be done for 1.3...
+
+Functionalities to be added / sorted out:
+
+    * Set of utf8 functions that still need to be implemented:
+
+    * New functions helpers to count chars for Fl_Text_Display and others.
+
+    * Rendering and measuring of non-utf8-conforming text
+
+    * (add your items here)
+
+
+Bugs that have to be fixed before an RC
+
+    * XFT font sizes not matching pixel sizes (STR#)
+      Matt: font sizes are currently a mess! Fonts in Quartz are too tall and too high up. We need to add a "unittest" module that will allow for precise font measurement and comparison. Maybe we can find some fixed factor that will give us the same font face and font height on every machine.
+
+    * Document/define the FLTK UTF8 API (see matt's post on 03/25/09)
+
+    * Make consistent use of fltk's utf8 functions for e.g. all string handling (see Ian's post on 03/25/09)
+
+    * fix fl_draw(cons char*, int n, int x, int y) and related for drawing realy n unicode characters 
+
+    * (add your items here)
+
+
+
+What should be fixed after 1.3 release...
+
+    * More languages to support to be defined here
+
+    * Eastern language support (right-to-left input/etc)
+
+    * (add your items here)
+
+
+
+Related STRs
+
+STR#2115 -- Fl_Text_Display problem -- much discussion of UTF8 font sizes vs. pixel sizes
+STR#2122 -- Courier font showing up 'light' (probably so thin) since UTF8 added
+STR#2165 -- Fluid GUI layout issues possibly related to UTF8
+STR#2117 -- Text not vertically centered, underlined text inconsistent since UTF8 added
+STR#2148 -- Timothy Lee's patches to use iconv() on glibc systems
+STR#2162 -- Timothy Lee's patches for Fl_Input text CJK line wrap, has utf8 implications and possible ABI issues (ripe for 1.3.0?)
+STR#1903 -- Timothy Lee's patches to fix lost UTF8 functionalities
+STR#1738 -- (Not sure if this is still relevant) Font issues
+STR#438 -- (Not sure if this is still relevant) issues with Xutf8LookupString() not being present on some systems
+STR#XXXX -- Brief
+STR#XXXX -- Brief
+(add items here)
+
+
+Matt's suggestions: 
+
+1: introduction of two new types: Fl_Char is a 32-bit unsigned int and can contain any unicode character (not UTF8!). Fl_String is a pointer to 8-bit unsigned int (uchar) and denotes UTF8 strings (I find it very important to have this new type even if char* would suffice. It will cost us some additional typing to change all existing source, but I see this as the only way to make sure that every little function is checked for UTF-8 compatibility). Fl_CString is the const veriant. Fl_Keycode is probably required as well for standardized keyboard handling.
+
+2: but before we can change the types around, we nee a minimal and complete API. Tom Tromey's libunicode seems to be a good start. Here is a list of functions that seems to be required (btw: I try to avoid repeating "Unicode" or "UTF8" in types and function names, simply because *all* strings in FLTK are now UTF8 and all chars are now Unicode)
+
+all kinds of file access function, but those already exist anyways (fl_open, fl_fopen, fl_faccess, ...)
+int fl_isalnum(Fl_Char); and relatives: isalpha, iscntrl, isdigit, isgraphm islower, isprint, ispunct, isspace, isupper, isxdigit, isdefined, iswide (istitle?)
+int fl_digit_value(Fl_Char); for chars that return true on isdigit
+int fl_xdigit_value(Fl_Char); for chars that return true on isxdigit
+Fl_String fl_prev_char(Fl_CString start, Fl_String ptr);
+Fl_String fl_next_char(Fl_String ptr); (and the same with 'const'?)
+(...more to come)

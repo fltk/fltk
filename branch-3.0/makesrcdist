@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# makesrcdist - make a distribution of FLTK.
+#
+
+echo "Getting distribution..."
+
+if test $# = 0 -o "x$1" = xsnapshot; then
+	echo Updating for snapshot...
+	svn up
+	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
+	version="1.3svn"
+	fileversion="1.3svn-r$rev"
+	fileurl="ftp://ftp.easysw.com/pub/fltk/snapshots/fltk-$fileversion-source.tar.bz2"
+	url="."
+else
+	echo Creating tag for release...
+	rev="1"
+	version=$1
+	fileversion=$1
+	fileurl="ftp://ftp.easysw.com/pub/fltk/$version/fltk-$fileversion-source.tar.bz2"
+	url="https://svn.easysw.com/public/fltk/fltk/tags/release-$version"
+
+	svn copy https://svn.easysw.com/public/fltk/fltk/branches/branch-1.3 "$url" \
+		-m "Tag $version" || exit 1
+fi
+
+echo Exporting $version...
+rm -rf /tmp/fltk-$version
+svn export $url /tmp/fltk-$version
+
+echo Applying version number...
+cd /tmp/fltk-$version
+
+fileurl=`echo $fileurl | sed -e '1,$s/\\//\\\\\\//g'`
+sed -e '1,$s/@VERSION@/'$version'/' \
+	-e '1,$s/@RELEASE@/'$rev'/' \
+	-e '1,$s/^Source:.*/Source: '$fileurl'/' \
+	<fltk.spec.in >fltk.spec
+
+echo Creating configure script...
+autoconf -f
+
+echo Cleaning developer files...
+rm -rf OpenGL autom4te* bc5 config forms gl glut images packages themes
+rm -f makesrcdist
+
+cd ..
+
+echo "Making UNIX distribution..."
+
+gtar czf fltk-$fileversion-source.tar.gz fltk-$version
+
+echo "Making BZ2 distribution..."
+gtar cjf fltk-$fileversion-source.tar.bz2 fltk-$version
+
+echo "Making Windows distribution..."
+
+rm -f fltk-$fileversion-source.zip
+zip -r9 fltk-$fileversion-source.zip fltk-$version
+
+echo "Removing distribution directory..."
+
+rm -rf fltk-$version
+
+echo "Done!"

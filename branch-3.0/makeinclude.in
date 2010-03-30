@@ -1,0 +1,179 @@
+#
+# "$Id$"
+#
+# Make include file for the Fast Light Tool Kit (FLTK).
+#
+# Copyright 1998-2009 by Bill Spitzak and others.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA.
+#
+# Please report all bugs and problems on the following page:
+#
+#      http://www.fltk.org/str.php
+#
+
+prefix		= @prefix@
+exec_prefix	= @exec_prefix@
+bindir		= @bindir@
+datadir		= @datadir@
+datarootdir	= @datarootdir@
+includedir	= @includedir@
+libdir		= @libdir@
+mandir		= @mandir@
+srcdir		= @srcdir@
+docdir		= $(datadir)/doc/fltk
+VPATH		= @srcdir@
+
+# programs we use...
+HTMLDOC		= @HTMLDOC@
+DOXYDOC		= @DOXYDOC@
+INSTALL		= @INSTALL@
+LN		= ln -s
+NROFF		= @NROFF@
+RM		= rm -f
+RMDIR		= rm -rf
+SHELL		= /bin/sh
+STRIP		= strip
+
+# compiler names:
+CXX		= @CXX@
+CC		= @CC@
+MAKEDEPEND	= @MAKEDEPEND@
+
+# flags for C++ compiler:
+ARCHFLAGS	= @ARCHFLAGS@
+OPTIM		= @OPTIM@
+CFLAGS		= $(OPTIM) @LARGEFILE@ @PTHREAD_FLAGS@ @CPPFLAGS@ @CFLAGS@
+CXXFLAGS	= $(OPTIM) @LARGEFILE@ @PTHREAD_FLAGS@ @CPPFLAGS@ @CXXFLAGS@
+
+# program to make the archive:
+LIBNAME		= @LIBNAME@
+FLLIBNAME	= @FLLIBNAME@
+GLLIBNAME	= @GLLIBNAME@
+IMGLIBNAME	= @IMGLIBNAME@
+CAIROLIBNAME	= @CAIROLIBNAME@
+LIBCOMMAND	= @LIBCOMMAND@
+LIBEXT		= @LIBEXT@
+RANLIB		= @RANLIB@
+DSONAME		= @DSONAME@
+FLDSONAME	= @FLDSONAME@
+GLDSONAME	= @GLDSONAME@
+IMGDSONAME	= @IMGDSONAME@
+CAIRODSONAME	= @CAIRODSONAME@
+DSOCOMMAND	= @DSOCOMMAND@
+
+LIBBASENAME	= @LIBBASENAME@
+FLLIBBASENAME	= @FLLIBBASENAME@
+GLLIBBASENAME	= @GLLIBBASENAME@
+IMGLIBBASENAME	= @IMGLIBBASENAME@
+CAIROLIBBASENAME= @CAIROLIBBASENAME@
+
+# libraries to link with:
+AUDIOLIBS	= @AUDIOLIBS@
+CAIROLIBS	= @CAIROLIBS@
+CAIROFLAGS	= @CAIROFLAGS@
+DSOFLAGS	= -L. @DSOFLAGS@
+LDFLAGS		= $(OPTIM) @LDFLAGS@
+LDLIBS		= @LIBS@
+GLDLIBS		= @GLLIB@ @LIBS@
+LINKFLTK	= @LINKFLTK@
+LINKFLTKGL	= @LINKFLTKGL@
+LINKFLTKFORMS	= @LINKFLTKFORMS@ @LINKFLTK@
+LINKFLTKIMG	= @LINKFLTKIMG@ @LINKFLTK@ $(IMAGELIBS)
+LINKFLTKCAIRO	= @LINKFLTKCAIRO@ $(CAIROLIBS)
+FLTKCAIROOPTION = @FLTKCAIROOPTION@
+LINKSHARED	= @DSOLINK@ @LINKSHARED@ $(IMAGELIBS) $(CAIROLIBS)
+IMAGELIBS	= -L../lib @IMAGELIBS@
+
+# image libraries to build...
+IMAGEDIRS	= @JPEG@ @ZLIB@ @PNG@
+CAIRODIR	= @CAIRODIR@
+# The extension to use for executables...
+EXEEXT		= @EXEEXT@
+
+# Do we build the OpenGL demos?
+GLDEMOS		= @GLDEMOS@
+
+# Do we build the threads demo?
+THREADS		= @THREADS@
+
+# Name of FLUID executable we install
+FLUID		= @FLUID@$(EXEEXT)
+
+# Possible steps for OS X build only
+OSX_ONLY	= @OSX_ONLY@
+
+# Man page extensions...
+CAT1EXT		= @CAT1EXT@
+CAT3EXT		= @CAT3EXT@
+CAT6EXT		= @CAT6EXT@
+
+#
+# Installation programs...
+#
+
+INSTALL_BIN	= $(INSTALL) -m 755
+INSTALL_DATA	= $(INSTALL) -m 644
+INSTALL_DIR	= $(INSTALL) -d 
+INSTALL_LIB	= $(INSTALL) -m 755
+INSTALL_MAN	= $(INSTALL) -m 644
+INSTALL_SCRIPT	= $(INSTALL) -m 755
+
+# Additional GUI install/uninstall targets...
+INSTALL_DESKTOP	= @INSTALL_DESKTOP@
+UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
+
+# Be quiet when building...
+.SILENT:
+
+# Build commands and filename extensions...
+.SUFFIXES:	.0 .1 .3 .6 .c .cxx .h .fl .man .o .z $(EXEEXT)
+
+.o$(EXEEXT):
+	echo Linking $@...
+	$(CXX) $(ARCHFLAGS) $(LDFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+
+.c.o:
+	echo Compiling $<...
+	$(CC) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CFLAGS) -c $< -o $@
+
+.cxx.o:
+	echo Compiling $<...
+	@if test `uname` = Darwin -a $< = Fl.cxx ; then \
+		$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -x objective-c++ -c $< -o $@; \
+	elif test `uname` = Darwin -a  $< = Fl_Native_File_Chooser.cxx ; then \
+		$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -x objective-c++ -c $< -o $@; \
+	elif test `uname` = Darwin -a  $< = Fl_Printer.cxx ; then \
+		$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -x objective-c++ -c $< -o $@; \
+	else \
+		$(CXX) -I.. $(ARCHFLAGS) @PNGINC@ @JPEGINC@ @ZLIBINC@ $(CXXFLAGS) -c $< -o $@; \
+	fi
+
+.man.0 .man.1 .man.3 .man.6:
+	echo Formatting $<...
+	rm -f $@
+	$(NROFF) -man $< >$@
+
+.man.z:
+	echo Formatting $<...
+	rm -f $@ t.z
+	$(NROFF) -man $< >t
+	pack -f t
+	mv t.z $@
+
+#
+# End of "$Id$".
+#

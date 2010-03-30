@@ -1,0 +1,43 @@
+Compilation of FLTK 1.1rc2 in Borland C++ Builder 6.0
+(by Alexey Parshin alexeyp@m7.tts-sf.com)
+
+FLTK library compile:
+---------------------
+0) Open the project group fltk.bpg. It contains all the other projects.
+1) Create the directory ../obj (obj in fltk)
+2) During the compilation of fltklib project I had two compile
+   errors in scandir_win32.c. Just add the required type conversions:
+
+   Line 46:
+   findIn = (char *)malloc(len+5);
+
+   Line 75:
+	struct dirent **tempDir = (struct dirent **) calloc(sizeof(struct dirent*), NDir+33);
+3) For some reason BCB 6.0 doesn't like the word 'DIRECTORY' so I had to replace
+   it everywhere in source code and examples with '_DIRECTORY'. The case is
+   very important. For instance (file Fl_File_Icon.cxx):
+
+      icon = new Fl_File_Icon("*", Fl_File_Icon::DIRECTORY);
+
+      replaced with
+
+      icon = new Fl_File_Icon("*", Fl_File_Icon::_DIRECTORY);
+
+
+FLTK examples compile:
+---------------------
+0) All the examples create an empty console window when start. I know how to
+   avoid this window but it requires the modification of the examples. So I leave
+   it on FLTK authors.
+1) File connect.cxx doesn't support Windows - example is not generated.
+2) The colbrowser example uses the color map file which is not presented on
+   Windows. If you modify this example so it uses the file stolen from Linux
+   you can test it.
+3) The (cube, fullscreen, fractals) examples use GL which I don't have. For this 
+   reason I was unable to test how it works with GL.
+
+Your own projects in BCB 6.0:
+----------------------------
+1) Make sure you have 'Treat enums as integers' option checked (in project options).
+2) To make it simple you can take fltk_app_template.bpr and replace bitmap.cxx in
+   this project with your files.
