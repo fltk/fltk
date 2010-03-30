@@ -30,7 +30,7 @@
 //#include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
 
-/** \brief Draws an Fl_RGB_Image object to the device. 
+/** \brief Draws an Fl_Pixmap object to the device. 
  *
  Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
  the image offset by the cx and cy arguments.
@@ -50,7 +50,7 @@ void Fl_Device::draw(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int c
   bm->draw(XP, YP, WP, HP, cx, cy);
 }
 
-/** \brief Draws an Fl_Pixmap object to the device. 
+/** \brief Draws an Fl_RGB_Image object to the device. 
  *
  Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
  the image offset by the cx and cy arguments.
