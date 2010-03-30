@@ -96,7 +96,10 @@ static Fl_Window *makeform() {
  }
  // create the buttons (right to left)
  for (int b=0, x=310; b<3; b++, x -= 100) {
-   button[b] = new Fl_Button(x, 70, 90, 23);
+   if (b==1)
+     button[b] = new Fl_Return_Button(x, 70, 90, 23);
+   else
+     button[b] = new Fl_Button(x, 70, 90, 23);
    button[b]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
    button[b]->callback(button_cb,(void *)b);
  }
