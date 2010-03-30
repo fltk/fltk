@@ -37,8 +37,6 @@
  The widget's position on the printed page is determined by the last call to origin()
  and by the optional delta_x and delta_y arguments.
  Its dimensions are in points unless there was a previous call to scale().
- <br>Under MSWindows and X11, Fl_RGB_Image's are printed without transparency.
- A workaround is to use the print_window_part() call. 
  @param[in] widget Any FLTK widget (e.g., standard, custom, window).
  @param[in] delta_x Optional horizontal offset for positioning the widget relatively
  to the current origin of graphics functions.
@@ -259,8 +257,8 @@ void Fl_Abstract_Printer::scale (float scale_x, float scale_y) {}
 /**
  @brief Rotates the graphics operations relatively to paper.
  *
- The rotation is centered on the current graphics origin. Successive rotate() calls don't combine their effects.
- On MSWindows, Fl_RGB_Image's don't rotate well; print_window_part() is an efficient workaround.
+ The rotation is centered on the current graphics origin. 
+ Successive rotate() calls don't combine their effects.
  @param angle Rotation angle in counterclockwise degrees.
  */
 void Fl_Abstract_Printer::rotate(float angle) {}
