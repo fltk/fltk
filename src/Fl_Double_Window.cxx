@@ -142,15 +142,23 @@ void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy)
   DeleteDC(new_gc);
 }
 
+#if(WINVER < 0x0500)
+#define SHADEBLENDCAPS 120
+#define SB_PIXEL_ALPHA 0x02
+#endif
 void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
   BOOL alpha_ok = 0;
   // first try to alpha blend
-  if (fl_can_do_alpha_blending())
+  int to_display = Fl_Device::current()->type() < 256; // true iff display output
+  if ( !to_display) { // ask if non-display device can alpha-blend pixel by pixel
+    alpha_ok = (GetDeviceCaps(fl_gc, SHADEBLENDCAPS) == SB_PIXEL_ALPHA);
+    }
+  if (alpha_ok || (to_display && fl_can_do_alpha_blending()))
     alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
-  // if that failed (it shouldn,t), still copy the bitmap over, but now alpha is 1
+  // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
   if (!alpha_ok)
     BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
   RestoreDC(new_gc, save);
