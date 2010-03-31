@@ -104,6 +104,8 @@ int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
     }
     x_offset = 0;
     y_offset = 0;
+    WIN_SetupPrinterDeviceContext (hPr);
+    gc = (void *)fl_gc;
     this->set_current();
   }
   return err;
