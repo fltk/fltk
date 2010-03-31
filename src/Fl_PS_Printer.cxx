@@ -45,6 +45,7 @@ Fl_PSfile_Device::Fl_PSfile_Device(void)
   mask = 0;
   ps_filename_ = NULL;
   type_ = postscript_device;
+  scale_x = scale_y = 1.;
 #ifdef __APPLE__
   gc = fl_gc; // the display context is used by fl_text_extents()
 #endif
