@@ -66,7 +66,8 @@
  Use Fl_PSfile_Device::file_chooser_title to customize the title of the file chooser dialog that opens
  when using the "Print To File" option of the print dialog. 
  Class Fl_RGB_Image prints but looses its transparency if it has one.
- <li>MSWindows platform: class Fl_RGB_Image looses its transparency if it has one, and doesn't rotate() well.
+ <li>MSWindows platform: Transparent Fl_RGB_Image 's don't print with exact transparency on most printers.
+ Fl_RGB_Image 's don't rotate() well.
  A workaround is to use the print_window_part() call. 
  <li>Mac OS X platform: all graphics requests print as on display.
  </ul>
