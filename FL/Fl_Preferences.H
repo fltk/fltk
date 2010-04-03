@@ -107,7 +107,7 @@ public:
   
   /** Remove the group with this ID from a databse.
    */
-  static char remove(ID id) { return ((Node*)id)->remove(); }
+  static char remove(ID id_) { return ((Node*)id_)->remove(); }
 
   /** Return the name of this entry.
    */
