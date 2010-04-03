@@ -85,7 +85,7 @@ public:
    
    ID's can be retrieved from an Fl_Preferences-Group and can then be used
    to create more Fl_Preference references to the same data set, as long as the 
-   databse remains open.
+   database remains open.
    */
   typedef void *ID;
   
@@ -105,7 +105,7 @@ public:
    */
   ID id() { return (ID)node; }
   
-  /** Remove the group with this ID from a databse.
+  /** Remove the group with this ID from a database.
    */
   static char remove(ID id_) { return ((Node*)id_)->remove(); }
 

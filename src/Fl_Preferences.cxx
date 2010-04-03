@@ -263,9 +263,9 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences &parent, const char *group )
    \param[in] parent the parameter parent is a pointer to the parent group.
               \p Parent may be \p NULL. It then refers to an application internal
               database which exists only once, and remains in RAM only until the
-              application quits. This databse is used to manage plugins and other
+              application quits. This database is used to manage plugins and other
               data indexes by strings.
-   \param[in] group a group name that is used as a key into the databse
+   \param[in] group a group name that is used as a key into the database
    \see Fl_Preferences( Fl_Preferences&, const char *group )
  */
 Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, const char *group )
@@ -326,7 +326,7 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, int groupIndex )
  Create a new dataset access point using a dataset ID.
 
  ID's are a great way to remember shortcuts to database entries that are deeply
- nested in a preferences database, as long as the databse root is not deleted.
+ nested in a preferences database, as long as the database root is not deleted.
  An ID can be retrieved from any Fl_Preferences dataset, and can then be used
  to create multiple new references to the same dataset.
 
@@ -380,7 +380,7 @@ Fl_Preferences::~Fl_Preferences()
 
 
 /**
-  Copy the databse hierarchy to an Fl_Tree browser from this node down.
+  Copy the database hierarchy to an Fl_Tree browser from this node down.
  */
 char Fl_Preferences::copyTo(Fl_Tree *tree)
 {
@@ -1906,7 +1906,7 @@ Fl_Plugin *Fl_Plugin_Manager::plugin(const char *name)
 }
 
 /**
- * \brief This function adds a new plugin to the databse.
+ * \brief This function adds a new plugin to the database.
  *
  * There is no need to call this function explicitly. Every Fl_Plugin constructor
  * will call this function at initialization time.
