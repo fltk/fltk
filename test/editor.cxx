@@ -784,6 +784,7 @@ Fl_Window* new_view() {
 
 int main(int argc, char **argv) {
   textbuf = new Fl_Text_Buffer;
+  textbuf->text("Rügenwälder Ruß.");
   style_init();
 
   Fl_Window* window = new_view();

@@ -34,12 +34,15 @@
 #define FL_TEXT_BUFFER_H
 
 /*
- UTF-8 terminology for this file:
+ Suggested UTF-8 terminology for this file:
 
- "length" is the number of characters in a string
- "size" is the number of bytes
- "index" is the position in a string in number of characters
- "offset" is the position in a strin in bytes (and must be kept on a charater boundary)
+ ?? "length" is the number of characters in a string
+ ?? "size" is the number of bytes
+ ?? "index" is the position in a string in number of characters
+ ?? "offset" is the position in a strin in bytes (and must be kept on a charater boundary)
+ (there seems to be no standard in Uncode documents, howevere "length" is commonly
+ referencing the number of bytes. Maybe "bytes" and "glyphs" would be the most
+ obvious way to describe sizes?)
  
  "character size" is the size of a UTF-8 character in bytes
  "character width" is the width of a Unicode character in pixels
