@@ -199,7 +199,11 @@ enum {
 
 // rectangles tweaked to exactly fill the pixel rectangle:
 
-/** Draws a 1-pixel border \e inside the given bounding box */
+/** 
+ Draws a 1-pixel border \e inside the given bounding box.
+ This function is meant for quick drawing of simple boxes. The behavior is 
+ undefined for line widths that are not 1.
+ */
 inline void fl_rect(int x, int y, int w, int h) { fl_device->rect(x,y,w,h); };
 
 /** Draws with passed color a 1-pixel border \e inside the given bounding box */
