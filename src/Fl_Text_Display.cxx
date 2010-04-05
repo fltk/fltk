@@ -1543,6 +1543,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
         int l = 1;
         if (*outPtr & 0x80) {
           l = fl_utf8len(*outPtr);
+          if (l<=0) l = 1;
         }
         charWidth = string_width( &expandedChar[ i ], l, charStyle );
       } else
@@ -1590,6 +1591,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
         int l = 1;
         if (*outPtr & 0x80) {
           l = fl_utf8len(*outPtr);
+          if (l<=0) l = 1;
         }
         charWidth = string_width( &expandedChar[ i ], l, charStyle );
       } else

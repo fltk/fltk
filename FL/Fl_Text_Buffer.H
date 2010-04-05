@@ -75,7 +75,6 @@ public:
    \brief Set the selection range.
    \param start byte offset to first selected character
    \param end byte offset pointing after last selected character
-   \todo unicode check
    */
   void set(int start, int end);
   
@@ -85,7 +84,6 @@ public:
    \param end byte offset pointing after last selected character
    \param rectStart first selected column
    \param rectEnd last selected column +1
-   \todo unicode check
    */
   void set_rectangular(int start, int end, int rectStart, int rectEnd);
   
@@ -154,7 +152,6 @@ public:
    \brief Return the positions of this selection.
    \param start retrun byte offset to first selected character
    \param end retrun byte offset pointing after last selected character
-   \todo unicode check
    */
   int position(int* start, int* end) const;
   
@@ -165,7 +162,6 @@ public:
    \param isRect return if the selection is rectangular
    \param rectStart return first selected column
    \param rectEnd return last selected column +1
-   \todo unicode check
    */
   int position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd) const;
   

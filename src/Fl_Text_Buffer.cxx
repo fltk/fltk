@@ -33,29 +33,92 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Text_Buffer.H>
 
+/*
+ This file is based on a port of NEdit to FLTK many years ago. NEdit at that
+ point was already stretched beyond the task it was designed for which explains
+ why the source code is sometimes pretty convoluted. It still is a nice widget
+ for FLTK.
 
+ With the introduction of Unicode and UTF-8, Fl_Text_... has to go into a whole
+ new generation of code. Originally designed for monspaced fonts only, many
+ features make les sense in the multibyte and multiwdth world of UTF-8.
+ 
+ Columns are a good example. There is simply no such thing.
+ 
+ Rectangular selections pose a real problem.
+ 
+ Using multiple spaces to emulate tab stops will no longer work.
+ 
+ And constantly recalculating character widths is just much too expensive.
+ 
+ But nevertheless, we will get ths widget rolling again ;-)
+ 
+ */
+
+
+/*
+ \todo unicode check
+ */
 static void insertColInLine(const char *line, char *insLine, int column,
 			    int insWidth, int tabDist, int useTabs,
 			    char *outStr, int *outLen,
 			    int *endOffset);
+
+/*
+ \todo unicode check
+ */
 static void deleteRectFromLine(const char *line, int rectStart,
 			       int rectEnd, int tabDist, int useTabs,
 			       char *outStr,
 			       int *outLen, int *endOffset);
+
+/*
+ \todo unicode check
+ */
 static void overlayRectInLine(const char *line, char *insLine,
 			      int rectStart, int rectEnd, int tabDist,
 			      int useTabs, char *outStr,
 			      int *outLen, int *endOffset);
+
+/*
+ \todo unicode check
+ */
 static void addPadding(char *string, int startIndent, int toIndent,
 		       int tabDist, int useTabs, int *charsAdded);
+
+/*
+ \todo unicode check
+ */
 static char *copyLine(const char *text, int *lineLen);
+
+/*
+ unicode tested
+ */
 static int countLines(const char *string);
+
+/*
+ \todo unicode check
+ */
 static int textWidth(const char *text, int tabDist);
+
+/*
+ \todo unicode check
+ */
 static char *realignTabs(const char *text, int origIndent, int newIndent,
 			 int tabDist, int useTabs, int *newLength);
+
+/*
+ \todo unicode check
+ */
 static char *expandTabs(const char *text, int startIndent, int tabDist, int *newLen);
+
+/*
+ \todo unicode check
+ */
 static char *unexpandTabs(char *text, int startIndent, int tabDist, int *newLen);
+
 #ifndef min
+
 static int max(int i1, int i2)
 {
   return i1 >= i2 ? i1 : i2;
@@ -65,6 +128,7 @@ static int min(int i1, int i2)
 {
   return i1 <= i2 ? i1 : i2;
 }
+
 #endif
 
 static const char *ControlCodeTable[32] = {
@@ -901,11 +965,12 @@ int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDi
   } else if (c == 127) {
     sprintf(outStr, "<del>");
     return 5;
-  } else if (c == 0) {
-    sprintf(outStr, "<nul>");
-    return 5;
   } else if ((c & 0x80) && !(c & 0x40)) {
-    return 0;
+#ifdef DEBUG
+    fprintf(stderr, "%s:%d - Error in UTF-8 encoding!\n", __FILE__, __LINE__);
+#endif
+    *outStr = c;
+    return 1;
   } else if (c & 0x80) {
     *outStr = c;
     return fl_utf8len(c);
@@ -919,17 +984,18 @@ int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDi
 int Fl_Text_Buffer::character_width(char c, int indent, int tabDist)
 {
   /* Note, this code must parallel that in Fl_Text_Buffer::ExpandCharacter */
-  if (c == '\t')
+  if (c == '\t') {
     return tabDist - (indent % tabDist);
-  else if (((unsigned char) c) <= 31)
+  } else if (((unsigned char) c) <= 31) {
     return strlen(ControlCodeTable[(unsigned char) c]) + 2;
-  else if (c == 127)
+  } else if (c == 127) {
     return 5;
-  else if (c == 0)
-    return 5;
-  else if ((c & 0x80) && !(c & 0x40))
-    return 0;
-  else if (c & 0x80) {
+  } else if ((c & 0x80) && !(c & 0x40)) {
+#ifdef DEBUG
+    fprintf(stderr, "%s:%d - Error in UTF-8 encoding!\n", __FILE__, __LINE__);
+#endif
+    return 1;
+  } else if (c & 0x80) {
     return fl_utf8len(c);
   }
   return 1;
@@ -1655,6 +1721,9 @@ static void overlayRectInLine(const char *line, char *insLine,
   *outLen = (outPtr - outStr) + strlen(linePtr);
 }
 
+
+// simple setter
+// Unicode safe
 void Fl_Text_Selection::set(int startpos, int endpos)
 {
   mSelected = startpos != endpos;
@@ -1663,6 +1732,9 @@ void Fl_Text_Selection::set(int startpos, int endpos)
   mEnd = max(startpos, endpos);
 }
 
+
+// simple setter
+// Unicode safe
 void Fl_Text_Selection::set_rectangular(int startpos, int endpos,
 					int rectStart, int rectEnd)
 {
@@ -1674,6 +1746,9 @@ void Fl_Text_Selection::set_rectangular(int startpos, int endpos,
   mRectEnd = rectEnd;
 }
 
+
+// simple getter
+// Unicode safe
 int Fl_Text_Selection::position(int *startpos, int *endpos) const {
   if (!mSelected)
     return 0;
@@ -1681,7 +1756,12 @@ int Fl_Text_Selection::position(int *startpos, int *endpos) const {
   *endpos = mEnd;
   
   return 1;
-} int Fl_Text_Selection::position(int *startpos, int *endpos,
+} 
+
+
+// simple getter
+// Unicode safe
+int Fl_Text_Selection::position(int *startpos, int *endpos,
 				  int *isRect, int *rectStart,
 				  int *rectEnd) const {
   if (!mSelected)
@@ -1697,13 +1777,18 @@ int Fl_Text_Selection::position(int *startpos, int *endpos) const {
   return 1;
 }
 
+
 int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) const {
-  return selected() &&
-  ((!rectangular() && pos >= start() && pos < end()) ||
-   (rectangular() && pos >= start() && lineStartPos <= end() &&
-    dispIndex >= rect_start() && dispIndex < rect_end())
-   );
-} char *Fl_Text_Buffer::selection_text_(Fl_Text_Selection * sel) const {
+  return (selected() 
+          && ( (!rectangular() && pos >= start() && pos < end()) 
+              || (rectangular() && pos >= start() && lineStartPos <= end() 
+                  && dispIndex >= rect_start() && dispIndex < rect_end()
+                  )
+              )
+          );
+} 
+
+char *Fl_Text_Buffer::selection_text_(Fl_Text_Selection * sel) const {
   int start, end, isRect, rectStart, rectEnd;
   
   /* If there's no selection, return an allocated empty string */
@@ -2007,7 +2092,8 @@ static char *copyLine(const char *text, int *lineLen)
 }
 
 /*
- Counts the number of newlines in a null-terminated text string;
+ Counts the number of newlines in a null-terminated text string.
+ Unicode tested.
  */
 static int countLines(const char *string)
 {
