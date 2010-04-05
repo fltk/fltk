@@ -1,0 +1,105 @@
+
+INTRODUCTION TO CMAKE
+
+CMake was designed to let you create build files for a project once and
+then compile the project on multiple platforms.
+
+Using it on any platform consists of the same steps.  Create the
+CMakeLists.txt build file(s).  Run one of the CMake executables, picking
+your source directory, build directory, and build target.  The "cmake"
+executable is a one-step process with everything specified on the command
+line.  The others let you select options interactively, then configure
+and generate your platform-specific target.  You then run the resulting
+Makefile / project file / solution file as you normally would.
+
+CMake can be run in up to three ways, depending on your platform.  "cmake"
+is the basic command line tool.  "ccmake" is the curses based interactive
+tool.  "cmake-gui" is the gui-based interactive tool.  Each of these will
+take command line options in the form of -DOPTION=VALUE.  ccmake and
+cmake-gui will also let you change options interactively.
+
+CMake not only supports, but works best with out-of-tree builds.  This means
+that your build directory is not the same as your source directory or with a
+complex project, not the same as your source root directory.  Note that the
+build directory is where, in this case, FLTK will be built, not its final
+installation point.  If you want to build for multiple targets, such as
+VC++ and MinGW on Windows, or do some cross-compiling you must use out-of-tree
+builds exclusively.  In-tree builds will gum up the works by putting a
+CMakeCache.txt file in the source root.
+
+More information on CMake can be found on its web site http://www.cmake.org.
+
+USING CMAKE WITH FLTK
+
+This howto assumes that you have FLTK libraries which were built using
+CMake, installed.  Building them with CMake generates some CMake helper
+files which are installed in standard locations, making FLTK easy to find
+and use.
+
+Here is a basic CMakeLists.txt file using FLTK.
+
+------
+
+cmake_minimum_required(VERSION 2.6)
+
+project(hello)
+
+find_package(FLTK REQUIRED NO_MODULE)
+include(${FLTK_USE_FILE})
+
+add_executable(hello WIN32 hello.cxx)
+
+target_link_libraries(hello fltk)
+
+------
+
+The find_package command tells CMake to find the package FLTK, REQUIRED
+means that it is an error if it's not found.  NO_MODULE tells it to search
+only for the FLTKConfig file, not using the FindFLTK.cmake supplied with
+CMake, which doesn't work with this version of FLTK.
+
+Once the package is found we include the ${FLTK_USE_FILE} which adds the
+FLTK include directories and library link information to its knowledge
+base.  After that your programs will be able to find FLTK headers and
+when you link the fltk library, it automatically links the libraries
+fltk depends on.
+
+The WIN32 in the add_executable tells your Windows compiler that this is
+a gui app.  It is ignored on other platforms.
+
+LIBRARY NAMES
+
+When you use the target_link_libraries command, CMake uses it's own
+internal names for libraries.  The fltk library names are:
+
+fltk     fltk_forms     fltk_images    fltk_gl
+
+and for the shared libraries (if built):
+
+fltk_SHARED     fltk_forms_SHARED     fltk_images_SHARED    fltk_gl_SHARED
+
+The built-in libraries (if built):
+
+fltk_jpeg      fltk_png    fltk_z
+
+USING FLUID FILES
+
+CMake has a command named fltk_wrap_ui which helps deal with fluid *.fl
+files.  An example of its use is in test/CMakeLists.txt.  Here is a short
+summary on its use.
+
+Set a variable to list your C++ files, say CPPFILES.
+Set another variable to list your *.fl files, say FLFILES.
+Say your executable will be called exec.
+
+Then this is what you do...
+
+fltk_wrap_ui(exec ${FLFILES})
+add_executable(exec WIN32 ${CPPFILES} ${exec_FLTK_UI_SRCS})
+
+fltk_wrap_ui calls fluid and generates the required C++ files from the *.fl
+files.  It sets the variable, in this case exec_FLTK_UI_SRCS, to the
+list of generated files for inclusion in the add_executable command.
+
+The variable FLTK_FLUID_EXECUTABLE which is needed by fltk_wrap_ui is set
+when find_package(FLTK REQUIRED NO_MODULE) succeeds.
