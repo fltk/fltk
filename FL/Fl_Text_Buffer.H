@@ -211,15 +211,16 @@ public:
   ~Fl_Text_Buffer();
   
   /**
-   Returns the number of characters in the buffer.  
-   \todo unicode check
+   \brief Returns the number of bytes in the buffer.
+   \return size of text in bytes
    */
   int length() const { return mLength; }
   
   /**
-   Get the entire contents of a text buffer.  Memory is allocated to contain
-   the returned string, which the caller must free.
-   \todo unicode check
+   \brief Get a copy of the entire contents of the text buffer.
+   Memory is allocated to contain the returned string, which the caller 
+   must free.
+   \return newly allocated text buffer - must be free'd
    */  
   char* text() const;
   
@@ -230,11 +231,14 @@ public:
   void text(const char* text);
   
   /**
+   \brief Get a copy of a part of the text buffer.
    Return a copy of the text between \p start and \p end character positions
    from text buffer \p buf. Positions start at 0, and the range does not
    include the character pointed to by \p end.
    When you are done with the text, free it using the free() function.
-   \todo unicode check
+   \param start byte offset to first character
+   \param end byte offset after last character in range
+   \return newly allocated text buffer - must be free'd
    */  
   char* text_range(int start, int end) const;
   
@@ -659,22 +663,25 @@ public:
    control code).  Returns the number of characters added to \p outStr.
    \p indent is the number of characters from the start of the line
    for figuring tabs of length \p tabDist.  Output string is guaranteed 
-   to be shorter or  equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
+   to be shorter or equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
    Tabs and  other control characters are given special treatment.
-   \p nulSubsChar represent the null character to be transformed in \<nul\>
-   \todo unicode check
+   \param src address of utf-8 text
+   \param indent 
+   \param[out] outStr write substitution here
+   \param tabDist
+   \return number of byte in substitution
    */
-  static int expand_character(char c, int indent, char* outStr, int tabDist);
+  static int expand_character(const char *src, int indent, char* outStr, int tabDist);
   
   /**
    Return the length in displayed characters of character \p c expanded
-   for display (as discussed above in expand_character() ).  If the
-   buffer for which the character width is being measured is doing null
-   substitution, nullSubsChar should be passed as that character (or nul
-   to ignore).
-   \todo unicode check
+   for display (as discussed above in expand_character() ).  
+   \param src address of utf-8 text
+   \param indent 
+   \param tabDist
+   \return number of byte in substitution
    */
-  static int character_width(char c, int indent, int tabDist);
+  static int character_width(const char *src, int indent, int tabDist);
 
   /**
    Count the number of displayed characters between buffer position
@@ -689,6 +696,9 @@ public:
    Count forward from buffer position \p startPos in displayed characters
    (displayed characters are the characters shown on the screen to represent
    characters in the buffer, where tabs and control characters are expanded)
+   \param lineStartPos byte offset into buffer
+   \param nChars number of bytes that are sent to the display
+   \return byte offset in input after all output bytes are sent
    \todo unicode check
    */
   int skip_displayed_characters(int lineStartPos, int nChars);
@@ -928,6 +938,14 @@ protected:
    \todo unicode check
    */
   void update_selections(int pos, int nDeleted, int nInserted);
+  
+  /**
+   Convert a byte offset in buffer into a memory address.
+   */
+  const char *address(int pos) const
+  { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
+  char *address(int pos)
+  { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
   
   Fl_Text_Selection mPrimary;     /**< highlighted areas */
   Fl_Text_Selection mSecondary;   /**< highlighted areas */

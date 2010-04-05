@@ -629,7 +629,7 @@ void Fl_Text_Display::overstrike(const char* text) {
   startIndent = mBuffer->count_displayed_characters( lineStart, startPos );
   indent = startIndent;
   for ( c = text; *c != '\0'; c++ )
-    indent += Fl_Text_Buffer::character_width( *c, indent, buf->tab_distance() );
+    indent += Fl_Text_Buffer::character_width( c, indent, buf->tab_distance() );
   endIndent = indent;
 
   /* find which characters to remove, and if necessary generate additional
@@ -641,7 +641,7 @@ void Fl_Text_Display::overstrike(const char* text) {
     ch = buf->character( p );
     if ( ch == '\n' )
       break;
-    indent += Fl_Text_Buffer::character_width( ch, indent, buf->tab_distance() );
+    indent += Fl_Text_Buffer::character_width( &ch, indent, buf->tab_distance() ); // FIXME: not unicode
     if ( indent == endIndent ) {
       p++;
       break;
@@ -722,18 +722,12 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
      to "pos" to calculate the X coordinate */
   xStep = text_area.x - mHorizOffset;
   outIndex = 0;
-  for ( charIndex = 0; charIndex < lineLen && charIndex < pos - lineStartPos; charIndex++ ) {
-    charLen = Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+  for (charIndex = 0; 
+       charIndex < lineLen && charIndex < pos - lineStartPos; 
+       charIndex += fl_utf8len(lineStr[charIndex]) ) 
+  {
+    charLen = Fl_Text_Buffer::expand_character( lineStr+charIndex, outIndex, expandedChar,
               mBuffer->tab_distance());
-    if (charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
-      int i, ii = 0;;
-      i = fl_utf8len(lineStr[ charIndex ]);
-      while (i > 1) {
-        i--;
-        ii++;
-        expandedChar[ii] = lineStr[ charIndex + ii];
-      }
-    }
     charStyle = position_style( lineStartPos, lineLen, charIndex,
                                 outIndex );
     xStep += string_width( expandedChar, charLen, charStyle );
@@ -1475,20 +1469,10 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
      that character */
   X = text_area.x - mHorizOffset;
   outIndex = 0;
-  for ( charIndex = 0; ; charIndex++ ) {
+  for ( charIndex = 0; ; charIndex += lineStr ? fl_utf8len(lineStr[charIndex]) : 1 ) {
     charLen = charIndex >= lineLen ? 1 :
-              Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex,
+              Fl_Text_Buffer::expand_character( lineStr+charIndex, outIndex,
                                                 expandedChar, buf->tab_distance());
-    if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
-      int i, ii = 0;;
-      i = fl_utf8len(lineStr[ charIndex ]);
-      while (i > 1) {
-        i--;
-        ii++;
-        expandedChar[ii] = lineStr[ charIndex + ii];
-      }
-    }
-
     style = position_style( lineStartPos, lineLen, charIndex,
                             outIndex + dispIndexOffset );
     charWidth = charIndex >= lineLen ? stdCharWidth :
@@ -1513,19 +1497,13 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   outPtr = outStr;
   outIndex = outStartIndex;
   X = startX;
-  for ( charIndex = startIndex; charIndex < rightCharIndex; charIndex++ ) {
+  for (charIndex = startIndex; 
+       charIndex < rightCharIndex; 
+       charIndex += lineStr ? fl_utf8len(lineStr[charIndex]) : 1 ) 
+  {
     charLen = charIndex >= lineLen ? 1 :
-              Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+              Fl_Text_Buffer::expand_character( lineStr+charIndex, outIndex, expandedChar,
                                                 buf->tab_distance());
-    if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
-      int i, ii = 0;;
-      i = fl_utf8len(lineStr[ charIndex ]);
-      while (i > 1) {
-        i--;
-        ii++;
-        expandedChar[ii] = lineStr[ charIndex + ii];
-      }
-    }
     charStyle = position_style( lineStartPos, lineLen, charIndex,
                                 outIndex + dispIndexOffset );
     for ( i = 0; i < charLen; i++ ) {
@@ -1561,19 +1539,13 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   outPtr = outStr;
   outIndex = outStartIndex;
   X = startX;
-  for ( charIndex = startIndex; charIndex < rightCharIndex; charIndex++ ) {
+  for (charIndex = startIndex; 
+       charIndex < rightCharIndex; 
+       charIndex += lineStr ? fl_utf8len(lineStr[charIndex]) : 0) 
+  {
     charLen = charIndex >= lineLen ? 1 :
-              Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+              Fl_Text_Buffer::expand_character( lineStr+charIndex, outIndex, expandedChar,
                                                 buf->tab_distance());
-    if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
-      int i, ii = 0;;
-      i = fl_utf8len(lineStr[ charIndex ]);
-      while (i > 1) {
-        i--;
-        ii++;
-        expandedChar[ii] = lineStr[ charIndex + ii];
-      }
-    }
     charStyle = position_style( lineStartPos, lineLen, charIndex,
                                 outIndex + dispIndexOffset );
     for ( i = 0; i < charLen; i++ ) {
@@ -1923,18 +1895,12 @@ int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) const {
      to find the character position corresponding to the X coordinate */
   xStep = text_area.x - mHorizOffset;
   outIndex = 0;
-  for ( charIndex = 0; charIndex < lineLen; charIndex++ ) {
-    charLen = Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
+  for (charIndex = 0;
+       charIndex < lineLen;
+       charIndex += fl_utf8len(lineStr[charIndex]) ) 
+  {
+    charLen = Fl_Text_Buffer::expand_character( lineStr+charIndex, outIndex, expandedChar,
               mBuffer->tab_distance());
-    if (charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
-      int i, ii = 0;;
-      i = fl_utf8len(lineStr[ charIndex ]);
-      while (i > 1) {
-        i--;
-        ii++;
-        expandedChar[ii] = lineStr[ charIndex + ii];
-      }
-    }
     charStyle = position_style( lineStart, lineLen, charIndex, outIndex );
     charWidth = string_width( expandedChar, charLen, charStyle );
     if ( X < xStep + ( posType == CURSOR_POS ? charWidth / 2 : charWidth ) ) {
@@ -2732,7 +2698,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
     	    colNum = 0;
     	    width = 0;
     	} else {
-    	    colNum += Fl_Text_Buffer::character_width(c, colNum, tabDist);
+          colNum += Fl_Text_Buffer::character_width((char*)&c, colNum, tabDist); // FIXME: unicode
     	    if (countPixels)
     	    	width += measure_proportional_character(c, colNum, p+styleBufOffset);
     	}
@@ -2762,7 +2728,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
     	    }
     	    if (!foundBreak) { /* no whitespace, just break at margin */
     	    	newLineStart = max(p, lineStart+1);
-    	    	colNum = Fl_Text_Buffer::character_width(c, colNum, tabDist);
+              colNum = Fl_Text_Buffer::character_width((char*)&c, colNum, tabDist); // FIXME: unicode
     	    	if (countPixels)
    	    	    width = measure_proportional_character(c, colNum, p+styleBufOffset);
     	    }
@@ -2814,7 +2780,7 @@ int Fl_Text_Display::measure_proportional_character(char c, int colNum, int pos)
     char expChar[ FL_TEXT_MAX_EXP_CHAR_LEN ];
     Fl_Text_Buffer *styleBuf = mStyleBuffer;
     
-    charLen = Fl_Text_Buffer::expand_character(c, colNum, expChar, buffer()->tab_distance());
+  charLen = Fl_Text_Buffer::expand_character(&c, colNum, expChar, buffer()->tab_distance()); // FIXME: unicode
     if (styleBuf == 0) {
 	style = 0;
     } else {

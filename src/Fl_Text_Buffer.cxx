@@ -209,14 +209,19 @@ Fl_Text_Buffer::~Fl_Text_Buffer()
   }
 }
 
+
+// This function copies verbose whatever is in front and after the gap into a
+// single buffer.
+// - unicode ok
 char *Fl_Text_Buffer::text() const {
-  char *t = (char *) malloc(mLength + 1);	//UTF8: we alloc from a string len, but as (non-utf8 aware) strlen() 
-                                                // is used to affect mLength, it is equal to buffer size - 1 and thus correct.
+  char *t = (char *) malloc(mLength + 1);
   memcpy(t, mBuf, mGapStart);
   memcpy(&t[mGapStart], &mBuf[mGapEnd], mLength - mGapStart);
   t[mLength] = '\0';
   return t;
-} void Fl_Text_Buffer::text(const char *t)
+} 
+
+void Fl_Text_Buffer::text(const char *t)
 {
   call_predelete_callbacks(0, length());
   
@@ -249,6 +254,9 @@ char *Fl_Text_Buffer::text() const {
   free((void *) deletedText);
 }
 
+
+// Creates a new buffer and copies verbose from around the gap.
+// - unicode ok
 char *Fl_Text_Buffer::text_range(int start, int end) const {
   char *s = NULL;
   
@@ -284,6 +292,8 @@ char *Fl_Text_Buffer::text_range(int start, int end) const {
   return s;
 }
 
+
+// FIXME: a character must be UCS-4 encoded
 char Fl_Text_Buffer::character(int pos) const {
   if (pos < 0 || pos >= mLength)
     return '\0';
@@ -291,7 +301,10 @@ char Fl_Text_Buffer::character(int pos) const {
     return mBuf[pos];
   else
     return mBuf[pos + mGapEnd - mGapStart];
-} void Fl_Text_Buffer::insert(int pos, const char *text)
+} 
+
+
+void Fl_Text_Buffer::insert(int pos, const char *text)
 {
   /* if pos is not contiguous to existing text, make it */
   if (pos > mLength)
@@ -930,25 +943,23 @@ int Fl_Text_Buffer::word_end(int pos) const {
   } return pos;
 }
 
+
+// Expand from the byte representation into some readable text.
+// Under unicode, this is not really needed because all characters should
+// be prinatble one way or the other. But since we use this to (badly) simulate
+// tabs, we can leave this here anyway.
+// - unicode ok
 int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) const {
-  char c = character(pos);
-  int ret = expand_character(c, indent, outStr, mTabDist);
-  if (ret > 1 && (c & 0x80))
-  {
-    int i;
-    i = fl_utf8len(c);
-    while (i > 1) {
-      i--;
-      pos++;
-      outStr++;
-      *outStr = character(pos);
-    }}
-  
-  return ret;
+  const char *src = address(pos);
+  return expand_character(src, indent, outStr, mTabDist);
 }
 
-int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDist)
+
+// static function and counterpart to "character_width"
+// - unicode ok
+int Fl_Text_Buffer::expand_character(const char *src, int indent, char *outStr, int tabDist)
 {
+  char c = *src;
   /* Convert tabs to spaces */
   if (c == '\t') {
     int nSpaces = tabDist - (indent % tabDist);
@@ -958,7 +969,6 @@ int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDi
   }
   
   /* Convert control codes to readable character sequences */
-  /*... is this safe with international character sets? */
   if (((unsigned char) c) <= 31) {
     sprintf(outStr, "<%s>", ControlCodeTable[(unsigned char) c]);
     return strlen(outStr);
@@ -972,8 +982,9 @@ int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDi
     *outStr = c;
     return 1;
   } else if (c & 0x80) {
-    *outStr = c;
-    return fl_utf8len(c);
+    int i, n = fl_utf8len(c);
+    for (i=0; i<n; i++) *outStr++ = *src++;
+    return n;
   }
   
   /* Otherwise, just return the character */
@@ -981,9 +992,16 @@ int Fl_Text_Buffer::expand_character(char c, int indent, char *outStr, int tabDi
   return 1;
 }
 
-int Fl_Text_Buffer::character_width(char c, int indent, int tabDist)
+
+// This function takes a character and optionally converts it into a little
+// string which will replace the character on screen. This function returns
+// the number of bytes in the replacement string, but *not* the number of 
+// bytes in the original character!
+// - unicode ok
+int Fl_Text_Buffer::character_width(const char *src, int indent, int tabDist)
 {
   /* Note, this code must parallel that in Fl_Text_Buffer::ExpandCharacter */
+  char c = *src;
   if (c == '\t') {
     return tabDist - (indent % tabDist);
   } else if (((unsigned char) c) <= 31) {
@@ -1011,18 +1029,22 @@ int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
   while (pos < targetPos)
     charCount += expand_character(pos++, charCount, expandedChar);
   return charCount;
-} int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos,
-						int nChars)
+} 
+
+
+// All values are number of bytes. 
+// - unicode ok
+int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
 {
   int pos = lineStartPos;
-  char c;
   
   for (int charCount = 0; charCount < nChars && pos < mLength;) {
-    c = character(pos);
+    const char *src = address(pos);
+    char c = *src;
     if (c == '\n')
       return pos;
-    charCount += character_width(c, charCount, mTabDist);
-    pos++;
+    charCount += character_width(src, charCount, mTabDist);
+    pos += fl_utf8len(c);
   }
   return pos;
 }
@@ -1488,7 +1510,7 @@ static void insertColInLine(const char *line, char *insLine, int column,
   
   for (linePtr = line; *linePtr != '\0'; linePtr++) {
     len =
-    Fl_Text_Buffer::character_width(*linePtr, indent, tabDist);
+    Fl_Text_Buffer::character_width(linePtr, indent, tabDist);
     if (indent + len > column)
       break;
     indent += len;
@@ -1532,7 +1554,7 @@ static void insertColInLine(const char *line, char *insLine, int column,
     for (const char *c = retabbedStr; *c != '\0'; c++) {
       *outPtr++ = *c;
       len =
-      Fl_Text_Buffer::character_width(*c, indent, tabDist);
+      Fl_Text_Buffer::character_width(c, indent, tabDist);
       indent += len;
     }
     free((void *) retabbedStr);
@@ -1583,7 +1605,7 @@ static void deleteRectFromLine(const char *line, int rectStart,
     if (indent > rectStart)
       break;
     len =
-    Fl_Text_Buffer::character_width(*c, indent, tabDist);
+    Fl_Text_Buffer::character_width(c, indent, tabDist);
     if (indent + len > rectStart && (indent == rectStart || *c == '\t'))
       break;
     indent += len;
@@ -1594,7 +1616,7 @@ static void deleteRectFromLine(const char *line, int rectStart,
   /* skip the characters between rectStart and rectEnd */
   for (; *c != '\0' && indent < rectEnd; c++)
     indent +=
-    Fl_Text_Buffer::character_width(*c, indent, tabDist);
+    Fl_Text_Buffer::character_width(c, indent, tabDist);
   int postRectIndent = indent;
   
   /* If the line ended before rectEnd, there's nothing more to do */
@@ -1641,7 +1663,7 @@ static void overlayRectInLine(const char *line, char *insLine,
   
   for (; *linePtr != '\0'; linePtr++) {
     len =
-    Fl_Text_Buffer::character_width(*linePtr, inIndent, tabDist);
+    Fl_Text_Buffer::character_width(linePtr, inIndent, tabDist);
     if (inIndent + len > rectStart)
       break;
     inIndent += len;
@@ -1668,7 +1690,7 @@ static void overlayRectInLine(const char *line, char *insLine,
   int postRectIndent = rectEnd;
   for (; *linePtr != '\0'; linePtr++) {
     inIndent +=
-    Fl_Text_Buffer::character_width(*linePtr, inIndent, tabDist);
+    Fl_Text_Buffer::character_width(linePtr, inIndent, tabDist);
     if (inIndent >= rectEnd) {
       linePtr++;
       postRectIndent = inIndent;
@@ -1697,7 +1719,7 @@ static void overlayRectInLine(const char *line, char *insLine,
     for (const char *c = retabbedStr; *c != '\0'; c++) {
       *outPtr++ = *c;
       len =
-      Fl_Text_Buffer::character_width(*c, outIndent, tabDist);
+      Fl_Text_Buffer::character_width(c, outIndent, tabDist);
       outIndent += len;
     }
     free((void *) retabbedStr);
@@ -1852,8 +1874,8 @@ static void addPadding(char *string, int startIndent, int toIndent,
   
   if (useTabs) {
     while (indent < toIndent) {
-      len =
-      Fl_Text_Buffer::character_width('\t', indent, tabDist);
+      static char t = '\t';
+      len = Fl_Text_Buffer::character_width(&t, indent, tabDist);
       if (len > 1 && indent + len <= toIndent) {
 	*outPtr++ = '\t';
 	indent += len;
@@ -2115,14 +2137,14 @@ static int textWidth(const char *text, int tabDist)
 {
   int width = 0, maxWidth = 0;
   
-  for (const char *c = text; *c != '\0'; c++) {
+  for (const char *c = text; *c != '\0'; c++) { // FIXME: increment is wrong!
     if (*c == '\n') {
       if (width > maxWidth)
 	maxWidth = width;
       width = 0;
     } else
       width +=
-      Fl_Text_Buffer::character_width(*c, width, tabDist);
+      Fl_Text_Buffer::character_width(c, width, tabDist);
   }
   if (width > maxWidth)
     return width;
@@ -2145,7 +2167,7 @@ void Fl_Text_Buffer::rectangular_selection_boundaries(int lineStartPos,
     if (c == '\n')
       break;
     width =
-    Fl_Text_Buffer::character_width(c, indent, mTabDist);
+    Fl_Text_Buffer::character_width(&c, indent, mTabDist); // FIXME: c si not unicode
     if (indent + width > rectStart) {
       if (indent != rectStart && c != '\t') {
         pos++;
@@ -2163,7 +2185,7 @@ void Fl_Text_Buffer::rectangular_selection_boundaries(int lineStartPos,
     if (c == '\n')
       break;
     width =
-    Fl_Text_Buffer::character_width(c, indent, mTabDist);
+    Fl_Text_Buffer::character_width(&c, indent, mTabDist); // FIXME: c is not unicode
     indent += width;
     if (indent > rectEnd) {
       if (indent - width != rectEnd && c != '\t')
@@ -2220,7 +2242,7 @@ static char *expandTabs(const char *text, int startIndent, int tabDist, int *new
   for (c = text; *c != '\0'; c++) {
     if (*c == '\t') {
       len =
-      Fl_Text_Buffer::character_width(*c, indent, tabDist);
+      Fl_Text_Buffer::character_width(c, indent, tabDist);
       outLen += len;
       indent += len;
     } else if (*c == '\n') {
@@ -2228,7 +2250,7 @@ static char *expandTabs(const char *text, int startIndent, int tabDist, int *new
       outLen++;
     } else {
       indent +=
-      Fl_Text_Buffer::character_width(*c, indent, tabDist);
+      Fl_Text_Buffer::character_width(c, indent, tabDist);
       outLen++;
     }
   }
@@ -2240,7 +2262,7 @@ static char *expandTabs(const char *text, int startIndent, int tabDist, int *new
   for (c = text; *c != '\0'; c++) {
     if (*c == '\t') {
       len =
-      Fl_Text_Buffer::expand_character(*c, indent, outPtr, tabDist);
+      Fl_Text_Buffer::expand_character(c, indent, outPtr, tabDist);
       outPtr += len;
       indent += len;
     } else if (*c == '\n') {
@@ -2248,7 +2270,7 @@ static char *expandTabs(const char *text, int startIndent, int tabDist, int *new
       *outPtr++ = *c;
     } else {
       indent +=
-      Fl_Text_Buffer::character_width(*c, indent, tabDist);
+      Fl_Text_Buffer::character_width(c, indent, tabDist);
       *outPtr++ = *c;
     }
   }
@@ -2271,8 +2293,9 @@ static char *unexpandTabs(char *text, int startIndent, int tabDist, int *newLen)
   
   for (const char *c = text; *c != '\0';) {
     if (*c == ' ') {
+      static char tab = '\t';
       len =
-      Fl_Text_Buffer::expand_character('\t', indent, expandedChar, tabDist);
+      Fl_Text_Buffer::expand_character(&tab, indent, expandedChar, tabDist);
       if (len >= 3 && !strncmp(c, expandedChar, len)) {
 	c += len;
 	*outPtr++ = '\t';
