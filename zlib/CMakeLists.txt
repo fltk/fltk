@@ -1,15 +1,30 @@
-PROJECT(FLTKZLIB)
-INCLUDE_REGULAR_EXPRESSION("^(deflate|inf|trees|zconf|zlib|zutil).*$")
+project(FLTKZLIB)
+include_regular_expression(regex_match "[.][h|c]$")
 
-INCLUDE_DIRECTORIES(${FLTKZLIB_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${FLTKZLIB_BINARY_DIR})
+include_directories(${FLTKZLIB_SOURCE_DIR})
+include_directories(${FLTKZLIB_BINARY_DIR})
 
 # source files for zlib
-SET(ZLIB_SRCS
-adler32.c compress.c crc32.c deflate.c gzio.c inffast.c
-inflate.c inftrees.c trees.c uncompr.c zutil.c
+set(ZLIB_SRCS
+   adler32.c compress.c crc32.c deflate.c gzio.c inffast.c
+   inflate.c inftrees.c trees.c uncompr.c zutil.c
 )
 
-ADD_LIBRARY(fltk_zlib ${ZLIB_SRCS})
-INSTALL_TARGETS(/lib fltk_zlib)
+#######################################################################
+add_library(fltk_z ${ZLIB_SRCS})
 
+if(MSVC)
+   set_target_properties(fltk_z
+      PROPERTIES
+         OUTPUT_NAME zlib
+         DEBUG_OUTPUT_NAME zlibd
+   )
+   if(OPTION_LARGE_FILE)
+      set_target_properties(fltk_z PROPERTIES LINK_FLAGS /LARGEADDRESSAWARE)
+   endif(OPTION_LARGE_FILE)
+endif(MSVC)
+
+install(TARGETS fltk_z
+   EXPORT fltk-install
+   DESTINATION ${PREFIX_LIB}
+)

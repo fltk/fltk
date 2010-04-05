@@ -1,4 +1,5 @@
-SET(CPPFILES
+
+set(CPPFILES
 	CodeEditor.cxx
 	Fl_Function_Type.cxx
 	Fl_Group_Type.cxx
@@ -20,11 +21,28 @@ SET(CPPFILES
 	widget_panel.cxx
 )
 
+add_executable(fluid ${CPPFILES})
+target_link_libraries(fluid fltk fltk_images fltk_forms)
 
-ADD_EXECUTABLE(fluid ${CPPFILES})
-INSTALL_TARGETS(/bin fluid)
-TARGET_LINK_LIBRARIES(fluid fltk fltk_images fltk_forms ${FLTK_PLATFORM_DEPENDENT_LIBS})
-IF(OPENGL_FOUND)
-	TARGET_LINK_LIBRARIES(fluid fltk_gl)
-ENDIF(OPENGL_FOUND)
+# link in optional libraries
+if(HAVE_CAIRO)
+   target_link_libraries(fluid fltk_cairo)
+endif(HAVE_CAIRO)
 
+if(FLTK_USE_GL)
+   target_link_libraries(fluid fltk_gl)
+   target_link_libraries(fluid ${OPENGL_LIBRARIES})
+endif(FLTK_USE_GL)
+
+if(USE_XFT)
+   target_link_libraries(fluid ${X11_Xft_LIB})
+endif(USE_XFT)
+
+if(HAVE_XINERAMA)
+   target_link_libraries(fluid ${X11_Xinerama_LIB})
+endif(HAVE_XINERAMA)
+
+install(TARGETS fluid
+   EXPORT fltk-install
+   DESTINATION ${PREFIX_BIN}
+)
