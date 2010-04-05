@@ -411,7 +411,6 @@ public:
   
   /** 
    Returns a non 0 value if text has been selected, 0 otherwise 
-   \todo unicode check
    */
   int selected() const { return mPrimary.selected(); }
   
@@ -468,7 +467,6 @@ public:
   /** 
    Returns a non 0 value if text has been selected in the secondary
    text selection, 0 otherwise 
-   \todo unicode check
    */
   int secondary_selected() { return mSecondary.selected(); }
   
@@ -527,7 +525,6 @@ public:
   /**
    Returns the highlighted text. When you are done with the
    text, free it using the free() function.
-   \todo unicode check
    */
   int highlight() { return mHighlight.selected(); }
   
@@ -786,25 +783,21 @@ public:
   
   /** 
    Returns the primary selection.  
-   \todo unicode check
    */
   const Fl_Text_Selection* primary_selection() const { return &mPrimary; }
   
   /**
    Returns the primary selection. 
-   \todo unicode check
    */
   Fl_Text_Selection* primary_selection() { return &mPrimary; }
   
   /**
    Returns the secondary selection.
-   \todo unicode check
    */
   const Fl_Text_Selection* secondary_selection() const { return &mSecondary; }
   
   /**
    Returns the current highlight selection.
-   \todo unicode check
    */
   const Fl_Text_Selection* highlight_selection() const { return &mHighlight; }
   
@@ -944,6 +937,10 @@ protected:
    */
   const char *address(int pos) const
   { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
+
+  /**
+   Convert a byte offset in buffer into a memory address.
+   */
   char *address(int pos)
   { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
   

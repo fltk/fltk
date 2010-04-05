@@ -1506,7 +1506,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
                                                 buf->tab_distance());
     charStyle = position_style( lineStartPos, lineLen, charIndex,
                                 outIndex + dispIndexOffset );
-    for ( i = 0; i < charLen; i++ ) {
+    for ( i = 0; i < charLen; i++ ) { // FIXME: this rips apart the utf-8 sequneces
       if ( i != 0 && charIndex < lineLen && lineStr[ charIndex ] == '\t' )
         charStyle = position_style( lineStartPos, lineLen,
                                     charIndex, outIndex + dispIndexOffset );
@@ -1548,7 +1548,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
                                                 buf->tab_distance());
     charStyle = position_style( lineStartPos, lineLen, charIndex,
                                 outIndex + dispIndexOffset );
-    for ( i = 0; i < charLen; i++ ) {
+    for ( i = 0; i < charLen; i++ ) { // FIXME: this rips apart the utf-8 sequneces
       if ( i != 0 && charIndex < lineLen && lineStr[ charIndex ] == '\t' )
         charStyle = position_style( lineStartPos, lineLen,
                                     charIndex, outIndex + dispIndexOffset );
