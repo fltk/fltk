@@ -33,67 +33,146 @@
 #ifndef FL_TEXT_BUFFER_H
 #define FL_TEXT_BUFFER_H
 
+/*
+ UTF-8 terminology for this file:
+
+ "length" is the number of characters in a string
+ "size" is the number of bytes
+ "index" is the position in a string in number of characters
+ "offset" is the position in a strin in bytes (and must be kept on a charater boundary)
+ 
+ "character size" is the size of a UTF-8 character in bytes
+ "character width" is the width of a Unicode character in pixels
+
+ "column" was orginally defined as a character offset from the left margin. It was
+          identical to the byte offset. In UTF-8, we have neither a byte offset nor
+          truly fixed width fonts. Column could be a pixel value multiplied with
+          an average character width (which is a bearable approximation).
+ */
+ 
+
 /* Maximum length in characters of a tab or control character expansion
    of a single buffer character */
 #define FL_TEXT_MAX_EXP_CHAR_LEN 20
 
 #include "Fl_Export.H"
 
-/** \class Fl_Text_Selection
-    This is an internal class for Fl_Text_Buffer to manage text selections.
-    
-    \todo	members must be documented
+
+/** 
+ \class Fl_Text_Selection
+ \brief This is an internal class for Fl_Text_Buffer to manage text selections.
  */
 class FL_EXPORT Fl_Text_Selection {
   friend class Fl_Text_Buffer;
 
-  public:
-    void set(int start, int end);
-    void set_rectangular(int start, int end, int rectStart, int rectEnd);
-    void update(int pos, int nDeleted, int nInserted);
-    char rectangular() const { return mRectangular; }
-    int start() const { return mStart; }
-    int end() const { return mEnd; }
-    int rect_start() const { return mRectStart; }
-    int rect_end() const { return mRectEnd; }
-    /**
-       Returns a non-zero number if any text has been selected, or 0
-       if no text is selected.
-    */
-    char selected() const { return mSelected; }
-    void selected(char b) { mSelected = b; }
-    int includes(int pos, int lineStartPos, int dispIndex) const;
-    int position(int* start, int* end) const;
-    int position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd) const;
+public:
+  
+  /**
+   \brief Set the selection range.
+   \param start byte offset to first selected character
+   \param end byte offset pointing after last selected character
+   */
+  void set(int start, int end);
+  
+  /**
+   \brief Set a regtangular selection range.
+   \param start byte offset to first selected character
+   \param end byte offset pointing after last selected character
+   \param rectStart first selected column
+   \param rectEnd last selected column +1
+   */
+  void set_rectangular(int start, int end, int rectStart, int rectEnd);
+  
+  /**
+   \brief Updates a selection afer text was modified.
+   \param pos byte offset into text buffer at which the change occured
+   \param nDeleted number of bytes deleted from the buffer
+   \param nInserted number of bytes inserted into the buffer
+   */
+  void update(int pos, int nDeleted, int nInserted);
+  
+  /**
+   \brief Returns true if the selection is rectangular.
+   */
+  char rectangular() const { return mRectangular; }
+  
+  /**
+   \brief Return the byte offset to the first selected character.
+   */
+  int start() const { return mStart; }
+  
+  /**
+   \brief Return the byte ofsset to the character after the last selected character.
+   */
+  int end() const { return mEnd; }
+  
+  /**
+   \brief Return the first column of the rectangular selection.
+   */
+  int rect_start() const { return mRectStart; }
+  
+  /**
+   \brief Return the last column of the rectangular selection + 1.
+   */
+  int rect_end() const { return mRectEnd; }
+  
+  /**
+   \brief Returns true if any text is selected.
+   Returns a non-zero number if any text has been selected, or 0
+   if no text is selected.
+  */
+  char selected() const { return mSelected; }
+  
+  /**
+   \brief Modify the 'selected' flag.
+   */
+  void selected(char b) { mSelected = b; }
+  
+  /**
+   \brief ??
+   */
+  int includes(int pos, int lineStartPos, int dispIndex) const;
+  
+  /**
+   \brief Return the positions of this selection.
+   \param start retrun byte offset to first selected character
+   \param end retrun byte offset pointing after last selected character
+   */
+  int position(int* start, int* end) const;
+  
+  /**
+   \brief Return the positions of this rectangular selection.
+   \param start return byte offset to first selected character
+   \param end return byte offset pointing after last selected character
+   \param isRect return if the selection is rectangular
+   \param rectStart return first selected column
+   \param rectEnd return last selected column +1
+   */
+  int position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd) const;
 
-
-  protected:
-    char mSelected;
-    char mRectangular;
-    int mStart;
-    int mEnd;
-    int mRectStart;
-    int mRectEnd;
+protected:
+  
+  char mSelected;     ///< this flag is set if any text is selected  
+  char mRectangular;  ///< this flag is set if the selection is rectangular
+  int mStart;         ///< byte offset to the first selected character
+  int mEnd;           ///< byte offset to the character after the last selected character
+  int mRectStart;     ///< first selected column (see "column")
+  int mRectEnd;       ///< last selected column +1 (see "column")
 };
 
 typedef void (*Fl_Text_Modify_Cb)(int pos, int nInserted, int nDeleted,
                                   int nRestyled, const char* deletedText,
                                   void* cbArg);
+
 typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
 
+
 /**
+ \brief This class manages unicode displayed in one or more Fl_Text_Display widgets.
+ 
   The Fl_Text_Buffer class is used by the Fl_Text_Display
   and Fl_Text_Editor to manage complex text data and is based upon the
   excellent NEdit text editor engine - see http://www.nedit.org/.
-*/
-/**
-  The Fl_Text_Buffer class is used by the 
-  Fl_Text_Display
-  and 
-  Fl_Text_Editor
-  to manage complex text data and is based upon the
-  excellent NEdit text editor engine - see
-  http://www.nedit.org/.
 */
 class FL_EXPORT Fl_Text_Buffer {
   public:
