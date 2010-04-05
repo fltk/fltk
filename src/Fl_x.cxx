@@ -136,7 +136,9 @@ void Fl::add_fd(int n, void (*cb)(int, void*), void* v) {
 
 void Fl::remove_fd(int n, int events) {
   int i,j;
+# if !USE_POLL
   maxfd = -1; // recalculate maxfd on the fly
+# endif
   for (i=j=0; i<nfds; i++) {
 #  if USE_POLL
     if (pollfds[i].fd == n) {
@@ -150,8 +152,8 @@ void Fl::remove_fd(int n, int events) {
       if (!e) continue; // if no events left, delete this fd
       fd[i].events = e;
     }
-#  endif
     if (fd[i].fd > maxfd) maxfd = fd[i].fd;
+#  endif
     // move it down in the array if necessary:
     if (j<i) {
       fd[j] = fd[i];
