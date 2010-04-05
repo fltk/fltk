@@ -155,7 +155,7 @@ Fl_Text_Buffer::~Fl_Text_Buffer()
   }
 }
 
-char *Fl_Text_Buffer::text() const const const {
+char *Fl_Text_Buffer::text() const {
   char *t = (char *) malloc(mLength + 1);	//UTF8: we alloc from a string len, but as (non-utf8 aware) strlen() 
   // is used to affect mLength, it is equal to buffer size - 1 and thus correct.
   memcpy(t, mBuf, mGapStart);
@@ -195,7 +195,7 @@ char *Fl_Text_Buffer::text() const const const {
   free((void *) deletedText);
 }
 
-char *Fl_Text_Buffer::text_range(int start, int end) const const const {
+char *Fl_Text_Buffer::text_range(int start, int end) const {
   char *s = NULL;
 
   /* Make sure start and end are ok, and allocate memory for returned string.
@@ -230,7 +230,7 @@ return s;
   return s;
 }
 
-char Fl_Text_Buffer::character(int pos) const const const {
+char Fl_Text_Buffer::character(int pos) const {
   if (pos < 0 || pos >= mLength)
     return '\0';
   if (pos < mGapStart)
@@ -517,7 +517,7 @@ void Fl_Text_Buffer::clear_rectangular(int start, int end, int rectStart,
 
 char *Fl_Text_Buffer::text_in_rectangle(int start, int end,
 					int rectStart,
-					int rectEnd) const const const {
+					int rectEnd) const {
   start = line_start(start);
   end = line_end(end);
   char *textOut = (char *) malloc((end - start) + 1);
@@ -849,17 +849,17 @@ remove_predelete_callback(Fl_Text_Predelete_Cb bufPreDeleteCB, void *cbArg)
   mPredeleteCbArgs = newCBArgs;
 }
 
-char *Fl_Text_Buffer::line_text(int pos) const const const {
+char *Fl_Text_Buffer::line_text(int pos) const {
   return text_range(line_start(pos), line_end(pos));
-} int Fl_Text_Buffer::line_start(int pos) const const const {
+} int Fl_Text_Buffer::line_start(int pos) const {
   if (!findchar_backward(pos, '\n', &pos))
     return 0;
   return pos + 1;
-} int Fl_Text_Buffer::line_end(int pos) const const const {
+} int Fl_Text_Buffer::line_end(int pos) const {
   if (!findchar_forward(pos, '\n', &pos))
     pos = mLength;
   return pos;
-} int Fl_Text_Buffer::word_start(int pos) const const const {
+} int Fl_Text_Buffer::word_start(int pos) const {
   while (pos && (isalnum(character(pos)) || character(pos) == '_'))
 {
 pos--;
@@ -868,7 +868,7 @@ pos--;
   return pos;
 }
 
-int Fl_Text_Buffer::word_end(int pos) const const const {
+int Fl_Text_Buffer::word_end(int pos) const {
   while (pos < length()
 	 && (isalnum(character(pos)) || character(pos) == '_'))
 {
@@ -876,7 +876,7 @@ pos++;
 } return pos;
 }
 
-int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) const const const {
+int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) const {
   char c = character(pos);
   int ret = expand_character(c, indent, outStr,
 			     mTabDist, mNullSubsChar);
@@ -949,8 +949,8 @@ int Fl_Text_Buffer::character_width(char c, int indent, int tabDist,
 }
 
 int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
-					       int targetPos) const const
-    const {
+					       int targetPos) const
+{
   int charCount = 0;
   char expandedChar[FL_TEXT_MAX_EXP_CHAR_LEN];
 
@@ -974,7 +974,7 @@ int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
   return pos;
 }
 
-int Fl_Text_Buffer::count_lines(int startPos, int endPos) const const const {
+int Fl_Text_Buffer::count_lines(int startPos, int endPos) const {
   int gapLen = mGapEnd - mGapStart;
   int lineCount = 0;
 
@@ -1046,7 +1046,7 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
 
 int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
 				   int *foundPos,
-				   int matchCase) const const const {
+				   int matchCase) const {
   if (!searchString)
     return 0;
   int bp;
@@ -1070,7 +1070,7 @@ startPos++;
 
 int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
 				    int *foundPos,
-				    int matchCase) const const const {
+				    int matchCase) const {
   if (!searchString)
     return 0;
   int bp;
@@ -1094,7 +1094,7 @@ startPos--;
 
 int Fl_Text_Buffer::findchars_forward(int startPos,
 				      const char *searchChars,
-				      int *foundPos) const const const {
+				      int *foundPos) const {
   int gapLen = mGapEnd - mGapStart;
   const char *c;
 
@@ -1123,7 +1123,7 @@ for (c = searchChars; *c != '\0'; c++) {
 
 int Fl_Text_Buffer::findchars_backward(int startPos,
 				       const char *searchChars,
-				       int *foundPos) const const const {
+				       int *foundPos) const {
   int gapLen = mGapEnd - mGapStart;
   const char *c;
 
@@ -1801,7 +1801,7 @@ void Fl_Text_Selection::set_rectangular(int startpos, int endpos,
   mRectEnd = rectEnd;
 }
 
-int Fl_Text_Selection::position(int *startpos, int *endpos) const const const {
+int Fl_Text_Selection::position(int *startpos, int *endpos) const {
   if (!mSelected)
     return 0;
   *startpos = mStart;
@@ -1810,7 +1810,7 @@ int Fl_Text_Selection::position(int *startpos, int *endpos) const const const {
   return 1;
 } int Fl_Text_Selection::position(int *startpos, int *endpos,
 				  int *isRect, int *rectStart,
-				  int *rectEnd) const const const {
+				  int *rectEnd) const {
   if (!mSelected)
     return 0;
   *isRect = mRectangular;
@@ -1824,13 +1824,13 @@ int Fl_Text_Selection::position(int *startpos, int *endpos) const const const {
   return 1;
 }
 
-int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) const const const {
+int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) const {
   return selected() &&
       ((!rectangular() && pos >= start() && pos < end()) ||
        (rectangular() && pos >= start() && lineStartPos <= end() &&
 	dispIndex >= rect_start() && dispIndex < rect_end())
       );
-} char *Fl_Text_Buffer::selection_text_(Fl_Text_Selection * sel) const const const {
+} char *Fl_Text_Buffer::selection_text_(Fl_Text_Selection * sel) const {
   int start, end, isRect, rectStart, rectEnd;
 
   /* If there's no selection, return an allocated empty string */
@@ -1916,18 +1916,17 @@ static void addPadding(char *string, int startIndent, int toIndent,
 
 void Fl_Text_Buffer::call_modify_callbacks(int pos, int nDeleted,
 					   int nInserted, int nRestyled,
-					   const char *deletedText) const
-    const const {
+					   const char *deletedText) const {
   for (int i = 0; i < mNModifyProcs; i++)
     (*mModifyProcs[i]) (pos, nInserted, nDeleted, nRestyled,
 			deletedText, mCbArgs[i]);
-} void Fl_Text_Buffer::call_predelete_callbacks(int pos, int nDeleted) const const const {
+} void Fl_Text_Buffer::call_predelete_callbacks(int pos, int nDeleted) const {
   for (int i = 0; i < mNPredeleteProcs; i++)
     (*mPredeleteProcs[i]) (pos, nDeleted, mPredeleteCbArgs[i]);
 } void Fl_Text_Buffer::redisplay_selection(Fl_Text_Selection *
 					   oldSelection,
 					   Fl_Text_Selection *
-					   newSelection) const const const
+					   newSelection) const
 {
   int oldStart, oldEnd, newStart, newEnd, ch1Start, ch1End, ch2Start,
       ch2End;
@@ -2066,7 +2065,7 @@ void Fl_Text_Selection::update(int pos, int nDeleted, int nInserted)
 }
 
 int Fl_Text_Buffer::findchar_forward(int startPos, char searchChar,
-				     int *foundPos) const const const {
+				     int *foundPos) const {
   if (startPos < 0 || startPos >= mLength)
 {
 *foundPos = mLength;
@@ -2093,7 +2092,7 @@ return 0;
 }
 
 int Fl_Text_Buffer::findchar_backward(int startPos, char searchChar,
-				      int *foundPos) const const const {
+				      int *foundPos) const {
 
   if (startPos <= 0 || startPos > mLength)
 {
@@ -2176,7 +2175,7 @@ void Fl_Text_Buffer::rectangular_selection_boundaries(int lineStartPos,
 						      int rectEnd,
 						      int *selStart,
 						      int *selEnd) const
-    const const {
+{
   int pos, width, indent = 0;
   char c;
 

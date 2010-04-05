@@ -64,6 +64,7 @@
 /** 
  \class Fl_Text_Selection
  \brief This is an internal class for Fl_Text_Buffer to manage text selections.
+ \todo unicode check
  */
 class FL_EXPORT Fl_Text_Selection {
   friend class Fl_Text_Buffer;
@@ -74,6 +75,7 @@ public:
    \brief Set the selection range.
    \param start byte offset to first selected character
    \param end byte offset pointing after last selected character
+   \todo unicode check
    */
   void set(int start, int end);
   
@@ -83,6 +85,7 @@ public:
    \param end byte offset pointing after last selected character
    \param rectStart first selected column
    \param rectEnd last selected column +1
+   \todo unicode check
    */
   void set_rectangular(int start, int end, int rectStart, int rectEnd);
   
@@ -92,31 +95,37 @@ public:
    \param pos byte offset into text buffer at which the change occured
    \param nDeleted number of bytes deleted from the buffer
    \param nInserted number of bytes inserted into the buffer
+   \todo unicode check
    */
   void update(int pos, int nDeleted, int nInserted);
   
   /**
    \brief Returns true if the selection is rectangular.
+   \todo unicode check
    */
   char rectangular() const { return mRectangular; }
   
   /**
    \brief Return the byte offset to the first selected character.
+   \todo unicode check
    */
   int start() const { return mStart; }
   
   /**
    \brief Return the byte ofsset to the character after the last selected character.
+   \todo unicode check
    */
   int end() const { return mEnd; }
   
   /**
    \brief Return the first column of the rectangular selection.
+   \todo unicode check
    */
   int rect_start() const { return mRectStart; }
   
   /**
    \brief Return the last column of the rectangular selection + 1.
+   \todo unicode check
    */
   int rect_end() const { return mRectEnd; }
   
@@ -124,17 +133,20 @@ public:
    \brief Returns true if any text is selected.
    Returns a non-zero number if any text has been selected, or 0
    if no text is selected.
+   \todo unicode check
    */
   char selected() const { return mSelected; }
   
   /**
    \brief Modify the 'selected' flag.
+   \todo unicode check
    */
   void selected(char b) { mSelected = b; }
   
   /**
    Return true if position \p pos with indentation \p dispIndex is in
    the Fl_Text_Selection.
+   \todo unicode check
    */
   int includes(int pos, int lineStartPos, int dispIndex) const;
   
@@ -142,6 +154,7 @@ public:
    \brief Return the positions of this selection.
    \param start retrun byte offset to first selected character
    \param end retrun byte offset pointing after last selected character
+   \todo unicode check
    */
   int position(int* start, int* end) const;
   
@@ -152,6 +165,7 @@ public:
    \param isRect return if the selection is rectangular
    \param rectStart return first selected column
    \param rectEnd return last selected column +1
+   \todo unicode check
    */
   int position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd) const;
   
@@ -178,39 +192,44 @@ typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
  The Fl_Text_Buffer class is used by the Fl_Text_Display
  and Fl_Text_Editor to manage complex text data and is based upon the
  excellent NEdit text editor engine - see http://www.nedit.org/.
+ \todo unicode check
  */
 class FL_EXPORT Fl_Text_Buffer {
 public:
 
   /**
-   Create an empty text buffer of a pre-determined size.
-   
+   Create an empty text buffer of a pre-determined size.   
    \param requestedSize use this to avoid unnecessary re-allocation 
    if you know exactly how much the buffer will need to hold
    \param preferredGapSize Initial size for the buffer gap (empty space
    in the buffer where text might be inserted
    if the user is typing sequential chars)
+   \todo unicode check
    */
   Fl_Text_Buffer(int requestedSize = 0, int preferredGapSize = 1024);
   
   /** 
    Frees a text buffer 
+   \todo unicode check
    */
   ~Fl_Text_Buffer();
   
   /**
    Returns the number of characters in the buffer.  
+   \todo unicode check
    */
   int length() const { return mLength; }
   
   /**
    Get the entire contents of a text buffer.  Memory is allocated to contain
    the returned string, which the caller must free.
+   \todo unicode check
    */  
   char* text() const;
   
   /**  
    Replaces the entire contents of the text buffer 
+   \todo unicode check
    */
   void text(const char* text);
   
@@ -219,55 +238,65 @@ public:
    from text buffer \p buf. Positions start at 0, and the range does not
    include the character pointed to by \p end.
    When you are done with the text, free it using the free() function.
+   \todo unicode check
    */  
   char* text_range(int start, int end) const;
   
   /**
    Returns the character at the specified position pos in the buffer.
    Positions start at 0 
+   \todo unicode check
    */
   char character(int pos) const;
   
   /** 
    Returns the text from the given rectangle. When you are done
    with the text, free it using the free() function.
+   \todo unicode check
    */
   char* text_in_rectangle(int start, int end, int rectStart, int rectEnd) const;
   
   /** 
    Inserts null-terminated string \p text at position \p pos. 
+   \todo unicode check
    */
   void insert(int pos, const char* text);
   
   /**
    Appends the text string to the end of the buffer.  
+   \todo unicode check
    */
   void append(const char* t) { insert(length(), t); }
   
   /**
    Deletes a range of characters in the buffer.
+   \todo unicode check
    */
   void remove(int start, int end);
   
   /**
    Deletes the characters between \p start and \p end, and inserts the null-terminated string \p text in their place in the buffer.
+   \todo unicode check
    */
   void replace(int start, int end, const char *text);
   
   /**
    Copies text from one buffer to this one; fromBuf may
    be the same as this.
+   \todo unicode check
    */
   void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);
   
   /**
    Undo text modification according to the undo variables or insert text 
    from the undo buffer
+   \todo unicode check
    */
   int undo(int *cp=0);
   
   /** 
    Lets the undo system know if we can undo changes 
+   \todo unicode check
    */
   void canUndo(char flag=1);
   
@@ -276,6 +305,7 @@ public:
    non-zero on error (strerror() contains reason).  1 indicates open 
    for read failed (no data loaded). 2 indicates error occurred 
    while reading data (data was partially loaded).
+   \todo unicode check
    */
   int insertfile(const char *file, int pos, int buflen = 128*1024);
   
@@ -284,12 +314,14 @@ public:
    success, non-zero on error (strerror() contains reason).  1 indicates 
    open for read failed (no data loaded). 2 indicates error occurred 
    while reading data (data was partially loaded).
+   \todo unicode check
    */
   int appendfile(const char *file, int buflen = 128*1024)
   { return insertfile(file, length(), buflen); }
   
   /** 
    Loads a text file into the buffer 
+   \todo unicode check
    */
   int loadfile(const char *file, int buflen = 128*1024)
   { select(0, length()); remove_selection(); return appendfile(file, buflen); }
@@ -299,11 +331,13 @@ public:
    on error (strerror() contains reason).  1 indicates open for write failed 
    (no data saved). 2 indicates error occurred while writing data 
    (data was partially saved).
+   \todo unicode check
    */
   int outputfile(const char *file, int start, int end, int buflen = 128*1024);
   
   /** 
    Saves a text file from the current buffer 
+   \todo unicode check
    */
   int savefile(const char *file, int buflen = 128*1024)
   { return outputfile(file, 0, length(), buflen); }
@@ -315,6 +349,7 @@ public:
    \p column right.  If \p charsInserted and \p charsDeleted are not NULL, the
    number of characters inserted and deleted in the operation (beginning
    at \p startPos) are returned in these arguments.
+   \todo unicode check
    */
   void insert_column(int column, int startPos, const char* text,
                      int* charsInserted, int* charsDeleted);
@@ -323,6 +358,7 @@ public:
    Replaces a rectangular area in the buffer, given by \p start, \p end,
    \p rectStart, and \p rectEnd, with \p text.  If \p text is vertically
    longer than the rectangle, add extra lines to make room for it.
+   \todo unicode check
    */
   void replace_rectangular(int start, int end, int rectStart, int rectEnd,
                            const char* text);
@@ -332,6 +368,7 @@ public:
    \p rectEnd on the line beginning at \p startPos.  If \p charsInserted and
    \p charsDeleted are not NULL, the number of characters inserted and deleted
    in the operation (beginning at \p startPos) are returned in these arguments.
+   \todo unicode check
    */
   void overlay_rectangular(int startPos, int rectStart, int rectEnd,
                            const char* text, int* charsInserted,
@@ -340,6 +377,7 @@ public:
   /**
    Removes a rectangular swath of characters between character positions start
    and end and horizontal displayed-character offsets rectStart and rectEnd.
+   \todo unicode check
    */
   void remove_rectangular(int start, int end, int rectStart, int rectEnd);
   
@@ -348,47 +386,56 @@ public:
    It clears a rectangular "hole" out of the buffer between character positions
    start and end and horizontal displayed-character offsets rectStart and
    rectEnd.
+   \todo unicode check
    */
   void clear_rectangular(int start, int end, int rectStart, int rectEnd);
   
   /** 
    Gets the tab width.  
+   \todo unicode check
    */
   int tab_distance() const { return mTabDist; }
   
   /**
    Set the hardware tab distance (width) used by all displays for this buffer,
    and used in computing offsets for rectangular selection operations.
+   \todo unicode check
    */
   void tab_distance(int tabDist);
   
   /**  
    Selects a range of characters in the buffer.
+   \todo unicode check
    */
   void select(int start, int end);
   
   /** 
    Returns a non 0 value if text has been selected, 0 otherwise 
+   \todo unicode check
    */
   int selected() const { return mPrimary.selected(); }
   
   /** 
    Cancels any previous selection on the primary text selection object 
+   \todo unicode check
    */
   void unselect();
   
   /** 
    Achieves a rectangular selection on the primary text selection object 
+   \todo unicode check
    */
   void select_rectangular(int start, int end, int rectStart, int rectEnd);
   
   /** 
    Gets the selection position 
+   \todo unicode check
    */
   int selection_position(int* start, int* end);
   
   /** 
    Gets the selection position, and rectangular selection info 
+   \todo unicode check
    */
   int selection_position(int* start, int* end, int* isRect, int* rectStart,
                          int* rectEnd);
@@ -396,48 +443,57 @@ public:
   /**
    Returns the currently selected text. When you are done with
    the text, free it using the free() function.
+   \todo unicode check
    */
   char* selection_text();
 
   /**  
    Removes the text in the primary selection.
+   \todo unicode check
    */
   void remove_selection();
   
   /**
    Replaces the text in the primary selection.
+   \todo unicode check
    */
   void replace_selection(const char* text);
   
   /**
    Selects a range of characters in the secondary selection.
+   \todo unicode check
    */
   void secondary_select(int start, int end);
   
   /** 
    Returns a non 0 value if text has been selected in the secondary
    text selection, 0 otherwise 
+   \todo unicode check
    */
   int secondary_selected() { return mSecondary.selected(); }
   
   /** 
    Clears any selection in the secondary text selection object. 
+   \todo unicode check
    */
   void secondary_unselect();
   
   /** 
    Achieves a rectangular selection on the secondary text selection object 
+   \todo unicode check
    */
   void secondary_select_rectangular(int start, int end, int rectStart,
                                     int rectEnd);
   
   /**  
    Returns the current selection in the secondary text selection object.
+   \todo unicode check
    */
   int secondary_selection_position(int* start, int* end);
   
   /** 
    Returns the current selection in the secondary text selection object.
+   \todo unicode check
    */
   int secondary_selection_position(int* start, int* end, int* isRect,
                                    int* rectStart, int* rectEnd);
@@ -445,48 +501,57 @@ public:
   /**
    Returns the text in the secondary selection. When you are
    done with the text, free it using the free() function.
+   \todo unicode check
    */
   char* secondary_selection_text();
   
   /**  
    Removes the text from the buffer corresponding to the secondary text selection object.
+   \todo unicode check
    */
   void remove_secondary_selection();
   
   /**  
    Replaces the text from the buffer corresponding to the secondary 
    text selection object with the new string \p text.
+   \todo unicode check
    */
   void replace_secondary_selection(const char* text);
   
   /**  
    Highlights the specified text within the buffer.
+   \todo unicode check
    */
   void highlight(int start, int end);
   
   /**
    Returns the highlighted text. When you are done with the
    text, free it using the free() function.
+   \todo unicode check
    */
   int highlight() { return mHighlight.selected(); }
   
   /**
    Unhighlights text in the buffer.
+   \todo unicode check
    */
   void unhighlight();
 
   /** 
    Highlights a rectangular selection in the buffer 
+   \todo unicode check
    */
   void highlight_rectangular(int start, int end, int rectStart, int rectEnd);
   
   /** 
    Highlights the specified text between \p start and \p end within the buffer.
+   \todo unicode check
    */
   int highlight_position(int* start, int* end);
   
   /** 
    Highlights the specified rectangle of text within the buffer.
+   \todo unicode check
    */
   int highlight_position(int* start, int* end, int* isRect, int* rectStart,
                          int* rectEnd);
@@ -494,6 +559,7 @@ public:
   /**
    Returns the highlighted text. When you are done with the
    text, free it using the free() function.
+   \todo unicode check
    */
   char* highlight_text();
   
@@ -506,11 +572,13 @@ public:
       int nRestyled, const char* deletedText,
       void* cbArg);
    \endcode
+   \todo unicode check
    */
   void add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
   
   /**
    Removes a modify callback.
+   \todo unicode check
    */
   void remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
   
@@ -518,23 +586,27 @@ public:
    Calls all modify callbacks that have been registered using
    the add_modify_callback()
    method.
+   \todo unicode check
    */
   void call_modify_callbacks() { call_modify_callbacks(0, 0, 0, 0, 0); }
   
   /** 
    Adds a callback routine to be called before text is deleted from the buffer. 
+   \todo unicode check
    */
   void add_predelete_callback(Fl_Text_Predelete_Cb bufPredelCB, void* cbArg);
 
   /** 
    Removes a callback routine \p bufPreDeleteCB associated with argument \p cbArg 
    to be called before text is deleted from the buffer. 
+   \todo unicode check
    */
   void remove_predelete_callback(Fl_Text_Predelete_Cb predelCB, void* cbArg);
   
   /**
    Calls the stored pre-delete callback procedure(s) for this buffer to update 
    the changed area(s) on the screen and any other listeners.
+   \todo unicode check
    */
   void call_predelete_callbacks() { call_predelete_callbacks(0, 0); }
   
@@ -542,11 +614,13 @@ public:
    Returns the text from the entire line containing the specified
    character position. When you are done with the text, free it
    using the free() function.
+   \todo unicode check
    */
   char* line_text(int pos) const;
   
   /** 
    Returns the position of the start of the line containing position \p pos. 
+   \todo unicode check
    */
   int line_start(int pos) const;
   
@@ -554,16 +628,19 @@ public:
    Finds and returns the position of the end of the line containing position \p pos
    (which is either a pointer to the newline character ending the line,
    or a pointer to one character beyond the end of the buffer)
+   \todo unicode check
    */
   int line_end(int pos) const;
 
   /** 
    Returns the position corresponding to the start of the word 
+   \todo unicode check
    */
   int word_start(int pos) const;
 
   /**  
    Returns the position corresponding to the end of the word.
+   \todo unicode check
    */
   int word_end(int pos) const;
   
@@ -576,6 +653,7 @@ public:
    \p indent is the number of characters from the start of the line
    for figuring tabs.  Output string is guranteed to be shorter or
    equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
+   \todo unicode check
    */
   int expand_character(int pos, int indent, char *outStr) const;
   
@@ -588,6 +666,7 @@ public:
    to be shorter or  equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
    Tabs and  other control characters are given special treatment.
    \p nulSubsChar represent the null character to be transformed in \<nul\>
+   \todo unicode check
    */
   static int expand_character(char c, int indent, char* outStr, int tabDist,
                               char nullSubsChar);
@@ -598,6 +677,7 @@ public:
    buffer for which the character width is being measured is doing null
    substitution, nullSubsChar should be passed as that character (or nul
    to ignore).
+   \todo unicode check
    */
   static int character_width(char c, int indent, int tabDist, char nullSubsChar);
 
@@ -606,6 +686,7 @@ public:
    \p lineStartPos and \p targetPos. (displayed characters are the characters
    shown on the screen to represent characters in the buffer, where tabs and
    control characters are expanded)
+   \todo unicode check
    */
   int count_displayed_characters(int lineStartPos, int targetPos) const;
 
@@ -613,18 +694,21 @@ public:
    Count forward from buffer position \p startPos in displayed characters
    (displayed characters are the characters shown on the screen to represent
    characters in the buffer, where tabs and control characters are expanded)
+   \todo unicode check
    */
   int skip_displayed_characters(int lineStartPos, int nChars);
   
   /**
    Counts the number of newlines between \p startPos and \p endPos in buffer.
    The character at position \p endPos is not counted.
+   \todo unicode check
    */
   int count_lines(int startPos, int endPos) const;
 
   /**
    Finds the first character of the line \p nLines forward from \p startPos
    in the buffer and returns its position
+   \todo unicode check
    */
   int skip_lines(int startPos, int nLines);
   
@@ -632,6 +716,7 @@ public:
    Finds and returns the position of the first character of the line \p nLines backwards
    from \p startPos (not counting the character pointed to by \p startpos if
    that is a newline) in the buffer.  \p nLines == 0 means find the beginning of the line
+   \todo unicode check
    */
   int rewind_lines(int startPos, int nLines);
 
@@ -643,6 +728,7 @@ public:
    BufSearchForward is that it's optimized for single characters.  The
    overall performance of the text widget is dependent on its ability to
    count lines quickly, hence searching for a single character: newline)
+   \todo unicode check
    */
   int findchar_forward(int startPos, char searchChar, int* foundPos) const;
   
@@ -653,6 +739,7 @@ public:
    BufSearchBackward is that it's optimized for single characters.  The
    overall performance of the text widget is dependent on its ability to
    count lines quickly, hence searching for a single character: newline)
+   \todo unicode check
    */
   int findchar_backward(int startPos, char searchChar, int* foundPos) const;
   
@@ -661,6 +748,7 @@ public:
    Search forwards in buffer for characters in \p searchChars, starting
    with the character \p startPos, and returning the result in \p foundPos
    returns 1 if found, 0 if not.
+   \todo unicode check
    */
   int findchars_forward(int startPos, const char* searchChars, int* foundPos) const;
   
@@ -669,6 +757,7 @@ public:
    Search backwards in buffer for characters in \p searchChars, starting
    with the character BEFORE \p startPos, returning the result in \p foundPos
    returns 1 if found, 0 if not.
+   \todo unicode check
    */
   int findchars_backward(int startPos, const char* searchChars, int* foundPos) const;
   
@@ -676,6 +765,7 @@ public:
    Search forwards in buffer for string \p searchString, starting with the
    character \p startPos, and returning the result in \p foundPos
    returns 1 if found, 0 if not.
+   \todo unicode check
    */
   int search_forward(int startPos, const char* searchString, int* foundPos,
                      int matchCase = 0) const;
@@ -684,6 +774,7 @@ public:
    Search backwards in buffer for string <i>searchCharssearchString</i>, starting with the
    character BEFORE \p startPos, returning the result in \p foundPos
    returns 1 if found, 0 if not.
+   \todo unicode check
    */
   int search_backward(int startPos, const char* searchString, int* foundPos,
                       int matchCase = 0) const;
@@ -696,6 +787,7 @@ public:
    event that the string contains the character it is currently using for
    substitution.  Returns 0, if substitution is no longer possible
    because all non-printable characters are already in use.
+   \todo unicode check
    */
   int substitute_null_characters(char* string, int length);
   
@@ -704,31 +796,37 @@ public:
    have been substituted for by a special substitution character, back to
    a null-containing string.  There is no time penalty for calling this
    routine if no substitution has been done.
+   \todo unicode check
    */
   void unsubstitute_null_characters(char* string);
 
   /**    
    Returns the current nul substitution character.  
+   \todo unicode check
    */
   char null_substitution_character() const { return mNullSubsChar; }
   
   /** 
    Returns the primary selection.  
+   \todo unicode check
    */
   const Fl_Text_Selection* primary_selection() const { return &mPrimary; }
   
   /**
    Returns the primary selection. 
+   \todo unicode check
    */
   Fl_Text_Selection* primary_selection() { return &mPrimary; }
   
   /**
    Returns the secondary selection.
+   \todo unicode check
    */
   const Fl_Text_Selection* secondary_selection() const { return &mSecondary; }
   
   /**
    Returns the current highlight selection.
+   \todo unicode check
    */
   const Fl_Text_Selection* highlight_selection() const { return &mHighlight; }
   
@@ -737,6 +835,7 @@ protected:
   /**
    Calls the stored modify callback procedure(s) for this buffer to update the
    changed area(s) on the screen and any other listeners.
+   \todo unicode check
    */
   void call_modify_callbacks(int pos, int nDeleted, int nInserted,
                              int nRestyled, const char* deletedText) const;
@@ -744,6 +843,7 @@ protected:
   /**
    Calls the stored pre-delete callback procedure(s) for this buffer to update 
    the changed area(s) on the screen and any other listeners.
+   \todo unicode check
    */
   void call_predelete_callbacks(int pos, int nDeleted) const;
   
@@ -753,6 +853,7 @@ protected:
    expensive and the length will be required by any caller who will continue
    on to call redisplay). \p pos must be contiguous with the existing text in
    the buffer (i.e. not past the end).
+   \todo unicode check
    */
   int insert_(int pos, const char* text);
   
@@ -760,6 +861,7 @@ protected:
    Internal (non-redisplaying) version of BufRemove.  Removes the contents
    of the buffer between start and end (and moves the gap to the site of
    the delete).
+   \todo unicode check
    */
   void remove_(int start, int end);
   
@@ -770,6 +872,7 @@ protected:
    the buffer because of tab expansions. \p endPos returns the buffer position
    of the point in the last line where the text was removed (as a hint for
    routines which need to position the cursor after a delete operation)
+   \todo unicode check
    */
   void remove_rectangular_(int start, int end, int rectStart, int rectEnd,
                            int* replaceLen, int* endPos);
@@ -782,6 +885,7 @@ protected:
    at the start of the line containing \p startPos.  \p endPos returns buffer
    position of the lower left edge of the inserted column (as a hint for
    routines which need to set a cursor position).
+   \todo unicode check
    */
   void insert_column_(int column, int startPos, const char* insText,
                       int* nDeleted, int* nInserted, int* endPos);
@@ -792,6 +896,7 @@ protected:
    inserted beginning at the start of the line containing \p startPos.
    \p endPos returns buffer position of the lower left edge of the inserted
    column (as a hint for routines which need to set a cursor position).
+   \todo unicode check
    */
   void overlay_rectangular_(int startPos, int rectStart, int rectEnd,
                             const char* insText, int* nDeleted,
@@ -800,15 +905,20 @@ protected:
   /**
    Calls the stored redisplay procedure(s) for this buffer to update the
    screen for a change in a selection.
+   \todo unicode check
    */
   void redisplay_selection(Fl_Text_Selection* oldSelection,
                            Fl_Text_Selection* newSelection) const;
   
+  /**
+   \todo unicode check
+   */
   void move_gap(int pos);
   
   /**
    Reallocates the text storage in the buffer to have a gap starting at \p newGapStart
    and a gap size of \p newGapLen, preserving the buffer's current contents.
+   \todo unicode check
    */
   void reallocate_with_gap(int newGapStart, int newGapLen);
   
@@ -816,11 +926,13 @@ protected:
   
   /**  
    Removes the text from the buffer corresponding to \p sel.
+   \todo unicode check
    */
   void remove_selection_(Fl_Text_Selection* sel);
   
   /** 
    Replaces the \p text in selection \p sel.
+   \todo unicode check
    */
   void replace_selection_(Fl_Text_Selection* sel, const char* text);
   
@@ -837,6 +949,7 @@ protected:
    shifted characters, so if a tab protrudes, just lop it off and hope
    that there are other characters in the selection to establish the right
    margin for subsequent columnar pastes of this data.
+   \todo unicode check
    */
   void rectangular_selection_boundaries(int lineStartPos, int rectStart,
                                         int rectEnd, int* selStart,
@@ -844,43 +957,44 @@ protected:
   
   /**
    Updates all of the selections in the buffer for changes in the buffer's text
+   \todo unicode check
    */
   void update_selections(int pos, int nDeleted, int nInserted);
   
-  Fl_Text_Selection mPrimary;   /**< highlighted areas */
-  Fl_Text_Selection mSecondary; /**< highlighted areas */
-  Fl_Text_Selection mHighlight; /**< highlighted areas */
-  int mLength;                /**< length of the text in the buffer (the length
-                               of the buffer itself must be calculated:
-                               gapEnd - gapStart + length) */
-  char* mBuf;                 /**< allocated memory where the text is stored */
-  int mGapStart;              /**< points to the first character of the gap */
-  int mGapEnd;                /**< points to the first char after the gap */
+  Fl_Text_Selection mPrimary;     /**< highlighted areas */
+  Fl_Text_Selection mSecondary;   /**< highlighted areas */
+  Fl_Text_Selection mHighlight;   /**< highlighted areas */
+  int mLength;                    /**< length of the text in the buffer (the length
+                                   of the buffer itself must be calculated:
+                                   gapEnd - gapStart + length) */
+  char* mBuf;                     /**< allocated memory where the text is stored */
+  int mGapStart;                  /**< points to the first character of the gap */
+  int mGapEnd;                    /**< points to the first char after the gap */
   // The hardware tab distance used by all displays for this buffer,
   // and used in computing offsets for rectangular selection operations.
-  int mTabDist;               /**< equiv. number of characters in a tab */
-  int mUseTabs;               /**< True if buffer routines are allowed to use
-                               tabs for padding in rectangular operations */
-  int mNModifyProcs;          /**< number of modify-redisplay procs attached */
-  Fl_Text_Modify_Cb*          /**< procedures to call when buffer is */
-  mModifyProcs;               /**< modified to redisplay contents */
-  void** mCbArgs;             /**< caller arguments for modifyProcs above */
-  int mNPredeleteProcs;	/**< number of pre-delete procs attached */
-  Fl_Text_Predelete_Cb*	/**< procedure to call before text is deleted */
-  mPredeleteProcs;	/**< from the buffer; at most one is supported. */
-  void **mPredeleteCbArgs;	/**< caller argument for pre-delete proc above */
-  int mCursorPosHint;         /**< hint for reasonable cursor position after
-                               a buffer modification operation */
-  char mNullSubsChar;         /**< NEdit is based on C null-terminated strings,
-                               so ascii-nul characters must be substituted
-                               with something else.  This is the else, but
-                               of course, things get quite messy when you
-                               use it */
-  char mCanUndo;		/**< if this buffer is used for attributes, it must
-                                 not do any undo calls */
-  int mPreferredGapSize;	/**< the default allocation for the text gap is 1024
-                                 bytes and should only be increased if frequent
-                                 and large changes in buffer size are expected */
+  int mTabDist;                   /**< equiv. number of characters in a tab */
+  int mUseTabs;                   /**< True if buffer routines are allowed to use
+                                   tabs for padding in rectangular operations */
+  int mNModifyProcs;              /**< number of modify-redisplay procs attached */
+  Fl_Text_Modify_Cb*              /**< procedures to call when buffer is */
+  mModifyProcs;                   /**< modified to redisplay contents */
+  void** mCbArgs;                 /**< caller arguments for modifyProcs above */
+  int mNPredeleteProcs;           /**< number of pre-delete procs attached */
+  Fl_Text_Predelete_Cb*           /**< procedure to call before text is deleted */
+  mPredeleteProcs;                /**< from the buffer; at most one is supported. */
+  void **mPredeleteCbArgs;        /**< caller argument for pre-delete proc above */
+  int mCursorPosHint;             /**< hint for reasonable cursor position after
+                                   a buffer modification operation */
+  char mNullSubsChar;             /**< NEdit is based on C null-terminated strings,
+                                   so ascii-nul characters must be substituted
+                                   with something else.  This is the else, but
+                                   of course, things get quite messy when you
+                                   use it */
+  char mCanUndo;                  /**< if this buffer is used for attributes, it must
+                                   not do any undo calls */
+  int mPreferredGapSize;          /**< the default allocation for the text gap is 1024
+                                   bytes and should only be increased if frequent
+                                   and large changes in buffer size are expected */
 };
 
 #endif
