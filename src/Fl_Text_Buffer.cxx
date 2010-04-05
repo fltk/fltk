@@ -1778,6 +1778,7 @@ int Fl_Text_Selection::position(int *startpos, int *endpos,
 }
 
 
+// unicode safe
 int Fl_Text_Selection::includes(int pos, int lineStartPos, int dispIndex) const {
   return (selected() 
           && ( (!rectangular() && pos >= start() && pos < end()) 
@@ -1999,6 +2000,8 @@ void Fl_Text_Buffer::update_selections(int pos, int nDeleted,
   mHighlight.update(pos, nDeleted, nInserted);
 }
 
+
+// unicode safe, assuming the arguments are on character boundaries
 void Fl_Text_Selection::update(int pos, int nDeleted, int nInserted)
 {
   if (!mSelected || pos > mEnd)

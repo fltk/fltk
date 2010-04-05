@@ -64,7 +64,8 @@
 /** 
  \class Fl_Text_Selection
  \brief This is an internal class for Fl_Text_Buffer to manage text selections.
- \todo unicode check
+ This class works correctly with utf-8 strings assuming that the parameters
+ for all calls are on character boundaries.
  */
 class FL_EXPORT Fl_Text_Selection {
   friend class Fl_Text_Buffer;
@@ -93,58 +94,55 @@ public:
    \param pos byte offset into text buffer at which the change occured
    \param nDeleted number of bytes deleted from the buffer
    \param nInserted number of bytes inserted into the buffer
-   \todo unicode check
    */
   void update(int pos, int nDeleted, int nInserted);
   
   /**
    \brief Returns true if the selection is rectangular.
-   \todo unicode check
+   \return flag
    */
   char rectangular() const { return mRectangular; }
   
   /**
    \brief Return the byte offset to the first selected character.
-   \todo unicode check
+   \return byte offset
    */
   int start() const { return mStart; }
   
   /**
    \brief Return the byte ofsset to the character after the last selected character.
-   \todo unicode check
+   \return byte offset
    */
   int end() const { return mEnd; }
   
   /**
    \brief Return the first column of the rectangular selection.
-   \todo unicode check
+   \return first column of rectangular selection
    */
   int rect_start() const { return mRectStart; }
   
   /**
    \brief Return the last column of the rectangular selection + 1.
-   \todo unicode check
+   \return last column of rectangular selection +1
    */
   int rect_end() const { return mRectEnd; }
   
   /**
    \brief Returns true if any text is selected.
-   Returns a non-zero number if any text has been selected, or 0
+   \return a non-zero number if any text has been selected, or 0
    if no text is selected.
-   \todo unicode check
    */
   char selected() const { return mSelected; }
   
   /**
    \brief Modify the 'selected' flag.
-   \todo unicode check
+   \param b new flag
    */
   void selected(char b) { mSelected = b; }
   
   /**
    Return true if position \p pos with indentation \p dispIndex is in
    the Fl_Text_Selection.
-   \todo unicode check
    */
   int includes(int pos, int lineStartPos, int dispIndex) const;
   
@@ -152,6 +150,7 @@ public:
    \brief Return the positions of this selection.
    \param start retrun byte offset to first selected character
    \param end retrun byte offset pointing after last selected character
+   \return true if selected
    */
   int position(int* start, int* end) const;
   
@@ -162,6 +161,7 @@ public:
    \param isRect return if the selection is rectangular
    \param rectStart return first selected column
    \param rectEnd return last selected column +1
+   \return true if selected
    */
   int position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd) const;
   
