@@ -629,7 +629,7 @@ void Fl_Text_Display::overstrike(const char* text) {
   startIndent = mBuffer->count_displayed_characters( lineStart, startPos );
   indent = startIndent;
   for ( c = text; *c != '\0'; c++ )
-    indent += Fl_Text_Buffer::character_width( *c, indent, buf->tab_distance(), buf->null_substitution_character() );
+    indent += Fl_Text_Buffer::character_width( *c, indent, buf->tab_distance() );
   endIndent = indent;
 
   /* find which characters to remove, and if necessary generate additional
@@ -641,7 +641,7 @@ void Fl_Text_Display::overstrike(const char* text) {
     ch = buf->character( p );
     if ( ch == '\n' )
       break;
-    indent += Fl_Text_Buffer::character_width( ch, indent, buf->tab_distance(), buf->null_substitution_character() );
+    indent += Fl_Text_Buffer::character_width( ch, indent, buf->tab_distance() );
     if ( indent == endIndent ) {
       p++;
       break;
@@ -724,7 +724,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
   outIndex = 0;
   for ( charIndex = 0; charIndex < lineLen && charIndex < pos - lineStartPos; charIndex++ ) {
     charLen = Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
-              mBuffer->tab_distance(), mBuffer->null_substitution_character() );
+              mBuffer->tab_distance());
     if (charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
       i = fl_utf8len(lineStr[ charIndex ]);
@@ -1478,7 +1478,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   for ( charIndex = 0; ; charIndex++ ) {
     charLen = charIndex >= lineLen ? 1 :
               Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex,
-                                                expandedChar, buf->tab_distance(), buf->null_substitution_character() );
+                                                expandedChar, buf->tab_distance());
     if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
       i = fl_utf8len(lineStr[ charIndex ]);
@@ -1516,7 +1516,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   for ( charIndex = startIndex; charIndex < rightCharIndex; charIndex++ ) {
     charLen = charIndex >= lineLen ? 1 :
               Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
-                                                buf->tab_distance(), buf->null_substitution_character() );
+                                                buf->tab_distance());
     if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
       i = fl_utf8len(lineStr[ charIndex ]);
@@ -1563,7 +1563,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   for ( charIndex = startIndex; charIndex < rightCharIndex; charIndex++ ) {
     charLen = charIndex >= lineLen ? 1 :
               Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
-                                                buf->tab_distance(), buf->null_substitution_character() );
+                                                buf->tab_distance());
     if (charIndex < lineLen && charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
       i = fl_utf8len(lineStr[ charIndex ]);
@@ -1923,7 +1923,7 @@ int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) const {
   outIndex = 0;
   for ( charIndex = 0; charIndex < lineLen; charIndex++ ) {
     charLen = Fl_Text_Buffer::expand_character( lineStr[ charIndex ], outIndex, expandedChar,
-              mBuffer->tab_distance(), mBuffer->null_substitution_character() );
+              mBuffer->tab_distance());
     if (charLen > 1 && (lineStr[ charIndex ] & 0x80)) {
       int i, ii = 0;;
       i = fl_utf8len(lineStr[ charIndex ]);
@@ -2676,7 +2676,6 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
 	 bool countPixels;
     int nLines = 0, tabDist = buffer()->tab_distance();
     unsigned char c;
-    char nullSubsChar = buffer()->null_substitution_character();
     
     /* If the font is fixed, or there's a wrap margin set, it's more efficient
        to measure in columns, than to count pixels.  Determine if we can count
@@ -2731,7 +2730,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
     	    colNum = 0;
     	    width = 0;
     	} else {
-    	    colNum += Fl_Text_Buffer::character_width(c, colNum, tabDist, nullSubsChar);
+    	    colNum += Fl_Text_Buffer::character_width(c, colNum, tabDist);
     	    if (countPixels)
     	    	width += measure_proportional_character(c, colNum, p+styleBufOffset);
     	}
@@ -2761,7 +2760,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
     	    }
     	    if (!foundBreak) { /* no whitespace, just break at margin */
     	    	newLineStart = max(p, lineStart+1);
-    	    	colNum = Fl_Text_Buffer::character_width(c, colNum, tabDist, nullSubsChar);
+    	    	colNum = Fl_Text_Buffer::character_width(c, colNum, tabDist);
     	    	if (countPixels)
    	    	    width = measure_proportional_character(c, colNum, p+styleBufOffset);
     	    }
@@ -2813,8 +2812,7 @@ int Fl_Text_Display::measure_proportional_character(char c, int colNum, int pos)
     char expChar[ FL_TEXT_MAX_EXP_CHAR_LEN ];
     Fl_Text_Buffer *styleBuf = mStyleBuffer;
     
-    charLen = Fl_Text_Buffer::expand_character(c, colNum, expChar, 
-	    buffer()->tab_distance(), buffer()->null_substitution_character());
+    charLen = Fl_Text_Buffer::expand_character(c, colNum, expChar, buffer()->tab_distance());
     if (styleBuf == 0) {
 	style = 0;
     } else {

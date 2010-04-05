@@ -668,8 +668,7 @@ public:
    \p nulSubsChar represent the null character to be transformed in \<nul\>
    \todo unicode check
    */
-  static int expand_character(char c, int indent, char* outStr, int tabDist,
-                              char nullSubsChar);
+  static int expand_character(char c, int indent, char* outStr, int tabDist);
   
   /**
    Return the length in displayed characters of character \p c expanded
@@ -679,7 +678,7 @@ public:
    to ignore).
    \todo unicode check
    */
-  static int character_width(char c, int indent, int tabDist, char nullSubsChar);
+  static int character_width(char c, int indent, int tabDist);
 
   /**
    Count the number of displayed characters between buffer position
@@ -778,33 +777,6 @@ public:
    */
   int search_backward(int startPos, const char* searchString, int* foundPos,
                       int matchCase = 0) const;
-  
-  /**
-   The primary routine for integrating new text into a text buffer with
-   substitution of another character for ascii nuls.  This substitutes null
-   characters in the string in preparation for being copied or replaced
-   into the buffer, and if necessary, adjusts the buffer as well, in the
-   event that the string contains the character it is currently using for
-   substitution.  Returns 0, if substitution is no longer possible
-   because all non-printable characters are already in use.
-   \todo unicode check
-   */
-  int substitute_null_characters(char* string, int length);
-  
-  /**
-   Converts strings obtained from buffers which contain null characters, which
-   have been substituted for by a special substitution character, back to
-   a null-containing string.  There is no time penalty for calling this
-   routine if no substitution has been done.
-   \todo unicode check
-   */
-  void unsubstitute_null_characters(char* string);
-
-  /**    
-   Returns the current nul substitution character.  
-   \todo unicode check
-   */
-  char null_substitution_character() const { return mNullSubsChar; }
   
   /** 
    Returns the primary selection.  
@@ -985,11 +957,6 @@ protected:
   void **mPredeleteCbArgs;        /**< caller argument for pre-delete proc above */
   int mCursorPosHint;             /**< hint for reasonable cursor position after
                                    a buffer modification operation */
-  char mNullSubsChar;             /**< NEdit is based on C null-terminated strings,
-                                   so ascii-nul characters must be substituted
-                                   with something else.  This is the else, but
-                                   of course, things get quite messy when you
-                                   use it */
   char mCanUndo;                  /**< if this buffer is used for attributes, it must
                                    not do any undo calls */
   int mPreferredGapSize;          /**< the default allocation for the text gap is 1024
