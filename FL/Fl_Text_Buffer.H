@@ -196,17 +196,15 @@ public:
   /**
    Create an empty text buffer of a pre-determined size.   
    \param requestedSize use this to avoid unnecessary re-allocation 
-   if you know exactly how much the buffer will need to hold
+    if you know exactly how much the buffer will need to hold
    \param preferredGapSize Initial size for the buffer gap (empty space
-   in the buffer where text might be inserted
-   if the user is typing sequential chars)
-   \todo unicode check
+    in the buffer where text might be inserted
+    if the user is typing sequential chars)
    */
   Fl_Text_Buffer(int requestedSize = 0, int preferredGapSize = 1024);
   
   /** 
    Frees a text buffer 
-   \todo unicode check
    */
   ~Fl_Text_Buffer();
   
@@ -239,15 +237,16 @@ public:
    \param start byte offset to first character
    \param end byte offset after last character in range
    \return newly allocated text buffer - must be free'd
-   */  
+   */
   char* text_range(int start, int end) const;
   
   /**
    Returns the character at the specified position pos in the buffer.
    Positions start at 0 
-   \todo unicode check
+   \param pos byte offset into buffer
+   \return Unicode UCS-4 encoded character
    */
-  char character(int pos) const;
+  unsigned int character(int pos) const;
   
   /** 
    Returns the text from the given rectangle. When you are done
@@ -258,7 +257,8 @@ public:
   
   /** 
    Inserts null-terminated string \p text at position \p pos. 
-   \todo unicode check
+   \param pos insertion position as byte offset (must be utf-8 character aligned)
+   \param text utf-8 encoded and nul terminated text
    */
   void insert(int pos, const char* text);
   
@@ -270,13 +270,16 @@ public:
   
   /**
    Deletes a range of characters in the buffer.
-   \todo unicode check
+   \param start byte offset to first character to be removed
+   \param end byte offset to charcatre after last character to be removed
    */
   void remove(int start, int end);
   
   /**
    Deletes the characters between \p start and \p end, and inserts the null-terminated string \p text in their place in the buffer.
-   \todo unicode check
+   \param start byte offset to first character to be removed and new insert position
+   \param end byte offset to charcatre after last character to be removed
+   \param text utf-8 encoded and nul terminated text
    */
   void replace(int start, int end, const char *text);
   
@@ -296,7 +299,6 @@ public:
   
   /** 
    Lets the undo system know if we can undo changes 
-   \todo unicode check
    */
   void canUndo(char flag=1);
   

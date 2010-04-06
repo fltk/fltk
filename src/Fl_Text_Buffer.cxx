@@ -161,6 +161,8 @@ static void undobuffersize(int n)
   }
 }
 
+
+// unicode ok
 Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
 {
   mLength = 0;
@@ -196,6 +198,8 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
 #endif
 }
 
+
+// unicode ok
 Fl_Text_Buffer::~Fl_Text_Buffer()
 {
   free(mBuf);
@@ -221,6 +225,8 @@ char *Fl_Text_Buffer::text() const {
   return t;
 } 
 
+
+// unicode ok, functions called have not been verified yet
 void Fl_Text_Buffer::text(const char *t)
 {
   call_predelete_callbacks(0, length());
@@ -230,14 +236,13 @@ void Fl_Text_Buffer::text(const char *t)
   int deletedLength = mLength;
   free((void *) mBuf);
   
-  /* Start a new buffer with a gap of mPreferredGapSize in the center */
+  /* Start a new buffer with a gap of mPreferredGapSize at the end */
   int insertedLength = strlen(t);
   mBuf = (char *) malloc(insertedLength + mPreferredGapSize);
   mLength = insertedLength;
-  mGapStart = insertedLength / 2;
+  mGapStart = insertedLength;
   mGapEnd = mGapStart + mPreferredGapSize;
-  memcpy(mBuf, t, mGapStart);
-  memcpy(&mBuf[mGapEnd], &t[mGapStart], insertedLength - mGapStart);
+  memcpy(mBuf, t, insertedLength);
 #ifdef PURIFY
   {
     int i;
@@ -293,17 +298,17 @@ char *Fl_Text_Buffer::text_range(int start, int end) const {
 }
 
 
-// FIXME: a character must be UCS-4 encoded
-char Fl_Text_Buffer::character(int pos) const {
+// TODO: we will need the same signature function to get bytes (style buffer)
+// unicode ok
+unsigned int Fl_Text_Buffer::character(int pos) const {
   if (pos < 0 || pos >= mLength)
     return '\0';
-  if (pos < mGapStart)
-    return mBuf[pos];
-  else
-    return mBuf[pos + mGapEnd - mGapStart];
+  const char *src = address(pos);
+  return fl_utf8decode(src, 0, 0);
 } 
 
 
+// unicode ok, dependents not tested
 void Fl_Text_Buffer::insert(int pos, const char *text)
 {
   /* if pos is not contiguous to existing text, make it */
@@ -321,6 +326,8 @@ void Fl_Text_Buffer::insert(int pos, const char *text)
   call_modify_callbacks(pos, 0, nInserted, 0, NULL);
 }
 
+
+// unicode ok, dependents not tested
 void Fl_Text_Buffer::replace(int start, int end, const char *text)
 {
   // Range check...
@@ -334,13 +341,14 @@ void Fl_Text_Buffer::replace(int start, int end, const char *text)
   call_predelete_callbacks(start, end - start);
   const char *deletedText = text_range(start, end);
   remove_(start, end);
-  //undoyankcut = undocut;
   int nInserted = insert_(start, text);
   mCursorPosHint = start + nInserted;
   call_modify_callbacks(start, end - start, nInserted, 0, deletedText);
   free((void *) deletedText);
 }
 
+
+// unicode ok, dependents not tested
 void Fl_Text_Buffer::remove(int start, int end)
 {
   /* Make sure the arguments make sense */
@@ -441,6 +449,8 @@ int Fl_Text_Buffer::undo(int *cursorPos)
   return 1;
 }
 
+
+// unicode ok
 void Fl_Text_Buffer::canUndo(char flag)
 {
   mCanUndo = flag;
@@ -918,26 +928,34 @@ remove_predelete_callback(Fl_Text_Predelete_Cb bufPreDeleteCB, void *cbArg)
 
 char *Fl_Text_Buffer::line_text(int pos) const {
   return text_range(line_start(pos), line_end(pos));
-} int Fl_Text_Buffer::line_start(int pos) const {
+} 
+
+int Fl_Text_Buffer::line_start(int pos) const {
   if (!findchar_backward(pos, '\n', &pos))
     return 0;
   return pos + 1;
-} int Fl_Text_Buffer::line_end(int pos) const {
+} 
+
+int Fl_Text_Buffer::line_end(int pos) const {
   if (!findchar_forward(pos, '\n', &pos))
     pos = mLength;
   return pos;
-} int Fl_Text_Buffer::word_start(int pos) const {
-  while (pos && (isalnum(character(pos)) || character(pos) == '_'))
-  {
+} 
+
+int Fl_Text_Buffer::word_start(int pos) const {
+  // FIXME: character is ucs-4
+  while (pos && (isalnum(character(pos)) || character(pos) == '_')) {
     pos--;
-  } if (!(isalnum(character(pos)) || character(pos) == '_'))
+  } 
+  // FIXME: character is ucs-4
+  if (!(isalnum(character(pos)) || character(pos) == '_'))
     pos++;
   return pos;
 }
 
 int Fl_Text_Buffer::word_end(int pos) const {
-  while (pos < length()
-	 && (isalnum(character(pos)) || character(pos) == '_'))
+  // FIXME: character is ucs-4
+  while (pos < length() && (isalnum(character(pos)) || character(pos) == '_'))
   {
     pos++;
   } return pos;
@@ -1121,13 +1139,13 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
 
 int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
 				   int *foundPos,
-				   int matchCase) const {
+				   int matchCase) const 
+{
   if (!searchString)
     return 0;
   int bp;
   const char *sp;
-  while (startPos < length())
-  {
+  while (startPos < length()) {
     bp = startPos;
     sp = searchString;
     do {
@@ -1135,6 +1153,7 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
         *foundPos = startPos;
         return 1;
       }
+      // FIXME: character is ucs-4
     } while ((matchCase ? character(bp++) == *sp++ :
               toupper(character(bp++)) == toupper(*sp++))
              && bp < length());
@@ -1159,6 +1178,7 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
         *foundPos = bp + 1;
         return 1;
       }
+      // FIXME: character is ucs-4
     } while ((matchCase ? character(bp--) == *sp-- :
               toupper(character(bp--)) == toupper(*sp--))
              && bp >= 0);
@@ -1331,7 +1351,7 @@ void Fl_Text_Buffer::insert_column_(int column, int startPos,
    is counted with the length of insText) */
   int start = line_start(startPos);
   int nLines = countLines(insText) + 1;
-  int insWidth = textWidth(insText, mTabDist);
+  int insWidth = textWidth(insText, mTabDist); // this function probably returns a useless value
   int end = line_end(skip_lines(start, nLines - 1));
   int expReplLen, expInsLen, len, endOffset;
   const char *replText = text_range(start, end);
@@ -2137,14 +2157,15 @@ static int textWidth(const char *text, int tabDist)
 {
   int width = 0, maxWidth = 0;
   
-  for (const char *c = text; *c != '\0'; c++) { // FIXME: increment is wrong!
+  // HUH? Why is "c" incremented? Shouldn't "text" be incrmented?
+  // FIXME: increment is wrong!
+  for (const char *c = text; *c != '\0'; c++) {
     if (*c == '\n') {
       if (width > maxWidth)
 	maxWidth = width;
       width = 0;
     } else
-      width +=
-      Fl_Text_Buffer::character_width(c, width, tabDist);
+      width += Fl_Text_Buffer::character_width(c, width, tabDist);
   }
   if (width > maxWidth)
     return width;
@@ -2163,11 +2184,12 @@ void Fl_Text_Buffer::rectangular_selection_boundaries(int lineStartPos,
   /* find the start of the selection */
   for (pos = lineStartPos; pos < mLength; pos++)
   {
+    // FIXME: character is ucs-4
     c = character(pos);
     if (c == '\n')
       break;
     width =
-    Fl_Text_Buffer::character_width(&c, indent, mTabDist); // FIXME: c si not unicode
+    Fl_Text_Buffer::character_width(&c, indent, mTabDist); // FIXME: c is not unicode
     if (indent + width > rectStart) {
       if (indent != rectStart && c != '\t') {
         pos++;
@@ -2181,6 +2203,7 @@ void Fl_Text_Buffer::rectangular_selection_boundaries(int lineStartPos,
   
   /* find the end */
   for (; pos < mLength; pos++) {
+    // FIXME: character is ucs-4
     c = character(pos);
     if (c == '\n')
       break;
@@ -2338,7 +2361,7 @@ int Fl_Text_Buffer::outputfile(const char *file, int start, int end,
 			       int buflen)
 {
   FILE *fp;
-  if (!(fp = fl_fopen(file, "w")))
+  if (!(fp = fl_fopen(file, "wb")))
     return 1;
   for (int n; (n = min(end - start, buflen)); start += n) {
     const char *p = text_range(start, start + n);
