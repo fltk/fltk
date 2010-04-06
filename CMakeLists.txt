@@ -629,6 +629,11 @@ string(REPLACE ";" " " LD_LIBS "${FLTK_LDLIBS}")
 configure_file(${FLTK_SOURCE_DIR}/fltk-config.cmake.in
    ${FLTK_BINARY_DIR}/fltk-config
    )
+if(UNIX)
+   execute_process(COMMAND chmod 755 fltk-config
+      WORKING_DIRECTORY ${FLTK_BINARY_DIR}
+   )
+endif(UNIX)
 
 # generate uninstall target
 configure_file(
@@ -661,7 +666,6 @@ install(DIRECTORY ${FLTK_BINARY_DIR}/Fl
 
 install(PROGRAMS ${FLTK_BINARY_DIR}/fltk-config
    DESTINATION ${PREFIX_BIN}
-   PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
    OPTIONAL
    )
 
