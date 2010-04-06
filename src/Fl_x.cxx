@@ -1587,10 +1587,10 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     XSetWMHints(fl_display, xp->xid, hints);
     XFree(hints);
   }
- 
+
   // set the window type for menu and tooltip windows to avoid animations (compiz)
   if (win->menu_window() || win->tooltip_window()) {
-   Atom net_wm_type = XInternAtom(fl_display, "_NET_WM_WINDOW_TYPE", False);
+    Atom net_wm_type = XInternAtom(fl_display, "_NET_WM_WINDOW_TYPE", False);
     Atom net_wm_type_kind = XInternAtom(fl_display, "_NET_WM_WINDOW_TYPE_MENU", False);
     int ret = XChangeProperty(fl_display, xp->xid, net_wm_type, XA_ATOM, 32, PropModeReplace, (unsigned char*)&net_wm_type_kind, 1);
   }
