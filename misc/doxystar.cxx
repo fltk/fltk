@@ -32,7 +32,7 @@ char linebuf[1024];
 
 
 
-int main(int argc, char *argv) {
+int main(int argc, char **argv) {
   if (argc!=1) {
     puts("Add stars (*) in front of multi-line doxygen comments");
     puts("to protect comment indentation from code beautifiers.");
