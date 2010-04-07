@@ -338,7 +338,7 @@ These are all trivial inline functions and thus very fast and small:
 \section events_propagation Event Propagation
 
 Widgets receive events via the virtual handle() function. The argument indicates
-the type of event that can be handled. The widget must indicat if it handled the
+the type of event that can be handled. The widget must indicate if it handled the
 event by returning 1. FLTK will then remove the event and wait for further events 
 from the host. If the widget's handle function returns 0, FLTK may redistribute
 the event based on a few rules.
@@ -365,33 +365,39 @@ control those leaf widgets:
 \li Fl::release()
 \li Fl_Widget::take_focus()
 
-FLTK propagetes events along the widget hierarchy depending on the kind of event
-and the status of the UI. Some events are injected directly into the widgets, others
-may be resend as anew event to a different group of receivers.
+FLTK propagates events along the widget hierarchy depending on the kind of event
+and the status of the UI. Some events are injected directly into the widgets,
+others may be resent as new events to a different group of receivers.
 
-Mouse click events are first sent to the Window that caused them. The Window
-then forwards the event down the hierarchy until it reaches the Widget that
-is below the click position. It that Widget uses the given event, the widget
-is marked "pushed" and will receive all following mouse motion events until the 
-mouse button release.
+Mouse click events are first sent to the window that caused them. The window
+then forwards the event down the hierarchy until it reaches the widget that
+is below the click position. If that widget uses the given event, the widget
+is marked "pushed" and will receive all following mouse motion (FL_DRAG) events
+until the mouse button is released.
 
-Mouse wheel events are sent to the Window that caused the event. The Window
-propagets the event down the tree, first to the widget that is below the 
-mouse pointer, and if that does not succeed, to all other widgets in the Group.
-This ensures that Scroll widgets work as expected with the widget furthest
+\todo Is this correct? IMHO, mouse motion (FL_MOVE) events are sent to the
+belowmouse() widget, i.e. the widget that returned 1 on an FL_ENTER event.
+The pushed() widget will usually get an FL_FOCUS event and becomes the focus()
+widget if it returns 1 on FL_FOCUS, and will then get keyboard events (see
+below).
+
+Mouse wheel events are sent to the window that caused the event. The window
+propagates the event down the tree, first to the widget that is below the 
+mouse pointer, and if that does not succeed, to all other widgets in the group.
+This ensures that scroll widgets work as expected with the widget furthest
 down in the hierarchy getting the first opportunity to use the wheel event,
-but also giving scroll bars, that are ot directly below the mouse a chance.
+but also giving scroll bars, that are not directly below the mouse a chance.
 
-Keyboard events are sent directly to the Widget that has keyboard focus.
-If the focused Widget rejects the event, it is resent as a Shortcut event,
+Keyboard events are sent directly to the widget that has keyboard focus.
+If the focused widget rejects the event, it is resent as a shortcut event,
 first to the top-most window, then to the widget below the mouse pointer, 
-propagiting up the hierarchy to all its parents. Those send the event also
+propagating up the hierarchy to all its parents. Those send the event also
 to all widgets that are not below the mouse pointer. Now if that did not work 
-out, the shortcut is sent to all registered shortcut handler.
+out, the shortcut is sent to all registered shortcut handlers.
 
 If we are still unsuccessful, the event handler flips the case of the shortcut
 letter and starts over. Finally, if the key is "escape", FLTK sends a close 
-event to the top-most window. 
+event to the top-most window.
 
 All other events are pretty much sent right away to the window that created 
 the event.
@@ -399,8 +405,8 @@ the event.
 Widgets can "grab" events. The grabbing window gets all events exclusively, but
 usually by the same rules as described above.
 
-Windows can also request eclusivity in event handling by making the 
-window non-modal.
+Windows can also request exclusivity in event handling by making the 
+window modal.
 
 
 \section events_compose_characters FLTK Compose-Character Sequences
