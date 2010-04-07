@@ -142,10 +142,6 @@ void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy)
   DeleteDC(new_gc);
 }
 
-#if(WINVER < 0x0500)
-#define SHADEBLENDCAPS 120
-#define SB_PIXEL_ALPHA 0x02
-#endif
 void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
