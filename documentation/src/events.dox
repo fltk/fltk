@@ -337,15 +337,11 @@ These are all trivial inline functions and thus very fast and small:
 
 \section events_propagation Event Propagation
 
-FLTK follows very simple and unchangeable rules for sending
-events. The major innovation is that widgets can indicate (by
-returning 0 from the
-\p handle()
-method) that they are not
-interested in an event, and FLTK can then send that event
-elsewhere.  This eliminates the need for \e "interests"
-(event masks or tables), and this is probably the main reason
-FLTK is much smaller than other toolkits.
+Widgets receive events via the virtual handle() function. The argument indicates
+the type of event that can be handled. The widget must indicat if it handled the
+event by returning 1. FLTK will then remove the event and wait for further events 
+from the host. If the widget's handle function returns 0, FLTK may redistribute
+the event based on a few rules.
 
 Most events are sent directly to the
 \p handle()
@@ -368,6 +364,44 @@ control those leaf widgets:
 \li Fl::pushed()
 \li Fl::release()
 \li Fl_Widget::take_focus()
+
+FLTK propagetes events along the widget hierarchy depending on the kind of event
+and the status of the UI. Some events are injected directly into the widgets, others
+may be resend as anew event to a different group of receivers.
+
+Mouse click events are first sent to the Window that caused them. The Window
+then forwards the event down the hierarchy until it reaches the Widget that
+is below the click position. It that Widget uses the given event, the widget
+is marked "pushed" and will receive all following mouse motion events until the 
+mouse button release.
+
+Mouse wheel events are sent to the Window that caused the event. The Window
+propagets the event down the tree, first to the widget that is below the 
+mouse pointer, and if that does not succeed, to all other widgets in the Group.
+This ensures that Scroll widgets work as expected with the widget furthest
+down in the hierarchy getting the first opportunity to use the wheel event,
+but also giving scroll bars, that are ot directly below the mouse a chance.
+
+Keyboard events are sent directly to the Widget that has keyboard focus.
+If the focused Widget rejects the event, it is resent as a Shortcut event,
+first to the top-most window, then to the widget below the mouse pointer, 
+propagiting up the hierarchy to all its parents. Those send the event also
+to all widgets that are not below the mouse pointer. Now if that did not work 
+out, the shortcut is sent to all registered shortcut handler.
+
+If we are still unsuccessful, the event handler flips the case of the shortcut
+letter and starts over. Finally, if the key is "escape", FLTK sends a close 
+event to the top-most window. 
+
+All other events are pretty much sent right away to the window that created 
+the event.
+
+Widgets can "grab" events. The grabbing window gets all events exclusively, but
+usually by the same rules as described above.
+
+Windows can also request eclusivity in event handling by making the 
+window non-modal.
+
 
 \section events_compose_characters FLTK Compose-Character Sequences
 
