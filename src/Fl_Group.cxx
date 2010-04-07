@@ -745,7 +745,23 @@ void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
   int Y = widget.y();
   int W = widget.w();
   int H = widget.h();
-  if (a & FL_ALIGN_TOP) {
+  if ( (a & 0x0f) == FL_ALIGN_LEFT_TOP ) {
+    a = (a &~0x0f ) | FL_ALIGN_TOP_RIGHT;
+    X = x();
+    W = widget.x()-X-3;
+  } else if ( (a & 0x0f) == FL_ALIGN_LEFT_BOTTOM ) {
+    a = (a &~0x0f ) | FL_ALIGN_BOTTOM_RIGHT; 
+    X = x();
+    W = widget.x()-X-3;
+  } else if ( (a & 0x0f) == FL_ALIGN_RIGHT_TOP ) {
+    a = (a &~0x0f ) | FL_ALIGN_TOP_LEFT; 
+    X = X+W+3;
+    W = x()+this->w()-X;
+  } else if ( (a & 0x0f) == FL_ALIGN_RIGHT_BOTTOM ) {
+    a = (a &~0x0f ) | FL_ALIGN_BOTTOM_LEFT; 
+    X = X+W+3;
+    W = x()+this->w()-X;
+  } else if (a & FL_ALIGN_TOP) {
     a ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
     Y = y();
     H = widget.y()-Y;

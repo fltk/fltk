@@ -618,6 +618,27 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
  *  inside the widget.
  *
  *  Flags can be or'd to achieve a combination of alignments.
+ *
+ *  Outside alignments:
+ *  \code
+ *             TOP_LEFT        TOP       TOP_RIGHT
+ *     LEFT_TOP+---------------------------------+RIGHT_TOP
+ *             |                                 |
+ *         LEFT|                                 |RIGHT
+ *             |                                 |
+ *  LEFT_BOTTOM+---------------------------------+RIGHT_BOTTOM
+ *             BOTTOM_RIGHT   BOTTOM   BOTTOM_LEFT
+ *
+ *  Inside alignments:
+ *  \code
+ *             +---------------------------------+
+ *             |TOP_LEFT       TOP      TOP_RIGHT|
+ *             |                                 |
+ *             |LEFT                        RIGHT|
+ *             |                                 |
+ *             |BOTTOM_RIGHT  BOTTOM  BOTTOM_LEFT|
+ *             +---------------------------------+
+ *  \endcode
  *  \see #FL_ALIGN_CENTER, etc.
  */
 typedef unsigned Fl_Align;
@@ -644,16 +665,23 @@ const Fl_Align FL_ALIGN_IMAGE_OVER_TEXT	= (Fl_Align)0;
 const Fl_Align FL_ALIGN_CLIP		= (Fl_Align)64;
   /** Wrap text that does not fit the width of the widget. */
 const Fl_Align FL_ALIGN_WRAP		= (Fl_Align)128;
+  /** If the label contains an image, draw the text to the left of the image. */
+const Fl_Align FL_ALIGN_TEXT_NEXT_TO_IMAGE = (Fl_Align)0x0100;
+  /** If the label contains an image, draw the text to the right of the image. */
+const Fl_Align FL_ALIGN_IMAGE_NEXT_TO_TEXT = (Fl_Align)0x0110;
+/** If the label contains an image, draw the image or deimage in the backgroup. */
+const Fl_Align FL_ALIGN_IMAGE_BACKDROP  = (Fl_Align)0x0200;
 const Fl_Align FL_ALIGN_TOP_LEFT	= FL_ALIGN_TOP | FL_ALIGN_LEFT;
 const Fl_Align FL_ALIGN_TOP_RIGHT	= FL_ALIGN_TOP | FL_ALIGN_RIGHT;
 const Fl_Align FL_ALIGN_BOTTOM_LEFT	= FL_ALIGN_BOTTOM | FL_ALIGN_LEFT;
 const Fl_Align FL_ALIGN_BOTTOM_RIGHT	= FL_ALIGN_BOTTOM | FL_ALIGN_RIGHT;
-const Fl_Align FL_ALIGN_LEFT_TOP	= FL_ALIGN_TOP_LEFT;
-const Fl_Align FL_ALIGN_RIGHT_TOP	= FL_ALIGN_TOP_RIGHT;
-const Fl_Align FL_ALIGN_LEFT_BOTTOM	= FL_ALIGN_BOTTOM_LEFT;
-const Fl_Align FL_ALIGN_RIGHT_BOTTOM	= FL_ALIGN_BOTTOM_RIGHT;
+const Fl_Align FL_ALIGN_LEFT_TOP	= 0x0007; // magic value
+const Fl_Align FL_ALIGN_RIGHT_TOP	= 0x000b; // magic value
+const Fl_Align FL_ALIGN_LEFT_BOTTOM	= 0x000d; // magic value
+const Fl_Align FL_ALIGN_RIGHT_BOTTOM	= 0x000e; // magic value
 const Fl_Align FL_ALIGN_NOWRAP		= (Fl_Align)0; // for back compatability
 /*@}*/
+
 
 /** \name Font Numbers */
 /*@{*/

@@ -32,14 +32,19 @@
 #include <FL/Fl_Toggle_Button.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Choice.H>
+#include <FL/Fl_Pixmap.H>
 #include <FL/fl_draw.H>
 
+#include "pixmaps/blast.xpm"
+
+Fl_Toggle_Button *imageb, *imageovertextb, *imagenexttotextb, *imagebackdropb;
 Fl_Toggle_Button *leftb,*rightb,*topb,*bottomb,*insideb,*clipb,*wrapb;
 Fl_Box *text;
 Fl_Input *input;
 Fl_Hor_Value_Slider *fonts;
 Fl_Hor_Value_Slider *sizes;
 Fl_Double_Window *window;
+Fl_Pixmap *img;
 
 void button_cb(Fl_Widget *,void *) {
   int i = 0;
@@ -50,7 +55,18 @@ void button_cb(Fl_Widget *,void *) {
   if (insideb->value()) i |= FL_ALIGN_INSIDE;
   if (clipb->value()) i |= FL_ALIGN_CLIP;
   if (wrapb->value()) i |= FL_ALIGN_WRAP;
+  if (imageovertextb->value()) i |= FL_ALIGN_TEXT_OVER_IMAGE;
+  if (imagenexttotextb->value()) i |= FL_ALIGN_TEXT_NEXT_TO_IMAGE;
+  if (imagebackdropb->value()) i |= FL_ALIGN_IMAGE_BACKDROP;
   text->align(i);
+  window->redraw();
+}
+
+void image_cb(Fl_Widget *,void *) {
+  if (imageb->value())
+    text->image(img);
+  else 
+    text->image(0);
   window->redraw();
 }
 
@@ -107,6 +123,8 @@ Fl_Menu_Item choices[] = {
   {0}};
 
 int main(int argc, char **argv) {
+  img = new Fl_Pixmap(blast_xpm);
+  
   window = new Fl_Double_Window(400,400);
 
   input = new Fl_Input(50,375,350,25);
@@ -128,7 +146,15 @@ int main(int argc, char **argv) {
   fonts->value(0);
   fonts->callback(font_cb);
 
-  Fl_Group *g = new Fl_Group(50,300,350,25);
+  Fl_Group *g = new Fl_Group(50,275,350,50);
+  imageb = new Fl_Toggle_Button(50,275,50,25,"image");
+  imageb->callback(image_cb);
+  imageovertextb = new Fl_Toggle_Button(100,275,50,25,"I - T");
+  imageovertextb->callback(button_cb);
+  imagenexttotextb = new Fl_Toggle_Button(150,275,50,25,"I | T");
+  imagenexttotextb->callback(button_cb);
+  imagebackdropb = new Fl_Toggle_Button(200,275,50,25,"back");
+  imagebackdropb->callback(button_cb);
   leftb = new Fl_Toggle_Button(50,300,50,25,"left");
   leftb->callback(button_cb);
   rightb = new Fl_Toggle_Button(100,300,50,25,"right");
@@ -146,7 +172,7 @@ int main(int argc, char **argv) {
   g->resizable(insideb);
   g->end();
 
-  Fl_Choice *c = new Fl_Choice(50,275,200,25);
+  Fl_Choice *c = new Fl_Choice(50,250,200,25);
   c->menu(choices);
 
   text= new Fl_Box(FL_FRAME_BOX,100,75,200,100,input->value());

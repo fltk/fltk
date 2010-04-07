@@ -170,6 +170,7 @@ protected:
   void draw_box() const;
   void draw_box(Fl_Boxtype t, Fl_Color c) const;
   void draw_box(Fl_Boxtype t, int x,int y,int w,int h, Fl_Color c) const;
+  void draw_backdrop() const;
   /** draws a focus rectangle around the widget */
   void draw_focus() {draw_focus(box(),x(),y(),w(),h());}
   void draw_focus(Fl_Boxtype t, int x,int y,int w,int h) const;
@@ -497,6 +498,7 @@ public:
       \return the current image
    */
   Fl_Image* image() {return label_.image;}
+  const Fl_Image* image() const {return label_.image;}
 
   /** Sets the image to use as part of the widget label.
       This image is used when drawing the widget in the active state.
@@ -515,6 +517,7 @@ public:
       \return the current image for the deactivated widget
    */
   Fl_Image* deimage() {return label_.deimage;}
+  const Fl_Image* deimage() const {return label_.deimage;}
 
   /** Sets the image to use as part of the widget label.  
       This image is used when drawing the widget in the inactive state.
