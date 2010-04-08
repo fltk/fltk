@@ -43,6 +43,8 @@ Fl_Printer::Fl_Printer(void)
   type_ = quartz_printer;
 }
 
+Fl_Printer::~Fl_Printer(void) {}
+
 int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
 //printing using a Quartz graphics context
 //returns 0 iff OK

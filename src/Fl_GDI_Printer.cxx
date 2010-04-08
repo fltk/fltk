@@ -39,6 +39,10 @@ Fl_Printer::Fl_Printer(void) : Fl_Abstract_Printer() {
   type_ = gdi_printer;
 }
 
+Fl_Printer::~Fl_Printer(void) {
+  if (hPr) end_job();
+}
+
 static void WIN_SetupPrinterDeviceContext(HDC prHDC)
 {
   if ( !prHDC ) return;
@@ -81,7 +85,7 @@ int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
       prerr = StartDoc (hPr, &di);
       if (prerr < 1) {
 	abortPrint = TRUE;
-	fl_alert ("StartDoc error %d", prerr);
+	//fl_alert ("StartDoc error %d", prerr);
 	err = 1;
       }
     } else {
@@ -129,6 +133,7 @@ void Fl_Printer::end_job (void)
       GlobalFree (pd.hDevNames);
     }
   }
+  hPr = NULL;
 }
 
 void Fl_Printer::absolute_printable_rect(int *x, int *y, int *w, int *h)

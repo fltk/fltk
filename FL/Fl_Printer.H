@@ -113,6 +113,10 @@ public:
 #endif  
   int end_page (void);
   void end_job (void);
+  /** 
+   @brief The destructor.
+   */
+  ~Fl_Printer(void);
 #ifdef FL_DOXYGEN
   /** \name These attributes apply to the Xlib platform only.
    \{
