@@ -275,7 +275,7 @@ int Fl_Menu_::size() const {
     Sets the menu array pointer directly.  If the old menu is private it is
     deleted.  NULL is allowed and acts the same as a zero-length
     menu.  If you try to modify the array (with add(), replace(), or
-    delete()) a private copy is automatically done.
+    remove()) a private copy is automatically done.
 */
 void Fl_Menu_::menu(const Fl_Menu_Item* m) {
   clear();
