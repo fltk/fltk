@@ -82,26 +82,17 @@ void  gl_font(int fontid, int size) {
 #else // Fltk-1.1.8 style GL font selection
 
 #if defined (USE_X11) // X-windows options follow, either XFT or "plain" X
-#  if USE_XFT // XFT case
-#    warning We really need a glXUseXftFont implementation here...
-//    fl_xfont = fl_xxfont();
-    XFontStruct *font = fl_xxfont();
+#  warning Ideally, for XFT, we really need a glXUseXftFont implementation here...
+#  warning GL font selection is basically wrong here
+/* OksiD had a fairly sophisticated scheme for storing multiple X fonts in a XUtf8FontStruct,
+ * then sorting through them at draw time (for normal X rendering) to find which one can
+ * render the current glyph... But for now, just use the first font in the list for GL...
+ */
+    XFontStruct *font = fl_xfont;
     int base = font->min_char_or_byte2;
     int count = font->max_char_or_byte2-base+1;
     fl_fontsize->listbase = glGenLists(256);
     glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
-#  else // plain X
-#    warning GL font selection is basically wrong here
-/* OksiD has a fairly sophisticated scheme for storing multiple X fonts in a XUtf8FontStruct,
- * then sorting through them at draw time (for normal X rendering) to find which one can
- * render the current glyph... But for now, just use the first font in the list for GL...
- */
-    XFontStruct *tmp_font = fl_fontsize->font->fonts[0];  // this is certainly wrong!
-    int base = tmp_font->min_char_or_byte2;
-    int count = tmp_font->max_char_or_byte2-base+1;
-    fl_fontsize->listbase = glGenLists(256);
-    glXUseXFont(tmp_font->fid, base, count, fl_fontsize->listbase+base);
-#  endif // USE_XFT
 # elif defined(WIN32)
     int base = fl_fontsize->metr.tmFirstChar;
     int count = fl_fontsize->metr.tmLastChar-base+1;
