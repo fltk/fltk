@@ -253,7 +253,7 @@ void fl_draw(
   int xpos;
   int ypos;
   int height = fl_height();
-  int imgvert = ((align&FL_ALIGN_TEXT_NEXT_TO_IMAGE)==0);
+  int imgvert = ((align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)==0);
   int imgh = img && imgvert ? img->h() : 0;
   int imgw[2] = {0, 0};
 

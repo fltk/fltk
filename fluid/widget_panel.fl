@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0300 
 header_name {.h} 
 code_name {.cxx}
 comment {//
@@ -43,12 +43,12 @@ Function {make_widget_panel()} {open
     } {
       Fl_Group {} {
         label GUI
-        callback propagate_load
-        xywh {10 30 400 290} labelsize 11 when 0 hide resizable
+        callback propagate_load open
+        xywh {10 30 400 290} labelsize 11 when 0 resizable
       } {
         Fl_Group {} {
           label {Label:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 40 309 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
@@ -95,26 +95,51 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         }
         Fl_Group {} {
           label {Alignment:}
-          callback propagate_load
+          callback propagate_load open
           xywh {95 115 300 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Button {} {
             label Clip
             user_data FL_ALIGN_CLIP
             callback align_cb
-            tooltip {Clip the label to the inside of the widget.} xywh {95 115 45 20} type Toggle selection_color 8 labelsize 11 align 16
+            tooltip {Clip the label to the inside of the widget.} xywh {95 115 40 20} type Toggle selection_color 8 labelsize 11 align 16
           }
           Fl_Button {} {
             label Wrap
             user_data FL_ALIGN_WRAP
             callback align_cb
-            tooltip {Wrap the label text.} xywh {145 115 50 20} type Toggle selection_color 8 labelsize 11
+            tooltip {Wrap the label text.} xywh {140 115 40 20} type Toggle selection_color 8 labelsize 11
           }
-          Fl_Button {} {
+          Fl_Menu_Button {} {
             label {Text/Image}
-            user_data FL_ALIGN_TEXT_OVER_IMAGE
-            callback align_cb
-            tooltip {Show the label text over the image.} xywh {200 115 65 20} type Toggle selection_color 8 labelsize 11
+            callback align_text_image_cb open
+            xywh {185 115 80 20} labelsize 11 align 20
+          } {
+            MenuItem {} {
+              label {image over text}
+              user_data FL_ALIGN_IMAGE_OVER_TEXT
+              xywh {10 10 100 20} type Radio labelsize 11
+            }
+            MenuItem {} {
+              label {text over image}
+              user_data FL_ALIGN_TEXT_OVER_IMAGE selected
+              xywh {0 0 100 20} type Radio labelsize 11
+            }
+            MenuItem {} {
+              label {text next to image}
+              user_data FL_ALIGN_TEXT_NEXT_TO_IMAGE
+              xywh {20 20 100 20} type Radio labelsize 11
+            }
+            MenuItem {} {
+              label {image next to text}
+              user_data FL_ALIGN_IMAGE_NEXT_TO_TEXT
+              xywh {30 30 100 20} type Radio labelsize 11
+            }
+            MenuItem {} {
+              label {image is backdrop}
+              user_data FL_ALIGN_IMAGE_BACKDROP
+              xywh {40 40 100 20} type Radio labelsize 11
+            }
           }
           Fl_Button {} {
             label {@-1<-}
@@ -415,7 +440,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
       Fl_Group {} {
         label {C++}
         callback propagate_load open
-        xywh {10 30 400 290} labelsize 11 when 0
+        xywh {10 30 400 290} labelsize 11 when 0 hide
       } {
         Fl_Group {} {
           label {Class:}
@@ -438,7 +463,7 @@ Use Ctrl-J for newlines.} xywh {95 285 310 20} labelfont 1 labelsize 11 textsize
           xywh {95 65 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Input {} {
-            callback name_cb selected
+            callback name_cb
             tooltip {The name of the widget.} xywh {95 65 235 20} labelfont 1 labelsize 11 textsize 11 resizable
           }
           Fl_Choice {} {

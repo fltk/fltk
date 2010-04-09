@@ -1170,6 +1170,37 @@ void align_cb(Fl_Button* i, void *v) {
   }
 }
 
+void align_text_image_cb(Fl_Menu_Button* i, void *v) {
+  if (v == LOAD) {
+    if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
+    Fl_Menu_Item *mi = (Fl_Menu_Item*)i->menu();
+    Fl_Align b = current_widget->o->align() & FL_ALIGN_IMAGE_MASK;
+    for (;mi->text;mi++) {
+      if (mi->argument()==b)
+        mi->set();
+      else 
+        mi->clear();
+    }
+  } else {
+    const Fl_Menu_Item *mi = i->mvalue();
+    Fl_Align b = Fl_Align(long(mi->user_data()));
+    int mod = 0;
+    for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
+      if (o->selected && o->is_widget()) {
+	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
+	Fl_Align x = q->o->align();
+	Fl_Align y = (x & ~FL_ALIGN_IMAGE_MASK) | b;
+	if (x != y) {
+          q->o->align(y);
+	  q->redraw();
+	  mod = 1;
+	}
+      }
+    }
+    if (mod) set_modflag(1);
+  }
+}
+
 ////////////////////////////////////////////////////////////////
 
 void callback_cb(CodeEditor* i, void *v) {

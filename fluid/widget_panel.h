@@ -45,6 +45,8 @@ extern void image_browse_cb(Fl_Button*, void*);
 extern void inactive_cb(Fl_Input*, void*);
 extern void inactive_browse_cb(Fl_Button*, void*);
 extern void align_cb(Fl_Button*, void*);
+#include <FL/Fl_Menu_Button.H>
+extern void align_text_image_cb(Fl_Menu_Button*, void*);
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Value_Input.H>
 extern void x_cb(Fl_Value_Input*, void*);
@@ -113,6 +115,7 @@ extern void cancel_cb(Fl_Button*, void*);
 extern void live_mode_cb(Fl_Button*, void*);
 extern Fl_Button *wLiveMode;
 Fl_Double_Window* make_widget_panel();
+extern Fl_Menu_Item menu_Text[];
 extern Fl_Menu_Item menu_[];
 extern Fl_Menu_Item menu_1[];
 #endif
