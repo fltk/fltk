@@ -94,8 +94,7 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 Fl_Font fl_font_ = 0;
 Fl_Fontsize fl_size_ = 0;
 int fl_angle_ = 0; // internal for rotating text support
-//XFontStruct* fl_xfont = 0;
-XUtf8FontStruct* fl_xfont = 0;
+Fl_XFont_On_Demand fl_xfont;
 void *fl_xftfont = 0;
 //const char* fl_encoding_ = "iso8859-1";
 const char* fl_encoding_ = "iso10646-1";
@@ -128,6 +127,8 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   fl_fontsize = f;
 #if XFT_MAJOR < 2
   fl_xfont    = f->font->u.core.font;
+#else
+  fl_xfont    = NULL; // invalidate
 #endif // XFT_MAJOR < 2
   fl_xftfont = (void*)f->font;
 }
@@ -372,17 +373,16 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
 } // fl_text_extents
 
 
-#if HAVE_GL
-/* This code is used by opengl to get a bitmapped font. The original XFT-1 code
- * used XFT's "core" fonts methods to load an XFT font that was actually a
- * X-bitmap font, that could then be readily used with GL.
- * But XFT-2 does not provide that ability, and there is no easy method to use
- * an XFT font directly with GL. So...
+/* This code is used (mainly by opengl) to get a bitmapped font. The
+ * original XFT-1 code used XFT's "core" fonts methods to load an XFT
+ * font that was actually a X-bitmap font, that could then be readily
+ * used with GL.  But XFT-2 does not provide that ability, and there
+ * is no easy method to use an XFT font directly with GL. So...
 */
 
 #  if XFT_MAJOR > 1
 // This function attempts, on XFT2 systems, to find a suitable "core" Xfont
-// for GL to use, since we dont have an XglUseXftFont(...) function.
+// for GL or other bitmap font needs (we dont have an XglUseXftFont(...) function.)
 // There's probably a better way to do this. I can't believe it is this hard...
 // Anyway... This code attempts to make an XLFD out of the fltk-style font
 // name it is passed, then tries to load that font. Surprisingly, this quite
@@ -392,8 +392,8 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
 // If this code fails to load the requested font, it falls back through a
 // series of tried 'n tested alternatives, ultimately resorting to what the
 // original fltk code did.
-// NOTE: On my test boxes (FC6, FC7, FC8, ubuntu8.04) this works well for the 
-//       fltk "built-in" font names.
+// NOTE: On my test boxes (FC6, FC7, FC8, ubuntu8.04, 9.04, 9.10) this works 
+//       well for the fltk "built-in" font names.
 static XFontStruct* load_xfont_for_xft2(void) {
   XFontStruct* xgl_font = 0;
   int size = fl_size_;
@@ -468,7 +468,11 @@ XFontStruct* fl_xxfont() {
   return xftfont->u.core.font;
 #  endif // XFT_MAJOR > 1
 }
-#endif // HAVE_GL
+
+XFontStruct* Fl_XFont_On_Demand::value() {
+  if (!ptr) ptr = fl_xxfont();
+  return ptr;
+}
 
 #if USE_OVERLAY
 // Currently Xft does not work with colormapped visuals, so this probably

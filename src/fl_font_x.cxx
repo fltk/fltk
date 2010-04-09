@@ -39,6 +39,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
 }
 
 Fl_Font_Descriptor* fl_fontsize;
+Fl_XFont_On_Demand fl_xfont;
 
 Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #  if HAVE_GL
@@ -52,7 +53,10 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 //  glDeleteLists(listbase+base,size);
 // }
 #  endif
-  if (this == fl_fontsize) fl_fontsize = 0;
+  if (this == fl_fontsize) {
+    fl_fontsize = 0;
+    fl_xfont = 0;
+  }
   XFreeUtf8FontStruct(fl_display, font);
 }
 
@@ -82,6 +86,8 @@ static Fl_Fontdesc built_in_table[] = {
 Fl_Fontdesc* fl_fonts = built_in_table;
 
 #define MAXSIZE 32767
+
+#define current_font (fl_fontsize->font)
 
 // return dash number N, or pointer to ending null if none:
 const char* fl_font_word(const char* p, int n) {
@@ -256,10 +262,12 @@ static Fl_Font_Descriptor* find(int fnum, int size) {
 
 Fl_Font fl_font_ = 0;
 Fl_Fontsize fl_size_ = 0;
-//XFontStruct* fl_xfont = 0;
-XUtf8FontStruct* fl_xfont;
 void *fl_xftfont = 0;
 static GC font_gc;
+
+XFontStruct* Fl_XFont_On_Demand::value() {
+  return ptr;
+}
 
 void Fl_Device::font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) {
@@ -271,28 +279,28 @@ void Fl_Device::font(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Font_Descriptor* f = find(fnum, size);
   if (f != fl_fontsize) {
     fl_fontsize = f;
-    fl_xfont = f->font;
+    fl_xfont = current_font->fonts[0];
     font_gc = 0;
   }
 }
 
 int fl_height() {
-  if (fl_xfont) return (fl_xfont->ascent + fl_xfont->descent);
+  if (current_font) return (current_font->ascent + current_font->descent);
   else return -1;
 }
 
 int fl_descent() {
-  if (fl_xfont) return fl_xfont->descent;
+  if (current_font) return current_font->descent;
   else return -1;
 }
 
 double fl_width(const char* c, int n) {
-  if (fl_xfont) return (double) XUtf8TextWidth(fl_xfont, c, n);
+  if (current_font) return (double) XUtf8TextWidth(current_font, c, n);
   else return -1;
 }
 
 double fl_width(unsigned int c) {
-  if (fl_xfont) return (double) XUtf8UcsWidth(fl_xfont, c);
+  if (current_font) return (double) XUtf8UcsWidth(current_font, c);
   else return -1;
 }
 
@@ -312,12 +320,12 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
 
 void Fl_Device::draw(const char* c, int n, int x, int y) {
   if (font_gc != fl_gc) {
-    if (!fl_xfont) fl_font(FL_HELVETICA, 14);
+    if (!current_font) fl_font(FL_HELVETICA, 14);
     font_gc = fl_gc;
-    XSetFont(fl_display, fl_gc, fl_xfont->fid);
+    XSetFont(fl_display, fl_gc, current_font->fid);
   }
 //  XDrawString(fl_display, fl_window, fl_gc, x, y, c, n);
-  XUtf8DrawString(fl_display, fl_window, fl_xfont, fl_gc, x, y, c, n);
+  XUtf8DrawString(fl_display, fl_window, current_font, fl_gc, x, y, c, n);
 }
 void Fl_Device::draw(int angle, const char *str, int n, int x, int y) {
   fprintf(stderr,"ROTATING TEXT NOT IMPLIMENTED\n");
@@ -329,10 +337,10 @@ void Fl_Device::draw(int angle, const char *str, int n, int x, int y) {
 
 void fl_rtl_draw(const char* c, int n, int x, int y) {
   if (font_gc != fl_gc) {
-    if (!fl_xfont) fl_font(FL_HELVETICA, 12);
+    if (!current_font) fl_font(FL_HELVETICA, 12);
     font_gc = fl_gc;
   }
-  XUtf8DrawRtlString(fl_display, fl_window, fl_xfont, fl_gc, x, y, c, n);
+  XUtf8DrawRtlString(fl_display, fl_window, current_font, fl_gc, x, y, c, n);
 }
 #endif // FL_DOXYGEN
 //
