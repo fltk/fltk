@@ -2100,7 +2100,7 @@ void Fl_X::make(Fl_Window* w)
         winstyle |= NSResizableWindowMask;
       }
     } else {
-			if (w->resizable()) {
+      if (w->resizable()) {
         Fl_Widget *o = w->resizable();
         int minw = o->w(); if (minw > 100) minw = 100;
         int minh = o->h(); if (minh > 100) minh = 100;
@@ -2121,7 +2121,8 @@ void Fl_X::make(Fl_Window* w)
         winstyle = NSBorderlessWindowMask;
       }
     } else if (w->modal()) {
-      winstyle &= ~(NSResizableWindowMask | NSMiniaturizableWindowMask);
+      winstyle &= ~NSMiniaturizableWindowMask;
+      // winstyle &= ~(NSResizableWindowMask | NSMiniaturizableWindowMask);
       // winlevel = NSModalPanelWindowLevel;
     }
     else if (w->non_modal()) {

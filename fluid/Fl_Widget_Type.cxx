@@ -1188,7 +1188,6 @@ void align_position_cb(Fl_Choice *i, void *v) {
 	Fl_Widget_Type* q = (Fl_Widget_Type*)o;
 	Fl_Align x = q->o->align();
 	Fl_Align y = (x & ~FL_ALIGN_POSITION_MASK) | b;
-        //printf("x:%04x y:%04x b:%04x\n", x, y, b);
 	if (x != y) {
           q->o->align(y);
 	  q->redraw();
@@ -1787,6 +1786,7 @@ void live_mode_cb(Fl_Button*o,void *) {
   }
   if (o->value()) {
     if (numselected == 1) {
+      Fl_Group::current(0L);
       live_widget = current_widget->enter_live_mode(1);
       if (live_widget) {
         live_type = current_widget;
@@ -1804,8 +1804,9 @@ void live_mode_cb(Fl_Button*o,void *) {
         Fl_Button *btn = new Fl_Button(10, h+20, 100, 25, "Exit Live Mode");
         btn->labelsize(12);
         btn->callback(leave_live_mode_cb);
-        live_widget->position(10, 10);
+        rsz->end();
         live_window->add(live_widget);
+        live_widget->position(10, 10);
         live_window->resizable(live_widget);
         live_window->set_modal(); // block all other UI
         live_window->callback(leave_live_mode_cb);
