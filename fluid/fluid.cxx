@@ -1599,6 +1599,12 @@ void dbvisualc_cb(Fl_Widget*, void*) {
   if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
 }
 
+void dbmake_cb(Fl_Widget*, void*) {
+  Fl_Plugin_Manager pm("commandline");  
+  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("ideMaketools.fluid.fltk.org");
+  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
+}
+
 void show_dbmanager_cb(Fl_Widget*, void*) {
   Fl_Plugin_Manager pm("commandline");  
   Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("FltkDB.fluid.fltk.org");
@@ -1700,6 +1706,7 @@ Fl_Menu_Item Main_Menu[] = {
   {"--fltkdb",0,(Fl_Callback *)fltkdb_cb},
   {"--dbxcode3",0,(Fl_Callback *)dbxcode_cb},
   {"--dbvisualc6",0,(Fl_Callback *)dbvisualc_cb},
+  {"--dbmake",0,(Fl_Callback *)dbmake_cb},
 #endif
   {0},
 {"&Help",0,0,0,FL_SUBMENU},

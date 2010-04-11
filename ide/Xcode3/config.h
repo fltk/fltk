@@ -1,5 +1,5 @@
 /*
- * "$Id: ide_xcode.cxx 7267 2010-03-14 21:29:12Z matt $"
+ * "$Id: ide_xcode.cxx 7357 2010-03-29 14:10:54Z matt $"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
@@ -16,9 +16,7 @@
 #define USE_XFT 0
 #define HAVE_XDBE 0
 #define USE_XDBE HAVE_XDBE
-#define USE_QUARTZ 1
 #define __APPLE_QUARTZ__ 1
-#define __APPLE_COCOA__ 1
 #define HAVE_OVERLAY 0
 #define HAVE_GL_OVERLAY HAVE_OVERLAY
 #define WORDS_BIGENDIAN 0
@@ -50,5 +48,5 @@
 #define HAVE_DLSYM 1
 
 /*
- * End of "$Id: ide_xcode.cxx 7267 2010-03-14 21:29:12Z matt $".
+ * End of "$Id: ide_xcode.cxx 7357 2010-03-29 14:10:54Z matt $".
  */

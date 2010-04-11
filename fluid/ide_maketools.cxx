@@ -89,1477 +89,1599 @@ public:
   ~Maketools_IDE() {
     if (rootDir) free(rootDir);
   }
-  
-#if 0  
-  /*
-   * Write all files required during the actual build.
-   * These are actually forwarding links from the build setup into the 
-   * files section.
-   */
-  int writeBuildFiles(FILE *out, Fl_Preferences &targetDB) {
-    // FIXME: also write .app, .plist, and maybe headers
-    // --- write all references to sources from the given target
-    Fl_Preferences sourcesDB(targetDB, "sources");
-    int i, n = sourcesDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences sourceDB(sourcesDB, i);
-      GET_UUID(refUUID, sourceDB);
-      MAKE_XCID(xcBuildFileID, sourceDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      MAKE_XCID(xcFileID, fileDB);
-      const char *fullName = fileDB.fullName();
-      fprintf(out, "\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFileID, fullName, xcFileID, fullName);
-    }
-    // --- write all references to Fluid UI files from the given target
-    Fl_Preferences flsDB(targetDB, "fl");
-    n = flsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences flDB(flsDB, i);
-      GET_UUID(refUUID, flDB);
-      MAKE_XCID(xcBuildFileID, flDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      MAKE_XCID(xcFileID, fileDB);
-      const char *fullName = fileDB.fullName();
-      fprintf(out, "\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFileID, fullName, xcFileID, fullName);
-    }
-    Fl_Preferences libsDB(targetDB, "libs"); n = libsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences libDB(libsDB, i);
-      GET_UUID(refUUID, libDB);
-      MAKE_XCID(xcBuildFrameworkID, libDB);
-      MAKE_XCID(xcCopyFrameworkID, libDB);
-      Fl_Preferences tgtLibDB(tgtLibsDB, refUUID);
-      MAKE_XCID(xcProductID, tgtLibDB);
-      char name[80]; tgtLibDB.get("name", name, "DBERROR", 80);;
-      fprintf(out, "\t\t%s /* %s.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* %s.framework */; };\n", xcBuildFrameworkID, name, xcProductID, name);
-      fprintf(out, "\t\t%s /* %s.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = %s /* %s.framework */; };\n", xcCopyFrameworkID, name, xcProductID, name);
-    }
-    Fl_Preferences extsDB(targetDB, "externals"); n = extsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences extDB(extsDB, i);
-      if (with_xcode(extDB.id())) {
-        GET_UUID(refUUID, extDB);
-        Fl_File_Prefs fileDB(filesDB, refUUID);
-        MAKE_XCID(xcFileID, fileDB);
-        const char *fullName = fileDB.fullName();
-        if (strcmp(fileDB.fileExt(), ".icns")==0) {
-          MAKE_XCID(xcCopyResourceID, extDB);
-          fprintf(out, "\t\t%s /* %s in Resources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcCopyResourceID, fullName, xcFileID, fullName);
-        } else {
-          MAKE_XCID(xcBuildFrameworkID, extDB);
-          fprintf(out, "\t\t%s /* %s in Frameworks */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFrameworkID, fullName, xcFileID, fullName);
-        }
-      }
-    }
-    return 0;
-  }
-  
-  /*
-   * Writes the section that links build components to a file.
-   */
-  int writeBuildFileSection(FILE *out) {
-    fprintf(out, "/* Begin PBXBuildFile section */\n");
-    int i;
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeBuildFiles(out, targetDB);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeBuildFiles(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeBuildFiles(out, targetDB);
-    }
-    fprintf(out, "/* End PBXBuildFile section */\n\n");
-    return 0;
-  }
-
-  /*
-   * Write the build rule for .fl files.
-   */
-  int writeBuildRule(FILE *out, Fl_Preferences &targetDB) {
-    MAKE_XCID(xcBuildRuleFlID, targetDB);    
-    fprintf(out, "\t\t%s /* PBXBuildRule */ = {\n", xcBuildRuleFlID);
-    fprintf(out, "\t\t\tisa = PBXBuildRule;\n");
-    fprintf(out, "\t\t\tcompilerSpec = com.apple.compilers.proxy.script;\n");
-    fprintf(out, "\t\t\tfilePatterns = \"*.fl\";\n");
-    fprintf(out, "\t\t\tfileType = pattern.proxy;\n");
-    fprintf(out, "\t\t\tisEditable = 1;\n");
-    fprintf(out, "\t\t\toutputFiles = (\n");
-    fprintf(out, "\t\t\t\t\"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx\",\n");
-    fprintf(out, "\t\t\t\t\"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h\",\n");
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tscript = \"export DYLD_FRAMEWORK_PATH=${TARGET_BUILD_DIR} && cd ${INPUT_FILE_DIR} && ${TARGET_BUILD_DIR}/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}\";\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
-
-  /*
-   * Additional build rules. Here we teach Xcode how to handle .fl files.
-   */
-  int writeBuildRuleSection(FILE *out) {
-    int i;
-    fprintf(out, "/* Begin PBXBuildRule section */\n");
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeBuildRule(out, targetDB);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeBuildRule(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeBuildRule(out, targetDB);
-    }
-    fprintf(out, "/* End PBXBuildRule section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * Write all target proxies for a single target.
-   */
-  int writeContainerItemProxy(FILE *out, Fl_Preferences &targetDB) {
-    Fl_Preferences depsDB(targetDB, "deps");
-    int i, n = depsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences depDB(depsDB, i);
-      GET_UUID(refUUID, depDB);
-      //      MAKE_XCID(xcDependencyID, depDB);
-      MAKE_XCID(xcProxyID, depDB);
-      Fl_Preferences *depTgtDBp = 0;
-      if (tgtAppsDB.groupExists(refUUID))
-        depTgtDBp = new Fl_Preferences(tgtAppsDB, refUUID);
-      else if (tgtLibsDB.groupExists(refUUID))
-        depTgtDBp = new Fl_Preferences(tgtLibsDB, refUUID);
-      else if (tgtTestsDB.groupExists(refUUID))
-        depTgtDBp = new Fl_Preferences(tgtTestsDB, refUUID);
-      if (depTgtDBp) {
-        Fl_Preferences &depTgtDB = *depTgtDBp;
-        MAKE_XCID(xcTargetID, depTgtDB);
-        char name[80]; depTgtDB.get("name", name, "DBERROR", 80);        
-        fprintf(out, "\t\t%s /* PBXContainerItemProxy */ = {\n", xcProxyID);
-        fprintf(out, "\t\t\tisa = PBXContainerItemProxy;\n");
-        fprintf(out, "\t\t\tcontainerPortal = %s /* Project object */;\n", xcRootNodeID);
-        fprintf(out, "\t\t\tproxyType = 1;\n");
-        fprintf(out, "\t\t\tremoteGlobalIDString = %s;\n", xcTargetID);
-        fprintf(out, "\t\t\tremoteInfo = %s;\n", name);
-        fprintf(out, "\t\t};\n");
-        delete depTgtDBp;
-      }
-    }
-    return 0;
-  }
-  
-  /*
-   * Write a proxy for all target dependencies of all targets.
-   * (I am not entirely sure why these proxies exist, but Apple will know)
-   */
-  int writeContainerItemProxySection(FILE *out) {
-    fprintf(out, "/* Begin PBXContainerItemProxy section */\n");
-    int i;
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeContainerItemProxy(out, targetDB);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeContainerItemProxy(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeContainerItemProxy(out, targetDB);
-    }
-    fprintf(out, "/* End PBXContainerItemProxy section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * List the files that will be copied into the final application.
-   */
-  int writeCopyFilesBuildPhase(FILE *out, Fl_Preferences &targetDB) {
-    MAKE_XCID(xcBuildCopyFilesID, targetDB);
-    fprintf(out, "\t\t%s /* CopyFiles */ = {\n", xcBuildCopyFilesID);
-    fprintf(out, "\t\t\tisa = PBXCopyFilesBuildPhase;\n");
-    fprintf(out, "\t\t\tbuildActionMask = 2147483647;\n");
-    fprintf(out, "\t\t\tdstPath = \"\";\n");
-    fprintf(out, "\t\t\tdstSubfolderSpec = 10;\n");
-    fprintf(out, "\t\t\tfiles = (\n");
-    // ---
-    Fl_Preferences libsDB(targetDB, "libs");
-    int i, n = libsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences libDB(libsDB, i);
-      GET_UUID(refUUID, libDB);
-      MAKE_XCID(xcCopyFrameworkID, libDB);
-      Fl_Preferences tgtLibDB(tgtLibsDB, refUUID);
-      char name[80]; tgtLibDB.get("name", name, "DBERROR", 80);;
-      fprintf(out, "\t\t\t\t%s /* %s.framework in CopyFiles */,\n", xcCopyFrameworkID, name);
-    }
-    // ---
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  };
-  
-  /*
-   * List the files that will be copied into the final application.
-   */
-  int writeCopyFilesBuildPhaseSection(FILE *out) {
-    fprintf(out, "/* Begin PBXCopyFilesBuildPhase section */\n");
-    int i;
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeCopyFilesBuildPhase(out, targetDB);
-    }
-    // TgtLibsDB has no CopyFile build phase
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeCopyFilesBuildPhase(out, targetDB);
-    }
-    fprintf(out, "/* End PBXCopyFilesBuildPhase section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * A list of all files that are somehow referenced in this project
-   */
-  int writeFileReferenceSection(FILE *out) {
-    int i;
-    fprintf(out, "/* Begin PBXFileReference section */\n");  
-    // --- list of all Application target results
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      // write a reference to the target.app file
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcProductID, targetDB);
-      fprintf(out, "\t\t%s /* %s.app */ = {isa = PBXFileReference; "
-              "explicitFileType = wrapper.application; includeInIndex = 0; "
-              "path = %s.app; sourceTree = BUILT_PRODUCTS_DIR; };\n", 
-              xcProductID, name, name);
-      // FIXME: write .plist reference
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      // write a reference to the target.app file
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcProductID, targetDB);
-      fprintf(out, "\t\t%s /* %s.framework */ = {isa = PBXFileReference; "
-              "explicitFileType = wrapper.framework; includeInIndex = 0; "
-              "path = %s.framework; sourceTree = BUILT_PRODUCTS_DIR; };\n", 
-              xcProductID, name, name);
-      // FIXME: write .plist reference
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      // write a reference to the target.app file
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcProductID, targetDB);
-      fprintf(out, "\t\t%s /* %s.app */ = {isa = PBXFileReference; "
-              "explicitFileType = wrapper.application; includeInIndex = 0; "
-              "path = %s.app; sourceTree = BUILT_PRODUCTS_DIR; };\n", 
-              xcProductID, name, name);
-      // FIXME: write .plist reference
-    }
-    // write all source file
-    for (i=0; i<nFiles; i++) {
-      Fl_File_Prefs fileDB(filesDB, i);
-      MAKE_XCID(xcFileID, fileDB);
-      const char *fullName = fileDB.fullName();
-      char pathAndName[1024]; fileDB.get("pathAndName", pathAndName, "DBERROR", 1024);
-      const char *filetype = "test";
-      const char *ext = fileDB.fileExt();
-      if (!ext) {
-      } else if (strcmp(pathAndName, "src/Fl.cxx")==0
-               ||strcmp(pathAndName, "src/Fl_Native_File_Chooser.cxx")==0) { // FIXME: bad hack!
-        filetype = "sourcecode.cpp.objcpp";
-      } else if (strcmp(ext, ".cxx")==0) {
-        filetype = "sourcecode.cpp.cpp";
-      } else if (strcmp(ext, ".c")==0) {
-        filetype = "sourcecode.c.c";
-      } else if (strcmp(ext, ".mm")==0) {
-        filetype = "sourcecode.cpp.objcpp";
-      } else if (strcmp(ext, ".dylib")==0) {
-        fprintf(out,
-                "\t\t%s /* %s */ = {isa = PBXFileReference; "
-                "lastKnownFileType = \"compiled.mach-o.dylib\"; "
-                "name = %s; path = %s; "
-                "sourceTree = \"<absolute>\"; };\n", 
-                xcFileID, fullName, fullName, pathAndName );
-        filetype = 0L;
-      } else if (strcmp(ext, ".framework")==0) {
-        fprintf(out,
-                "\t\t%s /* %s */ = {isa = PBXFileReference; "
-                "lastKnownFileType = \"wrapper.framework\"; "
-                "name = %s; path = %s; "
-                "sourceTree = \"<absolute>\"; };\n", 
-                xcFileID, fullName, fullName, pathAndName );
-        filetype = 0L;
-      } else if (strcmp(ext, ".icns")==0) {
-        fprintf(out,
-                "\t\t%s /* %s */ = {isa = PBXFileReference; "
-                "lastKnownFileType = \"image.icns\"; "
-                "name = %s; path = %s; "
-                "sourceTree = \"<group>\"; };\n", 
-                xcFileID, fullName, fullName, pathAndName );
-        filetype = 0L;
-      } else if (strcmp(ext, ".plist")==0) {
-        filetype = "text.plist.xml";
-      }
-      if (filetype)
-        fprintf(out,
-              "\t\t%s /* %s */ = {isa = PBXFileReference; fileEncoding = 4; "
-              "lastKnownFileType = %s; name = %s; "
-              "path = ../../%s; sourceTree = SOURCE_ROOT; };\n", 
-              xcFileID, fullName, filetype, fullName, pathAndName);
-    }
-    fprintf(out, "/* End PBXFileReference section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * List all framework build phases
-   */
-  int writeFrameworksBuildPhase(FILE *out, Fl_Preferences &targetDB) {
-    MAKE_XCID(xcBuildFrameworksID, targetDB);
-    fprintf(out, "\t\t%s /* Frameworks */ = {\n", xcBuildFrameworksID);
-    fprintf(out, "\t\t\tisa = PBXFrameworksBuildPhase;\n");
-    fprintf(out, "\t\t\tbuildActionMask = 2147483647;\n");
-    fprintf(out, "\t\t\tfiles = (\n");
-    Fl_Preferences libsDB(targetDB, "libs");
-    int i, n = libsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences libDB(libsDB, i);
-      GET_UUID(refUUID, libDB);
-      MAKE_XCID(xcBuildFrameworkID, libDB);
-      Fl_Preferences tgtLibDB(tgtLibsDB, refUUID);
-      char name[80]; tgtLibDB.get("name", name, "DBERROR", 80);
-      fprintf(out, "\t\t\t\t%s /* %s.framework in Frameworks */,\n", xcBuildFrameworkID, name);
-    }
-    Fl_Preferences extsDB(targetDB, "externals");
-    n = extsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences extDB(extsDB, i);
-      if (with_xcode(extDB.id())) {
-        GET_UUID(refUUID, extDB);
-        MAKE_XCID(xcBuildFrameworkID, extDB);
-        Fl_File_Prefs fileDB(filesDB, refUUID);
-        const char *fullName = fileDB.fullName();
-        if (strcmp(fileDB.fileExt(), ".icns")!=0) {
-          fprintf(out, "\t\t\t\t%s /* %s in Frameworks */,\n", xcBuildFrameworkID, fullName);
-        }
-      }
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  };
-  
-  /*
-   * Write all build phases.
-   */
-  int writeFrameworksBuildPhaseSection(FILE *out) {
-    fprintf(out, "/* Begin PBXFrameworksBuildPhase section */\n");
-    int i;
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeFrameworksBuildPhase(out, targetDB);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeFrameworksBuildPhase(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeFrameworksBuildPhase(out, targetDB);
-    }
-    fprintf(out, "/* End PBXFrameworksBuildPhase section */\n\n");
-    return 0;
-  }
-  
-  /*
-   *
-   */
-  int writeTargetFiles(FILE *out, Fl_Preferences &targetDB) {
-    char name[80];
-    MAKE_XCID(xcTargetGroupID, targetDB);    
-    targetDB.get("name", name, "DBERROR", 80);
-    fprintf(out, "\t\t%s /* %s */ = {\n", xcTargetGroupID, name);
-    fprintf(out, "\t\t\tisa = PBXGroup;\n");
-    fprintf(out, "\t\t\tchildren = (\n");
     
-    MAKE_XCID(xcProductID, targetDB);
-    Fl_Preferences sourcesDB(targetDB, "sources");
-    int j, n = sourcesDB.groups();
-    for (j=0; j<n; j++) {
-      Fl_Preferences sourceDB(sourcesDB, j);
-      GET_UUID(refUUID, sourceDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      MAKE_XCID(xcFileID, fileDB);
-      const char *fullName = fileDB.fullName();
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcFileID, fullName);
-    }
-    Fl_Preferences flsDB(targetDB, "fl");
-    n = flsDB.groups();
-    for (j=0; j<n; j++) {
-      Fl_Preferences flDB(flsDB, j);
-      GET_UUID(refUUID, flDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      MAKE_XCID(xcFileID, fileDB);
-      const char *fullName = fileDB.fullName();
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcFileID, fullName);
-    }
-    Fl_Preferences extsDB(targetDB, "externals");
-    n = extsDB.groups();
-    for (j=0; j<n; j++) {
-      Fl_Preferences extDB(extsDB, j);
-      if (with_xcode(extDB.id())) {
-        GET_UUID(refUUID, extDB);
-        Fl_File_Prefs fileDB(filesDB, refUUID);
-        MAKE_XCID(xcFileID, fileDB);
-        const char *fullName = fileDB.fullName();
-        fprintf(out, "\t\t\t\t%s /* %s */,\n", xcFileID, fullName);
-      }
-    }
-    
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tname = %s;\n", name);
-    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
-  
-  /*
-   * Groups define the folder hierarchy in the "Groups & Files" panel
-   */
-  int writeGroupSection(FILE *out) {
-    int i;
-    char name[80];
-    fprintf(out, "/* Begin PBXGroup section */\n");
-    // --- FIXME: missing "icons" group
-    // --- main group
-    fprintf(out, "\t\t%s = {\n", xcMainGroupID);
-    fprintf(out, "\t\t\tisa = PBXGroup;\n");
-    fprintf(out, "\t\t\tchildren = (\n");
-    fprintf(out, "\t\t\t\t%s /* Applications */,\n", xcAppsGroupID);
-    fprintf(out, "\t\t\t\t%s /* Frameworks */,\n", xcLibsGroupID);
-    fprintf(out, "\t\t\t\t%s /* Tests */,\n", xcTestsGroupID);
-    fprintf(out, "\t\t\t\t%s /* Products */,\n", xcProductsGroupID); // link to "Products" group
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
-    fprintf(out, "\t\t};\n");
-    // --- "Products" group
-    fprintf(out, "\t\t%s /* Products */ = {\n", xcProductsGroupID);
-    fprintf(out, "\t\t\tisa = PBXGroup;\n");
-    fprintf(out, "\t\t\tchildren = (\n");
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcProductID, targetDB);
-      fprintf(out, "\t\t\t\t%s /* %s.app */,\n", xcProductID, name);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcProductID, targetDB);
-      fprintf(out, "\t\t\t\t%s /* %s.framework */,\n", xcProductID, name);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcProductID, targetDB);
-      fprintf(out, "\t\t\t\t%s /* %s.app */,\n", xcProductID, name);
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tname = Products;\n");
-    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
-    fprintf(out, "\t\t};\n");
-    // --- FIXME: missing "plists" group
-
-    // --- "Applications" group
-    fprintf(out, "\t\t%s /* Applications */ = {\n", xcAppsGroupID);
-    fprintf(out, "\t\t\tisa = PBXGroup;\n");
-    fprintf(out, "\t\t\tchildren = (\n");
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      MAKE_XCID(xcTargetGroupID, targetDB);
-      targetDB.get("name", name, "DBERROR", 80);
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetGroupID, name);
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tname = Applications;\n");
-    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
-    fprintf(out, "\t\t};\n");
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeTargetFiles(out, targetDB);
-    }
-    // --- "Frameworks" group
-    fprintf(out, "\t\t%s /* Frameworks */ = {\n", xcLibsGroupID);
-    fprintf(out, "\t\t\tisa = PBXGroup;\n");
-    fprintf(out, "\t\t\tchildren = (\n");
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      MAKE_XCID(xcTargetGroupID, targetDB);
-      targetDB.get("name", name, "DBERROR", 80);
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetGroupID, name);
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tname = Frameworks;\n");
-    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
-    fprintf(out, "\t\t};\n");
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeTargetFiles(out, targetDB);
-    }
-    // --- "Tests" group
-    fprintf(out, "\t\t%s /* Tests */ = {\n", xcTestsGroupID);
-    fprintf(out, "\t\t\tisa = PBXGroup;\n");
-    fprintf(out, "\t\t\tchildren = (\n");
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      MAKE_XCID(xcTargetGroupID, targetDB);
-      targetDB.get("name", name, "DBERROR", 80);
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetGroupID, name);
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tname = Tests;\n");
-    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
-    fprintf(out, "\t\t};\n");
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeTargetFiles(out, targetDB);
-    }
-    // --- done
-    
-    fprintf(out, "/* End PBXGroup section */\n\n");
-    return 0;
-  }
-  
-  /*
-   *
-   */
-  int writeHeadersBuildPhase(FILE *out, Fl_Preferences &targetDB) {
-    MAKE_XCID(xcBuildHeadersID, targetDB);
-    fprintf(out, "\t\t%s /* Headers */ = {\n", xcBuildHeadersID);
-    fprintf(out, "\t\t\tisa = PBXHeadersBuildPhase;\n");
-    fprintf(out, "\t\t\tbuildActionMask = 2147483647;\n");
-    fprintf(out, "\t\t\tfiles = (\n");
-#if 0
-    // FIXME: list all required headers
-    Fl_Preferences libsDB(targetDB, "libs");
-    int i, n = libsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences libDB(libsDB, i);
-      GET_UUID(refUUID, libDB);
-      MAKE_XCID(xcCopyFrameworkID, libDB);
-      Fl_Preferences tgtLibDB(tgtLibsDB, refUUID);
-      char name[80]; tgtLibDB.get("name", name, "DBERROR", 80);;
-      fprintf(out, "\t\t\t\t%s /* %s.framework in CopyFiles */,\n", xcCopyFrameworkID, name);
-    }
-#endif
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  };
-  
-  /*
-   *
-   */
-  int writeHeadersBuildPhaseSection(FILE *out) {
-    int i;
-    fprintf(out, "/* Begin PBXHeadersBuildPhase section */\n");
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeHeadersBuildPhase(out, targetDB);
-    }
-    fprintf(out, "/* End PBXHeadersBuildPhase section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * Write build information for this target
-   */
-  int writeNativeTarget(FILE *out, Fl_Preferences &targetDB, int fmwk=0) {
-    char name[80]; targetDB.get("name", name, "DBERROR", 80);
-    MAKE_XCID(xcTargetID, targetDB);
-    MAKE_XCID(xcBuildConfigurationListID, targetDB);
-    char xcBuildHeadersID[25], xcBuildCopyFilesID[25];
-    if (fmwk) getXCID(targetDB, "xcBuildHeadersID", xcBuildHeadersID);
-    MAKE_XCID(xcBuildResourcesID, targetDB);
-    MAKE_XCID(xcBuildSourcesID, targetDB);
-    MAKE_XCID(xcBuildFrameworksID, targetDB);
-    if (!fmwk) getXCID(targetDB, "xcBuildCopyFilesID", xcBuildCopyFilesID);
-    MAKE_XCID(xcProductID, targetDB);
-    MAKE_XCID(xcBuildRuleFlID, targetDB);
-    fprintf(out, "\t\t%s /* %s */ = {\n", xcTargetID, name);
-    fprintf(out, "\t\t\tisa = PBXNativeTarget;\n");
-    fprintf(out, "\t\t\tbuildConfigurationList = %s /* Build configuration list for PBXNativeTarget \"%s\" */;\n", xcBuildConfigurationListID, name);
-    fprintf(out, "\t\t\tbuildPhases = (\n");
-    if (fmwk) fprintf(out, "\t\t\t\t%s /* Headers */,\n", xcBuildHeadersID);
-    fprintf(out, "\t\t\t\t%s /* Resources */,\n", xcBuildResourcesID);
-    fprintf(out, "\t\t\t\t%s /* Sources */,\n", xcBuildSourcesID);    
-    fprintf(out, "\t\t\t\t%s /* Frameworks */,\n", xcBuildFrameworksID);
-    if (!fmwk) fprintf(out, "\t\t\t\t%s /* CopyFiles */,\n", xcBuildCopyFilesID);  
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tbuildRules = (\n");
-    fprintf(out, "\t\t\t\t%s /* PBXBuildRule */,\n", xcBuildRuleFlID);
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tdependencies = (\n"); {
-      Fl_Preferences depsDB(targetDB, "deps");
-      int i, n = depsDB.groups();
-      for (i=0; i<n; i++) {
-        Fl_Preferences depDB(depsDB, i);
-        MAKE_XCID(xcDependencyID, depDB);
-        fprintf(out, "\t\t\t\t%s /* PBXTargetDependency */,\n", xcDependencyID);
-      }
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tname = %s;\n", name);
-    fprintf(out, "\t\t\tproductName = %s;\n", name);
-    if (fmwk) {
-      fprintf(out, "\t\t\tproductReference = %s /* %s.framework */;\n", xcProductID, name);
-      fprintf(out, "\t\t\tproductType = \"com.apple.product-type.framework\";\n");
-    } else {
-      fprintf(out, "\t\t\tproductReference = %s /* %s.app */;\n", xcProductID, name);
-      fprintf(out, "\t\t\tproductType = \"com.apple.product-type.application\";\n");
-    }
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
-  
-  /*
-   * Write the build information for all targets
-   */
-  int writeNativeTargetSection(FILE *out) {
-    fprintf(out, "/* Begin PBXNativeTarget section */\n");
-    int i;
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeNativeTarget(out, targetDB, 0);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeNativeTarget(out, targetDB, 1);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeNativeTarget(out, targetDB, 0);
-    }
-    fprintf(out, "/* End PBXNativeTarget section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * This section describes the file layout in "Grous & Files"
-   */
-  int writeProjectSection(FILE *out) {
-    int i;
-    fprintf(out, "/* Begin PBXProject section */\n");
-    fprintf(out, "\t\t%s /* Project object */ = {\n", xcRootNodeID);
-    fprintf(out, "\t\t\tisa = PBXProject;\n");
-    fprintf(out, "\t\t\tbuildConfigurationList = %s /* Build configuration list for PBXProject \"%s\" */;\n", xcBuildConfigurationListID, projectName);
-    fprintf(out, "\t\t\tcompatibilityVersion = \"Xcode 3.0\";\n");
-    fprintf(out, "\t\t\thasScannedForEncodings = 0;\n");
-    fprintf(out, "\t\t\tmainGroup = %s;\n", xcMainGroupID);
-    fprintf(out, "\t\t\tproductRefGroup = %s /* Products */;\n", xcProductsGroupID);
-    fprintf(out, "\t\t\tprojectDirPath = \"\";\n");
-    fprintf(out, "\t\t\tprojectRoot = \"\";\n");
-    fprintf(out, "\t\t\ttargets = (\n");
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcTargetID, targetDB);
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetID, name);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcTargetID, targetDB);
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetID, name);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      char name[80]; targetDB.get("name", name, "DBERROR", 80);
-      MAKE_XCID(xcTargetID, targetDB);
-      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcTargetID, name);
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t};\n");
-    fprintf(out, "/* End PBXProject section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * Write the resource build pahse for a target.
-   * Currently we do not include any resources, but we will eventually allow
-   * icons for applications.
-   */
-  int writeResourcesBuildPhase(FILE *out, Fl_Preferences &targetDB) {
-    MAKE_XCID(xcBuildResourcesID, targetDB);
-    fprintf(out, "\t\t%s /* Resources */ = {\n", xcBuildResourcesID);
-    fprintf(out, "\t\t\tisa = PBXResourcesBuildPhase;\n");
-    fprintf(out, "\t\t\tbuildActionMask = 2147483647;\n");
-    fprintf(out, "\t\t\tfiles = (\n");
-    Fl_Preferences extsDB(targetDB, "externals");
-    int i, n = extsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences extDB(extsDB, i);
-      if (with_xcode(extDB.id())) {
-        GET_UUID(refUUID, extDB);
-        Fl_File_Prefs fileDB(filesDB, refUUID);
-        if (strcmp(fileDB.fileExt(), ".icns")==0) {
-          MAKE_XCID(xcCopyResourceID, extDB);
-          fprintf(out, "\t\t\t\t%s /* %s in Resources */,\n", xcCopyResourceID, fileDB.fullName());
-        }
-      }
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
-  
-  /*
-   * Write all resource build phases for all targets.
-   */
-  int writeResourcesBuildPhaseSection(FILE *out) {
-    int i;
-    fprintf(out, "/* Begin PBXResourcesBuildPhase section */\n");
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeResourcesBuildPhase(out, targetDB);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeResourcesBuildPhase(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeResourcesBuildPhase(out, targetDB);
-    }
-    fprintf(out, "/* End PBXResourcesBuildPhase section */\n\n");
-    return 0;
-  }
-  
-  /*
-   *
-   */
-  int writeSourcesBuildPhase(FILE *out, Fl_Preferences &targetDB) {
-    MAKE_XCID(xcBuildSourcesID, targetDB);
-    fprintf(out, "\t\t%s /* Sources */ = {\n", xcBuildSourcesID);
-    fprintf(out, "\t\t\tisa = PBXSourcesBuildPhase;\n");
-    fprintf(out, "\t\t\tbuildActionMask = 2147483647;\n");
-    fprintf(out, "\t\t\tfiles = (\n");
-    // write the array of source code files
-    Fl_Preferences sourcesDB(targetDB, "sources");
-    int i, n = sourcesDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences sourceDB(sourcesDB, i);
-      GET_UUID(refUUID, sourceDB);
-      MAKE_XCID(xcBuildFileID, sourceDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      fprintf(out, "\t\t\t\t%s /* %s in Sources */,\n", xcBuildFileID, fileDB.fullName());
-    }
-    Fl_Preferences flsDB(targetDB, "fl");
-    n = flsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences flDB(flsDB, i);
-      GET_UUID(refUUID, flDB);
-      MAKE_XCID(xcBuildFileID, flDB);
-      Fl_File_Prefs fileDB(filesDB, refUUID);
-      fprintf(out, "\t\t\t\t%s /* %s in Sources */,\n", xcBuildFileID, fileDB.fullName());
-    }
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  };
-  
-  /*
-   *
-   */
-  int writeSourcesBuildPhaseSection(FILE *out) {
-    fprintf(out, "/* Begin PBXSourcesBuildPhase section */\n");
-    int i;
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeSourcesBuildPhase(out, targetDB);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeSourcesBuildPhase(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeSourcesBuildPhase(out, targetDB);
-    }
-    fprintf(out, "/* End PBXSourcesBuildPhase section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * Write all target dependencies of a single target.
-   */
-  int writeTargetDependency(FILE *out, Fl_Preferences &targetDB) {
-    Fl_Preferences depsDB(targetDB, "deps");
-    int i, n = depsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences depDB(depsDB, i);
-      GET_UUID(refUUID, depDB);
-      MAKE_XCID(xcDependencyID, depDB);
-      MAKE_XCID(xcProxyID, depDB);
-      Fl_Preferences *depTgtDBp = 0;
-      if (tgtAppsDB.groupExists(refUUID))
-        depTgtDBp = new Fl_Preferences(tgtAppsDB, refUUID);
-      else if (tgtLibsDB.groupExists(refUUID))
-        depTgtDBp = new Fl_Preferences(tgtLibsDB, refUUID);
-      else if (tgtTestsDB.groupExists(refUUID))
-        depTgtDBp = new Fl_Preferences(tgtTestsDB, refUUID);
-      if (depTgtDBp) {
-        Fl_Preferences &depTgtDB = *depTgtDBp;
-        MAKE_XCID(xcTargetID, depTgtDB);
-        char name[80]; depTgtDB.get("name", name, "DBERROR", 80);
-        fprintf(out, "\t\t%s /* PBXTargetDependency */ = {\n", xcDependencyID);
-        fprintf(out, "\t\t\tisa = PBXTargetDependency;\n");
-        fprintf(out, "\t\t\ttarget = %s /* %s */;\n", xcTargetID, name);
-        fprintf(out, "\t\t\ttargetProxy = %s /* PBXContainerItemProxy */;\n", xcProxyID);
-        fprintf(out, "\t\t};\n");
-        delete depTgtDBp;
-      }
-    }
-    return 0;
-  }
-    
-  /*
-   * Collect all the target dependencies from all targets and write them into 
-   * this section.
-   */
-  int writeTargetDependencySection(FILE *out) {
-    int i;
-    fprintf(out, "/* Begin PBXTargetDependency section */\n");
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeTargetDependency(out, targetDB);      
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeTargetDependency(out, targetDB);      
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeTargetDependency(out, targetDB);      
-    }
-    fprintf(out, "/* End PBXTargetDependency section */\n\n");
-    return 0;
-  }
-  
-  /*
-   *
-   */
-  int writeProjectBuildConfiguration(FILE *out) {
-    // --- project build configuration (Debug)
-    fprintf(out, "\t\t%s /* Debug */ = {\n", xcBuildConfigurationDebugID);
-    fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
-    fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
-    fprintf(out, "\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_64_BIT)\";\n");
-    fprintf(out, "\t\t\t\tGCC_C_LANGUAGE_STANDARD = gnu99;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;\n");
-    fprintf(out, "\t\t\t\tONLY_ACTIVE_ARCH = YES;\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tSDKROOT = macosx10.5;\n");    
-#else
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_TRIGRAPHS = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++\";\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
-    fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;\n");
-    fprintf(out, "\t\t\t\tMACOSX_DEPLOYMENT_TARGET = 10.2;\n");
-    fprintf(out, "\t\t\t\tSDKROOT = \"$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk\";\n");
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = ../../jpeg;\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"\";\n");
-#endif
-    fprintf(out, "\t\t\t};\n");
-    fprintf(out, "\t\t\tname = Debug;\n");
-    fprintf(out, "\t\t};\n");
-    // --- project build configuration (Debug)
-    fprintf(out, "\t\t%s /* Release */ = {\n", xcBuildConfigurationReleaseID);
-    fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
-    fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
-    fprintf(out, "\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_64_BIT)\";\n");
-    fprintf(out, "\t\t\t\tGCC_C_LANGUAGE_STANDARD = gnu99;\n");
-    fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tSDKROOT = macosx10.5;\n");
-#else
-    fprintf(out, "\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)\";\n");
-    fprintf(out, "\t\t\t\tARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = \"ppc i386 x86_64\";\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_GENERATE_DEBUGGING_SYMBOLS = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++\";\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
-    fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;\n");
-    fprintf(out, "\t\t\t\tMACOSX_DEPLOYMENT_TARGET = 10.3;\n");
-    fprintf(out, "\t\t\t\tSDKROOT = \"$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk\";\n");
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = ../../jpeg;\n");
-    fprintf(out, "\t\t\t\tVALID_ARCHS = \"i386 ppc x86_64\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"\";\n");
-#endif
-    fprintf(out, "\t\t\t};\n");
-    fprintf(out, "\t\t\tname = Release;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
-  
-  /*
-   *
-   */
-  int writeApplicationBuildConfiguration(FILE *out, Fl_Preferences &targetDB) {
-    char name[80]; targetDB.get("name", name, "DBERROR", 80);
-    MAKE_XCID(xcBuildConfigurationDebugID, targetDB);
-    fprintf(out, "\t\t%s /* Debug */ = {\n", xcBuildConfigurationDebugID);
-    fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
-    fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
-    fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = fltk.pch;\n");
-    fprintf(out, "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"USING_XCODE=1\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = \"$(HOME)/Applications\";\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-#else
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
-    fprintf(out, "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"USING_XCODE=1\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = /Applications;\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tWRAPPER_EXTENSION = app;\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = YES;\n");
-#endif
-    fprintf(out, "\t\t\t};\n");
-    fprintf(out, "\t\t\tname = Debug;\n");
-    fprintf(out, "\t\t};\n");
-    MAKE_XCID(xcBuildConfigurationReleaseID, targetDB);
-    fprintf(out, "\t\t%s /* Release */ = {\n", xcBuildConfigurationReleaseID);
-    fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
-    fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
-    fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;\n");
-    fprintf(out, "\t\t\t\tDEBUG_INFORMATION_FORMAT = \"dwarf-with-dsym\";\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = fltk.pch;\n");
-    fprintf(out, "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"USING_XCODE=1\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = \"$(HOME)/Applications\";\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-#else
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = YES;\n");
-    fprintf(out, "\t\t\t\tDEBUG_INFORMATION_FORMAT = \"dwarf-with-dsym\";\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
-    fprintf(out, "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"USING_XCODE=1\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = /Applications;\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tWRAPPER_EXTENSION = app;\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
-#endif
-    fprintf(out, "\t\t\t};\n");
-    fprintf(out, "\t\t\tname = Release;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
-    
-  /*
-   *
-   */
-  int writeFrameworkBuildConfiguration(FILE *out, Fl_Preferences &targetDB) {
-    char name[80]; targetDB.get("name", name, "DBERROR", 80);
-    MAKE_XCID(xcBuildConfigurationDebugID, targetDB);
-    fprintf(out, "\t\t%s /* Debug */ = {\n", xcBuildConfigurationDebugID);
-    fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
-    fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
-    fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
-    fprintf(out, "\t\t\t\tDYLIB_COMPATIBILITY_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tDYLIB_CURRENT_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tFRAMEWORK_VERSION = A;\n");
-    fprintf(out, "\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = fltk.pch;\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-#else
-    fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = YES;\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
-    fprintf(out, "\t\t\t\tDYLIB_COMPATIBILITY_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tDYLIB_CURRENT_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tEXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = \"*.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj\";\n");
-    fprintf(out, "\t\t\t\tFRAMEWORK_VERSION = A;\n");
-    fprintf(out, "\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++ objective-c++\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = YES;\n");
-#endif
-    fprintf(out, "\t\t\t};\n");
-    fprintf(out, "\t\t\tname = Debug;\n");
-    fprintf(out, "\t\t};\n");
-    MAKE_XCID(xcBuildConfigurationReleaseID, targetDB);
-    fprintf(out, "\t\t%s /* Release */ = {\n", xcBuildConfigurationReleaseID);
-    fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
-    fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
-    fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = YES;\n");
-    fprintf(out, "\t\t\t\tDEBUG_INFORMATION_FORMAT = \"dwarf-with-dsym\";\n");
-    fprintf(out, "\t\t\t\tDYLIB_COMPATIBILITY_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tDYLIB_CURRENT_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tFRAMEWORK_VERSION = A;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = fltk.pch;\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
-#else
-    fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = YES;\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = YES;\n");
-    fprintf(out, "\t\t\t\tDEBUG_INFORMATION_FORMAT = \"dwarf-with-dsym\";\n");
-    fprintf(out, "\t\t\t\tDYLIB_COMPATIBILITY_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tDYLIB_CURRENT_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tEXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = \"*.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj\";\n");
-    fprintf(out, "\t\t\t\tFRAMEWORK_VERSION = A;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++ objective-c++\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");
-    fprintf(out, "\t\t\t\tMACOSX_DEPLOYMENT_TARGET = 10.2;\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tSDKROOT = \"\";\n");
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
-#endif
-    fprintf(out, "\t\t\t};\n");
-    fprintf(out, "\t\t\tname = Release;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
-  
-  /*
-   * This block contains build configurations for every target and project
-   */
-  int writeBuildConfigurationSection(FILE *out) {
-    writeProjectBuildConfiguration(out);
-    int i;
-    fprintf(out, "/* Begin XCBuildConfiguration section */\n");
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeApplicationBuildConfiguration(out, targetDB);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeFrameworkBuildConfiguration(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeApplicationBuildConfiguration(out, targetDB);
-    }
-    fprintf(out, "/* End XCBuildConfiguration section */\n\n");
-    return 0;
-  }
-
-  /*
-   * Write the build onfiguration list for the entire project.
-   */
-  int writeProjectConfigurationList(FILE *out) {
-    fprintf(out, "\t\t%s /* Build configuration list for PBXProject \"%s\" */ = {\n", xcBuildConfigurationListID, projectName);
-    fprintf(out, "\t\t\tisa = XCConfigurationList;\n");
-    fprintf(out, "\t\t\tbuildConfigurations = (\n");
-    fprintf(out, "\t\t\t\t%s /* Debug */,\n", xcBuildConfigurationDebugID);
-    fprintf(out, "\t\t\t\t%s /* Release */,\n", xcBuildConfigurationReleaseID);
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tdefaultConfigurationIsVisible = 0;\n");
-    fprintf(out, "\t\t\tdefaultConfigurationName = Debug;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
-    
-  /*
-   * Write the build onfiguration list for the entire project.
-   */
-  int writeTargetConfigurationList(FILE *out, Fl_Preferences &targetDB) {
-    char name[80]; targetDB.get("name", name, "DBERROR", 80);
-    MAKE_XCID(xcBuildConfigurationListID, targetDB);
-    MAKE_XCID(xcBuildConfigurationDebugID, targetDB);
-    MAKE_XCID(xcBuildConfigurationReleaseID, targetDB);
-    fprintf(out, "\t\t%s /* Build configuration list for PBXProject \"%s\" */ = {\n", xcBuildConfigurationListID, name);
-    fprintf(out, "\t\t\tisa = XCConfigurationList;\n");
-    fprintf(out, "\t\t\tbuildConfigurations = (\n");
-    fprintf(out, "\t\t\t\t%s /* Debug */,\n", xcBuildConfigurationDebugID);
-    fprintf(out, "\t\t\t\t%s /* Release */,\n", xcBuildConfigurationReleaseID);
-    fprintf(out, "\t\t\t);\n");
-    fprintf(out, "\t\t\tdefaultConfigurationIsVisible = 0;\n");
-    fprintf(out, "\t\t\tdefaultConfigurationName = Debug;\n");
-    fprintf(out, "\t\t};\n");
-    return 0;
-  }
- 
-  /*
-   * This block contains arrays to the available build configurations
-   */
-  int writeConfigurationListSection(FILE *out) {
-    int i;
-    fprintf(out, "/* Begin XCConfigurationList section */\n");
-    // --- project configuration list
-    writeProjectConfigurationList(out);
-    // --- configuration list for all targets
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writeTargetConfigurationList(out, targetDB);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writeTargetConfigurationList(out, targetDB);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writeTargetConfigurationList(out, targetDB);
-    }
-    fprintf(out, "/* End XCConfigurationList section */\n\n");
-    return 0;
-  }
-  
-  /*
-   * Write the project definition file
-   */
-  int writeProjectFile(const char *filepath) {
-    char filename[2048];
-    fl_snprintf(filename, 2047, "%s/project.pbxproj", filepath);
-    FILE *out = fopen(filename, "wb");
-    if (!out) {
-      fl_alert("Can't open file:\n%s", filename);
-      return -1;
-    }
-    fprintf(out, 
-            "// !$*UTF8*$!\n" "{\n" "\tarchiveVersion = 1;\n" "\tclasses = {\n"
-            "\t};\n" "\tobjectVersion = 44;\n" "\tobjects = {\n\n");
-    writeBuildFileSection(out);
-    writeBuildRuleSection(out);
-    writeContainerItemProxySection(out);
-    writeCopyFilesBuildPhaseSection(out);
-    writeFileReferenceSection(out);
-    writeFrameworksBuildPhaseSection(out);
-    writeGroupSection(out);
-    writeHeadersBuildPhaseSection(out);
-    writeNativeTargetSection(out);
-    writeProjectSection(out);
-    writeResourcesBuildPhaseSection(out);
-    writeSourcesBuildPhaseSection(out);
-    writeTargetDependencySection(out);
-    writeBuildConfigurationSection(out);
-    writeConfigurationListSection(out);
-    fprintf(out,
-            "\t};\n"
-            "\trootObject = %s /* Project object */;\n"
-            "}\n", xcRootNodeID);
-
-    fclose(out);
-    return 0;
-  }
-  
-  int writeConfigH(const char *filename) {
-    FILE *f = fopen(filename, "wb");
-    fputs("/*\n * \"$Id: ide_xcode.cxx 7169 2010-02-27 22:38:25Z matt $\"\n"
-          " *\n * Configuration file for the Fast Light Tool Kit (FLTK).\n *\n"
-          " * Copyright 1998-2010 by Bill Spitzak and others.\n */\n\n", f);
-    fputs("#define FLTK_DATADIR \"/usr/local/share/fltk\"\n"
-          "#define FLTK_DOCDIR \"/usr/local/share/doc/fltk\"\n"
-          "#define BORDER_WIDTH 2\n#define HAVE_GL 1\n#define HAVE_GL_GLU_H 1\n"
-          "#define USE_COLORMAP 1\n#define HAVE_XINERAMA 0\n#define USE_XFT 0\n"
-          "#define HAVE_XDBE 0\n#define USE_XDBE HAVE_XDBE\n", f);
-    fputs("#define __APPLE_QUARTZ__ 1\n#define HAVE_OVERLAY 0\n"
-          "#define HAVE_GL_OVERLAY HAVE_OVERLAY\n#define WORDS_BIGENDIAN 0\n"
-          "#define U16 unsigned short\n#define U32 unsigned\n"
-          "#define HAVE_DIRENT_H 1\n#define HAVE_SCANDIR 1\n"
-          "#define HAVE_VSNPRINTF 1\n", f);
-    fputs("#define HAVE_SNPRINTF 1\n#define HAVE_STRINGS_H 1\n"
-          "#define HAVE_STRCASECMP 1\n#define HAVE_STRLCAT 1\n"
-          "#define HAVE_STRLCPY 1\n#define HAVE_LOCALE_H 1\n"
-          "#define HAVE_LOCALECONV 1\n#define HAVE_SYS_SELECT_H 1\n"
-          "#define USE_POLL 0\n#define HAVE_LIBPNG 1\n#define HAVE_LIBZ 1\n"
-          "#define HAVE_LIBJPEG 1\n#define HAVE_PNG_H 1\n", f);
-    fputs("#define HAVE_PTHREAD 1\n#define HAVE_PTHREAD_H 1\n"
-          "#define HAVE_LONG_LONG 1\n#define FLTK_LLFMT \"%lld\"\n"
-          "#define FLTK_LLCAST (long long)\n#define HAVE_STRTOLL 1\n"
-          "#define HAVE_DLFCN_H 1\n#define HAVE_DLSYM 1\n\n", f);
-    fputs("/*\n"
-          " * End of \"$Id: ide_xcode.cxx 7169 2010-02-27 22:38:25Z matt $\".\n"
-          " */", f);
+  int writeMainMakefile(const char *filepath) {
+    FILE *f = fopen(filepath, "wb");
+    fputs("#\n", f);
+    fputs("# \"$Id: Makefile 6798 2009-06-27 16:39:36Z fabien $\"\n", f);
+    fputs("#\n", f);
+    fputs("# Top-level makefile for the Fast Light Tool Kit (FLTK).\n", f);
+    fputs("#\n", f);
+    fputs("# Copyright 1998-2009 by Bill Spitzak and others.\n", f);
+    fputs("#\n", f);
+    fputs("# This library is free software; you can redistribute it and/or\n", f);
+    fputs("# modify it under the terms of the GNU Library General Public\n", f);
+    fputs("# License as published by the Free Software Foundation; either\n", f);
+    fputs("# version 2 of the License, or (at your option) any later version.\n", f);
+    fputs("#\n", f);
+    fputs("# This library is distributed in the hope that it will be useful,\n", f);
+    fputs("# but WITHOUT ANY WARRANTY; without even the implied warranty of\n", f);
+    fputs("# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n", f);
+    fputs("# Library General Public License for more details.\n", f);
+    fputs("#\n", f);
+    fputs("# You should have received a copy of the GNU Library General Public\n", f);
+    fputs("# License along with this library; if not, write to the Free Software\n", f);
+    fputs("# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307\n", f);
+    fputs("# USA.\n", f);
+    fputs("#\n", f);
+    fputs("# Please report all bugs and problems on the following page:\n", f);
+    fputs("#\n", f);
+    fputs("#      http://www.fltk.org/str.php\n", f);
+    fputs("#\n", f);
+    fputs("\n", f);
+    fputs("include makeinclude\n", f);
+    fputs("\n", f);
+    fputs("DIRS = $(IMAGEDIRS) src $(CAIRODIR) fluid test documentation\n", f);
+    fputs("\n", f);
+    fputs("all: makeinclude fltk-config\n", f);
+    fputs("\tfor dir in $(DIRS); do\\\n", f);
+    fputs("\t\techo \"=== making $$dir ===\";\\\n", f);
+    fputs("\t\t(cd $$dir; $(MAKE) $(MFLAGS)) || exit 1;\\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("install: makeinclude\n", f);
+    fputs("\t-mkdir -p $(DESTDIR)$(bindir)\n", f);
+    fputs("\t$(RM) $(DESTDIR)$(bindir)/fltk-config\n", f);
+    fputs("\t$(INSTALL_SCRIPT) fltk-config $(DESTDIR)$(bindir)\n", f);
+    fputs("\tfor dir in FL $(DIRS); do\\\n", f);
+    fputs("\t\techo \"=== installing $$dir ===\";\\\n", f);
+    fputs("\t\t(cd $$dir; $(MAKE) $(MFLAGS) install) || exit 1;\\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("install-desktop: makeinclude\n", f);
+    fputs("\tcd documentation; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)\n", f);
+    fputs("\tcd fluid; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)\n", f);
+    fputs("\tcd test; $(MAKE) $(MFLAGS) $(INSTALL_DESKTOP)\n", f);
+    fputs("\n", f);
+    fputs("uninstall: makeinclude\n", f);
+    fputs("\t$(RM) $(DESTDIR)$(bindir)/fltk-config\n", f);
+    fputs("\tfor dir in FL $(DIRS); do\\\n", f);
+    fputs("\t\techo \"=== uninstalling $$dir ===\";\\\n", f);
+    fputs("\t\t(cd $$dir; $(MAKE) $(MFLAGS) uninstall) || exit 1;\\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("uninstall-desktop: makeinclude\n", f);
+    fputs("\tcd documentation; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)\n", f);
+    fputs("\tcd fluid; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)\n", f);
+    fputs("\tcd test; $(MAKE) $(MFLAGS) $(UNINSTALL_DESKTOP)\n", f);
+    fputs("\n", f);
+    fputs("depend: makeinclude\n", f);
+    fputs("\tfor dir in $(DIRS); do\\\n", f);
+    fputs("\t\techo \"=== making dependencies in $$dir ===\";\\\n", f);
+    fputs("\t\t(cd $$dir; $(MAKE) $(MFLAGS) depend) || exit 1;\\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("clean:\n", f);
+    fputs("\t-$(RM) core *.o\n", f);
+    fputs("\tfor dir in $(DIRS); do\\\n", f);
+    fputs("\t\techo \"=== cleaning $$dir ===\";\\\n", f);
+    fputs("\t\t(cd $$dir; $(MAKE) $(MFLAGS) clean) || exit 1;\\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("distclean: clean\n", f);
+    fputs("\t$(RM) config.*\n", f);
+    fputs("\t$(RM) fltk-config fltk.list makeinclude\n", f);
+    fputs("\t$(RM) fltk.spec\n", f);
+    fputs("\t$(RM) FL/Makefile\n", f);
+    fputs("\t$(RM) documentation/*.$(CAT1EXT)\n", f);
+    fputs("\t$(RM) documentation/*.$(CAT3EXT)\n", f);
+    fputs("\t$(RM) documentation/*.$(CAT6EXT)\n", f);
+    fputs("\t$(RM) documentation/fltk.ps\n", f);
+    fputs("\t$(RM) -r documentation/fltk.d\n", f);
+    fputs("\tfor file in test/*.fl; do\\\n", f);
+    fputs("\t\t$(RM) test/`basename $$file .fl`.cxx; \\\n", f);
+    fputs("\t\t$(RM) test/`basename $$file .fl`.h; \\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("fltk-config: configure configh.in fltk-config.in\n", f);
+    fputs("\tif test -f config.status; then \\\n", f);
+    fputs("\t\t./config.status --recheck; \\\n", f);
+    fputs("\t\t./config.status; \\\n", f);
+    fputs("\telse \\\n", f);
+    fputs("\t\t./configure; \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\ttouch config.h\n", f);
+    fputs("\tchmod +x fltk-config\n", f);
+    fputs("\n", f);
+    fputs("makeinclude: configure configh.in makeinclude.in\n", f);
+    fputs("\tif test -f config.status; then \\\n", f);
+    fputs("\t\t./config.status --recheck; \\\n", f);
+    fputs("\t\t./config.status; \\\n", f);
+    fputs("\telse \\\n", f);
+    fputs("\t\t./configure; \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\ttouch config.h\n", f);
+    fputs("\tchmod +x fltk-config\n", f);
+    fputs("\n", f);
+    fputs("configure: configure.in\n", f);
+    fputs("\tautoconf\n", f);
+    fputs("\n", f);
+    fputs("portable-dist:\n", f);
+    fputs("\tepm -v -s fltk.xpm fltk\n", f);
+    fputs("\n", f);
+    fputs("native-dist:\n", f);
+    fputs("\tepm -v -f native fltk\n", f);
+    fputs("\n", f);
+    fputs("etags:\n", f);
+    fputs("\tetags FL/*.H FL/*.h src/*.cxx src/*.c src/*.h src/xutf8/*.h src/xutf8/*.c cairo/*.cxx fluid/*.h fluid/*.cxx test/*.h test/*.cxx\n", f);
+    fputs("\n", f);
+    fputs("#\n", f);
+    fputs("# End of \"$Id: Makefile 6798 2009-06-27 16:39:36Z fabien $\".\n", f);
+    fputs("#\n", f);
     fclose(f);
     return 0;
   }
   
-  int writePCH(const char *filename) {
-    FILE *f = fopen(filename, "wb");
-    fputs("//\n// Prefix header for all source files\n//\n\n"
-          "#ifdef __OBJC__\n#import <Cocoa/Cocoa.h>\n#endif\n\n", f);
+  int writeFluidMakefile(const char *filepath) {
+    FILE *f = fopen(filepath, "wb");
+    fputs("#\n", f);
+    fputs("# \"$Id: Makefile 6614 2009-01-01 16:11:32Z matt $\"\n", f);
+    fputs("#\n", f);
+    fputs("# FLUID makefile for the Fast Light Tool Kit (FLTK).\n", f);
+    fputs("#\n", f);
+    fputs("# Copyright 1998-2009 by Bill Spitzak and others.\n", f);
+    fputs("#\n", f);
+    fputs("# This library is free software; you can redistribute it and/or\n", f);
+    fputs("# modify it under the terms of the GNU Library General Public\n", f);
+    fputs("# License as published by the Free Software Foundation; either\n", f);
+    fputs("# version 2 of the License, or (at your option) any later version.\n", f);
+    fputs("#\n", f);
+    fputs("# This library is distributed in the hope that it will be useful,\n", f);
+    fputs("# but WITHOUT ANY WARRANTY; without even the implied warranty of\n", f);
+    fputs("# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n", f);
+    fputs("# Library General Public License for more details.\n", f);
+    fputs("#\n", f);
+    fputs("# You should have received a copy of the GNU Library General Public\n", f);
+    fputs("# License along with this library; if not, write to the Free Software\n", f);
+    fputs("# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307\n", f);
+    fputs("# USA.\n", f);
+    fputs("#\n", f);
+    fputs("# Please report all bugs and problems on the following page:\n", f);
+    fputs("#\n", f);
+    fputs("#      http://www.fltk.org/str.php\n", f);
+    fputs("#\n", f);
+    fputs("\n", f);
+    fputs("CPPFILES = \\\n", f);
+    fputs("\tCodeEditor.cxx \\\n", f);
+    fputs("\tFl_Function_Type.cxx \\\n", f);
+    fputs("\tFl_Group_Type.cxx \\\n", f);
+    fputs("\tFl_Menu_Type.cxx \\\n", f);
+    fputs("\tFl_Type.cxx \\\n", f);
+    fputs("\tFl_Widget_Type.cxx \\\n", f);
+    fputs("\tFl_Window_Type.cxx \\\n", f);
+    fputs("\tFluid_Image.cxx \\\n", f);
+    fputs("\tabout_panel.cxx \\\n", f);
+    fputs("\talign_widget.cxx \\\n", f);
+    fputs("\talignment_panel.cxx \\\n", f);
+    fputs("\tcode.cxx \\\n", f);
+    fputs("\tfactory.cxx \\\n", f);
+    fputs("\tfile.cxx \\\n", f);
+    fputs("\tfluid.cxx \\\n", f);
+    fputs("\tfunction_panel.cxx \\\n", f);
+    fputs("\ttemplate_panel.cxx \\\n", f);
+    fputs("\tundo.cxx \\\n", f);
+    fputs("\twidget_panel.cxx\n", f);
+    fputs("\n", f);
+    fputs("################################################################\n", f);
+    fputs("\n", f);
+    fputs("OBJECTS = $(CPPFILES:.cxx=.o)\n", f);
+    fputs("\n", f);
+    fputs("include ../makeinclude\n", f);
+    fputs("\n", f);
+    fputs("all:\t$(FLUID) fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("fluid$(EXEEXT):\t\t$(OBJECTS) $(LIBNAME) $(FLLIBNAME) \\\n", f);
+    fputs("\t\t\t$(IMGLIBNAME)\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKFLTKFORMS) $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\t$(OSX_ONLY) $(INSTALL_BIN) fluid fluid.app/Contents/MacOS\n", f);
+    fputs("\n", f);
+    fputs("fluid-shared$(EXEEXT):\t$(OBJECTS) ../src/$(DSONAME) ../src/$(FLDSONAME) \\\n", f);
+    fputs("\t\t\t../src/$(IMGDSONAME)\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) $(LINKSHARED) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("clean:\n", f);
+    fputs("\t-$(RM) *.o core.* *~ *.bck *.bck\n", f);
+    fputs("\t-$(RM) core fluid$(EXEEXT) fluid-shared$(EXEEXT)\n", f);
+    fputs("\t-$(RM) fluid.app/Contents/MacOS/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("depend:\t$(CPPFILES)\n", f);
+    fputs("\tmakedepend -Y -I.. -f makedepend $(CPPFILES)\n", f);
+    fputs("\n", f);
+    fputs("# Automatically generated dependencies...\n", f);
+    fputs("include makedepend\n", f);
+    fputs("\n", f);
+    fputs("install: all\n", f);
+    fputs("\techo \"Installing FLUID in $(DESTDIR)$(bindir)...\"\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)$(bindir)\n", f);
+    fputs("\t$(INSTALL_BIN) $(FLUID) $(DESTDIR)$(bindir)/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("install-linux:\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/usr/share/applications\n", f);
+    fputs("\t$(INSTALL_DATA) fluid.desktop  $(DESTDIR)/usr/share/applications\n", f);
+    fputs("\tfor size in 16 32 48 64 128; do \\\n", f);
+    fputs("\t\tif test ! -d $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; then \\\n", f);
+    fputs("\t\t\t$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps; \\\n", f);
+    fputs("\t\tfi; \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) icons/fluid-$$size.png $(DESTDIR)/usr/share/icons/hicolor/$${size}x$${size}/apps/fluid.png; \\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/usr/share/mimelnk/application\n", f);
+    fputs("\t$(INSTALL_DATA) x-fluid.desktop  $(DESTDIR)/usr/share/mimelnk/application\n", f);
+    fputs("\n", f);
+    fputs("install-osx:\n", f);
+    fputs("\techo Installing Fluid in $(DESTDIR)/Applications...\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents\n", f);
+    fputs("\t$(INSTALL_DATA) fluid.app/Contents/Info.plist $(DESTDIR)/Applications/fluid.app/Contents/Info.plist\n", f);
+    fputs("\t$(INSTALL_DATA) fluid.app/Contents/PkgInfo $(DESTDIR)/Applications/fluid.app/Contents/PkgInfo\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents/MacOS\n", f);
+    fputs("\t$(RM) $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid\n", f);
+    fputs("\t$(LN) $(bindir)/fluid $(DESTDIR)/Applications/fluid.app/Contents/MacOS/fluid\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/Applications/fluid.app/Contents/Resources\n", f);
+    fputs("\t$(INSTALL_DATA) fluid.app/Contents/Resources/fluid.icns $(DESTDIR)/Applications/fluid.app/Contents/Resources\n", f);
+    fputs("\n", f);
+    fputs("uninstall:\n", f);
+    fputs("\t$(RM) $(DESTDIR)$(bindir)/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("uninstall-linux:\n", f);
+    fputs("\t$(RM) $(DESTDIR)/usr/share/applications/fluid.desktop\n", f);
+    fputs("\t$(RM) $(DESTDIR)/usr/share/icons/hicolor/*/fluid.png\n", f);
+    fputs("\t$(RM) $(DESTDIR)/usr/share/mimelnk/application/x-fluid.desktop\n", f);
+    fputs("\n", f);
+    fputs("uninstall-osx:\n", f);
+    fputs("\t$(RM) -r $(DESTDIR)/Applications/fluid.app\n", f);
+    fputs("\n", f);
+    fputs("\n", f);
+    fputs("#\n", f);
+    fputs("# Note: The rebuild target can only be used if you have the original .fl\n", f);
+    fputs("#       files.  This is normally only used by the FLTK maintainers...\n", f);
+    fputs("#\n", f);
+    fputs("\n", f);
+    fputs("rebuild:\n", f);
+    fputs("\t./fluid -c about_panel.fl\n", f);
+    fputs("\t./fluid -c alignment_panel.fl\n", f);
+    fputs("\t./fluid -c function_panel.fl\n", f);
+    fputs("\t./fluid -c print_panel.fl\n", f);
+    fputs("\t./fluid -c template_panel.fl\n", f);
+    fputs("\t./fluid -c widget_panel.fl\n", f);
+    fputs("\n", f);
+    fputs("#\n", f);
+    fputs("# End of \"$Id: Makefile 6614 2009-01-01 16:11:32Z matt $\".\n", f);
+    fputs("#\n", f);
     fclose(f);
     return 0;
   }
   
-  int createIcons(const char *filepath) {
-    // FIXME: LATER: create a minimum set of icon files?
-    return 0;
-  }
-  
-  /*
-   * create a single plists/[name]-Info.plist 
-   */
-  int writePList(const char *filepath, Fl_Preferences &target_db, int fmwk=0) {
-    char name[80]; target_db.get("name", name, "DBERROR", 79);
-    char filename[2048]; 
-    fl_snprintf(filename, 2047, "%s/%s-Info.plist", filepath, name);
-    FILE *f = fopen(filename, "wb");
-    fprintf(f, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    fprintf(f, "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n");
-    fprintf(f, "<plist version=\"1.0\">\n");
-    fprintf(f, "<dict>\n");
-    fprintf(f, "\t<key>CFBundleDevelopmentRegion</key>\n");
-    fprintf(f, "\t<string>English</string>\n");
-    if (strcmp(name, "Fluid")==0) { // TODO: this option is not yet in the database
-      fprintf(f, "\t<key>CFBundleDocumentTypes</key>\n");
-      fprintf(f, "\t<array>\n");
-      fprintf(f, "\t\t<dict>\n");
-      fprintf(f, "\t\t\t<key>CFBundleTypeExtensions</key>\n");
-      fprintf(f, "\t\t\t<array>\n");
-      fprintf(f, "\t\t\t\t<string>fl</string>\n");
-      fprintf(f, "\t\t\t</array>\n");
-      fprintf(f, "\t\t\t<key>CFBundleTypeIconFile</key>\n");
-      fprintf(f, "\t\t\t<string>fluid_doc</string>\n");
-      fprintf(f, "\t\t\t<key>CFBundleTypeName</key>\n");
-      fprintf(f, "\t\t\t<string>Fluid Documents</string>\n");
-      fprintf(f, "\t\t\t<key>CFBundleTypeOSTypes</key>\n");
-      fprintf(f, "\t\t\t<array>\n");
-      fprintf(f, "\t\t\t\t<string>flid</string>\n");
-      fprintf(f, "\t\t\t</array>\n");
-      fprintf(f, "\t\t\t<key>CFBundleTypeRole</key>\n");
-      fprintf(f, "\t\t\t<string>Editor</string>\n");
-      fprintf(f, "\t\t\t<key>LSTypeIsPackage</key>\n");
-      fprintf(f, "\t\t\t<false/>\n");
-      fprintf(f, "\t\t\t<key>NSPersistentStoreTypeKey</key>\n");
-      fprintf(f, "\t\t\t<string>Binary</string>\n");
-      fprintf(f, "\t\t</dict>\n");
-      fprintf(f, "\t</array>\n");
-    }
-    fprintf(f, "\t<key>CFBundleExecutable</key>\n");
-    fprintf(f, "\t<string>${EXECUTABLE_NAME}</string>\n");
-    // find the first suitable icon file if there is one
-    Fl_Preferences extsDB(target_db, "externals");
-    int i, n = extsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences extDB(extsDB, i);
-      if (with_xcode(extDB.id())) {
-        GET_UUID(refUUID, extDB);
-        Fl_File_Prefs fileDB(filesDB, refUUID);
-        if (strcmp(fileDB.fileExt(), ".icns")==0) {
-          fprintf(f, "\t<key>CFBundleIconFile</key>\n\t<string>%s</string>", fileDB.fileName());
-          break;
-        }
-      }
-    }
-    fprintf(f, "\t<key>CFBundleIdentifier</key>\n");
-    fprintf(f, "\t<string>org.fltk.%s</string>\n", name);
-    fprintf(f, "\t<key>CFBundleInfoDictionaryVersion</key>\n");
-    fprintf(f, "\t<string>6.0</string>\n");
-    fprintf(f, "\t<key>CFBundlePackageType</key>\n");
-    if (fmwk)
-      fprintf(f, "\t<string>FMWK</string>\n");
-    else
-      fprintf(f, "\t<string>APPL</string>\n");
-    fprintf(f, "\t<key>CFBundleSignature</key>\n");
-    fprintf(f, "\t<string>FLTK</string>\n");
-    fprintf(f, "\t<key>CFBundleVersion</key>\n");
-    fprintf(f, "\t<string>1.0</string>\n");
-    fprintf(f, "</dict>\n");
-    fprintf(f, "\t</plist>\n");
+  int writeLibsMakefile(const char *filepath) {
+    FILE *f = fopen(filepath, "wb");
+    fputs("#\n", f);
+    fputs("# \"$Id: Makefile 7333 2010-03-25 14:35:45Z manolo $\"\n", f);
+    fputs("#\n", f);
+    fputs("# Library makefile for the Fast Light Tool Kit (FLTK).\n", f);
+    fputs("#\n", f);
+    fputs("# Copyright 1998-2009 by Bill Spitzak and others.\n", f);
+    fputs("#\n", f);
+    fputs("# This library is free software; you can redistribute it and/or\n", f);
+    fputs("# modify it under the terms of the GNU Library General Public\n", f);
+    fputs("# License as published by the Free Software Foundation; either\n", f);
+    fputs("# version 2 of the License, or (at your option) any later version.\n", f);
+    fputs("#\n", f);
+    fputs("# This library is distributed in the hope that it will be useful,\n", f);
+    fputs("# but WITHOUT ANY WARRANTY; without even the implied warranty of\n", f);
+    fputs("# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n", f);
+    fputs("# Library General Public License for more details.\n", f);
+    fputs("#\n", f);
+    fputs("# You should have received a copy of the GNU Library General Public\n", f);
+    fputs("# License along with this library; if not, write to the Free Software\n", f);
+    fputs("# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307\n", f);
+    fputs("# USA.\n", f);
+    fputs("#\n", f);
+    fputs("# Please report all bugs and problems on the following page:\n", f);
+    fputs("#\n", f);
+    fputs("#      http://www.fltk.org/str.php\n", f);
+    fputs("#\n", f);
+    fputs("\n", f);
+    fputs("CPPFILES = \\\n", f);
+    fputs("\tFl.cxx \\\n", f);
+    fputs("\tFl_Abstract_Printer.cxx \\\n", f);
+    fputs("\tFl_Adjuster.cxx \\\n", f);
+    fputs("\tFl_Bitmap.cxx \\\n", f);
+    fputs("\tFl_Browser.cxx \\\n", f);
+    fputs("\tFl_Browser_.cxx \\\n", f);
+    fputs("\tFl_Browser_load.cxx \\\n", f);
+    fputs("\tFl_Box.cxx \\\n", f);
+    fputs("\tFl_Button.cxx \\\n", f);
+    fputs("\tFl_Chart.cxx \\\n", f);
+    fputs("\tFl_Check_Browser.cxx \\\n", f);
+    fputs("\tFl_Check_Button.cxx \\\n", f);
+    fputs("\tFl_Choice.cxx \\\n", f);
+    fputs("\tFl_Clock.cxx \\\n", f);
+    fputs("\tFl_Color_Chooser.cxx \\\n", f);
+    fputs("\tFl_Counter.cxx \\\n", f);
+    fputs("\tFl_Dial.cxx \\\n", f);
+    fputs("\tFl_Device.cxx \\\n", f);
+    fputs("\tFl_Double_Window.cxx \\\n", f);
+    fputs("\tFl_File_Browser.cxx \\\n", f);
+    fputs("\tFl_File_Chooser.cxx \\\n", f);
+    fputs("\tFl_File_Chooser2.cxx \\\n", f);
+    fputs("\tFl_File_Icon.cxx \\\n", f);
+    fputs("\tFl_File_Input.cxx \\\n", f);
+    fputs("\tFl_Group.cxx \\\n", f);
+    fputs("\tFl_Help_View.cxx \\\n", f);
+    fputs("\tFl_Image.cxx \\\n", f);
+    fputs("\tFl_Input.cxx \\\n", f);
+    fputs("\tFl_Input_.cxx \\\n", f);
+    fputs("\tFl_Light_Button.cxx \\\n", f);
+    fputs("\tFl_Menu.cxx \\\n", f);
+    fputs("\tFl_Menu_.cxx \\\n", f);
+    fputs("\tFl_Menu_Bar.cxx \\\n", f);
+    fputs("\tFl_Sys_Menu_Bar.cxx \\\n", f);
+    fputs("\tFl_Menu_Button.cxx \\\n", f);
+    fputs("\tFl_Menu_Window.cxx \\\n", f);
+    fputs("\tFl_Menu_add.cxx \\\n", f);
+    fputs("\tFl_Menu_global.cxx \\\n", f);
+    fputs("\tFl_Multi_Label.cxx \\\n", f);
+    fputs("\tFl_Native_File_Chooser.cxx \\\n", f);
+    fputs("\tFl_Overlay_Window.cxx \\\n", f);
+    fputs("\tFl_Pack.cxx \\\n", f);
+    fputs("\tFl_Pixmap.cxx \\\n", f);
+    fputs("\tFl_Positioner.cxx \\\n", f);
+    fputs("\tFl_Preferences.cxx \\\n", f);
+    fputs("\tFl_Printer.cxx \\\n", f);
+    fputs("\tFl_Progress.cxx \\\n", f);
+    fputs("\tFl_Repeat_Button.cxx \\\n", f);
+    fputs("\tFl_Return_Button.cxx \\\n", f);
+    fputs("\tFl_Roller.cxx \\\n", f);
+    fputs("\tFl_Round_Button.cxx \\\n", f);
+    fputs("\tFl_Scroll.cxx \\\n", f);
+    fputs("\tFl_Scrollbar.cxx \\\n", f);
+    fputs("\tFl_Shared_Image.cxx \\\n", f);
+    fputs("\tFl_Single_Window.cxx \\\n", f);
+    fputs("\tFl_Slider.cxx \\\n", f);
+    fputs("\tFl_Table.cxx \\\n", f);
+    fputs("\tFl_Table_Row.cxx \\\n", f);
+    fputs("\tFl_Tabs.cxx \\\n", f);
+    fputs("\tFl_Text_Buffer.cxx \\\n", f);
+    fputs("\tFl_Text_Display.cxx \\\n", f);
+    fputs("\tFl_Text_Editor.cxx \\\n", f);
+    fputs("\tFl_Tile.cxx \\\n", f);
+    fputs("\tFl_Tiled_Image.cxx \\\n", f);
+    fputs("\tFl_Tree.cxx \\\n", f);
+    fputs("\tFl_Tree_Item.cxx \\\n", f);
+    fputs("\tFl_Tree_Item_Array.cxx \\\n", f);
+    fputs("\tFl_Tree_Prefs.cxx \\\n", f);
+    fputs("\tFl_Tooltip.cxx \\\n", f);
+    fputs("\tFl_Valuator.cxx \\\n", f);
+    fputs("\tFl_Value_Input.cxx \\\n", f);
+    fputs("\tFl_Value_Output.cxx \\\n", f);
+    fputs("\tFl_Value_Slider.cxx \\\n", f);
+    fputs("\tFl_Widget.cxx \\\n", f);
+    fputs("\tFl_Window.cxx \\\n", f);
+    fputs("\tFl_Window_fullscreen.cxx \\\n", f);
+    fputs("\tFl_Window_hotspot.cxx \\\n", f);
+    fputs("\tFl_Window_iconize.cxx \\\n", f);
+    fputs("\tFl_Wizard.cxx \\\n", f);
+    fputs("\tFl_XBM_Image.cxx \\\n", f);
+    fputs("\tFl_XPM_Image.cxx \\\n", f);
+    fputs("\tFl_abort.cxx \\\n", f);
+    fputs("\tFl_add_idle.cxx \\\n", f);
+    fputs("\tFl_arg.cxx \\\n", f);
+    fputs("\tFl_compose.cxx \\\n", f);
+    fputs("\tFl_display.cxx \\\n", f);
+    fputs("\tFl_get_key.cxx \\\n", f);
+    fputs("\tFl_get_system_colors.cxx \\\n", f);
+    fputs("\tFl_grab.cxx \\\n", f);
+    fputs("\tFl_lock.cxx \\\n", f);
+    fputs("\tFl_own_colormap.cxx \\\n", f);
+    fputs("\tFl_visual.cxx \\\n", f);
+    fputs("\tFl_x.cxx \\\n", f);
+    fputs("\tfilename_absolute.cxx \\\n", f);
+    fputs("\tfilename_expand.cxx \\\n", f);
+    fputs("\tfilename_ext.cxx \\\n", f);
+    fputs("\tfilename_isdir.cxx \\\n", f);
+    fputs("\tfilename_list.cxx \\\n", f);
+    fputs("\tfilename_match.cxx \\\n", f);
+    fputs("\tfilename_setext.cxx \\\n", f);
+    fputs("\tfl_arc.cxx \\\n", f);
+    fputs("\tfl_arci.cxx \\\n", f);
+    fputs("\tfl_ask.cxx \\\n", f);
+    fputs("\tfl_boxtype.cxx \\\n", f);
+    fputs("\tfl_color.cxx \\\n", f);
+    fputs("\tfl_cursor.cxx \\\n", f);
+    fputs("\tfl_curve.cxx \\\n", f);
+    fputs("\tfl_diamond_box.cxx \\\n", f);
+    fputs("\tfl_dnd.cxx \\\n", f);
+    fputs("\tfl_draw.cxx \\\n", f);
+    fputs("\tfl_draw_image.cxx \\\n", f);
+    fputs("\tfl_draw_pixmap.cxx \\\n", f);
+    fputs("\tfl_encoding_latin1.cxx \\\n", f);
+    fputs("\tfl_encoding_mac_roman.cxx \\\n", f);
+    fputs("\tfl_engraved_label.cxx \\\n", f);
+    fputs("\tfl_file_dir.cxx \\\n", f);
+    fputs("\tfl_font.cxx \\\n", f);
+    fputs("\tfl_gtk.cxx \\\n", f);
+    fputs("\tfl_labeltype.cxx \\\n", f);
+    fputs("\tfl_line_style.cxx \\\n", f);
+    fputs("\tfl_open_uri.cxx \\\n", f);
+    fputs("\tfl_oval_box.cxx \\\n", f);
+    fputs("\tfl_overlay.cxx \\\n", f);
+    fputs("\tfl_overlay_visual.cxx \\\n", f);
+    fputs("\tfl_plastic.cxx \\\n", f);
+    fputs("\tfl_read_image.cxx \\\n", f);
+    fputs("\tfl_rect.cxx \\\n", f);
+    fputs("\tfl_round_box.cxx \\\n", f);
+    fputs("\tfl_rounded_box.cxx \\\n", f);
+    fputs("\tfl_set_font.cxx \\\n", f);
+    fputs("\tfl_set_fonts.cxx \\\n", f);
+    fputs("\tfl_scroll_area.cxx \\\n", f);
+    fputs("\tfl_shadow_box.cxx \\\n", f);
+    fputs("\tfl_shortcut.cxx \\\n", f);
+    fputs("\tfl_show_colormap.cxx \\\n", f);
+    fputs("\tfl_symbols.cxx \\\n", f);
+    fputs("\tfl_vertex.cxx \\\n", f);
+    fputs("\tscreen_xywh.cxx \\\n", f);
+    fputs("\tfl_utf8.cxx \\\n", f);
+    fputs("\tps_image.cxx\n", f);
+    fputs("\n", f);
+    fputs("FLCPPFILES = \\\n", f);
+    fputs("\tforms_compatability.cxx \\\n", f);
+    fputs("\tforms_bitmap.cxx \\\n", f);
+    fputs("\tforms_free.cxx \\\n", f);
+    fputs("\tforms_fselect.cxx \\\n", f);
+    fputs("\tforms_pixmap.cxx \\\n", f);
+    fputs("\tforms_timer.cxx\n", f);
+    fputs("\n", f);
+    fputs("GLCPPFILES = \\\n", f);
+    fputs("\tFl_Gl_Choice.cxx \\\n", f);
+    fputs("\tFl_Gl_Overlay.cxx \\\n", f);
+    fputs("\tFl_Gl_Device_Plugin.cxx \\\n", f);
+    fputs("\tFl_Gl_Window.cxx \\\n", f);
+    fputs("\tfreeglut_geometry.cxx \\\n", f);
+    fputs("\tfreeglut_stroke_mono_roman.cxx \\\n", f);
+    fputs("\tfreeglut_stroke_roman.cxx \\\n", f);
+    fputs("\tfreeglut_teapot.cxx \\\n", f);
+    fputs("\tgl_draw.cxx \\\n", f);
+    fputs("\tgl_start.cxx \\\n", f);
+    fputs("\tglut_compatability.cxx \\\n", f);
+    fputs("\tglut_font.cxx\n", f);
+    fputs("\n", f);
+    fputs("IMGCPPFILES = \\\n", f);
+    fputs("\tfl_images_core.cxx \\\n", f);
+    fputs("\tFl_BMP_Image.cxx \\\n", f);
+    fputs("\tFl_File_Icon2.cxx \\\n", f);
+    fputs("\tFl_GIF_Image.cxx \\\n", f);
+    fputs("\tFl_Help_Dialog.cxx \\\n", f);
+    fputs("\tFl_JPEG_Image.cxx \\\n", f);
+    fputs("\tFl_PNG_Image.cxx \\\n", f);
+    fputs("\tFl_PNM_Image.cxx\n", f);
+    fputs("\n", f);
+    fputs("\n", f);
+    fputs("CFILES = fl_call_main.c flstring.c scandir.c numericsort.c vsnprintf.c fl_utf.c\n", f);
+    fputs("\n", f);
+    fputs("UTF8CFILES = \\\n", f);
+    fputs("\txutf8/case.c \\\n", f);
+    fputs("\txutf8/is_right2left.c \\\n", f);
+    fputs("\txutf8/is_spacing.c \\\n", f);
+    fputs("\txutf8/keysym2Ucs.c \\\n", f);
+    fputs("\txutf8/utf8Input.c \\\n", f);
+    fputs("\txutf8/utf8Utils.c \\\n", f);
+    fputs("\txutf8/utf8Wrap.c\n", f);
+    fputs("\n", f);
+    fputs("################################################################\n", f);
+    fputs("\n", f);
+    fputs("include ../makeinclude\n", f);
+    fputs("\n", f);
+    fputs("OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)\n", f);
+    fputs("GLOBJECTS = $(GLCPPFILES:.cxx=.o)\n", f);
+    fputs("FLOBJECTS = $(FLCPPFILES:.cxx=.o)\n", f);
+    fputs("IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)\n", f);
+    fputs("\n", f);
+    fputs("all:\t$(LIBNAME) $(DSONAME) \\\n", f);
+    fputs("\t$(FLLIBNAME) $(FLDSONAME) \\\n", f);
+    fputs("\t$(GLLIBNAME) $(GLDSONAME) \\\n", f);
+    fputs("\t$(IMGLIBNAME) $(IMGDSONAME) \n", f);
+    fputs("\n", f);
+    fputs("$(LIBNAME): $(OBJECTS)\n", f);
+    fputs("\techo $(LIBCOMMAND) $@ ...\n", f);
+    fputs("\t$(RM) $@\n", f);
+    fputs("\t$(LIBCOMMAND) $@ $(OBJECTS)\n", f);
+    fputs("\t$(RANLIB) $@\n", f);
+    fputs("\n", f);
+    fputs("libfltk.so.1.3: $(OBJECTS)\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ $(OBJECTS)\n", f);
+    fputs("\t$(RM) libfltk.so\n", f);
+    fputs("\t$(LN) libfltk.so.1.3 libfltk.so\n", f);
+    fputs("\n", f);
+    fputs("libfltk.sl.1.3: $(OBJECTS)\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ $(OBJECTS)\n", f);
+    fputs("\t$(RM) libfltk.sl\n", f);
+    fputs("\t$(LN) libfltk.sl.1.3 libfltk.sl\n", f);
+    fputs("\n", f);
+    fputs("libfltk.1.3.dylib: $(OBJECTS)\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ \\\n", f);
+    fputs("\t\t-install_name $(libdir)/$@ \\\n", f);
+    fputs("\t\t-current_version 1.3.0 \\\n", f);
+    fputs("\t\t-compatibility_version 1.3.0 \\\n", f);
+    fputs("\t\t$(OBJECTS) $(LDLIBS)\n", f);
+    fputs("\t$(RM) libfltk.dylib\n", f);
+    fputs("\t$(LN) libfltk.1.3.dylib libfltk.dylib\n", f);
+    fputs("\n", f);
+    fputs("libfltk_s.a: $(OBJECTS)\n", f);
+    fputs("\techo $(DSOCOMMAND) libfltk_s.o ...\n", f);
+    fputs("\t$(DSOCOMMAND) libfltk_s.o $(OBJECTS) $(IMAGELIBS)\n", f);
+    fputs("\techo $(LIBCOMMAND) libfltk_s.a libfltk_s.o\n", f);
+    fputs("\t$(RM) $@\n", f);
+    fputs("\t$(LIBCOMMAND) libfltk_s.a libfltk_s.o\n", f);
+    fputs("\t$(CHMOD) +x libfltk_s.a\n", f);
+    fputs("\n", f);
+    fputs("$(FLLIBNAME): $(FLOBJECTS)\n", f);
+    fputs("\techo $(LIBCOMMAND) $@ ...\n", f);
+    fputs("\t$(RM) $@\n", f);
+    fputs("\t$(LIBCOMMAND) $@ $(FLOBJECTS)\n", f);
+    fputs("\t$(RANLIB) $@\n", f);
+    fputs("\n", f);
+    fputs("libfltk_forms.so.1.3: $(FLOBJECTS) libfltk.so.1.3\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk\n", f);
+    fputs("\t$(RM) libfltk_forms.so\n", f);
+    fputs("\t$(LN) libfltk_forms.so.1.3 libfltk_forms.so\n", f);
+    fputs("\n", f);
+    fputs("libfltk_forms.sl.1.3: $(FLOBJECTS) libfltk.sl.1.3\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ $(FLOBJECTS) -L. -lfltk\n", f);
+    fputs("\t$(RM) libfltk_forms.sl\n", f);
+    fputs("\t$(LN) libfltk_forms.sl.1.3 libfltk_forms.sl\n", f);
+    fputs("\n", f);
+    fputs("libfltk_forms.1.3.dylib: $(FLOBJECTS) libfltk.1.3.dylib\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ \\\n", f);
+    fputs("\t\t-install_name $(libdir)/$@ \\\n", f);
+    fputs("\t\t-current_version 1.3.0 \\\n", f);
+    fputs("\t\t-compatibility_version 1.3.0 \\\n", f);
+    fputs("\t\t$(FLOBJECTS) -L. $(LDLIBS) -lfltk\n", f);
+    fputs("\t$(RM) libfltk_forms.dylib\n", f);
+    fputs("\t$(LN) libfltk_forms.1.3.dylib libfltk_forms.dylib\n", f);
+    fputs("\n", f);
+    fputs("libfltk_forms_s.a: $(FLOBJECTS)\n", f);
+    fputs("\techo $(DSOCOMMAND) libfltk_forms_s.o ...\n", f);
+    fputs("\t$(DSOCOMMAND) libfltk_forms_s.o $(FLOBJECTS)\n", f);
+    fputs("\techo $(LIBCOMMAND) libfltk_forms_s.a libfltk_forms_s.o\n", f);
+    fputs("\t$(RM) $@\n", f);
+    fputs("\t$(LIBCOMMAND) libfltk_forms_s.a libfltk_forms_s.o\n", f);
+    fputs("\t$(CHMOD) +x libfltk_forms_s.a\n", f);
+    fputs("\n", f);
+    fputs("$(GLLIBNAME): $(GLOBJECTS)\n", f);
+    fputs("\techo $(LIBCOMMAND) $@ ...\n", f);
+    fputs("\t$(RM) $@\n", f);
+    fputs("\t$(LIBCOMMAND) $@ $(GLOBJECTS)\n", f);
+    fputs("\t$(RANLIB) $@\n", f);
+    fputs("\n", f);
+    fputs("libfltk_gl.so.1.3: $(GLOBJECTS) libfltk.so.1.3\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk\n", f);
+    fputs("\t$(RM) libfltk_gl.so\n", f);
+    fputs("\t$(LN) libfltk_gl.so.1.3 libfltk_gl.so\n", f);
+    fputs("\n", f);
+    fputs("libfltk_gl.sl.1.3: $(GLOBJECTS) libfltk.sl.1.3\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ $(GLOBJECTS) -L. -lfltk\n", f);
+    fputs("\t$(RM) libfltk_gl.sl\n", f);
+    fputs("\t$(LN) libfltk_gl.sl.1.3 libfltk_gl.sl\n", f);
+    fputs("\n", f);
+    fputs("libfltk_gl.1.3.dylib: $(GLOBJECTS) libfltk.1.3.dylib\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ \\\n", f);
+    fputs("\t\t-install_name $(libdir)/$@ \\\n", f);
+    fputs("\t\t-current_version 1.3.0 \\\n", f);
+    fputs("\t\t-compatibility_version 1.3.0 \\\n", f);
+    fputs("\t\t$(GLOBJECTS) -L. $(GLDLIBS) -lfltk\n", f);
+    fputs("\t$(RM) libfltk_gl.dylib\n", f);
+    fputs("\t$(LN) libfltk_gl.1.3.dylib libfltk_gl.dylib\n", f);
+    fputs("\n", f);
+    fputs("libfltk_gl_s.a: $(GLOBJECTS)\n", f);
+    fputs("\techo $(DSOCOMMAND) libfltk_gl_s.o ...\n", f);
+    fputs("\t$(DSOCOMMAND) libfltk_gl_s.o $(GLOBJECTS)\n", f);
+    fputs("\techo $(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o\n", f);
+    fputs("\t$(RM) $@\n", f);
+    fputs("\t$(LIBCOMMAND) libfltk_gl_s.a libfltk_gl_s.o\n", f);
+    fputs("\t$(CHMOD) +x libfltk_gl_s.a\n", f);
+    fputs("\n", f);
+    fputs("$(IMGLIBNAME): $(IMGOBJECTS)\n", f);
+    fputs("\techo $(LIBCOMMAND) $@ ...\n", f);
+    fputs("\t$(RM) $@\n", f);
+    fputs("\t$(LIBCOMMAND) $@ $(IMGOBJECTS)\n", f);
+    fputs("\t$(RANLIB) $@\n", f);
+    fputs("\n", f);
+    fputs("libfltk_images.so.1.3: $(IMGOBJECTS) libfltk.so.1.3\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk\n", f);
+    fputs("\t$(RM) libfltk_images.so\n", f);
+    fputs("\t$(LN) libfltk_images.so.1.3 libfltk_images.so\n", f);
+    fputs("\n", f);
+    fputs("libfltk_images.sl.1.3: $(IMGOBJECTS) libfltk.sl.1.3\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ $(IMGOBJECTS) -L. $(IMAGELIBS) -lfltk\n", f);
+    fputs("\t$(RM) libfltk_images.sl\n", f);
+    fputs("\t$(LN) libfltk_images.sl.1.3 libfltk_images.sl\n", f);
+    fputs("\n", f);
+    fputs("libfltk_images.1.3.dylib: $(IMGOBJECTS) libfltk.1.3.dylib\n", f);
+    fputs("\techo $(DSOCOMMAND) $@ ...\n", f);
+    fputs("\t$(DSOCOMMAND) $@ \\\n", f);
+    fputs("\t\t-install_name $(libdir)/$@ \\\n", f);
+    fputs("\t\t-current_version 1.3.0 \\\n", f);
+    fputs("\t\t-compatibility_version 1.3.0 \\\n", f);
+    fputs("\t\t$(IMGOBJECTS)  -L. $(LDLIBS) $(IMAGELIBS) -lfltk\n", f);
+    fputs("\t$(RM) libfltk_images.dylib\n", f);
+    fputs("\t$(LN) libfltk_images.1.3.dylib libfltk_images.dylib\n", f);
+    fputs("\n", f);
+    fputs("libfltk_images_s.a: $(IMGOBJECTS)\n", f);
+    fputs("\techo $(DSOCOMMAND) libfltk_images_s.o ...\n", f);
+    fputs("\t$(DSOCOMMAND) libfltk_images_s.o $(IMGOBJECTS)\n", f);
+    fputs("\techo $(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o\n", f);
+    fputs("\t$(RM) $@\n", f);
+    fputs("\t$(LIBCOMMAND) libfltk_images_s.a libfltk_images_s.o\n", f);
+    fputs("\t$(CHMOD) +x libfltk_images_s.a\n", f);
+    fputs("\n", f);
+    fputs("#-----------------------------------------------------------------\n", f);
+    fputs("# - the import libraries libfltk*.dll.a and the .dll files\n", f);
+    fputs("#   are created from the libfltk*.a files. They are built\n", f);
+    fputs("#   into the src dir.\n", f);
+    fputs("# - The _images, _gl, _forms and dlls must be linked\n", f);
+    fputs("#   against the import libraries in the src dir.\n", f);
+    fputs("#-----------------------------------------------------------------\n", f);
+    fputs("\n", f);
+    fputs("#-----------------------------------------------------------------\n", f);
+    fputs("# cygwin GDI shared libraries\n", f);
+    fputs("#-----------------------------------------------------------------\n", f);
+    fputs("\n", f);
+    fputs("cygfltknox-1.3.dll: $(LIBNAME)\n", f);
+    fputs("\techo $(DSOCOMMAND) $(LIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk.dll.a $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("cygfltknox_forms-1.3.dll: $(FLLIBNAME) cygfltknox-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(FLLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_forms.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("cygfltknox_gl-1.3.dll: $(GLLIBNAME) cygfltknox-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(GLLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_gl.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("cygfltknox_images-1.3.dll: $(IMGLIBNAME) cygfltknox-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(IMGLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_images.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \\\n", f);
+    fputs("\t\t\t$(IMAGELIBS) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("#-----------------------------------------------------------------\n", f);
+    fputs("# cygwin X11 shared libraries\n", f);
+    fputs("#-----------------------------------------------------------------\n", f);
+    fputs("\n", f);
+    fputs("cygfltk-1.3.dll: $(LIBNAME)\n", f);
+    fputs("\techo $(DSOCOMMAND) $(LIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk.dll.a $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("cygfltk_forms-1.3.dll: $(FLLIBNAME) cygfltk-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(FLLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_forms.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("cygfltk_gl-1.3.dll: $(GLLIBNAME) cygfltk-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(GLLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_gl.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("cygfltk_images-1.3.dll: $(IMGLIBNAME) cygfltk-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(IMGLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_images.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \\\n", f);
+    fputs("\t\t\t$(IMAGELIBS) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("mgwfltknox-1.3.dll: $(LIBNAME)\n", f);
+    fputs("\techo $(DSOCOMMAND) $(LIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(LIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk.dll.a $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("mgwfltknox_forms-1.3.dll: $(FLLIBNAME) mgwfltknox-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(FLLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(FLLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_forms.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("mgwfltknox_gl-1.3.dll: $(GLLIBNAME) mgwfltknox-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(GLLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(GLLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_gl.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("#-----------------------------------------------------\n", f);
+    fputs("# See STR #1585 for --exclude-libs\n", f);
+    fputs("#-----------------------------------------------------\n", f);
+    fputs("\n", f);
+    fputs("mgwfltknox_images-1.3.dll: $(IMGLIBNAME) mgwfltknox-1.3.dll\n", f);
+    fputs("\techo $(DSOCOMMAND) $(IMGLIBNAME) ...\n", f);
+    fputs("\t$(DSOCOMMAND) $(IMGLIBNAME) -Wl,--no-whole-archive \\\n", f);
+    fputs("\t\t-Wl,--out-implib=libfltk_images.dll.a \\\n", f);
+    fputs("\t\t-L. -lfltk -Wl,--exclude-libs -Wl,libfltk_png.a \\\n", f);
+    fputs("\t\t\t$(IMAGELIBS) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("clean:\n", f);
+    fputs("\t-$(RM) *.o xutf8/*.o *.dll.a core.* *~ *.bak *.bck\n", f);
+    fputs("\t-$(RM) $(DSONAME) $(FLDSONAME) $(GLDSONAME) $(IMGDSONAME) \\\n", f);
+    fputs("\t\t$(LIBNAME) $(FLLIBNAME) $(GLLIBNAME) \\\n", f);
+    fputs("\t\t$(IMGLIBNAME) \\\n", f);
+    fputs("\t\tlibfltk.so libfltk_forms.so libfltk_gl.so libfltk_images.so \\\n", f);
+    fputs("\t\tlibfltk.sl libfltk_forms.sl libfltk_gl.sl libfltk_images.sl \\\n", f);
+    fputs("\t\tlibfltk.dylib libfltk_forms.dylib \\\n", f);
+    fputs("\t\tlibfltk_gl.dylib libfltk_images.dylib \\\n", f);
+    fputs("\t\tcmap core\n", f);
+    fputs("\n", f);
+    fputs("depend:\t$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)\n", f);
+    fputs("\tmakedepend -Y -I.. -f makedepend $(CPPFILES) $(FLCPPFILES) \\\n", f);
+    fputs("\t\t$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)\n", f);
+    fputs("\n", f);
+    fputs("# Automatically generated dependencies... generated on a Linux/Unix host !\n", f);
+    fputs("include makedepend\n", f);
+    fputs("\n", f);
+    fputs("# These dependencies aren't part of the makedepend file since\n", f);
+    fputs("# they are part of the WIN32 and MacOS code base...\n", f);
+    fputs("# Please add only non-Linux/Unix files or such that are optional\n", f);
+    fputs("# (like \"*xft*\") here:\n", f);
+    fputs("Fl_get_key.o:\tFl_get_key_mac.cxx Fl_get_key_win32.cxx\n", f);
+    fputs("Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_MAC.cxx Fl_Native_File_Chooser_WIN32.cxx\n", f);
+    fputs("Fl.o:\t\tFl_mac.cxx Fl_win32.cxx Fl_cocoa.mm\n", f);
+    fputs("fl_color.o:\tfl_color_mac.cxx fl_color_win32.cxx\n", f);
+    fputs("fl_dnd.o:\tfl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx\n", f);
+    fputs("fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx\n", f);
+    fputs("fl_font.o:\tfl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx\n", f);
+    fputs("fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx\n", f);
+    fputs("fl_set_fonts.o:\tfl_set_fonts_mac.cxx fl_set_fonts_x.cxx \\\n", f);
+    fputs("\t\tfl_set_fonts_xft.cxx fl_set_fonts_win32.cxx\n", f);
+    fputs("Fl_Printer.o:\tFl_Quartz_Printer.mm Fl_GDI_Printer.cxx Fl_PS_Printer.cxx\n", f);
+    fputs("\n", f);
+    fputs("fl_arci.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_arg.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_ask.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Bitmap.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_color.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_cursor.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_dnd.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Double_Window.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_draw_image.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_draw_image_mac.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_draw_image_win32.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_draw_pixmap.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_encoding_latin1.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_encoding_mac_roman.o:   ../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_File_Chooser2.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_font.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_get_key.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_get_system_colors.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Gl_Choice.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Gl_Overlay.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Gl_Window.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_grab.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Image.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_line_style.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Native_File_Chooser.o: ../FL/Fl_Native_File_Chooser_MAC.H ../FL/Fl_Native_File_Chooser_WIN32.H\n", f);
+    fputs("Fl_Menu_Window.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_overlay.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_overlay_visual.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Overlay_Window.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_own_colormap.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Pixmap.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Printer.o:  ../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_read_image.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_read_image_mac.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_read_image_win32.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_rect.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_scroll_area.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_set_font.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_set_fonts.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_shortcut.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("fl_vertex.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_visual.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Window_fullscreen.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_Window_iconize.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("Fl_x.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("gl_draw.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("gl_start.o:\t../FL/mac.H ../FL/win32.H\n", f);
+    fputs("\n", f);
+    fputs("################################################################\n", f);
+    fputs("\n", f);
+    fputs("install: $(LIBNAME) $(DSONAME) \\\n", f);
+    fputs("\t$(FLLIBNAME) $(FLDSONAME) \\\n", f);
+    fputs("\t$(GLLIBNAME) $(GLDSONAME) \\\n", f);
+    fputs("\t$(IMGLIBNAME) $(IMGDSONAME) \n", f);
+    fputs("\techo \"Installing libraries in $(DESTDIR)$(libdir)...\"\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)$(libdir)\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)$(bindir)\n", f);
+    fputs("\t$(RM) $(DESTDIR)$(libdir)/$(LIBBASENAME)\n", f);
+    fputs("\t$(INSTALL_LIB) $(LIBNAME) $(DESTDIR)$(libdir)\n", f);
+    fputs("\t$(INSTALL_LIB) $(FLLIBNAME) $(DESTDIR)$(libdir)\n", f);
+    fputs("\t$(INSTALL_LIB) $(IMGLIBNAME) $(DESTDIR)$(libdir)\n", f);
+    fputs("\t$(RANLIB) $(DESTDIR)$(libdir)/$(LIBBASENAME)\n", f);
+    fputs("\t$(RANLIB) $(DESTDIR)$(libdir)/$(FLLIBBASENAME)\n", f);
+    fputs("\tif test x$(GLLIBNAME) != x; then \\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(GLLIBNAME) $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(RANLIB) $(DESTDIR)$(libdir)/$(GLLIBBASENAME); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\t$(RANLIB) $(DESTDIR)$(libdir)/$(IMGLIBBASENAME)\n", f);
+    fputs("\tif test x$(DSONAME) = xlibfltk.so.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.so*;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk.so.1.3 $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk.so.1.3 $(DESTDIR)$(libdir)/libfltk.so;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xlibfltk.sl.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.sl*;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk.sl.1.3 $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk.sl.1.3 $(DESTDIR)$(libdir)/libfltk.sl;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xlibfltk.1.3.dylib; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.*dylib;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk.1.3.dylib $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk.1.3.dylib $(DESTDIR)$(libdir)/libfltk.dylib;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xlibfltk_s.a; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_s.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_s.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xcygfltknox-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(DSONAME);\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(DSONAME) $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk.dll.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xmgwfltknox-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(DSONAME);\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(DSONAME) $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk.dll.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xlibfltk_forms.so.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_forms.so.1.3 $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_forms.so.1.3 $(DESTDIR)$(libdir)/libfltk_forms.so;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xlibfltk_forms.sl.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.sl*;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_forms.sl.1.3 $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_forms.sl.1.3 $(DESTDIR)$(libdir)/libfltk_forms.sl;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xlibfltk_forms.1.3.dylib; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.*dylib;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_forms.1.3.dylib $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_forms.1.3.dylib $(DESTDIR)$(libdir)/libfltk_forms.dylib;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xlibfltk_forms_s.a; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_forms_s.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xcygfltknox_forms-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(FLDSONAME) $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_forms.dll.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xmgwfltknox_forms-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME);\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(FLDSONAME) $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_forms.dll.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xlibfltk_gl.so.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.so*;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_gl.so.1.3 $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_gl.so.1.3 $(DESTDIR)$(libdir)/libfltk_gl.so;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xlibfltk_gl.sl.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.sl*;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_gl.sl.1.3 $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_gl.sl.1.3 $(DESTDIR)$(libdir)/libfltk_gl.sl;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xlibfltk_gl.1.3.dylib; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.*dylib;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_gl.1.3.dylib $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_gl.1.3.dylib $(DESTDIR)$(libdir)/libfltk_gl.dylib;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xlibfltk_gl_s.a; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl_s.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_gl_s.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xcygfltknox_gl-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME);\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(GLDSONAME) $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_gl.dll.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xmgwfltknox_gl-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME);\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(GLDSONAME) $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_gl.dll.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xlibfltk_images.so.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.so*;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_images.so.1.3 $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_images.so.1.3 $(DESTDIR)$(libdir)/libfltk_images.so;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xlibfltk_images.sl.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.sl*;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_images.sl.1.3 $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_images.sl.1.3 $(DESTDIR)$(libdir)/libfltk_images.sl;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xlibfltk_images.1.3.dylib; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.*dylib;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_images.1.3.dylib $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\t\t$(LN) libfltk_images.1.3.dylib $(DESTDIR)$(libdir)/libfltk_images.dylib;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xlibfltk_images_s.a; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images_s.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_images_s.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xcygfltknox_images-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(IMGDSONAME) $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_images.dll.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xmgwfltknox_images-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \\\n", f);
+    fputs("\t\t$(INSTALL_LIB) $(IMGDSONAME) $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\\\n", f);
+    fputs("\t\t$(INSTALL_LIB) libfltk_images.dll.a $(DESTDIR)$(libdir); \\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\n", f);
+    fputs("\n", f);
+    fputs("uninstall:\n", f);
+    fputs("\techo \"Uninstalling libraries...\"\n", f);
+    fputs("\t$(RM) $(DESTDIR)$(libdir)/$(LIBBASENAME)\n", f);
+    fputs("\tif test x$(DSONAME) = xlibfltk.so.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.so*;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xlibfltk.sl.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.sl*;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xlibfltk.1.3.dylib; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.*dylib;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xlibfltk_s.a; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_s.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xcygfltknox-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xcygfltk-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(DSONAME) = xmgwfltknox-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(DSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\t$(RM) $(DESTDIR)$(libdir)/$(FLLIBBASENAME);\n", f);
+    fputs("\tif test x$(FLDSONAME) = xlibfltk_forms.so.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.so*;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xlibfltk_forms.sl.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.sl*;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xlibfltk_forms.1.3.dylib; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.*dylib;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xlibfltk_forms_s.a; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms_s.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xcygfltknox_forms-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xcygfltk_forms-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(FLDSONAME) = xmgwfltknox_forms-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(FLDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_forms.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLLIBNAME) != x; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/$(GLLIBBASENAME);\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xlibfltk_gl.so.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.so*;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xlibfltk_gl.sl.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.sl*;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xlibfltk_gl.1.3.dylib; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.*dylib;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xlibfltk_gl_s.a; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl_s.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xcygfltknox_gl-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xcygfltk_gl-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(GLDSONAME) = xmgwfltknox_gl-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(GLDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_gl.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGLIBNAME) != x; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/$(IMGLIBBASENAME);\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xlibfltk_images.so.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.so*;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xlibfltk_images.sl.1.3; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.sl*;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xlibfltk_images.1.3.dylib; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.*dylib;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xlibfltk_images_s.a; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images_s.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xcygfltknox_images-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xcygfltk_images-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\tif test x$(IMGDSONAME) = xmgwfltknox_images-1.3.dll; then\\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\\\n", f);
+    fputs("\tfi\n", f);
+    fputs("\n", f);
+    fputs("#\n", f);
+    fputs("# End of \"$Id: Makefile 7333 2010-03-25 14:35:45Z manolo $\".\n", f);
+    fputs("#\n", f);
     fclose(f);
     return 0;
   }
   
-  /*
-   * Create the plist files for all apps and tests 
-   */
-  int writePLists(const char *filepath) {
-    int i;
-    for (i=0; i<nTgtApps; i++) {
-      Fl_Preferences targetDB(tgtAppsDB, i);
-      writePList(filepath, targetDB, 0);
-    }
-    for (i=0; i<nTgtLibs; i++) {
-      Fl_Preferences targetDB(tgtLibsDB, i);
-      writePList(filepath, targetDB, 1);
-    }
-    for (i=0; i<nTgtTests; i++) {
-      Fl_Preferences targetDB(tgtTestsDB, i);
-      writePList(filepath, targetDB, 0);
-    }
+  int writeTestMakefile(const char *filepath) {
+    FILE *f = fopen(filepath, "wb");
+    fputs("#\n", f);
+    fputs("# \"$Id: Makefile 7263 2010-03-14 18:07:24Z AlbrechtS $\"\n", f);
+    fputs("#\n", f);
+    fputs("# Test/example program makefile for the Fast Light Tool Kit (FLTK).\n", f);
+    fputs("#\n", f);
+    fputs("# Copyright 1998-2009 by Bill Spitzak and others.\n", f);
+    fputs("#\n", f);
+    fputs("# This library is free software; you can redistribute it and/or\n", f);
+    fputs("# modify it under the terms of the GNU Library General Public\n", f);
+    fputs("# License as published by the Free Software Foundation; either\n", f);
+    fputs("# version 2 of the License, or (at your option) any later version.\n", f);
+    fputs("#\n", f);
+    fputs("# This library is distributed in the hope that it will be useful,\n", f);
+    fputs("# but WITHOUT ANY WARRANTY; without even the implied warranty of\n", f);
+    fputs("# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n", f);
+    fputs("# Library General Public License for more details.\n", f);
+    fputs("#\n", f);
+    fputs("# You should have received a copy of the GNU Library General Public\n", f);
+    fputs("# License along with this library; if not, write to the Free Software\n", f);
+    fputs("# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307\n", f);
+    fputs("# USA.\n", f);
+    fputs("#\n", f);
+    fputs("# Please report all bugs and problems on the following page:\n", f);
+    fputs("#\n", f);
+    fputs("#      http://www.fltk.org/str.php\n", f);
+    fputs("#\n", f);
+    fputs("\n", f);
+    fputs("include ../makeinclude\n", f);
+    fputs("\n", f);
+    fputs("CPPFILES =\\\n", f);
+    fputs("\tunittests.cxx \\\n", f);
+    fputs("\tadjuster.cxx \\\n", f);
+    fputs("\tarc.cxx \\\n", f);
+    fputs("\task.cxx \\\n", f);
+    fputs("\tbitmap.cxx \\\n", f);
+    fputs("\tblocks.cxx \\\n", f);
+    fputs("\tboxtype.cxx \\\n", f);
+    fputs("\tbrowser.cxx \\\n", f);
+    fputs("\tbutton.cxx \\\n", f);
+    fputs("\tbuttons.cxx \\\n", f);
+    fputs("\tcairo_test.cxx \\\n", f);
+    fputs("\tcheckers.cxx \\\n", f);
+    fputs("\tclock.cxx \\\n", f);
+    fputs("\tcolbrowser.cxx \\\n", f);
+    fputs("\tcolor_chooser.cxx \\\n", f);
+    fputs("\tcube.cxx \\\n", f);
+    fputs("\tCubeMain.cxx \\\n", f);
+    fputs("\tCubeView.cxx \\\n", f);
+    fputs("\tcursor.cxx \\\n", f);
+    fputs("\tcurve.cxx \\\n", f);
+    fputs("\tdemo.cxx \\\n", f);
+    fputs("\tdevice.cxx \\\n", f);
+    fputs("\tdoublebuffer.cxx \\\n", f);
+    fputs("\teditor.cxx \\\n", f);
+    fputs("\tfast_slow.cxx \\\n", f);
+    fputs("\tfile_chooser.cxx \\\n", f);
+    fputs("\tfonts.cxx \\\n", f);
+    fputs("\tforms.cxx \\\n", f);
+    fputs("\tfractals.cxx \\\n", f);
+    fputs("\tfullscreen.cxx \\\n", f);
+    fputs("\tgl_overlay.cxx \\\n", f);
+    fputs("\tglpuzzle.cxx \\\n", f);
+    fputs("\thello.cxx \\\n", f);
+    fputs("\thelp.cxx \\\n", f);
+    fputs("\ticonize.cxx \\\n", f);
+    fputs("\timage.cxx \\\n", f);
+    fputs("\tinactive.cxx \\\n", f);
+    fputs("\tinput.cxx \\\n", f);
+    fputs("\tinput_choice.cxx \\\n", f);
+    fputs("\tkeyboard.cxx \\\n", f);
+    fputs("\tlabel.cxx \\\n", f);
+    fputs("\tline_style.cxx \\\n", f);
+    fputs("\tlist_visuals.cxx \\\n", f);
+    fputs("\tmandelbrot.cxx \\\n", f);
+    fputs("\tmenubar.cxx \\\n", f);
+    fputs("\tmessage.cxx \\\n", f);
+    fputs("\tminimum.cxx \\\n", f);
+    fputs("\tnative-filechooser.cxx \\\n", f);
+    fputs("\tnavigation.cxx \\\n", f);
+    fputs("\toutput.cxx \\\n", f);
+    fputs("\toverlay.cxx \\\n", f);
+    fputs("\tpack.cxx \\\n", f);
+    fputs("\tpixmap_browser.cxx \\\n", f);
+    fputs("\tpixmap.cxx \\\n", f);
+    fputs("\tpreferences.cxx \\\n", f);
+    fputs("\tdevice.cxx \\\n", f);
+    fputs("\tradio.cxx \\\n", f);
+    fputs("\tresizebox.cxx \\\n", f);
+    fputs("\tresize.cxx \\\n", f);
+    fputs("\trotated_text.cxx \\\n", f);
+    fputs("\tscroll.cxx \\\n", f);
+    fputs("\tshape.cxx \\\n", f);
+    fputs("\tsubwindow.cxx \\\n", f);
+    fputs("\tsudoku.cxx \\\n", f);
+    fputs("\tsymbols.cxx \\\n", f);
+    fputs("\ttable.cxx \\\n", f);
+    fputs("\ttabs.cxx \\\n", f);
+    fputs("\tthreads.cxx \\\n", f);
+    fputs("\ttile.cxx \\\n", f);
+    fputs("\ttiled_image.cxx \\\n", f);
+    fputs("\ttree.cxx \\\n", f);
+    fputs("\tvaluators.cxx \\\n", f);
+    fputs("\tutf8.cxx\n", f);
+    fputs("\n", f);
+    fputs("ALL =\t\\\n", f);
+    fputs("\tunittests$(EXEEXT) \\\n", f);
+    fputs("\tadjuster$(EXEEXT) \\\n", f);
+    fputs("\tarc$(EXEEXT) \\\n", f);
+    fputs("\task$(EXEEXT) \\\n", f);
+    fputs("\tbitmap$(EXEEXT) \\\n", f);
+    fputs("\tblocks$(EXEEXT) \\\n", f);
+    fputs("\tboxtype$(EXEEXT) \\\n", f);
+    fputs("\tbrowser$(EXEEXT) \\\n", f);
+    fputs("\tbutton$(EXEEXT) \\\n", f);
+    fputs("\tbuttons$(EXEEXT) \\\n", f);
+    fputs("\tcairo_test$(EXEEXT) \\\n", f);
+    fputs("\tcheckers$(EXEEXT) \\\n", f);
+    fputs("\tclock$(EXEEXT) \\\n", f);
+    fputs("\tcolbrowser$(EXEEXT) \\\n", f);
+    fputs("\tcolor_chooser$(EXEEXT) \\\n", f);
+    fputs("\tcursor$(EXEEXT) \\\n", f);
+    fputs("\tcurve$(EXEEXT) \\\n", f);
+    fputs("\tdemo$(EXEEXT) \\\n", f);
+    fputs("\tdevice$(EXEEXT) \\\n", f);
+    fputs("\tdoublebuffer$(EXEEXT) \\\n", f);
+    fputs("\teditor$(EXEEXT) \\\n", f);
+    fputs("\tfast_slow$(EXEEXT) \\\n", f);
+    fputs("\tfile_chooser$(EXEEXT) \\\n", f);
+    fputs("\tfonts$(EXEEXT) \\\n", f);
+    fputs("\tforms$(EXEEXT) \\\n", f);
+    fputs("\thello$(EXEEXT) \\\n", f);
+    fputs("\thelp$(EXEEXT) \\\n", f);
+    fputs("\ticonize$(EXEEXT) \\\n", f);
+    fputs("\timage$(EXEEXT) \\\n", f);
+    fputs("\tinactive$(EXEEXT) \\\n", f);
+    fputs("\tinput$(EXEEXT) \\\n", f);
+    fputs("\tinput_choice$(EXEEXT) \\\n", f);
+    fputs("\tkeyboard$(EXEEXT) \\\n", f);
+    fputs("\tlabel$(EXEEXT) \\\n", f);
+    fputs("\tline_style$(EXEEXT) \\\n", f);
+    fputs("\tlist_visuals$(EXEEXT) \\\n", f);
+    fputs("\tmandelbrot$(EXEEXT) \\\n", f);
+    fputs("\tmenubar$(EXEEXT) \\\n", f);
+    fputs("\tmessage$(EXEEXT) \\\n", f);
+    fputs("\tminimum$(EXEEXT) \\\n", f);
+    fputs("\tnative-filechooser$(EXEEXT) \\\n", f);
+    fputs("\tnavigation$(EXEEXT) \\\n", f);
+    fputs("\toutput$(EXEEXT) \\\n", f);
+    fputs("\toverlay$(EXEEXT) \\\n", f);
+    fputs("\tpack$(EXEEXT) \\\n", f);
+    fputs("\tpixmap$(EXEEXT) \\\n", f);
+    fputs("\tpixmap_browser$(EXEEXT) \\\n", f);
+    fputs("\tpreferences$(EXEEXT) \\\n", f);
+    fputs("\tdevice$(EXEEXT) \\\n", f);
+    fputs("\tradio$(EXEEXT) \\\n", f);
+    fputs("\tresize$(EXEEXT) \\\n", f);
+    fputs("\tresizebox$(EXEEXT) \\\n", f);
+    fputs("\trotated_text$(EXEEXT) \\\n", f);
+    fputs("\tscroll$(EXEEXT) \\\n", f);
+    fputs("\tsubwindow$(EXEEXT) \\\n", f);
+    fputs("\tsudoku$(EXEEXT) \\\n", f);
+    fputs("\tsymbols$(EXEEXT) \\\n", f);
+    fputs("\ttable$(EXEEXT) \\\n", f);
+    fputs("\ttabs$(EXEEXT) \\\n", f);
+    fputs("\t$(THREADS) \\\n", f);
+    fputs("\ttile$(EXEEXT) \\\n", f);
+    fputs("\ttiled_image$(EXEEXT) \\\n", f);
+    fputs("\ttree$(EXEEXT) \\\n", f);
+    fputs("\tvaluators$(EXEEXT) \\\n", f);
+    fputs("\tcairotest$(EXEEXT) \\\n", f);
+    fputs("\tutf8$(EXEEXT) \n", f);
+    fputs("\n", f);
+    fputs("\n", f);
+    fputs("GLALL = \\\n", f);
+    fputs("\tcube$(EXEEXT) \\\n", f);
+    fputs("\tCubeView$(EXEEXT) \\\n", f);
+    fputs("\tfractals$(EXEEXT) \\\n", f);
+    fputs("\tfullscreen$(EXEEXT) \\\n", f);
+    fputs("\tgl_overlay$(EXEEXT) \\\n", f);
+    fputs("\tglpuzzle$(EXEEXT) \\\n", f);
+    fputs("\tshape$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("all:\t$(ALL) $(GLDEMOS)\n", f);
+    fputs("\n", f);
+    fputs("gldemos:\t$(GLALL)\n", f);
+    fputs("\n", f);
+    fputs("depend:\t$(CPPFILES)\n", f);
+    fputs("\tmakedepend -Y -I.. -f makedepend $(CPPFILES)\n", f);
+    fputs("\n", f);
+    fputs("# Automatically generated dependencies...\n", f);
+    fputs("include makedepend\n", f);
+    fputs("\n", f);
+    fputs("clean:\n", f);
+    fputs("\t$(RM) $(ALL) $(GLALL) core\n", f);
+    fputs("\t$(RM) *.o core.* *~ *.bck *.bak\n", f);
+    fputs("\t$(RM) CubeViewUI.cxx\n", f);
+    fputs("\t$(RM) fast_slow.cxx\n", f);
+    fputs("\t$(RM) inactive.cxx\n", f);
+    fputs("\t$(RM) keyboard_ui.cxx\n", f);
+    fputs("\t$(RM) mandelbrot_ui.cxx\n", f);
+    fputs("\t$(RM) preferences.cxx\n", f);
+    fputs("\t$(RM) radio.cxx\n", f);
+    fputs("\t$(RM) resize.cxx\n", f);
+    fputs("\t$(RM) tabs.cxx\n", f);
+    fputs("\t$(RM) valuators.cxx\n", f);
+    fputs("\t$(OSX_ONLY) $(RM) blocks.app/Contents/MacOS/blocks$(EXEEXT)\n", f);
+    fputs("\t$(OSX_ONLY) $(RM) checkers.app/Contents/MacOS/checkers$(EXEEXT)\n", f);
+    fputs("\t$(OSX_ONLY) $(RM) sudoku.app/Contents/MacOS/sudoku$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("install:\tall\n", f);
+    fputs("\techo \"Installing example programs to $(DESTDIR)$(docdir)/examples...\"\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)$(docdir)/examples\n", f);
+    fputs("\tfor file in *.h *.cxx *.fl demo.menu; do \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) $$file $(DESTDIR)$(docdir)/examples; \\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)$(docdir)/examples/pixmaps\n", f);
+    fputs("\tfor file in pixmaps/*.xbm pixmaps/*.xpm; do \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) $$file $(DESTDIR)$(docdir)/examples/pixmaps; \\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("install-linux:\n", f);
+    fputs("\techo Installing games to $(DESTDIR)$(bindir)...\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)$(bindir)\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/usr/share/applications\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps\n", f);
+    fputs("\t-$(INSTALL_DIR) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps\n", f);
+    fputs("\tfor game in blocks checkers sudoku; do \\\n", f);
+    fputs("\t\t$(INSTALL_BIN) $$game $(DESTDIR)$(bindir); \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) desktop/$$game.desktop  $(DESTDIR)/usr/share/applications; \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) desktop/$$game-32.png $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) desktop/$$game-128.png $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("install-osx:\n", f);
+    fputs("\techo Installing games in $(DESTDIR)/Applications...\n", f);
+    fputs("\tfor game in blocks checkers sudoku; do \\\n", f);
+    fputs("\t\tif test ! -d $(DESTDIR)/Applications/$$game.app; then \\\n", f);
+    fputs("\t\t\t$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app; \\\n", f);
+    fputs("\t\t\t$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents; \\\n", f);
+    fputs("\t\t\t$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \\\n", f);
+    fputs("\t\t\t$(INSTALL_DIR) $(DESTDIR)/Applications/$$game.app/Contents/Resources; \\\n", f);
+    fputs("\t\tfi; \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) $$game.app/Contents/Info.plist $(DESTDIR)/Applications/$$game.app/Contents; \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) $$game.app/Contents/PkgInfo $(DESTDIR)/Applications/$$game.app/Contents; \\\n", f);
+    fputs("\t\t$(INSTALL_BIN) $$game.app/Contents/MacOS/$$game $(DESTDIR)/Applications/$$game.app/Contents/MacOS; \\\n", f);
+    fputs("\t\t$(INSTALL_DATA) $$game.app/Contents/Resources/$$game.icns $(DESTDIR)/Applications/$$game.app/Contents/Resources; \\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("uninstall:\n", f);
+    fputs("\techo \"Removing examples programs from $(DESTDIR)$(docdir)/examples...\"\n", f);
+    fputs("\t-$(RMDIR) $(DESTDIR)$(docdir)/examples\n", f);
+    fputs("\n", f);
+    fputs("uninstall-linux:\n", f);
+    fputs("\techo Removing games from $(DESTDIR)$(bindir)...\n", f);
+    fputs("\tfor game in blocks checkers sudoku; do \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$$game; \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)/usr/share/applications/$$game.desktop; \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)/usr/share/icons/hicolor/32x32/apps/$$game.png; \\\n", f);
+    fputs("\t\t$(RM) $(DESTDIR)/usr/share/icons/hicolor/128x128/apps/$$game.png; \\\n", f);
+    fputs("\tdone\n", f);
+    fputs("\n", f);
+    fputs("uninstall-osx:\n", f);
+    fputs("\techo Removing games from $(DESTDIR)/Applications...\n", f);
+    fputs("\t$(RMDIR) $(DESTDIR)/Applications/blocks.app\n", f);
+    fputs("\t$(RMDIR) $(DESTDIR)/Applications/checkers.app\n", f);
+    fputs("\t$(RMDIR) $(DESTDIR)/Applications/sudoku.app\n", f);
+    fputs("\n", f);
+    fputs("# FLUID file rules\n", f);
+    fputs(".fl.cxx .fl.h:\t../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\techo Generating $@ and header from $<...\n", f);
+    fputs("\t../fluid/fluid$(EXEEXT) -c $<\n", f);
+    fputs("\n", f);
+    fputs("# All demos depend on the FLTK library...\n", f);
+    fputs("$(ALL): $(LIBNAME)\n", f);
+    fputs("\n", f);
+    fputs("# General demos...\n", f);
+    fputs("unittests$(EXEEXT): unittests.o\n", f);
+    fputs("\n", f);
+    fputs("unittests.cxx: unittest_about.cxx unittest_points.cxx unittest_lines.cxx unittest_circles.cxx \\\n", f);
+    fputs("\tunittest_rects.cxx unittest_text.cxx unittest_viewport.cxx unittest_images.cxx\n", f);
+    fputs("\n", f);
+    fputs("adjuster$(EXEEXT): adjuster.o\n", f);
+    fputs("\n", f);
+    fputs("arc$(EXEEXT): arc.o\n", f);
+    fputs("\n", f);
+    fputs("ask$(EXEEXT): ask.o\n", f);
+    fputs("\n", f);
+    fputs("bitmap$(EXEEXT): bitmap.o\n", f);
+    fputs("\n", f);
+    fputs("boxtype$(EXEEXT): boxtype.o\n", f);
+    fputs("\n", f);
+    fputs("browser$(EXEEXT): browser.o\n", f);
+    fputs("\n", f);
+    fputs("button$(EXEEXT): button.o\n", f);
+    fputs("\n", f);
+    fputs("buttons$(EXEEXT): buttons.o\n", f);
+    fputs("\n", f);
+    fputs("blocks$(EXEEXT): blocks.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) blocks.o -o $@ $(AUDIOLIBS) $(LINKFLTK) $(LDLIBS)\n", f);
+    fputs("\t$(OSX_ONLY) $(INSTALL_BIN) blocks$(EXEEXT) blocks.app/Contents/MacOS\n", f);
+    fputs("\n", f);
+    fputs("checkers$(EXEEXT): checkers.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) checkers.o -o $@ $(LINKFLTK) $(LDLIBS)\n", f);
+    fputs("\t$(OSX_ONLY) $(INSTALL_BIN) checkers$(EXEEXT) checkers.app/Contents/MacOS\n", f);
+    fputs("\n", f);
+    fputs("clock$(EXEEXT): clock.o\n", f);
+    fputs("\n", f);
+    fputs("colbrowser$(EXEEXT): colbrowser.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ colbrowser.o $(LINKFLTKFORMS) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("color_chooser$(EXEEXT): color_chooser.o\n", f);
+    fputs("\n", f);
+    fputs("cursor$(EXEEXT): cursor.o\n", f);
+    fputs("\n", f);
+    fputs("curve$(EXEEXT): curve.o\n", f);
+    fputs("\n", f);
+    fputs("demo$(EXEEXT): demo.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ demo.o $(LINKFLTKFORMS) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("device$(EXEEXT): device.o $(IMGLIBNAME)\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) device.o -o $@ $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("doublebuffer$(EXEEXT): doublebuffer.o\n", f);
+    fputs("\n", f);
+    fputs("editor$(EXEEXT): editor.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) editor.o -o $@ $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("fast_slow$(EXEEXT): fast_slow.o\n", f);
+    fputs("fast_slow.cxx:\tfast_slow.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("file_chooser$(EXEEXT): file_chooser.o $(IMGLIBNAME)\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) file_chooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("fonts$(EXEEXT): fonts.o\n", f);
+    fputs("\n", f);
+    fputs("forms$(EXEEXT): forms.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ forms.o $(LINKFLTKFORMS) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("hello$(EXEEXT): hello.o\n", f);
+    fputs("\n", f);
+    fputs("help$(EXEEXT): help.o $(IMGLIBNAME)\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("iconize$(EXEEXT): iconize.o\n", f);
+    fputs("\n", f);
+    fputs("image$(EXEEXT): image.o\n", f);
+    fputs("\n", f);
+    fputs("inactive$(EXEEXT): inactive.o\n", f);
+    fputs("inactive.cxx:\tinactive.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("input$(EXEEXT): input.o\n", f);
+    fputs("\n", f);
+    fputs("input_choice$(EXEEXT): input_choice.o\n", f);
+    fputs("\n", f);
+    fputs("keyboard$(EXEEXT): keyboard_ui.o keyboard.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ keyboard.o keyboard_ui.o $(LINKFLTK) $(LDLIBS)\n", f);
+    fputs("keyboard_ui.o:\tkeyboard_ui.h\n", f);
+    fputs("keyboard_ui.cxx:\tkeyboard_ui.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("label$(EXEEXT): label.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ label.o $(LINKFLTKFORMS) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("line_style$(EXEEXT): line_style.o\n", f);
+    fputs("\n", f);
+    fputs("list_visuals$(EXEEXT): list_visuals.o\n", f);
+    fputs("\n", f);
+    fputs("mandelbrot$(EXEEXT): mandelbrot_ui.o mandelbrot.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ mandelbrot.o mandelbrot_ui.o $(LINKFLTK) $(LDLIBS)\n", f);
+    fputs("mandelbrot_ui.o:\tmandelbrot_ui.h\n", f);
+    fputs("mandelbrot_ui.cxx:\tmandelbrot_ui.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("menubar$(EXEEXT): menubar.o\n", f);
+    fputs("\n", f);
+    fputs("message$(EXEEXT): message.o\n", f);
+    fputs("\n", f);
+    fputs("minimum$(EXEEXT): minimum.o\n", f);
+    fputs("\n", f);
+    fputs("native-filechooser$(EXEEXT): native-filechooser.o $(IMGLIBNAME)\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) native-filechooser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("native-filechooser.o: ../FL/Fl_Native_File_Chooser_WIN32.H ../FL/Fl_Native_File_Chooser_MAC.H\n", f);
+    fputs("\n", f);
+    fputs("navigation$(EXEEXT): navigation.o\n", f);
+    fputs("\n", f);
+    fputs("output$(EXEEXT): output.o $(FLLIBNAME)\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ output.o $(LINKFLTKFORMS) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("overlay$(EXEEXT): overlay.o\n", f);
+    fputs("\n", f);
+    fputs("pack$(EXEEXT): pack.o\n", f);
+    fputs("\n", f);
+    fputs("pixmap$(EXEEXT): pixmap.o\n", f);
+    fputs("\n", f);
+    fputs("pixmap_browser$(EXEEXT): pixmap_browser.o $(IMGLIBNAME)\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) pixmap_browser.o -o $@ $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("preferences$(EXEEXT):\tpreferences.o\n", f);
+    fputs("preferences.cxx:\tpreferences.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("device$(EXEEXT): device.o\n", f);
+    fputs("\n", f);
+    fputs("radio$(EXEEXT): radio.o\n", f);
+    fputs("radio.cxx:\tradio.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("resize$(EXEEXT): resize.o\n", f);
+    fputs("resize.cxx:\tresize.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("resizebox$(EXEEXT): resizebox.o\n", f);
+    fputs("\n", f);
+    fputs("rotated_text$(EXEEXT): rotated_text.o\n", f);
+    fputs("\n", f);
+    fputs("scroll$(EXEEXT): scroll.o\n", f);
+    fputs("\n", f);
+    fputs("subwindow$(EXEEXT): subwindow.o\n", f);
+    fputs("\n", f);
+    fputs("sudoku: sudoku.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) sudoku.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\t$(OSX_ONLY) $(INSTALL_BIN) sudoku$(EXEEXT) sudoku.app/Contents/MacOS\n", f);
+    fputs("\n", f);
+    fputs("sudoku.exe: sudoku.o sudoku.rc\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\twindres sudoku.rc sudokures.o\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) sudoku.o sudokures.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("symbols$(EXEEXT): symbols.o\n", f);
+    fputs("\n", f);
+    fputs("table$(EXEEXT): table.o\n", f);
+    fputs("\n", f);
+    fputs("tabs$(EXEEXT): tabs.o\n", f);
+    fputs("tabs.cxx:\ttabs.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("threads$(EXEEXT): threads.o\n", f);
+    fputs("# This ensures that we have this dependency even if threads are not\n", f);
+    fputs("# enabled in the current tree...\n", f);
+    fputs("threads.o:\tthreads.h\n", f);
+    fputs("\n", f);
+    fputs("tile$(EXEEXT): tile.o\n", f);
+    fputs("\n", f);
+    fputs("tiled_image$(EXEEXT): tiled_image.o\n", f);
+    fputs("\n", f);
+    fputs("tree$(EXEEXT): tree.o\n", f);
+    fputs("\n", f);
+    fputs("valuators$(EXEEXT): valuators.o\n", f);
+    fputs("valuators.cxx:\tvaluators.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("# All OpenGL demos depend on the FLTK and FLTK_GL libraries...\n", f);
+    fputs("$(GLALL): $(LIBNAME) $(GLLIBNAME)\n", f);
+    fputs("\n", f);
+    fputs("# OpenGL demos...\n", f);
+    fputs("CubeView$(EXEEXT): CubeMain.o CubeView.o CubeViewUI.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ \\\n", f);
+    fputs("\t\tCubeMain.o CubeView.o CubeViewUI.o \\\n", f);
+    fputs("\t\t$(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)\n", f);
+    fputs("CubeMain.o: CubeViewUI.h CubeView.h CubeViewUI.cxx\n", f);
+    fputs("CubeView.o: CubeView.h\n", f);
+    fputs("CubeViewUI.o:\tCubeViewUI.cxx CubeViewUI.h\n", f);
+    fputs("CubeViewUI.cxx:\tCubeViewUI.fl ../fluid/fluid$(EXEEXT)\n", f);
+    fputs("\n", f);
+    fputs("cube$(EXEEXT): cube.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ cube.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("fractals$(EXEEXT): fractals.o fracviewer.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ fractals.o fracviewer.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("fullscreen$(EXEEXT): fullscreen.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ fullscreen.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("glpuzzle$(EXEEXT): glpuzzle.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ glpuzzle.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("gl_overlay$(EXEEXT): gl_overlay.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ gl_overlay.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("shape$(EXEEXT): shape.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(LDFLAGS) -o $@ shape.o $(LINKFLTKGL) $(LINKFLTK) $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("cairo_test$(EXEEXT): cairo_test.o\n", f);
+    fputs("\techo Linking $@...\n", f);
+    fputs("\t$(CXX) $(ARCHFLAGS) $(CAIROFLAGS) $(LDFLAGS) -o $@ cairo_test.o $(LINKFLTK) $(LINKFLTKCAIRO) $(GLDLIBS)\n", f);
+    fputs("\n", f);
+    fputs("#\n", f);
+    fputs("# End of \"$Id: Makefile 7263 2010-03-14 18:07:24Z AlbrechtS $\".\n", f);
+    fputs("#\n", f);
+    fclose(f);
     return 0;
   }
-#endif
   
   /*
    * Write the entire system of files.
@@ -1570,6 +1692,11 @@ public:
     sprintf(filepath, "%s/fluid", rootDir); fl_mkdir(filepath, 0777);
     sprintf(filepath, "%s/src", rootDir); fl_mkdir(filepath, 0777);
     sprintf(filepath, "%s/test", rootDir); fl_mkdir(filepath, 0777);
+    // --- create the Makefiles
+    sprintf(filepath, "%s/Makefile", rootDir); writeMainMakefile(filepath);
+    sprintf(filepath, "%s/fluid/Makefile", rootDir); writeFluidMakefile(filepath);
+    sprintf(filepath, "%s/src/Makefile", rootDir); writeLibsMakefile(filepath);
+    sprintf(filepath, "%s/test/Makefile", rootDir); writeTestMakefile(filepath);
     return 0;
   }
 };
