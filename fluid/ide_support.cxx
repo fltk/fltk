@@ -192,13 +192,19 @@ Fl_Target_Prefs::Fl_Target_Prefs(Fl_Preferences::ID id)
 Fl_Preferences::ID Fl_Target_Prefs::add_source(Fl_IDE_Prefs &fdb, const char *pathAndName) {
   Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", pathAndName));
   Fl_IDE_Prefs p(*this, "sources");
-  return p.add_with_key("refUUID", file.name());
+  Fl_Preferences::ID id = p.add_with_key("refUUID", file.name());
+  Fl_Preferences ref(id);
+  ref.set("(filename)", pathAndName);
+  return id;
 }
 
 Fl_Preferences::ID Fl_Target_Prefs::add_fl(Fl_IDE_Prefs &fdb, const char *pathAndName) {
   Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", pathAndName));
   Fl_IDE_Prefs p(*this, "fl");
-  return p.add_with_key("refUUID", file.name());
+  Fl_Preferences::ID id = p.add_with_key("refUUID", file.name());
+  Fl_Preferences ref(id);
+  ref.set("(filename)", pathAndName);
+  return id;
 }
 
 Fl_Preferences::ID Fl_Target_Prefs::depends_on(Fl_IDE_Prefs &dep) {
@@ -215,7 +221,10 @@ Fl_Preferences::ID Fl_Target_Prefs::add_lib(Fl_IDE_Prefs &lib) {
 Fl_Preferences::ID Fl_Target_Prefs::add_external_lib(Fl_IDE_Prefs &fdb, const char *pathAndName) {
   Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", pathAndName));
   Fl_IDE_Prefs p(*this, "externals");
-  return p.add_with_key("refUUID", file.name());
+  Fl_Preferences::ID id = p.add_with_key("refUUID", file.name());
+  Fl_Preferences ref(id);
+  ref.set("(filename)", pathAndName);
+  return id;
 }
 
 
