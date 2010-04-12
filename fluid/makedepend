@@ -354,6 +354,64 @@ function_panel.o: ../FL/Fl_Widget.H ../FL/Fl_Menu.H Fluid_Image.h
 function_panel.o: ../FL/Fl_Shared_Image.H ../FL/fl_draw.H ../FL/Fl_Pack.H
 function_panel.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H ../FL/Fl_Input_Choice.H
 function_panel.o: ../FL/Fl_Menu_Bar.H undo.h
+ide_maketools.o: ide_support.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+ide_maketools.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+ide_maketools.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Preferences.H
+ide_maketools.o: ../FL/filename.H ../FL/fl_ask.H ../src/flstring.h
+ide_maketools.o: ../config.h Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H
+ide_maketools.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
+ide_maketools.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H Fluid_Image.h
+ide_maketools.o: ../FL/Fl_Shared_Image.H ../FL/fl_draw.H ../FL/Fl_Window.H
+ide_maketools.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/x.H
+ide_maketools.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
+ide_maketools.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Tabs.H ../FL/Fl_Pack.H
+ide_maketools.o: ../FL/Fl_Group.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
+ide_maketools.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Choice.H
+ide_maketools.o: ../FL/Fl_Input_Choice.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+ide_maketools.o: ../FL/Fl_Window.H ../FL/Fl_Menu_Bar.H
+ide_support.o: ide_support.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+ide_support.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+ide_support.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Preferences.H
+ide_support.o: ../FL/fl_ask.H ../FL/Fl_Widget.H ../FL/filename.H Fl_Type.h
+ide_support.o: ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H
+ide_support.o: ../FL/Fl_Image.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+ide_support.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/fl_draw.H
+ide_support.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/x.H
+ide_support.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
+ide_support.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Tabs.H ../FL/Fl_Pack.H
+ide_support.o: ../FL/Fl_Group.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
+ide_support.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Choice.H
+ide_support.o: ../FL/Fl_Input_Choice.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+ide_support.o: ../FL/Fl_Window.H ../FL/Fl_Menu_Bar.H
+ide_visualc.o: ide_support.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+ide_visualc.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+ide_visualc.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Preferences.H
+ide_visualc.o: ../FL/filename.H ../FL/fl_ask.H ../src/flstring.h ../config.h
+ide_visualc.o: Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H
+ide_visualc.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
+ide_visualc.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H Fluid_Image.h
+ide_visualc.o: ../FL/Fl_Shared_Image.H ../FL/fl_draw.H ../FL/Fl_Window.H
+ide_visualc.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Image.H
+ide_visualc.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+ide_visualc.o: ../FL/Fl_Tabs.H ../FL/Fl_Pack.H ../FL/Fl_Group.H
+ide_visualc.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H
+ide_visualc.o: ../FL/Fl_Menu_.H ../FL/Fl_Choice.H ../FL/Fl_Input_Choice.H
+ide_visualc.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Window.H
+ide_visualc.o: ../FL/Fl_Menu_Bar.H
+ide_xcode.o: ide_support.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+ide_xcode.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+ide_xcode.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Preferences.H
+ide_xcode.o: ../FL/filename.H ../FL/fl_ask.H ../src/flstring.h ../config.h
+ide_xcode.o: Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H
+ide_xcode.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/Fl_Plugin.H
+ide_xcode.o: ../FL/Fl_Preferences.H Fluid_Image.h ../FL/Fl_Shared_Image.H
+ide_xcode.o: ../FL/fl_draw.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+ide_xcode.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+ide_xcode.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Tabs.H
+ide_xcode.o: ../FL/Fl_Pack.H ../FL/Fl_Group.H ../FL/Fl_Wizard.H
+ide_xcode.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H
+ide_xcode.o: ../FL/Fl_Choice.H ../FL/Fl_Input_Choice.H ../FL/Fl_Input.H
+ide_xcode.o: ../FL/Fl_Input_.H ../FL/Fl_Window.H ../FL/Fl_Menu_Bar.H
 template_panel.o: template_panel.h ../FL/Fl.H ../FL/fl_utf8.h
 template_panel.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
 template_panel.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h

@@ -341,7 +341,7 @@ label.o: ../FL/Fl_Hor_Value_Slider.H ../FL/Fl_Value_Slider.H
 label.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Toggle_Button.H
 label.o: ../FL/Fl_Button.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 label.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
-label.o: ../FL/Fl_Image.H ../FL/fl_draw.H
+label.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/fl_draw.H pixmaps/blast.xpm
 line_style.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 line_style.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 line_style.o: ../FL/fl_types.h ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
