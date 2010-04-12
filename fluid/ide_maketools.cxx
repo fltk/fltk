@@ -268,6 +268,10 @@ public:
     fputs("\tfile.cxx \\\n", f);
     fputs("\tfluid.cxx \\\n", f);
     fputs("\tfunction_panel.cxx \\\n", f);
+    fputs("\tide_maketools.cxx \\\n", f);
+    fputs("\tide_support.cxx \\\n", f);
+    fputs("\tide_visualc.cxx \\\n", f);
+    fputs("\tide_xcode.cxx \\\n", f);    
     fputs("\ttemplate_panel.cxx \\\n", f);
     fputs("\tundo.cxx \\\n", f);
     fputs("\twidget_panel.cxx\n", f);
@@ -1729,7 +1733,7 @@ public:
   const char *name() { return "ideMaketools.fluid.fltk.org"; }
   const char *help() { return
     " --dbmake <dbname> <targetpath> : create all IDE files for a Makefile/autoconf based project\n"
-    "   WARNING: --dbmake is not yet implemented completely.\n"; }
+    "   WARNING: --dbmake is not yet implemented completely."; }
   int arg(int argc, char **argv, int &i) {
     if (argc>=i+1 && strcmp(argv[i], "--dbxcode3")==0) {
       if (argc>=i+3 && argv[i+1][0]!='-' && argv[i+2][0]!='-') {

@@ -408,7 +408,6 @@
 		B220C8BACFB1FF8B576683AE /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F459EEE32AC6EE0087583065 /* fltk.framework */; };
 		B33439F4D21CCF663D38D36F /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F459EEE32AC6EE0087583065 /* fltk.framework */; };
 		B3AB7CB3BB4674496EE23A9D /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F459EEE32AC6EE0087583065 /* fltk.framework */; };
-		B3BA6EDC6CBD904947309845 /* ide_support_ui.cxx in Sources */ = {isa = PBXBuildFile; fileRef = BE8AEC5B94A33E971A141F65 /* ide_support_ui.cxx */; };
 		B3F7E78259D54982CE9D0636 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F459EEE32AC6EE0087583065 /* fltk.framework */; };
 		B433FC5EB573FF9875CBF3A0 /* fl_dnd.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 4BC7AF98309EC04D477C75BF /* fl_dnd.cxx */; };
 		B5866D0045327FD5656DE0D5 /* flstring.c in Sources */ = {isa = PBXBuildFile; fileRef = 1DF43319523953BD4B153A07 /* flstring.c */; };
@@ -3932,7 +3931,6 @@
 		BE710079ACC4C7D3FB2E72D6 /* Fl_Box.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Box.cxx; path = ../../src/Fl_Box.cxx; sourceTree = SOURCE_ROOT; };
 		BE7E4C70257863B05F3BEA7E /* Fl_Wizard.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Wizard.cxx; path = ../../src/Fl_Wizard.cxx; sourceTree = SOURCE_ROOT; };
 		BE840FE9120DF2BDF7C0D8B1 /* mandelbrot_ui.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = mandelbrot_ui.fl; path = ../../test/mandelbrot_ui.fl; sourceTree = SOURCE_ROOT; };
-		BE8AEC5B94A33E971A141F65 /* ide_support_ui.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_support_ui.cxx; path = ../../fluid/ide_support_ui.cxx; sourceTree = SOURCE_ROOT; };
 		BF24156FEE87C9CF2DF5D6DF /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtrans.c; path = ../../png/pngtrans.c; sourceTree = SOURCE_ROOT; };
 		BF53F3C7BD0B54B51FEDD0FA /* jquant1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant1.c; path = ../../jpeg/jquant1.c; sourceTree = SOURCE_ROOT; };
 		C08A8ABFE2A8C2921AC63025 /* jcsample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcsample.c; path = ../../jpeg/jcsample.c; sourceTree = SOURCE_ROOT; };
@@ -5475,7 +5473,6 @@
 				1C0E3777F229938969F8E0E7 /* function_panel.cxx */,
 				B65FCD2B8489E2BBAA3F695A /* ide_maketools.cxx */,
 				77759BD79A674B0703F21C3E /* ide_support.cxx */,
-				BE8AEC5B94A33E971A141F65 /* ide_support_ui.cxx */,
 				B50524F41B3A568F8AD761C9 /* ide_visualc.cxx */,
 				B78D76B5AC3045B586173DC9 /* ide_xcode.cxx */,
 				82D70F7B9460C9797FF03089 /* template_panel.cxx */,
@@ -8297,7 +8294,6 @@
 				CCA89C0B6F35BD769098B0B6 /* function_panel.cxx in Sources */,
 				C9C84B2983DC793B141DDC70 /* ide_maketools.cxx in Sources */,
 				3B5132A7C2C4AFC712117A4C /* ide_support.cxx in Sources */,
-				B3BA6EDC6CBD904947309845 /* ide_support_ui.cxx in Sources */,
 				3734BD3A2D1490F4EC62ACAA /* ide_visualc.cxx in Sources */,
 				92BAD1B264D06B999FABE825 /* ide_xcode.cxx in Sources */,
 				E5AD089B2DB919A31955C459 /* template_panel.cxx in Sources */,

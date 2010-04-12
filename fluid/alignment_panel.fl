@@ -157,10 +157,11 @@ decl {Fl_Text_Buffer *shell_run_buffer;} {public local
 decl {void scheme_cb(Fl_Choice *, void *);} {public local
 } 
 
-Function {make_settings_window()} {} {
+Function {make_settings_window()} {open
+} {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {393 191 342 269} type Double non_modal visible
+    xywh {393 191 339 241} type Double non_modal visible
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
@@ -188,8 +189,8 @@ Function {make_settings_window()} {} {
         xywh {10 10 35 25}
       }
     }
-    Fl_Group {} {open
-      xywh {116 43 220 149} labelfont 1 align 4
+    Fl_Group {} {open selected
+      xywh {116 43 220 126} labelfont 1 align 0
     } {
       Fl_Box {} {
         label {Options: }
@@ -238,25 +239,12 @@ redraw_browser();}
         code1 {fluid_prefs.get("show_comments", show_comments, 1);}
         code2 {show_comments_button->value(show_comments);}
       }
-      Fl_Check_Button show_coredevmenus_button {
-        label {Show Core Developer Menus}
-        callback {show_coredevmenus = show_coredevmenus_button->value();
-fluid_prefs.set("show_coredevmenus", show_coredevmenus);
-if (show_coredevmenus) 
-  dbmanager_item->show(); 
-else 
-  dbmanager_item->hide();}
-        xywh {116 167 209 25} down_box DOWN_BOX
-        code1 {fluid_prefs.get("show_coredevmenus", show_coredevmenus, 0);}
-        code2 {show_coredevmenus_button->value(show_coredevmenus);}
-        code3 {if (!show_coredevmenus) dbmanager_item->hide();}
-      }
     }
     Fl_Spinner recent_spinner {
       label {\# Recent Files: }
       callback {fluid_prefs.set("recent_files", recent_spinner->value());
 load_history();}
-      xywh {115 199 40 25} labelfont 1 when 1
+      xywh {115 173 40 25} labelfont 1 when 1
       code0 {int c;}
       code1 {fluid_prefs.get("recent_files", c, 5);}
       code2 {recent_spinner->maximum(10);}
@@ -265,7 +253,7 @@ load_history();}
     Fl_Button {} {
       label Close
       callback {settings_window->hide();}
-      tooltip {Close this dialog.} xywh {266 231 64 25}
+      tooltip {Close this dialog.} xywh {266 205 64 25}
     }
   }
 } 

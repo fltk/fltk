@@ -118,7 +118,6 @@ Fl_Menu_Item *save_item = 0L;
 Fl_Menu_Item *history_item = 0L;
 Fl_Menu_Item *widgetbin_item = 0L;
 Fl_Menu_Item *sourceview_item = 0L;
-Fl_Menu_Item *dbmanager_item = 0L;
 
 ////////////////////////////////////////////////////////////////
 
@@ -1605,12 +1604,6 @@ void dbmake_cb(Fl_Widget*, void*) {
   if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
 }
 
-void show_dbmanager_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("FltkDB.fluid.fltk.org");
-  if (pi) pi->show_panel();
-}
-
 ////////////////////////////////////////////////////////////////
 
 extern Fl_Menu_Item New_Menu[];
@@ -1664,7 +1657,6 @@ Fl_Menu_Item Main_Menu[] = {
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
   {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
-  {"Manage &FLTK Database...",0,show_dbmanager_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
@@ -1820,7 +1812,6 @@ void make_main_window() {
     history_item = (Fl_Menu_Item*)main_menubar->find_item(open_history_cb);
     widgetbin_item = (Fl_Menu_Item*)main_menubar->find_item(toggle_widgetbin_cb);
     sourceview_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)toggle_sourceview_cb);
-    dbmanager_item = (Fl_Menu_Item*)main_menubar->find_item((Fl_Callback*)show_dbmanager_cb);
     main_menubar->global();
     fill_in_New_Menu();
     main_window->end();

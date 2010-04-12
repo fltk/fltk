@@ -103,7 +103,6 @@
  */
 
 #include "ide_support.h"
-#include "ide_support_ui.h"
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
@@ -652,7 +651,6 @@ int create_new_database(const char *filename)
     fluid_app.add_source(files_db, "fluid/function_panel.cxx");
     fluid_app.add_source(files_db, "fluid/ide_maketools.cxx");
     fluid_app.add_source(files_db, "fluid/ide_support.cxx");
-    fluid_app.add_source(files_db, "fluid/ide_support_ui.cxx");
     fluid_app.add_source(files_db, "fluid/ide_visualc.cxx");
     fluid_app.add_source(files_db, "fluid/ide_xcode.cxx");
     fluid_app.add_source(files_db, "fluid/template_panel.cxx");
@@ -1167,121 +1165,6 @@ int create_new_database(const char *filename)
   return 0;
 }
 
-class Item_Manager {
-  Fl_Preferences::ID id;
-public:
-  Item_Manager(Fl_Preferences::ID idA) { id = idA; }
-  virtual ~Item_Manager() { }
-  virtual void select(Fl_Tree_Item *) { dbm_wizard->value(dbm_empty); }
-};
-
-class Test_Item_Manager : public Item_Manager {
-  Fl_Preferences::ID id;
-public:
-  Test_Item_Manager(Fl_Preferences::ID idA) : Item_Manager(idA) { }
-  virtual void select(Fl_Tree_Item *ti) { 
-    dbm_wizard->value(dbm_test);
-    dbm_test_name->value(ti->label());
-  }
-};
-
-void tree_item_cb(Fl_Tree *t, void *) {
-  Fl_Tree_Item *ti = t->item_clicked();
-  Item_Manager *im = (Item_Manager*)ti->user_data();
-  if (im) {
-    im->select(ti);
-  }
-}
-
-void ui_load_database(const char *filename)
-{
-  char buf[1024];
-  float v = 0.0f;
-  int i, j;
-  
-  dbmanager_tree->callback((Fl_Callback*)tree_item_cb);
-  
-  // FIXME: must be global, so we can close it
-  Fl_Preferences *db = new Fl_Preferences(filename, "fltk.org", 0);
-
-  // Check if this is a database
-  if (db->entries()==0) {
-    fl_alert("%s\nis not a database", filename);
-    delete db;
-    return;
-  }
-  
-  // Check if the database has the correct format
-  if (!db->entryExists("databaseFormat")) {
-    fl_alert("%s\nis not a Fluid database", filename);
-    delete db;
-    return;
-  }
-  db->get("databaseFormat", buf, "", 1024);
-  if (strcmp(buf, "FLUID_IDE_DB")!=0) {
-    fl_alert("%s\nis not a Fluid IDE database", filename);
-    delete db;
-    return;
-  }
-  db->get("databaseVersion", buf, "", 1024);
-  sscanf(buf, "%f", &v);
-  if (v>1.0f) {
-    fl_alert("The Fluid IDE database\n%s\nversion %f is not suported.", filename, v);
-    delete db;
-    return;
-  }
-  
-  // set the dialog label to the project name
-  char *name; db->get("projectName", name, "unnamed");
-  char *vers; db->get("projectVersion", vers, "0.1");
-  sprintf(buf, "%s V%s", name, vers);
-  dbmanager_window->label(buf);
-  free(vers); free(name);
-  
-  Fl_Preferences targetsDB(db, "targets");
-  Fl_Preferences filesDB(db, "files");
-  Fl_Tree_Item *ti;
-  
-  // load all tests
-  ti = dbmanager_tree->add("Applications");
-  ti->user_data(new Item_Manager(0L));
-  
-  // load all tests
-  ti = dbmanager_tree->add("Libraries & Frameworks");
-  ti->user_data(new Item_Manager(0L));
-  
-  // load all tests
-  ti = dbmanager_tree->add("Test Applications");
-  ti->user_data(new Item_Manager(0L));
-  Fl_Preferences testsDB(targetsDB, "tests");
-  for (i=0; i<testsDB.groups(); i++) {
-    Fl_Preferences testDB(testsDB, i);
-    testDB.get("name", buf, "DB-Error", 1024);
-    Fl_Tree_Item *tt = dbmanager_tree->add(ti, buf); tt->close();
-    tt->user_data(new Test_Item_Manager(testDB.id()));
-    
-    if (testDB.groupExists("sources")) {
-      Fl_Tree_Item *ts = dbmanager_tree->add(tt, "Sources"); ts->close();
-      Fl_Preferences srcsDB(testDB, "sources");
-      for (j=0; j<srcsDB.groups(); j++) {
-        Fl_Preferences srcDB(srcsDB, j);
-        srcDB.get("refUUID", buf, "DBERROR", 1024);
-        Fl_File_Prefs fileDB(filesDB, buf);
-        /* Fl_Tree_Item *tb = */ dbmanager_tree->add(ts, fileDB.fullName());
-      }
-    }
-    
-    //ts = dbmanager_tree->add(tt, "Dependencies");
-    //ts = dbmanager_tree->add(tt, "Libraries");
-    //ts = dbmanager_tree->add(tt, "Externals");
-  }
-  
-
-  dbmanager_tree->redraw();
-  delete db;
-}
-
-
 // Make this module into a plugin
 
 extern int exit_early;
@@ -1313,10 +1196,6 @@ public:
     return 0;
   }
   void show_panel() {
-    if (!dbmanager_window)
-      make_dbmanager_window();
-    dbmanager_window->label("IDE Database Manager");
-    dbmanager_window->show();
   }
 };
 

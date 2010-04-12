@@ -77,7 +77,6 @@ extern Fl_Check_Button *completion_button;
 extern Fl_Check_Button *openlast_button;
 extern Fl_Check_Button *prevpos_button;
 extern Fl_Check_Button *show_comments_button;
-extern Fl_Check_Button *show_coredevmenus_button;
 #include <FL/Fl_Spinner.H>
 extern Fl_Spinner *recent_spinner;
 Fl_Double_Window* make_settings_window();
