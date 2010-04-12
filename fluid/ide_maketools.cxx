@@ -272,31 +272,6 @@ public:
       if (i<n-1) fputs(" \\", f);
       fputs("\n", f);
     }
-/*    
-    fputs("\tCodeEditor.cxx \\\n", f);
-    fputs("\tFl_Function_Type.cxx \\\n", f);
-    fputs("\tFl_Group_Type.cxx \\\n", f);
-    fputs("\tFl_Menu_Type.cxx \\\n", f);
-    fputs("\tFl_Type.cxx \\\n", f);
-    fputs("\tFl_Widget_Type.cxx \\\n", f);
-    fputs("\tFl_Window_Type.cxx \\\n", f);
-    fputs("\tFluid_Image.cxx \\\n", f);
-    fputs("\tabout_panel.cxx \\\n", f);
-    fputs("\talign_widget.cxx \\\n", f);
-    fputs("\talignment_panel.cxx \\\n", f);
-    fputs("\tcode.cxx \\\n", f);
-    fputs("\tfactory.cxx \\\n", f);
-    fputs("\tfile.cxx \\\n", f);
-    fputs("\tfluid.cxx \\\n", f);
-    fputs("\tfunction_panel.cxx \\\n", f);
-    fputs("\tide_maketools.cxx \\\n", f);
-    fputs("\tide_support.cxx \\\n", f);
-    fputs("\tide_visualc.cxx \\\n", f);
-    fputs("\tide_xcode.cxx \\\n", f);    
-    fputs("\ttemplate_panel.cxx \\\n", f);
-    fputs("\tundo.cxx \\\n", f);
-    fputs("\twidget_panel.cxx\n", f);
-*/
     fputs("\n", f);
     fputs("################################################################\n", f);
     fputs("\n", f);
