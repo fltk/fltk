@@ -114,7 +114,7 @@
 /* 
  * Read a UUID from a database entry. If none exists, create one in the database. 
  */
-void getUUID(Fl_Preferences &db, const char *key, char *buffer) {
+void fl_getUUID(Fl_Preferences &db, const char *key, char *buffer) {
   db.get(key, buffer, "", 37);
   if (buffer[0]==0) {
     strcpy(buffer, Fl_Preferences::newUUID());
@@ -126,7 +126,7 @@ void getUUID(Fl_Preferences &db, const char *key, char *buffer) {
  * Read an Xcode ID from a database entry. If none exists, create one in the database. 
  * The Xcode ID contains 24 bytes of hexadecimal chracters.
  */
-void getXCID(Fl_Preferences &db, const char *key, char *buffer) {
+void fl_getXCID(Fl_Preferences &db, const char *key, char *buffer) {
   db.get(key, buffer, "", 25);
   if (buffer[0]==0) {
     const char *uuid = Fl_Preferences::newUUID();

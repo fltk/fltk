@@ -62,11 +62,11 @@
 class Maketools_IDE {
   char *rootDir;
   char projectName[80];
-  Fl_Preferences tgtAppsDB;
+  Fl_IDE_Prefs tgtAppsDB;
   int nTgtApps;
-  Fl_Preferences tgtLibsDB;
+  Fl_IDE_Prefs tgtLibsDB;
   int nTgtLibs;
-  Fl_Preferences tgtTestsDB;
+  Fl_IDE_Prefs tgtTestsDB;
   int nTgtTests;
   Fl_Preferences filesDB;
   int nFiles;
@@ -223,6 +223,15 @@ public:
   }
   
   int writeFluidMakefile(const char *filepath) {
+    int i, n;
+    
+    Fl_Preferences::ID fluidID = tgtAppsDB.find_by_key("name", "Fluid");
+    if (!fluidID) {
+      fprintf(stderr, "Target \"Fluid\" not found!\n");
+      return -1;
+    }
+    Fl_Target_Prefs fluidDB(fluidID);
+    
     FILE *f = fopen(filepath, "wb");
     fputs("#\n", f);
     fputs("# \"$Id: Makefile 6614 2009-01-01 16:11:32Z matt $\"\n", f);
@@ -252,6 +261,18 @@ public:
     fputs("#\n", f);
     fputs("\n", f);
     fputs("CPPFILES = \\\n", f);
+    
+    Fl_Preferences sourcesDB(fluidDB, "sources");
+    n = sourcesDB.groups();
+    for (i=0; i<n; i++) {
+      Fl_Preferences sourceDB(sourcesDB, i);
+      GET_UUID(refUUID, sourceDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      fprintf(f, "\t%s", fileDB.fullName());
+      if (i<n-1) fputs(" \\", f);
+      fputs("\n", f);
+    }
+/*    
     fputs("\tCodeEditor.cxx \\\n", f);
     fputs("\tFl_Function_Type.cxx \\\n", f);
     fputs("\tFl_Group_Type.cxx \\\n", f);
@@ -275,6 +296,7 @@ public:
     fputs("\ttemplate_panel.cxx \\\n", f);
     fputs("\tundo.cxx \\\n", f);
     fputs("\twidget_panel.cxx\n", f);
+*/
     fputs("\n", f);
     fputs("################################################################\n", f);
     fputs("\n", f);

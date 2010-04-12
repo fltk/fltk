@@ -115,15 +115,15 @@ class Xcode3_IDE {
   Fl_Preferences filesDB;
   int nFiles;
   Fl_Preferences ideDB;
-  XCID xcRootNodeID;
-  XCID xcBuildConfigurationListID;
-  XCID xcMainGroupID;
-  XCID xcProductsGroupID;
-  XCID xcAppsGroupID;
-  XCID xcLibsGroupID;
-  XCID xcTestsGroupID;
-  XCID xcBuildConfigurationDebugID;
-  XCID xcBuildConfigurationReleaseID;
+  Fl_XCID xcRootNodeID;
+  Fl_XCID xcBuildConfigurationListID;
+  Fl_XCID xcMainGroupID;
+  Fl_XCID xcProductsGroupID;
+  Fl_XCID xcAppsGroupID;
+  Fl_XCID xcLibsGroupID;
+  Fl_XCID xcTestsGroupID;
+  Fl_XCID xcBuildConfigurationDebugID;
+  Fl_XCID xcBuildConfigurationReleaseID;
 public:
   Xcode3_IDE(Fl_Preferences &db, const char *rootDirA)
   : rootDir(strdup(rootDirA)),
@@ -138,15 +138,15 @@ public:
     nTgtLibs = tgtLibsDB.groups();
     nTgtTests = tgtTestsDB.groups();
     nFiles = filesDB.groups();
-    getXCID(ideDB, "xcRootNodeID", xcRootNodeID);
-    getXCID(ideDB, "xcBuildConfigurationListID", xcBuildConfigurationListID);
-    getXCID(ideDB, "xcMainGroupID", xcMainGroupID);
-    getXCID(ideDB, "xcProductsGroupID", xcProductsGroupID);
-    getXCID(ideDB, "xcAppsGroupID", xcAppsGroupID);
-    getXCID(ideDB, "xcLibsGroupID", xcLibsGroupID);
-    getXCID(ideDB, "xcTestsGroupID", xcTestsGroupID);    
-    getXCID(ideDB, "xcBuildConfigurationDebugID", xcBuildConfigurationDebugID);
-    getXCID(ideDB, "xcBuildConfigurationReleaseID", xcBuildConfigurationReleaseID);
+    fl_getXCID(ideDB, "xcRootNodeID", xcRootNodeID);
+    fl_getXCID(ideDB, "xcBuildConfigurationListID", xcBuildConfigurationListID);
+    fl_getXCID(ideDB, "xcMainGroupID", xcMainGroupID);
+    fl_getXCID(ideDB, "xcProductsGroupID", xcProductsGroupID);
+    fl_getXCID(ideDB, "xcAppsGroupID", xcAppsGroupID);
+    fl_getXCID(ideDB, "xcLibsGroupID", xcLibsGroupID);
+    fl_getXCID(ideDB, "xcTestsGroupID", xcTestsGroupID);    
+    fl_getXCID(ideDB, "xcBuildConfigurationDebugID", xcBuildConfigurationDebugID);
+    fl_getXCID(ideDB, "xcBuildConfigurationReleaseID", xcBuildConfigurationReleaseID);
   }
   ~Xcode3_IDE() {
     if (rootDir) free(rootDir);
@@ -752,11 +752,11 @@ public:
     MAKE_XCID(xcTargetID, targetDB);
     MAKE_XCID(xcBuildConfigurationListID, targetDB);
     char xcBuildHeadersID[25], xcBuildCopyFilesID[25];
-    if (fmwk) getXCID(targetDB, "xcBuildHeadersID", xcBuildHeadersID);
+    if (fmwk) fl_getXCID(targetDB, "xcBuildHeadersID", xcBuildHeadersID);
     MAKE_XCID(xcBuildResourcesID, targetDB);
     MAKE_XCID(xcBuildSourcesID, targetDB);
     MAKE_XCID(xcBuildFrameworksID, targetDB);
-    if (!fmwk) getXCID(targetDB, "xcBuildCopyFilesID", xcBuildCopyFilesID);
+    if (!fmwk) fl_getXCID(targetDB, "xcBuildCopyFilesID", xcBuildCopyFilesID);
     MAKE_XCID(xcProductID, targetDB);
     MAKE_XCID(xcBuildRuleFlID, targetDB);
     fprintf(out, "\t\t%s /* %s */ = {\n", xcTargetID, name);

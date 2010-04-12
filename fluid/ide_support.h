@@ -32,21 +32,16 @@
 #include <FL/Fl_Preferences.H>
 
 
-#ifndef WIN32
-/* Remove this typedef from win32 builds, it seems it clashes
- * with existing symbol names. It does not appear to be used. */
-typedef char UUID[40];
-#endif
-typedef char XCID[25];
+typedef char Fl_UUID[40];
+typedef char Fl_XCID[25];
 
-
-extern void getUUID(Fl_Preferences &db, const char *key, char *buffer);
-extern void getXCID(Fl_Preferences &db, const char *key, char *buffer);
+extern void fl_getUUID(Fl_Preferences &db, const char *key, char *buffer);
+extern void fl_getXCID(Fl_Preferences &db, const char *key, char *buffer);
 
 
 /* Shortcut to retrieve or create a UUID from the database */
 #define MAKE_UUID(name, db) \
-  char name[40]; getUUID(db, #name, name);
+  char name[40]; fl_getUUID(db, #name, name);                                          
 
 /* Shortcut to retrieve, but not create a UUID from the database */
 #define GET_UUID(name, db) \
@@ -54,7 +49,7 @@ extern void getXCID(Fl_Preferences &db, const char *key, char *buffer);
 
 /* Shortcut to retrieve or create a UUID from the database */
 #define MAKE_XCID(name, db) \
-char name[25]; getXCID(db, #name, name);
+char name[25]; fl_getXCID(db, #name, name);                                          
 
 /* Shortcut to retrieve, but not create a UUID from the database */
 #define GET_XCID(name, db) \
