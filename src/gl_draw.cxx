@@ -478,8 +478,12 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   current = (current + 1) % size_;
   if (current > last) last = current;
   //write str to a bitmap just big enough  
+  if ( fifo[current].utf8 ) free(fifo[current].utf8);
+  fifo[current].utf8 = (char *)malloc(n + 1);
+  memcpy(fifo[current].utf8, str, n);
+  fifo[current].utf8[n] = 0;
   fifo[current].width = 0, fifo[current].height = 0;
-  fl_measure(str, fifo[current].width, fifo[current].height, 0);
+  fl_measure(fifo[current].utf8, fifo[current].width, fifo[current].height, 0);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   void *base = calloc(4*fifo[current].width, fifo[current].height);
   if (base == NULL) return -1;
@@ -500,10 +504,6 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   CGContextRelease(fl_gc);
   fl_gc = NULL;
   free(base);
-  if ( fifo[current].utf8 ) free(fifo[current].utf8);
-  fifo[current].utf8 = (char *)malloc(n + 1);
-  memcpy(fifo[current].utf8, str, n);
-  fifo[current].utf8[n] = 0;
   fifo[current].fdesc = gl_fontsize;
   return current;
 }
