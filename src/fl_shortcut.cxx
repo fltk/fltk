@@ -269,6 +269,16 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
 #include <stdlib.h>
 /**
   Emulation of XForms named shortcuts.
+
+  Converts ascii shortcut specifications (eg. "^c") 
+  into the FLTK integer equivalent (eg. FL_CTRL+'c')
+
+  These ascii characters are used to specify the various keyboard modifier keys:
+  \verbatim
+   # - Alt
+   + - Shift
+   ^ - Control
+  \endverbatim
 */
 unsigned int fl_old_shortcut(const char* s) {
   if (!s || !*s) return 0;
