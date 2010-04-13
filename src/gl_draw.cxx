@@ -486,6 +486,9 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   fl_gc = CGBitmapContextCreate(base, fifo[current].width, fifo[current].height, 8, fifo[current].width*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
   fl_fontsize = gl_fontsize;
+  GLfloat colors[4];
+  glGetFloatv(GL_CURRENT_COLOR, colors);
+  fl_color(colors[0]*255, colors[1]*255, colors[2]*255);
   fl_draw(str, 0, fifo[current].height - fl_descent());
   //put this bitmap in a texture  
   glPushAttrib(GL_TEXTURE_BIT);
