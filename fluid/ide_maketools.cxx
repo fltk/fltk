@@ -89,15 +89,14 @@ public:
   ~Maketools_IDE() {
     if (rootDir) free(rootDir);
   }
-    
-  int writeMainMakefile(const char *filepath) {
-    FILE *f = fopen(filepath, "wb");
+  
+  int fput_copyright(const char *str, FILE *f) {
     fputs("#\n", f);
-    fputs("# \"$Id: Makefile 6798 2009-06-27 16:39:36Z fabien $\"\n", f);
+    fputs("# \"$Id:  $\"\n", f);
     fputs("#\n", f);
-    fputs("# Top-level makefile for the Fast Light Tool Kit (FLTK).\n", f);
+    fprintf(f, "# %s\n", str);
     fputs("#\n", f);
-    fputs("# Copyright 1998-2009 by Bill Spitzak and others.\n", f);
+    fputs("# Copyright 1998-2010 by Bill Spitzak and others.\n", f);
     fputs("#\n", f);
     fputs("# This library is free software; you can redistribute it and/or\n", f);
     fputs("# modify it under the terms of the GNU Library General Public\n", f);
@@ -119,6 +118,20 @@ public:
     fputs("#      http://www.fltk.org/str.php\n", f);
     fputs("#\n", f);
     fputs("\n", f);
+    return 0;
+  }    
+    
+  int fput_footer(FILE *f) {
+    fputs("\n", f);
+    fputs("#\n", f);
+    fputs("# End of \"$Id:  $\".\n", f);
+    fputs("#\n", f);
+    return 0;
+  }
+  
+  int writeMainMakefile(const char *filepath) {
+    FILE *f = fopen(filepath, "wb");
+    fput_copyright("Top-level makefile for the Fast Light Tool Kit (FLTK).", f);
     fputs("include makeinclude\n", f);
     fputs("\n", f);
     fputs("DIRS = $(IMAGEDIRS) src $(CAIRODIR) fluid test documentation\n", f);
@@ -214,10 +227,7 @@ public:
     fputs("\n", f);
     fputs("etags:\n", f);
     fputs("\tetags FL/*.H FL/*.h src/*.cxx src/*.c src/*.h src/xutf8/*.h src/xutf8/*.c cairo/*.cxx fluid/*.h fluid/*.cxx test/*.h test/*.cxx\n", f);
-    fputs("\n", f);
-    fputs("#\n", f);
-    fputs("# End of \"$Id: Makefile 6798 2009-06-27 16:39:36Z fabien $\".\n", f);
-    fputs("#\n", f);
+    fput_footer(f);
     fclose(f);
     return 0;
   }
@@ -233,33 +243,7 @@ public:
     Fl_Target_Prefs fluidDB(fluidID);
     
     FILE *f = fopen(filepath, "wb");
-    fputs("#\n", f);
-    fputs("# \"$Id: Makefile 6614 2009-01-01 16:11:32Z matt $\"\n", f);
-    fputs("#\n", f);
-    fputs("# FLUID makefile for the Fast Light Tool Kit (FLTK).\n", f);
-    fputs("#\n", f);
-    fputs("# Copyright 1998-2009 by Bill Spitzak and others.\n", f);
-    fputs("#\n", f);
-    fputs("# This library is free software; you can redistribute it and/or\n", f);
-    fputs("# modify it under the terms of the GNU Library General Public\n", f);
-    fputs("# License as published by the Free Software Foundation; either\n", f);
-    fputs("# version 2 of the License, or (at your option) any later version.\n", f);
-    fputs("#\n", f);
-    fputs("# This library is distributed in the hope that it will be useful,\n", f);
-    fputs("# but WITHOUT ANY WARRANTY; without even the implied warranty of\n", f);
-    fputs("# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n", f);
-    fputs("# Library General Public License for more details.\n", f);
-    fputs("#\n", f);
-    fputs("# You should have received a copy of the GNU Library General Public\n", f);
-    fputs("# License along with this library; if not, write to the Free Software\n", f);
-    fputs("# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307\n", f);
-    fputs("# USA.\n", f);
-    fputs("#\n", f);
-    fputs("# Please report all bugs and problems on the following page:\n", f);
-    fputs("#\n", f);
-    fputs("#      http://www.fltk.org/str.php\n", f);
-    fputs("#\n", f);
-    fputs("\n", f);
+    fput_copyright("FLUID makefile for the Fast Light Tool Kit (FLTK).", f);
     fputs("CPPFILES = \\\n", f);
     
     Fl_Preferences sourcesDB(fluidDB, "sources");
@@ -356,43 +340,14 @@ public:
     fputs("\t./fluid -c print_panel.fl\n", f);
     fputs("\t./fluid -c template_panel.fl\n", f);
     fputs("\t./fluid -c widget_panel.fl\n", f);
-    fputs("\n", f);
-    fputs("#\n", f);
-    fputs("# End of \"$Id: Makefile 6614 2009-01-01 16:11:32Z matt $\".\n", f);
-    fputs("#\n", f);
+    fput_footer(f);
     fclose(f);
     return 0;
   }
   
   int writeLibsMakefile(const char *filepath) {
     FILE *f = fopen(filepath, "wb");
-    fputs("#\n", f);
-    fputs("# \"$Id: Makefile 7333 2010-03-25 14:35:45Z manolo $\"\n", f);
-    fputs("#\n", f);
-    fputs("# Library makefile for the Fast Light Tool Kit (FLTK).\n", f);
-    fputs("#\n", f);
-    fputs("# Copyright 1998-2009 by Bill Spitzak and others.\n", f);
-    fputs("#\n", f);
-    fputs("# This library is free software; you can redistribute it and/or\n", f);
-    fputs("# modify it under the terms of the GNU Library General Public\n", f);
-    fputs("# License as published by the Free Software Foundation; either\n", f);
-    fputs("# version 2 of the License, or (at your option) any later version.\n", f);
-    fputs("#\n", f);
-    fputs("# This library is distributed in the hope that it will be useful,\n", f);
-    fputs("# but WITHOUT ANY WARRANTY; without even the implied warranty of\n", f);
-    fputs("# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n", f);
-    fputs("# Library General Public License for more details.\n", f);
-    fputs("#\n", f);
-    fputs("# You should have received a copy of the GNU Library General Public\n", f);
-    fputs("# License along with this library; if not, write to the Free Software\n", f);
-    fputs("# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307\n", f);
-    fputs("# USA.\n", f);
-    fputs("#\n", f);
-    fputs("# Please report all bugs and problems on the following page:\n", f);
-    fputs("#\n", f);
-    fputs("#      http://www.fltk.org/str.php\n", f);
-    fputs("#\n", f);
-    fputs("\n", f);
+    fput_copyright("Library makefile for the Fast Light Tool Kit (FLTK).", f);
     fputs("CPPFILES = \\\n", f);
     fputs("\tFl.cxx \\\n", f);
     fputs("\tFl_Abstract_Printer.cxx \\\n", f);
@@ -1164,43 +1119,14 @@ public:
     fputs("\t\t$(RM) $(DESTDIR)$(bindir)/$(IMGDSONAME); \\\n", f);
     fputs("\t\t$(RM) $(DESTDIR)$(libdir)/libfltk_images.dll.a;\\\n", f);
     fputs("\tfi\n", f);
-    fputs("\n", f);
-    fputs("#\n", f);
-    fputs("# End of \"$Id: Makefile 7333 2010-03-25 14:35:45Z manolo $\".\n", f);
-    fputs("#\n", f);
+    fput_footer(f);
     fclose(f);
     return 0;
   }
   
   int writeTestMakefile(const char *filepath) {
     FILE *f = fopen(filepath, "wb");
-    fputs("#\n", f);
-    fputs("# \"$Id: Makefile 7263 2010-03-14 18:07:24Z AlbrechtS $\"\n", f);
-    fputs("#\n", f);
-    fputs("# Test/example program makefile for the Fast Light Tool Kit (FLTK).\n", f);
-    fputs("#\n", f);
-    fputs("# Copyright 1998-2009 by Bill Spitzak and others.\n", f);
-    fputs("#\n", f);
-    fputs("# This library is free software; you can redistribute it and/or\n", f);
-    fputs("# modify it under the terms of the GNU Library General Public\n", f);
-    fputs("# License as published by the Free Software Foundation; either\n", f);
-    fputs("# version 2 of the License, or (at your option) any later version.\n", f);
-    fputs("#\n", f);
-    fputs("# This library is distributed in the hope that it will be useful,\n", f);
-    fputs("# but WITHOUT ANY WARRANTY; without even the implied warranty of\n", f);
-    fputs("# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n", f);
-    fputs("# Library General Public License for more details.\n", f);
-    fputs("#\n", f);
-    fputs("# You should have received a copy of the GNU Library General Public\n", f);
-    fputs("# License along with this library; if not, write to the Free Software\n", f);
-    fputs("# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307\n", f);
-    fputs("# USA.\n", f);
-    fputs("#\n", f);
-    fputs("# Please report all bugs and problems on the following page:\n", f);
-    fputs("#\n", f);
-    fputs("#      http://www.fltk.org/str.php\n", f);
-    fputs("#\n", f);
-    fputs("\n", f);
+    fput_copyright("Test/example program makefile for the Fast Light Tool Kit (FLTK).", f);
     fputs("include ../makeinclude\n", f);
     fputs("\n", f);
     fputs("CPPFILES =\\\n", f);
@@ -1676,10 +1602,7 @@ public:
     fputs("cairo_test$(EXEEXT): cairo_test.o\n", f);
     fputs("\techo Linking $@...\n", f);
     fputs("\t$(CXX) $(ARCHFLAGS) $(CAIROFLAGS) $(LDFLAGS) -o $@ cairo_test.o $(LINKFLTK) $(LINKFLTKCAIRO) $(GLDLIBS)\n", f);
-    fputs("\n", f);
-    fputs("#\n", f);
-    fputs("# End of \"$Id: Makefile 7263 2010-03-14 18:07:24Z AlbrechtS $\".\n", f);
-    fputs("#\n", f);
+    fput_footer(f);
     fclose(f);
     return 0;
   }
