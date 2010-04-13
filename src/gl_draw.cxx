@@ -437,6 +437,8 @@ void gl_texture_fifo::display_texture(int rank)
   glBlendFunc (GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // ditto
   glEnable (GL_TEXTURE_RECTANGLE_EXT);	
   
+  GLboolean lighting = glIsEnabled(GL_LIGHTING);
+  if (lighting) glDisable(GL_LIGHTING);
   glBindTexture (GL_TEXTURE_RECTANGLE_EXT, fifo[rank].texName);
   glBegin (GL_QUADS);
   glTexCoord2f (0.0f, 0.0f); // draw lower left in world coordinates
@@ -451,7 +453,8 @@ void gl_texture_fifo::display_texture(int rank)
   glTexCoord2f (fifo[rank].width, 0.0f); // draw lower right in world coordinates
   glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y);
   glEnd ();
-  
+  if (lighting) glEnable(GL_LIGHTING);
+
   glPopAttrib();
   // reset original matrices
   glPopMatrix(); // GL_MODELVIEW
