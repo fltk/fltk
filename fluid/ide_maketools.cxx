@@ -92,7 +92,7 @@ public:
   
   int fput_copyright(const char *str, FILE *f) {
     fputs("#\n", f);
-    fputs("# \"$Id:  $\"\n", f);
+    fputs("# \"$Id:$\"\n", f);
     fputs("#\n", f);
     fprintf(f, "# %s\n", str);
     fputs("#\n", f);
@@ -124,7 +124,7 @@ public:
   int fput_footer(FILE *f) {
     fputs("\n", f);
     fputs("#\n", f);
-    fputs("# End of \"$Id:  $\".\n", f);
+    fputs("# End of \"$Id:$\".\n", f);
     fputs("#\n", f);
     return 0;
   }
