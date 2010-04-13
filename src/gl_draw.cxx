@@ -493,7 +493,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   GLfloat colors[4];
   glGetFloatv(GL_CURRENT_COLOR, colors);
   fl_color(colors[0]*255, colors[1]*255, colors[2]*255);
-  fl_draw(str, 0, fifo[current].height - fl_descent());
+  fl_draw(str, n, 0, fifo[current].height - fl_descent());
   //put this bitmap in a texture  
   glPushAttrib(GL_TEXTURE_BIT);
   glBindTexture (GL_TEXTURE_RECTANGLE_EXT, fifo[current].texName);
