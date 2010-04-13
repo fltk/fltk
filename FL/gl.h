@@ -98,6 +98,10 @@ FL_EXPORT void gl_draw(const char*, int n, int x, int y);
 FL_EXPORT void gl_draw(const char*, int n, float x, float y);
 FL_EXPORT void gl_draw(const char*, int x, int y, int w, int h, Fl_Align);
 FL_EXPORT void gl_measure(const char*, int& x, int& y);
+#ifdef __APPLE__
+extern FL_EXPORT void gl_texture_pile_height(int max);
+extern FL_EXPORT int gl_texture_pile_height();
+#endif
 
 FL_EXPORT void gl_draw_image(const uchar *, int x,int y,int w,int h, int d=3, int ld=0);
 
