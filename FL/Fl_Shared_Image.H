@@ -25,8 +25,8 @@
 //     http://www.fltk.org/str.php
 //
 
-/* \file
-   Fl_Shared_Image class . */
+/** \file
+   Fl_Shared_Image class. */
 
 #ifndef Fl_Shared_Image_H
 #  define Fl_Shared_Image_H

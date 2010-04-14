@@ -53,10 +53,13 @@
 static Fl_Image	*fl_check_images(const char *name, uchar *header, int headerlen);
 
 
-//
-// 'fl_register_images()' - Register the image formats.
-//
-
+/**
+\brief Register the image formats.
+ *
+ This function is provided in the fltk_images library and 
+ registers all of the "extra" image file formats that are not part
+ of the core FLTK library.
+*/
 void fl_register_images() {
   Fl_Shared_Image::add_handler(fl_check_images);
 }
