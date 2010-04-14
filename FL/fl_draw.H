@@ -704,6 +704,7 @@ FL_EXPORT void fl_scroll(int X, int Y, int W, int H, int dx, int dy,
                          void (*draw_area)(void*, int,int,int,int), void* data);
 FL_EXPORT const char* fl_shortcut_label(unsigned int shortcut);
 FL_EXPORT const char* fl_shortcut_label(unsigned int shortcut, const char **eom);
+FL_EXPORT unsigned int fl_old_shortcut(const char* s);
 FL_EXPORT void fl_overlay_rect(int x,int y,int w,int h);
 FL_EXPORT void fl_overlay_clear();
 FL_EXPORT void fl_cursor(Fl_Cursor, Fl_Color fg=FL_BLACK, Fl_Color bg=FL_WHITE);
