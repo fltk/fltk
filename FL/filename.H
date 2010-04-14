@@ -25,6 +25,12 @@
  *     http://www.fltk.org/str.php
  */
 
+// Xcode on OS X includes files by recursing down into directories.
+// This code catches the cycle and directly includes the required file.
+#ifdef fl_dirent_h_cyclic_include 
+#  include "/usr/include/dirent.h"
+#endif
+
 #ifndef FL_FILENAME_H
 #  define FL_FILENAME_H
 
@@ -94,7 +100,9 @@ struct dirent {char d_name[1];};
  * It would be best to create a <dirent.h> file that does this...
  */
 #    include <sys/types.h>
+#    define fl_dirent_h_cyclic_include 
 #    include <dirent.h>
+#    undef fl_dirent_h_cyclic_include 
 #  endif
 
 #  if defined (__cplusplus)

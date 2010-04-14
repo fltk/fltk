@@ -197,6 +197,15 @@ Fl_Preferences::ID Fl_Target_Prefs::add_source(Fl_IDE_Prefs &fdb, const char *pa
   return id;
 }
 
+Fl_Preferences::ID Fl_Target_Prefs::add_header(Fl_IDE_Prefs &fdb, const char *pathAndName) {
+  Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", pathAndName));
+  Fl_IDE_Prefs p(*this, "headers");
+  Fl_Preferences::ID id = p.add_with_key("refUUID", file.name());
+  Fl_Preferences ref(id);
+  ref.set("(filename)", pathAndName);
+  return id;
+}
+
 Fl_Preferences::ID Fl_Target_Prefs::add_fl(Fl_IDE_Prefs &fdb, const char *pathAndName) {
   Fl_IDE_Prefs file(fdb.add_with_key("pathAndName", pathAndName));
   Fl_IDE_Prefs p(*this, "fl");
@@ -501,10 +510,141 @@ int create_new_database(const char *filename)
     fltk_lib.add_source(files_db, "src/xutf8/case.c");
     fltk_lib.add_source(files_db, "src/xutf8/is_right2left.c");
     fltk_lib.add_source(files_db, "src/xutf8/is_spacing.c");
+    
+    
+    fltk_lib.add_header(files_db, "FL/Enumerations.H");
+    fltk_lib.add_header(files_db, "FL/Fl.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Abstract_Printer.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Adjuster.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Bitmap.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Box.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Browser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Browser_.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Cairo.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Cairo_Window.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Chart.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Check_Browser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Check_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Choice.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Clock.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Color_Chooser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Counter.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Device.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Dial.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Double_Window.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Export.H");
+    fltk_lib.add_header(files_db, "FL/Fl_File_Browser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_File_Chooser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_File_Icon.H");
+    fltk_lib.add_header(files_db, "FL/Fl_File_Input.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Fill_Dial.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Fill_Slider.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Float_Input.H");
+    fltk_lib.add_header(files_db, "FL/Fl_FormsBitmap.H");
+    fltk_lib.add_header(files_db, "FL/Fl_FormsPixmap.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Free.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Group.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Hold_Browser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Hor_Fill_Slider.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Hor_Nice_Slider.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Hor_Slider.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Hor_Value_Slider.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Image.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Input.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Input_.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Input_Choice.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Int_Input.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Light_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Line_Dial.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Menu.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Menu_.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Menu_Bar.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Menu_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Menu_Item.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Menu_Window.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Multi_Browser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Multi_Label.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Multiline_Input.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Multiline_Output.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Native_File_Chooser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Nice_Slider.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Object.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Output.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Overlay_Window.H");
+    fltk_lib.add_header(files_db, "FL/Fl_PSfile_Device.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Pack.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Pixmap.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Plugin.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Positioner.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Preferences.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Printer.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Progress.H");
+    fltk_lib.add_header(files_db, "FL/Fl_RGB_Image.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Radio_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Radio_Light_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Radio_Round_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Repeat_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Return_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Roller.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Round_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Round_Clock.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Scroll.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Scrollbar.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Secret_Input.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Select_Browser.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Shared_Image.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Simple_Counter.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Single_Window.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Slider.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Spinner.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Sys_Menu_Bar.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Table.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Table_Row.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Tabs.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Text_Buffer.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Text_Display.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Text_Editor.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Tile.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Tiled_Image.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Timer.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Toggle_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Toggle_Light_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Toggle_Round_Button.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Tooltip.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Tree.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Tree_Item.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Tree_Item_Array.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Tree_Prefs.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Valuator.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Value_Input.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Value_Output.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Value_Slider.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Widget.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Window.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Wizard.H");
+    fltk_lib.add_header(files_db, "FL/Fl_XBM_Image.H");
+    fltk_lib.add_header(files_db, "FL/Fl_XPM_Image.H");
+    fltk_lib.add_header(files_db, "FL/Xutf8.h");
+    fltk_lib.add_header(files_db, "FL/dirent.h");
+    fltk_lib.add_header(files_db, "FL/filename.H");
+    fltk_lib.add_header(files_db, "FL/fl_ask.H");
+    fltk_lib.add_header(files_db, "FL/fl_draw.H");
+    fltk_lib.add_header(files_db, "FL/fl_message.H");
+    fltk_lib.add_header(files_db, "FL/fl_show_colormap.H");
+    fltk_lib.add_header(files_db, "FL/fl_show_input.H");
+    fltk_lib.add_header(files_db, "FL/fl_types.h");
+    fltk_lib.add_header(files_db, "FL/fl_utf8.h");
+    fltk_lib.add_header(files_db, "FL/mac.H");
+    fltk_lib.add_header(files_db, "FL/math.h");
+    fltk_lib.add_header(files_db, "FL/names.h");
+    fltk_lib.add_header(files_db, "FL/win32.H");
+    fltk_lib.add_header(files_db, "FL/x.H");    
+    
     xcode_only(fltk_lib.add_external_lib(files_db, "/System/Library/Frameworks/AudioToolbox.framework"));
   }
   
-  Fl_Target_Prefs fltk_gl_lib(libs_db.add_with_key("name", "fltkgl")); {
+  Fl_Target_Prefs fltk_gl_lib(libs_db.add_with_key("name", "fltk_gl")); {
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Choice.cxx");
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Device_Plugin.cxx");
     fltk_gl_lib.add_source(files_db, "src/Fl_Gl_Overlay.cxx");
@@ -516,12 +656,20 @@ int create_new_database(const char *filename)
     fltk_gl_lib.add_source(files_db, "src/gl_draw.cxx");
     fltk_gl_lib.add_source(files_db, "src/glut_compatability.cxx");
     fltk_gl_lib.add_source(files_db, "src/glut_font.cxx");
+    
+    fltk_gl_lib.add_header(files_db, "FL/Fl_Gl_Window.H");
+    fltk_gl_lib.add_header(files_db, "FL/gl.h");
+    fltk_gl_lib.add_header(files_db, "FL/gl2opengl.h");
+    fltk_gl_lib.add_header(files_db, "FL/gl_draw.H");
+    fltk_gl_lib.add_header(files_db, "FL/glu.h");
+    fltk_gl_lib.add_header(files_db, "FL/glut.H");
+    
     xcode_only(fltk_gl_lib.add_external_lib(files_db, "/System/Library/Frameworks/OpenGL.framework"));
     xcode_only(fltk_gl_lib.add_external_lib(files_db, "/System/Library/Frameworks/AGL.framework"));
     fltk_gl_lib.add_lib(fltk_lib);
   }
   
-  Fl_Target_Prefs fltk_images_lib(libs_db.add_with_key("name", "fltkimages")); {
+  Fl_Target_Prefs fltk_images_lib(libs_db.add_with_key("name", "fltk_images")); {
     fltk_images_lib.add_source(files_db, "src/Fl_BMP_Image.cxx");
     fltk_images_lib.add_source(files_db, "src/Fl_File_Icon2.cxx");
     fltk_images_lib.add_source(files_db, "src/Fl_GIF_Image.cxx");
@@ -530,10 +678,19 @@ int create_new_database(const char *filename)
     fltk_images_lib.add_source(files_db, "src/Fl_PNG_Image.cxx");
     fltk_images_lib.add_source(files_db, "src/Fl_PNM_Image.cxx");
     fltk_images_lib.add_source(files_db, "src/fl_images_core.cxx");
+    
+    fltk_images_lib.add_header(files_db, "FL/Fl_BMP_Image.H");
+    fltk_images_lib.add_header(files_db, "FL/Fl_GIF_Image.H");
+    fltk_images_lib.add_header(files_db, "FL/Fl_Help_Dialog.H");
+    fltk_images_lib.add_header(files_db, "FL/Fl_Help_View.H");
+    fltk_images_lib.add_header(files_db, "FL/Fl_JPEG_Image.H");
+    fltk_images_lib.add_header(files_db, "FL/Fl_PNG_Image.H");
+    fltk_images_lib.add_header(files_db, "FL/Fl_PNM_Image.H");
+    
     fltk_images_lib.add_lib(fltk_lib);
   }
   
-  Fl_Target_Prefs fltk_png_lib(libs_db.add_with_key("name", "fltkpng")); {
+  Fl_Target_Prefs fltk_png_lib(libs_db.add_with_key("name", "fltk_png")); {
     fltk_png_lib.add_source(files_db, "png/png.c");
     fltk_png_lib.add_source(files_db, "png/pngerror.c");
     fltk_png_lib.add_source(files_db, "png/pngget.c");
@@ -553,7 +710,7 @@ int create_new_database(const char *filename)
     fltk_images_lib.add_lib(fltk_png_lib);
   }
   
-  Fl_Target_Prefs fltk_jpeg_lib(libs_db.add_with_key("name", "fltkjpeg")); {
+  Fl_Target_Prefs fltk_jpeg_lib(libs_db.add_with_key("name", "fltk_jpeg")); {
     fltk_jpeg_lib.add_source(files_db, "jpeg/jcapimin.c");
     fltk_jpeg_lib.add_source(files_db, "jpeg/jcapistd.c");
     fltk_jpeg_lib.add_source(files_db, "jpeg/jccoefct.c");
@@ -604,17 +761,20 @@ int create_new_database(const char *filename)
     fltk_images_lib.add_lib(fltk_jpeg_lib);
   }
   
-  Fl_Target_Prefs fltk_forms_lib(libs_db.add_with_key("name", "fltkforms")); {
+  Fl_Target_Prefs fltk_forms_lib(libs_db.add_with_key("name", "fltk_forms")); {
     fltk_forms_lib.add_source(files_db, "src/forms_bitmap.cxx");
     fltk_forms_lib.add_source(files_db, "src/forms_compatability.cxx");
     fltk_forms_lib.add_source(files_db, "src/forms_free.cxx");
     fltk_forms_lib.add_source(files_db, "src/forms_fselect.cxx");
     fltk_forms_lib.add_source(files_db, "src/forms_pixmap.cxx");
     fltk_forms_lib.add_source(files_db, "src/forms_timer.cxx");
+
+    fltk_forms_lib.add_header(files_db, "FL/forms.H");
+
     fltk_forms_lib.add_lib(fltk_lib);
   }
   
-  Fl_Target_Prefs fltk_z_lib(libs_db.add_with_key("name", "zlib")); {
+  Fl_Target_Prefs fltk_z_lib(libs_db.add_with_key("name", "fltk_zlib")); {
     fltk_z_lib.add_source(files_db, "zlib/adler32.c");
     fltk_z_lib.add_source(files_db, "zlib/compress.c");
     fltk_z_lib.add_source(files_db, "zlib/crc32.c");
@@ -656,6 +816,22 @@ int create_new_database(const char *filename)
     fluid_app.add_source(files_db, "fluid/template_panel.cxx");
     fluid_app.add_source(files_db, "fluid/undo.cxx");
     fluid_app.add_source(files_db, "fluid/widget_panel.cxx");
+
+    fluid_app.add_header(files_db, "fluid/CodeEditor.h");
+    fluid_app.add_header(files_db, "fluid/Fl_Type.h");
+    fluid_app.add_header(files_db, "fluid/Fl_Widget_Type.h");
+    fluid_app.add_header(files_db, "fluid/Fluid_Image.h");
+    fluid_app.add_header(files_db, "fluid/Shortcut_Button.h");
+    fluid_app.add_header(files_db, "fluid/about_panel.h");
+    fluid_app.add_header(files_db, "fluid/alignment_panel.h");
+    fluid_app.add_header(files_db, "fluid/comments.h");
+    fluid_app.add_header(files_db, "fluid/function_panel.h");
+    fluid_app.add_header(files_db, "fluid/ide_support.h");
+    fluid_app.add_header(files_db, "fluid/print_panel.h");
+    fluid_app.add_header(files_db, "fluid/template_panel.h");
+    fluid_app.add_header(files_db, "fluid/undo.h");
+    fluid_app.add_header(files_db, "fluid/widget_panel.h");
+    
     fluid_app.add_lib(fltk_lib);
     fluid_app.add_lib(fltk_forms_lib);
     fluid_app.add_lib(fltk_images_lib);

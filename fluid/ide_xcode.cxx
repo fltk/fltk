@@ -25,8 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-#define XCODE_DEFAULT 1
-
 /*
  
     XCODE 3.0 IDE FILES
@@ -170,6 +168,21 @@ public:
       MAKE_XCID(xcFileID, fileDB);
       const char *fullName = fileDB.fullName();
       fprintf(out, "\t\t%s /* %s in Sources */ = {isa = PBXBuildFile; fileRef = %s /* %s */; };\n", xcBuildFileID, fullName, xcFileID, fullName);
+    }
+    // --- write all references to headers from the given target
+    Fl_Preferences headersDB(targetDB, "headers");
+    n = headersDB.groups();
+    for (i=0; i<n; i++) {
+      Fl_Preferences headerDB(headersDB, i);
+      GET_UUID(refUUID, headerDB);
+      MAKE_XCID(xcCopyHeaderID, headerDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      MAKE_XCID(xcFileID, fileDB);
+      const char *fullName = fileDB.fullName();
+      fprintf(out, "\t\t%s /* %s in Headers */ = "
+              "{isa = PBXBuildFile; fileRef = %s /* %s */; "
+              "settings = {ATTRIBUTES = (Public, ); }; };\n", 
+              xcCopyHeaderID, fullName, xcFileID, fullName);
     }
     // --- write all references to Fluid UI files from the given target
     Fl_Preferences flsDB(targetDB, "fl");
@@ -440,8 +453,12 @@ public:
         filetype = "sourcecode.cpp.objcpp";
       } else if (strcmp(ext, ".cxx")==0) {
         filetype = "sourcecode.cpp.cpp";
+      } else if (strcmp(ext, ".H")==0) {
+        filetype = "sourcecode.cpp.h";
       } else if (strcmp(ext, ".c")==0) {
         filetype = "sourcecode.c.c";
+      } else if (strcmp(ext, ".h")==0) {
+        filetype = "sourcecode.c.h";
       } else if (strcmp(ext, ".mm")==0) {
         filetype = "sourcecode.cpp.objcpp";
       } else if (strcmp(ext, ".dylib")==0) {
@@ -542,7 +559,34 @@ public:
     fprintf(out, "/* End PBXFrameworksBuildPhase section */\n\n");
     return 0;
   }
-  
+
+  /*
+   *
+   */
+  int writeTargetHeaders(FILE *out, Fl_Preferences &targetDB) {
+    MAKE_XCID(xcTargetHeadersGroupID, targetDB);    
+    fprintf(out, "\t\t%s /* Headers */ = {\n", xcTargetHeadersGroupID);
+    fprintf(out, "\t\t\tisa = PBXGroup;\n");
+    fprintf(out, "\t\t\tchildren = (\n");
+    
+    Fl_Preferences headersDB(targetDB, "headers");
+    int j, n = headersDB.groups();
+    for (j=0; j<n; j++) {
+      Fl_Preferences headerDB(headersDB, j);
+      GET_UUID(refUUID, headerDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      MAKE_XCID(xcFileID, fileDB);
+      const char *fullName = fileDB.fullName();
+      fprintf(out, "\t\t\t\t%s /* %s */,\n", xcFileID, fullName);
+    }
+    
+    fprintf(out, "\t\t\t);\n");
+    fprintf(out, "\t\t\tname = Headers;\n");
+    fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
+    fprintf(out, "\t\t};\n");
+    return 0;
+  }
+    
   /*
    *
    */
@@ -553,6 +597,13 @@ public:
     fprintf(out, "\t\t%s /* %s */ = {\n", xcTargetGroupID, name);
     fprintf(out, "\t\t\tisa = PBXGroup;\n");
     fprintf(out, "\t\t\tchildren = (\n");
+    
+    Fl_Preferences headersDB(targetDB, "headers");
+    int nHeaders = headersDB.groups();
+    if (nHeaders) {
+      MAKE_XCID(xcTargetHeadersGroupID, targetDB);    
+      fprintf(out, "\t\t\t\t%s /* Headers */,\n", xcTargetHeadersGroupID);
+    }
     
     MAKE_XCID(xcProductID, targetDB);
     Fl_Preferences sourcesDB(targetDB, "sources");
@@ -592,6 +643,9 @@ public:
     fprintf(out, "\t\t\tname = %s;\n", name);
     fprintf(out, "\t\t\tsourceTree = \"<group>\";\n");
     fprintf(out, "\t\t};\n");
+    
+    writeTargetHeaders(out, targetDB);
+    
     return 0;
   }
   
@@ -711,19 +765,20 @@ public:
     fprintf(out, "\t\t\tisa = PBXHeadersBuildPhase;\n");
     fprintf(out, "\t\t\tbuildActionMask = 2147483647;\n");
     fprintf(out, "\t\t\tfiles = (\n");
-#if 0
-    // FIXME: list all required headers
-    Fl_Preferences libsDB(targetDB, "libs");
-    int i, n = libsDB.groups();
-    for (i=0; i<n; i++) {
-      Fl_Preferences libDB(libsDB, i);
-      GET_UUID(refUUID, libDB);
-      MAKE_XCID(xcCopyFrameworkID, libDB);
-      Fl_Preferences tgtLibDB(tgtLibsDB, refUUID);
-      char name[80]; tgtLibDB.get("name", name, "DBERROR", 80);;
-      fprintf(out, "\t\t\t\t%s /* %s.framework in CopyFiles */,\n", xcCopyFrameworkID, name);
+    
+    // did not work!
+    Fl_Preferences headersDB(targetDB, "headers");
+    int j, n = headersDB.groups();
+    for (j=0; j<n; j++) {
+      Fl_Preferences headerDB(headersDB, j);
+      GET_UUID(refUUID, headerDB);
+      MAKE_XCID(xcCopyHeaderID, headerDB);
+      Fl_File_Prefs fileDB(filesDB, refUUID);
+      const char *fullName = fileDB.fullName();
+      fprintf(out, "\t\t\t\t%s /* %s in Copyheaders */,\n", xcCopyHeaderID, fullName);
     }
-#endif
+    // end
+    
     fprintf(out, "\t\t\t);\n");
     fprintf(out, "\t\t\trunOnlyForDeploymentPostprocessing = 0;\n");
     fprintf(out, "\t\t};\n");
@@ -1029,7 +1084,6 @@ public:
     fprintf(out, "\t\t%s /* Debug */ = {\n", xcBuildConfigurationDebugID);
     fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
     fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
     fprintf(out, "\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_64_BIT)\";\n");
     fprintf(out, "\t\t\t\tGCC_C_LANGUAGE_STANDARD = gnu99;\n");
     fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
@@ -1038,19 +1092,6 @@ public:
     fprintf(out, "\t\t\t\tONLY_ACTIVE_ARCH = YES;\n");
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tSDKROOT = macosx10.5;\n");    
-#else
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_TRIGRAPHS = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++\";\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
-    fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;\n");
-    fprintf(out, "\t\t\t\tMACOSX_DEPLOYMENT_TARGET = 10.2;\n");
-    fprintf(out, "\t\t\t\tSDKROOT = \"$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk\";\n");
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = ../../jpeg;\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"\";\n");
-#endif
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Debug;\n");
     fprintf(out, "\t\t};\n");
@@ -1058,28 +1099,12 @@ public:
     fprintf(out, "\t\t%s /* Release */ = {\n", xcBuildConfigurationReleaseID);
     fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
     fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
     fprintf(out, "\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_64_BIT)\";\n");
     fprintf(out, "\t\t\t\tGCC_C_LANGUAGE_STANDARD = gnu99;\n");
     fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;\n");
     fprintf(out, "\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;\n");
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tSDKROOT = macosx10.5;\n");
-#else
-    fprintf(out, "\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)\";\n");
-    fprintf(out, "\t\t\t\tARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = \"ppc i386 x86_64\";\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_GENERATE_DEBUGGING_SYMBOLS = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++\";\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
-    fprintf(out, "\t\t\t\tGCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;\n");
-    fprintf(out, "\t\t\t\tMACOSX_DEPLOYMENT_TARGET = 10.3;\n");
-    fprintf(out, "\t\t\t\tSDKROOT = \"$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk\";\n");
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = ../../jpeg;\n");
-    fprintf(out, "\t\t\t\tVALID_ARCHS = \"i386 ppc x86_64\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = \"\";\n");
-#endif
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Release;\n");
     fprintf(out, "\t\t};\n");
@@ -1095,7 +1120,6 @@ public:
     fprintf(out, "\t\t%s /* Debug */ = {\n", xcBuildConfigurationDebugID);
     fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
     fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
     fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;\n");
     fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
     fprintf(out, "\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;\n");
@@ -1121,36 +1145,6 @@ public:
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-#else
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
-    fprintf(out, "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"USING_XCODE=1\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = /Applications;\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tWRAPPER_EXTENSION = app;\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = YES;\n");
-#endif
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Debug;\n");
     fprintf(out, "\t\t};\n");
@@ -1158,7 +1152,6 @@ public:
     fprintf(out, "\t\t%s /* Release */ = {\n", xcBuildConfigurationReleaseID);
     fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
     fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
     fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;\n");
     fprintf(out, "\t\t\t\tDEBUG_INFORMATION_FORMAT = \"dwarf-with-dsym\";\n");
     fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
@@ -1181,35 +1174,6 @@ public:
     fprintf(out, "\t\t\t\t);\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-#else
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = YES;\n");
-    fprintf(out, "\t\t\t\tDEBUG_INFORMATION_FORMAT = \"dwarf-with-dsym\";\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_PRECOMPILE_PREFIX_HEADER = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_PREFIX_HEADER = \"\";\n");
-    fprintf(out, "\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"USING_XCODE=1\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = /Applications;\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tWRAPPER_EXTENSION = app;\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
-#endif
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Release;\n");
     fprintf(out, "\t\t};\n");
@@ -1225,7 +1189,6 @@ public:
     fprintf(out, "\t\t%s /* Debug */ = {\n", xcBuildConfigurationDebugID);
     fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
     fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
     fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;\n");
     fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
     fprintf(out, "\t\t\t\tDYLIB_COMPATIBILITY_VERSION = 1;\n");
@@ -1254,38 +1217,6 @@ public:
     fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-#else
-    fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = YES;\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = NO;\n");
-    fprintf(out, "\t\t\t\tDYLIB_COMPATIBILITY_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tDYLIB_CURRENT_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tEXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = \"*.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj\";\n");
-    fprintf(out, "\t\t\t\tFRAMEWORK_VERSION = A;\n");
-    fprintf(out, "\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = YES;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;\n");
-    fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++ objective-c++\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = YES;\n");
-#endif
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Debug;\n");
     fprintf(out, "\t\t};\n");
@@ -1293,7 +1224,6 @@ public:
     fprintf(out, "\t\t%s /* Release */ = {\n", xcBuildConfigurationReleaseID);
     fprintf(out, "\t\t\tisa = XCBuildConfiguration;\n");
     fprintf(out, "\t\t\tbuildSettings = {\n");
-#ifdef XCODE_DEFAULT
     fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = NO;\n");
     fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = YES;\n");
     fprintf(out, "\t\t\t\tDEBUG_INFORMATION_FORMAT = \"dwarf-with-dsym\";\n");
@@ -1322,39 +1252,6 @@ public:
     fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
     fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
     fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
-#else
-    fprintf(out, "\t\t\t\tALWAYS_SEARCH_USER_PATHS = YES;\n");
-    fprintf(out, "\t\t\t\tCOPY_PHASE_STRIP = YES;\n");
-    fprintf(out, "\t\t\t\tDEBUG_INFORMATION_FORMAT = \"dwarf-with-dsym\";\n");
-    fprintf(out, "\t\t\t\tDYLIB_COMPATIBILITY_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tDYLIB_CURRENT_VERSION = 1;\n");
-    fprintf(out, "\t\t\t\tEXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = \"*.nib *.lproj *.framework *.gch (*) CVS .svn *.xcodeproj *.xcode *.pbproj *.pbxproj\";\n");
-    fprintf(out, "\t\t\t\tFRAMEWORK_VERSION = A;\n");
-    fprintf(out, "\t\t\t\tGCC_ENABLE_FIX_AND_CONTINUE = NO;\n");
-    fprintf(out, "\t\t\t\tGCC_MODEL_TUNING = G5;\n");
-    fprintf(out, "\t\t\t\tGCC_PFE_FILE_C_DIALECTS = \"c c++ objective-c++\";\n");
-    fprintf(out, "\t\t\t\tHEADER_SEARCH_PATHS = (\n");
-    fprintf(out, "\t\t\t\t\t../../ide/XCode3/,\n");
-    fprintf(out, "\t\t\t\t\t../../,\n");
-    fprintf(out, "\t\t\t\t\t../../png,\n");
-    fprintf(out, "\t\t\t\t\t../../jpeg,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tINFOPLIST_FILE = \"plists/%s-Info.plist\";\n", name);
-    fprintf(out, "\t\t\t\tINSTALL_PATH = \"@executable_path/../Frameworks\";\n");
-    fprintf(out, "\t\t\t\tMACOSX_DEPLOYMENT_TARGET = 10.2;\n");
-    fprintf(out, "\t\t\t\tOTHER_LDFLAGS = (\n");
-    fprintf(out, "\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\tCocoa,\n");
-    fprintf(out, "\t\t\t\t\t\"-framework\",\n");
-    fprintf(out, "\t\t\t\t\tCarbon,\n");
-    fprintf(out, "\t\t\t\t);\n");
-    fprintf(out, "\t\t\t\tPREBINDING = NO;\n");
-    fprintf(out, "\t\t\t\tPRODUCT_NAME = %s;\n", name);
-    fprintf(out, "\t\t\t\tSDKROOT = \"\";\n");
-    fprintf(out, "\t\t\t\tUSER_HEADER_SEARCH_PATHS = \"\";\n");
-    fprintf(out, "\t\t\t\tWARNING_CFLAGS = (\"-Wno-format-security\",\"-Wall\");\n");
-    fprintf(out, "\t\t\t\tZERO_LINK = NO;\n");
-#endif
     fprintf(out, "\t\t\t};\n");
     fprintf(out, "\t\t\tname = Release;\n");
     fprintf(out, "\t\t};\n");
@@ -1567,8 +1464,13 @@ public:
       fprintf(f, "\t\t</dict>\n");
       fprintf(f, "\t</array>\n");
     }
-    fprintf(f, "\t<key>CFBundleExecutable</key>\n");
-    fprintf(f, "\t<string>${EXECUTABLE_NAME}</string>\n");
+    if (fmwk) {
+      fprintf(f, "\t<key>CFBundleName</key>\n");
+      fprintf(f, "\t<string>${PRODUCT_NAME}</string>\n");
+    } else {
+      fprintf(f, "\t<key>CFBundleExecutable</key>\n");
+      fprintf(f, "\t<string>${EXECUTABLE_NAME}</string>\n");
+    }
     // find the first suitable icon file if there is one
     Fl_Preferences extsDB(target_db, "externals");
     int i, n = extsDB.groups();
@@ -1596,6 +1498,10 @@ public:
     fprintf(f, "\t<string>FLTK</string>\n");
     fprintf(f, "\t<key>CFBundleVersion</key>\n");
     fprintf(f, "\t<string>1.0</string>\n");
+    fprintf(f, "\t<key>NSHumanReadableCopyright</key>\n");
+    fprintf(f, "\t<string>Copyright 1998-2010 by Bill Spitzak and others.</string>\n");
+    fprintf(f, "\t<key>CFBundleGetInfoString</key>\n");
+    fprintf(f, "\t<string>Part of the FLTK library. Please visit www.fltk.org.</string>\n");
     fprintf(f, "</dict>\n");
     fprintf(f, "\t</plist>\n");
     fclose(f);

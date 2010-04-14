@@ -25,15 +25,18 @@
 //     http://www.fltk.org/str.php
 //
 
+// Xcode on OS X includes files by recursing down into directories.
+// This code catches the cycle and directly includes the required file.
+#ifdef fl_math_h_cyclic_include 
+#  include "/usr/include/math.h"
+#endif
+
 #ifndef fl_math_h
 #  define fl_math_h
 
-// Apple's ProjectBuilder has the nasty habit of including recursively
-// down the file tree. To avoid re-including <FL/math.h> we must 
-// directly include the systems math file. (Plus, I could not find a 
-// predefined macro for ProjectBuilder builds, so we have to define it 
-// in the project)
+#  define fl_math_h_cyclic_include 
 #  include <math.h>
+#  undef fl_math_h_cyclic_include 
 
 #  ifdef __EMX__
 #    include <float.h>

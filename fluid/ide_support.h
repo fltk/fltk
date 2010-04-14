@@ -72,6 +72,7 @@ class Fl_Target_Prefs : public Fl_IDE_Prefs {
 public:
   Fl_Target_Prefs(Fl_Preferences::ID id);
   Fl_Preferences::ID add_source(Fl_IDE_Prefs &fdb, const char *pathAndName);
+  Fl_Preferences::ID add_header(Fl_IDE_Prefs &fdb, const char *pathAndName);
   Fl_Preferences::ID add_fl(Fl_IDE_Prefs &fdb, const char *pathAndName);
   Fl_Preferences::ID depends_on(Fl_IDE_Prefs &dep);
   Fl_Preferences::ID add_lib(Fl_IDE_Prefs &lib);
