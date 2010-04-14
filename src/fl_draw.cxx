@@ -234,7 +234,7 @@ void fl_draw(
     for (p = str, lines=0; p;) {
       e = fl_expand_text(p, buf, MAXBUF, w - symtotal, buflen, width, 
                          align&FL_ALIGN_WRAP, draw_symbols);
-      if (strw<width) strw = width;
+      if (strw<width) strw = (int)width;
       lines++;
       if (!*e || (*e == '@' && e[1] != '@' && draw_symbols)) break;
       p = e;
