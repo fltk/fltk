@@ -27,7 +27,6 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Device.H>
-//#include <FL/fl_draw.H>
 #include <FL/Fl_Image.H>
 
 /** \brief Draws an Fl_Pixmap object to the device. 
@@ -35,9 +34,8 @@
  Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
  the image offset by the cx and cy arguments.
  */
-void Fl_Device::draw(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int cy)
-{
-  pxm->draw(XP, YP, WP, HP, cx, cy);
+void Fl_Device::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  pxm->generic_device_draw(XP, YP, WP, HP, cx, cy);
 }
 
 /** \brief Draws an Fl_Bitmap object to the device. 
@@ -45,9 +43,8 @@ void Fl_Device::draw(Fl_Pixmap *pxm,int XP, int YP, int WP, int HP, int cx, int 
  Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
  the image offset by the cx and cy arguments.
  */
-void Fl_Device::draw(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int cy)
-{
-  bm->draw(XP, YP, WP, HP, cx, cy);
+void Fl_Device::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  bm->generic_device_draw(XP, YP, WP, HP, cx, cy);
 }
 
 /** \brief Draws an Fl_RGB_Image object to the device. 
@@ -55,9 +52,8 @@ void Fl_Device::draw(Fl_Bitmap *bm,int XP, int YP, int WP, int HP, int cx, int c
  Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
  the image offset by the cx and cy arguments.
  */
-void Fl_Device::draw(Fl_RGB_Image *rgb,int XP, int YP, int WP, int HP, int cx, int cy)
-{
-  rgb->draw(XP, YP, WP, HP, cx, cy);
+void Fl_Device::draw(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy) {
+  rgb->generic_device_draw(XP, YP, WP, HP, cx, cy);
 }
 
 /**

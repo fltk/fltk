@@ -40,6 +40,7 @@ struct Fl_Menu_Item;
   (bitmap) images. Images are drawn using the current color.
 */
 class FL_EXPORT Fl_Bitmap : public Fl_Image {
+  friend class Fl_Device;
   public:
 
   /** pointer to raw bitmap data */
@@ -57,6 +58,7 @@ class FL_EXPORT Fl_Bitmap : public Fl_Image {
   unsigned id_;
 #endif // __APPLE__ || WIN32
 
+  void generic_device_draw(int XP, int YP, int WP, int HP, int cx, int cy);
   public:
 
   /** The constructors create a new bitmap from the specified bitmap data */
