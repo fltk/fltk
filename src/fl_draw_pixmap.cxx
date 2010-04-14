@@ -179,6 +179,40 @@ int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color bg) {
   return fl_draw_pixmap((const char*const*)data,x,y,bg);
 }
 
+#ifdef WIN32
+// to compute an unused color to be used for the pixmap background
+FL_EXPORT UINT win_pixmap_bg_color; // the RGB() of the pixmap background color
+static int color_count; // # of non-transparent colors used in pixmap
+static uchar *used_colors; // used_colors[3*i+j] j=0,1,2 are the RGB values of the ith used color
+
+static void make_unused_color(uchar &r, uchar &g, uchar &b)
+// makes an RGB triplet different from all the colors used in the pixmap
+// and compute win_pixmap_bg_color from this triplet
+{
+  int i;
+  r = 2; g = 3; b = 4;
+  while (1) {
+    for ( i = 0; i < color_count; i++) {
+      if(used_colors[3*i] == r && used_colors[3*i+1] == g && used_colors[3*i+2] == b) break;
+      }
+    if (i >= color_count) {
+      free(used_colors);
+      win_pixmap_bg_color = RGB(r, g, b);
+      return;
+      }
+    if (r < 255) r++;
+    else {
+      r = 0;
+      if (g < 255) g++;
+      else {
+	g = 0;
+	b++;
+	}
+      }
+    }
+}
+#endif
+
 /**
   Draw XPM image data, with the top-left corner at the given position.
   \see fl_draw_pixmap(char* const* data, int x, int y, Fl_Color bg)
@@ -188,6 +222,11 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   if (!fl_measure_pixmap(cdata, d.w, d.h)) return 0;
   const uchar*const* data = (const uchar*const*)(cdata+1);
   int transparent_index = -1;
+  uchar *transparent_c; // such that transparent_c[0,1,2] are the RGB of the transparent color
+#ifdef WIN32
+  color_count = 0;
+  used_colors = (uchar *)malloc(abs(ncolors)*3*sizeof(uchar));
+#endif
 
   if (ncolors < 0) {	// FLTK (non standard) compressed colormap
     ncolors = -ncolors;
@@ -204,6 +243,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #endif
       transparent_index = ' ';
       Fl::get_color(bg, c[0], c[1], c[2]); c[3] = 0;
+      transparent_c = c;
       p += 4;
       ncolors--;
     }
@@ -215,6 +255,12 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #  if WORDS_BIGENDIAN
       c += 4;
 #  endif
+#endif
+#ifdef WIN32
+      used_colors[3*color_count] = *p;
+      used_colors[3*color_count+1] = *(p+1);
+      used_colors[3*color_count+2] = *(p+2);
+      color_count++;
 #endif
       *c++ = *p++;
       *c++ = *p++;
@@ -266,7 +312,16 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #ifdef __APPLE_QUARTZ__
       c[3] = 255;
 #endif
-      if (!fl_parse_color((const char*)p, c[0], c[1], c[2])) {
+      int parse = fl_parse_color((const char*)p, c[0], c[1], c[2]);
+      if (parse) {
+#ifdef WIN32
+	used_colors[3*color_count] = c[0];
+	used_colors[3*color_count+1] = c[1];
+	used_colors[3*color_count+2] = c[2];
+	color_count++;
+#endif
+	}
+      else {
         // assume "None" or "#transparent" for any errors
 	// "bg" should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
@@ -274,11 +329,14 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
         c[3] = 0;
 #endif
 	transparent_index = ind;
+	transparent_c = c;
       }
     }
   }
   d.data = data;
-
+#ifdef WIN32
+    make_unused_color(transparent_c[0], transparent_c[1], transparent_c[2]);
+#endif
 #ifndef __APPLE_QUARTZ__
 
   // build the mask bitmap used by Fl_Pixmap:
