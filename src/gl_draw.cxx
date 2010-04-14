@@ -60,6 +60,7 @@ double gl_width(uchar c) {return fl_width(c);}
 
 static Fl_Font_Descriptor *gl_fontsize;
 
+#define GL_DRAW_USES_TEXTURES  (defined(__APPLE__) && !__ppc__) // 1 only for non-PPC OSX
 #ifndef __APPLE__
 #  define USE_OksiD_style_GL_font_selection 1  // Most hosts except OSX
 #else
@@ -75,6 +76,7 @@ static Fl_Font_Descriptor *gl_fontsize;
   */
 void  gl_font(int fontid, int size) {
   fl_font(fontid, size);
+#if !GL_DRAW_USES_TEXTURES
   if (!fl_fontsize->listbase) {
 
 #ifdef  USE_OksiD_style_GL_font_selection
@@ -94,6 +96,7 @@ void  gl_font(int fontid, int size) {
     fl_fontsize->listbase = glGenLists(256);
     glXUseXFont(font->fid, base, count, fl_fontsize->listbase+base);
 # elif defined(WIN32)
+    // this is unused because USE_OksiD_style_GL_font_selection == 1
     int base = fl_fontsize->metr.tmFirstChar;
     int count = fl_fontsize->metr.tmLastChar-base+1;
     HFONT oldFid = (HFONT)SelectObject(fl_gc, fl_fontsize->fid);
@@ -101,7 +104,6 @@ void  gl_font(int fontid, int size) {
     wglUseFontBitmaps(fl_gc, base, count, fl_fontsize->listbase+base);
     SelectObject(fl_gc, oldFid);
 # elif defined(__APPLE_QUARTZ__)
-#if __ppc__
 //AGL is not supported for use in 64-bit applications:
 //http://developer.apple.com/mac/library/documentation/Carbon/Conceptual/Carbon64BitGuide/OtherAPIChanges/OtherAPIChanges.html
     short font, face, size;
@@ -114,18 +116,15 @@ void  gl_font(int fontid, int size) {
     fl_fontsize->listbase = glGenLists(256);
 	aglUseFont(aglGetCurrentContext(), font, face,
                size, 0, 256, fl_fontsize->listbase);
-# endif
 # else 
 #   error unsupported platform
 # endif
 
 #endif // USE_OksiD_style_GL_font_selection
-
   }
-  gl_fontsize = fl_fontsize;
-#if !(defined( __APPLE_QUARTZ__) && !__ppc__)
   glListBase(fl_fontsize->listbase);
-#endif
+#endif // !GL_DRAW_USES_TEXTURES
+  gl_fontsize = fl_fontsize;
 }
 
 #ifndef __APPLE__
@@ -196,8 +195,8 @@ void gl_remove_displaylist_fonts()
 #endif
 }
 
-#if defined( __APPLE__) && !__ppc__
-static void gl_draw_cocoa(const char* str, int n);
+#if GL_DRAW_USES_TEXTURES
+static void gl_draw_textures(const char* str, int n);
 #endif
 
 /**
@@ -208,22 +207,15 @@ static void gl_draw_cocoa(const char* str, int n);
 void gl_draw(const char* str, int n) {
 #ifdef __APPLE__  
   
-#if !__ppc__
-  gl_draw_cocoa(str, n);
+#if GL_DRAW_USES_TEXTURES
+  gl_draw_textures(str, n);
 #else
-// Should be converting the text here, as for other platforms???
   glCallLists(n, GL_UNSIGNED_BYTE, str);
 #endif
   
 #else
   static xchar *buf = NULL;
   static int l = 0;
-//  if (n > l) {
-//    buf = (xchar*) realloc(buf, sizeof(xchar) * (n + 20));
-//    l = n + 20;
-//  }
-//  n = fl_utf2unicode((const unsigned char*)str, n, buf);
-
   int wn = fl_utf8toUtf16(str, n, (unsigned short*)buf, l);
   if(wn >= l) {
     buf = (xchar*) realloc(buf, sizeof(xchar) * (wn + 1));
@@ -364,13 +356,13 @@ void gl_draw_image(const uchar* b, int x, int y, int w, int h, int d, int ld) {
   glDrawPixels(w,h,d<4?GL_RGB:GL_RGBA,GL_UNSIGNED_BYTE,(const ulong*)b);
 }
 
-#if (defined( __APPLE__) && !__ppc__) || defined(FL_DOXYGEN)
+#if GL_DRAW_USES_TEXTURES || defined(FL_DOXYGEN)
 
 #include <FL/glu.h>
 
 // manages a fifo pile of pre-computed string textures
 class gl_texture_fifo {
-  friend void gl_draw_cocoa(const char *, int);
+  friend void gl_draw_textures(const char *, int);
 private:
   typedef struct { // information for a pre-computed texture
     GLuint texName; // its name
@@ -523,7 +515,7 @@ int gl_texture_fifo::already_known(const char *str, int n)
 static gl_texture_fifo *gl_fifo = NULL; // points to the texture pile class instance
 
 // draws a utf8 string using pre-computed texture if available
-static void gl_draw_cocoa(const char* str, int n) 
+static void gl_draw_textures(const char* str, int n) 
 {
   if (! gl_fifo) gl_fifo = new gl_texture_fifo();
   if (!gl_fifo->textures_generated) {
@@ -566,7 +558,7 @@ void gl_texture_pile_height(int max)
 
 /** @} */
 
-#endif // __APPLE__
+#endif // GL_DRAW_USES_TEXTURES
 
 #endif // HAVE_GL
 
