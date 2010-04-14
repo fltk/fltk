@@ -430,15 +430,14 @@ void gl_texture_fifo::display_texture(int rank)
   GLfloat pos[4];
   glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);
   CGRect bounds = CGRectMake (pos[0], pos[1] - fl_descent(), fifo[rank].width, fifo[rank].height);
-  glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT); // GL_COLOR_BUFFER_BIT for glBlendFunc, GL_ENABLE_BIT for glEnable / glDisable
   
+  // GL_COLOR_BUFFER_BIT for glBlendFunc, GL_ENABLE_BIT for glEnable / glDisable
+  glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT | GL_COLOR_BUFFER_BIT); 
   glDisable (GL_DEPTH_TEST); // ensure text is not removed by depth buffer test.
   glEnable (GL_BLEND); // for text fading
   glBlendFunc (GL_ONE, GL_ONE_MINUS_SRC_ALPHA); // ditto
   glEnable (GL_TEXTURE_RECTANGLE_EXT);	
-  
-  GLboolean lighting = glIsEnabled(GL_LIGHTING);
-  if (lighting) glDisable(GL_LIGHTING);
+  glDisable(GL_LIGHTING);
   glBindTexture (GL_TEXTURE_RECTANGLE_EXT, fifo[rank].texName);
   glBegin (GL_QUADS);
   glTexCoord2f (0.0f, 0.0f); // draw lower left in world coordinates
@@ -453,9 +452,8 @@ void gl_texture_fifo::display_texture(int rank)
   glTexCoord2f (fifo[rank].width, 0.0f); // draw lower right in world coordinates
   glVertex2f (bounds.origin.x + bounds.size.width, bounds.origin.y);
   glEnd ();
-  if (lighting) glEnable(GL_LIGHTING);
-
   glPopAttrib();
+  
   // reset original matrices
   glPopMatrix(); // GL_MODELVIEW
   glMatrixMode (GL_PROJECTION);
