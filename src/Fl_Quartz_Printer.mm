@@ -49,7 +49,7 @@ int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
 //printing using a Quartz graphics context
 //returns 0 iff OK
 {
-  OSStatus status;
+  OSStatus status = 0;
   Fl_X::q_release_context();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if( [NSPrintPanel instancesRespondToSelector:@selector(runModalWithPrintInfo:)] &&
