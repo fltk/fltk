@@ -45,7 +45,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/fl_ask.H>
-#include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Button.H>
@@ -484,7 +484,7 @@ int check_save(void) {
 }
 
 int loading = 0;
-void load_file(char *newfile, int ipos) {
+void load_file(const char *newfile, int ipos) {
   loading = 1;
   int insert = (ipos != -1);
   changed = insert;
@@ -500,7 +500,7 @@ void load_file(char *newfile, int ipos) {
   textbuf->call_modify_callbacks();
 }
 
-void save_file(char *newfile) {
+void save_file(const char *newfile) {
   if (textbuf->savefile(newfile))
     fl_alert("Error writing to file \'%s\':\n%s.", newfile, strerror(errno));
   else
@@ -590,15 +590,21 @@ void new_cb(Fl_Widget*, void*) {
 
 void open_cb(Fl_Widget*, void*) {
   if (!check_save()) return;
+  Fl_Native_File_Chooser fnfc;
+  fnfc.title("Open file");
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  if ( fnfc.show() ) return;
+  load_file(fnfc.filename(), -1);
 
-  char *newfile = fl_file_chooser("Open File?", "*", filename);
-  if (newfile != NULL) load_file(newfile, -1);
 }
 
-void insert_cb(Fl_Widget*, void *v) {
-  char *newfile = fl_file_chooser("Insert File?", "*", filename);
+void insert_cb(Fl_Widget*, void *v) {  
+  Fl_Native_File_Chooser fnfc;
+  fnfc.title("Insert file");
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  if ( fnfc.show() ) return;
   EditorWindow *w = (EditorWindow *)v;
-  if (newfile != NULL) load_file(newfile, w->editor->insert_position());
+  load_file(fnfc.filename(), w->editor->insert_position());
 }
 
 void paste_cb(Fl_Widget*, void* v) {
@@ -718,10 +724,11 @@ void save_cb() {
 }
 
 void saveas_cb() {
-  char *newfile;
-
-  newfile = fl_file_chooser("Save File As?", "*", filename);
-  if (newfile != NULL) save_file(newfile);
+  Fl_Native_File_Chooser fnfc;
+  fnfc.title("Save File As?");
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+  if ( fnfc.show() ) return;
+  save_file(fnfc.filename());
 }
 
 Fl_Window* new_view();

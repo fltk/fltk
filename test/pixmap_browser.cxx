@@ -32,7 +32,7 @@
 #include <FL/Fl_Shared_Image.H>
 #include <string.h>
 #include <errno.h>
-#include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_Native_File_Chooser.H>
 #include <FL/fl_message.H>
 
 Fl_Box *b;
@@ -87,9 +87,12 @@ void file_cb(const char *n) {
 }
 
 void button_cb(Fl_Widget *,void *) {
-  fl_file_chooser_callback(file_cb);
-  fl_file_chooser("Image file?","*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm}", name);
-  fl_file_chooser_callback(0);
+  Fl_Native_File_Chooser fnfc;
+  fnfc.title("Pick an image file");
+  fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+  fnfc.filter("Image files\t*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm}");
+  if ( fnfc.show() ) return;
+  file_cb(fnfc.filename());
 }
 
 int dvisual = 0;
