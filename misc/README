@@ -36,15 +36,15 @@ the colums with character codes x'80' - x'9F' (U+0080 - U+009F) are empty.
 
 Special Notes:
 
-  U+0022 ("quotation mark") is doubled intentionally. This has been done for
-  better results in test/editor, because otherwise the rest of the file would
-  be shown in blue color (as a comment).
+  x'22' (U+0022: "quotation mark") is doubled intentionally. This has been
+  done for better results in test/editor, because otherwise the rest of the
+  file would be shown in blue color (as a comment).
 
-  U+0098 ("small tilde") may not display correctly on Windows systems. I saw
-  the same effect with other Windows editors as well. The following characters
-  may be display "shifted left" by one position. Seems to work correctly on
-  Linux (with UTF-8 encoding).
-  
+  x'98' (U+02DC: "small tilde") may not display correctly on Windows systems.
+  I saw the same effect with other Windows editors as well. The following
+  characters may be displayed "shifted left" by one position. Seems to work
+  correctly on Linux (with UTF-8 encoding).
+
   There may currently be drawing artefacts when moving the cursor forwards
   and/or backwards over some "special" characters.
 
