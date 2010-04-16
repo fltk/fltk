@@ -36,7 +36,7 @@
  * FLTK features not supported by the Mac System menu
  *
  * - no invisible menu items
- * - no sybolic labels
+ * - no symbolic labels
  * - embossed labels will be underlined instead
  * - no font sizes
  * - Shortcut Characters should be English alphanumeric only, no modifiers yet
@@ -69,7 +69,7 @@ typedef const Fl_Menu_Item *pFl_Menu_Item;
  
 
 /*
- * Set a shortct for an Apple manu item using the FLTK shortcut descriptor.
+ * Set a shortcut for an Apple menu item using the FLTK shortcut descriptor.
  */
 static void setMenuShortcut( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
 {
@@ -219,6 +219,34 @@ int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void 
   return rank;
 }
 
+/**
+ * @brief insert in the system menu bar a new menu item
+ *
+ * insert in the system menu bar a new menu item, with a title string, shortcut int,
+ * callback, argument to the callback, and flags.
+ *
+ * @see Fl_Menu_::insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags) 
+ */
+int Fl_Sys_Menu_Bar::insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data, int flags)
+{
+  fl_open_display();
+  int rank = Fl_Menu_::insert(index, label, shortcut, cb, user_data, flags);
+  convertToMenuBar(Fl_Menu_::menu());
+  return rank;
+}
+
+void Fl_Sys_Menu_Bar::clear()
+{
+  Fl_Menu_::clear();
+  convertToMenuBar(NULL);
+}
+
+int Fl_Sys_Menu_Bar::clear_submenu(int index)
+{
+  int retval = Fl_Menu_::clear_submenu(index);
+  if (retval != -1) convertToMenuBar(Fl_Menu_::menu());
+  return retval;
+}
 
 /**
  * @brief remove an item from the system menu bar
