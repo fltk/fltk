@@ -100,10 +100,12 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
 }
 
 /**
- Find menu item index, given a menu pathname such as "Edit/Copy".
+ Find the menu item for a given menu \p pathname, such as "Edit/Copy".
  
- This method finds a menu item in a menu array, also traversing submenus, but
+ This method finds a menu item in the menu array, also traversing submenus, but
  not submenu pointers.
+
+ To get the menu item's index, use find_index(const char*)
 
   \b Example:
   \code
@@ -120,25 +122,84 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
 	item->labelcolor(FL_GREEN);
     }
   \endcode
-  \returns The item found, or NULL if not found.
-  \see 
 
- \param name path and name of the menu item
- \return NULL if not found
- \see Fl_Menu_::find_item(Fl_Callback*), item_pathname() 
+  \param pathname The path and name of the menu item
+  \returns The item found, or NULL if not found
+  \see find_index(const char*), find_item(Fl_Callback*), item_pathname() 
 */
-const Fl_Menu_Item * Fl_Menu_::find_item(const char *name) {
-  char menupath[1024] = "";	// File/Export
+const Fl_Menu_Item * Fl_Menu_::find_item(const char *pathname) {
+  int i = find_index(pathname);
+  return( (i==-1) ? 0 : (const Fl_Menu_Item*)(menu_+i));
+}
 
+/**
+ Find the index the menu array for given \p item.
+ 
+ A way to convert a menu item pointer into an index.
+
+ Current implementation is fast and not expensive.
+
+ \code
+   // Convert an index-to-item
+   int index = 12;
+   const Fl_Menu_Item *item = mymenu->menu() + index;
+
+   // Convert an item-to-index
+   int index = mymenu->find_index(item);
+   if ( index == -1 ) { ..error.. }
+ \endcode
+
+ \param item The *item to be found
+ \returns    The index of the item, or -1 if not found.
+ \see        menu()
+*/
+int Fl_Menu_::find_index(const Fl_Menu_Item *item) const {
+  Fl_Menu_Item *max = menu_+size();
+  if (item<menu_ || item>=max) return(-1);
+  return(item-menu_);
+}
+
+/**
+ Find the index into the menu array for a given callback \p cb.
+ 
+ This method finds a menu item's index position, also traversing submenus, but
+ not submenu pointers. This is useful if an application uses internationalisation
+ and a menu item can not be found using its label. This search is also much faster.
+ 
+ \param cb Find the first item with this callback
+ \returns  The index of the item with the specific callback, or -1 if not found
+ \see      find_index(const char*)
+ */
+int Fl_Menu_::find_index(Fl_Callback *cb) const {
+  for ( int t=0; t < size(); t++ )
+    if (menu_[t].callback_==cb)
+      return(t);
+  return(-1);
+}
+
+/**
+ Find the menu item index for a given menu \p pathname, such as "Edit/Copy".
+ 
+ This method finds a menu item's index position for the given menu pathname,
+ also traversing submenus, but not submenu pointers.
+
+ To get the menu item pointer for a pathname, use find_item()
+
+ \param pathname The path and name of the menu item index to find
+ \returns        The index of the matching item, or -1 if not found.
+ \see            item_pathname()
+
+*/
+int Fl_Menu_::find_index(const char *pathname) const {
+  char menupath[1024] = "";	// File/Export
   for ( int t=0; t < size(); t++ ) {
     Fl_Menu_Item *m = menu_ + t;
-
     if (m->flags&FL_SUBMENU) {
       // IT'S A SUBMENU
       // we do not support searches through FL_SUBMENU_POINTER links
       if (menupath[0]) strlcat(menupath, "/", sizeof(menupath));
       strlcat(menupath, m->label(), sizeof(menupath));
-      if (!strcmp(menupath, name)) return m;
+      if (!strcmp(menupath, pathname)) return(t);
     } else {
       if (!m->label()) {
 	// END OF SUBMENU? Pop back one level.
@@ -147,21 +208,19 @@ const Fl_Menu_Item * Fl_Menu_::find_item(const char *name) {
 	else menupath[0] = '\0';
 	continue;
       }
-
       // IT'S A MENU ITEM
       char itempath[1024];	// eg. Edit/Copy
       strcpy(itempath, menupath);
       if (itempath[0]) strlcat(itempath, "/", sizeof(itempath));
       strlcat(itempath, m->label(), sizeof(itempath));
-      if (!strcmp(itempath, name)) return m;
+      if (!strcmp(itempath, pathname)) return(t);
     }
   }
-
-  return (const Fl_Menu_Item *)0;
+  return(-1);
 }
 
 /**
- Find menu item index given a callback.
+ Find the menu item for the given callback \p cb.
  
  This method finds a menu item in a menu array, also traversing submenus, but
  not submenu pointers. This is useful if an application uses 
@@ -169,8 +228,8 @@ const Fl_Menu_Item * Fl_Menu_::find_item(const char *name) {
  search is also much faster.
  
  \param cb find the first item with this callback
- \return NULL if not found
- \see Fl_Menu_::find_item(const char*)
+ \returns The item found, or NULL if not found
+ \see find_item(const char*)
  */
 const Fl_Menu_Item * Fl_Menu_::find_item(Fl_Callback *cb) {
   for ( int t=0; t < size(); t++ ) {
@@ -286,7 +345,7 @@ void Fl_Menu_::menu(const Fl_Menu_Item* m) {
 
 /** 
   Sets the menu array pointer with a copy of m that will be automatically deleted. 
-  If ud is not NULL, then all user data pointers are changed in the menus as well.
+  If userdata \p ud is not NULL, then all user data pointers are changed in the menus as well.
   See void Fl_Menu_::menu(const Fl_Menu_Item* m). 
 */
 void Fl_Menu_::copy(const Fl_Menu_Item* m, void* ud) {
@@ -328,6 +387,47 @@ void Fl_Menu_::clear() {
     value_ = 0;
     alloc = 0;
   }
+}
+
+/**
+ Clears the specified submenu pointed to by \p index of all menu items.
+
+ This method is useful for clearing a submenu so that it can be
+ re-populated with new items. Example: a "File/Recent Files/..." submenu
+ that shows the last few files that have been opened.
+
+ The specified \p index must point to a submenu.
+ 
+ The submenu is cleared with remove().
+ If the menu array was directly set with menu(x), then copy() 
+ is done to make a private array.
+
+ \warning Since this method can change the internal menu array, any menu
+ item pointers or indecies the application may have cached can become
+ stale, and should be recalculated/refreshed.
+
+ \b Example:
+ \code
+   int index = menubar->find_index("File/Recent");    // get index of "File/Recent" submenu
+   if ( index != -1 ) menubar->clear_submenu(index);  // clear the submenu
+   menubar->add("File/Recent/Aaa");
+   menubar->add("File/Recent/Bbb");
+   [..]
+ \endcode
+
+ \param index The index of the submenu to be cleared
+ \returns 0 on success, -1 if the index is out of range or not a submenu
+ \see remove(int)
+ */
+int Fl_Menu_::clear_submenu(int index) {
+  if ( index < 0 || index >= size() ) return(-1);
+  if ( ! (menu_[index].flags & FL_SUBMENU) ) return(-1);
+  ++index;					// advance to first item in submenu
+  while ( index < size() ) {                    // keep remove()ing top item until end is reached
+    if ( menu_[index].text == 0 ) break;	// end of this submenu? done
+    remove(index);				// remove items/submenus
+  }
+  return(0);
 }
 
 //

@@ -386,6 +386,7 @@ struct FL_EXPORT Fl_Menu_Item {
   /** back compatibility only \deprecated. */
   void uncheck() {flags &= ~FL_MENU_VALUE;}
 
+  int insert(int,const char*,int,Fl_Callback*,void* =0, int =0);
   int add(const char*, int shortcut, Fl_Callback*, void* =0, int = 0);
 
   /** See int add(const char*, int shortcut, Fl_Callback*, void*, int) */
