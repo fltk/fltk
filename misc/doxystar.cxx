@@ -1,5 +1,5 @@
 //
-// "$Id: doxystar.cxx 6615 2009-01-01 16:35:13Z matt $"
+// "$Id$"
 //
 // Doxygen pre-formatting program for the Fast Light Tool Kit (FLTK).
 //
@@ -98,5 +98,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: doxystar.cxx 6615 2009-01-01 16:35:13Z matt $".
+// End of "$Id$".
 //
