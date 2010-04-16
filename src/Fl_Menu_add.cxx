@@ -312,17 +312,19 @@ int Fl_Menu_::add(const char *label,int shortcut,Fl_Callback *callback,void *use
 
   If \p index is -1, the menu item is appended; same behavior as add().
 
-  The value of \p index will be ignored if \p label contains un-escaped 
-  front-slashes (/) indicating a menu pathname as the point of insertion.
-  A menu pathname will override the value of \p index.
+  To properly insert a menu item, \p label must be the name of the item (eg. "Quit"),
+  and not a 'menu pathname' (eg. "File/Quit").  If a menu pathname is specified, 
+  the value of \p index is \em ignored, the new item's position defined by the pathname.
   
   For more details, see add(). Except for the \p index parameter, add()
   has more detailed information on parameters and behavior, and is
-  functionally equivalent,
+  functionally equivalent.
 
   \param[in] index    The menu array's index position where the new item
                       is inserted. If -1, behavior is the same as add().
-  \param[in] label    The text label for the menu item.
+  \param[in] label    The text label for the menu item. If the label 
+                      is a menu pathname, \p index is ignored, and the pathname
+		      indicates the position of the new item.
   \param[in] shortcut Optional keyboard shortcut. Can be an int (FL_CTRL+'a')
                       or a string ("^a"). Default is 0.
   \param[in] callback Optional callback invoked when user clicks the item.
@@ -332,6 +334,8 @@ int Fl_Menu_::add(const char *label,int shortcut,Fl_Callback *callback,void *use
   \param[in] flags    Optional flags that control the type of menu item; 
                       see add() for more info. Default is 0 for none.
   \returns            The index into the menu() array, where the entry was added.
+
+  \see                add()
 
  */
 int Fl_Menu_::insert(
