@@ -188,8 +188,7 @@ class FL_EXPORT Fl_Image {
   &lt;FL/Fl_RGB_Image.H&gt; should be included.
 */
 class FL_EXPORT Fl_RGB_Image : public Fl_Image {
-  friend class Fl_Device;
-  void generic_device_draw(int X, int Y, int W, int H, int cx=0, int cy=0);
+  friend class Fl_Graphics_Device;
   public:
 
   const uchar *array;

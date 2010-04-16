@@ -39,10 +39,7 @@
  *
  This class has no public constructor: don't instantiate it; use Fl_Printer or Fl_PSfile_Device instead.
  */
-class Fl_Abstract_Printer : public Fl_Device {
-  friend class Fl_Pixmap;
-  friend class Fl_RGB_Image;
-  friend class Fl_Bitmap;
+class Fl_Abstract_Printer {
 private:
 #ifdef __APPLE__
   struct chain_elt {
@@ -62,14 +59,11 @@ protected:
   struct chain_elt *image_list_; 
   /** \brief the printer's graphics context, if there's one, NULL otherwise */
   void *gc; 
-  /** \brief the constructor */
-  Fl_Abstract_Printer(void) { gc = NULL; bg_r_ = bg_g_ = bg_b_ = 0; };
 #ifdef __APPLE__
   /** \brief deletes the page image list */
   void delete_image_list(); 
 #endif
 public:
-  Fl_Device *set_current(void);
   virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   virtual int start_page(void);
   virtual int printable_rect(int *w, int *h);
@@ -91,3 +85,4 @@ public:
 //
 // End of "$Id$"
 //
+

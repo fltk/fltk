@@ -45,7 +45,7 @@ struct Fl_Menu_Item;
   (pixmap) images, including transparency.
 */
 class FL_EXPORT Fl_Pixmap : public Fl_Image {
-  friend class Fl_Device;
+  friend class Fl_Graphics_Device;
   void copy_data();
   void delete_data();
   void set_data(const char * const *p);
@@ -67,7 +67,6 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   unsigned id_; // for internal use
   unsigned mask_; // for internal use (mask bitmap)
 #endif // __APPLE__ || WIN32
-  void generic_device_draw(int XP, int YP, int WP, int HP, int cx, int cy);
   
   public:
 

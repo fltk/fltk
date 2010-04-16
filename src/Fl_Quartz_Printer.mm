@@ -40,7 +40,7 @@ Fl_Printer::Fl_Printer(void)
   x_offset = 0;
   y_offset = 0;
   scale_x = scale_y = 1.;
-  type_ = quartz_printer;
+  type_ = device_type;
 }
 
 Fl_Printer::~Fl_Printer(void) {}

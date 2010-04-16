@@ -95,9 +95,9 @@
   for async mode proper operation, not mentioning the side effects...
 */
 
-static Fl_GDI_Display fl_gdi_device;
-FL_EXPORT Fl_Display *fl_display_device = (Fl_Display*)&fl_gdi_device; // does not change
-FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_gdi_device; // the current target device of graphics operations
+static Fl_Display_Device fl_gdi_display;
+FL_EXPORT Fl_Display_Device *fl_display_device = (Fl_Display_Device*)&fl_gdi_display; // does not change
+FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_gdi_display; // the current target device of graphics operations
 
 // dynamic wsock dll handling api:
 #if defined(__CYGWIN__) && !defined(SOCKET)
@@ -1925,7 +1925,7 @@ void fl_cleanup_dc_list(void) {          // clean up the list
 }
 
 Fl_Region XRectangleRegion(int x, int y, int w, int h) {
-  if (Fl_Device::current()->type() < 256) return CreateRectRgn(x,y,x+w,y+h);
+  if (Fl_Device::current()->type() == Fl_Display_Device::device_type) return CreateRectRgn(x,y,x+w,y+h);
   // because rotation may apply, the rectangle becomes a polygon in device coords
   POINT pt[4] = { {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h} };
   LPtoDP(fl_gc, pt, 4);
