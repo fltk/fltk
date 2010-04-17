@@ -41,7 +41,7 @@
  */
 FL_EXPORT class Fl_PS_Device : public  Fl_Device {
 public: 
-  static const char *Fl_PS_Device::device_type;
+  static const char *device_type;
   /**
    \brief Possible page formats.
    */
