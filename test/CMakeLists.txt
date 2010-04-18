@@ -1,5 +1,16 @@
 set(EXECUTABLE_OUTPUT_PATH ${FLTK_BINARY_DIR}/bin/examples)
 
+#######################################################################
+# audio libs for test apps
+if(WIN32)
+   set(AUDIOLIBS -lwinmm)
+elseif(APPLE)
+   set(AUDIOLIBS "-framework CoreAudio")
+elseif(HAVE_ALSA_ASOUNDLIB_H)
+   set(AUDIOLIBS -lasound)
+endif(WIN32)
+
+#######################################################################
 macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 	set(srcs)
 	set(flsrcs)
@@ -39,15 +50,18 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
       )
 endmacro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 
+#######################################################################
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 
+#######################################################################
 CREATE_EXAMPLE(adjuster adjuster.cxx fltk)
 CREATE_EXAMPLE(arc arc.cxx fltk)
 CREATE_EXAMPLE(ask ask.cxx fltk)
 CREATE_EXAMPLE(bitmap bitmap.cxx fltk)
+CREATE_EXAMPLE(blocks blocks.cxx "fltk;${AUDIOLIBS}")
 CREATE_EXAMPLE(boxtype boxtype.cxx fltk)
 CREATE_EXAMPLE(browser browser.cxx fltk)
 CREATE_EXAMPLE(button button.cxx fltk)
@@ -72,6 +86,7 @@ CREATE_EXAMPLE(iconize iconize.cxx fltk)
 CREATE_EXAMPLE(image image.cxx fltk)
 CREATE_EXAMPLE(inactive inactive.fl fltk)
 CREATE_EXAMPLE(input input.cxx fltk)
+CREATE_EXAMPLE(input_choice input_choice.cxx fltk)
 CREATE_EXAMPLE(keyboard "keyboard.cxx;keyboard_ui.fl" fltk)
 CREATE_EXAMPLE(label label.cxx "fltk;fltk_forms")
 CREATE_EXAMPLE(line_style line_style.cxx fltk)
@@ -91,8 +106,10 @@ CREATE_EXAMPLE(preferences preferences.fl fltk)
 CREATE_EXAMPLE(radio radio.fl fltk)
 CREATE_EXAMPLE(resize resize.fl fltk)
 CREATE_EXAMPLE(resizebox resizebox.cxx fltk)
+CREATE_EXAMPLE(rotated_text rotated_text.cxx fltk)
 CREATE_EXAMPLE(scroll scroll.cxx fltk)
 CREATE_EXAMPLE(subwindow subwindow.cxx fltk)
+CREATE_EXAMPLE(sudoku sudoku.cxx "fltk;fltk_images;${AUDIOLIBS}")
 CREATE_EXAMPLE(symbols symbols.cxx fltk)
 CREATE_EXAMPLE(tabs tabs.fl fltk)
 CREATE_EXAMPLE(table table.cxx fltk)
@@ -115,3 +132,7 @@ CREATE_EXAMPLE(gl_overlay gl_overlay.cxx "fltk;fltk_gl;${OPENGL_LIBRARIES}")
 CREATE_EXAMPLE(shape shape.cxx "fltk;fltk_gl;${OPENGL_LIBRARIES}")
 endif(OPENGL_FOUND)
 
+# Cairo demo
+if(HAVE_CAIRO)
+   CREATE_EXAMPLE(cairo_test cairo_test.cxx fltk)
+endif(HAVE_CAIRO)
