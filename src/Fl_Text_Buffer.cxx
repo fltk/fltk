@@ -975,6 +975,8 @@ int Fl_Text_Buffer::expand_character(int pos, int indent, char *outStr) const {
 
 // static function and counterpart to "character_width"
 // - unicode ok
+// FIXME: harmonise with new character_width(char*...) version
+//
 int Fl_Text_Buffer::expand_character(const char *src, int indent, char *outStr, int tabDist)
 {
   char c = *src;
@@ -1018,8 +1020,27 @@ int Fl_Text_Buffer::expand_character(const char *src, int indent, char *outStr, 
 // - unicode ok
 int Fl_Text_Buffer::character_width(const char *src, int indent, int tabDist)
 {
-  /* Note, this code must parallel that in Fl_Text_Buffer::ExpandCharacter */
   char c = *src;
+  if ((c & 0x80) && (c & 0x40)) {       // first byte of UTF-8 sequence
+    int len = fl_utf8len(c);
+    int ret = 0;
+    unsigned int ucs = fl_utf8decode(src, src+len, &ret);
+    int width = 1; //   mk_wcwidth((wchar_t)ucs); // FIXME
+    // fprintf(stderr, "mk_wcwidth(%x) -> %d (%d, %d, %s)\n", ucs, width, len, ret, s);
+    return width;
+  }
+  if ((c & 0x80) && !(c & 0x40)) {      // other byte of UTF-8 sequence
+    return 0;
+  }
+  return character_width(c, indent, tabDist);
+}
+
+// FIXME: merge the following with the char* version above.
+// but the question then is: how to reorganise expand_character()?
+//
+int Fl_Text_Buffer::character_width(const char    c, int indent, int tabDist)
+{
+  /* Note, this code must parallel that in Fl_Text_Buffer::ExpandCharacter */
   if (c == '\t') {
     return tabDist - (indent % tabDist);
   } else if (((unsigned char) c) <= 31) {
@@ -1032,7 +1053,8 @@ int Fl_Text_Buffer::character_width(const char *src, int indent, int tabDist)
 #endif
     return 1;
   } else if (c & 0x80) {
-    return fl_utf8len(c);
+    // return fl_utf8len(c);
+    return 1;
   }
   return 1;
 }
@@ -1529,8 +1551,7 @@ static void insertColInLine(const char *line, char *insLine, int column,
   const char *linePtr;
   
   for (linePtr = line; *linePtr != '\0'; linePtr++) {
-    len =
-    Fl_Text_Buffer::character_width(linePtr, indent, tabDist);
+    len = Fl_Text_Buffer::character_width(linePtr, indent, tabDist);
     if (indent + len > column)
       break;
     indent += len;
@@ -1573,8 +1594,7 @@ static void insertColInLine(const char *line, char *insLine, int column,
 				   &len);
     for (const char *c = retabbedStr; *c != '\0'; c++) {
       *outPtr++ = *c;
-      len =
-      Fl_Text_Buffer::character_width(c, indent, tabDist);
+      len = Fl_Text_Buffer::character_width(c, indent, tabDist);
       indent += len;
     }
     free((void *) retabbedStr);
@@ -1624,8 +1644,7 @@ static void deleteRectFromLine(const char *line, int rectStart,
   for (c = line; *c != '\0'; c++) {
     if (indent > rectStart)
       break;
-    len =
-    Fl_Text_Buffer::character_width(c, indent, tabDist);
+    len = Fl_Text_Buffer::character_width(c, indent, tabDist);
     if (indent + len > rectStart && (indent == rectStart || *c == '\t'))
       break;
     indent += len;
@@ -1635,8 +1654,7 @@ static void deleteRectFromLine(const char *line, int rectStart,
   
   /* skip the characters between rectStart and rectEnd */
   for (; *c != '\0' && indent < rectEnd; c++)
-    indent +=
-    Fl_Text_Buffer::character_width(c, indent, tabDist);
+    indent += Fl_Text_Buffer::character_width(c, indent, tabDist);
   int postRectIndent = indent;
   
   /* If the line ended before rectEnd, there's nothing more to do */
@@ -1682,8 +1700,7 @@ static void overlayRectInLine(const char *line, char *insLine,
   const char *linePtr = line;
   
   for (; *linePtr != '\0'; linePtr++) {
-    len =
-    Fl_Text_Buffer::character_width(linePtr, inIndent, tabDist);
+    len = Fl_Text_Buffer::character_width(linePtr, inIndent, tabDist);
     if (inIndent + len > rectStart)
       break;
     inIndent += len;
@@ -1709,8 +1726,7 @@ static void overlayRectInLine(const char *line, char *insLine,
   /* skip the characters between rectStart and rectEnd */
   int postRectIndent = rectEnd;
   for (; *linePtr != '\0'; linePtr++) {
-    inIndent +=
-    Fl_Text_Buffer::character_width(linePtr, inIndent, tabDist);
+    inIndent += Fl_Text_Buffer::character_width(linePtr, inIndent, tabDist);
     if (inIndent >= rectEnd) {
       linePtr++;
       postRectIndent = inIndent;
@@ -1738,8 +1754,7 @@ static void overlayRectInLine(const char *line, char *insLine,
     realignTabs(insLine, 0, rectStart, tabDist, useTabs, &len);
     for (const char *c = retabbedStr; *c != '\0'; c++) {
       *outPtr++ = *c;
-      len =
-      Fl_Text_Buffer::character_width(c, outIndent, tabDist);
+      len = Fl_Text_Buffer::character_width(c, outIndent, tabDist);
       outIndent += len;
     }
     free((void *) retabbedStr);
@@ -1895,7 +1910,7 @@ static void addPadding(char *string, int startIndent, int toIndent,
   if (useTabs) {
     while (indent < toIndent) {
       static char t = '\t';
-      len = Fl_Text_Buffer::character_width(&t, indent, tabDist);
+      len = Fl_Text_Buffer::character_width("\t", indent, tabDist);
       if (len > 1 && indent + len <= toIndent) {
 	*outPtr++ = '\t';
 	indent += len;
@@ -2272,6 +2287,7 @@ static char *expandTabs(const char *text, int startIndent, int tabDist, int *new
       indent = startIndent;
       outLen++;
     } else {
+      // FIXME: character_width does not return number of bytes for UTF-8!
       indent +=
       Fl_Text_Buffer::character_width(c, indent, tabDist);
       outLen++;
@@ -2292,6 +2308,7 @@ static char *expandTabs(const char *text, int startIndent, int tabDist, int *new
       indent = startIndent;
       *outPtr++ = *c;
     } else {
+      // FIXME: character_width does not return number of bytes for UTF-8!
       indent +=
       Fl_Text_Buffer::character_width(c, indent, tabDist);
       *outPtr++ = *c;

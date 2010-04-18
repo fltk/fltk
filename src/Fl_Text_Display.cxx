@@ -644,7 +644,8 @@ void Fl_Text_Display::overstrike(const char* text) {
     ch = buf->character( p );
     if ( ch == '\n' )
       break;
-    indent += Fl_Text_Buffer::character_width( &ch, indent, buf->tab_distance() ); // FIXME: not unicode
+    const char *s = buf->address(p);
+    indent += Fl_Text_Buffer::character_width(s, indent, buf->tab_distance() ); // FIXME: not unicode
     if ( indent == endIndent ) {
       p++;
       break;
@@ -1635,7 +1636,6 @@ void Fl_Text_Display::draw_string( int style, int X, int Y, int toX,
     clear_rect( style, X, Y, toX - X, mMaxsize );
     return;
   }
-
   /* Set font, color, and gc depending on style.  For normal text, GCs
      for normal drawing, or drawing within a Fl_Text_Selection or highlight are
      pre-allocated and pre-configured.  For syntax highlighting, GCs are
@@ -2717,9 +2717,10 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
     	    colNum = 0;
     	    width = 0;
     	} else {
-          colNum += Fl_Text_Buffer::character_width((char*)&c, colNum, tabDist); // FIXME: unicode
+          const char *s = buf->address(p);
+          colNum += Fl_Text_Buffer::character_width(s, colNum, tabDist); // FIXME: unicode
     	    if (countPixels)
-    	    	width += measure_proportional_character(c, colNum, p+styleBufOffset);
+    	    	width += measure_proportional_character(s, colNum, p+styleBufOffset);
     	}
 
     	/* If character exceeded wrap margin, find the break point
@@ -2737,7 +2738,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
     	    	    	for (i=b+1; i<p+1; i++) {
     	    	    	    width += measure_proportional_character(
                                                                     // FIXME: character is ucs-4
-				    buf->character(i), colNum, 
+				    buf->address(i), colNum, 
 				    i+styleBufOffset);
     	    	    	    colNum++;
     	    	    	}
@@ -2749,9 +2750,10 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
     	    }
     	    if (!foundBreak) { /* no whitespace, just break at margin */
     	    	newLineStart = max(p, lineStart+1);
-              colNum = Fl_Text_Buffer::character_width((char*)&c, colNum, tabDist); // FIXME: unicode
+              const char *s = buf->address(b);
+              colNum = Fl_Text_Buffer::character_width(s, colNum, tabDist); // FIXME: unicode
     	    	if (countPixels)
-   	    	    width = measure_proportional_character(c, colNum, p+styleBufOffset);
+   	    	    width = measure_proportional_character(s, colNum, p+styleBufOffset);
     	    }
     	    if (p >= maxPos) {
     		*retPos = maxPos;
@@ -2783,9 +2785,9 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
 }
 
 /**
-   Measure the width in pixels of a character "c" at a particular column
-   "colNum" and buffer position "pos".  This is for measuring characters in
-   proportional or mixed-width highlighting fonts.
+   Measure the width in pixels of the first character of string "s" at a
+   particular column "colNum" and buffer position "pos".  This is for measuring
+   characters in proportional or mixed-width highlighting fonts.
 **
    A note about proportional and mixed-width fonts: the mixed width and
    proportional font code in nedit does not get much use in general editing,
@@ -2796,12 +2798,13 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
    insertion/deletion, though static display and wrapping and resizing
    should now be solid because they are now used for online help display.
 */
-int Fl_Text_Display::measure_proportional_character(char c, int colNum, int pos) const {
+
+int Fl_Text_Display::measure_proportional_character(const char *s, int colNum, int pos) const {
     int charLen, style;
     char expChar[ FL_TEXT_MAX_EXP_CHAR_LEN ];
     Fl_Text_Buffer *styleBuf = mStyleBuffer;
     
-  charLen = Fl_Text_Buffer::expand_character(&c, colNum, expChar, buffer()->tab_distance()); // FIXME: unicode
+  charLen = Fl_Text_Buffer::expand_character(s, colNum, expChar, buffer()->tab_distance()); // FIXME: unicode
     if (styleBuf == 0) {
 	style = 0;
     } else {

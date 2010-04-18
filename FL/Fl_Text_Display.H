@@ -251,7 +251,7 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
                                bool countLastLineMissingNewLine = true) const;
     void find_line_end(int pos, bool start_pos_is_line_start, int *lineEnd,
                          int *nextLineStart) const;
-    int measure_proportional_character(char c, int colNum, int pos) const;
+    int measure_proportional_character(const char *s, int colNum, int pos) const;
     int wrap_uses_character(int lineEndPos) const;
     int range_touches_selection(const Fl_Text_Selection *sel, int rangeStart,
                                  int rangeEnd) const;

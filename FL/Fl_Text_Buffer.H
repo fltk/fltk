@@ -248,6 +248,18 @@ public:
    */
   unsigned int character(int pos) const;
   
+  /**
+   Convert a byte offset in buffer into a memory address.
+   */
+  const char *address(int pos) const
+  { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
+
+  /**
+   Convert a byte offset in buffer into a memory address.
+   */
+  char *address(int pos)
+  { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
+  
   /** 
    Returns the text from the given rectangle. When you are done
    with the text, free it using the free() function.
@@ -681,6 +693,7 @@ public:
    \return number of byte in substitution
    */
   static int character_width(const char *src, int indent, int tabDist);
+  static int character_width(const char    c, int indent, int tabDist);
 
   /**
    Count the number of displayed characters between buffer position
@@ -933,18 +946,6 @@ protected:
    \todo unicode check
    */
   void update_selections(int pos, int nDeleted, int nInserted);
-  
-  /**
-   Convert a byte offset in buffer into a memory address.
-   */
-  const char *address(int pos) const
-  { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
-
-  /**
-   Convert a byte offset in buffer into a memory address.
-   */
-  char *address(int pos)
-  { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
   
   Fl_Text_Selection mPrimary;     /**< highlighted areas */
   Fl_Text_Selection mSecondary;   /**< highlighted areas */
