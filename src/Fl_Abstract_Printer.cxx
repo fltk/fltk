@@ -70,7 +70,7 @@ void Fl_Abstract_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta
       int width, height;
       this->printable_rect(&width, &height);
       drawn_by_plugin = pi->print(widget, 0, 0, height);
-      }
+    }
   }
   if (!drawn_by_plugin) {
     widget->draw();
@@ -126,7 +126,7 @@ void Fl_Abstract_Printer::origin(int *x, int *y)
 void Fl_Abstract_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
   int slice, width, offset, count = 0;
-  Fl_Device *current = Fl_Device::display_device()->set_current();
+  Fl_Device::display_device()->set_current();
   Fl_Window *save_front = Fl::first_window();
   win->show();
   fl_gc = NULL;
@@ -144,7 +144,7 @@ void Fl_Abstract_Printer::print_window_part(Fl_Window *win, int x, int y, int w,
     image_data[count++] = fl_read_image(NULL, x + offset, y, width, h);
   }  
   save_front->show();
-  current->set_current();
+  this->set_current();
   for ( int i = 0, offset = 0; i < count; i++, offset += slice) {
     width = slice; 
     if (offset + width > w) width = w - offset;
@@ -178,6 +178,18 @@ void Fl_Abstract_Printer::delete_image_list()
   }
 }
 #endif
+
+Fl_Device *Fl_Abstract_Printer::set_current(void)
+{
+#ifdef __APPLE__
+  fl_gc = (CGContextRef)gc;
+#elif defined(WIN32)
+  fl_gc = (HDC)gc;
+#else
+  fl_gc = (_XGC*)gc;
+#endif
+  return this->Fl_Device::set_current();
+}
 
 
 /**

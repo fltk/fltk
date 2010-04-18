@@ -51,9 +51,9 @@
 #  include <X11/Xlocale.h>
 #  include <X11/Xlib.h>
 
-static Fl_Display_Device fl_xlib_display;
-FL_EXPORT Fl_Display_Device *fl_display_device = (Fl_Display_Device*)&fl_xlib_display; // does not change
-FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_xlib_display; // the current target device of graphics operations
+static Fl_Xlib_Display fl_xlib_device;
+FL_EXPORT Fl_Display *fl_display_device = (Fl_Display*)&fl_xlib_device; // does not change
+FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_xlib_device; // the current target device of graphics operations
 
 ////////////////////////////////////////////////////////////////
 // interface to poll/select call:
@@ -136,7 +136,9 @@ void Fl::add_fd(int n, void (*cb)(int, void*), void* v) {
 
 void Fl::remove_fd(int n, int events) {
   int i,j;
+# if !USE_POLL
   maxfd = -1; // recalculate maxfd on the fly
+# endif
   for (i=j=0; i<nfds; i++) {
 #  if USE_POLL
     if (pollfds[i].fd == n) {
@@ -150,8 +152,8 @@ void Fl::remove_fd(int n, int events) {
       if (!e) continue; // if no events left, delete this fd
       fd[i].events = e;
     }
-#  endif
     if (fd[i].fd > maxfd) maxfd = fd[i].fd;
+#  endif
     // move it down in the array if necessary:
     if (j<i) {
       fd[j] = fd[i];
@@ -1584,6 +1586,13 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     }
     XSetWMHints(fl_display, xp->xid, hints);
     XFree(hints);
+  }
+
+  // set the window type for menu and tooltip windows to avoid animations (compiz)
+  if (win->menu_window() || win->tooltip_window()) {
+    Atom net_wm_type = XInternAtom(fl_display, "_NET_WM_WINDOW_TYPE", False);
+    Atom net_wm_type_kind = XInternAtom(fl_display, "_NET_WM_WINDOW_TYPE_MENU", False);
+    int ret = XChangeProperty(fl_display, xp->xid, net_wm_type, XA_ATOM, 32, PropModeReplace, (unsigned char*)&net_wm_type_kind, 1);
   }
 
   XMapWindow(fl_display, xp->xid);

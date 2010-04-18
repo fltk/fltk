@@ -58,20 +58,6 @@ const char *Fl_Printer::property_use = "Use";
 const char *Fl_Printer::property_save = "Save";
 const char *Fl_Printer::property_cancel = "Cancel";
 
-const char *Fl_Printer::device_type = "Fl_Printer";
-
-Fl_Device *Fl_Printer::set_current(void)
-{
-#ifdef __APPLE__
-  fl_gc = (CGContextRef)gc;
-#elif defined(WIN32)
-  fl_gc = (HDC)gc;
-#else
-  fl_gc = (_XGC*)gc;
-#endif
-  return this->Fl_Device::set_current();
-}
-
 //
 // End of "$Id$".
 //

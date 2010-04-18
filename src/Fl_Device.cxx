@@ -29,10 +29,32 @@
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 
-const char *Fl_Device::device_type = "Fl_Device";
-const char *Fl_Display_Device::device_type = "Fl_Display_Device";
-const char *Fl_Graphics_Device::device_type = "Fl_Graphics_Device";
+/** \brief Draws an Fl_Pixmap object to the device. 
+ *
+ Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
+ the image offset by the cx and cy arguments.
+ */
+void Fl_Device::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  pxm->generic_device_draw(XP, YP, WP, HP, cx, cy);
+}
 
+/** \brief Draws an Fl_Bitmap object to the device. 
+ *
+ Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
+ the image offset by the cx and cy arguments.
+ */
+void Fl_Device::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  bm->generic_device_draw(XP, YP, WP, HP, cx, cy);
+}
+
+/** \brief Draws an Fl_RGB_Image object to the device. 
+ *
+ Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
+ the image offset by the cx and cy arguments.
+ */
+void Fl_Device::draw(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy) {
+  rgb->generic_device_draw(XP, YP, WP, HP, cx, cy);
+}
 
 /**
  @brief Sets this device (display, printer, local file) as the target of future graphics calls.

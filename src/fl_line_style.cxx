@@ -33,10 +33,8 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
-#include <FL/Fl_Printer.H>
 #include "flstring.h"
 #include <stdio.h>
-#include <FL/fl_ask.H>//TMP
 
 #ifdef __APPLE_QUARTZ__
 float fl_quartz_line_width_ = 1.0f;
@@ -119,9 +117,7 @@ void Fl_Device::line_style(int style, int width, char* dashes) {
   fl_quartz_line_width_ = (float)width; 
   fl_quartz_line_cap_ = Cap[(style>>8)&3];
   // when printing kCGLineCapSquare seems better for solid lines
-  if ( Fl_Device::current()->type() == Fl_Printer::device_type && style == FL_SOLID && dashes == NULL ) {
-    fl_quartz_line_cap_ = kCGLineCapSquare;
-    }
+  if (Fl_Device::current()->type() == quartz_printer && style == FL_SOLID) fl_quartz_line_cap_ = kCGLineCapSquare;
   fl_quartz_line_join_ = Join[(style>>12)&3];
   char *d = dashes; 
   static CGFloat pattern[16];

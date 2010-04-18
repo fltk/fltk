@@ -36,7 +36,7 @@ extern HWND fl_window;
 
 Fl_Printer::Fl_Printer(void) : Fl_Abstract_Printer() {
   hPr = NULL;
-  type_ = device_type;
+  type_ = gdi_printer;
 }
 
 Fl_Printer::~Fl_Printer(void) {

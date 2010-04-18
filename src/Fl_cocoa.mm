@@ -131,9 +131,9 @@ static void createAppleMenu(void);
 static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h);
 static void cocoaMouseHandler(NSEvent *theEvent);
 
-static Fl_Display_Device fl_quartz_display;
-FL_EXPORT Fl_Display_Device *fl_display_device = (Fl_Display_Device*)&fl_quartz_display; // does not change
-FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_quartz_display; // the current target device of graphics operations
+static Fl_Quartz_Display fl_quartz_device;
+FL_EXPORT Fl_Display *fl_display_device = (Fl_Display*)&fl_quartz_device; // does not change
+FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_quartz_device; // the current target device of graphics operations
 
 // public variables
 int fl_screen;
@@ -2100,7 +2100,7 @@ void Fl_X::make(Fl_Window* w)
         winstyle |= NSResizableWindowMask;
       }
     } else {
-			if (w->resizable()) {
+      if (w->resizable()) {
         Fl_Widget *o = w->resizable();
         int minw = o->w(); if (minw > 100) minw = 100;
         int minh = o->h(); if (minh > 100) minh = 100;
@@ -2121,7 +2121,8 @@ void Fl_X::make(Fl_Window* w)
         winstyle = NSBorderlessWindowMask;
       }
     } else if (w->modal()) {
-      winstyle &= ~(NSResizableWindowMask | NSMiniaturizableWindowMask);
+      winstyle &= ~NSMiniaturizableWindowMask;
+      // winstyle &= ~(NSResizableWindowMask | NSMiniaturizableWindowMask);
       // winlevel = NSModalPanelWindowLevel;
     }
     else if (w->non_modal()) {
@@ -2998,7 +2999,6 @@ int MACscreen_init(XRectangle screens[])
   printer.end_page();
   printer.end_job();
 }
-
 @end
 
 static NSMenu *appleMenu;
@@ -3028,7 +3028,7 @@ static void createAppleMenu(void)
   [appleMenu setAutoenablesItems:NO];
   [menuItem setEnabled:YES];
   [appleMenu addItem:[NSMenuItem separatorItem]];
-  // end of temporary for testing Fl_Printer  
+// end of temporary for testing Fl_Printer  
   // Services Menu
   services = [[NSMenu alloc] init];
   [appleMenu addItemWithTitle:@"Services" action:nil keyEquivalent:@""];
@@ -3475,7 +3475,7 @@ WindowRef MACwindowRef(Fl_Window *w)
 
 // so a CGRect matches exactly what is denoted x,y,w,h for clipping purposes
 CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
-  if ( Fl_Device::current()->type() == Fl_Printer::device_type ) return CGRectMake(x, y, w-1.5 , h-1.5 ); 
+  if (Fl_Device::current()->type() == Fl_Device::quartz_printer) return CGRectMake(x, y, w-1.5 , h-1.5 ); 
   return CGRectMake(x, y, w > 0 ? w - 0.9 : 0, h > 0 ? h - 0.9 : 0);
 }
 

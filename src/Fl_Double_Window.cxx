@@ -28,7 +28,6 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Printer.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 
@@ -149,9 +148,8 @@ void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int src
   SelectObject(new_gc, bitmap);
   BOOL alpha_ok = 0;
   // first try to alpha blend
-  // if to printer, always try alpha_blend
-  int to_display = Fl_Device::current()->type() == Fl_Display_Device::device_type; // true iff display output
-  if ( (to_display && fl_can_do_alpha_blending()) || Fl_Device::current()->type() == Fl_Printer::device_type) 
+  int to_display = Fl_Device::current()->type() < 256; // true iff display output
+  if ( (!to_display) || fl_can_do_alpha_blending()) // if not on display, always try alpha_blend
     alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
   if (!alpha_ok)

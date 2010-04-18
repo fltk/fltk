@@ -46,7 +46,6 @@
 
 #include <config.h>
 #include <FL/Fl.H>
-#include <FL/Fl_Printer.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
@@ -255,7 +254,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
         }            
       }
     }
-    if(Fl_Device::current()->type() == Fl_Printer::device_type) {
+    if(Fl_Device::current()->type() == Fl_Device::gdi_printer) {
       // if print context, device and logical units are not equal, so SetDIBitsToDevice
       // does not do the expected job, whereas StretchDIBits does it.
       StretchDIBits(fl_gc, x, y+j-k, w, k, 0, 0, w, k,

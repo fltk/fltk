@@ -24,9 +24,6 @@
 //
 //     http://www.fltk.org/str.php
 //
-
-#include <FL/Fl_Printer.H>
-
 static int fl_angle_ = 0;
 
 #ifndef FL_DOXYGEN
@@ -250,7 +247,7 @@ static void on_printer_extents_update(int &dx, int &dy, int &w, int &h)
 
 // if printer context, extents shd be converted to logical coords
 #define EXTENTS_UPDATE(x,y,w,h) \
-  if (Fl_Device::current()->type() == Fl_Printer::device_type) { on_printer_extents_update(x,y,w,h); }
+  if (Fl_Device::current()->type() == Fl_Device::gdi_printer) { on_printer_extents_update(x,y,w,h); }
 
 static unsigned short *ext_buff = NULL; // UTF-16 converted version of input UTF-8 string
 static unsigned wc_len = 0; // current string buffer dimension

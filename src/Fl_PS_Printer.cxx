@@ -32,34 +32,25 @@
 #include <FL/Fl_PSfile_Device.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
-const char *Fl_PS_Device::device_type = "Fl_PS_Device";
-const char *Fl_PSfile_Device::device_type = "Fl_PSfile_Device";
 const char *Fl_PSfile_Device::file_chooser_title = "Select a .ps file";
-
-/**
- @brief The constructor.
- */
-Fl_PS_Device::Fl_PS_Device(void)
-{
-  close_cmd_ = 0;
-  //lang_level_ = 3;
-  lang_level_ = 2;
-  mask = 0;
-  ps_filename_ = NULL;
-  type_ = device_type;
-  scale_x = scale_y = 1.;
-}
 
 /**
  @brief The constructor.
  */
 Fl_PSfile_Device::Fl_PSfile_Device(void)
 {
-  type_ = device_type;
+  close_cmd_ = 0;
+  //lang_level_ = 3;
+  lang_level_ = 2;
+  mask = 0;
+  ps_filename_ = NULL;
+  type_ = postscript_device;
+  scale_x = scale_y = 1.;
 #ifdef __APPLE__
   gc = fl_gc; // the display context is used by fl_text_extents()
 #endif
 }
+
 /**
  @brief Begins the session where all graphics requests will go to a local PostScript file.
  *
@@ -116,7 +107,7 @@ Fl_PSfile_Device::~Fl_PSfile_Device() {
   #include "print_panel.cxx"
 #endif
 
-const Fl_PS_Device::page_format Fl_PS_Device::page_formats[NO_PAGE_FORMATS] = { // order of enum Page_Format
+const Fl_PSfile_Device::page_format Fl_PSfile_Device::page_formats[NO_PAGE_FORMATS] = { // order of enum Page_Format
 // comes from appendix B of 5003.PPD_Spec_v4.3.pdf
 
   // A* // index(Ai) = i
@@ -468,7 +459,7 @@ static const char * prolog_3 = // prolog relevant only if lang_level >2
 
 // end prolog 
 
-int Fl_PS_Device::start_postscript (int pagecount, enum Page_Format format, enum Page_Layout layout)
+int Fl_PSfile_Device::start_postscript (int pagecount, enum Page_Format format, enum Page_Layout layout)
 //returns 0 iff OK
 {
   int w, h, x;
@@ -526,13 +517,13 @@ int Fl_PS_Device::start_postscript (int pagecount, enum Page_Format format, enum
   return 0;
 }
 
-void Fl_PS_Device::recover(){
+void Fl_PSfile_Device::recover(){
   color(cr_,cg_,cb_);
   line_style(linestyle_,linewidth_,linedash_);
   font(font_,size_);
 }
 
-void Fl_PS_Device::reset(){
+void Fl_PSfile_Device::reset(){
   gap_=1;
   clip_=0;
   cr_=cg_=cb_=0;
@@ -551,7 +542,7 @@ void Fl_PS_Device::reset(){
   
 }
 
-void Fl_PS_Device::page_policy(int p){
+void Fl_PSfile_Device::page_policy(int p){
   page_policy_ = p;
   if(lang_level_>=2)
     fprintf(output,"<< /Policies << /Pagesize %i >> >> setpagedevice\n", p);
@@ -561,7 +552,7 @@ void Fl_PS_Device::page_policy(int p){
 
 
 
-void Fl_PS_Device::page(double pw, double ph, int media) {
+void Fl_PSfile_Device::page(double pw, double ph, int media) {
   
   if (nPages){
     fprintf(output, "CR\nGR\nGR\nGR\nSP\nrestore\n");
@@ -610,20 +601,20 @@ void Fl_PS_Device::page(double pw, double ph, int media) {
   fprintf(output, "GS\nCS\n");
 };
 
-void Fl_PS_Device::page(int format){
+void Fl_PSfile_Device::page(int format){
   
   
   if(format &  LANDSCAPE){
-    ph_=Fl_PS_Device::page_formats[format & 0xFF].width;
-    pw_=Fl_PS_Device::page_formats[format & 0xFF].height;
+    ph_=Fl_PSfile_Device::page_formats[format & 0xFF].width;
+    pw_=Fl_PSfile_Device::page_formats[format & 0xFF].height;
   }else{
-    pw_=Fl_PS_Device::page_formats[format & 0xFF].width;
-    ph_=Fl_PS_Device::page_formats[format & 0xFF].height;
+    pw_=Fl_PSfile_Device::page_formats[format & 0xFF].width;
+    ph_=Fl_PSfile_Device::page_formats[format & 0xFF].height;
   }
   page(pw_,ph_,format & 0xFF00);//,orientation only;
 };
 
-void Fl_PS_Device::rect(int x, int y, int w, int h) {
+void Fl_PSfile_Device::rect(int x, int y, int w, int h) {
   // Commented code does not work, i can't find the bug ;-(
   // fprintf(output, "GS\n");
   //  fprintf(output, "%i, %i, %i, %i R\n", x , y , w, h);
@@ -638,17 +629,17 @@ void Fl_PS_Device::rect(int x, int y, int w, int h) {
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::rectf(int x, int y, int w, int h) {
+void Fl_PSfile_Device::rectf(int x, int y, int w, int h) {
   fprintf(output, "%g %g %i %i FR\n", x-0.5, y-0.5, w, h);
 }
 
-void Fl_PS_Device::line(int x1, int y1, int x2, int y2) {
+void Fl_PSfile_Device::line(int x1, int y1, int x2, int y2) {
   fprintf(output, "GS\n");
   fprintf(output, "%i %i %i %i L\n", x1 , y1, x2 ,y2);
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::line(int x0, int y0, int x1, int y1, int x2, int y2) {
+void Fl_PSfile_Device::line(int x0, int y0, int x1, int y1, int x2, int y2) {
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x0 , y0);
@@ -658,7 +649,7 @@ void Fl_PS_Device::line(int x0, int y0, int x1, int y1, int x2, int y2) {
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::xyline(int x, int y, int x1, int y2, int x3){
+void Fl_PSfile_Device::xyline(int x, int y, int x1, int y2, int x3){
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x , y );
@@ -670,7 +661,7 @@ void Fl_PS_Device::xyline(int x, int y, int x1, int y2, int x3){
 };
 
 
-void Fl_PS_Device::xyline(int x, int y, int x1, int y2){
+void Fl_PSfile_Device::xyline(int x, int y, int x1, int y2){
   
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
@@ -681,7 +672,7 @@ void Fl_PS_Device::xyline(int x, int y, int x1, int y2){
   fprintf(output, "GR\n");
 };
 
-void Fl_PS_Device::xyline(int x, int y, int x1){
+void Fl_PSfile_Device::xyline(int x, int y, int x1){
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x , y);
@@ -691,7 +682,7 @@ void Fl_PS_Device::xyline(int x, int y, int x1){
   fprintf(output, "GR\n");
 };
 
-void Fl_PS_Device::yxline(int x, int y, int y1, int x2, int y3){
+void Fl_PSfile_Device::yxline(int x, int y, int y1, int x2, int y3){
   fprintf(output, "GS\n");
   
   fprintf(output,"BP\n");
@@ -703,7 +694,7 @@ void Fl_PS_Device::yxline(int x, int y, int y1, int x2, int y3){
   fprintf(output, "GR\n");
 };
 
-void Fl_PS_Device::yxline(int x, int y, int y1, int x2){
+void Fl_PSfile_Device::yxline(int x, int y, int y1, int x2){
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x , y);
@@ -713,7 +704,7 @@ void Fl_PS_Device::yxline(int x, int y, int y1, int x2){
   fprintf(output, "GR\n");
 };
 
-void Fl_PS_Device::yxline(int x, int y, int y1){
+void Fl_PSfile_Device::yxline(int x, int y, int y1){
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x , y);
@@ -722,7 +713,7 @@ void Fl_PS_Device::yxline(int x, int y, int y1){
   fprintf(output, "GR\n");
 };
 
-void Fl_PS_Device::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
+void Fl_PSfile_Device::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x0 , y0);
@@ -732,7 +723,7 @@ void Fl_PS_Device::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+void Fl_PSfile_Device::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x0 , y0);
@@ -743,7 +734,7 @@ void Fl_PS_Device::loop(int x0, int y0, int x1, int y1, int x2, int y2, int x3, 
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
+void Fl_PSfile_Device::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x0 , y0);
@@ -753,7 +744,7 @@ void Fl_PS_Device::polygon(int x0, int y0, int x1, int y1, int x2, int y2) {
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
+void Fl_PSfile_Device::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3) {
   fprintf(output, "GS\n");
   fprintf(output,"BP\n");
   fprintf(output, "%i %i MT\n", x0 , y0 );
@@ -765,7 +756,7 @@ void Fl_PS_Device::polygon(int x0, int y0, int x1, int y1, int x2, int y2, int x
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::point(int x, int y){
+void Fl_PSfile_Device::point(int x, int y){
   rectf(x,y,1,1);
 }
 
@@ -788,7 +779,7 @@ static double dashes_cap[5][7]={
 };
 
 
-void Fl_PS_Device::line_style(int style, int width, char* dashes){
+void Fl_PSfile_Device::line_style(int style, int width, char* dashes){
   //line_styled_=1;
   
   linewidth_=width;
@@ -866,16 +857,16 @@ static const char *_fontNames[] = {
 "ZapfDingbats"
 };
 
-void Fl_PS_Device::font(int f, int s) {
+void Fl_PSfile_Device::font(int f, int s) {
   if (f >= FL_FREE_FONT)
     f = FL_COURIER;
   fprintf(output, "/%s SF\n" , _fontNames[f]);
   fprintf(output,"%i FS\n", s);
-  display_device()->font(f,s); // Use display fonts for font measurement
+  Fl_Device::display_device()->font(f,s); // Use display fonts for font measurement
   font_ = f; size_ = s;
 };
 
-void Fl_PS_Device::color(Fl_Color c) {
+void Fl_PSfile_Device::color(Fl_Color c) {
   //colored_=1;
   color_=c;
   Fl::get_color(c, cr_, cg_, cb_);
@@ -892,7 +883,7 @@ void Fl_PS_Device::color(Fl_Color c) {
   }
 }
 
-void Fl_PS_Device::color(unsigned char r, unsigned char g, unsigned char b) {
+void Fl_PSfile_Device::color(unsigned char r, unsigned char g, unsigned char b) {
   //colored_=1;
   cr_=r;cg_=g;cb_=b;
   if (r==g && g==b) {
@@ -907,14 +898,14 @@ void Fl_PS_Device::color(unsigned char r, unsigned char g, unsigned char b) {
   }
 }
 
-void Fl_PS_Device::draw(int angle, const char *str, int n, int x, int y)
+void Fl_PSfile_Device::draw(int angle, const char *str, int n, int x, int y)
 {
   fprintf(output, "GS %d %d translate %d rotate\n", x, y, - angle);
   this->transformed_draw(str, n, 0, 0);
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::transformed_draw(const char* str, int n, double x, double y){
+void Fl_PSfile_Device::transformed_draw(const char* str, int n, double x, double y){
   if (!n || !str || !*str)return;
   fprintf(output,"%g (", fl_width(str, n));
   int i=1;
@@ -939,18 +930,18 @@ void Fl_PS_Device::transformed_draw(const char* str, int n, double x, double y){
 struct matrix {double a, b, c, d, x, y;};
 extern matrix * fl_matrix;
 
-void Fl_PS_Device::concat(){
+void Fl_PSfile_Device::concat(){
   fprintf(output,"[%g %g %g %g %g %g] CT\n", fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y);
 }
 
-void Fl_PS_Device::reconcat(){
+void Fl_PSfile_Device::reconcat(){
   fprintf(output, "[%g %g %g %g %g %g] RCT\n" , fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y);
 }
 
 /////////////////  transformed (double) drawings ////////////////////////////////
 
 
-void Fl_PS_Device::begin_points(){
+void Fl_PSfile_Device::begin_points(){
   fprintf(output, "GS\n");
   concat();
   
@@ -959,7 +950,7 @@ void Fl_PS_Device::begin_points(){
   shape_=POINTS;
 };
 
-void Fl_PS_Device::begin_line(){
+void Fl_PSfile_Device::begin_line(){
   fprintf(output, "GS\n");
   concat();
   fprintf(output, "BP\n");
@@ -967,7 +958,7 @@ void Fl_PS_Device::begin_line(){
   shape_=LINE;
 };
 
-void Fl_PS_Device::begin_loop(){
+void Fl_PSfile_Device::begin_loop(){
   fprintf(output, "GS\n");
   concat();
   fprintf(output, "BP\n");
@@ -975,7 +966,7 @@ void Fl_PS_Device::begin_loop(){
   shape_=LOOP;
 };
 
-void Fl_PS_Device::begin_polygon(){
+void Fl_PSfile_Device::begin_polygon(){
   fprintf(output, "GS\n");
   concat();
   fprintf(output, "BP\n");
@@ -983,7 +974,7 @@ void Fl_PS_Device::begin_polygon(){
   shape_=POLYGON;
 };
 
-void Fl_PS_Device::vertex(double x, double y){
+void Fl_PSfile_Device::vertex(double x, double y){
   if(shape_==POINTS){
     fprintf(output,"%g %g MT\n", x , y);
     gap_=1;
@@ -996,7 +987,7 @@ void Fl_PS_Device::vertex(double x, double y){
     fprintf(output, "%g %g LT\n", x , y);
 };
 
-void Fl_PS_Device::curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3){
+void Fl_PSfile_Device::curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3){
   if(shape_==NONE) return;
   if(gap_)
     fprintf(output,"%g %g MT\n", x , y);
@@ -1008,7 +999,7 @@ void Fl_PS_Device::curve(double x, double y, double x1, double y1, double x2, do
 };
 
 
-void Fl_PS_Device::circle(double x, double y, double r){
+void Fl_PSfile_Device::circle(double x, double y, double r){
   if(shape_==NONE){
     fprintf(output, "GS\n");
     concat();
@@ -1023,7 +1014,7 @@ void Fl_PS_Device::circle(double x, double y, double r){
   
 };
 
-void Fl_PS_Device::arc(double x, double y, double r, double start, double a){
+void Fl_PSfile_Device::arc(double x, double y, double r, double start, double a){
   if(shape_==NONE) return;
   gap_=0;
   if(start>a)
@@ -1033,7 +1024,7 @@ void Fl_PS_Device::arc(double x, double y, double r, double start, double a){
   
 };
 
-void Fl_PS_Device::arc(int x, int y, int w, int h, double a1, double a2) {
+void Fl_PSfile_Device::arc(int x, int y, int w, int h, double a1, double a2) {
   fprintf(output, "GS\n");
   //fprintf(output, "BP\n");
   begin_line();
@@ -1052,7 +1043,7 @@ void Fl_PS_Device::arc(int x, int y, int w, int h, double a1, double a2) {
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::pie(int x, int y, int w, int h, double a1, double a2) {
+void Fl_PSfile_Device::pie(int x, int y, int w, int h, double a1, double a2) {
   
   fprintf(output, "GS\n");
   fprintf(output, "%g %g TR\n", x + w/2.0 -0.5 , y + h/2.0 - 0.5);
@@ -1064,7 +1055,7 @@ void Fl_PS_Device::pie(int x, int y, int w, int h, double a1, double a2) {
   fprintf(output, "GR\n");
 }
 
-void Fl_PS_Device::end_points(){
+void Fl_PSfile_Device::end_points(){
   gap_=1;
   reconcat();
   fprintf(output, "ELP\n"); //??
@@ -1072,14 +1063,14 @@ void Fl_PS_Device::end_points(){
   shape_=NONE;
 }
 
-void Fl_PS_Device::end_line(){
+void Fl_PSfile_Device::end_line(){
   gap_=1;
   reconcat();
   fprintf(output, "ELP\n");
   fprintf(output, "GR\n");
   shape_=NONE;
 }
-void Fl_PS_Device::end_loop(){
+void Fl_PSfile_Device::end_loop(){
   gap_=1;
   reconcat();
   fprintf(output, "ECP\n");
@@ -1087,7 +1078,7 @@ void Fl_PS_Device::end_loop(){
   shape_=NONE;
 }
 
-void Fl_PS_Device::end_polygon(){
+void Fl_PSfile_Device::end_polygon(){
   
   gap_=1;
   reconcat();
@@ -1096,7 +1087,7 @@ void Fl_PS_Device::end_polygon(){
   shape_=NONE;
 }
 
-void Fl_PS_Device::transformed_vertex(double x, double y){
+void Fl_PSfile_Device::transformed_vertex(double x, double y){
   reconcat();
   if(gap_){
     fprintf(output, "%g %g MT\n", x , y);
@@ -1108,7 +1099,7 @@ void Fl_PS_Device::transformed_vertex(double x, double y){
 
 /////////////////////////////   Clipping /////////////////////////////////////////////
 
-void Fl_PS_Device::push_clip(int x, int y, int w, int h) {
+void Fl_PSfile_Device::push_clip(int x, int y, int w, int h) {
   Clip * c=new Clip();
   clip_box(x,y,w,h,c->x,c->y,c->w,c->h);
   c->prev=clip_;
@@ -1120,7 +1111,7 @@ void Fl_PS_Device::push_clip(int x, int y, int w, int h) {
   
 }
 
-void Fl_PS_Device::push_no_clip() {
+void Fl_PSfile_Device::push_no_clip() {
   Clip * c = new Clip();
   c->prev=clip_;
   clip_=c;
@@ -1130,7 +1121,7 @@ void Fl_PS_Device::push_no_clip() {
     recover();
 }
 
-void Fl_PS_Device::pop_clip() {
+void Fl_PSfile_Device::pop_clip() {
   if(!clip_)return;
   Clip * c=clip_;
   clip_=clip_->prev;
@@ -1143,7 +1134,7 @@ void Fl_PS_Device::pop_clip() {
     recover();
 }
 
-int Fl_PS_Device::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H){
+int Fl_PSfile_Device::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H){
   if(!clip_){
     X=x;Y=y;W=w;H=h;
     return 1;
@@ -1179,7 +1170,7 @@ int Fl_PS_Device::clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, i
   return ret;
 };
 
-int Fl_PS_Device::not_clipped(int x, int y, int w, int h){
+int Fl_PSfile_Device::not_clipped(int x, int y, int w, int h){
   if(!clip_) return 1;
   if(clip_->w < 0) return 1;
   int X, Y, W, H;
@@ -1351,7 +1342,7 @@ int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
     return 1;
   }
 
-  return Fl_PS_Device::start_postscript(pages, format, layout); // start printing
+  return Fl_PSfile_Device::start_postscript(pages, format, layout); // start printing
 }
 
 #endif // ! (defined(__APPLE__) || defined(WIN32) )

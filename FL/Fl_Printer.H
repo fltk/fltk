@@ -72,7 +72,7 @@
  <li>Mac OS X platform: all graphics requests print as on display.
  </ul>
  */
-class Fl_Printer : public Fl_Graphics_Device , public Fl_Abstract_Printer {
+class Fl_Printer : public Fl_Abstract_Printer {
 private:
 #ifdef __APPLE__
   float scale_x;
@@ -126,15 +126,14 @@ public:
 class Fl_Printer : public Fl_PSfile_Device {
 
 public:
-  Fl_Printer(void) { gc = NULL; bg_r_ = bg_g_ = bg_b_ = 0; };
+
+  Fl_Printer(void) {};
   ~Fl_Printer(void) {};
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
 
 #endif	// Fl_Printer (platform-dependent)
 
   // Fl_Printer:: common for all platforms
-  Fl_Device *set_current(void);
-  static const char *device_type;
 
 public:	// just to be sure ...
 
