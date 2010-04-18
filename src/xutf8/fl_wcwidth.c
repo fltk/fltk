@@ -30,7 +30,9 @@
  * forward declare the routines as static to avoid name leakage.
  */
 
-#include <wchar.h>
+#include <stdio.h>              /* for size_t only */
+typedef unsigned int wchar_t;   /* supercede system wchar_t */
+
 static int mk_wcwidth(wchar_t ucs);
 static int mk_wcswidth(const wchar_t *pwcs, size_t n);
 static int mk_wcwidth_cjk(wchar_t ucs);

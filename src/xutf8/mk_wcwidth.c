@@ -1,4 +1,10 @@
 /*
+ * Important!
+ * This file should remain as close to Markus Kuhn's original source
+ * as possible for easy checking for changes later, however unlikely.
+ * All customisations to work with FLTK shall be annotated!
+ */
+/*
  * This is an implementation of wcwidth() and wcswidth() (defined in
  * IEEE Std 1002.1-2001) for Unicode.
  *
@@ -59,7 +65,14 @@
  * Latest version: http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
  */
 
+/*
+ * FLTK - avoid possible problems on systems with 32-bit wchar_t.
+ *        In the first instance, wchar_t is superceded in calling file
+ *        to avoid any unnecessary changes in this one.
+ */
+#if 0
 #include <wchar.h>
+#endif
 
 struct interval {
   int first;
