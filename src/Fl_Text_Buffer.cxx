@@ -1025,8 +1025,8 @@ int Fl_Text_Buffer::character_width(const char *src, int indent, int tabDist)
     int len = fl_utf8len(c);
     int ret = 0;
     unsigned int ucs = fl_utf8decode(src, src+len, &ret);
-    int width = 1; //   mk_wcwidth((wchar_t)ucs); // FIXME
-    // fprintf(stderr, "mk_wcwidth(%x) -> %d (%d, %d, %s)\n", ucs, width, len, ret, s);
+    int width = fl_wcwidth_(ucs);       // FIXME
+    // fprintf(stderr, "mk_wcwidth(%x) -> %d (%d, %d, %s)\n", ucs, width, len, ret, src);
     return width;
   }
   if ((c & 0x80) && !(c & 0x40)) {      // other byte of UTF-8 sequence

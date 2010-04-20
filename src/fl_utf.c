@@ -856,6 +856,51 @@ int fl_utf8test(const char* src, unsigned srclen) {
   return ret;
 }
 
+/* forward declare mk_wcwidth() as static so the name is not visible.
+ */
+ static int mk_wcwidth(unsigned int ucs);
+
+ /* include the c source directly so it's contents are only visible here
+  */
+#include "xutf8/mk_wcwidth.c"
+
+/** wrapper to adapt Markus Kuhn's implementation of wcwidth() for FLTK
+    \param [in] ucs Unicode character value
+    \returns width of character in columns
+
+    This is an implementation of wcwidth() and wcswidth()
+    (defined in IEEE Std 1002.1-2001) for Unicode.
+    See http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
+
+    WARNING: this function returns widths for "raw" Unicode characters.
+    It does not even try to map C1 control characters (0x80 to 0x9F) to
+    CP1252, and C0/C1 control characters and DEL will return -1.
+ */
+int fl_wcwidth_(unsigned int ucs) {
+  return mk_wcwidth(ucs);
+}
+
+/** extended wrapper around  fl_wcwidth_(unsigned int ucs) function.
+    \param[in] src pointer to start of UTF-8 byte sequence
+    \returns width of character in columns
+
+    Depending on build options, this function may map C1 control
+    characters (0x80 to 0x9f) to CP1252, and return the width of
+    that character instead. This is not the same behaviour as
+    fl_wcwidth_(unsigned int ucs) .
+
+    Note that other control characters and DEL will still return -1,
+    so if you want different behaviour, you need to test for those
+    characters before calling fl_wcwidth(), and handle them separately.
+ */
+int fl_wcwidth(const char* src) {
+  int len = fl_utf8len(*src);
+  int ret = 0;
+  unsigned int ucs = fl_utf8decode(src, src+len, &ret);
+  int width = fl_wcwidth_(ucs);
+  return width;
+}
+
 /** @} */
 
 /*
