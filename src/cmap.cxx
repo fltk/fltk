@@ -20,7 +20,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@easysw.com".
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
 //
 
 // This program produces the contents of "fl_cmap.h" as stdout
