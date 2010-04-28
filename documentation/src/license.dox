@@ -16,8 +16,7 @@ exceptions:
         The authors do request that such modifications be
         contributed to the FLTK project - send all contributions
         through the "Software Trouble Report" on the following page:
-        <BR> 
-           http://www.fltk.org/str.php
+        http://www.fltk.org/str.php<BR>
 	<BR>
 -#	Widgets that are subclassed from FLTK widgets do not
 	constitute a derivative work.<BR>
