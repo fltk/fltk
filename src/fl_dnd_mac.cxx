@@ -20,7 +20,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
 
 // This file contains MacOS-specific code for fltk which is always linked
 // in.  Search other files for "__APPLE__" or filenames ending in _mac.cxx

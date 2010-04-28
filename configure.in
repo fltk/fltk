@@ -1243,9 +1243,9 @@ else
 	    ;;
 	*)
 	    # Running some other operating system; inform the user they
-	    # should contribute the necessary options to fltk-bugs@fltk.org...
+	    # should contribute the necessary options via the STR form..
 	    AC_MSG_WARN(Building FLTK with default compiler optimizations)
-	    AC_MSG_WARN(Contact fltk-bugs@fltk.org with uname and compiler options.)
+	    AC_MSG_WARN(Send the FLTK developers your uname and compiler options via http://www.fltk.org/str.php)
 	    ;;
     esac
 fi

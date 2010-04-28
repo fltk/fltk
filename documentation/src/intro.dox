@@ -302,7 +302,8 @@ FLTK is available on the 'net in a bunch of locations:
 \par WWW
 http://www.fltk.org/ <br>
 http://www.fltk.org/str.php [for reporting bugs] <br> 
-http://www.fltk.org/software.php [source code]
+http://www.fltk.org/software.php [source code]<br>
+http://www.fltk.org/newsgroups.php [newsgroup/forums]
 
 \par FTP
 http://ftp.easysw.com/pub/fltk [California, USA, via http]<br>
@@ -312,37 +313,28 @@ ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub/fltk [Espoo, Finland]<br>
 ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk [Germany] <br>
 ftp://gd.tuwien.ac.at/hci/fltk [Austria]
 
-\par EMail
-<A href="mailto:fltk@fltk.org">fltk@fltk.org</A> [see instructions below]<br> 
-<A href="mailto:fltk-bugs@fltk.org">fltk-bugs@fltk.org</A> [for	reporting bugs]
-
 \par NNTP Newsgroups
-news.easysw.com
+news://news.easysw.com/ [NNTP interface]<br>
+http://fltk.org/newsgroups.php [web interface]<br>
 
-To send a message to the FLTK mailing list
-("fltk@fltk.org") you  must first join the list.
-Non-member submissions are blocked to avoid  problems with
-unsolicited email.
+Point your NNTP news reader at news.easysw.com. At minimum, you'll want to subscribe
+to the "fltk.general" group for general FLTK questions and answers. 
 
-To join the FLTK mailing list, send a message to
-"majordomo@fltk.org" with "subscribe fltk"
-in the message body. A digest of this list is available by
-subscribing to the "fltk-digest" mailing list.
+You can also use the web interface to the newsgroup; just go to the main http://fltk.org/ 
+page and click on "Forums".
 
 \section intro_reporting Reporting Bugs
 
-To report a bug in FLTK, send an email to
-"fltk-bugs@fltk.org". Please include the FLTK version,
-operating system & version, and compiler that you are using
-when describing the bug or problem. We will be unable to provide
+To report a bug in FLTK, or for feature requests, please use the form at
+<A href="http://www.fltk.org/str.php">http://www.fltk.org/str.php</A>,
+and click on "Submit Bug or Feature Request".
+
+You'll be prompted for the FLTK version, operating system & version, 
+and compiler that you are using. We will be unable to provide
 any kind of help without that basic information.
 
-Bugs can also be reported to the "fltk.bugs" newsgroup or on the
-SourceForge bug tracker pages.
-
-For general support and questions, please use the FLTK mailing list
-at "fltk@fltk.org" or one of the newsgroups.
-
+For general support and questions, please use the fltk.general newsgroup (see above, "NNTP Newsgroups")
+or the web interface to the newsgroups at <A href="http://fltk.org/newsgroups.php">http://fltk.org/newsgroups.php</A>.
 
 \htmlonly
 <hr>

@@ -18,8 +18,10 @@ file, and makefiles by themselves to support a specific platform
 do not constitute a modified or derivative work.
 .IP
 The authors do request that such modifications be
-contributed to the FLTK project - send all
-contributions to "fltk\-bugs@fltk.org".
+contributed to the FLTK project - send all contributions
+through the "Software Trouble Report" on the following page:
+.IP
+    http://www.fltk.org/str.php
 .IP
 2. Widgets that are subclassed from FLTK widgets do not
 constitute a derivative work.
