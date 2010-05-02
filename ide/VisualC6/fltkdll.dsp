@@ -33,13 +33,13 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "fltkdll0"
-# PROP BASE Intermediate_Dir "fltkdll0"
+# PROP BASE Output_Dir "Release/$(ProjectName)"
+# PROP BASE Intermediate_Dir "Release/$(ProjectName)"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "../../test"
-# PROP Intermediate_Dir "fltkdll"
+# PROP Output_Dir "Release/$(ProjectName)"
+# PROP Intermediate_Dir "Release/$(ProjectName)"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
@@ -60,13 +60,13 @@ LINK32=link.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "fltkdll1"
-# PROP BASE Intermediate_Dir "fltkdll1"
+# PROP BASE Output_Dir "Debug/$(ProjectName)"
+# PROP BASE Intermediate_Dir "Debug/$(ProjectName)"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "../../test"
-# PROP Intermediate_Dir "fltkdlld"
+# PROP Output_Dir "Debug/$(ProjectName)"
+# PROP Intermediate_Dir "Debug/$(ProjectName)"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
@@ -92,6 +92,10 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\..\src\Fl.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Abstract_Printer.cxx
 # End Source File
 # Begin Source File
 
@@ -148,6 +152,10 @@ SOURCE=..\..\src\Fl_Color_Chooser.cxx
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Counter.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Device.cxx
 # End Source File
 # Begin Source File
 
@@ -252,6 +260,10 @@ SOURCE=..\..\src\Fl_Pixmap.cxx
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Positioner.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Printer.cxx
 # End Source File
 # Begin Source File
 
@@ -651,6 +663,10 @@ SOURCE=..\..\src\numericsort.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\ps_image.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\scandir.c
 # End Source File
 # Begin Source File
@@ -672,22 +688,6 @@ SOURCE=..\..\src\xutf8\is_right2left.c
 # Begin Source File
 
 SOURCE=..\..\src\xutf8\is_spacing.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\Fl_Device.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\Fl_Printer.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\ps_image.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\Fl_Abstract_Printer.cxx
 # End Source File
 # End Target
 # End Project

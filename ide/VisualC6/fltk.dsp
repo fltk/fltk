@@ -32,13 +32,13 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release"
-# PROP BASE Intermediate_Dir "Release"
+# PROP BASE Output_Dir "Release/$(ProjectName)"
+# PROP BASE Intermediate_Dir "Release/$(ProjectName)"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release"
-# PROP Intermediate_Dir "Release"
+# PROP Output_Dir "Release/$(ProjectName)"
+# PROP Intermediate_Dir "Release/$(ProjectName)"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD CPP /nologo /MD /GX /Ot /Op /Ob2 /I "." /I "../.." /I "../../zlib" /I "../../png" /I "../../jpeg" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /FD /c
@@ -56,13 +56,13 @@ LIB32=link.exe -lib
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug"
-# PROP BASE Intermediate_Dir "Debug"
+# PROP BASE Output_Dir "Debug/$(ProjectName)"
+# PROP BASE Intermediate_Dir "Debug/$(ProjectName)"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
-# PROP Intermediate_Dir "Debug"
+# PROP Output_Dir "Debug/$(ProjectName)"
+# PROP Intermediate_Dir "Debug/$(ProjectName)"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
 # ADD CPP /nologo /MDd /GX /Z7 /Od /I "." /I "../.." /I "../../zlib" /I "../../png" /I "../../jpeg" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /FR /YX /FD /c
@@ -84,6 +84,10 @@ LIB32=link.exe -lib
 # Begin Source File
 
 SOURCE=..\..\src\Fl.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Abstract_Printer.cxx
 # End Source File
 # Begin Source File
 
@@ -140,6 +144,10 @@ SOURCE=..\..\src\Fl_Color_Chooser.cxx
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Counter.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Device.cxx
 # End Source File
 # Begin Source File
 
@@ -244,6 +252,10 @@ SOURCE=..\..\src\Fl_Pixmap.cxx
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Positioner.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Printer.cxx
 # End Source File
 # Begin Source File
 
@@ -643,6 +655,10 @@ SOURCE=..\..\src\numericsort.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\ps_image.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\scandir.c
 # End Source File
 # Begin Source File
@@ -664,22 +680,6 @@ SOURCE=..\..\src\xutf8\is_right2left.c
 # Begin Source File
 
 SOURCE=..\..\src\xutf8\is_spacing.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\Fl_Device.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\Fl_Printer.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\ps_image.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\Fl_Abstract_Printer.cxx
 # End Source File
 # End Target
 # End Project
