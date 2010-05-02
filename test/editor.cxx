@@ -209,13 +209,13 @@ style_parse(const char *text,
 	continue;
       } else if (*text == '\"') {
         current = 'D';
-      } else if (!last && (islower(*text) || *text == '_')) {
+      } else if (!last && (islower((*text)&255) || *text == '_')) {
         // Might be a keyword...
 	for (temp = text, bufptr = buf;
-	     (islower(*temp) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
+	     (islower((*temp)&255) || *temp == '_') && bufptr < (buf + sizeof(buf) - 1);
 	     *bufptr++ = *temp++);
 
-        if (!islower(*temp) && *temp != '_') {
+        if (!islower((*temp)&255) && *temp != '_') {
 	  *bufptr = '\0';
 
           bufptr = buf;
@@ -284,7 +284,7 @@ style_parse(const char *text,
     else *style++ = current;
     col ++;
 
-    last = isalnum(*text) || *text == '_' || *text == '.';
+    last = isalnum((*text)&255) || *text == '_' || *text == '.';
 
     if (*text == '\n') {
       // Reset column and possibly reset the style
