@@ -736,7 +736,7 @@ public:
    */
   int write() {
     char filepath[2048];
-    // --- create directory structure ide/Xcode3
+    // --- create directory structure ide/VisualC6
     sprintf(filepath, "%s/ide", rootDir); fl_mkdir(filepath, 0777);
     sprintf(filepath, "%s/ide/VisualC6", rootDir); fl_mkdir(filepath, 0777);
     // --- create project database (.dsw)
@@ -777,7 +777,7 @@ public:
   Fl_IDE_VisualC_Plugin() : Fl_Commandline_Plugin(name()) { }
   const char *name() { return "ideVisualC.fluid.fltk.org"; }
   const char *help() { return
-    " --dbvisualc6 <dbname> <targetpath> : create all IDE files for an Xcode3 project"; } 
+    " --dbvisualc6 <dbname> <targetpath> : create IDE files for MS IDE's able to read VC6 projects"; } 
   int arg(int argc, char **argv, int &i) {
     if (argc>=i+1 && strcmp(argv[i], "--dbvisualc6")==0) {
       if (argc>=i+3 && argv[i+1][0]!='-' && argv[i+2][0]!='-') {
@@ -801,6 +801,6 @@ public:
 Fl_IDE_VisualC_Plugin IDE_VisualC_Plugin;
 
 //
-// End of "$Id: ide_xcode.cxx 7131 2010-02-21 21:38:02Z matt $".
+// End of "$Id: ide_visualc.cxx 7131 2010-02-21 21:38:02Z matt $".
 //
 
