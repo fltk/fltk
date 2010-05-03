@@ -1,5 +1,5 @@
 //
-// "$Id: ide_support.h 6981 2009-12-25 20:53:22Z matt $"
+// "$Id$"
 //
 // IDE and Build FIle generation for the Fast Light Tool Kit (FLTK).
 //
@@ -108,5 +108,5 @@ void ui_load_database(const char *filename);
 #endif
 
 //
-// End of "$Id: ide_support.h 6981 2009-12-25 20:53:22Z matt $".
+// End of "$Id$".
 //
