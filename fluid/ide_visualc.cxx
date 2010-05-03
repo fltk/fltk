@@ -340,12 +340,12 @@ public:
     fprintf(f, "# PROP BASE Use_MFC 0\r\n");
     fprintf(f, "# PROP BASE Use_Debug_Libraries 1\r\n");
     fprintf(f, "# PROP BASE Output_Dir \"Debug/$(ProjectName)\"\r\n");
-    fprintf(f, "# PROP BASE Intermediate_Dir \"Debug/$(ProjectName)\"\r\n", name);
+    fprintf(f, "# PROP BASE Intermediate_Dir \"Debug/$(ProjectName)\"\r\n");
     fprintf(f, "# PROP BASE Target_Dir \"\"\r\n");
     fprintf(f, "# PROP Use_MFC 0\r\n");
     fprintf(f, "# PROP Use_Debug_Libraries 1\r\n");
-    fprintf(f, "# PROP Output_Dir \"Debug/$(ProjectName)\"\r\n", name);
-    fprintf(f, "# PROP Intermediate_Dir \"Debug/$(ProjectName)\"\r\n", name);
+    fprintf(f, "# PROP Output_Dir \"Debug/$(ProjectName)\"\r\n");
+    fprintf(f, "# PROP Intermediate_Dir \"Debug/$(ProjectName)\"\r\n");
     fprintf(f, "# PROP Ignore_Export_Lib 0\r\n");
     fprintf(f, "# PROP Target_Dir \"\"\r\n");
     fprintf(f, "# ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D \"WIN32\" /D \"_DEBUG\" /D \"_WINDOWS\" /YX /FD /c\r\n");
