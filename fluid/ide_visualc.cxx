@@ -1,5 +1,5 @@
 //
-// "$Id: ide_visualc.cxx 7131 2010-02-21 21:38:02Z matt $"
+// "$Id$"
 //
 // IDE and Build File generation for the Fast Light Tool Kit (FLTK).
 //
@@ -695,7 +695,7 @@ public:
   int writeConfigH(const char *filename) {
     FILE *f = fopen(filename, "wb");
     fputs("/*\n", f);
-    fputs(" * \"$Id: config.h 6472 2008-10-19 16:40:38Z fabien $\"\n", f);
+    fputs(" * \"$Id$\"\n", f);
     fputs(" */\n", f);
     fputs("#define FLTK_DATADIR    \"C:/FLTK\"\n", f);
     fputs("#define FLTK_DOCDIR     \"C:/FLTK/DOC\"\n", f);
@@ -725,7 +725,7 @@ public:
     fputs("#define HAVE_PNG_GET_VALID\n", f);
     fputs("#define HAVE_PNG_SET_TRNS_TO_ALPHA\n", f);
     fputs("/*\n", f);
-    fputs(" * End of \"$Id: config.h 6472 2008-10-19 16:40:38Z fabien $\".\n", f);
+    fputs(" * End of \"$Id$\".\n", f);
     fputs(" */\n", f);
     fclose(f);
     return 0;
@@ -801,6 +801,6 @@ public:
 Fl_IDE_VisualC_Plugin IDE_VisualC_Plugin;
 
 //
-// End of "$Id: ide_visualc.cxx 7131 2010-02-21 21:38:02Z matt $".
+// End of "$Id$".
 //
 
