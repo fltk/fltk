@@ -194,7 +194,8 @@ set(CFILES
 )
 
 if(APPLE)
-   set_source_file_properties(Fl.cxx
+   set_source_files_properties(
+      Fl.cxx Fl_Native_File_Chooser.cxx Fl_Printer.cxx
       PROPERTIES COMPILE_FLAGS "-x objective-c++")
 endif(APPLE)
 
