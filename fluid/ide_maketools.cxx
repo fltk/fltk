@@ -1655,7 +1655,7 @@ public:
     " --dbmake <dbname> <targetpath> : create all IDE files for a Makefile/autoconf based project\n"
     "   WARNING: --dbmake is not yet implemented completely."; }
   int arg(int argc, char **argv, int &i) {
-    if (argc>=i+1 && strcmp(argv[i], "--dbxcode3")==0) {
+    if (argc>=i+1 && strcmp(argv[i], "--dbmake")==0) {
       if (argc>=i+3 && argv[i+1][0]!='-' && argv[i+2][0]!='-') {
         fprintf(stderr, "Creating Makefiles from %s in %s\n", argv[i+1], argv[i+2]);
         exit_early = 1;

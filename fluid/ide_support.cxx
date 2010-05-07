@@ -1241,6 +1241,12 @@ int create_new_database(const char *filename)
     demo_db.depends_on(db);
   }  
   
+  { Fl_Target_Prefs db(tests_db.add_with_key("name", "rotated_text"));
+    db.add_source(files_db, "test/rotated_text.cxx");
+    db.add_lib(fltk_lib); 
+    demo_db.depends_on(db);
+  }  
+  
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "scroll"));
     db.add_source(files_db, "test/scroll.cxx");
     db.add_lib(fltk_lib); 

@@ -1,5 +1,5 @@
 /*
- * "$Id: config.h 6472 2008-10-19 16:40:38Z fabien $"
+ * "$Id: ide_visualc.cxx 7586 2010-05-03 20:10:13Z ianmacarthur $"
  */
 #define FLTK_DATADIR    "C:/FLTK"
 #define FLTK_DOCDIR     "C:/FLTK/DOC"
@@ -29,5 +29,5 @@
 #define HAVE_PNG_GET_VALID
 #define HAVE_PNG_SET_TRNS_TO_ALPHA
 /*
- * End of "$Id: config.h 6472 2008-10-19 16:40:38Z fabien $".
+ * End of "$Id: ide_visualc.cxx 7586 2010-05-03 20:10:13Z ianmacarthur $".
  */
