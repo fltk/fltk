@@ -304,12 +304,12 @@ int Fl_Tree::handle(int e) {
                   changed = 1;	// changed
                   o->select_toggle();	// toggle selection
                   lastselect = o;	// save we toggled it (prevents oscillation)
-                  redraw();		// make change(s) visible
                 }
               } else {
-                changed = 1;		// changed
-                o->select();		// select this
-                redraw();		// make change(s) visible
+	        if ( ! o->is_selected() ) {
+                  changed = 1;		// changed
+                  o->select();		// select this
+	        }
               }
               break;
             }
@@ -323,10 +323,16 @@ int Fl_Tree::handle(int e) {
           }
         }
       }
+      break;
     }
     case FL_RELEASE: {
       if ( Fl::event_button() == FL_LEFT_MOUSE ) {
         ret |= 1;
+      }
+      if ( when() & FL_WHEN_RELEASE || 
+	   ( changed && when() & FL_WHEN_CHANGED) ) {
+	set_changed();
+	do_callback((Fl_Widget*)this, user_data());       // item callback
       }
       break;
     }
