@@ -279,6 +279,7 @@ int Fl_Tree::handle(int e) {
       break;
     }
     case FL_DRAG: {
+      if ( Fl::event_button() != FL_LEFT_MOUSE ) break;
       Fl_Tree_Item *o = _root->find_clicked(_prefs);
       if ( o ) {
         ret |= 1;				// handled
@@ -328,11 +329,9 @@ int Fl_Tree::handle(int e) {
     case FL_RELEASE: {
       if ( Fl::event_button() == FL_LEFT_MOUSE ) {
         ret |= 1;
-      }
-      if ( when() & FL_WHEN_RELEASE || 
-	   ( changed && when() & FL_WHEN_CHANGED) ) {
-	set_changed();
-	do_callback((Fl_Widget*)this, user_data());       // item callback
+        if ( when() & FL_WHEN_RELEASE || ( this->changed() && (when() & FL_WHEN_CHANGED)) ) {
+	  do_callback((Fl_Widget*)this, user_data());       // item callback
+        }
       }
       break;
     }

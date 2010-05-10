@@ -458,6 +458,7 @@ static void cb_whenmode_chooser(Fl_Choice*, void*) {
   switch ( whenmode_chooser->value() ) {
     case 0:  tree->when(FL_WHEN_RELEASE);   break;
     case 1:  tree->when(FL_WHEN_CHANGED);   break;
+    case 2:  tree->when(FL_WHEN_NEVER);     break;
     default: tree->when(FL_WHEN_RELEASE);   break;
   };
 }
@@ -465,6 +466,7 @@ static void cb_whenmode_chooser(Fl_Choice*, void*) {
 Fl_Menu_Item menu_whenmode_chooser[] = {
   {"Release", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
   {"Changed", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+  {"Never",   0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
   {0,0,0,0,0,0,0,0,0}
 };
 

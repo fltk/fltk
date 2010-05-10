@@ -63,6 +63,11 @@
 ///     The tree items may also contain other FLTK widgets, like buttons, input fields,
 ///     or even "custom" widgets.
 ///
+///     The callback() is invoked depending on the value of when():
+///
+///         - FL_WHEN_RELEASE -- callback invoked when left mouse button is released on an item
+///         - FL_WHEN_CHANGED -- callback invoked when left mouse changes selection state
+///
 ///     The simple way to define a tree:
 /// \code
 ///    #include <FL/Fl_Tree.H>
@@ -100,6 +105,8 @@
 ///     colors, margins, connection lines. 
 ///
 ///     \image html tree-elements.png
+///
+///     \todo Needs handling of callbacks when items are procedurally select()ed
 ///
 
 class Fl_Tree : public Fl_Group {
