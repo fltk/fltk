@@ -88,11 +88,13 @@ Fl_Tree *tree=(Fl_Tree *)0;
 
 static void cb_tree(Fl_Tree*, void*) {
   Fl_Tree_Item *item = tree->item_clicked();
-  //item->select( item->is_selected() ? 0 : 1);
-  //tree->redraw();
-  fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld\n",
-          item->label(),
-          (long)tree->user_data());
+  if ( item ) {
+    fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld\n",
+	    item->label(),
+	    (long)tree->user_data());
+  } else {
+    fprintf(stderr, "TREE CALLBACK: no item!\n");
+  }
 }
 
 Fl_Value_Slider *labelsize_slider=(Fl_Value_Slider *)0;
@@ -449,6 +451,23 @@ Fl_Menu_Item menu_selectmode_chooser[] = {
   {0,0,0,0,0,0,0,0,0}
 };
 
+Fl_Choice *whenmode_chooser=(Fl_Choice *)0;
+
+static void cb_whenmode_chooser(Fl_Choice*, void*) {
+  // Set when mode
+  switch ( whenmode_chooser->value() ) {
+    case 0:  tree->when(FL_WHEN_RELEASE);   break;
+    case 1:  tree->when(FL_WHEN_CHANGED);   break;
+    default: tree->when(FL_WHEN_RELEASE);   break;
+  };
+}
+
+Fl_Menu_Item menu_whenmode_chooser[] = {
+  {"Release", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+  {"Changed", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+  {0,0,0,0,0,0,0,0,0}
+};
+
 Fl_Value_Slider *openchild_marginbottom_slider=(Fl_Value_Slider *)0;
 
 static void cb_openchild_marginbottom_slider(Fl_Value_Slider*, void*) {
@@ -613,6 +632,16 @@ int main(int argc, char **argv) {
       selectmode_chooser->menu(menu_selectmode_chooser);
       selectmode_chooser->value(1);
       cb_selectmode_chooser(selectmode_chooser, (void*)0);
+    } // Fl_Choice* selectmode_chooser
+    { whenmode_chooser = new Fl_Choice(145, 644, 110, 16, "When");
+      whenmode_chooser->tooltip("Sets when callback is invoked");
+      whenmode_chooser->down_box(FL_BORDER_BOX);
+      whenmode_chooser->labelsize(11);
+      whenmode_chooser->textsize(11);
+      whenmode_chooser->callback((Fl_Callback*)cb_whenmode_chooser);
+      whenmode_chooser->menu(menu_whenmode_chooser);
+      whenmode_chooser->value(0);
+      cb_whenmode_chooser(whenmode_chooser, (void*)0);
     } // Fl_Choice* selectmode_chooser
     { Fl_Value_Slider* o = openchild_marginbottom_slider = new Fl_Value_Slider(190, 454, 240, 16, "openchild_marginbottom()");
       openchild_marginbottom_slider->tooltip("Changes the vertical space below an open child tree");
