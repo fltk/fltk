@@ -8,78 +8,78 @@ void CccButton_CB(Fl_Widget*, void*data) {
 
 void RebuildTree() {
   // REBUILD THE TREE TO MAKE CURRENT "DEFAULT" PREFS TAKE EFFECT
-  tree->clear();
-  tree->add("Aaa");
-  tree->add("Bbb");
-  tree->add("Ccc");
-  tree->add("Ddd");
-  tree->add("Bbb/child-01");
-  tree->add("Bbb/child-01/111");
-  tree->add("Bbb/child-01/222");
-  tree->add("Bbb/child-01/333");
-  tree->add("Bbb/child-02");
-  tree->add("Bbb/child-03");
-  tree->add("Bbb/child-04");
-  
-  {
+tree->clear();
+tree->add("Aaa");
+tree->add("Bbb");
+tree->add("Ccc");
+tree->add("Ddd");
+tree->add("Bbb/child-01");
+tree->add("Bbb/child-01/111");
+tree->add("Bbb/child-01/222");
+tree->add("Bbb/child-01/333");
+tree->add("Bbb/child-02");
+tree->add("Bbb/child-03");
+tree->add("Bbb/child-04");
+
+{
     static Fl_Button *but = 0;
     // Assign an FLTK widget to one of the items
     Fl_Tree_Item *i;
     if ( ( i = tree->find_item("Bbb/child-03") ) != NULL ) {
-      if ( !but ) {		// only do this once at program startup
-        tree->begin();
-        but = new Fl_Button(1,1,140,1,"ccc button");     // we control w() only
-        but->labelsize(10);
-      }
-      i->widget(but);
-      tree->end();
+        if ( !but ) {		// only do this once at program startup
+            tree->begin();
+            but = new Fl_Button(1,1,140,1,"ccc button");     // we control w() only
+            but->labelsize(10);
+        }
+        i->widget(but);
+        tree->end();
     }
-  }
-  {
+}
+{
     // Assign an FLTK group to one of the items with widgets
     Fl_Tree_Item *i;
     if ( ( i = tree->find_item("Bbb/child-04") ) != NULL ) {
-      static Fl_Group *grp = 0;
-      if ( !grp ) {		// only do this once at program startup
-        tree->begin();
-        grp = new Fl_Group(100,100,140,18); // build group.. tree handles position
-        grp->color(FL_WHITE);
-        grp->begin();
-        Fl_Button *abut = new Fl_Button(grp->x()+0 ,grp->y()+2,65,15,"D1");
-        abut->labelsize(10);
-        Fl_Button *bbut = new Fl_Button(grp->x()+75,grp->y()+2,65,15,"D2");
-        bbut->labelsize(10);
-        grp->end();
-        grp->resizable(grp);
-        tree->end();
-      }
-      i->widget(grp);
+        static Fl_Group *grp = 0;
+        if ( !grp ) {		// only do this once at program startup
+            tree->begin();
+              grp = new Fl_Group(100,100,140,18); // build group.. tree handles position
+              grp->color(FL_WHITE);
+              grp->begin();
+                Fl_Button *abut = new Fl_Button(grp->x()+0 ,grp->y()+2,65,15,"D1");
+                abut->labelsize(10);
+                Fl_Button *bbut = new Fl_Button(grp->x()+75,grp->y()+2,65,15,"D2");
+                bbut->labelsize(10);
+              grp->end();
+              grp->resizable(grp);
+            tree->end();
+        }
+        i->widget(grp);
     }
-  }
-  
-  // Add an 'Ascending' node, and create it sorted
-  tree->sortorder(FL_TREE_SORT_NONE);
-  tree->add("Ascending")->close();
-  tree->sortorder(FL_TREE_SORT_ASCENDING);
-  tree->add("Ascending/Zzz");
-  tree->add("Ascending/Xxx");
-  tree->add("Ascending/Aaa");
-  tree->add("Ascending/Bbb");
-  tree->add("Ascending/Yyy");
-  tree->add("Ascending/Ccc");
-  
-  // Add a 'Descending' node, and create it sorted
-  tree->sortorder(FL_TREE_SORT_NONE);
-  tree->add("Descending")->close();
-  tree->sortorder(FL_TREE_SORT_DESCENDING);
-  tree->add("Descending/Zzz");
-  tree->add("Descending/Xxx");
-  tree->add("Descending/Aaa");
-  tree->add("Descending/Bbb");
-  tree->add("Descending/Yyy");
-  tree->add("Descending/Ccc");
-  
-  tree->redraw();
+}
+
+// Add an 'Ascending' node, and create it sorted
+tree->sortorder(FL_TREE_SORT_NONE);
+tree->add("Ascending")->close();
+tree->sortorder(FL_TREE_SORT_ASCENDING);
+tree->add("Ascending/Zzz");
+tree->add("Ascending/Xxx");
+tree->add("Ascending/Aaa");
+tree->add("Ascending/Bbb");
+tree->add("Ascending/Yyy");
+tree->add("Ascending/Ccc");
+
+// Add a 'Descending' node, and create it sorted
+tree->sortorder(FL_TREE_SORT_NONE);
+tree->add("Descending")->close();
+tree->sortorder(FL_TREE_SORT_DESCENDING);
+tree->add("Descending/Zzz");
+tree->add("Descending/Xxx");
+tree->add("Descending/Aaa");
+tree->add("Descending/Bbb");
+tree->add("Descending/Yyy");
+tree->add("Descending/Ccc");
+
+tree->redraw();
 }
 
 Fl_Double_Window *window=(Fl_Double_Window *)0;
@@ -88,37 +88,63 @@ Fl_Tree *tree=(Fl_Tree *)0;
 
 static void cb_tree(Fl_Tree*, void*) {
   Fl_Tree_Item *item = tree->item_clicked();
-  if ( item ) {
-    fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld\n",
-	    item->label(),
-	    (long)tree->user_data());
-  } else {
-    fprintf(stderr, "TREE CALLBACK: no item!\n");
-  }
+if ( item ) {
+  fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld\n",
+          item->label(),
+          (long)tree->user_data());
+} else {
+  fprintf(stderr, "TREE CALLBACK: no item (probably multiple items were changed at once)\n");
+};
+}
+
+Fl_Box *docallback_box=(Fl_Box *)0;
+
+Fl_Value_Slider *margintop_slider=(Fl_Value_Slider *)0;
+
+static void cb_margintop_slider(Fl_Value_Slider*, void*) {
+  int val = (int)margintop_slider->value();
+tree->margintop(val);
+tree->redraw();
+}
+
+Fl_Value_Slider *marginleft_slider=(Fl_Value_Slider *)0;
+
+static void cb_marginleft_slider(Fl_Value_Slider*, void*) {
+  int val = (int)marginleft_slider->value();
+tree->marginleft(val);
+tree->redraw();
+}
+
+Fl_Value_Slider *openchild_marginbottom_slider=(Fl_Value_Slider *)0;
+
+static void cb_openchild_marginbottom_slider(Fl_Value_Slider*, void*) {
+  int val = (int)openchild_marginbottom_slider->value();
+tree->openchild_marginbottom(val);
+tree->redraw();
 }
 
 Fl_Value_Slider *labelsize_slider=(Fl_Value_Slider *)0;
 
 static void cb_labelsize_slider(Fl_Value_Slider*, void*) {
   int size = (int)labelsize_slider->value();
-  
-  // DO SELECTED ITEMS
-  int count = 0;
-  for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
+
+// DO SELECTED ITEMS
+int count = 0;
+for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
     if ( item->is_selected() ) {
-      item->labelsize(size);
-      count++;
+        item->labelsize(size);
+        count++;
     }
-  }
-  
-  // NO ITEMS SELECTED? DO ALL
-  if ( ! count ) {
+}
+
+// NO ITEMS SELECTED? DO ALL
+if ( ! count ) {
     for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
-      item->labelsize(size);
+        item->labelsize(size);
     }
-  }
-  
-  tree->redraw();
+}
+
+tree->redraw();
 }
 
 Fl_Value_Slider *connectorwidth_slider=(Fl_Value_Slider *)0;
@@ -146,9 +172,9 @@ static void cb_usericon_radio(Fl_Check_Button*, void*) {
     "@xxxxxxxxx@",
     "@xxxxxxxxx@",
     "@@@@@@@@@@@"};
-  static Fl_Pixmap L_folderpixmap(L_folder_xpm);
-  
-  static const char *L_document_xpm[] = {
+static Fl_Pixmap L_folderpixmap(L_folder_xpm);
+
+static const char *L_document_xpm[] = {
     "11 11 3 1",
     ".  c None",
     "x  c #d8d8f8",
@@ -164,20 +190,27 @@ static void cb_usericon_radio(Fl_Check_Button*, void*) {
     ".@xxxxxxx@.",
     ".@xxxxxxx@.",
     ".@@@@@@@@@."};
-  static Fl_Pixmap L_documentpixmap(L_document_xpm);
-  
-  Fl_Tree_Item *i = 0;
-  if ( usericon_radio->value() ) {
+static Fl_Pixmap L_documentpixmap(L_document_xpm);
+
+Fl_Tree_Item *i = 0;
+if ( usericon_radio->value() ) {
     tree->usericon(&L_folderpixmap);
     if ( ( i = tree->find_item("Bbb/bgb/111") ) != NULL ) i->usericon(&L_documentpixmap);
     if ( ( i = tree->find_item("Bbb/bgb/222") ) != NULL ) i->usericon(&L_documentpixmap);
     if ( ( i = tree->find_item("Bbb/bgb/333") ) != NULL ) i->usericon(&L_documentpixmap);
-  } else {
+} else {
     tree->usericon(0);
     if ( ( i = tree->find_item("Bbb/bgb/111") ) != NULL ) i->usericon(0);
     if ( ( i = tree->find_item("Bbb/bgb/222") ) != NULL ) i->usericon(0);
     if ( ( i = tree->find_item("Bbb/bgb/333") ) != NULL ) i->usericon(0);
-  };
+};
+}
+
+Fl_Check_Button *showroot_radio=(Fl_Check_Button *)0;
+
+static void cb_showroot_radio(Fl_Check_Button*, void*) {
+  int onoff = showroot_radio->value();
+tree->showroot(onoff);
 }
 
 Fl_Choice *collapseicons_chooser=(Fl_Choice *)0;
@@ -198,9 +231,9 @@ static void cb_collapseicons_chooser(Fl_Choice*, void*) {
     "...@@@.....",
     "...@@......",
     "...@......."};
-  static Fl_Pixmap L_openpixmap(L_open_xpm);
-  
-  static const char *L_close_xpm[] = {
+static Fl_Pixmap L_openpixmap(L_open_xpm);
+
+static const char *L_close_xpm[] = {
     "11 11 2 1",
     ".  c None",
     "@  c #000000",
@@ -215,271 +248,276 @@ static void cb_collapseicons_chooser(Fl_Choice*, void*) {
     "...@@@@@...",
     "....@@@....",
     ".....@....."};
-  static Fl_Pixmap L_closepixmap(L_close_xpm);
-  
-  switch ( collapseicons_chooser->value() ) {
+static Fl_Pixmap L_closepixmap(L_close_xpm);
+
+switch ( collapseicons_chooser->value() ) {
     case 0:
-      tree->showcollapse(1);
-      tree->openicon(0);
-      tree->closeicon(0);
-      break;
+        tree->showcollapse(1);
+        tree->openicon(0);
+        tree->closeicon(0);
+        break;
     case 1:
-      tree->showcollapse(1);
-      tree->openicon(&L_openpixmap);
-      tree->closeicon(&L_closepixmap);
-      break;
+        tree->showcollapse(1);
+        tree->openicon(&L_openpixmap);
+        tree->closeicon(&L_closepixmap);
+        break;
     case 2:
-      tree->showcollapse(0);
-      break;
-  };
+        tree->showcollapse(0);
+        break;
+};
 }
 
 Fl_Menu_Item menu_collapseicons_chooser[] = {
-  {"Normal", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Arrow", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Off", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {0,0,0,0,0,0,0,0,0}
+ {"Normal", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Arrow", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Off", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
 };
 
 Fl_Choice *connectorstyle_chooser=(Fl_Choice *)0;
 
 static void cb_connectorstyle_chooser(Fl_Choice*, void*) {
   // CHANGE COLLAPSESTYLE
-  switch ( connectorstyle_chooser->value() ) {
+switch ( connectorstyle_chooser->value() ) {
     case 0: tree->connectorstyle(FL_TREE_CONNECTOR_NONE);     break;
     case 1: tree->connectorstyle(FL_TREE_CONNECTOR_DOTTED);   break;
     case 2: tree->connectorstyle(FL_TREE_CONNECTOR_SOLID);    break;
-  };
+};
 }
 
 Fl_Menu_Item menu_connectorstyle_chooser[] = {
-  {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Dotted", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Solid", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {0,0,0,0,0,0,0,0,0}
+ {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Dotted", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Solid", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
 };
 
 Fl_Choice *labelcolor_chooser=(Fl_Choice *)0;
 
 static void cb_labelcolor_chooser(Fl_Choice*, void*) {
   // Set color..
-  Fl_Color c = Fl_Color(0x00000000);
-  switch ( labelcolor_chooser->value() ) {
+Fl_Color c = Fl_Color(0x00000000);
+switch ( labelcolor_chooser->value() ) {
     case 0:  c = Fl_Color(0x00000000); break;	// black
     case 1:  c = Fl_Color(0xd0000000); break;	// red
     case 2:  c = Fl_Color(0x00a00000); break;	// green
     case 3:  c = Fl_Color(0x0000a000); break;	// blue
     default: c = Fl_Color(0x00000000); break;	// black
-  }
-  
-  // DO SELECTED ITEMS
-  int count = 0;
-  for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
+}
+
+// DO SELECTED ITEMS
+int count = 0;
+for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
     if ( item->is_selected() ) {
-      item->labelcolor(c);
-      count++;
+        item->labelcolor(c);
+        count++;
     }
-  }
-  
-  // NO ITEMS SELECTED? DO ALL
-  if ( ! count ) {
+}
+
+// NO ITEMS SELECTED? DO ALL
+if ( ! count ) {
     for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
-      item->labelcolor(c);
+        item->labelcolor(c);
     }
-  }
-  
-  tree->redraw();
+}
+
+tree->redraw();
 }
 
 Fl_Menu_Item menu_labelcolor_chooser[] = {
-  {"Black", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Red", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Green", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Blue", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {0,0,0,0,0,0,0,0,0}
+ {"Black", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Red", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Green", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Blue", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
 };
-
-static void cb_Clear(Fl_Button*, void*) {
-  Fl_Tree_Item *item=tree->first();
-  while (item) {
-    if ( item->is_selected() ) {
-    	if ( tree->remove(item) == -1 ) break;
-    	item = tree->first();
-    } else {
-      item = item->next();
-    }
-  }
-  
-  tree->redraw();
-}
-
-Fl_Light_Button *selectall_toggle=(Fl_Light_Button *)0;
-
-static void cb_selectall_toggle(Fl_Light_Button*, void*) {
-  int onoff = selectall_toggle->value();
-  for (Fl_Tree_Item *item=tree->first(); item; item = item->next()) {
-    item->select(onoff);
-  }
-  tree->redraw();
-}
-
-Fl_Light_Button *bold_toggle=(Fl_Light_Button *)0;
-
-static void cb_bold_toggle(Fl_Light_Button*, void*) {
-  int face = bold_toggle->value() ? FL_HELVETICA_BOLD : FL_HELVETICA;
-  
-  // DO SELECTED ITEMS
-  int count = 0;
-  for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
-    if ( item->is_selected() ) {
-      item->labelfont(face);
-      count++;
-    }
-  }
-  
-  // NO ITEMS SELECTED? DO ALL
-  if ( ! count ) {
-    for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
-      item->labelfont(face);
-    }
-  }
-  
-  tree->redraw();
-}
-
-Fl_Light_Button *bbbselect_toggle=(Fl_Light_Button *)0;
-
-static void cb_bbbselect_toggle(Fl_Light_Button*, void*) {
-  // Select just the Bbb item and its immediate children
-  Fl_Tree_Item *bbb = tree->find_item("/Bbb");
-  if ( !bbb) {
-    fl_alert("FAIL: Couldn't find item '/Bbb'???");
-    return;
-  }
-  int onoff = bbbselect_toggle->value();
-  bbb->select(onoff);
-  for ( int t=0; t<bbb->children(); t++ ) {
-    bbb->child(t)->select(onoff);
-  }
-  tree->redraw();
-}
-
-static void cb_Rebuild(Fl_Button*, void*) {
-  RebuildTree();
-}
-
-static void cb_Clear1(Fl_Button*, void*) {
-  tree->clear();
-  tree->redraw();
-}
-
-static void cb_Insert(Fl_Button*, void*) {
-  Fl_Tree_Item *item=tree->first();
-  while (item) {
-    if ( item->is_selected() ) {
-      tree->insert_above(item, "AaaAaa");
-      tree->insert_above(item, "BbbBbb");
-      tree->insert_above(item, "CccCcc");
-    }
-    item = item->next();
-  }
-  
-  tree->redraw();
-}
-
-Fl_Value_Slider *margintop_slider=(Fl_Value_Slider *)0;
-
-static void cb_margintop_slider(Fl_Value_Slider*, void*) {
-  int val = (int)margintop_slider->value();
-  tree->margintop(val);
-  tree->redraw();
-}
-
-Fl_Value_Slider *marginleft_slider=(Fl_Value_Slider *)0;
-
-static void cb_marginleft_slider(Fl_Value_Slider*, void*) {
-  int val = (int)marginleft_slider->value();
-  tree->marginleft(val);
-  tree->redraw();
-}
-
-Fl_Light_Button *deactivate_toggle=(Fl_Light_Button *)0;
-
-static void cb_deactivate_toggle(Fl_Light_Button*, void*) {
-  int onoff = deactivate_toggle->value() ? 0 : 1;
-  
-  int count = 0;
-  for (Fl_Tree_Item *item=tree->first(); item; item = item->next()) {
-    if ( item->is_selected() ) {
-      item->activate(onoff);
-      ++count;
-    }
-  }
-  
-  if ( count == 0 ) {
-    for (Fl_Tree_Item *item=tree->first(); item; item = item->next()) {
-      item->activate(onoff);
-    }
-  }
-  
-  tree->redraw();
-}
-
-Fl_Check_Button *showroot_radio=(Fl_Check_Button *)0;
-
-static void cb_showroot_radio(Fl_Check_Button*, void*) {
-  int onoff = showroot_radio->value();
-  tree->showroot(onoff);
-}
 
 Fl_Choice *selectmode_chooser=(Fl_Choice *)0;
 
 static void cb_selectmode_chooser(Fl_Choice*, void*) {
   // Set selection mode
-  switch ( selectmode_chooser->value() ) {
+switch ( selectmode_chooser->value() ) {
     case 0:  tree->selectmode(FL_TREE_SELECT_NONE);   break;	// None
     case 1:  tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
     case 2:  tree->selectmode(FL_TREE_SELECT_MULTI);  break; 	// Multi
     default: tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
-  };
+};
 }
 
 Fl_Menu_Item menu_selectmode_chooser[] = {
-  {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Single", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Multi", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {0,0,0,0,0,0,0,0,0}
+ {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Single", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Multi", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
 };
 
 Fl_Choice *whenmode_chooser=(Fl_Choice *)0;
 
 static void cb_whenmode_chooser(Fl_Choice*, void*) {
   // Set when mode
-  switch ( whenmode_chooser->value() ) {
-    case 0:  tree->when(FL_WHEN_RELEASE);   break;
-    case 1:  tree->when(FL_WHEN_CHANGED);   break;
-    case 2:  tree->when(FL_WHEN_NEVER);     break;
-    default: tree->when(FL_WHEN_RELEASE);   break;
-  };
+switch ( whenmode_chooser->value() ) {
+  case 0:  tree->when(FL_WHEN_RELEASE);   break;
+  case 1:  tree->when(FL_WHEN_CHANGED);   break;
+  case 2:  tree->when(FL_WHEN_NEVER);     break;
+  default: tree->when(FL_WHEN_RELEASE);   break;
+};
 }
 
 Fl_Menu_Item menu_whenmode_chooser[] = {
-  {"Release", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Changed", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {"Never",   0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
-  {0,0,0,0,0,0,0,0,0}
+ {"Changed", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Released", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Never", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {0,0,0,0,0,0,0,0,0}
 };
 
-Fl_Value_Slider *openchild_marginbottom_slider=(Fl_Value_Slider *)0;
+Fl_Check_Button *docallback_radio=(Fl_Check_Button *)0;
 
-static void cb_openchild_marginbottom_slider(Fl_Value_Slider*, void*) {
-  int val = (int)openchild_marginbottom_slider->value();
-  tree->openchild_marginbottom(val);
-  tree->redraw();
+Fl_Button *selectall_button=(Fl_Button *)0;
+
+static void cb_selectall_button(Fl_Button*, void*) {
+  int docallbacks = docallback_radio->value() ? 1 : 0;
+tree->select_all(0,docallbacks);
+tree->redraw();
+}
+
+Fl_Button *deselectall_button=(Fl_Button *)0;
+
+static void cb_deselectall_button(Fl_Button*, void*) {
+  int docallbacks = docallback_radio->value() ? 1 : 0;
+tree->deselect_all(0,docallbacks);
+tree->redraw();
+}
+
+Fl_Light_Button *bbbselect_toggle=(Fl_Light_Button *)0;
+
+static void cb_bbbselect_toggle(Fl_Light_Button*, void*) {
+  // Toggle select of just the Bbb item and its immediate children
+int docallback = docallback_radio->value() ? 1 : 0;
+Fl_Tree_Item *bbb = tree->find_item("/Bbb");
+if ( !bbb) {
+  fl_alert("FAIL: Couldn't find item '/Bbb'???");
+  return;
+}
+int onoff = bbbselect_toggle->value();
+if ( onoff ) tree->select_all(bbb, docallback);		// select /Bbb and its children
+else         tree->deselect_all(bbb, docallback);	// deselect /Bbb and its children
+
+tree->redraw();
+
+// Toggle select of just the Bbb item and its immediate children
+//int docallback = docallback_radio->value() ? 1 : 0;
+//int onoff = bbbselect_toggle->value();
+//
+//if ( onoff ) tree->select("/Bbb", docallback);
+//else         tree->deselect("/Bbb", docallback);
+//
+//tree->redraw();
+}
+
+Fl_Light_Button *deactivate_toggle=(Fl_Light_Button *)0;
+
+static void cb_deactivate_toggle(Fl_Light_Button*, void*) {
+  int onoff = deactivate_toggle->value() ? 0 : 1;
+
+int count = 0;
+for (Fl_Tree_Item *item=tree->first(); item; item = item->next()) {
+    if ( item->is_selected() ) {
+        item->activate(onoff);
+        ++count;
+    }
+}
+
+if ( count == 0 ) {
+    for (Fl_Tree_Item *item=tree->first(); item; item = item->next()) {
+        item->activate(onoff);
+    }
+}
+
+tree->redraw();
+}
+
+Fl_Light_Button *bold_toggle=(Fl_Light_Button *)0;
+
+static void cb_bold_toggle(Fl_Light_Button*, void*) {
+  int face = bold_toggle->value() ? FL_HELVETICA_BOLD : FL_HELVETICA;
+
+// DO SELECTED ITEMS
+int count = 0;
+for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
+    if ( item->is_selected() ) {
+        item->labelfont(face);
+        count++;
+    }
+}
+
+// NO ITEMS SELECTED? DO ALL
+if ( ! count ) {
+    for ( Fl_Tree_Item *item=tree->first(); item; item = item->next() ) {
+        item->labelfont(face);
+    }
+}
+
+tree->redraw();
+}
+
+Fl_Button *insertabove_button=(Fl_Button *)0;
+
+static void cb_insertabove_button(Fl_Button*, void*) {
+  Fl_Tree_Item *item=tree->first();
+while (item) {
+    if ( item->is_selected() ) {
+        tree->insert_above(item, "AaaAaa");
+        tree->insert_above(item, "BbbBbb");
+        tree->insert_above(item, "CccCcc");
+    }
+    item = item->next();
+}
+
+tree->redraw();
+}
+
+Fl_Button *rebuildtree_button=(Fl_Button *)0;
+
+static void cb_rebuildtree_button(Fl_Button*, void*) {
+  RebuildTree();
+}
+
+Fl_Button *clearselected_button=(Fl_Button *)0;
+
+static void cb_clearselected_button(Fl_Button*, void*) {
+  Fl_Tree_Item *item=tree->first();
+while (item) {
+    if ( item->is_selected() ) {
+    	if ( tree->remove(item) == -1 ) break;
+    	item = tree->first();
+    } else {
+        item = item->next();
+    }
+}
+
+tree->redraw();
+}
+
+Fl_Button *clearall_button=(Fl_Button *)0;
+
+static void cb_clearall_button(Fl_Button*, void*) {
+  tree->clear();
+tree->redraw();
+}
+
+Fl_Light_Button *bbbchild02select_toggle=(Fl_Light_Button *)0;
+
+static void cb_bbbchild02select_toggle(Fl_Light_Button*, void*) {
+  // Toggle select of just the /Bbb/child-02 item
+int docallback = docallback_radio->value() ? 1 : 0;
+int onoff = bbbchild02select_toggle->value();
+if ( onoff ) tree->select("/Bbb/child-02", docallback);
+else         tree->deselect("/Bbb/child-02", docallback);
+tree->redraw();
 }
 
 int main(int argc, char **argv) {
-  { window = new Fl_Double_Window(580, 695, "test-Fl_Tree");
+  { window = new Fl_Double_Window(580, 695, "tree");
     { tree = new Fl_Tree(15, 15, 550, 390);
       tree->box(FL_DOWN_BOX);
       tree->color((Fl_Color)55);
@@ -493,9 +531,52 @@ int main(int argc, char **argv) {
       tree->when(FL_WHEN_RELEASE);
       tree->end();
     } // Fl_Tree* tree
+    { docallback_box = new Fl_Box(280, 521, 285, 81);
+      docallback_box->box(FL_GTK_DOWN_BOX);
+      docallback_box->color(FL_DARK1);
+    } // Fl_Box* docallback_box
+    { Fl_Value_Slider* o = margintop_slider = new Fl_Value_Slider(190, 414, 240, 16, "margintop()");
+      margintop_slider->tooltip("Changes the top margin for the tree widget");
+      margintop_slider->type(1);
+      margintop_slider->labelsize(12);
+      margintop_slider->step(0.01);
+      margintop_slider->textsize(12);
+      margintop_slider->callback((Fl_Callback*)cb_margintop_slider, (void*)(tree));
+      margintop_slider->align(Fl_Align(FL_ALIGN_LEFT));
+      o->value(tree->margintop());
+      o->range(0.0, 100.0);
+      o->step(1.0);
+      o->color(46); o->selection_color(FL_RED);
+    } // Fl_Value_Slider* margintop_slider
+    { Fl_Value_Slider* o = marginleft_slider = new Fl_Value_Slider(190, 434, 240, 16, "marginleft()");
+      marginleft_slider->tooltip("Changes the left margin for the tree widget");
+      marginleft_slider->type(1);
+      marginleft_slider->labelsize(12);
+      marginleft_slider->step(0.01);
+      marginleft_slider->textsize(12);
+      marginleft_slider->callback((Fl_Callback*)cb_marginleft_slider, (void*)(tree));
+      marginleft_slider->align(Fl_Align(FL_ALIGN_LEFT));
+      o->value(tree->marginleft());
+      o->range(0.0, 100.0);
+      o->step(1.0);
+      o->color(46); o->selection_color(FL_RED);
+    } // Fl_Value_Slider* marginleft_slider
+    { Fl_Value_Slider* o = openchild_marginbottom_slider = new Fl_Value_Slider(190, 454, 240, 16, "openchild_marginbottom()");
+      openchild_marginbottom_slider->tooltip("Changes the vertical space below an open child tree");
+      openchild_marginbottom_slider->type(1);
+      openchild_marginbottom_slider->labelsize(12);
+      openchild_marginbottom_slider->step(0.01);
+      openchild_marginbottom_slider->textsize(12);
+      openchild_marginbottom_slider->callback((Fl_Callback*)cb_openchild_marginbottom_slider, (void*)(tree));
+      openchild_marginbottom_slider->align(Fl_Align(FL_ALIGN_LEFT));
+      o->value(tree->openchild_marginbottom());
+      o->range(0.0, 100.0);
+      o->step(1.0);
+      o->color(46); o->selection_color(FL_RED);
+    } // Fl_Value_Slider* openchild_marginbottom_slider
     { Fl_Value_Slider* o = labelsize_slider = new Fl_Value_Slider(190, 474, 240, 16, "Text size");
       labelsize_slider->tooltip("Changes the font size of the selected items\nIf none selected, all are change\
-                                d");
+d");
       labelsize_slider->type(1);
       labelsize_slider->labelsize(12);
       labelsize_slider->step(0.01);
@@ -526,6 +607,13 @@ int main(int argc, char **argv) {
       usericon_radio->labelsize(11);
       usericon_radio->callback((Fl_Callback*)cb_usericon_radio, (void*)(tree));
     } // Fl_Check_Button* usericon_radio
+    { showroot_radio = new Fl_Check_Button(145, 539, 130, 16, "Show root?");
+      showroot_radio->tooltip("Tests Fl_Tree_Item::usericon()");
+      showroot_radio->down_box(FL_DOWN_BOX);
+      showroot_radio->labelsize(11);
+      showroot_radio->callback((Fl_Callback*)cb_showroot_radio, (void*)(tree));
+      int onoff = tree->showroot(); showroot_radio->value(onoff);
+    } // Fl_Check_Button* showroot_radio
     { collapseicons_chooser = new Fl_Choice(145, 564, 110, 16, "Collapse icons");
       collapseicons_chooser->tooltip("Tests Fl_Tree::openicon() and Fl_Tree::closeicon()");
       collapseicons_chooser->down_box(FL_BORDER_BOX);
@@ -545,86 +633,13 @@ int main(int argc, char **argv) {
     } // Fl_Choice* connectorstyle_chooser
     { labelcolor_chooser = new Fl_Choice(145, 604, 110, 16, "Item Text Color");
       labelcolor_chooser->tooltip("Changes the label color for the selected items\nIf no items selected, all are\
-                                  changed");
+ changed");
       labelcolor_chooser->down_box(FL_BORDER_BOX);
       labelcolor_chooser->labelsize(11);
       labelcolor_chooser->textsize(11);
       labelcolor_chooser->callback((Fl_Callback*)cb_labelcolor_chooser);
       labelcolor_chooser->menu(menu_labelcolor_chooser);
     } // Fl_Choice* labelcolor_chooser
-    { Fl_Button* o = new Fl_Button(450, 563, 100, 16, "Clear Selected");
-      o->tooltip("Clears the selected items\nIf no items are selected, all items are cleared");
-      o->labelsize(11);
-      o->callback((Fl_Callback*)cb_Clear);
-    } // Fl_Button* o
-    { selectall_toggle = new Fl_Light_Button(325, 563, 100, 16, " Select All");
-      selectall_toggle->labelsize(11);
-      selectall_toggle->callback((Fl_Callback*)cb_selectall_toggle);
-    } // Fl_Light_Button* selectall_toggle
-    { bold_toggle = new Fl_Light_Button(325, 623, 100, 17, " Bold Font");
-      bold_toggle->tooltip("Toggles bold font for selected items\nIf nothing selected, all are changed");
-      bold_toggle->labelsize(11);
-      bold_toggle->callback((Fl_Callback*)cb_bold_toggle);
-    } // Fl_Light_Button* bold_toggle
-    { bbbselect_toggle = new Fl_Light_Button(325, 583, 100, 16, " Select Bbb");
-      bbbselect_toggle->tooltip("Toggles selecting the \'Bbb\' item and its immediate children");
-      bbbselect_toggle->labelsize(11);
-      bbbselect_toggle->callback((Fl_Callback*)cb_bbbselect_toggle);
-    } // Fl_Light_Button* bbbselect_toggle
-    { Fl_Button* o = new Fl_Button(450, 623, 100, 17, "Rebuild Tree");
-      o->tooltip("Rebuilds the tree with defaults");
-      o->labelsize(11);
-      o->callback((Fl_Callback*)cb_Rebuild);
-    } // Fl_Button* o
-    { Fl_Button* o = new Fl_Button(450, 583, 100, 16, "Clear All");
-      o->tooltip("Clears all items\nTests Fl_Tree::clear()");
-      o->labelsize(11);
-      o->callback((Fl_Callback*)cb_Clear1);
-    } // Fl_Button* o
-    { Fl_Button* o = new Fl_Button(450, 603, 100, 16, "Insert Above");
-      o->tooltip("Inserts three items above the selected items");
-      o->labelsize(11);
-      o->callback((Fl_Callback*)cb_Insert);
-    } // Fl_Button* o
-    { Fl_Value_Slider* o = margintop_slider = new Fl_Value_Slider(190, 414, 240, 16, "margintop()");
-      margintop_slider->tooltip("Changes the top margin for the tree widget");
-      margintop_slider->type(1);
-      margintop_slider->labelsize(12);
-      margintop_slider->step(0.01);
-      margintop_slider->textsize(12);
-      margintop_slider->callback((Fl_Callback*)cb_margintop_slider, (void*)(tree));
-      margintop_slider->align(Fl_Align(FL_ALIGN_LEFT));
-      o->value(tree->margintop());
-      o->range(0.0, 100.0);
-      o->step(1.0);
-      o->color(46); o->selection_color(FL_RED);
-    } // Fl_Value_Slider* margintop_slider
-    { Fl_Value_Slider* o = marginleft_slider = new Fl_Value_Slider(190, 434, 240, 16, "marginleft()");
-      marginleft_slider->tooltip("Changes the left margin for the tree widget");
-      marginleft_slider->type(1);
-      marginleft_slider->labelsize(12);
-      marginleft_slider->step(0.01);
-      marginleft_slider->textsize(12);
-      marginleft_slider->callback((Fl_Callback*)cb_marginleft_slider, (void*)(tree));
-      marginleft_slider->align(Fl_Align(FL_ALIGN_LEFT));
-      o->value(tree->marginleft());
-      o->range(0.0, 100.0);
-      o->step(1.0);
-      o->color(46); o->selection_color(FL_RED);
-    } // Fl_Value_Slider* marginleft_slider
-    { deactivate_toggle = new Fl_Light_Button(325, 603, 100, 16, " Deactivate");
-      deactivate_toggle->tooltip("Toggle the deactivation state of the selected items.\nIf none are selected, a\
-                                 ll are set.");
-      deactivate_toggle->labelsize(11);
-      deactivate_toggle->callback((Fl_Callback*)cb_deactivate_toggle);
-    } // Fl_Light_Button* deactivate_toggle
-    { showroot_radio = new Fl_Check_Button(145, 539, 130, 16, "Show root?");
-      showroot_radio->tooltip("Tests Fl_Tree_Item::usericon()");
-      showroot_radio->down_box(FL_DOWN_BOX);
-      showroot_radio->labelsize(11);
-      showroot_radio->callback((Fl_Callback*)cb_showroot_radio, (void*)(tree));
-      int onoff = tree->showroot(); showroot_radio->value(onoff);
-    } // Fl_Check_Button* showroot_radio
     { selectmode_chooser = new Fl_Choice(145, 624, 110, 16, "Selection Mode");
       selectmode_chooser->tooltip("Sets how Fl_Tree handles mouse selection of tree items");
       selectmode_chooser->down_box(FL_BORDER_BOX);
@@ -636,38 +651,82 @@ int main(int argc, char **argv) {
       cb_selectmode_chooser(selectmode_chooser, (void*)0);
     } // Fl_Choice* selectmode_chooser
     { whenmode_chooser = new Fl_Choice(145, 644, 110, 16, "When");
-      whenmode_chooser->tooltip("Sets when callback is invoked");
+      whenmode_chooser->tooltip("Sets when() the tree\'s callback is invoked");
       whenmode_chooser->down_box(FL_BORDER_BOX);
       whenmode_chooser->labelsize(11);
       whenmode_chooser->textsize(11);
       whenmode_chooser->callback((Fl_Callback*)cb_whenmode_chooser);
       whenmode_chooser->menu(menu_whenmode_chooser);
-      whenmode_chooser->value(0);
+      whenmode_chooser->value(1);
       cb_whenmode_chooser(whenmode_chooser, (void*)0);
-    } // Fl_Choice* selectmode_chooser
-    { Fl_Value_Slider* o = openchild_marginbottom_slider = new Fl_Value_Slider(190, 454, 240, 16, "openchild_marginbottom()");
-      openchild_marginbottom_slider->tooltip("Changes the vertical space below an open child tree");
-      openchild_marginbottom_slider->type(1);
-      openchild_marginbottom_slider->labelsize(12);
-      openchild_marginbottom_slider->step(0.01);
-      openchild_marginbottom_slider->textsize(12);
-      openchild_marginbottom_slider->callback((Fl_Callback*)cb_openchild_marginbottom_slider, (void*)(tree));
-      openchild_marginbottom_slider->align(Fl_Align(FL_ALIGN_LEFT));
-      o->value(tree->openchild_marginbottom());
-      o->range(0.0, 100.0);
-      o->step(1.0);
-      o->color(46); o->selection_color(FL_RED);
-    } // Fl_Value_Slider* openchild_marginbottom_slider
+    } // Fl_Choice* whenmode_chooser
+    { docallback_radio = new Fl_Check_Button(310, 529, 230, 16, "Invoke callback on select changes?");
+      docallback_radio->tooltip("Invokes the callback when one or more item\'s state changes.");
+      docallback_radio->down_box(FL_DOWN_BOX);
+      docallback_radio->labelsize(11);
+    } // Fl_Check_Button* docallback_radio
+    { selectall_button = new Fl_Button(305, 551, 105, 16, "Select All");
+      selectall_button->tooltip("Selects all items in the tree");
+      selectall_button->labelsize(11);
+      selectall_button->callback((Fl_Callback*)cb_selectall_button);
+    } // Fl_Button* selectall_button
+    { deselectall_button = new Fl_Button(305, 571, 105, 16, "Deselect All");
+      deselectall_button->tooltip("Deselects all items in the tree");
+      deselectall_button->labelsize(11);
+      deselectall_button->callback((Fl_Callback*)cb_deselectall_button);
+    } // Fl_Button* deselectall_button
+    { bbbselect_toggle = new Fl_Light_Button(430, 552, 115, 15, " Select Bbb");
+      bbbselect_toggle->tooltip("Toggle selection of the /Bbb item and its children");
+      bbbselect_toggle->labelsize(11);
+      bbbselect_toggle->callback((Fl_Callback*)cb_bbbselect_toggle);
+    } // Fl_Light_Button* bbbselect_toggle
+    { deactivate_toggle = new Fl_Light_Button(280, 625, 90, 16, " Deactivate");
+      deactivate_toggle->tooltip("Toggle the deactivation state of the selected items.\nIf none are selected, a\
+ll are set.");
+      deactivate_toggle->labelsize(11);
+      deactivate_toggle->callback((Fl_Callback*)cb_deactivate_toggle);
+    } // Fl_Light_Button* deactivate_toggle
+    { bold_toggle = new Fl_Light_Button(280, 644, 90, 16, " Bold Font");
+      bold_toggle->tooltip("Toggles bold font for selected items\nIf nothing selected, all are changed");
+      bold_toggle->labelsize(11);
+      bold_toggle->callback((Fl_Callback*)cb_bold_toggle);
+    } // Fl_Light_Button* bold_toggle
+    { insertabove_button = new Fl_Button(380, 624, 90, 16, "Insert Above");
+      insertabove_button->tooltip("Inserts three items above the selected items");
+      insertabove_button->labelsize(11);
+      insertabove_button->callback((Fl_Callback*)cb_insertabove_button);
+    } // Fl_Button* insertabove_button
+    { rebuildtree_button = new Fl_Button(380, 644, 90, 16, "Rebuild Tree");
+      rebuildtree_button->tooltip("Rebuilds the tree with defaults");
+      rebuildtree_button->labelsize(11);
+      rebuildtree_button->callback((Fl_Callback*)cb_rebuildtree_button);
+    } // Fl_Button* rebuildtree_button
+    { clearselected_button = new Fl_Button(475, 624, 90, 16, "Clear Selected");
+      clearselected_button->tooltip("Clears the selected items");
+      clearselected_button->labelsize(11);
+      clearselected_button->callback((Fl_Callback*)cb_clearselected_button);
+    } // Fl_Button* clearselected_button
+    { clearall_button = new Fl_Button(475, 644, 90, 16, "Clear All");
+      clearall_button->tooltip("Clears all items\nTests Fl_Tree::clear()");
+      clearall_button->labelsize(11);
+      clearall_button->callback((Fl_Callback*)cb_clearall_button);
+    } // Fl_Button* clearall_button
+    { bbbchild02select_toggle = new Fl_Light_Button(430, 571, 115, 16, " Toggle child-02");
+      bbbchild02select_toggle->tooltip("Toggle the single item /Bbb/child-02");
+      bbbchild02select_toggle->labelsize(11);
+      bbbchild02select_toggle->callback((Fl_Callback*)cb_bbbchild02select_toggle);
+    } // Fl_Light_Button* bbbchild02select_toggle
     window->end();
   } // Fl_Double_Window* window
   // Initialize Tree
-  tree->root_label("ROOT");
-  RebuildTree();
-  tree->show_self();
+tree->root_label("ROOT");
+docallback_radio->value(1);	// enable docallbacks radio button
+RebuildTree();
+tree->show_self();
   // FLTK stuff
-  // Fl::scheme("gtk+");
-  window->resizable(window);
-  window->size_range(window->w(), window->h(), 0, 0);
+Fl::scheme("gtk+");
+window->resizable(window);
+window->size_range(window->w(), window->h(), 0, 0);
   window->show(argc, argv);
   return Fl::run();
 }
