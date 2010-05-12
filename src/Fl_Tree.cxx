@@ -345,10 +345,22 @@ int Fl_Tree::handle(int e) {
 ///     Returns count of how many items were in the 'selected' state,
 ///     ie. how many items were "changed".
 ///
-int Fl_Tree::deselect_all(Fl_Tree_Item *item) {
+///     \p docallback is an optional paramemter that can either be 0 or 1:
+///
+///     - 0 - the callback() is not invoked (default)
+///     - 1 - the callback() is invoked once if \b any items changed state,
+///           and item_clicked() will be NULL (since many items could have been changed).
+//
+/// \todo deselect_all()'s docallback should support '2' (invoke callback for each item changed)
+///
+int Fl_Tree::deselect_all(Fl_Tree_Item *item, int docallback) {
   item = item ? item : root();			// NULL? use root()
   int count = item->deselect_all();
-  if ( count ) redraw();			// anything changed? cause redraw
+  if ( count ) {
+    redraw();					// anything changed? cause redraw
+    if ( docallback == 1 )
+      do_callback_for_item(0);
+  }
   return(count);
 }
 
@@ -358,10 +370,22 @@ int Fl_Tree::deselect_all(Fl_Tree_Item *item) {
 ///     Returns count of how many items were in the 'deselected' state,
 ///     ie. how many items were "changed".
 ///
-int Fl_Tree::select_all(Fl_Tree_Item *item) {
+///     \p docallback is an optional paramemter that can either be 0 or 1:
+///
+///     - 0 - the callback() is not invoked (default)
+///     - 1 - the callback() is invoked once if \b any items changed state,
+///           and item_clicked() will be NULL (since many items could have been changed).
+///
+/// \todo select_all()'s docallback should support '2' (invoke callback for each item changed)
+///
+int Fl_Tree::select_all(Fl_Tree_Item *item, int docallback) {
   item = item ? item : root();			// NULL? use root()
   int count = item->select_all();
-  if ( count ) redraw();			// anything changed? cause redraw
+  if ( count ) {
+    redraw();					// anything changed? cause redraw
+    if (docallback == 1)
+      do_callback_for_item(0);
+  }
   return(count);
 }
 
@@ -370,7 +394,15 @@ int Fl_Tree::select_all(Fl_Tree_Item *item) {
 ///     Handles calling redraw() if anything was changed.
 ///     Returns how many items were changed, if any.
 ///
-int Fl_Tree::select_only(Fl_Tree_Item *selitem) {
+///     \p docallback is an optional paramemter that can either be 0, 1 or 2:
+///
+///     - 0 - the callback() is not invoked (default)
+///     - 1 - the callback() is invoked once if \b any items changed state,
+///          and item_clicked() will be NULL (since many items could have been changed).
+///     - 2 - the callback() is invoked once for \b each item that changed state,
+///          and the callback() can use item_clicked() to determine the item changed.
+///
+int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
   selitem = selitem ? selitem : root();		// NULL? use root()
   int changed = 0;
   for ( Fl_Tree_Item *item = first(); item; item = item->next() ) {
@@ -378,14 +410,19 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem) {
       if ( item->is_selected() ) continue;	// don't count if already selected
       item->select();
       ++changed;
+      if ( docallback == 2 ) do_callback_for_item(item);
     } else {
       if ( item->is_selected() ) {
         item->deselect();
         ++changed;
+        if ( docallback == 2 ) do_callback_for_item(item);
       }
     }
   }
-  if ( changed ) redraw();			// anything changed? redraw
+  if ( changed ) {
+    redraw();			// anything changed? redraw
+    if ( docallback == 1 ) do_callback_for_item(0);
+  }
   return(changed);
 }
 

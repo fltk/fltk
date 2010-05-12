@@ -139,6 +139,12 @@ protected:
   void item_clicked(Fl_Tree_Item* val) {
     _item_clicked = val;
   }
+  void do_callback_for_item(Fl_Tree_Item* item) {
+    Fl_Tree_Item *save = _item_clicked;		// save previous 'item_clicked'
+    _item_clicked = item;			// set item_clicked to this item while we do callback
+    do_callback((Fl_Widget*)this, user_data());
+    _item_clicked = save;			// restore item_clicked
+  }
   
 public:
   Fl_Tree(int X, int Y, int W, int H, const char *L=0);
@@ -171,7 +177,7 @@ public:
   Fl_Tree_Item *insert_above(Fl_Tree_Item *above, const char *name);
   Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos);
   
-  /// Remove the specified 'item' from the tree.
+  /// Remove the specified \p item from the tree.
   /// If it has children, all those are removed too.
   /// \returns 0 if done, -1 if 'item' not found.
   ///
@@ -194,7 +200,7 @@ public:
     _root->clear_children();
     delete _root; _root = 0;
   } 
-  /// Clear all the children of a particular node in the tree.
+  /// Clear all the children of a particular node in the tree specified by \p item.
   void clear_children(Fl_Tree_Item *item) {
     if ( item->has_children() ) {
       item->clear_children();
@@ -208,7 +214,7 @@ public:
   Fl_Tree_Item *find_item(const char *path);
   const Fl_Tree_Item *find_item(const char *path) const;
   
-  /// Return the parent for specified 'item'.
+  /// Return the parent for specified \p item.
   ///
   /// \returns item's parent, or 0 if none (root).
   ///
@@ -220,6 +226,7 @@ public:
   /// Valid only from within an Fl_Tree::callback().
   ///
   /// \returns the item clicked, or 0 if none.
+  ///          0 may also be used to indicate several items were clicked/changed.
   ///
   Fl_Tree_Item *item_clicked() {
     return(_item_clicked);
@@ -273,7 +280,7 @@ public:
       redraw();
     }
   }
-  /// Opens the item specified by a 'menu item' style pathname (eg: "Parent/child/item").
+  /// Opens the item specified by \p path (eg: "Parent/child/item").
   /// This causes the item's children (if any) to be shown.
   /// Handles redrawing if anything was actually changed.
   ///
@@ -289,7 +296,7 @@ public:
     }
     return(-1);
   }
-  /// Closes the 'item'.
+  /// Closes the specified \p item.
   /// Handles redrawing if anything was actually changed.
   ///
   void close(Fl_Tree_Item *item) {
@@ -298,7 +305,7 @@ public:
       redraw();
     }
   }
-  /// Closes the item specified by 'path', eg: "Parent/child/item".
+  /// Closes the item specified by \p path, eg: "Parent/child/item".
   ///
   /// Handles redrawing if anything was actually changed.
   ///
@@ -314,7 +321,7 @@ public:
     }
     return(-1);
   }
-  /// See if item is open.
+  /// See if \p item is open.
   ///
   /// Items that are 'open' are themselves not necessarily visible;
   /// one of the item's parents might be closed.
@@ -326,7 +333,7 @@ public:
   int is_open(Fl_Tree_Item *item) const {
     return(item->is_open()?1:0);
   }
-  /// See if item specified by 'path' (eg: "Parent/child/item") is open.
+  /// See if item specified by \p path (eg: "Parent/child/item") is open.
   ///
   /// Items that are 'open' are themselves not necessarily visible;
   /// one of the item's parents might be closed.
@@ -341,7 +348,7 @@ public:
     if ( item ) return(item->is_open()?1:0);
     return(-1);
   }
-  /// See if item is closed.
+  /// See if the specified \p item is closed.
   /// \returns
   ///     -   1 : item is open
   ///     -   0 : item is closed
@@ -349,7 +356,7 @@ public:
   int is_close(Fl_Tree_Item *item) const {
     return(item->is_close());
   }
-  /// See if item specified by 'path' (eg: "Parent/child/item") is closed.
+  /// See if item specified by \p path (eg: "Parent/child/item") is closed.
   ///
   /// \returns
   ///     -   1 : item is closed
@@ -366,67 +373,96 @@ public:
   // Item selection methods
   /////////////////////////
   
-  /// Select the specified item. Use 'deselect()' to de-select it.
+  /// Select the specified \p item. Use 'deselect()' to de-select it.
   /// Handles redrawing if anything was actually changed.
   ///
-  void select(Fl_Tree_Item *item) {
+  /// \p docallback is an optional paramemter that can either be 0 or 1.
+  ///     - 0 - the callback() is not invoked (default)
+  ///     - 1 - the callback() is invoked if the item changed state,
+  ///           and the callback can use item_clicked() to determine the selected item.
+  ///
+  void select(Fl_Tree_Item *item, int docallback=0) {
     if ( ! item->is_selected() ) {
       item->select();
+      if ( docallback == 1 ) do_callback_for_item(item);
       redraw();
     }
   }
-  /// Select an item specified by 'path' (eg: "Parent/child/item").
+  /// Select the item specified by \p path (eg: "Parent/child/item").
   /// Handles redrawing if anything was actually changed.
+  ///
+  /// \p docallback is an optional paramemter that can either be 0 or 1.
+  ///     - 0 - the callback() is not invoked (default)
+  ///     - 1 - the callback() is invoked if the item changed state,
+  ///           and the callback can use item_clicked() to determine the selected item.
   ///
   /// \returns
   ///     -   0 : OK
   ///     -  -1 : item was not found
   ///
-  int select(const char *path) {
+  int select(const char *path, int docallback=0) {
     Fl_Tree_Item *item = find_item(path);
     if ( item ) {
       select(item);
+      if ( docallback == 1 ) do_callback_for_item(item);
       return(0);
     }
     return(-1);
   }
-  /// Toggle item's select state.
+  /// Toggle the select state of the specified \p item.
   /// Handles redrawing.
   ///
-  void select_toggle(Fl_Tree_Item *item) {
+  /// \p docallback is an optional paramemter that can either be 0 or 1.
+  ///     - 0 - the callback() is not invoked (default)
+  ///     - 1 - the callback() is invoked,
+  ///           and the callback can use item_clicked() to determine the selected item.
+  ///
+  void select_toggle(Fl_Tree_Item *item, int docallback=0) {
     item->select_toggle();
+    if ( docallback == 1 ) do_callback_for_item(item);
     redraw();
   }
-  /// De-select the specified item.
+  /// De-select the specified \p item.
   /// Handles redrawing if anything was actually changed.
   ///
-  void deselect(Fl_Tree_Item *item) {
+  /// \p docallback is an optional paramemter that can either be 0 or 1.
+  ///     - 0 - the callback() is not invoked (default)
+  ///     - 1 - the callback() is invoked if the item changed state,
+  ///           and the callback can use item_clicked() to determine the selected item.
+  ///
+  void deselect(Fl_Tree_Item *item, int docallback=0) {
     if ( item->is_selected() ) {
       item->deselect();
+      if ( docallback == 1 ) do_callback_for_item(item);
       redraw();
     }
   }
-  /// De-select an item specified by 'path' (eg: "Parent/child/item").
+  /// De-select an item specified by \p path (eg: "Parent/child/item").
   /// Handles redrawing if anything was actually changed.
+  ///
+  /// \p docallback is an optional paramemter that can either be 0 or 1.
+  ///     - 0 - the callback() is not invoked (default)
+  ///     - 1 - the callback() is invoked if the item changed state,
+  ///           and the callback can use item_clicked() to determine the selected item.
   ///
   ///  \returns
   ///     -   0 : OK
   ///     -  -1 : item was not found
   ///
-  int deselect(const char *path) {
+  int deselect(const char *path, int docallback=0) {
     Fl_Tree_Item *item = find_item(path);
     if ( item ) {
-      deselect(item);
+      deselect(item, docallback);
       return(0);
     }
     return(-1);
   }
   
-  int deselect_all(Fl_Tree_Item *item=0);
-  int select_only(Fl_Tree_Item *selitem);
-    int select_all(Fl_Tree_Item *item=0);
+  int deselect_all(Fl_Tree_Item *item=0, int docallback=0);
+  int select_only(Fl_Tree_Item *selitem, int docallback=0);
+  int select_all(Fl_Tree_Item *item=0, int docallback=0);
   
-  /// See if the specified item is selected.
+  /// See if the specified \p item is selected.
   /// \return
   ///     -   1 : item selected
   ///     -   0 : item deselected
@@ -434,7 +470,7 @@ public:
   int is_selected(Fl_Tree_Item *item) const {
     return(item->is_selected()?1:0);
   }
-  /// See if item specified by 'path' (eg: "Parent/child/item") is selected.
+  /// See if item specified by \p path (eg: "Parent/child/item") is selected.
   ///
   /// \returns
   ///     -   1 : item selected
