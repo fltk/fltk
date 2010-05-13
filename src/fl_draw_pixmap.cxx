@@ -335,9 +335,12 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   }
   d.data = data;
 #ifdef WIN32
-    if(transparent_c){
-      // only make a transparent color if one is defined
-      make_unused_color(transparent_c[0], transparent_c[1], transparent_c[2]);
+  if (transparent_c) {
+    make_unused_color(transparent_c[0], transparent_c[1], transparent_c[2]);
+    }
+  else {
+    uchar r, g, b;
+    make_unused_color(r, g, b);
     }
 #endif
 #ifndef __APPLE_QUARTZ__
