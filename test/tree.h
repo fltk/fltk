@@ -8,7 +8,7 @@
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Tree.H>
-#include <FL/fl_ask.h>
+#include <FL/fl_ask.H>
 void CccButton_CB(Fl_Widget*, void*data);
 void RebuildTree();
 #include <FL/Fl_Double_Window.H>
