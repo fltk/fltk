@@ -19,6 +19,7 @@ For further information, please see:
 - http://www.iso.org
 - http://en.wikipedia.org/wiki/Unicode
 - http://www.cl.cam.ac.uk/~mgk25/unicode.html
+- http://www.apps.ietf.org/rfc/rfc3629.html
 
 \par The Unicode Standard
 
@@ -64,9 +65,20 @@ and are usually shown using 'U+' and the code in hexadecimal,
 e.g. U+0041 is the "Latin capital letter A".
 The UCS characters U+0000 to U+007F correspond to US-ASCII,
 and U+0000 to U+00FF correspond to ISO 8859-1 (Latin1).
+
+ISO 10646 was originally designed to handle a 31-bit character set
+from U+00000000 to U+7FFFFFFF, but the current idea is that 21-bits
+will be sufficient for all future needs, giving characters up to
+U+10FFFF.  The complete character set is sub-divided into \e planes.
+<i>Plane 0</i>, also known as the <b>Basic Multilingual Plane</b>
+(BMP), ranges from U+0000 to U+FFFD and consists of the most commonly
+used characters from previous encoding standards. Other planes
+contain characters for specialist applications.
+\todo
+Do we need this info about planes?
+
 The UCS also defines various methods of encoding characters as
 a sequence of bytes.
-
 UCS-2 encodes Unicode characters into two bytes,
 which is wasteful if you are only dealing with ASCII or Latin1 text,
 and insufficient if you need characters above U+00FFFF.
@@ -77,6 +89,8 @@ but this is even more wasteful for ASCII or Latin1.
 
 The Unicode standard defines various UCS Transformation Formats.
 UTF-16 and UTF-32 are based on units of two and four bytes.
+UCS characters requiring more than 16-bits are encoded using
+"surrogate pairs" in UTF-16.
 
 UTF-8 encodes all Unicode characters into variable length 
 sequences of bytes. Unicode characters in the 7-bit ASCII 
@@ -86,7 +100,7 @@ making the transformation to Unicode quick and easy.
 All UCS characters above U+007F are encoded as a sequence of
 several bytes. The top bits of the first byte are set to show
 the length of the byte sequence, and subseqent bytes are
-always in the range 0x80 to 8x8F. This combination provides
+always in the range 0x80 to 0x8F. This combination provides
 some level of synchronisation and error detection.
 
 <table summary="Unicode character byte sequences" align="center">
@@ -128,9 +142,13 @@ library.
 
 \section unicode_in_fltk Unicode in FLTK
 
-FLTK will be entirely converted to Unicode in UTF-8 encoding.
-If a different encoding is required by the underlying operatings
-system, FLTK will convert string as needed.
+\todo
+Work through the code and this documentation to harmonize
+the [<b>OksiD</b>] and [<b>fltk2</b>] functions.
+
+FLTK will be entirely converted to Unicode using UTF-8 encoding.
+If a different encoding is required by the underlying operating
+system, FLTK will convert the string as needed.
 
 It is important to note that the initial implementation of
 Unicode and UTF-8 in FLTK involves three important areas:
@@ -138,7 +156,7 @@ Unicode and UTF-8 in FLTK involves three important areas:
 - provision of Unicode character tables and some simple related functions;
 
 - conversion of char* variables and function parameters from single byte
-  per character representation to UTF-8 variable length characters;
+  per character representation to UTF-8 variable length sequences;
 
 - modifications to the display font interface to accept general
   Unicode character or UCS code numbers instead of just ASCII or Latin1
@@ -147,9 +165,15 @@ Unicode and UTF-8 in FLTK involves three important areas:
 The current implementation of Unicode / UTF-8 in FLTK will impose
 the following limitations:
 
-- An implementation note in the code says that all functions are
-  LIMITED to 24 bit Unicode values, but also says that only 16 bits
+- An implementation note in the [<b>OksiD</b>] code says that all functions
+  are LIMITED to 24 bit Unicode values, but also says that only 16 bits
   are really used under linux and win32.
+  <b>[Can we verify this?]</b>
+  
+- The [<b>fltk2</b>] %fl_utf8encode() and %fl_utf8decode() functions are
+  designed to handle Unicode characters in the range U+000000 to U+10FFFF
+  inclusive, which covers all UTF-16 characters, as specified in RFC 3629.
+  <i>Note that the user must first convert UTF-16 surrogate pairs to UCS.</i>
 
 - FLTK will only handle single characters, so composed characters
   consisting of a base character and floating accent characters
@@ -164,8 +188,54 @@ the following limitations:
   Verify 16/24 bit Unicode limit for different character sets?
   OksiD's code appears limited to 16-bit whereas the FLTK2 code
   appears to handle a wider set. What about illegal characters?
-  See comments in fl_utf8fromwc() and fl_utf8toUtf16().
+  See comments in %fl_utf8fromwc() and %fl_utf8toUtf16().
 
+\section unicode_illegals Illegal Unicode and UTF8 sequences
+
+Three pre-processor variables are defined in the source code that
+determine how %fl_utf8decode() handles illegal UTF8 sequences:
+
+- if ERRORS_TO_CP1252 is set to 1 (the default), %fl_utf8decode() will
+  assume that a byte sequence starting with a byte in the range 0x80
+  to 0x9f represents a Microsoft CP1252 character, and will instead
+  return the value of an equivalent UCS character. Otherwise, it
+  will be processed as an illegal byte value as described below.
+
+- if STRICT_RFC3629 is set to 1 (not the default!) then UTF-8
+  sequences that correspond to illegal UCS values are treated as
+  errors.  Illegal UCS values include those above U+10FFFF, or
+  corresponding to UTF-16 surrogate pairs. Illegal byte values
+  are handled as described below.
+
+- if ERRORS_TO_ISO8859_1 is set to 1 (the default), the illegal
+  byte value is returned unchanged, otherwise 0xFFFD, the Unicode
+  REPLACEMENT CHARACTER, is returned instead.
+
+%fl_utf8encode() is less strict, and only generates the UTF-8
+sequence for 0xFFFD, the Unicode REPLACEMENT CHARACTER, if it is
+asked to encode a UCS value above U+10FFFF.
+
+Many of the [<b>fltk2</b>] functions below use %fl_utf8decode() and
+%fl_utf8encode() in their own implementation, and are therefore
+somewhat protected from bad UTF-8 sequences.
+
+The [<b>OksiD</b>] %fl_utf8len() function assumes that the byte it is
+passed is the first byte in a UTF-8 sequence, and returns the length
+of the sequence. Trailing bytes in a UTF-8 sequence will return -1.
+
+- \b WARNING:
+  %fl_utf8len() can not distinguish between single
+  bytes representing Microsoft CP1252 characters 0x80-0x9f and
+  those forming part of a valid UTF-8 sequence. You are strongly
+  advised not to use %fl_utf8len() in your own code unless you
+  know that the byte sequence contains only valid UTF-8 sequences.
+
+- \b WARNING:
+  Some of the [OksiD] functions below use still use %fl_utf8len() in
+  their implementations. These may need further validation.
+
+Please see the individual function description for further details
+about error handling and return values.
 
 \section unicode_fltk_calls FLTK Unicode and UTF8 functions
 
