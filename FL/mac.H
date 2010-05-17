@@ -176,7 +176,7 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 
 /** 
  * \brief Mac OS X: attaches a callback to the "About myprog" item of the system application menu.
- * \note  #include <FL/x.H>
+ * \note  \#include <FL/x.H>
  *
  * \param cb   a callback that will be called by "About myprog" menu item
  *		   with NULL 1st argument.
