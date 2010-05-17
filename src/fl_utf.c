@@ -68,17 +68,17 @@
   /** @} */  
 #endif /* 0 */
   
-/* Set to 1 to turn bad UTF8 bytes into ISO-8859-1. If this is to zero
+/*!Set to 1 to turn bad UTF8 bytes into ISO-8859-1. If this is to zero
    they are instead turned into the Unicode REPLACEMENT CHARACTER, of
    value 0xfffd.
-   If this is on fl_utf8decode will correctly map most (perhaps all)
+   If this is on fl_utf8decode() will correctly map most (perhaps all)
    human-readable text that is in ISO-8859-1. This may allow you
    to completely ignore character sets in your code because virtually
    everything is either ISO-8859-1 or UTF-8.
 */
 #define ERRORS_TO_ISO8859_1 1
 
-/* Set to 1 to turn bad UTF8 bytes in the 0x80-0x9f range into the
+/*!Set to 1 to turn bad UTF8 bytes in the 0x80-0x9f range into the
    Unicode index for Microsoft's CP1252 character set. You should
    also set ERRORS_TO_ISO8859_1. With this a huge amount of more
    available text (such as all web pages) are correctly converted
@@ -86,7 +86,7 @@
 */
 #define ERRORS_TO_CP1252 1
 
-/* A number of Unicode code points are in fact illegal and should not
+/*!A number of Unicode code points are in fact illegal and should not
    be produced by a UTF-8 converter. Turn this on will replace the
    bytes in those encodings with errors. If you do this then converting
    arbitrary 16-bit data to UTF-8 and then back is not an identity,
@@ -286,7 +286,7 @@ int fl_utf8bytes(unsigned ucs) {
     return 2;
   } else if (ucs < 0x010000U) {
     return 3;
-  } else if (ucs < 0x10ffffU) {
+  } else if (ucs <= 0x10ffffU) {
     return 4;
   } else {
     return 3; /* length of the illegal character encoding */
@@ -322,7 +322,7 @@ int fl_utf8encode(unsigned ucs, char* buf) {
     buf[1] = 0x80 | ((ucs >> 6) & 0x3F);
     buf[2] = 0x80 | (ucs & 0x3F);
     return 3;
-  } else if (ucs < 0x0010ffffU) {
+  } else if (ucs <= 0x0010ffffU) {
     buf[0] = 0xf0 | (ucs >> 18);
     buf[1] = 0x80 | ((ucs >> 12) & 0x3F);
     buf[2] = 0x80 | ((ucs >> 6) & 0x3F);
@@ -868,13 +868,14 @@ int fl_utf8test(const char* src, unsigned srclen) {
     \param [in] ucs Unicode character value
     \returns width of character in columns
 
-    This is an implementation of wcwidth() and wcswidth()
+    See http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c for Markus Kuhn's
+    original implementation of wcwidth() and wcswidth()
     (defined in IEEE Std 1002.1-2001) for Unicode.
-    See http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
 
-    WARNING: this function returns widths for "raw" Unicode characters.
+    \b WARNING: this function returns widths for "raw" Unicode characters.
     It does not even try to map C1 control characters (0x80 to 0x9F) to
     CP1252, and C0/C1 control characters and DEL will return -1.
+    You are advised to use fl_width(const char* src) instead.
  */
 int fl_wcwidth_(unsigned int ucs) {
   return mk_wcwidth(ucs);
