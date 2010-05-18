@@ -2385,7 +2385,9 @@ void Fl_Window::make_current()
     win = (Fl_Window*)win->window();
   }
   
-  [[NSView focusView] unlockFocus];
+  NSView *current_focus = [NSView focusView]; 
+  // sometimes current_focus is set to a non-FLTK view: don't touch that
+  if ( [current_focus isKindOfClass:[FLView class]] ) [current_focus unlockFocus];
   [[(NSWindow*)i->xid contentView]  lockFocus];
   i->gc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
   fl_gc = i->gc;
