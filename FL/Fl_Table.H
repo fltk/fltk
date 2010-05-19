@@ -518,22 +518,22 @@ public:
   }
   
   /**
-   Returns the range of row and column numbers for all the
-   visible (and partially visible) cells in the table.
+   Returns the range of row and column numbers for all visible 
+   and partially visible cells in the table.
    
    These values can be used e.g. by your draw_cell() routine during
-   CONTEXT_STARTPAGE to figure out what cells are about to be redrawn,
+   CONTEXT_STARTPAGE to figure out what cells are about to be redrawn
    for the purposes of locking the data from a database before it's drawn.
    
    \code
-   leftcol             rightcol
-   :                   :
+          leftcol             rightcol
+             :                   :
    toprow .. .-------------------.
-   |                   |
-   |  V I S I B L E    |
-   |                   |
-   |    T A B L E      |
-   |                   |
+             |                   |
+             |  V I S I B L E    |
+             |                   |
+             |    T A B L E      |
+             |                   |
    botrow .. '-------------------`
    \endcode
    
