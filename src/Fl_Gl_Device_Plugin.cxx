@@ -90,19 +90,23 @@ static void print_gl_window(Fl_Gl_Window *glw, int x, int y, int height)
   glPopClientAttrib();
   fl_gc = save_gc;
 #if defined(__APPLE__)
+// kCGBitmapByteOrder32Host and CGBitmapInfo are supposed to arrive with 10.4
+// but some 10.4 don't have kCGBitmapByteOrder32Host, so we play a little #define game
 #if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_4
-#define kCGBitmapByteOrder32Big 0
+#define kCGBitmapByteOrder32Host 0
 #define CGBitmapInfo CGImageAlphaInfo
+#elif ! defined(kCGBitmapByteOrder32Host)
+#ifdef __BIG_ENDIAN__
+#define kCGBitmapByteOrder32Host (4 << 12)
+#else    /* Little endian. */
+#define kCGBitmapByteOrder32Host (2 << 12)
+#endif
 #endif
   CGColorSpaceRef cSpace = CGColorSpaceCreateDeviceRGB();
   CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, baseAddress, mByteWidth * glw->h(), imgProviderReleaseData);
-  CGImageRef image = CGImageCreate(glw->w(), glw->h(), 8, 8*bytesperpixel, mByteWidth, cSpace,
-#if __BIG_ENDIAN__
-		(CGBitmapInfo)(kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Big) /* XRGB Big Endian */
-#else
-		  kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little /* XRGB Little Endian */
-#endif
-   , provider, NULL, false, kCGRenderingIntentDefault);
+  CGImageRef image = CGImageCreate(glw->w(), glw->h(), 8, 8*bytesperpixel, mByteWidth, cSpace, 
+				   (CGBitmapInfo)(kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host), 
+				   provider, NULL, false, kCGRenderingIntentDefault);
   if(image == NULL) return;
   CGContextSaveGState(fl_gc);
   CGContextTranslateCTM(fl_gc, 0, height);
