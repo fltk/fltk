@@ -43,7 +43,7 @@
  really remove these as well, so we can stop linking to Carbon alltogether.
  
  "_GetKeys", referenced from:
- Fl::get_key(int)  in Fl_get_key.o
+ Fl::get_key(int)  in Fl_get_key.o (kept only for pre-10.4 runs)
   
  "_GetEventParameter", referenced from:
  carbonTextHandler(OpaqueEventHandlerCallRef*, OpaqueEventRef*, void*) in Fl.o
