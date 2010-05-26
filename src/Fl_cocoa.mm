@@ -44,10 +44,7 @@
  
  "_GetKeys", referenced from:
  Fl::get_key(int)  in Fl_get_key.o
- 
- "_InstallEventLoopTimer", referenced from:
- Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
- 
+  
  "_GetEventParameter", referenced from:
  carbonTextHandler(OpaqueEventHandlerCallRef*, OpaqueEventRef*, void*) in Fl.o
  
@@ -56,18 +53,7 @@
  
  "_GetEventDispatcherTarget", referenced from:
  fl_open_display()     in Fl.o
- 
- "_SetEventLoopTimerNextFireTime", referenced from:
- Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
- 
- "_RemoveEventLoopTimer", referenced from:
- Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
- delete_timer(MacTimeout&)       in Fl.o
- 
- "_GetMainEventLoop", referenced from:
- Fl::add_timeout(double, void (*)(void*), void*)in Fl.o
- 
- */
+*/
 
 #ifndef FL_DOXYGEN
 
@@ -569,8 +555,7 @@ static void breakMacEventLoop()
 struct MacTimeout {
   Fl_Timeout_Handler callback;
   void* data;
-  EventLoopTimerRef timer;
-  EventLoopTimerUPP upp;
+  CFRunLoopTimerRef timer;
   char pending; 
 };
 static MacTimeout* mac_timers;
@@ -594,13 +579,12 @@ static void realloc_timers()
 static void delete_timer(MacTimeout& t)
 {
   if (t.timer) {
-    RemoveEventLoopTimer(t.timer);
-    DisposeEventLoopTimerUPP(t.upp);
+    CFRelease(t.timer);
     memset(&t, 0, sizeof(MacTimeout));
   }
 }
 
-static void do_timer(EventLoopTimerRef timer, void* data)
+static void do_timer(CFRunLoopTimerRef timer, void* data)
 {
   for (int i = 0;  i < mac_timer_used;  ++i) {
     MacTimeout& t = mac_timers[i];
@@ -2639,7 +2623,7 @@ void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
     MacTimeout& t = mac_timers[i];
     // if so, simply change the fire interval
     if (t.callback == cb  &&  t.data == data) {
-      SetEventLoopTimerNextFireTime(t.timer, (EventTimerInterval)time);
+      CFRunLoopTimerSetNextFireDate(t.timer, CFAbsoluteTimeGetCurrent() + time );
       t.pending = 1;
       return;
     }
@@ -2663,21 +2647,23 @@ void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
   }
   // now install a brand new timer
   MacTimeout& t = mac_timers[timer_id];
-  EventTimerInterval fireDelay = (EventTimerInterval)time;
-  EventLoopTimerUPP  timerUPP = NewEventLoopTimerUPP(do_timer);
-  EventLoopTimerRef  timerRef = 0;
-  OSStatus err = InstallEventLoopTimer(GetMainEventLoop(), fireDelay, 0, timerUPP, data, &timerRef);
-  if (err == noErr) {
+  CFRunLoopTimerContext context = {0, data, NULL,NULL,NULL};
+  CFRunLoopTimerRef timerRef = CFRunLoopTimerCreate(kCFAllocatorDefault, 
+						    CFAbsoluteTimeGetCurrent() + time,
+						    1E30,  
+						    0,
+						    0,
+						    do_timer,
+						    &context
+						    );
+  if (timerRef) {
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(),
+		      timerRef,
+		      kCFRunLoopDefaultMode);
     t.callback = cb;
     t.data     = data;
     t.timer    = timerRef;
-    t.upp      = timerUPP;
     t.pending  = 1;
-  } else {
-    if (timerRef) 
-      RemoveEventLoopTimer(timerRef);
-    if (timerUPP)
-      DisposeEventLoopTimerUPP(timerUPP);
   }
 }
 
