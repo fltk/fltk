@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PostScript.H 7556 2010-04-27 21:33:44Z manolo $"
+// "$Id$"
 //
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
@@ -289,5 +289,5 @@ public:
 #endif // Fl_PostScript_H
 
 //
-// End of "$Id: Fl_PostScript.H 7556 2010-04-27 21:33:44Z manolo $"
+// End of "$Id$"
 //
