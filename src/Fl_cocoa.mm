@@ -579,6 +579,9 @@ static void realloc_timers()
 static void delete_timer(MacTimeout& t)
 {
   if (t.timer) {
+    CFRunLoopRemoveTimer(CFRunLoopGetCurrent(),
+		      t.timer,
+		      kCFRunLoopDefaultMode);
     CFRelease(t.timer);
     memset(&t, 0, sizeof(MacTimeout));
   }
