@@ -121,7 +121,7 @@ cube.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H ../FL/Fl_Slider.H
 cube.o: ../FL/Fl_Valuator.H ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H ../FL/gl.h
 cube.o: ../FL/Fl_Sys_Menu_Bar.H ../FL/Fl_Menu_Bar.H ../FL/Fl_Menu_.H
 cube.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Printer.H
-cube.o: ../FL/Fl_Abstract_Printer.H ../FL/Fl_Device.H ../FL/x.H
+cube.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/x.H
 cube.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 cube.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 cube.o: ../FL/fl_draw.H ../FL/Fl_PSfile_Device.H
@@ -164,7 +164,7 @@ device.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 device.o: ../FL/Fl_Light_Button.H ../FL/fl_draw.H ../FL/Fl_Clock.H
 device.o: ../test/pixmaps/porsche.xpm ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
 device.o: ../FL/Fl_Bitmap.H ../FL/Fl_Round_Button.H ../FL/Fl_Light_Button.H
-device.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H ../FL/Fl_Abstract_Printer.H
+device.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
 device.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Plugin.H
 device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_RGB_Image.H
 device.o: ../FL/Fl_PSfile_Device.H ../FL/Fl_File_Chooser.H
@@ -358,7 +358,7 @@ mandelbrot.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Double_Window.H
 mandelbrot.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 mandelbrot.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/fl_draw.H
 mandelbrot.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H
-mandelbrot.o: ../FL/Fl_Abstract_Printer.H ../FL/Fl_Device.H ../FL/x.H
+mandelbrot.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/x.H
 mandelbrot.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 mandelbrot.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
 mandelbrot.o: ../FL/Fl_RGB_Image.H ../FL/Fl_PSfile_Device.H
@@ -464,7 +464,7 @@ device.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 device.o: ../FL/Fl_Light_Button.H ../FL/fl_draw.H ../FL/Fl_Clock.H
 device.o: ../test/pixmaps/porsche.xpm ../FL/Fl_Pixmap.H ../FL/Fl_Image.H
 device.o: ../FL/Fl_Bitmap.H ../FL/Fl_Round_Button.H ../FL/Fl_Light_Button.H
-device.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H ../FL/Fl_Abstract_Printer.H
+device.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
 device.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Plugin.H
 device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_RGB_Image.H
 device.o: ../FL/Fl_PSfile_Device.H ../FL/Fl_File_Chooser.H
