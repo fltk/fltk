@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_PS_Printer.cxx 7520 2010-04-16 20:19:09Z manolo $"
+// "$Id$"
 //
 // PostScript device support for the Fast Light Tool Kit (FLTK).
 //
@@ -1389,5 +1389,5 @@ int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
 #endif // FL_DOXYGEN
 
 //
-// End of "$Id: Fl_PS_Printer.cxx 7520 2010-04-16 20:19:09Z manolo $".
+// End of "$Id$".
 //
