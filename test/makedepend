@@ -124,7 +124,7 @@ cube.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/x.H ../FL/Fl_Printer.H
 cube.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/x.H
 cube.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 cube.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-cube.o: ../FL/fl_draw.H ../FL/Fl_PSfile_Device.H
+cube.o: ../FL/fl_draw.H ../FL/Fl_PostScript.H
 CubeMain.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 CubeMain.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 CubeMain.o: ../FL/Fl_Export.H ../FL/fl_types.h CubeViewUI.h
@@ -167,7 +167,7 @@ device.o: ../FL/Fl_Bitmap.H ../FL/Fl_Round_Button.H ../FL/Fl_Light_Button.H
 device.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
 device.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Plugin.H
 device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_RGB_Image.H
-device.o: ../FL/Fl_PSfile_Device.H ../FL/Fl_File_Chooser.H
+device.o: ../FL/Fl_PostScript.H ../FL/Fl_File_Chooser.H
 device.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
 device.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/Fl_Menu_Button.H
 device.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
@@ -361,7 +361,7 @@ mandelbrot.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H
 mandelbrot.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/x.H
 mandelbrot.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 mandelbrot.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-mandelbrot.o: ../FL/Fl_RGB_Image.H ../FL/Fl_PSfile_Device.H
+mandelbrot.o: ../FL/Fl_RGB_Image.H ../FL/Fl_PostScript.H
 menubar.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 menubar.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 menubar.o: ../FL/fl_types.h ../FL/Fl_Box.H ../FL/Fl_Double_Window.H
@@ -467,7 +467,7 @@ device.o: ../FL/Fl_Bitmap.H ../FL/Fl_Round_Button.H ../FL/Fl_Light_Button.H
 device.o: ../FL/Fl_Button.H ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
 device.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Plugin.H
 device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_RGB_Image.H
-device.o: ../FL/Fl_PSfile_Device.H ../FL/Fl_File_Chooser.H
+device.o: ../FL/Fl_PostScript.H ../FL/Fl_File_Chooser.H
 device.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
 device.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/Fl_Menu_Button.H
 device.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
