@@ -34,12 +34,13 @@
 
 extern HWND fl_window;
 
-Fl_Printer::Fl_Printer(void) : Fl_Abstract_Printer() {
+Fl_Printer::Fl_System_Printer(void) : Fl_Paged_Device() {
   hPr = NULL;
-  type_ = gdi_printer;
+  type_ = device_type;
+  driver(fl_device);
 }
 
-Fl_Printer::~Fl_Printer(void) {
+Fl_Printer::~Fl_System_Printer(void) {
   if (hPr) end_job();
 }
 
@@ -117,7 +118,7 @@ int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
 
 void Fl_Printer::end_job (void)
 {
-  Fl_Device::display_device()->set_current();
+  Fl_Display_Device::display_device()->set_current();
   if (hPr != NULL) {
     if (! abortPrint) {
       prerr = EndDoc (hPr);

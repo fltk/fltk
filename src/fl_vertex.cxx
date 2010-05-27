@@ -145,13 +145,13 @@ static int n;
 static int what;
 enum {LINE, LOOP, POLYGON, POINT_};
 
-void Fl_Device::begin_points() {n = 0; what = POINT_;}
+void Fl_Graphics_Driver::begin_points() {n = 0; what = POINT_;}
 
-void Fl_Device::begin_line() {n = 0; what = LINE;}
+void Fl_Graphics_Driver::begin_line() {n = 0; what = LINE;}
 
-void Fl_Device::begin_loop() {n = 0; what = LOOP;}
+void Fl_Graphics_Driver::begin_loop() {n = 0; what = LOOP;}
 
-void Fl_Device::begin_polygon() {n = 0; what = POLYGON;}
+void Fl_Graphics_Driver::begin_polygon() {n = 0; what = POLYGON;}
 
 /**
   Transforms coordinate using the current transformation matrix.
@@ -189,7 +189,7 @@ static void fl_transformed_vertex(COORD_T x, COORD_T y) {
   }
 }
 
-void Fl_Device::transformed_vertex(double xf, double yf) {
+void Fl_Graphics_Driver::transformed_vertex(double xf, double yf) {
 #ifdef __APPLE_QUARTZ__
   fl_transformed_vertex(COORD_T(xf), COORD_T(yf));
 #else
@@ -197,11 +197,11 @@ void Fl_Device::transformed_vertex(double xf, double yf) {
 #endif
 }
 
-void Fl_Device::vertex(double x,double y) {
+void Fl_Graphics_Driver::vertex(double x,double y) {
   fl_transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
 }
 
-void Fl_Device::end_points() {
+void Fl_Graphics_Driver::end_points() {
 #if defined(USE_X11)
   if (n>1) XDrawPoints(fl_display, fl_window, fl_gc, p, n, 0);
 #elif defined(WIN32)
@@ -219,7 +219,7 @@ void Fl_Device::end_points() {
 #endif
 }
 
-void Fl_Device::end_line() {
+void Fl_Graphics_Driver::end_line() {
   if (n < 2) {
     fl_end_points();
     return;
@@ -245,13 +245,13 @@ static void fixloop() {  // remove equal points from closed path
   while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
 
-void Fl_Device::end_loop() {
+void Fl_Graphics_Driver::end_loop() {
   fixloop();
   if (n>2) fl_transformed_vertex((COORD_T)p[0].x, (COORD_T)p[0].y);
   fl_end_line();
 }
 
-void Fl_Device::end_polygon() {
+void Fl_Graphics_Driver::end_polygon() {
   fixloop();
   if (n < 3) {
     fl_end_line();
@@ -284,7 +284,7 @@ static int counts[20];
 static int numcount;
 #endif
 
-void Fl_Device::begin_complex_polygon() {
+void Fl_Graphics_Driver::begin_complex_polygon() {
   fl_begin_polygon();
   gap_ = 0;
 #if defined(WIN32)
@@ -292,7 +292,7 @@ void Fl_Device::begin_complex_polygon() {
 #endif
 }
 
-void Fl_Device::gap() {
+void Fl_Graphics_Driver::gap() {
   while (n>gap_+2 && p[n-1].x == p[gap_].x && p[n-1].y == p[gap_].y) n--;
   if (n > gap_+2) {
     fl_transformed_vertex((COORD_T)p[gap_].x, (COORD_T)p[gap_].y);
@@ -305,7 +305,7 @@ void Fl_Device::gap() {
   }
 }
 
-void Fl_Device::end_complex_polygon() {
+void Fl_Graphics_Driver::end_complex_polygon() {
   fl_gap();
   if (n < 3) {
     fl_end_line();
@@ -336,7 +336,7 @@ void Fl_Device::end_complex_polygon() {
 // warning: these do not draw rotated ellipses correctly!
 // See fl_arc.c for portable version.
 
-void Fl_Device::circle(double x, double y,double r) {
+void Fl_Graphics_Driver::circle(double x, double y,double r) {
   double xt = fl_transform_x(x,y);
   double yt = fl_transform_y(x,y);
   double rx = r * (m.c ? sqrt(m.a*m.a+m.c*m.c) : fabs(m.a));

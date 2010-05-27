@@ -269,7 +269,7 @@ XFontStruct* Fl_XFont_On_Demand::value() {
   return ptr;
 }
 
-void Fl_Device::font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) {
     fl_font_ = 0; fl_size_ = 0;
     return;
@@ -318,7 +318,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
 } // fl_text_extents
 
 
-void Fl_Device::draw(const char* c, int n, int x, int y) {
+void Fl_Graphics_Driver::draw(const char* c, int n, int x, int y) {
   if (font_gc != fl_gc) {
     if (!current_font) fl_font(FL_HELVETICA, 14);
     font_gc = fl_gc;
@@ -327,7 +327,7 @@ void Fl_Device::draw(const char* c, int n, int x, int y) {
 //  XDrawString(fl_display, fl_window, fl_gc, x, y, c, n);
   XUtf8DrawString(fl_display, fl_window, current_font, fl_gc, x, y, c, n);
 }
-void Fl_Device::draw(int angle, const char *str, int n, int x, int y) {
+void Fl_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   fprintf(stderr,"ROTATING TEXT NOT IMPLIMENTED\n");
   fl_draw(str, n, (int)x, (int)y);
 }

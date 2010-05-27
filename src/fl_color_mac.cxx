@@ -49,7 +49,7 @@ Fl_XMap* fl_current_xmap;
 
 Fl_Color fl_color_;
 
-void Fl_Device::color(Fl_Color i) {
+void Fl_Graphics_Driver::color(Fl_Color i) {
   fl_color_ = i;
   int index;
   uchar r, g, b;
@@ -74,7 +74,7 @@ void Fl_Device::color(Fl_Color i) {
   CGContextSetRGBStrokeColor(fl_gc, fr, fg, fb, 1.0f);
 }
 
-void Fl_Device::color(uchar r, uchar g, uchar b) {
+void Fl_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   fl_color_ = fl_rgb_color(r, g, b);
   float fr = r/255.0f;
   float fg = g/255.0f;

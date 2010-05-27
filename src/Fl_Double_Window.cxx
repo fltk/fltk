@@ -28,6 +28,7 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Printer.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 
@@ -142,18 +143,24 @@ void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy)
   DeleteDC(new_gc);
 }
 
+//#include <FL/fl_ask.H>
 void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
   BOOL alpha_ok = 0;
   // first try to alpha blend
-  int to_display = Fl_Device::current()->type() < 256; // true iff display output
-  if ( (!to_display) || fl_can_do_alpha_blending()) // if not on display, always try alpha_blend
+  // if to printer, always try alpha_blend
+  int to_display = Fl_Surface_Device::surface()->type() == Fl_Display_Device::device_type; // true iff display output
+//fl_alert("to_display=%d ",to_display);
+  if ( (to_display && fl_can_do_alpha_blending()) || Fl_Surface_Device::surface()->type() == Fl_Printer::device_type) {
     alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
+//fl_alert("alpha_ok=%d",alpha_ok);
+    }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
-  if (!alpha_ok)
+  if (!alpha_ok) {
     BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
+    }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }

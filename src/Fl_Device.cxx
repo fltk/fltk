@@ -29,51 +29,26 @@
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 
-/** \brief Draws an Fl_Pixmap object to the device. 
- *
- Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
- the image offset by the cx and cy arguments.
- */
-void Fl_Device::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  pxm->generic_device_draw(XP, YP, WP, HP, cx, cy);
-}
+const char *Fl_Device::device_type = "Fl_Device";
+const char *Fl_Surface_Device::device_type = "Fl_Surface_Device";
+const char *Fl_Display_Device::device_type = "Fl_Display_Device";
+const char *Fl_Graphics_Driver::device_type = "Fl_Graphics_Driver";
+#if defined(__APPLE__) || defined(FL_DOXYGEN)
+const char *Fl_Quartz_Graphics_Driver::device_type = "Fl_Quartz_Graphics_Driver";
+#endif
+#if defined(WIN32) || defined(FL_DOXYGEN)
+const char *Fl_GDI_Graphics_Driver::device_type = "Fl_GDI_Graphics_Driver";
+#endif
+#if !(defined(__APPLE__) || defined(WIN32))
+const char *Fl_Xlib_Graphics_Driver::device_type = "Fl_Xlib_Graphics_Driver";
+#endif
 
-/** \brief Draws an Fl_Bitmap object to the device. 
- *
- Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
- the image offset by the cx and cy arguments.
- */
-void Fl_Device::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
-  bm->generic_device_draw(XP, YP, WP, HP, cx, cy);
-}
 
-/** \brief Draws an Fl_RGB_Image object to the device. 
- *
- Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
- the image offset by the cx and cy arguments.
- */
-void Fl_Device::draw(Fl_RGB_Image *rgb, int XP, int YP, int WP, int HP, int cx, int cy) {
-  rgb->generic_device_draw(XP, YP, WP, HP, cx, cy);
-}
-
-/**
- @brief Sets this device (display, printer, local file) as the target of future graphics calls.
- *
- @return  The current target device of graphics calls.
- */
-Fl_Device *Fl_Device::set_current(void)
+/** \brief Use this drawing surface for future graphics requests. */
+void Fl_Surface_Device::set_current(void)
 {
-  Fl_Device *current = fl_device;
-  fl_device = this;
-  return current;
-}
-
-/**
- @brief    Returns the current target device of graphics calls.
- */
-Fl_Device *Fl_Device::current(void)
-{
-  return fl_device;
+  fl_device = _driver;
+  fl_surface = this;
 }
 
 //

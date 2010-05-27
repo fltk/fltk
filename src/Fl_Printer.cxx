@@ -34,29 +34,59 @@
 #include <src/Fl_GDI_Printer.cxx>
 #endif
 
-#include <src/Fl_PS_Printer.cxx>
+#include <src/Fl_PostScript.cxx>
 
 // print dialog customization strings
-
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_title = "Print";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_printer = "Printer:";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_range = "Print Range";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_copies = "Copies";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_all = "All";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_pages = "Pages";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_from = "From:";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_to = "To:";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_properties = "Properties...";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_copyNo = "# Copies:";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_print_button = "Print";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_cancel_button = "Cancel";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::dialog_print_to_file = "Print To File";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::property_title = "Printer Properties";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::property_pagesize = "Page Size:";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::property_mode = "Output Mode:";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::property_use = "Use";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::property_save = "Save";
+/** [this text may be customized at run-time] */
 const char *Fl_Printer::property_cancel = "Cancel";
+
+const char *Fl_Printer::device_type = "Fl_Printer";
+
+void Fl_Printer::set_current()
+{
+#ifdef __APPLE__
+  fl_gc = (CGContextRef)gc;
+#elif defined(WIN32)
+  fl_gc = (HDC)gc;
+#endif
+  this->Fl_Surface_Device::set_current();
+}
 
 //
 // End of "$Id$".

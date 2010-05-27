@@ -37,6 +37,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Bitmap.H>
+#include <FL/Fl_Printer.H>
 #include "flstring.h"
 
 #if defined(__APPLE_QUARTZ__)
@@ -251,49 +252,66 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_device->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
-void Fl_Bitmap::generic_device_draw(int XP, int YP, int WP, int HP, int cx, int cy) {
-  if (!array) {
-    draw_empty(XP, YP);
-    return;
-  }
-
+static int start(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int w, int h, int cx, int cy, 
+		 int &X, int &Y, int &W, int &H)
+{
   // account for current clip region (faster on Irix):
-  int X,Y,W,H; fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
+  fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
   cx += X-XP; cy += Y-YP;
   // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
-  if ((cx+W) > w()) W = w()-cx;
-  if (W <= 0) return;
+  if (cx+W > w) W = w-cx;
+  if (W <= 0) return 1;
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
-  if ((cy+H) > h()) H = h()-cy;
-  if (H <= 0) return;
+  if (cy+H > h) H = h-cy;
+  if (H <= 0) return 1;
+  return 0;
+}
 
-#if defined(USE_X11)
-  if (!id_) id_ = fl_create_bitmask(w(), h(), array);
+#ifdef __APPLE__
+void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (!bm->array) {
+    bm->draw_empty(XP, YP);
+    return;
+  }
+  if (start(bm, XP, YP, WP, HP, bm->w(), bm->h(), cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (!bm->id_) bm->id_ = fl_create_bitmask(bm->w(), bm->h(), bm->array);
+  if (bm->id_ && fl_gc) {
+    CGRect rect = { { X, Y }, { W, H } };
+    Fl_X::q_begin_image(rect, cx, cy, bm->w(), bm->h());
+    CGContextDrawImage(fl_gc, rect, (CGImageRef)bm->id_);
+    Fl_X::q_end_image();
+  }
+}
 
-  XSetStipple(fl_display, fl_gc, id_);
-  int ox = X-cx; if (ox < 0) ox += w();
-  int oy = Y-cy; if (oy < 0) oy += h();
-  XSetTSOrigin(fl_display, fl_gc, ox, oy);
-  XSetFillStyle(fl_display, fl_gc, FillStippled);
-  XFillRectangle(fl_display, fl_window, fl_gc, X, Y, W, H);
-  XSetFillStyle(fl_display, fl_gc, FillSolid);
 #elif defined(WIN32)
-  if (!id_) id_ = fl_create_bitmap(w(), h(), array);
-
+void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (!bm->array) {
+    bm->draw_empty(XP, YP);
+    return;
+  }
+  if (start(bm, XP, YP, WP, HP, bm->w(), bm->h(), cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (!bm->id_) bm->id_ = fl_create_bitmap(bm->w(), bm->h(), bm->array);
+  
   typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
   static fl_transp_func fl_TransparentBlt;
   HDC tempdc;
   int save;
   BOOL use_print_algo = false;
-  if (fl_device->type() == Fl_Device::gdi_printer) {
+  if (fl_surface->type() == Fl_Printer::device_type) {
     static HMODULE hMod = NULL;
     if (!hMod) {
       hMod = LoadLibrary("MSIMG32.DLL");
       if (hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
-      }
-    if (hMod) use_print_algo = true;
     }
+    if (hMod) use_print_algo = true;
+  }
   if (use_print_algo) { // algorithm for bitmap output to Fl_GDI_Printer
     Fl_Offscreen tmp_id = fl_create_offscreen(W, H);
     fl_begin_offscreen(tmp_id);
@@ -309,37 +327,48 @@ void Fl_Bitmap::generic_device_draw(int XP, int YP, int WP, int HP, int cx, int 
     fl_color(save_c); // back to bitmap's color
     tempdc = CreateCompatibleDC(fl_gc);
     save = SaveDC(tempdc);
-    SelectObject(tempdc, (HGDIOBJ)id_);
+    SelectObject(tempdc, (HGDIOBJ)bm->id_);
     SelectObject(fl_gc, fl_brush()); // use bitmap's desired color
     BitBlt(fl_gc, 0, 0, W, H, tempdc, 0, 0, 0xE20746L); // draw bitmap to offscreen
     fl_end_offscreen(); // offscreen data is in tmp_id
     SelectObject(tempdc, (HGDIOBJ)tmp_id); // use offscreen data
     // draw it to printer context with background color as transparent
-    fl_TransparentBlt(fl_gc, X,Y,W,H, tempdc, cx, cy, w(), h(), RGB(r, g, b) ); 
+    fl_TransparentBlt(fl_gc, X,Y,W,H, tempdc, cx, cy, bm->w(), bm->h(), RGB(r, g, b) ); 
     fl_delete_offscreen(tmp_id);
-    }
+  }
   else { // algorithm for bitmap output to display
     tempdc = CreateCompatibleDC(fl_gc);
     save = SaveDC(tempdc);
-    SelectObject(tempdc, (HGDIOBJ)id_);
+    SelectObject(tempdc, (HGDIOBJ)bm->id_);
     SelectObject(fl_gc, fl_brush());
     // secret bitblt code found in old MSWindows reference manual:
     BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
-    }
+  }
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
-#elif defined(__APPLE_QUARTZ__)
-  if (!id_) id_ = fl_create_bitmask(w(), h(), array);
-  if (id_ && fl_gc) {
-    CGRect rect = { { X, Y }, { W, H } };
-    Fl_X::q_begin_image(rect, cx, cy, w(), h());
-    CGContextDrawImage(fl_gc, rect, (CGImageRef)id_);
-    Fl_X::q_end_image();
+}  
+
+#else // Xlib
+void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (!bm->array) {
+    bm->draw_empty(XP, YP);
+    return;
   }
-#else
-# error unsupported platform
-#endif
+  if (start(bm, XP, YP, WP, HP, bm->w(), bm->h(), cx, cy, X, Y, W, H)) {
+    return;
+  }
+  if (!bm->id_) bm->id_ = fl_create_bitmask(bm->w(), bm->h(), bm->array);
+  
+  XSetStipple(fl_display, fl_gc, bm->id_);
+  int ox = X-cx; if (ox < 0) ox += bm->w();
+  int oy = Y-cy; if (oy < 0) oy += bm->h();
+  XSetTSOrigin(fl_display, fl_gc, ox, oy);
+  XSetFillStyle(fl_display, fl_gc, FillStippled);
+  XFillRectangle(fl_display, fl_window, fl_gc, X, Y, W, H);
+  XSetFillStyle(fl_display, fl_gc, FillSolid);
 }
+#endif
 
 /**
   The destructor free all memory and server resources that are used by

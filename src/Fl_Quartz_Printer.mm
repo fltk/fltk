@@ -35,15 +35,16 @@
 
 extern void fl_quartz_restore_line_style_();
 
-Fl_Printer::Fl_Printer(void)
+Fl_System_Printer::Fl_System_Printer(void)
 {
   x_offset = 0;
   y_offset = 0;
   scale_x = scale_y = 1.;
-  type_ = quartz_printer;
+  type_ = device_type;
+  driver(fl_device);
 }
 
-Fl_Printer::~Fl_Printer(void) {}
+Fl_System_Printer::~Fl_System_Printer(void) {}
 
 int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
 //printing using a Quartz graphics context
@@ -288,7 +289,7 @@ void Fl_Printer::end_job (void)
     fl_alert ("PM Session error %d", (int)status);
   }
   PMSessionEndDocumentNoDialog(printSession);
-  Fl_Device::display_device()->set_current();
+  Fl_Display_Device::display_device()->set_current();
   fl_gc = 0;
   Fl::first_window()->show();
 }

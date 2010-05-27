@@ -47,7 +47,7 @@
 #endif
 #include <config.h>
 
-void Fl_Device::arc(int x,int y,int w,int h,double a1,double a2) {
+void Fl_Graphics_Driver::arc(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
 
 #if defined(USE_X11)
@@ -82,7 +82,7 @@ void Fl_Device::arc(int x,int y,int w,int h,double a1,double a2) {
 #endif
 }
 
-void Fl_Device::pie(int x,int y,int w,int h,double a1,double a2) {
+void Fl_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
 
 #if defined(USE_X11)

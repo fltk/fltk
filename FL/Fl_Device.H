@@ -1,8 +1,8 @@
 //
 // "$Id$"
 //
-// Definition of classes Fl_Device, Fl_Display, Fl_Quartz_Display, Fl_GDI_Display,
-// and Fl_Xlib_Display for the Fast Light Tool Kit (FLTK).
+// Definition of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
+// for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 2010 by Bill Spitzak and others.
 //
@@ -26,7 +26,7 @@
 //     http://www.fltk.org/str.php
 //
 /** \file Fl_Device.H 
- \brief declaration of classes Fl_Device, Fl_Display.
+ \brief declaration of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device.
 */
 
 #ifndef Fl_Device_H
@@ -45,14 +45,15 @@
 #include <stdio.h>
 #endif
 
-class Fl_Widget;
-class Fl_Device;
-class Fl_Display;
-class Fl_Abstract_Printer;
-/** \brief Points to the device that currently receives all graphics requests */
-FL_EXPORT extern Fl_Device *fl_device;
-/** \brief Points to the platform's display device */
-FL_EXPORT extern Fl_Display *fl_display_device;
+class Fl_Graphics_Driver;
+class Fl_Display_Device;
+class Fl_Surface_Device;
+/** \brief Points to the driver that currently receives all graphics requests */
+extern Fl_Graphics_Driver *fl_device;
+/** \brief Points to the surface that currently receives all graphics requests */
+extern Fl_Surface_Device *fl_surface;
+/** \brief Points to the platform's display */
+extern Fl_Display_Device *fl_display_device;
 
 /**
  signature of image generation callback function.
@@ -65,33 +66,56 @@ FL_EXPORT extern Fl_Display *fl_display_device;
 typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 
 /**
- \brief A pure virtual class subclassed to send the output of drawing functions to display, printers, or local files.
- *
- The protected virtual methods of this class are those that a device should implement to
- support all of FLTK drawing functions.
- <br> The preferred FLTK API for drawing operations is the function collection of the 
- \ref fl_drawings and \ref fl_attributes modules. 
- <br> Alternatively, member functions of the Fl_Device class can be called
- using the global variable Fl_Device * \ref fl_device that points at all time to the single device 
- (an instance of an Fl_Device subclass) that's currently receiving graphics requests:
- \code fl_device->rect(x, y, w, h); \endcode
- <br>Each member function of the Fl_Device class has the same effect and parameter list as the
- function of the \ref fl_drawings and \ref fl_attributes modules which bears the same name
- prefixed with fl_ .
-  */
+ \brief All graphical output devices and all graphics systems.
+ */
 class Fl_Device {
 protected:
   /** \brief The device type */
-  int type_; 
-  /** \brief red color for background and/or mixing if device does not support masking or alpha */
+  const char *type_; 
+  /** \brief A string that identifies each subclass of Fl_Device.
+   *
+  Function type() applied to a device of this class returns this string.
+   */
+  static const char *device_type;
+public:
+  /** 
+   @brief An RTTI emulation of device classes. 
+   *
+   The type of an instance of an Fl_Device subclass can be checked with code such as:
+   \code
+   if ( instance->type() == Fl_Printer::device_type ) { ... }
+   \endcode
+   */
+  inline const char *type() {return type_;};
+};
+
+/**
+ \brief A virtual class subclassed for each graphics driver FLTK uses.
+ *
+ The protected virtual methods of this class are those that a graphics driver should implement to
+ support all of FLTK drawing functions.
+ <br> The preferred FLTK API for drawing operations is the function collection of the 
+ \ref fl_drawings and \ref fl_attributes modules. 
+ <br> Alternatively, methods of the Fl_Graphics_Driver class can be called
+ using the global variable Fl_Graphics_Driver * \ref fl_device that points at all time to the single driver 
+ (an instance of an Fl_Graphics_Driver subclass) that's currently receiving graphics requests:
+ \code fl_device->rect(x, y, w, h); \endcode
+ <br>Each protected method of the Fl_Graphics_Driver class has the same effect as the
+ function of the \ref fl_drawings and \ref fl_attributes modules which bears the same name
+ prefixed with fl_ and has the same parameter list.
+  */
+class Fl_Graphics_Driver : public Fl_Device {
+protected:
+/*  ** \brief red color for background and/or mixing if device does not support masking or alpha *
   uchar bg_r_; 
-  /** \brief green color for background and/or mixing if device does not support masking or alpha */
+  ** \brief green color for background and/or mixing if device does not support masking or alpha *
   uchar bg_g_; 
-  /** \brief blue color for background and/or mixing if device does not support masking or alpha */
-  uchar bg_b_; 
+  ** \brief blue color for background and/or mixing if device does not support masking or alpha *
+  uchar bg_b_; */
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
+  friend class Fl_PostScript_Graphics_Driver;
   friend void fl_rect(int x, int y, int w, int h);
   friend void fl_rectf(int x, int y, int w, int h);
   friend void fl_line_style(int style, int width, char* dashes);
@@ -141,6 +165,8 @@ protected:
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   
+  /** \brief The constructor. */
+  Fl_Graphics_Driver() {};
   /** \brief see fl_rect(int x, int y, int w, int h). */
   virtual void rect(int x, int y, int w, int h);
   /** \brief see fl_rectf(int x, int y, int w, int h). */
@@ -239,73 +265,112 @@ protected:
   /** \brief see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D). */
   virtual   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
   // Image classes
-  virtual   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
-  virtual   void draw(Fl_Bitmap * bmp,int XP, int YP, int WP, int HP, int cx, int cy);  
-  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
-  
+  /** \brief Draws an Fl_RGB_Image object to the device. 
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
+   the image offset by the cx and cy arguments.
+   */
+  virtual   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {};
+  /** \brief Draws an Fl_Pixmap object to the device. 
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
+   the image offset by the cx and cy arguments.
+   */
+  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {};
+  /** \brief Draws an Fl_Bitmap object to the device. 
+   *
+   Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
+   the image offset by the cx and cy arguments.
+   */
+  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {};
+    
 public:
-  /** 
-   @brief All implemented graphics output devices.
-   */
-  enum device_types { 
-    xlib_display = 0, /**< The X11 display. */
-    quartz_display,  /**< The Mac OS X display. */
-    gdi_display,  /**< The MSWindows display. */
-    gdi_printer = 256,  /**< The MSWindows printer. */
-    quartz_printer,  /**< The Mac OS X printer. */
-    postscript_device  /**< The PostScript device. */
-  };
-  /** 
-   @brief An RTTI emulation of device classes. It returns values < 256 if it is a display device 
-   */
-  inline int type() {return type_;};
-  virtual Fl_Device *set_current(void);
-  
-  virtual ~Fl_Device() {};
-  static Fl_Device *current();
-  
-  /**
-   @brief    Returns the platform's display device.
-   */
-  static Fl_Display *display_device() { return fl_display_device; };
-  
-};
-extern FL_EXPORT Fl_Device *fl_device;
-
-/**
- @brief A virtual class subclassed for OS-specific display graphics.
- */
-class Fl_Display : public Fl_Device {
-  friend class Fl_PSfile_Device;
+  static const char *device_type;
+  /** \brief The destructor */
+  virtual ~Fl_Graphics_Driver() {};
 };
 
 #if defined(__APPLE__) || defined(FL_DOXYGEN)
 /**
- @brief The Mac OS X-specific display graphics class.
+ \brief The Mac OS X-specific graphics class.
+ *
+ This class is implemented only on the Mac OS X platform.
  */
-class Fl_Quartz_Display : public Fl_Display {
+class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 public:
-  Fl_Quartz_Display() { type_ = quartz_display; };
+  Fl_Quartz_Graphics_Driver() { type_ = device_type; };
+  static const char *device_type;
+  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
 };
 #endif
 #if defined(WIN32) || defined(FL_DOXYGEN)
 /**
- @brief The MSWindows-specific display graphics class.
+ \brief The MSWindows-specific graphics class.
+ *
+ This class is implemented only on the MSWindows platform.
  */
-class Fl_GDI_Display : public Fl_Display {
+class Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
 public:
-  Fl_GDI_Display() { type_ = gdi_display; };
+  Fl_GDI_Graphics_Driver() { type_ = device_type; };
+  static const char *device_type;
+  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
 };
 #endif
-#if !( defined(__APPLE__) || defined(WIN32)) || defined(FL_DOXYGEN)
+#if !(defined(__APPLE__) || defined(WIN32))
 /**
- @brief The X11-specific display graphics class.
+ \brief The Xlib-specific graphics class.
+ *
+ This class is implemented only on the Xlib platform.
  */
-class Fl_Xlib_Display : public Fl_Display {
+class Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
 public:
-  Fl_Xlib_Display() { type_ = xlib_display; };
+  Fl_Xlib_Graphics_Driver() { type_ = device_type; };
+  static const char *device_type;
+  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
 };
 #endif
+
+/**
+ \brief A surface that's susceptible to receive graphical output.
+ */
+class Fl_Surface_Device : public Fl_Device {
+  /** \brief The graphics driver in use by this surface. */
+  Fl_Graphics_Driver *_driver;
+protected:
+  /** \brief Constructor that sets the graphics driver to use for the created surface. */
+  Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver; };
+public:
+  static const char *device_type;
+  virtual void set_current(void);
+  /** \brief Sets the graphics driver of this drawing surface. */
+  inline void driver(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver;};
+  /** \brief Returns the graphics driver of this drawing surface. */
+  inline Fl_Graphics_Driver *driver() {return _driver; };
+  /** \brief the surface that currently receives graphics output */
+  static Fl_Surface_Device *surface() {return fl_surface; }; 
+  /** \brief The destructor. */
+  virtual ~Fl_Surface_Device() {}
+};
+
+/**
+ \brief A display to which the computer can draw.
+ */
+class Fl_Display_Device : public Fl_Surface_Device {
+public:
+  static const char *device_type;
+  /** \brief A constructor that sets the graphics driver used by the display */
+  Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) { type_ = device_type; };
+  /**
+   @brief    Returns the platform's display device.
+   */
+  static Fl_Display_Device *display_device() { return fl_display_device; };
+};
 
 #endif // Fl_Device_H
 

@@ -127,7 +127,7 @@ Fl_XColor fl_xmap[1][256];
 /** Current color for drawing operations */
 Fl_Color fl_color_;
 
-void Fl_Device::color(Fl_Color i) {
+void Fl_Graphics_Driver::color(Fl_Color i) {
   if (i & 0xffffff00) {
     unsigned rgb = (unsigned)i;
     fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
@@ -138,7 +138,7 @@ void Fl_Device::color(Fl_Color i) {
   }
 }
 
-void Fl_Device::color(uchar r,uchar g,uchar b) {
+void Fl_Graphics_Driver::color(uchar r,uchar g,uchar b) {
   fl_color_ = fl_rgb_color(r, g, b);
   if(!fl_gc) return; // don't get a default gc if current window is not yet created/valid
   XSetForeground(fl_display, fl_gc, fl_xpixel(r,g,b));

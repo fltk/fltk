@@ -117,9 +117,11 @@ static void createAppleMenu(void);
 static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h);
 static void cocoaMouseHandler(NSEvent *theEvent);
 
-static Fl_Quartz_Display fl_quartz_device;
-FL_EXPORT Fl_Display *fl_display_device = (Fl_Display*)&fl_quartz_device; // does not change
-FL_EXPORT Fl_Device *fl_device = (Fl_Device*)&fl_quartz_device; // the current target device of graphics operations
+static Fl_Quartz_Graphics_Driver fl_quartz_driver;
+static Fl_Display_Device fl_quartz_display(&fl_quartz_driver);
+FL_EXPORT Fl_Display_Device *fl_display_device = (Fl_Display_Device*)&fl_quartz_display; // does not change
+FL_EXPORT Fl_Graphics_Driver *fl_device = (Fl_Graphics_Driver*)&fl_quartz_driver; // the current target device of graphics operations
+FL_EXPORT Fl_Surface_Device *fl_surface = (Fl_Surface_Device*)fl_display_device; // the current target surface of graphics operations
 
 // public variables
 int fl_screen;
@@ -2963,7 +2965,7 @@ int MACscreen_init(XRectangle screens[])
 - (void)printPanel
 {
   Fl_Printer printer;
-  //Fl_PSfile_Device printer;
+  //Fl_PostScript_File_Device printer;
   int w, h;
   Fl_Window *win = Fl::first_window();
   if(!win) return;
@@ -3466,7 +3468,7 @@ WindowRef MACwindowRef(Fl_Window *w)
 
 // so a CGRect matches exactly what is denoted x,y,w,h for clipping purposes
 CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
-  if (Fl_Device::current()->type() == Fl_Device::quartz_printer) return CGRectMake(x, y, w-1.5 , h-1.5 ); 
+  if ( Fl_Surface_Device::surface()->type() == Fl_Printer::device_type ) return CGRectMake(x, y, w-1.5 , h-1.5 ); 
   return CGRectMake(x, y, w > 0 ? w - 0.9 : 0, h > 0 ? h - 0.9 : 0);
 }
 

@@ -40,6 +40,9 @@
 #include <FL/x.H>
 #include <stdio.h>
 #include "flstring.h"
+#ifdef  __APPLE_QUARTZ__
+#include <FL/Fl_Printer.H>
+#endif
 
 static int ncolors, chars_per_pixel;
 
@@ -139,8 +142,6 @@ struct pixmap_data {
   };
 };
 
-#  ifndef __APPLE_QUARTZ__
-
 // callback for 1 byte per pixel:
 static void cb1(void*v, int x, int y, int w, uchar* buf) {
   pixmap_data& d = *(pixmap_data*)v;
@@ -159,8 +160,6 @@ static void cb2(void*v, int x, int y, int w, uchar* buf) {
     *q++ = colors[*p++];
   }
 }
-
-#  endif  // !__APPLE_QUARTZ__
 
 #endif // U64 else U32
 
@@ -222,7 +221,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   if (!fl_measure_pixmap(cdata, d.w, d.h)) return 0;
   const uchar*const* data = (const uchar*const*)(cdata+1);
   int transparent_index = -1;
-  uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
+  uchar *transparent_c; // such that transparent_c[0,1,2] are the RGB of the transparent color
 #ifdef WIN32
   color_count = 0;
   used_colors = (uchar *)malloc(abs(ncolors)*3*sizeof(uchar));
@@ -335,15 +334,43 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   }
   d.data = data;
 #ifdef WIN32
-  if (transparent_c) {
     make_unused_color(transparent_c[0], transparent_c[1], transparent_c[2]);
+#endif
+  
+#ifdef  __APPLE_QUARTZ__
+  if (fl_surface->type() == Fl_Printer::device_type) {
+    bool transparent = (transparent_index>=0);
+    transparent = true;
+    U32 *array = new U32[d.w * d.h], *q = array;
+    for (int Y = 0; Y < d.h; Y++) {
+      const uchar* p = data[Y];
+      if (chars_per_pixel <= 1) {
+	for (int X = 0; X < d.w; X++) {
+	  *q++ = d.colors[*p++];
+	}
+      } else {
+	for (int X = 0; X < d.w; X++) {
+	  U32* colors = (U32*)d.byte1[*p++];
+	  *q++ = colors[*p++];
+	}
+      }
+    }
+    CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+    CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, d.w * d.h * 4, 0L);
+    CGImageRef img = CGImageCreate(d.w, d.h, 8, 4*8, 4*d.w,
+				   lut, transparent?kCGImageAlphaLast:kCGImageAlphaNoneSkipLast,
+				   src, 0L, false, kCGRenderingIntentDefault);
+    CGColorSpaceRelease(lut);
+    CGDataProviderRelease(src);
+    CGRect rect = { { x, y} , { d.w, d.h } };
+    Fl_X::q_begin_image(rect, 0, 0, d.w, d.h);
+    CGContextDrawImage(fl_gc, rect, img);
+    Fl_X::q_end_image();
+    CGImageRelease(img);
+    delete array;
     }
   else {
-    uchar r, g, b;
-    make_unused_color(r, g, b);
-    }
-#endif
-#ifndef __APPLE_QUARTZ__
+#endif // __APPLE_QUARTZ__
 
   // build the mask bitmap used by Fl_Pixmap:
   if (fl_mask_bitmap && transparent_index >= 0) {
@@ -386,40 +413,9 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   }
 
   fl_draw_image(chars_per_pixel==1 ? cb1 : cb2, &d, x, y, d.w, d.h, 4);
-
-#else // __APPLE_QUARTZ__
-
-  bool transparent = (transparent_index>=0);
-  transparent = true;
-  U32 *array = new U32[d.w * d.h], *q = array;
-  for (int Y = 0; Y < d.h; Y++) {
-    const uchar* p = data[Y];
-    if (chars_per_pixel <= 1) {
-      for (int X = 0; X < d.w; X++) {
-        *q++ = d.colors[*p++];
-      }
-    } else {
-      for (int X = 0; X < d.w; X++) {
-        U32* colors = (U32*)d.byte1[*p++];
-        *q++ = colors[*p++];
-      }
+#ifdef __APPLE_QUARTZ__
     }
-  }
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, d.w * d.h * 4, 0L);
-  CGImageRef img = CGImageCreate(d.w, d.h, 8, 4*8, 4*d.w,
-        lut, transparent?kCGImageAlphaLast:kCGImageAlphaNoneSkipLast,
-        src, 0L, false, kCGRenderingIntentDefault);
-  CGColorSpaceRelease(lut);
-  CGDataProviderRelease(src);
-  CGRect rect = { { x, y} , { d.w, d.h } };
-  Fl_X::q_begin_image(rect, 0, 0, d.w, d.h);
-  CGContextDrawImage(fl_gc, rect, img);
-  Fl_X::q_end_image();
-  CGImageRelease(img);
-  delete array;
-
-#endif // !__APPLE_QUARTZ__
+#endif
 
   if (chars_per_pixel > 1) for (int i = 0; i < 256; i++) delete[] d.byte1[i];
   return 1;
