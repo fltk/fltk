@@ -7,15 +7,6 @@ Fl.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
 Fl.o: flstring.h ../FL/fl_draw.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 Fl.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
 Fl.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-Fl_Abstract_Printer.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
-Fl_Abstract_Printer.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
-Fl_Abstract_Printer.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Printer.H
-Fl_Abstract_Printer.o: ../FL/Fl_Abstract_Printer.H ../FL/Fl_Device.H
-Fl_Abstract_Printer.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Plugin.H
-Fl_Abstract_Printer.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H
-Fl_Abstract_Printer.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-Fl_Abstract_Printer.o: ../FL/Fl_RGB_Image.H ../FL/fl_draw.H ../FL/Fl_Device.H
-Fl_Abstract_Printer.o: ../FL/Fl_PSfile_Device.H
 Fl_Adjuster.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Adjuster.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Adjuster.o: ../FL/fl_types.h ../FL/Fl_Adjuster.H ../FL/Fl_Valuator.H
@@ -333,6 +324,15 @@ Fl_Overlay_Window.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/Fl_Device.H
 Fl_Overlay_Window.o: ../FL/x.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_Overlay_Window.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Overlay_Window.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Paged_Device.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Paged_Device.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Paged_Device.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Printer.H
+Fl_Paged_Device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H
+Fl_Paged_Device.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Plugin.H
+Fl_Paged_Device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Paged_Device.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Paged_Device.o: ../FL/Fl_RGB_Image.H ../FL/fl_draw.H ../FL/Fl_Device.H
+Fl_Paged_Device.o: ../FL/Fl_PostScript.H
 Fl_Pack.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Pack.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Pack.o: ../FL/fl_types.h ../FL/Fl_Pack.H ../FL/Fl_Group.H ../FL/fl_draw.H
@@ -366,14 +366,14 @@ Fl_Preferences.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Tree_Item.H
 Fl_Preferences.o: ../FL/Fl_Widget.H ../FL/Fl_Tree_Item_Array.H
 Fl_Preferences.o: ../FL/Fl_Tree_Prefs.H ../FL/filename.H ../FL/fl_utf8.h
 Fl_Preferences.o: flstring.h ../config.h
-Fl_Printer.o: ../FL/Fl_Printer.H ../FL/Fl_Abstract_Printer.H
+Fl_Printer.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
 Fl_Printer.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Enumerations.H
 Fl_Printer.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
 Fl_Printer.o: ../FL/Xutf8.h ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_Printer.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Printer.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/fl_draw.H
-Fl_Printer.o: ../FL/Fl_Device.H ../FL/Fl_PSfile_Device.H
-Fl_Printer.o: ../src/Fl_PS_Printer.cxx ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Printer.o: ../FL/Fl_Device.H ../FL/Fl_PostScript.H
+Fl_Printer.o: ../src/Fl_PostScript.cxx ../FL/Fl.H ../FL/fl_utf8.h
 Fl_Printer.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/fl_ask.H
 Fl_Printer.o: ../FL/Fl_Native_File_Chooser.H
 Fl_Printer.o: ../FL/Fl_Native_File_Chooser_FLTK.H ../FL/Fl_File_Chooser.H
@@ -931,8 +931,8 @@ screen_xywh.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 screen_xywh.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Export.H
 screen_xywh.o: ../FL/fl_types.h ../FL/x.H ../FL/Fl_Window.H ../config.h
 fl_utf8.o: ../config.h ../FL/filename.H ../FL/Xutf8.h ../FL/fl_utf8.h
-ps_image.o: ../FL/Fl_PSfile_Device.H ../FL/Fl_Printer.H
-ps_image.o: ../FL/Fl_Abstract_Printer.H ../FL/Fl_Device.H ../FL/x.H
+ps_image.o: ../FL/Fl_PostScript.H ../FL/Fl_Printer.H
+ps_image.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/x.H
 ps_image.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
 ps_image.o: ../FL/Fl_Window.H ../FL/Xutf8.h ../FL/Fl_Plugin.H
 ps_image.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
@@ -1067,13 +1067,13 @@ Fl_Gl_Overlay.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Gl_Overlay.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Gl_Overlay.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/x.H
 Fl_Gl_Overlay.o: ../FL/Fl_Window.H Fl_Gl_Choice.H ../FL/Fl_Gl_Window.H
-Fl_Gl_Device_Plugin.o: ../FL/Fl_Printer.H ../FL/Fl_Abstract_Printer.H
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Enumerations.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
 Fl_Gl_Device_Plugin.o: ../FL/Xutf8.h ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/fl_draw.H
-Fl_Gl_Device_Plugin.o: ../FL/Fl_Device.H ../FL/Fl_PSfile_Device.H
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Device.H ../FL/Fl_PostScript.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Gl_Window.H Fl_Gl_Choice.H ../FL/Fl.H
 Fl_Gl_Device_Plugin.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Gl_Window.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H

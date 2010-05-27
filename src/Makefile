@@ -27,7 +27,6 @@
 
 CPPFILES = \
 	Fl.cxx \
-	Fl_Abstract_Printer.cxx \
 	Fl_Adjuster.cxx \
 	Fl_Bitmap.cxx \
 	Fl_Browser.cxx \
@@ -68,6 +67,7 @@ CPPFILES = \
 	Fl_Native_File_Chooser.cxx \
 	Fl_Overlay_Window.cxx \
 	Fl_Pack.cxx \
+	Fl_Paged_Device.cxx \
 	Fl_Pixmap.cxx \
 	Fl_Positioner.cxx \
 	Fl_Preferences.cxx \
@@ -493,8 +493,7 @@ fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx
 fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
 fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_x.cxx \
 		fl_set_fonts_xft.cxx fl_set_fonts_win32.cxx
-Fl_Printer.o:	Fl_Quartz_Printer.mm Fl_GDI_Printer.cxx Fl_PS_Printer.cxx
-
+Fl_Printer.o:	Fl_Quartz_Printer.mm Fl_GDI_Printer.cxx Fl_PostScript.cxx
 fl_arci.o:	../FL/mac.H ../FL/win32.H
 Fl_arg.o:	../FL/mac.H ../FL/win32.H
 fl_ask.o:	../FL/mac.H ../FL/win32.H
