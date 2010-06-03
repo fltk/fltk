@@ -261,6 +261,7 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, const char *new_labe
 /// Descend into the path specified by \p arr, and add a new child there.
 /// Should be used only by Fl_Tree's internals.
 /// Adds the item based on the value of prefs.sortorder().
+/// \returns the item added.
 ///
 Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, char **arr) {
   int t = find_child(*arr);
@@ -278,6 +279,8 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, char **arr) {
 }
 
 /// Insert a new item into current item's children at a specified position.
+/// \returns the new item inserted.
+///
 Fl_Tree_Item *Fl_Tree_Item::insert(const Fl_Tree_Prefs &prefs, const char *new_label, int pos) {
   Fl_Tree_Item *item = new Fl_Tree_Item(prefs);
   item->label(new_label);
@@ -287,6 +290,8 @@ Fl_Tree_Item *Fl_Tree_Item::insert(const Fl_Tree_Prefs &prefs, const char *new_l
 }
 
 /// Insert a new item above this item.
+/// \returns the new item inserted, or 0 if an error occurred.
+///
 Fl_Tree_Item *Fl_Tree_Item::insert_above(const Fl_Tree_Prefs &prefs, const char *new_label) {
   Fl_Tree_Item *p = _parent;
   if ( ! p ) return(0);
@@ -301,7 +306,7 @@ Fl_Tree_Item *Fl_Tree_Item::insert_above(const Fl_Tree_Prefs &prefs, const char 
 }
 
 /// Remove child by item.
-///    Returns 0 if removed, -1 if item not an immediate child.
+///    \returns 0 if removed, -1 if item not an immediate child.
 ///
 int Fl_Tree_Item::remove_child(Fl_Tree_Item *item) {
   for ( int t=0; t<children(); t++ ) {
@@ -315,7 +320,7 @@ int Fl_Tree_Item::remove_child(Fl_Tree_Item *item) {
 }
 
 /// Remove immediate child (and its children) by its label 'name'.
-///    Returns 0 if removed, -1 if not found.
+/// \returns 0 if removed, -1 if not found.
 ///
 int Fl_Tree_Item::remove_child(const char *name) {
   for ( int t=0; t<children(); t++ ) {
