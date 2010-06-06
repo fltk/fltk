@@ -2,7 +2,8 @@ include ../makeinclude
 
 ALL = howto-add_fd-and-popen$(EXEEXT) \
       tabs-simple$(EXEEXT) \
-      tree-simple$(EXEEXT)
+      tree-simple$(EXEEXT) \
+      wizard-simple$(EXEEXT)
 
 # default target -- build everything
 default: $(ALL)

@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     // Wizard: page 1
     {
         Fl_Group *g = new Fl_Group(0,0,400,300);
-        Fl_Button *next = new Fl_Button(290,265,100,25,"Next"); next->callback(next_cb);
+        Fl_Button *next = new Fl_Button(290,265,100,25,"Next @->"); next->callback(next_cb);
         Fl_Multiline_Output *out = new Fl_Multiline_Output(10,30,400-20,300-80,"Welcome");
         out->labelsize(20);
         out->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
@@ -59,8 +59,8 @@ int main(int argc, char **argv) {
     // Wizard: page 2
     {
         Fl_Group *g = new Fl_Group(0,0,400,300);
-        Fl_Button *next = new Fl_Button(290,265,100,25,"Next"); next->callback(next_cb);
-        Fl_Button *back = new Fl_Button(180,265,100,25,"Back"); back->callback(back_cb);
+        Fl_Button *next = new Fl_Button(290,265,100,25,"Next @->"); next->callback(next_cb);
+        Fl_Button *back = new Fl_Button(180,265,100,25,"@<- Back"); back->callback(back_cb);
         Fl_Multiline_Output *out = new Fl_Multiline_Output(10,30,400-20,300-80,"Terms And Conditions");
         out->labelsize(20);
         out->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
     {
         Fl_Group *g = new Fl_Group(0,0,400,300);
         Fl_Button *done = new Fl_Button(290,265,100,25,"Finish"); done->callback(done_cb);
-        Fl_Button *back = new Fl_Button(180,265,100,25,"Back"); back->callback(back_cb);
+        Fl_Button *back = new Fl_Button(180,265,100,25,"@<- Back"); back->callback(back_cb);
         Fl_Multiline_Output *out = new Fl_Multiline_Output(10,30,400-20,300-80,"Finish");
         out->labelsize(20);
         out->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
