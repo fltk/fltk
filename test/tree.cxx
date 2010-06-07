@@ -2,8 +2,8 @@
 
 #include "tree.h"
 
-void CccButton_CB(Fl_Widget*, void*data) {
-  fprintf(stderr, "ccc button pushed\n");
+void Button_CB(Fl_Widget*w, void*data) {
+  fprintf(stderr, "'%s' button pushed\n", w->label());
 }
 
 void RebuildTree() {
@@ -30,6 +30,7 @@ tree->add("Bbb/child-04");
             tree->begin();
             but = new Fl_Button(1,1,140,1,"ccc button");     // we control w() only
             but->labelsize(10);
+	    but->callback(Button_CB);
         }
         i->widget(but);
         tree->end();
@@ -47,8 +48,10 @@ tree->add("Bbb/child-04");
               grp->begin();
                 Fl_Button *abut = new Fl_Button(grp->x()+0 ,grp->y()+2,65,15,"D1");
                 abut->labelsize(10);
+		abut->callback(Button_CB);
                 Fl_Button *bbut = new Fl_Button(grp->x()+75,grp->y()+2,65,15,"D2");
                 bbut->labelsize(10);
+		bbut->callback(Button_CB);
               grp->end();
               grp->resizable(grp);
             tree->end();
