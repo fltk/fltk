@@ -214,13 +214,6 @@ public:
   Fl_Tree_Item *find_item(const char *path);
   const Fl_Tree_Item *find_item(const char *path) const;
   
-  /// Return the parent for specified \p item.
-  ///
-  /// \returns item's parent, or 0 if none (root).
-  ///
-  Fl_Tree_Item *parent(Fl_Tree_Item *item) {
-    return(item->parent());
-  }
   /// Return the item that was last clicked.
   ///
   /// Valid only from within an Fl_Tree::callback().
