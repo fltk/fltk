@@ -111,3 +111,15 @@ HISTORY
     The fltk/examples directory was created in FLTK 1.3.0 to separate
     'good programming examples' from the test suite code. 
 
+
+DISCLAIMER
+
+    The examples in this directory are provided 'as-is', without any express
+    or implied warranty.  In no event will the authors be held liable for
+    any damages arising from the use of this software.
+  
+
+BUGS
+
+    If you find a bug, please report it through the fltk STR form at
+    http://fltk.org/str.php
