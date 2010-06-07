@@ -20,7 +20,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 // USA.
 //
-// Please report all bugs and problems to "fltk-bugs@fltk.org".
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
 //
 
 #ifndef FL_DOXYGEN
@@ -182,20 +184,12 @@ int Fl_PostScript_Graphics_Driver::alpha_mask(const uchar * data, int w, int h, 
   return 0;
 }
 
+// bitwise inversion of all 4-bit quantities
+static const unsigned char swapped[16] = {0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15};
 
-
-// TODO: anybody has more efficient algoritm?
-static inline uchar swap_byte(const uchar i){
-  uchar b =0;
-  if(i & 1) b |= 128;
-  if(i & 2) b |= 64;
-  if(i & 4) b |= 32;
-  if(i & 8) b |= 16;
-  if(i & 16) b |= 8;
-  if(i & 32) b |= 4;
-  if(i & 64) b |= 2;
-  if(i & 128) b |= 1;
-  return b;
+// bitwise inversion of a byte
+static inline uchar swap_byte(const uchar b) {
+  return (swapped[b & 0xF] << 4) | swapped[b >> 4];
 }
 
 

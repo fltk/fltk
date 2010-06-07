@@ -78,7 +78,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_device->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
-static int start(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int w, int h, int cx, int cy, 
+static int start(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 
 		 int &X, int &Y, int &W, int &H)
 {
   // ignore empty or bad pixmap data:

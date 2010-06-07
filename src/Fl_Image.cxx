@@ -544,7 +544,7 @@ void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
 #endif
 }*/
 
-static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int cx, int cy, 
+static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 
 		 int &X, int &Y, int &W, int &H)
 {
   // account for current clip region (faster on Irix):
