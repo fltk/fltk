@@ -61,7 +61,7 @@ void Fl_Overlay_Window::flush() {
     return;
   }
 #endif
-  int erase_overlay = (damage()&FL_DAMAGE_OVERLAY);
+  int erase_overlay = (damage()&FL_DAMAGE_OVERLAY) | (overlay_ == this);
   clear_damage((uchar)(damage()&~FL_DAMAGE_OVERLAY));
   Fl_Double_Window::flush(erase_overlay);
   if (overlay_ == this) draw_overlay();

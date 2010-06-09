@@ -296,7 +296,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   }
 #if USE_XDBE
   if (use_xdbe) {
-    if (myi->backbuffer_bad) {
+    if (myi->backbuffer_bad || eraseoverlay) {
       // Make sure we do a complete redraw...
       if (myi->region) {XDestroyRegion(myi->region); myi->region = 0;}
       clear_damage(FL_DAMAGE_ALL);
@@ -360,7 +360,15 @@ void Fl_Double_Window::resize(int X,int Y,int W,int H) {
   int oh = h();
   Fl_Window::resize(X,Y,W,H);
 #if USE_XDBE
-  if (use_xdbe) return;
+  if (use_xdbe) {
+    Fl_X* myi = Fl_X::i(this);
+    if (myi && myi->other_xid && (ow < w() || oh < h())) {
+      // STR #2152: Deallocate the back buffer to force creation of a new one.
+      XdbeDeallocateBackBufferName(fl_display,myi->other_xid);
+      myi->other_xid = 0;
+    }
+    return;
+  }
 #endif
   Fl_X* myi = Fl_X::i(this);
   if (myi && myi->other_xid && (ow != w() || oh != h())) {
