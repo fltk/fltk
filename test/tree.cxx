@@ -100,8 +100,6 @@ if ( item ) {
 };
 }
 
-Fl_Box *docallback_box=(Fl_Box *)0;
-
 Fl_Value_Slider *margintop_slider=(Fl_Value_Slider *)0;
 
 static void cb_margintop_slider(Fl_Value_Slider*, void*) {
@@ -373,6 +371,8 @@ Fl_Menu_Item menu_whenmode_chooser[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+Fl_Box *docallback_box=(Fl_Box *)0;
+
 Fl_Check_Button *docallback_radio=(Fl_Check_Button *)0;
 
 Fl_Button *selectall_button=(Fl_Button *)0;
@@ -415,6 +415,17 @@ tree->redraw();
 //else         tree->deselect("/Bbb", docallback);
 //
 //tree->redraw();
+}
+
+Fl_Light_Button *bbbchild02select_toggle=(Fl_Light_Button *)0;
+
+static void cb_bbbchild02select_toggle(Fl_Light_Button*, void*) {
+  // Toggle select of just the /Bbb/child-02 item
+int docallback = docallback_radio->value() ? 1 : 0;
+int onoff = bbbchild02select_toggle->value();
+if ( onoff ) tree->select("/Bbb/child-02", docallback);
+else         tree->deselect("/Bbb/child-02", docallback);
+tree->redraw();
 }
 
 Fl_Light_Button *deactivate_toggle=(Fl_Light_Button *)0;
@@ -508,17 +519,6 @@ static void cb_clearall_button(Fl_Button*, void*) {
 tree->redraw();
 }
 
-Fl_Light_Button *bbbchild02select_toggle=(Fl_Light_Button *)0;
-
-static void cb_bbbchild02select_toggle(Fl_Light_Button*, void*) {
-  // Toggle select of just the /Bbb/child-02 item
-int docallback = docallback_radio->value() ? 1 : 0;
-int onoff = bbbchild02select_toggle->value();
-if ( onoff ) tree->select("/Bbb/child-02", docallback);
-else         tree->deselect("/Bbb/child-02", docallback);
-tree->redraw();
-}
-
 int main(int argc, char **argv) {
   { window = new Fl_Double_Window(580, 695, "tree");
     { tree = new Fl_Tree(15, 15, 550, 390);
@@ -534,10 +534,6 @@ int main(int argc, char **argv) {
       tree->when(FL_WHEN_RELEASE);
       tree->end();
     } // Fl_Tree* tree
-    { docallback_box = new Fl_Box(280, 521, 285, 81);
-      docallback_box->box(FL_GTK_DOWN_BOX);
-      docallback_box->color(FL_DARK1);
-    } // Fl_Box* docallback_box
     { Fl_Value_Slider* o = margintop_slider = new Fl_Value_Slider(190, 414, 240, 16, "margintop()");
       margintop_slider->tooltip("Changes the top margin for the tree widget");
       margintop_slider->type(1);
@@ -663,6 +659,10 @@ d");
       whenmode_chooser->value(1);
       cb_whenmode_chooser(whenmode_chooser, (void*)0);
     } // Fl_Choice* whenmode_chooser
+    { docallback_box = new Fl_Box(280, 521, 285, 81);
+      docallback_box->box(FL_GTK_DOWN_BOX);
+      docallback_box->color(FL_DARK1);
+    } // Fl_Box* docallback_box
     { docallback_radio = new Fl_Check_Button(310, 529, 230, 16, "Invoke callback on select changes?");
       docallback_radio->tooltip("Invokes the callback when one or more item\'s state changes.");
       docallback_radio->down_box(FL_DOWN_BOX);
@@ -683,6 +683,11 @@ d");
       bbbselect_toggle->labelsize(11);
       bbbselect_toggle->callback((Fl_Callback*)cb_bbbselect_toggle);
     } // Fl_Light_Button* bbbselect_toggle
+    { bbbchild02select_toggle = new Fl_Light_Button(430, 571, 115, 16, " Toggle child-02");
+      bbbchild02select_toggle->tooltip("Toggle the single item /Bbb/child-02");
+      bbbchild02select_toggle->labelsize(11);
+      bbbchild02select_toggle->callback((Fl_Callback*)cb_bbbchild02select_toggle);
+    } // Fl_Light_Button* bbbchild02select_toggle
     { deactivate_toggle = new Fl_Light_Button(280, 625, 90, 16, " Deactivate");
       deactivate_toggle->tooltip("Toggle the deactivation state of the selected items.\nIf none are selected, a\
 ll are set.");
@@ -714,11 +719,6 @@ ll are set.");
       clearall_button->labelsize(11);
       clearall_button->callback((Fl_Callback*)cb_clearall_button);
     } // Fl_Button* clearall_button
-    { bbbchild02select_toggle = new Fl_Light_Button(430, 571, 115, 16, " Toggle child-02");
-      bbbchild02select_toggle->tooltip("Toggle the single item /Bbb/child-02");
-      bbbchild02select_toggle->labelsize(11);
-      bbbchild02select_toggle->callback((Fl_Callback*)cb_bbbchild02select_toggle);
-    } // Fl_Light_Button* bbbchild02select_toggle
     window->end();
   } // Fl_Double_Window* window
   // Initialize Tree

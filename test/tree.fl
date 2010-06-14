@@ -124,9 +124,6 @@ if ( item ) {
       xywh {15 15 550 390} box DOWN_BOX color 55
       class Fl_Tree
     } {}
-    Fl_Box docallback_box {
-      xywh {280 521 285 81} box GTK_DOWN_BOX color 47
-    }
     Fl_Value_Slider margintop_slider {
       label {margintop()}
       user_data tree
@@ -454,6 +451,9 @@ switch ( whenmode_chooser->value() ) {
         xywh {60 60 36 21} labelsize 11
       }
     }
+    Fl_Box docallback_box {
+      xywh {280 521 285 81} box GTK_DOWN_BOX color 47
+    }
     Fl_Check_Button docallback_radio {
       label {Invoke callback on select changes?} user_data_type {void*}
       tooltip {Invokes the callback when one or more item's state changes.} xywh {310 529 230 16} down_box DOWN_BOX labelsize 11
@@ -496,6 +496,16 @@ tree->redraw();
 //
 //tree->redraw();}
       tooltip {Toggle selection of the /Bbb item and its children} xywh {430 552 115 15} labelsize 11
+    }
+    Fl_Light_Button bbbchild02select_toggle {
+      label { Toggle child-02}
+      callback {// Toggle select of just the /Bbb/child-02 item
+int docallback = docallback_radio->value() ? 1 : 0;
+int onoff = bbbchild02select_toggle->value();
+if ( onoff ) tree->select("/Bbb/child-02", docallback);
+else         tree->deselect("/Bbb/child-02", docallback);
+tree->redraw();}
+      tooltip {Toggle the single item /Bbb/child-02} xywh {430 571 115 16} labelsize 11
     }
     Fl_Light_Button deactivate_toggle {
       label { Deactivate}
@@ -581,27 +591,16 @@ tree->redraw();}
     Fl_Button clearall_button {
       label {Clear All}
       callback {tree->clear();
-tree->redraw();}
+tree->redraw();} selected
       tooltip {Clears all items
 Tests Fl_Tree::clear()} xywh {475 644 90 16} labelsize 11
-    }
-    Fl_Light_Button bbbchild02select_toggle {
-      label { Toggle child-02}
-      callback {// Toggle select of just the /Bbb/child-02 item
-int docallback = docallback_radio->value() ? 1 : 0;
-int onoff = bbbchild02select_toggle->value();
-if ( onoff ) tree->select("/Bbb/child-02", docallback);
-else         tree->deselect("/Bbb/child-02", docallback);
-tree->redraw();}
-      tooltip {Toggle the single item /Bbb/child-02} xywh {430 571 115 16} labelsize 11
     }
   }
   code {// Initialize Tree
 tree->root_label("ROOT");
 docallback_radio->value(1);	// enable docallbacks radio button
 RebuildTree();
-tree->show_self();} {selected
-  }
+tree->show_self();} {}
   code {// FLTK stuff
 Fl::scheme("gtk+");
 window->resizable(window);
