@@ -71,7 +71,7 @@ static pollfd *pollfds = 0;
 #    endif /* HAVE_SYS_SELECT_H */
 
 // The following #define is only needed for HP-UX 9.x and earlier:
-//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
+// #define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
 
 static fd_set fdsets[3];
 static int maxfd;
