@@ -36,7 +36,6 @@
 #include <FL/Fl_Printer.H>
 #include "flstring.h"
 #include <stdio.h>
-#include <FL/fl_ask.H>//TMP
 
 #ifdef __APPLE_QUARTZ__
 float fl_quartz_line_width_ = 1.0f;
