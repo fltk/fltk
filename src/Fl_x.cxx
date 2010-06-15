@@ -71,7 +71,7 @@ static pollfd *pollfds = 0;
 #    endif /* HAVE_SYS_SELECT_H */
 
 // The following #define is only needed for HP-UX 9.x and earlier:
-// #define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
+//#define select(a,b,c,d,e) select((a),(int *)(b),(int *)(c),(int *)(d),(e))
 
 static fd_set fdsets[3];
 static int maxfd;
@@ -1594,7 +1594,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   if (win->menu_window() || win->tooltip_window()) {
     Atom net_wm_type = XInternAtom(fl_display, "_NET_WM_WINDOW_TYPE", False);
     Atom net_wm_type_kind = XInternAtom(fl_display, "_NET_WM_WINDOW_TYPE_MENU", False);
-    int ret = XChangeProperty(fl_display, xp->xid, net_wm_type, XA_ATOM, 32, PropModeReplace, (unsigned char*)&net_wm_type_kind, 1);
+    XChangeProperty(fl_display, xp->xid, net_wm_type, XA_ATOM, 32, PropModeReplace, (unsigned char*)&net_wm_type_kind, 1);
   }
 
   XMapWindow(fl_display, xp->xid);
