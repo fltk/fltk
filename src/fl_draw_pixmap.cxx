@@ -221,7 +221,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   if (!fl_measure_pixmap(cdata, d.w, d.h)) return 0;
   const uchar*const* data = (const uchar*const*)(cdata+1);
   int transparent_index = -1;
-  uchar *transparent_c; // such that transparent_c[0,1,2] are the RGB of the transparent color
+  uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
 #ifdef WIN32
   color_count = 0;
   used_colors = (uchar *)malloc(abs(ncolors)*3*sizeof(uchar));
@@ -334,7 +334,13 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   }
   d.data = data;
 #ifdef WIN32
+  if (transparent_c) {
     make_unused_color(transparent_c[0], transparent_c[1], transparent_c[2]);
+  }
+  else {
+    uchar r, g, b;
+    make_unused_color(r, g, b);
+  }
 #endif
   
 #ifdef  __APPLE_QUARTZ__
