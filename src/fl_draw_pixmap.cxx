@@ -40,9 +40,6 @@
 #include <FL/x.H>
 #include <stdio.h>
 #include "flstring.h"
-#ifdef  __APPLE_QUARTZ__
-#include <FL/Fl_Printer.H>
-#endif
 
 static int ncolors, chars_per_pixel;
 
@@ -344,7 +341,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #endif
   
 #ifdef  __APPLE_QUARTZ__
-  if (fl_surface->type() == Fl_Printer::device_type) {
+  if (fl_surface->driver()->type() == Fl_Quartz_Graphics_Driver::device_type ) {
     bool transparent = (transparent_index>=0);
     transparent = true;
     U32 *array = new U32[d.w * d.h], *q = array;
