@@ -29,7 +29,7 @@
 extern unsigned char *MACbitmapFromRectOfWindow(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
 
 //
-// 'fl_read_image()' - Read an image from the current window.
+// 'fl_read_image()' - Read an image from the current window or off-screen buffer.
 //
 
 uchar *				// O - Pixel buffer or NULL if failed
@@ -39,11 +39,24 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
 	      int   w,		// I - Width of area to read
 	      int   h,		// I - Height of area to read
 	      int   alpha) {	// I - Alpha value for image (0 for none)
-  Fl_Window *window = Fl_Window::current();
-  while(window->window()) window = window->window();
-  int delta;
-  uchar *base = MACbitmapFromRectOfWindow(window,x,y,w,h,&delta);
-  int rowBytes = delta*w;
+  uchar *base;
+  int rowBytes, delta;
+  if(fl_window == NULL) { // reading from an offscreen buffer
+    CGContextRef src = (CGContextRef)fl_gc;   // get bitmap context
+    base = (uchar *)CGBitmapContextGetData(src);  // get data
+    if(!base) return NULL;
+    int sw = CGBitmapContextGetWidth(src);
+    int sh = CGBitmapContextGetHeight(src);
+    rowBytes = CGBitmapContextGetBytesPerRow(src);
+    delta = CGBitmapContextGetBitsPerPixel(src)/8;
+    if( (sw - x > w) || (sh - y > h) )  return NULL;
+    }
+  else { // reading from current window
+    Fl_Window *window = Fl_Window::current();
+    while(window->window()) window = window->window();
+    base = MACbitmapFromRectOfWindow(window,x,y,w,h,&delta);
+    rowBytes = delta*w;
+    }
   // Allocate the image data array as needed...
   int d = alpha ? 4 : 3;
   if (!p) p = new uchar[w * h * d];
@@ -59,7 +72,7 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
       pdst[2] = psrc[2];  // B
     }
   }
-  delete base;
+  if(fl_window != NULL) delete base;
   return p;
 }
 
