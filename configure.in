@@ -97,7 +97,7 @@ case $uname in
 	    DSOFLAGS="$DSOFLAGS -mno-cygwin"
 	else
 	    # we target cygwin in combination with X11
-	    if test x$enable_x11 == xyes; then
+	    if test x$enable_x11 = xyes; then
 		uname_GUI="X11$uname"
 	    fi
 	fi
@@ -300,7 +300,7 @@ if test x$enable_shared = xyes; then
 		IMGDSONAME="mgwfltknox_images-$FL_API_VERSION.dll"
 		CAIRODSONAME="mgwfltknox_cairo-$FL_API_VERSION.dll"
 	    else
-		if test x$enable_x11 == xyes; then
+		if test x$enable_x11 = xyes; then
 		    DSONAME="cygfltk-$FL_API_VERSION.dll"
 		    FLDSONAME="cygfltk_forms-$FL_API_VERSION.dll"
 		    GLDSONAME="cygfltk_gl-$FL_API_VERSION.dll"
