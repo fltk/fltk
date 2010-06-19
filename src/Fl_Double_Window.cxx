@@ -231,14 +231,13 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
 
   fl_gc = (CGContextRef)ctx;
   fl_window = 0;
-  //fl_push_no_clip();
   CGContextSaveGState(fl_gc);
-  Fl_X::q_fill_context();
+  fl_push_no_clip();
 }
 
 void fl_end_offscreen() {
   Fl_X::q_release_context();
-  //fl_pop_clip();
+  fl_pop_clip();
   if (stack_ix>0)
     stack_ix--;
   else
