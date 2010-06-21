@@ -488,8 +488,8 @@ void Fl_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   CGContextRestoreGState(fl_gc);
 }
 
-void fl_rtl_draw(const char* c, int n, int x, int y) {
-  fl_draw(c, n, x - fl_width(c, n), y); //to check;
+void Fl_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
+  draw(c, n, x - fl_width(c, n), y);
 }
 
 //

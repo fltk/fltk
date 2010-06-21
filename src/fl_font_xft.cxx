@@ -584,7 +584,7 @@ static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
 }
 
 
-void fl_rtl_draw(const char* c, int n, int x, int y) {
+void Fl_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
 
 #if defined(__GNUC__)
 #warning Need to improve this XFT right to left draw function

@@ -335,7 +335,7 @@ void Fl_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
 //  fl_draw(str, n, (int)x, (int)y);
 //}
 
-void fl_rtl_draw(const char* c, int n, int x, int y) {
+void Fl_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   if (font_gc != fl_gc) {
     if (!current_font) fl_font(FL_HELVETICA, 12);
     font_gc = fl_gc;

@@ -386,7 +386,7 @@ void Fl_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
   fl_font(fl_font_, fl_size_);
 }
 
-void fl_rtl_draw(const char* c, int n, int x, int y) {
+void Fl_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   int wn;
   int i = 0;
   int lx = 0;

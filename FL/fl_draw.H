@@ -563,7 +563,7 @@ inline void fl_draw(int angle,const char* str, int n, int x, int y) {fl_device->
 /**
   Draws an array of \p n characters right to left starting at given location.
 */
-FL_EXPORT void fl_rtl_draw(const char*, int n, int x, int y);
+inline void fl_rtl_draw(const char* str, int n, int x, int y) {fl_device->rtl_draw(str,n,x,y); };
 FL_EXPORT void fl_measure(const char* str, int& x, int& y,
                           int draw_symbols = 1);
 FL_EXPORT void fl_draw(const char* str, int x, int y, int w, int h,

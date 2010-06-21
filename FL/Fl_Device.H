@@ -129,6 +129,7 @@ protected:
   friend void fl_line(int x, int y, int x1, int y1, int x2, int y2);
   friend void fl_draw(const char *str, int n, int x, int y);
   friend void fl_draw(int angle, const char *str, int n, int x, int y);
+  friend void fl_rtl_draw(const char *str, int n, int x, int y);
   friend void fl_font(Fl_Font face, Fl_Fontsize size);
   friend void fl_color(Fl_Color c);
   friend void fl_color(uchar r, uchar g, uchar b);
@@ -193,6 +194,8 @@ protected:
   virtual void draw(const char *str, int n, int x, int y);
   /** \brief see fl_draw(int angle, const char *str, int n, int x, int y). */
   virtual void draw(int angle, const char *str, int n, int x, int y);
+  /** \brief see fl_rtl_draw(const char *str, int n, int x, int y). */
+  virtual void rtl_draw(const char *str, int n, int x, int y);
   /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
   virtual void font(Fl_Font face, Fl_Fontsize size);
   /** \brief see fl_color(Fl_Color c). */
