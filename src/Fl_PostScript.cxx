@@ -351,6 +351,23 @@ static const char * prolog_2 =  // prolog relevant only if lang_level >1
 "end\n"
 "IDD image GR} bind def\n"
 
+// procedure to modify a font to use ISOLatin1 encoding (iso-8859-1)
+// and to keep its name unchanged
+"/ToLatin1 { dup findfont dup length dict "
+"begin {def} forall /Encoding ISOLatin1Encoding def currentdict end definefont pop } def\n"
+// modify all fonts to use ISOLatin1 encoding
+"/Helvetica ToLatin1 "
+"/Helvetica-Bold ToLatin1 "
+"/Helvetica-Oblique ToLatin1 "
+"/Helvetica-BoldOblique ToLatin1 \n"
+"/Courier ToLatin1 "
+"/Courier-Bold ToLatin1 "
+"/Courier-Oblique ToLatin1 "
+"/Courier-BoldOblique ToLatin1 \n"
+"/Times ToLatin1 "
+"/Times-Bold ToLatin1 "
+"/Times-Italic ToLatin1 "
+"/Times-BoldItalic ToLatin1 \n"
 ;
 
 static const char * prolog_2_pixmap =  // prolog relevant only if lang_level == 2 for pixmaps
@@ -936,24 +953,26 @@ void Fl_PostScript_Graphics_Driver::draw(int angle, const char *str, int n, int 
   fprintf(output, "GR\n");
 }
 
-void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, double x, double y){
-  if (!n || !str || !*str)return;
+// outputs in PostScript a UTF8 string replacing non-Latin1 characters by ?
+// and using the same width in points as on display
+void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, double x, double y) {
+  int len;
+  if (!n || !str || !*str) return;
+  const char *last = str + n;
+  // compute display width of string
   fprintf(output,"%g (", fl_width(str, n));
-  int i=1;
-  for (int j=0;j<n;j++){
-    if (i>240){
-      fprintf(output, "\\\n");
-      i=0;
-    }
-    i++;
-    switch (*str) {
-      case '(': case ')': case '\\' :
-        putc('\\' , output);
-	/* fallthrough */
-      default:
-        putc(*str , output);
-    }
-    str++;
+  while (str < last) {
+    // Extract each unicode character of string.
+    // Until 0xFF, UTF codes coincide with iso-Latin1 (iso-8859-1)
+    unsigned utf = fl_utf8decode(str, last, &len);
+    str += len;
+    if (utf > 0xFF) {
+      utf = '?'; // replace non Latin-1 unicodes by ?
+      }
+    else if (utf == '(' || utf == ')' || utf == '\\') {
+      putc('\\' , output); // these chars need be escaped
+     }
+    putc(utf, output); // output the latin character
   }
   fprintf(output, ") %g %g show_pos_width\n", x, y);
 }
