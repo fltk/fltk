@@ -27,50 +27,62 @@ or an editor with the corresponding codepage or locale.
 
 The UTF-8 encoded files should be usable with FLTK 1.3, FLTK 2, or FLTK 3
 (future). They contain UTF-8 encoded characters at the table positions,
-where the corresponding ISO-8859-1 or Windows copepage 1252 characters would
-be. They should look identical as the image file (cp1252.png) on all UTF-8
-capable systems.
+where the corresponding ISO-8859-1, Windows copepage 1252, or Mac OS Roman
+characters would be. They should look identical as the image file (cp1252.png)
+or MacRoman_utf-8.png, resp., on all UTF-8 capable systems.
 
 The files with names iso-8859-1_* contain only the ISO-8859-1 subset, i.e.
-the colums with character codes x'80' - x'9F' (U+0080 - U+009F) are empty.
+the colums with character codes 0x80 - 0x9F (U+0080 - U+009F) are empty.
+
+Mac OS Roman is the Apple Mac native character set before it became Unicode
+by default (OS X). The corresponding files are ordered as they would appear
+with the native character set / encoding.
 
 Special Notes:
 
-  x'22' (U+0022: "quotation mark") is doubled intentionally. This has been
+  0x22 (U+0022: "quotation mark") is doubled intentionally. This has been
   done for better results in test/editor, because otherwise the rest of the
   file would be shown in blue color (as a comment).
 
-  x'98' (U+02DC: "small tilde") may not display correctly on Windows systems.
+  0x98 (U+02DC: "small tilde") may not display correctly on Windows systems.
   I saw the same effect with other Windows editors as well. The following
   characters may be displayed "shifted left" by one position. Seems to work
   correctly on Linux (with UTF-8 encoding).
+  
+  Mac OS Roman: 0xF0 (U+F8FF: "Apple logo") may not be printable, depending
+  on installed fonts on other systems.
 
   There may currently be drawing artefacts when moving the cursor forwards
   and/or backwards over some "special" characters.
-
 
 References:
 
   http://unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
   http://unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/CP1252.TXT
+  http://unicode.org/Public/MAPPINGS/VENDORS/APPLE/ROMAN.TXT
+  http://en.wikipedia.org/wiki/Mac_OS_Roman
 
 Files:
 
-The first file is an image of how it should look:
+The first two files are images of how it should look:
 
- cp1252.png		full Windows Codepage 1252 (Western)
+  cp1252.png		full Windows Codepage 1252 (Western)
+  MacRoman_utf-8.png	full Mac OS Roman character set (w/o Apple logo)
 
 The following two files contain the full Windows Codepage 1252:
 
- cp1252.txt		native (Windows) encoding, suitable for FLTK 1.1
- cp1252_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
+  cp1252.txt		native (Windows) encoding, suitable for FLTK 1.1
+  cp1252_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
 
-The following two files contain only the ISO-8859-1 characters:
+The following two files contain only the ISO-8859-1 subset:
 
- iso-8859-1.txt		native (Windows) encoding, suitable for FLTK 1.1
- iso-8859-1_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
+  iso-8859-1.txt	native (Windows) encoding, suitable for FLTK 1.1
+  iso-8859-1_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
 
+The following file contains the full Mac OS Roman character set:
 
+  MacRoman_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
+			(use cp1252.txt with FLTK 1.1 on Mac OS instead)
 
 Other developer support files:
 ================================================================================
