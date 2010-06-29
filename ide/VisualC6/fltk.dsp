@@ -87,7 +87,7 @@ SOURCE=..\..\src\Fl.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\Fl_Abstract_Printer.cxx
+SOURCE=..\..\src\Fl_Paged_Device.cxx
 # End Source File
 # Begin Source File
 
