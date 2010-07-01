@@ -199,6 +199,7 @@ typedef Fl_PostScript_Printer Fl_Printer;
 class Fl_Printer : public Fl_System_Printer, Fl_PostScript_Printer {
 public:
   static const char *device_type;
+  /** @brief The constructor */
   Fl_Printer(void);
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   int start_page(void);
@@ -211,6 +212,7 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
+  /** @brief The destructor */
   ~Fl_Printer(void);
  
   /** \name These attributes are effective under the Xlib platform only.
