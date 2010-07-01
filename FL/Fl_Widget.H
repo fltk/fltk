@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/* \file
+/** \file
    Fl_Widget, Fl_Label classes . */
 
 #ifndef Fl_Widget_H
