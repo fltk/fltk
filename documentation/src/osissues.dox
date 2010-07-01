@@ -707,19 +707,11 @@ The Fl_Sys_Menu_Bar class allows to build menu bars that, on Mac OS X, are
 placed in the system menu bar (at top-left of display), and, on other platforms,
 at a user-chosen location of a user-chosen window.
 
-\subsection osissues_quickdraw Drawing Things Using QuickDraw
-
-When the virtual function Fl_Widget::draw() is
-called, FLTK has prepared the Window and CGrafPort for drawing.
-Clipping and offsets are prepared to allow correct subwindow
-drawing.
-
 \subsection osissues_quartz Drawing Things Using Quartz
 
-If the FLTK library was compiled using the configuration
-flag <tt>--enable-quartz</tt>, all code inside Fl_Widget::draw()
-is expected to call Quartz drawing functions instead of 
-QuickDraw. The Quartz coordinate system is flipped to match
+All code inside Fl_Widget::draw()
+is expected to call Quartz drawing functions. The Quartz coordinate system 
+is flipped to match
 FLTK's coordinate system. The origin for all drawing is in the top
 left corner of the enclosing Fl_Window.
 
@@ -758,18 +750,6 @@ handle the Resource Fork correctly.
 \par Mac File Paths
 
 FLTK uses UNIX-style filenames and paths.
-
-\subsection osissues_macos_problems Known MacOS Bugs and Problems
-
-The following is a list of known bugs and problems in the
-MacOS version of FLTK:
-
-\li	Line styles are not well supported. This is due to
-	limitations in the QuickDraw interface.
-
-\li	Nested subwindows are not supported, i.e. you can
-	have a Fl_Window widget inside a Fl_Window, but not a
-	Fl_Window inside a Fl_Window inside a Fl_Window.
 
 
 \htmlonly
