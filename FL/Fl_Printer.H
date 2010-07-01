@@ -166,7 +166,7 @@ typedef Fl_PostScript_Printer Fl_Printer;
  Fl_Printer allows to use all FLTK drawing, color, text, and clip functions, and to have them operate
  on printed page(s). There are two main, non exclusive, ways to use it.
  <ul><li>Print any widget (standard, custom, Fl_Window, Fl_Gl_Window) as it appears 
- on screen, with optional translation and scaling. This is done by calling print_widget() 
+ on screen, with optional translation, scaling and rotation. This is done by calling print_widget() 
  or print_window_part().
  <li>Use a series of FLTK graphics commands (e.g., font, text, lines, colors, clip) to
  compose a page appropriately shaped for printing. 
@@ -178,16 +178,16 @@ typedef Fl_PostScript_Printer Fl_Printer;
  and to Fl_System_Printer otherwise. Both classes have the same API.
  <ul>
  <li>Unix/Linux platforms:
+ Class Fl_RGB_Image prints but loses its transparency if it has one.
+ PostScript text output is presently restricted to the Latin alphabet.
  Use the static public attributes of this class to set the print dialog to other languages 
  than English. For example, the "Printer:" dialog item Fl_Printer::dialog_printer can be set to French with:
  \code
  Fl_Printer::dialog_printer = "Imprimante:";
- Fl_Printer myprinter;
- myprinter.start_job();
  \endcode
+ before creation of the Fl_Printer object.
  Use Fl_PostScript_File_Device::file_chooser_title to customize the title of the file chooser dialog that opens
  when using the "Print To File" option of the print dialog. 
- Class Fl_RGB_Image prints but loses its transparency if it has one.
  <li>MSWindows platform: Transparent Fl_RGB_Image 's don't print with exact transparency on most printers.
  Fl_RGB_Image 's don't rotate() well.
  A workaround is to use the print_window_part() call. 
