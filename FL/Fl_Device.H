@@ -49,7 +49,7 @@ class Fl_Graphics_Driver;
 class Fl_Display_Device;
 class Fl_Surface_Device;
 /** \brief Points to the driver that currently receives all graphics requests */
-extern Fl_Graphics_Driver *fl_device;
+extern Fl_Graphics_Driver *fl_graphics_driver;
 /** \brief Points to the surface that currently receives all graphics requests */
 extern Fl_Surface_Device *fl_surface;
 /** \brief Points to the platform's display */
@@ -97,9 +97,10 @@ public:
  <br> The preferred FLTK API for drawing operations is the function collection of the 
  \ref fl_drawings and \ref fl_attributes modules. 
  <br> Alternatively, methods of the Fl_Graphics_Driver class can be called
- using the global variable Fl_Graphics_Driver * \ref fl_device that points at all time to the single driver 
- (an instance of an Fl_Graphics_Driver subclass) that's currently receiving graphics requests:
- \code fl_device->rect(x, y, w, h); \endcode
+ using the global variable Fl_Graphics_Driver * \ref fl_graphics_driver that points at all time to 
+ the single driver (an instance of an Fl_Graphics_Driver subclass) that's currently receiving graphics 
+ requests. For example:
+ \code fl_graphics_driver->rect(x, y, w, h); \endcode
  <br>Each protected method of the Fl_Graphics_Driver class has the same effect as the
  function of the \ref fl_drawings and \ref fl_attributes modules which bears the same name
  prefixed with fl_ and has the same parameter list.

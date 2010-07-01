@@ -47,7 +47,7 @@ const char *Fl_Xlib_Graphics_Driver::device_type = "Fl_Xlib_Graphics_Driver";
 /** \brief Use this drawing surface for future graphics requests. */
 void Fl_Surface_Device::set_current(void)
 {
-  fl_device = _driver;
+  fl_graphics_driver = _driver;
   fl_surface = this;
 }
 

@@ -57,7 +57,7 @@ FL_EXPORT extern char fl_draw_shortcut;
  the foreground is not set for the current window.
  \param[in] c color 
  */
-inline void	fl_color(Fl_Color c) {fl_device->color(c); }; // select indexed color
+inline void	fl_color(Fl_Color c) {fl_graphics_driver->color(c); }; // select indexed color
 /** for back compatibility - use fl_color(Fl_Color c) instead */
 inline void fl_color(int c) {fl_color((Fl_Color)c);}
 /**
@@ -70,7 +70,7 @@ inline void fl_color(int c) {fl_color((Fl_Color)c);}
  the foreground is not set for the current window.
  \param[in] r,g,b color components
  */
-inline void	fl_color(uchar r, uchar g, uchar b) {fl_device->color(r,g,b); }; // select actual color
+inline void	fl_color(uchar r, uchar g, uchar b) {fl_graphics_driver->color(r,g,b); }; // select actual color
 /** \brief The current color */
 extern FL_EXPORT Fl_Color fl_color_;
 /**
@@ -89,13 +89,13 @@ inline Fl_Color fl_color() {return fl_color_;}
  new region onto the stack.
  \param[in] x,y,w,h position and size
  */
-inline void fl_push_clip(int x, int y, int w, int h) {fl_device->push_clip(x,y,w,h); };
+inline void fl_push_clip(int x, int y, int w, int h) {fl_graphics_driver->push_clip(x,y,w,h); };
 /** The fl_clip() name is deprecated and will be removed from future releases */
 #define fl_clip fl_push_clip
 /**
  Pushes an empty clip region onto the stack so nothing will be clipped.
  */
-inline void fl_push_no_clip() {fl_device->push_no_clip(); };
+inline void fl_push_no_clip() {fl_graphics_driver->push_no_clip(); };
 /**
  Restores the previous clip region.
  
@@ -103,7 +103,7 @@ inline void fl_push_no_clip() {fl_device->push_no_clip(); };
  Unpredictable results may occur if the clip stack is not empty when
  you return to FLTK.
  */
-inline void fl_pop_clip() {fl_device->pop_clip(); };
+inline void fl_pop_clip() {fl_graphics_driver->pop_clip(); };
 /**
  Does the rectangle intersect the current clip region?
  \param[in] x,y,w,h position and size of rectangle
@@ -114,7 +114,7 @@ inline void fl_pop_clip() {fl_device->pop_clip(); };
  Under X this returns 2 if the rectangle is partially clipped, 
  and 1 if it is entirely inside the clip region.
  */
-inline int fl_not_clipped(int x, int y, int w, int h) {return fl_device->not_clipped(x,y,w,h); };
+inline int fl_not_clipped(int x, int y, int w, int h) {return fl_graphics_driver->not_clipped(x,y,w,h); };
 /**
  Intersects the rectangle with the current clip region and returns the
  bounding box of the result.
@@ -130,7 +130,7 @@ inline int fl_not_clipped(int x, int y, int w, int h) {return fl_device->not_cli
  \returns Non-zero if the resulting rectangle is different to the original.
  */
 inline int fl_clip_box(int x , int y, int w, int h, int& X, int& Y, int& W, int& H) 
-  {return fl_device->clip_box(x,y,w,h,X,Y,W,H); };
+  {return fl_graphics_driver->clip_box(x,y,w,h,X,Y,W,H); };
 /** Undoes any clobbering of clip done by your program */
 extern void fl_restore_clip();
 /**
@@ -150,7 +150,7 @@ extern Fl_Region fl_clip_region();
 /**
  Draws a single pixel at the given coordinates
  */
-inline void fl_point(int x, int y) { fl_device->point(x,y); };
+inline void fl_point(int x, int y) { fl_graphics_driver->point(x,y); };
 
 // line type:
 /**
@@ -180,7 +180,7 @@ inline void fl_point(int x, int y) { fl_device->point(x,y); };
  \note      The \p dashes array does not work under Windows 95, 98 or Me,
  since those operating systems do not support complex line styles.
  */
-inline void fl_line_style(int style, int width=0, char* dashes=0) {fl_device->line_style(style,width,dashes); };
+inline void fl_line_style(int style, int width=0, char* dashes=0) {fl_graphics_driver->line_style(style,width,dashes); };
 enum {
   FL_SOLID	= 0,		///< line style: <tt>___________</tt>
   FL_DASH	= 1,		///< line style: <tt>_ _ _ _ _ _</tt>
@@ -204,12 +204,12 @@ enum {
  This function is meant for quick drawing of simple boxes. The behavior is 
  undefined for line widths that are not 1.
  */
-inline void fl_rect(int x, int y, int w, int h) { fl_device->rect(x,y,w,h); };
+inline void fl_rect(int x, int y, int w, int h) { fl_graphics_driver->rect(x,y,w,h); };
 
 /** Draws with passed color a 1-pixel border \e inside the given bounding box */
 inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rect(x,y,w,h);}
 /** Colors with current color a rectangle that exactly fills the given bounding box */
-inline void fl_rectf(int x, int y, int w, int h) { fl_device->rectf(x,y,w,h); };
+inline void fl_rectf(int x, int y, int w, int h) { fl_graphics_driver->rectf(x,y,w,h); };
 /** Colors with passsed color a rectangle that exactly fills the given bounding box */
 inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rectf(x,y,w,h);}
 
@@ -226,63 +226,63 @@ FL_EXPORT void fl_rectf(int x, int y, int w, int h, uchar r, uchar g, uchar b);
 /**
  Draws a line from (x,y) to (x1,y1)
  */
-inline void fl_line(int x, int y, int x1, int y1) {fl_device->line(x,y,x1,y1); };
+inline void fl_line(int x, int y, int x1, int y1) {fl_graphics_driver->line(x,y,x1,y1); };
 /**
  Draws a line from (x,y) to (x1,y1) and another from (x1,y1) to (x2,y2)
  */
-inline void fl_line(int x, int y, int x1, int y1, int x2, int y2) {fl_device->line(x,y,x1,y1,x2,y2); };
+inline void fl_line(int x, int y, int x1, int y1, int x2, int y2) {fl_graphics_driver->line(x,y,x1,y1,x2,y2); };
 
 // closed line segments:
 /**
  Outlines a 3-sided polygon with lines
  */
-inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {fl_device->loop(x,y,x1,y1,x2,y2); };
+inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2) {fl_graphics_driver->loop(x,y,x1,y1,x2,y2); };
 /**
  Outlines a 4-sided polygon with lines
  */
 inline void fl_loop(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) 
-  {fl_device->loop(x,y,x1,y1,x2,y2,x3,y3); };
+  {fl_graphics_driver->loop(x,y,x1,y1,x2,y2,x3,y3); };
 
 // filled polygons
 /**
  Fills a 3-sided polygon. The polygon must be convex.
  */
-inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {fl_device->polygon(x,y,x1,y1,x2,y2); };
+inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2) {fl_graphics_driver->polygon(x,y,x1,y1,x2,y2); };
 /**
  Fills a 4-sided polygon. The polygon must be convex.
  */
 inline void fl_polygon(int x, int y, int x1, int y1, int x2, int y2, int x3, int y3) 
-  { fl_device->polygon(x,y,x1,y1,x2,y2,x3,y3); };
+  { fl_graphics_driver->polygon(x,y,x1,y1,x2,y2,x3,y3); };
 
 // draw rectilinear lines, horizontal segment first:
 /**
  Draws a horizontal line from (x,y) to (x1,y)
  */
-inline void fl_xyline(int x, int y, int x1) {fl_device->xyline(x,y,x1);};
+inline void fl_xyline(int x, int y, int x1) {fl_graphics_driver->xyline(x,y,x1);};
 /**
  Draws a horizontal line from (x,y) to (x1,y), then vertical from (x1,y) to (x1,y2)
  */
-inline void fl_xyline(int x, int y, int x1, int y2) {fl_device->xyline(x,y,x1,y2);};
+inline void fl_xyline(int x, int y, int x1, int y2) {fl_graphics_driver->xyline(x,y,x1,y2);};
 /**
  Draws a horizontal line from (x,y) to (x1,y), then a vertical from (x1,y) to (x1,y2)
  and then another horizontal from (x1,y2) to (x3,y2)
  */
-inline void fl_xyline(int x, int y, int x1, int y2, int x3) {fl_device->xyline(x,y,x1,y2,x3);};
+inline void fl_xyline(int x, int y, int x1, int y2, int x3) {fl_graphics_driver->xyline(x,y,x1,y2,x3);};
 
 // draw rectilinear lines, vertical segment first:
 /**
  Draws a vertical line from (x,y) to (x,y1)
  */
-inline void fl_yxline(int x, int y, int y1) {fl_device->yxline(x,y,y1);};
+inline void fl_yxline(int x, int y, int y1) {fl_graphics_driver->yxline(x,y,y1);};
 /**
  Draws a vertical line from (x,y) to (x,y1), then a horizontal from (x,y1) to (x2,y1)
  */
-inline void fl_yxline(int x, int y, int y1, int x2) {fl_device->yxline(x,y,y1,x2);};
+inline void fl_yxline(int x, int y, int y1, int x2) {fl_graphics_driver->yxline(x,y,y1,x2);};
 /**
  Draws a vertical line from (x,y) to (x,y1) then a horizontal from (x,y1)
  to (x2,y1), then another vertical from (x2,y1) to (x2,y3)
  */
-inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_device->yxline(x,y,y1,x2,y3);};
+inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_graphics_driver->yxline(x,y,y1,x2,y3);};
 
 // circular lines and pie slices (code in fl_arci.C):
 /**
@@ -307,7 +307,7 @@ inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_device->yxline(x
  counter-clockwise from 3 o'clock. \p a2 must be greater
  than or equal to \p a1.
  */
-inline void fl_arc(int x, int y, int w, int h, double a1, double a2) {fl_device->arc(x,y,w,h,a1,a2); };
+inline void fl_arc(int x, int y, int w, int h, double a1, double a2) {fl_graphics_driver->arc(x,y,w,h,a1,a2); };
 /**
  Draw filled ellipse sections using integer coordinates.
  
@@ -320,7 +320,7 @@ inline void fl_arc(int x, int y, int w, int h, double a1, double a2) {fl_device-
  counter-clockwise from 3 o'clock. \p a2 must be greater
  than or equal to \p a1.
  */
-inline void fl_pie(int x, int y, int w, int h, double a1, double a2) {fl_device->pie(x,y,w,h,a1,a2); };
+inline void fl_pie(int x, int y, int w, int h, double a1, double a2) {fl_graphics_driver->pie(x,y,w,h,a1,a2); };
 /** fl_chord declaration is a place holder - the function does not yet exist */
 FL_EXPORT void fl_chord(int x, int y, int w, int h, double a1, double a2); // nyi
 
@@ -335,24 +335,24 @@ FL_EXPORT void fl_mult_matrix(double a, double b, double c, double d, double x,d
 /**
  Starts drawing a list of points. Points are added to the list with fl_vertex()
  */
-inline void fl_begin_points() {fl_device->begin_points(); };
+inline void fl_begin_points() {fl_graphics_driver->begin_points(); };
 /**
  Starts drawing a list of lines.
  */
-inline void fl_begin_line() {fl_device->begin_line(); };
+inline void fl_begin_line() {fl_graphics_driver->begin_line(); };
 /**
  Starts drawing a closed sequence of lines.
  */
-inline void fl_begin_loop() {fl_device->begin_loop(); };
+inline void fl_begin_loop() {fl_graphics_driver->begin_loop(); };
 /**
  Starts drawing a convex filled polygon.
  */
-inline void fl_begin_polygon() {fl_device->begin_polygon(); };
+inline void fl_begin_polygon() {fl_graphics_driver->begin_polygon(); };
 /**
  Adds a single vertex to the current path.
  \param[in] x,y coordinate
  */
-inline void fl_vertex(double x, double y) {fl_device->vertex(x,y); };
+inline void fl_vertex(double x, double y) {fl_graphics_driver->vertex(x,y); };
 /**
  Add a series of points on a Bezier curve to the path.
  The curve ends (and two of the points) are at X0,Y0 and X3,Y3.
@@ -362,7 +362,7 @@ inline void fl_vertex(double x, double y) {fl_device->vertex(x,y); };
  \param[in] X3,Y3 curve end point
  */
 inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3)
-  {fl_device->curve(X0,Y0,X1,Y1,X2,Y2,X3,Y3); };
+  {fl_graphics_driver->curve(X0,Y0,X1,Y1,X2,Y2,X3,Y3); };
 /**
  Add a series of points to the current path on the arc of a circle; you
  can get elliptical paths by using scale and rotate before calling fl_arc().
@@ -371,7 +371,7 @@ inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, doub
  counter-clockwise from 3 o'clock. If \p end is less than \p start
  then it draws the arc in a clockwise direction.
  */
-inline void fl_arc(double x, double y, double r, double start, double end) {fl_device->arc(x,y,r,start,end); };
+inline void fl_arc(double x, double y, double r, double start, double end) {fl_graphics_driver->arc(x,y,r,start,end); };
 /**
  fl_circle() is equivalent to fl_arc(x,y,r,0,360), but may be faster.
  
@@ -379,23 +379,23 @@ inline void fl_arc(double x, double y, double r, double start, double end) {fl_d
  a complex polygon you must use fl_arc()
  \param[in] x,y,r center and radius of circle
  */
-inline void fl_circle(double x, double y, double r) {fl_device->circle(x,y,r); };
+inline void fl_circle(double x, double y, double r) {fl_graphics_driver->circle(x,y,r); };
 /**
  Ends list of points, and draws.
  */
-inline void fl_end_points() {fl_device->end_points(); };
+inline void fl_end_points() {fl_graphics_driver->end_points(); };
 /**
  Ends list of lines, and draws.
  */
-inline void fl_end_line() {fl_device->end_line(); };
+inline void fl_end_line() {fl_graphics_driver->end_line(); };
 /**
  Ends closed sequence of lines, and draws.
  */
-inline void fl_end_loop() {fl_device->end_loop(); };
+inline void fl_end_loop() {fl_graphics_driver->end_loop(); };
 /**
  Ends convex filled polygon, and draws.
  */
-inline void fl_end_polygon() {fl_device->end_polygon(); };
+inline void fl_end_polygon() {fl_graphics_driver->end_polygon(); };
 /**
  Starts drawing a complex filled polygon.
  
@@ -410,18 +410,18 @@ inline void fl_end_polygon() {fl_device->end_polygon(); };
  whether "even/odd" or "non-zero" winding rules are used to fill them.
  Holes should be drawn in the opposite direction to the outside loop.
  */
-inline void fl_begin_complex_polygon() {fl_device->begin_complex_polygon(); };
+inline void fl_begin_complex_polygon() {fl_graphics_driver->begin_complex_polygon(); };
 /**
  Call fl_gap() to separate loops of the path.
  
  It is unnecessary but harmless to call fl_gap() before the first vertex,
  after the last vertex, or several times in a row.
  */
-inline void fl_gap() {fl_device->gap(); };
+inline void fl_gap() {fl_graphics_driver->gap(); };
 /**
  Ends complex filled polygon, and draws.
  */
-inline void fl_end_complex_polygon() {fl_device->end_complex_polygon(); };
+inline void fl_end_complex_polygon() {fl_graphics_driver->end_complex_polygon(); };
 // get and use transformed positions:
 FL_EXPORT double fl_transform_x(double x, double y);
 FL_EXPORT double fl_transform_y(double x, double y);
@@ -431,7 +431,7 @@ FL_EXPORT double fl_transform_dy(double x, double y);
  Adds coordinate pair to the vertex list without further transformations.
  \param[in] xf,yf transformed coordinate
  */
-inline void fl_transformed_vertex(double xf, double yf) {fl_device->transformed_vertex(xf,yf); };
+inline void fl_transformed_vertex(double xf, double yf) {fl_graphics_driver->transformed_vertex(xf,yf); };
 /** @} */
 
 /** \addtogroup  fl_attributes
@@ -448,7 +448,7 @@ inline void fl_transformed_vertex(double xf, double yf) {fl_device->transformed_
   The size of the font is measured in pixels and not "points".
   Lines should be spaced \p size pixels apart or more.
 */
-inline void fl_font(Fl_Font face, Fl_Fontsize size) { fl_device->font(face,size); };
+inline void fl_font(Fl_Font face, Fl_Fontsize size) { fl_graphics_driver->font(face,size); };
 extern FL_EXPORT Fl_Font fl_font_; ///< current font index
 
 /**
@@ -554,16 +554,16 @@ FL_EXPORT void fl_draw(int angle, const char* str, int x, int y);
 /**
   Draws an array of \p n characters starting at the given location.
 */
-inline void fl_draw(const char* str, int n, int x, int y) {fl_device->draw(str,n,x,y); };
+inline void fl_draw(const char* str, int n, int x, int y) {fl_graphics_driver->draw(str,n,x,y); };
 /**
   Draws an array of \p n characters starting at the given location,
   rotating \p angle degrees counterclockwise.
 */
-inline void fl_draw(int angle,const char* str, int n, int x, int y) {fl_device->draw(angle,str,n,x,y); };
+inline void fl_draw(int angle,const char* str, int n, int x, int y) {fl_graphics_driver->draw(angle,str,n,x,y); };
 /**
   Draws an array of \p n characters right to left starting at given location.
 */
-inline void fl_rtl_draw(const char* str, int n, int x, int y) {fl_device->rtl_draw(str,n,x,y); };
+inline void fl_rtl_draw(const char* str, int n, int x, int y) {fl_graphics_driver->rtl_draw(str,n,x,y); };
 FL_EXPORT void fl_measure(const char* str, int& x, int& y,
                           int draw_symbols = 1);
 FL_EXPORT void fl_draw(const char* str, int x, int y, int w, int h,
@@ -615,14 +615,14 @@ FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
   to 32 bits.
   */
 inline void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0)
-  { fl_device->draw_image(buf, X, Y, W, H, D, L); };
+  { fl_graphics_driver->draw_image(buf, X, Y, W, H, D, L); };
 
 /**
   Draw a gray-scale (1 channel) image.
   \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
   */
 inline void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0)
-  { fl_device->draw_image_mono(buf, X, Y, W, H, D, L); };
+  { fl_graphics_driver->draw_image_mono(buf, X, Y, W, H, D, L); };
 
 /**
   Draw image using callback function to generate image data.
@@ -657,7 +657,7 @@ inline void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=
   If \p D is 4 or more, you must fill in the unused bytes with zero.
   */
 inline void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3)
-  { fl_device->draw_image(cb, data, X, Y, W, H, D); };
+  { fl_graphics_driver->draw_image(cb, data, X, Y, W, H, D); };
 
 /**
   Draw gray-scale image using callback function to generate image data.

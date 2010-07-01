@@ -120,7 +120,7 @@ static void cocoaMouseHandler(NSEvent *theEvent);
 static Fl_Quartz_Graphics_Driver fl_quartz_driver;
 static Fl_Display_Device fl_quartz_display(&fl_quartz_driver);
 FL_EXPORT Fl_Display_Device *fl_display_device = (Fl_Display_Device*)&fl_quartz_display; // does not change
-FL_EXPORT Fl_Graphics_Driver *fl_device = (Fl_Graphics_Driver*)&fl_quartz_driver; // the current target device of graphics operations
+FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_quartz_driver; // the current target device of graphics operations
 FL_EXPORT Fl_Surface_Device *fl_surface = (Fl_Surface_Device*)fl_display_device; // the current target surface of graphics operations
 
 // public variables

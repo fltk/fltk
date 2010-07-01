@@ -249,7 +249,7 @@ Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *array) 
 }
 
 void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
-  fl_device->draw(this, XP, YP, WP, HP, cx, cy);
+  fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
 static int start(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 

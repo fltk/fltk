@@ -434,7 +434,7 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
 #endif // !WIN32 && !__APPLE_QUARTZ__
 
 void Fl_RGB_Image::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
-  fl_device->draw(this, XP, YP, WP, HP, cx, cy);
+  fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
 static int start(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 

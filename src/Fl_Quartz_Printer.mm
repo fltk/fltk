@@ -41,7 +41,7 @@ Fl_System_Printer::Fl_System_Printer(void)
   y_offset = 0;
   scale_x = scale_y = 1.;
   type_ = device_type;
-  driver(fl_device);
+  driver(fl_graphics_driver);
 }
 
 Fl_System_Printer::~Fl_System_Printer(void) {}
