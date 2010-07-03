@@ -188,6 +188,13 @@ Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
   return (Fl_Offscreen)ctx;
 }
 
+static void bmProviderRelease (void *src, const void *data, size_t size)
+{
+  CFIndex count = CFGetRetainCount(src);
+  CFRelease(src);
+  if(count == 1) free((void*)data);
+}
+
 void fl_copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {
   CGContextRef src = (CGContextRef)osrc;
   void *data = CGBitmapContextGetData(src);
@@ -195,7 +202,10 @@ void fl_copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int sr
   int sh = CGBitmapContextGetHeight(src);
   CGImageAlphaInfo alpha = CGBitmapContextGetAlphaInfo(src);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  CGDataProviderRef src_bytes = CGDataProviderCreateWithData( 0L, data, sw*sh*4, 0L);
+  // when output goes to a Quartz printercontext, release of the bitmap must be
+  // delayed after the end of the print page
+  CFRetain(src);
+  CGDataProviderRef src_bytes = CGDataProviderCreateWithData( src, data, sw*sh*4, bmProviderRelease);
   CGImageRef img = CGImageCreate( sw, sh, 8, 4*8, 4*sw, lut, alpha,
     src_bytes, 0L, false, kCGRenderingIntentDefault);
   // fl_push_clip();
@@ -211,9 +221,9 @@ void fl_copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int sr
 void fl_delete_offscreen(Fl_Offscreen ctx) {
   if (!ctx) return;
   void *data = CGBitmapContextGetData((CGContextRef)ctx);
+  CFIndex count = CFGetRetainCount(ctx);
   CGContextRelease((CGContextRef)ctx);
-  if (!data) return;
-  free(data);
+  if(count == 1) free(data);
 }
 
 const int stack_max = 16;
