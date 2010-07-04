@@ -49,11 +49,11 @@ class Fl_Graphics_Driver;
 class Fl_Display_Device;
 class Fl_Surface_Device;
 /** \brief Points to the driver that currently receives all graphics requests */
-extern Fl_Graphics_Driver *fl_graphics_driver;
+FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
 /** \brief Points to the surface that currently receives all graphics requests */
-extern Fl_Surface_Device *fl_surface;
+FL_EXPORT extern Fl_Surface_Device *fl_surface;
 /** \brief Points to the platform's display */
-extern Fl_Display_Device *fl_display_device;
+FL_EXPORT extern Fl_Display_Device *fl_display_device;
 
 /**
  signature of image generation callback function.
