@@ -361,7 +361,6 @@ int create_new_database(const char *filename)
   
   Fl_Target_Prefs fltk_lib(libs_db.add_with_key("name", "fltk")); {
     fltk_lib.add_source(files_db, "src/Fl.cxx");
-    fltk_lib.add_source(files_db, "src/Fl_Abstract_Printer.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Adjuster.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Bitmap.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Box.cxx");
@@ -401,6 +400,7 @@ int create_new_database(const char *filename)
     fltk_lib.add_source(files_db, "src/Fl_Native_File_Chooser.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Overlay_Window.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Pack.cxx");
+    fltk_lib.add_source(files_db, "src/Fl_Paged_Device.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Pixmap.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Positioner.cxx");
     fltk_lib.add_source(files_db, "src/Fl_Printer.cxx");
@@ -514,7 +514,6 @@ int create_new_database(const char *filename)
     
     fltk_lib.add_header(files_db, "FL/Enumerations.H");
     fltk_lib.add_header(files_db, "FL/Fl.H");
-    fltk_lib.add_header(files_db, "FL/Fl_Abstract_Printer.H");
     fltk_lib.add_header(files_db, "FL/Fl_Adjuster.H");
     fltk_lib.add_header(files_db, "FL/Fl_Bitmap.H");
     fltk_lib.add_header(files_db, "FL/Fl_Box.H");
@@ -574,6 +573,7 @@ int create_new_database(const char *filename)
     fltk_lib.add_header(files_db, "FL/Fl_Overlay_Window.H");
     fltk_lib.add_header(files_db, "FL/Fl_PSfile_Device.H");
     fltk_lib.add_header(files_db, "FL/Fl_Pack.H");
+    fltk_lib.add_header(files_db, "FL/Fl_Paged_Device.H");
     fltk_lib.add_header(files_db, "FL/Fl_Pixmap.H");
     fltk_lib.add_header(files_db, "FL/Fl_Plugin.H");
     fltk_lib.add_header(files_db, "FL/Fl_Positioner.H");

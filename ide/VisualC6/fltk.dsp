@@ -87,10 +87,6 @@ SOURCE=..\..\src\Fl.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\Fl_Paged_Device.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\Fl_Adjuster.cxx
 # End Source File
 # Begin Source File
@@ -680,6 +676,10 @@ SOURCE=..\..\src\xutf8\is_right2left.c
 # Begin Source File
 
 SOURCE=..\..\src\xutf8\is_spacing.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Paged_Device.cxx
 # End Source File
 # End Target
 # End Project
