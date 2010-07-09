@@ -110,16 +110,20 @@ extern FL_EXPORT ulong fl_event_time;
 
 // off-screen pixmaps: create, destroy, draw into, copy to window:
 typedef ulong Fl_Offscreen;
-#define fl_create_offscreen(w,h) \
-  XCreatePixmap(fl_display, fl_window, w, h, fl_visual->depth)
+#   define fl_create_offscreen(w,h) \
+  XCreatePixmap(fl_display, \
+	      (fl_surface->type() == Fl_Display_Device::device_type ? \
+	      fl_window : fl_xid(Fl::first_window()) ) , \
+	      w, h, fl_visual->depth)
 // begin/end are macros that save the old state in local variables:
 #    define fl_begin_offscreen(pixmap) \
-  Window _sw=fl_window; fl_window=pixmap; fl_push_no_clip()
+  Window _sw=fl_window; fl_window=pixmap; \
+  Fl_Surface_Device *_ss = fl_surface; fl_display_device->set_current(); \
+  fl_push_no_clip()
 #    define fl_end_offscreen() \
-  fl_pop_clip(); fl_window = _sw
+  fl_pop_clip(); fl_window = _sw; _ss->set_current()
 
-#    define fl_copy_offscreen(x,y,w,h,pixmap,srcx,srcy) \
-  XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y)
+extern void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 #    define fl_delete_offscreen(pixmap) XFreePixmap(fl_display, pixmap)
 
 // Bitmap masks

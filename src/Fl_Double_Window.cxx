@@ -65,7 +65,27 @@ void Fl_Double_Window::show() {
   Fl_Window::show();
 }
 
+static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+
+void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
+  if( fl_graphics_driver == fl_display_device->driver()) {
+    fl_copy_offscreen_to_display(x, y, w, h, pixmap, srcx, srcy);
+  }
+  else { // when copy is not to the display
+    fl_begin_offscreen(pixmap);
+    uchar *img = fl_read_image(NULL, srcx, srcy, w, h, 0);
+    fl_end_offscreen();
+    fl_draw_image(img, x, y, w, h, 3, 0);
+    delete img;
+  }
+}
+
 #if defined(USE_X11)
+
+static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
+    XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y);
+}
+
 
 // maybe someone feels inclined to implement alpha blending on X11?
 char fl_can_do_alpha_blending() {
@@ -134,7 +154,7 @@ HDC fl_makeDC(HBITMAP bitmap) {
   return new_gc;
 }
 
-void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
+static void fl_copy_offscreen_to_display(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
@@ -195,7 +215,7 @@ static void bmProviderRelease (void *src, const void *data, size_t size)
   if(count == 1) free((void*)data);
 }
 
-void fl_copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {
+static void fl_copy_offscreen_to_display(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {
   CGContextRef src = (CGContextRef)osrc;
   void *data = CGBitmapContextGetData(src);
   int sw = CGBitmapContextGetWidth(src);
@@ -230,8 +250,11 @@ const int stack_max = 16;
 static int stack_ix = 0;
 static CGContextRef stack_gc[stack_max];
 static Window stack_window[stack_max];
+static Fl_Surface_Device *_ss;
 
 void fl_begin_offscreen(Fl_Offscreen ctx) {
+  _ss = fl_surface; 
+  fl_display_device->set_current();
   if (stack_ix<stack_max) {
     stack_gc[stack_ix] = fl_gc;
     stack_window[stack_ix] = fl_window;
@@ -256,6 +279,7 @@ void fl_end_offscreen() {
     fl_gc = stack_gc[stack_ix];
     fl_window = stack_window[stack_ix];
   }
+  _ss->set_current();
 }
 
 extern void fl_restore_clip();

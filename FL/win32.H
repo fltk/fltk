@@ -121,16 +121,19 @@ extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);
 
 // off-screen pixmaps: create, destroy, draw into, copy to window
 typedef HBITMAP Fl_Offscreen;
-#define fl_create_offscreen(w, h) CreateCompatibleBitmap(fl_gc, w, h)
+#define fl_create_offscreen(w, h) \
+  CreateCompatibleBitmap( (fl_gc ? fl_gc : fl_GetDC(0) ) , w, h)
 
 extern FL_EXPORT HDC fl_makeDC(HBITMAP);
 
 # define fl_begin_offscreen(b) \
    HDC _sgc=fl_gc; Window _sw=fl_window; \
+   Fl_Surface_Device *_ss = fl_surface; fl_display_device->set_current(); \
    fl_gc=fl_makeDC(b); int _savedc = SaveDC(fl_gc); fl_window=(HWND)b; fl_push_no_clip()
 
 # define fl_end_offscreen() \
-   fl_pop_clip(); RestoreDC(fl_gc, _savedc); DeleteDC(fl_gc); fl_window=_sw; fl_gc = _sgc
+   fl_pop_clip(); RestoreDC(fl_gc, _savedc); DeleteDC(fl_gc); _ss->set_current(); fl_window=_sw; fl_gc = _sgc
+   
 
 FL_EXPORT void fl_copy_offscreen(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
 FL_EXPORT void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP pixmap,int srcx,int srcy);
