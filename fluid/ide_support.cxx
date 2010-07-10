@@ -571,7 +571,6 @@ int create_new_database(const char *filename)
     fltk_lib.add_header(files_db, "FL/Fl_Object.H");
     fltk_lib.add_header(files_db, "FL/Fl_Output.H");
     fltk_lib.add_header(files_db, "FL/Fl_Overlay_Window.H");
-    fltk_lib.add_header(files_db, "FL/Fl_PSfile_Device.H");
     fltk_lib.add_header(files_db, "FL/Fl_Pack.H");
     fltk_lib.add_header(files_db, "FL/Fl_Paged_Device.H");
     fltk_lib.add_header(files_db, "FL/Fl_Pixmap.H");
@@ -1324,8 +1323,9 @@ int create_new_database(const char *filename)
   }  
   
   { Fl_Target_Prefs db(tests_db.add_with_key("name", "tree"));
-    db.add_source(files_db, "test/tree.cxx");
+    db.add_fl(files_db, "test/tree.fl");
     db.add_lib(fltk_lib); 
+    db.depends_on(fluid_app);
     demo_db.depends_on(db);
   }  
   

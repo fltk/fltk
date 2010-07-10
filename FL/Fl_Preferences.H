@@ -156,7 +156,7 @@ public:
   // char export( const char *filename, Type fileFormat );
   // char import( const char *filename );
   
-  char copyTo(class Fl_Tree*);
+  // char copyTo(class Fl_Tree*); // deprecated, use Fl_Tree::load(Fl_Preferences&)
 
   /**
      'Name' provides a simple method to create numerical or more complex 
@@ -227,7 +227,6 @@ private:
   public:
     Node( const char *path );
     ~Node();
-    char copyTo(class Fl_Tree*, class Fl_Tree_Item*);
     // node methods
     int write( FILE *f );
     const char *name();

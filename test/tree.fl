@@ -20,7 +20,13 @@ decl {\#include <FL/Fl_Tree.H>} {public global
 decl {\#include <FL/fl_ask.H>} {public global
 } 
 
-Function {Button_CB(Fl_Widget*w, void*data)} {open return_type void
+decl {\#include <FL/Fl_File_Chooser.H>} {selected public global
+} 
+
+decl {\#include <FL/Fl_Preferences.H>} {public global
+} 
+
+Function {Button_CB(Fl_Widget*w, void*data)} {return_type void
 } {
   code {fprintf(stderr, "'%s' button pushed\\n", w->label());} {}
 } 
@@ -109,7 +115,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {1105 30 580 695} type Double visible
+    xywh {1105 44 580 695} type Double visible
   } {
     Fl_Group tree {
       user_data 1234
@@ -130,7 +136,7 @@ if ( item ) {
       callback {int val = (int)margintop_slider->value();
 tree->margintop(val);
 tree->redraw();}
-      tooltip {Changes the top margin for the tree widget} xywh {190 414 240 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+      tooltip {Changes the top margin for the tree widget} xywh {190 414 240 16} type Horizontal labelsize 12 align 4 textsize 12
       code0 {o->value(tree->margintop());}
       code1 {o->range(0.0, 100.0);}
       code2 {o->step(1.0);}
@@ -142,7 +148,7 @@ tree->redraw();}
       callback {int val = (int)marginleft_slider->value();
 tree->marginleft(val);
 tree->redraw();}
-      tooltip {Changes the left margin for the tree widget} xywh {190 434 240 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+      tooltip {Changes the left margin for the tree widget} xywh {190 434 240 16} type Horizontal labelsize 12 align 4 textsize 12
       code0 {o->value(tree->marginleft());}
       code1 {o->range(0.0, 100.0);}
       code2 {o->step(1.0);}
@@ -154,7 +160,7 @@ tree->redraw();}
       callback {int val = (int)openchild_marginbottom_slider->value();
 tree->openchild_marginbottom(val);
 tree->redraw();}
-      tooltip {Changes the vertical space below an open child tree} xywh {190 454 240 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+      tooltip {Changes the vertical space below an open child tree} xywh {190 454 240 16} type Horizontal labelsize 12 align 4 textsize 12
       code0 {o->value(tree->openchild_marginbottom());}
       code1 {o->range(0.0, 100.0);}
       code2 {o->step(1.0);}
@@ -183,7 +189,7 @@ if ( ! count ) {
 
 tree->redraw();}
       tooltip {Changes the font size of the selected items
-If none selected, all are changed} xywh {190 474 240 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+If none selected, all are changed} xywh {190 474 240 16} type Horizontal labelsize 12 align 4 textsize 12
       code0 {o->value(tree->labelsize());}
       code1 {o->range(5.0, 200.0);}
       code2 {o->step(1.0);}
@@ -193,9 +199,9 @@ If none selected, all are changed} xywh {190 474 240 16} type Horizontal labelsi
       label {Connector width}
       user_data tree
       callback {tree->connectorwidth((int)connectorwidth_slider->value());}
-      tooltip {Tests Fl_Tree::connectorwidth()} xywh {190 494 240 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+      tooltip {Tests Fl_Tree::connectorwidth()} xywh {190 494 240 16} type Horizontal labelsize 12 align 4 textsize 12
       code0 {o->value(tree->connectorwidth());}
-      code1 {o->range(10.0, 100.0);}
+      code1 {o->range(1.0, 100.0);}
       code2 {o->step(1.0);}
       code3 {o->color(46); o->selection_color(FL_RED);}
     }
@@ -250,19 +256,36 @@ if ( usericon_radio->value() ) {
     if ( ( i = tree->find_item("Bbb/bgb/222") ) != NULL ) i->usericon(0);
     if ( ( i = tree->find_item("Bbb/bgb/333") ) != NULL ) i->usericon(0);
 }}
-      tooltip {Tests Fl_Tree_Item::usericon()} xywh {145 520 130 16} down_box DOWN_BOX labelsize 11
+      tooltip {Tests Fl_Tree_Item::usericon()} xywh {145 525 130 16} down_box DOWN_BOX labelsize 11
     }
     Fl_Check_Button showroot_radio {
       label {Show root?}
       user_data tree
       callback {int onoff = showroot_radio->value();
 tree->showroot(onoff);}
-      tooltip {Tests Fl_Tree_Item::usericon()} xywh {145 539 130 16} down_box DOWN_BOX labelsize 11
+      tooltip {Tests Fl_Tree_Item::usericon()} xywh {145 544 130 16} down_box DOWN_BOX labelsize 11
       code0 {int onoff = tree->showroot(); showroot_radio->value(onoff);}
     }
     Fl_Choice collapseicons_chooser {
       label {Collapse icons}
       callback {static const char *L_open_xpm[] = {
+\#ifdef __APPLE__
+  "11 11 3 1",
+  ".	c \#fefefe",
+  "\#	c \#444444",
+  "@	c \#000000",
+  "\#\#\#\#\#\#\#\#\#\#\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#....@....\#",
+  "\#....@....\#",
+  "\#..@@@@@..\#",
+  "\#....@....\#",
+  "\#....@....\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#\#\#\#\#\#\#\#\#\#\#"
+\#else
     "11 11 2 1",
     ".  c None",
     "@  c \#000000",
@@ -276,10 +299,29 @@ tree->showroot(onoff);}
     "...@@@@....",
     "...@@@.....",
     "...@@......",
-    "...@......."};
+    "...@......."
+\#endif
+    };
 static Fl_Pixmap L_openpixmap(L_open_xpm);
 
 static const char *L_close_xpm[] = {
+\#ifdef __APPLE__
+  "11 11 3 1",
+  ".	c \#fefefe",
+  "\#	c \#444444",
+  "@	c \#000000",
+  "\#\#\#\#\#\#\#\#\#\#\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#..@@@@@..\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#\#\#\#\#\#\#\#\#\#\#"
+\#else
     "11 11 2 1",
     ".  c None",
     "@  c \#000000",
@@ -293,7 +335,9 @@ static const char *L_close_xpm[] = {
     "..@@@@@@@..",
     "...@@@@@...",
     "....@@@....",
-    ".....@....."};
+    ".....@....."
+\#endif
+    };
 static Fl_Pixmap L_closepixmap(L_close_xpm);
 
 switch ( collapseicons_chooser->value() ) {
@@ -311,14 +355,14 @@ switch ( collapseicons_chooser->value() ) {
         tree->showcollapse(0);
         break;
 }} open
-      tooltip {Tests Fl_Tree::openicon() and Fl_Tree::closeicon()} xywh {145 564 110 16} down_box BORDER_BOX labelsize 11 textsize 11
+      tooltip {Tests Fl_Tree::openicon() and Fl_Tree::closeicon()} xywh {145 572 110 16} down_box BORDER_BOX labelsize 11 textsize 11
     } {
       MenuItem {} {
         label Normal
         xywh {0 0 36 21} labelsize 11
       }
       MenuItem {} {
-        label Arrow
+        label Custom
         xywh {10 10 36 21} labelsize 11
       }
       MenuItem {} {
@@ -334,8 +378,8 @@ switch ( connectorstyle_chooser->value() ) {
     case 1: tree->connectorstyle(FL_TREE_CONNECTOR_DOTTED);   break;
     case 2: tree->connectorstyle(FL_TREE_CONNECTOR_SOLID);    break;
 }} open
-      tooltip {Tests connectorstyle() bit flags} xywh {145 584 110 16} down_box BORDER_BOX labelsize 11 textsize 11
-      code0 {connectorstyle_chooser->value(1);   // tree's default is 'dotted'}
+      tooltip {Tests connectorstyle() bit flags} xywh {145 592 110 16} down_box BORDER_BOX labelsize 11 textsize 11
+      code0 {switch (tree->connectorstyle()) { case FL_TREE_CONNECTOR_NONE: connectorstyle_chooser->value(0); break; case FL_TREE_CONNECTOR_DOTTED: connectorstyle_chooser->value(1); break; case FL_TREE_CONNECTOR_SOLID: connectorstyle_chooser->value(2); break; }}
     } {
       MenuItem {} {
         label None
@@ -380,7 +424,7 @@ if ( ! count ) {
 
 tree->redraw();} open
       tooltip {Changes the label color for the selected items
-If no items selected, all are changed} xywh {145 604 110 16} down_box BORDER_BOX labelsize 11 textsize 11
+If no items selected, all are changed} xywh {145 612 110 16} down_box BORDER_BOX labelsize 11 textsize 11
     } {
       MenuItem {} {
         label Black
@@ -408,7 +452,7 @@ switch ( selectmode_chooser->value() ) {
     case 2:  tree->selectmode(FL_TREE_SELECT_MULTI);  break; 	// Multi
     default: tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
 }}
-      tooltip {Sets how Fl_Tree handles mouse selection of tree items} xywh {145 624 110 16} down_box BORDER_BOX labelsize 11 textsize 11
+      tooltip {Sets how Fl_Tree handles mouse selection of tree items} xywh {145 632 110 16} down_box BORDER_BOX labelsize 11 textsize 11
       code0 {selectmode_chooser->value(1);}
       code1 {cb_selectmode_chooser(selectmode_chooser, (void*)0);}
     } {
@@ -434,7 +478,7 @@ switch ( whenmode_chooser->value() ) {
   case 2:  tree->when(FL_WHEN_NEVER);     break;
   default: tree->when(FL_WHEN_RELEASE);   break;
 }}
-      tooltip {Sets when() the tree's callback is invoked} xywh {145 644 110 16} down_box BORDER_BOX labelsize 11 textsize 11
+      tooltip {Sets when() the tree's callback is invoked} xywh {145 652 110 16} down_box BORDER_BOX labelsize 11 textsize 11
       code0 {whenmode_chooser->value(1);}
       code1 {cb_whenmode_chooser(whenmode_chooser, (void*)0);}
     } {
@@ -527,7 +571,7 @@ if ( count == 0 ) {
 
 tree->redraw();}
       tooltip {Toggle the deactivation state of the selected items.
-If none are selected, all are set.} xywh {280 625 90 16} labelsize 11
+If none are selected, all are set.} xywh {280 633 90 16} labelsize 11
     }
     Fl_Light_Button bold_toggle {
       label { Bold Font}
@@ -551,7 +595,7 @@ if ( ! count ) {
 
 tree->redraw();}
       tooltip {Toggles bold font for selected items
-If nothing selected, all are changed} xywh {280 644 90 16} labelsize 11
+If nothing selected, all are changed} xywh {280 652 90 16} labelsize 11
     }
     Fl_Button insertabove_button {
       label {Insert Above}
@@ -566,12 +610,12 @@ while (item) {
 }
 
 tree->redraw();}
-      tooltip {Inserts three items above the selected items} xywh {380 624 90 16} labelsize 11
+      tooltip {Inserts three items above the selected items} xywh {380 632 90 16} labelsize 11
     }
     Fl_Button rebuildtree_button {
       label {Rebuild Tree}
       callback {RebuildTree();}
-      tooltip {Rebuilds the tree with defaults} xywh {380 644 90 16} labelsize 11
+      tooltip {Rebuilds the tree with defaults} xywh {380 652 90 16} labelsize 11
     }
     Fl_Button clearselected_button {
       label {Clear Selected}
@@ -586,14 +630,25 @@ while (item) {
 }
 
 tree->redraw();}
-      tooltip {Clears the selected items} xywh {475 624 90 16} labelsize 11
+      tooltip {Clears the selected items} xywh {475 632 90 16} labelsize 11
     }
     Fl_Button clearall_button {
       label {Clear All}
       callback {tree->clear();
-tree->redraw();} selected
+tree->redraw();}
       tooltip {Clears all items
-Tests Fl_Tree::clear()} xywh {475 644 90 16} labelsize 11
+Tests Fl_Tree::clear()} xywh {475 652 90 16} labelsize 11
+    }
+    Fl_Button loaddb_button {
+      label {Load Database...}
+      callback {const char *filename = fl_file_chooser("Select a Preferences style Databse", "Preferences(*.prefs)", 0L);
+if (filename) {
+  tree->clear();
+  Fl_Preferences prefs(filename, 0L, 0L);
+  tree->load(prefs);
+  tree->redraw();
+}}
+      tooltip {Load the contents of an Fl_Preferences databse into the tree view} xywh {380 612 90 16} labelsize 11
     }
   }
   code {// Initialize Tree

@@ -722,12 +722,12 @@ static void undobuffersize(int n) {
   <tt>when() & FL_WHEN_CHANGED</tt> and there is a change.
 
   Set \p b and \p e equal to not delete anything.
-  Set insert to \c NULL to not insert anything.
+  Set \p text to \c NULL to not insert anything.
 
-  \p ilen must be zero or strlen(insert), this
+  \p ilen can be zero or <tt>strlen(text)</tt>, which
   saves a tiny bit of time if you happen to already know the
   length of the insertion, or can be used to insert a portion of a
-  string or a string containing <tt>nul</tt>'s.
+  string.
   
   \p b and \p e are clamped to the
   <tt>0..size()</tt> range, so it is safe to pass any values.

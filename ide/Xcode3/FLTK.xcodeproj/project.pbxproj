@@ -60,7 +60,6 @@
 		12E4293A141DD684369D6B8F /* fl_boxtype.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 9B54C6B8D801E899981FC5E6 /* fl_boxtype.cxx */; };
 		12EDA8498FE1A47E32A9428E /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 5575DA9A654EB53C515F917A /* png.c */; };
 		1328D9EE314856BAB7A54D5A /* Fl_BMP_Image.H in Headers */ = {isa = PBXBuildFile; fileRef = B20D11CF3F871C99011F632E /* Fl_BMP_Image.H */; settings = {ATTRIBUTES = (Public, ); }; };
-		13B77D5A401B98BD18D3CCF8 /* Fl_PSfile_Device.H in Headers */ = {isa = PBXBuildFile; fileRef = 44C10E7FA85430F4E1D68B60 /* Fl_PSfile_Device.H */; settings = {ATTRIBUTES = (Public, ); }; };
 		13DE96EAB36238A478381098 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		1490AC534F76E26EF9280C6D /* Fl_add_idle.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 274CBEBF1D1BFD5C91605CBE /* Fl_add_idle.cxx */; };
 		1565219A0166F42F299C2C9E /* Fl_Browser_load.cxx in Sources */ = {isa = PBXBuildFile; fileRef = E46A3C4F955A94AE095FF726 /* Fl_Browser_load.cxx */; };
@@ -68,6 +67,7 @@
 		16C76FAEEC543074798FF0CB /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		16CA21C97F278A00B2558C3C /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = C4CF7DDC2EC8792157A3F43B /* pngread.c */; };
 		16F26F7D137CC7F7B57ECAC0 /* fltk_zlib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8880CD3FEF32388A24C1B94 /* fltk_zlib.framework */; };
+		16FC08C22B1B693EB00C15F5 /* tree.fl in Sources */ = {isa = PBXBuildFile; fileRef = D10B1EA053B5C8F02A636D93 /* tree.fl */; };
 		17875FB347705D46D333E6EC /* fractals.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 598DD70F89D7731D61BBD8EF /* fractals.cxx */; };
 		180F08AFCDEE94081FDCD9AF /* Fl_Choice.H in Headers */ = {isa = PBXBuildFile; fileRef = C8AE10A8DDF53B8B27E3215A /* Fl_Choice.H */; settings = {ATTRIBUTES = (Public, ); }; };
 		185933E619D6C024C4B53D3B /* Fl_Value_Input.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 34CB383C3A4360C14B58562E /* Fl_Value_Input.cxx */; };
@@ -129,9 +129,9 @@
 		2800B0509A5D20FABE8F02DC /* fl_show_colormap.cxx in Sources */ = {isa = PBXBuildFile; fileRef = EB15CE98189A4C0A7A8A480F /* fl_show_colormap.cxx */; };
 		2832E97111DB41A4B13A4EFE /* keyboard_ui.fl in Sources */ = {isa = PBXBuildFile; fileRef = 7B084447C58E292798B27283 /* keyboard_ui.fl */; };
 		285B384349B0FC5FCE9C9FCE /* fl_open_uri.cxx in Sources */ = {isa = PBXBuildFile; fileRef = FAD24127A06F3F9F0EEB843A /* fl_open_uri.cxx */; };
-		28A5D2BB72720891608E7B82 /* Fl_Abstract_Printer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5E009E15C14AA1D60827722D /* Fl_Abstract_Printer.cxx */; };
 		291FA24A9E91A2036BC718A2 /* Fl_Overlay_Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D1C792936D427CC48581BFAE /* Fl_Overlay_Window.cxx */; };
 		29303C4480E0BBEB9E29EE7B /* vsnprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = EBC0D2C965EDD6503B0CF519 /* vsnprintf.c */; };
+		299CB8A2848CB844BCEC7829 /* Fl_Paged_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */; };
 		29A99477531233BE9391CE66 /* Fl_Slider.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5AF5119D08DFC92EA1032671 /* Fl_Slider.cxx */; };
 		29B01C1F3FF6C5B007DEEF45 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		29ED282EF51CBBB0CDEE76D6 /* Fl_Color_Chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 058BCBC36ADE724A418F1C43 /* Fl_Color_Chooser.cxx */; };
@@ -368,6 +368,7 @@
 		74D195DEE3A33FA0C8C7A5BE /* Fl_Help_View.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 790419B5A0AD64D66F9B19E1 /* Fl_Help_View.cxx */; };
 		74D5FD7ED2AF3F51D8B2EEEB /* Fl_Slider.H in Headers */ = {isa = PBXBuildFile; fileRef = F2E5612A81A6E8D53ED91CAE /* Fl_Slider.H */; settings = {ATTRIBUTES = (Public, ); }; };
 		753A6417598E2D35C308632A /* valuators.fl in Sources */ = {isa = PBXBuildFile; fileRef = 590C56F672356072A5C86BC3 /* valuators.fl */; };
+		7582831EE62557F2D4668FA4 /* Fl_Paged_Device.H in Headers */ = {isa = PBXBuildFile; fileRef = 4CABCBB89F9DD5CF57BB9779 /* Fl_Paged_Device.H */; settings = {ATTRIBUTES = (Public, ); }; };
 		761829645FD3BCA7EE9DE369 /* fltk_gl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EA8E6EC230301E597B9D9AED /* fltk_gl.framework */; };
 		762325B25679668EB687A028 /* gl_overlay.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 1F6E4CE3C0DF58D8F7B3A94A /* gl_overlay.cxx */; };
 		76BA5F2997A55DDFA04EFC98 /* ide_visualc.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 9C0598A21FEE02AA4F0E39C9 /* ide_visualc.cxx */; };
@@ -430,7 +431,6 @@
 		8A80E9D910324212101C3E76 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		8AB3C564389AED897174FFF2 /* Fl_Type.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0B800D01D215C41573FFE4DA /* Fl_Type.cxx */; };
 		8AC8FF5C9534F6E0664A352B /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
-		8B1319F9AB1424C1480A3133 /* tree.cxx in Sources */ = {isa = PBXBuildFile; fileRef = ECCD42A2E7B2C6BF5B3DF410 /* tree.cxx */; };
 		8BA3F05B96804E0FD9491049 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		8CC2898FB12015F247784420 /* jdcoefct.c in Sources */ = {isa = PBXBuildFile; fileRef = A715D265EAD3C5DA5628485C /* jdcoefct.c */; };
 		8CCF18F146F2012A0C1DC330 /* Fl_Return_Button.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 9A3D4184FF1C89B7CEE9FBD6 /* Fl_Return_Button.cxx */; };
@@ -568,7 +568,6 @@
 		BCFD2D2C8ED191EFB52166A4 /* fl_show_input.H in Headers */ = {isa = PBXBuildFile; fileRef = EFAE92A1C7CA90BC56E5A70A /* fl_show_input.H */; settings = {ATTRIBUTES = (Public, ); }; };
 		BD48B8B0B3DE04E72A17F60D /* jdmarker.c in Sources */ = {isa = PBXBuildFile; fileRef = BB37899B104B362F32F0F417 /* jdmarker.c */; };
 		BDB3A4C9B2AC519DC6A95D84 /* fl_dnd.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 2DD93178E8AFA850DAC293FC /* fl_dnd.cxx */; };
-		BE079BCB8B1142B84067555A /* Fl_Abstract_Printer.H in Headers */ = {isa = PBXBuildFile; fileRef = F9AAAD5964050A3DC9E20879 /* Fl_Abstract_Printer.H */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF212FE1FA8676E379DE4BC1 /* fltk_gl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EA8E6EC230301E597B9D9AED /* fltk_gl.framework */; };
 		BF3BDB0B4DA065027B4771CA /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		BF7219C14C522420ED920D72 /* Fl_Simple_Counter.H in Headers */ = {isa = PBXBuildFile; fileRef = 9B57B581401BD8575BFAF2F1 /* Fl_Simple_Counter.H */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1784,6 +1783,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = A57FDE871C99A52BEEDEE68C;
 			remoteInfo = fltk;
+		};
+		14AFCE90907C6F3225151910 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4BF1A7FFEACF5F31B4127482 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AE6BC0AEB24EBBBDBA4071E0;
+			remoteInfo = Fluid;
 		};
 		16BBABAD50B4194D5D76302F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3947,7 +3953,6 @@
 		43D9A7CD936B1382F5EA23E1 /* about_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = about_panel.cxx; path = ../../fluid/about_panel.cxx; sourceTree = SOURCE_ROOT; };
 		44277061B27BFBE1FB22B79B /* menubar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menubar.cxx; path = ../../test/menubar.cxx; sourceTree = SOURCE_ROOT; };
 		44B6E71105CCEECB4D5E2DC8 /* ide_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ide_support.h; path = ../../fluid/ide_support.h; sourceTree = SOURCE_ROOT; };
-		44C10E7FA85430F4E1D68B60 /* Fl_PSfile_Device.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_PSfile_Device.H; path = ../../FL/Fl_PSfile_Device.H; sourceTree = SOURCE_ROOT; };
 		451D01896EFDD83277515630 /* glut.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = glut.H; path = ../../FL/glut.H; sourceTree = SOURCE_ROOT; };
 		4577F046D6D5D93D2553BFBC /* jdtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdtrans.c; path = ../../jpeg/jdtrans.c; sourceTree = SOURCE_ROOT; };
 		45B993D3FA0EED6037499D3A /* color_chooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color_chooser.cxx; path = ../../test/color_chooser.cxx; sourceTree = SOURCE_ROOT; };
@@ -3965,6 +3970,7 @@
 		4C2979BC9629FABDCC0271BB /* jcmainct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcmainct.c; path = ../../jpeg/jcmainct.c; sourceTree = SOURCE_ROOT; };
 		4C2EEE3E17025A63A0AEEF5F /* hello.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hello.cxx; path = ../../test/hello.cxx; sourceTree = SOURCE_ROOT; };
 		4C9AF6F2C1B78A67FFD177F9 /* gl2opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl2opengl.h; path = ../../FL/gl2opengl.h; sourceTree = SOURCE_ROOT; };
+		4CABCBB89F9DD5CF57BB9779 /* Fl_Paged_Device.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Paged_Device.H; path = ../../FL/Fl_Paged_Device.H; sourceTree = SOURCE_ROOT; };
 		4CD4094D8712818EACF5C7C5 /* Fl_Progress.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Progress.H; path = ../../FL/Fl_Progress.H; sourceTree = SOURCE_ROOT; };
 		4CD5A5D2975A2CCB77EBAD43 /* jutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jutils.c; path = ../../jpeg/jutils.c; sourceTree = SOURCE_ROOT; };
 		4D124BD72F4E63D99837CE0C /* fl_encoding_latin1.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_encoding_latin1.cxx; path = ../../src/fl_encoding_latin1.cxx; sourceTree = SOURCE_ROOT; };
@@ -4005,7 +4011,6 @@
 		5CDA214AEABC15E3EF1BB172 /* Fl_Adjuster.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Adjuster.H; path = ../../FL/Fl_Adjuster.H; sourceTree = SOURCE_ROOT; };
 		5CE4CB9AEF9070A32A27696D /* fl_overlay_visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_overlay_visual.cxx; path = ../../src/fl_overlay_visual.cxx; sourceTree = SOURCE_ROOT; };
 		5D36F806A2C72F1894F0878E /* Fl_File_Icon.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_File_Icon.cxx; path = ../../src/Fl_File_Icon.cxx; sourceTree = SOURCE_ROOT; };
-		5E009E15C14AA1D60827722D /* Fl_Abstract_Printer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Abstract_Printer.cxx; path = ../../src/Fl_Abstract_Printer.cxx; sourceTree = SOURCE_ROOT; };
 		5E0EC227A972D2E4F34A2CEB /* Fl_Tree.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Tree.H; path = ../../FL/Fl_Tree.H; sourceTree = SOURCE_ROOT; };
 		5EF025FDE53B2276B6931CD5 /* clock.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clock.cxx; path = ../../test/clock.cxx; sourceTree = SOURCE_ROOT; };
 		5F328DFEE7B768CF141C8E9E /* zutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zutil.c; path = ../../zlib/zutil.c; sourceTree = SOURCE_ROOT; };
@@ -4033,6 +4038,7 @@
 		6B30F6EA5CA69E305D2B82EE /* is_right2left.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = is_right2left.c; path = ../../src/xutf8/is_right2left.c; sourceTree = SOURCE_ROOT; };
 		6BCDA929CD8600DE9AC516DD /* compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = compress.c; path = ../../zlib/compress.c; sourceTree = SOURCE_ROOT; };
 		6BDBE905BDAC3374782D6E81 /* input.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Paged_Device.cxx; path = ../../src/Fl_Paged_Device.cxx; sourceTree = SOURCE_ROOT; };
 		6C64353A3129BCCFAA667D86 /* boxtype.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = boxtype.cxx; path = ../../test/boxtype.cxx; sourceTree = SOURCE_ROOT; };
 		6CCA5064754A8314839CB37A /* freeglut_stroke_roman.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = freeglut_stroke_roman.cxx; path = ../../src/freeglut_stroke_roman.cxx; sourceTree = SOURCE_ROOT; };
 		6D999C03407EAEE9C4D3477A /* browser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = browser.cxx; path = ../../test/browser.cxx; sourceTree = SOURCE_ROOT; };
@@ -4257,6 +4263,7 @@
 		D02CF2893ECCE831CD5D3176 /* Fl_Multi_Label.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Multi_Label.cxx; path = ../../src/Fl_Multi_Label.cxx; sourceTree = SOURCE_ROOT; };
 		D06E371A971A3BC1B399AD78 /* button.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = button.cxx; path = ../../test/button.cxx; sourceTree = SOURCE_ROOT; };
 		D0E376E93B4F22BE701D29E0 /* Fl_Roller.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Roller.cxx; path = ../../src/Fl_Roller.cxx; sourceTree = SOURCE_ROOT; };
+		D10B1EA053B5C8F02A636D93 /* tree.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = tree.fl; path = ../../test/tree.fl; sourceTree = SOURCE_ROOT; };
 		D1C792936D427CC48581BFAE /* Fl_Overlay_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Overlay_Window.cxx; path = ../../src/Fl_Overlay_Window.cxx; sourceTree = SOURCE_ROOT; };
 		D2DE1079C826533A91053A9C /* Fl_XBM_Image.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_XBM_Image.H; path = ../../FL/Fl_XBM_Image.H; sourceTree = SOURCE_ROOT; };
 		D33C668435685F7CCB359EE2 /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrio.c; path = ../../png/pngrio.c; sourceTree = SOURCE_ROOT; };
@@ -4336,7 +4343,6 @@
 		EC2BAEE540612218DC9EEC75 /* Fl_Scroll.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Scroll.H; path = ../../FL/Fl_Scroll.H; sourceTree = SOURCE_ROOT; };
 		EC57889382FB898FD3EF2580 /* Fl_Gl_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Window.cxx; path = ../../src/Fl_Gl_Window.cxx; sourceTree = SOURCE_ROOT; };
 		EC5862E1FC79542DC55D8462 /* colbrowser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colbrowser.cxx; path = ../../test/colbrowser.cxx; sourceTree = SOURCE_ROOT; };
-		ECCD42A2E7B2C6BF5B3DF410 /* tree.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tree.cxx; path = ../../test/tree.cxx; sourceTree = SOURCE_ROOT; };
 		ECFF712363202EC351A51E53 /* Fl_PNM_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_PNM_Image.cxx; path = ../../src/Fl_PNM_Image.cxx; sourceTree = SOURCE_ROOT; };
 		EDCB878D48197F6AE1C99614 /* jidctred.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jidctred.c; path = ../../jpeg/jidctred.c; sourceTree = SOURCE_ROOT; };
 		EDE6CE6B09D31AC0AAC9FF56 /* fullscreen.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fullscreen.cxx; path = ../../test/fullscreen.cxx; sourceTree = SOURCE_ROOT; };
@@ -4366,7 +4372,6 @@
 		F8BAA8B283D4CF4D904B6486 /* Fl_Valuator.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Valuator.H; path = ../../FL/Fl_Valuator.H; sourceTree = SOURCE_ROOT; };
 		F91DEF40DC3592BE52CAB001 /* Fl_Native_File_Chooser.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Native_File_Chooser.H; path = ../../FL/Fl_Native_File_Chooser.H; sourceTree = SOURCE_ROOT; };
 		F98FE04C081FB5B1161C546C /* Fl_Window.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Window.H; path = ../../FL/Fl_Window.H; sourceTree = SOURCE_ROOT; };
-		F9AAAD5964050A3DC9E20879 /* Fl_Abstract_Printer.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Abstract_Printer.H; path = ../../FL/Fl_Abstract_Printer.H; sourceTree = SOURCE_ROOT; };
 		FA2F70BA8FF4E7F4B7B36971 /* fl_file_dir.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_file_dir.cxx; path = ../../src/fl_file_dir.cxx; sourceTree = SOURCE_ROOT; };
 		FAA6BA6E4DC1AF28F5FC8466 /* Fl_Tile.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Tile.H; path = ../../FL/Fl_Tile.H; sourceTree = SOURCE_ROOT; };
 		FAD24127A06F3F9F0EEB843A /* fl_open_uri.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_open_uri.cxx; path = ../../src/fl_open_uri.cxx; sourceTree = SOURCE_ROOT; };
@@ -5154,7 +5159,6 @@
 			children = (
 				B04F6E032ADAF0A16A860A2E /* Headers */,
 				F4EFF27D730BED51EF0EAA8D /* Fl.cxx */,
-				5E009E15C14AA1D60827722D /* Fl_Abstract_Printer.cxx */,
 				19C5DB6F3DD5011DAE6F79AB /* Fl_Adjuster.cxx */,
 				3F000DD5F091F66BC42822E3 /* Fl_Bitmap.cxx */,
 				C3F048573FAEABD2D27401D4 /* Fl_Box.cxx */,
@@ -5303,6 +5307,7 @@
 				FB7A9EFB3C7CDAE324E9544F /* case.c */,
 				6B30F6EA5CA69E305D2B82EE /* is_right2left.c */,
 				5AE1F936F1C186E18C1B9C28 /* is_spacing.c */,
+				6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */,
 				E05754DEC1813B6BA6DC1FC8 /* AudioToolbox.framework */,
 			);
 			name = fltk;
@@ -5420,7 +5425,7 @@
 		2DD062AF5E08E6EEAE97E188 /* tree */ = {
 			isa = PBXGroup;
 			children = (
-				ECCD42A2E7B2C6BF5B3DF410 /* tree.cxx */,
+				D10B1EA053B5C8F02A636D93 /* tree.fl */,
 			);
 			name = tree;
 			sourceTree = "<group>";
@@ -5904,7 +5909,6 @@
 			children = (
 				84CE79448708855561FEE498 /* Enumerations.H */,
 				C359E5D5187606DD69C7938B /* Fl.H */,
-				F9AAAD5964050A3DC9E20879 /* Fl_Abstract_Printer.H */,
 				5CDA214AEABC15E3EF1BB172 /* Fl_Adjuster.H */,
 				FE90AA3BB40510FA45E0C27B /* Fl_Bitmap.H */,
 				390863A4D5D1B4C7C9B58679 /* Fl_Box.H */,
@@ -5962,7 +5966,6 @@
 				EE2FB1F7B99BE408E1B4DFB7 /* Fl_Object.H */,
 				D585CB55BDA143D343033352 /* Fl_Output.H */,
 				1FCDDD4E00F7CAA8193CAE04 /* Fl_Overlay_Window.H */,
-				44C10E7FA85430F4E1D68B60 /* Fl_PSfile_Device.H */,
 				52C3B1D0A473BDC01D497917 /* Fl_Pack.H */,
 				B8455C1BD96FF6FB3C197C34 /* Fl_Pixmap.H */,
 				A8F89055CABBCFECCC4CC940 /* Fl_Plugin.H */,
@@ -6030,6 +6033,7 @@
 				D5CE28437ABB8513BE08AC77 /* names.h */,
 				62281FC096BA407C4F1E6824 /* win32.H */,
 				83CED42A779FA76E98D37CA8 /* x.H */,
+				4CABCBB89F9DD5CF57BB9779 /* Fl_Paged_Device.H */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -6422,7 +6426,6 @@
 			files = (
 				05D71028D71BB089B3157E35 /* Enumerations.H in Headers */,
 				0231212CBF1A26721E3F20FE /* Fl.H in Headers */,
-				BE079BCB8B1142B84067555A /* Fl_Abstract_Printer.H in Headers */,
 				1EE443C865A80CACB57E4815 /* Fl_Adjuster.H in Headers */,
 				424ADD12193823093AF1FBDF /* Fl_Bitmap.H in Headers */,
 				E02DABD44EE5FDAC20F3F676 /* Fl_Box.H in Headers */,
@@ -6480,7 +6483,6 @@
 				A9E5239AB84083A21F3F490B /* Fl_Object.H in Headers */,
 				62CFB49620B17B8938A1063F /* Fl_Output.H in Headers */,
 				012DC7566408D3CBF672BE50 /* Fl_Overlay_Window.H in Headers */,
-				13B77D5A401B98BD18D3CCF8 /* Fl_PSfile_Device.H in Headers */,
 				3D282039331A6ECDFED5255E /* Fl_Pack.H in Headers */,
 				B9134F6A1769B94761981AEA /* Fl_Pixmap.H in Headers */,
 				93CC0E443DAAB241C7EEE4B7 /* Fl_Plugin.H in Headers */,
@@ -6548,6 +6550,7 @@
 				D8C2D8F3053EEF229EEF66FB /* names.h in Headers */,
 				43EF9194502AFF8F5EE968EE /* win32.H in Headers */,
 				72843BB6450DBFB9A9F53490 /* x.H in Headers */,
+				7582831EE62557F2D4668FA4 /* Fl_Paged_Device.H in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8208,6 +8211,7 @@
 			);
 			dependencies = (
 				89EEA83A9CD9747F05B1E6AA /* PBXTargetDependency */,
+				9519279882836E4B8EDEBE60 /* PBXTargetDependency */,
 			);
 			name = tree;
 			productName = tree;
@@ -8991,7 +8995,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B1319F9AB1424C1480A3133 /* tree.cxx in Sources */,
+				16FC08C22B1B693EB00C15F5 /* tree.fl in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9094,7 +9098,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED83B85BA678C8C9B5E91535 /* Fl.cxx in Sources */,
-				28A5D2BB72720891608E7B82 /* Fl_Abstract_Printer.cxx in Sources */,
 				B371C5FF1106E69056784D6C /* Fl_Adjuster.cxx in Sources */,
 				274F92CF30A586E0F8E21530 /* Fl_Bitmap.cxx in Sources */,
 				40E66CBA06083998669F80CE /* Fl_Box.cxx in Sources */,
@@ -9243,6 +9246,7 @@
 				EF0B77D0D7EF375C1CBDC390 /* case.c in Sources */,
 				CE14EC6653D4EF4779992758 /* is_right2left.c in Sources */,
 				9DD7A2B6D63D30C07781F446 /* is_spacing.c in Sources */,
+				299CB8A2848CB844BCEC7829 /* Fl_Paged_Device.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10252,6 +10256,11 @@
 			isa = PBXTargetDependency;
 			target = 5C2FE9F5E71E04EA903248FA /* input */;
 			targetProxy = 3B38ABA4483E58B2891D08CB /* PBXContainerItemProxy */;
+		};
+		9519279882836E4B8EDEBE60 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AE6BC0AEB24EBBBDBA4071E0 /* Fluid */;
+			targetProxy = 14AFCE90907C6F3225151910 /* PBXContainerItemProxy */;
 		};
 		951CA1D37E7F30B53E37B095 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

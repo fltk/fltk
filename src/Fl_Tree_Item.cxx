@@ -481,6 +481,11 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
   int H = _labelsize;
   if(usericon() && H < usericon()->h()) H = usericon()->h(); 
   H += prefs.linespacing() + fl_descent();
+  // adjust horizontally if we draw no connecting lines
+  if ( is_root() && prefs.connectorstyle() == FL_TREE_CONNECTOR_NONE ) {
+    X -= prefs.openicon()->w();
+    W += prefs.openicon()->w();
+  }
   // Colors, fonts
   Fl_Color fg = _selected ? prefs.bgcolor()     : _labelfgcolor;
   Fl_Color bg = _selected ? prefs.selectcolor() : _labelbgcolor;
@@ -497,9 +502,9 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
   int textw=0, texth=0;
   fl_measure(_label, textw, texth, 0);
   int textycenter = Y+(H/2);
-  int &icon_x = _collapse_xywh[0] = X-1;
-  int &icon_y = _collapse_xywh[1] = textycenter - (prefs.openicon()->h()/2);
   int &icon_w = _collapse_xywh[2] = prefs.openicon()->w();
+  int &icon_x = _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
+  int &icon_y = _collapse_xywh[1] = textycenter - (prefs.openicon()->h()/2);
   _collapse_xywh[3] = prefs.openicon()->h();
   // Horizontal connector values
   int hstartx  = X+icon_w/2-1;
@@ -514,7 +519,11 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     // Draw connectors
     if ( prefs.connectorstyle() != FL_TREE_CONNECTOR_NONE ) {
       // Horiz connector between center of icon and text
-      draw_horizontal_connector(hstartx, hendx, textycenter, prefs);
+      // if this is root, the connector should not dangle in thin air on the left
+      if (is_root())
+        draw_horizontal_connector(hcenterx, hendx, textycenter, prefs);
+      else
+        draw_horizontal_connector(hstartx, hendx, textycenter, prefs);
       if ( has_children() && is_open() ) {
         // Small vertical line down to children
         draw_vertical_connector(hcenterx, textycenter, Y+H, prefs);
@@ -538,9 +547,11 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       }
     }
     // Background for this item
-    int &bx = _label_xywh[0] = X+(icon_w/2-1+prefs.connectorwidth());
+    int cw1 = icon_w+prefs.connectorwidth()/2, cw2 = prefs.connectorwidth();
+    int cwidth = cw1>cw2 ? cw1 : cw2;
+    int &bx = _label_xywh[0] = X+(icon_w/2-1+cwidth);
     int &by = _label_xywh[1] = Y;
-    int &bw = _label_xywh[2] = W-(icon_w/2-1+prefs.connectorwidth());
+    int &bw = _label_xywh[2] = W-(icon_w/2-1+cwidth);
     int &bh = _label_xywh[3] = H;
     // Draw bg only if different from tree's bg
     if ( bg != tree->color() || is_selected() ) {
@@ -554,7 +565,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       }
     }
     // Draw user icon (if any)
-    int useroff = (icon_w/2-1+prefs.connectorwidth());
+    int useroff = (icon_w/2-1+cwidth);
     if ( usericon() ) {
       // Item has user icon? Use it
       useroff += prefs.usericonmarginleft();

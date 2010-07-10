@@ -9,6 +9,8 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Tree.H>
 #include <FL/fl_ask.H>
+#include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_Preferences.H>
 void Button_CB(Fl_Widget*w, void*data);
 void RebuildTree();
 #include <FL/Fl_Double_Window.H>
@@ -44,6 +46,7 @@ extern Fl_Button *insertabove_button;
 extern Fl_Button *rebuildtree_button;
 extern Fl_Button *clearselected_button;
 extern Fl_Button *clearall_button;
+extern Fl_Button *loaddb_button;
 extern Fl_Menu_Item menu_collapseicons_chooser[];
 extern Fl_Menu_Item menu_connectorstyle_chooser[];
 extern Fl_Menu_Item menu_labelcolor_chooser[];

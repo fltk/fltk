@@ -151,7 +151,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
   /** \internal Horizontal cursor position in pixels while movin up or down.  */
   static double up_down_pos;
 
-  /** \internal Flag to remeber last cursor move. */
+  /** \internal Flag to remember last cursor move. */
   static int was_up_down;
 
   /* Convert a given text segment into the text that will be rendered on screen. */

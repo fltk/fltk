@@ -218,6 +218,23 @@ Fl_Choice *collapseicons_chooser=(Fl_Choice *)0;
 
 static void cb_collapseicons_chooser(Fl_Choice*, void*) {
   static const char *L_open_xpm[] = {
+#ifdef __APPLE__
+  "11 11 3 1",
+  ".	c #fefefe",
+  "#	c #444444",
+  "@	c #000000",
+  "###########",
+  "#.........#",
+  "#.........#",
+  "#....@....#",
+  "#....@....#",
+  "#..@@@@@..#",
+  "#....@....#",
+  "#....@....#",
+  "#.........#",
+  "#.........#",
+  "###########"
+#else
     "11 11 2 1",
     ".  c None",
     "@  c #000000",
@@ -231,10 +248,29 @@ static void cb_collapseicons_chooser(Fl_Choice*, void*) {
     "...@@@@....",
     "...@@@.....",
     "...@@......",
-    "...@......."};
+    "...@......."
+#endif
+    };
 static Fl_Pixmap L_openpixmap(L_open_xpm);
 
 static const char *L_close_xpm[] = {
+#ifdef __APPLE__
+  "11 11 3 1",
+  ".	c #fefefe",
+  "#	c #444444",
+  "@	c #000000",
+  "###########",
+  "#.........#",
+  "#.........#",
+  "#.........#",
+  "#.........#",
+  "#..@@@@@..#",
+  "#.........#",
+  "#.........#",
+  "#.........#",
+  "#.........#",
+  "###########"
+#else
     "11 11 2 1",
     ".  c None",
     "@  c #000000",
@@ -248,7 +284,9 @@ static const char *L_close_xpm[] = {
     "..@@@@@@@..",
     "...@@@@@...",
     "....@@@....",
-    ".....@....."};
+    ".....@....."
+#endif
+    };
 static Fl_Pixmap L_closepixmap(L_close_xpm);
 
 switch ( collapseicons_chooser->value() ) {
@@ -270,7 +308,7 @@ switch ( collapseicons_chooser->value() ) {
 
 Fl_Menu_Item menu_collapseicons_chooser[] = {
  {"Normal", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
- {"Arrow", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
+ {"Custom", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
  {"Off", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 11, 0},
  {0,0,0,0,0,0,0,0,0}
 };
@@ -519,6 +557,18 @@ static void cb_clearall_button(Fl_Button*, void*) {
 tree->redraw();
 }
 
+Fl_Button *loaddb_button=(Fl_Button *)0;
+
+static void cb_loaddb_button(Fl_Button*, void*) {
+  const char *filename = fl_file_chooser("Select a Preferences style Databse", "Preferences(*.prefs)", 0L);
+if (filename) {
+  tree->clear();
+  Fl_Preferences prefs(filename, 0L, 0L);
+  tree->load(prefs);
+  tree->redraw();
+};
+}
+
 int main(int argc, char **argv) {
   { window = new Fl_Double_Window(580, 695, "tree");
     { tree = new Fl_Tree(15, 15, 550, 390);
@@ -538,7 +588,6 @@ int main(int argc, char **argv) {
       margintop_slider->tooltip("Changes the top margin for the tree widget");
       margintop_slider->type(1);
       margintop_slider->labelsize(12);
-      margintop_slider->step(0.01);
       margintop_slider->textsize(12);
       margintop_slider->callback((Fl_Callback*)cb_margintop_slider, (void*)(tree));
       margintop_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -551,7 +600,6 @@ int main(int argc, char **argv) {
       marginleft_slider->tooltip("Changes the left margin for the tree widget");
       marginleft_slider->type(1);
       marginleft_slider->labelsize(12);
-      marginleft_slider->step(0.01);
       marginleft_slider->textsize(12);
       marginleft_slider->callback((Fl_Callback*)cb_marginleft_slider, (void*)(tree));
       marginleft_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -564,7 +612,6 @@ int main(int argc, char **argv) {
       openchild_marginbottom_slider->tooltip("Changes the vertical space below an open child tree");
       openchild_marginbottom_slider->type(1);
       openchild_marginbottom_slider->labelsize(12);
-      openchild_marginbottom_slider->step(0.01);
       openchild_marginbottom_slider->textsize(12);
       openchild_marginbottom_slider->callback((Fl_Callback*)cb_openchild_marginbottom_slider, (void*)(tree));
       openchild_marginbottom_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -578,7 +625,6 @@ int main(int argc, char **argv) {
 d");
       labelsize_slider->type(1);
       labelsize_slider->labelsize(12);
-      labelsize_slider->step(0.01);
       labelsize_slider->textsize(12);
       labelsize_slider->callback((Fl_Callback*)cb_labelsize_slider, (void*)(tree));
       labelsize_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -591,29 +637,28 @@ d");
       connectorwidth_slider->tooltip("Tests Fl_Tree::connectorwidth()");
       connectorwidth_slider->type(1);
       connectorwidth_slider->labelsize(12);
-      connectorwidth_slider->step(0.01);
       connectorwidth_slider->textsize(12);
       connectorwidth_slider->callback((Fl_Callback*)cb_connectorwidth_slider, (void*)(tree));
       connectorwidth_slider->align(Fl_Align(FL_ALIGN_LEFT));
       o->value(tree->connectorwidth());
-      o->range(10.0, 100.0);
+      o->range(1.0, 100.0);
       o->step(1.0);
       o->color(46); o->selection_color(FL_RED);
     } // Fl_Value_Slider* connectorwidth_slider
-    { usericon_radio = new Fl_Check_Button(145, 520, 130, 16, "Enable user icons?");
+    { usericon_radio = new Fl_Check_Button(145, 525, 130, 16, "Enable user icons?");
       usericon_radio->tooltip("Tests Fl_Tree_Item::usericon()");
       usericon_radio->down_box(FL_DOWN_BOX);
       usericon_radio->labelsize(11);
       usericon_radio->callback((Fl_Callback*)cb_usericon_radio, (void*)(tree));
     } // Fl_Check_Button* usericon_radio
-    { showroot_radio = new Fl_Check_Button(145, 539, 130, 16, "Show root?");
+    { showroot_radio = new Fl_Check_Button(145, 544, 130, 16, "Show root?");
       showroot_radio->tooltip("Tests Fl_Tree_Item::usericon()");
       showroot_radio->down_box(FL_DOWN_BOX);
       showroot_radio->labelsize(11);
       showroot_radio->callback((Fl_Callback*)cb_showroot_radio, (void*)(tree));
       int onoff = tree->showroot(); showroot_radio->value(onoff);
     } // Fl_Check_Button* showroot_radio
-    { collapseicons_chooser = new Fl_Choice(145, 564, 110, 16, "Collapse icons");
+    { collapseicons_chooser = new Fl_Choice(145, 572, 110, 16, "Collapse icons");
       collapseicons_chooser->tooltip("Tests Fl_Tree::openicon() and Fl_Tree::closeicon()");
       collapseicons_chooser->down_box(FL_BORDER_BOX);
       collapseicons_chooser->labelsize(11);
@@ -621,16 +666,16 @@ d");
       collapseicons_chooser->callback((Fl_Callback*)cb_collapseicons_chooser);
       collapseicons_chooser->menu(menu_collapseicons_chooser);
     } // Fl_Choice* collapseicons_chooser
-    { connectorstyle_chooser = new Fl_Choice(145, 584, 110, 16, "Line style");
+    { connectorstyle_chooser = new Fl_Choice(145, 592, 110, 16, "Line style");
       connectorstyle_chooser->tooltip("Tests connectorstyle() bit flags");
       connectorstyle_chooser->down_box(FL_BORDER_BOX);
       connectorstyle_chooser->labelsize(11);
       connectorstyle_chooser->textsize(11);
       connectorstyle_chooser->callback((Fl_Callback*)cb_connectorstyle_chooser);
       connectorstyle_chooser->menu(menu_connectorstyle_chooser);
-      connectorstyle_chooser->value(1);   // tree's default is 'dotted'
+      switch (tree->connectorstyle()) { case FL_TREE_CONNECTOR_NONE: connectorstyle_chooser->value(0); break; case FL_TREE_CONNECTOR_DOTTED: connectorstyle_chooser->value(1); break; case FL_TREE_CONNECTOR_SOLID: connectorstyle_chooser->value(2); break; }
     } // Fl_Choice* connectorstyle_chooser
-    { labelcolor_chooser = new Fl_Choice(145, 604, 110, 16, "Item Text Color");
+    { labelcolor_chooser = new Fl_Choice(145, 612, 110, 16, "Item Text Color");
       labelcolor_chooser->tooltip("Changes the label color for the selected items\nIf no items selected, all are\
  changed");
       labelcolor_chooser->down_box(FL_BORDER_BOX);
@@ -639,7 +684,7 @@ d");
       labelcolor_chooser->callback((Fl_Callback*)cb_labelcolor_chooser);
       labelcolor_chooser->menu(menu_labelcolor_chooser);
     } // Fl_Choice* labelcolor_chooser
-    { selectmode_chooser = new Fl_Choice(145, 624, 110, 16, "Selection Mode");
+    { selectmode_chooser = new Fl_Choice(145, 632, 110, 16, "Selection Mode");
       selectmode_chooser->tooltip("Sets how Fl_Tree handles mouse selection of tree items");
       selectmode_chooser->down_box(FL_BORDER_BOX);
       selectmode_chooser->labelsize(11);
@@ -649,7 +694,7 @@ d");
       selectmode_chooser->value(1);
       cb_selectmode_chooser(selectmode_chooser, (void*)0);
     } // Fl_Choice* selectmode_chooser
-    { whenmode_chooser = new Fl_Choice(145, 644, 110, 16, "When");
+    { whenmode_chooser = new Fl_Choice(145, 652, 110, 16, "When");
       whenmode_chooser->tooltip("Sets when() the tree\'s callback is invoked");
       whenmode_chooser->down_box(FL_BORDER_BOX);
       whenmode_chooser->labelsize(11);
@@ -688,37 +733,42 @@ d");
       bbbchild02select_toggle->labelsize(11);
       bbbchild02select_toggle->callback((Fl_Callback*)cb_bbbchild02select_toggle);
     } // Fl_Light_Button* bbbchild02select_toggle
-    { deactivate_toggle = new Fl_Light_Button(280, 625, 90, 16, " Deactivate");
+    { deactivate_toggle = new Fl_Light_Button(280, 633, 90, 16, " Deactivate");
       deactivate_toggle->tooltip("Toggle the deactivation state of the selected items.\nIf none are selected, a\
 ll are set.");
       deactivate_toggle->labelsize(11);
       deactivate_toggle->callback((Fl_Callback*)cb_deactivate_toggle);
     } // Fl_Light_Button* deactivate_toggle
-    { bold_toggle = new Fl_Light_Button(280, 644, 90, 16, " Bold Font");
+    { bold_toggle = new Fl_Light_Button(280, 652, 90, 16, " Bold Font");
       bold_toggle->tooltip("Toggles bold font for selected items\nIf nothing selected, all are changed");
       bold_toggle->labelsize(11);
       bold_toggle->callback((Fl_Callback*)cb_bold_toggle);
     } // Fl_Light_Button* bold_toggle
-    { insertabove_button = new Fl_Button(380, 624, 90, 16, "Insert Above");
+    { insertabove_button = new Fl_Button(380, 632, 90, 16, "Insert Above");
       insertabove_button->tooltip("Inserts three items above the selected items");
       insertabove_button->labelsize(11);
       insertabove_button->callback((Fl_Callback*)cb_insertabove_button);
     } // Fl_Button* insertabove_button
-    { rebuildtree_button = new Fl_Button(380, 644, 90, 16, "Rebuild Tree");
+    { rebuildtree_button = new Fl_Button(380, 652, 90, 16, "Rebuild Tree");
       rebuildtree_button->tooltip("Rebuilds the tree with defaults");
       rebuildtree_button->labelsize(11);
       rebuildtree_button->callback((Fl_Callback*)cb_rebuildtree_button);
     } // Fl_Button* rebuildtree_button
-    { clearselected_button = new Fl_Button(475, 624, 90, 16, "Clear Selected");
+    { clearselected_button = new Fl_Button(475, 632, 90, 16, "Clear Selected");
       clearselected_button->tooltip("Clears the selected items");
       clearselected_button->labelsize(11);
       clearselected_button->callback((Fl_Callback*)cb_clearselected_button);
     } // Fl_Button* clearselected_button
-    { clearall_button = new Fl_Button(475, 644, 90, 16, "Clear All");
+    { clearall_button = new Fl_Button(475, 652, 90, 16, "Clear All");
       clearall_button->tooltip("Clears all items\nTests Fl_Tree::clear()");
       clearall_button->labelsize(11);
       clearall_button->callback((Fl_Callback*)cb_clearall_button);
     } // Fl_Button* clearall_button
+    { loaddb_button = new Fl_Button(380, 612, 90, 16, "Load Database...");
+      loaddb_button->tooltip("Load the contents of an Fl_Preferences databse into the tree view");
+      loaddb_button->labelsize(11);
+      loaddb_button->callback((Fl_Callback*)cb_loaddb_button);
+    } // Fl_Button* loaddb_button
     window->end();
   } // Fl_Double_Window* window
   // Initialize Tree

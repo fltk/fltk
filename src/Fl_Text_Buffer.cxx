@@ -1909,7 +1909,7 @@ static void addPadding(char *string, int startIndent, int toIndent,
   
   if (useTabs) {
     while (indent < toIndent) {
-      static char t = '\t';
+      //static char t = '\t';
       len = Fl_Text_Buffer::character_width("\t", indent, tabDist);
       if (len > 1 && indent + len <= toIndent) {
 	*outPtr++ = '\t';

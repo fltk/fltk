@@ -688,6 +688,8 @@ public:
   void selectmode(Fl_Tree_Select val) {
     _prefs.selectmode(val);
   }
+  
+  void load(class Fl_Preferences&);
 };
 
 #endif /*FL_TREE_H*/

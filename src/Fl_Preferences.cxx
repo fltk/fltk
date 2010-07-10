@@ -380,17 +380,6 @@ Fl_Preferences::~Fl_Preferences()
 
 
 /**
-  Copy the database hierarchy to an Fl_Tree browser from this node down.
- */
-char Fl_Preferences::copyTo(Fl_Tree *tree)
-{
-  if (!tree->root())
-    tree->add(name());
-  return node->copyTo(tree, tree->root());
-}
-
-
-/**
    Returns the number of groups that are contained within a group.
 
    \return 0 for no groups at all
@@ -1761,28 +1750,6 @@ void Fl_Preferences::Node::deleteIndex() {
   index_ = 0;
   indexed_ = 0;
 }
-
-char Fl_Preferences::Node::copyTo(Fl_Tree *tree, Fl_Tree_Item *ti)
-{
-  ti->label(name());
-  ti->user_data(this);
-  Node *nd = child_;
-  for ( ; nd; nd = nd->next_) {
-    Fl_Tree_Item *tic = tree->insert(ti, 0, 0);
-    nd->copyTo(tree, tic);
-    tic->close();
-  }
-  int i, n = nEntry_;
-  for (i=0; i<n; i++) {
-    char buf[80];
-    const char *name = entry_[i].name;
-    const char *value = entry_[i].value;
-    fl_snprintf(buf, 80, "%s: %s", name, value);
-    tree->add(ti, buf);
-  }
-  return 0;
-}
-
 
 /**
  * \brief Create a plugin.

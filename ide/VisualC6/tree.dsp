@@ -93,5 +93,36 @@ LINK32=link.exe
 
 SOURCE=..\..\test\tree.cxx
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\test\tree.fl
+
+!IF  "$(CFG)" == "tree - Win32 Release"
+
+# Begin Custom Build - Create .cxx and .h file with fluid
+InputPath=..\..\test\tree.fl
+
+"..\..\test\tree.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\..\test/ 
+	..\fluid\fluid -c tree.fl
+	cd ..\ide\visualc 
+	
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "tree - Win32 Debug"
+
+# Begin Custom Build - Create .cxx and .h file with fluidd
+InputPath=..\..\test\tree.fl
+
+"..\..\test\tree.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	cd ..\..\test/ 
+	..\fluid\fluidd -c tree.fl 
+	cd ..\ide\visualc 
+	
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
 # End Target
 # End Project

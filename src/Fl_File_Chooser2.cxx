@@ -1031,6 +1031,8 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
   if (!allfiles) showChoice->add(all_files_label);
 
   showChoice->add(custom_filter_label);
+  
+  // TODO: add a menu item to switch hidden files on and off
 
   showChoice->value(0);
   showChoiceCB();
