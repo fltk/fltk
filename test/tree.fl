@@ -641,14 +641,14 @@ Tests Fl_Tree::clear()} xywh {475 652 90 16} labelsize 11
     }
     Fl_Button loaddb_button {
       label {Load Database...}
-      callback {const char *filename = fl_file_chooser("Select a Preferences style Databse", "Preferences(*.prefs)", 0L);
+      callback {const char *filename = fl_file_chooser("Select a Preferences style Database", "Preferences(*.prefs)", 0L);
 if (filename) {
   tree->clear();
   Fl_Preferences prefs(filename, 0L, 0L);
   tree->load(prefs);
   tree->redraw();
 }}
-      tooltip {Load the contents of an Fl_Preferences databse into the tree view} xywh {380 612 90 16} labelsize 11
+      tooltip {Load the contents of an Fl_Preferences database into the tree view} xywh {380 612 90 16} labelsize 11
     }
   }
   code {// Initialize Tree

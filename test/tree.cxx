@@ -560,7 +560,7 @@ tree->redraw();
 Fl_Button *loaddb_button=(Fl_Button *)0;
 
 static void cb_loaddb_button(Fl_Button*, void*) {
-  const char *filename = fl_file_chooser("Select a Preferences style Databse", "Preferences(*.prefs)", 0L);
+  const char *filename = fl_file_chooser("Select a Preferences style Database", "Preferences(*.prefs)", 0L);
 if (filename) {
   tree->clear();
   Fl_Preferences prefs(filename, 0L, 0L);
@@ -588,6 +588,7 @@ int main(int argc, char **argv) {
       margintop_slider->tooltip("Changes the top margin for the tree widget");
       margintop_slider->type(1);
       margintop_slider->labelsize(12);
+      margintop_slider->step(0.01);
       margintop_slider->textsize(12);
       margintop_slider->callback((Fl_Callback*)cb_margintop_slider, (void*)(tree));
       margintop_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -600,6 +601,7 @@ int main(int argc, char **argv) {
       marginleft_slider->tooltip("Changes the left margin for the tree widget");
       marginleft_slider->type(1);
       marginleft_slider->labelsize(12);
+      marginleft_slider->step(0.01);
       marginleft_slider->textsize(12);
       marginleft_slider->callback((Fl_Callback*)cb_marginleft_slider, (void*)(tree));
       marginleft_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -612,6 +614,7 @@ int main(int argc, char **argv) {
       openchild_marginbottom_slider->tooltip("Changes the vertical space below an open child tree");
       openchild_marginbottom_slider->type(1);
       openchild_marginbottom_slider->labelsize(12);
+      openchild_marginbottom_slider->step(0.01);
       openchild_marginbottom_slider->textsize(12);
       openchild_marginbottom_slider->callback((Fl_Callback*)cb_openchild_marginbottom_slider, (void*)(tree));
       openchild_marginbottom_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -625,6 +628,7 @@ int main(int argc, char **argv) {
 d");
       labelsize_slider->type(1);
       labelsize_slider->labelsize(12);
+      labelsize_slider->step(0.01);
       labelsize_slider->textsize(12);
       labelsize_slider->callback((Fl_Callback*)cb_labelsize_slider, (void*)(tree));
       labelsize_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -637,6 +641,7 @@ d");
       connectorwidth_slider->tooltip("Tests Fl_Tree::connectorwidth()");
       connectorwidth_slider->type(1);
       connectorwidth_slider->labelsize(12);
+      connectorwidth_slider->step(0.01);
       connectorwidth_slider->textsize(12);
       connectorwidth_slider->callback((Fl_Callback*)cb_connectorwidth_slider, (void*)(tree));
       connectorwidth_slider->align(Fl_Align(FL_ALIGN_LEFT));
@@ -765,7 +770,7 @@ ll are set.");
       clearall_button->callback((Fl_Callback*)cb_clearall_button);
     } // Fl_Button* clearall_button
     { loaddb_button = new Fl_Button(380, 612, 90, 16, "Load Database...");
-      loaddb_button->tooltip("Load the contents of an Fl_Preferences databse into the tree view");
+      loaddb_button->tooltip("Load the contents of an Fl_Preferences database into the tree view");
       loaddb_button->labelsize(11);
       loaddb_button->callback((Fl_Callback*)cb_loaddb_button);
     } // Fl_Button* loaddb_button
