@@ -1361,7 +1361,7 @@ public:
   int arg(int argc, char **argv, int &i) {
     if (argc>=i+1 && strcmp(argv[i], "--fltkdb")==0) {
       if (argc>=i+2 && argv[i+1][0]!='-') {
-        fprintf(stderr, "Creating Databse %s\n", argv[i+1]);
+        fprintf(stderr, "Creating Database %s\n", argv[i+1]);
         exit_early = 1;
         create_new_database(argv[i+1]);
         i = i+2;

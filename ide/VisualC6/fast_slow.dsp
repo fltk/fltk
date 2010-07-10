@@ -103,9 +103,9 @@ SOURCE=..\..\test\fast_slow.fl
 InputPath=..\..\test\fast_slow.fl
 
 "..\..\test\fast_slow.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluid -c fast_slow.fl
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 
@@ -115,9 +115,9 @@ InputPath=..\..\test\fast_slow.fl
 InputPath=..\..\test\fast_slow.fl
 
 "..\..\test\fast_slow.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluidd -c fast_slow.fl 
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 

@@ -111,9 +111,9 @@ SOURCE=..\..\test\CubeViewUI.fl
 InputPath=..\..\test\CubeViewUI.fl
 
 "..\..\test\CubeViewUI.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluid -c CubeViewUI.fl
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 
@@ -123,9 +123,9 @@ InputPath=..\..\test\CubeViewUI.fl
 InputPath=..\..\test\CubeViewUI.fl
 
 "..\..\test\CubeViewUI.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluidd -c CubeViewUI.fl 
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 

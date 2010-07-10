@@ -103,9 +103,9 @@ SOURCE=..\..\test\tree.fl
 InputPath=..\..\test\tree.fl
 
 "..\..\test\tree.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluid -c tree.fl
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 
@@ -115,9 +115,9 @@ InputPath=..\..\test\tree.fl
 InputPath=..\..\test\tree.fl
 
 "..\..\test\tree.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluidd -c tree.fl 
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 

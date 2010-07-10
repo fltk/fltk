@@ -197,10 +197,11 @@ public:
   int writeFluidFile(FILE *f, Fl_File_Prefs &fileDB, const char *name) {
     char pathAndName[1024]; fileDB.get("pathAndName", pathAndName, "DBERROR/DBERROR.DBERR", 1024);
     char cxx_pathname[1024]; strcpy(cxx_pathname, pathAndName);
+    char path_fl[1024]; strcpy(path_fl, fileDB.filePath());
     DOSPath(pathAndName);
     fl_filename_setext(cxx_pathname, 1024, ".cxx");
     DOSPath(cxx_pathname);
-    const char *path_fl = fileDB.filePath();
+    DOSPath(path_fl);
     fprintf(f, "# Begin Source File\r\n");
     fprintf(f, "\r\n");
     fprintf(f, "SOURCE=..\\..\\%s\r\n", cxx_pathname);
@@ -215,9 +216,9 @@ public:
     fprintf(f, "InputPath=..\\..\\%s\r\n", pathAndName);
     fprintf(f, "\r\n");
     fprintf(f, "\"..\\..\\%s\" : $(SOURCE) \"$(INTDIR)\" \"$(OUTDIR)\"\r\n", cxx_pathname);
-    fprintf(f, "\tcd ..\\..\\%s \r\n", path_fl);
+    fprintf(f, "\tpushd ..\\..\\%s \r\n", path_fl);
     fprintf(f, "\t..\\fluid\\fluid -c %s\r\n", fileDB.fullName());
-    fprintf(f, "\tcd ..\\ide\\visualc \r\n");
+    fprintf(f, "\tpopd \r\n");
     fprintf(f, "\t\r\n");
     fprintf(f, "# End Custom Build\r\n");
     fprintf(f, "\r\n");
@@ -227,9 +228,9 @@ public:
     fprintf(f, "InputPath=..\\..\\%s\r\n", pathAndName);
     fprintf(f, "\r\n");
     fprintf(f, "\"..\\..\\%s\" : $(SOURCE) \"$(INTDIR)\" \"$(OUTDIR)\"\r\n", cxx_pathname);
-    fprintf(f, "\tcd ..\\..\\%s \r\n", path_fl);
+    fprintf(f, "\tpushd ..\\..\\%s \r\n", path_fl);
     fprintf(f, "\t..\\fluid\\fluidd -c %s \r\n", fileDB.fullName());
-    fprintf(f, "\tcd ..\\ide\\visualc \r\n");
+    fprintf(f, "\tpopd \r\n");
     fprintf(f, "\t\r\n");
     fprintf(f, "# End Custom Build\r\n");
     fprintf(f, "\r\n");

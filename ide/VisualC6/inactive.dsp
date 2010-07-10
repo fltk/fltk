@@ -103,9 +103,9 @@ SOURCE=..\..\test\inactive.fl
 InputPath=..\..\test\inactive.fl
 
 "..\..\test\inactive.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluid -c inactive.fl
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 
@@ -115,9 +115,9 @@ InputPath=..\..\test\inactive.fl
 InputPath=..\..\test\inactive.fl
 
 "..\..\test\inactive.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluidd -c inactive.fl 
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 

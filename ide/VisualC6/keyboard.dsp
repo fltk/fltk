@@ -107,9 +107,9 @@ SOURCE=..\..\test\keyboard_ui.fl
 InputPath=..\..\test\keyboard_ui.fl
 
 "..\..\test\keyboard_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluid -c keyboard_ui.fl
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 
@@ -119,9 +119,9 @@ InputPath=..\..\test\keyboard_ui.fl
 InputPath=..\..\test\keyboard_ui.fl
 
 "..\..\test\keyboard_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluidd -c keyboard_ui.fl 
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 

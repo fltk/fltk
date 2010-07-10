@@ -107,9 +107,9 @@ SOURCE=..\..\test\mandelbrot_ui.fl
 InputPath=..\..\test\mandelbrot_ui.fl
 
 "..\..\test\mandelbrot_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluid -c mandelbrot_ui.fl
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 
@@ -119,9 +119,9 @@ InputPath=..\..\test\mandelbrot_ui.fl
 InputPath=..\..\test\mandelbrot_ui.fl
 
 "..\..\test\mandelbrot_ui.cxx" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	cd ..\..\test/ 
+	pushd ..\..\test\ 
 	..\fluid\fluidd -c mandelbrot_ui.fl 
-	cd ..\ide\visualc 
+	popd 
 	
 # End Custom Build
 
