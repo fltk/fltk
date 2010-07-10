@@ -2,7 +2,6 @@ include_regular_expression("[.][cxx|c|h]$")
 
 set(CPPFILES
   Fl.cxx
-  Fl_Abstract_Printer.cxx
   Fl_Adjuster.cxx
   Fl_Bitmap.cxx
   Fl_Browser.cxx
@@ -43,6 +42,7 @@ set(CPPFILES
   Fl_Native_File_Chooser.cxx
   Fl_Overlay_Window.cxx
   Fl_Pack.cxx
+  Fl_Paged_Device.cxx
   Fl_Pixmap.cxx
   Fl_Positioner.cxx
   Fl_Printer.cxx
