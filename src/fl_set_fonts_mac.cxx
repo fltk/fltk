@@ -60,6 +60,8 @@ static int fl_free_font = FL_FREE_FONT;
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
 #pragma unused ( xstarname )
+if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static SInt32 MACsystemVersion = 0;
 if(MACsystemVersion == 0) Gestalt(gestaltSystemVersion, &MACsystemVersion);
