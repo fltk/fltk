@@ -915,26 +915,14 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
 };
 
 void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
-  //colored_=1;
   color_=c;
   Fl::get_color(c, cr_, cg_, cb_);
-  if (cr_==cg_ && cg_==cb_) {
-    double gray = cr_/255.0;
-    fprintf(output, "%g GL\n", gray);
-    
-  } else {
-    double fr, fg, fb;
-    fr = cr_/255.0;
-    fg = cg_/255.0;
-    fb = cb_/255.0;
-    fprintf(output,"%g %g %g SRGB\n", fr , fg , fb);
-  }
+  color(cr_, cg_, cb_);
 }
 
 void Fl_PostScript_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned char b) {
-  //colored_=1;
-  cr_=r;cg_=g;cb_=b;
-  if (r==g && g==b) {
+  cr_ = r; cg_ = g; cb_ = b;
+  if (r == g && g == b) {
     double gray = r/255.0;
     fprintf(output, "%g GL\n", gray);
   } else {
