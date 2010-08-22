@@ -109,7 +109,6 @@ class Clip {
   int lang_level_;
   int font_;
   int size_;
-  Fl_Color color_;
   int gap_;
   int pages_;
   
@@ -164,9 +163,7 @@ class Clip {
   char *ps_filename_;
   // implementation of drawing methods
   void color(Fl_Color c);
-  //void bg_color(Fl_Color bg);
   void color(uchar r, uchar g, uchar b);
-  Fl_Color color(){return color_;};
   
   void push_clip(int x, int y, int w, int h);
   int clip_box(int x, int y, int w, int h, int &X, int &Y, int &W, int &H);

@@ -915,7 +915,6 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
 };
 
 void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
-  color_=c;
   Fl::get_color(c, cr_, cg_, cb_);
   color(cr_, cg_, cb_);
 }
