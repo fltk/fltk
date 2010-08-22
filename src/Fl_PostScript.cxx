@@ -921,6 +921,7 @@ void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
 }
 
 void Fl_PostScript_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned char b) {
+  fl_color_ = fl_rgb_color(r, g, b);
   cr_ = r; cg_ = g; cb_ = b;
   if (r == g && g == b) {
     double gray = r/255.0;
