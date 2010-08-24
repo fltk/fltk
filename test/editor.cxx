@@ -61,16 +61,17 @@ Fl_Text_Buffer     *textbuf = 0;
 
 
 // Syntax highlighting stuff...
+#define TS 14 // default editor textsize
 Fl_Text_Buffer     *stylebuf = 0;
 Fl_Text_Display::Style_Table_Entry
                    styletable[] = {	// Style table
-		     { FL_BLACK,      FL_COURIER,        14 }, // A - Plain
-		     { FL_DARK_GREEN, FL_COURIER_ITALIC, 14 }, // B - Line comments
-		     { FL_DARK_GREEN, FL_COURIER_ITALIC, 14 }, // C - Block comments
-		     { FL_BLUE,       FL_COURIER,        14 }, // D - Strings
-		     { FL_DARK_RED,   FL_COURIER,        14 }, // E - Directives
-		     { FL_DARK_RED,   FL_COURIER_BOLD,   14 }, // F - Types
-		     { FL_BLUE,       FL_COURIER_BOLD,   14 }  // G - Keywords
+		     { FL_BLACK,      FL_COURIER,        TS }, // A - Plain
+		     { FL_DARK_GREEN, FL_COURIER_ITALIC, TS }, // B - Line comments
+		     { FL_DARK_GREEN, FL_COURIER_ITALIC, TS }, // C - Block comments
+		     { FL_BLUE,       FL_COURIER,        TS }, // D - Strings
+		     { FL_DARK_RED,   FL_COURIER,        TS }, // E - Directives
+		     { FL_DARK_RED,   FL_COURIER_BOLD,   TS }, // F - Types
+		     { FL_BLUE,       FL_COURIER_BOLD,   TS }  // G - Keywords
 		   };
 const char         *code_keywords[] = {	// List of known C/C++ keywords...
 		     "and",
@@ -773,11 +774,12 @@ Fl_Window* new_view() {
     Fl_Menu_Bar* m = new Fl_Menu_Bar(0, 0, 660, 30);
     m->copy(menuitems, w);
     w->editor = new Fl_Text_Editor(0, 30, 660, 370);
+    w->editor->textfont(FL_COURIER);
+    w->editor->textsize(TS);
     w->editor->buffer(textbuf);
     w->editor->highlight_data(stylebuf, styletable,
                               sizeof(styletable) / sizeof(styletable[0]),
 			      'A', style_unfinished_cb, 0);
-    w->editor->textfont(FL_COURIER);
   w->end();
   w->resizable(w->editor);
   w->callback((Fl_Callback *)close_cb, w);
