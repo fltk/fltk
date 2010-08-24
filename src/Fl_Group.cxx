@@ -600,7 +600,7 @@ void Fl_Group::resize(int X, int Y, int W, int H) {
 
   Fl_Widget::resize(X,Y,W,H); // make new xywh values visible for children
 
-  if (!resizable() || dw==0 && dh==0 ) {
+  if (!resizable() || (dw==0 && dh==0) ) {
 
     if (type() < FL_WINDOW) {
       Fl_Widget*const* a = array();
@@ -740,7 +740,7 @@ void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
   // skip any labels that are inside the widget:
   if (!(widget.align()&15) || (widget.align() & FL_ALIGN_INSIDE)) return;
   // invent a box that is outside the widget:
-  int a = widget.align();
+  Fl_Align a = widget.align();
   int X = widget.x();
   int Y = widget.y();
   int W = widget.w();
