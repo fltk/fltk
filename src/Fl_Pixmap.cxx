@@ -153,7 +153,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
       hMod = LoadLibrary("MSIMG32.DLL");
       if(hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
     }
-    if (hMod) {
+    if (fl_TransparentBlt) {
       Fl_Offscreen tmp_id = fl_create_offscreen(pxm->w(), pxm->h());
       fl_begin_offscreen(tmp_id);
       uchar *bitmap = 0;
