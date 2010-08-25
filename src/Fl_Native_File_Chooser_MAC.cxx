@@ -548,6 +548,7 @@ int Fl_Native_File_Chooser::post() {
     NSString *fname = nil;
     NSString *preset = nil;
     NSPopUpButton *popup = nil;
+    [(NSSavePanel*)_panel setAllowsOtherFileTypes:YES];
     if ( !(_options & SAVEAS_CONFIRM) ) {
       static FLsaveDelegate *saveDelegate = nil;
       if (saveDelegate == nil)saveDelegate = [[FLsaveDelegate alloc] init]; // not to be ever freed
