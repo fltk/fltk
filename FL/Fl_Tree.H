@@ -84,68 +84,75 @@
 ///    tree.end();
 /// \endcode
 ///     
-///     Items can be added with Fl_Tree::add(),
-///     removed with Fl_Tree::remove(),
-///     inserted with Fl_Tree::insert_above(),
-///     selected/deselected with Fl_Tree::select() and Fl_Tree::deselect().
-///     Items can be swapped with Fl_Tree_Item::swap_children(), sorting control via
-///     Fl_Tree::sortorder().
+///     Items can be added with add(),
+///     removed with remove(),
+///     completely cleared with clear(),
+///     inserted with insert() and insert_above(),
+///     selected/deselected with select() and deselect(),
+///     open/closed with open() and closed().
+///     Children of an item can be swapped around with Fl_Tree_Item::swap_children(),
+///     sorting can be controlled when items are add()ed via sortorder().
+///     You can walk the entire tree with first() and next().
+///     You can walk selected items with first_selected_item() and
+///     next_selected_item().
+///     Items can be found by their pathname using find_item(const char*),
+///     and an item's pathname can be found with item_pathname().
 ///
-///     The tree can have different selection behaviors controlled by Fl_Tree::selectmode().
+///     The tree can have different selection behaviors controlled by selectmode().
 ///
-///     FLTK and custom FLTK widgets can be assigned to tree items via Fl_Tree_Item::widget().
+///     FLTK widgets (including custom widgets) can be assigned to tree items via
+///     Fl_Tree_Item::widget().
 ///
-///     Parent nodes can be open/closed with open() and close(), icons can be assigned
-///     or redefined with some or all items via 
+///     Icons for individual items can be changed with
 ///     Fl_Tree_Item::openicon(), 
 ///     Fl_Tree_Item::closeicon(),
 ///     Fl_Tree_Item::usericon().
 ///
-///     Various default preferences can be manipulated via Fl_Tree_Prefs, including
-///     colors, margins, connection lines. 
+///     Various default preferences can be globally manipulated via Fl_Tree_Prefs, 
+///     including colors, margins, icons, connection lines. 
+///
+///     The tree's callback() will be invoked when items change state or are open/closed.
+///     when() controls when mouse/keyboard events invoke the callback.
+///     callback_item() and callback_reason() can be used to determine the cause of the callback.
 ///
 ///     \image html tree-elements.png
 ///
-///     \todo Needs handling of callbacks when items are procedurally select()ed
+
+/// \enum Fl_Tree_Reason
+/// The reason the callback was invoked.
 ///
+enum Fl_Tree_Reason {
+  FL_TREE_REASON_NONE=0,	///< unknown reason
+  FL_TREE_REASON_SELECTED,	///< an item was selected
+  FL_TREE_REASON_DESELECTED,	///< an item was de-selected
+  FL_TREE_REASON_OPENED,	///< an item was opened
+  FL_TREE_REASON_CLOSED		///< an item was closed
+};
+
 
 class Fl_Tree : public Fl_Group {
-  Fl_Tree_Item  *_root;					// can be null!
-  Fl_Tree_Item  *_item_clicked;
-  Fl_Tree_Prefs  _prefs;				// all the tree's settings
-  Fl_Scrollbar  *_vscroll;
-  
-public:
-  /// Find the item that was clicked.
-  /// You probably want to use item_clicked() instead, which is fast.
-  ///
-  /// This method walks the entire tree looking for the first item that is
-  /// under the mouse (ie. at Fl::event_x()/Fl:event_y().
-  ///
-  /// Use this method /only/ if you've subclassed Fl_Tree, and are receiving
-  /// events before Fl_Tree has been able to process and update item_clicked().
-  /// 
-  /// \returns the item clicked, or 0 if no item was under the current event.
-  ///
-  const Fl_Tree_Item *find_clicked() const {
-    if ( ! _root ) return(0);
-    return(_root->find_clicked(_prefs));
-  }
+  Fl_Tree_Item  *_root;				// can be null!
+  Fl_Tree_Item  *_item_focus;			// item that has focus box
+  Fl_Tree_Item  *_callback_item;		// item invoked during callback (can be NULL)
+  Fl_Tree_Reason _callback_reason;		// reason for the callback
+  Fl_Tree_Prefs  _prefs;			// all the tree's settings
+  int            _scrollbar_size;		// size of scrollbar trough
+
 protected:
-  /// Set the item that was last clicked.
-  /// Should only be used by subclasses needing to change this value.
-  /// Normally Fl_Tree manages this value.
-  ///
-  void item_clicked(Fl_Tree_Item* val) {
-    _item_clicked = val;
-  }
-  void do_callback_for_item(Fl_Tree_Item* item) {
-    Fl_Tree_Item *save = _item_clicked;		// save previous 'item_clicked'
-    _item_clicked = item;			// set item_clicked to this item while we do callback
-    do_callback((Fl_Widget*)this, user_data());
-    _item_clicked = save;			// restore item_clicked
-  }
+  /// Vertical scrollbar
+  Fl_Scrollbar *_vscroll;
   
+protected:
+  void set_item_focus(Fl_Tree_Item *o);
+  void item_clicked(Fl_Tree_Item* val);
+  /// Do the callback for the item, setting the item and reason
+  void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason) {
+    callback_reason(reason);
+    callback_item(item);
+    do_callback((Fl_Widget*)this, user_data());
+  }
+  Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);
+
 public:
   Fl_Tree(int X, int Y, int W, int H, const char *L=0);
   ~Fl_Tree();
@@ -204,7 +211,7 @@ public:
   void clear_children(Fl_Tree_Item *item) {
     if ( item->has_children() ) {
       item->clear_children();
-      redraw();						// redraw only if there were children to clear
+      redraw();				// redraw only if there were children to clear
     }
   } 
   
@@ -213,52 +220,29 @@ public:
   ////////////////////////
   Fl_Tree_Item *find_item(const char *path);
   const Fl_Tree_Item *find_item(const char *path) const;
+  int item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *item) const;
+
+  const Fl_Tree_Item *find_clicked() const;
   
   /// Return the item that was last clicked.
   ///
-  /// Valid only from within an Fl_Tree::callback().
+  /// Valid only from within the callback().
+  ///
+  /// Deprecated: use callback_item() instead.
   ///
   /// \returns the item clicked, or 0 if none.
   ///          0 may also be used to indicate several items were clicked/changed.
   ///
   Fl_Tree_Item *item_clicked() {
-    return(_item_clicked);
+    return(_callback_item);
   }
-  /// Returns the first item in the tree.
-  ///
-  /// Use this to walk the tree in the forward direction, eg:
-  /// \code
-  /// for ( Fl_Tree_Item *item = tree->first(); item; item = item->next() ) {
-  ///     printf("Item: %s\n", item->label());
-  /// }
-  /// \endcode
-  ///
-  /// \returns first item in tree, or 0 if none (tree empty).
-  ///
-  Fl_Tree_Item *first() {
-    return(_root);					// first item always root
-  }
-  /// Returns the last item in the tree.
-  ///
-  /// Use this to walk the tree in reverse, eg:
-  ///
-  /// \code
-  /// for ( Fl_Tree_Item *item = tree->last(); item; item = item->prev() ) {
-  ///     printf("Item: %s\n", item->label());
-  /// }
-  /// \endcode
-  ///
-  /// \returns last item in the tree, or 0 if none (tree empty).
-  ///
-  Fl_Tree_Item *last() {
-    if ( ! _root ) return(0);
-    Fl_Tree_Item *item = _root;
-    while ( item->has_children() ) {
-      item = item->child(item->children()-1);
-    }
-    return(item);
-  }
-  
+  Fl_Tree_Item *first();
+  Fl_Tree_Item *next(Fl_Tree_Item *item=0);
+  Fl_Tree_Item *prev(Fl_Tree_Item *item=0);
+  Fl_Tree_Item *last();
+  Fl_Tree_Item *first_selected_item();
+  Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item=0);
+
   //////////////////////////
   // Item open/close methods
   //////////////////////////
@@ -266,58 +250,139 @@ public:
   /// Open the specified 'item'.
   /// This causes the item's children (if any) to be shown.
   /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
-  void open(Fl_Tree_Item *item) {
-    if ( ! item->is_open() ) {
-      item->open();
-      redraw();
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
+  ///
+  /// \param[in] item -- the item to be opened
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - callback() is not invoked
+  ///     -   1 - callback() is invoked if item changed,
+  ///             callback_reason() will be FL_TREE_REASON_OPENED
+  ///
+  /// \returns
+  ///     -   1 -- item was opened
+  ///     -   0 -- item was already open, no change
+  ///
+  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
+  ///
+  int open(Fl_Tree_Item *item, int docallback=1) {
+    if ( item->is_open() ) return(0);
+    item->open();
+    redraw();
+    if ( docallback ) {
+      do_callback_for_item(item, FL_TREE_REASON_OPENED);
     }
+    return(1);
   }
   /// Opens the item specified by \p path (eg: "Parent/child/item").
   /// This causes the item's children (if any) to be shown.
   /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
+  ///
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
+  ///
+  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - callback() is not invoked
+  ///     -   1 - callback() is invoked if item changed,
+  ///             callback_reason() will be FL_TREE_REASON_OPENED
   ///
   /// \returns
-  ///     -   0 : OK
-  ///     -  -1 : item was not found
+  ///     -   1 -- OK: item opened
+  ///     -   0 -- OK: item was already open, no change
+  ///     -  -1 -- ERROR: item was not found
+  ///
+  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
   ///         
-  int open(const char *path) {
+  int open(const char *path, int docallback=1) {
     Fl_Tree_Item *item = find_item(path);
-    if ( item ) {
-      open(item);
-      return(0);
+    if ( ! item ) return(-1);
+    return(open(item, docallback));
+  }
+  /// Toggle the open state of \p item.
+  /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
+  ///
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
+  ///
+  /// \param[in] item -- the item to be opened
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - callback() is not invoked
+  ///     -   1 - callback() is invoked, callback_reason() will be either
+  ///             FL_TREE_REASON_OPENED or FL_TREE_REASON_CLOSED
+  ///
+  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
+  ///
+  void open_toggle(Fl_Tree_Item *item, int docallback=1) {
+    if ( item->is_open() ) {
+      close(item, docallback);
+    } else {
+      open(item, docallback);
     }
-    return(-1);
   }
   /// Closes the specified \p item.
   /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
-  void close(Fl_Tree_Item *item) {
-    if ( ! item->is_close() ) {
-      item->close();
-      redraw();
-    }
-  }
-  /// Closes the item specified by \p path, eg: "Parent/child/item".
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
   ///
-  /// Handles redrawing if anything was actually changed.
+  /// \param[in] item -- the item to be closed
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - callback() is not invoked
+  ///     -   1 - callback() is invoked if item changed,
+  ///             callback_reason() will be FL_TREE_REASON_CLOSED
   ///
   /// \returns
-  ///     -   0 -- OK
-  ///     -  -1 -- item was not found
-  ///         
-  int close(const char *path) {
-    Fl_Tree_Item *item = find_item(path);
-    if ( item ) {
-      close(item);
-      return(0);
+  ///     -   1 -- item was closed
+  ///     -   0 -- item was already closed, no change
+  ///
+  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
+  ///
+  int close(Fl_Tree_Item *item, int docallback=1) {
+    if ( item->is_close() ) return(0);
+    item->close();
+    redraw();
+    if ( docallback ) {
+      do_callback_for_item(item, FL_TREE_REASON_CLOSED);
     }
-    return(-1);
+    return(1);
+  }
+  /// Closes the item specified by \p path, eg: "Parent/child/item".
+  /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
+  ///
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
+  ///
+  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - callback() is not invoked
+  ///     -   1 - callback() is invoked if item changed,
+  ///             callback_reason() will be FL_TREE_REASON_CLOSED
+  ///
+  /// \returns
+  ///     -   1 -- OK: item closed
+  ///     -   0 -- OK: item was already closed, no change
+  ///     -  -1 -- ERROR: item was not found
+  ///
+  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
+  ///         
+  int close(const char *path, int docallback=1) {
+    Fl_Tree_Item *item = find_item(path);
+    if ( ! item ) return(-1);
+    return(close(item, docallback));
   }
   /// See if \p item is open.
   ///
   /// Items that are 'open' are themselves not necessarily visible;
   /// one of the item's parents might be closed.
+  ///
+  /// \param[in] item -- the item to be tested
   ///
   /// \returns
   ///     -  1 : item is open
@@ -331,17 +396,22 @@ public:
   /// Items that are 'open' are themselves not necessarily visible;
   /// one of the item's parents might be closed.
   ///
+  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  ///
   /// \returns
-  ///     -    1 : item is open
-  ///     -    0 : item is closed
-  ///     -   -1 : item was not found
+  ///     -    1 - OK: item is open
+  ///     -    0 - OK: item is closed
+  ///     -   -1 - ERROR: item was not found
   ///
   int is_open(const char *path) const {
     const Fl_Tree_Item *item = find_item(path);
-    if ( item ) return(item->is_open()?1:0);
-    return(-1);
+    if ( ! item ) return(-1);
+    return(item->is_open()?1:0);
   }
   /// See if the specified \p item is closed.
+  ///
+  /// \param[in] item -- the item to be tested
+  ///
   /// \returns
   ///     -   1 : item is open
   ///     -   0 : item is closed
@@ -351,111 +421,154 @@ public:
   }
   /// See if item specified by \p path (eg: "Parent/child/item") is closed.
   ///
+  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  ///
   /// \returns
-  ///     -   1 : item is closed
-  ///     -   0 : item is open
-  ///     -  -1 : item was not found
+  ///     -   1 - OK: item is closed
+  ///     -   0 - OK: item is open
+  ///     -  -1 - ERROR: item was not found
   ///
   int is_close(const char *path) const {
     const Fl_Tree_Item *item = find_item(path);
-    if ( item ) return(item->is_close()?1:0);
-    return(-1);
+    if ( ! item ) return(-1);
+    return(item->is_close()?1:0);
   }
-  
-  /////////////////////////
-  // Item selection methods
-  /////////////////////////
   
   /// Select the specified \p item. Use 'deselect()' to de-select it.
   /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
-  /// \p docallback is an optional paramemter that can either be 0 or 1.
-  ///     - 0 - the callback() is not invoked (default)
-  ///     - 1 - the callback() is invoked if the item changed state,
-  ///           and the callback can use item_clicked() to determine the selected item.
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
   ///
-  void select(Fl_Tree_Item *item, int docallback=0) {
+  /// \param[in] item -- the item to be selected
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - the callback() is not invoked
+  ///     -   1 - the callback() is invoked if item changed state,
+  ///             callback_reason() will be FL_TREE_REASON_SELECTED
+  ///
+  /// \returns
+  ///     -   1 - item's state was changed
+  ///     -   0 - item was already selected, no change was made
+  ///
+  int select(Fl_Tree_Item *item, int docallback=1) {
     if ( ! item->is_selected() ) {
       item->select();
-      if ( docallback == 1 ) do_callback_for_item(item);
+      set_changed();
+      if ( docallback ) {
+        do_callback_for_item(item, FL_TREE_REASON_SELECTED);
+      }
       redraw();
+      return(1);
     }
+    return(0);
   }
   /// Select the item specified by \p path (eg: "Parent/child/item").
   /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
-  /// \p docallback is an optional paramemter that can either be 0 or 1.
-  ///     - 0 - the callback() is not invoked (default)
-  ///     - 1 - the callback() is invoked if the item changed state,
-  ///           and the callback can use item_clicked() to determine the selected item.
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
+  ///
+  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - the callback() is not invoked
+  ///     -   1 - the callback() is invoked if item changed state,
+  ///             callback_reason() will be FL_TREE_REASON_SELECTED
   ///
   /// \returns
-  ///     -   0 : OK
-  ///     -  -1 : item was not found
+  ///     -   1 : OK: item's state was changed
+  ///     -   0 : OK: item was already selected, no change was made
+  ///     -  -1 : ERROR: item was not found
   ///
-  int select(const char *path, int docallback=0) {
+  int select(const char *path, int docallback=1) {
     Fl_Tree_Item *item = find_item(path);
-    if ( item ) {
-      select(item);
-      if ( docallback == 1 ) do_callback_for_item(item);
-      return(0);
-    }
-    return(-1);
+    if ( ! item ) return(-1);
+    return(select(item, docallback));
   }
   /// Toggle the select state of the specified \p item.
-  /// Handles redrawing.
+  /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
-  /// \p docallback is an optional paramemter that can either be 0 or 1.
-  ///     - 0 - the callback() is not invoked (default)
-  ///     - 1 - the callback() is invoked,
-  ///           and the callback can use item_clicked() to determine the selected item.
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
   ///
-  void select_toggle(Fl_Tree_Item *item, int docallback=0) {
+  /// \param[in] item -- the item to be selected
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - the callback() is not invoked
+  ///     -   1 - the callback() is invoked, callback_reason() will be
+  ///             either FL_TREE_REASON_SELECTED or FL_TREE_REASON_DESELECTED
+  ///
+  void select_toggle(Fl_Tree_Item *item, int docallback=1) {
     item->select_toggle();
-    if ( docallback == 1 ) do_callback_for_item(item);
+    set_changed();
+    if ( docallback ) {
+      do_callback_for_item(item, item->is_selected() ? FL_TREE_REASON_SELECTED
+                                                     : FL_TREE_REASON_DESELECTED);
+    }
     redraw();
   }
   /// De-select the specified \p item.
   /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
-  /// \p docallback is an optional paramemter that can either be 0 or 1.
-  ///     - 0 - the callback() is not invoked (default)
-  ///     - 1 - the callback() is invoked if the item changed state,
-  ///           and the callback can use item_clicked() to determine the selected item.
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
   ///
-  void deselect(Fl_Tree_Item *item, int docallback=0) {
+  /// \param[in] item -- the item to be selected
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - the callback() is not invoked
+  ///     -   1 - the callback() is invoked if item changed state,
+  ///             callback_reason() will be FL_TREE_REASON_DESELECTED
+  ///
+  /// \returns
+  ///     - 0 - item was already deselected, no change was made
+  ///     - 1 - item's state was changed
+  ///
+  int deselect(Fl_Tree_Item *item, int docallback=1) {
     if ( item->is_selected() ) {
       item->deselect();
-      if ( docallback == 1 ) do_callback_for_item(item);
+      set_changed();
+      if ( docallback ) {
+        do_callback_for_item(item, FL_TREE_REASON_DESELECTED);
+      }
       redraw();
+      return(1);
     }
+    return(0);
   }
-  /// De-select an item specified by \p path (eg: "Parent/child/item").
+  /// Deselect an item specified by \p path (eg: "Parent/child/item").
   /// Handles redrawing if anything was actually changed.
+  /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
-  /// \p docallback is an optional paramemter that can either be 0 or 1.
-  ///     - 0 - the callback() is not invoked (default)
-  ///     - 1 - the callback() is invoked if the item changed state,
-  ///           and the callback can use item_clicked() to determine the selected item.
+  /// The callback can use callback_item() and callback_reason() respectively to determine 
+  /// the item changed and the reason the callback was called.
+  ///
+  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
+  ///     -   0 - the callback() is not invoked
+  ///     -   1 - the callback() is invoked if item changed state,
+  ///             callback_reason() will be FL_TREE_REASON_DESELECTED
   ///
   ///  \returns
-  ///     -   0 : OK
-  ///     -  -1 : item was not found
+  ///     -   1 - OK: item's state was changed
+  ///     -   0 - OK: item was already deselected, no change was made
+  ///     -  -1 - ERROR: item was not found
   ///
-  int deselect(const char *path, int docallback=0) {
+  int deselect(const char *path, int docallback=1) {
     Fl_Tree_Item *item = find_item(path);
-    if ( item ) {
-      deselect(item, docallback);
-      return(0);
-    }
-    return(-1);
+    if ( ! item ) return(-1);
+    return(deselect(item, docallback));
   }
   
-  int deselect_all(Fl_Tree_Item *item=0, int docallback=0);
-  int select_only(Fl_Tree_Item *selitem, int docallback=0);
-  int select_all(Fl_Tree_Item *item=0, int docallback=0);
+  int deselect_all(Fl_Tree_Item *item=0, int docallback=1);
+  int select_only(Fl_Tree_Item *selitem, int docallback=1);
+  int select_all(Fl_Tree_Item *item=0, int docallback=1);
   
   /// See if the specified \p item is selected.
+  ///
+  /// \param[in] item -- the item to be tested
+  ///
   /// \return
   ///     -   1 : item selected
   ///     -   0 : item deselected
@@ -465,6 +578,8 @@ public:
   }
   /// See if item specified by \p path (eg: "Parent/child/item") is selected.
   ///
+  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  ///
   /// \returns
   ///     -   1 : item selected
   ///     -   0 : item deselected
@@ -472,8 +587,8 @@ public:
   ///
   int is_selected(const char *path) {
     Fl_Tree_Item *item = find_item(path);
-    if ( item ) return(is_selected(item));
-    return(-1);
+    if ( ! item ) return(-1);
+    return(is_selected(item));
   }
   /// Print the tree as 'ascii art' to stdout.
   /// Used mainly for debugging.
@@ -688,7 +803,109 @@ public:
   void selectmode(Fl_Tree_Select val) {
     _prefs.selectmode(val);
   }
-  
+  void show_item(Fl_Tree_Item *item, int yoff=0);
+  void show_item_bottom(Fl_Tree_Item *item);
+  void show_item_middle(Fl_Tree_Item *item);
+  void show_item_top(Fl_Tree_Item *item);
+  void display(Fl_Tree_Item *item);
+  int  vposition() const;
+  void vposition(int ypos);
+
+  /// See if widget \p w is one of the Fl_Tree widget's scrollbars.
+  /// Use this to skip over the scrollbars when walking the child() array. Example:
+  /// \code
+  /// for ( int i=0; i<tree->children(); i++ ) {    // walk children
+  ///     Fl_Widget *w= tree->child(i);
+  ///     if ( brow->is_scrollbar(w) ) continue;    // skip scrollbars
+  ///     ..do work here..
+  /// }
+  /// \endcode
+  /// \param[in] w Widget to test
+  /// \returns 1 if \p w is a scrollbar, 0 if not.
+  ///
+  int is_scrollbar(Fl_Widget *w) {
+      return( ( w == _vscroll ) ? 1 : 0 );
+  }
+  /// Gets the current size of the scrollbars' troughs, in pixels.
+  ///
+  /// If this value is zero (default), this widget will use the global
+  /// Fl::scrollbar_size() value as the scrollbar's width.
+  /// 
+  /// \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
+  /// \see Fl::scrollbar_size(int)
+  ///
+  int scrollbar_size() const {
+      return(_scrollbar_size);
+  }
+  /// Sets the pixel size of the scrollbars' troughs to the \p size, in pixels.
+  ///
+  /// Normally you should not need this method, and should use the global
+  /// Fl::scrollbar_size(int) instead to manage the size of ALL 
+  /// your widgets' scrollbars. This ensures your application 
+  /// has a consistent UI, is the default behavior, and is normally
+  /// what you want.
+  ///
+  /// Only use THIS method if you really need to override the global
+  /// scrollbar size. The need for this should be rare.
+  ///   
+  /// Setting \p size to the special value of 0 causes the widget to
+  /// track the global Fl::scrollbar_size(), which is the default.
+  ///   
+  /// \param[in] size Sets the scrollbar size in pixels.\n
+  ///                 If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
+  /// \see Fl::scrollbar_size()
+  ///
+  void scrollbar_size(int size) {
+      _scrollbar_size = size;
+      int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
+      if ( _vscroll->w() != scrollsize ) {
+        _vscroll->resize(x()+w()-scrollsize, h(), scrollsize, _vscroll->h());
+      }
+  }   
+
+  ///////////////////////
+  // callback related
+  ///////////////////////
+
+  /// Sets the item that was changed for this callback.
+  ///    Used internally to pass the item that invoked the callback.
+  ///
+  void callback_item(Fl_Tree_Item* item) {
+    _callback_item = item;
+  }
+  /// Gets the item that caused the callback.
+  /// The callback() can use this value to see which item changed.
+  ///
+  Fl_Tree_Item* callback_item() {
+    return(_callback_item);
+  }
+  /// Sets the reason for this callback.
+  ///    Used internally to pass the reason the callback was invoked.
+  ///
+  void callback_reason(Fl_Tree_Reason reason) {
+    _callback_reason = reason;
+  }
+  /// Gets the reason for this callback.
+  ///
+  /// The callback() can use this value to see why it was called. Example:
+  /// \code
+  ///     void MyTreeCallback(Fl_Widget *w, void *userdata) {
+  ///         Fl_Tree *tree = (Fl_Tree*)w;
+  ///         Fl_Tree_Item *item = tree->callback_item();    // the item changed (can be NULL if more than one item was changed!)
+  ///         switch ( tree->callback_reason() ) {           // reason callback was invoked
+  ///             case     FL_TREE_REASON_OPENED: ..item was opened..
+  ///             case     FL_TREE_REASON_CLOSED: ..item was closed..
+  ///             case   FL_TREE_REASON_SELECTED: ..item was selected..
+  ///             case FL_TREE_REASON_DESELECTED: ..item was deselected..
+  ///         }
+  ///     }
+  /// \endcode
+  ///
+  Fl_Tree_Reason callback_reason() const {
+    return(_callback_reason);
+  }
+
+  /// Load FLTK preferences
   void load(class Fl_Preferences&);
 };
 

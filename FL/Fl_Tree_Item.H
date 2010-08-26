@@ -83,7 +83,11 @@ public:
   Fl_Tree_Item(const Fl_Tree_Prefs &prefs);	// CTOR
   ~Fl_Tree_Item();				// DTOR
   Fl_Tree_Item(const Fl_Tree_Item *o);		// COPY CTOR
-  void draw(int X, int &Y, int W, Fl_Widget *tree, const Fl_Tree_Prefs &prefs, int lastchild=1);
+  int x() const { return(_xywh[0]); }
+  int y() const { return(_xywh[1]); }
+  int w() const { return(_xywh[2]); }
+  int h() const { return(_xywh[3]); }
+  void draw(int X, int &Y, int W, Fl_Widget *tree, Fl_Tree_Item *itemfocus, const Fl_Tree_Prefs &prefs, int lastchild=1);
   void show_self(const char *indent = "") const;
   void label(const char *val);
   const char *label() const;
@@ -163,8 +167,10 @@ public:
   void clear_children();
   void swap_children(int ax, int bx);
   int swap_children(Fl_Tree_Item *a, Fl_Tree_Item *b);
-  const Fl_Tree_Item *find_item(char **arr) const;
-  Fl_Tree_Item *find_item(char **arr);
+  const Fl_Tree_Item *find_child_item(char **arr) const;	// const
+        Fl_Tree_Item *find_child_item(char **arr);		// non-const
+  const Fl_Tree_Item *find_item(char **arr) const;		// const
+        Fl_Tree_Item *find_item(char **arr);			// non-const
   //////////////////
   // Adding items
   //////////////////
@@ -175,12 +181,16 @@ public:
   int depth() const;
   Fl_Tree_Item *prev();
   Fl_Tree_Item *next();
+  Fl_Tree_Item *next_sibling();
+  Fl_Tree_Item *prev_sibling();
+  Fl_Tree_Item *next_displayed(Fl_Tree_Prefs &prefs);
+  Fl_Tree_Item *prev_displayed(Fl_Tree_Prefs &prefs);
   
-  /// Return the parent for this item.
+  /// Return the parent for this item. Returns NULL if we are the root.
   Fl_Tree_Item *parent() {
     return(_parent);
   }
-  /// Return the const parent for this item.
+  /// Return the const parent for this item. Returns NULL if we are the root.
   const Fl_Tree_Item *parent() const {
     return(_parent);
   }
@@ -293,6 +303,12 @@ public:
   char is_active() const {
     return(_active);
   }
+  /// See if the item is visible.
+  int visible() const {
+    return(_visible ? 1 : 0);
+  }
+  int visible_r() const;
+
   /// Set the user icon's image. '0' will disable.
   void usericon(Fl_Image *val) {
     _usericon = val;

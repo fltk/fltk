@@ -27,6 +27,7 @@
 
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Browser.H>
+#include <FL/Fl_Tree.H>
 #include <FL/Fl_Value_Slider.H>
 
 //
@@ -34,10 +35,12 @@
 //
 class ScrollBarSizeTest : public Fl_Group {
     Fl_Browser *brow_a, *brow_b, *brow_c;
+    Fl_Tree    *tree_a, *tree_b, *tree_c;
 
     Fl_Browser *makebrowser(int X,int Y,int W,int H,const char*L=0) {
 	Fl_Browser *b = new Fl_Browser(X,Y,W,H,L);
 	b->type(FL_MULTI_BROWSER);
+	b->align(FL_ALIGN_TOP);
 	b->add("Papa");     b->add("Delta"); b->add("Hotel");
         b->add("Long entry will show h-bar");
 	b->add("Charlie");  b->add("Echo");  b->add("Foxtrot");
@@ -59,12 +62,29 @@ class ScrollBarSizeTest : public Fl_Group {
 	b->add("Whisky");   b->add("Zulu");
 	return(b);
     }
+    Fl_Tree *maketree(int X,int Y,int W,int H,const char*L=0) {
+	Fl_Tree *b = new Fl_Tree(X,Y,W,H,L);
+	b->type(FL_TREE_SELECT_MULTI);
+	b->align(FL_ALIGN_TOP);
+	b->add("Papa");     b->add("Delta"); b->add("Hotel");
+        b->add("Long entry will show h-bar");
+	b->add("Charlie");  b->add("Echo");  b->add("Foxtrot");
+	b->add("Golf");     b->add("Lima");  b->add("Victor");
+	b->add("Alpha");    b->add("Xray");  b->add("Yankee");
+	b->add("Oscar");    b->add("India"); b->add("Juliet");
+	b->add("Kilo");     b->add("Mike");  b->add("Sierra");
+	b->add("November"); b->add("Tango"); b->add("Quebec");
+	b->add("Bravo");    b->add("Romeo"); b->add("Uniform");
+	b->add("Whisky");   b->add("Zulu");
+	return(b);
+    }
     void slide_cb2(Fl_Value_Slider *in) {
 	const char *label = in->label();
 	int val = in->value();
 	//fprintf(stderr, "VAL='%d'\n",val);
 	if ( strcmp(label,"A: Scroll Size") == 0 ) {
 	    brow_a->scrollbar_size(val);
+	    tree_a->scrollbar_size(val);
 	} else {
 	    Fl::scrollbar_size(val);
 	}
@@ -82,10 +102,36 @@ public:
     // CTOR
     ScrollBarSizeTest(int X, int Y, int W, int H) : Fl_Group(X,Y,W,H) {
       begin();
-	brow_a = makebrowser(X+ 10,Y+40,100,H-170,"Browser A");
-	brow_b = makebrowser(X+120,Y+40,100,H-170,"Browser B");
-	brow_c = makebrowser(X+240,Y+40,100,H-170,"Browser C");
-        Fl_Value_Slider *slide_glob = new Fl_Value_Slider(X+100,Y+10,100,18,"Global Scroll Size");
+        //      _____________    _______________
+        //     |_____________|  |_______________|
+        //                                                ---   -----  <-- tgrpy
+        //       brow_a      brow_b      brow_c            | 14   | 
+        //     ----------  ----------  ----------         ---     |    <-- browy
+        //     |        |  |        |  |        |          |      |
+        //     |        |  |        |  |        |          |browh |
+        //     |        |  |        |  |        |          |      |
+        //     ----------  ----------  ----------         ---   tgrph 
+        //                                                 |      |
+        //       tree_a      tree_b      tree_c            | 20   | 
+        //     ----------  ----------  ----------         ---     |    <-- treey
+        //     |        |  |        |  |        |          |      |
+        //     |        |  |        |  |        |          |treeh |
+        //     |        |  |        |  |        |          |      |
+        //     ----------  ----------  ----------         ---  ------
+        //                                     
+        int tgrpy = Y+30;
+        int tgrph = H-130;
+        int browy = tgrpy+14;
+        int browh = tgrph/2 - 20;
+        int treey = browy + browh + 20;
+        int treeh = browh;
+        brow_a = makebrowser(X+ 10,browy,100,browh,"Browser A");
+        brow_b = makebrowser(X+120,browy,100,browh,"Browser B");
+        brow_c = makebrowser(X+240,browy,100,browh,"Browser C");
+        tree_a = maketree(X+ 10,treey,100,treeh,"Tree A");
+        tree_b = maketree(X+120,treey,100,treeh,"Tree B");
+        tree_c = maketree(X+240,treey,100,treeh,"Tree C");
+        Fl_Value_Slider *slide_glob = new Fl_Value_Slider(X+100,Y,100,18,"Global Scroll Size");
         slide_glob->value(16);
         slide_glob->type(FL_HORIZONTAL);
         slide_glob->align(FL_ALIGN_LEFT);
@@ -93,7 +139,7 @@ public:
         slide_glob->step(1.0);
         slide_glob->callback(slide_cb, (void*)this);
         slide_glob->labelsize(12);
-        Fl_Value_Slider *slide_browa = new Fl_Value_Slider(X+350,Y+10,100,18,"A: Scroll Size");
+        Fl_Value_Slider *slide_browa = new Fl_Value_Slider(X+350,Y,100,18,"A: Scroll Size");
         slide_browa->value(16);
         slide_browa->type(FL_HORIZONTAL);
         slide_browa->align(FL_ALIGN_LEFT);
