@@ -15,8 +15,8 @@ FLTK EXAMPLE PROGRAMS
 
       o Show simple examples of how to use widgets to new users of FLTK.
 
-      o Show intermediate or advanced examples that show particular
-        techniques often misused or hard to document
+      o Show intermediate or advanced examples of techniques often 
+        misused or hard to document
 
       o Demonstrate code that are FAQs on the newsgroup forum.
 	(such as how to use threads, callbacks, etc)
@@ -31,12 +31,9 @@ NEW SUBMISSIONS: RECOMMENDED PRACTICES
     These programs must follow FLTK coding style as defined in the FLTK
     "CMP" (Configuration Management Plan/Coding Standards).
 
-    Example code should demonstrate recommended techniques the FLTK
-    developers think application programmers should use in their own
-    applications.
-
-    The best examples are those that are as short and clear as possible;
-    terse, but not at the expense of clarity.
+    Example code should have the above goals in mind.  The best examples
+    are those that are as short and clear as possible; terse, but not
+    at the expense of clarity.
 
     To avoid cluttering up the top level directory with ancillary files
     (such as image files or icons), examples that depend on more than
@@ -49,12 +46,12 @@ NEW SUBMISSIONS: RECOMMENDED PRACTICES
     distribution tar files small. Avoid high resolution images or
     uncompressed images when possible. 
     
-    Examples that need very large data sets should not be part of the
-    FLTK distribution; they can be provided as separate packages
-    (eg. as articles or external links).
+    Examples that need large data sets (HD images, etc) should not
+    be part of the FLTK distribution; they can be provided as separate
+    packages (eg. as articles or external links).
 
-    Some widgets have multiple common uses that are best demonstrated
-    separately. For instance, the table widget can be used as a 
+    Some widgets have multiple capabilities that are best demonstrated
+    separately. For instance, the table widget can be used as a
     custom data table, or as a spreadsheet, or as a widget container.
     So separate examples for each would be e.g. "table-custom-data.cxx",
     "table-spreadsheet.cxx", "table-widget-container.cxx", etc.
