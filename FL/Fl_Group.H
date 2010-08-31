@@ -106,6 +106,7 @@ public:
     widget if \p before is not in the group.
   */
   void insert(Fl_Widget& o, Fl_Widget* before) {insert(o,find(before));}
+  void remove(int index);
   void remove(Fl_Widget&);
   /**
     Removes the widget \p o from the group.

@@ -389,16 +389,12 @@ void Fl_Group::clear() {
   init_sizes();
   // okay, now it is safe to destroy the children:
   while (children_) {
-    Fl_Widget* o = child(0);	// *first* child widget
-    if (o->parent() == this) {	// should always be true
-      remove(o);		// remove child widget first
-      delete o;			// then delete it
+    Fl_Widget* w = child(0);	// *first* child widget
+    if (w->parent() == this) {	// should always be true
+      remove(0);		// remove child widget first
+      delete w;			// then delete it
     } else {			// this should never happen !
-#ifdef DEBUG_CLEAR
-      printf ("Fl_Group::clear() widget:%p, parent: %p != this (%p)\n",
-	      o, o->parent(), this); fflush(stdout);
-#endif // DEBUG_CLEAR
-      remove(o);		// remove it
+      remove(0);		// remove it only
     }
   }
 }
@@ -435,7 +431,7 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
       if (index > n) index--;
       if (index == n) return;
     }
-    g->remove(o);
+    g->remove(n);
   }
   o.parent_ = this;
   if (children_ == 0) { // use array pointer to point at single child
@@ -463,39 +459,53 @@ void Fl_Group::insert(Fl_Widget &o, int index) {
 void Fl_Group::add(Fl_Widget &o) {insert(o, children_);}
 
 /**
+  Removes the widget at \p index from the group but does not delete it.
+
+  This method does nothing if \p index is out of bounds.
+
+  This method differs from the clear() method in that it only affects
+  a single widget and does not delete it from memory.
+  
+  \since FLTK 1.3.0
+*/
+void Fl_Group::remove(int index) {
+  if (index < 0 || index >= children_) return;
+  Fl_Widget &o = *child(index);
+  if (&o == savedfocus_) savedfocus_ = 0;
+  if (o.parent_ == this) {	// this should always be true
+    o.parent_ = 0;
+  } 
+
+  // remove the widget from the group
+
+  children_--;
+  if (children_ == 1) { // go from 2 to 1 child
+    Fl_Widget *t = array_[!index];
+    free((void*)array_);
+    array_ = (Fl_Widget**)t;
+  } else if (children_ > 1) { // delete from array
+    for (; index < children_; index++) array_[index] = array_[index+1];
+  }
+  init_sizes();
+}
+
+/**
   Removes a widget from the group but does not delete it.
 
   This method does nothing if the widget is not a child of the group.
 
   This method differs from the clear() method in that it only affects
   a single widget and does not delete it from memory.
+  
+  \note If you have the child's index anyway, use remove(int index)
+  instead, because this doesn't need a child lookup in the group's
+  table of children. This can be much faster, if there are lots of
+  children.
 */
 void Fl_Group::remove(Fl_Widget &o) {
   if (!children_) return;
   int i = find(o);
-  if (i >= children_) return;
-  if (&o == savedfocus_) savedfocus_ = 0;
-  if (o.parent_ == this) {	// this should always be true
-    o.parent_ = 0;
-  } 
-#ifdef DEBUG_REMOVE  
-  else {			// this should never happen !
-    printf ("Fl_Group::remove(): widget %p, parent_ (%p) != this (%p)\n",
-      &o, o.parent_, this);
-  }
-#endif // DEBUG_REMOVE
-
-  // remove the widget from the group
-
-  children_--;
-  if (children_ == 1) { // go from 2 to 1 child
-    Fl_Widget *t = array_[!i];
-    free((void*)array_);
-    array_ = (Fl_Widget**)t;
-  } else if (children_ > 1) { // delete from array
-    for (; i < children_; i++) array_[i] = array_[i+1];
-  }
-  init_sizes();
+  if (i < children_) remove(i);
 }
 
 ////////////////////////////////////////////////////////////////
