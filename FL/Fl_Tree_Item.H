@@ -56,7 +56,7 @@
 /// When you make changes to items, you'll need to tell the tree to redraw()
 /// for the changes to show up.
 ///
-class Fl_Tree_Item {
+class FL_EXPORT Fl_Tree_Item {
   const char             *_label;		// label (memory managed)
   int                     _labelfont;		// label's font face
   int                     _labelsize;		// label's font size

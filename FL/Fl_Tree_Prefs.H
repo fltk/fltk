@@ -82,7 +82,7 @@ enum Fl_Tree_Select {
 /// You should probably be using the methods in Fl_Tree
 /// instead of trying to accessing tree's preferences settings directly.
 ///
-class Fl_Tree_Prefs {
+class FL_EXPORT Fl_Tree_Prefs {
   int _labelfont;			// label's font face
   int _labelsize;			// label's font size
   int _margintop;			// -- 

@@ -5,7 +5,9 @@
 #ifndef _FL_TREE_ITEM_ARRAY_H
 #define _FL_TREE_ITEM_ARRAY_H
 
-class Fl_Tree_Item;		// forward decl must *precede* first doxygen comment block
+#include "Fl_Export.H"
+
+class FL_EXPORT Fl_Tree_Item;	// forward decl must *precede* first doxygen comment block
 				// or doxygen will not document our class..
 
 //////////////////////////
@@ -46,7 +48,7 @@ class Fl_Tree_Item;		// forward decl must *precede* first doxygen comment block
 /// (unless otherwise noted).
 ///
 
-class Fl_Tree_Item_Array {
+class FL_EXPORT Fl_Tree_Item_Array {
   Fl_Tree_Item **_items;	// items array
   int _total;			// #items in array
   int _size;			// #items *allocated* for array
