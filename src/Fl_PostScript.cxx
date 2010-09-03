@@ -330,8 +330,6 @@ static const char * prolog_2 =  // prolog relevant only if lang_level >1
 "IDD image GR} bind def\n"
 
 // gray image dict 
-
-
 "/GII {GS /inter exch def /py exch def /px exch def /sy exch def /sx exch def \n"
 "translate \n"
 "sx sy scale\n"
@@ -370,9 +368,7 @@ static const char * prolog_2 =  // prolog relevant only if lang_level >1
 "/Times-BoldItalic ToLatin1 \n"
 ;
 
-static const char * prolog_2_pixmap =  // prolog relevant only if lang_level == 2 for pixmaps
-"/pixmap_size { /pixmap_sy exch def /pixmap_sx exch def } bind def\n"
-
+static const char * prolog_2_pixmap =  // prolog relevant only if lang_level == 2 for pixmaps/masked color images
 "/pixmap_mat {[ pixmap_sx 0 0 pixmap_sy neg 0 pixmap_sy ]}  bind def\n"
 
 "/pixmap_dict {"
@@ -384,10 +380,10 @@ static const char * prolog_2_pixmap =  // prolog relevant only if lang_level == 
 "/YStep pixmap_sy\n"
 "/PaintProc "
 "{ begin "
-"pixmap_sx pixmap_sy scale "
+"pixmap_w pixmap_h scale "
 "pixmap_sx pixmap_sy 8 "
 "pixmap_mat "
-"pixmap_data "
+"currentfile /ASCIIHexDecode filter "
 "false 3 "
 "colorimage "
 "end "
@@ -397,27 +393,19 @@ static const char * prolog_2_pixmap =  // prolog relevant only if lang_level == 
 
 "/pixmap_plot {"
 "GS "
-"/pixmap_y exch def /pixmap_x exch def\n"
-"pixmap_x pixmap_y translate\n"
+"/pixmap_sy exch def /pixmap_sx exch def\n"
+"/pixmap_h exch def /pixmap_w exch def\n"
+"translate\n"
 "pixmap_dict matrix makepattern setpattern\n"
-"pixmap_sx pixmap_sy scale\n"
+"pixmap_w pixmap_h scale\n"
 "pixmap_sx pixmap_sy\n"
 "true\n"
 "pixmap_mat\n"
-"pixmap_mask\n"
+"currentfile /ASCIIHexDecode filter\n"
 "imagemask\n"
 "GR\n"
 "} bind def\n"
-
-"/pixmap_loaddata { /pixmap_data currentfile pixmap_sx pixmap_sy 3 mul mul string readhexstring "
-"} bind def\n"
-
-"/pixmap_loadmask { "
-"/pixmap_mask currentfile  pixmap_sx 8 div ceiling cvi pixmap_sy mul  string readhexstring "
-"} bind def\n"
 ;
-
-
 
 static const char * prolog_3 = // prolog relevant only if lang_level >2
 

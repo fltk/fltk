@@ -277,7 +277,7 @@ void Fl_PostScript_Graphics_Driver::draw_scaled_image(Fl_Draw_Image_Cb call, voi
       }
     else if (mask && lang_level_ == 2) {
       level2_mask = 1; // use method for drawing masked color image with PostScript level 2
-      fprintf(output, "%d %d pixmap_size\n pixmap_loadmask\n", iw, ih);
+      fprintf(output, " %g %g %g %g %d %d pixmap_plot\n", x, y, w, h, iw, ih);
     }
     else {
       fprintf(output, "%g %g %g %g %i %i %s CII\n", x , y+h , w , -h , iw , ih, interpol);
@@ -291,38 +291,36 @@ void Fl_PostScript_Graphics_Driver::draw_scaled_image(Fl_Draw_Image_Cb call, voi
   uchar *curmask=mask;
 
   if(level2_mask) {
-    for (j = ih - 1; j >= 0; j--) {
-      curmask = mask + j * my/ih * ((mx+7)/8);
-	for(k=0; k < my/ih; k++) { // output mask data
-	  for (i=0; i < ((mx+7)/8); i++) {
-	    fprintf(output, "%.2x",swap_byte(*curmask));
-	    curmask++;
-	  }
-	  fprintf(output,"\n");
-	}
-      }
-    fprintf(output,"pop def\n\npixmap_loaddata\n");
     for (j = ih - 1; j >= 0; j--) { // output full image data
-      call(data,0,j,iw,rgbdata);
-      uchar *curdata=rgbdata;
-      for(i=0 ; i<iw ; i++) {
-	uchar r = curdata[0];
-	uchar g =  curdata[1];
-	uchar b =  curdata[2];
-	//if (!(i%40)) fprintf(output, "\n");
-	fprintf(output, "%.2x%.2x%.2x", r, g, b);
+      call(data, 0, j, iw, rgbdata);
+      uchar *curdata = rgbdata;
+      for (i=0 ; i<iw ; i++) {
+	if (!(i%20)) fputs("\n", output);
+	fprintf(output, "%.2x%.2x%.2x", curdata[0], curdata[1], curdata[2]);
 	curdata += D;
 	}
-      fprintf(output,"\n");
+      fputs("\n", output);
       }
-    fprintf(output,"pop def\n\n%g %g pixmap_plot\n", x, y); // draw the masked image
+    fputs(">\n", output);
+    for (j = ih - 1; j >= 0; j--) { // output mask data
+      curmask = mask + j * (my/ih) * ((mx+7)/8);
+      for (k=0; k < my/ih; k++) {
+	for (i=0; i < ((mx+7)/8); i++) {
+	  if (!(i%40)) fputs("\n", output);
+	  fprintf(output, "%.2x",swap_byte(*curmask));
+	  curmask++;
+	}
+	fputs("\n", output);
+      }
     }
+    fputs(">\n", output);
+  }
   else {
     for (j=0; j<ih;j++) {
       if(mask && lang_level_ > 2) {  // InterleaveType 2 mask data
-	for(k=0; k<my/ih;k++) { //for alpha pseudo-masking
+	for (k=0; k<my/ih;k++) { //for alpha pseudo-masking
 	  for (i=0; i<((mx+7)/8);i++) {
-	    if (!(i%40)) fprintf(output, "\n");
+	    if (!(i%40)) fputs("\n", output);
 	    fprintf(output, "%.2x",swap_byte(*curmask));
 	    curmask++;
 	  }
@@ -331,20 +329,20 @@ void Fl_PostScript_Graphics_Driver::draw_scaled_image(Fl_Draw_Image_Cb call, voi
       }
       call(data,0,j,iw,rgbdata);
       uchar *curdata=rgbdata;
-      for(i=0 ; i<iw ; i++) {
+      for (i=0 ; i<iw ; i++) {
 	uchar r = curdata[0];
 	uchar g =  curdata[1];
 	uchar b =  curdata[2];
 
-	if (!(i%40)) fprintf(output, "\n");
+	if (!(i%40)) 	fputs("\n", output);
 	fprintf(output, "%.2x%.2x%.2x", r, g, b);
 
 	curdata +=D;
       }
-      fprintf(output,"\n");
+      fputs("\n", output);
 
     }
-    fprintf(output,">\n");
+    fputs(">\n", output);
     }
 
   fprintf(output,"restore\n");
