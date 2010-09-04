@@ -40,9 +40,23 @@
 /**
  \brief PostScript graphical backend.
  *
- PostScript text output is presently implemented only for the latin character set.
- FLTK's standard fonts are output using PostScript's standard fonts: Helvetica, Courier, 
- Times (and their bold, oblique, italic variants), Symbol, ZapfDingbats.
+ PostScript text uses vectorial fonts for the latin alphabet only (exactly: all unicode
+ characters between U+0020 and U+017F, that is, ASCII, Latin-1 Supplement and Latin Extended-A charts)
+ plus a few other punctuation and symbols:
+  U+0192 (ƒ florin), U+02C6 (ˆ circumflex), U+02C7 (ˇ caron), 
+  U+02D8 (breve), U+02D9 (dotaccent), U+02DA (ring), U+02DB (ogonek), U+02DC (tilde), U+02DD (hungarumlaut),
+  U+2013 (– endash), U+2014 (— emdash), U+2018 (‘ quoteleft), U+2019 (’ quoteright), 
+  U+201A (‚ quotesinglbase), U+201C (“ quotedblleft), U+201D (” quotedblright), U+0201E („ quotedblbase), 
+  U+2020 († dagger), U+2021 (‡ daggerdbl), U+2022 (• bullet),
+  U+2026 (… ellipsis), U+2030 (‰ perthousand), U+2039 (‹ guilsinglleft), U+203A (› guilsinglright), 
+  U+2044 (⁄ fraction), U+20AC (€ Euro), U+2122 (™ trademark), 
+  U+2202 (∂ partialdiff), U+2206 (Δ Delta), U+2211 (∑ summation), U+0221A (√ radical),
+  U+221E (∞ infinity), U+2260 (≠ notequal), U+2264 (≤ lessequal), 
+  U+2265 (≥ greaterequal), 
+  U+25CA (◊ lozenge), U+FB01 (fi), U+FB02 (fl), U+F8FF ( apple symbol, Mac OS X only). 
+ <br> All other unicode characters are output as a bitmap.
+ <br> FLTK standard fonts are output using PostScript standard fonts: Helvetica, Courier, 
+ Times (and their bold, oblique, italic variants).
  */
 class Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 public: 

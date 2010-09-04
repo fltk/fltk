@@ -349,23 +349,87 @@ static const char * prolog_2 =  // prolog relevant only if lang_level >1
 "end\n"
 "IDD image GR} bind def\n"
 
-// procedure to modify a font to use ISOLatin1 encoding (iso-8859-1)
-// and to keep its name unchanged
-"/ToLatin1 { dup findfont dup length dict "
-"begin {def} forall /Encoding ISOLatin1Encoding def currentdict end definefont pop } def\n"
-// modify all fonts to use ISOLatin1 encoding
-"/Helvetica ToLatin1 "
-"/Helvetica-Bold ToLatin1 "
-"/Helvetica-Oblique ToLatin1 "
-"/Helvetica-BoldOblique ToLatin1 \n"
-"/Courier ToLatin1 "
-"/Courier-Bold ToLatin1 "
-"/Courier-Oblique ToLatin1 "
-"/Courier-BoldOblique ToLatin1 \n"
-"/Times ToLatin1 "
-"/Times-Bold ToLatin1 "
-"/Times-Italic ToLatin1 "
-"/Times-BoldItalic ToLatin1 \n"
+// Create a custom PostScript font derived from PostScript standard text fonts
+// The encoding of this custom font is as follows:
+// 0000-00FF  coincides with Unicode, that is to ASCII + Latin-1
+// 0100-017F  coincides with Unicode, that is to Latin Extended-A
+// 0180-01A6  encodes miscellaneous characters present in PostScript standard text fonts
+
+// use ISOLatin1Encoding for all text fonts
+"/ToISO { dup findfont dup length dict copy begin /Encoding ISOLatin1Encoding def currentdict end definefont pop } def\n"
+"/Helvetica ToISO /Helvetica-Bold ToISO /Helvetica-Oblique ToISO /Helvetica-BoldOblique ToISO \n"
+"/Courier ToISO /Courier-Bold ToISO /Courier-Oblique ToISO /Courier-BoldOblique ToISO \n"
+"/Times-Roman ToISO /Times-Bold ToISO /Times-Italic ToISO /Times-BoldItalic ToISO \n"
+
+// define LatinExtA, the encoding of Latin-extended-A + some additional characters
+// see http://www.adobe.com/devnet/opentype/archives/glyphlist.txt for their names
+"/LatinExtA \n"
+"[ "
+" /Amacron /amacron /Abreve /abreve /Aogonek /aogonek\n" // begin of Latin Extended-A code page
+" /Cacute  /cacute  /Ccircumflex  /ccircumflex  /Cdotaccent  /cdotaccent  /Ccaron  /ccaron \n"
+" /Dcaron  /dcaron   /Dcroat  /dcroat\n"
+" /Emacron  /emacron  /Ebreve  /ebreve  /Edotaccent  /edotaccent  /Eogonek  /eogonek  /Ecaron  /ecaron\n"
+" /Gcircumflex  /gcircumflex  /Gbreve  /gbreve  /Gdotaccent  /gdotaccent  /Gcommaaccent  /gcommaaccent \n"
+" /Hcircumflex /hcircumflex  /Hbar  /hbar  \n"
+" /Itilde  /itilde  /Imacron  /imacron  /Ibreve  /ibreve  /Iogonek  /iogonek /Idotaccent  /dotlessi  \n"
+" /IJ  /ij  /Jcircumflex  /jcircumflex\n"
+" /Kcommaaccent  /kcommaaccent  /kgreenlandic  \n"
+" /Lacute  /lacute  /Lcommaaccent  /lcommaaccent   /Lcaron  /lcaron  /Ldotaccent /ldotaccent   /Lslash  /lslash \n"
+" /Nacute  /nacute  /Ncommaaccent  /ncommaaccent  /Ncaron  /ncaron  /napostrophe  /Eng  /eng  \n"
+" /Omacron  /omacron /Obreve  /obreve  /Ohungarumlaut  /ohungarumlaut  /OE  /oe \n"
+" /Racute  /racute  /Rcommaaccent  /rcommaaccent  /Rcaron  /rcaron \n"
+" /Sacute /sacute  /Scircumflex  /scircumflex  /Scedilla /scedilla /Scaron  /scaron \n"
+" /Tcommaaccent  /tcommaaccent  /Tcaron  /tcaron  /Tbar  /tbar \n"
+" /Utilde  /utilde /Umacron /umacron  /Ubreve  /ubreve  /Uring  /uring  /Uhungarumlaut  /uhungarumlaut  /Uogonek /uogonek \n"
+" /Wcircumflex  /wcircumflex  /Ycircumflex  /ycircumflex  /Ydieresis \n"
+" /Zacute /zacute /Zdotaccent /zdotaccent /Zcaron /zcaron \n"
+" /longs \n" // end of Latin Extended-A code page
+" /florin  /circumflex  /caron  /breve  /dotaccent  /ring \n" // remaining characters from PostScript standard text fonts
+" /ogonek  /tilde  /hungarumlaut  /endash /emdash \n"
+" /quoteleft  /quoteright  /quotesinglbase  /quotedblleft  /quotedblright \n"
+" /quotedblbase  /dagger  /daggerdbl  /bullet  /ellipsis \n"
+" /perthousand  /guilsinglleft  /guilsinglright  /fraction  /Euro \n"
+" /trademark /partialdiff  /Delta /summation  /radical \n"
+" /infinity /notequal /lessequal /greaterequal /lozenge \n"
+" /fi /fl /apple \n"
+" ] def \n"
+// deal with alternative PostScript names of some characters
+" /mycharstrings /Helvetica findfont /CharStrings get def\n"
+" /PSname2 { dup mycharstrings exch known {LatinExtA 3 -1 roll 3 -1 roll put}{pop pop} ifelse } def \n"
+" 16#20 /Gdot PSname2 16#21 /gdot PSname2 16#30 /Idot PSname2 16#3F /Ldot PSname2 16#40 /ldot PSname2 16#7F /slong PSname2 \n"
+
+// proc that gives LatinExtA encoding to a font
+"/ToLatinExtA { findfont dup length dict copy begin /Encoding LatinExtA def currentdict end definefont pop } def\n"
+// create Ext-versions of standard fonts that use LatinExtA encoding \n"
+"/HelveticaExt /Helvetica ToLatinExtA \n"
+"/Helvetica-BoldExt /Helvetica-Bold ToLatinExtA /Helvetica-ObliqueExt /Helvetica-Oblique ToLatinExtA  \n"
+"/Helvetica-BoldObliqueExt /Helvetica-BoldOblique ToLatinExtA  \n"
+"/CourierExt /Courier ToLatinExtA /Courier-BoldExt /Courier-Bold ToLatinExtA  \n"
+"/Courier-ObliqueExt /Courier-Oblique ToLatinExtA /Courier-BoldObliqueExt /Courier-BoldOblique ToLatinExtA \n"
+"/Times-RomanExt /Times-Roman ToLatinExtA /Times-BoldExt /Times-Bold ToLatinExtA  \n"
+"/Times-ItalicExt /Times-Italic ToLatinExtA /Times-BoldItalicExt /Times-BoldItalic ToLatinExtA \n"
+
+// proc to create a Type 0 font with 2-byte encoding 
+// that merges a text font with ISO encoding + same font with LatinExtA encoding
+"/To2byte { 6 dict begin /FontType 0 def \n"
+"/FDepVector 3 1 roll findfont exch findfont 2 array astore def \n"
+"/FontMatrix [1  0  0  1  0  0] def /FMapType 6 def /Encoding [ 0 1 0 ] def\n"
+// 100: Hexa count of ISO array; A7: hexa count of LatinExtA array
+"/SubsVector < 01 0100 00A7 > def\n" 
+"currentdict end definefont pop } def\n"
+// create Type 0 versions of standard fonts
+"/Helvetica2B /HelveticaExt /Helvetica To2byte \n"
+"/Helvetica-Bold2B /Helvetica-BoldExt /Helvetica-Bold To2byte \n"
+"/Helvetica-Oblique2B /Helvetica-ObliqueExt /Helvetica-Oblique To2byte \n"
+"/Helvetica-BoldOblique2B /Helvetica-BoldObliqueExt /Helvetica-BoldOblique To2byte \n"
+"/Courier2B /CourierExt /Courier To2byte \n"
+"/Courier-Bold2B /Courier-BoldExt /Courier-Bold To2byte \n"
+"/Courier-Oblique2B /Courier-ObliqueExt /Courier-Oblique To2byte \n"
+"/Courier-BoldOblique2B /Courier-BoldObliqueExt /Courier-BoldOblique To2byte \n"
+"/Times-Roman2B /Times-RomanExt /Times-Roman To2byte \n"
+"/Times-Bold2B /Times-BoldExt /Times-Bold To2byte \n"
+"/Times-Italic2B /Times-ItalicExt /Times-Italic To2byte \n"
+"/Times-BoldItalic2B /Times-BoldItalicExt /Times-BoldItalic To2byte \n"
 ;
 
 static const char * prolog_2_pixmap =  // prolog relevant only if lang_level == 2 for pixmaps/masked color images
@@ -875,21 +939,21 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
 };
 
 static const char *_fontNames[] = {
-"Helvetica",
-"Helvetica-Bold",
-"Helvetica-Oblique",
-"Helvetica-BoldOblique",
-"Courier",
-"Courier-Bold",
-"Courier-Oblique",
-"Courier-BoldOblique",
-"Times",
-"Times-Bold",
-"Times-Italic",
-"Times-BoldItalic",
+"Helvetica2B", 
+"Helvetica-Bold2B",
+"Helvetica-Oblique2B",
+"Helvetica-BoldOblique2B",
+"Courier2B",
+"Courier-Bold2B",
+"Courier-Oblique2B",
+"Courier-BoldOblique2B",
+"Times-Roman2B",
+"Times-Bold2B",
+"Times-Italic2B",
+"Times-BoldItalic2B",
 "Symbol",
-"Courier",
-"Courier-Bold",
+"Courier2B",
+"Courier-Bold2B",
 "ZapfDingbats"
 };
 
@@ -929,28 +993,136 @@ void Fl_PostScript_Graphics_Driver::draw(int angle, const char *str, int n, int 
   fprintf(output, "GR\n");
 }
 
-// outputs in PostScript a UTF8 string replacing non-Latin1 characters by ?
-// and using the same width in points as on display
-void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, double x, double y) {
-  int len;
-  if (!n || !str || !*str) return;
-  const char *last = str + n;
-  // compute display width of string
-  fprintf(output,"%g (", fl_width(str, n));
-  while (str < last) {
-    // Extract each unicode character of string.
-    // Until 0xFF, UTF codes coincide with iso-Latin1 (iso-8859-1)
-    unsigned utf = fl_utf8decode(str, last, &len);
-    str += len;
-    if (utf > 0xFF) {
-      utf = '?'; // replace non Latin-1 unicodes by ?
+
+// computes the mask for the RGB image img of all pixels with color != bg
+static uchar *calc_mask(uchar *img, int w, int h, Fl_Color bg)
+{
+  uchar red, green, blue, r, g, b;
+  uchar bit, byte, *q;
+  Fl::get_color(bg, red, green, blue);
+  int W = (w+7)/8; // width of mask
+  uchar* mask = new uchar[W * h];
+  q = mask;
+  while (h-- > 0) { // for each row
+    bit = 0x80; // byte with last bit set
+    byte = 0; // next mask byte to compute
+    for (int j = 0; j < w; j++) { // for each column
+      r = *img++; // the pixel color components
+      g = *img++;
+      b = *img++;
+      // if pixel doesn't have bg color, put it in mask
+      if (r != red || g != green || b != blue) byte |= bit;
+      bit = bit>>1; // shift bit one step to the right
+      if (bit == 0) { // single set bit has fallen out
+	*q++ = byte; // enter byte in mask
+	byte = 0; // reset next mask byte to zero
+	bit = 0x80; // and this byte
+	}
       }
-    else if (utf == '(' || utf == ')' || utf == '\\') {
-      putc('\\' , output); // these chars need be escaped
-     }
-    putc(utf, output); // output the latin character
+    if (bit != 0x80) *q++ = byte; // enter last columns' byte in mask
+    }
+  return mask;
+}
+
+// write to PostScript a bitmap image of a UTF8 string
+static void transformed_draw_extra(const char* str, int n, double x, double y, int w, FILE *output) {
+  const float scale = 3; // scale for bitmask computation
+  Fl_Fontsize old_size = fl_size();
+  fl_font(fl_font(), (Fl_Fontsize)(scale * old_size) );
+  w =  (int)(w *scale + 0.5);
+  int h = fl_height();
+  // create an offscreen image of the string
+  Fl_Color text_color = fl_color();
+  Fl_Color bg_color = fl_contrast(FL_WHITE, text_color);
+  Fl_Offscreen off = fl_create_offscreen(w+2, (int)(h+3*scale) );
+  fl_begin_offscreen(off);
+  fl_color(bg_color);
+  // color offscreen background with a shade contrasting with the text color
+  fl_rectf(0, 0, w+2, (int)(h+3*scale) );
+  fl_color(text_color);
+  fl_draw(str, n, 1, (int)(h * 0.8) ); // draw string in offscreen
+  // read (most of) the offscreen image
+  uchar *img = fl_read_image(NULL, 1, 1, w, h, 0);
+  fl_end_offscreen();
+  fl_font(fl_font(), old_size);
+  fl_delete_offscreen(off);
+  // compute the mask of what is not the background
+  uchar *mask = calc_mask(img, w, h, bg_color);
+  delete img;
+  // write the string image to PostScript as a scaled bitmask
+  fprintf(output, "%g %g %g %g %d %d MI\n", x, y - h*0.77/scale, w/scale, h/scale, w, h);
+  uchar *di;
+  int wmask = (w+7)/8;
+  for (int j = h - 1; j >= 0; j--){
+    di = mask + j * wmask;
+    for (int i = 0; i < wmask; i++){
+      //if (!(i%80)) fprintf(output, "\n"); // don't have lines longer than 255 chars
+      fprintf(output, "%2.2x", *di );
+      di++;
+    }
+    fprintf(output,"\n");
   }
-  fprintf(output, ") %g %g show_pos_width\n", x, y);
+  fprintf(output,">\n");
+  delete mask;
+}
+
+static int is_in_table(unsigned utf) {
+  unsigned i;
+  static unsigned extra_table_roman[] = { // unicodes/*names*/ of other characters from PostScript standard fonts
+    0x192/*florin*/, 0x2C6/*circumflex*/, 0x2C7/*caron*/, 
+    0x2D8/*breve*/, 0x2D9/*dotaccent*/, 0x2DA/*ring*/, 0x2DB/*ogonek*/, 0x2DC/*tilde*/, 0x2DD/*hungarumlaut*/,
+    0x2013/*endash*/, 0x2014/*emdash*/, 0x2018/*quoteleft*/, 0x2019/*quoteright*/, 
+    0x201A/*quotesinglbase*/, 0x201C/*quotedblleft*/, 0x201D/*quotedblright*/, 0x201E/*quotedblbase*/, 
+    0x2020/*dagger*/, 0x2021/*daggerdbl*/, 0x2022/*bullet*/,
+    0x2026/*ellipsis*/, 0x2030/*perthousand*/, 0x2039/*guilsinglleft*/, 0x203A/*guilsinglright*/, 
+    0x2044/*fraction*/, 0x20AC/*Euro*/, 0x2122/*trademark*/, 
+    0x2202/*partialdiff*/, 0x2206/*Delta*/, 0x2211/*summation*/, 0x221A/*radical*/,
+    0x221E/*infinity*/, 0x2260/*notequal*/, 0x2264/*lessequal*/, 
+    0x2265/*greaterequal*/, 
+    0x25CA/*lozenge*/, 0xFB01/*fi*/, 0xFB02/*fl*/,
+    0xF8FF/*apple*/
+  };
+  for ( i = 0; i < sizeof(extra_table_roman)/sizeof(int); i++) {
+    if (extra_table_roman[i] == utf) return i + 0x180;
+  }
+  return 0;
+}
+
+// outputs in PostScript a UTF8 string using the same width in points as on display
+void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, double x, double y) {
+  int len, code;
+  if (!n || !str || !*str) return;
+  // compute display width of string
+  int width = (int)fl_width(str, n);
+  if (width == 0) return;
+  fprintf(output, "%d <", width);
+  // transforms UTF8 encoding to our custom PostScript encoding as follows:
+  // extract each unicode character
+  // if unicode <= 0x17F, unicode and PostScript codes are identical
+  // if unicode is one of the values listed in extra_table_roman above
+  //    its PostScript code is 0x180 + the character's rank in extra_table_roman
+  // if unicode is something else, draw all string as bitmap image
+
+  const char *last = str + n;
+  const char *str2 = str;
+  while (str2 < last) {
+    // Extract each unicode character of string.
+    unsigned utf = fl_utf8decode(str2, last, &len);
+    str2 += len;
+    if (utf <= 0x17F) { // until Latin Extended-A
+      ;
+      }
+    else if ( (code = is_in_table(utf)) != 0) { // other handled characters
+      utf = code;
+      }
+    else { // unhandled character: draw all string as bitmap image
+      fprintf(output, "> pop pop\n"); // close and ignore the opened hex string
+      transformed_draw_extra(str, n, x, y, width, output);
+      return;
+    }
+    fprintf(output, "%4.4X", utf);
+  }
+  fprintf(output, "> %g %g show_pos_width\n", x, y);
 }
 
 struct matrix {double a, b, c, d, x, y;};
