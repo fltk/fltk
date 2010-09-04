@@ -270,7 +270,7 @@ static const char * prolog =
 
 "/MI { GS /py exch def /px exch def /sy exch def /sx exch def \n"
 "translate \n"
-"sx sy scale px py false \n"
+"sx sy scale px py true \n"
 "[ px 0 0 py neg 0 py ]\n"
 "currentfile /ASCIIHexDecode filter\n"
 "imagemask GR\n"

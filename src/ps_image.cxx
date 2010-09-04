@@ -517,7 +517,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
   for (j=0; j<HP; j++){
     for (i=0; i<xx; i++){
       if (!(i%80)) fprintf(output, "\n"); // not have lines longer than 255 chars
-      fprintf(output, "%.2x",swap_byte(~(*di)));
+      fprintf(output, "%.2x", swap_byte(*di) );
       di++;
     }
     fprintf(output,"\n");
