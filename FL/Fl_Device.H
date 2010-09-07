@@ -305,6 +305,7 @@ public:
  */
 class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 public:
+  /** \brief The constructor. */
   Fl_Quartz_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -320,6 +321,7 @@ public:
  */
 class Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
 public:
+  /** \brief The constructor. */
   Fl_GDI_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -335,6 +337,7 @@ public:
  */
 class Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
 public:
+  /** \brief The constructor. */
   Fl_Xlib_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
