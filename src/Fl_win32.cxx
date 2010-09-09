@@ -1400,14 +1400,16 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     first_class_name = class_name;
   }
 
-  const wchar_t* class_namew = L"FLTK";
-  const wchar_t* message_namew = L"FLTK::ThreadWakeup";
-  if (!class_name_list.has_name(class_name)) {
-    WNDCLASSEX wc;
-    WNDCLASSEXW wcw;
+  wchar_t class_namew[100]; // (limited) buffer for Windows class name
 
-    memset(&wc, 0, sizeof(wc));
-    wc.cbSize = sizeof(WNDCLASSEX);
+  // convert UTF-8 class_name to wchar_t for RegisterClassExW and CreateWindowExW
+
+  fl_utf8toUtf16(class_name,strlen(class_name),		// in
+		 (unsigned short*)class_namew,		// out
+		 sizeof(class_namew)/sizeof(wchar_t));	// max. size
+
+  if (!class_name_list.has_name(class_name)) {
+    WNDCLASSEXW wcw;
     memset(&wcw, 0, sizeof(wcw));
     wcw.cbSize = sizeof(WNDCLASSEXW);
 
@@ -1428,13 +1430,11 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     wcw.hbrBackground = NULL;
     wcw.lpszMenuName = NULL;
     wcw.lpszClassName = class_namew;
-    wcw.cbSize = sizeof(WNDCLASSEXW);
     RegisterClassExW(&wcw);
-    class_name_list.add_name((const char *)class_namew);
+    class_name_list.add_name(class_name);
   }
 
-  // const char* message_name = "FLTK::ThreadWakeup";
-  // if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessage(message_name);
+  const wchar_t* message_namew = L"FLTK::ThreadWakeup";
   if (!fl_wake_msg) fl_wake_msg = RegisterWindowMessageW(message_namew);
 
   HWND parent;
