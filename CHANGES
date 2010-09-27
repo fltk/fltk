@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.3.0
 
+	- Fixed unbalanced Windows OleInitialize/OleUnitialize calls
+	  when loading/unloading the FLTK dll (STR #2417)
 	- Fixed X11/XDBE double buffering (STR #2152, #2197)
 	- Added new label and image alignments (STR #2269)
 	- Added documentation for event delivery (STR #1983)

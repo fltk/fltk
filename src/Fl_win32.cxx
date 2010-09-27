@@ -1554,14 +1554,10 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   // Drag-n-drop requires GCC 3.x or a non-GNU compiler...
 #if !defined(__GNUC__) || __GNUC__ >= 3
   // Register all windows for potential drag'n'drop operations
-  static char oleInitialized = 0;
-  if (!oleInitialized) { OleInitialize(0L); oleInitialized=1; }
-
+  fl_OleInitialize();
   RegisterDragDrop(x->xid, flIDropTarget);
+
   if (!fl_aimm) {
-    static char been_here = 0;
-    if (!been_here && !oleInitialized) CoInitialize(NULL);
-    been_here = 1;
     CoCreateInstance(CLSID_CActiveIMM, NULL, CLSCTX_INPROC_SERVER,
 		     IID_IActiveIMMApp, (void**) &fl_aimm);
     if (fl_aimm) {

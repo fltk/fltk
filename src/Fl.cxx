@@ -484,13 +484,35 @@ int Fl::run() {
 }
 
 #ifdef WIN32
+
+// Function to initialize COM/OLE for usage. This must be done only once.
+// We define a flag to register whether we called it:
+static char oleInitialized = 0;
+
+// This calls the Windows function OleInitialize() exactly once.
+void fl_OleInitialize() {
+  if (!oleInitialized) {
+    OleInitialize(0L);
+    oleInitialized = 1;
+  }
+}
+
+// This calls the Windows function OleUninitialize() only, if
+// OleInitialize has been called before.
+void fl_OleUninitialize() {
+  if (oleInitialized) {
+    OleUninitialize();
+    oleInitialized = 0;
+  }
+}
+
 class Fl_Win32_At_Exit {
 public:
   Fl_Win32_At_Exit() { }
   ~Fl_Win32_At_Exit() {
     fl_free_fonts();        // do some WIN32 cleanup
     fl_cleanup_pens();
-    OleUninitialize();
+    fl_OleUninitialize();
     fl_brush_action(1);
     fl_cleanup_dc_list();
   }

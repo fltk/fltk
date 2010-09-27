@@ -47,6 +47,8 @@ char *wchartoutf8(LPCWSTR in);  //MG
 #define RBRACKET_CHR	']'
 #define MAXFILTERS	80
 
+void fl_OleInitialize();	// in Fl.cxx (Windows only)
+
 // STATIC: PRINT WINDOWS 'DOUBLE NULL' STRING (DEBUG)
 static void dnullprint(char *wp) {
   if ( ! wp ) return;
@@ -464,7 +466,8 @@ int CALLBACK Fl_Native_File_Chooser::Dir_CB(HWND win, UINT msg, LPARAM param, LP
 
 // SHOW DIRECTORY BROWSER
 int Fl_Native_File_Chooser::showdir() {
-  OleInitialize(NULL);		// init needed by BIF_USENEWUI
+  // initialize OLE only once
+  fl_OleInitialize();		// init needed by BIF_USENEWUI
   ClearBINF();
   clear_pathnames();
   // PARENT WINDOW
