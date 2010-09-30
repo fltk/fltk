@@ -137,11 +137,17 @@ const char *Fl_Preferences::newUUID()
     b[5] = (unsigned char)(r>>8);
     b[6] = (unsigned char)(r>>16);
     b[7] = (unsigned char)(r>>24);
-    unsigned int a = (unsigned int)&t; // four more bytes
-    b[8] = (unsigned char)a;
-    b[9] = (unsigned char)(a>>8);
-    b[10] = (unsigned char)(a>>16);
-    b[11] = (unsigned char)(a>>24);
+    // Now we try to find 4 more "random" bytes. We extract the
+    // lower 4 bytes from the address of t - it is created on the
+    // stack so *might* be in a different place each time...
+    // This is now done via a union to make it compile OK on 64-bit systems.
+    union { void *pv; unsigned char a[sizeof(void*)]; } v;
+    v.pv = (void *)(&t);
+	// NOTE: This assume that all WinXX systems are little-endian
+    b[8] = v.a[0];
+    b[9] = v.a[1];
+    b[10] = v.a[2];
+    b[11] = v.a[3];
     TCHAR name[MAX_COMPUTERNAME_LENGTH + 1]; // only used to make last four bytes
     DWORD nSize = MAX_COMPUTERNAME_LENGTH + 1;
     // GetComputerName() does not depend on any extra libs, and returns something
@@ -156,7 +162,9 @@ const char *Fl_Preferences::newUUID()
             b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
   }
 #else
-#warning Unix implementation incomplete!
+# if defined(__GNUC__)
+# warning Unix implementation of Fl_Preferences::newUUID() incomplete!
+# endif /*__GNUC__*/
   // #include <uuid/uuid.h>
   // void uuid_generate(uuid_t out);
   unsigned char b[16];
@@ -175,6 +183,24 @@ const char *Fl_Preferences::newUUID()
   b[9] = (unsigned char)(a>>8);
   b[10] = (unsigned char)(a>>16);
   b[11] = (unsigned char)(a>>24);
+  // Now we try to find 4 more "random" bytes. We extract the
+  // lower 4 bytes from the address of t - it is created on the
+  // stack so *might* be in a different place each time...
+  // This is now done via a union to make it compile OK on 64-bit systems.
+  union { void *pv; unsigned char a[sizeof(void*)]; } v;
+  v.pv = (void *)(&t);
+  // NOTE: May need to handle big- or little-endian systems here
+# if WORDS_BIGENDIAN
+  b[8] = v.a[sizeof(void*) - 1];
+  b[9] = v.a[sizeof(void*) - 2];
+  b[10] = v.a[sizeof(void*) - 3];
+  b[11] = v.a[sizeof(void*) - 4];
+# else /* data ordered for a little-endian system */
+  b[8] = v.a[0];
+  b[9] = v.a[1];
+  b[10] = v.a[2];
+  b[11] = v.a[3];
+# endif
   char name[80]; // last four bytes
   gethostname(name, 79);
   memcpy(b+12, name, 4);
