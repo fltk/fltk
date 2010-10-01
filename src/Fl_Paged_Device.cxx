@@ -149,7 +149,8 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   }  
   save_front->show();
   current->set_current();
-  for ( int i = 0, offset = 0; i < count; i++, offset += slice) {
+  offset = 0;
+  for ( int i = 0; i < count; i++, offset += slice) {
     width = slice; 
     if (offset + width > w) width = w - offset;
     fl_draw_image(image_data[i], delta_x + offset, delta_y, width, h, 3);

@@ -25,8 +25,9 @@
  *     http://www.fltk.org/str.php
  */
 
-// Xcode on OS X includes files by recursing down into directories.
-// This code catches the cycle and directly includes the required file.
+/* Xcode on OS X includes files by recursing down into directories.
+ * This code catches the cycle and directly includes the required file.
+ */
 #ifdef fl_dirent_h_cyclic_include 
 #  include "/usr/include/dirent.h"
 #endif
