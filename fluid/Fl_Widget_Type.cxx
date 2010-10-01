@@ -1176,7 +1176,7 @@ void align_position_cb(Fl_Choice *i, void *v) {
     Fl_Menu_Item *mi = (Fl_Menu_Item*)i->menu();
     Fl_Align b = current_widget->o->align() & FL_ALIGN_POSITION_MASK;
     for (;mi->text;mi++) {
-      if (mi->argument()==b)
+      if ((Fl_Align)(mi->argument())==b)
         i->value(mi);
     }
   } else {
@@ -1205,7 +1205,7 @@ void align_text_image_cb(Fl_Choice *i, void *v) {
     Fl_Menu_Item *mi = (Fl_Menu_Item*)i->menu();
     Fl_Align b = current_widget->o->align() & FL_ALIGN_IMAGE_MASK;
     for (;mi->text;mi++) {
-      if (mi->argument()==b)
+      if ((Fl_Align)(mi->argument())==b)
         i->value(mi);
     }
   } else {
