@@ -1624,7 +1624,7 @@ static void get_window_frame_sizes(int &bx, int &by, int &bt) {
  * smallest x ccordinate in screen space
  */
 int Fl::x() {
-  return [[NSScreen mainScreen] frame].origin.x;
+  return [[NSScreen mainScreen] visibleFrame].origin.x;
 }
 
 
@@ -1639,7 +1639,7 @@ int Fl::y() {
 
 
 /*
- * screen width (single monitor!?)
+ * screen width
  */
 int Fl::w() {
   return [[NSScreen mainScreen] visibleFrame].size.width;
@@ -1647,12 +1647,10 @@ int Fl::w() {
 
 
 /*
- * screen height (single monitor!?)
+ * screen height
  */
 int Fl::h() {
-  int bx, by, bt;
-  get_window_frame_sizes(bx, by, bt);
-  return [[NSScreen mainScreen] frame].size.height - bt;
+  return [[NSScreen mainScreen] visibleFrame].size.height;
 }
 
 
