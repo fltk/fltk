@@ -80,7 +80,7 @@ class ScrollBarSizeTest : public Fl_Group {
     }
     void slide_cb2(Fl_Value_Slider *in) {
 	const char *label = in->label();
-	int val = in->value();
+	int val = int(in->value());
 	//fprintf(stderr, "VAL='%d'\n",val);
 	if ( strcmp(label,"A: Scroll Size") == 0 ) {
 	    brow_a->scrollbar_size(val);
