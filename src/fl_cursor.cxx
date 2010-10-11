@@ -176,7 +176,7 @@ CGContextRef CreateWatchImage(void)
   fl_color(FL_WHITE);
   fl_circle(0, 0, r+1);
   fl_color(FL_BLACK);
-  fl_rectf(-r*0.7, -r*1.7, 1.4*r, 3.4*r);
+  fl_rectf(int(-r*0.7), int(-r*1.7), int(1.4*r), int(3.4*r));
   fl_rectf(r-1, -1, 3, 3);
   fl_color(FL_WHITE);
   fl_pie(-r, -r, 2*r, 2*r, 0, 360);
