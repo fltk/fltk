@@ -66,6 +66,10 @@ const char* copyright =
 #include <stdarg.h>
 #include <time.h>
 
+#ifdef VT100
+#include <ctype.h>	// toupper
+#endif
+
 ////////////////////////////////////////////////////////////////
 // The algorithim:
 
@@ -732,7 +736,7 @@ node *getusermove(void) {
   else
     printf("\033[1mCommand?\033[0m ");
   abortflag = 0;
-  if (!gets(line)) {
+  if (!fgets(line, sizeof(line), stdin)) {
     putchar('\n');
     if (feof(stdin)) fixexit(0);
     return 0;
