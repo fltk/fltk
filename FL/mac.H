@@ -36,7 +36,6 @@
 
 // Standard MacOS Carbon API includes...
 #include <Carbon/Carbon.h>
-#include <config.h>
 
 #ifndef MAC_OS_X_VERSION_10_3
 #define MAC_OS_X_VERSION_10_3 1030

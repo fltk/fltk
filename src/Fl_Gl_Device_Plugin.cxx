@@ -25,6 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <config.h>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Gl_Window.H>
 #include "Fl_Gl_Choice.H"
