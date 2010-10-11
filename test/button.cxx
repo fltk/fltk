@@ -43,7 +43,7 @@ void exitcb(Fl_Widget *, void *) {
 // test Fl::add_fd()...
 void stdin_cb(int, void*) {
   char buf[1000];
-  gets(buf);
+  fgets(buf, sizeof(buf), stdin);
   printf("stdin callback\n");
 }
 #endif
