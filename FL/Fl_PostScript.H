@@ -243,11 +243,7 @@ class Clip {
   void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0){draw_scaled_image_mono(d,x,y,w,h,w,h,delta,ld);};
   void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3){draw_scaled_image(call,data, x, y, w, h, w, h, delta);};
   void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1){draw_scaled_image_mono(call, data, x, y, w, h, w, h, delta);};
-  
-  void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
-  void draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
-    
+      
 public:
   void page_policy(int p);
   int page_policy(){return page_policy_;};
@@ -265,6 +261,9 @@ public:
   void place(double x, double y, double tx, double ty, double scale = 1);
 #endif // FL_DOXYGEN
   Fl_PostScript_Graphics_Driver();
+  void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
   ~Fl_PostScript_Graphics_Driver();
 };
 
