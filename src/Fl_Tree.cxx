@@ -304,8 +304,10 @@ Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
   }
 }
 
-/// Set the item currently in focus. Handles calling redraw()
-/// as needed to update the focus box.
+/// Set the item that currently should have keyboard focus.
+/// Handles calling redraw() to update the focus box (if its visible).
+///
+/// \param[in] item The item that should take focus. If NULL, none will have focus.
 ///
 void Fl_Tree::set_item_focus(Fl_Tree_Item *item) {
   if ( _item_focus != item ) {		// changed?
