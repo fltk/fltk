@@ -32,13 +32,16 @@
 
 /** Clear all but the scrollbars... */
 void Fl_Scroll::clear() {
-  for (int i=children() - 1; i >= 0; i --) {
-    Fl_Widget* o = child(i);
-    if (o != &hscrollbar && o != &scrollbar) {
-      remove(o);
-      delete o;
-    }
-  }
+  // Note: the scrollbars are removed from the group before calling
+  // Fl_Group::clear() to take advantage of the optimized widget removal
+  // and deletion. Finally they are added to Fl_Scroll's group again. This
+  // is MUCH faster than removing the widgets one by one (STR #2409).
+
+  remove(scrollbar);
+  remove(hscrollbar);
+  Fl_Group::clear();
+  add(hscrollbar);
+  add(scrollbar);
 }
 
 /** Insure the scrollbars are the last children */

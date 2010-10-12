@@ -387,16 +387,51 @@ void Fl_Group::clear() {
   savedfocus_ = 0;
   resizable_ = this;
   init_sizes();
+
+  // we must change the Fl::pushed() widget, if it is one of
+  // the group's children. Otherwise fl_fix_focus() would send
+  // lots of events to children that are about to be deleted
+  // anyway.
+
+  Fl_Widget *pushed = Fl::pushed();	// save pushed() widget
+  if (contains(pushed)) pushed = this;	// set it to be the group, if it's a child
+  Fl::pushed(this);			// for fl_fix_focus etc.
+
   // okay, now it is safe to destroy the children:
-  while (children_) {
-    Fl_Widget* w = child(0);	// *first* child widget
-    if (w->parent() == this) {	// should always be true
-      remove(0);		// remove child widget first
-      delete w;			// then delete it
-    } else {			// this should never happen !
-      remove(0);		// remove it only
+
+#define REVERSE_CHILDREN
+#ifdef  REVERSE_CHILDREN
+  // Reverse the order of the children. Doing this and deleting
+  // always the last child is much faster than the other way around.
+  if (children_ > 1) {
+    Fl_Widget *temp;
+    Fl_Widget **a = (Fl_Widget**)array();
+    for (int i=0,j=children_-1; i<children_/2; i++,j--) {
+      temp = a[i];
+      a[i] = a[j];
+      a[j] = temp;
     }
   }
+#endif // REVERSE_CHILDREN
+
+  while (children_) {			// delete all children
+    int idx = children_-1;		// last child's index
+    Fl_Widget* w = child(idx);		// last child widget
+    if (w->parent()==this) {		// should always be true
+      if (children_>2) {		// optimized removal
+        w->parent_ = 0;			// reset child's parent
+        children_--;			// update counter
+      } else {				// slow removal
+        remove(idx);
+      }
+      delete w;				// delete the child
+    } else {				// should never happen
+      remove(idx);			// remove it anyway
+    }
+  }
+
+  if (pushed != this) Fl::pushed(pushed); // reset pushed() widget
+
 }
 
 /**
