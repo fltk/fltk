@@ -143,7 +143,6 @@ protected:
   Fl_Scrollbar *_vscroll;
   
 protected:
-  void set_item_focus(Fl_Tree_Item *o);
   void item_clicked(Fl_Tree_Item* val);
   /// Do the callback for the item, setting the item and reason
   void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason) {
@@ -564,6 +563,7 @@ public:
   int deselect_all(Fl_Tree_Item *item=0, int docallback=1);
   int select_only(Fl_Tree_Item *selitem, int docallback=1);
   int select_all(Fl_Tree_Item *item=0, int docallback=1);
+  void set_item_focus(Fl_Tree_Item *o);
   
   /// See if the specified \p item is selected.
   ///
