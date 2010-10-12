@@ -67,6 +67,15 @@ void Fl_Double_Window::show() {
 
 static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
+/** \addtogroup fl_drawings
+ @{
+ */
+/** Copy a rectangular area of the given offscreen buffer into the current drawing destination.
+ \param x,y	position where to draw the copied rectangle
+ \param w,h	size of the copied rectangle
+ \param pixmap  offscreen buffer containing the rectangle to copy
+ \param srcx,srcy origin in offscreen buffer of rectangle to copy
+ */
 void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
   if( fl_graphics_driver == fl_display_device->driver()) {
     fl_copy_offscreen_to_display(x, y, w, h, pixmap, srcx, srcy);
@@ -79,6 +88,7 @@ void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx
     delete img;
   }
 }
+/** @} */
 
 #if defined(USE_X11)
 
@@ -184,19 +194,10 @@ void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int src
 
 extern void fl_restore_clip();
 
-#elif defined(__APPLE_QUARTZ__)
+#elif defined(__APPLE_QUARTZ__) || defined(FL_DOXYGEN)
 
 char fl_can_do_alpha_blending() {
   return 1;
-}
-
-Fl_Offscreen fl_create_offscreen(int w, int h) {
-  void *data = calloc(w*h,4);
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  CGContextRef ctx = CGBitmapContextCreate(
-    data, w, h, 8, w*4, lut, kCGImageAlphaNoneSkipLast);
-  CGColorSpaceRelease(lut);
-  return (Fl_Offscreen)ctx;
 }
 
 Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
@@ -204,6 +205,24 @@ Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   CGContextRef ctx = CGBitmapContextCreate(
     data, w, h, 8, w*4, lut, kCGImageAlphaPremultipliedLast);
+  CGColorSpaceRelease(lut);
+  return (Fl_Offscreen)ctx;
+}
+
+/** \addtogroup fl_drawings
+ @{
+ */
+
+/** 
+  Creation of an offscreen graphics buffer.
+ \param w,h     width and height in pixels of the buffer.
+ \return    the created graphics buffer.
+ */
+Fl_Offscreen fl_create_offscreen(int w, int h) {
+  void *data = calloc(w*h,4);
+  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+  CGContextRef ctx = CGBitmapContextCreate(
+    data, w, h, 8, w*4, lut, kCGImageAlphaNoneSkipLast);
   CGColorSpaceRelease(lut);
   return (Fl_Offscreen)ctx;
 }
@@ -238,6 +257,9 @@ static void fl_copy_offscreen_to_display(int x,int y,int w,int h,Fl_Offscreen os
   CGDataProviderRelease(src_bytes);
 }
 
+/**  Deletion of an offscreen graphics buffer.
+ \param ctx     the buffer to be deleted.
+ */
 void fl_delete_offscreen(Fl_Offscreen ctx) {
   if (!ctx) return;
   void *data = CGBitmapContextGetData((CGContextRef)ctx);
@@ -252,6 +274,9 @@ static CGContextRef stack_gc[stack_max];
 static Window stack_window[stack_max];
 static Fl_Surface_Device *_ss;
 
+/**  Send all subsequent drawing commands to this offscreen buffer.
+ \param ctx     the offscreen buffer.
+ */
 void fl_begin_offscreen(Fl_Offscreen ctx) {
   _ss = fl_surface; 
   fl_display_device->set_current();
@@ -268,6 +293,8 @@ void fl_begin_offscreen(Fl_Offscreen ctx) {
   fl_push_no_clip();
 }
 
+/** Quit sending drawing commands to the current offscreen buffer.
+ */
 void fl_end_offscreen() {
   Fl_X::q_release_context();
   fl_pop_clip();
@@ -281,6 +308,8 @@ void fl_end_offscreen() {
   }
   _ss->set_current();
 }
+
+/** @} */
 
 extern void fl_restore_clip();
 

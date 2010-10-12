@@ -925,15 +925,13 @@ This is the same as doing \p draw(x,y,img->w(),img->h(),0,0).
 
 \subsection ssect_Offscreen Offscreen Drawing
 
-\todo
-Doxygenate the offscreen drawing functions.
-
 Sometimes it can be very useful to generate a complex drawing
 in memory first and copy it to the screen at a later point in 
 time. This technique can significantly reduce the amount of
-repeated drawing. Fl_Double_Window uses offscreen rendering
+repeated drawing. Offscreen drawing functions are declared in <FL/x.H>.
+Fl_Double_Window uses offscreen rendering
 to avoid flickering on systems that don't support 
-double-buffering natively.
+double-buffering natively. 
 
 Fl_Offscreen fl_create_offscreen(int w, int h)
 
@@ -957,8 +955,7 @@ void fl_end_offscreen()
 \par
 Quit sending drawing commands to this offscreen buffer.
 
-void fl_copy_offscreen(int x, int y, int w, int h,
-Fl_Offscreen osrc, int srcx, int srcy)
+void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen osrc, int srcx, int srcy)
 
 \par
 Copy a rectangular area of the size \p w*h from \p srcx,srcy

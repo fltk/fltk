@@ -779,7 +779,9 @@ public:
 
   /**   @} */
  /** \defgroup  fl_drawings  Drawing functions
-	fl global graphics and gui drawing functions
+  FLTK global graphics and GUI drawing functions.
+  These functions are declared in <FL/fl_draw.H>, 
+  and in <FL/x.H> for offscreen buffer-related ones.
      @{ */
   // <Hack to re-order the 'Drawing functions' group>
  /** @} */
