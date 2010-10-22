@@ -1176,7 +1176,7 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
         return 1;
       }
       // FIXME: character is ucs-4
-    } while ((matchCase ? character(bp++) == *sp++ :
+    } while ((matchCase ? character(bp++) == (unsigned int)*sp++ :
               toupper(character(bp++)) == toupper(*sp++))
              && bp < length());
     startPos++;
@@ -1201,7 +1201,7 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
         return 1;
       }
       // FIXME: character is ucs-4
-    } while ((matchCase ? character(bp--) == *sp-- :
+    } while ((matchCase ? character(bp--) == (unsigned int)*sp-- :
               toupper(character(bp--)) == toupper(*sp--))
              && bp >= 0);
     startPos--;
