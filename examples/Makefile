@@ -1,6 +1,7 @@
 include ../makeinclude
 
 ALL = howto-add_fd-and-popen$(EXEEXT) \
+      howto-parse-args$(EXEEXT) \
       tabs-simple$(EXEEXT) \
       tree-simple$(EXEEXT) \
       wizard-simple$(EXEEXT)
