@@ -176,9 +176,9 @@ public:
   static double version();
 
   // argument parsers:
-  static int arg(int, char**, int&);
-  static int args(int, char**, int&, Fl_Args_Handler ah = 0);
-  static void args(int, char**);
+  static int arg(int argc, char **argv, int& i);
+  static int args(int argc, char **argv, int& i, Fl_Args_Handler cb = 0);
+  static void args(int argc, char **argv);
   /**
     Usage string displayed if Fl::args() detects an invalid argument.
     This may be changed to point to customized text at run-time.
