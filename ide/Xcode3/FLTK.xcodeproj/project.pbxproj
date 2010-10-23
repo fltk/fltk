@@ -4247,6 +4247,7 @@
 		C7C5A11DD7448F61DFC69398 /* glpuzzle.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glpuzzle.cxx; path = ../../test/glpuzzle.cxx; sourceTree = SOURCE_ROOT; };
 		C84F99F5AC8C6517F45055B0 /* jdmerge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmerge.c; path = ../../jpeg/jdmerge.c; sourceTree = SOURCE_ROOT; };
 		C8AE10A8DDF53B8B27E3215A /* Fl_Choice.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Choice.H; path = ../../FL/Fl_Choice.H; sourceTree = SOURCE_ROOT; };
+		C9EDD143127338F600ADB21C /* README.OSX.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.OSX.txt; path = ../../README.OSX.txt; sourceTree = SOURCE_ROOT; };
 		C9F1464F0E6A4DCD77AF72B8 /* Fl_Function_Type.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Function_Type.cxx; path = ../../fluid/Fl_Function_Type.cxx; sourceTree = SOURCE_ROOT; };
 		CAEC632CEFC2CA7592EF9D74 /* image.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = image.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB23A4CE90D5A89FA2640A78 /* label.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = label.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5399,6 +5400,7 @@
 		2000E0C1AD91ACA63811D339 = {
 			isa = PBXGroup;
 			children = (
+				C9EDD143127338F600ADB21C /* README.OSX.txt */,
 				5D444464FCF5714805936107 /* Applications */,
 				188555DBC553F66588792C6B /* Frameworks */,
 				015D2BD894993395B263D6C0 /* Tests */,
