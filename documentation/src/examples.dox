@@ -2,8 +2,6 @@
 
  \page	examples	Example Source Code
 
-\par March 19, 2005
-
 The FLTK distribution contains over 60 sample applications written
 in, or ported to, FLTK. If the FLTK archive you received does not
 contain a 'test' directory, you can download the complete FLTK
