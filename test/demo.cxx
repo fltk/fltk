@@ -71,6 +71,7 @@ const char *default_menu[] = {
   "@di:Fl_Tiled\\n_Image:tiled_image\n",
   "@d:cursor:cursor\n",
   "@d:labels:label\n",
+  "@d:rotated text:rotated_text\n",
   "@d:fl_arc:arc\n",
   "@d:fl_curve:curve\n",
   "@d:fl_line_style:line_style\n",

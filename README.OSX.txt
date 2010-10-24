@@ -21,9 +21,10 @@ README.OSX.txt - 2010-10-23 - Building FLTK under Apple OS X
     3.3   Configuring FLTK
     3.4   Building FLTK
     3.5   Testing FLTK
-    3.6   Installing FLTK
-    3.7   Installing Little Helpers
-    3.8   Creating new Projects
+    3.6   Uninstalling previous versions of FLTK
+    3.7   Installing FLTK
+    3.8   Installing Little Helpers
+    3.9   Creating new Projects
   4   DOCUMENT HISTORY
 
 
@@ -210,26 +211,48 @@ Use the "Project" pulldown menu to set the "Active Target" to "Demo". Select
 explore all test programs.
 
 
+ Uninstalling previous versions of FLTK
+----------------------------------------
+
+Remove FLTK frameworks:
+
+  sudo rm -r /Library/Frameworks/fltk*.framework
+  
+Remove Fluid and other possibly utilities:
+
+  sudo rm -r /Developer/Applications/Utilities/
+  
+
  Installing FLTK
 -----------------
 
 All FLTK frameworks should be copied from "./ide/Xcode3/build/Debug/" or 
-"./ide/Xcode3/build/Release/" to "/Library/Frameworks/". The matching header
-files must be copied from "./FL/" to "/usr/local/include/FL/".
+"./ide/Xcode3/build/Release/" to "/Library/Frameworks/". All required FLTK
+header files will be at "/Library/Frameworks/fltk.framework/Headers/" which
+should be added to the header search path.
+
+  sudo cp -R ide/Xcode3/build/Debug/fltk*.framework /Library/Frameworks/
+
+Many FLTK applications will use Fluid, the FLTK User Interface builder, to 
+generate C++ source code from .fl resource files. Add Fluid to the developer 
+tools:
+
+  sudo mkdir /Developer/Applications/Utilities/FLTK/
+  sudo cp -R ide/Xcode3/build/Debug/Fluid.app /Developer/Applications/Utilities/FLTK/
 
 
  Installing Little Helpers
 ---------------------------
 
+FIXME: 
+
 Xcode can learn how to create FLTK projects for you. To add FLTK projects as a 
 new project template for Xcode 3, copy "./ide/Xcode3/Project Templates/" to
-"$(HOME)/Library/Application Support/Developer/Shared/Xcode/" and restart Xcode.
+"~/Library/Application Support/Developer/Shared/Xcode/" and restart Xcode.
 
-FIXME: 
 Projects that are generated using this template expect fltk 1.3 as it is 
 installed using the command line. Also, you will need to add the 
 "AudioToolbox.framework" manually which is needed to create warning beeps.
-END OF FIXME.
 
 Xcode can also handle the .fl file extension to edit and compile Fluid resource
 files for you. The template project contains custom build rules for .fl files.
@@ -245,6 +268,8 @@ Specifications/fluid.pbfilespec" and add the following lines:
     BasedOn = sourcecode;
     Extensions = (fl);
   }
+
+END OF FIXME.
 
 
  Creating new Projects
