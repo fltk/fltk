@@ -13,6 +13,10 @@ Most of the example programs were created while testing a group of widgets.
 They are not meant to be great achievements in clean C++ programming, but
 merely a test platform to verify the functionality of the FLTK library.
 
+Note that extra example programs are also available in an additional
+'examples' directory, but these are \b NOT built automatically when
+you build FLTK, unlike those in the 'test' directory shown below.
+
 \section example_applications  Example Applications
 
 <table width=100% border=0>

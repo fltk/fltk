@@ -72,10 +72,69 @@ extern const char *fl_bg2;
   Returns the number of words eaten (1 or 2, or 0 if it is not
   recognized) and adds the same value to \p i. 
   
-  You can use this function if you prefer to control the incrementing
-  through the standard FLTK switches yourself. If you want to handle
-  additional switches, you will need to provide your own argument handler
-  and pass it to Fl::args(int,char**,int&,Fl_Args_Handler) explicitly.
+  This is the default argument handler used internally by Fl::args(...),
+  but you can use this function if you prefer to step through the
+  standard FLTK switches yourself.
+  
+  All standard FLTK switches except -bg2 may be abbreviated to just
+  one letter and case is ignored:
+  
+  \li -bg color or -background color
+  <br>
+  Sets the background color using Fl::background().
+  
+  \li -bg2 color or -background2 color
+  <br>
+  Sets the secondary background color using Fl::background2().
+  
+  \li -display host:n.n
+  <br>
+  Sets the X display to use; this option is silently
+  ignored under WIN32 and MacOS.
+  
+  \li -dnd and -nodnd
+  <br>
+  Enables or disables drag and drop text operations
+  using Fl::dnd_text_ops().
+  
+  \li -fg color or -foreground color
+  <br>
+  Sets the foreground color using Fl::foreground().
+  
+  \li -geometry WxH+X+Y
+  <br>
+  Sets the initial window position and size according
+  to the standard X geometry string.
+  
+  \li -iconic
+  <br>
+  Iconifies the window using Fl_Window::iconize().
+  
+  \li -kbd and -nokbd
+  <br>
+  Enables or disables visible keyboard focus for
+  non-text widgets using Fl::visible_focus().
+  
+  \li -name string
+  <br>
+  Sets the window class using Fl_Window::xclass().
+  
+  \li -scheme string
+  <br>
+  Sets the widget scheme using Fl::scheme().
+  
+  \li -title string
+  <br>
+  Sets the window title using Fl_Window::label().
+  
+  \li -tooltips and -notooltips
+  <br>
+  Enables or disables tooltips using Fl_Tooltip::enable().
+  
+  
+  If your program requires other switches in addition to the standard
+  FLTK options, you will need to pass your own argument handler to
+  Fl::args(int,char**,int&,Fl_Args_Handler) explicitly.
 */
 int Fl::arg(int argc, char **argv, int &i) {
   arg_called = 1;
@@ -173,17 +232,11 @@ int Fl::arg(int argc, char **argv, int &i) {
 /**
   Parse command line switches using the \p cb argument handler.
   
-  Returns 0 on error, or the number of words eaten.
-  
-  After the call returns, \p i will either point at the first word
-  that does not start with '-', or the word that does not match a
-  valid switch, or after a '--' denoting the end of the switches,
-  or at \p argc. If your program does not take any additional
-  arguments you can report an error if <tt>i < argc</tt>.
+  Returns 0 on error, or the number of words processed.
   
   FLTK provides this as an <i>entirely optional</i> command line
   switch parser. You don't have to call it if you don't want to.
-  Everything it can do can be done with other calls to FLTK
+  Everything it can do can be done with other calls to FLTK.
   
   To use the switch parser, call Fl::args(...) near the start
   of your program.  This does \b not open the display, instead
@@ -192,95 +245,43 @@ int Fl::arg(int argc, char **argv, int &i) {
   <tt>window->show(argc,argv)</tt>, which will do anything stored
   in the static variables.
   
-  The \p cb argument handler lets you define your own switches.
-  It is called with the same \p argc and \p argv, and with \p i
-  the index of each word. The \p cb handler should return zero
-  if the switch is unrecognized, and not change \p i. It should
-  return non-zero if the switch is recognized, and add at least
-  1 to \p i (it can add more to consume words after the switch). 
-  This \p cb handler is called \i before any other tests, so
+  Providing an argument handler callback \p cb lets you define
+  your own switches. It is called with the same \p argc and \p argv,
+  and with \p i set to the index of the switch to be processed.
+  The \p cb handler should return zero if the switch is unrecognized,
+  and not change \p i. It should return non-zero to indicate the
+  number of words processed if the switch is recognized, i.e. 1 for
+  just the switch, and more than 1 for the switch plus associated
+  parameters. \p i should be incremented by the same amount.
+  
+  The \p cb handler is called \b before any other tests, so
   <i>you can also override any standard FLTK switch</i>
   (this is why FLTK can use very short switches instead of
   the long ones all other toolkits force you to use).
+  See Fl::arg() for descriptions of the standard switches.
  
   On return \p i is set to the index of the first non-switch.
   This is either:
   
-  - The first word that does not start with '-'.
-  - The word '-' (used by many programs to name stdin as a file)
-  - The first unrecognized switch (return value is 0).
-  - \p argc
+  \li The first word that does not start with '-'.
+  \li The word '-' (used by many programs to name stdin as a file)
+  \li The first unrecognized switch (return value is 0).
+  \li \p argc
   
   The return value is \p i unless an unrecognized switch is found,
-  in which case it is zero.  If your program takes no arguments other
+  in which case it is zero. If your program takes no arguments other
   than switches you should produce an error if the return value is less
   than \p argc.
   
-  <P>All switches except -bg2 may be abbreviated one letter and case is ignored:
-  
-  <UL>
-  
-  	<LI>-bg color or -background color
-  
-  	<P>Sets the background color using Fl::background().</LI>
-  
-  	<LI>-bg2 color or -background2 color
-  
-  	<P>Sets the secondary background color using Fl::background2().</LI>
-  
-  	<LI>-display host:n.n
-  
-  	<P>Sets the X display to use; this option is silently
-  	ignored under WIN32 and MacOS.</LI>
-  
-  	<LI>-dnd and -nodnd
-  
-  	<P>Enables or disables drag and drop text operations
-  	using Fl::dnd_text_ops().</LI>
-  
-  	<LI>-fg color or -foreground color
-  
-  	<P>Sets the foreground color using Fl::foreground().</LI>
-  
-  	<LI>-geometry WxH+X+Y
-  
-  	<P>Sets the initial window position and size according
-  	to the standard X geometry string.</LI>
-  
-  	<LI>-iconic
-  
-  	<P>Iconifies the window using Fl_Window::iconize().</LI>
-  
-  	<LI>-kbd and -nokbd
-  
-  	<P>Enables or disables visible keyboard focus for
-  	non-text widgets using Fl::visible_focus().</LI>
-  
-  	<LI>-name string
-  
-  	<P>Sets the window class using Fl_Window::xclass().</LI>
-  
-  	<LI>-scheme string
-  
-  	<P>Sets the widget scheme using Fl::scheme().</LI>
-  
-  	<LI>-title string
-  
-  	<P>Sets the window title using Fl_Window::label().</LI>
-  
-  	<LI>-tooltips and -notooltips
-  
-  	<P>Enables or disables tooltips using Fl_Tooltip::enable().</LI>
-  
-  </UL>
   
   A usage string is displayed if Fl::args() detects an invalid argument
   on the command-line. You can change the message by setting the
   Fl::help pointer.
   
+  A very simple command line parser can be found in <tt>examples/howto-parse-args.cxx</tt>
+  
   The simpler Fl::args(int argc, char **argv) form is useful if your program
-  does not have command line switches of its own. It parses all the switches,
-  and if any are not recognized it calls Fl::abort(Fl::help).
+  does not have command line switches of its own.
 */
 
 int Fl::args(int argc, char** argv, int& i, Fl_Args_Handler cb) {
@@ -395,12 +396,12 @@ static const char * const helpmsg =
 const char * const Fl::help = helpmsg+13;
 
 /**
- * Parse all command line switches matching standard FLTK options only.
- * 
- * This calls Fl::args(int,char**,int&,Fl_Args_Handler) with the
- * argument handler set to the Fl::arg(int,char**,int&) function.
- * 
- * Note: an unexpected switch will cause an error message and program exit.
+ Parse all command line switches matching standard FLTK options only.
+ 
+ It parses all the switches, and if any are not recognized it calls
+ Fl::abort(Fl::help), i.e. unlike the long form, an unrecognized
+ switch generates an error message and causes the program to exit.
+ 
  */
 void Fl::args(int argc, char **argv) {
   int i; if (Fl::args(argc,argv,i) < argc) Fl::error(helpmsg);
