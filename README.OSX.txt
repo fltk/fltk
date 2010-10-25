@@ -248,32 +248,52 @@ tools:
  Installing Little Helpers
 ---------------------------
 
-FIXME: 
 
-Xcode can learn how to create FLTK projects for you. To add FLTK projects as a 
-new project template for Xcode 3, copy "./ide/Xcode3/Project Templates/" to
-"~/Library/Application Support/Developer/Shared/Xcode/" and restart Xcode.
+- Project Templates:
 
-Projects that are generated using this template expect fltk 1.3 as it is 
-installed using the command line. Also, you will need to add the 
-"AudioToolbox.framework" manually which is needed to create warning beeps.
+Project Templates are the quickest way to vcreate a new FLTK application from
+within Xcode. The included project builds an FLTK based Cocoa application 
+written in C++ with support for the Fluid UI designer, image reading, and 
+OpenGL. Unsused FLTK sub-Frameworks can simply be removed from the project.
+The template assumes that Release versions of the FLTK frameworks are installed
+in /Library/Frameworks as described above.
 
-Xcode can also handle the .fl file extension to edit and compile Fluid resource
-files for you. The template project contains custom build rules for .fl files.
+First, we need to create the Template folder:
 
-Choose Xcode > Preferences to open Xcode's preferences window. There is a 
-toolbar at the top of the window with many buttons. Click the File Types button. 
+  sudo mkdir -p /Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/
 
-Create the file "Library/Application Support/Developer/Shared/Xcode/
-Specifications/fluid.pbfilespec" and add the following lines:
-  
-  {
-    Identifier = sourcecode.fluid;
-    BasedOn = sourcecode;
-    Extensions = (fl);
-  }
+Next, we copy the project template over:
 
-END OF FIXME.
+  sudo cp -r ide/Xcode3/Project\ Templates/* /Library/Application\ Support/Developer/Shared/Xcode/Project\ Templates/
+
+After restarting Xcode, the dialog for "File > New Project..." will offer an
+FLTK 1.3 user template which is ready to compile.
+
+
+- Fluid file handling
+
+This section assumes that a Relaease version of Fluid is installed in 
+"/Developer/Applications/Utilities/FLTK/" as describe above. It will installe
+a new file type which opens Fluid as an editor for files ending in ".fl".
+
+First, we need to create the spec folder:
+
+  sudo mkdir -p /Library/Application\ Support/Developer/Shared/Xcode/Specifications/
+
+Next, we copy the Fluid specification over:
+
+  sudo cp ide/Xcode3/fluid.pbfilespec /Library/Application\ Support/Developer/Shared/Xcode/Specifications/
+
+Open Xcoe preferences and select the File Types tab. Find the "sourcecode.fluid"
+entry in "file > text > sourcecode" and set the external editor to Fluid. When
+radding ".fl" files, set the File Type in the Info dialog to "sourcecode.fluid"
+and Xcode will edit your fil in Fluid when double-clicking.
+
+
+- More
+
+TODO: Language Definition
+TODO: Build Rules
 
 
  Creating new Projects

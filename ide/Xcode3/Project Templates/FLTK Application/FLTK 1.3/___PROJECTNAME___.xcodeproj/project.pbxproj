@@ -1,0 +1,355 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
+		C95960BE1274CD8A009C0594 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C95960BD1274CD8A009C0594 /* fltk.framework */; };
+		C9601E9910B1FAED0018BADE /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C9601E9810B1FAED0018BADE /* main.cpp */; };
+		C9601EE410B2020B0018BADE /* ui.fl in Resources */ = {isa = PBXBuildFile; fileRef = C9601EE310B2020B0018BADE /* ui.fl */; };
+		C9601EEC10B202440018BADE /* ui.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C9601EEA10B202440018BADE /* ui.cxx */; };
+		C96291231274D238007D3CFE /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96291221274D238007D3CFE /* fltk_forms.framework */; };
+		C96291251274D238007D3CFE /* fltk_gl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96291241274D238007D3CFE /* fltk_gl.framework */; };
+		C96291271274D238007D3CFE /* fltk_images.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96291261274D238007D3CFE /* fltk_images.framework */; };
+		C96291291274D238007D3CFE /* fltk_jpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96291281274D238007D3CFE /* fltk_jpeg.framework */; };
+		C962912B1274D238007D3CFE /* fltk_png.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C962912A1274D238007D3CFE /* fltk_png.framework */; };
+		C962912D1274D238007D3CFE /* fltk_zlib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C962912C1274D238007D3CFE /* fltk_zlib.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildRule section */
+		C9601C4B10B1F9B60018BADE /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.fl";
+			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.cxx",
+				"${INPUT_FILE_DIR}/${INPUT_FILE_BASE}.h",
+			);
+			script = "/Developer/Applications/Utilities/FLTK/Fluid.app/Contents/MacOS/Fluid -c ${INPUT_FILE_NAME}";
+		};
+/* End PBXBuildRule section */
+
+/* Begin PBXFileReference section */
+		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* ___PROJECTNAMEASIDENTIFIER___-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "___PROJECTNAMEASIDENTIFIER___-Info.plist"; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* ___PROJECTNAME___.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ___PROJECTNAME___.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C95960BD1274CD8A009C0594 /* fltk.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = fltk.framework; path = /Library/Frameworks/fltk.framework; sourceTree = "<absolute>"; };
+		C9601DCB10B1FA890018BADE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		C9601E9710B1FAED0018BADE /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		C9601E9810B1FAED0018BADE /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		C9601EE310B2020B0018BADE /* ui.fl */ = {isa = PBXFileReference; explicitFileType = sourcecode.fluid; fileEncoding = 4; path = ui.fl; sourceTree = "<group>"; };
+		C9601EEA10B202440018BADE /* ui.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ui.cxx; sourceTree = "<group>"; };
+		C9601EEB10B202440018BADE /* ui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui.h; sourceTree = "<group>"; };
+		C96291221274D238007D3CFE /* fltk_forms.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = fltk_forms.framework; path = /Library/Frameworks/fltk_forms.framework; sourceTree = "<absolute>"; };
+		C96291241274D238007D3CFE /* fltk_gl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = fltk_gl.framework; path = /Library/Frameworks/fltk_gl.framework; sourceTree = "<absolute>"; };
+		C96291261274D238007D3CFE /* fltk_images.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = fltk_images.framework; path = /Library/Frameworks/fltk_images.framework; sourceTree = "<absolute>"; };
+		C96291281274D238007D3CFE /* fltk_jpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = fltk_jpeg.framework; path = /Library/Frameworks/fltk_jpeg.framework; sourceTree = "<absolute>"; };
+		C962912A1274D238007D3CFE /* fltk_png.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = fltk_png.framework; path = /Library/Frameworks/fltk_png.framework; sourceTree = "<absolute>"; };
+		C962912C1274D238007D3CFE /* fltk_zlib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = fltk_zlib.framework; path = /Library/Frameworks/fltk_zlib.framework; sourceTree = "<absolute>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C95960BE1274CD8A009C0594 /* fltk.framework in Frameworks */,
+				C96291231274D238007D3CFE /* fltk_forms.framework in Frameworks */,
+				C96291251274D238007D3CFE /* fltk_gl.framework in Frameworks */,
+				C96291271274D238007D3CFE /* fltk_images.framework in Frameworks */,
+				C96291291274D238007D3CFE /* fltk_jpeg.framework in Frameworks */,
+				C962912B1274D238007D3CFE /* fltk_png.framework in Frameworks */,
+				C962912D1274D238007D3CFE /* fltk_zlib.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1058C7A0FEA54F0111CA2CBB /* OS X Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C9601DCB10B1FA890018BADE /* OpenGL.framework */,
+			);
+			name = "OS X Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107320486CEB800E47090 /* ___PROJECTNAME___.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* ___PROJECTNAMEASXML___ */ = {
+			isa = PBXGroup;
+			children = (
+				C9601E9410B1FADC0018BADE /* Sources */,
+				C9601EED10B2024C0018BADE /* FLUID Sources */,
+				C9601EE910B2022E0018BADE /* Generated Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = ___PROJECTNAMEASXML___;
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107310486CEB800E47090 /* ___PROJECTNAMEASIDENTIFIER___-Info.plist */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C9EDD6C71274CC1D00ADB21C /* FLTK Frameworks */,
+				1058C7A0FEA54F0111CA2CBB /* OS X Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C9601E9410B1FADC0018BADE /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C9601E9710B1FAED0018BADE /* main.h */,
+				C9601E9810B1FAED0018BADE /* main.cpp */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		C9601EE910B2022E0018BADE /* Generated Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C9601EEA10B202440018BADE /* ui.cxx */,
+				C9601EEB10B202440018BADE /* ui.h */,
+			);
+			name = "Generated Sources";
+			sourceTree = "<group>";
+		};
+		C9601EED10B2024C0018BADE /* FLUID Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C9601EE310B2020B0018BADE /* ui.fl */,
+			);
+			name = "FLUID Sources";
+			sourceTree = "<group>";
+		};
+		C9EDD6C71274CC1D00ADB21C /* FLTK Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C95960BD1274CD8A009C0594 /* fltk.framework */,
+				C96291221274D238007D3CFE /* fltk_forms.framework */,
+				C96291241274D238007D3CFE /* fltk_gl.framework */,
+				C96291261274D238007D3CFE /* fltk_images.framework */,
+				C96291281274D238007D3CFE /* fltk_jpeg.framework */,
+				C962912A1274D238007D3CFE /* fltk_png.framework */,
+				C962912C1274D238007D3CFE /* fltk_zlib.framework */,
+			);
+			name = "FLTK Frameworks";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D1107260486CEB800E47090 /* ___PROJECTNAME___ */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "___PROJECTNAME___" */;
+			buildPhases = (
+				8D1107290486CEB800E47090 /* Resources */,
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+			);
+			buildRules = (
+				C9601C4B10B1F9B60018BADE /* PBXBuildRule */,
+			);
+			dependencies = (
+			);
+			name = "___PROJECTNAME___";
+			productInstallPath = "$(HOME)/Applications";
+			productName = "___PROJECTNAME___";
+			productReference = 8D1107320486CEB800E47090 /* ___PROJECTNAME___.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "___PROJECTNAME___" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* ___PROJECTNAMEASXML___ */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D1107260486CEB800E47090 /* ___PROJECTNAME___ */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D1107290486CEB800E47090 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				C9601EE410B2020B0018BADE /* ui.fl in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D11072C0486CEB800E47090 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9601E9910B1FAED0018BADE /* main.cpp in Sources */,
+				C9601EEC10B202440018BADE /* ui.cxx in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C165DFE840E0CC02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C01FCF4B08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/fltk.framework/Headers/,
+					/Library/Framework/fltk.frameworks/Headers/FL/images,
+				);
+				INFOPLIST_FILE = "___PROJECTNAMEASIDENTIFIER___-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "___PROJECTNAME___";
+				SDKROOT = macosx10.5;
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
+				VALID_ARCHS = "i386 ppc ppc64 ppc7400 ppc970 x86_64";
+			};
+			name = Debug;
+		};
+		C01FCF4C08A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
+				GCC_WARN_UNUSED_VARIABLE = NO;
+				HEADER_SEARCH_PATHS = (
+					/Library/Frameworks/fltk.framework/Headers/,
+					/Library/Framework/fltk.frameworks/Headers/FL/images,
+				);
+				INFOPLIST_FILE = "___PROJECTNAMEASIDENTIFIER___-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "___PROJECTNAME___";
+				SDKROOT = macosx10.5;
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
+				VALID_ARCHS = "i386 ppc ppc64 ppc7400 ppc970 x86_64";
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "___PROJECTNAME___" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4B08A954540054247B /* Debug */,
+				C01FCF4C08A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "___PROJECTNAME___" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}
