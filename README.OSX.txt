@@ -189,26 +189,26 @@ Launch Xcode. Open the project file in
 
   .../fltk-1.3.xxxx/ide/Xcode3/FLTK.xcodeproj
 
-Use the "Project" pulldown menu to select the "Active Architecture" and
-"Active Build Configuration".
+Use the "Project" pulldown menu to change "Active Build Configuration" to 
+"Release". Change the "Active Architecture" and "Active Build Configuration" as
+desired. 
   
 
  Building FLTK
 ---------------
 
-Use the "Project" pulldown menu to set the "Active Target" to "Demo". Select
-"Build" form the "Build" menu to create all libraries and test applications.
+Use the "Project" pulldown menu to set the "Active Target" to "Release". Use the 
+"Project" pulldown menu to set the "Active Target" to "Demo". Select "Build" 
+form the "Build" menu to create all libraries and test applications.
 
-All frameworks and apps will be loacted in "./ide/Xcode3/build/Debug/" or 
-"./ide/Xcode3/build/Release/".
+All frameworks and apps will be loacted in "./ide/Xcode3/build/Release/".
 
 
  Testing FLTK
 --------------
 
-Use the "Project" pulldown menu to set the "Active Target" to "Demo". Select
-"Build and Run" form the "Build" menu to run the Demo program. Use Demo to 
-explore all test programs.
+Select "Build and Run" form the "Build" menu to run the Demo program. Use "Demo"
+to explore all test programs.
 
 
  Uninstalling previous versions of FLTK
@@ -220,25 +220,29 @@ Remove FLTK frameworks:
   
 Remove Fluid and other possibly utilities:
 
-  sudo rm -r /Developer/Applications/Utilities/
+  sudo rm -r /Developer/Applications/Utilities/FLTK/
   
 
  Installing FLTK
 -----------------
 
-All FLTK frameworks should be copied from "./ide/Xcode3/build/Debug/" or 
-"./ide/Xcode3/build/Release/" to "/Library/Frameworks/". All required FLTK
-header files will be at "/Library/Frameworks/fltk.framework/Headers/" which
-should be added to the header search path.
+When distributing FLTK applications, the FLTK frameworks should be made part of
+the application package. For development however, it is very convenient to have
+the Release-mode Frameworks in a standard location.
 
-  sudo cp -R ide/Xcode3/build/Debug/fltk*.framework /Library/Frameworks/
+For Xcode project template use, all FLTK frameworks should be copied from 
+"./ide/Xcode3/build/Release/" to "/Library/Frameworks/". The FLTK header files 
+for all FLTK frameworks will then be at "/Library/Frameworks/fltk.framework/
+Headers/". Add this path to the header search path of your projects.
+
+  sudo cp -R ide/Xcode3/build/Release/fltk*.framework /Library/Frameworks/
 
 Many FLTK applications will use Fluid, the FLTK User Interface builder, to 
 generate C++ source code from .fl resource files. Add Fluid to the developer 
 tools:
 
   sudo mkdir /Developer/Applications/Utilities/FLTK/
-  sudo cp -R ide/Xcode3/build/Debug/Fluid.app /Developer/Applications/Utilities/FLTK/
+  sudo cp -R ide/Xcode3/build/Release/Fluid.app /Developer/Applications/Utilities/FLTK/
 
 
  Installing Little Helpers

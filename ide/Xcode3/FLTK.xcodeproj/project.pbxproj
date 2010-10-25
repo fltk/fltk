@@ -501,6 +501,7 @@
 		C96290EC1274D134007D3CFE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290EB1274D133007D3CFE /* AudioToolbox.framework */; };
 		C962910E1274D1D7007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96291151274D1FD007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
+		C96291E712756D5E007D3CFE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFB1274D0B3007D3CFE /* Carbon.framework */; };
 		C9A374AB3AD29E141C659819 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		C9C4C91FDA73557BB6B69F3D /* jchuff.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DB580DCA05DE487FACA272 /* jchuff.c */; };
 		C9D72F10B7A22DD0349ABC68 /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097D0B476E396B9AAC6FA1E0 /* fltk_forms.framework */; };
@@ -5088,6 +5089,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C96291E712756D5E007D3CFE /* Carbon.framework in Frameworks */,
 				C962910E1274D1D7007D3CFE /* Cocoa.framework in Frameworks */,
 				04C166D5213DD80648BE1F4D /* fltk.framework in Frameworks */,
 				C96290E21274D0EF007D3CFE /* AGL.framework in Frameworks */,
@@ -12956,6 +12958,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -14678,6 +14681,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
