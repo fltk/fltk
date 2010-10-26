@@ -373,53 +373,53 @@ protected:
    // This is called whenever Fl_Table wants you to draw a cell
    void MyTable::draw_cell(TableContext context, int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0)
    {
-   static char s[40];
-   sprintf(s, "%d/%d", R, C);              // text for each cell
-   switch ( context )
-   {
-   case CONTEXT_STARTPAGE:             // Fl_Table telling us its starting to draw page
-   fl_font(FL_HELVETICA, 16);
-   return;
-   
-   case CONTEXT_ROW_HEADER:            // Fl_Table telling us it's draw row/col headers
-   case CONTEXT_COL_HEADER:
-   fl_push_clip(X, Y, W, H);
-   {
-   fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, color());
-   fl_color(FL_BLACK);
-   fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
-   }
-   fl_pop_clip();
-   return;
-   
-   case CONTEXT_CELL:                  // Fl_Table telling us to draw cells
-   fl_push_clip(X, Y, W, H);
-   {
-   // BG COLOR
-   fl_color( row_selected(R) ? selection_color() : FL_WHITE);
-   fl_rectf(X, Y, W, H);
-   
-   // TEXT
-   fl_color(FL_BLACK);
-   fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
-   
-   // BORDER
-   fl_color(FL_LIGHT2);
-   fl_rect(X, Y, W, H);
-   }
-   fl_pop_clip();
-   return;
-   
-   default:
-   return;
-   }
-   //NOTREACHED
+       static char s[40];
+       sprintf(s, "%d/%d", R, C);              // text for each cell
+       switch ( context )
+       {
+	   case CONTEXT_STARTPAGE:             // Fl_Table telling us its starting to draw page
+	       fl_font(FL_HELVETICA, 16);
+	       return;
+       
+	   case CONTEXT_ROW_HEADER:            // Fl_Table telling us it's draw row/col headers
+	   case CONTEXT_COL_HEADER:
+	       fl_push_clip(X, Y, W, H);
+	       {
+		   fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, color());
+		   fl_color(FL_BLACK);
+		   fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
+	       }
+	       fl_pop_clip();
+	       return;
+	   
+	   case CONTEXT_CELL:                  // Fl_Table telling us to draw cells
+	       fl_push_clip(X, Y, W, H);
+	       {
+		   // BG COLOR
+		   fl_color( row_selected(R) ? selection_color() : FL_WHITE);
+		   fl_rectf(X, Y, W, H);
+		   
+		   // TEXT
+		   fl_color(FL_BLACK);
+		   fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
+		   
+		   // BORDER
+		   fl_color(FL_LIGHT2);
+		   fl_rect(X, Y, W, H);
+	       }
+	       fl_pop_clip();
+	       return;
+	   
+       default:
+	   return;
+       }
+       //NOTREACHED
    }
    \endcode
    */
   virtual void draw_cell(TableContext context, int R=0, int C=0, 
                          int X=0, int Y=0, int W=0, int H=0)
-  { }					// overridden by deriving class
+  { }						// overridden by deriving class
   
   long row_scroll_position(int row);		// find scroll position of row (in pixels)
   long col_scroll_position(int col);		// find scroll position of col (in pixels)
