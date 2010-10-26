@@ -23,7 +23,15 @@ README.MSWindows.txt - 2010-10-25 - Building FLTK under Microsoft Windows
     3.5   Testing FLTK
     3.6   Installing FLTK
     3.7   Creating new Projects
-  4   DOCUMENT HISTORY
+  4   HOW TO BUILD FLTK USING VISUAL STUDIO 2010
+    4.1   Prerequisites
+    4.2   Downloading and Unpacking
+    4.3   Configuring FLTK
+    4.4   Building FLTK
+    4.5   Testing FLTK
+    4.6   Installing FLTK
+    4.7   Creating new Projects
+  5   DOCUMENT HISTORY
 
 
  INTRODUCTION
@@ -211,14 +219,15 @@ VisualC 2008 has a bug that messes up building a Solution on multicore CPUs.
 Make sure that Visual Studio 2008 Service Pack 1 is installed or, as a 
 workaround, set the "maximum number of parallel project builds" to 1 (Tools > 
 Options > Projects and Solutions > Build and Run > maximum number of parallel 
-project builds).
+project builds). Also, repeating the build command two or three times may 
+clear unresolved reference errors.
 
 
  Testing FLTK
 --------------
 
-Select "Start Debugging" form the "Debug" menu or "" from the "" menu or just 
-press F5 to run the Demo program. Use "Demo" to explore all test programs.
+Select "Start Debugging" form the "Debug" menu or just press F5 to run the Demo
+program. Use "Demo" to explore all test programs.
 
 
  Installing FLTK
@@ -245,6 +254,119 @@ conflicts. Use the static .lib libraries instead.
 
  Creating new Projects
 -----------------------
+
+This chapter assumes that libraries and headers are copied into 
+
+  C:\Program Files\Microsoft Visual Studio 9.0\VC
+
+Create a new project of type "General", "Empty Project". Open the Project
+Properties dialog and add "WIN32" in the Preprocessor Definitions (Configuration
+Properties > C/C++ > Preprocessor > Preprocessor Definitions). 
+
+Now add "Comctl32.lib" and all the LFKT libraries that you will need (at least 
+"fltk.lib") to Additional Dependencies (Configuration Properties > Linker > 
+Additional Dependencies).
+
+Add a simple C++ file with a few FLTK commands and run it with F5.
+
+You can also include .fl resources: add a new Hedare file to you project, but 
+let the name end in .fl. Right-click and select "Open with...". Add "fluid.exe"
+from the "bin" directory and set it as the default editor.
+
+To automatically compile .fl files, open the Properties editor and set the
+Custom Build Steps to:
+
+  Command Line: fluid.exe -c $(InputPath)
+  Description: Compiling Fluid .fl file
+  Outputs: $(InputDir)$(InputName).cxx; $(InputDir)$(InputName).h
+
+Now add the generated .cxx file to your project as well. Whenever the .fl file 
+is changed, the corresponding .cxx file will be recompiled.
+
+
+
+ HOW TO BUILD FLTK USING VISUAL STUDIO 2010
+============================================
+
+
+ Prerequisites
+---------------
+
+In order to build FLTK from within VisualStudio 2010, you need to install the 
+VisualC developer environment from the Microsoft web site. The Express edition 
+is free of charge and sufficient to develop FLTK applications:
+
+  http://www.microsoft.com/express/Downloads/
+  
+
+ Downloading and Unpacking
+---------------------------
+
+Download FLTK from here:
+
+  http://www.fltk.org/software.php
+
+If you are familiar with "subversion" and like to stay current with you version,
+you will find the subversion access parameters at the bottom of that page.
+
+Unpack FLTK by using an appropriate unpacker and copy the new folder into a 
+convenient location. I have set up a "dev" folder in my home folder for all my 
+projects.
+
+
+ Configuring FLTK
+------------------
+
+Launch VisualStudio. Open the project file in 
+
+  .../fltk-1.3.xxxx/ide/VisualC2010/fltk.sln
+
+Choose "Debug" or "Release" mode from the "Solution Configurations" menu.
+  
+
+ Building FLTK
+---------------
+
+Use the context menu of the "demo" project to "Set as StartUp Project". Then 
+select "Build Solution" from the "Build" menu or press F7 to build all 
+libraries.
+
+
+ Testing FLTK
+--------------
+
+Select "Start Debugging" form the "Debug" menu or just press F5 to run the Demo
+program. Use "Demo" to explore all test programs.
+
+
+ Installing FLTK
+-----------------
+
+FIXME: this is still the VC2008 documentation!
+
+The default location for VisualC 2008 libraries and headers is here:
+
+  C:\Program Files\Microsoft Visual Studio 9.0\VC
+
+It is possible to move the FLTK libraries, headers, and Fluid into the 
+respective subdirectories, so that they are available for future development
+without adding link and include paths to the solution.
+
+  copy the entire FL directory into the include path
+  
+  copy all .lib files from the fltk lib directory to the VC lib directory
+  
+  copy fluid/fluid.exe to the bin directory
+
+I highly discourace using dll's (dynamically linking libraries) on MSWindows
+because they will require an installation process and likely cause version 
+conflicts. Use the static .lib libraries instead.
+
+
+ Creating new Projects
+-----------------------
+
+FIXME: this is still the VC2008 documentation!
 
 This chapter assumes that libraries and headers are copied into 
 
