@@ -474,6 +474,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "blocks", "blocks.vcproj", "
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rotated_text", "rotated_text.vcproj", "{E88CCAF5-5DB9-4A46-8C91-97C5697F167A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E070AAFC-9D03-41A3-BC7D-30887EA0D50F} = {E070AAFC-9D03-41A3-BC7D-30887EA0D50F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "device", "device.vcproj", "{2B3BD00C-1A32-4764-AE20-C03B3EDDBD50}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E070AAFC-9D03-41A3-BC7D-30887EA0D50F} = {E070AAFC-9D03-41A3-BC7D-30887EA0D50F}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "native-filechooser", "native-filechooser.vcproj", "{314273B6-8478-475E-881D-1F5A294AFED6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -785,6 +795,14 @@ Global
 		{E88CCAF5-5DB9-4A46-8C91-97C5697F167A}.Debug|Win32.Build.0 = Debug|Win32
 		{E88CCAF5-5DB9-4A46-8C91-97C5697F167A}.Release|Win32.ActiveCfg = Release|Win32
 		{E88CCAF5-5DB9-4A46-8C91-97C5697F167A}.Release|Win32.Build.0 = Release|Win32
+		{2B3BD00C-1A32-4764-AE20-C03B3EDDBD50}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2B3BD00C-1A32-4764-AE20-C03B3EDDBD50}.Debug|Win32.Build.0 = Debug|Win32
+		{2B3BD00C-1A32-4764-AE20-C03B3EDDBD50}.Release|Win32.ActiveCfg = Release|Win32
+		{2B3BD00C-1A32-4764-AE20-C03B3EDDBD50}.Release|Win32.Build.0 = Release|Win32
+		{314273B6-8478-475E-881D-1F5A294AFED6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{314273B6-8478-475E-881D-1F5A294AFED6}.Debug|Win32.Build.0 = Debug|Win32
+		{314273B6-8478-475E-881D-1F5A294AFED6}.Release|Win32.ActiveCfg = Release|Win32
+		{314273B6-8478-475E-881D-1F5A294AFED6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
