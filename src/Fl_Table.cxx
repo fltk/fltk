@@ -990,6 +990,13 @@ int Fl_Table::handle(int event) {
         case FL_Down:
           ret = move_cursor(1, 0);
           break;
+	case FL_Tab:
+	  if ( Fl::event_state() & FL_SHIFT ) {
+            ret = move_cursor(0, -1);		// shift-tab -> left
+	  } else {
+	    ret = move_cursor(0, 1);		// tab -> right
+	  }
+          break;
       }
       if (ret && Fl::focus() != this) {
         do_callback(CONTEXT_TABLE, -1, -1);
