@@ -172,15 +172,18 @@
  */
 class Fl_Table : public Fl_Group {
 public:
+  /**
+   The context bit flags for Fl_Table related callbacks (eg. draw_cell(), callback(), etc)
+   */
   enum TableContext {
-    CONTEXT_NONE       = 0,
-    CONTEXT_STARTPAGE  = 0x01,	// before a page is redrawn
-    CONTEXT_ENDPAGE    = 0x02,	// after a page is redrawn
-    CONTEXT_ROW_HEADER = 0x04,	// in the row header
-    CONTEXT_COL_HEADER = 0x08,	// in the col header
-    CONTEXT_CELL       = 0x10,	// in one of the cells
-    CONTEXT_TABLE      = 0x20,	// in the table
-    CONTEXT_RC_RESIZE  = 0x40 	// column or row being resized
+    CONTEXT_NONE       = 0,	///< no known context
+    CONTEXT_STARTPAGE  = 0x01,	///< before a page is redrawn
+    CONTEXT_ENDPAGE    = 0x02,	///< after a page is redrawn
+    CONTEXT_ROW_HEADER = 0x04,	///< in the row header
+    CONTEXT_COL_HEADER = 0x08,	///< in the col header
+    CONTEXT_CELL       = 0x10,	///< in one of the cells
+    CONTEXT_TABLE      = 0x20,	///< in a dead zone of table
+    CONTEXT_RC_RESIZE  = 0x40 	///< column or row being resized
   };
   
 private:
@@ -881,10 +884,9 @@ public:
    
    Typically used in loops, eg:
    \code
-   for ( int i=0; i<children(); i++ )
-   {
-   Fl_Widget *w = child(i);
-   [..]
+   for ( int i=0; i<children(); i++ ) {
+     Fl_Widget *w = child(i);
+     [..]
    }
    \endcode
    */
