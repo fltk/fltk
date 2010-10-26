@@ -121,7 +121,8 @@
  allowing FLTK license to apply while his widgets are part of the library.
  
  If used on its own, this is the license that applies:
- 
+
+ \verbatim 
  Fl_Table License
  December 16, 2002
  
@@ -165,6 +166,7 @@
  
  [program/widget] is based in part on the work of
  the Fl_Table project http://seriss.com/people/erco/fltk/Fl_Table/
+ \endverbatim
  
  
  */
