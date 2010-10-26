@@ -2,15 +2,13 @@ include ../makeinclude
 
 ALL = howto-add_fd-and-popen$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
+      howto-text-over-image-button$(EXEEXT) \
       tabs-simple$(EXEEXT) \
       tree-simple$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
 # default target -- build everything
 default: $(ALL)
-
-tabs-simple$(EXEEXT): tabs-simple.cxx
-	fltk-config --compile tabs-simple.cxx
 
 # clean everything
 clean:
