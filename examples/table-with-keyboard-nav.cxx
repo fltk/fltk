@@ -43,8 +43,6 @@
 const int MAX_COLS = 26;
 const int MAX_ROWS = 500;
 
-Fl_Callback input_cb;
-
 class SingleInput : public Fl_Table {
   Fl_Int_Input* input;
   int values[MAX_ROWS][MAX_COLS];
@@ -69,7 +67,7 @@ public:
     input->maximum_size(5);
     for (i = 0; i < MAX_ROWS; i++) {
       for (j = 0; j < MAX_COLS; j++) {
-	values[i][j] = (i + 2) * (j + 3); {
+	values[i][j] = (i + 2) * (j + 3);
       }
     }
     (new Fl_Box(9999,9999,0,0))->hide();  // HACK: prevent flickering in Fl_Scroll
@@ -77,24 +75,29 @@ public:
   }
   ~SingleInput() { }
 
+  // Change number of rows
   void rows(int val) {
     if (input->visible()) {
       input->do_callback(); 
-      Fl_Table::rows(val);
     }
+    Fl_Table::rows(val);
   }
+  // Change number of columns
   void cols(int val) {
     if (input->visible()) {
       input->do_callback();
-      Fl_Table::cols(val);
     }
+    Fl_Table::cols(val);
   }
+  // Get number of rows
   inline int rows() {
     return Fl_Table::rows();
   }
+  // Get number of columns
   inline int cols() {
     return Fl_Table::cols();
   }
+  // Apply value from input widget to values[row][col] array
   void set_value() {
     values[row_edit][col_edit] = atoi(input->value());
     input->hide();
@@ -110,45 +113,49 @@ void SingleInput::draw_cell(TableContext context,
 			    int R, int C, int X, int Y, int W, int H) {
   static char s[30]; 
   switch ( context ) {
-    case CONTEXT_STARTPAGE:
+    case CONTEXT_STARTPAGE:			// table about to redraw
       // Get kb nav + mouse 'selection region' for use below
       get_selection(s_top, s_left, s_bottom, s_right);
       break;
 
-    case CONTEXT_COL_HEADER:
+    case CONTEXT_COL_HEADER:			// table wants us to draw a column heading (C is column)
       fl_font(FL_HELVETICA | FL_BOLD, 14);
       fl_push_clip(X, Y, W, H);
       {
 	fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, col_header_color());
 	fl_color(FL_BLACK);
 	if (C != cols()-1) {
+	  // Not last column? Show column letter
 	  s[0] = 'A' + C;
 	  s[1] = '\0';
 	  fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
 	} else {
+	  // Last column? show 'TOTAL'
 	  fl_draw("TOTAL", X, Y, W, H, FL_ALIGN_CENTER);
 	}
       }
       fl_pop_clip();
       return;
 
-    case CONTEXT_ROW_HEADER:
+    case CONTEXT_ROW_HEADER:			// table wants us to draw a row heading (R is row)
       fl_font(FL_HELVETICA | FL_BOLD, 14);
       fl_push_clip(X, Y, W, H);
       {
 	fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, row_header_color());
 	fl_color(FL_BLACK);
 	if (R != rows()-1) {
+	  // Not last row? Show row number
 	  sprintf(s, "%d", R+1);
 	  fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);
 	} else {
+	  // Last row? show 'TOTAL'
 	  fl_draw("TOTAL", X, Y, W, H, FL_ALIGN_CENTER);
 	}
       }
       fl_pop_clip();
       return;
 
-    case CONTEXT_CELL: {
+    case CONTEXT_CELL: {			// table wants us to draw a cell
       if (R == row_edit && C == col_edit && input->visible()) {
 	return;
       }
@@ -177,17 +184,17 @@ void SingleInput::draw_cell(TableContext context,
 	  int T = 0;
 	  fl_font(FL_HELVETICA | FL_BOLD, 14);
 
-	  if (C == cols()-1 && R == rows()-1) {	// TOTAL
+	  if (C == cols()-1 && R == rows()-1) {	// All cells total
 	    for (int c=0; c<cols()-1; ++c) {
 	      for (int r=0; r<rows()-1; ++r) {
 		T += values[r][c];
 	      }
 	    }
-	  } else if (C == cols()-1) {			// ROW SUBTOTAL
+	  } else if (C == cols()-1) {		// Row subtotal
 	    for (int c=0; c<cols()-1; ++c) {
 	      T += values[R][c];
 	    }
-	  } else if (R == rows()-1) {			// COL SUBTOTAL
+	  } else if (R == rows()-1) {		// Col subtotal
 	    for (int r=0; r<rows()-1; ++r) {
 	      T += values[r][C];
 	    }
@@ -201,11 +208,11 @@ void SingleInput::draw_cell(TableContext context,
       return;
     }
 
-    case CONTEXT_RC_RESIZE: {
+    case CONTEXT_RC_RESIZE: {			// table resizing rows or columns
       if (!input->visible()) return;
       find_cell(CONTEXT_TABLE, row_edit, col_edit, X, Y, W, H);
       if (X==input->x() && Y==input->y() && W==input->w() && H==input->h()) {
-	return;
+	return;					// no change? ignore
       }
       input->resize(X,Y,W,H);
       return;
@@ -226,9 +233,9 @@ void SingleInput::event_callback2() {
   int R = callback_row();
   int C = callback_col();
   TableContext context = callback_context(); 
+
   switch ( context ) {
-    // Fl_Table wants to draw a cell
-    case CONTEXT_CELL: {
+    case CONTEXT_CELL: {			// A table event occurred on a cell
       fprintf(stderr, "CALLBACK: CONTEXT_CELL: for R/C: %d / %d\n", R, C); 
       switch (Fl::event()) { 
 	case FL_PUSH:
@@ -255,6 +262,8 @@ void SingleInput::event_callback2() {
 	  char s[30];
 	  sprintf(s, "%d", values[R][C]);
 	  input->value(s);
+	  input->position(strlen(s));		// position cursor at end of string
+	  input->mark(0);			// pre-highlight (so typing replaces contents)
 	  input->show();
 	  input->take_focus();
 	  if (Fl::event() == FL_KEYBOARD && Fl::e_text[0] != '\r') {
@@ -265,15 +274,13 @@ void SingleInput::event_callback2() {
       return;
     }
 
-    // Fl_Table wants to draw a row/column header
-    case CONTEXT_ROW_HEADER:
+    case CONTEXT_ROW_HEADER:			// A table event occurred on row/column header
     case CONTEXT_COL_HEADER:
       if (input->visible()) input->do_callback();
       input->hide();
       return;
 
-    // Fl_Table wants to draw a row/column header
-    case CONTEXT_TABLE:
+    case CONTEXT_TABLE:				// A table event occurred on dead zone in table
       if (R < 0 && C < 0) {
 	if (input->visible()) input->do_callback();
 	input->hide();
@@ -305,15 +312,13 @@ int main() {
   Fl_Double_Window win(600, 400, "table with keyboard nav");
 
   SingleInput* table = new SingleInput(20, 20, win.w()-80, win.h()-80);
-
-  // ROWS
+  // Table rows
   table->row_header(1);
   table->row_header_width(70);
   table->row_resize(1);
   table->rows(11);
   table->row_height_all(25);
-
-  // COLS
+  // Table cols
   table->col_header(1);
   table->col_header_height(25);
   table->col_resize(1);
@@ -323,7 +328,7 @@ int main() {
   // Add children to window
   win.begin();
 
-  // ROW
+  // Row slider
   Fl_Value_Slider setrows(win.w()-40,20,20,win.h()-80, 0);
   setrows.type(FL_VERT_NICE_SLIDER);
   setrows.bounds(2,MAX_ROWS);
@@ -333,7 +338,7 @@ int main() {
   setrows.when(FL_WHEN_CHANGED);
   setrows.clear_visible_focus();
 
-  // COL
+  // Column slider
   Fl_Value_Slider setcols(20,win.h()-40,win.w()-80,20, 0);
   setcols.type(FL_HOR_NICE_SLIDER);
   setcols.bounds(2,MAX_COLS);
