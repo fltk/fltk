@@ -61,12 +61,12 @@
  
  This widget can be used in several ways:
  
- - As a custom widget; see test/testtablerow.cxx. Very optimal for even 
+ - As a custom widget; see test/table.cxx. Very optimal for even 
  extremely large tables.
- - As a table made up of a single FLTK widget instanced all over the table;
- see test/singleinput.cxx. Very optimal for even extremely large tables;
+ - As a table made up of a single FLTK widget instanced all over the table,
+   simulating a numeric spreadsheet.
  - As a regular container of FLTK widgets, one widget per cell.
- See test/widgettable.cxx. \em Not recommended for large tables.
+   See examples/table-as-container.cxx. \em Not recommended for large tables.
  
  When acting as part of a custom widget, events on the cells and/or headings
  generate callbacks when they are clicked by the user. You control when events 
