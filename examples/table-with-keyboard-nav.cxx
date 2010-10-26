@@ -248,8 +248,11 @@ void SingleInput::event_callback2() {
 	  //FALLTHROUGH
 
 	case FL_KEYBOARD:
-	  if (Fl::event() == FL_KEYBOARD && Fl::e_length == 0) {
-	    return;
+	  if ( Fl::event_key() == FL_Escape )
+	    exit(0);				// ESC closes app
+	  if (Fl::event() == FL_KEYBOARD && 
+	     ( Fl::e_length == 0 || Fl::event_key() == FL_Tab) ) {
+	    return;				// ignore eg. keyboard nav keys
 	  }
 	  if (C == cols()-1 || R == rows()-1) return;
 	  if (input->visible()) input->do_callback();
@@ -262,8 +265,7 @@ void SingleInput::event_callback2() {
 	  char s[30];
 	  sprintf(s, "%d", values[R][C]);
 	  input->value(s);
-	  input->position(strlen(s));		// position cursor at end of string
-	  input->mark(0);			// pre-highlight (so typing replaces contents)
+	  input->position(0,strlen(s));		// pre-highlight (so typing replaces contents)
 	  input->show();
 	  input->take_focus();
 	  if (Fl::event() == FL_KEYBOARD && Fl::e_text[0] != '\r') {
@@ -324,6 +326,7 @@ int main() {
   table->col_resize(1);
   table->cols(11);
   table->col_width_all(70);
+  table->set_selection(0,0,0,0);	// select top/left cell
 
   // Add children to window
   win.begin();
