@@ -331,38 +331,47 @@ protected:
    <table border=1>
    <tr>
    <td>\p Fl_Table::CONTEXT_STARTPAGE</td>
-   <td> When table, or parts of the table, are about to be redrawn.
-   Use to initialize static data, such as font selections.
-   r/c will be zero, x/y/w/h will be the dimensions of the
-   table's entire data area.
-   (Useful for locking a database before accessing; see
-   also visible_cells())</td>
+   <td>When table, or parts of the table, are about to be redrawn.<br>
+       Use to initialize static data, such as font selections.<p>
+       R/C will be zero,<br>
+       X/Y/W/H will be the dimensions of the table's entire data area.<br>
+       (Useful for locking a database before accessing; see
+       also visible_cells())</td>
    </tr><tr>
    <td>\p Fl_Table::CONTEXT_ENDPAGE</td>
-   <td>When table has completed being redrawn.
-   r/c will be zero, x/y/w/h dimensions of table's data area.
-   (Useful for unlocking a database after accessing)</td>
+   <td>When table has completed being redrawn.<br>
+       R/C will be zero, X/Y/W/H dimensions of table's data area.<br>
+       (Useful for unlocking a database after accessing)</td>
    </tr><tr>
    <td>\p Fl_Table::CONTEXT_ROW_HEADER</td>
-   <td>Whenever a row header cell needs to be drawn.</td>
+   <td>Whenever a row header cell needs to be drawn.<br>
+       R will be the row number of the header being redrawn,<br>
+       C will be zero,<br>
+       X/Y/W/H will be the fltk drawing area of the row header in the window </td>
    </tr><tr>
    <td>\p Fl_Table::CONTEXT_COL_HEADER</td>
-   <td>Whenever a column header cell needs to be drawn.</td>
+   <td>Whenever a column header cell needs to be drawn.<br>
+       R will be zero, <br>
+       C will be the column number of the header being redrawn,<br>
+       X/Y/W/H will be the fltk drawing area of the column header in the window </td>
    </tr><tr>
    <td>\p Fl_Table::CONTEXT_CELL</td>
-   <td>Whenever a data cell in the table needs to be drawn.</td>
+   <td>Whenever a data cell in the table needs to be drawn.<br>
+       R/C will be the row/column of the cell to be drawn,<br>
+       X/Y/W/H will be the fltk drawing area of the cell in the window </td>
    </tr><tr>
    <td>\p Fl_Table::CONTEXT_RC_RESIZE</td>
    <td>Whenever table or row/column is resized or scrolled,
-   either interactively or via col_width() or row_height().
-   
-   Useful for fltk containers that need to resize or move
-   the child fltk widgets.</td>
+       either interactively or via col_width() or row_height().<br>
+       R/C/X/Y/W/H will all be zero.
+       <p> 
+       Useful for fltk containers that need to resize or move
+       the child fltk widgets.</td>
    </tr>
    </table>
    
    \p row and \p col will be set to the row and column number
-   the user clicked on. In the case of row headers, \p col will be \a 0.
+   of the cell being drawn. In the case of row headers, \p col will be \a 0.
    In the case of column headers, \p row will be \a 0.
    
    <tt>x/y/w/h</tt> will be the position and dimensions of where the cell
