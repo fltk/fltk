@@ -66,10 +66,10 @@ Download FLTK from here:
 
   http://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with you version,
-you will find the subversion access parameters at the bottom of that page.
-Unpack FLTK into a convinient location. I like to have everything in my dev 
-directory:
+If you are familiar with "subversion" and like to stay current with your 
+version, you will find the subversion access parameters at the bottom of that 
+page. Unpack FLTK into a convinient location. I like to have everything in my 
+dev directory:
 
   cd
   mkdir dev
@@ -176,8 +176,10 @@ Download FLTK from here:
 
   http://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with you version,
-you will find the subversion access parameters at the bottom of that page.
+If you are familiar with "subversion" and like to stay current with your 
+version, you will find the subversion access parameters at the bottom of that 
+page. You can use the SCM system that is built into Xcode.
+
 Unpack FLTK by double-clicking it and copy the new folder into a convenient
 location. I have set up a "dev" folder in my home folder for all my projects.
 
@@ -284,10 +286,11 @@ Next, we copy the Fluid specification over:
 
   sudo cp ide/Xcode3/fluid.pbfilespec /Library/Application\ Support/Developer/Shared/Xcode/Specifications/
 
-Open Xcoe preferences and select the File Types tab. Find the "sourcecode.fluid"
-entry in "file > text > sourcecode" and set the external editor to Fluid. When
-radding ".fl" files, set the File Type in the Info dialog to "sourcecode.fluid"
-and Xcode will edit your fil in Fluid when double-clicking.
+Open Xcode preferences and select the File Types tab. Find the 
+"sourcecode.fluid" entry in "file > text > sourcecode" and set the external 
+editor to Fluid. When radding ".fl" files, set the File Type in the Info dialog
+to "sourcecode.fluid" and Xcode will edit your fil in Fluid when 
+double-clicking.
 
 
 - More
