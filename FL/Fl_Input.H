@@ -37,10 +37,10 @@
   This is the FLTK text input widget. It displays a single line
   of text and lets the user edit it. Normally it is drawn with an
   inset box and a white background. The text may contain any
-  characters (even 0), and will correctly display anything, using
-  ^X notation for unprintable control characters and \\nnn notation
-  for unprintable characters with the high bit set. It assumes the
-  font can draw any characters in the ISO-8859-1 character set.</P>
+  characters (even 0), and will correctly display any UTF text, using
+  ^X notation for unprintable control characters. It assumes the
+ font can draw any characters of the used scripts, which is true
+ for standard fonts under MSWindows and Mac OS X.</P>
   
   <CENTER><TABLE border=1 WIDTH=90% summary="Fl_Input keyboard and mouse bindings.">
   
@@ -114,7 +114,10 @@
   also be able to type "dead key" prefix characters.  On X you will
   actually be able to see what dead key you typed, and if you then move
   the cursor without completing the sequence the accent will remain
-  inserted.</TD></TR>
+ inserted.
+ 
+ <p>Under Mac OS X, character composition is done as for any Mac application
+ using Mac OS-defined keystroke series.</TD></TR>
   </TABLE></CENTER>
   
   <!-- NEW PAGE -->

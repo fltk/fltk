@@ -875,141 +875,33 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 }
 
 
-/*
- * keycode_function for post-10.5 systems, allows more sophisticated decoding of keys
- */
-/*
- static int keycodeToUnicode(
- char * uniChars, int maxChars,
- EventKind eKind,
- UInt32 keycode, UInt32 modifiers,
- UInt32 * deadKeyStatePtr,
- unsigned char,  // not used in this function
- unsigned short) // not used in this function
- {
-   // first get the keyboard mapping in a post 10.2 way
-   
-   Ptr resource;
-   TextEncoding encoding;
-   static TextEncoding lastEncoding = kTextEncodingMacRoman;
-   int len = 0;
-   KeyboardLayoutRef currentLayout = NULL;
-   static KeyboardLayoutRef lastLayout = NULL;
-   SInt32 currentLayoutId = 0;
-   static SInt32 lastLayoutId;
-   int hasLayoutChanged = false;
-   static Ptr uchr = NULL;
-   static Ptr KCHR = NULL;
-   // ScriptCode currentKeyScript;
-   
-   KLGetCurrentKeyboardLayout(&currentLayout);
-    if (currentLayout) {
-     KLGetKeyboardLayoutProperty(currentLayout, kKLIdentifier, (const void**)&currentLayoutId);
-     if ( (lastLayout != currentLayout) || (lastLayoutId != currentLayoutId) ) {
-       lastLayout = currentLayout;
-       lastLayoutId = currentLayoutId;
-       uchr = NULL;
-       KCHR = NULL;
-       if ((KLGetKeyboardLayoutProperty(currentLayout, kKLuchrData, (const void**)&uchr) == noErr) && (uchr != NULL)) {
-	 // done
-       } else if ((KLGetKeyboardLayoutProperty(currentLayout, kKLKCHRData, (const void**)&KCHR) == noErr) && (KCHR != NULL)) {
-	 // done
-       }
-       // FIXME No Layout property found. Now we have a problem. 
-     }
-   }
-   if (hasLayoutChanged) {
-     // deadKeyStateUp = deadKeyStateDown = 0;
-     if (KCHR != NULL) {
-       // FIXME this must not happen
-     } else if (uchr == NULL) {
-       KCHR = (Ptr) GetScriptManagerVariable(smKCHRCache);
-     }
-   }
-   if (uchr != NULL) {
-     // this is what I expect
-     resource = uchr;
-   } else {
-     resource = KCHR;
-     encoding = lastEncoding;
-     // this is actually not supported by the following code and will likely crash
-   }
-   
-   // now apply that keyboard mapping to our keycode
-   
-   int action;
-   //OptionBits options = 0;
-   // not used yet: OptionBits options = kUCKeyTranslateNoDeadKeysMask;
-   unsigned long keyboardType;
-   keycode &= 0xFF;
-   modifiers = (modifiers >> 8) & 0xFF;
-   keyboardType = LMGetKbdType();
-   OSStatus status;
-   UniCharCount actuallength;
-   UniChar utext[10];
-   
-   switch(eKind) {     
-     case kEventRawKeyDown:    action = kUCKeyActionDown; break;
-     case kEventRawKeyUp:      action = kUCKeyActionUp; break;
-     case kEventRawKeyRepeat:  action = kUCKeyActionAutoKey; break;
-     default: return 0;
-   }
-   
-   UInt32 deadKeyState = *deadKeyStatePtr;
-   if ((action==kUCKeyActionUp)&&(*deadKeyStatePtr)) {
-     deadKeyStatePtr = &deadKeyState;
-   }
-   
-   status = UCKeyTranslate((const UCKeyboardLayout *) uchr,
-			   keycode, action, modifiers, keyboardType,
-			   0, deadKeyStatePtr,
-			   10, &actuallength, utext);
-   
-   if (noErr != status) {
-     fprintf(stderr,"UCKeyTranslate failed: %d\n", (int) status);
-     actuallength = 0;
-   }
-   
-   // convert the list of unicode chars into utf8
-   // FIXME no bounds check (see maxchars)
-   unsigned i;
-   for (i=0; i<actuallength; ++i) {
-     len += fl_utf8encode(utext[i], uniChars+len);
-   }
-   uniChars[len] = 0;
-   return len;
- }
- */
-
-/*
- * keycode_function for pre-10.5 systems, this is the "historic" fltk Mac key handling
- */
-static int keycode_wrap_old(char * buffer,
-                            int, EventKind, UInt32, // not used in this function
-                            UInt32, UInt32 *,       // not used in this function
-                            unsigned char key,
-                            unsigned short sym)
+static void calc_e_text(CFStringRef s, char *buffer, size_t len, unsigned sym)
 {
-  if ( (sym >= FL_KP && sym <= FL_KP_Last) || !(sym & 0xff00) ||
-        sym == FL_Tab || sym == FL_Enter) {
-    buffer[0] = key;
-    return 1;
-  } else {
-    buffer[0] = 0;
-    return 0;
+  int i, no_text_key = false;
+  static unsigned notext[] = { // keys that don't emit text
+    FL_BackSpace, FL_Print, FL_Scroll_Lock, FL_Pause,
+    FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down,
+    FL_Left, FL_Up, FL_Right, FL_Down, 
+    FL_Menu, FL_Num_Lock, FL_Help 
+  };
+  int count = sizeof(notext)/sizeof(int);
+  
+  if (sym > FL_F && sym <= FL_F_Last) no_text_key = true;
+  else for (i=0; i < count; i++) {
+    if(notext[i] == sym) {
+      no_text_key = true;
+      break;
+      }
   }
-} /* keycode_wrap_old */
-
-/* 
- * Stub pointer to select appropriate keycode_function per operating system version. This function pointer
- * is initialised in fl_open_display, based on the runtime identification of the host OS version. This is
- * intended to allow us to utilise 10.5 services dynamically to improve Unicode handling, whilst still 
- * allowing code to run satisfactorily on older systems.
- */
-static int (*keycode_function)(char*, int, EventKind, UInt32, UInt32, UInt32*, unsigned char, unsigned short) = keycode_wrap_old;
+  
+  if ( no_text_key) {
+    buffer[0] = 0;
+  } else {
+    CFStringGetCString(s, buffer, len, kCFStringEncodingUTF8);
+  }
+}
 
 
-// EXPERIMENTAL!
 // this gets called by CJK character palette input
 OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, void *unused )
 {
@@ -1047,44 +939,6 @@ OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, voi
   return noErr;
 }
 
-static void processCompositionSequence(CFStringRef s, Fl_Window *window)
-// composed character sequences are sent here
-// they contain 2 unichars, the first comes from the deadkey and can be non ascii (e.g., diaeresis),
-// the second is the character to be modified (e.g., e to be accented)
-{
-  // unicodes: non-ascii unicode chars produced by deadkeys
-  // asciis: corresponding ascii chars expected by Fl::compose()
-  //                           diaeresis acute-accent circumflex tilde ring-above 
-  static UniChar unicodes[] = {0xA8,      0xB4,      0x2C6,     0x2DC, 0x2DA };
-  static char asciis[] = {     ':',        '\'',      '^',       '~',    '*' };
-  if (CFStringGetLength(s) == 0) return;
-  char text[10];
-  char buffer[10];
-  UniChar unis[2];
-  CFStringGetCharacters(s, CFRangeMake(0, 2), unis);
-  for(unsigned int i = 0; i < sizeof(asciis)/sizeof(char); i++) {
-    if (unis[0] == unicodes[i]) {
-      // replace the non-ascii unicode by the corresponding ascii value
-      unis[0] = (UniChar)asciis[i];
-      break;
-    }
-  }
-  CFStringRef smod = CFStringCreateWithCharacters(kCFAllocatorDefault, unis, 2);
-  CFStringGetCString(smod, buffer, sizeof(buffer), kCFStringEncodingUTF8);
-  CFRelease(smod);
-  Fl::e_keysym = 0;
-  Fl::e_state = 0;
-  Fl::e_length = 1;
-  Fl::e_text = text;
-  Fl::e_text[0] = buffer[0];
-  Fl::handle(FL_KEYBOARD, window);
-  Fl::e_keysym = 0;
-  Fl::e_state = 0;
-  Fl::e_length = 1;
-  Fl::e_text[0] = buffer[1];
-  Fl::handle(FL_KEYBOARD, window);
-}
-
 
 /*
  * handle cocoa keyboard events
@@ -1106,36 +960,41 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   
   // get the key code only for key events
   UInt32 keyCode = 0, maskedKeyCode = 0;
-  unichar key = 0;
-  unsigned char keychar = 0;
   unsigned short sym = 0;
   keyCode = [theEvent keyCode];
   NSString *s = [theEvent characters];
   static BOOL compose = NO;
   static NSText *edit;
   static int countevents;
-  static CFMutableStringRef sequence;	// will contain the two characters of the composition sequence
   if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
     s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
   }
   if (compose) {	// we are in a composition sequence
-    // the only benefit of sending events to the NSText object edit is that the deadkey becomes visible
-    // at its keyUp event; without this, the deadkey remains invisible
     if ([s length] == 0) {	// occurs if 2 deadkeys are typed successively by error
       compose = NO;
       [edit setString:@""];
-      CFRelease(sequence);
       fl_unlock_function();
       return noErr;
     }
-    [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    mods_to_e_state( mods ); // process modifier keys
+    Fl::e_keysym = Fl::e_original_keysym = macKeyLookUp[keyCode];
+    if([theEvent type] == NSKeyDown) { // keydown of the 2nd key of the compose sequence
+      [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+      }
+    else { // keyup of the dead key: there's text in s: display it temporarily
+      CFStringGetCString((CFStringRef)s, buffer, sizeof(buffer), kCFStringEncodingUTF8);
+      Fl::e_length = strlen(buffer);
+      Fl::e_text = buffer;
+      Fl::handle(FL_KEYBOARD, window);    
+    }
     countevents++;
-    UniChar deadkey;
-    CFStringGetCharacters((CFStringRef)s, CFRangeMake(0, 1), &deadkey);
-    CFStringAppendCharacters(sequence, &deadkey, 1);// done for keyUp of deadkey and keyDown of next key
     if (countevents >= 3) {	// end of composition sequence
-      processCompositionSequence( sequence, window );
-      CFRelease(sequence);
+      // the composed char is now in s, handle it
+      CFStringGetCString((CFStringRef)s, buffer, sizeof(buffer), kCFStringEncodingUTF8);
+      Fl::e_length = strlen(buffer);
+      Fl::e_text = buffer;
+      Fl::compose_state = 1; // signals the end of a composition sequence
+      Fl::handle(FL_KEYBOARD, window);
       [edit setString:@""];	// clear the content of the edit object
       compose=NO;		// character composition is now complete
     }
@@ -1144,23 +1003,13 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   }
   if ([s length] == 0) {	// this is a dead key that must be combined with the next key to be pressed
     while (window->parent()) window = window->window();
-    Fl::e_keysym = FL_Control_R; // first simulate pressing of the compose key (FL_Control_R)
-    Fl::e_text = (char*)"";
-    Fl::e_length = 0;
-    Fl::handle(FL_KEYBOARD, window); 
     compose=YES;
-    // then send remaining events to an object of type NSText that helps handle character composition sequences
+    // send remaining keydown events to an object of type NSText that handles character composition sequences
     edit = [[theEvent window]  fieldEditor:YES forObject:nil];
-    [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];    
     countevents = 1;
-    sequence = CFStringCreateMutable(NULL, 2);
     fl_unlock_function();
     return noErr;
-  } else {
-    char buff[10];
-    CFStringGetCString((CFStringRef)s, buff, sizeof(buff), kCFStringEncodingUnicode);
-    key = *(unichar*)buff;
-    keychar = buff[0];
   }
   // extended keyboards can also send sequences on key-up to generate Kanji etc. codes.
   // Some observed prefixes are 0x81 to 0x83, followed by an 8 bit keycode.
@@ -1187,15 +1036,10 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
         sendEvent = FL_KEYUP;
         Fl::e_state &= 0xbfffffff; // clear the deadkey flag
       }
-      mods_to_e_state( mods ); // we process modifier keys at the same time
-      // if the user pressed alt/option, event_key should have the keycap, 
-      // but event_text should generate the international symbol
+      mods_to_e_state( mods ); // process modifier keys
       sym = macKeyLookUp[maskedKeyCode];
-      if ( isalpha(key) )
-        sym = tolower(key);
-      else if ( Fl::e_state&FL_CTRL && key<32 && sym<0xff00)
-        sym = key+96;
-      else if ( Fl::e_state&FL_ALT && sym<0xff00) {	// find the keycap of this key
+      if (sym < 0xff00) { // a "simple" key
+	// find the result of this key without modifier
 	NSString *sim = [theEvent charactersIgnoringModifiers];
 	UniChar one;
 	CFStringGetCharacters((CFStringRef)sim, CFRangeMake(0, 1), &one);
@@ -1206,16 +1050,11 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
       
       Fl::e_keysym = Fl::e_original_keysym = sym;
       // Handle FL_KP_Enter on regular keyboards and on Powerbooks
-      if ( maskedKeyCode==0x4c || maskedKeyCode==0x34) key=0x0d;    
-      static UInt32 deadKeyState = 0; // must be cleared when losing focus
-      int l =  (*keycode_function)(buffer, 31, kind, keyCode, mods, &deadKeyState, keychar, sym);
-      if (l > 0) {
-        CFStringGetCString((CFStringRef)s, buffer, sizeof(buffer), kCFStringEncodingUTF8);
-      }
+      if ( maskedKeyCode==0x4c || maskedKeyCode==0x34) s = @"\r";    
+      calc_e_text((CFStringRef)s, buffer, sizeof(buffer), sym);
       Fl::e_length = strlen(buffer);
       Fl::e_text = buffer;
-      buffer[Fl::e_length] = 0; // just in case...
-      }
+    }
       break;
     default:
       fl_unlock_function();
@@ -1230,7 +1069,6 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
     return eventNotHandledErr;
   }
 }
-
 
 
 /*
@@ -1557,18 +1395,7 @@ void fl_open_display() {
         
         CFRelease(execUrl);
       }
-      
-      keycode_function = keycode_wrap_old; // under Cocoa we always use this one
-      /*  // imm: keycode handler stub setting - use Gestalt to determine the running system version,
-       *  // then set the keycode_function pointer accordingly
-       *  if (MACsystemVersion >= 0x1050) {      // 10.5.0 or later
-       *    keycode_function = keycodeToUnicode;
-       *  }
-       *  else {
-       *    keycode_function = keycode_wrap_old; // pre-10.5 mechanism
-       *  }
-       */
-      
+            
       if ( !bundle )
       {
         // Earlier versions of this code tried to use weak linking, however it
