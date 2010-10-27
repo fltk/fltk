@@ -366,9 +366,6 @@ void Fl::set_color(Fl_Color i, unsigned c) {
     integer with the red value in the upper 8 bits, the green value
     in the next 8 bits, and the blue value in bits 8-15.  The lower
     8 bits will always be 0.
-    
-    The second form returns the red, green, and blue values
-    separately in referenced variables.
 */
 unsigned Fl::get_color(Fl_Color i) {
   if (i & 0xffffff00) return (i);
@@ -383,7 +380,14 @@ void Fl::set_color(Fl_Color i, uchar red, uchar green, uchar blue) {
   Fl::set_color((Fl_Color)(i & 255),
 	((unsigned)red<<24)+((unsigned)green<<16)+((unsigned)blue<<8));
 }
-/** See unsigned get_color(Fl_Color c) */
+/**
+    Returns the RGB value(s) for the given FLTK color index. 
+    
+    This form returns the red, green, and blue values
+    separately in referenced variables.
+
+    See also unsigned get_color(Fl_Color c)
+ */
 void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue) {
   unsigned c;
 

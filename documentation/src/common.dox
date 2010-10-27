@@ -174,6 +174,12 @@ colors or a 24-bit RGB color. The color palette is \e not
 the X or WIN32 colormap, but instead is an internal table with
 fixed contents.
 
+See the
+\ref drawing_colors
+section of
+\ref drawing
+for implementation details.
+
 There are symbols for naming some of the more common colors:
 
 \li \p FL_BLACK
@@ -186,20 +192,23 @@ There are symbols for naming some of the more common colors:
 \li \p FL_WHITE
 \li \p FL_WHITE
 
-These symbols are the default colors for all FLTK widgets. They are
-explained in more detail under
-\ref enumerations_colors in
-\ref enumerations.
+Other symbols are used as the default colors for all FLTK widgets.
 
 \li \p FL_FOREGROUND_COLOR
 \li \p FL_BACKGROUND_COLOR
 \li \p FL_INACTIVE_COLOR
 \li \p FL_SELECTION_COLOR
 
-RGB colors can be set using the \p fl_rgb_color() function:
+The full list of named color values can be found in
+\ref enumerations_colors "FLTK Enumerations".
+
+A color value can be created from its RGB components by using the
+\p %fl_rgb_color() function, and decomposed again with
+\p Fl::get_color():
 
 \code
-Fl_Color c = fl_rgb_color(85, 170, 255);
+Fl_Color c = fl_rgb_color(85, 170, 255);    // RGB to Fl_Color
+Fl::get_color(c, r, g, b);                  // Fl_Color to RGB
 \endcode
 
 The widget color is set using the \p color() method:

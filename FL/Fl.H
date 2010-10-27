@@ -718,15 +718,15 @@ public:
     Sets an entry in the fl_color index table. You can set it to any
     8-bit RGB color. The color is not allocated until fl_color(i) is used.
   */
-  static void	set_color(Fl_Color, unsigned); // platform dependent
-  static Fl_Color get_color(Fl_Color);
-  static void	get_color(Fl_Color, uchar&, uchar&, uchar&);
+  static void	set_color(Fl_Color i, unsigned c); // platform dependent
+  static unsigned get_color(Fl_Color i);
+  static void	get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue);
   /**
     Frees the specified color from the colormap, if applicable.
     If overlay is non-zero then the color is freed from the
     overlay colormap.
   */
-  static void	free_color(Fl_Color, int overlay = 0); // platform dependent
+  static void	free_color(Fl_Color i, int overlay = 0); // platform dependent
 
   // fonts:
   static const char* get_font(Fl_Font);

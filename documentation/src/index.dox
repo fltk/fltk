@@ -38,7 +38,7 @@
     \subpage basics
 
     \subpage common
-	- \ref drawing_colors
+	- \ref common_colors
 	- \ref common_boxtypes
 	- \ref common_labels
 	- \ref drawing_images

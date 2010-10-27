@@ -153,8 +153,13 @@ the current clipping region.
 
 \section drawing_colors Colors
 
-FLTK manages colors as 32-bit unsigned integers. Values from
-0 to 255 represent colors from the FLTK 1.0.x standard colormap
+FLTK manages colors as 32-bit unsigned integers, encoded as RGBI.
+When the RGB bytes are non-zero, the value is treated as RGB.
+If these bytes are zero, the I byte will be used as an index
+into the colormap.
+
+Values from 0 to 255, i.e. the I index value, represent
+colors from the FLTK 1.3.x standard colormap
 and are allocated as needed on screens without TrueColor support.
 The \b Fl_Color enumeration type defines the
 standard colors and color cube for the first 256 colors. All of
@@ -164,11 +169,14 @@ these are named with symbols in
 Color values greater than 255 are treated as 24-bit RGB
 values. These are mapped to the closest color supported by the
 screen, either from one of the 256 colors in the FLTK 1.3.x
-colormap or a direct RGB value on TrueColor screens. You can
-generate 24-bit RGB color values using the
-fl_rgb_color(uchar r, uchar b, uchar c) and
-fl_rgb_color(uchar grayscale)
-functions.
+colormap or a direct RGB value on TrueColor screens.
+
+Fl_Color fl_rgb_color(uchar r, uchar g, uchar b) <br>
+Fl_Color fl_rgb_color(uchar grayscale)
+
+\par
+Generate Fl_Color out of specified
+8-bit RGB values or one 8-bit grayscale value.
 
 void fl_color(Fl_Color c) <br>
 void fl_color(int c)
@@ -197,6 +205,40 @@ Set the color for all subsequent drawing operations. The
 closest possible match to the RGB color is used. The RGB color
 is used directly on TrueColor displays. For colormap visuals the
 nearest index in the gray ramp or color cube is used.
+
+unsigned Fl::get_color(Fl_Color i) <br>
+void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue)
+
+\par
+Generate RGB values from a colormap index value \p i.
+The first returns the RGB as a 32-bit unsigned integer,
+and the second decomposes the RGB into three 8-bit values.
+\todo work out why Fl::get_color() does not give links!
+
+Fl::get_system_colors() <br>
+Fl::foreground() <br>
+Fl::background() <br>
+Fl::background2()
+
+\par
+The first gets color values from the user preferences or the system,
+and the other routines are used to apply those values.
+
+Fl::own_colormap() <br>
+Fl::free_color(Fl_Color i, int overlay) <br>
+Fl::set_color(Fl_Color i, unsigned c)
+
+\par
+\p Fl::own_colormap() is used to install a local colormap [X11 only].
+\par
+\p Fl::free_color() and \p Fl::set_color() are used to remove and replace
+entries from the colormap.
+\todo work out why these do not give links!
+
+There are two predefined graphical interfaces for choosing colors.
+The function fl_show_colormap() shows a table of colors and returns an
+Fl_Color index value.
+The Fl_Color_Chooser widget provides a standard RGB color chooser.
 
 \subsection ssect_Lines Line Dashes and Thickness
 

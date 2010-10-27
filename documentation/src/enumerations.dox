@@ -243,6 +243,16 @@ FLTK standard color cube:
 \li FL_WHITE
 \li FL_YELLOW
 
+The following are named values within the standard grayscale:
+
+\li FL_GRAY0
+\li FL_DARK3
+\li FL_DARK2
+\li FL_DARK1
+\li FL_LIGHT1
+\li FL_LIGHT2
+\li FL_LIGHT3
+
 The inline methods for getting a grayscale, color cube, or
 RGB color value are described in the
 \ref drawing_colors
