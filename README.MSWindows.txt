@@ -203,7 +203,7 @@ projects.
 
 Launch VisualStudio. Open the project file in 
 
-  .../fltk-1.3.xxxx/ide/VisualC2008/fltk.sln
+  ...\fltk-1.3.xxxx\ide\VisualC2008\fltk.sln
 
 Choose "Debug" or "Release" mode from the "Solution Configurations" menu.
   
@@ -235,7 +235,7 @@ program. Use "Demo" to explore all test programs.
 
 The default location for VisualC 2008 libraries and headers is here:
 
-  C:\Program Files\Microsoft Visual Studio 9.0\VC
+  C:\Program Files\Microsoft Visual Studio 9.0\VC\
 
 It is possible to move the FLTK libraries, headers, and Fluid into the 
 respective subdirectories, so that they are available for future development
@@ -245,7 +245,7 @@ without adding link and include paths to the solution.
   
   copy all .lib files from the fltk lib directory to the VC lib directory
   
-  copy fluid/fluid.exe to the bin directory
+  copy fluid.exe in the fluid directory to the bin directory
 
 I highly discourace using dll's (dynamically linking libraries) on MSWindows
 because they will require an installation process and likely cause version 
@@ -257,17 +257,18 @@ conflicts. Use the static .lib libraries instead.
 
 This chapter assumes that libraries and headers are copied into 
 
-  C:\Program Files\Microsoft Visual Studio 9.0\VC
+  C:\Program Files\Microsoft Visual Studio 9.0\VC\
 
-Create a new project of type "General", "Empty Project". Open the Project
-Properties dialog and add "WIN32" in the Preprocessor Definitions (Configuration
-Properties > C/C++ > Preprocessor > Preprocessor Definitions). 
+Create a new project of type "General", "Empty Project" and add a simple "C++"
+file to it. The FLTK "hello" source code is a good base.
 
-Now add "Comctl32.lib" and all the LFKT libraries that you will need (at least 
-"fltk.lib") to Additional Dependencies (Configuration Properties > Linker > 
-Additional Dependencies).
+Now open the Project Properties dialog and add "Comctl32.lib" and all the FLTK 
+libraries that you want to use (at least "fltk.lib") to Additional Dependencies
+(Configuration Properties > Linker > Additional Dependencies). In the same 
+dialog, add "WIN32" to the C++ Preprocessor Definitions (Configuration 
+Properties > C/C++ > Preprocessor > Preprocessor Definitions).
 
-Add a simple C++ file with a few FLTK commands and run it with F5.
+Compile and run your test program with F5.
 
 You can also include .fl resources: add a new Hedare file to you project, but 
 let the name end in .fl. Right-click and select "Open with...". Add "fluid.exe"
@@ -342,11 +343,9 @@ program. Use "Demo" to explore all test programs.
  Installing FLTK
 -----------------
 
-FIXME: this is still the VC2008 documentation!
+The default location for VisualC 2010 libraries and headers is here:
 
-The default location for VisualC 2008 libraries and headers is here:
-
-  C:\Program Files\Microsoft Visual Studio 9.0\VC
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\
 
 It is possible to move the FLTK libraries, headers, and Fluid into the 
 respective subdirectories, so that they are available for future development
@@ -356,7 +355,7 @@ without adding link and include paths to the solution.
   
   copy all .lib files from the fltk lib directory to the VC lib directory
   
-  copy fluid/fluid.exe to the bin directory
+  copy fluid.exe in the fluid directory to the bin directory
 
 I highly discourace using dll's (dynamically linking libraries) on MSWindows
 because they will require an installation process and likely cause version 
@@ -366,30 +365,30 @@ conflicts. Use the static .lib libraries instead.
  Creating new Projects
 -----------------------
 
-FIXME: this is still the VC2008 documentation!
-
 This chapter assumes that libraries and headers are copied into 
 
-  C:\Program Files\Microsoft Visual Studio 9.0\VC
+  C:\Program Files\Microsoft Visual Studio 10.0\VC\
 
-Create a new project of type "General", "Empty Project". Open the Project
-Properties dialog and add "WIN32" in the Preprocessor Definitions (Configuration
-Properties > C/C++ > Preprocessor > Preprocessor Definitions). 
+Create a new project of type "General", "Empty Project" and add a simple "C++"
+file to it. The FLTK "hello" source code is a good base.
 
-Now add "Comctl32.lib" and all the LFKT libraries that you will need (at least 
-"fltk.lib") to Additional Dependencies (Configuration Properties > Linker > 
-Additional Dependencies).
+Now open the Project Properties dialog and add "Comctl32.lib" and all the FLTK 
+libraries that you want to use (at least "fltk.lib") to Additional Dependencies
+(Configuration Properties > Linker > Additional Dependencies). In the same 
+dialog, add "WIN32" to the C++ Preprocessor Definitions (Configuration 
+Properties > C/C++ > Preprocessor > Preprocessor Definitions).
 
-Add a simple C++ file with a few FLTK commands and run it with F5.
+Compile and run your test program with F5.
 
 You can also include .fl resources: add a new Hedare file to you project, but 
 let the name end in .fl. Right-click and select "Open with...". Add "fluid.exe"
 from the "bin" directory and set it as the default editor.
 
-To automatically compile .fl files, open the Properties editor and set the
+To automatically compile .fl files, open the Properties editor and cahnge the 
+Element Type to Custom Build and click Apply. Now set the
 Custom Build Steps to:
 
-  Command Line: fluid.exe -c $(InputPath)
+  Command Line: fluid.exe -c %(FullPath)
   Description: Compiling Fluid .fl file
   Outputs: $(InputDir)$(InputName).cxx; $(InputDir)$(InputName).h
 
