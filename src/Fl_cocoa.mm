@@ -910,20 +910,16 @@ OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, voi
   if (keywindow == nil || ![keywindow isMemberOfClass:[FLWindow class]]) return eventNotHandledErr;
   // under 10.5 this gets called only after character palette inputs
   // but under 10.6 this gets also called by interpretKeyEvents 
-  // during character composition when we don't want to run it
+  // during keyboard input when we don't want to run it
   if ([[NSApp currentEvent] type] != NSSystemDefined) return eventNotHandledErr;
   Fl_Window *window = [(FLWindow*)keywindow getFl_Window];
   fl_lock_function();
-  // int kind = GetEventKind(event);
-  unsigned short buf[200];
-  ByteCount size;
+  UniChar ucs[20];
   GetEventParameter( event, kEventParamTextInputSendText, typeUnicodeText, 
-                    NULL, 100, &size, &buf );
-  //  printf("TextEvent: %02x %02x %02x %02x\n", buf[0], buf[1], buf[2], buf[3]);
-  // FIXME: oversimplified!
-  unsigned ucs = buf[0];
-  char utf8buf[20];
-  int len = fl_utf8encode(ucs, utf8buf); 
+                    NULL, 20, NULL, ucs );
+  char utf8buf[5];
+  int len = fl_utf8encode(ucs[0], utf8buf);
+  utf8buf[len]=0;
   
   Fl::e_length = len;
   Fl::e_text = utf8buf;
@@ -952,62 +948,24 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   NSUInteger mods;
   
   fl_lock_function();
-  
-  int kind = 0;
-  
-  // get the modifiers for any of the events
+    
+  // get the modifiers
   mods = [theEvent modifierFlags];
-  
-  // get the key code only for key events
+  // get the key code
   UInt32 keyCode = 0, maskedKeyCode = 0;
   unsigned short sym = 0;
   keyCode = [theEvent keyCode];
   NSString *s = [theEvent characters];
   static BOOL compose = NO;
-  static NSText *edit;
-  static int countevents;
+  // send keydown events to an object of type NSText that handles character composition sequences
+  NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
+  if([theEvent type] == NSKeyDown) [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    
   if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
     s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
   }
-  if (compose) {	// we are in a composition sequence
-    if ([s length] == 0) {	// occurs if 2 deadkeys are typed successively by error
-      compose = NO;
-      [edit setString:@""];
-      fl_unlock_function();
-      return noErr;
-    }
-    mods_to_e_state( mods ); // process modifier keys
-    Fl::e_keysym = Fl::e_original_keysym = macKeyLookUp[keyCode];
-    if([theEvent type] == NSKeyDown) { // keydown of the 2nd key of the compose sequence
-      [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-      }
-    else { // keyup of the dead key: there's text in s: display it temporarily
-      CFStringGetCString((CFStringRef)s, buffer, sizeof(buffer), kCFStringEncodingUTF8);
-      Fl::e_length = strlen(buffer);
-      Fl::e_text = buffer;
-      Fl::handle(FL_KEYBOARD, window);    
-    }
-    countevents++;
-    if (countevents >= 3) {	// end of composition sequence
-      // the composed char is now in s, handle it
-      CFStringGetCString((CFStringRef)s, buffer, sizeof(buffer), kCFStringEncodingUTF8);
-      Fl::e_length = strlen(buffer);
-      Fl::e_text = buffer;
-      Fl::compose_state = 1; // signals the end of a composition sequence
-      Fl::handle(FL_KEYBOARD, window);
-      [edit setString:@""];	// clear the content of the edit object
-      compose=NO;		// character composition is now complete
-    }
-    fl_unlock_function();
-    return noErr;
-  }
-  if ([s length] == 0) {	// this is a dead key that must be combined with the next key to be pressed
-    while (window->parent()) window = window->window();
+  if ([s length] == 0) { // this is a dead key that must be combined with the next key to be pressed
     compose=YES;
-    // send remaining keydown events to an object of type NSText that handles character composition sequences
-    edit = [[theEvent window]  fieldEditor:YES forObject:nil];
-    [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];    
-    countevents = 1;
     fl_unlock_function();
     return noErr;
   }
@@ -1016,22 +974,13 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   // In this mode, there seem to be no key-down codes
   // printf("%08x %08x %08x\n", keyCode, mods, key);
   maskedKeyCode = keyCode & 0x7f;
-  /* output a human readable event identifier for debugging 
-   * const char *ev = "";
-   * switch (kind) {
-   *    case kEventRawKeyDown:             ev = "kEventRawKeyDown";             break;
-   *    case kEventRawKeyRepeat:           ev = "kEventRawKeyRepeat";           break;
-   *    case kEventRawKeyUp:               ev = "kEventRawKeyUp";               break;
-   *    case kEventRawKeyModifiersChanged: ev = "kEventRawKeyModifiersChanged"; break;
-   *    default:                           ev = "unknown";                      break;
-   * }
-   * printf("%08x %08x %08x '%c' %s \n", mods, keyCode, key, key, ev);
-   */
   switch([theEvent type]) {
     case NSKeyDown:
       sendEvent = FL_KEYBOARD;
+      if(compose) Fl::compose_state = 1;
       // fall through
     case NSKeyUp: {
+      if(compose) sendEvent = FL_KEYBOARD;
       if ( !sendEvent ) {
         sendEvent = FL_KEYUP;
         Fl::e_state &= 0xbfffffff; // clear the deadkey flag
@@ -1062,6 +1011,10 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   }
   while (window->parent()) window = window->window();
   if (sendEvent && Fl::handle(sendEvent,window)) {
+    if ([theEvent type] == NSKeyDown) {
+      [edit setString:@""];
+      if (compose) compose = NO;
+      }
     fl_unlock_function();  
     return noErr; // return noErr if FLTK handled the event
   } else {
