@@ -246,7 +246,7 @@ int Fl_Tabs::handle(int event) {
 
 int Fl_Tabs::push(Fl_Widget *o) {
   if (push_ == o) return 0;
-  if (push_ && !push_->visible() || o && !o->visible())
+  if ( (push_ && !push_->visible()) || (o && !o->visible()) )
     redraw_tabs();
   push_ = o;
   return 1;

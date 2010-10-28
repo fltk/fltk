@@ -844,7 +844,7 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
 */
 int Fl_Input_::undo() {
   was_up_down = 0;
-  if (undowidget != this || !undocut && !undoinsert) return 0;
+  if ( undowidget != this || (!undocut && !undoinsert) ) return 0;
 
   int ilen = undocut;
   int xlen = undoinsert;

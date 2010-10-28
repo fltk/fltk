@@ -686,7 +686,7 @@ int menuwindow::early_hide_handle(int e) {
       }
       return 1;
     case FL_Right:
-      if (pp.menubar && (pp.menu_number<=0 || pp.menu_number==1 && pp.nummenus==2))
+      if (pp.menubar && (pp.menu_number<=0 || (pp.menu_number==1 && pp.nummenus==2)))
 	forward(0);
       else if (pp.menu_number < pp.nummenus-1) forward(pp.menu_number+1);
       return 1;
@@ -774,8 +774,9 @@ int menuwindow::early_hide_handle(int e) {
   case FL_RELEASE:
     // Mouse must either be held down/dragged some, or this must be
     // the second click (not the one that popped up the menu):
-    if (!Fl::event_is_click() || pp.state == PUSH_STATE ||
-	pp.menubar && pp.current_item && !pp.current_item->submenu() // button
+    if (   !Fl::event_is_click() 
+        || pp.state == PUSH_STATE 
+        || (pp.menubar && pp.current_item && !pp.current_item->submenu()) // button
 	) {
 #if 0 // makes the check/radio items leave the menu up
       const Fl_Menu_Item* m = pp.current_item;

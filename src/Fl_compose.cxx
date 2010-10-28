@@ -176,7 +176,7 @@ int Fl::compose(int& del) {
     char c1 = char(compose_state); // retrieve first character
     // now search for the pair in either order:
     for (const char *p = compose_pairs; *p; p += 2) {
-      if (p[0] == ascii && p[1] == c1 || p[1] == ascii && p[0] == c1) {
+      if ( (p[0] == ascii && p[1] == c1) || (p[1] == ascii && p[0] == c1)) {
         int len = fl_utf8encode((p-compose_pairs)/2+0xA0, e_text);
         e_text[len] = '\0';
         e_length = len;

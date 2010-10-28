@@ -77,7 +77,7 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
       if (*q == '\\') switch (*++q) {
       case '\r':
       case '\n':
-	fgets(q,(buffer+MAXSIZE+20)-q,f); break;
+	if (!fgets(q,(buffer+MAXSIZE+20)-q,f)) { /* no problem if we hit EOF */ } break;
       case 0:
 	break;
       case 'x': {

@@ -986,7 +986,7 @@ int Fl::handle(int e, Fl_Window* window)
   switch (e) {
 
   case FL_CLOSE:
-    if (grab() || modal() && window != modal()) return 0;
+    if ( grab() || (modal() && window != modal()) ) return 0;
     wi->do_callback();
     return 1;
 

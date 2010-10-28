@@ -116,7 +116,7 @@ static void make_raw_name(char *raw, char *pretty)
   char *nm2 = strchr(pretty, ',');
   if(nm2) *nm2 = 0; // terminate name after first entry
   raw[0] = ' '; raw[1] = 0; // Default start of "raw name" text
-  strncat(raw, pretty, LOCAL_RAW_NAME_MAX);
+  strncat(raw, pretty, LOCAL_RAW_NAME_MAX-1);
 #endif
   // At this point, the name is "marked" as regular...
   if (style)

@@ -63,7 +63,7 @@ int fl_measure_pixmap(/*const*/ char* const* data, int &w, int &h) {
 int fl_measure_pixmap(const char * const *cdata, int &w, int &h) {
   int i = sscanf(cdata[0],"%d%d%d%d",&w,&h,&ncolors,&chars_per_pixel);
   if (i<4 || w<=0 || h<=0 ||
-      chars_per_pixel!=1 && chars_per_pixel!=2) return w=0;
+      (chars_per_pixel!=1 && chars_per_pixel!=2) ) return w=0;
   return 1;
 }
 

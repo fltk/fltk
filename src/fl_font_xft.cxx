@@ -587,7 +587,7 @@ static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
 void Fl_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
 
 #if defined(__GNUC__)
-#warning Need to improve this XFT right to left draw function
+// FIXME: warning Need to improve this XFT right to left draw function
 #endif /*__GNUC__*/
 
 // This actually draws LtoR, but aligned to R edge with the glyph order reversed...

@@ -414,7 +414,7 @@ void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
 
 int Fl_Text_Buffer::undo(int *cursorPos)
 {
-  if (undowidget != this || !undocut && !undoinsert && !mCanUndo)
+  if (undowidget != this || (!undocut && !undoinsert && !mCanUndo) )
     return 0;
   
   int ilen = undocut;

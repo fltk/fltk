@@ -228,7 +228,7 @@ void Fl_Shared_Image::reload() {
   if (!name_) return;
 
   if ((fp = fl_fopen(name_, "rb")) != NULL) {
-    fread(header, 1, sizeof(header), fp);
+    if (fread(header, 1, sizeof(header), fp)==0) { /* ignore */ }
     fclose(fp);
   } else {
     return;

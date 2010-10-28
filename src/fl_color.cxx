@@ -202,7 +202,7 @@ static inline uchar realcolor(uchar color, uchar mask) {
   }
   return result;
 #  else
-  return (color&mask) | (~mask)&(mask>>1);
+  return (color&mask) | ( (~mask)&(mask>>1) );
 #  endif
 }
 

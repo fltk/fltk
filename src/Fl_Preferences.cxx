@@ -162,9 +162,7 @@ const char *Fl_Preferences::newUUID()
             b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]);
   }
 #else
-# if defined(__GNUC__)
-# warning Unix implementation of Fl_Preferences::newUUID() incomplete!
-# endif /*__GNUC__*/
+  // warning Unix implementation of Fl_Preferences::newUUID() incomplete!
   // #include <uuid/uuid.h>
   // void uuid_generate(uuid_t out);
   unsigned char b[16];
@@ -692,8 +690,13 @@ static char *decodeText( const char *src )
   const char *s = src;
   for ( ; *s; s++, len++ )
   {
-    if ( *s == '\\' )
-      if ( isdigit( s[1] ) ) s+=3; else s+=1;
+    if ( *s == '\\' ) {
+      if ( isdigit( s[1] ) ) {
+        s+=3; 
+      } else { 
+        s+=1;
+      }
+    }
   }
   char *dst = (char*)malloc( len+1 ), *d = dst;
   for ( s = src; *s; s++ )
@@ -1267,9 +1270,9 @@ int Fl_Preferences::RootNode::read()
   if ( !f )
     return -1;
 
-  fgets( buf, 1024, f );
-  fgets( buf, 1024, f );
-  fgets( buf, 1024, f );
+  if (fgets( buf, 1024, f )==0) { /* ignore */ }
+  if (fgets( buf, 1024, f )==0) { /* ignore */ }
+  if (fgets( buf, 1024, f )==0) { /* ignore */ }
   Node *nd = prefs_->node;
   for (;;)
   {

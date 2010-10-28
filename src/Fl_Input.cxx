@@ -123,12 +123,12 @@ int Fl_Input::handle_key() {
       // find the insert position
       int ip = position()<mark() ? position() : mark();
       // This is complex to allow "0xff12" hex to be typed:
-      if (!ip && (ascii == '+' || ascii == '-') 
+      if (   (!ip && (ascii == '+' || ascii == '-')) 
           || (ascii >= '0' && ascii <= '9') 
           || (ip==1 && index(0)=='0' && (ascii=='x' || ascii == 'X')) 
-          || (ip>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X')
-              && (ascii>='A'&& ascii<='F' || ascii>='a'&& ascii<='f')) 
-          || input_type()==FL_FLOAT_INPUT && ascii && strchr(legal_fp_chars, ascii)) 
+          || (ip>1 && index(0)=='0' && (index(1)=='x'||index(1)=='X') 
+              && ((ascii>='A'&& ascii<='F') || (ascii>='a'&& ascii<='f'))) 
+          || (input_type()==FL_FLOAT_INPUT && ascii && strchr(legal_fp_chars, ascii))) 
       {
 	if (readonly()) fl_beep();
 	else replace(position(), mark(), &ascii, 1);
@@ -532,8 +532,8 @@ int Fl_Input::handle(int event) {
         newpos = position(); 
         position( oldpos, oldmark );
         if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
-            (newpos >= mark() && newpos < position() ||
-             newpos >= position() && newpos < mark())) {
+            (   (newpos >= mark() && newpos < position()) 
+             || (newpos >= position() && newpos < mark())) ) {
               // user clicked in the selection, may be trying to drag
               drag_start = newpos;
               return 1;

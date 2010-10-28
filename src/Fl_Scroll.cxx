@@ -348,9 +348,9 @@ void Fl_Scroll::resize(int X, int Y, int W, int H) {
     o->position(o->x()+dx, o->y()+dy);
   }
   if (dw==0 && dh==0) {
-    char pad = (scrollbar.visible() && hscrollbar.visible());
-    char al = (scrollbar.align()&FL_ALIGN_LEFT!=0);
-    char at = (scrollbar.align()&FL_ALIGN_TOP!=0);
+    char pad = ( scrollbar.visible() && hscrollbar.visible() );
+    char al = ( (scrollbar.align() & FL_ALIGN_LEFT) != 0 );
+    char at = ( (scrollbar.align() & FL_ALIGN_TOP)  !=0 );
     scrollbar.position(al?X:X+W-scrollbar.w(), (at&&pad)?Y+hscrollbar.h():Y);
     hscrollbar.position((al&&pad)?X+scrollbar.w():X, at?Y:Y+H-hscrollbar.h());
   } else {

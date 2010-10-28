@@ -350,19 +350,19 @@ void fl_new_ic()
 #if USE_XFT
 
 #if defined(__GNUC__)
-#warning XFT support here
+// FIXME: warning XFT support here
 #endif /*__GNUC__*/
 
   if (!fs) {
     fnt = NULL;//fl_get_font_xfld(0, 14);
-    if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
+    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
     fs = XCreateFontSet(fl_display, fnt, &missing_list,
                         &missing_count, &def_string);
   }
 #else
   if (!fs) {
     fnt = fl_get_font_xfld(0, 14);
-    if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
+    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
     fs = XCreateFontSet(fl_display, fnt, &missing_list,
                         &missing_count, &def_string);
   }
@@ -465,16 +465,16 @@ void fl_set_spot(int font, int size, int X, int Y, int W, int H, Fl_Window *win)
 #if USE_XFT
 
 #if defined(__GNUC__)
-#warning XFT support here
+// FIXME: warning XFT support here
 #endif /*__GNUC__*/
 
     fnt = NULL; // fl_get_font_xfld(font, size);
-    if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
+    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
     fs = XCreateFontSet(fl_display, fnt, &missing_list,
                         &missing_count, &def_string);
 #else
     fnt = fl_get_font_xfld(font, size);
-    if (!fnt) {fnt = "-misc-fixed-*";must_free_fnt=false;}
+    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
     fs = XCreateFontSet(fl_display, fnt, &missing_list,
                         &missing_count, &def_string);
 #endif
@@ -1725,7 +1725,7 @@ void Fl_Window::label(const char *name,const char *iname) {
 // contents are restored to the area, but this assumes the area
 // is cleared to background color.  So this is disabled in this version.
 // Fl_Window *fl_boxcheat;
-static inline int can_boxcheat(uchar b) {return (b==1 || (b&2) && b<=15);}
+static inline int can_boxcheat(uchar b) {return (b==1 || ((b&2) && b<=15));}
 
 void Fl_Window::show() {
   image(Fl::scheme_bg_);

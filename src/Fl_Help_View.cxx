@@ -3201,7 +3201,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
     rewind(fp);
 
     value_ = (const char *)calloc(len + 1, 1);
-    fread((void *)value_, 1, len, fp);
+    if (fread((void *)value_, 1, len, fp)==0) { /* use default 0 */ }
     fclose(fp);
   }
   else
