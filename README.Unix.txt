@@ -9,6 +9,15 @@ README.Unix.txt - 2010-10-28 - Building FLTK on Unix
   1   INTRODUCTION
   2   PREREQUISITES
     2.1   Ubuntu 10
+    2.2   * http://www.linuxmint.com/about.php
+    2.3   * http://fedoraproject.org/
+    2.4   * http://www2.mandriva.com/
+    2.5   * http://www.opensuse.org/en/
+    2.6   * http://www.debian.org/
+    2.7   * Mandrake?
+    2.8   * Sun?
+    2.9   * SGI?
+    2.10  * HPUX?
   3   HOW TO BUILD FLTK USING GCC
     3.1   Prerequisites
     3.2   Downloading and Unpacking
@@ -17,6 +26,7 @@ README.Unix.txt - 2010-10-28 - Building FLTK on Unix
     3.5   Testing FLTK
     3.6   Installing FLTK
     3.7   Creating new Projects
+  4   * CODE::BLOCKS
   4   DOCUMENT HISTORY
 
 
