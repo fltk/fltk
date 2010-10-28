@@ -195,14 +195,14 @@ char check(int target,int direction) {
   piece aa = tb[target]; piece bb = tb[src];
   tb[target] = EMPTY; tb[src] = EMPTY;
   int safe =
-    (tb[src-4]&FRIEND && tb[src-8]&ENEMY
-     ||tb[src-5]&FRIEND && tb[src-10]&ENEMY
-     ||tb[dst-4]&ENEMY && !tb[dst+4]
-     ||tb[dst-5]&ENEMY && !tb[dst+5]
-     ||tb[src+4]&FRIEND && tb[src+8]==ENEMYKING
-     ||tb[src+5]&FRIEND && tb[src+10]==ENEMYKING
-     ||tb[dst+4]==ENEMYKING && !tb[dst-4]
-     ||tb[dst+5]==ENEMYKING && !tb[dst-5]);
+    (   (tb[src-4]&FRIEND && tb[src-8]&ENEMY)
+     || (tb[src-5]&FRIEND && tb[src-10]&ENEMY)
+     || (tb[dst-4]&ENEMY && !tb[dst+4])
+     || (tb[dst-5]&ENEMY && !tb[dst+5])
+     || (tb[src+4]&FRIEND && tb[src+8]==ENEMYKING)
+     || (tb[src+5]&FRIEND && tb[src+10]==ENEMYKING)
+     || (tb[dst+4]==ENEMYKING && !tb[dst-4])
+     || (tb[dst+5]==ENEMYKING && !tb[dst-5]));
   tb[target] = aa; tb[src] = bb;
   return(safe);
 }
@@ -290,7 +290,7 @@ void evaluateboard(node *n,int print) {
   for (i=9; i<40; i++) {
     int x = (gradient[i-4]+gradient[i-5])/2;
     if (tb[i]==FRIEND) total += x;
-    gradient[i] = (tb[i]&FRIEND || !tb[i] && !is_protected[i]) ? x : 0;
+    gradient[i] = (tb[i]&FRIEND || (!tb[i] && !is_protected[i])) ? x : 0;
   }
   n->gradient = total;
 
@@ -1012,7 +1012,7 @@ void Board::draw() {
 
 // drag the piece on square i to dx dy, or undo drag if i is zero:
 void Board::drag_piece(int j, int dx, int dy) {
-  dy = (dy&-2) | dx&1; // make halftone shadows line up
+  dy = (dy&-2) | (dx&1); // make halftone shadows line up
   if (j != erase_this) drop_piece(erase_this); // should not happen
   if (!erase_this) { // pick up old piece
     dragx = squarex(j); dragy = squarey(j);
