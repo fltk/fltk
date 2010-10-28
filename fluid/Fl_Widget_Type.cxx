@@ -260,7 +260,7 @@ void Fl_Widget_Type::redraw() {
 Fl_Type *sort(Fl_Type *parent) {
   Fl_Type *f,*n=0;
   for (f = parent ? parent->next : Fl_Type::first; ; f = n) {
-    if (!f || parent && f->level <= parent->level) return f;
+    if (!f || (parent && f->level <= parent->level)) return f;
     n = sort(f);
     if (!f->selected || (!f->is_widget() || f->is_menu_item())) continue;
     Fl_Widget* fw = ((Fl_Widget_Type*)f)->o;
@@ -1940,7 +1940,7 @@ const char *array_name(Fl_Widget_Type *o) {
     if (!e) continue;
     if (strncmp(c,e,d-c)) continue;
     int n1 = atoi(e+(d-c)+1);
-    if (n1 > num || n1==num && sawthis) return 0;
+    if (n1 > num || (n1==num && sawthis)) return 0;
   }
   static char buffer[128];
   // MRS: we want strncpy() here...

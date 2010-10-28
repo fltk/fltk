@@ -112,10 +112,10 @@ Fl_Type *Fl_Menu_Item_Type::make() {
   Fl_Type* q = Fl_Type::current;
   Fl_Type* p = q;
   if (p) {
-    if (force_parent && q->is_menu_item() || !q->is_parent()) p = p->parent;
+    if ( (force_parent && q->is_menu_item()) || !q->is_parent()) p = p->parent;
   }
   force_parent = 0;
-  if (!p || !(p->is_menu_button() || p->is_menu_item() && p->is_parent())) {
+  if (!p || !(p->is_menu_button() || (p->is_menu_item() && p->is_parent()))) {
     fl_message("Please select a menu to add to");
     return 0;
   }
@@ -565,17 +565,17 @@ int Shortcut_Button::handle(int e) {
   if (e == FL_KEYBOARD) {
     if (!value()) return 0;
     int v = Fl::event_text()[0];
-    if (v > 32 && v < 0x7f || v > 0xa0 && v <= 0xff) {
+    if ( (v > 32 && v < 0x7f) || (v > 0xa0 && v <= 0xff) ) {
       if (isupper(v)) {
         v = tolower(v);
         v |= FL_SHIFT;
       }
-      v = v | Fl::event_state()&(FL_META|FL_ALT|FL_CTRL);
+      v = v | (Fl::event_state()&(FL_META|FL_ALT|FL_CTRL));
     } else {
-      v = Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT) | Fl::event_key();
+      v = (Fl::event_state()&(FL_META|FL_ALT|FL_CTRL|FL_SHIFT)) | Fl::event_key();
       if (v == FL_BackSpace && svalue) v = 0;
     }
-		if (v != svalue) {svalue = v; set_changed(); redraw(); do_callback(); }
+    if (v != svalue) {svalue = v; set_changed(); redraw(); do_callback(); }
     return 1;
   } else if (e == FL_UNFOCUS) {
     int c = changed(); value(0); if (c) set_changed();

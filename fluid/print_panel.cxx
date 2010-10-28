@@ -564,7 +564,7 @@ const char *printer = (const char *)print_choice->menu()[print_choice->value()].
 if (print_choice->value()) {
   snprintf(command, sizeof(command), "lpstat -p '%s'", printer);
   if ((lpstat = popen(command, "r")) != NULL) {
-    fgets(status, sizeof(status), lpstat);
+    if (fgets(status, sizeof(status), lpstat)==0) { /* ignore */ }
     pclose(lpstat);
   } else strcpy(status, "printer status unavailable");
 } else status[0] = '\0';

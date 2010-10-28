@@ -166,7 +166,7 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
       case 5 :
       case 6 :
         if (maxval < 256) {
-          fread(ptr, w(), d(), fp);
+          if (fread(ptr, w(), d(), fp)) { /* ignored */ }
         } else {
           for (x = d() * w(); x > 0; x --) {
             val = (uchar)getc(fp);

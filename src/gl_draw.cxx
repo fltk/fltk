@@ -84,8 +84,8 @@ void  gl_font(int fontid, int size) {
 #else // Fltk-1.1.8 style GL font selection
 
 #if defined (USE_X11) // X-windows options follow, either XFT or "plain" X
-#  warning Ideally, for XFT, we really need a glXUseXftFont implementation here...
-#  warning GL font selection is basically wrong here
+// FIXME:  warning Ideally, for XFT, we really need a glXUseXftFont implementation here...
+// FIXME:  warning GL font selection is basically wrong here
 /* OksiD had a fairly sophisticated scheme for storing multiple X fonts in a XUtf8FontStruct,
  * then sorting through them at draw time (for normal X rendering) to find which one can
  * render the current glyph... But for now, just use the first font in the list for GL...

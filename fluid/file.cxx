@@ -159,7 +159,7 @@ void read_error(const char *format, ...) {
   if (!fin) {
     char buffer[1024];
     vsnprintf(buffer, sizeof(buffer), format, args);
-    fl_message(buffer);
+    fl_message("%s", buffer);
   } else {
     fprintf(stderr, "%s:%d: ", fname, lineno);
     vfprintf(stderr, format, args);

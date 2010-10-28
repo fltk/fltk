@@ -57,8 +57,7 @@ int main(int argc, char **argv) {
       Fl_Widget *o = window.child(n);
       if (x<o->x()+o->w() && x+w>o->x() &&
 	  y<o->y()+o->h() && y+h>o->y()) break;
-      if (   (!j && (y < o->y())
-          || (y == o->y() && x < o->x())) ) j = o;
+      if ( !j && ( y<o->y() || (y==o->y() && x<o->x()) ) ) j = o;
     }
     // skip if intersection:
     if (n < window.children()) continue;

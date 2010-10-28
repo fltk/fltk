@@ -188,7 +188,7 @@ void Fl_Function_Type::open() {
   function_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert(message);
+    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == f_panel_cancel) goto BREAK2;
@@ -332,7 +332,7 @@ void Fl_Function_Type::write_code1() {
           skipc = skipc ? 0 : 1;
         if(!skips && !skipc && plevel==1 && *nptr =='=' && 
            !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
-          while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || plevel!=1) )) {
+          while(*++nptr  && (skips || skipc || ( (*nptr!=',' && *nptr!=')') || plevel!=1) )) {
             if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
               skips = skips ? 0 : 1;
             else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
@@ -374,7 +374,7 @@ void Fl_Function_Type::write_code1() {
           skipc = skipc ? 0 : 1;
         if(!skips && !skipc && plevel==1 && *nptr =='=' && 
            !(nc && *(nptr-1)=='\'') ) // ignore '=' case 
-          while(*++nptr  && (skips || skipc || (*nptr!=',' && *nptr!=')' || plevel!=1) )) {
+          while(*++nptr  && (skips || skipc || ( (*nptr!=',' && *nptr!=')') || plevel!=1) )) {
             if ( *nptr=='"' &&  *(nptr-1)!='\\' ) 
               skips = skips ? 0 : 1;
             else if(!skips && *nptr=='\'' &&  *(nptr-1)!='\\')
@@ -449,7 +449,7 @@ void Fl_Code_Type::open() {
   code_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert(message);
+    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == code_panel_cancel) goto BREAK2;
@@ -516,7 +516,7 @@ void Fl_CodeBlock_Type::open() {
   codeblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert(message);
+    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == codeblock_panel_cancel) goto BREAK2;
@@ -620,7 +620,7 @@ void Fl_Decl_Type::open() {
   decl_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert(message);
+    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == decl_panel_cancel) goto BREAK2;
@@ -668,11 +668,10 @@ void Fl_Decl_Type::write_code1() {
   const char* c = name();
   if (!c) return;
   // handle a few keywords differently if inside a class
-  if (is_in_class() && (
-                        !strncmp(c,"class",5) && isspace(c[5])
-                        || !strncmp(c,"typedef",7) && isspace(c[7])
-                        || !strncmp(c,"FL_EXPORT",9) && isspace(c[9])
-                        || !strncmp(c,"struct",6) && isspace(c[6])
+  if (is_in_class() && (   (!strncmp(c,"class",5) && isspace(c[5]))
+                        || (!strncmp(c,"typedef",7) && isspace(c[7]))
+                        || (!strncmp(c,"FL_EXPORT",9) && isspace(c[9]))
+                        || (!strncmp(c,"struct",6) && isspace(c[6]))
                         ) ) {
     write_public(public_);
     write_comment_h("  ");
@@ -680,12 +679,12 @@ void Fl_Decl_Type::write_code1() {
     return;
   }
   // handle putting #include, extern, using or typedef into decl:
-  if (!isalpha(*c) && *c != '~'
-      || !strncmp(c,"extern",6) && isspace(c[6])
-      || !strncmp(c,"class",5) && isspace(c[5])
-      || !strncmp(c,"typedef",7) && isspace(c[7])
-      || !strncmp(c,"using",5) && isspace(c[5])
-      || !strncmp(c,"FL_EXPORT",9) && isspace(c[9])
+  if (   (!isalpha(*c) && *c != '~')
+      || (!strncmp(c,"extern",6) && isspace(c[6]))
+      || (!strncmp(c,"class",5) && isspace(c[5]))
+      || (!strncmp(c,"typedef",7) && isspace(c[7]))
+      || (!strncmp(c,"using",5) && isspace(c[5]))
+      || (!strncmp(c,"FL_EXPORT",9) && isspace(c[9]))
       //    || !strncmp(c,"struct",6) && isspace(c[6])
       ) {
     if (public_) {
@@ -779,7 +778,7 @@ void Fl_Data_Type::open() {
   data_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert(message);
+    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == data_panel_cancel) goto BREAK2;
@@ -881,7 +880,7 @@ void Fl_Data_Type::write_code1() {
       fseek(f, 0, SEEK_SET);
       if (nData) {
         data = (char*)calloc(nData, 1);
-        fread(data, nData, 1, f);
+        if (fread(data, nData, 1, f)==0) { /* use default */ }
       }
       fclose(f);
     }
@@ -980,7 +979,7 @@ void Fl_DeclBlock_Type::open() {
   declblock_panel->show();
   const char* message = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert(message);
+    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == declblock_panel_cancel) goto BREAK2;
@@ -1103,7 +1102,7 @@ void Fl_Comment_Type::open() {
   char itempath[256]; itempath[0] = 0;
   int last_selected_item = 0;
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert(message);
+    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == comment_panel_cancel) goto BREAK2;
@@ -1359,7 +1358,7 @@ void Fl_Class_Type::open() {
   char *na=0,*pr=0,*p=0; // name and prefix substrings
   
   for (;;) { // repeat as long as there are errors
-    if (message) fl_alert(message);
+    if (message) fl_alert("%s", message);
     for (;;) {
       Fl_Widget* w = Fl::readqueue();
       if (w == c_panel_cancel) goto BREAK2;

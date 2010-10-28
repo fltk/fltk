@@ -573,10 +573,34 @@ void Fl_Window_Type::newposition(Fl_Widget_Type *myo,int &X,int &Y,int &R,int &T
     R += dx;
     T += dy;
   } else {
-    if (drag&LEFT) if (X==bx) X += dx; else if (X<bx+dx) X = bx+dx;
-    if (drag&TOP) if (Y==by) Y += dy; else if (Y<by+dy) Y = by+dy;
-    if (drag&RIGHT) if (R==br) R += dx; else if (R>br+dx) R = br+dx;
-    if (drag&BOTTOM) if (T==bt) T += dy; else if (T>bt+dx) T = bt+dx;
+    if (drag&LEFT) {
+      if (X==bx) {
+        X += dx; 
+      } else {
+        if (X<bx+dx) X = bx+dx;
+      }
+    }
+    if (drag&TOP) {
+      if (Y==by) {
+        Y += dy;
+      } else {
+        if (Y<by+dy) Y = by+dy;
+      }
+    }
+    if (drag&RIGHT) {
+      if (R==br) {
+        R += dx; 
+      } else {
+        if (R>br+dx) R = br+dx;
+      }
+    }
+    if (drag&BOTTOM) {
+      if (T==bt) {
+        T += dy; 
+      } else {
+        if (T>bt+dx) T = bt+dx;
+      }
+    }
   }
   if (R<X) {int n = X; X = R; R = n;}
   if (T<Y) {int n = Y; Y = T; T = n;}

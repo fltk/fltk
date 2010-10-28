@@ -652,7 +652,7 @@ inline int fl_show_question(const char* c, int = 0) {return fl_choice("%s",fl_no
 FL_EXPORT void fl_show_message(const char *,const char *,const char *);
 FL_EXPORT void fl_show_alert(const char *,const char *,const char *,int=0);
 FL_EXPORT int fl_show_question(const char *,const char *,const char *);
-inline const char *fl_show_input(const char *l,const char*d=0) {return fl_input(l,d);}
+inline const char *fl_show_input(const char *l,const char*d=0) {return fl_input("%s",d,l);}
 FL_EXPORT /*const*/ char *fl_show_simple_input(const char *label, const char *deflt = 0);
 FL_EXPORT int fl_show_choice(
     const char *m1,

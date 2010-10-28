@@ -47,7 +47,7 @@ extern const char* i18n_set;
 // return true if c can be in a C identifier.  I needed this so
 // it is not messed up by locale settings:
 int is_id(char c) {
-  return c>='a' && c<='z' || c>='A' && c<='Z' || c>='0' && c<='9' || c=='_';
+  return (c>='a' && c<='z') || (c>='A' && c<='Z') || (c>='0' && c<='9') || c=='_';
 }
 
 ////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ void write_cstring(const char *w, int length) {
       // consume them as part of the quoted sequence.  Use string constant
       // pasting to avoid this:
       c = *w;
-      if (w < e && (c>='0'&&c<='9' || c>='a'&&c<='f' || c>='A'&&c<='F')) {
+      if (w < e && ( (c>='0'&&c<='9') || (c>='a'&&c<='f') || (c>='A'&&c<='F') )) {
 	putc('\"', code_file); linelength++;
 	if (linelength >= 79) {fputs("\n",code_file); linelength = 0;}
 	putc('\"', code_file); linelength++;

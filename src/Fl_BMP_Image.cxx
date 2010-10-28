@@ -177,7 +177,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
   for (repcount = 0; repcount < colors_used; repcount ++) {
     // Read BGR color...
-    fread(colormap[repcount], 1, 3, fp);
+    if (fread(colormap[repcount], 1, 3, fp)==0) { /* ignore */ }
 
     // Skip pad byte for new BMP files...
     if (info_size > 12) getc(fp);

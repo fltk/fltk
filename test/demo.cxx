@@ -417,7 +417,7 @@ void dobut(Fl_Widget *, long arg)
     char* command = new char[icommand_length+5]; // 5 for extra './' and ' &\0' 
     
     sprintf(command, "./%s &", menus[men].icommand[bn]);
-    system(command);
+    if (system(command)==-1) { /* ignore */ }
     
     delete[] command;
 #endif // WIN32
@@ -518,7 +518,10 @@ int main(int argc, char **argv) {
   if (buf!=fname)
     strcpy(buf,fname);
   const char *c = fl_filename_name(buf);
-  if (c > buf) {buf[c-buf] = 0; chdir(buf);}
+  if (c > buf) {
+    buf[c-buf] = 0; 
+    if (chdir(buf)==-1) { /* ignore */ }
+  }
   push_menu("@main");
   form->show(argc,argv);
   Fl::run();

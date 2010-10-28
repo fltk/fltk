@@ -204,7 +204,7 @@ int fl_show_choice(
 }
 
 char *fl_show_simple_input(const char *str1, const char *defstr) {
-  const char *r = fl_input(str1, defstr);
+  const char *r = fl_input("%s", defstr, str1);
   return (char *)(r ? r : defstr);
 }
 

@@ -120,7 +120,7 @@ void Fluid_Image::write_static() {
       fseek(f, 0, SEEK_SET);
       if (nData) {
         char *data = (char*)calloc(nData, 1);
-        fread(data, nData, 1, f);
+        if (fread(data, nData, 1, f)==0) { /* ignore */ }
         write_cdata(data, nData);
         free(data);
       }
