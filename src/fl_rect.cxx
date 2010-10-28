@@ -597,10 +597,10 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
       else u = CGRectUnion(u, test);
     }
   }
-  X = u.origin.x;
-  Y = u.origin.y;
-  W = u.size.width + 1;
-  H = u.size.height + 1;
+  X = int(u.origin.x);
+  Y = int(u.origin.y);
+  W = int(u.size.width + 1);
+  H = int(u.size.height + 1);
   if(CGRectIsEmpty(u)) W = H = 0;
   return ! CGRectEqualToRect(arg, u);
 #else
