@@ -25,9 +25,25 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file
+   The fl_show_colormap() function hides the implementation classes used
+   to provide the popup window and color selection mechanism.
+*/
+
 #ifndef fl_show_colormap_H
 #define fl_show_colormap_H
 
+/* doxygen comment here to avoid exposing ColorMenu in fl_show_colormap.cxx
+*/
+/**
+  \brief Pops up a window to let the user pick an colormap entry.
+  \image html fl_show_colormap.gif 
+  \image latex  fl_show_colormap.eps "fl_show_colormap" width=8cm
+  \param[in] oldcol color to be highlighted when grid is shown.
+  \retval Fl_Color value of the chosen colormap entry.
+  \sa Fl_Color_Chooser
+*/
+ 
 FL_EXPORT Fl_Color fl_show_colormap(Fl_Color oldcol);
 
 #endif

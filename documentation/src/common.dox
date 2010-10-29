@@ -214,7 +214,7 @@ Fl::get_color(c, r, g, b);                  // Fl_Color to RGB
 The widget color is set using the \p color() method:
 
 \code
-button->color(FL_RED);
+button->color(FL_RED);                      // set color using named value
 \endcode
 
 Similarly, the label color is set using the \p labelcolor() method:
@@ -222,6 +222,27 @@ Similarly, the label color is set using the \p labelcolor() method:
 \code
 button->labelcolor(FL_WHITE);
 \endcode
+
+The Fl_Color encoding maps to a 32-bit unsigned integer representing
+RGBI, so it is also possible to specify a color using a hex constant
+as a color map index:
+
+\code
+button->color(0x000000ff);                  // colormap index #255 (FL_WHITE)
+\endcode
+
+or specify a color using a hex constant for the RGB components:
+
+\code
+button->color(0xff000000);                  // RGB: red
+button->color(0x00ff0000);                  // RGB: green
+button->color(0x0000ff00);                  // RGB: blue
+button->color(0xffffff00);                  // RGB: white
+\endcode
+
+\note
+If TrueColor is not available, any RGB colors will be set to
+the nearest entry in the colormap.
 
 \section common_boxtypes Box Types
 

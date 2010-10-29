@@ -240,6 +240,42 @@ The function fl_show_colormap() shows a table of colors and returns an
 Fl_Color index value.
 The Fl_Color_Chooser widget provides a standard RGB color chooser.
 
+As the Fl_Color encoding maps to a 32-bit unsigned integer representing
+RGBI, it is also possible to specify a color using a hex constant as a
+color map index:
+<pre>
+// COLOR MAP INDEX
+color(0x000000II)
+        ------ |
+           |   |
+           |   Color map index (8 bits)
+           Must be zero
+</pre>
+\code
+button->color(0x000000ff);                  // colormap index #255 (FL_WHITE)
+\endcode
+
+or specify a color using a hex constant for the RGB components:
+<pre>
+// RGB COLOR ASSIGNMENTS
+color(0xRRGGBB00)
+         | | | |
+         | | | Must be zero
+         | | Blue (8 bits)
+         | Green (8 bits)
+         Red (8 bits)
+</pre>
+\code
+button->color(0xff000000);                  // RGB: red
+button->color(0x00ff0000);                  // RGB: green
+button->color(0x0000ff00);                  // RGB: blue
+button->color(0xffffff00);                  // RGB: white
+\endcode
+
+\note
+If TrueColor is not available, any RGB colors will be set to
+the nearest entry in the colormap.
+
 \subsection ssect_Lines Line Dashes and Thickness
 
 FLTK supports drawing of lines with different styles and

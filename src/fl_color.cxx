@@ -361,8 +361,9 @@ void Fl::set_color(Fl_Color i, unsigned c) {
 
 #endif // end of X-specific code
 /**
-    Returns the RGB value(s) for the given FLTK color index. The
-    first form returns the RGB values packed in a 32-bit unsigned
+    Returns the RGB value(s) for the given FLTK color index.
+    
+    This form returns the RGB values packed in a 32-bit unsigned
     integer with the red value in the upper 8 bits, the green value
     in the next 8 bits, and the blue value in bits 8-15.  The lower
     8 bits will always be 0.
