@@ -475,6 +475,7 @@ int Fl_Input::handle_key() {
       // insert a few selected control characters literally:
       if (input_type() != FL_FLOAT_INPUT && input_type() != FL_INT_INPUT)
         return replace(position(), mark(), &ascii, 1);
+      break;
   }
   
   return 0;
@@ -521,23 +522,23 @@ int Fl_Input::handle(int event) {
           window()->cursor(FL_CURSOR_NONE);
         return handle_key();
       }
+      //NOTREACHED
       
     case FL_PUSH:
       if (Fl::dnd_text_ops()) {
         int oldpos = position(), oldmark = mark();
         Fl_Boxtype b = box();
-        Fl_Input_::handle_mouse(
-                                x()+Fl::box_dx(b), y()+Fl::box_dy(b),
+        Fl_Input_::handle_mouse(x()+Fl::box_dx(b), y()+Fl::box_dy(b),
                                 w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
         newpos = position(); 
         position( oldpos, oldmark );
         if (Fl::focus()==this && !Fl::event_state(FL_SHIFT) && input_type()!=FL_SECRET_INPUT &&
-            (   (newpos >= mark() && newpos < position()) 
-             || (newpos >= position() && newpos < mark())) ) {
-              // user clicked in the selection, may be trying to drag
-              drag_start = newpos;
-              return 1;
-            }
+           ( (newpos >= mark() && newpos < position()) || 
+             (newpos >= position() && newpos < mark()) ) ) {
+          // user clicked in the selection, may be trying to drag
+          drag_start = newpos;
+          return 1;
+        }
         drag_start = -1;
       }
       
@@ -602,12 +603,11 @@ int Fl_Input::handle(int event) {
         return 0;
       }
 #endif
-    {
-      Fl_Boxtype b = box();
-      Fl_Input_::handle_mouse(
-                              x()+Fl::box_dx(b), y()+Fl::box_dy(b),
-                              w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
-    }
+      {
+        Fl_Boxtype b = box();
+        Fl_Input_::handle_mouse(x()+Fl::box_dx(b), y()+Fl::box_dy(b),
+                                w()-Fl::box_dw(b), h()-Fl::box_dh(b), 0);
+      }
       return 1;
       
     case FL_DND_LEAVE:
@@ -636,7 +636,6 @@ int Fl_Input::handle(int event) {
        }
        return 1;
        */
-      
   }
   Fl_Boxtype b = box();
   return Fl_Input_::handletext(event,
