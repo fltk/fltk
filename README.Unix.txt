@@ -26,7 +26,7 @@ README.Unix.txt - 2010-10-28 - Building FLTK on Unix
     3.5   Testing FLTK
     3.6   Installing FLTK
     3.7   Creating new Projects
-  4   * CODE::BLOCKS
+  4   CREATING A NEW PROJECT IN CODE::BLOCKS
   5   DOCUMENT HISTORY
 
 * TODO: we still need to write these chapters
@@ -259,12 +259,41 @@ recommend that you add it to the command search path.
 
 
 
- 4  CODE::BLOCKS
-=================
+ 4  CREATING A NEW PROJECT IN CODE::BLOCKS
+===========================================
+
+Code::Blocks is a free and popular C++ IDE in the Linux world. It also runs on
+OS X and MSWindows. Configured correctly, it can also cross-compile between
+thise platforms. This chapter focuses on creating a new FLTK project for Linux, 
+assuming that FLTK 1.3 was previously built and installed in its default 
+location from the command line.
+
+If not done yet, install Code::Blocks as described in the Prerequisites chapter 
+above, or download it from their web site. This description is based on 
+version 10.05:
+
+  http://www.codeblocks.org/
+  
+Start Code::Blocks. Select File > New > Project. In the "New from template"
+dialog box, click on "FLTK project" and follow the instructions.
+
+The defualt project support basic fltk. If you would like to add support for
+images, OpenGL, GLUT, or Forms, add the corresponding flags --use-images,
+--use-gl, --use-glut, and --use-forms respectively.
+
+The flags are located in the "Project Buld Options" dialog. To change the 
+compiler flags, select your project in the tree view, then select the
+"Compiler Settings" tab, then "Other Options" and add the flags to 
+`fltk-config --cxxflags` in front of the second "`". 
+
+The linker flags are located in the "Linker Settings" tab under "Other Linker
+Options". Add the flags to `fltk-config --ldstaticflags` in front of the 
+second "`".
 
 
 
  5  DOCUMENT HISTORY
 =====================
 
+Oct 30 2010 - matt: added Code::Blocks chapter
 Oct 28 2010 - matt: restructured entire document and verified instructions
