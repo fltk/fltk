@@ -918,7 +918,7 @@ public:
   /** Sets width ww and height hh accordingly with the label size.
       Labels with images will return w() and h() of the image.
    */
-  void measure_label(int& ww, int& hh) {label_.measure(ww, hh);}
+  void measure_label(int& ww, int& hh) const {label_.measure(ww, hh);}
 
   /** Returns a pointer to the primary Fl_Window widget.
       \retval  NULL if no window is associated with this widget.  
