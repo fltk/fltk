@@ -128,22 +128,9 @@ int Fl_Button::handle(int event) {
     return 1;
   case FL_SHORTCUT:
     if (!(shortcut() ?
-	  Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;
-    
+	  Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;    
     if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
-
-    if (type() == FL_RADIO_BUTTON && !value_) {
-      setonly();
-      set_changed();
-      if (when() & (FL_WHEN_CHANGED|FL_WHEN_RELEASE) ) 
-	  do_callback();
-    } else if (type() == FL_TOGGLE_BUTTON) {
-      value(!value());
-      set_changed();
-      if (when() & (FL_WHEN_CHANGED|FL_WHEN_RELEASE)) 
-	  do_callback();
-    } else if (when() & FL_WHEN_RELEASE) do_callback();
-    return 1;
+    goto triggered_by_keyboard;
   case FL_FOCUS : /* FALLTHROUGH */
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
@@ -161,6 +148,7 @@ int Fl_Button::handle(int event) {
     if (Fl::focus() == this && Fl::event_key() == ' ' &&
         !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
       set_changed();
+    triggered_by_keyboard:
       Fl_Widget_Tracker wp(this);
       if (type() == FL_RADIO_BUTTON && !value_) {
 	setonly();

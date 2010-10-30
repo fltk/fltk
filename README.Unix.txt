@@ -32,6 +32,7 @@ README.Unix.txt - 2010-10-28 - Building FLTK on Unix
 * TODO: we still need to write these chapters
 
 
+
  1  INTRODUCTION
 =================
 
@@ -42,6 +43,10 @@ platforms:
     - Code::Blocks
     - ...
     
+The Symbol font and the Zapf Dingbats font do not work on X11. This is correct
+behavior for UTF-8 platforms.
+
+
 
  2  PREREQUISITES
 ==================
@@ -81,8 +86,6 @@ I like to use subversion to install the latest FLTK-1.3.release:
 To update to the latest version, just go into the fltk-1.3 directory and type
 
   svn update
-
-FIXME: no FL_SYMBOL font (-*-symbol-*),  font 15 (Zapf-Dingbats)
 
 
  2.2  Linux Mint 9

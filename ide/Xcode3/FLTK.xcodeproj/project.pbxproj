@@ -4192,7 +4192,7 @@
 		590C56F672356072A5C86BC3 /* valuators.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = valuators.fl; path = ../../test/valuators.fl; sourceTree = SOURCE_ROOT; };
 		598DD70F89D7731D61BBD8EF /* fractals.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fractals.cxx; path = ../../test/fractals.cxx; sourceTree = SOURCE_ROOT; };
 		59EAC37D26FEC2AB49D79C08 /* Fl_Radio_Button.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Radio_Button.H; path = ../../FL/Fl_Radio_Button.H; sourceTree = SOURCE_ROOT; };
-		5A7532B3CDA46030885D1D14 /* Fl_Button.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Button.cxx; path = ../../src/Fl_Button.cxx; sourceTree = SOURCE_ROOT; };
+		5A7532B3CDA46030885D1D14 /* Fl_Button.cxx */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Button.cxx; path = ../../src/Fl_Button.cxx; sourceTree = SOURCE_ROOT; tabWidth = 8; };
 		5AE1F936F1C186E18C1B9C28 /* is_spacing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = is_spacing.c; path = ../../src/xutf8/is_spacing.c; sourceTree = SOURCE_ROOT; };
 		5AF5119D08DFC92EA1032671 /* Fl_Slider.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Slider.cxx; path = ../../src/Fl_Slider.cxx; sourceTree = SOURCE_ROOT; };
 		5B2B6ED6A3649923BAAFFDF1 /* Fl_visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_visual.cxx; path = ../../src/Fl_visual.cxx; sourceTree = SOURCE_ROOT; };
