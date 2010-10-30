@@ -127,9 +127,19 @@ class FL_EXPORT Fl_Color_Chooser : public Fl_Group {
   static void rgb_cb(Fl_Widget*, void*);
   static void mode_cb(Fl_Widget*, void*);
 public:
-  /** Returns which Fl_Color_Chooser variant is currently active */
+  
+  /** 
+   Returns which Fl_Color_Chooser variant is currently active 
+   \return color modes are rgb(0), byte(1), hex(2), or hsv(3)   
+   */
   int mode() {return choice.value();}
-
+  
+  /** 
+   Set which Fl_Color_Chooser variant is currently active 
+   \param[in] newMode color modes are rgb(0), byte(1), hex(2), or hsv(3)   
+   */
+  void mode(int newMode);
+  
   /**
     Returns the current hue.
     0 <= hue < 6. Zero is red, one is yellow, two is green, etc.
@@ -179,8 +189,8 @@ public:
   Fl_Color_Chooser(int X, int Y, int W, int H, const char *L = 0);
 };
 
-FL_EXPORT int fl_color_chooser(const char* name, double& r, double& g, double& b);
-FL_EXPORT int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b);
+FL_EXPORT int fl_color_chooser(const char* name, double& r, double& g, double& b, int m=-1);
+FL_EXPORT int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b, int m=-1);
 
 #endif
 

@@ -86,7 +86,7 @@ void cb1(Fl_Widget *, void *v) {
 void cb2(Fl_Widget *, void *v) {
   uchar r,g,b;
   Fl::get_color(c,r,g,b);
-  if (!fl_color_chooser("New color:",r,g,b)) return;
+  if (!fl_color_chooser("New color:",r,g,b,3)) return;
   c = fullcolor_cell;
   Fl::set_color(fullcolor_cell,r,g,b);
   Fl_Box* bx = (Fl_Box*)v;

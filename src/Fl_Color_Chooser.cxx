@@ -455,6 +455,13 @@ void Fl_Color_Chooser::mode_cb(Fl_Widget* o, void*) {
   c->set_valuators();
 }
 
+void Fl_Color_Chooser::mode(int newMode)
+{
+  choice.value(newMode);
+  choice.do_callback();
+}
+
+
 ////////////////////////////////////////////////////////////////
 
 /**
@@ -561,7 +568,7 @@ static void cc_cancel_cb (Fl_Widget *o, void *p) {
   \retval 0 if user cancels the dialog
   \relates Fl_Color_Chooser
  */
-int fl_color_chooser(const char* name, double& r, double& g, double& b) {
+int fl_color_chooser(const char* name, double& r, double& g, double& b, int m) {
   int ret = 0;
   Fl_Window window(215,200,name);
   window.callback(cc_cancel_cb,&ret);
@@ -578,6 +585,7 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b) {
   window.resizable(chooser);
   chooser.rgb(r,g,b);
   chooser.callback(chooser_cb, &ok_color);
+  if (m!=-1) chooser.mode(m);
   window.end();
   window.set_modal();
   window.hotspot(window);
@@ -601,11 +609,11 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b) {
   \retval 0 if user cancels the dialog
   \relates Fl_Color_Chooser
  */
-int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
+int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b, int m) {
   double dr = r/255.0;
   double dg = g/255.0;
   double db = b/255.0;
-  if (fl_color_chooser(name,dr,dg,db)) {
+  if (fl_color_chooser(name,dr,dg,db,m)) {
     r = uchar(255*dr+.5);
     g = uchar(255*dg+.5);
     b = uchar(255*db+.5);
@@ -613,6 +621,7 @@ int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b) {
   }
   return 0;
 }
+
 /** @} */
 //
 // End of "$Id$".
