@@ -205,7 +205,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
 //         JOCTET * next_output_byte;  /* => next byte to write in buffer */
 //         size_t free_in_buffer;      /* # of byte spaces remaining in buffer */
 
-
+#ifdef HAVE_LIBJPEG
 typedef struct {
   struct jpeg_source_mgr pub;
   const unsigned char *data, *s;
@@ -261,6 +261,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
   src->data = data;
   src->s = data;
 }
+#endif // HAVE_LIBJPEG
 
 
 /**
