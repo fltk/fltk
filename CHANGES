@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.3.0
 
+	- Fixed wrong relative path (STR #2384)
 	- Fixed static allocation in Fl_Tabs (STR #2370)
 	- Fixed Fl_Widget::measure_label() to const (STR #2406)
 	- Added step by step README's for MSWindows, OS X, and four

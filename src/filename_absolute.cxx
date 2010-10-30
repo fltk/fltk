@@ -210,6 +210,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   if (isdirsep(*slash)) slash ++;
 
   // do the same for the current dir
+  if (isdirsep(*newslash)) newslash --;
   if (*newslash != '\0')
     while (!isdirsep(*newslash) && newslash > cwd) newslash --;
 
