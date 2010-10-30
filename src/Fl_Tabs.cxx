@@ -117,12 +117,20 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
     if (event_y > y()+H || event_y < y()) return 0;
   }
   if (event_x < x()) return 0;
-  int p[128], wp[128];
+  Fl_Widget *ret = 0L;
+  int nc = children();
+  int *p  = (int*)malloc((nc+1)*sizeof(int));
+  int *wp = (int*)malloc((nc+1)*sizeof(int));
   tab_positions(p, wp);
   for (int i=0; i<children(); i++) {
-    if (event_x < x()+p[i+1]) return child(i);
+    if (event_x < x()+p[i+1]) {
+      ret = child(i);
+      break;
+    }
   }
-  return 0;
+  free(p);
+  free(wp);
+  return ret;
 }
 
 void Fl_Tabs::redraw_tabs()
@@ -318,7 +326,9 @@ void Fl_Tabs::draw() {
     if (v) update_child(*v);
   }
   if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) {
-    int p[128]; int wp[128];
+    int nc = children();
+    int *p  = (int*)malloc((nc+1)*sizeof(int));
+    int *wp = (int*)malloc((nc+1)*sizeof(int));
     int selected = tab_positions(p,wp);
     int i;
     Fl_Widget*const* a = array();
@@ -330,6 +340,8 @@ void Fl_Tabs::draw() {
       i = selected;
       draw_tab(x()+p[i], x()+p[i+1], wp[i], H, a[i], SELECTED);
     }
+    free(p);
+    free(wp);
   }
 }
 
