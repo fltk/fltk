@@ -156,8 +156,6 @@ public:
   // char export( const char *filename, Type fileFormat );
   // char import( const char *filename );
   
-  // char copyTo(class Fl_Tree*); // deprecated, use Fl_Tree::load(Fl_Preferences&)
-
   /**
      'Name' provides a simple method to create numerical or more complex 
      procedural names for entries and groups on the fly.

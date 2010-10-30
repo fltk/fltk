@@ -28,7 +28,6 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Plugin.H>
-#include <FL/Fl_Tree.H>
 #include <FL/filename.H>
 
 #include <stdio.h>

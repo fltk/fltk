@@ -727,6 +727,7 @@ Fl_File_Chooser::fileListCB()
     {
       // Hide the window - picked the file...
       window->hide();
+      if (callback_) (*callback_)(this, data_);
     }
   }
   else
