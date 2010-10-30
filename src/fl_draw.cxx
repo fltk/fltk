@@ -193,7 +193,7 @@ void fl_draw(
   char buf[MAXBUF];
   int buflen;
   char symbol[2][255], *symptr;
-  int symwidth[2], symoffset, symtotal;
+  int symwidth[2], symoffset, symtotal, imgtotal;
 
   // count how many lines and put the last one into the buffer:
   int lines;
@@ -226,13 +226,14 @@ void fl_draw(
   }
 
   symtotal = symwidth[0] + symwidth[1];
+  imgtotal = (img && (align&FL_ALIGN_IMAGE_NEXT_TO_TEXT)) ? img->w() : 0;
   
   int strw = 0;
   int strh;
 
   if (str) {
     for (p = str, lines=0; p;) {
-      e = fl_expand_text(p, buf, MAXBUF, w - symtotal, buflen, width, 
+      e = fl_expand_text(p, buf, MAXBUF, w - symtotal - imgtotal, buflen, width, 
                          align&FL_ALIGN_WRAP, draw_symbols);
       if (strw<width) strw = (int)width;
       lines++;
@@ -299,7 +300,7 @@ void fl_draw(
   if (str) {
     int desc = fl_descent();
     for (p=str; ; ypos += height) {
-      if (lines>1) e = fl_expand_text(p, buf, MAXBUF, w - symtotal, buflen, 
+      if (lines>1) e = fl_expand_text(p, buf, MAXBUF, w - symtotal - imgtotal, buflen, 
 				width, align&FL_ALIGN_WRAP, draw_symbols);
       else e = "";
 

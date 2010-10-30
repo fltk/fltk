@@ -789,38 +789,44 @@ void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
   int Y = widget.y();
   int W = widget.w();
   int H = widget.h();
+  int wx, wy;
+  if (const_cast<Fl_Group*>(this)->as_window()) {
+    wx = wy = 0;
+  } else {
+    wx = x(); wy = y();
+  }
   if ( (a & 0x0f) == FL_ALIGN_LEFT_TOP ) {
     a = (a &~0x0f ) | FL_ALIGN_TOP_RIGHT;
-    X = x();
+    X = wx;
     W = widget.x()-X-3;
   } else if ( (a & 0x0f) == FL_ALIGN_LEFT_BOTTOM ) {
     a = (a &~0x0f ) | FL_ALIGN_BOTTOM_RIGHT; 
-    X = x();
+    X = wx;
     W = widget.x()-X-3;
   } else if ( (a & 0x0f) == FL_ALIGN_RIGHT_TOP ) {
     a = (a &~0x0f ) | FL_ALIGN_TOP_LEFT; 
     X = X+W+3;
-    W = x()+this->w()-X;
+    W = wx+this->w()-X;
   } else if ( (a & 0x0f) == FL_ALIGN_RIGHT_BOTTOM ) {
     a = (a &~0x0f ) | FL_ALIGN_BOTTOM_LEFT; 
     X = X+W+3;
-    W = x()+this->w()-X;
+    W = wx+this->w()-X;
   } else if (a & FL_ALIGN_TOP) {
     a ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
-    Y = y();
+    Y = wy;
     H = widget.y()-Y;
   } else if (a & FL_ALIGN_BOTTOM) {
     a ^= (FL_ALIGN_BOTTOM|FL_ALIGN_TOP);
     Y = Y+H;
-    H = y()+h()-Y;
+    H = wy+h()-Y;
   } else if (a & FL_ALIGN_LEFT) {
     a ^= (FL_ALIGN_LEFT|FL_ALIGN_RIGHT);
-    X = x();
+    X = wx;
     W = widget.x()-X-3;
   } else if (a & FL_ALIGN_RIGHT) {
     a ^= (FL_ALIGN_LEFT|FL_ALIGN_RIGHT);
     X = X+W+3;
-    W = x()+this->w()-X;
+    W = wx+this->w()-X;
   }
   widget.draw_label(X,Y,W,H,(Fl_Align)a);
 }

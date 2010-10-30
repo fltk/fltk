@@ -56,7 +56,7 @@ void button_cb(Fl_Widget *,void *) {
   if (clipb->value()) i |= FL_ALIGN_CLIP;
   if (wrapb->value()) i |= FL_ALIGN_WRAP;
   if (imageovertextb->value()) i |= FL_ALIGN_TEXT_OVER_IMAGE;
-  if (imagenexttotextb->value()) i |= FL_ALIGN_TEXT_NEXT_TO_IMAGE;
+  if (imagenexttotextb->value()) i |= FL_ALIGN_IMAGE_NEXT_TO_TEXT;
   if (imagebackdropb->value()) i |= FL_ALIGN_IMAGE_BACKDROP;
   text->align(i);
   window->redraw();

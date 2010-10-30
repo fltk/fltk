@@ -1414,6 +1414,7 @@ void Fl_Widget::redraw_label() {
       W += 5; // Add a little to the size of the label to cover overflow
       H += 5;
 
+      // FIXME: this does not take all outside label positions into account!
       if (align() & FL_ALIGN_BOTTOM) {
 	window()->damage(FL_DAMAGE_EXPOSE, x(), y() + h(), w(), H);
       } else if (align() & FL_ALIGN_TOP) {
