@@ -69,6 +69,7 @@
 
 // The predefined fonts that FLTK has:
 static Fl_Fontdesc built_in_table[] = {
+#if 1
 {" sans"},
 {"Bsans"},
 {"Isans"},
@@ -84,7 +85,25 @@ static Fl_Fontdesc built_in_table[] = {
 {" symbol"},
 {" screen"},
 {"Bscreen"},
-{" dingbats"},
+{" zapf dingbats"},
+#else
+{" helvetica"},
+{"Bhelvetica"},
+{"Ihelvetica"},
+{"Phelvetica"},
+{" courier"},
+{"Bcourier"},
+{"Icourier"},
+{"Pcourier"},
+{" times"},
+{"Btimes"},
+{"Itimes"},
+{"Ptimes"},
+{" symbol"},
+{" lucidatypewriter"},
+{"Blucidatypewriter"},
+{" zapf dingbats"},
+#endif
 };
 
 Fl_Fontdesc* fl_fonts = built_in_table;
