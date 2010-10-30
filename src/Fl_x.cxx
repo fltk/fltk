@@ -1254,6 +1254,10 @@ int fl_handle(const XEvent& thisevent)
       Fl::e_original_keysym = (int)keysym;
     }
     Fl::e_keysym = int(keysym);
+  
+    // replace XK_ISO_Left_Tab (Shift-TAB) with FL_Tab (modifier flags are set correctly by X11)
+    if (Fl::e_keysym == 0xfe20) Fl::e_keysym = FL_Tab;
+    
     set_event_xy();
     Fl::e_is_click = 0;
     break;}

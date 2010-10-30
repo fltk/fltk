@@ -1284,8 +1284,6 @@ int Fl_Window_Type::handle(int event) {
       ((Fl_Window*)o)->hide();
       return 1;
 
-    case 0xFE20: // backtab
-      backtab = 1;
     case FL_Tab: {
       if (Fl::event_state(FL_SHIFT)) backtab = 1;
       // find current child:

@@ -500,7 +500,6 @@ int Fl_Input::handle(int event) {
           up_down_position(line_start(size()));
           break;
         case FL_Tab:
-        case 0xfe20: // XK_ISO_Left_Tab
           position(size(),0);
           break;
         default:

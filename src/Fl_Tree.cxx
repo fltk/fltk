@@ -488,8 +488,7 @@ int Fl_Tree::handle(int e) {
 	    break;
 	  }
 	  case FL_Left:		// received focus via LEFT or UP?
-	  case FL_Up:
-	  case 0xfe20: { 	// XK_ISO_Left_Tab
+	  case FL_Up: { 	// XK_ISO_Left_Tab
 	    set_item_focus(next_visible_item(0, FL_Up));
 	    break;
 	  }

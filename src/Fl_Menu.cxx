@@ -660,7 +660,6 @@ int menuwindow::early_hide_handle(int e) {
   case FL_KEYBOARD:
     switch (Fl::event_key()) {
     case FL_BackSpace:
-    case 0xFE20: // backtab
     BACKTAB:
       if (!backward(pp.menu_number)) {pp.item_number = -1;backward(pp.menu_number);}
       return 1;
