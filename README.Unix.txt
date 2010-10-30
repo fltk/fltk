@@ -9,8 +9,8 @@ README.Unix.txt - 2010-10-28 - Building FLTK on Unix
   1   INTRODUCTION
   2   PREREQUISITES
     2.1   Ubuntu 10
-    2.2   * http://www.linuxmint.com/about.php
-    2.3   * http://fedoraproject.org/
+    2.2   Linux Mint 9
+    2.3   Fedora 13
     2.4   * http://www2.mandriva.com/
     2.5   * http://www.opensuse.org/en/
     2.6   * http://www.debian.org/
@@ -27,11 +27,13 @@ README.Unix.txt - 2010-10-28 - Building FLTK on Unix
     3.6   Installing FLTK
     3.7   Creating new Projects
   4   * CODE::BLOCKS
-  4   DOCUMENT HISTORY
+  5   DOCUMENT HISTORY
+
+* TODO: we still need to write these chapters
 
 
- INTRODUCTION
-==============
+ 1  INTRODUCTION
+=================
 
 FLTK currently supports the following development environments on vmost Unix 
 platforms:
@@ -41,16 +43,16 @@ platforms:
     - ...
     
 
- PREREQUISITES
-===============
+ 2  PREREQUISITES
+==================
 
 
- Ubuntu 10
------------
+ 2.1  Ubuntu 10
+----------------
 
 Ubuntu Linux can be downloaded here:
 
-  www.ubuntu.com
+  http://www.ubuntu.com/
   
 If you have not done so yet, download and install Ubuntu.
 
@@ -62,6 +64,9 @@ Open a shell and install some software:
   sudo apt-get install autoconf
   sudo apt-get install libx11-dev
   sudo apt-get install libglu1-mesa-dev
+  
+These two are optional, but highly recommended:  
+  
   sudo apt-get install libasound2-dev
   sudo apt-get install libxft-dev
 
@@ -80,13 +85,86 @@ To update to the latest version, just go into the fltk-1.3 directory and type
 FIXME: no FL_SYMBOL font (-*-symbol-*),  font 15 (Zapf-Dingbats)
 
 
+ 2.2  Linux Mint 9
+-------------------
 
- HOW TO BUILD FLTK USING GCC
-=============================
+Linux Mint 9 can be downloaded here:
+
+  http://www.linuxmint.com/
+  
+If you have not done so yet, download and install Linux Mint.
+
+Open a shell and install some software:
+
+  sudo apt-get install g++
+  sudo apt-get install gdb
+  sudo apt-get install subversion
+  sudo apt-get install autoconf
+  sudo apt-get install libx11-dev
+  sudo apt-get install libglu1-mesa-dev
+  
+These two are optional, but highly recommended:  
+  
+  sudo apt-get install libasound2-dev
+  sudo apt-get install libxft-dev
+
+If you are planning to use the Code::Blocks IDE, also install this
+
+  sudo apt-get install codeblocks
+
+I like to use subversion to install the latest FLTK-1.3.release:
+
+  svn co http://svn.easysw.com/public/fltk/fltk/branches/branch-1.3/ fltk-1.3
+  
+To update to the latest version, just go into the fltk-1.3 directory and type
+
+  svn update
+
+FIXME: no FL_SYMBOL font (-*-symbol-*),  font 15 (Zapf-Dingbats)
 
 
- Downloading and Unpacking
----------------------------
+ 2.3  Fedora 13
+-------------------
+
+Fedora 13 Linux can be downloaded here:
+
+  http://fedoraproject.org/
+  
+If you have not done so yet, download and install Fedora.
+
+Open a terminal window and install some software. In Fedora, the default user 
+has no permission to call "sudo", so we will change user a few times:
+
+  su root
+  yum groupinstall "Development Tools"
+  yum groupinstall "X Software Development"
+
+If you are planning to use the Code::Blocks IDE, also install this
+
+  yum install codeblocks.i686  (for 64 bit machines)
+
+Don't forget to leave root status (Ctrl-D) before loading FLTK. To install FLTK 
+for every user, you either have to set root user again, or use "visudo" to add 
+yourself to the "sudo" list.
+
+I like to use subversion to install the latest FLTK-1.3.release:
+
+  svn co http://svn.easysw.com/public/fltk/fltk/branches/branch-1.3/ fltk-1.3
+  
+To update to the latest version, just go into the fltk-1.3 directory and type
+
+  svn update
+
+FIXME: no FL_SYMBOL font (-*-symbol-*),  font 15 (Zapf-Dingbats)
+
+
+
+ 3  HOW TO BUILD FLTK USING GCC
+================================
+
+
+ 3.1  Downloading and Unpacking
+--------------------------------
 
 Download FLTK from here:
 
@@ -105,8 +183,8 @@ dev directory:
   cd fltk-1.3.xxxx
   
 
- Configuring FLTK
-------------------
+ 3.2  Configuring FLTK
+-----------------------
 
 Stay in your FLTK source-code directory. Type:
   
@@ -126,8 +204,8 @@ which you should have installed as described in the Perequisites chapter. Review
 the Configuration Summary, maybe take some notes.
 
 
- Building FLTK
----------------
+ 3.3  Building FLTK
+--------------------
 
 Now this is easy. Stay in your FLTK source-code directory and type: 
 
@@ -141,16 +219,16 @@ Actually, as of Oct 28 2010, quite a bunch of warnigns will show, mostly about
 suggested parenthesis. Please ignore them until we can fix them.
 
 
- Testing FLTK
---------------
+ 3.4  Testing FLTK
+-------------------
 
 After a successful build, you can test FLTK's capabilities:
 
   test/demo
 
 
- Installing FLTK
------------------
+ 3.5  Installing FLTK
+----------------------
 
 If you did not change any of the configuration settings, FLTK will be installed 
 in "/usr/local/include" and "/usr/local/lib" by typing
@@ -162,8 +240,8 @@ installation path to a location within the user account by adding the
 "--prefix=PREFIX" parameters to the "./configure" command.
 
 
- Creating new Projects
------------------------
+ 3.6  Creating new Projects
+----------------------------
 
 FLTK provides a neat script named "fltk-config" that can provide all the flags 
 needed to build FLTK applications using the same flags that were used to build
@@ -178,7 +256,12 @@ recommend that you add it to the command search path.
 
 
 
- DOCUMENT HISTORY
-==================
+ 4  CODE::BLOCKS
+=================
+
+
+
+ 5  DOCUMENT HISTORY
+=====================
 
 Oct 28 2010 - matt: restructured entire document and verified instructions

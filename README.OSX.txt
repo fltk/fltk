@@ -28,8 +28,8 @@ README.OSX.txt - 2010-10-23 - Building FLTK under Apple OS X
   4   DOCUMENT HISTORY
 
 
- INTRODUCTION
-==============
+ 1  INTRODUCTION
+=================
 
 FLTK currently supports the following development environments on the Apple OS X
 platform:
@@ -41,12 +41,12 @@ CAUTION: gcc command line built libraries and Xcode created Frameworks should
 not be mixed!    
 
 
- HOW TO BUILD FLTK USING GCC
-=============================
+ 2  HOW TO BUILD FLTK USING GCC
+================================
 
 
- Prerequisites
----------------
+ 2.1  Prerequisites
+--------------------
 
 In order to build FLTK from the command line, you need to install the Xcode
 developer environment from the Apple Inc. web site. The developer environment
@@ -59,8 +59,8 @@ is located in the "Utilities" folder inside the "Applications" folder. I like to
 keep the Terminal in the Dock.
 
 
- Downloading and Unpacking
----------------------------
+ 2.2  Downloading and Unpacking
+--------------------------------
 
 Download FLTK from here:
 
@@ -79,8 +79,8 @@ dev directory:
   cd fltk-1.3.xxxx
   
 
- Configuring FLTK
-------------------
+ 2.3  Configuring FLTK
+-----------------------
 
 Stay in your FLTK source-code directory. Type:
   
@@ -103,31 +103,28 @@ which should all have been part of your Xcode installation. Review the
 Configuration Summary, maybe take some notes.
 
 
- Building FLTK
----------------
+ 2.4  Building FLTK
+--------------------
 
 Now this is easy. Stay in your FLTK source-code directory and type: 
 
   make
 
 The entire FLTK toolkit including many test programs will be built for you. No 
-warnings should appear, but "ranlib" will complain about a few modules having no
+warnings should appear, but "ranlib" may complain about a few modules having no
 symbols. This is normal and can safely be ignored.
 
-(actually, as of Oct 23 2010, a handful of warnings related to string literals
-may appear, this is normal and will be fixed)
 
-
- Testing FLTK
---------------
+ 2.5  Testing FLTK
+-------------------
 
 After a successful build, you can test FLTK's capabilities:
 
   test/demo
 
 
- Installing FLTK
------------------
+ 2.6  Installing FLTK
+----------------------
 
 If you did not change any of the configuration settings, FLTK will be installed 
 in "/usr/local/include" and "/usr/local/lib" by typing
@@ -139,8 +136,8 @@ installation path to a location within the user account by adding the
 "--prefix=PREFIX" parameters to the "./configure" command.
 
 
- Creating new Projects
------------------------
+ 2.7  Creating new Projects
+----------------------------
 
 FLTK provides a neat script named "fltk-config" that can provide all the flags 
 needed to build FLTK applications using the same flags that were used to build
@@ -155,12 +152,12 @@ recommend that you add it to the command search path.
 
 
 
- HOW TO BUILD FLTK USING XCODE3
-================================
+ 3  HOW TO BUILD FLTK USING XCODE3
+===================================
 
 
- Prerequisites
----------------
+ 3.1  Prerequisites
+--------------------
 
 In order to build FLTK from within Xcode, you need to install the Xcode
 developer environment from the Apple Inc. web site. The developer environment
@@ -169,8 +166,8 @@ can be downloaded from the Mac Dev Center for free:
   http://developer.apple.com/technologies/xcode.html
   
 
- Downloading and Unpacking
----------------------------
+ 3.2  Downloading and Unpacking
+--------------------------------
 
 Download FLTK from here:
 
@@ -184,8 +181,8 @@ Unpack FLTK by double-clicking it and copy the new folder into a convenient
 location. I have set up a "dev" folder in my home folder for all my projects.
 
 
- Configuring FLTK
-------------------
+ 3.3  Configuring FLTK
+-----------------------
 
 Launch Xcode. Open the project file in 
 
@@ -196,8 +193,8 @@ Use the "Project" pulldown menu to change "Active Build Configuration" to
 desired. 
   
 
- Building FLTK
----------------
+ 3.4  Building FLTK
+--------------------
 
 Use the "Project" pulldown menu to set the "Active Target" to "Release". Use the 
 "Project" pulldown menu to set the "Active Target" to "Demo". Select "Build" 
@@ -206,15 +203,15 @@ form the "Build" menu to create all libraries and test applications.
 All frameworks and apps will be loacted in "./ide/Xcode3/build/Release/".
 
 
- Testing FLTK
---------------
+ 3.5  Testing FLTK
+-------------------
 
 Select "Build and Run" form the "Build" menu to run the Demo program. Use "Demo"
 to explore all test programs.
 
 
- Uninstalling previous versions of FLTK
-----------------------------------------
+ 3.6  Uninstalling previous versions of FLTK
+---------------------------------------------
 
 Remove FLTK frameworks:
 
@@ -225,8 +222,8 @@ Remove Fluid and other possibly utilities:
   sudo rm -r /Developer/Applications/Utilities/FLTK/
   
 
- Installing FLTK
------------------
+ 3.7  Installing FLTK
+----------------------
 
 When distributing FLTK applications, the FLTK frameworks should be made part of
 the application package. For development however, it is very convenient to have
@@ -247,8 +244,8 @@ tools:
   sudo cp -R ide/Xcode3/build/Release/Fluid.app /Developer/Applications/Utilities/FLTK/
 
 
- Installing Little Helpers
----------------------------
+ 3.8  Installing Little Helpers
+--------------------------------
 
 
 - Project Templates:
@@ -299,8 +296,8 @@ TODO: Language Definition
 TODO: Build Rules
 
 
- Creating new Projects
------------------------
+ 3.9  Creating new Projects
+----------------------------
 
 If the little helpers above were installed, the menu "File > New Project..."
 will pop up a dialog that offers a User Template named Fluid. Select it and
@@ -309,7 +306,8 @@ manually which is needed to create warning beeps.
 
 
 
- DOCUMENT HISTORY
-==================
+ 4  DOCUMENT HISTORY
+=====================
 
+Oct 29 2010 - matt: removed warnings
 Oct 24 2010 - matt: restructured entire document and verified instructions
