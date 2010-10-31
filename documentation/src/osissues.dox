@@ -371,7 +371,7 @@ MyWindow::~MyWindow() {
 FLTK currently supports setting a window's icon \b before it
 is shown using the Fl_Window::icon() method.
 
-void Fl_Window::icon(char *)
+void Fl_Window::icon(const void *)
 
 \par
 Sets the icon for the window to the passed pointer. You will
@@ -386,7 +386,7 @@ fl_open_display(); // needed if display has not been previously opened
 Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
                                  icon_bits, icon_width, icon_height);
 
-window->icon((char *)p);
+window->icon((const void*)p);
 \endcode
 
 \par
@@ -403,7 +403,7 @@ Pixmap p, mask;
 XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
                                  icon_xpm, &p, &mask, NULL);
 
-window->icon((char *)p);
+window->icon((const void *)p);
 \endcode
 
 \par
@@ -552,7 +552,7 @@ to get the window's size or position.
 FLTK currently supports setting a window's icon *before* it
 is shown using the Fl_Window::icon() method.
 
-void Fl_Window::icon(char *)
+void Fl_Window::icon(const void *)
 
 \par
 Sets the icon for the window to the passed pointer. You will
@@ -560,7 +560,7 @@ need to cast the \c HICON handle to a \c char* when
 calling this method. To set the icon using an icon resource
 compiled with your application use:
 \code
-window->icon((char *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
+window->icon((const void *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
 \endcode
 
 \par
