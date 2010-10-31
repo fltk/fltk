@@ -1414,17 +1414,36 @@ void Fl_Widget::redraw_label() {
       W += 5; // Add a little to the size of the label to cover overflow
       H += 5;
 
-      // FIXME: this does not take all outside label positions into account!
-      if (align() & FL_ALIGN_BOTTOM) {
-	window()->damage(FL_DAMAGE_EXPOSE, x(), y() + h(), w(), H);
-      } else if (align() & FL_ALIGN_TOP) {
-	window()->damage(FL_DAMAGE_EXPOSE, x(), y() - H, w(), H);
-      } else if (align() & FL_ALIGN_LEFT) {
-	window()->damage(FL_DAMAGE_EXPOSE, x() - W, y(), W, h());
-      } else if (align() & FL_ALIGN_RIGHT) {
-	window()->damage(FL_DAMAGE_EXPOSE, x() + w(), y(), W, h());
-      } else {
-        window()->damage(FL_DAMAGE_ALL);
+      // FIXME:
+      // This assumes the measure() returns the correct outline, which it does 
+      // not in all possible cases of alignment combinedwith image and symbols.
+      switch (align() & 0x0f) {
+        case FL_ALIGN_TOP_LEFT:
+          window()->damage(FL_DAMAGE_EXPOSE, x(), y()-H, W, H); break;
+        case FL_ALIGN_TOP:
+          window()->damage(FL_DAMAGE_EXPOSE, x()+(w()-W)/2, y()-H, W, H); break;
+        case FL_ALIGN_TOP_RIGHT:
+          window()->damage(FL_DAMAGE_EXPOSE, x()+w()-W, y()-H, W, H); break;
+        case FL_ALIGN_LEFT_TOP:
+          window()->damage(FL_DAMAGE_EXPOSE, x()-W, y(), W, H); break;
+        case FL_ALIGN_RIGHT_TOP:
+          window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y(), W, H); break;
+        case FL_ALIGN_LEFT:
+          window()->damage(FL_DAMAGE_EXPOSE, x()-W, y()+(h()-H)/2, W, H); break;
+        case FL_ALIGN_RIGHT:
+          window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y()+(h()-H)/2, W, H); break;
+        case FL_ALIGN_LEFT_BOTTOM:
+          window()->damage(FL_DAMAGE_EXPOSE, x()-W, y()+h()-H, W, H); break;
+        case FL_ALIGN_RIGHT_BOTTOM:
+          window()->damage(FL_DAMAGE_EXPOSE, x()+w(), y()+h()-H, W, H); break;
+        case FL_ALIGN_BOTTOM_LEFT:
+          window()->damage(FL_DAMAGE_EXPOSE, x(), y()+h(), W, H); break;
+        case FL_ALIGN_BOTTOM:
+          window()->damage(FL_DAMAGE_EXPOSE, x()+(w()-W)/2, y()+h(), W, H); break;
+        case FL_ALIGN_BOTTOM_RIGHT:
+          window()->damage(FL_DAMAGE_EXPOSE, x()+w()-W, y()+h(), W, H); break;
+        default:
+          window()->damage(FL_DAMAGE_ALL); break;
       }
     } else {
       // The label is inside the widget, so just redraw the widget itself...
