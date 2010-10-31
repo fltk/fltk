@@ -30,7 +30,7 @@ decl {\#include <FL/Fl_Preferences.H>} {public global
 } 
 
 decl {int G_cb_counter = 0;} {
-  comment {// Global callback event counter} private local
+  comment {// Global callback event counter}
 } 
 
 Function {reason_as_name(Fl_Tree_Reason reason)} {open return_type {const char*}
@@ -587,6 +587,20 @@ tree->redraw();}
 tree->redraw();}
       tooltip {Deselects all items in the tree} xywh {260 559 75 16} labelsize 9
     }
+    Fl_Light_Button bbbselect_toggle {
+      label { Select Bbb}
+      callback {// Toggle select of just the Bbb item (not children)
+Fl_Tree_Item *bbb = tree->find_item("/Bbb");
+if ( !bbb) {
+  fl_alert("FAIL: Couldn't find item '/Bbb'???");
+  return;
+}
+int onoff = bbbselect_toggle->value();
+if ( onoff ) tree->select(bbb);		// select /Bbb
+else         tree->deselect(bbb);	// deselect /Bbb}
+      tooltip {Toggle selection of just the /Bbb item
+(Not children)} xywh {350 540 95 15} selection_color 1 labelsize 9
+    }
     Fl_Light_Button bbbselect2_toggle {
       label { Select Bbb+}
       callback {// Toggle select of just the Bbb item and its immediate children
@@ -608,16 +622,31 @@ if ( onoff ) tree->select("/Bbb/child-02");
 else         tree->deselect("/Bbb/child-02");}
       tooltip {Toggle the single item /Bbb/child-02} xywh {350 579 95 16} selection_color 1 labelsize 9
     }
-    Fl_Button loaddb_button {
-      label {Load Database...}
-      callback {const char *filename = fl_file_chooser("Select a Preferences style Database", "Preferences(*.prefs)", 0L);
-if (filename) {
-  tree->clear();
-  Fl_Preferences prefs(filename, 0L, 0L);
-  tree->load(prefs);
-  tree->redraw();
-}}
-      tooltip {Load the contents of an Fl_Preferences database into the tree view} xywh {380 614 90 16} labelsize 9
+    Fl_Light_Button rootselect_toggle {
+      label {Select ROOT}
+      callback {// Toggle select of ROOT item and its children
+Fl_Tree_Item *item = tree->find_item("/ROOT");
+if ( !item) {
+  fl_alert("FAIL: Couldn't find item '/ROOT'???");
+  return;
+}
+int onoff = rootselect_toggle->value();
+if ( onoff ) tree->select(item);	// select /ROOT and its children
+else         tree->deselect(item);	// deselect /ROOT and its children}
+      tooltip {Toggle selection of the ROOT item} xywh {460 540 90 15} selection_color 1 labelsize 9
+    }
+    Fl_Light_Button rootselect2_toggle {
+      label {Select ROOT+}
+      callback {// Toggle select of ROOT item and its children
+Fl_Tree_Item *item = tree->find_item("/ROOT");
+if ( !item) {
+  fl_alert("FAIL: Couldn't find item '/ROOT'???");
+  return;
+}
+int onoff = rootselect2_toggle->value();
+if ( onoff ) tree->select_all(item);	// select /ROOT and its children
+else         tree->deselect_all(item);	// deselect /ROOT and its children}
+      tooltip {Toggle selection of the ROOT item and all children} xywh {460 560 90 15} selection_color 1 labelsize 9
     }
     Fl_Light_Button deactivate_toggle {
       label { Deactivate}
@@ -665,6 +694,17 @@ tree->redraw();}
       tooltip {Toggles bold font for selected items
 If nothing selected, all are changed} xywh {280 654 90 16} selection_color 1 labelsize 9
     }
+    Fl_Button loaddb_button {
+      label {Load Database...}
+      callback {const char *filename = fl_file_chooser("Select a Preferences style Database", "Preferences(*.prefs)", 0L);
+if (filename) {
+  tree->clear();
+  Fl_Preferences prefs(filename, 0L, 0L);
+  tree->load(prefs);
+  tree->redraw();
+}}
+      tooltip {Load the contents of an Fl_Preferences database into the tree view} xywh {380 614 90 16} labelsize 9
+    }
     Fl_Button insertabove_button {
       label {Insert Above}
       callback {Fl_Tree_Item *item=tree->first();
@@ -695,7 +735,7 @@ switch ( tree->item_pathname(pathname, sizeof(pathname), item) ) {
     case  0: fl_message("Pathname for '%s' is: \\"%s\\"", (item->label() ? item->label() : "???"), pathname); break;
     case -1: fl_message("item_pathname() returned -1 (NOT FOUND)"); break;
     case -2: fl_message("item_pathname() returned -2 (STRING TOO LONG)"); break;
-}} selected
+}}
       tooltip {Show the pathname for the selected item. Tests the Fl_Tree::item_pathname() method.} xywh {380 674 90 16} labelsize 8
     }
     Fl_Button showselected_button {
@@ -791,48 +831,8 @@ G_cb_counter = 0; tree->deselect("ROOT");    if ( !G_cb_counter ) fl_alert("FAIL
 G_cb_counter = 0; tree->select("ROOT");      if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST\\n select(path) cb wasn't triggered!");
 tree->deselect("ROOT"); // leave deselected
 
-fl_alert("TEST COMPLETED\\n If you didn't see any error dialogs, test PASSED.");}
+fl_alert("TEST COMPLETED\\n If you didn't see any error dialogs, test PASSED.");} selected
       tooltip {Test the 'docallback' argument can disable callbacks.} xywh {475 674 90 16} labelsize 8
-    }
-    Fl_Light_Button rootselect_toggle {
-      label {Select ROOT}
-      callback {// Toggle select of ROOT item and its children
-Fl_Tree_Item *item = tree->find_item("/ROOT");
-if ( !item) {
-  fl_alert("FAIL: Couldn't find item '/ROOT'???");
-  return;
-}
-int onoff = rootselect_toggle->value();
-if ( onoff ) tree->select(item);	// select /ROOT and its children
-else         tree->deselect(item);	// deselect /ROOT and its children}
-      tooltip {Toggle selection of the ROOT item} xywh {460 540 90 15} selection_color 1 labelsize 9
-    }
-    Fl_Light_Button bbbselect_toggle {
-      label { Select Bbb}
-      callback {// Toggle select of just the Bbb item (not children)
-Fl_Tree_Item *bbb = tree->find_item("/Bbb");
-if ( !bbb) {
-  fl_alert("FAIL: Couldn't find item '/Bbb'???");
-  return;
-}
-int onoff = bbbselect_toggle->value();
-if ( onoff ) tree->select(bbb);		// select /Bbb
-else         tree->deselect(bbb);	// deselect /Bbb}
-      tooltip {Toggle selection of just the /Bbb item
-(Not children)} xywh {350 540 95 15} selection_color 1 labelsize 9
-    }
-    Fl_Light_Button rootselect2_toggle {
-      label {Select ROOT+}
-      callback {// Toggle select of ROOT item and its children
-Fl_Tree_Item *item = tree->find_item("/ROOT");
-if ( !item) {
-  fl_alert("FAIL: Couldn't find item '/ROOT'???");
-  return;
-}
-int onoff = rootselect2_toggle->value();
-if ( onoff ) tree->select_all(item);	// select /ROOT and its children
-else         tree->deselect_all(item);	// deselect /ROOT and its children}
-      tooltip {Toggle selection of the ROOT item and all children} xywh {460 560 90 15} selection_color 1 labelsize 9
     }
   }
   code {// Initialize Tree
