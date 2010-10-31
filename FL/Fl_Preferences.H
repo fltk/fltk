@@ -99,7 +99,7 @@ public:
   Fl_Preferences( Fl_Preferences *parent, int groupIndex );
   Fl_Preferences(const Fl_Preferences&);
   Fl_Preferences( ID id );
-  ~Fl_Preferences();
+  virtual ~Fl_Preferences();
   
   /** Return an ID that can later be reused to open more references to this dataset.
    */

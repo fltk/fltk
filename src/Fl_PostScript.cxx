@@ -699,7 +699,7 @@ void Fl_PostScript_Graphics_Driver::page(double pw, double ph, int media) {
 	}
   }
   fprintf(output, "GS\nCS\n");
-};
+}
 
 void Fl_PostScript_Graphics_Driver::page(int format){
   
@@ -712,7 +712,7 @@ void Fl_PostScript_Graphics_Driver::page(int format){
     ph_=Fl_PostScript_Graphics_Driver::page_formats[format & 0xFF].height;
   }
   page(pw_,ph_,format & 0xFF00);//,orientation only;
-};
+}
 
 void Fl_PostScript_Graphics_Driver::rect(int x, int y, int w, int h) {
   // Commented code does not work, i can't find the bug ;-(
@@ -758,7 +758,7 @@ void Fl_PostScript_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3)
   fprintf(output,"%i %i LT\n", x3 , y2);
   fprintf(output, "ELP\n");
   fprintf(output, "GR\n");
-};
+}
 
 
 void Fl_PostScript_Graphics_Driver::xyline(int x, int y, int x1, int y2){
@@ -770,7 +770,7 @@ void Fl_PostScript_Graphics_Driver::xyline(int x, int y, int x1, int y2){
   fprintf(output, "%i %i LT\n", x1 , y2 );
   fprintf(output, "ELP\n");
   fprintf(output, "GR\n");
-};
+}
 
 void Fl_PostScript_Graphics_Driver::xyline(int x, int y, int x1){
   fprintf(output, "GS\n");
@@ -780,7 +780,7 @@ void Fl_PostScript_Graphics_Driver::xyline(int x, int y, int x1){
   fprintf(output, "ELP\n");
   
   fprintf(output, "GR\n");
-};
+}
 
 void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3){
   fprintf(output, "GS\n");
@@ -792,7 +792,7 @@ void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1, int x2, int y3)
   fprintf(output , "%i %i LT\n", x2 , y3);
   fprintf(output, "ELP\n");
   fprintf(output, "GR\n");
-};
+}
 
 void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1, int x2){
   fprintf(output, "GS\n");
@@ -802,7 +802,7 @@ void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1, int x2){
   fprintf(output, "%i %i LT\n", x2 , y1);
   fprintf(output, "ELP\n");
   fprintf(output, "GR\n");
-};
+}
 
 void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1){
   fprintf(output, "GS\n");
@@ -811,7 +811,7 @@ void Fl_PostScript_Graphics_Driver::yxline(int x, int y, int y1){
   fprintf(output, "%i %i LT\n", x , y1);
   fprintf(output, "ELP\n");
   fprintf(output, "GR\n");
-};
+}
 
 void Fl_PostScript_Graphics_Driver::loop(int x0, int y0, int x1, int y1, int x2, int y2) {
   fprintf(output, "GS\n");
@@ -936,7 +936,7 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
     }
   }
   fprintf(output, "] 0 setdash\n");
-};
+}
 
 static const char *_fontNames[] = {
 "Helvetica2B", 
@@ -964,7 +964,7 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
   fprintf(output,"%i FS\n", s);
   Fl_Display_Device::display_device()->driver()->font(f,s); // Use display fonts for font measurement
   font_ = f; size_ = s;
-};
+}
 
 void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
   Fl::get_color(c, cr_, cg_, cb_);
@@ -1146,7 +1146,7 @@ void Fl_PostScript_Graphics_Driver::begin_points(){
   fprintf(output, "BP\n");
   gap_=1;
   shape_=POINTS;
-};
+}
 
 void Fl_PostScript_Graphics_Driver::begin_line(){
   fprintf(output, "GS\n");
@@ -1154,7 +1154,7 @@ void Fl_PostScript_Graphics_Driver::begin_line(){
   fprintf(output, "BP\n");
   gap_=1;
   shape_=LINE;
-};
+}
 
 void Fl_PostScript_Graphics_Driver::begin_loop(){
   fprintf(output, "GS\n");
@@ -1162,7 +1162,7 @@ void Fl_PostScript_Graphics_Driver::begin_loop(){
   fprintf(output, "BP\n");
   gap_=1;
   shape_=LOOP;
-};
+}
 
 void Fl_PostScript_Graphics_Driver::begin_polygon(){
   fprintf(output, "GS\n");
@@ -1170,7 +1170,7 @@ void Fl_PostScript_Graphics_Driver::begin_polygon(){
   fprintf(output, "BP\n");
   gap_=1;
   shape_=POLYGON;
-};
+}
 
 void Fl_PostScript_Graphics_Driver::vertex(double x, double y){
   if(shape_==POINTS){
@@ -1183,7 +1183,7 @@ void Fl_PostScript_Graphics_Driver::vertex(double x, double y){
     gap_=0;
   }else
     fprintf(output, "%g %g LT\n", x , y);
-};
+}
 
 void Fl_PostScript_Graphics_Driver::curve(double x, double y, double x1, double y1, double x2, double y2, double x3, double y3){
   if(shape_==NONE) return;
@@ -1194,7 +1194,7 @@ void Fl_PostScript_Graphics_Driver::curve(double x, double y, double x1, double 
   gap_=0;
   
   fprintf(output, "%g %g %g %g %g %g curveto \n", x1 , y1 , x2 , y2 , x3 , y3);
-};
+}
 
 
 void Fl_PostScript_Graphics_Driver::circle(double x, double y, double r){
@@ -1210,7 +1210,7 @@ void Fl_PostScript_Graphics_Driver::circle(double x, double y, double r){
     
     fprintf(output, "%g %g %g 0 360 arc\n", x , y , r);
   
-};
+}
 
 void Fl_PostScript_Graphics_Driver::arc(double x, double y, double r, double start, double a){
   if(shape_==NONE) return;
@@ -1220,7 +1220,7 @@ void Fl_PostScript_Graphics_Driver::arc(double x, double y, double r, double sta
   else
     fprintf(output, "%g %g %g %g %g arcn\n", x , y , r , -start, -a);
   
-};
+}
 
 void Fl_PostScript_Graphics_Driver::arc(int x, int y, int w, int h, double a1, double a2) {
   fprintf(output, "GS\n");
@@ -1293,7 +1293,7 @@ void Fl_PostScript_Graphics_Driver::transformed_vertex(double x, double y){
   }else
     fprintf(output, "%g %g LT\n", x , y);
   concat();
-};
+}
 
 /////////////////////////////   Clipping /////////////////////////////////////////////
 
@@ -1366,7 +1366,7 @@ int Fl_PostScript_Graphics_Driver::clip_box(int x, int y, int w, int h, int &X, 
     return 1;
   }
   return ret;
-};
+}
 
 int Fl_PostScript_Graphics_Driver::not_clipped(int x, int y, int w, int h){
   if(!clip_) return 1;
@@ -1375,7 +1375,7 @@ int Fl_PostScript_Graphics_Driver::not_clipped(int x, int y, int w, int h){
   clip_box(x, y, w, h, X, Y, W, H);
   if(W) return 1;
   return 0;
-};
+}
 
 
 void Fl_PostScript_File_Device::margins(int *left, int *top, int *right, int *bottom) // to implement

@@ -60,7 +60,7 @@ extern "C" {
 extern "C" {
   int XUtf8Tolower(int ucs);
   unsigned short XUtf8IsNonSpacing(unsigned int ucs);
-};
+}
 
 #else // X-windows platform
 

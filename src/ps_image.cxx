@@ -260,7 +260,7 @@ void Fl_PostScript_Graphics_Driver::draw_scaled_image(const uchar *data, double 
   fprintf(output," >\nrestore\n" );
 
 
-};
+}
 
 void Fl_PostScript_Graphics_Driver::draw_scaled_image(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D) {
 
@@ -405,7 +405,7 @@ void Fl_PostScript_Graphics_Driver::draw_scaled_image_mono(const uchar *data, do
 
   fprintf(output," >\nrestore\n" );
 
-};
+}
 
 
 
@@ -472,7 +472,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Pixmap * pxm,int XP, int YP, int WP,
   delete[] mask;
   mask=0;
   fl_mask_bitmap=0;
-};
+}
 
 void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy){
   const uchar  * di = rgb->array;
@@ -486,7 +486,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int 
   pop_clip();
   delete[]mask;
   mask=0;
-};
+}
 
 void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy){
   const uchar  * di = bitmap->array;
@@ -523,7 +523,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_Bitmap * bitmap,int XP, int YP, int 
   }
   fprintf(output,">\n");
   pop_clip();
-};
+}
 
 #endif // FL_DOXYGEN
 
