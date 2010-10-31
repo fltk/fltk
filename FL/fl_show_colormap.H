@@ -35,6 +35,10 @@
 
 /* doxygen comment here to avoid exposing ColorMenu in fl_show_colormap.cxx
 */
+
+/** \addtogroup  fl_attributes
+    @{ */
+
 /**
   \brief Pops up a window to let the user pick an colormap entry.
   \image html fl_show_colormap.gif 
@@ -43,8 +47,9 @@
   \retval Fl_Color value of the chosen colormap entry.
   \sa Fl_Color_Chooser
 */
- 
 FL_EXPORT Fl_Color fl_show_colormap(Fl_Color oldcol);
+
+/** @} */
 
 #endif
 
