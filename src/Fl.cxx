@@ -85,6 +85,10 @@ int		Fl::e_length;
 int		Fl::visible_focus_ = 1,
 		Fl::dnd_text_ops_ = 1;
 
+unsigned char   Fl::options_[] = { 0, 0 };
+unsigned char   Fl::options_read_ = 0;
+
+
 Fl_Window *fl_xfocus;	// which window X thinks has focus
 Fl_Window *fl_xmousewin;// which window X thinks has FL_ENTER
 Fl_Window *Fl::grab_;	// most recent Fl::grab()
@@ -1734,6 +1738,33 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
   }
 }
 
+
+bool Fl::option(Fl_Option o)
+{
+  if (!options_read_) {
+    int tmp;
+    { // first, read the system wide preferences
+      Fl_Preferences prefs(Fl_Preferences::SYSTEM, "fltk.org", "fltk");
+      Fl_Preferences opt(prefs, "options");
+      prefs.get("ArrowFocus", tmp, 0); options_[OPTION_ARROW_FOCUS] = tmp;
+      prefs.get("NativeFilechooser", tmp, 0); options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+    }
+    { // next, check the user preferences
+      Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
+      Fl_Preferences opt(prefs, "options");
+      prefs.get("ArrowFocus", tmp, 0); options_[OPTION_ARROW_FOCUS] = tmp;
+      prefs.get("NativeFilechooser", tmp, 0); options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+    }
+    { // now, if the developer has registered this app, we could as for per-application preferences
+    }
+    options_read_ = 1;
+  }
+  if (o<0 || o>=OPTION_LAST) 
+    return false;
+  return (bool)options_[o];
+}
+
+
 // Helper class Fl_Widget_Tracker
 
 /**
@@ -1752,6 +1783,7 @@ Fl_Widget_Tracker::~Fl_Widget_Tracker() {
 
   Fl::release_widget_pointer(wp_); // remove pointer from watch list
 }
+
 
 //
 // End of "$Id$".

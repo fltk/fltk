@@ -382,7 +382,8 @@ int Fl_Input::handle_key() {
     case ctrl('A'): // go to the beginning of the current line
       return shift_position(line_start(position())) + NORMAL_INPUT_MOVE;
     case ctrl('B'): // go one character backward
-      return shift_position(position()-1) + NORMAL_INPUT_MOVE;
+      i = shift_position(position()-1) + NORMAL_INPUT_MOVE;
+      return Fl::option(Fl::OPTION_ARROW_FOCUS) ? i : 1;
     case ctrl('C'): // copy
       return copy(1);
     case ctrl('D'): // cut the next character
@@ -396,7 +397,8 @@ int Fl_Input::handle_key() {
     case ctrl('E'): // go to the end of the line
       return shift_position(line_end(position())) + NORMAL_INPUT_MOVE;
     case ctrl('F'): // go to the next character
-      return shift_position(position()+1) + NORMAL_INPUT_MOVE;
+      i = shift_position(position()+1) + NORMAL_INPUT_MOVE;
+      return Fl::option(Fl::OPTION_ARROW_FOCUS) ? i : 1;
     case ctrl('H'): // cut the previous character
       if (readonly()) {
         fl_beep();
@@ -417,7 +419,10 @@ int Fl_Input::handle_key() {
       return copy_cuts();
     case ctrl('N'): // go down one line
       i = position();
-      if (line_end(i) >= size()) return NORMAL_INPUT_MOVE;
+      if (line_end(i) >= size()) {
+        if (input_type()==FL_MULTILINE_INPUT && !Fl::option(Fl::OPTION_ARROW_FOCUS)) return 1;
+        return NORMAL_INPUT_MOVE;
+      }
       while (repeat_num--) {  
         i = line_end(i);
         if (i >= size()) break;
@@ -427,7 +432,10 @@ int Fl_Input::handle_key() {
       return 1;
     case ctrl('P'): // go up one line
       i = position();
-      if (!line_start(i)) return NORMAL_INPUT_MOVE;
+      if (!line_start(i)) {
+        if (input_type()==FL_MULTILINE_INPUT && !Fl::option(Fl::OPTION_ARROW_FOCUS)) return 1;
+        return NORMAL_INPUT_MOVE;
+      }
       while(repeat_num--) {
         i = line_start(i);
         if (!i) break;

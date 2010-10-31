@@ -106,13 +106,14 @@ typedef int (*Fl_Args_Handler)(int argc, char **argv, int &i);
 
 /** @} */ /* group callback_functions */
 
+
 /**
   The Fl is the FLTK global (static) containing
   state information and global methods for the current application.
 */
 class FL_EXPORT Fl {
   Fl() {}; // no constructor!
-
+  
 public: // should be private!
 #ifndef FL_DOXYGEN
   static int e_number;
@@ -143,7 +144,34 @@ public: // should be private!
     If true then flush() will do something.
   */
   static void damage(int d) {damage_ = d;}
-
+  
+public:
+  typedef enum {
+    /// If set, the arrow keys can change focus from a text widget to another 
+    /// widget. If clear, only Tab and BackTab can.
+    OPTION_ARROW_FOCUS = 0,
+    /// If set, calls to fl_file_chooser will open the native file chooser.
+    /// If clear, the FLTK file chooser will open instead.
+    /// \todo Fl::OPTION_NATIVE_FILECHOOSER not yet supported
+    OPTION_NATIVE_FILECHOOSER,
+    // don't change this, leave it always as the last element
+    OPTION_LAST
+  } Fl_Option;
+  
+private:  
+  static unsigned char options_[OPTION_LAST];
+  static unsigned char options_read_;
+  
+public:  
+  /**
+    Return a global setting for all FLTK applications, possibly overridden
+    by a setting specifically for this application.
+   
+    \param opt
+    \returns true or false
+   */
+  static bool option(Fl_Option opt);
+  
   /**
     The currently executing idle callback function: DO NOT USE THIS DIRECTLY!
     

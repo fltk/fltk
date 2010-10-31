@@ -993,7 +993,7 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
 	UniChar one;
 	CFStringGetCharacters((CFStringRef)sim, CFRangeMake(0, 1), &one);
 	sym = one;
-	// charactersIgnoringModifiers does'nt ignore shift, remove it when it's on
+	// charactersIgnoringModifiers doesn't ignore shift, remove it when it's on
 	if(sym >= 'A' && sym <= 'Z') sym += 32;
       }
       
