@@ -562,13 +562,14 @@ static void cc_cancel_cb (Fl_Widget *o, void *p) {
   \brief Pops up a window to let the user pick an arbitrary RGB color.
   \image html fl_color_chooser.jpg 
   \image latex  fl_color_chooser.eps "fl_color_chooser" width=8cm
-  \param[in] name title label for the window
-  \param[in,out] r, g, b color components in the range 0.0 to 1.0.
+  \param[in] name Title label for the window
+  \param[in,out] r, g, b Color components in the range 0.0 to 1.0.
+  \param[in] cmode Optional mode for color chooser. See mode(int). Default -1 if none (rgb mode).
   \retval 1 if user confirms the selection 
   \retval 0 if user cancels the dialog
   \relates Fl_Color_Chooser
  */
-int fl_color_chooser(const char* name, double& r, double& g, double& b, int m) {
+int fl_color_chooser(const char* name, double& r, double& g, double& b, int cmode) {
   int ret = 0;
   Fl_Window window(215,200,name);
   window.callback(cc_cancel_cb,&ret);
@@ -585,7 +586,7 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b, int m) {
   window.resizable(chooser);
   chooser.rgb(r,g,b);
   chooser.callback(chooser_cb, &ok_color);
-  if (m!=-1) chooser.mode(m);
+  if (cmode!=-1) chooser.mode(cmode);
   window.end();
   window.set_modal();
   window.hotspot(window);
@@ -603,17 +604,18 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b, int m) {
   \brief Pops up a window to let the user pick an arbitrary RGB color.
   \image html fl_color_chooser.jpg 
   \image latex  fl_color_chooser.eps "fl_color_chooser" width=8cm
-  \param[in] name title label for the window
-  \param[in,out] r, g, b color components in the range 0 to 255.
+  \param[in] name Title label for the window
+  \param[in,out] r, g, b Color components in the range 0 to 255.
+  \param[in] cmode Optional mode for color chooser. See mode(int). Default -1 if none (rgb mode).
   \retval 1 if user confirms the selection 
   \retval 0 if user cancels the dialog
   \relates Fl_Color_Chooser
  */
-int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b, int m) {
+int fl_color_chooser(const char* name, uchar& r, uchar& g, uchar& b, int cmode) {
   double dr = r/255.0;
   double dg = g/255.0;
   double db = b/255.0;
-  if (fl_color_chooser(name,dr,dg,db,m)) {
+  if (fl_color_chooser(name,dr,dg,db,cmode)) {
     r = uchar(255*dr+.5);
     g = uchar(255*dg+.5);
     b = uchar(255*db+.5);
