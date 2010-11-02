@@ -152,9 +152,11 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H,  const char* l)
   mSuppressResync = mNLinesDeleted = mModifyingTabDistance = 0;
 }
 
-/**   Free a text display and release its associated memory.  Note, the text
-   BUFFER that the text display displays is a separate entity and is not
-   freed, nor are the style buffer or style table.
+/**
+   Free a text display and release its associated memory.
+   
+   Note, the text BUFFER that the text display displays is a separate
+   entity and is not freed, nor are the style buffer or style table.
 */
 Fl_Text_Display::~Fl_Text_Display() {
   if (scroll_direction) {
@@ -540,6 +542,7 @@ void Fl_Text_Display::insert_position( int newPos ) {
   /* draw cursor at its new position */
   redisplay_range(mCursorPos - 1, mCursorPos + 1); // FIXME utf8
 }
+
 /** Shows the text cursor */
 void Fl_Text_Display::show_cursor(int b) {
   mCursorOn = b;
@@ -549,20 +552,12 @@ void Fl_Text_Display::show_cursor(int b) {
 /**
   Sets the text cursor style to one of the following:
   
-  <UL>
-  
-  	<LI>Fl_Text_Display::NORMAL_CURSOR - Shows an I beam.
-  
-  	<LI>Fl_Text_Display::CARET_CURSOR - Shows a caret under the text.
-  
-  	<LI>Fl_Text_Display::DIM_CURSOR - Shows a dimmed I beam.
-  
-  	<LI>Fl_Text_Display::BLOCK_CURSOR - Shows an unfilled box around the current
-  	character.
-  
-  	<LI>Fl_Text_Display::HEAVY_CURSOR - Shows a thick I beam.
-  
-  </UL>
+  \li Fl_Text_Display::NORMAL_CURSOR - Shows an I beam.
+  \li Fl_Text_Display::CARET_CURSOR - Shows a caret under the text.
+  \li Fl_Text_Display::DIM_CURSOR - Shows a dimmed I beam.
+  \li Fl_Text_Display::BLOCK_CURSOR - Shows an unfilled box around the current
+      character.
+  \li Fl_Text_Display::HEAVY_CURSOR - Shows a thick I beam.
 */
 void Fl_Text_Display::cursor_style(int style) {
   mCursorStyle = style;
@@ -895,9 +890,9 @@ void Fl_Text_Display::show_insert_position() {
 int Fl_Text_Display::move_right() {
   int ok = 0;
   while (!ok) {
-  if ( mCursorPos >= mBuffer->length() )
-    return 0;
-  insert_position( mCursorPos + 1 );
+    if ( mCursorPos >= mBuffer->length() )
+      return 0;
+    insert_position( mCursorPos + 1 );
     int pos = insert_position();
     // FIXME: character is ucs-4
     char c = buffer()->character( pos );
@@ -905,13 +900,14 @@ int Fl_Text_Display::move_right() {
   }
   return 1;
 }
+
 /**  Moves the current insert position left one character.*/
 int Fl_Text_Display::move_left() {
   int ok = 0;
   while (!ok) {
-  if ( mCursorPos <= 0 )
-    return 0;
-  insert_position( mCursorPos - 1 );
+    if ( mCursorPos <= 0 )
+      return 0;
+    insert_position( mCursorPos - 1 );
     int pos = insert_position();
     // FIXME: character is ucs-4
     char c = buffer()->character( pos );
@@ -984,8 +980,8 @@ int Fl_Text_Display::move_down() {
            mBuffer->count_displayed_characters( lineStartPos, mCursorPos );
   nextLineStartPos = skip_lines( lineStartPos, 1, true );
   newPos = mBuffer->skip_displayed_characters( nextLineStartPos, column );
-    if (mContinuousWrap)
-    	newPos = min(newPos, line_end(nextLineStartPos, true));
+  if (mContinuousWrap)
+    newPos = min(newPos, line_end(nextLineStartPos, true));
 
   insert_position( newPos );
   int ok = 0;
@@ -1215,9 +1211,9 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
     	textD->find_wrap_range(deletedText, pos, nInserted, nDeleted,
     	    	&wrapModStart, &wrapModEnd, &linesInserted, &linesDeleted);
     } else {
-   linesInserted = nInserted == 0 ? 0 :
-                  buf->count_lines( pos, pos + nInserted );
-   linesDeleted = nDeleted == 0 ? 0 : countlines( deletedText );
+      linesInserted = nInserted == 0 ? 0 :
+                      buf->count_lines( pos, pos + nInserted );
+      linesDeleted = nDeleted == 0 ? 0 : countlines( deletedText );
     }
 
   /* Update the line starts and mTopLineNum */
@@ -1449,7 +1445,7 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   /* Space beyond the end of the line is still counted in units of characters
      of a standardized character width (this is done mostly because style
      changes based on character position can still occur in this region due
-	  to rectangular Fl_Text_Selections).  stdCharWidth must be non-zero to
+     to rectangular Fl_Text_Selections).  stdCharWidth must be non-zero to
      prevent a potential infinite loop if X does not advance */
   stdCharWidth = TMPFONTWIDTH;   //mFontStruct->max_bounds.width;
   if ( stdCharWidth <= 0 ) {
@@ -1463,19 +1459,22 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   rightClip = min( rightClip, text_area.x + text_area.w );
 
   /* Rectangular Fl_Text_Selections are based on "real" line starts (after
-	  a newline or start of buffer).  Calculate the difference between the
-	  last newline position and the line start we're using.  Since scanning
-	  back to find a newline is expensive, only do so if there's actually a
-	  rectangular Fl_Text_Selection which needs it */
-    if (mContinuousWrap && (range_touches_selection(buf->primary_selection(),
-    	    lineStartPos, lineStartPos + lineLen) || range_touches_selection(
-    	    buf->secondary_selection(), lineStartPos, lineStartPos + lineLen) ||
-    	    range_touches_selection(buf->highlight_selection(), lineStartPos,
-    	    lineStartPos + lineLen))) {
-    	dispIndexOffset = buf->count_displayed_characters(
-    	    	buf->line_start(lineStartPos), lineStartPos);
-    } else
-    	dispIndexOffset = 0;
+     a newline or start of buffer).  Calculate the difference between the
+     last newline position and the line start we're using.  Since scanning
+     back to find a newline is expensive, only do so if there's actually a
+     rectangular Fl_Text_Selection which needs it */
+  if (mContinuousWrap &&
+       (range_touches_selection(buf->primary_selection(),
+                                lineStartPos, lineStartPos + lineLen) ||
+        range_touches_selection(buf->secondary_selection(),
+                                lineStartPos, lineStartPos + lineLen) ||
+        range_touches_selection(buf->highlight_selection(),
+                                lineStartPos, lineStartPos + lineLen)))
+  {
+    dispIndexOffset = buf->count_displayed_characters(
+                        buf->line_start(lineStartPos), lineStartPos);
+  } else
+    dispIndexOffset = 0;
 
   /* Step through character positions from the beginning of the line (even if
      that's off the left edge of the displayed area) to find the first
@@ -1483,7 +1482,10 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
      that character */
   X = text_area.x - mHorizOffset;
   outIndex = 0;
-  for ( charIndex = 0; ; charIndex += lineStr ? fl_utf8len(lineStr[charIndex]) : 1 ) {
+  for (charIndex = 0;
+       ;
+       charIndex += lineStr ? fl_utf8len(lineStr[charIndex]) : 1 )
+  {
     charLen = charIndex >= lineLen ? 1 :
               Fl_Text_Buffer::expand_character( lineStr+charIndex, outIndex,
                                                 expandedChar, buf->tab_distance());
