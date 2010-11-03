@@ -46,37 +46,53 @@
   by the Fl_Text_Buffer
   class.
 */
-class FL_EXPORT Fl_Text_Display: public Fl_Group {
+class FL_EXPORT Fl_Text_Display: public Fl_Group 
+{
   public:
-    /** text display cursor shapes enumeration */
+  
+  /** 
+   text display cursor shapes enumeration 
+   */
     enum {
       NORMAL_CURSOR, CARET_CURSOR, DIM_CURSOR,
       BLOCK_CURSOR, HEAVY_CURSOR
     };
 
+  /**
+   the character position is the left edge of a character wheras 
+   the cursor is thought to be between the centers of to consecutive
+   characters.
+   */
     enum {
       CURSOR_POS, CHARACTER_POS
     };
 
-    /** drag types- they match Fl::event_clicks() so that single clicking to
+  /** 
+   drag types- they match Fl::event_clicks() so that single clicking to
         start a collection selects by character, double clicking selects by
         word and triple clicking selects by line.
     */
     enum {
       DRAG_CHAR = 0, DRAG_WORD = 1, DRAG_LINE = 2
     };
+  
     friend void fl_text_drag_me(int pos, Fl_Text_Display* d);
 
     typedef void (*Unfinished_Style_Cb)(int, void *);
 
-    /** style attributes - currently not implemented! */
+  /** 
+   style attributes - currently not implemented! 
+   */
     enum {
       ATTR_NONE = 0,
       ATTR_UNDERLINE = 1,
       ATTR_HIDDEN = 2
     };
-    /** This structure associates the color,font,size of a string to draw
-        with an attribute mask matching attr */
+  
+  /** 
+   This structure associates the color,font,size of a string to draw
+   with an attribute mask matching attr 
+   */
     struct Style_Table_Entry {
       Fl_Color	color;
       Fl_Font	font;
@@ -89,23 +105,30 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
     virtual int handle(int e);
     void buffer(Fl_Text_Buffer* buf);
+  
   /**
       Sets or gets the current text buffer associated with the text widget.
     Multiple text widgets can be associated with the same text buffer.
   */
     void buffer(Fl_Text_Buffer& buf) { buffer(&buf); }
+  
     /**
       Gets the current text buffer associated with the text widget.
       Multiple text widgets can be associated with the same text buffer.
     */
     Fl_Text_Buffer* buffer() const { return mBuffer; }
+  
     void redisplay_range(int start, int end);
     void scroll(int topLineNum, int horizOffset);
     void insert(const char* text);
     void overstrike(const char* text);
     void insert_position(int newPos);
-    /** Gets the position of the text insertion cursor for text display */
+  
+  /** 
+   Gets the position of the text insertion cursor for text display 
+   */
     int insert_position() const { return mCursorPos; }
+  
     int in_selection(int x, int y) const;
     void show_insert_position();
     int move_right();
@@ -120,24 +143,52 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     void next_word(void);
     void previous_word(void);
     void show_cursor(int b = 1);
-    /**    Hides the text cursor */
+  
+  /**
+   Hides the text cursor 
+   */
     void hide_cursor() { show_cursor(0); }
+  
     void cursor_style(int style);
-    /**    Sets or gets the text cursor color.  */
+  
+  /**
+   Sets or gets the text cursor color.  
+   */
     Fl_Color cursor_color() const {return mCursor_color;}
-    /**    Sets or gets the text cursor color.  */
+  
+  /**    
+   Sets or gets the text cursor color.  
+   */
     void cursor_color(Fl_Color n) {mCursor_color = n;}
-    /**    Sets or gets the width/height of the scrollbars.  */
+  
+  /**   
+   Sets or gets the width/height of the scrollbars.  
+   */
     int scrollbar_width() const { return scrollbar_width_; }
-    /**    Sets or gets the width/height of the scrollbars.  */
+  
+  /**
+   Sets or gets the width/height of the scrollbars.  
+   */
     void scrollbar_width(int W) { scrollbar_width_ = W; }
-    /**    Gets the scrollbar alignment type */
+  
+  /**
+   Gets the scrollbar alignment type 
+   */
     Fl_Align scrollbar_align() const { return scrollbar_align_; }
-    /**    Sets the scrollbar alignment type */
+  
+  /**
+   Sets the scrollbar alignment type 
+   */
     void scrollbar_align(Fl_Align a) { scrollbar_align_ = a; }
-    /**    Moves the insert position to the beginning of the current word.  */
+  
+  /**
+   Moves the insert position to the beginning of the current word.  
+   */
     int word_start(int pos) const { return buffer()->word_start(pos); }
-    /**    Moves the insert position to the end of the current word.  */
+  
+  /**
+   Moves the insert position to the end of the current word.  
+   */
     int word_end(int pos) const { return buffer()->word_end(pos); }
 
     
@@ -147,26 +198,48 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
                         Unfinished_Style_Cb unfinishedHighlightCB,
                         void *cbArg);
 
-    int position_style(int lineStartPos, int lineLen, int lineIndex,
-                       int dispIndex) const;
-    /** \todo FIXME : get set methods pointing on shortcut_ 
-     have no effects as shortcut_ is unused in this class and derived! */
+  int position_style(int lineStartPos, int lineLen, int lineIndex) const;
+  
+  /** 
+   \todo FIXME : get set methods pointing on shortcut_ 
+   have no effects as shortcut_ is unused in this class and derived! 
+   */
     int shortcut() const {return shortcut_;}
-    /** \todo FIXME : get set methods pointing on shortcut_ 
-     have no effects as shortcut_ is unused in this class and derived! */
+  
+  /**
+   \todo FIXME : get set methods pointing on shortcut_ 
+   have no effects as shortcut_ is unused in this class and derived! 
+   */
     void shortcut(int s) {shortcut_ = s;}
 
-    /**    Gets the default font used when drawing text in the widget.  */
+  /**
+   Gets the default font used when drawing text in the widget.  
+   */
     Fl_Font textfont() const {return textfont_;}
-    /**    Sets the default font used when drawing text in the widget.  */
+  
+  /**
+   Sets the default font used when drawing text in the widget.  
+   */
     void textfont(Fl_Font s) {textfont_ = s;}
-    /**    Gets the default size of text in the widget.  */
+  
+  /**
+   Gets the default size of text in the widget.  
+   */
     Fl_Fontsize textsize() const {return textsize_;}
-    /**    Sets the default size of text in the widget.  */
+  
+  /**
+   Sets the default size of text in the widget.  
+   */
     void textsize(Fl_Fontsize s) {textsize_ = s;}
-    /**    Gets the default color of text in the widget.  */
+  
+  /**
+   Gets the default color of text in the widget.  
+   */
     Fl_Color textcolor() const {return textcolor_;}
-    /**    Sets the default color of text in the widget.  */
+  
+  /**
+   Sets the default color of text in the widget.  
+   */
     void textcolor(Fl_Color n) {textcolor_ = n;}
 
     int wrapped_column(int row, int column) const;
@@ -187,14 +260,21 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
     void draw_cursor(int, int);
 
     void draw_string(int style, int x, int y, int toX, const char *string,
-                     int nChars);
+                   int nChars) const;
 
     void draw_vline(int visLineNum, int leftClip, int rightClip,
                     int leftCharIndex, int rightCharIndex);
 
+  int find_x(const char *s, int len, int style, int x) const;
+  enum { DRAW_LINE, FIND_INDEX, GET_WIDTH };
+  int handle_vline(int mode, 
+                   int lineStart, int lineLen, int leftChar, int rightChar,
+                   int topClip, int bottomClip,
+                   int leftClip, int rightClip) const;
+  
     void draw_line_numbers(bool clearAll);
 
-    void clear_rect(int style, int x, int y, int width, int height);
+  void clear_rect(int style, int x, int y, int width, int height) const;
     void display_insert();
 
     void offset_line_starts(int newTopLineNum);
@@ -253,9 +333,7 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
                          int *nextLineStart) const;
     int measure_proportional_character(const char *s, int colNum, int pos) const;
     int wrap_uses_character(int lineEndPos) const;
-    int range_touches_selection(const Fl_Text_Selection *sel, int rangeStart,
-                                 int rangeEnd) const;
-#ifndef FL_DOXYGEN
+  
     int damage_range1_start, damage_range1_end;
     int damage_range2_start, damage_range2_end;
     int mCursorPos;
@@ -303,8 +381,6 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
     int mMaxsize;
 
-    int mFixedFontWidth;        /* Font width if all current fonts are
-                                   fixed and match in width, else -1 */
     int mSuppressResync;		/* Suppress resynchronization of line
                                            starts during buffer updates */
     int mNLinesDeleted;			/* Number of lines deleted during
@@ -332,9 +408,9 @@ class FL_EXPORT Fl_Text_Display: public Fl_Group {
 	 // The following are not presently used from the original NEdit code,
 	 // but are being put here so that future versions of Fl_Text_Display
 	 // can implement line numbers without breaking binary compatibility.
+  
+  /* Line number margin and width */
     int mLineNumLeft, mLineNumWidth;
-				/* Line number margin and width */
-#endif
 };
 
 #endif

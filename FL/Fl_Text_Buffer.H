@@ -49,8 +49,16 @@
  
  "column" was orginally defined as a character offset from the left margin. It was
  identical to the byte offset. In UTF-8, we have neither a byte offset nor
- truly fixed width fonts. Column could be a pixel value multiplied with
+ truly fixed width fonts (*). Column could be a pixel value multiplied with
  an average character width (which is a bearable approximation).
+ 
+ * in Unicode, there are no fixed width fonts! Even if the ASCII characters may 
+   happen to be all the same width in pixels, chinese charcaters surely are not.
+   There are plenty of exceptions, like ligatures, that make special handling of
+   "fixed" character widths a nightmare. I decided to remove all references to
+   fixed fonts and see "columns" as a multiple of the average width of a 
+   character in the main font.
+     - Matthias
  */
 
 
@@ -80,15 +88,6 @@ public:
   void set(int start, int end);
   
   /**
-   \brief Set a regtangular selection range.
-   \param start byte offset to first selected character
-   \param end byte offset pointing after last selected character
-   \param rectStart first selected column
-   \param rectEnd last selected column +1
-   */
-  void set_rectangular(int start, int end, int rectStart, int rectEnd);
-  
-  /**
    \brief Updates a selection afer text was modified.
    Updates an individual selection for changes in the corresponding text
    \param pos byte offset into text buffer at which the change occured
@@ -96,12 +95,6 @@ public:
    \param nInserted number of bytes inserted into the buffer
    */
   void update(int pos, int nDeleted, int nInserted);
-  
-  /**
-   \brief Returns true if the selection is rectangular.
-   \return flag
-   */
-  char rectangular() const { return mRectangular; }
   
   /**
    \brief Return the byte offset to the first selected character.
@@ -116,35 +109,23 @@ public:
   int end() const { return mEnd; }
   
   /**
-   \brief Return the first column of the rectangular selection.
-   \return first column of rectangular selection
-   */
-  int rect_start() const { return mRectStart; }
-  
-  /**
-   \brief Return the last column of the rectangular selection + 1.
-   \return last column of rectangular selection +1
-   */
-  int rect_end() const { return mRectEnd; }
-  
-  /**
    \brief Returns true if any text is selected.
    \return a non-zero number if any text has been selected, or 0
    if no text is selected.
    */
-  char selected() const { return mSelected; }
+  bool selected() const { return mSelected; }
   
   /**
    \brief Modify the 'selected' flag.
    \param b new flag
    */
-  void selected(char b) { mSelected = b; }
+  void selected(bool b) { mSelected = b; }
   
   /**
    Return true if position \p pos with indentation \p dispIndex is in
    the Fl_Text_Selection.
    */
-  int includes(int pos, int lineStartPos, int dispIndex) const;
+  int includes(int pos) const;
   
   /**
    \brief Return the positions of this selection.
@@ -154,30 +135,18 @@ public:
    */
   int position(int* start, int* end) const;
   
-  /**
-   \brief Return the positions of this rectangular selection.
-   \param start return byte offset to first selected character
-   \param end return byte offset pointing after last selected character
-   \param isRect return if the selection is rectangular
-   \param rectStart return first selected column
-   \param rectEnd return last selected column +1
-   \return true if selected
-   */
-  int position(int* start, int* end, int* isRect, int* rectStart, int* rectEnd) const;
-  
 protected:
   
-  char mSelected;     ///< this flag is set if any text is selected  
-  char mRectangular;  ///< this flag is set if the selection is rectangular
   int mStart;         ///< byte offset to the first selected character
   int mEnd;           ///< byte offset to the character after the last selected character
-  int mRectStart;     ///< first selected column (see "column")
-  int mRectEnd;       ///< last selected column +1 (see "column")
+  bool mSelected;     ///< this flag is set if any text is selected  
 };
+
 
 typedef void (*Fl_Text_Modify_Cb)(int pos, int nInserted, int nDeleted,
                                   int nRestyled, const char* deletedText,
                                   void* cbArg);
+
 
 typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
 
@@ -218,12 +187,13 @@ public:
    \brief Get a copy of the entire contents of the text buffer.
    Memory is allocated to contain the returned string, which the caller 
    must free.
-   \return newly allocated text buffer - must be free'd
+   \return newly allocated text buffer - must be free'd, text is utf8
    */  
   char* text() const;
   
   /**  
-   Replaces the entire contents of the text buffer 
+   Replaces the entire contents of the text buffer.
+   Text must be valid utf8.
    \todo unicode check
    */
   void text(const char* text);
@@ -236,17 +206,25 @@ public:
    When you are done with the text, free it using the free() function.
    \param start byte offset to first character
    \param end byte offset after last character in range
-   \return newly allocated text buffer - must be free'd
+   \return newly allocated text buffer - must be free'd, text is utf8
    */
   char* text_range(int start, int end) const;
   
   /**
    Returns the character at the specified position pos in the buffer.
    Positions start at 0 
-   \param pos byte offset into buffer
+   \param pos byte offset into buffer, pos must be at acharacter boundary
    \return Unicode UCS-4 encoded character
    */
-  unsigned int character(int pos) const;
+  unsigned int char_at(int pos) const;
+  
+  /**
+   Returns the raw byte at the specified position pos in the buffer.
+   Positions start at 0 
+   \param pos byte offset into buffer
+   \return unencoded raw byte
+   */
+  char byte_at(int pos) const;
   
   /**
    Convert a byte offset in buffer into a memory address.
@@ -261,13 +239,6 @@ public:
   { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
   
   /** 
-   Returns the text from the given rectangle. When you are done
-   with the text, free it using the free() function.
-   \todo unicode check
-   */
-  char* text_in_rectangle(int start, int end, int rectStart, int rectEnd) const;
-  
-  /** 
    Inserts null-terminated string \p text at position \p pos. 
    \param pos insertion position as byte offset (must be utf-8 character aligned)
    \param text utf-8 encoded and nul terminated text
@@ -276,6 +247,7 @@ public:
   
   /**
    Appends the text string to the end of the buffer.  
+   \param t utf-8 encoded and nul terminated text
    \todo unicode check
    */
   void append(const char* t) { insert(length(), t); }
@@ -296,8 +268,11 @@ public:
   void replace(int start, int end, const char *text);
   
   /**
-   Copies text from one buffer to this one; fromBuf may
-   be the same as this.
+   Copies text from one buffer to this one.
+   \param fromBuf source text buffer may be the same as this
+   \param fromStart byte offset into buffer
+   \param fromEnd byte offset into buffer
+   \param toPos destination byte offset into buffer
    \todo unicode check
    */
   void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);
@@ -357,54 +332,6 @@ public:
   { return outputfile(file, 0, length(), buflen); }
   
   /**
-   Insert \p s columnwise into buffer starting at displayed character
-   position \p column on the line beginning at \p startPos. Opens a rectangular
-   space the width and height of \p s, by moving all text to the right of
-   \p column right.  If \p charsInserted and \p charsDeleted are not NULL, the
-   number of characters inserted and deleted in the operation (beginning
-   at \p startPos) are returned in these arguments.
-   \todo unicode check
-   */
-  void insert_column(int column, int startPos, const char* text,
-                     int* charsInserted, int* charsDeleted);
-  
-  /**
-   Replaces a rectangular area in the buffer, given by \p start, \p end,
-   \p rectStart, and \p rectEnd, with \p text.  If \p text is vertically
-   longer than the rectangle, add extra lines to make room for it.
-   \todo unicode check
-   */
-  void replace_rectangular(int start, int end, int rectStart, int rectEnd,
-                           const char* text);
-  
-  /**
-   Overlay \p text between displayed character positions \p rectStart and
-   \p rectEnd on the line beginning at \p startPos.  If \p charsInserted and
-   \p charsDeleted are not NULL, the number of characters inserted and deleted
-   in the operation (beginning at \p startPos) are returned in these arguments.
-   \todo unicode check
-   */
-  void overlay_rectangular(int startPos, int rectStart, int rectEnd,
-                           const char* text, int* charsInserted,
-                           int* charsDeleted);
-  
-  /**
-   Removes a rectangular swath of characters between character positions start
-   and end and horizontal displayed-character offsets rectStart and rectEnd.
-   \todo unicode check
-   */
-  void remove_rectangular(int start, int end, int rectStart, int rectEnd);
-  
-  /**
-   Clears text in the specified area.
-   It clears a rectangular "hole" out of the buffer between character positions
-   start and end and horizontal displayed-character offsets rectStart and
-   rectEnd.
-   \todo unicode check
-   */
-  void clear_rectangular(int start, int end, int rectStart, int rectEnd);
-  
-  /** 
    Gets the tab width.  
    \todo unicode check
    */
@@ -435,25 +362,12 @@ public:
   void unselect();
   
   /** 
-   Achieves a rectangular selection on the primary text selection object 
-   \todo unicode check
-   */
-  void select_rectangular(int start, int end, int rectStart, int rectEnd);
-  
-  /** 
    Gets the selection position 
    \todo unicode check
    */
   int selection_position(int* start, int* end);
   
   /** 
-   Gets the selection position, and rectangular selection info 
-   \todo unicode check
-   */
-  int selection_position(int* start, int* end, int* isRect, int* rectStart,
-                         int* rectEnd);
-  
-  /**
    Returns the currently selected text. When you are done with
    the text, free it using the free() function.
    \todo unicode check
@@ -491,26 +405,12 @@ public:
   void secondary_unselect();
   
   /** 
-   Achieves a rectangular selection on the secondary text selection object 
-   \todo unicode check
-   */
-  void secondary_select_rectangular(int start, int end, int rectStart,
-                                    int rectEnd);
-  
-  /**  
    Returns the current selection in the secondary text selection object.
    \todo unicode check
    */
   int secondary_selection_position(int* start, int* end);
   
   /** 
-   Returns the current selection in the secondary text selection object.
-   \todo unicode check
-   */
-  int secondary_selection_position(int* start, int* end, int* isRect,
-                                   int* rectStart, int* rectEnd);
-  
-  /**
    Returns the text in the secondary selection. When you are
    done with the text, free it using the free() function.
    \todo unicode check
@@ -549,25 +449,12 @@ public:
   void unhighlight();
 
   /** 
-   Highlights a rectangular selection in the buffer 
-   \todo unicode check
-   */
-  void highlight_rectangular(int start, int end, int rectStart, int rectEnd);
-  
-  /** 
    Highlights the specified text between \p start and \p end within the buffer.
    \todo unicode check
    */
   int highlight_position(int* start, int* end);
   
   /** 
-   Highlights the specified rectangle of text within the buffer.
-   \todo unicode check
-   */
-  int highlight_position(int* start, int* end, int* isRect, int* rectStart,
-                         int* rectEnd);
-  
-  /**
    Returns the highlighted text. When you are done with the
    text, free it using the free() function.
    \todo unicode check
@@ -625,12 +512,16 @@ public:
    Returns the text from the entire line containing the specified
    character position. When you are done with the text, free it
    using the free() function.
+   \param pos byte index into buffer
+   \return copy of utf8 text, must be free'd
    \todo unicode check
    */
   char* line_text(int pos) const;
   
   /** 
    Returns the position of the start of the line containing position \p pos. 
+   \param pos byte index into buffer
+   \return byte offset to line start
    \todo unicode check
    */
   int line_start(int pos) const;
@@ -639,62 +530,28 @@ public:
    Finds and returns the position of the end of the line containing position \p pos
    (which is either a pointer to the newline character ending the line,
    or a pointer to one character beyond the end of the buffer)
+   \param pos byte index into buffer
+   \return byte offset to line end
    \todo unicode check
    */
   int line_end(int pos) const;
 
   /** 
    Returns the position corresponding to the start of the word 
+   \param pos byte index into buffer
+   \return byte offset to word start
    \todo unicode check
    */
   int word_start(int pos) const;
 
   /**  
    Returns the position corresponding to the end of the word.
+   \param pos byte index into buffer
+   \return byte offset to word end
    \todo unicode check
    */
   int word_end(int pos) const;
   
-  /**
-   Expands the given character to a displayable format. Tabs and
-   other control characters are given special treatment.
-   Get a character from the text buffer expanded into its screen
-   representation (which may be several characters for a tab or a
-   control code).  Returns the number of characters written to \p outStr.
-   \p indent is the number of characters from the start of the line
-   for figuring tabs.  Output string is guranteed to be shorter or
-   equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
-   \todo unicode check
-   */
-  int expand_character(int pos, int indent, char *outStr) const;
-  
-  /**
-   Expand a single character \p c from the text buffer into it's displayable
-   screen representation (which may be several characters for a tab or a
-   control code).  Returns the number of characters added to \p outStr.
-   \p indent is the number of characters from the start of the line
-   for figuring tabs of length \p tabDist.  Output string is guaranteed 
-   to be shorter or equal in length to FL_TEXT_MAX_EXP_CHAR_LEN
-   Tabs and  other control characters are given special treatment.
-   \param src address of utf-8 text
-   \param indent 
-   \param[out] outStr write substitution here
-   \param tabDist
-   \return number of byte in substitution
-   */
-  static int expand_character(const char *src, int indent, char* outStr, int tabDist);
-  
-  /**
-   Return the length in displayed characters of character \p c expanded
-   for display (as discussed above in expand_character() ).  
-   \param src address of utf-8 text
-   \param indent 
-   \param tabDist
-   \return number of byte in substitution
-   */
-  static int character_width(const char *src, int indent, int tabDist);
-  static int character_width(const char    c, int indent, int tabDist);
-
   /**
    Count the number of displayed characters between buffer position
    \p lineStartPos and \p targetPos. (displayed characters are the characters
@@ -745,9 +602,13 @@ public:
    BufSearchForward is that it's optimized for single characters.  The
    overall performance of the text widget is dependent on its ability to
    count lines quickly, hence searching for a single character: newline)
+   \param startPos byte offset to start position
+   \param searchChar UCS-4 character that we want to find
+   \param foundPos byte offset where the character was found
+   \return 1 if found, 0 if not
    \todo unicode check
    */
-  int findchar_forward(int startPos, char searchChar, int* foundPos) const;
+  int findchar_forward(int startPos, unsigned searchChar, int* foundPos) const;
   
   /**
    Search backwards in buffer \p buf for character \p searchChar, starting
@@ -756,15 +617,23 @@ public:
    BufSearchBackward is that it's optimized for single characters.  The
    overall performance of the text widget is dependent on its ability to
    count lines quickly, hence searching for a single character: newline)
+   \param startPos byte offset to start position
+   \param searchChar UCS-4 character that we want to find
+   \param foundPos byte offset where the character was found
+   \return 1 if found, 0 if not
    \todo unicode check
    */
-  int findchar_backward(int startPos, char searchChar, int* foundPos) const;
+  int findchar_backward(int startPos, unsigned searchChar, int* foundPos) const;
   
   /**
    Finds the next occurrence of the specified characters.
    Search forwards in buffer for characters in \p searchChars, starting
    with the character \p startPos, and returning the result in \p foundPos
    returns 1 if found, 0 if not.
+   \param startPos byte offset to start position
+   \param searchChars utf8 string that we want to find
+   \param foundPos byte offset where the string was found
+   \return 1 if found, 0 if not
    \todo unicode check
    */
   int findchars_forward(int startPos, const char* searchChars, int* foundPos) const;
@@ -774,6 +643,10 @@ public:
    Search backwards in buffer for characters in \p searchChars, starting
    with the character BEFORE \p startPos, returning the result in \p foundPos
    returns 1 if found, 0 if not.
+   \param startPos byte offset to start position
+   \param searchChars utf8 string that we want to find
+   \param foundPos byte offset where the string was found
+   \return 1 if found, 0 if not
    \todo unicode check
    */
   int findchars_backward(int startPos, const char* searchChars, int* foundPos) const;
@@ -782,6 +655,11 @@ public:
    Search forwards in buffer for string \p searchString, starting with the
    character \p startPos, and returning the result in \p foundPos
    returns 1 if found, 0 if not.
+   \param startPos byte offset to start position
+   \param searchString utf8 string that we want to find
+   \param foundPos byte offset where the string was found
+   \param matchCase if set, match character case
+   \return 1 if found, 0 if not
    \todo unicode check
    */
   int search_forward(int startPos, const char* searchString, int* foundPos,
@@ -791,6 +669,11 @@ public:
    Search backwards in buffer for string <i>searchCharssearchString</i>, starting with the
    character BEFORE \p startPos, returning the result in \p foundPos
    returns 1 if found, 0 if not.
+   \param startPos byte offset to start position
+   \param searchString utf8 string that we want to find
+   \param foundPos byte offset where the string was found
+   \param matchCase if set, match character case
+   \return 1 if found, 0 if not
    \todo unicode check
    */
   int search_backward(int startPos, const char* searchString, int* foundPos,
@@ -815,6 +698,32 @@ public:
    Returns the current highlight selection.
    */
   const Fl_Text_Selection* highlight_selection() const { return &mHighlight; }
+  
+  /**
+   Returns the index of the previous character.
+   \param ix index to the current char
+   */
+  int prev_char(int ix) const;
+  
+  /**
+   Returns a pointer to the previous character.
+   \param c pointer to the current char
+   */
+  char *prev_char(char *c) const;
+  const char *prev_char(const char *c) const;
+  
+  /**
+   Returns the index of the next character.
+   \param ix index to the current char
+   */
+  int next_char(int ix) const;
+  
+  /**
+   Returns a pointer to the next character.
+   \param c pointer to the current char
+   */
+  char *next_char(char *c) const;
+  const char *next_char(const char *c) const;
   
 protected:
 
@@ -852,43 +761,6 @@ protected:
   void remove_(int start, int end);
   
   /**
-   Deletes a rectangle of text without calling the modify callbacks. Returns
-   the number of characters replacing those between \p start and \p end. Note that
-   in some pathological cases, deleting can actually increase the size of
-   the buffer because of tab expansions. \p endPos returns the buffer position
-   of the point in the last line where the text was removed (as a hint for
-   routines which need to position the cursor after a delete operation)
-   \todo unicode check
-   */
-  void remove_rectangular_(int start, int end, int rectStart, int rectEnd,
-                           int* replaceLen, int* endPos);
-  
-  /**
-   Inserts a column of text without calling the modify callbacks.  Note that
-   in some pathological cases, inserting can actually decrease the size of
-   the buffer because of spaces being coalesced into tabs.  \p nDeleted and
-   \p nInserted return the number of characters deleted and inserted beginning
-   at the start of the line containing \p startPos.  \p endPos returns buffer
-   position of the lower left edge of the inserted column (as a hint for
-   routines which need to set a cursor position).
-   \todo unicode check
-   */
-  void insert_column_(int column, int startPos, const char* insText,
-                      int* nDeleted, int* nInserted, int* endPos);
-  
-  /**
-   Overlay a rectangular area of text without calling the modify callbacks.
-   \p nDeleted and \p nInserted return the number of characters deleted and
-   inserted beginning at the start of the line containing \p startPos.
-   \p endPos returns buffer position of the lower left edge of the inserted
-   column (as a hint for routines which need to set a cursor position).
-   \todo unicode check
-   */
-  void overlay_rectangular_(int startPos, int rectStart, int rectEnd,
-                            const char* insText, int* nDeleted,
-                            int* nInserted, int* endPos);
-  
-  /**
    Calls the stored redisplay procedure(s) for this buffer to update the
    screen for a change in a selection.
    \todo unicode check
@@ -923,25 +795,6 @@ protected:
   void replace_selection_(Fl_Text_Selection* sel, const char* text);
   
   /**
-   Finds the first and last character position in a line within a rectangular
-   selection (for copying).  Includes tabs which cross rectStart, but not
-   control characters which do so.  Leaves off tabs which cross rectEnd.
-   
-   Technically, the calling routine should convert tab characters which
-   cross the right boundary of the selection to spaces which line up with
-   the edge of the selection.  Unfortunately, the additional memory
-   management required in the parent routine to allow for the changes
-   in string size is not worth all the extra work just for a couple of
-   shifted characters, so if a tab protrudes, just lop it off and hope
-   that there are other characters in the selection to establish the right
-   margin for subsequent columnar pastes of this data.
-   \todo unicode check
-   */
-  void rectangular_selection_boundaries(int lineStartPos, int rectStart,
-                                        int rectEnd, int* selStart,
-                                        int* selEnd) const;
-  
-  /**
    Updates all of the selections in the buffer for changes in the buffer's text
    \todo unicode check
    */
@@ -959,15 +812,13 @@ protected:
   // The hardware tab distance used by all displays for this buffer,
   // and used in computing offsets for rectangular selection operations.
   int mTabDist;                   /**< equiv. number of characters in a tab */
-  int mUseTabs;                   /**< True if buffer routines are allowed to use
-                                   tabs for padding in rectangular operations */
   int mNModifyProcs;              /**< number of modify-redisplay procs attached */
-  Fl_Text_Modify_Cb*              /**< procedures to call when buffer is */
-  mModifyProcs;                   /**< modified to redisplay contents */
+  Fl_Text_Modify_Cb *mModifyProcs;/**< procedures to call when buffer is 
+                                   modified to redisplay contents */
   void** mCbArgs;                 /**< caller arguments for modifyProcs above */
   int mNPredeleteProcs;           /**< number of pre-delete procs attached */
-  Fl_Text_Predelete_Cb*           /**< procedure to call before text is deleted */
-  mPredeleteProcs;                /**< from the buffer; at most one is supported. */
+  Fl_Text_Predelete_Cb *mPredeleteProcs; /**< procedure to call before text is deleted
+                                   from the buffer; at most one is supported. */
   void **mPredeleteCbArgs;        /**< caller argument for pre-delete proc above */
   int mCursorPosHint;             /**< hint for reasonable cursor position after
                                    a buffer modification operation */
