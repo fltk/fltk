@@ -1410,7 +1410,7 @@ int Fl_Text_Display::handle_vline(
   }
   
   // draw the line
-  style = position_style(lineStartPos, lineLen, i);
+  style = position_style(lineStartPos, lineLen, 0);
   for (i=0; i<lineLen; ) {
     int len = fl_utf8len(lineStr[i]);
     charStyle = position_style(lineStartPos, lineLen, i);
