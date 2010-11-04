@@ -39,7 +39,7 @@
  ?? "length" is the number of characters in a string
  ?? "size" is the number of bytes
  ?? "index" is the position in a string in number of characters
- ?? "offset" is the position in a strin in bytes (and must be kept on a charater boundary)
+ ?? "offset" is the position in a string in bytes (and must be kept on a charater boundary)
  (there seems to be no standard in Uncode documents, howevere "length" is commonly
  referencing the number of bytes. Maybe "bytes" and "glyphs" would be the most
  obvious way to describe sizes?)
@@ -154,6 +154,11 @@ typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
 /**
  \brief This class manages unicode displayed in one or more Fl_Text_Display widgets.
  
+ All text in Fl_Text_Buffermust be encoded in UTF-8. All indices used in the 
+ function calls must be aligned to the start of a UTF-8 sequence. All indices 
+ and pointers returned will be aligned. All functions that return a single 
+ character will return that in an unsiged int in UCS-4 encoding.
+ 
  The Fl_Text_Buffer class is used by the Fl_Text_Display
  and Fl_Text_Editor to manage complex text data and is based upon the
  excellent NEdit text editor engine - see http://www.nedit.org/.
@@ -193,7 +198,7 @@ public:
   
   /**  
    Replaces the entire contents of the text buffer.
-   Text must be valid utf8.
+   \param text Text must be valid utf8.
    \todo unicode check
    */
   void text(const char* text);
@@ -228,12 +233,16 @@ public:
   
   /**
    Convert a byte offset in buffer into a memory address.
+   \param pos byte offset into buffer
+   \return byte offset converted to a memory address
    */
   const char *address(int pos) const
   { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
 
   /**
    Convert a byte offset in buffer into a memory address.
+   \param pos byte offset into buffer
+   \return byte offset converted to a memory address
    */
   char *address(int pos)
   { return (pos < mGapStart) ? mBuf+pos : mBuf+pos+mGapEnd-mGapStart; }
@@ -748,6 +757,7 @@ protected:
    expensive and the length will be required by any caller who will continue
    on to call redisplay). \p pos must be contiguous with the existing text in
    the buffer (i.e. not past the end).
+   \return the number of bytes inserted
    \todo unicode check
    */
   int insert_(int pos, const char* text);

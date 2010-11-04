@@ -270,6 +270,10 @@ char Fl_Text_Buffer::byte_at(int pos) const {
 */
 void Fl_Text_Buffer::insert(int pos, const char *text)
 {
+  /* check if there is actually any text */
+  if (!text || !*text)
+    return;
+  
   /* if pos is not contiguous to existing text, make it */
   if (pos > mLength)
     pos = mLength;
@@ -1010,7 +1014,7 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
         return 1;
       }
       // FIXME: character is ucs-4
-    } while ((matchCase ? char_at(bp++) == *sp++ :
+    } while ((matchCase ? char_at(bp++) == (unsigned int)*sp++ :
               toupper(char_at(bp++)) == toupper(*sp++))
              && bp < length());
     startPos++;
@@ -1040,7 +1044,7 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
         return 1;
       }
       // FIXME: character is ucs-4
-    } while ((matchCase ? char_at(bp--) == *sp-- :
+    } while ((matchCase ? char_at(bp--) == (unsigned int)*sp-- :
               toupper(char_at(bp--)) == toupper(*sp--))
              && bp >= 0);
     startPos--;
@@ -1128,6 +1132,9 @@ int Fl_Text_Buffer::findchars_backward(int startPos, const char *searchChars,
  */
 int Fl_Text_Buffer::insert_(int pos, const char *text)
 {
+  if (!text || !*text)
+    return 0;
+  
   int insertedLength = strlen(text);
   
   /* Prepare the buffer to receive the new text.  If the new text fits in
@@ -1246,7 +1253,7 @@ int Fl_Text_Selection::position(int *startpos, int *endpos) const {
  */
 int Fl_Text_Selection::includes(int pos) const {
   return (selected() && pos >= start() && pos < end() );
-  }
+}
 
 
 /*

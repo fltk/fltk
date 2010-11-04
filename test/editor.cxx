@@ -785,6 +785,7 @@ Fl_Window* new_view() {
     Fl_Menu_Bar* m = new Fl_Menu_Bar(0, 0, 660, 30);
     m->copy(menuitems, w);
     w->editor = new Fl_Text_Editor(0, 30, 660, 370);
+    w->editor->wrap_mode(1, 32);
     w->editor->textfont(FL_COURIER);
     w->editor->textsize(TS);
     w->editor->buffer(textbuf);
@@ -812,6 +813,7 @@ int main(int argc, char **argv) {
                 "  if ( fnfc.show() ) return;\n"
                 "  save_file(fnfc.filename());\n"
                 "}\n\n"
+                " 2 4 6 8 0 2 4 6 8 0 2 4 6 8 0 2 4 6 8 0\n\n"
                 "// Falsches Üben von Xylophonmusik quält jeden größeren Zwerg\n"
                 "// (= Wrongful practicing of xylophone music tortures every larger dwarf)\n"
                 "\n"
