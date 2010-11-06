@@ -38,6 +38,14 @@
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>
 
+#define ASSERT_UTF8
+
+#ifdef ASSERT_UTF8
+#define IS_UTF8_ALIGNED(a) if (a && *a) assert(fl_utf8len(*(a))>0);
+#else
+#define IS_UTF8_ALIGNED(a)
+#endif
+
 #undef min
 #undef max
 
@@ -86,8 +94,6 @@ static int scroll_x = 0;
  
  \param X, Y, W, H position and size of widget
  \param l label text, defaults to none
- 
- \todo Unicode?
  */
 Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
 : Fl_Group(X, Y, W, H, l) {
@@ -169,8 +175,6 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
  
  Note, the text BUFFER that the text display displays is a separate
  entity and is not freed, nor are the style buffer or style table.
- 
- \todo Unicode?
  */
 Fl_Text_Display::~Fl_Text_Display() {
   if (scroll_direction) {
@@ -189,8 +193,6 @@ Fl_Text_Display::~Fl_Text_Display() {
 /**  
  Attach a text buffer to display, replacing the current buffer (if any)
  \param buf attach this text buffer
- 
- \todo Unicode?
  */
 void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
   /* If the text display is already displaying a buffer, clear it off
@@ -221,7 +223,8 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
 
 
 /**   
- Attach (or remove) highlight information in text display and redisplay.
+ \brief Attach (or remove) highlight information in text display and redisplay.
+ 
  Highlighting information consists of a style buffer which parallels the
  normal text buffer, but codes font and color information for the display;
  a style table which translates style buffer codes (indexed by buffer
@@ -245,8 +248,6 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
    this callback will be called
  \param cbArg and optional argument for the callback above, usuallay a pointer
    to the Text Display.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
                                      const Style_Table_Entry *styleTable,
@@ -269,8 +270,6 @@ void Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
 /**
  \brief Find the longest line of all visible lines.
  \return the width of the longest visible line in pixels
- 
- \todo Unicode?
  */
 int Fl_Text_Display::longest_vline() const {
   int longest = 0;
@@ -286,8 +285,6 @@ int Fl_Text_Display::longest_vline() const {
  Calling this function will trigger a recalculation of all lines visible and
  of all scrollbar sizes.
  \param X, Y, W, H new position and size of this widget
- 
- \todo Unicode?
  */
 void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 #ifdef DEBUG
@@ -295,8 +292,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 #endif // DEBUG
   const int oldWidth = w();
 #ifdef DEBUG
-  printf("    oldWidth=%d, mContinuousWrap=%d, mWrapMargin=%d\n", oldWidth,
-         mContinuousWrap, mWrapMargin);
+  printf("    oldWidth=%d, mContinuousWrap=%d, mWrapMargin=%d\n", oldWidth, mContinuousWrap, mWrapMargin);
 #endif // DEBUG
   Fl_Widget::resize(X,Y,W,H);
   if (!buffer()) return;
@@ -333,8 +329,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
       mNBufferLines = count_lines(0, buffer()->length(), true);
       mFirstChar = line_start(mFirstChar);
       mTopLineNum = count_lines(0, mFirstChar, true)+1;
-      absolute_top_line_number(oldFirstChar);
-      
+      absolute_top_line_number(oldFirstChar);      
 #ifdef DEBUG
       printf("    mNBufferLines=%d\n", mNBufferLines);
 #endif // DEBUG
@@ -456,8 +451,6 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
  \brief Refresh a rectangle of the text display.  
  \param left, top are in coordinates of the text drawing window.
  \param width, height isze in pixels 
- 
- \todo Unicode?
  */
 void Fl_Text_Display::draw_text( int left, int top, int width, int height ) {
   int fontHeight, firstLine, lastLine, line;
@@ -488,29 +481,11 @@ void Fl_Text_Display::draw_text( int left, int top, int width, int height ) {
  the widget.
  \param startpos index of first character needing redraw
  \param endpos index after last character needing redraw
- 
- \todo Unicode?
  */
 void Fl_Text_Display::redisplay_range(int startpos, int endpos) {
-  int ok = 0;
-  while (!ok && startpos > 0) {
-    // FIXME: character is ucs-4
-    char c = buffer()->char_at( startpos );
-    if (!((c & 0x80) && !(c & 0x40))) {
-      ok = 1;
-    } else {
-      startpos--;
-    }
-  }
-  while (!ok && endpos < buffer()->length()) {
-    // FIXME: character is ucs-4
-    char c = buffer()->char_at( endpos );
-    if (!((c & 0x80) && !(c & 0x40))) {
-      ok = 1;
-    } else {
-      endpos++;
-    }
-  }
+  IS_UTF8_ALIGNED(buffer()->address(startpos))
+  IS_UTF8_ALIGNED(buffer()->address(endpos))
+  
   if (damage_range1_start == -1 && damage_range1_end == -1) {
     damage_range1_start = startpos;
     damage_range1_end = endpos;
@@ -542,15 +517,16 @@ void Fl_Text_Display::redisplay_range(int startpos, int endpos) {
  
  \param startpos index of first character to draw
  \param endpos index after last character to draw
- 
- \todo Unicode?
  */
 void Fl_Text_Display::draw_range(int startpos, int endpos) {
+  IS_UTF8_ALIGNED(buffer()->address(startpos))
+  IS_UTF8_ALIGNED(buffer()->address(endpos))
+  
   int i, startLine, lastLine, startIndex, endIndex;
   
   /* If the range is outside of the displayed text, just return */
-  if ( endpos < mFirstChar || ( startpos > mLastChar &&
-                               !empty_vlines() ) ) return;
+  if ( endpos < mFirstChar || ( startpos > mLastChar && !empty_vlines() ) ) 
+    return;
   
   /* Clean up the starting and ending values */
   if ( startpos < 0 ) startpos = 0;
@@ -573,8 +549,7 @@ void Fl_Text_Display::draw_range(int startpos, int endpos) {
   }
   
   /* Get the starting and ending positions within the lines */
-  startIndex = mLineStarts[ startLine ] == -1 ? 0 :
-  startpos - mLineStarts[ startLine ];
+  startIndex = mLineStarts[ startLine ] == -1 ? 0 : startpos - mLineStarts[ startLine ];
   if ( endpos >= mLastChar )
     endIndex = INT_MAX;
   else if ( mLineStarts[ lastLine ] == -1 )
@@ -607,13 +582,12 @@ void Fl_Text_Display::draw_range(int startpos, int endpos) {
  Move the insertion cursor in front of the character at \p newPos.
  This function may trigger a redraw.
  \param newPos new caret position
- 
- \todo Unicode?
  */
 void Fl_Text_Display::insert_position( int newPos ) {
+  IS_UTF8_ALIGNED(buffer()->address(newPos))
+  
   /* make sure new position is ok, do nothing if it hasn't changed */
-  if ( newPos == mCursorPos )
-    return;
+  if ( newPos == mCursorPos ) return;
   if ( newPos < 0 ) newPos = 0;
   if ( newPos > mBuffer->length() ) newPos = mBuffer->length();
   
@@ -621,12 +595,12 @@ void Fl_Text_Display::insert_position( int newPos ) {
   mCursorPreferredCol = -1;
   
   /* erase the cursor at it's previous position */
-  redisplay_range(mCursorPos - 1, mCursorPos + 1); // FIXME utf8
+  redisplay_range(buffer()->prev_char_clipped(mCursorPos), buffer()->next_char(mCursorPos));
   
   mCursorPos = newPos;
   
   /* draw cursor at its new position */
-  redisplay_range(mCursorPos - 1, mCursorPos + 1); // FIXME utf8
+  redisplay_range(buffer()->prev_char_clipped(mCursorPos), buffer()->next_char(mCursorPos));
 }
 
 
@@ -635,12 +609,10 @@ void Fl_Text_Display::insert_position( int newPos ) {
  \brief Shows the text cursor.
  This function may trigger a redraw.
  \param b show(1) or hide(0) the text cursor (caret).
- 
- \todo Unicode?
  */
 void Fl_Text_Display::show_cursor(int b) {
   mCursorOn = b;
-  redisplay_range(mCursorPos - 1, mCursorPos + 1); // FIXME utf8
+  redisplay_range(buffer()->prev_char_clipped(mCursorPos), buffer()->next_char(mCursorPos));
 }
 
 
@@ -653,14 +625,12 @@ void Fl_Text_Display::show_cursor(int b) {
  \li Fl_Text_Display::CARET_CURSOR - Shows a caret under the text.
  \li Fl_Text_Display::DIM_CURSOR - Shows a dimmed I beam.
  \li Fl_Text_Display::BLOCK_CURSOR - Shows an unfilled box around the current
- character.
+      character.
  \li Fl_Text_Display::HEAVY_CURSOR - Shows a thick I beam.
  
  This call also switches the cursor on and may trigger a redraw.
  
  \param style new cursor style
- 
- \todo Unicode?
  */
 void Fl_Text_Display::cursor_style(int style) {
   mCursorStyle = style;
@@ -683,8 +653,6 @@ void Fl_Text_Display::cursor_style(int style) {
  \todo this does not work for multi-byte characters yet
  \todo we need new wrap modes to wrap at the window edge and based on pixel width
    or average character width.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
   mWrapMargin = wrapMargin;
@@ -726,10 +694,11 @@ void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
  that it's optimized to do less redrawing.
  
  \param text new text in UTF-8 encoding.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::insert(const char* text) {
+  IS_UTF8_ALIGNED(buffer()->address(mCursorPos))
+  IS_UTF8_ALIGNED(text)
+  
   int pos = mCursorPos;
   
   mCursorToHint = pos + strlen( text );
@@ -741,33 +710,36 @@ void Fl_Text_Display::insert(const char* text) {
 
 /**  
  \brief Replaces text at the current insert position.
- \param text new text in YTF-8 encoding
+ \param text new text in UTF-8 encoding
  
- \todo Unicode?
+ \todo Unicode? Find out exactly what we do here and simplify.
  */
 void Fl_Text_Display::overstrike(const char* text) {
+  IS_UTF8_ALIGNED(buffer()->address(mCursorPos))
+  IS_UTF8_ALIGNED(text)
+  
   int startPos = mCursorPos;
   Fl_Text_Buffer *buf = mBuffer;
   int lineStart = buf->line_start( startPos );
   int textLen = strlen( text );
   int i, p, endPos, indent, startIndent, endIndent;
   const char *c;
-  char ch, *paddedText = NULL;
+  unsigned int ch;
+  char *paddedText = NULL;
   
   /* determine how many displayed character positions are covered */
   startIndent = mBuffer->count_displayed_characters( lineStart, startPos );
   indent = startIndent;
-  for ( c = text; *c != '\0'; c++ )
+  for ( c = text; *c != '\0'; c += fl_utf8len(*c) )
     indent++;
   endIndent = indent;
   
   /* find which characters to remove, and if necessary generate additional
    padding to make up for removed control characters at the end */
   indent = startIndent;
-  for ( p = startPos; ; p++ ) {
+  for ( p = startPos; ; p=buffer()->next_char(p) ) {
     if ( p == buf->length() )
       break;
-    // FIXME: character is ucs-4
     ch = buf->char_at( p );
     if ( ch == '\n' )
       break;
@@ -810,10 +782,10 @@ void Fl_Text_Display::overstrike(const char* text) {
  \param pos character index
  \param[out] X, Y pixel position of character on screen
  \return 0 if charater vertically out of view, X position otherwise
- 
- \todo Unicode?
  */
 int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
+  IS_UTF8_ALIGNED(buffer()->address(pos))
+
   int lineStartPos, fontHeight, lineLen;
   int visLineNum;
   
@@ -849,7 +821,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
 
 
 /**
- \brief Find the line an column number of position "pos".  
+ \brief Find the line and column number of position "pos".  
  
  This only works for displayed lines.  If the line is not displayed, the 
  function returns 0 (without the mLineStarts array it could turn in to very long
@@ -864,18 +836,17 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
  \todo a column number makes little sense in the UTF-8/variable font width 
     environment. We will have to further define what exactly we want to return. 
     Please check teh functions that call this particular function.
- 
- \todo Unicode?
  */
 int Fl_Text_Display::position_to_linecol( int pos, int* lineNum, int* column ) const {
+  IS_UTF8_ALIGNED(buffer()->address(pos))
+  
   int retVal;
   
   /* In continuous wrap mode, the absolute (non-wrapped) line count is
    maintained separately, as needed.  Only return it if we're actually
    keeping track of it and pos is in the displayed text */
   if (mContinuousWrap) {
-    if (!maintaining_absolute_top_line_number() ||
-        pos < mFirstChar || pos > mLastChar)
+    if (!maintaining_absolute_top_line_number() || pos < mFirstChar || pos > mLastChar)
       return 0;
     *lineNum = mAbsTopLineNum + buffer()->count_lines(mFirstChar, pos);
     *column = buffer()->count_displayed_characters(buffer()->line_start(pos), pos);
@@ -896,11 +867,10 @@ int Fl_Text_Display::position_to_linecol( int pos, int* lineNum, int* column ) c
  \brief Check if a pixel position is within the primary seection.
  \param X, Y pixel position to test
  \return 1 if position (X, Y) is inside of the primary Fl_Text_Selection
- 
- \todo Unicode?
  */
 int Fl_Text_Display::in_selection( int X, int Y ) const {
   int pos = xy_to_position( X, Y, CHARACTER_POS );
+  IS_UTF8_ALIGNED(buffer()->address(pos))
   Fl_Text_Buffer *buf = mBuffer;
   return buf->primary_selection()->includes(pos);
 }
@@ -936,8 +906,7 @@ int Fl_Text_Display::wrapped_column(int row, int column) const {
   if (dispLineStart == -1)
     return column;
   lineStart = buffer()->line_start(dispLineStart);
-  return column
-    + buffer()->count_displayed_characters(lineStart, dispLineStart);
+  return column + buffer()->count_displayed_characters(lineStart, dispLineStart);
 }
 
 
@@ -956,8 +925,6 @@ int Fl_Text_Display::wrapped_column(int row, int column) const {
  \return something unknown
  \todo What does this do and how is it useful? Column numbers mean little in 
  this context. Which functions depend on this one?
- 
- \todo Unicode?
  */
 int Fl_Text_Display::wrapped_row(int row) const{
   if (!mContinuousWrap || row < 0 || row > mNVisibleLines)
@@ -1186,6 +1153,9 @@ int Fl_Text_Display::move_down() {
  */
 int Fl_Text_Display::count_lines(int startPos, int endPos,
                                  bool startPosIsLineStart) const {
+  IS_UTF8_ALIGNED(buffer()->address(startPos))
+  IS_UTF8_ALIGNED(buffer()->address(endPos))
+  
   int retLines, retPos, retLineStart, retLineEnd;
   
 #ifdef DEBUG
@@ -1228,6 +1198,8 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
  */
 int Fl_Text_Display::skip_lines(int startPos, int nLines,
                                 bool startPosIsLineStart) {
+  IS_UTF8_ALIGNED(buffer()->address(startPos))
+
   int retLines, retPos, retLineStart, retLineEnd;
   
   /* if we're not wrapping use more efficient BufCountForwardNLines */
@@ -1272,6 +1244,8 @@ int Fl_Text_Display::skip_lines(int startPos, int nLines,
  \todo Unicode?
  */
 int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
+  IS_UTF8_ALIGNED(buffer()->address(pos))
+
   int retLines, retPos, retLineStart, retLineEnd;
   
   /* If we're not wrapping use more efficien BufEndOfLine */
@@ -1300,6 +1274,8 @@ int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
  \todo Unicode?
  */
 int Fl_Text_Display::line_start(int pos) const {
+  IS_UTF8_ALIGNED(buffer()->address(pos))
+
   int retLines, retPos, retLineStart, retLineEnd;
   
   /* If we're not wrapping, use the more efficient BufStartOfLine */
@@ -1325,6 +1301,8 @@ int Fl_Text_Display::line_start(int pos) const {
  \todo Unicode?
  */
 int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
+  IS_UTF8_ALIGNED(buffer()->address(startPos))
+
   Fl_Text_Buffer *buf = buffer();
   int pos, lineStart, retLines, retPos, retLineStart, retLineEnd;
   
@@ -1451,6 +1429,7 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
   int linesInserted, linesDeleted, startDispPos, endDispPos;
   Fl_Text_Display *textD = ( Fl_Text_Display * ) cbArg;
   Fl_Text_Buffer *buf = textD->mBuffer;
+  IS_UTF8_ALIGNED(buf->address(pos))  
   int oldFirstChar = textD->mFirstChar;
   int scrolled, origCursorPos = textD->mCursorPos;
   int wrapModStart, wrapModEnd;
@@ -1667,6 +1646,8 @@ void Fl_Text_Display::reset_absolute_top_line_number() {
  \todo Unicode?
  */
 int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
+  IS_UTF8_ALIGNED(buffer()->address(pos))
+
   int i;
   
   *lineNum = 0;
@@ -1725,6 +1706,10 @@ int Fl_Text_Display::handle_vline(
                                   int Y, int bottomClip,
                                   int leftClip, int rightClip) const
 {
+  IS_UTF8_ALIGNED(buffer()->address(lineStartPos))
+  IS_UTF8_ALIGNED(buffer()->address(leftChar))
+  if (rightChar!=INT_MAX) IS_UTF8_ALIGNED(buffer()->address(rightChar))
+
   // FIXME: we need to allow two modes for FIND_INDEX: one on the edge of the 
   // FIXME: character for selection, and one on the character center for cursors.
   int i, X, startX, startIndex, style, charStyle;
@@ -1818,6 +1803,8 @@ int Fl_Text_Display::handle_vline(
  \todo Unicode?
  */
 int Fl_Text_Display::find_x(const char *s, int len, int style, int x) const {
+  IS_UTF8_ALIGNED(s)
+
   // FIXME: use binary search which is much quicker!
   int i = 0;
   while (i<len) {
@@ -1917,6 +1904,8 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
 void Fl_Text_Display::draw_string(int style, 
                                   int X, int Y, int toX,
                                   const char *string, int nChars) const {
+  IS_UTF8_ALIGNED(string)
+
   const Style_Table_Entry * styleRec;
   
   /* Draw blank area rather than text, if that was the request */
@@ -2133,6 +2122,8 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
  */
 int Fl_Text_Display::position_style( int lineStartPos, int lineLen, int lineIndex) const 
 {
+  IS_UTF8_ALIGNED(buffer()->address(lineStartPos))
+
   Fl_Text_Buffer * buf = mBuffer;
   Fl_Text_Buffer *styleBuf = mStyleBuffer;
   int pos, style = 0;
@@ -2170,12 +2161,12 @@ int Fl_Text_Display::position_style( int lineStartPos, int lineLen, int lineInde
  \param length number of bytes instring
  \param style index into style table
  \return width of text segemnt in pixels
- 
- \todo Unicode?
  */
 int Fl_Text_Display::string_width( const char *string, int length, int style ) const {
+  IS_UTF8_ALIGNED(string)
+
   Fl_Font font;
-  int fsize;
+  Fl_Fontsize fsize;
   
   if ( style & STYLE_LOOKUP_MASK ) {
     int si = (style & STYLE_LOOKUP_MASK) - 'A';
@@ -2357,6 +2348,8 @@ void Fl_Text_Display::offset_line_starts( int newTopLineNum ) {
  */
 void Fl_Text_Display::update_line_starts( int pos, int charsInserted,
                                          int charsDeleted, int linesInserted, int linesDeleted, int *scrolled ) {
+  IS_UTF8_ALIGNED(buffer()->address(pos))
+
   int * lineStarts = mLineStarts;
   int i, lineOfPos, lineOfEnd, nVisLines = mNVisibleLines;
   int charDelta = charsInserted - charsDeleted;
@@ -2457,7 +2450,7 @@ void Fl_Text_Display::update_line_starts( int pos, int charsInserted,
  newlines to fill in the requested entries.  Out of range values for
  "startLine" and "endLine" are acceptable.
  
- \param startLine, endLine range of lines to scan.
+ \param startLine, endLine range of lines to scan as line numbers
  
  \todo Unicode?
  */
@@ -2729,6 +2722,8 @@ static int min( int i1, int i2 ) {
  \todo Unicode?
  */
 static int countlines( const char *string ) {
+  IS_UTF8_ALIGNED(string)
+
   const char * c;
   int lineCount = 0;
   
@@ -2831,6 +2826,9 @@ int Fl_Text_Display::vline_length( int visLineNum ) const {
 void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
                                       int nInserted, int nDeleted, int *modRangeStart, int *modRangeEnd,
                                       int *linesInserted, int *linesDeleted) {
+  IS_UTF8_ALIGNED(deletedText)
+  IS_UTF8_ALIGNED(buffer()->address(pos))
+
   int length, retPos, retLines, retLineStart, retLineEnd;
   Fl_Text_Buffer *deletedTextBuf, *buf = buffer();
   int nVisLines = mNVisibleLines;
@@ -2855,6 +2853,7 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
   } else
     countFrom = buf->line_start(pos);
   
+  IS_UTF8_ALIGNED(buffer()->address(countFrom))
   
   /*
    ** Move forward through the (new) text one line at a time, counting
@@ -2994,6 +2993,8 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
  \todo Unicode?
  */
 void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
+  IS_UTF8_ALIGNED(buffer()->address(pos))
+
   int retPos, retLines, retLineStart, retLineEnd;
   Fl_Text_Buffer *buf = buffer();
   int nVisLines = mNVisibleLines;
@@ -3093,11 +3094,14 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
                                            int maxPos, int maxLines, bool startPosIsLineStart, int styleBufOffset,
                                            int *retPos, int *retLines, int *retLineStart, int *retLineEnd,
                                            bool countLastLineMissingNewLine) const {
+  IS_UTF8_ALIGNED(buf->address(startPos))
+  if (maxPos<buf->length()) IS_UTF8_ALIGNED(buf->address(maxPos))
+
   int lineStart, newLineStart = 0, b, p, colNum, wrapMargin;
   int maxWidth, i, foundBreak, width;
   bool countPixels;
   int nLines = 0;
-  unsigned char c;
+  unsigned int c;
   
   /* If the font is fixed, or there's a wrap margin set, it's more efficient
    to measure in columns, than to count pixels.  Determine if we can count
@@ -3128,9 +3132,8 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
    */
   colNum = 0;
   width = 0;
-  for (p=lineStart; p<buf->length(); p++) {
-    // FIXME: character is ucs-4
-    c = (unsigned char)buf->char_at(p);
+  for (p=lineStart; p<buf->length(); p=buffer()->next_char(p)) {
+    c = buf->char_at(p);  // UCS-4
     
     /* If the character was a newline, count the line and start over,
      otherwise, add it to the width and column counts */
@@ -3144,18 +3147,22 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
       }
       nLines++;
       if (nLines >= maxLines) {
-        *retPos = p + 1;
+        int p1 = buffer()->next_char(p);
+        *retPos = p1;
         *retLines = nLines;
-        *retLineStart = p + 1;
+        *retLineStart = p1;
         *retLineEnd = p;
         return;
       }
-      lineStart = p + 1;
+      lineStart = buffer()->next_char(p);
       colNum = 0;
       width = 0;
     } else {
       const char *s = buf->address(p);
       colNum++;
+      // FIXME: it is not a good idea to simply add character widths because on
+      // some platforms, the width is a floating point value and depends on the 
+      // previous character as well.
       if (countPixels)
         width += measure_proportional_character(s, colNum, p+styleBufOffset);
     }
@@ -3164,29 +3171,26 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
      and wrap there */
     if (colNum > wrapMargin || width > maxWidth) {
       foundBreak = false;
-      for (b=p; b>=lineStart; b--) {
-        // FIXME: character is ucs-4
-        c = (unsigned char)buf->char_at(b);
+      for (b=p; b>=lineStart; b=buffer()->prev_char(b)) {
+        c = buf->char_at(b);
         if (c == '\t' || c == ' ') {
-          newLineStart = b + 1;
+          newLineStart = buffer()->next_char(b);
           if (countPixels) {
             colNum = 0;
             width = 0;
             for (i=b+1; i<p+1; i++) {
-              width += measure_proportional_character(
-                                                      // FIXME: character is ucs-4
-                                                      buf->address(i), colNum, 
+              width += measure_proportional_character(buf->address(i), colNum, 
                                                       i+styleBufOffset);
               colNum++;
             }
           } else
-            colNum = buf->count_displayed_characters(b+1, p+1);
+            colNum = buf->count_displayed_characters(buffer()->next_char(b), buffer()->next_char(p));
           foundBreak = true;
           break;
         }
       }
       if (!foundBreak) { /* no whitespace, just break at margin */
-        newLineStart = max(p, lineStart+1);
+        newLineStart = max(p, buffer()->next_char(lineStart));
         const char *s = buf->address(b);
         colNum++;
         if (countPixels)
@@ -3195,14 +3199,13 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
       if (p >= maxPos) {
         *retPos = maxPos;
         *retLines = maxPos < newLineStart ? nLines : nLines + 1;
-        *retLineStart = maxPos < newLineStart ? lineStart :
-        newLineStart;
+        *retLineStart = maxPos < newLineStart ? lineStart : newLineStart;
         *retLineEnd = maxPos;
         return;
       }
       nLines++;
       if (nLines >= maxLines) {
-        *retPos = foundBreak ? b + 1 : max(p, lineStart+1);
+        *retPos = foundBreak ? buffer()->next_char(b) : max(p, buffer()->next_char(lineStart));
         *retLines = nLines;
         *retLineStart = lineStart;
         *retLineEnd = foundBreak ? b : p;
@@ -3215,8 +3218,8 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
   /* reached end of buffer before reaching pos or line target */
   *retPos = buf->length();
   *retLines = nLines;
-  if (countLastLineMissingNewLine && colNum > 0)
-    ++(*retLines);
+  if (countLastLineMissingNewLine && colNum > 0) 
+    *retLines = buffer()->next_char(*retLines);
   *retLineStart = lineStart;
   *retLineEnd = buf->length();
 }
@@ -3239,18 +3242,17 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
  insertion/deletion, though static display and wrapping and resizing
  should now be solid because they are now used for online help display.
  
- \param s ??
- \param colNum ??
- \param pos ??
- \return ??
- 
- \todo Unicode?
+ \param s text string
+ \param colNum unused
+ \param pos offset within string
+ \return width of character in pixels
  */
 int Fl_Text_Display::measure_proportional_character(const char *s, int colNum, int pos) const {
+  IS_UTF8_ALIGNED(s)
+  
   int charLen = fl_utf8len(*s), style = 0;
   if (mStyleBuffer) {
-    const char *b = mStyleBuffer->address(pos);
-    style = *b;
+    style = mStyleBuffer->byte_at(pos);
   }
   return string_width(s, charLen, style);
 }
@@ -3278,12 +3280,16 @@ int Fl_Text_Display::measure_proportional_character(const char *s, int colNum, i
  */
 void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
                                     int *lineEnd, int *nextLineStart) const {
+  IS_UTF8_ALIGNED(buffer()->address(startPos))
+
   int retLines, retLineStart;
   
   /* if we're not wrapping use more efficient BufEndOfLine */
   if (!mContinuousWrap) {
-    *lineEnd = buffer()->line_end(startPos);
-    *nextLineStart = min(buffer()->length(), *lineEnd + 1);
+    int le = buffer()->line_end(startPos);
+    int ls = buffer()->next_char(le);
+    *lineEnd = le;
+    *nextLineStart = min(buffer()->length(), ls);
     return;
   }
   
@@ -3291,7 +3297,6 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
   wrapped_line_counter(buffer(), startPos, buffer()->length(),
                        1, startPosIsLineStart, 0, nextLineStart, &retLines,
                        &retLineStart, lineEnd);
-  return;
 }
 
 
@@ -3314,21 +3319,20 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
  used as a wrap point, and just guesses that it wasn't.  So if an exact
  accounting is necessary, don't use this function.
  
- \param lineEndPos ??
- \return ??
- 
- \todo Unicode?
+ \param lineEndPos index of character where the line wraps
+ \return 1 if a \\n character causes the line wrap
  */ 
 int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
+  IS_UTF8_ALIGNED(buffer()->address(lineEndPos))
+
   char c;
   
   if (!mContinuousWrap || lineEndPos == buffer()->length())
     return 1;
   
-  // FIXME: character is ucs-4
   c = buffer()->char_at(lineEndPos);
   return c == '\n' || ((c == '\t' || c == ' ') &&
-                       lineEndPos + 1 != buffer()->length());
+                       lineEndPos + fl_utf8len(c) < buffer()->length());
 }
 
 

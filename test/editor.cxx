@@ -785,7 +785,7 @@ Fl_Window* new_view() {
     Fl_Menu_Bar* m = new Fl_Menu_Bar(0, 0, 660, 30);
     m->copy(menuitems, w);
     w->editor = new Fl_Text_Editor(0, 30, 660, 370);
-    w->editor->wrap_mode(1, 32);
+    //w->editor->wrap_mode(1, 32);
     w->editor->textfont(FL_COURIER);
     w->editor->textsize(TS);
     w->editor->buffer(textbuf);

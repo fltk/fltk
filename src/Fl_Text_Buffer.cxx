@@ -1585,7 +1585,7 @@ int Fl_Text_Buffer::outputfile(const char *file, int start, int end,
  Return the previous character position.
  Uncode safe.
  */
-int Fl_Text_Buffer::prev_char(int pos) const
+int Fl_Text_Buffer::prev_char_clipped(int pos) const
 {
   if (pos<=0)
     return 0;
@@ -1601,9 +1601,21 @@ int Fl_Text_Buffer::prev_char(int pos) const
   return pos;
 }
 
+
+/*
+ Return the previous character poosition.
+ Returns -1 if the beginning of the buffer is reached.
+ */
+int Fl_Text_Buffer::prev_char(int pos) const
+{
+  if (pos==0) return -1;
+  return prev_char_clipped(pos);
+}
+
+
 /*
  Return the next character position.
- Uncode safe.
+ Returns length() if the end of the buffer is reached.
  */
 int Fl_Text_Buffer::next_char(int pos) const
 {
@@ -1613,6 +1625,19 @@ int Fl_Text_Buffer::next_char(int pos) const
     return mLength;
   return pos;
 }
+
+
+/*
+ Return the next character poosition.
+ If the end of the buffer is reached, it returns the current position.
+ */
+int Fl_Text_Buffer::next_char_clipped(int pos) const
+{
+  int n = next_char(pos);
+  if (pos==mLength) return pos;
+  return n;
+}
+
 
 //
 // End of "$Id$".

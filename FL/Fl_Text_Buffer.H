@@ -713,6 +713,7 @@ public:
    \param ix index to the current char
    */
   int prev_char(int ix) const;
+  int prev_char_clipped(int ix) const;
   
   /**
    Returns a pointer to the previous character.
@@ -726,6 +727,7 @@ public:
    \param ix index to the current char
    */
   int next_char(int ix) const;
+  int next_char_clipped(int ix) const;
   
   /**
    Returns a pointer to the next character.
