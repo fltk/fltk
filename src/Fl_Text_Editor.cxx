@@ -138,7 +138,7 @@ static struct {
   { FL_Down,      FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
   { FL_Page_Up,   FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
   { FL_Page_Down, FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
-//{ FL_Clear,	  0,                        Fl_Text_Editor::ete_to_eol },
+//{ FL_Clear,	  0,                        Fl_Text_Editor::delete_to_eol },
   { 'z',          FL_CTRL,                  Fl_Text_Editor::kf_undo	  },
   { '/',          FL_CTRL,                  Fl_Text_Editor::kf_undo	  },
   { 'x',          FL_CTRL,                  Fl_Text_Editor::kf_cut        },
