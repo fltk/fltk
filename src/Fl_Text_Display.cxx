@@ -41,6 +41,7 @@
 #define ASSERT_UTF8
 
 #ifdef ASSERT_UTF8
+#include <assert.h>
 #define IS_UTF8_ALIGNED(a) if (a && *a) assert(fl_utf8len(*(a))>0);
 #else
 #define IS_UTF8_ALIGNED(a)
