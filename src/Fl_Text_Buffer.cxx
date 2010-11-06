@@ -1287,7 +1287,7 @@ void Fl_Text_Buffer::replace_selection_(Fl_Text_Selection * sel,
 void Fl_Text_Buffer::call_modify_callbacks(int pos, int nDeleted,
 					   int nInserted, int nRestyled,
 					   const char *deletedText) const {
-  IS_UTF8_ALIGNED(address(pos))
+  IS_UTF8_ALIGNED2(this, pos)
   for (int i = 0; i < mNModifyProcs; i++)
     (*mModifyProcs[i]) (pos, nInserted, nDeleted, nRestyled,
 			deletedText, mCbArgs[i]);

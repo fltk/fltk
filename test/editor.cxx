@@ -805,6 +805,7 @@ Fl_Window* new_view() {
 
 int main(int argc, char **argv) {
   textbuf = new Fl_Text_Buffer;
+#if 1
   textbuf->text(
                 "void saveas_cb() {\n"
                 "  Fl_Native_File_Chooser fnfc;\n"
@@ -848,6 +849,7 @@ int main(int argc, char **argv) {
                 "And superficial dreams / Shall no longer delude you.\n"
                 "(from Iroha-uta)"
                 );
+#endif
   style_init();
 
   Fl_Window* window = new_view();
