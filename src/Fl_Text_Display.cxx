@@ -26,6 +26,13 @@
 //
 
 // TODO: check all functions for UTF-8/UCS-4 compatibility!
+// TODO: fix all fime's and todo's 
+// TODO: blinking selection when moving mouse outside of widget area
+// TODO: line wrapping - scroll bars
+// TODO: verify all "pixel position" vs. "column" values
+// TODO: verify all "byte counts" vs. "character counts"
+// TODO: rendering of the Tab character
+// TODO: rendering of the "optional hyphen"
 
 #include <stdio.h>
 #include <stdlib.h>

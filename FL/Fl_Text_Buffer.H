@@ -646,32 +646,6 @@ public:
   int findchar_backward(int startPos, unsigned searchChar, int* foundPos) const;
   
   /**
-   Finds the next occurrence of the specified characters.
-   Search forwards in buffer for characters in \p searchChars, starting
-   with the character \p startPos, and returning the result in \p foundPos
-   returns 1 if found, 0 if not.
-   \param startPos byte offset to start position
-   \param searchChars utf8 string that we want to find
-   \param foundPos byte offset where the string was found
-   \return 1 if found, 0 if not
-   \todo unicode check
-   */
-  int findchars_forward(int startPos, const char* searchChars, int* foundPos) const;
-  
-  /** 
-   Finds the previous occurrence of the specified characters.
-   Search backwards in buffer for characters in \p searchChars, starting
-   with the character BEFORE \p startPos, returning the result in \p foundPos
-   returns 1 if found, 0 if not.
-   \param startPos byte offset to start position
-   \param searchChars utf8 string that we want to find
-   \param foundPos byte offset where the string was found
-   \return 1 if found, 0 if not
-   \todo unicode check
-   */
-  int findchars_backward(int startPos, const char* searchChars, int* foundPos) const;
-  
-  /**
    Search forwards in buffer for string \p searchString, starting with the
    character \p startPos, and returning the result in \p foundPos
    returns 1 if found, 0 if not.

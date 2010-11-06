@@ -859,14 +859,13 @@ int Fl_Text_Buffer::word_end(int pos) const {
  Matt: I am not sure why we need this function. Does it still make sense in
  the world of proportional characters?
  */
-// FIXME: this is misleading and mey be used to count bytes instead of characters!
 int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
 					       int targetPos) const
 {
+  // FIXME: this is misleading and may be used to count bytes instead of characters!
   IS_UTF8_ALIGNED(address(lineStartPos))
   IS_UTF8_ALIGNED(address(targetPos))
   
-  // TODO: is this function still needed? If it is, put this functionality in handle_vline?
   int charCount = 0;
   
   int pos = lineStartPos;
@@ -882,11 +881,11 @@ int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
  Matt: I am not sure why we need this function. Does it still make sense in
  the world of proportional characters?
  */
-// FIXME: this is misleading and mey be used to count bytes instead of characters!
 // All values are number of bytes. 
 // - unicode ok?
 int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
 {
+  // FIXME: this is misleading and may be used to count bytes instead of characters!
   IS_UTF8_ALIGNED(address(lineStartPos))
   // FIXME: is this function still needed?
   int pos = lineStartPos;
@@ -1093,81 +1092,8 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
 
 
 /*
- Find a matching string in the buffer.
- NOT TESTED FOR UNICODE.
- */
-int Fl_Text_Buffer::findchars_forward(int startPos, const char *searchChars,
-				      int *foundPos) const {
-  // FIXME: unicode?
-  int gapLen = mGapEnd - mGapStart;
-  const char *c;
-  
-  int pos = startPos;
-  while (pos < mGapStart)
-  {
-    for (c = searchChars; *c != '\0'; c++) {
-      if (mBuf[pos] == *c) {
-        *foundPos = pos;
-        return 1;
-      }
-    } pos++;
-  }
-  while (pos < mLength) {
-    for (c = searchChars; *c != '\0'; c++) {
-      if (mBuf[pos + gapLen] == *c) {
-	*foundPos = pos;
-	return 1;
-      }
-    }
-    pos++;
-  }
-  *foundPos = mLength;
-  return 0;
-}
-
-
-/*
- Find a matching string in the buffer.
- NOT TESTED FOR UNICODE.
- */
-int Fl_Text_Buffer::findchars_backward(int startPos, const char *searchChars,
-				       int *foundPos) const {
-  // FIXME: Unicode
-  int gapLen = mGapEnd - mGapStart;
-  const char *c;
-  
-  if (startPos == 0)
-  {
-    *foundPos = 0;
-    return 0;
-  }
-  int pos = startPos == 0 ? 0 : startPos - 1;
-  while (pos >= mGapStart) {
-    for (c = searchChars; *c != '\0'; c++) {
-      if (mBuf[pos + gapLen] == *c) {
-	*foundPos = pos;
-	return 1;
-      }
-    }
-    pos--;
-  }
-  while (pos >= 0) {
-    for (c = searchChars; *c != '\0'; c++) {
-      if (mBuf[pos] == *c) {
-	*foundPos = pos;
-	return 1;
-      }
-    }
-    pos--;
-  }
-  *foundPos = 0;
-  return 0;
-}
-
-
-/*
  Insert a string into the buffer.
- Unicode safe. Pos must be at a character boundary. Text must be a correct utf8 string.
+ Pos must be at a character boundary. Text must be a correct utf8 string.
  */
 int Fl_Text_Buffer::insert_(int pos, const char *text)
 {
@@ -1519,21 +1445,18 @@ void Fl_Text_Selection::update(int pos, int nDeleted, int nInserted)
 
 /*
  Find a UCS-4 character.
- Unicode safe. StartPos must be at a charcter boundary, searchChar is UCS-4 encoded.
+ StartPos must be at a charcter boundary, searchChar is UCS-4 encoded.
  */
 int Fl_Text_Buffer::findchar_forward(int startPos, unsigned searchChar,
 				     int *foundPos) const 
-  {
-  if (startPos >= mLength)
-  {
+{
+  if (startPos >= mLength) {
     *foundPos = mLength;
     return 0;
   }
   
   if (startPos<0)
     startPos = 0;
-  
-  // TODO: for performance reasons, we can re-insert the ASCII search here which is about three times as fast if searchChar is <128
   
   for ( ; startPos<mLength; startPos = next_char(startPos)) {
     if (searchChar == char_at(startPos)) {
@@ -1549,9 +1472,9 @@ int Fl_Text_Buffer::findchar_forward(int startPos, unsigned searchChar,
   
 /*
  Find a UCS-4 character.
- Unicode safe. StartPos must be at a charcter boundary, searchChar is UCS-4 encoded.
+ StartPos must be at a charcter boundary, searchChar is UCS-4 encoded.
  */
-int Fl_Text_Buffer::findchar_backward(int startPos, unsigned searchChar,
+int Fl_Text_Buffer::findchar_backward(int startPos, unsigned int searchChar,
 				      int *foundPos) const {
   if (startPos <= 0) {
     *foundPos = 0;
@@ -1560,8 +1483,6 @@ int Fl_Text_Buffer::findchar_backward(int startPos, unsigned searchChar,
   
   if (startPos > mLength)
     startPos = mLength;
-  
-  // TODO: for performance reasons, we can re-insert the ASCII search here which is about three times as fast if searchChar is <128
   
   for (startPos = prev_char(startPos); startPos>=0; startPos = prev_char(startPos)) {
     if (searchChar == char_at(startPos)) {
