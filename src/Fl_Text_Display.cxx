@@ -948,9 +948,8 @@ void Fl_Text_Display::display_insert() {
   } else if (mLineStarts[mNVisibleLines-2] != -1) {
     int lastChar = line_end(mLineStarts[mNVisibleLines-2],true);
     if (insert_position() >= lastChar)
-      topLine
-      += count_lines(lastChar - (wrap_uses_character(mLastChar) ? 0 : 1),
-                     insert_position(), false);
+      topLine += count_lines(lastChar - (wrap_uses_character(mLastChar) ? 0 : 1),
+                             insert_position(), false);
   }
   
   /* Find the new setting for horizontal offset (this is a bit ungraceful).
@@ -981,8 +980,6 @@ void Fl_Text_Display::display_insert() {
  \brief Scrolls the text buffer to show the current insert position.
  This function triggers a complete recalculation, ending in a call to 
  Fl_Text_Display::display_insert()
- 
- \todo Unicode?
  */
 void Fl_Text_Display::show_insert_position() {
   display_insert_position_hint = 1;
@@ -1000,8 +997,6 @@ void Fl_Text_Display::show_insert_position() {
 /**  
  \brief Moves the current insert position right one character.
  \return 1 if the cursor moved, 0 if the end of the text was reached
- 
- \todo Unicode?
  */
 int Fl_Text_Display::move_right() {
   if ( mCursorPos >= mBuffer->length() )
@@ -1017,14 +1012,12 @@ int Fl_Text_Display::move_right() {
 /**  
  \brief Moves the current insert position left one character.
  \return 1 if the cursor moved, 0 if the beginning of the text was reached
- 
- \todo Unicode?
  */
 int Fl_Text_Display::move_left() {
   if ( mCursorPos <= 0 )
     return 0;
   int p = insert_position();
-  int q = buffer()->prev_char(p);
+  int q = buffer()->prev_char_clipped(p);
   insert_position(q);
   return 1;
 }
@@ -1034,8 +1027,6 @@ int Fl_Text_Display::move_left() {
 /** 
  \brief Moves the current insert position up one line.
  \return 1 if the cursor moved, 0 if the beginning of the text was reached
- 
- \todo Unicode?
  */
 int Fl_Text_Display::move_up() {
   int lineStartPos, column, prevLineStartPos, newPos, visLineNum;
@@ -1052,14 +1043,17 @@ int Fl_Text_Display::move_up() {
     return 0;
   
   /* Decide what column to move to, if there's a preferred column use that */
-  column = mCursorPreferredCol >= 0 ? mCursorPreferredCol :
-  mBuffer->count_displayed_characters( lineStartPos, mCursorPos );
+  if (mCursorPreferredCol >= 0)
+    column = mCursorPreferredCol;
+  else
+    column = mBuffer->count_displayed_characters( lineStartPos, mCursorPos );
   
   /* count forward from the start of the previous line to reach the column */
   if ( visLineNum != -1 && visLineNum != 0 )
     prevLineStartPos = mLineStarts[ visLineNum - 1 ];
   else
     prevLineStartPos = rewind_lines( lineStartPos, 1 );
+  
   newPos = mBuffer->skip_displayed_characters( prevLineStartPos, column );
   if (mContinuousWrap)
     newPos = min(newPos, line_end(prevLineStartPos, true));
@@ -1077,22 +1071,24 @@ int Fl_Text_Display::move_up() {
 /** 
  \brief Moves the current insert position down one line.
  \return 1 if the cursor moved, 0 if the beginning of the text was reached
- 
- \todo Unicode?
  */
 int Fl_Text_Display::move_down() {
   int lineStartPos, column, nextLineStartPos, newPos, visLineNum;
   
   if ( mCursorPos == mBuffer->length() )
     return 0;
+  
   if ( position_to_line( mCursorPos, &visLineNum ) )
     lineStartPos = mLineStarts[ visLineNum ];
   else {
     lineStartPos = line_start( mCursorPos );
     visLineNum = -1;
   }
-  column = mCursorPreferredCol >= 0 ? mCursorPreferredCol :
-  mBuffer->count_displayed_characters( lineStartPos, mCursorPos );
+  if (mCursorPreferredCol >= 0)
+    column = mCursorPreferredCol;
+  else 
+    column = mBuffer->count_displayed_characters( lineStartPos, mCursorPos );
+  
   nextLineStartPos = skip_lines( lineStartPos, 1, true );
   newPos = mBuffer->skip_displayed_characters( nextLineStartPos, column );
   if (mContinuousWrap)
@@ -1117,8 +1113,6 @@ int Fl_Text_Display::move_down() {
  \param endPos index after last character
  \param startPosIsLineStart avoid scanning back to the line start
  \retun number of lines
- 
- \todo Unicode?
  */
 int Fl_Text_Display::count_lines(int startPos, int endPos,
                                  bool startPosIsLineStart) const {
@@ -1161,9 +1155,7 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
  \param startPos index to starting character
  \param nLines number of lines to skip ahead
  \param startPosIsLineStart avoid scanning back to the line start
- \retun new position as index
- 
- \todo Unicode?
+ \return new position as index
  */
 int Fl_Text_Display::skip_lines(int startPos, int nLines,
                                 bool startPosIsLineStart) {
@@ -1181,8 +1173,9 @@ int Fl_Text_Display::skip_lines(int startPos, int nLines,
   
   /* use the common line counting routine to count forward */
   wrapped_line_counter(buffer(), startPos, buffer()->length(),
-                       nLines, startPosIsLineStart, 0, &retPos, &retLines, &retLineStart,
-                       &retLineEnd);
+                       nLines, startPosIsLineStart, 0, 
+                       &retPos, &retLines, &retLineStart, &retLineEnd);
+  IS_UTF8_ALIGNED(buffer()->address(retPos))
   return retPos;
 }
 
@@ -1209,8 +1202,6 @@ int Fl_Text_Display::skip_lines(int startPos, int nLines,
  \param startPos index to starting character
  \param startPosIsLineStart avoid scanning back to the line start
  \retun new position as index
- 
- \todo Unicode?
  */
 int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
   IS_UTF8_ALIGNED(buffer()->address(pos))
@@ -1223,9 +1214,12 @@ int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
   
   if (pos == buffer()->length())
     return pos;
+  
   wrapped_line_counter(buffer(), pos, buffer()->length(), 1,
                        startPosIsLineStart, 0, &retPos, &retLines, &retLineStart,
                        &retLineEnd);
+  
+  IS_UTF8_ALIGNED(buffer()->address(retLineEnd))
   return retLineEnd;
 }
 
@@ -1238,9 +1232,7 @@ int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
  rather than the last newline.
  
  \param pos index to starting character
- \retun new position as index
- 
- \todo Unicode?
+ \return new position as index
  */
 int Fl_Text_Display::line_start(int pos) const {
   IS_UTF8_ALIGNED(buffer()->address(pos))
@@ -1253,6 +1245,8 @@ int Fl_Text_Display::line_start(int pos) const {
   
   wrapped_line_counter(buffer(), buffer()->line_start(pos), pos, INT_MAX, true, 0,
                        &retPos, &retLines, &retLineStart, &retLineEnd);
+
+  IS_UTF8_ALIGNED(buffer()->address(retLineStart))
   return retLineStart;
 }
 
@@ -1260,14 +1254,13 @@ int Fl_Text_Display::line_start(int pos) const {
 
 /**
  \brief Skip a number of lines back.
+ 
  Same as BufCountBackwardNLines, but takes in to account line breaks when
  wrapping is turned on.
  
  \param startPos index to starting character
  \param nLines number of lines to skip back
- \retun new position as index
- 
- \todo Unicode?
+ \return new position as index
  */
 int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
   IS_UTF8_ALIGNED(buffer()->address(startPos))
@@ -1282,11 +1275,10 @@ int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
   pos = startPos;
   for (;;) {
     lineStart = buf->line_start(pos);
-    wrapped_line_counter(buf, lineStart, pos, INT_MAX,
-                         true, 0, &retPos, &retLines, &retLineStart, &retLineEnd, false);
+    wrapped_line_counter(buf, lineStart, pos, INT_MAX, true, 0, 
+                         &retPos, &retLines, &retLineStart, &retLineEnd, false);
     if (retLines > nLines)
-      return skip_lines(lineStart, retLines-nLines,
-                        true);
+      return skip_lines(lineStart, retLines-nLines, true);
     nLines -= retLines;
     pos = lineStart - 1;
     if (pos < 0)
@@ -1297,7 +1289,8 @@ int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
 
 
 
-static inline int fl_isseparator(int c) {
+// FIXME: this does not take UCS-4 encoding into account
+static inline int fl_isseparator(unsigned int c) {
   return c != '$' && c != '_' && (isspace(c) || ispunct(c));
 }
 
@@ -1305,18 +1298,16 @@ static inline int fl_isseparator(int c) {
 
 /**   
  \brief Moves the current insert position right one word.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::next_word() {
   int pos = insert_position();
-  // FIXME: character is ucs-4
+
   while (pos < buffer()->length() && !fl_isseparator(buffer()->char_at(pos))) {
-    pos++;
+    pos = buffer()->next_char(pos);
   }
-  // FIXME: character is ucs-4
+
   while (pos < buffer()->length() && fl_isseparator(buffer()->char_at(pos))) {
-    pos++;
+    pos = buffer()->next_char(pos);
   }
   
   insert_position( pos );
@@ -1326,23 +1317,23 @@ void Fl_Text_Display::next_word() {
 
 /**  
  \brief Moves the current insert position left one word.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::previous_word() {
   int pos = insert_position();
   if (pos==0) return;
-  pos--;
-  // FIXME: character is ucs-4
+  pos = buffer()->prev_char(pos);
+
   while (pos && fl_isseparator(buffer()->char_at(pos))) {
-    pos--;
+    pos = buffer()->prev_char(pos);
   }
   // FIXME: character is ucs-4
   while (pos && !fl_isseparator(buffer()->char_at(pos))) {
-    pos--;
+    pos = buffer()->prev_char(pos);
   }
-  // FIXME: character is ucs-4
-  if (fl_isseparator(buffer()->char_at(pos))) pos++;
+
+  if (fl_isseparator(buffer()->char_at(pos))) {
+    pos = buffer()->next_char(pos);
+  }
   
   insert_position( pos );
 }
@@ -1358,12 +1349,10 @@ void Fl_Text_Display::previous_word() {
  \param pos starting index of deletion
  \param nDeleted number of bytes we will delete (must be UTF-8 aligned!)
  \param cbArg "this" pointer for static callback function
- 
- \todo Unicode?
  */
 void Fl_Text_Display::buffer_predelete_cb(int pos, int nDeleted, void *cbArg) {
   Fl_Text_Display *textD = (Fl_Text_Display *)cbArg;
-  if (textD->mContinuousWrap)
+  if (textD->mContinuousWrap) {
   /* Note: we must perform this measurement, even if there is not a
    single character deleted; the number of "deleted" lines is the
    number of visual lines spanned by the real line in which the 
@@ -1372,9 +1361,11 @@ void Fl_Text_Display::buffer_predelete_cb(int pos, int nDeleted, void *cbArg) {
    kind of calculations in advance, even if the font width is "fixed",
    because when the width of the tab characters changes, the layout 
    of the text may be completely different. */
+    IS_UTF8_ALIGNED(textD->buffer()->address(pos))
     textD->measure_deleted_lines(pos, nDeleted);
-  else
+  } else {
     textD->mSuppressResync = 0; /* Probably not needed, but just in case */
+  }
 }
 
 
@@ -1535,8 +1526,6 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
  want this line count maintained (for use via TextDPosToLineAndCol).
  More specifically, this allows the line number reported in the statistics
  line to be calibrated in absolute lines, rather than post-wrapped lines.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::maintain_absolute_top_line_number(int state) {
   mNeedAbsTopLineNum = state;
@@ -1550,8 +1539,6 @@ void Fl_Text_Display::maintain_absolute_top_line_number(int state) {
  
  Returns the absolute (non-wrapped) line number of the first line displayed.
  Returns 0 if the absolute top line number is not being maintained.
- 
- \todo Unicode?
  */
 int Fl_Text_Display::get_absolute_top_line_number() const {
   if (!mContinuousWrap)
@@ -1567,8 +1554,6 @@ int Fl_Text_Display::get_absolute_top_line_number() const {
  \brief Line numbering stuff, currently unused.
  
  Re-calculate absolute top line number for a change in scroll position.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::absolute_top_line_number(int oldFirstChar) {
   if (maintaining_absolute_top_line_number()) {
@@ -1586,8 +1571,6 @@ void Fl_Text_Display::absolute_top_line_number(int oldFirstChar) {
  
  Return true if a separate absolute top line number is being maintained
  (for displaying line numbers or showing in the statistics line).
- 
- \todo Unicode?
  */
 int Fl_Text_Display::maintaining_absolute_top_line_number() const {
   return mContinuousWrap &&
@@ -1602,8 +1585,6 @@ int Fl_Text_Display::maintaining_absolute_top_line_number() const {
  Count lines from the beginning of the buffer to reestablish the
  absolute (non-wrapped) top line number.  If mode is not continuous wrap,
  or the number is not being maintained, does nothing.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::reset_absolute_top_line_number() {
   mAbsTopLineNum = 1;
@@ -1613,7 +1594,7 @@ void Fl_Text_Display::reset_absolute_top_line_number() {
 
 
 /**
- \brief I am not sure what this does or why it does it.
+ \brief Conver a position index into a line number offset.
  
  Find the line number of position "pos" relative to the first line of
  displayed text. Returns 0 if the line is not displayed.
@@ -1622,8 +1603,6 @@ void Fl_Text_Display::reset_absolute_top_line_number() {
  \param[out] lineNum ??
  \return ??
  \todo What does this do?
- 
- \todo Unicode?
  */
 int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
   IS_UTF8_ALIGNED(buffer()->address(pos))
@@ -1641,7 +1620,7 @@ int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
         }
         return ++( *lineNum ) <= mNVisibleLines - 1;
       } else {
-        position_to_line( mLastChar - 1, lineNum );
+        position_to_line( buffer()->prev_char_clipped(mLastChar), lineNum );
         return 1;
       }
     }
@@ -1676,9 +1655,8 @@ int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
  \retval GET_WIDTH width in pixels of text segment if we would draw it
  \retval FIND_INDEX x pixel position inside given block
  \todo we need to handle hidden hyphens and tabs here!
- \todo we handle all styles and selections
- 
- \todo Unicode?
+ \todo we handle all styles and selections 
+ \todo we must provide code to get pixle positions of the middle of a character as well
  */
 int Fl_Text_Display::handle_vline(
                                   int mode, 
@@ -1782,8 +1760,6 @@ int Fl_Text_Display::handle_vline(
  \param style index into style lookup table
  \param x position in pixels
  \return index into buffer
- 
- \todo Unicode?
  */
 int Fl_Text_Display::find_x(const char *s, int len, int style, int x) const {
   IS_UTF8_ALIGNED(s)
@@ -1814,13 +1790,10 @@ int Fl_Text_Display::find_x(const char *s, int len, int style, int x) const {
  \param visLineNum index of line in the visible line number lookup
  \param leftClip, rightClip pixel position of clipped area
  \param leftCharIndex, rightCharIndex index into line of segment that we want to draw
- 
- \todo Unicode?
  */
 void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
                                  int leftCharIndex, int rightCharIndex) {
   int Y, lineStartPos, lineLen, fontHeight;
-  int stdCharWidth;
   
   //  printf("draw_vline(visLineNum=%d, leftClip=%d, rightClip=%d, leftCharIndex=%d, rightCharIndex=%d)\n",
   //         visLineNum, leftClip, rightClip, leftCharIndex, rightCharIndex);
@@ -1836,22 +1809,10 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
   
   /* Get the text, length, and  buffer position of the line to display */
   lineStartPos = mLineStarts[ visLineNum ];
-  //  printf("lineStartPos=%d\n", lineStartPos);
   if ( lineStartPos == -1 ) {
     lineLen = 0;
   } else {
     lineLen = vline_length( visLineNum );
-  }
-  
-  /* Space beyond the end of the line is still counted in units of characters
-   of a standardized character width (this is done mostly because style
-   changes based on character position can still occur in this region due
-   to rectangular Fl_Text_Selections).  stdCharWidth must be non-zero to
-   prevent a potential infinite loop if X does not advance */
-  stdCharWidth = TMPFONTWIDTH;   //mFontStruct->max_bounds.width;
-  if ( stdCharWidth <= 0 ) {
-    Fl::error("Fl_Text_Display::draw_vline(): bad font measurement");
-    return;
   }
   
   /* Shrink the clipping range to the active display area */
@@ -1881,8 +1842,6 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
  \param toX rightmost position if this is a fill operation
  \param string text if this is a drawing operation
  \param nChars number of characters to draw
- 
- \todo Unicode?
  */
 void Fl_Text_Display::draw_string(int style, 
                                   int X, int Y, int toX,
@@ -1974,8 +1933,6 @@ void Fl_Text_Display::draw_string(int style,
  
  \param style index into style table
  \param X, Y, width, height size and position of background area
- 
- \todo Unicode?
  */
 void Fl_Text_Display::clear_rect(int style, 
                                  int X, int Y,
@@ -2008,8 +1965,6 @@ void Fl_Text_Display::clear_rect(int style,
  \brief Draw a cursor with top center at X, y.
  
  \param X, Y cursor position in pixels
- 
- \todo Unicode?
  */
 void Fl_Text_Display::draw_cursor( int X, int Y ) {
   typedef struct {
@@ -2100,8 +2055,6 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
  \param lineLen number of bytes in line
  \param lineIndex position of character within line
  \return style for the given character
- 
- \todo Unicode?
  */
 int Fl_Text_Display::position_style( int lineStartPos, int lineLen, int lineIndex) const 
 {
@@ -2181,8 +2134,6 @@ int Fl_Text_Display::string_width( const char *string, int length, int style ) c
  \param X, Y pixel position
  \param posType CURSOR_POS or CHARACTER_POS
  \return index into text buffer
- 
- \todo Unicode?
  */
 int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) const {
   int lineStart, lineLen, fontHeight;
@@ -2227,8 +2178,6 @@ int Fl_Text_Display::xy_to_position( int X, int Y, int posType ) const {
  \param X, Y pixel coordinates
  \param[out] row, column neares row and column
  \param posType CURSOR_POS or CHARACTER_POS
- 
- \todo Unicode?
  */
 void Fl_Text_Display::xy_to_rowcol( int X, int Y, int *row,
                                    int *column, int posType ) const {
@@ -2237,8 +2186,9 @@ void Fl_Text_Display::xy_to_rowcol( int X, int Y, int *row,
   
   /* Find the visible line number corresponding to the Y coordinate */
   *row = ( Y - text_area.y ) / fontHeight;
-  if ( *row < 0 ) * row = 0;
-  if ( *row >= mNVisibleLines ) * row = mNVisibleLines - 1;
+  if ( *row < 0 ) *row = 0;
+  if ( *row >= mNVisibleLines ) *row = mNVisibleLines - 1;
+  
   *column = ( ( X - text_area.x ) + mHorizOffset +
              ( posType == CURSOR_POS ? fontWidth / 2 : 0 ) ) / fontWidth;
   if ( *column < 0 ) * column = 0;
@@ -2256,8 +2206,6 @@ void Fl_Text_Display::xy_to_rowcol( int X, int Y, int *row,
  the closest value in the mLineStarts array)
  
  \param newTopLineNum index into buffer
- 
- \todo Unicode?
  */
 void Fl_Text_Display::offset_line_starts( int newTopLineNum ) {
   int oldTopLineNum = mTopLineNum;
@@ -2326,14 +2274,13 @@ void Fl_Text_Display::offset_line_starts( int newTopLineNum ) {
  \param linesInserted number of lines
  \param linesDeleted number of lines
  \param[out] scrolled set to 1 if the text display needs to be scrolled
- 
- \todo Unicode?
  */
-void Fl_Text_Display::update_line_starts( int pos, int charsInserted,
-                                         int charsDeleted, int linesInserted, int linesDeleted, int *scrolled ) {
+void Fl_Text_Display::update_line_starts(int pos, int charsInserted,
+                                         int charsDeleted, int linesInserted, 
+                                         int linesDeleted, int *scrolled ) {
   IS_UTF8_ALIGNED(buffer()->address(pos))
 
-  int * lineStarts = mLineStarts;
+  int *lineStarts = mLineStarts;
   int i, lineOfPos, lineOfEnd, nVisLines = mNVisibleLines;
   int charDelta = charsInserted - charsDeleted;
   int lineDelta = linesInserted - linesDeleted;
@@ -2358,8 +2305,7 @@ void Fl_Text_Display::update_line_starts( int pos, int charsInserted,
     if ( position_to_line( pos + charsDeleted, &lineOfEnd ) &&
         ++lineOfEnd < nVisLines && lineStarts[ lineOfEnd ] != -1 ) {
       mTopLineNum = max( 1, mTopLineNum + lineDelta );
-      mFirstChar = rewind_lines(
-                                lineStarts[ lineOfEnd ] + charDelta, lineOfEnd );
+      mFirstChar = rewind_lines(lineStarts[ lineOfEnd ] + charDelta, lineOfEnd );
       /* Otherwise anchor on original line number and recount everything */
     } else {
       if ( mTopLineNum > mNBufferLines + lineDelta ) {
@@ -2434,8 +2380,6 @@ void Fl_Text_Display::update_line_starts( int pos, int charsInserted,
  "startLine" and "endLine" are acceptable.
  
  \param startLine, endLine range of lines to scan as line numbers
- 
- \todo Unicode?
  */
 void Fl_Text_Display::calc_line_starts( int startLine, int endLine ) {
   int startPos, bufLen = mBuffer->length();
@@ -2497,8 +2441,6 @@ void Fl_Text_Display::calc_line_starts( int startLine, int endLine ) {
  
  Given a Fl_Text_Display with a complete, up-to-date lineStarts array, update
  the lastChar entry to point to the last buffer position displayed.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::calc_last_char() {
   int i;
@@ -2513,8 +2455,6 @@ void Fl_Text_Display::calc_last_char() {
  \param topLineNum top line number
  \param horizOffset column number
  \todo Column numbers make little sense here.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::scroll(int topLineNum, int horizOffset) {
   mTopLineNumHint = topLineNum;
@@ -2529,8 +2469,6 @@ void Fl_Text_Display::scroll(int topLineNum, int horizOffset) {
  \param topLineNum top line number
  \param horizOffset column number
  \todo Column numbers make little sense here.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::scroll_(int topLineNum, int horizOffset) {
   /* Limit the requested scroll position to allowable values */
@@ -2565,8 +2503,6 @@ void Fl_Text_Display::scroll_(int topLineNum, int horizOffset) {
  
  Update the minimum, maximum, slider size, page increment, and value
  for vertical scroll bar.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::update_v_scrollbar() {
   /* The Vert. scroll bar value and slider size directly represent the top
@@ -2590,8 +2526,6 @@ void Fl_Text_Display::update_v_scrollbar() {
  
  Update the minimum, maximum, slider size, page increment, and value
  for the horizontal scroll bar.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::update_h_scrollbar() {
   int sliderMax = max(longest_vline(), text_area.w + mHorizOffset);
@@ -2602,8 +2536,6 @@ void Fl_Text_Display::update_h_scrollbar() {
 
 /**
  \brief Callbacks for drag or valueChanged on scroll bars.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::v_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
   if (b->value() == textD->mTopLineNum) return;
@@ -2614,8 +2546,6 @@ void Fl_Text_Display::v_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
 
 /**
  \brief Callbacks for drag or valueChanged on scroll bars.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::h_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
   if (b->value() == textD->mHorizOffset) return;
@@ -2632,8 +2562,6 @@ void Fl_Text_Display::h_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
  area, which might have been left from before a resize or font change.
  
  This function is not used.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
 #if 0
@@ -2701,8 +2629,6 @@ static int min( int i1, int i2 ) {
 
 /**
  Count the number of newlines in a null-terminated text string;
- 
- \todo Unicode?
  */
 static int countlines( const char *string ) {
   IS_UTF8_ALIGNED(string)
@@ -2724,11 +2650,8 @@ static int countlines( const char *string ) {
  \brief Return the width in pixels of the displayed line pointed to by "visLineNum".
  \param index into visible lines array
  \return width of line in pixels
- 
- \todo Unicode?
  */
 int Fl_Text_Display::measure_vline( int visLineNum ) const {
-  // FIXME: the horizontal scroll bar is still messed up. Clicking the right container is not possible.
   int lineLen = vline_length( visLineNum );
   int lineStartPos = mLineStarts[ visLineNum ];
   if (lineStartPos < 0 || lineLen == 0) return 0;
@@ -2740,8 +2663,6 @@ int Fl_Text_Display::measure_vline( int visLineNum ) const {
 /**
  \brief Return true if there are lines visible with no corresponding buffer text.
  \return 1 if there are empty lines
- 
- \todo Unicode?
  */
 int Fl_Text_Display::empty_vlines() const {
   return (mNVisibleLines > 0) && (mLineStarts[ mNVisibleLines - 1 ] == -1);
@@ -2752,13 +2673,11 @@ int Fl_Text_Display::empty_vlines() const {
 /**
  \brief Count number of bytes in a visible line.
  
- Return the length of a line (number of displayable characters) by examining
+ Return the length of a line (number of bytes) by examining
  entries in the line starts array rather than by scanning for newlines.
  
  \param visLineNum index of line in visible line array
  \return number of byytes in this line
- 
- \todo Unicode?
  */
 int Fl_Text_Display::vline_length( int visLineNum ) const {
   int nextLineStart, lineStartPos;
@@ -2801,13 +2720,10 @@ int Fl_Text_Display::vline_length( int visLineNum ) const {
  \param modRangeEnd
  \param linesInserted
  \param linesDeleted
- 
- \todo We need to figure this one out!
- 
- \todo Unicode?
  */
 void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
-                                      int nInserted, int nDeleted, int *modRangeStart, int *modRangeEnd,
+                                      int nInserted, int nDeleted, 
+                                      int *modRangeStart, int *modRangeEnd,
                                       int *linesInserted, int *linesDeleted) {
   IS_UTF8_ALIGNED(deletedText)
   IS_UTF8_ALIGNED(buffer()->address(pos))
@@ -2825,16 +2741,20 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
    ** line, using information from the existing line starts array
    */
   if (pos >= mFirstChar && pos <= mLastChar) {
-    for (i=nVisLines-1; i>0; i--)
-      if (lineStarts[i] != -1 && pos >= lineStarts[i])
+    for (i=nVisLines-1; i>0; i--) {
+      if (lineStarts[i] != -1 && pos >= lineStarts[i]) {
         break;
+      }
+    }
     if (i > 0) {
       countFrom = lineStarts[i-1];
       visLineNum = i-1;
-    } else
+    } else {
       countFrom = buf->line_start(pos);
-  } else
+    }
+  } else {
     countFrom = buf->line_start(pos);
+  }
   
   IS_UTF8_ALIGNED(buffer()->address(countFrom))
   
@@ -2857,12 +2777,11 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
       if (retPos != retLineEnd)
         nLines++;
       break;
-    } else
+    } else {
       lineStart = retPos;
+    }
     nLines++;
-    if (lineStart > pos + nInserted &&
-        // FIXME: character is ucs-4
-        buf->char_at(lineStart-1) == '\n') {
+    if (lineStart > pos + nInserted && buf->char_at(buf->prev_char(lineStart)) == '\n') {
       countTo = lineStart;
       *modRangeEnd = lineStart;
       break;
@@ -2886,11 +2805,11 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
         countFrom = lineStart;
         nLines = 0;
         if (visLineNum+1 < nVisLines && lineStarts[visLineNum+1] != -1)
-          *modRangeStart = min(pos, lineStarts[visLineNum+1]-1);
+          *modRangeStart = min(pos, buf->prev_char(lineStarts[visLineNum+1]));
         else
           *modRangeStart = countFrom;
       } else
-        *modRangeStart = min(*modRangeStart, lineStart-1);
+        *modRangeStart = min(*modRangeStart, buf->prev_char(lineStart));
     }
     
     /* check for synchronization with the original line starts array
@@ -2941,12 +2860,11 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
   deletedTextBuf->copy(buffer(), countFrom, pos, 0);
   if (nDeleted != 0)
     deletedTextBuf->insert(pos-countFrom, deletedText);
-  deletedTextBuf->copy(buffer(), 
-                       pos+nInserted, countTo, pos-countFrom+nDeleted);
+  deletedTextBuf->copy(buffer(), pos+nInserted, countTo, pos-countFrom+nDeleted);
   /* Note that we need to take into account an offset for the style buffer:
    the deletedTextBuf can be out of sync with the style buffer. */
-  wrapped_line_counter(deletedTextBuf, 0, length, INT_MAX, true, 
-                       countFrom, &retPos, &retLines, &retLineStart, &retLineEnd, false);
+  wrapped_line_counter(deletedTextBuf, 0, length, INT_MAX, true, countFrom, 
+                       &retPos, &retLines, &retLineStart, &retLineEnd, false);
   delete deletedTextBuf;
   *linesDeleted = retLines;
   mSuppressResync = 0;
@@ -2970,10 +2888,6 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
 
  \param pos
  \param nDeleted
- 
- \todo We need to figure this one out!
- 
- \todo Unicode?
  */
 void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
   IS_UTF8_ALIGNED(buffer()->address(pos))
@@ -3068,10 +2982,6 @@ void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
  \param[out] retLineStart Start of the line where counting ended
  \param[out] retLineEnd End position of the last line traversed
  \param[out] countLastLineMissingNewLine
- 
- \todo We need to figure this one out!
- 
- \todo Unicode?
  */
 void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
                                            int maxPos, int maxLines, bool startPosIsLineStart, int styleBufOffset,
@@ -3161,7 +3071,9 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
           if (countPixels) {
             colNum = 0;
             width = 0;
-            for (i=b+1; i<p+1; i++) {
+            // TODO: we should have a much more efficient function already available!
+            int iMax = buffer()->next_char(p);
+            for (i=buffer()->next_char(b); i<iMax; i = buffer()->next_char(i)) {
               width += measure_proportional_character(buf->address(i), colNum, 
                                                       i+styleBufOffset);
               colNum++;
@@ -3258,8 +3170,6 @@ int Fl_Text_Display::measure_proportional_character(const char *s, int colNum, i
  \param startPosIsLineStart
  \param[out] lineEnd
  \param[out] nextLineStart
- 
- \todo Unicode?
  */
 void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
                                     int *lineEnd, int *nextLineStart) const {
@@ -3308,7 +3218,7 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
 int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
   IS_UTF8_ALIGNED(buffer()->address(lineEndPos))
 
-  char c;
+  unsigned int c;
   
   if (!mContinuousWrap || lineEndPos == buffer()->length())
     return 1;
@@ -3380,8 +3290,6 @@ void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) {
  \brief Draw the widget.
  
  This function tries to limit drawing to smaller areas if possible.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::draw(void) {
   // don't even try if there is no associated text buffer!
@@ -3539,8 +3447,6 @@ void fl_text_drag_me(int pos, Fl_Text_Display* d) {
  This timer event scrolls the text view proportionally to
  how far the mouse pointer has left the text area. This 
  allows for smooth scrolling without "wiggeling" the mouse.
- 
- \todo Unicode?
  */
 void Fl_Text_Display::scroll_timer_cb(void *user_data) {
   Fl_Text_Display *w = (Fl_Text_Display*)user_data;
@@ -3573,8 +3479,6 @@ void Fl_Text_Display::scroll_timer_cb(void *user_data) {
 
 /**
  \brief Event handling.
- 
- \todo Unicode?
  */
 int Fl_Text_Display::handle(int event) {
   if (!buffer()) return 0;
@@ -3630,7 +3534,7 @@ int Fl_Text_Display::handle(int event) {
       else if (dragType == DRAG_WORD)
         buffer()->select(word_start(pos), word_end(pos));
       else if (dragType == DRAG_LINE)
-        buffer()->select(buffer()->line_start(pos), buffer()->line_end(pos)+1);
+        buffer()->select(buffer()->line_start(pos), buffer()->next_char(buffer()->line_end(pos)));
       
       if (buffer()->primary_selection()->selected())
         insert_position(buffer()->primary_selection()->end());

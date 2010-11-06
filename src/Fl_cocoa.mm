@@ -916,7 +916,7 @@ OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, voi
   fl_lock_function();
   UniChar ucs[20];
   ByteCount actual_size;
-  int i;
+  unsigned int i;
   GetEventParameter( event, kEventParamTextInputSendText, typeUnicodeText, 
                     NULL, 20, &actual_size, ucs );
   char utf8buf[50], *p;
