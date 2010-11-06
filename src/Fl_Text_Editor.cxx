@@ -234,6 +234,7 @@ static void kill_selection(Fl_Text_Editor* e) {
 
 /** Inserts the text associated with the key */
 int Fl_Text_Editor::kf_default(int c, Fl_Text_Editor* e) {
+  // FIXME: this function is a mess! Fix this!
   if (!c || (!isprint(c) && c != '\t')) return 0;
   char s[2] = "\0";
   s[0] = (char)c;
