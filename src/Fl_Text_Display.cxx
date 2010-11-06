@@ -1687,8 +1687,6 @@ int Fl_Text_Display::handle_vline(
                                   int leftClip, int rightClip) const
 {
   IS_UTF8_ALIGNED(buffer()->address(lineStartPos))
-  IS_UTF8_ALIGNED(buffer()->address(leftChar))
-  if (rightChar!=INT_MAX) IS_UTF8_ALIGNED(buffer()->address(rightChar))
 
   // FIXME: we need to allow two modes for FIND_INDEX: one on the edge of the 
   // FIXME: character for selection, and one on the character center for cursors.
