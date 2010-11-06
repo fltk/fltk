@@ -33,6 +33,17 @@
 #ifndef FL_TEXT_BUFFER_H
 #define FL_TEXT_BUFFER_H
 
+
+#define ASSERT_UTF8
+
+#ifdef ASSERT_UTF8
+# include <assert.h>
+# define IS_UTF8_ALIGNED(a) if (a && *a) assert(fl_utf8len(*(a))>0);
+#else
+# define IS_UTF8_ALIGNED(a)
+#endif
+
+
 /*
  Suggested UTF-8 terminology for this file:
  
@@ -735,6 +746,11 @@ public:
    */
   char *next_char(char *c) const;
   const char *next_char(const char *c) const;
+  
+  /**
+   Align an index into the buffer to the current or previous utf8 boundary.
+   */
+  int utf8_align(int) const;
   
 protected:
 

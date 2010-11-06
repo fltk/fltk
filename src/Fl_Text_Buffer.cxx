@@ -63,17 +63,11 @@
 
 #ifndef min
 
-/*
- Unicode safe.
- */
 static int max(int i1, int i2)
 {
   return i1 >= i2 ? i1 : i2;
 }
 
-/*
- Unicode safe.
- */
 static int min(int i1, int i2)
 {
   return i1 <= i2 ? i1 : i2;
@@ -92,7 +86,6 @@ static int undoyankcut;		// length of valid contents of buffer, even if undocut=
 
 /*
  Resize the undo buffer to match at least the requested size.
- Unicode safe.
  */
 static void undobuffersize(int n)
 {
@@ -112,7 +105,6 @@ static void undobuffersize(int n)
 
 /*
  Initialize all variables.
- Unicode safe.
  */
 Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
 {
@@ -141,7 +133,6 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
 
 /*
  Free all resources.
- Unicode safe.
  */
 Fl_Text_Buffer::~Fl_Text_Buffer()
 {
@@ -160,7 +151,6 @@ Fl_Text_Buffer::~Fl_Text_Buffer()
 /*
  This function copies verbose whatever is in front and after the gap into a
  single buffer.
- Unicode safe.
  */
 char *Fl_Text_Buffer::text() const {
   char *t = (char *) malloc(mLength + 1);
@@ -173,10 +163,11 @@ char *Fl_Text_Buffer::text() const {
 
 /*
  Set the text buffer to a new string.
- Unicode safe.
  */
 void Fl_Text_Buffer::text(const char *t)
 {
+  IS_UTF8_ALIGNED(t)
+  
   call_predelete_callbacks(0, length());
   
   /* Save information for redisplay, and get rid of the old buffer */
@@ -203,9 +194,11 @@ void Fl_Text_Buffer::text(const char *t)
 
 /*
  Creates a range of text to a new buffer and copies verbose from around the gap.
- Unicode safe.
  */
 char *Fl_Text_Buffer::text_range(int start, int end) const {
+  IS_UTF8_ALIGNED(address(start))
+  IS_UTF8_ALIGNED(address(start))
+  
   char *s = NULL;
   
   /* Make sure start and end are ok, and allocate memory for returned string.
@@ -242,11 +235,14 @@ char *Fl_Text_Buffer::text_range(int start, int end) const {
 
 /*
  Return a UCS-4 character at the given index.
- Unicode safe. Pos must be at a character boundary.
+ Pos must be at a character boundary.
  */
-unsigned int Fl_Text_Buffer::char_at(int pos) const {
+unsigned int Fl_Text_Buffer::char_at(int pos) const {  
   if (pos < 0 || pos >= mLength)
     return '\0';
+  
+  IS_UTF8_ALIGNED(address(pos))
+  
   const char *src = address(pos);
   return fl_utf8decode(src, 0, 0);
 } 
@@ -266,10 +262,13 @@ char Fl_Text_Buffer::byte_at(int pos) const {
 
 /*
  Insert some text at the given index.
- Unicode safe. Pos must be at a character boundary.
+ Pos must be at a character boundary.
 */
 void Fl_Text_Buffer::insert(int pos, const char *text)
 {
+  IS_UTF8_ALIGNED(address(pos))
+  IS_UTF8_ALIGNED(text)
+  
   /* check if there is actually any text */
   if (!text || !*text)
     return;
@@ -286,13 +285,14 @@ void Fl_Text_Buffer::insert(int pos, const char *text)
   /* insert and redisplay */
   int nInserted = insert_(pos, text);
   mCursorPosHint = pos + nInserted;
+  IS_UTF8_ALIGNED(address(mCursorPosHint))
   call_modify_callbacks(pos, 0, nInserted, 0, NULL);
 }
 
 
 /*
  Replace a range of text with new text.
- Unicode safe. Start and end must be at a character boundary.
+ Start and end must be at a character boundary.
 */
 void Fl_Text_Buffer::replace(int start, int end, const char *text)
 {
@@ -303,6 +303,10 @@ void Fl_Text_Buffer::replace(int start, int end, const char *text)
     start = 0;
   if (end > mLength)
     end = mLength;
+
+  IS_UTF8_ALIGNED(address(start))
+  IS_UTF8_ALIGNED(address(end))
+  IS_UTF8_ALIGNED(text)
   
   call_predelete_callbacks(start, end - start);
   const char *deletedText = text_range(start, end);
@@ -316,7 +320,7 @@ void Fl_Text_Buffer::replace(int start, int end, const char *text)
 
 /*
  Remove a range of text.
- Unicode safe. Start and End must be at a character boundary.
+ Start and End must be at a character boundary.
 */
 void Fl_Text_Buffer::remove(int start, int end)
 {
@@ -334,6 +338,9 @@ void Fl_Text_Buffer::remove(int start, int end)
     end = mLength;
   if (end < 0)
     end = 0;
+
+  IS_UTF8_ALIGNED(address(start))
+  IS_UTF8_ALIGNED(address(end))  
   
   if (start == end)
     return;
@@ -350,11 +357,15 @@ void Fl_Text_Buffer::remove(int start, int end)
 
 /*
  Copy a range of text from another text buffer.
- Unicode safe. FromDtart, fromEnd, and toPos must be at a character boundary.
+ FromStart, fromEnd, and toPos must be at a character boundary.
  */
 void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
 			  int fromEnd, int toPos)
 {
+  IS_UTF8_ALIGNED(fromBuf->address(fromStart))
+  IS_UTF8_ALIGNED(fromBuf->address(fromEnd))
+  IS_UTF8_ALIGNED(address(toPos))
+  
   int copiedLength = fromEnd - fromStart;
   
   /* Prepare the buffer to receive the new text.  If the new text fits in
@@ -389,7 +400,7 @@ void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
 /*
  Take the previous changes and undo them. Return the previous
  cursor position in cursorPos. Returns 1 if the undo was applied.
- Unicode safe. CursorPos will be at a character boundary.
+ CursorPos will be at a character boundary.
  */ 
 int Fl_Text_Buffer::undo(int *cursorPos)
 {
@@ -431,7 +442,6 @@ int Fl_Text_Buffer::undo(int *cursorPos)
 
 /*
  Set a flag is undo function will work.
- Unicode safe.
  */
 void Fl_Text_Buffer::canUndo(char flag)
 {
@@ -448,7 +458,6 @@ void Fl_Text_Buffer::canUndo(char flag)
  Matt: I am not entirely sure why we need to trigger callbacks because
  tabs are only a graphical hint, not changing any text at all, but I leave
  this in here for back compatibility. 
- Unicode safe.
  */
 void Fl_Text_Buffer::tab_distance(int tabDist)
 {
@@ -469,10 +478,13 @@ void Fl_Text_Buffer::tab_distance(int tabDist)
 
 /*
  Select a range of text.
- Unicode safe. Start and End must be at a character boundary.
+ Start and End must be at a character boundary.
  */
 void Fl_Text_Buffer::select(int start, int end)
 {
+  IS_UTF8_ALIGNED(address(start))
+  IS_UTF8_ALIGNED(address(end))  
+  
   Fl_Text_Selection oldSelection = mPrimary;
   
   mPrimary.set(start, end);
@@ -482,7 +494,6 @@ void Fl_Text_Buffer::select(int start, int end)
 
 /*
  Clear the primary selection.
- Unicode safe.
  */
 void Fl_Text_Buffer::unselect()
 {
@@ -495,7 +506,6 @@ void Fl_Text_Buffer::unselect()
   
 /*
  Return the primary selection range.
- Unicode safe.
  */
 int Fl_Text_Buffer::selection_position(int *start, int *end)
 {
@@ -505,7 +515,6 @@ int Fl_Text_Buffer::selection_position(int *start, int *end)
 
 /*
  Return a copy of the selected text.
- Unicode safe.
  */
 char *Fl_Text_Buffer::selection_text()
 {
@@ -515,7 +524,6 @@ char *Fl_Text_Buffer::selection_text()
 
 /*
  Remove the selected text.
- Unicode safe.
  */
 void Fl_Text_Buffer::remove_selection()
 {
@@ -525,7 +533,6 @@ void Fl_Text_Buffer::remove_selection()
 
 /*
  Replace the selected text.
- Unicode safe.
  */
 void Fl_Text_Buffer::replace_selection(const char *text)
 {
@@ -535,7 +542,7 @@ void Fl_Text_Buffer::replace_selection(const char *text)
 
 /*
  Select text.
- Unicode safe. Start and End must be at a character boundary.
+ Start and End must be at a character boundary.
  */
 void Fl_Text_Buffer::secondary_select(int start, int end)
 {
@@ -548,7 +555,6 @@ void Fl_Text_Buffer::secondary_select(int start, int end)
 
 /*
  Deselect text.
- Unicode safe.
  */
 void Fl_Text_Buffer::secondary_unselect()
 {
@@ -561,7 +567,6 @@ void Fl_Text_Buffer::secondary_unselect()
   
 /*
  Return the selected range.
- Unicode safe.
  */
 int Fl_Text_Buffer::secondary_selection_position(int *start, int *end)
 {
@@ -571,7 +576,6 @@ int Fl_Text_Buffer::secondary_selection_position(int *start, int *end)
 
 /*
  Return a copy of the text in this selection.
- Unicode safe.
  */
 char *Fl_Text_Buffer::secondary_selection_text()
 {
@@ -581,7 +585,6 @@ char *Fl_Text_Buffer::secondary_selection_text()
 
 /*
  Remove the selected text.
- Unicode safe.
  */
 void Fl_Text_Buffer::remove_secondary_selection()
 {
@@ -591,7 +594,6 @@ void Fl_Text_Buffer::remove_secondary_selection()
 
 /*
  Replace selected text.
- Unicode safe.
  */
 void Fl_Text_Buffer::replace_secondary_selection(const char *text)
 {
@@ -601,7 +603,7 @@ void Fl_Text_Buffer::replace_secondary_selection(const char *text)
 
 /*
  Highlight a range of text.
- Unicode safe. Start and End must be at a character boundary.
+ Start and End must be at a character boundary.
  */
 void Fl_Text_Buffer::highlight(int start, int end)
 {
@@ -614,7 +616,6 @@ void Fl_Text_Buffer::highlight(int start, int end)
 
 /*
  Remove text highlighting.
- Unicode safe.
  */
 void Fl_Text_Buffer::unhighlight()
 {
@@ -627,7 +628,6 @@ void Fl_Text_Buffer::unhighlight()
   
 /*
  Return position of highlight.
- Unicode safe.
  */
 int Fl_Text_Buffer::highlight_position(int *start, int *end)
 {
@@ -637,7 +637,6 @@ int Fl_Text_Buffer::highlight_position(int *start, int *end)
 
 /*
  Return a copy of highlighted text.
- Unicode safe.
  */
 char *Fl_Text_Buffer::highlight_text()
 {
@@ -647,7 +646,6 @@ char *Fl_Text_Buffer::highlight_text()
 
 /*
  Add a callback that is called whenever text is modified.
- Unicode safe.
  */
 void Fl_Text_Buffer::add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB,
 					 void *cbArg)
@@ -673,7 +671,6 @@ void Fl_Text_Buffer::add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB,
 
 /*
  Remove a callback.
- Unicode safe.
  */
 void Fl_Text_Buffer::remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, 
                                             void *cbArg)
@@ -725,7 +722,6 @@ void Fl_Text_Buffer::remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB,
 
 /*
  Add a callback that is called before deleting text.
- Unicode safe.
  */
 void Fl_Text_Buffer::add_predelete_callback(Fl_Text_Predelete_Cb bufPreDeleteCB, 
                                             void *cbArg)
@@ -751,7 +747,6 @@ void Fl_Text_Buffer::add_predelete_callback(Fl_Text_Predelete_Cb bufPreDeleteCB,
 
 /*
  Remove a callback.
- Unicode safe.
  */
 void Fl_Text_Buffer::remove_predelete_callback(Fl_Text_Predelete_Cb bufPreDeleteCB, void *cbArg)
 {
@@ -803,7 +798,7 @@ void Fl_Text_Buffer::remove_predelete_callback(Fl_Text_Predelete_Cb bufPreDelete
 
 /*
  Return a copy of the line that contains a given index.
- Unicode safe. Pos must be at a character boundary.
+ Pos must be at a character boundary.
  */
 char *Fl_Text_Buffer::line_text(int pos) const {
   return text_range(line_start(pos), line_end(pos));
@@ -812,11 +807,9 @@ char *Fl_Text_Buffer::line_text(int pos) const {
 
 /*
  Find the beginning of the line.
- NOT UNICODE SAFE.
  */
 int Fl_Text_Buffer::line_start(int pos) const 
 {
-  // FIXME: this currently works for unicode, but will be very inefficent when findchar_backward is fixed.
   if (!findchar_backward(pos, '\n', &pos))
     return 0;
   return pos + 1;
@@ -825,10 +818,8 @@ int Fl_Text_Buffer::line_start(int pos) const
 
 /*
  Find the end of the line.
- NOT UNICODE SAFE.
  */
 int Fl_Text_Buffer::line_end(int pos) const {
-  // FIXME: this currently works for unicode, but will be very inefficent when findchar_forward is fixed.
   if (!findchar_forward(pos, '\n', &pos))
     pos = mLength;
   return pos;
@@ -841,12 +832,12 @@ int Fl_Text_Buffer::line_end(int pos) const {
  */
 int Fl_Text_Buffer::word_start(int pos) const {
   // FIXME: character is ucs-4
-  while (pos && (isalnum(char_at(pos)) || char_at(pos) == '_')) {
-    pos--;
+  while (pos>0 && (isalnum(char_at(pos)) || char_at(pos) == '_')) {
+    pos = prev_char(pos);
   } 
   // FIXME: character is ucs-4
   if (!(isalnum(char_at(pos)) || char_at(pos) == '_'))
-    pos++;
+    pos = next_char(pos);
   return pos;
 }
 
@@ -859,7 +850,7 @@ int Fl_Text_Buffer::word_end(int pos) const {
   // FIXME: character is ucs-4
   while (pos < length() && (isalnum(char_at(pos)) || char_at(pos) == '_'))
   {
-    pos++;
+    pos = next_char(pos);
   } return pos;
 }
 
@@ -868,17 +859,20 @@ int Fl_Text_Buffer::word_end(int pos) const {
  Matt: I am not sure why we need this function. Does it still make sense in
  the world of proportional characters?
  */
+// FIXME: this is misleading and mey be used to count bytes instead of characters!
 int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
 					       int targetPos) const
 {
+  IS_UTF8_ALIGNED(address(lineStartPos))
+  IS_UTF8_ALIGNED(address(targetPos))
+  
   // TODO: is this function still needed? If it is, put this functionality in handle_vline?
   int charCount = 0;
   
   int pos = lineStartPos;
   while (pos < targetPos) {
-    int len = fl_utf8len(*address(pos));
-    charCount += 1;
-    pos += len;
+    pos = next_char(pos);
+    charCount++;
   }
   return charCount;
 } 
@@ -888,20 +882,20 @@ int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
  Matt: I am not sure why we need this function. Does it still make sense in
  the world of proportional characters?
  */
+// FIXME: this is misleading and mey be used to count bytes instead of characters!
 // All values are number of bytes. 
 // - unicode ok?
 int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
 {
+  IS_UTF8_ALIGNED(address(lineStartPos))
   // FIXME: is this function still needed?
   int pos = lineStartPos;
   
-  for (int charCount = 0; charCount < nChars && pos < mLength;) {
-    const char *src = address(pos);
-    char c = *src;
+  for (int charCount = 0; charCount < nChars && pos < mLength; charCount++) {
+    unsigned int c = char_at(pos);
     if (c == '\n')
       return pos;
-    charCount++;
-    pos += fl_utf8len(c);
+    pos = next_char(pos);
   }
   return pos;
 }
@@ -909,9 +903,13 @@ int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
 
 /*
  Count the number of newline characters between start and end.
- Unicode safe. StartPos and endPos must be at a character boundary.
+ StartPos and endPos must be at a character boundary.
+ This function is optimized for speed by not using UTF-8 calls.
  */
 int Fl_Text_Buffer::count_lines(int startPos, int endPos) const {
+  IS_UTF8_ALIGNED(address(startPos))
+  IS_UTF8_ALIGNED(address(endPos))
+  
   int gapLen = mGapEnd - mGapStart;
   int lineCount = 0;
   
@@ -935,10 +933,13 @@ int Fl_Text_Buffer::count_lines(int startPos, int endPos) const {
 
 /*
  Skip to the first character, n lines ahead.
- Unicode safe. StartPos must be at a character boundary.
+ StartPos must be at a character boundary.
+ This function is optimized for speed by not using UTF-8 calls.
  */
 int Fl_Text_Buffer::skip_lines(int startPos, int nLines)
 {
+  IS_UTF8_ALIGNED(address(startPos))
+  
   if (nLines == 0)
     return startPos;
   
@@ -948,27 +949,35 @@ int Fl_Text_Buffer::skip_lines(int startPos, int nLines)
   while (pos < mGapStart) {
     if (mBuf[pos++] == '\n') {
       lineCount++;
-      if (lineCount == nLines)
+      if (lineCount == nLines) {
+        IS_UTF8_ALIGNED(address(pos))
 	return pos;
+      }
     }
   }
   while (pos < mLength) {
     if (mBuf[pos++ + gapLen] == '\n') {
       lineCount++;
-      if (lineCount >= nLines)
+      if (lineCount >= nLines) {
+        IS_UTF8_ALIGNED(address(pos))
 	return pos;
+      }
     }
   }
+  IS_UTF8_ALIGNED(address(pos))
   return pos;
 }
 
 
 /*
  Skip to the first character, n lines back.
- Unicode safe. StartPos must be at a character boundary.
+ StartPos must be at a character boundary.
+ This function is optimized for speed by not using UTF-8 calls.
  */
 int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
 {
+  IS_UTF8_ALIGNED(address(startPos))
+  
   int pos = startPos - 1;
   if (pos <= 0)
     return 0;
@@ -977,15 +986,19 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
   int lineCount = -1;
   while (pos >= mGapStart) {
     if (mBuf[pos + gapLen] == '\n') {
-      if (++lineCount >= nLines)
+      if (++lineCount >= nLines) {
+        IS_UTF8_ALIGNED(address(pos+1))
 	return pos + 1;
+      }
     }
     pos--;
   }
   while (pos >= 0) {
     if (mBuf[pos] == '\n') {
-      if (++lineCount >= nLines)
+      if (++lineCount >= nLines) {
+        IS_UTF8_ALIGNED(address(pos+1))
 	return pos + 1;
+      }
     }
     pos--;
   }
@@ -995,30 +1008,56 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
 
 /*
  Find a matching string in the buffer.
- NOT TESTED FOR UNICODE.
  */
 int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
 				   int *foundPos, int matchCase) const 
 {
-  // FIXME: Unicode?
+  IS_UTF8_ALIGNED(address(startPos))
+  IS_UTF8_ALIGNED(searchString)
+  
   if (!searchString)
     return 0;
   int bp;
   const char *sp;
-  while (startPos < length()) {
-    bp = startPos;
-    sp = searchString;
-    do {
-      if (!*sp) {
-        *foundPos = startPos;
-        return 1;
+  if (matchCase) {
+    while (startPos < length()) {
+      bp = startPos;
+      sp = searchString;
+      for (;;) {
+        char c = *sp;
+        // we reached the end of the "needle", so we found the string!
+        if (!c) {
+          *foundPos = startPos;
+          return 1;
+        }
+        int l = fl_utf8len(c);
+        if (memcmp(sp, address(bp), l))
+          break;
+        sp += l; bp += l;
       }
-      // FIXME: character is ucs-4
-    } while ((matchCase ? char_at(bp++) == (unsigned int)*sp++ :
-              toupper(char_at(bp++)) == toupper(*sp++))
-             && bp < length());
-    startPos++;
-  }
+      startPos = next_char(startPos);
+    }
+  } else {
+    while (startPos < length()) {
+      bp = startPos;
+      sp = searchString;
+      for (;;) {
+        // we reached the end of the "needle", so we found the string!
+        if (!*sp) {
+          *foundPos = startPos;
+          return 1;
+        }
+        int l;
+        unsigned int b = char_at(bp);
+        unsigned int s = fl_utf8decode(sp, 0, &l);
+        if (fl_tolower(b)!=fl_tolower(s))
+          break;
+        sp += l; 
+        bp = next_char(bp);
+      }
+      startPos = next_char(startPos);
+    }
+  }  
   return 0;
 }
 
@@ -1286,9 +1325,9 @@ void Fl_Text_Buffer::remove_selection_(Fl_Text_Selection * sel)
   
   if (!sel->position(&start, &end))
     return;
-    remove(start, end);
-    //undoyankcut = undocut;
-  }
+  remove(start, end);
+  //undoyankcut = undocut;
+}
 
 
 /*
@@ -1322,6 +1361,7 @@ void Fl_Text_Buffer::replace_selection_(Fl_Text_Selection * sel,
 void Fl_Text_Buffer::call_modify_callbacks(int pos, int nDeleted,
 					   int nInserted, int nRestyled,
 					   const char *deletedText) const {
+  IS_UTF8_ALIGNED(address(pos))
   for (int i = 0; i < mNModifyProcs; i++)
     (*mModifyProcs[i]) (pos, nInserted, nDeleted, nRestyled,
 			deletedText, mCbArgs[i]);
@@ -1590,6 +1630,8 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
   if (pos<=0)
     return 0;
 
+  IS_UTF8_ALIGNED(address(pos))  
+
   char c;
   do {
     pos--;
@@ -1598,6 +1640,7 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
     c = byte_at(pos);
   } while ( (c&0xc0) == 0x80);
   
+  IS_UTF8_ALIGNED(address(pos))  
   return pos;
 }
 
@@ -1619,10 +1662,12 @@ int Fl_Text_Buffer::prev_char(int pos) const
  */
 int Fl_Text_Buffer::next_char(int pos) const
 {
+  IS_UTF8_ALIGNED(address(pos))  
   int n = fl_utf8len(byte_at(pos));
   pos += n;
   if (pos>=mLength)
     return mLength;
+  IS_UTF8_ALIGNED(address(pos))  
   return pos;
 }
 
@@ -1633,11 +1678,21 @@ int Fl_Text_Buffer::next_char(int pos) const
  */
 int Fl_Text_Buffer::next_char_clipped(int pos) const
 {
-  int n = next_char(pos);
-  if (pos==mLength) return pos;
-  return n;
+  return next_char(pos);
 }
 
+/*
+ Align an index to the current utf8 boundary
+ */
+int Fl_Text_Buffer::utf8_align(int pos) const 
+{
+  char c = byte_at(pos);
+  while ( (c&0xc0) == 0x80) {
+    pos--;
+    c = byte_at(pos);
+  }
+  return pos;
+}
 
 //
 // End of "$Id$".

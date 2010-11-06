@@ -3,7 +3,7 @@
 //
 // Copyright 2001-2009 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
-// the LGPL for the FLTK library granted by Mark Edel.
+// the LGPL for the FLTK library granted by Mark E.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -138,7 +138,7 @@ static struct {
   { FL_Down,      FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
   { FL_Page_Up,   FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
   { FL_Page_Down, FL_CTRL|FL_SHIFT,         Fl_Text_Editor::kf_c_s_move   },
-//{ FL_Clear,	  0,                        Fl_Text_Editor::delete_to_eol },
+//{ FL_Clear,	  0,                        Fl_Text_Editor::ete_to_eol },
   { 'z',          FL_CTRL,                  Fl_Text_Editor::kf_undo	  },
   { '/',          FL_CTRL,                  Fl_Text_Editor::kf_undo	  },
   { 'x',          FL_CTRL,                  Fl_Text_Editor::kf_cut        },
@@ -253,13 +253,9 @@ int Fl_Text_Editor::kf_ignore(int, Fl_Text_Editor*) {
 /**  Does a backspace in the current buffer.*/
 int Fl_Text_Editor::kf_backspace(int, Fl_Text_Editor* e) {
   if (!e->buffer()->selected() && e->move_left()) {
-    int l = 1;
-    // FIXME: character is ucs-4
-    char c = e->buffer()->char_at(e->insert_position());
-    if (c & 0x80 && c & 0x40) {
-      l = fl_utf8len(c);
-    }
-    e->buffer()->select(e->insert_position(), e->insert_position()+l);
+    int p1 = e->insert_position();
+    int p2 = e->buffer()->next_char(p1);
+    e->buffer()->select(p1, p2);
   }
   kill_selection(e);
   e->show_insert_position();
@@ -449,13 +445,9 @@ int Fl_Text_Editor::kf_insert(int, Fl_Text_Editor* e) {
 /**  Does a delete of selected text or the current character in the current buffer.*/
 int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
   if (!e->buffer()->selected()) {
-    int l = 1;
-    // FIXME: character is ucs-4
-    char c = e->buffer()->char_at(e->insert_position());
-    if (c & 0x80 && c & 0x40) {
-      l = fl_utf8len(c);
-    }
-    e->buffer()->select(e->insert_position(), e->insert_position()+l);
+    int p1 = e->insert_position();
+    int p2 = e->buffer()->next_char(p1);
+    e->buffer()->select(p1, p2);
   }
 
   kill_selection(e);
@@ -519,7 +511,11 @@ int Fl_Text_Editor::handle_key() {
   // bytes to delete and a string to insert:
   int del = 0;
   if (Fl::compose(del)) {
-    if (del) buffer()->select(insert_position()-del, insert_position());
+    if (del) {
+      int dp = insert_position(), di = del;
+      while (di--) dp = buffer()->prev_char_clipped(dp);
+      buffer()->select(dp, insert_position());
+    }
     kill_selection(this);
     if (Fl::event_length()) {
       if (insert_mode()) insert(Fl::event_text());
