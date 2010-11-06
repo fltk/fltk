@@ -885,16 +885,16 @@ static void calc_e_text(CFStringRef s, char *buffer, size_t len, unsigned sym)
     FL_Menu, FL_Num_Lock, FL_Help 
   };
   int count = sizeof(notext)/sizeof(int);
-  
+   
   if (sym > FL_F && sym <= FL_F_Last) no_text_key = true;
   else for (i=0; i < count; i++) {
-    if(notext[i] == sym) {
+    if (notext[i] == sym) {
       no_text_key = true;
       break;
       }
   }
   
-  if ( no_text_key) {
+  if (no_text_key) {
     buffer[0] = 0;
   } else {
     CFStringGetCString(s, buffer, len, kCFStringEncodingUTF8);
@@ -915,10 +915,16 @@ OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, voi
   Fl_Window *window = [(FLWindow*)keywindow getFl_Window];
   fl_lock_function();
   UniChar ucs[20];
+  ByteCount actual_size;
+  int i;
   GetEventParameter( event, kEventParamTextInputSendText, typeUnicodeText, 
-                    NULL, 20, NULL, ucs );
-  char utf8buf[5];
-  int len = fl_utf8encode(ucs[0], utf8buf);
+                    NULL, 20, &actual_size, ucs );
+  char utf8buf[50], *p;
+  p = utf8buf;
+  for(i=0; i < actual_size/2; i++) {
+    p += fl_utf8encode(ucs[i], p);
+    }
+  int len = p - utf8buf;
   utf8buf[len]=0;
   
   Fl::e_length = len;
@@ -935,39 +941,76 @@ OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, voi
   return noErr;
 }
 
+OSStatus cocoaKeyboardHandler(NSEvent *theEvent);
+
+@interface FLTextView : NSTextView
+{
+  BOOL compose_key; // YES iff entering a character composition
+  BOOL needKBhandler_val;
+}
+- (BOOL)needKBhandler;
+- (void)needKBhandler:(BOOL)value;
+- (BOOL)compose;
+- (void)compose:(BOOL)value;
+- (void)insertText:(id)aString;
+- (void)doCommandBySelector:(SEL)aSelector;
+@end
+@implementation FLTextView
+- (BOOL)needKBhandler
+{
+  return needKBhandler_val;
+}
+- (void)needKBhandler:(BOOL)value
+{
+  needKBhandler_val = value;
+}
+- (BOOL)compose
+{
+  return compose_key;
+}
+- (void)compose:(BOOL)value
+{
+  compose_key = value;
+}
+- (void)insertText:(id)aString
+{
+  cocoaKeyboardHandler([NSApp currentEvent]);
+}
+- (void)doCommandBySelector:(SEL)aSelector
+{
+  cocoaKeyboardHandler([NSApp currentEvent]);
+}
+@end
 
 /*
  * handle cocoa keyboard events
+Events during a character composition sequence:
+ - keydown with deadkey -> [[theEvent characters] length] is 0
+ - keyup -> [theEvent characters] contains the deadkey: display it temporarily
+ - keydown with next key -> [theEvent characters] contains the composed character: 
+    replace the temporary character by this one
+ - keyup -> [theEvent characters] contains the standard character
  */
 OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
 {
   static char buffer[32];
-  int sendEvent = 0;
+  int sendEvent = 0, retval = 0;
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
   NSUInteger mods;
   
   fl_lock_function();
-    
   // get the modifiers
   mods = [theEvent modifierFlags];
   // get the key code
   UInt32 keyCode = 0, maskedKeyCode = 0;
   unsigned short sym = 0;
   keyCode = [theEvent keyCode];
-  NSString *s = [theEvent characters];
-  static BOOL compose = NO;
-  // send keydown events to an object of type NSText that handles character composition sequences
-  NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
-  if([theEvent type] == NSKeyDown) [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-    
+  NSString *s = [theEvent characters];  
+  FLTextView *edit = (FLTextView*)[[theEvent window]  fieldEditor:YES forObject:nil];
+  [edit needKBhandler:NO];
   if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
     s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
-  }
-  if ([s length] == 0) { // this is a dead key that must be combined with the next key to be pressed
-    compose=YES;
-    fl_unlock_function();
-    return noErr;
   }
   // extended keyboards can also send sequences on key-up to generate Kanji etc. codes.
   // Some observed prefixes are 0x81 to 0x83, followed by an 8 bit keycode.
@@ -977,10 +1020,9 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   switch([theEvent type]) {
     case NSKeyDown:
       sendEvent = FL_KEYBOARD;
-      if(compose) Fl::compose_state = 1;
       // fall through
-    case NSKeyUp: {
-      if(compose) sendEvent = FL_KEYBOARD;
+    case NSKeyUp:
+      if([edit compose]) sendEvent = FL_KEYBOARD; // when composing, the temporary character appears at KeyUp
       if ( !sendEvent ) {
         sendEvent = FL_KEYUP;
         Fl::e_state &= 0xbfffffff; // clear the deadkey flag
@@ -992,35 +1034,26 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
 	NSString *sim = [theEvent charactersIgnoringModifiers];
 	UniChar one;
 	CFStringGetCharacters((CFStringRef)sim, CFRangeMake(0, 1), &one);
-	sym = one;
 	// charactersIgnoringModifiers doesn't ignore shift, remove it when it's on
-	if(sym >= 'A' && sym <= 'Z') sym += 32;
+	if(one >= 'A' && one <= 'Z') one += 32;
+	if (one > 0 && one <= 0x7f && (sym<'0' || sym>'9') ) sym = one;
       }
-      
       Fl::e_keysym = Fl::e_original_keysym = sym;
       // Handle FL_KP_Enter on regular keyboards and on Powerbooks
       if ( maskedKeyCode==0x4c || maskedKeyCode==0x34) s = @"\r";    
       calc_e_text((CFStringRef)s, buffer, sizeof(buffer), sym);
       Fl::e_length = strlen(buffer);
       Fl::e_text = buffer;
+  }
+  if (sendEvent) {
+    retval = Fl::handle(sendEvent,window);
+    if([edit compose]) {
+      Fl::compose_state = 1;
+      [edit compose:NO];
     }
-      break;
-    default:
-      fl_unlock_function();
-      return eventNotHandledErr;
   }
-  while (window->parent()) window = window->window();
-  if (sendEvent && Fl::handle(sendEvent,window)) {
-    if ([theEvent type] == NSKeyDown) {
-      [edit setString:@""];
-      if (compose) compose = NO;
-      }
-    fl_unlock_function();  
-    return noErr; // return noErr if FLTK handled the event
-  } else {
-    fl_unlock_function();
-    return eventNotHandledErr;
-  }
+  fl_unlock_function();  
+  return retval ? (int)noErr : (int)eventNotHandledErr; // return noErr if FLTK handled the event
 }
 
 
@@ -1097,6 +1130,7 @@ extern "C" {
                                             UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
 }
 
+
 @interface FLDelegate : NSObject 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
 <NSWindowDelegate, NSApplicationDelegate>
@@ -1113,7 +1147,7 @@ extern "C" {
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
 - (void)applicationWillResignActive:(NSNotification *)notify;
-
+- (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
 @end
 @implementation FLDelegate
 - (void)windowDidMove:(NSNotification *)notif
@@ -1203,7 +1237,7 @@ extern "C" {
 }
 /**
  * Cocoa organizes the Z depth of windows on a global priority. FLTK however
- * expectes the window manager to organize Z level by application. The trickery
+ * expects the window manager to organize Z level by application. The trickery
  * below will change Z order during activation and deactivation.
  */
 - (void)applicationDidBecomeActive:(NSNotification *)notify
@@ -1277,6 +1311,16 @@ extern "C" {
       }
     }
   }
+}
+- (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client
+{
+  NSRect rect={{0,0},{20,20}};
+  static FLTextView *view = nil;
+  if (!view) {
+    view = [[FLTextView alloc] initWithFrame:rect];
+    [view compose:NO];
+    }
+  return view;
 }
 @end
 
@@ -1447,18 +1491,6 @@ void Fl::get_mouse(int &x, int &y)
 
 
 /*
- * convert Mac keystrokes to FLTK
- */
-/*
- * unsigned short mac2fltk(ulong macKey) 
- * {
- *   unsigned short cc = macKeyLookUp[(macKey>>8)&0x7f];
- *   if (cc) return cc;
- *   return macKey&0xff;
- * }
- */
-
-/*
  * Initialize the given port for redraw and call the window's flush() to actually draw the content
  */ 
 void Fl_X::flush()
@@ -1476,24 +1508,6 @@ static void handleUpdateEvent( Fl_Window *window )
   Fl_X *i = Fl_X::i( window );
   i->wait_for_expose = 0;
 
-  // FIXME: Matt: this is in the Carbon version. Does it need to be here?
-  /* 
-   * // I don't think so (MG). This function gets called only when a full
-   * // redraw is needed (creation, resize, deminiaturization)
-   * // and later in it we set damages to DAMAGE_ALL, so there is no
-   * // point in limiting redraw to i->region
-   * if ( i->xid && window->damage() ) {
-   *   NSView *view = [(NSWindow*)i->xid contentView];
-   *   if ( view && i->region ) {
-   *     int ix;
-   *     Fl_Region rgn = i->region;
-   *     for (ix=0; ix<rgn->count; ix++) {
-   *       NSRect rect = NSRectFromCGRect(rgn->rects[ix]);
-   *       [view setNeedsDisplayInRect:rect];
-   *     }
-   *   }
-   * }
-   */ 
   if ( i->region ) {
     XDestroyRegion(i->region);
     i->region = 0;
@@ -1512,6 +1526,7 @@ static void handleUpdateEvent( Fl_Window *window )
   i->flush();
   window->clear_damage();
 }     
+
 
 int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) {
   int W, H, xoff, yoff, dx, dy;
@@ -1709,7 +1724,13 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   cocoaMouseWheelHandler(theEvent);
 }
 - (void)keyDown:(NSEvent *)theEvent {
-  cocoaKeyboardHandler(theEvent);
+  FLTextView *edit = (FLTextView*)[[theEvent window]  fieldEditor:YES forObject:nil];
+  if ([[theEvent characters] length] == 0) [edit compose:YES];
+  if (Fl::compose_state)  [edit needKBhandler:YES];
+  else [edit needKBhandler:NO];
+  [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+  // in some cases (e.g., some Greek letters with tonos) interpretKeyEvents does not call insertText
+  if ([edit needKBhandler]) cocoaKeyboardHandler(theEvent);
 }
 - (void)keyUp:(NSEvent *)theEvent {
   cocoaKeyboardHandler(theEvent);
@@ -2825,7 +2846,7 @@ static void createAppleMenu(void)
   if (MACsystemVersion < 0x1060) {
     //	[NSApp setAppleMenu:appleMenu];
     //	to avoid compiler warning raised by use of undocumented setAppleMenu	:
-  [NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
+    [NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
   }
   [NSApp setServicesMenu:services];
   [NSApp setMainMenu:mainmenu];
