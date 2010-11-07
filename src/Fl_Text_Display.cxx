@@ -33,6 +33,7 @@
 // TODO: verify all "byte counts" vs. "character counts"
 // TODO: rendering of the Tab character
 // TODO: rendering of the "optional hyphen"
+// TODO: make line numbering work again
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -948,8 +949,6 @@ void Fl_Text_Display::display_insert() {
   hOffset = mHorizOffset;
   topLine = mTopLineNum;
   
-  //	FIXME: I don't understand this well enough to know if it is correct
-  //	       it is different than nedit 5.3
   if (insert_position() < mFirstChar) {
     topLine -= count_lines(insert_position(), mFirstChar, false);
   } else if (mLineStarts[mNVisibleLines-2] != -1) {
@@ -1296,8 +1295,8 @@ int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
 
 
 
-// FIXME: this does not take UCS-4 encoding into account
 static inline int fl_isseparator(unsigned int c) {
+  // FIXME: this does not take UCS-4 encoding into account
   return c != '$' && c != '_' && (isspace(c) || ispunct(c));
 }
 
@@ -1333,7 +1332,7 @@ void Fl_Text_Display::previous_word() {
   while (pos && fl_isseparator(buffer()->char_at(pos))) {
     pos = buffer()->prev_char(pos);
   }
-  // FIXME: character is ucs-4
+
   while (pos && !fl_isseparator(buffer()->char_at(pos))) {
     pos = buffer()->prev_char(pos);
   }
@@ -1663,7 +1662,7 @@ int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
  \retval FIND_INDEX x pixel position inside given block
  \todo we need to handle hidden hyphens and tabs here!
  \todo we handle all styles and selections 
- \todo we must provide code to get pixle positions of the middle of a character as well
+ \todo we must provide code to get pixel positions of the middle of a character as well
  */
 int Fl_Text_Display::handle_vline(
                                   int mode, 
@@ -2572,8 +2571,6 @@ void Fl_Text_Display::h_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
  */
 void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
 #if 0
-  // FIXME: don't want this yet, so will leave for another time
-  
   int y, line, visLine, nCols, lineStart;
   char lineNumString[12];
   int lineHeight = mMaxsize ? mMaxsize : textsize_;
@@ -2940,9 +2937,7 @@ void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
     } else
       lineStart = retPos;
     nLines++;
-    if (lineStart > pos + nDeleted &&
-        // FIXME: character is ucs-4
-        buf->char_at(lineStart-1) == '\n') {
+    if (lineStart > pos + nDeleted && buf->char_at(lineStart-1) == '\n') {
       break;
     }
     

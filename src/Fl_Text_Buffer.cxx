@@ -856,13 +856,11 @@ int Fl_Text_Buffer::word_end(int pos) const {
 
 
 /*
- Matt: I am not sure why we need this function. Does it still make sense in
- the world of proportional characters?
+ Count the number of characters between two positions.
  */
 int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
 					       int targetPos) const
 {
-  // FIXME: this is misleading and may be used to count bytes instead of characters!
   IS_UTF8_ALIGNED(address(lineStartPos))
   IS_UTF8_ALIGNED(address(targetPos))
   
@@ -878,16 +876,13 @@ int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
 
 
 /*
- Matt: I am not sure why we need this function. Does it still make sense in
- the world of proportional characters?
+ Skip ahead a number of characters from a given index.
+ This function breaks early if it encounters a newline character.
  */
-// All values are number of bytes. 
-// - unicode ok?
 int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
 {
-  // FIXME: this is misleading and may be used to count bytes instead of characters!
   IS_UTF8_ALIGNED(address(lineStartPos))
-  // FIXME: is this function still needed?
+
   int pos = lineStartPos;
   
   for (int charCount = 0; charCount < nChars && pos < mLength; charCount++) {
@@ -1060,35 +1055,58 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
   return 0;
 }
 
-
-/*
- Find a matching string in the buffer.
- NOT TESTED FOR UNICODE.
- */
 int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
-				    int *foundPos, int matchCase) const {
-  // FIXME: Unicode?
+				    int *foundPos, int matchCase) const 
+{
+  IS_UTF8_ALIGNED(address(startPos))
+  IS_UTF8_ALIGNED(searchString)
+  
   if (!searchString)
     return 0;
   int bp;
   const char *sp;
-  while (startPos > 0)
-  {
-    bp = startPos - 1;
-    sp = searchString + strlen(searchString) - 1;
-    do {
-      if (sp < searchString) {
-        *foundPos = bp + 1;
-        return 1;
+  if (matchCase) {
+    while (startPos >= 0) {
+      bp = startPos;
+      sp = searchString;
+      for (;;) {
+        char c = *sp;
+        // we reached the end of the "needle", so we found the string!
+        if (!c) {
+          *foundPos = startPos;
+          return 1;
+        }
+        int l = fl_utf8len(c);
+        if (memcmp(sp, address(bp), l))
+          break;
+        sp += l; bp += l;
       }
-      // FIXME: character is ucs-4
-    } while ((matchCase ? char_at(bp--) == (unsigned int)*sp-- :
-              toupper(char_at(bp--)) == toupper(*sp--))
-             && bp >= 0);
-    startPos--;
-  }
+      startPos = prev_char(startPos);
+    }
+  } else {
+    while (startPos >= 0) {
+      bp = startPos;
+      sp = searchString;
+      for (;;) {
+        // we reached the end of the "needle", so we found the string!
+        if (!*sp) {
+          *foundPos = startPos;
+          return 1;
+        }
+        int l;
+        unsigned int b = char_at(bp);
+        unsigned int s = fl_utf8decode(sp, 0, &l);
+        if (fl_tolower(b)!=fl_tolower(s))
+          break;
+        sp += l; 
+        bp = next_char(bp);
+      }
+      startPos = prev_char(startPos);
+    }
+  }  
   return 0;
 }
+
 
 
 /*
@@ -1422,7 +1440,6 @@ void Fl_Text_Buffer::update_selections(int pos, int nDeleted,
 // unicode safe, assuming the arguments are on character boundaries
 void Fl_Text_Selection::update(int pos, int nDeleted, int nInserted)
 {
-  // FIXME: check if this is safe when seletion crosses selction boundaries
   if (!mSelected || pos > mEnd)
     return;
   if (pos + nDeleted <= mStart) {

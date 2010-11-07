@@ -175,7 +175,6 @@ typedef void (*Fl_Text_Predelete_Cb)(int pos, int nDeleted, void* cbArg);
  The Fl_Text_Buffer class is used by the Fl_Text_Display
  and Fl_Text_Editor to manage complex text data and is based upon the
  excellent NEdit text editor engine - see http://www.nedit.org/.
- \todo unicode check
  */
 class FL_EXPORT Fl_Text_Buffer {
 public:
@@ -212,7 +211,6 @@ public:
   /**  
    Replaces the entire contents of the text buffer.
    \param text Text must be valid utf8.
-   \todo unicode check
    */
   void text(const char* text);
   
@@ -270,7 +268,6 @@ public:
   /**
    Appends the text string to the end of the buffer.  
    \param t utf-8 encoded and nul terminated text
-   \todo unicode check
    */
   void append(const char* t) { insert(length(), t); }
   
@@ -295,14 +292,12 @@ public:
    \param fromStart byte offset into buffer
    \param fromEnd byte offset into buffer
    \param toPos destination byte offset into buffer
-   \todo unicode check
    */
   void copy(Fl_Text_Buffer* fromBuf, int fromStart, int fromEnd, int toPos);
   
   /**
    Undo text modification according to the undo variables or insert text 
    from the undo buffer
-   \todo unicode check
    */
   int undo(int *cp=0);
   
@@ -316,7 +311,6 @@ public:
    non-zero on error (strerror() contains reason).  1 indicates open 
    for read failed (no data loaded). 2 indicates error occurred 
    while reading data (data was partially loaded).
-   \todo unicode check
    */
   int insertfile(const char *file, int pos, int buflen = 128*1024);
   
@@ -325,14 +319,12 @@ public:
    success, non-zero on error (strerror() contains reason).  1 indicates 
    open for read failed (no data loaded). 2 indicates error occurred 
    while reading data (data was partially loaded).
-   \todo unicode check
    */
   int appendfile(const char *file, int buflen = 128*1024)
   { return insertfile(file, length(), buflen); }
   
   /** 
    Loads a text file into the buffer 
-   \todo unicode check
    */
   int loadfile(const char *file, int buflen = 128*1024)
   { select(0, length()); remove_selection(); return appendfile(file, buflen); }
@@ -342,33 +334,28 @@ public:
    on error (strerror() contains reason).  1 indicates open for write failed 
    (no data saved). 2 indicates error occurred while writing data 
    (data was partially saved).
-   \todo unicode check
    */
   int outputfile(const char *file, int start, int end, int buflen = 128*1024);
   
   /** 
    Saves a text file from the current buffer 
-   \todo unicode check
    */
   int savefile(const char *file, int buflen = 128*1024)
   { return outputfile(file, 0, length(), buflen); }
   
   /**
    Gets the tab width.  
-   \todo unicode check
    */
   int tab_distance() const { return mTabDist; }
   
   /**
    Set the hardware tab distance (width) used by all displays for this buffer,
    and used in computing offsets for rectangular selection operations.
-   \todo unicode check
    */
   void tab_distance(int tabDist);
   
   /**  
    Selects a range of characters in the buffer.
-   \todo unicode check
    */
   void select(int start, int end);
   
@@ -379,38 +366,32 @@ public:
   
   /** 
    Cancels any previous selection on the primary text selection object 
-   \todo unicode check
    */
   void unselect();
   
   /** 
    Gets the selection position 
-   \todo unicode check
    */
   int selection_position(int* start, int* end);
   
   /** 
    Returns the currently selected text. When you are done with
    the text, free it using the free() function.
-   \todo unicode check
    */
   char* selection_text();
 
   /**  
    Removes the text in the primary selection.
-   \todo unicode check
    */
   void remove_selection();
   
   /**
    Replaces the text in the primary selection.
-   \todo unicode check
    */
   void replace_selection(const char* text);
   
   /**
    Selects a range of characters in the secondary selection.
-   \todo unicode check
    */
   void secondary_select(int start, int end);
   
@@ -422,39 +403,33 @@ public:
   
   /** 
    Clears any selection in the secondary text selection object. 
-   \todo unicode check
    */
   void secondary_unselect();
   
   /** 
    Returns the current selection in the secondary text selection object.
-   \todo unicode check
    */
   int secondary_selection_position(int* start, int* end);
   
   /** 
    Returns the text in the secondary selection. When you are
    done with the text, free it using the free() function.
-   \todo unicode check
    */
   char* secondary_selection_text();
   
   /**  
    Removes the text from the buffer corresponding to the secondary text selection object.
-   \todo unicode check
    */
   void remove_secondary_selection();
   
   /**  
    Replaces the text from the buffer corresponding to the secondary 
    text selection object with the new string \p text.
-   \todo unicode check
    */
   void replace_secondary_selection(const char* text);
   
   /**  
    Highlights the specified text within the buffer.
-   \todo unicode check
    */
   void highlight(int start, int end);
   
@@ -466,20 +441,17 @@ public:
   
   /**
    Unhighlights text in the buffer.
-   \todo unicode check
    */
   void unhighlight();
 
   /** 
    Highlights the specified text between \p start and \p end within the buffer.
-   \todo unicode check
    */
   int highlight_position(int* start, int* end);
   
   /** 
    Returns the highlighted text. When you are done with the
    text, free it using the free() function.
-   \todo unicode check
    */
   char* highlight_text();
   
@@ -492,13 +464,11 @@ public:
       int nRestyled, const char* deletedText,
       void* cbArg);
    \endcode
-   \todo unicode check
    */
   void add_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
   
   /**
    Removes a modify callback.
-   \todo unicode check
    */
   void remove_modify_callback(Fl_Text_Modify_Cb bufModifiedCB, void* cbArg);
   
@@ -506,27 +476,23 @@ public:
    Calls all modify callbacks that have been registered using
    the add_modify_callback()
    method.
-   \todo unicode check
    */
   void call_modify_callbacks() { call_modify_callbacks(0, 0, 0, 0, 0); }
   
   /** 
    Adds a callback routine to be called before text is deleted from the buffer. 
-   \todo unicode check
    */
   void add_predelete_callback(Fl_Text_Predelete_Cb bufPredelCB, void* cbArg);
 
   /** 
    Removes a callback routine \p bufPreDeleteCB associated with argument \p cbArg 
    to be called before text is deleted from the buffer. 
-   \todo unicode check
    */
   void remove_predelete_callback(Fl_Text_Predelete_Cb predelCB, void* cbArg);
   
   /**
    Calls the stored pre-delete callback procedure(s) for this buffer to update 
    the changed area(s) on the screen and any other listeners.
-   \todo unicode check
    */
   void call_predelete_callbacks() { call_predelete_callbacks(0, 0); }
   
@@ -536,7 +502,6 @@ public:
    using the free() function.
    \param pos byte index into buffer
    \return copy of utf8 text, must be free'd
-   \todo unicode check
    */
   char* line_text(int pos) const;
   
@@ -544,7 +509,6 @@ public:
    Returns the position of the start of the line containing position \p pos. 
    \param pos byte index into buffer
    \return byte offset to line start
-   \todo unicode check
    */
   int line_start(int pos) const;
   
@@ -554,7 +518,6 @@ public:
    or a pointer to one character beyond the end of the buffer)
    \param pos byte index into buffer
    \return byte offset to line end
-   \todo unicode check
    */
   int line_end(int pos) const;
 
@@ -562,7 +525,6 @@ public:
    Returns the position corresponding to the start of the word 
    \param pos byte index into buffer
    \return byte offset to word start
-   \todo unicode check
    */
   int word_start(int pos) const;
 
@@ -570,7 +532,6 @@ public:
    Returns the position corresponding to the end of the word.
    \param pos byte index into buffer
    \return byte offset to word end
-   \todo unicode check
    */
   int word_end(int pos) const;
   
@@ -579,7 +540,6 @@ public:
    \p lineStartPos and \p targetPos. (displayed characters are the characters
    shown on the screen to represent characters in the buffer, where tabs and
    control characters are expanded)
-   \todo unicode check
    */
   int count_displayed_characters(int lineStartPos, int targetPos) const;
 
@@ -590,21 +550,18 @@ public:
    \param lineStartPos byte offset into buffer
    \param nChars number of bytes that are sent to the display
    \return byte offset in input after all output bytes are sent
-   \todo unicode check
    */
   int skip_displayed_characters(int lineStartPos, int nChars);
   
   /**
    Counts the number of newlines between \p startPos and \p endPos in buffer.
    The character at position \p endPos is not counted.
-   \todo unicode check
    */
   int count_lines(int startPos, int endPos) const;
 
   /**
    Finds the first character of the line \p nLines forward from \p startPos
    in the buffer and returns its position
-   \todo unicode check
    */
   int skip_lines(int startPos, int nLines);
   
@@ -612,7 +569,6 @@ public:
    Finds and returns the position of the first character of the line \p nLines backwards
    from \p startPos (not counting the character pointed to by \p startpos if
    that is a newline) in the buffer.  \p nLines == 0 means find the beginning of the line
-   \todo unicode check
    */
   int rewind_lines(int startPos, int nLines);
 
@@ -628,7 +584,6 @@ public:
    \param searchChar UCS-4 character that we want to find
    \param foundPos byte offset where the character was found
    \return 1 if found, 0 if not
-   \todo unicode check
    */
   int findchar_forward(int startPos, unsigned searchChar, int* foundPos) const;
   
@@ -643,7 +598,6 @@ public:
    \param searchChar UCS-4 character that we want to find
    \param foundPos byte offset where the character was found
    \return 1 if found, 0 if not
-   \todo unicode check
    */
   int findchar_backward(int startPos, unsigned searchChar, int* foundPos) const;
   
@@ -656,7 +610,6 @@ public:
    \param foundPos byte offset where the string was found
    \param matchCase if set, match character case
    \return 1 if found, 0 if not
-   \todo unicode check
    */
   int search_forward(int startPos, const char* searchString, int* foundPos,
                      int matchCase = 0) const;
@@ -670,7 +623,6 @@ public:
    \param foundPos byte offset where the string was found
    \param matchCase if set, match character case
    \return 1 if found, 0 if not
-   \todo unicode check
    */
   int search_backward(int startPos, const char* searchString, int* foundPos,
                       int matchCase = 0) const;
@@ -733,7 +685,6 @@ protected:
   /**
    Calls the stored modify callback procedure(s) for this buffer to update the
    changed area(s) on the screen and any other listeners.
-   \todo unicode check
    */
   void call_modify_callbacks(int pos, int nDeleted, int nInserted,
                              int nRestyled, const char* deletedText) const;
@@ -741,7 +692,6 @@ protected:
   /**
    Calls the stored pre-delete callback procedure(s) for this buffer to update 
    the changed area(s) on the screen and any other listeners.
-   \todo unicode check
    */
   void call_predelete_callbacks(int pos, int nDeleted) const;
   
@@ -752,7 +702,6 @@ protected:
    on to call redisplay). \p pos must be contiguous with the existing text in
    the buffer (i.e. not past the end).
    \return the number of bytes inserted
-   \todo unicode check
    */
   int insert_(int pos, const char* text);
   
@@ -760,27 +709,24 @@ protected:
    Internal (non-redisplaying) version of BufRemove.  Removes the contents
    of the buffer between start and end (and moves the gap to the site of
    the delete).
-   \todo unicode check
    */
   void remove_(int start, int end);
   
   /**
    Calls the stored redisplay procedure(s) for this buffer to update the
    screen for a change in a selection.
-   \todo unicode check
    */
   void redisplay_selection(Fl_Text_Selection* oldSelection,
                            Fl_Text_Selection* newSelection) const;
   
   /**
-   \todo unicode check
+   Move the gap to start at a new position.
    */
   void move_gap(int pos);
   
   /**
    Reallocates the text storage in the buffer to have a gap starting at \p newGapStart
    and a gap size of \p newGapLen, preserving the buffer's current contents.
-   \todo unicode check
    */
   void reallocate_with_gap(int newGapStart, int newGapLen);
   
@@ -788,19 +734,16 @@ protected:
   
   /**  
    Removes the text from the buffer corresponding to \p sel.
-   \todo unicode check
    */
   void remove_selection_(Fl_Text_Selection* sel);
   
   /** 
    Replaces the \p text in selection \p sel.
-   \todo unicode check
    */
   void replace_selection_(Fl_Text_Selection* sel, const char* text);
   
   /**
    Updates all of the selections in the buffer for changes in the buffer's text
-   \todo unicode check
    */
   void update_selections(int pos, int nDeleted, int nInserted);
   

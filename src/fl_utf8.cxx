@@ -378,11 +378,11 @@ int fl_latin12utf(const unsigned char *str, int len, char *buf)
   */
 unsigned int fl_nonspacing(unsigned int ucs)
 {
-#ifdef __APPLE__
-  return (ucs==0x20); // FIXME: what does this really do?
-#else
+//#ifdef __APPLE__
+//  return (ucs==0x20); // FIXME: what does this really do?
+//#else
   return (unsigned int) XUtf8IsNonSpacing(ucs);
-#endif
+//#endif
 }
 
 #if defined(WIN32) && !defined(__CYGWIN__)
