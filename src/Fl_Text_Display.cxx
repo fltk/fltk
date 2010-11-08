@@ -483,8 +483,8 @@ void Fl_Text_Display::draw_text( int left, int top, int width, int height ) {
  \param endpos index after last character needing redraw
  */
 void Fl_Text_Display::redisplay_range(int startpos, int endpos) {
-  IS_UTF8_ALIGNED(buffer()->address(startpos))
-  IS_UTF8_ALIGNED(buffer()->address(endpos))
+  IS_UTF8_ALIGNED2(buffer(), startpos)
+  IS_UTF8_ALIGNED2(buffer(), endpos)
   
   if (damage_range1_start == -1 && damage_range1_end == -1) {
     damage_range1_start = startpos;
@@ -584,7 +584,7 @@ void Fl_Text_Display::draw_range(int startpos, int endpos) {
  \param newPos new caret position
  */
 void Fl_Text_Display::insert_position( int newPos ) {
-  IS_UTF8_ALIGNED(buffer()->address(newPos))
+  IS_UTF8_ALIGNED2(buffer(), newPos)
   
   /* make sure new position is ok, do nothing if it hasn't changed */
   if ( newPos == mCursorPos ) return;
@@ -696,7 +696,7 @@ void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
  \param text new text in UTF-8 encoding.
  */
 void Fl_Text_Display::insert(const char* text) {
-  IS_UTF8_ALIGNED(buffer()->address(mCursorPos))
+  IS_UTF8_ALIGNED2(buffer(), mCursorPos)
   IS_UTF8_ALIGNED(text)
   
   int pos = mCursorPos;
@@ -715,7 +715,7 @@ void Fl_Text_Display::insert(const char* text) {
  \todo Unicode? Find out exactly what we do here and simplify.
  */
 void Fl_Text_Display::overstrike(const char* text) {
-  IS_UTF8_ALIGNED(buffer()->address(mCursorPos))
+  IS_UTF8_ALIGNED2(buffer(), mCursorPos)
   IS_UTF8_ALIGNED(text)
   
   int startPos = mCursorPos;
@@ -784,7 +784,7 @@ void Fl_Text_Display::overstrike(const char* text) {
  \return 0 if charater vertically out of view, X position otherwise
  */
 int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
 
   int lineStartPos, fontHeight, lineLen;
   int visLineNum;
@@ -838,7 +838,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
     Please check teh functions that call this particular function.
  */
 int Fl_Text_Display::position_to_linecol( int pos, int* lineNum, int* column ) const {
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
   
   int retVal;
   
@@ -870,7 +870,7 @@ int Fl_Text_Display::position_to_linecol( int pos, int* lineNum, int* column ) c
  */
 int Fl_Text_Display::in_selection( int X, int Y ) const {
   int pos = xy_to_position( X, Y, CHARACTER_POS );
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
   Fl_Text_Buffer *buf = mBuffer;
   return buf->primary_selection()->includes(pos);
 }
@@ -1122,8 +1122,8 @@ int Fl_Text_Display::move_down() {
  */
 int Fl_Text_Display::count_lines(int startPos, int endPos,
                                  bool startPosIsLineStart) const {
-  IS_UTF8_ALIGNED(buffer()->address(startPos))
-  IS_UTF8_ALIGNED(buffer()->address(endPos))
+  IS_UTF8_ALIGNED2(buffer(), startPos)
+  IS_UTF8_ALIGNED2(buffer(), endPos)
   
   int retLines, retPos, retLineStart, retLineEnd;
   
@@ -1165,7 +1165,7 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
  */
 int Fl_Text_Display::skip_lines(int startPos, int nLines,
                                 bool startPosIsLineStart) {
-  IS_UTF8_ALIGNED(buffer()->address(startPos))
+  IS_UTF8_ALIGNED2(buffer(), startPos)
 
   int retLines, retPos, retLineStart, retLineEnd;
   
@@ -1181,7 +1181,7 @@ int Fl_Text_Display::skip_lines(int startPos, int nLines,
   wrapped_line_counter(buffer(), startPos, buffer()->length(),
                        nLines, startPosIsLineStart, 0, 
                        &retPos, &retLines, &retLineStart, &retLineEnd);
-  IS_UTF8_ALIGNED(buffer()->address(retPos))
+  IS_UTF8_ALIGNED2(buffer(), retPos)
   return retPos;
 }
 
@@ -1210,7 +1210,7 @@ int Fl_Text_Display::skip_lines(int startPos, int nLines,
  \retun new position as index
  */
 int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
 
   int retLines, retPos, retLineStart, retLineEnd;
   
@@ -1225,7 +1225,7 @@ int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
                        startPosIsLineStart, 0, &retPos, &retLines, &retLineStart,
                        &retLineEnd);
   
-  IS_UTF8_ALIGNED(buffer()->address(retLineEnd))
+  IS_UTF8_ALIGNED2(buffer(), retLineEnd)
   return retLineEnd;
 }
 
@@ -1241,7 +1241,7 @@ int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
  \return new position as index
  */
 int Fl_Text_Display::line_start(int pos) const {
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
 
   int retLines, retPos, retLineStart, retLineEnd;
   
@@ -1252,7 +1252,7 @@ int Fl_Text_Display::line_start(int pos) const {
   wrapped_line_counter(buffer(), buffer()->line_start(pos), pos, INT_MAX, true, 0,
                        &retPos, &retLines, &retLineStart, &retLineEnd);
 
-  IS_UTF8_ALIGNED(buffer()->address(retLineStart))
+  IS_UTF8_ALIGNED2(buffer(), retLineStart)
   return retLineStart;
 }
 
@@ -1269,7 +1269,7 @@ int Fl_Text_Display::line_start(int pos) const {
  \return new position as index
  */
 int Fl_Text_Display::rewind_lines(int startPos, int nLines) {
-  IS_UTF8_ALIGNED(buffer()->address(startPos))
+  IS_UTF8_ALIGNED2(buffer(), startPos)
 
   Fl_Text_Buffer *buf = buffer();
   int pos, lineStart, retLines, retPos, retLineStart, retLineEnd;
@@ -1367,7 +1367,7 @@ void Fl_Text_Display::buffer_predelete_cb(int pos, int nDeleted, void *cbArg) {
    kind of calculations in advance, even if the font width is "fixed",
    because when the width of the tab characters changes, the layout 
    of the text may be completely different. */
-    IS_UTF8_ALIGNED(textD->buffer()->address(pos))
+    IS_UTF8_ALIGNED2(textD->buffer(), pos)
     textD->measure_deleted_lines(pos, nDeleted);
   } else {
     textD->mSuppressResync = 0; /* Probably not needed, but just in case */
@@ -1397,9 +1397,9 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
   int scrolled, origCursorPos = textD->mCursorPos;
   int wrapModStart, wrapModEnd;
 
-  IS_UTF8_ALIGNED(buf->address(pos))  
-  IS_UTF8_ALIGNED(buf->address(oldFirstChar))  
-  IS_UTF8_ALIGNED(buf->address(origCursorPos))  
+  IS_UTF8_ALIGNED2(buf, pos)
+  IS_UTF8_ALIGNED2(buf, oldFirstChar)
+  IS_UTF8_ALIGNED2(buf, origCursorPos)
   
   /* buffer modification cancels vertical cursor motion column */
   if ( nInserted != 0 || nDeleted != 0 )
@@ -1473,11 +1473,11 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
    old cursor gets erased, and erase the bits of the cursor which extend
    beyond the left and right edges of the text. */
   startDispPos = textD->mContinuousWrap ? wrapModStart : pos;
-  IS_UTF8_ALIGNED(buf->address(startDispPos))  
+  IS_UTF8_ALIGNED2(buf, startDispPos)
   
   if ( origCursorPos == startDispPos && textD->mCursorPos != startDispPos )
     startDispPos = min( startDispPos, buf->prev_char_clipped(origCursorPos) );
-  IS_UTF8_ALIGNED(buf->address(startDispPos))  
+  IS_UTF8_ALIGNED2(buf, startDispPos)
   
   if ( linesInserted == linesDeleted ) {
     if ( nInserted == 0 && nDeleted == 0 )
@@ -1503,8 +1503,8 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
      results in at least two lines being redrawn). */
     textD->draw_line_numbers(false);
   }
-  IS_UTF8_ALIGNED(buf->address(startDispPos))  
-  IS_UTF8_ALIGNED(buf->address(endDispPos))  
+  IS_UTF8_ALIGNED2(buf, startDispPos)
+  IS_UTF8_ALIGNED2(buf, endDispPos)
   
   /* If there is a style buffer, check if the modification caused additional
    changes that need to be redisplayed.  (Redisplaying separately would
@@ -1512,8 +1512,8 @@ void Fl_Text_Display::buffer_modified_cb( int pos, int nInserted, int nDeleted,
    text).  Extend the redraw range to incorporate style changes */
   if ( textD->mStyleBuffer )
     textD->extend_range_for_styles( &startDispPos, &endDispPos );
-  IS_UTF8_ALIGNED(buf->address(startDispPos))  
-  IS_UTF8_ALIGNED(buf->address(endDispPos))  
+  IS_UTF8_ALIGNED2(buf, startDispPos)
+  IS_UTF8_ALIGNED2(buf, endDispPos)
   
   /* Redisplay computed range */
   textD->redisplay_range( startDispPos, endDispPos );
@@ -1611,7 +1611,7 @@ void Fl_Text_Display::reset_absolute_top_line_number() {
  \todo What does this do?
  */
 int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
 
   int i;
   
@@ -1670,7 +1670,7 @@ int Fl_Text_Display::handle_vline(
                                   int Y, int bottomClip,
                                   int leftClip, int rightClip) const
 {
-  IS_UTF8_ALIGNED(buffer()->address(lineStartPos))
+  IS_UTF8_ALIGNED2(buffer(), lineStartPos)
 
   // FIXME: we need to allow two modes for FIND_INDEX: one on the edge of the 
   // FIXME: character for selection, and one on the character center for cursors.
@@ -1697,7 +1697,7 @@ int Fl_Text_Display::handle_vline(
       draw_string( style|BG_ONLY_MASK, text_area.x, Y, text_area.x+text_area.w, lineStr, lineLen );
     }
     if (mode==FIND_INDEX) {
-      IS_UTF8_ALIGNED(buffer()->address(lineStartPos))
+      IS_UTF8_ALIGNED2(buffer(), lineStartPos)
       return lineStartPos;
     }
     return 0;
@@ -1719,7 +1719,7 @@ int Fl_Text_Display::handle_vline(
         // find x pos inside block
         int di = find_x(lineStr+startIndex, i-startIndex, style, rightClip-startX);
         free(lineStr);
-        IS_UTF8_ALIGNED(buffer()->address(lineStartPos+startIndex+di))
+        IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
         return lineStartPos + startIndex + di;
       }
       style = charStyle;
@@ -1739,7 +1739,7 @@ int Fl_Text_Display::handle_vline(
     // find x pos inside block
     int di = find_x(lineStr+startIndex, i-startIndex, style, rightClip-startX);
     free(lineStr);
-    IS_UTF8_ALIGNED(buffer()->address(lineStartPos+startIndex+di))
+    IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
     return lineStartPos + startIndex + di;
   }
   if (mode==GET_WIDTH) {
@@ -1754,7 +1754,7 @@ int Fl_Text_Display::handle_vline(
     draw_string( style|BG_ONLY_MASK, startX, Y, text_area.x+text_area.w, lineStr, lineLen );
   
   free(lineStr);
-  IS_UTF8_ALIGNED(buffer()->address(lineStartPos+lineLen))
+  IS_UTF8_ALIGNED2(buffer(), (lineStartPos+lineLen))
   return lineStartPos + lineLen;
 }
 
@@ -2064,7 +2064,7 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
  */
 int Fl_Text_Display::position_style( int lineStartPos, int lineLen, int lineIndex) const 
 {
-  IS_UTF8_ALIGNED(buffer()->address(lineStartPos))
+  IS_UTF8_ALIGNED2(buffer(), lineStartPos)
 
   Fl_Text_Buffer * buf = mBuffer;
   Fl_Text_Buffer *styleBuf = mStyleBuffer;
@@ -2284,7 +2284,7 @@ void Fl_Text_Display::offset_line_starts( int newTopLineNum ) {
 void Fl_Text_Display::update_line_starts(int pos, int charsInserted,
                                          int charsDeleted, int linesInserted, 
                                          int linesDeleted, int *scrolled ) {
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
 
   int *lineStarts = mLineStarts;
   int i, lineOfPos, lineOfEnd, nVisLines = mNVisibleLines;
@@ -2730,7 +2730,7 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
                                       int *modRangeStart, int *modRangeEnd,
                                       int *linesInserted, int *linesDeleted) {
   IS_UTF8_ALIGNED(deletedText)
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
 
   int length, retPos, retLines, retLineStart, retLineEnd;
   Fl_Text_Buffer *deletedTextBuf, *buf = buffer();
@@ -2760,7 +2760,7 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
     countFrom = buf->line_start(pos);
   }
   
-  IS_UTF8_ALIGNED(buffer()->address(countFrom))
+  IS_UTF8_ALIGNED2(buffer(), countFrom)
   
   /*
    ** Move forward through the (new) text one line at a time, counting
@@ -2894,7 +2894,7 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
  \param nDeleted
  */
 void Fl_Text_Display::measure_deleted_lines(int pos, int nDeleted) {
-  IS_UTF8_ALIGNED(buffer()->address(pos))
+  IS_UTF8_ALIGNED2(buffer(), pos)
 
   int retPos, retLines, retLineStart, retLineEnd;
   Fl_Text_Buffer *buf = buffer();
@@ -2989,8 +2989,8 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
                                            int maxPos, int maxLines, bool startPosIsLineStart, int styleBufOffset,
                                            int *retPos, int *retLines, int *retLineStart, int *retLineEnd,
                                            bool countLastLineMissingNewLine) const {
-  IS_UTF8_ALIGNED(buf->address(startPos))
-  if (maxPos<buf->length()) IS_UTF8_ALIGNED(buf->address(maxPos))
+  IS_UTF8_ALIGNED2(buf, startPos)
+  IS_UTF8_ALIGNED2(buf, maxPos)
 
   int lineStart, newLineStart = 0, b, p, colNum, wrapMargin;
   int maxWidth, i, foundBreak, width;
@@ -3175,7 +3175,7 @@ int Fl_Text_Display::measure_proportional_character(const char *s, int colNum, i
  */
 void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
                                     int *lineEnd, int *nextLineStart) const {
-  IS_UTF8_ALIGNED(buffer()->address(startPos))
+  IS_UTF8_ALIGNED2(buffer(), startPos)
 
   int retLines, retLineStart;
   
@@ -3218,7 +3218,7 @@ void Fl_Text_Display::find_line_end(int startPos, bool startPosIsLineStart,
  \return 1 if a \\n character causes the line wrap
  */ 
 int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
-  IS_UTF8_ALIGNED(buffer()->address(lineEndPos))
+  IS_UTF8_ALIGNED2(buffer(), lineEndPos)
 
   unsigned int c;
   
@@ -3245,8 +3245,8 @@ int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
  \todo Unicode?
  */
 void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) {
-  IS_UTF8_ALIGNED(buffer()->address(*startpos))  
-  IS_UTF8_ALIGNED(buffer()->address(*endpos))  
+  IS_UTF8_ALIGNED2(buffer(), (*startpos))  
+  IS_UTF8_ALIGNED2(buffer(), (*endpos))  
   
   Fl_Text_Selection * sel = mStyleBuffer->primary_selection();
   int extended = 0;
@@ -3266,13 +3266,13 @@ void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) {
       *startpos = sel->start();
       // FIXME: somewhere while deleting, alignment is lost!
       *startpos = buffer()->utf8_align(*startpos);
-      IS_UTF8_ALIGNED(buffer()->address(*startpos))  
+      IS_UTF8_ALIGNED2(buffer(), (*startpos))  
       extended = 1;
     }
     if ( sel->end() > *endpos ) {
       *endpos = sel->end();
       *endpos = buffer()->utf8_align(*endpos);
-      IS_UTF8_ALIGNED(buffer()->address(*endpos))  
+      IS_UTF8_ALIGNED2(buffer(), (*endpos))  
       extended = 1;
     }
   }
@@ -3283,7 +3283,7 @@ void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) {
   if ( extended )
     *endpos = mBuffer->line_end( *endpos ) + 1;
   
-  IS_UTF8_ALIGNED(buffer()->address(*endpos))
+  IS_UTF8_ALIGNED2(buffer(), (*endpos))
 }
 
 

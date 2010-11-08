@@ -196,8 +196,8 @@ void Fl_Text_Buffer::text(const char *t)
  Creates a range of text to a new buffer and copies verbose from around the gap.
  */
 char *Fl_Text_Buffer::text_range(int start, int end) const {
-  IS_UTF8_ALIGNED(address(start))
-  IS_UTF8_ALIGNED(address(start))
+  IS_UTF8_ALIGNED2(this, (start))
+  IS_UTF8_ALIGNED2(this, (start))
   
   char *s = NULL;
   
@@ -241,7 +241,7 @@ unsigned int Fl_Text_Buffer::char_at(int pos) const {
   if (pos < 0 || pos >= mLength)
     return '\0';
   
-  IS_UTF8_ALIGNED(address(pos))
+  IS_UTF8_ALIGNED2(this, (pos))
   
   const char *src = address(pos);
   return fl_utf8decode(src, 0, 0);
@@ -266,7 +266,7 @@ char Fl_Text_Buffer::byte_at(int pos) const {
 */
 void Fl_Text_Buffer::insert(int pos, const char *text)
 {
-  IS_UTF8_ALIGNED(address(pos))
+  IS_UTF8_ALIGNED2(this, (pos))
   IS_UTF8_ALIGNED(text)
   
   /* check if there is actually any text */
@@ -285,7 +285,7 @@ void Fl_Text_Buffer::insert(int pos, const char *text)
   /* insert and redisplay */
   int nInserted = insert_(pos, text);
   mCursorPosHint = pos + nInserted;
-  IS_UTF8_ALIGNED(address(mCursorPosHint))
+  IS_UTF8_ALIGNED2(this, (mCursorPosHint))
   call_modify_callbacks(pos, 0, nInserted, 0, NULL);
 }
 
@@ -304,8 +304,8 @@ void Fl_Text_Buffer::replace(int start, int end, const char *text)
   if (end > mLength)
     end = mLength;
 
-  IS_UTF8_ALIGNED(address(start))
-  IS_UTF8_ALIGNED(address(end))
+  IS_UTF8_ALIGNED2(this, (start))
+  IS_UTF8_ALIGNED2(this, (end))
   IS_UTF8_ALIGNED(text)
   
   call_predelete_callbacks(start, end - start);
@@ -339,8 +339,8 @@ void Fl_Text_Buffer::remove(int start, int end)
   if (end < 0)
     end = 0;
 
-  IS_UTF8_ALIGNED(address(start))
-  IS_UTF8_ALIGNED(address(end))  
+  IS_UTF8_ALIGNED2(this, (start))
+  IS_UTF8_ALIGNED2(this, (end))  
   
   if (start == end)
     return;
@@ -362,9 +362,9 @@ void Fl_Text_Buffer::remove(int start, int end)
 void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
 			  int fromEnd, int toPos)
 {
-  IS_UTF8_ALIGNED(fromBuf->address(fromStart))
-  IS_UTF8_ALIGNED(fromBuf->address(fromEnd))
-  IS_UTF8_ALIGNED(address(toPos))
+  IS_UTF8_ALIGNED2(fromBuf, fromStart)
+  IS_UTF8_ALIGNED2(fromBuf, fromEnd)
+  IS_UTF8_ALIGNED2(this, (toPos))
   
   int copiedLength = fromEnd - fromStart;
   
@@ -482,8 +482,8 @@ void Fl_Text_Buffer::tab_distance(int tabDist)
  */
 void Fl_Text_Buffer::select(int start, int end)
 {
-  IS_UTF8_ALIGNED(address(start))
-  IS_UTF8_ALIGNED(address(end))  
+  IS_UTF8_ALIGNED2(this, (start))
+  IS_UTF8_ALIGNED2(this, (end))  
   
   Fl_Text_Selection oldSelection = mPrimary;
   
@@ -861,8 +861,8 @@ int Fl_Text_Buffer::word_end(int pos) const {
 int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
 					       int targetPos) const
 {
-  IS_UTF8_ALIGNED(address(lineStartPos))
-  IS_UTF8_ALIGNED(address(targetPos))
+  IS_UTF8_ALIGNED2(this, (lineStartPos))
+  IS_UTF8_ALIGNED2(this, (targetPos))
   
   int charCount = 0;
   
@@ -881,7 +881,7 @@ int Fl_Text_Buffer::count_displayed_characters(int lineStartPos,
  */
 int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
 {
-  IS_UTF8_ALIGNED(address(lineStartPos))
+  IS_UTF8_ALIGNED2(this, (lineStartPos))
 
   int pos = lineStartPos;
   
@@ -901,8 +901,8 @@ int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
  This function is optimized for speed by not using UTF-8 calls.
  */
 int Fl_Text_Buffer::count_lines(int startPos, int endPos) const {
-  IS_UTF8_ALIGNED(address(startPos))
-  IS_UTF8_ALIGNED(address(endPos))
+  IS_UTF8_ALIGNED2(this, (startPos))
+  IS_UTF8_ALIGNED2(this, (endPos))
   
   int gapLen = mGapEnd - mGapStart;
   int lineCount = 0;
@@ -932,7 +932,7 @@ int Fl_Text_Buffer::count_lines(int startPos, int endPos) const {
  */
 int Fl_Text_Buffer::skip_lines(int startPos, int nLines)
 {
-  IS_UTF8_ALIGNED(address(startPos))
+  IS_UTF8_ALIGNED2(this, (startPos))
   
   if (nLines == 0)
     return startPos;
@@ -944,7 +944,7 @@ int Fl_Text_Buffer::skip_lines(int startPos, int nLines)
     if (mBuf[pos++] == '\n') {
       lineCount++;
       if (lineCount == nLines) {
-        IS_UTF8_ALIGNED(address(pos))
+        IS_UTF8_ALIGNED2(this, (pos))
 	return pos;
       }
     }
@@ -953,12 +953,12 @@ int Fl_Text_Buffer::skip_lines(int startPos, int nLines)
     if (mBuf[pos++ + gapLen] == '\n') {
       lineCount++;
       if (lineCount >= nLines) {
-        IS_UTF8_ALIGNED(address(pos))
+        IS_UTF8_ALIGNED2(this, (pos))
 	return pos;
       }
     }
   }
-  IS_UTF8_ALIGNED(address(pos))
+  IS_UTF8_ALIGNED2(this, (pos))
   return pos;
 }
 
@@ -970,7 +970,7 @@ int Fl_Text_Buffer::skip_lines(int startPos, int nLines)
  */
 int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
 {
-  IS_UTF8_ALIGNED(address(startPos))
+  IS_UTF8_ALIGNED2(this, (startPos))
   
   int pos = startPos - 1;
   if (pos <= 0)
@@ -981,7 +981,7 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
   while (pos >= mGapStart) {
     if (mBuf[pos + gapLen] == '\n') {
       if (++lineCount >= nLines) {
-        IS_UTF8_ALIGNED(address(pos+1))
+        IS_UTF8_ALIGNED2(this, (pos+1))
 	return pos + 1;
       }
     }
@@ -990,7 +990,7 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
   while (pos >= 0) {
     if (mBuf[pos] == '\n') {
       if (++lineCount >= nLines) {
-        IS_UTF8_ALIGNED(address(pos+1))
+        IS_UTF8_ALIGNED2(this, (pos+1))
 	return pos + 1;
       }
     }
@@ -1006,7 +1006,7 @@ int Fl_Text_Buffer::rewind_lines(int startPos, int nLines)
 int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
 				   int *foundPos, int matchCase) const 
 {
-  IS_UTF8_ALIGNED(address(startPos))
+  IS_UTF8_ALIGNED2(this, (startPos))
   IS_UTF8_ALIGNED(searchString)
   
   if (!searchString)
@@ -1058,7 +1058,7 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
 int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
 				    int *foundPos, int matchCase) const 
 {
-  IS_UTF8_ALIGNED(address(startPos))
+  IS_UTF8_ALIGNED2(this, (startPos))
   IS_UTF8_ALIGNED(searchString)
   
   if (!searchString)
@@ -1568,7 +1568,7 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
   if (pos<=0)
     return 0;
 
-  IS_UTF8_ALIGNED(address(pos))  
+  IS_UTF8_ALIGNED2(this, (pos))  
 
   char c;
   do {
@@ -1578,7 +1578,7 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
     c = byte_at(pos);
   } while ( (c&0xc0) == 0x80);
   
-  IS_UTF8_ALIGNED(address(pos))  
+  IS_UTF8_ALIGNED2(this, (pos))  
   return pos;
 }
 
@@ -1600,12 +1600,12 @@ int Fl_Text_Buffer::prev_char(int pos) const
  */
 int Fl_Text_Buffer::next_char(int pos) const
 {
-  IS_UTF8_ALIGNED(address(pos))  
+  IS_UTF8_ALIGNED2(this, (pos))  
   int n = fl_utf8len(byte_at(pos));
   pos += n;
   if (pos>=mLength)
     return mLength;
-  IS_UTF8_ALIGNED(address(pos))  
+  IS_UTF8_ALIGNED2(this, (pos))  
   return pos;
 }
 
