@@ -803,7 +803,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   NSPoint pos = [theEvent locationInWindow];
   pos.y = window->h() - pos.y;
   NSInteger btn = [theEvent buttonNumber]  + 1;
-  int clickCount = [theEvent clickCount];
   NSUInteger mods = [theEvent modifierFlags];  
   int sendEvent = 0;
   
@@ -827,7 +826,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       sendEvent = FL_PUSH;
       Fl::e_is_click = 1; 
       px = (int)pos.x; py = (int)pos.y;
-      if (clickCount>1) 
+      if ([theEvent clickCount] > 1) 
         Fl::e_clicks++;
       else
         Fl::e_clicks = 0;
