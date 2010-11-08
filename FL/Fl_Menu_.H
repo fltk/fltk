@@ -116,7 +116,7 @@ public:
     the new value is different than the old one.
   */
   int value(int i) {return value(menu_+i);}
-  /** Returns the title of the last item chosen, or of item i.  */
+  /** Returns the title of the last item chosen.  */
   const char *text() const {return value_ ? value_->text : 0;}
   /** Returns the title of the last item chosen, or of item i.  */
   const char *text(int i) const {return menu_[i].text;}
