@@ -2681,7 +2681,7 @@ int Fl_Text_Display::empty_vlines() const {
  entries in the line starts array rather than by scanning for newlines.
  
  \param visLineNum index of line in visible line array
- \return number of byytes in this line
+ \return number of bytes in this line
  */
 int Fl_Text_Display::vline_length( int visLineNum ) const {
   int nextLineStart, lineStartPos;
@@ -2693,13 +2693,18 @@ int Fl_Text_Display::vline_length( int visLineNum ) const {
   
   if ( lineStartPos == -1 )
     return 0;
+  
   if ( visLineNum + 1 >= mNVisibleLines )
     return mLastChar - lineStartPos;
+  
   nextLineStart = mLineStarts[ visLineNum + 1 ];
   if ( nextLineStart == -1 )
     return mLastChar - lineStartPos;
-  if (wrap_uses_character(nextLineStart-1))
-    return nextLineStart-1 - lineStartPos;
+  
+  int nextLineStartMinus1 = buffer()->prev_char(nextLineStart);
+  if (wrap_uses_character(nextLineStartMinus1))
+    return nextLineStartMinus1 - lineStartPos;
+  
   return nextLineStart - lineStartPos;
 }
 
@@ -2760,7 +2765,7 @@ void Fl_Text_Display::find_wrap_range(const char *deletedText, int pos,
     countFrom = buf->line_start(pos);
   }
   
-  IS_UTF8_ALIGNED2(buffer(), countFrom)
+  IS_UTF8_ALIGNED2(buf, countFrom)
   
   /*
    ** Move forward through the (new) text one line at a time, counting
@@ -3027,7 +3032,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
    */
   colNum = 0;
   width = 0;
-  for (p=lineStart; p<buf->length(); p=buffer()->next_char(p)) {
+  for (p=lineStart; p<buf->length(); p=buf->next_char(p)) {
     c = buf->char_at(p);  // UCS-4
     
     /* If the character was a newline, count the line and start over,
@@ -3041,15 +3046,15 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
         return;
       }
       nLines++;
+      int p1 = buf->next_char(p);
       if (nLines >= maxLines) {
-        int p1 = buffer()->next_char(p);
         *retPos = p1;
         *retLines = nLines;
         *retLineStart = p1;
         *retLineEnd = p;
         return;
       }
-      lineStart = buffer()->next_char(p);
+      lineStart = p1;
       colNum = 0;
       width = 0;
     } else {
@@ -3066,28 +3071,28 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
      and wrap there */
     if (colNum > wrapMargin || width > maxWidth) {
       foundBreak = false;
-      for (b=p; b>=lineStart; b=buffer()->prev_char(b)) {
+      for (b=p; b>=lineStart; b=buf->prev_char(b)) {
         c = buf->char_at(b);
         if (c == '\t' || c == ' ') {
-          newLineStart = buffer()->next_char(b);
+          newLineStart = buf->next_char(b);
           if (countPixels) {
             colNum = 0;
             width = 0;
             // TODO: we should have a much more efficient function already available!
-            int iMax = buffer()->next_char(p);
-            for (i=buffer()->next_char(b); i<iMax; i = buffer()->next_char(i)) {
+            int iMax = buf->next_char(p);
+            for (i=buf->next_char(b); i<iMax; i = buf->next_char(i)) {
               width += measure_proportional_character(buf->address(i), colNum, 
                                                       i+styleBufOffset);
               colNum++;
             }
           } else
-            colNum = buf->count_displayed_characters(buffer()->next_char(b), buffer()->next_char(p));
+            colNum = buf->count_displayed_characters(buf->next_char(b), buf->next_char(p));
           foundBreak = true;
           break;
         }
       }
       if (!foundBreak) { /* no whitespace, just break at margin */
-        newLineStart = max(p, buffer()->next_char(lineStart));
+        newLineStart = max(p, buf->next_char(lineStart));
         const char *s = buf->address(b);
         colNum++;
         if (countPixels)
@@ -3102,7 +3107,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
       }
       nLines++;
       if (nLines >= maxLines) {
-        *retPos = foundBreak ? buffer()->next_char(b) : max(p, buffer()->next_char(lineStart));
+        *retPos = foundBreak ? buf->next_char(b) : max(p, buf->next_char(lineStart));
         *retLines = nLines;
         *retLineStart = lineStart;
         *retLineEnd = foundBreak ? b : p;
@@ -3116,7 +3121,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
   *retPos = buf->length();
   *retLines = nLines;
   if (countLastLineMissingNewLine && colNum > 0) 
-    *retLines = buffer()->next_char(*retLines);
+    *retLines = buf->next_char(*retLines);
   *retLineStart = lineStart;
   *retLineEnd = buf->length();
 }
