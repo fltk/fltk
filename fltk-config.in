@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # "$Id$"
-# 
+#
 # FLTK configuration utility.
 #
 # Copyright 2000-2009 by Bill Spitzak and others.
@@ -143,10 +143,10 @@ post=
 debug=
 
 # Parse command line options
-while test $# -gt 0 
+while test $# -gt 0
 do
     case "$1" in
-	-*=*) 
+	-*=*)
 	    optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'`
 	    ;;
 	*)
@@ -358,29 +358,31 @@ if test "$echo_ldstaticflags" = "yes"; then
 fi
 
 if test "$echo_libs" = "yes"; then
-    echo $libdir/libfltk.a
+    USELIBS="$libdir/libfltk.a"
 
     if test x$use_forms = xyes; then
-        echo $libdir/libfltk_forms.a
+        USELIBS="$libdir/libfltk_forms.a $USELIBS"
     fi
 
     if test x$use_gl = xyes; then
-        echo $libdir/libfltk_gl.a
+        USELIBS="$libdir/libfltk_gl.a $USELIBS"
     fi
 
     if test x$use_cairo = xyes; then
-        echo $libdir/libfltk_cairo.a
+        USELIBS="$libdir/libfltk_cairo.a $USELIBS"
     fi
 
     if test x$use_images = xyes; then
-        echo $libdir/libfltk_images.a
+        USELIBS="$libdir/libfltk_images.a $USELIBS"
 
         for lib in fltk_jpeg fltk_png fltk_z; do
             if test -f $libdir/lib$lib.a; then
-                echo $libdir/lib$lib.a
+                USELIBS="$libdir/lib$lib.a $USELIBS"
             fi
 	done
     fi
+
+    echo $USELIBS
 fi
 
 #
