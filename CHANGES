@@ -1,5 +1,9 @@
 CHANGES IN FLTK 1.3.0
 
+	- Fixed blinking of selection when the mouse was dragged 
+	  outside of the Fl_Text_* widget
+	- Added drag'n'drop support for Fl_Text_*
+	- Fixed Unicode support for Fl_Text_* widgets
 	- Added mouse!=0 check in Fl_Glut_Window::handle (STR #2381)
 	- Fixed menu and shortcut handling (STR #2243)
 	- Removed support for gcc 2.x (or older)

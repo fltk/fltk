@@ -785,9 +785,9 @@ Fl_Window* new_view() {
     Fl_Menu_Bar* m = new Fl_Menu_Bar(0, 0, 660, 30);
     m->copy(menuitems, w);
     w->editor = new Fl_Text_Editor(0, 30, 660, 370);
-    //w->editor->wrap_mode(1, 32);
     w->editor->textfont(FL_COURIER);
     w->editor->textsize(TS);
+    //w->editor->wrap_mode(Fl_Text_Editor::WRAP_AT_BOUNDS, 100);
     w->editor->buffer(textbuf);
     w->editor->highlight_data(stylebuf, styletable,
                               sizeof(styletable) / sizeof(styletable[0]),
@@ -843,9 +843,9 @@ int main(int argc, char **argv) {
                 "/* たれそ つねならむ うゐのおくやま */\n"
                 "けふこえて あさきゆめみし ゑひも\n"
                 "せす\n\n"
-                "Even colours and [sweet perfume] / Will eventually fade /\n"
-                "Even our world / Is not eternal /\n"
-                "The deep mountains of vanity / Cross them today /\n"
+                "Even colours and [sweet perfume] / Will eventually fade / "
+                "Even our world / Is not eternal / "
+                "The deep mountains of vanity / Cross them today / "
                 "And superficial dreams / Shall no longer delude you.\n"
                 "(from Iroha-uta)"
                 );

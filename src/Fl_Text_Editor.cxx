@@ -546,6 +546,8 @@ void Fl_Text_Editor::maybe_do_callback() {
 }
 
 int Fl_Text_Editor::handle(int event) {
+  static int dndCursorPos;
+  
   if (!buffer()) return 0;
 
   switch (event) {
@@ -590,7 +592,7 @@ int Fl_Text_Editor::handle(int event) {
       if (Fl::event_button() == 2) {
         // don't let the text_display see this event
         if (Fl_Group::handle(event)) return 1;
-        dragType = -1;
+        dragType = DRAG_NONE;
         Fl::paste(*this, 0);
         Fl::focus(this);
         set_changed();
@@ -607,6 +609,24 @@ int Fl_Text_Editor::handle(int event) {
         return 1;
       }
       break;
+      
+      // Handle drag'n'drop attempt by the user. This is a simplified 
+      // implementation which allows dnd operations onto the scroll bars.
+    case FL_DND_ENTER: // save the current cursor position
+      if (Fl::visible_focus() && handle(FL_FOCUS))
+        Fl::focus(this);
+      show_cursor(mCursorOn);
+      dndCursorPos = insert_position();
+      /* fall through */
+    case FL_DND_DRAG: // show a temporary insertion cursor
+      insert_position(xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS));
+      return 1;      
+    case FL_DND_LEAVE: // restore original cursor
+      insert_position(dndCursorPos);
+      return 1;      
+    case FL_DND_RELEASE: // keep insertion cursor and wait for the FL_PASTE event
+      buffer()->unselect(); // FL_PASTE must not destroy current selection!
+      return 1;
   }
 
   return Fl_Text_Display::handle(event);
