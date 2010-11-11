@@ -375,7 +375,7 @@ public:
     n = 0;
   }
 
-  ~FLEnum(void) {
+  virtual ~FLEnum(void) {
     n = 0;
   }
 };
