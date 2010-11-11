@@ -61,15 +61,12 @@
 #include <winuser.h>
 #include <commctrl.h>
 
-#if defined(__GNUC__) && __GNUC__ >= 3
+#if defined(__GNUC__)
 # include <wchar.h>
 #endif
 
-// The following include files require GCC 3.x or a non-GNU compiler...
-#if !defined(__GNUC__) || __GNUC__ >= 3
 #  include <ole2.h>
 #  include <shellapi.h>
-#endif // !__GNUC__ || __GNUC__ >= 3
 
 #include "aimm.h"
 
@@ -245,9 +242,7 @@ static Fl_Window *track_mouse_win=0;	// current TrackMouseEvent() window
 static int maxfd = 0;
 static fd_set fdsets[3];
 
-#if !defined(__GNUC__) || __GNUC__ >= 3
 extern IDropTarget *flIDropTarget;
-#endif // !__GNUC__ || __GNUC__ >= 3
 
 static int nfds = 0;
 static int fd_array_size = 0;
@@ -1551,8 +1546,6 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
 	     (Fl::grab() || (style & WS_POPUP)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
 
-  // Drag-n-drop requires GCC 3.x or a non-GNU compiler...
-#if !defined(__GNUC__) || __GNUC__ >= 3
   // Register all windows for potential drag'n'drop operations
   fl_OleInitialize();
   RegisterDragDrop(x->xid, flIDropTarget);
@@ -1564,7 +1557,6 @@ Fl_X* Fl_X::make(Fl_Window* w) {
       fl_aimm->Activate(TRUE);
     }
   }
-#endif // !__GNUC__ || __GNUC__ >= 3
 
   if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;

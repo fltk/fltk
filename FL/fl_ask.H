@@ -43,9 +43,6 @@ enum {
 
 #  ifdef __GNUC__
 #    define __fl_attr(x) __attribute__ (x)
-#    if __GNUC__ < 3
-#      define __deprecated__
-#    endif // __GNUC__ < 3
 #  else
 #    define __fl_attr(x)
 #  endif // __GNUC__

@@ -32,7 +32,7 @@
  * The following is only used when building DLLs under WIN32...
  */
 
-#  if defined(FL_DLL) && (defined(_MSC_VER) || defined(__MWERKS__) || defined(__BORLANDC__) || __GNUC__ >= 3)
+#  if defined(FL_DLL) && ( defined(_MSC_VER) || defined(__MWERKS__) || defined(__BORLANDC__) || defined(__GNUC__) )
 #    ifdef FL_LIBRARY
 #      define FL_EXPORT	__declspec(dllexport)
 #    else

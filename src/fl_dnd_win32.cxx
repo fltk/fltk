@@ -54,9 +54,6 @@ extern unsigned int fl_codepage;
 
 Fl_Window *fl_dnd_target_window = 0;
 
-// All of the following code requires GCC 3.x or a non-GNU compiler...
-#if !defined(__GNUC__) || __GNUC__ >= 3
-
 #include <ole2.h>
 #include <shellapi.h>
 #include <shlobj.h>
@@ -519,14 +516,6 @@ int Fl::dnd()
   if ( ret==DRAGDROP_S_DROP ) return 1; // or DD_S_CANCEL
   return 0;
 }
-#else
-int Fl::dnd()
-{
-  // Always indicate DnD failed when using GCC < 3...
-  return 1;
-}
-#endif // !__GNUC__ || __GNUC__ >= 3
-
 
 //
 // End of "$Id$".
