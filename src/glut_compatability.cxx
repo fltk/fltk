@@ -3,7 +3,7 @@
 //
 // GLUT emulation routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2009 by Bill Spitzak and others.
+// Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -105,8 +105,8 @@ int Fl_Glut_Window::handle(int event) {
 
   case FL_MOUSEWHEEL:
     button = Fl::event_dy();
-    while (button < 0) {mouse(3,GLUT_DOWN,ex,ey); ++button;}
-    while (button > 0) {mouse(4,GLUT_DOWN,ex,ey); --button;}
+    while (button < 0) {if (mouse) mouse(3,GLUT_DOWN,ex,ey); ++button;}
+    while (button > 0) {if (mouse) mouse(4,GLUT_DOWN,ex,ey); --button;}
     return 1;
 
   case FL_RELEASE:
