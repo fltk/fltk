@@ -845,12 +845,12 @@ public:
   // Documentation and implementation in Fl_Widget.cxx
   void do_callback(Fl_Widget* o,void* arg=0);
 
-  /** Internal use only. */
+  /* Internal use only. */
   int test_shortcut();
-  /** Internal use only. */
+  /* Internal use only. */
   static unsigned int label_shortcut(const char *t);
-  /** Internal use only. */
-  static int test_shortcut(const char*);
+  /* Internal use only. */
+  static int test_shortcut(const char*, const bool require_alt = false);
 
   /** Checks if w is a child of this widget.
       \param[in] w potential child widget

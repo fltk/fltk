@@ -349,7 +349,7 @@ struct FL_EXPORT Fl_Menu_Item {
     const Fl_Menu_Item* title = 0,
     int menubar=0) const;
   const Fl_Menu_Item* test_shortcut() const;
-  const Fl_Menu_Item* find_shortcut(int *ip=0) const;
+  const Fl_Menu_Item* find_shortcut(int *ip=0, const bool require_alt = false) const;
 
   /**
     Calls the Fl_Menu_Item item's callback, and provides the 

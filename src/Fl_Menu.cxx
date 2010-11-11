@@ -956,44 +956,56 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 }
 
 /**
-  This method is called by widgets that want to display menus.  The menu
-  stays up until the user picks an item or dismisses it.  The selected
-  item (or NULL if none) is returned. <I>This does not do the
-  callbacks or change the state of check or radio items.</I>
-  <P>X,Y is the position of the mouse cursor, relative to the
+  This method is called by widgets that want to display menus.
+
+  The menu stays up until the user picks an item or dismisses it.
+  The selected item (or NULL if none) is returned. <I>This does not
+  do the callbacks or change the state of check or radio items.</I>
+
+  X,Y is the position of the mouse cursor, relative to the
   window that got the most recent event (usually you can pass 
-  Fl::event_x() and Fl::event_y() unchanged here). </P>
-  <P>title is a character string title for the menu.  If
-  non-zero a small box appears above the menu with the title in it. </P>
-  <P>The menu is positioned so the cursor is centered over the item 
-  picked.  This will work even if picked is in a submenu.
-  If picked is zero or not in the menu item table the menu is
-  positioned with the cursor in the top-left corner. </P>
-  <P>button is a pointer to an 
-  Fl_Menu_ from which the color and boxtypes for the menu are
-  pulled.  If NULL then defaults are used.
+  Fl::event_x() and Fl::event_y() unchanged here).
+
+  \p title is a character string title for the menu.  If
+  non-zero a small box appears above the menu with the title in it.
+
+  The menu is positioned so the cursor is centered over the item 
+  picked.  This will work even if \p picked is in a submenu.
+  If \p picked is zero or not in the menu item table the menu is
+  positioned with the cursor in the top-left corner.
+
+  \p button is a pointer to an Fl_Menu_ from which the color and
+  boxtypes for the menu are pulled.  If NULL then defaults are used.
 */
 const Fl_Menu_Item* Fl_Menu_Item::popup(
   int X, int Y,
   const char* title,
   const Fl_Menu_Item* picked,
-  const Fl_Menu_* but
+  const Fl_Menu_* button
   ) const {
   static Fl_Menu_Item dummy; // static so it is all zeros
   dummy.text = title;
-  return pulldown(X, Y, 0, 0, picked, but, title ? &dummy : 0);
+  return pulldown(X, Y, 0, 0, picked, button, title ? &dummy : 0);
 }
 
 /**
   Search only the top level menu for a shortcut.  
-  Either &x in the label or the shortcut fields are used. 
+  Either &x in the label or the shortcut fields are used.
+
+  This tests the current event, which must be an FL_KEYBOARD or 
+  FL_SHORTCUT, against a shortcut value.
+
+  \param ip returns the index of the item, if \p ip is not NULL.
+  \param require_alt if true: match only if Alt key is pressed.
+
+  \return found Fl_Menu_Item or NULL
 */
-const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
+const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip, const bool require_alt) const {
   const Fl_Menu_Item* m = first();
   if (m) for (int ii = 0; m->text; m = m->next(), ii++) {
     if (m->activevisible()) {
       if (Fl::test_shortcut(m->shortcut_)
-	 || Fl_Widget::test_shortcut(m->text)) {
+	 || Fl_Widget::test_shortcut(m->text, require_alt)) {
 	if (ip) *ip=ii;
 	return m;
       }

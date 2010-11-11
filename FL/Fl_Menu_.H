@@ -70,6 +70,17 @@ public:
   int find_index(const Fl_Menu_Item *item) const;
   int find_index(Fl_Callback *cb) const;
 
+  /**
+    Returns the menu item with the entered shortcut (key value).
+
+    This searches the complete menu() for a shortcut that matches the
+    entered key value.  It must be called for a FL_KEYBOARD or FL_SHORTCUT
+    event.
+
+    If a match is found, the menu's callback will be called.
+
+    \return matched Fl_Menu_Item or NULL.
+  */
   const Fl_Menu_Item* test_shortcut() {return picked(menu()->test_shortcut());}
   void global();
 
@@ -118,7 +129,7 @@ public:
   int value(int i) {return value(menu_+i);}
   /** Returns the title of the last item chosen.  */
   const char *text() const {return value_ ? value_->text : 0;}
-  /** Returns the title of the last item chosen, or of item i.  */
+  /** Returns the title of item i.  */
   const char *text(int i) const {return menu_[i].text;}
 
   /** Gets the current font of menu item labels.  */
