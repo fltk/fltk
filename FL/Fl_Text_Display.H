@@ -78,10 +78,22 @@ public:
    word and triple clicking selects by line.
    */
   enum {
+    DRAG_NONE = -2,
+    DRAG_START_DND = -1,
     DRAG_CHAR = 0, 
     DRAG_WORD = 1, 
     DRAG_LINE = 2
   };
+  
+  /**
+   wrap types - usedin wrap_mode()
+   */
+  enum {
+    WRAP_NONE,      /**< don't wrap text at all */
+    WRAP_AT_COLUMN, /**< wrap text at the given text column */
+    WRAP_AT_PIXEL,  /**< wrap text at a pixel position */
+    WRAP_AT_BOUNDS  /**< wrap text so that it fits into the widget width */
+  };    
   
   friend void fl_text_drag_me(int pos, Fl_Text_Display* d);
   
@@ -238,7 +250,7 @@ public:
    Sets the default font used when drawing text in the widget.  
    \param s default text font face
    */
-  void textfont(Fl_Font s) {textfont_ = s;}
+  void textfont(Fl_Font s) {textfont_ = s; mColumnScale = 0;}
   
   /**
    Gets the default size of text in the widget.  
@@ -250,7 +262,7 @@ public:
    Sets the default size of text in the widget.  
    \param s new text size
    */
-  void textsize(Fl_Fontsize s) {textsize_ = s;}
+  void textsize(Fl_Fontsize s) {textsize_ = s; mColumnScale = 0;}
   
   /**
    Gets the default color of text in the widget.  
@@ -269,6 +281,21 @@ public:
   void wrap_mode(int wrap, int wrap_margin);
   
   virtual void resize(int X, int Y, int W, int H);
+
+  /**
+   Convert an x pixel position into a column number.
+   \param x number of pixels form the left margin
+   \return an approximate column number based on the main font
+   */
+  double x_to_col(double y);
+  
+  /**
+   Convert a column number into an x pixel position.
+   \param col an approximate column number based on the main font
+   \return number of pixels form the left margin to the left of an average 
+            sized character
+   */
+  double col_to_x(double col);
   
 protected:
   // Most (all?) of this stuff should only be called from resize() or
@@ -291,7 +318,8 @@ protected:
   
   enum { 
     DRAW_LINE, 
-    FIND_INDEX, 
+    FIND_INDEX,
+    FIND_INDEX_FROM_ZERO,
     GET_WIDTH 
   };
   
@@ -315,7 +343,7 @@ protected:
   void calc_last_char();
   
   int position_to_line( int pos, int* lineNum ) const;
-  int string_width(const char* string, int length, int style) const;
+  double string_width(const char* string, int length, int style) const;
   
   static void scroll_timer_cb(void*);
   
@@ -344,7 +372,7 @@ protected:
   int maintaining_absolute_top_line_number() const;
   void reset_absolute_top_line_number();
   int position_to_linecol(int pos, int* lineNum, int* column) const;
-  void scroll_(int topLineNum, int horizOffset);
+  int scroll_(int topLineNum, int horizOffset);
   
   void extend_range_for_styles(int* start, int* end);
   
@@ -359,7 +387,7 @@ protected:
                             bool countLastLineMissingNewLine = true) const;
   void find_line_end(int pos, bool start_pos_is_line_start, int *lineEnd,
                      int *nextLineStart) const;
-  int measure_proportional_character(const char *s, int colNum, int pos) const;
+  double measure_proportional_character(const char *s, int colNum, int pos) const;
   int wrap_uses_character(int lineEndPos) const;
   
   int damage_range1_start, damage_range1_end;
@@ -371,7 +399,7 @@ protected:
                                  where to move the cursor, to reduce
                                  the number of redraw calls */
   int mCursorStyle;             /* One of enum cursorStyles above */
-  int mCursorPreferredCol;      /* Column for vert. cursor movement */
+  int mCursorPreferredXPos;     /* Pixel position for vert. cursor movement */
   int mNVisibleLines;           /* # of visible (displayed) lines */
   int mNBufferLines;            /* # of newlines in the buffer */
   Fl_Text_Buffer* mBuffer;      /* Contains text to be displayed */
@@ -382,7 +410,7 @@ protected:
                                  either to a newline or one character
                                  beyond the end of the buffer) */
   int mContinuousWrap;          /* Wrap long lines when displaying */
-  int mWrapMargin; 	    	/* Margin in # of char positions for
+  int mWrapMarginPix; 	    	/* Margin in # of pixels for
                                  wrapping in continuousWrap mode */
   int* mLineStarts;
   int mTopLineNum;              /* Line number of top displayed line
@@ -416,6 +444,8 @@ protected:
                                  when resynchronization is suppressed) */
   int mModifyingTabDistance;    /* Whether tab distance is being
                                  modified */
+  
+  double mColumnScale;          /* Width in pixels of an average character */
   
   Fl_Color mCursor_color;
   
