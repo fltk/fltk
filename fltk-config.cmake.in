@@ -358,6 +358,9 @@ if test "$echo_ldstaticflags" = "yes"; then
 fi
 
 if test "$echo_libs" = "yes"; then
+    USELIBS="$libdir/libfltk.a"
+
+    if test x$use_forms = xyes; then
         USELIBS="$libdir/libfltk_forms.a $USELIBS"
     fi
 
