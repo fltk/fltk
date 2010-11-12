@@ -31,7 +31,7 @@ Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
 Function {saveAndCloseWindowCB( Fl_Widget*, void* )} {open private return_type void
 } {
   code {writePrefs();
-  Fl::delete_widget(myWindow);} {}
+Fl::delete_widget(myWindow);} {}
 } 
 
 Function {} {open return_type int
@@ -180,7 +180,7 @@ Function {} {open return_type int
         xywh {175 185 70 20} type Horizontal align 8 minimum 2 maximum 6 value 3.1
       }
       Fl_Input wPaper {
-        label {Newspaper:} selected
+        label {Newspaper:}
         xywh {165 225 105 20} align 5
       }
     }
@@ -321,7 +321,8 @@ Function {writePrefs()} {open return_type void
     fl_message( "Assertion failed:\\nNot all group entries were found!" );
 
   /* sample code only: */
-    unsigned int hex = 0x2387efcd;
-    eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
-  eat.set( "binFoo2", (void*)&writePrefs, 256 );} {}
+  unsigned int hex = 0x2387efcd;
+  eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
+  eat.set( "binFoo2", (void*)&writePrefs, 256 );} {selected
+  }
 } 
