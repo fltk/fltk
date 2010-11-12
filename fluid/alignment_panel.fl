@@ -52,93 +52,100 @@ decl {extern int show_coredevmenus;} {public local
 decl {extern struct Fl_Menu_Item *dbmanager_item;} {public local
 } 
 
-Function {make_project_window()} {} {
+decl {extern Fl_Preferences fluid_prefs;} {public local
+} 
+
+decl {Fl_Text_Buffer *shell_run_buffer;} {public local
+} 
+
+Function {make_project_window()} {open
+} {
   Fl_Window project_window {
-    label {Project Settings}
-    xywh {393 460 358 207} type Double
+    label {Project Settings} open
+    xywh {393 460 399 252} type Double
     code0 {\#include <FL/Fl_Preferences.H>}
     code1 {\#include <FL/Fl_Tooltip.H>} modal visible
   } {
     Fl_Button {} {
       label Close
       callback {project_window->hide();}
-      tooltip {Close this dialog.} xywh {293 175 52 20} labelsize 11
+      tooltip {Close this dialog.} xywh {328 216 60 25}
     }
     Fl_Tabs {} {open
-      xywh {10 10 335 151} selection_color 12 labelsize 11
+      xywh {10 10 378 195} selection_color 12
     } {
       Fl_Group {} {
         label Output open
-        xywh {10 30 335 131} labelsize 11
+        xywh {10 36 378 169} hide
       } {
         Fl_Box {} {
-          label {Use "name.ext" to set name or just ".ext" to set extension.}
-          xywh {15 40 325 15} labelsize 11 align 144
+          label {Use "name.ext" to set a file name or just ".ext" to set extension.}
+          xywh {100 49 236 49} align 144
         }
         Fl_Input header_file_input {
           label {Header File:}
           user_data 1 user_data_type {void*}
           callback header_input_cb
-          tooltip {The name of the generated header file.} xywh {96 60 228 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
+          tooltip {The name of the generated header file.} xywh {99 103 272 20} box THIN_DOWN_BOX labelfont 1 when 1 textfont 4
         }
         Fl_Input code_file_input {
           label {Code File:}
           user_data 1 user_data_type {void*}
           callback code_input_cb
-          tooltip {The name of the generated code file.} xywh {97 85 227 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 when 1 textfont 4 textsize 11
+          tooltip {The name of the generated code file.} xywh {100 128 272 20} box THIN_DOWN_BOX labelfont 1 when 1 textfont 4
         }
         Fl_Check_Button include_H_from_C_button {
           label {Include Header from Code}
           callback include_H_from_C_button_cb
-          tooltip {Include the header file from the code file.} xywh {95 110 145 20} down_box DOWN_BOX labelsize 11
+          tooltip {Include the header file from the code file.} xywh {100 153 272 20} down_box DOWN_BOX
         }
         Fl_Check_Button use_FL_COMMAND_button {
-          label {Generate menu shortcuts using FL_COMMAND}
+          label {Menu shortcuts use FL_COMMAND}
           callback use_FL_COMMAND_button_cb
-          tooltip {Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.} xywh {95 130 245 20} down_box DOWN_BOX labelsize 11
+          tooltip {Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.} xywh {100 176 272 20} down_box DOWN_BOX
         }
       }
       Fl_Group {} {
         label Internationalization open
-        xywh {10 30 335 131} labelsize 11 hide
+        xywh {10 36 378 169}
       } {
         Fl_Choice i18n_type_chooser {
           label {Use:}
           callback i18n_type_cb open
-          tooltip {Type of internationalization to use.} xywh {80 42 100 20} box THIN_UP_BOX down_box BORDER_BOX labelfont 1 labelsize 11 textsize 11
+          tooltip {Type of internationalization to use.} xywh {100 48 136 25} box THIN_UP_BOX down_box BORDER_BOX labelfont 1
         } {
           MenuItem {} {
             label None
-            xywh {0 0 100 20} labelsize 11
+            xywh {0 0 100 20}
           }
           MenuItem {} {
-            label {GNU gettext}
-            xywh {0 0 100 20} labelsize 11
+            label {GNU gettext} selected
+            xywh {0 0 100 20}
           }
           MenuItem {} {
             label {POSIX catgets}
-            xywh {0 0 100 20} labelsize 11
+            xywh {0 0 100 20}
           }
         }
         Fl_Input i18n_include_input {
           label {\#include:}
           callback i18n_text_cb
-          tooltip {The include file for internationalization.} xywh {80 67 245 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 textfont 4 textsize 11
+          tooltip {The include file for internationalization.} xywh {100 78 272 20} box THIN_DOWN_BOX labelfont 1 textfont 4
         }
         Fl_Input i18n_file_input {
           label {File:}
           callback i18n_text_cb
-          tooltip {The name of the message catalog.} xywh {80 92 245 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 textfont 4 textsize 11
+          tooltip {The name of the message catalog.} xywh {100 104 272 20} box THIN_DOWN_BOX labelfont 1 textfont 4
         }
         Fl_Input i18n_set_input {
           label {Set:}
           callback i18n_text_cb
-          tooltip {The message set number.} xywh {80 117 245 20} type Int box THIN_DOWN_BOX labelfont 1 labelsize 11 textfont 4 textsize 11
+          tooltip {The message set number.} xywh {100 128 272 20} type Int box THIN_DOWN_BOX labelfont 1 textfont 4
         }
         Fl_Input i18n_function_input {
           label {Function:}
           callback i18n_text_cb
-          tooltip {The function to call to internationalize the labels and tooltips.} xywh {80 92 245 20} box THIN_DOWN_BOX labelfont 1 labelsize 11 textfont 4 textsize 11
+          tooltip {The function to call to internationalize the labels and tooltips.} xywh {100 103 272 20} box THIN_DOWN_BOX labelfont 1 textfont 4
         }
       }
     }
@@ -148,17 +155,10 @@ Function {make_project_window()} {} {
 decl {extern void i18n_cb(Fl_Choice *,void *);} {public local
 } 
 
-decl {extern Fl_Preferences fluid_prefs;} {public local
-} 
-
-decl {Fl_Text_Buffer *shell_run_buffer;} {public local
-} 
-
 decl {void scheme_cb(Fl_Choice *, void *);} {public local
 } 
 
-Function {make_settings_window()} {open
-} {
+Function {make_settings_window()} {} {
   Fl_Window settings_window {
     label {GUI Settings} open
     xywh {393 191 339 241} type Double non_modal visible
@@ -189,7 +189,7 @@ Function {make_settings_window()} {open
         xywh {10 10 35 25}
       }
     }
-    Fl_Group {} {open selected
+    Fl_Group {} {open
       xywh {116 43 220 126} labelfont 1 align 0
     } {
       Fl_Box {} {
@@ -260,7 +260,7 @@ load_history();}
 
 Function {make_shell_window()} {} {
   Fl_Window shell_window {
-    label {Shell Command}
+    label {Shell Command} open
     xywh {741 195 365 125} type Double visible
   } {
     Fl_Input shell_command_input {
@@ -323,7 +323,8 @@ Function {make_shell_window()} {} {
   }
 } 
 
-Function {make_layout_window()} {} {
+Function {make_layout_window()} {open
+} {
   Fl_Window grid_window {
     label {Layout Settings} open
     xywh {760 427 285 245} type Double non_modal visible

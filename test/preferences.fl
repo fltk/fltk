@@ -1,23 +1,26 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0107 
+version 1.0300 
 header_name {.h} 
 code_name {.cxx}
-decl {\#include <FL/Fl_Preferences.H>} {public
+decl {\#include <FL/Fl_Preferences.H>} {public local
 } 
 
-decl {\#include <stdio.h>} {public
+decl {\#include <stdio.h>} {public local
 } 
 
-decl {\#include <stdlib.h>} {} 
-
-decl {\#include <FL/filename.H>} {} 
-
-decl {\#include <FL/fl_ask.H>} {} 
-
-decl {void readPrefs();} {public
+decl {\#include <stdlib.h>} {private local
 } 
 
-decl {void writePrefs();} {public
+decl {\#include <FL/filename.H>} {private local
+} 
+
+decl {\#include <FL/fl_ask.H>} {private local
+} 
+
+decl {void readPrefs();} {public local
+} 
+
+decl {void writePrefs();} {public local
 } 
 
 Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
@@ -69,7 +72,7 @@ Function {} {open return_type int
         }
       }
       Fl_Choice wWear {
-        label {Wear:} open selected
+        label {Wear:} open
         xywh {25 100 105 20} down_box BORDER_BOX align 5
       } {
         MenuItem {} {
@@ -177,7 +180,7 @@ Function {} {open return_type int
         xywh {175 185 70 20} type Horizontal align 8 minimum 2 maximum 6 value 3.1
       }
       Fl_Input wPaper {
-        label {Newspaper:}
+        label {Newspaper:} selected
         xywh {165 225 105 20} align 5
       }
     }

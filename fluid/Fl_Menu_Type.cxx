@@ -228,9 +228,13 @@ void Fl_Menu_Item_Type::write_static() {
   // entire array out:
   const char* k = class_name(1);
   if (k) {
-    int i; write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(i));
+    int i; 
+    if (i18n_type) write_c("\nunsigned char %s::%s_i18n_done = 0;", k, menu_name(i));
+    write_c("\nFl_Menu_Item %s::%s[] = {\n", k, menu_name(i));
   } else {
-    int i; write_c("\nFl_Menu_Item %s[] = {\n", menu_name(i));
+    int i; 
+    if (i18n_type) write_c("\nunsigned char %s_i18n_done = 0;", menu_name(i));
+    write_c("\nFl_Menu_Item %s[] = {\n", menu_name(i));
   }
   Fl_Type* t = prev; while (t && t->is_menu_item()) t = t->prev;
   for (Fl_Type* q = t->next; q && q->is_menu_item(); q = q->next) {
@@ -291,24 +295,7 @@ void Fl_Menu_Item_Type::write_item() {
 
   write_c(" {");
   if (image) write_c("0");
-  else if (label()) {
-    switch (i18n_type) {
-    case 0 : /* None */
-        write_cstring(label());
-        break;
-    case 1 : /* GNU gettext */
-        write_c("%s(", i18n_function);
-        write_cstring(label());
-	write_c(")");
-        break;
-    case 2 : /* POSIX catgets */
-        write_c("catgets(%s,%s,%d,", i18n_file[0] ? i18n_file : "_catalog",
-	        i18n_set, msgnum());
-        write_cstring(label());
-	write_c(")");
-        break;
-    }
-  }
+  else if (label()) write_cstring(label()); // we will call i18n when the widget is instantiated for the first time
   else write_c("\"\"");
   if (((Fl_Button*)o)->shortcut()) {
 		int s = ((Fl_Button*)o)->shortcut();
@@ -341,10 +328,13 @@ void Fl_Menu_Item_Type::write_code1() {
   int i; const char* mname = menu_name(i);
   if (!prev->is_menu_item()) {
     // for first menu item, declare the array
-    if (class_name(1))
+    if (class_name(1)) {
+      if (i18n_type) write_h("  static unsigned char %s_i18n_done;\n", mname);
       write_h("  static Fl_Menu_Item %s[];\n", mname);
-    else
+    } else {
+      if (i18n_type) write_h("extern unsigned char %s_i18n_done;\n", mname);
       write_h("extern Fl_Menu_Item %s[];\n", mname);
+    }
   }
 
   const char *c = array_name(this);
@@ -468,9 +458,39 @@ Fl_Type* Fl_Menu_Type::click_test(int, int) {
 }
 
 void Fl_Menu_Type::write_code2() {
-  if (next && next->is_menu_item())
+  if (next && next->is_menu_item()) {
+    if (i18n_type) {
+      // take care of i18n now!
+      Fl_Menu_Item_Type *mi = (Fl_Menu_Item_Type*)next;
+      int i, nItem = 0, nLabel = 0;
+      const char *mName = mi->menu_name(i);
+      for (Fl_Type* q = next; q && q->is_menu_item(); q = q->next) {
+        if (((Fl_Menu_Item_Type*)q)->label()) nLabel++;
+        nItem++;
+      }
+      if (nLabel) {
+        write_c("%sif (!%s_i18n_done) {\n", indent(), mName);
+        write_c("%s  int i=0;\n", indent());
+        write_c("%s  for ( ; i<%d; i++)\n", indent(), nItem);
+        write_c("%s    if (%s[i].label())\n", indent(), mName);
+        switch (i18n_type) {
+          case 1:
+            write_c("%s      %s[i].label(%s(%s[i].label()));\n",
+                    indent(), mName, i18n_function, mName);
+            break;
+          case 2:
+            write_c("%s      %s[i].label(catgets(%s,%s,i+%d,%s[i].label()));\n",
+                    indent(), mName, i18n_file[0] ? i18n_file : "_catalog", 
+                    i18n_set, mi->msgnum(), mName);
+            break;
+        }
+        write_c("%s  %s_i18n_done = 1;\n", indent(), mName);
+        write_c("%s}\n", indent());
+      }
+    }
     write_c("%s%s->menu(%s);\n", indent(), name() ? name() : "o",
 	    unique_id(this, "menu", name(), label()));
+  }
   Fl_Widget_Type::write_code2();
 }
 

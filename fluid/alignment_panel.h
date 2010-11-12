@@ -37,6 +37,8 @@ extern void redraw_browser();
 extern int show_comments;
 extern int show_coredevmenus;
 extern struct Fl_Menu_Item *dbmanager_item;
+extern Fl_Preferences fluid_prefs;
+extern Fl_Text_Buffer *shell_run_buffer; 
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Preferences.H>
 #include <FL/Fl_Tooltip.H>
@@ -66,8 +68,6 @@ extern Fl_Input *i18n_function_input;
 Fl_Double_Window* make_project_window();
 extern Fl_Menu_Item menu_i18n_type_chooser[];
 extern void i18n_cb(Fl_Choice *,void *);
-extern Fl_Preferences fluid_prefs;
-extern Fl_Text_Buffer *shell_run_buffer; 
 extern void scheme_cb(Fl_Choice *, void *); 
 extern Fl_Double_Window *settings_window;
 extern void scheme_cb(Fl_Choice*, void*);
