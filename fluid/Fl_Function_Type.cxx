@@ -471,7 +471,7 @@ Fl_Code_Type Fl_Code_type;
 void Fl_Code_Type::write_code1() {
   const char* c = name();
   if (!c) return;
-  char *pch;
+  const char *pch;
   const char *ind = indent();
   while( (pch=strchr(c,'\n')) )
   {
