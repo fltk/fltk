@@ -4,7 +4,7 @@
 #
 # FLTK configuration utility.
 #
-# Copyright 2000-2009 by Bill Spitzak and others.
+# Copyright 2000-2010 by Bill Spitzak and others.
 # Original version Copyright 2000 by James Dean Palmer
 # Adapted by Vincent Penne and Michael Sweet
 #
@@ -123,6 +123,8 @@ Options telling what information we request:
 	[--ldstaticflags] return flags to link against static FLTK library
                                           even if there are DSOs installed
 	[--libs]          return FLTK libraries full path for dependencies
+	[--prefix]        return FLTK install time --prefix directory
+	[--includedir]    return FLTK install time include directory
 
 Options to compile and link an application:
 	[-g]              compile the program with debugging information
@@ -196,6 +198,12 @@ do
 	    ;;
 	--libs)
 	    echo_libs=yes
+	    ;;
+	--prefix)
+	    echo_prefix=yes
+	    ;;
+	--includedir)
+	    echo_includedir=yes
 	    ;;
 	-g)
 	    debug=-g
@@ -383,6 +391,14 @@ if test "$echo_libs" = "yes"; then
     fi
 
     echo $USELIBS
+fi
+
+if test "$echo_prefix" = "yes"; then
+    echo $prefix
+fi
+
+if test "$echo_includedir" = "yes"; then
+    echo $includedir
 fi
 
 #
