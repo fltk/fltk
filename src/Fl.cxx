@@ -1739,6 +1739,19 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
 }
 
 
+/**
+ \brief User interface options management.
+ 
+ This function needs to be documented in more detail. It can be used for more
+ optional settings, such as using a native file chooser instead of the FLTK one
+ wherever possible, disabeling tooltips, disabeling visible focus, disabeling 
+ FLTK file chooser preview, etc. .
+ 
+ There should be a command line option interface.
+ 
+ There should be an application that manages options system wide, per user, and
+ per application.
+ */ 
 bool Fl::option(Fl_Option o)
 {
   if (!options_read_) {
