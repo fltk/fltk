@@ -39,7 +39,8 @@
 
 int main(int argc, char ** argv) {
   Fl_Window *window = new Fl_Window(320,130);
-  (new Fl_Button(10, 10, 130, 30, "Fl_Button"))->tooltip("This is a Tooltip.");
+  Fl_Button *b = new Fl_Button(10, 10, 130, 30, "Fl_Button");
+  b->tooltip("This is a Tooltip.");
   new Fl_Return_Button(150, 10, 160, 30, "Fl_Return_Button");
   new Fl_Repeat_Button(10,50,130,30,"Fl_Repeat_Button");
   new Fl_Light_Button(10,90,130,30,"Fl_Light_Button");

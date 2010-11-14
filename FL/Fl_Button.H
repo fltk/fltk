@@ -46,6 +46,8 @@
 
 extern FL_EXPORT Fl_Shortcut fl_old_shortcut(const char*);
 
+class Fl_Widget_Tracker;
+
 /**
   \class Fl_Button
   \brief Buttons generate callbacks when they are clicked by the user.
@@ -88,6 +90,10 @@ class FL_EXPORT Fl_Button : public Fl_Widget {
 
 protected:
 
+  static Fl_Widget_Tracker *key_release_tracker;
+  static void key_release_timeout(void*);
+  void simulate_key_action();
+  
   virtual void draw();
 
 public:

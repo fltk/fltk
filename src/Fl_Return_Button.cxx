@@ -61,6 +61,7 @@ void Fl_Return_Button::draw() {
 int Fl_Return_Button::handle(int event) {
   if (event == FL_SHORTCUT &&
       (Fl::event_key() == FL_Enter || Fl::event_key() == FL_KP_Enter)) {
+    simulate_key_action();
     do_callback();
     return 1;
   } else

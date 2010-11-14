@@ -30,6 +30,10 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
 
+
+Fl_Widget_Tracker *Fl_Button::key_release_tracker = 0;
+
+
 // There are a lot of subclasses, named Fl_*_Button.  Some of
 // them are implemented by setting the type() value and testing it
 // here.  This includes Fl_Radio_Button and Fl_Toggle_Button
@@ -156,6 +160,8 @@ int Fl_Button::handle(int event) {
       } else if (type() == FL_TOGGLE_BUTTON) {
 	value(!value());
 	if (when() & FL_WHEN_CHANGED) do_callback();
+      } else {
+        simulate_key_action();
       }
       if (wp.deleted()) return 1;
       if (when() & FL_WHEN_RELEASE) do_callback();
@@ -164,6 +170,33 @@ int Fl_Button::handle(int event) {
   default:
     return 0;
   }
+}
+
+void Fl_Button::simulate_key_action()
+{
+  if (key_release_tracker) {
+    Fl::remove_timeout(key_release_timeout, key_release_tracker);
+    key_release_timeout(key_release_tracker);
+  }
+  value(1); 
+  redraw();
+  key_release_tracker = new Fl_Widget_Tracker(this);
+  Fl::add_timeout(0.15, key_release_timeout, key_release_tracker);
+}
+
+void Fl_Button::key_release_timeout(void *d)
+{
+  Fl_Widget_Tracker *wt = (Fl_Widget_Tracker*)d;
+  if (!wt)
+    return;
+  if (wt==key_release_tracker) 
+    key_release_tracker = 0L;
+  Fl_Button *btn = (Fl_Button*)wt->widget();
+  if (btn) {
+    btn->value(0);
+    btn->redraw();
+  }
+  delete wt;
 }
 
 /**
