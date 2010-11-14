@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.3.0
 
+	- Added alternative Xft font names (STR #2215)
 	- Update lib png access (STR #2442)
 	- Fixed OpenGL hide/show issue in OS X (STR #2260)
 	- Added visual feedback for button shortcuts (STR #2372)

@@ -418,18 +418,18 @@ static XFontStruct* load_xfont_for_xft2(void) {
   int size = fl_size_;
   const char *wt_med = "medium";
   const char *wt_bold = "bold";
-  char *weight = (char *)wt_med; // no specifc weight requested - accept any
+  const char *weight = wt_med; // no specifc weight requested - accept any
   char slant = 'r';   // regular non-italic by default
   char xlfd[128];     // we will put our synthetic XLFD in here
   char *pc = strdup(fl_fonts[fl_font_].name); // what font were we asked for?
-  char *name = pc;    // keep a handle to the original name for freeing later
+  const char *name = pc;    // keep a handle to the original name for freeing later
   // Parse the "fltk-name" of the font
   switch (*name++) {
-  case 'I': slant = 'i'; break;     // italic
-  case 'P': slant = 'i';            // bold-italic (falls-through)
-  case 'B': weight = (char*)wt_bold; break; // bold
-  case ' ': break;                  // regular
-  default: name--;                  // no prefix, restore name
+  case 'I': slant = 'i'; break;       // italic
+  case 'P': slant = 'i';              // bold-italic (falls-through)
+  case 'B': weight = wt_bold; break;  // bold
+  case ' ': break;                    // regular
+  default: name--;                    // no prefix, restore name
   }
 
   // first, we do a query with no prefered size, to see if the font exists at all
@@ -443,6 +443,23 @@ static XFontStruct* load_xfont_for_xft2(void) {
 //puts(xlfd);
   free(pc); // release our copy of the font name
 
+  // try alternative names
+  if (!xgl_font) {
+    if (!strcmp(name, "sans")) {
+      name = "helvetica";
+    } else if (!strcmp(name, "mono")) {
+      name = "courier";
+    } else if (!strcmp(name, "serif")) {
+      name = "times";
+    } else if (!strcmp(name, "screen")) {
+      name = "lucidatypewriter";
+    } else if (!strcmp(name, "dingbats")) {
+      name = "zapf dingbats";
+    }
+    snprintf(xlfd, 128, "-*-*%s*-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
+    xgl_font = XLoadQueryFont(fl_display, xlfd);
+  }  
+  
   // if we have nothing loaded, try a generic proportional font
   if(!xgl_font) {
     snprintf(xlfd, 128, "-*-helvetica-*-%c-*--*-%d-*-*-*-*-*-*", slant, (size*10));
