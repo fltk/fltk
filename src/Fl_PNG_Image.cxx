@@ -78,7 +78,7 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   pp   = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   info = png_create_info_struct(pp);
 
-  if (setjmp(pp->jmpbuf))
+  if (setjmp(png_jmpbuf(pp)))
   {
     Fl::warning("PNG file \"%s\" contains errors!\n", png);
     return;
@@ -90,27 +90,29 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   // Get the image dimensions and convert to grayscale or RGB...
   png_read_info(pp, info);
 
-  if (info->color_type == PNG_COLOR_TYPE_PALETTE)
+  if (png_get_color_type(pp, info) == PNG_COLOR_TYPE_PALETTE)
     png_set_expand(pp);
 
-  if (info->color_type & PNG_COLOR_MASK_COLOR)
+  if (png_get_color_type(pp, info) & PNG_COLOR_MASK_COLOR)
     channels = 3;
   else
     channels = 1;
 
-  if ((info->color_type & PNG_COLOR_MASK_ALPHA) || info->num_trans)
-    channels ++;
+  int num_trans;
+  png_get_tRNS(pp, info, 0, &num_trans, 0);
+  if ((png_get_color_type(pp, info) & PNG_COLOR_MASK_ALPHA) || (num_trans != 0))
+      channels ++;
 
-  w((int)(info->width));
-  h((int)(info->height));
+  w((int)(png_get_image_width(pp, info)));
+  h((int)(png_get_image_height(pp, info)));
   d(channels);
 
-  if (info->bit_depth < 8)
+  if (png_get_bit_depth(pp, info) < 8)
   {
     png_set_packing(pp);
     png_set_expand(pp);
   }
-  else if (info->bit_depth == 16)
+  else if (png_get_bit_depth(pp, info) == 16)
     png_set_strip_16(pp);
 
 #  if defined(HAVE_PNG_GET_VALID) && defined(HAVE_PNG_SET_TRNS_TO_ALPHA)
