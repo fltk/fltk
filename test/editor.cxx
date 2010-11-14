@@ -65,14 +65,13 @@ Fl_Text_Buffer     *textbuf = 0;
 Fl_Text_Buffer     *stylebuf = 0;
 Fl_Text_Display::Style_Table_Entry
                    styletable[] = {	// Style table
-		     { FL_BLACK,      FL_COURIER,        TS }, // A - Plain
-		     { FL_DARK_GREEN, FL_HELVETICA_ITALIC, TS }, // B - Line comments
-		     { FL_DARK_GREEN, FL_HELVETICA_ITALIC, TS }, // C - Block comments
-		     { FL_BLUE,       FL_COURIER,        TS }, // D - Strings
-		     { FL_DARK_RED,   FL_COURIER,        TS }, // E - Directives
-		     { FL_DARK_RED,   FL_COURIER_BOLD,   TS }, // F - Types
-		     { FL_BLUE,       FL_COURIER_BOLD,   TS }, // G - Keywords
-		     { FL_MAGENTA,    FL_HELVETICA,    TS-2 }  // H - Font height test
+		     { FL_BLACK,      FL_COURIER,           TS }, // A - Plain
+		     { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS }, // B - Line comments
+		     { FL_DARK_GREEN, FL_HELVETICA_ITALIC,  TS }, // C - Block comments
+		     { FL_BLUE,       FL_COURIER,           TS }, // D - Strings
+		     { FL_DARK_RED,   FL_COURIER,           TS }, // E - Directives
+		     { FL_DARK_RED,   FL_COURIER_BOLD,      TS }, // F - Types
+		     { FL_BLUE,       FL_COURIER_BOLD,      TS }, // G - Keywords
 		   };
 const char         *code_keywords[] = {	// List of known C/C++ keywords...
 		     "and",
@@ -201,8 +200,6 @@ style_parse(const char *text,
         if (length == 0) break;
       } else if (strncmp(text, "/*", 2) == 0) {
         current = 'C';
-      } else if (strncmp(text, "[", 1) == 0) {
-        current = 'H';
       } else if (strncmp(text, "\\\"", 2) == 0) {
         // Quoted quote...
 	*style++ = current;
@@ -263,14 +260,6 @@ style_parse(const char *text,
       length --;
       current = 'A';
       col += 2;
-      continue;
-    } else if (current == 'H' && strncmp(text, "]", 1) == 0) {
-      // Close a font test style
-      *style++ = current;
-      text ++;
-      length --;
-      current = 'A';
-      col += 1;
       continue;
     } else if (current == 'D') {
       // Continuing in string...
@@ -805,51 +794,6 @@ Fl_Window* new_view() {
 
 int main(int argc, char **argv) {
   textbuf = new Fl_Text_Buffer;
-#if 1
-  textbuf->text(
-                "void saveas_cb() {\n"
-                "  Fl_Native_File_Chooser fnfc;\n"
-                "  fnfc.title(\"Save File As?\");\n"
-                "  fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);\n"
-                "  if ( fnfc.show() ) return;\n"
-                "  save_file(fnfc.filename());\n"
-                "}\n\n"
-                " 2 4 6 8 0 2 4 6 8 0 2 4 6 8 0 2 4 6 8 0\n\n"
-                "// Falsches Üben von Xylophonmusik quält jeden größeren Zwerg\n"
-                "// (= Wrongful practicing of xylophone music tortures every larger dwarf)\n"
-                "\n"
-                "// Zwölf Boxkämpfer jagten Eva quer über den Sylter Deich\n"
-                "// (= Twelve boxing fighters hunted Eva across the dike of Sylt)\n"
-                "\n"
-                "Heizöl/*rückstoß*/abdämpfung\n"
-                "(= fuel oil recoil absorber)\n"
-                "\n"
-                "Hiragana: //(Iroha)\n"
-                "\n"
-                "いろはにほへとちりぬるを\n"
-                "わかよたれそつねならむ\n"
-                "うゐのおくやまけふこえて\n"
-                "あさきゆめみしゑひもせす\n"
-                "\n"
-                "Katakana:\n"
-                "\n"
-                "イロハニホヘト チ/*リヌルヲ ワカヨタ*/レソ ツネナラム\n"
-                "ウヰノオクヤマ ケフコエテ アサキユメミシ ヱヒモセスン\n"
-                "\n"
-                "Right-to-left script does not work yet:\n"
-                "? דג סקרן שט בים מאוכזב ולפתע מצא לו חברה איך הקליטה\n"
-                "\n"
-                "// いろはにほへと ちりぬるを わかよ\n"
-                "/* たれそ つねならむ うゐのおくやま */\n"
-                "けふこえて あさきゆめみし ゑひも\n"
-                "せす\n\n"
-                "Even colours and [sweet perfume] / Will eventually fade / "
-                "Even our world / Is not eternal / "
-                "The deep mountains of vanity / Cross them today / "
-                "And superficial dreams / Shall no longer delude you.\n"
-                "(from Iroha-uta)"
-                );
-#endif
   style_init();
 
   Fl_Window* window = new_view();
