@@ -79,6 +79,10 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND MacOS X
     install".  This will copy the "fluid" executable to
     "bindir", the header files to "includedir", and the library
     files to "libdir".
+    
+    To install additional files and icons to be used by the main
+    desktop environments such as KDE, GNOME and XFCE, you will also
+    need to run "make install-desktop" as root.
 
 
 BUILDING FLTK UNDER MICROSOFT WINDOWS
@@ -163,7 +167,7 @@ TRADEMARKS
 
 COPYRIGHT
 
-    FLTK is copyright 1998-2009 by Bill Spitzak
+    FLTK is copyright 1998-2010 by Bill Spitzak
     (spitzak@users.sourceforge.net) and others, 
     see the CREDITS file for more info.
 

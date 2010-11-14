@@ -2,7 +2,7 @@
 Name=FLUID
 Comment=FLTK GUI Designer
 TryExec=fluid
-Exec=cd %D && fluid %F
+Exec=fluid %F
 Icon=fluid
 Terminal=false
 Type=Application

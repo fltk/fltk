@@ -1,4 +1,4 @@
-README.Unix.txt - 2010-10-28 - Building FLTK on Unix
+README.Unix.txt - 2010-11-14 - Building FLTK on Unix
 -----------------------------------------------------
 
 
@@ -218,7 +218,7 @@ The entire FLTK toolkit including many test programs will be built for you. No
 warnings should appear. If some do, please let the FLTK developer team know via
 the mailing list or the bug reporting template at www.fltk.org .
 
-Actually, as of Oct 28 2010, quite a bunch of warnigns will show, mostly about 
+Actually, as of Oct 28 2010, quite a bunch of warnings will show, mostly about 
 suggested parenthesis. Please ignore them until we can fix them.
 
 
@@ -237,6 +237,12 @@ If you did not change any of the configuration settings, FLTK will be installed
 in "/usr/local/include" and "/usr/local/lib" by typing
 
   sudo make install
+  
+If you are using the KDE, GNOME or XFCE desktop environments and want to call
+"fluid" from the desktop menu, you will need to install additional files and
+icons under "/usr/share" by typing:
+
+  sudo make install-desktop
   
 It is possible to install FLTK without superuser previleges by changing the 
 installation path to a location within the user account by adding the 
@@ -297,3 +303,4 @@ second "`".
 
 Oct 30 2010 - matt: added Code::Blocks chapter
 Oct 28 2010 - matt: restructured entire document and verified instructions
+Nov 14 2010 - duncan: added install-desktop
