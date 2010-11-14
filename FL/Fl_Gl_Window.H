@@ -87,7 +87,8 @@ public:
   void flush();
   void hide();
   void resize(int,int,int,int);
-
+  int handle(int);
+  
   /**
     Is turned off when FLTK creates a new context for this window or 
     when the window resizes, and is turned on \e after draw() is called.
