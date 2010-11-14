@@ -290,9 +290,9 @@ extern Fl_Widget_Class_Type *current_widget_class;
 // of the parent code:
 static Fl_Type* write_code(Fl_Type* p) {
   if (write_sourceview) {
-    p->code_line = (int)ftell(code_file);
-    if (p->header_line_end==-1)
-      p->header_line = (int)ftell(header_file);
+    p->code_position = (int)ftell(code_file);
+    if (p->header_position_end==-1)
+      p->header_position = (int)ftell(header_file);
   }
   // write all code that come before the children code
   // (but don't write the last comment until the very end)
@@ -333,9 +333,9 @@ static Fl_Type* write_code(Fl_Type* p) {
     p->write_code2();
   }
   if (write_sourceview) {
-    p->code_line_end = (int)ftell(code_file);
-    if (p->header_line_end==-1)
-      p->header_line_end = (int)ftell(header_file);
+    p->code_position_end = (int)ftell(code_file);
+    if (p->header_position_end==-1)
+      p->header_position_end = (int)ftell(header_file);
   }
   return q;
 }
@@ -369,14 +369,14 @@ int write_code(const char *s, const char *t) {
   Fl_Type* first_type = Fl_Type::first;
   if (first_type && first_type->is_comment()) {
     if (write_sourceview) {
-      first_type->code_line = (int)ftell(code_file);
-      first_type->header_line = (int)ftell(header_file);
+      first_type->code_position = (int)ftell(code_file);
+      first_type->header_position = (int)ftell(header_file);
     }
     // it is ok to write non-recusive code here, because comments have no children or code2 blocks
     first_type->write_code1();
     if (write_sourceview) {
-      first_type->code_line_end = (int)ftell(code_file);
-      first_type->header_line_end = (int)ftell(header_file);
+      first_type->code_position_end = (int)ftell(code_file);
+      first_type->header_position_end = (int)ftell(header_file);
     }
     first_type = first_type->next;
   }
@@ -423,18 +423,18 @@ int write_code(const char *s, const char *t) {
   }
   for (Fl_Type* p = first_type; p;) {
     // write all static data for this & all children first
-    if (write_sourceview) p->header_line = (int)ftell(header_file);
+    if (write_sourceview) p->header_position = (int)ftell(header_file);
     p->write_static();
     if (write_sourceview) {
-      p->header_line_end = (int)ftell(header_file);
-      if (p->header_line==p->header_line_end) p->header_line_end = -1;
+      p->header_position_end = (int)ftell(header_file);
+      if (p->header_position==p->header_position_end) p->header_position_end = -1;
     }
     for (Fl_Type* q = p->next; q && q->level > p->level; q = q->next) {
-      if (write_sourceview) q->header_line = (int)ftell(header_file);
+      if (write_sourceview) q->header_position = (int)ftell(header_file);
       q->write_static();
       if (write_sourceview) {
-        q->header_line_end = (int)ftell(header_file);
-        if (q->header_line==q->header_line_end) q->header_line_end = -1;
+        q->header_position_end = (int)ftell(header_file);
+        if (q->header_position==q->header_position_end) q->header_position_end = -1;
       }
     }
     // then write the nested code:
@@ -450,13 +450,13 @@ int write_code(const char *s, const char *t) {
   Fl_Type* last_type = Fl_Type::last;
   if (last_type && last_type->is_comment()) {
     if (write_sourceview) {
-      last_type->code_line = (int)ftell(code_file);
-      last_type->header_line = (int)ftell(header_file);
+      last_type->code_position = (int)ftell(code_file);
+      last_type->header_position = (int)ftell(header_file);
     }
     last_type->write_code1();
     if (write_sourceview) {
-      last_type->code_line_end = (int)ftell(code_file);
-      last_type->header_line_end = (int)ftell(header_file);
+      last_type->code_position_end = (int)ftell(code_file);
+      last_type->header_position_end = (int)ftell(header_file);
     }
   }
 

@@ -75,8 +75,8 @@ public:	// things that should not be public:
   Fl_Type *factory;
   const char *callback_name();
 
-  int code_line, header_line;
-  int code_line_end, header_line_end;
+  int code_position, header_position;
+  int code_position_end, header_position_end;
 
 protected:
   int user_defined(const char* cbname) const;

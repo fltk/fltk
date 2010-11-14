@@ -2151,8 +2151,8 @@ void update_sourceview_position()
   if (sourceview_panel && sourceview_panel->visible() && Fl_Type::current) {
     int pos0, pos1;
     if (sv_source->visible_r()) {
-      pos0 = Fl_Type::current->code_line;
-      pos1 = Fl_Type::current->code_line_end;
+      pos0 = Fl_Type::current->code_position;
+      pos1 = Fl_Type::current->code_position_end;
       if (pos0>=0) {
         if (pos1<pos0)
           pos1 = pos0;
@@ -2162,8 +2162,8 @@ void update_sourceview_position()
       }
     }
     if (sv_header->visible_r()) {
-      pos0 = Fl_Type::current->header_line;
-      pos1 = Fl_Type::current->header_line_end;
+      pos0 = Fl_Type::current->header_position;
+      pos1 = Fl_Type::current->header_position_end;
       if (pos0>=0) {
         if (pos1<pos0)
           pos1 = pos0;

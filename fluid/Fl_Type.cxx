@@ -473,8 +473,8 @@ Fl_Type::Fl_Type() {
   comment_ = 0;
   rtti = 0;
   level = 0;
-  code_line = header_line = -1;
-  code_line_end = header_line_end = -1;
+  code_position = header_position = -1;
+  code_position_end = header_position_end = -1;
 }
 
 static void fixvisible(Fl_Type *p) {
