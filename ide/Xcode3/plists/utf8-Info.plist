@@ -6,6 +6,8 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Part of the FLTK library. Please visit www.fltk.org.</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.fltk.utf8</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -18,7 +20,5 @@
 	<string>1.0</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 1998-2010 by Bill Spitzak and others.</string>
-	<key>CFBundleGetInfoString</key>
-	<string>Part of the FLTK library. Please visit www.fltk.org.</string>
 </dict>
-	</plist>
+</plist>
