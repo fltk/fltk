@@ -1346,7 +1346,7 @@ Fl_File_Chooser::update_preview()
     int		bytes;
     char	*ptr;
 
-    if (filename) fp = fopen(filename, "rb");
+    if (filename) fp = fl_fopen(filename, "rb");
     else fp = NULL;
 
     if (fp != NULL) {
