@@ -433,15 +433,14 @@ static XFontStruct* load_xfont_for_xft2(void) {
   }
 
   // first, we do a query with no prefered size, to see if the font exists at all
-  snprintf(xlfd, 128, "-*-*%s*-%s-%c-*--*-*-*-*-*-*-*-*", name, weight, slant); // make up xlfd style name
+  snprintf(xlfd, 128, "-*-%s-%s-%c-*--*-*-*-*-*-*-*-*", name, weight, slant); // make up xlfd style name
   xgl_font = XLoadQueryFont(fl_display, xlfd);
   if(xgl_font) { // the face exists, but can we get it in a suitable size?
     XFreeFont(fl_display, xgl_font); // release the non-sized version
-    snprintf(xlfd, 128, "-*-*%s*-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
+    snprintf(xlfd, 128, "-*-%s-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd); // attempt to load the font at the right size
   }
 //puts(xlfd);
-  free(pc); // release our copy of the font name
 
   // try alternative names
   if (!xgl_font) {
@@ -459,6 +458,7 @@ static XFontStruct* load_xfont_for_xft2(void) {
     snprintf(xlfd, 128, "-*-*%s*-%s-%c-*--*-%d-*-*-*-*-*-*", name, weight, slant, (size*10));
     xgl_font = XLoadQueryFont(fl_display, xlfd);
   }  
+  free(pc); // release our copy of the font name
   
   // if we have nothing loaded, try a generic proportional font
   if(!xgl_font) {
