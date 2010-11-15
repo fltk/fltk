@@ -310,6 +310,14 @@ Atom fl_XdndURIList;
 Atom fl_XaUtf8String;
 Atom fl_XaTextUriList;
 
+/*
+  X defines 32-bit-entities to have a format value of max. 32,
+  although sizeof(atom) can be 8 (64 bits) on a 64-bit OS.
+  See also fl_open_display() for sizeof(atom) < 4.
+  Used for XChangeProperty (see STR #2419).
+*/
+static int atom_bits = 32;
+
 static void fd_callback(int,void *) {
   do_queued_events();
 }
@@ -583,6 +591,9 @@ void fl_open_display(Display* d) {
   fl_XdndURIList        = XInternAtom(d, "text/uri-list",       0);
   fl_XaUtf8String       = XInternAtom(d, "UTF8_STRING",         0);
   fl_XaTextUriList      = XInternAtom(d, "text/uri-list",       0);
+  
+  if (sizeof(Atom) < 4)
+    atom_bits = sizeof(Atom) * 8;
 
   Fl::add_fd(ConnectionNumber(d), POLLIN, fd_callback);
 
@@ -934,7 +945,7 @@ int fl_handle(const XEvent& thisevent)
     if (e.target == TARGETS) {
       Atom a = fl_XaUtf8String; //XA_STRING;
       XChangeProperty(fl_display, e.requestor, e.property,
-                      XA_ATOM, sizeof(Atom)*8, 0, (unsigned char*)&a, 1);
+                      XA_ATOM, atom_bits, 0, (unsigned char*)&a, 1);
     } else if (/*e.target == XA_STRING &&*/ fl_selection_length[clipboard]) {
       XChangeProperty(fl_display, e.requestor, e.property,
                       e.target, 8, 0,
