@@ -735,11 +735,11 @@ static void update_e_xy_and_e_xy_root(NSWindow *nsw)
 {
   NSPoint pt;
   pt = [nsw mouseLocationOutsideOfEventStream];
-  Fl::e_x = pt.x;
-  Fl::e_y = [[nsw contentView] frame].size.height - pt.y;
+  Fl::e_x = int(pt.x);
+  Fl::e_y = int([[nsw contentView] frame].size.height - pt.y);
   pt = [NSEvent mouseLocation];
-  Fl::e_x_root = pt.x;
-  Fl::e_y_root = [[nsw screen] frame].size.height - pt.y;
+  Fl::e_x_root = int(pt.x);
+  Fl::e_y_root = int([[nsw screen] frame].size.height - pt.y);
 }
 
 /*
@@ -1043,6 +1043,8 @@ OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
       calc_e_text((CFStringRef)s, buffer, sizeof(buffer), sym);
       Fl::e_length = strlen(buffer);
       Fl::e_text = buffer;
+    default:			// prevent 'not handled in switch' warnings
+      break;
   }
   if (sendEvent) {
     retval = Fl::handle(sendEvent,window);
@@ -1438,16 +1440,16 @@ static void get_window_frame_sizes(int &bx, int &by, int &bt) {
   fl_open_display();
   NSRect inside = { {20,20}, {100,100} };
   NSRect outside = [NSWindow  frameRectForContentRect:inside styleMask:NSTitledWindowMask];
-  bx = outside.origin.x - inside.origin.x;
-  by = outside.origin.y - inside.origin.y;
-  bt = outside.size.height - inside.size.height - by;
+  bx = int(outside.origin.x - inside.origin.x);
+  by = int(outside.origin.y - inside.origin.y);
+  bt = int(outside.size.height - inside.size.height - by);
 }
 
 /*
  * smallest x ccordinate in screen space
  */
 int Fl::x() {
-  return [[NSScreen mainScreen] visibleFrame].origin.x;
+  return int([[NSScreen mainScreen] visibleFrame].origin.x);
 }
 
 
@@ -1457,7 +1459,7 @@ int Fl::x() {
 int Fl::y() {
   NSRect all = [[NSScreen mainScreen] frame];
   NSRect visible = [[NSScreen mainScreen] visibleFrame];
-  return all.size.height - (visible.origin.y + visible.size.height);
+  return int(all.size.height - (visible.origin.y + visible.size.height));
 }
 
 
@@ -1465,7 +1467,7 @@ int Fl::y() {
  * screen width
  */
 int Fl::w() {
-  return [[NSScreen mainScreen] visibleFrame].size.width;
+  return int([[NSScreen mainScreen] visibleFrame].size.width);
 }
 
 
@@ -1473,7 +1475,7 @@ int Fl::w() {
  * screen height
  */
 int Fl::h() {
-  return [[NSScreen mainScreen] visibleFrame].size.height;
+  return int([[NSScreen mainScreen] visibleFrame].size.height);
 }
 
 
@@ -1484,8 +1486,8 @@ void Fl::get_mouse(int &x, int &y)
 {
   fl_open_display();
   NSPoint pt = [NSEvent mouseLocation];
-  x = pt.x;
-  y = [[NSScreen mainScreen] frame].size.height - pt.y;
+  x = int(pt.x);
+  y = int([[NSScreen mainScreen] frame].size.height - pt.y);
 }
 
 
@@ -1564,9 +1566,9 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   NSArray *a = [NSScreen screens]; int count = (int)[a count]; NSRect r; int i;
   for( i = 0; i < count; i++) {
     r = [[a objectAtIndex:i] frame];
-    cy = r.size.height - cy;
-    if (    cx >= r.origin.x && cx <= r.origin.x + r.size.width
-        && cy >= r.origin.y  && cy <= r.origin.y + r.size.height)
+    cy = int(r.size.height - cy);
+    if (   cx >= r.origin.x && cx <= r.origin.x + r.size.width
+        && cy >= r.origin.y && cy <= r.origin.y + r.size.height)
       break;
   }
   if (i < count) gd = [a objectAtIndex:i];
@@ -1616,11 +1618,11 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   if (!gd) gd = [a objectAtIndex:0];
   if (gd) {
     r = [gd visibleFrame];
-    int sh = [gd frame].size.height;
-    if ( R > r.origin.x + r.size.width )  X -= R - (r.origin.x + r.size.width);
-    if ( B > sh - r.origin.y ) Y -= B - (sh - r.origin.y);
-    if ( X < r.origin.x )   X = r.origin.x;
-    if ( Y < sh - (r.origin.y + r.size.height) )    Y = sh - (r.origin.y + r.size.height);
+    int sh = int([gd frame].size.height);
+    if ( R > r.origin.x + r.size.width ) X -= int(R - (r.origin.x + r.size.width));
+    if ( B > sh - r.origin.y ) Y -= int(B - (sh - r.origin.y));
+    if ( X < r.origin.x ) X = int(r.origin.x);
+    if ( Y < sh - (r.origin.y + r.size.height) ) Y = int(sh - (r.origin.y + r.size.height));
   }
   
   // Return the client area's top left corner in (X,Y)
@@ -2009,12 +2011,12 @@ void Fl_X::make(Fl_Window* w)
     }
     
     crect = [[cw contentView] frame];
-    w->w(crect.size.width);
-    w->h(crect.size.height);
+    w->w(int(crect.size.width));
+    w->h(int(crect.size.height));
     crect = [cw frame];
-    w->x(crect.origin.x);
+    w->x(int(crect.origin.x));
     srect = [[cw screen] frame];
-    w->y(srect.size.height - (crect.origin.y + w->h()));
+    w->y(int(srect.size.height - (crect.origin.y + w->h())));
     
     int old_event = Fl::e_number;
     w->handle(Fl::e_number = FL_SHOW);
@@ -2733,10 +2735,10 @@ int MACscreen_init(XRectangle screens[])
   int i, num_screens = 0;
   for( i = 0; i < count; i++) {
     r = [[a objectAtIndex:i] frame];
-    screens[num_screens].x      = r.origin.x;
-    screens[num_screens].y      = r.size.height - (r.origin.y + r.size.height);
-    screens[num_screens].width  = r.size.width;
-    screens[num_screens].height = r.size.height;
+    screens[num_screens].x      = int(r.origin.x);
+    screens[num_screens].y      = int(r.size.height - (r.origin.y + r.size.height));
+    screens[num_screens].width  = int(r.size.width);
+    screens[num_screens].height = int(r.size.height);
     num_screens ++;
     if (num_screens >= 16) break;
   }
@@ -3096,13 +3098,13 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
   int nl = 0;
   while((q=strchr(p, '\n')) != NULL) { 
     nl++; 
-    w2 = fl_width(p, q - p);
+    w2 = int(fl_width(p, q - p));
     if (w2 > width) width = w2;
     p = q + 1; 
   }
   if (text[ ltext - 1] != '\n') {
     nl++;
-    w2 = fl_width(p);
+    w2 = int(fl_width(p));
     if (w2 > width) width = w2;
   }
   height = nl * fl_height() + 3;
