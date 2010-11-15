@@ -1,83 +1,47 @@
-The FLTK Team is proud to announce the release of FLTK 1.1.10,
+The FLTK Team is proud to announce the release of FLTK 1.1.11,
 a cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
-Microsoft(r) Windows(r), and MacOS(r) X. FLTK provides
+Microsoft(r) Windows(r), and Apple(r) OS X(r). FLTK provides
 modern GUI functionality without the bloat and supports 3D
 graphics via OpenGL(r) and its built-in GLUT emulation.
 
-FLTK 1.1.10 fixes some bugs and updates the bundled png image
-library.
+FLTK 1.1.11 fixes some bugs and one regression.
 
 This is the final release of the FLTK 1.1.x development tree.
 
 FLTK is provided under the GNU Library Public License with
 exceptions that allow for static linking.
 
-Changes since FLTK 1.1.9 include:
+Changes since FLTK 1.1.10 include:
 
-	- Updated the bundled libpng to v1.2.35 (released 18 Feb. 2009)
-	- Added Fl_Scroll::bbox() documentation (STR #1893)
-	- Fixed static linking of image libraries (STR #1962)
-	- Fixed callback would not be called when shortcut was used with
-          radio and toggle buttons in default FL_RELEASE mode.
-	- Fixed a problem with TrackMouseEvent() (Windows only) that would
-	  generate wrong FL_LEAVE events with subwindows. TrackMouseEvent
-	  is now enabled by default (it was disabled for GNU compilers).
-	  It can be disabled by defining NO_TRACK_MOUSE.
-	  Improved test/subwindow.cxx (STR #2079)
-	- Fixed RGB colors for round box (STR #2097)
-	- Fixed documentation (added missing COMCTRL32.LIB dependency)
-	- Fl_Group::clip_children() is now public (STR #2017)
-	- Fixed first modifier key event (STR #1952)
-	- Fixed wrong default value of Fl_Spinner in Fluid (STR #1991)
-	- Fixed Fluid textcolor output (STR #1992)
-	- Added clarification to Fl_GL_Window mode function (STR #1945)
-	- Fl_Group and Fl_Scroll now resize themselves before
-	  resizing their children (STR #2032)
-	- Fixed adding an idle handler during a draw() call (STR #1950)
-	- Improved stability of fl_read_image (STR #2021)
-	- Fixed menu position close to screen border (STR #2057)
+        - Documentation fixes (STR #2410)
+        - Fixed mouse wheel related crash in GLUT emulation (STR #2381)
+        - Fixed missing architecture flags in OS X build (STR #2303)
+        - Fixed menu and shortcut handling (STR #2243)
+        - Fixed multiple line output of fltk-config --libs (STR #2408)
 
 ----HTML----
 
-<P>The FLTK Team is proud to announce the release of FLTK 1.1.10,
+<P>The FLTK Team is proud to announce the release of FLTK 1.1.11,
 a cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
-Microsoft(r) Windows(r), and MacOS(r) X. FLTK provides
+Microsoft(r) Windows(r), and Apple(r) OS X(r). FLTK provides
 modern GUI functionality without the bloat and supports 3D
 graphics via OpenGL(r) and its built-in GLUT emulation.</P>
 
-<P>FLTK 1.1.10 fixes some bugs and updates the bundled png image
-library.</P>
+<P>FLTK 1.1.11 fixes some bugs and one regression.</P> 
 
 <P>This is the final release of the FLTK 1.1.x development tree.</P>
 
 <P>FLTK is provided under the GNU Library Public License with
 exceptions that allow for static linking.</P>
 
-<P>Changes since FLTK 1.1.9 include:</P>
+<P>Changes since FLTK 1.1.10 include:</P>
 
 <UL>
 
-     <LI> Updated the bundled libpng to v1.2.35 (released 18 Feb. 2009)
-     <LI> Added Fl_Scroll::bbox() documentation (STR #1893)
-     <LI> Fixed static linking of image libraries (STR #1962)
-     <LI> Fixed callback would not be called when shortcut was used with
-          radio and toggle buttons in default FL_RELEASE mode.
-     <LI> Fixed a problem with TrackMouseEvent() (Windows only) that would
-	  generate wrong FL_LEAVE events with subwindows. TrackMouseEvent
-	  is now enabled by default (it was disabled for GNU compilers).
-	  It can be disabled by defining NO_TRACK_MOUSE.
-	  Improved test/subwindow.cxx (STR #2079)
-     <LI> Fixed RGB colors for round box (STR #2097)
-     <LI> Fixed documentation (added missing COMCTRL32.LIB dependency)
-     <LI> Fl_Group::clip_children() is now public (STR #2017)
-     <LI> Fixed first modifier key event (STR #1952)
-     <LI> Fixed wrong default value of Fl_Spinner in Fluid (STR #1991)
-     <LI> Fixed Fluid textcolor output (STR #1992)
-     <LI> Added clarification to Fl_GL_Window mode function (STR #1945)
-     <LI> Fl_Group and Fl_Scroll now resize themselves before
-	  resizing their children (STR #2032)
-     <LI> Fixed adding an idle handler during a draw() call (STR #1950)
-     <LI> Improved stability of fl_read_image (STR #2021)
-     <LI> Fixed menu position close to screen border (STR #2057)
+<LI> Documentation fixes (STR #2410)
+<LI> Fixed mouse wheel related crash in GLUT emulation (STR #2381)
+<LI> Fixed missing architecture flags in OS X build (STR #2303)
+<LI> Fixed menu and shortcut handling (STR #2243)
+<LI> Fixed multiple line output of fltk-config --libs (STR #2408)
 
 </UL>
