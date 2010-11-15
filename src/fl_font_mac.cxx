@@ -129,8 +129,8 @@ else {
   float fa = -FixedToFloat(bAscent), fd = -FixedToFloat(bDescent);
   if (fa>0.0f && fd>0.0f) {
     //float f = Size/(fa+fd);
-    ascent = fa; //int(fa*f+0.5f);
-    descent = fd; //Size - ascent;
+    ascent = int(fa); //int(fa*f+0.5f);
+    descent = int(fd); //Size - ascent;
   }
   int w = FixedToInt(bAfter);
   if (w)
@@ -335,8 +335,8 @@ void fl_text_extents(const UniChar* txt, int n, int &dx, int &dy, int &w, int &h
   if (!fl_fontsize) {
     check_default_font(); // avoid a crash!
     if (!fl_fontsize)
-      w = 8.0 * n; // user must select a font first!
-      h = 8.0;
+      w = int(8.0 * n); // user must select a font first!
+      h = int(8.0);
       return;
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -493,7 +493,7 @@ void Fl_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
 }
 
 void Fl_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
-  draw(c, n, x - fl_width(c, n), y);
+  draw(c, n, int(x - fl_width(c, n)), y);
 }
 
 //

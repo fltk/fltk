@@ -182,8 +182,8 @@ CGContextRef CreateWatchImage(void)
   fl_pie(-r, -r, 2*r, 2*r, 0, 360);
   fl_color(FL_BLACK);
   fl_circle(0,0,r);
-  fl_xyline(0, 0, -r*.7);
-  fl_xyline(0, 0, 0, -r*.7);
+  fl_xyline(0, 0, int(-r*.7));
+  fl_xyline(0, 0, 0, int(-r*.7));
   fl_end_offscreen();
   return (CGContextRef)off;
 }
