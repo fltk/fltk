@@ -212,6 +212,19 @@ static XftFont* fontopen(const char* name, bool core) {
     XftResult match_result; // the result of our matching attempt
     // query the system to find a match for this font
     match_pat = XftFontMatch(fl_display, fl_screen, fnt_pat, &match_result);
+    if (!match_pat) {
+      // last chance, just open any font in the right size
+      the_font = XftFontOpen (fl_display, fl_screen,
+                        XFT_FAMILY, XftTypeString, "sans",
+                        XFT_SIZE, XftTypeDouble, (double)fl_size_,
+                        NULL);
+      XftPatternDestroy(fnt_pat);
+      if (!the_font) {
+        Fl::error("Unable to find fonts. Check your FontConfig configuration.\n");
+        exit(1);
+      }
+      return the_font;
+    }
     // open the matched font
     the_font = XftFontOpenPattern(fl_display, match_pat);
     // Tidy up the resources we allocated
