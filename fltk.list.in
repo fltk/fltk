@@ -5,7 +5,7 @@
 #
 # (EPM can be found at http://www.epmhome.org/)
 #
-# Copyright 1998-2008 by Bill Spitzak and others.
+# Copyright 1998-2010 by Bill Spitzak and others.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -28,14 +28,14 @@
 #
 
 %product Fast Light Tool Kit (FLTK)
-%copyright 1998-2008 by Bill Spitzak and others.
+%copyright 1998-201- by Bill Spitzak and others.
 %vendor FLTK Development Team
 %license COPYING
 %readme README
 %version @FL_MAJOR_VERSION@.@FL_MINOR_VERSION@.@FL_PATCH_VERSION@
 %description The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
 %description cross-platform C++ GUI toolkit for UNIX(r)/Linux(r) (X11),
-%description Microsoft(r) Windows(r), and MacOS(r) X.  FLTK provides modern
+%description Microsoft(r) Windows(r), and Apple(r) OS X(r).  FLTK provides modern
 %description GUI functionality without the bloat and supports 3D graphics via
 %description OpenGL(r) and its built-in GLUT emulation.
 
