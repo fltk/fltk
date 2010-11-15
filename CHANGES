@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.10
 
+	- Documentation fixes (STR #2220, STR #2209, STR #1945, STR #1893)
 	- Widgets now remove stale entries from the default callback
 	  queue when they are deleted (STR #2302)
 	- Fixed selection bug in Fl_Int_Input (STR #2292)
@@ -9,12 +10,11 @@ CHANGES IN FLTK 1.1.10
 	- Updated the bundled libpng to v1.2.40 (released Sep. 10, 2009)
 	- Fixed Fl_Choice contrast with light-on-dark settings (STR #2219)
 	- Added Xft2 font lookup table (STR #2215)
-	- Fixed X server "lock", if a modal dialog window is opened
+	- Fixed X server lockup, if a modal dialog window is opened
 	  while a menu is active (STR #1986)
-	- Updated mirror sites in documentation (STR #2220)
 	- Setting a default font for Xft (STR #2216)
-	- Temporarily limited builds to 32-bit on OX S to stay
-	  compatible to Snow Leopard
+	- Limited builds to 32-bit on OX S to stay compatible to Snow Leopard.
+	  64 bit users should upgrade to FLTK 1.3 and above.
 	- Fixed Windows compile bug with "#define USE_COLORMAP 0"
 	  (STR #2241)
 	- Fixed glibc 2.10 compiler problems (Fedora 11 and others)
@@ -25,7 +25,6 @@ CHANGES IN FLTK 1.1.10
 	- Added cast to Fl_Color in all Fluid code (STR #2206)
 	- Fixed wrong identifier for special keys combined with 
 	  modifier (STR #2196)
-	- Fixed documentation for Fl_Progress (STR #2209)
 	- Fix for multiple popups, when dragging and calling fl_alert()
 	  and friends from the callback (STR #2159)
 	- Avoiding crashes for recursive common dialogs (this does not 
@@ -33,7 +32,6 @@ CHANGES IN FLTK 1.1.10
 	- Fluid printing used wrong colors under Windows (STR #2195)
 	- Fixed bad system menu hadling in OS X (STR #2153)
 	- Fixed File Input mouse pointer dragging (STR #2181)
-	- Added Fl_Scroll::bbox() documentation (STR #1893)
 	- Fixed static linking of image libraries (STR #1962)
 	- Fixed callback would not be called when shortcut was used with
           radio and toggle buttons in default FL_RELEASE mode.
@@ -48,7 +46,6 @@ CHANGES IN FLTK 1.1.10
 	- Fixed first modifier key event (STR #1952)
 	- Fixed wrong default value of Fl_Spinner in Fluid (STR #1991)
 	- Fixed Fluid textcolor output (STR #1992)
-	- Added clarification to Fl_GL_Window mode function (STR #1945)
 	- Fl_Group and Fl_Scroll now resize themselves before
 	  resizing their children (STR #2032)
 	- Fixed adding an idle handler during a draw() call (STR #1950)
