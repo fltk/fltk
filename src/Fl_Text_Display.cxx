@@ -672,7 +672,7 @@ void Fl_Text_Display::wrap_mode(int wrap, int wrapMargin) {
       break;
     case WRAP_AT_COLUMN: 
     default:
-      mWrapMarginPix = col_to_x(wrapMargin);
+      mWrapMarginPix = int(col_to_x(wrapMargin));
       mContinuousWrap = 1;
       break;
     case WRAP_AT_PIXEL: 
@@ -1747,7 +1747,7 @@ int Fl_Text_Display::handle_vline(
     // FIXME: if the character is an optional hyphen, we need to ignore it unless we wrap the text
     if (charStyle!=style) {
       // draw a segment whenever the style changes
-      int w = string_width( lineStr+startIndex, i-startIndex, style );
+      int w = int( string_width( lineStr+startIndex, i-startIndex, style ) );
       if (mode==DRAW_LINE)
         draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
       if (mode==FIND_INDEX && startX+w>rightClip) {
@@ -1767,7 +1767,7 @@ int Fl_Text_Display::handle_vline(
     }
     i += len;
   }
-  int w = string_width( lineStr+startIndex, i-startIndex, style );
+  int w = int( string_width( lineStr+startIndex, i-startIndex, style ) );
   if (mode==DRAW_LINE)
     draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
   if (mode==FIND_INDEX) {
@@ -1809,7 +1809,7 @@ int Fl_Text_Display::find_x(const char *s, int len, int style, int x) const {
   int i = 0;
   while (i<len) {
     int cl = fl_utf8len(s[i]);
-    int w = string_width(s, i+cl, style);
+    int w = int( string_width(s, i+cl, style) );
     if (w>x) 
       return i;
     i += cl;
