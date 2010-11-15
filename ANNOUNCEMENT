@@ -18,6 +18,7 @@ Changes since FLTK 1.1.10 include:
         - Fixed missing architecture flags in OS X build (STR #2303)
         - Fixed menu and shortcut handling (STR #2243)
         - Fixed multiple line output of fltk-config --libs (STR #2408)
+	- Fixed handling of missing fonts in Xft (STR #2355)
 
 ----HTML----
 
@@ -43,5 +44,6 @@ exceptions that allow for static linking.</P>
 <LI> Fixed missing architecture flags in OS X build (STR #2303)
 <LI> Fixed menu and shortcut handling (STR #2243)
 <LI> Fixed multiple line output of fltk-config --libs (STR #2408)
+<LI> Fixed handling of missing fonts in Xft (STR #2355)
 
 </UL>
