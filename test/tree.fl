@@ -30,7 +30,7 @@ decl {\#include <FL/Fl_Preferences.H>} {public global
 } 
 
 decl {int G_cb_counter = 0;} {
-  comment {// Global callback event counter}
+  comment {// Global callback event counter} private local
 } 
 
 Function {reason_as_name(Fl_Tree_Reason reason)} {open return_type {const char*}
@@ -142,7 +142,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {1105 44 580 695} type Double visible
+    xywh {1099 53 580 695} type Double visible
   } {
     Fl_Group tree {
       user_data 1234
@@ -831,7 +831,7 @@ G_cb_counter = 0; tree->deselect("ROOT");    if ( !G_cb_counter ) fl_alert("FAIL
 G_cb_counter = 0; tree->select("ROOT");      if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST\\n select(path) cb wasn't triggered!");
 tree->deselect("ROOT"); // leave deselected
 
-fl_alert("TEST COMPLETED\\n If you didn't see any error dialogs, test PASSED.");} selected
+fl_alert("TEST COMPLETED\\n If you didn't see any error dialogs, test PASSED.");}
       tooltip {Test the 'docallback' argument can disable callbacks.} xywh {475 674 90 16} labelsize 8
     }
   }
@@ -840,11 +840,14 @@ tree->root_label("ROOT");
 RebuildTree();
 /*tree->show_self();*/} {}
   code {// FLTK stuff
-Fl::scheme("gtk+");
+
+//Fl::scheme("gtk+");
+
 window->resizable(window);
 window->size_range(window->w(), window->h(), 0, 0);
 
      if ( tree->when() == FL_WHEN_CHANGED ) whenmode_chooser->value(0);
 else if ( tree->when() == FL_WHEN_RELEASE ) whenmode_chooser->value(1);
-else if ( tree->when() == FL_WHEN_NEVER   ) whenmode_chooser->value(2);} {}
+else if ( tree->when() == FL_WHEN_NEVER   ) whenmode_chooser->value(2);} {selected
+  }
 } 
