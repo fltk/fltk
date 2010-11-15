@@ -164,8 +164,8 @@ int Fl_Printer::printable_rect(int *w, int *h)
   
   x = (int)pmRect.left;
   y = (int)pmRect.top;
-  *w = (int)(pmRect.right - x) / scale_x + 1;
-  *h = (int)(pmRect.bottom - y) / scale_y + 1;
+  *w = int((int)(pmRect.right - x) / scale_x + 1);
+  *h = int((int)(pmRect.bottom - y) / scale_y + 1);
   return 0;
 }
 
