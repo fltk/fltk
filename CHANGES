@@ -4,6 +4,7 @@ CHANGES IN FLTK 1.1.11
 	- Fixed mouse wheel related crash in GLUT emulation (STR #2381)
 	- Fixed missing architecture flags in OS X build (STR #2303)
 	- Fixed menu and shortcut handling (STR #2243)
+	- Fixed multiple line output of fltk-config --libs (STR #2408)
 
 CHANGES IN FLTK 1.1.10
 
