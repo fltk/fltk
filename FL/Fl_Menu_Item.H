@@ -129,6 +129,7 @@ struct FL_EXPORT Fl_Menu_Item {
     int menubar=0) const;
   const Fl_Menu_Item* test_shortcut() const;
   const Fl_Menu_Item* find_shortcut(int *ip=0) const;
+  const Fl_Menu_Item* find_shortcut(int *ip, int require_alt) const;
 
   void do_callback(Fl_Widget* o) const {callback_(o, user_data_);}
   void do_callback(Fl_Widget* o,void* arg) const {callback_(o, arg);}

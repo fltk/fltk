@@ -221,11 +221,13 @@ char Fl_Widget::label_shortcut(const char *t) {
   }
 }
 
-int Fl_Widget::test_shortcut(const char *t) {
-  #ifdef WIN32
-  // on MSWindows, users expect shortcuts to work only when the Alt modifier is pressed
-  if (Fl::event_state(FL_ALT)==0) return 0;
-  #endif
+int Fl_Widget::test_shortcut(const char *ti) {
+  return test_shortcut(ti, 0);
+}
+
+int Fl_Widget::test_shortcut(const char *t, int require_alt) {
+  // for menubars etc. shortcuts must work only if the Alt modifier is pressed
+  if (require_alt && Fl::event_state(FL_ALT)==0) return 0;
   char c = Fl::event_text()[0];
   if (!c || !t) return 0;
   if (c == label_shortcut(t))

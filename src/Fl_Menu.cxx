@@ -899,22 +899,26 @@ Fl_Menu_Item::popup(
   int X, int Y,
   const char* title,
   const Fl_Menu_Item* picked,
-  const Fl_Menu_* but
+  const Fl_Menu_* button
   ) const
 {
   static Fl_Menu_Item dummy; // static so it is all zeros
   dummy.text = title;
-  return pulldown(X, Y, 0, 0, picked, but, title ? &dummy : 0);
+  return pulldown(X, Y, 0, 0, picked, button, title ? &dummy : 0);
+}
+
+const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
+  return find_shortcut(ip, 0);
 }
 
 // Search only the top level menu for a shortcut.  Either &x in the
 // label or the shortcut fields are used:
-const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip) const {
+const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip, int require_alt) const {
   const Fl_Menu_Item* m = first();
   if (m) for (int ii = 0; m->text; m = m->next(), ii++) {
     if (m->activevisible()) {
       if (Fl::test_shortcut(m->shortcut_)
-	 || Fl_Widget::test_shortcut(m->text)) {
+	 || Fl_Widget::test_shortcut(m->text, require_alt)) {
 	if (ip) *ip=ii;
 	return m;
       }

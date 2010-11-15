@@ -65,7 +65,7 @@ int Fl_Menu_Bar::handle(int event) {
     return 1;
   case FL_SHORTCUT:
     if (visible_r()) {
-      v = menu()->find_shortcut();
+      v = menu()->find_shortcut(0, true);
       if (v && v->submenu()) goto J1;
     }
     return test_shortcut() != 0;

@@ -190,6 +190,7 @@ public:
   int test_shortcut();
   static char label_shortcut(const char *t);
   static int test_shortcut(const char*);
+  static int test_shortcut(const char*, int require_alt);
   int contains(const Fl_Widget*) const ;
   int inside(const Fl_Widget* o) const {return o ? o->contains(this) : 0;}
 
