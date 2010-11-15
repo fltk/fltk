@@ -46,7 +46,7 @@ Function {make_about_panel()} {open
     Fl_Box {} {
       label {FLTK User
 Interface Designer
-Version 1.1.10}
+Version 1.1.11}
       xywh {135 10 170 69} color 12 selection_color 47 labelfont 1 labelsize 18 align 21
     }
     Fl_Box {} {
