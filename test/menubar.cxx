@@ -188,23 +188,6 @@ public:
   }
 };
 
-#ifdef TEST_MYBUTTON
-class MyButton : public Fl_Button {
-public:
-  MyButton(int x, int y,int w, int h, const char *l=0)
-  : Fl_Button(x, y, w, h, l) { }
-  int handle(int event) {
-    switch (event) {
-    case FL_ENTER:
-	puts("ENTER"); break;
-    case FL_LEAVE:
-	puts("LEAVE"); break;
-    }
-    printf("%d\n", event);
-    return Fl_Button::handle(event);
-  }
-};
-#endif
 
 int main(int argc, char **argv) {
   //Fl::set_color(Fl_Color(15),0,0,128);
@@ -218,9 +201,6 @@ int main(int argc, char **argv) {
   Fl_Menu_Bar menubar(0,0,WIDTH,30); menubar.menu(menutable);
   menubar.callback(test_cb);
   menus[0] = &menubar;
-#ifdef TEST_MYBUTTON
-  MyButton bb(100, 125, 120, 25, "Erwinn");
-#endif
   Fl_Menu_Button mb1(100,100,120,25,"&menubutton"); mb1.menu(pulldown);
   mb1.tooltip("this is a menu button");
   mb1.callback(test_cb);
