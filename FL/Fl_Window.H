@@ -57,11 +57,13 @@ class Fl_X;
 */
 class FL_EXPORT Fl_Window : public Fl_Group {
 
+  static char *default_xclass_;
+
   friend class Fl_X;
   Fl_X *i; // points at the system-specific stuff
 
   const char* iconlabel_;
-  const char* xclass_;
+  char* xclass_;
   const void* icon_;
   // size_range stuff:
   int minw, minh, maxw, maxh;
@@ -323,8 +325,10 @@ public:
   /** Sets the icon label. */
   void label(const char* label, const char* iconlabel); // platform dependent 
   void copy_label(const char* a);
-  /** See void Fl_Window::xclass(const char*) */
-  const char* xclass() const	{return xclass_;}
+
+  static void default_xclass(const char*);
+  static const char *default_xclass();
+  const char* xclass() const;
   /**
     A string used to tell the system what type of window this is. Mostly
     this identifies the picture to draw in the icon. <I>Under X, this is
@@ -339,7 +343,7 @@ public:
     visible effect. The passed pointer is stored unchanged. The string 
     is not copied.
   */
-  void xclass(const char* c)	{xclass_ = c;}
+  void xclass(const char* c);
   /** Gets the current icon window target dependent data. */
   const void* icon() const	{return icon_;}
   /** Sets the current icon window target dependent data. */

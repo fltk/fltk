@@ -40,6 +40,8 @@
 #include <FL/fl_draw.H>
 #endif
 
+char *Fl_Window::default_xclass_ = 0L;
+
 void Fl_Window::_Fl_Window() {
   type(FL_WINDOW);
   box(FL_FLAT_BOX);
@@ -176,6 +178,53 @@ void Fl_Window::default_callback(Fl_Window* win, void* v) {
 /**  Returns the last window that was made current. \see Fl_Window::make_current() */
 Fl_Window *Fl_Window::current() {
   return current_;
+}
+
+/** Returns the default xclass */
+const char *Fl_Window::default_xclass() 
+{
+  if (default_xclass_) {
+    return default_xclass_;
+  } else {
+    return "FLTK";
+  }
+}
+
+/** Sets the defaul xclass */
+void Fl_Window::default_xclass(const char *xc)
+{
+  if (default_xclass_) {
+    free(default_xclass_);
+    default_xclass_ = 0L;
+  }
+  if (xc) {
+    default_xclass_ = strdup(xc);
+  }
+}
+
+/** Set the xclass for this window */
+void Fl_Window::xclass(const char *xc) 
+{
+  if (xclass_) {
+    free(xclass_);
+    xclass_ = 0L;
+  }
+  if (xc) {
+    xclass_ = strdup(xc);
+    if (!default_xclass_) {
+      default_xclass(xc);
+    }
+  }
+}
+
+/** Return the XClass for this window, or a default. */
+const char *Fl_Window::xclass() const
+{
+  if (xclass_) {
+    return xclass_;
+  } else {
+    return default_xclass();
+  }
 }
 
 
