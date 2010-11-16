@@ -809,7 +809,6 @@ int fl_handle(const XEvent& thisevent)
   XEvent xevent = thisevent;
   fl_xevent = &thisevent;
   Window xid = xevent.xany.window;
-  int filtered = 0;
   static Window xim_win = 0;
 
   if (fl_xim_ic && xevent.type == DestroyNotify &&
@@ -868,10 +867,8 @@ int fl_handle(const XEvent& thisevent)
 #endif
   }
 
-  filtered = XFilterEvent((XEvent *)&xevent, 0);
-  if (filtered) {
-    return 1;
-  }
+  if ( XFilterEvent((XEvent *)&xevent, 0) )
+      return(1);
 
   switch (xevent.type) {
 
@@ -1144,33 +1141,30 @@ int fl_handle(const XEvent& thisevent)
       int len = 0;
 
       if (fl_xim_ic) {
-        if (!filtered) {
-          Status status;
-          len = XUtf8LookupString(fl_xim_ic, (XKeyPressedEvent *)&xevent.xkey,
-                               buffer, buffer_len, &keysym, &status);
+	Status status;
+	len = XUtf8LookupString(fl_xim_ic, (XKeyPressedEvent *)&xevent.xkey,
+			     buffer, buffer_len, &keysym, &status);
 
-          while (status == XBufferOverflow && buffer_len < 50000) {
-            buffer_len = buffer_len * 5 + 1;
-            buffer = (char*)realloc(buffer, buffer_len);
-            len = XUtf8LookupString(fl_xim_ic, (XKeyPressedEvent *)&xevent.xkey,
-                               buffer, buffer_len, &keysym, &status);
-          }
-        } else {
+	while (status == XBufferOverflow && buffer_len < 50000) {
+	  buffer_len = buffer_len * 5 + 1;
+	  buffer = (char*)realloc(buffer, buffer_len);
+	  len = XUtf8LookupString(fl_xim_ic, (XKeyPressedEvent *)&xevent.xkey,
+			     buffer, buffer_len, &keysym, &status);
+	}
+	keysym = XKeycodeToKeysym(fl_display, keycode, 0);
+      } else {
+        //static XComposeStatus compose;
+        len = XLookupString((XKeyEvent*)&(xevent.xkey),
+                             buffer, buffer_len, &keysym, 0/*&compose*/);
+        if (keysym && keysym < 0x400) { // a character in latin-1,2,3,4 sets
+          // force it to type a character (not sure if this ever is needed):
+          // if (!len) {buffer[0] = char(keysym); len = 1;}
+          len = fl_utf8encode(XKeysymToUcs(keysym), buffer);
+          if (len < 1) len = 1;
+          // ignore all effects of shift on the keysyms, which makes it a lot
+          // easier to program shortcuts and is Windoze-compatable:
           keysym = XKeycodeToKeysym(fl_display, keycode, 0);
         }
-      } else {
-      //static XComposeStatus compose;
-      len = XLookupString((XKeyEvent*)&(xevent.xkey),
-                             buffer, buffer_len, &keysym, 0/*&compose*/);
-      if (keysym && keysym < 0x400) { // a character in latin-1,2,3,4 sets
-        // force it to type a character (not sure if this ever is needed):
-        // if (!len) {buffer[0] = char(keysym); len = 1;}
-        len = fl_utf8encode(XKeysymToUcs(keysym), buffer);
-        if (len < 1) len = 1;
-        // ignore all effects of shift on the keysyms, which makes it a lot
-        // easier to program shortcuts and is Windoze-compatable:
-        keysym = XKeycodeToKeysym(fl_display, keycode, 0);
-      }
       }
       // MRS: Can't use Fl::event_state(FL_CTRL) since the state is not
       //      set until set_event_xy() is called later...
