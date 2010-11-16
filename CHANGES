@@ -6,6 +6,7 @@ CHANGES IN FLTK 1.1.11
 	- Fixed menu and shortcut handling (STR #2243)
 	- Fixed multiple line output of fltk-config --libs (STR #2408)
 	- Fixed handling of missing fonts in Xft (STR #2355)
+	- Fixed wrong relative path (STR #2384)
 
 CHANGES IN FLTK 1.1.10
 
