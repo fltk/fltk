@@ -695,3 +695,4 @@ to output symbols for functions that are likely inlined as well)
 
 > nm -g -j lib/libfltk.a | c++filt | sort -u | more
 
+>  ally hook bridge hitch span bond hookup joint weld
