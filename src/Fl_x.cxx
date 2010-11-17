@@ -804,6 +804,27 @@ static Fl_Window* resize_bug_fix;
 static char unknown[] = "<unknown>";
 const int unknown_len = 10;
 
+extern "C" {
+
+static int xerror = 0;
+
+static int ignoreXEvents(Display *display, XErrorEvent *event) {
+  xerror = 1;
+  return 0;
+}
+
+static XErrorHandler catchXExceptions() {
+  xerror = 0;
+  return ignoreXEvents;
+}
+
+static int wasXExceptionRaised() {
+  return xerror;
+}
+
+}
+
+
 int fl_handle(const XEvent& thisevent)
 {
   XEvent xevent = thisevent;
@@ -1359,6 +1380,9 @@ int fl_handle(const XEvent& thisevent)
   case ReparentNotify: {
     int xpos, ypos;
     Window junk;
+    
+    // on some systems, the ReparentNotify event is not handled as we would expect.
+    XErrorHandler oldHandler = XSetErrorHandler(catchXExceptions());
 
     //ReparentNotify gives the new position of the window relative to
     //the new parent. FLTK cares about the position on the root window.
@@ -1366,10 +1390,13 @@ int fl_handle(const XEvent& thisevent)
                           XRootWindow(fl_display, fl_screen),
                           xevent.xreparent.x, xevent.xreparent.y,
                           &xpos, &ypos, &junk);
+    XSetErrorHandler(oldHandler);
 
     // tell Fl_Window about it and set flag to prevent echoing:
-    resize_bug_fix = window;
-    window->position(xpos, ypos);
+    if ( !wasXExceptionRaised() ) {
+      resize_bug_fix = window;
+      window->position(xpos, ypos);
+    }
     break;
     }
   }
