@@ -278,7 +278,7 @@ if test x$enable_shared = xyes; then
             IMGDSONAME="libfltk_images.so.$FL_API_VERSION"
             CAIRODSONAME="libfltk_cairo.so.$FL_API_VERSION"
             DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -Wl,-soname,\$@ \$(LDLIBS) -shared -fPIC $DEBUGFLAG -o"
-	    if test "x$libdir" != "x/usr/lib"; then
+	    if test "x$libdir" != "x/usr/lib" -a "x$libdir" != "x/usr/lib64"; then
 		    DSOLINK="-Wl,-rpath,$libdir"
             fi
 	    ;;
