@@ -329,20 +329,6 @@ public:
   static void default_xclass(const char*);
   static const char *default_xclass();
   const char* xclass() const;
-  /**
-    A string used to tell the system what type of window this is. Mostly
-    this identifies the picture to draw in the icon. <I>Under X, this is
-    turned into a XA_WM_CLASS pair by truncating at the first
-    non-alphanumeric character and capitalizing the first character, and
-    the second one if the first is 'x'.  Thus "foo" turns into "foo, Foo",
-    and "xprog.1" turns into "xprog, XProg".</I> This only works if called <I>
-    before</I> calling show().
-
-    Under Microsoft Windows this string is used as the name of the
-    WNDCLASS structure, though it is not clear if this can have any
-    visible effect. The passed pointer is stored unchanged. The string 
-    is not copied.
-  */
   void xclass(const char* c);
   /** Gets the current icon window target dependent data. */
   const void* icon() const	{return icon_;}
@@ -357,14 +343,18 @@ public:
   int shown() {return i != 0;}
   /**
     Puts the window on the screen. Usually (on X) this has the side
-    effect of opening the display. The second form is used for top-level
-    windows and allows standard arguments to be parsed from the
-    command-line.
+    effect of opening the display. 
 
     If the window is already shown then it is restored and raised to the
     top.  This is really convenient because your program can call show()
     at any time, even if the window is already up.  It also means that 
     show() serves the purpose of raise() in other toolkits.
+    
+    Fl_Window::show(int argc, char **argv) is used for top-level
+    windows and allows standard arguments to be parsed from the
+    command-line.
+    
+    \see Fl_Window::show(int argc, char **argv)
   */
   virtual void show();
   /**
@@ -373,9 +363,26 @@ public:
   */
   virtual void hide();
   /**
-    See virtual void Fl_Window::show() 
+    Puts the window on the screen and parses command-line arguments.
+
+    Usually (on X) this has the side effect of opening the display.
+
+    This form should be used for top-level windows, at least for the
+    first (main) window. It allows standard arguments to be parsed
+    from the command-line. You can use \p argc and \p argv from
+    main(int argc, char **argv) for this call.
+
+    The first call also sets up some system-specific internal
+    variables like the system colors.
+
+    \todo explain which system parameters are set up.
+
+    \param argc command-line argument count, usually from main()
+    \param argv command-line argument vector, usually from main()
+
+    \see virtual void Fl_Window::show()
   */
-  void show(int, char**);
+  void show(int argc, char **argv);
   /**
     Makes the window completely fill the screen, without any window
     manager border visible.  You must use fullscreen_off() to undo
