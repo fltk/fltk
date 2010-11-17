@@ -34,7 +34,9 @@ extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short*
 #define check_default_font() {if (!fl_fontsize) fl_font(0, 12);}
 
 static const CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static SInt32 MACsystemVersion = 0;
+#endif
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
@@ -407,6 +409,7 @@ void Fl_Graphics_Driver::draw(const char* str, int n, int x, int y) {
 }
 
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static CGColorRef flcolortocgcolor(Fl_Color i)
 {
   uchar r, g, b;
@@ -414,14 +417,12 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
   CGFloat components[4] = {r/255.0f, g/255.0f, b/255.0f, 1.};
   static CGColorSpaceRef cspace = NULL;
   if(cspace == NULL) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     cspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
-#else
-    cspace = CGColorSpaceCreateWithName(kCGColorSpaceUserRGB);
-#endif
     }
   return CGColorCreate(cspace, components);
 }
+#endif
+
 
 void fl_draw(const char *str, int n, float x, float y) {
   
