@@ -114,6 +114,7 @@ case $uname in
             CFLAGS="$CFLAGS -arch i386"
             CXXFLAGS="$CXXFLAGS -arch i386"
             LDFLAGS="$LDFLAGS -arch i386"
+            DSOFLAGS="$DSOFLAGS -arch i386"
         fi
         ;;
 esac
