@@ -117,19 +117,14 @@
 #define USE_XDBE HAVE_XDBE
 
 /*
- * USE_QUARTZ:
+ * __APPLE_QUARTZ__:
  *
- * Use Quartz instead of Quickdraw on Apple Mac OS X machines.
- * FLTK was originally ported to Quickdraw which is no longer 
- * supported by Apple. If USE_QUARTZ is defined, FLTK will be
- * compiled using Quartz instead. This flag has no meaning on
- * other operating systems.
+ * If __APPLE_QUARTZ__ is defined, FLTK will be
+ * compiled using Quartz. This flag has no meaning on
+ * other operating systems than Mac OS X.
  */
 
-#cmakedefine USE_QUARTZ
 #cmakedefine __APPLE_QUARTZ__ @__APPLE_QUARTZ__@
-#cmakedefine __APPLE_COCOA__ @__APPLE_COCOA__@
-#cmakedefine __APPLE_QD__ @__APPLE_QD__@
 
 
 /*
