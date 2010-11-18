@@ -853,7 +853,7 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
   pattern[0]      = '\0';
   iconfilename[0] = '\0';
 
-  if ((fp = fopen(filename, "rb")) != NULL) {
+  if ((fp = fl_fopen(filename, "rb")) != NULL) {
     while (fgets(tmp, sizeof(tmp), fp)) {
       if ((val = get_kde_val(tmp, "Icon")) != NULL)
 	strlcpy(iconfilename, val, sizeof(iconfilename));

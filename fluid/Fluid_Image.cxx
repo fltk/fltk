@@ -111,7 +111,7 @@ void Fluid_Image::write_static() {
     write_c("static unsigned char %s[] =\n",
 	    unique_id(this, "idata", fl_filename_name(name()), 0));
         
-    FILE *f = fopen(name(), "rb");
+    FILE *f = fl_fopen(name(), "rb");
     if (!f) {
       // message = "Can't include binary file. Can't open";
     } else {
@@ -180,7 +180,7 @@ Fluid_Image* Fluid_Image::find(const char *iname) {
   // no, so now see if the file exists:
 
   goto_source_dir();
-  FILE *f = fopen(iname,"rb");
+  FILE *f = fl_fopen(iname,"rb");
   if (!f) {
     read_error("%s : %s",iname,strerror(errno));
     leave_source_dir();

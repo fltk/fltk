@@ -304,8 +304,8 @@ ps_check(const char *name,	// I - Name of file
     sprintf(outname, "%s/.preview.ps", home ? home : "");
 
     if (strcmp(name, outname) != 0) {
-      in   = fopen(name, "rb");
-      out  = fopen(outname, "wb");
+      in   = fl_fopen(name, "rb");
+      out  = fl_fopen(outname, "wb");
       page = 0;
 
       while (fgets(line, sizeof(line), in) != NULL) {

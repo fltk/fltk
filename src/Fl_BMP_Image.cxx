@@ -35,6 +35,7 @@
 //
 
 #include <FL/Fl_BMP_Image.H>
+#include <FL/fl_utf8.h>
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -93,7 +94,7 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
 
 
   // Open the file...
-  if ((fp = fopen(bmp, "rb")) == NULL) return;
+  if ((fp = fl_fopen(bmp, "rb")) == NULL) return;
 
   // Get the header...
   byte = (uchar)getc(fp);	// Check "BM" sync chars

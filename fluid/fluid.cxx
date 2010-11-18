@@ -326,7 +326,7 @@ void save_template_cb(Fl_Widget *, void *) {
 
   FILE *fp;
 
-  if ((fp = fopen(filename, "wb")) == NULL) {
+  if ((fp = fl_fopen(filename, "wb")) == NULL) {
     delete[] pixels;
     fl_alert("Error writing %s: %s", filename, strerror(errno));
     return;
@@ -354,7 +354,7 @@ void save_template_cb(Fl_Widget *, void *) {
 
 #  if 0 // The original PPM output code...
   strcpy(ext, ".ppm");
-  fp = fopen(filename, "wb");
+  fp = fl_fopen(filename, "wb");
   fprintf(fp, "P6\n%d %d 255\n", w, h);
   fwrite(pixels, w * h, 3, fp);
   fclose(fp);
@@ -595,7 +595,7 @@ void new_cb(Fl_Widget *, void *v) {
       char line[1024], *ptr, *next;
       FILE *infile, *outfile;
 
-      if ((infile = fopen(tname, "r")) == NULL) {
+      if ((infile = fl_fopen(tname, "r")) == NULL) {
 	fl_alert("Error reading template file \"%s\":\n%s", tname,
         	 strerror(errno));
 	set_modflag(0);
@@ -603,7 +603,7 @@ void new_cb(Fl_Widget *, void *v) {
 	return;
       }
 
-      if ((outfile = fopen(cutfname(1), "w")) == NULL) {
+      if ((outfile = fl_fopen(cutfname(1), "w")) == NULL) {
 	fl_alert("Error writing buffer file \"%s\":\n%s", cutfname(1),
         	 strerror(errno));
 	fclose(infile);
@@ -1252,7 +1252,7 @@ void print_cb(Fl_Return_Button *, void *) {
 		    "Replace", NULL, outname) == 0) outname = NULL;
     }
 
-    if (outname) outfile = fopen(outname, "w");
+    if (outname) outfile = fl_fopen(outname, "w");
     else outfile = NULL;
   }
 
@@ -1909,8 +1909,9 @@ public:
   Fl_Process() {_fpt= NULL;}
   ~Fl_Process() {if (_fpt) close();}
 
+  // FIXME: popen needs the utf8 equivalen fl_popen
   FILE * popen	(const char *cmd, const char *mode="r");
-  //not necessary here: FILE * fopen	(const char *file, const char *mode="r");
+  //not necessary here: FILE * fl_fopen	(const char *file, const char *mode="r");
   int  close();
 
   FILE * desc() const { return _fpt;} // non null if file is open

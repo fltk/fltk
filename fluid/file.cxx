@@ -43,7 +43,7 @@ static FILE *fout;
 
 int open_write(const char *s) {
   if (!s) {fout = stdout; return 1;}
-  FILE *f = fopen(s,"w");
+  FILE *f = fl_fopen(s,"w");
   if (!f) return 0;
   fout = f;
   return 1;
@@ -135,7 +135,7 @@ static const char *fname;
 int open_read(const char *s) {
   lineno = 1;
   if (!s) {fin = stdin; fname = "stdin"; return 1;}
-  FILE *f = fopen(s,"r");
+  FILE *f = fl_fopen(s,"r");
   if (!f) return 0;
   fin = f;
   fname = s;

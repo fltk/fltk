@@ -434,7 +434,7 @@ int load_the_menu(const char* fname)
   FILE *fin = 0;
   char line[256], mname[64],iname[64],cname[64];
   int i,j, mi = 0;
-  fin = fopen(fname,"r");
+  fin = fl_fopen(fname,"r");
   if (fin == NULL)
   {
 #if defined ( __APPLE__ )
@@ -445,7 +445,7 @@ int load_the_menu(const char* fname)
     pos = strrchr(fname,'/');
     if (!pos) return 0;
     strcpy(pos,"/Resources/demo.menu");
-    fin  = fopen(fname,"r");
+    fin  = fl_fopen(fname,"r");
 #endif
   }
   // if "fin" is still NULL, we will read the menu from the string array in the 
