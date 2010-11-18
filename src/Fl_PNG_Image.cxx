@@ -98,7 +98,7 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   else
     channels = 1;
 
-  int num_trans;
+  int num_trans = 0;
   png_get_tRNS(pp, info, 0, &num_trans, 0);
   if ((png_get_color_type(pp, info) & PNG_COLOR_MASK_ALPHA) || (num_trans != 0))
       channels ++;
