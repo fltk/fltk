@@ -43,6 +43,21 @@
  * extern const char *encoding_name(int num);
  */
 
+/* The ARM header files have a bug by not taking into account that ARM cpu
+ * likes pacing to 4 bytes. This little trick defines our own version of
+ * XChar2b which does not have this problem
+ */
+
+typedef struct {
+  unsigned char byte1;
+  unsigned char byte2;
+}
+#if defined(__GNUC__) && defined(__arm__) && !defined(__ARM_EABI__)
+__attribute__ ((packed))
+#endif
+Fl_XChar2b;
+
+
 /*********************************************************************/
 /** extract a list of font from the base font name list             **/
 /*********************************************************************/
@@ -328,8 +343,8 @@ XUtf8DrawRtlString(Display 		*display,
 
   int 		*encodings;	/* encodings array */
   XFontStruct 	**fonts;	/* fonts array */
-  XChar2b 	buf[128];	/* drawing buffer */
-  XChar2b	*ptr;		/* pointer to the drawing buffer */
+  Fl_XChar2b 	buf[128];	/* drawing buffer */
+  Fl_XChar2b	*ptr;		/* pointer to the drawing buffer */
   int 		fnum;		/* index of the current font in the fonts array*/
   int 		i;		/* current byte in the XChar2b buffer */
   int 		first;		/* first valid font index */
@@ -449,7 +464,7 @@ XUtf8DrawString(Display 	*display,
 
   int 		*encodings; /* encodings array */
   XFontStruct 	**fonts;    /* fonts array */
-  XChar2b 	buf[128];   /* drawing buffer */
+  Fl_XChar2b 	buf[128];   /* drawing buffer */
   int 		fnum;       /* index of the current font in the fonts array*/
   int 		i;          /* current byte in the XChar2b buffer */
   int 		first;      /* first valid font index */
@@ -559,7 +574,7 @@ XUtf8TextWidth(XUtf8FontStruct 	*font_set,
   int		x;
   int 		*encodings; /* encodings array */
   XFontStruct 	**fonts;    /* fonts array */
-  XChar2b 	buf[128];   /* drawing buffer */
+  Fl_XChar2b 	buf[128];   /* drawing buffer */
   int 		fnum;       /* index of the current font in the fonts array*/
   int 		i;          /* current byte in the XChar2b buffer */
   int 		first;      /* first valid font index */
@@ -739,7 +754,7 @@ XUtf8UcsWidth(XUtf8FontStruct  *font_set,
   int		x;
   int 		*encodings; /* encodings array */
   XFontStruct 	**fonts;    /* fonts array */
-  XChar2b 	buf[8];     /* drawing buffer */
+  Fl_XChar2b 	buf[8];     /* drawing buffer */
   int 		fnum;       /* index of the current font in the fonts array*/
   int 		i;          /* current byte in the XChar2b buffer */
   int 		first;      /* first valid font index */
