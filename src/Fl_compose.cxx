@@ -28,16 +28,8 @@
 #include <FL/Fl.H>
 #include <FL/x.H>
 
-//
-// MRS: Uncomment the following define to get the original (pre-1.1.2)
-//      dead key support code.  The original code apparently did not
-//      work on Belgian keyboards.
-//
 
-//#define OLD_DEAD_KEY_CODE
-
-
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(WIN32)
 
 static const char* const compose_pairs =
 "=E  _'f _\"..+ ++^ %%^S< OE  ^Z    ^''^^\"\"^-*- --~ TM^s> oe  ^z:Y" 
@@ -47,38 +39,11 @@ static const char* const compose_pairs =
 
 #endif
 
-#if !defined(WIN32) && defined(OLD_DEAD_KEY_CODE) // X only
-// X dead-key lookup table.  This turns a dead-key keysym into the
-// first of two characters for one of the compose sequences.  These
-// keysyms start at 0xFE50.
-// Win32 handles the dead keys before FLTK can see them.  This is
-// unfortunate, because you don't get the preview effect.
-static char dead_keys[] = {
-  '`',	// XK_dead_grave
-  '\'',	// XK_dead_acute
-  '^',	// XK_dead_circumflex
-  '~',	// XK_dead_tilde
-  '_',	// XK_dead_macron
-  0,	// XK_dead_breve
-  '.',	// XK_dead_abovedot
-  ':',	// XK_dead_diaeresis
-  '*',	// XK_dead_abovering
-  0,	// XK_dead_doubleacute
-  'v',	// XK_dead_caron
-  ','	// XK_dead_cedilla
-//   0,	// XK_dead_ogonek
-//   0,	// XK_dead_iota
-//   0,	// XK_dead_voiced_sound
-//   0,	// XK_dead_semivoiced_sound
-//   0	// XK_dead_belowdot
-};
-#endif // !WIN32 && OLD_DEAD_KEY_CODE
-
 #ifndef FL_DOXYGEN
 int Fl::compose_state = 0;
 #endif
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(WIN32)
 // under Mac OS X character composition is handled by the OS
 int Fl::compose(int& del) {
   if(Fl::e_length == 0 || Fl::e_keysym == FL_Enter || Fl::e_keysym == FL_KP_Enter || 
@@ -196,18 +161,9 @@ int Fl::compose(int& del) {
     return 1;
   }
 
-#ifndef WIN32
   // See if they typed a dead key.  This gets it into the same state as
   // typing prefix+accent:
   if (i >= 0xfe50 && i <= 0xfe5b) {
-#  ifdef OLD_DEAD_KEY_CODE
-    ascii = dead_keys[i-0xfe50];
-    for (const char *p = compose_pairs; *p; p += 2)
-      if (p[0] == ascii) {
-	compose_state = ascii;
-	return 1;
-      }
-#  else
     ascii = e_text[0];
     for (const char *p = compose_pairs; *p; p += 2)
       if (p[0] == ascii ||
@@ -215,11 +171,9 @@ int Fl::compose(int& del) {
         compose_state = p[0];
         return 1;
       }
-#  endif // OLD_DEAD_KEY_CODE
     compose_state = 0;
     return 1;
   }
-#endif
 
   // Only insert non-control characters:
   if (e_length && (ascii & ~31 && ascii!=127)) {compose_state = 0; return 1;}
@@ -227,7 +181,7 @@ int Fl::compose(int& del) {
   return 0;
 }
 
-#endif // __APPLE__
+#endif // __APPLE__ || WIN32
 
 //
 // End of "$Id$"
