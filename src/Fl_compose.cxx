@@ -55,18 +55,17 @@ int Fl::compose(int& del) {
   if(Fl::e_length == 0 || Fl::e_keysym == FL_Enter || Fl::e_keysym == FL_KP_Enter || 
      Fl::e_keysym == FL_Tab || Fl::e_keysym == FL_Escape || Fl::e_state&FL_META || Fl::e_state&FL_CTRL ) {
     return 0;
-    }
+  }
 #endif
   if(Fl::compose_state) {
     del = 1;
     Fl::compose_state = 0;
-    }
-  else {
+  } else {
 #ifdef WIN32
     // Only insert non-control characters:
     if (! (ascii & ~31 && ascii!=127)) { return 0; }
 #endif
-    }
+  }
   return 1;
 }
 
@@ -130,15 +129,15 @@ int Fl::compose(int& del) {
     // see if it is either character of any pair:
     for (const char *p = compose_pairs; *p; p += 2)
       if (p[0] == ascii || p[1] == ascii) {
-       if (p[1] == ' ') {
-               int len = fl_utf8encode((p-compose_pairs)/2+0xA0, e_text);
-               e_text[len] = '\0';
-               e_length = len;
-       }
+        if (p[1] == ' ') {
+          int len = fl_utf8encode((p-compose_pairs)/2+0xA0, e_text);
+          e_text[len] = '\0';
+          e_length = len;
+        }
 
-	compose_state = ascii;
-	return 1;
-      }
+      compose_state = ascii;
+      return 1;
+    }
 
     if (e_length) { // compose key also "quotes" control characters
       compose_state = 0;
