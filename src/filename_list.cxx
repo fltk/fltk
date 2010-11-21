@@ -83,7 +83,7 @@ int fl_filename_list(const char *d, dirent ***list,
                      Fl_File_Sort_F *sort) {
 #ifndef HAVE_SCANDIR
   int n = scandir(d, list, 0, sort);
-#elif defined(HAVE_SCANDIR_POSIX)
+#elif defined(HAVE_SCANDIR_POSIX) && !defined(__APPLE__)
   // POSIX (2008) defines the comparison function like this:
   int n = scandir(d, list, 0, (int(*)(const dirent **, const dirent **))sort);
 #elif defined(__osf__)
