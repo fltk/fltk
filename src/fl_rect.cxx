@@ -507,7 +507,25 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   if (x+w <= 0 || y+h <= 0) return 0;
   Fl_Region r = rstack[rstackptr];
 #if defined (USE_X11)
-  return r ? XRectInRegion(r, x, y, w, h) : 1;
+  if (!r) return 1;
+
+  // First get rid of coordinates outside the 16-bit range the X calls take.
+  // We could probably also use max. screen coordinates instead of SHRT_MAX
+  
+#ifndef SHRT_MAX
+#define SHRT_MAX (32767)
+#endif
+
+  if (x>SHRT_MAX || y > SHRT_MAX) return 0;
+  int tx = x, ty = y, tw = w, th = h;
+  if (x < 0) { tx = 0; tw += x; }
+  if (y < 0) { ty = 0; th += y; }
+  if (tx+tw > SHRT_MAX) tw = SHRT_MAX - tx;
+  if (ty+th > SHRT_MAX) th = SHRT_MAX - ty;
+
+  // now all coordinates to test are in the range [0,32767]
+
+  return r ? XRectInRegion(r, tx, ty, tw, th) : 1;
 #elif defined(WIN32)
   if (!r) return 1;
   RECT rect;
