@@ -525,7 +525,7 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
 
   // now all coordinates to test are in the range [0,32767]
 
-  return r ? XRectInRegion(r, tx, ty, tw, th) : 1;
+  return XRectInRegion(r, tx, ty, tw, th);
 #elif defined(WIN32)
   if (!r) return 1;
   RECT rect;
