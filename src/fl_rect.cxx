@@ -47,11 +47,62 @@ extern float fl_quartz_line_width_;
 #define USINGQUARTZPRINTER  (Fl_Surface_Device::surface()->type() == Fl_Printer::device_type)
 #endif
 
+#ifdef USE_X11
+  
+#ifndef SHRT_MAX
+#define SHRT_MAX (32767)
+#endif
+
+/*
+  We need to check some coordinates for areas for clipping before we
+  use X calls, because X can't handle coordinates outside the 16-bit
+  range. Since windows use relative coordinates > 0, we do also check
+  for negative values. X11 only, see also STR #2304.
+
+  Note:
+  We could use max. screen coordinates instead of SHRT_MAX, but that
+  would need more work and would probably be slower.
+
+  returns 1, if the area is invisible (clipped), because ...
+    (a) w or h are <= 0		i.e. nothing is visible
+    (b) x+w or y+h are < 0	i.e. left of or above visible area
+    (c) x or y are > SHRT_MAX	i.e. right of or below visible area
+
+  returns 0, if the area is potentially visible and X can handle the
+    clipping. x, y, w, and h may have been adjusted to fit into the
+    X coordinate space.
+*/
+static int clip_to_short(int &x, int &y, int &w, int &h) {
+
+  if (w <= 0 || h <= 0) return 1;		// (a)
+  if (x+w < 0 || y+h < 0) return 1;		// (b)
+  if (x > SHRT_MAX || y > SHRT_MAX) return 1;	// (c)
+
+  if (x < 0) { w += x; x = 0; }
+  if (y < 0) { h += y; y = 0; }
+  if (x+w > SHRT_MAX) w = SHRT_MAX - x;
+  if (y+h > SHRT_MAX) h = SHRT_MAX - y;
+
+  return 0;
+}
+
+#endif	// USE_X11
+
+
 void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {
 
   if (w<=0 || h<=0) return;
 #if defined(USE_X11)
-  XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
+  if (x+w < 0 || y+h < 0 || x > SHRT_MAX || y > SHRT_MAX ) return;
+
+  if (x+w > SHRT_MAX || y+h > SHRT_MAX ||
+        w > SHRT_MAX ||   h > SHRT_MAX) { // X can't handle clipping
+    xyline(x, y, x+w-1);
+    yxline(x+w-1, y, y+h-1);
+    xyline(x+w-1, y+h-1, x);
+    yxline(x, y+h-1, y);
+  } else
+    XDrawRectangle(fl_display, fl_window, fl_gc, x, y, w-1, h-1);
 #elif defined(WIN32)
   MoveToEx(fl_gc, x, y, 0L); 
   LineTo(fl_gc, x+w-1, y);
@@ -71,7 +122,10 @@ void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {
 void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {
   if (w<=0 || h<=0) return;
 #if defined(USE_X11)
-  if (w && h) XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
+  if (w && h) {
+    if (!clip_to_short(x,y,w,h))
+      XFillRectangle(fl_display, fl_window, fl_gc, x, y, w, h);
+  }
 #elif defined(WIN32)
   RECT rect;
   rect.left = x; rect.top = y;  
@@ -89,6 +143,17 @@ void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {
 
 void Fl_Graphics_Driver::xyline(int x, int y, int x1) {
 #if defined(USE_X11)
+  // get rid of coordinates outside the 16-bit range
+  if (y < 0 || y > SHRT_MAX) return;
+  if (x <= x1) {
+    if (x1 < 0 || x > SHRT_MAX) return;
+    if (x < 0) x = 0;
+    if (x1 > SHRT_MAX) x1 = SHRT_MAX;
+  } else { // x1 < x
+    if (x < 0 || x1 > SHRT_MAX) return;
+    if (x1 < 0) x1 = 0;
+    if (x > SHRT_MAX) x = SHRT_MAX;
+  }
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x1, y);
 #elif defined(WIN32)
   MoveToEx(fl_gc, x, y, 0L); LineTo(fl_gc, x1+1, y);
@@ -156,6 +221,17 @@ void Fl_Graphics_Driver::xyline(int x, int y, int x1, int y2, int x3) {
 
 void Fl_Graphics_Driver::yxline(int x, int y, int y1) {
 #if defined(USE_X11)
+  // get rid of coordinates outside the 16-bit range
+  if (x < 0 || x > SHRT_MAX) return;
+  if (y <= y1) {
+    if (y1 < 0 || y > SHRT_MAX) return;
+    if (y < 0) y = 0;
+    if (y1 > SHRT_MAX) y1 = SHRT_MAX;
+  } else { // y1 < y
+    if (y < 0 || y1 > SHRT_MAX) return;
+    if (y1 < 0) y1 = 0;
+    if (y > SHRT_MAX) y = SHRT_MAX;
+  }
   XDrawLine(fl_display, fl_window, fl_gc, x, y, x, y1);
 #elif defined(WIN32)
   if (y1 < y) y1--;
@@ -508,24 +584,9 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   Fl_Region r = rstack[rstackptr];
 #if defined (USE_X11)
   if (!r) return 1;
-
-  // First get rid of coordinates outside the 16-bit range the X calls take.
-  // We could probably also use max. screen coordinates instead of SHRT_MAX
-  
-#ifndef SHRT_MAX
-#define SHRT_MAX (32767)
-#endif
-
-  if (x>SHRT_MAX || y > SHRT_MAX) return 0;
-  int tx = x, ty = y, tw = w, th = h;
-  if (x < 0) { tx = 0; tw += x; }
-  if (y < 0) { ty = 0; th += y; }
-  if (tx+tw > SHRT_MAX) tw = SHRT_MAX - tx;
-  if (ty+th > SHRT_MAX) th = SHRT_MAX - ty;
-
-  // now all coordinates to test are in the range [0,32767]
-
-  return XRectInRegion(r, tx, ty, tw, th);
+  // get rid of coordinates outside the 16-bit range the X calls take.
+  if (clip_to_short(x,y,w,h)) return 0;	// clipped
+  return XRectInRegion(r, x, y, w, h);
 #elif defined(WIN32)
   if (!r) return 1;
   RECT rect;
@@ -533,17 +594,16 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
     POINT pt[2] = { {x, y}, {x + w, y + h} };
     LPtoDP(fl_gc, pt, 2);
     rect.left = pt[0].x; rect.top = pt[0].y; rect.right = pt[1].x; rect.bottom = pt[1].y;
-    }
-  else {
+  } else {
     rect.left = x; rect.top = y; rect.right = x+w; rect.bottom = y+h;
-    }
+  }
   return RectInRegion(r,&rect);
 #elif defined(__APPLE_QUARTZ__)
   if (!r) return 1;
   CGRect arg = fl_cgrectmake_cocoa(x, y, w, h);
-  for(int i = 0; i < r->count; i++) {
+  for (int i = 0; i < r->count; i++) {
     CGRect test = CGRectIntersection(r->rects[i], arg);
-    if( ! CGRectIsEmpty(test)) return 1;
+    if (!CGRectIsEmpty(test)) return 1;
   }
   return 0;
 #else
