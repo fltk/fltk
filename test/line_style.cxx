@@ -34,7 +34,7 @@
 #include <FL/Fl_Box.H>
 
 Fl_Double_Window *form;
-Fl_Slider *sliders[8];
+Fl_Slider *sliders[9];
 Fl_Choice *choice[3];
 Fl_Check_Button *draw_line;
 
@@ -50,29 +50,32 @@ void test_box::draw() {
   fl_color((uchar)(sliders[0]->value()),
 	   (uchar)(sliders[1]->value()),
 	   (uchar)(sliders[2]->value()));
-  char buf[5];
-  buf[0] = char(sliders[4]->value());
-  buf[1] = char(sliders[5]->value());
-  buf[2] = char(sliders[6]->value());
-  buf[3] = char(sliders[7]->value());
-  buf[4] = 0;
+  // dashes
+  char dashes[5];
+  dashes[0] = char(sliders[5]->value());
+  dashes[1] = char(sliders[6]->value());
+  dashes[2] = char(sliders[7]->value());
+  dashes[3] = char(sliders[8]->value());
+  dashes[4] = 0;
   fl_line_style(
     (long)(choice[0]->mvalue()->user_data()) +
     (long)(choice[1]->mvalue()->user_data()) +
     (long)(choice[2]->mvalue()->user_data()),
-    (long)(sliders[3]->value()),
-    buf);
-  
+    (long)(sliders[3]->value()), // width
+    dashes);
+
   // draw the defined fl_rect and fl_vertex first and then
   // the additional one-pixel line, if enabled
+  // sliders[4] = x/y coordinate translation (default = 10)
 
   for (int i=0; i<draw_line->value()+1; i++) {
-    fl_rect(10,10,w()-20,h()-20);
+    int move = (int)sliders[4]->value();
+    fl_rect(move,move,w()-20,h()-20);
     fl_begin_line();
-    fl_vertex(35, 35);
-    fl_vertex(w()-35, h()-35);
-    fl_vertex(w()-40, 35);
-    fl_vertex(35, h()/2);
+    fl_vertex(move+25, move+25);
+    fl_vertex(w()-45+move, h()-45+move);
+    fl_vertex(w()-50+move, move+25);
+    fl_vertex(move+25, h()/2-10+move);
     fl_end_line();
     // you must reset the line type when done:
     fl_line_style(FL_SOLID);
@@ -111,7 +114,7 @@ void do_redraw(Fl_Widget*,void*)
 }
 
 void makeform(const char *) {
-  form = new Fl_Double_Window(500,230,"fl_line_style() test");
+  form = new Fl_Double_Window(500,250,"fl_line_style() test");
   sliders[0]= new Fl_Value_Slider(280,10,180,20,"R");
   sliders[0]->bounds(0,255);
   sliders[1]= new Fl_Value_Slider(280,30,180,20,"G");
@@ -126,35 +129,38 @@ void makeform(const char *) {
   choice[2]->menu(join_menu);
   sliders[3]= new Fl_Value_Slider(280,130,180,20,"Width");
   sliders[3]->bounds(0,20);
-  draw_line = new Fl_Check_Button(280,150,20,20,"&Line");
+  sliders[4]= new Fl_Value_Slider(280,150,180,20,"Move");
+  sliders[4]->bounds(-10,20);
+  draw_line = new Fl_Check_Button(280,170,20,20,"&Line");
   draw_line->align(FL_ALIGN_LEFT);
-  new Fl_Box (300,150,160,20,"adds a 1-pixel black line");
-  sliders[4] = new Fl_Slider(200,190,70,20,"Dash");
-  sliders[4]->align(FL_ALIGN_TOP_LEFT);
-  sliders[4]->bounds(0,40);
-  sliders[5] = new Fl_Slider(270,190,70,20);
+  new Fl_Box (305,170,160,20,"add a 1-pixel black line");
+  sliders[5] = new Fl_Slider(200,210,70,20,"Dash");
+  sliders[5]->align(FL_ALIGN_TOP_LEFT);
   sliders[5]->bounds(0,40);
-  sliders[6] = new Fl_Slider(340,190,70,20);
+  sliders[6] = new Fl_Slider(270,210,70,20);
   sliders[6]->bounds(0,40);
-  sliders[7] = new Fl_Slider(410,190,70,20);
+  sliders[7] = new Fl_Slider(340,210,70,20);
   sliders[7]->bounds(0,40);
+  sliders[8] = new Fl_Slider(410,210,70,20);
+  sliders[8]->bounds(0,40);
   int i;
-  for (i=0;i<8;i++) {
+  for (i=0;i<9;i++) {
     sliders[i]->type(1);
-    if (i<4) sliders[i]->align(FL_ALIGN_LEFT);
+    if (i<5) sliders[i]->align(FL_ALIGN_LEFT);
     sliders[i]->callback((Fl_Callback*)do_redraw);
     sliders[i]->step(1);
   }
   sliders[0]->value(255); // R
   sliders[1]->value(100); // G
   sliders[2]->value(100); // B
+  sliders[4]->value(10);  // move line coordinates
   draw_line->value(0);
   draw_line->callback((Fl_Callback*)do_redraw);
   for (i=0;i<3;i++) {
     choice[i]->value(0);
     choice[i]->callback((Fl_Callback*)do_redraw);
   }
-  test=new test_box(10,10,190,190);
+  test = new test_box(0,0,200,200);
   test->end();
   form->resizable(test);
   form->end();
