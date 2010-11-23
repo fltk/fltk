@@ -67,7 +67,6 @@ static Fl_Int_Input *print_to=(Fl_Int_Input *)0;
 static Fl_Spinner *print_copies=(Fl_Spinner *)0;
 
 static int print_start = 0;	// 1 if print_okay has been clicked
-static int print_pipe = 0;	// 0 = file, 1 = pipe (lp)
 
 static void cb_print_choice(Fl_Choice*, void*) {
   print_update_status();

@@ -105,11 +105,13 @@ int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_PostScript_Grap
   return 0;
 }
 
+static int dont_close(FILE *f) {}
+
 /**
  @brief Begins the session where all graphics requests will go to FILE pointer.
  *
- @param ps_output A writable FILE pointer that will receive PostScript output and that will be closed
- when end_job() will be called.
+ @param ps_output A writable FILE pointer that will receive PostScript output and that should not be closed
+ until after end_job() has been called.
  @param pagecount The total number of pages to be created.
  @param format Desired page format.
  @param layout Desired page layout.
@@ -121,6 +123,7 @@ int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount, enum F
   ps->output = ps_output;
   ps->ps_filename_ = NULL;
   ps->start_postscript(pagecount, format, layout);
+  ps->close_command(dont_close); // so that end_job() doesn't close the file
   this->set_current();
   return 0;
 }
@@ -1467,20 +1470,16 @@ void Fl_PostScript_File_Device::end_job (void)
   if(ferror(ps->output)) {
     fl_alert ("Error during PostScript data output.");
     }
-#if ! (defined(__APPLE__) || defined(WIN32) )
-  if (print_pipe)
-    pclose(ps->output);
-  else
+  if (ps->close_cmd_) {
+    (*ps->close_cmd_)(ps->output);
+  } else {
     fclose(ps->output);
-#else
-  fclose(ps->output);
-#endif
+    }
   while (ps->clip_){
     Fl_PostScript_Graphics_Driver::Clip * c= ps->clip_;
     ps->clip_= ps->clip_->prev;
     delete c;
   }
-  if (ps->close_cmd_) (*ps->close_cmd_)(ps->output);
   Fl_Display_Device::display_device()->set_current();
 }
 
@@ -1525,7 +1524,7 @@ int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   else if (print_output_mode[2]->value()) layout = Fl_PostScript_Graphics_Driver::PORTRAIT;
   else layout = Fl_PostScript_Graphics_Driver::LANDSCAPE;
 
-  print_pipe = print_choice->value();	// 0 = print to file, >0 = printer (pipe)
+  int print_pipe = print_choice->value();	// 0 = print to file, >0 = printer (pipe)
 
   const char *media = print_page_size->text(print_page_size->value());
   const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
@@ -1547,6 +1546,7 @@ int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
     fl_alert("could not run command: %s\n",command);
     return 1;
   }
+  ps->close_command(pclose);
   this->set_current();
   return ps->start_postscript(pages, format, layout); // start printing
 }
