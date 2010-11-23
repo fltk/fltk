@@ -143,7 +143,7 @@ static int clip_to_short(int &x, int &y, int &w, int &h) {
   in fl_xyline() and fl_yxline(). Note that this can't be used for
   arbitrary lines (not horizontal or vertical).
 */
-int clip_x (int x) {
+static int clip_x (int x) {
 
   int kmin = -fl_line_width_;
   int kmax = SHRT_MAX - fl_line_width_;
