@@ -105,7 +105,10 @@ int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_PostScript_Grap
   return 0;
 }
 
-static int dont_close(FILE *f) {}
+static int dont_close(FILE *f) 
+{
+  return 0;
+}
 
 /**
  @brief Begins the session where all graphics requests will go to FILE pointer.
