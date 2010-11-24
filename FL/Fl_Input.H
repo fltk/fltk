@@ -116,8 +116,8 @@
   the cursor without completing the sequence the accent will remain
   inserted.
  
-  <p>Under Mac OS X, character composition is done as for any Mac application
-  using Mac OS-defined keystroke series.</TD></TR>
+  <p>Under MSWindows or Mac OS X, character composition is done using 
+  system-defined keystroke series.</TD></TR>
   </TABLE></CENTER>
   
   <!-- NEW PAGE -->
