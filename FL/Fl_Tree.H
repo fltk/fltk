@@ -803,7 +803,9 @@ public:
   void selectmode(Fl_Tree_Select val) {
     _prefs.selectmode(val);
   }
-  void show_item(Fl_Tree_Item *item, int yoff=0);
+  int displayed(Fl_Tree_Item *item);
+  void show_item(Fl_Tree_Item *item, int yoff);
+  void show_item(Fl_Tree_Item *item);
   void show_item_bottom(Fl_Tree_Item *item);
   void show_item_middle(Fl_Tree_Item *item);
   void show_item_top(Fl_Tree_Item *item);

@@ -520,6 +520,7 @@ int Fl_Tree::handle(int e) {
 	    case FL_KP_Enter:
 	      if ( when() & ~FL_WHEN_ENTER_KEY) {
 		select_only(_item_focus);
+		show_item(_item_focus);		// STR #2426
 		return(1);
 	      }
 	      break;
@@ -787,6 +788,27 @@ void Fl_Tree::show_item(Fl_Tree_Item *item, int yoff) {
   if ( newval > _vscroll->maximum() ) newval = (int)_vscroll->maximum();
   _vscroll->value(newval);
   redraw();
+}
+
+/// See if \p item is currently displayed on-screen (visible within the widget).
+/// This can be used to detect if the item is scrolled off-screen.
+/// Checks to see if the item's vertical position is within the top and bottom
+/// edges of the display window. This does NOT take into account the hide()/show()
+/// status of the item.
+///
+int Fl_Tree::displayed(Fl_Tree_Item *item) {
+  return( (item->y() >= y() && item->y() <= (y()+h()-item->h())) ? 1 : 0);
+}
+
+/// Adjust the vertical scroll bar to show \p item at the top
+/// of the display IF it is currently off-screen (eg. show_item_top()).
+/// If it is already on-screen, no change is made.
+///
+/// \see show_item_top(), show_item_middle(), show_item_bottom()
+///
+void Fl_Tree::show_item(Fl_Tree_Item *item) {
+  if ( displayed(item) ) return;
+  show_item_top(item);
 }
 
 /// Adjust the vertical scrollbar so that \p item is at the top of the display.
