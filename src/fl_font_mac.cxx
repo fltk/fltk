@@ -34,9 +34,6 @@ extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short*
 #define check_default_font() {if (!fl_fontsize) fl_font(0, 12);}
 
 static const CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-static SInt32 MACsystemVersion = 0;
-#endif
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
@@ -50,9 +47,8 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   size = Size;
   minsize = maxsize = Size;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if(MACsystemVersion == 0) Gestalt(gestaltSystemVersion, &MACsystemVersion);
-
-if(MACsystemVersion >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
+if(fl_mac_os_version == 0) fl_open_display();
+if(fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   fontref = CTFontCreateWithName(str, size, NULL);
   CGGlyph glyph[2];
@@ -170,7 +166,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
   */
   if (this == fl_fontsize) fl_fontsize = 0;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if(MACsystemVersion >= 0x1050)  CFRelease(fontref);
+  if(fl_mac_os_version >= 0x1050)  CFRelease(fontref);
 #else
 	/*  ATSUDisposeTextLayout(layout);
   ATSUDisposeStyle(style); */
@@ -273,7 +269,7 @@ double fl_width(const UniChar* txt, int n) {
       return 8*n; // user must select a font first!
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(MACsystemVersion >= 0x1050) {
+if(fl_mac_os_version >= 0x1050) {
   CTFontRef fontref = fl_fontsize->fontref;
   CFStringRef str = CFStringCreateWithBytes(NULL, (const UInt8*)txt, n * sizeof(UniChar), kCFStringEncodingUTF16, false);
   CFAttributedStringRef astr = CFAttributedStringCreate(NULL, str, NULL);
@@ -342,7 +338,7 @@ void fl_text_extents(const UniChar* txt, int n, int &dx, int &dy, int &w, int &h
       return;
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(MACsystemVersion >= 0x1050) {
+if(fl_mac_os_version >= 0x1050) {
   CTFontRef fontref = fl_fontsize->fontref;
   CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)txt, n *sizeof(UniChar), kCFStringEncodingUTF16, false);
   CFAttributedStringRef astr = CFAttributedStringCreate(NULL, str16, NULL);
@@ -435,7 +431,7 @@ void fl_draw(const char *str, int n, float x, float y) {
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if(MACsystemVersion >= 0x1050) {
+  if(fl_mac_os_version >= 0x1050) {
     CFStringRef keys[2];
     CFTypeRef values[2];  
     CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)uniStr, n * sizeof(UniChar), kCFStringEncodingUTF16, false);

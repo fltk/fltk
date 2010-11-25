@@ -130,19 +130,16 @@ void *fl_system_menu;                   // this is really a NSMenu*
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
 void *fl_default_cursor;		// this is really a NSCursor*
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
-//ulong fl_event_time;                  // the last timestamp from an x event
 char fl_key_vector[32];                 // used by Fl::get_key()
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
 int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
-//const Fl_Window* fl_modal_for;        // parent of modal() window
 Window fl_window;
 Fl_Window *Fl_Window::current_;
-//EventRef fl_os_event;		// last (mouse) event
+int fl_mac_os_version = 0;		// the version number of the running Mac OS X (e.g., 0x1064 for 10.6.4)
 
 // forward declarations of variables in this file
 static int got_events = 0;
 static Fl_Window* resize_from_system;
-static SInt32 MACsystemVersion;
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -1371,8 +1368,10 @@ void fl_open_display() {
     while (ign_event);
     
     fl_default_cursor = [NSCursor arrowCursor];
-    Gestalt(gestaltSystemVersion, &MACsystemVersion);
-    
+    SInt32 version;
+    Gestalt(gestaltSystemVersion, &version);
+    fl_mac_os_version = (int)version;
+
     // bring the application into foreground without a 'CARB' resource
     Boolean same_psn;
     ProcessSerialNumber cur_psn, front_psn;
@@ -2757,7 +2756,7 @@ int MACscreen_init(XRectangle screens[])
 {
     NSDictionary *options;
     options = [NSDictionary dictionaryWithObjectsAndKeys:
-                	     [NSString stringWithFormat:@" FLTK %d.%d Cocoa", FL_MAJOR_VERSION,
+                	     [NSString stringWithFormat:@" GUI with FLTK %d.%d", FL_MAJOR_VERSION,
                               FL_MINOR_VERSION ], @"Copyright",
                 	     nil];
     [NSApp  orderFrontStandardAboutPanelWithOptions:options];
@@ -2815,13 +2814,12 @@ static void createAppleMenu(void)
   FLaboutItemTarget *about = [[FLaboutItemTarget alloc] init];
   [menuItem setTarget:about];
   [appleMenu addItem:[NSMenuItem separatorItem]];
-// temporary for testing Fl_Printer. Contains also printPanel of class FLaboutItemTarget.
+  // Print front window
   menuItem = [appleMenu addItemWithTitle:@"Print front window" action:@selector(printPanel) keyEquivalent:@""];
   [menuItem setTarget:about];
   [appleMenu setAutoenablesItems:NO];
   [menuItem setEnabled:YES];
   [appleMenu addItem:[NSMenuItem separatorItem]];
-// end of temporary for testing Fl_Printer  
   // Services Menu
   services = [[NSMenu alloc] init];
   [appleMenu addItemWithTitle:@"Services" action:nil keyEquivalent:@""];
@@ -2844,7 +2842,7 @@ static void createAppleMenu(void)
   [menuItem setSubmenu:appleMenu];
   mainmenu = [[NSMenu alloc] initWithTitle:@""];
   [mainmenu addItem:menuItem];
-  if (MACsystemVersion < 0x1060) {
+  if (fl_mac_os_version < 0x1060) {
     //	[NSApp setAppleMenu:appleMenu];
     //	to avoid compiler warning raised by use of undocumented setAppleMenu	:
     [NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
@@ -3208,7 +3206,7 @@ unsigned char *MACbitmapFromRectOfWindow(Fl_Window *win, int x, int y, int w, in
     win = win->window();
   }
   CGFloat epsilon = 0;
-  if (MACsystemVersion >= 0x1060) epsilon = 0.001;
+  if (fl_mac_os_version >= 0x1060) epsilon = 0.001;
   // The epsilon offset is absolutely necessary under 10.6. Without it, the top pixel row and
   // left pixel column are not read, and bitmap is read shifted by one pixel in both directions. 
   // Under 10.5, we want no offset.

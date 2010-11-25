@@ -185,6 +185,11 @@ extern void fl_open_callback(void (*cb)(const char *));
  * \param shortcut    optional shortcut to attach to the "About myprog" menu item (e.g., FL_META+'a')
  */
 extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0);
+
+/** The version number of the running Mac OS X (e.g., 0x1064 for 10.6.4)
+ */
+extern int fl_mac_os_version;		
+
 /** @} */
 
 //

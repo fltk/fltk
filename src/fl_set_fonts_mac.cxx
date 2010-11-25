@@ -63,9 +63,8 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
 if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-static SInt32 MACsystemVersion = 0;
-if(MACsystemVersion == 0) Gestalt(gestaltSystemVersion, &MACsystemVersion);
-if(MACsystemVersion >= 0x1050) {
+  if(fl_mac_os_version == 0) fl_open_display();
+if(fl_mac_os_version >= 0x1050) {
 //if(CTFontCreateWithFontDescriptor != NULL) {// CTFontCreateWithFontDescriptor != NULL on 10.4 also!
   int value[1] = {1};
   CFDictionaryRef dict = CFDictionaryCreate(NULL, 
@@ -131,7 +130,7 @@ else {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   }
 #endif
-  return 0; // FIXME: I do not understand the shuffeling of the above ifdef's and why they are here!
+  return 0;
 }
 
 static int array[128];

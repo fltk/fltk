@@ -33,10 +33,6 @@
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 
-// warning: this function is only implemented in Quickdraw. The function
-//          below may not work if FLTK is compiled with Quartz enabled
-
-extern EventRef fl_os_event;
 extern char *fl_selection_buffer;
 extern int fl_selection_length;
 

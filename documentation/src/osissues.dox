@@ -687,7 +687,7 @@ Returns the Fl_Window that corresponds to the given window reference,
 or \c NULL if not found. FLTK windows that are children of top-level
 windows share the \c Window of the top-level window.
 
-void fl_open_callback(void (*cb)(const char *))
+void \ref fl_open_callback(void (*cb)(const char *))
 
 \par
 \c cb will be called with a single Unix-style file name and path.
@@ -749,7 +749,9 @@ handle the Resource Fork correctly.
 
 \par Mac File Paths
 
-FLTK uses UNIX-style filenames and paths.
+FLTK uses UTF-8-encoded UNIX-style filenames and paths.
+
+\sa  group_macosx 
 
 
 \htmlonly
