@@ -53,7 +53,7 @@ class Fl_System_Printer : public Fl_Paged_Device {
 private:
   /** \brief the printer's graphics context, if there's one, NULL otherwise */
   void *gc; 
-  void set_current();
+  void set_current(void);
 #ifdef __APPLE__
   float scale_x;
   float scale_y;
@@ -116,7 +116,6 @@ public:
 #endif // FL_DOXYGEN
 }; // class Fl_System_Printer
 
-/**  \brief OS-independant class name */
 typedef Fl_System_Printer Fl_Printer;
 #endif
   
@@ -129,8 +128,6 @@ typedef Fl_System_Printer Fl_Printer;
  Fl_Printer is typedef'ed to Fl_PostScript_Printer under Unix/Linux. 
  */
 class Fl_PostScript_Printer : public Fl_PostScript_File_Device {
-private:
-  void set_current();
 public:
   static const char *device_type;
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
@@ -158,7 +155,6 @@ public:
 #endif // FL_DOXYGEN
 };
 
-/**  \brief OS-independant class name */
 typedef Fl_PostScript_Printer Fl_Printer;
 #endif
 

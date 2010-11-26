@@ -78,7 +78,8 @@ const char *Fl_Printer::property_cancel = "Cancel";
 
 const char *Fl_Printer::device_type = "Fl_Printer";
 
-void Fl_Printer::set_current()
+#if defined(__APPLE__) || defined(WIN32)
+void Fl_System_Printer::set_current(void)
 {
 #ifdef __APPLE__
   fl_gc = (CGContextRef)gc;
@@ -87,6 +88,7 @@ void Fl_Printer::set_current()
 #endif
   this->Fl_Surface_Device::set_current();
 }
+#endif
 
 //
 // End of "$Id$".
