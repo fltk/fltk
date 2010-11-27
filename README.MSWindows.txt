@@ -112,6 +112,13 @@ The configuration script will check your machine for the required resources
 which should all have been part of your MinGW installation. Review the 
 Configuration Summary, maybe take some notes.
 
+ADVANCED: some versions of MinGW/Msys are broken and complain about a missing
+--enable-auto-import. The solution is to upgrade to the current release. If
+that is not possible, you can include the --enable-auto-import flag when 
+linking:
+  ./configure <config flags> LDFLAGS=-Wl,--enable-auto-import
+:END_ADVANCED
+
 
  Building FLTK
 ---------------
