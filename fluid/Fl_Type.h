@@ -166,6 +166,13 @@ class Fl_Function_Type : public Fl_Type {
   const char* return_type;
   char public_, cdecl_, constructor, havewidgets;
 public:
+  Fl_Function_Type() : 
+    Fl_Type(), 
+    return_type(0L), public_(0), cdecl_(0), constructor(0), havewidgets(0)
+  { }
+  ~Fl_Function_Type() {
+    if (return_type) free((void*)return_type);
+  }
   Fl_Type *make();
   void write_code1();
   void write_code2();
@@ -199,6 +206,10 @@ public:
 class Fl_CodeBlock_Type : public Fl_Type {
   const char* after;
 public:
+  Fl_CodeBlock_Type() : Fl_Type(), after(0L) { }
+  ~Fl_CodeBlock_Type() {
+    if (after) free((void*)after);
+  }
   Fl_Type *make();
   void write_code1();
   void write_code2();
@@ -229,8 +240,12 @@ public:
 };
 
 class Fl_Data_Type : public Fl_Decl_Type {
-	const char *filename_;
+  const char *filename_;
 public:
+  Fl_Data_Type() : Fl_Decl_Type(), filename_(0L) { }
+  ~Fl_Data_Type() {
+    if (filename_) free((void*)filename_);
+  }
   Fl_Type *make();
   void write_code1();
   void write_code2();
@@ -245,6 +260,10 @@ class Fl_DeclBlock_Type : public Fl_Type {
   const char* after;
   char public_;
 public:
+  Fl_DeclBlock_Type() : Fl_Type(), after(0L) { }
+  ~Fl_DeclBlock_Type() {
+    if (after) free((void*)after);
+  }
   Fl_Type *make();
   void write_code1();
   void write_code2();
@@ -279,6 +298,11 @@ class Fl_Class_Type : public Fl_Type {
   const char* subclass_of;
   char public_;
 public:
+  Fl_Class_Type() : Fl_Type(), subclass_of(0L) { }
+  ~Fl_Class_Type() {
+    if (subclass_of) free((void*)subclass_of);
+  }
+  
   // state variables for output:
   char write_public_state; // true when public: has been printed
   Fl_Class_Type* parent_class; // save class if nested

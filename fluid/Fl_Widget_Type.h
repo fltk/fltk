@@ -34,7 +34,7 @@
 struct Fl_Menu_Item;
 class Fluid_Image;
 
-void* const LOAD = (void *)9831;
+extern void* const LOAD;
 extern Fl_Widget_Type *current_widget; // one of the selected ones
 
 //

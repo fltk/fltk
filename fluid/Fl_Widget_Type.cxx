@@ -198,7 +198,8 @@ void Fl_Widget_Type::setlabel(const char *n) {
 }
 
 Fl_Widget_Type::Fl_Widget_Type() {
-  for (int n=0; n<NUM_EXTRA_CODE; n++) {extra_code_[n] = 0; subclass_ = 0;}
+  for (int n=0; n<NUM_EXTRA_CODE; n++) {extra_code_[n] = 0; }
+  subclass_ = 0;
   hotspot_ = 0;
   tooltip_ = 0;
   image_name_ = 0;
@@ -215,6 +216,13 @@ Fl_Widget_Type::~Fl_Widget_Type() {
     o->hide();
     if (o->parent()) ((Fl_Group*)o->parent())->remove(*o);
     delete o;
+  }
+  if (subclass_) free((void*)subclass_);
+  if (tooltip_) free((void*)tooltip_);
+  if (image_name_) free((void*)image_name_);
+  if (inactive_name_) free((void*)inactive_name_);
+  for (int n=0; n<NUM_EXTRA_CODE; n++) {
+    if (extra_code_[n]) free((void*) extra_code_[n]);
   }
 }
 
@@ -291,6 +299,7 @@ static Fl_Window *the_panel;
 // initialized parts of the widget that are nyi by fluid.
 
 Fl_Widget_Type *current_widget; // one of the selected ones
+void* const LOAD = (void *)"LOAD"; // "magic" pointer to indicate that we need to load values into the dialog
 static int numselected; // number selected
 static int haderror;
 
