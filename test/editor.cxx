@@ -775,22 +775,12 @@ Fl_Window* new_view() {
     w->editor = new Fl_Text_Editor(0, 30, 660, 370);
     w->editor->textfont(FL_COURIER);
     w->editor->textsize(TS);
-  w->editor->wrap_mode(Fl_Text_Editor::WRAP_AT_BOUNDS, 250);
+  //w->editor->wrap_mode(Fl_Text_Editor::WRAP_AT_BOUNDS, 250);
     w->editor->buffer(textbuf);
-  w->editor->textfont(FL_HELVETICA);
-  textbuf->text(
-                "12345678912345678901234567890\n"
-                "\tqwertyuiop\n"
-                "WWWWWWWW\tqwertyuiop\n"
-                "iiiiiiii\tqwertyuiop\n"
-                "\tasdfghjkl\n"
-                "\t\tasdfghjkl\t\n"
-                "\t\t\tzxcvbnm,\t\t\n"
-                "a\tb\tc\td\te\n"
-                "nvfdnv");
     w->editor->highlight_data(stylebuf, styletable,
                               sizeof(styletable) / sizeof(styletable[0]),
 			      'A', style_unfinished_cb, 0);
+  textbuf->text();
   style_init();
   w->end();
   w->resizable(w->editor);

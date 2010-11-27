@@ -25,10 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-// TODO: fix all fixme's and todo's 
-// TODO: blinking selection when moving mouse outside of widget area
-// TODO: line wrapping - scroll bars
-// TODO: rendering of the Tab character
 // TODO: rendering of the "optional hyphen"
 // TODO: make line numbering work again
 
@@ -1744,6 +1740,7 @@ int Fl_Text_Display::handle_vline(
   for (i=0; i<lineLen; ) {
     currChar = lineStr[i]; // one byte is enough to handele tabs and other cases
     int len = fl_utf8len(currChar);
+    if (len<=0) len = 1; // OUCH!
     charStyle = position_style(lineStartPos, lineLen, i);
     if (charStyle!=style || currChar=='\t' || prevChar=='\t') {
       // draw a segment whenever the style changes or a Tab is found
@@ -1972,17 +1969,7 @@ void Fl_Text_Display::draw_string(int style,
   if (!(style & BG_ONLY_MASK)) {
     fl_color( foreground );
     fl_font( font, fsize );
-    
-    // FIXME: remove this again!
-    char *buf = (char*)malloc(nChars);
-    memcpy(buf, string, nChars);
-    int i = 0;
-    for (i=0; i<nChars; i++) {
-      if (buf[i]=='\t') buf[i] = '$';
-    }
-    fl_draw( buf, nChars, X, Y + mMaxsize - fl_descent());
-    
-    //fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
+    fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
   }
   
   // CET - FIXME
@@ -2195,16 +2182,6 @@ double Fl_Text_Display::string_width( const char *string, int length, int style 
     fsize = textsize();
   }
   fl_font( font, fsize );
-
-  // FIXME: remove this again!
-  char *buf = (char*)malloc(length);
-  memcpy(buf, string, length);
-  int i = 0;
-  for (i=0; i<length; i++) {
-    if (buf[i]=='\t') buf[i] = '$';
-  }
-  return fl_width( buf, length);
-  
   return fl_width( string, length );
 }
 
@@ -3138,7 +3115,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
       // FIXME: it is not a good idea to simply add character widths because on
       // some platforms, the width is a floating point value and depends on the 
       // previous character as well.
-      width += measure_proportional_character(s, colNum, p+styleBufOffset);
+      width += measure_proportional_character(s, width, p+styleBufOffset);
     }
     
     /* If character exceeded wrap margin, find the break point and wrap there */
@@ -3150,10 +3127,9 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
           newLineStart = buf->next_char(b);
           colNum = 0;
           width = 0;
-          // TODO: we should have a much more efficient function already available!
           int iMax = buf->next_char(p);
           for (i=buf->next_char(b); i<iMax; i = buf->next_char(i)) {
-            width += measure_proportional_character(buf->address(i), colNum, 
+            width += measure_proportional_character(buf->address(i), width, 
                                                     i+styleBufOffset);
             colNum++;
           }
@@ -3165,7 +3141,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
         newLineStart = max(p, buf->next_char(lineStart));
         const char *s = buf->address(b);
         colNum++;
-        width = measure_proportional_character(s, colNum, p+styleBufOffset);
+        width = measure_proportional_character(s, 0, p+styleBufOffset);
       }
       if (p >= maxPos) {
         *retPos = maxPos;
@@ -3214,12 +3190,17 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
  should now be solid because they are now used for online help display.
  
  \param s text string
- \param colNum unused
+ \param xPix x pixel position needed for calculating tab widths
  \param pos offset within string
  \return width of character in pixels
  */
-double Fl_Text_Display::measure_proportional_character(const char *s, int colNum, int pos) const {
+double Fl_Text_Display::measure_proportional_character(const char *s, int xPix, int pos) const {
   IS_UTF8_ALIGNED(s)
+  
+  if (*s=='\t') {
+    int tab = col_to_x(8);
+    return (((xPix/tab)+1)*tab) - xPix;
+  }
   
   int charLen = fl_utf8len(*s), style = 0;
   if (mStyleBuffer) {
