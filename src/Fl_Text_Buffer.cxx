@@ -197,7 +197,7 @@ void Fl_Text_Buffer::text(const char *t)
  */
 char *Fl_Text_Buffer::text_range(int start, int end) const {
   IS_UTF8_ALIGNED2(this, (start))
-  IS_UTF8_ALIGNED2(this, (start))
+  IS_UTF8_ALIGNED2(this, (end))
   
   char *s = NULL;
   

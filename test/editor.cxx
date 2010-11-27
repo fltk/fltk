@@ -304,7 +304,6 @@ void
 style_init(void) {
   char *style = new char[textbuf->length() + 1];
   char *text = textbuf->text();
-  
 
   memset(style, 'A', textbuf->length());
   style[textbuf->length()] = '\0';
@@ -778,9 +777,21 @@ Fl_Window* new_view() {
     w->editor->textsize(TS);
     //w->editor->wrap_mode(Fl_Text_Editor::WRAP_AT_BOUNDS, 100);
     w->editor->buffer(textbuf);
+  w->editor->textfont(FL_HELVETICA);
+  textbuf->text(
+                "12345678912345678901234567890\n"
+                "\tqwertyuiop\n"
+                "WWWWWWWW\tqwertyuiop\n"
+                "iiiiiiii\tqwertyuiop\n"
+                "\tasdfghjkl\n"
+                "\t\tasdfghjkl\t\n"
+                "\t\t\tzxcvbnm,\t\t\n"
+                "a\tb\tc\td\te\n"
+                "nvfdnv");
     w->editor->highlight_data(stylebuf, styletable,
                               sizeof(styletable) / sizeof(styletable[0]),
 			      'A', style_unfinished_cb, 0);
+  style_init();
   w->end();
   w->resizable(w->editor);
   w->callback((Fl_Callback *)close_cb, w);

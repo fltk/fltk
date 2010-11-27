@@ -1738,44 +1738,70 @@ int Fl_Text_Display::handle_vline(
     return 0;
   }
   
+  char currChar = 0, prevChar = 0;
   // draw the line
   style = position_style(lineStartPos, lineLen, 0);
   for (i=0; i<lineLen; ) {
-    int len = fl_utf8len(lineStr[i]);
+    currChar = lineStr[i]; // one byte is enough to handele tabs and other cases
+    int len = fl_utf8len(currChar);
     charStyle = position_style(lineStartPos, lineLen, i);
-    // FIXME: if the character is a tab, we need to do the correct indenting
-    // FIXME: if the character is an optional hyphen, we need to ignore it unless we wrap the text
-    if (charStyle!=style) {
-      // draw a segment whenever the style changes
-      int w = int( string_width( lineStr+startIndex, i-startIndex, style ) );
-      if (mode==DRAW_LINE)
-        draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
-      if (mode==FIND_INDEX && startX+w>rightClip) {
-        // find x pos inside block
-        int di = find_x(lineStr+startIndex, i-startIndex, style, rightClip-startX);
-        free(lineStr);
-        IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
-        return lineStartPos + startIndex + di;
+    if (charStyle!=style || currChar=='\t' || prevChar=='\t') {
+      // draw a segment whenever the style changes or a Tab is found
+      int w = 0;
+      if (prevChar=='\t') {
+        // draw a single Tab space
+        int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
+        w = (((xAbs/100)+1)*100) - xAbs;
+        if (mode==DRAW_LINE)
+          draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
+        if (mode==FIND_INDEX && startX+w>rightClip) {
+          // find x pos inside block
+          free(lineStr);
+          return lineStartPos + startIndex;
+        }
+      } else {
+        // draw a text segment
+        w = int( string_width( lineStr+startIndex, i-startIndex, style ) );
+        if (mode==DRAW_LINE)
+          draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
+        if (mode==FIND_INDEX && startX+w>rightClip) {
+          // find x pos inside block
+          int di = find_x(lineStr+startIndex, i-startIndex, style, rightClip-startX);
+          free(lineStr);
+          IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
+          return lineStartPos + startIndex + di;
+        }
       }
       style = charStyle;
       startX += w;
       startIndex = i;
     }
-    if (len==-1) {
-      // FIXME: what happened? Is there an illegal charater, or an illegal index?
-      len = 1;
-    }
     i += len;
+    prevChar = currChar;
   }
-  int w = int( string_width( lineStr+startIndex, i-startIndex, style ) );
-  if (mode==DRAW_LINE)
-    draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
-  if (mode==FIND_INDEX) {
-    // find x pos inside block
-    int di = find_x(lineStr+startIndex, i-startIndex, style, rightClip-startX);
-    free(lineStr);
-    IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
-    return lineStartPos + startIndex + di;
+  int w = 0;
+  if (currChar=='\t') {
+    // draw a single Tab space
+    int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
+    w = (((xAbs/100)+1)*100) - xAbs;
+    if (mode==DRAW_LINE)
+      draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
+    if (mode==FIND_INDEX) {
+      // find x pos inside block
+      free(lineStr);
+      return lineStartPos + startIndex + ( rightClip-startX>w ? 1 : 0 );
+    }
+  } else {
+    w = int( string_width( lineStr+startIndex, i-startIndex, style ) );
+    if (mode==DRAW_LINE)
+      draw_string( style, startX, Y, startX+w, lineStr+startIndex, i-startIndex );
+    if (mode==FIND_INDEX) {
+      // find x pos inside block
+      int di = find_x(lineStr+startIndex, i-startIndex, style, rightClip-startX);
+      free(lineStr);
+      IS_UTF8_ALIGNED2(buffer(), (lineStartPos+startIndex+di))
+      return lineStartPos + startIndex + di;
+    }
   }
   if (mode==GET_WIDTH) {
     free(lineStr);
@@ -1944,7 +1970,17 @@ void Fl_Text_Display::draw_string(int style,
   if (!(style & BG_ONLY_MASK)) {
     fl_color( foreground );
     fl_font( font, fsize );
-    fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
+    
+    // FIXME: remove this again!
+    char *buf = (char*)malloc(nChars);
+    memcpy(buf, string, nChars);
+    int i = 0;
+    for (i=0; i<nChars; i++) {
+      if (buf[i]=='\t') buf[i] = '$';
+    }
+    fl_draw( buf, nChars, X, Y + mMaxsize - fl_descent());
+    
+    //fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
   }
   
   // CET - FIXME
@@ -2157,6 +2193,15 @@ double Fl_Text_Display::string_width( const char *string, int length, int style 
     fsize = textsize();
   }
   fl_font( font, fsize );
+
+  // FIXME: remove this again!
+  char *buf = (char*)malloc(length);
+  memcpy(buf, string, length);
+  int i = 0;
+  for (i=0; i<length; i++) {
+    if (buf[i]=='\t') buf[i] = '$';
+  }
+  return fl_width( buf, length);
   
   return fl_width( string, length );
 }
