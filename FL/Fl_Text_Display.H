@@ -287,7 +287,7 @@ public:
    \param x number of pixels form the left margin
    \return an approximate column number based on the main font
    */
-  double x_to_col(double y);
+  double x_to_col(double y) const;
   
   /**
    Convert a column number into an x pixel position.
@@ -295,7 +295,7 @@ public:
    \return number of pixels form the left margin to the left of an average 
             sized character
    */
-  double col_to_x(double col);
+  double col_to_x(double col) const;
   
 protected:
   // Most (all?) of this stuff should only be called from resize() or
@@ -445,7 +445,10 @@ protected:
   int mModifyingTabDistance;    /* Whether tab distance is being
                                  modified */
   
-  double mColumnScale;          /* Width in pixels of an average character */
+  mutable double mColumnScale; /* Width in pixels of an average character. This
+                                 value is calculated as needed (lazy eval); it 
+                                 needs to be mutable so that it can be calculated
+                                 within a method marked as "const" */
   
   Fl_Color mCursor_color;
   

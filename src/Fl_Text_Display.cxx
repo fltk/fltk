@@ -1750,8 +1750,9 @@ int Fl_Text_Display::handle_vline(
       int w = 0;
       if (prevChar=='\t') {
         // draw a single Tab space
+        int tab = col_to_x(8);
         int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
-        w = (((xAbs/100)+1)*100) - xAbs;
+        w = (((xAbs/tab)+1)*tab) - xAbs;
         if (mode==DRAW_LINE)
           draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
         if (mode==FIND_INDEX && startX+w>rightClip) {
@@ -1782,8 +1783,9 @@ int Fl_Text_Display::handle_vline(
   int w = 0;
   if (currChar=='\t') {
     // draw a single Tab space
+    int tab = col_to_x(8);
     int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
-    w = (((xAbs/100)+1)*100) - xAbs;
+    w = (((xAbs/tab)+1)*tab) - xAbs;
     if (mode==DRAW_LINE)
       draw_string( style|BG_ONLY_MASK, startX, Y, startX+w, 0, 0 );
     if (mode==FIND_INDEX) {
@@ -3759,7 +3761,7 @@ int Fl_Text_Display::handle(int event) {
 /*
  Convert an x pixel position into a column number.
  */
-double Fl_Text_Display::x_to_col(double y)
+double Fl_Text_Display::x_to_col(double y) const
 {
   if (!mColumnScale) {
     mColumnScale = string_width("Mitg", 4, 'A') / 4.0;
@@ -3769,9 +3771,9 @@ double Fl_Text_Display::x_to_col(double y)
 
 
 /**
- Convert a column number into an y pixel position.
+ Convert a column number into an x pixel position.
  */
-double Fl_Text_Display::col_to_x(double col)
+double Fl_Text_Display::col_to_x(double col) const
 {
   if (!mColumnScale) {
     // recalculate column scale value
