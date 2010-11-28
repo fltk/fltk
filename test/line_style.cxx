@@ -3,7 +3,7 @@
 //
 // Line style demo for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2000-2008 by Bill Spitzak and others.
+// Copyright 2000-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

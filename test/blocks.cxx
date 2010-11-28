@@ -3,7 +3,7 @@
 //
 // "Block Attack!" scrolling blocks game using the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2006 by Michael Sweet.
+// Copyright 2006-2010 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
