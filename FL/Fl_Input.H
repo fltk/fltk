@@ -40,7 +40,11 @@
   characters (even 0), and will correctly display any UTF text, using
   ^X notation for unprintable control characters. It assumes the
   font can draw any characters of the used scripts, which is true
-  for standard fonts under MSWindows and Mac OS X.</P>
+  for standard fonts under MSWindows and Mac OS X.
+  Characters can be input using the keyboard or the character palette/map.
+  Character composition is done using using dead keys and/or a compose
+  key as defined by the operating system.
+</P>
   
   <CENTER><TABLE border=1 WIDTH=90% summary="Fl_Input keyboard and mouse bindings.">
   
@@ -84,168 +88,8 @@
   expected.</TD></TR>
   <TR><TD><B>Shift+move</B></TD><TD>Move the cursor but also extend the
   selection.</TD></TR>
-  
-  <TR><TD><B>RightCtrl or
-  <BR>Compose</B></TD><TD>
-  \anchor Fl_Input_Compose_Character
-  Start a compose-character
-  sequence.  The next one or two keys typed define the character to
-  insert (see table that follows.)
-  
-  <p>For instance, to type "á" type [compose][a]['] or [compose]['][a].
-  
-  <P>The character "nbsp" (non-breaking space) is typed by using
-  [compose][space].
-  
-  <P>The single-character sequences may be followed by a space if
-  necessary to remove ambiguity.  For instance, if you really want to
-  type "ª~" rather than "ã" you must type [compose][a][space][~].
-  
-  <p>The same key may be used to "quote" control characters into the
-  text.  If you need a ^Q character you can get one by typing
-  [compose][Control+Q].
-  
-  <p>X may have a key on the keyboard
-  defined as XK_Multi_key.  If so this key may be used as well
-  as the right-hand control key.  You can set this up with the program
-  xmodmap.
-  
-  <p>If your keyboard is set to support a foreign language you should
-  also be able to type "dead key" prefix characters.  On X you will
-  actually be able to see what dead key you typed, and if you then move
-  the cursor without completing the sequence the accent will remain
-  inserted.
- 
-  <p>Under MSWindows or Mac OS X, character composition is done using 
-  system-defined keystroke series.</TD></TR>
   </TABLE></CENTER>
-  
-  <!-- NEW PAGE -->
-  <center><table border=1 summary="Character Composition Table">
-  <caption align="top">Character Composition Table</caption>
-  <tr>
-  	<th>Keys</th><th>Char</th>
-  	<th>Keys</th><th>Char</th>
-  	<th>Keys</th><th>Char</th>
-  	<th>Keys</th><th>Char</th>
-  	<th>Keys</th><th>Char</th>
-  	<th>Keys</th><th>Char</th>
-  
-  </tr><tr>
-  	<td align=center>sp</td><td align=center><small>nbsp</small></td>
-  	<td align=center>*</td><td align=center>°</td>
-  	<td align=center>` A</td><td align=center>À</td>
-  	<td align=center>D -</td><td align=center>Ð</td>
-  	<td align=center>` a</td><td align=center>à</td>
-  	<td align=center>d -</td><td align=center>ð</td>
-  </tr><tr>
-  	<td align=center>!</td><td align=center>¡</td>
-  	<td align=center>+ -</td><td align=center>±</td>
-  	<td align=center>' A</td><td align=center>Á</td>
-  	<td align=center>~ N</td><td align=center>Ñ</td>
-  	<td align=center>' a</td><td align=center>á</td>
-  	<td align=center>~ n</td><td align=center>ñ</td>
-  </tr><tr>
-  	<td align=center>%</td><td align=center>¢</td>
-  	<td align=center>2</td><td align=center>²</td>
-  	<td align=center>A ^</td><td align=center>Â</td>
-  	<td align=center>` O</td><td align=center>Ò</td>
-  	<td align=center>^ a</td><td align=center>â</td>
-  	<td align=center>` o</td><td align=center>ò</td>
-  </tr><tr>
-  	<td align=center>#</td><td align=center>£</td>
-  	<td align=center>3</td><td align=center>³</td>
-  	<td align=center>~ A</td><td align=center>Ã</td>
-  	<td align=center>' O</td><td align=center>Ó</td>
-  	<td align=center>~ a</td><td align=center>ã</td>
-  	<td align=center>' o</td><td align=center>ó</td>
-  </tr><tr>
-  	<td align=center>$</td><td align=center>¤</td>
-  	<td align=center>'</td><td align=center>´</td>
-  	<td align=center>: A</td><td align=center>Ä</td>
-  	<td align=center>^ O</td><td align=center>Ô</td>
-  	<td align=center>: a</td><td align=center>ä</td>
-  	<td align=center>^ o</td><td align=center>ô</td>
-  </tr><tr>
-  	<td align=center>y =</td><td align=center>¥</td>
-  	<td align=center>u</td><td align=center>µ</td>
-  	<td align=center>* A</td><td align=center>Å</td>
-  	<td align=center>~ O</td><td align=center>Õ</td>
-  	<td align=center>* a</td><td align=center>å</td>
-  	<td align=center>~ o</td><td align=center>õ</td>
-  </tr><tr>
-  	<td align=center>|</td><td align=center>¦</td>
-  	<td align=center>p</td><td align=center>¶</td>
-  	<td align=center>A E</td><td align=center>Æ</td>
-  	<td align=center>: O</td><td align=center>Ö</td>
-  	<td align=center>a e</td><td align=center>æ</td>
-  	<td align=center>: o</td><td align=center>ö</td>
-  </tr><tr>
-  	<td align=center>&</td><td align=center>§</td>
-  	<td align=center>.</td><td align=center>·</td>
-  	<td align=center>, C</td><td align=center>Ç</td>
-  	<td align=center>x</td><td align=center>×</td>
-  	<td align=center>, c</td><td align=center>ç</td>
-  	<td align=center>- :</td><td align=center>÷</td>
-  </tr><tr>
-  	<td align=center>:</td><td align=center>¨</td>
-  	<td align=center>,</td><td align=center>¸</td>
-  	<td align=center>E `</td><td align=center>È</td>
-  	<td align=center>O /</td><td align=center>Ø</td>
-  	<td align=center>` e</td><td align=center>è</td>
-  	<td align=center>o /</td><td align=center>ø</td>
-  </tr><tr>
-  	<td align=center>c</td><td align=center>©</td>
-  	<td align=center>1</td><td align=center>¹</td>
-  	<td align=center>' E</td><td align=center>É</td>
-  	<td align=center>` U</td><td align=center>Ù</td>
-  	<td align=center>' e</td><td align=center>é</td>
-  	<td align=center>` u</td><td align=center>ù</td>
-  </tr><tr>
-  	<td align=center>a</td><td align=center>ª</td>
-  	<td align=center>o</td><td align=center>º</td>
-  	<td align=center>^ E</td><td align=center>Ê</td>
-  	<td align=center>' U</td><td align=center>Ú</td>
-  	<td align=center>^ e</td><td align=center>ê</td>
-  	<td align=center>' u</td><td align=center>ú</td>
-  </tr><tr>
-  	<td align=center>&lt; &lt;</td><td align=center>«</td>
-  	<td align=center>&gt; &gt;</td><td align=center>»</td>
-  	<td align=center>: E</td><td align=center>Ë</td>
-  	<td align=center>^ U</td><td align=center>Û</td>
-  	<td align=center>: e</td><td align=center>ë</td>
-  	<td align=center>^ u</td><td align=center>û</td>
-  </tr><tr>
-  	<td align=center>~</td><td align=center>¬</td>
-  	<td align=center>1 4</td><td align=center>¼</td>
-  	<td align=center>` I</td><td align=center>Ì</td>
-  	<td align=center>: U</td><td align=center>Ü</td>
-  	<td align=center>` i</td><td align=center>ì</td>
-  	<td align=center>: u</td><td align=center>ü</td>
-  </tr><tr>
-  	<td align=center>-</td><td align=center>­</td>
-  	<td align=center>1 2</td><td align=center>½</td>
-  	<td align=center>' I</td><td align=center>Í</td>
-  	<td align=center>' Y</td><td align=center>Ý</td>
-  	<td align=center>' i</td><td align=center>í</td>
-  	<td align=center>' y</td><td align=center>ý</td>
-  </tr><tr>
-  	<td align=center>r</td><td align=center>®</td>
-  	<td align=center>3 4</td><td align=center>¾</td>
-  	<td align=center>^ I</td><td align=center>Î</td>
-  	<td align=center>T H</td><td align=center>Þ</td>
-  	<td align=center>^ i</td><td align=center>î</td>
-  	<td align=center>t h</td><td align=center>þ</td>
-  </tr><tr>
-  	<td align=center>_</td><td align=center>¯</td>
-  	<td align=center>?</td><td align=center>¿</td>
-  	<td align=center>: I</td><td align=center>Ï</td>
-  	<td align=center>s s</td><td align=center>ß</td>
-  	<td align=center>: i</td><td align=center>ï</td>
-  	<td align=center>: y</td><td align=center>ÿ</td>
-  </tr>
-  </table></center>
-*/
+  */
 class FL_EXPORT Fl_Input : public Fl_Input_ {
   int handle_key();
   int shift_position(int p);
