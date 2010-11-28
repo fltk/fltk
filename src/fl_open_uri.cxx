@@ -7,7 +7,7 @@
 //
 //    gcc -I/fltk/dir -I/fltk/dir/src -DTEST -o fl_open_uri fl_open_uri.cxx -lfltk
 //
-// Copyright 2003-2009 by Michael R Sweet
+// Copyright 2003-2010 by Michael R Sweet
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

@@ -54,7 +54,7 @@ static const char * const comment_text[] = {
     "//\n"
     "// ... for the Fast Light Tool Kit (FLTK).\n"
     "//\n"
-    "// Copyright 1998-2009 by Bill Spitzak and others.\n"
+    "// Copyright 1998-2010 by Bill Spitzak and others.\n"
     "//\n"
     "// This library is free software; you can redistribute it and/or\n"
     "// modify it under the terms of the GNU Library General Public\n"

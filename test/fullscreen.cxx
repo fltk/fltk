@@ -34,7 +34,7 @@
 // can avoid this by making the Fl_Gl_Window a child of a normal
 // window.
 //
-// Copyright 1998-2009 by Bill Spitzak and others.
+// Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

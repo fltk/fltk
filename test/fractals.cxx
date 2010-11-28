@@ -7,7 +7,7 @@
 // demonstrate how to add FLTK controls to a GLUT program.   The GLUT
 // code is unchanged except for the end (search for FLTK to find changes).
 //
-// Copyright 1998-2009 by Bill Spitzak and others.
+// Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

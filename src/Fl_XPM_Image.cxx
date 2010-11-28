@@ -3,7 +3,7 @@
 //
 // Fl_XPM_Image routines.
 //
-// Copyright 1997-2009 by Bill Spitzak and others.
+// Copyright 1997-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

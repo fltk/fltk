@@ -7,7 +7,7 @@
 //           | input area   || \/ |
 //           |______________||____|
 //
-// Copyright 1998-2009 by Bill Spitzak and others.
+// Copyright 1998-2010 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
 //
 // This library is free software; you can redistribute it and/or

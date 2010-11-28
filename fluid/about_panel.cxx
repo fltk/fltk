@@ -3,7 +3,7 @@
 //
 // About dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2009 by Bill Spitzak and others.
+// Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -285,7 +285,7 @@ Fl_Double_Window* make_about_panel() {
       o->labelsize(18);
       o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
     } // Fl_Box* o
-    { Fl_Box* o = new Fl_Box(135, 89, 170, 42, "Copyright 1998-2009 by\nBill Spitzak and others");
+    { Fl_Box* o = new Fl_Box(135, 89, 170, 42, "Copyright 1998-2010 by\nBill Spitzak and others");
       o->align(132|FL_ALIGN_INSIDE);
     } // Fl_Box* o
     { Fl_Button* o = new Fl_Button(89, 141, 123, 25, "View License...");

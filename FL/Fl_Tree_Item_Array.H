@@ -15,7 +15,7 @@ class FL_EXPORT Fl_Tree_Item;	// forward decl must *precede* first doxygen comme
 //////////////////////////
 //
 // Fl_Tree -- This file is part of the Fl_Tree widget for FLTK
-// Copyright (C) 2009 by Greg Ercolano.
+// Copyright (C) 2009-2010 by Greg Ercolano.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

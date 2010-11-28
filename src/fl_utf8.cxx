@@ -4,7 +4,7 @@
 // Unicode to UTF-8 conversion functions.
 //
 // Author: Jean-Marc Lienher ( http://oksid.ch )
-// Copyright 2000-2009 by O'ksi'D.
+// Copyright 2000-2010 by O'ksi'D.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public

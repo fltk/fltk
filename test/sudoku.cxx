@@ -3,7 +3,7 @@
 //
 // Sudoku game using the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2005-2009 by Michael Sweet.
+// Copyright 2005-2010 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -962,7 +962,7 @@ Sudoku::help_cb(Fl_Widget *, void *) {
 	"only once in each column and row. In addition, each 3x3 subgrid\n"
 	"may only contain one of each number.</P>\n"
 
-	"<P>This version of the puzzle is copyright 2005-2009 by Michael R\n"
+	"<P>This version of the puzzle is copyright 2005-2010 by Michael R\n"
 	"Sweet.</P>\n"
 
 	"<P><B>Note:</B> The 'Hard' and 'Impossible' difficulty\n"

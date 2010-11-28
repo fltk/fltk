@@ -3,7 +3,7 @@
  *
  * This is the utf.c file from fltk2 adapted for use in my fltk1.1 port
  */
-/* Copyright 2006-2009 by Bill Spitzak and others.
+/* Copyright 2006-2010 by Bill Spitzak and others.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
