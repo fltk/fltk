@@ -200,6 +200,12 @@ else
     DEBUGFLAG=""
 fi
 
+AC_ARG_ENABLE(cp936, [  --enable-cp936          turn on CP936 [default=no]])
+if test x$enable_cp936 = xyes; then
+    CFLAGS="$CFLAGS -DCP936"
+fi
+
+
 AC_ARG_ENABLE(gl, [  --enable-gl             turn on OpenGL support [default=yes]])
 
 AC_ARG_ENABLE(shared, [  --enable-shared         turn on shared libraries [default=no]])
