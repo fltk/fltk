@@ -131,9 +131,8 @@ void *fl_system_menu;                   // this is really a NSMenu*
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
 void *fl_default_cursor;		// this is really a NSCursor*
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
-char fl_key_vector[32];                 // used by Fl::get_key()
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
-int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
+//int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
 Window fl_window;
 Fl_Window *Fl_Window::current_;
 int fl_mac_os_version = 0;		// the version number of the running Mac OS X (e.g., 0x1064 for 10.6.4)
@@ -1937,7 +1936,7 @@ void Fl_X::make(Fl_Window* w)
       yp -= by+bt;
     }
     
-    if (w->non_modal() && Fl_X::first && !fl_disable_transient_for) {
+    if (w->non_modal() && Fl_X::first /*&& !fl_disable_transient_for*/) {
       // find some other window to be "transient for":
       Fl_Window* w = Fl_X::first->w;
       while (w->parent()) w = w->window(); // todo: this code does not make any sense! (w!=w??)
