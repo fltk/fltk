@@ -83,7 +83,7 @@ int Fl::test_shortcut(unsigned int shortcut) {
 
   // try matching utf8, ignore shift:
   unsigned int firstChar = fl_utf8decode(Fl::event_text(), Fl::event_text()+Fl::event_length(), 0);
-  if (key==firstChar) return 1;
+  if ( ! (FL_CAPS_LOCK&shift) && key==firstChar) return 1;
 
   // kludge so that Ctrl+'_' works (as opposed to Ctrl+'^_'):
   if ((shift&FL_CTRL) && key >= 0x3f && key <= 0x5F
