@@ -94,7 +94,7 @@ Here are some of the core features unique to FLTK:
 
 \li The FLUID program (which includes every widget) is 538k.
 
-\li Written directly atop core libraries (Xlib, WIN32 or Carbon) for
+\li Written directly atop core libraries (Xlib, WIN32 or Cocoa) for
     maximum speed, and carefully optimized for code size and performance.
 
 \li Precise low-level compatibility between the X11, WIN32 and MacOS
@@ -211,6 +211,9 @@ Enable the Xft library for anti-aliased fonts under X11
 
 \par --enable-x11
 When targeting cygwin, build with X11 GUI instead of windows GDI
+
+\par --enable-cp936
+Under X11, enable use of the GB2312 locale
 
 \par --bindir=/path
 Set the location for executables [default = $prefix/bin]
