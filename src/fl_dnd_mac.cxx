@@ -28,14 +28,9 @@
 // in.  Search other files for "__APPLE__" or filenames ending in _mac.cxx
 // for other system-specific code.
 
-#include <config.h>
 #include <FL/Fl.H>
-#include <FL/x.H>
-#include <FL/Fl_Window.H>
 
-extern char *fl_selection_buffer;
-extern int fl_selection_length;
-
+extern int MACpreparedrag(void);
 
 /**
  * drag and drop whatever is in the cut-copy-paste buffer
@@ -44,11 +39,9 @@ extern int fl_selection_length;
  */
 int Fl::dnd()
 {
-  extern int MACpreparedrag(void);
   return MACpreparedrag();
 }
   
-
 //
 // End of "$Id$".
 //
