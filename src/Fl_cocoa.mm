@@ -70,6 +70,7 @@ extern "C" {
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Input_.H>
+#include <FL/Fl_Text_Display.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -3173,7 +3174,7 @@ int MACpreparedrag(void)
   
   int width, height;
   NSImage *image;
-  if ( dynamic_cast<Fl_Input_*>(w) != NULL) {
+  if ( dynamic_cast<Fl_Input_*>(w) != NULL ||  dynamic_cast<Fl_Text_Display*>(w) != NULL) {
     fl_selection_buffer[0][ fl_selection_length[0] ] = 0;
     image = imageFromText(fl_selection_buffer[0], &width, &height);
   } else {
