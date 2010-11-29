@@ -3594,8 +3594,6 @@ int Fl_Text_Display::handle(int event) {
         buffer()->unselect();
       else if (dragType == DRAG_WORD)
         buffer()->select(word_start(pos), word_end(pos));
-      else if (dragType == DRAG_LINE)
-        buffer()->select(buffer()->line_start(pos), buffer()->next_char(buffer()->line_end(pos)));
       
       if (buffer()->primary_selection()->selected())
         insert_position(buffer()->primary_selection()->end());
@@ -3660,18 +3658,26 @@ int Fl_Text_Display::handle(int event) {
     }
       
     case FL_RELEASE: {
-      dragging = 0;
-      if (scroll_direction) {
-        Fl::remove_timeout(scroll_timer_cb, this);
-        scroll_direction = 0;
-      }
-      
-      // convert from WORD or LINE selection to CHAR
-      if (insert_position() >= dragPos)
-        dragPos = buffer()->primary_selection()->start();
-      else
-        dragPos = buffer()->primary_selection()->end();
-      dragType = DRAG_CHAR;
+      if (Fl::event_is_click() && (! Fl::event_clicks()) && buffer()->primary_selection()->includes(dragPos) ) {
+	buffer()->unselect(); // clicking in the selection: unselect and move cursor
+	insert_position(dragPos);
+	return 1;
+      } else if (Fl::event_clicks() == DRAG_LINE) {
+        buffer()->select(buffer()->line_start(dragPos), buffer()->next_char(buffer()->line_end(dragPos)));
+      } else {
+	dragging = 0;
+	if (scroll_direction) {
+	  Fl::remove_timeout(scroll_timer_cb, this);
+	  scroll_direction = 0;
+	}
+	
+	// convert from WORD or LINE selection to CHAR
+	if (insert_position() >= dragPos)
+	  dragPos = buffer()->primary_selection()->start();
+	else
+	  dragPos = buffer()->primary_selection()->end();
+	dragType = DRAG_CHAR;
+	}
       
       const char* copy = buffer()->selection_text();
       if (*copy) Fl::copy(copy, strlen(copy), 0);
