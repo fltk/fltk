@@ -103,6 +103,7 @@ you build FLTK, unlike those in the 'test' directory shown below.
 <td> \ref examples_tile            </td>
 <td> \ref examples_tiled_image     </td>
 <td> \ref examples_valuators       </td>
+<td> \ref examples_device       </td>
 <td>      &nbsp;                   </td>
 <td>      &nbsp;                   </td>
 </tr>
@@ -229,6 +230,11 @@ on few systems (some version of Irix for example).
 This tool allows quick access to all programs in the \c test directory. 
 \c demo is based on the visuals of the IrixGL demo program. The menu 
 tree can be changed by editing <tt>test/demo.menu</tt>.
+
+\subsection examples_device device
+
+\par
+Shows how a wide variety of graphics requests can be printed using the Fl_Printer class.
 
 \subsection examples_doublebuffer doublebuffer
 
