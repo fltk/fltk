@@ -3677,7 +3677,7 @@ int Fl_Text_Display::handle(int event) {
 	else
 	  dragPos = buffer()->primary_selection()->end();
 	dragType = DRAG_CHAR;
-	}
+      }
       
       const char* copy = buffer()->selection_text();
       if (*copy) Fl::copy(copy, strlen(copy), 0);
