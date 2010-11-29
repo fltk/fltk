@@ -3,7 +3,7 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2009 by Bill Spitzak and others.
+// Copyright 1998-2010 by Bill Spitzak and others.
 // Copyright 2005 by Nathan Vander Wilt.
 //
 // This library is free software; you can redistribute it and/or

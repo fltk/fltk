@@ -30,7 +30,7 @@
 
 const char* copyright = 
 "Checkers game\n"
-"Copyright (C) 1997 Bill Spitzak    spitzak@d2.com\n"
+"Copyright (C) 1997-2010 Bill Spitzak    spitzak@d2.com\n"
 "Original Pascal code:\n"
 "Copyright 1978, Oregon Minicomputer Software, Inc.\n"
 "2340 SW Canyon Road, Portland, Oregon 97201\n"

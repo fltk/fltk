@@ -3,7 +3,7 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2010 by Bill Spitzak and others.
 // Copyright 2004 by Greg Ercolano.
 // April 2005 - API changes, improved filter processing by Nathan Vander Wilt
 //
