@@ -307,6 +307,10 @@ Atom fl_XdndActionCopy;
 Atom fl_XdndFinished;
 //Atom fl_XdndProxy;
 Atom fl_XdndURIList;
+Atom fl_Xatextplainutf;
+Atom fl_Xatextplain;
+static Atom fl_XaText;
+Atom fl_XaCompoundText;
 Atom fl_XaUtf8String;
 Atom fl_XaTextUriList;
 
@@ -589,6 +593,10 @@ void fl_open_display(Display* d) {
   //fl_XdndProxy        = XInternAtom(d, "XdndProxy",           0);
   fl_XdndEnter          = XInternAtom(d, "XdndEnter",           0);
   fl_XdndURIList        = XInternAtom(d, "text/uri-list",       0);
+  fl_Xatextplainutf     = XInternAtom(d, "text/plain;charset=UTF-8",0);
+  fl_Xatextplain        = XInternAtom(d, "text/plain",          0);
+  fl_XaText             = XInternAtom(d, "TEXT",                0);     
+  fl_XaCompoundText     = XInternAtom(d, "COMPOUND_TEXT",       0);
   fl_XaUtf8String       = XInternAtom(d, "UTF8_STRING",         0);
   fl_XaTextUriList      = XInternAtom(d, "text/uri-list",       0);
   
@@ -704,7 +712,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
   // otherwise get the window server to return it:
   fl_selection_requestor = &receiver;
   Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
-  XConvertSelection(fl_display, property, fl_XaUtf8String, property,
+  XConvertSelection(fl_display, property, TARGETS, property,
                     fl_xid(Fl::first_window()), fl_event_time);
 }
 
@@ -918,15 +926,40 @@ int fl_handle(const XEvent& thisevent)
                              bytesread/4, 65536, 1, 0,
                              &actual, &format, &count, &remaining,
                              &portion)) break; // quit on error
-      if (bytesread) { // append to the accumulated buffer
-        buffer = (unsigned char*)realloc(buffer, bytesread+count*format/8+remaining);
-        memcpy(buffer+bytesread, portion, count*format/8);
-        XFree(portion);
-      } else {  // Use the first section without moving the memory:
-        buffer = portion;
+      if (actual == TARGETS || actual == XA_ATOM) {
+	Atom type = XA_STRING;
+	for (unsigned i = 0; i<count; i++) {
+	  Atom t = ((Atom*)portion)[i];
+	    if (t == fl_Xatextplainutf ||
+		  t == fl_Xatextplain ||
+		  t == fl_XaUtf8String) {type = t; break;}
+	    // rest are only used if no utf-8 available:
+	    if (t == fl_XaText || 
+		  t == fl_XaTextUriList || 
+		  t == fl_XaCompoundText) type = t;
+	}	
+	XFree(portion);
+	Atom property = xevent.xselection.property;
+	XConvertSelection(fl_display, property, type, property,
+	      fl_xid(Fl::first_window()),
+	      fl_event_time);
+	return true;
       }
-      bytesread += count*format/8;
-      buffer[bytesread] = 0;
+      XTextProperty text_prop; 
+      text_prop.value=portion;
+      text_prop.format=format;
+      text_prop.encoding=actual;
+      text_prop.nitems=count;
+      char **text_list;
+      int list_count;
+      Xutf8TextPropertyToTextList(fl_display, 
+				   +              (const XTextProperty*)&text_prop, &text_list, &list_count);
+      int bytesnew = strlen(*text_list)+1; 
+      XFree(portion); 
+      buffer = (unsigned char*)realloc(buffer, bytesread+bytesnew+remaining);
+      memcpy(buffer+bytesread, *text_list, bytesnew);
+      XFreeStringList(text_list);
+      bytesread += bytesnew - 1;
       if (!remaining) break;
     }
     Fl::e_text = buffer ? (char*)buffer : (char *)"";
@@ -961,14 +994,25 @@ int fl_handle(const XEvent& thisevent)
     e.time = fl_xevent->xselectionrequest.time;
     e.property = fl_xevent->xselectionrequest.property;
     if (e.target == TARGETS) {
-      Atom a = fl_XaUtf8String; //XA_STRING;
+      Atom a[3] = {fl_XaUtf8String, XA_STRING, fl_XaText};
       XChangeProperty(fl_display, e.requestor, e.property,
-                      XA_ATOM, atom_bits, 0, (unsigned char*)&a, 1);
+                      XA_ATOM, atom_bits, 0, (unsigned char*)a, 3);
     } else if (/*e.target == XA_STRING &&*/ fl_selection_length[clipboard]) {
-      XChangeProperty(fl_display, e.requestor, e.property,
-                      e.target, 8, 0,
-                      (unsigned char *)fl_selection_buffer[clipboard],
-                      fl_selection_length[clipboard]);
+    if (e.target == fl_XaUtf8String ||
+	     e.target == XA_STRING ||
+	     e.target == fl_XaCompoundText ||
+	     e.target == fl_XaText ||
+	     e.target == fl_Xatextplain ||
+	     e.target == fl_Xatextplainutf) {
+	// clobber the target type, this seems to make some applications
+	// behave that insist on asking for XA_TEXT instead of UTF8_STRING
+	// Does not change XA_STRING as that breaks xclipboard.
+	if (e.target != XA_STRING) e.target = fl_XaUtf8String;
+	XChangeProperty(fl_display, e.requestor, e.property,
+			 e.target, 8, 0,
+			 (unsigned char *)fl_selection_buffer[clipboard],
+			 fl_selection_length[clipboard]);
+      }
     } else {
 //    char* x = XGetAtomName(fl_display,e.target);
 //    fprintf(stderr,"selection request of %s\n",x);
