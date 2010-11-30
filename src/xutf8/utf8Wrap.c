@@ -48,14 +48,16 @@
  * XChar2b which does not have this problem
  */
 
+#if defined(__GNUC__) && defined(__arm__) && !defined(__ARM_EABI__)
 typedef struct {
   unsigned char byte1;
   unsigned char byte2;
 }
-#if defined(__GNUC__) && defined(__arm__) && !defined(__ARM_EABI__)
 __attribute__ ((packed))
-#endif
 Fl_XChar2b;
+#else
+#define Fl_XChar2b XChar2b
+#endif
 
 
 /*********************************************************************/
