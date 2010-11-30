@@ -23,7 +23,7 @@
 #include <FL/Fl_Light_Button.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Clock.H>
-#include <test/pixmaps/porsche.xpm>
+#include "pixmaps/porsche.xpm"
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Round_Button.H>

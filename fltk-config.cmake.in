@@ -59,9 +59,9 @@ OPTIM="@OPTION_OPTIM@"
 CAIROFLAGS="@CAIROFLAGS@"
 
 # Check for local invocation, and update paths accordingly...
-if test -f "$selfdir/FL/Fl_Window.H"; then
-	bindir="$selfdir/fluid"
-	includedir="$selfdir"
+if test -f "$selfdir/bin/UseFLTK.cmake"; then
+	bindir="$selfdir/bin/fluid"
+	includedir="@FLTK_SOURCE_DIR@"
 	libdir="$selfdir/lib"
 
 	if test -f "$libdir/libfltk_jpeg.a"; then

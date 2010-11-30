@@ -73,7 +73,7 @@
  * Do you have the OpenGL glXGetProcAddressARB() function?
  */
 
-#cmakedefine HAVE_GLXGETPROCADDRESSARB
+#cmakedefine HAVE_GLXGETPROCADDRESSARB %HAVE_GLXGETPROCADDRESSARB%
 
 /*
  * USE_COLORMAP:

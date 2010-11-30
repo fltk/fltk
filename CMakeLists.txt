@@ -46,38 +46,11 @@ set(ARCHIVE_OUTPUT_PATH ${FLTK_BINARY_DIR}/lib)
 # Search for modules in the FLTK source dir first
 set(CMAKE_MODULE_PATH "${FLTK_SOURCE_DIR}/CMake")
 
-include_directories(${FLTK_SOURCE_DIR} ${FLTK_BINARY_DIR})
-
-# If this is out-of-source build, then copy FL directory
-if(NOT ${FLTK_SOURCE_DIR} STREQUAL ${FLTK_BINARY_DIR})
-   file(GLOB FLTK_HEADER_FILES ${FLTK_SOURCE_DIR}/FL/*.[hHr])
-   foreach(file ${FLTK_HEADER_FILES})
-      GET_FILENAME_COMPONENT(name ${file} NAME)
-      CONFIGURE_file(${file} ${FLTK_BINARY_DIR}/FL/${name} COPYONLY)
-   endforeach(file)
-endif(NOT ${FLTK_SOURCE_DIR} STREQUAL ${FLTK_BINARY_DIR})
+include_directories(${FLTK_BINARY_DIR} ${FLTK_SOURCE_DIR})
 
 #######################################################################
 # platform dependent information
 #######################################################################
-# On unix create backward compatibility symlinks
-if(CMAKE_HOST_UNIX)
-   if(NOT EXISTS ${FLTK_BINARY_DIR}/Fl)
-      EXECUTE_PROCESS(COMMAND ln -s FL Fl
-         WORKING_DIRECTORY ${FLTK_BINARY_DIR}
-         )
-   endif(NOT EXISTS ${FLTK_BINARY_DIR}/Fl)
-
-   file(GLOB FLTK_HEADER_FILES ${FLTK_BINARY_DIR}/FL/*.H)
-   foreach(file ${FLTK_HEADER_FILES})
-      GET_FILENAME_COMPONENT(nameWE ${file} NAME_WE)
-      if(NOT EXISTS ${FLTK_BINARY_DIR}/FL/${nameWE}.h)
-         EXECUTE_PROCESS(COMMAND ln -s ${nameWE}.H ${nameWE}.h
-            WORKING_DIRECTORY ${FLTK_BINARY_DIR}/FL
-            )
-      endif()
-   endforeach(file)
-endif(CMAKE_HOST_UNIX)
 
 include(TestBigEndian)
 TEST_BIG_ENDIAN(WORDS_BIGENDIAN)
@@ -135,10 +108,6 @@ endif(${SIZEOF_INT} MATCHES "^8$")
 #######################################################################
 # check for headers, libraries and functions
 #######################################################################
-# set default search paths
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM BOTH)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 # headers
 find_file(HAVE_ALSA_ASOUNDLIB_H alsa/asoundlib.h)
 find_file(HAVE_DIRENT_H dirent.h)
@@ -349,6 +318,7 @@ if(CMAKE_HOST_UNIX)
       set(PREFIX_MAN ${CMAKE_INSTALL_PREFIX}/man CACHE INTERNAL "" FORCE)
    endif(OPTION_PREFIX_MAN)
 
+   option(OPTION_CREATE_LINKS "create backwards compatibility links" OFF)
 endif(CMAKE_HOST_UNIX)
 
 #######################################################################
@@ -544,7 +514,7 @@ if(X11_Xinerama_FOUND)
 endif(X11_Xinerama_FOUND)
 
 if(OPTION_USE_XINERAMA)
-   set(HAVE_XINERAMA X11_Xinerama_FOUND)
+   set(HAVE_XINERAMA ${X11_Xinerama_FOUND})
    include_directories(${X11_Xinerama_INCLUDE_PATH})
    list(APPEND FLTK_LDLIBS -lXinerama)
    set(FLTK_XINERAMA_FOUND TRUE)
@@ -561,7 +531,7 @@ if(OPTION_USE_XFT)
    set(USE_XFT X11_Xft_FOUND)
    list(APPEND FLTK_LDLIBS -lXft)
    set(FLTK_XFT_FOUND TRUE)
-else()   
+else()
    set(FLTK_XFT_FOUND FALSE)
 endif(OPTION_USE_XFT)
 
@@ -588,36 +558,40 @@ if(CMAKE_CROSSCOMPILING)
       NO_CMAKE_FIND_ROOT_PATH
    )
    add_executable(fluid IMPORTED)
-   set(FLTK_FLUID_EXECUTABLE fluid)
+   set(FLTK_FLUID_EXECUTABLE ${FLUID_PATH})
    set(FLTK_FLUID_PATH ${FLUID_PATH})
    set_target_properties(fluid
       PROPERTIES IMPORTED_LOCATION ${FLUID_PATH}
-      )
+   )
 else()
    add_subdirectory(fluid)
    set(FLTK_FLUID_EXECUTABLE fluid)
-   set(FLTK_FLUID_PATH ${EXECUTABLE_OUTPUT_PATH}/${FLTK_FLUID_EXECUTABLE})
+   set(FLTK_FLUID_PATH ${PREFIX_BIN}/fluid)
 endif(CMAKE_CROSSCOMPILING)
 
 add_subdirectory(src)
 
 # generate FLTKConfig.cmake
 string(REPLACE ";" " " EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
-configure_file(${FLTK_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
+configure_file(
+   ${FLTK_SOURCE_DIR}/CMake/FLTKConfig.cmake.in
    ${EXECUTABLE_OUTPUT_PATH}/FLTKConfig.cmake
    @ONLY
-   )
+)
 
 # generate UseFLTK.cmake
-configure_file(${FLTK_SOURCE_DIR}/CMake/UseFLTK.cmake.in
+configure_file(
+   ${FLTK_SOURCE_DIR}/CMake/UseFLTK.cmake.in
    ${EXECUTABLE_OUTPUT_PATH}/UseFLTK.cmake
    @ONLY
-   )
+)
 
 # generate config.h
-configure_file("${FLTK_SOURCE_DIR}/configh.cmake.in"
-  "${FLTK_BINARY_DIR}/config.h" @ONLY
-   )
+configure_file(
+   "${FLTK_SOURCE_DIR}/configh.cmake.in"
+   "${FLTK_BINARY_DIR}/config.h"
+   @ONLY
+)
 
 # generate fltk-config
 get_filename_component(CC ${CMAKE_C_COMPILER} NAME)
@@ -630,24 +604,34 @@ if(X11_Xext_FOUND)
 endif(X11_Xext_FOUND)
 string(REPLACE ";" " " LD_LIBS "${FLTK_LDLIBS}")
 
-configure_file(${FLTK_SOURCE_DIR}/fltk-config.cmake.in
-   ${FLTK_BINARY_DIR}/fltk-config
-   )
+configure_file(
+   "${FLTK_SOURCE_DIR}/fltk-config.cmake.in"
+   "${FLTK_BINARY_DIR}/fltk-config"
+   @ONLY
+)
 if(UNIX)
    execute_process(COMMAND chmod 755 fltk-config
-      WORKING_DIRECTORY ${FLTK_BINARY_DIR}
+      WORKING_DIRECTORY "${FLTK_BINARY_DIR}"
    )
 endif(UNIX)
+
+if(OPTION_CREATE_LINKS)
+   configure_file(
+      "${FLTK_SOURCE_DIR}/CMake/install-symlinks.cmake.in"
+      "${FLTK_BINARY_DIR}/install-symlinks.cmake"
+      @ONLY
+   )
+endif(OPTION_CREATE_LINKS)
 
 # generate uninstall target
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/CMake/cmake_uninstall.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
   @ONLY
-   )
+)
 add_custom_target(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-  )
+)
 
 #######################################################################
 # build examples - these have to be after fluid is built/imported
@@ -660,31 +644,32 @@ endif(OPTION_BUILD_EXAMPLES)
 # installation
 #######################################################################
 
-install(DIRECTORY ${FLTK_BINARY_DIR}/FL
+install(DIRECTORY ${FLTK_SOURCE_DIR}/FL
    DESTINATION ${PREFIX_INCLUDE} USE_SOURCE_PERMISSIONS
-   )
+   PATTERN ".svn" EXCLUDE
+)
 
-install(DIRECTORY ${FLTK_BINARY_DIR}/Fl
-   DESTINATION ${PREFIX_INCLUDE} USE_SOURCE_PERMISSIONS
-   )
+if(OPTION_CREATE_LINKS)
+   install(SCRIPT ${FLTK_BINARY_DIR}/install-symlinks.cmake)
+endif(OPTION_CREATE_LINKS)
 
 install(PROGRAMS ${FLTK_BINARY_DIR}/fltk-config
    DESTINATION ${PREFIX_BIN}
    OPTIONAL
-   )
+)
 
 install(EXPORT fltk-install
    DESTINATION ${PREFIX_CONFIG}
    FILE FLTKLibraries.cmake
-   )
+)
 
 install(FILES ${EXECUTABLE_OUTPUT_PATH}/FLTKConfig.cmake
    DESTINATION ${PREFIX_CONFIG}
-   )
+)
 
 install(FILES ${EXECUTABLE_OUTPUT_PATH}/UseFLTK.cmake
    DESTINATION ${PREFIX_CONFIG}
-   )
+)
 
 if(CMAKE_HOST_UNIX)
    macro(INSTALL_MAN FILE LEVEL)
@@ -692,7 +677,7 @@ if(CMAKE_HOST_UNIX)
       ${FLTK_SOURCE_DIR}/documentation/src/${FILE}.man
       DESTINATION ${PREFIX_MAN}/man${LEVEL}
       RENAME ${FILE}.${LEVEL}
-      )
+   )
    endmacro(INSTALL_MAN FILE LEVEL)
 
    INSTALL_MAN(fluid 1)

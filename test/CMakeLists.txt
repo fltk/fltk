@@ -3,7 +3,7 @@ set(EXECUTABLE_OUTPUT_PATH ${FLTK_BINARY_DIR}/bin/examples)
 #######################################################################
 # audio libs for test apps
 if(WIN32)
-   set(AUDIOLIBS -lwinmm)
+   set(AUDIOLIBS winmm)
 elseif(APPLE)
    set(AUDIOLIBS "-framework CoreAudio")
 elseif(HAVE_ALSA_ASOUNDLIB_H)
