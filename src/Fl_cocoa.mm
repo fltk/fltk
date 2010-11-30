@@ -1964,6 +1964,7 @@ void Fl_X::make(Fl_Window* w)
 					styleMask:winstyle  
 					  backing:NSBackingStoreBuffered 
 					    defer:NO];
+    [cw setHasShadow:YES];
     [cw setAcceptsMouseMovedEvents:YES];
     x->xid = cw;
     FLView *myview = [[FLView alloc] init];
