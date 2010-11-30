@@ -451,7 +451,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
 /**
  \brief Refresh a rectangle of the text display.  
  \param left, top are in coordinates of the text drawing window.
- \param width, height isze in pixels 
+ \param width, height size in pixels 
  */
 void Fl_Text_Display::draw_text( int left, int top, int width, int height ) {
   int fontHeight, firstLine, lastLine, line;
@@ -826,7 +826,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
   }
   
   fontHeight = mMaxsize;
-  *Y = text_area.y + visLineNum * fontHeight - 1;
+  *Y = text_area.y + visLineNum * fontHeight;
   
   /* Get the text, length, and  buffer position of the line. If the position
    is beyond the end of the buffer and should be at the first position on
@@ -1964,7 +1964,7 @@ void Fl_Text_Display::draw_string(int style,
   
   if (!(style & TEXT_ONLY_MASK)) {
     fl_color( background );
-    fl_rectf( X, Y - 1, toX - X, mMaxsize );
+    fl_rectf( X, Y, toX - X, mMaxsize );
   }
   if (!(style & BG_ONLY_MASK)) {
     fl_color( foreground );
@@ -2022,7 +2022,7 @@ void Fl_Text_Display::clear_rect(int style,
   } else {
     fl_color( color() );
   }
-  fl_rectf( X, Y - 1, width, height );
+  fl_rectf( X, Y, width, height );
 }
 
 
