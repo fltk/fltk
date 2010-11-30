@@ -826,7 +826,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
   }
   
   fontHeight = mMaxsize;
-  *Y = text_area.y + visLineNum * fontHeight;
+  *Y = text_area.y + visLineNum * fontHeight - 1;
   
   /* Get the text, length, and  buffer position of the line. If the position
    is beyond the end of the buffer and should be at the first position on
@@ -1964,7 +1964,7 @@ void Fl_Text_Display::draw_string(int style,
   
   if (!(style & TEXT_ONLY_MASK)) {
     fl_color( background );
-    fl_rectf( X, Y, toX - X, mMaxsize );
+    fl_rectf( X, Y - 1, toX - X, mMaxsize );
   }
   if (!(style & BG_ONLY_MASK)) {
     fl_color( foreground );
@@ -2022,7 +2022,7 @@ void Fl_Text_Display::clear_rect(int style,
   } else {
     fl_color( color() );
   }
-  fl_rectf( X, Y, width, height );
+  fl_rectf( X, Y - 1, width, height );
 }
 
 
