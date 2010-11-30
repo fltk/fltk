@@ -61,10 +61,11 @@
  
  This widget can be used in several ways:
  
- - As a custom widget; see test/table.cxx. Very optimal for even 
- extremely large tables.
+ - As a custom widget; see examples/table-simple.cxx and test/table.cxx.
+   Very optimal for even extremely large tables.
  - As a table made up of a single FLTK widget instanced all over the table,
-   simulating a numeric spreadsheet.
+   simulating a numeric spreadsheet. See examples/table-with-keyboard-nav.cxx.
+   Optimal for large tables.
  - As a regular container of FLTK widgets, one widget per cell.
    See examples/table-as-container.cxx. \em Not recommended for large tables.
  
@@ -74,7 +75,7 @@
  
  When acting as a container for FLTK widgets, the FLTK widgets maintain 
  themselves. Although the draw_cell() method must be overridden, its contents 
- can be very simple. See the draw_cell() code in test/widgettable.cxx.
+ can be very simple. See the draw_cell() code in examples/table-simple.cxx.
  
  The following variables are available to classes deriving from Fl_Table:
  
