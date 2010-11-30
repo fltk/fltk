@@ -87,7 +87,7 @@ static int local_handle(int event, Fl_Window* window) {
 
 int Fl::dnd() {
   Fl_Window *source_fl_win = Fl::first_window();
-  Fl::first_window()->cursor((Fl_Cursor)21);
+  Fl::first_window()->cursor(FL_CURSOR_MOVE);
   Window source_window = fl_xid(Fl::first_window());
   fl_local_grab = grabfunc;
   Window target_window = 0;

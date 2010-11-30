@@ -626,6 +626,9 @@ int Fl_Input::handle(int event) {
           Fl::focus(dnd_save_focus);
           handle(FL_UNFOCUS);
         }
+#if !(defined(__APPLE__) || defined(WIN32))
+      Fl::first_window()->cursor(FL_CURSOR_MOVE);
+#endif
       return 1;
       
     case FL_DND_RELEASE:
