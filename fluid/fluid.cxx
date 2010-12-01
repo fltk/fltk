@@ -2352,12 +2352,12 @@ int main(int argc,char **argv) {
 
   make_main_window();
 
-#ifdef __APPLE__
-  fl_open_callback(apple_open_cb);
-#endif // __APPLE__
 
   if (c) set_filename(c);
   if (!compile_only) {
+#ifdef __APPLE__
+    fl_open_callback(apple_open_cb);
+#endif // __APPLE__
     Fl::visual((Fl_Mode)(FL_DOUBLE|FL_INDEX));
     Fl_File_Icon::load_system_icons();
     main_window->callback(exit_cb);

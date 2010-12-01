@@ -1447,12 +1447,14 @@ void fl_close_display() {
 
 // Gets the border sizes and the titlebar size
 static void get_window_frame_sizes(int &bx, int &by, int &bt) {
-  fl_open_display();
+  NSAutoreleasePool *localPool;
+  localPool = [[NSAutoreleasePool alloc] init]; 
   NSRect inside = { {20,20}, {100,100} };
   NSRect outside = [NSWindow  frameRectForContentRect:inside styleMask:NSTitledWindowMask];
   bx = int(outside.origin.x - inside.origin.x);
   by = int(outside.origin.y - inside.origin.y);
   bt = int(outside.size.height - inside.size.height - by);
+  [localPool release];
 }
 
 /*
