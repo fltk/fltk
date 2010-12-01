@@ -614,7 +614,6 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 - (BOOL)windowShouldClose:(FLWindow *)w;
 - (BOOL)containsGLsubwindow;
 - (void)setContainsGLsubwindow:(BOOL)contains;
-- (BOOL)canBecomeKeyWindow;
 @end
 
 @implementation FLWindow
@@ -650,16 +649,6 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 - (void)setContainsGLsubwindow:(BOOL)contains
 {
   containsGLsubwindow = contains;
-}
-- (BOOL)canBecomeKeyWindow
-{
-  // before 10.5, the default impl of canBecomeKeyWindow is not OK for tooltip windows
-  // we return YES for these windows
-  BOOL retval;
-  Fl_Window *flw = (Fl_Window*)[self getFl_Window];
-  if(fl_mac_os_version < 0x1050 && flw->tooltip_window()) retval = YES;
-  else retval = [super canBecomeKeyWindow];
-  return retval;
 }
 @end
 
@@ -1666,6 +1655,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 - (void)mouseDown:(NSEvent *)theEvent;
 - (void)rightMouseDown:(NSEvent *)theEvent;
 - (void)otherMouseDown:(NSEvent *)theEvent;
+- (void)mouseMoved:(NSEvent *)theEvent;
 - (void)mouseDragged:(NSEvent *)theEvent;
 - (void)rightMouseDragged:(NSEvent *)theEvent;
 - (void)otherMouseDragged:(NSEvent *)theEvent;

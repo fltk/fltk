@@ -1042,9 +1042,25 @@ int Fl::handle(int e, Fl_Window* window)
     }
     if (modal() && wi != modal()) wi = 0;
     if (grab()) wi = grab();
-    {Fl_Widget* pbm = belowmouse();
-    int ret = (wi && send(e, wi, window));
-    if (pbm != belowmouse()) {
+    { int ret;
+      Fl_Widget* pbm = belowmouse();
+#ifdef __APPLE__
+      if (fl_mac_os_version < 0x1050) {
+        // before 10.5, mouse moved events aren't sent to borderless windows such as tooltips
+	Fl_Window *tooltip = Fl_Tooltip::current_window();
+	int inside = 0;
+	if (tooltip && tooltip->shown() ) { // check if a tooltip window is currently opened
+	  // check if mouse is inside the tooltip
+	  inside = (Fl::event_x_root() >= tooltip->x() && Fl::event_x_root() < tooltip->x() + tooltip->w() &&
+	  Fl::event_y_root() >= tooltip->y() && Fl::event_y_root() < tooltip->y() + tooltip->h() );
+	}
+	// if inside, send event to tooltip window instead of background window
+	if (inside) ret = send(e, tooltip, window);
+	else ret = (wi && send(e, wi, window));
+      } else
+#endif
+      ret = (wi && send(e, wi, window));
+   if (pbm != belowmouse()) {
 #ifdef DEBUG
       printf("Fl::handle(e=%d, window=%p);\n", e, window);
 #endif // DEBUG

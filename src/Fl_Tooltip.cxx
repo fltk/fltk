@@ -67,6 +67,14 @@ Fl_Widget* Fl_Tooltip::widget_ = 0;
 static Fl_TooltipBox *window = 0;
 static int Y,H;
 
+#ifdef __APPLE__
+// returns the unique tooltip window
+Fl_Window *Fl_Tooltip::current_window(void)
+{
+  return (Fl_Window*)window;
+}
+#endif
+
 void Fl_TooltipBox::layout() {
   fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
   int ww, hh;
