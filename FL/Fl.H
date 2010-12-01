@@ -54,7 +54,7 @@ struct Fl_Label;
 
 
 /** \defgroup  callback_functions Callback function typedefs
-    \brief Typedefs for callback or handler functions passed as function parameters.
+ \brief Typedefs defined in <FL/Fl.H> for callback or handler functions passed as function parameters.
 
     FLTK uses callback functions as parameters for some function calls, e.g. to
     set up global event handlers (Fl::add_handler()), to add a timeout handler
@@ -357,6 +357,7 @@ public:
   be messed up, but the user can probably keep working - all X protocol
   errors call this, for example. The default implementation returns after
   displaying the message.
+   \note \#include <FL/Fl.H>
   */
   static void (*warning)(const char*, ...);
   /**
@@ -371,6 +372,7 @@ public:
 
   Fl::error() means there is a recoverable error such as the inability to read
   an image file. The default implementation returns after displaying the message.
+   \note \#include <FL/Fl.H>
   */
   static void (*error)(const char*, ...);
   /**
@@ -387,12 +389,13 @@ public:
   version may be able to use longjmp or an exception to continue, as long as
   it does not call FLTK again. The default implementation exits with status 1
   after displaying the message.
+   \note \#include <FL/Fl.H>
   */
   static void (*fatal)(const char*, ...);
   /** @} */
 
   /** \defgroup  fl_windows Windows handling functions
-      Windows and standard dialogs handling
+      \brief Windows and standard dialogs handling defined in <FL/Fl.H>
     @{ */
   static Fl_Window* first_window();
   static void first_window(Fl_Window*);
@@ -438,7 +441,7 @@ public:
   /** @} */
 
   /** \defgroup fl_events Events handling functions
-	Fl class events handling API
+	Fl class events handling API defined in <FL/Fl.H>
 	@{
   */
   // event information:
@@ -675,7 +678,7 @@ public:
   /** @} */
 
   /** \defgroup  fl_clipboard  Selection & Clipboard functions
-	fl global copy/cut/paste functions
+	FLTK global copy/cut/paste functions defined in <FL/Fl.H>
    @{ */
   // cut/paste:
   /**
@@ -709,7 +712,7 @@ public:
   static void paste(Fl_Widget &receiver);
 /** @} */
 /** \defgroup  fl_screen  Screen functions
-	fl global screen functions
+	fl global screen functions defined in <FL/Fl.H>
      @{ */
   // screen size:
   /** Returns the origin of the current screen, where 0 indicates the left side of the screen. */
@@ -737,7 +740,8 @@ public:
   /**   @} */
 
   /** \defgroup  fl_attributes  Color & Font functions
-	fl global color, font functions
+	fl global color, font functions.
+   These functions are declared in <FL/Fl.H> or <FL/fl_draw.H>. 
      @{ */
  
   // color map:
@@ -921,7 +925,7 @@ public:
   */
   static int  dnd_text_ops() { return dnd_text_ops_; }
   /** \defgroup fl_multithread Multithreading support functions
-	fl multithreading support functions
+	fl multithreading support functions defined in <FL/Fl.H>
    @{ */
 
   // Multithreading support:
@@ -941,7 +945,7 @@ public:
 
   /** \defgroup fl_del_widget Safe widget deletion support functions
 
-    These functions support deletion of widgets inside callbacks.
+    These functions,defined in <FL/Fl.H>, support deletion of widgets inside callbacks.
 
     Fl::delete_widget() should be called when deleting widgets
     or complete widget trees (Fl_Group, Fl_Window, ...) inside
@@ -1106,7 +1110,7 @@ public:
 };
 
  /** \defgroup  fl_unicode  Unicode and UTF-8 functions
-	fl global Unicode and UTF-8 handling functions
+	fl global Unicode and UTF-8 handling functions defined in <FL/fl_utf8.h>
      @{ */
  /** @} */
 

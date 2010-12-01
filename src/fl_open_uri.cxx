@@ -57,6 +57,8 @@ static char	*path_find(const char *program, char *filename, int filesize);
 static int	run_program(const char *program, char **argv, char *msg, int msglen);
 #endif // !WIN32
 
+/** \addtogroup filenames
+ @{ */
 
 /**
  * Opens the specified Uniform Resource Identifier (URI).
@@ -239,6 +241,7 @@ fl_open_uri(const char *uri, char *msg, int msglen) {
 #endif // WIN32
 }
 
+/**   @} */
 
 #if !defined(WIN32) && !defined(__APPLE__)
 // Find a program in the path...

@@ -560,6 +560,7 @@ static void cc_cancel_cb (Fl_Widget *o, void *p) {
     @{ */
 /**
   \brief Pops up a window to let the user pick an arbitrary RGB color.
+  \note \#include <FL/Fl_Color_Chooser.H>
   \image html fl_color_chooser.jpg 
   \image latex  fl_color_chooser.eps "fl_color_chooser" width=8cm
   \param[in] name Title label for the window
@@ -602,6 +603,7 @@ int fl_color_chooser(const char* name, double& r, double& g, double& b, int cmod
 
 /**
   \brief Pops up a window to let the user pick an arbitrary RGB color.
+  \note \#include <FL/Fl_Color_Chooser.H>
   \image html fl_color_chooser.jpg 
   \image latex  fl_color_chooser.eps "fl_color_chooser" width=8cm
   \param[in] name Title label for the window

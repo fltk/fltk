@@ -168,16 +168,15 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif // FL_DOXYGEN
 
 /** \defgroup group_macosx Mac OS X-specific functions
+ Mac OS X-specific functions defined in <FL/x.H> or <FL/gl.h>
  @{ */
 
 /** @brief Register a function called for each file dropped onto an application icon 
- * \note  \#include <FL/x.H>
  */
 extern void fl_open_callback(void (*cb)(const char *));
 
 /** 
  * \brief Attaches a callback to the "About myprog" item of the system application menu.
- * \note  \#include <FL/x.H>
  *
  * \param cb   a callback that will be called by "About myprog" menu item
  *		   with NULL 1st argument.
@@ -186,7 +185,7 @@ extern void fl_open_callback(void (*cb)(const char *));
  */
 extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0);
 
-/** The version number of the running Mac OS X (e.g., 0x1064 for 10.6.4)
+/** \brief The version number of the running Mac OS X (e.g., 0x1064 for 10.6.4)
  */
 extern int fl_mac_os_version;		
 
