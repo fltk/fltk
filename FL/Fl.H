@@ -395,7 +395,7 @@ public:
   /** @} */
 
   /** \defgroup  fl_windows Windows handling functions
-      \brief Windows and standard dialogs handling defined in <FL/Fl.H>
+      \brief Windows and standard dialogs handling declared in <FL/Fl.H>
     @{ */
   static Fl_Window* first_window();
   static void first_window(Fl_Window*);
@@ -441,7 +441,7 @@ public:
   /** @} */
 
   /** \defgroup fl_events Events handling functions
-	Fl class events handling API defined in <FL/Fl.H>
+	Fl class events handling API declared in <FL/Fl.H>
 	@{
   */
   // event information:
@@ -678,7 +678,7 @@ public:
   /** @} */
 
   /** \defgroup  fl_clipboard  Selection & Clipboard functions
-	FLTK global copy/cut/paste functions defined in <FL/Fl.H>
+	FLTK global copy/cut/paste functions declared in <FL/Fl.H>
    @{ */
   // cut/paste:
   /**
@@ -712,7 +712,7 @@ public:
   static void paste(Fl_Widget &receiver);
 /** @} */
 /** \defgroup  fl_screen  Screen functions
-	fl global screen functions defined in <FL/Fl.H>
+	fl global screen functions declared in <FL/Fl.H>
      @{ */
   // screen size:
   /** Returns the origin of the current screen, where 0 indicates the left side of the screen. */
@@ -925,7 +925,7 @@ public:
   */
   static int  dnd_text_ops() { return dnd_text_ops_; }
   /** \defgroup fl_multithread Multithreading support functions
-	fl multithreading support functions defined in <FL/Fl.H>
+	fl multithreading support functions declared in <FL/Fl.H>
    @{ */
 
   // Multithreading support:
@@ -945,7 +945,7 @@ public:
 
   /** \defgroup fl_del_widget Safe widget deletion support functions
 
-    These functions,defined in <FL/Fl.H>, support deletion of widgets inside callbacks.
+    These functions, declared in <FL/Fl.H>, support deletion of widgets inside callbacks.
 
     Fl::delete_widget() should be called when deleting widgets
     or complete widget trees (Fl_Group, Fl_Window, ...) inside
@@ -1110,7 +1110,7 @@ public:
 };
 
  /** \defgroup  fl_unicode  Unicode and UTF-8 functions
-	fl global Unicode and UTF-8 handling functions defined in <FL/fl_utf8.h>
+	fl global Unicode and UTF-8 handling functions declared in <FL/fl_utf8.h>
      @{ */
  /** @} */
 

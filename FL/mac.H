@@ -168,7 +168,7 @@ extern FL_EXPORT int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
 #endif // FL_DOXYGEN
 
 /** \defgroup group_macosx Mac OS X-specific functions
- Mac OS X-specific functions defined in <FL/x.H> or <FL/gl.h>
+ Mac OS X-specific functions declared in <FL/x.H> or <FL/gl.h>
  @{ */
 
 /** @brief Register a function called for each file dropped onto an application icon 
