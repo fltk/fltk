@@ -313,6 +313,8 @@ static Atom fl_XaText;
 Atom fl_XaCompoundText;
 Atom fl_XaUtf8String;
 Atom fl_XaTextUriList;
+Atom fl_NET_WM_NAME;			// utf8 aware window label
+Atom fl_NET_WM_ICON_NAME;		// utf8 aware window icon name
 
 /*
   X defines 32-bit-entities to have a format value of max. 32,
@@ -599,6 +601,8 @@ void fl_open_display(Display* d) {
   fl_XaCompoundText     = XInternAtom(d, "COMPOUND_TEXT",       0);
   fl_XaUtf8String       = XInternAtom(d, "UTF8_STRING",         0);
   fl_XaTextUriList      = XInternAtom(d, "text/uri-list",       0);
+  fl_NET_WM_NAME        = XInternAtom(d, "_NET_WM_NAME",        0);
+  fl_NET_WM_ICON_NAME   = XInternAtom(d, "_NET_WM_ICON_NAME",   0);
   
   if (sizeof(Atom) < 4)
     atom_bits = sizeof(Atom) * 8;
@@ -1785,11 +1789,13 @@ void Fl_Window::label(const char *name,const char *iname) {
   iconlabel_ = iname;
   if (shown() && !parent()) {
     if (!name) name = "";
-    XChangeProperty(fl_display, i->xid, XA_WM_NAME,
-                    fl_XaUtf8String, 8, 0, (uchar*)name, strlen(name));
+    int namelen = strlen(name);
     if (!iname) iname = fl_filename_name(name);
-    XChangeProperty(fl_display, i->xid, XA_WM_ICON_NAME,
-                    fl_XaUtf8String, 8, 0, (uchar*)iname, strlen(iname));
+    int inamelen = strlen(iname);
+    XChangeProperty(fl_display, i->xid, fl_NET_WM_NAME,      fl_XaUtf8String, 8, 0, (uchar*)name,  namelen);	// utf8
+    XChangeProperty(fl_display, i->xid, XA_WM_NAME,          XA_STRING,       8, 0, (uchar*)name,  namelen);	// non-utf8
+    XChangeProperty(fl_display, i->xid, fl_NET_WM_ICON_NAME, fl_XaUtf8String, 8, 0, (uchar*)iname, inamelen);	// utf8
+    XChangeProperty(fl_display, i->xid, XA_WM_ICON_NAME,     XA_STRING,       8, 0, (uchar*)iname, inamelen);	// non-utf8
   }
 }
 
