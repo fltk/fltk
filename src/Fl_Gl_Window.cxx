@@ -324,7 +324,7 @@ void Fl_Gl_Window::flush() {
     glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
-#if defined __APPLE_QUARTZ__
+#if defined (__APPLE_QUARTZ__)
       SWAP_TYPE = COPY;
 #else
       SWAP_TYPE = UNDEFINED;
@@ -529,7 +529,7 @@ void Fl_Gl_Window::draw() {
  */
 int Fl_Gl_Window::handle(int event) 
 {
-#if (__APPLE_QUARTZ__)
+#ifdef __APPLE_QUARTZ__
   if (event==FL_HIDE) {
     // if we are not hidden, just the parent was hidden, so we must throw away the context
     if (!visible_r())
