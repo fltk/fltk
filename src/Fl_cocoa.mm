@@ -2494,13 +2494,15 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
 
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 {
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    if (t.callback == cb  && ( t.data == data || data == NULL)) {
-      delete_timer(t);
+  if (mac_timer_used) {
+    for (int i = 0; i < mac_timer_used; ++i) {
+      MacTimeout& t = mac_timers[i];
+      if (t.callback == cb  && ( t.data == data || data == NULL)) {
+	delete_timer(t);
+      }
     }
+    breakMacEventLoop();
   }
-  breakMacEventLoop();
 }
 
 int MacUnlinkWindow(Fl_X *ip, Fl_X *start) {
