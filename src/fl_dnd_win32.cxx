@@ -483,13 +483,6 @@ public:
 };
 
 
-/**
-   Drag and drop whatever is in the cut-copy-paste buffer.
-
-   Create a selection first using:
-
-     Fl::copy(const char *stuff, int len, 0)
-*/
 int Fl::dnd()
 {
   DWORD dropEffect;

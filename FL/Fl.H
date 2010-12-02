@@ -682,24 +682,28 @@ public:
    @{ */
   // cut/paste:
   /**
-    Copies the data pointed to by \p stuff to the selection (0) or
-    primary (1) clipboard. The selection clipboard is used for
-    middle-mouse pastes and for drag-and-drop selections. The primary
-    clipboard is used for traditional copy/cut/paste operations.
+    Copies the data pointed to by \p stuff to the selection clipboard (0) or
+    the copy clipboard (1). The selection clipboard is used for
+    middle-mouse pastes and for drag-and-drop selections. The 
+    copy clipboard is used for traditional copy/cut/paste operations.
   */
   static void copy(const char* stuff, int len, int clipboard = 0); // platform dependent
   /**
-    Pastes the data from the selection (0) or primary (1) clipboard into receiver.  
+    Pastes the data from the selection clipboard (0) or the copy clipboard (1) 
+    into receiver.  
     The selection clipboard is used for middle-mouse pastes and for 
-    drag-and-drop selections. The primary clipboard is used for 
-    traditional copy/cut/paste operations.
+    drag-and-drop selections. The copy clipboard is used for traditional 
+    copy/cut/paste operations.
   */
   static void paste(Fl_Widget &receiver, int clipboard /*=0*/); // platform dependent
   /**
-    Initiate a Drag And Drop operation. The clipboard should be
+    Initiate a Drag And Drop operation. The selection clipboard (0) should be
     filled with relevant data before calling this method. FLTK will
     then initiate the system wide drag and drop handling. Dropped data
     will be marked as <i>text</i>.
+   
+    Create a selection first using:
+    Fl::copy(const char *stuff, int len, 0)
   */
   static int dnd(); // platform dependent
 
