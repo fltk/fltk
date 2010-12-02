@@ -243,7 +243,7 @@ void Fl_Text_Display::buffer( Fl_Text_Buffer *buf ) {
  \param unfinishedStyle if this style is found, the callback below is called
  \param unfinishedHighlightCB if a character with an unfinished style is found,
    this callback will be called
- \param cbArg and optional argument for the callback above, usuallay a pointer
+ \param cbArg and optional argument for the callback above, usually a pointer
    to the Text Display.
  */
 void Fl_Text_Display::highlight_data(Fl_Text_Buffer *styleBuffer,
@@ -279,7 +279,7 @@ int Fl_Text_Display::longest_vline() const {
 
 
 /**
- \brief Change the size of the displayed text area
+ \brief Change the size of the displayed text area.
  Calling this function will trigger a recalculation of all lines visible and
  of all scrollbar sizes.
  \param X, Y, W, H new position and size of this widget
@@ -348,7 +348,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
     
     // figure the scrollbars
     if (scrollbar_width()) {
-      /* Decide if the vertical scroll bar needs to be visible */
+      /* Decide if the vertical scrollbar needs to be visible */
       if (scrollbar_align() & (FL_ALIGN_LEFT|FL_ALIGN_RIGHT) &&
           mNBufferLines >= mNVisibleLines - 1)
       {
@@ -367,9 +367,9 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
       }
       
       /*
-       Decide if the horizontal scroll bar needs to be visible.  If there
+       Decide if the horizontal scrollbar needs to be visible.  If there
        is a vertical scrollbar, a horizontal is always created too.  This
-       is because the alternatives are unatractive:
+       is because the alternatives are unattractive:
        * Dynamically creating a horizontal scrollbar based on the currently
        visible lines is what the original nedit does, but it always wastes
        space for the scrollbar even when it's not used.  Since the FLTK
@@ -508,14 +508,14 @@ void Fl_Text_Display::redisplay_range(int startpos, int endpos) {
 
 /**
  \brief Draw a range of text.
- 
- Refresh all of the text between buffer positions "start" and "end"
- not including the character at the position "end".
- 
- If end points beyond the end of the buffer, refresh the whole display
- after pos, including blank lines which are not technically part of
+
+ Refresh all of the text between buffer positions \p startpos and
+ \p endpos not including the character at the position \p endpos.
+
+ If \p endpos points beyond the end of the buffer, refresh the whole display
+ after \p startpos, including blank lines which are not technically part of
  any range of characters.
- 
+
  \param startpos index of first character to draw
  \param endpos index after last character to draw
  */
@@ -564,14 +564,14 @@ void Fl_Text_Display::draw_range(int startpos, int endpos) {
     draw_vline( startLine, 0, INT_MAX, startIndex, endIndex );
     return;
   }
-  
+
   /* Redisplay the first line from "start" */
   draw_vline( startLine, 0, INT_MAX, startIndex, INT_MAX );
-  
+
   /* Redisplay the lines in between at their full width */
   for ( i = startLine + 1; i < lastLine; i++ )
     draw_vline( i, 0, INT_MAX, 0, INT_MAX );
-  
+
   /* Redisplay the last line to "end" */
   draw_vline( lastLine, 0, INT_MAX, 0, endIndex );
 }
@@ -595,7 +595,7 @@ void Fl_Text_Display::insert_position( int newPos ) {
   /* cursor movement cancels vertical cursor motion column */
   mCursorPreferredXPos = -1;
   
-  /* erase the cursor at it's previous position */
+  /* erase the cursor at its previous position */
   redisplay_range(buffer()->prev_char_clipped(mCursorPos), buffer()->next_char(mCursorPos));
   
   mCursorPos = newPos;
@@ -643,11 +643,11 @@ void Fl_Text_Display::cursor_style(int style) {
 /**
  \brief Set the new text wrap mode.
  
- If \p mode is not zero, this call enables automatic word wrapping at column 
- \p pos. Word-wrapping does not change the text buffer itself, only the way that 
+ If \p wrap mode is not zero, this call enables automatic word wrapping at column
+ \p wrapMargin. Word-wrapping does not change the text buffer itself, only the way
  the text is displayed. Different Text Displays can have different wrap modes,
  even if they share the same Text Buffer.
- 
+
  \param wrap new wrap mode is WRAP_NONE (don't wrap text at all), WRAP_AT_COLUMN
       (wrap text at the given text column), WRAP_AT_PIXEL (wrap text at a pixel 
       position), or WRAP_AT_BOUNDS (wrap text so that it fits into the 
@@ -798,13 +798,13 @@ void Fl_Text_Display::overstrike(const char* text) {
  
  Translate a buffer text position to the XY location where the top left of the 
  cursor would be positioned to point to that character. Returns 0 if the 
- position is not displayed because it is VERTICALLY out of view. If the position
- is horizontally out of view, returns the X coordinate where the position would 
- be if it were visible.
- 
+ position is not displayed because it is \e \b vertically out of view.
+ If the position is horizontally out of view, returns the X coordinate where
+ the position would be if it were visible.
+
  \param pos character index
  \param[out] X, Y pixel position of character on screen
- \return 0 if charater vertically out of view, X position otherwise
+ \return 0 if character vertically out of view, X position otherwise
  */
 int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
   IS_UTF8_ALIGNED2(buffer(), pos)
@@ -828,7 +828,7 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
   fontHeight = mMaxsize;
   *Y = text_area.y + visLineNum * fontHeight;
   
-  /* Get the text, length, and  buffer position of the line. If the position
+  /* Get the text, length, and buffer position of the line. If the position
    is beyond the end of the buffer and should be at the first position on
    the first empty line, don't try to get or scan the text  */
   lineStartPos = mLineStarts[visLineNum];
@@ -844,21 +844,21 @@ int Fl_Text_Display::position_to_xy( int pos, int* X, int* Y ) const {
 
 
 /**
- \brief Find the line and column number of position "pos".  
- 
- This only works for displayed lines.  If the line is not displayed, the 
+ \brief Find the line and column number of position \p pos.  
+
+ This only works for displayed lines. If the line is not displayed, the 
  function returns 0 (without the mLineStarts array it could turn in to very long
  calculation involving scanning large amounts of text in the buffer).
  If continuous wrap mode is on, returns the absolute line number (as opposed
  to the wrapped line number which is used for scrolling).
  
  \param pos character index
- \param[out] lineNum absoluet (unwrapped) line number
- \param[out] column character offset to the beginning of the line *
- \return 0 if /p pos is off screen, line number otherwise
+ \param[out] lineNum absolute (unwrapped) line number
+ \param[out] column character offset to the beginning of the line
+ \return 0 if \p pos is off screen, line number otherwise
  \todo a column number makes little sense in the UTF-8/variable font width 
     environment. We will have to further define what exactly we want to return. 
-    Please check teh functions that call this particular function.
+    Please check the functions that call this particular function.
  */
 int Fl_Text_Display::position_to_linecol( int pos, int* lineNum, int* column ) const {
   IS_UTF8_ALIGNED2(buffer(), pos)
@@ -887,7 +887,7 @@ int Fl_Text_Display::position_to_linecol( int pos, int* lineNum, int* column ) c
 
 
 /**
- \brief Check if a pixel position is within the primary seection.
+ \brief Check if a pixel position is within the primary selection.
  \param X, Y pixel position to test
  \return 1 if position (X, Y) is inside of the primary Fl_Text_Selection
  */
@@ -944,12 +944,11 @@ int Fl_Text_Display::wrapped_column(int row, int column) const {
  needs a row, it needs it in terms of un-wrapped lines.
  
  \param row
- \param column
  \return something unknown
  \todo What does this do and how is it useful? Column numbers mean little in 
  this context. Which functions depend on this one?
  */
-int Fl_Text_Display::wrapped_row(int row) const{
+int Fl_Text_Display::wrapped_row(int row) const {
   if (!mContinuousWrap || row < 0 || row > mNVisibleLines)
     return row;
   return buffer()->count_lines(mFirstChar, mLineStarts[row]);
@@ -1020,8 +1019,6 @@ void Fl_Text_Display::show_insert_position() {
 /*
  Cursor movement functions
  */
-
-
 
 /**  
  \brief Moves the current insert position right one character.
@@ -1144,7 +1141,7 @@ int Fl_Text_Display::move_down() {
  \param startPos index to forst character
  \param endPos index after last character
  \param startPosIsLineStart avoid scanning back to the line start
- \retun number of lines
+ \return number of lines
  */
 int Fl_Text_Display::count_lines(int startPos, int endPos,
                                  bool startPosIsLineStart) const {
@@ -1214,9 +1211,9 @@ int Fl_Text_Display::skip_lines(int startPos, int nLines,
 
 
 /**
- \brief Return the end of a line.
+ \brief Returns the end of a line.
  
- Same as BufEndOfLine, but takes in to account line breaks when wrapping
+ Same as BufEndOfLine, but takes into account line breaks when wrapping
  is turned on.  If the caller knows that startPos is at a line start, it
  can pass "startPosIsLineStart" as True to make the call more efficient
  by avoiding the additional step of scanning back to the last newline.
@@ -1233,21 +1230,21 @@ int Fl_Text_Display::skip_lines(int startPos, int nLines,
  
  \param startPos index to starting character
  \param startPosIsLineStart avoid scanning back to the line start
- \retun new position as index
+ \return new position as index
  */
-int Fl_Text_Display::line_end(int pos, bool startPosIsLineStart) const {
-  IS_UTF8_ALIGNED2(buffer(), pos)
+int Fl_Text_Display::line_end(int startPos, bool startPosIsLineStart) const {
+  IS_UTF8_ALIGNED2(buffer(), startPos)
 
   int retLines, retPos, retLineStart, retLineEnd;
   
-  /* If we're not wrapping use more efficien BufEndOfLine */
+  /* If we're not wrapping use more efficient BufEndOfLine */
   if (!mContinuousWrap)
-    return buffer()->line_end(pos);
+    return buffer()->line_end(startPos);
   
-  if (pos == buffer()->length())
-    return pos;
+  if (startPos == buffer()->length())
+    return startPos;
   
-  wrapped_line_counter(buffer(), pos, buffer()->length(), 1,
+  wrapped_line_counter(buffer(), startPos, buffer()->length(), 1,
                        startPosIsLineStart, 0, &retPos, &retLines, &retLineStart,
                        &retLineEnd);
   
@@ -1820,7 +1817,7 @@ int Fl_Text_Display::handle_vline(
 
 
 /**
- \brief Finde the index of the charcter that lies at the given x position.
+ \brief Finde the index of the character that lies at the given x position.
  \param s UTF-8 text string
  \param len length of string
  \param style index into style lookup table
@@ -2195,7 +2192,7 @@ double Fl_Text_Display::string_width( const char *string, int length, int style 
 
 
 /**
- \brief Translate a pixel position into a charcter index.
+ \brief Translate a pixel position into a character index.
  
  Translate window coordinates to the nearest (insert cursor or character
  cell) text position.  The parameter posType specifies how to interpret the
@@ -2572,16 +2569,16 @@ int Fl_Text_Display::scroll_(int topLineNum, int horizOffset) {
 
 
 /**
- \brief Update vertical scroll bar.
+ \brief Update vertical scrollbar.
  
  Update the minimum, maximum, slider size, page increment, and value
- for vertical scroll bar.
+ for vertical scrollbar.
  */
 void Fl_Text_Display::update_v_scrollbar() {
-  /* The Vert. scroll bar value and slider size directly represent the top
+  /* The vertical scrollbar value and slider size directly represent the top
    line number, and the number of visible lines respectively.  The scroll
    bar maximum value is chosen to generally represent the size of the whole
-   buffer, with minor adjustments to keep the scroll bar widget happy */
+   buffer, with minor adjustments to keep the scrollbar widget happy */
 #ifdef DEBUG
   printf("Fl_Text_Display::update_v_scrollbar():\n"
          "    mTopLineNum=%d, mNVisibleLines=%d, mNBufferLines=%d\n",
@@ -2593,12 +2590,11 @@ void Fl_Text_Display::update_v_scrollbar() {
 }
 
 
-
 /**
- \brief Update vertical scroll bar.
+ \brief Update vertical scrollbar.
  
  Update the minimum, maximum, slider size, page increment, and value
- for the horizontal scroll bar.
+ for the horizontal scrollbar.
  */
 void Fl_Text_Display::update_h_scrollbar() {
   int sliderMax = max(longest_vline(), text_area.w + mHorizOffset);
@@ -2608,7 +2604,7 @@ void Fl_Text_Display::update_h_scrollbar() {
 
 
 /**
- \brief Callbacks for drag or valueChanged on scroll bars.
+ \brief Callbacks for drag or valueChanged on scrollbars.
  */
 void Fl_Text_Display::v_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
   if (b->value() == textD->mTopLineNum) return;
@@ -2618,7 +2614,7 @@ void Fl_Text_Display::v_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
 
 
 /**
- \brief Callbacks for drag or valueChanged on scroll bars.
+ \brief Callbacks for drag or valueChanged on scrollbars.
  */
 void Fl_Text_Display::h_scrollbar_cb(Fl_Scrollbar* b, Fl_Text_Display* textD) {
   if (b->value() == textD->mHorizOffset) return;
@@ -2718,8 +2714,8 @@ static int countlines( const char *string ) {
 
 
 /**
- \brief Return the width in pixels of the displayed line pointed to by "visLineNum".
- \param index into visible lines array
+ \brief Returns the width in pixels of the displayed line pointed to by "visLineNum".
+ \param visLineNum index into visible lines array
  \return width of line in pixels
  */
 int Fl_Text_Display::measure_vline( int visLineNum ) const {
@@ -3321,7 +3317,7 @@ void Fl_Text_Display::extend_range_for_styles( int *startpos, int *endpos ) {
    callback can't just call for a redraw, because Fl_Text_Display hasn't processed
    the original text changes yet.  Anyhow, to minimize redrawing and to
    avoid the complexity of scheduling redraws later, this simple protocol
-   tells the text display's buffer modify callback to extend it's redraw
+   tells the text display's buffer modify callback to extend its redraw
    range to show the text color/and font changes as well. */
   if ( sel->selected() ) {
     if ( sel->start() < *startpos ) {

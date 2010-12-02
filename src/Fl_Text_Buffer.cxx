@@ -42,19 +42,19 @@
  integrate their code.
 
  With the introduction of Unicode and UTF-8, Fl_Text_... has to go into a whole
- new generation of code. Originally designed for monspaced fonts only, many
- features make les sense in the multibyte and multiwdth world of UTF-8.
- 
+ new generation of code. Originally designed for monospaced fonts only, many
+ features make less sense in the multibyte and multiwidth world of UTF-8.
+
  Columns are a good example. There is simply no such thing. The new Fl_Text_...
  widget converts columns to pixels by multiplying them with the average 
- character width for a given font 
- 
- Rectangular selections were rearely used (if at all) and make little sense when
+ character width for a given font.
+
+ Rectangular selections were rarely used (if at all) and make little sense when
  using variable width fonts. They have been removed.
- 
+
  Using multiple spaces to emulate tab stops has been replaced by pixel counting
  routines. They are slower, but give the expected result for proportional fonts.
- 
+
  And constantly recalculating character widths is just much too expensive. Lines
  of text are now subdivided into blocks of text which are measured at once 
  instead of individual characters. 
@@ -128,7 +128,7 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
   mPredeleteCbArgs = NULL;
   mCursorPosHint = 0;
   mCanUndo = 1;
-  }
+}
 
 
 /*
@@ -357,7 +357,7 @@ void Fl_Text_Buffer::remove(int start, int end)
 
 /*
  Copy a range of text from another text buffer.
- FromStart, fromEnd, and toPos must be at a character boundary.
+ fromStart, fromEnd, and toPos must be at a character boundary.
  */
 void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
 			  int fromEnd, int toPos)
@@ -404,7 +404,7 @@ void Fl_Text_Buffer::copy(Fl_Text_Buffer * fromBuf, int fromStart,
  */ 
 int Fl_Text_Buffer::undo(int *cursorPos)
 {
-  if (undowidget != this || !undocut && !undoinsert && !mCanUndo)
+  if (undowidget != this || (!undocut && !undoinsert && !mCanUndo))
     return 0;
   
   int ilen = undocut;
@@ -441,12 +441,12 @@ int Fl_Text_Buffer::undo(int *cursorPos)
 
 
 /*
- Set a flag is undo function will work.
+ Set a flag if undo function will work.
  */
 void Fl_Text_Buffer::canUndo(char flag)
 {
   mCanUndo = flag;
-  // disabeling undo also clears the last undo operation!
+  // disabling undo also clears the last undo operation!
   if (!mCanUndo && undowidget==this) 
     undowidget = 0;
 }
@@ -851,7 +851,8 @@ int Fl_Text_Buffer::word_end(int pos) const {
   while (pos < length() && (isalnum(char_at(pos)) || char_at(pos) == '_'))
   {
     pos = next_char(pos);
-  } return pos;
+  }
+  return pos;
 }
 
 
@@ -897,7 +898,7 @@ int Fl_Text_Buffer::skip_displayed_characters(int lineStartPos, int nChars)
 
 /*
  Count the number of newline characters between start and end.
- StartPos and endPos must be at a character boundary.
+ startPos and endPos must be at a character boundary.
  This function is optimized for speed by not using UTF-8 calls.
  */
 int Fl_Text_Buffer::count_lines(int startPos, int endPos) const {
@@ -1111,7 +1112,7 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
 
 /*
  Insert a string into the buffer.
- Pos must be at a character boundary. Text must be a correct utf8 string.
+ Pos must be at a character boundary. Text must be a correct UTF-8 string.
  */
 int Fl_Text_Buffer::insert_(int pos, const char *text)
 {
@@ -1231,7 +1232,7 @@ int Fl_Text_Selection::position(int *startpos, int *endpos) const {
 
 
 /*
- Return if a position is inside the eselected area.
+ Return if a position is inside the selected area.
  Unicode safe. Pos must be at a character boundary.
  */
 int Fl_Text_Selection::includes(int pos) const {
@@ -1425,7 +1426,7 @@ void Fl_Text_Buffer::reallocate_with_gap(int newGapStart, int newGapLen)
 
 
 /*
- Update selection range if characers were inserted.
+ Update selection range if characters were inserted.
  Unicode safe. Pos must be at a character boundary.
  */
 void Fl_Text_Buffer::update_selections(int pos, int nDeleted,
@@ -1462,7 +1463,7 @@ void Fl_Text_Selection::update(int pos, int nDeleted, int nInserted)
 
 /*
  Find a UCS-4 character.
- StartPos must be at a charcter boundary, searchChar is UCS-4 encoded.
+ StartPos must be at a character boundary, searchChar is UCS-4 encoded.
  */
 int Fl_Text_Buffer::findchar_forward(int startPos, unsigned searchChar,
 				     int *foundPos) const 
@@ -1489,7 +1490,7 @@ int Fl_Text_Buffer::findchar_forward(int startPos, unsigned searchChar,
   
 /*
  Find a UCS-4 character.
- StartPos must be at a charcter boundary, searchChar is UCS-4 encoded.
+ StartPos must be at a character boundary, searchChar is UCS-4 encoded.
  */
 int Fl_Text_Buffer::findchar_backward(int startPos, unsigned int searchChar,
 				      int *foundPos) const {
@@ -1512,10 +1513,10 @@ int Fl_Text_Buffer::findchar_backward(int startPos, unsigned int searchChar,
   return 0;
 }
 
-  
+
 /*
  Insert text from a file.
- Unicode safe. Inout must be correct utf8!
+ Unicode safe. Inout must be correct UTF-8!
  */
 int Fl_Text_Buffer::insertfile(const char *file, int pos, int buflen)
 {
@@ -1536,7 +1537,7 @@ int Fl_Text_Buffer::insertfile(const char *file, int pos, int buflen)
 
 
 /*
- Write text to file,
+ Write text to file.
  Unicode safe.
  */
 int Fl_Text_Buffer::outputfile(const char *file, int start, int end,
@@ -1584,7 +1585,7 @@ int Fl_Text_Buffer::prev_char_clipped(int pos) const
 
 
 /*
- Return the previous character poosition.
+ Return the previous character position.
  Returns -1 if the beginning of the buffer is reached.
  */
 int Fl_Text_Buffer::prev_char(int pos) const
@@ -1611,7 +1612,7 @@ int Fl_Text_Buffer::next_char(int pos) const
 
 
 /*
- Return the next character poosition.
+ Return the next character position.
  If the end of the buffer is reached, it returns the current position.
  */
 int Fl_Text_Buffer::next_char_clipped(int pos) const
@@ -1620,7 +1621,7 @@ int Fl_Text_Buffer::next_char_clipped(int pos) const
 }
 
 /*
- Align an index to the current utf8 boundary
+ Align an index to the current UTF-8 boundary.
  */
 int Fl_Text_Buffer::utf8_align(int pos) const 
 {

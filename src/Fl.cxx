@@ -1771,7 +1771,7 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
  There should be an application that manages options system wide, per user, and
  per application.
  */ 
-bool Fl::option(Fl_Option o)
+bool Fl::option(Fl_Option opt)
 {
   if (!options_read_) {
     int tmp;
@@ -1791,9 +1791,9 @@ bool Fl::option(Fl_Option o)
     }
     options_read_ = 1;
   }
-  if (o<0 || o>=OPTION_LAST) 
+  if (opt<0 || opt>=OPTION_LAST) 
     return false;
-  return (bool)options_[o];
+  return (bool)options_[opt];
 }
 
 

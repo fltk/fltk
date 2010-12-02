@@ -152,7 +152,7 @@ public:
   int move_down();
   int count_lines(int start, int end, bool start_pos_is_line_start) const;
   int line_start(int pos) const;
-  int line_end(int pos, bool start_pos_is_line_start) const;
+  int line_end(int startPos, bool startPosIsLineStart) const;
   int skip_lines(int startPos, int nLines, bool startPosIsLineStart);
   int rewind_lines(int startPos, int nLines);
   void next_word(void);
@@ -287,7 +287,7 @@ public:
    \param x number of pixels form the left margin
    \return an approximate column number based on the main font
    */
-  double x_to_col(double y) const;
+  double x_to_col(double x) const;
   
   /**
    Convert a column number into an x pixel position.

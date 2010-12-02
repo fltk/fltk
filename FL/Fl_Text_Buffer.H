@@ -599,7 +599,7 @@ public:
    \param foundPos byte offset where the character was found
    \return 1 if found, 0 if not
    */
-  int findchar_backward(int startPos, unsigned searchChar, int* foundPos) const;
+  int findchar_backward(int startPos, unsigned int searchChar, int* foundPos) const;
   
   /**
    Search forwards in buffer for string \p searchString, starting with the
