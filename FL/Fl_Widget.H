@@ -162,6 +162,7 @@ protected:
         MODAL           = 1<<14,  ///< a window blocking input to all other winows (Fl_Window)
         NO_OVERLAY      = 1<<15,  ///< window not using a hardware overlay plane (Fl_Menu_Window)
         GROUP_RELATIVE  = 1<<16,  ///< position this idget relative to the parent group, not to the window
+        COPIED_TOOLTIP  = 1<<17,  ///< the widget tooltip is internally copied, its destruction is handled by the widget
         // (space for more flags)
         USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
@@ -533,22 +534,12 @@ public:
 
   /** Gets the current tooltip text.
       \return a pointer to the tooltip text or NULL
+      \see tooltip(const char*), copy_tooltip(const char*)
    */
   const char *tooltip() const {return tooltip_;}
 
-  /** Sets the current tooltip text. 
-      Sets a string of text to display in a popup tooltip window when the user 
-      hovers the mouse over the widget. The string is <I>not</I> copied, so 
-      make sure any formatted string is stored in a static, global, 
-      or allocated buffer.
-
-      If no tooltip is set, the tooltip of the parent is inherited. Setting a 
-      tooltip for a group and setting no tooltip for a child will show the 
-      group's tooltip instead. To avoid this behavior, you can set the child's 
-      tooltip to an empty string ("").
-      \param[in] t new tooltip
-   */
-  void tooltip(const char *t);
+  void tooltip(const char *text);		// see Fl_Tooltip
+  void copy_tooltip(const char *text);		// see Fl_Tooltip
 
   /** Gets the current callback function for the widget.
       Each widget has a single callback.

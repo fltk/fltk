@@ -168,6 +168,7 @@ extern void fl_throw_focus(Fl_Widget*); // in Fl_x.cxx
 Fl_Widget::~Fl_Widget() {
   Fl::clear_widget_pointer(this);
   if (flags() & COPIED_LABEL) free((void *)(label_.value));
+  if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
   // remove from parent group
   if (parent_) parent_->remove(this);
 #ifdef DEBUG_DELETE

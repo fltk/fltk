@@ -92,8 +92,10 @@ public:
   // fabien: made it private with only a friend function access
 private:
   friend void Fl_Widget::tooltip(const char *);
+  friend void Fl_Widget::copy_tooltip(const char *);
   static void enter_(Fl_Widget* w);
   static void exit_(Fl_Widget *w);
+  static void set_enter_exit_once_();
 
 private:
   static float delay_; //!< delay before a tooltip is shown

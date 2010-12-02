@@ -30,6 +30,7 @@
 #include <FL/Fl_Menu_Window.H>
 
 #include <stdio.h>
+#include <string.h>	// strdup()
 
 float		Fl_Tooltip::delay_ = 1.0f;
 float		Fl_Tooltip::hoverdelay_ = 0.2f;
@@ -275,14 +276,68 @@ void Fl_Tooltip::enter_area(Fl_Widget* wid, int x,int y,int w,int h, const char*
 #endif // DEBUG
 }
 
-void Fl_Widget::tooltip(const char *tt) {
+void Fl_Tooltip::set_enter_exit_once_() {
   static char beenhere = 0;
   if (!beenhere) {
     beenhere          = 1;
     Fl_Tooltip::enter = Fl_Tooltip::enter_;
     Fl_Tooltip::exit  = Fl_Tooltip::exit_;
   }
-  tooltip_ = tt;
+}
+
+/**
+  Sets the current tooltip text. 
+
+  Sets a string of text to display in a popup tooltip window when the user 
+  hovers the mouse over the widget. The string is <I>not</I> copied, so 
+  make sure any formatted string is stored in a static, global, 
+  or allocated buffer. If you want a copy made and managed for you,
+  use the copy_tooltip() method, which will manage the tooltip string
+  automatically.
+
+  If no tooltip is set, the tooltip of the parent is inherited. Setting a 
+  tooltip for a group and setting no tooltip for a child will show the 
+  group's tooltip instead. To avoid this behavior, you can set the child's 
+  tooltip to an empty string ("").
+  \param[in] text New tooltip text (no copy is made)
+  \see copy_tooltip(const char*), tooltip()
+*/
+void Fl_Widget::tooltip(const char *text) {
+  Fl_Tooltip::set_enter_exit_once_();
+  if (flags() & COPIED_TOOLTIP) {
+    // reassigning a copied tooltip remains the same copied tooltip
+    if (tooltip_ == text) return;
+    free((void*)(tooltip_));            // free maintained copy
+    clear_flag(COPIED_TOOLTIP);         // disable copy flag (WE don't make copies)
+  }
+  tooltip_ = text;
+}
+
+/**
+  Sets the current tooltip text. 
+  Unlike tooltip(), this method allocates a copy of the tooltip 
+  string instead of using the original string pointer.
+
+  The internal copy will automatically be freed whenever you assign
+  a new tooltip or when the widget is destroyed.
+
+  If no tooltip is set, the tooltip of the parent is inherited. Setting a 
+  tooltip for a group and setting no tooltip for a child will show the 
+  group's tooltip instead. To avoid this behavior, you can set the child's 
+  tooltip to an empty string ("").
+  \param[in] text New tooltip text (an internal copy is made and managed)
+  \see tooltip(const char*), tooltip()
+*/
+void Fl_Widget::copy_tooltip(const char *text) {
+  Fl_Tooltip::set_enter_exit_once_();
+  if (flags() & COPIED_TOOLTIP) free((void *)(tooltip_));
+  if (text) {
+    set_flag(COPIED_TOOLTIP);
+    tooltip_ = strdup(text);
+  } else {
+    clear_flag(COPIED_TOOLTIP);
+    tooltip_ = (char *)0;
+  }
 }
 
 //
