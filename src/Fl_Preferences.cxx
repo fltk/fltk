@@ -1321,6 +1321,21 @@ int Fl_Preferences::RootNode::write()
   fprintf( f, "; application: %s\n", application_ );
   prefs_->node->write( f );
   fclose( f );
+#if !(defined(__APPLE__) || defined(WIN32))
+  // unix: make sure that system prefs are user-readable
+  if (strncmp(filename_, "/etc/fltk/", 10) == 0) {
+    char *p;
+    p = filename_ + 9;
+    do { // for each directory to the pref file
+      *p = 0;
+      fl_chmod(filename_, 0755); // rwxr-xr-x
+      *p = '/';
+      p = strchr(p+1, '/');
+      }
+    while (p);
+    fl_chmod(filename_, 0644); // rw-r--r--
+    }
+#endif
   return 0;
 }
 
