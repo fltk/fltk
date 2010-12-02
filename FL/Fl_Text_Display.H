@@ -63,8 +63,8 @@ public:
   };
   
   /**
-   the character position is the left edge of a character wheras 
-   the cursor is thought to be between the centers of to consecutive
+   the character position is the left edge of a character, whereas 
+   the cursor is thought to be between the centers of two consecutive
    characters.
    */
   enum {
@@ -86,7 +86,7 @@ public:
   };
   
   /**
-   wrap types - usedin wrap_mode()
+   wrap types - used in wrap_mode()
    */
   enum {
     WRAP_NONE,      /**< don't wrap text at all */
@@ -100,8 +100,8 @@ public:
   typedef void (*Unfinished_Style_Cb)(int, void *);
   
   /** 
-   This structure associates the color,font,size of a string to draw
-   with an attribute mask matching attr 
+   This structure associates the color, font, andsize of a string to draw
+   with an attribute mask matching attr
    */
   struct Style_Table_Entry {
     Fl_Color    color;
@@ -138,7 +138,7 @@ public:
   void insert_position(int newPos);
   
   /** 
-   Gets the position of the text insertion cursor for text display 
+   Gets the position of the text insertion cursor for text display.
    \return insert position index into text buffer 
    */
   int insert_position() const { return mCursorPos; }
@@ -161,7 +161,7 @@ public:
   void show_cursor(int b = 1);
   
   /**
-   Hides the text cursor 
+   Hides the text cursor.
    */
   void hide_cursor() { show_cursor(0); }
   
@@ -174,39 +174,39 @@ public:
   Fl_Color cursor_color() const {return mCursor_color;}
   
   /**    
-   Sets the text cursor color.  
+   Sets the text cursor color.
    \param n new cursor color
    */
   void cursor_color(Fl_Color n) {mCursor_color = n;}
   
   /**   
-   Gets the width/height of the scrollbars.  
+   Gets the width/height of the scrollbars.
    /return width of scrollbars
    */
   int scrollbar_width() const { return scrollbar_width_; }
   
   /**
-   Sets the width/height of the scrollbars.  
+   Sets the width/height of the scrollbars.
    \param W width of scrollbars
    */
   void scrollbar_width(int W) { scrollbar_width_ = W; }
   
   /**
-   Gets the scrollbar alignment type 
+   Gets the scrollbar alignment type.
    \return scrollbar alignment
    */
   Fl_Align scrollbar_align() const { return scrollbar_align_; }
   
   /**
-   Sets the scrollbar alignment type 
+   Sets the scrollbar alignment type.
    \param a new scrollbar alignment
    */
   void scrollbar_align(Fl_Align a) { scrollbar_align_ = a; }
   
   /**
-   Moves the insert position to the beginning of the current word.  
+   Moves the insert position to the beginning of the current word.
    \param pos start calculation at this index
-   \return beginning of the wors
+   \return beginning of the words
    */
   int word_start(int pos) const { return buffer()->word_start(pos); }
   
@@ -242,36 +242,36 @@ public:
   
   /**
    Gets the default font used when drawing text in the widget.
-   \return current text font face unless overriden by a style
+   \return current text font face unless overridden by a style
    */
   Fl_Font textfont() const {return textfont_;}
   
   /**
-   Sets the default font used when drawing text in the widget.  
+   Sets the default font used when drawing text in the widget.
    \param s default text font face
    */
   void textfont(Fl_Font s) {textfont_ = s; mColumnScale = 0;}
   
   /**
-   Gets the default size of text in the widget.  
-   \return current text height unless overriden by a style
+   Gets the default size of text in the widget.
+   \return current text height unless overridden by a style
    */
   Fl_Fontsize textsize() const {return textsize_;}
   
   /**
-   Sets the default size of text in the widget.  
+   Sets the default size of text in the widget.
    \param s new text size
    */
   void textsize(Fl_Fontsize s) {textsize_ = s; mColumnScale = 0;}
   
   /**
-   Gets the default color of text in the widget.  
-   \return text color unless overriden by a style
+   Gets the default color of text in the widget.
+   \return text color unless overridden by a style
    */
   Fl_Color textcolor() const {return textcolor_;}
   
   /**
-   Sets the default color of text in the widget.  
+   Sets the default color of text in the widget.
    \param n new text color
    */
   void textcolor(Fl_Color n) {textcolor_ = n;}
@@ -284,7 +284,7 @@ public:
 
   /**
    Convert an x pixel position into a column number.
-   \param x number of pixels form the left margin
+   \param x number of pixels from the left margin
    \return an approximate column number based on the main font
    */
   double x_to_col(double x) const;
@@ -292,8 +292,8 @@ public:
   /**
    Convert a column number into an x pixel position.
    \param col an approximate column number based on the main font
-   \return number of pixels form the left margin to the left of an average 
-            sized character
+   \return number of pixels from the left margin to the left of an
+	   average sized character
    */
   double col_to_x(double col) const;
   

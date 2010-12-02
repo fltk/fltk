@@ -1015,7 +1015,6 @@ void Fl_Text_Display::show_insert_position() {
 }
 
 
-
 /*
  Cursor movement functions
  */
@@ -1132,13 +1131,13 @@ int Fl_Text_Display::move_down() {
 
 /**
  \brief Count the number of lines between two positions.
- 
- Same as BufCountLines, but takes in to account wrapping if wrapping is
- turned on.  If the caller knows that startPos is at a line start, it
- can pass "startPosIsLineStart" as True to make the call more efficient
+
+ Same as BufCountLines, but takes into account wrapping if wrapping is
+ turned on.  If the caller knows that \p startPos is at a line start, it
+ can pass \p startPosIsLineStart as True to make the call more efficient
  by avoiding the additional step of scanning back to the last newline.
- 
- \param startPos index to forst character
+
+ \param startPos index to first character
  \param endPos index after last character
  \param startPosIsLineStart avoid scanning back to the line start
  \return number of lines
@@ -1175,8 +1174,8 @@ int Fl_Text_Display::count_lines(int startPos, int endPos,
 
 /**
  \brief Skip a number of lines forward.
- 
- Same as BufCountForwardNLines, but takes in to account line breaks when
+
+ Same as BufCountForwardNLines, but takes into account line breaks when
  wrapping is turned on. If the caller knows that startPos is at a line start,
  it can pass "startPosIsLineStart" as True to make the call more efficient
  by avoiding the additional step of scanning back to the last newline.
@@ -1214,16 +1213,16 @@ int Fl_Text_Display::skip_lines(int startPos, int nLines,
  \brief Returns the end of a line.
  
  Same as BufEndOfLine, but takes into account line breaks when wrapping
- is turned on.  If the caller knows that startPos is at a line start, it
+ is turned on.  If the caller knows that \p startPos is at a line start, it
  can pass "startPosIsLineStart" as True to make the call more efficient
  by avoiding the additional step of scanning back to the last newline.
 
  Note that the definition of the end of a line is less clear when continuous
  wrap is on.  With continuous wrap off, it's just a pointer to the newline
  that ends the line.  When it's on, it's the character beyond the last
- DISPLAYABLE character on the line, where a whitespace character which has
+ \b displayable character on the line, where a whitespace character which has
  been "converted" to a newline for wrapping is not considered displayable.
- Also note that, a line can be wrapped at a non-whitespace character if the
+ Also note that a line can be wrapped at a non-whitespace character if the
  line had no whitespace.  In this case, this routine returns a pointer to
  the start of the next line.  This is also consistent with the model used by
  visLineLength.
@@ -1283,10 +1282,10 @@ int Fl_Text_Display::line_start(int pos) const {
 
 /**
  \brief Skip a number of lines back.
- 
- Same as BufCountBackwardNLines, but takes in to account line breaks when
+
+ Same as BufCountBackwardNLines, but takes into account line breaks when
  wrapping is turned on.
- 
+
  \param startPos index to starting character
  \param nLines number of lines to skip back
  \return new position as index
@@ -1384,11 +1383,11 @@ void Fl_Text_Display::buffer_predelete_cb(int pos, int nDeleted, void *cbArg) {
   if (textD->mContinuousWrap) {
   /* Note: we must perform this measurement, even if there is not a
    single character deleted; the number of "deleted" lines is the
-   number of visual lines spanned by the real line in which the 
-   modification takes place. 
+   number of visual lines spanned by the real line in which the
+   modification takes place.
    Also, a modification of the tab distance requires the same
    kind of calculations in advance, even if the font width is "fixed",
-   because when the width of the tab characters changes, the layout 
+   because when the width of the tab characters changes, the layout
    of the text may be completely different. */
     IS_UTF8_ALIGNED2(textD->buffer(), pos)
     textD->measure_deleted_lines(pos, nDeleted);
@@ -1404,7 +1403,7 @@ void Fl_Text_Display::buffer_predelete_cb(int pos, int nDeleted, void *cbArg) {
  
  Callback attached to the text buffer to receive modification information
 
- \param pos starting index of modificatiom
+ \param pos starting index of modification
  \param nInserted number of bytes we inserted (must be UTF-8 aligned!)
  \param nDeleted number of bytes deleted (must be UTF-8 aligned!)
  \param nRestyled ??
@@ -1622,9 +1621,9 @@ void Fl_Text_Display::reset_absolute_top_line_number() {
 
 
 /**
- \brief Conver a position index into a line number offset.
+ \brief Convert a position index into a line number offset.
  
- Find the line number of position "pos" relative to the first line of
+ Find the line number of position \p pos relative to the first line of
  displayed text. Returns 0 if the line is not displayed.
  
  \param pos ??
@@ -1667,19 +1666,19 @@ int Fl_Text_Display::position_to_line( int pos, int *lineNum ) const {
 
 /**
  Universal pixel machine.
- 
+
  We use a single function that handles all line layout, measuring, and drawing
-  * draw a text range
-  * return the width of a text range in pixels
-  * return the index of a char that is at a pixel position
-  
+  \li draw a text range
+  \li return the width of a text range in pixels
+  \li return the index of a character that is at a pixel position
+
  \param[in] mode DRAW_LINE, GET_WIDTH, FIND_INDEX
  \param[in] lineStartPos index of first character
  \param[in] lineLen size of string in bytes
  \param[in] leftChar, rightChar
  \param[in] Y drawing position
  \param[in] bottomClip, leftClip, rightClip stop work when we reach the clipped 
-            area. rightClip is the X position that we serach in FIND_INDEX.
+            area. rightClip is the X position that we search in FIND_INDEX.
  \retval DRAW_LINE index of last drawn character
  \retval GET_WIDTH width in pixels of text segment if we would draw it
  \retval FIND_INDEX index of character at given x position in window coordinates
@@ -1817,7 +1816,7 @@ int Fl_Text_Display::handle_vline(
 
 
 /**
- \brief Finde the index of the character that lies at the given x position.
+ \brief Find the index of the character that lies at the given x position.
  \param s UTF-8 text string
  \param len length of string
  \param style index into style lookup table
@@ -1844,11 +1843,11 @@ int Fl_Text_Display::find_x(const char *s, int len, int style, int x) const {
 /**
  \brief Draw a single line of text.
  
- Draw the text on a single line represented by "visLineNum" (the
+ Draw the text on a single line represented by \p visLineNum (the
  number of lines down from the top of the display), limited by
- "leftClip" and "rightClip" window coordinates and "leftCharIndex" and
- "rightCharIndex" character positions (not including the character at
- position "rightCharIndex").
+ \p leftClip and \p rightClip window coordinates and \p leftCharIndex and
+ \p rightCharIndex character positions (not including the character at
+ position \p rightCharIndex).
  
  \param visLineNum index of line in the visible line number lookup
  \param leftClip, rightClip pixel position of clipped area
@@ -1893,12 +1892,12 @@ void Fl_Text_Display::draw_vline(int visLineNum, int leftClip, int rightClip,
 /**
  \brief Draw a text segment in a single style.
  
- Draw a string or blank area according to parameter "style", using the
+ Draw a string or blank area according to parameter \p style, using the
  appropriate colors and drawing method for that style, with top left
- corner at X, Y.  If style says to draw text, use "string" as source of
- characters, and draw "nChars", if style is FILL, erase
- rectangle where text would have drawn from X to toX and from Y to
- the maximum Y extent of the current font(s).
+ corner at \p X, \p Y.  If style says to draw text, use \p string as
+ source of characters, and draw \p nChars, if style is FILL, erase
+ rectangle where text would have drawn from \p X to \p toX and from
+ \p Y to the maximum y extent of the current font(s).
  
  \param style index into style lookup table
  \param X, Y drawing origin
@@ -1999,7 +1998,7 @@ void Fl_Text_Display::draw_string(int style,
 
 
 /**
- \brief Clear a rectangle with the appropriate background color for "style".
+ \brief Clear a rectangle with the appropriate background color for \p style.
  
  \param style index into style table
  \param X, Y, width, height size and position of background area
@@ -2032,16 +2031,17 @@ void Fl_Text_Display::clear_rect(int style,
 
 
 /**
- \brief Draw a cursor with top center at X, y.
+ \brief Draw a cursor with top center at \p X, \p Y.
  
  \param X, Y cursor position in pixels
  */
 void Fl_Text_Display::draw_cursor( int X, int Y ) {
+
   typedef struct {
     int x1, y1, x2, y2;
   }
   Segment;
-  
+
   Segment segs[ 5 ];
   int left, right, cursorWidth, midY;
   //    int fontWidth = mFontStruct->min_bounds.width, nSegs = 0;
@@ -2104,13 +2104,13 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
 
 
 /**
- \brief Find the correct style for a character.,
- 
+ \brief Find the correct style for a character.
+
  Determine the drawing method to use to draw a specific character from "buf".
- "lineStartPos" gives the character index where the line begins, "lineIndex",
- the number of characters past the beginning of the line, and "dispIndex",
+ \p lineStartPos gives the character index where the line begins, \p lineIndex,
+ the number of characters past the beginning of the line, and \p lineIndex
  the number of displayed characters past the beginning of the line.  Passing
- lineStartPos of -1 returns the drawing style for "no text".
+ \p lineStartPos of -1 returns the drawing style for "no text".
 
  Why not just: position_style(pos)?  Because style applies to blank areas
  of the window beyond the text boundaries, and because this routine must also
@@ -2120,7 +2120,7 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
 
  Note that style is a somewhat incorrect name, drawing method would
  be more appropriate.
- 
+
  \param lineStartPos beginning of this line
  \param lineLen number of bytes in line
  \param lineIndex position of character within line
@@ -2159,14 +2159,13 @@ int Fl_Text_Display::position_style( int lineStartPos, int lineLen, int lineInde
 }
 
 
-
 /**
  \brief Find the width of a string in the font of a particular style.
  
  \param string the text
- \param length number of bytes instring
+ \param length number of bytes in string
  \param style index into style table
- \return width of text segemnt in pixels
+ \return width of text segment in pixels
  */
 double Fl_Text_Display::string_width( const char *string, int length, int style ) const {
   IS_UTF8_ALIGNED(string)
@@ -2193,13 +2192,13 @@ double Fl_Text_Display::string_width( const char *string, int length, int style 
 
 /**
  \brief Translate a pixel position into a character index.
- 
+
  Translate window coordinates to the nearest (insert cursor or character
- cell) text position.  The parameter posType specifies how to interpret the
+ cell) text position.  The parameter \p posType specifies how to interpret the
  position: CURSOR_POS means translate the coordinates to the nearest cursor
  position, and CHARACTER_POS means return the position of the character
- closest to (X, Y).
- 
+ closest to (\p X, \p Y).
+
  \param X, Y pixel position
  \param posType CURSOR_POS or CHARACTER_POS
  \return index into text buffer
@@ -2331,12 +2330,12 @@ void Fl_Text_Display::offset_line_starts( int newTopLineNum ) {
 
 /**
  \brief Update line start arrays and variables.
- 
+
  Update the line starts array, mTopLineNum, mFirstChar and lastChar for text
  display "textD" after a modification to the text buffer, given by the
- position where the change began "pos", and the numbers of characters
+ position \pos where the change began, and the numbers of characters
  and lines inserted and deleted.
- 
+
  \param pos index into buffer of recent changes
  \param charsInserted number of bytes(!) inserted
  \param charsDeleted number of bytes(!) deleted
@@ -3066,7 +3065,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
   int nLines = 0;
   unsigned int c;
   
-  /* Set the warp margin to the warp column or the view width */
+  /* Set the wrap margin to the wrap column or the view width */
   if (mWrapMarginPix != 0) {
     wrapMarginPix = mWrapMarginPix;
   } else {
