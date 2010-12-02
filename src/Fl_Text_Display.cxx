@@ -1965,12 +1965,12 @@ void Fl_Text_Display::draw_string(int style,
   if (!(style & BG_ONLY_MASK)) {
     fl_color( foreground );
     fl_font( font, fsize );
-#if !(defined(__APPLE__) || defined(WIN32))
+#if !(defined(__APPLE__) || defined(WIN32)) && USE_XFT
     // makes sure antialiased ÄÖÜ do not leak on line above
     fl_push_clip(X, Y, toX - X, mMaxsize);
 #endif
     fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
-#if !(defined(__APPLE__) || defined(WIN32))
+#if !(defined(__APPLE__) || defined(WIN32)) && USE_XFT
     fl_pop_clip();
 #endif
   }
