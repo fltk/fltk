@@ -672,15 +672,6 @@ static double do_queued_events( double time = 0.0 )
   }
   
   fl_unlock_function();
-	
-  // necessary so that after closing a non-FLTK window (e.g., Fl_Native_File_Chooser)
-  // the front window turns key again
-  NSWindow *nsk = [NSApp keyWindow];
-  NSWindow *nsm = [NSApp mainWindow];
-  if ([nsm isMemberOfClass:[FLWindow class]] && (nsk == nil || ( ! [nsk isMemberOfClass:[FLWindow class]] &&
-    ! [nsk isVisible] ) ) ) {
-    [nsm makeKeyAndOrderFront:nil];
-  }
   NSEvent *event = [NSApp nextEventMatchingMask:NSAnyEventMask 
                                       untilDate:[NSDate dateWithTimeIntervalSinceNow:time] 
                                          inMode:NSDefaultRunLoopMode dequeue:YES];  
@@ -1142,6 +1133,7 @@ extern "C" {
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (void)windowWillClose:(NSNotification *)notif;
+- (void)anywindowwillclosenotif:(NSNotification *)notif;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
 - (void)applicationWillResignActive:(NSNotification *)notify;
@@ -1216,6 +1208,18 @@ extern "C" {
     if (![cw isMainWindow]) {	// always make Fl::first_window() the main widow
       [cw makeMainWindow];
     }
+  }
+}
+- (void)anywindowwillclosenotif:(NSNotification *)notif
+{
+  // necessary so that after closing a non-FLTK window (e.g., Fl_Native_File_Chooser)
+  // the front window turns key again
+  NSWindow *closing = (NSWindow*)[notif object];
+  if ([closing isMemberOfClass:[FLWindow class]]) return;
+  NSWindow *nsk = [NSApp keyWindow];
+  NSWindow *nsm = [NSApp mainWindow];
+  if ([nsm isMemberOfClass:[FLWindow class]] && nsk == nil) {
+    [nsm makeKeyAndOrderFront:nil];
   }
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
@@ -1423,6 +1427,11 @@ void fl_open_display() {
     };
     EventHandlerUPP textHandler = NewEventHandlerUPP( carbonTextHandler );
     InstallEventHandler(GetEventDispatcherTarget(), textHandler, 1, textEvents, NULL, 0L);
+    
+    [[NSNotificationCenter defaultCenter] addObserver:mydelegate 
+	       selector:@selector(anywindowwillclosenotif:) 
+		   name:NSWindowWillCloseNotification 
+		 object:nil];
   }
 }
 
