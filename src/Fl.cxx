@@ -1777,15 +1777,16 @@ bool Fl::option(Fl_Option opt)
     int tmp;
     { // first, read the system wide preferences
       Fl_Preferences prefs(Fl_Preferences::SYSTEM, "fltk.org", "fltk");
-      Fl_Preferences opt(prefs, "options");
-      prefs.get("ArrowFocus", tmp, 0); options_[OPTION_ARROW_FOCUS] = tmp;
-      prefs.get("NativeFilechooser", tmp, 0); options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+      Fl_Preferences opt_prefs(prefs, "options");
+      opt_prefs.get("ArrowFocus", tmp, 0); options_[OPTION_ARROW_FOCUS] = tmp;
+      opt_prefs.get("NativeFilechooser", tmp, 0); options_[OPTION_NATIVE_FILECHOOSER] = tmp;
     }
     { // next, check the user preferences
+      // override system options only, if the option is set ( >= 0 )
       Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
-      Fl_Preferences opt(prefs, "options");
-      prefs.get("ArrowFocus", tmp, 0); options_[OPTION_ARROW_FOCUS] = tmp;
-      prefs.get("NativeFilechooser", tmp, 0); options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+      Fl_Preferences opt_prefs(prefs, "options");
+      opt_prefs.get("ArrowFocus", tmp, -1); if (tmp >= 0) options_[OPTION_ARROW_FOCUS] = tmp;
+      opt_prefs.get("NativeFilechooser", tmp, -1); if (tmp >= 0) options_[OPTION_NATIVE_FILECHOOSER] = tmp;
     }
     { // now, if the developer has registered this app, we could as for per-application preferences
     }
