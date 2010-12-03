@@ -1353,6 +1353,12 @@ char Fl_Preferences::RootNode::getPath( char *path, int pathlen )
   if ( !s ) return 0;
   *s = 0;
   char ret = fl_make_path( path );
+#if !(defined(__APPLE__) || defined(WIN32))
+  // unix: make sure that system prefs dir. is user-readable
+  if (strncmp(path, "/etc/fltk/", 10) == 0) {
+    fl_chmod(path, 0755); // rwxr-xr-x
+  }
+#endif
   strcpy( s, "/" );
   return ret;
 }
