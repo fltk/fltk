@@ -56,13 +56,13 @@ CAUTION: Libraries built by any of these environments can not be mixed!
 ---------------
 
 In order to build FLTK from the command line, you need to install the MinGW
-environment from www,mingw.org. The graphical installer " mingw-get-inst" can be
-downloaded here for free:
+environment from www.mingw.org. The graphical installer "mingw-get-inst" can
+be downloaded here for free:
 
   http://www.mingw.org/wiki/Getting_Started
 
 Launch the installer and follow the instructions. In the "Select Components"
-dialog, add "C++ Compiler", "MSYS Basic System", and "MinGW Develoepr Toolkit".
+dialog, add "C++ Compiler", "MSYS Basic System", and "MinGW Developer Toolkit".
 Wait for the installer to finish.
 
 After downloading and installing, you need to launch the MinGW Shell through
@@ -76,14 +76,15 @@ Download FLTK from here:
 
   http://www.fltk.org/software.php
 
-into your home folder. The default location as seen from MSWindows is similar to
+into your home folder. The default location as seen from MSWindows is similar
+to
 
   C:\MinGW\msys\1.0\home\matt\
   
-If you are familiar with "subversion" and like to stay current with you version,
-you will find the subversion access parameters at the bottom of that page.
-Unpack FLTK into a convinient location. I like to have everything in my dev 
-directory:
+If you are familiar with "subversion" and like to stay current with your
+version, you will find the subversion access parameters at the bottom of
+that page. Unpack FLTK into a convenient location. I like to have everything
+in my dev directory:
 
   cd
   mkdir dev
@@ -104,7 +105,7 @@ Now configure your FLTK installation:
   ./configure
   
 ADVANCED: type "./configure --help" to get a complete list of optional 
-configurations parameters. These should be pretty self-explenatory. Some
+configuration parameters. These should be pretty self-explanatory. Some
 more details can be found in README. 
 :END_ADVANCED
 
@@ -127,13 +128,14 @@ Now this is easy. Stay in your FLTK source-code directory and type:
 
   make
 
-The entire FLTK toolkit including many test programs will be built for you. No 
-warnings should appear.
+The entire FLTK toolkit including many test programs will be built for you.
+No warnings should appear.
 
 (actually, as of Oct 25 2010, quite a lot of warnings related to suggested
-parentheses and others will appear, this is normal and will be fixed. The linker
-will also spit out a lbunch of warnings for every program linked. This needs to
-be fixed. Lastly, there is no generator for man pages in MinGW)
+parentheses and others will appear, this is normal and will be fixed. The
+linker will also spit out a bunch of warnings for every program linked. This
+needs to be fixed. Lastly, there is no generator for man pages in a default
+MinGW installation, but you can install man and groff to fix this.)
 
 
  Testing FLTK
@@ -147,8 +149,8 @@ After a successful build, you can test FLTK's capabilities:
  Installing FLTK
 -----------------
 
-If you did not change any of the configuration settings, FLTK will be installed 
-in "/usr/local/include" and "/usr/local/lib" by typing
+If you did not change any of the configuration settings, FLTK will be
+installed in "/usr/local/include" and "/usr/local/lib" by typing
 
   make install
   
@@ -163,13 +165,13 @@ to the "./configure" command.
 FLTK provides a neat script named "fltk-config" that can provide all the flags 
 needed to build FLTK applications using the same flags that were used to build
 the library itself. Running "fltk-config" without arguments will print a list
-options. The easiest call to compile an FLTK application from a single source 
-file is: 
+of options. The easiest call to compile an FLTK application from a single
+source file is: 
 
   fltk-config --compile myProgram.cxx
 
-"fltk-config" and "fluid" will be installed in "/usr/local/bin/" by default. I
-recommend that you add it to the command search path.
+"fltk-config" and "fluid" will be installed in "/usr/local/bin/" by default.
+I recommend that you add it to the command search path.
 
 
 
@@ -197,12 +199,13 @@ Download FLTK from here:
 
   http://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with you version,
-you will find the subversion access parameters at the bottom of that page.
+If you are familiar with "subversion" and like to stay current with your
+version, you will find the subversion access parameters at the bottom of
+that page.
 
-Unpack FLTK by using an appropriate unpacker and copy the new folder into a 
-convenient location. I have set up a "dev" folder in my home folder for all my 
-projects.
+Unpack FLTK by using an appropriate unpacker and copy the new folder into a
+convenient location. I have set up a "dev" folder in my home folder for all
+my projects.
 
 
  Configuring FLTK
@@ -233,8 +236,8 @@ clear unresolved reference errors.
  Testing FLTK
 --------------
 
-Select "Start Debugging" form the "Debug" menu or just press F5 to run the Demo
-program. Use "Demo" to explore all test programs.
+Select "Start Debugging" from the "Debug" menu or just press F5 to run the
+Demo program. Use "Demo" to explore all test programs.
 
 
  Installing FLTK
@@ -249,12 +252,12 @@ respective subdirectories, so that they are available for future development
 without adding link and include paths to the solution.
 
   copy the entire FL directory into the include path
-  
+
   copy all .lib files from the fltk lib directory to the VC lib directory
-  
+
   copy fluid.exe in the fluid directory to the bin directory
 
-I highly discourace using dll's (dynamically linking libraries) on MSWindows
+I highly discourage using dll's (dynamically linking libraries) on MSWindows
 because they will require an installation process and likely cause version 
 conflicts. Use the static .lib libraries instead.
 
@@ -277,7 +280,7 @@ Properties > C/C++ > Preprocessor > Preprocessor Definitions).
 
 Compile and run your test program with F5.
 
-You can also include .fl resources: add a new Hedare file to you project, but 
+You can also include .fl resources: add a new Header file to your project, but 
 let the name end in .fl. Right-click and select "Open with...". Add "fluid.exe"
 from the "bin" directory and set it as the default editor.
 
@@ -314,12 +317,13 @@ Download FLTK from here:
 
   http://www.fltk.org/software.php
 
-If you are familiar with "subversion" and like to stay current with you version,
-you will find the subversion access parameters at the bottom of that page.
+If you are familiar with "subversion" and like to stay current with your
+version, you will find the subversion access parameters at the bottom of
+that page.
 
-Unpack FLTK by using an appropriate unpacker and copy the new folder into a 
-convenient location. I have set up a "dev" folder in my home folder for all my 
-projects.
+Unpack FLTK by using an appropriate unpacker and copy the new folder into a
+convenient location. I have set up a "dev" folder in my home folder for all
+my projects.
 
 
  Configuring FLTK
@@ -343,8 +347,8 @@ libraries.
  Testing FLTK
 --------------
 
-Select "Start Debugging" form the "Debug" menu or just press F5 to run the Demo
-program. Use "Demo" to explore all test programs.
+Select "Start Debugging" from the "Debug" menu or just press F5 to run the
+Demo program. Use "Demo" to explore all test programs.
 
 
  Installing FLTK
@@ -359,12 +363,12 @@ respective subdirectories, so that they are available for future development
 without adding link and include paths to the solution.
 
   copy the entire FL directory into the include path
-  
+
   copy all .lib files from the fltk lib directory to the VC lib directory
-  
+
   copy fluid.exe in the fluid directory to the bin directory
 
-I highly discourace using dll's (dynamically linking libraries) on MSWindows
+I highly discourage using dll's (dynamically linking libraries) on MSWindows
 because they will require an installation process and likely cause version 
 conflicts. Use the static .lib libraries instead.
 
@@ -387,11 +391,11 @@ Properties > C/C++ > Preprocessor > Preprocessor Definitions).
 
 Compile and run your test program with F5.
 
-You can also include .fl resources: add a new Hedare file to you project, but 
+You can also include .fl resources: add a new Header file to your project, but 
 let the name end in .fl. Right-click and select "Open with...". Add "fluid.exe"
 from the "bin" directory and set it as the default editor.
 
-To automatically compile .fl files, open the Properties editor and cahnge the 
+To automatically compile .fl files, open the Properties editor and change the 
 Element Type to Custom Build and click Apply. Now set the
 Custom Build Steps to:
 
