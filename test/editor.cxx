@@ -775,8 +775,7 @@ Fl_Window* new_view() {
     w->editor = new Fl_Text_Editor(0, 30, 660, 370);
     w->editor->textfont(FL_COURIER);
     w->editor->textsize(TS);
-  //
-    w->editor->wrap_mode(Fl_Text_Editor::WRAP_AT_BOUNDS, 250);
+  //w->editor->wrap_mode(Fl_Text_Editor::WRAP_AT_BOUNDS, 250);
     w->editor->buffer(textbuf);
     w->editor->highlight_data(stylebuf, styletable,
                               sizeof(styletable) / sizeof(styletable[0]),
