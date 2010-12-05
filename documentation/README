@@ -2,27 +2,30 @@ README
 ------
 
 The documentation in this directory is in PDF format.
-To read it, please open the fltk.pdf file in this directory
+To read it, please open the file "fltk.pdf" in this directory.
 
-To generate the doxygen HTML documention,
-you should have Doxygen version 1.5.5 min.
+To generate the doxygen HTML documention, you should have Doxygen
+version 1.5.7 or later. Use "make clean html" in the documentation
+directory to generate the HTML documentation.
 
-To read it, please open the "html/index.html" file. 
-A documentation version is also accessable at the FLTK web site, 
-along with PostScript(tm) and PDF versions of the manual.
+To read it, please open the file "html/index.html" with your browser.
+A documentation version is also available at the FLTK web site,
+along with the PDF version of the manual. The docs on the web site
+are usually somewhat older (latest release).
 
-You can generate your own (printable) copy of the manual by typing
-"make pdf" in this directory.  
+You can generate your own copy of the PDF manual by typing "make pdf"
+in this directory. The resulting file is "latex/refman.pdf". This is
+so that "make pdf" does not overwrite the bundled file "fltk.pdf".
 
-For future book gen alternative (TODO or CHECK):
-You will need to have the HTMLDOC software
-installed on your system.  HTMLDOC can be downloaded from:
-    http://www.easysw.com/htmldoc
+If you type "make pdf-dist" instead, the original file "fltk.pdf"
+will be overwritten.
 
-The default media size is 8.27x11.0" (210x279mm), which is the lesser
-of A4 and US Letter sizes.  You can change this in the makefile by
-uncommenting the corresponding media size or defining your own.
+Note that it is usually not necessary to create your own PDF version,
+if you use the release version of FLTK, because it comes with a current
+"fltk.pdf" file. However, if you use subversion or a snapshot file,
+then the included "fltk.pdf" file is likely to be outdated.
 
 If you find any typos, things that are unclear, or would like to
 contribute an example, section, or chapter to the FLTK manual, please
-contact Michael Sweet (mike@easysw.com).
+post a question in the fltk newsgroup fltk.general or post a bug
+report or feature request at http://www.fltk.org/str.php .
