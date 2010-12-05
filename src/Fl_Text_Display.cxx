@@ -2331,9 +2331,9 @@ void Fl_Text_Display::offset_line_starts( int newTopLineNum ) {
 /**
  \brief Update line start arrays and variables.
 
- Update the line starts array, mTopLineNum, mFirstChar and lastChar for text
- display "textD" after a modification to the text buffer, given by the
- position \pos where the change began, and the numbers of characters
+ Update the line starts array, mTopLineNum, mFirstChar and lastChar for this
+ text display after a modification to the text buffer, given by the
+ position \p pos where the change began, and the numbers of characters
  and lines inserted and deleted.
 
  \param pos index into buffer of recent changes

@@ -28,19 +28,7 @@
 # Get configuration stuff...
 include ../makeinclude
 
-# What media size to use:
-
-# "Universal" size - minimum of US Letter and A4
-MEDIA		=	--size universal
 SRC_DOCDIR      = 	./src
-# Standard US Letter
-#MEDIA		=	--size letter
-
-# Standard A4
-#MEDIA		=	--size a4
-
-# 7x8.5in (1/2 legal page) with reduced-size fonts
-#MEDIA		=	--size 7x8.5in --fontsize 9.0
 
 # These are the HTML "source" files...
 HTMLFILES	= 	 \
@@ -213,25 +201,24 @@ all:	$(MANPAGES)
 alldocs: pdf-dist html $(MANPAGES)
 
 clean:
-#	$(RM) fltk.ps
 	$(RM) refman.pdf
 	$(RMDIR) html latex
-	$(RM) *~ *.bck *.bck *.bak *.log
+	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
 
 depend:
 
 install: $(MANPAGES)
-	echo "Installing documentation files in $(DESTDIR)$(docdir)..."
+	echo "Installing documentation files in $(DESTDIR)$(docdir) ..."
 	-$(INSTALL_DIR) $(DESTDIR)$(docdir)
-	echo Installing file from $(INST_DOC_DIR)
 	if test -f html/index.html ; then \
 	  for file in html/* ; do \
 		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir); \
 	  done \
 	fi
-	$(INSTALL_DATA) fltk.pdf $(DESTDIR)$(docdir); \
-	echo "Installing man pages in $(DESTDIR)$(mandir)..."
+	echo "Installing fltk.pdf in $(DESTDIR)$(docdir) ..."
+	$(INSTALL_DATA) fltk.pdf $(DESTDIR)$(docdir)
+	echo "Installing man pages in $(DESTDIR)$(mandir) ..."
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
@@ -271,8 +258,9 @@ uninstall-linux uninstall-osx:
 	$(RM) $(DESTDIR)$(mandir)/man6/checkers.6
 	$(RM) $(DESTDIR)$(mandir)/man6/sudoku.6
 
-# Base html files are now the readable ones, so this target is not make by
-# default...
+# The HTML files are now generated using doxygen, and this needs
+# an installed doxygen version and may take some time, so this target
+# is not made by default.
 
 html: html/index.html
 
@@ -281,15 +269,13 @@ html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
 	-$(DOXYDOC)
+	if test "x$(DOXYDOC)" = "x" ; then \
+	  echo "Sorry - doxygen not found. Please install doxygen and run configure."; \
+	fi
 
 html-dist: html
-	echo "Stripping HTML files..."
+	echo "Stripping HTML files ..."
 	./strip_tags
-
-#fltk.ps: $(HTMLFILES) $(IMAGEFILES)
-#	echo "Generating PostScript documentation..."
-#	$(RM) fltk.ps
-#	-$(HTMLDOC) --verbose --batch $(SRC_DOCDIR)/fltk.book $(MEDIA) -f fltk.ps
 
 pdf-dist: latex/refman.pdf
 	cp -f latex/refman.pdf fltk.pdf
@@ -297,7 +283,7 @@ pdf-dist: latex/refman.pdf
 pdf: 	latex/refman.pdf
 
 latex/refman.pdf: latex/refman.tex Doxybook $(EPSFILES)
-	echo "Generating PDF documentation..."
+	echo "Generating PDF documentation ..."
 	$(DOXYDOC) Doxybook ;\
 	(cd latex ;\
 	pdflatex --interaction=nonstopmode refman.tex ;\
@@ -307,7 +293,7 @@ latex/refman.pdf: latex/refman.tex Doxybook $(EPSFILES)
 	while egrep -s 'Rerun (LaTeX|to get cross-references right)' refman.log \
 		&& [ $$latex_count -gt 0 ] ;\
 	    do \
-	      echo "Rerunning latex...." ;\
+	      echo "Rerunning latex ..." ;\
 	      pdflatex --interaction=nonstopmode refman.tex ;\
 	      latex_count=`expr $$latex_count - 1` ;\
 	    done ; \
