@@ -424,14 +424,13 @@ void Fl_Table::_auto_drag_cb() {
   if (lx > x() + w() - 20) {
     Fl::e_x = x() + w() - 20;
     if (hscrollbar->visible())
-      ((Fl_Slider*)hscrollbar)->value(
-                                      hscrollbar->clamp(hscrollbar->value() + 30));
+      ((Fl_Slider*)hscrollbar)->value(hscrollbar->clamp(hscrollbar->value() + 30));
     hscrollbar->do_callback();
     _dragging_x = Fl::e_x - 30;
   }
   else if (lx < (x() + row_header_width())) {
     Fl::e_x = x() + row_header_width() + 1;
-    if (hscrollbar->visible())  {
+    if (hscrollbar->visible()) {
       ((Fl_Slider*)hscrollbar)->value(hscrollbar->clamp(hscrollbar->value() - 30));
     }
     hscrollbar->do_callback();
@@ -514,7 +513,7 @@ void Fl_Table::table_scrolled() {
     if ( y > voff ) { y -= row_height(row); break; }
   }
   _row_position = toprow = ( row >= _rows ) ? (row - 1) : row;
-  toprow_scrollpos = y;	// OPTIMIZATION: save for later use 
+  toprow_scrollpos = y;		// OPTIMIZATION: save for later use 
   // Find bottom row
   voff = vscrollbar->value() + tih;
   for ( ; row < _rows; row++ ) {

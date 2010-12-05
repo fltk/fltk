@@ -386,12 +386,10 @@ protected:
    
    \code
    // This is called whenever Fl_Table wants you to draw a cell
-   void MyTable::draw_cell(TableContext context, int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0)
-   {
+   void MyTable::draw_cell(TableContext context, int R=0, int C=0, int X=0, int Y=0, int W=0, int H=0) {
        static char s[40];
        sprintf(s, "%d/%d", R, C);              // text for each cell
-       switch ( context )
-       {
+       switch ( context ) {
 	   case CONTEXT_STARTPAGE:             // Fl_Table telling us its starting to draw page
 	       fl_font(FL_HELVETICA, 16);
 	       return;
@@ -487,9 +485,7 @@ public:
    */
   virtual void clear() { rows(0); cols(0); }
   
-  // topline()
-  // middleline()
-  // bottomline()
+  // \todo: add topline(), middleline(), bottomline()
   
   /**
    Sets the kind of box drawn around the data table,
@@ -957,7 +953,7 @@ public:
     Fl_Widget::do_callback();
   }
   
-#if DOXYGEN
+#if FL_DOXYGEN
   /**
    The Fl_Widget::when() function is used to set a group of flags, determining
    when the widget callback is called:
@@ -989,7 +985,7 @@ public:
   void when(Fl_When flags);
 #endif
   
-#if DOXYGEN
+#if FL_DOXYGEN
   /**
    Callbacks will be called depending on the setting of Fl_Widget::when().
    
@@ -1039,34 +1035,31 @@ public:
    </table>
    
    \code
-   class MyTable
-   {
-   [..]
+   class MyTable : public Fl_Table {
+     [..]
    private:
-   // Handle events that happen on the table
-   void event_callback2()
-   {
-   int R = callback_row(),                     // row where event occurred
-   C = callback_col();                         // column where event occurred
-   TableContext context = callback_context();  // which part of table
-   fprintf(stderr, "callback: Row=%d Col=%d Context=%d Event=%d\n",
-   R, C, (int)context, (int)Fl::event());
-   }
+     // Handle events that happen on the table
+     void event_callback2() {
+       int R = callback_row(),                         // row where event occurred
+       C = callback_col();                             // column where event occurred
+       TableContext context = callback_context();      // which part of table
+       fprintf(stderr, "callback: Row=%d Col=%d Context=%d Event=%d\n",
+               R, C, (int)context, (int)Fl::event());
+     }
    
-   // Actual static callback
-   static void event_callback(Fl_Widget*, void* data)
-   {
-   MyTable *o = (MyTable*)data;
-   o-&gt;event_callback2();
-   }
-   
+     // Actual static callback
+     static void event_callback(Fl_Widget*, void* data) {
+       MyTable *o = (MyTable*)data;
+       o-&gt;event_callback2();
+     }
+     
    public:
-   MyTable()                      // Constructor
-   {
-   [..]
-   table.callback(&event_callback, (void*)this);       // setup callback
-   table.when(FL_WHEN_CHANGED|FL_WHEN_RELEASE);        // when to call it
-   }
+     // Constructor
+     MyTable() {
+       [..]
+       table.callback(&event_callback, (void*)this);   // setup callback
+       table.when(FL_WHEN_CHANGED|FL_WHEN_RELEASE);    // when to call it
+     }
    };
    \endcode
    */

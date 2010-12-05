@@ -37,12 +37,10 @@
 /**
  A table with row selection capabilities.
  
- This class implements a simple table of rows and columns that specializes in 
- the selection of rows. This widget is similar in behavior to a "mail subject 
- browser", similar to that found in mozilla, netscape and outlook mail browsers.
- 
- Most methods of importance will be found in the Fl_Table widget, such as 
- Fl_Table::rows() and Fl_Table::cols().
+ This class implements a simple table with the ability to select
+ rows.  This widget is similar to an Fl_Browser with columns.  Most
+ methods of importance will be found in the Fl_Table widget, such
+ as Fl_Table::rows() and Fl_Table::cols().
  
  To be useful it must be subclassed and at minimum the draw_cell()
  method must be overridden to provide the content of the cells. This widget
