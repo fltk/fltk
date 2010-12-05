@@ -118,7 +118,7 @@ IMAGEFILES	= \
 		$(SRC_DOCDIR)/table-simple.gif \
 		$(SRC_DOCDIR)/tabs.gif \
 		$(SRC_DOCDIR)/text.gif \
-		$(SRC_DOCDIR)/tree-elements.gif \
+		$(SRC_DOCDIR)/tree-elements.png \
 		$(SRC_DOCDIR)/valuators.gif \
 		$(SRC_DOCDIR)/value_slider.gif
 
