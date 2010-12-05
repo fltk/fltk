@@ -115,7 +115,8 @@
 ///     when() controls when mouse/keyboard events invoke the callback.
 ///     callback_item() and callback_reason() can be used to determine the cause of the callback.
 ///
-///     \image html tree-elements.png
+///     \image html tree-elements.gif
+///     \image latex tree-elements.eps "Fl_Tree dimensions" width=6cm
 ///
 
 /// \enum Fl_Tree_Reason

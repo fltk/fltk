@@ -125,8 +125,12 @@ IMAGEFILES	= \
 		$(SRC_DOCDIR)/scrollbar.gif \
 		$(SRC_DOCDIR)/slider.gif \
 		$(SRC_DOCDIR)/symbols.gif \
+		$(SRC_DOCDIR)/table-as-container.gif \
+		$(SRC_DOCDIR)/table-dimensions.gif \
+		$(SRC_DOCDIR)/table-simple.gif \
 		$(SRC_DOCDIR)/tabs.gif \
 		$(SRC_DOCDIR)/text.gif \
+		$(SRC_DOCDIR)/tree-elements.gif \
 		$(SRC_DOCDIR)/valuators.gif \
 		$(SRC_DOCDIR)/value_slider.gif
 
@@ -190,8 +194,13 @@ EPSFILES =	\
 		$(SRC_DOCDIR)/slider.eps \
 		$(SRC_DOCDIR)/symbols.eps \
 		$(SRC_DOCDIR)/tabs.eps \
+		$(SRC_DOCDIR)/table-as-container.eps \
+		$(SRC_DOCDIR)/table-dimensions.eps \
+		$(SRC_DOCDIR)/table-simple.eps \
+		$(SRC_DOCDIR)/tabs.eps \
 		$(SRC_DOCDIR)/text.eps \
 		$(SRC_DOCDIR)/tiny.eps \
+		$(SRC_DOCDIR)/tree-elements.eps \
 		$(SRC_DOCDIR)/valuators.eps \
 		$(SRC_DOCDIR)/value_slider.eps
 

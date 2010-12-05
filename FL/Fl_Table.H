@@ -69,6 +69,12 @@
  - As a regular container of FLTK widgets, one widget per cell.
    See examples/table-as-container.cxx. \em Not recommended for large tables.
  
+ \image html table-simple.gif
+ \image latex table-simple.eps "table-simple example" width=6cm
+
+ \image html table-as-container.gif
+ \image latex table-as-container.eps "table-as-container example" width=6cm
+ 
  When acting as part of a custom widget, events on the cells and/or headings
  generate callbacks when they are clicked by the user. You control when events 
  are generated based on the setting for Fl_Table::when().
@@ -80,6 +86,7 @@
  The following variables are available to classes deriving from Fl_Table:
  
  \image html table-dimensions.gif
+ \image latex table-dimensions.eps "Fl_Table Dimensions" width=6cm
  
  <table border=0>
  <tr><td>x()/y()/w()/h()</td>
