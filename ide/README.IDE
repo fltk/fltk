@@ -32,7 +32,7 @@ Earlier versions of Visual Studio can import the VisualC6 Project file
 to generate a working Solution.
 
 VisualC2008 and VisualC2010 Solutions were generated with the free 
-Visual Studion Express edition of the corresponding version.
+Visual Studio Express edition of the corresponding version.
 
 
 Further notes about Xcode IDE project files (December 2010):
@@ -48,7 +48,7 @@ Other IDE's and Platforms
 
 Code::Blocks supports FLTK project natively. Please compile and install 
 FLTK using the Makefile system. Once installed, new FLTK projects 
-can be generated using the Code::Blolcs IDE.
+can be generated using the Code::Blocks IDE.
 
 Further IDE's can only be supported if a volunteer maintainer is found.
 If you feel that your favourite IDE is missing from our list, we will
