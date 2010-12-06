@@ -4472,7 +4472,6 @@
 		C84F99F5AC8C6517F45055B0 /* jdmerge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmerge.c; path = ../../jpeg/jdmerge.c; sourceTree = SOURCE_ROOT; };
 		C8AE10A8DDF53B8B27E3215A /* Fl_Choice.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Choice.H; path = ../../FL/Fl_Choice.H; sourceTree = SOURCE_ROOT; };
 		C9165EAF1291A304003FF4F0 /* utf8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = utf8.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C9165EC11291A305003FF4F0 /* utf8-Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "utf8-Info copy.plist"; path = "plists/utf8-Info copy.plist"; sourceTree = "<group>"; };
 		C9165ED31291A376003FF4F0 /* unittests.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unittests.cxx; path = ../../test/unittests.cxx; sourceTree = SOURCE_ROOT; };
 		C95961641274CDEC009C0594 /* README.Xcode */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.Xcode; path = ../../FL/README.Xcode; sourceTree = SOURCE_ROOT; };
 		C9628FFB1274D0B3007D3CFE /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -5656,7 +5655,6 @@
 				015D2BD894993395B263D6C0 /* Tests */,
 				DCB546B00EC62A9F8CC4181A /* Products */,
 				C9628FFA1274D0A1007D3CFE /* Resources */,
-				C9165EC11291A305003FF4F0 /* utf8-Info copy.plist */,
 			);
 			sourceTree = "<group>";
 		};
