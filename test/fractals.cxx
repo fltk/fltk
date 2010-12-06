@@ -312,7 +312,7 @@ long TreeSeed;   /* for srand48 - remember so we can build "same tree"
  /*
   * recursive tree drawing thing, fleshed out from class notes pseudocode 
   */
-void FractalTree(int level)
+void FractalTree(int level, long level_seed)
 {
   long savedseed;  /* need to save seeds while building tree too */
 
@@ -328,26 +328,25 @@ void FractalTree(int level)
     glTranslatef(0, 1, 0);
     glScalef(0.7, 0.7, 0.7);
 
-      savedseed = (long)((ulong)drand48()*ULONG_MAX);
+      srand48(level_seed+1);
       glPushMatrix();    
         glRotatef(110 + drand48()*40, 0, 1, 0);
         glRotatef(30 + drand48()*20, 0, 0, 1);
-        FractalTree(level + 1);
+        FractalTree(level + 1, level_seed+4);
       glPopMatrix();
 
-      srand48(savedseed);
-      savedseed = (long)((ulong)drand48()*ULONG_MAX);
+      srand48(level_seed+2);
       glPushMatrix();
         glRotatef(-130 + drand48()*40, 0, 1, 0);
         glRotatef(30 + drand48()*20, 0, 0, 1);
-        FractalTree(level + 1);
+        FractalTree(level + 1, level_seed+5);
       glPopMatrix();
 
-      srand48(savedseed);
+      srand48(level_seed+3);
       glPushMatrix();
         glRotatef(-20 + drand48()*40, 0, 1, 0);
         glRotatef(30 + drand48()*20, 0, 0, 1);
-        FractalTree(level + 1);
+        FractalTree(level + 1, level_seed+6);
       glPopMatrix();
 
     glPopMatrix();
@@ -421,7 +420,7 @@ void CreateTree(void)
     glPushAttrib(GL_LIGHTING_BIT);
     glCallList(TREE_MAT);
     glTranslatef(0, -1, 0);
-    FractalTree(0);
+    FractalTree(0, TreeSeed);
     glPopAttrib();
     glPopMatrix();
   glEndList();  
