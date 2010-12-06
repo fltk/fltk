@@ -1526,6 +1526,7 @@ int Fl_Text_Buffer::insertfile(const char *file, int pos, int /*buflen*/)
   fseek(fp, 0, SEEK_END);
   size_t filesize = ftell(fp);
   fseek(fp, 0, SEEK_SET);  
+  if (!filesize) return 0;
   char *buffer = new char[filesize+1];
   if (fread(buffer, 1, filesize, fp)==filesize) {
     buffer[filesize] = (char) 0;
