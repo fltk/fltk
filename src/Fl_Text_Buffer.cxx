@@ -1516,19 +1516,21 @@ int Fl_Text_Buffer::findchar_backward(int startPos, unsigned int searchChar,
 
 /*
  Insert text from a file.
- Unicode safe. Inout must be correct UTF-8!
+ Unicode safe. Input must be correct UTF-8!
  */
-int Fl_Text_Buffer::insertfile(const char *file, int pos, int buflen)
+int Fl_Text_Buffer::insertfile(const char *file, int pos, int /*buflen*/)
 {
   FILE *fp;
   if (!(fp = fl_fopen(file, "r")))
     return 1;
-  char *buffer = new char[buflen];
-  for (int r; (r = fread(buffer, 1, buflen - 1, fp)) > 0; pos += r) {
-    buffer[r] = (char) 0;
+  fseek(fp, 0, SEEK_END);
+  size_t filesize = ftell(fp);
+  fseek(fp, 0, SEEK_SET);  
+  char *buffer = new char[filesize+1];
+  if (fread(buffer, 1, filesize, fp)==filesize) {
+    buffer[filesize] = (char) 0;
     insert(pos, buffer);
   }
-  
   int e = ferror(fp) ? 2 : 0;
   fclose(fp);
   delete[]buffer;
@@ -1562,7 +1564,7 @@ int Fl_Text_Buffer::outputfile(const char *file, int start, int end,
 
 /*
  Return the previous character position.
- Uncode safe.
+ Unicode safe.
  */
 int Fl_Text_Buffer::prev_char_clipped(int pos) const
 {
