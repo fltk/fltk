@@ -28,6 +28,9 @@
 # Get configuration stuff...
 include ../makeinclude
 
+# The following appends to the existing .SUFFIXES
+.SUFFIXES: .gif .jpg .png .eps
+
 SRC_DOCDIR      = 	./src
 
 # These are the HTML "source" files...
@@ -256,6 +259,19 @@ uninstall-linux uninstall-osx:
 	$(RM) $(DESTDIR)$(mandir)/man6/blocks.6
 	$(RM) $(DESTDIR)$(mandir)/man6/checkers.6
 	$(RM) $(DESTDIR)$(mandir)/man6/sudoku.6
+
+# Image -> eps conversions
+.gif.eps:
+	echo Creating eps for $<...
+	convert $< $@
+
+.jpg.eps:
+	echo Creating eps for $<...
+	convert $< $@
+
+.png.eps:
+	echo Creating eps for $<...
+	convert $< $@
 
 # The HTML files are now generated using doxygen, and this needs
 # an installed doxygen version and may take some time, so this target
