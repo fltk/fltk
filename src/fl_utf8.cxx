@@ -112,9 +112,11 @@ Toupper(
 }
 
 /**
-  return the byte length of the UTF-8 sequence with first byte \p c,
-  or -1 if \p c is not valid.
-  */
+ return the byte length of the UTF-8 sequence with first byte \p c,
+ or -1 if \p c is not valid.
+ This function is helpful for finding faulty UTF8 sequences.
+ \see fl_utf8len1
+ */
 int fl_utf8len(char c)
 {
   if (!(c & 0x80)) return 1;
@@ -137,15 +139,34 @@ int fl_utf8len(char c)
 } // fl_utf8len
 
 
-#if 0
-int fl_utflen(
-        const unsigned char     *buf,
-        int                     len)
+/**
+ Return the byte length of the UTF-8 sequence with first byte \p c,
+ or 1 if \p c is not valid. 
+ This function can be used to scan faulty UTF8 sequence, albeit ignoring invalid
+ codes.
+ \see fl_utf8len
+ */
+int fl_utf8len1(char c)
 {
-	unsigned int ucs;
-	return fl_utf2ucs(buf, len, &ucs);
-}
-#endif
+  if (!(c & 0x80)) return 1;
+  if (c & 0x40) {
+    if (c & 0x20) {
+      if (c & 0x10) {
+        if (c & 0x08) {
+          if (c & 0x04) {
+            return 6;
+          }
+          return 5;
+        }
+        return 4;
+      }
+      return 3;
+    }
+    return 2;
+  }
+  return 1;
+} // fl_utf8len1
+
 
 /**
   returns the number of Unicode chars in the UTF-8 string

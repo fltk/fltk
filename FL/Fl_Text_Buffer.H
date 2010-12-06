@@ -34,7 +34,7 @@
 #define FL_TEXT_BUFFER_H
 
 
-#define ASSERT_UTF8
+#undef ASSERT_UTF8
 
 #ifdef ASSERT_UTF8
 # include <assert.h>
@@ -47,22 +47,11 @@
 
 
 /*
- Suggested UTF-8 terminology for this file:
- 
- ?? "length" is the number of characters in a string
- ?? "size" is the number of bytes
- ?? "index" is the position in a string in number of characters
- ?? "offset" is the position in a string in bytes (and must be kept on a charater boundary)
- (there seems to be no standard in Uncode documents, howevere "length" is commonly
- referencing the number of bytes. Maybe "bytes" and "glyphs" would be the most
- obvious way to describe sizes?)
- 
  "character size" is the size of a UTF-8 character in bytes
- "character width" is the width of a Unicode character in pixels
- 
- "column" was orginally defined as a character offset from the left margin. It was
- identical to the byte offset. In UTF-8, we have neither a byte offset nor
- truly fixed width fonts (*). Column could be a pixel value multiplied with
+ "character width" is the width of a Unicode character in pixels 
+ "column" was orginally defined as a character offset from the left margin. 
+ It was identical to the byte offset. In UTF-8, we have neither a byte offset 
+ nor truly fixed width fonts (*). Column could be a pixel value multiplied with
  an average character width (which is a bearable approximation).
  
  * in Unicode, there are no fixed width fonts! Even if the ASCII characters may 

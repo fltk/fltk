@@ -1025,7 +1025,7 @@ int Fl_Text_Buffer::search_forward(int startPos, const char *searchString,
           *foundPos = startPos;
           return 1;
         }
-        int l = fl_utf8len(c);
+        int l = fl_utf8len1(c);
         if (memcmp(sp, address(bp), l))
           break;
         sp += l; bp += l;
@@ -1077,7 +1077,7 @@ int Fl_Text_Buffer::search_backward(int startPos, const char *searchString,
           *foundPos = startPos;
           return 1;
         }
-        int l = fl_utf8len(c);
+        int l = fl_utf8len1(c);
         if (memcmp(sp, address(bp), l))
           break;
         sp += l; bp += l;
@@ -1602,7 +1602,7 @@ int Fl_Text_Buffer::prev_char(int pos) const
 int Fl_Text_Buffer::next_char(int pos) const
 {
   IS_UTF8_ALIGNED2(this, (pos))  
-  int n = fl_utf8len(byte_at(pos));
+  int n = fl_utf8len1(byte_at(pos));
   pos += n;
   if (pos>=mLength)
     return mLength;

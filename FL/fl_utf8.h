@@ -99,13 +99,16 @@ FL_EXPORT int fl_utf8bytes(unsigned ucs);
 
 /* OD: returns the byte length of the first UTF-8 char sequence (returns -1 if not valid) */
 FL_EXPORT int fl_utf8len(char c);
-
+  
+/* OD: returns the byte length of the first UTF-8 char sequence (returns +1 if not valid) */
+FL_EXPORT int fl_utf8len1(char c);
+  
 /* OD: returns the number of Unicode chars in the UTF-8 string */
 FL_EXPORT int fl_utf_nb_char(const unsigned char *buf, int len);
 
 /* F2: Convert the next UTF8 char-sequence into a Unicode value (and say how many bytes were used) */
 FL_EXPORT unsigned fl_utf8decode(const char* p, const char* end, int* len);
-
+  
 /* F2: Encode a Unicode value into a UTF8 sequence, return the number of bytes used */
 FL_EXPORT int fl_utf8encode(unsigned ucs, char* buf);
 
