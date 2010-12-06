@@ -56,6 +56,19 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/examples.dox
 
 IMAGEFILES	= \
+		$(SRC_DOCDIR)/FL200.gif \
+		$(SRC_DOCDIR)/Fl_Check_Button.gif \
+		$(SRC_DOCDIR)/Fl_File_Chooser.jpg \
+		$(SRC_DOCDIR)/Fl_File_Input.gif \
+		$(SRC_DOCDIR)/Fl_Help_Dialog.gif \
+		$(SRC_DOCDIR)/Fl_Light_Button.gif \
+		$(SRC_DOCDIR)/Fl_Return_Button.gif \
+		$(SRC_DOCDIR)/Fl_Roller.gif \
+		$(SRC_DOCDIR)/Fl_Round_Button.gif \
+		$(SRC_DOCDIR)/Fl_Scroll.gif \
+		$(SRC_DOCDIR)/Fl_Tile.gif \
+		$(SRC_DOCDIR)/Fl_Value_Input.gif \
+		$(SRC_DOCDIR)/Fl_Value_Output.gif \
 		$(SRC_DOCDIR)/adjuster1.gif \
 		$(SRC_DOCDIR)/boxtypes.gif \
 		$(SRC_DOCDIR)/buttons.gif \
@@ -65,47 +78,34 @@ IMAGEFILES	= \
 		$(SRC_DOCDIR)/counter.gif \
 		$(SRC_DOCDIR)/cubeview.gif \
 		$(SRC_DOCDIR)/dial.gif \
-		$(SRC_DOCDIR)/editor.gif \
 		$(SRC_DOCDIR)/editor-replace.gif \
+		$(SRC_DOCDIR)/editor.gif \
 		$(SRC_DOCDIR)/fl_alert.gif \
 		$(SRC_DOCDIR)/fl_ask.gif \
-		$(SRC_DOCDIR)/Fl_Check_Button.gif \
 		$(SRC_DOCDIR)/fl_choice.gif \
 		$(SRC_DOCDIR)/fl_color_chooser.jpg \
-		$(SRC_DOCDIR)/Fl_File_Chooser.jpg \
-		$(SRC_DOCDIR)/Fl_File_Input.gif \
-		$(SRC_DOCDIR)/FL.gif \
-		$(SRC_DOCDIR)/Fl_Help_Dialog.gif \
 		$(SRC_DOCDIR)/fl_input.gif \
-		$(SRC_DOCDIR)/Fl_Light_Button.gif \
 		$(SRC_DOCDIR)/fl_message.gif \
 		$(SRC_DOCDIR)/fl_password.gif \
-		$(SRC_DOCDIR)/Fl_Return_Button.gif \
-		$(SRC_DOCDIR)/Fl_Roller.gif \
-		$(SRC_DOCDIR)/Fl_Round_Button.gif \
-		$(SRC_DOCDIR)/Fl_Scroll.gif \
 		$(SRC_DOCDIR)/fl_show_colormap.gif \
-		$(SRC_DOCDIR)/Fl_Tile.gif \
+		$(SRC_DOCDIR)/fluid-catgets.gif \
+		$(SRC_DOCDIR)/fluid-gettext.gif \
+		$(SRC_DOCDIR)/fluid-org.gif \
 		$(SRC_DOCDIR)/fluid1.gif \
 		$(SRC_DOCDIR)/fluid2.gif \
 		$(SRC_DOCDIR)/fluid3-cxx.gif \
 		$(SRC_DOCDIR)/fluid3-gui.gif \
 		$(SRC_DOCDIR)/fluid3-style.gif \
 		$(SRC_DOCDIR)/fluid4.gif \
-		$(SRC_DOCDIR)/fluid-catgets.gif \
-		$(SRC_DOCDIR)/fluid-gettext.gif \
-		$(SRC_DOCDIR)/fluid-org.gif \
 		$(SRC_DOCDIR)/fluid_prefs.gif \
 		$(SRC_DOCDIR)/fluid_widget_cxx.gif \
 		$(SRC_DOCDIR)/fluid_widget_gui.gif \
 		$(SRC_DOCDIR)/fluid_widget_style.gif \
-		$(SRC_DOCDIR)/Fl_Value_Input.gif \
-		$(SRC_DOCDIR)/Fl_Value_Output.gif \
 		$(SRC_DOCDIR)/hello.C.gif \
 		$(SRC_DOCDIR)/input_choice.jpg \
-		$(SRC_DOCDIR)/menubar.gif \
-		$(SRC_DOCDIR)/menu_button.gif \
 		$(SRC_DOCDIR)/menu.gif \
+		$(SRC_DOCDIR)/menu_button.gif \
+		$(SRC_DOCDIR)/menubar.gif \
 		$(SRC_DOCDIR)/positioner.gif \
 		$(SRC_DOCDIR)/resizebox1.gif \
 		$(SRC_DOCDIR)/resizebox2.gif \
@@ -118,12 +118,12 @@ IMAGEFILES	= \
 		$(SRC_DOCDIR)/table-simple.gif \
 		$(SRC_DOCDIR)/tabs.gif \
 		$(SRC_DOCDIR)/text.gif \
+		$(SRC_DOCDIR)/tiny.gif \
 		$(SRC_DOCDIR)/tree-elements.png \
 		$(SRC_DOCDIR)/valuators.gif \
 		$(SRC_DOCDIR)/value_slider.gif
 
 EPSFILES =	\
-		$(SRC_DOCDIR)/FL.eps \
 		$(SRC_DOCDIR)/FL200.eps\
 		$(SRC_DOCDIR)/Fl_Check_Button.eps \
 		$(SRC_DOCDIR)/Fl_File_Chooser.eps \
@@ -181,7 +181,6 @@ EPSFILES =	\
 		$(SRC_DOCDIR)/scrollbar.eps \
 		$(SRC_DOCDIR)/slider.eps \
 		$(SRC_DOCDIR)/symbols.eps \
-		$(SRC_DOCDIR)/tabs.eps \
 		$(SRC_DOCDIR)/table-as-container.eps \
 		$(SRC_DOCDIR)/table-dimensions.eps \
 		$(SRC_DOCDIR)/table-simple.eps \
