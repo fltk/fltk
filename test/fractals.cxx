@@ -314,8 +314,6 @@ long TreeSeed;   /* for srand48 - remember so we can build "same tree"
   */
 void FractalTree(int level, long level_seed)
 {
-  long savedseed;  /* need to save seeds while building tree too */
-
   if (level == Level) {
       glPushMatrix();
         glRotatef(drand48()*180, 0, 1, 0);
