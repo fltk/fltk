@@ -955,14 +955,19 @@ int fl_handle(const XEvent& thisevent)
       text_prop.encoding=actual;
       text_prop.nitems=count;
       char **text_list;
+#ifndef X_HAVE_UTF8_STRING
+      text_list = (char**)&portion;
+#else
       int list_count;
-      Xutf8TextPropertyToTextList(fl_display, 
-				   +              (const XTextProperty*)&text_prop, &text_list, &list_count);
+      Xutf8TextPropertyToTextList(fl_display, (const XTextProperty*)&text_prop, &text_list, &list_count);
+#endif
       int bytesnew = strlen(*text_list)+1; 
-      XFree(portion); 
       buffer = (unsigned char*)realloc(buffer, bytesread+bytesnew+remaining);
       memcpy(buffer+bytesread, *text_list, bytesnew);
+      XFree(portion); 
+#ifdef X_HAVE_UTF8_STRING
       XFreeStringList(text_list);
+#endif
       bytesread += bytesnew - 1;
       if (!remaining) break;
     }
