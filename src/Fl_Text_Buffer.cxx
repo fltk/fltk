@@ -1521,7 +1521,7 @@ int Fl_Text_Buffer::findchar_backward(int startPos, unsigned int searchChar,
 int Fl_Text_Buffer::insertfile(const char *file, int pos, int /*buflen*/)
 {
   FILE *fp;
-  if (!(fp = fl_fopen(file, "rb")))
+  if (!(fp = fl_fopen(file, "r")))
     return 1;
   fseek(fp, 0, SEEK_END);
   size_t filesize = ftell(fp);
