@@ -38,6 +38,7 @@
 #  include "Fl_Export.H"
 
 /** \addtogroup filenames File names and URI utility functions 
+ File names and URI functions defined in <FL/filename.H>
     @{ */
 
 #  define FL_PATH_MAX 256 /**< all path buffers should use this length */
