@@ -958,15 +958,16 @@ int fl_handle(const XEvent& thisevent)
 #ifndef X_HAVE_UTF8_STRING
       text_list = (char**)&portion;
 #else
-      int list_count;
+      int list_count = 0;
       Xutf8TextPropertyToTextList(fl_display, (const XTextProperty*)&text_prop, &text_list, &list_count);
+      if (list_count == 0) text_list = (char**)&portion;
 #endif
       int bytesnew = strlen(*text_list)+1; 
       buffer = (unsigned char*)realloc(buffer, bytesread+bytesnew+remaining);
       memcpy(buffer+bytesread, *text_list, bytesnew);
       XFree(portion); 
 #ifdef X_HAVE_UTF8_STRING
-      XFreeStringList(text_list);
+      if (list_count > 0) XFreeStringList(text_list);
 #endif
       bytesread += bytesnew - 1;
       if (!remaining) break;
