@@ -1518,8 +1518,7 @@ int Fl_Text_Buffer::findchar_backward(int startPos, unsigned int searchChar,
  Insert text from a file.
  Unicode safe. Input must be correct UTF-8!
  */
-int Fl_Text_Buffer::insertfile(const char *file, int pos, int /*buflen*/)
-{
+int Fl_Text_Buffer::insertfile(const char *file, int pos, int /*buflen*/) {
   FILE *fp;
   if (!(fp = fl_fopen(file, "r")))
     return 1;
@@ -1528,8 +1527,11 @@ int Fl_Text_Buffer::insertfile(const char *file, int pos, int /*buflen*/)
   fseek(fp, 0, SEEK_SET);  
   if (!filesize) return 0;
   char *buffer = new char[filesize+1];
-  if (fread(buffer, 1, filesize, fp)==filesize) {
-    buffer[filesize] = (char) 0;
+  // Note: If we read Windows text files in text mode, then Windows
+  // strips the <CR>'s from the text. Hence, rsize < filesize !
+  size_t rsize = fread(buffer, 1, filesize, fp);
+  if (rsize > 0) {
+    buffer[rsize] = (char) 0;
     insert(pos, buffer);
   }
   int e = ferror(fp) ? 2 : 0;
@@ -1543,11 +1545,11 @@ int Fl_Text_Buffer::insertfile(const char *file, int pos, int /*buflen*/)
  Write text to file.
  Unicode safe.
  */
-int Fl_Text_Buffer::outputfile(const char *file, int start, int end,
-			       int buflen)
-{
+int Fl_Text_Buffer::outputfile(const char *file,
+			       int start, int end,
+			       int buflen) {
   FILE *fp;
-  if (!(fp = fl_fopen(file, "wb")))
+  if (!(fp = fl_fopen(file, "w")))
     return 1;
   for (int n; (n = min(end - start, buflen)); start += n) {
     const char *p = text_range(start, start + n);
