@@ -435,7 +435,7 @@ sudoku: sudoku.o
 
 sudoku.exe: sudoku.o sudoku.rc
 	echo Linking $@...
-	windres sudoku.rc sudokures.o
+	$(RC) sudoku.rc sudokures.o
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) sudoku.o sudokures.o -o $@ $(AUDIOLIBS) $(LINKFLTKIMG) $(LDLIBS)
 
 symbols$(EXEEXT): symbols.o

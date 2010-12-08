@@ -53,6 +53,9 @@ CXX		= @CXX@
 CC		= @CC@
 MAKEDEPEND	= @MAKEDEPEND@
 
+# (Windows) resource compiler
+RC		= @RC@
+
 # flags for C++ compiler:
 ARCHFLAGS	= @ARCHFLAGS@
 OPTIM		= @OPTIM@

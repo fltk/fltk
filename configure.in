@@ -416,6 +416,10 @@ fi
 
 AC_SUBST(LIBCOMMAND)
 
+dnl how to compile (Windows) resource files
+dnl this will only be used to create Windows .exe files
+AC_PATH_PROG(RC,windres)
+
 dnl Architecture checks...
 AC_C_BIGENDIAN
 
