@@ -113,8 +113,8 @@ Here are some of the core features unique to FLTK:
 \li Support for OpenGL overlay hardware on both X11 and WIN32, with
     emulation if none is available.
 
-\li Text widgets with Emacs key bindings, X cut & paste, and  foreign
-   letter compose!
+\li Text widgets with Emacs key bindings, X cut & paste, and support
+   for character composition.
 
 \li Compatibility header file for the GLUT library.
 
