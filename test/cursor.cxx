@@ -39,7 +39,7 @@ Fl_Cursor cursor = FL_CURSOR_DEFAULT;
 Fl_Hor_Value_Slider *cursor_slider;
 
 void choice_cb(Fl_Widget *, void *v) {
-  cursor = (Fl_Cursor)(long)v;
+  cursor = (Fl_Cursor)(fl_intptr_t)v;
   cursor_slider->value(cursor);
   fl_cursor(cursor,fg,bg);
 }

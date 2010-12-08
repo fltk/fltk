@@ -1142,7 +1142,7 @@ static Fl_Menu_Item alignmenu[] = {
 {0}};
 
 void align_cb(Fl_Button* i, void *v) {
-  Fl_Align b = Fl_Align(long(i->user_data()));
+  Fl_Align b = Fl_Align(fl_uintptr_t(i->user_data()));
   if (v == LOAD) {
     if (current_widget->is_menu_item()) {i->deactivate(); return;} else i->activate();
     i->value(current_widget->o->align() & b);
@@ -1190,7 +1190,7 @@ void align_position_cb(Fl_Choice *i, void *v) {
     }
   } else {
     const Fl_Menu_Item *mi = i->menu() + i->value();
-    Fl_Align b = Fl_Align(long(mi->user_data()));
+    Fl_Align b = Fl_Align(fl_uintptr_t(mi->user_data()));
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
@@ -1219,7 +1219,7 @@ void align_text_image_cb(Fl_Choice *i, void *v) {
     }
   } else {
     const Fl_Menu_Item *mi = i->menu() + i->value();
-    Fl_Align b = Fl_Align(long(mi->user_data()));
+    Fl_Align b = Fl_Align(fl_uintptr_t(mi->user_data()));
     int mod = 0;
     for (Fl_Type *o = Fl_Type::first; o; o = o->next) {
       if (o->selected && o->is_widget()) {
@@ -1311,7 +1311,7 @@ void user_data_type_cb(Fl_Input *i, void *v) {
 // "v_attributes" let user type in random code for attribute settings:
 
 void v_input_cb(Fl_Input* i, void* v) {
-  int n = int(long(i->user_data()));
+  int n = fl_intptr_t(i->user_data());
   if (v == LOAD) {
     i->static_value(current_widget->extra_code(n));
   } else {

@@ -33,6 +33,18 @@
 
 #include "Enumerations.H"
 
+/**
+  \todo	typedef's fl_intptr_t and fl_uintptr_t should be documented.
+*/
+#ifdef _WIN64
+#include <stdint.h>
+typedef intptr_t fl_intptr_t;
+typedef uintptr_t fl_uintptr_t;
+#else
+typedef long fl_intptr_t;
+typedef unsigned long fl_uintptr_t;
+#endif
+
 class Fl_Widget;
 class Fl_Window;
 class Fl_Group;
@@ -587,7 +599,7 @@ public:
 
   /** Gets the current user data (long) argument that is passed to the callback function.
    */
-  long argument() const {return (long)user_data_;}
+  long argument() const {return (long)(fl_intptr_t)user_data_;}
 
   /** Sets the current user data (long) argument that is passed to the callback function.
       \todo The user data value must be implemented using a \em union to avoid 

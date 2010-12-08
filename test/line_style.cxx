@@ -58,9 +58,9 @@ void test_box::draw() {
   dashes[3] = char(sliders[8]->value());
   dashes[4] = 0;
   fl_line_style(
-    (long)(choice[0]->mvalue()->user_data()) +
-    (long)(choice[1]->mvalue()->user_data()) +
-    (long)(choice[2]->mvalue()->user_data()),
+    (long)(choice[0]->mvalue()->argument()) +
+    (long)(choice[1]->mvalue()->argument()) +
+    (long)(choice[2]->mvalue()->argument()),
     (long)(sliders[3]->value()), // width
     dashes);
 

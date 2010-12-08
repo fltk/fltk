@@ -109,14 +109,14 @@ int main(int argc, char** argv) {
     for (int i = 0; i < window->children(); i++) {
       Fl_Widget* b = window->child(i);
       if (b->callback() == (Fl_Callback*)key_cb) {
-	int i = (long)b->user_data();
+	int i = b->argument();
 	if (!i) i = b->label()[0];
         Fl_Button *btn = ((Fl_Button*)b);
         int state = Fl::event_key(i);
         if (btn->value()!=state)
 	  btn->value(state);
       } else if (b->callback() == (Fl_Callback*)shift_cb) {
-	int i = (long)b->user_data();
+	int i = b->argument();
         Fl_Button *btn = ((Fl_Button*)b);
         int state = Fl::event_state(i);
         if (btn->value()!=state)

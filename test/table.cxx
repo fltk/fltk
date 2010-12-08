@@ -273,19 +273,19 @@ char *itoa(int val)
 
 void tablebox_choice_cb(Fl_Widget *w, void *data)
 {
-    G_table->table_box((Fl_Boxtype)(long)data);
+    G_table->table_box((Fl_Boxtype)(fl_intptr_t)data);
     G_table->redraw();
 }
 
 void widgetbox_choice_cb(Fl_Widget *w, void *data)
 {
-    G_table->box((Fl_Boxtype)(long)data);
+    G_table->box((Fl_Boxtype)(fl_intptr_t)data);
     G_table->resize(G_table->x(), G_table->y(), G_table->w(), G_table->h());
 }
 
 void type_choice_cb(Fl_Widget *w, void *data)
 {
-    G_table->type((Fl_Table_Row::TableRowSelectMode)(long)data);
+    G_table->type((Fl_Table_Row::TableRowSelectMode)(fl_intptr_t)data);
 }
 
 Fl_Menu_Item tablebox_choices[] = {

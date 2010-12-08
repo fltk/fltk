@@ -31,7 +31,6 @@
 
 #ifndef FL_DOXYGEN
 #include <FL/Fl.H>
-#include <FL/x.H>
 #include <FL/fl_utf8.h>
 #include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
@@ -46,13 +45,8 @@
 #ifdef __CYGWIN__
 #  include <sys/time.h>
 #  include <unistd.h>
-#else
-# if !defined(USE_WSOCK1)
-#  include <winsock2.h>
-#else
-#  include <winsock.h>
-# endif
 #endif
+// note: the corresponding winsock*.h has been #include'd in Fl.cxx
 #if !defined(USE_WSOCK1)
 #  define WSCK_DLL_NAME "WS2_32.DLL"
 #else
@@ -60,6 +54,7 @@
 #endif
 #include <winuser.h>
 #include <commctrl.h>
+#include <FL/x.H>
 
 #if defined(__GNUC__)
 # include <wchar.h>

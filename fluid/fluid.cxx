@@ -1978,7 +1978,7 @@ FILE * Fl_Process::popen(const char *cmd, const char *mode) {
     // don't need theses handles inherited by child process:
     clean_close(pin[0]); clean_close(pout[1]); clean_close(perr[1]);
     HANDLE & h = *mode == 'r' ? pout[0] : pin[1];
-    _fpt = _fdopen(_open_osfhandle((long) h,_O_BINARY),mode);
+    _fpt = _fdopen(_open_osfhandle((fl_intptr_t) h,_O_BINARY),mode);
     h= INVALID_HANDLE_VALUE;  // reset the handle pointer that is shared
     // with _fpt so we don't free it twice
   }

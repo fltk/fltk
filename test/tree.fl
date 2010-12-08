@@ -152,7 +152,7 @@ Fl_Tree_Item *item = tree->callback_item();
 if ( item ) {
   fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld reason=%s\\n",
           item->label(),
-          (long)tree->user_data(),
+          (long)(fl_intptr_t)tree->user_data(),
 	  reason_as_name(tree->callback_reason()));
 } else {
   fprintf(stderr, "TREE CALLBACK: reason=%s item=(no item -- probably multiple items were changed at once)\\n",

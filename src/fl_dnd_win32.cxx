@@ -41,8 +41,6 @@
 #if defined(__CYGWIN__)
 #include <sys/time.h>
 #include <unistd.h>
-#else
-#include <winsock2.h>
 #endif
 
 extern char *fl_selection_buffer[2];

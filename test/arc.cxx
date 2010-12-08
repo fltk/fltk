@@ -66,7 +66,7 @@ Drawing *d;
 
 void slider_cb(Fl_Widget* o, void* v) {
   Fl_Slider* s = (Fl_Slider*)o;
-  args[long(v)] = s->value();
+  args[fl_intptr_t(v)] = s->value();
   d->redraw();
 }
 
