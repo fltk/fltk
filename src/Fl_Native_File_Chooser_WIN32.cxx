@@ -50,6 +50,7 @@ char *wchartoutf8(LPCWSTR in);  //MG
 void fl_OleInitialize();	// in Fl.cxx (Windows only)
 
 // STATIC: PRINT WINDOWS 'DOUBLE NULL' STRING (DEBUG)
+#ifdef DEBUG
 static void dnullprint(char *wp) {
   if ( ! wp ) return;
   for ( int t=0; true; t++ ) {
@@ -64,6 +65,7 @@ static void dnullprint(char *wp) {
     }
   }
 }
+#endif
 
 // RETURN LENGTH OF DOUBLENULL STRING
 //    Includes single nulls in count, excludes trailing doublenull.
@@ -633,9 +635,9 @@ void Fl_Native_File_Chooser::add_filter(const char *name_in,	// name of filter (
   // No name? Make one..
   char name[1024];
   if ( !name_in || name_in[0] == '\0' ) {
-    sprintf(name, "%.*s Files", sizeof(name)-10, winfilter);
+    sprintf(name, "%.*s Files", int(sizeof(name)-10), winfilter);
   } else {
-    sprintf(name, "%.*s", sizeof(name)-10, name_in);
+    sprintf(name, "%.*s", int(sizeof(name)-10), name_in);
   }
   dnullcat(_parsedfilt, name);
   dnullcat(_parsedfilt, winfilter);

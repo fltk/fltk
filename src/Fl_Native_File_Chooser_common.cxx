@@ -56,6 +56,7 @@ static char *strfree(char *val) {
 //	char *s = strnew("foo");	// s = "foo"
 //      s = strapp(s, "bar");		// s = "foobar"
 //
+#if !defined(WIN32)
 static char *strapp(char *s, const char *val) {
   if ( ! val ) {
     return(s);			// Nothing to append? return s
@@ -69,6 +70,7 @@ static char *strapp(char *s, const char *val) {
   delete [] s;			// delete old string
   return(news);			// return new copy
 }
+#endif
 
 // APPEND A CHARACTER TO A STRING
 //     This does NOT allocate space for the new character.
