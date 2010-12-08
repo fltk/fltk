@@ -842,8 +842,8 @@ Fl_File_Chooser::fileNameCB()
     // Enter pressed - select or change directory...
 #if (defined(WIN32) && ! defined(__CYGWIN__)) || defined(__EMX__)
     if ((isalpha(pathname[0] & 255) && pathname[1] == ':' && !pathname[2]) ||
-        _fl_filename_isdir_quick(pathname) &&
-	compare_dirnames(pathname, directory_)) {
+        (_fl_filename_isdir_quick(pathname) &&
+	 compare_dirnames(pathname, directory_))) {
 #else
     if (_fl_filename_isdir_quick(pathname) &&
 	compare_dirnames(pathname, directory_)) {

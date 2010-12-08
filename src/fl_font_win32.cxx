@@ -347,7 +347,7 @@ void Fl_Graphics_Driver::draw(const char* str, int n, int x, int y) {
 //  int l = fl_utf2ucs((const unsigned char*)str + i, n - i, &u);
     int l;
     u = fl_utf8decode((const char*)(str + i), end, &l);
-    if (u1 = fl_nonspacing(u)) {
+    if ( (u1 = fl_nonspacing(u)) ) {
       x -= lx;
 	  u = u1;
     } else {

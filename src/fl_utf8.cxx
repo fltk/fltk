@@ -420,9 +420,10 @@ static char *buf = NULL;
 static int buf_len = 0;
 static unsigned short *wbufa = NULL;
 
+// FIXME: This should *maybe* return 'const char *' instead of 'char *'
 char *fl_utf8_to_locale(const char *s, int len, UINT codepage)
 {
-	if (!s) return "";
+	if (!s) return (char *)"";
 	int l = 0;
 //	if (buf_len < len * 2 + 1) {
 //		buf_len = len * 2 + 1;
@@ -447,9 +448,10 @@ char *fl_utf8_to_locale(const char *s, int len, UINT codepage)
 	return buf;
 }
 
+// FIXME: This should maybe return 'const char *' instead of 'char *'
 char *fl_locale_to_utf8(const char *s, int len, UINT codepage)
 {
-	if (!s) return "";
+	if (!s) return (char *)"";
 	int l = 0;
 	if (buf_len < len * 5 + 1) {
 		buf_len = len * 5 + 1;
