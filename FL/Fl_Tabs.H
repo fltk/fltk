@@ -38,8 +38,8 @@
   interface that allows you to put lots and lots of buttons and
   switches in a panel, as popularized by many toolkits.
   
-  \image html  tabs.gif
-  \image latex tabs.eps "Fl_Tabs" width=8cm
+  \image html  tabs.png
+  \image latex tabs.png "Fl_Tabs" width=8cm
   
   Clicking the tab makes a child visible() by calling
   show() on it, and all other children are made invisible

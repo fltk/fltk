@@ -53,12 +53,12 @@
 
   \htmlonly <BR>  <table align=CENTER border=1 cellpadding=5 >  
   <caption align=bottom>type() FL_SQUARE_CLOCK and FL_ROUND_CLOCK </caption> <TR><TD> \endhtmlonly
-  \image html clock.gif  
+  \image html clock.png  
   \htmlonly </TD> <TD> \endhtmlonly
-  \image html round_clock.gif 
+  \image html round_clock.png 
   \htmlonly </TD> </TR> </table> \endhtmlonly
-  \image latex clock.eps "FL_SQUARE_CLOCK type" width=4cm
-  \image latex round_clock.eps "FL_ROUND_CLOCK type" width=4cm
+  \image latex clock.png "FL_SQUARE_CLOCK type" width=4cm
+  \image latex round_clock.png "FL_ROUND_CLOCK type" width=4cm
  */
 class FL_EXPORT Fl_Clock_Output : public Fl_Widget {
   int hour_, minute_, second_;
@@ -112,12 +112,12 @@ public:
   You can choose the rounded or square type of the clock with type(), see below.
   \htmlonly <BR>  <table align=CENTER border=1 cellpadding=5 >  
   <caption align=bottom>type() FL_SQUARE_CLOCK and FL_ROUND_CLOCK </caption> <TR><TD> \endhtmlonly
-  \image html clock.gif  
+  \image html clock.png  
   \htmlonly </TD> <TD> \endhtmlonly
-  \image html round_clock.gif 
+  \image html round_clock.png 
   \htmlonly </TD> </TR> </table> \endhtmlonly
-  \image latex clock.eps "FL_SQUARE_CLOCK type" width=4cm  
-  \image latex round_clock.eps "FL_ROUND_CLOCK type" width=4cm
+  \image latex clock.png "FL_SQUARE_CLOCK type" width=4cm  
+  \image latex round_clock.png "FL_ROUND_CLOCK type" width=4cm
  */
 class FL_EXPORT Fl_Clock : public Fl_Clock_Output {
 public:

@@ -36,8 +36,8 @@
 /**
   The Fl_Value_Slider widget is a Fl_Slider widget
   with a box displaying the current value.
-  <P ALIGN=CENTER>\image html value_slider.gif 
-  \image latex  value_slider.eps "Fl_Value_Slider" width=4cm
+  <P ALIGN=CENTER>\image html value_slider.png 
+  \image latex  value_slider.png "Fl_Value_Slider" width=4cm
 */
 class FL_EXPORT Fl_Value_Slider : public Fl_Slider {
     Fl_Font textfont_;

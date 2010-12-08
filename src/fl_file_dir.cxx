@@ -67,7 +67,7 @@ void fl_file_chooser_ok_label(const char *l) {
     Shows a file chooser dialog and gets a filename. 
     \note \#include <FL/Fl_File_Chooser.H>
     \image html Fl_File_Chooser.jpg 
-    \image latex  Fl_File_Chooser.eps "Fl_File_Chooser" width=12cm
+    \image latex  Fl_File_Chooser.jpg "Fl_File_Chooser" width=12cm
     \param[in] message text in title bar
     \param[in] pat filename pattern filter
     \param[in] fname initial/default filename selection

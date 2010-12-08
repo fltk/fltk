@@ -39,8 +39,8 @@
   larger than your window.  If the child widgets are larger than the size
   of this object then scrollbars will appear so that you can scroll over
   to them:
-  \image html Fl_Scroll.gif
-  \image latex  Fl_Scroll.eps "Fl_Scroll" width=4cm
+  \image html Fl_Scroll.png
+  \image latex  Fl_Scroll.png "Fl_Scroll" width=4cm
 
   If all of the child widgets are packed together into a solid
   rectangle then you want to set box() to FL_NO_BOX or

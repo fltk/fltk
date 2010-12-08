@@ -23,8 +23,8 @@ FLTK provides many types of buttons:
 
 \li Fl_Round_Button - A button with a radio circle.
 
-\image html buttons.gif "Figure 3-1: FLTK Button Widgets"
-\image latex buttons.eps "FLTK Button Widgets" width=10cm
+\image html buttons.png "Figure 3-1: FLTK Button Widgets"
+\image latex buttons.png "FLTK Button Widgets" width=10cm
 
 All of these buttons just need the corresponding
 <tt><FL/Fl_xyz_Button.H></tt> header file. The constructor
@@ -110,8 +110,8 @@ strings. FLTK provides the following valuators:
 
 \li Fl_Value_Slider - A slider that shows the current value.
 
-\image html valuators.gif "Figure 3-2: FLTK valuator widgets"
-\image latex valuators.eps "FLTK valuator widgets" width=10cm
+\image html valuators.png "Figure 3-2: FLTK valuator widgets"
+\image latex valuators.png "FLTK valuator widgets" width=10cm
 
 The \p value() method gets and sets the current value 
 of the widget. The \p minimum() and \p maximum()
@@ -251,8 +251,8 @@ is an enumeration defined in Enumerations.H.
 
 Figure 3-3 shows the standard box types included with FLTK.
 
-\image html boxtypes.gif "Figure 3-3: FLTK box types"
-\image latex boxtypes.eps "FLTK box types" width=12cm
+\image html boxtypes.png "Figure 3-3: FLTK box types"
+\image latex boxtypes.png "FLTK box types" width=12cm
 
 \p FL_NO_BOX means nothing is drawn at all, so whatever is
 already on the screen remains. The <tt>FL_..._FRAME</tt> types only
@@ -360,8 +360,8 @@ for the label. Symbols can be included with the label string by
 escaping them using the "@" symbol - "@@" displays a single at
 sign. Figure 3-4 shows the available symbols.
 
-\image html symbols.gif "Figure 3-4: FLTK label symbols"
-\image latex symbols.eps "FLTK label symbols" width=10cm
+\image html symbols.png "Figure 3-4: FLTK label symbols"
+\image latex symbols.png "FLTK label symbols" width=10cm
 
 <!-- NEED 2in -->
 

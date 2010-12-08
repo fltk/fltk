@@ -44,8 +44,8 @@
   <P>This is much lighter-weight than 
   Fl_Value_Input because it contains no text editing code or
   character buffer. </P>
-  <P ALIGN=CENTER>\image html Fl_Value_Output.gif 
-  \image latex  Fl_Value_Output.eps "Fl_Value_Output" width=8cm
+  <P ALIGN=CENTER>\image html Fl_Value_Output.png 
+  \image latex  Fl_Value_Output.png "Fl_Value_Output" width=8cm
 */
 class FL_EXPORT Fl_Value_Output : public Fl_Valuator {
   Fl_Font textfont_;

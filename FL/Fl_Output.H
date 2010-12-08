@@ -38,8 +38,8 @@
   which is useful for program-generated values.  The user may select
   portions of the text using the mouse and paste the contents into other
   fields or programs.
-  <P align=CENTER>\image html text.gif</P> 
-  \image latex text.eps "Fl_Output" width=8cm
+  <P align=CENTER>\image html text.png</P> 
+  \image latex text.png "Fl_Output" width=8cm
   <P>There is a single subclass, 
   Fl_Multiline_Output, which allows you to display multiple lines of
   text. Fl_Multiline_Output does not provide scroll bars. If a more 

@@ -40,8 +40,8 @@
   It would be useful if this could be put atop another widget so that the
   crosshairs are on top, but this is not implemented.  The color of the
   crosshairs is selection_color().
-  <P ALIGN=CENTER>\image html  positioner.gif </P> 
-  \image latex  positioner.eps " Fl_Positioner" width=4cm
+  <P ALIGN=CENTER>\image html  positioner.png </P> 
+  \image latex  positioner.png " Fl_Positioner" width=4cm
 */
 class FL_EXPORT Fl_Positioner : public Fl_Widget {
 

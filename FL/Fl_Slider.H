@@ -64,8 +64,8 @@
   \li FL_HOR_NICE_SLIDER - Draws a horizontal slider with  a
       nice looking control knob.
 
-  \image html  slider.gif 
-  \image latex slider.eps "Fl_Slider" width=4cm
+  \image html  slider.png 
+  \image latex slider.png "Fl_Slider" width=4cm
 */
 class FL_EXPORT Fl_Slider : public Fl_Valuator {
 

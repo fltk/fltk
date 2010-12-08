@@ -45,8 +45,8 @@
   Controls a single floating point value with button (or keyboard) arrows.
   Double arrows buttons achieve larger steps than simple arrows.
   \see Fl_Spinner for value input with vertical step arrows.
-  <P align=center>\image html counter.gif</P>
-  \image latex counter.eps "Fl_Counter" width=4cm
+  <P align=center>\image html counter.png</P>
+  \image latex counter.png "Fl_Counter" width=4cm
 
   \todo Refactor the doxygen comments for Fl_Counter type() documentation.
 

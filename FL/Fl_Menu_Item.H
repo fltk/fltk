@@ -102,8 +102,8 @@ class Fl_Menu_;
   \endcode
   produces:
 
-  \image html   menu.gif
-  \image latex  menu.eps "menu" width=10cm
+  \image html   menu.png
+  \image latex  menu.png "menu" width=10cm
 
   A submenu title is identified by the bit FL_SUBMENU in the 
   flags field, and ends with a label() that is NULL.

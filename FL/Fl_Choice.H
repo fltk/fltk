@@ -64,8 +64,8 @@
   you pick the item with the mouse.  The '\&' character in item names are
   only looked at when the menu is popped up, however.
 
-  \image html choice.gif
-  \image latex choice.eps  "Fl_Choice" width=4cm
+  \image html choice.png
+  \image latex choice.png  "Fl_Choice" width=4cm
   \todo Refactor the doxygen comments for Fl_Choice changed() documentation.
 
   \li <tt>int Fl_Widget::changed() const</tt>

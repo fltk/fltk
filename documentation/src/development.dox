@@ -28,11 +28,11 @@ as a temporary solution.
   The time shown on the clock is not updated. To display the current time,
   use Fl_Clock instead.
 
-  \image html clock.gif 
-  \image latex clock.eps "" width=10cm 
-  \image html round_clock.gif
-  \image latex clock.eps "" width=10cm 
-  \image html round_clock.eps "" width=10cm #/
+  \image html clock.png 
+  \image latex clock.png "" width=10cm 
+  \image html round_clock.png
+  \image latex clock.png "" width=10cm 
+  \image html round_clock.png "" width=10cm #/
 
   /##
     Returns the displayed time.
@@ -352,8 +352,8 @@ The above code produces the following paragraphs:
 	Find out, how this can be done, or avoid using an image in
 	the HTML footer.
 
-  \image html tiny.gif
-  \image latex tiny.eps "" width=2cm	
+  \image html tiny.png
+  \image latex tiny.png "" width=2cm	
 
 \section development_navigation_test Navigation Elements
 

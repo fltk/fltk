@@ -34,7 +34,7 @@
   dialog that supports various selection modes.
   
   \image html Fl_File_Chooser.jpg 
-  \image latex  Fl_File_Chooser.eps "Fl_File_Chooser" width=12cm
+  \image latex  Fl_File_Chooser.jpg "Fl_File_Chooser" width=12cm
   
   The Fl_File_Chooser class also exports several static values
   that may be used to localize or customize the appearance of all file chooser

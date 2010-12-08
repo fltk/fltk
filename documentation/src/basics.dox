@@ -73,8 +73,8 @@ The resulting program will display the window in Figure 2-1.
 You can quit the program by closing the window or pressing the
 <tt>ESC</tt>ape key.
 
-\image html hello.C.gif "Figure 2-1: The Hello, World! Window"
-\image latex hello.C.eps "The Hello, World! Window" width=8cm
+\image html hello.C.png "Figure 2-1: The Hello, World! Window"
+\image latex hello.C.png "The Hello, World! Window" width=8cm
 
 \subsection basics_creating Creating the Widgets
 

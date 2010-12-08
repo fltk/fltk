@@ -41,8 +41,8 @@
 
   Buttons generate callbacks when they are clicked by the user.  You
   control exactly when and how by changing the values for type() and when().
-  <P ALIGN=CENTER>\image html Fl_Light_Button.gif</P> 
-  \image latex Fl_Light_Button.eps "Fl_Light_Button" width=4cm
+  <P ALIGN=CENTER>\image html Fl_Light_Button.png</P> 
+  \image latex Fl_Light_Button.png "Fl_Light_Button" width=4cm
 */
 class FL_EXPORT Fl_Light_Button : public Fl_Button {
 protected:

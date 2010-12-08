@@ -435,8 +435,8 @@ enum Fl_When { // Fl_Widget::when():
     leaving the interior unchanged. The blue color in Figure 1 
     is the area that is not drawn by the frame types.
     
-    \image html boxtypes.gif "Figure 1: FLTK standard box types"
-    \image latex boxtypes.eps "FLTK standard box types" width=10cm
+    \image html boxtypes.png "Figure 1: FLTK standard box types"
+    \image latex boxtypes.png "FLTK standard box types" width=10cm
     \todo	Description of boxtypes is incomplete.
     		See below for the defined enum Fl_Boxtype.
 		\see src/Fl_get_system_colors.cxx

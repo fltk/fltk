@@ -28,9 +28,6 @@
 # Get configuration stuff...
 include ../makeinclude
 
-# The following appends to the existing .SUFFIXES
-.SUFFIXES: .gif .jpg .png .eps
-
 SRC_DOCDIR      = 	./src
 
 # These are the HTML "source" files...
@@ -126,74 +123,6 @@ IMAGEFILES	= \
 		$(SRC_DOCDIR)/valuators.gif \
 		$(SRC_DOCDIR)/value_slider.gif
 
-EPSFILES =	\
-		$(SRC_DOCDIR)/FL200.eps\
-		$(SRC_DOCDIR)/Fl_Check_Button.eps \
-		$(SRC_DOCDIR)/Fl_File_Chooser.eps \
-		$(SRC_DOCDIR)/Fl_File_Input.eps \
-		$(SRC_DOCDIR)/Fl_Help_Dialog.eps \
-		$(SRC_DOCDIR)/Fl_Light_Button.eps \
-		$(SRC_DOCDIR)/Fl_Return_Button.eps \
-		$(SRC_DOCDIR)/Fl_Roller.eps \
-		$(SRC_DOCDIR)/Fl_Round_Button.eps \
-		$(SRC_DOCDIR)/Fl_Scroll.eps \
-		$(SRC_DOCDIR)/Fl_Tile.eps \
-		$(SRC_DOCDIR)/Fl_Value_Input.eps \
-		$(SRC_DOCDIR)/Fl_Value_Output.eps \
-		$(SRC_DOCDIR)/adjuster1.eps \
-		$(SRC_DOCDIR)/boxtypes.eps \
-		$(SRC_DOCDIR)/buttons.eps \
-		$(SRC_DOCDIR)/charts.eps \
-		$(SRC_DOCDIR)/choice.eps \
-		$(SRC_DOCDIR)/clock.eps \
-		$(SRC_DOCDIR)/counter.eps \
-		$(SRC_DOCDIR)/cubeview.eps \
-		$(SRC_DOCDIR)/dial.eps \
-		$(SRC_DOCDIR)/editor-replace.eps \
-		$(SRC_DOCDIR)/editor.eps \
-		$(SRC_DOCDIR)/fl_alert.eps \
-		$(SRC_DOCDIR)/fl_ask.eps \
-		$(SRC_DOCDIR)/fl_choice.eps \
-		$(SRC_DOCDIR)/fl_color_chooser.eps \
-		$(SRC_DOCDIR)/fl_input.eps \
-		$(SRC_DOCDIR)/fl_message.eps \
-		$(SRC_DOCDIR)/fl_password.eps \
-		$(SRC_DOCDIR)/fl_show_colormap.eps \
-		$(SRC_DOCDIR)/fluid-catgets.eps \
-		$(SRC_DOCDIR)/fluid-gettext.eps \
-		$(SRC_DOCDIR)/fluid-org.eps \
-		$(SRC_DOCDIR)/fluid1.eps \
-		$(SRC_DOCDIR)/fluid2.eps \
-		$(SRC_DOCDIR)/fluid3-cxx.eps \
-		$(SRC_DOCDIR)/fluid3-gui.eps \
-		$(SRC_DOCDIR)/fluid3-style.eps \
-		$(SRC_DOCDIR)/fluid4.eps \
-		$(SRC_DOCDIR)/fluid_prefs.eps \
-		$(SRC_DOCDIR)/fluid_widget_cxx.eps \
-		$(SRC_DOCDIR)/fluid_widget_gui.eps \
-		$(SRC_DOCDIR)/fluid_widget_style.eps \
-		$(SRC_DOCDIR)/hello.C.eps \
-		$(SRC_DOCDIR)/input_choice.eps \
-		$(SRC_DOCDIR)/menu.eps \
-		$(SRC_DOCDIR)/menu_button.eps \
-		$(SRC_DOCDIR)/menubar.eps \
-		$(SRC_DOCDIR)/positioner.eps \
-		$(SRC_DOCDIR)/resizebox1.eps \
-		$(SRC_DOCDIR)/resizebox2.eps \
-		$(SRC_DOCDIR)/round_clock.eps \
-		$(SRC_DOCDIR)/scrollbar.eps \
-		$(SRC_DOCDIR)/slider.eps \
-		$(SRC_DOCDIR)/symbols.eps \
-		$(SRC_DOCDIR)/table-as-container.eps \
-		$(SRC_DOCDIR)/table-dimensions.eps \
-		$(SRC_DOCDIR)/table-simple.eps \
-		$(SRC_DOCDIR)/tabs.eps \
-		$(SRC_DOCDIR)/text.eps \
-		$(SRC_DOCDIR)/tiny.eps \
-		$(SRC_DOCDIR)/tree-elements.eps \
-		$(SRC_DOCDIR)/valuators.eps \
-		$(SRC_DOCDIR)/value_slider.eps
-
 MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 		$(SRC_DOCDIR)/fluid.$(CAT1EXT) $(SRC_DOCDIR)/blocks.$(CAT6EXT) \
 		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT)
@@ -260,19 +189,6 @@ uninstall-linux uninstall-osx:
 	$(RM) $(DESTDIR)$(mandir)/man6/checkers.6
 	$(RM) $(DESTDIR)$(mandir)/man6/sudoku.6
 
-# Image -> eps conversions
-.gif.eps:
-	echo Creating eps for $<...
-	convert $< $@
-
-.jpg.eps:
-	echo Creating eps for $<...
-	convert $< $@
-
-.png.eps:
-	echo Creating eps for $<...
-	convert $< $@
-
 # The HTML files are now generated using doxygen, and this needs
 # an installed doxygen version and may take some time, so this target
 # is not made by default.
@@ -297,7 +213,7 @@ pdf-dist: latex/refman.pdf
 
 pdf: 	latex/refman.pdf
 
-latex/refman.pdf: latex/refman.tex Doxybook $(EPSFILES)
+latex/refman.pdf: latex/refman.tex Doxybook
 	echo "Generating PDF documentation ..."
 	$(DOXYDOC) Doxybook ;\
 	(cd latex ;\
@@ -314,7 +230,7 @@ latex/refman.pdf: latex/refman.tex Doxybook $(EPSFILES)
 	    done ; \
 	cd ..) > pdfall.log
 
-latex/refman.tex: Doxybook $(EPSFILES)
+latex/refman.tex: Doxybook
 
 #
 # End of "$Id$".

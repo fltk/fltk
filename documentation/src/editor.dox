@@ -143,8 +143,8 @@ Fl_Input widgets, the "replace all" and
 the "replace next " button is a
 Fl_Return_Button widget:
 
-\image html editor-replace.gif "Figure 4-1: The search and replace dialog"
-\image latex editor-replace.eps "The search and replace dialog" width=10cm
+\image html editor-replace.png "Figure 4-1: The search and replace dialog"
+\image latex editor-replace.png "The search and replace dialog" width=10cm
 
 \code
 Fl_Window *replace_dlg = new Fl_Window(300, 105, "Replace");
@@ -606,8 +606,8 @@ Congratulations, you've just built your own text editor!
 
 The final editor window should look like the image in Figure 4-2.
 
-\image html editor.gif "Figure 4-2: The completed editor window"
-\image latex editor.eps "The completed editor window" width=12cm
+\image html editor.png "Figure 4-2: The completed editor window"
+\image latex editor.png "The completed editor window" width=12cm
 
 \section editor_advanced_features Advanced Features
 
