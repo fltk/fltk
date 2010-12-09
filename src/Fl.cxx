@@ -35,14 +35,10 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 
-// recent versions of MinGW warn us "Please include winsock2.h before windows.h"
-// hence we must include winsock*.h before FL/x.H (A.S. Dec. 2010)
+// recent versions of MinGW warn: "Please include winsock2.h before windows.h",
+// hence we must include winsock2.h before FL/x.H (A.S. Dec. 2010)
 #if defined(WIN32) && !defined(__CYGWIN__)
-# if !defined(USE_WSOCK1)
 #  include <winsock2.h>
-# else
-#  include <winsock.h>
-# endif
 #endif
 
 #include <FL/x.H>

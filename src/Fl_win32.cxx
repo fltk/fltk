@@ -29,6 +29,8 @@
 // in.  Search other files for "WIN32" or filenames ending in _win32.cxx
 // for other system-specific code.
 
+// This file must be #include'd in Fl.cxx and not compiled separately.
+
 #ifndef FL_DOXYGEN
 #include <FL/Fl.H>
 #include <FL/fl_utf8.h>
@@ -46,22 +48,17 @@
 #  include <sys/time.h>
 #  include <unistd.h>
 #endif
-// note: the corresponding winsock*.h has been #include'd in Fl.cxx
-#if !defined(USE_WSOCK1)
-#  define WSCK_DLL_NAME "WS2_32.DLL"
-#else
-#  define WSCK_DLL_NAME "WSOCK32.DLL"
+
+#if !defined(NO_TRACK_MOUSE)
+#include <commctrl.h>	// TrackMouseEvent
 #endif
-#include <winuser.h>
-#include <commctrl.h>
-#include <FL/x.H>
 
 #if defined(__GNUC__)
 # include <wchar.h>
 #endif
 
-#  include <ole2.h>
-#  include <shellapi.h>
+#include <ole2.h>
+#include <shellapi.h>
 
 #include "aimm.h"
 
@@ -97,12 +94,16 @@ FL_EXPORT Fl_Surface_Device *fl_surface = (Fl_Surface_Device*)fl_display_device;
 #if defined(__CYGWIN__) && !defined(SOCKET)
 # define SOCKET int
 #endif
+
+// note: winsock2.h has been #include'd in Fl.cxx
+#define WSCK_DLL_NAME "WS2_32.DLL"
+
 typedef int (WINAPI* fl_wsk_select_f)(int, fd_set*, fd_set*, fd_set*, const struct timeval*);
 typedef int (WINAPI* fl_wsk_fd_is_set_f)(SOCKET, fd_set *);
 
 static HMODULE s_wsock_mod = 0;
-static fl_wsk_select_f s_wsock_select=0;
-static fl_wsk_fd_is_set_f fl_wsk_fd_is_set=0;
+static fl_wsk_select_f s_wsock_select = 0;
+static fl_wsk_fd_is_set_f fl_wsk_fd_is_set = 0;
 
 static HMODULE get_wsock_mod() {
   if (!s_wsock_mod) {
