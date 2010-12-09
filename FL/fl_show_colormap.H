@@ -42,7 +42,7 @@
 /**
   \brief Pops up a window to let the user pick an colormap entry.
   \image html fl_show_colormap.png 
-  \image latex  fl_show_colormap.png "fl_show_colormap" width=8cm
+  \image latex  fl_show_colormap.png "fl_show_colormap" height=10cm
   \param[in] oldcol color to be highlighted when grid is shown.
   \retval Fl_Color value of the chosen colormap entry.
   \sa Fl_Color_Chooser
