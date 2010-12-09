@@ -630,7 +630,6 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
  *             BOTTOM_RIGHT   BOTTOM   BOTTOM_LEFT
  *
  *  Inside alignments:
- *  \code
  *             +---------------------------------+
  *             |TOP_LEFT       TOP      TOP_RIGHT|
  *             |                                 |
