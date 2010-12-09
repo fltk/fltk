@@ -43,6 +43,7 @@ extern Atom fl_XdndActionCopy;
 extern Atom fl_XdndFinished;
 //extern Atom fl_XdndProxy;
 extern Atom fl_XdndURIList;
+extern Atom fl_XaUtf8String;
 
 extern char fl_i_own_selection[2];
 extern char *fl_selection_buffer[2];
@@ -149,7 +150,7 @@ int Fl::dnd() {
         } else {
 	  // Send plain text...
 	  fl_sendClientMessage(target_window, fl_XdndEnter, source_window,
-			       dndversion<<24, XA_STRING, 0, 0);
+			       dndversion<<24, fl_XaUtf8String, 0, 0);
 	}
       }
     }

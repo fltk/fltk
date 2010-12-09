@@ -278,6 +278,20 @@ int fl_ready() {
 #  endif
 }
 
+// replace \r\n by \n
+static void convert_crlf(unsigned char *string, long& len)
+{
+  unsigned char *p = string, *q = p + len;
+  while (p < q) {
+    if (*p == '\r' && *(p + 1) == '\n' && p + 1 < q) {
+      memmove(p, p + 1, q - p - 1);
+      q--;
+      len--;
+      }
+    p++;
+    }
+}
+
 ////////////////////////////////////////////////////////////////
 
 Display *fl_display;
@@ -955,23 +969,15 @@ int fl_handle(const XEvent& thisevent)
       text_prop.encoding=actual;
       text_prop.nitems=count;
       char **text_list;
-#ifndef X_HAVE_UTF8_STRING
       text_list = (char**)&portion;
-#else
-      int list_count = 0;
-      Xutf8TextPropertyToTextList(fl_display, (const XTextProperty*)&text_prop, &text_list, &list_count);
-      if (list_count == 0) text_list = (char**)&portion;
-#endif
       int bytesnew = strlen(*text_list)+1; 
       buffer = (unsigned char*)realloc(buffer, bytesread+bytesnew+remaining);
       memcpy(buffer+bytesread, *text_list, bytesnew);
       XFree(portion); 
-#ifdef X_HAVE_UTF8_STRING
-      if (list_count > 0) XFreeStringList(text_list);
-#endif
       bytesread += bytesnew - 1;
       if (!remaining) break;
     }
+    convert_crlf(buffer, bytesread);
     Fl::e_text = buffer ? (char*)buffer : (char *)"";
     Fl::e_length = bytesread;
     int old_event = Fl::e_number;
