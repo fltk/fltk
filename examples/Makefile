@@ -9,6 +9,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       table-sort$(EXEEXT) \
       table-with-keyboard-nav$(EXEEXT) \
       tabs-simple$(EXEEXT) \
+      texteditor-simple$(EXEEXT) \
       tree-simple$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
