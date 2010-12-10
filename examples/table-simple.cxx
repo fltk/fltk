@@ -8,6 +8,7 @@
 //    No interaction; simple display of data only.
 //    See other examples for more complex interactions with the table.
 //
+// Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or

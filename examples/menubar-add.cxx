@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// An example of using Fl_Menu_Bar's add() to dynamically create menubars
+//	An example of using Fl_Menu_Bar's add() to dynamically create menubars
 //
 //	Menu bars can be created several ways. Using add() allows
 //	dynamically creating a menubar using a 'pathname' syntax.

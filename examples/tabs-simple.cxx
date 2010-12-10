@@ -1,9 +1,10 @@
 //
 // "$Id$"
 //
-// Simple Fl_Tabs widget example. 
-// Originally from erco's cheat sheet 06/05/2010, permission by author.
+//	Simple Fl_Tabs widget example. 
+//	Originally from erco's cheat sheet 06/05/2010, permission by author.
 //
+// Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or

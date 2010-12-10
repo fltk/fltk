@@ -1,16 +1,16 @@
 //
 // "$Id$"
 //
-//  table-sort -- An example application using a sortable Fl_Table
+//	table-sort -- An example application using a sortable Fl_Table
 //                
+//	Originally the 'sortapp.cxx' example program that came with 
+//	erco's Fl_Table widget. Added to FLTK in 2010.
+//
 //      Example of a non-trivial application that uses Fl_Table 
 //      with sortable columns. This example is not trying to be simple,
-//      but to demonstrate the complexities of an actual small app.
+//      but to demonstrate the complexities of an actual app.
 //
-// HISTORY
-//      03/18/2003 -- 'sortapp.cxx' added to the Fl_Table widget package -erco
-//      11/30/2010 -- Modified and added to FLTK examples -erco
-//
+// Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or

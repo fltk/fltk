@@ -10,7 +10,7 @@
 //	widgets; one widget per cell. This isn't optimal for large tables,
 //	where it's better to make one instance of a widget, and move it to
 //	where it's needed. For an example of this, see the example program
-//	"table-simple-spreadsheet.cxx"
+//	"table-spreadsheet.cxx".
 //
 // Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.

@@ -1,7 +1,7 @@
 //
 // "$Id$"
 //
-// A simple example of Fl_Text_Editor
+//	A simple example of Fl_Text_Editor
 //
 //	Fl_Text_Editor is unlike other FLTK widgets in that
 //	to work correctly, it must be assigned to an instance of an
