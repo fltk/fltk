@@ -64,8 +64,8 @@
  - As a custom widget; see examples/table-simple.cxx and test/table.cxx.
    Very optimal for even extremely large tables.
  - As a table made up of a single FLTK widget instanced all over the table,
-   simulating a numeric spreadsheet. See examples/table-with-keyboard-nav.cxx.
-   Optimal for large tables.
+   simulating a numeric spreadsheet. See examples/table-spreadsheet.cxx and
+   examples/table-spreadsheet-with-keyboard-nav.cxx. Optimal for large tables.
  - As a regular container of FLTK widgets, one widget per cell.
    See examples/table-as-container.cxx. \em Not recommended for large tables.
  
