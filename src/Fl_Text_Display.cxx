@@ -3660,7 +3660,8 @@ int Fl_Text_Display::handle(int event) {
     }
       
     case FL_RELEASE: {
-      if (Fl::event_is_click() && (! Fl::event_clicks()) && buffer()->primary_selection()->includes(dragPos) ) {
+      if (Fl::event_is_click() && (! Fl::event_clicks()) && 
+	  buffer()->primary_selection()->includes(dragPos) && !(Fl::event_state()&FL_SHIFT) ) {
 	buffer()->unselect(); // clicking in the selection: unselect and move cursor
 	insert_position(dragPos);
 	return 1;
