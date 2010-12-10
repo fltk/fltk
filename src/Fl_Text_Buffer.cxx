@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Text_Buffer.H>
+#include <FL/fl_ask.H>
 
 
 /*
@@ -102,6 +103,10 @@ static void undobuffersize(int n)
   }
 }
 
+static void def_transcoding_warning_action(Fl_Text_Buffer *text)
+{
+  fl_alert(text->file_encoding_warning_message);
+}
 
 /*
  Initialize all variables.
@@ -128,6 +133,8 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
   mPredeleteCbArgs = NULL;
   mCursorPosHint = 0;
   mCanUndo = 1;
+  input_file_was_reencoded = 0;
+  transcoding_warning_action = def_transcoding_warning_action;
 }
 
 
@@ -1513,30 +1520,174 @@ int Fl_Text_Buffer::findchar_backward(int startPos, unsigned int searchChar,
   return 0;
 }
 
+//#define FIXED_LENGTH_ENCODING // shows how to process any fixed-length encoding
+#ifdef FIXED_LENGTH_ENCODING 
+
+// returns the UCS equivalent of *p in CP1252 and advances p by 1
+unsigned cp1252toucs(char* &p)
+{
+  // Codes 0x80..0x9f from the Microsoft CP1252 character set, translated
+  // to Unicode
+  static unsigned cp1252[32] = {
+    0x20ac, 0x0081, 0x201a, 0x0192, 0x201e, 0x2026, 0x2020, 0x2021,
+    0x02c6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008d, 0x017d, 0x008f,
+    0x0090, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014,
+    0x02dc, 0x2122, 0x0161, 0x203a, 0x0153, 0x009d, 0x017e, 0x0178
+  };
+  unsigned char uc = *(unsigned char*)p;
+  p++;
+  return (uc < 0x80 || uc >= 0xa0 ? uc : cp1252[uc - 0x80]);
+}
+
+// returns the UCS equivalent of *p in UTF-16 and advances p by 2
+unsigned utf16toucs(char* &p)
+{
+  union {
+#if WORDS_BIGENDIAN
+    struct { unsigned char a, b;} chars;
+#else
+    struct { unsigned char b, a;} chars;
+#endif
+    U16 short_val;
+  } u;
+  u.chars.a = *(unsigned char*)p++;
+  u.chars.b = *(unsigned char*)p++;
+  return u.short_val;
+}
+
+// filter that produces, from an input stream fed by reading from fp,
+// a UTF-8-encoded output stream written in buffer.
+// Input can be any fixed-length (e.g., 8-bit, UTF-16) encoding.
+// Output is true UTF-8.
+// p_trf points to a function that transforms encoded byte(s) into UCS
+// and that increases the pointer by the adequate quantity
+static int fixed_length_input_filter(char *buffer, int buflen, 
+				 char *line, int sline, char* &endline, 
+				 unsigned (*p_trf)(char* &),
+				 FILE *fp)
+{
+  char *p, *q, multibyte[5];
+  int lq, r, offset;
+  p = endline = line;
+  q = buffer;
+  while (q < buffer + buflen) {
+    if (p >= endline) {
+      r = fread(line, 1, sline, fp);
+      endline = line + r; 
+      if (r == 0) return q - buffer;
+      p = line;
+    }
+    if (q + 4 /*max width of utf-8 char*/ > buffer + buflen) {
+      memmove(line, p, endline - p);
+      endline -= (p - line);
+      return q - buffer;
+    }
+    lq = fl_utf8encode( p_trf(p), multibyte );
+    memcpy(q, multibyte, lq);
+    q += lq; 
+  }
+  memmove(line, p, endline - p);
+  endline -= (p - line);
+  return q - buffer;
+}
+#endif // FIXED_LENGTH_ENCODING
+
+/*
+ filter that produces, from an input stream fed by reading from fp,
+ a UTF-8-encoded output stream written in buffer.
+ Input can be UTF-8. If it is not, it is decoded with CP1252.
+ Output is UTF-8.
+ *input_was_changed is set to true if the input was not strict UTF-8 so output
+ differs from input.
+ */
+static int utf8_input_filter(char *buffer, int buflen, char *line, int sline, char* &endline, 
+	      FILE *fp, int *input_was_changed)
+{
+  char *p, *q, multibyte[5];
+  int l, lp, lq, r;
+  unsigned u;
+  p = endline = line;
+  q = buffer;
+  while (q < buffer + buflen) {
+    if (p >= endline) {
+      r = fread(line, 1, sline, fp);
+      endline = line + r; 
+      if (r == 0) return q - buffer;
+      p = line;
+    }
+    l = fl_utf8len1(*p);
+    if (p + l > endline) {
+      memmove(line, p, endline - p);
+      endline -= (p - line);
+      r = fread(endline, 1, sline - (endline - line), fp);
+      endline += r;
+      p = line;
+      if (endline - line < l) break;
+    }
+    while ( l > 0) {
+      u = fl_utf8decode(p, p+l, &lp);
+      lq = fl_utf8encode(u, multibyte);
+      if (lp != l || lq != l) *input_was_changed = true;
+      if (q + lq > buffer + buflen) {
+	memmove(line, p, endline - p);
+	endline -= (p - line);
+	return q - buffer;
+      }
+      memcpy(q, multibyte, lq);
+      q += lq; 
+      p += lp;
+      l -= lp;
+    }
+  }
+  memmove(line, p, endline - p);
+  endline -= (p - line);
+  return q - buffer;
+}
+
+const char *Fl_Text_Buffer::file_encoding_warning_message = 
+"Displayed text contains the UTF-8 re-encoding\n"
+"of the input file which was not UTF-8 encoded.\n"
+"Some changes may have occurred.";
 
 /*
  Insert text from a file.
- Unicode safe. Input must be correct UTF-8!
+ Input file can be of various encodings according to what input fiter is used.
+ utf8_input_filter accepts UTF-8 or CP1252 as input encoding.
+ Output is always UTF-8.
  */
-int Fl_Text_Buffer::insertfile(const char *file, int pos, int /*buflen*/) {
+ int Fl_Text_Buffer::insertfile(const char *file, int pos, int buflen)
+{
   FILE *fp;
   if (!(fp = fl_fopen(file, "r")))
     return 1;
-  fseek(fp, 0, SEEK_END);
-  size_t filesize = ftell(fp);
-  fseek(fp, 0, SEEK_SET);  
-  if (!filesize) return 0;
-  char *buffer = new char[filesize+1];
-  // Note: If we read Windows text files in text mode, then Windows
-  // strips the <CR>'s from the text. Hence, rsize < filesize !
-  size_t rsize = fread(buffer, 1, filesize, fp);
-  if (rsize > 0) {
-    buffer[rsize] = (char) 0;
+  char *buffer = new char[buflen + 1];  
+  char *endline, line[100];
+  int l;
+  input_file_was_reencoded = false;
+  endline = line;
+  while (true) {
+#ifdef FIXED_LENGTH_ENCODING
+    // example of 16-bit encoding: UTF-16
+    l = fixed_length_input_filter(buffer, buflen, 
+				  line, sizeof(line), endline, 
+				  utf16toucs, // use cp1252toucs to read CP1252-encoded files
+				  fp);
+    input_file_was_reencoded = true;
+#else
+    l = utf8_input_filter(buffer, buflen, line, sizeof(line), endline, 
+			  fp, &input_file_was_reencoded);
+#endif
+    if (l == 0) break;
+    buffer[l] = 0;
     insert(pos, buffer);
-  }
+    pos += l;
+    }
   int e = ferror(fp) ? 2 : 0;
   fclose(fp);
   delete[]buffer;
+  if ( (!e) && input_file_was_reencoded && transcoding_warning_action) {
+    transcoding_warning_action(this);
+    }
   return e;
 }
 
