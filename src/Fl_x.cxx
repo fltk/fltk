@@ -279,17 +279,16 @@ int fl_ready() {
 }
 
 // replace \r\n by \n
-static void convert_crlf(unsigned char *string, long& len)
-{
+static void convert_crlf(unsigned char *string, long& len) {
   unsigned char *p = string, *q = p + len;
-  while (p < q) {
-    if (*p == '\r' && *(p + 1) == '\n' && p + 1 < q) {
+  while (p + 1 < q) {
+    if (*p == '\r' && *(p + 1) == '\n') {
       memmove(p, p + 1, q - p - 1);
       q--;
       len--;
-      }
-    p++;
     }
+    p++;
+  }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -977,7 +976,10 @@ int fl_handle(const XEvent& thisevent)
       bytesread += bytesnew - 1;
       if (!remaining) break;
     }
-    convert_crlf(buffer, bytesread);
+    if (buffer) {
+      convert_crlf(buffer, bytesread);
+      buffer[bytesread] = 0;
+    }
     Fl::e_text = buffer ? (char*)buffer : (char *)"";
     Fl::e_length = bytesread;
     int old_event = Fl::e_number;
