@@ -29,8 +29,8 @@
 #include <stdlib.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Table.H>
+#include <FL/Fl_Int_Input.H>
 #include <FL/fl_draw.H>
 
 const int MAX_COLS = 10;
@@ -42,22 +42,21 @@ class Spreadsheet : public Fl_Table {
   int row_edit, col_edit;				// row/col being modified
 
 protected:
-  void draw_cell(TableContext context, int=0, int=0, int=0, int=0, int=0, int=0);
+  void draw_cell(TableContext context,int=0,int=0,int=0,int=0,int=0,int=0);
   void event_callback2();				// table's event callback (instance)
-  static void event_callback(Fl_Widget*, void *v) {	// table's event callback (static)
+  static void event_callback(Fl_Widget*,void *v) {	// table's event callback (static)
     ((Spreadsheet*)v)->event_callback2();
   }
-  // Handle input widget's callback
-  static void input_cb(Fl_Widget*, void* v) {
+  static void input_cb(Fl_Widget*,void* v) {		// input widget's callback
     ((Spreadsheet*)v)->set_value_hide();
   }
 
 public:
-  Spreadsheet(int x, int y, int w, int h, const char* l=0) : Fl_Table(x,y,w,h,l) {
+  Spreadsheet(int X,int Y,int W,int H,const char* L=0) : Fl_Table(X,Y,W,H,L) {
     callback(&event_callback, (void*)this);
     when(FL_WHEN_NOT_CHANGED|when());
     // Create input widget that we'll use whenever user clicks on a cell
-    input = new Fl_Int_Input(w/2,h/2,0,0);
+    input = new Fl_Int_Input(W/2,H/2,0,0);
     input->hide();
     input->callback(input_cb, (void*)this);
     input->when(FL_WHEN_ENTER_KEY_ALWAYS);		// callback triggered when user hits Enter
@@ -100,29 +99,29 @@ public:
   // Return the sum of all rows in this column
   int sum_rows(int C) {
     int sum = 0;
-    for (int r=0; r<MAX_ROWS; ++r)
+    for (int r=0; r<rows()-1; ++r)			// -1: don't include cell data in 'totals' column
       sum += values[r][C];
     return(sum);
   }
   // Return the sum of all cols in this row
   int sum_cols(int R) {
     int sum = 0;
-    for (int c=0; c<MAX_COLS; ++c)
+    for (int c=0; c<cols()-1; ++c)			// -1: don't include cell data in 'totals' column
       sum += values[R][c];
     return(sum);
   }
   // Return the sum of all cells in table
   int sum_all() {
     int sum = 0;
-    for (int c=0; c<MAX_COLS; ++c)
-      for (int r=0; r<MAX_ROWS; ++r)
+    for (int c=0; c<cols()-1; ++c)			// -1: don't include cell data in 'totals' column
+      for (int r=0; r<rows()-1; ++r)			// -1: ""
 	sum += values[r][c];
     return(sum);
   }
 };
 
 // Handle drawing all cells in table
-void Spreadsheet::draw_cell(TableContext context, int R, int C, int X, int Y, int W, int H) {
+void Spreadsheet::draw_cell(TableContext context, int R,int C, int X,int Y,int W,int H) {
   static char s[30]; 
   switch ( context ) {
     case CONTEXT_STARTPAGE:			// table about to redraw
@@ -168,7 +167,7 @@ void Spreadsheet::draw_cell(TableContext context, int R, int C, int X, int Y, in
       if ( C < cols()-1 && R < rows()-1 ) {
 	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, FL_WHITE);
       } else {
-	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, 0xbbddbb00);
+	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, 0xbbddbb00);	// money green
       }
       // Text
       fl_push_clip(X+3, Y+3, W-6, H-6);
@@ -214,16 +213,15 @@ void Spreadsheet::event_callback2() {
 	    start_editing(R,C);				// start new edit
 	  return;
 
-	case FL_KEYBOARD: {
+	case FL_KEYBOARD:				// key press in table?
 	  if ( Fl::event_key() == FL_Escape ) exit(0);	// ESC closes app
-	  if (C == cols()-1 || R == rows()-1) return;	// can't edit totals column
+	  if (C == cols()-1 || R == rows()-1) return;	// no editing of totals column
 	  done_editing();				// finish any previous editing
 	  start_editing(R,C);				// start new edit
 	  if (Fl::event() == FL_KEYBOARD && Fl::e_text[0] != '\r') {
 	    input->handle(Fl::event());			// pass keypress to input widget
 	  }
 	  return;
-        }
       }
       return;
     }
