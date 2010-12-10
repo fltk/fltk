@@ -9,6 +9,7 @@
 //     while the command is running, keyboard navigation works,
 //     text can be highlighted, and the interface can be resized.
 //
+// Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or

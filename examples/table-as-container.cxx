@@ -1,8 +1,18 @@
 //
 // "$Id$"
 //
-// Show how FLTK widgets can be parented by Fl_Table.
+//	Show how FLTK widgets can be parented by Fl_Table. -erco 03/30/2003
 //
+//	Originally the 'widgettable.cxx' example program that came with 
+//	erco's Fl_Table widget. Added to FLTK in 2010.
+//
+//	This demonstrates how to use Fl_Table as a 'container' for FLTK
+//	widgets; one widget per cell. This isn't optimal for large tables,
+//	where it's better to make one instance of a widget, and move it to
+//	where it's needed. For an example of this, see the example program
+//	"table-simple-spreadsheet.cxx"
+//
+// Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or

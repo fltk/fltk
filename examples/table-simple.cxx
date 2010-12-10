@@ -30,14 +30,17 @@
 //     http://www.fltk.org/str.php
 // 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Table.H>
 #include <FL/fl_draw.H>
+
+#define MAX_ROWS 30
+#define MAX_COLS 30
 
 // Derive a class from Fl_Table
 class MyTable : public Fl_Table {
 
-  int data[10][10];                     // our 10x10 data array
+  int data[MAX_ROWS][MAX_COLS];		// data array for cells
 
   // Draw the row/col headings
   //    Make this a dark thin upbox with the text inside.
@@ -57,7 +60,7 @@ class MyTable : public Fl_Table {
       // Draw cell bg
       fl_color(FL_WHITE); fl_rectf(X,Y,W,H);
       // Draw cell data
-      fl_color(FL_DARK3); fl_draw(s, X,Y,W,H, FL_ALIGN_CENTER);
+      fl_color(FL_GRAY0); fl_draw(s, X,Y,W,H, FL_ALIGN_CENTER);
       // Draw box border
       fl_color(color()); fl_rect(X,Y,W,H);
     fl_pop_clip();
@@ -94,16 +97,16 @@ public:
   //
   MyTable(int X, int Y, int W, int H, const char *L=0) : Fl_Table(X,Y,W,H,L) {
     // Fill data array
-    for ( int x=0; x<10; x++ )
-      for ( int y=0; y<10; y++ )
-        data[x][y] = 1000+x*1000+y;
+    for ( int r=0; r<MAX_ROWS; r++ )
+      for ( int c=0; c<MAX_COLS; c++ )
+        data[r][c] = 1000+(r*1000)+c;
     // Rows
-    rows(10);                   // how many rows
+    rows(MAX_ROWS);             // how many rows
     row_header(1);              // enable row headers (along left)
     row_height_all(20);         // default height of rows
     row_resize(0);              // disable row resizing
     // Cols
-    cols(10);                   // how many columns
+    cols(MAX_COLS);             // how many columns
     col_header(1);              // enable column headers (along top)
     col_width_all(80);          // default width of columns
     col_resize(1);              // enable column resizing
@@ -112,7 +115,7 @@ public:
 };
 
 int main(int argc, char **argv) {
-  Fl_Window win(900, 400, "Simple Table");
+  Fl_Double_Window win(900, 400, "Simple Table");
   MyTable table(10,10,880,380);
   win.end();
   win.resizable(table);

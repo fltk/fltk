@@ -70,7 +70,6 @@ public:
 	values[i][j] = (i + 2) * (j + 3);
       }
     }
-    (new Fl_Box(9999,9999,0,0))->hide();  // HACK: prevent flickering in Fl_Scroll
     end();
   }
   ~SingleInput() { }
@@ -161,16 +160,12 @@ void SingleInput::draw_cell(TableContext context,
       }
 
       // BACKGROUND
-      fl_push_clip(X, Y, W, H);
-      {
-	// Keyboard nav and mouse selection highlighting
-	if (R >= s_top && R <= s_bottom && C >= s_left && C <= s_right) {
-	  fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, FL_YELLOW);
-	} else {
-	  fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, FL_WHITE);
-	}
+      // Keyboard nav and mouse selection highlighting
+      if (R >= s_top && R <= s_bottom && C >= s_left && C <= s_right) {
+	fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, FL_YELLOW);
+      } else {
+	fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, FL_WHITE);
       }
-      fl_pop_clip();
 
       // TEXT
       fl_push_clip(X+3, Y+3, W-6, H-6);
@@ -311,9 +306,8 @@ void setrows_cb(Fl_Widget* w, void* v) {
 }
 
 int main() {
-  Fl_Double_Window win(600, 400, "table with keyboard nav");
-
-  SingleInput* table = new SingleInput(20, 20, win.w()-80, win.h()-80);
+  Fl_Double_Window *win = new Fl_Double_Window(600, 400, "table with keyboard nav");
+  SingleInput* table = new SingleInput(20, 20, win->w()-80, win->h()-80);
   // Table rows
   table->row_header(1);
   table->row_header_width(70);
@@ -329,10 +323,10 @@ int main() {
   table->set_selection(0,0,0,0);	// select top/left cell
 
   // Add children to window
-  win.begin();
+  win->begin();
 
   // Row slider
-  Fl_Value_Slider setrows(win.w()-40,20,20,win.h()-80, 0);
+  Fl_Value_Slider setrows(win->w()-40,20,20,win->h()-80, 0);
   setrows.type(FL_VERT_NICE_SLIDER);
   setrows.bounds(2,MAX_ROWS);
   setrows.step(1);
@@ -342,7 +336,7 @@ int main() {
   setrows.clear_visible_focus();
 
   // Column slider
-  Fl_Value_Slider setcols(20,win.h()-40,win.w()-80,20, 0);
+  Fl_Value_Slider setcols(20,win->h()-40,win->w()-80,20, 0);
   setcols.type(FL_HOR_NICE_SLIDER);
   setcols.bounds(2,MAX_COLS);
   setcols.step(1);
@@ -351,9 +345,9 @@ int main() {
   setcols.when(FL_WHEN_CHANGED);
   setcols.clear_visible_focus();
 
-  win.end();
-  win.resizable(table);
-  win.show();
+  win->end();
+  win->resizable(table);
+  win->show();
 
   return Fl::run();
 }

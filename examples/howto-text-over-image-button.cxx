@@ -1,9 +1,18 @@
 //
 // "$Id$"
 //
-// Simple example of a button with text over an image
-// Originally from erco's cheat sheet 10/25/2010, permission by author.
+// 	Simple example of a button with text over an image
+// 	Originally from erco's cheat sheet 10/25/2010, permission by author.
 //
+//	This shows how to include an 'inline' image (.xpm)
+//	and have it appear on an Fl_Button. Demonstrates the use of the
+//	FL_ALIGN_IMAGE_BACKDROP align() flag (new in FLTK 1.3.0).
+//
+//	Note that the XPM can just as easily be in an #include file,
+//	but to keep the example self contained, the image (a gray scale
+//	gradient) is included here.
+//
+// Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or

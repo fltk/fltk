@@ -7,6 +7,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       table-as-container$(EXEEXT) \
       table-simple$(EXEEXT) \
       table-sort$(EXEEXT) \
+      table-spreadsheet$(EXEEXT) \
       table-with-keyboard-nav$(EXEEXT) \
       tabs-simple$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \

@@ -1,8 +1,14 @@
 //
 // "$Id$"
 //
-//	A simple example of Fl_Text_Display with colors.
-//	For a color text editor, see the 'editor' example in the test directory.
+//	How to use Fl_Text_Display with colors. -erco 11/09/2010
+//	Originally from erco's cheat sheet, permission by author.
+//
+//	Shows how to use the two Fl_Text_Buffer's needed to manage
+//	the text and style info separately.
+//
+//	For an example of a color text *editor*, see the 'editor'
+//	example in the test directory.
 //
 // Copyright 2010 Greg Ercolano.
 // Copyright 1998-2010 by Bill Spitzak and others.
