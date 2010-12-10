@@ -96,7 +96,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   damage_range1_start = damage_range1_end = -1;
   damage_range2_start = damage_range2_end = -1;
   dragPos = dragging = 0;
-  dragType = DRAG_NONE;
+  dragType = DRAG_CHAR;
   display_insert_position_hint = 0;
   shortcut_ = 0;
   
