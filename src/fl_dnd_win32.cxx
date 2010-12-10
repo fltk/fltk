@@ -172,6 +172,14 @@ public:
     HWND hwnd = fl_xid( (Fl_Window*)w );
     if (fillCurrentDragData(data)) {
       int old_event = Fl::e_number;
+      char *a, *b;
+      a = b = Fl::e_text;
+      while (*a) { // strip the CRLF pairs
+	if (*a == '\r' && a[1] == '\n') a++;
+	else *b++ = *a++;
+      }
+      *b = 0;
+      Fl::e_length = b - Fl::e_text;
       Fl::belowmouse()->handle(Fl::e_number = FL_PASTE); // e_text will be invalid after this call
       Fl::e_number = old_event;
       SetForegroundWindow( hwnd );
