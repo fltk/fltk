@@ -209,13 +209,9 @@ void Spreadsheet::event_callback2() {
     case CONTEXT_CELL: {				// A table event occurred on a cell
       switch (Fl::event()) { 				// see what FLTK event caused it
 	case FL_PUSH:					// mouse click?
-	  if (!Fl::event_clicks()) {			// single click?
-	    done_editing();				// finish editing
-	  } else {
-	    Fl::event_clicks(0);			// double click? zero clicks, fallthrough
-	    if (R != rows()-1 && C != cols()-1 )	// only edit cells not in total's columns
-	      start_editing(R,C);			// start new edit
-	  }
+	  done_editing();				// finish editing previous
+	  if (R != rows()-1 && C != cols()-1 )		// only edit cells not in total's columns
+	    start_editing(R,C);				// start new edit
 	  return;
 
 	case FL_KEYBOARD: {
