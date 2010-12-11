@@ -38,6 +38,11 @@ Mac OS Roman is the Apple Mac native character set before it became Unicode
 by default (OS X). The corresponding files are ordered as they would appear
 with the native character set / encoding.
 
+The *.html files contain a character encoding meta tag, so that they should
+be viewable with all standard browser. They can be used for cut'n'paste and
+drag'n'drop tests from a 'native' application (browser) to FLTK, e.g.
+test/editor or test/input.
+
 Special Notes:
 
   0x22 (U+0022: "quotation mark") is doubled intentionally. This has been
@@ -69,10 +74,12 @@ The first two files are images of how it should look:
   cp1252.png		full Windows Codepage 1252 (Western)
   MacRoman_utf-8.png	full Mac OS Roman character set (w/o Apple logo)
 
-The following two files contain the full Windows Codepage 1252:
+The following four files contain the full Windows Codepage 1252:
 
   cp1252.txt		native (Windows) encoding, suitable for FLTK 1.1
   cp1252_utf-8.txt	UTF-8 encoding, suitable for FLTK 1.3 and greater
+  cp1252.html		native (Windows) encoding, use with any browser
+  cp1252_utf-8.html	UTF-8 encoding, use with any browser
 
 The following two files contain only the ISO-8859-1 subset:
 
