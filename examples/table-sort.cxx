@@ -52,6 +52,7 @@
 #define popen           _popen
 #else /*_WIN32*/
 // UNIX
+#include <ctype.h>
 #define DIRCMD          "ls -l"
 #define DIRHEADER       { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename" }
 #endif /*_WIN32*/
