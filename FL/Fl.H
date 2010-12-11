@@ -689,11 +689,19 @@ public:
   */
   static void copy(const char* stuff, int len, int clipboard = 0); // platform dependent
   /**
-    Pastes the data from the selection clipboard (0) or the copy clipboard (1) 
-    into receiver.  
-    The selection clipboard is used for middle-mouse pastes and for 
-    drag-and-drop selections. The copy clipboard is used for traditional 
-    copy/cut/paste operations.
+  Pastes the data from the selection clipboard (0) or the copy clipboard (1) 
+  into receiver.  
+  Set things up so the receiver widget will be called with an FL_PASTE event some
+  time in the future for the specified clipboard. The receiver
+  should be prepared to be called \e directly by this, or for
+  it to happen \e later, or possibly <i>not at all</i>.  This
+  allows the window system to take as long as necessary to retrieve
+  the paste buffer (or even to screw up completely) without complex
+  and error-prone synchronization code in FLTK.
+   
+  The selection clipboard is used for middle-mouse pastes and for 
+  drag-and-drop selections. The copy clipboard is used for traditional 
+  copy/cut/paste operations.
   */
   static void paste(Fl_Widget &receiver, int clipboard /*=0*/); // platform dependent
   /**

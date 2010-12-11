@@ -1405,13 +1405,6 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
 }
 
 /** Backward compatibility only:
-  Set things up so the receiver widget will be called with an  FL_PASTE event some
-  time in the future for the specified clipboard. The reciever
-  should be prepared to be called \e directly by this, or for
-  it to happen \e later, or possibly <i>not at all</i>.  This
-  allows the window system to take as long as necessary to retrieve
-  the paste buffer (or even to screw up completely) without complex
-  and error-prone synchronization code in FLTK.
   \see Fl::paste(Fl_Widget &receiver, int clipboard)
 */
 void Fl::paste(Fl_Widget &receiver) {
