@@ -425,8 +425,7 @@ public:
       int utf16_len = fl_utf8toUtf16(fl_selection_buffer[0], fl_selection_length[0], 0, 0);
       HGLOBAL gh = GlobalAlloc( GHND, utf16_len * 2 + 2 );
       char *pMem = (char*)GlobalLock( gh );
-      fl_utf8toUtf16(fl_selection_buffer[0], fl_selection_length[0], (unsigned short*)pMem, utf16_len * 2);
-      pMem[ 2*utf16_len ] = 0;
+      fl_utf8toUtf16(fl_selection_buffer[0], fl_selection_length[0], (unsigned short*)pMem, utf16_len + 1);
 //      HGLOBAL gh = GlobalAlloc( GHND| GMEM_SHARE,
 //                            (fl_selection_length[0]+4) * sizeof(short)
 //                            + sizeof(DROPFILES));

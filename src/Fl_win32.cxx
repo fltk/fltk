@@ -559,7 +559,7 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
       EmptyClipboard();
       HGLOBAL hMem = GlobalAlloc(GHND, utf16_len * 2 + 2); // moveable and zero'ed mem alloc.
       LPVOID memLock = GlobalLock(hMem);
-      fl_utf8toUtf16(fl_selection_buffer[clipboard], fl_selection_length[clipboard], (unsigned short*) memLock, utf16_len * 2);
+      fl_utf8toUtf16(fl_selection_buffer[clipboard], fl_selection_length[clipboard], (unsigned short*) memLock, utf16_len + 1);
       GlobalUnlock(hMem);
       SetClipboardData(CF_UNICODETEXT, hMem);
       CloseClipboard();
