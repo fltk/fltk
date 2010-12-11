@@ -416,16 +416,17 @@ public:
       delete this;
     return nTemp;
   }
-  // GetData currently allows ASCII text through Global Memory only
+  // GetData currently allows UNICODE text through Global Memory only
   HRESULT STDMETHODCALLTYPE GetData( FORMATETC *pformatetcIn, STGMEDIUM *pmedium ) {
     if ((pformatetcIn->dwAspect & DVASPECT_CONTENT) &&
         (pformatetcIn->tymed & TYMED_HGLOBAL) &&
-        (pformatetcIn->cfFormat == CF_TEXT))
+        (pformatetcIn->cfFormat == CF_UNICODETEXT))
     {
-      HGLOBAL gh = GlobalAlloc( GHND, fl_selection_length[0]+1 );
+      int utf16_len = fl_utf8toUtf16(fl_selection_buffer[0], fl_selection_length[0], 0, 0);
+      HGLOBAL gh = GlobalAlloc( GHND, utf16_len * 2 + 2 );
       char *pMem = (char*)GlobalLock( gh );
-      memmove( pMem, fl_selection_buffer[0], fl_selection_length[0] );
-      pMem[ fl_selection_length[0] ] = 0;
+      fl_utf8toUtf16(fl_selection_buffer[0], fl_selection_length[0], (unsigned short*)pMem, utf16_len * 2);
+      pMem[ 2*utf16_len ] = 0;
 //      HGLOBAL gh = GlobalAlloc( GHND| GMEM_SHARE,
 //                            (fl_selection_length[0]+4) * sizeof(short)
 //                            + sizeof(DROPFILES));
@@ -467,7 +468,7 @@ public:
   {
     if ((pformatetc->dwAspect & DVASPECT_CONTENT) &&
         (pformatetc->tymed & TYMED_HGLOBAL) &&
-        (pformatetc->cfFormat == CF_TEXT))
+        (pformatetc->cfFormat == CF_UNICODETEXT))
       return S_OK;
     return DV_E_FORMATETC;
   }
