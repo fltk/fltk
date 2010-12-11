@@ -1847,7 +1847,6 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 
 /*
  * go ahead, create that (sub)window
- * \todo we should make menu windows slightly transparent for the new Mac look
  */
 void Fl_X::make(Fl_Window* w)
 {
@@ -1993,6 +1992,9 @@ void Fl_X::make(Fl_Window* w)
         static NSPoint delta = NSZeroPoint;
         delta = [cw cascadeTopLeftFromPoint:delta];
       }
+    }
+    if(w->menu_window()) { // make menu windows slightly transparent
+      [cw setAlphaValue:0.97];
     }
     x->w = w; w->i = x;
     x->wait_for_expose = 1;
