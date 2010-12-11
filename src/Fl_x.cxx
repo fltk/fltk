@@ -280,15 +280,13 @@ int fl_ready() {
 
 // replace \r\n by \n
 static void convert_crlf(unsigned char *string, long& len) {
-  unsigned char *p = string, *q = p + len;
-  while (p + 1 < q) {
-    if (*p == '\r' && *(p + 1) == '\n') {
-      memmove(p, p + 1, q - p - 1);
-      q--;
-      len--;
-    }
-    p++;
+  unsigned char *a, *b;
+  a = b = string;
+  while (*a) { 
+    if (*a == '\r' && a[1] == '\n') { a++; len--; }
+    else *b++ = *a++;
   }
+  *b = 0;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -570,7 +568,6 @@ void fl_init_xim()
     fl_xim_im = NULL;
   }
 }
-
 
 void fl_open_display() {
   if (fl_display) return;
@@ -977,8 +974,8 @@ int fl_handle(const XEvent& thisevent)
       if (!remaining) break;
     }
     if (buffer) {
-      convert_crlf(buffer, bytesread);
       buffer[bytesread] = 0;
+      convert_crlf(buffer, bytesread);
     }
     Fl::e_text = buffer ? (char*)buffer : (char *)"";
     Fl::e_length = bytesread;
