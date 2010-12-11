@@ -39,7 +39,7 @@ by default (OS X). The corresponding files are ordered as they would appear
 with the native character set / encoding.
 
 The *.html files contain a character encoding meta tag, so that they should
-be viewable with all standard browser. They can be used for cut'n'paste and
+be viewable with all standard browsers. They can be used for cut'n'paste and
 drag'n'drop tests from a 'native' application (browser) to FLTK, e.g.
 test/editor or test/input.
 
