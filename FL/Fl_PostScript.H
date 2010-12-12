@@ -35,8 +35,6 @@
 #include <FL/Fl_Paged_Device.H>
 #include <FL/fl_draw.H>
 
-#define NO_PAGE_FORMATS 30 /* MSVC6 compilation fix */
-
 /**
  \brief PostScript graphical backend.
  *
@@ -66,57 +64,9 @@
 class Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 public: 
   static const char *device_type;
-  /**
-   \brief Possible page formats.
-   */
-  enum Page_Format {
-    A0 = 0,
-    A1,
-    A2,
-    A3,
-    A4,
-    A5,
-    A6,
-    A7,
-    A8,
-    A9,
-    B0,
-    B1,
-    B2,
-    B3,
-    B4,
-    B5,
-    B6,
-    B7,
-    B8,
-    B9,
-    B10,
-    C5E,
-    DLE,
-    EXECUTIVE,
-    FOLIO,
-    LEDGER,
-    LEGAL,
-    LETTER,
-    TABLOID,
-    ENVELOPE,
-    MEDIA = 0x1000
-  };
-  
-  /**
-   \brief Possible page layouts.
-   */
-  enum Page_Layout {PORTRAIT = 0, LANDSCAPE = 0x100, REVERSED = 0x200, ORIENTATION = 0x300};
-    
 #ifndef FL_DOXYGEN
 public:
   enum SHAPE{NONE=0, LINE, LOOP, POLYGON, POINTS};
-  
-typedef struct page_format {
-  int width;
-  int height;
-  const char *name;
-} page_format;
   
 class Clip {
   public:
@@ -162,10 +112,9 @@ class Clip {
  
   FILE *output;
   double pw_, ph_;
-  static const page_format page_formats[NO_PAGE_FORMATS];
   
   uchar bg_r, bg_g, bg_b;
-  int start_postscript (int pagecount, enum Page_Format format, enum Page_Layout layout);
+  int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
   /*  int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
    */
   void draw(const char* s, int n, int x, int y) {transformed_draw(s,n,x,y); };
@@ -178,7 +127,7 @@ class Clip {
   void draw_scaled_image(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
   void draw_scaled_image_mono(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
   
-  enum Page_Format page_format_;
+  enum Fl_Paged_Device::Page_Format page_format_;
   char *ps_filename_;
   // implementation of drawing methods
   void color(Fl_Color c);
@@ -280,10 +229,10 @@ public:
   static const char *device_type;
   Fl_PostScript_File_Device();
   ~Fl_PostScript_File_Device();
-  int start_job(int pagecount, enum Fl_PostScript_Graphics_Driver::Page_Format format = Fl_PostScript_Graphics_Driver::A4, 
-		enum Fl_PostScript_Graphics_Driver::Page_Layout layout = Fl_PostScript_Graphics_Driver::PORTRAIT);
-  int start_job(FILE *ps_output, int pagecount, enum Fl_PostScript_Graphics_Driver::Page_Format format = Fl_PostScript_Graphics_Driver::A4, 
-		enum Fl_PostScript_Graphics_Driver::Page_Layout layout = Fl_PostScript_Graphics_Driver::PORTRAIT);
+  int start_job(int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4, 
+		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
+  int start_job(FILE *ps_output, int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4, 
+		enum Fl_Paged_Device::Page_Layout layout = Fl_Paged_Device::PORTRAIT);
   int start_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);

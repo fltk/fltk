@@ -34,6 +34,8 @@
 
 #include <FL/Fl_Device.H>
 
+#define NO_PAGE_FORMATS 30 /* MSVC6 compilation fix */
+
 /**
  \brief Represents page-structured drawing surfaces.
  *
@@ -41,6 +43,69 @@
  or Fl_PostScript_File_Device instead.
  */
 class Fl_Paged_Device : public Fl_Surface_Device {
+public:
+  /**
+   \brief Possible page formats.
+   
+   All paper formats with pre-defined width and height.
+   */
+  enum Page_Format {
+    A0 = 0, /**<  A0 format */
+    A1,
+    A2,
+    A3,
+    A4, /**<  A4 format */
+    A5,
+    A6,
+    A7,
+    A8,
+    A9,
+    B0,
+    B1,
+    B2,
+    B3,
+    B4,
+    B5,
+    B6,
+    B7,
+    B8,
+    B9,
+    B10,
+    C5E,
+    DLE,
+    EXECUTIVE,
+    FOLIO,
+    LEDGER,
+    LEGAL,
+    LETTER, /**<  Letter format */
+    TABLOID,
+    ENVELOPE,
+    MEDIA = 0x1000
+  };
+  /**
+   \brief Possible page layouts.
+   */
+  enum Page_Layout {
+    PORTRAIT = 0,  /**< Portrait orientation */
+    LANDSCAPE = 0x100,   /**< Landscape orientation */
+    REVERSED = 0x200,  /**< Reversed orientation */
+    ORIENTATION = 0x300 /**<  orientation */
+  };
+
+  /** \brief width, height and name of a page format
+ */
+  typedef struct {
+    /** \brief width in points */
+    int width; 
+    /** \brief height in points */
+    int height; 
+    /** \brief format name */
+    const char *name; 
+  } page_format;
+  /** \brief width, height and name of all elements of the enum \ref Page_Format.
+   */
+  static const page_format page_formats[NO_PAGE_FORMATS];  
+  
 private:
 #ifdef __APPLE__
   struct chain_elt {

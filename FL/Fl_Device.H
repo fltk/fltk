@@ -26,7 +26,8 @@
 //     http://www.fltk.org/str.php
 //
 /** \file Fl_Device.H 
- \brief declaration of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device.
+ \brief declaration of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, 
+ Fl_Display_Device, Fl_Device_Plugin.
 */
 
 #ifndef Fl_Device_H
@@ -372,6 +373,28 @@ public:
    @brief    Returns the platform's display device.
    */
   static Fl_Display_Device *display_device() { return fl_display_device; };
+};
+
+/**
+ This plugin socket allows the integration of new device drivers for special
+ window or screen types. It is currently used to provide an automated printing
+ service for OpenGL windows, if linked with fltk_gl.
+ */
+class Fl_Device_Plugin : public Fl_Plugin {
+public:
+  /** \brief The constructor */
+  Fl_Device_Plugin(const char *name)
+  : Fl_Plugin(klass(), name) { }
+  /** \brief Returns the class name */
+  virtual const char *klass() { return "fltk:device"; }
+  /** \brief Returns the plugin name */
+  virtual const char *name() = 0;
+  /** \brief Prints a widget 
+   \param w the widget
+   \param x,y offsets where to print relatively to coordinates origin
+   \param height height of the current drawing area
+   */
+  virtual int print(Fl_Widget* w, int x, int y, int height) { return 0; }
 };
 
 #endif // Fl_Device_H

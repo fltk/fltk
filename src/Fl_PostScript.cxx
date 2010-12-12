@@ -87,7 +87,8 @@ Fl_PostScript_Graphics_Driver *Fl_PostScript_File_Device::driver()
  @param layout Desired page layout.
  @return 0 iff OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
  */
-int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_PostScript_Graphics_Driver::Page_Format format, enum Fl_PostScript_Graphics_Driver::Page_Layout layout)
+int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_Paged_Device::Page_Format format, 
+					  enum Fl_Paged_Device::Page_Layout layout)
 {
   Fl_Native_File_Chooser fnfc;
   fnfc.title(Fl_PostScript_File_Device::file_chooser_title);
@@ -120,7 +121,8 @@ static int dont_close(FILE *f)
  @param layout Desired page layout.
  @return always 0.
  */
-int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount, enum Fl_PostScript_Graphics_Driver::Page_Format format, enum Fl_PostScript_Graphics_Driver::Page_Layout layout)
+int Fl_PostScript_File_Device::start_job (FILE *ps_output, int pagecount, 
+    enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout)
 {
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->output = ps_output;
@@ -144,46 +146,6 @@ Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
 #if ! (defined(__APPLE__) || defined(WIN32) )
   #include "print_panel.cxx"
 #endif
-
-const Fl_PostScript_Graphics_Driver::page_format Fl_PostScript_Graphics_Driver::page_formats[NO_PAGE_FORMATS] = { // order of enum Page_Format
-// comes from appendix B of 5003.PPD_Spec_v4.3.pdf
-
-  // A* // index(Ai) = i
-  {2384, 3370, "A0"},
-  {1684, 2384, "A1"},
-  {1191, 1684, "A2"},
-  { 842, 1191, "A3"},
-  { 595,  842, "A4"},
-  { 420,  595, "A5"},
-  { 297,  420, "A6"},
-  { 210,  297, "A7"},
-  { 148,  210, "A8"},
-  { 105,  148, "A9"},
-
-  // B* // index(Bi) = i+10
-  {2920, 4127, "B0"},
-  {2064, 2920, "B1"},
-  {1460, 2064, "B2"},
-  {1032, 1460, "B3"},
-  { 729, 1032, "B4"},
-  { 516,  729, "B5"},
-  { 363,  516, "B6"},
-  { 258,  363, "B7"},
-  { 181,  258, "B8"},
-  { 127,  181, "B9"},
-  {  91,  127, "B10"},
-
-  // others
-  { 459,  649, "EnvC5"}, // envelope
-  { 312,  624, "EnvDL"}, // envelope
-  { 522,  756, "Executive"},
-  { 595,  935, "Folio"},
-  {1224,  792, "Ledger"}, // landscape
-  { 612, 1008, "Legal"},
-  { 612,  792, "Letter"},
-  { 792, 1224, "Tabloid"},
-  { 297,  684, "Env10"} // envelope
-};
 
 //  Prolog string 
 
@@ -566,11 +528,12 @@ static const char * prolog_3 = // prolog relevant only if lang_level >2
 
 // end prolog 
 
-int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount, enum Fl_PostScript_Graphics_Driver::Page_Format format, enum Fl_PostScript_Graphics_Driver::Page_Layout layout)
+int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount, 
+    enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout)
 //returns 0 iff OK
 {
   int w, h, x;
-  if (format == A4) {
+  if (format == Fl_Paged_Device::A4) {
     left_margin = 18;
     top_margin = 18;
   }
@@ -578,7 +541,7 @@ int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount, enum Fl_Post
     left_margin = 12;
     top_margin = 12;
   }
-  page_format_ = (enum Page_Format)(format | layout);
+  page_format_ = (enum Fl_Paged_Device::Page_Format)(format | layout);
   
   fputs("%!PS-Adobe-3.0\n", output);
   fputs("%%Creator: FLTK\n", output);
@@ -588,10 +551,10 @@ int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount, enum Fl_Post
     fprintf(output, "%%%%Pages: %i\n", pagecount);
   else
     fputs("%%Pages: (atend)\n", output);
-  fprintf(output, "%%%%BeginFeature: *PageSize %s\n", page_formats[format].name );
-  w = page_formats[format].width;
-  h = page_formats[format].height;
-  if (lang_level_ == 3 && (layout & LANDSCAPE) ) { x = w; w = h; h = x; }
+  fprintf(output, "%%%%BeginFeature: *PageSize %s\n", Fl_Paged_Device::page_formats[format].name );
+  w = Fl_Paged_Device::page_formats[format].width;
+  h = Fl_Paged_Device::page_formats[format].height;
+  if (lang_level_ == 3 && (layout & Fl_Paged_Device::LANDSCAPE) ) { x = w; w = h; h = x; }
   fprintf(output, "<</PageSize[%d %d]>>setpagedevice\n", w, h );
   fputs("%%EndFeature\n", output);
   fputs("%%EndComments\n", output);
@@ -672,8 +635,8 @@ void Fl_PostScript_Graphics_Driver::page(double pw, double ph, int media) {
   }
   
   fprintf(output, "%%%%BeginPageSetup\n");
-  if((media & MEDIA) &&(lang_level_>1)){
-    int r = media & REVERSED;
+  if((media & Fl_Paged_Device::MEDIA) &&(lang_level_>1)){
+    int r = media & Fl_Paged_Device::REVERSED;
     if(r) r = 2;
     fprintf(output, "<< /PageSize [%i %i] /Orientation %i>> setpagedevice\n", (int)(pw+.5), (int)(ph+.5), r);
   }
@@ -690,9 +653,9 @@ void Fl_PostScript_Graphics_Driver::page(double pw, double ph, int media) {
   line_style(0);
   fprintf(output, "GS\n");
   
-  if (!((media & MEDIA) &&(lang_level_>1))){
+  if (!((media & Fl_Paged_Device::MEDIA) &&(lang_level_>1))){
     if (pw > ph) {
-      if(media & REVERSED) {
+      if(media & Fl_Paged_Device::REVERSED) {
         fprintf(output, "-90 rotate %i 0 translate\n", int(-pw));
 	}
       else {
@@ -700,7 +663,7 @@ void Fl_PostScript_Graphics_Driver::page(double pw, double ph, int media) {
 	}
       }
       else {
-	if(media & REVERSED)
+	if(media & Fl_Paged_Device::REVERSED)
 	  fprintf(output, "180 rotate %i %i translate\n", int(-pw), int(-ph));
 	}
   }
@@ -710,12 +673,12 @@ void Fl_PostScript_Graphics_Driver::page(double pw, double ph, int media) {
 void Fl_PostScript_Graphics_Driver::page(int format){
   
   
-  if(format &  LANDSCAPE){
-    ph_=Fl_PostScript_Graphics_Driver::page_formats[format & 0xFF].width;
-    pw_=Fl_PostScript_Graphics_Driver::page_formats[format & 0xFF].height;
+  if(format &  Fl_Paged_Device::LANDSCAPE){
+    ph_=Fl_Paged_Device::page_formats[format & 0xFF].width;
+    pw_=Fl_Paged_Device::page_formats[format & 0xFF].height;
   }else{
-    pw_=Fl_PostScript_Graphics_Driver::page_formats[format & 0xFF].width;
-    ph_=Fl_PostScript_Graphics_Driver::page_formats[format & 0xFF].height;
+    pw_=Fl_Paged_Device::page_formats[format & 0xFF].width;
+    ph_=Fl_Paged_Device::page_formats[format & 0xFF].height;
   }
   page(pw_,ph_,format & 0xFF00);//,orientation only;
 }
@@ -1488,8 +1451,8 @@ void Fl_PostScript_File_Device::end_job (void)
 
 #if ! (defined(__APPLE__) || defined(WIN32) )
 int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
-  enum Fl_PostScript_Graphics_Driver::Page_Format format;
-  enum Fl_PostScript_Graphics_Driver::Page_Layout layout;
+  enum Fl_Paged_Device::Page_Format format;
+  enum Fl_Paged_Device::Page_Layout layout;
 
   // first test version for print dialog
   if (!print_panel) make_print_panel();
@@ -1507,7 +1470,7 @@ int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
 
   // get options
 
-  format = print_page_size->value() ? Fl_PostScript_Graphics_Driver::A4 : Fl_PostScript_Graphics_Driver::LETTER;
+  format = print_page_size->value() ? Fl_Paged_Device::A4 : Fl_Paged_Device::LETTER;
   { // page range choice
     int from = 1, to = pages;
     if (print_pages->value()) {
@@ -1522,10 +1485,10 @@ int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
     pages = to - from + 1;
   }
   
-  if (print_output_mode[0]->value()) layout = Fl_PostScript_Graphics_Driver::PORTRAIT;
-  else if (print_output_mode[1]->value()) layout = Fl_PostScript_Graphics_Driver::LANDSCAPE;
-  else if (print_output_mode[2]->value()) layout = Fl_PostScript_Graphics_Driver::PORTRAIT;
-  else layout = Fl_PostScript_Graphics_Driver::LANDSCAPE;
+  if (print_output_mode[0]->value()) layout = Fl_Paged_Device::PORTRAIT;
+  else if (print_output_mode[1]->value()) layout = Fl_Paged_Device::LANDSCAPE;
+  else if (print_output_mode[2]->value()) layout = Fl_Paged_Device::PORTRAIT;
+  else layout = Fl_Paged_Device::LANDSCAPE;
 
   int print_pipe = print_choice->value();	// 0 = print to file, >0 = printer (pipe)
 
