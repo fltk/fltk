@@ -56,7 +56,7 @@
   widgets directly, using the menubutton()
   and input() accessor methods.
 */
-class Fl_Input_Choice : public Fl_Group {
+class FL_EXPORT Fl_Input_Choice : public Fl_Group {
   // Private class to handle slightly 'special' behavior of menu button
   class InputMenuButton : public Fl_Menu_Button {
     void draw() {

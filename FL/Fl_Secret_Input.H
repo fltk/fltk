@@ -38,7 +38,7 @@
   that displays its input as a string of asterisks.  This subclass is
   usually used to receive passwords and other "secret" information.
 */
-class Fl_Secret_Input : public Fl_Input {
+class FL_EXPORT Fl_Secret_Input : public Fl_Input {
 public:
   /**
     Creates a new Fl_Secret_Input widget using the given

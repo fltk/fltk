@@ -36,7 +36,7 @@
 #include <FL/filename.H>
 #define MAXFILTERS	80
 
-class Fl_Native_File_Chooser {
+class FL_EXPORT Fl_Native_File_Chooser {
 public:
   enum Type {
     BROWSE_FILE = 0,

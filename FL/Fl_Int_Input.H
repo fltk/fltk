@@ -37,7 +37,7 @@
   The Fl_Int_Input class is a subclass of Fl_Input
   that only allows the user to type decimal digits (or hex numbers of the form 0xaef).
 */
-class Fl_Int_Input : public Fl_Input {
+class FL_EXPORT Fl_Int_Input : public Fl_Input {
 public:
   /**
     Creates a new Fl_Int_Input widget using the given position,

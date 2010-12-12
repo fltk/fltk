@@ -178,7 +178,7 @@
  
  
  */
-class Fl_Table : public Fl_Group {
+class FL_EXPORT Fl_Table : public Fl_Group {
 public:
   /**
    The context bit flags for Fl_Table related callbacks (eg. draw_cell(), callback(), etc)

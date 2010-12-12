@@ -34,7 +34,7 @@
 #include "Fl_Clock.H"
 
 /** A clock widget of type FL_ROUND_CLOCK. Has no box. */
-class Fl_Round_Clock : public Fl_Clock {
+class FL_EXPORT Fl_Round_Clock : public Fl_Clock {
 public:
     /** Creates the clock widget, setting his type and box. */
     Fl_Round_Clock(int x,int y,int w,int h, const char *l = 0)

@@ -37,7 +37,7 @@
   <P align=center>\image html counter.png</P> 
   \image latex  counter.png "Fl_Simple_Counter" width=4cm
 */
-class Fl_Simple_Counter : public Fl_Counter {
+class FL_EXPORT Fl_Simple_Counter : public Fl_Counter {
 public:
     Fl_Simple_Counter(int x,int y,int w,int h, const char *l = 0)
 	: Fl_Counter(x,y,w,h,l) {type(FL_SIMPLE_COUNTER);}

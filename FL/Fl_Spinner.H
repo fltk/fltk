@@ -48,7 +48,7 @@
   widget and repeat buttons. The user can either type into the
   input area or use the buttons to change the value.
 */
-class Fl_Spinner : public Fl_Group
+class FL_EXPORT Fl_Spinner : public Fl_Group
 {
   double	value_;			// Current value
   double	minimum_;		// Minimum value

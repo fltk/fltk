@@ -47,7 +47,7 @@
   or full color control of characters, you probably want Fl_Text_Editor
   instead.
 */
-class Fl_Multiline_Input : public Fl_Input {
+class FL_EXPORT Fl_Multiline_Input : public Fl_Input {
 public:
   /**
     Creates a new Fl_Multiline_Input widget using the given

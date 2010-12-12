@@ -51,7 +51,7 @@
  clicked by the user.  You control when events are generated based on
  the values you supply for Fl_Table::when().
  */
-class Fl_Table_Row : public Fl_Table {
+class FL_EXPORT Fl_Table_Row : public Fl_Table {
 public:
   enum TableRowSelectMode {
     SELECT_NONE,		// no selection allowed

@@ -42,7 +42,7 @@
   control exactly when and how by changing the values for type()
   and when().
 */
-class Fl_Toggle_Button : public Fl_Button {
+class FL_EXPORT Fl_Toggle_Button : public Fl_Button {
 public:
   /**
     Creates a new Fl_Toggle_Button widget using the given

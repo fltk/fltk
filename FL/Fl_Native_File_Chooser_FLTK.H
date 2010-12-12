@@ -66,7 +66,7 @@
   - Some operating systems support certain OS specific options; see 
     Fl_Native_File_Chooser::options() for a list.
 */
-class Fl_Native_File_Chooser {
+class FL_EXPORT Fl_Native_File_Chooser {
 public:
   enum Type {
     BROWSE_FILE = 0,			///< browse files (lets user choose one file)

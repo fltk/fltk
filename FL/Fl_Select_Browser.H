@@ -41,7 +41,7 @@
   user presses the mouse, but you can change this with when().
   <P>See Fl_Browser for  methods to add and remove lines from the browser.
 */
-class Fl_Select_Browser : public Fl_Browser {
+class FL_EXPORT Fl_Select_Browser : public Fl_Browser {
 public:
   /** 
     Creates a new Fl_Select_Browser widget using the given

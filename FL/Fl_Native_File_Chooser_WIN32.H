@@ -36,7 +36,7 @@
 #include <commdlg.h>		// OPENFILENAME, GetOpenFileName()
 #include <shlobj.h>		// BROWSEINFO, SHBrowseForFolder()
 
-class Fl_Native_File_Chooser {
+class FL_EXPORT Fl_Native_File_Chooser {
 public:
   enum Type {
     BROWSE_FILE = 0,

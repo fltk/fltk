@@ -69,7 +69,7 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 /**
  \brief All graphical output devices and all graphics systems.
  */
-class Fl_Device {
+class FL_EXPORT Fl_Device {
 protected:
   /** \brief The device type */
   const char *type_; 
@@ -98,7 +98,7 @@ public:
  <br> The public API for drawing operations is functionally presented in \ref drawing and as function lists
  in the \ref fl_drawings and \ref fl_attributes modules. 
   */
-class Fl_Graphics_Driver : public Fl_Device {
+class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
 protected:
 /*  ** \brief red color for background and/or mixing if device does not support masking or alpha *
   uchar bg_r_; 
@@ -296,7 +296,7 @@ public:
  *
  This class is implemented only on the Mac OS X platform.
  */
-class Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
+class FL_EXPORT Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   /** \brief The constructor. */
   Fl_Quartz_Graphics_Driver() { type_ = device_type; };
@@ -312,7 +312,7 @@ public:
  *
  This class is implemented only on the MSWindows platform.
  */
-class Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
+class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   /** \brief The constructor. */
   Fl_GDI_Graphics_Driver() { type_ = device_type; };
@@ -342,7 +342,7 @@ public:
 /**
  \brief A surface that's susceptible to receive graphical output.
  */
-class Fl_Surface_Device : public Fl_Device {
+class FL_EXPORT Fl_Surface_Device : public Fl_Device {
   /** \brief The graphics driver in use by this surface. */
   Fl_Graphics_Driver *_driver;
 protected:
@@ -364,7 +364,7 @@ public:
 /**
  \brief A display to which the computer can draw.
  */
-class Fl_Display_Device : public Fl_Surface_Device {
+class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
 public:
   static const char *device_type;
   /** \brief A constructor that sets the graphics driver used by the display */
@@ -380,7 +380,7 @@ public:
  window or screen types. It is currently used to provide an automated printing
  service for OpenGL windows, if linked with fltk_gl.
  */
-class Fl_Device_Plugin : public Fl_Plugin {
+class FL_EXPORT Fl_Device_Plugin : public Fl_Plugin {
 public:
   /** \brief The constructor */
   Fl_Device_Plugin(const char *name)
