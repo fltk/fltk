@@ -220,13 +220,45 @@ private:
     fmt.tymed = TYMED_HGLOBAL;
     fmt.dwAspect = DVASPECT_CONTENT;
     fmt.lindex = -1;
-    fmt.cfFormat = CF_TEXT;
-    // if it is ASCII text, return a copy of it
+    fmt.cfFormat = CF_UNICODETEXT;
+    // if it is UNICODE text, return a UTF-8-converted copy of it
     if ( data->GetData( &fmt, &medium )==S_OK )
     {
       void *stuff = GlobalLock( medium.hGlobal );
-      Fl::e_length = strlen((char*)stuff);
-      Fl::e_text = strdup((char*)stuff);
+      unsigned srclen = 0;
+      const wchar_t *wstuff = (const wchar_t *)stuff;
+      while(*wstuff++) srclen++;
+      wstuff = (const wchar_t *)stuff;
+      unsigned utf8len = fl_utf8fromwc(NULL, 0, wstuff, srclen);
+      Fl::e_length = utf8len;
+      Fl::e_text = (char*)malloc(utf8len + 1);
+      fl_utf8fromwc(Fl::e_text, Fl::e_length, wstuff, srclen);
+      GlobalUnlock( medium.hGlobal );
+      ReleaseStgMedium( &medium );
+      currDragResult = 1;
+      return currDragResult;
+    }
+    fmt.cfFormat = CF_TEXT;
+    // if it is CP1252 text, return a UTF-8-converted copy of it
+    if ( data->GetData( &fmt, &medium )==S_OK )
+    {
+      int len;
+      char *p, *q, *last;
+      unsigned u;
+      void *stuff = GlobalLock( medium.hGlobal );
+      Fl::e_text = (char*)malloc(3 * strlen((char*)stuff) + 10);
+      p = (char*)stuff; 
+      last = p + strlen(p);
+      q = Fl::e_text;
+      while (p < last) {
+	u = fl_utf8decode(p, last, &len);
+	p += len;
+	len = fl_utf8encode(u, q);
+	q += len;
+	}
+      *q = 0;
+      Fl::e_length = q - Fl::e_text;
+      Fl::e_text = (char*)realloc(Fl::e_text, Fl::e_length + 1);
       GlobalUnlock( medium.hGlobal );
       ReleaseStgMedium( &medium );
       currDragResult = 1;
