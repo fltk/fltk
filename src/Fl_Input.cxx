@@ -164,11 +164,12 @@ int Fl_Input::handle_key() {
         return 1;
       } else return 1;
 #else
-      if (mods==0) {
-        ascii = ctrl('D'); 
-      } else if (mods==FL_SHIFT) {
-        ascii = ctrl('X');
-      } else return 1;
+      if (mods) return 1;		// Alt-Del/Ctrl-Del/Meta-Del: do nothing 
+      if (Fl::event_state() & FL_SHIFT) {
+	ascii = ctrl('X');		// Shift-Del -> ^X
+      } else {
+	ascii = ctrl('D');		// Del -> ^D
+      }
 #endif
       break;
     case FL_Left:
