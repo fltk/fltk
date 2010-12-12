@@ -676,22 +676,7 @@ static double do_queued_events( double time = 0.0 )
                                       untilDate:[NSDate dateWithTimeIntervalSinceNow:time] 
                                          inMode:NSDefaultRunLoopMode dequeue:YES];  
   if (event != nil) {
-    BOOL needSendEvent = YES;
-    if ([event type] == NSLeftMouseDown) {
-      Fl_Window *grab = Fl::grab();
-      if (grab && grab != [(FLWindow *)[event window] getFl_Window]) {
-	// a click event out of a menu window, so we should close this menu
-	// done here to catch also clicks on window title bar/resize box 
-	cocoaMouseHandler(event);
-      }
-    }
-    else if ([event type] == NSApplicationDefined) {
-      if ([event subtype] == FLTKDataReadyEvent) {
-	processFLTKEvent();
-      }
-      needSendEvent = NO;
-    }
-    if (needSendEvent) [NSApp sendEvent:event]; 
+    [NSApp sendEvent:event]; // reimplemented in [FLApplication sendevent:]
   }
   fl_lock_function();
   
@@ -1332,20 +1317,31 @@ extern "C" {
 - (void)sendEvent:(NSEvent *)theEvent;
 @end
 @implementation FLApplication
-// The default sendEvent turns key downs into performKeyEquivalent when
-// modifiers are down, but swallows the key up if the modifiers include
-// command.  This one makes all modifiers consistent by always sending key ups.
-// FLView treats performKeyEquivalent to keyDown, but performKeyEquivalent is
-// still needed for the system menu.
 - (void)sendEvent:(NSEvent *)theEvent
 {
-  NSEventType type = [theEvent type];
-  NSWindow *key = [self keyWindow];
-  if (key && type == NSKeyUp) {
-    [key sendEvent:theEvent];
-  } else {
-    [super sendEvent:theEvent];
-  }
+  NSEventType type = [theEvent type];  
+  if (type == NSLeftMouseDown) {
+    Fl_Window *grab = Fl::grab();
+    if (grab && grab != [(FLWindow *)[theEvent window] getFl_Window]) {
+      // a click event out of a menu window, so we should close this menu
+      // done here to catch also clicks on window title bar/resize box 
+      cocoaMouseHandler(theEvent);
+    }
+  } else if (type == NSApplicationDefined) {
+    if ([theEvent subtype] == FLTKDataReadyEvent) {
+      processFLTKEvent();
+    }
+    return;
+  } else if (type == NSKeyUp) {
+    // The default sendEvent turns key downs into performKeyEquivalent when
+    // modifiers are down, but swallows the key up if the modifiers include
+    // command.  This one makes all modifiers consistent by always sending key ups.
+    // FLView treats performKeyEquivalent to keyDown, but performKeyEquivalent is
+    // still needed for the system menu.
+    [[self keyWindow] sendEvent:theEvent];
+    return;
+    }
+  [super sendEvent:theEvent]; 
 }
 @end
 
