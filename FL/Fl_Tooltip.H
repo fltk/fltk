@@ -55,11 +55,11 @@ public:
   */
   static void hoverdelay(float f) { hoverdelay_ = f; }
   /**    Returns non-zero if tooltips are enabled.  */
-  static int enabled() { return enabled_; }
+  static int enabled() { return Fl::option(Fl::OPTION_SHOW_TOOLTIPS); }
   /**    Enables tooltips on all widgets (or disables if <i>b</i> is false).  */
-  static void enable(int b = 1) { enabled_ = b;}
+  static void enable(int b = 1) { Fl::option(Fl::OPTION_SHOW_TOOLTIPS, b);}
   /**    Same as enable(0), disables tooltips on all widgets.  */
-  static void disable() { enabled_ = 0; }
+  static void disable() { enable(0); }
   static void (*enter)(Fl_Widget* w);
   static void enter_area(Fl_Widget* w, int X, int Y, int W, int H, const char* tip);
   static void (*exit)(Fl_Widget *w);
@@ -100,7 +100,6 @@ private:
 private:
   static float delay_; //!< delay before a tooltip is shown
   static float hoverdelay_; //!< delay between tooltips
-  static int enabled_;
   static Fl_Color color_;
   static Fl_Color textcolor_;
   static Fl_Font font_;

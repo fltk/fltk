@@ -90,8 +90,6 @@ int		Fl::damage_,
 
 char		*Fl::e_text = (char *)"";
 int		Fl::e_length;
-int		Fl::visible_focus_ = 1,
-		Fl::dnd_text_ops_ = 1;
 
 unsigned char   Fl::options_[] = { 0, 0 };
 unsigned char   Fl::options_read_ = 0;
@@ -1760,7 +1758,7 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
 
 
 /**
- \brief User interface options management.
+ \brief FLTK library options management.
  
  This function needs to be documented in more detail. It can be used for more
  optional settings, such as using a native file chooser instead of the FLTK one
@@ -1771,6 +1769,10 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
  
  There should be an application that manages options system wide, per user, and
  per application.
+ 
+ \param opt which option
+ \return true or false
+ \see Fl_Option
  */ 
 bool Fl::option(Fl_Option opt)
 {
@@ -1779,15 +1781,35 @@ bool Fl::option(Fl_Option opt)
     { // first, read the system wide preferences
       Fl_Preferences prefs(Fl_Preferences::SYSTEM, "fltk.org", "fltk");
       Fl_Preferences opt_prefs(prefs, "options");
-      opt_prefs.get("ArrowFocus", tmp, 0); options_[OPTION_ARROW_FOCUS] = tmp;
-      opt_prefs.get("NativeFilechooser", tmp, 0); options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+      opt_prefs.get("ArrowFocus", tmp, 0);                      // default: off
+      options_[OPTION_ARROW_FOCUS] = tmp;
+      //opt_prefs.get("NativeFilechooser", tmp, 1);             // default: on
+      //options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+      //opt_prefs.get("FilechooserPreview", tmp, 1);            // default: on
+      //options_[OPTION_FILECHOOSER_PREVIEW] = tmp;
+      opt_prefs.get("VisibleFocus", tmp, 1);                    // default: on
+      options_[OPTION_VISIBLE_FOCUS] = tmp;
+      opt_prefs.get("DNDText", tmp, 1);                         // default: on
+      options_[OPTION_DND_TEXT] = tmp;
+      opt_prefs.get("ShowTooltips", tmp, 1);                    // default: on
+      options_[OPTION_SHOW_TOOLTIPS] = tmp;
     }
     { // next, check the user preferences
       // override system options only, if the option is set ( >= 0 )
       Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
       Fl_Preferences opt_prefs(prefs, "options");
-      opt_prefs.get("ArrowFocus", tmp, -1); if (tmp >= 0) options_[OPTION_ARROW_FOCUS] = tmp;
-      opt_prefs.get("NativeFilechooser", tmp, -1); if (tmp >= 0) options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+      opt_prefs.get("ArrowFocus", tmp, -1); 
+      if (tmp >= 0) options_[OPTION_ARROW_FOCUS] = tmp;
+      //opt_prefs.get("NativeFilechooser", tmp, -1); 
+      //if (tmp >= 0) options_[OPTION_NATIVE_FILECHOOSER] = tmp;
+      //opt_prefs.get("FilechooserPreview", tmp, -1);
+      //if (tmp >= 0) options_[OPTION_FILECHOOSER_PREVIEW] = tmp;
+      opt_prefs.get("VisibleFocus", tmp, -1); 
+      if (tmp >= 0) options_[OPTION_VISIBLE_FOCUS] = tmp;
+      opt_prefs.get("DNDText", tmp, -1); 
+      if (tmp >= 0) options_[OPTION_DND_TEXT] = tmp;
+      opt_prefs.get("ShowTooltips", tmp, -1); 
+      if (tmp >= 0) options_[OPTION_SHOW_TOOLTIPS] = tmp;
     }
     { // now, if the developer has registered this app, we could as for per-application preferences
     }
@@ -1798,14 +1820,34 @@ bool Fl::option(Fl_Option opt)
   return (bool)options_[opt];
 }
 
+/**
+ \brief Override an option while the application is running.
+ 
+ This function does not change any system or user settings.
+ 
+ \param opt which option
+ \param val set to true or false
+ \see Fl_Option
+ */
+void Fl::option(Fl_Option opt, bool val)
+{
+  if (opt<0 || opt>=OPTION_LAST) 
+    return;
+  if (!options_read_) {
+    // first read this option, so we don't override our setting later
+    option(opt);
+  }
+  options_[opt] = val;
+}
+
 
 // Helper class Fl_Widget_Tracker
 
 /**
   The constructor adds a widget to the watch list.
 */
-Fl_Widget_Tracker::Fl_Widget_Tracker(Fl_Widget *wi) {
-
+Fl_Widget_Tracker::Fl_Widget_Tracker(Fl_Widget *wi) 
+{
   wp_ = wi;
   Fl::watch_widget_pointer(wp_); // add pointer to watch list
 }
@@ -1813,8 +1855,8 @@ Fl_Widget_Tracker::Fl_Widget_Tracker(Fl_Widget *wi) {
 /**
   The destructor removes a widget from the watch list.
 */
-Fl_Widget_Tracker::~Fl_Widget_Tracker() {
-
+Fl_Widget_Tracker::~Fl_Widget_Tracker() 
+{
   Fl::release_widget_pointer(wp_); // remove pointer from watch list
 }
 

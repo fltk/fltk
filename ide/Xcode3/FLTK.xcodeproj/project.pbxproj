@@ -5449,6 +5449,7 @@
 				2DE25DB4CE986C1857B5ECF7 /* Fl_Native_File_Chooser.cxx */,
 				D1C792936D427CC48581BFAE /* Fl_Overlay_Window.cxx */,
 				813C830680D031C1B2FCF9B6 /* Fl_Pack.cxx */,
+				6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */,
 				D79D3910F834D4B78FED92F3 /* Fl_Pixmap.cxx */,
 				05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */,
 				B4CAFA162560925C4591997A /* Fl_Printer.cxx */,
@@ -5558,7 +5559,6 @@
 				FB7A9EFB3C7CDAE324E9544F /* case.c */,
 				6B30F6EA5CA69E305D2B82EE /* is_right2left.c */,
 				5AE1F936F1C186E18C1B9C28 /* is_spacing.c */,
-				6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */,
 			);
 			name = fltk;
 			sourceTree = "<group>";

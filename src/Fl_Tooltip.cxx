@@ -34,13 +34,12 @@
 
 float		Fl_Tooltip::delay_ = 1.0f;
 float		Fl_Tooltip::hoverdelay_ = 0.2f;
-int		Fl_Tooltip::enabled_ = 1;
 Fl_Color	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
 		                                   FL_NUM_GREEN - 1,
 						   FL_NUM_BLUE - 2);
 Fl_Color	Fl_Tooltip::textcolor_ = FL_BLACK;
 Fl_Font         Fl_Tooltip::font_ = FL_HELVETICA;
-Fl_Fontsize    Fl_Tooltip::size_ = FL_NORMAL_SIZE;
+Fl_Fontsize     Fl_Tooltip::size_ = FL_NORMAL_SIZE;
 
 #define MAX_WIDTH 400
 

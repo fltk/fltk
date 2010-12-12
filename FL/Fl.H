@@ -137,8 +137,6 @@ public: // should be private!
   static Fl_Window* modal_;
   static Fl_Window* grab_;
   static int compose_state;
-  static int visible_focus_;
-  static int dnd_text_ops_;
 #endif
   /**
     If true then flush() will do something.
@@ -147,14 +145,35 @@ public: // should be private!
   
 public:
   typedef enum {
-    /// If set, the arrow keys can change focus from a text widget to another 
-    /// widget. If clear, only Tab and BackTab can.
+      /// When switched on, moving the text cursor beyond the start or end of 
+      /// a text in a text widget will change focus to the next text widgt. 
+      /// When switched off, the cursor will stop at the end of the text. 
+      /// Pressing Tab or Ctrl-Tab will advance the keyboard focus.
     OPTION_ARROW_FOCUS = 0,
-    /// If set, calls to fl_file_chooser will open the native file chooser.
-    /// If clear, the FLTK file chooser will open instead.
-    /// \todo Fl::OPTION_NATIVE_FILECHOOSER not yet supported
-    OPTION_NATIVE_FILECHOOSER,
-    // don't change this, leave it always as the last element
+      // When switched on, FLTK will use the file chooser dialog that comes 
+      // with your operating system whenever possible. When switched off, FLTK
+      // will present its own file chooser.
+      // \todo implement me
+    // OPTION_NATIVE_FILECHOOSER,
+      // When Filechooser Preview is enabled, the FLTK or native file chooser
+      // will show a preview of a selected file (if possible) before the user
+      // decides to choose the file.
+      // \todo implement me
+    //OPTION_FILECHOOSER_PREVIEW,
+      /// If visible focus is switched on, FLTK will draw a dotted rectangle 
+      /// inside the widget that will receive the next keystroke. If switched
+      /// off, no such indicator will be drawn and keyboard navigation
+      /// is disabled.
+    OPTION_VISIBLE_FOCUS,
+      /// If text drag-and-drop is enabled, the user can select and drag text
+      /// from any text widget. If disabled, no dragging is possible, however
+      /// dropping text from other applications still works.
+    OPTION_DND_TEXT,
+      /// If tooltips are enabled, hovering the mouse over a widget with a 
+      /// tooltip text will open a little tootip window until the mouse leaves
+      /// the widget. If disabled, no tooltip is shown.
+    OPTION_SHOW_TOOLTIPS,
+      // don't change this, leave it always as the last element
     OPTION_LAST
   } Fl_Option;
   
@@ -163,14 +182,16 @@ private:
   static unsigned char options_read_;
   
 public:  
-  /**
-    Return a global setting for all FLTK applications, possibly overridden
-    by a setting specifically for this application.
-   
-    \param opt
-    \returns true or false
+  /*
+   Return a global setting for all FLTK applications, possibly overridden
+   by a setting specifically for this application.
    */
   static bool option(Fl_Option opt);
+  
+  /*
+   Override an option while the application is running.
+   */
+  static void option(Fl_Option opt, bool val);
   
   /**
     The currently executing idle callback function: DO NOT USE THIS DIRECTLY!
@@ -913,13 +934,13 @@ public:
     non-text widgets. The default mode is to enable keyboard focus
     for all widgets.
   */
-  static void visible_focus(int v) { visible_focus_ = v; }
+  static void visible_focus(int v) { option(OPTION_VISIBLE_FOCUS, v);  }
   /**
     Gets or sets the visible keyboard focus on buttons and other
     non-text widgets. The default mode is to enable keyboard focus
     for all widgets.
   */
-  static int  visible_focus() { return visible_focus_; }
+  static int  visible_focus() { return option(OPTION_VISIBLE_FOCUS); }
 
   // Drag-n-drop text operation methods...
   /**
@@ -928,14 +949,14 @@ public:
     be dragged from text fields or dragged within a text field as a
     cut/paste shortcut.
   */
-  static void dnd_text_ops(int v) { dnd_text_ops_ = v; }
+  static void dnd_text_ops(int v) { option(OPTION_DND_TEXT, v); }
   /**
     Gets or sets whether drag and drop text operations are
     supported. This specifically affects whether selected text can
     be dragged from text fields or dragged within a text field as a
     cut/paste shortcut.
   */
-  static int  dnd_text_ops() { return dnd_text_ops_; }
+  static int  dnd_text_ops() { return option(OPTION_DND_TEXT); }
   /** \defgroup fl_multithread Multithreading support functions
 	fl multithreading support functions declared in <FL/Fl.H>
    @{ */

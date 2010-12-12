@@ -3609,7 +3609,7 @@ int Fl_Text_Display::handle(int event) {
       if (dragType==DRAG_NONE)
         return 1;
       if (dragType==DRAG_START_DND) {
-        if (!Fl::event_is_click()) {
+        if (!Fl::event_is_click() && Fl::dnd_text_ops()) {
           const char* copy = buffer()->selection_text();
           Fl::dnd();
           free((void*)copy);
