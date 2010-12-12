@@ -66,13 +66,13 @@ public:
    Values for type() used to indicate what mouse buttons pop up the menu. 
    Fl_Menu_Button::POPUP3 is usually what you want.
    */  
-  enum popup_buttons {POPUP1 = 1, /**< pops up wih the mouse 1st button. */
-    POPUP2,  /**< pops up wih the mouse 2nd button. */
-    POPUP12, /**< pops up wih the mouse 1st or 2nd buttons. */
-    POPUP3,   /**< pops up wih the mouse 3rd button. */
-    POPUP13,  /**< pops up wih the mouse 1st or 3rd buttons. */
-    POPUP23,  /**< pops up wih the mouse 2nd or 3rd buttons. */
-    POPUP123 /**< pops up wih any mouse button. */
+  enum popup_buttons {POPUP1 = 1, /**< pops up with the mouse 1st button. */
+    POPUP2,  /**< pops up with the mouse 2nd button. */
+    POPUP12, /**< pops up with the mouse 1st or 2nd buttons. */
+    POPUP3,   /**< pops up with the mouse 3rd button. */
+    POPUP13,  /**< pops up with the mouse 1st or 3rd buttons. */
+    POPUP23,  /**< pops up with the mouse 2nd or 3rd buttons. */
+    POPUP123 /**< pops up with any mouse button. */
   };
   int handle(int);
   const Fl_Menu_Item* popup();
