@@ -67,6 +67,10 @@ const char* subclassname(Fl_Type* l) {
     if (c) return c;
     if (l->is_class()) return "Fl_Group";
     if (p->o->type() == FL_WINDOW+1) return "Fl_Double_Window";
+    if (strcmp(p->type_name(), "Fl_Input") == 0) {
+      if (p->o->type() == FL_FLOAT_INPUT) return "Fl_Float_Input";
+      if (p->o->type() == FL_INT_INPUT) return "Fl_Int_Input";
+    }
   }
   return l->type_name();
 }
