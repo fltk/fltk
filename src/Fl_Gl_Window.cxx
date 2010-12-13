@@ -324,7 +324,7 @@ void Fl_Gl_Window::flush() {
     glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
-#if defined (__APPLE_QUARTZ__)
+#if defined (__APPLE_QUARTZ__) || defined (__linux__)
       SWAP_TYPE = COPY;
 #else
       SWAP_TYPE = UNDEFINED;
@@ -334,6 +334,7 @@ void Fl_Gl_Window::flush() {
 	if (!strcmp(c,"COPY")) SWAP_TYPE = COPY;
 	else if (!strcmp(c, "NODAMAGE")) SWAP_TYPE = NODAMAGE;
 	else if (!strcmp(c, "SWAP")) SWAP_TYPE = SWAP;
+	else SWAP_TYPE = UNDEFINED;
       }
     }
 
@@ -350,7 +351,12 @@ void Fl_Gl_Window::flush() {
       if (damage() != FL_DAMAGE_OVERLAY || !save_valid) draw();
 	  swap_buffers();
 
-    } else { // SWAP_TYPE == UNDEFINED
+    } else if (SWAP_TYPE == SWAP){
+      damage(FL_DAMAGE_ALL);
+      draw();
+      if (overlay == this) draw_overlay();
+      swap_buffers();
+    } else if (SWAP_TYPE == UNDEFINED){ // SWAP_TYPE == UNDEFINED
 
       // If we are faking the overlay, use CopyPixels to act like
       // SWAP_TYPE == COPY.  Otherwise overlay redraw is way too slow.
@@ -386,7 +392,7 @@ void Fl_Gl_Window::flush() {
 
     }
 
-    if (overlay==this) { // fake overlay in front buffer
+    if (overlay==this && SWAP_TYPE != SWAP) { // fake overlay in front buffer
       glDrawBuffer(GL_FRONT);
       draw_overlay();
       glDrawBuffer(GL_BACK);
