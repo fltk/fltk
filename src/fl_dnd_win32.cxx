@@ -173,13 +173,14 @@ public:
     if (fillCurrentDragData(data)) {
       int old_event = Fl::e_number;
       char *a, *b;
-      a = b = Fl::e_text;
+      a = b = currDragData;
       while (*a) { // strip the CRLF pairs
 	if (*a == '\r' && a[1] == '\n') a++;
 	else *b++ = *a++;
       }
       *b = 0;
-      Fl::e_length = b - Fl::e_text;
+      Fl::e_text = currDragData;
+      Fl::e_length = b - currDragData;
       Fl::belowmouse()->handle(Fl::e_number = FL_PASTE); // e_text will be invalid after this call
       Fl::e_number = old_event;
       SetForegroundWindow( hwnd );
@@ -213,7 +214,8 @@ private:
 
     // clear currDrag* for a new drag event
     clearCurrentDragData();
-
+    
+    currDragRef = data;
     // fill currDrag* with ASCII data, if available
     FORMATETC fmt = { 0 };
     STGMEDIUM medium = { 0 };
@@ -230,9 +232,9 @@ private:
       while(*wstuff++) srclen++;
       wstuff = (const wchar_t *)stuff;
       unsigned utf8len = fl_utf8fromwc(NULL, 0, wstuff, srclen);
-      Fl::e_length = utf8len;
-      Fl::e_text = (char*)malloc(utf8len + 1);
-      fl_utf8fromwc(Fl::e_text, Fl::e_length, wstuff, srclen);
+      currDragSize = utf8len;
+      currDragData = (char*)malloc(utf8len + 1);
+      fl_utf8fromwc(currDragData, currDragSize, wstuff, srclen);
       GlobalUnlock( medium.hGlobal );
       ReleaseStgMedium( &medium );
       currDragResult = 1;
@@ -246,10 +248,10 @@ private:
       char *p, *q, *last;
       unsigned u;
       void *stuff = GlobalLock( medium.hGlobal );
-      Fl::e_text = (char*)malloc(3 * strlen((char*)stuff) + 10);
+      currDragData = (char*)malloc(3 * strlen((char*)stuff) + 10);
       p = (char*)stuff; 
       last = p + strlen(p);
-      q = Fl::e_text;
+      q = currDragData;
       while (p < last) {
 	u = fl_utf8decode(p, last, &len);
 	p += len;
@@ -257,8 +259,8 @@ private:
 	q += len;
 	}
       *q = 0;
-      Fl::e_length = q - Fl::e_text;
-      Fl::e_text = (char*)realloc(Fl::e_text, Fl::e_length + 1);
+      currDragSize = q - Fl::e_text;
+      currDragData = (char*)realloc(currDragData, currDragSize + 1);
       GlobalUnlock( medium.hGlobal );
       ReleaseStgMedium( &medium );
       currDragResult = 1;
@@ -288,10 +290,10 @@ private:
         }
          *dst=0;
 
-        Fl::e_text = (char*) malloc(nn * 5 + 1);
+        currDragData = (char*) malloc(nn * 5 + 1);
 //      Fl::e_length = fl_unicode2utf(bu, nn, Fl::e_text);
-        Fl::e_length = fl_utf8fromwc(Fl::e_text, (nn*5+1), bu, nn);
-        Fl::e_text[Fl::e_length] = 0;
+        currDragSize = fl_utf8fromwc(currDragData, (nn*5+1), bu, nn);
+        currDragData[currDragSize] = 0;
         free(bu);
 
 //    Fl::belowmouse()->handle(FL_DROP);
