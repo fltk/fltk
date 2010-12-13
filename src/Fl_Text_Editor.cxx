@@ -317,6 +317,11 @@ int Fl_Text_Editor::kf_move(int c, Fl_Text_Editor* e) {
 int Fl_Text_Editor::kf_shift_move(int c, Fl_Text_Editor* e) {
   kf_move(c, e);
   fl_text_drag_me(e->insert_position(), e);
+  char *copy = e->buffer()->selection_text();
+  if (copy) {
+    Fl::copy(copy, strlen(copy), 0);
+    free(copy);
+    }
   return 1;
 }
 /** Moves the current text cursor in the direction indicated by control key */
