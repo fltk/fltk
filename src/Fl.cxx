@@ -927,7 +927,7 @@ void fl_fix_focus() {
   }
 }
 
-#ifndef WIN32
+#if !(defined(WIN32) || defined(__APPLE__))
 extern Fl_Widget *fl_selection_requestor; // from Fl_x.cxx
 #endif
 
@@ -945,7 +945,7 @@ void fl_throw_focus(Fl_Widget *o) {
 #endif // DEBUG
 
   if (o->contains(Fl::pushed())) Fl::pushed_ = 0;
-#ifndef WIN32
+#if !(defined(WIN32) || defined(__APPLE__))
   if (o->contains(fl_selection_requestor)) fl_selection_requestor = 0;
 #endif
   if (o->contains(Fl::belowmouse())) Fl::belowmouse_ = 0;
