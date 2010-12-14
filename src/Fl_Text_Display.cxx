@@ -3669,7 +3669,7 @@ int Fl_Text_Display::handle(int event) {
 	buffer()->unselect(); // clicking in the selection: unselect and move cursor
 	insert_position(dragPos);
 	return 1;
-      } else if (Fl::event_clicks() == DRAG_LINE) {
+      } else if (Fl::event_clicks() == DRAG_LINE && Fl::event_button() == FL_LEFT_MOUSE) {
         buffer()->select(buffer()->line_start(dragPos), buffer()->next_char(buffer()->line_end(dragPos)));
 	dragPos = line_start(dragPos);
 	dragType = DRAG_CHAR;
