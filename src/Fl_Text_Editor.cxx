@@ -283,6 +283,7 @@ int Fl_Text_Editor::kf_move(int c, Fl_Text_Editor* e) {
   if (!selected)
     e->dragPos = e->insert_position();
   e->buffer()->unselect();
+  Fl::copy("", 0, 0);
   switch (c) {
   case FL_Home:
       e->insert_position(e->buffer()->line_start(e->insert_position()));
@@ -330,6 +331,7 @@ int Fl_Text_Editor::kf_ctrl_move(int c, Fl_Text_Editor* e) {
     e->dragPos = e->insert_position();
   if (c != FL_Up && c != FL_Down) {
     e->buffer()->unselect();
+    Fl::copy("", 0, 0);
     e->show_insert_position();
   }
   switch (c) {
@@ -369,6 +371,7 @@ int Fl_Text_Editor::kf_meta_move(int c, Fl_Text_Editor* e) {
     e->dragPos = e->insert_position();
   if (c != FL_Up && c != FL_Down) {
     e->buffer()->unselect();
+    Fl::copy("", 0, 0);
     e->show_insert_position();
   }
   switch (c) {
@@ -495,11 +498,15 @@ int Fl_Text_Editor::kf_paste(int, Fl_Text_Editor* e) {
 /**  Selects all text in the current buffer.*/
 int Fl_Text_Editor::kf_select_all(int, Fl_Text_Editor* e) {
   e->buffer()->select(0, e->buffer()->length());
+  const char *copy = e->buffer()->selection_text();
+  if (*copy) Fl::copy(copy, strlen(copy), 0);
+  free((void*)copy);
   return 1;
 }
 /**  Undo last edit in the current buffer. Also deselect previous selection. */
 int Fl_Text_Editor::kf_undo(int , Fl_Text_Editor* e) {
   e->buffer()->unselect();
+  Fl::copy("", 0, 0);
   int crsr;
   int ret = e->buffer()->undo(&crsr);
   e->insert_position(crsr);
@@ -598,6 +605,11 @@ int Fl_Text_Editor::handle(int event) {
         // don't let the text_display see this event
         if (Fl_Group::handle(event)) return 1;
         dragType = DRAG_NONE;
+	if(buffer()->selected()) {
+	  buffer()->unselect();
+	  }
+	int pos = xy_to_position(Fl::event_x(), Fl::event_y(), CURSOR_POS);
+        insert_position(pos);
         Fl::paste(*this, 0);
         Fl::focus(this);
         set_changed();

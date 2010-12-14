@@ -3592,10 +3592,14 @@ int Fl_Text_Display::handle(int event) {
         return 1;
       }
       dragType = Fl::event_clicks();
-      if (dragType == DRAG_CHAR)
+      if (dragType == DRAG_CHAR) {
         buffer()->unselect();
-      else if (dragType == DRAG_WORD)
+	Fl::copy("", 0, 0);
+      }
+      else if (dragType == DRAG_WORD) {
         buffer()->select(word_start(pos), word_end(pos));
+	dragPos = word_start(pos);
+	}
       
       if (buffer()->primary_selection()->selected())
         insert_position(buffer()->primary_selection()->end());
@@ -3667,6 +3671,8 @@ int Fl_Text_Display::handle(int event) {
 	return 1;
       } else if (Fl::event_clicks() == DRAG_LINE) {
         buffer()->select(buffer()->line_start(dragPos), buffer()->next_char(buffer()->line_end(dragPos)));
+	dragPos = line_start(dragPos);
+	dragType = DRAG_CHAR;
       } else {
 	dragging = 0;
 	if (scroll_direction) {
@@ -3675,10 +3681,10 @@ int Fl_Text_Display::handle(int event) {
 	}
 	
 	// convert from WORD or LINE selection to CHAR
-	if (insert_position() >= dragPos)
+	/*if (insert_position() >= dragPos)
 	  dragPos = buffer()->primary_selection()->start();
 	else
-	  dragPos = buffer()->primary_selection()->end();
+	  dragPos = buffer()->primary_selection()->end();*/
 	dragType = DRAG_CHAR;
       }
       
@@ -3725,6 +3731,9 @@ int Fl_Text_Display::handle(int event) {
       // Select all ?
       if ((Fl::event_state()&(FL_CTRL|FL_COMMAND)) && Fl::event_key()=='a') {
         buffer()->select(0,buffer()->length());
+        const char *copy = buffer()->selection_text();
+        if (*copy) Fl::copy(copy, strlen(copy), 0);
+        free((void*)copy);
         return 1;
       }
       
