@@ -216,7 +216,7 @@ private:
     clearCurrentDragData();
     
     currDragRef = data;
-    // fill currDrag* with ASCII data, if available
+    // fill currDrag* with UTF-8 data, if available
     FORMATETC fmt = { 0 };
     STGMEDIUM medium = { 0 };
     fmt.tymed = TYMED_HGLOBAL;
@@ -229,12 +229,12 @@ private:
       void *stuff = GlobalLock( medium.hGlobal );
       unsigned srclen = 0;
       const wchar_t *wstuff = (const wchar_t *)stuff;
-      while(*wstuff++) srclen++;
+      while (*wstuff++) srclen++;
       wstuff = (const wchar_t *)stuff;
       unsigned utf8len = fl_utf8fromwc(NULL, 0, wstuff, srclen);
       currDragSize = utf8len;
       currDragData = (char*)malloc(utf8len + 1);
-      fl_utf8fromwc(currDragData, currDragSize, wstuff, srclen);
+      fl_utf8fromwc(currDragData, currDragSize+1, wstuff, srclen+1); // include null-byte
       GlobalUnlock( medium.hGlobal );
       ReleaseStgMedium( &medium );
       currDragResult = 1;
@@ -259,7 +259,7 @@ private:
 	q += len;
 	}
       *q = 0;
-      currDragSize = q - Fl::e_text;
+      currDragSize = q - currDragData;
       currDragData = (char*)realloc(currDragData, currDragSize + 1);
       GlobalUnlock( medium.hGlobal );
       ReleaseStgMedium( &medium );
