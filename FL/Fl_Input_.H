@@ -58,10 +58,10 @@
   one of those people who likes to change how the editing keys
   work. It may also be useful for adding scrollbars
   to the input field.
-  
+
   This can act like any of the subclasses of Fl_Input, by
   setting type() to one of the following values:
-  
+
   \code
   #define FL_NORMAL_INPUT	   0
   #define FL_FLOAT_INPUT	   1
@@ -78,26 +78,26 @@
   \endcode
 
   All variables that represent an index into a text buffer are byte-oriented,
-  not character oriented. Since utf8 characters can be up to six bytes long, 
+  not character oriented. Since UTF-8 characters can be up to six bytes long,
   simply incrementing such an index will not reliably advance to the next character
-  in the text buffer. 
+  in the text buffer.
 
-  Indices and pointers into the text buffer should always point at a 7 bit ASCII 
-  character or the beginning of a utf8 character sequence. Behavior for false
-  utf8 sequences and pointers into the middle of a seqeunce are undefined.
+  Indices and pointers into the text buffer should always point at a 7 bit ASCII
+  character or the beginning of a UTF-8 character sequence. Behavior for false
+  UTF-8 sequences and pointers into the middle of a sequence are undefined.
 
   \see Fl_Text_Display, Fl_Text_Editor for more powerful text handling widgets
 
   \internal
-  When porting this widget from ASCII to UTF8, previously legal pointers into 
+  When porting this widget from ASCII to UTF-8, previously legal pointers into
   the text of this widget can become illegal by pointing into the middle of
-  a UTF8 seuence. This is not a big problem for Fl_Input_ because all code
+  a UTF-8 sequence. This is not a big problem for Fl_Input_ because all code
   in this module is quite tolerant. It could be problematic though when deriving
-  from this class because no feedback for illegal pointers is given. Additionaly,
-  a careless "copy" call can put partial UTF8 sequnces into the clipboard.
+  from this class because no feedback for illegal pointers is given. Additionally,
+  a careless "copy" call can put partial UTF-8 sequences into the clipboard.
 
-  None of these issues should be desasterous. Nevertheless, we should 
-  discuss how FLTK should handle false UTF8 suequences and pointers.
+  None of these issues should be disastrous. Nevertheless, we should
+  discuss how FLTK should handle false UTF-8 sequences and pointers.
 */
 class FL_EXPORT Fl_Input_ : public Fl_Widget {
 
@@ -113,7 +113,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
   /** \internal \todo Please document me! */
   int bufsize;
   
-  /** \internal Positin of the cursor in the document */
+  /** \internal Position of the cursor in the document. */
   int position_;
 
   /** \internal Position of the other end of the selected text. If \p position_ equals 
@@ -123,7 +123,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
   /** \internal Offset to text origin within widget bounds */
   int xscroll_, yscroll_;
 
-  /** \internal Minimal update pointer. Display requirs redraw from here to the end
+  /** \internal Minimal update pointer. Display requires redraw from here to the end
       of the buffer. */
   int mu_p;
 
@@ -148,7 +148,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
   /** \internal color of the text cursor */
   Fl_Color cursor_color_;
 
-  /** \internal Horizontal cursor position in pixels while movin up or down.  */
+  /** \internal Horizontal cursor position in pixels while moving up or down. */
   static double up_down_pos;
 
   /** \internal Flag to remember last cursor move. */
@@ -192,7 +192,7 @@ protected:
   /* Move the cursor to the column given by up_down_pos. */
   int up_down_position(int, int keepmark=0);
 
-  /* Handle mouse clicks and mose moves. */
+  /* Handle mouse clicks and mouse moves. */
   void handle_mouse(int, int, int, int, int keepmark=0);
 
   /* Handle all kinds of text field related events. */
@@ -294,7 +294,7 @@ public:
   int position(int p) {return position(p, p);}
 
   /** Sets the current selection mark. 
-    mark(n) is  the same as <tt>position(position(),n)</tt>.
+    mark(n) is the same as <tt>position(position(),n)</tt>.
     \param m new index of the mark 
     \return 0 if the mark did not change
     \see position(), position(int, int) */
@@ -364,13 +364,13 @@ public:
   /* Copy the yank buffer to the clipboard. */
   int copy_cuts();
 
-  /** Return the shortcut key associtaed with this widget.
+  /** Return the shortcut key associated with this widget.
     \return shortcut keystroke
     \see Fl_Button::shortcut() */
   int shortcut() const {return shortcut_;}
 
   /** 
-    Sets the shortcut key associtaed with this widget.
+    Sets the shortcut key associated with this widget.
     Pressing the shortcut key gives text editing focus to this widget.
     \param [in] s new shortcut keystroke 
     \see Fl_Button::shortcut() 
