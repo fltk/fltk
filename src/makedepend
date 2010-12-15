@@ -2,8 +2,8 @@
 
 Fl.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Window.H
-Fl.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/x.H ../FL/Fl_Window.H
-Fl.o: ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H flstring.h ../FL/Fl_Export.H
+Fl.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
+Fl.o: ../FL/x.H ../FL/Fl_Window.H flstring.h ../FL/Fl_Export.H
 Fl.o: ../FL/fl_draw.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
 Fl.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
 Fl.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
@@ -312,14 +312,13 @@ Fl_Pack.o: ../FL/Fl_Group.H ../FL/fl_draw.H ../FL/Fl_Window.H
 Fl_Pack.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Plugin.H
 Fl_Pack.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
 Fl_Pack.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-Fl_Paged_Device.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
-Fl_Paged_Device.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
-Fl_Paged_Device.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
-Fl_Paged_Device.o: ../FL/Fl_Device.H ../FL/fl_draw.H ../FL/Fl_Window.H
-Fl_Paged_Device.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Plugin.H
-Fl_Paged_Device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
-Fl_Paged_Device.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-Fl_Paged_Device.o: ../FL/Fl_PostScript.H
+Fl_Paged_Device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/Fl.H
+Fl_Paged_Device.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Paged_Device.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H
+Fl_Paged_Device.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/x.H
+Fl_Paged_Device.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Paged_Device.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Paged_Device.o: ../FL/Fl_RGB_Image.H
 Fl_Pixmap.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Pixmap.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H
 Fl_Pixmap.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Plugin.H
@@ -338,23 +337,16 @@ Fl_Positioner.o: ../FL/Fl_RGB_Image.H
 Fl_Preferences.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Preferences.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Preferences.o: ../FL/Fl_Preferences.H ../FL/Fl_Plugin.H
-Fl_Preferences.o: ../FL/Fl_Preferences.H ../FL/Fl_Tree.H ../FL/Fl_Group.H
-Fl_Preferences.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
-Fl_Preferences.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Fl_Window.H
-Fl_Preferences.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Image.H
-Fl_Preferences.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-Fl_Preferences.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Tree_Item.H ../FL/Fl_Widget.H
-Fl_Preferences.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H
-Fl_Preferences.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h
-Fl_Preferences.o: ../FL/Fl_Export.H ../config.h
+Fl_Preferences.o: ../FL/Fl_Preferences.H ../FL/filename.H ../FL/fl_utf8.h
+Fl_Preferences.o: flstring.h ../FL/Fl_Export.H ../config.h
 Fl_Printer.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H
 Fl_Printer.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Export.H
 Fl_Printer.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/x.H
 Fl_Printer.o: ../FL/Xutf8.h ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_Printer.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Printer.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_PostScript.H
-Fl_Printer.o: ../src/Fl_PostScript.cxx ../FL/Fl.H ../FL/fl_utf8.h
-Fl_Printer.o: ../FL/fl_ask.H ../FL/Fl_Native_File_Chooser.H
+Fl_Printer.o: Fl_PostScript.cxx ../FL/Fl.H ../FL/fl_utf8.h ../FL/fl_ask.H
+Fl_Printer.o: ../FL/Fl_Native_File_Chooser.H
 Fl_Printer.o: ../FL/Fl_Native_File_Chooser_FLTK.H ../FL/Fl_File_Chooser.H
 Fl_Printer.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
 Fl_Printer.o: ../FL/Fl_Menu_.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
@@ -454,7 +446,7 @@ Fl_Tabs.o: ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
 Fl_Text_Buffer.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
 Fl_Text_Buffer.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Text_Buffer.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
-Fl_Text_Buffer.o: ../FL/Fl_Text_Buffer.H
+Fl_Text_Buffer.o: ../FL/Fl_Text_Buffer.H ../FL/fl_ask.H
 Fl_Text_Display.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
 Fl_Text_Display.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Text_Display.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
@@ -493,7 +485,7 @@ Fl_Tree.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/x.H ../FL/Fl_Plugin.H
 Fl_Tree.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
 Fl_Tree.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 Fl_Tree.o: ../FL/Fl_Tree_Item.H ../FL/Fl_Widget.H ../FL/Fl_Tree_Item_Array.H
-Fl_Tree.o: ../FL/Fl_Tree_Prefs.H
+Fl_Tree.o: ../FL/Fl_Tree_Prefs.H ../FL/Fl_Preferences.H
 Fl_Tree_Item.o: ../FL/Fl_Widget.H ../FL/Fl_Tree_Item.H ../FL/Fl.H
 Fl_Tree_Item.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Tree_Item.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Image.H
@@ -501,8 +493,8 @@ Fl_Tree_Item.o: ../FL/fl_draw.H ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/x.H
 Fl_Tree_Item.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Bitmap.H
 Fl_Tree_Item.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 Fl_Tree_Item.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H
-Fl_Tree_Item_Array.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Item.H
-Fl_Tree_Item_Array.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Export.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Tree_Item.H ../FL/Fl.H ../FL/fl_utf8.h
 Fl_Tree_Item_Array.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Tree_Item_Array.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/fl_draw.H
 Fl_Tree_Item_Array.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/x.H
@@ -772,7 +764,7 @@ fl_line_style.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 fl_line_style.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Printer.H
 fl_line_style.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H
 fl_line_style.o: ../FL/Fl_PostScript.H flstring.h ../FL/Fl_Export.H
-fl_line_style.o: ../config.h ../FL/fl_ask.H
+fl_line_style.o: ../config.h
 fl_open_uri.o: ../FL/filename.H flstring.h ../FL/Fl_Export.H ../config.h
 fl_oval_box.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fl_oval_box.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H
@@ -999,7 +991,7 @@ Fl_Gl_Overlay.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Gl_Overlay.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 Fl_Gl_Overlay.o: ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
 Fl_Gl_Overlay.o: ../FL/Fl_Gl_Window.H
-Fl_Gl_Device_Plugin.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
+Fl_Gl_Device_Plugin.o: ../config.h ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Device.H ../FL/fl_draw.H ../FL/Enumerations.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
 Fl_Gl_Device_Plugin.o: ../FL/Fl_Device.H ../FL/x.H ../FL/Xutf8.h
@@ -1056,7 +1048,8 @@ fl_images_core.o: ../FL/Fl_BMP_Image.H ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H
 fl_images_core.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_PNG_Image.H
 fl_images_core.o: ../FL/Fl_PNM_Image.H flstring.h ../FL/Fl_Export.H
 fl_images_core.o: ../config.h
-Fl_BMP_Image.o: ../FL/Fl_BMP_Image.H ../FL/Fl_Image.H ../config.h
+Fl_BMP_Image.o: ../FL/Fl_BMP_Image.H ../FL/Fl_Image.H ../FL/fl_utf8.h
+Fl_BMP_Image.o: ../config.h
 Fl_File_Icon2.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
 Fl_File_Icon2.o: ../FL/math.h ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/fl_utf8.h
 Fl_File_Icon2.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
@@ -1083,7 +1076,8 @@ Fl_Help_Dialog.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Help_Dialog.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
 Fl_Help_Dialog.o: ../FL/Fl_Shared_Image.H flstring.h ../FL/Fl_Export.H
 Fl_Help_Dialog.o: ../config.h ../FL/fl_ask.H
-Fl_JPEG_Image.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_Image.H ../config.h
+Fl_JPEG_Image.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_Image.H ../FL/fl_utf8.h
+Fl_JPEG_Image.o: ../config.h
 Fl_PNG_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_PNG_Image.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_PNG_Image.H
 Fl_PNG_Image.o: ../FL/Fl_Image.H ../config.h ../FL/fl_utf8.h
@@ -1101,11 +1095,12 @@ xutf8/is_spacing.o: xutf8/headers/spacing.h
 xutf8/keysym2Ucs.o: ../FL/Xutf8.h xutf8/imKStoUCS.c xutf8/Xlibint.h
 xutf8/keysym2Ucs.o: xutf8/Ximint.h
 xutf8/utf8Input.o: ../config.h ../FL/Xutf8.h xutf8/lcUniConv/big5.h
-xutf8/utf8Input.o: xutf8/lcUniConv/gb2312.h xutf8/lcUniConv/jisx0201.h
-xutf8/utf8Input.o: xutf8/lcUniConv/jisx0208.h xutf8/lcUniConv/jisx0212.h
-xutf8/utf8Input.o: xutf8/lcUniConv/ksc5601.h
+xutf8/utf8Input.o: xutf8/lcUniConv/gb2312.h xutf8/lcUniConv/cp936ext.h
+xutf8/utf8Input.o: xutf8/lcUniConv/jisx0201.h xutf8/lcUniConv/jisx0208.h
+xutf8/utf8Input.o: xutf8/lcUniConv/jisx0212.h xutf8/lcUniConv/ksc5601.h
 xutf8/utf8Utils.o: ../FL/Xutf8.h
-xutf8/utf8Wrap.o: ../FL/Xutf8.h xutf8/ucs2fontmap.c xutf8/lcUniConv/big5.h
+xutf8/utf8Wrap.o: ../FL/Xutf8.h xutf8/ucs2fontmap.c
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp936ext.h xutf8/lcUniConv/big5.h
 xutf8/utf8Wrap.o: xutf8/lcUniConv/gb2312.h xutf8/lcUniConv/iso8859_10.h
 xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_11.h xutf8/lcUniConv/iso8859_13.h
 xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_14.h xutf8/lcUniConv/iso8859_15.h
