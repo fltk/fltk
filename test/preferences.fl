@@ -238,5 +238,7 @@ Fl::delete_widget(myWindow);}
       xywh {315 275 75 25}
     }
   }
-  code {readPrefs();} {}
+  code {readPrefs();
+  Fl::option(Fl::OPTION_SHOW_TOOLTIPS,1); // make sure tooltips are on !
+} {}
 } 
