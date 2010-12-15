@@ -56,7 +56,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include "config.h"
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Single_Window.H>
 #include <FL/Fl_Hor_Slider.H>

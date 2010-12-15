@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 
-#include "config.h"
+#include <config.h>
 
 #if HAVE_PTHREAD || defined(WIN32)
 #  include <FL/Fl.H>
