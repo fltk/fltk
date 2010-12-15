@@ -33,14 +33,23 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Input.H>
+#include <FL/Fl_Light_Button.H>
 
 #define WIDTH 600
 #define HEIGHT 300
 #define GRID 25
 
+void ToggleArrowFocus_CB(Fl_Widget *w, void*) {
+  Fl_Light_Button *b = (Fl_Light_Button*)w;
+  Fl::option(Fl::OPTION_ARROW_FOCUS, b->value() ? true : false);
+}
 int main(int argc, char **argv) {
   if (argc > 1) srand(atoi(argv[1]));
-  Fl_Window window(WIDTH,HEIGHT,argv[0]);
+  Fl_Window window(WIDTH,HEIGHT+40,argv[0]);
+    // Include a toggle button to control arrow focus
+    Fl_Light_Button arrowfocus_butt(10,HEIGHT+10,130,20," Arrow Focus");
+    arrowfocus_butt.callback(ToggleArrowFocus_CB);
+    arrowfocus_butt.value(Fl::option(Fl::OPTION_ARROW_FOCUS) ? 1 : 0);	// use default
   window.end(); // don't auto-add children
   for (int i = 0; i<10000; i++) {
     // make up a random size of widget:
