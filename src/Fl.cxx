@@ -30,7 +30,7 @@
 //          mostly to get around the single active context in QD and 
 //          to implement clipping. This should be changed into pure
 //          Quartz calls in the near future.
-#include "config.h"
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
