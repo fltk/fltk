@@ -1743,7 +1743,7 @@ int Fl_Text_Display::handle_vline(
       int w = 0;
       if (prevChar=='\t') {
         // draw a single Tab space
-        int tab = col_to_x(8);
+        int tab = (int)col_to_x(8);
         int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
         w = (((xAbs/tab)+1)*tab) - xAbs;
         if (mode==DRAW_LINE)
@@ -1776,7 +1776,7 @@ int Fl_Text_Display::handle_vline(
   int w = 0;
   if (currChar=='\t') {
     // draw a single Tab space
-    int tab = col_to_x(8);
+    int tab = (int)col_to_x(8);
     int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
     w = (((xAbs/tab)+1)*tab) - xAbs;
     if (mode==DRAW_LINE)
@@ -3117,7 +3117,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
       // FIXME: it is not a good idea to simply add character widths because on
       // some platforms, the width is a floating point value and depends on the 
       // previous character as well.
-      width += measure_proportional_character(s, width, p+styleBufOffset);
+      width += measure_proportional_character(s, (int)width, p+styleBufOffset);
     }
     
     /* If character exceeded wrap margin, find the break point and wrap there */
@@ -3131,7 +3131,7 @@ void Fl_Text_Display::wrapped_line_counter(Fl_Text_Buffer *buf, int startPos,
           width = 0;
           int iMax = buf->next_char(p);
           for (i=buf->next_char(b); i<iMax; i = buf->next_char(i)) {
-            width += measure_proportional_character(buf->address(i), width, 
+            width += measure_proportional_character(buf->address(i), (int)width, 
                                                     i+styleBufOffset);
             colNum++;
           }
@@ -3200,7 +3200,7 @@ double Fl_Text_Display::measure_proportional_character(const char *s, int xPix, 
   IS_UTF8_ALIGNED(s)
   
   if (*s=='\t') {
-    int tab = col_to_x(8);
+    int tab = (int)col_to_x(8);
     return (((xPix/tab)+1)*tab) - xPix;
   }
   
