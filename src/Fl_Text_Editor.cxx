@@ -223,8 +223,6 @@ void Fl_Text_Editor::add_key_binding(int key, int state, Key_Func function,
 
 ////////////////////////////////////////////////////////////////
 
-#define NORMAL_INPUT_MOVE 0
-
 static void kill_selection(Fl_Text_Editor* e) {
   if (e->buffer()->selected()) {
     e->insert_position(e->buffer()->primary_selection()->start());
