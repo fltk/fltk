@@ -104,7 +104,7 @@ opt[Fl::OPTION_VISIBLE_FOCUS][mode] = wVisibleFocus->value();} open
 
 If visible focus is switched on, FLTK will draw a dotted rectangle inside the widget that will receive the next keystroke. If switched off, no such indicator will be drawn and keyboard navigation is disabled.
 
-On by default.} xywh {245 40 100 25} down_box BORDER_BOX
+Default is on.} xywh {245 40 100 25} down_box BORDER_BOX
       } {
         MenuItem {} {
           label off
@@ -128,7 +128,7 @@ On by default.} xywh {245 40 100 25} down_box BORDER_BOX
 opt[Fl::OPTION_ARROW_FOCUS][mode] = wArrowFocus->value();} open
         tooltip {OPTION_ARROW_FOCUS
 
-When switched on, moving the text cursor beyond the start or end of a text in a text widget will change focus to the next text widgt. When switched off, the cursor will stop at the end of the text. Pressing Tab or Ctrl-Tab will advance the keyboard focus.
+When switched on, moving the text cursor beyond the start or end of the text in a text widget will change focus to the next widget. When switched off, the cursor will stop at the end of the text. Pressing Tab or Ctrl-Tab will advance the keyboard focus. Switch this on, if you want the old behavior of FLTK 1.1.
 
 Default is off.} xywh {245 75 100 25} down_box BORDER_BOX
       } {
@@ -159,7 +159,7 @@ Default is off.} xywh {245 75 100 25} down_box BORDER_BOX
 opt[Fl::OPTION_SHOW_TOOLTIPS][mode] = wShowTooltips->value();} open
         tooltip {OPTION_SHOW_TOOLTIPS
 
-If tooltips are enabled, hovering the mouse over a widget with a tooltip text will open a little tootip window until the mouse leaves the widget. If disabled, no tooltip is shown.
+If tooltips are enabled, hovering the mouse over a widget with a tooltip text will open a little tooltip window until the mouse leaves the widget. If disabled, no tooltip is shown.
 
 Default is on.} xywh {245 150 100 25} down_box BORDER_BOX
       } {
@@ -213,7 +213,7 @@ Default is on.} xywh {245 225 100 25} down_box BORDER_BOX
     }
     Fl_Choice wUserOrSystem {
       callback {refreshUI();} open
-      tooltip {Change settings for the current user, or for all users of this computer.} xywh {14 275 141 25} down_box BORDER_BOX
+      tooltip {Change settings for the current user, or default values for all users of this computer. Individual users can override system options, if they set their options to specific values (not 'default'). } xywh {14 275 141 25} down_box BORDER_BOX
     } {
       MenuItem {} {
         label {User Settings}

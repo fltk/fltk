@@ -62,11 +62,19 @@ int Fl_Input::shift_up_down_position(int p) {
   return up_down_position(p, Fl::event_state(FL_SHIFT));
 }
 
-// If you define this symbol as zero you will get the peculiar fltk
+// Old text from FLTK 1.1 for reference:
+// If you define NORMAL_INPUT_MOVE as zero you will get the peculiar fltk
 // behavior where moving off the end of an input field will move the
 // cursor into the next field:
 // define it as 1 to prevent cursor movement from going to next field:
-#define NORMAL_INPUT_MOVE 0
+//
+// Note: this has been replaced by Fl::option(Fl::OPTION_ARROW_FOCUS)
+// in FLTK 1.3.  This option has "inverted" values:
+//   1 = Arrow keys move focus (previously 0)
+//   0 = Arrow keys don't move focus (previously 1)
+// Hence we define ...
+//
+#define NORMAL_INPUT_MOVE (Fl::option(Fl::OPTION_ARROW_FOCUS) ? 0 : 1)
 
 #define ctrl(x) ((x)^0x40)
 
