@@ -105,7 +105,7 @@ static void undobuffersize(int n)
 
 static void def_transcoding_warning_action(Fl_Text_Buffer *text)
 {
-  fl_alert(text->file_encoding_warning_message);
+  fl_alert("%s", text->file_encoding_warning_message);
 }
 
 /*
