@@ -260,7 +260,7 @@ static int to_canonical(char *to, const char *from, size_t tolen) {
 static unsigned int fl_free_font = FL_FREE_FONT;
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
-  if (fl_free_font > FL_FREE_FONT) // already been here
+  if (fl_free_font > (unsigned)FL_FREE_FONT) // already been here
     return (Fl_Font)fl_free_font;
   fl_open_display();
   int xlistsize;

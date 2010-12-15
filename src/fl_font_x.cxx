@@ -160,8 +160,8 @@ static const char *find_best_font(const char *fname, int size) {
       name = namebuffer;
       ptsize = size;
     } else if (!ptsize ||	// no fonts yet
-	       thissize < ptsize && ptsize > size || // current font too big
-	       thissize > ptsize && thissize <= size // current too small
+	       (thissize < ptsize && ptsize > size) || // current font too big
+	       (thissize > ptsize && thissize <= size) // current too small
       ) {
       name = thisname;
       ptsize = thissize;
