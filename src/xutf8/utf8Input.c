@@ -52,6 +52,7 @@ typedef struct {
   unsigned short used;
 } Summary16;
 
+#define NEED_TOWC // indicates what part of these include files is needed here (avoid compilation warnings)
 #include "lcUniConv/big5.h"
 #include "lcUniConv/gb2312.h"
 #include "lcUniConv/cp936ext.h"

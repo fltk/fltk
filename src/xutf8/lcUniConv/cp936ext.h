@@ -28,22 +28,27 @@
 #if !defined(WIN32) && !defined(__APPLE__)
 
 #ifndef CP936
+#ifdef NEED_TOWC
 static int
 cp936ext_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
 {
   return 0;
 }
+#endif // NEED_TOWC
 
+#ifdef NEED_TOMB
 static int
 cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
   return 0;
 }
+#endif // NEED_TOMB
 
 #else
 /*
  * CP936EXT
  */
+#ifdef NEED_TOWC
 
 static const unsigned short cp936ext_2uni_page81[23766] = {
   /* 0x81 */
@@ -3201,6 +3206,9 @@ cp936ext_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
   }
   return RET_ILSEQ;
 }
+#endif // NEED_TOWC
+
+#ifdef NEED_TOMB
 
 static const unsigned short cp936ext_page0014[208] = {
   0x0000, 0x0000, 0x0000, 0x0000, 0xa1e8, 0x0000, 0x0000, 0xa1ec, /*0xa0-0xa7*/
@@ -6240,6 +6248,7 @@ cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
   }
   return RET_TOOSMALL;
 }
+#endif // NEED_TOMB
 
 #endif // CP936
 

@@ -36,7 +36,7 @@ typedef struct {
   unsigned short used;
 } Summary16;
 
-
+#define NEED_TOMB // indicates what part of these include files is needed here (avoid compilation warnings)
 #include "lcUniConv/cp936ext.h"
 #include "lcUniConv/big5.h"
 #include "lcUniConv/gb2312.h"
