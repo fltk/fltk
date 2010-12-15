@@ -133,7 +133,7 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
   mPredeleteCbArgs = NULL;
   mCursorPosHint = 0;
   mCanUndo = 1;
-  input_file_was_reencoded = 0;
+  input_file_was_transcoded = 0;
   transcoding_warning_action = def_transcoding_warning_action;
 }
 
@@ -1520,8 +1520,8 @@ int Fl_Text_Buffer::findchar_backward(int startPos, unsigned int searchChar,
   return 0;
 }
 
-//#define FIXED_LENGTH_ENCODING // shows how to process any fixed-length encoding
-#ifdef FIXED_LENGTH_ENCODING 
+//#define EXAMPLE_ENCODING // shows how to process any encoding for which a decoding function exists
+#ifdef EXAMPLE_ENCODING 
 
 // returns the UCS equivalent of *p in CP1252 and advances p by 1
 unsigned cp1252toucs(char* &p)
@@ -1539,7 +1539,7 @@ unsigned cp1252toucs(char* &p)
   return (uc < 0x80 || uc >= 0xa0 ? uc : cp1252[uc - 0x80]);
 }
 
-// returns the UCS equivalent of *p in UTF-16 and advances p by 2
+// returns the UCS equivalent of *p in UTF-16 and advances p by 2 (or more for surrogates)
 unsigned utf16toucs(char* &p)
 {
   union {
@@ -1557,11 +1557,11 @@ unsigned utf16toucs(char* &p)
 
 // filter that produces, from an input stream fed by reading from fp,
 // a UTF-8-encoded output stream written in buffer.
-// Input can be any fixed-length (e.g., 8-bit, UTF-16) encoding.
+// Input can be any (e.g., 8-bit, UTF-16) encoding.
 // Output is true UTF-8.
-// p_trf points to a function that transforms encoded byte(s) into UCS
+// p_trf points to a function that transforms encoded byte(s) into one UCS
 // and that increases the pointer by the adequate quantity
-static int fixed_length_input_filter(char *buffer, int buflen, 
+static int general_input_filter(char *buffer, int buflen, 
 				 char *line, int sline, char* &endline, 
 				 unsigned (*p_trf)(char* &),
 				 FILE *fp)
@@ -1590,7 +1590,7 @@ static int fixed_length_input_filter(char *buffer, int buflen,
   endline -= (p - line);
   return q - buffer;
 }
-#endif // FIXED_LENGTH_ENCODING
+#endif // EXAMPLE_ENCODING
 
 /*
  filter that produces, from an input stream fed by reading from fp,
@@ -1645,7 +1645,7 @@ static int utf8_input_filter(char *buffer, int buflen, char *line, int sline, ch
 }
 
 const char *Fl_Text_Buffer::file_encoding_warning_message = 
-"Displayed text contains the UTF-8 re-encoding\n"
+"Displayed text contains the UTF-8 transcoding\n"
 "of the input file which was not UTF-8 encoded.\n"
 "Some changes may have occurred.";
 
@@ -1663,19 +1663,19 @@ const char *Fl_Text_Buffer::file_encoding_warning_message =
   char *buffer = new char[buflen + 1];  
   char *endline, line[100];
   int l;
-  input_file_was_reencoded = false;
+  input_file_was_transcoded = false;
   endline = line;
   while (true) {
-#ifdef FIXED_LENGTH_ENCODING
+#ifdef EXAMPLE_ENCODING
     // example of 16-bit encoding: UTF-16
-    l = fixed_length_input_filter(buffer, buflen, 
+    l = general_input_filter(buffer, buflen, 
 				  line, sizeof(line), endline, 
 				  utf16toucs, // use cp1252toucs to read CP1252-encoded files
 				  fp);
-    input_file_was_reencoded = true;
+    input_file_was_transcoded = true;
 #else
     l = utf8_input_filter(buffer, buflen, line, sizeof(line), endline, 
-			  fp, &input_file_was_reencoded);
+			  fp, &input_file_was_transcoded);
 #endif
     if (l == 0) break;
     buffer[l] = 0;
@@ -1685,7 +1685,7 @@ const char *Fl_Text_Buffer::file_encoding_warning_message =
   int e = ferror(fp) ? 2 : 0;
   fclose(fp);
   delete[]buffer;
-  if ( (!e) && input_file_was_reencoded && transcoding_warning_action) {
+  if ( (!e) && input_file_was_transcoded && transcoding_warning_action) {
     transcoding_warning_action(this);
     }
   return e;

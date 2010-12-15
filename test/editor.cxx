@@ -492,7 +492,7 @@ void load_file(const char *newfile, int ipos) {
   int r;
   if (!insert) r = textbuf->loadfile(newfile);
   else r = textbuf->insertfile(newfile, ipos);
-  changed = changed || textbuf->input_file_was_reencoded;
+  changed = changed || textbuf->input_file_was_transcoded;
   if (r)
     fl_alert("Error reading from file \'%s\':\n%s.", newfile, strerror(errno));
   else

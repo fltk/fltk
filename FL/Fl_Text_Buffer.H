@@ -302,9 +302,9 @@ public:
    while reading data (data was partially loaded).
    File can be UTF-8 or CP1252-encoded.
    If the input file is not UTF-8-encoded, the Fl_Text_Buffer widget will contain
-   UTF-8-recoded data. By default, the message Fl_Text_Buffer::file_encoding_warning_message
+   UTF-8-transcoded data. By default, the message Fl_Text_Buffer::file_encoding_warning_message
    will warn the user about this.
-   \see input_file_was_reencoded and transcoding_warning_action.
+   \see input_file_was_transcoded and transcoding_warning_action.
    */
   int insertfile(const char *file, int pos, int buflen = 128*1024);
   
@@ -672,9 +672,9 @@ public:
   int utf8_align(int) const;
   
   /**
-   \brief true iff the loaded file has been re-encoded to UTF-8
+   \brief true iff the loaded file has been transcoded to UTF-8
    */
-  int input_file_was_reencoded;
+  int input_file_was_transcoded;
 
   /** This message may be displayed using the fl_alert() function when a file
    which was not UTF-8 encoded is input.
@@ -685,10 +685,10 @@ public:
    \brief Pointer to a function called after reading a non UTF-8 encoded file.
    
    This function is called after reading a file if the file content
-   was re-encoded to UTF-8. Its default implementation calls fl_alert()
+   was transcoded to UTF-8. Its default implementation calls fl_alert()
    with the text of \ref file_encoding_warning_message. No warning message is
-   displayed if this pointer is set to NULL. Use \ref input_file_was_reencoded
-   to be programmatically informed if file input required re-encoding to UTF-8.
+   displayed if this pointer is set to NULL. Use \ref input_file_was_transcoded
+   to be informed if file input required transcoding to UTF-8.
    */
   void (*transcoding_warning_action)(Fl_Text_Buffer*);
   
