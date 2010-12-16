@@ -484,7 +484,7 @@ include makedepend
 # Please add only non-Linux/Unix files or such that are optional
 # (like "*xft*") here:
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
-Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_MAC.cxx Fl_Native_File_Chooser_WIN32.cxx
+Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_MAC.mm Fl_Native_File_Chooser_WIN32.cxx
 Fl.o:		Fl_mac.cxx Fl_win32.cxx Fl_cocoa.mm
 fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
 fl_dnd.o:	fl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx
