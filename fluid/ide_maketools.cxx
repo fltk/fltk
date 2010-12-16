@@ -807,7 +807,7 @@ public:
     fputs("# Please add only non-Linux/Unix files or such that are optional\n", f);
     fputs("# (like \"*xft*\") here:\n", f);
     fputs("Fl_get_key.o:\tFl_get_key_mac.cxx Fl_get_key_win32.cxx\n", f);
-    fputs("Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_MAC.cxx Fl_Native_File_Chooser_WIN32.cxx\n", f);
+    fputs("Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_MAC.mm Fl_Native_File_Chooser_WIN32.cxx\n", f);
     fputs("Fl.o:\t\tFl_mac.cxx Fl_win32.cxx Fl_cocoa.mm\n", f);
     fputs("fl_color.o:\tfl_color_mac.cxx fl_color_win32.cxx\n", f);
     fputs("fl_dnd.o:\tfl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx\n", f);
