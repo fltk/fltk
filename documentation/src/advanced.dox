@@ -7,7 +7,7 @@ that will help you to get the most out of FLTK.
 
 \section advanced_multithreading Multithreading
 
-FLTK supports multithreaded application using a locking mechanism
+FLTK supports multithreaded applications using a locking mechanism
 based on "pthreads". We do not provide a threading interface as part of
 the library.  However a simple example how threads can be implemented
 for all supported platforms can be found in \p test/threads.h
@@ -30,7 +30,7 @@ locked:
     int main() {
       Fl::lock();
       /* run thread */
-      while (Fl::wait() &gt; 0) {
+      while (Fl::wait() > 0) {
         if (Fl::thread_message()) {
           /* process your data */
         }
@@ -48,13 +48,16 @@ with calls to Fl::lock() and Fl::unlock():
     Fl::unlock();    // allow other threads to access FLTK again
 \endcode
 
-You can send messages from child threads to the main thread 
+You can send messages from child threads to the main thread
 using Fl::awake(void* message):
 
 \code
     void *msg;       // "msg" is a pointer to your message
     Fl::awake(msg);  // send "msg" to main thread
 \endcode
+
+A message can be anything you like. The main thread can retrieve
+the message by calling Fl::thread_message(). See example above.
 
 You can also tell the main thread to call a function for you
 as soon as possible by using
@@ -70,18 +73,18 @@ Fl::awake(Fl_Awake_Handler cb, void* userdata):
     Fl::awake(do_something, data);  // call something in main thread
 \endcode
 
-      
+
 FLTK supports multiple platforms, some of which allow only the
-the main thread to handle system events and
-open or close windows. The safe thing to do is to adhere to the 
-following rules for threads on all operating systems:
+main thread to handle system events and open or close windows.
+The safe thing to do is to adhere to the following rules for
+threads on all operating systems:
 
 
-\li Don't \p show() or \p hide() anything that contains 
+\li Don't \p show() or \p hide() anything that contains
     widgets derived from Fl_Window, including dialogs, file
     choosers, subwindows or those using Fl_Gl_Window.
 
-\li Don't call Fl::wait(), Fl::flush() or any 
+\li Don't call Fl::wait(), Fl::flush() or any
     related methods that will handle system messages
 
 \li Don't start or cancel timers
@@ -93,7 +96,7 @@ following rules for threads on all operating systems:
     to allow for high speed rendering on graphics cards with multiple
     pipelines
 
-See also: 
+See also:
 Fl::awake(void* message),
 Fl::lock(),
 Fl::thread_message(),
