@@ -490,6 +490,11 @@ public:
     fputs("\tfl_utf8.cxx \\\n", f);
     fputs("\tps_image.cxx\n", f);
     fputs("\n", f);
+    
+    fputs("OBJCPPFILES = \\\n", f);
+    fputs("\tFl_cocoa.mm Fl_Quartz_Printer.mm Fl_Native_File_Chooser_MAC.mm\n", f);
+    fputs("\n", f);
+    
     fputs("FLCPPFILES = \\\n", f);
     fputs("\tforms_compatability.cxx \\\n", f);
     fputs("\tforms_bitmap.cxx \\\n", f);
@@ -538,7 +543,12 @@ public:
     fputs("\n", f);
     fputs("include ../makeinclude\n", f);
     fputs("\n", f);
-    fputs("OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)\n", f);
+    
+    fputs("MMFILES = $(shell \\\n"
+	  "\tif [ $(USEMMFILES) = Yes ]; then echo $(OBJCPPFILES);\\\n"
+	  "\tfi)\n\n", f);
+    
+    fputs("OBJECTS = $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)\n", f);
     fputs("GLOBJECTS = $(GLCPPFILES:.cxx=.o)\n", f);
     fputs("FLOBJECTS = $(FLCPPFILES:.cxx=.o)\n", f);
     fputs("IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)\n", f);
@@ -795,8 +805,8 @@ public:
     fputs("\t\tlibfltk_gl.dylib libfltk_images.dylib \\\n", f);
     fputs("\t\tcmap core\n", f);
     fputs("\n", f);
-    fputs("depend:\t$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)\n", f);
-    fputs("\tmakedepend -Y -I.. -f makedepend $(CPPFILES) $(FLCPPFILES) \\\n", f);
+    fputs("depend:\t$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)\n", f);
+    fputs("\tmakedepend -Y -I.. -f makedepend $(CPPFILES) $(MMFILES) $(FLCPPFILES) \\\n", f);
     fputs("\t\t$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)\n", f);
     fputs("\n", f);
     fputs("# Automatically generated dependencies... generated on a Linux/Unix host !\n", f);
@@ -807,8 +817,11 @@ public:
     fputs("# Please add only non-Linux/Unix files or such that are optional\n", f);
     fputs("# (like \"*xft*\") here:\n", f);
     fputs("Fl_get_key.o:\tFl_get_key_mac.cxx Fl_get_key_win32.cxx\n", f);
-    fputs("Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_MAC.mm Fl_Native_File_Chooser_WIN32.cxx\n", f);
-    fputs("Fl.o:\t\tFl_mac.cxx Fl_win32.cxx Fl_cocoa.mm\n", f);
+    fputs("Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_WIN32.cxx\n", f);
+    fputs("Fl_Native_File_Chooser_MAC.o : Fl_Native_File_Chooser_MAC.mm\n", f);
+    fputs("Fl_Quartz_Printer.o : Fl_Quartz_Printer.mm\n", f);
+    fputs("Fl.o:\t\tFl_win32.cxx\n", f);
+    fputs("Fl_cocoa.o:\t\tFl_cocoa.mm\n", f);
     fputs("fl_color.o:\tfl_color_mac.cxx fl_color_win32.cxx\n", f);
     fputs("fl_dnd.o:\tfl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx\n", f);
     fputs("fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx\n", f);
@@ -816,7 +829,7 @@ public:
     fputs("fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx\n", f);
     fputs("fl_set_fonts.o:\tfl_set_fonts_mac.cxx fl_set_fonts_x.cxx \\\n", f);
     fputs("\t\tfl_set_fonts_xft.cxx fl_set_fonts_win32.cxx\n", f);
-    fputs("Fl_Printer.o:\tFl_Quartz_Printer.mm Fl_GDI_Printer.cxx Fl_PS_Printer.cxx\n", f);
+    fputs("Fl_Printer.o:\tFl_GDI_Printer.cxx Fl_PostScript.cxx\n", f);
     fputs("\n", f);
     fputs("fl_arci.o:\t../FL/mac.H ../FL/win32.H\n", f);
     fputs("Fl_arg.o:\t../FL/mac.H ../FL/win32.H\n", f);

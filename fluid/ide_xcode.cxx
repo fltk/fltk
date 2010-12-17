@@ -29,7 +29,7 @@
  
     XCODE 3.0 IDE FILES
  
- The Xcode 3.0 IDE file format is using a quite comlex tree of multiply linked
+ The Xcode 3.0 IDE file format is using a quite complex tree of multiply linked
  entries to leave as much possibilities to developers as somehow possible. To 
  write this format, we will need to generate a bunch of new unique IDs that will
  be stored in the DB.
@@ -447,10 +447,6 @@ public:
       const char *filetype = "test";
       const char *ext = fileDB.fileExt();
       if (!ext) {
-      } else if (strcmp(pathAndName, "src/Fl.cxx")==0
-               ||strcmp(pathAndName, "src/Fl_Native_File_Chooser.cxx")==0
-               ||strcmp(pathAndName, "src/Fl_Printer.cxx")==0) { // FIXME: bad hack!
-        filetype = "sourcecode.cpp.objcpp";
       } else if (strcmp(ext, ".cxx")==0) {
         filetype = "sourcecode.cpp.cpp";
       } else if (strcmp(ext, ".H")==0) {

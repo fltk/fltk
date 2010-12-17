@@ -48,10 +48,6 @@
 #include <stdlib.h>
 #include "flstring.h"
 
-#if defined(__APPLE__)
-#import <Cocoa/Cocoa.h>
-#endif
-
 #if defined(DEBUG) || defined(DEBUG_WATCH)
 #  include <stdio.h>
 #endif // DEBUG || DEBUG_WATCH
@@ -63,6 +59,8 @@ HBRUSH fl_brush_action(int action);
 void fl_cleanup_pens(void);
 void fl_release_dc(HWND,HDC);
 void fl_cleanup_dc_list(void);
+#elif defined(__APPLE__)
+extern double fl_MAC_flush_and_wait(double time_to_wait, char in_idle);
 #endif // WIN32
 
 //
@@ -420,13 +418,7 @@ double Fl::wait(double time_to_wait) {
     // the idle function may turn off idle, we can then wait:
     if (idle) time_to_wait = 0.0;
   }
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  flush();
-  if (idle && !in_idle) // 'idle' may have been set within flush()
-    time_to_wait = 0.0;
-  double retval = fl_wait(time_to_wait);
-  [pool release];
-  return retval;
+  return fl_MAC_flush_and_wait(time_to_wait, in_idle);
 
 #else
 
@@ -1556,8 +1548,7 @@ void Fl_Window::flush() {
 
 #ifdef WIN32
 #  include "Fl_win32.cxx"
-#elif defined(__APPLE__)
-#  include "Fl_cocoa.mm"
+//#elif defined(__APPLE__)
 #endif
 
 //

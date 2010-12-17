@@ -36,7 +36,11 @@ AC_INIT(src/Fl.cxx)
 dnl So --with-archflags option is used during "checking size of long"
 if test `uname` = Darwin; then
   CFLAGS="$CFLAGS $with_archflags"
+  USEMMFILES="Yes"
+else
+  USEMMFILES="No"
 fi
+AC_SUBST(USEMMFILES)
 
 dnl FLTK library versions...
 FL_MAJOR_VERSION=1

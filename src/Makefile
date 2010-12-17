@@ -166,7 +166,12 @@ CPPFILES = \
 	screen_xywh.cxx \
 	fl_utf8.cxx \
 	ps_image.cxx
-
+	
+OBJCPPFILES = \
+    Fl_cocoa.mm \
+    Fl_Quartz_Printer.mm \
+    Fl_Native_File_Chooser_MAC.mm
+	
 FLCPPFILES = \
 	forms_compatability.cxx \
 	forms_bitmap.cxx \
@@ -215,7 +220,12 @@ UTF8CFILES = \
 
 include ../makeinclude
 
-OBJECTS = $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
+MMFILES = $(shell \
+	if [ $(USEMMFILES) = Yes ]; then echo $(OBJCPPFILES);\
+	fi)
+
+
+OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
 FLOBJECTS = $(FLCPPFILES:.cxx=.o)
 IMGOBJECTS = $(IMGCPPFILES:.cxx=.o)
@@ -472,8 +482,8 @@ clean:
 		libfltk_gl.dylib libfltk_images.dylib \
 		cmap core
 
-depend:	$(CPPFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
-	makedepend -Y -I.. -f makedepend $(CPPFILES) $(FLCPPFILES) \
+depend:	$(CPPFILES) $(MMFILES) $(FLCPPFILES) $(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
+	makedepend -Y -I.. -f makedepend $(CPPFILES) $(MMFILES) $(FLCPPFILES) \
 		$(GLCPPFILES) $(IMGCPPFILES) $(CFILES) $(UTF8CFILES)
 
 # Automatically generated dependencies... generated on a Linux/Unix host !
@@ -484,8 +494,10 @@ include makedepend
 # Please add only non-Linux/Unix files or such that are optional
 # (like "*xft*") here:
 Fl_get_key.o:	Fl_get_key_mac.cxx Fl_get_key_win32.cxx
-Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_MAC.mm Fl_Native_File_Chooser_WIN32.cxx
-Fl.o:		Fl_mac.cxx Fl_win32.cxx Fl_cocoa.mm
+Fl_Native_File_Chooser.o : Fl_Native_File_Chooser_WIN32.cxx
+Fl_Native_File_Chooser_MAC.o:	Fl_Native_File_Chooser_MAC.mm
+Fl.o:		Fl_win32.cxx
+Fl_cocoa.o:	Fl_cocoa.mm
 fl_color.o:	fl_color_mac.cxx fl_color_win32.cxx
 fl_dnd.o:	fl_dnd_mac.cxx fl_dnd_win32.cxx fl_dnd_x.cxx
 fl_draw_image.o: fl_draw_image_mac.cxx fl_draw_image_win32.cxx
@@ -493,7 +505,8 @@ fl_font.o:	fl_font_mac.cxx fl_font_x.cxx fl_font_xft.cxx fl_font_win32.cxx
 fl_read_image.o: fl_read_image_mac.cxx fl_read_image_win32.cxx
 fl_set_fonts.o:	fl_set_fonts_mac.cxx fl_set_fonts_x.cxx \
 		fl_set_fonts_xft.cxx fl_set_fonts_win32.cxx
-Fl_Printer.o:	Fl_Quartz_Printer.mm Fl_GDI_Printer.cxx Fl_PostScript.cxx
+Fl_Printer.o: Fl_GDI_Printer.cxx Fl_PostScript.cxx
+Fl_Quartz_Printer.o:	Fl_Quartz_Printer.mm
 fl_arci.o:	../FL/mac.H ../FL/win32.H
 Fl_arg.o:	../FL/mac.H ../FL/win32.H
 fl_ask.o:	../FL/mac.H ../FL/win32.H

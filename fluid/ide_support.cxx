@@ -510,7 +510,10 @@ int create_new_database(const char *filename)
     fltk_lib.add_source(files_db, "src/xutf8/case.c");
     fltk_lib.add_source(files_db, "src/xutf8/is_right2left.c");
     fltk_lib.add_source(files_db, "src/xutf8/is_spacing.c");
-    
+
+    xcode_only(fltk_lib.add_source(files_db, "src/Fl_cocoa.mm"));
+    xcode_only(fltk_lib.add_source(files_db, "src/Fl_Quartz_Printer.mm"));
+    xcode_only(fltk_lib.add_source(files_db, "src/Fl_Native_File_Chooser_MAC.mm"));
     
     fltk_lib.add_header(files_db, "FL/Enumerations.H");
     fltk_lib.add_header(files_db, "FL/Fl.H");
@@ -638,7 +641,7 @@ int create_new_database(const char *filename)
     fltk_lib.add_header(files_db, "FL/math.h");
     fltk_lib.add_header(files_db, "FL/names.h");
     fltk_lib.add_header(files_db, "FL/win32.H");
-    fltk_lib.add_header(files_db, "FL/x.H");    
+    fltk_lib.add_header(files_db, "FL/x.H");
     
     xcode_only(fltk_lib.add_external_lib(files_db, "/System/Library/Frameworks/AudioToolbox.framework"));
   }

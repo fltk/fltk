@@ -194,13 +194,18 @@ set(CFILES
 )
 
 if(APPLE)
-   set_source_files_properties(
-      Fl.cxx Fl_Native_File_Chooser.cxx Fl_Printer.cxx
-      PROPERTIES COMPILE_FLAGS "-x objective-c++")
+	set(MMFILES
+		Fl_cocoa.mm
+		Fl_Quartz_Printer.mm
+		Fl_Native_File_Chooser_MAC.mm
+		)
+else()
+   set(MMFILES
+      )
 endif(APPLE)
 
 #######################################################################
-add_library(fltk STATIC ${CPPFILES} ${CFILES} fl_call_main.c)
+add_library(fltk STATIC ${CPPFILES} ${MMFILES} ${CFILES} fl_call_main.c)
 set_target_properties(fltk PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 if(MSVC)
    if(OPTION_LARGE_FILE)
@@ -307,7 +312,7 @@ endif(OPENGL_FOUND)
 if(OPTION_BUILD_SHARED_LIBS)
 
 #######################################################################
-add_library(fltk_SHARED SHARED ${CPPFILES} ${CFILES})
+add_library(fltk_SHARED SHARED ${CPPFILES} ${MMFILES} ${CFILES})
 set_target_properties(fltk_SHARED
    PROPERTIES CLEAN_DIRECT_OUTPUT 1
    VERSION ${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}

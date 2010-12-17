@@ -703,6 +703,16 @@ int fl_wait( double time )
   return (got_events);
 }
 
+double fl_MAC_flush_and_wait(double time_to_wait, char in_idle) {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  Fl::flush();
+  if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
+    time_to_wait = 0.0;
+  double retval = fl_wait(time_to_wait);
+  [pool release];
+  return retval;
+}
+
 // updates Fl::e_x, Fl::e_y, Fl::e_x_root, and Fl::e_y_root
 static void update_e_xy_and_e_xy_root(NSWindow *nsw)
 {
