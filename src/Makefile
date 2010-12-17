@@ -220,10 +220,7 @@ UTF8CFILES = \
 
 include ../makeinclude
 
-MMFILES = $(shell \
-	if [ $(USEMMFILES) = Yes ]; then echo $(OBJCPPFILES);\
-	fi)
-
+MMFILES = $(shell if test $(USEMMFILES) = Yes; then echo $(OBJCPPFILES); fi)
 
 OBJECTS =  $(MMFILES:.mm=.o) $(CPPFILES:.cxx=.o) $(CFILES:.c=.o) $(UTF8CFILES:.c=.o)
 GLOBJECTS = $(GLCPPFILES:.cxx=.o)
