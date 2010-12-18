@@ -358,6 +358,8 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     if (Fl::focus() == this && selstart == selend &&
 	position() >= p-value() && position() <= e-value()) {
       fl_color(cursor_color());
+      // cursor position may need to be recomputed (see STR #2486)
+      curx = int(expandpos(p, value()+position(), buf, 0)+.5);
       if (readonly()) {
         fl_line((int)(xpos+curx-2.5f), Y+ypos+height-1,
 	        (int)(xpos+curx+0.5f), Y+ypos+height-4,
