@@ -40,6 +40,7 @@
 
 #define BORDER 2
 #define EXTRASPACE 10
+#define SELECTION_BORDER 5
 
 // return the left edges of each tab (plus a fake left edge for a tab
 // past the right-hand one).  These position are actually of the left
@@ -311,14 +312,11 @@ void Fl_Tabs::draw() {
     draw_box(box(), x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H), c);
 
     if (selection_color() != c) {
-      // Draw the top 5 lines of the tab pane in the selection color so
-      // that the user knows which tab is selected...
-      if (H >= 0) fl_push_clip(x(), y() + H, w(), 5);
-      else fl_push_clip(x(), y() + h() - H - 4, w(), 5);
-
-      draw_box(box(), x(), y()+(H>=0?H:0), w(), h()-(H>=0?H:-H),
-               selection_color());
-
+      // Draw the top or bottom SELECTION_BORDER lines of the tab pane in the
+      // selection color so that the user knows which tab is selected...
+      int clip_y = (H >= 0) ? y() + H : y() + h() + H - SELECTION_BORDER;
+      fl_push_clip(x(), clip_y, w(), SELECTION_BORDER);
+      draw_box(box(), x(), clip_y, w(), SELECTION_BORDER, selection_color());
       fl_pop_clip();
     }
     if (v) draw_child(*v);
