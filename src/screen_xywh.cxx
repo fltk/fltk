@@ -107,9 +107,8 @@ static void screen_init() {
 #elif defined(__APPLE__)
 XRectangle screens[16];
 
-extern int MACscreen_init(XRectangle screens[]);
 static void screen_init() {
-  num_screens = MACscreen_init(screens);
+  num_screens = Fl_X::screen_init(screens);
 }
 #elif HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>

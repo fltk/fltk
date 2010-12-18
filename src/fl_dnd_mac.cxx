@@ -30,11 +30,11 @@
 
 #include <FL/Fl.H>
 
-extern int MACpreparedrag(void);
+extern int fl_mac_prepare_drag(void);
 
 int Fl::dnd()
 {
-  return MACpreparedrag();
+  return fl_mac_prepare_drag();
 }
   
 //

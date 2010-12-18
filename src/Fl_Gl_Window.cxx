@@ -91,9 +91,8 @@ void Fl_Gl_Window::show() {
     Fl_X::make_xid(this, g->vis, g->colormap);
     if (overlay && overlay != this) ((Fl_Gl_Window*)overlay)->show();
 #elif defined(__APPLE__)
-	extern void MACsetContainsGLsubwindow(Fl_Window *);
 	if( ! parent() ) need_redraw=1;
-	else MACsetContainsGLsubwindow( window() );
+	else Fl_X::i(window())->contains_GL_subwindow();
 #endif
   }
   Fl_Window::show();
@@ -278,7 +277,7 @@ void Fl_Gl_Window::flush() {
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   //: clear previous clipping in this shared port
 #if ! __LP64__
-  GrafPtr port = GetWindowPort( MACwindowRef(this) );
+  GrafPtr port = GetWindowPort( Fl_X::i(this)->window_ref() );
   Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
   GrafPtr old; GetPort( &old );
   SetPort( port );

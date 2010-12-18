@@ -26,7 +26,6 @@
 //
 
 #include <config.h>
-extern unsigned char *MACbitmapFromRectOfWindow(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
 
 //
 // 'fl_read_image()' - Read an image from the current window or off-screen buffer.
@@ -54,7 +53,7 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   else { // reading from current window
     Fl_Window *window = Fl_Window::current();
     while(window->window()) window = window->window();
-    base = MACbitmapFromRectOfWindow(window,x,y,w,h,&delta);
+    base = Fl_X::bitmap_from_window_rect(window,x,y,w,h,&delta);
     rowBytes = delta*w;
     x = y = 0;
     }

@@ -580,7 +580,7 @@ void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {
       CombineRgn(r,r,current,RGN_AND);
 #elif defined(__APPLE_QUARTZ__)
       XDestroyRegion(r);
-      r = MacRectRegionIntersect(current, x,y,w,h);
+      r = Fl_X::intersect_region_and_rect(current, x,y,w,h);
 #else
 # error unsupported platform
 #endif

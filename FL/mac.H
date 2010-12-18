@@ -103,7 +103,7 @@ void fl_clip_region(Fl_Region);
 class Fl_X 
 {
 public:
-  Window xid;              // Cocoa: FLWindow* ; Carbon: WindowRef
+  Window xid;              // pointer to the Cocoa window object (FLWindow*)
   Fl_Offscreen other_xid;  // pointer for offscreen bitmaps (doublebuffer)
   Fl_Window *w;            // FLTK window for 
   Fl_Region region;
@@ -111,7 +111,7 @@ public:
   Fl_X *next;              // linked tree to support subwindows
   Fl_X *xidChildren, *xidNext; // more subwindow tree
   int wait_for_expose;
-  void *cursor;			  // is really NSCursor*
+  void *cursor;	           // is really NSCursor*
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);
@@ -124,16 +124,28 @@ public:
   static void q_release_context(Fl_X *x=0); // free all resources associated with fl_gc
   static void q_begin_image(CGRect&, int x, int y, int w, int h);
   static void q_end_image();
+  // Cocoa additions
+  void destroy(void);
+  void map(void);
+  void unmap(void);
+  int unlink(Fl_X* start = NULL);
+  void collapse(void);
+  WindowRef window_ref(void);
+  void contains_GL_subwindow(void);
+  void set_key_window(void);
+  void set_cursor(Fl_Cursor);
+  static int screen_init(XRectangle screens[]);
+  static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
+  static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
+  static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h);
+  static CGContextRef watch_cursor_image(void);
+  static CGContextRef help_cursor_image(void);
+  static CGContextRef nesw_cursor_image(void);
+  static CGContextRef nwse_cursor_image(void);
+  static CGContextRef none_cursor_image(void);
+private:
+  static void relink(Fl_Window*, Fl_Window*);
 };
-
-extern void MacDestroyWindow(Fl_Window*,void *);
-extern void MacMapWindow(Fl_Window*,void *);
-extern void MacUnmapWindow(Fl_Window*,void *);
-extern WindowRef MACwindowRef(Fl_Window *w);
-extern Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h);
-extern void MacCollapseWindow(Window w);
-
-extern int MacUnlinkWindow(Fl_X*,Fl_X*start=0L);
 
 inline Window fl_xid(const Fl_Window*w) 
 {

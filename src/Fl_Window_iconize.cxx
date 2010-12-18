@@ -37,7 +37,7 @@ void Fl_Window::iconize() {
 #ifdef WIN32
     ShowWindow(i->xid, SW_SHOWMINNOACTIVE);
 #elif defined(__APPLE__)
-    MacCollapseWindow((Window)i->xid);
+    i->collapse();
 #else
     XIconifyWindow(fl_display, i->xid, fl_screen);
 #endif

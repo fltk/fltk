@@ -47,7 +47,6 @@ extern HWND fl_capture;
 #endif
 
 #ifdef __APPLE__
-extern void MACsetkeywindow(void *nsw);
 extern void *fl_capture;
 #endif
 
@@ -59,7 +58,7 @@ void Fl::grab(Fl_Window* win) {
       SetCapture(fl_capture);
 #elif defined(__APPLE__)
       fl_capture = Fl_X::i(first_window())->xid;
-      MACsetkeywindow(fl_capture);
+      Fl_X::i(first_window())->set_key_window();
 #else
       XGrabPointer(fl_display,
 		   fl_xid(first_window()),

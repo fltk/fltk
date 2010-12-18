@@ -60,7 +60,7 @@ void fl_cleanup_pens(void);
 void fl_release_dc(HWND,HDC);
 void fl_cleanup_dc_list(void);
 #elif defined(__APPLE__)
-extern double fl_MAC_flush_and_wait(double time_to_wait, char in_idle);
+extern double fl_mac_flush_and_wait(double time_to_wait, char in_idle);
 #endif // WIN32
 
 //
@@ -418,7 +418,7 @@ double Fl::wait(double time_to_wait) {
     // the idle function may turn off idle, we can then wait:
     if (idle) time_to_wait = 0.0;
   }
-  return fl_MAC_flush_and_wait(time_to_wait, in_idle);
+  return fl_mac_flush_and_wait(time_to_wait, in_idle);
 
 #else
 
@@ -1218,7 +1218,7 @@ void Fl_Window::hide() {
   for (; *pp != ip; pp = &(*pp)->next) if (!*pp) return;
   *pp = ip->next;
 #ifdef __APPLE__
-  MacUnlinkWindow(ip);
+  ip->unlink();
   // MacOS X manages a single pointer per application. Make sure that hiding
   // a toplevel window will not leave us with some random pointer shape, or
   // worst case, an invisible pointer
@@ -1291,7 +1291,7 @@ void Fl_Window::hide() {
   }
   XDestroyWindow(fl_display, ip->xid);
 #elif defined(__APPLE_QUARTZ__)
-  MacDestroyWindow(this, ip->xid);
+  ip->destroy();
 #else
 # error unsupported platform
 #endif
@@ -1329,7 +1329,7 @@ int Fl_Window::handle(int ev)
 #if defined(USE_X11) || defined(WIN32)
         XMapWindow(fl_display, fl_xid(this)); // extra map calls are harmless
 #elif defined(__APPLE_QUARTZ__)
-        MacMapWindow(this, i->xid);
+	i->map();
 #else
 # error unsupported platform
 #endif // __APPLE__
@@ -1351,7 +1351,7 @@ int Fl_Window::handle(int ev)
 #if defined(USE_X11) || defined(WIN32)
 	XUnmapWindow(fl_display, fl_xid(this));
 #elif defined(__APPLE_QUARTZ__)
-	MacUnmapWindow(this, i->xid);
+	i->unmap();
 #else
 # error platform unsupported
 #endif

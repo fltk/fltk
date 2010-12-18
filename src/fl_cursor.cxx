@@ -134,11 +134,10 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color c1, Fl_Color c2) {
 # error "Either __LITTLE_ENDIAN__ or __BIG_ENDIAN__ must be defined"
 #endif
 
-extern void *MACSetCursor(Fl_Cursor c);
 extern Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h);
 
 
-CGContextRef CreateHelpImage(void)
+CGContextRef Fl_X::help_cursor_image(void)
 {
   int w = 20, h = 20;
   Fl_Offscreen off = fl_create_offscreen_with_alpha(w, h);
@@ -152,7 +151,7 @@ CGContextRef CreateHelpImage(void)
   return (CGContextRef)off;
 }
 
-CGContextRef CreateNoneImage(void)
+CGContextRef Fl_X::none_cursor_image(void)
 {
   int w = 20, h = 20;
   Fl_Offscreen off = fl_create_offscreen_with_alpha(w, h);
@@ -163,7 +162,7 @@ CGContextRef CreateNoneImage(void)
   return (CGContextRef)off;
 }
 
-CGContextRef CreateWatchImage(void)
+CGContextRef Fl_X::watch_cursor_image(void)
 {
   int w, h, r = 5;
   w = 2*r+6;
@@ -188,7 +187,7 @@ CGContextRef CreateWatchImage(void)
   return (CGContextRef)off;
 }
 
-CGContextRef CreateNESWImage(void)
+CGContextRef Fl_X::nesw_cursor_image(void)
 {
   int c = 7, r = 2*c;
   int w = r, h = r;
@@ -208,7 +207,7 @@ CGContextRef CreateNESWImage(void)
   return (CGContextRef)off;
 }
 
-CGContextRef CreateNWSEImage(void)
+CGContextRef Fl_X::nwse_cursor_image(void)
 {
   int c = 7, r = 2*c;
   int w = r, h = r;
@@ -232,10 +231,7 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color, Fl_Color) {
   if (c == FL_CURSOR_DEFAULT) {
     c = cursor_default;
   }
-  void *cursor = MACSetCursor( c );
-  if (i) {
-	  i->cursor = cursor;
-  }
+  if (i) i->set_cursor(c);
 }
 
 #else

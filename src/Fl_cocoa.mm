@@ -105,11 +105,6 @@ typedef unsigned int NSUInteger;
 // external functions
 extern void fl_fix_focus();
 extern Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h);
-extern CGContextRef CreateWatchImage(void);
-extern CGContextRef CreateHelpImage(void);
-extern CGContextRef CreateNESWImage(void);
-extern CGContextRef CreateNWSEImage(void);
-extern CGContextRef CreateNoneImage(void);
 
 // forward definition of functions in this file
 // converting cr lf converter function
@@ -703,7 +698,7 @@ int fl_wait( double time )
   return (got_events);
 }
 
-double fl_MAC_flush_and_wait(double time_to_wait, char in_idle) {
+double fl_mac_flush_and_wait(double time_to_wait, char in_idle) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   Fl::flush();
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
@@ -728,7 +723,7 @@ static void update_e_xy_and_e_xy_root(NSWindow *nsw)
 /*
  * Cocoa Mousewheel handler
  */
-void cocoaMouseWheelHandler(NSEvent *theEvent)
+static void cocoaMouseWheelHandler(NSEvent *theEvent)
 {
   // Handle the new "MightyMouse" mouse wheel events. Please, someone explain
   // to me why Apple changed the API on this even though the current API
@@ -885,7 +880,7 @@ static void calc_e_text(CFStringRef s, char *buffer, size_t len, unsigned sym)
 
 
 // this gets called by CJK character palette input
-OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, void *unused )
+static OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, void *unused )
 {
   // make sure the key window is an FLTK window
   NSWindow *keywindow = [NSApp keyWindow];
@@ -923,7 +918,7 @@ OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, voi
   return noErr;
 }
 
-OSStatus cocoaKeyboardHandler(NSEvent *theEvent);
+static OSStatus cocoaKeyboardHandler(NSEvent *theEvent);
 
 @interface FLTextView : NSTextView
 {
@@ -973,7 +968,7 @@ Events during a character composition sequence:
     replace the temporary character by this one
  - keyup -> [theEvent characters] contains the standard character
  */
-OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
+static OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
 {
   static char buffer[32];
   int sendEvent = 0, retval = 0;
@@ -1363,8 +1358,7 @@ void fl_open_display() {
     beenHereDoneThat = 1;
 	  
     [FLApplication sharedApplication];
-    NSAutoreleasePool *localPool;
-    localPool = [[NSAutoreleasePool alloc] init]; 
+    NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init]; // never released
     mydelegate = [[FLDelegate alloc] init];
     [NSApp setDelegate:mydelegate];
     [NSApp finishLaunching];
@@ -2277,22 +2271,6 @@ void Fl_X::q_release_context(Fl_X *x) {
 #endif
 }
 
-/* the former implementation
-void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
-  CGContextSaveGState(fl_gc);
-  CGAffineTransform mx = CGContextGetCTM(fl_gc);
-  CGRect r2 = rect;
-  r2.origin.x -= 0.5f;
-  r2.origin.y -= 0.5f;
-  CGContextClipToRect(fl_gc, r2);
-  mx.d = -1.0; mx.tx = -mx.tx;
-  CGContextConcatCTM(fl_gc, mx);
-  rect.origin.x = -(mx.tx+0.5f) + rect.origin.x     - cx;
-  rect.origin.y =  (mx.ty+0.5f) - rect.origin.y - h + cy;
-  rect.size.width = w;
-  rect.size.height = h;
-}
-*/
 void Fl_X::q_begin_image(CGRect &rect, int cx, int cy, int w, int h) {
   CGContextSaveGState(fl_gc);
   CGRect r2 = rect;
@@ -2518,35 +2496,36 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   }
 }
 
-int MacUnlinkWindow(Fl_X *ip, Fl_X *start) {
-  if (!ip) return 0;
+int Fl_X::unlink(Fl_X *start) {
   if (start) {
     Fl_X *pc = start;
     while (pc) {
-      if (pc->xidNext == ip) {
-        pc->xidNext = ip->xidNext;
+      if (pc->xidNext == this) {
+        pc->xidNext = xidNext;
         return 1;
       }
       if (pc->xidChildren) {
-        if (pc->xidChildren == ip) {
-          pc->xidChildren = ip->xidNext;
+        if (pc->xidChildren == this) {
+          pc->xidChildren = xidNext;
           return 1;
         }
-        if (MacUnlinkWindow(ip, pc->xidChildren))
+        if (unlink(pc->xidChildren))
           return 1;
       }
       pc = pc->xidNext;
     }
   } else {
     for ( Fl_X *pc = Fl_X::first; pc; pc = pc->next ) {
-      if (MacUnlinkWindow(ip, pc))
+      if (unlink(pc))
         return 1;
     }
   }  
   return 0;
 }
 
-static void MacRelinkWindow(Fl_X *x, Fl_X *p) {
+void Fl_X::relink(Fl_Window *w, Fl_Window *wp) {
+  Fl_X *x = Fl_X::i(w);
+  Fl_X *p = Fl_X::i(wp);
   if (!x || !p) return;
   // first, check if 'x' is already registered as a child of 'p'
   for (Fl_X *i = p->xidChildren; i; i=i->xidNext) {
@@ -2557,35 +2536,35 @@ static void MacRelinkWindow(Fl_X *x, Fl_X *p) {
   p->xidChildren = x;
 }
 
-void MacDestroyWindow(Fl_Window *w, void *p) {
-  if (w && !w->parent() && p) {
-    [[(NSWindow *)p contentView] release];
-    [(NSWindow *)p close];
+void Fl_X::destroy() {
+  if (w && !w->parent() && xid) {
+    [[(NSWindow *)xid contentView] release];
+    [(NSWindow *)xid close];
   }
 }
 
-void MacMapWindow(Fl_Window *w, void *p) {
-  if (w && p) {
-    [(NSWindow *)p orderFront:nil];
+void Fl_X::map() {
+  if (w && xid) {
+    [(NSWindow *)xid orderFront:nil];
   }
   //+ link to window list
   if (w && w->parent()) {
-    MacRelinkWindow(Fl_X::i(w), Fl_X::i(w->window()));
+    Fl_X::relink(w, w->window() );
     w->redraw();
   }
 }
 
-void MacUnmapWindow(Fl_Window *w, void *p) {
-  if (w && !w->parent() && p) {
-    [(NSWindow *)p orderOut:nil];
+void Fl_X::unmap() {
+  if (w && !w->parent() && xid) {
+    [(NSWindow *)xid orderOut:nil];
   }
   if (w && Fl_X::i(w)) 
-    MacUnlinkWindow(Fl_X::i(w));
+    Fl_X::i(w)->unlink();
 }
 
+
+// removes x,y,w,h rectangle from region r and returns result as a new Fl_Region
 static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h)
-/* removes x,y,w,h rectangle from region r and returns result as a new Fl_Region
- */
 {
   Fl_Region outr = (Fl_Region)malloc(sizeof(*outr));
   outr->rects = (CGRect*)malloc(4 * r->count * sizeof(CGRect));
@@ -2630,9 +2609,8 @@ static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h)
   return outr;
 }
 
-Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h)
-/* intersects current and x,y,w,h rectangle and returns result as a new Fl_Region
- */
+// intersects current and x,y,w,h rectangle and returns result as a new Fl_Region
+Fl_Region Fl_X::intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h)
 {
   if (current == NULL) return XRectangleRegion(x,y,w,h);
   CGRect r = fl_cgrectmake_cocoa(x, y, w, h);
@@ -2655,9 +2633,8 @@ Fl_Region MacRectRegionIntersect(Fl_Region current, int x,int y,int w, int h)
   return outr;
 }
 
-void MacCollapseWindow(Window w)
-{
-  [(NSWindow*)w miniaturize:nil];
+void Fl_X::collapse() {
+  [(NSWindow *)xid miniaturize:nil];
 }
 
 static NSImage *CGBitmapContextToNSImage(CGContextRef c)
@@ -2691,14 +2668,14 @@ static NSCursor *PrepareCursor(NSCursor *cursor, CGContextRef (*f)() )
   return cursor;
 }
 
-void *MACSetCursor(Fl_Cursor c)
+void Fl_X::set_cursor(Fl_Cursor c)
 {
   NSCursor *icrsr;
   switch (c) {
     case FL_CURSOR_CROSS:  icrsr = [NSCursor crosshairCursor]; break;
     case FL_CURSOR_WAIT:
       static NSCursor *watch = nil;
-      watch = PrepareCursor(watch,  CreateWatchImage);
+      watch = PrepareCursor(watch,  &Fl_X::watch_cursor_image);
       icrsr = watch;
       break;
     case FL_CURSOR_INSERT: icrsr = [NSCursor IBeamCursor]; break;
@@ -2707,7 +2684,7 @@ void *MACSetCursor(Fl_Cursor c)
     case FL_CURSOR_NS:     icrsr = [NSCursor resizeUpDownCursor]; break;
     case FL_CURSOR_HELP:   
       static NSCursor *help = nil;
-      help = PrepareCursor(help,  CreateHelpImage);
+      help = PrepareCursor(help,  &Fl_X::help_cursor_image);
       icrsr = help;
       break;
     case FL_CURSOR_HAND:   icrsr = [NSCursor pointingHandCursor]; break;
@@ -2716,7 +2693,7 @@ void *MACSetCursor(Fl_Cursor c)
     case FL_CURSOR_SW:
     case FL_CURSOR_NESW:   
       static NSCursor *nesw = nil;
-      nesw = PrepareCursor(nesw,  CreateNESWImage);
+      nesw = PrepareCursor(nesw,  &Fl_X::nesw_cursor_image);
       icrsr = nesw;
       break;
     case FL_CURSOR_E:      icrsr = [NSCursor resizeRightCursor]; break;
@@ -2726,12 +2703,12 @@ void *MACSetCursor(Fl_Cursor c)
     case FL_CURSOR_NW:
     case FL_CURSOR_NWSE:   
       static NSCursor *nwse = nil;
-      nwse = PrepareCursor(nwse,  CreateNWSEImage);
+      nwse = PrepareCursor(nwse,  &Fl_X::nwse_cursor_image);
       icrsr = nwse;
       break;
     case FL_CURSOR_NONE:   
       static NSCursor *none = nil;
-      none = PrepareCursor(none,  CreateNoneImage);
+      none = PrepareCursor(none,  &Fl_X::none_cursor_image);
       icrsr = none; 
       break;
     case FL_CURSOR_ARROW:
@@ -2740,13 +2717,12 @@ void *MACSetCursor(Fl_Cursor c)
       break;
   }
   [icrsr set];
-  return icrsr;
+  cursor = icrsr;
 }
 
-int MACscreen_init(XRectangle screens[])
+int Fl_X::screen_init(XRectangle screens[])
 {
-  NSAutoreleasePool *localPool;
-  localPool = [[NSAutoreleasePool alloc] init]; 
+  NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init]; 
   NSArray *a = [NSScreen screens]; 
   int count = (int)[a count]; 
   NSRect r; 
@@ -3101,9 +3077,9 @@ void *Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::menuOrItemOperatio
   return retval;
 }
 
-void MACsetkeywindow(void *nsw)
+void Fl_X::set_key_window()
 {
-  [(NSWindow*)nsw makeKeyAndOrderFront:nil];
+  [(NSWindow*)xid makeKeyAndOrderFront:nil];
 }
 
 static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
@@ -3170,7 +3146,7 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
   return image;
 }
 
-int MACpreparedrag(void)
+int Fl::dnd(void)
 {
   CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[0], fl_selection_length[0]);
   if (text==NULL) return false;
@@ -3216,7 +3192,7 @@ int MACpreparedrag(void)
   return true;
 }
 
-unsigned char *MACbitmapFromRectOfWindow(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel)
+unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel)
 // delete the returned pointer after use
 {
   while(win->window()) {
@@ -3257,11 +3233,11 @@ void imgProviderReleaseData (void *info, const void *data, size_t size)
   delete (unsigned char *)data;
 }
 
-CGImageRef MAC_CGImageFromRectOfWindow(Fl_Window *win, int x, int y, int w, int h)
+CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h)
 // CFRelease the returned CGImageRef after use
 {
   int bpp;
-  unsigned char *bitmap = MACbitmapFromRectOfWindow(win, x, y, w, h, &bpp);
+  unsigned char *bitmap = bitmap_from_window_rect(win, x, y, w, h, &bpp);
   CGImageRef img;
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, bitmap, w*h*bpp, imgProviderReleaseData);
@@ -3273,14 +3249,14 @@ CGImageRef MAC_CGImageFromRectOfWindow(Fl_Window *win, int x, int y, int w, int 
   return img;
 }
 
-void MACsetContainsGLsubwindow(Fl_Window *w) 
+void Fl_X::contains_GL_subwindow() 
 {
-  [(FLWindow*)Fl_X::i(w)->xid setContainsGLsubwindow:YES];
+  [(FLWindow*)xid setContainsGLsubwindow:YES];
 }
 
-WindowRef MACwindowRef(Fl_Window *w)
+WindowRef Fl_X::window_ref()
 {
-  return (WindowRef)[(FLWindow*)Fl_X::i(w)->xid windowRef];
+  return (WindowRef)[(FLWindow*)xid windowRef];
 }
 
 // so a CGRect matches exactly what is denoted x,y,w,h for clipping purposes
