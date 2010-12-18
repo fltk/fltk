@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.11
 
+	- Fixed Fl_Tabs selection border drawing, if tabs are at the bottom
+	  of the widget (part of STR #2480)
 	- Documentation fixes (STR #2410)
 	- Fixed mouse wheel related crash in GLUT emulation (STR #2381)
 	- Fixed missing architecture flags in OS X build (STR #2303)
