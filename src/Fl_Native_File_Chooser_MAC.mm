@@ -30,7 +30,7 @@
 //        Possibly 'preset_file' could be used to select the filename.
 //
 
-#ifndef FL_DOXYGEN		// PREVENT DOXYGEN'S USE OF THIS FILE
+#ifdef __APPLE__
 
 #include "Fl_Native_File_Chooser_common.cxx"		// strnew/strfree/strapp/chrcat
 #include <libgen.h>		// dirname(3)
@@ -577,7 +577,7 @@ int Fl_Native_File_Chooser::post() {
   return (retval == NSOKButton ? 0 : 1);
 }
 
-#endif /*!FL_DOXYGEN*/
+#endif // __APPLE__
 
 //
 // End of "$Id$".

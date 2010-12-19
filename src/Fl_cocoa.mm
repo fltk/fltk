@@ -55,7 +55,7 @@
  fl_open_display()     in Fl.o
 */
 
-#ifndef FL_DOXYGEN
+#ifdef __APPLE__
 
 #define CONSOLIDATE_MOTION 0
 extern "C" {
@@ -3266,7 +3266,7 @@ CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
   return CGRectMake(x, y, w > 0 ? w - 0.9 : 0, h > 0 ? h - 0.9 : 0);
 }
 
-#endif // FL_DOXYGEN
+#endif // __APPLE__
 
 //
 // End of "$Id: Fl_cocoa.mm 6971 2009-04-13 07:32:01Z matt $".
