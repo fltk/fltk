@@ -131,9 +131,9 @@ in "/usr/local/include" and "/usr/local/lib" by typing
 
   sudo make install
   
-It is possible to install FLTK without superuser previleges by changing the 
+It is possible to install FLTK without superuser privileges by changing the 
 installation path to a location within the user account by adding the 
-"--prefix=PREFIX" parameters to the "./configure" command.
+"--prefix=PREFIX" parameter to the "./configure" command.
 
 
  2.7  Creating new Projects
@@ -189,24 +189,22 @@ Launch Xcode. Open the project file in
   .../fltk-1.3.xxxx/ide/Xcode3/FLTK.xcodeproj
 
 Use the "Project" pulldown menu to change "Active Build Configuration" to 
-"Release". Change the "Active Architecture" and "Active Build Configuration" as
-desired. 
+"Release". Change the "Active Architecture"  as desired. 
   
 
  3.4  Building FLTK
 --------------------
 
-Use the "Project" pulldown menu to set the "Active Target" to "Release". Use the 
-"Project" pulldown menu to set the "Active Target" to "Demo". Select "Build" 
-form the "Build" menu to create all libraries and test applications.
+Use the "Project" pulldown menu to set the "Active Target" to "Demo". 
+Select "Build" from the "Build" menu to create all libraries and test applications.
 
-All frameworks and apps will be loacted in "./ide/Xcode3/build/Release/".
+All frameworks and apps will be located in "./ide/Xcode3/build/Release/".
 
 
  3.5  Testing FLTK
 -------------------
 
-Select "Build and Run" form the "Build" menu to run the Demo program. Use "Demo"
+Select "Build and Run" from the "Build" menu to run the Demo program. Use "Demo"
 to explore all test programs.
 
 
@@ -217,7 +215,7 @@ Remove FLTK frameworks:
 
   sudo rm -r /Library/Frameworks/fltk*.framework
   
-Remove Fluid and other possibly utilities:
+Remove Fluid and possibly other utilities:
 
   sudo rm -r /Developer/Applications/Utilities/FLTK/
   
@@ -250,10 +248,10 @@ tools:
 
 - Project Templates:
 
-Project Templates are the quickest way to vcreate a new FLTK application from
+Project Templates are the quickest way to create a new FLTK application from
 within Xcode. The included project builds an FLTK based Cocoa application 
 written in C++ with support for the Fluid UI designer, image reading, and 
-OpenGL. Unsused FLTK sub-Frameworks can simply be removed from the project.
+OpenGL. Unused FLTK sub-Frameworks can simply be removed from the project.
 The template assumes that Release versions of the FLTK frameworks are installed
 in /Library/Frameworks as described above.
 
@@ -271,8 +269,8 @@ FLTK 1.3 user template which is ready to compile.
 
 - Fluid file handling
 
-This section assumes that a Relaease version of Fluid is installed in 
-"/Developer/Applications/Utilities/FLTK/" as describe above. It will installe
+This section assumes that a Release version of Fluid is installed in 
+"/Developer/Applications/Utilities/FLTK/" as described above. It will install
 a new file type which opens Fluid as an editor for files ending in ".fl".
 
 First, we need to create the spec folder:
@@ -285,8 +283,8 @@ Next, we copy the Fluid specification over:
 
 Open Xcode preferences and select the File Types tab. Find the 
 "sourcecode.fluid" entry in "file > text > sourcecode" and set the external 
-editor to Fluid. When radding ".fl" files, set the File Type in the Info dialog
-to "sourcecode.fluid" and Xcode will edit your fil in Fluid when 
+editor to Fluid. When adding ".fl" files, set the File Type in the Info dialog
+to "sourcecode.fluid" and Xcode will edit your file in Fluid when 
 double-clicking.
 
 
@@ -311,3 +309,4 @@ manually which is needed to create warning beeps.
 
 Oct 29 2010 - matt: removed warnings
 Oct 24 2010 - matt: restructured entire document and verified instructions
+Dec 19 2010 - Manolo: corrected typos
