@@ -63,6 +63,7 @@ FL_EXPORT char *fl_filename_setext(char *to, int tolen, const char *ext);
 FL_EXPORT int fl_filename_expand(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from);
+FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from, const char *cwd);
 FL_EXPORT int fl_filename_match(const char *name, const char *pattern);
 FL_EXPORT int fl_filename_isdir(const char *name);
 

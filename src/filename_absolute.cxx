@@ -136,12 +136,33 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
 int					// O - 0 if no change, 1 if changed
 fl_filename_relative(char       *to,	// O - Relative filename
                      int        tolen,	// I - Size of "to" buffer
-                     const char *from) {// I - Absolute filename
-  char		*newslash;		// Directory separator
-  const char	*slash;			// Directory separator
-  char		cwd_buf[FL_PATH_MAX];	// Current directory
-  char          *cwd = cwd_buf;
+                     const char *from)  // I - Absolute filename
+{
+  char cwd_buf[FL_PATH_MAX];	// Current directory
+  // get the current directory and return if we can't
+  if (!fl_getcwd(cwd_buf, sizeof(cwd_buf))) {
+    strlcpy(to, from, tolen);
+    return 0;
+  }
+  return fl_filename_relative(to, tolen, from, cwd_buf);
+}
 
+
+/** Makes a filename relative to any other directory.
+ \param[out] to resulting relative filename
+ \param[in]  tolen size of the relative filename buffer 
+ \param[in]  from absolute filename
+ \param[in]  cwd relative to this absolute path
+ \return 0 if no change, non zero otherwise
+ */
+int					// O - 0 if no change, 1 if changed
+fl_filename_relative(char       *to,	// O - Relative filename
+                     int        tolen,	// I - Size of "to" buffer
+                     const char *from,  // I - Absolute filename
+                     const char *cwd) { // I - Find path relative to this path
+  
+  const char	*newslash;		// Directory separator
+  const char	*slash;			// Directory separator
 
   // return if "from" is not an absolute path
 #if defined(WIN32) || defined(__EMX__)
@@ -154,13 +175,19 @@ fl_filename_relative(char       *to,	// O - Relative filename
     strlcpy(to, from, tolen);
     return 0;
   }
-
-  // get the current directory and return if we can't
-  if (!fl_getcwd(cwd_buf, sizeof(cwd_buf))) {
+        
+  // return if "cwd" is not an absolute path
+#if defined(WIN32) || defined(__EMX__)
+  if (!cwd || cwd[0] == '\0' ||
+      (!isdirsep(*cwd) && !isalpha(*cwd) && cwd[1] != ':' &&
+       !isdirsep(cwd[2]))) {
+#else
+  if (!cwd || cwd[0] == '\0' || !isdirsep(*cwd)) {
+#endif // WIN32 || __EMX__
     strlcpy(to, from, tolen);
     return 0;
   }
-
+              
 #if defined(WIN32) || defined(__EMX__)
   // convert all backslashes into forward slashes
   for (newslash = strchr(cwd, '\\'); newslash; newslash = strchr(newslash + 1, '\\'))
