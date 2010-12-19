@@ -130,6 +130,7 @@ FL_EXPORT int fl_numericsort(struct dirent **, struct dirent **);
 
 FL_EXPORT int fl_filename_list(const char *d, struct dirent ***l,
                                Fl_File_Sort_F *s = fl_numericsort);
+FL_EXPORT void fl_filename_free_list(struct dirent ***l, int n);
 
 /*
  * Generic function to open a Uniform Resource Identifier (URI) using a
