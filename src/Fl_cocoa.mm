@@ -1358,7 +1358,8 @@ void fl_open_display() {
     beenHereDoneThat = 1;
 	  
     [FLApplication sharedApplication];
-    NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init]; // never released
+    NSAutoreleasePool *localPool;
+    localPool = [[NSAutoreleasePool alloc] init]; // never released
     mydelegate = [[FLDelegate alloc] init];
     [NSApp setDelegate:mydelegate];
     [NSApp finishLaunching];
