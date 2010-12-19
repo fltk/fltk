@@ -29,6 +29,7 @@
 #include "Fl_Type.h"
 #include "undo.h"
 #include <FL/Fl_Preferences.H>
+#include <FL/filename.H>
 #include "../src/flstring.h"
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <io.h>
@@ -68,7 +69,7 @@ static int undo_paused = 0;		// Undo checkpointing paused?
 
 // Return the undo filename
 static char *undo_filename(int level, char *buf, int bufsize) {
-  static char	undo_path[1024] = "";	// Undo path
+  static char	undo_path[FL_PATH_MAX] = "";	// Undo path
 
 
   if (!undo_path[0]) fluid_prefs.getUserdataPath(undo_path, sizeof(undo_path));
@@ -80,7 +81,7 @@ static char *undo_filename(int level, char *buf, int bufsize) {
 
 // Redo menu callback
 void redo_cb(Fl_Widget *, void *) {
-  char	filename[1024];			// Undo checkpoint file
+  char	filename[FL_PATH_MAX];			// Undo checkpoint file
 
   if (undo_current >= undo_last) return;
 
@@ -103,7 +104,7 @@ void redo_cb(Fl_Widget *, void *) {
 
 // Undo menu callback
 void undo_cb(Fl_Widget *, void *) {
-  char	filename[1024];			// Undo checkpoint file
+  char	filename[FL_PATH_MAX];			// Undo checkpoint file
 
   if (undo_current <= 0) return;
 
@@ -131,7 +132,7 @@ void undo_cb(Fl_Widget *, void *) {
 
 // Save current file to undo buffer
 void undo_checkpoint() {
-  char	filename[1024];			// Undo checkpoint filename
+  char	filename[FL_PATH_MAX];			// Undo checkpoint filename
 
 //  printf("undo_checkpoint(): undo_current=%d, undo_paused=%d, modflag=%d\n",
 //         undo_current, undo_paused, modflag);
@@ -162,7 +163,7 @@ void undo_checkpoint() {
 
 // Clear undo buffer
 void undo_clear() {
-  char	filename[1024];			// Undo checkpoint filename
+  char	filename[FL_PATH_MAX];			// Undo checkpoint filename
 
 
   // Remove old checkpoint files...

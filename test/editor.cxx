@@ -55,8 +55,8 @@
 
 
 int                changed = 0;
-char               filename[256] = "";
-char               title[256];
+char               filename[FL_PATH_MAX] = "";
+char               title[FL_PATH_MAX];
 Fl_Text_Buffer     *textbuf = 0;
 
 

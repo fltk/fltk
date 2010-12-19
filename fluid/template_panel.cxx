@@ -91,7 +91,7 @@ template_name->value(template_browser->text(item));
 
 template_delete->activate();
 
-char pngfile[1024], *ext;
+char pngfile[FL_PATH_MAX], *ext;
 
 strlcpy(pngfile, flfile, sizeof(pngfile));
 if ((ext = strrchr(pngfile, '.')) == NULL) return;
@@ -222,7 +222,7 @@ template_browser->do_callback();
 
 void template_load() {
   int i;
-char name[1024], filename[1024], path[1024], *ptr;
+char name[FL_PATH_MAX], filename[FL_PATH_MAX], path[FL_PATH_MAX], *ptr;
 struct dirent **files;
 int num_files;
 

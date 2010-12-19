@@ -37,6 +37,9 @@ decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 decl {\#include <FL/Fl_Text_Display.H>} {public local
 } 
 
+decl {\#include <FL/filename.H>} {selected public local
+} 
+
 decl {extern void load_history();} {public local
 } 
 
@@ -119,7 +122,7 @@ Function {make_project_window()} {open
             xywh {0 0 100 20}
           }
           MenuItem {} {
-            label {GNU gettext} selected
+            label {GNU gettext}
             xywh {0 0 100 20}
           }
           MenuItem {} {

@@ -2606,8 +2606,8 @@ Fl_Help_View::get_color(const char *n,	// I - Color name
 Fl_Shared_Image *
 Fl_Help_View::get_image(const char *name, int W, int H) {
   const char	*localname;		// Local filename
-  char		dir[1024];		// Current directory
-  char		temp[1024],		// Temporary filename
+  char		dir[FL_PATH_MAX];	// Current directory
+  char		temp[FL_PATH_MAX],	// Temporary filename
 		*tempptr;		// Pointer into temporary name
   Fl_Shared_Image *ip;			// Image pointer...
 
@@ -2703,8 +2703,8 @@ void Fl_Help_View::follow_link(Fl_Help_Link *linkp)
 
   if (strcmp(linkp->filename, filename_) != 0 && linkp->filename[0])
   {
-    char	dir[1024];	// Current directory
-    char	temp[1024],	// Temporary filename
+    char	dir[FL_PATH_MAX];	// Current directory
+    char	temp[FL_PATH_MAX],	// Temporary filename
 	      *tempptr;	// Pointer into temporary filename
 
 
@@ -3115,7 +3115,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
   char		*slash;		// Directory separator
   const char	*localname;	// Local filename
   char		error[1024];	// Error buffer
-  char		newname[1024];	// New filename buffer
+  char		newname[FL_PATH_MAX];	// New filename buffer
 
   // printf("load(%s)\n",f); fflush(stdout);
 
@@ -3125,7 +3125,7 @@ Fl_Help_View::load(const char *f)// I - Filename to load (may also have target)
       strncmp(f, "ipp:", 4) == 0 ||
       strncmp(f, "mailto:", 7) == 0 ||
       strncmp(f, "news:", 5) == 0) {
-    char urimsg[256];
+    char urimsg[FL_PATH_MAX];
     if ( fl_open_uri(f, urimsg, sizeof(urimsg)) == 0 ) {
       clear_selection();
 

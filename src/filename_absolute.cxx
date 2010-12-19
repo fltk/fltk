@@ -121,7 +121,7 @@ int fl_filename_absolute(char *to, int tolen, const char *from) {
     [..]
     chdir("/var/tmp/somedir");       // set cwd to /var/tmp/somedir
     [..]
-    char out[1024];
+    char out[FL_PATH_MAX];
     fl_filename_relative(out, sizeof(out), "/var/tmp/somedir/foo.txt");  // out="foo.txt",    return=1
     fl_filename_relative(out, sizeof(out), "/var/tmp/foo.txt");          // out="../foo.txt", return=1
     fl_filename_relative(out, sizeof(out), "foo.txt");                   // out="foo.txt",    return=0 (no change)
@@ -139,7 +139,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
                      const char *from) {// I - Absolute filename
   char		*newslash;		// Directory separator
   const char	*slash;			// Directory separator
-  char		cwd_buf[1024];		// Current directory
+  char		cwd_buf[FL_PATH_MAX];	// Current directory
   char          *cwd = cwd_buf;
 
 

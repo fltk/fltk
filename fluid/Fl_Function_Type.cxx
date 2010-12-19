@@ -1107,7 +1107,7 @@ void Fl_Comment_Type::open() {
   comment_in_header->value(in_h_);
   comment_panel->show();
   const char* message = 0;
-  char itempath[256]; itempath[0] = 0;
+  char itempath[FL_PATH_MAX]; itempath[0] = 0;
   int last_selected_item = 0;
   for (;;) { // repeat as long as there are errors
     if (message) fl_alert("%s", message);
@@ -1350,7 +1350,7 @@ void Fl_Class_Type::read_property(const char *c) {
 
 void Fl_Class_Type::open() {
   if (!class_panel) make_class_panel();
-  char fullname[1024]="";
+  char fullname[FL_PATH_MAX]="";
   if (prefix() && strlen(prefix())) 
     sprintf(fullname,"%s %s",prefix(),name());
   else 

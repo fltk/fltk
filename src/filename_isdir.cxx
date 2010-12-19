@@ -60,7 +60,7 @@ int _fl_filename_isdir_quick(const char* n) {
 */
 int fl_filename_isdir(const char* n) {
   struct stat	s;
-  char		fn[1024];
+  char		fn[FL_PATH_MAX];
   int		length;
 
   length = strlen(n);

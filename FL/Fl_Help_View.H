@@ -42,6 +42,7 @@
 #  include "Fl_Scrollbar.H"
 #  include "fl_draw.H"
 #  include "Fl_Shared_Image.H"
+#  include "filename.H"
 
 
 //
@@ -235,8 +236,8 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	// Help viewer widget
 		atargets_;		///< Allocated targets
   Fl_Help_Target *targets_;		///< Targets
 
-  char		directory_[1024];	///< Directory for current file
-  char		filename_[1024];	///< Current filename
+  char		directory_[FL_PATH_MAX];///< Directory for current file
+  char		filename_[FL_PATH_MAX];	///< Current filename
   int		topline_,		///< Top line in document
 		leftline_,		///< Lefthand position
 		size_,			///< Total document length

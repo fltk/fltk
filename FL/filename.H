@@ -41,7 +41,7 @@
  File names and URI functions defined in <FL/filename.H>
     @{ */
 
-#  define FL_PATH_MAX 256 /**< all path buffers should use this length */
+#  define FL_PATH_MAX 2048 /**< all path buffers should use this length */
 /** Gets the file name from a path. 
     Similar to basename(3), exceptions shown below.
     \code

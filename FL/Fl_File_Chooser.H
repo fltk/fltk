@@ -54,8 +54,8 @@ private:
   static Fl_Preferences prefs_; 
   void (*callback_)(Fl_File_Chooser*, void *); 
   void *data_; 
-  char directory_[1024]; 
-  char pattern_[1024]; 
+  char directory_[FL_PATH_MAX]; 
+  char pattern_[FL_PATH_MAX]; 
   char preview_text_[2048]; 
   int type_; 
   void favoritesButtonCB(); 

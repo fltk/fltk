@@ -253,8 +253,8 @@ pdf_check(const char *name,	// I - Name of file
 	  int)			// I - Length of header data (unused)
 {
   const char	*home;		// Home directory
-  char		preview[1024],	// Preview filename
-		command[1024];	// Command
+  char		preview[FL_PATH_MAX],	// Preview filename
+		command[FL_PATH_MAX];	// Command
 
 
   if (memcmp(header, "%PDF", 4) != 0)
@@ -284,9 +284,9 @@ ps_check(const char *name,	// I - Name of file
 	 int)			// I - Length of header data (unused)
 {
   const char	*home;		// Home directory
-  char		preview[1024],	// Preview filename
-		outname[1024],	// Preview PS file
-		command[1024];	// Command
+  char		preview[FL_PATH_MAX],	// Preview filename
+		outname[FL_PATH_MAX],	// Preview PS file
+		command[FL_PATH_MAX];	// Command
   FILE		*in,		// Input file
 		*out;		// Output file
   int		page;		// Current page
@@ -346,7 +346,7 @@ show_callback(void)
 {
   int	i;			// Looping var
   int	count;			// Number of files selected
-  char	relative[1024];		// Relative filename
+  char	relative[FL_PATH_MAX];	// Relative filename
 
 
   if (filter->value()[0])

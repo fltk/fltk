@@ -600,8 +600,8 @@ void
 Fl_File_Icon::load_system_icons(void) {
   int		i;		// Looping var
   Fl_File_Icon	*icon;		// New icons
-  char		filename[1024];	// Filename
-  char		icondir[1024];	// Icon directory
+  char		filename[FL_PATH_MAX];	// Filename
+  char		icondir[FL_PATH_MAX];	// Icon directory
   static int	init = 0;	// Have the icons been initialized?
   const char * const icondirs[] = {
 		  "Bluecurve",	// Icon directories to look for, in order
@@ -811,7 +811,7 @@ load_kde_icons(const char *directory,	// I - Directory to load
   int		i;			// Looping var
   int		n;			// Number of entries in directory
   dirent	**entries;		// Entries in directory
-  char		full[1024];		// Full name of file
+  char		full[FL_PATH_MAX];	// Full name of file
 
 
   entries = (dirent **)0;
@@ -841,11 +841,11 @@ load_kde_mimelnk(const char *filename,	// I - mimelnk filename
                  const char *icondir) {	// I - Location of icons
   FILE		*fp;
   char		tmp[1024];
-  char		iconfilename[1024];
+  char		iconfilename[FL_PATH_MAX];
   char		pattern[1024];
   char		mimetype[1024];
   char		*val;
-  char		full_iconfilename[1024];
+  char		full_iconfilename[FL_PATH_MAX];
   Fl_File_Icon	*icon;
 
 

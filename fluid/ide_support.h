@@ -30,6 +30,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Preferences.H>
+#include <FL/filename.H>
 
 
 typedef char Fl_UUID[40];
@@ -81,7 +82,7 @@ public:
 
 
 class Fl_File_Prefs : public Fl_Preferences {
-  char pPath[1024];
+  char pPath[FL_PATH_MAX];
   char pName[80];
   char pFullName[100];
   char pExt[20];

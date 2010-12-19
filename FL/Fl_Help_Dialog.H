@@ -43,8 +43,8 @@
 class FL_EXPORT Fl_Help_Dialog {
   int index_; 
   int max_; 
-  int line_[100]; 
-  char file_[100][256]; 
+  int line_[100];                 // FIXME: we must remove those static numbers
+  char file_[100][FL_PATH_MAX];   // FIXME: we must remove those static numbers
   int find_pos_; 
 public:
   Fl_Help_Dialog();

@@ -80,7 +80,7 @@ fl_file_chooser(const char *message,	// I - Message in titlebar
                 const char *pat,	// I - Filename pattern
 		const char *fname,	// I - Initial filename selection
 		int        relative) {	// I - 0 for absolute path
-  static char	retname[1024];		// Returned filename
+  static char	retname[FL_PATH_MAX];		// Returned filename
 
   if (!fc) {
     if (!fname || !*fname) fname = ".";
@@ -163,7 +163,7 @@ fl_dir_chooser(const char *message,	// I - Message for titlebar
                const char *fname,	// I - Initial directory name
 	       int        relative)	// I - 0 for absolute
 {
-  static char	retname[1024];		// Returned directory name
+  static char	retname[FL_PATH_MAX];		// Returned directory name
 
   if (!fc) {
     if (!fname || !*fname) fname = ".";

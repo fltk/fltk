@@ -460,7 +460,7 @@ Fl_File_Chooser::directory(const char *d)// I - Directory to change to
 #ifdef WIN32
   // See if the filename contains backslashes...
   char	*slash;				// Pointer to slashes
-  char	fixpath[1024];			// Path with slashes converted
+  char	fixpath[FL_PATH_MAX];			// Path with slashes converted
   if (strchr(d, '\\')) {
     // Convert backslashes to slashes...
     strlcpy(fixpath, d, sizeof(fixpath));
@@ -524,8 +524,8 @@ void
 Fl_File_Chooser::favoritesButtonCB()
 {
   int		v;			// Current selection
-  char		pathname[1024],		// Pathname
-		menuname[2048];		// Menu name
+  char		pathname[FL_PATH_MAX],		// Pathname
+		menuname[FL_PATH_MAX];		// Menu name
 
 
   v = favoritesButton->value();
@@ -691,7 +691,7 @@ void
 Fl_File_Chooser::fileListCB()
 {
   char	*filename,			// New filename
-	pathname[1024];			// Full pathname to file
+	pathname[FL_PATH_MAX];			// Full pathname to file
 
 
   filename = (char *)fileList->text(fileList->value());
@@ -792,8 +792,8 @@ Fl_File_Chooser::fileNameCB()
 {
   char		*filename,	// New filename
 		*slash,		// Pointer to trailing slash
-		pathname[1024],	// Full pathname to file
-		matchname[256];	// Matching filename
+		pathname[FL_PATH_MAX],	// Full pathname to file
+		matchname[FL_PATH_MAX];	// Matching filename
   int		i,		// Looping var
 		min_match,	// Minimum number of matching chars
 		max_match,	// Maximum number of matching chars
@@ -890,7 +890,7 @@ Fl_File_Chooser::fileNameCB()
       directory(pathname);
 
       if (filename[0]) {
-	char tempname[1024];
+	char tempname[FL_PATH_MAX];
 
 	snprintf(tempname, sizeof(tempname), "%s/%s", directory_, filename);
 	fileName->value(tempname);
@@ -1001,7 +1001,7 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
 		*start,				// Start of pattern
 		*end;				// End of pattern
   int		allfiles;			// Do we have a "*" pattern?
-  char		temp[1024];			// Temporary pattern string
+  char		temp[FL_PATH_MAX];			// Temporary pattern string
 
 
   // Make sure we have a pattern...
@@ -1048,7 +1048,7 @@ void
 Fl_File_Chooser::newdir()
 {
   const char	*dir;		// New directory name
-  char		pathname[1024];	// Full path of directory
+  char		pathname[FL_PATH_MAX];	// Full path of directory
 
 
   // Get a directory name from the user
@@ -1129,7 +1129,7 @@ Fl_File_Chooser::previewCB(Fl_File_Chooser *fc) {	// I - File chooser
 void
 Fl_File_Chooser::rescan()
 {
-  char	pathname[1024];		// New pathname for filename field
+  char	pathname[FL_PATH_MAX];		// New pathname for filename field
 
 
   // Clear the current filename
@@ -1167,7 +1167,7 @@ void Fl_File_Chooser::rescan_keep_filename()
   }
 
   int   i;
-  char	pathname[1024];		// New pathname for filename field
+  char	pathname[FL_PATH_MAX];		// New pathname for filename field
   strlcpy(pathname, fn, sizeof(pathname));
 
   // Build the file list...
@@ -1213,7 +1213,7 @@ Fl_File_Chooser::showChoiceCB()
   const char	*item,			// Selected item
 		*patstart;		// Start of pattern
   char		*patend;		// End of pattern
-  char		temp[1024];		// Temporary string for pattern
+  char		temp[FL_PATH_MAX];		// Temporary string for pattern
 
 
   item = showChoice->text(showChoice->value());
@@ -1250,7 +1250,7 @@ void
 Fl_File_Chooser::update_favorites()
 {
   int		i;			// Looping var
-  char		pathname[1024],		// Pathname
+  char		pathname[FL_PATH_MAX],		// Pathname
 		menuname[2048];		// Menu name
   const char	*home;			// Home directory
 
@@ -1456,7 +1456,7 @@ Fl_File_Chooser::value(int f)	// I - File number
   int		i;		// Looping var
   int		fcount;		// Number of selected files
   const char	*name;		// Current filename
-  static char	pathname[1024];	// Filename + directory
+  static char	pathname[FL_PATH_MAX];	// Filename + directory
 
 
   name = fileName->value();
@@ -1503,7 +1503,7 @@ Fl_File_Chooser::value(const char *filename)
   int	i,				// Looping var
   	fcount;				// Number of items in list
   char	*slash;				// Directory separator
-  char	pathname[1024];			// Local copy of filename
+  char	pathname[FL_PATH_MAX];		// Local copy of filename
 
 
 //  printf("Fl_File_Chooser::value(\"%s\")\n", filename == NULL ? "(null)" : filename);
@@ -1519,7 +1519,7 @@ Fl_File_Chooser::value(const char *filename)
 
 #ifdef WIN32
   // See if the filename contains backslashes...
-  char	fixpath[1024];			// Path with slashes converted
+  char	fixpath[FL_PATH_MAX];			// Path with slashes converted
   if (strchr(filename, '\\')) {
     // Convert backslashes to slashes...
     strlcpy(fixpath, filename, sizeof(fixpath));
