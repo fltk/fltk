@@ -152,18 +152,20 @@ fl_filename_relative(char       *to,	// O - Relative filename
  \param[out] to resulting relative filename
  \param[in]  tolen size of the relative filename buffer 
  \param[in]  from absolute filename
- \param[in]  cwd relative to this absolute path
+ \param[in]  base relative to this absolute path
  \return 0 if no change, non zero otherwise
  */
 int					// O - 0 if no change, 1 if changed
 fl_filename_relative(char       *to,	// O - Relative filename
                      int        tolen,	// I - Size of "to" buffer
                      const char *from,  // I - Absolute filename
-                     const char *cwd) { // I - Find path relative to this path
+                     const char *base) { // I - Find path relative to this path
   
-  const char	*newslash;		// Directory separator
+  char          *newslash;		// Directory separator
   const char	*slash;			// Directory separator
-
+  char          *cwd = 0L;
+  if (base) cwd = strdup(base);
+  
   // return if "from" is not an absolute path
 #if defined(WIN32) || defined(__EMX__)
   if (from[0] == '\0' ||
@@ -173,6 +175,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   if (from[0] == '\0' || !isdirsep(*from)) {
 #endif // WIN32 || __EMX__
     strlcpy(to, from, tolen);
+    if (cwd) free(cwd);
     return 0;
   }
         
@@ -185,6 +188,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   if (!cwd || cwd[0] == '\0' || !isdirsep(*cwd)) {
 #endif // WIN32 || __EMX__
     strlcpy(to, from, tolen);
+    if (cwd) free(cwd);
     return 0;
   }
               
@@ -196,6 +200,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   // test for the exact same string and return "." if so
   if (!strcasecmp(from, cwd)) {
     strlcpy(to, ".", tolen);
+    free(cwd);
     return (1);
   }
 
@@ -203,6 +208,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   if (tolower(*from & 255) != tolower(*cwd & 255)) {
     // Not the same drive...
     strlcpy(to, from, tolen);
+    free(cwd);
     return 0;
   }
 
@@ -212,6 +218,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   // test for the exact same string and return "." if so
   if (!strcmp(from, cwd)) {
     strlcpy(to, ".", tolen);
+    free(cwd);
     return (1);
   }
 #endif // WIN32 || __EMX__
@@ -255,6 +262,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   // finally add the differing path from "from"
   strlcat(to, slash, tolen);
 
+  free(cwd);
   return 1;
 }
 
