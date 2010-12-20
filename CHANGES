@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.3.0
 
+	- Removed Watcom compiler support because it was introduced in
+	  1.1.6 as a partial solution and never completed.
 	- Fixed Fl_Tabs selection border drawing, if tabs are at the bottom
 	  of the widget (STR #2480)
 	- Much faster fl_read_image() for Windows (STR #2387).
