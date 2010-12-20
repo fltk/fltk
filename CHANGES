@@ -1,138 +1,88 @@
+
 CHANGES IN FLTK 1.3.0
 
-	- Removed Watcom compiler support because it was introduced in
-	  1.1.6 as a partial solution and never completed.
-	- Fixed Fl_Tabs selection border drawing, if tabs are at the bottom
-	  of the widget (STR #2480)
-	- Much faster fl_read_image() for Windows (STR #2387).
-	- Added general Options dialog (STR #2471)
-	- Fixed Compiling with mingw-w64 (STR #2308).
-	- Fixed crashes when detecting illegal utf 8 sequences
-	  in Fl_Text_* widgets (STR #2348)
-	- Fixed Fl_Text_Display Tabulator calculations (STR #2450)
-	- Fixed file access code to use UTF-8 strings (STR #2440)
-	- Fixed ARM Unicode cross compilation issue (STR #2432)
-	- Improved support for faulty X11 clients (STR #2385)
-	- Fixed xclass support for Fl_Window (STR #2053)
-	- Fixed Caps Lock handling in X11/XIM (STR #2366)
-	- Fixed handling of missing fonts in Xft (STR #2355)
-	- Added alternative Xft font names (STR #2215)
-	- Update lib png access (STR #2442)
-	- Fixed OpenGL hide/show issue in OS X (STR #2260)
-	- Added visual feedback for button shortcuts (STR #2372)
-	- Fixed internationalisation of menus using FLuid (STR #2246)
-	- Fixed blinking of selection when the mouse was dragged 
-	  outside of the Fl_Text_* widget
-	- Added drag'n'drop support for Fl_Text_*
-	- Fixed Unicode support for Fl_Text_* widgets
-	- Added mouse!=0 check in Fl_Glut_Window::handle (STR #2381)
-	- Fixed menu and shortcut handling (STR #2243)
-	- Removed support for gcc 2.x (or older)
-	- Fixed fltk-config to give --libs on one line (STR #2408)
-	- Fixed tab key navigation to inactive widgets (STR #2420)
-	- Fixed outside label redraw damage areas (STR #2436)
-	- Added callback when double-clicking file in a file chooser
-	  (STR #2346)
-	- Fixed label alignment (STR #2436)
-	- Added interface to set color chooser mode (STR #2407)
-	- Fixed compile errors when HAVE_LIBJPEG was not defined 
-	  (STR #2382)
-	- Fixed special handling for ISO back-tab keycode (STR #2369)
-	- Fixed wrong relative path (STR #2384)
-	- Fixed static allocation in Fl_Tabs (STR #2370)
-	- Fixed Fl_Widget::measure_label() to const (STR #2406)
-	- Added step by step README's for MSWindows, OS X, and four
-	  Linux distros
-	- Fixed unbalanced Windows OleInitialize/OleUnitialize calls
-	  when loading/unloading the FLTK dll (STR #2417)
-	- Fixed X11/XDBE double buffering (STR #2152, #2197)
-	- Added new label and image alignments (STR #2269)
-	- Added documentation for event delivery (STR #1983)
-	- Fixed menu and tooltip window animation bug under X11 (compiz)
-	  by setting an appropriate window type (STR #2082)
-	- redesigned CMake files (STR #2317).
-	- Fixed max. fd calculation, if USE_POLL is enabled (STR #2324)
-	- Fixed clipping for offscreen rendering (OSX, STR #2330)
+	  New Features
+
+	- Added UTF-8 Unicode supprt
+	- Added Fl_Tree widget for hierarchical views
+	- Added Fl_Table widget for widget layout
+	- Added Fl_Native_Filechooser as a widget and global options
 	- Added printing support (Fl_Printer class and friends) for native
 	  printing on Windows and Mac OS X, PostScript printing on X11
 	  with CUPS or lp, and PostScript file output on all platforms
 	- Added basic Fl_Device abstraction layer for all drawing functions
-	- Fixed possibility of wrong flags() in Fl_Window::iconlabel()
-	  (STR #2161)
-	- Fixed Scrollbar events when max is less than min (STR #2283)
+
+	  Other Additions
+	
+	- Added global UI options (STR #2471)
+	- Added drag'n'drop support for Fl_Text_*
+	- Added new label and image alignments (STR #2269)
+	- Added visual feedback for button shortcuts (STR #2372)
+	- Added callback when double-clicking file in a file chooser
+	  (STR #2346)
+	- Added interface to set color chooser mode (STR #2407)
+	- Added alternative Xft font names (STR #2215)
+	- Added mouse!=0 check in Fl_Glut_Window::handle (STR #2381)	
+	- Added step by step README's for MSWindows, OS X, and four
+	  Linux distros
+	- Added class Fl_Widget_Tracker to simplify safe handling of widget
+	  deletion in callbacks. This is used in Fl_Widget::do_callback()
+	  to prevent accessing widgets after deletion in the callback.
 	- Added argument-less constructor in Fuid Widget Class
-	- Fixed menu item counting issue in Fluid (STR #2322)
 	- Added Fl_Menu_::find_item by callback
-	- Removed redundant Fl_Group casts
 	- Added indexing to Fl_Preferences
-	- Integrated default menu into Demo test app
-	- Added automated Xcode IDE file generation to Fluid
-	- Fixed lost top item in Fluid's tree browser (STR #2233)
-	- Fixed crash in test/Editor when freeing buffer 
-	  too soon (STR #2294) 
-	- Fixed Fl_Preferences Cygwin wide character bug (STR #2164)
-	- Fixed sorting in Fl_Browser - last item would not 
-	  be sorted (STR #2300)
-	- Fixed window levels in OS X Cocoa (STR #2316)
 	- Added jpeg support to Fluid image() element
 	- Added loading jpeg images from memory
 	- Added binary data type to Fluid
-	- File chosser preview would hang if a device was choosen
+	- Added template to generate new projects with Xcode.
+	- Added OS X cursor control to Fl_Input (STR #2169)
+        - Added support for shortcuts for Fl_Input_, Fl_Value_Input, and 
+	  Fl_Text_Display derived widgets (STR #1770)
+	- Added --enable-cairo and --enable-cairoext  configure options.
+	- Added "ide" subdirectory for all IDE support files
+        - Added Fl_Menu_ methods: insert(), find_index(), clear_submenu()
+	- Added menu shortcut alignment for OS X
+	- Added drop box to utf8 test that will show the utf8 encoding
+	  for the first dropped character
+	- Added flexible gap size for text buffer (STR #2046)
+	- Added sorting to Fl_Browser_ (STR #2113)
+	- Added clarification to Fl_GL_Window mode function (STR #1945)
+	- Added scroll_to(int,int) to Fl_Scroll, replacing 
+	  position(int,int) which now behaves as it should (STR #1303)
+	- Added alternative text input awareness on OS X 
+	
+	  Documentation
+
+	- Added documentation for event delivery (STR #1983)
+	- Added Fl_Scroll::bbox() documentation (STR #1893)
+	- Updated documentation for Fl_Input_
+	- Updated Copyright dates to 2010 (STR #2036)
+	- Updated mirror sites in documentation (STR #2220)
+	- Fixed documentation for Fl_Progress (STR #2209)
+	- Fixed documentation (added missing COMCTRL32.LIB dependency)
+	
+	  Improvements
+	
+	- Moved OS X code base to the more modern Cocoa toolkit thanks
+	  to the awesome work of Manolo Gouy (STR #2221)
+	- Improved handling of composed keys in OS X 10.5 and up
+	- Improved stability of fl_read_image (STR #2021)
+	- Much faster fl_read_image() for Windows (STR #2387).
+	- Improved support for faulty X11 clients (STR #2385)
+	- redesigned CMake files (STR #2317).
+	- Integrated default menu into Demo test app	
 	- Replaced _WIN32 symbols that had come with UTF-8 and the
 	  new Fl_Table widget with WIN32
-	- Fixed a buffer overflow in fl_utf8from_mb() (STR #2279)
-	- Fixed a Windows GDI leak when testing alpha blending capabilities
-	- Fixed a name conflict with new (VS 2008 Express) winsock2.h
-	  versions and another conflict that produced compile errors
-	  with VS 2008 Express (STR #2301)
 	- Widgets now remove stale entries from the default callback
 	  queue when they are deleted (STR #2302)
-	- Moved OS X code base to the more moder Cocoa toolkit thanks
-	  to the awesome work of Manolo Gouy (STR #2221)
-	- Added template to generate new projects with Xcode.
 	- Managing all Widget flags in a single location now (STR #2161)
-	- Fixed all color related call to Fl_Color type (STR #2208)
 	- File chooser preview now recognizes utf8 encoded 
 	  text files (STR #2218)
 	- Empty functions in Fluid no longer create an
 	  implementation (STR #2259)
-	- Fixed Fluid dependency on X11 (STR #2261)
-	- Updated the bundled libpng to v1.2.40 (released Sep. 10, 2009)
-	- Fixed Fl_Choice contrast with light-on-dark settings (STR #2219)
-	- Fixed X server "lock", if a modal dialog window is opened
-	  while a menu is active (STR #1986)
-	- Updated mirror sites in documentation (STR #2220)
 	- Setting a default font for Xft (STR #2216)
-	- Temporarily limited builds to 32-bit on OX S to stay
-	  compatible to Snow Leopard
-	- Fixed Windows compile bug with "#define USE_COLORMAP 0"
-	  (STR #2241)
-	- Fixed glibc 2.10 compiler problems (Fedora 11 and others)
-	  with scandir() and strchr() (STR #2222)
 	- Corrected const methods of Fl_Text_{Buffer|Display|Selection}
 	  to be declared const, corrected an Fl_Text_Buffer attrib. typo
-	- Fixed OpenGL shared context handling (STR #2135)
-	- Fixed gray-scale images with alpha channel (STR #2105)
-	- Fixed unexpected shortcut behavior for Win32 (STR #2199)
-	- Fixed documentation for Fl_Progress (STR #2209)
-	- Fluid printing used wrong colors under Windows (STR #2195)
-	- Updated documentation for Fl_Input_
-	- Fixed fl_draw_image to obey the alpha channel, hoping that 
-	  this has no adverse effect on existing software (OS X only)
-	- Added OS X cursor control to Fl_Input (STR #2169)
-	- Fix for multiple popups, when dragging and calling fl_alert()
-	  and friends from the callback (STR #2159)
-	- Avoiding crashes for recursive common dialogs (this does not 
-	  fix the issue at hand yet) (STR #1986, 2150)
-	- Fixed control key keycodes with modifiers on OS X
-	- Added menu shortcut alignment for OS X
-	- Fixed bad system menu hadling in OS X (STR #2153)
-	- Fixed File Input mouse pointer dragging (STR #2181)
-	- Added alternative text input awareness on OS X 
-	- Fixed 'del' keycode on OS X (must be verified for all keyboards)
-	- Fixed OS X support for sending and receiving dnd data as utf8
-	- Added drop box to utf8 test that will show the utf8 encoding
-	  for the first dropped character
 	- Restructured the unittest application
 	- Fl_Preferences.H now doesn't include windows.h any more
 	  (Windows only, STR #2173).
@@ -141,72 +91,130 @@ CHANGES IN FLTK 1.3.0
 	- All draw() methods of widgets are now protected (STR #2142).
 	- The new configure option --enable-x11 (lowercase 'x') enables
 	  Cygwin builds under Windows (with --enable-cygwin) to use X11
-	  instead of GDI drawing (STR #2147, #2183) and is ignored otherwise.
-	- Added Fl_Scroll::bbox() documentation (STR #1893)
-	- Removed an XForms compatibility "feature" that prevented the down
-	  array of Fl_Menu_Button from drawing (STR #2141).
-	- New class Fl_Widget_Tracker to simplify safe handling of widget
-	  deletion in callbacks. This is used in Fl_Widget::do_callback()
-	  to prevent accessing widgets after deletion in the callback.
+	  instead of GDI drawing (STR #2147, #2183) and is ignored otherwise.	  
 	- Fl_Help_View handles HTML2 font color specification (STR #890) 
-	- Copyright dates are now updated to 2009 (STR #2036)
-	- Copy/Paste operations should now work as expected, 
-          with utf8,16 support and fltk1.1 compatibility. (STR #2104,2121).
 	- Widgets now remove themselves from their parent group (if any),
 	  when destroyed (STR #1894)
-	- Added flexible gap size for text buffer (STR #2046)
+	- Changed Fl_Group::clip_children() to public (STR #2017)
+	- Changed font index to 32 bit
+	- Changed font size to 32 bit
+        - Changed widget coordinates to 32 bit
+	- Changed socket library to winsock2 (ws2_32.dll) instead of 
+	  wsock32.dll for Windows. The dll is now loaded dynamically only 
+	  if/when needed.	  
+	- Changed hide() and show() methods. They are now virtual from 
+	  Fl_Widget.
+	- Changed Fl_Group and Fl_Scroll to resize themselves before
+	  resizing their children (STR #2032)
+	- Changed "fltk-config --post foo" to creates an application
+	  bundle rather than attaching a resource fork.
+	- Updated the bundled libpng to v1.2.40 (released Sep. 10, 2009)
+	- Update lib png access (STR #2442)
+
+	  Bug Fixes
+
+	- Fixed Fl_Tabs selection border drawing, if tabs are at the bottom
+	  of the widget (STR #2480)
+	- Fixed Compiling with mingw-w64 (STR #2308).
+	- Fixed crashes when detecting illegal utf 8 sequences
+	  in Fl_Text_* widgets (STR #2348)
+	- Fixed Fl_Text_Display Tabulator calculations (STR #2450)
+	- Fixed file access code to use UTF-8 strings (STR #2440)
+	- Fixed ARM Unicode cross compilation issue (STR #2432)
+	- Fixed xclass support for Fl_Window (STR #2053)
+	- Fixed Caps Lock handling in X11/XIM (STR #2366)
+	- Fixed handling of missing fonts in Xft (STR #2355)
+	- Fixed OpenGL hide/show issue in OS X (STR #2260)
+	- Fixed File Chooser preview hang if a device was choosen
+	- Fixed internationalisation of menus using FLuid (STR #2246)
+	- Fixed blinking of selection when the mouse was dragged 
+	  outside of the Fl_Text_* widget
+	- Fixed Unicode support for Fl_Text_* widgets
+	- Fixed menu and shortcut handling (STR #2243)
+	- Fixed fltk-config to give --libs on one line (STR #2408)
+	- Fixed tab key navigation to inactive widgets (STR #2420)
+	- Fixed outside label redraw damage areas (STR #2436)
+	- Fixed label alignment (STR #2436)
+	- Fixed compile errors when HAVE_LIBJPEG was not defined 
+	  (STR #2382)
+	- Fixed special handling for ISO back-tab keycode (STR #2369)
+	- Fixed wrong relative path (STR #2384)
+	- Fixed static allocation in Fl_Tabs (STR #2370)
+	- Fixed Fl_Widget::measure_label() to const (STR #2406)
+	- Fixed unbalanced Windows OleInitialize/OleUnitialize calls
+	  when loading/unloading the FLTK dll (STR #2417)
+	- Fixed X11/XDBE double buffering (STR #2152, #2197)
+	- Fixed menu and tooltip window animation bug under X11 (compiz)
+	  by setting an appropriate window type (STR #2082)
+	- Fixed max. fd calculation, if USE_POLL is enabled (STR #2324)
+	- Fixed clipping for offscreen rendering (OSX, STR #2330)
+	- Fixed possibility of wrong flags() in Fl_Window::iconlabel()
+	  (STR #2161)
+	- Fixed Scrollbar events when max is less than min (STR #2283)
+	- Fixed menu item counting issue in Fluid (STR #2322)
+	- Fixed lost top item in Fluid's tree browser (STR #2233)
+	- Fixed crash in test/Editor when freeing buffer 
+	  too soon (STR #2294) 
+	- Fixed Fl_Preferences Cygwin wide character bug (STR #2164)
+	- Fixed sorting in Fl_Browser - last item would not 
+	  be sorted (STR #2300)
+	- Fixed window levels in OS X Cocoa (STR #2316)
+	- Fixed a buffer overflow in fl_utf8from_mb() (STR #2279)
+	- Fixed a Windows GDI leak when testing alpha blending capabilities
+	- Fixed crashes for recursive common dialogs (this does not 
+	  fix the issue at hand yet) (STR #1986, 2150)
+	- Fixed a name conflict with new (VS 2008 Express) winsock2.h
+	  versions and another conflict that produced compile errors
+	  with VS 2008 Express (STR #2301)
+	- Fixed all color related call to Fl_Color type (STR #2208)
+	- Fixed Fluid dependency on X11 (STR #2261)
+	- Fixed Fl_Choice contrast with light-on-dark settings (STR #2219)
+	- Fixed X server "lock", if a modal dialog window is opened
+	  while a menu is active (STR #1986)
+	- Fixed Windows compile bug with "#define USE_COLORMAP 0"
+	  (STR #2241)
+	- Fixed glibc 2.10 compiler problems (Fedora 11 and others)
+	  with scandir() and strchr() (STR #2222)
+	- Fixed OpenGL shared context handling (STR #2135)
+	- Fixed gray-scale images with alpha channel (STR #2105)
+	- Fixed unexpected shortcut behavior for Win32 (STR #2199)
+	- Fluid printing used wrong colors under Windows (STR #2195)
+	- Fixed fl_draw_image to obey the alpha channel, hoping that 
+	  this has no adverse effect on existing software (OS X only)
+	- Fix for multiple popups, when dragging and calling fl_alert()
+	  and friends from the callback (STR #2159)
+	- Fixed control key keycodes with modifiers on OS X
+	- Fixed bad system menu hadling in OS X (STR #2153)
+	- Fixed File Input mouse pointer dragging (STR #2181)
+	- Fixed 'del' keycode on OS X (must be verified for all keyboards)
+	- Fixed OS X support for sending and receiving dnd data as utf8
+	- Fixed Copy/Paste operations with utf8,16 support and 
+	  fltk1.1 compatibility. (STR #2104,2121).
 	- Fixed static linking of image libraries (STR #1962)
 	- Fixed fl_set_spot() for Windows (STR #2101)
-	- Added sorting to Fl_Browser_ (STR #2113)
-	- Added utf8 support for OS X copy and paste
-	- Improved handling of composed keys in OS X 10.5 and up
-	- Fixed callback would not be called when shortcut was used with
-          radio and toggle buttons in default FL_RELEASE mode.
+	- Fixed callback that would not be called when shortcut was used 
+	  with radio and toggle buttons in default FL_RELEASE mode.
 	- Fixed a problem with TrackMouseEvent() (Windows only) that would
 	  generate wrong FL_LEAVE events with subwindows. TrackMouseEvent
 	  is now enabled by default (it was disabled for GNU compilers).
 	  It can be disabled by defining NO_TRACK_MOUSE.
 	  Improved test/subwindow.cxx (STR #2079)
-	- Fixed documentation (added missing COMCTRL32.LIB dependency)
 	- Fixed menu position close to screen border (STR #2057)
-	- Improved stability of fl_read_image (STR #2021)
-	- Fixed adding an idle handler during
-	  a draw() call (STR #1950)
-	- Fl_Group::clip_children() is now public (STR #2017)
-	- Added clarification to Fl_GL_Window mode
-	  function (STR #1945)
+	- Fixed adding an idle handler during a draw() call (STR #1950)
 	- Fixed Fluid textcolor output (STR #1992)
-	- Fixed wrong default value of Fl_Spinner in
-	  Fluid (STR #1991)
+	- Fixed wrong default value of Fl_Spinner in Fluid (STR #1991)
 	- Fixed first modifier key event (STR #1952)
-	- Fl_Group and Fl_Scroll now resize themselves before
-	  resizing their children (STR #2032)
-	- "fltk-config --post foo" now creates an application
-	  bundle rather than attaching a resource fork.
-	- Added scroll_to(int,int) to Fl_Scroll, replacing
-	  position(int,int) which now behaves as it should (STR #1303)
 	- Fixed Fl_Scroll inside Fl_Scroll (STR #265)
-	- Hardcoded 1.1 references in src/Makefile to 1.3 (STR #1922)
-	- Changed font index to 32 bit
-	- Changed font size to 32 bit
-        - Changed widget coordinates to 32 bit
-        - Added support for shortcuts for Fl_Input_,
-	  Fl_Value_Input, and Fl_Text_Display derived
-          widgets (STR #1770)
-        - Initial setup (STR #1904)
-	- FLTK now uses winsock2 (ws2_32.dll) instead of wsock32.dll
-	  for Windows. The dll is loaded dynamically only if/when
-	  needed; there is no need to link with winsock (ws2_32.lib)
-	  if your program doesn't need socket operations.
-	- Cairo support: added --enable-cairo and --enable-cairoext 
-          configure options.
-	- visualc(6) & vc2005 devenv's are in the ide subdirectory
-	- hide() and show() methods are now virtual from Fl_Widget,
-	  was only virtual since Fl_Window derived classes before.
-	  So now widget->hide() will work if widget is a window.
-        - New widgets: Fl_Tree, Fl_Table, Fl_Native_File_Chooser
-        - added Fl_Menu_ methods: insert(), find_index(), clear_submenu()
-	- Bug reports/enhancements now refer to the STR form http://www.fltk.org/str.php
+
+	  Removed features
+
+	- Removed Watcom compiler support because it was introduced in
+	  1.1.6 as a partial solution and never completed.
+	- Removed an XForms compatibility "feature" that prevented the down
+	  array of Fl_Menu_Button from drawing (STR #2141).
+	- Removed support for gcc 2.x (or older)
+	- Removed redundant Fl_Group casts
+	
 
 CHANGES IN FLTK 1.1.9
 
