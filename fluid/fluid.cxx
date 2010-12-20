@@ -835,6 +835,7 @@ static void sort_cb(Fl_Widget *,void *) {
 void show_project_cb(Fl_Widget *, void *);
 void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
+void show_global_settings_cb(Fl_Widget *, void *);
 
 void align_widget_cb(Fl_Widget *, long);
 void widget_size_cb(Fl_Widget *, long);
@@ -1630,7 +1631,8 @@ Fl_Menu_Item Main_Menu[] = {
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
-  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
+  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb,0,FL_MENU_DIVIDER},
+  {"Global &FLTK Settings...",FL_ALT+FL_SHIFT+'g',show_global_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
@@ -1788,6 +1790,7 @@ void make_main_window() {
   if (!compile_only) {
     load_history();
     make_settings_window();
+    make_global_settings_window();
   }
 }
 

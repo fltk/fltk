@@ -245,6 +245,11 @@ void show_settings_cb(Fl_Widget *, void *) {
   settings_window->show();
 }
 
+void show_global_settings_cb(Fl_Widget *, void *) {
+  global_settings_window->hotspot(global_settings_window);
+  show_global_settings_window();
+}
+
 void header_input_cb(Fl_Input* i, void*) {
   if (header_file_name && strcmp(header_file_name, i->value()))
     set_modflag(1);

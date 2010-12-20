@@ -107,6 +107,19 @@ extern Fl_Check_Button *guides_toggle;
 extern void default_widget_size_cb(Fl_Round_Button*, long);
 extern Fl_Round_Button *def_widget_size[6];
 Fl_Double_Window* make_layout_window();
+void show_global_settings_window();
+extern Fl_Double_Window *global_settings_window;
+extern Fl_Choice *wVisibleFocus;
+extern Fl_Choice *wArrowFocus;
+extern Fl_Choice *wShowTooltips;
+extern Fl_Choice *wDNDText;
+extern Fl_Choice *wUserOrSystem;
+Fl_Double_Window* make_global_settings_window();
+extern Fl_Menu_Item menu_wVisibleFocus[];
+extern Fl_Menu_Item menu_wArrowFocus[];
+extern Fl_Menu_Item menu_wShowTooltips[];
+extern Fl_Menu_Item menu_wDNDText[];
+extern Fl_Menu_Item menu_wUserOrSystem[];
 #endif
 
 //

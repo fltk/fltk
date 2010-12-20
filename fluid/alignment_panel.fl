@@ -40,6 +40,12 @@ decl {\#include <FL/Fl_Text_Display.H>} {public local
 decl {\#include <FL/filename.H>} {public local
 } 
 
+decl {\#include <FL/Fl_Preferences.H>} {private global
+} 
+
+decl {\#include <FL/fl_ask.H>} {private global
+} 
+
 decl {extern void load_history();} {public local
 } 
 
@@ -61,8 +67,7 @@ decl {extern Fl_Preferences fluid_prefs;} {public local
 decl {Fl_Text_Buffer *shell_run_buffer;} {public local
 } 
 
-Function {make_project_window()} {open
-} {
+Function {make_project_window()} {} {
   Fl_Window project_window {
     label {Project Settings} open
     xywh {393 460 399 252} type Double
@@ -142,7 +147,7 @@ Function {make_project_window()} {open
         }
         Fl_Input i18n_set_input {
           label {Set:}
-          callback i18n_int_cb selected
+          callback i18n_int_cb
           tooltip {The message set number.} xywh {100 128 272 20} type Int box THIN_DOWN_BOX labelfont 1 textfont 4
         }
         Fl_Input i18n_function_input {
@@ -326,8 +331,7 @@ Function {make_shell_window()} {} {
   }
 } 
 
-Function {make_layout_window()} {open
-} {
+Function {make_layout_window()} {} {
   Fl_Window grid_window {
     label {Layout Settings} open
     xywh {760 427 285 245} type Double non_modal visible
@@ -431,6 +435,245 @@ Function {make_layout_window()} {open
       }
     }
   }
+} 
+
+decl {int opt[10][2];} {
+  comment {Copy of all options in user and system mode} private local
+} 
+
+Function {refreshUI()} {
+  comment {Update the UI using the values in the opt array} private return_type void
+} {
+  code {int mode = wUserOrSystem->value();
+wVisibleFocus->value(opt[Fl::OPTION_VISIBLE_FOCUS][mode]);
+wArrowFocus->value(opt[Fl::OPTION_ARROW_FOCUS][mode]);
+wShowTooltips->value(opt[Fl::OPTION_SHOW_TOOLTIPS][mode]);
+wDNDText->value(opt[Fl::OPTION_DND_TEXT][mode]);} {}
+} 
+
+Function {readPrefs()} {
+  comment {read all preferences and refresh the GUI} private return_type void
+} {
+  code {// read all preferences and refresh the GUI
+{
+  Fl_Preferences prefs(Fl_Preferences::SYSTEM, "fltk.org", "fltk");
+  Fl_Preferences opt_prefs(prefs, "options");
+  opt_prefs.get("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][1], 2);
+  opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][1], 2);
+  opt_prefs.get("DNDText", opt[Fl::OPTION_DND_TEXT][1], 2);
+  opt_prefs.get("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][1], 2);
+}
+{
+  Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
+  Fl_Preferences opt_prefs(prefs, "options");
+  opt_prefs.get("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][0], 2);
+  opt_prefs.get("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][0], 2);
+  opt_prefs.get("DNDText", opt[Fl::OPTION_DND_TEXT][0], 2);
+  opt_prefs.get("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][0], 2);
+}
+refreshUI();} {}
+} 
+
+Function {writePrefs()} {
+  comment {write all preferences using the array} private return_type void
+} {
+  code {// write all preferences using the array
+{
+  Fl_Preferences prefs(Fl_Preferences::SYSTEM, "fltk.org", "fltk");
+  Fl_Preferences opt_prefs(prefs, "options");
+  if (opt[Fl::OPTION_ARROW_FOCUS][1]==2) opt_prefs.deleteEntry("ArrowFocus");
+  else opt_prefs.set("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][1]);
+  if (opt[Fl::OPTION_VISIBLE_FOCUS][1]==2) opt_prefs.deleteEntry("VisibleFocus");
+  else opt_prefs.set("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][1]);
+  if (opt[Fl::OPTION_DND_TEXT][1]==2) opt_prefs.deleteEntry("DNDText");
+  else opt_prefs.set("DNDText", opt[Fl::OPTION_DND_TEXT][1]);
+  if (opt[Fl::OPTION_SHOW_TOOLTIPS][1]==2) opt_prefs.deleteEntry("ShowTooltips");
+  else opt_prefs.set("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][1]);
+}
+{
+  Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
+  Fl_Preferences opt_prefs(prefs, "options");
+  if (opt[Fl::OPTION_ARROW_FOCUS][0]==2) opt_prefs.deleteEntry("ArrowFocus");
+  else opt_prefs.set("ArrowFocus", opt[Fl::OPTION_ARROW_FOCUS][0]);
+  if (opt[Fl::OPTION_VISIBLE_FOCUS][0]==2) opt_prefs.deleteEntry("VisibleFocus");
+  else opt_prefs.set("VisibleFocus", opt[Fl::OPTION_VISIBLE_FOCUS][0]);
+  if (opt[Fl::OPTION_DND_TEXT][0]==2) opt_prefs.deleteEntry("DNDText");
+  else opt_prefs.set("DNDText", opt[Fl::OPTION_DND_TEXT][0]);
+  if (opt[Fl::OPTION_SHOW_TOOLTIPS][0]==2) opt_prefs.deleteEntry("ShowTooltips");
+  else opt_prefs.set("ShowTooltips", opt[Fl::OPTION_SHOW_TOOLTIPS][0]);
+}} {}
+} 
+
+Function {show_global_settings_window()} {open return_type void
+} {
+  code {if (!global_settings_window)
+  make_global_settings_window();
+readPrefs();
+refreshUI();
+fl_message(
+	"WARNING!\\n\\n"
+	"The following dialog changes the user interface behavior\\n"
+	"of ALL FLTK applications, for the current user, or for \\n"
+	"ALL users on this machine.\\n\\n"
+	"Please choose these settings carefully, or reset\\n"
+	"user and system settings to \\"default\\".");
+global_settings_window->show();} {selected
+  }
+} 
+
+Function {make_global_settings_window()} {} {
+  Fl_Window global_settings_window {
+    label {FLTK Preferences} open
+    xywh {444 220 403 317} type Double color 50 visible
+  } {
+    Fl_Group {} {
+      label {Keyboard Focus Options} open
+      xywh {10 10 380 100} box GTK_DOWN_BOX labelfont 2 align 21
+    } {
+      Fl_Choice wVisibleFocus {
+        label {Visible Keyboard Focus:}
+        callback {int mode = wUserOrSystem->value();
+opt[Fl::OPTION_VISIBLE_FOCUS][mode] = wVisibleFocus->value();} open
+        tooltip {OPTION_VISIBLE_FOCUS
+
+If visible focus is switched on, FLTK will draw a dotted rectangle inside the widget that will receive the next keystroke. If switched off, no such indicator will be drawn and keyboard navigation is disabled.
+
+Default is on.} xywh {245 40 100 25} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {10 10 31 20}
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {10 10 31 20} divider
+        }
+        MenuItem {} {
+          label default
+          user_data 2 user_data_type long
+          xywh {10 10 31 20}
+        }
+      }
+      Fl_Choice wArrowFocus {
+        label {Arrow Keys move Focus:}
+        callback {int mode = wUserOrSystem->value();
+opt[Fl::OPTION_ARROW_FOCUS][mode] = wArrowFocus->value();} open
+        tooltip {OPTION_ARROW_FOCUS
+
+When switched on, moving the text cursor beyond the start or end of the text in a text widget will change focus to the next widget. When switched off, the cursor will stop at the end of the text. Pressing Tab or Ctrl-Tab will advance the keyboard focus. Switch this on, if you want the old behavior of FLTK 1.1.
+
+Default is off.} xywh {245 75 100 25} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {0 0 31 20}
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {0 0 31 20} divider
+        }
+        MenuItem {} {
+          label default
+          user_data 2 user_data_type long
+          xywh {0 0 31 20}
+        }
+      }
+    }
+    Fl_Group {} {
+      label {Tooltip Options} open
+      xywh {10 120 380 65} box GTK_DOWN_BOX labelfont 2 align 21
+    } {
+      Fl_Choice wShowTooltips {
+        label {Show Tooltips:}
+        callback {int mode = wUserOrSystem->value();
+opt[Fl::OPTION_SHOW_TOOLTIPS][mode] = wShowTooltips->value();} open
+        tooltip {OPTION_SHOW_TOOLTIPS
+
+If tooltips are enabled, hovering the mouse over a widget with a tooltip text will open a little tooltip window until the mouse leaves the widget. If disabled, no tooltip is shown.
+
+Default is on.} xywh {245 150 100 25} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {10 10 31 20}
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {10 10 31 20} divider
+        }
+        MenuItem {} {
+          label default
+          user_data 2 user_data_type long
+          xywh {10 10 31 20}
+        }
+      }
+    }
+    Fl_Group {} {
+      label {Drag And Drop Options} open
+      xywh {10 194 380 66} box GTK_DOWN_BOX labelfont 2 align 21
+    } {
+      Fl_Choice wDNDText {
+        label {Allow dragging Text:}
+        callback {int mode = wUserOrSystem->value();
+opt[Fl::OPTION_DND_TEXT][mode] = wDNDText->value();} open
+        tooltip {OPTION_DND_TEXT
+
+If text drag-and-drop is enabled, the user can select and drag text from any text widget. If disabled, no dragging is possible, however dropping text from other applications still works.
+
+Default is on.} xywh {245 225 100 25} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label off
+          user_data 0 user_data_type long
+          xywh {30 30 31 20}
+        }
+        MenuItem {} {
+          label on
+          user_data 1 user_data_type long
+          xywh {30 30 31 20} divider
+        }
+        MenuItem {} {
+          label default
+          user_data 2 user_data_type long
+          xywh {30 30 31 20}
+        }
+      }
+    }
+    Fl_Choice wUserOrSystem {
+      callback {refreshUI();} open
+      tooltip {Change settings for the current user, or default values for all users of this computer. Individual users can override system options, if they set their options to specific values (not 'default').} xywh {14 275 141 25} down_box BORDER_BOX
+    } {
+      MenuItem {} {
+        label {User Settings}
+        user_data 0 user_data_type long
+        xywh {0 0 31 20}
+      }
+      MenuItem {} {
+        label {System Settings}
+        user_data 1 user_data_type long
+        xywh {0 0 31 20}
+      }
+    }
+    Fl_Button {} {
+      label Cancel
+      callback {global_settings_window->hide();}
+      xywh {230 275 75 25}
+    }
+    Fl_Button {} {
+      label OK
+      callback {writePrefs();
+global_settings_window->hide();}
+      xywh {315 275 75 25}
+    }
+  }
+  code {readPrefs();
+  Fl::option(Fl::OPTION_SHOW_TOOLTIPS,1); // make sure tooltips are on !} {}
 } 
 
 comment {
