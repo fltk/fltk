@@ -28,7 +28,7 @@
 /* Xcode on OS X includes files by recursing down into directories.
  * This code catches the cycle and directly includes the required file.
  */
-#ifdef fl_dirent_h_cyclic_include 
+#ifdef fl_dirent_h_cyclic_include
 #  include "/usr/include/dirent.h"
 #endif
 
@@ -37,12 +37,12 @@
 
 #  include "Fl_Export.H"
 
-/** \addtogroup filenames File names and URI utility functions 
+/** \addtogroup filenames File names and URI utility functions
  File names and URI functions defined in <FL/filename.H>
     @{ */
 
 #  define FL_PATH_MAX 2048 /**< all path buffers should use this length */
-/** Gets the file name from a path. 
+/** Gets the file name from a path.
     Similar to basename(3), exceptions shown below.
     \code
     #include <FL/filename.H>
@@ -63,7 +63,6 @@ FL_EXPORT char *fl_filename_setext(char *to, int tolen, const char *ext);
 FL_EXPORT int fl_filename_expand(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_absolute(char *to, int tolen, const char *from);
 FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from);
-FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from, const char *cwd);
 FL_EXPORT int fl_filename_match(const char *name, const char *pattern);
 FL_EXPORT int fl_filename_isdir(const char *name);
 
@@ -75,6 +74,7 @@ FL_EXPORT int fl_filename_isdir(const char *name);
 inline char *fl_filename_setext(char *to, const char *ext) { return fl_filename_setext(to, FL_PATH_MAX, ext); }
 inline int fl_filename_expand(char *to, const char *from) { return fl_filename_expand(to, FL_PATH_MAX, from); }
 inline int fl_filename_absolute(char *to, const char *from) { return fl_filename_absolute(to, FL_PATH_MAX, from); }
+FL_EXPORT int fl_filename_relative(char *to, int tolen, const char *from, const char *cwd);
 inline int fl_filename_relative(char *to, const char *from) { return fl_filename_relative(to, FL_PATH_MAX, from); }
 #  endif /* __cplusplus */
 
@@ -103,9 +103,9 @@ struct dirent {char d_name[1];};
  * It would be best to create a <dirent.h> file that does this...
  */
 #    include <sys/types.h>
-#    define fl_dirent_h_cyclic_include 
+#    define fl_dirent_h_cyclic_include
 #    include <dirent.h>
-#    undef fl_dirent_h_cyclic_include 
+#    undef fl_dirent_h_cyclic_include
 #  endif
 
 #  if defined (__cplusplus)
