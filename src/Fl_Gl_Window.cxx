@@ -323,7 +323,7 @@ void Fl_Gl_Window::flush() {
     glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
-#if defined (__APPLE_QUARTZ__) || defined (__linux__)
+#if defined (__APPLE_QUARTZ__) || defined (USE_X11)
       SWAP_TYPE = COPY;
 #else
       SWAP_TYPE = UNDEFINED;
