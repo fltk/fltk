@@ -1,5 +1,31 @@
-Cairo Support for fltk 1.3
-===========================
+README.Cairo.txt - 2010-10-25 - Cairo rendering support for FLTK
+----------------------------------------------------------------
+
+
+
+ CONTENTS
+==========
+
+ 1   INTRODUCTION
+ 2   CAIRO SUPPORT FOR FLTK 1.3
+   2.1   Configuration
+   2.2   Currently supported features
+   2.3   Future considerations 
+ 3   DOCUMENT HISTORY
+
+
+
+ iINTRODUCTION
+===============
+
+Cairo is a software library used to provide a vector graphics-based, 
+device-independent API for software developers. It is designed to provide 
+primitives for 2-dimensional drawing across a number of different 
+wbackends. Cairo is designed to use hardware acceleration when available.
+
+
+ CAIRO SUPPORT FOR FLTK 1.3
+=============================
 
 It is now possible to integrate cairo rendering in your fltk application
 more easily and transparently.
@@ -7,8 +33,10 @@ In 1.3, we provide minimum support for Cairo,
 In particular, no "total" cairo rendering layer support is achieved,
 as in fltk2.
 
-Configuration:
--------------
+
+ Configuration
+---------------
+
 All the changes are *inactive*  as long as the new configuration
 option --enable-cairo is not added to the configure command.
 For non configure based platforms/ide, the HAVE_CAIRO preprocess var.
@@ -18,8 +46,10 @@ also vc2005 build files have 2 new build modes "Release Cairo" and
 "Debug Cairo".
 Others IDE's will be updated progressively.
 
-The current support consist in :
--------------------------------
+
+ Currently supported features
+------------------------------
+
 - Adding a new Fl_Cairo_Window class permitting transparent and easy
 integration of a Cairo draw callback without the need to achieve subclassing.
 
@@ -44,8 +74,9 @@ This function is intended to be used in your overloaded draw() method.
 For more details, please have a look to the doxygen documentation,
 in the Modules section.
 
------------------------------------------------------------------------
-Reminder for potential future considerations 
+
+ Future considerations
+-----------------------
 
 From Bill:
 First there is the HAVE_CAIRO configuration option. This indicates that
@@ -72,3 +103,9 @@ called, it is exactly as though cairo_make_current(window) has been done.
 Note that it should be possible to compile so HAVE_CAIRO works even if
 USE_CAIRO does not, and so that turning on USE_CAIRO does not break any
 programs written for HAVE_CAIRO.
+
+
+ DOCUMENT HISTORY
+==================
+
+Dec 20 2010 - matt: restructured document
