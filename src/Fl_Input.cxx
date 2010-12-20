@@ -90,11 +90,219 @@ static const char *legal_fp_chars = 0L;
 static const char *legal_fp_chars = ".eE+-"; 
 #endif
 
+// Move cursor up specified #lines
+//    If OPTION_ARROW_FOCUS is disabled, return 1 to prevent focus navigation.
+//
+int Fl_Input::kf_lines_up(int repeat_num) {
+  int i = position();
+  if (!line_start(i)) {
+    //UNNEEDED if (input_type()==FL_MULTILINE_INPUT && !Fl::option(Fl::OPTION_ARROW_FOCUS)) return 1;
+    return NORMAL_INPUT_MOVE;
+  }
+  while(repeat_num--) {
+    i = line_start(i);
+    if (!i) break;
+    i--;
+  }
+  shift_up_down_position(line_start(i));
+  return 1;
+}
+
+// Move cursor down specified #lines
+//    If OPTION_ARROW_FOCUS is disabled, return 1 to prevent focus navigation.
+//
+int Fl_Input::kf_lines_down(int repeat_num) {
+  int i = position();
+  if (line_end(i) >= size()) {
+    //UNNEEDED if (input_type()==FL_MULTILINE_INPUT && !Fl::option(Fl::OPTION_ARROW_FOCUS)) return 1;
+    return NORMAL_INPUT_MOVE;
+  }
+  while (repeat_num--) {  
+    i = line_end(i);
+    if (i >= size()) break;
+    i++;
+  }
+  shift_up_down_position(i);
+  return 1;
+}
+
+// Move up a page
+int Fl_Input::kf_page_up() {
+  return kf_lines_up(linesPerPage());
+}
+
+// Move down a page
+int Fl_Input::kf_page_down() {
+  return kf_lines_down(linesPerPage());
+}
+
+// Toggle insert mode
+int Fl_Input::kf_insert_toggle() {
+  return 1;				// \todo: needs insert mode
+}
+
+// Delete word right
+int Fl_Input::kf_delete_word_right() {
+  if (readonly()) { fl_beep(); return 1; }
+  if (mark() != position()) return cut();
+  cut(position(), word_end(position()));
+  return 1;
+}
+
+// Delete word left
+int Fl_Input::kf_delete_word_left() {
+  if (readonly()) { fl_beep(); return 1; }
+  if (mark() != position()) return cut();
+  cut(word_start(position()), position());
+  return 1;
+}
+
+// Delete to start of line
+int Fl_Input::kf_delete_sol() {
+  if (mark() != position()) return cut();
+  cut(line_start(position()), position());
+  return 1;
+}
+
+// Delete to end of line
+int Fl_Input::kf_delete_eol() {
+  if (readonly()) { fl_beep(); return 1; }
+  if (mark() != position()) return cut();
+  cut(position(), line_end(position()));
+  return 1;
+}
+
+int Fl_Input::kf_delete_char_right() {
+  if (readonly()) { fl_beep(); return 1; }
+  if (mark() != position()) return cut();
+  else return cut(1);
+}
+
+int Fl_Input::kf_delete_char_left() {
+  if (readonly()) { fl_beep(); return 1; }
+  if (mark() != position()) cut();
+  else cut(-1);
+  return 1;
+}
+
+// Move cursor to start of line
+int Fl_Input::kf_move_sol() {
+  return shift_position(line_start(position())) + NORMAL_INPUT_MOVE;
+}
+
+// Move cursor to end of line
+int Fl_Input::kf_move_eol() {
+  return shift_position(line_end(position())) + NORMAL_INPUT_MOVE;
+}
+
+// Clear to end of line
+int Fl_Input::kf_clear_eol() {
+  if (readonly()) { fl_beep(); return 1; }
+  if (position()>=size()) return 0;
+  int i = line_end(position());
+  if (i == position() && i < size()) i++;
+  cut(position(), i);
+  return copy_cuts();
+}
+
+// Move cursor one character to the left
+//    If OPTION_ARROW_FOCUS is disabled, return 1 to prevent focus navigation.
+//
+int Fl_Input::kf_move_char_left() {
+  int i = shift_position(position()-1) + NORMAL_INPUT_MOVE;
+  return Fl::option(Fl::OPTION_ARROW_FOCUS) ? i : 1;
+}
+
+// Move cursor one character to the right
+//    If OPTION_ARROW_FOCUS is disabled, return 1 to prevent focus navigation.
+//
+int Fl_Input::kf_move_char_right() {
+  int i = shift_position(position()+1) + NORMAL_INPUT_MOVE;
+  return Fl::option(Fl::OPTION_ARROW_FOCUS) ? i : 1;
+}
+
+// Move cursor word-left
+int Fl_Input::kf_move_word_left() {
+  shift_position(word_start(position()));
+  return 1; 
+}
+
+// Move cursor word-right
+int Fl_Input::kf_move_word_right() {
+  shift_position(word_end(position()));
+  return 1;
+}
+
+// Move cursor up one line and to the start of line (paragraph up)
+int Fl_Input::kf_move_up_and_sol() {
+  if (line_start(position())==position() && position()>0)
+    return shift_position(line_start(position()-1)) + NORMAL_INPUT_MOVE;
+  else
+    return shift_position(line_start(position())) + NORMAL_INPUT_MOVE;
+}
+
+// Move cursor down one line and to the end of line (paragraph down)
+int Fl_Input::kf_move_down_and_eol() {
+  if (line_end(position())==position() && position()<size())
+    return shift_position(line_end(position()+1)) + NORMAL_INPUT_MOVE;
+  else
+    return shift_position(line_end(position())) + NORMAL_INPUT_MOVE;
+}
+
+// Move to top of document
+int Fl_Input::kf_top() {
+  shift_position(0);
+  return 1;
+}
+
+// Move to bottom of document
+int Fl_Input::kf_bottom() {
+  shift_position(size());
+  return 1; 
+}
+
+// Select all text in the widget
+int Fl_Input::kf_select_all() {
+  position(0,size());
+  return 1;
+}
+
+// Undo.
+int Fl_Input::kf_undo() {
+  if (readonly()) { fl_beep(); return 1; }
+  return undo();
+}
+
+// Redo. (currently unimplemented.. toggles undo() instead)
+int Fl_Input::kf_redo() {
+  return kf_undo();			// currently we don't support multilevel undo
+}
+
+// Do a copy operation
+int Fl_Input::kf_copy() {
+  return copy(1);
+}
+
+// Do a paste operation
+int Fl_Input::kf_paste() {
+  if (readonly()) { fl_beep(); return 1; }
+  Fl::paste(*this, 1);
+  return 1;
+}
+
+// Do a cut with copy
+int Fl_Input::kf_copy_cut() {
+  if (readonly()) { fl_beep(); return 1; }
+  copy(1);
+  return cut();
+}
+
+// Handle a keystroke.
+//     Returns 1 if handled by us, 0 if not.
+//
 int Fl_Input::handle_key() {
   
   char ascii = Fl::event_text()[0];
-  
-  int repeat_num=1;
   
   int del;
   if (Fl::compose(del)) {
@@ -153,349 +361,223 @@ int Fl_Input::handle_key() {
   }
   
   unsigned int mods = Fl::event_state() & (FL_META|FL_CTRL|FL_ALT);
+  unsigned int shift = Fl::event_state() & FL_SHIFT;
+  unsigned int multiline = (input_type() == FL_MULTILINE_INPUT) ? 1 : 0;
+  //
+  // The following lists apps that support these keypresses.
+  // Prefixes: '!' indicates NOT supported, '?' indicates un-verified.
+  //
+  //    HIG=Human Interface Guide, 
+  //    TE=TextEdit.app, SA=Safari.app, WOX=MS Word/OSX -- OSX 10.4.x
+  //    NP=Notepad, WP=WordPad, WOW=MS Word/Windows     -- WinXP
+  //    GE=gedit, KE=kedit                              -- Ubuntu8.04
+  //    OF=old FLTK behavior (<=1.1.10)
+  //
+  // Example: (NP,WP,!WO) means supported in notepad + wordpad, but NOT word.
+  //
   switch (Fl::event_key()) {
+
     case FL_Insert:
-      if (Fl::event_state() & FL_CTRL) ascii = ctrl('C');
-      else if (Fl::event_state() & FL_SHIFT) ascii = ctrl('V');
-      break;
-    case FL_Delete:
+      // Note: Mac has no "Insert" key; it's the "Help" key.
+      //       This keypress is apparently not possible on macs.
+      //
+      if (mods==0 && shift) return kf_paste();			// Shift-Insert   (WP,NP,WOW,GE,KE,OF)
+      if (mods==0)          return kf_insert_toggle();		// Insert         (Standard)
+      if (mods==FL_CTRL)    return kf_copy();			// Ctrl-Insert    (WP,NP,WOW,GE,KE,OF)
+      return 0;							// ignore other combos, pass to parent
+
+    case FL_Delete: {
 #ifdef __APPLE__
-      if (mods==0 || mods==FL_CTRL) { // delete next char
-        ascii = ctrl('D');
-      } else if (mods==FL_ALT) { // delete next word
-        if (mark() != position()) return cut();
-        cut(position(), word_end(position()));
-        return 1;
-      } else if (mods==FL_META) { // delete to the end of the line
-        if (mark() != position()) return cut();
-        cut(position(), line_end(position()));
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_delete_char_right();	// Delete         (OSX-HIG,TE,SA,WOX)
+      if (mods==FL_CTRL)    return kf_delete_char_right();	// Ctrl-Delete    (??? TE,!SA,!WOX)
+      if (mods==FL_ALT)     return kf_delete_word_right();	// Alt-Delete     (OSX-HIG,TE,SA)
+      return 0;							// ignore other combos, pass to parent
 #else
-      if (mods) return 1;		// Alt-Del/Ctrl-Del/Meta-Del: do nothing 
-      if (Fl::event_state() & FL_SHIFT) {
-	ascii = ctrl('X');		// Shift-Del -> ^X
-      } else {
-	ascii = ctrl('D');		// Del -> ^D
-      }
+      int selected = (position() != mark()) ? 1 : 0;
+      if (mods==0 && shift && selected)
+                            return kf_copy_cut();		// Shift-Delete with selection (WP,NP,WOW,GE,KE,OF)
+      if (mods==0 && shift && !selected)
+                            return kf_delete_char_right();	// Shift-Delete no selection (WP,NP,WOW,GE,KE,!OF)
+      if (mods==0)          return kf_delete_char_right();	// Delete         (Standard)
+      if (mods==FL_CTRL)    return kf_delete_word_right();	// Ctrl-Delete    (WP,!NP,WOW,GE,KE,!OF)
+      return 0;							// ignore other combos, pass to parent
 #endif
-      break;
+    }
+
     case FL_Left:
 #ifdef __APPLE__
-      if (mods==0) { // char left
-        ascii = ctrl('B'); 
-      } else if (mods==FL_ALT) { // word left
-        shift_position(word_start(position()));
-        return 1; 
-      } else if (mods==FL_CTRL || mods==FL_META) { // start of line
-        shift_position(line_start(position()));
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_move_char_left();		// Left           (OSX-HIG)
+      if (mods==FL_ALT)     return kf_move_word_left();		// Alt-Left       (OSX-HIG)
+      if (mods==FL_META)    return kf_move_sol();		// Meta-Left      (OSX-HIG)
+      if (mods==FL_CTRL)    return kf_move_sol();		// Ctrl-Left      (TE/SA)
+      return 1;							// other combos absorb and ignore
 #else
-      if (mods==0) { // char left
-        ascii = ctrl('B'); 
-      } else if (mods==FL_CTRL) { // word left
-        shift_position(word_start(position()));
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_move_char_left();		// Left           (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return kf_move_word_left();		// Ctrl-Left      (WP,NP,WOW,GE,KE,!OF)
+      if (mods==FL_META)    return kf_move_char_left();		// Meta-Left      (WP,NP,?WOW,GE,KE)
+      return 1;							// other combos absorb and ignore
 #endif
-      break;
+
     case FL_Right:
 #ifdef __APPLE__
-      if (mods==0) { // char right
-        ascii = ctrl('F'); 
-      } else if (mods==FL_ALT) { // word right
-        shift_position(word_end(position()));
-        return 1;
-      } else if (mods==FL_CTRL || mods==FL_META) { // end of line
-        shift_position(line_end(position()));
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_move_char_right();	// Right          (OSX-HIG)
+      if (mods==FL_ALT)     return kf_move_word_right();	// Alt-Right      (OSX-HIG)
+      if (mods==FL_META)    return kf_move_eol();		// Meta-Right     (OSX-HIG)
+      if (mods==FL_CTRL)    return kf_move_eol();		// Ctrl-Right     (TE/SA)
+      return 1;							// other combos absorb and ignore
 #else
-      if (mods==0) { // char right
-        ascii = ctrl('F'); 
-      } else if (mods==FL_CTRL) { // word right
-        shift_position(word_end(position()));
-        return 1;
-      } else return 1;
-#endif // __APPLE__
-      break;
-    case FL_Page_Up:
-#ifdef __APPLE__
-      if (mods==0) { // scroll text one page
-                     // OS X scrolls the view, but does not move the cursor
-                     // Fl_Input has no scroll control, so instead we move the cursor by one page
-        repeat_num = linesPerPage();
-        ascii = ctrl('P');
-      } else if (mods==FL_ALT) { // move cursor one page
-        repeat_num = linesPerPage();
-        ascii = ctrl('P');
-      } else return 1;
-      break;
-#else
-      repeat_num = linesPerPage();
-      // fall through
+      if (mods==0)          return kf_move_char_right();	// Right          (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return kf_move_word_right();	// Ctrl-Right     (WP,NP,WOW,GE,KE,!OF)
+      if (mods==FL_META)    return kf_move_char_right();	// Meta-Right     (WP,NP,?WOW,GE,KE,!OF)
+      return 1;							// other combos absorb and ignore
 #endif
+
     case FL_Up:
 #ifdef __APPLE__
-      if (mods==0) { // line up
-        ascii = ctrl('P');
-      } else if (mods==FL_CTRL) { // scroll text down one page
-                                  // OS X scrolls the view, but does not move the cursor
-                                  // Fl_Input has no scroll control, so instead we move the cursor by one page
-        repeat_num = linesPerPage();
-        ascii = ctrl('P');
-      } else if (mods==FL_ALT) { // line start and up
-        if (line_start(position())==position() && position()>0)
-          return shift_position(line_start(position()-1)) + NORMAL_INPUT_MOVE;
-        else
-          return shift_position(line_start(position())) + NORMAL_INPUT_MOVE;
-      } else if (mods==FL_META) { // start of document
-        shift_position(0);
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_lines_up(1);		// Up             (OSX-HIG)
+      if (mods==FL_CTRL)    return kf_page_up();		// Ctrl-Up        (TE !HIG)
+      if (mods==FL_ALT)     return kf_move_up_and_sol();	// Alt-Up         (OSX-HIG)
+      if (mods==FL_META)    return kf_top();			// Meta-Up        (OSX-HIG)
+      return 1;							// other combos absorb and ignore
 #else
-      if (mods==0) { // line up
-        ascii = ctrl('P');
-      } else if (mods==FL_CTRL) { // scroll text down one line
-                                  // Fl_Input has no scroll control, so instead we move the cursor by one page
-        ascii = ctrl('P');
-      } else return 1;
+      if (mods==0)          return kf_lines_up(1);		// Up             (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return kf_move_up_and_sol();	// Ctrl-Up        (WP,!NP,WOW,GE,!KE,OF)
+      return 1;							// other combos absorb and ignore
 #endif
-      break;
-    case FL_Page_Down:
-#ifdef __APPLE__
-      if (mods==0) { // scroll text one page
-                     // OS X scrolls the view, but does not move the cursor
-                     // Fl_Input has no scroll control, so instead we move the cursor by one page
-        repeat_num = linesPerPage();
-        ascii = ctrl('N');
-      } else if (mods==FL_ALT) { // move cursor one page
-        repeat_num = linesPerPage();
-        ascii = ctrl('N');
-      } else return 1;
-      break;
-#else
-      repeat_num = linesPerPage();
-      // fall through
-#endif
+
     case FL_Down:
 #ifdef __APPLE__
-      if (mods==0) { // line down
-        ascii = ctrl('N');
-      } else if (mods==FL_CTRL) {
-        // OS X scrolls the view, but does not move the cursor
-        // Fl_Input has no scroll control, so instead we move the cursor by one page
-        repeat_num = linesPerPage();
-        ascii = ctrl('N');
-      } else if (mods==FL_ALT) { // line end and down
-        if (line_end(position())==position() && position()<size())
-          return shift_position(line_end(position()+1)) + NORMAL_INPUT_MOVE;
-        else
-          return shift_position(line_end(position())) + NORMAL_INPUT_MOVE;
-      } else if (mods==FL_META) { // end of document
-        shift_position(size());
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_lines_down(1);		// Dn             (OSX-HIG)
+      if (mods==FL_CTRL)    return kf_page_down();		// Ctrl-Dn        (TE !HIG)
+      if (mods==FL_ALT)     return kf_move_down_and_eol();	// Alt-Dn         (OSX-HIG)
+      if (mods==FL_META)    return kf_bottom();			// Meta-Dn        (OSX-HIG)
+      return 1;							// other combos absorb and ignore
 #else
-      if (mods==0) { // line down
-        ascii = ctrl('N');
-      } else if (mods==FL_CTRL) { // scroll text up one line
-                                  // Fl_Input has no scroll control, so instead we move the cursor by one page
-        ascii = ctrl('N');
-      } else return 1;
+      if (mods==0)          return kf_lines_down(1);		// Dn             (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return kf_move_down_and_eol();	// Ctrl-Down      (WP,!NP,WOW,GE,!KE,OF)
+      return 1;							// other combos absorb and ignore
 #endif
-      break;
+
+    case FL_Page_Up:
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      // OSX-HIG recommends Alt increase one semantic unit, Meta next higher..
+#ifdef __APPLE__
+      if (mods==0)          return kf_page_up();		// PgUp           (OSX-HIG)
+      if (mods==FL_ALT)     return kf_page_up();		// Alt-PageUp     (OSX-HIG)
+      if (mods==FL_META)    return kf_top();			// Meta-PageUp    (OSX-HIG,!TE)
+      return 1;							// other combos absorb and ignore
+#else
+      if (mods==0)          return kf_page_up();		// PageUp         (WP,NP,WOW,GE,KE)
+      if (mods==FL_CTRL)    return kf_page_up();		// Ctrl-PageUp    (!WP,!NP,!WOW,!GE,KE,OF)
+      if (mods==FL_ALT)     return kf_page_up();		// Alt-PageUp     (!WP,!NP,!WOW,!GE,KE,OF)
+      return 1;							// other combos absorb and ignore
+#endif
+
+    case FL_Page_Down:
+#ifdef __APPLE__
+      // Fl_Input has no scroll control, so instead we move the cursor by one page
+      // OSX-HIG recommends Alt increase one semantic unit, Meta next higher..
+      if (mods==0)          return kf_page_down();		// PgDn           (OSX-HIG)
+      if (mods==FL_ALT)     return kf_page_down();		// Alt-PageDn     (OSX-HIG)
+      if (mods==FL_META)    return kf_bottom();			// Meta-PageDn    (OSX-HIG,!TE)
+      return 1;							// other combos absorb and ignore
+#else
+      if (mods==0)          return kf_page_down();		// PageDn         (WP,NP,WOW,GE,KE)
+      if (mods==FL_CTRL)    return kf_page_down();		// Ctrl-PageDn    (!WP,!NP,!WOW,!GE,KE,OF)
+      if (mods==FL_ALT)     return kf_page_down();		// Alt-PageDn     (!WP,!NP,!WOW,!GE,KE,OF)
+      return 1;							// other combos absorb and ignore
+#endif
+
     case FL_Home:
 #ifdef __APPLE__
-      if (mods==0) { // scroll display to the top
-                     // OS X scrolls the view, but does not move the cursor
-                     // Fl_Input has no scroll control, so instead we move the cursor by one page
-        shift_position(0);
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_top();			// Home           (OSX-HIG)
+      if (mods==FL_ALT)     return kf_top();			// Alt-Home       (???)
+      return 1;							// other combos absorb and ignore
 #else
-      if (mods==0) {
-        ascii = ctrl('A');
-      } else if (mods==FL_CTRL) {
-        shift_position(0);
-        return 1;
-      }
+      if (mods==0)          return kf_move_sol();		// Home           (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return kf_top();			// Ctrl-Home      (WP,NP,WOW,GE,KE,OF)
+      return 1;							// other combos absorb and ignore
 #endif
-      break;
+
     case FL_End:
 #ifdef __APPLE__
-      if (mods==0) { // scroll display to the bottom
-                     // OS X scrolls the view, but does not move the cursor
-                     // Fl_Input has no scroll control, so instead we move the cursor by one page
-        shift_position(size());
-        return 1; 
-      } else return 1;
+      if (mods==0)          return kf_bottom();			// End            (OSX-HIG)
+      if (mods==FL_ALT)     return kf_bottom();			// Alt-End        (???)
+      return 1;							// other combos absorb and ignore
 #else
-      if (mods==0) {
-        ascii = ctrl('E');
-      } else if (mods==FL_CTRL) {
-        shift_position(size());
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_move_eol();		// End            (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return kf_bottom();			// Ctrl-End       (WP,NP,WOW,GE,KE,OF)
+      return 1;							// other combos absorb and ignore
 #endif
-      break;
+
     case FL_BackSpace:
 #ifdef __APPLE__
-      if (mods==0 || mods==FL_CTRL) { // delete previous char
-        ascii = ctrl('H');
-      } else if (mods==FL_ALT) { // delete previous word
-        if (mark() != position()) return cut();
-        cut(word_start(position()), position());
-        return 1;
-      } else if (mods==FL_META) { // delete to the beginning of the line
-        if (mark() != position()) return cut();
-        cut(line_start(position()), position());
-        return 1;
-      } else return 1;
+      if (mods==0)          return kf_delete_char_left();	// Backspace      (OSX-HIG)
+      if (mods==FL_CTRL)    return kf_delete_char_left();	// Ctrl-Backspace (TE/SA)
+      if (mods==FL_ALT)     return kf_delete_word_left();	// Alt-Backspace  (OSX-HIG)
+      if (mods==FL_META)    return kf_delete_sol();		// Meta-Backspace (OSX-HIG,!TE)
+      return 1;							// other combos absorb and ignore
 #else
-      ascii = ctrl('H'); 
+      if (mods==0)          return kf_delete_char_left();	// Backspace      (WP,NP,WOW,GE,KE,OF)
+      if (mods==FL_CTRL)    return kf_delete_word_left();	// Ctrl-Backspace (WP,!NP,WOW,GE,KE,!OF)
+      return 1;							// other combos absorb and ignore
 #endif
-      break;
+
     case FL_Enter:
     case FL_KP_Enter:
       if (when() & FL_WHEN_ENTER_KEY) {
         position(size(), 0);
         maybe_do_callback();
         return 1;
-      } else if (input_type() == FL_MULTILINE_INPUT && !readonly())
+      } else if (multiline && !readonly()) {
         return replace(position(), mark(), "\n", 1);
-      else 
-        return 0;	// reserved for shortcuts
+      } return 0;			// reserved for shortcuts
+
     case FL_Tab:
-      if (Fl::event_state(FL_CTRL|FL_SHIFT) || input_type()!=FL_MULTILINE_INPUT || readonly()) return 0;
-      return replace(position(), mark(), &ascii, 1);
-#ifdef __APPLE__
-    case 'c' :
-    case 'v' :
-    case 'x' :
-    case 'z' :
-      //    printf("'%c' (0x%02x) pressed with%s%s%s%s\n", ascii, ascii,
-      //           Fl::event_state(FL_SHIFT) ? " FL_SHIFT" : "",
-      //           Fl::event_state(FL_CTRL) ? " FL_CTRL" : "",
-      //           Fl::event_state(FL_ALT) ? " FL_ALT" : "",
-      //           Fl::event_state(FL_META) ? " FL_META" : "");
-      if (Fl::event_state(FL_META)) ascii -= 0x60;
-      //    printf("using '%c' (0x%02x)...\n", ascii, ascii);
+      // Handle special case for multiline input with 'old tab behavior';
+      // tab handled as a normal insertable character.
+      //
+      if (mods==0 && !shift 		// Tab?
+	   //// PROPOSED && !tab_nav()	// old tab behavior enabled?
+	   && multiline) {		// multiline input?
+        break;				// insert tab character
+      }
+      if (mods==0) return 0;					// Tab, Shift-Tab? nav focus      (Standard/OSX-HIG)
+      return 0;							// ignore other combos, pass to parent
+
+    case 'a':
+      if (mods==FL_COMMAND) return kf_select_all();		// Ctrl-A, Mac:Meta-A             (Standard/OSX-HIG)
+      break;							// handle other combos elsewhere
+    case 'c':
+      if (mods==FL_COMMAND) return kf_copy();			// Ctrl-C, Mac:Meta-C             (Standard/OSX-HIG)
+      break;							// handle other combos elsewhere
+    case 'v':
+      if (mods==FL_COMMAND) return kf_paste();			// Ctrl-V, Mac:Meta-V             (Standard/OSX-HIG)
+      break;							// handle other combos elsewhere
+    case 'x':
+      if (mods==FL_COMMAND) return kf_copy_cut();		// Ctrl-X, Mac:Meta-X             (Standard/OSX-HIG)
       break;
-#endif // __APPLE__
+    case 'z':
+      if (mods==FL_COMMAND && !shift) return kf_undo();		// Ctrl-Z, Mac:Meta-Z             (Standard/OSX-HIG)
+      if (mods==FL_COMMAND && shift)  return kf_redo();		// Shift-Ctrl-Z, Mac:Shift-Meta-Z (Standard/OSX-HIG)
+      break;							// handle other combos elsewhere
   }
   
-  int i;
   switch (ascii) {
-    case ctrl('A'): // go to the beginning of the current line
-      return shift_position(line_start(position())) + NORMAL_INPUT_MOVE;
-    case ctrl('B'): // go one character backward
-      i = shift_position(position()-1) + NORMAL_INPUT_MOVE;
-      return Fl::option(Fl::OPTION_ARROW_FOCUS) ? i : 1;
-    case ctrl('C'): // copy
-      return copy(1);
-    case ctrl('D'): // cut the next character
-    case ctrl('?'):
-      if (readonly()) {
-        fl_beep();
-        return 1;
-      }
-      if (mark() != position()) return cut();
-      else return cut(1);
-    case ctrl('E'): // go to the end of the line
-      return shift_position(line_end(position())) + NORMAL_INPUT_MOVE;
-    case ctrl('F'): // go to the next character
-      i = shift_position(position()+1) + NORMAL_INPUT_MOVE;
-      return Fl::option(Fl::OPTION_ARROW_FOCUS) ? i : 1;
-    case ctrl('H'): // cut the previous character
-      if (readonly()) {
-        fl_beep();
-        return 1;
-      }
-      if (mark() != position()) cut();
-      else cut(-1);
-      return 1;
-    case ctrl('K'): // cut to the end of the line
-      if (readonly()) {
-        fl_beep();
-        return 1;
-      }
-      if (position()>=size()) return 0;
-      i = line_end(position());
-      if (i == position() && i < size()) i++;
-      cut(position(), i);
-      return copy_cuts();
-    case ctrl('N'): // go down one line
-      i = position();
-      if (line_end(i) >= size()) {
-        if (input_type()==FL_MULTILINE_INPUT && !Fl::option(Fl::OPTION_ARROW_FOCUS)) return 1;
-        return NORMAL_INPUT_MOVE;
-      }
-      while (repeat_num--) {  
-        i = line_end(i);
-        if (i >= size()) break;
-        i++;
-      }
-      shift_up_down_position(i);
-      return 1;
-    case ctrl('P'): // go up one line
-      i = position();
-      if (!line_start(i)) {
-        if (input_type()==FL_MULTILINE_INPUT && !Fl::option(Fl::OPTION_ARROW_FOCUS)) return 1;
-        return NORMAL_INPUT_MOVE;
-      }
-      while(repeat_num--) {
-        i = line_start(i);
-        if (!i) break;
-        i--;
-      }
-      shift_up_down_position(line_start(i));
-      return 1;
-    case ctrl('U'): // clear the whole document? 
-      if (readonly()) {
-        fl_beep();
-        return 1;
-      }
-      return cut(0, size());
-    case ctrl('V'): // paste text
-    case ctrl('Y'):
-      if (readonly()) {
-        fl_beep();
-        return 1;
-      }
-      Fl::paste(*this, 1);
-      return 1;
-    case ctrl('X'): // cut the selected text
-    case ctrl('W'):
-      if (readonly()) {
-        fl_beep();
-        return 1;
-      }
-      copy(1);
-      return cut();
-    case ctrl('Z'): // undo
-    case ctrl('_'):
-      if (readonly()) {
-        fl_beep();
-        return 1;
-      }
-      return undo();
-    case ctrl('I'): // insert literal
-    case ctrl('J'):
-    case ctrl('L'):
-    case ctrl('M'):
-      if (readonly()) {
-        fl_beep();
-        return 1;
-      }
+    case ctrl('H'):
+      return kf_delete_char_left();				// Ctrl-H                           (!WP,!NP,!WOW,!WOX,TE,SA,GE,KE,OF)
+    case ctrl('I'): 						// Ctrl-I (literal Tab)             (!WP,NP,!WOW,!GE,KE,OF)
+    case ctrl('J'):						// Ctrl-J (literal Line Feed/Enter) (Standard)
+    case ctrl('L'):						// Ctrl-L (literal Form Feed)       (Standard)
+    case ctrl('M'):						// Ctrl-M (literal Cr)              (Standard)
+      if (readonly()) { fl_beep(); return 1; }
       // insert a few selected control characters literally:
       if (input_type() != FL_FLOAT_INPUT && input_type() != FL_INT_INPUT)
         return replace(position(), mark(), &ascii, 1);
       break;
   }
   
-  return 0;
+  return 0;		// ignored
 }
 
 int Fl_Input::handle(int event) {
@@ -526,8 +608,16 @@ int Fl_Input::handle(int event) {
       break;
       
     case FL_KEYBOARD:
-      if (Fl::event_key() == FL_Tab && mark() != position()) {
-        // Set the current cursor position to the end of the selection...
+      // Handle special case for multiline input with 'old tab behavior'
+      // where tab is entered as a character: make sure user attempt to 'tab over'
+      // widget doesn't destroy the field, replacing it with a tab character.
+      //
+      if (Fl::event_key() == FL_Tab 			// Tab key?
+          && !Fl::event_state(FL_SHIFT)			// no shift?
+          //// PROPOSED && !tab_nav()			// with tab navigation disabled?
+	  && input_type() == FL_MULTILINE_INPUT		// with a multiline input?
+          && (mark()==0 && position()==size())) {	// while entire field selected?
+        // Set cursor to the end of the selection...
         if (mark() > position())
           position(mark());
         else
