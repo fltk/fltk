@@ -37,7 +37,7 @@ decl {\#include <FL/Fl_Text_Buffer.H>} {public local
 decl {\#include <FL/Fl_Text_Display.H>} {public local
 } 
 
-decl {\#include <FL/filename.H>} {selected public local
+decl {\#include <FL/filename.H>} {public local
 } 
 
 decl {extern void load_history();} {public local
@@ -142,7 +142,7 @@ Function {make_project_window()} {open
         }
         Fl_Input i18n_set_input {
           label {Set:}
-          callback i18n_text_cb
+          callback i18n_int_cb selected
           tooltip {The message set number.} xywh {100 128 272 20} type Int box THIN_DOWN_BOX labelfont 1 textfont 4
         }
         Fl_Input i18n_function_input {

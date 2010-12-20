@@ -283,10 +283,10 @@ Fl_Double_Window* make_about_panel() {
       o->selection_color(FL_DARK1);
       o->labelfont(1);
       o->labelsize(18);
-      o->align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE);
+      o->align(Fl_Align(FL_ALIGN_TOP_LEFT|FL_ALIGN_INSIDE));
     } // Fl_Box* o
-    { Fl_Box* o = new Fl_Box(135, 89, 170, 42, "Copyright 1998-2010 by\nBill Spitzak and others");
-      o->align(132|FL_ALIGN_INSIDE);
+    { Fl_Box* o = new Fl_Box(135, 89, 170, 42, "Copyright 1998-2009 by\nBill Spitzak and others");
+      o->align(Fl_Align(132|FL_ALIGN_INSIDE));
     } // Fl_Box* o
     { Fl_Button* o = new Fl_Button(89, 141, 123, 25, "View License...");
       o->labelcolor(FL_DARK_BLUE);

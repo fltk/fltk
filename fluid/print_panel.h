@@ -44,9 +44,9 @@ extern Fl_Box *print_status;
 extern Fl_Round_Button *print_all;
 extern Fl_Round_Button *print_pages;
 extern Fl_Round_Button *print_selection;
-#include <FL/Fl_Input.H>
-extern Fl_Input *print_from;
-extern Fl_Input *print_to;
+#include <FL/Fl_Int_Input.H>
+extern Fl_Int_Input *print_from;
+extern Fl_Int_Input *print_to;
 #include <FL/Fl_Spinner.H>
 extern Fl_Spinner *print_copies;
 #include <FL/Fl_Check_Button.H>

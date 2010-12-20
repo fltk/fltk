@@ -57,7 +57,7 @@ Fl_Input *i18n_include_input=(Fl_Input *)0;
 
 Fl_Input *i18n_file_input=(Fl_Input *)0;
 
-Fl_Input *i18n_set_input=(Fl_Input *)0;
+Fl_Int_Input *i18n_set_input=(Fl_Int_Input *)0;
 
 Fl_Input *i18n_function_input=(Fl_Input *)0;
 
@@ -125,14 +125,14 @@ Fl_Double_Window* make_project_window() {
           i18n_file_input->textfont(4);
           i18n_file_input->callback((Fl_Callback*)i18n_text_cb);
         } // Fl_Input* i18n_file_input
-        { i18n_set_input = new Fl_Input(100, 128, 272, 20, "Set:");
+        { i18n_set_input = new Fl_Int_Input(100, 128, 272, 20, "Set:");
           i18n_set_input->tooltip("The message set number.");
           i18n_set_input->type(2);
           i18n_set_input->box(FL_THIN_DOWN_BOX);
           i18n_set_input->labelfont(1);
           i18n_set_input->textfont(4);
-          i18n_set_input->callback((Fl_Callback*)i18n_text_cb);
-        } // Fl_Input* i18n_set_input
+          i18n_set_input->callback((Fl_Callback*)i18n_int_cb);
+        } // Fl_Int_Input* i18n_set_input
         { i18n_function_input = new Fl_Input(100, 103, 272, 20, "Function:");
           i18n_function_input->tooltip("The function to call to internationalize the labels and tooltips.");
           i18n_function_input->box(FL_THIN_DOWN_BOX);
@@ -379,11 +379,11 @@ Fl_Double_Window* make_shell_window() {
 
 Fl_Double_Window *grid_window=(Fl_Double_Window *)0;
 
-Fl_Input *horizontal_input=(Fl_Input *)0;
+Fl_Int_Input *horizontal_input=(Fl_Int_Input *)0;
 
-Fl_Input *vertical_input=(Fl_Input *)0;
+Fl_Int_Input *vertical_input=(Fl_Int_Input *)0;
 
-Fl_Input *snap_input=(Fl_Input *)0;
+Fl_Int_Input *snap_input=(Fl_Int_Input *)0;
 
 Fl_Check_Button *guides_toggle=(Fl_Check_Button *)0;
 
@@ -395,30 +395,30 @@ Fl_Round_Button *def_widget_size[6]={(Fl_Round_Button *)0};
 
 Fl_Double_Window* make_layout_window() {
   { grid_window = new Fl_Double_Window(285, 245, "Layout Settings");
-    { Fl_Input* o = horizontal_input = new Fl_Input(106, 10, 50, 25, "x");
+    { Fl_Int_Input* o = horizontal_input = new Fl_Int_Input(106, 10, 50, 25, "x");
       horizontal_input->tooltip("Horizontal grid spacing.");
       horizontal_input->type(2);
       horizontal_input->box(FL_THIN_DOWN_BOX);
       horizontal_input->callback((Fl_Callback*)grid_cb, (void*)(1));
       horizontal_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-    } // Fl_Input* horizontal_input
-    { Fl_Input* o = vertical_input = new Fl_Input(166, 10, 50, 25, "pixels");
+    } // Fl_Int_Input* horizontal_input
+    { Fl_Int_Input* o = vertical_input = new Fl_Int_Input(166, 10, 50, 25, "pixels");
       vertical_input->tooltip("Vertical grid spacing.");
       vertical_input->type(2);
       vertical_input->box(FL_THIN_DOWN_BOX);
       vertical_input->callback((Fl_Callback*)grid_cb, (void*)(2));
       vertical_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-    } // Fl_Input* vertical_input
-    { Fl_Input* o = snap_input = new Fl_Input(106, 45, 50, 25, "pixel snap");
+    } // Fl_Int_Input* vertical_input
+    { Fl_Int_Input* o = snap_input = new Fl_Int_Input(106, 45, 50, 25, "pixel snap");
       snap_input->tooltip("Snap to grid within this many pixels.");
       snap_input->type(2);
       snap_input->box(FL_THIN_DOWN_BOX);
       snap_input->callback((Fl_Callback*)grid_cb, (void*)(3));
       snap_input->align(Fl_Align(FL_ALIGN_RIGHT));
       o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);
-    } // Fl_Input* snap_input
+    } // Fl_Int_Input* snap_input
     { guides_toggle = new Fl_Check_Button(106, 80, 110, 25, "Show Guides");
       guides_toggle->tooltip("Show distance and alignment guides in overlay");
       guides_toggle->down_box(FL_DOWN_BOX);

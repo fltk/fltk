@@ -690,15 +690,15 @@ Fl_Double_Window* make_comment_panel() {
 
 void type_make_cb(Fl_Widget*,void*d) {
   undo_checkpoint();
-  Fl_Type *t = Fl_Type_make((char*)d);
-  if (t) {
-    select_only(t);
-    set_modflag(1);
-    t->open();
-  } else {
-    undo_current --;
-    undo_last --;
-  }
+    Fl_Type *t = Fl_Type_make((char*)d);
+    if (t) {
+      select_only(t);
+      set_modflag(1);
+      t->open();
+    } else {
+      undo_current --;
+      undo_last --;
+    }
 }
 
 Fl_Window *widgetbin_panel=(Fl_Window *)0;
