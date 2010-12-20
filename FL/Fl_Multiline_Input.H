@@ -46,6 +46,11 @@
   If you are presenting large amounts of text and need scrollbars
   or full color control of characters, you probably want Fl_Text_Editor
   instead.
+
+  In FLTK 1.3.x, the default behavior of the 'Tab' key was changed
+  to support consistent focus navigation. To get the older FLTK 1.1.x
+  behavior, set Fl_Input_::tab_nav() to 0. Newer programs should consider using
+  Fl_Text_Editor.
 */
 class FL_EXPORT Fl_Multiline_Input : public Fl_Input {
 public:

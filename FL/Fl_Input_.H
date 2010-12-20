@@ -120,6 +120,11 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
       \p mark_, no text is selected */
   int mark_;
 
+  /** \internal Behavior of Tab key in multiline input widget. 
+      If enabled (default) Tab causes focus nav, otherwise Tab is inserted 
+      as a character. */
+  int tab_nav_;
+
   /** \internal Offset to text origin within widget bounds */
   int xscroll_, yscroll_;
 
@@ -446,6 +451,43 @@ public:
   void wrap(int b) { if (b) type((uchar)(type() | FL_INPUT_WRAP));
                          else type((uchar)(type() & ~FL_INPUT_WRAP)); }
 
+  /**
+    Sets whether the Tab key does focus navigation, 
+    or inserts tab characters into Fl_Multiline_Input.
+
+    By default this flag is enabled to provide the 'normal' behavior 
+    most users expect; Tab navigates focus to the next widget. 
+    To inserting an actual Tab character, users can use Ctrl-I
+    or copy/paste.
+
+    Disabling this flag gives the old FLTK behavior where Tab
+    inserts a tab character into the text field, in which case
+    only the mouse can be used to navigate to the next field.
+
+    History: This flag was provided for backwards support of FLTK's old 1.1.x
+    behavior where Tab inserts a tab character instead of navigating 
+    focus to the next widget. This behavior was unique to Fl_Multiline_Input. 
+    With the advent of Fl_Text_Editor, this old behavior has been deprecated.
+
+    \param [in] val If \p val is 1, Tab advances focus (default).<BR>
+                    If \p val is 0, Tab inserts a tab character (old FLTK behavior).
+  */
+  void tab_nav(int val) {
+    tab_nav_ = val;
+  }
+
+  /**
+    Gets whether the Tab key causes focus navigation in multiline input fields or not.
+
+    If enabled (default), hitting Tab causes focus navigation to the next widget.
+
+    If disabled, hitting Tab inserts a tab character into the text field.
+    \returns 1 if Tab advances focus (default), 0 if Tab inserts tab characters.
+    \see tab_nav(int)
+  */
+  int tab_nav() const {
+    return tab_nav_;
+  }
 };
 
 #endif 

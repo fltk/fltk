@@ -538,7 +538,7 @@ int Fl_Input::handle_key() {
       // tab handled as a normal insertable character.
       //
       if (mods==0 && !shift 		// Tab?
-	   //// PROPOSED && !tab_nav()	// old tab behavior enabled?
+	   && !tab_nav()		// old tab behavior enabled?
 	   && multiline) {		// multiline input?
         break;				// insert tab character
       }
@@ -614,7 +614,7 @@ int Fl_Input::handle(int event) {
       //
       if (Fl::event_key() == FL_Tab 			// Tab key?
           && !Fl::event_state(FL_SHIFT)			// no shift?
-          //// PROPOSED && !tab_nav()			// with tab navigation disabled?
+          && !tab_nav()					// with tab navigation disabled?
 	  && input_type() == FL_MULTILINE_INPUT		// with a multiline input?
           && (mark()==0 && position()==size())) {	// while entire field selected?
         // Set cursor to the end of the selection...

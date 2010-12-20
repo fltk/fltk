@@ -1059,6 +1059,7 @@ Fl_Input_::Fl_Input_(int X, int Y, int W, int H, const char* l)
   maximum_size_ = 32767;
   shortcut_ = 0;
   set_flag(SHORTCUT_LABEL);
+  tab_nav(1);
 }
 
 /**
