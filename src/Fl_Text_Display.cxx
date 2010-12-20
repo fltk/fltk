@@ -3284,7 +3284,7 @@ int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
   
   c = buffer()->char_at(lineEndPos);
   return c == '\n' || ((c == '\t' || c == ' ') &&
-                       lineEndPos + fl_utf8len1(c) < buffer()->length());
+                       lineEndPos + 1 < buffer()->length());
 }
 
 
