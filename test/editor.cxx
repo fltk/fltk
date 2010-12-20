@@ -52,7 +52,7 @@
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Editor.H>
-
+#include <FL/filename.H>
 
 int                changed = 0;
 char               filename[FL_PATH_MAX] = "";
@@ -389,7 +389,7 @@ style_update(int        pos,		// I - Position of update
 
   style_parse(text, style, end - start);
 
-//  printf("new style = \"%s\", new last='%c'...\n", 
+//  printf("new style = \"%s\", new last='%c'...\n",
 //         style, style[end - start - 1]);
 
   stylebuf->replace(start, end, style);
@@ -397,7 +397,7 @@ style_update(int        pos,		// I - Position of update
 
   if (start==end || last != style[end - start - 1]) {
 //    printf("Recalculate the rest of the buffer style\n");
-    // Either the user deleted some text, or the last character 
+    // Either the user deleted some text, or the last character
     // on the line changed styles, so reparse the
     // remainder of the buffer...
     free(text);
@@ -599,7 +599,7 @@ void open_cb(Fl_Widget*, void*) {
 
 }
 
-void insert_cb(Fl_Widget*, void *v) {  
+void insert_cb(Fl_Widget*, void *v) {
   Fl_Native_File_Chooser fnfc;
   fnfc.title("Insert file");
   fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
@@ -628,7 +628,7 @@ void close_cb(Fl_Widget*, void* v) {
   textbuf->remove_modify_callback(style_update, w->editor);
   textbuf->remove_modify_callback(changed_cb, w);
   Fl::delete_widget(w);
-  
+
   num_windows--;
   if (!num_windows) exit(0);
 }
