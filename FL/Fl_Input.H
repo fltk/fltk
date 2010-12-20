@@ -37,7 +37,7 @@
   This is the FLTK text input widget. It displays a single line
   of text and lets the user edit it. Normally it is drawn with an
   inset box and a white background. The text may contain any
-  characters (even 0), and will correctly display any UTF text, using
+  characters, and will correctly display any UTF text, using
   ^X notation for unprintable control characters. It assumes the
   font can draw any characters of the used scripts, which is true
   for standard fonts under MSWindows and Mac OS X.
