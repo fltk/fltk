@@ -38,9 +38,6 @@
 #include <stdio.h>
 #include "flstring.h"
 
-#ifdef __APPLE__
-#  include <Carbon/Carbon.h>
-#endif
 /** Size of the menu starting from this menu item */
 int Fl_Menu_Item::size() const {
   const Fl_Menu_Item* m = this;
@@ -99,7 +96,7 @@ class menuwindow : public Fl_Menu_Window {
 public:
   menutitle* title;
   int handle(int);
-#ifdef __APPLE__
+#if defined (__APPLE__) || defined (USE_X11)
   int early_hide_handle(int);
 #endif
   int itemheight;	// zero == menubar
@@ -626,7 +623,7 @@ static int backward(int menu) { // previous item in menu menu if possible
 }
 
 int menuwindow::handle(int e) {
-#ifdef __APPLE__
+#if defined (__APPLE__) || defined (USE_X11)
   // This off-route takes care of the "detached menu" bug on OS X.
   // Apple event handler requires that we hide all menu windows right
   // now, so that Carbon can continue undisturbed with handling window
