@@ -53,7 +53,7 @@
       Moves the cursor to this point. 
       Drag selects characters. 
       Double click selects words. 
-      Triple click selects all text.
+      Triple click selects all line.
       Shift+click extends the selection.
       When you select text it is automatically copied to the clipboard.
     </TD></TR><TR><TD NOWRAP="NOWRAP">
