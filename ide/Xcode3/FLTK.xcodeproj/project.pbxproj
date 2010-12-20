@@ -132,7 +132,6 @@
 		33FCC793A92F544711E09A1E /* fltk_png.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
 		3451831A2E9F171627CCA8C5 /* button.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D06E371A971A3BC1B399AD78 /* button.cxx */; };
 		34870EA10DBD90DB3DD49DA0 /* fl_call_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1501BD6AB688B2DB8120E852 /* fl_call_main.c */; };
-		362C4C6926F1D16B73E4FDA1 /* ide_maketools.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 8EF20FF84687D00EF687AF62 /* ide_maketools.cxx */; };
 		36332A81E6A6E7E3D5D26531 /* radio.fl in Sources */ = {isa = PBXBuildFile; fileRef = 58166AA7A85D9E037993FC38 /* radio.fl */; };
 		363CA6BAC2E1C6F51F3C4F91 /* tiled_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 94D15578CD49CC75FE6617E4 /* tiled_image.cxx */; };
 		365C8ABAB40CA4E4F4DE497B /* jcmaster.c in Sources */ = {isa = PBXBuildFile; fileRef = D77F126A951A15185214FF2E /* jcmaster.c */; };
@@ -221,7 +220,6 @@
 		58D9DA0C0F0A11E97EAAB61B /* freeglut_stroke_roman.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6CCA5064754A8314839CB37A /* freeglut_stroke_roman.cxx */; };
 		59826A4FF117DE06A6F70ABD /* Fl_Native_File_Chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 2DE25DB4CE986C1857B5ECF7 /* Fl_Native_File_Chooser.cxx */; };
 		59879CC60E91D23A1380763F /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACB2F49A22C3FB3E837EC61 /* AGL.framework */; };
-		59930AC7D5318A72BE9ED1FB /* ide_xcode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 464D522BF0A1D61F58E94456 /* ide_xcode.cxx */; };
 		5B3DACE9AD337A089D2A2BDA /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		5B4CB32F2F0797A635568B3A /* fltk_gl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA8E6EC230301E597B9D9AED /* fltk_gl.framework */; };
 		5BF4C749E28B3792559C9107 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -298,7 +296,6 @@
 		753A6417598E2D35C308632A /* valuators.fl in Sources */ = {isa = PBXBuildFile; fileRef = 590C56F672356072A5C86BC3 /* valuators.fl */; };
 		761829645FD3BCA7EE9DE369 /* fltk_gl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EA8E6EC230301E597B9D9AED /* fltk_gl.framework */; };
 		762325B25679668EB687A028 /* gl_overlay.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 1F6E4CE3C0DF58D8F7B3A94A /* gl_overlay.cxx */; };
-		76BA5F2997A55DDFA04EFC98 /* ide_visualc.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 9C0598A21FEE02AA4F0E39C9 /* ide_visualc.cxx */; };
 		7780DFF77FE8A2E3918D76EE /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		78A86E05D9AE49D54C6503EB /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		794879F3090773543095027D /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -404,7 +401,6 @@
 		A6ED3327A24E5445BC27F29C /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		A749C4ADD4C26B198214260A /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		A76B5A74F4082F02C1A917F6 /* Fl_Tree_Prefs.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 197D446B1F4FEB565793FC67 /* Fl_Tree_Prefs.cxx */; };
-		A814D7DD818DB1FC5E8C7E0D /* ide_support.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5CA491664CF9A4BE4060CDBD /* ide_support.cxx */; };
 		A8C6B33E92B95C8BFC2474AA /* clock.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5EF025FDE53B2276B6931CD5 /* clock.cxx */; };
 		A8CCCF7D542DA0B5FED00393 /* Fl_Tree_Item_Array.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 00E3864092375950FE42449E /* Fl_Tree_Item_Array.cxx */; };
 		A98C734F750F2119D508FB8A /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -4184,7 +4180,6 @@
 		4577F046D6D5D93D2553BFBC /* jdtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdtrans.c; path = ../../jpeg/jdtrans.c; sourceTree = SOURCE_ROOT; };
 		45B993D3FA0EED6037499D3A /* color_chooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color_chooser.cxx; path = ../../test/color_chooser.cxx; sourceTree = SOURCE_ROOT; };
 		461BBD068DF8C58F4FFB131B /* Fl_Round_Clock.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Round_Clock.H; path = ../../FL/Fl_Round_Clock.H; sourceTree = SOURCE_ROOT; };
-		464D522BF0A1D61F58E94456 /* ide_xcode.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_xcode.cxx; path = ../../fluid/ide_xcode.cxx; sourceTree = SOURCE_ROOT; };
 		46DBACE210E8AEF57FFB5693 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		48A8DC166D69EDC6F24AE678 /* rotated_text.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotated_text.cxx; path = ../../test/rotated_text.cxx; sourceTree = SOURCE_ROOT; };
 		49F26943DBCFA9878A9C3F55 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = ../../zlib/adler32.c; sourceTree = SOURCE_ROOT; };
@@ -4233,7 +4228,6 @@
 		5B2B6ED6A3649923BAAFFDF1 /* Fl_visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_visual.cxx; path = ../../src/Fl_visual.cxx; sourceTree = SOURCE_ROOT; };
 		5B566F3BAD7101C63D5494E3 /* Fl_get_key.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_get_key.cxx; path = ../../src/Fl_get_key.cxx; sourceTree = SOURCE_ROOT; };
 		5B8BFBDF9C48A998F0781C9E /* Fl_Hor_Value_Slider.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Hor_Value_Slider.H; path = ../../FL/Fl_Hor_Value_Slider.H; sourceTree = SOURCE_ROOT; };
-		5CA491664CF9A4BE4060CDBD /* ide_support.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_support.cxx; path = ../../fluid/ide_support.cxx; sourceTree = SOURCE_ROOT; };
 		5CD5D087391E39030838C823 /* jcomapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcomapi.c; path = ../../jpeg/jcomapi.c; sourceTree = SOURCE_ROOT; };
 		5CDA214AEABC15E3EF1BB172 /* Fl_Adjuster.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Adjuster.H; path = ../../FL/Fl_Adjuster.H; sourceTree = SOURCE_ROOT; };
 		5CE4CB9AEF9070A32A27696D /* fl_overlay_visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_overlay_visual.cxx; path = ../../src/fl_overlay_visual.cxx; sourceTree = SOURCE_ROOT; };
@@ -4342,7 +4336,6 @@
 		8D4E2F8A10BA06E332B7EB03 /* demo.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = demo.cxx; path = ../../test/demo.cxx; sourceTree = SOURCE_ROOT; };
 		8DFB9E7E8DB3AEC762613348 /* Fl_Menu_Window.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Menu_Window.H; path = ../../FL/Fl_Menu_Window.H; sourceTree = SOURCE_ROOT; };
 		8E81EE378D475F9CFDE296C9 /* Fl_Gl_Overlay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Overlay.cxx; path = ../../src/Fl_Gl_Overlay.cxx; sourceTree = SOURCE_ROOT; };
-		8EF20FF84687D00EF687AF62 /* ide_maketools.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_maketools.cxx; path = ../../fluid/ide_maketools.cxx; sourceTree = SOURCE_ROOT; };
 		8F311718B3CD16844535EEE6 /* comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = comments.h; path = ../../fluid/comments.h; sourceTree = SOURCE_ROOT; };
 		8F40BFA65740DDA6E9240F30 /* overlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = overlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90D9C06A2DCECD5B99C4A90A /* jdatadst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdatadst.c; path = ../../jpeg/jdatadst.c; sourceTree = SOURCE_ROOT; };
@@ -4371,7 +4364,6 @@
 		9B54C6B8D801E899981FC5E6 /* fl_boxtype.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_boxtype.cxx; path = ../../src/fl_boxtype.cxx; sourceTree = SOURCE_ROOT; };
 		9B57B581401BD8575BFAF2F1 /* Fl_Simple_Counter.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Simple_Counter.H; path = ../../FL/Fl_Simple_Counter.H; sourceTree = SOURCE_ROOT; };
 		9BCF393F94482AE7C7421397 /* Fl_Clock.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Clock.H; path = ../../FL/Fl_Clock.H; sourceTree = SOURCE_ROOT; };
-		9C0598A21FEE02AA4F0E39C9 /* ide_visualc.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_visualc.cxx; path = ../../fluid/ide_visualc.cxx; sourceTree = SOURCE_ROOT; };
 		9C87CC8FC8B566C55594BA36 /* sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sudoku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CA94171ECE3444BB9D65BAE /* fl_read_image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_read_image.cxx; path = ../../src/fl_read_image.cxx; sourceTree = SOURCE_ROOT; };
 		9CBDD66D771449423070F912 /* template_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = template_panel.cxx; path = ../../fluid/template_panel.cxx; sourceTree = SOURCE_ROOT; };
@@ -6442,10 +6434,6 @@
 				2333DEC98DFFAA27F3D85449 /* file.cxx */,
 				E887B4AE75EC9D885D592636 /* fluid.cxx */,
 				FEE2F6E62FECD745952CB51D /* function_panel.cxx */,
-				8EF20FF84687D00EF687AF62 /* ide_maketools.cxx */,
-				5CA491664CF9A4BE4060CDBD /* ide_support.cxx */,
-				9C0598A21FEE02AA4F0E39C9 /* ide_visualc.cxx */,
-				464D522BF0A1D61F58E94456 /* ide_xcode.cxx */,
 				9CBDD66D771449423070F912 /* template_panel.cxx */,
 				D754515384F42D9E502F4A98 /* undo.cxx */,
 				102D0B1D203936477107B2D8 /* widget_panel.cxx */,
@@ -9828,10 +9816,6 @@
 				68D18B8291BECB504DDAE1A9 /* file.cxx in Sources */,
 				E1B04810E72BD9557356CAAE /* fluid.cxx in Sources */,
 				98A96758FF9D01852DFBECFE /* function_panel.cxx in Sources */,
-				362C4C6926F1D16B73E4FDA1 /* ide_maketools.cxx in Sources */,
-				A814D7DD818DB1FC5E8C7E0D /* ide_support.cxx in Sources */,
-				76BA5F2997A55DDFA04EFC98 /* ide_visualc.cxx in Sources */,
-				59930AC7D5318A72BE9ED1FB /* ide_xcode.cxx in Sources */,
 				438CCCA43724B2E59680EF6B /* template_panel.cxx in Sources */,
 				27B4C89E8CBF260313ACA42E /* undo.cxx in Sources */,
 				B7D0770AC83AA04E8E12B76E /* widget_panel.cxx in Sources */,

@@ -155,22 +155,6 @@ SOURCE=..\..\fluid\function_panel.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\fluid\ide_maketools.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\ide_support.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\ide_visualc.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\fluid\ide_xcode.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\fluid\template_panel.cxx
 # End Source File
 # Begin Source File

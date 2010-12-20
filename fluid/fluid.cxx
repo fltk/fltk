@@ -25,8 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-#undef IDE_SUPPORT
-
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
@@ -1580,30 +1578,6 @@ void print_cb(Fl_Return_Button *, void *) {
 }
 #endif // WIN32 && !__CYGWIN__
 
-void fltkdb_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("FltkDB.fluid.fltk.org");
-  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db");
-}
-
-void dbxcode_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("ideXcode.fluid.fltk.org");
-  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
-}
-
-void dbvisualc_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("ideVisualC.fluid.fltk.org");
-  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
-}
-
-void dbmake_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("ideMaketools.fluid.fltk.org");
-  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
-}
-
 ////////////////////////////////////////////////////////////////
 
 extern Fl_Menu_Item New_Menu[];
@@ -1694,12 +1668,6 @@ Fl_Menu_Item Main_Menu[] = {
 {"&Shell",0,0,0,FL_SUBMENU},
   {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
   {"Execute &Again...",FL_ALT+'g',(Fl_Callback *)do_shell_command},
-#ifdef IDE_SUPPORT
-  {"--fltkdb",0,(Fl_Callback *)fltkdb_cb},
-  {"--dbxcode3",0,(Fl_Callback *)dbxcode_cb},
-  {"--dbvisualc6",0,(Fl_Callback *)dbvisualc_cb},
-  {"--dbmake",0,(Fl_Callback *)dbmake_cb},
-#endif
   {0},
 {"&Help",0,0,0,FL_SUBMENU},
   {"&Rapid development with FLUID...",0,help_cb},
