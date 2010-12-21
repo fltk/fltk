@@ -67,7 +67,7 @@
     Fl_Native_File_Chooser::options() for a list.
 
   \image html Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms."
-  \image latex Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms" width=8cm
+  \image latex Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms" width=14cm
 
 */
 class FL_EXPORT Fl_Native_File_Chooser {
