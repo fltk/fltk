@@ -63,6 +63,7 @@ IMAGEFILES	= \
 		$(SRC_DOCDIR)/Fl_Help_Dialog.png \
 		$(SRC_DOCDIR)/Fl_Light_Button.png \
 		$(SRC_DOCDIR)/Fl_Return_Button.png \
+		$(SRC_DOCDIR)/Fl_Native_File_Chooser.png \
 		$(SRC_DOCDIR)/Fl_Roller.png \
 		$(SRC_DOCDIR)/Fl_Round_Button.png \
 		$(SRC_DOCDIR)/Fl_Scroll.png \
