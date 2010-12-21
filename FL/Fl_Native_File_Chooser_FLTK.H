@@ -37,10 +37,10 @@
   the operating system's native file chooser. Some operating systems 
   have very complex and specific file choosers that many users want 
   access to specifically, instead of FLTK's default file chooser(s). 
-  <P>
+
   In cases where there is no native file browser, FLTK's own file browser
   is used instead.
-  <P>
+
   \code
   // Create and post the local native file chooser
   #include <FL/Fl_Native_File_Chooser.H>
@@ -58,13 +58,17 @@
     default: printf("PICKED: %s\n", fnfc.filename()); break;  // FILE CHOSEN
   }
   \endcode
-  <P>
+
   <B>Platform Specific Caveats</B>
-  <P>
+
   - Under X windows, it's best if you call Fl_File_Icon::load_system_icons()
     at the start of main(), to enable the nicer looking file browser widgets.
   - Some operating systems support certain OS specific options; see 
     Fl_Native_File_Chooser::options() for a list.
+
+  \image html Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms."
+  \image latex Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms" width=8cm
+
 */
 class FL_EXPORT Fl_Native_File_Chooser {
 public:
