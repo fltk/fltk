@@ -4,6 +4,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
+      nativefilechooser-simple-app$(EXEEXT) \
       table-as-container$(EXEEXT) \
       table-simple$(EXEEXT) \
       table-sort$(EXEEXT) \
