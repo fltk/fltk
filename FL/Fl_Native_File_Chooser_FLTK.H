@@ -41,6 +41,15 @@
   In cases where there is no native file browser, FLTK's own file browser
   is used instead.
 
+  To use this widget correctly, use the following include in your code:
+  \code
+  #include <FL/Fl_Native_File_Chooser.H>
+  \endcode
+  Do not include the other Fl_Native_File_Choser_XXX.H files in your code;
+  those are platform specific files that will be included automatically
+  depending on your build platform.
+
+  The following example shows how to pick a single file:
   \code
   // Create and post the local native file chooser
   #include <FL/Fl_Native_File_Chooser.H>
@@ -50,7 +59,7 @@
   fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
   fnfc.filter("Text\t*.txt\n"
               "C Files\t*.{cxx,h,c}");
-  fnfc.directory("/var/tmp");
+  fnfc.directory("/var/tmp");           // default directory to use
   // Show native chooser
   switch ( fnfc.show() ) {
     case -1: printf("ERROR: %s\n", fnfc.errmsg());    break;  // ERROR
