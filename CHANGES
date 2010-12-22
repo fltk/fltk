@@ -43,7 +43,7 @@ CHANGES IN FLTK 1.1.10
 	- Avoiding crashes for recursive common dialogs (this does not 
 	  fix the issue at hand yet) (STR 2150)
 	- Fluid printing used wrong colors under Windows (STR #2195)
-	- Fixed bad system menu hadling in OS X (STR #2153)
+	- Fixed bad system menu handling in OS X (STR #2153)
 	- Fixed File Input mouse pointer dragging (STR #2181)
 	- Fixed static linking of image libraries (STR #1962)
 	- Fixed callback would not be called when shortcut was used with
@@ -72,7 +72,7 @@ CHANGES IN FLTK 1.1.9
 	- Fixed regression in callback handling (STR #1918)
 	- Fixed wrong relative path when absolute path has a 
 	  trailing slash in fl_filename_relative (STR #1920)
-	- Fixed multiple selction of files and directories in
+	- Fixed multiple selection of files and directories in
 	  Fl_File_Chooser (STR #1913)
 	- Fixed MSWindows crash when selecting umlauts
 	  in Fl_Help_View (STR #1912)
