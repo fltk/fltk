@@ -590,25 +590,11 @@ The following links may be of use:
    to check back through previous problems with this
    sort of configuration before posting new questions.
 
-4. Carl Thompson (member of the core team responsible
-   for FLTK):
-
-       http://www.carlthompson.net/
-
-   A pre-bundled development toolset tailored for use
-   with an earlier version of FLTK may be found at:
-
-       http://www.carlthompson.net/cygwin/
-
-   However, this has not been actively maintained since
-   the Cygwin and MinGW offerings are now more complete
-   these days.
-
-5. GNU Compiler Collection (GCC) compiler homepage:
+4. GNU Compiler Collection (GCC) compiler homepage:
 
        http://gcc.gnu.org/
 
-6. OpenGL page - for OpenGL and GLUT libs
+5. OpenGL page - for OpenGL and GLUT libs
 
        http://www.opengl.org/
 
