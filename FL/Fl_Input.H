@@ -46,7 +46,7 @@
   key as defined by the operating system.
   <P>
   <TABLE WIDTH=90% BORDER=1 SUMMARY="Fl_Input keyboard and mouse bindings.">
-    <CAPTION>Fl_Input keyboard and mouse bindings.</CAPTION>
+    <CAPTION ALIGN=TOP>Fl_Input keyboard and mouse bindings.</CAPTION>
     <TR><TD NOWRAP="NOWRAP" WIDTH="1%">
       <B>Mouse button 1</B> 
     </TD><TD>
@@ -55,12 +55,12 @@
       Double click selects words. 
       Triple click selects all line.
       Shift+click extends the selection.
-      When you select text it is automatically copied to the clipboard.
+      When you select text it is automatically copied to the selection buffer.
     </TD></TR><TR><TD NOWRAP="NOWRAP">
       <B>Mouse button 2</B> 
     </TD><TD>
-      Insert the clipboard at the point clicked.
-      You can also select a region and replace it with the clipboard
+      Insert the selection buffer at the point clicked.
+      You can also select a region and replace it with the selection buffer
       by selecting the region with mouse button 2.
     </TD></TR><TR><TD NOWRAP="NOWRAP">
       <B>Mouse button 3</B>
@@ -84,7 +84,7 @@
   <P>
 
   <TABLE WIDTH="90%" BORDER="1" SUMMARY="Fl_Input platform specific keyboard bindings.">
-    <CAPTION>Fl_Input platform specific keyboard bindings.</CAPTION>
+    <CAPTION ALIGN=TOP>Fl_Input platform specific keyboard bindings.</CAPTION>
   <TR>
     <TD NOWRAP="NOWRAP" WIDTH="1%"><B> Windows/Linux </B></TD>
     <TD NOWRAP="NOWRAP" WIDTH="1%"><B> Mac </B></TD>
