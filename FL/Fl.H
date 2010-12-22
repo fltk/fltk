@@ -703,30 +703,35 @@ public:
    @{ */
   // cut/paste:
   /**
-    Copies the data pointed to by \p stuff to the selection clipboard (0) or
-    the copy clipboard (1). The selection clipboard is used for
-    middle-mouse pastes and for drag-and-drop selections. The 
-    copy clipboard is used for traditional copy/cut/paste operations.
+  Copies the data pointed to by \p stuff to the selection buffer 
+  (\p destination is 0) or
+  the clipboard (\p destination is 1); \p len is the number of relevant
+  bytes in \p stuff.
+  The selection buffer is used for
+  middle-mouse pastes and for drag-and-drop selections. The 
+  clipboard is used for traditional copy/cut/paste operations.
   */
-  static void copy(const char* stuff, int len, int clipboard = 0); // platform dependent
+  static void copy(const char* stuff, int len, int destination = 0); // platform dependent
   /**
-  Pastes the data from the selection clipboard (0) or the copy clipboard (1) 
-  into receiver.  
+  Pastes the data from the selection buffer (\p source is 0) or the clipboard 
+  (\p source is 1) into \p receiver.  
   Set things up so the receiver widget will be called with an FL_PASTE event some
-  time in the future for the specified clipboard. The receiver
+  time in the future with the data from the specified \p source in Fl::event_text()
+  and the number of characters in Fl::event_length().
+  The receiver
   should be prepared to be called \e directly by this, or for
   it to happen \e later, or possibly <i>not at all</i>.  This
   allows the window system to take as long as necessary to retrieve
   the paste buffer (or even to screw up completely) without complex
   and error-prone synchronization code in FLTK.
    
-  The selection clipboard is used for middle-mouse pastes and for 
-  drag-and-drop selections. The copy clipboard is used for traditional 
+  The selection buffer is used for middle-mouse pastes and for 
+  drag-and-drop selections. The clipboard is used for traditional 
   copy/cut/paste operations.
   */
-  static void paste(Fl_Widget &receiver, int clipboard /*=0*/); // platform dependent
+  static void paste(Fl_Widget &receiver, int source /*=0*/); // platform dependent
   /**
-    Initiate a Drag And Drop operation. The selection clipboard (0) should be
+    Initiate a Drag And Drop operation. The selection buffer should be
     filled with relevant data before calling this method. FLTK will
     then initiate the system wide drag and drop handling. Dropped data
     will be marked as <i>text</i>.
