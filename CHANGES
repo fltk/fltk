@@ -3,7 +3,7 @@ CHANGES IN FLTK 1.3.0
 
 	  New Features
 
-	- Added UTF-8 Unicode supprt
+	- Added UTF-8 Unicode support
 	- Added Fl_Tree widget for hierarchical views
 	- Added Fl_Table widget for widget layout
 	- Added Fl_Native_Filechooser as a widget and global options
@@ -13,7 +13,9 @@ CHANGES IN FLTK 1.3.0
 	- Added basic Fl_Device abstraction layer for all drawing functions
 
 	  Other Additions
-	
+
+	- Added new method client_area() for easier positioning of children
+	  in Fl_Tabs (STR #2480)
 	- Added global UI options (STR #2471)
 	- Added drag'n'drop support for Fl_Text_*
 	- Added new label and image alignments (STR #2269)
@@ -28,7 +30,7 @@ CHANGES IN FLTK 1.3.0
 	- Added class Fl_Widget_Tracker to simplify safe handling of widget
 	  deletion in callbacks. This is used in Fl_Widget::do_callback()
 	  to prevent accessing widgets after deletion in the callback.
-	- Added argument-less constructor in Fuid Widget Class
+	- Added argument-less constructor in Fluid Widget Class
 	- Added Fl_Menu_::find_item by callback
 	- Added indexing to Fl_Preferences
 	- Added jpeg support to Fluid image() element
@@ -42,7 +44,7 @@ CHANGES IN FLTK 1.3.0
 	- Added "ide" subdirectory for all IDE support files
         - Added Fl_Menu_ methods: insert(), find_index(), clear_submenu()
 	- Added menu shortcut alignment for OS X
-	- Added drop box to utf8 test that will show the utf8 encoding
+	- Added drop box to UTF-8 test that will show the UTF-8 encoding
 	  for the first dropped character
 	- Added flexible gap size for text buffer (STR #2046)
 	- Added sorting to Fl_Browser_ (STR #2113)
@@ -50,7 +52,7 @@ CHANGES IN FLTK 1.3.0
 	- Added scroll_to(int,int) to Fl_Scroll, replacing 
 	  position(int,int) which now behaves as it should (STR #1303)
 	- Added alternative text input awareness on OS X 
-	
+
 	  Documentation
 
 	- Added documentation for event delivery (STR #1983)
@@ -59,10 +61,10 @@ CHANGES IN FLTK 1.3.0
 	- Updated Copyright dates to 2010 (STR #2036)
 	- Updated mirror sites in documentation (STR #2220)
 	- Fixed documentation for Fl_Progress (STR #2209)
-	- Fixed documentation (added missing COMCTRL32.LIB dependency)
-	
+	- Fixed documentation (added missing COMCTL32.LIB dependency)
+
 	  Improvements
-	
+
 	- Moved OS X code base to the more modern Cocoa toolkit thanks
 	  to the awesome work of Manolo Gouy (STR #2221)
 	- Improved handling of composed keys in OS X 10.5 and up
@@ -210,11 +212,10 @@ CHANGES IN FLTK 1.3.0
 
 	- Removed Watcom compiler support because it was introduced in
 	  1.1.6 as a partial solution and never completed.
-	- Removed an XForms compatibility "feature" that prevented the down
-	  array of Fl_Menu_Button from drawing (STR #2141).
+	- Removed an XForms compatibility "feature" that prevented the
+	  down array of Fl_Menu_Button from drawing (STR #2141).
 	- Removed support for gcc 2.x (or older)
 	- Removed redundant Fl_Group casts
-	
 
 CHANGES IN FLTK 1.1.9
 
@@ -223,7 +224,7 @@ CHANGES IN FLTK 1.1.9
 	- Fixed regression in callback handling (STR #1918)
 	- Fixed wrong relative path when absolute path has a 
 	  trailing slash in fl_filename_relative (STR #1920)
-	- Fixed multiple selction of files and directories in
+	- Fixed multiple selection of files and directories in
 	  Fl_File_Chooser (STR #1913)
 	- Fixed MSWindows crash when selecting umlauts
 	  in Fl_Help_View (STR #1912)

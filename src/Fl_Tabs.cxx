@@ -42,60 +42,74 @@
 #define EXTRASPACE 10
 #define SELECTION_BORDER 5
 
-// return the left edges of each tab (plus a fake left edge for a tab
-// past the right-hand one).  These position are actually of the left
+// Return the left edges of each tab (plus a fake left edge for a tab
+// past the right-hand one).  These positions are actually of the left
 // edge of the slope.  They are either separated by the correct distance
 // or by EXTRASPACE or by zero.
+// These positions are updated in the private arrays tab_pos[] and
+// tab_width[], resp.. If needed, these arrays are (re)allocated.
 // Return value is the index of the selected item.
 
-int Fl_Tabs::tab_positions(int* p, int* wp) {
+int Fl_Tabs::tab_positions() {
+  int nc = children();
+  if (nc != tab_count) {
+    clear_tab_positions();
+    if (nc) {
+      tab_pos   = (int*)malloc((nc+1)*sizeof(int));
+      tab_width = (int*)malloc((nc+1)*sizeof(int));
+    }
+    tab_count = nc;
+  }
+  if (nc == 0) return 0;
   int selected = 0;
   Fl_Widget*const* a = array();
   int i;
   char prev_draw_shortcut = fl_draw_shortcut;
   fl_draw_shortcut = 1;
 
-  p[0] = Fl::box_dx(box());
-  for (i=0; i<children(); i++) {
+  tab_pos[0] = Fl::box_dx(box());
+  for (i=0; i<nc; i++) {
     Fl_Widget* o = *a++;
     if (o->visible()) selected = i;
 
     int wt = 0; int ht = 0;
     o->measure_label(wt,ht);
 
-    wp[i]  = wt+EXTRASPACE;
-    p[i+1] = p[i]+wp[i]+BORDER;
+    tab_width[i] = wt + EXTRASPACE;
+    tab_pos[i+1] = tab_pos[i] + tab_width[i] + BORDER;
   }
   fl_draw_shortcut = prev_draw_shortcut;
 
   int r = w();
-  if (p[i] <= r) return selected;
+  if (tab_pos[i] <= r) return selected;
   // uh oh, they are too big:
   // pack them against right edge:
-  p[i] = r;
-  for (i = children(); i--;) {
-    int l = r-wp[i];
-    if (p[i+1] < l) l = p[i+1];
-    if (p[i] <= l) break;
-    p[i] = l;
+  tab_pos[i] = r;
+  for (i = nc; i--;) {
+    int l = r-tab_width[i];
+    if (tab_pos[i+1] < l) l = tab_pos[i+1];
+    if (tab_pos[i] <= l) break;
+    tab_pos[i] = l;
     r -= EXTRASPACE;
   }
   // pack them against left edge and truncate width if they still don't fit:
-  for (i = 0; i<children(); i++) {
-    if (p[i] >= i*EXTRASPACE) break;
-    p[i] = i*EXTRASPACE;
-    int W = w()-1-EXTRASPACE*(children()-i) - p[i];
-    if (wp[i] > W) wp[i] = W;
+  for (i = 0; i<nc; i++) {
+    if (tab_pos[i] >= i*EXTRASPACE) break;
+    tab_pos[i] = i*EXTRASPACE;
+    int W = w()-1-EXTRASPACE*(children()-i) - tab_pos[i];
+    if (tab_width[i] > W) tab_width[i] = W;
   }
   // adjust edges according to visiblity:
-  for (i = children(); i > selected; i--) {
-    p[i] = p[i-1]+wp[i-1];
+  for (i = nc; i > selected; i--) {
+    tab_pos[i] = tab_pos[i-1] + tab_width[i-1];
   }
   return selected;
 }
 
-// return space needed for tabs.  Negative to put them on the bottom:
+// Returns space (height) in pixels needed for tabs. Negative to put them on the bottom.
+// Returns full height, if children() = 0.
 int Fl_Tabs::tab_height() {
+  if (children() == 0) return h();
   int H = h();
   int H2 = y();
   Fl_Widget*const* a = array();
@@ -109,8 +123,10 @@ int Fl_Tabs::tab_height() {
   else return (H <= 0) ? 0 : H;
 }
 
-// this is used by fluid to pick tabs:
+// This is used for event handling (clicks) and by fluid to pick tabs.
+// Returns 0, if children() = 0, or if the event is outside of the tabs area.
 Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
+  if (children() == 0) return 0;
   int H = tab_height();
   if (H < 0) {
     if (event_y > y()+h() || event_y < y()+h()+H) return 0;
@@ -120,17 +136,13 @@ Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   if (event_x < x()) return 0;
   Fl_Widget *ret = 0L;
   int nc = children();
-  int *p  = (int*)malloc((nc+1)*sizeof(int));
-  int *wp = (int*)malloc((nc+1)*sizeof(int));
-  tab_positions(p, wp);
-  for (int i=0; i<children(); i++) {
-    if (event_x < x()+p[i+1]) {
+  tab_positions();
+  for (int i=0; i<nc; i++) {
+    if (event_x < x()+tab_pos[i+1]) {
       ret = child(i);
       break;
     }
   }
-  free(p);
-  free(wp);
   return ret;
 }
 
@@ -325,21 +337,20 @@ void Fl_Tabs::draw() {
   }
   if (damage() & (FL_DAMAGE_SCROLL|FL_DAMAGE_ALL)) {
     int nc = children();
-    int *p  = (int*)malloc((nc+1)*sizeof(int));
-    int *wp = (int*)malloc((nc+1)*sizeof(int));
-    int selected = tab_positions(p,wp);
+    int selected = tab_positions();
     int i;
     Fl_Widget*const* a = array();
     for (i=0; i<selected; i++)
-      draw_tab(x()+p[i], x()+p[i+1], wp[i], H, a[i], LEFT);
-    for (i=children()-1; i > selected; i--)
-      draw_tab(x()+p[i], x()+p[i+1], wp[i], H, a[i], RIGHT);
+      draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
+               tab_width[i], H, a[i], LEFT);
+    for (i=nc-1; i > selected; i--)
+      draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
+               tab_width[i], H, a[i], RIGHT);
     if (v) {
       i = selected;
-      draw_tab(x()+p[i], x()+p[i+1], wp[i], H, a[i], SELECTED);
+      draw_tab(x()+tab_pos[i], x()+tab_pos[i+1],
+               tab_width[i], H, a[i], SELECTED);
     }
-    free(p);
-    free(wp);
   }
 }
 
@@ -420,11 +431,11 @@ void Fl_Tabs::draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int what) {
     away from the top or bottom edge of the Fl_Tabs widget,
     which is where the tabs will be drawn.
 
-    All children of Fl_Tab should have the same size and exactly fit on top of 
+    All children of Fl_Tabs should have the same size and exactly fit on top of 
     each other. They should only leave space above or below where that tabs will 
-    go, but not on the sides. If the first child of Fl_Tab is set to 
+    go, but not on the sides. If the first child of Fl_Tabs is set to 
     "resizable()", the riders will not resize when the tabs are resized.
- 
+
     The destructor <I>also deletes all the children</I>. This
     allows a whole tree to be deleted at once, without having to
     keep a pointer to all the children in the user code. A kludge
@@ -437,6 +448,79 @@ Fl_Tabs::Fl_Tabs(int X,int Y,int W, int H, const char *l) :
 {
   box(FL_THIN_UP_BOX);
   push_ = 0;
+  tab_pos = 0;
+  tab_width = 0;
+  tab_count = 0;
+}
+
+Fl_Tabs::~Fl_Tabs() {
+  clear_tab_positions();
+}
+
+/**
+    Returns the position and size available to be used by its children.
+
+    If there isn't any child yet the \p tabh parameter will be used to
+    calculate the return values. This assumes that the children's labelsize
+    is the same as the Fl_Tabs' labelsize and adds a small border.
+
+    If there are already children, the values of child(0) are returned, and
+    \p tabh is ignored.
+
+    \note Children should always use the same positions and sizes.
+
+    \p tabh can be one of
+    \li    0: calculate label size, tabs on top
+    \li   -1: calculate label size, tabs on bottom
+    \li >  0: use given \p tabh value, tabs on top (height = tabh)
+    \li < -1: use given \p tabh value, tabs on bottom (height = -tabh)
+
+    \param[in]	tabh		position and optional height of tabs (see above)
+    \param[out]	rx,ry,rw,rh	(x,y,w,h) of client area for children
+*/
+void Fl_Tabs::client_area(int &rx, int &ry, int &rw, int &rh, int tabh) {
+
+  if (children()) {			// use existing values
+
+    rx = child(0)->x();
+    ry = child(0)->y();
+    rw = child(0)->w();
+    rh = child(0)->h();
+
+  } else {				// calculate values
+
+    int y_offset;
+    int label_height = fl_height(labelfont(), labelsize()) + BORDER*2;
+
+    if (tabh == 0)			// use default (at top)
+      y_offset = label_height;
+    else if (tabh == -1)	 	// use default (at bottom)
+      y_offset = -label_height;
+    else
+      y_offset = tabh;			// user given value
+
+    rx = x();
+    rw = w();
+
+    if (y_offset >= 0) {		// labels at top
+      ry = y() + y_offset;
+      rh = h() - y_offset;
+    } else {				// labels at bottom
+      ry = y();
+      rh = h() + y_offset;
+    }
+  }
+}
+
+void Fl_Tabs::clear_tab_positions() {
+  if (tab_pos) {
+    free(tab_pos);
+    tab_pos = 0;
+  }
+  if (tab_width){
+    free(tab_width);
+    tab_width = 0;
+  }
 }
 
 //
