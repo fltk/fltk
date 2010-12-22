@@ -1404,7 +1404,7 @@ int fl_handle(const XEvent& thisevent)
       if(!fl_xim_im || XGetIMValues(fl_xim_im, XNQueryInputStyle, &xim_styles, NULL, NULL)) {
 	fl_init_xim();
       }
-      XFree(xim_styles);
+      if (xim_styles) XFree(xim_styles);
     }
     break;
 
