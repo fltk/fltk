@@ -29,9 +29,6 @@
 #ifndef FL_DOXYGEN		// PREVENT DOXYGEN'S USE OF THIS FILE
 
 // OSX-SPECIFIC NATIVE BROWSER
-#include <Carbon/Carbon.h>
-
-#undef check // necessary for use of Fl::check()
 
 #include <FL/filename.H>
 #define MAXFILTERS	80
