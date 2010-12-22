@@ -138,6 +138,7 @@ int Fl_Input::kf_page_down() {
 
 // Toggle insert mode
 int Fl_Input::kf_insert_toggle() {
+  if (readonly()) { fl_beep(); return 1; }
   return 1;				// \todo: needs insert mode
 }
 
@@ -159,6 +160,7 @@ int Fl_Input::kf_delete_word_left() {
 
 // Delete to start of line
 int Fl_Input::kf_delete_sol() {
+  if (readonly()) { fl_beep(); return 1; }
   if (mark() != position()) return cut();
   cut(line_start(position()), position());
   return 1;
@@ -275,6 +277,7 @@ int Fl_Input::kf_undo() {
 
 // Redo. (currently unimplemented.. toggles undo() instead)
 int Fl_Input::kf_redo() {
+  if (readonly()) { fl_beep(); return 1; }
   return kf_undo();			// currently we don't support multilevel undo
 }
 
