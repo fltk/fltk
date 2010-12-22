@@ -658,6 +658,12 @@ Fl_Type::~Fl_Type() {
   if (next) next->prev = prev; else last = prev;
   if (current == this) current = 0;
   if (parent) parent->remove_child(this);
+  if (name_) free((void*)name_);
+  if (label_) free((void*)label_);
+  if (callback_) free((void*)callback_);
+  if (user_data_) free((void*)user_data_);
+  if (user_data_type_) free((void*)user_data_type_);
+  if (comment_) free((void*)comment_);
 }
 
 int Fl_Type::is_parent() const {return 0;}
