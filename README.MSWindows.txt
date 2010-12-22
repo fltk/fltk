@@ -4,7 +4,7 @@ README.MSWindows.txt - 2010-10-25 - Building FLTK under Microsoft Windows
 
 
  CONTENTS
-========== 
+==========
 
   1   INTRODUCTION
   2   HOW TO BUILD FLTK USING MinGW/Cygwin
@@ -41,9 +41,9 @@ README.MSWindows.txt - 2010-10-25 - Building FLTK under Microsoft Windows
  INTRODUCTION
 ==============
 
-FLTK 1.3 and later is officially supported on Windows (2000,) 2003, 
-XP, and later.  Older Windows versions are not officially supported, 
-but may still work.  The main reason is that the OS version needs 
+FLTK 1.3 and later is officially supported on Windows (2000,) 2003,
+XP, and later.  Older Windows versions are not officially supported,
+but may still work.  The main reason is that the OS version needs
 to support UTF-8. FLTK 1.3 is known to work on Windows 7 and Vista.
 
 FLTK currently supports the following development
@@ -60,7 +60,7 @@ environments on the Windows platform:
 
     - GNU toolsets (Cygwin or MinGW) hosted on Windows.
 
-CAUTION: Libraries built by any one of these environments can not be mixed 
+CAUTION: Libraries built by any one of these environments can not be mixed
 with object files from any other environment!
 
 
@@ -94,6 +94,17 @@ Note: Since December 2009, there is a new gcc 4.x compiler
 that doesn't support the -mno-cygwin option anymore. You
 must use the older gcc-3 compiler instead.
 
+An alternative is to install the new (since about Oct. 2010)
+mingw cross tools that support newer gcc compilers for building
+native Windows applications (like -mno-cygwin above).
+Currently you would have to install mingw64-i686-gcc-g++ for
+32-bit Windows applications (despite its name!), and/or
+mingw64-x86_64-gcc-g++ for 64-bit applications. You may also
+need to install the corresponding '-headers' packages as well.
+Currently these tools support gcc 4.5.x or newer, but the
+setup for FLTK is somewhat more complicated and not yet
+completely supported automatically (you may need to edit
+some lines in the generated makeinclude file).
 
 The MinGW distribution (Minimalist GNU for Windows) provides
 a similar toolset but geared solely towards native Windows
@@ -125,7 +136,8 @@ FLTK with the GNU tools:
 
     3. MinGW: Built using the MinGW utilities, compiler and
        tools. This is, in many aspects, analogous to the
-       Cygwin "-mno-cygwin" option.
+       Cygwin "-mno-cygwin" option. This is the recommended
+       one if you want to build native Windows programs only.
 
 
  Recommended Command Line Build Environment
@@ -186,7 +198,7 @@ into your home folder. The default location as seen from MSWindows is similar
 to
 
   C:\MinGW\msys\1.0\home\matt\
-  
+
 If you are familiar with "subversion" and like to stay current with your
 version, you will find the subversion access parameters at the bottom of
 that page. Unpack FLTK into a convenient location. I like to have everything
@@ -197,31 +209,31 @@ in my dev directory:
   cd dev
   tar xvfz fltk-1.3.xxxx.tar.gz
   cd fltk-1.3.xxxx
-  
+
 
  Configuring FLTK
 ------------------
 
 Stay in your FLTK source-code directory. Type:
-  
+
   autoconf
 
 Now configure your FLTK installation:
 
   ./configure
-  
-ADVANCED: type "./configure --help" to get a complete list of optional 
+
+ADVANCED: type "./configure --help" to get a complete list of optional
 configuration parameters. These should be pretty self-explanatory. Some
-more details can be found in README. 
+more details can be found in README.
 :END_ADVANCED
 
 The configuration script will check your machine for the required resources
-which should all have been part of your MinGW installation. Review the 
+which should all have been part of your MinGW installation. Review the
 Configuration Summary, maybe take some notes.
 
 ADVANCED: some versions of MinGW/Msys are broken and complain about a missing
 --enable-auto-import. The solution is to upgrade to the current release. If
-that is not possible, you can include the --enable-auto-import flag when 
+that is not possible, you can include the --enable-auto-import flag when
 linking:
   ./configure <config flags> LDFLAGS=-Wl,--enable-auto-import
 :END_ADVANCED
@@ -230,7 +242,7 @@ linking:
  Building FLTK
 ---------------
 
-Now this is easy. Stay in your FLTK source-code directory and type: 
+Now this is easy. Stay in your FLTK source-code directory and type:
 
   make
 
@@ -259,8 +271,8 @@ If you did not change any of the configuration settings, FLTK will be
 installed in "/usr/local/include" and "/usr/local/lib" by typing
 
   make install
-  
-It is possible to install FLTK in user space by changing the installation path 
+
+It is possible to install FLTK in user space by changing the installation path
 to a location within the user account by adding the "--prefix=PREFIX" parameter
 to the "./configure" command.
 
@@ -268,11 +280,11 @@ to the "./configure" command.
  Creating new Projects
 -----------------------
 
-FLTK provides a neat script named "fltk-config" that can provide all the flags 
+FLTK provides a neat script named "fltk-config" that can provide all the flags
 needed to build FLTK applications using the same flags that were used to build
 the library itself. Running "fltk-config" without arguments will print a list
 of options. The easiest call to compile an FLTK application from a single
-source file is: 
+source file is:
 
   fltk-config --compile myProgram.cxx
 
@@ -288,15 +300,15 @@ I recommend that you add it to the command search path.
  Prerequisites
 ---------------
 
-In order to build FLTK from within VisualStudio 2008, you need to install the 
-VisualC developer environment from the Microsoft web site. The Express edition 
+In order to build FLTK from within VisualStudio 2008, you need to install the
+VisualC developer environment from the Microsoft web site. The Express edition
 is free of charge and sufficient to develop FLTK applications:
 
   http://www.microsoft.com/express/Downloads/
-  
+
 You must make sure that at least VisualStudio 2008 Service Pack 1 is installed
 or building FLTK on a multicore CPU will be very painful!
-  
+
 
  Downloading and Unpacking
 ---------------------------
@@ -317,25 +329,25 @@ my projects.
  Configuring FLTK
 ------------------
 
-Launch VisualStudio. Open the project file in 
+Launch VisualStudio. Open the project file in
 
   ...\fltk-1.3.xxxx\ide\VisualC2008\fltk.sln
 
 Choose "Debug" or "Release" mode from the "Solution Configurations" menu.
-  
+
 
  Building FLTK
 ---------------
 
-Use the context menu of the "demo" project to "Set as StartUp Project". Then 
-select "Build Solution" from the "Build" menu or press F7 to build all 
+Use the context menu of the "demo" project to "Set as StartUp Project". Then
+select "Build Solution" from the "Build" menu or press F7 to build all
 libraries.
 
 VisualC 2008 has a bug that messes up building a Solution on multicore CPUs.
-Make sure that Visual Studio 2008 Service Pack 1 is installed or, as a 
-workaround, set the "maximum number of parallel project builds" to 1 (Tools > 
-Options > Projects and Solutions > Build and Run > maximum number of parallel 
-project builds). Also, repeating the build command two or three times may 
+Make sure that Visual Studio 2008 Service Pack 1 is installed or, as a
+workaround, set the "maximum number of parallel project builds" to 1 (Tools >
+Options > Projects and Solutions > Build and Run > maximum number of parallel
+project builds). Also, repeating the build command two or three times may
 clear unresolved reference errors.
 
 
@@ -353,7 +365,7 @@ The default location for VisualC 2008 libraries and headers is here:
 
   C:\Program Files\Microsoft Visual Studio 9.0\VC\
 
-It is possible to move the FLTK libraries, headers, and Fluid into the 
+It is possible to move the FLTK libraries, headers, and Fluid into the
 respective subdirectories, so that they are available for future development
 without adding link and include paths to the solution.
 
@@ -364,29 +376,29 @@ without adding link and include paths to the solution.
   copy fluid.exe in the fluid directory to the bin directory
 
 I highly discourage using dll's (dynamically linking libraries) on MSWindows
-because they will require an installation process and likely cause version 
+because they will require an installation process and likely cause version
 conflicts. Use the static .lib libraries instead.
 
 
  Creating new Projects
 -----------------------
 
-This chapter assumes that libraries and headers are copied into 
+This chapter assumes that libraries and headers are copied into
 
   C:\Program Files\Microsoft Visual Studio 9.0\VC\
 
 Create a new project of type "General", "Empty Project" and add a simple "C++"
 file to it. The FLTK "hello" source code is a good base.
 
-Now open the Project Properties dialog and add "Comctl32.lib" and all the FLTK 
+Now open the Project Properties dialog and add "Comctl32.lib" and all the FLTK
 libraries that you want to use (at least "fltk.lib") to Additional Dependencies
-(Configuration Properties > Linker > Additional Dependencies). In the same 
-dialog, add "WIN32" to the C++ Preprocessor Definitions (Configuration 
+(Configuration Properties > Linker > Additional Dependencies). In the same
+dialog, add "WIN32" to the C++ Preprocessor Definitions (Configuration
 Properties > C/C++ > Preprocessor > Preprocessor Definitions).
 
 Compile and run your test program with F5.
 
-You can also include .fl resources: add a new Header file to your project, but 
+You can also include .fl resources: add a new Header file to your project, but
 let the name end in .fl. Right-click and select "Open with...". Add "fluid.exe"
 from the "bin" directory and set it as the default editor.
 
@@ -397,7 +409,7 @@ Custom Build Steps to:
   Description: Compiling Fluid .fl file
   Outputs: $(InputDir)$(InputName).cxx; $(InputDir)$(InputName).h
 
-Now add the generated .cxx file to your project as well. Whenever the .fl file 
+Now add the generated .cxx file to your project as well. Whenever the .fl file
 is changed, the corresponding .cxx file will be recompiled.
 
 
@@ -409,12 +421,12 @@ is changed, the corresponding .cxx file will be recompiled.
  Prerequisites
 ---------------
 
-In order to build FLTK from within VisualStudio 2010, you need to install the 
-VisualC developer environment from the Microsoft web site. The Express edition 
+In order to build FLTK from within VisualStudio 2010, you need to install the
+VisualC developer environment from the Microsoft web site. The Express edition
 is free of charge and sufficient to develop FLTK applications:
 
   http://www.microsoft.com/express/Downloads/
-  
+
 
  Downloading and Unpacking
 ---------------------------
@@ -435,18 +447,18 @@ my projects.
  Configuring FLTK
 ------------------
 
-Launch VisualStudio. Open the project file in 
+Launch VisualStudio. Open the project file in
 
   .../fltk-1.3.xxxx/ide/VisualC2010/fltk.sln
 
 Choose "Debug" or "Release" mode from the "Solution Configurations" menu.
-  
+
 
  Building FLTK
 ---------------
 
-Use the context menu of the "demo" project to "Set as StartUp Project". Then 
-select "Build Solution" from the "Build" menu or press F7 to build all 
+Use the context menu of the "demo" project to "Set as StartUp Project". Then
+select "Build Solution" from the "Build" menu or press F7 to build all
 libraries.
 
 
@@ -464,7 +476,7 @@ The default location for VisualC 2010 libraries and headers is here:
 
   C:\Program Files\Microsoft Visual Studio 10.0\VC\
 
-It is possible to move the FLTK libraries, headers, and Fluid into the 
+It is possible to move the FLTK libraries, headers, and Fluid into the
 respective subdirectories, so that they are available for future development
 without adding link and include paths to the solution.
 
@@ -475,33 +487,33 @@ without adding link and include paths to the solution.
   copy fluid.exe in the fluid directory to the bin directory
 
 I highly discourage using dll's (dynamically linking libraries) on MSWindows
-because they will require an installation process and likely cause version 
+because they will require an installation process and likely cause version
 conflicts. Use the static .lib libraries instead.
 
 
  Creating new Projects
 -----------------------
 
-This chapter assumes that libraries and headers are copied into 
+This chapter assumes that libraries and headers are copied into
 
   C:\Program Files\Microsoft Visual Studio 10.0\VC\
 
 Create a new project of type "General", "Empty Project" and add a simple "C++"
 file to it. The FLTK "hello" source code is a good base.
 
-Now open the Project Properties dialog and add "Comctl32.lib" and all the FLTK 
+Now open the Project Properties dialog and add "Comctl32.lib" and all the FLTK
 libraries that you want to use (at least "fltk.lib") to Additional Dependencies
-(Configuration Properties > Linker > Additional Dependencies). In the same 
-dialog, add "WIN32" to the C++ Preprocessor Definitions (Configuration 
+(Configuration Properties > Linker > Additional Dependencies). In the same
+dialog, add "WIN32" to the C++ Preprocessor Definitions (Configuration
 Properties > C/C++ > Preprocessor > Preprocessor Definitions).
 
 Compile and run your test program with F5.
 
-You can also include .fl resources: add a new Header file to your project, but 
+You can also include .fl resources: add a new Header file to your project, but
 let the name end in .fl. Right-click and select "Open with...". Add "fluid.exe"
 from the "bin" directory and set it as the default editor.
 
-To automatically compile .fl files, open the Properties editor and change the 
+To automatically compile .fl files, open the Properties editor and change the
 Element Type to Custom Build and click Apply. Now set the
 Custom Build Steps to:
 
@@ -509,7 +521,7 @@ Custom Build Steps to:
   Description: Compiling Fluid .fl file
   Outputs: $(InputDir)$(InputName).cxx; $(InputDir)$(InputName).h
 
-Now add the generated .cxx file to your project as well. Whenever the .fl file 
+Now add the generated .cxx file to your project as well. Whenever the .fl file
 is changed, the corresponding .cxx file will be recompiled.
 
 
@@ -518,7 +530,7 @@ is changed, the corresponding .cxx file will be recompiled.
 ============================
 
 
- Why does a console window appear when I run my progrem?
+ Why does a console window appear when I run my program?
 ---------------------------------------------------------
 
 Windows has a flag that determines whether an application
@@ -607,3 +619,4 @@ The following links may be of use:
 
 Oct 25 2010 - matt: restructured entire document and verified instructions
 Dec 20 2010 - matt: merged with README.win32
+Dec 22 2010 - AlbrechtS: added newer Cygwin (cross/mingw-w64) options
