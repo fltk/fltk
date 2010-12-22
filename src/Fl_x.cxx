@@ -1400,6 +1400,12 @@ int fl_handle(const XEvent& thisevent)
 
     fl_xmousewin = window;
     in_a_window = true;
+    { XIMStyles *xim_styles = NULL;
+      if(!fl_xim_im || XGetIMValues(fl_xim_im, XNQueryInputStyle, &xim_styles, NULL, NULL)) {
+	fl_init_xim();
+      }
+      XFree(xim_styles);
+    }
     break;
 
   case LeaveNotify:
