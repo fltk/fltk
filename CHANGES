@@ -78,7 +78,7 @@ CHANGES IN FLTK 1.3.0
 	- Widgets now remove stale entries from the default callback
 	  queue when they are deleted (STR #2302)
 	- Managing all Widget flags in a single location now (STR #2161)
-	- File chooser preview now recognizes utf8 encoded 
+	- File chooser preview now recognizes UTF-8 encoded 
 	  text files (STR #2218)
 	- Empty functions in Fluid no longer create an
 	  implementation (STR #2259)
@@ -93,8 +93,8 @@ CHANGES IN FLTK 1.3.0
 	- All draw() methods of widgets are now protected (STR #2142).
 	- The new configure option --enable-x11 (lowercase 'x') enables
 	  Cygwin builds under Windows (with --enable-cygwin) to use X11
-	  instead of GDI drawing (STR #2147, #2183) and is ignored otherwise.	  
-	- Fl_Help_View handles HTML2 font color specification (STR #890) 
+	  instead of GDI drawing (STR #2147, #2183) and is ignored otherwise.
+	- Fl_Help_View handles HTML2 font color specification (STR #890)
 	- Widgets now remove themselves from their parent group (if any),
 	  when destroyed (STR #1894)
 	- Changed Fl_Group::clip_children() to public (STR #2017)
@@ -108,7 +108,7 @@ CHANGES IN FLTK 1.3.0
 	  Fl_Widget.
 	- Changed Fl_Group and Fl_Scroll to resize themselves before
 	  resizing their children (STR #2032)
-	- Changed "fltk-config --post foo" to creates an application
+	- Changed "fltk-config --post foo" to create an application
 	  bundle rather than attaching a resource fork.
 	- Updated the bundled libpng to v1.2.40 (released Sep. 10, 2009)
 	- Update lib png access (STR #2442)
@@ -118,7 +118,7 @@ CHANGES IN FLTK 1.3.0
 	- Fixed Fl_Tabs selection border drawing, if tabs are at the bottom
 	  of the widget (STR #2480)
 	- Fixed Compiling with mingw-w64 (STR #2308).
-	- Fixed crashes when detecting illegal utf 8 sequences
+	- Fixed crashes when detecting illegal UTF-8 sequences
 	  in Fl_Text_* widgets (STR #2348)
 	- Fixed Fl_Text_Display Tabulator calculations (STR #2450)
 	- Fixed file access code to use UTF-8 strings (STR #2440)
@@ -168,7 +168,7 @@ CHANGES IN FLTK 1.3.0
 	- Fixed a name conflict with new (VS 2008 Express) winsock2.h
 	  versions and another conflict that produced compile errors
 	  with VS 2008 Express (STR #2301)
-	- Fixed all color related call to Fl_Color type (STR #2208)
+	- Fixed all color related calls to Fl_Color type (STR #2208)
 	- Fixed Fluid dependency on X11 (STR #2261)
 	- Fixed Fl_Choice contrast with light-on-dark settings (STR #2219)
 	- Fixed X server "lock", if a modal dialog window is opened
@@ -186,12 +186,12 @@ CHANGES IN FLTK 1.3.0
 	- Fix for multiple popups, when dragging and calling fl_alert()
 	  and friends from the callback (STR #2159)
 	- Fixed control key keycodes with modifiers on OS X
-	- Fixed bad system menu hadling in OS X (STR #2153)
+	- Fixed bad system menu handling in OS X (STR #2153)
 	- Fixed File Input mouse pointer dragging (STR #2181)
 	- Fixed 'del' keycode on OS X (must be verified for all keyboards)
-	- Fixed OS X support for sending and receiving dnd data as utf8
-	- Fixed Copy/Paste operations with utf8,16 support and 
-	  fltk1.1 compatibility. (STR #2104,2121).
+	- Fixed OS X support for sending and receiving dnd data as UTF-8
+	- Fixed Copy/Paste operations with UTF-8, UTF-16 support and
+	  fltk1.1 compatibility. (STR #2104, 2121).
 	- Fixed static linking of image libraries (STR #1962)
 	- Fixed fl_set_spot() for Windows (STR #2101)
 	- Fixed callback that would not be called when shortcut was used 
