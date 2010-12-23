@@ -270,6 +270,8 @@ int Fl_Menu_Item::insert(
   \par
   Raw integer shortcuts can be a combination of keyboard chars (eg. 'A')
   and optional keyboard modifiers (see Fl::event_state(), e.g. FL_SHIFT, etc).
+  In addition, FL_COMMAND can be used to denote FL_META under Mac OS X and
+  FL_CTRL under other platforms.
   \par
   String shortcuts can be specified in one of two ways:
   \par
@@ -281,7 +283,7 @@ int Fl_Menu_Item::insert(
   ..where \<ascii_value\> is a decimal value representing an
   ascii character (eg. 97 is the ascii code for 'a'), and the optional
   prefixes enhance the value that follows. Multiple prefixes must
-  appear in the above order.
+  appear in the order below.
   \par
   \verbatim
    # - Alt
