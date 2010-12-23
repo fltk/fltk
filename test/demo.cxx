@@ -136,6 +136,8 @@ const char *default_menu[] = {
 #    define chdir _chdir
 #    define putenv _putenv
 #  endif // !__WATCOMC__
+#elif defined USING_XCODE
+#include <Carbon/Carbon.h>
 #else
 #  include <unistd.h>
 #endif

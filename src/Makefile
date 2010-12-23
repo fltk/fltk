@@ -217,7 +217,7 @@ UTF8CFILES = \
 	xutf8/utf8Wrap.c
 
 ################################################################
-
+FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
 MMFILES = $(shell if test $(USEMMFILES) = Yes; then echo $(OBJCPPFILES); fi)

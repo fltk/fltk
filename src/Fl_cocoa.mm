@@ -3266,6 +3266,11 @@ CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
   return CGRectMake(x, y, w > 0 ? w - 0.9 : 0, h > 0 ? h - 0.9 : 0);
 }
 
+Window fl_xid(const Fl_Window* w)
+{
+  return Fl_X::i(w)->xid;
+}
+
 #endif // __APPLE__
 
 //

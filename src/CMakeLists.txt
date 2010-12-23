@@ -194,6 +194,7 @@ set(CFILES
 )
 
 if(APPLE)
+    add_definitions(-DFL_LIBRARY)
 	set(MMFILES
 		Fl_cocoa.mm
 		Fl_Quartz_Printer.mm

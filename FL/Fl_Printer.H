@@ -58,9 +58,9 @@ private:
   float scale_x;
   float scale_y;
   float angle; // rotation angle in radians
-  PMPrintSession  printSession;
-  PMPageFormat    pageFormat;
-  PMPrintSettings printSettings;
+  Fl_PMPrintSession  printSession;
+  Fl_PMPageFormat    pageFormat;
+  Fl_PMPrintSettings printSettings;
 #elif defined(WIN32)
   int   abortPrint;
   PRINTDLG      pd;

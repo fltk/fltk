@@ -667,7 +667,7 @@ Fl_Window* Fl::next_window(const Fl_Window* window) {
 */
 void Fl::first_window(Fl_Window* window) {
   if (!window || !window->shown()) return;
-  fl_find(fl_xid(window));
+  fl_find( Fl_X::i(window)->xid );
 }
 
 /**
