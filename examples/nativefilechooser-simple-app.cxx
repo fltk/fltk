@@ -120,10 +120,10 @@ public:
   // CTOR
   Application() : Fl_Window(400,200,"Native File Chooser Example") {
     Fl_Menu_Bar *menu = new Fl_Menu_Bar(0,0,400,25);
-    menu->add("&File/&Open",  "^o", open_cb, (void*)this);
-    menu->add("&File/&Save",  "^s", save_cb, (void*)this);
+    menu->add("&File/&Open",  FL_COMMAND+'o', open_cb, (void*)this);
+    menu->add("&File/&Save",  FL_COMMAND+'s', save_cb, (void*)this);
     menu->add("&File/&Save As", 0,  saveas_cb, (void*)this);
-    menu->add("&File/&Quit",  "^q", quit_cb);
+    menu->add("&File/&Quit",  FL_COMMAND+'q', quit_cb);
     // Initialize the file chooser
     fc = new Fl_Native_File_Chooser();
     fc->filter("Text\t*.txt\n");
