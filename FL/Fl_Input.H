@@ -215,7 +215,7 @@
 
   </TD></TR><TR>
     <TD NOWRAP="NOWRAP"><B> Ctrl-Backspace </B></TD>
-    <TD NOWRAP="NOWRAP"><B> Alt-Delete, Alt-Backspace </B></TD>
+    <TD NOWRAP="NOWRAP"><B> Alt-Backspace </B></TD>
     <TD>
       <B>Delete word left.</B>
 
