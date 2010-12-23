@@ -673,6 +673,13 @@ Whenever the user drops a file onto an application icon, OS X
 generates an Apple Event of the type "Open". You can have FLTK
 notify you of an Open event by setting the \c fl_open_callback
 
+void fl_open_display()
+
+\par
+Opens the display. Does nothing if it is already open. You should call
+this if you wish to do Quartz calls and there is a chance that your
+code will be called before the first \c show() of a window.
+
 Window fl_xid(const Fl_Window *)
 
 \par
@@ -713,7 +720,9 @@ All code inside Fl_Widget::draw()
 is expected to call Quartz drawing functions. The Quartz coordinate system 
 is flipped to match
 FLTK's coordinate system. The origin for all drawing is in the top
-left corner of the enclosing Fl_Window.
+left corner of the enclosing Fl_Window. The global variable
+\c fl_gc is the appropriate Quartz 2D drawing environment.
+Include FL/x.H to declare the \c fl_gc variable.
 
 Fl_Double_Window
 
