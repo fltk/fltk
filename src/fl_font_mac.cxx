@@ -421,11 +421,6 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 
 
 void fl_draw(const char *str, int n, float x, float y) {
-  
-  if(fl_graphics_driver->type() != Fl_Quartz_Graphics_Driver::device_type) {
-    fl_graphics_driver->draw(str, n, (int)x, (int)y );
-    return;
-    }
   // avoid a crash if no font has been selected by user yet !
   check_default_font();
   // convert to UTF-16 first
