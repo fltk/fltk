@@ -182,8 +182,8 @@ Fl_File_Input.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 Fl_File_Input.o: ../FL/fl_draw.H ../FL/Fl_Window.H ../FL/Fl_Device.H
 Fl_File_Input.o: ../FL/x.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_File_Input.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
-Fl_File_Input.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H flstring.h
-Fl_File_Input.o: ../FL/Fl_Export.H ../config.h
+Fl_File_Input.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/filename.H
+Fl_File_Input.o: flstring.h ../FL/Fl_Export.H ../config.h
 Fl_Group.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Group.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Group.H
 Fl_Group.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
@@ -198,7 +198,7 @@ Fl_Help_View.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 Fl_Help_View.o: ../FL/fl_draw.H ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/x.H
 Fl_Help_View.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
 Fl_Help_View.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-Fl_Help_View.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H
+Fl_Help_View.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H ../FL/filename.H
 Fl_Help_View.o: ../FL/Fl_Window.H ../FL/fl_utf8.h ../FL/filename.H flstring.h
 Fl_Help_View.o: ../FL/Fl_Export.H ../config.h
 Fl_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -1074,8 +1074,8 @@ Fl_Help_Dialog.o: ../FL/Fl_Valuator.H ../FL/fl_draw.H ../FL/Fl_Device.H
 Fl_Help_Dialog.o: ../FL/x.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_Help_Dialog.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
 Fl_Help_Dialog.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-Fl_Help_Dialog.o: ../FL/Fl_Shared_Image.H flstring.h ../FL/Fl_Export.H
-Fl_Help_Dialog.o: ../config.h ../FL/fl_ask.H
+Fl_Help_Dialog.o: ../FL/Fl_Shared_Image.H ../FL/filename.H flstring.h
+Fl_Help_Dialog.o: ../FL/Fl_Export.H ../config.h ../FL/fl_ask.H
 Fl_JPEG_Image.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_Image.H ../FL/fl_utf8.h
 Fl_JPEG_Image.o: ../config.h
 Fl_PNG_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -1087,7 +1087,7 @@ Fl_PNM_Image.o: ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H
 Fl_PNM_Image.o: ../config.h
 flstring.o: flstring.h ../FL/Fl_Export.H ../config.h
 scandir.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/fl_utf8.h
-numericsort.o: ../config.h ../FL/filename.H
+numericsort.o: ../config.h
 vsnprintf.o: flstring.h ../FL/Fl_Export.H ../config.h
 fl_utf.o: ../FL/fl_utf8.h xutf8/mk_wcwidth.c
 xutf8/case.o: xutf8/headers/case.h
