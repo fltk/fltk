@@ -221,7 +221,7 @@ public:
  */
 class Fl_PostScript_File_Device : public Fl_Paged_Device {
 #ifdef __APPLE__
-  CGContextRef gc;
+  Fl_CGContextRef gc;
 #endif
 protected:
   Fl_PostScript_Graphics_Driver *driver();
