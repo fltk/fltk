@@ -55,75 +55,6 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/license.dox \
                          $(SRC_DOCDIR)/examples.dox
 
-IMAGEFILES	= \
-		$(SRC_DOCDIR)/FL200.png \
-		$(SRC_DOCDIR)/Fl_Check_Button.png \
-		$(SRC_DOCDIR)/Fl_File_Chooser.jpg \
-		$(SRC_DOCDIR)/Fl_File_Input.png \
-		$(SRC_DOCDIR)/Fl_Help_Dialog.png \
-		$(SRC_DOCDIR)/Fl_Light_Button.png \
-		$(SRC_DOCDIR)/Fl_Return_Button.png \
-		$(SRC_DOCDIR)/Fl_Native_File_Chooser.png \
-		$(SRC_DOCDIR)/Fl_Roller.png \
-		$(SRC_DOCDIR)/Fl_Round_Button.png \
-		$(SRC_DOCDIR)/Fl_Scroll.png \
-		$(SRC_DOCDIR)/Fl_Tile.png \
-		$(SRC_DOCDIR)/Fl_Value_Input.png \
-		$(SRC_DOCDIR)/Fl_Value_Output.png \
-		$(SRC_DOCDIR)/adjuster1.png \
-		$(SRC_DOCDIR)/boxtypes.png \
-		$(SRC_DOCDIR)/buttons.png \
-		$(SRC_DOCDIR)/charts.png \
-		$(SRC_DOCDIR)/choice.png \
-		$(SRC_DOCDIR)/clock.png \
-		$(SRC_DOCDIR)/counter.png \
-		$(SRC_DOCDIR)/cubeview.png \
-		$(SRC_DOCDIR)/dial.png \
-		$(SRC_DOCDIR)/editor-replace.png \
-		$(SRC_DOCDIR)/editor.png \
-		$(SRC_DOCDIR)/fl_alert.png \
-		$(SRC_DOCDIR)/fl_ask.png \
-		$(SRC_DOCDIR)/fl_choice.png \
-		$(SRC_DOCDIR)/fl_color_chooser.jpg \
-		$(SRC_DOCDIR)/fl_input.png \
-		$(SRC_DOCDIR)/fl_message.png \
-		$(SRC_DOCDIR)/fl_password.png \
-		$(SRC_DOCDIR)/fl_show_colormap.png \
-		$(SRC_DOCDIR)/fluid-catgets.png \
-		$(SRC_DOCDIR)/fluid-gettext.png \
-		$(SRC_DOCDIR)/fluid-org.png \
-		$(SRC_DOCDIR)/fluid1.png \
-		$(SRC_DOCDIR)/fluid2.png \
-		$(SRC_DOCDIR)/fluid3-cxx.png \
-		$(SRC_DOCDIR)/fluid3-gui.png \
-		$(SRC_DOCDIR)/fluid3-style.png \
-		$(SRC_DOCDIR)/fluid4.png \
-		$(SRC_DOCDIR)/fluid_prefs.png \
-		$(SRC_DOCDIR)/fluid_widget_cxx.png \
-		$(SRC_DOCDIR)/fluid_widget_gui.png \
-		$(SRC_DOCDIR)/fluid_widget_style.png \
-		$(SRC_DOCDIR)/hello.C.png \
-		$(SRC_DOCDIR)/input_choice.jpg \
-		$(SRC_DOCDIR)/menu.png \
-		$(SRC_DOCDIR)/menu_button.png \
-		$(SRC_DOCDIR)/menubar.png \
-		$(SRC_DOCDIR)/positioner.png \
-		$(SRC_DOCDIR)/resizebox1.png \
-		$(SRC_DOCDIR)/resizebox2.png \
-		$(SRC_DOCDIR)/round_clock.png \
-		$(SRC_DOCDIR)/scrollbar.png \
-		$(SRC_DOCDIR)/slider.png \
-		$(SRC_DOCDIR)/symbols.png \
-		$(SRC_DOCDIR)/table-as-container.png \
-		$(SRC_DOCDIR)/table-dimensions.png \
-		$(SRC_DOCDIR)/table-simple.png \
-		$(SRC_DOCDIR)/tabs.png \
-		$(SRC_DOCDIR)/text.png \
-		$(SRC_DOCDIR)/tiny.png \
-		$(SRC_DOCDIR)/tree-elements.png \
-		$(SRC_DOCDIR)/valuators.png \
-		$(SRC_DOCDIR)/value_slider.png
-
 MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 		$(SRC_DOCDIR)/fluid.$(CAT1EXT) $(SRC_DOCDIR)/blocks.$(CAT6EXT) \
 		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT)
@@ -196,7 +127,7 @@ uninstall-linux uninstall-osx:
 
 html: html/index.html
 
-html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
+html/index.html: $(HTMLFILES) Doxyfile
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
