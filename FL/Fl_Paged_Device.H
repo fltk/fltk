@@ -34,6 +34,7 @@
 
 #include <FL/Fl_Device.H>
 
+/** \brief Number of elements in enum Page_Format */
 #define NO_PAGE_FORMATS 30 /* MSVC6 compilation fix */
 
 /**
