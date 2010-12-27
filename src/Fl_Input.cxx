@@ -413,12 +413,12 @@ int Fl_Input::handle_key() {
       if (mods==FL_ALT)     return kf_move_word_left();		// Alt-Left       (OSX-HIG)
       if (mods==FL_META)    return kf_move_sol();		// Meta-Left      (OSX-HIG)
       if (mods==FL_CTRL)    return kf_move_sol();		// Ctrl-Left      (TE/SA)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_move_char_left();		// Left           (WP,NP,WOW,GE,KE,OF)
       if (mods==FL_CTRL)    return kf_move_word_left();		// Ctrl-Left      (WP,NP,WOW,GE,KE,!OF)
       if (mods==FL_META)    return kf_move_char_left();		// Meta-Left      (WP,NP,?WOW,GE,KE)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_Right:
@@ -427,12 +427,12 @@ int Fl_Input::handle_key() {
       if (mods==FL_ALT)     return kf_move_word_right();	// Alt-Right      (OSX-HIG)
       if (mods==FL_META)    return kf_move_eol();		// Meta-Right     (OSX-HIG)
       if (mods==FL_CTRL)    return kf_move_eol();		// Ctrl-Right     (TE/SA)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_move_char_right();	// Right          (WP,NP,WOW,GE,KE,OF)
       if (mods==FL_CTRL)    return kf_move_word_right();	// Ctrl-Right     (WP,NP,WOW,GE,KE,!OF)
       if (mods==FL_META)    return kf_move_char_right();	// Meta-Right     (WP,NP,?WOW,GE,KE,!OF)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_Up:
@@ -441,11 +441,11 @@ int Fl_Input::handle_key() {
       if (mods==FL_CTRL)    return kf_page_up();		// Ctrl-Up        (TE !HIG)
       if (mods==FL_ALT)     return kf_move_up_and_sol();	// Alt-Up         (OSX-HIG)
       if (mods==FL_META)    return kf_top();			// Meta-Up        (OSX-HIG)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_lines_up(1);		// Up             (WP,NP,WOW,GE,KE,OF)
       if (mods==FL_CTRL)    return kf_move_up_and_sol();	// Ctrl-Up        (WP,!NP,WOW,GE,!KE,OF)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_Down:
@@ -454,11 +454,11 @@ int Fl_Input::handle_key() {
       if (mods==FL_CTRL)    return kf_page_down();		// Ctrl-Dn        (TE !HIG)
       if (mods==FL_ALT)     return kf_move_down_and_eol();	// Alt-Dn         (OSX-HIG)
       if (mods==FL_META)    return kf_bottom();			// Meta-Dn        (OSX-HIG)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_lines_down(1);		// Dn             (WP,NP,WOW,GE,KE,OF)
       if (mods==FL_CTRL)    return kf_move_down_and_eol();	// Ctrl-Down      (WP,!NP,WOW,GE,!KE,OF)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_Page_Up:
@@ -468,12 +468,12 @@ int Fl_Input::handle_key() {
       if (mods==0)          return kf_page_up();		// PgUp           (OSX-HIG)
       if (mods==FL_ALT)     return kf_page_up();		// Alt-PageUp     (OSX-HIG)
       if (mods==FL_META)    return kf_top();			// Meta-PageUp    (OSX-HIG,!TE)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_page_up();		// PageUp         (WP,NP,WOW,GE,KE)
       if (mods==FL_CTRL)    return kf_page_up();		// Ctrl-PageUp    (!WP,!NP,!WOW,!GE,KE,OF)
       if (mods==FL_ALT)     return kf_page_up();		// Alt-PageUp     (!WP,!NP,!WOW,!GE,KE,OF)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_Page_Down:
@@ -483,34 +483,34 @@ int Fl_Input::handle_key() {
       if (mods==0)          return kf_page_down();		// PgDn           (OSX-HIG)
       if (mods==FL_ALT)     return kf_page_down();		// Alt-PageDn     (OSX-HIG)
       if (mods==FL_META)    return kf_bottom();			// Meta-PageDn    (OSX-HIG,!TE)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_page_down();		// PageDn         (WP,NP,WOW,GE,KE)
       if (mods==FL_CTRL)    return kf_page_down();		// Ctrl-PageDn    (!WP,!NP,!WOW,!GE,KE,OF)
       if (mods==FL_ALT)     return kf_page_down();		// Alt-PageDn     (!WP,!NP,!WOW,!GE,KE,OF)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_Home:
 #ifdef __APPLE__
       if (mods==0)          return kf_top();			// Home           (OSX-HIG)
       if (mods==FL_ALT)     return kf_top();			// Alt-Home       (???)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_move_sol();		// Home           (WP,NP,WOW,GE,KE,OF)
       if (mods==FL_CTRL)    return kf_top();			// Ctrl-Home      (WP,NP,WOW,GE,KE,OF)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_End:
 #ifdef __APPLE__
       if (mods==0)          return kf_bottom();			// End            (OSX-HIG)
       if (mods==FL_ALT)     return kf_bottom();			// Alt-End        (???)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_move_eol();		// End            (WP,NP,WOW,GE,KE,OF)
       if (mods==FL_CTRL)    return kf_bottom();			// Ctrl-End       (WP,NP,WOW,GE,KE,OF)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_BackSpace:
@@ -519,11 +519,11 @@ int Fl_Input::handle_key() {
       if (mods==FL_CTRL)    return kf_delete_char_left();	// Ctrl-Backspace (TE/SA)
       if (mods==FL_ALT)     return kf_delete_word_left();	// Alt-Backspace  (OSX-HIG)
       if (mods==FL_META)    return kf_delete_sol();		// Meta-Backspace (OSX-HIG,!TE)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #else
       if (mods==0)          return kf_delete_char_left();	// Backspace      (WP,NP,WOW,GE,KE,OF)
       if (mods==FL_CTRL)    return kf_delete_word_left();	// Ctrl-Backspace (WP,!NP,WOW,GE,KE,!OF)
-      return 1;							// other combos absorb and ignore
+      return 0;							// ignore other combos, pass to parent
 #endif
 
     case FL_Enter:
