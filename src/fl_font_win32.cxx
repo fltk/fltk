@@ -390,11 +390,6 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   int wn;
   int i = 0;
   int lx = 0;
-//  if (n > wstr_len) {
-//    wstr = (xchar*) realloc(wstr, sizeof(xchar) * (n + 1));
-//    wstr_len = n;
-//  }
-//wn = fl_utf2unicode((const unsigned char *)c, n, wstr);
   wn = fl_utf8toUtf16(c, n, (unsigned short*)wstr, wstr_len);
   if(wn >= wstr_len) {
     wstr = (xchar*) realloc(wstr, sizeof(xchar) * (wn + 1));
@@ -404,7 +399,8 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
 
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
   SelectObject(fl_gc, fl_fontsize->fid);
-  while (i < wn) {
+#ifdef RTL_CHAR_BY_CHAR
+  while (i < wn) { // output char by char is very bad for Arabic but coherent with fl_width()
     lx = (int) fl_width(wstr[i]);
     x -= lx;
     TextOutW(fl_gc, x, y, (WCHAR*)wstr + i, 1);
@@ -413,6 +409,11 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
     }
     i++;
   }
+#else
+  UINT old_align = SetTextAlign(fl_gc, TA_RIGHT | TA_RTLREADING);
+  TextOutW(fl_gc, x, y - fl_height() + fl_descent(), (WCHAR*)wstr, wn);
+  SetTextAlign(fl_gc, old_align);
+#endif
   SetTextColor(fl_gc, oldColor);
 }
 #endif
