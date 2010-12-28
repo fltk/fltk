@@ -31,6 +31,7 @@
 #ifndef Fl_Printer_H
 #define Fl_Printer_H
 
+#include <FL/x.H>
 #include <FL/Fl_Paged_Device.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Pixmap.H>
@@ -39,6 +40,8 @@
 #include <stdio.h>
 #if !(defined(__APPLE__) || defined(WIN32))
 #include <FL/Fl_PostScript.H>
+#elif defined(WIN32)
+#include <Commdlg.h>
 #endif
 
 #if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)

@@ -33,6 +33,7 @@
 #define Fl_Paged_Device_H
 
 #include <FL/Fl_Device.H>
+#include <FL/Fl_Window.H>
 
 /** \brief Number of elements in enum Page_Format */
 #define NO_PAGE_FORMATS 30 /* MSVC6 compilation fix */

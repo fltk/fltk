@@ -33,9 +33,10 @@
 #ifndef fl_draw_H
 #define fl_draw_H
 
-#include "Enumerations.H"  // for the color names
-#include "Fl_Window.H"	   // for fl_set_spot()
-#include "Fl_Device.H"
+#include <FL/x.H>	      // for Fl_Region
+#include <FL/Enumerations.H>  // for the color names
+#include <FL/Fl_Window.H>     // for fl_set_spot()
+#include <FL/Fl_Device.H>     // for fl_graphics_driver
 
 // Image class...
 class Fl_Image;
