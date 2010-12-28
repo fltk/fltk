@@ -119,6 +119,7 @@ class Clip {
    */
   void draw(const char* s, int n, int x, int y) {transformed_draw(s,n,x,y); };
   void draw(int angle, const char *str, int n, int x, int y);
+  void rtl_draw(const char* s, int n, int x, int y);
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
   void transformed_draw(const char* s, double x, double y);
   int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);

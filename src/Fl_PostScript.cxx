@@ -1094,6 +1094,25 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   fprintf(output, "> %g %g show_pos_width\n", x, y);
 }
 
+void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
+  const char *last = str + n;
+  const char *str2 = str;
+  unsigned unis[n + 1];
+  char out[n + 1];
+  int u = 0, len;
+  char *p = out;
+  double w = fl_width(str, n);
+  while (str2 < last) {
+    unis[u++] = fl_utf8decode(str2, last, &len);
+    str2 += len;
+    }
+  while (u > 0) {
+    len = fl_utf8encode(unis[--u], p);
+    p += len;
+    }
+  transformed_draw(out, p - out, x - w, y);
+}
+
 struct matrix {double a, b, c, d, x, y;};
 extern matrix * fl_matrix;
 
