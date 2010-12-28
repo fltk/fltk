@@ -193,9 +193,9 @@ protected:
   /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
   virtual void font(Fl_Font face, Fl_Fontsize size) {};
   /** \brief see fl_color(Fl_Color c). */
-  virtual void color(Fl_Color c);
+  virtual void color(Fl_Color c) {};
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
-  virtual void color(uchar r, uchar g, uchar b);
+  virtual void color(uchar r, uchar g, uchar b) {};
   /** \brief see fl_point(int x, int y). */
   virtual void point(int x, int y);
   /** \brief see fl_loop(int x0, int y0, int x1, int y1, int x2, int y2). */
@@ -298,6 +298,8 @@ public:
   /** \brief The constructor. */
   Fl_Quartz_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
+  void color(Fl_Color c);
+  void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* str, int n, int x, int y);
@@ -322,6 +324,8 @@ public:
   /** \brief The constructor. */
   Fl_GDI_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
+  void color(Fl_Color c);
+  void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* str, int n, int x, int y);
@@ -346,6 +350,8 @@ public:
   /** \brief The constructor. */
   Fl_Xlib_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
+  void color(Fl_Color c);
+  void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* str, int n, int x, int y);
