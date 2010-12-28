@@ -284,7 +284,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 
 static int fl_abs(int v) { return v<0 ? -v : v; }
 
-void Fl_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_GDI_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
     innards(buf,x,y,w,h,d,l,fl_abs(d),0,0);
@@ -293,7 +293,7 @@ void Fl_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h
   }
 }
 
-void Fl_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
+void Fl_GDI_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
@@ -303,7 +303,7 @@ void Fl_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
   }
 }
 
-void Fl_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_GDI_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
     innards(buf,x,y,w,h,d,l,1,0,0);
@@ -312,7 +312,7 @@ void Fl_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, 
   }
 }
 
-void Fl_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
+void Fl_GDI_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   if (fl_abs(d)&FL_IMAGE_WITH_ALPHA) {
     d ^= FL_IMAGE_WITH_ALPHA;
