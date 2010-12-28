@@ -50,7 +50,7 @@
   assumes the font can draw any characters in the ISO-Latin1 character
   set.
 */
-class FL_EXPORT Fl_Output : public Fl_Input {
+class Fl_Output : public Fl_Input { // don't use FL_EXPORT here !
 public:
   /**
     Creates a new Fl_Output widget using the given position,

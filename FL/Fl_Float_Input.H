@@ -39,7 +39,7 @@
   that only allows the user to type floating point numbers (sign,
   digits, decimal point, more digits, 'E' or 'e', sign, digits).
 */
-class FL_EXPORT Fl_Float_Input : public Fl_Input {
+class Fl_Float_Input : public Fl_Input { // don't use FL_EXPORT here !
 public:
   /**
       Creates a new Fl_Float_Input widget using the given position,
