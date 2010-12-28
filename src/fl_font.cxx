@@ -81,7 +81,7 @@ void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
 } // fl_text_extents
 
 
-#if !USE_XFT && !__APPLE__
+#ifndef __APPLE__
 void fl_draw(const char* str, int l, float x, float y) {
   fl_draw(str, l, (int)x, (int)y);
 }

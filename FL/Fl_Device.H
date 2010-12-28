@@ -122,9 +122,6 @@ protected:
   friend void fl_line(int x, int y, int x1, int y1);
   friend void fl_line(int x, int y, int x1, int y1, int x2, int y2);
   friend void fl_draw(const char *str, int n, int x, int y);
-#ifdef __APPLE__
-  friend void fl_draw(const char *str, int n, float x, float y);
-#endif
   friend void fl_draw(int angle, const char *str, int n, int x, int y);
   friend void fl_rtl_draw(const char *str, int n, int x, int y);
   friend void fl_font(Fl_Font face, Fl_Fontsize size);
@@ -188,13 +185,13 @@ protected:
   /** \brief see fl_line(int x, int y, int x1, int y1, int x2, int y2). */
   virtual void line(int x, int y, int x1, int y1, int x2, int y2);
   /** \brief see fl_draw(const char *str, int n, int x, int y). */
-  virtual void draw(const char *str, int n, int x, int y);
+  virtual void draw(const char *str, int n, int x, int y) {};
   /** \brief see fl_draw(int angle, const char *str, int n, int x, int y). */
-  virtual void draw(int angle, const char *str, int n, int x, int y);
+  virtual void draw(int angle, const char *str, int n, int x, int y) {};
   /** \brief see fl_rtl_draw(const char *str, int n, int x, int y). */
-  virtual void rtl_draw(const char *str, int n, int x, int y);
+  virtual void rtl_draw(const char *str, int n, int x, int y) {};
   /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
-  virtual void font(Fl_Font face, Fl_Fontsize size);
+  virtual void font(Fl_Font face, Fl_Fontsize size) {};
   /** \brief see fl_color(Fl_Color c). */
   virtual void color(Fl_Color c);
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
@@ -301,6 +298,10 @@ public:
   /** \brief The constructor. */
   Fl_Quartz_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
+  void draw(const char* str, int n, int x, int y);
+  void draw(int angle, const char *str, int n, int x, int y);
+  void rtl_draw(const char* str, int n, int x, int y);
+  void font(Fl_Font face, Fl_Fontsize size);
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -317,6 +318,10 @@ public:
   /** \brief The constructor. */
   Fl_GDI_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
+  void draw(const char* str, int n, int x, int y);
+  void draw(int angle, const char *str, int n, int x, int y);
+  void rtl_draw(const char* str, int n, int x, int y);
+  void font(Fl_Font face, Fl_Fontsize size);
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);
@@ -333,6 +338,10 @@ public:
   /** \brief The constructor. */
   Fl_Xlib_Graphics_Driver() { type_ = device_type; };
   static const char *device_type;
+  void draw(const char* str, int n, int x, int y);
+  void draw(int angle, const char *str, int n, int x, int y);
+  void rtl_draw(const char* str, int n, int x, int y);
+  void font(Fl_Font face, Fl_Fontsize size);
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy);

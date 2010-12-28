@@ -146,7 +146,7 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   fl_fontsize = find(fnum, size, angle);
 }
 
-void Fl_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_GDI_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(fnum, size, 0);
 }
 
@@ -334,7 +334,7 @@ exit_error:
   return;
 } // fl_text_extents
 
-void Fl_Graphics_Driver::draw(const char* str, int n, int x, int y) {
+void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   int i = 0;
   int lx = 0;
   char *end = (char *)&str[n];
@@ -362,7 +362,7 @@ void Fl_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   SetTextColor(fl_gc, oldColor);
 }
 
-void Fl_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
+void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
   fl_font(fl_font_, fl_size_, angle);
 //  fl_draw(str, n, (int)x, (int)y);
   int i = 0, i2=0;
@@ -386,7 +386,7 @@ void Fl_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
   fl_font(fl_font_, fl_size_);
 }
 
-void Fl_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
+void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   int wn;
   int i = 0;
   int lx = 0;

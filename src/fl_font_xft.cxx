@@ -152,7 +152,7 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   fl_xftfont = (void*)f->font;
 }
 
-void Fl_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
+void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(fnum,size,0);
 }
 
@@ -552,7 +552,7 @@ void fl_destroy_xft_draw(Window id) {
 #endif
 }
 
-void Fl_Graphics_Driver::draw(const char *str, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   if ( !current_font ) {
     fl_font(FL_HELVETICA, 14);
   }
@@ -589,14 +589,10 @@ void Fl_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   XftDrawStringUtf8(draw_, &color, current_font, x, y, (XftChar8 *)str, n);
 }
 
-void Fl_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   fl_font(fl_font_, fl_size_, angle);
   fl_draw(str, n, (int)x, (int)y);
   fl_font(fl_font_, fl_size_);
-}
-
-void fl_draw(const char* str, int n, float x, float y) {
-  fl_draw(str, n, (int)x, (int)y);
 }
 
 static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
@@ -634,7 +630,7 @@ static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
 }
 
 
-void Fl_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
+void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
 
 #if defined(__GNUC__)
 // FIXME: warning Need to improve this XFT right to left draw function
