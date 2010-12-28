@@ -33,6 +33,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_Box.H>
 #include <FL/fl_ask.H>
 
 class Application : public Fl_Window {
@@ -56,11 +57,14 @@ class Application : public Fl_Window {
     if ( !exist(filename) ) {
       FILE *fp = fopen(filename, "w");				// create file if it doesn't exist
       if ( fp ) {
+        // A real app would do something useful here.
         fprintf(fp, "Hello world.\n");
         fclose(fp);
       } else {
         fl_message("Error: %s: %s", filename, strerror(errno));
       }
+    } else {
+      // A real app would do something useful here.
     }
   }
   // Handle an 'Open' request from the menu
@@ -124,6 +128,19 @@ public:
     menu->add("&File/&Save",  FL_COMMAND+'s', save_cb, (void*)this);
     menu->add("&File/&Save As", 0,  saveas_cb, (void*)this);
     menu->add("&File/&Quit",  FL_COMMAND+'q', quit_cb);
+    // Describe the demo..
+    Fl_Box *box = new Fl_Box(20,25+20,w()-40,h()-40-25);
+    box->color(45); 
+    box->box(FL_FLAT_BOX);
+    box->align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
+    box->label("This demo shows an example of implementing "
+               "common 'File' menu operations like:\n"
+               "    File/Open, File/Save, File/Save As\n"
+	       "..using the Fl_Native_File_Chooser widget.\n\n"
+	       "Note 'Save' and 'Save As' really *does* create files! "
+	       "This is to show how behavior differs when "
+	       "files exist vs. do not.");
+    box->labelsize(12);
     // Initialize the file chooser
     fc = new Fl_Native_File_Chooser();
     fc->filter("Text\t*.txt\n");
