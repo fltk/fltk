@@ -37,7 +37,11 @@
   \todo	typedef's fl_intptr_t and fl_uintptr_t should be documented.
 */
 #ifdef _WIN64
+#ifdef __GNUC__
 #include <stdint.h>
+#else
+#include <stddef.h>  // M$VC
+#endif
 typedef intptr_t fl_intptr_t;
 typedef uintptr_t fl_uintptr_t;
 #else
