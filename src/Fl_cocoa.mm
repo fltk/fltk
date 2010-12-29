@@ -71,7 +71,6 @@ extern "C" {
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Input_.H>
 #include <FL/Fl_Text_Display.H>
-#include <FL/fl_ask.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include "flstring.h"
@@ -3270,17 +3269,6 @@ CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
 Window fl_xid(const Fl_Window* w)
 {
   return Fl_X::i(w)->xid;
-}
-
-void fl_beep(int type) {
-  switch (type) {
-    case FL_BEEP_DEFAULT :
-    case FL_BEEP_ERROR :
-      NSBeep();
-      break;
-    default :
-      break;
-  }
 }
 
 #endif // __APPLE__

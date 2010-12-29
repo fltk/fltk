@@ -56,6 +56,9 @@ static int ret_val;
 static const char *iconlabel = "?";
 Fl_Font fl_message_font_ = FL_HELVETICA;
 Fl_Fontsize fl_message_size_ = 14;
+#ifdef __APPLE__
+extern "C" void NSBeep(void);
+#endif
 
 static char avoidRecursion = 0;
 
@@ -252,7 +255,6 @@ const char* fl_cancel= "Cancel"; ///< string pointer used in common dialogs, you
 const char* fl_close= "Close";   ///< string pointer used in common dialogs, you can change it to a foreign language
 
 // fltk functions:
-#ifndef __APPLE__ // the Mac code is in file Fl_cocoa.mm
 /**
    Emits a system beep message.
    \note \#include <FL/fl_ask.H>
@@ -277,6 +279,15 @@ void fl_beep(int type) {
       MessageBeep(0xFFFFFFFF);
       break;
   }
+#elif defined(__APPLE__)
+  switch (type) {
+    case FL_BEEP_DEFAULT :
+    case FL_BEEP_ERROR :
+      NSBeep();
+      break;
+    default :
+      break;
+  }  
 #else
   switch (type) {
     case FL_BEEP_DEFAULT :
@@ -293,7 +304,6 @@ void fl_beep(int type) {
   }
 #endif // WIN32
 }
-#endif // __APPLE__
 
 /** Shows an information message dialog box.
 
