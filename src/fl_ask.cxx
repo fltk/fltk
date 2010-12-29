@@ -47,12 +47,6 @@
 #include <FL/x.H>
 #include <FL/fl_draw.H>
 
-#ifdef __APPLE__
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-#  include <AudioToolbox/AudioServices.h>
-# endif
-#endif
-
 static Fl_Window *message_form;
 static Fl_Box *message;
 static Fl_Box *icon;
@@ -258,7 +252,7 @@ const char* fl_cancel= "Cancel"; ///< string pointer used in common dialogs, you
 const char* fl_close= "Close";   ///< string pointer used in common dialogs, you can change it to a foreign language
 
 // fltk functions:
-
+#ifndef __APPLE__ // the Mac code is in file Fl_cocoa.mm
 /**
    Emits a system beep message.
    \note \#include <FL/fl_ask.H>
@@ -283,34 +277,6 @@ void fl_beep(int type) {
       MessageBeep(0xFFFFFFFF);
       break;
   }
-#elif defined(__APPLE__)
-  switch (type) {
-    case FL_BEEP_DEFAULT :
-    case FL_BEEP_ERROR :
-      // How Apple is not any better than Microsoft:
-      /* MacOS 8 */   // SysBeep(30);
-      /* OS X 10.1 */ // AlertSoundPlay();
-      /* OS X 10.5 */ // AudioServicesPlayAlertSound(kUserPreferredAlert);
-      /* OS X 10.6 */ // AudioServicesPlayAlertSound(kSystemSoundID_UserPreferredAlert);
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-      if (AudioServicesPlayAlertSound!=0L)
-#   if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-        AudioServicesPlayAlertSound(kSystemSoundID_UserPreferredAlert);
-#   else
-        AudioServicesPlayAlertSound(kUserPreferredAlert);
-#   endif
-      else
-# endif
-#if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-        AlertSoundPlay();
-#else
-    {
-    }
-#endif
-      break;
-    default :
-      break;
-  }
 #else
   switch (type) {
     case FL_BEEP_DEFAULT :
@@ -327,6 +293,8 @@ void fl_beep(int type) {
   }
 #endif // WIN32
 }
+#endif // __APPLE__
+
 /** Shows an information message dialog box.
 
    \note Common dialog boxes are application modal. No more than one common dialog box

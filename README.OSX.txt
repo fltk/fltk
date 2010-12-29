@@ -299,8 +299,7 @@ TODO: Build Rules
 
 If the little helpers above were installed, the menu "File > New Project..."
 will pop up a dialog that offers a User Template named Fluid. Select it and
-follow the instructions. You will need to add the "AudioToolbox.framework" 
-manually which is needed to create warning beeps.
+follow the instructions.
 
 
 
@@ -310,3 +309,4 @@ manually which is needed to create warning beeps.
 Oct 29 2010 - matt: removed warnings
 Oct 24 2010 - matt: restructured entire document and verified instructions
 Dec 19 2010 - Manolo: corrected typos
+Dec 29 2010 - Manolo: removed reference to AudioToolbox.framework that's no longer needed

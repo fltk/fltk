@@ -500,7 +500,6 @@
 		C96290C21274D0CF007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96290E21274D0EF007D3CFE /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E11274D0EF007D3CFE /* AGL.framework */; };
 		C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E51274D100007D3CFE /* OpenGL.framework */; };
-		C96290EC1274D134007D3CFE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290EB1274D133007D3CFE /* AudioToolbox.framework */; };
 		C962910E1274D1D7007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96291151274D1FD007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96291E712756D5E007D3CFE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFB1274D0B3007D3CFE /* Carbon.framework */; };
@@ -4476,7 +4475,6 @@
 		C9628FFD1274D0B3007D3CFE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C96290E11274D0EF007D3CFE /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = System/Library/Frameworks/AGL.framework; sourceTree = SDKROOT; };
 		C96290E51274D100007D3CFE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		C96290EB1274D133007D3CFE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		C9EDD143127338F600ADB21C /* README.OSX.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.OSX.txt; path = ../../README.OSX.txt; sourceTree = SOURCE_ROOT; };
 		C9EDD4DE1274BB6600ADB21C /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = ../../png/png.h; sourceTree = SOURCE_ROOT; };
 		C9EDD4DF1274BB6600ADB21C /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = ../../png/pngconf.h; sourceTree = SOURCE_ROOT; };
@@ -5202,7 +5200,6 @@
 			files = (
 				C96290C11274D0CD007D3CFE /* Carbon.framework in Frameworks */,
 				C96290C21274D0CF007D3CFE /* Cocoa.framework in Frameworks */,
-				C96290EC1274D134007D3CFE /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6355,7 +6352,6 @@
 		C9628FFA1274D0A1007D3CFE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C96290EB1274D133007D3CFE /* AudioToolbox.framework */,
 				C9628FFB1274D0B3007D3CFE /* Carbon.framework */,
 				C9628FFD1274D0B3007D3CFE /* Cocoa.framework */,
 				C96290E11274D0EF007D3CFE /* AGL.framework */,

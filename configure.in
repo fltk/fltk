@@ -843,7 +843,7 @@ case $uname_GUI in
 
     Darwin*)
         # MacOS X uses Cocoa for graphics. There are still some Carbon leftovers.
-        LIBS="$LIBS -framework Cocoa -framework Carbon -framework AudioToolbox"
+        LIBS="$LIBS -framework Cocoa -framework Carbon"
 
 	if test x$have_pthread = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)

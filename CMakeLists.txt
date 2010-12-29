@@ -60,7 +60,7 @@ if(APPLE)
    set(HAVE_STRTOLL 1)
    set(HAVE_STRCASECMP 1)
    set(HAVE_DIRENT_H 1)
-   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework Carbon -framework AudioToolBox")
+   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa -framework Carbon")
 endif(APPLE)
 
 if(WIN32)
