@@ -88,9 +88,6 @@ distclean: clean
 		$(RM) test/`basename $$file .fl`.cxx; \
 		$(RM) test/`basename $$file .fl`.h; \
 	done
-	$(RM) -r ide/Xcode3/build
-	$(RM) ide/Xcode3/FLTK.xcodeproj/*.pbxuser
-	$(RM) ide/Xcode3/FLTK.xcodeproj/*.perspective*
 
 fltk-config: configure configh.in fltk-config.in
 	if test -f config.status; then \
