@@ -14,6 +14,10 @@ if test $# = 0 -o "x$1" = xsnapshot; then
 	fileurl="ftp://ftp.easysw.com/pub/fltk/snapshots/fltk-$fileversion-source.tar.bz2"
 	url="."
 else
+	if test ! -e "documentation/html/"; then
+		echo "ERROR: Please generate the HTML documentation and update the PDF."
+		exit
+	fi 
 	echo Creating tag for release...
 	rev="1"
 	version=$1
@@ -28,6 +32,11 @@ fi
 echo Exporting $version...
 rm -rf /tmp/fltk-$version
 svn export $url /tmp/fltk-$version
+
+if test $# != 0 -a "x$1" != xsnapshot; then
+	echo "Copying HTML documentation..."
+	cp -r documentation/html /tmp/fltk-$version/documentation/
+fi
 
 echo Applying version number...
 cd /tmp/fltk-$version
@@ -47,17 +56,27 @@ rm -f makesrcdist
 
 cd ..
 
-echo "Making UNIX distribution..."
+if test $# != 0 -a "x$1" != xsnapshot; then
+	echo "Making HTML docs distribution..."
+	gtar czf fltk-$fileversion-docs-html.tar.gz fltk-$version/documentation/html/
 
+	echo "Making PDF docs distribution..."
+	gtar czf fltk-$fileversion-docs-pdf.tar.gz fltk-$version/documentation/fltk.pdf
+fi
+
+echo "Removing documentation..."
+rm -rf fltk-$version/documentation/html/
+rm -f fltk-$version/documentation/fltk.pdf
+
+echo "Making UNIX distribution..."
 gtar czf fltk-$fileversion-source.tar.gz fltk-$version
 
-echo "Making BZ2 distribution..."
-gtar cjf fltk-$fileversion-source.tar.bz2 fltk-$version
+#echo "Making BZ2 distribution..."
+#gtar cjf fltk-$fileversion-source.tar.bz2 fltk-$version
 
-echo "Making Windows distribution..."
-
-rm -f fltk-$fileversion-source.zip
-zip -r9 fltk-$fileversion-source.zip fltk-$version
+#echo "Making Windows distribution..."
+#rm -f fltk-$fileversion-source.zip
+#zip -r9 fltk-$fileversion-source.zip fltk-$version
 
 echo "Removing distribution directory..."
 
