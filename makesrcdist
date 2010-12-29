@@ -42,7 +42,7 @@ echo Creating configure script...
 autoconf -f
 
 echo Cleaning developer files...
-rm -rf OpenGL autom4te* bc5 config forms gl glut images packages themes
+rm -rf OpenGL autom4te* bc5 config forms glut images packages themes
 rm -f makesrcdist
 
 cd ..
