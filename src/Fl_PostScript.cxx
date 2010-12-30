@@ -1097,8 +1097,8 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
 void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
   const char *last = str + n;
   const char *str2 = str;
-  unsigned unis[n + 1];
-  char out[n + 1];
+  unsigned int *unis = new unsigned int[n + 1];
+  char *out = new char[n + 1];
   int u = 0, len;
   char *p = out;
   double w = fl_width(str, n);
@@ -1111,6 +1111,8 @@ void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int 
     p += len;
     }
   transformed_draw(out, p - out, x - w, y);
+  delete [] unis;
+  delete [] out;
 }
 
 struct matrix {double a, b, c, d, x, y;};
