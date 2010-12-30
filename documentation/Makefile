@@ -79,8 +79,10 @@ install: $(MANPAGES)
 		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir); \
 	  done \
 	fi
-	echo "Installing fltk.pdf in $(DESTDIR)$(docdir) ..."
-	$(INSTALL_DATA) fltk.pdf $(DESTDIR)$(docdir)
+	if test -f fltk.pdf ; then \
+	  echo "Installing fltk.pdf in $(DESTDIR)$(docdir) ..."; \
+	  $(INSTALL_DATA) fltk.pdf $(DESTDIR)$(docdir); \
+	fi
 	echo "Installing man pages in $(DESTDIR)$(mandir) ..."
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
