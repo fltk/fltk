@@ -791,7 +791,7 @@ HLINKS=
 OSX_ONLY=:
 THREADS=
 
-AC_ARG_WITH(links, [  --with-links            make header links for common misspellings])
+AC_ARG_WITH(links, [  --with-links            make header links for common misspellings (default=no)])
 
 INSTALL_DESKTOP=""
 UNINSTALL_DESKTOP=""
@@ -1002,7 +1002,9 @@ case $uname_GUI in
 	    *)
 	    ;;
 	esac
-	if test "x$with_links" = xno; then
+	# Make symlinks since UNIX/Linux is case sensitive,
+	# but only if explicitly configured (default=no)
+	if test "x$with_links" != xyes; then
 		HLINKS="#"
 	fi
 

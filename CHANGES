@@ -55,10 +55,10 @@ CHANGES IN FLTK 1.3.0
 
 	  IDE support and command line build options
 
-	- FLTK now support Apple Xcode 3, MS VisualC 2008 and 
-	  MS VisualC 2010. MS VisualC 6 support is maintained as a compatibily
-	  base for VisualC.net, etc. .  FLTK continues to support
-	  configure/make and improved CMake build files.
+	- FLTK now supports Apple Xcode 3, MS VisualC 2008, and
+	  MS VisualC 2010. MS VisualC 6 support is maintained as a
+	  compatibility base for VisualC.net, etc. . FLTK continues
+	  to support configure/make and improved CMake build files.
 	- Added step by step README's for MSWindows, OS X, and four
 	  Linux distros.
 	- Added "ide" subdirectory for all IDE support files
@@ -70,6 +70,10 @@ CHANGES IN FLTK 1.3.0
 	  instead of GDI drawing (STR #2147, #2183) and is ignored otherwise.
 	- Changed "fltk-config --post foo" to create an application
 	  bundle rather than attaching a resource fork.
+	- Changed default for configure option --with-links for common
+	  misspellings on case sensitive file systems like Unix/Linux.
+	  The new default is --without-links; use --with-links on
+	  Unix/Linux only if you need the links (e.g. lowercase '.h')
 
 	  Fluid
 
