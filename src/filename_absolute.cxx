@@ -163,8 +163,8 @@ fl_filename_relative(char       *to,	// O - Relative filename
   
   char          *newslash;		// Directory separator
   const char	*slash;			// Directory separator
-  char          *cwd = 0L;
-  if (base) cwd = strdup(base);
+  char          *cwd = 0L, *cwd_buf = 0L;
+  if (base) cwd = cwd_buf = strdup(base);
   
   // return if "from" is not an absolute path
 #if defined(WIN32) || defined(__EMX__)
@@ -175,7 +175,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   if (from[0] == '\0' || !isdirsep(*from)) {
 #endif // WIN32 || __EMX__
     strlcpy(to, from, tolen);
-    if (cwd) free(cwd);
+    if (cwd_buf) free(cwd_buf);
     return 0;
   }
         
@@ -188,7 +188,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   if (!cwd || cwd[0] == '\0' || !isdirsep(*cwd)) {
 #endif // WIN32 || __EMX__
     strlcpy(to, from, tolen);
-    if (cwd) free(cwd);
+    if (cwd_buf) free(cwd_buf);
     return 0;
   }
               
@@ -200,7 +200,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   // test for the exact same string and return "." if so
   if (!strcasecmp(from, cwd)) {
     strlcpy(to, ".", tolen);
-    free(cwd);
+    free(cwd_buf);
     return (1);
   }
 
@@ -208,7 +208,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   if (tolower(*from & 255) != tolower(*cwd & 255)) {
     // Not the same drive...
     strlcpy(to, from, tolen);
-    free(cwd);
+    free(cwd_buf);
     return 0;
   }
 
@@ -218,7 +218,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   // test for the exact same string and return "." if so
   if (!strcmp(from, cwd)) {
     strlcpy(to, ".", tolen);
-    free(cwd);
+    free(cwd_buf);
     return (1);
   }
 #endif // WIN32 || __EMX__
@@ -262,7 +262,7 @@ fl_filename_relative(char       *to,	// O - Relative filename
   // finally add the differing path from "from"
   strlcat(to, slash, tolen);
 
-  free(cwd);
+  free(cwd_buf);
   return 1;
 }
 
