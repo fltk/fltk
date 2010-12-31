@@ -166,17 +166,20 @@ to control the positioning of the label:
 \li FL_ALIGN_RIGHT - The label is right-aligned. 
 \li FL_ALIGN_CLIP - The label is clipped to the widget. 
 \li FL_ALIGN_WRAP - The label text is wrapped as needed. 
-\li FL_ALIGN_TOP_LEFT
-\li FL_ALIGN_TOP_RIGHT
-\li FL_ALIGN_BOTTOM_LEFT
-\li FL_ALIGN_BOTTOM_RIGHT
-\li FL_ALIGN_LEFT_TOP
-\li FL_ALIGN_RIGHT_TOP
-\li FL_ALIGN_LEFT_BOTTOM
-\li FL_ALIGN_RIGHT_BOTTOM
-\li FL_ALIGN_INSIDE - 'or' this with other values to put
-    label inside the widget. 
-
+\li FL_ALIGN_TOP_LEFT - The label appears at the top of the widget, aligned to the left.
+\li FL_ALIGN_TOP_RIGHT - The label appears at the top of the widget, aligned to the right.
+\li FL_ALIGN_BOTTOM_LEFT - The label appears at the bottom of the widget, aligned to the left.
+\li FL_ALIGN_BOTTOM_RIGHT - The label appears at the bottom of the widget, aligned to the right.
+\li FL_ALIGN_LEFT_TOP - The label appears to the left of the widget, aligned at the top. Outside labels only.
+\li FL_ALIGN_RIGHT_TOP - The label appears to the right of the widget, aligned at the top. Outside labels only.
+\li FL_ALIGN_LEFT_BOTTOM - The label appears to the left of the widget, aligned at the bottom. Outside labels only.
+\li FL_ALIGN_RIGHT_BOTTOM - The label appears to the right of the widget, aligned at the bottom. Outside labels only.
+\li FL_ALIGN_INSIDE - 'or' this with other values to put label inside the widget. 
+\li FL_ALIGN_TEXT_OVER_IMAGE - Label text will appear above the image.
+\li FL_ALIGN_IMAGE_OVER_TEXT - Label text will be below the image.
+\li FL_ALIGN_IMAGE_NEXT_TO_TEXT - The image will appear to the left of the text.
+\li FL_ALIGN_TEXT_NEXT_TO_IMAGE - The image will appear to the right of the text.
+\li FL_ALIGN_IMAGE_BACKDROP - The image will be used as a background for the widget.
 
 \section enumerations_fonts Fonts
 
