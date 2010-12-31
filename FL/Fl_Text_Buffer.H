@@ -646,25 +646,11 @@ public:
   int prev_char_clipped(int ix) const;
   
   /**
-   Returns a pointer to the previous character.
-   \param c pointer to the current char
-   */
-  char *prev_char(char *c) const;
-  const char *prev_char(const char *c) const;
-  
-  /**
    Returns the index of the next character.
    \param ix index to the current char
    */
   int next_char(int ix) const;
   int next_char_clipped(int ix) const;
-  
-  /**
-   Returns a pointer to the next character.
-   \param c pointer to the current char
-   */
-  char *next_char(char *c) const;
-  const char *next_char(const char *c) const;
   
   /**
    Align an index into the buffer to the current or previous utf8 boundary.
