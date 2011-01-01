@@ -307,7 +307,7 @@ if test -n "$post"; then
 
 	    # Make a shell script that runs the bundled executable
 	    echo "#!/bin/sh" >"$post"
-	    echo 'dir="`dirname '"'"'$0'"'"'`"' >>"$post"
+	    echo 'dir="`dirname \"$0\"`"' >>"$post"
 	    echo 'exec "$dir/'"$post.app/Contents/MacOS/$post"'" "$@"' >>"$post"
 	    chmod +x "$post"
 
