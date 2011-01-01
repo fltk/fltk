@@ -19,11 +19,11 @@ World!" program that uses FLTK to display the window.
 #include <FL/Fl_Box.H>
 
 int main(int argc, char **argv) {
-  Fl_Window *window = new Fl_Window(300,180);
-  Fl_Box *box = new Fl_Box(20,40,260,100,"Hello, World!");
+  Fl_Window *window = new Fl_Window(340,180);
+  Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
   box->box(FL_UP_BOX);
-  box->labelsize(36);
   box->labelfont(FL_BOLD+FL_ITALIC);
+  box->labelsize(36);
   box->labeltype(FL_SHADOW_LABEL);
   window->end();
   window->show(argc, argv);
@@ -47,12 +47,12 @@ adds the new box to \p window, the current grouping widget.
 Fl_Box *box = new Fl_Box(20,40,260,100,"Hello, World!");
 \endcode
 
-Next, we set the type of box and the size, font, and style of the label:
+Next, we set the type of box and the font, size, and style of the label:
 
 \code
 box->box(FL_UP_BOX);
-box->labelsize(36);
 box->labelfont(FL_BOLD+FL_ITALIC);
+box->labelsize(36);
 box->labeltype(FL_SHADOW_LABEL);
 \endcode
 
