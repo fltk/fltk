@@ -190,10 +190,10 @@ the following limitations:
   appears to handle a wider set. What about illegal characters?
   See comments in %fl_utf8fromwc() and %fl_utf8toUtf16().
 
-\section unicode_illegals Illegal Unicode and UTF8 sequences
+\section unicode_illegals Illegal Unicode and UTF-8 sequences
 
 Three pre-processor variables are defined in the source code that
-determine how %fl_utf8decode() handles illegal UTF8 sequences:
+determine how %fl_utf8decode() handles illegal UTF-8 sequences:
 
 - if ERRORS_TO_CP1252 is set to 1 (the default), %fl_utf8decode() will
   assume that a byte sequence starting with a byte in the range 0x80
@@ -237,7 +237,7 @@ of the sequence. Trailing bytes in a UTF-8 sequence will return -1.
 Please see the individual function description for further details
 about error handling and return values.
 
-\section unicode_fltk_calls FLTK Unicode and UTF8 functions
+\section unicode_fltk_calls FLTK Unicode and UTF-8 functions
 
 This section currently provides a brief overview of the functions.
 For more details, consult the main text for each function via its link.

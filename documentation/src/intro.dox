@@ -114,7 +114,7 @@ Here are some of the core features unique to FLTK:
     emulation if none is available.
 
 \li Text widgets with cut & paste, undo, and support
-   for Unicode text and international input methods..
+   for Unicode text and international input methods.
 
 \li Compatibility header file for the GLUT library.
 
