@@ -41,7 +41,7 @@
 #if !(defined(__APPLE__) || defined(WIN32))
 #include <FL/Fl_PostScript.H>
 #elif defined(WIN32)
-#include <Commdlg.h>
+#include <commdlg.h>
 #endif
 
 #if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)
