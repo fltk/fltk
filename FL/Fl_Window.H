@@ -426,15 +426,9 @@ public:
   */
   void make_current();
 
-  /** Returns an Fl_Window pointer if this widget is an Fl_Window.
-  
-      \retval NULL if this widget is not derived from Fl_Window.
-      \note This method is provided to avoid dynamic_cast.
-      \todo More documentation ...
-   */
+  // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Window* as_window() { return this; }
 
-  // for back-compatibility only:
   /**
     Changes the cursor for this window.  This always calls the system, if
     you are changing the cursor a lot you may want to keep track of how
