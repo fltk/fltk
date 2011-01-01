@@ -344,17 +344,6 @@ The above code produces the following paragraphs:
     Use a single line ending with \<br\> for complicated paragraph titles.
 
 
-\section development_html_footer Hack for missing "tiny.gif" file
-
-  \todo
-	*HACK* : include image file for footer. Doxygen does not include
-  	the file "tiny.gif" from "html_footer" in its output html dir.
-	Find out, how this can be done, or avoid using an image in
-	the HTML footer.
-
-  \image html tiny.png
-  \image latex tiny.png "" width=2cm	
-
 \section development_navigation_test Navigation Elements
 
 Each introduction (tutorial) page ends with navigation elements. These

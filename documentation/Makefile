@@ -137,6 +137,7 @@ html/index.html: $(HTMLFILES) Doxyfile
 	if test "x$(DOXYDOC)" = "x" ; then \
 	  echo "Sorry - doxygen not found. Please install doxygen and run configure."; \
 	fi
+	test -d html && cp src/tiny.png html/
 
 html-dist: html
 	echo "Stripping HTML files ..."
