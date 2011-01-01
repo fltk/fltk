@@ -677,7 +677,7 @@ void fl_open_display()
 
 \par
 Opens the display. Does nothing if it is already open. You should call
-this if you wish to do Cocoa calls and there is a chance that your
+this if you wish to do Cocoa or Quartz calls and there is a chance that your
 code will be called before the first \c show() of a window.
 
 Window fl_xid(const Fl_Window *)
