@@ -143,7 +143,6 @@ void create_the_forms() {
   fontobj->box(FL_FRAME_BOX);
   fontobj->color(53,3);
   fontobj->callback(font_cb);
-  form->resizable(fontobj);
   sizeobj = new Fl_Hold_Browser(410, 190, 130, 170);
   sizeobj->box(FL_FRAME_BOX);
   sizeobj->color(53,3);
@@ -153,6 +152,7 @@ void create_the_forms() {
   
   tile->end();
   
+  form->resizable(tile);
   form->end();
 }
 

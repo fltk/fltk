@@ -31,6 +31,7 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Tile.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Button.H>
@@ -322,8 +323,7 @@ static void own_face_cb(Fl_Widget *, void *)
 
 static void create_font_widget()
 {
-  fnt_chooser_win = new Fl_Double_Window(380, 420, "Font Selector");
-  
+  // Create the font sample label
   strcpy(label, "Font Sample\n");
   int i = 12; // strlen(label);
   int n = 0;
@@ -340,55 +340,77 @@ static void create_font_widget()
   }
   label[i] = 0;
   
-  textobj = new FontDisplay(FL_FRAME_BOX, 10, 10, 360, 90, label);
-  textobj->align(FL_ALIGN_TOP|FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
-  textobj->color(53, 3);
-  
-  fontobj = new Fl_Hold_Browser(10, 110, 290, 270);
-  fontobj->box(FL_FRAME_BOX);
-  fontobj->color(53, 3);
-  fontobj->callback(font_cb);
-  fnt_chooser_win->resizable(fontobj);
-  
-  sizeobj = new Fl_Hold_Browser(310, 110, 60, 270);
-  sizeobj->box(FL_FRAME_BOX);
-  sizeobj->color(53, 3);
-  sizeobj->callback(size_cb);
-  
-  // Create the status bar
-  Fl_Group * stat_bar = new Fl_Group (10, 385, 380, 30);
-  stat_bar->begin();
-  
-  fnt_cnt = new Fl_Value_Output(10, 390, 40, 20);
-  fnt_cnt->label("fonts");
-  fnt_cnt->align(FL_ALIGN_RIGHT);
-  
-  fix_prop = new Fl_Output(100, 390, 40, 20);
-  fix_prop->color(FL_BACKGROUND_COLOR);
-  fix_prop->value("prop");
-  fix_prop->clear_visible_focus();
-  
-  own_face = new Fl_Check_Button(150, 390, 40, 20, "Self");
-  own_face->value(0);
-  own_face->type(FL_TOGGLE_BUTTON);
-  own_face->clear_visible_focus();
-  own_face->callback(own_face_cb);
-  own_face->tooltip("Display font names in their own face");
-  
-  Fl_Box * dummy = new Fl_Box(220, 390, 1, 1);
-  
-  choose_btn = new Fl_Button(240, 385, 60, 30);
-  choose_btn->label("Select");
-  choose_btn->callback(choose_cb);
-  
-  refresh_btn = new Fl_Button(310, 385, 60, 30);
-  refresh_btn->label("Refresh");
-  refresh_btn->callback(refresh_cb);
-  
-  stat_bar->end();
-  stat_bar->resizable (dummy);
-  
-  fnt_chooser_win->end();
+  // Create the window layout
+  fnt_chooser_win = new Fl_Double_Window(380, 420, "Font Selector");
+  {
+    Fl_Tile *tile = new Fl_Tile(0, 0, 380, 420);
+    {
+      Fl_Group *textgroup = new Fl_Group(0, 0, 380, 105);
+      {
+        
+        textobj = new FontDisplay(FL_FRAME_BOX, 10, 10, 360, 90, label);
+        textobj->align(FL_ALIGN_TOP|FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
+        textobj->color(53, 3);
+        
+        textgroup->box(FL_FLAT_BOX);
+        textgroup->resizable(textobj);
+        textgroup->end();
+      }  
+      Fl_Group *fontgroup = new Fl_Group(0, 105, 380, 315);
+      {        
+        fontobj = new Fl_Hold_Browser(10, 110, 290, 270);
+        fontobj->box(FL_FRAME_BOX);
+        fontobj->color(53, 3);
+        fontobj->callback(font_cb);
+        fnt_chooser_win->resizable(fontobj);
+        
+        sizeobj = new Fl_Hold_Browser(310, 110, 60, 270);
+        sizeobj->box(FL_FRAME_BOX);
+        sizeobj->color(53, 3);
+        sizeobj->callback(size_cb);
+        
+        // Create the status bar
+        Fl_Group *stat_bar = new Fl_Group (10, 385, 380, 30);
+        {        
+          fnt_cnt = new Fl_Value_Output(10, 390, 40, 20);
+          fnt_cnt->label("fonts");
+          fnt_cnt->align(FL_ALIGN_RIGHT);
+        
+          fix_prop = new Fl_Output(100, 390, 40, 20);
+          fix_prop->color(FL_BACKGROUND_COLOR);
+          fix_prop->value("prop");
+          fix_prop->clear_visible_focus();
+        
+          own_face = new Fl_Check_Button(150, 390, 40, 20, "Self");
+          own_face->value(0);
+          own_face->type(FL_TOGGLE_BUTTON);
+          own_face->clear_visible_focus();
+          own_face->callback(own_face_cb);
+          own_face->tooltip("Display font names in their own face");
+        
+          Fl_Box * dummy = new Fl_Box(220, 390, 1, 1);
+        
+          choose_btn = new Fl_Button(240, 385, 60, 30);
+          choose_btn->label("Select");
+          choose_btn->callback(choose_cb);
+        
+          refresh_btn = new Fl_Button(310, 385, 60, 30);
+          refresh_btn->label("Refresh");
+          refresh_btn->callback(refresh_cb);
+        
+          stat_bar->resizable (dummy);
+          stat_bar->end();
+        }
+        
+        fontgroup->box(FL_FLAT_BOX);
+        fontgroup->resizable(fontobj);
+        fontgroup->end();
+      }
+      tile->end();
+    }
+    fnt_chooser_win->resizable(tile);
+    fnt_chooser_win->end();
+  }
 }
 
 
@@ -437,7 +459,7 @@ int make_font_chooser(void)
   own_face_cb(NULL, 0);
   
   fontobj->value(1);
-   // optional hard-coded font for testing - do not use!
+  // optional hard-coded font for testing - do not use!
   //	fontobj->textfont(261);
   
   font_cb(fontobj, 0);
@@ -551,7 +573,7 @@ int main(int argc, char** argv)
 {
   int l;
   const char *latin1 = 
-    "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
+  "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
   char *utf8 = (char*) malloc(strlen(latin1) * 5 + 1);
   l = 0;
   //	l = fl_latin12utf((const unsigned char*)latin1, strlen(latin1), utf8);
@@ -662,8 +684,8 @@ int main(int argc, char** argv)
   // Now try Greg Ercolano's Japanese test sequence
   // SOME JAPANESE UTF8 TEXT
   const char *utfstr = 
-    "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
-    "\x8c\xe3\x82\x8b\xe3\x80\x82"; 
+  "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
+  "\x8c\xe3\x82\x8b\xe3\x80\x82"; 
   
   UCharDropBox db(5, 300, 190, 30);
   db.textsize(16);
