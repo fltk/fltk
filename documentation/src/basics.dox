@@ -37,14 +37,14 @@ After including the required header files, the program then creates a
 window. All following widgets will automatically be children of this window.
 
 \code
-Fl_Window *window = new Fl_Window(300,180);
+Fl_Window *window = new Fl_Window(340,180);
 \endcode
 
 Then we create a box with the "Hello, World!" string in it. FLTK automatically
 adds the new box to \p window, the current grouping widget.
 
 \code
-Fl_Box *box = new Fl_Box(20,40,260,100,"Hello, World!");
+Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
 \endcode
 
 Next, we set the type of box and the font, size, and style of the label:
