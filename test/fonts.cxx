@@ -27,6 +27,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Tile.H>
 #include <FL/Fl_Hold_Browser.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
@@ -35,6 +36,7 @@
 #include <string.h>
 
 Fl_Double_Window *form;
+Fl_Tile *tile;
 
 class FontDisplay : public Fl_Widget {
   void draw();
@@ -105,9 +107,8 @@ void size_cb(Fl_Widget *, long) {
 char label[0x1000];
 
 void create_the_forms() {
+  // Cerate the sample string
   int n = 0;
-  form = new Fl_Double_Window(550,370);
-
   strcpy(label, "Hello, world!\n");
   int i = strlen(label);
   ulong c;
@@ -117,13 +118,27 @@ void create_the_forms() {
     label[i++]=c;
   }
   label[i++] = '\n';
-  for (c = 0xA1; c < 0x600; c += 9) {if (!(++n&(0x1f))) label[i++]='\n';
-                          i += fl_utf8encode((unsigned int)c, label + i);}
+  for (c = 0xA1; c < 0x600; c += 9) {
+    if (!(++n&(0x1f))) label[i++]='\n';
+    i += fl_utf8encode((unsigned int)c, label + i);
+  }
   label[i] = 0;
+    
+  // create the basic layout
+  form = new Fl_Double_Window(550,370);
 
+  tile = new Fl_Tile(0, 0, 550, 370);
+  
+  Fl_Group *textgroup = new Fl_Group(0, 0, 550, 185);
+  textgroup->box(FL_FLAT_BOX);
   textobj = new FontDisplay(FL_FRAME_BOX,10,10,530,170,label);
   textobj->align(FL_ALIGN_TOP|FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
   textobj->color(9,47);
+  textgroup->resizable(textobj);
+  textgroup->end();
+  
+  Fl_Group *fontgroup = new Fl_Group(0, 185, 550, 185);
+  fontgroup->box(FL_FLAT_BOX);
   fontobj = new Fl_Hold_Browser(10, 190, 390, 170);
   fontobj->box(FL_FRAME_BOX);
   fontobj->color(53,3);
@@ -133,6 +148,11 @@ void create_the_forms() {
   sizeobj->box(FL_FRAME_BOX);
   sizeobj->color(53,3);
   sizeobj->callback(size_cb);
+  fontgroup->resizable(fontobj);
+  fontgroup->end();
+  
+  tile->end();
+  
   form->end();
 }
 
