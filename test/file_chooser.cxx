@@ -112,8 +112,14 @@ main(int  argc,		// I - Number of command-line arguments
   window = new Fl_Double_Window(400, 215, "File Chooser Test");
 
   filter = new Fl_Input(50, 10, 315, 25, "Filter:");
-  if (argc > 1)
-    filter->value(argv[1]);
+  int argn = 1;
+#ifdef __APPLE__
+  // OS X may add the process number as the first argument - ignore
+  if (argc>argn && strncmp(argv[1], "-psn_", 5)==0)
+    argn++;
+#endif
+  if (argc > argn)
+    filter->value(argv[argn]);
   else
     filter->value("PDF Files (*.pdf)\t"
                   "PostScript Files (*.ps)\t"
