@@ -335,14 +335,9 @@ need to add the FLTK (FLTK.LIB or FLTKD.LIB) and the Windows
 Common Controls (COMCTL32.LIB) libraries to the "Link" settings.
 
 You can build your Microsoft Windows applications as Console or
-WIN32 applications.  If you want to use the standard C \p main()
+Desktop applications.  If you want to use the standard C \p main()
 function as the entry point, FLTK includes a \p WinMain()
 function that will call your \p main() function for you.
-
-<I>Note: The Visual C++ 5.0 optimizer is known to cause problems with
-many programs. We only recommend using the "Favor Small Code"
-optimization setting.</I> The Visual C++ 6.0 optimizer seems to be much
-better and can be used with the "optimized for speed" setting.
 
 \section basics_naming Naming
 

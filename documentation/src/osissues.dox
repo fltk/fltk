@@ -639,10 +639,10 @@ version of FLTK:
 	as -O2 and -O3 seem to work OK. More details can be found
 	in STR#1656
 
-\section osissues_macos The Mac OS Interface
+\section osissues_macos The Apple OS X Interface
 
-FLTK supports Mac OS X using the Apple Cocoa library. Older
-versions of Mac OS are <I>not</I> supported.
+FLTK supports Apple OS X using the Apple Cocoa library. Older
+versions of MacOS are no longer supported.
 
 Control, Option, and Command Modifier Keys
 
@@ -677,7 +677,7 @@ void fl_open_display()
 
 \par
 Opens the display. Does nothing if it is already open. You should call
-this if you wish to do Quartz calls and there is a chance that your
+this if you wish to do Cocoa calls and there is a chance that your
 code will be called before the first \c show() of a window.
 
 Window fl_xid(const Fl_Window *)
@@ -736,11 +736,12 @@ internally in the same way.
 
 FLTK does not access the resource fork of an application.
 However, a minimal resource fork must be created for OS X
-applications
+applications. Starting with OS X 10.6, resource forks are
+no longer needed.
 
 <CENTER>
 <TABLE WIDTH="80%" BORDER="1" BGCOLOR="#cccccc" CELLPADDING="5">
-<TR><TD><B>Caution:</B>
+<TR><TD><B>Caution (OS X 10.2 and older):</B>
 
 When using UNIX commands to copy or move executables, OS X
 will NOT copy any resource forks! For copying and moving use

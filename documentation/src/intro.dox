@@ -5,7 +5,7 @@
 The Fast Light Tool Kit ("FLTK", pronounced
 "fulltick") is a cross-platform C++ GUI toolkit for
 UNIX&reg;/Linux&reg; (X11), Microsoft&reg; Windows&reg;, and
-MacOS&reg; X. FLTK provides modern GUI functionality without the
+Apple&reg; OS X&reg;. FLTK provides modern GUI functionality without the
 bloat and supports 3D graphics via OpenGL&reg; and its built-in
 GLUT emulation. It was originally developed by Mr. Bill Spitzak
 and is currently maintained by a small group of developers
@@ -113,8 +113,8 @@ Here are some of the core features unique to FLTK:
 \li Support for OpenGL overlay hardware on both X11 and WIN32, with
     emulation if none is available.
 
-\li Text widgets with Emacs key bindings, X cut & paste, and support
-   for character composition.
+\li Text widgets with cut & paste, undo, and support
+   for Unicode text and international input methods..
 
 \li Compatibility header file for the GLUT library.
 
@@ -143,11 +143,13 @@ the toolkit, which was already in use by several people, Bill
 came up with "FLTK", including a bogus excuse that it
 stands for "The Fast Light Toolkit".
 
-\section intro_unix Building and Installing FLTK Under UNIX and MacOS X
+\section intro_unix Building and Installing FLTK Under UNIX and Apple OS X
 
 In most cases you can just type "make". This will
 run configure with the default of no options and then compile
 everything.
+
+For OS X, Xcode 3 project files can be found in the 'ide' directory.
 
 FLTK uses GNU autoconf to configure itself for your UNIX
 platform. The main things that the configure script will look
@@ -244,9 +246,9 @@ files to "includedir", and the library files to "libdir".
 \section intro_windows Building FLTK Under Microsoft Windows
 
 There are three ways to build FLTK under Microsoft Windows.
-The first is to use the Visual C++ 5.0 project files under the
-"visualc" directory. Just open (or double-click on)
-the "fltk.dsw" file to get the whole shebang.
+The first is to use one of the VisualC project files in the
+"ide" directory. Just open (or double-click on)
+the "fltk.dsw" or "fltk.sln" file to get the whole shebang.
 
 The second method is to use the \p configure script
 included with the FLTK software; this has only been tested with
@@ -281,23 +283,6 @@ you will need to define the \p FL_DLL preprocessor symbol
 to get the correct linkage commands embedded within the FLTK
 header files.
 
-\section intro_os2 Building FLTK Under OS/2
-
-The current OS/2 build requires XFree86 for OS/2 to work.  A
-native  Presentation Manager version has not been implemented
-yet (volunteers  are welcome!).
-
-The current set of Makefiles/configuration failes assumes that EMX 0.9d
-and libExt (from http://posix2.sourceforge.net) is installed.
-
-To build the XFree86 version of FLTK for OS/2, copy the appropriate
-makeinclude and config files to the main directory and do a make: 
-
-\code
-copy makefiles\Makefile.os2x Makefile
-make
-\endcode
-
 \section intro_internet Internet Resources
 
 FLTK is available on the 'net in a bunch of locations:
@@ -313,8 +298,6 @@ http://ftp.easysw.com/pub/fltk [California, USA, via http]<br>
 ftp://ftp.easysw.com/pub/fltk [California, USA via ftp]<br>
 ftp://ftp2.easysw.com/pub/fltk [Maryland, USA]<br>
 ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub/fltk [Espoo, Finland]<br>
-ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk [Germany] <br>
-ftp://gd.tuwien.ac.at/hci/fltk [Austria]
 
 \par NNTP Newsgroups
 news://news.easysw.com/ [NNTP interface]<br>
