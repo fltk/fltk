@@ -1,4 +1,5 @@
 //
+// "$Id: $"
 //
 // UTF-8 test program for the Fast Light Tool Kit (FLTK).
 //
@@ -86,7 +87,8 @@ public:
   
   int test_fixed_pitch(void);
   
-  FontDisplay(Fl_Boxtype B, int X, int Y, int W, int H, const char *L = 0) : Fl_Widget(X, Y, W, H, L)
+  FontDisplay(Fl_Boxtype B, int X, int Y, int W, int H, const char *L = 0) 
+  : Fl_Widget(X, Y, W, H, L)
   {
     box(B);
     font = 0;
@@ -290,7 +292,8 @@ static void own_face_cb(Fl_Widget *, void *)
     
     if(own_face->value() == 0) {
       char *p = buffer;
-      if (font_type & FL_BOLD) { // if the font is BOLD, set the bold attribute in the list
+      // if the font is BOLD, set the bold attribute in the list
+      if (font_type & FL_BOLD) { 
         *p++ = '@';
         *p++ = 'b';
       }
@@ -302,8 +305,10 @@ static void own_face_cb(Fl_Widget *, void *)
       *p++ = '@';
       *p++ = '.';
       strcpy(p, name);
-    } else { // Show font in its own face
-      /* this is neat, but really slow on some systems: uses each font to display its own name */
+    } else { 
+      // Show font in its own face
+      // this is neat, but really slow on some systems: 
+      // uses each font to display its own name
       sprintf (buffer, "@F%d@.%s", font_idx, name);
     }
     fontobj->add(buffer);
@@ -336,7 +341,7 @@ static void create_font_widget()
   label[i] = 0;
   
   textobj = new FontDisplay(FL_FRAME_BOX, 10, 10, 360, 90, label);
-  textobj->align(FL_ALIGN_TOP | FL_ALIGN_LEFT | FL_ALIGN_INSIDE | FL_ALIGN_CLIP);
+  textobj->align(FL_ALIGN_TOP|FL_ALIGN_LEFT|FL_ALIGN_INSIDE|FL_ALIGN_CLIP);
   textobj->color(53, 3);
   
   fontobj = new Fl_Hold_Browser(10, 110, 290, 270);
@@ -401,11 +406,13 @@ int make_font_chooser(void)
 #elif __APPLE__
   font_count = Fl::set_fonts("*");
 #else
-  // Load the systems available fonts - ask for everything that claims to be iso10646 compatible
+  // Load the systems available fonts - ask for everything that claims to be 
+  // iso10646 compatible
   font_count = Fl::set_fonts("-*-*-*-*-*-*-*-*-*-*-*-*-iso10646-1");
 #endif
   
-  // allocate space for the sizes and numsizes array, now we know how many entries it needs
+  // allocate space for the sizes and numsizes array, now we know how many 
+  // entries it needs
   sizes = new int*[font_count];
   numsizes = new int[font_count];
   
@@ -417,7 +424,8 @@ int make_font_chooser(void)
     int *size_array;
     int size_count = Fl::get_font_sizes((Fl_Font)font_idx, size_array);
     numsizes[font_idx-first_free] = size_count;
-    if (size_count) // if the font has multiple sizes, populate the 2-D sizes array
+    // if the font has multiple sizes, populate the 2-D sizes array
+    if (size_count)
     {
       sizes[font_idx-first_free] = new int[size_count];
       for (int j = 0; j < size_count; j++)
@@ -429,7 +437,8 @@ int make_font_chooser(void)
   own_face_cb(NULL, 0);
   
   fontobj->value(1);
-  //	fontobj->textfont(261); // optional hard-coded font for testing - do not use!
+   // optional hard-coded font for testing - do not use!
+  //	fontobj->textfont(261);
   
   font_cb(fontobj, 0);
   
@@ -541,11 +550,8 @@ public:
 int main(int argc, char** argv)
 {
   int l;
-  /* If this file is saved as a UTF-8, the latin1 text in the comment 
-   * below doesn't look right any more! 
-   * Store the specific latin-1 byte values here... this should be equivalent to:
-   *	char *latin1 = "ABCabc‡ËÈÔ‚Óˆ¸„123"; */
-  const char *latin1 = "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
+  const char *latin1 = 
+    "\x41\x42\x43\x61\x62\x63\xe0\xe8\xe9\xef\xe2\xee\xf6\xfc\xe3\x31\x32\x33";
   char *utf8 = (char*) malloc(strlen(latin1) * 5 + 1);
   l = 0;
   //	l = fl_latin12utf((const unsigned char*)latin1, strlen(latin1), utf8);
@@ -621,7 +627,8 @@ int main(int argc, char** argv)
   i4.value(ltr_txt);
   i4.textfont(extra_font);
   
-  wchar_t r_to_l_txt[] ={/*8238,*/ 1610, 1608, 1606, 1604, 1603, 1608, 1583, 0};
+  wchar_t r_to_l_txt[] = {/*8238,*/ 
+    1610, 1608, 1606, 1604, 1603, 1608, 1583, 0};
   
   char abuf[40];
   //  l = fl_unicode2utf(r_to_l_txt, 8, abuf);
@@ -640,7 +647,9 @@ int main(int argc, char** argv)
   i7.value(abuf);
   i7.when(FL_WHEN_CHANGED);
   
-  wchar_t r_to_l_txt1[] ={/*8238,*/ 1610, 0x20, 1608, 0x20, 1606, 0x20,  1604, 0x20, 1603, 0x20, 1608, 0x20, 1583, 0};
+  wchar_t r_to_l_txt1[] = { /*8238,*/ 
+    1610, 0x20, 1608, 0x20, 1606, 0x20,  
+    1604, 0x20, 1603, 0x20, 1608, 0x20, 1583, 0};
   
   //  l = fl_unicode2utf(r_to_l_txt1, 14, abuf);
   l = fl_utf8fromwc(abuf, 40, r_to_l_txt1, 14);
@@ -652,8 +661,9 @@ int main(int argc, char** argv)
   
   // Now try Greg Ercolano's Japanese test sequence
   // SOME JAPANESE UTF8 TEXT
-  const char *utfstr = "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
-  "\x8c\xe3\x82\x8b\xe3\x80\x82"; // ‰Ωï„ÇÇË°å„Çã„ÄÇ
+  const char *utfstr = 
+    "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
+    "\x8c\xe3\x82\x8b\xe3\x80\x82"; 
   
   UCharDropBox db(5, 300, 190, 30);
   db.textsize(16);
@@ -681,5 +691,6 @@ int main(int argc, char** argv)
   return ret;
 }
 
-/* end of file */
-
+//
+// End of "$Id: $".
+//
