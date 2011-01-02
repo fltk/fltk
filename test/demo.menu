@@ -9,7 +9,7 @@
 # @main indicates the main menu.
 #
 
-@main:Widget\nTests:@x
+@main:Widget\nTests...:@x
 	@x:Fl_Browser:browser
 	@x:Fl_Input:input
 	@x:Fl_Output:output
@@ -23,7 +23,7 @@
 		@xm:Fl_Table:table
 		@xm:Fl_Tree:tree
 
-@main:Window\nTests:@w
+@main:Window\nTests...:@w
 	@w:overlay:overlay
 	@w:subwindow:subwindow
 	@w:double\nbuffer:doublebuffer
@@ -34,8 +34,8 @@
 	@w:resizable:resizebox
 	@w:resize:resize
 
-@main:Drawing\nTests:@d
-	@d:Images:@di
+@main:Drawing\nTests...:@d
+	@d:Images...:@di
 		@di:Fl_Bitmap:bitmap
 		@di:Fl_Pixmap:pixmap
 		@di:Fl_RGB\n_Image:image
@@ -48,7 +48,7 @@
 	@d:fl_curve:curve
 	@d:fl_line_style:line_style
 
-@main:Events:@u
+@main:Events...:@u
 	@u:navigation:navigation
 	@u:minimum update:minimum
 	@u:keyboard:keyboard
@@ -57,7 +57,7 @@
 
 @main:Fluid\n(UI design tool):../fluid/fluid valuators.fl
 
-@main:Cool\nDemos:@e
+@main:Cool\nDemos...:@e
 	@e:X Color\nBrowser:colbrowser
 	@e:Mandelbrot:mandelbrot
 	@e:Fractals:fractals
@@ -67,11 +67,11 @@
 	@e:Sudoku:sudoku
 	@e:Print\nsupport:device
 
-@main:Other\nTests:@o
+@main:Other\nTests...:@o
 	@o:Color Choosers:color_chooser
 	@o:File Chooser:file_chooser
 	@o:Native File Chooser:native-filechooser
-	@o:Font Tests:@of
+	@o:Font Tests...:@of
 		@of:Fonts:fonts
 		@of:UTF-8:utf8
 	@o:HelpDialog:help
@@ -80,7 +80,7 @@
 	@o:Threading:threads
 	@o:XForms Emulation:forms
 
-@main:Tutorial\nfrom\nManual:@j
+@main:Tutorial\nfrom\nManual...:@j
 	@j:ask\n(modified):ask
 	@j:button:button
 	@j:CubeView:CubeView
@@ -88,7 +88,7 @@
 	@j:hello:hello
 	@j:shape:shape
 
-@main:Images\nfor\nManual:@i
+@main:Images\nfor\nManual...:@i
 	@i:valuators:valuators
 	@i:symbols:symbols
 	@i:buttons:buttons
