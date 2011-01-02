@@ -77,7 +77,7 @@ static int first_free = 0;
 
 
 /*
- Class for displaying samle fonts.
+ Class for displaying sample fonts.
  */
 class FontDisplay : public Fl_Widget
 {
@@ -682,7 +682,7 @@ int main(int argc, char** argv)
   i6.value(abuf);
   
   // Now try Greg Ercolano's Japanese test sequence
-  // SOME JAPANESE UTF8 TEXT
+  // SOME JAPANESE UTF-8 TEXT
   const char *utfstr = 
   "\xe4\xbd\x95\xe3\x82\x82\xe8\xa1"
   "\x8c\xe3\x82\x8b\xe3\x80\x82"; 
