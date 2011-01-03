@@ -8404,6 +8404,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,

@@ -41,7 +41,7 @@ This manual is organized into the following chapters and appendices:
 \section preface_conventions Conventions
 
 This manual was generated using Doxygen
-(see http://www.stack.nl/~dimitri/doxygen/)
+(see http://www.doxygen.org/)
 to process the source code itself, special comments in the code,
 and additional documentation files.
 In general, Doxygen recognizes and denotes the following entities as shown:
