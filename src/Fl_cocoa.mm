@@ -864,7 +864,7 @@ static void calc_e_text(CFStringRef s, char *buffer, size_t len, unsigned sym)
 static int cocoaKeyboardHandler(NSEvent *theEvent);
 
 @interface FLTextView : NSTextView 
-// this subclass is needed under OS X 10.3 and 10.4 but not under 10.6 where the base class is enough
+// this subclass is needed under OS X <= 10.4 but not under >= 10.5 where the base class is enough
 {
 }
 @end

@@ -296,6 +296,7 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 }
 
 #  elif defined(__APPLE_QUARTZ__)
+#if !(MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 && __LP64__)
 static CGrafPtr fl_GetWindowPort(WindowRef window)
 {
   typedef CGrafPtr (*wf)(WindowRef);
@@ -303,6 +304,7 @@ static CGrafPtr fl_GetWindowPort(WindowRef window)
   if ( ! f) f = (wf)Fl_X::get_carbon_function("GetWindowPort");
   return (*f)(window);
 }
+#endif
 
 // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
