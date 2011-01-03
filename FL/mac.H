@@ -49,8 +49,8 @@ typedef void* Fl_PMPrintSession;
 
 #else // this part must be compiled when building the FLTK libraries
 
-// Standard MacOS Carbon API includes...
-#include <Carbon/Carbon.h>
+// Standard MacOS C/C++ includes...
+#include <ApplicationServices/ApplicationServices.h>
 #undef check // because of Fl::check()
 
 typedef CGContextRef	Fl_CGContextRef;
@@ -154,6 +154,7 @@ public:
   static CGContextRef nesw_cursor_image(void);
   static CGContextRef nwse_cursor_image(void);
   static CGContextRef none_cursor_image(void);
+  static void *get_carbon_function(const char *name);
 private:
   static void relink(Fl_Window*, Fl_Window*);
 };

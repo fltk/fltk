@@ -313,6 +313,7 @@
 		7E8E2DC7A53A62D0F1EB860E /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		7EA88708B9A088FCEB7CAA27 /* file_chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 39CD231E22E0B53E92CABDC9 /* file_chooser.cxx */; };
 		7EC3AD9A56535A54430B8DCD /* Fl_Browser_.cxx in Sources */ = {isa = PBXBuildFile; fileRef = AAD25B747F4122A2C5224708 /* Fl_Browser_.cxx */; };
+		7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */; };
 		7F66B1D912BB924C00C67B59 /* Fl_cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */; };
 		7F66B1DA12BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */; };
 		7F66B1DB12BB924C00C67B59 /* Fl_Quartz_Printer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */; };
@@ -496,13 +497,10 @@
 		C95961881274CEA1009C0594 /* README.Xcode in Headers */ = {isa = PBXBuildFile; fileRef = C95961641274CDEC009C0594 /* README.Xcode */; settings = {ATTRIBUTES = (Public, ); }; };
 		C95961891274CEA4009C0594 /* README.Xcode in Headers */ = {isa = PBXBuildFile; fileRef = C95961641274CDEC009C0594 /* README.Xcode */; settings = {ATTRIBUTES = (Public, ); }; };
 		C959618A1274CEA6009C0594 /* README.Xcode in Headers */ = {isa = PBXBuildFile; fileRef = C95961641274CDEC009C0594 /* README.Xcode */; settings = {ATTRIBUTES = (Public, ); }; };
-		C96290C11274D0CD007D3CFE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFB1274D0B3007D3CFE /* Carbon.framework */; };
 		C96290C21274D0CF007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96290E21274D0EF007D3CFE /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E11274D0EF007D3CFE /* AGL.framework */; };
 		C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E51274D100007D3CFE /* OpenGL.framework */; };
-		C962910E1274D1D7007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96291151274D1FD007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
-		C96291E712756D5E007D3CFE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFB1274D0B3007D3CFE /* Carbon.framework */; };
 		C984AFA812D02A1800D66DAD /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C984AFA712D02A1800D66DAD /* demo.menu */; };
 		C9A374AB3AD29E141C659819 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		C9C4C91FDA73557BB6B69F3D /* jchuff.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DB580DCA05DE487FACA272 /* jchuff.c */; };
@@ -4295,6 +4293,7 @@
 		7DF4AD3769671959EA813845 /* jcparam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcparam.c; path = ../../jpeg/jcparam.c; sourceTree = SOURCE_ROOT; };
 		7E05602BE68211B11E493E18 /* Fl_Menu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu.cxx; path = ../../src/Fl_Menu.cxx; sourceTree = SOURCE_ROOT; };
 		7E51DAB7D0F93ACFB736EE9A /* Fl_Tree_Prefs.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Tree_Prefs.H; path = ../../FL/Fl_Tree_Prefs.H; sourceTree = SOURCE_ROOT; };
+		7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		7F4B8ADD01CB2F8BFE43ACBA /* Fl_Menu_Bar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu_Bar.cxx; path = ../../src/Fl_Menu_Bar.cxx; sourceTree = SOURCE_ROOT; };
 		7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_cocoa.mm; path = ../../src/Fl_cocoa.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Native_File_Chooser_MAC.mm; path = ../../src/Fl_Native_File_Chooser_MAC.mm; sourceTree = SOURCE_ROOT; };
@@ -4472,7 +4471,6 @@
 		C9165EAF1291A304003FF4F0 /* utf8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = utf8.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9165ED31291A376003FF4F0 /* unittests.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unittests.cxx; path = ../../test/unittests.cxx; sourceTree = SOURCE_ROOT; };
 		C95961641274CDEC009C0594 /* README.Xcode */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.Xcode; path = ../../FL/README.Xcode; sourceTree = SOURCE_ROOT; };
-		C9628FFB1274D0B3007D3CFE /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		C9628FFD1274D0B3007D3CFE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C96290E11274D0EF007D3CFE /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = System/Library/Frameworks/AGL.framework; sourceTree = SDKROOT; };
 		C96290E51274D100007D3CFE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -5122,11 +5120,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C96291E712756D5E007D3CFE /* Carbon.framework in Frameworks */,
-				C962910E1274D1D7007D3CFE /* Cocoa.framework in Frameworks */,
 				04C166D5213DD80648BE1F4D /* fltk.framework in Frameworks */,
 				C96290E21274D0EF007D3CFE /* AGL.framework in Frameworks */,
 				C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */,
+				7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5201,7 +5198,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C96290C11274D0CD007D3CFE /* Carbon.framework in Frameworks */,
 				C96290C21274D0CF007D3CFE /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6355,7 +6351,7 @@
 		C9628FFA1274D0A1007D3CFE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C9628FFB1274D0B3007D3CFE /* Carbon.framework */,
+				7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */,
 				C9628FFD1274D0B3007D3CFE /* Cocoa.framework */,
 				C96290E11274D0EF007D3CFE /* AGL.framework */,
 				C96290E51274D100007D3CFE /* OpenGL.framework */,
@@ -8408,7 +8404,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.0";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -10977,8 +10972,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = line_style;
 				WARNING_CFLAGS = (
@@ -11041,8 +11034,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = ask;
 				WARNING_CFLAGS = (
@@ -11075,8 +11066,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tile;
 				WARNING_CFLAGS = (
@@ -11109,8 +11098,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = mandelbrot;
 				WARNING_CFLAGS = (
@@ -11143,8 +11130,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = hello;
 				WARNING_CFLAGS = (
@@ -11174,8 +11159,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = list_visuals;
 				WARNING_CFLAGS = (
@@ -11205,8 +11188,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = image;
 				WARNING_CFLAGS = (
@@ -11239,8 +11220,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = keyboard;
 				WARNING_CFLAGS = (
@@ -11270,8 +11249,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tiled_image;
 				WARNING_CFLAGS = (
@@ -11304,8 +11281,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = utf8;
 				WARNING_CFLAGS = (
@@ -11335,8 +11310,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = checkers;
 				WARNING_CFLAGS = (
@@ -11369,8 +11342,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = doublebuffer;
 				WARNING_CFLAGS = (
@@ -11403,8 +11374,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = overlay;
 				WARNING_CFLAGS = (
@@ -11437,8 +11406,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = checkers;
 				WARNING_CFLAGS = (
@@ -11468,8 +11435,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = radio;
 				WARNING_CFLAGS = (
@@ -11499,8 +11464,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = navigation;
 				WARNING_CFLAGS = (
@@ -11530,8 +11493,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tile;
 				WARNING_CFLAGS = (
@@ -11561,8 +11522,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = utf8;
 				WARNING_CFLAGS = (
@@ -11592,8 +11551,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = output;
 				WARNING_CFLAGS = (
@@ -11655,8 +11612,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = editor;
 				WARNING_CFLAGS = (
@@ -11689,8 +11644,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tree;
 				WARNING_CFLAGS = (
@@ -11723,8 +11676,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tabs;
 				WARNING_CFLAGS = (
@@ -11757,8 +11708,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = image;
 				WARNING_CFLAGS = (
@@ -11788,8 +11737,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = help;
 				WARNING_CFLAGS = (
@@ -11822,8 +11769,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = bitmap;
 				WARNING_CFLAGS = (
@@ -11856,8 +11801,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = list_visuals;
 				WARNING_CFLAGS = (
@@ -11888,8 +11831,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = arc;
 				WARNING_CFLAGS = (
@@ -11919,8 +11860,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = resizebox;
 				WARNING_CFLAGS = (
@@ -11950,8 +11889,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = sudoku;
 				WARNING_CFLAGS = (
@@ -11984,8 +11921,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = boxtype;
 				WARNING_CFLAGS = (
@@ -12015,8 +11950,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = label;
 				WARNING_CFLAGS = (
@@ -12046,8 +11979,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = gl_overlay;
 				WARNING_CFLAGS = (
@@ -12107,8 +12038,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = browser;
 				WARNING_CFLAGS = (
@@ -12141,8 +12070,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = cursor;
 				WARNING_CFLAGS = (
@@ -12175,8 +12102,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = blocks;
 				WARNING_CFLAGS = (
@@ -12209,8 +12134,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = colbrowser;
 				WARNING_CFLAGS = (
@@ -12243,8 +12166,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = glpuzzle;
 				WARNING_CFLAGS = (
@@ -12274,8 +12195,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = clock;
 				WARNING_CFLAGS = (
@@ -12305,8 +12224,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = inactive;
 				WARNING_CFLAGS = (
@@ -12339,8 +12256,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = help;
 				WARNING_CFLAGS = (
@@ -12370,8 +12285,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = valuators;
 				WARNING_CFLAGS = (
@@ -12401,8 +12314,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fast_slow;
 				WARNING_CFLAGS = (
@@ -12435,8 +12346,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = navigation;
 				WARNING_CFLAGS = (
@@ -12469,8 +12378,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = resize;
 				WARNING_CFLAGS = (
@@ -12503,8 +12410,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pack;
 				WARNING_CFLAGS = (
@@ -12537,8 +12442,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = symbols;
 				WARNING_CFLAGS = (
@@ -12635,8 +12538,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = message;
 				WARNING_CFLAGS = (
@@ -12699,8 +12600,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = cube;
 				WARNING_CFLAGS = (
@@ -12730,8 +12629,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fonts;
 				WARNING_CFLAGS = (
@@ -12790,8 +12687,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = shape;
 				WARNING_CFLAGS = (
@@ -12821,8 +12716,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = iconize;
 				WARNING_CFLAGS = (
@@ -12855,8 +12748,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = "native-filechooser";
 				WARNING_CFLAGS = (
@@ -12889,8 +12780,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = menubar;
 				WARNING_CFLAGS = (
@@ -12920,8 +12809,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fractals;
 				WARNING_CFLAGS = (
@@ -12954,8 +12841,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = valuators;
 				WARNING_CFLAGS = (
@@ -12983,8 +12868,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = arc;
 				WARNING_CFLAGS = (
@@ -13014,8 +12897,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = device;
 				WARNING_CFLAGS = (
@@ -13081,8 +12962,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = minimum;
 				WARNING_CFLAGS = (
@@ -13155,8 +13034,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = rotated_text;
 				WARNING_CFLAGS = (
@@ -13189,8 +13066,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = iconize;
 				WARNING_CFLAGS = (
@@ -13223,8 +13098,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = sudoku;
 				WARNING_CFLAGS = (
@@ -13257,8 +13130,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pixmap_browser;
 				WARNING_CFLAGS = (
@@ -13288,8 +13159,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = preferences;
 				WARNING_CFLAGS = (
@@ -13319,8 +13188,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = forms;
 				WARNING_CFLAGS = (
@@ -13353,8 +13220,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = preferences;
 				WARNING_CFLAGS = (
@@ -13387,8 +13252,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = label;
 				WARNING_CFLAGS = (
@@ -13418,8 +13281,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = buttons;
 				WARNING_CFLAGS = (
@@ -13505,8 +13366,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = glpuzzle;
 				WARNING_CFLAGS = (
@@ -13539,8 +13398,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = button;
 				WARNING_CFLAGS = (
@@ -13573,8 +13430,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fast_slow;
 				WARNING_CFLAGS = (
@@ -13604,8 +13459,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = message;
 				WARNING_CFLAGS = (
@@ -13635,8 +13488,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = editor;
 				WARNING_CFLAGS = (
@@ -13666,8 +13517,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = bitmap;
 				WARNING_CFLAGS = (
@@ -13700,8 +13549,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = inactive;
 				WARNING_CFLAGS = (
@@ -13734,8 +13581,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = clock;
 				WARNING_CFLAGS = (
@@ -13765,8 +13610,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = file_chooser;
 				WARNING_CFLAGS = (
@@ -13820,8 +13663,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = curve;
 				WARNING_CFLAGS = (
@@ -13851,8 +13692,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fullscreen;
 				WARNING_CFLAGS = (
@@ -13882,8 +13721,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = colbrowser;
 				WARNING_CFLAGS = (
@@ -13940,8 +13777,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = browser;
 				WARNING_CFLAGS = (
@@ -13971,8 +13806,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tree;
 				WARNING_CFLAGS = (
@@ -14005,8 +13838,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = scroll;
 				WARNING_CFLAGS = (
@@ -14036,8 +13867,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = hello;
 				WARNING_CFLAGS = (
@@ -14100,8 +13929,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pack;
 				WARNING_CFLAGS = (
@@ -14134,8 +13961,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = device;
 				WARNING_CFLAGS = (
@@ -14168,8 +13993,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = subwindow;
 				WARNING_CFLAGS = (
@@ -14199,8 +14022,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = doublebuffer;
 				WARNING_CFLAGS = (
@@ -14230,8 +14051,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = mandelbrot;
 				WARNING_CFLAGS = (
@@ -14264,8 +14083,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = resizebox;
 				WARNING_CFLAGS = (
@@ -14309,8 +14126,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pixmap_browser;
 				WARNING_CFLAGS = (
@@ -14340,8 +14155,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = color_chooser;
 				WARNING_CFLAGS = (
@@ -14406,8 +14219,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = buttons;
 				WARNING_CFLAGS = (
@@ -14440,8 +14251,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = minimum;
 				WARNING_CFLAGS = (
@@ -14474,8 +14283,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = input;
 				WARNING_CFLAGS = (
@@ -14508,8 +14315,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = file_chooser;
 				WARNING_CFLAGS = (
@@ -14542,8 +14347,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fonts;
 				WARNING_CFLAGS = (
@@ -14573,8 +14376,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tabs;
 				WARNING_CFLAGS = (
@@ -14636,8 +14437,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = input_choice;
 				WARNING_CFLAGS = (
@@ -14667,8 +14466,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = keyboard;
 				WARNING_CFLAGS = (
@@ -14698,8 +14495,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = scroll;
 				WARNING_CFLAGS = (
@@ -14732,8 +14527,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = curve;
 				WARNING_CFLAGS = (
@@ -14829,8 +14622,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = menubar;
 				WARNING_CFLAGS = (
@@ -14860,8 +14651,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = table;
 				WARNING_CFLAGS = (
@@ -14894,8 +14683,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = rotated_text;
 				WARNING_CFLAGS = (
@@ -14928,8 +14715,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = input_choice;
 				WARNING_CFLAGS = (
@@ -14962,8 +14747,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = output;
 				WARNING_CFLAGS = (
@@ -14993,8 +14776,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = boxtype;
 				WARNING_CFLAGS = (
@@ -15027,8 +14808,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = table;
 				WARNING_CFLAGS = (
@@ -15061,8 +14840,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = threads;
 				WARNING_CFLAGS = (
@@ -15090,13 +14867,11 @@
 					../../png,
 					../../jpeg,
 				);
-				INFOPLIST_FILE = "plists/utf8-Info copy.plist";
+				INFOPLIST_FILE = "plists/utf8-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = utf8;
 				WARNING_CFLAGS = (
@@ -15121,13 +14896,11 @@
 					../../png,
 					../../jpeg,
 				);
-				INFOPLIST_FILE = "plists/utf8-Info copy.plist";
+				INFOPLIST_FILE = "plists/utf8-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = utf8;
 				WARNING_CFLAGS = (
@@ -15157,8 +14930,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = button;
 				WARNING_CFLAGS = (
@@ -15191,8 +14962,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = gl_overlay;
 				WARNING_CFLAGS = (
@@ -15225,8 +14994,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tiled_image;
 				WARNING_CFLAGS = (
@@ -15259,8 +15026,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pixmap;
 				WARNING_CFLAGS = (
@@ -15293,8 +15058,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = radio;
 				WARNING_CFLAGS = (
@@ -15324,8 +15087,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pixmap;
 				WARNING_CFLAGS = (
@@ -15355,8 +15116,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = line_style;
 				WARNING_CFLAGS = (
@@ -15386,8 +15145,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = shape;
 				WARNING_CFLAGS = (
@@ -15417,8 +15174,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = subwindow;
 				WARNING_CFLAGS = (
@@ -15448,8 +15203,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = overlay;
 				WARNING_CFLAGS = (
@@ -15482,8 +15235,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = ask;
 				WARNING_CFLAGS = (
@@ -15513,8 +15264,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = input;
 				WARNING_CFLAGS = (
@@ -15547,8 +15296,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = forms;
 				WARNING_CFLAGS = (
@@ -15578,8 +15325,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = cube;
 				WARNING_CFLAGS = (
@@ -15609,8 +15354,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = blocks;
 				WARNING_CFLAGS = (
@@ -15664,8 +15407,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = cursor;
 				WARNING_CFLAGS = (
@@ -15695,8 +15436,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = "native-filechooser";
 				WARNING_CFLAGS = (
@@ -15729,8 +15468,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = color_chooser;
 				WARNING_CFLAGS = (
@@ -15794,8 +15531,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = symbols;
 				WARNING_CFLAGS = (
@@ -15825,8 +15560,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = resize;
 				WARNING_CFLAGS = (
@@ -15888,8 +15621,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fractals;
 				WARNING_CFLAGS = (
@@ -15952,8 +15683,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fullscreen;
 				WARNING_CFLAGS = (
@@ -15983,8 +15712,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = threads;
 				WARNING_CFLAGS = (

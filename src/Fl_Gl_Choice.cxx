@@ -37,8 +37,8 @@
 #  include <FL/fl_utf8.h>
 
 #  ifdef __APPLE__
+#    include <ApplicationServices/ApplicationServices.H>
 #    include <FL/Fl_Window.H>
-#    include <Carbon/Carbon.h>
 #  endif
 
 #  ifdef WIN32
@@ -296,6 +296,14 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 }
 
 #  elif defined(__APPLE_QUARTZ__)
+static CGrafPtr fl_GetWindowPort(WindowRef window)
+{
+  typedef CGrafPtr (*wf)(WindowRef);
+  static wf f = NULL;
+  if ( ! f) f = (wf)Fl_X::get_carbon_function("GetWindowPort");
+  return (*f)(window);
+}
+
 // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
 GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int layer) {
   GLContext context, shared_ctx = 0;
@@ -312,17 +320,17 @@ GLContext fl_create_gl_context(Fl_Window* window, const Fl_Gl_Choice* g, int lay
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 #if __LP64__
   // 64 bit version
-  aglSetWindowRef(context, Fl_X::i(window)->window_ref()/*fl_mac_windowref(window)*/ );
+  aglSetWindowRef(context, Fl_X::i(window)->window_ref() );
 #else
   // 32 bit version >= 10.5
   if (aglSetWindowRef != NULL)
-    aglSetWindowRef(context, Fl_X::i(window)->window_ref()/*fl_mac_windowref(window)*/ );
+    aglSetWindowRef(context, Fl_X::i(window)->window_ref() );
   else
-    aglSetDrawable( context, GetWindowPort( Fl_X::i(window)->window_ref()/*fl_mac_windowref(window)*/ ) );
+    aglSetDrawable( context, fl_GetWindowPort( Fl_X::i(window)->window_ref() ) );
 #endif
 #else
   // 32 bit version < 10.5
-  aglSetDrawable( context, GetWindowPort( Fl_X::i(window)->window_ref()/*fl_mac_windowref(window)*/ ) );
+  aglSetDrawable( context, fl_GetWindowPort( Fl_X::i(window)->window_ref() ) );
 #endif
   return (context);
 }
@@ -352,17 +360,17 @@ void fl_set_gl_context(Fl_Window* w, GLContext context) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 #if __LP64__
     // 64 bit version
-    aglSetWindowRef(context, Fl_X::i(w)->window_ref()/*fl_mac_windowref(w)*/ );
+    aglSetWindowRef(context, Fl_X::i(w)->window_ref() );
 #else
     // 32 bit version >= 10.5
     if (aglSetWindowRef != NULL)
-      aglSetWindowRef(context, Fl_X::i(w)->window_ref()/*fl_mac_windowref(w)*/ );
+      aglSetWindowRef(context, Fl_X::i(w)->window_ref() );
     else
-      aglSetDrawable( context, GetWindowPort( Fl_X::i(w)->window_ref()/*fl_mac_windowref(w)*/ ) );
+      aglSetDrawable( context, fl_GetWindowPort( Fl_X::i(w)->window_ref() ) );
 #endif
 #else
     // 32 bit version < 10.5
-    aglSetDrawable( context, GetWindowPort( Fl_X::i(w)->window_ref()/*fl_mac_windowref(w)*/ ) );
+    aglSetDrawable( context, fl_GetWindowPort( Fl_X::i(w)->window_ref() ) );
 #endif
     aglSetCurrentContext(context);
 #  else

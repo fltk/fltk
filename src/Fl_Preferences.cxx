@@ -47,7 +47,7 @@
 #  define access _access
 #  define mkdir _mkdir
 #elif defined (__APPLE__)
-#  include <Carbon/Carbon.h>
+#  include <ApplicationServices/ApplicationServices.h>
 #  include <unistd.h>
 #  include <dlfcn.h>
 #else

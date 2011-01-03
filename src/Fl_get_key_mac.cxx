@@ -83,8 +83,6 @@ int Fl::event_key(int k) {
   return get_key(k);
 }
 
-#include <stdio.h>
-
 //: returns true, if that key is pressed right now
 int Fl::get_key(int k) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
@@ -94,8 +92,13 @@ int Fl::get_key(int k) {
   else 
 #endif
   {
-  KeyMap foo;
-  GetKeys(foo);
+  typedef UInt32 fl_KeyMap[4];
+  fl_KeyMap foo;
+  // use the GetKeys Carbon function
+  typedef void (*keymap_f)(fl_KeyMap);
+  static keymap_f f = NULL;
+  if (!f) f = ( keymap_f )Fl_X::get_carbon_function("GetKeys");
+  (*f)(foo);
 #ifdef MAC_TEST_FOR_KEYCODES
  static int cnt = 0;
  if (cnt++>1024) {

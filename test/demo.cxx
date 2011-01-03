@@ -37,7 +37,7 @@
 #    define putenv _putenv
 #  endif // !__WATCOMC__
 #elif defined USING_XCODE
-#include <Carbon/Carbon.h>
+#include <ApplicationServices/ApplicationServices.h>
 #else
 #  include <unistd.h>
 #endif

@@ -92,7 +92,11 @@ int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
     status = PMCreatePageFormat(&pageFormat);
     status = PMSessionDefaultPageFormat(printSession, pageFormat);
     if (status != noErr) return 1;
-    status = PMSessionPageSetupDialog(printSession, pageFormat, &accepted);
+    // get pointer to the PMSessionPageSetupDialog Carbon fucntion
+    typedef OSStatus (*dialog_f)(PMPrintSession, PMPageFormat, Boolean *);
+    static dialog_f f = NULL;
+    if (!f) f = (dialog_f)Fl_X::get_carbon_function("PMSessionPageSetupDialog");
+    status = (*f)(printSession, pageFormat, &accepted);
     if (status != noErr || !accepted) {
       Fl::first_window()->show();
       return 1;
@@ -102,7 +106,11 @@ int Fl_Printer::start_job (int pagecount, int *frompage, int *topage)
     status = PMSessionDefaultPrintSettings (printSession, printSettings);
     if (status != noErr) return 1;
     PMSetPageRange(printSettings, 1, (UInt32)kPMPrintAllPages);
-    status = PMSessionPrintDialog(printSession, printSettings, pageFormat, &accepted);
+    // get pointer to the PMSessionPrintDialog Carbon fucntion
+    typedef OSStatus (*dialog_f2)(PMPrintSession, PMPrintSettings, PMPageFormat, Boolean *);
+    static dialog_f2 f2 = NULL;
+    if (!f2) f2 = (dialog_f2)Fl_X::get_carbon_function("PMSessionPrintDialog");
+    status = (*f2)(printSession, printSettings, pageFormat, &accepted);
     if (!accepted) status = kPMCancel;
     if (status != noErr) {
       Fl::first_window()->show();

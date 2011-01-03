@@ -38,23 +38,6 @@
 // One Compile to copy them all and in the bundle bind them,
 // in the Land of MacOS X where the Drop-Shadows lie."
 
-/*
- TODO: The following messages point to the last Carbon remainders. We should 
- really remove these as well, so we can stop linking to Carbon alltogether.
- 
- "_GetKeys", referenced from:
- Fl::get_key(int)  in Fl_get_key.o (kept only for pre-10.4 runs)
-  
- "_GetEventParameter", referenced from:
- carbonTextHandler(OpaqueEventHandlerCallRef*, OpaqueEventRef*, void*) in Fl.o
- 
- "_InstallEventHandler", referenced from:
- fl_open_display()     in Fl.o
- 
- "_GetEventDispatcherTarget", referenced from:
- fl_open_display()     in Fl.o
-*/
-
 #ifdef __APPLE__
 
 #define CONSOLIDATE_MOTION 0
@@ -84,7 +67,7 @@ extern "C" {
 typedef long NSInteger;
 typedef unsigned long NSUInteger;
 #else
-typedef int NSInteger;
+typedef long NSInteger;
 typedef unsigned int NSUInteger;
 #endif
 #endif
@@ -878,77 +861,14 @@ static void calc_e_text(CFStringRef s, char *buffer, size_t len, unsigned sym)
   }
 }
 
+static int cocoaKeyboardHandler(NSEvent *theEvent);
 
-// this gets called by CJK character palette input
-static OSStatus carbonTextHandler( EventHandlerCallRef nextHandler, EventRef event, void *unused )
+@interface FLTextView : NSTextView 
+// this subclass is needed under OS X 10.3 and 10.4 but not under 10.6 where the base class is enough
 {
-  // make sure the key window is an FLTK window
-  NSWindow *keywindow = [NSApp keyWindow];
-  if (keywindow == nil || ![keywindow isMemberOfClass:[FLWindow class]]) return eventNotHandledErr;
-  // under 10.5 this gets called only after character palette inputs
-  // but under 10.6 this gets also called by interpretKeyEvents 
-  // during keyboard input when we don't want to run it
-  if ([[NSApp currentEvent] type] != NSSystemDefined) return eventNotHandledErr;
-  Fl_Window *window = [(FLWindow*)keywindow getFl_Window];
-  fl_lock_function();
-  UniChar ucs[20];
-  ByteCount actual_size;
-  unsigned int i;
-  GetEventParameter( event, kEventParamTextInputSendText, typeUnicodeText, 
-                    NULL, 20, &actual_size, ucs );
-  char utf8buf[50], *p;
-  p = utf8buf;
-  for(i=0; i < actual_size/2; i++) {
-    p += fl_utf8encode(ucs[i], p);
-    }
-  int len = p - utf8buf;
-  utf8buf[len]=0;
-  
-  Fl::e_length = len;
-  Fl::e_text = utf8buf;
-  while (window->parent()) window = window->window();
-  Fl::handle(FL_KEYBOARD, window);
-  fl_unlock_function();
-  fl_lock_function();
-  Fl::handle(FL_KEYUP, window);
-  fl_unlock_function();
-  // for some reason, the window does not redraw until the next mouse move or button push
-  // sending a 'redraw()' or 'awake()' does not solve the issue!
-  Fl::flush();
-  return noErr;
 }
-
-static OSStatus cocoaKeyboardHandler(NSEvent *theEvent);
-
-@interface FLTextView : NSTextView
-{
-  BOOL compose_key; // YES iff entering a character composition
-  BOOL needKBhandler_val;
-}
-- (BOOL)needKBhandler;
-- (void)needKBhandler:(BOOL)value;
-- (BOOL)compose;
-- (void)compose:(BOOL)value;
-- (void)insertText:(id)aString;
-- (void)doCommandBySelector:(SEL)aSelector;
 @end
 @implementation FLTextView
-- (BOOL)needKBhandler
-{
-  return needKBhandler_val;
-}
-- (void)needKBhandler:(BOOL)value
-{
-  needKBhandler_val = value;
-}
-- (BOOL)compose
-{
-  return compose_key;
-}
-- (void)compose:(BOOL)value
-{
-  compose_key = value;
-}
 - (void)insertText:(id)aString
 {
   cocoaKeyboardHandler([NSApp currentEvent]);
@@ -960,7 +880,7 @@ static OSStatus cocoaKeyboardHandler(NSEvent *theEvent);
 @end
 
 /*
- * handle cocoa keyboard events
+Handle cocoa keyboard events
 Events during a character composition sequence:
  - keydown with deadkey -> [[theEvent characters] length] is 0
  - keyup -> [theEvent characters] contains the deadkey: display it temporarily
@@ -968,7 +888,7 @@ Events during a character composition sequence:
     replace the temporary character by this one
  - keyup -> [theEvent characters] contains the standard character
  */
-static OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
+static int cocoaKeyboardHandler(NSEvent *theEvent)
 {
   static char buffer[32];
   int sendEvent = 0, retval = 0;
@@ -984,8 +904,6 @@ static OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   unsigned short sym = 0;
   keyCode = [theEvent keyCode];
   NSString *s = [theEvent characters];  
-  FLTextView *edit = (FLTextView*)[[theEvent window]  fieldEditor:YES forObject:nil];
-  [edit needKBhandler:NO];
   if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
     s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
   }
@@ -999,7 +917,6 @@ static OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
       sendEvent = FL_KEYBOARD;
       // fall through
     case NSKeyUp:
-      if([edit compose]) sendEvent = FL_KEYBOARD; // when composing, the temporary character appears at KeyUp
       if ( !sendEvent ) {
         sendEvent = FL_KEYUP;
         Fl::e_state &= 0xbfffffff; // clear the deadkey flag
@@ -1026,13 +943,9 @@ static OSStatus cocoaKeyboardHandler(NSEvent *theEvent)
   }
   if (sendEvent) {
     retval = Fl::handle(sendEvent,window);
-    if([edit compose]) {
-      Fl::compose_state = 1;
-      [edit compose:NO];
-    }
   }
   fl_unlock_function();  
-  return retval ? (int)noErr : (int)eventNotHandledErr; // return noErr if FLTK handled the event
+  return retval;
 }
 
 
@@ -1310,8 +1223,7 @@ extern "C" {
   static FLTextView *view = nil;
   if (!view) {
     view = [[FLTextView alloc] initWithFrame:rect];
-    [view compose:NO];
-    }
+  }
   return view;
 }
 @end
@@ -1422,12 +1334,6 @@ void fl_open_display() {
       }
     }
     createAppleMenu();
-    // Install Carbon Event handler for character palette input
-    static EventTypeSpec textEvents[] = {
-      { kEventClassTextInput, kEventTextInputUnicodeForKeyEvent }
-    };
-    EventHandlerUPP textHandler = NewEventHandlerUPP( carbonTextHandler );
-    InstallEventHandler(GetEventDispatcherTarget(), textHandler, 1, textEvents, NULL, 0L);
     
     [[NSNotificationCenter defaultCenter] addObserver:mydelegate 
 	       selector:@selector(anywindowwillclosenotif:) 
@@ -1653,7 +1559,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 
 
-@interface FLView : NSView {
+@interface FLView : NSView <NSTextInput> {
 }
 - (void)drawRect:(NSRect)rect;
 - (BOOL)acceptsFirstResponder;
@@ -1694,8 +1600,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent
 {   
-  OSStatus err = cocoaKeyboardHandler(theEvent);
-  return (err ? NO : YES);
+  int err = cocoaKeyboardHandler(theEvent);
+  return (err ? YES : NO);
 }
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent
 {   
@@ -1738,12 +1644,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 - (void)keyDown:(NSEvent *)theEvent {
   FLTextView *edit = (FLTextView*)[[theEvent window]  fieldEditor:YES forObject:nil];
-  if ([[theEvent characters] length] == 0) [edit compose:YES];
-  if (Fl::compose_state)  [edit needKBhandler:YES];
-  else [edit needKBhandler:NO];
   [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-  // in some cases (e.g., some Greek letters with tonos) interpretKeyEvents does not call insertText
-  if ([edit needKBhandler]) cocoaKeyboardHandler(theEvent);
 }
 - (void)keyUp:(NSEvent *)theEvent {
   cocoaKeyboardHandler(theEvent);
@@ -1843,6 +1744,99 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 {
   return NSDragOperationGeneric;
 }
+
+// These functions implement text input.
+// Only two-stroke character composition works at this point.
+// Needs much elaboration to fully support CJK text input,
+// but this is the way to go.
+- (void)doCommandBySelector:(SEL)aSelector {
+}
+
+- (void)insertText:(id)aString {
+  NSEvent *event = [NSApp currentEvent];
+  NSEventType type = [event type];
+  NSString *str = @"";
+  NSString *received;
+  if ([aString isKindOfClass:[NSAttributedString class]]) {
+    received = [(NSAttributedString*)aString string];
+  } else {
+    received = (NSString*)aString;
+  }
+//NSLog(@"insertText: received=%@ event type=%d",received, type);
+  if (type == NSKeyDown ) {
+    str = [event characters];
+    }
+  if ([received isEqualToString:@"\b"] || [str isEqualToString:received]) {
+    if (type == NSKeyDown ) cocoaKeyboardHandler(event);
+  } else {
+    fl_lock_function();
+    Fl_Window *window = [(FLWindow*)[NSApp keyWindow] getFl_Window];
+    Fl::e_text = (char*)[received UTF8String];
+    Fl::e_length = strlen(Fl::e_text);
+    Fl::handle(FL_KEYBOARD, window);
+    Fl::handle(FL_KEYUP, window);
+    fl_unlock_function();
+    // for some reason, the window does not redraw until the next mouse move or button push
+    // sending a 'redraw()' or 'awake()' does not solve the issue!
+    Fl::flush();
+  }
+}
+
+- (void)setMarkedText:(id)aString selectedRange:(NSRange)newSelection  {
+  // NSLog(@"setMarkedText: %@ %d %d Fl::compose_state=%d",
+  //  aString,newSelection.location,newSelection.length,newSelection.location);
+  [self insertText:aString];
+  Fl::compose_state = newSelection.location;
+}
+
+- (void)unmarkText {
+  Fl::compose_state = 0;
+  //NSLog(@"unmarkText");
+}
+
+- (NSRange)selectedRange {
+  return NSMakeRange(NSNotFound, 0);
+}
+
+- (NSRange)markedRange {
+  //NSLog(@"markedRange ?");
+  return NSMakeRange(NSNotFound, Fl::compose_state);
+}
+
+- (BOOL)hasMarkedText {
+  //NSLog(@"hasMarkedText %s", Fl::compose_state > 0?"YES":"NO");
+  return (Fl::compose_state > 0);
+}
+
+- (NSAttributedString *)attributedSubstringFromRange:(NSRange)aRange {
+  //NSLog(@"attributedSubstringFromRange: %d %d",aRange.location,aRange.length);
+  return nil;
+}
+
+- (NSArray *)validAttributesForMarkedText {
+  return nil;
+}
+
+- (NSRect)firstRectForCharacterRange:(NSRange)aRange {
+  NSRect glyphRect, frame;
+  
+  frame = [self frame];
+  glyphRect.origin.x = frame.size.width;
+  glyphRect.origin.y = 0;
+  glyphRect.size.width = glyphRect.size.height = 0;
+  // Convert the rect to screen coordinates
+  glyphRect.origin = [[self window] convertBaseToScreen:glyphRect.origin];
+  return glyphRect;
+}
+
+- (NSUInteger)characterIndexForPoint:(NSPoint)aPoint {
+  return 0;
+}
+
+- (NSInteger)conversationIdentifier {
+  return (NSInteger)self;
+}
+
 @end
 
 
@@ -3271,6 +3265,26 @@ Window fl_xid(const Fl_Window* w)
   return Fl_X::i(w)->xid;
 }
 
+#include <dlfcn.h>
+
+/* Returns the address of a Carbon function after dynamically loading the Carbon library if needed.
+ Supports old Mac OS X versions that may use a couple of Carbon calls:
+ GetKeys used by OS X 10.3 or before (in Fl::get_key())
+ PMSessionPageSetupDialog and PMSessionPrintDialog used by 10.4 or before (in Fl_Printer::start_job())
+ GetWindowPort used by 10.4 or before (in Fl_Gl_Choice.cxx)
+ */
+void *Fl_X::get_carbon_function(const char *function_name) {
+  static void *carbon = NULL;
+  void *f = NULL;
+  if (!carbon) {
+    carbon = dlopen("/System/Library/Frameworks/Carbon.framework/Carbon", RTLD_LAZY);
+  }
+  if (carbon) {
+    f = dlsym(carbon, function_name);
+  }
+  return f;
+}
+  
 #endif // __APPLE__
 
 //

@@ -277,12 +277,12 @@ void Fl_Gl_Window::flush() {
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   //: clear previous clipping in this shared port
 #if ! __LP64__
-  GrafPtr port = GetWindowPort( Fl_X::i(this)->window_ref() );
+/*GrafPtr port = GetWindowPort( Fl_X::i(this)->window_ref() );
   Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
   GrafPtr old; GetPort( &old );
   SetPort( port );
   ClipRect( &rect );
-  SetPort( old );
+  SetPort( old );*/
 #endif
 #endif
 

@@ -842,8 +842,8 @@ case $uname_GUI in
 	;;
 
     Darwin*)
-        # MacOS X uses Cocoa for graphics. There are still some Carbon leftovers.
-        LIBS="$LIBS -framework Cocoa -framework Carbon"
+        # MacOS X uses Cocoa for graphics.
+        LIBS="$LIBS -framework Cocoa"
 
 	if test x$have_pthread = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)
@@ -853,7 +853,7 @@ case $uname_GUI in
 	if test x$enable_gl != xno; then
             AC_DEFINE(HAVE_GL)
             AC_DEFINE(HAVE_GL_GLU_H)
-            GLLIB="-framework AGL -framework OpenGL"
+            GLLIB="-framework AGL -framework OpenGL -framework ApplicationServices"
         else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""

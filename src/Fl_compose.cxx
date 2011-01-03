@@ -65,7 +65,7 @@ int Fl::compose(int& del) {
   if ((e_state & (FL_ALT | FL_META)) && !(ascii & 128)) return 0;
 #endif
   if(Fl::compose_state) {
-    del = 1;
+    del = Fl::compose_state;
     Fl::compose_state = 0;
   } else {
 #ifndef __APPLE__
