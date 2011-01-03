@@ -27,6 +27,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Table.H>
 #include <FL/Fl_Input.H>
 #include "Fl_Widget_Type.h"
 #include "alignment_panel.h"

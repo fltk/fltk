@@ -37,6 +37,7 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Pixmap.H>
+#include <FL/Fl_Tree.H>
 #include <stdio.h>
 #include "../src/flstring.h"
 #include "undo.h"
@@ -308,6 +309,33 @@ int Fl_Check_Browser_Type::textstuff(int w, Fl_Font& f, int& s, Fl_Color& c) {
   }
   return 1;
 }
+
+class Fl_Tree_Type : public Fl_Widget_Type {
+public:
+  virtual void ideal_size(int &w, int &h) {
+    if (h < 60) h = 60;
+    if (w < 80) w = 80;
+  }
+  virtual const char *type_name() {return "Fl_Tree";}
+  virtual const char *alt_type_name() {return "fltk::TreeBrowser";}
+  Fl_Widget *widget(int x,int y,int w,int h) {
+    Fl_Tree* b = new Fl_Tree(x,y,w,h);
+    if (!compile_only) {
+      b->add("/A1/B1/C1");
+      b->add("/A1/B1/C2");
+      b->add("/A1/B2/C1");
+      b->add("/A1/B2/C2");
+      b->add("/A2/B1/C1");
+      b->add("/A2/B1/C2");
+      b->add("/A2/B2/C1");
+      b->add("/A2/B2/C2");
+    }
+    return b;
+  }
+  Fl_Widget_Type *_make() {return new Fl_Tree_Type();}
+  int pixmapID() { return 50; }
+};
+static Fl_Tree_Type Fl_Tree_type;
 
 class Fl_File_Browser_Type : public Fl_Widget_Type {
   Fl_Menu_Item *subtypes() {return browser_type_menu;}
@@ -926,6 +954,7 @@ extern class Fl_Group_Type Fl_Group_type;
 extern class Fl_Pack_Type Fl_Pack_type;
 extern class Fl_Tabs_Type Fl_Tabs_type;
 extern class Fl_Scroll_Type Fl_Scroll_type;
+extern class Fl_Table_Type Fl_Table_type;
 extern class Fl_Tile_Type Fl_Tile_type;
 extern class Fl_Input_Choice_Type Fl_Input_Choice_type;
 extern class Fl_Choice_Type Fl_Choice_type;
@@ -997,6 +1026,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Pack_type},
   {0,0,cb,(void*)&Fl_Tabs_type},
   {0,0,cb,(void*)&Fl_Scroll_type},
+  {0,0,cb,(void*)&Fl_Table_type},
   {0,0,cb,(void*)&Fl_Tile_type},
   {0,0,cb,(void*)&Fl_Wizard_type},
 {0},
@@ -1039,6 +1069,7 @@ Fl_Menu_Item New_Menu[] = {
   {0,0,cb,(void*)&Fl_Browser_type},
   {0,0,cb,(void*)&Fl_Check_Browser_type},
   {0,0,cb,(void*)&Fl_File_Browser_type},
+  {0,0,cb,(void*)&Fl_Tree_type},
 {0},
 {"Other",0,0,0,FL_SUBMENU},
   {0,0,cb,(void*)&Fl_Box_type},

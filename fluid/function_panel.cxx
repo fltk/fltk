@@ -711,7 +711,7 @@ else
 }
 
 Fl_Window* make_widgetbin() {
-  { widgetbin_panel = new Fl_Window(550, 85, "Widget Bin");
+  { widgetbin_panel = new Fl_Window(574, 85, "Widget Bin");
     widgetbin_panel->callback((Fl_Callback*)cb_widgetbin_panel);
     widgetbin_panel->align(Fl_Align(FL_ALIGN_CLIP|FL_ALIGN_INSIDE));
     { Fl_Group* o = new Fl_Group(3, 3, 79, 79);
@@ -801,6 +801,12 @@ Fl_Window* make_widgetbin() {
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Scroll"));
         o->image(pixmap[19]);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(139, 30, 24, 24);
+        o->tooltip("Table");
+        o->box(FL_THIN_UP_BOX);
+        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Table"));
+        o->image(pixmap[51]);
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(89, 55, 24, 24);
         o->tooltip("Tile");
@@ -990,12 +996,18 @@ Fl_Window* make_widgetbin() {
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(457, 3, 29, 79);
+    { Fl_Group* o = new Fl_Group(457, 3, 54, 79);
       { Fl_Button* o = new Fl_Button(459, 5, 24, 24);
         o->tooltip("Browser");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Browser"));
         o->image(pixmap[31]);
+      } // Fl_Button* o
+      { Fl_Button* o = new Fl_Button(484, 5, 24, 24);
+        o->tooltip("Tree");
+        o->box(FL_THIN_UP_BOX);
+        o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Tree"));
+        o->image(pixmap[50]);
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(459, 30, 24, 24);
         o->tooltip("Check Browser");
@@ -1011,26 +1023,26 @@ Fl_Window* make_widgetbin() {
       } // Fl_Button* o
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(491, 3, 55, 79);
-      { Fl_Button* o = new Fl_Button(493, 5, 24, 24);
+    { Fl_Group* o = new Fl_Group(515, 3, 55, 79);
+      { Fl_Button* o = new Fl_Button(517, 5, 24, 24);
         o->tooltip("Box");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Box"));
         o->image(pixmap[5]);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(518, 5, 24, 24);
+      { Fl_Button* o = new Fl_Button(542, 5, 24, 24);
         o->tooltip("Clock");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Clock"));
         o->image(pixmap[34]);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(493, 30, 24, 24);
+      { Fl_Button* o = new Fl_Button(517, 30, 24, 24);
         o->tooltip("Help Browser");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Help_View"));
         o->image(pixmap[35]);
       } // Fl_Button* o
-      { Fl_Button* o = new Fl_Button(493, 55, 24, 24);
+      { Fl_Button* o = new Fl_Button(517, 55, 24, 24);
         o->tooltip("Progress");
         o->box(FL_THIN_UP_BOX);
         o->callback((Fl_Callback*)type_make_cb, (void*)("Fl_Progress"));

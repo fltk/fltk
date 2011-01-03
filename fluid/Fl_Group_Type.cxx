@@ -32,6 +32,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_Table.H>
 #include <FL/fl_message.H>
 #include "Fl_Widget_Type.h"
 #include "../src/flstring.h"
@@ -146,6 +147,91 @@ Fl_Pack_Type Fl_Pack_type;	// the "factory"
 
 ////////////////////////////////////////////////////////////////
 
+static const int MAX_ROWS = 14;
+static const int MAX_COLS = 7;
+
+// this is a minimal table widget used as an example when adding tables in Fluid
+class Fluid_Table : public Fl_Table {
+  int data[MAX_ROWS][MAX_COLS];         // data array for cells
+  
+  // Draw the row/col headings
+  //    Make this a dark thin upbox with the text inside.
+  //
+  void DrawHeader(const char *s, int X, int Y, int W, int H) {
+    fl_push_clip(X,Y,W,H);
+    fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, row_header_color());
+    fl_color(FL_BLACK);
+    fl_draw(s, X,Y,W,H, FL_ALIGN_CENTER);
+    fl_pop_clip();
+  } 
+  // Draw the cell data
+  //    Dark gray text on white background with subtle border
+  //
+  void DrawData(const char *s, int X, int Y, int W, int H) {
+    fl_push_clip(X,Y,W,H);
+    // Draw cell bg
+    fl_color(FL_WHITE); fl_rectf(X,Y,W,H);
+    // Draw cell data
+    fl_color(FL_GRAY0); fl_draw(s, X,Y,W,H, FL_ALIGN_CENTER);
+    // Draw box border
+    fl_color(color()); fl_rect(X,Y,W,H);
+    fl_pop_clip();
+  } 
+  // Handle drawing table's cells
+  //     Fl_Table calls this function to draw each visible cell in the table.
+  //     It's up to us to use FLTK's drawing functions to draw the cells the way we want.
+  //
+  void draw_cell(TableContext context, int ROW=0, int COL=0, int X=0, int Y=0, int W=0, int H=0) {
+    static char s[40];
+    switch ( context ) {
+      case CONTEXT_STARTPAGE:                   // before page is drawn..
+        fl_font(FL_HELVETICA, 16);              // set the font for our drawing operations
+        return; 
+      case CONTEXT_COL_HEADER:                  // Draw column headers
+        sprintf(s,"%c",'A'+COL);                // "A", "B", "C", etc.
+        DrawHeader(s,X,Y,W,H);
+        return; 
+      case CONTEXT_ROW_HEADER:                  // Draw row headers
+        sprintf(s,"%03d:",ROW);                 // "001:", "002:", etc
+        DrawHeader(s,X,Y,W,H);
+        return; 
+      case CONTEXT_CELL:                        // Draw data in cells
+        sprintf(s,"%d",data[ROW][COL]);
+        DrawData(s,X,Y,W,H);
+        return;
+      default:
+        return;
+    }
+  }
+public:
+  Fluid_Table(int x, int y, int w, int h, const char *l=0L)
+  : Fl_Table(x, y, w, h, l) {
+    for ( int r=0; r<MAX_ROWS; r++ )
+      for ( int c=0; c<MAX_COLS; c++ )
+        data[r][c] = 1000+(r*1000)+c;
+    // Rows
+    rows(MAX_ROWS);             // how many rows
+    row_header(1);              // enable row headers (along left)
+    row_height_all(20);         // default height of rows
+    row_resize(0);              // disable row resizing                                // Cols
+    cols(MAX_COLS);             // how many columns
+    col_header(1);              // enable column headers (along top)
+    col_width_all(80);          // default width of columns
+    col_resize(1);              // enable column resizing
+  }
+};
+
+const char table_type_name[] = "Fl_Table";
+
+Fl_Table_Type Fl_Table_type;	// the "factory"
+
+Fl_Widget *Fl_Table_Type::widget(int X,int Y,int W,int H) {
+  Fluid_Table *table = new Fluid_Table(X, Y, W, H);
+  return table;
+}
+
+////////////////////////////////////////////////////////////////
+
 const char tabs_type_name[] = "Fl_Tabs";
 
 // Override group's resize behavior to do nothing to children:
@@ -201,6 +287,18 @@ void Fl_Tabs_Type::add_child(Fl_Type* c, Fl_Type* before) {
   Fl_Group_Type::add_child(c, before);
 }
 
+void Fl_Table_Type::add_child(Fl_Type* cc, Fl_Type* before) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  if (((Fl_Table*)o)->children()==1) { // the FLuid_Table has one extra child
+    fl_message("Inserting child widgets into an Fl_Table is not recommended.\n"
+               "Please refer to the documentation on Fl_Table.");
+  }
+  ((Fl_Table*)o)->insert(*(c->o), b);
+  o->redraw();
+}
+
+
 // This is called when o is deleted.  If it is in the tab group make
 // sure it is not visible:
 
@@ -217,6 +315,12 @@ void Fl_Tabs_Type::remove_child(Fl_Type* cc) {
   Fl_Group_Type::remove_child(c);
 }
 
+void Fl_Table_Type::remove_child(Fl_Type* cc) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  ((Fl_Table*)o)->remove(*(c->o));
+  o->redraw();
+}
+
 // move, don't change selected value:
 
 void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
@@ -224,6 +328,14 @@ void Fl_Group_Type::move_child(Fl_Type* cc, Fl_Type* before) {
   Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
   ((Fl_Group*)o)->remove(c->o);
   ((Fl_Group*)o)->insert(*(c->o), b);
+  o->redraw();
+}
+
+void Fl_Table_Type::move_child(Fl_Type* cc, Fl_Type* before) {
+  Fl_Widget_Type* c = (Fl_Widget_Type*)cc;
+  Fl_Widget* b = before ? ((Fl_Widget_Type*)before)->o : 0;
+  ((Fl_Table*)o)->remove(*(c->o));
+  ((Fl_Table*)o)->insert(*(c->o), b);
   o->redraw();
 }
 
@@ -258,6 +370,16 @@ Fl_Widget *Fl_Tabs_Type::enter_live_mode(int) {
     grp->end();
   }
   grp->value(((Fl_Tabs*)o)->value());
+  return live_widget;
+}
+
+Fl_Widget *Fl_Table_Type::enter_live_mode(int) {
+  Fl_Group *grp = new Fluid_Table(o->x(), o->y(), o->w(), o->h());
+  live_widget = grp;
+  if (live_widget) {
+    copy_properties();
+    grp->end();
+  }
   return live_widget;
 }
 

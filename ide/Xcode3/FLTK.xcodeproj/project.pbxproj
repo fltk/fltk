@@ -4176,7 +4176,6 @@
 		4343E645136756B9FEEE6902 /* fl_cursor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_cursor.cxx; path = ../../src/fl_cursor.cxx; sourceTree = SOURCE_ROOT; };
 		43D9A7CD936B1382F5EA23E1 /* about_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = about_panel.cxx; path = ../../fluid/about_panel.cxx; sourceTree = SOURCE_ROOT; };
 		44277061B27BFBE1FB22B79B /* menubar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menubar.cxx; path = ../../test/menubar.cxx; sourceTree = SOURCE_ROOT; };
-		44B6E71105CCEECB4D5E2DC8 /* ide_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ide_support.h; path = ../../fluid/ide_support.h; sourceTree = SOURCE_ROOT; };
 		451D01896EFDD83277515630 /* glut.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = glut.H; path = ../../FL/glut.H; sourceTree = SOURCE_ROOT; };
 		4577F046D6D5D93D2553BFBC /* jdtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdtrans.c; path = ../../jpeg/jdtrans.c; sourceTree = SOURCE_ROOT; };
 		45B993D3FA0EED6037499D3A /* color_chooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color_chooser.cxx; path = ../../test/color_chooser.cxx; sourceTree = SOURCE_ROOT; };
@@ -5632,7 +5631,6 @@
 				BD209D4716895D1365B6BA73 /* alignment_panel.h */,
 				8F311718B3CD16844535EEE6 /* comments.h */,
 				D4E11692C02E48A71A18527C /* function_panel.h */,
-				44B6E71105CCEECB4D5E2DC8 /* ide_support.h */,
 				176A3053D562D80CD4D3A400 /* print_panel.h */,
 				4A6DFBFA4FDD6D0B8F65009E /* template_panel.h */,
 				91726A70C25E6155A2FAF315 /* undo.h */,

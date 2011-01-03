@@ -465,6 +465,21 @@ public:
   void copy_properties();
 };
 
+extern const char table_type_name[];
+
+class Fl_Table_Type : public Fl_Group_Type {
+public:
+  virtual const char *type_name() {return table_type_name;}
+  virtual const char *alt_type_name() {return "fltk::TableGroup";}
+  Fl_Widget_Type *_make() {return new Fl_Table_Type();}
+  Fl_Widget *widget(int X,int Y,int W,int H);
+  int pixmapID() { return 51; }
+  virtual Fl_Widget *enter_live_mode(int top=0);
+  void add_child(Fl_Type*, Fl_Type*);
+  void move_child(Fl_Type*, Fl_Type*);
+  void remove_child(Fl_Type*);
+};
+
 extern const char tabs_type_name[];
 
 class Fl_Tabs_Type : public Fl_Group_Type {
