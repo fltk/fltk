@@ -41,20 +41,21 @@ Fl_Function_Type.o: ../FL/Fl_Text_Buffer.H CodeEditor.h
 Fl_Function_Type.o: ../FL/Fl_Text_Buffer.H comments.h
 Fl_Group_Type.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Group_Type.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
-Fl_Group_Type.o: ../FL/Fl_Group.H ../FL/fl_message.H ../FL/fl_ask.H
+Fl_Group_Type.o: ../FL/Fl_Group.H ../FL/Fl_Table.H ../FL/Fl_Scroll.H
+Fl_Group_Type.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
+Fl_Group_Type.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Box.H
+Fl_Group_Type.o: ../FL/Fl_Scrollbar.H ../FL/fl_message.H ../FL/fl_ask.H
 Fl_Group_Type.o: Fl_Widget_Type.h Fl_Type.h ../FL/Fl_Widget.H ../FL/Fl_Menu.H
-Fl_Group_Type.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
-Fl_Group_Type.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H Fluid_Image.h
-Fl_Group_Type.o: ../FL/Fl_Shared_Image.H ../FL/fl_draw.H ../FL/x.H
-Fl_Group_Type.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Enumerations.H
-Fl_Group_Type.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/Fl_Image.H
-Fl_Group_Type.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
-Fl_Group_Type.o: ../FL/Fl_Tabs.H ../FL/Fl_Pack.H ../FL/Fl_Wizard.H
-Fl_Group_Type.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H
-Fl_Group_Type.o: ../FL/Fl_Choice.H ../FL/Fl_Input_Choice.H ../FL/Fl_Input.H
-Fl_Group_Type.o: ../FL/Fl_Input_.H ../FL/Fl_Menu_Bar.H ../src/flstring.h
-Fl_Group_Type.o: ../FL/Fl_Export.H ../config.h ../FL/Fl_Scroll.H
-Fl_Group_Type.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_Group_Type.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/Fl_Plugin.H
+Fl_Group_Type.o: ../FL/Fl_Preferences.H Fluid_Image.h ../FL/Fl_Shared_Image.H
+Fl_Group_Type.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Group_Type.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_Group_Type.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
+Fl_Group_Type.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Tabs.H ../FL/Fl_Pack.H
+Fl_Group_Type.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H
+Fl_Group_Type.o: ../FL/Fl_Menu_.H ../FL/Fl_Choice.H ../FL/Fl_Input_Choice.H
+Fl_Group_Type.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Menu_Bar.H
+Fl_Group_Type.o: ../src/flstring.h ../FL/Fl_Export.H ../config.h
 Fl_Menu_Type.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 Fl_Menu_Type.o: ../FL/Xutf8.h ../FL/Enumerations.H Fl_Widget_Type.h Fl_Type.h
 Fl_Menu_Type.o: ../FL/Fl_Widget.H ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H
@@ -114,26 +115,29 @@ Fl_Type.o: pixmaps/flSlider.xpm pixmaps/flScrollBar.xpm
 Fl_Type.o: pixmaps/flValueSlider.xpm pixmaps/flAdjuster.xpm
 Fl_Type.o: pixmaps/flCounter.xpm pixmaps/flDial.xpm pixmaps/flRoller.xpm
 Fl_Type.o: pixmaps/flValueInput.xpm pixmaps/flValueOutput.xpm
-Fl_Type.o: pixmaps/flSpinner.xpm pixmaps/flWidgetClass.xpm
+Fl_Type.o: pixmaps/flSpinner.xpm pixmaps/flWidgetClass.xpm pixmaps/flTree.xpm
+Fl_Type.o: pixmaps/flTable.xpm
 Fl_Widget_Type.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 Fl_Widget_Type.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
-Fl_Widget_Type.o: ../FL/Fl_Group.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+Fl_Widget_Type.o: ../FL/Fl_Group.H ../FL/Fl_Table.H ../FL/Fl_Scroll.H
+Fl_Widget_Type.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H
+Fl_Widget_Type.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Box.H
+Fl_Widget_Type.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 Fl_Widget_Type.o: Fl_Widget_Type.h Fl_Type.h ../FL/Fl_Widget.H
-Fl_Widget_Type.o: ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H
-Fl_Widget_Type.o: ../FL/Fl_Image.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
-Fl_Widget_Type.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/fl_draw.H
-Fl_Widget_Type.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Group.H
-Fl_Widget_Type.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
-Fl_Widget_Type.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
-Fl_Widget_Type.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Tabs.H ../FL/Fl_Pack.H
-Fl_Widget_Type.o: ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Button.H
-Fl_Widget_Type.o: ../FL/Fl_Menu_.H ../FL/Fl_Choice.H ../FL/Fl_Input_Choice.H
-Fl_Widget_Type.o: ../FL/Fl_Menu_Bar.H alignment_panel.h
-Fl_Widget_Type.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Display.H
-Fl_Widget_Type.o: ../FL/fl_draw.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
-Fl_Widget_Type.o: ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H ../FL/filename.H
+Fl_Widget_Type.o: ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H
+Fl_Widget_Type.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H Fluid_Image.h
+Fl_Widget_Type.o: ../FL/Fl_Shared_Image.H ../FL/fl_draw.H ../FL/x.H
+Fl_Widget_Type.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Widget_Type.o: ../FL/Fl_Device.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Widget_Type.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Tabs.H
+Fl_Widget_Type.o: ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
+Fl_Widget_Type.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Choice.H
+Fl_Widget_Type.o: ../FL/Fl_Input_Choice.H ../FL/Fl_Menu_Bar.H
+Fl_Widget_Type.o: alignment_panel.h ../FL/Fl_Text_Buffer.H
+Fl_Widget_Type.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H
+Fl_Widget_Type.o: ../FL/Fl_Text_Buffer.H ../FL/filename.H
 Fl_Widget_Type.o: ../FL/Fl_Double_Window.H ../FL/Fl_Preferences.H
-Fl_Widget_Type.o: ../FL/Fl_Tooltip.H ../FL/Fl_Button.H ../FL/Fl_Box.H
+Fl_Widget_Type.o: ../FL/Fl_Tooltip.H ../FL/Fl_Button.H
 Fl_Widget_Type.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
 Fl_Widget_Type.o: ../FL/Fl_Button.H ../FL/Fl_Int_Input.H ../FL/Fl_Input.H
 Fl_Widget_Type.o: ../FL/Fl_Spinner.H ../FL/Fl_Repeat_Button.H ../FL/Fl.H
@@ -261,14 +265,16 @@ code.o: ../FL/Fl_Round_Button.H
 factory.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 factory.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Group.H
 factory.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
-factory.o: ../FL/Fl_Pixmap.H ../src/flstring.h ../FL/Fl_Export.H ../config.h
-factory.o: undo.h Fl_Widget_Type.h Fl_Type.h ../FL/Fl_Widget.H
-factory.o: ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H ../FL/Fl_Plugin.H
-factory.o: ../FL/Fl_Preferences.H Fluid_Image.h ../FL/Fl_Shared_Image.H
+factory.o: ../FL/Fl_Pixmap.H ../FL/Fl_Tree.H ../FL/Fl_Scrollbar.H
 factory.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 factory.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
-factory.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_RGB_Image.H
-factory.o: ../FL/Fl_Tabs.H ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
+factory.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+factory.o: ../FL/Fl_Bitmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Tree_Item.H
+factory.o: ../FL/Fl_Widget.H ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H
+factory.o: ../src/flstring.h ../FL/Fl_Export.H ../config.h undo.h
+factory.o: Fl_Widget_Type.h Fl_Type.h ../FL/Fl_Menu.H ../FL/Fl_Menu_Item.H
+factory.o: Fluid_Image.h ../FL/Fl_Shared_Image.H ../FL/Fl_Tabs.H
+factory.o: ../FL/Fl_Pack.H ../FL/Fl_Wizard.H ../FL/Fl_Menu_.H
 factory.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Choice.H
 factory.o: ../FL/Fl_Input_Choice.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 factory.o: ../FL/Fl_Menu_Bar.H ../FL/Fl_Box.H ../FL/Fl_Button.H
@@ -284,9 +290,9 @@ factory.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H ../FL/Fl_Text_Buffer.H
 factory.o: ../FL/Fl_Text_Editor.H ../FL/Fl_Text_Display.H ../FL/Fl_Clock.H
 factory.o: ../FL/Fl_Help_View.H ../FL/Fl_Shared_Image.H ../FL/Fl_Progress.H
 factory.o: ../FL/Fl_Adjuster.H ../FL/Fl_Dial.H ../FL/Fl_Roller.H
-factory.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Output.H ../FL/Fl_Input.H
-factory.o: ../FL/Fl_Value_Input.H ../FL/Fl_Value_Output.H
-factory.o: ../FL/Fl_Value_Slider.H ../FL/Fl_Multi_Label.H
+factory.o: ../FL/Fl_Output.H ../FL/Fl_Input.H ../FL/Fl_Value_Input.H
+factory.o: ../FL/Fl_Value_Output.H ../FL/Fl_Value_Slider.H
+factory.o: ../FL/Fl_Multi_Label.H
 file.o: ../src/flstring.h ../FL/Fl_Export.H ../config.h alignment_panel.h
 file.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 file.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Text_Buffer.H

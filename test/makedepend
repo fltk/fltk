@@ -213,7 +213,7 @@ file_chooser.o: ../FL/Fl_Shared_Image.H ../FL/Fl_PNM_Image.H
 file_chooser.o: ../FL/Fl_Light_Button.H
 fonts.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 fonts.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Double_Window.H
-fonts.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+fonts.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Tile.H
 fonts.o: ../FL/Fl_Hold_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
 fonts.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
 fonts.o: ../FL/Fl_Image.H ../FL/fl_draw.H ../FL/Fl_Box.H ../FL/fl_ask.H
@@ -359,7 +359,7 @@ minimum.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
 native-filechooser.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
 native-filechooser.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 native-filechooser.o: ../FL/fl_ask.H ../FL/Fl_Window.H ../FL/Fl_Button.H
-native-filechooser.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H
+native-filechooser.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Box.H
 native-filechooser.o: ../FL/Fl_Native_File_Chooser.H
 native-filechooser.o: ../FL/Fl_Native_File_Chooser_FLTK.H
 native-filechooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H
@@ -371,7 +371,7 @@ native-filechooser.o: ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H
 native-filechooser.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
 native-filechooser.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
 native-filechooser.o: ../FL/Fl_Valuator.H ../FL/Fl_File_Icon.H ../FL/Fl.H
-native-filechooser.o: ../FL/filename.H ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
+native-filechooser.o: ../FL/filename.H ../FL/Fl_Check_Button.H
 native-filechooser.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 native-filechooser.o: ../FL/Fl_File_Input.H ../FL/Fl_Return_Button.H
 navigation.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
@@ -571,8 +571,8 @@ utf8.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 utf8.o: ../FL/Fl_Scroll.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
 utf8.o: ../FL/Fl_Valuator.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
 utf8.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/Fl_Input.H
-utf8.o: ../FL/Fl_Input_.H ../FL/Fl_Box.H ../FL/Fl_Hold_Browser.H
-utf8.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Value_Output.H
-utf8.o: ../FL/Fl_Button.H ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
-utf8.o: ../FL/Fl_Button.H ../FL/Fl_Output.H ../FL/Fl_Input.H ../FL/fl_draw.H
-utf8.o: ../FL/fl_utf8.h
+utf8.o: ../FL/Fl_Input_.H ../FL/Fl_Box.H ../FL/Fl_Tile.H
+utf8.o: ../FL/Fl_Hold_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
+utf8.o: ../FL/Fl_Value_Output.H ../FL/Fl_Button.H ../FL/Fl_Check_Button.H
+utf8.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H ../FL/Fl_Output.H
+utf8.o: ../FL/Fl_Input.H ../FL/fl_draw.H ../FL/fl_utf8.h
