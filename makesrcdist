@@ -15,9 +15,20 @@ if test $# = 0 -o "x$1" = xsnapshot; then
 	url="."
 else
 	if test ! -e "documentation/html/"; then
-		echo "ERROR: Please generate the HTML documentation and update the PDF."
+		echo "ERROR: Please generate the HTML documentation before distributing:"
+		echo "  autoconf"
+		echo "  ./configure"
+		echo "  cd documentation; make html-dist"
 		exit
 	fi 
+	if test ! -e "documentation/fltk.pdf"; then
+		echo "ERROR: Please generate the PDF documentation before distributing:"
+		echo "  autoconf"
+		echo "  ./configure"
+		echo "  cd documentation; make html-dist"
+		exit
+	fi 
+exit
 	echo Creating tag for release...
 	rev="1"
 	version=$1

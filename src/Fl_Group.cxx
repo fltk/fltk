@@ -89,7 +89,8 @@ void Fl_Group::end() {current_ = parent();}
 Fl_Group *Fl_Group::current() {return current_;}
 
 /**
-  See static Fl_Group *Fl_Group::current() 
+  Sets the current group.
+  \see Fl_Group::current() 
 */
 void Fl_Group::current(Fl_Group *g) {current_ = g;}
 

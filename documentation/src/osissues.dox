@@ -286,12 +286,14 @@ void MyWindow::show() {
 }
 \endcode
 
+\verbatim
 Fl_X *Fl_X::set_xid(Fl_Window*, Window xid)
+\endverbatim
 
 \par
 Allocate a hidden structure called an Fl_X, put the
 XID into it, and set a pointer to it from the Fl_Window.
-This causes Fl_Window::shown()to return true.
+This causes Fl_Window::shown() to return true.
 
 void Fl_X::make_xid(Fl_Window*, XVisualInfo* = fl_visual, Colormap = fl_colormap)
 
