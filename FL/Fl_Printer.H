@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 /** \file Fl_Printer.H 
- \brief declaration of classes Fl_System_Printer, Fl_PostScript_Printer, Fl_Printer, Fl_Device_Plugin.
+ \brief declaration of class Fl_Printer.
  */
 
 #ifndef Fl_Printer_H
