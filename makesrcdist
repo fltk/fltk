@@ -28,7 +28,6 @@ else
 		echo "  cd documentation; make pdf-dist"
 		exit
 	fi
-exit
 	echo Creating tag for release...
 	rev="1"
 	version=$1
@@ -45,8 +44,9 @@ rm -rf /tmp/fltk-$version
 svn export $url /tmp/fltk-$version
 
 if test $# != 0 -a "x$1" != xsnapshot; then
-	echo "Copying HTML documentation..."
+	echo "Copying HTML and PDF documentation..."
 	cp -r documentation/html /tmp/fltk-$version/documentation/
+	cp documentation/fltk.pdf /tmp/fltk-$version/documentation/
 fi
 
 echo Applying version number...
