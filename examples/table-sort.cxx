@@ -45,17 +45,17 @@
 
 #define MARGIN 20
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 // WINDOWS
 #define DIRCMD          "dir"
 #define DIRHEADER       { "Date", "Time", "Size", "Filename", "", "", "", "", "" }
 #define popen           _popen
-#else /*_WIN32*/
+#else /*_MSC_VER*/
 // UNIX
 #include <ctype.h>
 #define DIRCMD          "ls -l"
 #define DIRHEADER       { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename" }
-#endif /*_WIN32*/
+#endif /*_MSC_VER*/
 
 // A single row of columns
 class Row {
