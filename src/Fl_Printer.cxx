@@ -77,6 +77,11 @@ const char *Fl_Printer::property_save = "Save";
 const char *Fl_Printer::property_cancel = "Cancel";
 
 const char *Fl_Printer::device_type = "Fl_Printer";
+#if defined(__APPLE__) || defined(WIN32)
+const char *Fl_System_Printer::device_type = "Fl_Printer";
+#elif !defined(FL_DOXYGEN)
+const char *Fl_PostScript_Printer::device_type = "Fl_Printer";
+#endif
 
 #if defined(__APPLE__) || defined(WIN32)
 void Fl_System_Printer::set_current(void)
@@ -89,6 +94,75 @@ void Fl_System_Printer::set_current(void)
   this->Fl_Surface_Device::set_current();
 }
 #endif
+
+Fl_Printer::Fl_Printer(void) {
+#if defined(WIN32) || defined(__APPLE__)
+  printer = new Fl_System_Printer();
+#else
+  printer = new Fl_PostScript_Printer();
+#endif
+}
+
+int Fl_Printer::start_job(int pagecount, int *frompage, int *topage)
+{
+  return printer->start_job(pagecount, frompage, topage);
+}
+
+int Fl_Printer::start_page(void)
+{
+  return printer->start_page();
+}
+
+int Fl_Printer::printable_rect(int *w, int *h)
+{
+  return printer->printable_rect(w, h);
+}
+
+void Fl_Printer::margins(int *left, int *top, int *right, int *bottom)
+{
+  printer->margins(left, top, right, bottom);
+}
+
+void Fl_Printer::origin(int x, int y)
+{
+  printer->origin(x, y);
+}
+
+void Fl_Printer::scale(float scale_x, float scale_y)
+{
+  printer->scale(scale_x, scale_y);
+}
+
+void Fl_Printer::rotate(float angle)
+{
+  printer->rotate(angle);
+}
+
+void Fl_Printer::translate(int x, int y)
+{
+  printer->translate(x, y);
+}
+
+void Fl_Printer::untranslate(void)
+{
+  printer->untranslate();
+}
+
+int Fl_Printer::end_page (void)
+{
+  return printer->end_page();
+}
+
+void Fl_Printer::end_job (void)
+{
+  printer->end_job();
+}
+
+Fl_Printer::~Fl_Printer(void)
+{
+  delete printer;
+}
+
 
 //
 // End of "$Id$".

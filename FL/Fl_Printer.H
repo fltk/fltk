@@ -44,13 +44,12 @@
 #include <commdlg.h>
 #endif
 
-#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)
-/**
- \brief Print support under MSWindows and Mac OS X.
-*
+#if defined(__APPLE__) || defined(WIN32)
+/*
+ Print support under MSWindows and Mac OS X.
+
  Class Fl_System_Printer is implemented only on the MSWindows and Mac OS X platforms.
  Use Fl_Printer instead that is cross-platform and has the same API.
- Fl_Printer is typedef'ed to Fl_System_Printer under MSWindows and Mac OS X. 
  */
 class Fl_System_Printer : public Fl_Paged_Device {
 private:
@@ -75,9 +74,6 @@ private:
 #endif
 public:
   static const char *device_type;
-  /** 
-   @brief The constructor.
-   */
   Fl_System_Printer(void);
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   int start_page (void);
@@ -91,78 +87,28 @@ public:
   int end_page (void);
   void end_job (void);
 
-  /** 
-   @brief The destructor.
-   */
   ~Fl_System_Printer(void);
-#ifndef FL_DOXYGEN
-public:
-  static const char *dialog_title; 
-  static const char *dialog_printer; 
-  static const char *dialog_range; 
-  static const char *dialog_copies; 
-  static const char *dialog_all; 
-  static const char *dialog_pages;
-  static const char *dialog_from;
-  static const char *dialog_to;
-  static const char *dialog_properties;
-  static const char *dialog_copyNo;
-  static const char *dialog_print_button;
-  static const char *dialog_cancel_button;
-  static const char *dialog_print_to_file;
-  static const char *property_title;
-  static const char *property_pagesize;
-  static const char *property_mode;
-  static const char *property_use;
-  static const char *property_save;
-  static const char *property_cancel;
-#endif // FL_DOXYGEN
 }; // class Fl_System_Printer
 
-typedef Fl_System_Printer Fl_Printer;
 #endif
   
-#if !(defined(__APPLE__) || defined(WIN32))
-/**
- \brief Print support under Unix/Linux.
- *
+#if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
+/*
+ Print support under Unix/Linux.
+ 
  Class Fl_PostScript_Printer is implemented only on the Unix/Linux platform.
  Use Fl_Printer instead that is cross-platform and has the same API.
- Fl_Printer is typedef'ed to Fl_PostScript_Printer under Unix/Linux. 
  */
 class Fl_PostScript_Printer : public Fl_PostScript_File_Device {
 public:
   static const char *device_type;
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
-
-#ifndef FL_DOXYGEN
-  static const char *dialog_title; 
-  static const char *dialog_printer; 
-  static const char *dialog_range; 
-  static const char *dialog_copies; 
-  static const char *dialog_all; 
-  static const char *dialog_pages;
-  static const char *dialog_from;
-  static const char *dialog_to;
-  static const char *dialog_properties;
-  static const char *dialog_copyNo;
-  static const char *dialog_print_button;
-  static const char *dialog_cancel_button;
-  static const char *dialog_print_to_file;
-  static const char *property_title;
-  static const char *property_pagesize;
-  static const char *property_mode;
-  static const char *property_use;
-  static const char *property_save;
-  static const char *property_cancel;
-#endif // FL_DOXYGEN
 };
 
-typedef Fl_PostScript_Printer Fl_Printer;
 #endif
 
 /**
- * @brief OS-independent print support.
+ * \brief OS-independent print support.
  *
  Fl_Printer allows to use all FLTK drawing, color, text, and clip functions, and to have them operate
  on printed page(s). There are two main, non exclusive, ways to use it.
@@ -175,8 +121,6 @@ typedef Fl_PostScript_Printer Fl_Printer;
  In both cases, begin by start_job(), start_page(), printable_rect() and origin() calls
  and finish by end_page() and end_job() calls.
  <p><b>Platform specifics</b>
- <br>Fl_Printer is typedef'ed to Fl_PostScript_Printer under Unix/Linux 
- and to Fl_System_Printer otherwise. Both classes have the same API.
  <ul>
  <li>Unix/Linux platforms:
  Class Fl_RGB_Image prints but loses its transparency if it has one.
@@ -195,12 +139,10 @@ typedef Fl_PostScript_Printer Fl_Printer;
  <li>Mac OS X platform: all graphics requests print as on display.
  </ul>
  */
-#ifdef FL_DOXYGEN
-// this class is NOT compiled. It's here for Doxygen documentation purpose only
-class Fl_Printer : public Fl_System_Printer, Fl_PostScript_Printer {
+class Fl_Printer : public Fl_Paged_Device {
 public:
   static const char *device_type;
-  /** @brief The constructor */
+  /** \brief The constructor */
   Fl_Printer(void);
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   int start_page(void);
@@ -213,7 +155,7 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
-  /** @brief The destructor */
+  /** \brief The destructor */
   ~Fl_Printer(void);
  
   /** \name These attributes are effective under the Xlib platform only.
@@ -239,8 +181,13 @@ public:
   static const char *property_save;
   static const char *property_cancel;
   /** \} */ 
-};
+private:
+#if defined(WIN32) || defined(__APPLE__)
+  Fl_System_Printer *printer;
+#else
+  Fl_PostScript_Printer *printer;
 #endif
+};
 
 #endif // Fl_Printer_H
 

@@ -1471,7 +1471,7 @@ void Fl_PostScript_File_Device::end_job (void)
 }
 
 #if ! (defined(__APPLE__) || defined(WIN32) )
-int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
+int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   enum Fl_Paged_Device::Page_Format format;
   enum Fl_Paged_Device::Page_Layout layout;
 
