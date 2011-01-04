@@ -502,6 +502,7 @@
 		C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E51274D100007D3CFE /* OpenGL.framework */; };
 		C96291151274D1FD007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C984AFA812D02A1800D66DAD /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C984AFA712D02A1800D66DAD /* demo.menu */; };
+		C99FD8E212D2A2AD002FC776 /* browser.cxx in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D999C03407EAEE9C4D3477A /* browser.cxx */; };
 		C9A374AB3AD29E141C659819 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		C9C4C91FDA73557BB6B69F3D /* jchuff.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DB580DCA05DE487FACA272 /* jchuff.c */; };
 		C9D72F10B7A22DD0349ABC68 /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097D0B476E396B9AAC6FA1E0 /* fltk_forms.framework */; };
@@ -3662,6 +3663,16 @@
 			dstSubfolderSpec = 10;
 			files = (
 				C9165EAA1291A304003FF4F0 /* fltk.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C99FD8E112D2A295002FC776 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				C99FD8E212D2A2AD002FC776 /* browser.cxx in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6968,6 +6979,7 @@
 				FD1A7D2F7532522CCF2B0FFB /* Sources */,
 				5CEB6CB961822D1167C891C6 /* Frameworks */,
 				B1608C348129813E176E8357 /* CopyFiles */,
+				C99FD8E112D2A295002FC776 /* CopyFiles */,
 			);
 			buildRules = (
 				982E85D9644C6688DAA59FCA /* PBXBuildRule */,
