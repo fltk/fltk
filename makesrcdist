@@ -18,16 +18,16 @@ else
 		echo "ERROR: Please generate the HTML documentation before distributing:"
 		echo "  autoconf"
 		echo "  ./configure"
-		echo "  cd documentation; make html-dist"
+		echo "  cd documentation; make html"
 		exit
-	fi 
+	fi
 	if test ! -e "documentation/fltk.pdf"; then
 		echo "ERROR: Please generate the PDF documentation before distributing:"
 		echo "  autoconf"
 		echo "  ./configure"
-		echo "  cd documentation; make html-dist"
+		echo "  cd documentation; make pdf-dist"
 		exit
-	fi 
+	fi
 exit
 	echo Creating tag for release...
 	rev="1"
