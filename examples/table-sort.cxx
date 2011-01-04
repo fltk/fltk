@@ -34,7 +34,7 @@
 // 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Table_Row.H>
 
@@ -269,7 +269,7 @@ void MyTable::event_callback2() {
 }
 
 int main() {
-    Fl_Window win(900,500,"Table Sorting");
+    Fl_Double_Window win(900,500,"Table Sorting");
         MyTable table(MARGIN, MARGIN, win.w()-MARGIN*2, win.h()-MARGIN*2);
         table.selection_color(FL_YELLOW);
         table.col_header(1);
