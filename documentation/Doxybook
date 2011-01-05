@@ -565,6 +565,8 @@ INPUT                  = src/index.dox \
                          src/fluid.dox \
                          src/advanced.dox \
                          src/unicode.dox \
+                         ../FL \
+                         ../src \
                          src/enumerations.dox \
                          src/glut.dox \
                          src/forms.dox \
@@ -573,9 +575,7 @@ INPUT                  = src/index.dox \
                          src/migration_1_3.dox \
                          src/development.dox \
                          src/license.dox \
-                         src/examples.dox \
-                         ../FL \
-                         ../src
+                         src/examples.dox
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -768,7 +768,7 @@ IGNORE_PREFIX          = fl_ \
 # If the GENERATE_HTML tag is set to YES (the default) Doxygen will 
 # generate HTML output.
 
-GENERATE_HTML          = YES
+GENERATE_HTML          = NO
 
 # The HTML_OUTPUT tag is used to specify where the HTML docs will be put. 
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
@@ -801,7 +801,7 @@ HTML_FOOTER            = src/html_footer
 # the style sheet file to the HTML output directory, so don't put your own 
 # stylesheet in the HTML output directory as well, or it will be erased!
 
-HTML_STYLESHEET        = 
+HTML_STYLESHEET        = src/html_stylesheet.css
 
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
@@ -945,7 +945,7 @@ ENUM_VALUES_PER_LINE   = 4
 # releases of Doxygen, the values YES and NO are equivalent to FRAME and NONE
 # respectively.
 
-GENERATE_TREEVIEW      = NO
+GENERATE_TREEVIEW      = YES
 
 # If the treeview is enabled (see GENERATE_TREEVIEW) then this tag can be 
 # used to set the initial width (in pixels) of the frame in which the tree 
@@ -1240,7 +1240,8 @@ PREDEFINED             = FL_DOXYGEN \
                          HAVE_CAIRO \
                          HAVE_GL \
                          HAVE_GL_OVERLAY \
-                         FL_EXPORT:=
+                         FL_EXPORT:= \
+			 __cplusplus
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 

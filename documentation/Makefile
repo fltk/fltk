@@ -28,6 +28,9 @@
 # Get configuration stuff...
 include ../makeinclude
 
+# make sure that all docs are (re-)created independent of missing deps
+.PHONY: pdf html refman.pdf
+
 SRC_DOCDIR      = 	./src
 
 # These are the HTML "source" files...
@@ -61,10 +64,15 @@ MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 
 all:	$(MANPAGES)
 
-alldocs: pdf-dist html $(MANPAGES)
+# use make dist to create all docs for distribution files
+# you need an installed version of doxygen for this
+dist:	all html pdf
+
+# synonym for dist
+alldocs: dist
 
 clean:
-	$(RM) refman.pdf
+	$(RM) fltk.pdf
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
@@ -126,10 +134,9 @@ uninstall-linux uninstall-osx:
 # The HTML files are now generated using doxygen, and this needs
 # an installed doxygen version and may take some time, so this target
 # is not made by default.
+# Use `make html' or `make dist' to create the html docs
 
-html: html/index.html
-
-html/index.html: $(HTMLFILES) Doxyfile
+html:	$(HTMLFILES) Doxyfile
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
@@ -139,16 +146,18 @@ html/index.html: $(HTMLFILES) Doxyfile
 	fi
 	test -d html && cp src/tiny.png html/
 
-html-dist: html
-	echo "Stripping HTML files ..."
+# this is only used to minimize subversion updates of the online docs
+html-online: html
+	echo "*** Warning: re-create HTML files if you want to build distribution files."
+	echo "*** Warning: Use 'make html' to re-create the correct HTML files."
+	echo "Stripping HTML files for online documentation upload..."
 	./strip_tags
 
-pdf-dist: latex/refman.pdf
+pdf:	refman.pdf
 	cp -f latex/refman.pdf fltk.pdf
 
-pdf: 	latex/refman.pdf
-
-latex/refman.pdf: latex/refman.tex Doxybook
+refman.pdf: $(HTMLFILES) Doxybook
+	-$(RMDIR) latex
 	echo "Generating PDF documentation ..."
 	$(DOXYDOC) Doxybook ;\
 	(cd latex ;\
@@ -163,9 +172,7 @@ latex/refman.pdf: latex/refman.tex Doxybook
 	      pdflatex --interaction=nonstopmode refman.tex ;\
 	      latex_count=`expr $$latex_count - 1` ;\
 	    done ; \
-	cd ..) > pdfall.log
-
-latex/refman.tex: Doxybook
+	cd ..) > pdfall.log 2>&1
 
 #
 # End of "$Id$".
