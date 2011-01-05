@@ -72,7 +72,7 @@ dist:	all html pdf
 alldocs: dist
 
 clean:
-	$(RM) fltk.pdf
+	$(RM) fltk.pdf refman.pdf
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
