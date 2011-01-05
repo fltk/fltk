@@ -17,7 +17,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
 # default target -- build everything
-default: $(ALL)
+default all: $(ALL)
 
 # clean everything
 clean:
