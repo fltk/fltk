@@ -692,8 +692,6 @@ int fl_utf8locale(void) {
     needed.
 
     If fl_utf8locale() returns true then this does not change the data.
-    It is copied and truncated as necessary to
-    the destination buffer and \p srclen is always returned.
 */
 unsigned fl_utf8to_mb(const char* src, unsigned srclen,
 		  char* dst, unsigned dstlen)
@@ -747,8 +745,7 @@ unsigned fl_utf8to_mb(const char* src, unsigned srclen,
     memcpy(dst, src, srclen);
     dst[srclen] = 0;
   } else {
-    memcpy(dst, src, dstlen-1);
-    dst[dstlen-1] = 0;
+    // Buffer insufficent or buffer query
   }
   return srclen;
 }
@@ -765,8 +762,7 @@ unsigned fl_utf8to_mb(const char* src, unsigned srclen,
     needed.
 
     On Unix or on Windows when a UTF-8 locale is in effect, this
-    does not change the data. It is copied and truncated as necessary to
-    the destination buffer and \p srclen is always returned.
+    does not change the data.
     You may also want to check if fl_utf8test() returns non-zero, so that
     the filesystem can store filenames in UTF-8 encoding regardless of
     the locale.
@@ -813,8 +809,7 @@ unsigned fl_utf8from_mb(char* dst, unsigned dstlen,
     memcpy(dst, src, srclen);
     dst[srclen] = 0;
   } else {
-    memcpy(dst, src, dstlen-1);
-    dst[dstlen-1] = 0;
+    // Buffer insufficent or buffer query
   }
   return srclen;
 }
