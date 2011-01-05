@@ -49,7 +49,7 @@ extern int fl_line_width_;
 
 #ifdef __APPLE_QUARTZ__
 extern float fl_quartz_line_width_;
-#define USINGQUARTZPRINTER  (Fl_Surface_Device::surface()->type() == Fl_Printer::device_type)
+#define USINGQUARTZPRINTER  (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id)
 #endif
 
 #ifdef USE_X11
@@ -627,7 +627,7 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   return XRectInRegion(r, x, y, w, h);
 #elif defined(WIN32)
   RECT rect;
-  if (Fl_Surface_Device::surface()->type() == Fl_Printer::device_type) { // in case of print context, convert coords from logical to device
+  if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) { // in case of print context, convert coords from logical to device
     POINT pt[2] = { {x, y}, {x + w, y + h} };
     LPtoDP(fl_gc, pt, 2);
     rect.left = pt[0].x; rect.top = pt[0].y; rect.right = pt[1].x; rect.bottom = pt[1].y;
@@ -687,7 +687,7 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
   } else {	// partial intersection
     RECT rect;
     GetRgnBox(temp, &rect);
-    if(Fl_Surface_Device::surface()->type() == Fl_Printer::device_type) { // if print context, convert coords from device to logical
+    if(Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) { // if print context, convert coords from device to logical
       POINT pt[2] = { {rect.left, rect.top}, {rect.right, rect.bottom} };
       DPtoLP(fl_gc, pt, 2);
       X = pt[0].x; Y = pt[0].y; W = pt[1].x - X; H = pt[1].y - Y;

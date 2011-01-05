@@ -32,8 +32,8 @@
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
-const char *Fl_PostScript_Graphics_Driver::device_type = "Fl_PostScript_Graphics_Driver";
-const char *Fl_PostScript_File_Device::device_type = "Fl_PostScript_File_Device";
+const char *Fl_PostScript_Graphics_Driver::class_id = "Fl_PostScript_Graphics_Driver";
+const char *Fl_PostScript_File_Device::class_id = "Fl_PostScript_File_Device";
 /** \brief Label of the PostScript file chooser window */
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
 
@@ -47,7 +47,7 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   lang_level_ = 2;
   mask = 0;
   ps_filename_ = NULL;
-  type_ = device_type;
+  class_name(class_id);
   scale_x = scale_y = 1.;
   bg_r = bg_g = bg_b = 255;
 }
@@ -62,7 +62,7 @@ Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
  */
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void)
 {
-  type_ = device_type;
+  class_name(class_id);
 #ifdef __APPLE__
   gc = fl_gc; // the display context is used by fl_text_extents()
 #endif

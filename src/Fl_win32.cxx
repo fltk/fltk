@@ -1911,7 +1911,7 @@ void fl_cleanup_dc_list(void) {          // clean up the list
 }
 
 Fl_Region XRectangleRegion(int x, int y, int w, int h) {
-  if (Fl_Surface_Device::surface()->type() == Fl_Display_Device::device_type) return CreateRectRgn(x,y,x+w,y+h);
+  if (Fl_Surface_Device::surface()->class_name() == Fl_Display_Device::class_id) return CreateRectRgn(x,y,x+w,y+h);
   // because rotation may apply, the rectangle becomes a polygon in device coords
   POINT pt[4] = { {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h} };
   LPtoDP(fl_gc, pt, 4);

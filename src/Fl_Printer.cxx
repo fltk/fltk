@@ -76,11 +76,11 @@ const char *Fl_Printer::property_save = "Save";
 /** [this text may be customized at run-time] */
 const char *Fl_Printer::property_cancel = "Cancel";
 
-const char *Fl_Printer::device_type = "Fl_Printer";
+const char *Fl_Printer::class_id = "Fl_Printer";
 #if defined(__APPLE__) || defined(WIN32)
-const char *Fl_System_Printer::device_type = "Fl_Printer";
+const char *Fl_System_Printer::class_id = "Fl_Printer";
 #elif !defined(FL_DOXYGEN)
-const char *Fl_PostScript_Printer::device_type = "Fl_Printer";
+const char *Fl_PostScript_Printer::class_id = "Fl_Printer";
 #endif
 
 #if defined(__APPLE__) || defined(WIN32)

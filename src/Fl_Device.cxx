@@ -29,18 +29,18 @@
 #include <FL/Fl_Device.H>
 #include <FL/Fl_Image.H>
 
-const char *Fl_Device::device_type = "Fl_Device";
-const char *Fl_Surface_Device::device_type = "Fl_Surface_Device";
-const char *Fl_Display_Device::device_type = "Fl_Display_Device";
-const char *Fl_Graphics_Driver::device_type = "Fl_Graphics_Driver";
+const char *Fl_Device::class_id = "Fl_Device";
+const char *Fl_Surface_Device::class_id = "Fl_Surface_Device";
+const char *Fl_Display_Device::class_id = "Fl_Display_Device";
+const char *Fl_Graphics_Driver::class_id = "Fl_Graphics_Driver";
 #if defined(__APPLE__) || defined(FL_DOXYGEN)
-const char *Fl_Quartz_Graphics_Driver::device_type = "Fl_Quartz_Graphics_Driver";
+const char *Fl_Quartz_Graphics_Driver::class_id = "Fl_Quartz_Graphics_Driver";
 #endif
 #if defined(WIN32) || defined(FL_DOXYGEN)
-const char *Fl_GDI_Graphics_Driver::device_type = "Fl_GDI_Graphics_Driver";
+const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))
-const char *Fl_Xlib_Graphics_Driver::device_type = "Fl_Xlib_Graphics_Driver";
+const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
 #endif
 
 

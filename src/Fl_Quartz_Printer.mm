@@ -40,7 +40,7 @@ Fl_System_Printer::Fl_System_Printer(void)
   x_offset = 0;
   y_offset = 0;
   scale_x = scale_y = 1.;
-  type_ = device_type;
+  class_name(class_id);
   gc = 0;
   driver(fl_graphics_driver);
 }

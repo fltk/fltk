@@ -304,7 +304,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP,
   HDC tempdc;
   int save;
   BOOL use_print_algo = false;
-  if (fl_surface->type() == Fl_Printer::device_type) {
+  if (fl_surface->class_name() == Fl_Printer::class_id) {
     static HMODULE hMod = NULL;
     if (!hMod) {
       hMod = LoadLibrary("MSIMG32.DLL");

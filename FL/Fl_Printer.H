@@ -73,7 +73,7 @@ private:
   void absolute_printable_rect(int *x, int *y, int *w, int *h);
 #endif
 public:
-  static const char *device_type;
+  static const char *class_id;
   Fl_System_Printer(void);
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   int start_page (void);
@@ -101,7 +101,7 @@ public:
  */
 class Fl_PostScript_Printer : public Fl_PostScript_File_Device {
 public:
-  static const char *device_type;
+  static const char *class_id;
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
 };
 
@@ -141,7 +141,7 @@ public:
  */
 class Fl_Printer : public Fl_Paged_Device {
 public:
-  static const char *device_type;
+  static const char *class_id;
   /** \brief The constructor */
   Fl_Printer(void);
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);

@@ -130,11 +130,11 @@ protected:
   void delete_image_list(); 
 #endif
   /** \brief The constructor */
-  Fl_Paged_Device() : Fl_Surface_Device(NULL) {type_ = device_type;};
+  Fl_Paged_Device() : Fl_Surface_Device(NULL) {class_name( class_id);};
   /** \brief The destructor */
   virtual ~Fl_Paged_Device() {};
 public:
-  static const char *device_type;
+  static const char *class_id;
   virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   virtual int start_page(void);
   virtual int printable_rect(int *w, int *h);

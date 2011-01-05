@@ -180,8 +180,8 @@ void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int src
   BOOL alpha_ok = 0;
   // first try to alpha blend
   // if to printer, always try alpha_blend
-  int to_display = Fl_Surface_Device::surface()->type() == Fl_Display_Device::device_type; // true iff display output
-  if ( (to_display && fl_can_do_alpha_blending()) || Fl_Surface_Device::surface()->type() == Fl_Printer::device_type) {
+  int to_display = Fl_Surface_Device::surface()->class_name() == Fl_Display_Device::class_id; // true iff display output
+  if ( (to_display && fl_can_do_alpha_blending()) || Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
     alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
     }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1

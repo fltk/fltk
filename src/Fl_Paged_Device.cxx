@@ -32,7 +32,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-const char *Fl_Paged_Device::device_type = "Fl_Paged_Device";
+const char *Fl_Paged_Device::class_id = "Fl_Paged_Device";
 
 
 /**

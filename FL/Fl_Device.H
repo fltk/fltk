@@ -63,24 +63,26 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
  \brief All graphical output devices and all graphics systems.
  */
 class FL_EXPORT Fl_Device {
+private:
+  const char *type_; // pointer to class name
 protected:
-  /** \brief The device type */
-  const char *type_; 
+  /** \brief Sets the class name */
+  inline void class_name(const char *name) { type_ = name;};
   /** \brief A string that identifies each subclass of Fl_Device.
-   *
-  Function type() applied to a device of this class returns this string.
+   
+  Function class_name() applied to a device of this class returns this string.
    */
-  static const char *device_type;
+  static const char *class_id;
 public:
   /** 
-   @brief An RTTI emulation of device classes. 
+   \brief Returns the name of the class of this object. 
    *
-   The type of an instance of an Fl_Device subclass can be checked with code such as:
+   The class of an instance of an Fl_Device subclass can be checked with code such as:
    \code
-   if ( instance->type() == Fl_Printer::device_type ) { ... }
+   if ( instance->class_name() == Fl_Printer::class_id ) { ... }
    \endcode
    */
-  inline const char *type() {return type_;};
+  inline const char *class_name() {return type_;};
 };
 
 /**
@@ -275,7 +277,7 @@ protected:
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {};
     
 public:
-  static const char *device_type;
+  static const char *class_id;
   /** \brief The destructor */
   virtual ~Fl_Graphics_Driver() {};
 };
@@ -289,8 +291,8 @@ public:
 class FL_EXPORT Fl_Quartz_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   /** \brief The constructor. */
-  Fl_Quartz_Graphics_Driver() { type_ = device_type; };
-  static const char *device_type;
+  Fl_Quartz_Graphics_Driver() { class_name( class_id); };
+  static const char *class_id;
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
@@ -315,8 +317,8 @@ public:
 class FL_EXPORT Fl_GDI_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   /** \brief The constructor. */
-  Fl_GDI_Graphics_Driver() { type_ = device_type; };
-  static const char *device_type;
+  Fl_GDI_Graphics_Driver() { class_name ( class_id); };
+  static const char *class_id;
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
@@ -341,8 +343,8 @@ public:
 class Fl_Xlib_Graphics_Driver : public Fl_Graphics_Driver {
 public:
   /** \brief The constructor. */
-  Fl_Xlib_Graphics_Driver() { type_ = device_type; };
-  static const char *device_type;
+  Fl_Xlib_Graphics_Driver() { class_name ( class_id); };
+  static const char *class_id;
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
@@ -369,7 +371,7 @@ protected:
   /** \brief Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver; };
 public:
-  static const char *device_type;
+  static const char *class_id;
   virtual void set_current(void);
   /** \brief Sets the graphics driver of this drawing surface. */
   inline void driver(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver;};
@@ -386,9 +388,9 @@ public:
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
 public:
-  static const char *device_type;
+  static const char *class_id;
   /** \brief A constructor that sets the graphics driver used by the display */
-  Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) { type_ = device_type; };
+  Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) { class_name( class_id); };
   /**
    @brief    Returns the platform's display device.
    */
