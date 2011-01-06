@@ -151,9 +151,9 @@ int main(int argc, char** argv) {
     
     window.resizable(&window);
     window.color(FL_WHITE);
-    window.show(argc,argv);
     window.set_draw_cb(my_cairo_draw_cb);
-    
+    window.show(argc,argv);
+
     return Fl::run();
 }
 #else

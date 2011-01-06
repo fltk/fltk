@@ -25,6 +25,7 @@
 #     http://www.fltk.org/str.php
 #
 
+FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
 #
