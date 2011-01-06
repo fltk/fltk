@@ -44,14 +44,16 @@
 #include <commdlg.h>
 #endif
 
-#if defined(__APPLE__) || defined(WIN32)
-/*
- Print support under MSWindows and Mac OS X.
+#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)
+/**
+ Print support under MSWindows and Mac OS.
 
- Class Fl_System_Printer is implemented only on the MSWindows and Mac OS X platforms.
+ Class Fl_System_Printer is implemented only on the MSWindows and Mac OS platforms.
+ It has no public constructor.
  Use Fl_Printer instead that is cross-platform and has the same API.
  */
 class Fl_System_Printer : public Fl_Paged_Device {
+  friend class Fl_Printer;
 private:
   /** \brief the printer's graphics context, if there's one, NULL otherwise */
   void *gc; 
@@ -72,9 +74,11 @@ private:
   int top_margin;
   void absolute_printable_rect(int *x, int *y, int *w, int *h);
 #endif
+protected:
+  /** \brief The constructor */
+  Fl_System_Printer(void);
 public:
   static const char *class_id;
-  Fl_System_Printer(void);
   int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
   int start_page (void);
   int printable_rect(int *w, int *h);
@@ -86,20 +90,25 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
-
+  /** \brief The destructor */
   ~Fl_System_Printer(void);
 }; // class Fl_System_Printer
 
 #endif
   
-#if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
-/*
+#if !(defined(__APPLE__) || defined(WIN32) )
+/**
  Print support under Unix/Linux.
  
  Class Fl_PostScript_Printer is implemented only on the Unix/Linux platform.
+ It has no public constructor.
  Use Fl_Printer instead that is cross-platform and has the same API.
  */
 class Fl_PostScript_Printer : public Fl_PostScript_File_Device {
+  friend class Fl_Printer;
+protected:
+  /** \brief The constructor */
+  Fl_PostScript_Printer(void) {};
 public:
   static const char *class_id;
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);
