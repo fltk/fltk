@@ -2298,20 +2298,32 @@ int main(int argc,char **argv) {
   int i = 1;
   
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
-    fprintf(stderr,
-"usage: %s <switches> name.fl\n"
-" -c : write .cxx and .h and exit\n"
-" -cs : write .cxx and .h and strings and exit\n"
-" -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
-" -h <name> : .h output filename, or extension if <name> starts with '.'\n"
-            , argv[0]);
+    static const char *msg = 
+      "usage: %s <switches> name.fl\n"
+      " -c : write .cxx and .h and exit\n"
+      " -cs : write .cxx and .h and strings and exit\n"
+      " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
+      " -h <name> : .h output filename, or extension if <name> starts with '.'\n";
+    int len = strlen(msg) + strlen(argv[0]) + strlen(Fl::help);
     Fl_Plugin_Manager pm("commandline");
     int i, n = pm.plugins();
     for (i=0; i<n; i++) {
       Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
-      if (pi) puts(pi->help());
+      if (pi) len += strlen(pi->help());
     }
-    fprintf(stderr, "%s\n", Fl::help);
+    char *buf = (char*)malloc(len+1);
+    sprintf(buf, msg, argv[0]);
+    for (i=0; i<n; i++) {
+      Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
+      if (pi) strcat(buf, pi->help());
+    }
+    strcat(buf, Fl::help);
+#ifdef _MSC_VER
+    fl_message("%s\n", buf);
+#else
+    fprintf(stderr, "%s\n", buf);
+#endif
+    free(buf);
     return 1;
   }
   if (exit_early)
