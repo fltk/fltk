@@ -184,7 +184,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".;..\..\zlib;..\..\png;..\..\jpeg;../.."
-				PreprocessorDefinitions="HAVE_CAIRO=1"
+				PreprocessorDefinitions="FLTK_HAVE_CAIRO=1"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\Debug/jpeg.pch"
