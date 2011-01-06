@@ -25,7 +25,7 @@
 //     http://www.fltk.org/str.php
 //
 /** \file Fl_Printer.H 
- \brief declaration of class Fl_Printer.
+ \brief declaration of classes Fl_Printer, Fl_System_Printer and Fl_PostScript_Printer.
  */
 
 #ifndef Fl_Printer_H
@@ -108,7 +108,7 @@ class Fl_PostScript_Printer : public Fl_PostScript_File_Device {
   friend class Fl_Printer;
 protected:
   /** \brief The constructor */
-  Fl_PostScript_Printer(void) {};
+  Fl_PostScript_Printer(void) {class_name(class_id);};
 public:
   static const char *class_id;
   int start_job(int pages, int *firstpage = NULL, int *lastpage = NULL);

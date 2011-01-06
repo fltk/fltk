@@ -77,10 +77,11 @@ const char *Fl_Printer::property_save = "Save";
 const char *Fl_Printer::property_cancel = "Cancel";
 
 const char *Fl_Printer::class_id = "Fl_Printer";
-#if defined(__APPLE__) || defined(WIN32)
-const char *Fl_System_Printer::class_id = "Fl_Printer";
-#elif !defined(FL_DOXYGEN)
-const char *Fl_PostScript_Printer::class_id = "Fl_Printer";
+#if defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN)
+const char *Fl_System_Printer::class_id = Fl_Printer::class_id;
+#endif
+#if !( defined(__APPLE__) || defined(WIN32) )
+const char *Fl_PostScript_Printer::class_id = Fl_Printer::class_id;
 #endif
 
 #if defined(__APPLE__) || defined(WIN32)
@@ -101,6 +102,7 @@ Fl_Printer::Fl_Printer(void) {
 #else
   printer = new Fl_PostScript_Printer();
 #endif
+  class_name(class_id);
 }
 
 int Fl_Printer::start_job(int pagecount, int *frompage, int *topage)
