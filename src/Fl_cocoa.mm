@@ -2216,12 +2216,12 @@ void Fl_Window::make_current()
   XDestroyRegion(fl_window_region);
 // this is the context with origin at top left of (sub)window clipped out of its subwindows if any
   CGContextSaveGState(fl_gc); 
-#if defined(USE_CAIRO)
+#if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this); // capture gc changes automatically to update the cairo context adequately
 #endif
   fl_clip_region( 0 );
   
-#if defined(USE_CAIRO)
+#if defined(FLTK_USE_CAIRO)
   // update the cairo_t context
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this);
 #endif
@@ -2261,7 +2261,7 @@ void Fl_X::q_release_context(Fl_X *x) {
   if (!fl_gc) return;
   CGContextRestoreGState(fl_gc); // matches the CGContextSaveGState of make_current
   fl_gc = 0;
-#if defined(USE_CAIRO)
+#if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
 #endif
 }

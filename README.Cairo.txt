@@ -39,7 +39,7 @@ as in fltk2.
 
 All the changes are *inactive*  as long as the new configuration
 option --enable-cairo is not added to the configure command.
-For non configure based platforms/ide, the HAVE_CAIRO preprocess var.
+For non configure based platforms/ide, the FLTK_HAVE_CAIRO preprocess var.
 has to be defined.
 All configure based build files has now this feature integrated,
 also vc2005 build files have 2 new build modes "Release Cairo" and 
@@ -79,7 +79,7 @@ in the Modules section.
 -----------------------
 
 From Bill:
-First there is the HAVE_CAIRO configuration option. This indicates that
+First there is the FLTK_HAVE_CAIRO configuration option. This indicates that
 any cairo calls are available. In this case you get something like this:
 
 // static variable holding the last cairo context fltk set:
@@ -95,14 +95,14 @@ void Fl::cairo_make_current(Fl_Window*)
 // thus cannot be destroyed or reused for a different window:
 void Fl::cairo_make_current(cairo_t*)
 
-Second there is the USE_CAIRO configuration option. This means that all
+Second there is the FLTK_USE_CAIRO configuration option. This means that all
 drawing is done using Cairo. In this case when a widget draw() method is
 called, it is exactly as though cairo_make_current(window) has been done.
 *** 
 
-Note that it should be possible to compile so HAVE_CAIRO works even if
-USE_CAIRO does not, and so that turning on USE_CAIRO does not break any
-programs written for HAVE_CAIRO.
+Note that it should be possible to compile so FLTK_HAVE_CAIRO works even if
+FLTK_USE_CAIRO does not, and so that turning on FLTK_USE_CAIRO does not break any
+programs written for FLTK_HAVE_CAIRO.
 
 
  DOCUMENT HISTORY

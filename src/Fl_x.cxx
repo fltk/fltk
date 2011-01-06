@@ -1869,7 +1869,7 @@ void Fl_Window::make_current() {
   current_ = this;
   fl_clip_region(0);
 
-#ifdef USE_CAIRO
+#ifdef FLTK_USE_CAIRO
   // update the cairo_t context
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this);
 #endif

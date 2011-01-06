@@ -27,7 +27,7 @@
 
 #include <config.h>
 
-#ifdef HAVE_CAIRO
+#ifdef FLTK_HAVE_CAIRO
 
 #include <FL/Fl_Cairo_Window.H>
 #include <FL/Fl_Box.H>

@@ -245,21 +245,21 @@
 #cmakedefine HAVE_LIBJPEG @HAVE_LIBJPEG@
 
 /*
- * USE_CAIRO
+ * FLTK_USE_CAIRO
  *
  * Do we have the cairo library available and want extended cairo use in fltk ?
  * will implies to link cairo.lib in all fltk based apps.
  */
 
-#cmakedefine USE_CAIRO @USE_CAIRO@
+#cmakedefine FLTK_USE_CAIRO @FLTK_USE_CAIRO@
 
 /*
- * HAVE_CAIRO
+ * FLTK_HAVE_CAIRO
  *
  * Do we have the cairo library available?
  */
 
-#cmakedefine HAVE_CAIRO @HAVE_CAIRO@
+#cmakedefine FLTK_HAVE_CAIRO @FLTK_HAVE_CAIRO@
 
 /*
  * Which header file do we include for libpng?

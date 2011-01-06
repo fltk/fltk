@@ -32,7 +32,7 @@
 #ifndef Fl_H
 #  define Fl_H
 
-#ifdef HAVE_CAIRO
+#ifdef FLTK_HAVE_CAIRO
 # include <FL/Fl_Cairo.H>
 #endif
 
@@ -1018,14 +1018,14 @@ public:
   static void clear_widget_pointer(Fl_Widget const *w);
   /** @} */
 
-#ifdef HAVE_CAIRO
+#ifdef FLTK_HAVE_CAIRO
   /** \defgroup group_cairo Cairo support functions and classes 
       @{ 
   */
 public:
   // Cairo support API
   static cairo_t * cairo_make_current(Fl_Window* w);
-   /** when HAVE_CAIRO is defined and cairo_autolink_context() is true, 
+   /** when FLTK_HAVE_CAIRO is defined and cairo_autolink_context() is true, 
       any current window dc is linked to a current context.
       This is not the default, because it may not be necessary
       to add cairo support to all fltk supported windows.
@@ -1063,7 +1063,7 @@ private:
 public:
   /** @} */ 
 
-#endif // HAVE_CAIRO
+#endif // FLTK_HAVE_CAIRO
 
 };
 

@@ -182,7 +182,7 @@
  */
 
 // uncomment the following for using cairo
-// #define HAVE_CAIRO 1
+// #define FLTK_HAVE_CAIRO 1
 
 /*
  * Which header file do we include for libpng?

@@ -33,9 +33,9 @@ macro(CREATE_EXAMPLE NAME SOURCES LIBRARIES)
 	target_link_libraries(${NAME} ${LIBRARIES})
 
    # link in optional libraries
-   if(HAVE_CAIRO)
+   if(FLTK_HAVE_CAIRO)
       target_link_libraries(${NAME} fltk_cairo)
-   endif(HAVE_CAIRO)
+   endif(FLTK_HAVE_CAIRO)
 
    if(USE_XFT)
       target_link_libraries(${NAME} ${X11_Xft_LIB})
@@ -133,6 +133,6 @@ CREATE_EXAMPLE(shape shape.cxx "fltk;fltk_gl;${OPENGL_LIBRARIES}")
 endif(OPENGL_FOUND)
 
 # Cairo demo
-if(HAVE_CAIRO)
+if(FLTK_HAVE_CAIRO)
    CREATE_EXAMPLE(cairo_test cairo_test.cxx fltk)
-endif(HAVE_CAIRO)
+endif(FLTK_HAVE_CAIRO)

@@ -136,7 +136,7 @@ void Fl_Window::draw() {
   }
 #endif
 
-# if defined(USE_CAIRO)
+# if defined(FLTK_USE_CAIRO)
   Fl::cairo_make_current(this); // checkout if an update is necessary
 # endif
 }

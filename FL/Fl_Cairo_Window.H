@@ -31,7 +31,7 @@
 
 #ifndef FL_CAIRO_WINDOW_H
 # define FL_CAIRO_WINDOW_H
-# ifdef HAVE_CAIRO
+# ifdef FLTK_HAVE_CAIRO
 
 // Cairo is currently supported for the following platforms:
 // Win32, Apple Quartz, X11
@@ -84,7 +84,7 @@ private:
 
 /** @} */
 
-# endif // HAVE_CAIRO
+# endif // FLTK_HAVE_CAIRO
 #endif // FL_CAIRO_WINDOW_H
 
 //
