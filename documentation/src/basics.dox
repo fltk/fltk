@@ -331,8 +331,11 @@ In Visual C++ you will need to tell the compiler where to
 find the FLTK header files. This can be done by selecting
 "Settings" from the "Project" menu and then changing the 
 "Preprocessor" settings under the "C/C++" tab. You will also 
-need to add the FLTK (FLTK.LIB or FLTKD.LIB) and the Windows
-Common Controls (COMCTL32.LIB) libraries to the "Link" settings.
+need to add the FLTK (<tt>FLTK.LIB</tt> or <tt>FLTKD.LIB</tt>) and the Windows
+Common Controls (<tt>COMCTL32.LIB</tt>) libraries to the "Link" settings.
+You must also define <tt>WIN32</tt>.
+
+More information can be found in <tt>README.MSWindows.txt</tt>.
 
 You can build your Microsoft Windows applications as Console or
 Desktop applications.  If you want to use the standard C \p main()
