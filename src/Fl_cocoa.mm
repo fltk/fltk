@@ -2715,7 +2715,7 @@ void Fl_X::set_cursor(Fl_Cursor c)
   cursor = icrsr;
 }
 
-int Fl_X::screen_init(XRectangle screens[])
+int Fl_X::screen_init(XRectangle screens[], float dpi[])
 {
   NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init]; 
   NSArray *a = [NSScreen screens]; 
@@ -2728,6 +2728,7 @@ int Fl_X::screen_init(XRectangle screens[])
     screens[num_screens].y      = int(r.size.height - (r.origin.y + r.size.height));
     screens[num_screens].width  = int(r.size.width);
     screens[num_screens].height = int(r.size.height);
+    dpi[num_screens]            = float([[a objectAtIndex:i] userSpaceScaleFactor])*72.0f;
     num_screens ++;
     if (num_screens >= 16) break;
   }

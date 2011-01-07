@@ -56,17 +56,29 @@ typedef BOOL (WINAPI* fl_gmi_func)(HMONITOR, LPMONITORINFO);
 static fl_gmi_func fl_gmi = NULL; // used to get a proc pointer for GetMonitorInfoA
 
 static RECT screens[16];
+static int dpi[16][2] = { { 0.0f, 0.0f } };
 
 static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
   if (num_screens >= 16) return TRUE;
 
-  MONITORINFO mi;
+  MONITORINFOEX mi;
   mi.cbSize = sizeof(mi);
 
 //  GetMonitorInfo(mon, &mi);
 //  (but we use our self-aquired function pointer instead)
   if (fl_gmi(mon, &mi)) {
     screens[num_screens] = mi.rcWork;
+    
+    // find the pixel size
+    if (mi.cbSize == sizeof(mi)) {
+      HDC screen = CreateDC(mi.szDevice, NULL, NULL, NULL);
+      if (screen) {
+        dpi[num_screens][0] = (float)GetDeviceCaps(screen, LOGPIXELSX);
+        dpi[num_screens][1] = (float)GetDeviceCaps(screen, LOGPIXELSY);
+      }
+      ReleaseDC();
+    }
+    
     num_screens ++;
   }
   return TRUE;
@@ -105,16 +117,18 @@ static void screen_init() {
   num_screens = 1;
 }
 #elif defined(__APPLE__)
-XRectangle screens[16];
+static XRectangle screens[16];
+static float dpi[16];
 
 static void screen_init() {
-  num_screens = Fl_X::screen_init(screens);
+  num_screens = Fl_X::screen_init(screens, dpi);
 }
 #elif HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
 
 // Screen data...
 static XineramaScreenInfo *screens;
+static float dpi[2];
 
 static void screen_init() {
   if (!fl_display) fl_open_display();
@@ -122,10 +136,22 @@ static void screen_init() {
   if (XineramaIsActive(fl_display)) {
     screens = XineramaQueryScreens(fl_display, &num_screens);
   } else num_screens = 1;
+  
+  int mm = DisplayWidthMM(fl_display, fl_screen);
+  dpi[0] = mm ? monitor.w()*25.4f/mm : 0.0f;
+  mm = DisplayHeightMM(fl_display, fl_screen);
+  dpi[1] = mm ? monitor.h()*25.4f/mm : dpi[0];  
 }
 #else
+static XRectangle screen;
+static float dpi[2];
 static void screen_init() {
   num_screens = 1;
+  if (!fl_display) fl_open_display();
+  int mm = DisplayWidthMM(fl_display, fl_screen);
+  dpi[0] = mm ? monitor.w()*25.4f/mm : 0.0f;
+  mm = DisplayHeightMM(fl_display, fl_screen);
+  dpi[1] = mm ? monitor.h()*25.4f/mm : dpi[0];  
 }
 #endif // WIN32
 
@@ -250,6 +276,41 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   W = Fl::w();
   H = Fl::h();
 }
+
+
+/**
+ Gets the screen resolution in dots-per-inch for the given screen. 
+ \param[out]  h, v  horizontal and vertical resolution
+ \param[in]   n     the screen number (0 to Fl::screen_count() - 1)
+ \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
+ */
+void Fl::screen_dpi(float &h, float &v, int n)
+{
+  if (!num_screens) screen_init();
+  h = v = 0.0f;
+  
+#ifdef WIN32
+  if (n >= 0 && n < num_screens) {
+    h = float(dpi[n][0]);
+    v = float(dpi[n][1]);
+  }
+#elif defined(__APPLE__)
+  if (n >= 0 && n < num_screens) {
+    h = v = dpi[n];
+  }
+#elif HAVE_XINERAMA
+  if (n >= 0 && n < num_screens) {
+    h = dpi[0];
+    v = dpi[1];
+  }
+#else
+  if (n >= 0 && n < num_screens) {
+    h = dpi[0];
+    v = dpi[1];
+  }
+#endif // WIN32
+}
+
 
 
 //

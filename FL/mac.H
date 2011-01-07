@@ -145,7 +145,7 @@ public:
   void contains_GL_subwindow(void);
   void set_key_window(void);
   void set_cursor(Fl_Cursor);
-  static int screen_init(XRectangle screens[]);
+  static int screen_init(XRectangle screens[], float dpi[]);
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
   static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h);

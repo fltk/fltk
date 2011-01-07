@@ -30,6 +30,9 @@
 #include <FL/Fl_Box.H>
 
 int main(int argc, char **argv) {
+  float h, v;
+  Fl::screen_dpi(h, v);
+  printf("Screen res is %g x %g ppi\n", h, v);
   Fl_Window *window = new Fl_Window(340,180);
   Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
   box->box(FL_UP_BOX);
