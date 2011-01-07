@@ -128,7 +128,7 @@ static void screen_init() {
 
 // Screen data...
 static XineramaScreenInfo *screens;
-static float dpi[2];
+static float dpi[16][2];
 
 static void screen_init() {
   if (!fl_display) fl_open_display();
@@ -136,11 +136,14 @@ static void screen_init() {
   if (XineramaIsActive(fl_display)) {
     screens = XineramaQueryScreens(fl_display, &num_screens);
   } else num_screens = 1;
-  
-  int mm = DisplayWidthMM(fl_display, fl_screen);
-  dpi[0] = mm ? monitor.w()*25.4f/mm : 0.0f;
-  mm = DisplayHeightMM(fl_display, fl_screen);
-  dpi[1] = mm ? monitor.h()*25.4f/mm : dpi[0];  
+
+  int i;
+  for (i=0; i<num_screens; i++) {
+    int mm = DisplayWidthMM(fl_display, i);
+    dpi[0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+    mm = DisplayHeightMM(fl_display, fl_screen);
+    dpi[1] = mm ? screens[i].height*25.4f/mm : dpi[0];  
+  }
 }
 #else
 static XRectangle screen;
@@ -300,8 +303,8 @@ void Fl::screen_dpi(float &h, float &v, int n)
   }
 #elif HAVE_XINERAMA
   if (n >= 0 && n < num_screens) {
-    h = dpi[0];
-    v = dpi[1];
+    h = dpi[n][0];
+    v = dpi[n][1];
   }
 #else
   if (n >= 0 && n < num_screens) {
