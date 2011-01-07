@@ -2719,16 +2719,26 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
 {
   NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init]; 
   NSArray *a = [NSScreen screens]; 
+  NSScreen *object;
   int count = (int)[a count]; 
   NSRect r; 
   int i, num_screens = 0;
   for( i = 0; i < count; i++) {
-    r = [[a objectAtIndex:i] frame];
+    object = (NSScreen*)[a objectAtIndex:i];
+    r = [object frame];
     screens[num_screens].x      = int(r.origin.x);
     screens[num_screens].y      = int(r.size.height - (r.origin.y + r.size.height));
     screens[num_screens].width  = int(r.size.width);
     screens[num_screens].height = int(r.size.height);
-    dpi[num_screens]            = float([[a objectAtIndex:i] userSpaceScaleFactor])*72.0f;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+    if ([object respondsToSelector:@selector(userSpaceScaleFactor)]) {
+      dpi[num_screens] = float([object userSpaceScaleFactor])*72.0f;
+    } else 
+#endif
+    {
+      dpi[num_screens] = 72.0f;
+    }
+      	
     num_screens ++;
     if (num_screens >= 16) break;
   }
