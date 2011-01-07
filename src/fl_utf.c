@@ -410,19 +410,25 @@ unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
   Converts a UTF-8 string into a wide character string.
 
   This function generates 32-bit wchar_t (e.g. "ucs4" as it were) except
-  on win32 where it returns Utf16 with surrogate pairs where required.
+  on Windows where it returns UTF-16 with surrogate pairs where required.
+
+  Note that Windows includes Cygwin, i.e. compiled with Cygwin's POSIX
+  layer (cygwin1.dll, --enable-cygwin), either native (GDI) or X11.
   */
 unsigned fl_utf8towc(const char* src, unsigned srclen,
 		  wchar_t* dst, unsigned dstlen)
 {
-#ifdef WIN32
-	return fl_utf8toUtf16(src, srclen, (unsigned short*)dst, dstlen);
+#if defined(WIN32) || defined(__CYGWIN__)
+  return fl_utf8toUtf16(src, srclen, (unsigned short*)dst, dstlen);
 #else
   const char* p = src;
   const char* e = src+srclen;
   unsigned count = 0;
   if (dstlen) for (;;) {
-    if (p >= e) {dst[count] = 0; return count;}
+    if (p >= e) {
+      dst[count] = 0;
+      return count;
+    }
     if (!(*p & 0x80)) { /* ascii */
       dst[count] = *p++;
     } else {
@@ -511,7 +517,7 @@ unsigned fl_utf8toa(const char* src, unsigned srclen,
     needed.
 
     \p srclen is the number of words in \p src to convert. On Windows
-    this is not necessairly the number of characters, due to there
+    this is not necessarily the number of characters, due to there
     possibly being "surrogate pairs" in the UTF-16 encoding used.
     On Unix wchar_t is 32 bits and each location is a character.
 
@@ -541,7 +547,7 @@ unsigned fl_utf8fromwc(char* dst, unsigned dstlen,
       if (count+2 >= dstlen) {dst[count] = 0; count += 2; break;}
       dst[count++] = 0xc0 | (ucs >> 6);
       dst[count++] = 0x80 | (ucs & 0x3F);
-#ifdef WIN32
+#if defined(WIN32) || defined(__CYGWIN__)
     } else if (ucs >= 0xd800 && ucs <= 0xdbff && i < srclen &&
 	       src[i] >= 0xdc00 && src[i] <= 0xdfff) {
       /* surrogate pair */
@@ -561,7 +567,7 @@ unsigned fl_utf8fromwc(char* dst, unsigned dstlen,
       dst[count++] = 0x80 | ((ucs >> 6) & 0x3F);
       dst[count++] = 0x80 | (ucs & 0x3F);
     } else {
-#ifndef WIN32
+#if !(defined(WIN32) || defined(__CYGWIN__))
     J1:
 #endif
       /* all others are 3 bytes: */
@@ -578,7 +584,7 @@ unsigned fl_utf8fromwc(char* dst, unsigned dstlen,
       count++;
     } else if (ucs < 0x800U) { /* 2 bytes */
       count += 2;
-#ifdef WIN32
+#if defined(WIN32) || defined(__CYGWIN__)
     } else if (ucs >= 0xd800 && ucs <= 0xdbff && i < srclen-1 &&
 	       src[i+1] >= 0xdc00 && src[i+1] <= 0xdfff) {
       /* surrogate pair */
