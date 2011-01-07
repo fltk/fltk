@@ -76,7 +76,7 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
         dpi[num_screens][0] = (float)GetDeviceCaps(screen, LOGPIXELSX);
         dpi[num_screens][1] = (float)GetDeviceCaps(screen, LOGPIXELSY);
       }
-      ReleaseDC();
+      ReleaseDC(0L, screen);
     }
     
     num_screens ++;
@@ -97,7 +97,7 @@ static void screen_init() {
       // We do have EnumDisplayMonitors, so lets find out how many monitors...
       num_screens = GetSystemMetrics(SM_CMONITORS);
 
-      if (num_screens > 1) {
+//      if (num_screens > 1) {
         // If there is more than 1 monitor, enumerate them...
         fl_gmi = (fl_gmi_func)GetProcAddress(hMod, "GetMonitorInfoA");
 
@@ -109,7 +109,7 @@ static void screen_init() {
           fl_edm(0, 0, screen_cb, 0);
           return;
         }
-      }
+//      }
     }
   }
 

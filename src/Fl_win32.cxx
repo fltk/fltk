@@ -1068,8 +1068,12 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
       }
     } else if ((lParam & (1<<31))==0){
-      buffer[0] = 0;
-      Fl::e_length = 0;
+      //buffer[0] = 0;
+      //Fl::e_length = 0;
+      xchar u = (xchar) wParam;
+//    Fl::e_length = fl_unicode2utf(&u, 1, buffer);
+      Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+      buffer[Fl::e_length] = 0;
     }
     Fl::e_text = buffer;
     if (lParam & (1<<31)) { // key up events.
@@ -1078,7 +1082,11 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     // for (int i = lParam&0xff; i--;)
     while (window->parent()) window = window->window();
-    if (Fl::handle(FL_KEYBOARD,window)) return 0;
+    if (Fl::handle(FL_KEYBOARD,window)) {
+	  if (uMsg==WM_DEADCHAR || uMsg==WM_SYSDEADCHAR)
+		Fl::compose_state = 1;
+	  return 0;
+	}
     break;}
 
   case WM_MOUSEWHEEL: {
