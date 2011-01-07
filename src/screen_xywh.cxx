@@ -146,15 +146,14 @@ static void screen_init() {
   }
 }
 #else
-static XRectangle screen;
 static float dpi[2];
 static void screen_init() {
   num_screens = 1;
   if (!fl_display) fl_open_display();
   int mm = DisplayWidthMM(fl_display, fl_screen);
-  dpi[0] = mm ? monitor.w()*25.4f/mm : 0.0f;
+  dpi[0] = mm ? Fl::w()*25.4f/mm : 0.0f;
   mm = DisplayHeightMM(fl_display, fl_screen);
-  dpi[1] = mm ? monitor.h()*25.4f/mm : dpi[0];  
+  dpi[1] = mm ? Fl::h()*25.4f/mm : dpi[0];  
 }
 #endif // WIN32
 
