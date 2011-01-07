@@ -56,7 +56,7 @@ typedef BOOL (WINAPI* fl_gmi_func)(HMONITOR, LPMONITORINFO);
 static fl_gmi_func fl_gmi = NULL; // used to get a proc pointer for GetMonitorInfoA
 
 static RECT screens[16];
-static int dpi[16][2] = { { 0.0f, 0.0f } };
+static float dpi[16][2];
 
 static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
   if (num_screens >= 16) return TRUE;
@@ -135,14 +135,19 @@ static void screen_init() {
 
   if (XineramaIsActive(fl_display)) {
     screens = XineramaQueryScreens(fl_display, &num_screens);
-  } else num_screens = 1;
-
-  int i;
-  for (i=0; i<num_screens; i++) {
-    int mm = DisplayWidthMM(fl_display, i);
-    dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+    int i;
+    for (i=0; i<num_screens; i++) {
+      int mm = DisplayWidthMM(fl_display, i);
+      dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+      mm = DisplayHeightMM(fl_display, fl_screen);
+      dpi[i][1] = mm ? screens[i].height*25.4f/mm : dpi[i][0];
+    }
+  } else { // ! XineramaIsActive()
+    num_screens = 1;
+    int mm = DisplayWidthMM(fl_display, fl_screen);
+    dpi[0][0] = mm ? Fl::w()*25.4f/mm : 0.0f;
     mm = DisplayHeightMM(fl_display, fl_screen);
-    dpi[i][1] = mm ? screens[i].height*25.4f/mm : dpi[i][0];  
+    dpi[0][1] = mm ? Fl::h()*25.4f/mm : dpi[0][0];
   }
 }
 #else
