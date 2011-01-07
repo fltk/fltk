@@ -374,8 +374,10 @@ static const wchar_t *utf8reformat(const char *str, int& n)
     lbuf = newn + 100;
     if (buffer) free(buffer);
     buffer = (wchar_t*)malloc(lbuf * sizeof(wchar_t));
-    }
-  n = fl_utf8towc(str, n, (wchar_t*)buffer, lbuf);
+    n = fl_utf8towc(str, n, (wchar_t*)buffer, lbuf);
+  } else {
+    n = newn;
+  }
   return buffer;
 }
 
