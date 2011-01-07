@@ -140,9 +140,9 @@ static void screen_init() {
   int i;
   for (i=0; i<num_screens; i++) {
     int mm = DisplayWidthMM(fl_display, i);
-    dpi[0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+    dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
     mm = DisplayHeightMM(fl_display, fl_screen);
-    dpi[1] = mm ? screens[i].height*25.4f/mm : dpi[0];  
+    dpi[i][1] = mm ? screens[i].height*25.4f/mm : dpi[i][0];  
   }
 }
 #else
