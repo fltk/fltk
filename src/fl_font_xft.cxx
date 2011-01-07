@@ -358,6 +358,38 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 //  XftFontClose(fl_display, font);
 }
 
+/* decodes the input UTF-8 string into a series of wchar_t characters.
+ n is set upon return to the number of characters.
+ Don't deallocate the returned memory.
+ */
+static const wchar_t *utf8reformat(const char *str, int& n)
+{
+  static const wchar_t empty[] = {0};
+  static wchar_t *buffer;
+  static int lbuf = 0;
+  int newn;
+  if (n == 0) return empty;
+  newn = fl_utf8towc(str, n, (wchar_t*)buffer, lbuf);
+  if (newn >= lbuf) {
+    lbuf = newn + 100;
+    if (buffer) free(buffer);
+    buffer = (wchar_t*)malloc(lbuf * sizeof(wchar_t));
+    }
+  n = fl_utf8towc(str, n, (wchar_t*)buffer, lbuf);
+  return buffer;
+}
+
+static void utf8extents(const char *str, int n, XGlyphInfo *extents)
+{
+  memset(extents, 0, sizeof(XGlyphInfo));
+  const wchar_t *buffer = utf8reformat(str, n);
+#ifdef __CYGWIN__
+    XftTextExtents16(fl_display, current_font, (XftChar16 *)buffer, n, extents);
+#else
+    XftTextExtents32(fl_display, current_font, (XftChar32 *)buffer, n, extents);
+#endif
+}
+
 int fl_height() {
   if (current_font) return current_font->ascent + current_font->descent;
   else return -1;
@@ -371,7 +403,7 @@ int fl_descent() {
 double fl_width(const char *str, int n) {
   if (!current_font) return -1.0;
   XGlyphInfo i;
-  XftTextExtentsUtf8(fl_display, current_font, (XftChar8 *)str, n, &i);
+  utf8extents(str, n, &i);
   return i.xOff;
 }
 
@@ -397,7 +429,7 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
     return;
   }
   XGlyphInfo gi;
-  XftTextExtentsUtf8(fl_display, current_font, (XftChar8 *)c, n, &gi);
+  utf8extents(c, n, &gi);
 
   w = gi.width;
   h = gi.height;
@@ -585,8 +617,13 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   color.color.green = ((int)g)*0x101;
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
-
-  XftDrawStringUtf8(draw_, &color, current_font, x, y, (XftChar8 *)str, n);
+  
+  const wchar_t *buffer = utf8reformat(str, n);
+#ifdef __CYGWIN__
+  XftDrawString16(draw_, &color, current_font, x, y, (XftChar16 *)buffer, n);
+#else
+  XftDrawString32(draw_, &color, current_font, x, y, (XftChar32 *)buffer, n);
+#endif
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
