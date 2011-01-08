@@ -183,10 +183,12 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 //
 
 
-////////////////////////////////////////////////////////////////
-// Timeouts are stored in a sorted list, so only the first one needs
-// to be checked to see if any should be called.
-  
+////////////////////////////////////////////////////////////////////////
+// Timeouts are stored in a sorted list (*first_timeout), so only the
+// first one needs to be checked to see if any should be called.
+// Allocated, but unused (free) Timeout structs are stored in another
+// linked list (*free_timeout).
+
 struct Timeout {
   double time;
   void (*cb)(void*);
@@ -194,7 +196,6 @@ struct Timeout {
   Timeout* next;
 };
 static Timeout* first_timeout, *free_timeout;
-static int first_timeout_count, free_timeout_count;
 
 #include <sys/time.h>
 
@@ -235,7 +236,6 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   Timeout* t = free_timeout;
   if (t) {
       free_timeout = t->next;
-      --free_timeout_count;
   } else {
       t = new Timeout;
   }
@@ -435,8 +435,6 @@ double Fl::wait(double time_to_wait) {
       first_timeout = t->next;
       t->next = free_timeout;
       free_timeout = t;
-      ++free_timeout_count;
-      --first_timeout_count;
       // Now it is safe for the callback to do add_timeout:
       cb(argp);
     }
