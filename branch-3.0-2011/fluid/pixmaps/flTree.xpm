@@ -1,0 +1,30 @@
+/* XPM */
+static const char *flTree_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 7 1",
+/* colors */
+"a c #606060",
+"b c #808080",
+"c c none",
+"d c #c0c0c0",
+"e c #ffffff",
+"f c #000000",
+"g c #303030",
+/* pixels */
+"cccccccccccccccc",
+"dddddddddddddddc",
+"dfffffffffffffdc",
+"dfegeeeeeeebbfdc",
+"dfeggggeeeebdfdc",
+"dfegeegeeeebdfdc",
+"dfegeeggggebffdc",
+"dfegeegeeeebdfdc",
+"dfegeeggggebdfdc",
+"dfegeegeegebdfdc",
+"dfegeegeegebdfdc",
+"dfbbbbbbbbbbbfdc",
+"dfbdddfddddbdfdc",
+"dfffffffffffffdc",
+"dddddddddddddddc",
+"cccccccccccccccc"
+};

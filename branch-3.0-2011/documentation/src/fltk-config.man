@@ -1,0 +1,90 @@
+.TH fltk\-config 1 "Fast Light Tool Kit" "6 February 2007"
+.SH NAME
+fltk\-config \- script to get information about the installed version of fltk.
+.sp
+.SH SYNOPSIS
+fltk\-config [ \-\-prefix
+.I [=DIR]
+] [ \-\-exec\-prefix
+.I [=DIR]
+] [ \-\-version ] [ \-\-api\-version ] [ \-\-use\-gl ] [ \-\-use\-images ]
+[ \-\-use\-glut ]
+[ \-\-cc ] [ \-\-cxx ]
+[ \-\-cflags ] [ \-\-cxxflags ] [ \-\-ldflags ] [ \-\-ldstaticflags ]
+[ \-\-libs ]
+[ \-D\fIname[=value]\fR ] [ \-g ] [ \-\-compile
+.I program.cxx
+]
+.SH DESCRIPTION
+\fIfltk\-config\fR is a utility script that can be used to get information
+about the current version of FLTK that is installed on the system, what
+compiler and linker options to use when building FLTK-based applications,
+and to build simple FLTK applications.
+.LP
+The following options are supported:
+.TP 5
+\-\-api\-version
+.br
+Displays the current FLTK API version number, e.g. "1.1".
+.TP 5
+\-\-cc
+.TP 5
+\-\-cxx
+.br
+Displays the C/C++ compiler that was used to compile FLTK.
+.TP 5
+\-\-cflags
+.TP 5
+\-\-cxxflags
+.br
+Displays the C/C++ compiler options to use when compiling source
+files that use FLTK.
+.TP 5
+\-\-compile \fIprogram.cxx\fR
+.br
+Compiles the source file \fIprogram.cxx\fR into \fIprogram\fR.
+This option implies "\-\-post \fIprogram\fR".
+.TP 5
+\-g
+.br
+Enables debugging information when compiling with the \fI\-\-compile\fR
+option.
+.TP 5
+\-\-ldflags
+.br
+Displays the linker options to use when linking a FLTK
+application.
+.TP 5
+\-\-ldstaticflags
+.br
+Displays the linker options to use when linking a FLTK
+application to the static FLTK libraries.
+.TP 5
+\-\-libs
+.br
+Displays the full path to the FLTK library files, to be used for
+dependency checking.
+.TP 5
+\-\-use\-gl
+.br
+Enables OpenGL support.
+.TP 5
+\-\-use\-glut
+.br
+Enables GLUT support.
+.TP 5
+\-\-use\-images
+.br
+Enables image file support.
+.TP 5
+\-\-version
+.br
+Displays the current FLTK version number, e.g. "1.1.0".
+.SH SEE ALSO
+fluid(1), fltk(3)
+.br
+FLTK Programming Manual
+.br
+FLTK Web Site, http://www.fltk.org/
+.SH AUTHORS
+Bill Spitzak and others.

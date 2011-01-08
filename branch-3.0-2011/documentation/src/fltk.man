@@ -1,0 +1,57 @@
+.TH fltk 3 "Fast Light Tool Kit" "6 January 2002"
+.SH NAME
+fltk \- the fast light tool kit
+.sp
+.SH SYNOPSIS
+The Fast Light Tool Kit ("FLTK", pronounced "fulltick") is a
+C++ graphical user interface toolkit for the X Window
+System, MacOS(r), and Microsoft Windows(r) that supports OpenGL(r).
+It was originally developed by Mr. Bill Spitzak and is currently
+maintained by a small group of developers across the world with
+a central repository in the US.
+.LP
+FLTK is provides under the terms of the GNU Library General Public License,
+with the following exceptions:
+.IP
+1. Modifications to the FLTK configure script, config header
+file, and makefiles by themselves to support a specific platform
+do not constitute a modified or derivative work.
+.IP
+The authors do request that such modifications be
+contributed to the FLTK project - send all contributions
+through the "Software Trouble Report" on the following page:
+.IP
+    http://www.fltk.org/str.php
+.IP
+2. Widgets that are subclassed from FLTK widgets do not
+constitute a derivative work.
+.IP
+3. Static linking of applications and widgets to the FLTK
+library does not constitute a derivative work and does not
+require the author to provide source code for the application or
+widget, use the shared FLTK libraries, or link their
+applications or widgets against a user-supplied version of FLTK.
+.IP
+If you link the application or widget to a modified version of
+FLTK, then the changes to FLTK must be provided under the terms
+of the LGPL in sections 1, 2, and 4.
+.IP
+4. You do not have to provide a copy of the FLTK license with
+programs that are linked to the FLTK library, nor do you have to
+identify the FLTK license in your program or documentation as
+required by section 6 of the LGPL.
+.IP
+However, programs must still identify their use of FLTK. The
+following example statement can be included in user
+documentation to satisfy this requirement:
+.IP
+[program/widget] is based in part on the work of the FLTK
+project (http://www.fltk.org).
+.SH SEE ALSO
+fltk\-config(1), fluid(1)
+.br
+FLTK Programming Manual
+.br
+FLTK Web Site, http://www.fltk.org/
+.SH AUTHORS
+Bill Spitzak and others.

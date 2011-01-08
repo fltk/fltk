@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="0.9">
+    <dict>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+
+	<key>CFBundleExecutable</key>
+	<string>fluid</string>
+
+	<key>CFBundleIdentifier</key>
+	<string>org.fltk.fluid</string>
+
+	<key>CFBundleVersion</key>
+	<string>1.1.7</string>
+
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright 1998-2010 by Bill Spitzak and others</string>
+
+	<key>CFAppleHelpAnchor</key>
+	<string>help</string>
+
+	<key>CFBundleName</key>
+	<string>FLUID</string>
+
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+
+	<key>CFBundleSignature</key>
+	<string>FLID</string>
+
+	<key>CFBundleIconFile</key>
+	<string>fluid.icns</string>
+
+	<key>CFBundleShortVersionString</key>
+	<string>1.1.7</string>
+
+	<key>CFBundleGetInfoString</key>
+	<string>1.1.7, Copyright 1998-2010 by Bill Spitzak and others</string>
+
+	<key>CFBundleDocumentTypes</key>
+	<array>
+            <dict>
+        	<key>CFBundleTypeExtensions</key>
+        	<array>
+                    <string>fl</string>
+        	</array>
+
+        	<key>CFBundleTypeIconFile</key>
+        	<string>fluid.icns</string>
+
+        	<key>CFBundleTypeName</key>
+        	<string>FLUID Designer File</string>
+
+        	<key>CFBundleTypeOSTypes</key>
+        	<array>
+                    <string>Flid</string>
+        	</array>
+
+        	<key>CFBundleTypeRole</key>
+        	<string>Editor</string>
+            </dict>
+	</array>
+
+    </dict>
+</plist>

@@ -1,0 +1,8 @@
+{
+	Identifier = sourcecode.fluid;
+	BasedOn = sourcecode;
+	Name = "FLTK Fluid GUI description";
+	Extensions = (fl);
+	AppliesToBuildRules = yes;
+	CanSetIncludeInIndex = YES;
+}

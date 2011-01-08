@@ -1,0 +1,100 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+Function {button_cb(Fl_Button *b, void *)} {
+  comment {Buttons test callback} open private return_type void
+} {
+  code {char msg[256];
+sprintf(msg, "Label: '%s'\\nValue: %d", b->label(),b->value());
+cb_info->value(msg);
+cb_info->redraw();
+printf("%s\\n",msg);} {selected
+  }
+} 
+
+Function {} {open
+} {
+  Fl_Window {} {open
+    xywh {463 67 369 214} type Double visible
+  } {
+    Fl_Button {} {
+      label {&Fl_Button A1}
+      tooltip {Normal button (callback called only when released)} xywh {20 10 160 30} labelsize 13
+      code0 {o->callback((Fl_Callback*) button_cb);}
+    }
+    Fl_Button {} {
+      label {Fl_Button &A2}
+      tooltip {Normal button with callback called when changed (push and released)} xywh {20 44 160 30} labelsize 13 when 1
+      code0 {o->callback((Fl_Callback*) button_cb);}
+    }
+    Fl_Return_Button {} {
+      label {Fl_Return_Button &B}
+      tooltip {Button with Return key as default shortcut} xywh {20 78 160 30} labelsize 13
+      code0 {o->callback((Fl_Callback*) button_cb);}
+    }
+    Fl_Light_Button {} {
+      label {Fl_Light_Button &C}
+      tooltip {Button with toggle state and a visual indicator of the current state} xywh {20 113 160 30} labelsize 13
+      code0 {o->callback((Fl_Callback*) button_cb);}
+    }
+    Fl_Check_Button {} {
+      label {Fl_Check_Button &D}
+      tooltip {Check button with toggle state} xywh {20 148 160 30} down_box DOWN_BOX labelsize 13
+      code0 {o->callback((Fl_Callback*) button_cb);}
+    }
+    Fl_Round_Button {} {
+      label {Fl_Round_Button &E}
+      tooltip {Round Button with toggle state} xywh {20 178 160 30} down_box ROUND_DOWN_BOX labelsize 13
+      code0 {o->callback((Fl_Callback*) button_cb);}
+    }
+    Fl_Group {} {open
+      xywh {190 10 70 120} box THIN_UP_FRAME
+    } {
+      Fl_Round_Button {} {
+        label {radio &1}
+        tooltip {Radio button, only one button is set at a time, in the corresponding group.} xywh {190 10 70 30} type Radio down_box ROUND_DOWN_BOX
+        code0 {o->callback((Fl_Callback*) button_cb);}
+      }
+      Fl_Round_Button {} {
+        label {radio &2}
+        tooltip {Radio button, only one button is set at a time, in the corresponding group.} xywh {190 40 70 30} type Radio down_box ROUND_DOWN_BOX
+        code0 {o->callback((Fl_Callback*) button_cb);}
+      }
+      Fl_Round_Button {} {
+        label {radio &3}
+        tooltip {Radio button, only one button is set at a time, in the corresponding group.} xywh {190 70 70 30} type Radio down_box ROUND_DOWN_BOX
+        code0 {o->callback((Fl_Callback*) button_cb);}
+      }
+      Fl_Round_Button {} {
+        label {radio &4}
+        tooltip {Radio button, only one button is set at a time, in the corresponding group.} xywh {190 100 70 30} type Radio down_box ROUND_DOWN_BOX
+        code0 {o->callback((Fl_Callback*) button_cb);}
+      }
+    }
+    Fl_Group {} {open
+      xywh {270 10 90 120} box THIN_UP_BOX
+    } {
+      Fl_Button {} {
+        label radio
+        tooltip {Custom look button, only one button is set at a time, in the corresponding group.} xywh {280 20 20 20} type Radio selection_color 1 align 8
+      }
+      Fl_Button {} {
+        label radio
+        tooltip {Custom look button, only one button is set at a time, in the corresponding group.} xywh {280 45 20 20} type Radio selection_color 1 align 8
+      }
+      Fl_Button {} {
+        label radio
+        tooltip {Custom look button, only one button is set at a time, in the corresponding group.} xywh {280 70 20 20} type Radio selection_color 1 align 8
+      }
+      Fl_Button {} {
+        label radio
+        tooltip {Custom look button, only one button is set at a time, in the corresponding group.} xywh {280 95 20 20} type Radio selection_color 1 align 8
+      }
+    }
+    Fl_Output cb_info {
+      label {callback:}
+      xywh {190 148 170 62} type Multiline align 133 textsize 12
+    }
+  }
+} 
