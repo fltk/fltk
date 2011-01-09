@@ -1818,13 +1818,26 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)aRange {
-  NSRect glyphRect, frame;
+  NSRect glyphRect;
+  Fl_Widget *focus = Fl::focus();
+  Fl_Window *wfocus = focus->window();
+  while (wfocus->window()) wfocus = wfocus->window();
+  glyphRect.size.width = 0;
   
-  frame = [self frame];
-  glyphRect.origin.x = frame.size.width;
-  glyphRect.origin.y = 0;
-  glyphRect.size.width = glyphRect.size.height = 0;
+  if (dynamic_cast<Fl_Text_Display*>(focus) != NULL) {
+    int x, y;
+    Fl_Text_Display *current = (Fl_Text_Display*)focus;
+    current->position_to_xy( current->insert_position(), &x, &y );
+    glyphRect.origin.x = (CGFloat)x;
+    glyphRect.origin.y = (CGFloat)y + current->textsize();
+    glyphRect.size.height = current->textsize();
+  } else {
+    glyphRect.origin.x = (CGFloat)Fl::event_x();
+    glyphRect.origin.y = (CGFloat)Fl::event_y() + 12;
+    glyphRect.size.height = 12;
+  }
   // Convert the rect to screen coordinates
+  glyphRect.origin.y = wfocus->h() - glyphRect.origin.y;
   glyphRect.origin = [[self window] convertBaseToScreen:glyphRect.origin];
   return glyphRect;
 }
