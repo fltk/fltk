@@ -30,17 +30,6 @@
 #include <FL/Fl_Box.H>
 
 int main(int argc, char **argv) {
-#if (1) // FIXME: test screen dimensions and resolution. Remove before release !
-  float ppi_h, ppi_v;
-  int x,y,w,h;
-  int n = Fl::screen_count();
-  for (int i=0; i<n; i++) {
-    Fl::screen_xywh(x,y,w,h,i);
-    Fl::screen_dpi(ppi_h, ppi_v, i);
-    printf("Screen %2d (%4d,%4d,%4d,%4d) res. is %7.3f x %7.3f ppi\n", i, x,y,w,h, ppi_h, ppi_v);
-  }
-  fflush(stdout);
-#endif // FIXME: test screen dimensions and resolution. Remove before release !
   Fl_Window *window = new Fl_Window(340,180);
   Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
   box->box(FL_UP_BOX);
