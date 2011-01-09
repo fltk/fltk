@@ -3234,7 +3234,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   return data;
 }
 
-void imgProviderReleaseData (void *info, const void *data, size_t size)
+static void imgProviderReleaseData (void *info, const void *data, size_t size)
 {
   delete (unsigned char *)data;
 }
