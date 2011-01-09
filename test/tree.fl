@@ -785,6 +785,7 @@ Tests Fl_Tree::clear()} xywh {475 654 90 16} labelsize 9
       label {Test Callback Flag}
       callback {Fl_Tree_Item *root = tree->root();
 fprintf(stderr, "--- Checking docallback off\\n");
+if (!root) return;
 
 //// "OFF" TEST
 
