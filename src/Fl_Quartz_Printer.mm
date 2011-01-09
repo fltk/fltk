@@ -92,7 +92,7 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
     status = PMCreatePageFormat(&pageFormat);
     status = PMSessionDefaultPageFormat(printSession, pageFormat);
     if (status != noErr) return 1;
-    // get pointer to the PMSessionPageSetupDialog Carbon fucntion
+    // get pointer to the PMSessionPageSetupDialog Carbon function
     typedef OSStatus (*dialog_f)(PMPrintSession, PMPageFormat, Boolean *);
     static dialog_f f = NULL;
     if (!f) f = (dialog_f)Fl_X::get_carbon_function("PMSessionPageSetupDialog");
@@ -106,7 +106,7 @@ int Fl_System_Printer::start_job (int pagecount, int *frompage, int *topage)
     status = PMSessionDefaultPrintSettings (printSession, printSettings);
     if (status != noErr) return 1;
     PMSetPageRange(printSettings, 1, (UInt32)kPMPrintAllPages);
-    // get pointer to the PMSessionPrintDialog Carbon fucntion
+    // get pointer to the PMSessionPrintDialog Carbon function
     typedef OSStatus (*dialog_f2)(PMPrintSession, PMPrintSettings, PMPageFormat, Boolean *);
     static dialog_f2 f2 = NULL;
     if (!f2) f2 = (dialog_f2)Fl_X::get_carbon_function("PMSessionPrintDialog");
