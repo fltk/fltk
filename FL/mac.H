@@ -39,6 +39,22 @@ typedef void* Window;	    // this is really a pointer to the subclass FLWindow o
 typedef void* Fl_Offscreen; // this is really a CGContextRef
 typedef void* Fl_Bitmask;   // this is really a CGImageRef
 
+#ifndef MAC_OS_X_VERSION_10_3
+#define MAC_OS_X_VERSION_10_3 1030
+#endif
+#ifndef MAC_OS_X_VERSION_10_4
+#define MAC_OS_X_VERSION_10_4 1040
+#endif
+#ifndef MAC_OS_X_VERSION_10_5
+#define MAC_OS_X_VERSION_10_5 1050
+#endif
+#ifndef MAC_OS_X_VERSION_10_6
+#define MAC_OS_X_VERSION_10_6 1060
+#endif
+#ifndef MAC_OS_X_VERSION_MAX_ALLOWED
+#define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_3
+#endif
+
 #ifndef FL_LIBRARY // this part is used when compiling an application program
 
 typedef void* Fl_Region;
@@ -57,22 +73,6 @@ typedef CGContextRef	Fl_CGContextRef;
 typedef PMPrintSettings Fl_PMPrintSettings;
 typedef PMPageFormat	Fl_PMPageFormat;
 typedef PMPrintSession	Fl_PMPrintSession;
-
-#ifndef MAC_OS_X_VERSION_10_3
-#define MAC_OS_X_VERSION_10_3 1030
-#endif
-#ifndef MAC_OS_X_VERSION_10_4
-#define MAC_OS_X_VERSION_10_4 1040
-#endif
-#ifndef MAC_OS_X_VERSION_10_5
-#define MAC_OS_X_VERSION_10_5 1050
-#endif
-#ifndef MAC_OS_X_VERSION_10_6
-#define MAC_OS_X_VERSION_10_6 1060
-#endif
-#ifndef MAC_OS_X_VERSION_MAX_ALLOWED
-#define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_3
-#endif
 
 typedef struct flCocoaRegion {
   int count;
