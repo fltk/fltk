@@ -1,6 +1,7 @@
 include ../makeinclude
 
 ALL = howto-add_fd-and-popen$(EXEEXT) \
+      howto-drag-and-drop$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
