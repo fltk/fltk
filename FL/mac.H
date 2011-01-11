@@ -51,11 +51,9 @@ typedef void* Fl_Bitmask;   // this is really a CGImageRef
 #ifndef MAC_OS_X_VERSION_10_6
 #define MAC_OS_X_VERSION_10_6 1060
 #endif
-#ifndef MAC_OS_X_VERSION_MAX_ALLOWED
-#define MAC_OS_X_VERSION_MAX_ALLOWED MAC_OS_X_VERSION_10_3
-#endif
 
 #ifndef FL_LIBRARY // this part is used when compiling an application program
+#include <AvailabilityMacros.h>
 
 typedef void* Fl_Region;
 typedef void* Fl_CGContextRef;
