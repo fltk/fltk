@@ -38,6 +38,10 @@
 #  endif // !__WATCOMC__
 #elif defined USING_XCODE
 #include <ApplicationServices/ApplicationServices.h>
+#include <unistd.h> // for chdir()
+#include <stdio.h>
+#include <stdlib.h> // for system()
+#include <string.h>
 #else
 #  include <unistd.h>
 #endif
