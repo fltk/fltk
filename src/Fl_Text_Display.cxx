@@ -356,11 +356,13 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
         if (scrollbar_align() & FL_ALIGN_LEFT) {
           text_area.x = X+scrollbar_width()+LEFT_MARGIN;
           text_area.w = W-scrollbar_width()-LEFT_MARGIN-RIGHT_MARGIN;
+	  mWrapMarginPix = text_area.w - 2;
           mVScrollBar->resize(X, text_area.y-TOP_MARGIN, scrollbar_width(),
                               text_area.h+TOP_MARGIN+BOTTOM_MARGIN);
         } else {
           text_area.x = X+LEFT_MARGIN;
           text_area.w = W-scrollbar_width()-LEFT_MARGIN-RIGHT_MARGIN;
+	  mWrapMarginPix = text_area.w - 2;
           mVScrollBar->resize(X+W-scrollbar_width(), text_area.y-TOP_MARGIN,
                               scrollbar_width(), text_area.h+TOP_MARGIN+BOTTOM_MARGIN);
         }
@@ -387,8 +389,14 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
       /* WAS: Suggestion: Try turning the horizontal scrollbar on when
        you first see a line that is too wide in the window, but then
        don't turn it off (ie mix both of your solutions). */
-      if (scrollbar_align() & (FL_ALIGN_TOP|FL_ALIGN_BOTTOM) &&
+#if (1) // original h-scrollbar code
+      if ((scrollbar_align() & (FL_ALIGN_TOP|FL_ALIGN_BOTTOM)) &&
           (mVScrollBar->visible() || longest_vline() > text_area.w))
+#else // modified h-scrollbar code
+      if ((scrollbar_align() & (FL_ALIGN_TOP|FL_ALIGN_BOTTOM)) &&
+          (mVScrollBar->visible() || longest_vline() > text_area.w) &&
+	  !mContinuousWrap )
+#endif // modified h-scrollbar code
       {
         if (!mHScrollBar->visible()) {
           mHScrollBar->set_visible();
