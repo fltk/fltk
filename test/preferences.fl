@@ -323,6 +323,6 @@ Function {writePrefs()} {open return_type void
   /* sample code only: */
   unsigned int hex = 0x2387efcd;
   eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
-  eat.set( "binFoo2", (void*)&writePrefs, 256 );} {selected
+  eat.set( "binFoo2", (void*)&bed, 256 );} {selected
   }
 } 

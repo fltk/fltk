@@ -3,7 +3,7 @@
 //
 // FLTK native OS file chooser widget
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 // Copyright 2005 by Nathan Vander Wilt.
 //
 // This library is free software; you can redistribute it and/or
@@ -93,7 +93,7 @@ public:
     NO_OPTIONS     = 0x0000,		///< no options enabled
     SAVEAS_CONFIRM = 0x0001,		///< Show native 'Save As' overwrite confirm dialog (if supported)
     NEW_FOLDER     = 0x0002,		///< Show 'New Folder' icon (if supported)
-    PREVIEW        = 0x0004,		///< enable preview mode
+    PREVIEW        = 0x0004		///< enable preview mode
   };
 private:
   int   _btype;			// kind-of browser to show()

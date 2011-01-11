@@ -608,7 +608,7 @@ void print(Fl_Widget *, void *w) {
     p->end_job();
   }
   delete p;
-};
+}
 
 /*void print2(Fl_Widget *, void *w) {
   Fl_Widget * g = (Fl_Widget *)w;
@@ -731,4 +731,4 @@ b_bitmap.labelcolor(FL_GREEN);
 
 	Fl::run();
 	return 0;
-};
+}
