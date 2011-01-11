@@ -1067,8 +1067,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	    break;
 	}
       }
-    } else if ((lParam & (1<<31))==0){
-		  if ((lParam & (1<<24))==0) { // clear if dead key (always?)
+    } else if ((lParam & (1<<31))==0) {
+#ifdef FLTK_PREVIEW_DEAD_KEYS
+      if ((lParam & (1<<24))==0) { // clear if dead key (always?)
         xchar u = (xchar) wParam;
         Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
         buffer[Fl::e_length] = 0;
@@ -1076,6 +1077,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         buffer[0] = 0;
         Fl::e_length = 0;
       }
+#else
+      buffer[0] = 0;
+      Fl::e_length = 0;
+#endif
     }
     Fl::e_text = buffer;
     if (lParam & (1<<31)) { // key up events.
