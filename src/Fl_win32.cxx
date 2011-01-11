@@ -1068,12 +1068,14 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
       }
     } else if ((lParam & (1<<31))==0){
-      //buffer[0] = 0;
-      //Fl::e_length = 0;
-      xchar u = (xchar) wParam;
-//    Fl::e_length = fl_unicode2utf(&u, 1, buffer);
-      Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
-      buffer[Fl::e_length] = 0;
+		  if ((lParam & (1<<24))==0) { // clear if dead key (always?)
+        xchar u = (xchar) wParam;
+        Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+        buffer[Fl::e_length] = 0;
+      } else { // set if "extended key" (never printable?)
+        buffer[0] = 0;
+        Fl::e_length = 0;
+      }
     }
     Fl::e_text = buffer;
     if (lParam & (1<<31)) { // key up events.
