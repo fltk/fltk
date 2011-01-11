@@ -247,7 +247,7 @@ files to "includedir", and the library files to "libdir".
 
 NOTE: This documentation section is currently under review.
 More up-to-date information for this release may be available
-in the file README.MSWindows.txt and you should read
+in the file "README.MSWindows.txt" and you should read
 that file to determine if there are changes that may be
 applicable to your build environment.
 
@@ -274,17 +274,17 @@ versions, can be used as well, if they can open
 the project files.
 Be sure to get your service packs!
 
-The project files can be found in the ide/ directory.
-Please read ide/README.IDE for more info about this.
+The project files can be found in the "ide/" directory.
+Please read "ide/README.IDE" for more info about this.
 
 
-GNU toolsets (Cygwin or MinGW) hosted on Windows.
+\subsection intro_cygwin_mingw GNU toolsets (Cygwin or MinGW) hosted on Windows
 
 If using Cygwin with the Cygwin shell, or MinGW with
 the Msys shell, these build environments behave very
-much like a Unix or OSX build and the notes above in
+much like a Unix or OS X build and the notes above in
 the section on
-Building and Installing FLTK Under UNIX and Apple OS X
+<i>Building and Installing FLTK Under UNIX and Apple OS X</i>
 apply, in particular the descriptions of using the
 "configure" script and its related options.
 
@@ -319,8 +319,8 @@ something like "C:\msys\1.0\local\lib", depending
 on where your Msys installation is rooted, which may
 not be useful to other tools.
 
-If you want to "install" your built fltk libraries in a
-"non-standard" location you may do:
+If you want to install your built fltk libraries in a
+non-standard location you may do:
 
 \code
 sh configure --prefix=C:/FLTK
