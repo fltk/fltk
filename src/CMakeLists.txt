@@ -193,8 +193,8 @@ set(CFILES
   fl_utf.c
 )
 
+add_definitions(-DFL_LIBRARY)
 if(APPLE)
-    add_definitions(-DFL_LIBRARY)
 	set(MMFILES
 		Fl_cocoa.mm
 		Fl_Quartz_Printer.mm

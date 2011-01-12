@@ -60,46 +60,18 @@ FL_EXPORT void fl_close_display();
 
 // constant info about the X server connection:
 extern FL_EXPORT Display *fl_display;
-extern FL_EXPORT Window fl_message_window;
 extern FL_EXPORT int fl_screen;
 extern FL_EXPORT XVisualInfo *fl_visual;
 extern FL_EXPORT Colormap fl_colormap;
 
-// access to core fonts:
-// This class provides a "smart pointer" that returns a pointer to an XFontStruct.
-// The global variable fl_xfont can be called wherever a bitmap "core" font is
-// needed, e.g. when rendering to a GL context under X11.
-// With Xlib / X11 fonts, fl_xfont will return the current selected font.
-// With XFT / X11 fonts, fl_xfont will attempt to return the bitmap "core" font most
-// similar to (usually the same as) the current XFT font.
-class Fl_XFont_On_Demand
-{
-public:
-  Fl_XFont_On_Demand(XFontStruct* p = NULL) : ptr(p) { }
-  Fl_XFont_On_Demand& operator=(const Fl_XFont_On_Demand& x)
-    { ptr = x.ptr;  return *this; }
-  Fl_XFont_On_Demand& operator=(XFontStruct* p)
-    { ptr = p;  return *this; }
-  XFontStruct* value();
-  operator XFontStruct*() { return value(); }
-  XFontStruct& operator*() { return *value(); }
-  XFontStruct* operator->() { return value(); }
-  bool operator==(const Fl_XFont_On_Demand& x) { return ptr == x.ptr; }
-  bool operator!=(const Fl_XFont_On_Demand& x) { return ptr != x.ptr; }
-private:
-  XFontStruct *ptr;
-};
-extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
 
 // drawing functions:
 extern FL_EXPORT GC fl_gc;
 extern FL_EXPORT Window fl_window;
-extern FL_EXPORT void *fl_xftfont;
 FL_EXPORT ulong fl_xpixel(Fl_Color i);
 FL_EXPORT ulong fl_xpixel(uchar r, uchar g, uchar b);
 FL_EXPORT void fl_clip_region(Fl_Region);
 FL_EXPORT Fl_Region fl_clip_region();
-FL_EXPORT Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
 
 // feed events into fltk:
 FL_EXPORT int fl_handle(const XEvent&);
@@ -133,6 +105,37 @@ extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
 extern FL_EXPORT Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);
 extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 
+#ifdef FL_LIBRARY
+extern FL_EXPORT Window fl_message_window;
+extern FL_EXPORT void *fl_xftfont;
+FL_EXPORT Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
+
+// access to core fonts:
+// This class provides a "smart pointer" that returns a pointer to an XFontStruct.
+// The global variable fl_xfont can be called wherever a bitmap "core" font is
+// needed, e.g. when rendering to a GL context under X11.
+// With Xlib / X11 fonts, fl_xfont will return the current selected font.
+// With XFT / X11 fonts, fl_xfont will attempt to return the bitmap "core" font most
+// similar to (usually the same as) the current XFT font.
+class Fl_XFont_On_Demand
+{
+public:
+  Fl_XFont_On_Demand(XFontStruct* p = NULL) : ptr(p) { }
+  Fl_XFont_On_Demand& operator=(const Fl_XFont_On_Demand& x)
+  { ptr = x.ptr;  return *this; }
+  Fl_XFont_On_Demand& operator=(XFontStruct* p)
+  { ptr = p;  return *this; }
+  XFontStruct* value();
+  operator XFontStruct*() { return value(); }
+  XFontStruct& operator*() { return *value(); }
+  XFontStruct* operator->() { return value(); }
+  bool operator==(const Fl_XFont_On_Demand& x) { return ptr == x.ptr; }
+  bool operator!=(const Fl_XFont_On_Demand& x) { return ptr != x.ptr; }
+private:
+  XFontStruct *ptr;
+};
+extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
+
 // this object contains all X-specific stuff about a window:
 // Warning: this object is highly subject to change!  It's definition
 // is only here so that fl_xid can be declared inline:
@@ -157,12 +160,15 @@ public:
   static void y(Fl_Window* wi, int Y) {wi->y(Y);}
 };
 
-// convert xid <-> Fl_Window:
-inline Window fl_xid(const Fl_Window*w) {return Fl_X::i(w)->xid;}
-FL_EXPORT Fl_Window* fl_find(Window xid);
-
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
+
+#endif // FL_LIBRARY
+
+// convert xid <-> Fl_Window:
+Window fl_xid(const Fl_Window*w);
+FL_EXPORT Fl_Window* fl_find(Window xid);
+
 
 // Dummy function to register a function for opening files via the window manager...
 inline void fl_open_callback(void (*)(const char *)) {}

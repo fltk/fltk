@@ -1873,7 +1873,11 @@ void Fl_Window::make_current() {
   // update the cairo_t context
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current(this);
 #endif
+}
 
+Window fl_xid(const Fl_Window* w)
+{
+  return Fl_X::i(w)->xid;
 }
 
 #ifdef USE_PRINT_BUTTON
