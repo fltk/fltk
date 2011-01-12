@@ -39,6 +39,7 @@ typedef void* Window;	    // this is really a pointer to the subclass FLWindow o
 typedef void* Fl_Offscreen; // this is really a CGContextRef
 typedef void* Fl_Bitmask;   // this is really a CGImageRef
 
+#include <AvailabilityMacros.h>
 #ifndef MAC_OS_X_VERSION_10_3
 #define MAC_OS_X_VERSION_10_3 1030
 #endif
@@ -53,7 +54,6 @@ typedef void* Fl_Bitmask;   // this is really a CGImageRef
 #endif
 
 #ifndef FL_LIBRARY // this part is used when compiling an application program
-#include <AvailabilityMacros.h>
 
 typedef void* Fl_Region;
 typedef void* Fl_CGContextRef;
