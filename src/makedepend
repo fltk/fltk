@@ -672,7 +672,8 @@ filename_expand.o: ../FL/Fl_Export.H ../config.h
 filename_ext.o: ../FL/filename.H
 filename_isdir.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/filename.H
 filename_isdir.o: ../FL/fl_utf8.h
-filename_list.o: ../FL/filename.H flstring.h ../FL/Fl_Export.H ../config.h
+filename_list.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h
+filename_list.o: ../FL/Fl_Export.H ../config.h
 filename_match.o: ../FL/filename.H
 filename_setext.o: ../FL/filename.H flstring.h ../FL/Fl_Export.H ../config.h
 fl_arc.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
@@ -1183,7 +1184,7 @@ Fl_PNM_Image.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_PNM_Image.H
 Fl_PNM_Image.o: ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H
 Fl_PNM_Image.o: ../config.h
 flstring.o: flstring.h ../FL/Fl_Export.H ../config.h
-scandir.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/fl_utf8.h
+scandir.o: flstring.h ../FL/Fl_Export.H ../config.h
 numericsort.o: ../config.h
 vsnprintf.o: flstring.h ../FL/Fl_Export.H ../config.h
 fl_utf.o: ../FL/fl_utf8.h xutf8/mk_wcwidth.c
