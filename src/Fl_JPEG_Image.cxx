@@ -98,7 +98,7 @@ extern "C" {
  There is no error function in this class. If the image has loaded correctly, 
  w(), h(), and d() should return values greater zero.
  
- \param filename a full path and name pointing to a valid jpeg file.
+ \param[in] filename a full path and name pointing to a valid jpeg file.
  */
 Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
 : Fl_RGB_Image(0,0,0) {
@@ -274,8 +274,12 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
  There is no error function in this class. If the image has loaded correctly, 
  w(), h(), and d() should return values greater zero.
  
- \param name developer shoud provide a unique name for this image
- \param data a pointer to the memorry location of the jpeg image
+ \param name developer should provide a unique name for this image.
+ 	Note: currently this is not used!
+ \param data a pointer to the memory location of the jpeg image
+ 
+ \todo	The documentation of parameter \p name specifies that a unique name
+ 	should be provided, but it is not used in the constructor.
  */
 Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
 : Fl_RGB_Image(0,0,0) {
