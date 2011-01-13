@@ -291,7 +291,7 @@ Fl_X *Fl_X::set_xid(Fl_Window*, Window xid)
 \endverbatim
 
 \par
-Allocate a hidden structure called an Fl_X, put the
+Allocate a hidden class called an Fl_X, put the
 XID into it, and set a pointer to it from the Fl_Window.
 This causes Fl_Window::shown() to return true.
 
@@ -367,6 +367,9 @@ MyWindow::~MyWindow() {
   hide();
 }
 \endcode
+
+\note Access to the Fl_X hidden class requires to \#define FL_LIBRARY
+before compilation.
 
 \subsection osissues_x_icon Setting the Icon of a Window
 
