@@ -184,7 +184,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   if (size > buffer_size) {
     delete[] buffer;
     buffer_size = size;
-    buffer = new U32[(size+3)/4];
+    buffer = new U32[(int)(1.02*   (size+3)/4)]; // some extra memory needed when printing
   }}
   bmi.bmiHeader.biHeight = blocking;
   static U32* line_buffer;
