@@ -1938,19 +1938,19 @@ void Fl_Text_Display::draw_string(int style,
     fsize = styleRec->size;
     
     if (style & PRIMARY_MASK) {
-      if (Fl::focus() == this) background = selection_color();
+      if (Fl::focus() == (Fl_Widget*)this) background = selection_color();
       else background = fl_color_average(color(), selection_color(), 0.4f);
     } else if (style & HIGHLIGHT_MASK) {
-      if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.5f);
+      if (Fl::focus() == (Fl_Widget*)this) background = fl_color_average(color(), selection_color(), 0.5f);
       else background = fl_color_average(color(), selection_color(), 0.6f);
     } else background = color();
     foreground = fl_contrast(styleRec->color, background);
   } else if (style & PRIMARY_MASK) {
-    if (Fl::focus() == this) background = selection_color();
+    if (Fl::focus() == (Fl_Widget*)this) background = selection_color();
     else background = fl_color_average(color(), selection_color(), 0.4f);
     foreground = fl_contrast(textcolor(), background);
   } else if (style & HIGHLIGHT_MASK) {
-    if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.5f);
+    if (Fl::focus() == (Fl_Widget*)this) background = fl_color_average(color(), selection_color(), 0.5f);
     else background = fl_color_average(color(), selection_color(), 0.6f);
     foreground = fl_contrast(textcolor(), background);
   } else {
@@ -2011,13 +2011,13 @@ void Fl_Text_Display::clear_rect(int style,
     return;
   
   if (style & PRIMARY_MASK) {
-    if (Fl::focus()==this) {
+    if (Fl::focus()==(Fl_Widget*)this) {
       fl_color(selection_color());
     } else {
       fl_color(fl_color_average(color(), selection_color(), 0.4f));
     }
   } else if (style & HIGHLIGHT_MASK) {
-    if (Fl::focus()==this) {
+    if (Fl::focus()==(Fl_Widget*)this) {
       fl_color(fl_color_average(color(), selection_color(), 0.5f));
     } else {
       fl_color(fl_color_average(color(), selection_color(), 0.6f));
@@ -3448,7 +3448,7 @@ void Fl_Text_Display::draw(void) {
   // draw the text cursor
   if (damage() & (FL_DAMAGE_ALL | FL_DAMAGE_SCROLL | FL_DAMAGE_EXPOSE)
       && !buffer()->primary_selection()->selected() &&
-      mCursorOn && Fl::focus() == this ) {
+      mCursorOn && Fl::focus() == (Fl_Widget*)this ) {
     fl_push_clip(text_area.x-LEFT_MARGIN,
                  text_area.y,
                  text_area.w+LEFT_MARGIN+RIGHT_MARGIN,
