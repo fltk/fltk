@@ -137,8 +137,8 @@ private:
 extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
 
 // this object contains all X-specific stuff about a window:
-// Warning: this object is highly subject to change!  It's definition
-// is only here so that fl_xid can be declared inline:
+// Warning: this object is highly subject to change!  
+// FL_LIBRARY must be defined to access this class.
 class FL_EXPORT Fl_X {
 public:
   Window xid;
