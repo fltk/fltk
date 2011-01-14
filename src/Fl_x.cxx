@@ -363,7 +363,6 @@ void fl_new_ic()
   XVaNestedList status_attr = NULL;
   static XFontSet fs = NULL;
   char *fnt;
-  bool must_free_fnt = true;
   char **missing_list;
   int missing_count;
   char *def_string;
@@ -379,17 +378,18 @@ void fl_new_ic()
 #endif /*__GNUC__*/
 
   if (!fs) {
-    fnt = NULL;//fl_get_font_xfld(0, 14);
-    if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
+    fnt = (char*)"-misc-fixed-*";
     fs = XCreateFontSet(fl_display, fnt, &missing_list,
                         &missing_count, &def_string);
   }
 #else
   if (!fs) {
+    bool must_free_fnt = true;
     fnt = fl_get_font_xfld(0, 14);
     if (!fnt) {fnt = (char*)"-misc-fixed-*";must_free_fnt=false;}
     fs = XCreateFontSet(fl_display, fnt, &missing_list,
                         &missing_count, &def_string);
+    if (must_free_fnt) free(fnt);
   }
 #endif
   preedit_attr = XVaCreateNestedList(0,
