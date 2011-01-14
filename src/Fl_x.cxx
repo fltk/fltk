@@ -550,6 +550,8 @@ void fl_init_xim()
                   &xim_styles, NULL, NULL);
   } else {
     Fl::warning("XOpenIM() failed\n");
+    // if xim_styles is allocated, free it now
+    if(xim_styles) XFree(xim_styles);
     return;
   }
 
@@ -559,14 +561,19 @@ void fl_init_xim()
      Fl::warning("No XIM style found\n");
      XCloseIM(fl_xim_im);
      fl_xim_im = NULL;
+     // if xim_styles is allocated, free it now
+     if(xim_styles) XFree(xim_styles);
      return;
   }
   if (!fl_xim_ic) {
     Fl::warning("XCreateIC() failed\n");
     XCloseIM(fl_xim_im);
-    XFree(xim_styles);
+    if(xim_styles) XFree(xim_styles);
+    xim_styles = NULL; // make sure we remember we have free'd xim_styles
     fl_xim_im = NULL;
   }
+  // if xim_styles is still allocated, free it now
+  if(xim_styles) XFree(xim_styles);
 }
 
 void fl_open_display() {
