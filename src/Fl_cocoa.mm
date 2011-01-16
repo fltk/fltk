@@ -1890,8 +1890,6 @@ void Fl_X::make(Fl_Window* w)
     fl_show_iconic = 0;
   }
   else {			// create a desktop window
-    NSAutoreleasePool *localPool;
-    localPool = [[NSAutoreleasePool alloc] init]; 
     Fl_Group::current(0);
     fl_open_display();
     NSInteger winlevel = NSNormalWindowLevel;
@@ -2045,7 +2043,6 @@ void Fl_X::make(Fl_Window* w)
     Fl::e_number = old_event;
     
     if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
-    [localPool release];
   }
 }
 
@@ -2917,8 +2914,6 @@ static void createAppleMenu(void)
 
 void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
 {
-  NSAutoreleasePool *localPool;
-  localPool = [[NSAutoreleasePool alloc] init]; 
   fl_open_display();
   Fl_Menu_Item aboutItem;
   memset(&aboutItem, 0, sizeof(Fl_Menu_Item));
@@ -2939,7 +2934,6 @@ void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
   [appleMenu insertItem:item atIndex:0];
   CFRelease(cfname);
   [item setTarget:item];
-  [localPool release];
 }
 
 static char *remove_ampersand(const char *s)
