@@ -320,12 +320,13 @@ double fl_width(const char* txt, int n) {
   return fl_width(uniStr, wc_len);
 }
 
-double fl_width(uchar c) {
+/*double fl_width(uchar c) {
   return fl_width((const char*)(&c), 1);
-}
+}*/
 
 double fl_width(unsigned int wc) {
-  return fl_width((const UniChar*)(&wc), 1);
+  UniChar uc = wc;
+  return fl_width(&uc, 1);
 }
 
 // text extent calculation
