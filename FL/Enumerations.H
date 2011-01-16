@@ -181,7 +181,7 @@ enum Fl_Event {	// events
    *
    *  If you are writing a text-editing widget you may also want to call 
    *  the Fl::compose() function to translate individual keystrokes into 
-   *  foreign characters.
+   *  non-ASCII characters.
    *
    *  FL_KEYUP events are sent to the widget that currently has focus. This 
    *  is not necessarily the same widget that received the corresponding 
