@@ -247,12 +247,12 @@ static int innards(const char* fmt, va_list ap,
  /** \addtogroup group_comdlg
     @{ */
 
-// pointers you can use to change FLTK to a foreign language:
-const char* fl_no = "No";        ///< string pointer used in common dialogs, you can change it to a foreign language
-const char* fl_yes= "Yes";       ///< string pointer used in common dialogs, you can change it to a foreign language
-const char* fl_ok = "OK";        ///< string pointer used in common dialogs, you can change it to a foreign language
-const char* fl_cancel= "Cancel"; ///< string pointer used in common dialogs, you can change it to a foreign language
-const char* fl_close= "Close";   ///< string pointer used in common dialogs, you can change it to a foreign language
+// pointers you can use to change FLTK to another language:
+const char* fl_no = "No";        ///< string pointer used in common dialogs, you can change it to another language
+const char* fl_yes= "Yes";       ///< string pointer used in common dialogs, you can change it to another language
+const char* fl_ok = "OK";        ///< string pointer used in common dialogs, you can change it to another language
+const char* fl_cancel= "Cancel"; ///< string pointer used in common dialogs, you can change it to another language
+const char* fl_close= "Close";   ///< string pointer used in common dialogs, you can change it to another language
 
 // fltk functions:
 /**
