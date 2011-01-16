@@ -72,6 +72,8 @@
 
   - Under X windows, it's best if you call Fl_File_Icon::load_system_icons()
     at the start of main(), to enable the nicer looking file browser widgets.
+    Use the static public attributes of class Fl_File_Chooser to localize
+    the browser.
   - Some operating systems support certain OS specific options; see 
     Fl_Native_File_Chooser::options() for a list.
 
@@ -95,6 +97,8 @@ public:
     NEW_FOLDER     = 0x0002,		///< Show 'New Folder' icon (if supported)
     PREVIEW        = 0x0004		///< enable preview mode
   };
+  /** Localizable message */
+  static const char *file_exists_message;
 private:
   int   _btype;			// kind-of browser to show()
   int   _options;		// general options
@@ -106,15 +110,7 @@ private:
   char *_prevvalue;		// Returned filename
   char *_directory;
   char *_errmsg;		// error message
-  char *_old_dir;
   Fl_File_Chooser *_file_chooser;
-
-  // added by MG
-  Fl_File_Browser *my_fileList;
-  Fl_Check_Button *show_hidden;
-  int prev_filtervalue;
-  static void show_hidden_cb(Fl_Check_Button *o, void *data);
-  static void remove_hidden_files(Fl_File_Browser *my_fileList);
 
   // Private methods
   void errmsg(const char *msg);

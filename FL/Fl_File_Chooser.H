@@ -123,6 +123,9 @@ private:
   Fl_Return_Button *favOkButton;
   void cb_favOkButton_i(Fl_Return_Button*, void*);
   static void cb_favOkButton(Fl_Return_Button*, void*);
+  Fl_Check_Button *show_hidden;
+  static void show_hidden_cb(Fl_Check_Button*, void*);
+  void remove_hidden_files();
 public:
   ~Fl_File_Chooser();
   void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);
@@ -213,6 +216,10 @@ public:
      [standard text may be customized at run-time]
   */
   static const char *show_label; 
+  /** 
+     [standard text may be customized at run-time]
+ */
+  static const char *hidden_label;
   /**
      the sort function that is used when loading
      the contents of a directory.

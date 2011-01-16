@@ -74,7 +74,11 @@
   	<TD>"My Computer" (WIN32)<BR>
   	"File Systems" (all others)</TD>
   </TR>
-  <TR>
+ <TR>
+	<TD>hidden_label</TD>
+	<TD>"Show hidden files:"</TD>
+ </TR>
+ <TR>
   	<TD>manage_favorites_label</TD>
   	<TD>"Manage Favorites"</TD>
   </TR>
@@ -98,7 +102,7 @@
   	<TD>show_label</TD>
   	<TD>"Show:"</TD>
   </TR>
-  <TR>
+ <TR>
   	<TD>sort</TD>
   	<TD>fl_numericsort</TD>
   </TR>
@@ -392,6 +396,7 @@ const char	*Fl_File_Chooser::new_directory_tooltip = "Create a new directory.";
 const char	*Fl_File_Chooser::preview_label = "Preview";
 const char	*Fl_File_Chooser::save_label = "Save";
 const char	*Fl_File_Chooser::show_label = "Show:";
+const char      *Fl_File_Chooser::hidden_label = "Show hidden files";
 Fl_File_Sort_F	*Fl_File_Chooser::sort = fl_numericsort;
 
 
@@ -1033,8 +1038,6 @@ Fl_File_Chooser::filter(const char *p)		// I - Pattern(s)
 
   showChoice->add(custom_filter_label);
   
-  // TODO: add a menu item to switch hidden files on and off
-
   showChoice->value(0);
   showChoiceCB();
 }
@@ -1147,6 +1150,7 @@ Fl_File_Chooser::rescan()
 
   // Build the file list...
   fileList->load(directory_, sort);
+  if (!show_hidden->value()) remove_hidden_files();
 
   // Update the preview box...
   update_preview();
@@ -1172,6 +1176,7 @@ void Fl_File_Chooser::rescan_keep_filename()
 
   // Build the file list...
   fileList->load(directory_, sort);
+  if (!show_hidden->value()) remove_hidden_files();
 
   // Update the preview box...
   update_preview();
@@ -1296,7 +1301,6 @@ Fl_File_Chooser::update_preview()
   int			pbw, pbh;	// Width and height of preview box
   int			w, h;		// Width and height of preview image
   int                   set = 0;        // Set this flag as soon as a decent preview is found
-
 
   if (!previewButton->value()) return;
 

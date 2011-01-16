@@ -88,6 +88,26 @@ void Fl_File_Chooser::cb_previewButton(Fl_Check_Button* o, void* v) {
   ((Fl_File_Chooser*)(o->parent()->parent()->parent()->user_data()))->cb_previewButton_i(o,v);
 }
 
+void Fl_File_Chooser::remove_hidden_files()
+{
+  int count = fileList->size();
+  for(int num = count; num >= 1; num--) {
+    const char *p = fileList->text(num);
+    if (*p == '.' && strcmp(p, "../") != 0) fileList->remove(num);
+  }
+  fileList->topline(1);
+}
+
+void Fl_File_Chooser::show_hidden_cb(Fl_Check_Button* o, void* data) {
+  Fl_File_Chooser *mychooser = (Fl_File_Chooser *)data;
+  if (o->value()) {
+    mychooser->browser()->load(mychooser->directory());
+  } else {
+    mychooser->remove_hidden_files();
+    mychooser->browser()->redraw();
+  }
+}
+
 void Fl_File_Chooser::cb_fileName_i(Fl_File_Input*, void*) {
   fileNameCB();
 }
@@ -208,6 +228,15 @@ Fl_File_Chooser::Fl_File_Chooser(const char *d, const char *p, int t, const char
           previewButton->callback((Fl_Callback*)cb_previewButton);
           previewButton->label(preview_label);
         } // Fl_Check_Button* previewButton
+	
+        { show_hidden = new Fl_Check_Button(
+	    previewButton->x() + previewButton->w() + 30, 275, 140, 20, "Show hidden files");
+          show_hidden->down_box(FL_DOWN_BOX);
+          show_hidden->value(0);
+          show_hidden->callback((Fl_Callback*)show_hidden_cb, this);
+          show_hidden->label(hidden_label);
+        } // Fl_Check_Button* show_hidden
+		
         { Fl_Box* o = new Fl_Box(115, 275, 365, 20);
           Fl_Group::current()->resizable(o);
         } // Fl_Box* o

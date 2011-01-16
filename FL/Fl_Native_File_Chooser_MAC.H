@@ -49,6 +49,7 @@ public:
     NEW_FOLDER     = 0x0002,		// Show 'New Folder' icon (if supported)
     PREVIEW        = 0x0004 		// enable preview mode
   };
+  static const char *file_exists_message;
 private:
   int             _btype;		// kind-of browser to show()
   int             _options;		// general options
