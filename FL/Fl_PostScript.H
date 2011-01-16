@@ -184,10 +184,6 @@ class Clip {
   void font(int face, int size);
   int font(){return font_;};
   int size(){return size_;};
-  double width(unsigned c);
-  double width(const char* s, int n);
-  int descent();
-  int height();
   
   void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0){draw_scaled_image(d,x,y,w,h,w,h,delta,ldelta);};
   void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0){draw_scaled_image_mono(d,x,y,w,h,w,h,delta,ld);};
@@ -208,7 +204,6 @@ public:
   void page(double pw, double ph, int media = 0);
   void page(int format);
   
-  void place(double x, double y, double tx, double ty, double scale = 1);
 #endif // FL_DOXYGEN
   Fl_PostScript_Graphics_Driver();
   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
