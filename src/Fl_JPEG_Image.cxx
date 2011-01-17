@@ -3,7 +3,7 @@
 //
 // Fl_JPEG_Image routines.
 //
-// Copyright 1997-2010 by Easy Software Products.
+// Copyright 1997-2011 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // This library is free software; you can redistribute it and/or
@@ -267,19 +267,16 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
 
 /**
  \brief The constructor loads the JPEG image from memory.
- 
+
  The inherited destructor frees all memory and server resources that are used 
  by the image.
- 
+
  There is no error function in this class. If the image has loaded correctly, 
  w(), h(), and d() should return values greater zero.
- 
- \param name developer should provide a unique name for this image.
+
+ \param name The developer should provide a unique name for this image.
  	Note: currently this is not used!
- \param data a pointer to the memory location of the jpeg image
- 
- \todo	The documentation of parameter \p name specifies that a unique name
- 	should be provided, but it is not used in the constructor.
+ \param data A pointer to the memory location of the JPEG image
  */
 Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
 : Fl_RGB_Image(0,0,0) {

@@ -3,7 +3,7 @@
 //
 // Fl_PNG_Image routines.
 //
-// Copyright 1997-2010 by Easy Software Products.
+// Copyright 1997-2011 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // This library is free software; you can redistribute it and/or
@@ -78,8 +78,11 @@ static void png_read_data_from_mem( png_structp png_ptr, //pointer to our data
 
 /**
   The constructor loads the named PNG image from the given png filename.
-  <P>The destructor frees all memory and server resources that are used by
+
+  The destructor frees all memory and server resources that are used by
   the image.
+
+  \param[in] filename	Name of PNG file to read
 */
 Fl_PNG_Image::Fl_PNG_Image (const char *filename): Fl_RGB_Image(0,0,0)
 {
@@ -87,8 +90,9 @@ Fl_PNG_Image::Fl_PNG_Image (const char *filename): Fl_RGB_Image(0,0,0)
 }
 
 /** Constructor that reads a PNG image from memory.
+
  \param name_png  A name given to this image
- \param	buffer	  Pointer to the start of the PNG image in memory
+ \param buffer	  Pointer to the start of the PNG image in memory
  \param maxsize  Size in bytes of the memory buffer containing the PNG image
  */
 Fl_PNG_Image::Fl_PNG_Image (
