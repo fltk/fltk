@@ -123,9 +123,11 @@ private:
   Fl_Return_Button *favOkButton;
   void cb_favOkButton_i(Fl_Return_Button*, void*);
   static void cb_favOkButton(Fl_Return_Button*, void*);
+#ifndef WIN32
   Fl_Check_Button *show_hidden;
   static void show_hidden_cb(Fl_Check_Button*, void*);
   void remove_hidden_files();
+#endif
 public:
   ~Fl_File_Chooser();
   void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);

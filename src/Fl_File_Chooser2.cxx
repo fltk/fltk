@@ -1150,8 +1150,9 @@ Fl_File_Chooser::rescan()
 
   // Build the file list...
   fileList->load(directory_, sort);
+#ifndef WIN32	
   if (!show_hidden->value()) remove_hidden_files();
-
+#endif
   // Update the preview box...
   update_preview();
 }
@@ -1176,8 +1177,9 @@ void Fl_File_Chooser::rescan_keep_filename()
 
   // Build the file list...
   fileList->load(directory_, sort);
+#ifndef WIN32	
   if (!show_hidden->value()) remove_hidden_files();
-
+#endif
   // Update the preview box...
   update_preview();
 
