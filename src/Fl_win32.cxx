@@ -1933,6 +1933,11 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
   return CreatePolygonRgn(pt, 4, ALTERNATE);
 }
 
+Window fl_xid(const Fl_Window *w) {
+  Fl_X *temp = Fl_X::i(w); 
+  return temp ? temp->xid : 0;
+}
+
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
 // contains also preparePrintFront call above

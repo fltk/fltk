@@ -3,7 +3,7 @@
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -105,7 +105,7 @@ extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
 extern FL_EXPORT Fl_Bitmask fl_create_alphamask(int w, int h, int d, int ld, const uchar *data);
 extern FL_EXPORT void fl_delete_bitmask(Fl_Bitmask bm);
 
-#ifdef FL_LIBRARY
+#if defined(FL_LIBRARY) || defined(FL_INTERNALS)
 extern FL_EXPORT Window fl_message_window;
 extern FL_EXPORT void *fl_xftfont;
 FL_EXPORT Fl_Region XRectangleRegion(int x, int y, int w, int h); // in fl_rect.cxx
@@ -138,7 +138,7 @@ extern FL_EXPORT Fl_XFont_On_Demand fl_xfont;
 
 // this object contains all X-specific stuff about a window:
 // Warning: this object is highly subject to change!  
-// FL_LIBRARY must be defined to access this class.
+// FL_LIBRARY or FL_INTERNALS must be defined to access this class.
 class FL_EXPORT Fl_X {
 public:
   Window xid;
@@ -163,7 +163,7 @@ public:
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 
-#endif // FL_LIBRARY
+#endif // FL_LIBRARY || FL_INTERNALS
 
 // convert xid <-> Fl_Window:
 Window fl_xid(const Fl_Window*w);

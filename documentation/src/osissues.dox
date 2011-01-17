@@ -368,7 +368,7 @@ MyWindow::~MyWindow() {
 }
 \endcode
 
-\note Access to the Fl_X hidden class requires to \#define FL_LIBRARY
+\note Access to the Fl_X hidden class requires to \#define FL_INTERNALS
 before compilation.
 
 \subsection osissues_x_icon Setting the Icon of a Window

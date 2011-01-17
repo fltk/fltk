@@ -3,7 +3,7 @@
 //
 // Mac header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -53,7 +53,7 @@ typedef void* Fl_Bitmask;   // this is really a CGImageRef
 #define MAC_OS_X_VERSION_10_6 1060
 #endif
 
-#ifndef FL_LIBRARY // this part is used when compiling an application program
+#if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
 
 typedef void* Fl_Region;
 typedef void* Fl_CGContextRef;
@@ -163,7 +163,7 @@ extern struct Fl_XMap {
 } *fl_current_xmap;
 extern FL_EXPORT Window fl_window;
 
-#endif // FL_LIBRARY
+#endif // FL_LIBRARY || FL_INTERNALS
 
 extern FL_EXPORT Fl_CGContextRef fl_gc;
 extern FL_EXPORT class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
