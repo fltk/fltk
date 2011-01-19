@@ -898,8 +898,8 @@ void Fl_Data_Type::write_code1() {
   if (is_in_class()) {
     write_public(public_);
     write_comment_h("  ");
-    write_h("  static unsigned char %s[];\n", c);
-    write_c("unsigned char %s::%s[] = /* binary data included from %s */\n", class_name(1), c, fn);
+    write_h("  static unsigned char %s[%d];\n", c, nData);
+    write_c("unsigned char %s::%s[%d] = /* binary data included from %s */\n", class_name(1), c, nData, fn);
     if (message) write_c("#error %s %s\n", message, fn);
     write_cdata(data, nData);
     write_c(";\n");
@@ -907,22 +907,22 @@ void Fl_Data_Type::write_code1() {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        write_h("extern unsigned char %s[];\n", c);
+        write_h("extern unsigned char %s[%d];\n", c, nData);
         write_comment_c();
-        write_c("unsigned char %s[] = /* binary data included from %s */\n", c, fn);
+        write_c("unsigned char %s[%d] = /* binary data included from %s */\n", c, nData, fn);
         if (message) write_c("#error %s %s\n", message, fn);
         write_cdata(data, nData);
         write_c(";\n");
       } else {
         write_comment_h();
         write_h("#error Unsupported declaration loading binary data %s\n", fn);
-        write_h("unsigned char %s[] = { 1, 2, 3 };\n", c);
+        write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
       }
     } else {
       write_comment_c();
       if (static_) 
         write_c("static ");
-      write_c("unsigned char %s[] = /* binary data included from %s */\n", c, fn);
+      write_c("unsigned char %s[%d] = /* binary data included from %s */\n", c, nData, fn);
       if (message) write_c("#error %s %s\n", message, fn);
       write_cdata(data, nData);
       write_c(";\n");
