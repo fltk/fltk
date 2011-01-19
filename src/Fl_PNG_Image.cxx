@@ -105,7 +105,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
 {
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
   int i;	  // Looping var
-  FILE *fp;	  // File pointer
+  FILE *fp = NULL;	  // File pointer
   int channels;	  // Number of color channels
   png_structp pp; // PNG read pointer
   png_infop info; // PNG info pointers
