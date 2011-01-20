@@ -174,17 +174,18 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   int linesize = (pixelsize*w+3)&~3;
   
   static U32* buffer;
+  static long buffer_size;
   int blocking = h;
   {int size = linesize*h;
-  if (size > MAXBUFFER) {
+  // when printing, don't limit buffer size not to get a crash in StretchDIBits
+  if (size > MAXBUFFER && Fl_Surface_Device::surface()->class_name() != Fl_Printer::class_id) {
     size = MAXBUFFER;
     blocking = MAXBUFFER/linesize;
   }
-  static long buffer_size;
   if (size > buffer_size) {
     delete[] buffer;
     buffer_size = size;
-    buffer = new U32[(int)(1.02*   (size+3)/4)]; // some extra memory needed when printing
+    buffer = new U32[(size+3)/4];
   }}
   bmi.bmiHeader.biHeight = blocking;
   static U32* line_buffer;
@@ -267,6 +268,9 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 		    DIB_RGB_COLORS
 #endif
 		    , SRCCOPY );
+      delete[] buffer;
+      buffer = NULL;
+      buffer_size = 0;
     }
     else {
       SetDIBitsToDevice(fl_gc, x, y+j-k, w, k, 0, 0, 0, k,
