@@ -1880,7 +1880,7 @@ void Fl_Window::make_current() {
 #endif
 }
 
-Window fl_xid(const Fl_Window* w)
+Window fl_xid_(const Fl_Window* w)
 {
   return Fl_X::i(w)->xid;
 }

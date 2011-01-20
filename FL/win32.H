@@ -101,9 +101,13 @@ extern FL_EXPORT HPALETTE fl_palette; // non-zero only on 8-bit displays!
 extern FL_EXPORT void fl_release_dc(HWND w, HDC dc);
 extern FL_EXPORT void fl_save_dc( HWND w, HDC dc);
 
+inline Window fl_xid(const Fl_Window* w) { Fl_X *temp = Fl_X::i(w); return temp ? temp->xid : 0; }
+
+#else
+FL_EXPORT Window fl_xid_(const Fl_Window* w);
+#define fl_xid(w) fl_xid_(w)
 #endif // FL_LIBRARY || FL_INTERNALS
 
-extern FL_EXPORT Window fl_xid(const Fl_Window*w);
 FL_EXPORT Fl_Window* fl_find(Window xid);
 FL_EXPORT void fl_clip_region(Fl_Region);
 

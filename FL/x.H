@@ -163,10 +163,15 @@ public:
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 
+inline Window fl_xid(const Fl_Window* w) { return Fl_X::i(w)->xid; }
+
+#else
+
+extern Window fl_xid_(const Fl_Window* w);
+#define fl_xid(w) fl_xid_(w)
+
 #endif // FL_LIBRARY || FL_INTERNALS
 
-// convert xid <-> Fl_Window:
-Window fl_xid(const Fl_Window*w);
 FL_EXPORT Fl_Window* fl_find(Window xid);
 
 
