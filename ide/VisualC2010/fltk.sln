@@ -47,6 +47,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "file_chooser", "file_chooser.vcxproj", "{6927F349-29DF-4D60-BC8F-5A3F5E133735}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fltk", "fltk.lib.vcxproj", "{E070AAFC-9D03-41A3-BC7D-30887EA0D50F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D640A221-F95A-40FF-AC0E-0E8B615C7681} = {D640A221-F95A-40FF-AC0E-0E8B615C7681}
+		{08B82852-90B3-4767-A5D2-F0A4FCCB2377} = {08B82852-90B3-4767-A5D2-F0A4FCCB2377}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fltkdll", "fltkdll.vcxproj", "{F0B8F4BD-955D-43CB-980C-805364D04A25}"
 EndProject
@@ -57,6 +61,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fltkimages", "fltkimages.vcxproj", "{6E8E1663-B88D-4454-ADF2-279666A93306}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fluid", "fluid.vcxproj", "{8AED3078-8CD8-40C9-A8FF-46080024F1EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F0B8F4BD-955D-43CB-980C-805364D04A25} = {F0B8F4BD-955D-43CB-980C-805364D04A25}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fonts", "fonts.vcxproj", "{DF2A883A-7356-4603-9CB1-E8F1E6B1549D}"
 EndProject
@@ -141,6 +148,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fltkzlib", "zlib.vcxproj", "{E1D9CE3F-400D-40E8-AD0D-61C29B1847FF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fltkpng", "libpng.vcxproj", "{D640A221-F95A-40FF-AC0E-0E8B615C7681}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E1D9CE3F-400D-40E8-AD0D-61C29B1847FF} = {E1D9CE3F-400D-40E8-AD0D-61C29B1847FF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "input_choice", "input_choice.vcxproj", "{50651D04-C8F7-4C2B-B412-0848573BDF88}"
 EndProject

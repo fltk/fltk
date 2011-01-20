@@ -262,9 +262,19 @@
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\test\tree.fl">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create .cxx and .h file with fluidd</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create %(Filename).cxx and %(Filename).h file with fluid</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">cfluid /D %(Filename).fl</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">../../test/%(Filename).cxx;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug Cairo|Win32'">cfluid /D %(Filename).fl
+</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create %(Filename).cxx and %(Filename).h file with fluid</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">../../test/%(Filename).cxx;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">cfluid %(Filename).fl</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release Cairo|Win32'">cfluid /D %(Filename).fl</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release Cairo|Win32'">Create %(Filename).cxx and %(Filename).h file with fluid</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug Cairo|Win32'">Create %(Filename).cxx and %(Filename).h file with fluid</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug Cairo|Win32'">../../test/%(Filename).cxx;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release Cairo|Win32'">../../test/%(Filename).cxx;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
