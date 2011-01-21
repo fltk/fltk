@@ -33,7 +33,7 @@ extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short*
 // if no font has been selected yet by the user, get one.
 #define check_default_font() {if (!fl_fontsize) fl_font(0, 12);}
 
-static const CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
+static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
@@ -47,8 +47,8 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   size = Size;
   minsize = maxsize = Size;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(fl_mac_os_version == 0) fl_open_display();
-if(fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
+if (fl_mac_os_version == 0) fl_open_display();
+if (fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   fontref = CTFontCreateWithName(str, size, NULL);
   CGGlyph glyph[2];
@@ -58,7 +58,7 @@ if(fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL o
   double w;
   CTFontGetAdvancesForGlyphs(fontref, kCTFontHorizontalOrientation, glyph, advances, 2);
   w = advances[0].width;
-  if( abs(advances[0].width - advances[1].width) < 1E-2 ) {//this is a fixed-width font
+  if ( abs(advances[0].width - advances[1].width) < 1E-2 ) {//this is a fixed-width font
     //slightly rescale fixed-width fonts so the character width has an integral value
     CFRelease(fontref);
     CGFloat fsize = size / ( w/floor(w + 0.5) );
@@ -107,7 +107,6 @@ else {
   ATSUFindFontFromName(name, strlen(name), kFontFullName, kFontMacintoshPlatform, kFontRomanScript, kFontEnglishLanguage, &fontID);
 
   // draw the font upside-down... Compensate for fltk/OSX origin differences
-  static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
   ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag, kATSUFontMatrixTag };
   ByteCount sBytes[] = { sizeof(ATSUFontID), sizeof(Fixed), sizeof(CGAffineTransform) };
   ATSUAttributeValuePtr sAttr[] = { &fontID, &fsize, &font_mx };
@@ -166,7 +165,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
   */
   if (this == fl_fontsize) fl_fontsize = 0;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if(fl_mac_os_version >= 0x1050)  CFRelease(fontref);
+  if (fl_mac_os_version >= 0x1050)  CFRelease(fontref);
 #else
 	/*  ATSUDisposeTextLayout(layout);
   ATSUDisposeStyle(style); */
@@ -200,10 +199,10 @@ static unsigned utfWlen = 0;
 static UniChar *mac_Utf8_to_Utf16(const char *txt, int len, int *new_len)
 {
   unsigned wlen = fl_utf8toUtf16(txt, len, (unsigned short*)utfWbuf, utfWlen);
-  if(wlen >= utfWlen)
+  if (wlen >= utfWlen)
   {
     utfWlen = wlen + 100;
-	if(utfWbuf) free(utfWbuf);
+	if (utfWbuf) free(utfWbuf);
     utfWbuf = (UniChar*)malloc((utfWlen)*sizeof(UniChar));
 	wlen = fl_utf8toUtf16(txt, len, (unsigned short*)utfWbuf, utfWlen);
   }
@@ -269,7 +268,7 @@ double fl_width(const UniChar* txt, int n) {
       return 8*n; // user must select a font first!
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(fl_mac_os_version >= 0x1050) {
+if (fl_mac_os_version >= 0x1050) {
   CTFontRef fontref = fl_fontsize->fontref;
   CFStringRef str = CFStringCreateWithBytes(NULL, (const UInt8*)txt, n * sizeof(UniChar), kCFStringEncodingUTF16, false);
   CFAttributedStringRef astr = CFAttributedStringCreate(NULL, str, NULL);
@@ -339,7 +338,7 @@ void fl_text_extents(const UniChar* txt, int n, int &dx, int &dy, int &w, int &h
       return;
   }
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(fl_mac_os_version >= 0x1050) {
+if (fl_mac_os_version >= 0x1050) {
   CTFontRef fontref = fl_fontsize->fontref;
   CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)txt, n *sizeof(UniChar), kCFStringEncodingUTF16, false);
   CFAttributedStringRef astr = CFAttributedStringCreate(NULL, str16, NULL);
@@ -413,7 +412,7 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
   Fl::get_color(i, r, g, b);
   CGFloat components[4] = {r/255.0f, g/255.0f, b/255.0f, 1.};
   static CGColorSpaceRef cspace = NULL;
-  if(cspace == NULL) {
+  if (cspace == NULL) {
     cspace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
     }
   return CGColorCreate(cspace, components);
@@ -427,7 +426,7 @@ void fl_draw(const char *str, int n, float x, float y) {
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if(fl_mac_os_version >= 0x1050) {
+  if (fl_mac_os_version >= 0x1050) {
     CFStringRef keys[2];
     CFTypeRef values[2];  
     CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)uniStr, n * sizeof(UniChar), kCFStringEncodingUTF16, false);
