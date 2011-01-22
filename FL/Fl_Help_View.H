@@ -89,7 +89,7 @@ struct Fl_Help_Link
  */
 
 /** Fl_Help_View font stack element definition. */
-struct Fl_Help_Font_Style {
+struct FL_EXPORT Fl_Help_Font_Style {
   Fl_Font      f;  ///< Font
   Fl_Fontsize  s;  ///< Font Size
   Fl_Color     c;  ///< Font Color
@@ -102,7 +102,7 @@ struct Fl_Help_Font_Style {
 /** Fl_Help_View font stack definition. */
 const size_t MAX_FL_HELP_FS_ELTS = 100;
 
-struct Fl_Help_Font_Stack {
+struct FL_EXPORT Fl_Help_Font_Stack {
   /** font stack construction, initialize attributes. */
   Fl_Help_Font_Stack() {
     nfonts_ = 0;
@@ -221,7 +221,7 @@ class FL_EXPORT Fl_Help_View : public Fl_Group	// Help viewer widget
   Fl_Font       textfont_;		///< Default font for text
   Fl_Fontsize  textsize_;		///< Default font size
   const char	*value_;		///< HTML text value
-  Fl_Help_Font_Stack fstack_;           ///< font stack management
+  Fl_Help_Font_Stack fstack_;		///< font stack management
   int		nblocks_,		///< Number of blocks/paragraphs
 		ablocks_;		///< Allocated blocks
   Fl_Help_Block	*blocks_;		///< Blocks

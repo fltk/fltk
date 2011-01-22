@@ -60,7 +60,7 @@ public:
   }; 
 private:
   // An STL-ish vector without templates
-  class CharVector {
+  class FL_EXPORT CharVector {
     char *arr;
     int _size;
     void init() {

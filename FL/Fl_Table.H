@@ -220,7 +220,7 @@ private:
   int _selecting;
   
   // An STL-ish vector without templates
-  class IntVector {
+  class FL_EXPORT IntVector {
     int *arr;
     unsigned int _size;
     void init() {
