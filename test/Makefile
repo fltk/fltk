@@ -193,16 +193,17 @@ include makedepend
 clean:
 	$(RM) $(ALL) $(GLALL) core
 	$(RM) *.o core.* *~ *.bck *.bak
-	$(RM) CubeViewUI.cxx
-	$(RM) fast_slow.cxx
-	$(RM) inactive.cxx
-	$(RM) keyboard_ui.cxx
-	$(RM) mandelbrot_ui.cxx
-	$(RM) preferences.cxx
-	$(RM) radio.cxx
-	$(RM) resize.cxx
-	$(RM) tabs.cxx
-	$(RM) valuators.cxx
+	$(RM) CubeViewUI.cxx CubeViewUI.h
+	$(RM) fast_slow.cxx fast_slow.h
+	$(RM) inactive.cxx inactive.h
+	$(RM) keyboard_ui.cxx keyboard_ui.h
+	$(RM) mandelbrot_ui.cxx mandelbrot_ui.h
+	$(RM) preferences.cxx preferences.h
+	$(RM) radio.cxx radio.h
+	$(RM) resize.cxx resize.h
+	$(RM) tabs.cxx tabs.h
+	$(RM) tree.cxx tree.h
+	$(RM) valuators.cxx valuators.h
 	$(OSX_ONLY) $(RM) blocks.app/Contents/MacOS/blocks$(EXEEXT)
 	$(OSX_ONLY) $(RM) checkers.app/Contents/MacOS/checkers$(EXEEXT)
 	$(OSX_ONLY) $(RM) sudoku.app/Contents/MacOS/sudoku$(EXEEXT)
@@ -455,6 +456,7 @@ tile$(EXEEXT): tile.o
 tiled_image$(EXEEXT): tiled_image.o
 
 tree$(EXEEXT): tree.o
+tree.cxx:	tree.fl ../fluid/fluid$(EXEEXT)
 
 valuators$(EXEEXT): valuators.o
 valuators.cxx:	valuators.fl ../fluid/fluid$(EXEEXT)
