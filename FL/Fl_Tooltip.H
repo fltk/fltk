@@ -57,7 +57,7 @@ public:
   /**    Returns non-zero if tooltips are enabled.  */
   static int enabled() { return Fl::option(Fl::OPTION_SHOW_TOOLTIPS); }
   /**    Enables tooltips on all widgets (or disables if <i>b</i> is false).  */
-  static void enable(int b = 1) { Fl::option(Fl::OPTION_SHOW_TOOLTIPS, b);}
+  static void enable(int b = 1) { Fl::option(Fl::OPTION_SHOW_TOOLTIPS, (b!=0));}
   /**    Same as enable(0), disables tooltips on all widgets.  */
   static void disable() { enable(0); }
   static void (*enter)(Fl_Widget* w);

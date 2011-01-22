@@ -940,7 +940,7 @@ public:
     non-text widgets. The default mode is to enable keyboard focus
     for all widgets.
   */
-  static void visible_focus(int v) { option(OPTION_VISIBLE_FOCUS, v);  }
+  static void visible_focus(int v) { option(OPTION_VISIBLE_FOCUS, (v!=0)); }
   /**
     Gets or sets the visible keyboard focus on buttons and other
     non-text widgets. The default mode is to enable keyboard focus
@@ -955,7 +955,7 @@ public:
     be dragged from text fields or dragged within a text field as a
     cut/paste shortcut.
   */
-  static void dnd_text_ops(int v) { option(OPTION_DND_TEXT, v); }
+  static void dnd_text_ops(int v) { option(OPTION_DND_TEXT, (v!=0)); }
   /**
     Gets or sets whether drag and drop text operations are
     supported. This specifically affects whether selected text can

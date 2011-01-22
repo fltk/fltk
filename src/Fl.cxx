@@ -1806,7 +1806,7 @@ bool Fl::option(Fl_Option opt)
   }
   if (opt<0 || opt>=OPTION_LAST) 
     return false;
-  return (bool)options_[opt];
+  return (bool)(options_[opt]!=0);
 }
 
 /**
