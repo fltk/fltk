@@ -33,13 +33,13 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release/$(ProjectName)"
-# PROP BASE Intermediate_Dir "Release/$(ProjectName)"
+# PROP BASE Output_Dir "Release/fltk_zlibdll"
+# PROP BASE Intermediate_Dir "Release/fltk_zlibdll"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release/$(ProjectName)"
-# PROP Intermediate_Dir "Release/$(ProjectName)"
+# PROP Output_Dir "Release/fltk_zlibdll"
+# PROP Intermediate_Dir "Release/fltk_zlibdll"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
@@ -60,13 +60,13 @@ LINK32=link.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug/$(ProjectName)"
-# PROP BASE Intermediate_Dir "Debug/$(ProjectName)"
+# PROP BASE Output_Dir "Debug/fltk_zlibdll"
+# PROP BASE Intermediate_Dir "Debug/fltk_zlibdll"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug/$(ProjectName)"
-# PROP Intermediate_Dir "Debug/$(ProjectName)"
+# PROP Output_Dir "Debug/fltk_zlibdll"
+# PROP Intermediate_Dir "Debug/fltk_zlibdll"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 opengl32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltk_zlibdlld.pdb" /debug /machine:I386 /out:"../../test/fltk_zlibdlld.dll" /pdbtype:sept
+# ADD LINK32 opengl32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltk_zlibdlld.pdb" /debug /machine:I386 /out:"Debug/fltk_zlibdll/fltk_zlibdlld.dll" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none /incremental:no
 
 !ENDIF 
@@ -92,46 +92,110 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\..\zlib\adler32.c
+DEP_CPP_ADLER=\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\compress.c
+DEP_CPP_COMPR=\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\crc32.c
+DEP_CPP_CRC32=\
+	"..\..\zlib\crc32.h"\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	"..\..\zlib\zutil.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\deflate.c
+DEP_CPP_DEFLA=\
+	"..\..\zlib\deflate.h"\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	"..\..\zlib\zutil.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\gzio.c
+DEP_CPP_GZIO_=\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	"..\..\zlib\zutil.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\inffast.c
+DEP_CPP_INFFA=\
+	"..\..\zlib\inffast.h"\
+	"..\..\zlib\inflate.h"\
+	"..\..\zlib\inftrees.h"\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	"..\..\zlib\zutil.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\inflate.c
+DEP_CPP_INFLA=\
+	"..\..\zlib\inffast.h"\
+	"..\..\zlib\inffixed.h"\
+	"..\..\zlib\inflate.h"\
+	"..\..\zlib\inftrees.h"\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	"..\..\zlib\zutil.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\inftrees.c
+DEP_CPP_INFTR=\
+	"..\..\zlib\inftrees.h"\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	"..\..\zlib\zutil.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\trees.c
+DEP_CPP_TREES=\
+	"..\..\zlib\deflate.h"\
+	"..\..\zlib\trees.h"\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	"..\..\zlib\zutil.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\uncompr.c
+DEP_CPP_UNCOM=\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\zlib\zutil.c
+DEP_CPP_ZUTIL=\
+	"..\..\zlib\zconf.h"\
+	"..\..\zlib\zlib.h"\
+	"..\..\zlib\zutil.h"\
+	
 # End Source File
 # End Target
 # End Project

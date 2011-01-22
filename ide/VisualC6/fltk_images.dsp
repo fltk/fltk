@@ -32,16 +32,16 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release/$(ProjectName)"
-# PROP BASE Intermediate_Dir "Release/$(ProjectName)"
+# PROP BASE Output_Dir "Release/fltk_images"
+# PROP BASE Intermediate_Dir "Release/fltk_images"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release/$(ProjectName)"
-# PROP Intermediate_Dir "Release/$(ProjectName)"
+# PROP Output_Dir "Release/fltk_images"
+# PROP Intermediate_Dir "Release/fltk_images"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MD /GX /Ot /Op /Ob2 /I "." /I "../.." /I "../../zlib" /I "../../png" /I "../../jpeg" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /FD /c
+# ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "FL_LIBRARY" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /MD /GX /Ot /Op /Ob2 /I "." /I "../.." /I "../../zlib" /I "../../png" /I "../../jpeg" /D "WIN32" /D "FL_LIBRARY" /D "NDEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /YX /FD /c
 # SUBTRACT CPP /Os
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
@@ -56,16 +56,16 @@ LIB32=link.exe -lib
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug/$(ProjectName)"
-# PROP BASE Intermediate_Dir "Debug/$(ProjectName)"
+# PROP BASE Output_Dir "Debug/fltk_images"
+# PROP BASE Intermediate_Dir "Debug/fltk_images"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug/$(ProjectName)"
-# PROP Intermediate_Dir "Debug/$(ProjectName)"
+# PROP Output_Dir "Debug/fltk_images"
+# PROP Intermediate_Dir "Debug/fltk_images"
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /MDd /GX /Z7 /Od /I "." /I "../.." /I "../../zlib" /I "../../png" /I "../../jpeg" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /FR /YX /FD /c
+# ADD BASE CPP /nologo /W3 /GX /Z7 /Od /D "WIN32" /D "FL_LIBRARY" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
+# ADD CPP /nologo /MDd /GX /Z7 /Od /I "." /I "../.." /I "../../zlib" /I "../../png" /I "../../jpeg" /D "WIN32" /D "FL_LIBRARY" /D "_DEBUG" /D "_WINDOWS" /D "WIN32_LEAN_AND_MEAN" /D "VC_EXTRA_LEAN" /D "WIN32_EXTRA_LEAN" /FR /YX /FD /c
 # ADD BASE RSC /l 0x409
 # ADD RSC /l 0x409
 BSC32=bscmake.exe
@@ -99,6 +99,10 @@ SOURCE=..\..\src\Fl_Help_Dialog.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\fl_images_core.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\Fl_JPEG_Image.cxx
 # End Source File
 # Begin Source File
@@ -108,10 +112,6 @@ SOURCE=..\..\src\Fl_PNG_Image.cxx
 # Begin Source File
 
 SOURCE=..\..\src\Fl_PNM_Image.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\fl_images_core.cxx
 # End Source File
 # End Target
 # End Project

@@ -33,13 +33,13 @@ RSC=rc.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "Release/$(ProjectName)"
-# PROP BASE Intermediate_Dir "Release/$(ProjectName)"
+# PROP BASE Output_Dir "Release/fltk_gldll"
+# PROP BASE Intermediate_Dir "Release/fltk_gldll"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Release/$(ProjectName)"
-# PROP Intermediate_Dir "Release/$(ProjectName)"
+# PROP Output_Dir "Release/fltk_gldll"
+# PROP Intermediate_Dir "Release/fltk_gldll"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /FD /c
@@ -60,13 +60,13 @@ LINK32=link.exe
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
-# PROP BASE Output_Dir "Debug/$(ProjectName)"
-# PROP BASE Intermediate_Dir "Debug/$(ProjectName)"
+# PROP BASE Output_Dir "Debug/fltk_gldll"
+# PROP BASE Intermediate_Dir "Debug/fltk_gldll"
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug/$(ProjectName)"
-# PROP Intermediate_Dir "Debug/$(ProjectName)"
+# PROP Output_Dir "Debug/fltk_gldll"
+# PROP Intermediate_Dir "Debug/fltk_gldll"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
@@ -80,7 +80,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 opengl32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltk_gldlld.pdb" /debug /machine:I386 /out:"../../test/fltk_gldlld.dll" /pdbtype:sept
+# ADD LINK32 opengl32.lib comctl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /version:1.0 /subsystem:windows /dll /pdb:"fltk_gldlld.pdb" /debug /machine:I386 /out:"Debug/fltk_gldll/fltk_gldlld.dll" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none /incremental:no
 
 !ENDIF 
@@ -92,46 +92,258 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Gl_Choice.cxx
+DEP_CPP_FL_GL=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\FL\gl.h"\
+	"..\..\fl\gl_draw.h"\
+	"..\..\fl\mac.H"\
+	"..\..\fl\win32.h"\
+	"..\..\fl\x.h"\
+	"..\..\fl\Xutf8.h"\
+	"..\..\src\fl_gl_choice.h"\
+	"..\..\src\flstring.h"\
+	".\config.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Gl_Device_Plugin.cxx
+DEP_CPP_FL_GL_=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\fl\fl_bitmap.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_device.h"\
+	"..\..\fl\fl_draw.h"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_image.h"\
+	"..\..\fl\fl_paged_device.h"\
+	"..\..\fl\fl_pixmap.h"\
+	"..\..\fl\fl_plugin.h"\
+	"..\..\fl\fl_postscript.h"\
+	"..\..\fl\fl_preferences.h"\
+	"..\..\fl\fl_printer.h"\
+	"..\..\fl\fl_rgb_image.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\FL\gl.h"\
+	"..\..\fl\mac.H"\
+	"..\..\fl\win32.h"\
+	"..\..\fl\x.h"\
+	"..\..\fl\Xutf8.h"\
+	"..\..\src\fl_gl_choice.h"\
+	".\config.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Gl_Overlay.cxx
+DEP_CPP_FL_GL_O=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\FL\gl.h"\
+	"..\..\fl\mac.H"\
+	"..\..\fl\win32.h"\
+	"..\..\fl\x.h"\
+	"..\..\fl\Xutf8.h"\
+	"..\..\src\fl_gl_choice.h"\
+	".\config.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Gl_Window.cxx
+DEP_CPP_FL_GL_W=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\FL\gl.h"\
+	"..\..\fl\mac.H"\
+	"..\..\fl\win32.h"\
+	"..\..\fl\x.h"\
+	"..\..\fl\Xutf8.h"\
+	"..\..\src\fl_gl_choice.h"\
+	"..\..\src\flstring.h"\
+	".\config.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\freeglut_geometry.cxx
+DEP_CPP_FREEG=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\fl\glut.h"\
+	"..\..\FL\math.h"\
+	"..\..\fl\Xutf8.h"\
+	
+NODEP_CPP_FREEG=\
+	"..\..\..\..\usr\include\math.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\freeglut_stroke_mono_roman.cxx
+DEP_CPP_FREEGL=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\fl\glut.h"\
+	"..\..\fl\Xutf8.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\freeglut_stroke_roman.cxx
+DEP_CPP_FREEGLU=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\fl\glut.h"\
+	"..\..\fl\Xutf8.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\freeglut_teapot.cxx
+DEP_CPP_FREEGLUT=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\fl\glut.h"\
+	"..\..\fl\Xutf8.h"\
+	"..\..\src\freeglut_teapot_data.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\gl_draw.cxx
+DEP_CPP_GL_DR=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\fl\fl_bitmap.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_device.h"\
+	"..\..\fl\fl_draw.h"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_image.h"\
+	"..\..\fl\fl_pixmap.h"\
+	"..\..\fl\fl_plugin.h"\
+	"..\..\fl\fl_preferences.h"\
+	"..\..\fl\fl_rgb_image.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\FL\gl.h"\
+	"..\..\FL\glu.h"\
+	"..\..\fl\mac.H"\
+	"..\..\fl\win32.h"\
+	"..\..\fl\x.h"\
+	"..\..\fl\Xutf8.h"\
+	"..\..\src\fl_font.h"\
+	"..\..\src\fl_gl_choice.h"\
+	"..\..\src\flstring.h"\
+	".\config.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\glut_compatability.cxx
+DEP_CPP_GLUT_=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_image.h"\
+	"..\..\fl\fl_menu_item.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\fl\glut.h"\
+	"..\..\fl\Xutf8.h"\
+	"..\..\src\flstring.h"\
+	".\config.h"\
+	
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\glut_font.cxx
+DEP_CPP_GLUT_F=\
+	"..\..\fl\enumerations.h"\
+	"..\..\fl\fl.h"\
+	"..\..\FL\Fl_Cairo.H"\
+	"..\..\fl\fl_export.h"\
+	"..\..\fl\fl_gl_window.h"\
+	"..\..\fl\fl_group.h"\
+	"..\..\fl\fl_types.h"\
+	"..\..\fl\fl_utf8.h"\
+	"..\..\fl\fl_widget.h"\
+	"..\..\fl\fl_window.h"\
+	"..\..\fl\glut.h"\
+	"..\..\fl\Xutf8.h"\
+	".\config.h"\
+	
 # End Source File
 # End Target
 # End Project
