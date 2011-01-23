@@ -420,9 +420,15 @@ fi
 
 AC_SUBST(LIBCOMMAND)
 
+dnl try to find windres with host prefix first
+dnl fix cross compiling 
+AC_PATH_PROG(RC,"$host_alias-windres")
+
 dnl how to compile (Windows) resource files
 dnl this will only be used to create Windows .exe files
-AC_PATH_PROG(RC,windres)
+if test "x$RC" = "x"; then
+    AC_PATH_PROG(RC,windres)
+fi
 
 dnl Architecture checks...
 AC_C_BIGENDIAN
