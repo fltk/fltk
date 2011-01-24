@@ -312,15 +312,15 @@ if (fl_mac_os_version >= 0x1050) {
       i++; // because a pair of UniChar's represent a single character
       continue;
       }
-    unsigned int r = uni >> 8; // index of the character block containing uni
+    unsigned int r = uni >> 7; // index of the character block containing uni
     if (!fl_fontsize->width[r]) { // this character block has not been hit yet
 //fprintf(stderr,"r=%d size=%d name=%s\n",r,fl_fontsize->size, fl_fontsize->q_name);
       // allocate memory to hold width of each character in the block
-      fl_fontsize->width[r] = (float*) malloc(sizeof(float) * 0x100);
-      UniChar ii = r * 0x100;
+      fl_fontsize->width[r] = (float*) malloc(sizeof(float) * 0x80);
+      UniChar ii = r * 0x80;
       CGGlyph glyph;
       CGSize advance_size;
-      for (int j = 0; j < 0x100; j++) { // loop over the block
+      for (int j = 0; j < 0x80; j++) { // loop over the block
 	CTFontRef font2 = fl_fontsize->fontref;
 	bool must_release = false;
 	// ii spans all characters of this block
@@ -342,7 +342,7 @@ if (fl_mac_os_version >= 0x1050) {
       }
     }
     // sum the widths of all characters of txt
-    retval += fl_fontsize->width[r][uni & 0xFF];
+    retval += fl_fontsize->width[r][uni & 0x7F];
   }
   return retval;
 } else {

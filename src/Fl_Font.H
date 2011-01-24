@@ -63,8 +63,8 @@ public:
   ATSUTextLayout layout;
 #     if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   CTFontRef fontref;
-  // the unicode span is divided in 256 blocks of 256 characters
-  float *width[256]; // array of arrays of character widths
+  // the unicode span is divided in 512 blocks of 128 characters
+  float *width[512]; // array of arrays of character widths
 #     endif
   ATSUStyle style;
   short ascent, descent, q_width;
