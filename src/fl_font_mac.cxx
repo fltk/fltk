@@ -70,7 +70,7 @@ if (fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL 
   ascent = (short)(CTFontGetAscent(fontref) + 0.5);
   descent = (short)(CTFontGetDescent(fontref) + 0.5);
   q_width = w + 0.5;
-  for (int i = 0; i < 256; i++) width[i] = NULL;
+  for (int i = 0; i < 512; i++) width[i] = NULL;
   if (!attributes) {
     static CFNumberRef zero_ref;
     float zero = 0.;
@@ -181,7 +181,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 0x1050)  {
     CFRelease(fontref);
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < 512; i++) {
       if (width[i]) free(width[i]);
       }
   }
