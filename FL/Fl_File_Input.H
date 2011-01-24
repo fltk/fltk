@@ -51,8 +51,8 @@
   One resulting side effect is that you should call clear_changed() early in your callback
   to avoid reentrant calls if you plan to show another window or dialog box in the callback.
 */
-class FL_EXPORT Fl_File_Input : public Fl_Input
-{
+class FL_EXPORT Fl_File_Input : public Fl_Input {
+  
   Fl_Color	errorcolor_;
   char		ok_entry_;
   uchar		down_box_;

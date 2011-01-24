@@ -37,6 +37,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_PNG_Image.H>
+#include <FL/Fl_Shared_Image.H>
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -89,11 +90,17 @@ Fl_PNG_Image::Fl_PNG_Image (const char *filename): Fl_RGB_Image(0,0,0)
   load_png_(filename, NULL, 0);
 }
 
-/** Constructor that reads a PNG image from memory.
+/** 
+ \brief Constructor that reads a PNG image from memory.
 
- \param name_png  A name given to this image
+ Construct an image from a block of memory inside the application. Fluid offers
+ "binary Data" chunks as a great way to add image data into the C++ source code.
+ name_png can be NULL. If a name is givem the image is added to the the list of 
+ shared images (see: Fl_Shared_Image) and will be available by that name.
+ 
+ \param name_png  A name given to this image or NULL
  \param buffer	  Pointer to the start of the PNG image in memory
- \param maxsize  Size in bytes of the memory buffer containing the PNG image
+ \param maxsize   Size in bytes of the memory buffer containing the PNG image
  */
 Fl_PNG_Image::Fl_PNG_Image (
       const char *name_png, const unsigned char *buffer, int maxsize): Fl_RGB_Image(0,0,0)
@@ -111,7 +118,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   png_infop info; // PNG info pointers
   png_bytep *rows;// PNG row pointers
   fl_png_memory png_mem_data;
-  int from_memory = (buffer_png != NULL); // true iff reading image from memory
+  int from_memory = (buffer_png != NULL); // true if reading image from memory
 
   if (!from_memory) {
     if ((fp = fl_fopen(name_png, "rb")) == NULL) return;
@@ -200,7 +207,14 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   png_read_end(pp, info);
   png_destroy_read_struct(&pp, &info, NULL);
 
-  if (!from_memory) fclose(fp);
+  if (from_memory) {
+    if (w() && h() && name_png) {
+      Fl_Shared_Image *si = new Fl_Shared_Image(name_png, this);
+      si->add();
+    }
+  } else {
+    fclose(fp);
+  }
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 

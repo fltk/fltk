@@ -57,8 +57,7 @@ typedef const char *(Fl_Help_Func)(Fl_Widget *, const char *);
 // Fl_Help_Block structure...
 //
 
-struct Fl_Help_Block
-{
+struct Fl_Help_Block {
   const char	*start,		// Start of text
 		*end;		// End of text
   uchar		border;		// Draw border?
@@ -74,8 +73,7 @@ struct Fl_Help_Block
 // Fl_Help_Link structure...
 //
 /** Definition of a link for the html viewer. */
-struct Fl_Help_Link
-{
+struct Fl_Help_Link {
   char		filename[192],	///< Reference filename
 		name[32];	///< Link target (blank if none)
   int		x,		///< X offset of link text
@@ -138,8 +136,7 @@ protected:
 
 /** Fl_Help_Target structure */
 
-struct Fl_Help_Target
-{
+struct Fl_Help_Target {
   char		name[32];	///< Target name
   int		y;		///< Y offset of target
 };
@@ -209,8 +206,8 @@ struct Fl_Help_Target
      - yen Yuml yuml
 
 */
-class FL_EXPORT Fl_Help_View : public Fl_Group	// Help viewer widget
-{
+class FL_EXPORT Fl_Help_View : public Fl_Group {	// Help viewer widget
+  
   enum { RIGHT = -1, CENTER, LEFT };	///< Alignments
 
   char		title_[1024];		///< Title string

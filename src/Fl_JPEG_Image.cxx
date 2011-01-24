@@ -35,6 +35,7 @@
 //
 
 #include <FL/Fl_JPEG_Image.H>
+#include <FL/Fl_Shared_Image.H>
 #include <FL/fl_utf8.h>
 #include <config.h>
 #include <stdio.h>
@@ -268,14 +269,18 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
 /**
  \brief The constructor loads the JPEG image from memory.
 
+ Construct an image from a block of memory inside the application. Fluid offers
+ "binary Data" chunks as a great way to add image data into the C++ source code.
+ name_png can be NULL. If a name is givem the image is added to the the list of 
+ shared images (see: Fl_Shared_Image) and will be available by that name.
+
  The inherited destructor frees all memory and server resources that are used 
  by the image.
 
  There is no error function in this class. If the image has loaded correctly, 
  w(), h(), and d() should return values greater zero.
 
- \param name The developer should provide a unique name for this image.
- 	Note: currently this is not used!
+ \param name A unique name or NULL
  \param data A pointer to the memory location of the JPEG image
  */
 Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
@@ -363,6 +368,11 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
   
   free(max_destroy_decompress_err);
   free(max_finish_decompress_err);
+
+  if (w() && h() && name) {
+    Fl_Shared_Image *si = new Fl_Shared_Image(name, this);
+    si->add();
+  }
 #endif // HAVE_LIBJPEG
 }
 

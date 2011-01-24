@@ -53,8 +53,8 @@
   The Fl_File_Icon class manages icon images that can be used 
   as labels in other widgets and as icons in the FileBrowser widget.
 */
-class FL_EXPORT Fl_File_Icon			//// Icon data
-{
+class FL_EXPORT Fl_File_Icon {			//// Icon data
+
   static Fl_File_Icon *first_;	// Pointer to first icon/filetype
   Fl_File_Icon	*next_;		// Pointer to next icon/filetype
   const char	*pattern_;	// Pattern string

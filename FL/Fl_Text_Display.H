@@ -47,8 +47,8 @@
  in the widget is managed by the Fl_Text_Buffer class. A single Text Buffer
  can be displayed by multiple Text Displays.
  */
-class FL_EXPORT Fl_Text_Display: public Fl_Group 
-{
+class FL_EXPORT Fl_Text_Display: public Fl_Group {
+
 public:
   
   /** 

@@ -38,6 +38,7 @@
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_PNG_Image.H>
 #include <FL/fl_message.H>
 #include <FL/filename.H>
 #include <stdio.h>
@@ -866,7 +867,56 @@ void show_help(const char *name) {
   }
   snprintf(helpname, sizeof(helpname), "%s/%s", docdir, name);
 
-  help_dialog->load(helpname);
+  // make sure that we can read the file
+  FILE *f = fopen(helpname, "rb");
+  if (f) {
+    fclose(f);
+    help_dialog->load(helpname);
+  } else {
+    // if we can not read the file, we display the canned version instead
+    // or ask the native browser to open the page on www.fltk.org
+    if (strcmp(name, "fluid.html")==0) {
+      if (!Fl_Shared_Image::find("embedded:/fluid-org.png"))
+        new Fl_PNG_Image("embedded:/fluid-org.png", fluid_org_png, sizeof(fluid_org_png));
+      help_dialog->value
+      (
+       "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n"
+       "<html><head><title>FLTK: Programming with FLUID</title></head><body>\n"
+       "<h2>What is FLUID?</h2>\n"
+       "The Fast Light User Interface Designer, or FLUID, is a graphical editor "
+       "that is used to produce FLTK source code. FLUID edits and saves its state "
+       "in <code>.fl</code> files. These files are text, and you can (with care) "
+       "edit them in a text editor, perhaps to get some special effects.<p>\n"
+       "FLUID can \"compile\" the <code>.fl</code> file into a <code>.cxx</code> "
+       "and a <code>.h</code> file. The <code>.cxx</code> file defines all the "
+       "objects from the <code>.fl</code> file and the <code>.h</code> file "
+       "declares all the global ones. FLUID also supports localization "
+       "(Internationalization) of label strings using message files and the GNU "
+       "gettext or POSIX catgets interfaces.<p>\n"
+       "A simple program can be made by putting all your code (including a <code>"
+       "main()</code> function) into the <code>.fl</code> file and thus making the "
+       "<code>.cxx</code> file a single source file to compile. Most programs are "
+       "more complex than this, so you write other <code>.cxx</code> files that "
+       "call the FLUID functions. These <code>.cxx</code> files must <code>"
+       "#include</code> the <code>.h</code> file or they can <code>#include</code> "
+       "the <code>.cxx</code> file so it still appears to be a single source file.<p>"
+       "<img src=\"embedded:/fluid-org.png\"></p>"
+       "<p>More information is available online at <a href="
+       "\"http://www.fltk.org/doc-1.3/fluid.html\">http://www.fltk.org/</a>"
+       "</body></html>"
+       );
+    } else if (strcmp(name, "license.html")==0) {
+      fl_open_uri("http://www.fltk.org/doc-1.3/license.html");
+      return;
+    } else if (strcmp(name, "index.html")==0) {
+      fl_open_uri("http://www.fltk.org/doc-1.3/index.html");
+      return;
+    } else {
+      snprintf(helpname, sizeof(helpname), "http://www.fltk.org/%s", name);
+      fl_open_uri(helpname);
+      return;
+    }
+  }
   help_dialog->show();
 }
 
@@ -875,7 +925,7 @@ void help_cb(Fl_Widget *, void *) {
 }
 
 void manual_cb(Fl_Widget *, void *) {
-  show_help("main.html");
+  show_help("index.html");
 }
 
 

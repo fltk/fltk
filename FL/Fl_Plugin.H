@@ -67,8 +67,7 @@
  }
  \endcode
  */
-class FL_EXPORT Fl_Plugin 
-{
+class FL_EXPORT Fl_Plugin  {
   Fl_Preferences::ID id;
 public:
   Fl_Plugin(const char *klass, const char *name);
@@ -80,8 +79,7 @@ public:
  \brief Fl_Plugin_Manager manages link-time and run-time plugin binaries.
  \see Fl_Plugin
  */
-class FL_EXPORT Fl_Plugin_Manager : public Fl_Preferences
-{
+class FL_EXPORT Fl_Plugin_Manager : public Fl_Preferences {
 public:
   Fl_Plugin_Manager(const char *klass);
   ~Fl_Plugin_Manager();

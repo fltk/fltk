@@ -47,7 +47,11 @@ typedef Fl_Image *(*Fl_Shared_Handler)(const char *name, uchar *header,
   function to support standard image formats such as BMP, GIF, JPEG, and PNG.
 */
 class FL_EXPORT Fl_Shared_Image : public Fl_Image {
-  protected:
+  
+  friend class Fl_JPEG_Image;
+  friend class Fl_PNG_Image;
+
+protected:
 
   static Fl_Shared_Image **images_;	// Shared images
   static int	num_images_;		// Number of shared images
