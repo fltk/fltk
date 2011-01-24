@@ -474,9 +474,11 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 void fl_draw(const char *str, int n, float x, float y) {
   // avoid a crash if no font has been selected by user yet !
   check_default_font();
+  // convert to UTF-16 first
+  UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 0x1050) {
-    CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)str, n, kCFStringEncodingUTF8, false);
+    CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)uniStr, n * sizeof(UniChar), kCFStringEncodingUTF16, false);
     CGColorRef color = flcolortocgcolor(fl_color());
     CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
     CFDictionarySetValue (attributes, kCTForegroundColorAttributeName, color);
@@ -503,8 +505,6 @@ void fl_draw(const char *str, int n, float x, float y) {
   ATSUAttributeValuePtr iValuePtr=&fl_gc;
   ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
 
-  // convert to UTF-16 first
-  UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
   err = ATSUSetTextPointerLocation(layout, uniStr, kATSUFromTextBeginning, n, n);
   CGContextSetShouldAntialias(fl_gc, true);
   err = ATSUDrawText(layout, kATSUFromTextBeginning, n, FloatToFixed(x), FloatToFixed(y));
