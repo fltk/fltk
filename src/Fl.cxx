@@ -89,6 +89,8 @@ int		Fl::damage_,
 char		*Fl::e_text = (char *)"";
 int		Fl::e_length;
 
+Fl_Event_Dispatch Fl::e_dispatch = 0;
+
 unsigned char   Fl::options_[] = { 0, 0 };
 unsigned char   Fl::options_read_ = 0;
 
@@ -727,7 +729,7 @@ static handler_link *handlers = 0;
   them returns non zero then the event is ignored.  Events that cause
   this to be called are:
   
-  - FL_SHORTCUT events that are not recognized by any  widget.
+  - FL_SHORTCUT events that are not recognized by any widget.
     This lets you provide global shortcut keys.
   - System events that FLTK does not recognize.  See fl_xevent.
   - \e Some other events when the widget FLTK selected  returns
@@ -978,6 +980,12 @@ int Fl::handle(int e, Fl_Window* window)
   widget uses the event.
 */
 {
+  if (e_dispatch) {
+    int ret = e_dispatch(e, window);
+    if (ret)
+      return ret;
+  }
+  
   e_number = e;
   if (fl_local_grab) return fl_local_grab(e);
 

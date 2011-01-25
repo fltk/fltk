@@ -312,7 +312,7 @@ if (fl_mac_os_version >= 0x1050) {
       i++; // because a pair of UniChar's represent a single character
       continue;
       }
-    unsigned int r = uni >> 7; // index of the character block containing uni
+    unsigned int r = uni >> 9; // index of the character block containing uni
     if (!fl_fontsize->width[r]) { // this character block has not been hit yet
 //fprintf(stderr,"r=%d size=%d name=%s\n",r,fl_fontsize->size, fl_fontsize->q_name);
       // allocate memory to hold width of each character in the block

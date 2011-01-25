@@ -104,6 +104,9 @@ typedef void (*Fl_Atclose_Handler)(Fl_Window *window, void *data);
 /** signature of args functions passed as parameters */
 typedef int (*Fl_Args_Handler)(int argc, char **argv, int &i);
 
+/** signature of event_dispatch functions passed as parameters */
+typedef int (*Fl_Event_Dispatch)(int event, Fl_Window *w);
+
 /** @} */ /* group callback_functions */
 
 
@@ -129,6 +132,7 @@ public: // should be private!
   static int e_keysym;
   static char* e_text;
   static int e_length;
+  static Fl_Event_Dispatch e_dispatch;
   static Fl_Widget* belowmouse_;
   static Fl_Widget* pushed_;
   static Fl_Widget* focus_;
@@ -696,6 +700,14 @@ public:
   static void focus(Fl_Widget*);
   static void add_handler(Fl_Event_Handler h);
   static void remove_handler(Fl_Event_Handler h);
+  /** Set a new event dispatch function.
+  The event dispatch function is called after native events are converted to 
+  FLTK events, but before they are handled by FLTK. If the dispatch function
+  returns a value other than 0, FLTK will not handle the event any further.
+  \param d new dispatch function, can be NULL */
+  static void event_dispatch(Fl_Event_Dispatch d) { e_dispatch = d; }
+  /** Return the current event dispatch function. */
+  static Fl_Event_Dispatch event_dispatch() { return e_dispatch; }
   /** @} */
 
   /** \defgroup  fl_clipboard  Selection & Clipboard functions
