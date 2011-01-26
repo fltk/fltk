@@ -687,6 +687,7 @@ public:
 
   // event destinations:
   static int handle(int, Fl_Window*);
+  static int handle_(int, Fl_Window*);
   /**  Gets the widget that is below the mouse. 
        \see  belowmouse(Fl_Widget*) */
   static Fl_Widget* belowmouse() {return belowmouse_;}
@@ -700,14 +701,8 @@ public:
   static void focus(Fl_Widget*);
   static void add_handler(Fl_Event_Handler h);
   static void remove_handler(Fl_Event_Handler h);
-  /** Set a new event dispatch function.
-  The event dispatch function is called after native events are converted to 
-  FLTK events, but before they are handled by FLTK. If the dispatch function
-  returns a value other than 0, FLTK will not handle the event any further.
-  \param d new dispatch function, can be NULL */
-  static void event_dispatch(Fl_Event_Dispatch d) { e_dispatch = d; }
-  /** Return the current event dispatch function. */
-  static Fl_Event_Dispatch event_dispatch() { return e_dispatch; }
+  static void event_dispatch(Fl_Event_Dispatch d);
+  static Fl_Event_Dispatch event_dispatch();
   /** @} */
 
   /** \defgroup  fl_clipboard  Selection & Clipboard functions

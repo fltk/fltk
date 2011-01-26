@@ -585,12 +585,12 @@ int Fl::check() {
   
   \code
   while (!calculation_done()) {
-  calculate();
-  if (Fl::ready()) {
-    do_expensive_cleanup();
-    Fl::check();
-    if (user_hit_abort_button()) break;
-  }
+    calculate();
+    if (Fl::ready()) {
+      do_expensive_cleanup();
+      Fl::check();
+      if (user_hit_abort_button()) break;
+    }
   }
   \endcode
 */
@@ -712,15 +712,19 @@ void Fl::flush() {
 #endif
 }
 
+
 ////////////////////////////////////////////////////////////////
 // Event handlers:
+
 
 struct handler_link {
   int (*handle)(int);
   handler_link *next;
 };
 
+
 static handler_link *handlers = 0;
+
 
 /**
   Install a function to parse unrecognized events.  If FLTK cannot
@@ -735,6 +739,10 @@ static handler_link *handlers = 0;
   - \e Some other events when the widget FLTK selected  returns
     zero from its handle() method.  Exactly which  ones may change
     in future versions, however.
+ 
+ \see Fl::remove_handler(Fl_Event_Handler)
+ \see Fl::event_dispatch(Fl_Event_Dispatch d)
+ \see Fl::handle(int, Fl_Window*)
 */
 void Fl::add_handler(Fl_Event_Handler ha) {
   handler_link *l = new handler_link;
@@ -743,8 +751,10 @@ void Fl::add_handler(Fl_Event_Handler ha) {
   handlers = l;
 }
 
+
 /**
-  Removes a previously added event handler.
+ Removes a previously added event handler.
+ \see Fl::handle(int, Fl_Window*)
 */
 void Fl::remove_handler(Fl_Event_Handler ha) {
   handler_link *l, *p;
@@ -974,18 +984,92 @@ static int send(int event, Fl_Widget* to, Fl_Window* window) {
   return ret;
 }
 
-int Fl::handle(int e, Fl_Window* window)
+
+/** 
+ \brief Set a new event dispatch function.
+ 
+ The event dispatch function is called after native events are converted to 
+ FLTK events, but before they are handled by FLTK. If the dispatch pointer
+ is set, it is up to the dispatch function to call 
+ Fl::handle_(int, Fl_Window*).
+ 
+ The event dispatch can be used to handle exceptions in FLTK events and  
+ callbacks before they reach the native event handler:
+ 
+ \code
+ int myHandler(int e, Fl_Window *w) {
+   try {
+     Fl::handle_(e, w);
+   } catch () {
+     ...
+   }
+ }
+ 
+ main() {
+   Fl::event_dispatch(myHandler);
+   ...
+   Fl::run();
+ }
+ \endcode
+ 
+ \param d new dispatch function, or NULL 
+ \see Fl::add_handler(Fl_Event_Handler)
+ \see Fl::handle(int, Fl_Window*)
+ \see Fl::handle_(int, Fl_Window*)
+ */
+void Fl::event_dispatch(Fl_Event_Dispatch d) 
+{
+  e_dispatch = d; 
+}
+
+
+/** 
+ \brief Return the current event dispatch function. 
+ */
+Fl_Event_Dispatch Fl::event_dispatch() 
+{ 
+  return e_dispatch; 
+}
+
+
 /**
-  Sends the event to a window for processing.  Returns non-zero if any
-  widget uses the event.
-*/
+ \brief Handle events from the window system.
+ 
+ This is called from the native event dispatch after native events have been
+ converted to FLTK notation. This functin calls Fl::handle_(int, Fl_Window*) 
+ unless the user sets a dispatch function. If a user dispatch function is set,
+ the user must make sure that Fl::handle_() is called.
+ 
+ \param e the event type (Fl::event_number() is not yet set)
+ \param window the window that cause this event
+ \return 0 if the event was handled
+ 
+ \sa Fl::add_handler(Fl_Event_Handler)
+ \sa Fl::event_dispatch(Fl_Event_Dispatch)
+ */
+int Fl::handle(int e, Fl_Window* window)
 {
   if (e_dispatch) {
-    int ret = e_dispatch(e, window);
-    if (ret)
-      return ret;
+    return e_dispatch(e, window);
+  } else {
+    return handle_(e, window);
   }
-  
+}
+
+
+/**
+ \brief Handle events from the window system.
+
+ This function is called form the native event dispatch, unless the user sets 
+ another dispatch function. In that case, the user dispatch function must 
+ decide when to call Fl::handle_(int, Fl_Window*)
+ 
+ \param e the event type (Fl::event_number() is not yet set)
+ \param window the window that cause this event
+ \return 0 if the event was handled
+ */
+int Fl::handle_(int e, Fl_Window* window)
+{  
   e_number = e;
   if (fl_local_grab) return fl_local_grab(e);
 
