@@ -337,7 +337,7 @@ int fl_utf8encode(unsigned ucs, char* buf) {
   }
 }
 
-/*! Convert a UTF-8 sequence into an array of wchar_t. These
+/*! Convert a UTF-8 sequence into an array of 16-bit characters. These
     are used by some system calls, especially on Windows.
 
     \p src points at the UTF-8, and \p srclen is the number of bytes to
@@ -350,7 +350,7 @@ int fl_utf8encode(unsigned ucs, char* buf) {
     zero-terminated string. If \p dstlen is zero then \p dst can be
     null and no data is written, but the length is returned.
 
-    The return value is the number of words that \e would be written
+    The return value is the number of 16-bit words that \e would be written
     to \p dst if it were long enough, not counting the terminating
     zero. If the return value is greater or equal to \p dstlen it
     indicates truncation, you can then allocate a new array of size
@@ -361,12 +361,9 @@ int fl_utf8encode(unsigned ucs, char* buf) {
     ISO-8859-1 text mistakenly identified as UTF-8 to be printed
     correctly.
 
-    Notice that sizeof(wchar_t) is 2 on Windows and is 4 on Linux
-    and most other systems. Where wchar_t is 16 bits, Unicode
-    characters in the range 0x10000 to 0x10ffff are converted to
+    Unicode characters in the range 0x10000 to 0x10ffff are converted to
     "surrogate pairs" which take two words each (this is called UTF-16
-    encoding). If wchar_t is 32 bits this rather nasty problem is
-    avoided.
+    encoding). 
 */
 unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
 		  unsigned short* dst, unsigned dstlen)
@@ -410,8 +407,29 @@ unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
   Converts a UTF-8 string into a wide character string.
 
   This function generates 32-bit wchar_t (e.g. "ucs4" as it were) except
-  on Windows where it returns UTF-16 with surrogate pairs where required.
+  on Windows where it is equivalent to fl_utf8toUtf16 and returns 
+  UTF-16.
+ 
+  \p src points at the UTF-8, and \p srclen is the number of bytes to
+  convert.
+ 
+  \p dst points at an array to write, and \p dstlen is the number of
+  locations in this array. At most \p dstlen-1 wchar_t will be
+  written there, plus a 0 terminating wchar_t.
+ 
+  The return value is the number of wchar_t that \e would be written
+  to \p dst if it were long enough, not counting the terminating
+  zero. If the return value is greater or equal to \p dstlen it
+  indicates truncation, you can then allocate a new array of size
+  return+1 and call this again. 
 
+  Notice that sizeof(wchar_t) is 2 on Windows and is 4 on Linux
+  and most other systems. Where wchar_t is 16 bits, Unicode
+  characters in the range 0x10000 to 0x10ffff are converted to
+  "surrogate pairs" which take two words each (this is called UTF-16
+  encoding). If wchar_t is 32 bits this rather nasty problem is
+  avoided.
+ 
   Note that Windows includes Cygwin, i.e. compiled with Cygwin's POSIX
   layer (cygwin1.dll, --enable-cygwin), either native (GDI) or X11.
   */
