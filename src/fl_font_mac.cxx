@@ -70,7 +70,7 @@ if (fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL 
   ascent = (short)(CTFontGetAscent(fontref) + 0.5);
   descent = (short)(CTFontGetDescent(fontref) + 0.5);
   q_width = w + 0.5;
-  for (int i = 0; i < 512; i++) width[i] = NULL;
+  for (unsigned i = 0; i < sizeof(width)/sizeof(float); i++) width[i] = NULL;
   if (!attributes) {
     static CFNumberRef zero_ref;
     float zero = 0.;
@@ -181,7 +181,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 0x1050)  {
     CFRelease(fontref);
-    for (int i = 0; i < 512; i++) {
+    for (unsigned i = 0; i < sizeof(width)/sizeof(float); i++) {
       if (width[i]) free(width[i]);
       }
   }
@@ -312,15 +312,17 @@ if (fl_mac_os_version >= 0x1050) {
       i++; // because a pair of UniChar's represent a single character
       continue;
       }
-    unsigned int r = uni >> 7; // index of the character block containing uni
+    const int block = 0x10000 / (sizeof(fl_fontsize->width)/sizeof(float)); // block size
+    // r: index of the character block containing uni
+    unsigned int r = uni >> 7; // change 7 if sizeof(width) is changed
     if (!fl_fontsize->width[r]) { // this character block has not been hit yet
 //fprintf(stderr,"r=%d size=%d name=%s\n",r,fl_fontsize->size, fl_fontsize->q_name);
       // allocate memory to hold width of each character in the block
-      fl_fontsize->width[r] = (float*) malloc(sizeof(float) * 0x80);
-      UniChar ii = r * 0x80;
-      CGGlyph glyph;
+      fl_fontsize->width[r] = (float*) malloc(sizeof(float) * block);
+      UniChar ii = r * block;
       CGSize advance_size;
-      for (int j = 0; j < 0x80; j++) { // loop over the block
+      CGGlyph glyph;
+      for (int j = 0; j < block; j++) { // loop over the block
 	CTFontRef font2 = fl_fontsize->fontref;
 	bool must_release = false;
 	// ii spans all characters of this block
@@ -342,7 +344,7 @@ if (fl_mac_os_version >= 0x1050) {
       }
     }
     // sum the widths of all characters of txt
-    retval += fl_fontsize->width[r][uni & 0x7F];
+    retval += fl_fontsize->width[r][uni & (block-1)];
   }
   return retval;
 } else {
@@ -478,7 +480,8 @@ void fl_draw(const char *str, int n, float x, float y) {
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 0x1050) {
-    CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)uniStr, n * sizeof(UniChar), kCFStringEncodingUTF16, false);
+    CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, uniStr, n,  kCFAllocatorNull);
+    if (str16 == NULL) return; // shd not happen
     CGColorRef color = flcolortocgcolor(fl_color());
     CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
     CFDictionarySetValue (attributes, kCTForegroundColorAttributeName, color);
