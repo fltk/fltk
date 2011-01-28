@@ -1,5 +1,10 @@
-include ../makeinclude
+include Makefile.FLTK
 
+RM    = rm -f
+SHELL = /bin/sh
+.SILENT:
+
+# Executables
 ALL = howto-add_fd-and-popen$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
@@ -25,3 +30,4 @@ clean:
 	$(RM) $(ALL)
 	$(RM) *.o
 	$(RM) core
+
