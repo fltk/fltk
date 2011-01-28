@@ -34,7 +34,9 @@ extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short*
 #define check_default_font() {if (!fl_fontsize) fl_font(0, 12);}
 
 static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static CFMutableDictionaryRef attributes = NULL;
+#endif
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
