@@ -984,7 +984,7 @@ public:
     The thread_message() method returns the last message
     that was sent from a child by the awake() method.
     
-    See also: advanced_multithreading
+    See also: \ref advanced_multithreading
   */
   static void* thread_message(); // platform dependent
   /** @} */
