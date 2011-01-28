@@ -132,15 +132,20 @@ static void tooltip_timeout(void*) {
   if (!tip || !*tip) {
     if (window) window->hide();
   } else {
-    //if (Fl::grab()) return;
-    if (!window) window = new Fl_TooltipBox;
-    // this cast bypasses the normal Fl_Window label() code:
-    ((Fl_Widget*)window)->label(tip);
-    window->layout();
-    window->redraw();
-//    printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
-//           window, tip ? tip : "(null)");
-    window->show();
+    int condition = 1;
+#if !(defined(__APPLE__) || defined(WIN32))
+    condition = (Fl::grab() == NULL);
+#endif
+    if ( condition ) {
+      if (!window) window = new Fl_TooltipBox;
+      // this cast bypasses the normal Fl_Window label() code:
+      ((Fl_Widget*)window)->label(tip);
+      window->layout();
+      window->redraw();
+  //    printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
+  //           window, tip ? tip : "(null)");
+      window->show();
+    }
   }
 
   Fl::remove_timeout(recent_timeout);
