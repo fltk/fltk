@@ -232,6 +232,7 @@ For Xcode project template use, all FLTK frameworks should be copied from
 for all FLTK frameworks will then be at "/Library/Frameworks/fltk.framework/
 Headers/". Add this path to the header search path of your projects.
 
+  sudo rm -f -r /Library/Frameworks/fltk*
   sudo cp -R ide/Xcode3/build/Release/fltk*.framework /Library/Frameworks/
 
 Many FLTK applications will use Fluid, the FLTK User Interface builder, to 
@@ -239,6 +240,7 @@ generate C++ source code from .fl resource files. Add Fluid to the developer
 tools:
 
   sudo mkdir /Developer/Applications/Utilities/FLTK/
+  sudo rm -f -r /Developer/Applications/Utilities/FLTK/Fluid.app
   sudo cp -R ide/Xcode3/build/Release/Fluid.app /Developer/Applications/Utilities/FLTK/
 
 
