@@ -347,7 +347,7 @@ void Fl_Tree::item_clicked(Fl_Tree_Item* val) {
 ///
 /// Use this to walk the tree in the forward direction, eg:
 /// \code
-/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next() ) {
+/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) ) {
 ///     printf("Item: %s\n", item->label());
 /// }
 /// \endcode
