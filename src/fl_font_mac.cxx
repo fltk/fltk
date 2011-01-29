@@ -72,7 +72,7 @@ if (fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL 
   ascent = (short)(CTFontGetAscent(fontref) + 0.5);
   descent = (short)(CTFontGetDescent(fontref) + 0.5);
   q_width = w + 0.5;
-  for (unsigned i = 0; i < sizeof(width)/sizeof(float); i++) width[i] = NULL;
+  for (unsigned i = 0; i < sizeof(width)/sizeof(float*); i++) width[i] = NULL;
   if (!attributes) {
     static CFNumberRef zero_ref;
     float zero = 0.;
@@ -183,7 +183,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 0x1050)  {
     CFRelease(fontref);
-    for (unsigned i = 0; i < sizeof(width)/sizeof(float); i++) {
+    for (unsigned i = 0; i < sizeof(width)/sizeof(float*); i++) {
       if (width[i]) free(width[i]);
       }
   }
@@ -314,7 +314,7 @@ if (fl_mac_os_version >= 0x1050) {
       i++; // because a pair of UniChar's represent a single character
       continue;
       }
-    const int block = 0x10000 / (sizeof(fl_fontsize->width)/sizeof(float)); // block size
+    const int block = 0x10000 / (sizeof(fl_fontsize->width)/sizeof(float*)); // block size
     // r: index of the character block containing uni
     unsigned int r = uni >> 7; // change 7 if sizeof(width) is changed
     if (!fl_fontsize->width[r]) { // this character block has not been hit yet
