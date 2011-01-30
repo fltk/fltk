@@ -537,11 +537,11 @@ static Fl_Win32_At_Exit win32_at_exit;
   any Fl::add_fd() callbacks.  It then handles the events and
   calls the callbacks and then returns.
   
-  The return value of the first form is non-zero if there are
+  The return value of Fl::wait() is non-zero if there are
   any visible windows - this may change in future versions of
   FLTK.
   
-  The second form waits a maximum of <i>time</i>
+  Fl::wait(time) waits a maximum of <i>time</i>
   seconds.  <i>It can return much sooner if something happens.</i>
   
   The return value is positive if an event or fd happens before the
