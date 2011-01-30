@@ -90,23 +90,27 @@ public:
   */
   char soft() const {return soft_;}
   /**
-    The first form returns the current shortcut key for the Input.
-    <P>The second form sets the shortcut key to key. Setting this
-    overrides the use of '&' in the label().  The value is a bitwise
-    OR of a key and a set of shift flags, for example FL_ALT | 'a'
-    , FL_ALT | (FL_F + 10), or just 'a'.  A value
-    of 0 disables the shortcut. </P>
-    <P>The key can be any value returned by 
-    Fl::event_key(), but will usually be an ASCII letter.  Use
-    a lower-case letter unless you require the shift key to be held down. </P>
-    <P>The shift flags can be any set of values accepted by 
-    Fl::event_state().  If the bit is on that shift key must
-    be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
-    the shift flags (zero for the other bits indicates a "don't care"
-    setting).
+   Returns the current shortcut key for the Input.
+   \see Fl_Value_Input::shortcut(int) 
   */
   int shortcut() const {return input.shortcut();}
-  /** See int Fl_Value_Input::shortcut() const */
+  /** 
+   Sets the shortcut key to \p s. Setting this
+   overrides the use of '&' in the label().  The value is a bitwise
+   OR of a key and a set of shift flags, for example FL_ALT | 'a'
+   , FL_ALT | (FL_F + 10), or just 'a'.  A value
+   of 0 disables the shortcut.
+   
+   The key can be any value returned by 
+   Fl::event_key(), but will usually be an ASCII letter.  Use
+   a lower-case letter unless you require the shift key to be held down.
+   
+   The shift flags can be any set of values accepted by 
+   Fl::event_state().  If the bit is on that shift key must
+   be pushed.  Meta, Alt, Ctrl, and Shift must be off if they are not in
+   the shift flags (zero for the other bits indicates a "don't care"
+   setting).
+   */
   void shortcut(int s) {input.shortcut(s);}
 
   /** Gets the typeface of the text in the value box.  */
