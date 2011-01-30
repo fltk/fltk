@@ -234,7 +234,7 @@ class FL_EXPORT Fl_Spinner : public Fl_Group {
 		  input_.textsize(s);
 		}
   /** Gets the numeric representation in the input field.
-   \see Fl_Spinner::type(uchar) */
+   \see Fl_Spinner::type(uchar) 
   */
   uchar		type() const { return (input_.type()); }
   /** Sets the numeric representation in the input field.
