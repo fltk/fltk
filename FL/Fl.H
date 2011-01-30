@@ -541,18 +541,18 @@ public:
   */
   static void event_clicks(int i) {e_clicks = i;}
   /**
-    The first form returns non-zero if the mouse has not moved far enough
-    and not enough time has passed since the last FL_PUSH or 
-    FL_KEYBOARD event for it to be considered a "drag" rather than a
-    "click".  You can test this on FL_DRAG, FL_RELEASE,
-    and FL_MOVE events.  The second form clears the value returned
-    by Fl::event_is_click().  Useful to prevent the <I>next</I>
-    click from being counted as a double-click or to make a popup menu
-    pick an item with a single click.  Don't pass non-zero to this.
+  Returns non-zero if the mouse has not moved far enough
+  and not enough time has passed since the last FL_PUSH or 
+  FL_KEYBOARD event for it to be considered a "drag" rather than a
+  "click".  You can test this on FL_DRAG, FL_RELEASE,
+  and FL_MOVE events.  
   */
   static int event_is_click()	{return e_is_click;}
   /**
-    Only i=0 works! See int event_is_click(). 
+   Clears the value returned by Fl::event_is_click().  
+   Useful to prevent the <I>next</I>
+   click from being counted as a double-click or to make a popup menu
+   pick an item with a single click.  Don't pass non-zero to this. 
   */
   static void event_is_click(int i) {e_is_click = i;}
   /**
