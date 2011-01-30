@@ -436,32 +436,36 @@ public:
     called (grab() overrides this).
   */
   static Fl_Window* modal() {return modal_;}
-  /**
-    This is used when pop-up menu systems are active.
-    
-    Send all events to the passed window no matter where the pointer or
-    focus is (including in other programs). The window <I>does not have
-    to be shown()</I> , this lets the handle() method of a
-    "dummy" window override all event handling and allows you to
-    map and unmap a complex set of windows (under both X and WIN32
-    <I>some</I> window must be mapped because the system interface needs a
-    window id).
-    
-    If grab() is on it will also affect show() of windows by doing
-    system-specific operations (on X it turns on override-redirect).
-    These are designed to make menus popup reliably
-    and faster on the system.
-    
-    To turn off grabbing do Fl::grab(0).
-    
-    <I>Be careful that your program does not enter an infinite loop
-    while grab() is on.  On X this will lock up your screen!</I>
-    To avoid this potential lockup, all newer operating systems seem to 
-    limit mouse pointer grabbing to the time during which a mouse button 
-    is held down. Some OS's may not support grabbing at all.
+  /** Returns the window that currently receives all events.
+   
+   \return The window that currently receives all events,
+   or NULL if event grabbing is currently OFF.
   */
   static Fl_Window* grab() {return grab_;}
-  /** Selects the window to grab. See Fl_Window* Fl::grab() */
+  /** Selects the window to grab.  
+   This is used when pop-up menu systems are active.
+   
+   Send all events to the passed window no matter where the pointer or
+   focus is (including in other programs). The window <I>does not have
+   to be shown()</I> , this lets the handle() method of a
+   "dummy" window override all event handling and allows you to
+   map and unmap a complex set of windows (under both X and WIN32
+   <I>some</I> window must be mapped because the system interface needs a
+   window id).
+   
+   If grab() is on it will also affect show() of windows by doing
+   system-specific operations (on X it turns on override-redirect).
+   These are designed to make menus popup reliably
+   and faster on the system.
+   
+   To turn off grabbing do Fl::grab(0).
+   
+   <I>Be careful that your program does not enter an infinite loop
+   while grab() is on.  On X this will lock up your screen!</I>
+   To avoid this potential lockup, all newer operating systems seem to 
+   limit mouse pointer grabbing to the time during which a mouse button 
+   is held down. Some OS's may not support grabbing at all.
+   */
   static void grab(Fl_Window*); // platform dependent
   /** @} */
 
@@ -934,11 +938,11 @@ public:
     \deprecated This method is obsolete - use the add_idle() method instead.
   */
   static void set_idle(Fl_Old_Idle_Handler cb) {idle = cb;}
-  /** See Fl_Window* grab() */
-  static void grab(Fl_Window&win) {grab(&win);}
+  /** See grab(Fl_Window*) */
+  static void grab(Fl_Window& win) {grab(&win);}
   /** Releases the current grabbed window, equals grab(0).
   \deprecated Use Fl::grab(0) instead.
-  \see Fl_Window* grab() */
+  \see grab(Fl_Window*) */
   static void release() {grab(0);}
 
   // Visible focus methods...
