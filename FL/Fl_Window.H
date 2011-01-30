@@ -116,8 +116,8 @@ public:
     If Fl_Group::current() is not NULL, the window is created as a 
     subwindow of the parent window.
     
-    The first form of the constructor creates a top-level window
-    and asks the window manager to position the window. The second
+    The (w,h) form of the constructor creates a top-level window
+    and asks the window manager to position the window. The (x,y,w,h)
     form of the constructor either creates a subwindow or a
     top-level window at the specified location (x,y) , subject to window
     manager configuration. If you do not specify the position of the
@@ -137,12 +137,12 @@ public:
     change this to FL_NO_BOX. If you turn the window border off
     you may want to change this to FL_UP_BOX.
 
-    \see Fl_Window(int x, int y, int w, int h, const char* title = 0)
+    \see Fl_Window(int x, int y, int w, int h, const char* title)
   */
     Fl_Window(int w, int h, const char* title= 0);
   /** Creates a window from the given position, size and title.
 
-    \see Fl_Window::Fl_Window(int w, int h, const char *title = 0)
+    \see Fl_Window(int w, int h, const char *title)
   */
     Fl_Window(int x, int y, int w, int h, const char* title = 0);
   /**
