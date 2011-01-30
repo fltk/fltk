@@ -97,6 +97,7 @@
 ///     next_selected_item().
 ///     Items can be found by their pathname using find_item(const char*),
 ///     and an item's pathname can be found with item_pathname().
+///     The selected items' colors are controlled by selection_color() (inherited from Fl_Widget).
 ///
 ///     The tree can have different selection behaviors controlled by selectmode().
 ///
@@ -604,36 +605,57 @@ public:
   /////////////////////////////////
   
   /// Get the default label fontsize used for creating new items.
-  int labelsize() const {
+  Fl_Fontsize item_labelsize() const {
     return(_prefs.labelsize());
   }
   /// Set the default label font size used for creating new items.
-  /// To change the font size on a per-item basis, use Fl_Tree_Item::labelsize(int)
+  /// To change the font size on a per-item basis, use Fl_Tree_Item::labelsize(Fl_Fontsize)
   ///
-  void labelsize(int val) {
+  void item_labelsize(Fl_Fontsize val) {
     _prefs.labelsize(val);
   }
-  
-  /// Get the default font face used for item's labels when new items are created.
-  ///
-  /// Don't use this if you want to change an existing label() size; use
-  /// item->labelfont() instead.
-  ///
-  int labelfont() const {
+  /// Get the default font face used for creating new items.
+  Fl_Font item_labelfont() const {
     return(_prefs.labelfont());
   }
-  /// Set the default font face used for item's labels when new items are created.
+  /// Set the default font face used for creating new items.
+  /// To change the font face on a per-item basis, use Fl_Tree_Item::labelfont(Fl_Font)
   ///
-  /// Don't use this if you want to change an existing label() size; use
-  /// item->labelfont(int) instead.
-  ///
-  void labelfont(int val) {
+  void item_labelfont(Fl_Font val) {
     _prefs.labelfont(val);
+  }
+  /// Get the default label foreground color used for creating new items.
+  Fl_Color item_labelfgcolor(void) const {
+    return(_prefs.labelfgcolor());
+  }
+  /// Set the default label foreground color used for creating new items.
+  /// To change the foreground color on a per-item basis, use Fl_Tree_Item::labelfgcolor(Fl_Color)
+  ///
+  void item_labelfgcolor(Fl_Color val) {
+    _prefs.labelfgcolor(val);
+  }
+  /// Get the default label background color used for creating new items.
+  Fl_Color item_labelbgcolor(void) const {
+    return(_prefs.labelbgcolor());
+  }
+  /// Set the default label background color used for creating new items.
+  /// To change the background color on a per-item basis, use Fl_Tree_Item::labelbgcolor(Fl_Color)
+  ///
+  void item_labelbgcolor(Fl_Color val) {
+    _prefs.labelbgcolor(val);
+  }
+  /// Get the connector color used for tree connection lines.
+  Fl_Color connectorcolor() const {
+    return(_prefs.connectorcolor());
+  }
+  /// Set the connector color used for tree connection lines.
+  void connectorcolor(Fl_Color val) {
+    _prefs.connectorcolor(val);
   }
   /// Get the amount of white space (in pixels) that should appear
   /// between the widget's left border and the tree's contents.
   ///
-  int  marginleft() const {
+  int marginleft() const {
     return(_prefs.marginleft());
   }
   /// Set the amount of white space (in pixels) that should appear
@@ -646,7 +668,7 @@ public:
   /// Get the amount of white space (in pixels) that should appear
   /// between the widget's top border and the top of the tree's contents.
   ///
-  int  margintop() const {
+  int margintop() const {
     return(_prefs.margintop());
   }
   /// Sets the amount of white space (in pixels) that should appear
@@ -659,7 +681,7 @@ public:
   /// Get the amount of white space (in pixels) that should appear
   /// below an open child tree's contents.
   ///
-  int  openchild_marginbottom() const {
+  int openchild_marginbottom() const {
     return(_prefs.openchild_marginbottom());
   }
   /// Set the amount of white space (in pixels) that should appear
@@ -672,7 +694,7 @@ public:
   /// Gets the width of the horizontal connection lines (in pixels) 
   /// that appear to the left of each tree item's label.
   ///
-  int  connectorwidth() const {
+  int connectorwidth() const {
     return(_prefs.connectorwidth());
   }
   /// Sets the width of the horizontal connection lines (in pixels) 
@@ -682,7 +704,8 @@ public:
     _prefs.connectorwidth(val);
     redraw();
   }
-  /// Returns the Fl_Image being used as the default user icon for newly created items.
+  /// Returns the Fl_Image being used as the default user icon for all
+  /// newly created items.
   /// Returns zero if no icon has been set, which is the default.
   ///
   Fl_Image *usericon() const {

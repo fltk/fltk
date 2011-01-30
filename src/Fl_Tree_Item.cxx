@@ -44,8 +44,8 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
   _label        = 0;
   _labelfont    = prefs.labelfont();
   _labelsize    = prefs.labelsize();
-  _labelfgcolor = prefs.fgcolor();
-  _labelbgcolor = prefs.bgcolor();
+  _labelfgcolor = prefs.labelfgcolor();
+  _labelbgcolor = prefs.labelbgcolor();
   _widget       = 0;
   _open         = 1;
   _visible      = 1;
@@ -562,8 +562,8 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     W += prefs.openicon()->w();
   }
   // Colors, fonts
-  Fl_Color fg = _selected ? prefs.bgcolor()     : _labelfgcolor;
-  Fl_Color bg = _selected ? prefs.selectcolor() : _labelbgcolor;
+  Fl_Color fg = _selected ? _labelbgcolor : _labelfgcolor;		// selected uses bgcolor, unselected uses fgcolor
+  Fl_Color bg = _selected ? tree->selection_color() : _labelbgcolor;	// selected uses selectcolor, unselected uses bgcolor
   if ( ! _active ) {
     fg = fl_inactive(fg);
     if ( _selected ) bg = fl_inactive(bg);
