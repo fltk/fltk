@@ -164,6 +164,9 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
+#ifdef __APPLE__
+  void add_image(const uchar *data);
+#endif
   /** \brief The destructor */
   ~Fl_Printer(void);
  

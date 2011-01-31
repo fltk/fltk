@@ -156,7 +156,7 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
     if (offset + width > w) width = w - offset;
     fl_draw_image(image_data[i], delta_x + offset, delta_y, width, h, 3);
 #ifdef __APPLE__
-    add_image(NULL, image_data[i]);
+    add_image(image_data[i]);
 #else
     delete image_data[i];
 #endif
@@ -164,10 +164,9 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
 }
 
 #ifdef __APPLE__
-void Fl_Paged_Device::add_image(Fl_Image *image, const uchar *data)
+void Fl_Paged_Device::add_image(const uchar *data)
 {
   struct chain_elt *elt =  (struct chain_elt *)calloc(sizeof(struct chain_elt), 1);
-  elt->image = image;
   elt->data = data;
   if (image_list_) { elt->next = image_list_; }
   image_list_ = elt;
@@ -177,7 +176,6 @@ void Fl_Paged_Device::delete_image_list()
 {
   while(image_list_) {
     struct chain_elt *next = image_list_->next;
-    if(image_list_->image) delete image_list_->image;
     if (image_list_->data) delete (uchar*) image_list_->data; // msvc6 compilation fix
     free(image_list_);
     image_list_ = next;

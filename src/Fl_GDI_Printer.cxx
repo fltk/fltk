@@ -194,7 +194,6 @@ int Fl_System_Printer::start_page (void)
     }
     printable_rect(&w, &h);
     origin(0, 0);
-    image_list_ = NULL;
     fl_clip_region(0);
     gc = (void *)fl_gc;
   }

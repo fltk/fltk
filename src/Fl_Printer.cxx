@@ -160,6 +160,13 @@ void Fl_Printer::end_job (void)
   printer->end_job();
 }
 
+#ifdef __APPLE__
+void Fl_Printer::add_image(const uchar *data)
+{
+  printer->add_image(data);
+}
+#endif
+
 Fl_Printer::~Fl_Printer(void)
 {
   delete printer;
