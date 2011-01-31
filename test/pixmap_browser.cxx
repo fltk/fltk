@@ -88,7 +88,8 @@ void file_cb(const char *n) {
 
 void button_cb(Fl_Widget *,void *) {
   fl_file_chooser_callback(file_cb);
-  puts(fl_file_chooser("Image file?","*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm}", name));
+  const char *fname = fl_file_chooser("Image file?","*.{bm,bmp,gif,jpg,pbm,pgm,png,ppm,xbm,xpm}", name);
+  puts(fname ? fname : "(null)"); fflush(stdout);
   fl_file_chooser_callback(0);
 }
 
