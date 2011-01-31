@@ -45,25 +45,27 @@ static void callback(Fl_File_Chooser *, void*) {
 /** \addtogroup  group_comdlg 
     @{ */
 
-/** \relates Fl_File_Chooser
+/** 
     Set the file chooser callback
     \note \#include <FL/Fl_File_Chooser.H>
+    \relates Fl_File_Chooser
 */
 void fl_file_chooser_callback(void (*cb)(const char*)) {
   current_callback = cb;
 }
 
 
-/** \relates Fl_File_Chooser
+/** 
     Set the "OK" button label
     \note \#include <FL/Fl_File_Chooser.H>
+    \relates Fl_File_Chooser
 */
 void fl_file_chooser_ok_label(const char *l) {
   if (l) current_label = l;
   else current_label = fl_ok;
 }
 
-/** \relates Fl_File_Chooser
+/** 
     Shows a file chooser dialog and gets a filename. 
     \note \#include <FL/Fl_File_Chooser.H>
     \image html Fl_File_Chooser.jpg 
@@ -74,6 +76,7 @@ void fl_file_chooser_ok_label(const char *l) {
     \param[in] relative 0 for absolute path name, relative path name otherwise
     \return the user selected filename, in absolute or relative format 
             or NULL if user cancels
+    \relates Fl_File_Chooser
 */
 char *					// O - Filename or NULL
 fl_file_chooser(const char *message,	// I - Message in titlebar
@@ -149,15 +152,14 @@ fl_file_chooser(const char *message,	// I - Message in titlebar
   else return 0;
 }
 
-/**  \relates Fl_File_Chooser
-    Shows a file chooser dialog and gets a directory.
+/** Shows a file chooser dialog and gets a directory.
     \note \#include <FL/Fl_File_Chooser.H>
     \param[in] message title bar text
     \param[in] fname initial/default directory name
     \param[in] relative 0 for absolute path return, relative otherwise
     \return the directory path string chosen by the user or NULL if user cancels
+    \relates Fl_File_Chooser
 */
-
 char *					// O - Directory or NULL
 fl_dir_chooser(const char *message,	// I - Message for titlebar
                const char *fname,	// I - Initial directory name
