@@ -123,7 +123,7 @@ protected:
   int y_offset;
 #ifdef __APPLE__
   struct chain_elt *image_list_; // chained list of images used in this page
-  virtual void add_image(const uchar *data); // adds an image to the page image list
+  void add_image(const uchar *data); // adds an image to the page image list
   void delete_image_list(); // deletes the page image list
 #endif
   /** \brief The constructor */
@@ -137,13 +137,13 @@ public:
   virtual int printable_rect(int *w, int *h);
   virtual void margins(int *left, int *top, int *right, int *bottom);
   virtual void origin(int x, int y);
-  void origin(int *x, int *y);
+  virtual void origin(int *x, int *y);
   virtual void scale(float scale_x, float scale_y);
   virtual void rotate(float angle);
   virtual void translate(int x, int y);
   virtual void untranslate(void);
-  void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
-  void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x = 0, int delta_y = 0);
+  virtual void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
+  virtual void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x = 0, int delta_y = 0);
   virtual int end_page (void);
   virtual void end_job (void);
 };

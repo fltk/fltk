@@ -1386,6 +1386,11 @@ int Fl_PostScript_File_Device::printable_rect(int *w, int *h)
   return 0;
 }
 
+void Fl_PostScript_File_Device::origin(int *x, int *y)
+{
+  Fl_Paged_Device::origin(x, y);
+}
+
 void Fl_PostScript_File_Device::origin(int x, int y)
 {
   x_offset = x;

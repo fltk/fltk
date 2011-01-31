@@ -83,6 +83,7 @@ public:
   int start_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
+  void origin(int *x, int *y);
   void origin(int x, int y);
   void scale (float scale_x, float scale_y);
   void rotate(float angle);
@@ -157,6 +158,7 @@ public:
   int start_page(void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
+  void origin(int *x, int *y);
   void origin(int x, int y);
   void scale(float scale_x, float scale_y);
   void rotate(float angle);
@@ -164,9 +166,8 @@ public:
   void untranslate(void);
   int end_page (void);
   void end_job (void);
-#ifdef __APPLE__
-  void add_image(const uchar *data);
-#endif
+  void print_widget(Fl_Widget* widget, int delta_x=0, int delta_y=0);
+  void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x=0, int delta_y=0);
   /** \brief The destructor */
   ~Fl_Printer(void);
  

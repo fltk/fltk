@@ -232,6 +232,7 @@ public:
   int start_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
+  void origin(int *x, int *y);
   void origin(int x, int y);
   void scale (float scale_x, float scale_y);
   void rotate(float angle);

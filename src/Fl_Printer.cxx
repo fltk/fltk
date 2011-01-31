@@ -94,6 +94,12 @@ void Fl_System_Printer::set_current(void)
 #endif
   this->Fl_Surface_Device::set_current();
 }
+
+void Fl_System_Printer::origin(int *x, int *y)
+{
+  Fl_Paged_Device::origin(x, y);
+}
+
 #endif
 
 Fl_Printer::Fl_Printer(void) {
@@ -123,6 +129,11 @@ int Fl_Printer::printable_rect(int *w, int *h)
 void Fl_Printer::margins(int *left, int *top, int *right, int *bottom)
 {
   printer->margins(left, top, right, bottom);
+}
+
+void Fl_Printer::origin(int *x, int *y)
+{
+  printer->origin(x, y);
 }
 
 void Fl_Printer::origin(int x, int y)
@@ -160,12 +171,15 @@ void Fl_Printer::end_job (void)
   printer->end_job();
 }
 
-#ifdef __APPLE__
-void Fl_Printer::add_image(const uchar *data)
+void Fl_Printer::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
 {
-  printer->add_image(data);
+  printer->print_widget(widget, delta_x, delta_y);
 }
-#endif
+
+void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
+{
+  printer->print_window_part(win, x, y, w, h, delta_x, delta_y);
+}
 
 Fl_Printer::~Fl_Printer(void)
 {
