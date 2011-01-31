@@ -129,7 +129,6 @@ void Fl_Paged_Device::origin(int *x, int *y)
  */
 void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
-  int slice, width, offset, count = 0;
   Fl_Surface_Device *current = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
   Fl_Window *save_front = Fl::first_window();
@@ -137,31 +136,18 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   fl_gc = NULL;
   Fl::check();
   win->make_current();
-  uchar *image_data[20];
-#ifdef WIN32 // because of bug in StretchDIBits, vertically cut image in pieces of width slice
-  slice = 500;
-#else
-  slice = w;
-#endif
-  for ( offset = 0; offset < w; offset += slice) {
-    width = slice; 
-    if (offset + width > w) width = w - offset;
-    image_data[count++] = fl_read_image(NULL, x + offset, y, width, h);
-  }  
+  uchar *image_data;
+  image_data = fl_read_image(NULL, x, y, w, h);
   save_front->show();
   current->set_current();
-  offset = 0;
-  for ( int i = 0; i < count; i++, offset += slice) {
-    width = slice; 
-    if (offset + width > w) width = w - offset;
-    fl_draw_image(image_data[i], delta_x + offset, delta_y, width, h, 3);
+  fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
 #ifdef __APPLE__
-    add_image(image_data[i]);
+  add_image(image_data);
 #else
-    delete image_data[i];
+  delete image_data;
 #endif
-  }
 }
+
 
 #ifdef __APPLE__
 void Fl_Paged_Device::add_image(const uchar *data)
