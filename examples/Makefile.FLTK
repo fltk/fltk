@@ -11,6 +11,10 @@
 #    Set .SILENT in your Makefile if you want 'quieter' builds.
 #
 
+ifeq '$(OS)' "Windows_NT"
+EXEEXT = .exe
+endif
+
 FLTKCONFIG   = ../fltk-config
 CXX          = $(shell $(FLTKCONFIG) --cxx)
 CXXFLAGS     = $(shell $(FLTKCONFIG) --cxxflags) -Wall -I.
