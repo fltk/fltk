@@ -54,10 +54,8 @@
 ///                  |--- Fl_Tree_Sort (enum)           // Sort behavior
 /// \endcode
 ///
-///     An expandable tree widget.
-///
-///     Similar to Fl_Browser, Fl_Tree is browser of Fl_Tree_Item's, which can be
-///     in a parented hierarchy. Subtrees can be expanded or closed. Items can be
+///     Similar to Fl_Browser, Fl_Tree is a browser of Fl_Tree_Item's, which is arranged
+///     in a parented hierarchy, or 'tree'. Subtrees can be expanded or closed. Items can be
 ///     added, deleted, inserted, sorted and re-ordered.
 ///
 ///     The tree items may also contain other FLTK widgets, like buttons, input fields,
@@ -116,6 +114,50 @@
 ///     when() controls when mouse/keyboard events invoke the callback.
 ///     callback_item() and callback_reason() can be used to determine the cause of the callback.
 ///
+///     To walk all the items of the tree from top to bottom:
+/// \code
+/// // Walk all the items in the tree, and print their labels
+/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) ) {
+///     printf("Item: %s\n", item->label());
+/// }
+/// \endcode
+///
+///     To recursively walk all the children of a particular item, 
+///     define a function that uses recursion:
+///     \code
+/// // Find all of the item's children and print an indented report of their labels
+/// void my_print_all_children(Fl_Tree_Item *item, int indent=0) {
+///     for ( int t=0; t<item->children(); t++ ) {
+///         printf("%*s Item: %s\n", indent, "", item->child(t)->label());
+///         my_print_all_children(item->child(t), indent+4);   // recurse
+///     }
+/// }
+///     \endcode
+///
+///     To change the default label font and color for creating new items:
+/// \code
+///  tree = new Fl_Tree(..);
+///  tree->item_labelfont(FL_COURIER);	// Use Courier font for all new items
+///  tree->item_labelfgcolor(FL_RED);	// Use red color for labels of all new items
+///  [..]
+///  // Now create the items in the tree using the above defaults.
+///  tree->add("Aaa");
+///  tree->add("Bbb");
+///  [..]
+/// \endcode
+///
+///     To change the font and color of all items in the tree:
+/// \code
+/// // Change the font and color of all items currently in the tree
+/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) ) {
+///     item->labelfont(FL_COURIER);
+///     item->labelcolor(FL_RED);
+/// }
+/// \endcode
+///
+///     The following image shows the tree's various visual elements
+///     and the methods that control them:
+///     
 ///     \image html tree-elements.png
 ///     \image latex tree-elements.png "Fl_Tree dimensions" width=6cm
 ///
