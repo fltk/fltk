@@ -185,11 +185,13 @@ extern void fl_open_display();
 
 #endif // FL_DOXYGEN
 
-/** \defgroup group_macosx Mac OS X-specific functions
- Mac OS X-specific functions declared in <FL/x.H> or <FL/gl.h>
+/** \defgroup group_macosx Mac OS X-specific symbols
+ Mac OS X-specific symbols declared in <FL/x.H> or <FL/gl.h>
  @{ */
 
-/** @brief Register a function called for each file dropped onto an application icon 
+/** @brief Register a function called for each file dropped onto an application icon.
+ \e cb will be called with a single Unix-style file name and path.
+ If multiple files were dropped, \e cb will be called multiple times.
  */
 extern void fl_open_callback(void (*cb)(const char *));
 
@@ -205,7 +207,38 @@ extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0
 
 /** \brief The version number of the running Mac OS X (e.g., 0x1064 for 10.6.4)
  */
-extern int fl_mac_os_version;		
+extern int fl_mac_os_version;
+
+/** To localize the application menu.
+ 
+ These character strings are used to build the application menu. They can be localized
+ at run time to any UTF-8 text by placing instructions such as these \e very 
+ early in the program:
+ \verbatim
+ #include <FL/x.H>
+ Fl_Mac_App_Menu::print = "Imprimer la fenêtre";
+ \endverbatim
+ */
+class Fl_Mac_App_Menu {
+public:
+  /** Localizable text for the "About xxx" application menu item */
+  static const char *about;
+  /** Localizable text for the "Print Front Window" application menu item.
+   This menu item won't be displayed if Fl_Mac_App_Menu::print 
+   is set to an empty string.
+   */
+  static const char *print;
+  /** Localizable text for the "Services" application menu item */
+  static const char *services;
+  /** Localizable text for the "Hide xxx" application menu item */
+  static const char *hide;
+  /** Localizable text for the "Hide Others" application menu item */
+  static const char *hide_others;
+  /** Localizable text for the "Show All" application menu item */
+  static const char *show;
+  /** Localizable text for the "Quit xxx" application menu item */
+  static const char *quit;
+};
 
 /** @} */
 

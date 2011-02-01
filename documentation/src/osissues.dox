@@ -2,7 +2,11 @@
 
  \page	osissues	Operating System Issues
 
-This appendix describes the operating system specific interfaces in FLTK.
+This appendix describes the operating system specific interfaces in FLTK:
+\li \ref osissues_accessing
+\li \ref osissues_unit
+\li \ref osissues_win32
+\li \ref osissues_macos
 
 \section osissues_accessing Accessing the OS Interfaces
 
@@ -676,7 +680,8 @@ Apple "Open" Event
 \par
 Whenever the user drops a file onto an application icon, OS X
 generates an Apple Event of the type "Open". You can have FLTK
-notify you of an Open event by setting the \c fl_open_callback
+notify you of an Open event by calling the \ref fl_open_callback 
+function.
 
 void fl_open_display()
 
@@ -699,18 +704,15 @@ Returns the Fl_Window that corresponds to the given window reference,
 or \c NULL if not found. FLTK windows that are children of top-level
 windows share the \c Window of the top-level window.
 
-void \ref fl_open_callback(void (*cb)(const char *))
-
-\par
-\c cb will be called with a single Unix-style file name and path.
-If multiple files were dropped, \c fl_open_callback() will be called
-multiple times.
-
 void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
 
 \par
 Attaches the callback \c cb to the "About myprog" item of the system application menu.
 \c cb will be called with NULL first argument and \c user_data second argument.
+
+Fl_Mac_App_Menu class
+\par 
+The Fl_Mac_App_Menu class allows to localize the application menu.
 
 Fl_Sys_Menu_Bar class
 
