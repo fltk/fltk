@@ -169,19 +169,19 @@
   Destroys the widget and frees all memory used by it.*/
 
 /** \fn void Fl_File_Chooser::color(Fl_Color c)
-  Sets or gets the background color of the Fl_File_Browser list.*/
+  Sets the background color of the Fl_File_Browser list.*/
 
 /** \fn Fl_Color Fl_File_Chooser::color()
-  Sets or gets the background color of the Fl_File_Browser list.*/
+  Gets the background color of the Fl_File_Browser list.*/
 
 /** \fn int Fl_File_Chooser::count()
   Returns the number of selected files.*/
 
 /** \fn void Fl_File_Chooser::directory(const char *pathname)
-  Sets or gets the current directory.*/
+  Sets the current directory.*/
 
 /** \fn const char *Fl_File_Chooser::directory()
-  Sets or gets the current directory.*/
+  Gets the current directory.*/
 
 /** \fn void Fl_File_Chooser::filter(const char *pattern)
   Sets or gets the current filename filter patterns. The filter
@@ -199,36 +199,36 @@
   See void filter(const char *pattern)*/
 
 /** \fn void Fl_File_Chooser::filter_value(int f)
-  Sets or gets the current filename filter selection.*/
+  Sets the current filename filter selection.*/
 
 /** \fn int Fl_File_Chooser::filter_value()
-  Sets or gets the current filename filter selection.*/
+  Gets the current filename filter selection.*/
 
 /** \fn void Fl_File_Chooser::hide()
   Hides the Fl_File_Chooser window.*/
 
 /** \fn void Fl_File_Chooser::iconsize(uchar s)
-  Sets or gets the size of the icons in the Fl_File_Browser.  By
+  Sets the size of the icons in the Fl_File_Browser.  By
   default the icon size is set to 1.5 times the textsize().
 */
 
 /** \fn uchar Fl_File_Chooser::iconsize()
-  Sets or gets the size of the icons in the Fl_File_Browser.  By
+  Gets the size of the icons in the Fl_File_Browser.  By
   default the icon size is set to 1.5 times the textsize().
 */
 
 /** \fn void Fl_File_Chooser::label(const char *l)
-  Sets or gets the title bar text for the Fl_File_Chooser.*/
+  Sets the title bar text for the Fl_File_Chooser.*/
 
 /** \fn const char *Fl_File_Chooser::label()
-  Sets or gets the title bar text for the Fl_File_Chooser.*/
+  Gets the title bar text for the Fl_File_Chooser.*/
 
 /** \fn void Fl_File_Chooser::ok_label(const char *l)
-  Sets or gets the label for the "ok" button in the Fl_File_Chooser.
+  Sets the label for the "ok" button in the Fl_File_Chooser.
 */
 
 /** \fn const char *Fl_File_Chooser::ok_label()
-  Sets or gets the label for the "ok" button in the Fl_File_Chooser.
+  Gets the label for the "ok" button in the Fl_File_Chooser.
 */
 
 /** \fn int Fl_File_Chooser::preview() const
@@ -241,48 +241,48 @@
   Shows the Fl_File_Chooser window.*/
 
 /** \fn void Fl_File_Chooser::textcolor(Fl_Color c)
-  Sets or gets the current Fl_File_Browser text color.*/
+  Sets the current Fl_File_Browser text color.*/
 
 /** \fn Fl_Color Fl_File_Chooser::textcolor()
-  Sets or gets the current Fl_File_Browser text color.*/
+  Gets the current Fl_File_Browser text color.*/
 
 /** \fn void Fl_File_Chooser::textfont(Fl_Font f)
-  Sets or gets the current Fl_File_Browser text font.*/
+  Sets the current Fl_File_Browser text font.*/
 
 /** \fn Fl_Font Fl_File_Chooser::textfont()
-  Sets or gets the current Fl_File_Browser text font.*/
+  Gets the current Fl_File_Browser text font.*/
 
 /** \fn void Fl_File_Chooser::textsize(Fl_Fontsize s)
-  Sets or gets the current Fl_File_Browser text size.*/
+  Sets the current Fl_File_Browser text size.*/
 
 /** \fn Fl_Fontsize Fl_File_Chooser::textsize()
-  Sets or gets the current Fl_File_Browser text size.*/
+  Gets the current Fl_File_Browser text size.*/
 
 /** \fn void Fl_File_Chooser::type(int t)
-  Sets or gets the current type of Fl_File_Chooser.*/
+  Sets the current type of Fl_File_Chooser.*/
 
 /** \fn int Fl_File_Chooser::type()
-  Sets or gets the current type of Fl_File_Chooser.*/
+  Gets the current type of Fl_File_Chooser.*/
 
-/** \fn const char *Fl_File_Chooser::value(const char *pathname)
-  Sets or gets the current value of the selected file.
-  
-  In the second form, \p file is a \c 1-based index into a list of
-  file names. The number of selected files is returned by
-  Fl_File_Chooser::count().
-  
-  This sample code loops through all selected files:
-  \code
-  // Get list of filenames user selected from a MULTI chooser
-  for ( int t=1; t<=chooser->count(); t++ ) {
-     const char *filename = chooser->value(t);
-     ...
-  }
-  \endcode
+/** \fn void Fl_File_Chooser::value(const char *pathname)
+  Sets the current value of the selected file.
 */
 
-/** \fn const char *Fl_File_Chooser::value(int file)
-  See const char *value(const char *pathname)*/
+/** \fn const char *Fl_File_Chooser::value(int f)
+ Gets the current value of the selected file(s).
+ \p f is a \c 1-based index into a list of
+ file names. The number of selected files is returned by
+ Fl_File_Chooser::count().
+ 
+ This sample code loops through all selected files:
+ \code
+ // Get list of filenames user selected from a MULTI chooser
+ for ( int t=1; t<=chooser->count(); t++ ) {
+ const char *filename = chooser->value(t);
+ ...
+ }
+ \endcode
+ */
 
 /** \fn int Fl_File_Chooser::visible()
   Returns 1 if the Fl_File_Chooser window is visible.*/
