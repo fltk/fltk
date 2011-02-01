@@ -261,7 +261,6 @@ int Fl_System_Printer::start_page (void)
   angle = 0;
   scale_x = scale_y = 1;
   win_scale_x = win_scale_y = 1;
-  image_list_ = NULL;
   if(orientation == kPMPortrait)
     CGContextTranslateCTM(fl_gc, margins.left, margins.bottom + h);
   else
@@ -284,7 +283,6 @@ int Fl_System_Printer::end_page (void)
   CGContextRestoreGState(fl_gc);
   CGContextRestoreGState(fl_gc);
   OSStatus status = PMSessionEndPageNoDialog(printSession);
-  delete_image_list();
   gc = NULL;
   return status != noErr;
 }

@@ -141,34 +141,8 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   save_front->show();
   current->set_current();
   fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
-#ifdef __APPLE__
-  add_image(image_data);
-#else
   delete image_data;
-#endif
 }
-
-
-#ifdef __APPLE__
-void Fl_Paged_Device::add_image(const uchar *data)
-{
-  struct chain_elt *elt =  (struct chain_elt *)calloc(sizeof(struct chain_elt), 1);
-  elt->data = data;
-  if (image_list_) { elt->next = image_list_; }
-  image_list_ = elt;
-}
-
-void Fl_Paged_Device::delete_image_list()
-{
-  while(image_list_) {
-    struct chain_elt *next = image_list_->next;
-    if (image_list_->data) delete (uchar*) image_list_->data; // msvc6 compilation fix
-    free(image_list_);
-    image_list_ = next;
-  }
-}
-#endif
-
 
 /**
  @brief Starts a print job.

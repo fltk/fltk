@@ -107,13 +107,6 @@ public:
   /** \brief width, height and name of all elements of the enum \ref Page_Format.
    */
   static const page_format page_formats[NO_PAGE_FORMATS];  
-  
-#ifdef __APPLE__
-  struct chain_elt {
-    const uchar *data;
-    struct chain_elt *next;
-  };
-#endif
 private:
   void traverse(Fl_Widget *widget); // finds subwindows of widget and prints them
 protected:
@@ -121,11 +114,6 @@ protected:
   int x_offset;
   /** \brief vertical offset to the origin of graphics coordinates */
   int y_offset;
-#ifdef __APPLE__
-  struct chain_elt *image_list_; // chained list of images used in this page
-  void add_image(const uchar *data); // adds an image to the page image list
-  void delete_image_list(); // deletes the page image list
-#endif
   /** \brief The constructor */
   Fl_Paged_Device() : Fl_Surface_Device(NULL) {class_name( class_id);};
   /** \brief The destructor */

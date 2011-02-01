@@ -30,6 +30,7 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Printer.H>
 #include <FL/x.H>
 
 #define MAXBUFFER 0x40000 // 256k
@@ -39,7 +40,7 @@ static void dataReleaseCB(void *info, const void *data, size_t size)
   delete[] (uchar *)data;
 }
 
-/**
+/*
  * draw an image based on the input parameters
  *
  * buf:       image source data
@@ -63,10 +64,14 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 
   const void *array = buf;
   uchar *tmpBuf = 0;
-  if (cb) {
+  if (cb || Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
     tmpBuf = new uchar[ H*W*delta ];
-    for (int i=0; i<H; i++) {
-      cb(userdata, 0, i, W, tmpBuf+i*W*delta);
+    if (cb) {
+      for (int i=0; i<H; i++) {
+	cb(userdata, 0, i, W, tmpBuf+i*W*delta);
+      }
+    } else {
+      memcpy(tmpBuf, buf, H*W*delta);
     }
     array = (void*)tmpBuf;
     linedelta = W*delta;
@@ -86,7 +91,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 						     size_t size
   );
 #endif  
-  CGDataProviderReleaseDataCallback releaseCB = ( cb ? dataReleaseCB : NULL);
+  CGDataProviderReleaseDataCallback releaseCB = ( tmpBuf ? dataReleaseCB : NULL);
   CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H, releaseCB);
   CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta,
                             //lut, delta&1?kCGImageAlphaNone:kCGImageAlphaNoneSkipLast,
