@@ -666,7 +666,7 @@ Fl_Font val = (Fl_Font)all_font_choice->value(); // Get font value
 
 // Do selected items
 int count = 0;
-for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+for ( item=tree->first(); item; item = tree->next(item) ) {
     if ( item->is_selected() ) {
         item->labelfont(val);
         count++;
@@ -675,7 +675,7 @@ for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
 
 // No items selected? Do all..
 if ( ! count ) {
-    for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
         item->labelfont(val);
     }
 }
@@ -756,7 +756,8 @@ tree->redraw();}
 
 // DO SELECTED ITEMS
 int count = 0;
-for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+Fl_Tree_Item *item;
+for ( item=tree->first(); item; item = tree->next(item) ) {
     if ( item->is_selected() ) {
         item->labelsize(size);
         count++;
@@ -765,7 +766,7 @@ for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
 
 // NO ITEMS SELECTED? DO ALL
 if ( ! count ) {
-    for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
         item->labelsize(size);
     }
 }
@@ -789,7 +790,7 @@ all_labelfgcolor_button->color(val);			// update modified color to button
 
 // Do selected items
 int count = 0;
-for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+for ( item=tree->first(); item; item = tree->next(item) ) {
     if ( item->is_selected() ) {
         item->labelfgcolor(val);
         count++;
@@ -798,7 +799,7 @@ for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
 
 // No items selected? Do all..
 if ( ! count ) {
-    for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
         item->labelfgcolor(val);
     }
 }
@@ -819,7 +820,7 @@ all_labelbgcolor_button->color(val);			// update modified color to button
 
 // Do selected items
 int count = 0;
-for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+for ( item=tree->first(); item; item = tree->next(item) ) {
     if ( item->is_selected() ) {
         item->labelbgcolor(val);
         count++;
@@ -828,7 +829,7 @@ for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
 
 // No items selected? Do all..
 if ( ! count ) {
-    for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
         item->labelbgcolor(val);
     }
 }
@@ -851,8 +852,9 @@ tree->redraw();}
         label { Deactivate}
         callback {int onoff = deactivate_toggle->value() ? 0 : 1;
 
+Fl_Tree_Item *item;
 int count = 0;
-for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+for ( item=tree->first(); item; item = tree->next(item) ) {
     if ( item->is_selected() ) {
         item->activate(onoff);
         ++count;
@@ -860,7 +862,7 @@ for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
 }
 
 if ( count == 0 ) {
-    for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
         item->activate(onoff);
     }
 }
@@ -875,7 +877,8 @@ If none are selected, all are set.} xywh {734 152 95 16} selection_color 1 label
 
 // DO SELECTED ITEMS
 int count = 0;
-for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+Fl_Tree_Item *item;
+for ( item=tree->first(); item; item = tree->next(item) ) {
     if ( item->is_selected() ) {
         item->labelfont(face);
         count++;
@@ -884,7 +887,7 @@ for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
 
 // NO ITEMS SELECTED? DO ALL
 if ( ! count ) {
-    for ( Fl_Tree_Item *item=tree->first(); item; item = tree->next(item) ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
         item->labelfont(face);
     }
 }
