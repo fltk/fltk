@@ -640,13 +640,6 @@ Fl_Window* fl_find(Window xid) {
   Returns the first top-level window in the list of shown() windows.  If
   a modal() window is shown this is the top-most modal window, otherwise
   it is the most recent window to get an event.
-  
-  The second form sets the window that is returned by
-  first_window.  The window is removed from wherever it is in the
-  list and inserted at the top.  This is not done if Fl::modal()
-  is on or if the window is not shown(). Because the first window
-  is used to set the "parent" of modal windows, this is often
-  useful.
 */
 Fl_Window* Fl::first_window() {
   Fl_X* i = Fl_X::first;
@@ -663,8 +656,13 @@ Fl_Window* Fl::next_window(const Fl_Window* window) {
 }
 
 /**
-  See Fl_Window* first_window()
-*/
+ Sets the window that is returned by first_window().  
+ The window is removed from wherever it is in the
+ list and inserted at the top.  This is not done if Fl::modal()
+ is on or if the window is not shown(). Because the first window
+ is used to set the "parent" of modal windows, this is often
+ useful.
+ */
 void Fl::first_window(Fl_Window* window) {
   if (!window || !window->shown()) return;
   fl_find( Fl_X::i(window)->xid );
