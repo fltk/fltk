@@ -124,10 +124,10 @@ static unsigned short cp1252[32] = {
     unexpectedly 1 will work:
 
     \code
-    if (*p & 0x80) { // what should be a multibyte encoding
+    if (*p & 0x80) {              // what should be a multibyte encoding
       code = fl_utf8decode(p,end,&len);
-      if (len<2) code = 0xFFFD; // Turn errors into REPLACEMENT CHARACTER
-    } else { // handle the 1-byte utf8 encoding:
+      if (len<2) code = 0xFFFD;   // Turn errors into REPLACEMENT CHARACTER
+    } else {                      // handle the 1-byte utf8 encoding:
       code = *p;
       len = 1;
     }

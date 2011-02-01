@@ -36,7 +36,7 @@ iso8859_10_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
     *pwc = (ucs4_t) iso8859_10_2uni[c-0xa0];
   return 1;
 }
-#endif // NEED_TOWC
+#endif /* NEED_TOWC */
 
 #ifdef  NEED_TOMB
 static const unsigned char iso8859_10_page00[224] = {
@@ -89,4 +89,4 @@ iso8859_10_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
   }
   return RET_ILSEQ;
 }
-#endif // NEED_TOMB
+#endif /* NEED_TOMB */

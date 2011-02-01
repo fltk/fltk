@@ -1198,7 +1198,7 @@ ksc5601_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
   }
   return RET_ILSEQ;
 }
-#endif // NEED_TOWC
+#endif /* NEED_TOWC */
 
 #ifdef NEED_TOMB
 static const unsigned short ksc5601_2charset[8224] = {
@@ -3003,4 +3003,4 @@ ksc5601_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
   }
   return RET_TOOSMALL;
 }
-#endif // NEED_TOMB
+#endif /* NEED_TOMB */

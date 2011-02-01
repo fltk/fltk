@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
     if (l2 != 6) {
       ucs = (unsigned)ob[0];
       ucs += (unsigned) (ob[1] << 8);
-      //XConvertUtf8ToUcs((unsigned char*)ob, 6 - l2, &ucs); 
+      /* XConvertUtf8ToUcs((unsigned char*)ob, 6 - l2, &ucs); */
       printf ("%x --> %X\n", i, ucs & 0xFFFF);
     }
   }

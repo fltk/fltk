@@ -52,7 +52,7 @@ typedef struct {
   unsigned short used;
 } Summary16;
 
-#define NEED_TOWC // indicates what part of these include files is needed here (avoid compilation warnings)
+#define NEED_TOWC /* indicates what part of these include files is needed here (avoid compilation warnings) */
 #include "lcUniConv/big5.h"
 #include "lcUniConv/gb2312.h"
 #include "lcUniConv/cp936ext.h"
@@ -382,7 +382,8 @@ XConvertEucToUtf8(const char*	locale,
 		  int		len, 
 		  int		bytes_buffer) {
 
-  //if (!locale/* || strstr(locale, "UTF") || strstr(locale, "utf")*/) {
+  /* if (!locale) { */
+  /* if (!locale || strstr(locale, "UTF") || strstr(locale, "utf")) { */
   if (!locale || strstr(locale, "UTF") || strstr(locale, "utf")) {
     return len;
   }

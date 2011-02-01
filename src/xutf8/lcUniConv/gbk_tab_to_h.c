@@ -332,9 +332,9 @@ static void output_uni2charset_dense (const char* name, Encoding* enc)
     p = -1;
     for (t = 0; t < tableno; t++)
       if (tables[t].usecount > 1) {
-        //p = tables[t].minline >> 5;
+        /* p = tables[t].minline >> 5; */
         p = tables[t].minline ;
-        //printf("static const unsigned short %s_page%02x[%d] = {\n", name, p, 8*(tables[t].maxline-tables[t].minline+1));
+        /* printf("static const unsigned short %s_page%02x[%d] = {\n", name, p, 8*(tables[t].maxline-tables[t].minline+1)); */
         printf("static const unsigned short %s_page%04x[%d] = {\n", name, p, 8*(tables[t].maxline-tables[t].minline+1));
         for (j1 = tables[t].minline; j1 <= tables[t].maxline; j1++) {
           if ((j1 % 0x20) == 0 && j1 > tables[t].minline)
@@ -382,7 +382,7 @@ static void output_uni2charset_dense (const char* name, Encoding* enc)
         } else {
           printf("if (wc >= 0x%04x && wc < 0x%04x)", 8*j1, 8*j2);
         }
-        //printf("\n      c = %s_page%02x[wc", name, j1 >> 5);
+        /* printf("\n      c = %s_page%02x[wc", name, j1 >> 5); */
         printf("\n      c = %s_page%04x[wc", name, j1);
         if (tables[t].minline > 0)
           printf("-0x%04x", 8*j1);
