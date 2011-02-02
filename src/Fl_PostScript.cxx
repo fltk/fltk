@@ -85,7 +85,7 @@ Fl_PostScript_Graphics_Driver *Fl_PostScript_File_Device::driver()
  @param pagecount The total number of pages to be created.
  @param format Desired page format.
  @param layout Desired page layout.
- @return 0 iff OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
+ @return 0 if OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
  */
 int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_Paged_Device::Page_Format format, 
 					  enum Fl_Paged_Device::Page_Layout layout)
