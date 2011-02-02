@@ -278,7 +278,7 @@ static Fl_Surface_Device *_ss;
  \param ctx     the offscreen buffer.
  */
 void fl_begin_offscreen(Fl_Offscreen ctx) {
-  _ss = fl_surface; 
+  _ss = Fl_Surface_Device::surface(); 
   Fl_Display_Device::display_device()->set_current();
   if (stack_ix<stack_max) {
     stack_gc[stack_ix] = fl_gc;

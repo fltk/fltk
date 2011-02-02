@@ -87,8 +87,8 @@
 static Fl_GDI_Graphics_Driver fl_gdi_driver;
 static Fl_Display_Device fl_gdi_display(&fl_gdi_driver);
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_gdi_driver; // the current target driver of graphics operations
-FL_EXPORT Fl_Surface_Device *fl_surface = (Fl_Surface_Device*)&fl_gdi_display; // the current target surface of graphics operations
-Fl_Display_Device *Fl_Display_Device::display_device() { return &fl_gdi_display; };
+Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_gdi_display; // the current target surface of graphics operations
+Fl_Display_Device *Fl_Display_Device::_display = &fl_gdi_display; // the platform display
 
 // dynamic wsock dll handling api:
 #if defined(__CYGWIN__) && !defined(SOCKET)

@@ -40,12 +40,8 @@
 #include <FL/Fl_RGB_Image.H>
 
 class Fl_Graphics_Driver;
-class Fl_Display_Device;
-class Fl_Surface_Device;
 /** \brief Points to the driver that currently receives all graphics requests */
 FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
-/** \brief Points to the surface that currently receives all graphics requests */
-FL_EXPORT extern Fl_Surface_Device *fl_surface;
 
 /**
  signature of image generation callback function.
@@ -365,6 +361,7 @@ public:
 class FL_EXPORT Fl_Surface_Device : public Fl_Device {
   /** \brief The graphics driver in use by this surface. */
   Fl_Graphics_Driver *_driver;
+  static Fl_Surface_Device *_surface; // the surface that currently receives graphics output
 protected:
   /** \brief Constructor that sets the graphics driver to use for the created surface. */
   Fl_Surface_Device(Fl_Graphics_Driver *graphics_driver) {_driver = graphics_driver; };
@@ -376,7 +373,7 @@ public:
   /** \brief Returns the graphics driver of this drawing surface. */
   inline Fl_Graphics_Driver *driver() {return _driver; };
   /** \brief the surface that currently receives graphics output */
-  static Fl_Surface_Device *surface() {return fl_surface; }; 
+  static inline Fl_Surface_Device *surface() {return _surface; }; 
   /** \brief The destructor. */
   virtual ~Fl_Surface_Device() {}
 };
@@ -385,14 +382,13 @@ public:
  \brief A display to which the computer can draw.
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
+  static Fl_Display_Device *_display; // the platform display device
 public:
   static const char *class_id;
   /** \brief A constructor that sets the graphics driver used by the display */
   Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) { class_name( class_id); };
-  /**
-   @brief    Returns the platform's display device.
-   */
-  static Fl_Display_Device *display_device();
+  /** Returns the platform display device. */
+  static inline Fl_Display_Device *display_device() {return _display;};
 };
 
 /**

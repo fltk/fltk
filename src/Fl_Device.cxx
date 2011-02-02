@@ -48,7 +48,7 @@ const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
 void Fl_Surface_Device::set_current(void)
 {
   fl_graphics_driver = _driver;
-  fl_surface = this;
+  _surface = this;
 }
 
 //
