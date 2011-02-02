@@ -141,7 +141,7 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   save_front->show();
   current->set_current();
   fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
-  delete image_data;
+  delete[] image_data;
 }
 
 /**

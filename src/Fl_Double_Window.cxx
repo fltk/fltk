@@ -85,7 +85,7 @@ void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx
     uchar *img = fl_read_image(NULL, srcx, srcy, w, h, 0);
     fl_end_offscreen();
     fl_draw_image(img, x, y, w, h, 3, 0);
-    delete img;
+    delete[] img;
   }
 }
 /** @} */

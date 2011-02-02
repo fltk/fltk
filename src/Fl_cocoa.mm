@@ -3265,7 +3265,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
 
 static void imgProviderReleaseData (void *info, const void *data, size_t size)
 {
-  delete (unsigned char *)data;
+  delete[] (unsigned char *)data;
 }
 
 CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h)

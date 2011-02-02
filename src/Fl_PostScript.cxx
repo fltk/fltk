@@ -1017,7 +1017,7 @@ static void transformed_draw_extra(const char* str, int n, double x, double y, i
   fl_delete_offscreen(off);
   // compute the mask of what is not the background
   uchar *mask = calc_mask(img, w, h, bg_color);
-  delete img;
+  delete[] img;
   // write the string image to PostScript as a scaled bitmask
   fprintf(output, "%g %g %g %g %d %d MI\n", x, y - h*0.77/scale, w/scale, h/scale, w, h);
   uchar *di;
@@ -1032,7 +1032,7 @@ static void transformed_draw_extra(const char* str, int n, double x, double y, i
     fprintf(output,"\n");
   }
   fprintf(output,">\n");
-  delete mask;
+  delete[] mask;
 }
 
 static int is_in_table(unsigned utf) {

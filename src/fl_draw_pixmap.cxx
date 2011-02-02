@@ -370,7 +370,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
     CGContextDrawImage(fl_gc, rect, img);
     Fl_X::q_end_image();
     CGImageRelease(img);
-    delete array;
+    delete[] array;
     }
   else {
 #endif // __APPLE_QUARTZ__

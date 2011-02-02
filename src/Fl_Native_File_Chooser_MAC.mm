@@ -504,7 +504,7 @@ int Fl_Native_File_Chooser::post() {
 	p = r + 1;
       } while(*p);
       popup = createPopupAccessory((NSSavePanel*)_panel, t, "Enable:", 0);
-      delete t;
+      delete[] t;
       [[popup menu] addItem:[NSMenuItem separatorItem]];
       [popup addItemWithTitle:@"All Documents"];
       [popup setAction:@selector(validateVisibleColumns)];
