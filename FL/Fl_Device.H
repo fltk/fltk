@@ -46,8 +46,6 @@ class Fl_Surface_Device;
 FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
 /** \brief Points to the surface that currently receives all graphics requests */
 FL_EXPORT extern Fl_Surface_Device *fl_surface;
-/** \brief Points to the platform's display */
-FL_EXPORT extern Fl_Display_Device *fl_display_device;
 
 /**
  signature of image generation callback function.
@@ -394,7 +392,7 @@ public:
   /**
    @brief    Returns the platform's display device.
    */
-  static Fl_Display_Device *display_device() { return fl_display_device; };
+  static Fl_Display_Device *display_device();
 };
 
 /**

@@ -77,7 +77,7 @@ static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscree
  \param srcx,srcy origin in offscreen buffer of rectangle to copy
  */
 void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  if( fl_graphics_driver == fl_display_device->driver()) {
+  if( fl_graphics_driver == Fl_Display_Device::display_device()->driver()) {
     fl_copy_offscreen_to_display(x, y, w, h, pixmap, srcx, srcy);
   }
   else { // when copy is not to the display
@@ -279,7 +279,7 @@ static Fl_Surface_Device *_ss;
  */
 void fl_begin_offscreen(Fl_Offscreen ctx) {
   _ss = fl_surface; 
-  fl_display_device->set_current();
+  Fl_Display_Device::display_device()->set_current();
   if (stack_ix<stack_max) {
     stack_gc[stack_ix] = fl_gc;
     stack_window[stack_ix] = fl_window;
