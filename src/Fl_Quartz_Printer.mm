@@ -42,7 +42,7 @@ Fl_System_Printer::Fl_System_Printer(void)
   scale_x = scale_y = 1.;
   class_name(class_id);
   gc = 0;
-  driver(fl_graphics_driver);
+  driver(Fl_Display_Device::display_device()->driver());
 }
 
 Fl_System_Printer::~Fl_System_Printer(void) {}

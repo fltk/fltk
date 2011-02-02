@@ -37,7 +37,7 @@ extern HWND fl_window;
 Fl_System_Printer::Fl_System_Printer(void) : Fl_Paged_Device() {
   hPr = NULL;
   class_name(class_id);
-  driver(fl_graphics_driver);
+  driver(Fl_Display_Device::display_device()->driver());
 }
 
 Fl_System_Printer::~Fl_System_Printer(void) {
