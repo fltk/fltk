@@ -685,7 +685,7 @@ FL_EXPORT char fl_can_do_alpha_blending();
   The \p p argument points to a buffer that can hold the image and must
   be at least \p W*H*3 bytes when reading RGB images, or \p W*H*4 bytes
   when reading RGBA images. If NULL, fl_read_image() will create an
-  array of the proper suze which can be freed using <tt>delete[]</tt>.
+  array of the proper size which can be freed using <tt>delete[]</tt>.
 
   The \p alpha parameter controls whether an alpha channel is created
   and the value that is placed in the alpha channel. If 0, no alpha
