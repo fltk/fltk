@@ -188,7 +188,6 @@ double fl_width(unsigned int c) {
   unsigned int r;
   r = (c & 0xFC00) >> 10;
   if (!fl_fontsize->width[r]) {
-    SelectObject(fl_gc, fl_fontsize->fid);
     fl_fontsize->width[r] = (int*) malloc(sizeof(int) * 0x0400);
     SIZE s;
     unsigned short i = 0, ii = r * 0x400;
@@ -207,6 +206,7 @@ double fl_width(unsigned int c) {
     }
     if (!gc)
 	Fl::fatal("Invalid graphic context: fl_width() failed because no valid HDC was found!");
+    SelectObject(gc, fl_fontsize->fid);
     for (; i < 0x400; i++) {
       GetTextExtentPoint32W(gc, (WCHAR*)&ii, 1, &s);
       fl_fontsize->width[r][i] = s.cx;
