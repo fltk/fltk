@@ -66,6 +66,15 @@ extern double fl_mac_flush_and_wait(double time_to_wait, char in_idle);
 //
 // Globals...
 //
+#if defined(__APPLE__) || defined(FL_DOXYGEN)
+const char *Fl_Mac_App_Menu::about = "About ";
+const char *Fl_Mac_App_Menu::print = "Print Front Window";
+const char *Fl_Mac_App_Menu::services = "Services";
+const char *Fl_Mac_App_Menu::hide = "Hide ";
+const char *Fl_Mac_App_Menu::hide_others = "Hide Others";
+const char *Fl_Mac_App_Menu::show = "Show All";
+const char *Fl_Mac_App_Menu::quit = "Quit ";
+#endif // __APPLE__
 #ifndef FL_DOXYGEN
 Fl_Widget	*Fl::belowmouse_,
 		*Fl::pushed_,

@@ -2805,14 +2805,6 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
 }
 @end
 
-const char *Fl_Mac_App_Menu::about = "About ";
-const char *Fl_Mac_App_Menu::print = "Print Front Window";
-const char *Fl_Mac_App_Menu::services = "Services";
-const char *Fl_Mac_App_Menu::hide = "Hide ";
-const char *Fl_Mac_App_Menu::hide_others = "Hide Others";
-const char *Fl_Mac_App_Menu::show = "Show All";
-const char *Fl_Mac_App_Menu::quit = "Quit ";
-
 static NSMenu *appleMenu;
 static void createAppleMenu(void)
 {
