@@ -507,12 +507,6 @@ void Fl_Graphics_Driver::point(int x, int y) {
 
 ////////////////////////////////////////////////////////////////
 
-#define STACK_SIZE 10
-#define STACK_MAX (STACK_SIZE - 1)
-static Fl_Region rstack[STACK_SIZE];
-static int rstackptr=0;
-int fl_clip_state_number=0; // used by gl_begin.cxx to update GL clip
-
 #if !defined(WIN32) && !defined(__APPLE__)
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
 // MSWindows equivalent exists, implemented inline in win32.H
@@ -526,7 +520,7 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 }
 #endif
 
-void fl_restore_clip() {
+void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
 #if defined(USE_X11)
@@ -554,14 +548,14 @@ void fl_restore_clip() {
 #endif
 }
 
-void fl_clip_region(Fl_Region r) {
+void Fl_Graphics_Driver::clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
   if (oldr) XDestroyRegion(oldr);
   rstack[rstackptr] = r;
   fl_restore_clip();
 }
 
-Fl_Region fl_clip_region() {
+Fl_Region Fl_Graphics_Driver::clip_region() {
   return rstack[rstackptr];
 }
 
@@ -596,14 +590,14 @@ void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 # error unsupported platform
 #endif
   }
-  if (rstackptr < STACK_MAX) rstack[++rstackptr] = r;
+  if (rstackptr < REGION_STACK_MAX) rstack[++rstackptr] = r;
   else Fl::warning("fl_push_clip: clip stack overflow!\n");
   fl_restore_clip();
 }
 
 // make there be no clip (used by fl_begin_offscreen() only!)
 void Fl_Graphics_Driver::push_no_clip() {
-  if (rstackptr < STACK_MAX) rstack[++rstackptr] = 0;
+  if (rstackptr < REGION_STACK_MAX) rstack[++rstackptr] = 0;
   else Fl::warning("fl_push_no_clip: clip stack overflow!\n");
   fl_restore_clip();
 }

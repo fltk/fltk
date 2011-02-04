@@ -46,8 +46,6 @@
 #include <FL/fl_draw.H>
 #include "Fl_Gl_Choice.H"
 
-extern int fl_clip_state_number; // in fl_rect.cxx
-
 static GLContext context;
 static int clip_state_number=-1;
 static int pw, ph;
@@ -89,8 +87,8 @@ void gl_start() {
     glOrtho(0, pw, 0, ph, -1, 1);
     glDrawBuffer(GL_FRONT);
   }
-  if (clip_state_number != fl_clip_state_number) {
-    clip_state_number = fl_clip_state_number;
+  if (clip_state_number != fl_graphics_driver->fl_clip_state_number) {
+    clip_state_number = fl_graphics_driver->fl_clip_state_number;
     int x, y, w, h;
     if (fl_clip_box(0, 0, Fl_Window::current()->w(), Fl_Window::current()->h(),
 		    x, y, w, h)) {

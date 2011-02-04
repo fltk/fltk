@@ -44,42 +44,21 @@
 #include <FL/math.h>
 #include <stdlib.h>
 
-struct matrix {double a, b, c, d, x, y;};
-
-static matrix m = {1, 0, 0, 1, 0, 0};
-
-static matrix stack[32];
-matrix * fl_matrix = &m;
-static int sptr = 0;
-
-/**
-  Saves the current transformation matrix on the stack. 
-  The maximum depth of the stack is 4.
-*/
-void fl_push_matrix() {
-  if (sptr==32)
+void Fl_Graphics_Driver::push_matrix() {
+  if (sptr==MATRIX_STACK_SIZE)
     Fl::error("fl_push_matrix(): matrix stack overflow.");
   else
     stack[sptr++] = m;
 }
 
-/**
-  Restores the current transformation matrix from the stack.
-*/
-void fl_pop_matrix() {
+void Fl_Graphics_Driver::pop_matrix() {
   if (sptr==0)
     Fl::error("fl_pop_matrix(): matrix stack underflow.");
   else 
     m = stack[--sptr];
 }
 
-/**
-  Concatenates another transformation onto the current one.
-
-  \param[in] a,b,c,d,x,y transformation matrix elements such that
-             <tt> X' = aX + cY + x </tt> and <tt> Y' = bX +dY + y </tt>
-*/
-void fl_mult_matrix(double a, double b, double c, double d, double x, double y) {
+void Fl_Graphics_Driver::mult_matrix(double a, double b, double c, double d, double x, double y) {
   matrix o;
   o.a = a*m.a + b*m.c;
   o.b = a*m.b + b*m.d;
@@ -124,27 +103,6 @@ void fl_rotate(double d) {
   }
 }
 
-// typedef what the x,y fields in a point are:
-#ifdef WIN32
-typedef int COORD_T;
-#  define XPOINT XPoint
-#elif defined(__APPLE_QUARTZ__)
-typedef float COORD_T;
-typedef struct { float x; float y; } QPoint;
-#  define XPOINT QPoint
-extern float fl_quartz_line_width_;
-#else
-typedef short COORD_T;
-#  define XPOINT XPoint
-#endif
-
-static XPOINT *p = (XPOINT *)0;
-
-static int p_size;
-static int n;
-static int what;
-enum {LINE, LOOP, POLYGON, POINT_};
-
 void Fl_Graphics_Driver::begin_points() {n = 0; what = POINT_;}
 
 void Fl_Graphics_Driver::begin_line() {n = 0; what = LINE;}
@@ -153,31 +111,15 @@ void Fl_Graphics_Driver::begin_loop() {n = 0; what = LOOP;}
 
 void Fl_Graphics_Driver::begin_polygon() {n = 0; what = POLYGON;}
 
-/**
-  Transforms coordinate using the current transformation matrix.
-  \param[in] x,y coordinate
-*/
-double fl_transform_x(double x, double y) {return x*m.a + y*m.c + m.x;}
+double Fl_Graphics_Driver::transform_x(double x, double y) {return x*m.a + y*m.c + m.x;}
 
-/**
-  Transform coordinate using the current transformation matrix.
-  \param[in] x,y coordinate
-*/
-double fl_transform_y(double x, double y) {return x*m.b + y*m.d + m.y;}
+double Fl_Graphics_Driver::transform_y(double x, double y) {return x*m.b + y*m.d + m.y;}
 
-/**
-  Transforms distance using current transformation matrix.
-  \param[in] x,y coordinate
-*/
-double fl_transform_dx(double x, double y) {return x*m.a + y*m.c;}
+double Fl_Graphics_Driver::transform_dx(double x, double y) {return x*m.a + y*m.c;}
 
-/**
-  Transforms distance using current transformation matrix.
-  \param[in] x,y coordinate
-*/
-double fl_transform_dy(double x, double y) {return x*m.b + y*m.d;}
+double Fl_Graphics_Driver::transform_dy(double x, double y) {return x*m.b + y*m.d;}
 
-static void fl_transformed_vertex(COORD_T x, COORD_T y) {
+void Fl_Graphics_Driver::transformed_vertex0(COORD_T x, COORD_T y) {
   if (!n || x != p[n-1].x || y != p[n-1].y) {
     if (n >= p_size) {
       p_size = p ? 2*p_size : 16;
@@ -191,14 +133,14 @@ static void fl_transformed_vertex(COORD_T x, COORD_T y) {
 
 void Fl_Graphics_Driver::transformed_vertex(double xf, double yf) {
 #ifdef __APPLE_QUARTZ__
-  fl_transformed_vertex(COORD_T(xf), COORD_T(yf));
+  transformed_vertex0(COORD_T(xf), COORD_T(yf));
 #else
-  fl_transformed_vertex(COORD_T(rint(xf)), COORD_T(rint(yf)));
+  transformed_vertex0(COORD_T(rint(xf)), COORD_T(rint(yf)));
 #endif
 }
 
 void Fl_Graphics_Driver::vertex(double x,double y) {
-  fl_transformed_vertex(x*m.a + y*m.c + m.x, x*m.b + y*m.d + m.y);
+  transformed_vertex0(COORD_T(x*m.a + y*m.c + m.x), COORD_T(x*m.b + y*m.d + m.y));
 }
 
 void Fl_Graphics_Driver::end_points() {
@@ -241,7 +183,7 @@ void Fl_Graphics_Driver::end_line() {
 #endif
 }
 
-static void fixloop() {  // remove equal points from closed path
+void Fl_Graphics_Driver::fixloop() {  // remove equal points from closed path
   while (n>2 && p[n-1].x == p[0].x && p[n-1].y == p[0].y) n--;
 }
 
@@ -277,12 +219,6 @@ void Fl_Graphics_Driver::end_polygon() {
 # error unsupported platform
 #endif
 }
-
-static int gap_;
-#if defined(WIN32)
-static int counts[20];
-static int numcount;
-#endif
 
 void Fl_Graphics_Driver::begin_complex_polygon() {
   fl_begin_polygon();

@@ -53,7 +53,9 @@ static void print_gl_window(Fl_Gl_Window *glw, int x, int y, int height)
   _XGC *save_gc = fl_gc;
   const int bytesperpixel = 3;
 #endif
+  Fl_Surface_Device *save_surface = Fl_Surface_Device::surface();
   fl_gc = NULL;
+  Fl_Display_Device::display_device()->set_current();
 #ifdef WIN32
   Fl::check();
   Fl_Window *win = (Fl_Window*)glw;
@@ -89,6 +91,7 @@ static void print_gl_window(Fl_Gl_Window *glw, int x, int y, int height)
 #endif
 	       baseAddress);
   glPopClientAttrib();
+  save_surface->set_current();
   fl_gc = save_gc;
 #if defined(__APPLE__)
 // kCGBitmapByteOrder32Host and CGBitmapInfo are supposed to arrive with 10.4

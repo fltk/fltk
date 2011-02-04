@@ -33,6 +33,7 @@
 #ifndef Fl_Device_H
 #define Fl_Device_H
 
+#include <FL/x.H>
 #include <FL/Fl_Plugin.H>
 #include <FL/Fl_Image.H>
 #include <FL/Fl_Bitmap.H>
@@ -52,6 +53,27 @@ FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
  to this buffer.
  */
 typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
+
+#define REGION_STACK_SIZE 10
+#define REGION_STACK_MAX (REGION_STACK_SIZE - 1)
+
+#define MATRIX_STACK_SIZE 32
+#define MATRIX_STACK_MAX (MATRIX_STACK_SIZE - 1)
+struct matrix {double a, b, c, d, x, y;};
+
+// typedef what the x,y fields in a point are:
+#ifdef WIN32
+typedef int COORD_T;
+#  define XPOINT XPoint
+#elif defined(__APPLE__)
+typedef float COORD_T;
+typedef struct { float x; float y; } QPoint;
+#  define XPOINT QPoint
+extern float fl_quartz_line_width_;
+#else
+typedef short COORD_T;
+#  define XPOINT XPoint
+#endif
 
 /**
  \brief All graphical output devices and all graphics systems.
@@ -88,6 +110,23 @@ public:
  in the \ref fl_drawings and \ref fl_attributes modules. 
   */
 class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
+  enum {LINE, LOOP, POLYGON, POINT_};
+  int sptr;
+  matrix stack[MATRIX_STACK_SIZE];
+  matrix m;
+  int n, p_size, gap_;
+  XPOINT *p;
+  int what;
+  int fl_clip_state_number;
+  int rstackptr;
+  Fl_Region rstack[REGION_STACK_MAX];
+#ifdef WIN32
+  int numcount;
+  int counts[20];
+#endif
+  void transformed_vertex0(COORD_T x, COORD_T y);
+  void fixloop();
+  
 protected:
 /*  ** \brief red color for background and/or mixing if device does not support masking or alpha *
   uchar bg_r_; 
@@ -143,13 +182,27 @@ protected:
   friend void fl_begin_complex_polygon();
   friend void fl_gap();
   friend void fl_end_complex_polygon();
+  friend void fl_push_matrix();
+  friend void fl_pop_matrix();
+  friend void fl_mult_matrix(double a, double b, double c, double d, double x, double y);
+  friend double fl_transform_x(double x, double y);
+  friend double fl_transform_y(double x, double y);
+  friend double fl_transform_dx(double x, double y);
+  friend double fl_transform_dy(double x, double y);
+  friend Fl_Region fl_clip_region();
+  friend void fl_clip_region(Fl_Region r);
+  friend void fl_restore_clip();
+  
   friend void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
-  
+  friend void gl_start();
+
+  matrix *fl_matrix;
+
   /** \brief The constructor. */
-  Fl_Graphics_Driver() {};
+  Fl_Graphics_Driver();
   /** \brief see fl_rect(int x, int y, int w, int h). */
   virtual void rect(int x, int y, int w, int h);
   /** \brief see fl_rectf(int x, int y, int w, int h). */
@@ -238,6 +291,28 @@ protected:
   virtual void push_no_clip();
   /** \brief see fl_pop_clip(). */
   virtual void pop_clip();
+    
+  /** \brief see fl_push_matrix(). */
+  void push_matrix();
+  /** \brief see fl_pop_matrix(). */
+  void pop_matrix();
+  /** \brief see fl_mult_matrix(double a, double b, double c, double d, double x, double y). */
+  void mult_matrix(double a, double b, double c, double d, double x, double y);
+  /** \brief see fl_transform_x(double x, double y). */
+  double transform_x(double x, double y);
+  /** \brief see fl_transform_y(double x, double y). */
+  double transform_y(double x, double y);
+  /** \brief see fl_transform_dx(double x, double y). */
+  double transform_dx(double x, double y);
+  /** \brief see fl_transform_dy(double x, double y). */
+  double transform_dy(double x, double y);
+  /** \brief see fl_clip_region(). */
+  Fl_Region clip_region();
+  /** \brief see fl_clip_region(Fl_Region r). */
+  void clip_region(Fl_Region r);
+  /** \brief see fl_restore_clip(). */
+  void restore_clip();
+  
   // Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
   virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) = 0;

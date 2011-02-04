@@ -1115,9 +1115,6 @@ void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int 
   delete [] out;
 }
 
-struct matrix {double a, b, c, d, x, y;};
-extern matrix * fl_matrix;
-
 void Fl_PostScript_Graphics_Driver::concat(){
   fprintf(output,"[%g %g %g %g %g %g] CT\n", fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y);
 }

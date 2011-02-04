@@ -37,6 +37,7 @@
 #include <windows.h>
 typedef HRGN Fl_Region;
 typedef HWND Window;
+typedef POINT XPoint;
 
 // this part is included only when compiling the FLTK library or if requested explicitly
 #if defined(FL_LIBRARY) || defined(FL_INTERNALS) 
@@ -52,7 +53,6 @@ typedef HWND Window;
 #endif
 
 // some random X equivalents
-typedef POINT XPoint;
 struct XRectangle {int x, y, width, height;};
 extern Fl_Region XRectangleRegion(int x, int y, int w, int h);
 inline void XDestroyRegion(Fl_Region r) {DeleteObject(r);}
