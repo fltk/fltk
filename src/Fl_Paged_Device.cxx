@@ -206,7 +206,9 @@ void Fl_Paged_Device::origin(int x, int y) {}
  After a scale() call, do a printable_rect() call to get the new dimensions of the printable page area.
  Successive scale() calls don't combine their effects.
  @param scale_x Horizontal dimensions of plot are multiplied by this quantity.
- @param scale_y Same as above, vertically.
+ @param scale_y Same as above, vertically. 
+  The value 0. is equivalent to setting \p scale_y = \p scale_x. Thus, scale(factor);
+  is equivalent to scale(factor, factor);
  */
 void Fl_Paged_Device::scale (float scale_x, float scale_y) {}
 

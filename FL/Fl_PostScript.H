@@ -234,7 +234,7 @@ public:
   void margins(int *left, int *top, int *right, int *bottom);
   void origin(int *x, int *y);
   void origin(int x, int y);
-  void scale (float scale_x, float scale_y);
+  void scale (float scale_x, float scale_y = 0.);
   void rotate(float angle);
   void translate(int x, int y);
   void untranslate(void);

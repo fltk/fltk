@@ -126,7 +126,7 @@ public:
   virtual void margins(int *left, int *top, int *right, int *bottom);
   virtual void origin(int x, int y);
   virtual void origin(int *x, int *y);
-  virtual void scale(float scale_x, float scale_y);
+  virtual void scale(float scale_x, float scale_y = 0.);
   virtual void rotate(float angle);
   virtual void translate(int x, int y);
   virtual void untranslate(void);

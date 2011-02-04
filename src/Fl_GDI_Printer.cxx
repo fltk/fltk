@@ -209,6 +209,7 @@ void Fl_System_Printer::origin (int deltax, int deltay)
 
 void Fl_System_Printer::scale (float scalex, float scaley)
 {
+  if (scaley == 0.) scaley = scalex;
   int w, h;
   SetWindowExtEx(fl_gc, (int)(720 / scalex + 0.5), (int)(720 / scaley + 0.5), NULL);
   printable_rect(&w, &h);

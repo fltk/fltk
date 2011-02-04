@@ -2787,7 +2787,7 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
   if (win->w()>w || win->h()>h) {
     scale = (float)w/win->w();
     if ((float)h/win->h() < scale) scale = (float)h/win->h();
-    printer.scale(scale, scale);
+    printer.scale(scale);
   }
 //#define ROTATE 1
 #ifdef ROTATE

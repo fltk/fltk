@@ -193,6 +193,7 @@ void Fl_System_Printer::origin(int x, int y)
 
 void Fl_System_Printer::scale (float s_x, float s_y)
 {
+  if (s_y == 0.) s_y = s_x;
   scale_x = s_x;
   scale_y = s_y;
   CGContextRestoreGState(fl_gc);

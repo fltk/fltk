@@ -1402,6 +1402,7 @@ void Fl_PostScript_File_Device::origin(int x, int y)
 
 void Fl_PostScript_File_Device::scale (float s_x, float s_y)
 {
+  if (s_y == 0.) s_y = s_x;
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->scale_x = s_x;
   ps->scale_y = s_y;
