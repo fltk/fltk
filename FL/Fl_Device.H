@@ -98,7 +98,6 @@ protected:
   friend class Fl_Pixmap;
   friend class Fl_Bitmap;
   friend class Fl_RGB_Image;
-  friend class Fl_PostScript_Graphics_Driver;
   friend void fl_rect(int x, int y, int w, int h);
   friend void fl_rectf(int x, int y, int w, int h);
   friend void fl_line_style(int style, int width, char* dashes);
@@ -179,8 +178,6 @@ protected:
   virtual void draw(int angle, const char *str, int n, int x, int y) = 0;
   /** \brief see fl_rtl_draw(const char *str, int n, int x, int y). */
   virtual void rtl_draw(const char *str, int n, int x, int y) = 0;
-  /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
-  virtual void font(Fl_Font face, Fl_Fontsize size) = 0;
   /** \brief see fl_color(Fl_Color c). */
   virtual void color(Fl_Color c) = 0;
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
@@ -272,6 +269,8 @@ protected:
     
 public:
   static const char *class_id;
+  /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
+  virtual void font(Fl_Font face, Fl_Fontsize size) = 0;
   /** \brief The destructor */
   virtual ~Fl_Graphics_Driver() {};
 };
