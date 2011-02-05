@@ -59,6 +59,8 @@ typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 
 #define MATRIX_STACK_SIZE 32
 #define MATRIX_STACK_MAX (MATRIX_STACK_SIZE - 1)
+/** A 2D coordinate transformation matrix
+ */
 struct matrix {double a, b, c, d, x, y;};
 
 // typedef what the x,y fields in a point are:
@@ -110,6 +112,8 @@ public:
  in the \ref fl_drawings and \ref fl_attributes modules. 
   */
 class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
+  Fl_Font font_; // current font
+  Fl_Fontsize size_; // current font size
   enum {LINE, LOOP, POLYGON, POINT_};
   int sptr;
   matrix stack[MATRIX_STACK_SIZE];
@@ -199,7 +203,7 @@ protected:
   friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend void gl_start();
 
-  matrix *fl_matrix;
+  matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
 
   /** \brief The constructor. */
   Fl_Graphics_Driver();
@@ -345,7 +349,11 @@ protected:
 public:
   static const char *class_id;
   /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
-  virtual void font(Fl_Font face, Fl_Fontsize size) = 0;
+  virtual void font(Fl_Font face, Fl_Fontsize size) {font_ = face; size_ = size;}
+  /** \brief see fl_font(). */
+  Fl_Font font() {return font_; }
+  /** \brief see fl_size(). */
+  Fl_Fontsize size() {return size_; }
   /** \brief The destructor */
   virtual ~Fl_Graphics_Driver() {};
 };

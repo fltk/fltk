@@ -260,8 +260,6 @@ static Fl_Font_Descriptor* find(int fnum, int size) {
 ////////////////////////////////////////////////////////////////
 // Public interface:
 
-Fl_Font fl_font_ = 0;
-Fl_Fontsize fl_size_ = 0;
 void *fl_xftfont = 0;
 static GC font_gc;
 
@@ -271,11 +269,11 @@ XFontStruct* Fl_XFont_On_Demand::value() {
 
 void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) {
-    fl_font_ = 0; fl_size_ = 0;
+    Fl_Graphics_Driver::font(0, 0);
     return;
   }
-  if (fnum == fl_font_ && size == fl_size_) return;
-  fl_font_ = fnum; fl_size_ = size;
+  if (fnum == Fl_Graphics_Driver::font() && size == Fl_Graphics_Driver::size()) return;
+  Fl_Graphics_Driver::font(fnum, size);
   Fl_Font_Descriptor* f = find(fnum, size);
   if (f != fl_fontsize) {
     fl_fontsize = f;

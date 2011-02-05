@@ -132,11 +132,11 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size, int angle) {
 ////////////////////////////////////////////////////////////////
 // Public interface:
 
-Fl_Font fl_font_ = 0;
-Fl_Fontsize fl_size_ = 0;
+static Fl_Font fl_font_ = 0;
+static Fl_Fontsize fl_size_ = 0;
 //static HDC font_gc;
 
-void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
+static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // just make sure that we will load a new font next time
     fl_font_ = 0; fl_size_ = 0; fl_angle_ = 0;
     return;
@@ -148,6 +148,7 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
 
 void Fl_GDI_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(fnum, size, 0);
+  Fl_Graphics_Driver::font(fl_font_, fl_size_);
 }
 
 int fl_height() {

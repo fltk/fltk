@@ -250,18 +250,12 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
 ////////////////////////////////////////////////////////////////
 // Public interface:
 
-Fl_Font fl_font_ = 0;
-Fl_Fontsize fl_size_ = 0;
-
-
 void Fl_Quartz_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum==-1) {
-    fl_font_ = 0; 
-    fl_size_ = 0;
+    Fl_Graphics_Driver::font(0, 0);
     return;
   }
-  fl_font_ = fnum;
-  fl_size_ = size;
+  Fl_Graphics_Driver::font(fnum, size);
   fl_font(find(fnum, size));
 }
 

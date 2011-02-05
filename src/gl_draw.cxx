@@ -35,6 +35,7 @@
 #include <FL/gl.h>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Device.H>
 #include "Fl_Gl_Choice.H"
 #include "Fl_Font.H"
 #include <FL/fl_utf8.h>
@@ -161,8 +162,7 @@ void gl_remove_displaylist_fonts()
 # if HAVE_GL
 
   // clear variables used mostly in fl_font
-  fl_font_ = 0;
-  fl_size_ = 0;
+  fl_graphics_driver->font(0, 0);
 
   for (int j = 0 ; j < FL_FREE_FONT ; ++j)
   {

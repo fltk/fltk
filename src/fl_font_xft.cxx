@@ -110,8 +110,8 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 #define current_font (fl_fontsize->font)
 
-Fl_Font fl_font_ = 0;
-Fl_Fontsize fl_size_ = 0;
+static Fl_Font fl_font_ = 0;
+static Fl_Fontsize fl_size_ = 0;
 int fl_angle_ = 0; // internal for rotating text support
 Fl_XFont_On_Demand fl_xfont;
 void *fl_xftfont = 0;
@@ -154,6 +154,7 @@ void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
 
 void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(fnum,size,0);
+  Fl_Graphics_Driver::font(fl_font_, fl_size_);
 }
 
 static XftFont* fontopen(const char* name, bool core, int angle) {

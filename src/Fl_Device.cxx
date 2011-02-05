@@ -54,11 +54,13 @@ void Fl_Surface_Device::set_current(void)
 static matrix m0 = {1, 0, 0, 1, 0, 0};
 
 Fl_Graphics_Driver::Fl_Graphics_Driver() {
-	sptr=0; rstackptr=0; 
-	fl_clip_state_number=0;
-	m = m0; 
-	fl_matrix = &m; 
-	p = (XPOINT *)0;
+  font_ = 0;
+  size_ = 0;
+  sptr=0; rstackptr=0; 
+  fl_clip_state_number=0;
+  m = m0; 
+  fl_matrix = &m; 
+  p = (XPOINT *)0;
 };
 
 //

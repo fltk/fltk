@@ -589,15 +589,14 @@ int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount,
 void Fl_PostScript_Graphics_Driver::recover(){
   color(cr_,cg_,cb_);
   line_style(linestyle_,linewidth_,linedash_);
-  font(font_,size_);
+  font(Fl_Graphics_Driver::font(), Fl_Graphics_Driver::size());
 }
 
 void Fl_PostScript_Graphics_Driver::reset(){
   gap_=1;
   clip_=0;
   cr_=cg_=cb_=0;
-  font_=FL_HELVETICA;
-  size_=12;
+  Fl_Graphics_Driver::font(FL_HELVETICA, 12);
   linewidth_=0;
   linestyle_=FL_SOLID;
   strcpy(linedash_,"");
@@ -932,7 +931,7 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
   fprintf(output, "/%s SF\n" , _fontNames[f]);
   fprintf(output,"%i FS\n", s);
   Fl_Display_Device::display_device()->driver()->font(f,s); // Use display fonts for font measurement
-  font_ = f; size_ = s;
+  Fl_Graphics_Driver::font(f, s);
 }
 
 void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {

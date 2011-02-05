@@ -76,8 +76,6 @@ class Clip {
   Clip * clip_;
   
   int lang_level_;
-  int font_;
-  int size_;
   int gap_;
   int pages_;
   
@@ -182,8 +180,6 @@ class Clip {
   void transformed_vertex(double x, double y);
   
   void font(int face, int size);
-  int font(){return font_;};
-  int size(){return size_;};
   
   void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0){draw_scaled_image(d,x,y,w,h,w,h,delta,ldelta);};
   void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0){draw_scaled_image_mono(d,x,y,w,h,w,h,delta,ld);};
