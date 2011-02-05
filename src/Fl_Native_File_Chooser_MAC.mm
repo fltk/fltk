@@ -332,7 +332,7 @@ void Fl_Native_File_Chooser::preset_file(const char* val) {
 // PRESET FILE
 //     Returned value can be NULL if none set.
 //
-const char* Fl_Native_File_Chooser::preset_file() {
+const char* Fl_Native_File_Chooser::preset_file() const {
   return(_preset_file);
 }
 
