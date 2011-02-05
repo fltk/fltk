@@ -30,7 +30,9 @@
    Fl_Native_File_Chooser widget. */
 
 #include <FL/Fl_File_Chooser.H>
+#ifndef WIN32
 #include <unistd.h>		// _POSIX_NAME_MAX
+#endif /*WIN32*/
 
 /**
   This class lets an FLTK application easily and consistently access 
