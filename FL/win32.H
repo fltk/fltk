@@ -39,6 +39,8 @@ typedef HRGN Fl_Region;
 typedef HWND Window;
 typedef POINT XPoint;
 
+#include <FL/Fl_Window.H>
+
 // this part is included only when compiling the FLTK library or if requested explicitly
 #if defined(FL_LIBRARY) || defined(FL_INTERNALS) 
 
@@ -67,7 +69,6 @@ inline void XClipBox(Fl_Region r,XRectangle* rect) {
 #define XMapWindow(a,b) ShowWindow(b, SW_RESTORE)
 #define XUnmapWindow(a,b) ShowWindow(b, SW_HIDE)
 
-#include <FL/Fl_Window.H>
 // this object contains all win32-specific stuff about a window:
 // Warning: this object is highly subject to change!
 class FL_EXPORT Fl_X {
