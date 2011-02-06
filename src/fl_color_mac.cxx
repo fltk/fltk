@@ -47,10 +47,8 @@ Fl_XMap fl_xmap[256];
 
 Fl_XMap* fl_current_xmap;
 
-Fl_Color fl_color_;
-
 void Fl_Quartz_Graphics_Driver::color(Fl_Color i) {
-  fl_color_ = i;
+  Fl_Graphics_Driver::color(i);
   int index;
   uchar r, g, b;
   if (i & 0xFFFFFF00) {
@@ -75,7 +73,7 @@ void Fl_Quartz_Graphics_Driver::color(Fl_Color i) {
 }
 
 void Fl_Quartz_Graphics_Driver::color(uchar r, uchar g, uchar b) {
-  fl_color_ = fl_rgb_color(r, g, b);
+  Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
   float fr = r/255.0f;
   float fg = g/255.0f;
   float fb = b/255.0f;

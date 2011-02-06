@@ -72,13 +72,11 @@ inline void fl_color(int c) {fl_color((Fl_Color)c);}
  \param[in] r,g,b color components
  */
 inline void	fl_color(uchar r, uchar g, uchar b) {fl_graphics_driver->color(r,g,b); } // select actual color
-/** \brief The current color */
-extern FL_EXPORT Fl_Color fl_color_;
 /**
   Returns the last fl_color() that was set.
   This can be used for state save/restore.
 */
-inline Fl_Color fl_color() {return fl_color_;}
+inline Fl_Color fl_color() {return fl_graphics_driver->color();}
 /** @} */
 
 /** \addtogroup fl_drawings

@@ -2238,7 +2238,6 @@ void Fl_Window::make_current()
 }
 
 // helper function to manage the current CGContext fl_gc
-extern Fl_Color fl_color_;
 extern class Fl_Font_Descriptor *fl_fontsize;
 extern void fl_font(class Fl_Font_Descriptor*);
 extern void fl_quartz_restore_line_style_();
@@ -2253,7 +2252,7 @@ void Fl_X::q_fill_context() {
     CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the context
     }
   fl_font(fl_fontsize);
-  fl_color(fl_color_);
+  fl_color(fl_graphics_driver->color());
   fl_quartz_restore_line_style_();
 }
 

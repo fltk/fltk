@@ -614,8 +614,8 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   // Use fltk's color allocator, copy the results to match what
   // XftCollorAllocValue returns:
   XftColor color;
-  color.pixel = fl_xpixel(fl_color_);
-  uchar r,g,b; Fl::get_color(fl_color_, r,g,b);
+  color.pixel = fl_xpixel(fl_graphics_driver->color());
+  uchar r,g,b; Fl::get_color(fl_graphics_driver->color(), r,g,b);
   color.color.red   = ((int)r)*0x101;
   color.color.green = ((int)g)*0x101;
   color.color.blue  = ((int)b)*0x101;
@@ -659,8 +659,8 @@ static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
   // Use fltk's color allocator, copy the results to match what
   // XftCollorAllocValue returns:
   XftColor color;
-  color.pixel = fl_xpixel(fl_color_);
-  uchar r,g,b; Fl::get_color(fl_color_, r,g,b);
+  color.pixel = fl_xpixel(fl_graphics_driver->color());
+  uchar r,g,b; Fl::get_color(fl_graphics_driver->color(), r,g,b);
   color.color.red   = ((int)r)*0x101;
   color.color.green = ((int)g)*0x101;
   color.color.blue  = ((int)b)*0x101;

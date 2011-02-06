@@ -114,6 +114,7 @@ public:
 class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
   Fl_Font font_; // current font
   Fl_Fontsize size_; // current font size
+  Fl_Color color_; // current color
   enum {LINE, LOOP, POLYGON, POINT_};
   int sptr;
   matrix stack[MATRIX_STACK_SIZE];
@@ -236,7 +237,7 @@ protected:
   /** \brief see fl_rtl_draw(const char *str, int n, int x, int y). */
   virtual void rtl_draw(const char *str, int n, int x, int y) = 0;
   /** \brief see fl_color(Fl_Color c). */
-  virtual void color(Fl_Color c) = 0;
+  virtual void color(Fl_Color c) {color_ = c;}
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
   virtual void color(uchar r, uchar g, uchar b) = 0;
   /** \brief see fl_point(int x, int y). */
@@ -350,10 +351,12 @@ public:
   static const char *class_id;
   /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
   virtual void font(Fl_Font face, Fl_Fontsize size) {font_ = face; size_ = size;}
-  /** \brief see fl_font(). */
+  /** \brief see fl_font(void). */
   Fl_Font font() {return font_; }
   /** \brief see fl_size(). */
   Fl_Fontsize size() {return size_; }
+  /** \brief see fl_color(void). */
+  Fl_Color color() {return color_;}
   /** \brief The destructor */
   virtual ~Fl_Graphics_Driver() {};
 };
