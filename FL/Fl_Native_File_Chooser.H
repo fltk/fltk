@@ -26,7 +26,7 @@
 //     http://www.fltk.org/str.php
 //
 
-/* \file
+/** \file
    Fl_Native_File_Chooser widget. */
 
 /**
