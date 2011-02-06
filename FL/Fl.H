@@ -979,7 +979,7 @@ public:
    @{ */
 
   // Multithreading support:
-  static void lock();
+  static int lock();
   static void unlock();
   static void awake(void* message = 0);
   /** See void awake(void* message=0). */
