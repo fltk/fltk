@@ -30,6 +30,17 @@
 // need to call Xlib directly.  These symbols may not exist on non-X
 // systems.
 
+/** \class Fl_Mac_App_Menu 
+ Mac OS-specific class allowing to localize the application menu.
+ 
+ These character strings are used to build the application menu. They can be localized
+ at run time to any UTF-8 text by placing instructions such as this \e very 
+ early in the program:
+ \verbatim
+ Fl_Mac_App_Menu::print = "Imprimer la fenêtre";
+ \endverbatim
+*/
+
 #if !defined(Fl_X_H) && !defined(FL_DOXYGEN) 
 #  define Fl_X_H
 

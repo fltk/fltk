@@ -209,16 +209,6 @@ extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0
  */
 extern int fl_mac_os_version;
 
-/** To localize the application menu.
- 
- These character strings are used to build the application menu. They can be localized
- at run time to any UTF-8 text by placing instructions such as these \e very 
- early in the program:
- \verbatim
- #include <FL/x.H>
- Fl_Mac_App_Menu::print = "Imprimer la fenêtre";
- \endverbatim
- */
 class Fl_Mac_App_Menu {
 public:
   /** Localizable text for the "About xxx" application menu item */
