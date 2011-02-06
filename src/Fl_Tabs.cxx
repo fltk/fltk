@@ -217,6 +217,10 @@ int Fl_Tabs::handle(int event) {
 	Fl::event() == FL_FOCUS ||
 	Fl::event() == FL_UNFOCUS) {
       redraw_tabs();
+#ifndef __APPLE__
+      // fix for STR #2552
+      if (Fl::event() == FL_FOCUS) return Fl_Group::handle(event);
+#endif
       if (Fl::event() == FL_FOCUS || Fl::event() == FL_UNFOCUS) return 0;
       else return 1;
     } else return Fl_Group::handle(event);
