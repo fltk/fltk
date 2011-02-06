@@ -52,9 +52,12 @@ static int can_xdbe() {
     int numscreens = 1;
     XdbeScreenVisualInfo *a = XdbeGetVisualInfo(fl_display,&root,&numscreens);
     if (!a) return 0;
-    for (int j = 0; j < a->count; j++)
+    for (int j = 0; j < a->count; j++) {
       if (a->visinfo[j].visual == fl_visual->visualid
-	  /*&& a->visinfo[j].perflevel > 0*/) {use_xdbe = 1; break;}
+	  /*&& a->visinfo[j].perflevel > 0*/) {
+        use_xdbe = 1; break;
+      }
+    }
     XdbeFreeVisualInfo(a);
   }
   return use_xdbe;
@@ -77,7 +80,7 @@ static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscree
  \param srcx,srcy origin in offscreen buffer of rectangle to copy
  */
 void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  if( fl_graphics_driver == Fl_Display_Device::display_device()->driver()) {
+  if (fl_graphics_driver == Fl_Display_Device::display_device()->driver()) {
     fl_copy_offscreen_to_display(x, y, w, h, pixmap, srcx, srcy);
   }
   else { // when copy is not to the display
@@ -93,7 +96,7 @@ void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx
 #if defined(USE_X11)
 
 static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-    XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y);
+  XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y);
 }
 
 
@@ -183,11 +186,11 @@ void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int src
   int to_display = Fl_Surface_Device::surface()->class_name() == Fl_Display_Device::class_id; // true iff display output
   if ( (to_display && fl_can_do_alpha_blending()) || Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
     alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
-    }
+  }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
   if (!alpha_ok) {
     BitBlt(fl_gc, x, y, w, h, new_gc, srcx, srcy, SRCCOPY);
-    }
+  }
   RestoreDC(new_gc, save);
   DeleteDC(new_gc);
 }
@@ -227,8 +230,7 @@ Fl_Offscreen fl_create_offscreen(int w, int h) {
   return (Fl_Offscreen)ctx;
 }
 
-static void bmProviderRelease (void *src, const void *data, size_t size)
-{
+static void bmProviderRelease (void *src, const void *data, size_t size) {
   CFIndex count = CFGetRetainCount(src);
   CFRelease(src);
   if(count == 1) free((void*)data);
@@ -336,8 +338,7 @@ void Fl_Double_Window::flush(int eraseoverlay) {
   if (!myi->other_xid) {
 #if USE_XDBE
     if (can_xdbe()) {
-      myi->other_xid =
-        XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeCopied);
+      myi->other_xid = XdbeAllocateBackBufferName(fl_display, fl_xid(this), XdbeCopied);
       myi->backbuffer_bad = 1;
     } else
 #endif
