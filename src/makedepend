@@ -299,7 +299,6 @@ Fl_Multi_Label.o: ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H
 Fl_Multi_Label.o: ../FL/Fl_Image.H ../FL/Fl_Multi_Label.H
 Fl_Native_File_Chooser.o: Fl_Native_File_Chooser_FLTK.cxx
 Fl_Native_File_Chooser.o: ../FL/Fl_Native_File_Chooser.H
-Fl_Native_File_Chooser.o: ../FL/Fl_Native_File_Chooser_FLTK.H
 Fl_Native_File_Chooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/fl_utf8.h
 Fl_Native_File_Chooser.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
 Fl_Native_File_Chooser.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H
@@ -375,7 +374,7 @@ Fl_Printer.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 Fl_Printer.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Enumerations.H
 Fl_Printer.o: ../FL/Fl_PostScript.H Fl_PostScript.cxx ../FL/Fl.H
 Fl_Printer.o: ../FL/fl_utf8.h ../FL/fl_ask.H ../FL/Fl_Native_File_Chooser.H
-Fl_Printer.o: ../FL/Fl_Native_File_Chooser_FLTK.H ../FL/Fl_File_Chooser.H
+Fl_Printer.o: ../FL/Fl_File_Chooser.H
 Fl_Printer.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
 Fl_Printer.o: ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H ../FL/Fl_Menu_Button.H
 Fl_Printer.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H

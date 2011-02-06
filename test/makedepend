@@ -175,7 +175,7 @@ editor.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
 editor.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Group.H
 editor.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
 editor.o: ../FL/Fl_Widget.H ../FL/fl_ask.H ../FL/Fl_Native_File_Chooser.H
-editor.o: ../FL/Fl_Native_File_Chooser_FLTK.H ../FL/Fl_File_Chooser.H
+editor.o: ../FL/Fl_File_Chooser.H
 editor.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H ../FL/Fl_Menu_Item.H
 editor.o: ../FL/Fl_Image.H ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H
 editor.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H
@@ -361,7 +361,6 @@ native-filechooser.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
 native-filechooser.o: ../FL/fl_ask.H ../FL/Fl_Window.H ../FL/Fl_Button.H
 native-filechooser.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Box.H
 native-filechooser.o: ../FL/Fl_Native_File_Chooser.H
-native-filechooser.o: ../FL/Fl_Native_File_Chooser_FLTK.H
 native-filechooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H
 native-filechooser.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
 native-filechooser.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
