@@ -3,7 +3,7 @@
 //
 // implementation of Fl_Device class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -61,6 +61,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver() {
   m = m0; 
   fl_matrix = &m; 
   p = (XPOINT *)0;
+  font_descriptor_ = NULL;
 };
 
 //

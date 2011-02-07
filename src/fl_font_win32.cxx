@@ -3,7 +3,7 @@
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -30,7 +30,7 @@
 static int fl_angle_ = 0;
 
 #ifndef FL_DOXYGEN
-Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize) {
   int weight = FW_NORMAL;
   int italic = 0;
   switch (*name++) {
@@ -41,7 +41,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
   default: name--;
   }
   fid = CreateFont(
-    -size, // negative makes it use "char size"
+    -fsize, // negative makes it use "char size"
     0,	            // logical average character width
     fl_angle_*10,	            // angle of escapement
     fl_angle_*10,	            // base-line orientation angle
@@ -69,10 +69,8 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize size) {
   listbase = 0;
   for (i = 0; i < 64; i++) glok[i] = 0;
 #endif
-  minsize = maxsize = size;
+  size = fsize;
 }
-
-Fl_Font_Descriptor* fl_fontsize;
 
 Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #if HAVE_GL
@@ -86,7 +84,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 //  glDeleteLists(listbase+base,size);
 // }
 #endif
-  if (this == fl_fontsize) fl_fontsize = 0;
+  if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
   DeleteObject(fid);
   int i;
   for (i = 0; i < 64; i++) free(width[i]);
@@ -122,7 +120,7 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
-    if (f->minsize <= size && f->maxsize >= size && f->angle == angle) return f;
+    if (f->size == size && f->angle == angle) return f;
   f = new Fl_Font_Descriptor(s->name, size);
   f->next = s->first;
   s->first = f;
@@ -143,7 +141,7 @@ static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   }
   if (fnum == fl_font_ && size == fl_size_ && angle == fl_angle_) return;
   fl_font_ = fnum; fl_size_ = size; fl_angle_ = angle;
-  fl_fontsize = find(fnum, size, angle);
+  fl_graphics_driver->font_descriptor( find(fnum, size, angle) );
 }
 
 void Fl_GDI_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
@@ -152,11 +150,13 @@ void Fl_GDI_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 int fl_height() {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   if (fl_fontsize) return (fl_fontsize->metr.tmAscent + fl_fontsize->metr.tmDescent);
   else return -1;
 }
 
 int fl_descent() {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   if (fl_fontsize) return fl_fontsize->metr.tmDescent;
   else return -1;
 }
@@ -168,7 +168,7 @@ static int wstr_len    = 0;
 
 double fl_width(const char* c, int n) {
   int i = 0;
-  if (!fl_fontsize) return -1.0;
+  if (!fl_graphics_driver->font_descriptor()) return -1.0;
   double w = 0.0;
   char *end = (char *)&c[n];
   while (i < n) {
@@ -186,6 +186,7 @@ double fl_width(const char* c, int n) {
 }
 
 double fl_width(unsigned int c) {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   unsigned int r;
   r = (c & 0xFC00) >> 10;
   if (!fl_fontsize->width[r]) {
@@ -258,6 +259,7 @@ static unsigned wc_len = 0; // current string buffer dimension
 static WORD *gi = NULL; // glyph indices array
 // Function to determine the extent of the "inked" area of the glyphs in a string
 void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   if (!fl_fontsize) {
     w = 0; h = 0;
     dx = dy = 0;
@@ -340,7 +342,7 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   int lx = 0;
   char *end = (char *)&str[n];
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-   SelectObject(fl_gc, fl_fontsize->fid);
+   SelectObject(fl_gc, fl_graphics_driver->font_descriptor()->fid);
   while (i < n) {
     unsigned int u;
 	unsigned int u1;
@@ -369,7 +371,7 @@ void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int 
   int i = 0, i2=0;
   char *end = (char *)&str[n];
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-  SelectObject(fl_gc, fl_fontsize->fid);
+  SelectObject(fl_gc, fl_graphics_driver->font_descriptor()->fid);
   //unsigned short ucs[n]; //only GCC, but not MSVC
   unsigned short* ucs = new unsigned short[n];
   while (i < n) {
@@ -397,7 +399,7 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   }
 
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-  SelectObject(fl_gc, fl_fontsize->fid);
+  SelectObject(fl_gc, fl_graphics_driver->font_descriptor()->fid);
 #ifdef RTL_CHAR_BY_CHAR
   int i = 0;
   int lx = 0;

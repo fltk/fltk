@@ -3,7 +3,7 @@
 //
 // MacOS font selection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -48,7 +48,6 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
     // OpenGL needs those for its font handling
   q_name = strdup(name);
   size = Size;
-  minsize = maxsize = Size;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 if (fl_mac_os_version == 0) fl_open_display();
 if (fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
@@ -162,8 +161,6 @@ else {
 #endif
 }
 
-Fl_Font_Descriptor* fl_fontsize = 0L;
-
 Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 /*
 #if HAVE_GL
@@ -179,7 +176,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 // }
 #endif
   */
-  if (this == fl_fontsize) fl_fontsize = 0;
+  if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 0x1050)  {
     CFRelease(fontref);
@@ -230,17 +227,12 @@ static UniChar *mac_Utf8_to_Utf16(const char *txt, int len, int *new_len)
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
-void fl_font(Fl_Font_Descriptor* s) {
-  fl_fontsize = s;
-  // we will use fl_fontsize later to access the required style and layout
-}
-
 static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
   if (!s->name) s = fl_fonts; // use 0 if fnum undefined
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
-    if (f->minsize <= size && f->maxsize >= size) return f;
+    if (f->size == size) return f;
   f = new Fl_Font_Descriptor(s->name, size);
   f->next = s->first;
   s->first = f;
@@ -256,16 +248,18 @@ void Fl_Quartz_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
     return;
   }
   Fl_Graphics_Driver::font(fnum, size);
-  fl_font(find(fnum, size));
+  fl_graphics_driver->font_descriptor( find(fnum, size) );
 }
 
 int fl_height() {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   check_default_font();
   if (fl_fontsize) return fl_fontsize->ascent+fl_fontsize->descent;
   else return -1;
 }
 
 int fl_descent() {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   check_default_font();
   if (fl_fontsize) 
     return fl_fontsize->descent+1;
@@ -276,6 +270,7 @@ int fl_descent() {
 // returns width of a pair of UniChar's in the surrogate range
 static CGFloat surrogate_width(const UniChar *txt)
 {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, txt, 2, kCFAllocatorNull);
   CTFontRef font2 = CTFontCreateForString(fl_fontsize->fontref, str, CFRangeMake(0,2));
   CFRelease(str);
@@ -290,6 +285,7 @@ static CGFloat surrogate_width(const UniChar *txt)
 #endif
 
 static double fl_width(const UniChar* txt, int n) {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   check_default_font();
   if (!fl_fontsize) {
     check_default_font(); // avoid a crash!
@@ -387,6 +383,7 @@ double fl_width(unsigned int wc) {
 
 // text extent calculation
 void fl_text_extents(const char *str8, int n, int &dx, int &dy, int &w, int &h) {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   if (!fl_fontsize) {
     check_default_font(); // avoid a crash!
     if (!fl_fontsize)
@@ -470,6 +467,7 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 
 
 void fl_draw(const char *str, int n, float x, float y) {
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   // avoid a crash if no font has been selected by user yet !
   check_default_font();
   // convert to UTF-16 first

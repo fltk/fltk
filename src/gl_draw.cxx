@@ -3,7 +3,7 @@
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -77,6 +77,7 @@ static Fl_Font_Descriptor *gl_fontsize;
   */
 void  gl_font(int fontid, int size) {
   fl_font(fontid, size);
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
 #if !GL_DRAW_USES_TEXTURES
   if (!fl_fontsize->listbase) {
 
@@ -482,7 +483,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   if (base == NULL) return -1;
   fl_gc = CGBitmapContextCreate(base, fifo[current].width, fifo[current].height, 8, fifo[current].width*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
-  fl_fontsize = gl_fontsize;
+  fl_graphics_driver->font_descriptor(gl_fontsize);
   GLfloat colors[4];
   glGetFloatv(GL_CURRENT_COLOR, colors);
   fl_color((uchar)(colors[0]*255), (uchar)(colors[1]*255), (uchar)(colors[2]*255));

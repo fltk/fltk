@@ -3,7 +3,7 @@
 //
 // Standard X11 font selection code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -38,7 +38,6 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
 #  endif
 }
 
-Fl_Font_Descriptor* fl_fontsize;
 Fl_XFont_On_Demand fl_xfont;
 
 Fl_Font_Descriptor::~Fl_Font_Descriptor() {
@@ -53,8 +52,8 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 //  glDeleteLists(listbase+base,size);
 // }
 #  endif
-  if (this == fl_fontsize) {
-    fl_fontsize = 0;
+  if (this == fl_graphics_driver->font_descriptor()) {
+    fl_graphics_driver->font_descriptor(NULL);
     fl_xfont = 0;
   }
   XFreeUtf8FontStruct(fl_display, font);
@@ -87,7 +86,7 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 #define MAXSIZE 32767
 
-#define current_font (fl_fontsize->font)
+#define current_font (fl_graphics_driver->font_descriptor()->font)
 
 // return dash number N, or pointer to ending null if none:
 const char* fl_font_word(const char* p, int n) {
@@ -243,13 +242,12 @@ static Fl_Font_Descriptor* find(int fnum, int size) {
   if (!s->name) s = fl_fonts; // use font 0 if still undefined
   Fl_Font_Descriptor* f;
   for (f = s->first; f; f = f->next)
-    if (f->minsize <= size && f->maxsize >= size) return f;
+    if (f->size == size) return f;
   fl_open_display();
 
   name = put_font_size(s->name, size);
   f = new Fl_Font_Descriptor(name);
-  f->minsize = size;
-  f->maxsize = size;
+  f->size = size;
   f->next = s->first;
   s->first = f;
   free(name);
@@ -275,8 +273,8 @@ void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum == Fl_Graphics_Driver::font() && size == Fl_Graphics_Driver::size()) return;
   Fl_Graphics_Driver::font(fnum, size);
   Fl_Font_Descriptor* f = find(fnum, size);
-  if (f != fl_fontsize) {
-    fl_fontsize = f;
+  if (f != fl_graphics_driver->font_descriptor()) {
+    fl_graphics_driver->font_descriptor(f);
     fl_xfont = current_font->fonts[0];
     font_gc = 0;
   }

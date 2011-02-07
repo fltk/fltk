@@ -3,7 +3,7 @@
 //
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -2238,8 +2238,6 @@ void Fl_Window::make_current()
 }
 
 // helper function to manage the current CGContext fl_gc
-extern class Fl_Font_Descriptor *fl_fontsize;
-extern void fl_font(class Fl_Font_Descriptor*);
 extern void fl_quartz_restore_line_style_();
 
 // FLTK has only one global graphics state. This function copies the FLTK state into the
@@ -2251,7 +2249,6 @@ void Fl_X::q_fill_context() {
     CGContextTranslateCTM(fl_gc, 0.5, hgt-0.5f);
     CGContextScaleCTM(fl_gc, 1.0f, -1.0f); // now 0,0 is top-left point of the context
     }
-  fl_font(fl_fontsize);
   fl_color(fl_graphics_driver->color());
   fl_quartz_restore_line_style_();
 }

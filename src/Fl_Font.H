@@ -51,6 +51,7 @@ class Fl_Font_Descriptor {
 public:
   /** linked list for this Fl_Fontdesc */
   Fl_Font_Descriptor *next;	
+  Fl_Fontsize size; /**< font size */
 #ifndef FL_DOXYGEN // don't bother with platorm dependant details in the doc. 
 #  ifdef WIN32
   HFONT fid;
@@ -69,19 +70,15 @@ public:
   ATSUStyle style;
   short ascent, descent, q_width;
   char *q_name;
-  int size;
 #  elif USE_XFT
   XftFont* font;
-  const char* encoding;
-  Fl_Fontsize size;
+  //const char* encoding;
   int angle;
-  FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
+  FL_EXPORT Fl_Font_Descriptor(const char* xfontname, int angle);
 #  else
   XUtf8FontStruct* font;	// X UTF-8 font information
   FL_EXPORT Fl_Font_Descriptor(const char* xfontname);
 #  endif
-  Fl_Fontsize minsize;		// smallest point size that should use this
-  Fl_Fontsize maxsize;		// largest point size that should use this
 #  if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
 #ifndef __APPLE_QUARTZ__

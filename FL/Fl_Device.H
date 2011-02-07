@@ -4,7 +4,7 @@
 // Definition of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -41,6 +41,7 @@
 #include <FL/Fl_RGB_Image.H>
 
 class Fl_Graphics_Driver;
+class Fl_Font_Descriptor;
 /** \brief Points to the driver that currently receives all graphics requests */
 FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
 
@@ -129,6 +130,7 @@ class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
   int numcount;
   int counts[20];
 #endif
+  Fl_Font_Descriptor *font_descriptor_;
   void transformed_vertex0(COORD_T x, COORD_T y);
   void fixloop();
   
@@ -357,6 +359,10 @@ public:
   Fl_Fontsize size() {return size_; }
   /** \brief see fl_color(void). */
   Fl_Color color() {return color_;}
+  /** Returns a pointer to the current Fl_Font_Descriptor for the graphics driver */
+  inline Fl_Font_Descriptor *font_descriptor() { return font_descriptor_;}
+  /** Sets the current Fl_Font_Descriptor for the graphics driver */
+  inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   /** \brief The destructor */
   virtual ~Fl_Graphics_Driver() {};
 };

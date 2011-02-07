@@ -3,7 +3,7 @@
 //
 // Xft font code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2001-2010 Bill Spitzak and others.
+// Copyright 2001-2011 Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -108,42 +108,36 @@ static Fl_Fontdesc built_in_table[] = {
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
-#define current_font (fl_fontsize->font)
+#define current_font (fl_graphics_driver->font_descriptor()->font)
 
 static Fl_Font fl_font_ = 0;
 static Fl_Fontsize fl_size_ = 0;
-int fl_angle_ = 0; // internal for rotating text support
 Fl_XFont_On_Demand fl_xfont;
 void *fl_xftfont = 0;
 //const char* fl_encoding_ = "iso8859-1";
 const char* fl_encoding_ = "iso10646-1";
-Fl_Font_Descriptor* fl_fontsize = 0;
 
-
-
-void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
+static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // special case to stop font caching
-    fl_font_ = 0; fl_size_ = 0; fl_angle_ = 0;
+    fl_font_ = 0; fl_size_ = 0;
     return;
   }
-  if (fnum == fl_font_ && size == fl_size_ && angle == fl_angle_
-      && fl_fontsize)
-//      && !strcasecmp(fl_fontsize->encoding, fl_encoding_))
+  Fl_Font_Descriptor* f = fl_graphics_driver->font_descriptor();
+  if (fnum == fl_font_ && size == fl_size_ && f && f->angle == angle)
     return;
-  fl_font_ = fnum; fl_size_ = size; fl_angle_ = angle;
+  fl_font_ = fnum; fl_size_ = size;
   Fl_Fontdesc *font = fl_fonts + fnum;
-  Fl_Font_Descriptor* f;
   // search the fontsizes we have generated already
   for (f = font->first; f; f = f->next) {
     if (f->size == size && f->angle == angle)// && !strcasecmp(f->encoding, fl_encoding_))
       break;
   }
   if (!f) {
-    f = new Fl_Font_Descriptor(font->name);
+    f = new Fl_Font_Descriptor(font->name, angle);
     f->next = font->first;
     font->first = f;
   }
-  fl_fontsize = f;
+  fl_graphics_driver->font_descriptor(f);
 #if XFT_MAJOR < 2
   fl_xfont    = f->font->u.core.font;
 #else
@@ -237,11 +231,11 @@ static XftFont* fontopen(const char* name, bool core, int angle) {
     XftPatternAddDouble (fnt_pat, XFT_PIXEL_SIZE, (double)fl_size_);
     XftPatternAddString (fnt_pat, XFT_ENCODING, fl_encoding_);
 
-    // rotate font if fl_angle_!=0
-    if (fl_angle_ !=0) {
+    // rotate font if angle!=0
+    if (angle !=0) {
       XftMatrix m;
       XftMatrixInit(&m);
-      XftMatrixRotate(&m,cos(M_PI*fl_angle_/180.),sin(M_PI*fl_angle_/180.));
+      XftMatrixRotate(&m,cos(M_PI*angle/180.),sin(M_PI*angle/180.));
       XftPatternAddMatrix (fnt_pat, XFT_MATRIX,&m);
     }
 
@@ -344,10 +338,10 @@ puts("Font Opened"); fflush(stdout);
   }
 } // end of fontopen
 
-Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, int fangle) {
 //  encoding = fl_encoding_;
   size = fl_size_;
-  angle = fl_angle_;
+  angle = fangle;
 #if HAVE_GL
   listbase = 0;
 #endif // HAVE_GL
@@ -355,7 +349,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name) {
 }
 
 Fl_Font_Descriptor::~Fl_Font_Descriptor() {
-  if (this == fl_fontsize) fl_fontsize = 0;
+  if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
 //  XftFontClose(fl_display, font);
 }
 
