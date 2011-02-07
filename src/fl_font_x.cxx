@@ -302,15 +302,20 @@ double fl_width(unsigned int c) {
 
 
 void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
+  if (font_gc != fl_gc) {
+    if (!current_font) fl_font(FL_HELVETICA, 14);
+    font_gc = fl_gc;
+    XSetFont(fl_display, fl_gc, current_font->fid);
+  }
+  int xx, yy, ww, hh;
+  XUtf8_measure_extents(fl_display, fl_window, current_font, fl_gc, &xx, &yy, &ww, &hh, c, n);
 
-#if defined(__GNUC__)
-#warning fl_text_extents is only a test stub in Xlib build at present
-#endif /*__GNUC__*/
-
-  W = 0; H = 0;
-  fl_measure(c, W, H, 0);
-  dx = 0;
-  dy = fl_descent() - H;
+  W = ww; H = hh; dx = xx; dy = yy;
+// This is the safe but mostly wrong thing we used to do...
+//  W = 0; H = 0;
+//  fl_measure(c, W, H, 0);
+//  dx = 0;
+//  dy = fl_descent() - H;
 } // fl_text_extents
 
 
