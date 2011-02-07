@@ -3,7 +3,7 @@
 //
 // Font definitions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -84,8 +84,10 @@ public:
   Fl_Fontsize maxsize;		// largest point size that should use this
 #  if HAVE_GL
   unsigned int listbase;// base of display list, 0 = none
+#ifndef __APPLE_QUARTZ__
   char glok[64];
-#  endif
+#endif // __APPLE_QUARTZ__
+#  endif // HAVE_GL
 
   FL_EXPORT ~Fl_Font_Descriptor();
 
