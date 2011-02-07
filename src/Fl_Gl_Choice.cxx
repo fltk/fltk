@@ -37,7 +37,7 @@
 #  include <FL/fl_utf8.h>
 
 #  ifdef __APPLE__
-#    include <ApplicationServices/ApplicationServices.H>
+#    include <ApplicationServices/ApplicationServices.h>
 #    include <FL/Fl_Window.H>
 #  endif
 
