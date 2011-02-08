@@ -110,8 +110,6 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 #define current_font (fl_graphics_driver->font_descriptor()->font)
 
-static Fl_Font fl_font_ = 0;
-static Fl_Fontsize fl_size_ = 0;
 Fl_XFont_On_Demand fl_xfont;
 void *fl_xftfont = 0;
 //const char* fl_encoding_ = "iso8859-1";
@@ -119,13 +117,13 @@ const char* fl_encoding_ = "iso10646-1";
 
 static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // special case to stop font caching
-    fl_font_ = 0; fl_size_ = 0;
+    fl_graphics_driver->Fl_Graphics_Driver::font(0, 0);
     return;
   }
   Fl_Font_Descriptor* f = fl_graphics_driver->font_descriptor();
-  if (fnum == fl_font_ && size == fl_size_ && f && f->angle == angle)
+  if (fnum == fl_graphics_driver->font() && size == fl_graphics_driver->size() && f && f->angle == angle)
     return;
-  fl_font_ = fnum; fl_size_ = size;
+  fl_graphics_driver->Fl_Graphics_Driver::font(fnum, size);
   Fl_Fontdesc *font = fl_fonts + fnum;
   // search the fontsizes we have generated already
   for (f = font->first; f; f = f->next) {
@@ -148,7 +146,6 @@ static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
 
 void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(fnum,size,0);
-  Fl_Graphics_Driver::font(fl_font_, fl_size_);
 }
 
 static XftFont* fontopen(const char* name, bool core, int angle) {
@@ -228,7 +225,7 @@ static XftFont* fontopen(const char* name, bool core, int angle) {
     // Construct a match pattern for the font we want...
     XftPatternAddInteger(fnt_pat, XFT_WEIGHT, weight);
     XftPatternAddInteger(fnt_pat, XFT_SLANT, slant);
-    XftPatternAddDouble (fnt_pat, XFT_PIXEL_SIZE, (double)fl_size_);
+    XftPatternAddDouble (fnt_pat, XFT_PIXEL_SIZE, (double)fl_graphics_driver->size());
     XftPatternAddString (fnt_pat, XFT_ENCODING, fl_encoding_);
 
     // rotate font if angle!=0
@@ -288,7 +285,7 @@ static XftFont* fontopen(const char* name, bool core, int angle) {
       // last chance, just open any font in the right size
       the_font = XftFontOpen (fl_display, fl_screen,
                         XFT_FAMILY, XftTypeString, "sans",
-                        XFT_SIZE, XftTypeDouble, (double)fl_size_,
+                        XFT_SIZE, XftTypeDouble, (double)fl_graphics_driver->size(),
                         NULL);
       XftPatternDestroy(fnt_pat);
       if (!the_font) {
@@ -340,7 +337,6 @@ puts("Font Opened"); fflush(stdout);
 
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, int fangle) {
 //  encoding = fl_encoding_;
-  size = fl_size_;
   angle = fangle;
 #if HAVE_GL
   listbase = 0;
@@ -458,13 +454,14 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
 //       well for the fltk "built-in" font names.
 static XFontStruct* load_xfont_for_xft2(void) {
   XFontStruct* xgl_font = 0;
-  int size = fl_size_;
+  int size = fl_graphics_driver->size();
+  int fnum = fl_graphics_driver->font();
   const char *wt_med = "medium";
   const char *wt_bold = "bold";
   const char *weight = wt_med; // no specifc weight requested - accept any
   char slant = 'r';   // regular non-italic by default
   char xlfd[128];     // we will put our synthetic XLFD in here
-  char *pc = strdup(fl_fonts[fl_font_].name); // what font were we asked for?
+  char *pc = strdup(fl_fonts[fnum].name); // what font were we asked for?
   const char *name = pc;    // keep a handle to the original name for freeing later
   // Parse the "fltk-name" of the font
   switch (*name++) {
@@ -531,11 +528,11 @@ XFontStruct* fl_xxfont() {
   static int glsize = 0;
   static int glfont = -1;
   // Do we need to load a new font?
-  if ((!xgl_font) || (glsize != fl_size_) || (glfont != fl_font_)) {
+  if ((!xgl_font) || (glsize != fl_graphics_driver->size()) || (glfont != fl_graphics_driver->font())) {
     // create a dummy XLFD for some font of the appropriate size...
     if (xgl_font) XFreeFont(fl_display, xgl_font); // font already loaded, free it - this *might* be a Bad Idea
-    glsize = fl_size_; // record current font size
-    glfont = fl_font_; // and face
+    glsize = fl_graphics_driver->size(); // record current font size
+    glfont = fl_graphics_driver->font(); // and face
     xgl_font = load_xfont_for_xft2();
   }
   return xgl_font;
@@ -543,7 +540,7 @@ XFontStruct* fl_xxfont() {
   if (current_font->core) return current_font->u.core.font; // is the current font a "core" font? If so, use it.
   static XftFont* xftfont;
   if (xftfont) XftFontClose (fl_display, xftfont);
-  xftfont = fontopen(fl_fonts[fl_font_].name, true); // else request XFT to load a suitable "core" font instead.
+  xftfont = fontopen(fl_fonts[fl_graphics_driver->font()].name, true); // else request XFT to load a suitable "core" font instead.
   return xftfont->u.core.font;
 #  endif // XFT_MAJOR > 1
 }
@@ -624,9 +621,9 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
-  fl_font(fl_font_, fl_size_, angle);
+  fl_font(fl_graphics_driver->font(), fl_graphics_driver->size(), angle);
   fl_draw(str, n, (int)x, (int)y);
-  fl_font(fl_font_, fl_size_);
+  fl_font(fl_graphics_driver->font(), fl_graphics_driver->size());
 }
 
 static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
