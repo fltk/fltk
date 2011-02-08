@@ -301,7 +301,7 @@ load_fonts(Display 	   *dpy,
 }
 
 /*********************************************************************/
-/** Creates an array of XFontStruct acording to the comma separated  **/
+/** Creates an array of XFontStruct acording to the comma separated **/
 /** list of fonts. XLoad all fonts.				    **/
 /*********************************************************************/
 XUtf8FontStruct *
@@ -352,7 +352,7 @@ XUtf8DrawRtlString(Display 		*display,
   int 		first;		/* first valid font index */
   int 		last_fnum;	/* font index of the previous char */
   int 		nb_font;	/* quantity of fonts in the font array */
-  char 		glyph[2];	/* byte1 and byte1 value of the UTF-8 char */
+  char 		glyph[2];	/* byte1 and byte2 value of the UTF-8 char */
   int		*ranges;	/* sub range of iso10646 */
 
   nb_font = font_set->nb_font;
@@ -472,7 +472,7 @@ XUtf8DrawString(Display 	*display,
   int 		first;      /* first valid font index */
   int 		last_fnum;  /* font index of the previous char */
   int 		nb_font;    /* quantity of fonts in the font array */
-  char 		glyph[2];   /* byte0 and byte1 value of the UTF-8 char */
+  char 		glyph[2];   /* byte1 and byte2 value of the UTF-8 char */
   int		*ranges;    /* sub range of iso10646 */
 
   nb_font = font_set->nb_font;
@@ -567,7 +567,7 @@ XUtf8DrawString(Display 	*display,
 /*****************************************************************************/
 /** Measure the inked extents of a UTF-8 string using multiple fonts as     **/
 /** needed. Tries to mirror the behaviour of the draw function              **/
-/** XUtf8DrawString as closely as possible.                                 **/
+/** XUtf8DrawString() as closely as possible to get consistent sizes.       **/
 /*****************************************************************************/
 void
 XUtf8_measure_extents(
@@ -589,13 +589,14 @@ XUtf8_measure_extents(
   int 		first;      /* first valid font index */
   int 		last_fnum;  /* font index of the previous char */
   int 		nb_font;    /* quantity of fonts in the font array */
-  char 		glyph[2];   /* byte0 and byte1 value of the UTF-8 char */
+  char 		glyph[2];   /* byte1 and byte2 value of the UTF-8 char */
   int		*ranges;    /* sub range of iso10646 */
 
-  int wd = 0; /* accumulates the width */
-  int ht = 0; /* find max height in text */
-  int yt = 0x7FFFFFFF; /* delta-y found */
-  int res, hs;
+  int wd = 0; /* accumulates the width of the text */
+  int ht = 0; /* used to find max height in text */
+  int hs;     /* "height sum" of current text segment */
+  int yt = 0x7FFFFFFF; /* used to find bounding rectangle delta-y */
+  int res; /* result from calling XTextExtents16() - we should test this is OK! */
 
   XCharStruct sizes;
   int dir_ret = 0;
@@ -702,10 +703,10 @@ XUtf8_measure_extents(
   if(hs > ht) ht = hs; /* new height exceeds previous height */
   if(yt > (-sizes.ascent)) yt = -sizes.ascent; /* delta y offset */
   /* return values */
-  *ww = wd;
-  *hh = ht;
-  *xx = 0;
-  *yy = yt;
+  *ww = wd; /* width of inked area rectangle */
+  *hh = ht; /* max height of inked area rectangle */
+  *xx = 0;  /* x-offset from origin to start of inked area - this is wrong! */
+  *yy = yt; /* y-offset from origin to start of inked rectangle */
 }
 
 
@@ -726,7 +727,7 @@ XUtf8TextWidth(XUtf8FontStruct 	*font_set,
   int 		first;      /* first valid font index */
   int 		last_fnum;  /* font index of the previous char */
   int 		nb_font;    /* quantity of fonts in the font array */
-  char 		glyph[2];   /* byte1 and byte1 value of the UTF-8 char */
+  char 		glyph[2];   /* byte1 and byte2 value of the UTF-8 char */
   int		*ranges;    /* sub range of iso10646 */
 
   nb_font = font_set->nb_font;
@@ -836,7 +837,7 @@ XGetUtf8FontAndGlyph(XUtf8FontStruct  *font_set,
   int             first;      /* first valid font index */
   int             last_fnum;  /* font index of the previous char */
   int             nb_font;    /* quantity of fonts in the font array */
-  char 		  glyph[2];   /* byte1 and byte1 value of the UTF-8 char */
+  char 		  glyph[2];   /* byte1 and byte2 value of the UTF-8 char */
   int             *ranges;    /* sub range of iso10646 */
 
   nb_font = font_set->nb_font;
@@ -906,7 +907,7 @@ XUtf8UcsWidth(XUtf8FontStruct  *font_set,
   int 		first;      /* first valid font index */
   int 		last_fnum;  /* font index of the previous char */
   int 		nb_font;    /* quantity of fonts in the font array */
-  char 		glyph[2];   /* byte1 and byte1 value of the UTF-8 char */
+  char 		glyph[2];   /* byte1 and byte2 value of the UTF-8 char */
   int		*ranges;    /* sub range of iso10646 */
 
   nb_font = font_set->nb_font;
