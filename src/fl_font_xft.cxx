@@ -384,17 +384,17 @@ static void utf8extents(const char *str, int n, XGlyphInfo *extents)
 }
 
 int fl_height() {
-  if (current_font) return current_font->ascent + current_font->descent;
+  if (fl_graphics_driver->font_descriptor()) return current_font->ascent + current_font->descent;
   else return -1;
 }
 
 int fl_descent() {
-  if (current_font) return current_font->descent;
+  if (fl_graphics_driver->font_descriptor()) return current_font->descent;
   else return -1;
 }
 
 double fl_width(const char *str, int n) {
-  if (!current_font) return -1.0;
+  if (!fl_graphics_driver->font_descriptor()) return -1.0;
   XGlyphInfo i;
   utf8extents(str, n, &i);
   return i.xOff;
@@ -405,7 +405,7 @@ double fl_width(uchar c) {
 }
 
 double fl_width(FcChar32 *str, int n) {
-  if (!current_font) return -1.0;
+  if (!fl_graphics_driver->font_descriptor()) return -1.0;
   XGlyphInfo i;
   XftTextExtents32(fl_display, current_font, str, n, &i);
   return i.xOff;
@@ -416,7 +416,7 @@ double fl_width(unsigned int c) {
 }
 
 void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
-  if (!current_font) {
+  if (!fl_graphics_driver->font_descriptor()) {
     w = h = 0;
     dx = dy = 0;
     return;
@@ -579,8 +579,8 @@ void fl_destroy_xft_draw(Window id) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
-  if ( !current_font ) {
-    fl_font(FL_HELVETICA, 14);
+  if ( !fl_graphics_driver->font_descriptor() ) {
+    fl_font(FL_HELVETICA, FL_NORMAL_SIZE);
   }
 #if USE_OVERLAY
   XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
