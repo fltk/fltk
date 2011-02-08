@@ -3,7 +3,7 @@
 //
 // More Fl_File_Chooser routines.
 //
-// Copyright 1999-2010 by Michael Sweet.
+// Copyright 1999-2011 by Michael Sweet.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1410,7 +1410,7 @@ Fl_File_Chooser::update_preview()
       // Show the first 1k of text...
       int size = previewBox->h() / 20;
       if (size < 6) size = 6;
-      else if (size > 14) size = 14;
+      else if (size > FL_NORMAL_SIZE) size = FL_NORMAL_SIZE;
 
       previewBox->label(preview_text_);
       previewBox->align((Fl_Align)(FL_ALIGN_CLIP | FL_ALIGN_INSIDE |

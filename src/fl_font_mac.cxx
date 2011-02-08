@@ -31,7 +31,7 @@
 extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short* dst, unsigned dstlen);
 
 // if no font has been selected yet by the user, get one.
-#define check_default_font() {if (!fl_fontsize) fl_font(0, 12);}
+#define check_default_font() {if (!fl_fontsize) fl_font(FL_HELVETICA, FL_NORMAL_SIZE);}
 
 static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5

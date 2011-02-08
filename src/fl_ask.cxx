@@ -3,7 +3,7 @@
 //
 // Standard dialog functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -55,7 +55,7 @@ static Fl_Input *input;
 static int ret_val;
 static const char *iconlabel = "?";
 Fl_Font fl_message_font_ = FL_HELVETICA;
-Fl_Fontsize fl_message_size_ = 14;
+Fl_Fontsize fl_message_size_ = -1;
 #ifdef __APPLE__
 extern "C" void NSBeep(void);
 #endif
@@ -127,7 +127,7 @@ void resizeform() {
   int	x, w, h, max_w, max_h;
 	const int icon_size = 50;
 
-  fl_font(fl_message_font_, fl_message_size_);
+  fl_font(message->labelfont(), message->labelsize());
   message_w = message_h = 0;
   fl_measure(message->label(), message_w, message_h);
 
@@ -211,7 +211,10 @@ static int innards(const char* fmt, va_list ap,
   }
 
   message->labelfont(fl_message_font_);
-  message->labelsize(fl_message_size_);
+  if (fl_message_size_ == -1)
+    message->labelsize(FL_NORMAL_SIZE);
+  else
+    message->labelsize(fl_message_size_);
   if (b0) {button[0]->show(); button[0]->label(b0); button[1]->position(210,70);}
   else {button[0]->hide(); button[1]->position(310,70);}
   if (b1) {button[1]->show(); button[1]->label(b1);}

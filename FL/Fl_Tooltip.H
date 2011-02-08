@@ -3,7 +3,7 @@
 //
 // Tooltip header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -72,7 +72,7 @@ public:
   /**    Sets the typeface for the tooltip text.  */
   static void font(Fl_Font i) { font_ = i; }
   /**    Gets the size of the tooltip text.  */
-  static Fl_Fontsize size() { return size_; }
+  static Fl_Fontsize size() { return (size_ == -1 ? FL_NORMAL_SIZE : size_); }
   /**    Sets the size of the tooltip text.  */
   static void size(Fl_Fontsize s) { size_ = s; }
   /** Gets the background color for tooltips. The default background color is a pale yellow.  */
