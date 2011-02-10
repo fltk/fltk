@@ -926,10 +926,10 @@ static const char *_fontNames[] = {
 };
 
 void Fl_PostScript_Graphics_Driver::font(int f, int s) {
-  if (f >= FL_FREE_FONT)
-    f = FL_COURIER;
-  fprintf(output, "/%s SF\n" , _fontNames[f]);
-  fprintf(output,"%i FS\n", s);
+  if (f < FL_FREE_FONT) {
+    fprintf(output, "/%s SF\n" , _fontNames[f]);
+    fprintf(output,"%i FS\n", s);
+    }
   Fl_Display_Device::display_device()->driver()->font(f,s); // Use display fonts for font measurement
   Fl_Graphics_Driver::font(f, s);
 }
@@ -994,11 +994,16 @@ static uchar *calc_mask(uchar *img, int w, int h, Fl_Color bg)
 
 // write to PostScript a bitmap image of a UTF8 string
 static void transformed_draw_extra(const char* str, int n, double x, double y, int w, FILE *output) {
-  const float scale = 3; // scale for bitmask computation
+  // scale for bitmask computation
+#if defined(USE_X11) && !USE_XFT
+  const float scale = 1; // don't scale because we can't expect to have scalable fonts
+#else
+  const float scale = 3;
+#endif
   Fl_Fontsize old_size = fl_size();
-  fl_font(fl_font(), (Fl_Fontsize)(scale * old_size) );
+  Fl_Font fontnum = fl_font();
   w =  (int)(w *scale + 0.5);
-  int h = fl_height();
+  int h = (int)(fl_height() * scale);
   // create an offscreen image of the string
   Fl_Color text_color = fl_color();
   Fl_Color bg_color = fl_contrast(FL_WHITE, text_color);
@@ -1008,11 +1013,20 @@ static void transformed_draw_extra(const char* str, int n, double x, double y, i
   // color offscreen background with a shade contrasting with the text color
   fl_rectf(0, 0, w+2, (int)(h+3*scale) );
   fl_color(text_color);
+#if defined(USE_X11) && !USE_XFT
+  // force seeing this font as new so it's applied to the offscreen graphics context
+  fl_graphics_driver->font_descriptor(NULL);
+  fl_graphics_driver->Fl_Graphics_Driver::font(fontnum, 0);
+#endif
+  fl_font(fontnum, (Fl_Fontsize)(scale * old_size) );
   fl_draw(str, n, 1, (int)(h * 0.8) ); // draw string in offscreen
+#ifdef WIN32
+  fl_font(0, FL_NORMAL_SIZE); // TODO: find something better
+#endif
   // read (most of) the offscreen image
   uchar *img = fl_read_image(NULL, 1, 1, w, h, 0);
   fl_end_offscreen();
-  fl_font(fl_font(), old_size);
+  fl_font(fontnum, old_size);
   fl_delete_offscreen(off);
   // compute the mask of what is not the background
   uchar *mask = calc_mask(img, w, h, bg_color);
@@ -1063,6 +1077,10 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   // compute display width of string
   int width = (int)fl_width(str, n);
   if (width == 0) return;
+  if (fl_font() >= FL_FREE_FONT) {
+    transformed_draw_extra(str, n, x, y, width, output);
+    return;
+    }
   fprintf(output, "%d <", width);
   // transforms UTF8 encoding to our custom PostScript encoding as follows:
   // extract each unicode character
