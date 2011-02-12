@@ -61,8 +61,12 @@ void rename_me_pwd(Fl_Widget*o) {
 }
 
 void window_callback(Fl_Widget*, void*) {
+  int hotspot = fl_message_hotspot();
+  fl_message_hotspot(0);
+  fl_message_title("note: no hotspot set for this dialog");
   int rep = fl_choice("Are you sure you want to quit?", 
 		      "Cancel", "Quit", "Dunno");
+  fl_message_hotspot(hotspot);
   if (rep==1) 
     exit(0);
   else if (rep==2)

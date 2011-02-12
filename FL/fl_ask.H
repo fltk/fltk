@@ -3,7 +3,7 @@
 //
 // Standard dialog header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -66,6 +66,8 @@ inline void fl_message_font(Fl_Font f, Fl_Fontsize s) {
 
 FL_EXPORT void fl_message_hotspot(int enable);
 FL_EXPORT int fl_message_hotspot(void);
+
+FL_EXPORT void fl_message_title(const char *title);
 
 // pointers you can use to change FLTK to a foreign language:
 extern FL_EXPORT const char* fl_no;

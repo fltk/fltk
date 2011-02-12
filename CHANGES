@@ -54,6 +54,8 @@ CHANGES IN FLTK 1.3.0
         - Added Fl_Menu_ methods: insert(), find_index(), clear_submenu()
 	- Hotspot behavior of fl_message() and other common dialogs is now
 	  optional (STR #2561).
+	- Common dialogs like fl_message() and fl_ask() can now have a window
+	  title (STR #2562).
 
 	  IDE support and command line build options
 

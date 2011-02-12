@@ -244,6 +244,7 @@ static int innards(const char* fmt, va_list ap,
   if (g) // regrab the previous popup menu, if there was one
     Fl::grab(g);
   icon->label(prev_icon_label);
+  message_form->label(0); // reset window title
 
   avoidRecursion = 0;
   return ret_val;
@@ -506,6 +507,26 @@ void fl_message_hotspot(int enable) {
  */
 int fl_message_hotspot(void) {
   return enableHotspot;
+}
+
+/** Sets the title of the dialog window used in many common dialogs.
+
+    This window \p title will be used in the next call of one of the
+    common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+    fl_input(), fl_password().
+
+    The \p title string is copied internally, so that you can use a
+    local variable or free the string immediately after this call. It
+    applies only to the \b next call of one of the common dialogs and
+    will be reset to an empty title (the default for all dialogs) after
+    that call.
+
+    \note \#include <FL/fl_ask.H>
+    \param[in] title	window label, string copied internally
+*/
+void fl_message_title(const char *title) {
+  makeform();
+  message_form->copy_label(title);
 }
 
 /** @} */
