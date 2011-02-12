@@ -64,6 +64,9 @@ extern FL_EXPORT Fl_Fontsize fl_message_size_;
 inline void fl_message_font(Fl_Font f, Fl_Fontsize s) {
   fl_message_font_ = f; fl_message_size_ = s;}
 
+FL_EXPORT void fl_message_hotspot(int enable);
+FL_EXPORT int fl_message_hotspot(void);
+
 // pointers you can use to change FLTK to a foreign language:
 extern FL_EXPORT const char* fl_no;
 extern FL_EXPORT const char* fl_yes;

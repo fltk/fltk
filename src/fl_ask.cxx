@@ -56,6 +56,7 @@ static int ret_val;
 static const char *iconlabel = "?";
 Fl_Font fl_message_font_ = FL_HELVETICA;
 Fl_Fontsize fl_message_size_ = -1;
+static int enableHotspot = 1;
 #ifdef __APPLE__
 extern "C" void NSBeep(void);
 #endif
@@ -78,7 +79,7 @@ static Fl_Window *makeform() {
    message_form->size(410,103);
    return message_form;
  }
- // make sure that the dialog does not become the child of some 
+ // make sure that the dialog does not become the child of some
  // current group
  Fl_Group *previously_current_group = Fl_Group::current();
  Fl_Group::current(0);
@@ -226,9 +227,10 @@ static int innards(const char* fmt, va_list ap,
 
   resizeform();
 
-  if (button[1]->visible() && !input->visible()) 
+  if (button[1]->visible() && !input->visible())
     button[1]->take_focus();
-  message_form->hotspot(button[0]);
+  if (enableHotspot)
+    message_form->hotspot(button[0]);
   if (b0 && Fl_Widget::label_shortcut(b0))
     button[0]->shortcut(0);
   else
@@ -290,7 +292,7 @@ void fl_beep(int type) {
       break;
     default :
       break;
-  }  
+  }
 #else
   switch (type) {
     case FL_BEEP_DEFAULT :
@@ -408,11 +410,11 @@ int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
   va_end(ap);
   return r;
 }
-/** Gets the Fl_Box icon container of the current default dialog used in 
-    many common dialogs like fl_message(), fl_alert(), 
-    fl_ask(), fl_choice(), fl_input(), fl_password() 
+/** Gets the Fl_Box icon container of the current default dialog used in
+    many common dialogs like fl_message(), fl_alert(),
+    fl_ask(), fl_choice(), fl_input(), fl_password()
     \note \#include <FL/fl_ask.H>
-*/ 
+*/
 Fl_Widget *fl_message_icon() {makeform(); return icon;}
 
 static const char* input_innards(const char* fmt, va_list ap,
@@ -477,6 +479,33 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
   const char* r = input_innards(fmt, ap, defstr, FL_SECRET_INPUT);
   va_end(ap);
   return r;
+}
+
+/** Sets whether or not to move the common message box used in
+    many common dialogs like fl_message(), fl_alert(),
+    fl_ask(), fl_choice(), fl_input(), fl_password() to follow
+    the mouse pointer.
+
+    The default is \e enabled, so that the default button is the
+    hotspot and appears at the mouse position.
+    \note \#include <FL/fl_ask.H>
+    \param[in]	enable	non-zero enables hotspot behavior,
+			0 disables hotspot
+ */
+void fl_message_hotspot(int enable) {
+  enableHotspot = enable ? 1 : 0;
+}
+
+/** Gets whether or not to move the common message box used in
+    many common dialogs like fl_message(), fl_alert(),
+    fl_ask(), fl_choice(), fl_input(), fl_password() to follow
+    the mouse pointer.
+    \note \#include <FL/fl_ask.H>
+    \return	0 if disable, non-zero otherwise
+    \see fl_message_hotspot(int)
+ */
+int fl_message_hotspot(void) {
+  return enableHotspot;
 }
 
 /** @} */
