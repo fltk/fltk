@@ -562,12 +562,12 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     W += prefs.openicon()->w();
   }
   // Colors, fonts
-  Fl_Color fg = _selected ? _labelbgcolor : _labelfgcolor;		// selected uses bgcolor, unselected uses fgcolor
-  Fl_Color bg = _selected ? tree->selection_color() : _labelbgcolor;	// selected uses selectcolor, unselected uses bgcolor
-  if ( ! _active ) {
-    fg = fl_inactive(fg);
-    if ( _selected ) bg = fl_inactive(bg);
-  }
+  Fl_Color fg = _selected ? fl_contrast(_labelfgcolor, tree->selection_color())
+                          : _active ? _labelfgcolor 
+			            : fl_inactive(_labelfgcolor);
+  Fl_Color bg = _selected ? _active ? tree->selection_color() 
+                                    : fl_inactive(tree->selection_color())
+                          : _labelbgcolor;
   // Update the xywh of this item
   _xywh[0] = X;
   _xywh[1] = Y;

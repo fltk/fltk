@@ -45,6 +45,9 @@
 ///
 /// \brief Tree widget.
 ///
+///     \image html tree-simple.png "Fl_Tree example program"
+///     \image latex tree-simple.png "Fl_Tree example program" width=4cm
+///
 /// \code
 ///     Fl_Tree                                         // Top level widget
 ///        |--- Fl_Tree_Item                            // Items in the tree

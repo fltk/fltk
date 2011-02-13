@@ -93,7 +93,7 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _callback_reason = FL_TREE_REASON_NONE;
   _scrollbar_size  = 0;				// 0: uses Fl::scrollbar_size()
   box(FL_DOWN_BOX);
-  color(FL_WHITE);
+  color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   when(FL_WHEN_CHANGED);
   _vscroll = new Fl_Scrollbar(0,0,0,0);		// will be resized by draw()
   _vscroll->hide();
