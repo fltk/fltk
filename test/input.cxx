@@ -149,14 +149,14 @@ int main(int argc, char **argv) {
   b->value(input[4]->tab_nav() ? 1 : 0);
   b->value(Fl::option(Fl::OPTION_ARROW_FOCUS) ? 1 : 0);
 
-  b = new Fl_Button(220,y1,100,25,"color"); y1 += 25;
+  b = new Fl_Button(220,y1,120,25,"color"); y1 += 25;
   b->color(input[0]->color()); b->callback(color_cb, (void*)0);
   b->tooltip("Color behind the text");
-  b = new Fl_Button(220,y1,100,25,"selection_color"); y1 += 25;
+  b = new Fl_Button(220,y1,120,25,"selection_color"); y1 += 25;
   b->color(input[0]->selection_color()); b->callback(color_cb, (void*)1);
   b->labelcolor(fl_contrast(FL_BLACK,b->color()));
   b->tooltip("Color behind selected text");
-  b = new Fl_Button(220,y1,100,25,"textcolor"); y1 += 25;
+  b = new Fl_Button(220,y1,120,25,"textcolor"); y1 += 25;
   b->color(input[0]->textcolor()); b->callback(color_cb, (void*)2);
   b->labelcolor(fl_contrast(FL_BLACK,b->color()));
   b->tooltip("Color of the text");
