@@ -754,7 +754,24 @@ dnl Check for pthreads for multi-threaded apps...
 have_pthread=no
 PTHREAD_FLAGS=""
 
-if test "x$enable_threads" != xno; then
+dnl Test whether we want to check for pthreads. We must not do it on Windows
+dnl unless we run under Cygwin with --enable-cygwin, since we always use
+dnl native threads on Windows (even if libpthread is available)
+check_pthread=yes
+case $uname in
+    MINGW*)
+	check_pthread=no
+	;;
+    CYGWIN*)
+	if test "x$enable_cygwin" != xyes; then
+	    check_pthread=no
+	fi
+	;;
+    *)
+	;;
+esac
+
+if test "x$enable_threads" != xno -a x$check_pthread = xyes; then
     AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
 
     if test x$ac_cv_header_pthread_h = xyes; then
@@ -831,9 +848,9 @@ case $uname_GUI in
 	    if test x$have_pthread = xyes; then
 		AC_DEFINE(HAVE_PTHREAD)
 	    fi
-
-	    THREADS="threads$EXEEXT"
         fi
+
+	THREADS="threads$EXEEXT"
 
 	# Don't make symlinks since Windows is not case sensitive.
 	if test "x$with_links" != xyes; then
