@@ -91,7 +91,7 @@ public:
 #endif // FL_DOXYGEN
 };
 
-extern FL_EXPORT Fl_Font_Descriptor *fl_fontsize; // the currently selected one
+//extern FL_EXPORT Fl_Font_Descriptor *fl_fontsize; // the currently selected one
 
 struct Fl_Fontdesc {
   const char *name;
