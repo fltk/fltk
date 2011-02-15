@@ -273,9 +273,9 @@ void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   if (fnum == Fl_Graphics_Driver::font() && size == Fl_Graphics_Driver::size()) return;
   Fl_Graphics_Driver::font(fnum, size);
   Fl_Font_Descriptor* f = find(fnum, size);
-  if (f != fl_graphics_driver->font_descriptor()) {
-    fl_graphics_driver->font_descriptor(f);
-    fl_xfont = current_font->fonts[0];
+  if (f != this->font_descriptor()) {
+    this->font_descriptor(f);
+    fl_xfont = f->font->fonts[0];
     font_gc = 0;
   }
 }
