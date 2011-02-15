@@ -25,13 +25,14 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
-#if !defined(WIN32) && !defined(__APPLE__) && !USE_XFT
+#if defined(USE_X11) && !USE_XFT
 #include "Fl_Font.H"
 #endif
 
