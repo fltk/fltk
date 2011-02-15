@@ -91,6 +91,14 @@ SOURCE=..\..\jpeg\jcapistd.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\jpeg\jaricom.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\jpeg\jcarith.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\jpeg\jccoefct.c
 # End Source File
 # Begin Source File
@@ -131,10 +139,6 @@ SOURCE=..\..\jpeg\jcparam.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\jpeg\jcphuff.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\jpeg\jcprepct.c
 # End Source File
 # Begin Source File
@@ -152,6 +156,10 @@ SOURCE=..\..\jpeg\jdapimin.c
 # Begin Source File
 
 SOURCE=..\..\jpeg\jdapistd.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\jpeg\jdarith.c
 # End Source File
 # Begin Source File
 
@@ -199,10 +207,6 @@ SOURCE=..\..\jpeg\jdmerge.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\jpeg\jdphuff.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\jpeg\jdpostct.c
 # End Source File
 # Begin Source File
@@ -240,10 +244,6 @@ SOURCE=..\..\jpeg\jidctfst.c
 # Begin Source File
 
 SOURCE=..\..\jpeg\jidctint.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\jpeg\jidctred.c
 # End Source File
 # Begin Source File
 

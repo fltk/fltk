@@ -91,6 +91,18 @@ LINK32=link.exe
 # Name "fltk_jpegdll - Win32 Debug"
 # Begin Source File
 
+SOURCE=..\..\jpeg\jaricom.c
+DEP_CPP_JCPHU=\
+	"..\..\jpeg\jconfig.h"\
+	"..\..\jpeg\jerror.h"\
+	"..\..\jpeg\jinclude.h"\
+	"..\..\jpeg\jmorecfg.h"\
+	"..\..\jpeg\jpegint.h"\
+	"..\..\jpeg\jpeglib.h"\
+	
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\jpeg\jcapimin.c
 DEP_CPP_JCAPI=\
 	"..\..\jpeg\jconfig.h"\
@@ -105,6 +117,18 @@ DEP_CPP_JCAPI=\
 
 SOURCE=..\..\jpeg\jcapistd.c
 DEP_CPP_JCAPIS=\
+	"..\..\jpeg\jconfig.h"\
+	"..\..\jpeg\jerror.h"\
+	"..\..\jpeg\jinclude.h"\
+	"..\..\jpeg\jmorecfg.h"\
+	"..\..\jpeg\jpegint.h"\
+	"..\..\jpeg\jpeglib.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\jpeg\jcarith.c
+DEP_CPP_JCPHU=\
 	"..\..\jpeg\jconfig.h"\
 	"..\..\jpeg\jerror.h"\
 	"..\..\jpeg\jinclude.h"\
@@ -237,19 +261,6 @@ DEP_CPP_JCPAR=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\jpeg\jcphuff.c
-DEP_CPP_JCPHU=\
-	"..\..\jpeg\jchuff.h"\
-	"..\..\jpeg\jconfig.h"\
-	"..\..\jpeg\jerror.h"\
-	"..\..\jpeg\jinclude.h"\
-	"..\..\jpeg\jmorecfg.h"\
-	"..\..\jpeg\jpegint.h"\
-	"..\..\jpeg\jpeglib.h"\
-	
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\jpeg\jcprepct.c
 DEP_CPP_JCPRE=\
 	"..\..\jpeg\jconfig.h"\
@@ -300,6 +311,18 @@ DEP_CPP_JDAPI=\
 
 SOURCE=..\..\jpeg\jdapistd.c
 DEP_CPP_JDAPIS=\
+	"..\..\jpeg\jconfig.h"\
+	"..\..\jpeg\jerror.h"\
+	"..\..\jpeg\jinclude.h"\
+	"..\..\jpeg\jmorecfg.h"\
+	"..\..\jpeg\jpegint.h"\
+	"..\..\jpeg\jpeglib.h"\
+	
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\jpeg\jdarith.c
+DEP_CPP_JCPHU=\
 	"..\..\jpeg\jconfig.h"\
 	"..\..\jpeg\jerror.h"\
 	"..\..\jpeg\jinclude.h"\
@@ -444,19 +467,6 @@ DEP_CPP_JDMER=\
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\jpeg\jdphuff.c
-DEP_CPP_JDPHU=\
-	"..\..\jpeg\jconfig.h"\
-	"..\..\jpeg\jdhuff.h"\
-	"..\..\jpeg\jerror.h"\
-	"..\..\jpeg\jinclude.h"\
-	"..\..\jpeg\jmorecfg.h"\
-	"..\..\jpeg\jpegint.h"\
-	"..\..\jpeg\jpeglib.h"\
-	
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\jpeg\jdpostct.c
 DEP_CPP_JDPOS=\
 	"..\..\jpeg\jconfig.h"\
@@ -573,19 +583,6 @@ DEP_CPP_JIDCTF=\
 
 SOURCE=..\..\jpeg\jidctint.c
 DEP_CPP_JIDCTI=\
-	"..\..\jpeg\jconfig.h"\
-	"..\..\jpeg\jdct.h"\
-	"..\..\jpeg\jerror.h"\
-	"..\..\jpeg\jinclude.h"\
-	"..\..\jpeg\jmorecfg.h"\
-	"..\..\jpeg\jpegint.h"\
-	"..\..\jpeg\jpeglib.h"\
-	
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\jpeg\jidctred.c
-DEP_CPP_JIDCTR=\
 	"..\..\jpeg\jconfig.h"\
 	"..\..\jpeg\jdct.h"\
 	"..\..\jpeg\jerror.h"\

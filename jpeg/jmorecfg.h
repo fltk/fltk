@@ -2,6 +2,7 @@
  * jmorecfg.h
  *
  * Copyright (C) 1991-1997, Thomas G. Lane.
+ * Modified 1997-2009 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -54,8 +55,21 @@
  * You can use a signed char by having GETJSAMPLE mask it with 0xFF.
  */
 
+#ifdef HAVE_UNSIGNED_CHAR
+
 typedef unsigned char JSAMPLE;
 #define GETJSAMPLE(value)  ((int) (value))
+
+#else /* not HAVE_UNSIGNED_CHAR */
+
+typedef char JSAMPLE;
+#ifdef CHAR_IS_UNSIGNED
+#define GETJSAMPLE(value)  ((int) (value))
+#else
+#define GETJSAMPLE(value)  ((int) (value) & 0xFF)
+#endif /* CHAR_IS_UNSIGNED */
+
+#endif /* HAVE_UNSIGNED_CHAR */
 
 #define MAXJSAMPLE	255
 #define CENTERJSAMPLE	128
@@ -92,8 +106,22 @@ typedef short JCOEF;
  * managers, this is also the data type passed to fread/fwrite.
  */
 
+#ifdef HAVE_UNSIGNED_CHAR
+
 typedef unsigned char JOCTET;
 #define GETJOCTET(value)  (value)
+
+#else /* not HAVE_UNSIGNED_CHAR */
+
+typedef char JOCTET;
+#ifdef CHAR_IS_UNSIGNED
+#define GETJOCTET(value)  (value)
+#else
+#define GETJOCTET(value)  ((value) & 0xFF)
+#endif /* CHAR_IS_UNSIGNED */
+
+#endif /* HAVE_UNSIGNED_CHAR */
+
 
 /* These typedefs are used for various table entries and so forth.
  * They must be at least as wide as specified; but making them too big
@@ -104,11 +132,23 @@ typedef unsigned char JOCTET;
 
 /* UINT8 must hold at least the values 0..255. */
 
+#ifdef HAVE_UNSIGNED_CHAR
 typedef unsigned char UINT8;
+#else /* not HAVE_UNSIGNED_CHAR */
+#ifdef CHAR_IS_UNSIGNED
+typedef char UINT8;
+#else /* not CHAR_IS_UNSIGNED */
+typedef short UINT8;
+#endif /* CHAR_IS_UNSIGNED */
+#endif /* HAVE_UNSIGNED_CHAR */
 
 /* UINT16 must hold at least the values 0..65535. */
 
+#ifdef HAVE_UNSIGNED_SHORT
 typedef unsigned short UINT16;
+#else /* not HAVE_UNSIGNED_SHORT */
+typedef unsigned int UINT16;
+#endif /* HAVE_UNSIGNED_SHORT */
 
 /* INT16 must hold at least the values -32768..32767. */
 
@@ -118,8 +158,14 @@ typedef short INT16;
 
 /* INT32 must hold at least signed 32-bit values. */
 
-#ifndef XMD_H
-typedef int INT32;
+#ifndef XMD_H			/* X11/xmd.h correctly defines INT32 */
+#ifndef _BASETSD_H_		/* Microsoft defines it in basetsd.h */
+#ifndef _BASETSD_H		/* MinGW is slightly different */
+#ifndef QGLOBAL_H		/* Qt defines it in qglobal.h */
+typedef long INT32;
+#endif
+#endif
+#endif
 #endif
 
 /* Datatype used for image dimensions.  The JPEG standard only supports
@@ -157,7 +203,12 @@ typedef unsigned int JDIMENSION;
  * Again, you can customize this if you need special linkage keywords.
  */
 
+#ifdef HAVE_PROTOTYPES
 #define JMETHOD(type,methodname,arglist)  type (*methodname) arglist
+#else
+#define JMETHOD(type,methodname,arglist)  type (*methodname) ()
+#endif
+
 
 /* Here is the pseudo-keyword for declaring pointers that must be "far"
  * on 80x86 machines.  Most of the specialized coding for 80x86 is handled
@@ -165,8 +216,13 @@ typedef unsigned int JDIMENSION;
  * explicit coding is needed; see uses of the NEED_FAR_POINTERS symbol.
  */
 
-#undef FAR
+#ifndef FAR
+#ifdef NEED_FAR_POINTERS
+#define FAR  far
+#else
 #define FAR
+#endif
+#endif
 
 
 /*
@@ -177,7 +233,7 @@ typedef unsigned int JDIMENSION;
  */
 
 #ifndef HAVE_BOOLEAN
-typedef char boolean;
+typedef int boolean;
 #endif
 #ifndef FALSE			/* in case these macros already exist */
 #define FALSE	0		/* values of boolean */
@@ -209,8 +265,6 @@ typedef char boolean;
  * (You may HAVE to do that if your compiler doesn't like null source files.)
  */
 
-/* Arithmetic coding is unsupported for legal reasons.  Complaints to IBM. */
-
 /* Capability options common to encoder and decoder: */
 
 #define DCT_ISLOW_SUPPORTED	/* slow but accurate integer algorithm */
@@ -219,9 +273,10 @@ typedef char boolean;
 
 /* Encoder capability options: */
 
-#undef  C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
+#define C_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define C_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 #define C_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
+#define DCT_SCALING_SUPPORTED	    /* Input rescaling via DCT? (Requires DCT_ISLOW)*/
 #define ENTROPY_OPT_SUPPORTED	    /* Optimization of entropy coding parms? */
 /* Note: if you selected 12-bit data precision, it is dangerous to turn off
  * ENTROPY_OPT_SUPPORTED.  The standard Huffman tables are only good for 8-bit
@@ -235,12 +290,12 @@ typedef char boolean;
 
 /* Decoder capability options: */
 
-#undef  D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
+#define D_ARITH_CODING_SUPPORTED    /* Arithmetic coding back end? */
 #define D_MULTISCAN_FILES_SUPPORTED /* Multiple-scan JPEG files? */
 #define D_PROGRESSIVE_SUPPORTED	    /* Progressive JPEG? (Requires MULTISCAN)*/
+#define IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? */
 #define SAVE_MARKERS_SUPPORTED	    /* jpeg_save_markers() needed? */
 #define BLOCK_SMOOTHING_SUPPORTED   /* Block smoothing? (Progressive only) */
-#define IDCT_SCALING_SUPPORTED	    /* Output rescaling via IDCT? */
 #undef  UPSAMPLE_SCALING_SUPPORTED  /* Output rescaling at upsample stage? */
 #define UPSAMPLE_MERGING_SUPPORTED  /* Fast path for sloppy upsampling? */
 #define QUANT_1PASS_SUPPORTED	    /* 1-pass color quantization? */
