@@ -86,8 +86,6 @@ Fl_Fontdesc* fl_fonts = built_in_table;
 
 #define MAXSIZE 32767
 
-#define current_font (fl_graphics_driver->font_descriptor()->font)
-
 // return dash number N, or pointer to ending null if none:
 const char* fl_font_word(const char* p, int n) {
   while (*p) {if (*p=='-') {if (!--n) break;} p++;}
@@ -281,35 +279,46 @@ void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
 }
 
 int fl_height() {
-  if (fl_graphics_driver->font_descriptor()) return (current_font->ascent + current_font->descent);
+  Fl_Graphics_Driver *driver = Fl_Display_Device::display_device()->driver();
+  if (driver->font_descriptor()) {
+    XUtf8FontStruct *font = driver->font_descriptor()->font;
+    return (font->ascent + font->descent);
+    }
   else return -1;
 }
 
 int fl_descent() {
-  if (fl_graphics_driver->font_descriptor()) return current_font->descent;
+  Fl_Graphics_Driver *driver = Fl_Display_Device::display_device()->driver();
+  if (driver->font_descriptor()) {
+    return driver->font_descriptor()->font->descent;
+    }
   else return -1;
 }
 
 double fl_width(const char* c, int n) {
-  if (fl_graphics_driver->font_descriptor()) return (double) XUtf8TextWidth(current_font, c, n);
+  Fl_Graphics_Driver *driver = Fl_Display_Device::display_device()->driver();
+  if (driver->font_descriptor()) 
+    return (double) XUtf8TextWidth(driver->font_descriptor()->font, c, n);
   else return -1;
 }
 
 double fl_width(unsigned int c) {
-  if (fl_graphics_driver->font_descriptor()) return (double) XUtf8UcsWidth(current_font, c);
+  Fl_Graphics_Driver *driver = Fl_Display_Device::display_device()->driver();
+  if (driver->font_descriptor()) 
+    return (double) XUtf8UcsWidth(driver->font_descriptor()->font, c);
   else return -1;
 }
 
-
 void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
+  Fl_Graphics_Driver *driver = Fl_Display_Device::display_device()->driver();
   if (font_gc != fl_gc) {
-    if (!fl_graphics_driver->font_descriptor()) fl_font(FL_HELVETICA, FL_NORMAL_SIZE);
+    if (!driver->font_descriptor()) driver->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = fl_gc;
-    XSetFont(fl_display, fl_gc, current_font->fid);
+    XSetFont(fl_display, fl_gc, driver->font_descriptor()->font->fid);
   }
   int xx, yy, ww, hh;
   xx = yy = ww = hh = 0;
-  if (fl_gc) XUtf8_measure_extents(fl_display, fl_window, current_font, fl_gc, &xx, &yy, &ww, &hh, c, n);
+  if (fl_gc) XUtf8_measure_extents(fl_display, fl_window, driver->font_descriptor()->font, fl_gc, &xx, &yy, &ww, &hh, c, n);
 
   W = ww; H = hh; dx = xx; dy = yy;
 // This is the safe but mostly wrong thing we used to do...
@@ -319,26 +328,26 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
 //  dy = fl_descent() - H;
 } // fl_text_extents
 
-
 void Fl_Xlib_Graphics_Driver::draw(const char* c, int n, int x, int y) {
   if (font_gc != fl_gc) {
-    if (!fl_graphics_driver->font_descriptor()) fl_font(FL_HELVETICA, FL_NORMAL_SIZE);
+    if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = fl_gc;
-    XSetFont(fl_display, fl_gc, current_font->fid);
+    XSetFont(fl_display, fl_gc, font_descriptor()->font->fid);
   }
-  if (fl_gc) XUtf8DrawString(fl_display, fl_window, current_font, fl_gc, x, y, c, n);
+  if (fl_gc) XUtf8DrawString(fl_display, fl_window, font_descriptor()->font, fl_gc, x, y, c, n);
 }
+
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   fprintf(stderr,"ROTATING TEXT NOT IMPLEMENTED\n");
-  fl_draw(str, n, (int)x, (int)y);
+  this->draw(str, n, (int)x, (int)y);
 }
 
 void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   if (font_gc != fl_gc) {
-    if (!fl_graphics_driver->font_descriptor()) fl_font(FL_HELVETICA, FL_NORMAL_SIZE);
+    if (!font_descriptor()) this->font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = fl_gc;
   }
-  if (fl_gc) XUtf8DrawRtlString(fl_display, fl_window, current_font, fl_gc, x, y, c, n);
+  if (fl_gc) XUtf8DrawRtlString(fl_display, fl_window, font_descriptor()->font, fl_gc, x, y, c, n);
 }
 #endif // FL_DOXYGEN
 //
