@@ -131,7 +131,7 @@ static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
       break;
   }
   if (!f) {
-    f = new Fl_Font_Descriptor(font->name, angle);
+    f = new Fl_Font_Descriptor(font->name, size, angle);
     f->next = font->first;
     font->first = f;
   }
@@ -335,8 +335,9 @@ puts("Font Opened"); fflush(stdout);
   }
 } // end of fontopen
 
-Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, int fangle) {
+Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize, int fangle) {
 //  encoding = fl_encoding_;
+  size = fsize;
   angle = fangle;
 #if HAVE_GL
   listbase = 0;
