@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
-#if defined(USE_X11) && !USE_XFT
+#if !defined(WIN32) && !defined(__APPLE__) && !USE_XFT
 #include "Fl_Font.H"
 #endif
 
