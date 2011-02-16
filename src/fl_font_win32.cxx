@@ -130,23 +130,20 @@ static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size, int angle) {
 ////////////////////////////////////////////////////////////////
 // Public interface:
 
-static Fl_Font fl_font_ = 0;
-static Fl_Fontsize fl_size_ = 0;
-//static HDC font_gc;
-
-static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
+static void fl_font(Fl_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // just make sure that we will load a new font next time
-    fl_font_ = 0; fl_size_ = 0; fl_angle_ = 0;
+    fl_angle_ = 0;
+    driver->Fl_Graphics_Driver::font(0, 0);
     return;
   }
-  if (fnum == fl_font_ && size == fl_size_ && angle == fl_angle_) return;
-  fl_font_ = fnum; fl_size_ = size; fl_angle_ = angle;
-  fl_graphics_driver->font_descriptor( find(fnum, size, angle) );
+  if (fnum == driver->Fl_Graphics_Driver::font() && size == driver->size() && angle == fl_angle_) return;
+  fl_angle_ = angle;
+  driver->Fl_Graphics_Driver::font(fnum, size);
+  driver->font_descriptor( find(fnum, size, angle) );
 }
 
 void Fl_GDI_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
-  fl_font(fnum, size, 0);
-  Fl_Graphics_Driver::font(fl_font_, fl_size_);
+  fl_font(this, fnum, size, 0);
 }
 
 int fl_height() {
@@ -366,8 +363,7 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
 }
 
 void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
-  fl_font(fl_font_, fl_size_, angle);
-//  fl_draw(str, n, (int)x, (int)y);
+  fl_font(this, Fl_Graphics_Driver::font(), size(), angle);
   int i = 0, i2=0;
   char *end = (char *)&str[n];
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
@@ -386,7 +382,7 @@ void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int 
   TextOutW(fl_gc, x, y, (WCHAR*)ucs, i2);
   delete[] ucs;
   SetTextColor(fl_gc, oldColor);
-  fl_font(fl_font_, fl_size_);
+  fl_font(this, Fl_Graphics_Driver::font(), size(), 0);
 }
 
 void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {

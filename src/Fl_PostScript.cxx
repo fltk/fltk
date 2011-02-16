@@ -1038,9 +1038,6 @@ static void transformed_draw_extra(const char* str, int n, double x, double y, i
 #endif
   fl_font(fontnum, (Fl_Fontsize)(scale * old_size) );
   fl_draw(str, n, 1, (int)(h * 0.8) ); // draw string in offscreen
-#ifdef WIN32
-  fl_font(0, FL_NORMAL_SIZE); // TODO: find something better
-#endif
   // read (most of) the offscreen image
   uchar *img = fl_read_image(NULL, 1, 1, w, h, 0);
   fl_end_offscreen();

@@ -248,7 +248,7 @@ void Fl_Quartz_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
     return;
   }
   Fl_Graphics_Driver::font(fnum, size);
-  fl_graphics_driver->font_descriptor( find(fnum, size) );
+  this->font_descriptor( find(fnum, size) );
 }
 
 int fl_height() {
