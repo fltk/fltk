@@ -472,12 +472,6 @@ dnl Standard headers and functions...
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h,AC_DEFINE(HAVE_SYS_SELECT_H))
 AC_CHECK_HEADER(sys/stdtypes.h,AC_DEFINE(HAVE_SYS_SELECT_H))
-AC_CHECK_FUNC(scandir,
-    if test "x$uname" = xSunOS -o "x$uname" = xQNX; then
-        AC_MSG_WARN(Not using $uname scandir emulation function.)
-    else
-        AC_DEFINE(HAVE_SCANDIR)
-    fi)
 
 dnl Do we have the POSIX compatible scandir() prototype?
 AC_CACHE_CHECK([whether we have the POSIX compatible scandir() prototype],
@@ -494,8 +488,21 @@ AC_CACHE_CHECK([whether we have the POSIX compatible scandir() prototype],
 	AC_LANG_RESTORE
     ])
 
+dnl Define both HAVE_SCANDIR... macros, if the POSIX compatible function is
+dnl available. Otherwise: check, whether any scandir prototype is available,
+dnl but don't use it on SunOS and QNX because of an incompatibility in pre-Y2K
+dnl SunOS scandir versions. We assume, though, that the POSIX compatible
+dnl version on newer SunOS/Solaris versions works as expected.
 if test "$ac_cv_cxx_scandir_posix" = yes; then
+    AC_DEFINE(HAVE_SCANDIR)
     AC_DEFINE(HAVE_SCANDIR_POSIX)
+else
+    AC_CHECK_FUNC(scandir,
+	if test "x$uname" = xSunOS -o "x$uname" = xQNX; then
+            AC_MSG_WARN(Not using $uname scandir emulation function.)
+	else
+            AC_DEFINE(HAVE_SCANDIR)
+        fi)
 fi
 
 AC_CHECK_FUNC(vsnprintf,[
