@@ -115,15 +115,15 @@ void *fl_xftfont = 0;
 //const char* fl_encoding_ = "iso8859-1";
 const char* fl_encoding_ = "iso10646-1";
 
-static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
+static void fl_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // special case to stop font caching
-    fl_graphics_driver->Fl_Graphics_Driver::font(0, 0);
+    driver->Fl_Graphics_Driver::font(0, 0);
     return;
   }
-  Fl_Font_Descriptor* f = fl_graphics_driver->font_descriptor();
-  if (fnum == fl_graphics_driver->font() && size == fl_graphics_driver->size() && f && f->angle == angle)
+  Fl_Font_Descriptor* f = driver->font_descriptor();
+  if (fnum == driver->Fl_Graphics_Driver::font() && size == driver->size() && f && f->angle == angle)
     return;
-  fl_graphics_driver->Fl_Graphics_Driver::font(fnum, size);
+  driver->Fl_Graphics_Driver::font(fnum, size);
   Fl_Fontdesc *font = fl_fonts + fnum;
   // search the fontsizes we have generated already
   for (f = font->first; f; f = f->next) {
@@ -135,7 +135,7 @@ static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
     f->next = font->first;
     font->first = f;
   }
-  fl_graphics_driver->font_descriptor(f);
+  driver->font_descriptor(f);
 #if XFT_MAJOR < 2
   fl_xfont    = f->font->u.core.font;
 #else
@@ -145,7 +145,7 @@ static void fl_font(Fl_Font fnum, Fl_Fontsize size, int angle) {
 }
 
 void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
-  fl_font(fnum,size,0);
+  fl_font(this,fnum,size,0);
 }
 
 static XftFont* fontopen(const char* name, bool core, int angle) {
@@ -580,8 +580,8 @@ void fl_destroy_xft_draw(Window id) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
-  if ( !fl_graphics_driver->font_descriptor() ) {
-    fl_font(FL_HELVETICA, FL_NORMAL_SIZE);
+  if ( !this->font_descriptor() ) {
+    this->font(FL_HELVETICA, FL_NORMAL_SIZE);
   }
 #if USE_OVERLAY
   XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
@@ -622,9 +622,9 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
-  fl_font(fl_graphics_driver->font(), fl_graphics_driver->size(), angle);
-  fl_draw(str, n, (int)x, (int)y);
-  fl_font(fl_graphics_driver->font(), fl_graphics_driver->size());
+  fl_font(this, this->Fl_Graphics_Driver::font(), this->size(), angle);
+  this->draw(str, n, (int)x, (int)y);
+  this->font(this->Fl_Graphics_Driver::font(), this->size());
 }
 
 static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {

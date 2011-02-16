@@ -272,8 +272,8 @@ static const char * prolog =
 // show at position with desired width
 // usage:
 // width (string) x y show_pos_width
-"/show_pos_width {GS moveto dup dup stringwidth pop exch length 2 div 1 sub dup 0 eq {pop 1} if "
-"exch 3 index exch sub exch "
+"/show_pos_width {GS moveto dup dup stringwidth pop exch length 2 div dup 2 le {pop 9999} if "
+"1 sub exch 3 index exch sub exch "
 "div 0 2 index 1 -1 scale ashow pop pop GR} bind def\n" // spacing altered to match desired width
 //"/show_pos_width {GS moveto dup stringwidth pop 3 2 roll exch div -1 matrix scale concat "
 //"show GR } bind def\n" // horizontally scaled text to match desired width
@@ -931,16 +931,17 @@ static const char *_fontNames[] = {
 };
 
 void Fl_PostScript_Graphics_Driver::font(int f, int s) {
-  Fl_Display_Device::display_device()->driver()->font(f,s); // Use display fonts for font measurement
+  Fl_Graphics_Driver *driver = Fl_Display_Device::display_device()->driver();
+  driver->font(f,s); // Use display fonts for font measurement
   Fl_Graphics_Driver::font(f, s);
+  Fl_Font_Descriptor *desc = driver->font_descriptor();
+  this->font_descriptor(desc);
   if (f < FL_FREE_FONT) {
     int ps_size = s;
     fprintf(output, "/%s SF\n" , _fontNames[f]);
 #if defined(USE_X11) && !USE_XFT
 // Non-Xft fonts can have a different size from that required.
 // Give to the PostScript font the same size as that used on the display 
-    Fl_Font_Descriptor *desc = Fl_Display_Device::display_device()->driver()->font_descriptor();
-    this->font_descriptor(desc);
     char *name = desc->font->font_name_list[0];
     char *p = strstr(name, "--");
     if (p) {
