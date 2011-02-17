@@ -32,8 +32,11 @@
 #include <stdio.h>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
-#if defined(USE_X11) && !USE_XFT
+#if defined(USE_X11)
 #include "Fl_Font.H"
+#if USE_XFT
+#include <X11/Xft/Xft.h>
+#endif
 #endif
 
 const char *Fl_PostScript_Graphics_Driver::class_id = "Fl_PostScript_Graphics_Driver";
@@ -937,18 +940,26 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
   Fl_Font_Descriptor *desc = driver->font_descriptor();
   this->font_descriptor(desc);
   if (f < FL_FREE_FONT) {
-    int ps_size = s;
+    float ps_size = s;
     fprintf(output, "/%s SF\n" , _fontNames[f]);
-#if defined(USE_X11) && !USE_XFT
-// Non-Xft fonts can have a different size from that required.
-// Give to the PostScript font the same size as that used on the display 
+#if defined(USE_X11) 
+#if USE_XFT
+    // Xft font height is sometimes larger than the size required (see STR 2566).
+    // Increase the PostScript font size by 15% without exceeding the display font height 
+    int max = desc->font->height;
+    ps_size = s * 1.15;
+    if (ps_size > max) ps_size = max;
+#else
+    // Non-Xft fonts can be smaller than required.
+    // Set the PostScript font size to the display font height 
     char *name = desc->font->font_name_list[0];
     char *p = strstr(name, "--");
     if (p) {
-      sscanf(p + 2, "%d", &ps_size);
+      sscanf(p + 2, "%f", &ps_size);
     }
-#endif
-    fprintf(output,"%i FS\n", ps_size);
+#endif // USE_XFT
+#endif // USE_X11
+    fprintf(output,"%.1f FS\n", ps_size);
   }
 }
 
