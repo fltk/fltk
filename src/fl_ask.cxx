@@ -54,6 +54,7 @@ static Fl_Button *button[3];
 static Fl_Input *input;
 static int ret_val;
 static const char *iconlabel = "?";
+static const char *message_title_default;
 Fl_Font fl_message_font_ = FL_HELVETICA;
 Fl_Fontsize fl_message_size_ = -1;
 static int enableHotspot = 1;
@@ -84,7 +85,7 @@ static Fl_Window *makeform() {
  Fl_Group *previously_current_group = Fl_Group::current();
  Fl_Group::current(0);
  // create a new top level window
- Fl_Window *w = message_form = new Fl_Window(410,103,"");
+ Fl_Window *w = message_form = new Fl_Window(410,103);
  message_form->callback(button_cb,(void *)0);
  // w->clear_border();
  // w->box(FL_UP_BOX);
@@ -235,6 +236,10 @@ static int innards(const char* fmt, va_list ap,
     button[0]->shortcut(0);
   else
     button[0]->shortcut(FL_Escape);
+
+  // set default window title, if defined and a specific title is not set
+  if (!message_form->label() && message_title_default)
+    message_form->label(message_title_default);
 
   // deactivate Fl::grab(), because it is incompatible with modal windows
   Fl_Window* g = Fl::grab();
@@ -527,6 +532,31 @@ int fl_message_hotspot(void) {
 void fl_message_title(const char *title) {
   makeform();
   message_form->copy_label(title);
+}
+
+/** Sets the default title of the dialog window used in many common dialogs.
+
+    This window \p title will be used in all subsequent calls of one of the
+    common dialogs like fl_message(), fl_alert(), fl_ask(), fl_choice(),
+    fl_input(), fl_password(), unless a specific title has been set
+    with fl_message_title(const char *title).
+    
+    The default is no title. You can override the default title for a
+    single dialog with fl_message_title(const char *title).
+
+    The \p title string is copied internally, so that you can use a
+    local variable or free the string immediately after this call.
+
+    \note \#include <FL/fl_ask.H>
+    \param[in] title	default window label, string copied internally
+*/
+void fl_message_title_default(const char *title) {
+  if (message_title_default) {
+    free ((void *)message_title_default);
+    message_title_default = 0;
+  }
+  if (title)
+    message_title_default = strdup(title);
 }
 
 /** @} */

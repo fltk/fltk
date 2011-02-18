@@ -91,6 +91,9 @@ int main(int argc, char **argv) {
 // Also we test to see if the exit callback works:
   window.callback(window_callback);
 
+// set default message window title
+  // fl_message_title_default("Default Window Title");
+
   return Fl::run();
 }
     
