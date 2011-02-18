@@ -64,6 +64,14 @@ Fl_Graphics_Driver::Fl_Graphics_Driver() {
   font_descriptor_ = NULL;
 };
 
+void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int& w, int& h)
+{
+  w = (int)width(t, n);
+  h = - height();
+  dx = dy = 0;
+}
+
+
 //
 // End of "$Id$".
 //

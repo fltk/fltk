@@ -278,36 +278,35 @@ void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   }
 }
 
-#define current_font (fl_graphics_driver->font_descriptor()->font)
-int fl_height() {
-  if (fl_graphics_driver->font_descriptor()) return current_font->ascent + current_font->descent;
+int Fl_Xlib_Graphics_Driver::height() {
+  if (font_descriptor()) return font_descriptor()->font->ascent + font_descriptor()->font->descent;
   else return -1;
 }
 
-int fl_descent() {
-  if (fl_graphics_driver->font_descriptor()) return current_font->descent;
+int Fl_Xlib_Graphics_Driver::descent() {
+  if (font_descriptor()) return font_descriptor()->font->descent;
   else return -1;
 }
 
-double fl_width(const char* c, int n) {
-  if (fl_graphics_driver->font_descriptor()) return (double) XUtf8TextWidth(current_font, c, n);
+double Fl_Xlib_Graphics_Driver::width(const char* c, int n) {
+  if (font_descriptor()) return (double) XUtf8TextWidth(font_descriptor()->font, c, n);
   else return -1;
 }
 
-double fl_width(unsigned int c) {
-  if (fl_graphics_driver->font_descriptor()) return (double) XUtf8UcsWidth(current_font, c);
+double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
+  if (font_descriptor()) return (double) XUtf8UcsWidth(font_descriptor()->font, c);
   else return -1;
 }
 
-void fl_text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
+void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &W, int &H) {
   if (font_gc != fl_gc) {
-    if (!fl_graphics_driver->font_descriptor()) fl_font(FL_HELVETICA, FL_NORMAL_SIZE);
+    if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
     font_gc = fl_gc;
-    XSetFont(fl_display, fl_gc, current_font->fid);
+    XSetFont(fl_display, fl_gc, font_descriptor()->font->fid);
   }
   int xx, yy, ww, hh;
   xx = yy = ww = hh = 0;
-  if (fl_gc) XUtf8_measure_extents(fl_display, fl_window, current_font, fl_gc, &xx, &yy, &ww, &hh, c, n);
+  if (fl_gc) XUtf8_measure_extents(fl_display, fl_window, font_descriptor()->font, fl_gc, &xx, &yy, &ww, &hh, c, n);
 
   W = ww; H = hh; dx = xx; dy = yy;
 // This is the safe but mostly wrong thing we used to do...

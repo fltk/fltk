@@ -45,7 +45,7 @@
 #endif
 
 #if USE_XFT
-extern XFontStruct* fl_xxfont();
+//extern XFontStruct* fl_xxfont();
 #endif // USE_XFT
 
 /** Returns the current font's height */

@@ -81,11 +81,13 @@ void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
 } // fl_text_extents
 
 
-#ifndef __APPLE__
 void fl_draw(const char* str, int l, float x, float y) {
+#ifdef __APPLE__
+  fl_graphics_driver->draw(str, l, x, y);
+#else
   fl_draw(str, l, (int)x, (int)y);
-}
 #endif
+}
 //
 // End of "$Id$".
 //

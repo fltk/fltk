@@ -108,14 +108,12 @@ static Fl_Fontdesc built_in_table[] = {
 
 Fl_Fontdesc* fl_fonts = built_in_table;
 
-#define current_font (fl_graphics_driver->font_descriptor()->font)
-
 Fl_XFont_On_Demand fl_xfont;
 void *fl_xftfont = 0;
 //const char* fl_encoding_ = "iso8859-1";
 const char* fl_encoding_ = "iso10646-1";
 
-static void fl_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
+static void fl_xft_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize size, int angle) {
   if (fnum==-1) { // special case to stop font caching
     driver->Fl_Graphics_Driver::font(0, 0);
     return;
@@ -145,10 +143,10 @@ static void fl_font(Fl_Xlib_Graphics_Driver *driver, Fl_Font fnum, Fl_Fontsize s
 }
 
 void Fl_Xlib_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
-  fl_font(this,fnum,size,0);
+  fl_xft_font(this,fnum,size,0);
 }
 
-static XftFont* fontopen(const char* name, bool core, int angle) {
+static XftFont* fontopen(const char* name, Fl_Fontsize size, bool core, int angle) {
   // Check: does it look like we have been passed an old-school XLFD fontname?
   bool is_xlfd = false;
   int hyphen_count = 0;
@@ -225,7 +223,7 @@ static XftFont* fontopen(const char* name, bool core, int angle) {
     // Construct a match pattern for the font we want...
     XftPatternAddInteger(fnt_pat, XFT_WEIGHT, weight);
     XftPatternAddInteger(fnt_pat, XFT_SLANT, slant);
-    XftPatternAddDouble (fnt_pat, XFT_PIXEL_SIZE, (double)fl_graphics_driver->size());
+    XftPatternAddDouble (fnt_pat, XFT_PIXEL_SIZE, (double)size);
     XftPatternAddString (fnt_pat, XFT_ENCODING, fl_encoding_);
 
     // rotate font if angle!=0
@@ -285,7 +283,7 @@ static XftFont* fontopen(const char* name, bool core, int angle) {
       // last chance, just open any font in the right size
       the_font = XftFontOpen (fl_display, fl_screen,
                         XFT_FAMILY, XftTypeString, "sans",
-                        XFT_SIZE, XftTypeDouble, (double)fl_graphics_driver->size(),
+                        XFT_SIZE, XftTypeDouble, (double)size,
                         NULL);
       XftPatternDestroy(fnt_pat);
       if (!the_font) {
@@ -342,7 +340,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize, int 
 #if HAVE_GL
   listbase = 0;
 #endif // HAVE_GL
-  font = fontopen(name, false, angle);
+  font = fontopen(name, fsize, false, angle);
 }
 
 Fl_Font_Descriptor::~Fl_Font_Descriptor() {
@@ -373,57 +371,57 @@ static const wchar_t *utf8reformat(const char *str, int& n)
   return buffer;
 }
 
-static void utf8extents(const char *str, int n, XGlyphInfo *extents)
+static void utf8extents(Fl_Font_Descriptor *desc, const char *str, int n, XGlyphInfo *extents)
 {
   memset(extents, 0, sizeof(XGlyphInfo));
   const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
-    XftTextExtents16(fl_display, current_font, (XftChar16 *)buffer, n, extents);
+    XftTextExtents16(fl_display, desc->font, (XftChar16 *)buffer, n, extents);
 #else
-    XftTextExtents32(fl_display, current_font, (XftChar32 *)buffer, n, extents);
+    XftTextExtents32(fl_display, desc->font, (XftChar32 *)buffer, n, extents);
 #endif
 }
 
-int fl_height() {
-  if (fl_graphics_driver->font_descriptor()) return current_font->ascent + current_font->descent;
+int Fl_Xlib_Graphics_Driver::height() {
+  if (font_descriptor()) return font_descriptor()->font->ascent + font_descriptor()->font->descent;
   else return -1;
 }
 
-int fl_descent() {
-  if (fl_graphics_driver->font_descriptor()) return current_font->descent;
+int Fl_Xlib_Graphics_Driver::descent() {
+  if (font_descriptor()) return font_descriptor()->font->descent;
   else return -1;
 }
 
-double fl_width(const char *str, int n) {
-  if (!fl_graphics_driver->font_descriptor()) return -1.0;
+double Fl_Xlib_Graphics_Driver::width(const char* str, int n) {
+  if (!font_descriptor()) return -1.0;
   XGlyphInfo i;
-  utf8extents(str, n, &i);
+  utf8extents(font_descriptor(), str, n, &i);
   return i.xOff;
 }
 
-double fl_width(uchar c) {
-  return fl_width((const char *)(&c), 1);
-}
+/*double fl_width(uchar c) {
+  return fl_graphics_driver->width((const char *)(&c), 1);
+}*/
 
-double fl_width(FcChar32 *str, int n) {
-  if (!fl_graphics_driver->font_descriptor()) return -1.0;
+static double fl_xft_width(Fl_Font_Descriptor *desc, FcChar32 *str, int n) {
+  if (!desc) return -1.0;
   XGlyphInfo i;
-  XftTextExtents32(fl_display, current_font, str, n, &i);
+  XftTextExtents32(fl_display, desc->font, str, n, &i);
   return i.xOff;
 }
 
-double fl_width(unsigned int c) {
-  return fl_width((FcChar32 *)(&c), 1);
+double Fl_Xlib_Graphics_Driver::width(unsigned int c) {
+  return fl_xft_width(font_descriptor(), (FcChar32 *)(&c), 1);
 }
 
-void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
-  if (!fl_graphics_driver->font_descriptor()) {
+void Fl_Xlib_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  if (!font_descriptor()) {
     w = h = 0;
     dx = dy = 0;
     return;
   }
   XGlyphInfo gi;
-  utf8extents(c, n, &gi);
+  utf8extents(font_descriptor(), c, n, &gi);
 
   w = gi.width;
   h = gi.height;
@@ -453,10 +451,10 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
 // original fltk code did.
 // NOTE: On my test boxes (FC6, FC7, FC8, ubuntu8.04, 9.04, 9.10) this works 
 //       well for the fltk "built-in" font names.
-static XFontStruct* load_xfont_for_xft2(void) {
+static XFontStruct* load_xfont_for_xft2(Fl_Graphics_Driver *driver) {
   XFontStruct* xgl_font = 0;
-  int size = fl_graphics_driver->size();
-  int fnum = fl_graphics_driver->font();
+  int size = driver->size();
+  int fnum = driver->font();
   const char *wt_med = "medium";
   const char *wt_bold = "bold";
   const char *weight = wt_med; // no specifc weight requested - accept any
@@ -521,7 +519,7 @@ static XFontStruct* load_xfont_for_xft2(void) {
 } // end of load_xfont_for_xft2
 #  endif
 
-XFontStruct* fl_xxfont() {
+static XFontStruct* fl_xxfont(Fl_Graphics_Driver *driver) {
 #  if XFT_MAJOR > 1
   // kludge! XFT 2 and later does not provide core fonts for us to use with GL
   // try to load a bitmap X font instead
@@ -529,25 +527,27 @@ XFontStruct* fl_xxfont() {
   static int glsize = 0;
   static int glfont = -1;
   // Do we need to load a new font?
-  if ((!xgl_font) || (glsize != fl_graphics_driver->size()) || (glfont != fl_graphics_driver->font())) {
+  if ((!xgl_font) || (glsize != driver->size()) || (glfont != driver->font())) {
     // create a dummy XLFD for some font of the appropriate size...
     if (xgl_font) XFreeFont(fl_display, xgl_font); // font already loaded, free it - this *might* be a Bad Idea
-    glsize = fl_graphics_driver->size(); // record current font size
-    glfont = fl_graphics_driver->font(); // and face
-    xgl_font = load_xfont_for_xft2();
+    glsize = driver->size(); // record current font size
+    glfont = driver->font(); // and face
+    xgl_font = load_xfont_for_xft2(driver);
   }
   return xgl_font;
 #  else // XFT-1 provides a means to load a "core" font directly
-  if (current_font->core) return current_font->u.core.font; // is the current font a "core" font? If so, use it.
+  if (driver->font_descriptor()->font->core) {
+    return driver->font_descriptor()->font->u.core.font; // is the current font a "core" font? If so, use it.
+    }
   static XftFont* xftfont;
   if (xftfont) XftFontClose (fl_display, xftfont);
-  xftfont = fontopen(fl_fonts[fl_graphics_driver->font()].name, true); // else request XFT to load a suitable "core" font instead.
+  xftfont = fontopen(fl_fonts[driver->font()].name, driver->size(), true, 0); // else request XFT to load a suitable "core" font instead.
   return xftfont->u.core.font;
 #  endif // XFT_MAJOR > 1
 }
 
 XFontStruct* Fl_XFont_On_Demand::value() {
-  if (!ptr) ptr = fl_xxfont();
+  if (!ptr) ptr = fl_xxfont(fl_graphics_driver);
   return ptr;
 }
 
@@ -606,8 +606,8 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   // Use fltk's color allocator, copy the results to match what
   // XftCollorAllocValue returns:
   XftColor color;
-  color.pixel = fl_xpixel(fl_graphics_driver->color());
-  uchar r,g,b; Fl::get_color(fl_graphics_driver->color(), r,g,b);
+  color.pixel = fl_xpixel(Fl_Graphics_Driver::color());
+  uchar r,g,b; Fl::get_color(Fl_Graphics_Driver::color(), r,g,b);
   color.color.red   = ((int)r)*0x101;
   color.color.green = ((int)g)*0x101;
   color.color.blue  = ((int)b)*0x101;
@@ -615,19 +615,19 @@ void Fl_Xlib_Graphics_Driver::draw(const char *str, int n, int x, int y) {
   
   const wchar_t *buffer = utf8reformat(str, n);
 #ifdef __CYGWIN__
-  XftDrawString16(draw_, &color, current_font, x, y, (XftChar16 *)buffer, n);
+  XftDrawString16(draw_, &color, font_descriptor()->font, x, y, (XftChar16 *)buffer, n);
 #else
-  XftDrawString32(draw_, &color, current_font, x, y, (XftChar32 *)buffer, n);
+  XftDrawString32(draw_, &color, font_descriptor()->font, x, y, (XftChar32 *)buffer, n);
 #endif
 }
 
 void Fl_Xlib_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
-  fl_font(this, this->Fl_Graphics_Driver::font(), this->size(), angle);
+  fl_xft_font(this, this->Fl_Graphics_Driver::font(), this->size(), angle);
   this->draw(str, n, (int)x, (int)y);
-  this->font(this->Fl_Graphics_Driver::font(), this->size());
+  fl_xft_font(this, this->Fl_Graphics_Driver::font(), this->size(), 0);
 }
 
-static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
+static void fl_drawUCS4(Fl_Graphics_Driver *driver, const FcChar32 *str, int n, int x, int y) {
 #if USE_OVERLAY
   XftDraw*& draw_ = fl_overlay ? draw_overlay : ::draw_;
   if (fl_overlay) {
@@ -651,14 +651,14 @@ static void fl_drawUCS4(const FcChar32 *str, int n, int x, int y) {
   // Use fltk's color allocator, copy the results to match what
   // XftCollorAllocValue returns:
   XftColor color;
-  color.pixel = fl_xpixel(fl_graphics_driver->color());
-  uchar r,g,b; Fl::get_color(fl_graphics_driver->color(), r,g,b);
+  color.pixel = fl_xpixel(driver->color());
+  uchar r,g,b; Fl::get_color(driver->color(), r,g,b);
   color.color.red   = ((int)r)*0x101;
   color.color.green = ((int)g)*0x101;
   color.color.blue  = ((int)b)*0x101;
   color.color.alpha = 0xffff;
 
-  XftDrawString32(draw_, &color, current_font, x, y, (FcChar32 *)str, n);
+  XftDrawString32(draw_, &color, driver->font_descriptor()->font, x, y, (FcChar32 *)str, n);
 }
 
 
@@ -694,8 +694,8 @@ void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
     out = out - 1;
   }
   // Now we have a UCS4 version of the input text, reversed, in ucs_txt
-  int offs = (int)fl_width(ucs_txt, n);
-  fl_drawUCS4(ucs_txt, n, (x-offs), y);
+  int offs = (int)fl_xft_width(font_descriptor(), ucs_txt, n);
+  fl_drawUCS4(this, ucs_txt, n, (x-offs), y);
 
   delete[] ucs_txt;
 }

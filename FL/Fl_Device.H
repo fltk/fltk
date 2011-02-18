@@ -107,7 +107,7 @@ public:
 /**
  \brief A virtual class subclassed for each graphics driver FLTK uses.
  *
- The protected virtual methods of this class are those that a graphics driver should implement to
+ The virtual methods of this class are those that a graphics driver should implement to
  support all of FLTK drawing functions.
  <br> The public API for drawing operations is functionally presented in \ref drawing and as function lists
  in the \ref fl_drawings and \ref fl_attributes modules. 
@@ -156,6 +156,9 @@ protected:
   friend void fl_line(int x, int y, int x1, int y1);
   friend void fl_line(int x, int y, int x1, int y1, int x2, int y2);
   friend void fl_draw(const char *str, int n, int x, int y);
+#ifdef __APPLE__
+  friend void fl_draw(const char *str, int n, float x, float y);
+#endif
   friend void fl_draw(int angle, const char *str, int n, int x, int y);
   friend void fl_rtl_draw(const char *str, int n, int x, int y);
   friend void fl_font(Fl_Font face, Fl_Fontsize size);
@@ -234,6 +237,9 @@ protected:
   virtual void line(int x, int y, int x1, int y1, int x2, int y2);
   /** \brief see fl_draw(const char *str, int n, int x, int y). */
   virtual void draw(const char *str, int n, int x, int y) = 0;
+#ifdef __APPLE__
+  virtual void draw(const char *str, int n, float x, float y) = 0;
+#endif
   /** \brief see fl_draw(int angle, const char *str, int n, int x, int y). */
   virtual void draw(int angle, const char *str, int n, int x, int y) = 0;
   /** \brief see fl_rtl_draw(const char *str, int n, int x, int y). */
@@ -357,6 +363,16 @@ public:
   Fl_Font font() {return font_; }
   /** \brief see fl_size(). */
   Fl_Fontsize size() {return size_; }
+  /** \brief see fl_width(const char *str, int n). */
+  virtual double width(const char *str, int n) = 0;
+  /** \brief see fl_width(unsigned int n). */
+  virtual inline double width(unsigned int c) { char ch = (char)c; return width(&ch, 1); }
+  /** \brief see fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h). */
+  virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  /** \brief see fl_height(). */
+  virtual int height() = 0;
+  /** \brief see fl_descent(). */
+  virtual int descent() = 0;
   /** \brief see fl_color(void). */
   Fl_Color color() {return color_;}
   /** Returns a pointer to the current Fl_Font_Descriptor for the graphics driver */
@@ -381,6 +397,9 @@ public:
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b);
   void draw(const char* str, int n, int x, int y);
+#ifdef __APPLE__
+  void draw(const char *str, int n, float x, float y);
+#endif
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* str, int n, int x, int y);
   void font(Fl_Font face, Fl_Fontsize size);
@@ -391,6 +410,11 @@ public:
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+  double width(const char *str, int n);
+  double width(unsigned int c);
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  int height();
+  int descent();
 };
 #endif
 #if defined(WIN32) || defined(FL_DOXYGEN)
@@ -417,6 +441,11 @@ public:
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+  double width(const char *str, int n);
+  double width(unsigned int c);
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  int height();
+  int descent();
 };
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))
@@ -443,6 +472,11 @@ public:
   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3);
   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0);
   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+  double width(const char *str, int n);
+  double width(unsigned int c);
+  void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+  int height();
+  int descent();
 };
 #endif
 

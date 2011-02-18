@@ -146,14 +146,14 @@ void Fl_GDI_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   fl_font(this, fnum, size, 0);
 }
 
-int fl_height() {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
+int Fl_GDI_Graphics_Driver::height() {
+  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   if (fl_fontsize) return (fl_fontsize->metr.tmAscent + fl_fontsize->metr.tmDescent);
   else return -1;
 }
 
-int fl_descent() {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
+int Fl_GDI_Graphics_Driver::descent() {
+  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   if (fl_fontsize) return fl_fontsize->metr.tmDescent;
   else return -1;
 }
@@ -163,9 +163,9 @@ static xchar *wstr = NULL;
 static int wstr_len    = 0;
 
 
-double fl_width(const char* c, int n) {
+double Fl_GDI_Graphics_Driver::width(const char* c, int n) {
   int i = 0;
-  if (!fl_graphics_driver->font_descriptor()) return -1.0;
+  if (!font_descriptor()) return -1.0;
   double w = 0.0;
   char *end = (char *)&c[n];
   while (i < n) {
@@ -176,14 +176,14 @@ double fl_width(const char* c, int n) {
 //  if (l < 1) l = 1;
     i += l;
     if (!fl_nonspacing(ucs)) {
-      w += fl_width(ucs);
+      w += width(ucs);
     }
   }
   return w;
 }
 
-double fl_width(unsigned int c) {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
+double Fl_GDI_Graphics_Driver::width(unsigned int c) {
+  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   unsigned int r;
   r = (c & 0xFC00) >> 10;
   if (!fl_fontsize->width[r]) {
@@ -255,8 +255,8 @@ static unsigned short *ext_buff = NULL; // UTF-16 converted version of input UTF
 static unsigned wc_len = 0; // current string buffer dimension
 static WORD *gi = NULL; // glyph indices array
 // Function to determine the extent of the "inked" area of the glyphs in a string
-void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
+void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   if (!fl_fontsize) {
     w = 0; h = 0;
     dx = dy = 0;
@@ -326,10 +326,10 @@ void fl_text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
 
 exit_error:
   // some error here - just return fl_measure values
-  w = (int)fl_width(c, n);
-  h = fl_height();
+  w = (int)width(c, n);
+  h = height();
   dx = 0;
-  dy = fl_descent() - h;
+  dy = descent() - h;
   EXTENTS_UPDATE(dx, dy, w, h);
   return;
 } // fl_text_extents
@@ -339,10 +339,10 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   int lx = 0;
   char *end = (char *)&str[n];
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-   SelectObject(fl_gc, fl_graphics_driver->font_descriptor()->fid);
+   SelectObject(fl_gc, font_descriptor()->fid);
   while (i < n) {
     unsigned int u;
-	unsigned int u1;
+    unsigned int u1;
     unsigned short ucs;
 //  int l = fl_utf2ucs((const unsigned char*)str + i, n - i, &u);
     int l;
@@ -351,7 +351,7 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
       x -= lx;
 	  u = u1;
     } else {
-      lx = (int) fl_width(u);
+      lx = (int) width(u);
     }
     ucs = u;
     if (l < 1) l = 1;
@@ -367,7 +367,7 @@ void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int 
   int i = 0, i2=0;
   char *end = (char *)&str[n];
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-  SelectObject(fl_gc, fl_graphics_driver->font_descriptor()->fid);
+  SelectObject(fl_gc, font_descriptor()->fid);
   //unsigned short ucs[n]; //only GCC, but not MSVC
   unsigned short* ucs = new unsigned short[n];
   while (i < n) {
@@ -395,12 +395,12 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   }
 
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-  SelectObject(fl_gc, fl_graphics_driver->font_descriptor()->fid);
+  SelectObject(fl_gc, font_descriptor()->fid);
 #ifdef RTL_CHAR_BY_CHAR
   int i = 0;
   int lx = 0;
   while (i < wn) { // output char by char is very bad for Arabic but coherent with fl_width()
-    lx = (int) fl_width(wstr[i]);
+    lx = (int) width(wstr[i]);
     x -= lx;
     TextOutW(fl_gc, x, y, (WCHAR*)wstr + i, 1);
     if (fl_nonspacing(wstr[i])) {
@@ -410,7 +410,7 @@ void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   }
 #else
   UINT old_align = SetTextAlign(fl_gc, TA_RIGHT | TA_RTLREADING);
-  TextOutW(fl_gc, x, y - fl_height() + fl_descent(), (WCHAR*)wstr, wn);
+  TextOutW(fl_gc, x, y - height() + descent(), (WCHAR*)wstr, wn);
   SetTextAlign(fl_gc, old_align);
 #endif
   SetTextColor(fl_gc, oldColor);

@@ -30,9 +30,6 @@
 /* from fl_utf.c */
 extern unsigned fl_utf8toUtf16(const char* src, unsigned srclen, unsigned short* dst, unsigned dstlen);
 
-// if no font has been selected yet by the user, get one.
-#define check_default_font() {if (!fl_fontsize) fl_font(FL_HELVETICA, FL_NORMAL_SIZE);}
-
 static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static CFMutableDictionaryRef attributes = NULL;
@@ -251,26 +248,22 @@ void Fl_Quartz_Graphics_Driver::font(Fl_Font fnum, Fl_Fontsize size) {
   this->font_descriptor( find(fnum, size) );
 }
 
-int fl_height() {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
-  check_default_font();
-  if (fl_fontsize) return fl_fontsize->ascent+fl_fontsize->descent;
-  else return -1;
+int Fl_Quartz_Graphics_Driver::height() {
+  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
+  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
+  return fl_fontsize->ascent + fl_fontsize->descent;
 }
 
-int fl_descent() {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
-  check_default_font();
-  if (fl_fontsize) 
-    return fl_fontsize->descent+1;
-  else return -1;
+int Fl_Quartz_Graphics_Driver::descent() {
+  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
+  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
+  return fl_fontsize->descent+1;
 }
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 // returns width of a pair of UniChar's in the surrogate range
-static CGFloat surrogate_width(const UniChar *txt)
+static CGFloat surrogate_width(const UniChar *txt, Fl_Font_Descriptor *fl_fontsize)
 {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
   CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, txt, 2, kCFAllocatorNull);
   CTFontRef font2 = CTFontCreateForString(fl_fontsize->fontref, str, CFRangeMake(0,2));
   CFRelease(str);
@@ -284,14 +277,7 @@ static CGFloat surrogate_width(const UniChar *txt)
 }
 #endif
 
-static double fl_width(const UniChar* txt, int n) {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
-  check_default_font();
-  if (!fl_fontsize) {
-    check_default_font(); // avoid a crash!
-    if (!fl_fontsize)
-      return 8*n; // user must select a font first!
-  }
+static double fl_mac_width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 if (fl_mac_os_version >= 0x1050) {
   double retval = 0;
@@ -300,7 +286,7 @@ if (fl_mac_os_version >= 0x1050) {
   for (i = 0; i < n; i++) { // loop over txt
     uni = txt[i];
     if (uni >= 0xD800 && uni <= 0xDBFF) { // handles the surrogate range
-      retval += surrogate_width(txt + i);
+      retval += surrogate_width(txt + i, fl_fontsize);
       i++; // because a pair of UniChar's represent a single character
       continue;
       }
@@ -370,27 +356,23 @@ if (fl_mac_os_version >= 0x1050) {
   return 0;
 }
 
-double fl_width(const char* txt, int n) {
+double Fl_Quartz_Graphics_Driver::width(const char* txt, int n) {
   int wc_len = n;
   UniChar *uniStr = mac_Utf8_to_Utf16(txt, n, &wc_len);
-  return fl_width(uniStr, wc_len);
+  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
+  return fl_mac_width(uniStr, wc_len, font_descriptor());
 }
 
-double fl_width(unsigned int wc) {
+double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
   const UniChar uc = wc;
-  return fl_width(&uc, 1);
+  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
+  return fl_mac_width(&uc, 1, font_descriptor());
 }
 
 // text extent calculation
-void fl_text_extents(const char *str8, int n, int &dx, int &dy, int &w, int &h) {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
-  if (!fl_fontsize) {
-    check_default_font(); // avoid a crash!
-    if (!fl_fontsize)
-      w = int(8.0 * n); // user must select a font first!
-      h = int(8.0);
-      return;
-  }
+void Fl_Quartz_Graphics_Driver::text_extents(const char *str8, int n, int &dx, int &dy, int &w, int &h) {
+  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
+  Fl_Font_Descriptor *fl_fontsize = font_descriptor();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 if (fl_mac_os_version >= 0x1050) {
   CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)str8, n, kCFStringEncodingUTF8, false);
@@ -443,14 +425,6 @@ else {
   return;
 } // fl_text_extents
 
-
-void fl_draw(const char *str, int n, float x, float y);
-
-void Fl_Quartz_Graphics_Driver::draw(const char* str, int n, int x, int y) {
-  fl_draw(str, n, (float)x-0.0f, (float)y+0.5f);
-}
-
-
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static CGColorRef flcolortocgcolor(Fl_Color i)
 {
@@ -465,11 +439,7 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 }
 #endif
 
-
-void fl_draw(const char *str, int n, float x, float y) {
-  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
-  // avoid a crash if no font has been selected by user yet !
-  check_default_font();
+static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Font_Descriptor *fl_fontsize) {
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -512,16 +482,28 @@ void fl_draw(const char *str, int n, float x, float y) {
 #endif
 }
 
+void Fl_Quartz_Graphics_Driver::draw(const char *str, int n, float x, float y) {
+  // avoid a crash if no font has been selected by user yet !
+  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
+  fl_mac_draw(str, n, x, y, font_descriptor());
+}
+
+void Fl_Quartz_Graphics_Driver::draw(const char* str, int n, int x, int y) {
+  // avoid a crash if no font has been selected by user yet !
+  if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
+  fl_mac_draw(str, n, (float)x-0.0f, (float)y+0.5f, font_descriptor());
+}
+
 void Fl_Quartz_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
   CGContextSaveGState(fl_gc);
   CGContextTranslateCTM(fl_gc, x, y);
   CGContextRotateCTM(fl_gc, - angle*(M_PI/180) );
-  fl_draw(str, n, (float)0., (float)0.);
+  draw(str, n, 0, 0);
   CGContextRestoreGState(fl_gc);
 }
 
 void Fl_Quartz_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
-  draw(c, n, int(x - fl_width(c, n)), y);
+  draw(c, n, int(x - width(c, n)), y);
 }
 
 //

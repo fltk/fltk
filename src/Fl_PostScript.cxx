@@ -944,7 +944,7 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
     fprintf(output, "/%s SF\n" , _fontNames[f]);
 #if defined(USE_X11) 
 #if USE_XFT
-    // Xft font height is sometimes larger than the size required (see STR 2566).
+    // Xft font height is sometimes larger than the required size (see STR 2566).
     // Increase the PostScript font size by 15% without exceeding the display font height 
     int max = desc->font->height;
     ps_size = s * 1.15;
@@ -962,6 +962,23 @@ void Fl_PostScript_Graphics_Driver::font(int f, int s) {
     fprintf(output,"%.1f FS\n", ps_size);
   }
 }
+
+double Fl_PostScript_Graphics_Driver::width(const char *s, int n) {
+  return Fl_Display_Device::display_device()->driver()->width(s, n);
+}
+
+int Fl_PostScript_Graphics_Driver::height() {
+  return Fl_Display_Device::display_device()->driver()->height();
+}
+
+int Fl_PostScript_Graphics_Driver::descent() {
+  return Fl_Display_Device::display_device()->driver()->descent();
+}
+
+void Fl_PostScript_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  return Fl_Display_Device::display_device()->driver()->text_extents(c, n, dx, dy, w, h);
+}
+
 
 void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
   Fl::get_color(c, cr_, cg_, cb_);
@@ -1022,45 +1039,48 @@ static uchar *calc_mask(uchar *img, int w, int h, Fl_Color bg)
 }
 
 // write to PostScript a bitmap image of a UTF8 string
-static void transformed_draw_extra(const char* str, int n, double x, double y, int w, FILE *output) {
+static void transformed_draw_extra(
+      const char* str, int n, double x, double y, int w, FILE *output, Fl_Graphics_Driver *driver) {
   // scale for bitmask computation
 #if defined(USE_X11) && !USE_XFT
-  const float scale = 1; // don't scale because we can't expect to have scalable fonts
+  float scale = 1; // don't scale because we can't expect to have scalable fonts
 #else
-  const float scale = 3;
+  float scale = 3;
 #endif
-  Fl_Fontsize old_size = fl_size();
-  Fl_Font fontnum = fl_font();
-  w =  (int)(w *scale + 0.5);
-  int h = (int)(fl_height() * scale);
+  Fl_Fontsize old_size = driver->size();
+  Fl_Font fontnum = driver->font();
+  int w_scaled =  (int)(w * (scale + 0.5));
+  int h = (int)(driver->height() * scale);
   // create an offscreen image of the string
-  Fl_Color text_color = fl_color();
+  Fl_Color text_color = driver->color();
   Fl_Color bg_color = fl_contrast(FL_WHITE, text_color);
-  Fl_Offscreen off = fl_create_offscreen(w+2, (int)(h+3*scale) );
+  Fl_Offscreen off = fl_create_offscreen(w_scaled, (int)(h+3*scale) );
   fl_begin_offscreen(off);
   fl_color(bg_color);
   // color offscreen background with a shade contrasting with the text color
-  fl_rectf(0, 0, w+2, (int)(h+3*scale) );
+  fl_rectf(0, 0, w_scaled, (int)(h+3*scale) );
   fl_color(text_color);
 #if defined(USE_X11) && !USE_XFT
   // force seeing this font as new so it's applied to the offscreen graphics context
   fl_graphics_driver->font_descriptor(NULL);
-  fl_graphics_driver->Fl_Graphics_Driver::font(fontnum, 0);
+  fl_font(fontnum, 0);
 #endif
   fl_font(fontnum, (Fl_Fontsize)(scale * old_size) );
   fl_draw(str, n, 1, (int)(h * 0.8) ); // draw string in offscreen
+  int w2 = (int)fl_width(str, n);
   // read (most of) the offscreen image
-  uchar *img = fl_read_image(NULL, 1, 1, w, h, 0);
+  uchar *img = fl_read_image(NULL, 1, 1, w2, h, 0);
   fl_end_offscreen();
-  fl_font(fontnum, old_size);
+  driver->font(fontnum, old_size);
   fl_delete_offscreen(off);
   // compute the mask of what is not the background
-  uchar *mask = calc_mask(img, w, h, bg_color);
+  uchar *mask = calc_mask(img, w2, h, bg_color);
   delete[] img;
   // write the string image to PostScript as a scaled bitmask
-  fprintf(output, "%g %g %g %g %d %d MI\n", x, y - h*0.77/scale, w/scale, h/scale, w, h);
+  scale = w2 / float(w);
+  fprintf(output, "%g %g %g %g %d %d MI\n", x, y - h*0.77/scale, w2/scale, h/scale, w2, h);
   uchar *di;
-  int wmask = (w+7)/8;
+  int wmask = (w2+7)/8;
   for (int j = h - 1; j >= 0; j--){
     di = mask + j * wmask;
     for (int i = 0; i < wmask; i++){
@@ -1101,13 +1121,13 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   int len, code;
   if (!n || !str || !*str) return;
   // compute display width of string
-  int width = (int)fl_width(str, n);
-  if (width == 0) return;
-  if (fl_font() >= FL_FREE_FONT) {
-    transformed_draw_extra(str, n, x, y, width, output);
+  int w = (int)width(str, n);
+  if (w == 0) return;
+  if (Fl_Graphics_Driver::font() >= FL_FREE_FONT) {
+    transformed_draw_extra(str, n, x, y, w, output, this);
     return;
     }
-  fprintf(output, "%d <", width);
+  fprintf(output, "%d <", w);
   // transforms UTF8 encoding to our custom PostScript encoding as follows:
   // extract each unicode character
   // if unicode <= 0x17F, unicode and PostScript codes are identical
@@ -1129,7 +1149,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
       }
     else { // unhandled character: draw all string as bitmap image
       fprintf(output, "> pop pop\n"); // close and ignore the opened hex string
-      transformed_draw_extra(str, n, x, y, width, output);
+      transformed_draw_extra(str, n, x, y, w, output, this);
       return;
     }
     fprintf(output, "%4.4X", utf);

@@ -495,21 +495,21 @@ inline Fl_Fontsize fl_size() {return fl_graphics_driver->size();}
   Returns the recommended minimum line spacing for the current font.
   You can also use the value of \p size passed to fl_font()
 */
-FL_EXPORT int   fl_height();	// using "size" should work ok
+inline int fl_height() {return fl_graphics_driver->height();}
 FL_EXPORT int fl_height(int font, int size);
 /**
   Returns the recommended distance above the bottom of a fl_height() tall box to
   draw the text at so it looks centered vertically in that box.
 */
-FL_EXPORT int   fl_descent();
+inline int  fl_descent() {return fl_graphics_driver->descent();}
 /** Return the typographical width of a nul-terminated string */
 FL_EXPORT double fl_width(const char* txt);
 /** Return the typographical width of a sequence of \p n characters */
-FL_EXPORT double fl_width(const char* txt, int n);
+inline double fl_width(const char* txt, int n) {return fl_graphics_driver->width(txt, n);}
 /** Return the typographical width of a single character :
     \note if a valid fl_gc is NOT found then it uses the first window gc,
     or the screen gc if no fltk window is available when called. */
-FL_EXPORT double fl_width(unsigned int);
+inline double fl_width(unsigned int c)  {return fl_graphics_driver->width(c);}
 /** Determine the minimum pixel dimensions of a nul-terminated string.
 
 Usage: given a string "txt" drawn using fl_draw(txt, x, y) you would determine
@@ -522,7 +522,8 @@ FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); /
 /** Determine the minimum pixel dimensions of a sequence of \p n characters.
 \see fl_text_extents(const char*, int& dx, int& dy, int& w, int& h)
 */
-FL_EXPORT void fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
+inline void fl_text_extents(const char *t, int n, int& dx, int& dy, int& w, int& h)
+  {fl_graphics_driver->text_extents(t, n, dx, dy, w, h);}
 
 // font encoding:
 // Note: doxygen comments here to avoid duplication for os-sepecific cases

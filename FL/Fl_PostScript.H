@@ -116,6 +116,9 @@ class Clip {
   /*  int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
    */
   void draw(const char* s, int n, int x, int y) {transformed_draw(s,n,x,y); };
+#ifdef __APPLE__
+  void draw(const char* s, int n, float x, float y) {transformed_draw(s,n,x,y); };
+#endif
   void draw(int angle, const char *str, int n, int x, int y);
   void rtl_draw(const char* s, int n, int x, int y);
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
@@ -180,6 +183,10 @@ class Clip {
   void transformed_vertex(double x, double y);
   
   void font(int face, int size);
+  double width(const char *, int);
+  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
+  int height();
+  int descent();
   
   void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0){draw_scaled_image(d,x,y,w,h,w,h,delta,ldelta);};
   void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0){draw_scaled_image_mono(d,x,y,w,h,w,h,delta,ld);};
