@@ -69,29 +69,7 @@ void Fl_Graphics_Driver::mult_matrix(double a, double b, double c, double d, dou
   m = o;
 }
 
-/**
-  Concatenates scaling transformation onto the current one.
-  \param[in] x,y scale factors in x-direction and y-direction
-*/
-void fl_scale(double x,double y) {fl_mult_matrix(x,0,0,y,0,0);}
-
-/**
-  Concatenates scaling transformation onto the current one.
-  \param[in] x scale factor in both x-direction and y-direction
-*/
-void fl_scale(double x) {fl_mult_matrix(x,0,0,x,0,0);}
-
-/**
-  Concatenates translation transformation onto the current one.
-  \param[in] x,y translation factor in x-direction and y-direction
-*/
-void fl_translate(double x,double y) {fl_mult_matrix(1,0,0,1,x,y);}
-
-/**
-  Concatenates rotation transformation onto the current one.
-  \param[in] d - rotation angle, counter-clockwise in degrees (not radians)
-*/
-void fl_rotate(double d) {
+void Fl_Graphics_Driver::rotate(double d) {
   if (d) {
     double s, c;
     if (d == 0) {s = 0; c = 1;}
@@ -99,7 +77,7 @@ void fl_rotate(double d) {
     else if (d == 180) {s = 0; c = -1;}
     else if (d == 270 || d == -90) {s = -1; c = 0;}
     else {s = sin(d*M_PI/180); c = cos(d*M_PI/180);}
-    fl_mult_matrix(c,-s,s,c,0,0);
+    mult_matrix(c,-s,s,c,0,0);
   }
 }
 

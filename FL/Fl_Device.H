@@ -195,6 +195,10 @@ protected:
   friend void fl_push_matrix();
   friend void fl_pop_matrix();
   friend void fl_mult_matrix(double a, double b, double c, double d, double x, double y);
+  friend void fl_scale(double x, double y);
+  friend void fl_scale(double x);
+  friend void fl_translate(double x, double y);
+  friend void fl_rotate(double d);
   friend double fl_transform_x(double x, double y);
   friend double fl_transform_y(double x, double y);
   friend double fl_transform_dx(double x, double y);
@@ -311,6 +315,14 @@ protected:
   void pop_matrix();
   /** \brief see fl_mult_matrix(double a, double b, double c, double d, double x, double y). */
   void mult_matrix(double a, double b, double c, double d, double x, double y);
+  /** \brief see fl_scale(double x, double y). */
+  inline void scale(double x, double y) { mult_matrix(x,0,0,y,0,0); }
+  /** \brief see fl_scale(double x). */
+  inline void scale(double x) { mult_matrix(x,0,0,x,0,0); }
+  /** \brief see fl_translate(double x, double y). */
+  inline void translate(double x,double y) { mult_matrix(1,0,0,1,x,y); }
+  /** \brief see fl_rotate(double d). */
+  void rotate(double d);
   /** \brief see fl_transform_x(double x, double y). */
   double transform_x(double x, double y);
   /** \brief see fl_transform_y(double x, double y). */

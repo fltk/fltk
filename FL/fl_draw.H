@@ -333,10 +333,26 @@ inline void fl_push_matrix() { fl_graphics_driver->push_matrix(); };
  Restores the current transformation matrix from the stack.
  */
 inline void fl_pop_matrix() { fl_graphics_driver->pop_matrix(); };
-FL_EXPORT void fl_scale(double x, double y);
-FL_EXPORT void fl_scale(double x);
-FL_EXPORT void fl_translate(double x, double y);
-FL_EXPORT void fl_rotate(double d);
+/**
+ Concatenates scaling transformation onto the current one.
+ \param[in] x,y scale factors in x-direction and y-direction
+ */
+inline void fl_scale(double x, double y) { fl_graphics_driver->scale(x, y); };
+/**
+ Concatenates scaling transformation onto the current one.
+ \param[in] x scale factor in both x-direction and y-direction
+ */
+inline void fl_scale(double x) { fl_graphics_driver->scale(x, x); };
+/**
+ Concatenates translation transformation onto the current one.
+ \param[in] x,y translation factor in x-direction and y-direction
+ */
+inline void fl_translate(double x, double y) { fl_graphics_driver->translate(x, y); };
+/**
+ Concatenates rotation transformation onto the current one.
+ \param[in] d - rotation angle, counter-clockwise in degrees (not radians)
+ */
+inline void fl_rotate(double d) { fl_graphics_driver->rotate(d); };
 /**
  Concatenates another transformation onto the current one.
  
