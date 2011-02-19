@@ -56,6 +56,13 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   return f->fontname;
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+static int name_compare(const void *a, const void *b)
+{
+  return strcmp(*(char**)a, *(char**)b);
+}
+#endif
+
 static int fl_free_font = FL_FREE_FONT;
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
@@ -76,6 +83,7 @@ if(fl_mac_os_version >= 0x1050) {
   CFRelease(fcref);
   CFIndex count = CFArrayGetCount(arrayref);
   CFIndex i;
+  char **tabfontnames = new char*[count]; // never free'ed
   for (i = 0; i < count; i++) {
 	CTFontDescriptorRef fdesc = (CTFontDescriptorRef)CFArrayGetValueAtIndex(arrayref, i);
 	CTFontRef font = CTFontCreateWithFontDescriptor(fdesc, 0., NULL);
@@ -83,10 +91,14 @@ if(fl_mac_os_version >= 0x1050) {
 	CFRelease(font);
 	static char fname[100];
 	CFStringGetCString(cfname, fname, sizeof(fname), kCFStringEncodingUTF8);
+	tabfontnames[i] = strdup(fname); // never free'ed
 	CFRelease(cfname);
-	Fl::set_font((Fl_Font)(fl_free_font++), strdup(fname));
 	}
   CFRelease(arrayref);
+  qsort(tabfontnames, count, sizeof(char*), name_compare);
+  for (i = 0; i < count; i++) {
+    Fl::set_font((Fl_Font)(fl_free_font++), tabfontnames[i]);
+    }
   return (Fl_Font)fl_free_font;
 }
 else {
