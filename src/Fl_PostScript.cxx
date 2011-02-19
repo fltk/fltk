@@ -1039,13 +1039,13 @@ static uchar *calc_mask(uchar *img, int w, int h, Fl_Color bg)
 }
 
 // write to PostScript a bitmap image of a UTF8 string
-static void transformed_draw_extra(
-      const char* str, int n, double x, double y, int w, FILE *output, Fl_Graphics_Driver *driver) {
+static void transformed_draw_extra(const char* str, int n, double x, double y, int w, 
+      FILE *output, Fl_Graphics_Driver *driver, bool rtl) {
   // scale for bitmask computation
 #if defined(USE_X11) && !USE_XFT
   float scale = 1; // don't scale because we can't expect to have scalable fonts
 #else
-  float scale = 3;
+  float scale = 2;
 #endif
   Fl_Fontsize old_size = driver->size();
   Fl_Font fontnum = driver->font();
@@ -1066,8 +1066,10 @@ static void transformed_draw_extra(
   fl_font(fontnum, 0);
 #endif
   fl_font(fontnum, (Fl_Fontsize)(scale * old_size) );
-  fl_draw(str, n, 1, (int)(h * 0.8) ); // draw string in offscreen
   int w2 = (int)fl_width(str, n);
+  // draw string in offscreen
+  if (rtl) fl_rtl_draw(str, n, w2, (int)(h * 0.8) );
+  else fl_draw(str, n, 1, (int)(h * 0.8) );
   // read (most of) the offscreen image
   uchar *img = fl_read_image(NULL, 1, 1, w2, h, 0);
   fl_end_offscreen();
@@ -1124,7 +1126,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   int w = (int)width(str, n);
   if (w == 0) return;
   if (Fl_Graphics_Driver::font() >= FL_FREE_FONT) {
-    transformed_draw_extra(str, n, x, y, w, output, this);
+    transformed_draw_extra(str, n, x, y, w, output, this, false);
     return;
     }
   fprintf(output, "%d <", w);
@@ -1149,7 +1151,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
       }
     else { // unhandled character: draw all string as bitmap image
       fprintf(output, "> pop pop\n"); // close and ignore the opened hex string
-      transformed_draw_extra(str, n, x, y, w, output, this);
+      transformed_draw_extra(str, n, x, y, w, output, this, false);
       return;
     }
     fprintf(output, "%4.4X", utf);
@@ -1158,24 +1160,8 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
 }
 
 void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
-  const char *last = str + n;
-  const char *str2 = str;
-  unsigned int *unis = new unsigned int[n + 1];
-  char *out = new char[n + 1];
-  int u = 0, len;
-  char *p = out;
-  double w = fl_width(str, n);
-  while (str2 < last) {
-    unis[u++] = fl_utf8decode(str2, last, &len);
-    str2 += len;
-    }
-  while (u > 0) {
-    len = fl_utf8encode(unis[--u], p);
-    p += len;
-    }
-  transformed_draw(out, p - out, x - w, y);
-  delete [] unis;
-  delete [] out;
+  int w = (int)width(str, n);
+  transformed_draw_extra(str, n, x - w, y, w, output, this, true);
 }
 
 void Fl_PostScript_Graphics_Driver::concat(){
