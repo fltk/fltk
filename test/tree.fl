@@ -54,8 +54,59 @@ Function {Button_CB(Fl_Widget*w, void*data)} {return_type void
   code {fprintf(stderr, "'%s' button pushed\\n", w->label());} {}
 } 
 
+Function {AssignUserIcons()} {
+  comment {Assign user icons to the items} open
+} {
+  code {static const char *L_folder_xpm[] = {
+    "11 11 3 1",
+    ".  c None",
+    "x  c \#d8d833",
+    "@  c \#808011",
+    "...........",
+    ".....@@@@..",
+    "....@xxxx@.",
+    "@@@@@xxxx@@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@@@@@@@@@@@"};
+static Fl_Pixmap L_folderpixmap(L_folder_xpm);
+
+static const char *L_document_xpm[] = {
+    "11 11 3 1",
+    ".  c None",
+    "x  c \#d8d8f8",
+    "@  c \#202060",
+    ".@@@@@@@@@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@@@@@@@@@."};
+static Fl_Pixmap L_documentpixmap(L_document_xpm);
+
+// Assign user icons to tree items
+for ( Fl_Tree_Item *item = tree->first(); item; item=item->next())
+    if ( usericon_radio->value() )
+        // Assign custom icons
+        item->usericon(item->has_children() ? &L_folderpixmap : &L_documentpixmap);
+    else
+    	// Don't assign custom icons
+        item->usericon(0);
+
+tree->redraw();} {}
+} 
+
 Function {RebuildTree()} {
-  comment {Rebuild the 'example tree' from scratch}
+  comment {Rebuild the 'example tree' from scratch} open
 } {
   code {// REBUILD THE TREE TO MAKE CURRENT "DEFAULT" PREFS TAKE EFFECT
 tree->clear();
@@ -141,7 +192,10 @@ for ( int t=0; t<500; t++ ) {
 }
 tree->close("500 Items");	// close the 500 items by default
 
-tree->redraw();} {}
+AssignUserIcons();
+
+tree->redraw();} {selected
+  }
 } 
 
 Function {EditColor(Fl_Color val)} {
@@ -182,7 +236,7 @@ if ( item ) {
       tooltip {Test tree} xywh {15 22 280 411} box DOWN_BOX color 55 selection_color 15
       class Fl_Tree
     } {}
-    Fl_Group {} {open selected
+    Fl_Group {} {open
       xywh {300 5 705 427}
       code0 {o->resizable(0);}
     } {
@@ -409,55 +463,9 @@ switch ( whenmode_chooser->value() ) {
       Fl_Check_Button usericon_radio {
         label {Enable user icons?}
         user_data tree
-        callback {static const char *L_folder_xpm[] = {
-    "11 11 3 1",
-    ".  c None",
-    "x  c \#d8d833",
-    "@  c \#808011",
-    "...........",
-    ".....@@@@..",
-    "....@xxxx@.",
-    "@@@@@xxxx@@",
-    "@xxxxxxxxx@",
-    "@xxxxxxxxx@",
-    "@xxxxxxxxx@",
-    "@xxxxxxxxx@",
-    "@xxxxxxxxx@",
-    "@xxxxxxxxx@",
-    "@@@@@@@@@@@"};
-static Fl_Pixmap L_folderpixmap(L_folder_xpm);
-
-static const char *L_document_xpm[] = {
-    "11 11 3 1",
-    ".  c None",
-    "x  c \#d8d8f8",
-    "@  c \#202060",
-    ".@@@@@@@@@.",
-    ".@xxxxxxx@.",
-    ".@xxxxxxx@.",
-    ".@xxxxxxx@.",
-    ".@xxxxxxx@.",
-    ".@xxxxxxx@.",
-    ".@xxxxxxx@.",
-    ".@xxxxxxx@.",
-    ".@xxxxxxx@.",
-    ".@xxxxxxx@.",
-    ".@@@@@@@@@."};
-static Fl_Pixmap L_documentpixmap(L_document_xpm);
-
-Fl_Tree_Item *i = 0;
-if ( usericon_radio->value() ) {
-    tree->usericon(&L_folderpixmap);
-    if ( ( i = tree->find_item("Bbb/bgb/111") ) != NULL ) i->usericon(&L_documentpixmap);
-    if ( ( i = tree->find_item("Bbb/bgb/222") ) != NULL ) i->usericon(&L_documentpixmap);
-    if ( ( i = tree->find_item("Bbb/bgb/333") ) != NULL ) i->usericon(&L_documentpixmap);
-} else {
-    tree->usericon(0);
-    if ( ( i = tree->find_item("Bbb/bgb/111") ) != NULL ) i->usericon(0);
-    if ( ( i = tree->find_item("Bbb/bgb/222") ) != NULL ) i->usericon(0);
-    if ( ( i = tree->find_item("Bbb/bgb/333") ) != NULL ) i->usericon(0);
-}}
+        callback {AssignUserIcons();}
         tooltip {Tests Fl_Tree_Item::usericon()} xywh {486 194 20 16} down_box DOWN_BOX labelsize 12 align 7
+        code0 {usericon_radio->value(1);}
       }
       Fl_Check_Button showroot_radio {
         label {Show root?}
