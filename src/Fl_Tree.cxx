@@ -782,13 +782,14 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
 /// the value will be clipped. So if yoff=100, but scrollbar's max
 /// is 50, then 50 will be used.
 ///
-/// \param[in] item The item to be shown. Should not be NULL.
+/// \param[in] item The item to be shown. If NULL, first() is used.
 /// \param[in] yoff The pixel offset from the top for the displayed position.
 ///
 /// \see show_item_top(), show_item_middle(), show_item_bottom()
 ///
 void Fl_Tree::show_item(Fl_Tree_Item *item, int yoff) {
-  if ( ! item ) return;
+  item = item ? item : first();
+  if (!item) return;
   int newval = item->y() - y() - yoff + (int)_vscroll->value();
   if ( newval < _vscroll->minimum() ) newval = (int)_vscroll->minimum();
   if ( newval > _vscroll->maximum() ) newval = (int)_vscroll->maximum();
