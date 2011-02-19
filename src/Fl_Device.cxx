@@ -68,7 +68,8 @@ void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int
 {
   w = (int)width(t, n);
   h = - height();
-  dx = dy = 0;
+  dx = 0;
+  dy = descent();
 }
 
 
