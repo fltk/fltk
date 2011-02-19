@@ -231,11 +231,11 @@ public:
   Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos);
   
   /// Remove the specified \p item from the tree.
+  /// \p item may not be NULL.
   /// If it has children, all those are removed too.
   /// \returns 0 if done, -1 if 'item' not found.
   ///
   int remove(Fl_Tree_Item *item) {
-    if ( !item ) return(0);
     if ( item == _root ) {
       clear();
     } else {
@@ -254,6 +254,8 @@ public:
     delete _root; _root = 0;
   } 
   /// Clear all the children of a particular node in the tree specified by \p item.
+  /// Item may not be NULL.
+  ///
   void clear_children(Fl_Tree_Item *item) {
     if ( item->has_children() ) {
       item->clear_children();
@@ -301,12 +303,11 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be opened
+  /// \param[in] item -- the item to be opened. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
   ///             callback_reason() will be FL_TREE_REASON_OPENED
-  ///
   /// \returns
   ///     -   1 -- item was opened
   ///     -   0 -- item was already open, no change
@@ -335,7 +336,6 @@ public:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
   ///             callback_reason() will be FL_TREE_REASON_OPENED
-  ///
   /// \returns
   ///     -   1 -- OK: item opened
   ///     -   0 -- OK: item was already open, no change
@@ -355,7 +355,7 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be opened
+  /// \param[in] item -- the item whose open state is to be toggled. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked, callback_reason() will be either
@@ -377,12 +377,11 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be closed
+  /// \param[in] item -- the item to be closed. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
   ///             callback_reason() will be FL_TREE_REASON_CLOSED
-  ///
   /// \returns
   ///     -   1 -- item was closed
   ///     -   0 -- item was already closed, no change
@@ -410,7 +409,6 @@ public:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
   ///             callback_reason() will be FL_TREE_REASON_CLOSED
-  ///
   /// \returns
   ///     -   1 -- OK: item closed
   ///     -   0 -- OK: item was already closed, no change
@@ -428,8 +426,7 @@ public:
   /// Items that are 'open' are themselves not necessarily visible;
   /// one of the item's parents might be closed.
   ///
-  /// \param[in] item -- the item to be tested
-  ///
+  /// \param[in] item -- the item to be tested. Must not be NULL.
   /// \returns
   ///     -  1 : item is open
   ///     -  0 : item is closed
@@ -443,7 +440,6 @@ public:
   /// one of the item's parents might be closed.
   ///
   /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
-  ///
   /// \returns
   ///     -    1 - OK: item is open
   ///     -    0 - OK: item is closed
@@ -456,8 +452,7 @@ public:
   }
   /// See if the specified \p item is closed.
   ///
-  /// \param[in] item -- the item to be tested
-  ///
+  /// \param[in] item -- the item to be tested. Must not be NULL.
   /// \returns
   ///     -   1 : item is open
   ///     -   0 : item is closed
@@ -468,7 +463,6 @@ public:
   /// See if item specified by \p path (eg: "Parent/child/item") is closed.
   ///
   /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
-  ///
   /// \returns
   ///     -   1 - OK: item is closed
   ///     -   0 - OK: item is open
@@ -487,12 +481,11 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be selected
+  /// \param[in] item -- the item to be selected. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
   ///             callback_reason() will be FL_TREE_REASON_SELECTED
-  ///
   /// \returns
   ///     -   1 - item's state was changed
   ///     -   0 - item was already selected, no change was made
@@ -521,7 +514,6 @@ public:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
   ///             callback_reason() will be FL_TREE_REASON_SELECTED
-  ///
   /// \returns
   ///     -   1 : OK: item's state was changed
   ///     -   0 : OK: item was already selected, no change was made
@@ -539,7 +531,7 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be selected
+  /// \param[in] item -- the item to be selected. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked, callback_reason() will be
@@ -561,15 +553,14 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be selected
+  /// \param[in] item -- the item to be selected. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
   ///             callback_reason() will be FL_TREE_REASON_DESELECTED
-  ///
   /// \returns
-  ///     - 0 - item was already deselected, no change was made
-  ///     - 1 - item's state was changed
+  ///     -   0 - item was already deselected, no change was made
+  ///     -   1 - item's state was changed
   ///
   int deselect(Fl_Tree_Item *item, int docallback=1) {
     if ( item->is_selected() ) {
@@ -595,7 +586,6 @@ public:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
   ///             callback_reason() will be FL_TREE_REASON_DESELECTED
-  ///
   ///  \returns
   ///     -   1 - OK: item's state was changed
   ///     -   0 - OK: item was already deselected, no change was made
@@ -614,7 +604,7 @@ public:
   
   /// See if the specified \p item is selected.
   ///
-  /// \param[in] item -- the item to be tested
+  /// \param[in] item -- the item to be tested. Must not be NULL.
   ///
   /// \return
   ///     -   1 : item selected
@@ -626,7 +616,6 @@ public:
   /// See if item specified by \p path (eg: "Parent/child/item") is selected.
   ///
   /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
-  ///
   /// \returns
   ///     -   1 : item selected
   ///     -   0 : item deselected
