@@ -336,6 +336,18 @@ const char* Fl_Native_File_Chooser::preset_file() const {
   return(_preset_file);
 }
 
+void Fl_Native_File_Chooser::filter_value(int val) {
+  _filt_value = val;
+}
+
+int Fl_Native_File_Chooser::filter_value() const {
+  return(_filt_value);
+}
+
+int Fl_Native_File_Chooser::filters() const {
+  return(_filt_total);
+}
+
 #import <Cocoa/Cocoa.h>
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
 #ifndef MAC_OS_X_VERSION_10_6
