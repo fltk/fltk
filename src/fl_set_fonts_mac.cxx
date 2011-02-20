@@ -87,7 +87,7 @@ if(fl_mac_os_version >= 0x1050) {
   for (i = 0; i < count; i++) {
 	CTFontDescriptorRef fdesc = (CTFontDescriptorRef)CFArrayGetValueAtIndex(arrayref, i);
 	CTFontRef font = CTFontCreateWithFontDescriptor(fdesc, 0., NULL);
-	CFStringRef cfname = CTFontCopyPostScriptName(font);
+	CFStringRef cfname = CTFontCopyFullName(font);
 	CFRelease(font);
 	static char fname[100];
 	CFStringGetCString(cfname, fname, sizeof(fname), kCFStringEncodingUTF8);
