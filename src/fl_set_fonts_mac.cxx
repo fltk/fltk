@@ -83,7 +83,7 @@ if(fl_mac_os_version >= 0x1050) {
   CFRelease(fcref);
   CFIndex count = CFArrayGetCount(arrayref);
   CFIndex i;
-  char **tabfontnames = new char*[count]; // never free'ed
+  char **tabfontnames = new char*[count];
   for (i = 0; i < count; i++) {
 	CTFontDescriptorRef fdesc = (CTFontDescriptorRef)CFArrayGetValueAtIndex(arrayref, i);
 	CTFontRef font = CTFontCreateWithFontDescriptor(fdesc, 0., NULL);
@@ -99,6 +99,7 @@ if(fl_mac_os_version >= 0x1050) {
   for (i = 0; i < count; i++) {
     Fl::set_font((Fl_Font)(fl_free_font++), tabfontnames[i]);
     }
+  delete[] tabfontnames;
   return (Fl_Font)fl_free_font;
 }
 else {
