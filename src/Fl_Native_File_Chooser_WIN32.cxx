@@ -821,6 +821,10 @@ const char* Fl_Native_File_Chooser::preset_file() const {
   return(_preset_file);
 }
 
+int Fl_Native_File_Chooser::filters() const {
+  return(_nfilters);
+}
+
 char *wchartoutf8(LPCWSTR in)
 {
   static char *out = NULL;
