@@ -50,7 +50,14 @@
 #endif
 
 #if !defined(NO_TRACK_MOUSE)
-#include <commctrl.h>	// TrackMouseEvent
+#  include <commctrl.h>	// TrackMouseEvent
+// fabien: Ms Visual Studio >= 2003 permit embedded lib reference
+// that makes fltk use easier as only fltk libs are now requested
+// This idea could be extended to fltk libs themselves, 
+// implementer should then care about DLL linkage flags ...
+#  if (_MSC_VER>=1310)
+#    pragma comment (lib, "comctl32.lib")
+#  endif
 #endif
 
 #if defined(__GNUC__)
