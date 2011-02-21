@@ -439,15 +439,15 @@ static CGColorRef flcolortocgcolor(Fl_Color i)
 }
 #endif
 
-static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Font_Descriptor *fl_fontsize) {
+static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Driver *driver) {
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   if (fl_mac_os_version >= 0x1050) {
     CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, uniStr, n,  kCFAllocatorNull);
     if (str16 == NULL) return; // shd not happen
-    CGColorRef color = flcolortocgcolor(fl_color());
-    CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
+    CGColorRef color = flcolortocgcolor(driver->color());
+    CFDictionarySetValue (attributes, kCTFontAttributeName, driver->font_descriptor()->fontref);
     CFDictionarySetValue (attributes, kCTForegroundColorAttributeName, color);
     CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str16, attributes);
     CFRelease(str16);
@@ -465,7 +465,7 @@ static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Font_Descri
 #if ! __LP64__
   OSStatus err;
   // now collect our ATSU resources
-  ATSUTextLayout layout = fl_fontsize->layout;
+  ATSUTextLayout layout = driver->font_descriptor()->layout;
 
   ByteCount iSize = sizeof(CGContextRef);
   ATSUAttributeTag iTag = kATSUCGContextTag;
@@ -485,13 +485,13 @@ static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Font_Descri
 void Fl_Quartz_Graphics_Driver::draw(const char *str, int n, float x, float y) {
   // avoid a crash if no font has been selected by user yet !
   if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  fl_mac_draw(str, n, x, y, font_descriptor());
+  fl_mac_draw(str, n, x, y, this);
 }
 
 void Fl_Quartz_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   // avoid a crash if no font has been selected by user yet !
   if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  fl_mac_draw(str, n, (float)x-0.0f, (float)y+0.5f, font_descriptor());
+  fl_mac_draw(str, n, (float)x-0.0f, (float)y+0.5f, this);
 }
 
 void Fl_Quartz_Graphics_Driver::draw(int angle, const char *str, int n, int x, int y) {
