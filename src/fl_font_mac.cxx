@@ -503,7 +503,9 @@ void Fl_Quartz_Graphics_Driver::draw(int angle, const char *str, int n, int x, i
 }
 
 void Fl_Quartz_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
-  draw(c, n, int(x - width(c, n)), y);
+  int dx, dy, w, h;
+  text_extents(c, n, dx, dy, w, h);
+  draw(c, n, x - w - dx, y);
 }
 
 //
