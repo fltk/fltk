@@ -211,7 +211,7 @@ protected:
   friend void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L);
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
-  friend void gl_start();
+  friend FL_EXPORT void gl_start();
 
   matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
 
