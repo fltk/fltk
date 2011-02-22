@@ -271,7 +271,7 @@ static void jpeg_mem_src(j_decompress_ptr cinfo, const unsigned char *data)
 
  Construct an image from a block of memory inside the application. Fluid offers
  "binary Data" chunks as a great way to add image data into the C++ source code.
- name_png can be NULL. If a name is givem the image is added to the the list of 
+ name_png can be NULL. If a name is given, the image is added to the list of 
  shared images (see: Fl_Shared_Image) and will be available by that name.
 
  The inherited destructor frees all memory and server resources that are used 
