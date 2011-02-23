@@ -54,7 +54,6 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   lang_level_ = 2;
   mask = 0;
   ps_filename_ = NULL;
-  class_name(class_id);
   scale_x = scale_y = 1.;
   bg_r = bg_g = bg_b = 255;
 }
@@ -69,7 +68,6 @@ Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
  */
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void)
 {
-  class_name(class_id);
 #ifdef __APPLE__
   gc = fl_gc; // the display context is used by fl_text_extents()
 #endif
