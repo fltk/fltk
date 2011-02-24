@@ -91,7 +91,7 @@ Now configure your FLTK installation:
   ./configure
   
 ADVANCED: type "./configure --help" to get a complete list of optional 
-configurations parameters. These should be pretty self-explenatory. Some
+configurations parameters. These should be pretty self-explanatory. Some
 more details can be found in README. 
 
 To create Universal Binaries, start "configure" with these flags:
@@ -141,8 +141,11 @@ installation path to a location within the user account by adding the
 
 FLTK provides a neat script named "fltk-config" that can provide all the flags 
 needed to build FLTK applications using the same flags that were used to build
-the library itself. Running "fltk-config" without arguments will print a list
-options. The easiest call to compile an FLTK application from a single source 
+the library itself. Architecture flags (e.g., -arch i386) used to build the 
+library, though, are not provided by the fltk-config script. This allows to
+build universal libraries and to produce applications of any architecture
+from them. Running "fltk-config" without arguments will print a list
+of options. The easiest call to compile an FLTK application from a single source 
 file is: 
 
   fltk-config --compile myProgram.cxx
@@ -312,3 +315,4 @@ Oct 29 2010 - matt: removed warnings
 Oct 24 2010 - matt: restructured entire document and verified instructions
 Dec 19 2010 - Manolo: corrected typos
 Dec 29 2010 - Manolo: removed reference to AudioToolbox.framework that's no longer needed
+Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config script.

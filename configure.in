@@ -35,7 +35,9 @@ AC_INIT(src/Fl.cxx)
 
 dnl So --with-archflags option is used during "checking size of long"
 if test `uname` = Darwin; then
-  CFLAGS="$CFLAGS $with_archflags"
+  if test "x$with_archflags" != x ; then
+    CFLAGS="$CFLAGS $with_archflags"
+  fi
   USEMMFILES="Yes"
 else
   USEMMFILES="No"
@@ -225,7 +227,7 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
             IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
             CAIRODSONAME="libfltk_cairo.$FL_API_VERSION.dylib"
-	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -dynamiclib -lc -o"
+	    DSOCOMMAND="\$(CXX) \$(ARCHFLAGS) \$(DSOFLAGS) -dynamiclib -lc -o"
 	    ;;
 
 	SunOS* | UNIX_S*)
@@ -1281,6 +1283,13 @@ else
 fi
 
 OPTIM="$DEBUGFLAG $OPTIM"
+
+dnl Take archflags away from CFLAGS (makefiles use ARCHFLAGS explicitly)
+if test `uname` = Darwin; then
+  if test "x$with_archflags" != x ; then
+    CFLAGS="`echo $CFLAGS | sed -e "s/$with_archflags//g"`"
+  fi
+fi
 
 dnl Define the FLTK documentation directory...
 if test x$prefix = xNONE; then
