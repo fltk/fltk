@@ -590,14 +590,14 @@ void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 # error unsupported platform
 #endif
   }
-  if (rstackptr < REGION_STACK_MAX) rstack[++rstackptr] = r;
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
   else Fl::warning("fl_push_clip: clip stack overflow!\n");
   fl_restore_clip();
 }
 
 // make there be no clip (used by fl_begin_offscreen() only!)
 void Fl_Graphics_Driver::push_no_clip() {
-  if (rstackptr < REGION_STACK_MAX) rstack[++rstackptr] = 0;
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
   else Fl::warning("fl_push_no_clip: clip stack overflow!\n");
   fl_restore_clip();
 }

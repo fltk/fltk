@@ -51,7 +51,7 @@ void Fl_Surface_Device::set_current(void)
   _surface = this;
 }
 
-static matrix m0 = {1, 0, 0, 1, 0, 0};
+const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 
 Fl_Graphics_Driver::Fl_Graphics_Driver() {
   font_ = 0;

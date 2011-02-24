@@ -45,7 +45,7 @@
 #include <stdlib.h>
 
 void Fl_Graphics_Driver::push_matrix() {
-  if (sptr==MATRIX_STACK_SIZE)
+  if (sptr==matrix_stack_size)
     Fl::error("fl_push_matrix(): matrix stack overflow.");
   else
     stack[sptr++] = m;

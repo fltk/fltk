@@ -55,15 +55,6 @@ FL_EXPORT extern Fl_Graphics_Driver *fl_graphics_driver;
  */
 typedef void (*Fl_Draw_Image_Cb)(void* data,int x,int y,int w,uchar* buf);
 
-#define REGION_STACK_SIZE 10
-#define REGION_STACK_MAX (REGION_STACK_SIZE - 1)
-
-#define MATRIX_STACK_SIZE 32
-#define MATRIX_STACK_MAX (MATRIX_STACK_SIZE - 1)
-/** A 2D coordinate transformation matrix
- */
-struct matrix {double a, b, c, d, x, y;};
-
 // typedef what the x,y fields in a point are:
 #ifdef WIN32
 typedef int COORD_T;
@@ -97,6 +88,8 @@ public:
   virtual const char *class_name() {return class_id;};
 };
 
+#define FL_REGION_STACK_SIZE 10
+#define FL_MATRIX_STACK_SIZE 32
 /**
  \brief A virtual class subclassed for each graphics driver FLTK uses.
  *
@@ -106,19 +99,27 @@ public:
  in the \ref fl_drawings and \ref fl_attributes modules. 
   */
 class FL_EXPORT Fl_Graphics_Driver : public Fl_Device {
+public:
+  /** A 2D coordinate transformation matrix
+   */
+  struct matrix {double a, b, c, d, x, y;};
+private:
+  static const matrix m0;
   Fl_Font font_; // current font
   Fl_Fontsize size_; // current font size
   Fl_Color color_; // current color
   enum {LINE, LOOP, POLYGON, POINT_};
   int sptr;
-  matrix stack[MATRIX_STACK_SIZE];
+  static const int matrix_stack_size = FL_MATRIX_STACK_SIZE;
+  matrix stack[FL_MATRIX_STACK_SIZE];
   matrix m;
   int n, p_size, gap_;
   XPOINT *p;
   int what;
   int fl_clip_state_number;
   int rstackptr;
-  Fl_Region rstack[REGION_STACK_MAX];
+  static const int region_stack_max = FL_REGION_STACK_SIZE - 1;
+  Fl_Region rstack[FL_REGION_STACK_SIZE];
 #ifdef WIN32
   int numcount;
   int counts[20];
