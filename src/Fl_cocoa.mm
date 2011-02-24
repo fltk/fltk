@@ -1239,10 +1239,13 @@ extern "C" {
   NSEventType type = [theEvent type];  
   if (type == NSLeftMouseDown) {
     Fl_Window *grab = Fl::grab();
-    if (grab && grab != [(FLWindow *)[theEvent window] getFl_Window]) {
-      // a click event out of a menu window, so we should close this menu
-      // done here to catch also clicks on window title bar/resize box 
-      cocoaMouseHandler(theEvent);
+    if (grab) {
+      FLWindow *win = (FLWindow *)[theEvent window];
+      if ( [win isKindOfClass:[FLWindow class]] && grab != [win getFl_Window]) {
+	// a click event out of a menu window, so we should close this menu
+	// done here to catch also clicks on window title bar/resize box 
+	cocoaMouseHandler(theEvent);
+      }
     }
   } else if (type == NSApplicationDefined) {
     if ([theEvent subtype] == FLTKDataReadyEvent) {
@@ -2768,6 +2771,7 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
                 	     nil];
     [NSApp  orderFrontStandardAboutPanelWithOptions:options];
   }
+//#include <FL/Fl_PostScript.H>
 - (void)printPanel
 {
   Fl_Printer printer;
