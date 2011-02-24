@@ -873,6 +873,7 @@ case $uname in
 	        CPPFLAGS="`$FTCONFIG --cflags` $CPPFLAGS"
 	        CXXFLAGS="`$FTCONFIG --cflags` $CXXFLAGS"
 
+	        AC_CHECK_LIB(fontconfig, FcPatternCreate)
 		AC_CHECK_HEADER(X11/Xft/Xft.h,
 		    AC_CHECK_LIB(Xft, XftDrawCreate,
 	        	AC_DEFINE(USE_XFT)

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.1.11
 
+	- Fixed linker issue (missing -lfontconfig) when configured with
+	  --enable-xft (STR #2570)
 	- Fixed fluid desktop file (STR #2328)
 	- Fixed OpenGL overlay drawing (STR #2437)
 	- Fixed Fl_Tabs selection border drawing, if tabs are at the bottom
