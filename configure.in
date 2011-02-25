@@ -1292,11 +1292,21 @@ if test `uname` = Darwin; then
 fi
 
 dnl Define the FLTK documentation directory...
-if test x$prefix = xNONE; then
-    AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "/usr/local/share/doc/fltk")
-else
-    AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$prefix/share/doc/fltk")
-fi
+case $uname in
+  MINGW*)
+     # Determine the path where MSys has /usr installed
+ 	msyspath=`mount | grep '\/usr' | grep -v '\/usr\/bin' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g'`
+     # Then substitute that in the WIN32 path instead of /usr
+ 	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$msyspath/local/share/doc/fltk")
+    ;;
+  *)
+    if test x$prefix = xNONE; then
+	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "/usr/local/share/doc/fltk")
+    else
+	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$prefix/share/doc/fltk")
+    fi
+    ;;
+esac
 
 dnl Define the FLTK data directory...
 if test x$prefix = xNONE; then
@@ -1339,6 +1349,11 @@ echo "                 exec_prefix=$exec_prefix"
 echo "                 includedir=$includedir"
 echo "                 libdir=$libdir"
 echo "                 mandir=$mandir"
+case $uname in
+  MINGW*)
+    echo "                 MSys docpath=$msyspath/local/share/doc/fltk"
+  ;;
+esac
 echo "       Graphics: $graphics"
 
 if test x$JPEG = x; then
