@@ -549,7 +549,7 @@ void fl_init_xim()
     XGetIMValues (fl_xim_im, XNQueryInputStyle,
                   &xim_styles, NULL, NULL);
   } else {
-    Fl::warning("XOpenIM() failed\n");
+    Fl::warning("XOpenIM() failed");
     // if xim_styles is allocated, free it now
     if(xim_styles) XFree(xim_styles);
     return;
@@ -558,7 +558,7 @@ void fl_init_xim()
   if (xim_styles && xim_styles->count_styles) {
     fl_new_ic();
    } else {
-     Fl::warning("No XIM style found\n");
+     Fl::warning("No XIM style found");
      XCloseIM(fl_xim_im);
      fl_xim_im = NULL;
      // if xim_styles is allocated, free it now
@@ -566,7 +566,7 @@ void fl_init_xim()
      return;
   }
   if (!fl_xim_ic) {
-    Fl::warning("XCreateIC() failed\n");
+    Fl::warning("XCreateIC() failed");
     XCloseIM(fl_xim_im);
     fl_xim_im = NULL;
   }
