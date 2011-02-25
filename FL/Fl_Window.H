@@ -323,17 +323,15 @@ public:
   /** Sets the icon label. */
   void iconlabel(const char*);
   /** Sets the icon label. */
-  void label(const char* label, const char* iconlabel); // platform dependent 
+  void label(const char* label, const char* iconlabel); // platform dependent
   void copy_label(const char* a);
 
   static void default_xclass(const char*);
   static const char *default_xclass();
   const char* xclass() const;
   void xclass(const char* c);
-  /** Gets the current icon window target dependent data. */
-  const void* icon() const	{return icon_;}
-  /** Sets the current icon window target dependent data. */
-  void icon(const void * ic)	{icon_ = ic;}
+  const void* icon() const;
+  void icon(const void * ic);
 
   /**
     Returns non-zero if show() has been called (but not hide()
@@ -343,11 +341,11 @@ public:
   int shown() {return i != 0;}
   /**
     Puts the window on the screen. Usually (on X) this has the side
-    effect of opening the display. 
+    effect of opening the display.
 
     If the window is already shown then it is restored and raised to the
     top.  This is really convenient because your program can call show()
-    at any time, even if the window is already up.  It also means that 
+    at any time, even if the window is already up.  It also means that
     show() serves the purpose of raise() in other toolkits.
     
     Fl_Window::show(int argc, char **argv) is used for top-level

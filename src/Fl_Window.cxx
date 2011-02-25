@@ -277,6 +277,16 @@ const char *Fl_Window::xclass() const
   }
 }
 
+/** Gets the current icon window target dependent data. */
+const void *Fl_Window::icon() const {
+  return icon_;
+}
+
+/** Sets the current icon window target dependent data. */
+void Fl_Window::icon(const void * ic) {
+  icon_ = ic;
+}
+
 
 //
 // End of "$Id$".
