@@ -166,7 +166,7 @@ protected:
         OUTPUT          = 1<<2,   ///< for output only
         NOBORDER        = 1<<3,   ///< don't draw a decoration (Fl_Window)
         FORCE_POSITION  = 1<<4,   ///< don't let the window manager position the window (Fl_Window)
-        NON_MODAL       = 1<<5,   ///< thisis a hovering toolbar window (Fl_Window)
+        NON_MODAL       = 1<<5,   ///< this is a hovering toolbar window (Fl_Window)
         SHORTCUT_LABEL  = 1<<6,   ///< the label contains a shortcut we need to draw
         CHANGED         = 1<<7,   ///< the widget value changed
         OVERRIDE        = 1<<8,   ///< position window on top (Fl_Window)
@@ -177,7 +177,7 @@ protected:
         TOOLTIP_WINDOW  = 1<<13,  ///< a temporary popup, transparent to events, and dismissed easily (Fl_Window)
         MODAL           = 1<<14,  ///< a window blocking input to all other winows (Fl_Window)
         NO_OVERLAY      = 1<<15,  ///< window not using a hardware overlay plane (Fl_Menu_Window)
-        GROUP_RELATIVE  = 1<<16,  ///< position this idget relative to the parent group, not to the window
+        GROUP_RELATIVE  = 1<<16,  ///< position this widget relative to the parent group, not to the window
         COPIED_TOOLTIP  = 1<<17,  ///< the widget tooltip is internally copied, its destruction is handled by the widget
         // (space for more flags)
         USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
