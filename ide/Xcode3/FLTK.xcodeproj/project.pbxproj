@@ -163,7 +163,6 @@
 		3B39A4D9B92163A3DC42B79D /* jdapistd.c in Sources */ = {isa = PBXBuildFile; fileRef = AB3E00F5BBC9AB1C51B0EEDC /* jdapistd.c */; };
 		3B627DDF4E12177AED294C76 /* jdapimin.c in Sources */ = {isa = PBXBuildFile; fileRef = D3FB35B309F2E1E59D1618C8 /* jdapimin.c */; };
 		3B93665C37B124E7072A0C29 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
-		3BA58E827191046DB7277DBE /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = D3D556728D5CDD2FD7B86AC8 /* gzio.c */; };
 		3BB6C389D42EA62871E9F4B4 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		3BD005D954ABCB5983F540AB /* fl_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = 42660BA0E346168608D0FADB /* fl_utf.c */; };
 		3C0CA0BFF07538026590AE21 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -321,6 +320,11 @@
 		7EA88708B9A088FCEB7CAA27 /* file_chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 39CD231E22E0B53E92CABDC9 /* file_chooser.cxx */; };
 		7EC3AD9A56535A54430B8DCD /* Fl_Browser_.cxx in Sources */ = {isa = PBXBuildFile; fileRef = AAD25B747F4122A2C5224708 /* Fl_Browser_.cxx */; };
 		7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */; };
+		7F54C8A8130FAC4F00E736F3 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A3130FAC4F00E736F3 /* gzclose.c */; };
+		7F54C8A9130FAC4F00E736F3 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A4130FAC4F00E736F3 /* gzlib.c */; };
+		7F54C8AA130FAC4F00E736F3 /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A5130FAC4F00E736F3 /* gzread.c */; };
+		7F54C8AB130FAC4F00E736F3 /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A6130FAC4F00E736F3 /* gzwrite.c */; };
+		7F54C8AC130FAC4F00E736F3 /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A7130FAC4F00E736F3 /* infback.c */; };
 		7F66B1D912BB924C00C67B59 /* Fl_cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */; };
 		7F66B1DA12BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */; };
 		7F66B1DB12BB924C00C67B59 /* Fl_Quartz_Printer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */; };
@@ -4318,6 +4322,11 @@
 		7E51DAB7D0F93ACFB736EE9A /* Fl_Tree_Prefs.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Tree_Prefs.H; path = ../../FL/Fl_Tree_Prefs.H; sourceTree = SOURCE_ROOT; };
 		7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		7F4B8ADD01CB2F8BFE43ACBA /* Fl_Menu_Bar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu_Bar.cxx; path = ../../src/Fl_Menu_Bar.cxx; sourceTree = SOURCE_ROOT; };
+		7F54C8A3130FAC4F00E736F3 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzclose.c; path = ../../zlib/gzclose.c; sourceTree = SOURCE_ROOT; };
+		7F54C8A4130FAC4F00E736F3 /* gzlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzlib.c; path = ../../zlib/gzlib.c; sourceTree = SOURCE_ROOT; };
+		7F54C8A5130FAC4F00E736F3 /* gzread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzread.c; path = ../../zlib/gzread.c; sourceTree = SOURCE_ROOT; };
+		7F54C8A6130FAC4F00E736F3 /* gzwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzwrite.c; path = ../../zlib/gzwrite.c; sourceTree = SOURCE_ROOT; };
+		7F54C8A7130FAC4F00E736F3 /* infback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = infback.c; path = ../../zlib/infback.c; sourceTree = SOURCE_ROOT; };
 		7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_cocoa.mm; path = ../../src/Fl_cocoa.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Native_File_Chooser_MAC.mm; path = ../../src/Fl_Native_File_Chooser_MAC.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Quartz_Printer.mm; path = ../../src/Fl_Quartz_Printer.mm; sourceTree = SOURCE_ROOT; };
@@ -4529,7 +4538,6 @@
 		D33C668435685F7CCB359EE2 /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrio.c; path = ../../png/pngrio.c; sourceTree = SOURCE_ROOT; };
 		D3761C93D5C7A48D4B80225A /* doublebuffer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = doublebuffer.cxx; path = ../../test/doublebuffer.cxx; sourceTree = SOURCE_ROOT; };
 		D390A37D428892B9A8AD63AD /* Fl_Text_Buffer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Text_Buffer.cxx; path = ../../src/Fl_Text_Buffer.cxx; sourceTree = SOURCE_ROOT; };
-		D3D556728D5CDD2FD7B86AC8 /* gzio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzio.c; path = ../../zlib/gzio.c; sourceTree = SOURCE_ROOT; };
 		D3E25408466639AACEF4D2A6 /* jmemnobs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemnobs.c; path = ../../jpeg/jmemnobs.c; sourceTree = SOURCE_ROOT; };
 		D3FB35B309F2E1E59D1618C8 /* jdapimin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdapimin.c; path = ../../jpeg/jdapimin.c; sourceTree = SOURCE_ROOT; };
 		D4E11692C02E48A71A18527C /* function_panel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = function_panel.h; path = ../../fluid/function_panel.h; sourceTree = SOURCE_ROOT; };
@@ -6486,7 +6494,11 @@
 				6BCDA929CD8600DE9AC516DD /* compress.c */,
 				B95D0F0F7652C2937824E87D /* crc32.c */,
 				65E5BAE2A9732DA6B4A53098 /* deflate.c */,
-				D3D556728D5CDD2FD7B86AC8 /* gzio.c */,
+				7F54C8A3130FAC4F00E736F3 /* gzclose.c */,
+				7F54C8A4130FAC4F00E736F3 /* gzlib.c */,
+				7F54C8A5130FAC4F00E736F3 /* gzread.c */,
+				7F54C8A6130FAC4F00E736F3 /* gzwrite.c */,
+				7F54C8A7130FAC4F00E736F3 /* infback.c */,
 				4B4931D88DEFF9253DD2B260 /* inffast.c */,
 				C64D06EA8317E22EE4B2376D /* inflate.c */,
 				65B20106A8A21FCCA56538F8 /* inftrees.c */,
@@ -9707,13 +9719,17 @@
 				4CA85FBAAB7E8F8801ECB742 /* compress.c in Sources */,
 				81BF2B665315DE651C49F1CF /* crc32.c in Sources */,
 				449DC0C1FDA01F16CB184F66 /* deflate.c in Sources */,
-				3BA58E827191046DB7277DBE /* gzio.c in Sources */,
 				2642F76001144A05102CC191 /* inffast.c in Sources */,
 				AFA33B6FF7209CC7EE2B1D5D /* inflate.c in Sources */,
 				9642156FA4A17DE4872E0A6E /* inftrees.c in Sources */,
 				6D0C34F0837A30162A7B3759 /* trees.c in Sources */,
 				AF9F3D486CCB9B87E4C2736B /* uncompr.c in Sources */,
 				880B2140496D2B6744225CEF /* zutil.c in Sources */,
+				7F54C8A8130FAC4F00E736F3 /* gzclose.c in Sources */,
+				7F54C8A9130FAC4F00E736F3 /* gzlib.c in Sources */,
+				7F54C8AA130FAC4F00E736F3 /* gzread.c in Sources */,
+				7F54C8AB130FAC4F00E736F3 /* gzwrite.c in Sources */,
+				7F54C8AC130FAC4F00E736F3 /* infback.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
