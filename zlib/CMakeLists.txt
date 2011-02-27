@@ -6,8 +6,10 @@ include_directories(${FLTKZLIB_BINARY_DIR})
 
 # source files for zlib
 set(ZLIB_SRCS
-   adler32.c compress.c crc32.c deflate.c gzio.c inffast.c
-   inflate.c inftrees.c trees.c uncompr.c zutil.c
+   adler32.c compress.c crc32.c deflate.c 
+   gzclose.c gzlib.c gzread.c gzwrite.c
+   inffast.c infback.c inflate.c inftrees.c 
+   trees.c uncompr.c zutil.c
 )
 
 #######################################################################
