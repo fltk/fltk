@@ -654,6 +654,7 @@ static double do_queued_events( double time = 0.0 )
                                       untilDate:[NSDate dateWithTimeIntervalSinceNow:time] 
                                          inMode:NSDefaultRunLoopMode dequeue:YES];  
   if (event != nil) {
+    got_events = 1;
     [NSApp sendEvent:event]; // reimplemented in [FLApplication sendevent:]
   }
   fl_lock_function();
