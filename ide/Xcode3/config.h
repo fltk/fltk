@@ -38,6 +38,8 @@
 #define HAVE_LIBZ 1
 #define HAVE_LIBJPEG 1
 #define HAVE_PNG_H 1
+#define HAVE_PNG_GET_VALID 1
+#define HAVE_PNG_SET_TRNS_TO_ALPHA 1
 #define HAVE_PTHREAD 1
 #define HAVE_PTHREAD_H 1
 #define HAVE_LONG_LONG 1
