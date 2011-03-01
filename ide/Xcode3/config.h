@@ -19,7 +19,11 @@
 #define __APPLE_QUARTZ__ 1
 #define HAVE_OVERLAY 0
 #define HAVE_GL_OVERLAY HAVE_OVERLAY
+#if defined(__ppc__) || defined(__ppc64__)
+#define WORDS_BIGENDIAN 1
+#else
 #define WORDS_BIGENDIAN 0
+#endif
 #define U16 unsigned short
 #define U32 unsigned
 #define HAVE_DIRENT_H 1
