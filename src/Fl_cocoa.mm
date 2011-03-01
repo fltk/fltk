@@ -293,11 +293,11 @@ static DataReady dataready;
 
 void DataReady::AddFD(int n, int events, void (*cb)(int, void*), void *v)
 {
-  fl_open_display(); // necessary for NSApp to be defined
   RemoveFD(n, events);
   int i = nfds++;
   if (i >= fd_array_size) 
   {
+    fl_open_display(); // necessary for NSApp to be defined and the event loop to work
     FD *temp;
     fd_array_size = 2*fd_array_size+1;
     if (!fds) { temp = (FD*)malloc(fd_array_size*sizeof(FD)); }
@@ -544,6 +544,7 @@ static void realloc_timers()
 {
   if (mac_timer_alloc == 0) {
     mac_timer_alloc = 8;
+    fl_open_display(); // needed because the timer creates an event
   }
   mac_timer_alloc *= 2;
   MacTimeout* new_timers = new MacTimeout[mac_timer_alloc];
