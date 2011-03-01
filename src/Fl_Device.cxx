@@ -72,6 +72,14 @@ void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int
   dy = descent();
 }
 
+Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) {
+#ifdef __APPLE__
+  SInt32 version;
+  Gestalt(gestaltSystemVersion, &version);
+  fl_mac_os_version = (int)version;
+#endif
+};
+
 
 //
 // End of "$Id$".

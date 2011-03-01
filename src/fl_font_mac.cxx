@@ -46,7 +46,6 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   q_name = strdup(name);
   size = Size;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version == 0) fl_open_display();
 if (fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   fontref = CTFontCreateWithName(str, size, NULL);

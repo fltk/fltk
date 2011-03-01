@@ -293,6 +293,7 @@ static DataReady dataready;
 
 void DataReady::AddFD(int n, int events, void (*cb)(int, void*), void *v)
 {
+  fl_open_display(); // necessary for NSApp to be defined
   RemoveFD(n, events);
   int i = nfds++;
   if (i >= fd_array_size) 
@@ -1289,9 +1290,6 @@ void fl_open_display() {
     while (ign_event);
     
     fl_default_cursor = [NSCursor arrowCursor];
-    SInt32 version;
-    Gestalt(gestaltSystemVersion, &version);
-    fl_mac_os_version = (int)version;
 
     // bring the application into foreground without a 'CARB' resource
     Boolean same_psn;

@@ -517,11 +517,7 @@ public:
   static const char *class_id;
   const char *class_name() {return class_id;};
   /** \brief A constructor that sets the graphics driver used by the display */
-  Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) {
-#ifdef __APPLE__
-    fl_open_display();
-#endif
-  };
+  Fl_Display_Device(Fl_Graphics_Driver *graphics_driver);
   /** Returns the platform display device. */
   static inline Fl_Display_Device *display_device() {return _display;};
 };
