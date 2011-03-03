@@ -442,12 +442,14 @@ else
         AC_DEFINE(U32,unsigned long)
     fi
 fi
-if test $ac_cv_sizeof_int -eq 8; then
-    AC_DEFINE(U64,unsigned)
-else
-    if test $ac_cv_sizeof_long -eq 8; then
-        AC_DEFINE(U64,unsigned long)
-    fi
+if test "$uname" != Darwin; then
+	if test $ac_cv_sizeof_int -eq 8; then
+		AC_DEFINE(U64,unsigned)
+	else
+		if test $ac_cv_sizeof_long -eq 8; then
+			AC_DEFINE(U64,unsigned long)
+		fi
+	fi
 fi
 
 dnl Does the C++ compiler support the bool type?
