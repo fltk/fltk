@@ -1,9 +1,9 @@
 /*
- * "$Id: ide_xcode.cxx 7504 2010-04-14 20:17:44Z matt $"
+ * "$Id$"
  *
  * Configuration file for the Fast Light Tool Kit (FLTK).
  *
- * Copyright 1998-2010 by Bill Spitzak and others.
+ * Copyright 1998-2011 by Bill Spitzak and others.
  */
 
 #define FLTK_DATADIR "/usr/local/share/fltk"
@@ -19,7 +19,7 @@
 #define __APPLE_QUARTZ__ 1
 #define HAVE_OVERLAY 0
 #define HAVE_GL_OVERLAY HAVE_OVERLAY
-#if defined(__ppc__) || defined(__ppc64__)
+#if defined(__BIG_ENDIAN__)
 #define WORDS_BIGENDIAN 1
 #else
 #define WORDS_BIGENDIAN 0
@@ -54,5 +54,5 @@
 #define HAVE_DLSYM 1
 
 /*
- * End of "$Id: ide_xcode.cxx 7504 2010-04-14 20:17:44Z matt $".
+ * End of "$Id$".
  */
