@@ -70,7 +70,7 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
 if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(fl_mac_os_version >= 0x1050) {
+if(fl_mac_os_version >= 100500) {
 //if(CTFontCreateWithFontDescriptor != NULL) {// CTFontCreateWithFontDescriptor != NULL on 10.4 also!
   int value[1] = {1};
   CFDictionaryRef dict = CFDictionaryCreate(NULL, 

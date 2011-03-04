@@ -1140,7 +1140,7 @@ int Fl::handle_(int e, Fl_Window* window)
     { int ret;
       Fl_Widget* pbm = belowmouse();
 #ifdef __APPLE__
-      if (fl_mac_os_version < 0x1050) {
+      if (fl_mac_os_version < 100500) {
         // before 10.5, mouse moved events aren't sent to borderless windows such as tooltips
 	Fl_Window *tooltip = Fl_Tooltip::current_window();
 	int inside = 0;

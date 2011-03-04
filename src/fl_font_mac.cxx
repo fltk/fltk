@@ -46,7 +46,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   q_name = strdup(name);
   size = Size;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= 0x1050) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
+if (fl_mac_os_version >= 100500) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   fontref = CTFontCreateWithName(str, size, NULL);
   CGGlyph glyph[2];
@@ -174,7 +174,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
   */
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= 0x1050)  {
+  if (fl_mac_os_version >= 100500)  {
     CFRelease(fontref);
     for (unsigned i = 0; i < sizeof(width)/sizeof(float*); i++) {
       if (width[i]) free(width[i]);
@@ -278,7 +278,7 @@ static CGFloat surrogate_width(const UniChar *txt, Fl_Font_Descriptor *fl_fontsi
 
 static double fl_mac_width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= 0x1050) {
+if (fl_mac_os_version >= 100500) {
   double retval = 0;
   UniChar uni;
   int i;
@@ -373,7 +373,7 @@ void Fl_Quartz_Graphics_Driver::text_extents(const char *str8, int n, int &dx, i
   if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= 0x1050) {
+if (fl_mac_os_version >= 100500) {
   CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)str8, n, kCFStringEncodingUTF8, false);
   CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
   CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str16, attributes);
@@ -442,7 +442,7 @@ static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Dr
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= 0x1050) {
+  if (fl_mac_os_version >= 100500) {
     CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, uniStr, n,  kCFAllocatorNull);
     if (str16 == NULL) return; // shd not happen
     CGColorRef color = flcolortocgcolor(driver->color());

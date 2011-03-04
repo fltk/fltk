@@ -74,9 +74,13 @@ void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int
 
 Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_Surface_Device( graphics_driver) {
 #ifdef __APPLE__
-  SInt32 version;
-  Gestalt(gestaltSystemVersion, &version);
-  fl_mac_os_version = (int)version;
+  SInt32 versionMajor = 0;
+  SInt32 versionMinor = 0;
+  SInt32 versionBugFix = 0;
+  Gestalt( gestaltSystemVersionMajor, &versionMajor );
+  Gestalt( gestaltSystemVersionMinor, &versionMinor );
+  Gestalt( gestaltSystemVersionBugFix, &versionBugFix );
+  fl_mac_os_version = versionMajor * 10000 + versionMinor * 100 + versionBugFix;
 #endif
 };
 

@@ -113,7 +113,7 @@ bool fl_show_iconic;                    // true if called from iconize() - shows
 //int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
 Window fl_window;
 Fl_Window *Fl_Window::current_;
-int fl_mac_os_version = 0;		// the version number of the running Mac OS X (e.g., 0x1064 for 10.6.4)
+int fl_mac_os_version = 0;		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
 // forward declarations of variables in this file
 static int got_events = 0;
@@ -2868,7 +2868,7 @@ static void createAppleMenu(void)
   [menuItem setSubmenu:appleMenu];
   mainmenu = [[NSMenu alloc] initWithTitle:@""];
   [mainmenu addItem:menuItem];
-  if (fl_mac_os_version < 0x1060) {
+  if (fl_mac_os_version < 100600) {
     //	[NSApp setAppleMenu:appleMenu];
     //	to avoid compiler warning raised by use of undocumented setAppleMenu	:
     [NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
@@ -3228,7 +3228,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
     win = win->window();
   }
   CGFloat epsilon = 0;
-  if (fl_mac_os_version >= 0x1060) epsilon = 0.001;
+  if (fl_mac_os_version >= 100600) epsilon = 0.001;
   // The epsilon offset is absolutely necessary under 10.6. Without it, the top pixel row and
   // left pixel column are not read, and bitmap is read shifted by one pixel in both directions. 
   // Under 10.5, we want no offset.
