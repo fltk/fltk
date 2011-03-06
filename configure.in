@@ -427,7 +427,9 @@ dnl this will only be used to compile resources for Windows .exe files
 AC_PATH_TOOL(RC,windres)
 
 dnl Architecture checks...
-AC_C_BIGENDIAN
+if test "$uname" != Darwin; then
+  AC_C_BIGENDIAN
+fi
 
 AC_CHECK_SIZEOF(short, 2)
 AC_CHECK_SIZEOF(int, 4)

@@ -161,8 +161,12 @@
  *
  * Byte order of your machine: 1 = big-endian, 0 = little-endian.
  */
-
+ 
+#ifdef __APPLE__
+#include <mac_endianness.h>
+#else
 #define WORDS_BIGENDIAN 0
+#endif
 
 /*
  * U16, U32, U64:
