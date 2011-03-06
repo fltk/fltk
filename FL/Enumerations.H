@@ -417,10 +417,10 @@ enum Fl_When { // Fl_Widget::when():
 
 #ifdef __APPLE__
 #  define FL_COMMAND	FL_META   ///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
-#  define FL_CONTROL  FL_CTRL   ///< An alias for FL_META on WIN32 and X11, or FL_META on MacOS X
+#  define FL_CONTROL  FL_CTRL   ///< An alias for FL_META on WIN32 and X11, or FL_CTRL on MacOS X
 #else
 #  define FL_COMMAND	FL_CTRL		///< An alias for FL_CTRL on WIN32 and X11, or FL_META on MacOS X
-#  define FL_CONTROL  FL_META   ///< An alias for FL_META on WIN32 and X11, or FL_META on MacOS X
+#  define FL_CONTROL  FL_META   ///< An alias for FL_META on WIN32 and X11, or FL_CTRL on MacOS X
 #endif // __APPLE__
 
 /*@}*/		// group: Event States
@@ -610,17 +610,16 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
 #define FL_EMBOSSED_LABEL fl_define_FL_EMBOSSED_LABEL()
 /** @} */
 
-/** \name Alignment Flags */
-/*@{*/
-/** Flags to control the label alignment. 
+/** \name Alignment Flags 
+ *  Flags to control the label alignment. 
  *  This controls how the label is displayed next to or inside the widget. 
  *  The default value is FL_ALIGN_CENTER for most widgets, which centers the label
  *  inside the widget.
  *
  *  Flags can be or'd to achieve a combination of alignments.
  *
- *  Outside alignments:
  *  \code
+ *  Outside alignments:
  *             TOP_LEFT        TOP       TOP_RIGHT
  *     LEFT_TOP+---------------------------------+RIGHT_TOP
  *             |                                 |
@@ -640,6 +639,8 @@ extern Fl_Labeltype FL_EXPORT fl_define_FL_EMBOSSED_LABEL();
  *  \endcode
  *  \see #FL_ALIGN_CENTER, etc.
  */
+/*@{*/
+/** FLTK type for alignment control */
 typedef unsigned Fl_Align;
   /** Align the label horizontally in the middle. */
 const Fl_Align FL_ALIGN_CENTER		= (Fl_Align)0;
@@ -684,16 +685,12 @@ const Fl_Align FL_ALIGN_IMAGE_MASK      = 0x0320; // l/r, t/b, backdrop
 /*@}*/
 
 
-/** \name Font Numbers */
-/*@{*/
-/** A font number is an index into the internal font table.
-
-    The following constants define the standard FLTK fonts:
-
+/** \name Font Numbers 
+ The following constants define the standard FLTK fonts:
  */
+/*@{*/
+/** A font number is an index into the internal font table. */
 typedef int Fl_Font;
-
-// standard fonts
 
 const Fl_Font FL_HELVETICA              = 0;	///< Helvetica (or Arial) normal (0)
 const Fl_Font FL_HELVETICA_BOLD         = 1;	///< Helvetica (or Arial) bold
@@ -726,9 +723,8 @@ typedef int Fl_Fontsize;
 
 extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
 
-/** \name Colors */
-/*@{*/
-/** The Fl_Color type holds an FLTK color value.
+/** \name Colors 
+    The Fl_Color type holds an FLTK color value.
 
     Colors are either 8-bit indexes into a virtual colormap
     or 24-bit RGB color values.
@@ -749,7 +745,8 @@ extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
     and an index >0 are reserved for special use.
  
  */
-
+/*@{*/
+/** an FLTK color value */
 typedef unsigned int Fl_Color;
 
 // Standard colors. These are used as default colors in widgets and altered as necessary
@@ -806,8 +803,10 @@ FL_EXPORT Fl_Color fl_contrast(Fl_Color fg, Fl_Color bg);
 
 FL_EXPORT Fl_Color fl_color_average(Fl_Color c1, Fl_Color c2, float weight);
 
+/** Returns a lighter version of the specified color. */
 inline Fl_Color fl_lighter(Fl_Color c) { return fl_color_average(c, FL_WHITE, .67f); }
 
+/** Returns a darker version of the specified color. */
 inline Fl_Color fl_darker(Fl_Color c) { return fl_color_average(c, FL_BLACK, .67f); }
 
 /** return 24-bit color value closest to \p r, \p g, \p b. */
@@ -822,58 +821,78 @@ inline Fl_Color fl_rgb_color(uchar g) {
   else return (Fl_Color)(((((g << 8) | g) << 8) | g) << 8);
 }
 
+/** Returns a gray color value from black (i == 0) to white (i == FL_NUM_GRAY - 1). 
+ FL_NUM_GRAY is defined to be 24 in the current FLTK release. 
+ To get the closest FLTK gray value to an 8-bit grayscale color 'I' use:
+\code 
+ fl_gray_ramp(I * (FL_NUM_GRAY - 1) / 255)
+ \endcode
+*/ 
 inline Fl_Color fl_gray_ramp(int i) {return (Fl_Color)(i+FL_GRAY_RAMP);}
 
+/** Returns a color out of the color cube. 
+ r must be in the range 0 to FL_NUM_RED (5) minus 1, 
+ g must be in the range 0 to FL_NUM_GREEN (8) minus 1,
+ b must be in the range 0 to FL_NUM_BLUE (5) minus 1.
+ 
+ To get the closest color to a 8-bit set of R,G,B values use:
+ \code
+ fl_color_cube(R * (FL_NUM_RED - 1) / 255,
+     G * (FL_NUM_GREEN - 1) / 255,
+     B * (FL_NUM_BLUE - 1) / 255);
+ \endcode
+ */
 inline Fl_Color fl_color_cube(int r, int g, int b) {
   return (Fl_Color)((b*FL_NUM_RED + r) * FL_NUM_GREEN + g + FL_COLOR_CUBE);}
 
-//*@}*/		// group: Colors
+/*@}*/		// group: Colors  
 
-/** \name Cursors
+/** \name Cursors */
+/*@{*/
 
-    The following constants define the mouse cursors that are available in FLTK.
+/** The following constants define the mouse cursors that are available in FLTK.
     
     The double-headed arrows are bitmaps provided by FLTK on X, the others
     are provided by system-defined cursors.
     
-    \todo	enum Fl_Cursor needs some more comments for values
-    		(and maybe an image), see Fl/Enumerations.H
+    \todo	enum Fl_Cursor needs maybe an image.
 */
-enum Fl_Cursor {	// standard cursors
-  FL_CURSOR_DEFAULT	= 0,
-  FL_CURSOR_ARROW	= 35,
-  FL_CURSOR_CROSS	= 66,
-  FL_CURSOR_WAIT	= 76,
-  FL_CURSOR_INSERT	= 77,
-  FL_CURSOR_HAND	= 31,
-  FL_CURSOR_HELP	= 47,
-  FL_CURSOR_MOVE	= 27,
+enum Fl_Cursor {
+  FL_CURSOR_DEFAULT	=  0, /**< the default cursor, usually an arrow. */
+  FL_CURSOR_ARROW	= 35, /**< an arrow pointer. */
+  FL_CURSOR_CROSS	= 66, /**< crosshair. */
+  FL_CURSOR_WAIT	= 76, /**< watch or hourglass. */
+  FL_CURSOR_INSERT	= 77, /**< I-beam. */
+  FL_CURSOR_HAND	= 31, /**< hand (uparrow on MSWindows). */
+  FL_CURSOR_HELP	= 47, /**< question mark. */
+  FL_CURSOR_MOVE	= 27, /**< 4-pointed arrow. */
   // fltk provides bitmaps for these:
-  FL_CURSOR_NS		= 78,
-  FL_CURSOR_WE		= 79,
-  FL_CURSOR_NWSE	= 80,
-  FL_CURSOR_NESW	= 81,
-  FL_CURSOR_NONE	= 255,
+  FL_CURSOR_NS		= 78, /**< up/down arrow. */
+  FL_CURSOR_WE		= 79, /**< left/right arrow. */
+  FL_CURSOR_NWSE	= 80, /**< diagonal arrow. */
+  FL_CURSOR_NESW	= 81, /**< diagonal arrow. */
+  FL_CURSOR_NONE	=255, /**< invisible. */
   // for back compatability (non MSWindows ones):
-  FL_CURSOR_N		= 70,
-  FL_CURSOR_NE		= 69,
-  FL_CURSOR_E		= 49,
-  FL_CURSOR_SE		= 8,
-  FL_CURSOR_S		= 9,
-  FL_CURSOR_SW		= 7,
-  FL_CURSOR_W		= 36,
-  FL_CURSOR_NW		= 68
-  //FL_CURSOR_NS	= 22,
-  //FL_CURSOR_WE	= 55,
+  FL_CURSOR_N		= 70, /**< for back compatability. */
+  FL_CURSOR_NE		= 69, /**< for back compatability. */
+  FL_CURSOR_E		= 49, /**< for back compatability. */
+  FL_CURSOR_SE		=  8, /**< for back compatability. */
+  FL_CURSOR_S		=  9, /**< for back compatability. */
+  FL_CURSOR_SW		=  7, /**< for back compatability. */
+  FL_CURSOR_W		= 36, /**< for back compatability. */
+  FL_CURSOR_NW		= 68 /**< for back compatability. */
 };
+/*@}*/		// group: Cursors  
 
+/** FD "when" conditions */
 enum { // values for "when" passed to Fl::add_fd()
-  FL_READ = 1,
-  FL_WRITE = 4,
-  FL_EXCEPT = 8
+  FL_READ   = 1, /**< Call the callback when there is data to be read. */
+  FL_WRITE  = 4, /**< Call the callback when data can be written without blocking. */
+  FL_EXCEPT = 8  /**< Call the callback if an exception occurs on the file. */
 };
 
-enum Fl_Mode { // visual types and Fl_Gl_Window::mode() (values match Glut)
+/** visual types and Fl_Gl_Window::mode() (values match Glut) */
+enum Fl_Mode { 
   FL_RGB	= 0,
   FL_INDEX	= 1,
   FL_SINGLE	= 0,
@@ -892,16 +911,15 @@ enum Fl_Mode { // visual types and Fl_Gl_Window::mode() (values match Glut)
 
 #define FL_IMAGE_WITH_ALPHA 0x40000000
 
-// damage masks
-
+/** Damage masks */
 enum Fl_Damage {
-  FL_DAMAGE_CHILD    = 0x01,
-  FL_DAMAGE_EXPOSE   = 0x02,
-  FL_DAMAGE_SCROLL   = 0x04,
-  FL_DAMAGE_OVERLAY  = 0x08,
-  FL_DAMAGE_USER1    = 0x10,
-  FL_DAMAGE_USER2    = 0x20,
-  FL_DAMAGE_ALL      = 0x80
+  FL_DAMAGE_CHILD    = 0x01, /**< A child needs to be redrawn. */
+  FL_DAMAGE_EXPOSE   = 0x02, /**< The window was exposed. */
+  FL_DAMAGE_SCROLL   = 0x04, /**< The Fl_Scroll widget was scrolled. */
+  FL_DAMAGE_OVERLAY  = 0x08, /**< The overlay planes need to be redrawn. */
+  FL_DAMAGE_USER1    = 0x10, /**< First user-defined damage bit. */
+  FL_DAMAGE_USER2    = 0x20, /**< Second user-defined damage bit. */
+  FL_DAMAGE_ALL      = 0x80  /**< Everything needs to be redrawn. */
 };
 
 // FLTK 1.0.x compatibility definitions...
