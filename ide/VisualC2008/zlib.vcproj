@@ -477,48 +477,24 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\zlib\gzio.c"
+			RelativePath="..\..\zlib\gzclose.c"
 			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					FavorSizeOrSpeed="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug Cairo|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					Optimization="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release Cairo|Win32"
-				>
-				<Tool
-					Name="VCCLCompilerTool"
-					FavorSizeOrSpeed="0"
-					AdditionalIncludeDirectories=""
-					PreprocessorDefinitions=""
-				/>
-			</FileConfiguration>
+		</File>
+		<File
+			RelativePath="..\..\zlib\gzlib.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\zlib\gzread.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\zlib\gzwrite.c"
+			>
+		</File>
+		<File
+			RelativePath="..\..\zlib\infback.c"
+			>
 		</File>
 		<File
 			RelativePath="..\..\zlib\inffast.c"
