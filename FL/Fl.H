@@ -784,7 +784,8 @@ public:
     screen_xywh(X, Y, W, H, e_x_root, e_y_root);
   }
   static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
-  static void screen_xywh(int &X, int &Y, int &W, int &H, int n);  
+  static void screen_xywh(int &X, int &Y, int &W, int &H, int n); 
+  static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
   static void screen_dpi(float &h, float &v, int n=0);
 
   /**   @} */
