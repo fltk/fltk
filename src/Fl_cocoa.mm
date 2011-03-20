@@ -1931,7 +1931,7 @@ void Fl_X::make(Fl_Window* w)
     } else if (w->modal()) {
       winstyle &= ~NSMiniaturizableWindowMask;
       // winstyle &= ~(NSResizableWindowMask | NSMiniaturizableWindowMask);
-      // winlevel = NSModalPanelWindowLevel;
+      winlevel = NSModalPanelWindowLevel;
     }
     else if (w->non_modal()) {
       winlevel = NSFloatingWindowLevel;
