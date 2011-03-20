@@ -90,112 +90,49 @@ LINK32=link.exe
 # Name "fltk_zlibdll - Win32 Release"
 # Name "fltk_zlibdll - Win32 Debug"
 # Begin Source File
-
 SOURCE=..\..\zlib\adler32.c
-DEP_CPP_ADLER=\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	
 # End Source File
 # Begin Source File
-
 SOURCE=..\..\zlib\compress.c
-DEP_CPP_COMPR=\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	
 # End Source File
 # Begin Source File
-
 SOURCE=..\..\zlib\crc32.c
-DEP_CPP_CRC32=\
-	"..\..\zlib\crc32.h"\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	"..\..\zlib\zutil.h"\
-	
 # End Source File
 # Begin Source File
-
 SOURCE=..\..\zlib\deflate.c
-DEP_CPP_DEFLA=\
-	"..\..\zlib\deflate.h"\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	"..\..\zlib\zutil.h"\
-	
 # End Source File
 # Begin Source File
-
-SOURCE=..\..\zlib\gzio.c
-DEP_CPP_GZIO_=\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	"..\..\zlib\zutil.h"\
-	
+SOURCE=..\..\zlib\gzclose.c
 # End Source File
 # Begin Source File
-
+SOURCE=..\..\zlib\gzlib.c
+# End Source File
+# Begin Source File
+SOURCE=..\..\zlib\gzread.c
+# End Source File
+# Begin Source File
+SOURCE=..\..\zlib\gzwrite.c
+# End Source File
+# Begin Source File
+SOURCE=..\..\zlib\infback.c
+# End Source File
+# Begin Source File
 SOURCE=..\..\zlib\inffast.c
-DEP_CPP_INFFA=\
-	"..\..\zlib\inffast.h"\
-	"..\..\zlib\inflate.h"\
-	"..\..\zlib\inftrees.h"\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	"..\..\zlib\zutil.h"\
-	
 # End Source File
 # Begin Source File
-
 SOURCE=..\..\zlib\inflate.c
-DEP_CPP_INFLA=\
-	"..\..\zlib\inffast.h"\
-	"..\..\zlib\inffixed.h"\
-	"..\..\zlib\inflate.h"\
-	"..\..\zlib\inftrees.h"\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	"..\..\zlib\zutil.h"\
-	
 # End Source File
 # Begin Source File
-
 SOURCE=..\..\zlib\inftrees.c
-DEP_CPP_INFTR=\
-	"..\..\zlib\inftrees.h"\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	"..\..\zlib\zutil.h"\
-	
 # End Source File
 # Begin Source File
-
 SOURCE=..\..\zlib\trees.c
-DEP_CPP_TREES=\
-	"..\..\zlib\deflate.h"\
-	"..\..\zlib\trees.h"\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	"..\..\zlib\zutil.h"\
-	
 # End Source File
 # Begin Source File
-
 SOURCE=..\..\zlib\uncompr.c
-DEP_CPP_UNCOM=\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	
 # End Source File
 # Begin Source File
-
 SOURCE=..\..\zlib\zutil.c
-DEP_CPP_ZUTIL=\
-	"..\..\zlib\zconf.h"\
-	"..\..\zlib\zlib.h"\
-	"..\..\zlib\zutil.h"\
-	
 # End Source File
 # End Target
 # End Project
