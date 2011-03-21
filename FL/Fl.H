@@ -678,13 +678,7 @@ public:
   static int event_length() {return e_length;}
 
   static int compose(int &del);
-  /**
-    If the user moves the cursor, be sure to call Fl::compose_reset().
-    The next call to Fl::compose() will start out in an initial state. In
-    particular it will not set "del" to non-zero. This call is very fast
-    so it is ok to call it many times and in many places.
-  */
-  static void compose_reset() {compose_state = 0;}
+  static void compose_reset();
   static int event_inside(int,int,int,int);
   static int event_inside(const Fl_Widget*);
   static int test_shortcut(Fl_Shortcut);

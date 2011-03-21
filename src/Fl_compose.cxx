@@ -33,6 +33,10 @@
 int Fl::compose_state = 0;
 #endif
 
+#if !defined(WIN32) && !defined(__APPLE__)
+extern XIC fl_xim_ic;
+#endif
+
 /** Any text editing widget should call this for each FL_KEYBOARD event.
  Use of this function is very simple.
  
@@ -74,6 +78,20 @@ int Fl::compose(int& del) {
 #endif
   }
   return 1;
+}
+
+/**
+ If the user moves the cursor, be sure to call Fl::compose_reset().
+ The next call to Fl::compose() will start out in an initial state. In
+ particular it will not set "del" to non-zero. This call is very fast
+ so it is ok to call it many times and in many places.
+ */
+void Fl::compose_reset()
+{
+  Fl::compose_state = 0;
+#if !defined(WIN32) && !defined(__APPLE__)
+  if (fl_xim_ic) XmbResetIC(fl_xim_ic);
+#endif
 }
 
 //
