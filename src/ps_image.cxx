@@ -195,11 +195,11 @@ static inline uchar swap_byte(const uchar b) {
 extern uchar **fl_mask_bitmap;
 
 
-void Fl_PostScript_Graphics_Driver::draw_scaled_image(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D, int LD) {
-
+void Fl_PostScript_Graphics_Driver::draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) {
+  double x = ix, y = iy, w = iw, h = ih;
 
   if (D<3){ //mono
-    draw_scaled_image_mono(data, x, y, w, h, iw, ih, D, LD);
+    draw_image_mono(data, ix, iy, iw, ih, D, LD);
     return;
   }
 
@@ -262,7 +262,8 @@ void Fl_PostScript_Graphics_Driver::draw_scaled_image(const uchar *data, double 
 
 }
 
-void Fl_PostScript_Graphics_Driver::draw_scaled_image(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D) {
+void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D) {
+  double x = ix, y = iy, w = iw, h = ih;
 
   int level2_mask = 0;
   fprintf(output,"save\n");
@@ -348,7 +349,8 @@ void Fl_PostScript_Graphics_Driver::draw_scaled_image(Fl_Draw_Image_Cb call, voi
   delete[] rgbdata;
 }
 
-void Fl_PostScript_Graphics_Driver::draw_scaled_image_mono(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D, int LD) {
+void Fl_PostScript_Graphics_Driver::draw_image_mono(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) {
+  double x = ix, y = iy, w = iw, h = ih;
 
   fprintf(output,"save\n");
 
@@ -409,7 +411,8 @@ void Fl_PostScript_Graphics_Driver::draw_scaled_image_mono(const uchar *data, do
 
 
 
-void Fl_PostScript_Graphics_Driver::draw_scaled_image_mono(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D) {
+void Fl_PostScript_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D) {
+  double x = ix, y = iy, w = iw, h = ih;
 
   fprintf(output,"save\n");
   int i,j,k;
@@ -482,7 +485,7 @@ void Fl_PostScript_Graphics_Driver::draw(Fl_RGB_Image * rgb,int XP, int YP, int 
   if (lang_level_>2) //when not true, not making alphamask, mixing colors instead...
   if (alpha_mask(di, w, h, rgb->d(),rgb->ld())) return; //everthing masked, no need for painting!
   push_clip(XP, YP, WP, HP);
-  draw_scaled_image(di, XP + cx, YP + cy, w, h,  w,  h, rgb->d(), rgb->ld());
+  draw_image(di, XP + cx, YP + cy, w, h, rgb->d(), rgb->ld());
   pop_clip();
   delete[]mask;
   mask=0;

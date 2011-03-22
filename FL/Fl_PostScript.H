@@ -62,11 +62,6 @@
  Times (and their bold, oblique, italic variants).
  */
 class Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
-private:
-  void draw_scaled_image(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D=3, int LD=0);
-  void draw_scaled_image_mono(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D=3, int LD=0);
-  void draw_scaled_image(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
-  void draw_scaled_image_mono(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
 public: 
   static const char *class_id;
   const char *class_name() {return class_id;};
@@ -193,10 +188,10 @@ class Clip {
   void end_complex_polygon(){end_polygon();};
   void transformed_vertex(double x, double y);
     
-  void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0){draw_scaled_image(d,x,y,w,h,w,h,delta,ldelta);};
-  void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0){draw_scaled_image_mono(d,x,y,w,h,w,h,delta,ld);};
-  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3){draw_scaled_image(call,data, x, y, w, h, w, h, delta);};
-  void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1){draw_scaled_image_mono(call, data, x, y, w, h, w, h, delta);};
+  void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0);
+  void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0);
+  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3);
+  void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
       
   void draw(const char* s, int n, int x, int y) {transformed_draw(s,n,x,y); };
 #ifdef __APPLE__
