@@ -3,7 +3,7 @@
 //
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -62,6 +62,11 @@
  Times (and their bold, oblique, italic variants).
  */
 class Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
+private:
+  void draw_scaled_image(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D=3, int LD=0);
+  void draw_scaled_image_mono(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D=3, int LD=0);
+  void draw_scaled_image(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
+  void draw_scaled_image_mono(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
 public: 
   static const char *class_id;
   const char *class_name() {return class_id;};
@@ -119,10 +124,6 @@ class Clip {
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
   void transformed_draw(const char* s, double x, double y);
   int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
-  void draw_scaled_image(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D=3, int LD=0);
-  void draw_scaled_image_mono(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D=3, int LD=0);
-  void draw_scaled_image(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
-  void draw_scaled_image_mono(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
   
   enum Fl_Paged_Device::Page_Format page_format_;
   char *ps_filename_;
