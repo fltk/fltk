@@ -71,7 +71,11 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 	cb(userdata, 0, i, W, tmpBuf+i*W*delta);
       }
     } else {
-      memcpy(tmpBuf, buf, H*W*delta);
+      uchar *p = tmpBuf;
+      for (int i=0; i<H; i++) {
+	memcpy(p, buf+i*linedelta, W*delta);
+	p += W*delta;
+	}
     }
     array = (void*)tmpBuf;
     linedelta = W*delta;
