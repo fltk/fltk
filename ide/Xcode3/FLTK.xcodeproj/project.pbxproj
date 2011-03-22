@@ -4320,6 +4320,11 @@
 		7DF4AD3769671959EA813845 /* jcparam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcparam.c; path = ../../jpeg/jcparam.c; sourceTree = SOURCE_ROOT; };
 		7E05602BE68211B11E493E18 /* Fl_Menu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu.cxx; path = ../../src/Fl_Menu.cxx; sourceTree = SOURCE_ROOT; };
 		7E51DAB7D0F93ACFB736EE9A /* Fl_Tree_Prefs.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Tree_Prefs.H; path = ../../FL/Fl_Tree_Prefs.H; sourceTree = SOURCE_ROOT; };
+		7F2A29041338C6B80033C0A6 /* pnglibconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnglibconf.h; path = ../../png/pnglibconf.h; sourceTree = SOURCE_ROOT; };
+		7F2A29051338C6D40033C0A6 /* pngpriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngpriv.h; path = ../../png/pngpriv.h; sourceTree = SOURCE_ROOT; };
+		7F2A29071338C7450033C0A6 /* pngstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngstruct.h; path = ../../png/pngstruct.h; sourceTree = SOURCE_ROOT; };
+		7F2A29081338C7520033C0A6 /* pnginfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnginfo.h; path = ../../png/pnginfo.h; sourceTree = SOURCE_ROOT; };
+		7F2A29091338C7650033C0A6 /* pngdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngdebug.h; path = ../../png/pngdebug.h; sourceTree = SOURCE_ROOT; };
 		7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		7F4B8ADD01CB2F8BFE43ACBA /* Fl_Menu_Bar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu_Bar.cxx; path = ../../src/Fl_Menu_Bar.cxx; sourceTree = SOURCE_ROOT; };
 		7F54C8A3130FAC4F00E736F3 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzclose.c; path = ../../zlib/gzclose.c; sourceTree = SOURCE_ROOT; };
@@ -6398,6 +6403,11 @@
 			children = (
 				C9EDD4DE1274BB6600ADB21C /* png.h */,
 				C9EDD4DF1274BB6600ADB21C /* pngconf.h */,
+				7F2A29091338C7650033C0A6 /* pngdebug.h */,
+				7F2A29081338C7520033C0A6 /* pnginfo.h */,
+				7F2A29041338C6B80033C0A6 /* pnglibconf.h */,
+				7F2A29051338C6D40033C0A6 /* pngpriv.h */,
+				7F2A29071338C7450033C0A6 /* pngstruct.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
