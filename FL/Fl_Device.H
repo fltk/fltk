@@ -86,6 +86,13 @@ public:
    \endcode
    */
   virtual const char *class_name() {return class_id;};
+  /** 
+   Virtual destructor.
+   
+   The destructor of Fl_Device must be virtual to make the destructors of
+   derived classes being called correctly on destruction.
+   */
+  virtual ~Fl_Device() {};
 };
 
 #define FL_REGION_STACK_SIZE 10
