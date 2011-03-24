@@ -1034,6 +1034,7 @@ extern "C" {
 }
 - (void)windowDidMove:(NSNotification *)notif;
 - (void)windowDidResize:(NSNotification *)notif;
+- (void)windowDidResignKey:(NSNotification *)notif;
 - (void)windowDidBecomeKey:(NSNotification *)notif;
 - (void)windowDidBecomeMain:(NSNotification *)notif;
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
@@ -1075,6 +1076,12 @@ extern "C" {
                  (int)([[nsw screen] frame].size.height - pt2.y),
 		 (int)r.size.width,
 		 (int)r.size.height);
+}
+- (void)windowDidResignKey:(NSNotification *)notif
+{
+  FLWindow *nsw = (FLWindow*)[notif object];
+  Fl_Window *window = [nsw getFl_Window];
+  Fl::handle( FL_UNFOCUS, window);
 }
 - (void)windowDidBecomeKey:(NSNotification *)notif
 {
@@ -2024,6 +2031,8 @@ void Fl_X::make(Fl_Window* w)
       Fl_Tooltip::enter(0);
     }
     [cw makeKeyAndOrderFront:nil];
+    if (winlevel != NSMainMenuWindowLevel) Fl::handle(FL_FOCUS, w);
+    Fl::handle(FL_SHOW, w);
     Fl::first_window(w);
     [cw setDelegate:mydelegate];
     if (fl_show_iconic) { 
