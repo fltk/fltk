@@ -1044,6 +1044,8 @@ extern "C" {
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
 - (void)applicationWillResignActive:(NSNotification *)notify;
+- (void)applicationWillHide:(NSNotification *)notify;
+- (void)applicationWillUnhide:(NSNotification *)notify;
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
 @end
 @implementation FLDelegate
@@ -1087,7 +1089,7 @@ extern "C" {
 {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
-  Fl::handle( FL_FOCUS, window);
+  if ([nsw level] != NSMainMenuWindowLevel) Fl::handle( FL_FOCUS, window);
 }
 - (void)windowDidBecomeMain:(NSNotification *)notif
 {
@@ -1225,6 +1227,26 @@ extern "C" {
       } else {
       }
     }
+  }
+}
+- (void)applicationWillHide:(NSNotification *)notify
+{
+  Fl_X *x;
+  for (x = Fl_X::first;x;x = x->next) {
+    Fl_Window *window = x->w;
+    if ( !window->parent() ) Fl::handle( FL_HIDE, window);
+    }
+}
+- (void)applicationWillUnhide:(NSNotification *)notify
+{
+  Fl_X *x;
+  for (x = Fl_X::first;x;x = x->next) {
+    FLWindow *cw = (FLWindow*)x->xid;
+    Fl_Window *window = x->w;
+    if ( !window->parent() ) {
+      if ([cw level] != NSMainMenuWindowLevel) Fl::handle( FL_FOCUS, window);
+      Fl::handle( FL_SHOW, window);
+      }
   }
 }
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client
@@ -3115,7 +3137,7 @@ void *Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::menuOrItemOperatio
 
 void Fl_X::set_key_window()
 {
-  [(NSWindow*)xid makeKeyAndOrderFront:nil];
+  [(NSWindow*)xid makeKeyWindow];
 }
 
 static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
