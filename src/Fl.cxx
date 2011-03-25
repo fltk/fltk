@@ -816,7 +816,12 @@ void Fl::focus(Fl_Widget *o) {
       Fl_Window *win = 0, *w1 = o->as_window();
       if (!w1) w1 = o->window();
       while (w1) { win=w1; w1=win->window(); }
-      if (win) fl_xfocus = win;
+      if (win) {
+#ifdef __APPLE__
+	if (fl_xfocus != win) Fl_X::i(win)->set_key_window();
+#endif
+	fl_xfocus = win;
+	}
     }
     // take focus from the old focused window
     fl_oldfocus = 0;
