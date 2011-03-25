@@ -2573,6 +2573,15 @@ void Fl_X::relink(Fl_Window *w, Fl_Window *wp) {
 
 void Fl_X::destroy() {
   if (w && !w->parent() && xid) {
+    /* Fix for STR #2595: don't delete the xid of a subwindow because it is shared
+     with the xid of its parent window.
+     The link from subwindow to parent may have been removed already.
+     This algorithm makes sure that none of the windows of the window list uses this xid.
+     Is there a better algorithm ?
+     */
+    for (Fl_X *xo = Fl_X::first; xo; xo = xo->next) {
+      if (xo->xid == xid) return;
+      }
     [[(NSWindow *)xid contentView] release];
     [(NSWindow *)xid close];
   }
