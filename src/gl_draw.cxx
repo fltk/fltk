@@ -559,6 +559,10 @@ void gl_texture_pile_height(int max)
 
 /** @} */
 
+#elif defined(__APPLE__)
+// used only if __ppc__
+int gl_texture_pile_height(void) {return 0;}
+void gl_texture_pile_height(int max) {}
 #endif // GL_DRAW_USES_TEXTURES
 
 #endif // HAVE_GL

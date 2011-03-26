@@ -34,6 +34,9 @@ static int temp = fl_gl_load_plugin;
 
 #include <FL/Fl.H>
 #include <FL/x.H>
+#ifdef __APPLE__
+#include <FL/gl.H>
+#endif
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
@@ -469,6 +472,10 @@ void Fl_Gl_Window::hide() {
 Fl_Gl_Window::~Fl_Gl_Window() {
   hide();
 //  delete overlay; this is done by ~Fl_Group
+#ifdef __APPLE__
+  // resets the pile of string textures used to draw strings
+  gl_texture_pile_height(gl_texture_pile_height());
+#endif
 }
 
 void Fl_Gl_Window::init() {
