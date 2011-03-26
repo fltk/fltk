@@ -474,7 +474,8 @@ Fl_Gl_Window::~Fl_Gl_Window() {
 //  delete overlay; this is done by ~Fl_Group
 #ifdef __APPLE__
   // resets the pile of string textures used to draw strings
-  gl_texture_pile_height(gl_texture_pile_height());
+  extern void gl_texture_reset();
+  gl_texture_reset();
 #endif
 }
 
