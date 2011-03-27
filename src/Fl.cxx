@@ -149,12 +149,19 @@ void Fl::scrollbar_size(int W) {
 }
 
 
-/**
-    Returns whether or not the mouse event is inside the given rectangle.
-    Returns non-zero if the current event_x and event_y
-    put it inside the widget or inside an arbitrary bounding box.  You
-    should always call this rather than doing your own comparison so you
-    are consistent about edge effects.
+/** Returns whether or not the mouse event is inside the given rectangle.
+
+    Returns non-zero if the current Fl::event_x() and Fl::event_y()
+    put it inside the given arbitrary bounding box.
+
+    You should always call this rather than doing your own comparison
+    so you are consistent about edge effects.
+
+    To find out, whether the event is inside a child widget of the
+    current window, you can use Fl::event_inside(const Fl_Widget *).
+
+    \param[in] xx,yy,ww,hh	bounding box
+    \return			non-zero, if mouse event is inside
 */
 int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
   int mx = e_x - xx;
@@ -162,11 +169,32 @@ int Fl::event_inside(int xx,int yy,int ww,int hh) /*const*/ {
   return (mx >= 0 && mx < ww && my >= 0 && my < hh);
 }
 
-/** Returns whether or not the mouse event is inside the given widget.
-    Returns non-zero if the current event_x and event_y
-    put it inside the widget or inside an arbitrary bounding box.  You
-    should always call this rather than doing your own comparison so you
-    are consistent about edge effects.
+/** Returns whether or not the mouse event is inside a given child widget.
+
+    Returns non-zero if the current Fl::event_x() and Fl::event_y()
+    put it inside the given child widget's bounding box.
+
+    This method can only be used to check whether the mouse event is
+    inside a \b child widget of the window that handles the event, and
+    there must not be an intermediate subwindow (i.e. the widget must
+    not be inside a subwindow of the current window). However, it is
+    valid if the widget is inside a nested Fl_Group.
+
+    You must not use it with the window itself as the \p o argument
+    in a window's handle() method.
+
+    \note The mentioned restrictions are necessary, because this method
+    does not transform coordinates of child widgets, and thus the given
+    widget \p o must be within the \e same window that is handling the
+    current event. Otherwise the results are undefined.
+
+    You should always call this rather than doing your own comparison
+    so you are consistent about edge effects.
+
+    \see Fl::event_inside(int, int, int, int)
+
+    \param[in] o	child widget to be tested
+    \return		non-zero, if mouse event is inside the widget
 */
 int Fl::event_inside(const Fl_Widget *o) /*const*/ {
   int mx = e_x - o->x();
