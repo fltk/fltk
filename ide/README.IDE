@@ -12,6 +12,7 @@ ide/VisualC6	|   Microsoft Visual C++ 6 and 2005 (2)
 ide/VisualC2008	|   Microsoft Visual C++ 2008
 ide/VisualC2010	|   Microsoft Visual C++ 2010
 ide/Xcode3 	|   Apple Xcode 3.x and up
+ide/Xcode4 	|   Apple Xcode 4.x and up
 
 Notes :
 -------
@@ -39,8 +40,12 @@ Further notes about Xcode IDE project files (December 2010):
 ------------------------------------------------------------------------
 
 The FLTK team limits support to the last two releases of any major IDE.
-Currently only Xcode 3 is available to regular developers. Xcode 3 
-projects should import into Xcode 4.
+Xcode 3 is available form Apple for free. Xcode 4 is available from the
+App Store for a nominal fee, or a s part of a paid developer membership
+with Apple. The Xcode3 project targets OS X 10.5, whereas Xcode4
+targets 10.6. If you wish to develop for a lower version, you will
+need to download the required SDK form Apple and change the target 
+SDK.
 
 
 Other IDE's and Platforms

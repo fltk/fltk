@@ -1,0 +1,11 @@
+//
+// Prefix header for all source files
+//
+
+#ifdef __OBJC__
+#import <Cocoa/Cocoa.h>
+#endif
+
+#ifdef FL_LIBRARY
+#include <ApplicationServices/ApplicationServices.h>
+#endif

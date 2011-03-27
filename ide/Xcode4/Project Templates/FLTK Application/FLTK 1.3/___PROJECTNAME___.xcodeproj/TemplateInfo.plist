@@ -1,0 +1,4 @@
+{
+        Description = "This project builds an FLTK based Cocoa application written in C++ with support for the Fluid UI designer, image reading, and OpenGL.";
+}
+
