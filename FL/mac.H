@@ -155,6 +155,7 @@ public:
   static void *get_carbon_function(const char *name);
 private:
   static void relink(Fl_Window*, Fl_Window*);
+  bool subwindow;
 };
 
 extern struct Fl_XMap {

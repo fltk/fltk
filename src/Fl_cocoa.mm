@@ -1895,6 +1895,7 @@ void Fl_X::make(Fl_Window* w)
     Fl_Group::current(0);
     // our subwindow needs this structure to know about its clipping. 
     Fl_X* x = new Fl_X;
+    x->subwindow = true;
     x->other_xid = 0;
     x->region = 0;
     x->subRegion = 0;
@@ -1994,6 +1995,7 @@ void Fl_X::make(Fl_Window* w)
     const char *name = w->label();
     
     Fl_X* x = new Fl_X;
+    x->subwindow = false;
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
     x->region = 0;
     x->subRegion = 0;
@@ -2572,16 +2574,8 @@ void Fl_X::relink(Fl_Window *w, Fl_Window *wp) {
 }
 
 void Fl_X::destroy() {
-  if (w && !w->parent() && xid) {
-    /* Fix for STR #2595: don't delete the xid of a subwindow because it is shared
-     with the xid of its parent window.
-     The link from subwindow to parent may have been removed already.
-     This algorithm makes sure that none of the windows of the window list uses this xid.
-     Is there a better algorithm ?
-     */
-    for (Fl_X *xo = Fl_X::first; xo; xo = xo->next) {
-      if (xo->xid == xid) return;
-      }
+  // subwindows share their xid with their parent window, so should not close it
+  if (!subwindow && w && !w->parent() && xid) {
     [[(NSWindow *)xid contentView] release];
     [(NSWindow *)xid close];
   }
