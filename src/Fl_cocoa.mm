@@ -1251,12 +1251,15 @@ extern "C" {
 }
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client
 {
-  NSRect rect={{0,0},{20,20}};
-  static FLTextView *view = nil;
-  if (!view) {
-    view = [[FLTextView alloc] initWithFrame:rect];
+  if (fl_mac_os_version < 100500) {
+    NSRect rect={{0,0},{20,20}};
+    static FLTextView *view = nil;
+    if (!view) {
+      view = [[FLTextView alloc] initWithFrame:rect];
+    }
+    return view;
   }
-  return view;
+  return nil;
 }
 @end
 
@@ -1675,7 +1678,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   cocoaMouseWheelHandler(theEvent);
 }
 - (void)keyDown:(NSEvent *)theEvent {
-  FLTextView *edit = (FLTextView*)[[theEvent window]  fieldEditor:YES forObject:nil];
+  NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
   [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
 }
 - (void)keyUp:(NSEvent *)theEvent {
