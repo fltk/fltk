@@ -632,6 +632,12 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 }
 @end
 
+@interface FLApplication : NSObject
+{
+}
++ (void)sendEvent:(NSEvent *)theEvent;
+@end
+
 /*
  * This function is the central event handler.
  * It reads events from the event queue using the given maximum time
@@ -657,7 +663,7 @@ static double do_queued_events( double time = 0.0 )
                                          inMode:NSDefaultRunLoopMode dequeue:YES];  
   if (event != nil) {
     got_events = 1;
-    [NSApp sendEvent:event]; // reimplemented in [FLApplication sendevent:]
+    [FLApplication sendEvent:event]; // will then call [NSApplication sendevent:]
   }
   fl_lock_function();
   
@@ -1263,13 +1269,8 @@ extern "C" {
 }
 @end
 
-@interface FLApplication : NSApplication
-{
-}
-- (void)sendEvent:(NSEvent *)theEvent;
-@end
 @implementation FLApplication
-- (void)sendEvent:(NSEvent *)theEvent
++ (void)sendEvent:(NSEvent *)theEvent
 {
   NSEventType type = [theEvent type];  
   if (type == NSLeftMouseDown) {
@@ -1293,10 +1294,10 @@ extern "C" {
     // command.  This one makes all modifiers consistent by always sending key ups.
     // FLView treats performKeyEquivalent to keyDown, but performKeyEquivalent is
     // still needed for the system menu.
-    [[self keyWindow] sendEvent:theEvent];
+    [[NSApp keyWindow] sendEvent:theEvent];
     return;
     }
-  [super sendEvent:theEvent]; 
+  [NSApp sendEvent:theEvent]; 
 }
 @end
 
@@ -1307,7 +1308,7 @@ void fl_open_display() {
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
 	  
-    [FLApplication sharedApplication];
+    [NSApplication sharedApplication];
     NSAutoreleasePool *localPool;
     localPool = [[NSAutoreleasePool alloc] init]; // never released
     mydelegate = [[FLDelegate alloc] init];
