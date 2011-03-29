@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_cocoa.mm 6971 2009-04-13 07:32:01Z matt $"
+// "$Id$"
 //
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
@@ -3357,5 +3357,5 @@ void *Fl_X::get_carbon_function(const char *function_name) {
 #endif // __APPLE__
 
 //
-// End of "$Id: Fl_cocoa.mm 6971 2009-04-13 07:32:01Z matt $".
+// End of "$Id$".
 //
