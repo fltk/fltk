@@ -1252,9 +1252,9 @@ extern "C" {
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client
 {
   if (fl_mac_os_version < 100500) {
-    NSRect rect={{0,0},{20,20}};
     static FLTextView *view = nil;
     if (!view) {
+      NSRect rect={{0,0},{20,20}};
       view = [[FLTextView alloc] initWithFrame:rect];
     }
     return view;
