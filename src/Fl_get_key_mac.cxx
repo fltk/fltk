@@ -36,6 +36,8 @@
 // convert an FLTK (X) keysym to a MacOS symbol:
 // See also the inverse converter in table macKeyLookUp of Fl_cocoa.mm
 // This table is in numeric order by FLTK symbol order for binary search:
+// The list of Mac OS virtual keycodes appears with OS 10.5 in
+// ...../Carbon.framework/Frameworks/HIToolbox.framework/Headers/Events.h
 
 static const struct {unsigned short vk, fltk;} vktab[] = {
   { 49, ' ' }, { 39, '\'' }, { 43, ',' }, { 27, '-' }, { 47, '.' }, { 44, '/' }, 
