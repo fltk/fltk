@@ -2843,13 +2843,12 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
 }
 @end
 
-static NSMenu *appleMenu;
 static void createAppleMenu(void)
 {
   static BOOL donethat = NO;
   if (donethat) return;
   donethat = YES;
-  NSMenu *mainmenu, *services;
+  NSMenu *mainmenu, *services, *appleMenu;
   NSMenuItem *menuItem;
   NSString *title;
 
@@ -2972,6 +2971,7 @@ void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
   aboutItem.callback(cb);
   aboutItem.user_data(user_data);
   aboutItem.shortcut(shortcut);
+  NSMenu *appleMenu = [[(NSMenu*)fl_system_menu itemAtIndex:0] submenu];
   CFStringRef cfname = CFStringCreateCopy(NULL, (CFStringRef)[[appleMenu itemAtIndex:0] title]);
   [appleMenu removeItemAtIndex:0];
   FLMenuItem *item = [[[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
