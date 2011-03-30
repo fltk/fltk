@@ -142,6 +142,7 @@ void fl_set_status(int x, int y, int w, int h)
 
 /*
  * Mac keyboard lookup table
+ * See also the inverse converter vktab in Fl_get_get_mac.cxx
  */
 static unsigned short macKeyLookUp[128] =
 {
@@ -155,9 +156,9 @@ static unsigned short macKeyLookUp[128] =
   'k', ';', '\\', ',', '/', 'n', 'm', '.',
   
   FL_Tab, ' ', '`', FL_BackSpace, 
-  FL_KP_Enter, FL_Escape, 0, 0/*FL_Meta_L*/,
-  0/*FL_Shift_L*/, 0/*FL_Caps_Lock*/, 0/*FL_Alt_L*/, 0/*FL_Control_L*/, 
-  0/*FL_Shift_R*/, 0/*FL_Alt_R*/, 0/*FL_Control_R*/, 0,
+  FL_KP_Enter, FL_Escape, FL_Meta_R, FL_Meta_L,
+  FL_Shift_L, FL_Caps_Lock, FL_Alt_L, FL_Control_L, 
+  FL_Shift_R, FL_Alt_R, FL_Control_R, 0/*FL_F*/,
   
   0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Num_Lock,
   FL_Down, 0, 0, FL_KP+'/', FL_KP_Enter, FL_Up, FL_KP+'-', 0,
@@ -195,7 +196,7 @@ static unsigned int mods_to_e_state( NSUInteger mods )
  * convert the current key chord into the FLTK keysym
  */
 
- static void mods_to_e_keysym( NSUInteger mods )
+ /*static void mods_to_e_keysym( NSUInteger mods )
  {
  if ( mods & NSCommandKeyMask ) Fl::e_keysym = FL_Meta_L;
  else if ( mods & NSNumericPadKeyMask ) Fl::e_keysym = FL_Num_Lock;
@@ -205,7 +206,7 @@ static unsigned int mods_to_e_state( NSUInteger mods )
  else if ( mods & NSAlphaShiftKeyMask ) Fl::e_keysym = FL_Caps_Lock;
  else Fl::e_keysym = 0;
  //printf( "to sym 0x%08x (%04x)\n", Fl::e_keysym, mods );
- }
+ }*/
 
 // these pointers are set by the Fl::lock() function:
 static void nothing() {}
@@ -1369,7 +1370,8 @@ void fl_open_display() {
         }
       }
     }
-    createAppleMenu();
+    if (![NSApp servicesMenu]) createAppleMenu();
+    fl_system_menu = [NSApp mainMenu];
     
     [[NSNotificationCenter defaultCenter] addObserver:mydelegate 
 	       selector:@selector(anywindowwillclosenotif:) 
@@ -1694,7 +1696,9 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   int sendEvent = 0;
   if ( tMods )
   {
-    mods_to_e_keysym( tMods );
+    //mods_to_e_keysym( tMods );
+    unsigned short keycode = [theEvent keyCode];
+    Fl::e_keysym = macKeyLookUp[keycode & 0x7f];
     if ( Fl::e_keysym ) 
       sendEvent = ( prevMods<mods ) ? FL_KEYBOARD : FL_KEYUP;
     Fl::e_length = 0;
@@ -1809,6 +1813,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
     Fl_Window *window = [(FLWindow*)[NSApp keyWindow] getFl_Window];
     Fl::e_text = (char*)[received UTF8String];
     Fl::e_length = strlen(Fl::e_text);
+    Fl::e_keysym = 0;
     Fl::handle(FL_KEYBOARD, window);
     Fl::handle(FL_KEYUP, window);
     fl_unlock_function();
@@ -2916,7 +2921,6 @@ static void createAppleMenu(void)
   [mainmenu release];
   [appleMenu release];
   [menuItem release];
-  fl_system_menu = [NSApp mainMenu];
 }
 
 @interface FLMenuItem : NSMenuItem {
@@ -2971,7 +2975,7 @@ void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
   aboutItem.callback(cb);
   aboutItem.user_data(user_data);
   aboutItem.shortcut(shortcut);
-  NSMenu *appleMenu = [[(NSMenu*)fl_system_menu itemAtIndex:0] submenu];
+  NSMenu *appleMenu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
   CFStringRef cfname = CFStringCreateCopy(NULL, (CFStringRef)[[appleMenu itemAtIndex:0] title]);
   [appleMenu removeItemAtIndex:0];
   FLMenuItem *item = [[[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
@@ -3119,11 +3123,11 @@ void *Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::menuOrItemOperatio
     // renames the system menu item numbered rank in fl_sys_menu_bar->menu()
     int rank = va_arg(ap, int);
     char *newname = remove_ampersand( va_arg(ap, const char *) );
-    int countmenus = [(NSMenu*)fl_system_menu numberOfItems];
+    int countmenus = [[NSApp mainMenu] numberOfItems];
     bool found = NO;
     NSMenuItem *macitem = 0;
     for(int i = 1; (!found) && i < countmenus; i++) {
-      NSMenuItem *item = [(NSMenu*)fl_system_menu itemAtIndex:i];
+      NSMenuItem *item = [[NSApp mainMenu] itemAtIndex:i];
       NSMenu *submenu = [item submenu];
       if (submenu == nil) continue;
       int countitems = [submenu numberOfItems];
