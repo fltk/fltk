@@ -209,11 +209,11 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 
 #ifdef WIN32
 
-/// implementation in Fl_win32.cxx
+// implementation in Fl_win32.cxx
 
 #elif defined(__APPLE__)
 
-/// implementation in Fl_mac.cxx
+// implementation in Fl_mac.cxx
 
 #else
 
@@ -241,7 +241,7 @@ static Timeout* first_timeout, *free_timeout;
 // I avoid the overhead of getting the current time when we have no
 // timeouts by setting this flag instead of getting the time.
 // In this case calling elapse_timeouts() does nothing, but records
-// the current time, and the next call will actualy elapse time.
+// the current time, and the next call will actually elapse time.
 static char reset_clock = 1;
 
 static void elapse_timeouts() {
@@ -300,10 +300,11 @@ int Fl::has_timeout(Fl_Timeout_Handler cb, void *argp) {
 /**
   Removes a timeout callback. It is harmless to remove a timeout
   callback that no longer exists.
+
+  \note	This version removes all matching timeouts, not just the first one.
+	This may change in the future.
 */
 void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
-  // This version removes all matching timeouts, not just the first one.
-  // This may change in the future.
   for (Timeout** p = &first_timeout; *p;) {
     Timeout* t = *p;
     if (t->cb == cb && (t->arg == argp || !argp)) {
@@ -322,7 +323,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void *argp) {
 // Checks are just stored in a list. They are called in the reverse
 // order that they were added (this may change in the future).
 // This is a bit messy because I want to allow checks to be added,
-// removed, and have wait() called from inside them, to do this
+// removed, and have wait() called from inside them. To do this
 // next_check points at the next unprocessed one for the outermost
 // call to Fl::wait().
 
@@ -338,16 +339,16 @@ static Check *first_check, *next_check, *free_check;
   waits for events.  This is different than an idle callback because it
   is only called once, then FLTK calls the system and tells it not to
   return until an event happens.
-  
+
   This can be used by code that wants to monitor the
   application's state, such as to keep a display up to date. The
   advantage of using a check callback is that it is called only when no
   events are pending. If events are coming in quickly, whole blocks of
   them will be processed before this is called once. This can save
   significant time and avoid the application falling behind the events.
-  
+
   Sample code:
-  
+
   \code
   bool state_changed; // anything that changes the display turns this on
   
@@ -429,13 +430,13 @@ static char in_idle;
 ////////////////////////////////////////////////////////////////
 // wait/run/check/ready:
 
-void (*Fl::idle)(); // see Fl_add_idle.cxx for the add/remove functions
+void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
 
 extern int fl_ready(); // in Fl_<platform>.cxx
 extern int fl_wait(double time); // in Fl_<platform>.cxx
 
 /**
-  See int wait()
+  See int Fl::wait()
 */
 double Fl::wait(double time_to_wait) {
   // delete all widgets that were listed during callbacks
@@ -573,17 +574,16 @@ static Fl_Win32_At_Exit win32_at_exit;
   all pending timeouts, or infinity), for any events from the user or
   any Fl::add_fd() callbacks.  It then handles the events and
   calls the callbacks and then returns.
-  
-  The return value of Fl::wait() is non-zero if there are
-  any visible windows - this may change in future versions of
-  FLTK.
-  
-  Fl::wait(time) waits a maximum of <i>time</i>
-  seconds.  <i>It can return much sooner if something happens.</i>
-  
+
+  The return value of Fl::wait() is non-zero if there are any
+  visible windows - this may change in future versions of FLTK.
+
+  Fl::wait(time) waits a maximum of \e time seconds.
+  <i>It can return much sooner if something happens.</i>
+
   The return value is positive if an event or fd happens before the
   time elapsed.  It is zero if nothing happens (on Win32 this will only
-  return zero if <i>time</i> is zero).  It is negative if an error
+  return zero if \e time is zero).  It is negative if an error
   occurs (this will happen on UNIX if a signal happens).
 */
 int Fl::wait() {
@@ -604,7 +604,7 @@ int Fl::wait() {
   }
   \endcode
   
-  The returns non-zero if any windows are displayed, and 0 if no
+  This returns non-zero if any windows are displayed, and 0 if no
   windows are displayed (this is likely to change in future versions of
   FLTK).
 */
@@ -684,8 +684,9 @@ Fl_Window* Fl::first_window() {
 }
 
 /**
-  Returns the next top-level window in the list of shown() windows.  You can
-  use this call to iterate through all the windows that are shown().
+  Returns the next top-level window in the list of shown() windows.
+  You can use this call to iterate through all the windows that are shown().
+  \param[in] window	must be shown and not NULL
 */
 Fl_Window* Fl::next_window(const Fl_Window* window) {
   Fl_X* i = Fl_X::i(window)->next;
@@ -765,16 +766,16 @@ static handler_link *handlers = 0;
   Install a function to parse unrecognized events.  If FLTK cannot
   figure out what to do with an event, it calls each of these functions
   (most recent first) until one of them returns non-zero.  If none of
-  them returns non zero then the event is ignored.  Events that cause
+  them returns non-zero then the event is ignored.  Events that cause
   this to be called are:
   
   - FL_SHORTCUT events that are not recognized by any widget.
     This lets you provide global shortcut keys.
   - System events that FLTK does not recognize.  See fl_xevent.
-  - \e Some other events when the widget FLTK selected  returns
-    zero from its handle() method.  Exactly which  ones may change
+  - \e Some other events when the widget FLTK selected returns
+    zero from its handle() method.  Exactly which ones may change
     in future versions, however.
- 
+
  \see Fl::remove_handler(Fl_Event_Handler)
  \see Fl::event_dispatch(Fl_Event_Dispatch d)
  \see Fl::handle(int, Fl_Window*)
@@ -829,7 +830,7 @@ Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
     \e test if the widget wants the focus (by it returning non-zero from
     handle()).
     
-    \sa Fl_Widget::take_focus()
+    \see Fl_Widget::take_focus()
 */
 void Fl::focus(Fl_Widget *o) {
   if (o && !o->visible_focus()) return;
@@ -974,7 +975,7 @@ void fl_fix_focus() {
 extern Fl_Widget *fl_selection_requestor; // from Fl_x.cxx
 #endif
 
-// This function is called by ~Fl_Widget() and by Fl_Widget::deactivate
+// This function is called by ~Fl_Widget() and by Fl_Widget::deactivate()
 // and by Fl_Widget::hide().  It indicates that the widget does not want
 // to receive any more events, and also removes all global variables that
 // point at the widget.
@@ -1002,9 +1003,9 @@ void fl_throw_focus(Fl_Widget *o) {
 
 ////////////////////////////////////////////////////////////////
 
-// Call to->handle but first replace the mouse x/y with the correct
-// values to account for nested X windows. 'window' is the outermost
-// window the event was posted to by X:
+// Call to->handle(), but first replace the mouse x/y with the correct
+// values to account for nested windows. 'window' is the outermost
+// window the event was posted to by the system:
 static int send(int event, Fl_Widget* to, Fl_Window* window) {
   int dx, dy;
   int old_event = Fl::e_number;
@@ -1026,39 +1027,43 @@ static int send(int event, Fl_Widget* to, Fl_Window* window) {
 }
 
 
-/** 
+/**
  \brief Set a new event dispatch function.
- 
- The event dispatch function is called after native events are converted to 
- FLTK events, but before they are handled by FLTK. If the dispatch pointer
- is set, it is up to the dispatch function to call 
- Fl::handle_(int, Fl_Window*).
- 
- The event dispatch can be used to handle exceptions in FLTK events and  
+
+ The event dispatch function is called after native events are converted to
+ FLTK events, but before they are handled by FLTK. If the dispatch function
+ Fl_Event_Dispatch \p d is set, it is up to the dispatch function to call
+ Fl::handle_(int, Fl_Window*) or to ignore the event.
+
+ The dispatch function itself must return 0 if it ignored the event,
+ or non-zero if it used the event. If you call Fl::handle_(), then
+ this will return the correct value.
+
+ The event dispatch can be used to handle exceptions in FLTK events and
  callbacks before they reach the native event handler:
- 
+
  \code
  int myHandler(int e, Fl_Window *w) {
    try {
-     Fl::handle_(e, w);
+     return Fl::handle_(e, w);
    } catch () {
      ...
    }
  }
- 
+
  main() {
    Fl::event_dispatch(myHandler);
    ...
    Fl::run();
  }
  \endcode
- 
+
  \param d new dispatch function, or NULL 
  \see Fl::add_handler(Fl_Event_Handler)
  \see Fl::handle(int, Fl_Window*)
  \see Fl::handle_(int, Fl_Window*)
  */
-void Fl::event_dispatch(Fl_Event_Dispatch d) 
+void Fl::event_dispatch(Fl_Event_Dispatch d)
 {
   e_dispatch = d; 
 }
@@ -1075,18 +1080,19 @@ Fl_Event_Dispatch Fl::event_dispatch()
 
 /**
  \brief Handle events from the window system.
- 
+
  This is called from the native event dispatch after native events have been
- converted to FLTK notation. This functin calls Fl::handle_(int, Fl_Window*) 
+ converted to FLTK notation. This function calls Fl::handle_(int, Fl_Window*) 
  unless the user sets a dispatch function. If a user dispatch function is set,
- the user must make sure that Fl::handle_() is called.
- 
+ the user must make sure that Fl::handle_() is called, or the event will be
+ ignored.
+
  \param e the event type (Fl::event_number() is not yet set)
- \param window the window that cause this event
- \return 0 if the event was handled
- 
- \sa Fl::add_handler(Fl_Event_Handler)
- \sa Fl::event_dispatch(Fl_Event_Dispatch)
+ \param window the window that caused this event
+ \return 0 if the event was not handled
+
+ \see Fl::add_handler(Fl_Event_Handler)
+ \see Fl::event_dispatch(Fl_Event_Dispatch)
  */
 int Fl::handle(int e, Fl_Window* window)
 {
@@ -1101,13 +1107,15 @@ int Fl::handle(int e, Fl_Window* window)
 /**
  \brief Handle events from the window system.
 
- This function is called form the native event dispatch, unless the user sets 
+ This function is called from the native event dispatch, unless the user sets 
  another dispatch function. In that case, the user dispatch function must 
  decide when to call Fl::handle_(int, Fl_Window*)
- 
+
  \param e the event type (Fl::event_number() is not yet set)
- \param window the window that cause this event
- \return 0 if the event was handled
+ \param window the window that caused this event
+ \return 0 if the event was not handled
+
+ \see Fl::event_dispatch(Fl_Event_Dispatch)
  */
 int Fl::handle_(int e, Fl_Window* window)
 {  
@@ -1220,7 +1228,7 @@ int Fl::handle_(int e, Fl_Window* window)
     return 1;
 
   case FL_KEYUP:
-    // Send the key-up to the current focus. This is not 
+    // Send the key-up to the current focus widget. This is not
     // always the same widget that received the corresponding
     // FL_KEYBOARD event because focus may have changed.
     // Sending the KEYUP to the right KEYDOWN is possible, but
@@ -1468,7 +1476,7 @@ int Fl_Window::handle(int ev)
       break;
     case FL_HIDE:
       if (shown()) {
-	// Find what really turned invisible, if is was a parent window
+	// Find what really turned invisible, if it was a parent window
 	// we do nothing.  We need to avoid unnecessary unmap calls
 	// because they cause the display to blink when the parent is
 	// remapped.  However if this or any intermediate non-window
@@ -1525,7 +1533,8 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
   Fl::copy(text, len, 0);
 }
 
-/** Backward compatibility only:
+/** Backward compatibility only.
+  This calls Fl::paste(receiver, 0);
   \see Fl::paste(Fl_Widget &receiver, int clipboard)
 */
 void Fl::paste(Fl_Widget &receiver) {
@@ -1560,7 +1569,7 @@ void Fl_Widget::redraw_label() {
       H += 5;
 
       // FIXME:
-      // This assumes the measure() returns the correct outline, which it does 
+      // This assumes that measure() returns the correct outline, which it does
       // not in all possible cases of alignment combinedwith image and symbols.
       switch (align() & 0x0f) {
         case FL_ALIGN_TOP_LEFT:
@@ -1881,20 +1890,26 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
 
 /**
  \brief FLTK library options management.
- 
+
  This function needs to be documented in more detail. It can be used for more
  optional settings, such as using a native file chooser instead of the FLTK one
- wherever possible, disabeling tooltips, disabeling visible focus, disabeling 
+ wherever possible, disabling tooltips, disabling visible focus, disabling 
  FLTK file chooser preview, etc. .
- 
+
  There should be a command line option interface.
- 
+
  There should be an application that manages options system wide, per user, and
  per application.
- 
+
+ \note As of FLTK 1.3.0, options can be managed within fluid, using the menu
+ <i>Edit/Global FLTK Settings</i>.
+
  \param opt which option
  \return true or false
- \see Fl_Option
+ \see enum Fl::Fl_Option
+ \see Fl::option(Fl_Option, bool)
+
+ \since FLTK 1.3.0
  */ 
 bool Fl::option(Fl_Option opt)
 {
@@ -1949,7 +1964,8 @@ bool Fl::option(Fl_Option opt)
  
  \param opt which option
  \param val set to true or false
- \see Fl_Option
+ \see enum Fl::Fl_Option
+ \see bool Fl::option(Fl_Option)
  */
 void Fl::option(Fl_Option opt, bool val)
 {

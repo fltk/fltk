@@ -68,50 +68,51 @@ struct Fl_Label;
 	 Fl::remove_timeout() and others
   @{ */
 
-/** signature of some label drawing functions passed as parameters */
+/** Signature of some label drawing functions passed as parameters */
 typedef void (Fl_Label_Draw_F)(const Fl_Label *label, int x, int y, int w, int h, Fl_Align align);
 
-/** signature of some label measurement functions passed as parameters */
+/** Signature of some label measurement functions passed as parameters */
 typedef void (Fl_Label_Measure_F)(const Fl_Label *label, int &width, int &height);
 
-/** signature of some box drawing functions passed as parameters */
+/** Signature of some box drawing functions passed as parameters */
 typedef void (Fl_Box_Draw_F)(int x, int y, int w, int h, Fl_Color color);
 
-/** signature of some timeout callback functions passed as parameters */
+/** Signature of some timeout callback functions passed as parameters */
 typedef void (*Fl_Timeout_Handler)(void *data);
 
-/** signature of some wakeup callback functions passed as parameters */
+/** Signature of some wakeup callback functions passed as parameters */
 typedef void (*Fl_Awake_Handler)(void *data);
 
-/** signature of add_idle callback functions passed as parameters */
+/** Signature of add_idle callback functions passed as parameters */
 typedef void (*Fl_Idle_Handler)(void *data);
 
-/** signature of set_idle callback functions passed as parameters */
+/** Signature of set_idle callback functions passed as parameters */
 typedef void (*Fl_Old_Idle_Handler)();
 
-/** signature of add_fd functions passed as parameters */
+/** Signature of add_fd functions passed as parameters */
 typedef void (*Fl_FD_Handler)(int fd, void *data);
 
-/** signature of add_handler functions passed as parameters */
+/** Signature of add_handler functions passed as parameters */
 typedef int (*Fl_Event_Handler)(int event);
 
-/** signature of set_abort functions passed as parameters */
+/** Signature of set_abort functions passed as parameters */
 typedef void (*Fl_Abort_Handler)(const char *format,...);
 
-/** signature of set_atclose functions passed as parameters */
+/** Signature of set_atclose functions passed as parameters */
 typedef void (*Fl_Atclose_Handler)(Fl_Window *window, void *data);
 
-/** signature of args functions passed as parameters */
+/** Signature of args functions passed as parameters */
 typedef int (*Fl_Args_Handler)(int argc, char **argv, int &i);
 
-/** signature of event_dispatch functions passed as parameters */
+/** Signature of event_dispatch functions passed as parameters.
+    \see Fl::event_dispatch(Fl_Event_Dispatch) */
 typedef int (*Fl_Event_Dispatch)(int event, Fl_Window *w);
 
 /** @} */ /* group callback_functions */
 
 
 /**
-  The Fl is the FLTK global (static) containing
+  The Fl is the FLTK global (static) class containing
   state information and global methods for the current application.
 */
 class FL_EXPORT Fl {
@@ -148,10 +149,16 @@ public: // should be private!
   static void damage(int d) {damage_ = d;}
   
 public:
+  /** Enumerator for global FLTK options.
+      These options can be set system wide, per user, or for the running
+      application only.
+      \see Fl::option(Fl_Option, bool)
+      \see Fl::option(Fl_Option)
+  */
   typedef enum {
-      /// When switched on, moving the text cursor beyond the start or end of 
-      /// a text in a text widget will change focus to the next text widgt. 
-      /// When switched off, the cursor will stop at the end of the text. 
+      /// When switched on, moving the text cursor beyond the start or end of
+      /// a text in a text widget will change focus to the next text widget.
+      /// When switched off, the cursor will stop at the end of the text.
       /// Pressing Tab or Ctrl-Tab will advance the keyboard focus.
     OPTION_ARROW_FOCUS = 0,
       // When switched on, FLTK will use the file chooser dialog that comes 
@@ -174,13 +181,14 @@ public:
       /// dropping text from other applications still works.
     OPTION_DND_TEXT,
       /// If tooltips are enabled, hovering the mouse over a widget with a 
-      /// tooltip text will open a little tootip window until the mouse leaves
+      /// tooltip text will open a little tooltip window until the mouse leaves
       /// the widget. If disabled, no tooltip is shown.
     OPTION_SHOW_TOOLTIPS,
       // don't change this, leave it always as the last element
+      /// For internal use only.
     OPTION_LAST
   } Fl_Option;
-  
+
 private:  
   static unsigned char options_[OPTION_LAST];
   static unsigned char options_read_;

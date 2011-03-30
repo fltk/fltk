@@ -481,6 +481,8 @@ Fl_Tabs::~Fl_Tabs() {
 
     \param[in]	tabh		position and optional height of tabs (see above)
     \param[out]	rx,ry,rw,rh	(x,y,w,h) of client area for children
+
+    \since	FLTK 1.3.0
 */
 void Fl_Tabs::client_area(int &rx, int &ry, int &rw, int &rh, int tabh) {
 
