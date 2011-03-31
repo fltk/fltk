@@ -4,7 +4,7 @@
 
 This appendix describes the operating system specific interfaces in FLTK:
 \li \ref osissues_accessing
-\li \ref osissues_unit
+\li \ref osissues_unix
 \li \ref osissues_win32
 \li \ref osissues_macos
 
@@ -37,7 +37,7 @@ operating system.
 </TABLE>
 </CENTER>
 
-\section osissues_unit The UNIX (X11) Interface
+\section osissues_unix The UNIX (X11) Interface
 
 The UNIX interface provides access to the X Window System
 state information and data structures.
