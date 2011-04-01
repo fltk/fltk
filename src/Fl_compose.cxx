@@ -66,7 +66,7 @@ int Fl::compose(int& del) {
   }
 #else
   unsigned char ascii = (unsigned)e_text[0];
-  if ((e_state & (FL_ALT | FL_META)) && !(ascii & 128)) return 0;
+  if ((e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128)) return 0;
 #endif
   if(Fl::compose_state) {
     del = Fl::compose_state;
