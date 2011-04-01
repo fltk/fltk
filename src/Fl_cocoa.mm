@@ -1308,14 +1308,15 @@ void fl_open_display() {
   static char beenHereDoneThat = 0;
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
-	  
-    [NSApplication sharedApplication];
+
+    BOOL need_new_nsapp = (NSApp == nil);
+    if (need_new_nsapp) [NSApplication sharedApplication];
     NSAutoreleasePool *localPool;
     localPool = [[NSAutoreleasePool alloc] init]; // never released
     mydelegate = [[FLDelegate alloc] init];
     [NSApp setDelegate:mydelegate];
-    [NSApp finishLaunching];
-		
+    if (need_new_nsapp) [NSApp finishLaunching];
+
     // empty the event queue but keep system events for drag&drop of files at launch
     NSEvent *ign_event;
     do ign_event = [NSApp nextEventMatchingMask:(NSAnyEventMask & ~NSSystemDefinedMask)
