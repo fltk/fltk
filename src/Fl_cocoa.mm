@@ -1803,7 +1803,6 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   } else {
     received = (NSString*)aString;
   }
-//NSLog(@"insertText: received=%@ event type=%d",received, type);
   if (type == NSKeyDown ) {
     str = [event characters];
     }
@@ -1814,9 +1813,13 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
     Fl_Window *window = [(FLWindow*)[NSApp keyWindow] getFl_Window];
     Fl::e_text = (char*)[received UTF8String];
     Fl::e_length = strlen(Fl::e_text);
-    Fl::e_keysym = 0;
-    Fl::handle(FL_KEYBOARD, window);
-    Fl::handle(FL_KEYUP, window);
+    if (type == NSKeyDown ) {
+      Fl::e_keysym = macKeyLookUp[ [event keyCode] & 0x7f] ;
+      Fl::handle(FL_KEYBOARD, window);
+      }
+    else {
+      Fl::handle(FL_PASTE, window);
+      }
     fl_unlock_function();
     // for some reason, the window does not redraw until the next mouse move or button push
     // sending a 'redraw()' or 'awake()' does not solve the issue!
