@@ -142,7 +142,7 @@ void fl_set_status(int x, int y, int w, int h)
 
 /*
  * Mac keyboard lookup table
- * See also the inverse converter vktab in Fl_get_get_mac.cxx
+ * See also the inverse converter vktab in Fl_get_key_mac.cxx
  */
 static unsigned short macKeyLookUp[128] =
 {
