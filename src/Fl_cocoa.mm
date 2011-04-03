@@ -1639,8 +1639,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent
 {   
-  int err = cocoaKeyboardHandler(theEvent);
-  return (err ? YES : NO);
+  cocoaKeyboardHandler(theEvent);
+  return YES;
 }
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent
 {   
@@ -1819,11 +1819,11 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
       }
     else {
       Fl::handle(FL_PASTE, window);
-      }
+      // for some reason, the window does not redraw until the next mouse move or button push
+      // sending a 'redraw()' or 'awake()' does not solve the issue!
+      Fl::flush();
+    }
     fl_unlock_function();
-    // for some reason, the window does not redraw until the next mouse move or button push
-    // sending a 'redraw()' or 'awake()' does not solve the issue!
-    Fl::flush();
   }
 }
 
