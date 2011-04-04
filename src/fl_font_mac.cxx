@@ -80,6 +80,17 @@ if (fl_mac_os_version >= 100500) {//unfortunately, CTFontCreateWithName != NULL 
 					   &kCFTypeDictionaryValueCallBacks);
     CFDictionarySetValue (attributes, kCTKernAttributeName, zero_ref);
   }
+  if (ascent == 0) { // this may happen with some third party fonts
+    CFDictionarySetValue (attributes, kCTFontAttributeName, fontref);
+    CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, CFSTR("Wj"), attributes);
+    CTLineRef ctline = CTLineCreateWithAttributedString(mastr);
+    CFRelease(mastr);
+    CGFloat fascent, fdescent;
+    CTLineGetTypographicBounds(ctline, &fascent, &fdescent, NULL);
+    CFRelease(ctline);
+    ascent = (short)(fascent + 0.5);
+    descent = (short)(fdescent + 0.5);
+    }
 }
 else {
 #endif
