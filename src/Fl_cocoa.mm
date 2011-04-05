@@ -2818,7 +2818,7 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
 {
   Fl_Printer printer;
   //Fl_PostScript_File_Device printer;
-  int w, h;
+  int w, h, wh;
   Fl_Window *win = Fl::first_window();
   if(!win) return;
   if( printer.start_job(1) ) return;
@@ -2826,9 +2826,15 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
   // scale the printer device so that the window fits on the page
   float scale = 1;
   printer.printable_rect(&w, &h);
-  if (win->w()>w || win->h()>h) {
+  wh = win->h();
+  int bx, by, bt = 0;
+  if (win->border()) {
+    get_window_frame_sizes(bx, by, bt);
+    wh += bt;
+    }
+  if (win->w()>w || wh>h) {
     scale = (float)w/win->w();
-    if ((float)h/win->h() < scale) scale = (float)h/win->h();
+    if ((float)h/wh < scale) scale = (float)h/wh;
     printer.scale(scale);
   }
 //#define ROTATE 1
@@ -2839,8 +2845,8 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
   printer.rotate(20.);
   printer.print_widget( win, - win->w()/2, - win->h()/2 );
 #else
-  printer.print_widget( win);
-  //printer.print_window_part( win, 0,0, win->w(), win->h() );
+  if (bt) printer.print_window_part(win, 0, -bt, win->w(), bt, 0, 1);
+  printer.print_widget(win, 0, bt);
 #endif
   printer.end_page();
   printer.end_job();
