@@ -1386,14 +1386,11 @@ void fl_close_display() {
 
 // Gets the border sizes and the titlebar size
 static void get_window_frame_sizes(int &bx, int &by, int &bt) {
-  NSAutoreleasePool *localPool;
-  localPool = [[NSAutoreleasePool alloc] init]; 
   NSRect inside = { {20,20}, {100,100} };
   NSRect outside = [NSWindow  frameRectForContentRect:inside styleMask:NSTitledWindowMask];
   bx = int(outside.origin.x - inside.origin.x);
   by = int(outside.origin.y - inside.origin.y);
   bt = int(outside.size.height - inside.size.height - by);
-  [localPool release];
 }
 
 /*
@@ -2172,9 +2169,6 @@ void Fl_Window::show() {
  * resize a window
  */
 void Fl_Window::resize(int X,int Y,int W,int H) {
-  int bx, by, bt;
-  if ( ! this->border() ) bt = 0;
-  else get_window_frame_sizes(bx, by, bt);
   if (W<=0) W = 1; // OS X does not like zero width windows
   if (H<=0) H = 1;
   int is_a_resize = (W != w() || H != h());
@@ -2193,6 +2187,9 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       } else {
         size_range(W, H, W, H);
       }
+      int bx, by, bt;
+      if ( ! this->border() ) bt = 0;
+      else get_window_frame_sizes(bx, by, bt);
       NSRect dim;
       dim.origin.x = X;
       dim.origin.y = [[(NSWindow*)i->xid screen] frame].size.height - (Y + H);
