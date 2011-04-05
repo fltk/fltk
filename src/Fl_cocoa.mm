@@ -1096,7 +1096,7 @@ extern "C" {
 {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
-  if ([nsw level] != NSMainMenuWindowLevel) Fl::handle( FL_FOCUS, window);
+  if (!window->modal() || window->border()) Fl::handle( FL_FOCUS, window);
 }
 - (void)windowDidBecomeMain:(NSNotification *)notif
 {
@@ -1217,8 +1217,6 @@ extern "C" {
       if (win->modal()) {
         [cw setLevel:NSNormalWindowLevel];
         if (top) [cw orderWindow:NSWindowAbove relativeTo:[top windowNumber]];
-      } else if (win->non_modal()) {
-      } else {
       }
     }
   }
@@ -1227,11 +1225,9 @@ extern "C" {
     FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
     if (win && cw) {
-      if (win->modal()) {
-      } else if (win->non_modal()) {
+      if (win->non_modal()) {
         [cw setLevel:NSNormalWindowLevel];
         if (top) [cw orderWindow:NSWindowAbove relativeTo:[top windowNumber]];
-      } else {
       }
     }
   }
@@ -1248,10 +1244,9 @@ extern "C" {
 {
   Fl_X *x;
   for (x = Fl_X::first;x;x = x->next) {
-    FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *window = x->w;
     if ( !window->parent() ) {
-      if ([cw level] != NSMainMenuWindowLevel) Fl::handle( FL_FOCUS, window);
+      if (!window->modal() || window->border()) Fl::handle( FL_FOCUS, window);
       Fl::handle( FL_SHOW, window);
       }
   }
@@ -1967,7 +1962,7 @@ void Fl_X::make(Fl_Window* w)
       // menu windows and tooltips
       if (w->modal()||w->override()) {
         winstyle = NSBorderlessWindowMask;
-        winlevel = NSMainMenuWindowLevel;
+        winlevel = NSModalPanelWindowLevel;
       } else {
         winstyle = NSBorderlessWindowMask;
       }
@@ -2064,11 +2059,11 @@ void Fl_X::make(Fl_Window* w)
     
     if (w->size_range_set) w->size_range_();
     
-    if (winlevel != NSMainMenuWindowLevel) {
+    if (!w->modal() || w->border()) {
       Fl_Tooltip::enter(0);
     }
     [cw makeKeyAndOrderFront:nil];
-    if (winlevel != NSMainMenuWindowLevel) Fl::handle(FL_FOCUS, w);
+    if (!w->modal() || w->border()) Fl::handle(FL_FOCUS, w);
     Fl::handle(FL_SHOW, w);
     Fl::first_window(w);
     [cw setDelegate:mydelegate];
