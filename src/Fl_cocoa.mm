@@ -2180,9 +2180,9 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
     if (is_a_resize) {
       if (resizable()) {
         if (W<minw) minw = W; // user request for resize takes priority
-        if (W>maxw) maxw = W; // over a previously set size_range
+        if (maxw && W>maxw) maxw = W; // over a previously set size_range
         if (H<minh) minh = H;
-        if (H>maxh) maxh = H;
+        if (maxh && H>maxh) maxh = H;
         size_range(minw, minh, maxw, maxh);
       } else {
         size_range(W, H, W, H);
