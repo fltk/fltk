@@ -974,7 +974,7 @@ int Fl_PostScript_Graphics_Driver::descent() {
 }
 
 void Fl_PostScript_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
-  return Fl_Display_Device::display_device()->driver()->text_extents(c, n, dx, dy, w, h);
+  Fl_Display_Device::display_device()->driver()->text_extents(c, n, dx, dy, w, h);
 }
 
 
