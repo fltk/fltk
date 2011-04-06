@@ -373,22 +373,17 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
 
 void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
   fl_font(this, Fl_Graphics_Driver::font(), size(), angle);
-  int i = 0, i2=0;
-  char *end = (char *)&str[n];
+  int wc_count = 0; // count of UTF16 cells to render full string
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
   SelectObject(fl_gc, font_descriptor()->fid);
-  //unsigned short ucs[n]; //only GCC, but not MSVC
-  unsigned short* ucs = new unsigned short[n];
-  while (i < n) {
-    unsigned int u;
-    int l;
-    u = fl_utf8decode((const char*)(str + i), end, &l);
-    ucs[i2] = u;
-    if (l < 1) l = 1;
-    i += l;
-    ++i2;
+  unsigned short* ucs = new unsigned short[n]; // alloc an array for the UTF16 string
+  wc_count = fl_utf8toUtf16(str, n, ucs, n);
+  if(wc_count > n) { // Array too small - this should never happen...
+    delete[] ucs; // free up the initial allocation
+    ucs = new unsigned short[wc_count + 4]; // make a "big enough" array
+    wc_count = fl_utf8toUtf16(str, n, ucs, wc_count); // respin the translation
   }
-  TextOutW(fl_gc, x, y, (WCHAR*)ucs, i2);
+  TextOutW(fl_gc, x, y, (WCHAR*)ucs, wc_count);
   delete[] ucs;
   SetTextColor(fl_gc, oldColor);
   fl_font(this, Fl_Graphics_Driver::font(), size(), 0);
