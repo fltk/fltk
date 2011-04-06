@@ -180,6 +180,11 @@ void Fl_Printer::print_window_part(Fl_Window *win, int x, int y, int w, int h, i
   printer->print_window_part(win, x, y, w, h, delta_x, delta_y);
 }
 
+void Fl_Printer::set_current(void)
+{
+  printer->set_current();
+}
+
 Fl_Printer::~Fl_Printer(void)
 {
   delete printer;
