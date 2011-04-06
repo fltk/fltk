@@ -339,24 +339,33 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
   int lx = 0;
   char *end = (char *)&str[n];
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
-   SelectObject(fl_gc, font_descriptor()->fid);
+  SelectObject(fl_gc, font_descriptor()->fid);
   while (i < n) {
-    unsigned int u;
-    unsigned int u1;
-    unsigned short ucs;
-//  int l = fl_utf2ucs((const unsigned char*)str + i, n - i, &u);
-    int l;
+    unsigned int u;  // UCS value of next glyph
+    unsigned int u1; // UCS non-spacing glyph
+    unsigned cc;     // UTF16 cell count for glyph - usually 1
+    unsigned short ucs[4]; // Array for UTF16 cells
+    int l; // byte-count of current UTF8 glyph
     u = fl_utf8decode((const char*)(str + i), end, &l);
     if ( (u1 = fl_nonspacing(u)) ) {
       x -= lx;
-	  u = u1;
+      u = u1;
     } else {
       lx = (int) width(u);
     }
-    ucs = u;
+    // Do we need a surrogate pair for this UCS value?
+    if(u > 0xFFFF) {
+      cc = fl_utf8toUtf16((str + i), l, ucs, 4);
+// This is the - essentially identical - MS API equivalent
+//cc = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (str + i), l, (WCHAR*)ucs, 4);
+    }
+    else { // not a surrogate pair, use a single value
+      ucs[0] = u;
+      cc = 1;
+    }
+    TextOutW(fl_gc, x, y, (WCHAR*)ucs, cc);
     if (l < 1) l = 1;
     i += l;
-    TextOutW(fl_gc, x, y, (WCHAR*)&ucs, 1);
     x += lx;
   }
   SetTextColor(fl_gc, oldColor);
