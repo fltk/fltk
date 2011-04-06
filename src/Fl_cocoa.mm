@@ -2842,7 +2842,21 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
   printer.rotate(20.);
   printer.print_widget( win, - win->w()/2, - win->h()/2 );
 #else
-  if (bt) printer.print_window_part(win, 0, -bt, win->w(), bt, 0, 1);
+  if (bt) { // print the window title bar
+    //printer.print_window_part(win, 0, -bt, win->w(), bt, 0, 1);
+    Fl_Display_Device::display_device()->set_current();
+    win->show();
+    fl_gc = NULL;
+    Fl::check();
+    win->make_current();
+    CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
+    printer.set_current();
+    CGRect rect = { { 0, 1 }, { win->w(), bt } };
+    Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
+    CGContextDrawImage(fl_gc, rect, img);
+    Fl_X::q_end_image();
+    CGImageRelease(img);
+  }
   printer.print_widget(win, 0, bt);
 #endif
   printer.end_page();
