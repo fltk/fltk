@@ -172,6 +172,7 @@ public:
   void print_widget(Fl_Widget* widget, int delta_x=0, int delta_y=0);
   void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x=0, int delta_y=0);
   void set_current(void);
+  Fl_Graphics_Driver* driver(void);
   /** \brief The destructor */
   ~Fl_Printer(void);
  

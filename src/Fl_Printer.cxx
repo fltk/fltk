@@ -185,6 +185,11 @@ void Fl_Printer::set_current(void)
   printer->set_current();
 }
 
+Fl_Graphics_Driver* Fl_Printer::driver(void)
+{
+  return printer->driver();
+}
+
 Fl_Printer::~Fl_Printer(void)
 {
   delete printer;
