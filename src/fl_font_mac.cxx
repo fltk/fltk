@@ -374,9 +374,19 @@ double Fl_Quartz_Graphics_Driver::width(const char* txt, int n) {
 }
 
 double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
-  const UniChar uc = wc;
   if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
-  return fl_mac_width(&uc, 1, font_descriptor());
+
+  UniChar utf16[3];
+  int l = 1;
+  if (wc <= 0xFFFF) {
+    *utf16 = wc;
+    }
+  else {
+    char buf[4];
+    l = fl_utf8encode(wc, buf);
+    l = (int)fl_utf8toUtf16(buf, l, utf16, 3);
+    }
+  return fl_mac_width(utf16, l, font_descriptor());
 }
 
 // text extent calculation
