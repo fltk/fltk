@@ -1386,6 +1386,7 @@ void fl_close_display() {
 
 // Gets the border sizes and the titlebar size
 static void get_window_frame_sizes(int &bx, int &by, int &bt) {
+  if (NSApp == nil) fl_open_display();
   NSRect inside = { {20,20}, {100,100} };
   NSRect outside = [NSWindow  frameRectForContentRect:inside styleMask:NSTitledWindowMask];
   bx = int(outside.origin.x - inside.origin.x);
