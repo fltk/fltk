@@ -567,9 +567,11 @@ void gl_texture_pile_height(int max) {}
 #if defined(__APPLE__)
 void gl_texture_reset()
 {
+#if GL_DRAW_USES_TEXTURES
   if (gl_fifo) gl_texture_pile_height(gl_texture_pile_height());
+#endif // GL_DRAW_USES_TEXTURES
 }
-#endif
+#endif // __APPLE__
 
 #endif // HAVE_GL
 
