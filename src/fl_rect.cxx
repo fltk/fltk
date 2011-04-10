@@ -171,10 +171,10 @@ void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {
   LineTo(fl_gc, x, y+h-1);
   LineTo(fl_gc, x, y);
 #elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(fl_gc, rect);
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
 #endif
@@ -191,10 +191,14 @@ void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {
   rect.right = x + w; rect.bottom = y + h;
   FillRect(fl_gc, &rect, fl_brush());
 #elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGRect rect = CGRectMake(x, y, w-1, h-1);
+  CGFloat delta_size =  0.9;
+  CGFloat delta_ori = 0;
+  if (USINGQUARTZPRINTER) {
+    delta_size = 0;
+    delta_ori = 0.5;
+    }
+  CGRect  rect = CGRectMake(x - delta_ori, y - delta_ori, w - delta_size , h - delta_size);
   CGContextFillRect(fl_gc, rect);
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
 #endif
@@ -495,11 +499,7 @@ void Fl_Graphics_Driver::point(int x, int y) {
 #elif defined(WIN32)
   SetPixel(fl_gc, x, y, fl_RGB());
 #elif defined(__APPLE_QUARTZ__)
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x-.5, y); // Quartz needs a line that is one pixel long, or it will not draw anything
-  CGContextAddLineToPoint(fl_gc, x+.5, y);
-  CGContextStrokePath(fl_gc);
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  CGContextFillRect(fl_gc, CGRectMake(x - 0.5, y - 0.5, 1, 1) );
 #else
 # error unsupported platform
 #endif
