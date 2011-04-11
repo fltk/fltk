@@ -159,7 +159,7 @@ int Fl_GDI_Graphics_Driver::descent() {
 }
 
 // Unicode string buffer
-static xchar *wstr = NULL;
+static unsigned short *wstr = NULL;
 static int wstr_len    = 0;
 
 
@@ -371,29 +371,27 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
 
 void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
   fl_font(this, Fl_Graphics_Driver::font(), size(), angle);
-  int wc_count = 0; // count of UTF16 cells to render full string
+  int wn = 0; // count of UTF16 cells to render full string
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
   SelectObject(fl_gc, font_descriptor()->fid);
-  unsigned short* ucs = new unsigned short[n+1]; // alloc an array for the UTF16 string
-  wc_count = fl_utf8toUtf16(str, n, ucs, n);
-  if(wc_count > n) { // Array too small - this should never happen...
-    delete[] ucs; // free up the initial allocation
-    ucs = new unsigned short[wc_count + 4]; // make a "big enough" array
-    wc_count = fl_utf8toUtf16(str, n, ucs, wc_count); // respin the translation
+  wn = fl_utf8toUtf16(str, n, wstr, wstr_len);
+  if(wn >= wstr_len) { // Array too small
+    wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
+    wstr_len = wn + 1;
+    wn = fl_utf8toUtf16(str, n, wstr, wstr_len); // respin the translation
   }
-  TextOutW(fl_gc, x, y, (WCHAR*)ucs, wc_count);
-  delete[] ucs;
+  TextOutW(fl_gc, x, y, (WCHAR*)wstr, wn);
   SetTextColor(fl_gc, oldColor);
   fl_font(this, Fl_Graphics_Driver::font(), size(), 0);
 }
 
 void Fl_GDI_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   int wn;
-  wn = fl_utf8toUtf16(c, n, (unsigned short*)wstr, wstr_len);
+  wn = fl_utf8toUtf16(c, n, wstr, wstr_len);
   if(wn >= wstr_len) {
-    wstr = (xchar*) realloc(wstr, sizeof(xchar) * (wn + 1));
+    wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
     wstr_len = wn + 1;
-    wn = fl_utf8toUtf16(c, n, (unsigned short*)wstr, wstr_len);
+    wn = fl_utf8toUtf16(c, n, wstr, wstr_len);
   }
 
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
