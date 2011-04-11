@@ -491,6 +491,7 @@ int fl_ready()
 
 
 static void processFLTKEvent(void) {
+  fl_lock_function();
   dataready.CancelThread(DEBUGTEXT("DATA READY EVENT\n"));
   
   // CHILD THREAD TELLS US DATA READY
@@ -506,6 +507,7 @@ static void processFLTKEvent(void) {
       dataready.HandleData(r,w,x);
       break;
   }
+  fl_unlock_function();
   return;
 }
 
@@ -617,10 +619,12 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 }
 - (BOOL)windowShouldClose:(FLWindow *)fl
 {
+  fl_lock_function();
   Fl::handle( FL_CLOSE, [fl getFl_Window] ); // this might or might not close the window
   if (!Fl_X::first) return YES;
   Fl_Window *l = Fl::first_window();
   while( l != NULL && l != [fl getFl_Window]) l = Fl::next_window(l);
+  fl_unlock_function();
   return (l == NULL ? YES : NO);
 }
 - (BOOL)containsGLsubwindow
@@ -1058,6 +1062,7 @@ extern "C" {
 @implementation FLDelegate
 - (void)windowDidMove:(NSNotification *)notif
 {
+  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   NSPoint pt, pt2; 
@@ -1069,9 +1074,11 @@ extern "C" {
   if ([nsw containsGLsubwindow] ) {
     [nsw display];// redraw window after moving if it contains OpenGL subwindows
   }
+  fl_unlock_function();
 }
 - (void)windowDidResize:(NSNotification *)notif
 {
+  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   NSRect r = [[nsw contentView] frame];
@@ -1085,52 +1092,66 @@ extern "C" {
                  (int)([[nsw screen] frame].size.height - pt2.y),
 		 (int)r.size.width,
 		 (int)r.size.height);
+  fl_unlock_function();
 }
 - (void)windowDidResignKey:(NSNotification *)notif
 {
+  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   Fl::handle( FL_UNFOCUS, window);
+  fl_unlock_function();
 }
 - (void)windowDidBecomeKey:(NSNotification *)notif
 {
+  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   if (!window->modal() || window->border()) Fl::handle( FL_FOCUS, window);
+  fl_unlock_function();
 }
 - (void)windowDidBecomeMain:(NSNotification *)notif
 {
+  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   Fl::first_window(window);
   update_e_xy_and_e_xy_root(nsw);
+  fl_unlock_function();
 }
 - (void)windowDidDeminiaturize:(NSNotification *)notif
 {
+  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   window->set_visible();
   update_e_xy_and_e_xy_root(nsw);
+  fl_unlock_function();
 }
 - (void)windowDidMiniaturize:(NSNotification *)notif
 {
+  fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   window->clear_visible();
+  fl_unlock_function();
 }
 - (void)windowWillClose:(NSNotification *)notif
 {
+  fl_lock_function();
   Fl_Window *w = Fl::first_window();
-  if (!w) return;
-  NSWindow *cw = (NSWindow*)Fl_X::i(w)->xid;
-  if ( ![cw isMiniaturized] && ([cw styleMask] & NSTitledWindowMask) ) {
-    if (![cw isKeyWindow]) {	// always make Fl::first_window() the key widow
-      [cw makeKeyAndOrderFront:nil];
-    }
-    if (![cw isMainWindow]) {	// always make Fl::first_window() the main widow
-      [cw makeMainWindow];
+  if (w) {
+    NSWindow *cw = (NSWindow*)Fl_X::i(w)->xid;
+    if ( ![cw isMiniaturized] && ([cw styleMask] & NSTitledWindowMask) ) {
+      if (![cw isKeyWindow]) {	// always make Fl::first_window() the key widow
+	[cw makeKeyAndOrderFront:nil];
+      }
+      if (![cw isMainWindow]) {	// always make Fl::first_window() the main widow
+	[cw makeMainWindow];
+      }
     }
   }
+  fl_unlock_function();
 }
 - (void)anywindowwillclosenotif:(NSNotification *)notif
 {
@@ -1166,6 +1187,7 @@ extern "C" {
  */
 - (void)applicationDidBecomeActive:(NSNotification *)notify
 {
+  fl_lock_function();
   Fl_X *x;
   FLWindow *top = 0, *topModal = 0, *topNonModal = 0;
   for (x = Fl_X::first;x;x = x->next) {
@@ -1192,9 +1214,11 @@ extern "C" {
       }
     }
   }
+  fl_unlock_function();
 }
 - (void)applicationWillResignActive:(NSNotification *)notify
 {
+  fl_lock_function();
   Fl_X *x;
   FLWindow *top = 0;
   // sort in all regular windows
@@ -1231,17 +1255,21 @@ extern "C" {
       }
     }
   }
+  fl_unlock_function();
 }
 - (void)applicationWillHide:(NSNotification *)notify
 {
+  fl_lock_function();
   Fl_X *x;
   for (x = Fl_X::first;x;x = x->next) {
     Fl_Window *window = x->w;
     if ( !window->parent() ) Fl::handle( FL_HIDE, window);
     }
+  fl_unlock_function();
 }
 - (void)applicationWillUnhide:(NSNotification *)notify
 {
+  fl_lock_function();
   Fl_X *x;
   for (x = Fl_X::first;x;x = x->next) {
     Fl_Window *window = x->w;
@@ -1250,6 +1278,7 @@ extern "C" {
       Fl::handle( FL_SHOW, window);
       }
   }
+  fl_unlock_function();
 }
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client
 {
@@ -1270,6 +1299,7 @@ extern "C" {
 {
   NSEventType type = [theEvent type];  
   if (type == NSLeftMouseDown) {
+    fl_lock_function();
     Fl_Window *grab = Fl::grab();
     if (grab) {
       FLWindow *win = (FLWindow *)[theEvent window];
@@ -1279,6 +1309,7 @@ extern "C" {
 	cocoaMouseHandler(theEvent);
       }
     }
+    fl_unlock_function();
   } else if (type == NSApplicationDefined) {
     if ([theEvent subtype] == FLTKDataReadyEvent) {
       processFLTKEvent();
@@ -1621,9 +1652,11 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 @implementation FLView
 - (void)drawRect:(NSRect)rect
 {
+  fl_lock_function();
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *w = [cw getFl_Window];
   handleUpdateEvent(w);
+  fl_unlock_function();
 }
 
 - (BOOL)acceptsFirstResponder
@@ -1706,28 +1739,34 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 - (NSDragOperation)draggingEntered:(id < NSDraggingInfo >)sender
 {
+  fl_lock_function();
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   update_e_xy_and_e_xy_root([self window]);
   fl_dnd_target_window = target;
   int ret = Fl::handle( FL_DND_ENTER, target );
   breakMacEventLoop();
+  fl_unlock_function();
   return ret ? NSDragOperationCopy : NSDragOperationNone;
 }
 - (NSDragOperation)draggingUpdated:(id < NSDraggingInfo >)sender
 {
+  fl_lock_function();
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   update_e_xy_and_e_xy_root([self window]);
   fl_dnd_target_window = target;
   int ret = Fl::handle( FL_DND_DRAG, target );
   breakMacEventLoop();
+  fl_unlock_function();
   return ret ? NSDragOperationCopy : NSDragOperationNone;
 }
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender 
 {
   static char *DragData = NULL;
+  fl_lock_function();
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   if ( !Fl::handle( FL_DND_RELEASE, target ) ) { 
     breakMacEventLoop();
+    fl_unlock_function();
     return NO;
   }
   NSPasteboard *pboard;
@@ -1753,6 +1792,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   }
   else {
     breakMacEventLoop();
+    fl_unlock_function();
     return NO;
   }
   Fl::e_text = DragData;
@@ -1765,14 +1805,17 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   Fl::e_length = 0;
   fl_dnd_target_window = NULL;
   breakMacEventLoop();
+  fl_unlock_function();
   return YES;
 }
 - (void)draggingExited:(id < NSDraggingInfo >)sender
 {
+  fl_lock_function();
   if ( fl_dnd_target_window ) {
     Fl::handle( FL_DND_LEAVE, fl_dnd_target_window );
     fl_dnd_target_window = 0;
   }
+  fl_unlock_function();
 }
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
@@ -1857,6 +1900,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 
 - (NSRect)firstRectForCharacterRange:(NSRange)aRange {
   NSRect glyphRect;
+  fl_lock_function();
   Fl_Widget *focus = Fl::focus();
   Fl_Window *wfocus = focus->window();
   while (wfocus->window()) wfocus = wfocus->window();
@@ -1877,6 +1921,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   // Convert the rect to screen coordinates
   glyphRect.origin.y = wfocus->h() - glyphRect.origin.y;
   glyphRect.origin = [[self window] convertBaseToScreen:glyphRect.origin];
+  fl_unlock_function();
   return glyphRect;
 }
 
