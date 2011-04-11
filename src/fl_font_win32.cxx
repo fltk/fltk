@@ -335,38 +335,16 @@ exit_error:
 } // fl_text_extents
 
 void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
-  int i = 0;
-  int lx = 0;
-  char *end = (char *)&str[n];
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
   SelectObject(fl_gc, font_descriptor()->fid);
-  while (i < n) {
-    unsigned int u;  // UCS value of next glyph
-    unsigned int u1; // UCS non-spacing glyph
-    unsigned cc;     // UTF16 cell count for glyph - usually 1
-    unsigned short ucs[4]; // Array for UTF16 cells
-    int l; // byte-count of current UTF8 glyph
-    u = fl_utf8decode((const char*)(str + i), end, &l);
-    if ( (u1 = fl_nonspacing(u)) ) {
-      x -= lx;
-      u = u1;
-    } else {
-      lx = (int) width(u);
-    }
-    // Do we need a surrogate pair for this UCS value?
-    if(u > 0xFFFF) {
-      cc = fl_utf8toUtf16((str + i), l, ucs, 4);
-    }
-    else { // not a surrogate pair, use a single value
-      ucs[0] = u;
-      cc = 1;
-    }
-    TextOutW(fl_gc, x, y, (WCHAR*)ucs, cc);
-    if (l < 1) l = 1;
-    i += l;
-    x += lx;
+  int wn = fl_utf8toUtf16(str, n, wstr, wstr_len);
+  if(wn >= wstr_len) {
+    wstr = (unsigned short*) realloc(wstr, sizeof(unsigned short) * (wn + 1));
+    wstr_len = wn + 1;
+    wn = fl_utf8toUtf16(str, n, wstr, wstr_len);
   }
-  SetTextColor(fl_gc, oldColor);
+  TextOutW(fl_gc, x, y, (WCHAR*)wstr, wn);
+  SetTextColor(fl_gc, oldColor); // restore initial state
 }
 
 void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int y) {
