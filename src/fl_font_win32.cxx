@@ -355,9 +355,7 @@ void Fl_GDI_Graphics_Driver::draw(const char* str, int n, int x, int y) {
     }
     // Do we need a surrogate pair for this UCS value?
     if(u > 0xFFFF) {
-      //cc = fl_utf8toUtf16((str + i), l, ucs, 4);
-      // This is the MS API equivalent to fl_utf8toUtf16()
-      cc = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, (str + i), l, (WCHAR*)ucs, 4);
+      cc = fl_utf8toUtf16((str + i), l, ucs, 4);
     }
     else { // not a surrogate pair, use a single value
       ucs[0] = u;
@@ -376,16 +374,13 @@ void Fl_GDI_Graphics_Driver::draw(int angle, const char* str, int n, int x, int 
   int wc_count = 0; // count of UTF16 cells to render full string
   COLORREF oldColor = SetTextColor(fl_gc, fl_RGB());
   SelectObject(fl_gc, font_descriptor()->fid);
-  unsigned short* ucs = new unsigned short[n]; // alloc an array for the UTF16 string
-  //wc_count = fl_utf8toUtf16(str, n, ucs, n);
-  // This is the MS API equivalent to fl_utf8toUtf16()
-  wc_count = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str, n, (WCHAR*)ucs, n);
-//  if(wc_count > n) { // Array too small - this should never happen...
-//    delete[] ucs; // free up the initial allocation
-//    ucs = new unsigned short[wc_count + 4]; // make a "big enough" array
-//    //wc_count = fl_utf8toUtf16(str, n, ucs, wc_count); // respin the translation
-//    wc_count = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str, n, (WCHAR*)ucs, wc_count);
-//  }
+  unsigned short* ucs = new unsigned short[n+1]; // alloc an array for the UTF16 string
+  wc_count = fl_utf8toUtf16(str, n, ucs, n);
+  if(wc_count > n) { // Array too small - this should never happen...
+    delete[] ucs; // free up the initial allocation
+    ucs = new unsigned short[wc_count + 4]; // make a "big enough" array
+    wc_count = fl_utf8toUtf16(str, n, ucs, wc_count); // respin the translation
+  }
   TextOutW(fl_gc, x, y, (WCHAR*)ucs, wc_count);
   delete[] ucs;
   SetTextColor(fl_gc, oldColor);
