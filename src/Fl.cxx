@@ -847,7 +847,10 @@ void Fl::focus(Fl_Widget *o) {
       while (w1) { win=w1; w1=win->window(); }
       if (win) {
 #ifdef __APPLE__
-	if (fl_xfocus != win) Fl_X::i(win)->set_key_window();
+	if (fl_xfocus != win) {
+	  Fl_X *x = Fl_X::i(win);
+	  if (x) x->set_key_window();
+	  }
 #endif
 	fl_xfocus = win;
 	}
