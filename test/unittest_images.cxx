@@ -86,11 +86,7 @@ public:
     fl_color(FL_BLACK); fl_rectf(xx, yy, 130, 130);
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 64, 64);
     fl_color(FL_WHITE); fl_rectf(xx+65, yy+65, 64, 64);
-#ifdef __APPLE__
-    fl_draw_image(img_rgba, xx+1, yy+1, 128, 128, 4);	// Apple: okay w/alpha
-#else
     i_rgba->draw(xx+1,yy+1);	// only Fl_RGB_Image->draw() works with alpha
-#endif
     fl_color(FL_BLACK); fl_draw("RGBA", xx+134, yy+64);
     
     // top right: Gray
@@ -106,11 +102,7 @@ public:
     fl_color(FL_BLACK); fl_rectf(xx, yy, 130, 130);
     fl_color(FL_WHITE); fl_rectf(xx+1, yy+1, 64, 64);
     fl_color(FL_WHITE); fl_rectf(xx+65, yy+65, 64, 64);
-#ifdef __APPLE__
-    fl_draw_image(img_gray_a, xx+1, yy+1, 128, 128, 2);	// Apple: okay w/alpha
-#else
     i_ga->draw(xx+1,yy+1);	// only Fl_RGB_Image->draw() works with alpha
-#endif
     fl_color(FL_BLACK); fl_draw("Gray+Alpha", xx+134, yy+64);
   }
 };
