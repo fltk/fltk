@@ -1665,8 +1665,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
 }
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent
 {   
-  cocoaKeyboardHandler(theEvent);
-  return YES;
+  int retval = cocoaKeyboardHandler(theEvent);
+  return (retval ? YES : NO);
 }
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent
 {   
