@@ -170,7 +170,6 @@ double Fl_GDI_Graphics_Driver::width(const char* c, int n) {
   char *end = (char *)&c[n];
   while (i < n) {
     unsigned int ucs;
-//  int l = fl_utf2ucs((const unsigned char*)c + i, n - i, &ucs);
     int l;
     ucs = fl_utf8decode((const char*)(c + i), end, &l);
 //  if (l < 1) l = 1;
@@ -185,10 +184,34 @@ double Fl_GDI_Graphics_Driver::width(const char* c, int n) {
 double Fl_GDI_Graphics_Driver::width(unsigned int c) {
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   unsigned int r;
+  SIZE s;
+  // Special Case Handling of Unicode points over U+FFFF
+  // The logic (below) computes a lookup table for char widths
+  // on-the-fly, but the table only covers codepoints up to
+  // U+FFFF, which covers the basic multilingual plane, but
+  // not any higher plane, or glyphs that require surrogate-pairs
+  // to encode them in WinXX which is UTF16.
+  // This code assumes that these glyphs are rarely used and simply
+  // measures them explicitly if they occur - Which may be slow...
+  if(c > 0x0000FFFF) { // UTF16 surrogate pair is needed
+    if (!fl_gc) { // We have no valid gc, so nothing to measure - bail out
+      return 0.0;
+    }
+    int cc; // cell count
+    char utf8[8];          // Array for UTF-8 representation of c
+    unsigned short ucs[4]; // Array for UTF16 representation of c
+    // This fl_utf8encode / fl_utf8toUtf16 dance creates a UTF16 string
+    // from a UCS code point.
+    cc = fl_utf8encode(c, utf8);
+    cc = fl_utf8toUtf16(utf8, cc, ucs, 4);
+    GetTextExtentPoint32W(fl_gc, (WCHAR*)ucs, cc, &s);
+    return (double)s.cx;
+  }
+  // else - this falls through to the lookup-table for glyph widths
+  // in the basic multilingual plane
   r = (c & 0xFC00) >> 10;
   if (!fl_fontsize->width[r]) {
     fl_fontsize->width[r] = (int*) malloc(sizeof(int) * 0x0400);
-    SIZE s;
     unsigned short i = 0, ii = r * 0x400;
     // The following code makes a best effort attempt to obtain a valid fl_gc.
     // If no fl_gc is available at the time we call fl_width(), then we first
@@ -199,9 +222,9 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
     HDC gc = fl_gc;
     HWND hWnd = 0;
     if (!gc) { // We have no valid gc, try and obtain one
-	// Use our first fltk window, or fallback to using the screen via GetDC(NULL)
-	hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
-	gc = GetDC(hWnd);
+      // Use our first fltk window, or fallback to using the screen via GetDC(NULL)
+      hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
+      gc = GetDC(hWnd);
     }
     if (!gc)
 	Fl::fatal("Invalid graphic context: fl_width() failed because no valid HDC was found!");
