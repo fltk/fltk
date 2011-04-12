@@ -291,6 +291,7 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   int minx = 0, miny = -999999;
   unsigned len = 0, idx = 0;
   HWND hWnd = 0;
+  HDC gc = fl_gc; // local copy of current gc - make a copy in case we change it...
 
   // Have we loaded the GetGlyphIndicesW function yet?
   if (have_loaded_GetGlyphIndices == 0) {
@@ -301,12 +302,12 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
 
   // The following code makes a best effort attempt to obtain a valid fl_gc.
   // See description in fl_width() above for an explanation.
-  if (!fl_gc) { // We have no valid gc, try and obtain one
-	// Use our first fltk window, or fallback to using the screen via GetDC(NULL)
-	hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
-	fl_gc = GetDC(hWnd);
+  if (!gc) { // We have no valid gc, try and obtain one
+    // Use our first fltk window, or fallback to using the screen via GetDC(NULL)
+    hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
+    gc = GetDC(hWnd);
   }
-  if (!fl_gc)goto exit_error; // no valid gc, attempt to use fallback measure
+  if (!gc) goto exit_error; // no valid gc, attempt to use fallback measure
 
   // now convert the string to WCHAR and measure it
   len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
@@ -318,18 +319,17 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
 	gi = new WORD[wc_len];
     len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
   }
-  SelectObject(fl_gc, fl_fontsize->fid);
+  SelectObject(gc, fl_fontsize->fid);
 
-  if (fl_GetGlyphIndices(fl_gc, (WCHAR*)ext_buff, len, gi, 0) == GDI_ERROR) {
-    // some error occured here - just return fl_measure values?
+  if (fl_GetGlyphIndices(gc, (WCHAR*)ext_buff, len, gi, GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR) {
+    // some error occured here - just return fl_measure values
     goto exit_error;
   }
-
   // now we have the glyph array we measure each glyph in turn...
   for(idx = 0; idx < len; idx++){
-    if (GetGlyphOutlineW (fl_gc, gi[idx], GGO_METRICS | GGO_GLYPH_INDEX,
+    if (GetGlyphOutlineW (gc, gi[idx], GGO_METRICS | GGO_GLYPH_INDEX,
 					      &metrics, 0, NULL, &matrix) == GDI_ERROR) {
-                    goto exit_error;
+      goto exit_error;
     }
     maxw += metrics.gmCellIncX;
 	if(idx == 0) minx = metrics.gmptGlyphOrigin.x;
