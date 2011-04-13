@@ -37,11 +37,11 @@
 
 
 #if 0
-  /** 
+  /**
    \defgroup fl_unichar Unicode Character Functions
    Global Functions Handling Single Unicode Characters
    @{ */
-  
+
   /**
    Converts a Unicode character into a utf-8 sequence.
    \param[in] uc Unicode character
@@ -50,24 +50,24 @@
    \return length of the sequence in bytes
    */
   /* FL_EXPORT int fl_unichar_to_utf8(unsigned int uc, char *text); */
-  
-  /** @} */  
-  
-  /** 
+
+  /** @} */
+
+  /**
    \defgroup fl_utf8 Unicode String Functions
    Global Functions Handling Unicode Text
    @{ */
-  
+
   /**
    Calculate the size of a utf-8 sequence for a Unicode character.
    \param[in] uc Unicode character
    \return length of the sequence in bytes
    */
   /* FL_EXPORT int fl_utf8_size(unsigned int uc); */
-  
-  /** @} */  
+
+  /** @} */
 #endif /* 0 */
-  
+
 /*!Set to 1 to turn bad UTF8 bytes into ISO-8859-1. If this is to zero
    they are instead turned into the Unicode REPLACEMENT CHARACTER, of
    value 0xfffd.
@@ -337,6 +337,73 @@ int fl_utf8encode(unsigned ucs, char* buf) {
   }
 }
 
+/*! Convert a single 32-bit Unicode codepoint into an array of 16-bit
+    characters. These are used by some system calls, especially on Windows.
+
+    \p ucs is the value to convert.
+
+    \p dst points at an array to write, and \p dstlen is the number of
+    locations in this array. At most \p dstlen words will be
+    written, and a 0 terminating word will be added if \p dstlen is
+    large enough. Thus this function will never overwrite the buffer
+    and will attempt return a zero-terminated string if space permits.
+    If \p dstlen is zero then \p dst can be set to NULL and no data
+    is written, but the length is returned.
+
+    The return value is the number of 16-bit words that \e would be written
+    to \p dst if it is large enough, not counting any terminating
+    zero.
+
+    If the return value is greater than \p dstlen it indicates truncation,
+    you should then allocate a new array of size return+1 and call this again.
+
+    Unicode characters in the range 0x10000 to 0x10ffff are converted to
+    "surrogate pairs" which take two words each (in UTF-16 encoding).
+    Typically, setting \p dstlen to 2 will ensure that any valid Unicode
+    value can be converted, and setting \p dstlen to 3 or more will allow
+    a NULL terminated sequence to be returned.
+*/
+unsigned fl_ucs_to_Utf16(const unsigned ucs, unsigned short *dst, const unsigned dstlen)
+{
+  /* The rule for direct conversion from UCS to UTF16 is:
+   * - if UCS >  0x0010FFFF then UCS is invalid
+   * - if UCS >= 0xD800 && UCS <= 0xDFFF UCS is invalid
+   * - if UCS <= 0x0000FFFF then U16 = UCS, len = 1
+   * - else
+   * -- U16[0] = ((UCS - 0x00010000) >> 10) & 0x3FF + 0xD800
+   * -- U16[1] = (UCS & 0x3FF) + 0xDC00
+   * -- len = 2;
+   */
+  unsigned count;        /* Count of converted UTF16 cells */
+  unsigned short u16[4]; /* Alternate buffer if dst is not set */
+  unsigned short *out;   /* points to the active buffer */
+  /* Ensure we have a valid buffer to write to */
+  if((!dstlen) || (!dst)) {
+    out = u16;
+  } else {
+    out = dst;
+  }
+  /* Convert from UCS to UTF16 */
+  if((ucs > 0x0010FFFF) || /* UCS is too large */
+  ((ucs > 0xD7FF) && (ucs < 0xE000))) { /* UCS in invalid range */
+    out[0] = 0xFFFD; /* REPLACEMENT CHARACTER */
+    count = 1;
+  } else if(ucs < 0x00010000) {
+    out[0] = (unsigned short)ucs;
+    count = 1;
+  } else if(dstlen < 2) { /* dst is too small for the result */
+    out[0] = 0xFFFD; /* REPLACEMENT CHARACTER */
+    count = 2;
+  } else {
+    out[0] = (((ucs - 0x00010000) >> 10) & 0x3FF) + 0xD800;
+    out[1] = (ucs & 0x3FF) + 0xDC00;
+    count = 2;
+  }
+  /* NULL terminate the output, if there is space */
+  if(count < dstlen) { out[count] = 0; }
+  return count;
+} /* fl_ucs_to_Utf16 */
+
 /*! Convert a UTF-8 sequence into an array of 16-bit characters. These
     are used by some system calls, especially on Windows.
 
@@ -363,7 +430,7 @@ int fl_utf8encode(unsigned ucs, char* buf) {
 
     Unicode characters in the range 0x10000 to 0x10ffff are converted to
     "surrogate pairs" which take two words each (this is called UTF-16
-    encoding). 
+    encoding).
 */
 unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
 		  unsigned short* dst, unsigned dstlen)
@@ -407,21 +474,21 @@ unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
   Converts a UTF-8 string into a wide character string.
 
   This function generates 32-bit wchar_t (e.g. "ucs4" as it were) except
-  on Windows where it is equivalent to fl_utf8toUtf16 and returns 
+  on Windows where it is equivalent to fl_utf8toUtf16 and returns
   UTF-16.
- 
+
   \p src points at the UTF-8, and \p srclen is the number of bytes to
   convert.
- 
+
   \p dst points at an array to write, and \p dstlen is the number of
   locations in this array. At most \p dstlen-1 wchar_t will be
   written there, plus a 0 terminating wchar_t.
- 
+
   The return value is the number of wchar_t that \e would be written
   to \p dst if it were long enough, not counting the terminating
   zero. If the return value is greater or equal to \p dstlen it
   indicates truncation, you can then allocate a new array of size
-  return+1 and call this again. 
+  return+1 and call this again.
 
   Notice that sizeof(wchar_t) is 2 on Windows and is 4 on Linux
   and most other systems. Where wchar_t is 16 bits, Unicode
@@ -429,7 +496,7 @@ unsigned fl_utf8toUtf16(const char* src, unsigned srclen,
   "surrogate pairs" which take two words each (this is called UTF-16
   encoding). If wchar_t is 32 bits this rather nasty problem is
   avoided.
- 
+
   Note that Windows includes Cygwin, i.e. compiled with Cygwin's POSIX
   layer (cygwin1.dll, --enable-cygwin), either native (GDI) or X11.
   */

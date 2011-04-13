@@ -185,26 +185,23 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   unsigned int r;
   SIZE s;
-  // Special Case Handling of Unicode points over U+FFFF
+  // Special Case Handling of Unicode points over U+FFFF.
   // The logic (below) computes a lookup table for char widths
   // on-the-fly, but the table only covers codepoints up to
   // U+FFFF, which covers the basic multilingual plane, but
   // not any higher plane, or glyphs that require surrogate-pairs
-  // to encode them in WinXX which is UTF16.
+  // to encode them in WinXX, which is UTF16.
   // This code assumes that these glyphs are rarely used and simply
-  // measures them explicitly if they occur - Which may be slow...
+  // measures them explicitly if they occur - This will be slow...
   if(c > 0x0000FFFF) { // UTF16 surrogate pair is needed
     if (!fl_gc) { // We have no valid gc, so nothing to measure - bail out
       return 0.0;
     }
     int cc; // cell count
-    char utf8[8];          // Array for UTF-8 representation of c
-    unsigned short ucs[4]; // Array for UTF16 representation of c
-    // This fl_utf8encode / fl_utf8toUtf16 dance creates a UTF16 string
-    // from a UCS code point.
-    cc = fl_utf8encode(c, utf8);
-    cc = fl_utf8toUtf16(utf8, cc, ucs, 4);
-    GetTextExtentPoint32W(fl_gc, (WCHAR*)ucs, cc, &s);
+    unsigned short u16[4]; // Array for UTF16 representation of c
+    // Creates a UTF16 string from a UCS code point.
+    cc = fl_ucs_to_Utf16(c, u16, 4);
+    GetTextExtentPoint32W(fl_gc, (WCHAR*)u16, cc, &s);
     return (double)s.cx;
   }
   // else - this falls through to the lookup-table for glyph widths
