@@ -1124,7 +1124,7 @@ extern "C" {
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
-  window->set_visible();
+  Fl::handle(FL_SHOW, window);
   update_e_xy_and_e_xy_root(nsw);
   fl_unlock_function();
 }
@@ -1133,7 +1133,7 @@ extern "C" {
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
-  window->clear_visible();
+  Fl::handle(FL_HIDE, window);
   fl_unlock_function();
 }
 - (void)windowWillClose:(NSNotification *)notif
