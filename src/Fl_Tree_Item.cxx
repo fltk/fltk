@@ -450,7 +450,7 @@ void Fl_Tree_Item::draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_
 
 /// Find the item that the last event was over.
 ///
-///    Returns the item if its visible, and mouse is over it.
+///    Returns the item if it is visible, and mouse is over it.
 ///    Works even if widget deactivated.
 ///    Use event_on_collapse_icon() to determine if collapse button was pressed.
 ///
@@ -480,7 +480,7 @@ const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) const
 /// Non-const version of the above.
 /// Find the item that the last event was over.
 ///
-///    Returns the item if its visible, and mouse is over it.
+///    Returns the item if it is visible, and mouse is over it.
 ///    Works even if widget deactivated.
 ///    Use event_on_collapse_icon() to determine if collapse button was pressed.
 ///
