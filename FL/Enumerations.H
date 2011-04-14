@@ -598,7 +598,7 @@ enum Fl_Labeltype {	// labeltypes:
 };
 
 /** 
-  Sets the current  label type end return its corresponding Fl_Labeltype value. 
+  Sets the current  label type and return its corresponding Fl_Labeltype value. 
   @{
 */
 #define FL_SYMBOL_LABEL FL_NORMAL_LABEL
