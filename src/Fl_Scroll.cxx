@@ -391,7 +391,7 @@ void Fl_Scroll::scrollbar_cb(Fl_Widget* o, void*) {
   <P>The destructor <I>also deletes all the children</I>. This allows a
   whole tree to be deleted at once, without having to keep a pointer to
   all the children in the user code. A kludge has been done so the 
-  Fl_Scroll and all of it's children can be automatic (local)
+  Fl_Scroll and all of its children can be automatic (local)
   variables, but you must declare the Fl_Scroll<I>first</I>, so
   that it is destroyed last.
 */
