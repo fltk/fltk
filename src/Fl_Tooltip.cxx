@@ -155,7 +155,7 @@ static void tooltip_timeout(void*) {
 
 /**
    This method is called when the mouse pointer enters a  widget.
-   <P>If this widget or one of it's parents has a tooltip, enter it. This
+   <P>If this widget or one of its parents has a tooltip, enter it. This
    will do nothing if this is the current widget (even if the mouse moved
    out so an exit() was done and then moved back in). If no tooltip can
    be found do Fl_Tooltip::exit_(). If you don't want this behavior (for instance
