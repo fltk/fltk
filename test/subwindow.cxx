@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
   subwindow->end();
   subwindow->use_cursor(FL_CURSOR_HAND);
   (new Fl_Box(FL_NO_BOX,0,0,400,100,
-	     "A child Fl_Window with children of it's own may "
+	     "A child Fl_Window with children of its own may "
 	     "be useful for imbedding controls into a GL or display "
 	     "that needs a different visual.  There are bugs with the "
 	     "origins being different between drawing and events, "
