@@ -38,6 +38,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Enumerations.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Paged_Device.H>
 #include "flstring.h"
 #include "Fl_Font.H"
 #include <stdio.h>
@@ -1945,6 +1946,56 @@ Window fl_xid_(const Fl_Window *w) {
   return temp ? temp->xid : 0;
 }
 
+int Fl_Window::decorated_w()
+{
+  if (parent() || !shown()) return w();
+  int X, Y, bt, bx, by;
+  Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
+  return w() + 2 * bx;
+}
+
+int Fl_Window::decorated_h()
+{
+  if (this->parent() || !shown()) return h();
+  int X, Y, bt, bx, by;
+  Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
+  return h() + bt + 2 * by;
+}
+
+void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
+{
+  if (win->parent() || !win->border()) {
+    this->print_widget(win, x_offset, y_offset);
+    return;
+  }
+  int X, Y, bt, bx, by, ww, wh; // compute the window border sizes
+  Fl_X::fake_X_wm(win, X, Y, bt, bx, by);
+  ww = win->w() + 2 * bx;
+  wh = win->h() + bt + 2 * by;
+  Fl_Display_Device::display_device()->set_current(); // make window current
+  win->show();
+  Fl::check();
+  win->make_current();
+  // capture the 4 window sides from screen
+  // use negative 4th argument to allow negative 2nd or 3rd arguments
+  uchar *top_image = fl_read_image(NULL, -bx, - bt - by, -ww, bt + by);
+  uchar *left_image = fl_read_image(NULL, -bx, - bt - by, -bx, wh);
+  uchar *right_image = fl_read_image(NULL, win->w(), - bt - by, -bx, wh);
+  uchar *bottom_image = fl_read_image(NULL, -bx, win->h(), -ww, by);
+  this->set_current();
+  // print the 4 window sides
+  fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3);
+  fl_draw_image(left_image, x_offset, y_offset, bx, wh, 3);
+  fl_draw_image(right_image, x_offset + win->w() + bx, y_offset, bx, wh, 3);
+  fl_draw_image(bottom_image, x_offset, y_offset + win->h() + bt + by, ww, by, 3);
+  delete[] top_image;
+  delete[] left_image;
+  delete[] right_image;
+  delete[] bottom_image;
+  // print the window inner part
+  this->print_widget(win, x_offset + bx, y_offset + bt + by);
+}  
+
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
 // contains also preparePrintFront call above
@@ -1960,11 +2011,14 @@ void printFront(Fl_Widget *o, void *data)
   if( printer.start_job(1) ) { o->window()->show(); return; }
   if( printer.start_page() ) { o->window()->show(); return; }
   printer.printable_rect(&w,&h);
+  int  wh, ww;
+  wh = win->decorated_h();
+  ww = win->decorated_w();
   // scale the printer device so that the window fits on the page
   float scale = 1;
-  if (win->w() > w || win->h() > h) {
-    scale = (float)w/win->w();
-    if ((float)h/win->h() < scale) scale = (float)h/win->h();
+  if (ww > w || wh > h) {
+    scale = (float)w/ww;
+    if ((float)h/wh < scale) scale = (float)h/wh;
     printer.scale(scale, scale);
   }
 // #define ROTATE 20.0
@@ -1975,9 +2029,8 @@ void printFront(Fl_Widget *o, void *data)
   printer.rotate(ROTATE);
   printer.print_widget( win, - win->w()/2, - win->h()/2 );
   //printer.print_window_part( win, 0,0, win->w(), win->h(), - win->w()/2, - win->h()/2 );
-#else
-  printer.print_widget( win );
-  //printer.print_window_part( win, 0,0, win->w(), win->h() );
+#else  
+  printer.print_window(win);
 #endif
   printer.end_page();
   printer.end_job();

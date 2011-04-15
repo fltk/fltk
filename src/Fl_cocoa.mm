@@ -1417,12 +1417,20 @@ void fl_close_display() {
 
 // Gets the border sizes and the titlebar size
 static void get_window_frame_sizes(int &bx, int &by, int &bt) {
-  if (NSApp == nil) fl_open_display();
-  NSRect inside = { {20,20}, {100,100} };
-  NSRect outside = [NSWindow  frameRectForContentRect:inside styleMask:NSTitledWindowMask];
-  bx = int(outside.origin.x - inside.origin.x);
-  by = int(outside.origin.y - inside.origin.y);
-  bt = int(outside.size.height - inside.size.height - by);
+  static bool first = true;
+  static int top, left, bottom;
+  if (first) {
+    first = false;
+    if (NSApp == nil) fl_open_display();
+    NSRect inside = { {20,20}, {100,100} };
+    NSRect outside = [NSWindow  frameRectForContentRect:inside styleMask:NSTitledWindowMask];
+    left = int(outside.origin.x - inside.origin.x);
+    bottom = int(outside.origin.y - inside.origin.y);
+    top = int(outside.size.height - inside.size.height) - bottom;
+    }
+  bx = left;
+  by = bottom;
+  bt = top;
 }
 
 /*
@@ -2861,7 +2869,7 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
 {
   Fl_Printer printer;
   //Fl_PostScript_File_Device printer;
-  int w, h, wh;
+  int w, h, ww, wh;
   Fl_Window *win = Fl::first_window();
   if(!win) return;
   if( printer.start_job(1) ) return;
@@ -2869,13 +2877,9 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
   // scale the printer device so that the window fits on the page
   float scale = 1;
   printer.printable_rect(&w, &h);
-  wh = win->h();
-  int bx, by, bt = 0;
-  if (win->border()) {
-    get_window_frame_sizes(bx, by, bt);
-    wh += bt;
-    }
-  if (win->w()>w || wh>h) {
+  ww = win->decorated_w();
+  wh = win->decorated_h();
+  if (ww>w || wh>h) {
     scale = (float)w/win->w();
     if ((float)h/wh < scale) scale = (float)h/wh;
     printer.scale(scale);
@@ -2888,22 +2892,7 @@ int Fl_X::screen_init(XRectangle screens[], float dpi[])
   printer.rotate(20.);
   printer.print_widget( win, - win->w()/2, - win->h()/2 );
 #else
-  if (bt) { // print the window title bar
-    //printer.print_window_part(win, 0, -bt, win->w(), bt, 0, 1);
-    Fl_Display_Device::display_device()->set_current();
-    win->show();
-    fl_gc = NULL;
-    Fl::check();
-    win->make_current();
-    CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
-    printer.set_current();
-    CGRect rect = { { 0, 1 }, { win->w(), bt } };
-    Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
-    CGContextDrawImage(fl_gc, rect, img);
-    Fl_X::q_end_image();
-    CGImageRelease(img);
-  }
-  printer.print_widget(win, 0, bt);
+  printer.print_window(win);
 #endif
   printer.end_page();
   printer.end_job();
@@ -3399,6 +3388,46 @@ CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
 Window fl_xid(const Fl_Window* w)
 {
   return Fl_X::i(w)->xid;
+}
+
+int Fl_Window::decorated_w()
+{
+  if (this->parent() || !border()) return w();
+  int bx, by, bt;
+  get_window_frame_sizes(bx, by, bt);
+  return w() + 2 * bx;
+}
+
+int Fl_Window::decorated_h()
+{
+  if (this->parent() || !border()) return h();
+  int bx, by, bt;
+  get_window_frame_sizes(bx, by, bt);
+  return h() + bt + by;
+}
+
+void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
+{
+  if (win->parent() || !win->border()) {
+    this->print_widget(win, x_offset, y_offset);
+    return;
+  }
+  int bx, by, bt;
+  get_window_frame_sizes(bx, by, bt);
+  Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
+  win->show();
+  fl_gc = NULL;
+  Fl::check();
+  win->make_current();
+  // capture the window title bar from screen
+  CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
+  this->set_current(); // back to the Fl_Paged_Device
+  CGRect rect = { { 0, 1 }, { win->w(), bt } }; // print the title bar
+  Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
+  CGContextDrawImage(fl_gc, rect, img);
+  Fl_X::q_end_image();
+  CGImageRelease(img);
+  this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
 
 #include <dlfcn.h>

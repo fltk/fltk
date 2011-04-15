@@ -443,6 +443,18 @@ public:
   void cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE); // platform dependent
   void default_cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
   static void default_callback(Fl_Window*, void* v);
+  
+  /** Returns the window width including any frame added by the window manager.
+   
+   Same as w() if applied to a subwindow.
+   */
+  int decorated_w();
+  /** Returns the window height including any window title bar and any frame 
+   added by the window manager.
+   
+   Same as h() if applied to a subwindow.
+   */
+  int decorated_h();
 
 };
 

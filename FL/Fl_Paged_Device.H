@@ -132,6 +132,14 @@ public:
   virtual void translate(int x, int y);
   virtual void untranslate(void);
   virtual void print_widget(Fl_Widget* widget, int delta_x = 0, int delta_y = 0);
+  /** Prints a window with its title bar and frame if any.
+   
+   \p x_offset and \p y_offset are optional coordinates of where to position the window top left.
+   Equivalent to print_widget() if \p win is a subwindow or has no border.
+   Use Fl_Window::decorated_w() and Fl_Window::decorated_h() to get the size of the
+   printed window.
+   */
+  void print_window(Fl_Window *win, int x_offset = 0, int y_offset = 0);
   virtual void print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x = 0, int delta_y = 0);
   virtual int end_page (void);
   virtual void end_job (void);

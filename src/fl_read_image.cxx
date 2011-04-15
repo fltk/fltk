@@ -92,6 +92,7 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
               int   X,		// I - Left position
 	      int   Y,		// I - Top position
 	      int   w,		// I - Width of area to read
+	                        // negative allows capture of window title bar and frame
 	      int   h,		// I - Height of area to read
 	      int   alpha) {	// I - Alpha value for image (0 for none)
   XImage	*image;		// Captured image
@@ -118,6 +119,8 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   // ReadDisplay extension which does all of the really hard work for
   // us...
   //
+  int allow_outside = w < 0;    // negative w allows negative X or Y, that is, window frame
+  if (w < 0) w = - w;
 
 #  ifdef __sgi
   if (XReadDisplayQueryExtension(fl_display, &i, &i)) {
@@ -131,7 +134,10 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
     // fetch absolute coordinates
     int dx, dy, sx, sy, sw, sh;
     Window child_win;
-    Fl_Window *win = fl_find(fl_window);
+    
+    Fl_Window *win;
+    if (allow_outside) win = (Fl_Window*)1;
+    else win = fl_find(fl_window);
     if (win) {
       XTranslateCoordinates(fl_display, fl_window,
           RootWindow(fl_display, fl_screen), X, Y, &dx, &dy, &child_win);
