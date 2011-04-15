@@ -35,7 +35,7 @@ static int temp = fl_gl_load_plugin;
 #include <FL/Fl.H>
 #include <FL/x.H>
 #ifdef __APPLE__
-#include <FL/gl.H>
+#include <FL/gl.h>
 #endif
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_Gl_Window.H>
