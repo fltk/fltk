@@ -2112,7 +2112,7 @@ void Fl_X::make(Fl_Window* w)
     
     if (w->size_range_set) w->size_range_();
     
-    if (!w->modal() || w->border()) {
+    if ( (!w->modal() || w->border()) && !w->tooltip_window()) {
       Fl_Tooltip::enter(0);
     }
     [cw makeKeyAndOrderFront:nil];
