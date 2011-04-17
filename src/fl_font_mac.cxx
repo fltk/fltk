@@ -274,15 +274,22 @@ int Fl_Quartz_Graphics_Driver::descent() {
 // returns width of a pair of UniChar's in the surrogate range
 static CGFloat surrogate_width(const UniChar *txt, Fl_Font_Descriptor *fl_fontsize)
 {
-  CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, txt, 2, kCFAllocatorNull);
-  CTFontRef font2 = CTFontCreateForString(fl_fontsize->fontref, str, CFRangeMake(0,2));
-  CFRelease(str);
+  CTFontRef font2 = fl_fontsize->fontref;
+  bool must_release = false;
   CGGlyph glyphs[2];
   bool b = CTFontGetGlyphsForCharacters(font2, txt, glyphs, 2);
   CGSize a;
+  if(!b) { // the current font doesn't contain this char
+    CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, txt, 2, kCFAllocatorNull);
+    // find a font that contains it
+    font2 = CTFontCreateForString(font2, str, CFRangeMake(0,2));
+    must_release = true;
+    CFRelease(str);
+    b = CTFontGetGlyphsForCharacters(font2, txt, glyphs, 2);
+  }
   if (b) CTFontGetAdvancesForGlyphs(font2, kCTFontHorizontalOrientation, glyphs, &a, 1);
   else a.width = fl_fontsize->q_width;
-  CFRelease(font2);
+  if(must_release) CFRelease(font2);
   return a.width;
 }
 #endif
@@ -296,10 +303,10 @@ if (fl_mac_os_version >= 100500) {
   for (i = 0; i < n; i++) { // loop over txt
     uni = txt[i];
     if (uni >= 0xD800 && uni <= 0xDBFF) { // handles the surrogate range
-      retval += surrogate_width(txt + i, fl_fontsize);
+      retval += surrogate_width(&txt[i], fl_fontsize);
       i++; // because a pair of UniChar's represent a single character
       continue;
-      }
+    }
     const int block = 0x10000 / (sizeof(fl_fontsize->width)/sizeof(float*)); // block size
     // r: index of the character block containing uni
     unsigned int r = uni >> 7; // change 7 if sizeof(width) is changed
@@ -380,12 +387,13 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
   int l = 1;
   if (wc <= 0xFFFF) {
     *utf16 = wc;
-    }
+  }
   else {
-    char buf[4];
-    l = fl_utf8encode(wc, buf);
-    l = (int)fl_utf8toUtf16(buf, l, utf16, 3);
-    }
+//    char buf[4];
+//    l = fl_utf8encode(wc, buf);
+//    l = (int)fl_utf8toUtf16(buf, l, utf16, 3);
+    l = (int)fl_ucs_to_Utf16(wc, utf16, 3);
+  }
   return fl_mac_width(utf16, l, font_descriptor());
 }
 
