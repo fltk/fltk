@@ -393,9 +393,10 @@ double Fl_Quartz_Graphics_Driver::width(unsigned int wc) {
 void Fl_Quartz_Graphics_Driver::text_extents(const char *str8, int n, int &dx, int &dy, int &w, int &h) {
   if (!font_descriptor()) font(FL_HELVETICA, FL_NORMAL_SIZE);
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
+  UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 if (fl_mac_os_version >= 100500) {
-  CFStringRef str16 = CFStringCreateWithBytes(NULL, (const UInt8*)str8, n, kCFStringEncodingUTF8, false);
+  CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, txt, n,  kCFAllocatorNull);
   CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
   CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str16, attributes);
   CFRelease(str16);
@@ -429,7 +430,6 @@ else {
   iValuePtr = &fl_gc;
       ATSUSetLayoutControls(layout, 1, &iTag, &iSize, &iValuePtr);
         // now measure the bounding box
-  UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
   err = ATSUSetTextPointerLocation(layout, txt, kATSUFromTextBeginning, n, n);
   Rect bbox;
   err = ATSUMeasureTextImage(layout, kATSUFromTextBeginning, n, 0, 0, &bbox);
