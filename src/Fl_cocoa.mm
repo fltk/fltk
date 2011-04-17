@@ -1625,8 +1625,10 @@ Fl_Window *fl_dnd_target_window = 0;
 
 static void  q_set_window_title(NSWindow *nsw, const char * name ) {
   CFStringRef utf8_title = CFStringCreateWithCString(NULL, (name ? name : ""), kCFStringEncodingUTF8);
-	[nsw setTitle:(NSString*)utf8_title ];
-  CFRelease(utf8_title);
+  if(utf8_title) {
+    [nsw setTitle:(NSString*)utf8_title ];
+    CFRelease(utf8_title);
+  }
 }
 
 
