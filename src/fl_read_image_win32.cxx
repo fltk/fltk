@@ -34,13 +34,10 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
               int   X,		// I - Left position
 	      int   Y,		// I - Top position
 	      int   w,		// I - Width of area to read
-	                        //     negative w means negative X or Y are allowed
 	      int   h,		// I - Height of area to read
 	      int   alpha) {	// I - Alpha value for image (0 for none)
 
   int	d;			// Depth of image
-  int allow_outside = w < 0;    // negative w allows negative X or Y, that is, window border
-  if (w < 0) w = - w;
 
   // Allocate the image data array as needed...
   d = alpha ? 4 : 3;
@@ -61,17 +58,15 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
   int shift_x = 0; // X target shift if X modified
   int shift_y = 0; // Y target shift if X modified
 
-  if (!allow_outside) {
-    if (X < 0) {
-      shift_x = -X;
-      w += X;
-      X = 0;
-    }
-    if (Y < 0) {
-      shift_y = -Y;
-      h += Y;
-      Y = 0;
-    }
+  if (X < 0) {
+    shift_x = -X;
+    w += X;
+    X = 0;
+  }
+  if (Y < 0) {
+    shift_y = -Y;
+    h += Y;
+    Y = 0;
   }
 
   if (h < 1 || w < 1) return p;		// nothing to copy
