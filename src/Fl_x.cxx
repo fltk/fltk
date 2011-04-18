@@ -1321,6 +1321,21 @@ int fl_handle(const XEvent& thisevent)
       else if (keysym == FL_BackSpace) got_backspace = 1;
     }
 #  endif
+    // For the first few years, there wasn't a good consensus on what the
+    // Windows keys should be mapped to for X11. So we need to help out a
+    // bit and map all variants to the same FLTK key...
+    switch (keysym) {
+	case XK_Meta_L:
+	case XK_Hyper_L:
+	case XK_Super_L:
+	  keysym = FL_Meta_L;
+	  break;
+	case XK_Meta_R:
+	case XK_Hyper_R:
+	case XK_Super_R:
+	  keysym = FL_Meta_R;
+	  break;
+      }
     // We have to get rid of the XK_KP_function keys, because they are
     // not produced on Windoze and thus case statements tend not to check
     // for them.  There are 15 of these in the range 0xff91 ... 0xff9f
