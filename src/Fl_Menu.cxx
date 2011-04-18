@@ -535,6 +535,10 @@ int menuwindow::is_inside(int mx, int my) {
        my < y_root() || my >= y_root() + h()) {
     return 0;
   }
+  if (itemheight == 0 && find_selected(mx, my) == -1) {
+    // in the menubar but out from any menu header
+    return 0;
+    }
   return 1;
 }
 
