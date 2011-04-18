@@ -282,15 +282,14 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   }
 
   static unsigned short *ext_buff = NULL; // UTF-16 converted version of input UTF-8 string
-  static unsigned *ucs_buff = NULL; // UCS converted version of input UTF8 string
-  static WORD *w_buff = NULL; // glyph or class indices array
-  static unsigned wc_len = 0; // current string buffer dimensions
+  static WCHAR *c_buff = NULL; // glyph class array (if needed)
+  static WORD  *w_buff = NULL; // glyph indices array
+  static unsigned wc_len = 0;  // current string buffer dimensions
   static const MAT2 matrix = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } }; // identity mat for GetGlyphOutlineW
   GLYPHMETRICS metrics;
   int maxw = 0, maxh = 0, dh;
   int minx = 0, miny = -999999;
   unsigned len = 0, idx = 0;
-  unsigned gcp_w = 0x7FFFFFFF, gcp_h;
   HWND hWnd = 0;
   HDC gc = fl_gc; // local copy of current gc - make a copy in case we change it...
   int has_surrogates; // will be set if the string contains surrogate pairs
@@ -316,11 +315,11 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   if(len >= wc_len) {
     if(ext_buff) {delete [] ext_buff;}
     if(w_buff) {delete [] w_buff;}
-    if(ucs_buff) {delete [] ucs_buff;}
-	wc_len = len + 64;
+    if(c_buff) {delete [] c_buff;}
+    wc_len = len + 64;
     ext_buff = new unsigned short[wc_len];
-	w_buff = new WORD[wc_len];
-	ucs_buff = new unsigned[wc_len];
+    w_buff = new WORD[wc_len];
+    c_buff = new WCHAR[wc_len];
     len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
   }
   SelectObject(gc, fl_fontsize->fid);
@@ -332,48 +331,44 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   // is not ideal, but works adequately well, and does handle surrogate pairs.
   has_surrogates = 0;
   for(unsigned ll = 0; ll < len; ll++) {
-	  if((ext_buff[ll] >= 0xD800) && (ext_buff[ll] < 0xE000)) {
-		  has_surrogates = -1;
-		  break;
-	  }
+    if((ext_buff[ll] >= 0xD800) && (ext_buff[ll] < 0xE000)) {
+      has_surrogates = -1;
+      break;
+    }
   }
   if (has_surrogates) {
     // GetGlyphIndices will not work - use GetCharacterPlacementW() instead
     GCP_RESULTSW gcp_res;
-    memset(ucs_buff, 0, (sizeof(unsigned) * wc_len));
-    memset(w_buff, 0, (sizeof(WCHAR) * wc_len));
+    memset(c_buff, 0, (sizeof(WCHAR) * wc_len));
+    memset(w_buff, 0, (sizeof(WORD) * wc_len));
     memset(&gcp_res, 0, sizeof(GCP_RESULTSW));
-    gcp_res.lpClass = (WCHAR *)w_buff;
-    gcp_res.lpGlyphs = (LPWSTR)ucs_buff;
+    gcp_res.lpClass = c_buff;
+    gcp_res.lpGlyphs = (LPWSTR)w_buff;
     gcp_res.nGlyphs = wc_len;
     gcp_res.lStructSize = sizeof(gcp_res);
 
     DWORD dr = GetCharacterPlacementW(gc, (WCHAR*)ext_buff, len, 0, &gcp_res, GCP_GLYPHSHAPE);
-    gcp_w = dr & 0xFFFF;
-    if(gcp_w == 0) gcp_w = 0x7FFFFFFF;
-    gcp_h = (dr >> 16) & 0xFFFF;
-    len = gcp_res.nGlyphs;
+    if(dr) {
+      len = gcp_res.nGlyphs;
+    } else goto exit_error;
   } else {
     if (fl_GetGlyphIndices(gc, (WCHAR*)ext_buff, len, w_buff, GGI_MARK_NONEXISTING_GLYPHS) == GDI_ERROR) {
       // some error occured here - just return fl_measure values
       goto exit_error;
     }
-    for(unsigned ll = 0; ll < len; ll++) {
-      ucs_buff[ll] = w_buff[ll];
-    }
   }
 
   // now we have the glyph array we measure each glyph in turn...
   for(idx = 0; idx < len; idx++){
-    if (GetGlyphOutlineW (gc, ucs_buff[idx], GGO_METRICS | GGO_GLYPH_INDEX,
-					      &metrics, 0, NULL, &matrix) == GDI_ERROR) {
+    if (GetGlyphOutlineW (gc, w_buff[idx], GGO_METRICS | GGO_GLYPH_INDEX,
+                          &metrics, 0, NULL, &matrix) == GDI_ERROR) {
       goto exit_error;
     }
     maxw += metrics.gmCellIncX;
-	if(idx == 0) minx = metrics.gmptGlyphOrigin.x;
+    if(idx == 0) minx = metrics.gmptGlyphOrigin.x;
     dh = metrics.gmBlackBoxY - metrics.gmptGlyphOrigin.y;
-	if(dh > maxh) maxh = dh;
-	if(miny < metrics.gmptGlyphOrigin.y) miny = metrics.gmptGlyphOrigin.y;
+    if(dh > maxh) maxh = dh;
+    if(miny < metrics.gmptGlyphOrigin.y) miny = metrics.gmptGlyphOrigin.y;
   }
   // for the last cell, we only want the bounding X-extent, not the glyphs increment step
   maxw = maxw - metrics.gmCellIncX + metrics.gmBlackBoxX + metrics.gmptGlyphOrigin.x;
@@ -381,10 +376,6 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   h = maxh + miny;
   dx = minx;
   dy = -miny;
-  // This next line traps for a specific (probably font related) issue with measuring
-  // the width of strings that sometimes happens if using GetCharacterPlacementW()
-  // it is a workaround, not good code...
-  if((has_surrogates) && (w > (int)gcp_w)) {w = (int)gcp_w;}
   EXTENTS_UPDATE(dx, dy, w, h);
   return; // normal exit
 
