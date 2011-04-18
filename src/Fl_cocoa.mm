@@ -1106,8 +1106,8 @@ extern "C" {
 {
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
-  Fl_Window *window = [nsw getFl_Window];
-  if (!window->modal() || window->border()) Fl::handle( FL_FOCUS, window);
+  Fl_Window *w = [nsw getFl_Window];
+  if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle( FL_FOCUS, w);
   fl_unlock_function();
 }
 - (void)windowDidBecomeMain:(NSNotification *)notif
@@ -1272,10 +1272,10 @@ extern "C" {
   fl_lock_function();
   Fl_X *x;
   for (x = Fl_X::first;x;x = x->next) {
-    Fl_Window *window = x->w;
-    if ( !window->parent() ) {
-      if (!window->modal() || window->border()) Fl::handle( FL_FOCUS, window);
-      Fl::handle( FL_SHOW, window);
+    Fl_Window *w = x->w;
+    if ( !w->parent() ) {
+      if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle( FL_FOCUS, w);
+      Fl::handle( FL_SHOW, w);
       }
   }
   fl_unlock_function();
@@ -2013,7 +2013,7 @@ void Fl_X::make(Fl_Window* w)
     
     if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) {
       // menu windows and tooltips
-      if (w->modal()||w->override()) {
+      if (w->modal()||w->tooltip_window()) {
         winstyle = NSBorderlessWindowMask;
         winlevel = NSModalPanelWindowLevel;
       } else {
@@ -2112,11 +2112,11 @@ void Fl_X::make(Fl_Window* w)
     
     if (w->size_range_set) w->size_range_();
     
-    if ( (!w->modal() || w->border()) && !w->tooltip_window()) {
+    if ( w->border() || (!w->modal() && !w->tooltip_window()) ) {
       Fl_Tooltip::enter(0);
     }
     [cw makeKeyAndOrderFront:nil];
-    if (!w->modal() || w->border()) Fl::handle(FL_FOCUS, w);
+    if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle(FL_FOCUS, w);
     Fl::handle(FL_SHOW, w);
     Fl::first_window(w);
     [cw setDelegate:mydelegate];
