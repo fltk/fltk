@@ -746,7 +746,11 @@ Fl_Menu_Item menuitems[] = {
     { "&Insert File...",  FL_COMMAND + 'i', (Fl_Callback *)insert_cb, 0, FL_MENU_DIVIDER },
     { "&Save File",       FL_COMMAND + 's', (Fl_Callback *)save_cb },
     { "Save File &As...", FL_COMMAND + FL_SHIFT + 's', (Fl_Callback *)saveas_cb, 0, FL_MENU_DIVIDER },
-    { "New &View",        FL_ALT + 'v', (Fl_Callback *)view_cb, 0 },
+    { "New &View",        FL_ALT
+#ifdef __APPLE__
+      + FL_COMMAND
+#endif
+      + 'v', (Fl_Callback *)view_cb, 0 },
     { "&Close View",      FL_COMMAND + 'w', (Fl_Callback *)close_cb, 0, FL_MENU_DIVIDER },
     { "E&xit",            FL_COMMAND + 'q', (Fl_Callback *)quit_cb, 0 },
     { 0 },
