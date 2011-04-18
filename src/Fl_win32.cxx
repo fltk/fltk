@@ -1997,6 +1997,8 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   delete[] bottom_image;
   // print the window inner part
   this->print_widget(win, x_offset + bx, y_offset + bt + by);
+  fl_gc = GetDC(fl_xid(win));
+  ReleaseDC(fl_xid(win), fl_gc);
 }  
 
 #ifdef USE_PRINT_BUTTON

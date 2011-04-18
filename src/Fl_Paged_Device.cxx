@@ -138,10 +138,14 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   win->make_current();
   uchar *image_data;
   image_data = fl_read_image(NULL, x, y, w, h);
-  save_front->show();
+  if (save_front != win) save_front->show();
   current->set_current();
   fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
   delete[] image_data;
+#ifdef WIN32
+  fl_gc = GetDC(fl_xid(win));
+  ReleaseDC(fl_xid(win), fl_gc);
+#endif
 }
 
 /**
