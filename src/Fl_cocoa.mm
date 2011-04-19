@@ -1523,11 +1523,10 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   if (w->border() && !w->parent()) {
     if (w->maxw != w->minw || w->maxh != w->minh) {
       ret = 2;
-      get_window_frame_sizes(bx, by, bt);
     } else {
       ret = 1;
-      get_window_frame_sizes(bx, by, bt);
     }
+    get_window_frame_sizes(bx, by, bt);
   }
   // The coordinates of the whole window, including non-client area
   xoff = bx;
@@ -3394,7 +3393,7 @@ Window fl_xid(const Fl_Window* w)
 
 int Fl_Window::decorated_w()
 {
-  if (this->parent() || !border()) return w();
+  if (parent() || !border()) return w();
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
   return w() + 2 * bx;
@@ -3402,7 +3401,7 @@ int Fl_Window::decorated_w()
 
 int Fl_Window::decorated_h()
 {
-  if (this->parent() || !border()) return h();
+  if (parent() || !border()) return h();
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
   return h() + bt + by;
@@ -3410,7 +3409,7 @@ int Fl_Window::decorated_h()
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  if (win->parent() || !win->border()) {
+  if (!win->shown() || win->parent() || !win->border()) {
     this->print_widget(win, x_offset, y_offset);
     return;
   }
@@ -3424,7 +3423,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   // capture the window title bar from screen
   CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
   this->set_current(); // back to the Fl_Paged_Device
-  CGRect rect = { { 0, 1 }, { win->w(), bt } }; // print the title bar
+  CGRect rect = { { 0, 0 }, { win->w(), bt } }; // print the title bar
   Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
   CGContextDrawImage(fl_gc, rect, img);
   Fl_X::q_end_image();
