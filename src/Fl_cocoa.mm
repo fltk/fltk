@@ -1623,11 +1623,16 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
 Fl_Window *fl_dnd_target_window = 0;
 
 static void  q_set_window_title(NSWindow *nsw, const char * name ) {
-  CFStringRef utf8_title = CFStringCreateWithCString(NULL, (name ? name : ""), kCFStringEncodingUTF8);
-  if(utf8_title) {
-    [nsw setTitle:(NSString*)utf8_title ];
-    CFRelease(utf8_title);
-  }
+  CFStringRef title = CFStringCreateWithCString(NULL, (name ? name : ""), kCFStringEncodingUTF8);
+  if(!title) { // fallback when name contains malformed UTF-8
+    int l = strlen(name);
+    unsigned short* utf16 = new unsigned short[l + 1];
+    l = fl_utf8toUtf16(name, l, utf16, l + 1);
+    title = CFStringCreateWithCharacters(NULL, utf16, l);
+    delete[] utf16;
+    }
+  [nsw setTitle:(NSString*)title];
+  CFRelease(title);
 }
 
 
