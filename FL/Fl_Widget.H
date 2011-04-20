@@ -752,9 +752,7 @@ public:
       && visible()) but is faster.
       \retval 0 if the widget takes no events
    */ 
-  unsigned int takesevents() const {
-    return !output() && active_r() && visible_r();
-  }
+  unsigned int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
 
   /** 
       Checks if the widget value changed since the last callback.
