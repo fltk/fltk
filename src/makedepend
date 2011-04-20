@@ -665,7 +665,8 @@ Fl_x.o: ../FL/Fl_Widget.H ../FL/fl_utf8.h ../FL/Fl_Tooltip.H
 Fl_x.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Enumerations.H
 Fl_x.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
 Fl_x.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
-Fl_x.o: ../FL/Fl_RGB_Image.H flstring.h ../FL/Fl_Export.H
+Fl_x.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Paged_Device.H flstring.h
+Fl_x.o: ../FL/Fl_Export.H
 filename_absolute.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h
 filename_absolute.o: ../FL/Fl_Export.H ../config.h
 filename_expand.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h
