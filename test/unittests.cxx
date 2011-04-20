@@ -3,7 +3,7 @@
 //
 // Unit tests for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2005 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -24,275 +24,185 @@
 //
 //     http://www.fltk.org/str.php
 //
+// Fltk unit tests
+// v0.1 - Greg combines Matthias + Ian's tests
+// v0.2 - Ian's 02/12/09 fixes applied
+// v0.3 - Fixes to circle desc, augmented extent tests, fixed indents, added show(argc,argv)
+// v1.0 - Submit for svn
+// v1.1 - Matthias separated all tests into multiple source files for hopefully easier handling
+// v1.1 - Albrecht reordered tests, backported FLTK 1.3 tests to FLTK 1.1 as far as possible
 
 #include <FL/Fl.H>
-#include <FL/x.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Button.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Help_View.H>
+#include <FL/Fl_Group.H>
 #include <FL/Fl_Box.H>
-#include <FL/fl_draw.H>
+#include <FL/fl_draw.H>		// fl_text_extents()
 
-Fl_Window *win = 0;
+#include <stdlib.h>		// malloc, free
+#include <string.h>		// strdup, ...
 
-int point_test_ix, line_test_ix, rect_test_ix, viewport_test_ix, circle_test_ix;
+// WINDOW/WIDGET SIZES
+#define MAINWIN_W	700				// main window w()
+#define MAINWIN_H	400				// main window h()
+#define BROWSER_X	10				// browser x()
+#define BROWSER_Y	25				// browser y()
+#define BROWSER_W	150				// browser w()
+#define BROWSER_H	MAINWIN_H-35			// browser h()
+#define TESTAREA_X	(BROWSER_W + 20)		// test area x()
+#define TESTAREA_Y	25				// test area y()
+#define TESTAREA_W	(MAINWIN_W - BROWSER_W - 30)	// test area w()
+#define TESTAREA_H	BROWSER_H			// test area h()
 
-void changePageCB(Fl_Widget*, void *ixvp) {
-  long ix = (long)ixvp;
-  long i = 0, n = win->children();
-  for ( ; i<n; i++) 
-    win->child(i)->hide();
-  if (ix>=n || ix<0) ix = n-1;
-  win->child(ix)->show();
-}
+typedef void (*UnitTestCallback)(const char*,Fl_Group*);
 
-void newButton(int x, int y, int w, int h, const char *l, int ix, const char *tt) {
-  Fl_Button *b = new Fl_Button(x, y, w, h, l);
-  b->tooltip(tt);
-  b->callback(changePageCB, (void*)ix);
-}
+class MainWindow *mainwin = 0;
+Fl_Hold_Browser *browser = 0;
 
-void createMenuPage() {
-  Fl_Group *page, *g;
-  page = new Fl_Group(0, 0, 600, 600);
-  g = new Fl_Group(100, 20, 460, 26, "drawing:");
-  g->align(FL_ALIGN_LEFT);
-  newButton(100+2, 22, 22, 22, "1", point_test_ix, "Testing pixel drawing");
-  newButton(125+2, 22, 22, 22, "2", line_test_ix, "Testing fl_line");
-  newButton(150+2, 22, 22, 22, "3", rect_test_ix, "Testing fl_rect");
-  newButton(175+2, 22, 22, 22, "4", viewport_test_ix, "Testing viewport alignment");
-  newButton(200+2, 22, 22, 22, "5", circle_test_ix, "Testing circle and oval drawing");
-  g->end();
-  page->end(); 
-}
-
-Fl_Group *beginTestPage(const char *l) {
-  int ix = win->children();
-  Fl_Group *g = new Fl_Group(0, 0, win->w(), win->h());
-  g->box(FL_FLAT_BOX);
-  g->hide();
-  newButton(20, 20, 20, 20, "M", -1, "Return to main menu");
-  newButton(20, 40, 20, 20, "@<", ix-1, "previous test");
-  newButton(20, 60, 20, 20, "@>", ix+1, "next test");
-  Fl_Box *bx = new Fl_Box(60, 20, win->w()-80, 100, l);
-  bx->box(FL_ENGRAVED_BOX);
-  bx->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
-  return g;
-}
-
-//------- test the point drawing capabilities of this implementation ----------
-class PointTest : public Fl_Widget {
-public: PointTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
-  void draw() {
-    int a = x(), b = y();
-    fl_color(FL_BLACK);
-    fl_rect(x(), y(), w(), h());
-    fl_point(a+10, b+10); fl_point(a+20, b+20); 
-    fl_point(a+10, b+20); fl_point(a+20, b+10);
-    fl_color(FL_RED); a = x()+70;
-    fl_point(a+10, b+10); fl_point(a+20, b+20);
-    fl_point(a+10, b+20); fl_point(a+20, b+10);
-    fl_color(FL_GREEN); a = x(); b = y()+70;
-    fl_point(a+10, b+10); fl_point(a+20, b+20);
-    fl_point(a+10, b+20); fl_point(a+20, b+10);
-    fl_color(FL_BLUE); a = x()+70;
-    fl_point(a+10, b+10); fl_point(a+20, b+20);
-    fl_point(a+10, b+20); fl_point(a+20, b+10);
+// This class helps to automagically register a new test with the unittest app.
+// Please see the examples on how this is used. 
+class UnitTest {
+public:
+  UnitTest(const char *label, Fl_Widget* (*create)()) :
+    fWidget(0L)
+  {
+    fLabel = strdup(label);
+    fCreate = create;
+    add(this);
   }
-};
-void fl_point_test() {
-  point_test_ix = win->children();
-  Fl_Group *page = beginTestPage(
-    "testing the fl_point call\n"
-    "You should see four pixels each in black, red, green and blue. "
-    "Make sure that pixels are not anti-aliased (blured across multiple pixels)!"
-  );
-  new PointTest(20, 140, 100, 100);
-  page->end();
-}
-
-//------- test the line drawing capabilities of this implementation ----------
-class LineTest : public Fl_Widget {
-public: LineTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
-  void draw() {
-    int a = x(), b = y(); fl_color(FL_BLACK); fl_rect(a, b, w(), h());
-    // testing fl_xyline(x, y, x1)
-    fl_color(FL_RED); fl_point(a+10, b+10); fl_point(a+20, b+10);
-    fl_color(FL_BLACK); fl_xyline(a+10, b+10, a+20);
-    // testing fl_xyline(x, y, x1, y2);
-    fl_color(FL_RED); fl_point(a+10, b+20); fl_point(a+20, b+20);
-    fl_point(a+20, b+30);
-    fl_color(FL_BLACK); fl_xyline(a+10, b+20, a+20, b+30);
-    // testing fl_xyline(x, y, x1, y2, x3);
-    fl_color(FL_RED); fl_point(a+10, b+40); fl_point(a+20, b+40);
-    fl_point(a+20, b+50); fl_point(a+30, b+50);
-    fl_color(FL_BLACK); fl_xyline(a+10, b+40, a+20, b+50, a+30);
-    //+++ add testing for the fl_yxline commands!
-    // testing fl_loop(x,y, x,y, x,y, x, y)
-    fl_color(FL_RED); fl_point(a+60, b+60); fl_point(a+90, b+60);
-    fl_point(a+60, b+90); fl_point(a+90, b+90);
-    fl_color(FL_BLACK);
-    fl_loop(a+60, b+60, a+90, b+60, a+90, b+90, a+60, b+90);
+  ~UnitTest() {
+    delete fWidget;
+    free(fLabel);
   }
-};
-void fl_line_test() {
-  line_test_ix = win->children();
-  Fl_Group *page = beginTestPage(
-    "testing the integer based fl_line calls\n"
-    "No red pixels should be visible. "
-    "If you see bright red pixels, the line drawing alignment is off, "
-    "or the last pixel in a line does not get drawn. "
-    "If you see dark red pixels, anti-aliasing must be switched off."
-  );
-  new LineTest(20, 140, 100, 100);
-  page->end();
-}
-
-//------- test the line drawing capabilities of this implementation ----------
-class RectTest : public Fl_Widget {
-public: RectTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
-  void draw() {
-    int a = x(), b = y(); fl_color(FL_BLACK); fl_rect(a, b, w(), h());
-    // testing fl_rect() with positive size
-    fl_color(FL_RED);   fl_loop(a+10, b+10, a+40, b+10, a+40, b+40, a+10, b+40);
-    fl_color(FL_GREEN); fl_loop(a+ 9, b+ 9, a+41, b+ 9, a+41, b+41, a+ 9, b+41);
-    fl_color(FL_GREEN); fl_loop(a+11, b+11, a+39, b+11, a+39, b+39, a+11, b+39);
-    fl_color(FL_BLACK); fl_rect(a+10, b+10, 31, 31);
-    // testing fl_rect() with positive size
-    fl_color(FL_RED);   fl_loop(a+60, b+60, a+90, b+60, a+90, b+90, a+60, b+90);
-    fl_color(FL_GREEN); fl_loop(a+59, b+59, a+91, b+59, a+91, b+91, a+59, b+91);
-    fl_color(FL_BLACK); fl_rectf(a+60, b+60, 31, 31);
+  const char *label() {
+    return fLabel;
   }
-};
-void fl_rect_test() {
-  rect_test_ix = win->children();
-  Fl_Group *page = beginTestPage(
-    "testing the fl_rect call\n"
-    "No red pixels should be visible. "
-    "If you see bright red lines, or if parts of the green frames are hidden, "
-    "the rect drawing alignment is off. "
-  );
-  new RectTest(20, 140, 100, 100);
-  page->end();
-}
+  void create() {
+    fWidget = fCreate();
+    if (fWidget) fWidget->hide();
+  }
+  void show() {
+    if (fWidget) fWidget->show();
+  }
+  void hide() {
+    if (fWidget) fWidget->hide();
+  }
+  static int numTest() { return nTest; }
+  static UnitTest *test(int i) { return fTest[i]; }
+private:
+  char *fLabel;
+  Fl_Widget *(*fCreate)();
+  Fl_Widget *fWidget;
 
-//------- test the line drawing capabilities of this implementation ----------
-class ViewportTest : public Fl_Widget {
-  int pos;
-public: ViewportTest(int x, int y, int w, int h, int p) : Fl_Widget(x, y, w, h),
-  pos(p) {}
+  static void add(UnitTest *t) {
+    fTest[nTest] = t;
+    nTest++;
+  }
+  static int nTest;
+  static UnitTest *fTest[200];
+};
+
+int UnitTest::nTest = 0;
+UnitTest *UnitTest::fTest[];
+
+
+// The main window needs an additional drawing feature in order to support 
+// the viewport alignment test.
+class MainWindow : public Fl_Double_Window {
+public:
+  MainWindow(int w, int h, const char *l=0L) :
+    Fl_Double_Window(w, h, l),
+    fTestAlignment(0)
+  { }
+  // this code is used by the viewport alignment test
+  void drawAlignmentIndicators() {
+    const int sze = 16;
+    // top left corner
+    fl_color(FL_GREEN); fl_yxline(0, sze, 0, sze);
+    fl_color(FL_RED);   fl_yxline(-1, sze, -1, sze);
+    fl_color(FL_WHITE); fl_rectf(3, 3, sze-2, sze-2);
+    fl_color(FL_BLACK); fl_rect(3, 3, sze-2, sze-2);
+    // bottom left corner
+    fl_color(FL_GREEN); fl_yxline(0, h()-sze-1, h()-1, sze);
+    fl_color(FL_RED);   fl_yxline(-1, h()-sze-1, h(), sze);
+    fl_color(FL_WHITE); fl_rectf(3, h()-sze-1, sze-2, sze-2);
+    fl_color(FL_BLACK); fl_rect(3, h()-sze-1, sze-2, sze-2);
+    // bottom right corner
+    fl_color(FL_GREEN); fl_yxline(w()-1, h()-sze-1, h()-1, w()-sze-1);
+    fl_color(FL_RED);   fl_yxline(w(), h()-sze-1, h(), w()-sze-1);
+    fl_color(FL_WHITE); fl_rectf(w()-sze-1, h()-sze-1, sze-2, sze-2);
+    fl_color(FL_BLACK); fl_rect(w()-sze-1, h()-sze-1, sze-2, sze-2);
+    // top right corner
+    fl_color(FL_GREEN); fl_yxline(w()-1, sze, 0, w()-sze-1);
+    fl_color(FL_RED);   fl_yxline(w(), sze, -1, w()-sze-1);
+    fl_color(FL_WHITE); fl_rectf(w()-sze-1, 3, sze-2, sze-2);
+    fl_color(FL_BLACK); fl_rect(w()-sze-1, 3, sze-2, sze-2);
+  }
   void draw() {
-    if (pos&1) {
-      fl_color(FL_RED);   fl_yxline(x()+w(), y(), y()+h());
-      fl_color(FL_GREEN); fl_yxline(x()+w()-1, y(), y()+h());
-    } else {
-      fl_color(FL_RED);   fl_yxline(x()-1, y(), y()+h());
-      fl_color(FL_GREEN); fl_yxline(x(), y(), y()+h());
+    Fl_Double_Window::draw();
+    if (fTestAlignment) {
+      drawAlignmentIndicators();
     }
-    if (pos&2) {
-      fl_color(FL_RED);   fl_xyline(x(), y()+h(), x()+w());
-      fl_color(FL_GREEN); fl_xyline(x(), y()+h()-1, x()+w());
+  }
+  void testAlignment(int v) {
+    fTestAlignment = v;
+    redraw();
+  }
+  int fTestAlignment;
+};
+
+//------- include the various unit tests as inline code -------
+
+#include "unittest_about.cxx"
+#include "unittest_points.cxx"
+#include "unittest_lines.cxx"
+#include "unittest_rects.cxx"
+#include "unittest_viewport.cxx"
+#include "unittest_circles.cxx"
+#include "unittest_images.cxx"
+
+// callback whenever the browser value changes
+void Browser_CB(Fl_Widget*, void*) {
+  for ( int t=1; t<=browser->size(); t++ ) {
+    UnitTest *ti = (UnitTest*)browser->data(t);
+    if ( browser->selected(t) ) {
+      ti->show();
     } else {
-      fl_color(FL_RED);   fl_xyline(x(), y()-1, x()+w());
-      fl_color(FL_GREEN); fl_xyline(x(), y(), x()+w());
+      ti->hide();
     }
-    fl_color(FL_BLACK);
-    fl_loop(x()+3, y()+3, x()+w()-4, y()+3, x()+w()-4, y()+h()-4, x()+3, y()+h()-4);
   }
-};
-void fl_viewport_test() {
-  viewport_test_ix = win->children();
-  Fl_Group *page = beginTestPage(
-    "testing viewport alignment\n"
-    "Only green lines should be visible. "
-    "If red lines are visible in the corners of this window, "
-    "your viewport alignment and clipping is off. "
-    "If there is a space between the green lines and the window border, "
-    "the viewport is off, but some clipping may be working. "
-    "Also, your window size may be off to begin with."
-  );
-  new ViewportTest(0, 0, 20, 20, 0);
-  new ViewportTest(page->w()-20, 0, 20, 20, 1);
-  new ViewportTest(0, page->h()-20, 20, 20, 2);
-  new ViewportTest(page->w()-20,page->h()-20, 20, 20, 3);
-  page->end();
 }
 
-//------- test the circle drawing capabilities of this implementation ----------
-class CircleTest : public Fl_Widget {
-public: CircleTest(int x, int y, int w, int h) : Fl_Widget(x, y, w, h) {}
-  void draw() {
-    int a = x(), b = y(); fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
-    // test fl_arc for full circles
-    fl_color(FL_GREEN); fl_rect(a+ 9, b+ 9, 33, 33);
-    fl_color(FL_RED); fl_xyline(a+24, b+10, a+27); fl_xyline(a+24, b+40, a+27);
-    fl_yxline(a+10, b+24, b+27); fl_yxline(a+40, b+24, b+27);
-    fl_color(FL_BLACK); fl_arc(a+10, b+10, 31, 31, 0.0, 360.0);
-    // test fl_arc segmet 1
-    fl_color(FL_GREEN); fl_rect(a+54, b+ 4, 43, 43);
-    fl_rect(a+54, b+4, 18, 18); fl_rect(a+79, b+29, 18, 18);
-    fl_color(FL_RED); fl_point(a+55, b+30); fl_point(a+70, b+45);
-    fl_point(a+80, b+5); fl_point(a+95, b+20);
-    fl_color(FL_BLACK); fl_arc(a+65, b+ 5, 31, 31, -35.0, 125.0);
-    // test fl_arc segmet 2
-    fl_color(FL_BLACK); fl_arc(a+55, b+15, 31, 31, 145.0, 305.0);
-    // test fl_pie for full circles
-    fl_color(FL_RED); fl_xyline(a+24, b+60, a+27); fl_xyline(a+24, b+90, a+27);
-    fl_yxline(a+10, b+74, b+77); fl_yxline(a+40, b+74, b+77);
-    fl_color(FL_GREEN); fl_rect(a+ 9, b+59, 33, 33);
-    fl_color(FL_BLACK); fl_pie(a+10, b+60, 31, 31, 0.0, 360.0);
-    // test fl_pie segmet 1
-    fl_color(FL_GREEN); fl_rect(a+54, b+54, 43, 43);
-    fl_rect(a+54, b+54, 18, 18); fl_rect(a+79, b+79, 18, 18);
-    fl_point(a+79, b+71); fl_point(a+71, b+79);
-    fl_color(FL_RED); fl_point(a+55, b+80); fl_point(a+70, b+95);
-    fl_point(a+80, b+55); fl_point(a+95, b+70);
-    fl_point(a+81, b+69); fl_point(a+69, b+81);
-    fl_color(FL_BLACK); fl_pie(a+65, b+55, 31, 31, -30.0, 120.0);
-    // test fl_pie segmet 2
-    fl_color(FL_BLACK); fl_pie(a+55, b+65, 31, 31, 150.0, 300.0);
-    //---- oval testing (horizontal squish)
-    a = x()+120; b = y(); fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
-    fl_color(FL_GREEN); 
-    fl_rect(a+19, b+9, 63, 33); fl_rect(a+19, b+59, 63, 33);
-    fl_color(FL_BLACK); 
-    fl_arc(a+20, b+10, 61, 31, 0, 360); fl_pie(a+20, b+60, 61, 31, 0, 360);
-    //---- oval testing (horizontal squish)
-    a = x()+240; b = y(); fl_color(FL_BLACK); fl_rect(a, b, 100, 100);
-    fl_color(FL_GREEN); 
-    fl_rect(a+9, b+19, 33, 63); fl_rect(a+59, b+19, 33, 63);    
-    fl_color(FL_BLACK); 
-    fl_arc(a+10, b+20, 31, 61, 0, 360); fl_pie(a+60, b+20, 31, 61, 0, 360);
-  }
-};
-void fl_circle_test() {
-  circle_test_ix = win->children();
-  Fl_Group *page = beginTestPage(
-    "testing int drawing of circles and ovals (fl_arc, fl_pie)\n"
-    "No red lines should be visible. "
-    "If you see bright red pixels, the circle drawing alignment is off. "
-    "If you see dark red pixels, your syste supports anti-aliasing "
-    "which should be of no concern. "
-    "The green rectangles should not be touched by circle drawings."
-  );
-  new CircleTest(20, 140, 340, 100);
-  page->end();
-}
 
+// this is the main call. It creates the window and adds all previously
+// registered tests to the browser widget.
 int main(int argc, char **argv) {
-  win = new Fl_Window(600, 600, "Unit Tests for FLTK");
-  // --- list all tests
-  fl_point_test();
-  fl_line_test();
-  fl_rect_test();
-  fl_viewport_test();
-  fl_circle_test();
-  // --- last page is the menu
-  createMenuPage();
-  win->end();
-  win->show(argc, argv);
-  return Fl::run();
-}
+  Fl::args(argc,argv);
+  Fl::visual(FL_RGB);
+  mainwin = new MainWindow(MAINWIN_W, MAINWIN_H, "Fltk Unit Tests");
+  browser = new Fl_Hold_Browser(BROWSER_X, BROWSER_Y, BROWSER_W, BROWSER_H, "Unit Tests");
+  browser->align(FL_ALIGN_TOP|FL_ALIGN_LEFT);
+  browser->when(FL_WHEN_CHANGED);
+  browser->callback(Browser_CB);
 
+  int i, n = UnitTest::numTest();
+  for (i=0; i<n; i++) {
+    UnitTest *t = UnitTest::test(i);
+    mainwin->begin();
+    t->create();
+    mainwin->end();
+    browser->add(t->label(), (void*)t);
+  }
+
+  /////
+  mainwin->resizable(mainwin);
+  mainwin->show(argc,argv);
+  // Select first test in browser, and show that test.
+  browser->select(1);
+  Browser_CB(browser,0);
+  return(Fl::run());
+}
 
 //
 // End of "$Id$".
