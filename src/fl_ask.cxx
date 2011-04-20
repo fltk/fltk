@@ -99,6 +99,7 @@ static Fl_Window *makeform() {
   o->color(FL_WHITE);
   o->labelcolor(FL_BLUE);
  }
+ w->end(); // don't add the buttons automatically
  // create the buttons (right to left)
  for (int b=0, x=310; b<3; b++, x -= 100) {
    if (b==1)
@@ -109,6 +110,10 @@ static Fl_Window *makeform() {
    button[b]->callback(button_cb,(void *)b);
  }
  button[0]->shortcut(FL_Escape);
+ // add the buttons (left to right)
+ for (int b=2; b>=0; b--)
+   w->add(button[b]);
+ w->begin();
  w->resizable(new Fl_Box(60,10,110-60,27));
  w->end();
  w->set_modal();
