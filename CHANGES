@@ -146,6 +146,7 @@ CHANGES IN FLTK 1.3.0
 
 	  Bug Fixes
 
+	- Fixed alpha blending under X11 when line data size != 0 (STR #2606)
 	- Fixed Fl_Tabs selection border drawing, if tabs are at the bottom
 	  of the widget (STR #2480)
 	- Fixed Compiling with mingw-w64 (STR #2308).
