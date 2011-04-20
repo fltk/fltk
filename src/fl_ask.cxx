@@ -81,6 +81,8 @@ static Fl_Window *makeform() {
   o->color(FL_WHITE);
   o->labelcolor(FL_BLUE);
  }
+ w->end(); // don't add the buttons automatically
+ // create the buttons (right to left)
  button[0] = new Fl_Button(310, 70, 90, 23);
  button[0]->shortcut(FL_Escape);
  button[0]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
@@ -88,6 +90,10 @@ static Fl_Window *makeform() {
  button[1]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
  button[2] = new Fl_Button(110, 70, 90, 23);
  button[2]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
+ // add the buttons (left to right)
+ for (int b=2; b>=0; b--)
+   w->add(button[b]);
+ w->begin();
  w->resizable(new Fl_Box(60,10,110-60,27));
  w->end();
  w->set_modal();
