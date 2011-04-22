@@ -64,6 +64,9 @@ int Fl::compose(int& del) {
      Fl::e_keysym == FL_Tab || Fl::e_keysym == FL_Escape || Fl::e_state&(FL_META | FL_CTRL) ) {
     return 0;
   }
+#elif defined(WIN32)
+  unsigned char ascii = (unsigned)e_text[0];
+  if ((e_state & (FL_ALT | FL_META)) && !(ascii & 128)) return 0;
 #else
   unsigned char ascii = (unsigned)e_text[0];
   if ((e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128)) return 0;
