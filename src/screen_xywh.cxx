@@ -118,10 +118,25 @@ static void screen_init() {
 }
 #elif defined(__APPLE__)
 static XRectangle screens[16];
-static float dpi[16];
+static float dpi_h[16];
+static float dpi_v[16];
 
 static void screen_init() {
-  num_screens = Fl_X::screen_init(screens, dpi);
+  CGDirectDisplayID displays[16];
+  CGDisplayCount count, i;
+  CGRect r;
+  CGGetActiveDisplayList(16, displays, &count);
+  for( i = 0; i < count; i++) {
+    r = CGDisplayBounds(displays[i]);
+    screens[i].x      = int(r.origin.x);
+    screens[i].y      = int(r.size.height - (r.origin.y + r.size.height));
+    screens[i].width  = int(r.size.width);
+    screens[i].height = int(r.size.height);
+    CGSize s = CGDisplayScreenSize(displays[i]);
+    dpi_h[i] = screens[i].width / (s.width/25.4);
+    dpi_v[i] = screens[i].height / (s.height/25.4);
+  }
+  num_screens = count;
 }
 #elif HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
@@ -338,7 +353,8 @@ void Fl::screen_dpi(float &h, float &v, int n)
   }
 #elif defined(__APPLE__)
   if (n >= 0 && n < num_screens) {
-    h = v = dpi[n];
+    h = dpi_h[n];
+    v = dpi_v[n];
   }
 #elif HAVE_XINERAMA
   if (n >= 0 && n < num_screens) {
