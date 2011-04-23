@@ -3,7 +3,7 @@
 //
 // Shortcut support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -34,7 +34,7 @@
 // To make it easier to match some things it is more complex:
 //
 // Only FL_META, FL_ALT, FL_SHIFT, and FL_CTRL must be "off".  A
-// zero in the other shift flags indicates "dont care".
+// zero in the other shift flags indicates "don't care".
 //
 // It also checks against the first character of Fl::event_text(),
 // and zero for FL_SHIFT means "don't care".
@@ -52,13 +52,12 @@
 #endif
 
 /**
-    Test the current event, which must be an FL_KEYBOARD or 
-    FL_SHORTCUT, against a shortcut value (described in 
-    Fl_Button).
-    
-    Not to be confused with Fl_Widget::test_shortcut().
-    
-    \return non-zero if there is a match.
+  Tests the current event, which must be an FL_KEYBOARD or
+  FL_SHORTCUT, against a shortcut value (described in Fl_Button).
+
+  Not to be confused with Fl_Widget::test_shortcut().
+
+  \return non-zero if there is a match.
 */
 int Fl::test_shortcut(unsigned int shortcut) {
   if (!shortcut) return 0;
@@ -129,7 +128,7 @@ static Keyname table[] = {
 };
 #elif defined(__APPLE__) 
 static Keyname table[] = {
-                                 // v - this column contains utf8 characters
+                                 // v - this column contains UTF-8 characters
   {' ', "Space"},
   {FL_BackSpace,"\xe2\x8c\xab"}, // erase to the left
   {FL_Tab,	"\xe2\x87\xa5"}, // rightwards arrow to bar
@@ -144,7 +143,7 @@ static Keyname table[] = {
   {FL_Right,	"\xe2\x86\x92"}, // rightwards arrow
   {FL_Down,	"\xe2\x86\x93"}, // downwards arrow
   {FL_Page_Up,	"\xe2\x87\x9e"}, // upwards arrow with double stroke
-  {FL_Page_Down,"\xe2\x87\x9f"}, // downward arrow with double stroke
+  {FL_Page_Down,"\xe2\x87\x9f"}, // downwards arrow with double stroke
   {FL_End,	"\xe2\x86\x98"}, // south east arrow
   {FL_Print,	"Print"},
   {FL_Insert,	"Insert"},
@@ -173,7 +172,7 @@ static Keyname table[] = {
   zero then an empty string is returned. The return value points at
   a static buffer that is overwritten with each call.
 
-  \param [in] shortcut the integer value containing the ascii charcter or extended keystroke plus modifiers
+  \param [in] shortcut the integer value containing the ascii character or extended keystroke plus modifiers
   \return a pointer to a static buffer containing human readable text for the shortcut
   */
 const char* fl_shortcut_label(unsigned int shortcut) {
@@ -183,7 +182,7 @@ const char* fl_shortcut_label(unsigned int shortcut) {
 /** 
   Get a human-readable string from a shortcut value.
 
-  \param [in] shortcut the integer value containing the ascii charcter or extended keystroke plus modifiers
+  \param [in] shortcut the integer value containing the ascii character or extended keystroke plus modifiers
   \param [in] eom if this pointer is set, it will receive a pointer to the end of the modifier text
   \return a pointer to a static buffer containing human readable text for the shortcut
   \see fl_shortcut_label(unsigned int shortcut)
@@ -298,7 +297,7 @@ unsigned int fl_old_shortcut(const char* s) {
 
   The given text \p t (usually a widget's label or a menu text) is
   searched for a '&x' shortcut label, and if found, the Unicode
-  value of the '&x' shortcut is returned.
+  value (code point) of the '&x' shortcut is returned.
 
   \param t text or label to search for '&x' shortcut.
 

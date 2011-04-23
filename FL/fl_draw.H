@@ -3,7 +3,7 @@
 //
 // Portable drawing function header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -62,7 +62,7 @@ inline void	fl_color(Fl_Color c) {fl_graphics_driver->color(c); } // select inde
 /** for back compatibility - use fl_color(Fl_Color c) instead */
 inline void fl_color(int c) {fl_color((Fl_Color)c);}
 /**
- Set the color for all subsequent drawing operations.
+ Sets the color for all subsequent drawing operations.
  The closest possible match to the RGB color is used.
  The RGB color is used directly on TrueColor displays.
  For colormap visuals the nearest index in the gray
@@ -89,7 +89,14 @@ inline Fl_Color fl_color() {return fl_graphics_driver->color();}
  \param[in] x,y,w,h position and size
  */
 inline void fl_push_clip(int x, int y, int w, int h) {fl_graphics_driver->push_clip(x,y,w,h); }
-/** The fl_clip() name is deprecated and will be removed from future releases */
+/**
+ Intersects the current clip region with a rectangle and pushes this
+ new region onto the stack (deprecated).
+ \param[in] x,y,w,h position and size
+ \deprecated
+   fl_clip(int, int, int, int) is deprecated and will be removed from future releases.
+   Please use fl_push_clip(int x, int y, int w, int h) instead.
+ */
 #define fl_clip fl_push_clip
 /**
  Pushes an empty clip region onto the stack so nothing will be clipped.
@@ -120,12 +127,9 @@ inline int fl_not_clipped(int x, int y, int w, int h) {return fl_graphics_driver
  
  Returns non-zero if the resulting rectangle is different to the original.
  This can be used to limit the necessary drawing to a rectangle.
- \p W and \p H are set to zero if the rectangle is completely outside
- the region.
+ \p W and \p H are set to zero if the rectangle is completely outside the region.
  \param[in] x,y,w,h position and size of rectangle
  \param[out] X,Y,W,H position and size of resulting bounding box.
- \p W and \p H are set to zero if the rectangle is
- completely outside the region.
  \returns Non-zero if the resulting rectangle is different to the original.
  */
 inline int fl_clip_box(int x , int y, int w, int h, int& X, int& Y, int& W, int& H) 
@@ -140,10 +144,10 @@ inline void fl_restore_clip() { fl_graphics_driver->restore_clip(); };
  */
 inline void fl_clip_region(Fl_Region r) { fl_graphics_driver->clip_region(r); };
 /**
- returns the current clipping region.
+ Returns the current clipping region.
  */
 inline Fl_Region fl_clip_region() { return fl_graphics_driver->clip_region(); };
-  
+
 
 // points:
 /**
@@ -209,11 +213,11 @@ inline void fl_rect(int x, int y, int w, int h) { fl_graphics_driver->rect(x,y,w
 inline void fl_rect(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rect(x,y,w,h);}
 /** Colors with current color a rectangle that exactly fills the given bounding box */
 inline void fl_rectf(int x, int y, int w, int h) { fl_graphics_driver->rectf(x,y,w,h); }
-/** Colors with passsed color a rectangle that exactly fills the given bounding box */
+/** Colors with passed color a rectangle that exactly fills the given bounding box */
 inline void fl_rectf(int x, int y, int w, int h, Fl_Color c) {fl_color(c); fl_rectf(x,y,w,h);}
 
 /**
-  Color a rectangle with "exactly" the passed <tt>r,g,b</tt> color.
+  Colors a rectangle with "exactly" the passed <tt>r,g,b</tt> color.
   On screens with less than 24 bits of color this is done by drawing a
   solid-colored block using fl_draw_image() so that the correct color
   shade is produced.
@@ -293,7 +297,7 @@ inline void fl_yxline(int x, int y, int y1, int x2, int y3) {fl_graphics_driver-
  much nicer small circles, since the small sizes are often hard-coded bitmaps.
  
  If a complete circle is drawn it will fit inside the passed bounding box.
- The two angles are measured in degrees counterclockwise from 3 o'clock and
+ The two angles are measured in degrees counter-clockwise from 3 o'clock and
  are the starting and ending angle of the arc, \p a2 must be greater or equal
  to \p a1.
  
@@ -326,7 +330,7 @@ FL_EXPORT void fl_chord(int x, int y, int w, int h, double a1, double a2); // ny
 // scalable drawing code (code in fl_vertex.C and fl_arc.C):
 /**
  Saves the current transformation matrix on the stack. 
- The maximum depth of the stack is 4.
+ The maximum depth of the stack is 32.
  */
 inline void fl_push_matrix() { fl_graphics_driver->push_matrix(); };
 /**
@@ -383,7 +387,7 @@ inline void fl_begin_polygon() {fl_graphics_driver->begin_polygon(); }
  */
 inline void fl_vertex(double x, double y) {fl_graphics_driver->vertex(x,y); }
 /**
- Add a series of points on a Bezier curve to the path.
+ Adds a series of points on a Bezier curve to the path.
  The curve ends (and two of the points) are at X0,Y0 and X3,Y3.
  \param[in] X0,Y0 curve start point
  \param[in] X1,Y1 curve control point
@@ -393,8 +397,8 @@ inline void fl_vertex(double x, double y) {fl_graphics_driver->vertex(x,y); }
 inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, double Y2, double X3, double Y3)
   {fl_graphics_driver->curve(X0,Y0,X1,Y1,X2,Y2,X3,Y3); }
 /**
- Add a series of points to the current path on the arc of a circle; you
- can get elliptical paths by using scale and rotate before calling fl_arc().
+ Adds a series of points to the current path on the arc of a circle.
+ You can get elliptical paths by using scale and rotate before calling fl_arc().
  \param[in] x,y,r center and radius of circular arc
  \param[in] start,end angles of start and end of arc measured in degrees
  counter-clockwise from 3 o'clock. If \p end is less than \p start
@@ -458,7 +462,7 @@ inline void fl_end_complex_polygon() {fl_graphics_driver->end_complex_polygon();
  */
 inline double fl_transform_x(double x, double y) {return fl_graphics_driver->transform_x(x, y); };
 /**
- Transform coordinate using the current transformation matrix.
+ Transforms coordinate using the current transformation matrix.
  \param[in] x,y coordinate
  */
 inline double fl_transform_y(double x, double y) {return fl_graphics_driver->transform_y(x, y); };
@@ -518,24 +522,24 @@ FL_EXPORT int fl_height(int font, int size);
   draw the text at so it looks centered vertically in that box.
 */
 inline int  fl_descent() {return fl_graphics_driver->descent();}
-/** Return the typographical width of a nul-terminated string */
+/** Returns the typographical width of a nul-terminated string */
 FL_EXPORT double fl_width(const char* txt);
-/** Return the typographical width of a sequence of \p n characters */
+/** Returns the typographical width of a sequence of \p n characters */
 inline double fl_width(const char* txt, int n) {return fl_graphics_driver->width(txt, n);}
-/** Return the typographical width of a single character :
+/** Returns the typographical width of a single character.
     \note if a valid fl_gc is NOT found then it uses the first window gc,
     or the screen gc if no fltk window is available when called. */
 inline double fl_width(unsigned int c)  {return fl_graphics_driver->width(c);}
-/** Determine the minimum pixel dimensions of a nul-terminated string.
+/** Determines the minimum pixel dimensions of a nul-terminated string.
 
-Usage: given a string "txt" drawn using fl_draw(txt, x, y) you would determine
-its pixel extents on the display using fl_text_extents(txt, dx, dy, wo, ho)
-such that a bounding box that exactly fits around the text could be drawn with
-fl_rect(x+dx, y+dy, wo, ho). Note the dx, dy values hold the offset of the first
-"colored in" pixel of the string, from the draw origin.
+  Usage: given a string "txt" drawn using fl_draw(txt, x, y) you would determine
+  its pixel extents on the display using fl_text_extents(txt, dx, dy, wo, ho)
+  such that a bounding box that exactly fits around the text could be drawn with
+  fl_rect(x+dx, y+dy, wo, ho). Note the dx, dy values hold the offset of the first
+  "colored in" pixel of the string, from the draw origin.
 */
 FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); // NO fltk symbol expansion will be performed
-/** Determine the minimum pixel dimensions of a sequence of \p n characters.
+/** Determines the minimum pixel dimensions of a sequence of \p n characters.
 \see fl_text_extents(const char*, int& dx, int& dy, int& w, int& h)
 */
 inline void fl_text_extents(const char *t, int n, int& dx, int& dy, int& w, int& h)
@@ -544,28 +548,28 @@ inline void fl_text_extents(const char *t, int n, int& dx, int& dy, int& w, int&
 // font encoding:
 // Note: doxygen comments here to avoid duplication for os-sepecific cases
 /**
-  convert text from Windows/X11 latin1 charcter set to local encoding.
+  Converts text from Windows/X11 latin1 character set to local encoding.
   \param[in] t character string (latin1 encoding)
   \param[in] n optional number of characters to convert (default is all)
   \returns pointer to internal buffer containing converted characters
   */
 FL_EXPORT const char *fl_latin1_to_local(const char *t, int n=-1);
 /**
-  convert text from local encoding to Windowx/X11 latin1 character set.
+  Converts text from local encoding to Windowx/X11 latin1 character set.
   \param[in] t character string (local encoding)
   \param[in] n optional number of characters to convert (default is all)
   \returns pointer to internal buffer containing converted characters
   */
 FL_EXPORT const char *fl_local_to_latin1(const char *t, int n=-1);
 /**
-  convert text from Mac Roman charcter set to local encoding.
+  Converts text from Mac Roman character set to local encoding.
   \param[in] t character string (Mac Roman encoding)
   \param[in] n optional number of characters to convert (default is all)
   \returns pointer to internal buffer containing converted characters
   */
 FL_EXPORT const char *fl_mac_roman_to_local(const char *t, int n=-1);
 /**
-  convert text from local encoding to Mac Roman character set.
+  Converts text from local encoding to Mac Roman character set.
   \param[in] t character string (local encoding)
   \param[in] n optional number of characters to convert (default is all)
   \returns pointer to internal buffer containing converted characters
@@ -588,7 +592,7 @@ FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
 FL_EXPORT void fl_draw(const char* str, int x, int y);
 /**
   Draws a nul-terminated string starting at the given location and 
-  rotating \p angle degrees counterclockwise.
+  rotating \p angle degrees counter-clockwise.
   This version of fl_draw provides direct access to the text drawing
   function of the underlying OS and is supported by Xft, Win32 and MacOS
   fltk subsets.
@@ -600,7 +604,7 @@ FL_EXPORT void fl_draw(int angle, const char* str, int x, int y);
 inline void fl_draw(const char* str, int n, int x, int y) {fl_graphics_driver->draw(str,n,x,y); }
 /**
   Draws an array of \p n characters starting at the given location,
-  rotating \p angle degrees counterclockwise.
+  rotating \p angle degrees counter-clockwise.
 */
 inline void fl_draw(int angle,const char* str, int n, int x, int y) {fl_graphics_driver->draw(angle,str,n,x,y); }
 /**
@@ -625,13 +629,14 @@ FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
 // images:
 
 /**
-  Draw an 8-bit per color RGB or luminance image.
+  Draws an 8-bit per color RGB or luminance image.
   \param[in] buf points at the "r" data of the top-left pixel.
                  Color data must be in <tt>r,g,b</tt> order.
+		 Luminance data is only one <tt>gray</tt> byte.
   \param[in] X,Y position where to put top-left corner of image
   \param[in] W,H size of the image
-  \param[in] D   delta to add to the pointer between pixels. it may be
-                 any value greater than or equal to 3, or it can be
+  \param[in] D   delta to add to the pointer between pixels. It may be
+                 any value greater than or equal to 1, or it can be
 		 negative to flip the image horizontally
   \param[in] L   delta to add to the pointer between lines (if 0 is
                  passed it uses \p W * \p D), and may be larger than
@@ -644,6 +649,7 @@ FL_EXPORT void fl_draw_box(Fl_Boxtype, int x, int y, int w, int h, Fl_Color);
   \code
   Fl::visual(FL_RGB);
   \endcode
+
   Gray scale (1-channel) images may be drawn. This is done if
   <tt>abs(D)</tt> is less than 3, or by calling fl_draw_image_mono().
   Only one 8-bit sample is used for each pixel, and on screens with
@@ -661,28 +667,29 @@ inline void fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, in
   { fl_graphics_driver->draw_image(buf, X, Y, W, H, D, L); }
 
 /**
-  Draw a gray-scale (1 channel) image.
+  Draws a gray-scale (1 channel) image.
   \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
   */
 inline void fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0)
   { fl_graphics_driver->draw_image_mono(buf, X, Y, W, H, D, L); }
 
 /**
-  Draw image using callback function to generate image data.
+  Draws an image using a callback function to generate image data.
+
   You can generate the image as it is being drawn, or do arbitrary
   decompression of stored data, provided it can be decompressed to
   individual scan lines easily.
   \param[in] cb   callback function to generate scan line data
   \param[in] data user data passed to callback function
-  \param[in] X,Y
-  \param[in] W,H
-  \param[in] D
+  \param[in] X,Y  screen position of top left pixel
+  \param[in] W,H  image width and height
+  \param[in] D    data size in bytes (must be greater than 0)
   \see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L)
 
   The callback function \p cb is called with the <tt>void*</tt> \p data
   user data pointer to allow access to a structure of information about
   the image, and the \p x, \p y, and \p w of the scan line desired from
-  the image. 0,0 is the upper-left corner of the image, not \p X, \p Y.
+  the image. 0,0 is the upper-left corner of the image, not \p x, \p y.
   A pointer to a buffer to put the data into is passed. You must copy
   \p w pixels from scanline \p y, starting at pixel \p x, to this buffer.
 
@@ -703,7 +710,7 @@ inline void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int
   { fl_graphics_driver->draw_image(cb, data, X, Y, W, H, D); }
 
 /**
-  Draw gray-scale image using callback function to generate image data.
+  Draws a gray-scale image using a callback function to generate image data.
   \see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D)
   */
 FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
@@ -717,11 +724,11 @@ FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,i
 FL_EXPORT char fl_can_do_alpha_blending();
 
 /**
-  Read an RGB(A) image from the current window or off-screen buffer.
+  Reads an RGB(A) image from the current window or off-screen buffer.
   \param[in] p     pixel buffer, or NULL to allocate one
   \param[in] X,Y   position of top-left of image to read
   \param[in] W,H   width and height of image to read
-  \param[in] alpha alpha value for image (0 fr none)
+  \param[in] alpha alpha value for image (0 for none)
   \returns pointer to pixel buffer, or NULL if allocation failed.
 
   The \p p argument points to a buffer that can hold the image and must

@@ -420,7 +420,7 @@ small sizes are often hard-coded bitmaps.
 
 \par
 If a complete circle is drawn it will fit inside the passed bounding
-box. The two angles are measured in degrees counterclockwise from
+box. The two angles are measured in degrees counter-clockwise from
 3'oclock and are the starting and ending angle of the arc, \p a2
 must be greater or equal to \p a1.
 

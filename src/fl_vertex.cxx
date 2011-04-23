@@ -3,7 +3,7 @@
 //
 // Portable drawing routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -270,8 +270,8 @@ void Fl_Graphics_Driver::circle(double x, double y,double r) {
   } else
     Arc(fl_gc, llx, lly, llx+w, lly+h, 0,0, 0,0); 
 #elif defined(__APPLE_QUARTZ__)
-  // Quartz warning : circle won't scale to current matrix!
-//last argument must be 0 (counterclockwise) or it draws nothing under __LP64__ !!!!
+  // Quartz warning: circle won't scale to current matrix!
+  // Last argument must be 0 (counter-clockwise) or it draws nothing under __LP64__ !!!!
   CGContextSetShouldAntialias(fl_gc, true);
   CGContextAddArc(fl_gc, xt, yt, (w+h)*0.25f, 0, 2.0f*M_PI, 0);
   (what == POLYGON ? CGContextFillPath : CGContextStrokePath)(fl_gc);
