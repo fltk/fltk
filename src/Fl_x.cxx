@@ -1946,7 +1946,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   XQueryTree(fl_display, fl_window, &root, &parent, &children, &n); if (n) XFree(children);
   XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &bx, &bt, &child_win);
   fl_window = parent;
-  uchar *top_image, *left_image, *right_image, *bottom_image;
+  uchar *top_image = 0, *left_image = 0, *right_image = 0, *bottom_image = 0;
   top_image = fl_read_image(NULL, 0, 0, - (win->w() + 2 * bx), bt);
   if (bx) {
     left_image = fl_read_image(NULL, 0, bt, -bx, win->h() + bx);
