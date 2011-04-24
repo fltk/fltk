@@ -3,7 +3,7 @@
 //
 // PostScript device support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -867,7 +867,7 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
     linedash_[0]=0;
   char width0 = 0;
   if(!width){
-    width=1; //for screen drawing compatability
+    width=1; //for screen drawing compatibility
     width0=1;
   }
   

@@ -3,7 +3,7 @@
 //
 // X specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -1253,7 +1253,7 @@ int fl_handle(const XEvent& thisevent)
           len = fl_utf8encode(XKeysymToUcs(keysym), buffer);
           if (len < 1) len = 1;
           // ignore all effects of shift on the keysyms, which makes it a lot
-          // easier to program shortcuts and is Windoze-compatable:
+          // easier to program shortcuts and is Windoze-compatible:
           keysym = XKeycodeToKeysym(fl_display, keycode, 0);
         }
       }

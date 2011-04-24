@@ -3,7 +3,7 @@
 //
 // OpenGL header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // You must include this instead of GL/gl.h to get the Microsoft
 // APIENTRY stuff included (from <windows.h>) prior to the OpenGL
@@ -73,7 +73,7 @@ FL_EXPORT void gl_start();
 FL_EXPORT void gl_finish();
 
 FL_EXPORT void gl_color(Fl_Color i);
-/** back compatability */
+/** back compatibility */
 inline void gl_color(int c) {gl_color((Fl_Color)c);}
 
 FL_EXPORT void gl_rect(int x,int y,int w,int h);

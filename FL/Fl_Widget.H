@@ -162,7 +162,7 @@ protected:
   */
   enum {
         INACTIVE        = 1<<0,   ///< the widget can't receive focus, and is disabled but potentially visible
-        INVISIBLE       = 1<<1,   ///< the widget is not drawn but can receive events
+        INVISIBLE       = 1<<1,   ///< the widget is not drawn, but can receive a few special events
         OUTPUT          = 1<<2,   ///< for output only
         NOBORDER        = 1<<3,   ///< don't draw a decoration (Fl_Window)
         FORCE_POSITION  = 1<<4,   ///< don't let the window manager position the window (Fl_Window)
@@ -660,14 +660,17 @@ public:
   int visible_r() const;
 
   /** Makes a widget visible.
-      An invisible widget never gets redrawn and does not get events.  
-      The visible() method returns true if the widget is set to be  
-      visible. The visible_r() method returns true if the widget and 
-      all of its parents are visible. A widget is only visible if 
-      visible() is true on it <I>and all of its parents</I>. 
 
-      Changing it will send FL_SHOW or FL_HIDE events to 
-      the widget. <I>Do not change it if the parent is not visible, as this 
+      An invisible widget never gets redrawn and does not get keyboard
+      or mouse events, but can receive a few other events like FL_SHOW.
+
+      The visible() method returns true if the widget is set to be
+      visible. The visible_r() method returns true if the widget and
+      all of its parents are visible. A widget is only visible if
+      visible() is true on it <I>and all of its parents</I>.
+
+      Changing it will send FL_SHOW or FL_HIDE events to the widget.
+      <I>Do not change it if the parent is not visible, as this
       will send false FL_SHOW or FL_HIDE events to the widget</I>.
       redraw() is called if necessary on this or the parent.
 
@@ -720,7 +723,7 @@ public:
 
       Changing this value will send FL_DEACTIVATE to the widget if 
       active_r() is true.
-    
+
       Currently you cannot deactivate Fl_Window widgets.
 
       \see activate(), active(), active_r()
@@ -748,10 +751,10 @@ public:
   void clear_output() {flags_ &= ~OUTPUT;}
 
   /** Returns if the widget is able to take events.
-      This is the same as (active() && !output()
-      && visible()) but is faster.
+      This is the same as (active() && !output() && visible())
+      but is faster.
       \retval 0 if the widget takes no events
-   */ 
+   */
   unsigned int takesevents() const {return !(flags_&(INACTIVE|INVISIBLE|OUTPUT));}
 
   /** 

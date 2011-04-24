@@ -1561,7 +1561,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     w->redraw(); // force draw to happen
   }
   // If we've captured the mouse, we dont want to activate any
-  // other windows from the code, or we loose the capture.
+  // other windows from the code, or we lose the capture.
   ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
 	     (Fl::grab() || (style & WS_POPUP)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
 
