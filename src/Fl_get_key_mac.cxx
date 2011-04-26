@@ -35,7 +35,7 @@
 
 // convert an FLTK (X) keysym to a MacOS symbol:
 // See also the inverse converter in table macKeyLookUp of Fl_cocoa.mm
-// This table is in numeric order by FLTK symbol order for binary search:
+// This table is in numeric order by FLTK symbol order for binary search.
 // The list of Mac OS virtual keycodes appears with OS 10.5 in
 // ...../Carbon.framework/Frameworks/HIToolbox.framework/Headers/Events.h
 
@@ -51,11 +51,11 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   { 12, 'Q' }, { 15, 'R'  }, {  1, 'S'  }, { 17, 'T'  }, 
   { 32, 'U' }, {  9, 'V'  }, { 13, 'W'  }, {  7, 'X'  }, 
   { 16, 'Y' }, {  6, 'Z'  }, 
-  { 33, '[' }, { 30, ']' }, { 50, '`' },  { 42, '|' },
-  { 51, FL_BackSpace }, { 48, FL_Tab }, { 36, FL_Enter }, { 127, FL_Pause },
-  { 107, FL_Scroll_Lock }, { 53, FL_Escape }, { 0x73, FL_Home }, { 123, FL_Left },
+  { 33, '[' }, { 30, ']' }, { 50, '`' },  { 42, '\\' },
+  { 51, FL_BackSpace }, { 48, FL_Tab }, { 36, FL_Enter }, { 0x7F, FL_Pause },
+  { 0x7F, FL_Scroll_Lock }, { 53, FL_Escape }, { 0x73, FL_Home }, { 123, FL_Left },
   { 126, FL_Up }, { 124, FL_Right }, { 125, FL_Down }, { 0x74, FL_Page_Up },
-  { 0x79, FL_Page_Down },  { 119, FL_End }, { 0x71, FL_Print }, { 127, FL_Insert },
+  { 0x79, FL_Page_Down },  { 119, FL_End }, { 0x7F, FL_Print }, { 0x7F, FL_Insert },
   { 0x6e, FL_Menu }, { 114, FL_Help }, { 0x47, FL_Num_Lock },
   { 76, FL_KP_Enter }, { 67, FL_KP+'*' }, { 69, FL_KP+'+'}, { 78, FL_KP+'-' }, { 65, FL_KP+'.' }, { 75, FL_KP+'/' }, 
   { 82, FL_KP+'0' }, { 83, FL_KP+'1' }, { 84, FL_KP+'2' }, { 85, FL_KP+'3' }, 
@@ -64,6 +64,7 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   { 0x7a, FL_F+1 }, { 0x78, FL_F+2  }, { 0x63, FL_F+3  }, { 0x76, FL_F+4  }, 
   { 0x60, FL_F+5 }, { 0x61, FL_F+6  }, { 0x62, FL_F+7  }, { 0x64, FL_F+8  }, 
   { 0x65, FL_F+9 }, { 0x6D, FL_F+10 }, { 0x67, FL_F+11 }, { 0x6f, FL_F+12 }, 
+  { 0x69, FL_F+13 }, { 0x6B, FL_F+14 }, { 0x71, FL_F+15 }, { 0x6A, FL_F+16 }, 
   { 0x38, FL_Shift_L }, { 0x3C, FL_Shift_R }, { 0x3B, FL_Control_L }, { 0x3E, FL_Control_R }, 
   { 0x39, FL_Caps_Lock }, { 0x37, FL_Meta_L }, { 0x36, FL_Meta_R },
   { 0x3A, FL_Alt_L }, { 0x3D, FL_Alt_R }, { 0x75, FL_Delete },
