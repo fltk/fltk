@@ -29,7 +29,6 @@
 #include <FL/x.H>
 
 #ifndef FL_DOXYGEN
-// at present, this is effectively used by Mac OS X only
 int Fl::compose_state = 0;
 #endif
 
@@ -74,8 +73,8 @@ int Fl::compose(int& del) {
   if(Fl::compose_state) {
     del = Fl::compose_state;
     Fl::compose_state = 0;
-  } else {
 #ifndef __APPLE__
+  } else {
     // Only insert non-control characters:
     if (! (ascii & ~31 && ascii!=127)) { return 0; }
 #endif
