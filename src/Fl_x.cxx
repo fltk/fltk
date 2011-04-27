@@ -51,6 +51,7 @@
 #  include <X11/Xmd.h>
 #  include <X11/Xlocale.h>
 #  include <X11/Xlib.h>
+#  include <X11/keysym.h>
 
 static Fl_Xlib_Graphics_Driver fl_xlib_driver;
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
