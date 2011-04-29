@@ -179,7 +179,6 @@ static unsigned short macKeyLookUp[128] =
 static unsigned int mods_to_e_state( NSUInteger mods )
 {
   long state = 0;
-  if ( mods & NSNumericPadKeyMask ) state |= FL_NUM_LOCK;
   if ( mods & NSCommandKeyMask ) state |= FL_META;
   if ( mods & NSAlternateKeyMask ) state |= FL_ALT;
   if ( mods & NSControlKeyMask ) state |= FL_CTRL;
