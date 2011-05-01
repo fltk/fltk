@@ -82,6 +82,10 @@ extern float fl_quartz_line_width_;
   
   In this example case, no clipping would be done, because X can
   handle it and clip unneeded pixels.
+  
+  Note that we must also take care of the case where fl_line_width_
+  is zero (maybe unitialized). If this is the case, we assume a line
+  width of 1.
 
   Todo: Arbitrary line drawings (e.g. polygons) and clip regions
   are not yet done.
@@ -120,8 +124,9 @@ extern float fl_quartz_line_width_;
 
 static int clip_to_short(int &x, int &y, int &w, int &h) {
 
-  int kmin = -fl_line_width_;
-  int kmax = SHRT_MAX - fl_line_width_;
+  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
+  int kmin = -lw;
+  int kmax = SHRT_MAX - lw;
 
   if (w <= 0 || h <= 0) return 1;		// (a)
   if (x+w < kmin || y+h < kmin) return 1;	// (b)
@@ -145,8 +150,9 @@ static int clip_to_short(int &x, int &y, int &w, int &h) {
 */
 static int clip_x (int x) {
 
-  int kmin = -fl_line_width_;
-  int kmax = SHRT_MAX - fl_line_width_;
+  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
+  int kmin = -lw;
+  int kmax = SHRT_MAX - lw;
 
   if (x < kmin)
     x = kmin;
