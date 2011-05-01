@@ -75,6 +75,10 @@ static Fl_Font extra_font;
 static int font_count = 0;
 static int first_free = 0;
 
+static void cb_exit(Fl_Button*, void*) {
+  if(fnt_chooser_win) fnt_chooser_win->hide();
+  if(main_win) main_win->hide();
+} /* cb_exit */
 
 /*
  Class for displaying sample fonts.
@@ -410,6 +414,7 @@ static void create_font_widget()
     }
     fnt_chooser_win->resizable(tile);
     fnt_chooser_win->end();
+	fnt_chooser_win->callback((Fl_Callback*)cb_exit);
   }
 }
 
@@ -602,17 +607,20 @@ int main(int argc, char** argv)
   Fl_Scroll scroll(200,0,5 * 75,400);
   
   int off = 2;
+  int end_list = 0x10000 / 16;
   if (argc > 1) {
     off = (int)strtoul(argv[1], NULL, 0);
+    end_list = off + 0x10000;
     off /= 16;
+    end_list /= 16;
   }
   argc = 1;
-  for (long y=off; y< 0x10000 / 16; y++) {
+  for (long y = off; y < end_list; y++) {
     int o = 0;
-    char bu[25];
-    char buf[16*6];
+    char bu[25]; // index label
+    char buf[16 * 6]; // utf8 text
     int i = 16 * y;
-    for (int x=0; x<16; x++) {
+    for (int x = 0; x < 16; x++) {
       int l;
       l = fl_utf8encode(i, buf + o);
       if (l < 1) l = 1;
@@ -620,15 +628,16 @@ int main(int argc, char** argv)
       i++;
     }
     buf[o] = '\0';
-    sprintf(bu, "0x%04lX", y * 16);
-    Fl_Input* b = new Fl_Input(200,(y-off)*25,60,25);
+    sprintf(bu, "0x%06lX", y * 16);
+    Fl_Input *b = new Fl_Input(200,(y-off)*25,80,25);
+    b->textfont(FL_COURIER);
     b->value(strdup(bu));
-    b = new Fl_Input(260,(y-off)*25,400,25);
+    b = new Fl_Input(280,(y-off)*25,380,25);
     b->textfont(extra_font);
     b->value(strdup(buf));
   }
-  main_win->resizable(scroll);
   scroll.end();
+  main_win->resizable(scroll);
   
   thescroll = &scroll;
   
@@ -696,20 +705,21 @@ int main(int argc, char** argv)
   o9.textsize(30);
   o9.value(utfstr);
   
-  
   main_win->end();
+  main_win->callback((Fl_Callback*)cb_exit);
+
   fl_set_status(0, 370, 100, 30);
   
   main_win->show(argc,argv);
-  
+
   fnt_chooser_win->show();
-  
+
   int ret = Fl::run();
-  
+
   // Free up the sizes arrays we allocated
   if(numsizes) {delete [] numsizes;}
   if(sizes) {delete [] sizes;}
-  
+
   return ret;
 }
 
