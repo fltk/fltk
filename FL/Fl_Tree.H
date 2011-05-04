@@ -115,7 +115,26 @@
 ///
 ///     The tree's callback() will be invoked when items change state or are open/closed.
 ///     when() controls when mouse/keyboard events invoke the callback.
-///     callback_item() and callback_reason() can be used to determine the cause of the callback.
+///     callback_item() and callback_reason() can be used to determine the cause of the callback. eg:
+///
+/// \code
+/// void MyTreeCallback(Fl_Widget *w, void *data) {
+///   Fl_Tree      *tree = (Fl_Tree*)w;
+///   Fl_Tree_Item *item = (Fl_Tree_Item*)tree->callback_item();	// get selected item
+///   switch ( tree->callback_reason() ) {
+///     case FL_TREE_REASON_SELECTED: [..]
+///     case FL_TREE_REASON_DESELECTED: [..]
+///     case FL_TREE_REASON_OPENED: [..]
+///     case FL_TREE_REASON_CLOSED: [..]
+///   }
+/// \endcode
+///
+///     To get the item's full menu pathname, you can use Fl_Tree_Item::item_pathname(), eg:
+///
+/// \code
+///   char pathname[256] = "???";
+///   tree->item_pathname(pathname, sizeof(pathname), item);		// eg. "Parent/Child/Item"
+/// \endcode
 ///
 ///     To walk all the items of the tree from top to bottom:
 /// \code
@@ -328,10 +347,13 @@ public:
   /// Handles redrawing if anything was actually changed.
   /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. open("Holidays/12\\/25\//2010").
+  ///
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
@@ -401,10 +423,13 @@ public:
   /// Handles redrawing if anything was actually changed.
   /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. close("Holidays/12\\/25\//2010").
+  ///
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
@@ -436,10 +461,13 @@ public:
   }
   /// See if item specified by \p path (eg: "Parent/child/item") is open.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. is_open("Holidays/12\\/25\//2010").
+  ///
   /// Items that are 'open' are themselves not necessarily visible;
   /// one of the item's parents might be closed.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \returns
   ///     -    1 - OK: item is open
   ///     -    0 - OK: item is closed
@@ -462,7 +490,10 @@ public:
   }
   /// See if item specified by \p path (eg: "Parent/child/item") is closed.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. is_close("Holidays/12\\/25\//2010").
+  ///
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \returns
   ///     -   1 - OK: item is closed
   ///     -   0 - OK: item is open
@@ -506,10 +537,13 @@ public:
   /// Handles redrawing if anything was actually changed.
   /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. select("Holidays/12\\/25\//2010").
+  ///
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
@@ -578,10 +612,13 @@ public:
   /// Handles redrawing if anything was actually changed.
   /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. deselect("Holidays/12\\/25\//2010").
+  ///
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
@@ -615,7 +652,10 @@ public:
   }
   /// See if item specified by \p path (eg: "Parent/child/item") is selected.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. is_selected("Holidays/12\\/25\//2010").
+  ///
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \returns
   ///     -   1 : item selected
   ///     -   0 : item deselected

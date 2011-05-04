@@ -31,12 +31,30 @@
 #include <FL/Fl_Tree.H>
 
 // Tree's callback
-//    Invoked whenever someone clicks an item.
+//    Invoked whenever an item's state changes.
 //
 void TreeCallback(Fl_Widget *w, void *data) {
-  Fl_Tree      *tree = (Fl_Tree*)w;
-  Fl_Tree_Item *item = (Fl_Tree_Item*)tree->item_clicked();
-  fprintf(stderr, "TreeCallback: item clicked='%s'\n", (item)?item->label():"???");
+  Fl_Tree *tree = (Fl_Tree*)w;
+  Fl_Tree_Item *item = (Fl_Tree_Item*)tree->callback_item();
+  if ( ! item ) return;
+  switch ( tree->callback_reason() ) {
+    case FL_TREE_REASON_SELECTED: {
+      char pathname[256];
+      tree->item_pathname(pathname, sizeof(pathname), item);
+      fprintf(stderr, "TreeCallback: Item selected='%s', Full pathname='%s'\n", item->label(), pathname);
+      break;
+    }
+    case FL_TREE_REASON_DESELECTED:
+      // fprintf(stderr, "TreeCallback: Item '%s' deselected\n", item->label());
+      break;
+    case FL_TREE_REASON_OPENED:
+      // fprintf(stderr, "TreeCallback: Item '%s' opened\n", item->label());
+      break;
+    case FL_TREE_REASON_CLOSED:
+      // fprintf(stderr, "TreeCallback: Item '%s' closed\n", item->label());
+    default:
+      break;
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -57,9 +75,15 @@ int main(int argc, char *argv[]) {
     tree->add("Simpsons/Marge");
     tree->add("Simpsons/Bart");
     tree->add("Simpsons/Lisa");
+    tree->add("Holidays/01\\/01 New Years");
+    tree->add("Holidays/02\\/15 Valentine's Day");
+    tree->add("Holidays/05\\/05 Cinco de Mayo");
+    tree->add("Holidays/07\\/04 Independence Day");
+    tree->add("Holidays/12\\/25 Christmas");
 
-    // Start with one of the items closed
+    // Start with some items closed
     tree->close("Simpsons");
+    tree->close("Holidays");
   }
   win->end();
   win->resizable(win);
