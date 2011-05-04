@@ -1,5 +1,6 @@
 CHANGES IN FLTK 1.1.11
 
+	- Removed obsolete -mno-cygwin compiler option from MinGW build.
 	- Fixed keyboard navigation in fl_choice() (STR #2591)
 	- Fixed alpha blending under X11 when line data size != 0 (STR #2606)
 	- Update libpng access for libpng 1.5 and higher (STR #2542)
