@@ -69,7 +69,7 @@ AC_SUBST(OPTIM)
 
 dnl OS-specific pre-tests...
 case $uname in
-    CYGWIN* | MINGW*)
+    CYGWIN*)
         # Handle Cygwin option *first*, before all other tests.
 	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [default=no]])
 	if test x$enable_cygwin != xyes; then
