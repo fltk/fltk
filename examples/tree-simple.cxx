@@ -75,15 +75,14 @@ int main(int argc, char *argv[]) {
     tree->add("Simpsons/Marge");
     tree->add("Simpsons/Bart");
     tree->add("Simpsons/Lisa");
-    tree->add("Holidays/01\\/01 New Years");
-    tree->add("Holidays/02\\/15 Valentine's Day");
-    tree->add("Holidays/05\\/05 Cinco de Mayo");
-    tree->add("Holidays/07\\/04 Independence Day");
-    tree->add("Holidays/12\\/25 Christmas");
+    tree->add("Pathnames/\\/bin");		// front slashes
+    tree->add("Pathnames/\\/usr\\/sbin");
+    tree->add("Pathnames/C:\\\\Program Files");	// backslashes
+    tree->add("Pathnames/C:\\\\Documents and Settings");
 
     // Start with some items closed
     tree->close("Simpsons");
-    tree->close("Holidays");
+    tree->close("Pathnames");
   }
   win->end();
   win->resizable(win);
