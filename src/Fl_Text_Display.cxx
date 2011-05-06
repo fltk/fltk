@@ -1744,7 +1744,7 @@ int Fl_Text_Display::handle_vline(
       int w = 0;
       if (prevChar=='\t') {
         // draw a single Tab space
-        int tab = (int)col_to_x(8);
+        int tab = (int)col_to_x(mBuffer->tab_distance());
         int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
         w = (((xAbs/tab)+1)*tab) - xAbs;
         if (mode==DRAW_LINE)
@@ -1777,7 +1777,7 @@ int Fl_Text_Display::handle_vline(
   int w = 0;
   if (currChar=='\t') {
     // draw a single Tab space
-    int tab = (int)col_to_x(8);
+    int tab = (int)col_to_x(mBuffer->tab_distance());
     int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
     w = (((xAbs/tab)+1)*tab) - xAbs;
     if (mode==DRAW_LINE)
@@ -3201,7 +3201,7 @@ double Fl_Text_Display::measure_proportional_character(const char *s, int xPix, 
   IS_UTF8_ALIGNED(s)
   
   if (*s=='\t') {
-    int tab = (int)col_to_x(8);
+    int tab = (int)col_to_x(mBuffer->tab_distance());
     return (((xPix/tab)+1)*tab) - xPix;
   }
   
