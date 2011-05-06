@@ -53,6 +53,23 @@ int Fl_Menu_Item::size() const {
   }
 }
 
+// Advance a pointer to next visible or invisible item of a menu array, 
+// skipping the contents of submenus.
+static const Fl_Menu_Item* next_visible_or_not(const Fl_Menu_Item* m) {
+  int nest = 0;
+  do {
+    if (!m->text) {
+      if (!nest) return m;
+      nest--;
+    } else if (m->flags&FL_SUBMENU) {
+      nest++;
+    }
+    m++;
+  }
+  while (nest);
+  return m;
+}
+
 /**
   Advance a pointer by n items through a menu array, skipping
   the contents of submenus and invisible items.  There are two calls so
@@ -61,17 +78,10 @@ int Fl_Menu_Item::size() const {
 const Fl_Menu_Item* Fl_Menu_Item::next(int n) const {
   if (n < 0) return 0; // this is so selected==-1 returns NULL
   const Fl_Menu_Item* m = this;
-  int nest = 0;
   if (!m->visible()) n++;
-  while (n>0) {
-    if (!m->text) {
-      if (!nest) return m;
-      nest--;
-    } else if (m->flags&FL_SUBMENU) {
-      nest++;
-    }
-    m++;
-    if (!nest && m->visible()) n--;
+  while (n) {
+    m = next_visible_or_not(m);
+    if (m->visible()) n--;
   }
   return m;
 }
@@ -1002,9 +1012,9 @@ const Fl_Menu_Item* Fl_Menu_Item::popup(
   \return found Fl_Menu_Item or NULL
 */
 const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip, const bool require_alt) const {
-  const Fl_Menu_Item* m = first();
-  if (m) for (int ii = 0; m->text; m = m->next(), ii++) {
-    if (m->activevisible()) {
+  const Fl_Menu_Item* m = this;
+  if (m) for (int ii = 0; m->text; m = next_visible_or_not(m), ii++) {
+    if (m->active()) {
       if (Fl::test_shortcut(m->shortcut_)
 	 || Fl_Widget::test_shortcut(m->text, require_alt)) {
 	if (ip) *ip=ii;
@@ -1026,10 +1036,10 @@ const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip, const bool require_alt)
   preceeded by '
 */
 const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
-  const Fl_Menu_Item* m = first();
+  const Fl_Menu_Item* m = this;
   const Fl_Menu_Item* ret = 0;
-  if (m) for (; m->text; m = m->next()) {
-    if (m->activevisible()) {
+  if (m) for (; m->text; m = next_visible_or_not(m)) {
+    if (m->active()) {
       // return immediately any match of an item in top level menu:
       if (Fl::test_shortcut(m->shortcut_)) return m;
       // if (Fl_Widget::test_shortcut(m->text)) return m;
