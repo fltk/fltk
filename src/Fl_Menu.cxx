@@ -612,7 +612,7 @@ static void setitem(int m, int n) {
 
 static int forward(int menu) { // go to next item in menu menu if possible
   menustate &pp = *p;
-  // Fl_Menu_Button can geberate menu=-1. This line fixes it and selectes the first item.
+  // Fl_Menu_Button can generate menu=-1. This line fixes it and selectes the first item.
   if (menu==-1) 
     menu = 0;
   menuwindow &m = *(pp.p[menu]);
@@ -729,16 +729,17 @@ int menuwindow::early_hide_handle(int e) {
       }
     }
     break;
+    case FL_MOVE:
+#if ! (defined(WIN32) || defined(__APPLE__))
+      if (pp.state == DONE_STATE) {
+	return 1; // Fix for STR #2619
+      }
+      /* FALLTHROUGH */
+#endif
   case FL_ENTER:
-  case FL_MOVE:
   case FL_PUSH:
   case FL_DRAG:
     {
-#ifdef __QNX__
-      // STR 704: workaround QNX X11 bug - in QNX a FL_MOVE event is sent
-      // right after FL_RELEASE...
-      if (pp.state == DONE_STATE) return 1;
-#endif // __QNX__
       int mx = Fl::event_x_root();
       int my = Fl::event_y_root();
       int item=0; int mymenu = pp.nummenus-1;
