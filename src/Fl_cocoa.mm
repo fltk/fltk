@@ -827,7 +827,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 }
 
 @interface FLTextView : NSTextView 
-// this subclass is needed under OS X <= 10.4 but not under >= 10.5 where the base class is enough
+// this subclass is needed under OS X <= 10.5 but not under >= 10.6 where the base class is enough
 {
 }
 @end
@@ -1215,7 +1215,7 @@ extern "C" {
 }
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client
 {
-  if (fl_mac_os_version < 100500) {
+  if (fl_mac_os_version < 100600) {
     static FLTextView *view = nil;
     if (!view) {
       NSRect rect={{0,0},{20,20}};
