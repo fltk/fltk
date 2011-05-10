@@ -282,7 +282,6 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   }
 
   static unsigned short *ext_buff = NULL; // UTF-16 converted version of input UTF-8 string
-  static WCHAR *c_buff = NULL; // glyph class array (if needed)
   static WORD  *w_buff = NULL; // glyph indices array
   static unsigned wc_len = 0;  // current string buffer dimensions
   static const MAT2 matrix = { { 0, 1 }, { 0, 0 }, { 0, 0 }, { 0, 1 } }; // identity mat for GetGlyphOutlineW
@@ -315,11 +314,9 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   if(len >= wc_len) {
     if(ext_buff) {delete [] ext_buff;}
     if(w_buff) {delete [] w_buff;}
-    if(c_buff) {delete [] c_buff;}
     wc_len = len + 64;
     ext_buff = new unsigned short[wc_len];
     w_buff = new WORD[wc_len];
-    c_buff = new WCHAR[wc_len];
     len = fl_utf8toUtf16(c, n, ext_buff, wc_len);
   }
   SelectObject(gc, fl_fontsize->fid);
@@ -339,10 +336,8 @@ void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy
   if (has_surrogates) {
     // GetGlyphIndices will not work - use GetCharacterPlacementW() instead
     GCP_RESULTSW gcp_res;
-    memset(c_buff, 0, (sizeof(WCHAR) * wc_len));
     memset(w_buff, 0, (sizeof(WORD) * wc_len));
     memset(&gcp_res, 0, sizeof(GCP_RESULTSW));
-    gcp_res.lpClass = c_buff;
     gcp_res.lpGlyphs = (LPWSTR)w_buff;
     gcp_res.nGlyphs = wc_len;
     gcp_res.lStructSize = sizeof(gcp_res);
