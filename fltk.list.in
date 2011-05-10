@@ -348,24 +348,16 @@ l 0000 root sys $includedir/FL/Fl_Window.h Fl_Window.H
 l 0000 root sys $includedir/FL/Fl_Wizard.h Fl_Wizard.H
 l 0000 root sys $includedir/FL/Fl_XBM_Image.h Fl_XBM_Image.H
 l 0000 root sys $includedir/FL/Fl_XPM_Image.h Fl_XPM_Image.H
-l 0000 root sys $includedir/FL/Xutf8.h Xutf8.H
-l 0000 root sys $includedir/FL/dirent.h dirent.H
 l 0000 root sys $includedir/FL/filename.h filename.H
 l 0000 root sys $includedir/FL/fl_ask.h fl_ask.H
 l 0000 root sys $includedir/FL/fl_draw.h fl_draw.H
 l 0000 root sys $includedir/FL/fl_message.h fl_message.H
 l 0000 root sys $includedir/FL/fl_show_colormap.h fl_show_colormap.H
 l 0000 root sys $includedir/FL/fl_show_input.h fl_show_input.H
-l 0000 root sys $includedir/FL/fl_types.h fl_types.H
-l 0000 root sys $includedir/FL/fl_utf8.h fl_utf8.H
 l 0000 root sys $includedir/FL/forms.h forms.H
-l 0000 root sys $includedir/FL/gl.h gl.H
 l 0000 root sys $includedir/FL/gl_draw.h gl_draw.H
-l 0000 root sys $includedir/FL/glu.h glu.H
 l 0000 root sys $includedir/FL/glut.h glut.H
 l 0000 root sys $includedir/FL/mac.h mac.H
-l 0000 root sys $includedir/FL/math.h math.H
-l 0000 root sys $includedir/FL/names.h names.H
 l 0000 root sys $includedir/FL/win32.h win32.H
 l 0000 root sys $includedir/FL/x.h x.H
 %system all
