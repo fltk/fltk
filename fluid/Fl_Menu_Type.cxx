@@ -470,7 +470,10 @@ void Fl_Menu_Type::write_code2() {
       const char *mName = mi->menu_name(i);
       for (Fl_Type* q = next; q && q->is_menu_item(); q = q->next) {
         if (((Fl_Menu_Item_Type*)q)->label()) nLabel++;
-        nItem++;
+	int thislevel = q->level; if (q->is_parent()) thislevel++;
+	int nextlevel =
+	    (q->next && q->next->is_menu_item()) ? q->next->level : next->level+1;
+	nItem += 1 + ((thislevel > nextlevel) ? (thislevel-nextlevel) : 0);
       }
       if (nLabel) {
         write_c("%sif (!%s_i18n_done) {\n", indent(), mName);
