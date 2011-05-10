@@ -28,7 +28,7 @@
 #
 
 %product Fast Light Tool Kit (FLTK)
-%copyright 1998-2010 by Bill Spitzak and others.
+%copyright 1998-2011 by Bill Spitzak and others.
 %vendor FLTK Development Team
 %license COPYING
 %readme README
@@ -144,12 +144,12 @@ f 0555 root sys $bindir/fluid fluid/$FLUID
 f 0555 root sys $bindir/fltk-config fltk-config
 
 # Man pages
-f 0444 root sys $mandir/cat1/fluid.$CAT1EXT documentation/fluid.$CAT1EXT
-f 0444 root sys $mandir/cat1/fltk-config.$CAT1EXT documentation/fltk-config.$CAT1EXT
-f 0444 root sys $mandir/cat3/fltk.$CAT3EXT documentation/fltk.$CAT3EXT
-f 0444 root sys $mandir/man1/fluid.1 documentation/fluid.man
-f 0444 root sys $mandir/man1/fltk-config.1 documentation/fltk-config.man
-f 0444 root sys $mandir/man3/fltk.3 documentation/fltk.man
+f 0444 root sys $mandir/cat1/fluid.$CAT1EXT documentation/src/fluid.$CAT1EXT
+f 0444 root sys $mandir/cat1/fltk-config.$CAT1EXT documentation/src/fltk-config.$CAT1EXT
+f 0444 root sys $mandir/cat3/fltk.$CAT3EXT documentation/src/fltk.$CAT3EXT
+f 0444 root sys $mandir/man1/fluid.1 documentation/src/fluid.man
+f 0444 root sys $mandir/man1/fltk-config.1 documentation/src/fltk-config.man
+f 0444 root sys $mandir/man3/fltk.3 documentation/src/fltk.man
 
 # Library files
 f 0444 root sys $libdir/libfltk.a lib/libfltk.a
@@ -240,6 +240,8 @@ l 0000 root sys $includedir/FL/Fl_Box.h Fl_Box.H
 l 0000 root sys $includedir/FL/Fl_Browser.h Fl_Browser.H
 l 0000 root sys $includedir/FL/Fl_Browser_.h Fl_Browser_.H
 l 0000 root sys $includedir/FL/Fl_Button.h Fl_Button.H
+l 0000 root sys $includedir/FL/Fl_Cairo.h Fl_Cairo.H
+l 0000 root sys $includedir/FL/Fl_Cairo_Window.h Fl_Cairo_Window.H
 l 0000 root sys $includedir/FL/Fl_Chart.h Fl_Chart.H
 l 0000 root sys $includedir/FL/Fl_Check_Browser.h Fl_Check_Browser.H
 l 0000 root sys $includedir/FL/Fl_Check_Button.h Fl_Check_Button.H
@@ -247,8 +249,10 @@ l 0000 root sys $includedir/FL/Fl_Choice.h Fl_Choice.H
 l 0000 root sys $includedir/FL/Fl_Clock.h Fl_Clock.H
 l 0000 root sys $includedir/FL/Fl_Color_Chooser.h Fl_Color_Chooser.H
 l 0000 root sys $includedir/FL/Fl_Counter.h Fl_Counter.H
+l 0000 root sys $includedir/FL/Fl_Device.h Fl_Device.H
 l 0000 root sys $includedir/FL/Fl_Dial.h Fl_Dial.H
 l 0000 root sys $includedir/FL/Fl_Double_Window.h Fl_Double_Window.H
+l 0000 root sys $includedir/FL/Fl_Export.h Fl_Export.H
 l 0000 root sys $includedir/FL/Fl_File_Browser.h Fl_File_Browser.H
 l 0000 root sys $includedir/FL/Fl_File_Chooser.h Fl_File_Chooser.H
 l 0000 root sys $includedir/FL/Fl_File_Icon.h Fl_File_Icon.H
@@ -286,15 +290,21 @@ l 0000 root sys $includedir/FL/Fl_Multi_Browser.h Fl_Multi_Browser.H
 l 0000 root sys $includedir/FL/Fl_Multi_Label.h Fl_Multi_Label.H
 l 0000 root sys $includedir/FL/Fl_Multiline_Input.h Fl_Multiline_Input.H
 l 0000 root sys $includedir/FL/Fl_Multiline_Output.h Fl_Multiline_Output.H
+l 0000 root sys $includedir/FL/Fl_Native_File_Chooser.h Fl_Native_File_Chooser.H
 l 0000 root sys $includedir/FL/Fl_Nice_Slider.h Fl_Nice_Slider.H
 l 0000 root sys $includedir/FL/Fl_Object.h Fl_Object.H
 l 0000 root sys $includedir/FL/Fl_Output.h Fl_Output.H
 l 0000 root sys $includedir/FL/Fl_Overlay_Window.h Fl_Overlay_Window.H
 l 0000 root sys $includedir/FL/Fl_Pack.h Fl_Pack.H
+l 0000 root sys $includedir/FL/Fl_Paged_Device.h Fl_Paged_Device.H
 l 0000 root sys $includedir/FL/Fl_Pixmap.h Fl_Pixmap.H
+l 0000 root sys $includedir/FL/Fl_Plugin.h Fl_Plugin.H
 l 0000 root sys $includedir/FL/Fl_PNG_Image.h Fl_PNG_Image.H
 l 0000 root sys $includedir/FL/Fl_PNM_Image.h Fl_PNM_Image.H
 l 0000 root sys $includedir/FL/Fl_Positioner.h Fl_Positioner.H
+l 0000 root sys $includedir/FL/Fl_PostScript.h Fl_PostScript.H
+l 0000 root sys $includedir/FL/Fl_Preferences.h Fl_Preferences.H
+l 0000 root sys $includedir/FL/Fl_Printer.h Fl_Printer.H
 l 0000 root sys $includedir/FL/Fl_Progress.h Fl_Progress.H
 l 0000 root sys $includedir/FL/Fl_Radio_Button.h Fl_Radio_Button.H
 l 0000 root sys $includedir/FL/Fl_Radio_Light_Button.h Fl_Radio_Light_Button.H
@@ -308,45 +318,65 @@ l 0000 root sys $includedir/FL/Fl_Scroll.h Fl_Scroll.H
 l 0000 root sys $includedir/FL/Fl_Scrollbar.h Fl_Scrollbar.H
 l 0000 root sys $includedir/FL/Fl_Secret_Input.h Fl_Secret_Input.H
 l 0000 root sys $includedir/FL/Fl_Select_Browser.h Fl_Select_Browser.H
+l 0000 root sys $includedir/FL/Fl_Shared_Image.h Fl_Shared_Image.H
 l 0000 root sys $includedir/FL/Fl_Simple_Counter.h Fl_Simple_Counter.H
 l 0000 root sys $includedir/FL/Fl_Single_Window.h Fl_Single_Window.H
 l 0000 root sys $includedir/FL/Fl_Slider.h Fl_Slider.H
 l 0000 root sys $includedir/FL/Fl_Spinner.h Fl_Spinner.H
+l 0000 root sys $includedir/FL/Fl_Sys_Menu_Bar.h Fl_Sys_Menu_Bar.H
+l 0000 root sys $includedir/FL/Fl_Table.h Fl_Table.H
+l 0000 root sys $includedir/FL/Fl_Table_Row.h Fl_Table_Row.H
 l 0000 root sys $includedir/FL/Fl_Tabs.h Fl_Tabs.H
+l 0000 root sys $includedir/FL/Fl_Text_Buffer.h Fl_Text_Buffer.H
+l 0000 root sys $includedir/FL/Fl_Text_Display.h Fl_Text_Display.H
+l 0000 root sys $includedir/FL/Fl_Text_Editor.h Fl_Text_Editor.H
 l 0000 root sys $includedir/FL/Fl_Tile.h Fl_Tile.H
+l 0000 root sys $includedir/FL/Fl_Tiled_Image.h Fl_Tiled_Image.H
 l 0000 root sys $includedir/FL/Fl_Timer.h Fl_Timer.H
 l 0000 root sys $includedir/FL/Fl_Toggle_Button.h Fl_Toggle_Button.H
 l 0000 root sys $includedir/FL/Fl_Toggle_Light_Button.h Fl_Toggle_Light_Button.H
 l 0000 root sys $includedir/FL/Fl_Toggle_Round_Button.h Fl_Toggle_Round_Button.H
 l 0000 root sys $includedir/FL/Fl_Tooltip.h Fl_Tooltip.H
+l 0000 root sys $includedir/FL/Fl_Tree.h Fl_Tree.H
+l 0000 root sys $includedir/FL/Fl_Tree_Item.h Fl_Tree_Item.H
+l 0000 root sys $includedir/FL/Fl_Tree_Item_Array.h Fl_Tree_Item_Array.H
+l 0000 root sys $includedir/FL/Fl_Tree_Prefs.h Fl_Tree_Prefs.H
 l 0000 root sys $includedir/FL/Fl_Valuator.h Fl_Valuator.H
 l 0000 root sys $includedir/FL/Fl_Value_Input.h Fl_Value_Input.H
 l 0000 root sys $includedir/FL/Fl_Value_Output.h Fl_Value_Output.H
 l 0000 root sys $includedir/FL/Fl_Value_Slider.h Fl_Value_Slider.H
 l 0000 root sys $includedir/FL/Fl_Widget.h Fl_Widget.H
 l 0000 root sys $includedir/FL/Fl_Window.h Fl_Window.H
+l 0000 root sys $includedir/FL/Fl_Wizard.h Fl_Wizard.H
 l 0000 root sys $includedir/FL/Fl_XBM_Image.h Fl_XBM_Image.H
 l 0000 root sys $includedir/FL/Fl_XPM_Image.h Fl_XPM_Image.H
+l 0000 root sys $includedir/FL/Xutf8.h Xutf8.H
+l 0000 root sys $includedir/FL/dirent.h dirent.H
 l 0000 root sys $includedir/FL/filename.h filename.H
 l 0000 root sys $includedir/FL/fl_ask.h fl_ask.H
 l 0000 root sys $includedir/FL/fl_draw.h fl_draw.H
-l 0000 root sys $includedir/FL/fl_file_chooser.h Fl_File_Chooser.H
-l 0000 root sys $includedir/FL/fl_file_chooser.H Fl_File_Chooser.H
 l 0000 root sys $includedir/FL/fl_message.h fl_message.H
 l 0000 root sys $includedir/FL/fl_show_colormap.h fl_show_colormap.H
 l 0000 root sys $includedir/FL/fl_show_input.h fl_show_input.H
+l 0000 root sys $includedir/FL/fl_types.h fl_types.H
+l 0000 root sys $includedir/FL/fl_utf8.h fl_utf8.H
 l 0000 root sys $includedir/FL/forms.h forms.H
+l 0000 root sys $includedir/FL/gl.h gl.H
 l 0000 root sys $includedir/FL/gl_draw.h gl_draw.H
+l 0000 root sys $includedir/FL/glu.h glu.H
 l 0000 root sys $includedir/FL/glut.h glut.H
+l 0000 root sys $includedir/FL/mac.h mac.H
+l 0000 root sys $includedir/FL/math.h math.H
+l 0000 root sys $includedir/FL/names.h names.H
 l 0000 root sys $includedir/FL/win32.h win32.H
 l 0000 root sys $includedir/FL/x.h x.H
 %system all
 
 # Documentation
 d 0555 root sys $docdir -
-f 0444 root sys $docdir/ documentation/*.gif
-f 0444 root sys $docdir/ documentation/*.html
-f 0444 root sys $docdir/ documentation/*.jpg
+f 0444 root sys $docdir/ documentation/html/*.gif
+f 0444 root sys $docdir/ documentation/html/*.html
+f 0444 root sys $docdir/ documentation/html/*.jpg
 f 0444 root sys $docdir/COPYING COPYING
 f 0444 root sys $docdir/CHANGES CHANGES
 
@@ -409,12 +439,12 @@ f 0444 root sys /usr/share/icons/hicolor/32x32/apps/sudoku.png test/desktop/sudo
 f 0444 root sys /usr/share/icons/hicolor/128x128/apps/sudoku.png test/desktop/sudoku-128.png
 
 %system all
-f 0444 root sys $mandir/cat6/blocks.$CAT6EXT documentation/blocks.$CAT6EXT
-f 0444 root sys $mandir/cat6/checkers.$CAT6EXT documentation/checkers.$CAT6EXT
-f 0444 root sys $mandir/cat6/sudoku.$CAT6EXT documentation/sudoku.$CAT6EXT
-f 0444 root sys $mandir/man6/blocks.6 documentation/blocks.man
-f 0444 root sys $mandir/man6/checkers.6 documentation/checkers.man
-f 0444 root sys $mandir/man6/sudoku.6 documentation/sudoku.man
+f 0444 root sys $mandir/cat6/blocks.$CAT6EXT documentation/src/blocks.$CAT6EXT
+f 0444 root sys $mandir/cat6/checkers.$CAT6EXT documentation/src/checkers.$CAT6EXT
+f 0444 root sys $mandir/cat6/sudoku.$CAT6EXT documentation/src/sudoku.$CAT6EXT
+f 0444 root sys $mandir/man6/blocks.6 documentation/src/blocks.man
+f 0444 root sys $mandir/man6/checkers.6 documentation/src/checkers.man
+f 0444 root sys $mandir/man6/sudoku.6 documentation/src/sudoku.man
 
 #
 # End of "$Id$".
