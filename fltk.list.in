@@ -115,8 +115,6 @@ f 0555 root sys $libdir/libfltk_gl.so.@FL_API_VERSION@ src/libfltk_gl.so.@FL_API
 %description dynamically linked applications.
 
 %system darwin
-l 0444 root sys /usr/include/gcc/darwin/3.1/g++-v3/FL $includedir/FL
-
 d 0555 root sys /Applications/fluid.app -
 d 0555 root sys /Applications/fluid.app/Contents -
 f 0444 root sys /Applications/fluid.app/Contents/Info.plist fluid/fluid.app/Contents/Info.plist
