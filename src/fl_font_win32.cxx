@@ -201,6 +201,9 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
     unsigned short u16[4]; // Array for UTF16 representation of c
     // Creates a UTF16 string from a UCS code point.
     cc = fl_ucs_to_Utf16(c, u16, 4);
+    // Make sure the current font is selected before we make the measurement
+    SelectObject(fl_gc, fl_fontsize->fid);
+    // measure the glyph width
     GetTextExtentPoint32W(fl_gc, (WCHAR*)u16, cc, &s);
     return (double)s.cx;
   }
