@@ -2138,16 +2138,15 @@ void Fl_X::make(Fl_Window* w)
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) {
       Fl_Tooltip::enter(0);
     }
-    [cw makeKeyAndOrderFront:nil];
+    w->set_visible();
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle(FL_FOCUS, w);
-    Fl::handle(FL_SHOW, w);
     Fl::first_window(w);
     [cw setDelegate:mydelegate];
     if (fl_show_iconic) { 
       fl_show_iconic = 0;
       [cw miniaturize:nil];
     } else {
-      w->set_visible();
+      [cw makeKeyAndOrderFront:nil];
     }
     
     crect = [[cw contentView] frame];
