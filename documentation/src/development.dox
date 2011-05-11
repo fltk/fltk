@@ -315,7 +315,7 @@ The following code gives the navigation bar at the bottom of this page:
     </a>
   </td>
   <td width="10%" align="CENTER">
-    <a class="el" href="main.html">[Index]</a>
+    <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="license.html">
@@ -340,7 +340,7 @@ The following code gives the navigation bar at the bottom of this page:
     </a>
   </td>
   <td width="10%" align="CENTER">
-    <a class="el" href="main.html">[Index]</a>
+    <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="license.html">
