@@ -140,7 +140,6 @@ public:
   int unlink(Fl_X* start = NULL);
   void collapse(void);
   WindowRef window_ref(void);
-  void contains_GL_subwindow(void);
   void set_key_window(void);
   void set_cursor(Fl_Cursor);
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);

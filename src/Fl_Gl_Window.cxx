@@ -95,7 +95,6 @@ void Fl_Gl_Window::show() {
     if (overlay && overlay != this) ((Fl_Gl_Window*)overlay)->show();
 #elif defined(__APPLE__)
 	if( ! parent() ) need_redraw=1;
-	else Fl_X::i(window())->contains_GL_subwindow();
 #endif
   }
   Fl_Window::show();

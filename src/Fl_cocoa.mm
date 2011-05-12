@@ -2006,6 +2006,10 @@ void Fl_X::make(Fl_Window* w)
       Fl::e_number = old_event;
       w->redraw();		// force draw to happen
     }
+    if (w->as_gl_window()) { // if creating a sub-GL-window
+      while (win->window()) win = win->window();
+      [(FLWindow*)Fl_X::i(win)->xid setContainsGLsubwindow:YES];
+    }
     fl_show_iconic = 0;
   }
   else {			// create a desktop window
@@ -3360,11 +3364,6 @@ CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, i
   CGColorSpaceRelease(lut);
   CGDataProviderRelease(provider);
   return img;
-}
-
-void Fl_X::contains_GL_subwindow() 
-{
-  [(FLWindow*)xid setContainsGLsubwindow:YES];
 }
 
 WindowRef Fl_X::window_ref()
