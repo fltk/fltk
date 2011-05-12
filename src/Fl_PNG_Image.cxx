@@ -123,14 +123,23 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   if (!from_memory) {
     if ((fp = fl_fopen(name_png, "rb")) == NULL) return;
   }
+  else name_png = "In-memory PNG data";
 
   // Setup the PNG data structures...
-  pp   = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  info = png_create_info_struct(pp);
-
+  pp = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if (pp) info = png_create_info_struct(pp);
+  if (!pp || !info) {
+    if (pp) png_destroy_read_struct(&pp, NULL, NULL);
+    if (!from_memory) fclose(fp);
+    Fl::warning("Cannot allocate memory to read PNG file or data \"%s\".\n", name_png);
+    return;
+  }
+  
   if (setjmp(png_jmpbuf(pp)))
   {
-    Fl::warning("PNG file \"%s\" contains errors!\n", name_png);
+    png_destroy_read_struct(&pp, &info, NULL);
+    if (!from_memory) fclose(fp);
+    Fl::warning("PNG file or data \"%s\" contains errors!\n", name_png);
     return;
   }
 
