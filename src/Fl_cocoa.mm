@@ -1694,7 +1694,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
       break;
     }
   }
-  if (!no_text_key) {
+  if (!no_text_key && !(Fl::e_state & FL_META) ) {
+    // Don't send cmd-<key> to interpretKeyEvents because it beeps.
     // Then we can let the OS have a stab at it and see if it thinks it
     // should result in some text
     NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
