@@ -420,7 +420,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   /* if empty lines become visible, there may be an opportunity to
    display more text by scrolling down */
   } else {
-    while (   (mLineStarts[mNVisibleLines-2]==-1) 
+    while (   mNVisibleLines>=2
+           && (mLineStarts[mNVisibleLines-2]==-1) 
            && scroll_(mTopLineNum-1, mHorizOffset))
     { }
   }
@@ -974,7 +975,7 @@ void Fl_Text_Display::display_insert() {
   
   if (insert_position() < mFirstChar) {
     topLine -= count_lines(insert_position(), mFirstChar, false);
-  } else if (mLineStarts[mNVisibleLines-2] != -1) {
+  } else if (mNVisibleLines>=2 && mLineStarts[mNVisibleLines-2] != -1) {
     int lastChar = line_end(mLineStarts[mNVisibleLines-2],true);
     if (insert_position() >= lastChar)
       topLine += count_lines(lastChar - (wrap_uses_character(mLastChar) ? 0 : 1),
