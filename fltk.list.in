@@ -218,6 +218,7 @@ f 0444 root sys $includedir/FL/images/jpeglib.h jpeg/jpeglib.h
 %if PNG
 f 0444 root sys $includedir/FL/images/png.h png/png.h
 f 0444 root sys $includedir/FL/images/pngconf.h png/pngconf.h
+f 0444 root sys $includedir/FL/images/pnglibconf.h png/pnglibconf.h
 %endif
 
 %if ZLIB
