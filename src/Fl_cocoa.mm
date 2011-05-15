@@ -1555,7 +1555,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
 
 Fl_Window *fl_dnd_target_window = 0;
 
-static void  q_set_window_title(NSWindow *nsw, const char * name ) {
+static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mininame) {
   CFStringRef title = CFStringCreateWithCString(NULL, (name ? name : ""), kCFStringEncodingUTF8);
   if(!title) { // fallback when name contains malformed UTF-8
     int l = strlen(name);
@@ -1566,6 +1566,13 @@ static void  q_set_window_title(NSWindow *nsw, const char * name ) {
     }
   [nsw setTitle:(NSString*)title];
   CFRelease(title);
+  if (mininame && strlen(mininame)) {
+    CFStringRef minititle = CFStringCreateWithCString(NULL, mininame, kCFStringEncodingUTF8);
+    if (minititle) {
+      [nsw setMiniwindowTitle:(NSString*)minititle];
+      CFRelease(minititle);
+    }
+  }
 }
 
 
@@ -2082,9 +2089,7 @@ void Fl_X::make(Fl_Window* w)
       Fl_Window* w = Fl_X::first->w;
       while (w->parent()) w = w->window(); // todo: this code does not make any sense! (w!=w??)
     }
-    
-    const char *name = w->label();
-    
+        
     Fl_X* x = new Fl_X;
     x->subwindow = false;
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
@@ -2111,7 +2116,7 @@ void Fl_X::make(Fl_Window* w)
     [cw setContentView:myview];
     [cw setLevel:winlevel];
     
-    q_set_window_title(cw, name);
+    q_set_window_title(cw, w->label(), w->iconlabel());
     if (!(w->flags() & Fl_Window::FORCE_POSITION)) {
       if (w->modal()) {
         [cw center];
@@ -2216,14 +2221,7 @@ void Fl_Window::label(const char *name, const char *mininame) {
   iconlabel_ = mininame;
   if (shown() || i) {
     NSWindow* nsw = (NSWindow*)i->xid;
-    q_set_window_title(nsw, name);
-    if (mininame && strlen(mininame)) {
-      CFStringRef minititle = CFStringCreateWithCString(NULL, mininame, kCFStringEncodingUTF8);
-      if (minititle) {
-	[nsw setMiniwindowTitle:(NSString*)minititle];
-	CFRelease(minititle);
-	}
-      }
+    q_set_window_title(nsw, name, mininame);
   }
 }
 
