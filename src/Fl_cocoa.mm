@@ -2209,13 +2209,21 @@ const char *fl_filename_name( const char *name )
 
 
 /*
- * set the window title bar
- * \todo make the titlebar icon work!
+ * set the window title bar name
  */
-void Fl_Window::label(const char *name,const char */*iname*/) {
+void Fl_Window::label(const char *name, const char *mininame) {
   Fl_Widget::label(name);
+  iconlabel_ = mininame;
   if (shown() || i) {
-    q_set_window_title((NSWindow*)i->xid, name);
+    NSWindow* nsw = (NSWindow*)i->xid;
+    q_set_window_title(nsw, name);
+    if (mininame && strlen(mininame)) {
+      CFStringRef minititle = CFStringCreateWithCString(NULL, mininame, kCFStringEncodingUTF8);
+      if (minititle) {
+	[nsw setMiniwindowTitle:(NSString*)minititle];
+	CFRelease(minititle);
+	}
+      }
   }
 }
 
