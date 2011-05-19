@@ -372,18 +372,6 @@ int Fl_Native_File_Chooser::get_saveas_basename(void) {
 // SET THE TYPE OF BROWSER
 void Fl_Native_File_Chooser::type(int val) {
   _btype = val;
-  switch (_btype) {
-    case BROWSE_FILE:
-    case BROWSE_MULTI_FILE:
-    case BROWSE_DIRECTORY:
-    case BROWSE_MULTI_DIRECTORY:
-      _panel =  [NSOpenPanel openPanel];
-      break;	  
-    case BROWSE_SAVE_DIRECTORY:
-    case BROWSE_SAVE_FILE:
-      _panel =  [NSSavePanel savePanel];
-      break;
-  }
 }
   
 @interface FLopenDelegate : NSObject 
@@ -481,6 +469,18 @@ int Fl_Native_File_Chooser::post() {
   }
   NSAutoreleasePool *localPool;
   localPool = [[NSAutoreleasePool alloc] init];
+  switch (_btype) {
+    case BROWSE_FILE:
+    case BROWSE_MULTI_FILE:
+    case BROWSE_DIRECTORY:
+    case BROWSE_MULTI_DIRECTORY:
+      _panel =  [NSOpenPanel openPanel];
+      break;	  
+    case BROWSE_SAVE_DIRECTORY:
+    case BROWSE_SAVE_FILE:
+      _panel =  [NSSavePanel savePanel];
+      break;
+  }
   int retval;
   NSString *nstitle = [NSString stringWithUTF8String: (_title ? _title : "No Title")];
   [(NSSavePanel*)_panel setTitle:nstitle];
@@ -490,6 +490,7 @@ int Fl_Native_File_Chooser::post() {
       break;
     case BROWSE_MULTI_DIRECTORY:
       [(NSOpenPanel*)_panel setAllowsMultipleSelection:YES];
+      /* FALLTHROUGH */
     case BROWSE_DIRECTORY:
       [(NSOpenPanel*)_panel setCanChooseDirectories:YES];
       break;
