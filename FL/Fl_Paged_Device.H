@@ -44,7 +44,7 @@
  This class has no public constructor: don't instantiate it; use Fl_Printer 
  or Fl_PostScript_File_Device instead.
  */
-class Fl_Paged_Device : public Fl_Surface_Device {
+class FL_EXPORT Fl_Paged_Device : public Fl_Surface_Device {
 public:
   /**
    \brief Possible page formats.

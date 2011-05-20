@@ -61,7 +61,7 @@
  <br> FLTK standard fonts are output using PostScript standard fonts: Helvetica, Courier, 
  Times (and their bold, oblique, italic variants).
  */
-class Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
+class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 public: 
   static const char *class_id;
   const char *class_name() {return class_id;};
@@ -213,7 +213,7 @@ class Clip {
 /**
  \brief To send graphical output to a PostScript file.
  */
-class Fl_PostScript_File_Device : public Fl_Paged_Device {
+class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 #ifdef __APPLE__
   Fl_CGContextRef gc;
 #endif

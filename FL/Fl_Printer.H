@@ -151,7 +151,7 @@ public:
  <li>Mac OS X platform: all graphics requests print as on display.
  </ul>
  */
-class Fl_Printer : public Fl_Paged_Device {
+class FL_EXPORT Fl_Printer : public Fl_Paged_Device {
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
