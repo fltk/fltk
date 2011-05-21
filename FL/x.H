@@ -174,7 +174,7 @@ public:
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_X::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_X::make_xid()
 
-inline Window fl_xid(const Fl_Window* w) { return Fl_X::i(w)->xid; }
+inline Window fl_xid(const Fl_Window* w) { Fl_X *temp = Fl_X::i(w); return temp ? temp->xid : 0; }
 
 #else
 

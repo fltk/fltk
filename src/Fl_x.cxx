@@ -1902,11 +1902,10 @@ void Fl_Window::make_current() {
 #endif
 }
 
-Window fl_xid_(const Fl_Window* w)
-{
-  return Fl_X::i(w)->xid;
+Window fl_xid_(const Fl_Window *w) {
+  Fl_X *temp = Fl_X::i(w);
+  return temp ? temp->xid : 0;
 }
-
 
 int Fl_Window::decorated_h()
 {
