@@ -3386,7 +3386,8 @@ CGRect fl_cgrectmake_cocoa(int x, int y, int w, int h) {
 
 Window fl_xid(const Fl_Window* w)
 {
-  return Fl_X::i(w)->xid;
+  Fl_X *temp = Fl_X::i(w);
+  return temp ? temp->xid : 0;
 }
 
 int Fl_Window::decorated_w()
