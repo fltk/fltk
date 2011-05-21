@@ -35,6 +35,16 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
 
+/* We require Windows 2000 features (e.g. VK definitions) */
+#if defined(WIN32)
+# if !defined(WINVER) || (WINVER < 0x0500)
+#  define WINVER 0x0500
+# endif
+# if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
+#  define _WIN32_WINNT 0x0500
+# endif
+#endif
+
 // recent versions of MinGW warn: "Please include winsock2.h before windows.h",
 // hence we must include winsock2.h before FL/x.H (A.S. Dec. 2010)
 #if defined(WIN32) && !defined(__CYGWIN__)

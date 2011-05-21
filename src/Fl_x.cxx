@@ -1337,6 +1337,57 @@ int fl_handle(const XEvent& thisevent)
 	  keysym = FL_Meta_R;
 	  break;
       }
+    // Convert the multimedia keys to safer, portable values
+    switch (keysym) { // XF names come from X11/XF86keysym.h
+      case 0x1008FF11: // XF86XK_AudioLowerVolume:
+	keysym = FL_Volume_Down;
+	break;
+      case 0x1008FF12: // XF86XK_AudioMute:
+	keysym = FL_Volume_Mute;
+	break;
+      case 0x1008FF13: // XF86XK_AudioRaiseVolume:
+	keysym = FL_Volume_Up;
+	break;
+      case 0x1008FF14: // XF86XK_AudioPlay:
+	keysym = FL_Media_Play;
+	break;
+      case 0x1008FF15: // XF86XK_AudioStop:
+	keysym = FL_Media_Stop;
+	break;
+      case 0x1008FF16: // XF86XK_AudioPrev:
+	keysym = FL_Media_Prev;
+	break;
+      case 0x1008FF17: // XF86XK_AudioNext:
+	keysym = FL_Media_Next;
+	break;
+      case 0x1008FF18: // XF86XK_HomePage:
+	keysym = FL_Home_Page;
+	break;
+      case 0x1008FF19: // XF86XK_Mail:
+	keysym = FL_Mail;
+	break;
+      case 0x1008FF1B: // XF86XK_Search:
+	keysym = FL_Search;
+	break;
+      case 0x1008FF26: // XF86XK_Back:
+	keysym = FL_Back;
+	break;
+      case 0x1008FF27: // XF86XK_Forward:
+	keysym = FL_Forward;
+	break;
+      case 0x1008FF28: // XF86XK_Stop:
+	keysym = FL_Stop;
+	break;
+      case 0x1008FF29: // XF86XK_Refresh:
+	keysym = FL_Refresh;
+	break;
+      case 0x1008FF2F: // XF86XK_Sleep:
+	keysym = FL_Sleep;
+	break;
+      case 0x1008FF30: // XF86XK_Favorites:
+	keysym = FL_Favorites;
+	break;
+    }
     // We have to get rid of the XK_KP_function keys, because they are
     // not produced on Windoze and thus case statements tend not to check
     // for them.  There are 15 of these in the range 0xff91 ... 0xff9f

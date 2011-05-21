@@ -366,6 +366,27 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_Alt_R	0xffea	///< The right alt key. 
 #define FL_Delete	0xffff	///< The delete key.
 
+// These use the Private Use Area (PUA) of the Basic Multilingual Plane
+// of Unicode. Guaranteed not to conflict with a proper Unicode character.
+
+// These primarily map to the XFree86 keysym range
+#define FL_Volume_Down  0xEF11   /* Volume control down        */
+#define FL_Volume_Mute  0xEF12   /* Mute sound from the system */
+#define FL_Volume_Up    0xEF13   /* Volume control up          */
+#define FL_Media_Play   0xEF14   /* Start playing of audio     */
+#define FL_Media_Stop   0xEF15   /* Stop playing audio         */
+#define FL_Media_Prev   0xEF16   /* Previous track             */
+#define FL_Media_Next   0xEF17   /* Next track                 */
+#define FL_Home_Page    0xEF18   /* Display user's home page   */
+#define FL_Mail         0xEF19   /* Invoke user's mail program */
+#define FL_Search       0xEF1B   /* Search                     */
+#define FL_Back         0xEF26   /* Like back on a browser     */
+#define FL_Forward      0xEF27   /* Like forward on a browser  */
+#define FL_Stop         0xEF28   /* Stop current operation     */
+#define FL_Refresh      0xEF29   /* Refresh the page           */
+#define FL_Sleep        0xEF2F   /* Put system to sleep        */
+#define FL_Favorites    0xEF30   /* Show favorite locations    */
+
 /*@}*/	// group: Mouse and Keyboard Events
 
 /** \name Mouse Buttons
