@@ -446,6 +446,16 @@
 					Outputs="../../test/$(InputName).cxx"
 				/>
 			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Create $(InputName).cxx and $(InputName).h file with fluid"
+					CommandLine="cfluid $(InputName).fl"
+					Outputs="../../test/$(InputName).cxx"
+				/>
+			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
