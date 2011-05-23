@@ -1070,6 +1070,19 @@ int fl_handle(const XEvent& thisevent)
 
   if (window) switch (xevent.type) {
 
+    case DestroyNotify: { // an X11 window was closed externally from the program
+      Fl::handle(FL_CLOSE, window);
+      Fl_X* X = Fl_X::i(window);
+      if (X) { // indicates the FLTK window was not closed
+	X->xid = NULL; // indicates the X11 window was already destroyed
+	window->hide();
+	int oldx = window->x(), oldy = window->y();
+	window->position(0, 0);
+	window->position(oldx, oldy);
+	window->show(); // recreate the X11 window in support of the FLTK window
+	}
+      return 1;
+    }
   case ClientMessage: {
     Atom message = fl_xevent->xclient.message_type;
     const long* data = fl_xevent->xclient.data.l;

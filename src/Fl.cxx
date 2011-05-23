@@ -1439,7 +1439,8 @@ void Fl_Window::hide() {
 # if USE_XFT
   fl_destroy_xft_draw(ip->xid);
 # endif
-  XDestroyWindow(fl_display, ip->xid);
+  // this test makes sure ip->xid has not been destroyed already
+  if (ip->xid) XDestroyWindow(fl_display, ip->xid);
 #elif defined(WIN32)
   // this little trickery seems to avoid the popup window stacking problem
   HWND p = GetForegroundWindow();
