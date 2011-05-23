@@ -27,30 +27,36 @@
 
 
 // warning: the Apple Quartz version still uses some Quickdraw calls,
-//          mostly to get around the single active context in QD and 
+//          mostly to get around the single active context in QD and
 //          to implement clipping. This should be changed into pure
 //          Quartz calls in the near future.
 #include <config.h>
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Tooltip.H>
 
 /* We require Windows 2000 features (e.g. VK definitions) */
 #if defined(WIN32)
 # if !defined(WINVER) || (WINVER < 0x0500)
+#  ifdef WINVER
+#   undef WINVER
+#  endif
 #  define WINVER 0x0500
 # endif
 # if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
+#  ifdef _WIN32_WINNT
+#   undef _WIN32_WINNT
+#  endif
 #  define _WIN32_WINNT 0x0500
 # endif
 #endif
 
 // recent versions of MinGW warn: "Please include winsock2.h before windows.h",
-// hence we must include winsock2.h before FL/x.H (A.S. Dec. 2010)
+// hence we must include winsock2.h before FL/Fl.H (A.S. Dec. 2010, IMM May 2011)
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include <winsock2.h>
 #endif
 
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Tooltip.H>
 #include <FL/x.H>
 
 #include <ctype.h>
@@ -135,7 +141,7 @@ Fl::version() {
 }
 
 /**
-  Gets the default scrollbar size used by 
+  Gets the default scrollbar size used by
   Fl_Browser_,
   Fl_Help_View,
   Fl_Scroll, and
@@ -292,7 +298,7 @@ void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void *argp) {
   t->cb = cb;
   t->arg = argp;
   // insert-sort the new timeout:
-  Timeout** p = &first_timeout; 
+  Timeout** p = &first_timeout;
   while (*p && (*p)->time <= time) p = &((*p)->next);
   t->next = *p;
   *p = t;
@@ -361,14 +367,14 @@ static Check *first_check, *next_check, *free_check;
 
   \code
   bool state_changed; // anything that changes the display turns this on
-  
+
   void callback(void*) {
    if (!state_changed) return;
    state_changed = false;
    do_expensive_calculation();
    widget-&gt;redraw();
   }
-  
+
   main() {
    Fl::add_check(callback);
    return Fl::run();
@@ -577,7 +583,7 @@ static Fl_Win32_At_Exit win32_at_exit;
   repeatedly to "run" your program.  You can also check what happened
   each time after this returns, which is quite useful for managing
   program state.
-  
+
   What this really does is call all idle callbacks, all elapsed
   timeouts, call Fl::flush() to get the screen to update, and
   then wait some time (zero if there are idle callbacks, the shortest of
@@ -605,7 +611,7 @@ int Fl::wait() {
 /**
   Same as Fl::wait(0).  Calling this during a big calculation
   will keep the screen up to date and the interface responsive:
-  
+
   \code
   while (!calculation_done()) {
   calculate();
@@ -613,7 +619,7 @@ int Fl::wait() {
   if (user_hit_abort_button()) break;
   }
   \endcode
-  
+
   This returns non-zero if any windows are displayed, and 0 if no
   windows are displayed (this is likely to change in future versions of
   FLTK).
@@ -629,7 +635,7 @@ int Fl::check() {
   program is in a state where such callbacks are illegal.  This returns
   true if Fl::check() would do anything (it will continue to
   return true until you call Fl::check() or Fl::wait()).
-  
+
   \code
   while (!calculation_done()) {
     calculate();
@@ -664,9 +670,9 @@ Fl_Window* fl_find(Window xid) {
   Fl_X *window;
   for (Fl_X **pp = &Fl_X::first; (window = *pp); pp = &window->next)
 #if defined(WIN32) || defined(USE_X11)
-   if (window->xid == xid) 
+   if (window->xid == xid)
 #elif defined(__APPLE_QUARTZ__)
-   if (window->xid == xid && !window->w->window()) 
+   if (window->xid == xid && !window->w->window())
 #else
 # error unsupported platform
 #endif // __APPLE__
@@ -704,7 +710,7 @@ Fl_Window* Fl::next_window(const Fl_Window* window) {
 }
 
 /**
- Sets the window that is returned by first_window().  
+ Sets the window that is returned by first_window().
  The window is removed from wherever it is in the
  list and inserted at the top.  This is not done if Fl::modal()
  is on or if the window is not shown(). Because the first window
@@ -726,7 +732,7 @@ void Fl::redraw() {
 /**
   Causes all the windows that need it to be redrawn and graphics forced
   out through the pipes.
-  
+
   This is what wait() does before looking for events.
 
   Note: in multi-threaded applications you should only call Fl::flush()
@@ -778,7 +784,7 @@ static handler_link *handlers = 0;
   (most recent first) until one of them returns non-zero.  If none of
   them returns non-zero then the event is ignored.  Events that cause
   this to be called are:
-  
+
   - FL_SHORTCUT events that are not recognized by any widget.
     This lets you provide global shortcut keys.
   - System events that FLTK does not recognize.  See fl_xevent.
@@ -832,14 +838,14 @@ Fl_Widget* fl_oldfocus; // kludge for Fl_Group...
 
 /**
     Sets the widget that will receive FL_KEYBOARD events.
-    
+
     If you change Fl::focus(), the previous widget and all
     parents (that don't contain the new widget) are sent FL_UNFOCUS
     events.  Changing the focus does \e not send FL_FOCUS to
     this or any widget, because sending FL_FOCUS is supposed to
     \e test if the widget wants the focus (by it returning non-zero from
     handle()).
-    
+
     \see Fl_Widget::take_focus()
 */
 void Fl::focus(Fl_Widget *o) {
@@ -881,16 +887,16 @@ static char dnd_flag = 0; // make 'belowmouse' send DND_LEAVE instead of LEAVE
 
 /**
     Sets the widget that is below the mouse.  This is for
-    highlighting buttons.  It is not used to send FL_PUSH or 
+    highlighting buttons.  It is not used to send FL_PUSH or
     FL_MOVE directly, for several obscure reasons, but those events
-    typically go to this widget.  This is also the first widget tried for 
+    typically go to this widget.  This is also the first widget tried for
     FL_SHORTCUT events.
-    
+
     If you change the belowmouse widget, the previous one and all
     parents (that don't contain the new widget) are sent FL_LEAVE
     events.  Changing this does \e not send FL_ENTER to this
     or any widget, because sending FL_ENTER is supposed to \e test
-    if the widget wants the mouse (by it returning non-zero from 
+    if the widget wants the mouse (by it returning non-zero from
     handle()).
 */
 void Fl::belowmouse(Fl_Widget *o) {
@@ -908,15 +914,15 @@ void Fl::belowmouse(Fl_Widget *o) {
 }
 
 /**
-    Sets the widget that is being pushed. FL_DRAG or 
+    Sets the widget that is being pushed. FL_DRAG or
     FL_RELEASE (and any more FL_PUSH) events will be sent to
     this widget.
-    
+
     If you change the pushed widget, the previous one and all parents
     (that don't contain the new widget) are sent FL_RELEASE
     events.  Changing this does \e not send FL_PUSH to this
     or any widget, because sending FL_PUSH is supposed to \e test
-    if the widget wants the mouse (by it returning non-zero from 
+    if the widget wants the mouse (by it returning non-zero from
     handle()).
 */
  void Fl::pushed(Fl_Widget *o) {
@@ -1071,23 +1077,23 @@ static int send(int event, Fl_Widget* to, Fl_Window* window) {
  }
  \endcode
 
- \param d new dispatch function, or NULL 
+ \param d new dispatch function, or NULL
  \see Fl::add_handler(Fl_Event_Handler)
  \see Fl::handle(int, Fl_Window*)
  \see Fl::handle_(int, Fl_Window*)
  */
 void Fl::event_dispatch(Fl_Event_Dispatch d)
 {
-  e_dispatch = d; 
+  e_dispatch = d;
 }
 
 
-/** 
- \brief Return the current event dispatch function. 
+/**
+ \brief Return the current event dispatch function.
  */
-Fl_Event_Dispatch Fl::event_dispatch() 
-{ 
-  return e_dispatch; 
+Fl_Event_Dispatch Fl::event_dispatch()
+{
+  return e_dispatch;
 }
 
 
@@ -1095,7 +1101,7 @@ Fl_Event_Dispatch Fl::event_dispatch()
  \brief Handle events from the window system.
 
  This is called from the native event dispatch after native events have been
- converted to FLTK notation. This function calls Fl::handle_(int, Fl_Window*) 
+ converted to FLTK notation. This function calls Fl::handle_(int, Fl_Window*)
  unless the user sets a dispatch function. If a user dispatch function is set,
  the user must make sure that Fl::handle_() is called, or the event will be
  ignored.
@@ -1120,8 +1126,8 @@ int Fl::handle(int e, Fl_Window* window)
 /**
  \brief Handle events from the window system.
 
- This function is called from the native event dispatch, unless the user sets 
- another dispatch function. In that case, the user dispatch function must 
+ This function is called from the native event dispatch, unless the user sets
+ another dispatch function. In that case, the user dispatch function must
  decide when to call Fl::handle_(int, Fl_Window*)
 
  \param e the event type (Fl::event_number() is not yet set)
@@ -1131,7 +1137,7 @@ int Fl::handle(int e, Fl_Window* window)
  \see Fl::event_dispatch(Fl_Event_Dispatch)
  */
 int Fl::handle_(int e, Fl_Window* window)
-{  
+{
   e_number = e;
   if (fl_local_grab) return fl_local_grab(e);
 
@@ -1245,8 +1251,8 @@ int Fl::handle_(int e, Fl_Window* window)
     // always the same widget that received the corresponding
     // FL_KEYBOARD event because focus may have changed.
     // Sending the KEYUP to the right KEYDOWN is possible, but
-    // would require that we track the KEYDOWN for every possible 
-    // key stroke (users may hold down multiple keys!) and then 
+    // would require that we track the KEYDOWN for every possible
+    // key stroke (users may hold down multiple keys!) and then
     // make sure that the widget still exists before sending
     // a KEYUP there. I believe that the current solution is
     // "close enough".
@@ -1447,7 +1453,7 @@ void Fl_Window::hide() {
 #else
 # error unsupported platform
 #endif
-  
+
 #ifdef WIN32
   // Try to stop the annoying "raise another program" behavior
   if (non_modal() && Fl::first_window() && Fl::first_window()->shown())
@@ -1525,7 +1531,7 @@ int Fl_Window::handle(int ev)
     NULL, without changing the actual text of the
     selection. FL_SELECTIONCLEAR is sent to the previous
     selection owner, if any.
-    
+
     <i>Copying the buffer every time the selection is changed is
     obviously wasteful, especially for large selections.  An interface will
     probably be added in a future version to allow the selection to be made
@@ -1712,7 +1718,7 @@ void Fl_Window::flush() {
 static int		num_dwidgets = 0, alloc_dwidgets = 0;
 static Fl_Widget	**dwidgets = 0;
 
-/** 
+/**
   Schedules a widget for deletion at the next call to the event loop.
   Use this method to delete a widget inside a callback function.
 
@@ -1752,9 +1758,9 @@ void Fl::delete_widget(Fl_Widget *wi) {
   num_dwidgets ++;
 }
 
-/** 
+/**
     Deletes widgets previously scheduled for deletion.
-    
+
     This is for internal use only. You should never call this directly.
 
     Fl::do_widget_deletion() is called from the FLTK event loop or whenever
@@ -1778,7 +1784,7 @@ static int max_widget_watch = 0;
 
 /**
   Adds a widget pointer to the widget watch list.
-  
+
   \note Internal use only, please use class Fl_Widget_Tracker instead.
 
   This can be used, if it is possible that a widget might be deleted during
@@ -1821,7 +1827,7 @@ static int max_widget_watch = 0;
 
    \see class Fl_Widget_Tracker
 */
-void Fl::watch_widget_pointer(Fl_Widget *&w) 
+void Fl::watch_widget_pointer(Fl_Widget *&w)
 {
   Fl_Widget **wp = &w;
   int i;
@@ -1845,7 +1851,7 @@ void Fl::watch_widget_pointer(Fl_Widget *&w)
 
   This is used to remove a widget pointer that has been added to the watch list
   with Fl::watch_widget_pointer(), when it is not needed anymore.
-  
+
   \note Internal use only, please use class Fl_Widget_Tracker instead.
 
   \see Fl::watch_widget_pointer()
@@ -1889,7 +1895,7 @@ void Fl::release_widget_pointer(Fl_Widget *&w)
   \see Fl::watch_widget_pointer()
   \see class Fl_Widget_Tracker
 */
-void Fl::clear_widget_pointer(Fl_Widget const *w) 
+void Fl::clear_widget_pointer(Fl_Widget const *w)
 {
   if (w==0L) return;
   int i;
@@ -1906,7 +1912,7 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
 
  This function needs to be documented in more detail. It can be used for more
  optional settings, such as using a native file chooser instead of the FLTK one
- wherever possible, disabling tooltips, disabling visible focus, disabling 
+ wherever possible, disabling tooltips, disabling visible focus, disabling
  FLTK file chooser preview, etc. .
 
  There should be a command line option interface.
@@ -1923,7 +1929,7 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
  \see Fl::option(Fl_Option, bool)
 
  \since FLTK 1.3.0
- */ 
+ */
 bool Fl::option(Fl_Option opt)
 {
   if (!options_read_) {
@@ -1948,33 +1954,33 @@ bool Fl::option(Fl_Option opt)
       // override system options only, if the option is set ( >= 0 )
       Fl_Preferences prefs(Fl_Preferences::USER, "fltk.org", "fltk");
       Fl_Preferences opt_prefs(prefs, "options");
-      opt_prefs.get("ArrowFocus", tmp, -1); 
+      opt_prefs.get("ArrowFocus", tmp, -1);
       if (tmp >= 0) options_[OPTION_ARROW_FOCUS] = tmp;
-      //opt_prefs.get("NativeFilechooser", tmp, -1); 
+      //opt_prefs.get("NativeFilechooser", tmp, -1);
       //if (tmp >= 0) options_[OPTION_NATIVE_FILECHOOSER] = tmp;
       //opt_prefs.get("FilechooserPreview", tmp, -1);
       //if (tmp >= 0) options_[OPTION_FILECHOOSER_PREVIEW] = tmp;
-      opt_prefs.get("VisibleFocus", tmp, -1); 
+      opt_prefs.get("VisibleFocus", tmp, -1);
       if (tmp >= 0) options_[OPTION_VISIBLE_FOCUS] = tmp;
-      opt_prefs.get("DNDText", tmp, -1); 
+      opt_prefs.get("DNDText", tmp, -1);
       if (tmp >= 0) options_[OPTION_DND_TEXT] = tmp;
-      opt_prefs.get("ShowTooltips", tmp, -1); 
+      opt_prefs.get("ShowTooltips", tmp, -1);
       if (tmp >= 0) options_[OPTION_SHOW_TOOLTIPS] = tmp;
     }
     { // now, if the developer has registered this app, we could as for per-application preferences
     }
     options_read_ = 1;
   }
-  if (opt<0 || opt>=OPTION_LAST) 
+  if (opt<0 || opt>=OPTION_LAST)
     return false;
   return (bool)(options_[opt]!=0);
 }
 
 /**
  \brief Override an option while the application is running.
- 
+
  This function does not change any system or user settings.
- 
+
  \param opt which option
  \param val set to true or false
  \see enum Fl::Fl_Option
@@ -1982,7 +1988,7 @@ bool Fl::option(Fl_Option opt)
  */
 void Fl::option(Fl_Option opt, bool val)
 {
-  if (opt<0 || opt>=OPTION_LAST) 
+  if (opt<0 || opt>=OPTION_LAST)
     return;
   if (!options_read_) {
     // first read this option, so we don't override our setting later
@@ -1997,7 +2003,7 @@ void Fl::option(Fl_Option opt, bool val)
 /**
   The constructor adds a widget to the watch list.
 */
-Fl_Widget_Tracker::Fl_Widget_Tracker(Fl_Widget *wi) 
+Fl_Widget_Tracker::Fl_Widget_Tracker(Fl_Widget *wi)
 {
   wp_ = wi;
   Fl::watch_widget_pointer(wp_); // add pointer to watch list
@@ -2006,7 +2012,7 @@ Fl_Widget_Tracker::Fl_Widget_Tracker(Fl_Widget *wi)
 /**
   The destructor removes a widget from the watch list.
 */
-Fl_Widget_Tracker::~Fl_Widget_Tracker() 
+Fl_Widget_Tracker::~Fl_Widget_Tracker()
 {
   Fl::release_widget_pointer(wp_); // remove pointer from watch list
 }
