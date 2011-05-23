@@ -1074,7 +1074,7 @@ int fl_handle(const XEvent& thisevent)
       Fl::handle(FL_CLOSE, window);
       Fl_X* X = Fl_X::i(window);
       if (X) { // indicates the FLTK window was not closed
-	X->xid = NULL; // indicates the X11 window was already destroyed
+	X->xid = (Window)0; // indicates the X11 window was already destroyed
 	window->hide();
 	int oldx = window->x(), oldy = window->y();
 	window->position(0, 0);
