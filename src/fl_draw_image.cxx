@@ -297,13 +297,15 @@ static void rrr_converter(const uchar *from, uchar *to, int w, int delta) {
 #    if WORDS_BIGENDIAN
 #      define INNARDS32(f) \
   U64 *t = (U64*)to; \
-  int w1 = (w+1)/2; \
-  for (; w1--; from += delta) {U64 i = f; from += delta; *t++ = (i<<32)|(f);}
+  int w1 = w/2; \
+  for (; w1--; from += delta) {U64 i = f; from += delta; *t++ = (i<<32)|(f);} \
+  if (w&1) *t++ = (U64)(f)<<32;
 #    else
 #      define INNARDS32(f) \
   U64 *t = (U64*)to; \
-  int w1 = (w+1)/2; \
-  for (; w1--; from += delta) {U64 i=f; from+= delta; *t++ = ((U64)(f)<<32)|i;}
+  int w1 = w/2; \
+  for (; w1--; from += delta) {U64 i = f; from += delta; *t++ = ((U64)(f)<<32)|i;} \
+  if (w&1) *t++ = (U64)(f);
 #    endif
 #  else
 #    define STORETYPE U32
