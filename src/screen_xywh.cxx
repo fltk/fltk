@@ -155,11 +155,15 @@ static void screen_init() {
   if (XineramaIsActive(fl_display)) {
     screens = XineramaQueryScreens(fl_display, &num_screens);
     int i;
+    // Xlib and Xinerama may disagree on the screen count. Sigh...
+    // Use the minimum of the reported counts.
+    // Use the previous screen's info for non-existent ones.
+    int sc = ScreenCount(fl_display); // Xlib screen count
     for (i=0; i<num_screens; i++) {
-      int mm = DisplayWidthMM(fl_display, i);
-      dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
-      mm = DisplayHeightMM(fl_display, fl_screen);
-      dpi[i][1] = mm ? screens[i].height*25.4f/mm : dpi[i][0];
+      int mm = (i < sc) ? DisplayWidthMM(fl_display, i) : 0;
+      dpi[i][0] = mm ? screens[i].width*25.4f/mm : (i > 0) ? dpi[i-1][0] : 0.0f;
+      mm = (i < sc) ? DisplayHeightMM(fl_display, i) : 0;
+      dpi[i][1] = mm ? screens[i].height*25.4f/mm : (i > 0) ? dpi[i-1][1] : 0.0f;
     }
   } else { // ! XineramaIsActive()
     num_screens = 1;
