@@ -3,7 +3,7 @@
 //
 // Multiline input header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -57,10 +57,15 @@ public:
   /**
     Creates a new Fl_Multiline_Input widget using the given
     position, size, and label string. The default boxtype is FL_DOWN_BOX.
-    <P>Inherited destructor destroys the widget and any value associated with it.
+
+    Inherited destructor destroys the widget and any value associated with it.
   */
+#if defined(FL_DLL)	// implementation in src/Fl_Input.cxx
+  Fl_Multiline_Input(int X,int Y,int W,int H,const char *l = 0);
+#else
   Fl_Multiline_Input(int X,int Y,int W,int H,const char *l = 0)
     : Fl_Input(X,Y,W,H,l) {type(FL_MULTILINE_INPUT);}
+#endif
 };
 
 #endif

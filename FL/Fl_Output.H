@@ -53,16 +53,21 @@
   and \\nnn notation for unprintable characters with the high bit set. It
   assumes the font can draw any characters in the ISO-Latin1 character set.
 */
-class Fl_Output : public Fl_Input { // don't use FL_EXPORT here !
+class FL_EXPORT Fl_Output : public Fl_Input {
 public:
   /**
     Creates a new Fl_Output widget using the given position,
     size, and label string. The default boxtype is FL_DOWN_BOX.
 
-    Inherited destrucor destroys the widget and any value associated with it.
+    Inherited destructor destroys the widget and any value associated with it.
   */
+
+#if defined(FL_DLL)	// implementation in src/Fl_Input.cxx
+    Fl_Output(int X,int Y,int W,int H, const char *l = 0);
+#else
     Fl_Output(int X,int Y,int W,int H, const char *l = 0)
     : Fl_Input(X, Y, W, H, l) {type(FL_NORMAL_OUTPUT);}
+#endif
 };
 
 #endif 
