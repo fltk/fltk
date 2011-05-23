@@ -31,8 +31,8 @@
 #include <config.h>
 
 
-// Number of screens...
-static int num_screens = 0;
+// Number of screens returned by multi monitor aware API; -1 before init
+static int num_screens = -1;
 
 #ifdef WIN32
 #  if !defined(HMONITOR_DECLARED) && (_WIN32_WINNT < 0x0500)
@@ -67,7 +67,7 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
 //  GetMonitorInfo(mon, &mi);
 //  (but we use our self-aquired function pointer instead)
   if (fl_gmi(mon, &mi)) {
-    screens[num_screens] = mi.rcWork;
+    screens[num_screens] = mi.rcMonitor;
     
     // find the pixel size
     if (mi.cbSize == sizeof(mi)) {
@@ -85,6 +85,7 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
 }
 
 static void screen_init() {
+  num_screens = 0;
   // Since not all versions of Windows include multiple monitor support,
   // we do a run-time check for the required functions...
   HMODULE hMod = GetModuleHandle("USER32.DLL");
@@ -103,7 +104,6 @@ static void screen_init() {
 
         if (fl_gmi) {
           // We have GetMonitorInfoA, enumerate all the screens...
-          num_screens = 0;
 //        EnumDisplayMonitors(0,0,screen_cb,0);
 //        (but we use our self-aquired function pointer instead)
           fl_edm(0, 0, screen_cb, 0);
@@ -115,6 +115,10 @@ static void screen_init() {
 
   // If we get here, assume we have 1 monitor...
   num_screens = 1;
+  screens[0].top      = 0;
+  screens[0].left      = 0;
+  screens[0].right  = GetSystemMetrics(SM_CXSCREEN);
+  screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
 }
 #elif defined(__APPLE__)
 static XRectangle screens[16];
@@ -129,7 +133,7 @@ static void screen_init() {
   for( i = 0; i < count; i++) {
     r = CGDisplayBounds(displays[i]);
     screens[i].x      = int(r.origin.x);
-    screens[i].y      = int(r.size.height - (r.origin.y + r.size.height));
+    screens[i].y      = int(r.origin.y);
     screens[i].width  = int(r.size.width);
     screens[i].height = int(r.size.height);
     CGSize s = CGDisplayScreenSize(displays[i]);
@@ -182,9 +186,9 @@ static void screen_init() {
   Gets the number of available screens.
 */
 int Fl::screen_count() {
-  if (!num_screens) screen_init();
+  if (num_screens < 0) screen_init();
 
-  return num_screens;
+  return num_screens ? num_screens : 1;
 }
 
 /**
@@ -194,10 +198,10 @@ int Fl::screen_count() {
   \param[in] mx, my the absolute screen position
 */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
-  if (!num_screens) screen_init();
+  if (num_screens < 0) screen_init();
 
 #ifdef WIN32
-  if (num_screens > 1) {
+  if (num_screens > 0) {
     int i;
 
     for (i = 0; i < num_screens; i ++) {
@@ -212,7 +216,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
     }
   }
 #elif defined(__APPLE__)
-  if (num_screens > 1) {
+  if (num_screens > 0) {
     int i;
 
     for (i = 0; i < num_screens; i ++) {
@@ -229,7 +233,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
     }
   }
 #elif HAVE_XINERAMA
-  if (num_screens > 1) {
+  if (num_screens > 0) {
     int i;
 
     for (i = 0; i < num_screens; i ++) {
@@ -263,10 +267,10 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
   \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
 */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
-  if (!num_screens) screen_init();
+  if (num_screens < 0) screen_init();
 
 #ifdef WIN32
-  if (num_screens > 1 && n >= 0 && n < num_screens) {
+  if (num_screens > 0 && n >= 0 && n < num_screens) {
     X = screens[n].left;
     Y = screens[n].top;
     W = screens[n].right - screens[n].left;
@@ -274,7 +278,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     return;
   }
 #elif defined(__APPLE__)
-  if (num_screens > 1 && n >= 0 && n < num_screens) {
+  if (num_screens > 0 && n >= 0 && n < num_screens) {
     X = screens[n].x;
     Y = screens[n].y;
     W = screens[n].width;
@@ -282,7 +286,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     return;
   }
 #elif HAVE_XINERAMA
-  if (num_screens > 1 && n >= 0 && n < num_screens) {
+  if (num_screens > 0 && n >= 0 && n < num_screens) {
     X = screens[n].x_org;
     Y = screens[n].y_org;
     W = screens[n].width;
@@ -343,7 +347,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int
  */
 void Fl::screen_dpi(float &h, float &v, int n)
 {
-  if (!num_screens) screen_init();
+  if (num_screens < 0) screen_init();
   h = v = 0.0f;
   
 #ifdef WIN32

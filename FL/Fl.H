@@ -766,13 +766,13 @@ public:
 	fl global screen functions declared in <FL/Fl.H>
      @{ */
   // screen size:
-  /** Returns the origin of the current screen, where 0 indicates the left side of the screen. */
+  /** Returns the origin of the current screen work area, where 0 indicates the left side of the screen. */
   static int x(); // platform dependent
-  /** Returns the origin of the current screen, where 0 indicates the top edge of the screen. */
+  /** Returns the origin of the current screen work area, where 0 indicates the top edge of the screen. */
   static int y(); // platform dependent
-  /** Returns the width of the screen in pixels. */
+  /** Returns the width of the screen work area in pixels. */
   static int w(); // platform dependent
-  /** Returns the height of the screen in pixels. */
+  /** Returns the height of the screen work area in pixels. */
   static int h(); // platform dependent
 
   // multi-head support:
