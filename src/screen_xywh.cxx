@@ -237,7 +237,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
     }
   }
 #elif HAVE_XINERAMA
-  if (num_screens > 0) {
+  if (num_screens > 0 && screens) { // screens == NULL if !XineramaIsActive(fl_display)
     int i;
 
     for (i = 0; i < num_screens; i ++) {
