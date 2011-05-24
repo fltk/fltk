@@ -32,6 +32,12 @@
 #include <stdlib.h>
 #include <math.h>
 
+#if defined(FL_DLL)	// really needed for c'tors for MS VC++ only
+#include <FL/Fl_Hold_Browser.H>
+#include <FL/Fl_Multi_Browser.H>
+#include <FL/Fl_Select_Browser.H>
+#endif
+
 // I modified this from the original Forms data to use a linked list
 // so that the number of items in the browser and size of those items
 // is unlimited. The only problem is that the old browser used an
@@ -913,6 +919,30 @@ Fl_Image* Fl_Browser::icon(int line) const {
 void Fl_Browser::remove_icon(int line) { 
   icon(line,0);
 }
+
+/*
+  The following constructors must not be in the header file(s) if we
+  build a shared object (DLL). Instead they are defined here to force
+  the constructor (and default destructor as well) to be defined in
+  the DLL and exported (STR #2632, #2645).
+  
+  Note: if you change any of them, do the same changes in the specific
+  header file as well.  This redundant definition was chosen to enable
+  inline constructors in the header files (for static linking) as well
+  as those here for dynamic linking (Windows DLL).
+*/
+#if defined(FL_DLL)
+
+  Fl_Hold_Browser::Fl_Hold_Browser(int X,int Y,int W,int H,const char *L)
+	: Fl_Browser(X,Y,W,H,L) {type(FL_HOLD_BROWSER);}
+
+  Fl_Multi_Browser::Fl_Multi_Browser(int X,int Y,int W,int H,const char *L)
+	: Fl_Browser(X,Y,W,H,L) {type(FL_MULTI_BROWSER);}
+
+  Fl_Select_Browser::Fl_Select_Browser(int X,int Y,int W,int H,const char *L)
+	: Fl_Browser(X,Y,W,H,L) {type(FL_SELECT_BROWSER);}
+
+#endif // FL_DLL
 
 //
 // End of "$Id$".
