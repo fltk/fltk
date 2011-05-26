@@ -219,6 +219,11 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
       }
     }
   }
+  // if all else fails:
+  X = Fl::x();
+  Y = Fl::y();
+  W = Fl::w();
+  H = Fl::h();
 #elif defined(__APPLE__)
   if (num_screens > 0) {
     int i;
@@ -236,6 +241,11 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
       }
     }
   }
+  // if all else fails:
+  X = Fl::x();
+  Y = Fl::y();
+  W = Fl::w();
+  H = Fl::h();
 #elif HAVE_XINERAMA
   if (num_screens > 0 && screens) { // screens == NULL if !XineramaIsActive(fl_display)
     int i;
@@ -253,15 +263,20 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
       }
     }
   }
-#else
-  (void)mx;
-  (void)my;
-#endif // WIN32
-
+  // if all else fails:
   X = Fl::x();
   Y = Fl::y();
   W = Fl::w();
   H = Fl::h();
+#else
+  (void)mx;
+  (void)my;
+  X = 0;
+  Y = 0;
+  W = DisplayWidth(fl_display, fl_screen);
+  H = DisplayHeight(fl_display, fl_screen);
+#endif // WIN32
+
 }
 
 /**
@@ -279,7 +294,11 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     Y = screens[n].top;
     W = screens[n].right - screens[n].left;
     H = screens[n].bottom - screens[n].top;
-    return;
+  } else {
+    X = Fl::x();
+    Y = Fl::y();
+    W = Fl::w();
+    H = Fl::h();
   }
 #elif defined(__APPLE__)
   if (num_screens > 0 && n >= 0 && n < num_screens) {
@@ -287,24 +306,30 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     Y = screens[n].y;
     W = screens[n].width;
     H = screens[n].height;
-    return;
+  } else {
+    X = Fl::x();
+    Y = Fl::y();
+    W = Fl::w();
+    H = Fl::h();
   }
 #elif HAVE_XINERAMA
-  if (num_screens > 0 && n >= 0 && n < num_screens) {
+  if (num_screens > 0 && n >= 0 && n < num_screens && screens) {
     X = screens[n].x_org;
     Y = screens[n].y_org;
     W = screens[n].width;
     H = screens[n].height;
-    return;
+  } else {
+    X = Fl::x();
+    Y = Fl::y();
+    W = Fl::w();
+    H = Fl::h();
   }
 #else
-  (void)n;
+  X = 0;
+  Y = 0;
+  W = DisplayWidth(fl_display, fl_screen);
+  H = DisplayHeight(fl_display, fl_screen);
 #endif // WIN32
-
-  X = Fl::x();
-  Y = Fl::y();
-  W = Fl::w();
-  H = Fl::h();
 }
 
 static inline float fl_intersection(int x1, int y1, int w1, int h1,
