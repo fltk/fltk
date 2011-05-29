@@ -1998,17 +1998,23 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   if (win->parent() || !win->border()) {
     this->print_widget(win, x_offset, y_offset);
     return;
-    }
+  }
   Fl_Display_Device::display_device()->set_current();
   win->show();
   Fl::check();
   win->make_current();
   Window root, parent, *children, child_win, from;
-  unsigned n;
-  int bx, bt;
+  unsigned n = 0;
+  int bx, bt, do_it;
   from = fl_window;
-  XQueryTree(fl_display, fl_window, &root, &parent, &children, &n); if (n) XFree(children);
-  XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &bx, &bt, &child_win);
+  do_it = (XQueryTree(fl_display, fl_window, &root, &parent, &children, &n) != 0 && 
+	   XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &bx, &bt, &child_win) == True);
+  if (n) XFree(children);
+  if (!do_it) {
+    this->set_current();
+    this->print_widget(win, x_offset, y_offset);
+    return;
+  }
   fl_window = parent;
   uchar *top_image = 0, *left_image = 0, *right_image = 0, *bottom_image = 0;
   top_image = fl_read_image(NULL, 0, 0, - (win->w() + 2 * bx), bt);
@@ -2031,7 +2037,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   }
   this->print_widget( win, x_offset + bx, y_offset + bt );
 }
-
 
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
