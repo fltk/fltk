@@ -1977,6 +1977,9 @@ int Fl_Window::decorated_h()
   Window root, parent, *children;
   unsigned n;
   XQueryTree(fl_display, i->xid, &root, &parent, &children, &n); if (n) XFree(children);
+  // when compiz is used, root and parent are the same window 
+  // and I don't know where to find the window decoration
+  if (root == parent) return h(); 
   XWindowAttributes attributes;
   XGetWindowAttributes(fl_display, parent, &attributes);
   return attributes.height;
@@ -1988,6 +1991,9 @@ int Fl_Window::decorated_w()
   Window root, parent, *children;
   unsigned n;
   XQueryTree(fl_display, i->xid, &root, &parent, &children, &n); if (n) XFree(children);
+  // when compiz is used, root and parent are the same window 
+  // and I don't know where to find the window decoration
+  if (root == parent) return w(); 
   XWindowAttributes attributes;
   XGetWindowAttributes(fl_display, parent, &attributes);
   return attributes.width;
@@ -2010,8 +2016,9 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   do_it = (XQueryTree(fl_display, fl_window, &root, &parent, &children, &n) != 0 && 
 	   XTranslateCoordinates(fl_display, fl_window, parent, 0, 0, &bx, &bt, &child_win) == True);
   if (n) XFree(children);
-  // hack to bypass STR #2648: when compiz is used, bt is assigned a very high, misleading value
-  if (do_it && bt > 30) do_it = 0; 
+  // hack to bypass STR #2648: when compiz is used, root and parent are the same window 
+  // and I don't know where to find the window decoration
+  if (do_it && root == parent) do_it = 0; 
   if (!do_it) {
     this->set_current();
     this->print_widget(win, x_offset, y_offset);
