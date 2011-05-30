@@ -945,7 +945,7 @@ int fl_handle(const XEvent& thisevent)
       // bugs in X servers, or maybe to avoid an extra round-trip to
       // get the property length.  I copy this here:
       Atom actual; int format; unsigned long count, remaining;
-      unsigned char* portion;
+      unsigned char* portion = NULL;
       if (XGetWindowProperty(fl_display,
                              fl_xevent->xselection.requestor,
                              fl_xevent->xselection.property,
@@ -971,18 +971,17 @@ int fl_handle(const XEvent& thisevent)
 	      fl_event_time);
 	return true;
       }
-      XTextProperty text_prop;
-      text_prop.value=portion;
-      text_prop.format=format;
-      text_prop.encoding=actual;
-      text_prop.nitems=count;
-      char **text_list;
-      text_list = (char**)&portion;
-      int bytesnew = strlen(*text_list)+1;
-      buffer = (unsigned char*)realloc(buffer, bytesread+bytesnew+remaining);
-      memcpy(buffer+bytesread, *text_list, bytesnew);
+      // Make sure we got something sane...
+      if ((portion == NULL) || (format != 8) || (count == 0)) {
+	if (portion) XFree(portion);
+        return true;
+	}
+      buffer = (unsigned char*)realloc(buffer, bytesread+count+remaining+1);
+      memcpy(buffer+bytesread, portion, count);
       XFree(portion);
-      bytesread += bytesnew - 1;
+      bytesread += count;
+      // Cannot trust data to be null terminated
+      buffer[bytesread] = '\0';
       if (!remaining) break;
     }
     if (buffer) {
