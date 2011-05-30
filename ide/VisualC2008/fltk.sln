@@ -194,6 +194,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fltk", "fltk.lib.vcproj", "
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fltkdll", "fltkdll.vcproj", "{F0B8F4BD-955D-43CB-980C-805364D04A25}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D640A221-F95A-40FF-AC0E-0E8B615C7681} = {D640A221-F95A-40FF-AC0E-0E8B615C7681}
+		{08B82852-90B3-4767-A5D2-F0A4FCCB2377} = {08B82852-90B3-4767-A5D2-F0A4FCCB2377}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fltkforms", "fltkforms.vcproj", "{C17BAB42-F00B-4F71-9DF6-A921511C89EE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -497,7 +501,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "device", "device.vcproj", "
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "native-filechooser", "native-filechooser.vcproj", "{314273B6-8478-475E-881D-1F5A294AFED6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unittest", "unittests.vcproj", "{58262A6E-4B0B-4308-93D7-06DC8166428B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unittests", "unittests.vcproj", "{58262A6E-4B0B-4308-93D7-06DC8166428B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
