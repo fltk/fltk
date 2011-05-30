@@ -441,7 +441,7 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
 			w != 0, draw_symbols);
     if ((int)ceil(width) > W) W = (int)ceil(width);
     lines++;
-    if (!*e || (*e == '@' && draw_symbols)) break;
+    if (!*e || (*e == '@' && e[1] != '@' && draw_symbols)) break;
     p = e;
   }
 
