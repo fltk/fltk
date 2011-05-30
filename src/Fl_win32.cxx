@@ -1966,7 +1966,7 @@ Window fl_xid_(const Fl_Window *w) {
 
 int Fl_Window::decorated_w()
 {
-  if (parent() || !shown()) return w();
+  if (!shown() || parent() || !border() || !visible()) return w();
   int X, Y, bt, bx, by;
   Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
   return w() + 2 * bx;
@@ -1974,7 +1974,7 @@ int Fl_Window::decorated_w()
 
 int Fl_Window::decorated_h()
 {
-  if (this->parent() || !shown()) return h();
+  if (!shown() || parent() || !border() || !visible()) return h();
   int X, Y, bt, bx, by;
   Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
   return h() + bt + 2 * by;
@@ -1982,7 +1982,7 @@ int Fl_Window::decorated_h()
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  if (win->parent() || !win->border()) {
+  if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
     this->print_widget(win, x_offset, y_offset);
     return;
   }

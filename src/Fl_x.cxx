@@ -1971,37 +1971,41 @@ Window fl_xid_(const Fl_Window *w) {
   return temp ? temp->xid : 0;
 }
 
-int Fl_Window::decorated_h()
+static void decorated_win_size(Fl_Window *win, int &w, int &h)
 {
-  if (parent() || !shown()) return h();
+  w = win->w();
+  h = win->h();
+  if (!win->shown() || win->parent() || !win->border() || !win->visible()) return;
   Window root, parent, *children;
-  unsigned n;
-  XQueryTree(fl_display, i->xid, &root, &parent, &children, &n); if (n) XFree(children);
+  unsigned n = 0;
+  Status status = XQueryTree(fl_display, Fl_X::i(win)->xid, &root, &parent, &children, &n); 
+  if (status != 0 && n) XFree(children);
   // when compiz is used, root and parent are the same window 
   // and I don't know where to find the window decoration
-  if (root == parent) return h(); 
+  if (status == 0 || root == parent) return; 
   XWindowAttributes attributes;
   XGetWindowAttributes(fl_display, parent, &attributes);
-  return attributes.height;
+  w = attributes.width;
+  h = attributes.height;
+}
+
+int Fl_Window::decorated_h()
+{
+  int w, h;
+  decorated_win_size(this, w, h);
+  return h;
 }
 
 int Fl_Window::decorated_w()
 {
-  if (parent() || !shown()) return w();
-  Window root, parent, *children;
-  unsigned n;
-  XQueryTree(fl_display, i->xid, &root, &parent, &children, &n); if (n) XFree(children);
-  // when compiz is used, root and parent are the same window 
-  // and I don't know where to find the window decoration
-  if (root == parent) return w(); 
-  XWindowAttributes attributes;
-  XGetWindowAttributes(fl_display, parent, &attributes);
-  return attributes.width;
+  int w, h;
+  decorated_win_size(this, w, h);
+  return w;
 }
 
 void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
 {
-  if (win->parent() || !win->border()) {
+  if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
     this->print_widget(win, x_offset, y_offset);
     return;
   }
@@ -2034,8 +2038,10 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   }
   fl_window = from;
   this->set_current();
-  fl_draw_image(top_image, x_offset, y_offset, win->w() + 2 * bx, bt, 3);
-  delete[] top_image;
+  if (top_image) {
+    fl_draw_image(top_image, x_offset, y_offset, win->w() + 2 * bx, bt, 3);
+    delete[] top_image;
+  }
   if (bx) {
     if (left_image) fl_draw_image(left_image, x_offset, y_offset + bt, bx, win->h() + bx, 3);
     if (right_image) fl_draw_image(right_image, x_offset + win->w() + bx, y_offset + bt, bx, win->h() + bx, 3);
