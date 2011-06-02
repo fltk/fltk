@@ -135,18 +135,18 @@ inline int fl_not_clipped(int x, int y, int w, int h) {return fl_graphics_driver
 inline int fl_clip_box(int x , int y, int w, int h, int& X, int& Y, int& W, int& H) 
   {return fl_graphics_driver->clip_box(x,y,w,h,X,Y,W,H); }
 /** Undoes any clobbering of clip done by your program */
-inline void fl_restore_clip() { fl_graphics_driver->restore_clip(); };
+inline void fl_restore_clip() { fl_graphics_driver->restore_clip(); }
 /**
  Replaces the top of the clipping stack with a clipping region of any shape.
  
  Fl_Region is an operating system specific type.
  \param[in] r clipping region
  */
-inline void fl_clip_region(Fl_Region r) { fl_graphics_driver->clip_region(r); };
+inline void fl_clip_region(Fl_Region r) { fl_graphics_driver->clip_region(r); }
 /**
  Returns the current clipping region.
  */
-inline Fl_Region fl_clip_region() { return fl_graphics_driver->clip_region(); };
+inline Fl_Region fl_clip_region() { return fl_graphics_driver->clip_region(); }
 
 
 // points:
@@ -332,31 +332,31 @@ FL_EXPORT void fl_chord(int x, int y, int w, int h, double a1, double a2); // ny
  Saves the current transformation matrix on the stack. 
  The maximum depth of the stack is 32.
  */
-inline void fl_push_matrix() { fl_graphics_driver->push_matrix(); };
+inline void fl_push_matrix() { fl_graphics_driver->push_matrix(); }
 /**
  Restores the current transformation matrix from the stack.
  */
-inline void fl_pop_matrix() { fl_graphics_driver->pop_matrix(); };
+inline void fl_pop_matrix() { fl_graphics_driver->pop_matrix(); }
 /**
  Concatenates scaling transformation onto the current one.
  \param[in] x,y scale factors in x-direction and y-direction
  */
-inline void fl_scale(double x, double y) { fl_graphics_driver->scale(x, y); };
+inline void fl_scale(double x, double y) { fl_graphics_driver->scale(x, y); }
 /**
  Concatenates scaling transformation onto the current one.
  \param[in] x scale factor in both x-direction and y-direction
  */
-inline void fl_scale(double x) { fl_graphics_driver->scale(x, x); };
+inline void fl_scale(double x) { fl_graphics_driver->scale(x, x); }
 /**
  Concatenates translation transformation onto the current one.
  \param[in] x,y translation factor in x-direction and y-direction
  */
-inline void fl_translate(double x, double y) { fl_graphics_driver->translate(x, y); };
+inline void fl_translate(double x, double y) { fl_graphics_driver->translate(x, y); }
 /**
  Concatenates rotation transformation onto the current one.
  \param[in] d - rotation angle, counter-clockwise in degrees (not radians)
  */
-inline void fl_rotate(double d) { fl_graphics_driver->rotate(d); };
+inline void fl_rotate(double d) { fl_graphics_driver->rotate(d); }
 /**
  Concatenates another transformation onto the current one.
  
@@ -364,7 +364,7 @@ inline void fl_rotate(double d) { fl_graphics_driver->rotate(d); };
  <tt> X' = aX + cY + x </tt> and <tt> Y' = bX +dY + y </tt>
  */
 inline void fl_mult_matrix(double a, double b, double c, double d, double x,double y) 
-	{ fl_graphics_driver->mult_matrix(a, b, c, d, x, y); };
+	{ fl_graphics_driver->mult_matrix(a, b, c, d, x, y); }
 /**
  Starts drawing a list of points. Points are added to the list with fl_vertex()
  */
@@ -460,22 +460,22 @@ inline void fl_end_complex_polygon() {fl_graphics_driver->end_complex_polygon();
  Transforms coordinate using the current transformation matrix.
  \param[in] x,y coordinate
  */
-inline double fl_transform_x(double x, double y) {return fl_graphics_driver->transform_x(x, y); };
+inline double fl_transform_x(double x, double y) {return fl_graphics_driver->transform_x(x, y); }
 /**
  Transforms coordinate using the current transformation matrix.
  \param[in] x,y coordinate
  */
-inline double fl_transform_y(double x, double y) {return fl_graphics_driver->transform_y(x, y); };
+inline double fl_transform_y(double x, double y) {return fl_graphics_driver->transform_y(x, y); }
 /**
  Transforms distance using current transformation matrix.
  \param[in] x,y coordinate
  */
-inline double fl_transform_dx(double x, double y) {return fl_graphics_driver->transform_dx(x, y); };
+inline double fl_transform_dx(double x, double y) {return fl_graphics_driver->transform_dx(x, y); }
 /**
  Transforms distance using current transformation matrix.
  \param[in] x,y coordinate
  */
-inline double fl_transform_dy(double x, double y) {return fl_graphics_driver->transform_dy(x, y); };
+inline double fl_transform_dy(double x, double y) {return fl_graphics_driver->transform_dy(x, y); }
 /**
  Adds coordinate pair to the vertex list without further transformations.
  \param[in] xf,yf transformed coordinate
