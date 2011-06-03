@@ -40,6 +40,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>
 
 // FREE PATHNAMES ARRAY, IF IT HAS ANY CONTENTS
@@ -543,10 +544,10 @@ int Fl_Native_File_Chooser::post() {
     NSPopUpButton *popup = nil;
     if (_filt_total) {
       char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
-      popup = createPopupAccessory((NSSavePanel*)_panel, t, "Enable:", 0);
+      popup = createPopupAccessory((NSSavePanel*)_panel, t, Fl_File_Chooser::show_label, 0);
       delete[] t;
       [[popup menu] addItem:[NSMenuItem separatorItem]];
-      [popup addItemWithTitle:@"All Documents"];
+      [popup addItemWithTitle:[[NSString alloc] initWithUTF8String:Fl_File_Chooser::all_files_label]];
       [popup setAction:@selector(validateVisibleColumns)];
       [popup setTarget:(NSObject*)_panel];
       static FLopenDelegate *openDelegate = nil;
@@ -604,7 +605,7 @@ int Fl_Native_File_Chooser::post() {
     if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
     if (_filt_total) {
       char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
-      popup = createPopupAccessory((NSSavePanel*)_panel, t, "Format:", _filt_value);
+      popup = createPopupAccessory((NSSavePanel*)_panel, t, [[(NSSavePanel*)_panel nameFieldLabel] UTF8String], _filt_value);
       delete[] t;
     }
     retval = [(NSSavePanel*)_panel runModalForDirectory:dir file:fname];
