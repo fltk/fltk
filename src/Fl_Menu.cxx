@@ -824,7 +824,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   Fl_Group::current(0); // fix possible user error...
 
   button = pbutton;
-  if (pbutton) {
+  if (pbutton && pbutton->window()) {
     for (Fl_Window* w = pbutton->window(); w; w = w->window()) {
       X += w->x();
       Y += w->y();
