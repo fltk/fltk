@@ -373,6 +373,45 @@ int Fl_Native_File_Chooser::get_saveas_basename(void) {
 void Fl_Native_File_Chooser::type(int val) {
   _btype = val;
 }
+
+/* Input
+ filter=  "C files\t*.{c,h}\nText files\t*.txt\n"
+ patterns[0] = "*.{c,h}"
+ patterns[1] = "*.txt"
+ count = 2
+ Return:
+ "C files (*.{c,h})\nText files (*.txt)\n"
+ */
+static char *prepareMacFilter(int count, const char *filter, char **patterns) {
+  int rank = 0, l = 0;
+  for (int i = 0; i < count; i++) {
+    l += strlen(patterns[i]) + 3;
+    }
+  const char *p = filter;
+  char *q; q = new char[strlen(p) + l + 1];
+  const char *r, *s;
+  char *t;
+  t = q;
+  do {	// copy to t what is in filter removing what is between \t and \n, if any
+    r = strchr(p, '\n');
+    if (!r) r = p + strlen(p);
+    s = strchr(p, '\t');
+    if (s && s < r) { 
+      memcpy(q, p, s - p); 
+      q += s - p; 
+      if (rank < count) { sprintf(q, " (%s)", patterns[rank]); q += strlen(q); }
+    }
+    else { 
+      memcpy(q, p, r - p); 
+      q += r - p; 
+    }
+    rank++;
+    *(q++) = '\n'; 
+    if (*p) p = r + 1;
+  } while(*p);
+  *q = 0;
+  return t;
+}
   
 @interface FLopenDelegate : NSObject 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
@@ -503,19 +542,7 @@ int Fl_Native_File_Chooser::post() {
   if ( [(NSSavePanel*)_panel isKindOfClass:[NSOpenPanel class]] ) {
     NSPopUpButton *popup = nil;
     if (_filt_total) {
-      char *p; p = _filter;
-      char *q; q = new char[strlen(p) + 1];
-      char *r, *s, *t;
-      t = q;
-      do {	// copy to t what is in _filter removing what is between \t and \n, if any
-	r = strchr(p, '\n');
-	if (!r) r = p + strlen(p) - 1;
-	s = strchr(p, '\t');
-	if (s && s < r) { memcpy(q, p, s - p); q += s - p; *(q++) = '\n'; }
-	else { memcpy(q, p, r - p + 1); q += r - p + 1; }
-	*q = 0;
-	p = r + 1;
-      } while(*p);
+      char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
       popup = createPopupAccessory((NSSavePanel*)_panel, t, "Enable:", 0);
       delete[] t;
       [[popup menu] addItem:[NSMenuItem separatorItem]];
@@ -576,7 +603,9 @@ int Fl_Native_File_Chooser::post() {
     }
     if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
     if (_filt_total) {
-      popup = createPopupAccessory((NSSavePanel*)_panel, _filter, "Format:", _filt_value);
+      char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
+      popup = createPopupAccessory((NSSavePanel*)_panel, t, "Format:", _filt_value);
+      delete[] t;
     }
     retval = [(NSSavePanel*)_panel runModalForDirectory:dir file:fname];
     if (_filt_total) {
