@@ -1731,6 +1731,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
   cocoaKeyboardHandler(theEvent);
+  NSString *s = [theEvent characters];
+  if ([s length] >= 1) [FLView prepareEtext:[s substringToIndex:1]];
   Fl::handle(FL_KEYUP,window);
   fl_unlock_function();
 }
