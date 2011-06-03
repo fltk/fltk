@@ -202,81 +202,21 @@ int Fl::screen_count() {
   \param[in] mx, my the absolute screen position
 */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
+  int screen = 0;
+  int i;
+
   if (num_screens < 0) screen_init();
 
-#ifdef WIN32
-  if (num_screens > 0) {
-    int i;
-
-    for (i = 0; i < num_screens; i ++) {
-      if (mx >= screens[i].left && mx < screens[i].right &&
-	  my >= screens[i].top && my < screens[i].bottom) {
-	X = screens[i].left;
-	Y = screens[i].top;
-	W = screens[i].right - screens[i].left;
-	H = screens[i].bottom - screens[i].top;
-	return;
-      }
+  for (i = 0; i < num_screens; i ++) {
+    int sx, sy, sw, sh;
+    Fl::screen_xywh(sx, sy, sw, sh, i);
+    if ((mx >= sx) && (mx < (sx+sw)) && (my >= sy) && (my < (sy+sh))) {
+      screen = i;
+      break;
     }
   }
-  // if all else fails:
-  X = Fl::x();
-  Y = Fl::y();
-  W = Fl::w();
-  H = Fl::h();
-#elif defined(__APPLE__)
-  if (num_screens > 0) {
-    int i;
 
-    for (i = 0; i < num_screens; i ++) {
-      if (mx >= screens[i].x &&
-	  mx < (screens[i].x + screens[i].width) &&
-	  my >= screens[i].y &&
-	  my < (screens[i].y + screens[i].height)) {
-	X = screens[i].x;
-	Y = screens[i].y;
-	W = screens[i].width;
-	H = screens[i].height;
-	return;
-      }
-    }
-  }
-  // if all else fails:
-  X = Fl::x();
-  Y = Fl::y();
-  W = Fl::w();
-  H = Fl::h();
-#elif HAVE_XINERAMA
-  if (num_screens > 0 && screens) { // screens == NULL if !XineramaIsActive(fl_display)
-    int i;
-
-    for (i = 0; i < num_screens; i ++) {
-      if (mx >= screens[i].x_org &&
-	  mx < (screens[i].x_org + screens[i].width) &&
-	  my >= screens[i].y_org &&
-	  my < (screens[i].y_org + screens[i].height)) {
-	X = screens[i].x_org;
-	Y = screens[i].y_org;
-	W = screens[i].width;
-	H = screens[i].height;
-	return;
-      }
-    }
-  }
-  // if all else fails:
-  X = Fl::x();
-  Y = Fl::y();
-  W = Fl::w();
-  H = Fl::h();
-#else
-  (void)mx;
-  (void)my;
-  X = 0;
-  Y = 0;
-  W = DisplayWidth(fl_display, fl_screen);
-  H = DisplayHeight(fl_display, fl_screen);
-#endif // WIN32
-
+  screen_xywh(X, Y, W, H, screen);
 }
 
 /**
@@ -288,47 +228,51 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   if (num_screens < 0) screen_init();
 
+  if ((n < 0) || (n >= num_screens))
+    n = 0;
+
 #ifdef WIN32
-  if (num_screens > 0 && n >= 0 && n < num_screens) {
+  if (num_screens > 0) {
     X = screens[n].left;
     Y = screens[n].top;
     W = screens[n].right - screens[n].left;
     H = screens[n].bottom - screens[n].top;
   } else {
-    X = Fl::x();
-    Y = Fl::y();
-    W = Fl::w();
-    H = Fl::h();
+    /* Fallback if something is broken... */
+    X = 0;
+    Y = 0;
+    W = GetSystemMetrics(SM_CXSCREEN);
+    H = GetSystemMetrics(SM_CYSCREEN);
   }
 #elif defined(__APPLE__)
-  if (num_screens > 0 && n >= 0 && n < num_screens) {
+  if (num_screens > 0) {
     X = screens[n].x;
     Y = screens[n].y;
     W = screens[n].width;
     H = screens[n].height;
   } else {
-    X = Fl::x();
-    Y = Fl::y();
-    W = Fl::w();
-    H = Fl::h();
-  }
-#elif HAVE_XINERAMA
-  if (num_screens > 0 && n >= 0 && n < num_screens && screens) {
-    X = screens[n].x_org;
-    Y = screens[n].y_org;
-    W = screens[n].width;
-    H = screens[n].height;
-  } else {
+    /* Fallback if something is broken... */
     X = Fl::x();
     Y = Fl::y();
     W = Fl::w();
     H = Fl::h();
   }
 #else
-  X = 0;
-  Y = 0;
-  W = DisplayWidth(fl_display, fl_screen);
-  H = DisplayHeight(fl_display, fl_screen);
+#if HAVE_XINERAMA
+  if (num_screens > 0) {
+    X = screens[n].x_org;
+    Y = screens[n].y_org;
+    W = screens[n].width;
+    H = screens[n].height;
+  } else
+#endif // HAVE_XINERAMA
+  {
+    /* Fallback if something is broken (or no Xinerama)... */
+    X = 0;
+    Y = 0;
+    W = DisplayWidth(fl_display, fl_screen);
+    H = DisplayHeight(fl_display, fl_screen);
+  }
 #endif // WIN32
 }
 
