@@ -40,8 +40,8 @@ class FL_EXPORT Fl_File_Chooser {open
   decl {static Fl_Preferences prefs_;} {}
   decl {void (*callback_)(Fl_File_Chooser*, void *);} {}
   decl {void *data_;} {}
-  decl {char directory_[1024];} {}
-  decl {char pattern_[1024];} {}
+  decl {char directory_[FL_PATH_MAX];} {}
+  decl {char pattern_[FL_PATH_MAX];} {}
   decl {char preview_text_[2048];} {}
   decl {int type_;} {}
   decl {void favoritesButtonCB();} {}
@@ -114,6 +114,12 @@ window->hide();} open
             callback {preview(previewButton->value());}
             xywh {10 275 73 20} down_box DOWN_BOX shortcut 0x80070 value 1
             code0 {previewButton->label(preview_label);}
+          }
+          Fl_Check_Button showHiddenButton {
+            label {Show hidden files}
+            callback {showHidden(showHiddenButton->value());}
+            xywh {115 275 165 20} down_box DOWN_BOX
+            code0 {showHiddenButton->label(hidden_label);}
           }
           Fl_Box {} {
             private xywh {115 275 365 20} resizable
@@ -301,19 +307,15 @@ okButton->parent()->init_sizes();} {}
   }
   decl {int preview() const { return previewButton->value(); }} {public
   }
+  decl {void showHidden(int e);} {private
+  }
+  decl {void remove_hidden_files();} {private
+  }
   decl {void rescan();} {public
   }
   decl {void rescan_keep_filename();} {public
   }
-  Function {show()} {open return_type void
-  } {
-    code {window->hotspot(fileList);
-window->show();
-Fl::flush();
-fl_cursor(FL_CURSOR_WAIT);
-rescan_keep_filename();
-fl_cursor(FL_CURSOR_DEFAULT);
-fileName->take_focus();} {}
+  decl {void show();} {public
   }
   Function {shown()} {return_type int
   } {
@@ -416,6 +418,9 @@ else
     comment {[standard text may be customized at run-time]} public
   }
   decl {static const char *show_label;} {
+    comment {[standard text may be customized at run-time]} public
+  }
+  decl {static const char *hidden_label;} {
     comment {[standard text may be customized at run-time]} public
   }
   decl {static Fl_File_Sort_F *sort;} {

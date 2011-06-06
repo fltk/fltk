@@ -347,6 +347,7 @@
 #include <FL/fl_ask.H>
 #include <FL/x.H>
 #include <FL/Fl_Shared_Image.H>
+#include <FL/fl_draw.H>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1151,7 +1152,7 @@ Fl_File_Chooser::rescan()
   // Build the file list...
   fileList->load(directory_, sort);
 #ifndef WIN32	
-  if (!show_hidden->value()) remove_hidden_files();
+  if (!showHiddenButton->value()) remove_hidden_files();
 #endif
   // Update the preview box...
   update_preview();
@@ -1178,7 +1179,7 @@ void Fl_File_Chooser::rescan_keep_filename()
   // Build the file list...
   fileList->load(directory_, sort);
 #ifndef WIN32	
-  if (!show_hidden->value()) remove_hidden_files();
+  if (!showHiddenButton->value()) remove_hidden_files();
 #endif
   // Update the preview box...
   update_preview();
@@ -1576,8 +1577,42 @@ Fl_File_Chooser::value(const char *filename)
       break;
     }
 }
+  
+void Fl_File_Chooser::show()
+{
+  window->hotspot(fileList);
+  window->show();
+  Fl::flush();
+  fl_cursor(FL_CURSOR_WAIT);
+  rescan_keep_filename();
+  fl_cursor(FL_CURSOR_DEFAULT);
+  fileName->take_focus();
+#ifdef WIN32
+  showHiddenButton->hide();
+#endif
+}
 
+void Fl_File_Chooser::showHidden(int value)
+{
+  if (value) {
+    fileList->load(directory());
+  } else {
+    remove_hidden_files();
+    fileList->redraw();
+  }
+}
+  
+void Fl_File_Chooser::remove_hidden_files()
+{
+  int count = fileList->size();
+  for(int num = count; num >= 1; num--) {
+    const char *p = fileList->text(num);
+    if (*p == '.' && strcmp(p, "../") != 0) fileList->remove(num);
+  }
+  fileList->topline(1);
+}
 
+  
 //
 // 'compare_dirnames()' - Compare two directory names.
 //

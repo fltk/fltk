@@ -95,6 +95,11 @@ public:
 private:
   void cb_previewButton_i(Fl_Check_Button*, void*);
   static void cb_previewButton(Fl_Check_Button*, void*);
+public:
+  Fl_Check_Button *showHiddenButton;
+private:
+  void cb_showHiddenButton_i(Fl_Check_Button*, void*);
+  static void cb_showHiddenButton(Fl_Check_Button*, void*);
   Fl_File_Input *fileName;
   void cb_fileName_i(Fl_File_Input*, void*);
   static void cb_fileName(Fl_File_Input*, void*);
@@ -123,11 +128,6 @@ private:
   Fl_Return_Button *favOkButton;
   void cb_favOkButton_i(Fl_Return_Button*, void*);
   static void cb_favOkButton(Fl_Return_Button*, void*);
-#ifndef WIN32
-  Fl_Check_Button *show_hidden;
-  static void show_hidden_cb(Fl_Check_Button*, void*);
-  void remove_hidden_files();
-#endif
 public:
   ~Fl_File_Chooser();
   void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);
@@ -149,9 +149,13 @@ public:
   const char * ok_label();
   void preview(int e); 
   int preview() const { return previewButton->value(); }; 
+private:
+  void showHidden(int e); 
+  void remove_hidden_files(); 
+public:
   void rescan(); 
   void rescan_keep_filename(); 
-  void show();
+  void show(); 
   int shown();
   void textcolor(Fl_Color c);
   Fl_Color textcolor();
@@ -218,10 +222,10 @@ public:
      [standard text may be customized at run-time]
   */
   static const char *show_label; 
-  /** 
+  /**
      [standard text may be customized at run-time]
- */
-  static const char *hidden_label;
+  */
+  static const char *hidden_label; 
   /**
      the sort function that is used when loading
      the contents of a directory.
@@ -231,7 +235,6 @@ private:
   Fl_Widget* ext_group; 
 public:
   Fl_Widget* add_extra(Fl_Widget* gr);
-  Fl_File_Browser *browser(void) {return fileList; };
 };
 FL_EXPORT char *fl_dir_chooser(const char *message,const char *fname,int relative=0);
 FL_EXPORT char *fl_file_chooser(const char *message,const char *pat,const char *fname,int relative=0);
