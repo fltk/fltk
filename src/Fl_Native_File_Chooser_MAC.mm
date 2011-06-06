@@ -465,9 +465,9 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
   NSPopUpButton *popup;
   NSRect rectview = NSMakeRect(5, 5, 350, 30 );
   NSView *view = [[[NSView alloc] initWithFrame:rectview] autorelease];
-  NSRect rectbox = NSMakeRect(0, 3, 50, 1 );
+  NSRect rectbox = NSMakeRect(0, 3, 140, 20 );
   NSBox *box = [[[NSBox alloc] initWithFrame:rectbox] autorelease];
-  NSRect rectpop = NSMakeRect(60, 0, 250, 30 );
+  NSRect rectpop = NSMakeRect(105, 0, 246, 30 );
   popup = [[[NSPopUpButton alloc ] initWithFrame:rectpop pullsDown:NO] autorelease];
   [view addSubview:box];
   [view addSubview:popup];
@@ -478,9 +478,14 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
   NSFont *font = [NSFont controlContentFontOfSize:NSRegularControlSize];
   [box setTitleFont:font];
   [box sizeToFit];
+  // horizontally move box to fit the locale-dependent width of its title
+  NSRect r=[box frame];
+  NSPoint o = r.origin;
+  o.x = rectpop.origin.x - r.size.width + 15;
+  [box setFrameOrigin:o];
   CFStringRef tab = CFSTR("\n");
   CFStringRef tmp_cfs;
-  tmp_cfs = CFStringCreateWithCString(NULL, filter, kCFStringEncodingASCII);
+  tmp_cfs = CFStringCreateWithCString(NULL, filter, kCFStringEncodingUTF8);
   CFArrayRef array = CFStringCreateArrayBySeparatingStrings(NULL, tmp_cfs, tab);
   CFRelease(tmp_cfs);
   CFRelease(tab);
