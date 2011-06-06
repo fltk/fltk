@@ -259,7 +259,7 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   }
 #else
 #if HAVE_XINERAMA
-  if (num_screens > 0) {
+  if (num_screens > 0 && screens) {
     X = screens[n].x_org;
     Y = screens[n].y_org;
     W = screens[n].width;
