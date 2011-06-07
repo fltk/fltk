@@ -3,7 +3,7 @@
 //
 // Fl_File_Chooser dialog for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -447,27 +447,27 @@ Fl_Widget* Fl_File_Chooser::add_extra(Fl_Widget* gr) {
   Fl_Widget* ret=ext_group;
   if (gr==ext_group) {
     return ret;
-      }
-      if (ext_group) {
-        int sh=ext_group->h()+4;
-        Fl_Widget* svres=window->resizable();
-        window->resizable(NULL);
-        window->size(window->w(),window->h()-sh);
-        window->remove(ext_group);
-        ext_group=NULL;
-        window->resizable(svres);
-          }
-          if (gr) {
-            int nh=window->h()+gr->h()+4;
-            Fl_Widget* svres=window->resizable();
-            window->resizable(NULL);
-            window->size(window->w(),nh);
-            gr->position(2,okButton->y()+okButton->h()+2);
-            window->add(gr);
-            ext_group=gr;
-            window->resizable(svres);
-              }
-              return ret;
+  }
+  if (ext_group) {
+    int sh=ext_group->h()+4;
+    Fl_Widget* svres=window->resizable();
+    window->resizable(NULL);
+    window->size(window->w(),window->h()-sh);
+    window->remove(ext_group);
+    ext_group=NULL;
+    window->resizable(svres);
+  }
+  if (gr) {
+    int nh=window->h()+gr->h()+4;
+    Fl_Widget* svres=window->resizable();
+    window->resizable(NULL);
+    window->size(window->w(),nh);
+    gr->position(2,okButton->y()+okButton->h()+2);
+    window->add(gr);
+    ext_group=gr;
+    window->resizable(svres);
+  }
+  return ret;
 }
 
 //
