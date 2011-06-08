@@ -55,7 +55,7 @@
  My_Plugin blur_plugin();
  \endcode
  
- Plugins can be put into modules and either linked befor distribution, or loaded
+ Plugins can be put into modules and either linked before distribution, or loaded
  from dynamically linkable files. An Fl_Plugin_Manager is used to list and 
  access all currently loaded plugins.
  \code
