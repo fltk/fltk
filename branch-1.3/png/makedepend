@@ -1,0 +1,32 @@
+# DO NOT DELETE
+
+png.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+png.o: pngdebug.h
+pngset.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngset.o: pngdebug.h
+pngget.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngget.o: pngdebug.h
+pngrutil.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngrutil.o: pngdebug.h
+pngtrans.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngtrans.o: pngdebug.h
+pngwutil.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngwutil.o: pngdebug.h
+pngread.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngread.o: pngdebug.h
+pngrio.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngrio.o: pngdebug.h
+pngwio.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngwio.o: pngdebug.h
+pngwrite.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngwrite.o: pngdebug.h
+pngrtran.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngrtran.o: pngdebug.h
+pngwtran.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngwtran.o: pngdebug.h
+pngmem.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngmem.o: pngdebug.h
+pngerror.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngerror.o: pngdebug.h
+pngpread.o: pngpriv.h png.h pnglibconf.h pngconf.h pnginfo.h pngstruct.h
+pngpread.o: pngdebug.h

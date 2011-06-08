@@ -1,0 +1,15 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+Function {make_window()} {open
+} {
+  Fl_Window {} {open selected
+    xywh {550 77 300 160} type Double visible
+  } {
+    Fl_Box {} {
+      label {Welcome to FLTK!}
+      xywh {50 25 200 100} box GTK_ROUND_UP_BOX color 50 labelsize 20
+    }
+  }
+} 

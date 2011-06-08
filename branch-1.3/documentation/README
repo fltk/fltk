@@ -1,0 +1,73 @@
+README (documentation)
+----------------------
+FLTK 1.3 documentation is available in HTML and PDF format. The
+documentation must be generated in a separate step or downloaded
+from FLTK's software download pages. The documentation can also
+be accessed online.
+
+To read the docs after downloading or generating them, open the
+files:
+
+    documentation/html/index.html
+    documentation/fltk.pdf
+
+with your browser or PDF viewer, respectively.
+
+
+Online Documentation:
+---------------------
+A documentation version is available online at the FLTK web site,
+along with the PDF version of the manual. The docs on the web site
+are usually somewhat older (latest release). Use this URL to find
+the current online documentation:
+
+    http://www.fltk.org/documentation.php
+
+    
+Documentation Download:
+-----------------------
+To download pre-generated docs, go to
+
+    http://www.fltk.org/software.php
+
+and look for the files
+
+    fltk-<version>-docs-html.tar.gz
+    fltk-<version>-docs-pdf.tar.gz
+
+Extract the documentation tarballs into the same directory as you
+did with the source tarball.
+
+
+Generation of Documentation:
+----------------------------
+To generate the documentation yourself, you should have Doxygen
+version 1.5.7 or later (recommended version is 1.7.3).
+
+To generate the PDF version you also need a current version of LaTeX.
+You can use the packages tetex (older) or texlive (current) if your
+distribution provides them. You may need to install additional fonts
+and other sub-packages for the PDF version to be generated correctly.
+
+Use "make html" in the documentation directory to generate the HTML
+documentation, or "make pdf" to generate the PDF version. "make dist"
+generates both versions in one step (as would do "make clean html pdf").
+
+To read the HTML or PDF docs, see above.
+
+
+FLTK Developer Snapshots or Subversion Usage:
+---------------------------------------------
+There is no pre-generated documentation available if you use a current
+developer snapshot or subversion. You must generate the documentation
+yourself.
+
+
+Bugs and Feature Requests:
+--------------------------
+If you find any typos, things that are unclear, or would like to
+contribute an example, section, or chapter to the FLTK manual, please
+post a question in the fltk newsgroup fltk.general or post a bug
+report or feature request at:
+
+    http://www.fltk.org/str.php

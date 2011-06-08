@@ -1,0 +1,28 @@
+/* XPM */
+static const char *flDial_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 5 1",
+/* colors */
+". c none",
+"a c #000000",
+"b c #c0c0c0",
+"c c #000000",
+"' c #202080",
+/* pixels */
+"................",
+"................",
+"....aaaaaaa.....",
+"..aabbbbbbbcc...",
+".abbbbbbbbbbbc..",
+".ab''bbbbbbbbc..",
+"ab'bb'bbbbbbbbc.",
+"ab'bb'bbbbbbbbc.",
+"abb''bbbbbbbbbc.",
+"abbbbbbbbbbbbbc.",
+"abbbbbbbbbbbbbc.",
+".abbbbbbbbbbbc..",
+".abbbbbbbbbbbc..",
+"..ccbbbbbbbcc...",
+"....ccccccc.....",
+"................",
+};

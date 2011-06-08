@@ -1,0 +1,129 @@
+/**
+
+ \page advanced Advanced FLTK
+
+This chapter explains advanced programming and design topics
+that will help you to get the most out of FLTK.
+
+\section advanced_multithreading Multithreading
+
+FLTK supports multithreaded applications using a locking mechanism
+based on "pthreads". We do not provide a threading interface as part of
+the library.  However a simple example how threads can be implemented
+for all supported platforms can be found in \p test/threads.h
+and \p test/threads.cxx.
+
+To use the locking mechanism, FLTK must be compiled with
+\p --enable-threads set during the \p configure
+process. IDE-based versions of FLTK are automatically compiled with
+locking enabled if possible.
+
+In \p main(), call
+Fl::lock() before
+Fl::run() or
+Fl::wait() to start the runtime
+multithreading support for your program. All callbacks and derived
+functions like \p handle() and \p draw() will now be properly
+locked:
+
+\code
+    int main() {
+      Fl::lock();
+      /* run thread */
+      while (Fl::wait() > 0) {
+        if (Fl::thread_message()) {
+          /* process your data */
+        }
+      }
+    }
+\endcode
+
+You can now start as many threads as you like. From within
+a thread (other than the main thread) FLTK calls must be wrapped
+with calls to Fl::lock() and Fl::unlock():
+
+\code
+    Fl::lock();      // avoid conflicting calls
+    ...              // your code here
+    Fl::unlock();    // allow other threads to access FLTK again
+\endcode
+
+You can send messages from child threads to the main thread
+using Fl::awake(void* message):
+
+\code
+    void *msg;       // "msg" is a pointer to your message
+    Fl::awake(msg);  // send "msg" to main thread
+\endcode
+
+A message can be anything you like. The main thread can retrieve
+the message by calling Fl::thread_message(). See example above.
+
+You can also tell the main thread to call a function for you
+as soon as possible by using
+Fl::awake(Fl_Awake_Handler cb, void* userdata):
+
+\code
+    void do_something(void *userdata) {
+      // running with the main thread
+    }
+
+    // running in another thread
+    void *data;       // "data" is a pointer to your user data
+    Fl::awake(do_something, data);  // call something in main thread
+\endcode
+
+
+FLTK supports multiple platforms, some of which allow only the
+main thread to handle system events and open or close windows.
+The safe thing to do is to adhere to the following rules for
+threads on all operating systems:
+
+
+\li Don't \p show() or \p hide() anything that contains
+    widgets derived from Fl_Window, including dialogs, file
+    choosers, subwindows or those using Fl_Gl_Window.
+
+\li Don't call Fl::wait(), Fl::flush() or any
+    related methods that will handle system messages
+
+\li Don't start or cancel timers
+
+\li Don't change window decorations or titles
+
+\li The \p make_current() method may or may not work well for
+    regular windows, but should always work for a Fl_Gl_Window
+    to allow for high speed rendering on graphics cards with multiple
+    pipelines
+
+See also:
+Fl::awake(void* message),
+Fl::lock(),
+Fl::thread_message(),
+Fl::unlock().
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="fluid.html">
+    [Prev]
+    Programming with FLUID
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="unicode.html">
+    Unicode and utf-8 Support
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flProgress_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"f c #606060",
+". c #f0f000",
+"c c none",
+"d c #ffffff",
+"e c #8080ff",
+"a c #d0d0d0",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"ffffffffffffffff",
+"f.........ddddda",
+"f.........ddddda",
+"f.........ddddda",
+"f.........ddddda",
+"f.........ddddda",
+"f.........ddddda",
+"aaaaaaaaaaaaaaaa",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc"
+};

@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flScrollBar_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"a c #606060",
+"b c #2020ff",
+"c c none",
+"d c #c0c0c0",
+"e c #8080ff",
+"f c #e0e0e0",
+/* pixels */
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"aaaaaaaaaaaaaaaa",
+"adddfffffddddddf",
+"ad'dfdddadddd'df",
+"a''dfdddadddd''f",
+"a''dfdddadddd''f",
+"ad'dfdddadddd'df",
+"adddfaaaaddddddf",
+"afffffffffffffff",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc",
+"cccccccccccccccc"
+};

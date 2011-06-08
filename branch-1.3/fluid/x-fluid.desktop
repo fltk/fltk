@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=MimeType
+MimeType=application/x-fluid
+Icon=fluid.png
+Patterns=*.fl
+Name=FLUID
+Comment=FLUID GUI Design
+Encoding=UTF-8
