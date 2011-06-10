@@ -1260,7 +1260,7 @@ void print_cb(Fl_Return_Button *, void *) {
     if (t->is_window()) {
       winpage ++;
       windows[num_windows] = (Fl_Window_Type *)t;
-
+      if (!((Fl_Window*)(windows[num_windows]->o))->shown()) continue;
       if (print_all->value()) num_windows ++;
       else if (print_pages->value() && winpage >= first &&
                winpage <= last) num_windows ++;
