@@ -178,8 +178,11 @@ Fl_File_Chooser2.o: ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
 Fl_File_Chooser2.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
 Fl_File_Chooser2.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
 Fl_File_Chooser2.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H ../FL/filename.H
-Fl_File_Chooser2.o: ../FL/x.H ../FL/Fl_Shared_Image.H flstring.h
-Fl_File_Chooser2.o: ../FL/Fl_Export.H ../config.h
+Fl_File_Chooser2.o: ../FL/x.H ../FL/Fl_Shared_Image.H ../FL/fl_draw.H
+Fl_File_Chooser2.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_File_Chooser2.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_File_Chooser2.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_File_Chooser2.o: flstring.h ../FL/Fl_Export.H ../config.h
 Fl_File_Icon.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
 Fl_File_Icon.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/fl_utf8.h
 Fl_File_Icon.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
