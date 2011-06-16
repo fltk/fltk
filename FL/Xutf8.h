@@ -48,8 +48,8 @@ typedef struct {
 
 XUtf8FontStruct *
 XCreateUtf8FontStruct (
-	Display         *dpy, 
-	const char      *base_font_name_list); 
+	Display         *dpy,
+	const char      *base_font_name_list);
 
 void
 XUtf8DrawString(
@@ -59,6 +59,19 @@ XUtf8DrawString(
         GC              	gc,
         int             	x,
         int             	y,
+        const char      	*string,
+        int             	num_bytes);
+
+void
+XUtf8_measure_extents(
+        Display         	*display,
+        Drawable        	d,
+        XUtf8FontStruct  *font_set,
+        GC              	gc,
+        int             	*xx,
+        int             	*yy,
+        int             	*ww,
+        int             	*hh,
         const char      	*string,
         int             	num_bytes);
 
@@ -89,7 +102,7 @@ XUtf8TextWidth(
         XUtf8FontStruct  *font_set,
         const char      	*string,
         int             	num_bytes);
-int 
+int
 XUtf8UcsWidth(
 	XUtf8FontStruct  *font_set,
 	unsigned int            ucs);
@@ -100,41 +113,41 @@ XGetUtf8FontAndGlyph(
         unsigned int            ucs,
         XFontStruct     **fnt,
         unsigned short  *id);
-	
+
 void
 XFreeUtf8FontStruct(
         Display         	*dpy,
         XUtf8FontStruct 	*font_set);
 
 
-int 
-XConvertUtf8ToUcs( 
-	const unsigned char 	*buf, 
-	int 			len, 
+int
+XConvertUtf8ToUcs(
+	const unsigned char 	*buf,
+	int 			len,
 	unsigned int 		*ucs);
 
-int 
+int
 XConvertUcsToUtf8(
-	unsigned int 		ucs, 
+	unsigned int 		ucs,
 	char 			*buf);
 
-int 
+int
 XUtf8CharByteLen(
-	const unsigned char 	*buf, 
+	const unsigned char 	*buf,
 	int 			len);
 
-int 
+int
 XCountUtf8Char(
-	const unsigned char *buf, 
+	const unsigned char *buf,
 	int len);
 
-int 
-XFastConvertUtf8ToUcs( 
-	const unsigned char 	*buf, 
-	int 			len, 
+int
+XFastConvertUtf8ToUcs(
+	const unsigned char 	*buf,
+	int 			len,
 	unsigned int 		*ucs);
 
-long 
+long
 XKeysymToUcs(
 	KeySym 	keysym);
 
@@ -147,7 +160,7 @@ XUtf8LookupString(
     KeySym*             keysym,
     Status*             status_return);
 
-unsigned short 
+unsigned short
 XUtf8IsNonSpacing(
 	unsigned int ucs);
 
@@ -156,11 +169,11 @@ XUtf8IsRightToLeft(
         unsigned int ucs);
 
 
-int 
+int
 XUtf8Tolower(
         int ucs);
 
-int 
+int
 XUtf8Toupper(
         int ucs);
 
@@ -173,4 +186,4 @@ XUtf8Toupper(
 
 /*
  *  End of "$Id$".
- */ 
+ */

@@ -3,7 +3,7 @@
 //
 // Forms emulation header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -674,7 +674,7 @@ inline int fl_show_choices(const char* c,int n,const char* b1,const char* b2,
 #include "Fl_File_Chooser.H"
 inline int do_matching(char* a, const char* b) {return fl_filename_match(a,b);}
 
-// Forms-compatable file chooser (implementation in fselect.C):
+// Forms-compatible file chooser (implementation in fselect.C):
 FL_EXPORT char* fl_show_file_selector(const char* message,const char* dir,
 			    const char* pat,const char* fname);
 FL_EXPORT char*	fl_get_directory();

@@ -127,7 +127,7 @@ void Fl_Graphics_Driver::line_style(int style, int width, char* dashes) {
   fl_quartz_line_width_ = (float)width; 
   fl_quartz_line_cap_ = Cap[(style>>8)&3];
   // when printing kCGLineCapSquare seems better for solid lines
-  if ( Fl_Surface_Device::surface()->type() == Fl_Printer::device_type && style == FL_SOLID && dashes == NULL ) {
+  if ( Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id && style == FL_SOLID && dashes == NULL ) {
     fl_quartz_line_cap_ = kCGLineCapSquare;
     }
   fl_quartz_line_join_ = Join[(style>>12)&3];

@@ -145,7 +145,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
     }
     fl_end_offscreen();
   }
-  if (fl_surface->type() == Fl_Printer::device_type) {
+  if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
     typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
     static HMODULE hMod = NULL;
     static fl_transp_func fl_TransparentBlt = NULL;

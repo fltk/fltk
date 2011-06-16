@@ -536,7 +536,7 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
     // UNIX code uses /etc/fstab or similar...
     //
     FILE	*mtab;		// /etc/mtab or /etc/mnttab file
-    char	line[1024];	// Input line
+    char	line[FL_PATH_MAX];	// Input line
 
     //
     // Open the file that contains a list of mounted filesystems...

@@ -83,8 +83,8 @@ enum Fl_Tree_Select {
 /// instead of trying to accessing tree's preferences settings directly.
 ///
 class FL_EXPORT Fl_Tree_Prefs {
-  int _labelfont;			// label's font face
-  int _labelsize;			// label's font size
+  Fl_Font _labelfont;			// label's font face
+  Fl_Fontsize _labelsize;		// label's font size
   int _margintop;			// -- 
   int _marginleft;			//   |- tree's margins
   //int _marginright;			//   |
@@ -95,10 +95,8 @@ class FL_EXPORT Fl_Tree_Prefs {
   int _connectorwidth;			// connector width (right of open/close icon)
   int _linespacing;			// vertical space between lines
   // Colors
-  Fl_Color _fgcolor;			// label's foreground color
-  Fl_Color _bgcolor;			// background color
-  Fl_Color _selectcolor;		// selection color
-  Fl_Color _inactivecolor;		// inactive color
+  Fl_Color _labelfgcolor;		// label's foreground color
+  Fl_Color _labelbgcolor;		// background color
   Fl_Color _connectorcolor;		// connector dotted line color
   Fl_Tree_Connector _connectorstyle;	// connector line style
   Fl_Image *_openimage;			// the 'open' icon [+]
@@ -116,19 +114,19 @@ public:
   // Labels
   ////////////////////////////
   /// Return the label's font.
-  inline int labelfont() const {
+  inline Fl_Font labelfont() const {
     return(_labelfont);
   }
   /// Set the label's font to \p val.
-  inline void labelfont(int val) {
+  inline void labelfont(Fl_Font val) {
     _labelfont = val;
   }
   /// Return the label's size in pixels.
-  inline int labelsize() const {
+  inline Fl_Fontsize labelsize() const {
     return(_labelsize);
   }
   /// Set the label's size in pixels to \p val.
-  inline void labelsize(int val) {
+  inline void labelsize(Fl_Fontsize val) {
     _labelsize = val;
   }
   
@@ -204,50 +202,34 @@ public:
   // Colors and Styles
   ////////////////////////////
   /// Get the default label foreground color
-  inline Fl_Color fgcolor() const {
-    return(_fgcolor);
+  inline Fl_Color labelfgcolor() const {
+    return(_labelfgcolor);
   }
   /// Set the default label foreground color
-  inline void fgcolor(Fl_Color val) {
-    _fgcolor = val;
+  inline void labelfgcolor(Fl_Color val) {
+    _labelfgcolor = val;
   }
   /// Get the default label background color
-  inline Fl_Color bgcolor() const {
-    return(_bgcolor);
+  inline Fl_Color labelbgcolor() const {
+    return(_labelbgcolor);
   }
   /// Set the default label background color
-  inline void bgcolor(Fl_Color val) {
-    _bgcolor = val;
+  inline void labelbgcolor(Fl_Color val) {
+    _labelbgcolor = val;
   }
-  /// Get the default selection color
-  inline Fl_Color selectcolor() const {
-    return(_selectcolor);
-  }
-  /// Set the default selection color
-  inline void selectcolor(Fl_Color val) {
-    _selectcolor = val;
-  }
-  /// Get the default inactive color
-  inline Fl_Color inactivecolor() const {
-    return(_inactivecolor);
-  }
-  /// Set the default inactive color
-  inline void inactivecolor(Fl_Color val) {
-    _inactivecolor = val;
-  }
-  /// Get the connector color; the color used for tree connection lines
+  /// Get the connector color used for tree connection lines.
   inline Fl_Color connectorcolor() const {
     return(_connectorcolor);
   }
-  /// Set the connector color; the color used for tree connection lines
+  /// Set the connector color used for tree connection lines.
   inline void connectorcolor(Fl_Color val) {
     _connectorcolor = val;
   }
-  /// Get the connector style
+  /// Get the connector style.
   inline Fl_Tree_Connector connectorstyle() const {
     return(_connectorstyle);
   }
-  /// Set the connector style
+  /// Set the connector style.
   inline void connectorstyle(Fl_Tree_Connector val) {
     _connectorstyle = val;
   }
@@ -255,11 +237,11 @@ public:
   inline void connectorstyle(int val) {
     _connectorstyle = Fl_Tree_Connector(val);
   }
-  /// Get the tree connection line's width
+  /// Get the tree connection line's width.
   inline int connectorwidth() const {
     return(_connectorwidth);
   }
-  /// Set the tree connection line's width
+  /// Set the tree connection line's width.
   inline void connectorwidth(int val) {
     _connectorwidth = val;
   }

@@ -92,14 +92,12 @@ static void set_xmap(Fl_XMap& xmap, COLORREF c) {
   xmap.brush = -1;
 }
 
-Fl_Color fl_color_;
-
-void Fl_Graphics_Driver::color(Fl_Color i) {
+void Fl_GDI_Graphics_Driver::color(Fl_Color i) {
   if (i & 0xffffff00) {
     unsigned rgb = (unsigned)i;
     fl_color((uchar)(rgb >> 24), (uchar)(rgb >> 16), (uchar)(rgb >> 8));
   } else {
-    fl_color_ = i;
+    Fl_Graphics_Driver::color(i);
     Fl_XMap &xmap = fl_xmap[i];
     if (!xmap.pen) {
 #if USE_COLORMAP
@@ -118,10 +116,10 @@ void Fl_Graphics_Driver::color(Fl_Color i) {
   }
 }
 
-void Fl_Graphics_Driver::color(uchar r, uchar g, uchar b) {
+void Fl_GDI_Graphics_Driver::color(uchar r, uchar g, uchar b) {
   static Fl_XMap xmap;
   COLORREF c = RGB(r,g,b);
-  fl_color_ = fl_rgb_color(r, g, b);
+  Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
   if (!xmap.pen || c != xmap.rgb) {
     clear_xmap(xmap);
     set_xmap(xmap, c);

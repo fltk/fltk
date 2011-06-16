@@ -62,7 +62,11 @@
 class FL_EXPORT Fl_Tabs : public Fl_Group {
   Fl_Widget *value_;
   Fl_Widget *push_;
-  int tab_positions(int*, int*);
+  int *tab_pos;		// array of x-offsets of tabs per child + 1
+  int *tab_width;	// array of widths of tabs per child + 1
+  int tab_count;	// array size
+  int tab_positions();	// allocate and calculate tab positions
+  void clear_tab_positions();
   int tab_height();
   void draw_tab(int x1, int x2, int W, int H, Fl_Widget* o, int sel=0);
 protected:
@@ -77,6 +81,8 @@ public:
   int push(Fl_Widget *);
   Fl_Tabs(int,int,int,int,const char * = 0);
   Fl_Widget *which(int event_x, int event_y);
+  ~Fl_Tabs();
+  void client_area(int &rx, int &ry, int &rw, int &rh, int tabh=0);
 };
 
 #endif

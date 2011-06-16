@@ -36,7 +36,7 @@ typedef struct {
   unsigned short used;
 } Summary16;
 
-#define NEED_TOMB // indicates what part of these include files is needed here (avoid compilation warnings)
+#define NEED_TOMB /* indicates what part of these include files is needed here (avoid compilation warnings) */
 #include "lcUniConv/cp936ext.h"
 #include "lcUniConv/big5.h"
 #include "lcUniConv/gb2312.h"
@@ -305,7 +305,7 @@ int ucs2fontmap(char *s, unsigned int ucs, int enc) {
     break;
   };
   return -1;
-};
+}
 
 /*const*/
 int encoding_number(const char *enc) {
@@ -373,7 +373,7 @@ int encoding_number(const char *enc) {
     return 26;
   };
   return -1;
-};
+}
 
 /*
  * End of "$Id$".

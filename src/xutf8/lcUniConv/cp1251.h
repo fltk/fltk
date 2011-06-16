@@ -49,7 +49,7 @@ cp1251_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
   }
   return RET_ILSEQ;
 }
-#endif // NEED_TOWC
+#endif /* NEED_TOWC */
 
 #ifdef  NEED_TOMB
 static const unsigned char cp1251_page00[32] = {
@@ -114,4 +114,4 @@ cp1251_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
   }
   return RET_ILSEQ;
 }
-#endif // NEED_TOMB
+#endif /* NEED_TOMB */

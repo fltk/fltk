@@ -34,18 +34,24 @@
 #include "Fl_Input.H"
 
 /**
-  The Fl_Int_Input class is a subclass of Fl_Input
-  that only allows the user to type decimal digits (or hex numbers of the form 0xaef).
+  The Fl_Int_Input class is a subclass of Fl_Input that only allows
+  the user to type decimal digits (or hex numbers of the form 0xaef).
 */
 class FL_EXPORT Fl_Int_Input : public Fl_Input {
 public:
   /**
     Creates a new Fl_Int_Input widget using the given position,
     size, and label string. The default boxtype is FL_DOWN_BOX.
-    <P>Inherited destructor Destroys the widget and any value associated with it.
+
+    Inherited destructor destroys the widget and any value associated with it.
   */
+
+#if defined(FL_DLL)	// implementation in src/Fl_Input.cxx
+  Fl_Int_Input(int X,int Y,int W,int H,const char *l = 0);
+#else
   Fl_Int_Input(int X,int Y,int W,int H,const char *l = 0)
       : Fl_Input(X,Y,W,H,l) {type(FL_INT_INPUT);}
+#endif
 };
 
 #endif

@@ -45,6 +45,9 @@
 ///
 /// \brief Tree widget.
 ///
+///     \image html tree-simple.png "Fl_Tree example program"
+///     \image latex tree-simple.png "Fl_Tree example program" width=4cm
+///
 /// \code
 ///     Fl_Tree                                         // Top level widget
 ///        |--- Fl_Tree_Item                            // Items in the tree
@@ -54,10 +57,8 @@
 ///                  |--- Fl_Tree_Sort (enum)           // Sort behavior
 /// \endcode
 ///
-///     An expandable tree widget.
-///
-///     Similar to Fl_Browser, Fl_Tree is browser of Fl_Tree_Item's, which can be
-///     in a parented hierarchy. Subtrees can be expanded or closed. Items can be
+///     Similar to Fl_Browser, Fl_Tree is a browser of Fl_Tree_Item's, which is arranged
+///     in a parented hierarchy, or 'tree'. Subtrees can be expanded or closed. Items can be
 ///     added, deleted, inserted, sorted and re-ordered.
 ///
 ///     The tree items may also contain other FLTK widgets, like buttons, input fields,
@@ -97,6 +98,7 @@
 ///     next_selected_item().
 ///     Items can be found by their pathname using find_item(const char*),
 ///     and an item's pathname can be found with item_pathname().
+///     The selected items' colors are controlled by selection_color() (inherited from Fl_Widget).
 ///
 ///     The tree can have different selection behaviors controlled by selectmode().
 ///
@@ -113,8 +115,71 @@
 ///
 ///     The tree's callback() will be invoked when items change state or are open/closed.
 ///     when() controls when mouse/keyboard events invoke the callback.
-///     callback_item() and callback_reason() can be used to determine the cause of the callback.
+///     callback_item() and callback_reason() can be used to determine the cause of the callback. eg:
 ///
+/// \code
+/// void MyTreeCallback(Fl_Widget *w, void *data) {
+///   Fl_Tree      *tree = (Fl_Tree*)w;
+///   Fl_Tree_Item *item = (Fl_Tree_Item*)tree->callback_item();	// get selected item
+///   switch ( tree->callback_reason() ) {
+///     case FL_TREE_REASON_SELECTED: [..]
+///     case FL_TREE_REASON_DESELECTED: [..]
+///     case FL_TREE_REASON_OPENED: [..]
+///     case FL_TREE_REASON_CLOSED: [..]
+///   }
+/// \endcode
+///
+///     To get the item's full menu pathname, you can use Fl_Tree_Item::item_pathname(), eg:
+///
+/// \code
+///   char pathname[256] = "???";
+///   tree->item_pathname(pathname, sizeof(pathname), item);		// eg. "Parent/Child/Item"
+/// \endcode
+///
+///     To walk all the items of the tree from top to bottom:
+/// \code
+/// // Walk all the items in the tree, and print their labels
+/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) ) {
+///     printf("Item: %s\n", item->label());
+/// }
+/// \endcode
+///
+///     To recursively walk all the children of a particular item, 
+///     define a function that uses recursion:
+///     \code
+/// // Find all of the item's children and print an indented report of their labels
+/// void my_print_all_children(Fl_Tree_Item *item, int indent=0) {
+///     for ( int t=0; t<item->children(); t++ ) {
+///         printf("%*s Item: %s\n", indent, "", item->child(t)->label());
+///         my_print_all_children(item->child(t), indent+4);   // recurse
+///     }
+/// }
+///     \endcode
+///
+///     To change the default label font and color for creating new items:
+/// \code
+///  tree = new Fl_Tree(..);
+///  tree->item_labelfont(FL_COURIER);	// Use Courier font for all new items
+///  tree->item_labelfgcolor(FL_RED);	// Use red color for labels of all new items
+///  [..]
+///  // Now create the items in the tree using the above defaults.
+///  tree->add("Aaa");
+///  tree->add("Bbb");
+///  [..]
+/// \endcode
+///
+///     To change the font and color of all items in the tree:
+/// \code
+/// // Change the font and color of all items currently in the tree
+/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) ) {
+///     item->labelfont(FL_COURIER);
+///     item->labelcolor(FL_RED);
+/// }
+/// \endcode
+///
+///     The following image shows the tree's various visual elements
+///     and the methods that control them:
+///     
 ///     \image html tree-elements.png
 ///     \image latex tree-elements.png "Fl_Tree dimensions" width=6cm
 ///
@@ -185,11 +250,11 @@ public:
   Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos);
   
   /// Remove the specified \p item from the tree.
+  /// \p item may not be NULL.
   /// If it has children, all those are removed too.
   /// \returns 0 if done, -1 if 'item' not found.
   ///
   int remove(Fl_Tree_Item *item) {
-    if ( !item ) return(0);
     if ( item == _root ) {
       clear();
     } else {
@@ -208,6 +273,8 @@ public:
     delete _root; _root = 0;
   } 
   /// Clear all the children of a particular node in the tree specified by \p item.
+  /// Item may not be NULL.
+  ///
   void clear_children(Fl_Tree_Item *item) {
     if ( item->has_children() ) {
       item->clear_children();
@@ -255,12 +322,11 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be opened
+  /// \param[in] item -- the item to be opened. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
   ///             callback_reason() will be FL_TREE_REASON_OPENED
-  ///
   /// \returns
   ///     -   1 -- item was opened
   ///     -   0 -- item was already open, no change
@@ -281,15 +347,17 @@ public:
   /// Handles redrawing if anything was actually changed.
   /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. open("Holidays/12\\/25\//2010").
+  ///
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
   ///             callback_reason() will be FL_TREE_REASON_OPENED
-  ///
   /// \returns
   ///     -   1 -- OK: item opened
   ///     -   0 -- OK: item was already open, no change
@@ -309,7 +377,7 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be opened
+  /// \param[in] item -- the item whose open state is to be toggled. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked, callback_reason() will be either
@@ -331,12 +399,11 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be closed
+  /// \param[in] item -- the item to be closed. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
   ///             callback_reason() will be FL_TREE_REASON_CLOSED
-  ///
   /// \returns
   ///     -   1 -- item was closed
   ///     -   0 -- item was already closed, no change
@@ -356,15 +423,17 @@ public:
   /// Handles redrawing if anything was actually changed.
   /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. close("Holidays/12\\/25\//2010").
+  ///
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - callback() is not invoked
   ///     -   1 - callback() is invoked if item changed,
   ///             callback_reason() will be FL_TREE_REASON_CLOSED
-  ///
   /// \returns
   ///     -   1 -- OK: item closed
   ///     -   0 -- OK: item was already closed, no change
@@ -382,8 +451,7 @@ public:
   /// Items that are 'open' are themselves not necessarily visible;
   /// one of the item's parents might be closed.
   ///
-  /// \param[in] item -- the item to be tested
-  ///
+  /// \param[in] item -- the item to be tested. Must not be NULL.
   /// \returns
   ///     -  1 : item is open
   ///     -  0 : item is closed
@@ -393,11 +461,13 @@ public:
   }
   /// See if item specified by \p path (eg: "Parent/child/item") is open.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. is_open("Holidays/12\\/25\//2010").
+  ///
   /// Items that are 'open' are themselves not necessarily visible;
   /// one of the item's parents might be closed.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
-  ///
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \returns
   ///     -    1 - OK: item is open
   ///     -    0 - OK: item is closed
@@ -410,8 +480,7 @@ public:
   }
   /// See if the specified \p item is closed.
   ///
-  /// \param[in] item -- the item to be tested
-  ///
+  /// \param[in] item -- the item to be tested. Must not be NULL.
   /// \returns
   ///     -   1 : item is open
   ///     -   0 : item is closed
@@ -421,8 +490,10 @@ public:
   }
   /// See if item specified by \p path (eg: "Parent/child/item") is closed.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. is_close("Holidays/12\\/25\//2010").
   ///
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \returns
   ///     -   1 - OK: item is closed
   ///     -   0 - OK: item is open
@@ -441,12 +512,11 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be selected
+  /// \param[in] item -- the item to be selected. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
   ///             callback_reason() will be FL_TREE_REASON_SELECTED
-  ///
   /// \returns
   ///     -   1 - item's state was changed
   ///     -   0 - item was already selected, no change was made
@@ -467,15 +537,17 @@ public:
   /// Handles redrawing if anything was actually changed.
   /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. select("Holidays/12\\/25\//2010").
+  ///
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
   ///             callback_reason() will be FL_TREE_REASON_SELECTED
-  ///
   /// \returns
   ///     -   1 : OK: item's state was changed
   ///     -   0 : OK: item was already selected, no change was made
@@ -493,7 +565,7 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be selected
+  /// \param[in] item -- the item to be selected. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked, callback_reason() will be
@@ -515,15 +587,14 @@ public:
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] item -- the item to be selected
+  /// \param[in] item -- the item to be selected. Must not be NULL.
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
   ///             callback_reason() will be FL_TREE_REASON_DESELECTED
-  ///
   /// \returns
-  ///     - 0 - item was already deselected, no change was made
-  ///     - 1 - item's state was changed
+  ///     -   0 - item was already deselected, no change was made
+  ///     -   1 - item's state was changed
   ///
   int deselect(Fl_Tree_Item *item, int docallback=1) {
     if ( item->is_selected() ) {
@@ -541,15 +612,17 @@ public:
   /// Handles redrawing if anything was actually changed.
   /// Invokes the callback depending on the value of optional parameter \p docallback.
   ///
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. deselect("Holidays/12\\/25\//2010").
+  ///
   /// The callback can use callback_item() and callback_reason() respectively to determine 
   /// the item changed and the reason the callback was called.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
   ///     -   0 - the callback() is not invoked
   ///     -   1 - the callback() is invoked if item changed state,
   ///             callback_reason() will be FL_TREE_REASON_DESELECTED
-  ///
   ///  \returns
   ///     -   1 - OK: item's state was changed
   ///     -   0 - OK: item was already deselected, no change was made
@@ -568,7 +641,7 @@ public:
   
   /// See if the specified \p item is selected.
   ///
-  /// \param[in] item -- the item to be tested
+  /// \param[in] item -- the item to be tested. Must not be NULL.
   ///
   /// \return
   ///     -   1 : item selected
@@ -579,8 +652,10 @@ public:
   }
   /// See if item specified by \p path (eg: "Parent/child/item") is selected.
   ///
-  /// \param[in] path -- the tree item's pathname (eg. "Flintstones/Fred")
+  /// Items or submenus that themselves contain slashes ('/' or '\')
+  /// should be escaped, e.g. is_selected("Holidays/12\\/25\//2010").
   ///
+  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
   /// \returns
   ///     -   1 : item selected
   ///     -   0 : item deselected
@@ -604,36 +679,57 @@ public:
   /////////////////////////////////
   
   /// Get the default label fontsize used for creating new items.
-  int labelsize() const {
+  Fl_Fontsize item_labelsize() const {
     return(_prefs.labelsize());
   }
   /// Set the default label font size used for creating new items.
-  /// To change the font size on a per-item basis, use Fl_Tree_Item::labelsize(int)
+  /// To change the font size on a per-item basis, use Fl_Tree_Item::labelsize(Fl_Fontsize)
   ///
-  void labelsize(int val) {
+  void item_labelsize(Fl_Fontsize val) {
     _prefs.labelsize(val);
   }
-  
-  /// Get the default font face used for item's labels when new items are created.
-  ///
-  /// Don't use this if you want to change an existing label() size; use
-  /// item->labelfont() instead.
-  ///
-  int labelfont() const {
+  /// Get the default font face used for creating new items.
+  Fl_Font item_labelfont() const {
     return(_prefs.labelfont());
   }
-  /// Set the default font face used for item's labels when new items are created.
+  /// Set the default font face used for creating new items.
+  /// To change the font face on a per-item basis, use Fl_Tree_Item::labelfont(Fl_Font)
   ///
-  /// Don't use this if you want to change an existing label() size; use
-  /// item->labelfont(int) instead.
-  ///
-  void labelfont(int val) {
+  void item_labelfont(Fl_Font val) {
     _prefs.labelfont(val);
+  }
+  /// Get the default label foreground color used for creating new items.
+  Fl_Color item_labelfgcolor(void) const {
+    return(_prefs.labelfgcolor());
+  }
+  /// Set the default label foreground color used for creating new items.
+  /// To change the foreground color on a per-item basis, use Fl_Tree_Item::labelfgcolor(Fl_Color)
+  ///
+  void item_labelfgcolor(Fl_Color val) {
+    _prefs.labelfgcolor(val);
+  }
+  /// Get the default label background color used for creating new items.
+  Fl_Color item_labelbgcolor(void) const {
+    return(_prefs.labelbgcolor());
+  }
+  /// Set the default label background color used for creating new items.
+  /// To change the background color on a per-item basis, use Fl_Tree_Item::labelbgcolor(Fl_Color)
+  ///
+  void item_labelbgcolor(Fl_Color val) {
+    _prefs.labelbgcolor(val);
+  }
+  /// Get the connector color used for tree connection lines.
+  Fl_Color connectorcolor() const {
+    return(_prefs.connectorcolor());
+  }
+  /// Set the connector color used for tree connection lines.
+  void connectorcolor(Fl_Color val) {
+    _prefs.connectorcolor(val);
   }
   /// Get the amount of white space (in pixels) that should appear
   /// between the widget's left border and the tree's contents.
   ///
-  int  marginleft() const {
+  int marginleft() const {
     return(_prefs.marginleft());
   }
   /// Set the amount of white space (in pixels) that should appear
@@ -646,7 +742,7 @@ public:
   /// Get the amount of white space (in pixels) that should appear
   /// between the widget's top border and the top of the tree's contents.
   ///
-  int  margintop() const {
+  int margintop() const {
     return(_prefs.margintop());
   }
   /// Sets the amount of white space (in pixels) that should appear
@@ -659,7 +755,7 @@ public:
   /// Get the amount of white space (in pixels) that should appear
   /// below an open child tree's contents.
   ///
-  int  openchild_marginbottom() const {
+  int openchild_marginbottom() const {
     return(_prefs.openchild_marginbottom());
   }
   /// Set the amount of white space (in pixels) that should appear
@@ -672,7 +768,7 @@ public:
   /// Gets the width of the horizontal connection lines (in pixels) 
   /// that appear to the left of each tree item's label.
   ///
-  int  connectorwidth() const {
+  int connectorwidth() const {
     return(_prefs.connectorwidth());
   }
   /// Sets the width of the horizontal connection lines (in pixels) 
@@ -682,7 +778,8 @@ public:
     _prefs.connectorwidth(val);
     redraw();
   }
-  /// Returns the Fl_Image being used as the default user icon for newly created items.
+  /// Returns the Fl_Image being used as the default user icon for all
+  /// newly created items.
   /// Returns zero if no icon has been set, which is the default.
   ///
   Fl_Image *usericon() const {

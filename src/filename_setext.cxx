@@ -40,7 +40,7 @@
    \code
    #include <FL/filename.H>
    [..]
-   char buf[1024] = "/path/myfile.cxx";
+   char buf[FL_PATH_MAX] = "/path/myfile.cxx";
    fl_filename_setext(buf, sizeof(buf), ".txt");      // buf[] becomes "/path/myfile.txt"
    \endcode
 

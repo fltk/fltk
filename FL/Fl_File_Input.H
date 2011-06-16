@@ -42,17 +42,19 @@
   navigate upward in the directory tree.
   You may want to handle FL_WHEN_CHANGED events for tracking text changes
   and also FL_WHEN_RELEASE for button release when changing to parent dir.
-  FL_WHEN_RELEASE callback won't be called if the directory clicked 
-  is the same that the current one.
+  FL_WHEN_RELEASE callback won't be called if the directory clicked
+  is the same as the current one.
+
   <P align=CENTER> \image html Fl_File_Input.png </P> 
   \image latex Fl_File_Input.png "Fl_File_Input"  width=6cm
+
   \note As all Fl_Input derived objects, Fl_File_Input may call its callback
-  when loosing focus (see FL_UNFOCUS) to update its state like its cursor shape.
+  when losing focus (see FL_UNFOCUS) to update its state like its cursor shape.
   One resulting side effect is that you should call clear_changed() early in your callback
   to avoid reentrant calls if you plan to show another window or dialog box in the callback.
 */
-class FL_EXPORT Fl_File_Input : public Fl_Input
-{
+class FL_EXPORT Fl_File_Input : public Fl_Input {
+  
   Fl_Color	errorcolor_;
   char		ok_entry_;
   uchar		down_box_;

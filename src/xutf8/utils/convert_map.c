@@ -105,7 +105,7 @@ int JIS0212(unsigned char * ptr) {
   ptr += 7;
   i += 7;
   while(*ptr == ' ') { ptr++; i++; }
-  //i++; ptr++; 
+  /* i++; ptr++; */
   *(ptr+6) = '\0';
   ucs = (unsigned int)strtoul(ptr, NULL, 16);
   if (*(ptr + 1) != 'x') {

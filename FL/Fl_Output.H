@@ -3,7 +3,7 @@
 //
 // Output header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -33,32 +33,41 @@
 
 #include "Fl_Input.H"
 /**
-  This widget displays a piece of text.  When you set the value()
-  , Fl_Output does a strcpy() to it's own storage,
+  This widget displays a piece of text.
+  
+  When you set the value() , Fl_Output does a strcpy() to its own storage,
   which is useful for program-generated values.  The user may select
   portions of the text using the mouse and paste the contents into other
   fields or programs.
-  <P align=CENTER>\image html text.png</P> 
+
+  <P align=CENTER>\image html text.png</P>
   \image latex text.png "Fl_Output" width=8cm
-  <P>There is a single subclass, 
-  Fl_Multiline_Output, which allows you to display multiple lines of
-  text. Fl_Multiline_Output does not provide scroll bars. If a more 
-  complete text editing widget is needed, use Fl_Text_Display instead.</P>
-  <P>The text may contain any characters except \\0, and will correctly
+
+  There is a single subclass, Fl_Multiline_Output, which allows you to
+  display multiple lines of text. Fl_Multiline_Output does not provide
+  scroll bars. If a more complete text editing widget is needed, use
+  Fl_Text_Display instead.
+
+  The text may contain any characters except \\0, and will correctly
   display anything, using ^X notation for unprintable control characters
   and \\nnn notation for unprintable characters with the high bit set. It
-  assumes the font can draw any characters in the ISO-Latin1 character
-  set.
+  assumes the font can draw any characters in the ISO-Latin1 character set.
 */
 class FL_EXPORT Fl_Output : public Fl_Input {
 public:
   /**
     Creates a new Fl_Output widget using the given position,
     size, and label string. The default boxtype is FL_DOWN_BOX.
-    <P>Inherited destrucor destroys the widget and any value associated with it.
+
+    Inherited destructor destroys the widget and any value associated with it.
   */
+
+#if defined(FL_DLL)	// implementation in src/Fl_Input.cxx
+    Fl_Output(int X,int Y,int W,int H, const char *l = 0);
+#else
     Fl_Output(int X,int Y,int W,int H, const char *l = 0)
     : Fl_Input(X, Y, W, H, l) {type(FL_NORMAL_OUTPUT);}
+#endif
 };
 
 #endif 

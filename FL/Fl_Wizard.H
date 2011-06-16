@@ -47,8 +47,8 @@
     <P>As with Fl_Tabs, wizard panes are composed of child (usually
     Fl_Group) widgets. Navigation buttons must be added separately.
 */
-class FL_EXPORT Fl_Wizard : public Fl_Group
-{
+class FL_EXPORT Fl_Wizard : public Fl_Group {
+
   Fl_Widget *value_;
 
   void draw();

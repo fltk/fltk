@@ -7,6 +7,7 @@
 #ifdef __CHAR_UNSIGNED__
 #  define CHAR_IS_UNSIGNED
 #endif /* __CHAR_UNSIGNED__ */
+#define HAVE_STDLIB_H
 /* Define this if you get warnings about undefined structures. */
 #undef INCOMPLETE_TYPES_BROKEN
 

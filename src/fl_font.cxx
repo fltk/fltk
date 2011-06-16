@@ -26,14 +26,20 @@
 //
 
 #ifdef WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
 /* We require Windows 2000 features such as GetGlyphIndices */
 # if !defined(WINVER) || (WINVER < 0x0500)
+#  ifdef WINVER
+#   undef WINVER
+#  endif
 #  define WINVER 0x0500
 # endif
 # if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0500)
+#  ifdef _WIN32_WINNT
+#   undef _WIN32_WINNT
+#  endif
 #  define _WIN32_WINNT 0x0500
 # endif
 #endif
@@ -81,11 +87,13 @@ void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
 } // fl_text_extents
 
 
-#if !USE_XFT && !__APPLE__
 void fl_draw(const char* str, int l, float x, float y) {
+#ifdef __APPLE__
+  fl_graphics_driver->draw(str, l, x, y);
+#else
   fl_draw(str, l, (int)x, (int)y);
-}
 #endif
+}
 //
 // End of "$Id$".
 //

@@ -379,8 +379,10 @@ void Fl_RGB_Image::desaturate() {
 // Composite an image with alpha on systems that don't have accelerated
 // alpha compositing...
 static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, int cy) {
-  uchar *srcptr = (uchar*)img->array + img->d() * (img->w() * cy + cx);
-  int srcskip = img->d() * (img->w() - W);
+  int ld = img->ld();
+  if (ld == 0) ld = img->w() * img->d();
+  uchar *srcptr = (uchar*)img->array + cy * ld + cx * img->d();
+  int srcskip = ld - img->d() * W;
 
   uchar *dst = new uchar[W * H * 3];
   uchar *dstptr = dst;
@@ -392,7 +394,6 @@ static void alpha_blend(Fl_RGB_Image *img, int X, int Y, int W, int H, int cx, i
 
   if (img->d() == 2) {
     // Composite grayscale + alpha over RGB...
-    // Composite RGBA over RGB...
     for (int y = H; y > 0; y--, srcptr+=srcskip)
       for (int x = W; x > 0; x--) {
 	srcg = *srcptr++;

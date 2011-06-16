@@ -341,7 +341,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #endif
   
 #ifdef  __APPLE_QUARTZ__
-  if (fl_graphics_driver->type() == Fl_Quartz_Graphics_Driver::device_type ) {
+  if (fl_graphics_driver->class_name() == Fl_Quartz_Graphics_Driver::class_id ) {
     bool transparent = (transparent_index>=0);
     transparent = true;
     U32 *array = new U32[d.w * d.h], *q = array;
@@ -370,7 +370,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
     CGContextDrawImage(fl_gc, rect, img);
     Fl_X::q_end_image();
     CGImageRelease(img);
-    delete array;
+    delete[] array;
     }
   else {
 #endif // __APPLE_QUARTZ__

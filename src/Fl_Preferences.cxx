@@ -47,7 +47,7 @@
 #  define access _access
 #  define mkdir _mkdir
 #elif defined (__APPLE__)
-#  include <Carbon/Carbon.h>
+#  include <ApplicationServices/ApplicationServices.h>
 #  include <unistd.h>
 #  include <dlfcn.h>
 #else
@@ -1316,17 +1316,17 @@ int Fl_Preferences::Node::write( FILE *f ) {
     char *src = entry_[i].value;
     if ( src ) {		// hack it into smaller pieces if needed
       fprintf( f, "%s:", entry_[i].name );
-      int cnt;
+      int cnt, written;
       for ( cnt = 0; cnt < 60; cnt++ )
 	if ( src[cnt]==0 ) break;
-      fwrite( src, cnt, 1, f );
+      written = fwrite( src, cnt, 1, f );
       fprintf( f, "\n" );
       src += cnt;
       for (;*src;) {
 	for ( cnt = 0; cnt < 80; cnt++ )
 	  if ( src[cnt]==0 ) break;
         fputc( '+', f );
-	fwrite( src, cnt, 1, f );
+	written = fwrite( src, cnt, 1, f );
         fputc( '\n', f );
 	src += cnt;
       }

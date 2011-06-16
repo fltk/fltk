@@ -962,13 +962,16 @@ int squarey(int i) {return (usermoves(i,2)-'1')*BOXSIZE+BMOFFSET;}
 
 void Board::draw() {
   make_bitmaps();
+  // -- draw the board itself
   fl_draw_box(box(),0,0,w(),h(),color());
+  // -- draw all dark tiles
   fl_color((Fl_Color)10 /*107*/);
   int x; for (x=0; x<8; x++) for (int y=0; y<8; y++) {
     if (!((x^y)&1)) fl_rectf(BORDER+x*BOXSIZE, BORDER+y*BOXSIZE,
 			     BOXSIZE-BORDER, BOXSIZE-BORDER);
   }
-  fl_color(FL_DARK3 /*FL_GRAY_RAMP+4*/);
+  // -- draw outlines around the fileds
+  fl_color(FL_DARK3);
   for (x=0; x<9; x++) {
     fl_rectf(x*BOXSIZE,0,BORDER,h());
     fl_rectf(0,x*BOXSIZE,w(),BORDER);
@@ -1167,6 +1170,7 @@ void quit_cb(Fl_Widget*, void*) {exit(0);}
 int FLTKmain(int argc, char** argv) {
   Fl::visual(FL_DOUBLE|FL_INDEX);
   Board b(BOARDSIZE,BOARDSIZE);
+  b.color(FL_BACKGROUND_COLOR);
   b.callback(quit_cb);
   b.show(argc,argv);
   return Fl::run();

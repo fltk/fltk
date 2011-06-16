@@ -2,7 +2,11 @@
 
  \page	osissues	Operating System Issues
 
-This appendix describes the operating system specific interfaces in FLTK.
+This appendix describes the operating system specific interfaces in FLTK:
+\li \ref osissues_accessing
+\li \ref osissues_unix
+\li \ref osissues_win32
+\li \ref osissues_macos
 
 \section osissues_accessing Accessing the OS Interfaces
 
@@ -33,7 +37,7 @@ operating system.
 </TABLE>
 </CENTER>
 
-\section osissues_unit The UNIX (X11) Interface
+\section osissues_unix The UNIX (X11) Interface
 
 The UNIX interface provides access to the X Window System
 state information and data structures.
@@ -286,12 +290,14 @@ void MyWindow::show() {
 }
 \endcode
 
+\verbatim
 Fl_X *Fl_X::set_xid(Fl_Window*, Window xid)
+\endverbatim
 
 \par
-Allocate a hidden structure called an Fl_X, put the
+Allocate a hidden class called an Fl_X, put the
 XID into it, and set a pointer to it from the Fl_Window.
-This causes Fl_Window::shown()to return true.
+This causes Fl_Window::shown() to return true.
 
 void Fl_X::make_xid(Fl_Window*, XVisualInfo* = fl_visual, Colormap = fl_colormap)
 
@@ -365,6 +371,9 @@ MyWindow::~MyWindow() {
   hide();
 }
 \endcode
+
+\note Access to the Fl_X hidden class requires to \#define FL_INTERNALS
+before compilation.
 
 \subsection osissues_x_icon Setting the Icon of a Window
 
@@ -639,10 +648,10 @@ version of FLTK:
 	as -O2 and -O3 seem to work OK. More details can be found
 	in STR#1656
 
-\section osissues_macos The Mac OS Interface
+\section osissues_macos The Apple OS X Interface
 
-FLTK supports Mac OS X using the Apple Cocoa library. Older
-versions of Mac OS are <I>not</I> supported.
+FLTK supports Apple OS X using the Apple Cocoa library. Older
+versions of MacOS are no longer supported.
 
 Control, Option, and Command Modifier Keys
 
@@ -671,7 +680,15 @@ Apple "Open" Event
 \par
 Whenever the user drops a file onto an application icon, OS X
 generates an Apple Event of the type "Open". You can have FLTK
-notify you of an Open event by setting the \c fl_open_callback
+notify you of an Open event by calling the \ref fl_open_callback 
+function.
+
+void fl_open_display()
+
+\par
+Opens the display. Does nothing if it is already open. You should call
+this if you wish to do Cocoa or Quartz calls and there is a chance that your
+code will be called before the first \c show() of a window.
 
 Window fl_xid(const Fl_Window *)
 
@@ -687,18 +704,15 @@ Returns the Fl_Window that corresponds to the given window reference,
 or \c NULL if not found. FLTK windows that are children of top-level
 windows share the \c Window of the top-level window.
 
-void \ref fl_open_callback(void (*cb)(const char *))
-
-\par
-\c cb will be called with a single Unix-style file name and path.
-If multiple files were dropped, \c fl_open_callback() will be called
-multiple times.
-
 void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
 
 \par
 Attaches the callback \c cb to the "About myprog" item of the system application menu.
 \c cb will be called with NULL first argument and \c user_data second argument.
+
+Fl_Mac_App_Menu class
+\par 
+The Fl_Mac_App_Menu class allows to localize the application menu.
 
 Fl_Sys_Menu_Bar class
 
@@ -713,7 +727,9 @@ All code inside Fl_Widget::draw()
 is expected to call Quartz drawing functions. The Quartz coordinate system 
 is flipped to match
 FLTK's coordinate system. The origin for all drawing is in the top
-left corner of the enclosing Fl_Window.
+left corner of the enclosing Fl_Window. The global variable
+\c fl_gc is the appropriate Quartz 2D drawing environment.
+Include FL/x.H to declare the \c fl_gc variable.
 
 Fl_Double_Window
 
@@ -727,11 +743,12 @@ internally in the same way.
 
 FLTK does not access the resource fork of an application.
 However, a minimal resource fork must be created for OS X
-applications
+applications. Starting with OS X 10.6, resource forks are
+no longer needed.
 
 <CENTER>
 <TABLE WIDTH="80%" BORDER="1" BGCOLOR="#cccccc" CELLPADDING="5">
-<TR><TD><B>Caution:</B>
+<TR><TD><B>Caution (OS X 10.2 and older):</B>
 
 When using UNIX commands to copy or move executables, OS X
 will NOT copy any resource forks! For copying and moving use
@@ -765,7 +782,7 @@ FLTK uses UTF-8-encoded UNIX-style filenames and paths.
     </a>
   </td>
   <td width="10%" align="CENTER">
-    <a class="el" href="main.html">[Index]</a>
+    <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="migration_1_1.html">

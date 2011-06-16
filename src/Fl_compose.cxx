@@ -29,8 +29,11 @@
 #include <FL/x.H>
 
 #ifndef FL_DOXYGEN
-// at present, this is effectively used by Mac OS X only
 int Fl::compose_state = 0;
+#endif
+
+#if !defined(WIN32) && !defined(__APPLE__)
+extern XIC fl_xim_ic;
 #endif
 
 /** Any text editing widget should call this for each FL_KEYBOARD event.
@@ -60,20 +63,37 @@ int Fl::compose(int& del) {
      Fl::e_keysym == FL_Tab || Fl::e_keysym == FL_Escape || Fl::e_state&(FL_META | FL_CTRL) ) {
     return 0;
   }
-#else
+#elif defined(WIN32)
   unsigned char ascii = (unsigned)e_text[0];
   if ((e_state & (FL_ALT | FL_META)) && !(ascii & 128)) return 0;
+#else
+  unsigned char ascii = (unsigned)e_text[0];
+  if ((e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128)) return 0;
 #endif
   if(Fl::compose_state) {
-    del = 1;
+    del = Fl::compose_state;
     Fl::compose_state = 0;
-  } else {
 #ifndef __APPLE__
+  } else {
     // Only insert non-control characters:
     if (! (ascii & ~31 && ascii!=127)) { return 0; }
 #endif
   }
   return 1;
+}
+
+/**
+ If the user moves the cursor, be sure to call Fl::compose_reset().
+ The next call to Fl::compose() will start out in an initial state. In
+ particular it will not set "del" to non-zero. This call is very fast
+ so it is ok to call it many times and in many places.
+ */
+void Fl::compose_reset()
+{
+  Fl::compose_state = 0;
+#if !defined(WIN32) && !defined(__APPLE__)
+  if (fl_xim_ic) XmbResetIC(fl_xim_ic);
+#endif
 }
 
 //

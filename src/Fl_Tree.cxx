@@ -38,6 +38,7 @@ static void scroll_cb(Fl_Widget*,void *data) {
 }
 
 // INTERNAL: Parse elements from path into an array of null terminated strings
+//    Handles escape characters.
 //    Path="/aa/bb"
 //    Return: arr[0]="aa", arr[1]="bb", arr[2]=0
 //    Caller must call free_path(arr).
@@ -48,19 +49,29 @@ static char **parse_path(const char *path) {
   int seps = 1;				// separator count (1: first item)
   int arrsize = 1;			// array size (1: first item)
   char *save = strdup(path);		// make copy we can modify
-  char *s = save;
-  while ( ( s = strchr(s, '/') ) ) {
-    while ( *s == '/' ) { *s++ = 0; seps++; }
-    if ( *s ) { arrsize++; }
+  char *sin = save, *sout = save;
+  while ( *sin ) {
+    if ( *sin == '\\' ) {		// handle escape character
+      *sout++ = *++sin;
+      if ( *sin ) ++sin;
+    } else if ( *sin == '/' ) {		// handle submenu
+      *sout++ = 0;
+      sin++;
+      seps++;
+      arrsize++;
+    } else {				// all other chars
+      *sout++ = *sin++;
+    }
   }
+  *sout = 0;
   arrsize++;				// (room for terminating NULL) 
   // Second pass: create array, save nonblank elements
   char **arr = (char**)malloc(sizeof(char*) * arrsize);
   int t = 0;
-  s = save;
+  sin = save;
   while ( seps-- > 0 ) {
-    if ( *s ) { arr[t++] = s; }		// skips empty fields, eg. '//'
-    s += (strlen(s) + 1);
+    if ( *sin ) { arr[t++] = sin; }	// skips empty fields, e.g. '//'
+    sin += (strlen(sin) + 1);
   }
   arr[t] = 0;
   return(arr);
@@ -93,7 +104,7 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _callback_reason = FL_TREE_REASON_NONE;
   _scrollbar_size  = 0;				// 0: uses Fl::scrollbar_size()
   box(FL_DOWN_BOX);
-  color(FL_WHITE);
+  color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   when(FL_WHEN_CHANGED);
   _vscroll = new Fl_Scrollbar(0,0,0,0);		// will be resized by draw()
   _vscroll->hide();
@@ -111,6 +122,15 @@ Fl_Tree::~Fl_Tree() {
 /// Adds a new item, given a 'menu style' path, eg: "/Parent/Child/item".
 /// Any parent nodes that don't already exist are created automatically.
 /// Adds the item based on the value of sortorder().
+///
+/// To specify items or submenus that contain slashes ('/' or '\')
+/// use an escape character to protect them, e.g.
+///
+/// \code
+///     tree->add("/Holidays/Photos/12\\/25\\2010");          // Adds item "12/25/2010"
+///     tree->add("/Pathnames/c:\\\\Program Files\\\\MyApp"); // Adds item "c:\Program Files\MyApp"
+/// \endcode
+///
 /// \returns the child item created, or 0 on error.
 ///
 Fl_Tree_Item* Fl_Tree::add(const char *path) {
@@ -126,6 +146,8 @@ Fl_Tree_Item* Fl_Tree::add(const char *path) {
 }
 
 /// Inserts a new item above the specified Fl_Tree_Item, with the label set to 'name'.
+/// \param[in] above -- the item above which to insert the new item. Must not be NULL.
+/// \param[in] name -- the name of the new item
 /// \returns the item that was added, or 0 if 'above' could not be found.
 /// 
 Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
@@ -134,38 +156,45 @@ Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
 
 /// Insert a new item into a tree-item's children at a specified position.
 ///
-/// \param[in] item The existing item to insert new child into
+/// \param[in] item The existing item to insert new child into. Must not be NULL.
 /// \param[in] name The label for the new item
 /// \param[in] pos The position of the new item in the child list
-///
 /// \returns the item that was added.
+///
 Fl_Tree_Item* Fl_Tree::insert(Fl_Tree_Item *item, const char *name, int pos) {
   return(item->insert(_prefs, name, pos));
 }
 
 /// Add a new child to a tree-item.
 ///
-/// \param[in] item The existing item to add new child to
+/// \param[in] item The existing item to add new child to. Must not be NULL.
 /// \param[in] name The label for the new item
-///
 /// \returns the item that was added.
+///
 Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *item, const char *name) {
   return(item->add(_prefs, name));
 }
 
 /// Find the item, given a menu style path, eg: "/Parent/Child/item".
-///
 /// There is both a const and non-const version of this method.
 /// Const version allows pure const methods to use this method 
 /// to do lookups without causing compiler errors.
 ///
-/// \param[in] path -- the tree item's pathname to be found (eg. "Flintstones/Fred")
+/// To specify items or submenus that contain slashes ('/' or '\')
+/// use an escape character to protect them, e.g.
 ///
-/// \returns the item, or 0 if not found.
+/// \code
+///     tree->add("/Holidays/Photos/12\\/25\\2010");          // Adds item "12/25/2010"
+///     tree->add("/Pathnames/c:\\\\Program Files\\\\MyApp"); // Adds item "c:\Program Files\MyApp"
+/// \endcode
+///
+/// \param[in] path -- the tree item's pathname to be found (e.g. "Flintstones/Fred")
+/// \returns the item, or NULL if not found.
+///
 /// \see item_pathname()
 ///
 Fl_Tree_Item *Fl_Tree::find_item(const char *path) {
-  if ( ! _root ) return(0);
+  if ( ! _root ) return(NULL);
   char **arr = parse_path(path);
   Fl_Tree_Item *item = _root->find_item(arr);
   free_path(arr);
@@ -174,7 +203,7 @@ Fl_Tree_Item *Fl_Tree::find_item(const char *path) {
 
 /// A const version of Fl_Tree::find_item(const char *path)
 const Fl_Tree_Item *Fl_Tree::find_item(const char *path) const {
-  if ( ! _root ) return(0);
+  if ( ! _root ) return(NULL);
   char **arr = parse_path(path);
   const Fl_Tree_Item *item = _root->find_item(arr);
   free_path(arr);
@@ -193,6 +222,9 @@ const Fl_Tree_Item *Fl_Tree::find_item(const char *path) const {
 /// Find the pathname for the specified \p item.
 /// If \p item is NULL, root() is used.
 /// The tree's root will be included in the pathname of showroot() is on.
+/// Menu items or submenus that contain slashes ('/' or '\') in their names
+/// will be escaped with a backslash. This is symmetrical with the add()
+/// function which uses the same escape pattern to set names.
 /// \param[in] pathname The string to use to return the pathname
 /// \param[in] pathnamelen The maximum length of the string (including NULL). Must not be zero.
 /// \param[in] item The item whose pathname is to be returned.
@@ -216,7 +248,12 @@ int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *
     const char *name = item->label() ? item->label() : "???";	// name for this item
     int len = strlen(name);
     // Add name to end of pathname[]
-    for ( --len; len>=0; len-- ) { SAFE_RCAT(name[len]); }	// rcat name of item
+    for ( --len; len>=0; len-- ) {
+      SAFE_RCAT(name[len]);					// rcat name of item
+      if ( name[len] == '/' || name[len] == '\\' ) {
+        SAFE_RCAT('\\');					// escape front or back slashes within name
+      }
+    }
     SAFE_RCAT('/');						// rcat leading slash
     item = item->parent();					// move up tree (NULL==root)
   }
@@ -256,7 +293,7 @@ void Fl_Tree::draw() {
   
   // Show vertical scrollbar?
   int ydiff = (Y+_prefs.margintop())-Ysave;		// ydiff=size of tree
-  int ytoofar = (cy+ch) - Y;				// ytoofar -- scrolled beyond bottom (eg. stow)
+  int ytoofar = (cy+ch) - Y;				// ytoofar -- scrolled beyond bottom (e.g. stow)
   
   //printf("ydiff=%d ch=%d Ysave=%d ytoofar=%d value=%d\n",
   //int(ydiff),int(ch),int(Ysave),int(ytoofar), int(_vscroll->value()));
@@ -288,7 +325,6 @@ void Fl_Tree::draw() {
 ///
 /// \param[in] item The item above/below which we'll find the next visible item
 /// \param[in] dir The direction to search. Can be FL_Up or FL_Down.
-///
 /// \returns The item found, or 0 if there's no visible items above/below the specified \p item.
 ///
 Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
@@ -305,7 +341,7 @@ Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
 }
 
 /// Set the item that currently should have keyboard focus.
-/// Handles calling redraw() to update the focus box (if its visible).
+/// Handles calling redraw() to update the focus box (if it is visible).
 ///
 /// \param[in] item The item that should take focus. If NULL, none will have focus.
 ///
@@ -329,7 +365,7 @@ void Fl_Tree::set_item_focus(Fl_Tree_Item *item) {
 /// \returns the item clicked, or 0 if no item was under the current event.
 ///
 const Fl_Tree_Item* Fl_Tree::find_clicked() const {
-  if ( ! _root ) return(0);
+  if ( ! _root ) return(NULL);
   return(_root->find_clicked(_prefs));
 }
 
@@ -347,7 +383,7 @@ void Fl_Tree::item_clicked(Fl_Tree_Item* val) {
 ///
 /// Use this to walk the tree in the forward direction, eg:
 /// \code
-/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next() ) {
+/// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) ) {
 ///     printf("Item: %s\n", item->label());
 /// }
 /// \endcode
@@ -368,8 +404,7 @@ Fl_Tree_Item* Fl_Tree::first() {
 /// }
 /// \endcode
 ///
-/// \param[in] item The item to use to find the next item. If NULL, returns NULL
-///
+/// \param[in] item The item to use to find the next item. If NULL, returns 0.
 /// \returns Next item in tree, or 0 if at last item.
 ///
 /// \see first(),next(),last(),prev()
@@ -389,8 +424,7 @@ Fl_Tree_Item *Fl_Tree::next(Fl_Tree_Item *item) {
 /// }
 /// \endcode
 ///
-/// \param[in] item The item to use to find the previous item. If NULL, returns NULL
-///
+/// \param[in] item The item to use to find the previous item. If NULL, returns 0.
 /// \returns Previous item in tree, or 0 if at first item.
 ///
 /// \see first(),next(),last(),prev()
@@ -450,7 +484,6 @@ Fl_Tree_Item *Fl_Tree::first_selected_item() {
 /// \endcode
 ///
 /// \param[in] item The item to use to find the next selected item. If NULL, first() is used.
-///
 /// \returns The next selected item, or 0 if there are no more selected items.
 ///     
 Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item) {
@@ -685,7 +718,8 @@ int Fl_Tree::handle(int e) {
 /// The callback can use callback_item() and callback_reason() respectively to determine 
 /// the item changed and the reason the callback was called.
 ///
-/// \param[in] item The item that will be deselected (along with all its children)
+/// \param[in] item The item that will be deselected (along with all its children).
+///                 If NULL, first() is used.
 /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
 ///     -   0 - the callback() is not invoked
 ///     -   1 - the callback() is invoked for each item that changed state,
@@ -697,10 +731,13 @@ int Fl_Tree::deselect_all(Fl_Tree_Item *item, int docallback) {
   item = item ? item : first();			// NULL? use first()
   if ( ! item ) return(0);
   int count = 0;
-  for ( ; item; item = next(item) ) {
-    if ( item->is_selected() )
-      if ( deselect(item, docallback) )
-        ++count;
+  // Deselect item
+  if ( item->is_selected() )
+    if ( deselect(item, docallback) )
+      ++count;
+  // Deselect its children
+  for ( int t=0; t<item->children(); t++ ) {
+    count += deselect_all(item->child(t), docallback);	// recurse
   }
   return(count);
 }
@@ -714,22 +751,24 @@ int Fl_Tree::deselect_all(Fl_Tree_Item *item, int docallback) {
 /// the item changed and the reason the callback was called.
 ///
 /// \param[in] item The item that will be selected (along with all its children). 
-///            If NULL, first() is assumed.
+///            If NULL, first() is used.
 /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
 ///     -   0 - the callback() is not invoked
 ///     -   1 - the callback() is invoked for each item that changed state,
 ///             callback_reason() will be FL_TREE_REASON_SELECTED
-///
 /// \returns count of how many items were actually changed to the selected state.
 ///
 int Fl_Tree::select_all(Fl_Tree_Item *item, int docallback) {
   item = item ? item : first();			// NULL? use first()
   if ( ! item ) return(0);
   int count = 0;
-  for ( ; item; item = next(item) ) {
-    if ( !item->is_selected() )
-      if ( select(item, docallback) )
-        ++count;
+  // Select item
+  if ( !item->is_selected() )
+    if ( select(item, docallback) )
+      ++count;
+  // Select its children
+  for ( int t=0; t<item->children(); t++ ) {
+    count += select_all(item->child(t), docallback);	// recurse
   }
   return(count);
 }
@@ -748,7 +787,6 @@ int Fl_Tree::select_all(Fl_Tree_Item *item, int docallback) {
 ///     -   1 - the callback() is invoked for each item that changed state, 
 ///             callback_reason() will be either FL_TREE_REASON_SELECTED or 
 ///             FL_TREE_REASON_DESELECTED
-///
 /// \returns the number of items whose selection states were changed, if any.
 ///
 int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
@@ -779,10 +817,14 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
 /// the value will be clipped. So if yoff=100, but scrollbar's max
 /// is 50, then 50 will be used.
 ///
+/// \param[in] item The item to be shown. If NULL, first() is used.
+/// \param[in] yoff The pixel offset from the top for the displayed position.
+///
 /// \see show_item_top(), show_item_middle(), show_item_bottom()
 ///
 void Fl_Tree::show_item(Fl_Tree_Item *item, int yoff) {
-  if ( ! item ) return;
+  item = item ? item : first();
+  if (!item) return;
   int newval = item->y() - y() - yoff + (int)_vscroll->value();
   if ( newval < _vscroll->minimum() ) newval = (int)_vscroll->minimum();
   if ( newval > _vscroll->maximum() ) newval = (int)_vscroll->maximum();
@@ -794,42 +836,57 @@ void Fl_Tree::show_item(Fl_Tree_Item *item, int yoff) {
 /// This can be used to detect if the item is scrolled off-screen.
 /// Checks to see if the item's vertical position is within the top and bottom
 /// edges of the display window. This does NOT take into account the hide()/show()
-/// status of the item.
+/// or open()/close() status of the item.
+///
+/// \param[in] item The item to be checked. If NULL, first() is used.
+/// \returns 1 if displayed, 0 if scrolled off screen or no items are in tree.
 ///
 int Fl_Tree::displayed(Fl_Tree_Item *item) {
-  return( (item->y() >= y() && item->y() <= (y()+h()-item->h())) ? 1 : 0);
+  item = item ? item : first();
+  if (!item) return(0);
+  return( (item->y() >= y()) && (item->y() <= (y()+h()-item->h())) ? 1 : 0);
 }
 
 /// Adjust the vertical scroll bar to show \p item at the top
-/// of the display IF it is currently off-screen (eg. show_item_top()).
+/// of the display IF it is currently off-screen (e.g. show_item_top()).
 /// If it is already on-screen, no change is made.
+///
+/// \param[in] item The item to be shown. If NULL, first() is used.
 ///
 /// \see show_item_top(), show_item_middle(), show_item_bottom()
 ///
 void Fl_Tree::show_item(Fl_Tree_Item *item) {
+  item = item ? item : first();
+  if (!item) return;
   if ( displayed(item) ) return;
   show_item_top(item);
 }
 
 /// Adjust the vertical scrollbar so that \p item is at the top of the display.
+///
+/// \param[in] item The item to be shown. If NULL, first() is used.
+///
 void Fl_Tree::show_item_top(Fl_Tree_Item *item) {
   item = item ? item : first();
-  if ( ! item ) return;
-  show_item(item, 0);
+  if (item) show_item(item, 0);
 }
 
 /// Adjust the vertical scrollbar so that \p item is in the middle of the display.
+///
+/// \param[in] item The item to be shown. If NULL, first() is used.
+///
 void Fl_Tree::show_item_middle(Fl_Tree_Item *item) {
   item = item ? item : first();
-  if ( ! item ) return;
-  show_item(item, h()/2 - item->h()/2);
+  if (item) show_item(item, (h()/2)-(item->h()/2));
 }
 
 /// Adjust the vertical scrollbar so that \p item is at the bottom of the display.
+///
+/// \param[in] item The item to be shown. If NULL, first() is used.
+///
 void Fl_Tree::show_item_bottom(Fl_Tree_Item *item) {
   item = item ? item : first();
-  if ( ! item ) return;
-  show_item(item, h() - item->h());
+  if (item) show_item(item, h()-item->h());
 }
 
 /// Returns the vertical scroll position as a pixel offset.
@@ -857,11 +914,11 @@ void Fl_Tree::vposition(int pos) {
 }
 
 /// Displays \p item, scrolling the tree as necessary.
-/// \param[in] item The item to be displayed.
+/// \param[in] item The item to be displayed. If NULL, first() is used.
 ///
 void Fl_Tree::display(Fl_Tree_Item *item) {
-  if ( ! item ) return;
-  show_item_middle(item);
+  item = item ? item : first();
+  if (item) show_item_middle(item);
 }
 
 /**

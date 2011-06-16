@@ -38,6 +38,7 @@
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Window.H>
+#include <FL/Fl_Printer.H>
 
 #undef min
 #undef max
@@ -419,7 +420,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   /* if empty lines become visible, there may be an opportunity to
    display more text by scrolling down */
   } else {
-    while (   (mLineStarts[mNVisibleLines-2]==-1) 
+    while (   mNVisibleLines>=2
+           && (mLineStarts[mNVisibleLines-2]==-1) 
            && scroll_(mTopLineNum-1, mHorizOffset))
     { }
   }
@@ -973,7 +975,7 @@ void Fl_Text_Display::display_insert() {
   
   if (insert_position() < mFirstChar) {
     topLine -= count_lines(insert_position(), mFirstChar, false);
-  } else if (mLineStarts[mNVisibleLines-2] != -1) {
+  } else if (mNVisibleLines>=2 && mLineStarts[mNVisibleLines-2] != -1) {
     int lastChar = line_end(mLineStarts[mNVisibleLines-2],true);
     if (insert_position() >= lastChar)
       topLine += count_lines(lastChar - (wrap_uses_character(mLastChar) ? 0 : 1),
@@ -1743,7 +1745,7 @@ int Fl_Text_Display::handle_vline(
       int w = 0;
       if (prevChar=='\t') {
         // draw a single Tab space
-        int tab = (int)col_to_x(8);
+        int tab = (int)col_to_x(mBuffer->tab_distance());
         int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
         w = (((xAbs/tab)+1)*tab) - xAbs;
         if (mode==DRAW_LINE)
@@ -1776,7 +1778,7 @@ int Fl_Text_Display::handle_vline(
   int w = 0;
   if (currChar=='\t') {
     // draw a single Tab space
-    int tab = (int)col_to_x(8);
+    int tab = (int)col_to_x(mBuffer->tab_distance());
     int xAbs = (mode==GET_WIDTH) ? startX : startX+mHorizOffset-text_area.x;
     w = (((xAbs/tab)+1)*tab) - xAbs;
     if (mode==DRAW_LINE)
@@ -1938,19 +1940,19 @@ void Fl_Text_Display::draw_string(int style,
     fsize = styleRec->size;
     
     if (style & PRIMARY_MASK) {
-      if (Fl::focus() == this) background = selection_color();
+      if (Fl::focus() == (Fl_Widget*)this) background = selection_color();
       else background = fl_color_average(color(), selection_color(), 0.4f);
     } else if (style & HIGHLIGHT_MASK) {
-      if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.5f);
+      if (Fl::focus() == (Fl_Widget*)this) background = fl_color_average(color(), selection_color(), 0.5f);
       else background = fl_color_average(color(), selection_color(), 0.6f);
     } else background = color();
     foreground = fl_contrast(styleRec->color, background);
   } else if (style & PRIMARY_MASK) {
-    if (Fl::focus() == this) background = selection_color();
+    if (Fl::focus() == (Fl_Widget*)this) background = selection_color();
     else background = fl_color_average(color(), selection_color(), 0.4f);
     foreground = fl_contrast(textcolor(), background);
   } else if (style & HIGHLIGHT_MASK) {
-    if (Fl::focus() == this) background = fl_color_average(color(), selection_color(), 0.5f);
+    if (Fl::focus() == (Fl_Widget*)this) background = fl_color_average(color(), selection_color(), 0.5f);
     else background = fl_color_average(color(), selection_color(), 0.6f);
     foreground = fl_contrast(textcolor(), background);
   } else {
@@ -2011,13 +2013,13 @@ void Fl_Text_Display::clear_rect(int style,
     return;
   
   if (style & PRIMARY_MASK) {
-    if (Fl::focus()==this) {
+    if (Fl::focus()==(Fl_Widget*)this) {
       fl_color(selection_color());
     } else {
       fl_color(fl_color_average(color(), selection_color(), 0.4f));
     }
   } else if (style & HIGHLIGHT_MASK) {
-    if (Fl::focus()==this) {
+    if (Fl::focus()==(Fl_Widget*)this) {
       fl_color(fl_color_average(color(), selection_color(), 0.5f));
     } else {
       fl_color(fl_color_average(color(), selection_color(), 0.6f));
@@ -3200,7 +3202,7 @@ double Fl_Text_Display::measure_proportional_character(const char *s, int xPix, 
   IS_UTF8_ALIGNED(s)
   
   if (*s=='\t') {
-    int tab = (int)col_to_x(8);
+    int tab = (int)col_to_x(mBuffer->tab_distance());
     return (((xPix/tab)+1)*tab) - xPix;
   }
   
@@ -3284,7 +3286,7 @@ int Fl_Text_Display::wrap_uses_character(int lineEndPos) const {
   
   c = buffer()->char_at(lineEndPos);
   return c == '\n' || ((c == '\t' || c == ' ') &&
-                       lineEndPos + fl_utf8len1(c) < buffer()->length());
+                       lineEndPos + 1 < buffer()->length());
 }
 
 
@@ -3359,6 +3361,10 @@ void Fl_Text_Display::draw(void) {
   // draw the non-text, non-scrollbar areas.
   if (damage() & FL_DAMAGE_ALL) {
     //    printf("drawing all (box = %d)\n", box());
+    if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
+      // if to printer, draw the background
+      fl_rectf(text_area.x, text_area.y, text_area.w, text_area.h, color() );
+    }
     // draw the box()
     int W = w(), H = h();
     draw_box(box(), x(), y(), W, H, color());
@@ -3448,7 +3454,7 @@ void Fl_Text_Display::draw(void) {
   // draw the text cursor
   if (damage() & (FL_DAMAGE_ALL | FL_DAMAGE_SCROLL | FL_DAMAGE_EXPOSE)
       && !buffer()->primary_selection()->selected() &&
-      mCursorOn && Fl::focus() == this ) {
+      mCursorOn && Fl::focus() == (Fl_Widget*)this ) {
     fl_push_clip(text_area.x-LEFT_MARGIN,
                  text_area.y,
                  text_area.w+LEFT_MARGIN+RIGHT_MARGIN,
@@ -3594,7 +3600,7 @@ int Fl_Text_Display::handle(int event) {
       dragType = Fl::event_clicks();
       if (dragType == DRAG_CHAR) {
         buffer()->unselect();
-	Fl::copy("", 0, 0);
+//	Fl::copy("", 0, 0); /* removed for STR 2668 */
       }
       else if (dragType == DRAG_WORD) {
         buffer()->select(word_start(pos), word_end(pos));

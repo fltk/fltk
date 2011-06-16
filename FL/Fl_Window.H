@@ -116,8 +116,8 @@ public:
     If Fl_Group::current() is not NULL, the window is created as a 
     subwindow of the parent window.
     
-    The first form of the constructor creates a top-level window
-    and asks the window manager to position the window. The second
+    The (w,h) form of the constructor creates a top-level window
+    and asks the window manager to position the window. The (x,y,w,h)
     form of the constructor either creates a subwindow or a
     top-level window at the specified location (x,y) , subject to window
     manager configuration. If you do not specify the position of the
@@ -137,12 +137,12 @@ public:
     change this to FL_NO_BOX. If you turn the window border off
     you may want to change this to FL_UP_BOX.
 
-    \see Fl_Window(int x, int y, int w, int h, const char* title = 0)
+    \see Fl_Window(int x, int y, int w, int h, const char* title)
   */
     Fl_Window(int w, int h, const char* title= 0);
   /** Creates a window from the given position, size and title.
 
-    \see Fl_Window::Fl_Window(int w, int h, const char *title = 0)
+    \see Fl_Window(int w, int h, const char *title)
   */
     Fl_Window(int x, int y, int w, int h, const char* title = 0);
   /**
@@ -323,17 +323,15 @@ public:
   /** Sets the icon label. */
   void iconlabel(const char*);
   /** Sets the icon label. */
-  void label(const char* label, const char* iconlabel); // platform dependent 
+  void label(const char* label, const char* iconlabel); // platform dependent
   void copy_label(const char* a);
 
   static void default_xclass(const char*);
   static const char *default_xclass();
   const char* xclass() const;
   void xclass(const char* c);
-  /** Gets the current icon window target dependent data. */
-  const void* icon() const	{return icon_;}
-  /** Sets the current icon window target dependent data. */
-  void icon(const void * ic)	{icon_ = ic;}
+  const void* icon() const;
+  void icon(const void * ic);
 
   /**
     Returns non-zero if show() has been called (but not hide()
@@ -343,11 +341,11 @@ public:
   int shown() {return i != 0;}
   /**
     Puts the window on the screen. Usually (on X) this has the side
-    effect of opening the display. 
+    effect of opening the display.
 
     If the window is already shown then it is restored and raised to the
     top.  This is really convenient because your program can call show()
-    at any time, even if the window is already up.  It also means that 
+    at any time, even if the window is already up.  It also means that
     show() serves the purpose of raise() in other toolkits.
     
     Fl_Window::show(int argc, char **argv) is used for top-level
@@ -426,15 +424,9 @@ public:
   */
   void make_current();
 
-  /** Returns an Fl_Window pointer if this widget is an Fl_Window.
-  
-      \retval NULL if this widget is not derived from Fl_Window.
-      \note This method is provided to avoid dynamic_cast.
-      \todo More documentation ...
-   */
+  // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Window* as_window() { return this; }
 
-  // for back-compatibility only:
   /**
     Changes the cursor for this window.  This always calls the system, if
     you are changing the cursor a lot you may want to keep track of how
@@ -451,6 +443,18 @@ public:
   void cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE); // platform dependent
   void default_cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
   static void default_callback(Fl_Window*, void* v);
+  
+  /** Returns the window width including any frame added by the window manager.
+   
+   Same as w() if applied to a subwindow.
+   */
+  int decorated_w();
+  /** Returns the window height including any window title bar and any frame 
+   added by the window manager.
+   
+   Same as h() if applied to a subwindow.
+   */
+  int decorated_h();
 
 };
 

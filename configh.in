@@ -161,8 +161,12 @@
  *
  * Byte order of your machine: 1 = big-endian, 0 = little-endian.
  */
-
+ 
+#ifdef __APPLE__
+#include <mac_endianness.h>
+#else
 #define WORDS_BIGENDIAN 0
+#endif
 
 /*
  * U16, U32, U64:
@@ -245,21 +249,21 @@
 #undef HAVE_LIBJPEG
 
 /*
- * USE_CAIRO
+ * FLTK_USE_CAIRO
  *
  * Do we have the cairo library available and want extended cairo use in fltk ?
  * will implies to link cairo.lib in all fltk based apps.
  */
 
-#undef USE_CAIRO
+#undef FLTK_USE_CAIRO
 
 /*
- * HAVE_CAIRO
+ * FLTK_HAVE_CAIRO
  *
  * Do we have the cairo library available?
  */
 
-#undef HAVE_CAIRO
+#undef FLTK_HAVE_CAIRO
 
 /*
  * Which header file do we include for libpng?

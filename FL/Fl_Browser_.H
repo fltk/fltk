@@ -138,20 +138,20 @@ protected:
     \param[in] item The item whose label text is returned.
     \returns The item's text label. (Can be NULL if blank)
    */
-  virtual const char *item_text(void *item) const { return 0L; }
+  virtual const char *item_text(void *item) const { (void)item; return 0L; }
   /**
     This optional method should be provided by the subclass 
     to efficiently swap browser items \p a and \p b, such as for sorting.
     \param[in] a,b The two items to be swapped.
    */
-  virtual void item_swap(void *a,void *b) { }
+  virtual void item_swap(void *a,void *b) { (void)a; (void)b; }
   /**
     This method must be provided by the subclass 
     to return the item for the specified \p index. 
     \param[in] index The \p index of the item to be returned
     \returns The item at the specified \p index.
    */
-  virtual void *item_at(int index) const { return 0L; }
+  virtual void *item_at(int index) const { (void)index; return 0L; }
   // you don't have to provide these but it may help speed it up:
   virtual int full_width() const ;	// current width of all items
   virtual int full_height() const ;	// current height of all items

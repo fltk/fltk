@@ -148,12 +148,12 @@ Fl_Double_Window* make_template_panel() {
       template_browser->type(2);
       template_browser->labelfont(1);
       template_browser->callback((Fl_Callback*)cb_template_browser);
-      template_browser->align(FL_ALIGN_TOP_LEFT);
+      template_browser->align(Fl_Align(FL_ALIGN_TOP_LEFT));
       template_browser->when(3);
     } // Fl_Browser* template_browser
     { template_preview = new Fl_Box(200, 28, 250, 250);
       template_preview->box(FL_THIN_DOWN_BOX);
-      template_preview->align(69|FL_ALIGN_INSIDE);
+      template_preview->align(Fl_Align(69|FL_ALIGN_INSIDE));
       Fl_Group::current()->resizable(template_preview);
     } // Fl_Box* template_preview
     { template_name = new Fl_Input(124, 288, 326, 25, "Template Name:");
@@ -190,67 +190,67 @@ Fl_Double_Window* make_template_panel() {
 
 void template_clear() {
   int i;
-void *filename;
-
-for (i = 1; i <= template_browser->size(); i ++) {
-  if ((filename = template_browser->data(i)) != NULL) free(filename);
-}
-
-template_browser->deselect();
-template_browser->clear();
+  void *filename;
+  
+  for (i = 1; i <= template_browser->size(); i ++) {
+    if ((filename = template_browser->data(i)) != NULL) free(filename);
+  }
+  
+  template_browser->deselect();
+  template_browser->clear();
 }
 
 void template_delete_cb(Fl_Button *, void *) {
   int item = template_browser->value();
-if (item < 1) return;
-
-const char *name = template_browser->text(item);
-const char *flfile = (const char *)template_browser->data(item);
-if (!flfile) return;
-
-if (!fl_choice("Are you sure you want to delete the template \"%s\"?",
-               "Cancel", "Delete", 0, name)) return;
-
-if (unlink(flfile)) {
-  fl_alert("Unable to delete template \"%s\":\n%s", name, strerror(errno));
-  return;
-}
-
-template_browser->remove(item);
-template_browser->do_callback();
+  if (item < 1) return;
+  
+  const char *name = template_browser->text(item);
+  const char *flfile = (const char *)template_browser->data(item);
+  if (!flfile) return;
+  
+  if (!fl_choice("Are you sure you want to delete the template \"%s\"?",
+                 "Cancel", "Delete", 0, name)) return;
+  
+  if (unlink(flfile)) {
+    fl_alert("Unable to delete template \"%s\":\n%s", name, strerror(errno));
+    return;
+  }
+  
+  template_browser->remove(item);
+  template_browser->do_callback();
 }
 
 void template_load() {
   int i;
-char name[1024], filename[1024], path[1024], *ptr;
-struct dirent **files;
-int num_files;
-
-fluid_prefs.getUserdataPath(path, sizeof(path));
-strlcat(path, "templates", sizeof(path));
-
-num_files = fl_filename_list(path, &files);
-
-for (i = 0; i < num_files; i ++) {
-  if (fl_filename_match(files[i]->d_name, "*.fl")) {
-    // Format the name as the filename with "_" replaced with " "
-    // and without the trailing ".fl"...
-    strlcpy(name, files[i]->d_name, sizeof(name));
-    *strstr(name, ".fl") = '\0';
-
-    for (ptr = name; *ptr; ptr ++) {
-      if (*ptr == '_') *ptr = ' ';
+  char name[1024], filename[1024], path[1024], *ptr;
+  struct dirent **files;
+  int num_files;
+  
+  fluid_prefs.getUserdataPath(path, sizeof(path));
+  strlcat(path, "templates", sizeof(path));
+  
+  num_files = fl_filename_list(path, &files);
+  
+  for (i = 0; i < num_files; i ++) {
+    if (fl_filename_match(files[i]->d_name, "*.fl")) {
+      // Format the name as the filename with "_" replaced with " "
+      // and without the trailing ".fl"...
+      strlcpy(name, files[i]->d_name, sizeof(name));
+      *strstr(name, ".fl") = '\0';
+  
+      for (ptr = name; *ptr; ptr ++) {
+        if (*ptr == '_') *ptr = ' ';
+      }
+  
+      // Add the template to the browser...
+      snprintf(filename, sizeof(filename), "%s/%s", path, files[i]->d_name);
+      template_browser->add(name, strdup(filename));
     }
-
-    // Add the template to the browser...
-    snprintf(filename, sizeof(filename), "%s/%s", path, files[i]->d_name);
-    template_browser->add(name, strdup(filename));
+  
+    free(files[i]);
   }
-
-  free(files[i]);
-}
-
-if (num_files > 0) free(files);
+  
+  if (num_files > 0) free(files);
 }
 
 //

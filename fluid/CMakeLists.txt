@@ -25,9 +25,9 @@ add_executable(fluid ${CPPFILES})
 target_link_libraries(fluid fltk fltk_images fltk_forms)
 
 # link in optional libraries
-if(HAVE_CAIRO)
+if(FLTK_HAVE_CAIRO)
    target_link_libraries(fluid fltk_cairo)
-endif(HAVE_CAIRO)
+endif(FLTK_HAVE_CAIRO)
 
 if(FLTK_USE_GL)
    target_link_libraries(fluid fltk_gl)

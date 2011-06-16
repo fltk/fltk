@@ -73,9 +73,9 @@ static void cb_print_selection(Fl_Round_Button*, void*) {
 print_to->deactivate();
 }
 
-Fl_Input *print_from=(Fl_Input *)0;
+Fl_Int_Input *print_from=(Fl_Int_Input *)0;
 
-Fl_Input *print_to=(Fl_Input *)0;
+Fl_Int_Input *print_to=(Fl_Int_Input *)0;
 
 Fl_Spinner *print_copies=(Fl_Spinner *)0;
 
@@ -278,16 +278,16 @@ Fl_Double_Window* make_print_panel() {
           print_selection->down_box(FL_ROUND_DOWN_BOX);
           print_selection->callback((Fl_Callback*)cb_print_selection);
         } // Fl_Round_Button* print_selection
-        { print_from = new Fl_Input(136, 126, 28, 25, "From:");
+        { print_from = new Fl_Int_Input(136, 126, 28, 25, "From:");
           print_from->type(2);
           print_from->textfont(4);
           print_from->deactivate();
-        } // Fl_Input* print_from
-        { print_to = new Fl_Input(199, 126, 28, 25, "To:");
+        } // Fl_Int_Input* print_from
+        { print_to = new Fl_Int_Input(199, 126, 28, 25, "To:");
           print_to->type(2);
           print_to->textfont(4);
           print_to->deactivate();
-        } // Fl_Input* print_to
+        } // Fl_Int_Input* print_to
         o->end();
       } // Fl_Group* o
       { Fl_Group* o = new Fl_Group(247, 86, 210, 105, "Copies");
@@ -510,77 +510,77 @@ void print_cb(Fl_Return_Button *, void *);
 
 void print_load() {
   FILE *lpstat;
-char line[1024], name[1024], *nptr, qname[2048], *qptr, defname[1024];
-int i;
-
-if (print_choice->size() > 1) {
-  for (i = 1; print_choice->text(i); i ++) {
-    free(print_choice->menu()[i].user_data());
+  char line[1024], name[1024], *nptr, qname[2048], *qptr, defname[1024];
+  int i;
+  
+  if (print_choice->size() > 1) {
+    for (i = 1; print_choice->text(i); i ++) {
+      free(print_choice->menu()[i].user_data());
+    }
   }
-}
-
-print_choice->clear();
-print_choice->add("Print To File", 0, 0, 0, FL_MENU_DIVIDER);
-print_choice->value(0);
-
-defname[0] = '\0';
-
-if ((lpstat = popen("LC_MESSAGES=C LANG=C lpstat -p -d", "r")) != NULL) {
-  while (fgets(line, sizeof(line), lpstat)) {
-    if (!strncmp(line, "printer ", 8) &&
-        sscanf(line + 8, "%s", name) == 1) {
-      for (nptr = name, qptr = qname; *nptr; *qptr++ = *nptr++) {
-        if (*nptr == '/') *qptr++ = '\\';
+  
+  print_choice->clear();
+  print_choice->add("Print To File", 0, 0, 0, FL_MENU_DIVIDER);
+  print_choice->value(0);
+  
+  defname[0] = '\0';
+  
+  if ((lpstat = popen("LC_MESSAGES=C LANG=C lpstat -p -d", "r")) != NULL) {
+    while (fgets(line, sizeof(line), lpstat)) {
+      if (!strncmp(line, "printer ", 8) &&
+          sscanf(line + 8, "%s", name) == 1) {
+        for (nptr = name, qptr = qname; *nptr; *qptr++ = *nptr++) {
+          if (*nptr == '/') *qptr++ = '\\';
+        }
+        *qptr = '\0';
+  
+        print_choice->add(qname, 0, 0, (void *)strdup(name), 0);
+      } else if (!strncmp(line, "system default destination: ", 28)) {
+        if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\0';
       }
-      *qptr = '\0';
-
-      print_choice->add(qname, 0, 0, (void *)strdup(name), 0);
-    } else if (!strncmp(line, "system default destination: ", 28)) {
-      if (sscanf(line + 28, "%s", defname) != 1) defname[0] = '\0';
     }
+    pclose(lpstat);
   }
-  pclose(lpstat);
-}
-
-if (defname[0]) {
-  for (i = 1; print_choice->text(i); i ++) {
-    if (!strcmp((char *)print_choice->menu()[i].user_data(), defname)) {
-      print_choice->value(i);
-      break;
+  
+  if (defname[0]) {
+    for (i = 1; print_choice->text(i); i ++) {
+      if (!strcmp((char *)print_choice->menu()[i].user_data(), defname)) {
+        print_choice->value(i);
+        break;
+      }
     }
-  }
-} else if (print_choice->size() > 2) print_choice->value(1);
-
-
-print_update_status();
+  } else if (print_choice->size() > 2) print_choice->value(1);
+  
+  
+  print_update_status();
 }
 
 void print_update_status() {
   FILE *lpstat;
-char command[1024];
-static char status[1024];
-const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
-
-if (print_choice->value()) {
-  snprintf(command, sizeof(command), "lpstat -p '%s'", printer);
-  if ((lpstat = popen(command, "r")) != NULL) {
-    if (fgets(status, sizeof(status), lpstat)==0) { /* ignore */ }
-    pclose(lpstat);
-  } else strcpy(status, "printer status unavailable");
-} else status[0] = '\0';
-
-print_status->label(status);
-
-char name[1024];
-int val;
-
-snprintf(name, sizeof(name), "%s/page_size", printer);
-fluid_prefs.get(name, val, 0);
-print_page_size->value(val);
-
-snprintf(name, sizeof(name), "%s/output_mode", printer);
-fluid_prefs.get(name, val, 0);
-print_output_mode[val]->setonly();
+  char command[1024];
+  static char status[1024];
+  const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
+  
+  if (print_choice->value()) {
+    snprintf(command, sizeof(command), "lpstat -p '%s'", printer);
+    if ((lpstat = popen(command, "r")) != NULL) {
+      if (fgets(status, sizeof(status), lpstat)==0) { /* ignore */ }
+      pclose(lpstat);
+    } else strcpy(status, "printer status unavailable");
+  } else status[0] = '\0';
+  
+  print_status->label(status);
+  
+  char name[1024];
+  int val;
+  
+  snprintf(name, sizeof(name), "%s/page_size", printer);
+  fluid_prefs.get(name, val, 0);
+  print_page_size->value(val);
+  
+  snprintf(name, sizeof(name), "%s/output_mode", printer);
+  fluid_prefs.get(name, val, 0);
+  print_output_mode[val]->setonly();
 }
 
 //

@@ -112,8 +112,14 @@ main(int  argc,		// I - Number of command-line arguments
   window = new Fl_Double_Window(400, 215, "File Chooser Test");
 
   filter = new Fl_Input(50, 10, 315, 25, "Filter:");
-  if (argc > 1)
-    filter->value(argv[1]);
+  int argn = 1;
+#ifdef __APPLE__
+  // OS X may add the process number as the first argument - ignore
+  if (argc>argn && strncmp(argv[1], "-psn_", 5)==0)
+    argn++;
+#endif
+  if (argc > argn)
+    filter->value(argv[argn]);
   else
     filter->value("PDF Files (*.pdf)\t"
                   "PostScript Files (*.ps)\t"
@@ -253,8 +259,8 @@ pdf_check(const char *name,	// I - Name of file
 	  int)			// I - Length of header data (unused)
 {
   const char	*home;		// Home directory
-  char		preview[1024],	// Preview filename
-		command[1024];	// Command
+  char		preview[FL_PATH_MAX],	// Preview filename
+		command[FL_PATH_MAX];	// Command
 
 
   if (memcmp(header, "%PDF", 4) != 0)
@@ -284,9 +290,9 @@ ps_check(const char *name,	// I - Name of file
 	 int)			// I - Length of header data (unused)
 {
   const char	*home;		// Home directory
-  char		preview[1024],	// Preview filename
-		outname[1024],	// Preview PS file
-		command[1024];	// Command
+  char		preview[FL_PATH_MAX],	// Preview filename
+		outname[FL_PATH_MAX],	// Preview PS file
+		command[FL_PATH_MAX];	// Command
   FILE		*in,		// Input file
 		*out;		// Output file
   int		page;		// Current page
@@ -346,7 +352,7 @@ show_callback(void)
 {
   int	i;			// Looping var
   int	count;			// Number of files selected
-  char	relative[1024];		// Relative filename
+  char	relative[FL_PATH_MAX];	// Relative filename
 
 
   if (filter->value()[0])

@@ -48,8 +48,8 @@
   widget and repeat buttons. The user can either type into the
   input area or use the buttons to change the value.
 */
-class FL_EXPORT Fl_Spinner : public Fl_Group
-{
+class FL_EXPORT Fl_Spinner : public Fl_Group {
+  
   double	value_;			// Current value
   double	minimum_;		// Minimum value
   double	maximum_;		// Maximum value
@@ -233,14 +233,16 @@ class FL_EXPORT Fl_Spinner : public Fl_Group
   void		textsize(Fl_Fontsize s) {
 		  input_.textsize(s);
 		}
-  /** Sets or Gets the numeric representation in the input field.
-    Valid values are FL_INT_INPUT and FL_FLOAT_INPUT.
-    The first form also changes the format() template.
-    Setting a new spinner type via a superclass pointer will not work.
-    \note  type is not a virtual function. 
+  /** Gets the numeric representation in the input field.
+   \see Fl_Spinner::type(uchar) 
   */
   uchar		type() const { return (input_.type()); }
-  /** See uchar	Fl_Spinner::type() const */
+  /** Sets the numeric representation in the input field.
+   Valid values are FL_INT_INPUT and FL_FLOAT_INPUT.
+   Also changes the format() template.
+   Setting a new spinner type via a superclass pointer will not work.
+   \note  type is not a virtual function. 
+   */
   void		type(uchar v) { 
                   if (v==FL_FLOAT_INPUT) {
                     format("%.*f");

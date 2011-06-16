@@ -52,11 +52,11 @@
 #include <FL/Fl_Return_Button.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Text_Editor.H>
-
+#include <FL/filename.H>
 
 int                changed = 0;
-char               filename[256] = "";
-char               title[256];
+char               filename[FL_PATH_MAX] = "";
+char               title[FL_PATH_MAX];
 Fl_Text_Buffer     *textbuf = 0;
 
 
@@ -389,7 +389,7 @@ style_update(int        pos,		// I - Position of update
 
   style_parse(text, style, end - start);
 
-//  printf("new style = \"%s\", new last='%c'...\n", 
+//  printf("new style = \"%s\", new last='%c'...\n",
 //         style, style[end - start - 1]);
 
   stylebuf->replace(start, end, style);
@@ -397,7 +397,7 @@ style_update(int        pos,		// I - Position of update
 
   if (start==end || last != style[end - start - 1]) {
 //    printf("Recalculate the rest of the buffer style\n");
-    // Either the user deleted some text, or the last character 
+    // Either the user deleted some text, or the last character
     // on the line changed styles, so reparse the
     // remainder of the buffer...
     free(text);
@@ -599,7 +599,7 @@ void open_cb(Fl_Widget*, void*) {
 
 }
 
-void insert_cb(Fl_Widget*, void *v) {  
+void insert_cb(Fl_Widget*, void *v) {
   Fl_Native_File_Chooser fnfc;
   fnfc.title("Insert file");
   fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
@@ -628,7 +628,7 @@ void close_cb(Fl_Widget*, void* v) {
   textbuf->remove_modify_callback(style_update, w->editor);
   textbuf->remove_modify_callback(changed_cb, w);
   Fl::delete_widget(w);
-  
+
   num_windows--;
   if (!num_windows) exit(0);
 }
@@ -742,27 +742,31 @@ void view_cb(Fl_Widget*, void*) {
 Fl_Menu_Item menuitems[] = {
   { "&File",              0, 0, 0, FL_SUBMENU },
     { "&New File",        0, (Fl_Callback *)new_cb },
-    { "&Open File...",    FL_CTRL + 'o', (Fl_Callback *)open_cb },
-    { "&Insert File...",  FL_CTRL + 'i', (Fl_Callback *)insert_cb, 0, FL_MENU_DIVIDER },
-    { "&Save File",       FL_CTRL + 's', (Fl_Callback *)save_cb },
-    { "Save File &As...", FL_CTRL + FL_SHIFT + 's', (Fl_Callback *)saveas_cb, 0, FL_MENU_DIVIDER },
-    { "New &View", FL_ALT + 'v', (Fl_Callback *)view_cb, 0 },
-    { "&Close View", FL_CTRL + 'w', (Fl_Callback *)close_cb, 0, FL_MENU_DIVIDER },
-    { "E&xit", FL_CTRL + 'q', (Fl_Callback *)quit_cb, 0 },
+    { "&Open File...",    FL_COMMAND + 'o', (Fl_Callback *)open_cb },
+    { "&Insert File...",  FL_COMMAND + 'i', (Fl_Callback *)insert_cb, 0, FL_MENU_DIVIDER },
+    { "&Save File",       FL_COMMAND + 's', (Fl_Callback *)save_cb },
+    { "Save File &As...", FL_COMMAND + FL_SHIFT + 's', (Fl_Callback *)saveas_cb, 0, FL_MENU_DIVIDER },
+    { "New &View",        FL_ALT
+#ifdef __APPLE__
+      + FL_COMMAND
+#endif
+      + 'v', (Fl_Callback *)view_cb, 0 },
+    { "&Close View",      FL_COMMAND + 'w', (Fl_Callback *)close_cb, 0, FL_MENU_DIVIDER },
+    { "E&xit",            FL_COMMAND + 'q', (Fl_Callback *)quit_cb, 0 },
     { 0 },
 
   { "&Edit", 0, 0, 0, FL_SUBMENU },
-    { "Cu&t",        FL_CTRL + 'x', (Fl_Callback *)cut_cb },
-    { "&Copy",       FL_CTRL + 'c', (Fl_Callback *)copy_cb },
-    { "&Paste",      FL_CTRL + 'v', (Fl_Callback *)paste_cb },
-    { "&Delete",     0, (Fl_Callback *)delete_cb },
+    { "Cu&t",             FL_COMMAND + 'x', (Fl_Callback *)cut_cb },
+    { "&Copy",            FL_COMMAND + 'c', (Fl_Callback *)copy_cb },
+    { "&Paste",           FL_COMMAND + 'v', (Fl_Callback *)paste_cb },
+    { "&Delete",          0, (Fl_Callback *)delete_cb },
     { 0 },
 
   { "&Search", 0, 0, 0, FL_SUBMENU },
-    { "&Find...",       FL_CTRL + 'f', (Fl_Callback *)find_cb },
-    { "F&ind Again",    FL_CTRL + 'g', find2_cb },
-    { "&Replace...",    FL_CTRL + 'r', replace_cb },
-    { "Re&place Again", FL_CTRL + 't', replace2_cb },
+    { "&Find...",         FL_COMMAND + 'f', (Fl_Callback *)find_cb },
+    { "F&ind Again",      FL_COMMAND + 'g', find2_cb },
+    { "&Replace...",      FL_COMMAND + 'r', replace_cb },
+    { "Re&place Again",   FL_COMMAND + 't', replace2_cb },
     { 0 },
 
   { 0 }

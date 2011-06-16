@@ -5,7 +5,7 @@
 The Fast Light Tool Kit ("FLTK", pronounced
 "fulltick") is a cross-platform C++ GUI toolkit for
 UNIX&reg;/Linux&reg; (X11), Microsoft&reg; Windows&reg;, and
-MacOS&reg; X. FLTK provides modern GUI functionality without the
+Apple&reg; OS X&reg;. FLTK provides modern GUI functionality without the
 bloat and supports 3D graphics via OpenGL&reg; and its built-in
 GLUT emulation. It was originally developed by Mr. Bill Spitzak
 and is currently maintained by a small group of developers
@@ -113,8 +113,8 @@ Here are some of the core features unique to FLTK:
 \li Support for OpenGL overlay hardware on both X11 and WIN32, with
     emulation if none is available.
 
-\li Text widgets with Emacs key bindings, X cut & paste, and support
-   for character composition.
+\li Text widgets with cut & paste, undo, and support
+   for Unicode text and international input methods.
 
 \li Compatibility header file for the GLUT library.
 
@@ -123,9 +123,9 @@ Here are some of the core features unique to FLTK:
 \section intro_licensing Licensing
 
 FLTK comes with complete free source code.
-FLTK is available under the terms of the 
+FLTK is available under the terms of the
 \ref license "GNU Library General Public License"
-with exceptions that allow for static linking. 
+with exceptions that allow for static linking.
 Contrary to popular belief, it can be used in
 commercial software - even Bill Gates could use it!
 
@@ -143,11 +143,13 @@ the toolkit, which was already in use by several people, Bill
 came up with "FLTK", including a bogus excuse that it
 stands for "The Fast Light Toolkit".
 
-\section intro_unix Building and Installing FLTK Under UNIX and MacOS X
+\section intro_unix Building and Installing FLTK Under UNIX and Apple OS X
 
 In most cases you can just type "make". This will
 run configure with the default of no options and then compile
 everything.
+
+For OS X, Xcode 3 project files can be found in the 'ide' directory.
 
 FLTK uses GNU autoconf to configure itself for your UNIX
 platform. The main things that the configure script will look
@@ -243,30 +245,96 @@ files to "includedir", and the library files to "libdir".
 
 \section intro_windows Building FLTK Under Microsoft Windows
 
-There are three ways to build FLTK under Microsoft Windows.
-The first is to use the Visual C++ 5.0 project files under the
-"visualc" directory. Just open (or double-click on)
-the "fltk.dsw" file to get the whole shebang.
+NOTE: This documentation section is currently under review.
+More up-to-date information for this release may be available
+in the file "README.MSWindows.txt" and you should read
+that file to determine if there are changes that may be
+applicable to your build environment.
 
-The second method is to use the \p configure script
-included with the FLTK software; this has only been tested with
-the Cygwin tools:
+FLTK 1.3 is officially supported on Windows (2000,) 2003,
+XP, and later.  Older Windows versions prior to Windows 2000
+are not officially supported, but may still work.
+The main reason is that the OS version needs to support UTF-8.
+FLTK 1.3 is known to work on recent versions of
+Windows such as Windows 7 and Vista and has been reported to work
+in both 32-bit and 64-bit versions of these.
+
+FLTK currently supports the following development
+environments on the Windows platform:
+
+CAUTION: Libraries built by any one of these build
+environments can not be mixed
+with object files from any of the other environments!
+(They use incompatible C++ conventions internally.)
+
+Free Microsoft Visual C++ 2008 Express and Visual
+C++ 2010 Express using the supplied workspace and
+project files. Older versions, and the commercial
+versions, can be used as well, if they can open
+the project files.
+Be sure to get your service packs!
+
+The project files can be found in the "ide/" directory.
+Please read "ide/README.IDE" for more info about this.
+
+
+\subsection intro_cygwin_mingw GNU toolsets (Cygwin or MinGW) hosted on Windows
+
+If using Cygwin with the Cygwin shell, or MinGW with
+the Msys shell, these build environments behave very
+much like a Unix or OS X build and the notes above in
+the section on
+<i>Building and Installing FLTK Under UNIX and Apple OS X</i>
+apply, in particular the descriptions of using the
+"configure" script and its related options.
+
+In general for a build using these tools, e.g. for
+the Msys shell with MinGW,
+it should suffice to "cd" into the directory where
+you have extracted the fltk tarball and type:
+
+\code
+./configure
+make
+\endcode
+
+This will build the fltk libraries and they can then be
+utilised directly from the build location.
+NOTE: this may be simpler than "installing" them in
+many cases as different tool chains on Windows have
+different ideas about where the files should be "installed" to.
+
+For example, if you "install" the libraries using Msys/MinGW
+with the following command:
+
+\code
+make install
+\endcode
+
+Then Msys will "install" the libraries to where it thinks
+the path "/usr/local/" leads to. If you only ever build code
+from within the Msys environment this works well, but the
+actual "Windows path" these files are located in will be
+something like "C:\msys\1.0\local\lib", depending
+on where your Msys installation is rooted, which may
+not be useful to other tools.
+
+If you want to install your built fltk libraries in a
+non-standard location you may do:
 
 \code
 sh configure --prefix=C:/FLTK
 make
 \endcode
 
-The final method is to use a GNU-based development tool with
-the files in the "makefiles" directory. To build
-using one of these tools simply copy the appropriate
-makeinclude and config files to the main directory and do a
-make:
+Where the value passed to "prefix" is the path at which
+you would like fltk to be installed.
 
-\code
-copy makefiles\Makefile.<env> Makefile
-make
-\endcode
+A subsequent invocation of "make install" will then place
+the fltk libraries and header files into that path.
+
+The other options to "configure" may also be used to
+tailor the build to suit your environment.
 
 \subsection intro_visualcpp Using the Visual C++ DLL Library
 
@@ -281,30 +349,13 @@ you will need to define the \p FL_DLL preprocessor symbol
 to get the correct linkage commands embedded within the FLTK
 header files.
 
-\section intro_os2 Building FLTK Under OS/2
-
-The current OS/2 build requires XFree86 for OS/2 to work.  A
-native  Presentation Manager version has not been implemented
-yet (volunteers  are welcome!).
-
-The current set of Makefiles/configuration failes assumes that EMX 0.9d
-and libExt (from http://posix2.sourceforge.net) is installed.
-
-To build the XFree86 version of FLTK for OS/2, copy the appropriate
-makeinclude and config files to the main directory and do a make: 
-
-\code
-copy makefiles\Makefile.os2x Makefile
-make
-\endcode
-
 \section intro_internet Internet Resources
 
 FLTK is available on the 'net in a bunch of locations:
 
 \par WWW
 http://www.fltk.org/ <br>
-http://www.fltk.org/str.php [for reporting bugs] <br> 
+http://www.fltk.org/str.php [for reporting bugs] <br>
 http://www.fltk.org/software.php [source code]<br>
 http://www.fltk.org/newsgroups.php [newsgroup/forums]
 
@@ -313,17 +364,15 @@ http://ftp.easysw.com/pub/fltk [California, USA, via http]<br>
 ftp://ftp.easysw.com/pub/fltk [California, USA via ftp]<br>
 ftp://ftp2.easysw.com/pub/fltk [Maryland, USA]<br>
 ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub/fltk [Espoo, Finland]<br>
-ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk [Germany] <br>
-ftp://gd.tuwien.ac.at/hci/fltk [Austria]
 
 \par NNTP Newsgroups
 news://news.easysw.com/ [NNTP interface]<br>
 http://fltk.org/newsgroups.php [web interface]<br>
 
 Point your NNTP news reader at news.easysw.com. At minimum, you'll want to subscribe
-to the "fltk.general" group for general FLTK questions and answers. 
+to the "fltk.general" group for general FLTK questions and answers.
 
-You can also use the web interface to the newsgroup; just go to the main http://fltk.org/ 
+You can also use the web interface to the newsgroup; just go to the main http://fltk.org/
 page and click on "Forums".
 
 \section intro_reporting Reporting Bugs
@@ -332,7 +381,7 @@ To report a bug in FLTK, or for feature requests, please use the form at
 <A href="http://www.fltk.org/str.php">http://www.fltk.org/str.php</A>,
 and click on "Submit Bug or Feature Request".
 
-You'll be prompted for the FLTK version, operating system & version, 
+You'll be prompted for the FLTK version, operating system & version,
 and compiler that you are using. We will be unable to provide
 any kind of help without that basic information.
 
@@ -350,7 +399,7 @@ or the web interface to the newsgroups at <A href="http://fltk.org/newsgroups.ph
     </a>
   </td>
   <td width="10%" align="CENTER">
-    <a class="el" href="main.html">[Index]</a>
+    <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="basics.html">

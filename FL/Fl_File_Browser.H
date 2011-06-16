@@ -45,8 +45,8 @@
 //
 
 /** The Fl_File_Browser widget displays a list of filenames, optionally with file-specific icons. */
-class FL_EXPORT Fl_File_Browser : public Fl_Browser
-{
+class FL_EXPORT Fl_File_Browser : public Fl_Browser {
+  
   int		filetype_;
   const char	*directory_;
   uchar		iconsize_;

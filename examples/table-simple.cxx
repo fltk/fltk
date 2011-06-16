@@ -111,6 +111,7 @@ public:
     col_header(1);              // enable column headers (along top)
     col_width_all(80);          // default width of columns
     col_resize(1);              // enable column resizing
+    end();			// end the Fl_Table group
   }
   ~MyTable() { }
 };

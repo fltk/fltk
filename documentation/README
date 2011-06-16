@@ -1,31 +1,73 @@
-README
-------
+README (documentation)
+----------------------
+FLTK 1.3 documentation is available in HTML and PDF format. The
+documentation must be generated in a separate step or downloaded
+from FLTK's software download pages. The documentation can also
+be accessed online.
 
-The documentation in this directory is in PDF format.
-To read it, please open the file "fltk.pdf" in this directory.
+To read the docs after downloading or generating them, open the
+files:
 
-To generate the doxygen HTML documention, you should have Doxygen
-version 1.5.7 or later. Use "make clean html" in the documentation
-directory to generate the HTML documentation.
+    documentation/html/index.html
+    documentation/fltk.pdf
 
-To read it, please open the file "html/index.html" with your browser.
-A documentation version is also available at the FLTK web site,
+with your browser or PDF viewer, respectively.
+
+
+Online Documentation:
+---------------------
+A documentation version is available online at the FLTK web site,
 along with the PDF version of the manual. The docs on the web site
-are usually somewhat older (latest release).
+are usually somewhat older (latest release). Use this URL to find
+the current online documentation:
 
-You can generate your own copy of the PDF manual by typing "make pdf"
-in this directory. The resulting file is "latex/refman.pdf". This is
-so that "make pdf" does not overwrite the bundled file "fltk.pdf".
+    http://www.fltk.org/documentation.php
 
-If you type "make pdf-dist" instead, the original file "fltk.pdf"
-will be overwritten.
+    
+Documentation Download:
+-----------------------
+To download pre-generated docs, go to
 
-Note that it is usually not necessary to create your own PDF version,
-if you use the release version of FLTK, because it comes with a current
-"fltk.pdf" file. However, if you use subversion or a snapshot file,
-then the included "fltk.pdf" file is likely to be outdated.
+    http://www.fltk.org/software.php
 
+and look for the files
+
+    fltk-<version>-docs-html.tar.gz
+    fltk-<version>-docs-pdf.tar.gz
+
+Extract the documentation tarballs into the same directory as you
+did with the source tarball.
+
+
+Generation of Documentation:
+----------------------------
+To generate the documentation yourself, you should have Doxygen
+version 1.5.7 or later (recommended version is 1.7.3).
+
+To generate the PDF version you also need a current version of LaTeX.
+You can use the packages tetex (older) or texlive (current) if your
+distribution provides them. You may need to install additional fonts
+and other sub-packages for the PDF version to be generated correctly.
+
+Use "make html" in the documentation directory to generate the HTML
+documentation, or "make pdf" to generate the PDF version. "make dist"
+generates both versions in one step (as would do "make clean html pdf").
+
+To read the HTML or PDF docs, see above.
+
+
+FLTK Developer Snapshots or Subversion Usage:
+---------------------------------------------
+There is no pre-generated documentation available if you use a current
+developer snapshot or subversion. You must generate the documentation
+yourself.
+
+
+Bugs and Feature Requests:
+--------------------------
 If you find any typos, things that are unclear, or would like to
 contribute an example, section, or chapter to the FLTK manual, please
 post a question in the fltk newsgroup fltk.general or post a bug
-report or feature request at http://www.fltk.org/str.php .
+report or feature request at:
+
+    http://www.fltk.org/str.php

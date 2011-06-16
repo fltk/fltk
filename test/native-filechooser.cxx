@@ -31,6 +31,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Input.H>
+#include <FL/Fl_Box.H>
 #include <FL/Fl_Native_File_Chooser.H>
 
 // GLOBALS
@@ -70,20 +71,30 @@ int main(int argc, char **argv) {
   Fl_File_Icon::load_system_icons();
 #endif
 
+  int argn = 1;
+#ifdef __APPLE__
+  // OS X may add the process number as the first argument - ignore
+  if (argc>argn && strncmp(argv[1], "-psn_", 5)==0)
+    argn++;
+#endif
+  
   Fl_Window *win = new Fl_Window(600, 100, "Native File Chooser Test");
+  win->size_range(300, 100, 0, 100);
   win->begin();
   {
     int y = 10;
     G_filename = new Fl_Input(80, y, win->w()-80-10, 25, "Filename");
-    G_filename->value(argc < 2 ? "." : argv[1]);
+    G_filename->value(argc <= argn ? "." : argv[argn]);
     G_filename->tooltip("Default filename");
     y += G_filename->h() + 5;
     Fl_Button *but = new Fl_Button(win->w()-80-10, win->h()-25-10, 80, 25, "Pick File");
     but->callback(Butt_CB);
+    Fl_Box *dummy = new Fl_Box(80, 0, 430, 100);
+    dummy->hide();
+    win->resizable(dummy);
   }
   win->end();
-  win->resizable(win);
-  win->show();
+  win->show(argc, argv);
   return(Fl::run());
 }
 

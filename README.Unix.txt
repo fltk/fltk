@@ -175,7 +175,7 @@ Download FLTK from here:
 
 If you are familiar with "subversion" and like to stay current with your 
 version, you will find the subversion access parameters at the bottom of that 
-page. Unpack FLTK into a convinient location. I like to have everything in my 
+page. Unpack FLTK into a convenient location. I like to have everything in my 
 dev directory:
 
   cd
@@ -198,12 +198,12 @@ Now configure your FLTK installation:
   ./configure
   
 ADVANCED: type "./configure --help" to get a complete list of optional 
-configurations parameters. These should be pretty self-explenatory. Some
+configurations parameters. These should be pretty self-explanatory. Some
 more details can be found in README. 
 :END_ADVANCED
 
 The configuration script will check your machine for the required resources
-which you should have installed as described in the Perequisites chapter. Review
+which you should have installed as described in the Prerequisites chapter. Review
 the Configuration Summary, maybe take some notes.
 
 
@@ -244,7 +244,7 @@ icons under "/usr/share" by typing:
 
   sudo make install-desktop
   
-It is possible to install FLTK without superuser previleges by changing the 
+It is possible to install FLTK without superuser privileges by changing the 
 installation path to a location within the user account by adding the 
 "--prefix=PREFIX" parameters to the "./configure" command.
 
@@ -270,7 +270,7 @@ recommend that you add it to the command search path.
 
 Code::Blocks is a free and popular C++ IDE in the Linux world. It also runs on
 OS X and MSWindows. Configured correctly, it can also cross-compile between
-thise platforms. This chapter focuses on creating a new FLTK project for Linux, 
+these platforms. This chapter focuses on creating a new FLTK project for Linux, 
 assuming that FLTK 1.3 was previously built and installed in its default 
 location from the command line.
 
@@ -283,11 +283,11 @@ version 10.05:
 Start Code::Blocks. Select File > New > Project. In the "New from template"
 dialog box, click on "FLTK project" and follow the instructions.
 
-The defualt project support basic fltk. If you would like to add support for
+The default project support basic fltk. If you would like to add support for
 images, OpenGL, GLUT, or Forms, add the corresponding flags --use-images,
 --use-gl, --use-glut, and --use-forms respectively.
 
-The flags are located in the "Project Buld Options" dialog. To change the 
+The flags are located in the "Project Build Options" dialog. To change the 
 compiler flags, select your project in the tree view, then select the
 "Compiler Settings" tab, then "Other Options" and add the flags to 
 `fltk-config --cxxflags` in front of the second "`". 

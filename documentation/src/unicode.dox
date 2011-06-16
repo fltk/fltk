@@ -190,10 +190,10 @@ the following limitations:
   appears to handle a wider set. What about illegal characters?
   See comments in %fl_utf8fromwc() and %fl_utf8toUtf16().
 
-\section unicode_illegals Illegal Unicode and UTF8 sequences
+\section unicode_illegals Illegal Unicode and UTF-8 sequences
 
 Three pre-processor variables are defined in the source code that
-determine how %fl_utf8decode() handles illegal UTF8 sequences:
+determine how %fl_utf8decode() handles illegal UTF-8 sequences:
 
 - if ERRORS_TO_CP1252 is set to 1 (the default), %fl_utf8decode() will
   assume that a byte sequence starting with a byte in the range 0x80
@@ -237,7 +237,7 @@ of the sequence. Trailing bytes in a UTF-8 sequence will return -1.
 Please see the individual function description for further details
 about error handling and return values.
 
-\section unicode_fltk_calls FLTK Unicode and UTF8 functions
+\section unicode_fltk_calls FLTK Unicode and UTF-8 functions
 
 This section currently provides a brief overview of the functions.
 For more details, consult the main text for each function via its link.
@@ -494,41 +494,6 @@ converts the strings to lower case Unicode as part of the comparison.
 \li explain issues with Fl_Preferences
 \li why FLTK has no Fl_String class
 
-\par DONE:
-
-\li initial transfer of the Ian/O'ksi'D patch
-\li adapted Makefiles and IDEs for available platforms
-\li hacked some Unicode keyboard entry for OS X
-
-\par ISSUES:
-
-\li  IDEs:
-    - Makefile support: tested on Fedora Core 5 and OS X, but heaven knows  
-      on which platforms this may fail
-    - Xcode: tested, seems to be working (but see comments below on OS X)
-    - VisualC (VC6): tested, test/utf8 works, but may have had some issues  
-      during merge. Some additional work needed (imm32.lib)
-    - VisualStudio2005: tested, test/utf8 works, some addtl. work needed  
-     (imm32.lib)
-    - VisualCNet: sorry, I have no longer access to that IDE
-    - Borland and other compiler: sorry, I can't update those
-
-\li  Platforms:
-    - you will encounter problems on all platforms!
-    - X11: many characters are missing, but that may be related to bad  
-      fonts on my machine. I also could not do any keyboard tests yet.  
-      Rendering seems to generally work ok.
-    - Win32: US and German keyboard worked ok, but no compositing was  
-      tested. Rendering looks pretty good.
-    - OS X: redering looks good. Keyboard is completely messed up, even in  
-      US setting (with Alt key)
-    - all: while merging I have seen plenty of places that are not  
-      entirley utf8-safe, particularly Fl_Input, Fl_Text_Editor, and  
-      Fl_Help_View. Keycodes from the keyboard conflict with Unicode  
-      characters. Right-to-left rendered text can not be marked or edited,  
-      and probably much more.
-
-
 \htmlonly
 <hr>
 <table summary="navigation bar" width="100%" border="0">
@@ -540,7 +505,7 @@ converts the strings to lower case Unicode as part of the comparison.
     </a>
   </td>
   <td width="10%" align="CENTER">
-    <a class="el" href="main.html">[Index]</a>
+    <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="enumerations.html">

@@ -3,7 +3,7 @@
 //
 // PostScript device support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -25,15 +25,22 @@
 //     http://www.fltk.org/str.php
 //
 
+#include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <stdio.h>
 #include <FL/Fl_PostScript.H>
 #include <FL/Fl_Native_File_Chooser.H>
+#if defined(USE_X11)
+#include "Fl_Font.H"
+#if USE_XFT
+#include <X11/Xft/Xft.h>
+#endif
+#endif
 
-const char *Fl_PostScript_Graphics_Driver::device_type = "Fl_PostScript_Graphics_Driver";
-const char *Fl_PostScript_File_Device::device_type = "Fl_PostScript_File_Device";
+const char *Fl_PostScript_Graphics_Driver::class_id = "Fl_PostScript_Graphics_Driver";
+const char *Fl_PostScript_File_Device::class_id = "Fl_PostScript_File_Device";
 /** \brief Label of the PostScript file chooser window */
 const char *Fl_PostScript_File_Device::file_chooser_title = "Select a .ps file";
 
@@ -47,7 +54,6 @@ Fl_PostScript_Graphics_Driver::Fl_PostScript_Graphics_Driver(void)
   lang_level_ = 2;
   mask = 0;
   ps_filename_ = NULL;
-  type_ = device_type;
   scale_x = scale_y = 1.;
   bg_r = bg_g = bg_b = 255;
 }
@@ -62,7 +68,6 @@ Fl_PostScript_Graphics_Driver::~Fl_PostScript_Graphics_Driver() {
  */
 Fl_PostScript_File_Device::Fl_PostScript_File_Device(void)
 {
-  type_ = device_type;
 #ifdef __APPLE__
   gc = fl_gc; // the display context is used by fl_text_extents()
 #endif
@@ -85,7 +90,7 @@ Fl_PostScript_Graphics_Driver *Fl_PostScript_File_Device::driver()
  @param pagecount The total number of pages to be created.
  @param format Desired page format.
  @param layout Desired page layout.
- @return 0 iff OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
+ @return 0 if OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
  */
 int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_Paged_Device::Page_Format format, 
 					  enum Fl_Paged_Device::Page_Layout layout)
@@ -268,7 +273,8 @@ static const char * prolog =
 // show at position with desired width
 // usage:
 // width (string) x y show_pos_width
-"/show_pos_width {GS moveto dup dup stringwidth pop exch length exch 3 index exch sub exch "
+"/show_pos_width {GS moveto dup dup stringwidth pop exch length 2 div dup 2 le {pop 9999} if "
+"1 sub exch 3 index exch sub exch "
 "div 0 2 index 1 -1 scale ashow pop pop GR} bind def\n" // spacing altered to match desired width
 //"/show_pos_width {GS moveto dup stringwidth pop 3 2 roll exch div -1 matrix scale concat "
 //"show GR } bind def\n" // horizontally scaled text to match desired width
@@ -589,15 +595,14 @@ int Fl_PostScript_Graphics_Driver::start_postscript (int pagecount,
 void Fl_PostScript_Graphics_Driver::recover(){
   color(cr_,cg_,cb_);
   line_style(linestyle_,linewidth_,linedash_);
-  font(font_,size_);
+  font(Fl_Graphics_Driver::font(), Fl_Graphics_Driver::size());
 }
 
 void Fl_PostScript_Graphics_Driver::reset(){
   gap_=1;
   clip_=0;
   cr_=cg_=cb_=0;
-  font_=FL_HELVETICA;
-  size_=12;
+  Fl_Graphics_Driver::font(FL_HELVETICA, 12);
   linewidth_=0;
   linestyle_=FL_SOLID;
   strcpy(linedash_,"");
@@ -862,7 +867,7 @@ void Fl_PostScript_Graphics_Driver::line_style(int style, int width, char* dashe
     linedash_[0]=0;
   char width0 = 0;
   if(!width){
-    width=1; //for screen drawing compatability
+    width=1; //for screen drawing compatibility
     width0=1;
   }
   
@@ -927,13 +932,51 @@ static const char *_fontNames[] = {
 };
 
 void Fl_PostScript_Graphics_Driver::font(int f, int s) {
-  if (f >= FL_FREE_FONT)
-    f = FL_COURIER;
-  fprintf(output, "/%s SF\n" , _fontNames[f]);
-  fprintf(output,"%i FS\n", s);
-  Fl_Display_Device::display_device()->driver()->font(f,s); // Use display fonts for font measurement
-  font_ = f; size_ = s;
+  Fl_Graphics_Driver *driver = Fl_Display_Device::display_device()->driver();
+  driver->font(f,s); // Use display fonts for font measurement
+  Fl_Graphics_Driver::font(f, s);
+  Fl_Font_Descriptor *desc = driver->font_descriptor();
+  this->font_descriptor(desc);
+  if (f < FL_FREE_FONT) {
+    float ps_size = s;
+    fprintf(output, "/%s SF\n" , _fontNames[f]);
+#if defined(USE_X11) 
+#if USE_XFT
+    // Xft font height is sometimes larger than the required size (see STR 2566).
+    // Increase the PostScript font size by 15% without exceeding the display font height 
+    int max = desc->font->height;
+    ps_size = s * 1.15;
+    if (ps_size > max) ps_size = max;
+#else
+    // Non-Xft fonts can be smaller than required.
+    // Set the PostScript font size to the display font height 
+    char *name = desc->font->font_name_list[0];
+    char *p = strstr(name, "--");
+    if (p) {
+      sscanf(p + 2, "%f", &ps_size);
+    }
+#endif // USE_XFT
+#endif // USE_X11
+    fprintf(output,"%.1f FS\n", ps_size);
+  }
 }
+
+double Fl_PostScript_Graphics_Driver::width(const char *s, int n) {
+  return Fl_Display_Device::display_device()->driver()->width(s, n);
+}
+
+int Fl_PostScript_Graphics_Driver::height() {
+  return Fl_Display_Device::display_device()->driver()->height();
+}
+
+int Fl_PostScript_Graphics_Driver::descent() {
+  return Fl_Display_Device::display_device()->driver()->descent();
+}
+
+void Fl_PostScript_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {
+  Fl_Display_Device::display_device()->driver()->text_extents(c, n, dx, dy, w, h);
+}
+
 
 void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
   Fl::get_color(c, cr_, cg_, cb_);
@@ -941,7 +984,7 @@ void Fl_PostScript_Graphics_Driver::color(Fl_Color c) {
 }
 
 void Fl_PostScript_Graphics_Driver::color(unsigned char r, unsigned char g, unsigned char b) {
-  fl_color_ = fl_rgb_color(r, g, b);
+  Fl_Graphics_Driver::color( fl_rgb_color(r, g, b) );
   cr_ = r; cg_ = g; cb_ = b;
   if (r == g && g == b) {
     double gray = r/255.0;
@@ -994,34 +1037,50 @@ static uchar *calc_mask(uchar *img, int w, int h, Fl_Color bg)
 }
 
 // write to PostScript a bitmap image of a UTF8 string
-static void transformed_draw_extra(const char* str, int n, double x, double y, int w, FILE *output) {
-  const float scale = 3; // scale for bitmask computation
-  Fl_Fontsize old_size = fl_size();
-  fl_font(fl_font(), (Fl_Fontsize)(scale * old_size) );
-  w =  (int)(w *scale + 0.5);
-  int h = fl_height();
+static void transformed_draw_extra(const char* str, int n, double x, double y, int w, 
+      FILE *output, Fl_Graphics_Driver *driver, bool rtl) {
+  // scale for bitmask computation
+#if defined(USE_X11) && !USE_XFT
+  float scale = 1; // don't scale because we can't expect to have scalable fonts
+#else
+  float scale = 2;
+#endif
+  Fl_Fontsize old_size = driver->size();
+  Fl_Font fontnum = driver->font();
+  int w_scaled =  (int)(w * (scale + 0.5));
+  int h = (int)(driver->height() * scale);
   // create an offscreen image of the string
-  Fl_Color text_color = fl_color();
+  Fl_Color text_color = driver->color();
   Fl_Color bg_color = fl_contrast(FL_WHITE, text_color);
-  Fl_Offscreen off = fl_create_offscreen(w+2, (int)(h+3*scale) );
+  Fl_Offscreen off = fl_create_offscreen(w_scaled, (int)(h+3*scale) );
   fl_begin_offscreen(off);
   fl_color(bg_color);
   // color offscreen background with a shade contrasting with the text color
-  fl_rectf(0, 0, w+2, (int)(h+3*scale) );
+  fl_rectf(0, 0, w_scaled, (int)(h+3*scale) );
   fl_color(text_color);
-  fl_draw(str, n, 1, (int)(h * 0.8) ); // draw string in offscreen
+#if defined(USE_X11) && !USE_XFT
+  // force seeing this font as new so it's applied to the offscreen graphics context
+  fl_graphics_driver->font_descriptor(NULL);
+  fl_font(fontnum, 0);
+#endif
+  fl_font(fontnum, (Fl_Fontsize)(scale * old_size) );
+  int w2 = (int)fl_width(str, n);
+  // draw string in offscreen
+  if (rtl) fl_rtl_draw(str, n, w2, (int)(h * 0.8) );
+  else fl_draw(str, n, 1, (int)(h * 0.8) );
   // read (most of) the offscreen image
-  uchar *img = fl_read_image(NULL, 1, 1, w, h, 0);
+  uchar *img = fl_read_image(NULL, 1, 1, w2, h, 0);
   fl_end_offscreen();
-  fl_font(fl_font(), old_size);
+  driver->font(fontnum, old_size);
   fl_delete_offscreen(off);
   // compute the mask of what is not the background
-  uchar *mask = calc_mask(img, w, h, bg_color);
-  delete img;
+  uchar *mask = calc_mask(img, w2, h, bg_color);
+  delete[] img;
   // write the string image to PostScript as a scaled bitmask
-  fprintf(output, "%g %g %g %g %d %d MI\n", x, y - h*0.77/scale, w/scale, h/scale, w, h);
+  scale = w2 / float(w);
+  fprintf(output, "%g %g %g %g %d %d MI\n", x, y - h*0.77/scale, w2/scale, h/scale, w2, h);
   uchar *di;
-  int wmask = (w+7)/8;
+  int wmask = (w2+7)/8;
   for (int j = h - 1; j >= 0; j--){
     di = mask + j * wmask;
     for (int i = 0; i < wmask; i++){
@@ -1032,7 +1091,7 @@ static void transformed_draw_extra(const char* str, int n, double x, double y, i
     fprintf(output,"\n");
   }
   fprintf(output,">\n");
-  delete mask;
+  delete[] mask;
 }
 
 static int is_in_table(unsigned utf) {
@@ -1062,9 +1121,13 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   int len, code;
   if (!n || !str || !*str) return;
   // compute display width of string
-  int width = (int)fl_width(str, n);
-  if (width == 0) return;
-  fprintf(output, "%d <", width);
+  int w = (int)width(str, n);
+  if (w == 0) return;
+  if (Fl_Graphics_Driver::font() >= FL_FREE_FONT) {
+    transformed_draw_extra(str, n, x, y, w, output, this, false);
+    return;
+    }
+  fprintf(output, "%d <", w);
   // transforms UTF8 encoding to our custom PostScript encoding as follows:
   // extract each unicode character
   // if unicode <= 0x17F, unicode and PostScript codes are identical
@@ -1086,7 +1149,7 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
       }
     else { // unhandled character: draw all string as bitmap image
       fprintf(output, "> pop pop\n"); // close and ignore the opened hex string
-      transformed_draw_extra(str, n, x, y, width, output);
+      transformed_draw_extra(str, n, x, y, w, output, this, false);
       return;
     }
     fprintf(output, "%4.4X", utf);
@@ -1094,8 +1157,10 @@ void Fl_PostScript_Graphics_Driver::transformed_draw(const char* str, int n, dou
   fprintf(output, "> %g %g show_pos_width\n", x, y);
 }
 
-struct matrix {double a, b, c, d, x, y;};
-extern matrix * fl_matrix;
+void Fl_PostScript_Graphics_Driver::rtl_draw(const char* str, int n, int x, int y) {
+  int w = (int)width(str, n);
+  transformed_draw_extra(str, n, x - w, y, w, output, this, true);
+}
 
 void Fl_PostScript_Graphics_Driver::concat(){
   fprintf(output,"[%g %g %g %g %g %g] CT\n", fl_matrix->a , fl_matrix->b , fl_matrix->c , fl_matrix->d , fl_matrix->x , fl_matrix->y);
@@ -1365,6 +1430,11 @@ int Fl_PostScript_File_Device::printable_rect(int *w, int *h)
   return 0;
 }
 
+void Fl_PostScript_File_Device::origin(int *x, int *y)
+{
+  Fl_Paged_Device::origin(x, y);
+}
+
 void Fl_PostScript_File_Device::origin(int x, int y)
 {
   x_offset = x;
@@ -1376,6 +1446,7 @@ void Fl_PostScript_File_Device::origin(int x, int y)
 
 void Fl_PostScript_File_Device::scale (float s_x, float s_y)
 {
+  if (s_y == 0.) s_y = s_x;
   Fl_PostScript_Graphics_Driver *ps = driver();
   ps->scale_x = s_x;
   ps->scale_y = s_y;
@@ -1450,7 +1521,7 @@ void Fl_PostScript_File_Device::end_job (void)
 }
 
 #if ! (defined(__APPLE__) || defined(WIN32) )
-int Fl_Printer::start_job(int pages, int *firstpage, int *lastpage) {
+int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
   enum Fl_Paged_Device::Page_Format format;
   enum Fl_Paged_Device::Page_Layout layout;
 

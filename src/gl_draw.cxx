@@ -3,7 +3,7 @@
 //
 // OpenGL drawing support routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -35,6 +35,7 @@
 #include <FL/gl.h>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Device.H>
 #include "Fl_Gl_Choice.H"
 #include "Fl_Font.H"
 #include <FL/fl_utf8.h>
@@ -44,7 +45,7 @@
 #endif
 
 #if USE_XFT
-extern XFontStruct* fl_xxfont();
+//extern XFontStruct* fl_xxfont();
 #endif // USE_XFT
 
 /** Returns the current font's height */
@@ -76,6 +77,7 @@ static Fl_Font_Descriptor *gl_fontsize;
   */
 void  gl_font(int fontid, int size) {
   fl_font(fontid, size);
+  Fl_Font_Descriptor *fl_fontsize = fl_graphics_driver->font_descriptor();
 #if !GL_DRAW_USES_TEXTURES
   if (!fl_fontsize->listbase) {
 
@@ -161,8 +163,7 @@ void gl_remove_displaylist_fonts()
 # if HAVE_GL
 
   // clear variables used mostly in fl_font
-  fl_font_ = 0;
-  fl_size_ = 0;
+  fl_graphics_driver->font(0, 0);
 
   for (int j = 0 ; j < FL_FREE_FONT ; ++j)
   {
@@ -482,10 +483,10 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   if (base == NULL) return -1;
   fl_gc = CGBitmapContextCreate(base, fifo[current].width, fifo[current].height, 8, fifo[current].width*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
-  fl_fontsize = gl_fontsize;
+  fl_graphics_driver->font_descriptor(gl_fontsize);
   GLfloat colors[4];
   glGetFloatv(GL_CURRENT_COLOR, colors);
-  fl_color(colors[0]*255, colors[1]*255, colors[2]*255);
+  fl_color((uchar)(colors[0]*255), (uchar)(colors[1]*255), (uchar)(colors[2]*255));
   fl_draw(str, n, 0, fifo[current].height - fl_descent());
   //put this bitmap in a texture  
   glPushAttrib(GL_TEXTURE_BIT);
@@ -558,7 +559,19 @@ void gl_texture_pile_height(int max)
 
 /** @} */
 
+#elif defined(__APPLE__)
+// used only if __ppc__
+int gl_texture_pile_height(void) {return 0;}
+void gl_texture_pile_height(int max) {}
 #endif // GL_DRAW_USES_TEXTURES
+#if defined(__APPLE__)
+void gl_texture_reset()
+{
+#if GL_DRAW_USES_TEXTURES
+  if (gl_fifo) gl_texture_pile_height(gl_texture_pile_height());
+#endif // GL_DRAW_USES_TEXTURES
+}
+#endif // __APPLE__
 
 #endif // HAVE_GL
 

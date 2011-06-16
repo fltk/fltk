@@ -28,6 +28,9 @@
 # Get configuration stuff...
 include ../makeinclude
 
+# make sure that all docs are (re-)created independent of missing deps
+.PHONY: pdf html refman.pdf
+
 SRC_DOCDIR      = 	./src
 
 # These are the HTML "source" files...
@@ -55,84 +58,21 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/license.dox \
                          $(SRC_DOCDIR)/examples.dox
 
-IMAGEFILES	= \
-		$(SRC_DOCDIR)/FL200.png \
-		$(SRC_DOCDIR)/Fl_Check_Button.png \
-		$(SRC_DOCDIR)/Fl_File_Chooser.jpg \
-		$(SRC_DOCDIR)/Fl_File_Input.png \
-		$(SRC_DOCDIR)/Fl_Help_Dialog.png \
-		$(SRC_DOCDIR)/Fl_Light_Button.png \
-		$(SRC_DOCDIR)/Fl_Return_Button.png \
-		$(SRC_DOCDIR)/Fl_Roller.png \
-		$(SRC_DOCDIR)/Fl_Round_Button.png \
-		$(SRC_DOCDIR)/Fl_Scroll.png \
-		$(SRC_DOCDIR)/Fl_Tile.png \
-		$(SRC_DOCDIR)/Fl_Value_Input.png \
-		$(SRC_DOCDIR)/Fl_Value_Output.png \
-		$(SRC_DOCDIR)/adjuster1.png \
-		$(SRC_DOCDIR)/boxtypes.png \
-		$(SRC_DOCDIR)/buttons.png \
-		$(SRC_DOCDIR)/charts.png \
-		$(SRC_DOCDIR)/choice.png \
-		$(SRC_DOCDIR)/clock.png \
-		$(SRC_DOCDIR)/counter.png \
-		$(SRC_DOCDIR)/cubeview.png \
-		$(SRC_DOCDIR)/dial.png \
-		$(SRC_DOCDIR)/editor-replace.png \
-		$(SRC_DOCDIR)/editor.png \
-		$(SRC_DOCDIR)/fl_alert.png \
-		$(SRC_DOCDIR)/fl_ask.png \
-		$(SRC_DOCDIR)/fl_choice.png \
-		$(SRC_DOCDIR)/fl_color_chooser.jpg \
-		$(SRC_DOCDIR)/fl_input.png \
-		$(SRC_DOCDIR)/fl_message.png \
-		$(SRC_DOCDIR)/fl_password.png \
-		$(SRC_DOCDIR)/fl_show_colormap.png \
-		$(SRC_DOCDIR)/fluid-catgets.png \
-		$(SRC_DOCDIR)/fluid-gettext.png \
-		$(SRC_DOCDIR)/fluid-org.png \
-		$(SRC_DOCDIR)/fluid1.png \
-		$(SRC_DOCDIR)/fluid2.png \
-		$(SRC_DOCDIR)/fluid3-cxx.png \
-		$(SRC_DOCDIR)/fluid3-gui.png \
-		$(SRC_DOCDIR)/fluid3-style.png \
-		$(SRC_DOCDIR)/fluid4.png \
-		$(SRC_DOCDIR)/fluid_prefs.png \
-		$(SRC_DOCDIR)/fluid_widget_cxx.png \
-		$(SRC_DOCDIR)/fluid_widget_gui.png \
-		$(SRC_DOCDIR)/fluid_widget_style.png \
-		$(SRC_DOCDIR)/hello.C.png \
-		$(SRC_DOCDIR)/input_choice.jpg \
-		$(SRC_DOCDIR)/menu.png \
-		$(SRC_DOCDIR)/menu_button.png \
-		$(SRC_DOCDIR)/menubar.png \
-		$(SRC_DOCDIR)/positioner.png \
-		$(SRC_DOCDIR)/resizebox1.png \
-		$(SRC_DOCDIR)/resizebox2.png \
-		$(SRC_DOCDIR)/round_clock.png \
-		$(SRC_DOCDIR)/scrollbar.png \
-		$(SRC_DOCDIR)/slider.png \
-		$(SRC_DOCDIR)/symbols.png \
-		$(SRC_DOCDIR)/table-as-container.png \
-		$(SRC_DOCDIR)/table-dimensions.png \
-		$(SRC_DOCDIR)/table-simple.png \
-		$(SRC_DOCDIR)/tabs.png \
-		$(SRC_DOCDIR)/text.png \
-		$(SRC_DOCDIR)/tiny.png \
-		$(SRC_DOCDIR)/tree-elements.png \
-		$(SRC_DOCDIR)/valuators.png \
-		$(SRC_DOCDIR)/value_slider.png
-
 MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 		$(SRC_DOCDIR)/fluid.$(CAT1EXT) $(SRC_DOCDIR)/blocks.$(CAT6EXT) \
 		$(SRC_DOCDIR)/checkers.$(CAT6EXT) $(SRC_DOCDIR)/sudoku.$(CAT6EXT)
 
 all:	$(MANPAGES)
 
-alldocs: pdf-dist html $(MANPAGES)
+# use make dist to create all docs for distribution files
+# you need an installed version of doxygen for this
+dist:	all html pdf
+
+# synonym for dist
+alldocs: dist
 
 clean:
-	$(RM) refman.pdf
+	$(RM) fltk.pdf refman.pdf
 	$(RMDIR) html latex
 	$(RM) *~ *.bck *.bak *.log
 	$(RM) $(MANPAGES) $(SRC_DOCDIR)/*.0
@@ -147,8 +87,10 @@ install: $(MANPAGES)
 		$(INSTALL_DATA) $$file $(DESTDIR)$(docdir); \
 	  done \
 	fi
-	echo "Installing fltk.pdf in $(DESTDIR)$(docdir) ..."
-	$(INSTALL_DATA) fltk.pdf $(DESTDIR)$(docdir)
+	if test -f fltk.pdf ; then \
+	  echo "Installing fltk.pdf in $(DESTDIR)$(docdir) ..."; \
+	  $(INSTALL_DATA) fltk.pdf $(DESTDIR)$(docdir); \
+	fi
 	echo "Installing man pages in $(DESTDIR)$(mandir) ..."
 	-$(INSTALL_DIR) $(DESTDIR)$(mandir)/cat1
 	$(INSTALL_MAN) $(SRC_DOCDIR)/fluid.$(CAT1EXT) $(DESTDIR)$(mandir)/cat1
@@ -192,10 +134,9 @@ uninstall-linux uninstall-osx:
 # The HTML files are now generated using doxygen, and this needs
 # an installed doxygen version and may take some time, so this target
 # is not made by default.
+# Use `make html' or `make dist' to create the html docs
 
-html: html/index.html
-
-html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
+html:	$(HTMLFILES) Doxyfile
 	echo "Generating HTML documentation..."
 	-$(RMDIR) html
 	-$(INSTALL_DIR) html
@@ -203,17 +144,20 @@ html/index.html: $(HTMLFILES) $(IMAGEFILES) Doxyfile
 	if test "x$(DOXYDOC)" = "x" ; then \
 	  echo "Sorry - doxygen not found. Please install doxygen and run configure."; \
 	fi
+	test -d html && cp src/tiny.png html/
 
-html-dist: html
-	echo "Stripping HTML files ..."
+# this is only used to minimize subversion updates of the online docs
+html-online: html
+	echo "*** Warning: re-create HTML files if you want to build distribution files."
+	echo "*** Warning: Use 'make html' to re-create the correct HTML files."
+	echo "Stripping HTML files for online documentation upload..."
 	./strip_tags
 
-pdf-dist: latex/refman.pdf
+pdf:	refman.pdf
 	cp -f latex/refman.pdf fltk.pdf
 
-pdf: 	latex/refman.pdf
-
-latex/refman.pdf: latex/refman.tex Doxybook
+refman.pdf: $(HTMLFILES) Doxybook
+	-$(RMDIR) latex
 	echo "Generating PDF documentation ..."
 	$(DOXYDOC) Doxybook ;\
 	(cd latex ;\
@@ -228,9 +172,7 @@ latex/refman.pdf: latex/refman.tex Doxybook
 	      pdflatex --interaction=nonstopmode refman.tex ;\
 	      latex_count=`expr $$latex_count - 1` ;\
 	    done ; \
-	cd ..) > pdfall.log
-
-latex/refman.tex: Doxybook
+	cd ..) > pdfall.log 2>&1
 
 #
 # End of "$Id$".

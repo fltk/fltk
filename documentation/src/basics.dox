@@ -19,11 +19,11 @@ World!" program that uses FLTK to display the window.
 #include <FL/Fl_Box.H>
 
 int main(int argc, char **argv) {
-  Fl_Window *window = new Fl_Window(300,180);
-  Fl_Box *box = new Fl_Box(20,40,260,100,"Hello, World!");
+  Fl_Window *window = new Fl_Window(340,180);
+  Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
   box->box(FL_UP_BOX);
-  box->labelsize(36);
   box->labelfont(FL_BOLD+FL_ITALIC);
+  box->labelsize(36);
   box->labeltype(FL_SHADOW_LABEL);
   window->end();
   window->show(argc, argv);
@@ -37,22 +37,22 @@ After including the required header files, the program then creates a
 window. All following widgets will automatically be children of this window.
 
 \code
-Fl_Window *window = new Fl_Window(300,180);
+Fl_Window *window = new Fl_Window(340,180);
 \endcode
 
 Then we create a box with the "Hello, World!" string in it. FLTK automatically
 adds the new box to \p window, the current grouping widget.
 
 \code
-Fl_Box *box = new Fl_Box(20,40,260,100,"Hello, World!");
+Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
 \endcode
 
-Next, we set the type of box and the size, font, and style of the label:
+Next, we set the type of box and the font, size, and style of the label:
 
 \code
 box->box(FL_UP_BOX);
-box->labelsize(36);
 box->labelfont(FL_BOLD+FL_ITALIC);
+box->labelsize(36);
 box->labeltype(FL_SHADOW_LABEL);
 \endcode
 
@@ -331,18 +331,16 @@ In Visual C++ you will need to tell the compiler where to
 find the FLTK header files. This can be done by selecting
 "Settings" from the "Project" menu and then changing the 
 "Preprocessor" settings under the "C/C++" tab. You will also 
-need to add the FLTK (FLTK.LIB or FLTKD.LIB) and the Windows
-Common Controls (COMCTL32.LIB) libraries to the "Link" settings.
+need to add the FLTK (<tt>FLTK.LIB</tt> or <tt>FLTKD.LIB</tt>) and the Windows
+Common Controls (<tt>COMCTL32.LIB</tt>) libraries to the "Link" settings.
+You must also define <tt>WIN32</tt>.
+
+More information can be found in <tt>README.MSWindows.txt</tt>.
 
 You can build your Microsoft Windows applications as Console or
-WIN32 applications.  If you want to use the standard C \p main()
+Desktop applications.  If you want to use the standard C \p main()
 function as the entry point, FLTK includes a \p WinMain()
 function that will call your \p main() function for you.
-
-<I>Note: The Visual C++ 5.0 optimizer is known to cause problems with
-many programs. We only recommend using the "Favor Small Code"
-optimization setting.</I> The Visual C++ 6.0 optimizer seems to be much
-better and can be used with the "optimized for speed" setting.
 
 \section basics_naming Naming
 
@@ -391,7 +389,7 @@ include lines:</i>
     </a>
   </td>
   <td width="10%" align="CENTER">
-    <a class="el" href="main.html">[Index]</a>
+    <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="common.html">

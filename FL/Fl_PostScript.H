@@ -3,7 +3,7 @@
 //
 // Support for graphics output to PostScript file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -61,11 +61,12 @@
  <br> FLTK standard fonts are output using PostScript standard fonts: Helvetica, Courier, 
  Times (and their bold, oblique, italic variants).
  */
-class Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
+class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 public: 
-  static const char *device_type;
+  static const char *class_id;
+  const char *class_name() {return class_id;};
+  Fl_PostScript_Graphics_Driver();
 #ifndef FL_DOXYGEN
-public:
   enum SHAPE{NONE=0, LINE, LOOP, POLYGON, POINTS};
   
 class Clip {
@@ -76,8 +77,6 @@ class Clip {
   Clip * clip_;
   
   int lang_level_;
-  int font_;
-  int size_;
   int gap_;
   int pages_;
   
@@ -117,18 +116,27 @@ class Clip {
   int start_postscript (int pagecount, enum Fl_Paged_Device::Page_Format format, enum Fl_Paged_Device::Page_Layout layout);
   /*  int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
    */
-  void draw(const char* s, int n, int x, int y) {transformed_draw(s,n,x,y); };
-  void draw(int angle, const char *str, int n, int x, int y);
   void transformed_draw(const char* s, int n, double x, double y); //precise text placing
   void transformed_draw(const char* s, double x, double y);
   int alpha_mask(const uchar * data, int w, int h, int D, int LD=0);
-  void draw_scaled_image(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D=3, int LD=0);
-  void draw_scaled_image_mono(const uchar *data, double x, double y, double w, double h, int iw, int ih, int D=3, int LD=0);
-  void draw_scaled_image(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
-  void draw_scaled_image_mono(Fl_Draw_Image_Cb call, void *data, double x, double y, double w, double h, int iw, int ih, int D);
   
   enum Fl_Paged_Device::Page_Format page_format_;
   char *ps_filename_;
+ 
+  void page_policy(int p);
+  int page_policy(){return page_policy_;};
+  void close_command( int (*cmd)(FILE *)){close_cmd_=cmd;};
+  FILE * file() {return output;};
+  //void orientation (int o);
+  //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int pages = 0); // ps (also multi-page) constructor
+  //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int x, int y, int w, int h); //eps constructor
+  void interpolate(int i){interpolate_=i;};
+  int interpolate(){return interpolate_;}
+  
+  void page(double pw, double ph, int media = 0);
+  void page(int format);
+#endif // FL_DOXYGEN
+  
   // implementation of drawing methods
   void color(Fl_Color c);
   void color(uchar r, uchar g, uchar b);
@@ -179,37 +187,23 @@ class Clip {
   void gap(){gap_=1;};
   void end_complex_polygon(){end_polygon();};
   void transformed_vertex(double x, double y);
-  
-  void font(int face, int size);
-  int font(){return font_;};
-  int size(){return size_;};
-  double width(unsigned c);
-  double width(const char* s, int n);
-  int descent();
-  int height();
-  
-  void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0){draw_scaled_image(d,x,y,w,h,w,h,delta,ldelta);};
-  void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0){draw_scaled_image_mono(d,x,y,w,h,w,h,delta,ld);};
-  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3){draw_scaled_image(call,data, x, y, w, h, w, h, delta);};
-  void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1){draw_scaled_image_mono(call, data, x, y, w, h, w, h, delta);};
+    
+  void draw_image(const uchar* d, int x,int y,int w,int h, int delta=3, int ldelta=0);
+  void draw_image_mono(const uchar* d, int x,int y,int w,int h, int delta=1, int ld=0);
+  void draw_image(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=3);
+  void draw_image_mono(Fl_Draw_Image_Cb call, void* data, int x,int y, int w, int h, int delta=1);
       
-public:
-  void page_policy(int p);
-  int page_policy(){return page_policy_;};
-  void close_command( int (*cmd)(FILE *)){close_cmd_=cmd;};
-  FILE * file() {return output;};
-  //void orientation (int o);
-  //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int pages = 0); // ps (also multi-page) constructor
-  //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int x, int y, int w, int h); //eps constructor
-  void interpolate(int i){interpolate_=i;};
-  int interpolate(){return interpolate_;}
-  
-  void page(double pw, double ph, int media = 0);
-  void page(int format);
-  
-  void place(double x, double y, double tx, double ty, double scale = 1);
-#endif // FL_DOXYGEN
-  Fl_PostScript_Graphics_Driver();
+  void draw(const char* s, int n, int x, int y) {transformed_draw(s,n,x,y); };
+#ifdef __APPLE__
+  void draw(const char* s, int n, float x, float y) {transformed_draw(s,n,x,y); };
+#endif
+  void draw(int angle, const char *str, int n, int x, int y);
+  void rtl_draw(const char* s, int n, int x, int y);
+  void font(int face, int size);
+  double width(const char *, int);
+  void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
+  int height();
+  int descent();
   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_Bitmap * bitmap,int XP, int YP, int WP, int HP, int cx, int cy);
   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy);
@@ -219,14 +213,15 @@ public:
 /**
  \brief To send graphical output to a PostScript file.
  */
-class Fl_PostScript_File_Device : public Fl_Paged_Device {
+class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 #ifdef __APPLE__
-  CGContextRef gc;
+  Fl_CGContextRef gc;
 #endif
 protected:
   Fl_PostScript_Graphics_Driver *driver();
 public:
-  static const char *device_type;
+  static const char *class_id;
+  const char *class_name() {return class_id;};
   Fl_PostScript_File_Device();
   ~Fl_PostScript_File_Device();
   int start_job(int pagecount, enum Fl_Paged_Device::Page_Format format = Fl_Paged_Device::A4, 
@@ -236,8 +231,9 @@ public:
   int start_page (void);
   int printable_rect(int *w, int *h);
   void margins(int *left, int *top, int *right, int *bottom);
+  void origin(int *x, int *y);
   void origin(int x, int y);
-  void scale (float scale_x, float scale_y);
+  void scale (float scale_x, float scale_y = 0.);
   void rotate(float angle);
   void translate(int x, int y);
   void untranslate(void);

@@ -1,9 +1,16 @@
-include ../makeinclude
+include Makefile.FLTK
 
+RM    = rm -f
+SHELL = /bin/sh
+.SILENT:
+
+# Executables
 ALL = howto-add_fd-and-popen$(EXEEXT) \
+      howto-drag-and-drop$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
+      nativefilechooser-simple-app$(EXEEXT) \
       table-as-container$(EXEEXT) \
       table-simple$(EXEEXT) \
       table-sort$(EXEEXT) \
@@ -16,10 +23,11 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
 # default target -- build everything
-default: $(ALL)
+default all: $(ALL)
 
 # clean everything
 clean:
 	$(RM) $(ALL)
 	$(RM) *.o
 	$(RM) core
+

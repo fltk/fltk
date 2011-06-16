@@ -27,10 +27,13 @@
 
 #include <config.h>
 
-#ifdef HAVE_CAIRO
+#ifdef FLTK_HAVE_CAIRO
 #include <FL/Fl.H>
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
 
 // static Fl module initialization :
 Fl_Cairo_State Fl::cairo_state_;	///< contains all necesary info for current cairo context mapping
@@ -41,7 +44,7 @@ Fl_Cairo_State Fl::cairo_state_;	///< contains all necesary info for current cai
 // Fl_Cairo_State class impl
 
 void  Fl_Cairo_State::autolink(bool b)  {
-#ifdef USE_CAIRO
+#ifdef FLTK_USE_CAIRO
   autolink_ = b;
 #else
   Fl::fatal("In Fl::autolink(bool) : Cairo autolink() feature is only "
@@ -116,7 +119,7 @@ cairo_t * Fl::cairo_make_current(void *gc) {
 #elif defined(__APPLE_QUARTZ__) 
     if (fl_window) {
       Rect portRect; 
-      GetPortBounds(GetWindowPort( fl_window ), &portRect);
+      GetPortBounds(GetWindowPort( Fl_X::i(Fl_Window::current())->window_ref() ), &portRect);
       W = portRect.right-portRect.left;
       H = portRect.bottom-portRect.top;
     } 
@@ -159,7 +162,7 @@ cairo_t * Fl::cairo_make_current(void *gc, int W, int H) {
 // just don't leave the libfltk_cairo lib empty to avoid warnings
 #include <FL/Fl_Export.H>
 FL_EXPORT int fltk_cairo_dummy() { return 1;}
-#endif // HAVE_CAIRO
+#endif // FLTK_HAVE_CAIRO
 
 //
 // End of "$Id$" .

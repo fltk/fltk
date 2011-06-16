@@ -58,8 +58,8 @@
 ///
 class FL_EXPORT Fl_Tree_Item {
   const char             *_label;		// label (memory managed)
-  int                     _labelfont;		// label's font face
-  int                     _labelsize;		// label's font size
+  Fl_Font                 _labelfont;		// label's font face
+  Fl_Fontsize             _labelsize;		// label's font size
   Fl_Color                _labelfgcolor;	// label's fg color
   Fl_Color                _labelbgcolor;	// label's bg color
   char                    _open;		// item is open?
@@ -99,19 +99,19 @@ public:
   inline void* user_data() const { return _userdata; }
   
   /// Set item's label font face.
-  void labelfont(int val) {
+  void labelfont(Fl_Font val) {
     _labelfont = val; 
   }
   /// Get item's label font face.
-  int labelfont() const {
+  Fl_Font labelfont() const {
     return(_labelfont);
   }
   /// Set item's label font size.
-  void labelsize(int val) {
+  void labelsize(Fl_Fontsize val) {
     _labelsize = val; 
   }
   /// Get item's label font size.
-  int labelsize() const {
+  Fl_Fontsize labelsize() const {
     return(_labelsize);
   }
   /// Set item's label foreground text color.

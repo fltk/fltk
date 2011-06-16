@@ -3,7 +3,7 @@
 //
 // Fl_PNG_Image routines.
 //
-// Copyright 1997-2010 by Easy Software Products.
+// Copyright 1997-2011 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // This library is free software; you can redistribute it and/or
@@ -37,55 +37,121 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_PNG_Image.H>
+#include <FL/Fl_Shared_Image.H>
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <FL/fl_utf8.h>
 
+#if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
 extern "C"
 {
-#if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
 #  include <zlib.h>
 #  ifdef HAVE_PNG_H
 #    include <png.h>
 #  else
 #    include <libpng/png.h>
 #  endif // HAVE_PNG_H
-#endif // HAVE_LIBPNG && HAVE_LIBZ
 }
+
+typedef struct  {
+  png_structp pp;
+  const unsigned char *current;
+  const unsigned char *last;
+} fl_png_memory;
+
+static void png_read_data_from_mem( png_structp png_ptr, //pointer to our data
+				   png_bytep data,  // where to copy the image data for libpng computing
+				   png_size_t length) // length of data to copy
+{
+  fl_png_memory *png_mem_data = (fl_png_memory*)png_get_io_ptr(png_ptr); // get the pointer to our struct
+  if (png_mem_data->current + length > png_mem_data->last) {
+    png_error(png_mem_data->pp, "Invalid attempt to read row data");
+    return;
+  }
+  /* copy data from image buffer */
+  memcpy (data, png_mem_data->current, length);
+  /* advance in the memory data */
+  png_mem_data->current += length;
+}
+#endif // HAVE_LIBPNG && HAVE_LIBZ
 
 
 /**
   The constructor loads the named PNG image from the given png filename.
-  <P>The destructor free all memory and server resources that are used by
+
+  The destructor frees all memory and server resources that are used by
   the image.
+
+  \param[in] filename	Name of PNG file to read
 */
-Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
-  : Fl_RGB_Image(0,0,0) {
+Fl_PNG_Image::Fl_PNG_Image (const char *filename): Fl_RGB_Image(0,0,0)
+{
+  load_png_(filename, NULL, 0);
+}
+
+/** 
+ \brief Constructor that reads a PNG image from memory.
+
+ Construct an image from a block of memory inside the application. Fluid offers
+ "binary Data" chunks as a great way to add image data into the C++ source code.
+ name_png can be NULL. If a name is given, the image is added to the list of 
+ shared images (see: Fl_Shared_Image) and will be available by that name.
+ 
+ \param name_png  A name given to this image or NULL
+ \param buffer	  Pointer to the start of the PNG image in memory
+ \param maxsize   Size in bytes of the memory buffer containing the PNG image
+ */
+Fl_PNG_Image::Fl_PNG_Image (
+      const char *name_png, const unsigned char *buffer, int maxsize): Fl_RGB_Image(0,0,0)
+{
+  load_png_(name_png, buffer, maxsize);
+}
+
+void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_png, int maxsize)
+{
 #if defined(HAVE_LIBPNG) && defined(HAVE_LIBZ)
-  int		i;			// Looping var
-  FILE		*fp;			// File pointer
-  int		channels;		// Number of color channels
-  png_structp	pp;			// PNG read pointer
-  png_infop	info;			// PNG info pointers
-  png_bytep	*rows;			// PNG row pointers
+  int i;	  // Looping var
+  FILE *fp = NULL;	  // File pointer
+  int channels;	  // Number of color channels
+  png_structp pp; // PNG read pointer
+  png_infop info; // PNG info pointers
+  png_bytep *rows;// PNG row pointers
+  fl_png_memory png_mem_data;
+  int from_memory = (buffer_png != NULL); // true if reading image from memory
 
-
-  // Open the PNG file...
-  if ((fp = fl_fopen(png, "rb")) == NULL) return;
+  if (!from_memory) {
+    if ((fp = fl_fopen(name_png, "rb")) == NULL) return;
+  }
+  else name_png = "In-memory PNG data";
 
   // Setup the PNG data structures...
-  pp   = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  info = png_create_info_struct(pp);
-
+  pp = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if (pp) info = png_create_info_struct(pp);
+  if (!pp || !info) {
+    if (pp) png_destroy_read_struct(&pp, NULL, NULL);
+    if (!from_memory) fclose(fp);
+    Fl::warning("Cannot allocate memory to read PNG file or data \"%s\".\n", name_png);
+    return;
+  }
+  
   if (setjmp(png_jmpbuf(pp)))
   {
-    Fl::warning("PNG file \"%s\" contains errors!\n", png);
+    png_destroy_read_struct(&pp, &info, NULL);
+    if (!from_memory) fclose(fp);
+    Fl::warning("PNG file or data \"%s\" contains errors!\n", name_png);
     return;
   }
 
-  // Initialize the PNG read "engine"...
-  png_init_io(pp, fp);
+  if (from_memory) {
+    png_mem_data.current = buffer_png;
+    png_mem_data.last = buffer_png + maxsize;
+    png_mem_data.pp = pp;
+    // Initialize the function pointer to the PNG read "engine"...
+    png_set_read_fn (pp, (png_voidp) &png_mem_data, png_read_data_from_mem);
+  } else {
+    png_init_io(pp, fp); // Initialize the PNG file read "engine"...
+  }  
 
   // Get the image dimensions and convert to grayscale or RGB...
   png_read_info(pp, info);
@@ -101,7 +167,7 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   int num_trans = 0;
   png_get_tRNS(pp, info, 0, &num_trans, 0);
   if ((png_get_color_type(pp, info) & PNG_COLOR_MASK_ALPHA) || (num_trans != 0))
-      channels ++;
+    channels ++;
 
   w((int)(png_get_image_width(pp, info)));
   h((int)(png_get_image_height(pp, info)));
@@ -150,7 +216,14 @@ Fl_PNG_Image::Fl_PNG_Image(const char *png) // I - File to read
   png_read_end(pp, info);
   png_destroy_read_struct(&pp, &info, NULL);
 
-  fclose(fp);
+  if (from_memory) {
+    if (w() && h() && name_png) {
+      Fl_Shared_Image *si = new Fl_Shared_Image(name_png, this);
+      si->add();
+    }
+  } else {
+    fclose(fp);
+  }
 #endif // HAVE_LIBPNG && HAVE_LIBZ
 }
 

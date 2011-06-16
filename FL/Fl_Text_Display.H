@@ -47,8 +47,8 @@
  in the widget is managed by the Fl_Text_Buffer class. A single Text Buffer
  can be displayed by multiple Text Displays.
  */
-class FL_EXPORT Fl_Text_Display: public Fl_Group 
-{
+class FL_EXPORT Fl_Text_Display: public Fl_Group {
+
 public:
   
   /** 
@@ -142,7 +142,8 @@ public:
    \return insert position index into text buffer 
    */
   int insert_position() const { return mCursorPos; }
-  
+  int position_to_xy(int pos, int* x, int* y) const;
+
   int in_selection(int x, int y) const;
   void show_insert_position();
   
@@ -364,8 +365,6 @@ protected:
   
   void xy_to_rowcol(int x, int y, int* row, int* column,
                     int PosType = CHARACTER_POS) const;
-  
-  int position_to_xy(int pos, int* x, int* y) const;
   void maintain_absolute_top_line_number(int state);
   int get_absolute_top_line_number() const;
   void absolute_top_line_number(int oldFirstChar);

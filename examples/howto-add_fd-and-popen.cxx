@@ -32,12 +32,22 @@
 //     http://www.fltk.org/str.php
 //
 #include <stdio.h>
-#include <unistd.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Multi_Browser.H>
 
-#define PING_CMD "ping -i 2 -c 10 localhost"	// 'slow command' under unix
+#ifdef WIN32
+#  define PING_CMD "ping -n 10 localhost"	// 'slow command' under windows
+#  ifdef _MSC_VER
+#    define popen _popen
+#    define pclose _pclose
+#  else /*_MSC_VER*/
+#    include <unistd.h>				// non-MS win32 compilers (untested)
+#  endif /*_MSC_VER*/
+#else
+#  include <unistd.h>
+#  define PING_CMD "ping -i 2 -c 10 localhost"	// 'slow command' under unix
+#endif
 
 // GLOBALS
 FILE *G_fp = NULL;

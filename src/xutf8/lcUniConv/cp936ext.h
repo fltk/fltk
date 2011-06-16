@@ -1,29 +1,29 @@
-//
-// "$Id$"
-//
-// Character encoding support for the Fast Light Tool Kit (FLTK).
-//
-// Copyright 1998-2010 by Bill Spitzak and others.
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA.
-//
-// Please report all bugs and problems on the following page:
-//
-//     http://www.fltk.org/str.php
-//
+/*
+ * "$Id$"
+ *
+ * Character encoding support for the Fast Light Tool Kit (FLTK).
+ *
+ * Copyright 1998-2010 by Bill Spitzak and others.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems on the following page:
+ *
+ *     http://www.fltk.org/str.php
+ */
 
 #if !defined(WIN32) && !defined(__APPLE__)
 
@@ -34,7 +34,7 @@ cp936ext_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
 {
   return 0;
 }
-#endif // NEED_TOWC
+#endif /* NEED_TOWC */
 
 #ifdef NEED_TOMB
 static int
@@ -42,7 +42,7 @@ cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
 {
   return 0;
 }
-#endif // NEED_TOMB
+#endif /* NEED_TOMB */
 
 #else
 /*
@@ -3206,7 +3206,7 @@ cp936ext_mbtowc (conv_t conv, ucs4_t *pwc, const unsigned char *s, int n)
   }
   return RET_ILSEQ;
 }
-#endif // NEED_TOWC
+#endif /* NEED_TOWC */
 
 #ifdef NEED_TOMB
 
@@ -6248,12 +6248,12 @@ cp936ext_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
   }
   return RET_TOOSMALL;
 }
-#endif // NEED_TOMB
+#endif /* NEED_TOMB */
 
-#endif // CP936
+#endif /* CP936 */
 
-#endif // __APPLE__  WIN32
+#endif /* __APPLE__  WIN32 */
 
-//
-// End of "$Id$".
-//
+/*
+ * End of "$Id$".
+ */

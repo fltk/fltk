@@ -84,7 +84,7 @@ void guides_cb(Fl_Check_Button *i, long) {
   }
 }
 
-void grid_cb(Fl_Input *i, long v) {
+void grid_cb(Fl_Int_Input *i, long v) {
   int n = atoi(i->value());
   if (n < 0) n = 0;
   switch (v) {
@@ -165,16 +165,23 @@ void i18n_type_cb(Fl_Choice *c, void *) {
 
 void i18n_text_cb(Fl_Input *i, void *) {
   undo_checkpoint();
-
+  
   if (i == i18n_function_input)
     i18n_function = i->value();
   else if (i == i18n_file_input)
     i18n_file = i->value();
-  else if (i == i18n_set_input)
-    i18n_set = i->value();
   else if (i == i18n_include_input)
     i18n_include = i->value();
+  
+  set_modflag(1);
+}
 
+void i18n_int_cb(Fl_Int_Input *i, void *) {
+  undo_checkpoint();
+  
+  if (i == i18n_set_input)
+    i18n_set = i->value();
+  
   set_modflag(1);
 }
 
@@ -236,6 +243,11 @@ void show_grid_cb(Fl_Widget *, void *) {
 void show_settings_cb(Fl_Widget *, void *) {
   settings_window->hotspot(settings_window);
   settings_window->show();
+}
+
+void show_global_settings_cb(Fl_Widget *, void *) {
+  global_settings_window->hotspot(global_settings_window);
+  show_global_settings_window();
 }
 
 void header_input_cb(Fl_Input* i, void*) {

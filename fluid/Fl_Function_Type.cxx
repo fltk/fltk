@@ -3,7 +3,7 @@
 //
 // C function type code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -552,7 +552,7 @@ void Fl_CodeBlock_Type::write_code1() {
 }
 
 void Fl_CodeBlock_Type::write_code2() {
-  indentation += 2;
+  indentation -= 2;
   if (after) write_c("%s} %s\n", indent(), after);
   else write_c("%s}\n", indent());
 }
@@ -898,8 +898,8 @@ void Fl_Data_Type::write_code1() {
   if (is_in_class()) {
     write_public(public_);
     write_comment_h("  ");
-    write_h("  static unsigned char %s[];\n", c);
-    write_c("unsigned char %s::%s[] = /* binary data included from %s */\n", class_name(1), c, fn);
+    write_h("  static unsigned char %s[%d];\n", c, nData);
+    write_c("unsigned char %s::%s[%d] = /* binary data included from %s */\n", class_name(1), c, nData, fn);
     if (message) write_c("#error %s %s\n", message, fn);
     write_cdata(data, nData);
     write_c(";\n");
@@ -907,22 +907,22 @@ void Fl_Data_Type::write_code1() {
     // the "header only" option does not apply here!
     if (public_) {
       if (static_) {
-        write_h("extern unsigned char %s[];\n", c);
+        write_h("extern unsigned char %s[%d];\n", c, nData);
         write_comment_c();
-        write_c("unsigned char %s[] = /* binary data included from %s */\n", c, fn);
+        write_c("unsigned char %s[%d] = /* binary data included from %s */\n", c, nData, fn);
         if (message) write_c("#error %s %s\n", message, fn);
         write_cdata(data, nData);
         write_c(";\n");
       } else {
         write_comment_h();
         write_h("#error Unsupported declaration loading binary data %s\n", fn);
-        write_h("unsigned char %s[] = { 1, 2, 3 };\n", c);
+        write_h("unsigned char %s[3] = { 1, 2, 3 };\n", c);
       }
     } else {
       write_comment_c();
       if (static_) 
         write_c("static ");
-      write_c("unsigned char %s[] = /* binary data included from %s */\n", c, fn);
+      write_c("unsigned char %s[%d] = /* binary data included from %s */\n", c, nData, fn);
       if (message) write_c("#error %s %s\n", message, fn);
       write_cdata(data, nData);
       write_c(";\n");
@@ -1107,7 +1107,7 @@ void Fl_Comment_Type::open() {
   comment_in_header->value(in_h_);
   comment_panel->show();
   const char* message = 0;
-  char itempath[256]; itempath[0] = 0;
+  char itempath[FL_PATH_MAX]; itempath[0] = 0;
   int last_selected_item = 0;
   for (;;) { // repeat as long as there are errors
     if (message) fl_alert("%s", message);
@@ -1350,7 +1350,7 @@ void Fl_Class_Type::read_property(const char *c) {
 
 void Fl_Class_Type::open() {
   if (!class_panel) make_class_panel();
-  char fullname[1024]="";
+  char fullname[FL_PATH_MAX]="";
   if (prefix() && strlen(prefix())) 
     sprintf(fullname,"%s %s",prefix(),name());
   else 

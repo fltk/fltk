@@ -70,6 +70,8 @@ public:
     input->callback(input_cb, (void*)this);
     input->when(FL_WHEN_ENTER_KEY_ALWAYS);		// callback triggered when user hits Enter
     input->maximum_size(5);
+    row_edit = col_edit = 0;
+    s_left = s_top = s_right = s_bottom = 0;
     for (int c = 0; c < MAX_COLS; c++)
       for (int r = 0; r < MAX_ROWS; r++)
 	values[r][c] = (r + 2) * (c + 3);		// initialize cells
@@ -85,12 +87,10 @@ public:
   }
   // Change number of rows
   void rows(int val) {
-    set_value_hide();
     Fl_Table::rows(val);
   }
   // Change number of columns
   void cols(int val) {
-    set_value_hide();
     Fl_Table::cols(val);
   }
   // Get number of rows

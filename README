@@ -31,7 +31,7 @@ ON-LINE DOCUMENTATION
         http://www.fltk.org/documentation.php
 
 
-BUILDING AND INSTALLING FLTK UNDER UNIX AND MacOS X
+BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
 
     In most cases you can just type "make".  This will run
     configure with the default (no) options and then compile
@@ -91,33 +91,11 @@ BUILDING FLTK UNDER MICROSOFT WINDOWS
     The first is to use the Visual C++ project files under the
     "ide/" directory.  See the file ide/README.IDE for more info.
 
-    The second method is to use a GNU-based development tool
-    with the files in the "makefiles" directory.  To build
-    with the CygWin tools, use the supplied configure script
-    as specified in the UNIX section above:
+    The second method is to use a GNU-based development tool.
+    To build with the Cygwin or MinGW tools, use the supplied
+    configure script as specified in the UNIX section above:
 
         sh configure ...options...
-
-    To build using other tools simply copy the appropriate
-    makeinclude and config files to the main directory and do a
-    make:
-
-	copy makefiles\Makefile.<env> Makefile
-	make
-
-
-BUILDING FLTK UNDER OS/2
-
-    The current OS/2 build requires XFree86 for OS/2 to work.  A
-    native Presentation Manager version has not been implemented
-    yet (volunteers are welcome!).
-
-    To build the XFree86 version of FLTK for OS/2, copy the
-    appropriate makeinclude and config files to the main
-    directory and do a make:
-
-        copy makefiles\Makefile.os2x Makefile
-	make
 
 
 INTERNET RESOURCES
@@ -161,13 +139,13 @@ TRADEMARKS
     Microsoft and Windows are registered trademarks of Microsoft
     Corporation. UNIX is a registered trademark of the X/Open
     Group, Inc.  OpenGL is a registered trademark of Silicon
-    Graphics, Inc.  MacOS is a registered trademark of Apple
+    Graphics, Inc.  Mac OS is a registered trademark of Apple
     Computers, Inc.
 
 
 COPYRIGHT
 
-    FLTK is copyright 1998-2010 by Bill Spitzak
+    FLTK is copyright 1998-2011 by Bill Spitzak
     (spitzak@users.sourceforge.net) and others, 
     see the CREDITS file for more info.
 

@@ -42,10 +42,6 @@ CPPFILES = \
 	file.cxx \
 	fluid.cxx \
 	function_panel.cxx \
-	ide_maketools.cxx \
-	ide_support.cxx \
-	ide_visualc.cxx \
-	ide_xcode.cxx \
 	template_panel.cxx \
 	undo.cxx \
 	widget_panel.cxx

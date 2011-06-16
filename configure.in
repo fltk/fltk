@@ -35,7 +35,9 @@ AC_INIT(src/Fl.cxx)
 
 dnl So --with-archflags option is used during "checking size of long"
 if test `uname` = Darwin; then
-  CFLAGS="$CFLAGS $with_archflags"
+  if test "x$with_archflags" != x ; then
+    CFLAGS="$CFLAGS $with_archflags"
+  fi
   USEMMFILES="Yes"
 else
   USEMMFILES="No"
@@ -60,8 +62,9 @@ if test "x$uname" = xIRIX64; then
     uname="IRIX"
 fi
 if test "x$uname" = x; then
-    # MingW doesn't provide any output when uname is run, even with "-s"...
-    uname="CYGWIN"
+    # Older MinGW doesn't provide any output when uname is run, even with "-s".
+    # Current MinGW (as of Jan. 2011) however does, so this is not necessary anymore...
+    uname="MINGW"
 fi
 
 dnl Do not automatically add "-g" to compiler options...
@@ -87,14 +90,13 @@ if test "x$cross_compiling" != xno ; then
 fi
 
 dnl OS-specific pre-tests...
-dnl uname_GUI equals $uname unless we target cygwin
-dnl in combination with X11.
+dnl uname_GUI equals $uname unless we target Cygwin in combination with X11.
 uname_GUI=$uname
 case $uname in
-    CYGWIN* | MINGW*)
+    CYGWIN*)
         # Handle Cygwin option *first*, before all other tests.
-	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the CygWin libraries [(default=no)]])
-	AC_ARG_ENABLE(x11,    [  --enable-x11            use CygWin with X11 [(default=no)]])
+	AC_ARG_ENABLE(cygwin, [  --enable-cygwin         use the Cygwin libraries [(default=no)]])
+	AC_ARG_ENABLE(x11,    [  --enable-x11            use Cygwin with X11 [(default=no)]])
 	if test x$enable_cygwin != xyes; then
 	    # NOTE: We can't use ARCHFLAGS for this, since it does not work
 	    #       with some of the function tests - Cygwin uses a
@@ -105,7 +107,7 @@ case $uname in
 	    LDFLAGS="$LDFLAGS -mno-cygwin"
 	    DSOFLAGS="$DSOFLAGS -mno-cygwin"
 	else
-	    # we target cygwin in combination with X11
+	    # we target Cygwin in combination with X11
 	    if test x$enable_x11 = xyes; then
 		uname_GUI="X11$uname"
 	    fi
@@ -144,8 +146,8 @@ AC_ARG_ENABLE(cairoext,[  --enable-cairoext       use fltk code instrumentation 
 AC_ARG_ENABLE(cairo,[  --enable-cairo          use lib Cairo  (default=no)])
 
 if test x$enable_cairoext = xyes; then
-	  AC_DEFINE(USE_CAIRO)
-	  AC_DEFINE(HAVE_CAIRO)
+	  AC_DEFINE(FLTK_USE_CAIRO)
+	  AC_DEFINE(FLTK_HAVE_CAIRO)
 	  dnl FIXME This part should be fixed so configure do not depend on
 	  dnl we do not rely on pkg-config .
 	  CAIRODIR="cairo"
@@ -159,7 +161,7 @@ if test x$enable_cairoext = xyes; then
 	  LINKFLTK+=" $LINKFLTKCAIRO"
 else 
     if test x$enable_cairo = xyes; then
-	  AC_DEFINE(HAVE_CAIRO)
+	  AC_DEFINE(FLTK_HAVE_CAIRO)
 	  dnl FIXME This part should be fixed so configure do not depend on
 	  dnl we do not rely on pkg-config .
 	  CAIRODIR="cairo"
@@ -225,7 +227,7 @@ if test x$enable_shared = xyes; then
             GLDSONAME="libfltk_gl.$FL_API_VERSION.dylib"
             IMGDSONAME="libfltk_images.$FL_API_VERSION.dylib"
             CAIRODSONAME="libfltk_cairo.$FL_API_VERSION.dylib"
-	    DSOCOMMAND="\$(CXX) \$(DSOFLAGS) -dynamiclib -lc -o"
+	    DSOCOMMAND="\$(CXX) \$(ARCHFLAGS) \$(DSOFLAGS) -dynamiclib -lc -o"
 	    ;;
 
 	SunOS* | UNIX_S*)
@@ -406,7 +408,7 @@ AC_PATH_PROG(DOXYDOC,doxygen)
 
 dnl How do we make libraries?
 AC_PROG_RANLIB
-AC_PATH_PROG(AR, ar)
+AC_PATH_TOOL(AR, ar)
 
 if test "x$AR" = "x:"; then
     AC_MSG_ERROR(Configure could not find the library archiver, aborting.)
@@ -421,11 +423,13 @@ fi
 AC_SUBST(LIBCOMMAND)
 
 dnl how to compile (Windows) resource files
-dnl this will only be used to create Windows .exe files
-AC_PATH_PROG(RC,windres)
+dnl this will only be used to compile resources for Windows .exe files
+AC_PATH_TOOL(RC,windres)
 
 dnl Architecture checks...
-AC_C_BIGENDIAN
+if test "$uname" != Darwin; then
+  AC_C_BIGENDIAN
+fi
 
 AC_CHECK_SIZEOF(short, 2)
 AC_CHECK_SIZEOF(int, 4)
@@ -440,12 +444,14 @@ else
         AC_DEFINE(U32,unsigned long)
     fi
 fi
-if test $ac_cv_sizeof_int -eq 8; then
-    AC_DEFINE(U64,unsigned)
-else
-    if test $ac_cv_sizeof_long -eq 8; then
-        AC_DEFINE(U64,unsigned long)
-    fi
+if test "$uname" != Darwin; then
+	if test $ac_cv_sizeof_int -eq 8; then
+		AC_DEFINE(U64,unsigned)
+	else
+		if test $ac_cv_sizeof_long -eq 8; then
+			AC_DEFINE(U64,unsigned long)
+		fi
+	fi
 fi
 
 dnl Does the C++ compiler support the bool type?
@@ -472,12 +478,6 @@ dnl Standard headers and functions...
 AC_HEADER_DIRENT
 AC_CHECK_HEADER(sys/select.h,AC_DEFINE(HAVE_SYS_SELECT_H))
 AC_CHECK_HEADER(sys/stdtypes.h,AC_DEFINE(HAVE_SYS_SELECT_H))
-AC_CHECK_FUNC(scandir,
-    if test "x$uname" = xSunOS -o "x$uname" = xQNX; then
-        AC_MSG_WARN(Not using $uname scandir emulation function.)
-    else
-        AC_DEFINE(HAVE_SCANDIR)
-    fi)
 
 dnl Do we have the POSIX compatible scandir() prototype?
 AC_CACHE_CHECK([whether we have the POSIX compatible scandir() prototype],
@@ -494,8 +494,21 @@ AC_CACHE_CHECK([whether we have the POSIX compatible scandir() prototype],
 	AC_LANG_RESTORE
     ])
 
+dnl Define both HAVE_SCANDIR... macros, if the POSIX compatible function is
+dnl available. Otherwise: check, whether any scandir prototype is available,
+dnl but don't use it on SunOS and QNX because of an incompatibility in pre-Y2K
+dnl SunOS scandir versions. We assume, though, that the POSIX compatible
+dnl version on newer SunOS/Solaris versions works as expected.
 if test "$ac_cv_cxx_scandir_posix" = yes; then
+    AC_DEFINE(HAVE_SCANDIR)
     AC_DEFINE(HAVE_SCANDIR_POSIX)
+else
+    AC_CHECK_FUNC(scandir,
+	if test "x$uname" = xSunOS -o "x$uname" = xQNX; then
+            AC_MSG_WARN(Not using $uname scandir emulation function.)
+	else
+            AC_DEFINE(HAVE_SCANDIR)
+        fi)
 fi
 
 AC_CHECK_FUNC(vsnprintf,[
@@ -754,7 +767,24 @@ dnl Check for pthreads for multi-threaded apps...
 have_pthread=no
 PTHREAD_FLAGS=""
 
-if test "x$enable_threads" != xno; then
+dnl Test whether we want to check for pthreads. We must not do it on Windows
+dnl unless we run under Cygwin with --enable-cygwin, since we always use
+dnl native threads on Windows (even if libpthread is available)
+check_pthread=yes
+case $uname in
+    MINGW*)
+	check_pthread=no
+	;;
+    CYGWIN*)
+	if test "x$enable_cygwin" != xyes; then
+	    check_pthread=no
+	fi
+	;;
+    *)
+	;;
+esac
+
+if test "x$enable_threads" != xno -a x$check_pthread = xyes; then
     AC_CHECK_HEADER(pthread.h, AC_DEFINE(HAVE_PTHREAD_H))
 
     if test x$ac_cv_header_pthread_h = xyes; then
@@ -791,7 +821,7 @@ HLINKS=
 OSX_ONLY=:
 THREADS=
 
-AC_ARG_WITH(links, [  --with-links            make header links for common misspellings])
+AC_ARG_WITH(links, [  --with-links            make header links for common misspellings (default=no)])
 
 INSTALL_DESKTOP=""
 UNINSTALL_DESKTOP=""
@@ -809,7 +839,7 @@ case $uname_GUI in
 	DSOFLAGS="-mwindows $DSOFLAGS"
 	LIBS="$LIBS -lole32 -luuid -lcomctl32"
 	if test "x$with_optim" = x; then
-	    dnl Avoid -Os optimization on Cygwin/Mingw
+	    dnl Avoid -Os optimization on Cygwin/MinGW
 	    with_optim="-O3"
 	fi
 
@@ -831,9 +861,9 @@ case $uname_GUI in
 	    if test x$have_pthread = xyes; then
 		AC_DEFINE(HAVE_PTHREAD)
 	    fi
-
-	    THREADS="threads$EXEEXT"
         fi
+
+	THREADS="threads$EXEEXT"
 
 	# Don't make symlinks since Windows is not case sensitive.
 	if test "x$with_links" != xyes; then
@@ -842,8 +872,8 @@ case $uname_GUI in
 	;;
 
     Darwin*)
-        # MacOS X uses Cocoa for graphics. There are still some Carbon leftovers.
-        LIBS="$LIBS -framework Cocoa -framework Carbon -framework AudioToolbox"
+        # MacOS X uses Cocoa for graphics.
+        LIBS="$LIBS -framework Cocoa"
 
 	if test x$have_pthread = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)
@@ -853,7 +883,7 @@ case $uname_GUI in
 	if test x$enable_gl != xno; then
             AC_DEFINE(HAVE_GL)
             AC_DEFINE(HAVE_GL_GLU_H)
-            GLLIB="-framework AGL -framework OpenGL"
+            GLLIB="-framework AGL -framework OpenGL -framework ApplicationServices"
         else
 	    LINKFLTKGL=""
 	    GLLIBNAME=""
@@ -876,7 +906,7 @@ case $uname_GUI in
 
     *)
 	# All others are UNIX/X11...
-	# This includes cygwin target combined with X11
+	# This includes Cygwin target combined with X11
 	if test x$have_pthread = xyes; then
 	    AC_DEFINE(HAVE_PTHREAD)
 	    THREADS="threads$EXEEXT"
@@ -994,7 +1024,7 @@ case $uname_GUI in
 	fi
 
 	# Make symlinks since UNIX/Linux is case sensitive,
-	# but cygwin in general not.
+	# but Cygwin in general not.
 	case $uname in
 	    CYGWIN*)
 		HLINKS="#"
@@ -1002,7 +1032,9 @@ case $uname_GUI in
 	    *)
 	    ;;
 	esac
-	if test "x$with_links" = xno; then
+	# Make symlinks since UNIX/Linux is case sensitive,
+	# but only if explicitly configured (default=no)
+	if test "x$with_links" != xyes; then
 		HLINKS="#"
 	fi
 
@@ -1256,12 +1288,29 @@ fi
 
 OPTIM="$DEBUGFLAG $OPTIM"
 
-dnl Define the FLTK documentation directory...
-if test x$prefix = xNONE; then
-    AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "/usr/local/share/doc/fltk")
-else
-    AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$prefix/share/doc/fltk")
+dnl Take archflags away from CFLAGS (makefiles use ARCHFLAGS explicitly)
+if test `uname` = Darwin; then
+  if test "x$with_archflags" != x ; then
+    CFLAGS="`echo $CFLAGS | sed -e "s/$with_archflags//g"`"
+  fi
 fi
+
+dnl Define the FLTK documentation directory...
+case $uname in
+  MINGW*)
+     # Determine the path where MSys has /usr installed
+ 	msyspath=`mount | grep '\/usr' | grep -v '\/usr\/bin' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g'`
+     # Then substitute that in the WIN32 path instead of /usr
+ 	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$msyspath/local/share/doc/fltk")
+    ;;
+  *)
+    if test x$prefix = xNONE; then
+	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "/usr/local/share/doc/fltk")
+    else
+	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$prefix/share/doc/fltk")
+    fi
+    ;;
+esac
 
 dnl Define the FLTK data directory...
 if test x$prefix = xNONE; then
@@ -1304,6 +1353,11 @@ echo "                 exec_prefix=$exec_prefix"
 echo "                 includedir=$includedir"
 echo "                 libdir=$libdir"
 echo "                 mandir=$mandir"
+case $uname in
+  MINGW*)
+    echo "                 MSys docpath=$msyspath/local/share/doc/fltk"
+  ;;
+esac
 echo "       Graphics: $graphics"
 
 if test x$JPEG = x; then

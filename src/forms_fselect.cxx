@@ -30,9 +30,9 @@
 #include <FL/forms.H>
 #include "flstring.h"
 
-static char fl_directory[1024];
+static char fl_directory[FL_PATH_MAX];
 static const char *fl_pattern;  // assumed passed value is static
-static char fl_filename[1024];
+static char fl_filename[FL_PATH_MAX];
 
 char* fl_show_file_selector(const char *message,const char *dir,
 			    const char *pat,const char *fname) {

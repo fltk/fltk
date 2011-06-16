@@ -50,6 +50,8 @@ int main(int argc, char **argv) {
     Fl_Light_Button arrowfocus_butt(10,HEIGHT+10,130,20," Arrow Focus");
     arrowfocus_butt.callback(ToggleArrowFocus_CB);
     arrowfocus_butt.value(Fl::option(Fl::OPTION_ARROW_FOCUS) ? 1 : 0);	// use default
+    arrowfocus_butt.tooltip("Control horizontal arrow key focus navigation behavior.\n"
+                            "e.g. Fl::OPTION_ARROW_FOCUS");
   window.end(); // don't auto-add children
   for (int i = 0; i<10000; i++) {
     // make up a random size of widget:

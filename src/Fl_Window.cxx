@@ -136,7 +136,7 @@ void Fl_Window::draw() {
   }
 #endif
 
-# if defined(USE_CAIRO)
+# if defined(FLTK_USE_CAIRO)
   Fl::cairo_make_current(this); // checkout if an update is necessary
 # endif
 }
@@ -275,6 +275,16 @@ const char *Fl_Window::xclass() const
   } else {
     return default_xclass();
   }
+}
+
+/** Gets the current icon window target dependent data. */
+const void *Fl_Window::icon() const {
+  return icon_;
+}
+
+/** Sets the current icon window target dependent data. */
+void Fl_Window::icon(const void * ic) {
+  icon_ = ic;
 }
 
 

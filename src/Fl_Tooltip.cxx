@@ -3,7 +3,7 @@
 //
 // Tooltip source file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -39,7 +39,7 @@ Fl_Color	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
 						   FL_NUM_BLUE - 2);
 Fl_Color	Fl_Tooltip::textcolor_ = FL_BLACK;
 Fl_Font         Fl_Tooltip::font_ = FL_HELVETICA;
-Fl_Fontsize     Fl_Tooltip::size_ = FL_NORMAL_SIZE;
+Fl_Fontsize     Fl_Tooltip::size_ = -1;
 
 #define MAX_WIDTH 400
 
@@ -59,7 +59,9 @@ public:
   void layout();
   /** Shows the tooltip windows only if a tooltip text is available. */
   void show() {
-    if (tip) Fl_Menu_Window::show();
+    if (!tip) return;
+    
+    Fl_Menu_Window::show();
   }
 };
 
@@ -132,15 +134,20 @@ static void tooltip_timeout(void*) {
   if (!tip || !*tip) {
     if (window) window->hide();
   } else {
-    //if (Fl::grab()) return;
-    if (!window) window = new Fl_TooltipBox;
-    // this cast bypasses the normal Fl_Window label() code:
-    ((Fl_Widget*)window)->label(tip);
-    window->layout();
-    window->redraw();
-//    printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
-//           window, tip ? tip : "(null)");
-    window->show();
+    int condition = 1;
+#if !(defined(__APPLE__) || defined(WIN32))
+    condition = (Fl::grab() == NULL);
+#endif
+    if ( condition ) {
+      if (!window) window = new Fl_TooltipBox;
+      // this cast bypasses the normal Fl_Window label() code:
+      ((Fl_Widget*)window)->label(tip);
+      window->layout();
+      window->redraw();
+  //    printf("tooltip_timeout: Showing window %p with tooltip \"%s\"...\n",
+  //           window, tip ? tip : "(null)");
+      window->show();
+    }
   }
 
   Fl::remove_timeout(recent_timeout);
@@ -149,8 +156,8 @@ static void tooltip_timeout(void*) {
 }
 
 /**
-   This method is called when the mouse pointer enters a  widget.
-   <P>If this widget or one of it's parents has a tooltip, enter it. This
+   This method is called when the mouse pointer enters a widget.
+   <P>If this widget or one of its parents has a tooltip, enter it. This
    will do nothing if this is the current widget (even if the mouse moved
    out so an exit() was done and then moved back in). If no tooltip can
    be found do Fl_Tooltip::exit_(). If you don't want this behavior (for instance

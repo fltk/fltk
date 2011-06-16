@@ -125,7 +125,7 @@
  LICENSE
  
  Greg added the following license to the original distribution of Fl_Table. He 
- kindly gave his permission to integrate Fl_Table and Fl_Table_row into FLTK,
+ kindly gave his permission to integrate Fl_Table and Fl_Table_Row into FLTK,
  allowing FLTK license to apply while his widgets are part of the library.
  
  If used on its own, this is the license that applies:
@@ -220,7 +220,7 @@ private:
   int _selecting;
   
   // An STL-ish vector without templates
-  class IntVector {
+  class FL_EXPORT IntVector {
     int *arr;
     unsigned int _size;
     void init() {

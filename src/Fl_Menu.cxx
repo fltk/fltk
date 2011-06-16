@@ -38,9 +38,6 @@
 #include <stdio.h>
 #include "flstring.h"
 
-#ifdef __APPLE__
-#  include <Carbon/Carbon.h>
-#endif
 /** Size of the menu starting from this menu item */
 int Fl_Menu_Item::size() const {
   const Fl_Menu_Item* m = this;
@@ -56,6 +53,23 @@ int Fl_Menu_Item::size() const {
   }
 }
 
+// Advance a pointer to next visible or invisible item of a menu array, 
+// skipping the contents of submenus.
+static const Fl_Menu_Item* next_visible_or_not(const Fl_Menu_Item* m) {
+  int nest = 0;
+  do {
+    if (!m->text) {
+      if (!nest) return m;
+      nest--;
+    } else if (m->flags&FL_SUBMENU) {
+      nest++;
+    }
+    m++;
+  }
+  while (nest);
+  return m;
+}
+
 /**
   Advance a pointer by n items through a menu array, skipping
   the contents of submenus and invisible items.  There are two calls so
@@ -64,17 +78,10 @@ int Fl_Menu_Item::size() const {
 const Fl_Menu_Item* Fl_Menu_Item::next(int n) const {
   if (n < 0) return 0; // this is so selected==-1 returns NULL
   const Fl_Menu_Item* m = this;
-  int nest = 0;
   if (!m->visible()) n++;
-  while (n>0) {
-    if (!m->text) {
-      if (!nest) return m;
-      nest--;
-    } else if (m->flags&FL_SUBMENU) {
-      nest++;
-    }
-    m++;
-    if (!nest && m->visible()) n--;
+  while (n) {
+    m = next_visible_or_not(m);
+    if (m->visible()) n--;
   }
   return m;
 }
@@ -99,7 +106,7 @@ class menuwindow : public Fl_Menu_Window {
 public:
   menutitle* title;
   int handle(int);
-#ifdef __APPLE__
+#if defined (__APPLE__) || defined (USE_X11)
   int early_hide_handle(int);
 #endif
   int itemheight;	// zero == menubar
@@ -538,6 +545,10 @@ int menuwindow::is_inside(int mx, int my) {
        my < y_root() || my >= y_root() + h()) {
     return 0;
   }
+  if (itemheight == 0 && find_selected(mx, my) == -1) {
+    // in the menubar but out from any menu header
+    return 0;
+    }
   return 1;
 }
 
@@ -601,7 +612,7 @@ static void setitem(int m, int n) {
 
 static int forward(int menu) { // go to next item in menu menu if possible
   menustate &pp = *p;
-  // Fl_Menu_Button can geberate menu=-1. This line fixes it and selectes the first item.
+  // Fl_Menu_Button can generate menu=-1. This line fixes it and selectes the first item.
   if (menu==-1) 
     menu = 0;
   menuwindow &m = *(pp.p[menu]);
@@ -626,7 +637,7 @@ static int backward(int menu) { // previous item in menu menu if possible
 }
 
 int menuwindow::handle(int e) {
-#ifdef __APPLE__
+#if defined (__APPLE__) || defined (USE_X11)
   // This off-route takes care of the "detached menu" bug on OS X.
   // Apple event handler requires that we hide all menu windows right
   // now, so that Carbon can continue undisturbed with handling window
@@ -718,16 +729,17 @@ int menuwindow::early_hide_handle(int e) {
       }
     }
     break;
+    case FL_MOVE:
+#if ! (defined(WIN32) || defined(__APPLE__))
+      if (pp.state == DONE_STATE) {
+	return 1; // Fix for STR #2619
+      }
+      /* FALLTHROUGH */
+#endif
   case FL_ENTER:
-  case FL_MOVE:
   case FL_PUSH:
   case FL_DRAG:
     {
-#ifdef __QNX__
-      // STR 704: workaround QNX X11 bug - in QNX a FL_MOVE event is sent
-      // right after FL_RELEASE...
-      if (pp.state == DONE_STATE) return 1;
-#endif // __QNX__
       int mx = Fl::event_x_root();
       int my = Fl::event_y_root();
       int item=0; int mymenu = pp.nummenus-1;
@@ -812,7 +824,7 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
   Fl_Group::current(0); // fix possible user error...
 
   button = pbutton;
-  if (pbutton) {
+  if (pbutton && pbutton->window()) {
     for (Fl_Window* w = pbutton->window(); w; w = w->window()) {
       X += w->x();
       Y += w->y();
@@ -948,10 +960,10 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
     }
   }
   const Fl_Menu_Item* m = pp.current_item;
-  Fl::grab(0);
   delete pp.fakemenu;
   while (pp.nummenus>1) delete pp.p[--pp.nummenus];
   mw.hide();
+  Fl::grab(0);
   return m;
 }
 
@@ -1001,9 +1013,9 @@ const Fl_Menu_Item* Fl_Menu_Item::popup(
   \return found Fl_Menu_Item or NULL
 */
 const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip, const bool require_alt) const {
-  const Fl_Menu_Item* m = first();
-  if (m) for (int ii = 0; m->text; m = m->next(), ii++) {
-    if (m->activevisible()) {
+  const Fl_Menu_Item* m = this;
+  if (m) for (int ii = 0; m->text; m = next_visible_or_not(m), ii++) {
+    if (m->active()) {
       if (Fl::test_shortcut(m->shortcut_)
 	 || Fl_Widget::test_shortcut(m->text, require_alt)) {
 	if (ip) *ip=ii;
@@ -1025,10 +1037,10 @@ const Fl_Menu_Item* Fl_Menu_Item::find_shortcut(int* ip, const bool require_alt)
   preceeded by '
 */
 const Fl_Menu_Item* Fl_Menu_Item::test_shortcut() const {
-  const Fl_Menu_Item* m = first();
+  const Fl_Menu_Item* m = this;
   const Fl_Menu_Item* ret = 0;
-  if (m) for (; m->text; m = m->next()) {
-    if (m->activevisible()) {
+  if (m) for (; m->text; m = next_visible_or_not(m)) {
+    if (m->active()) {
       // return immediately any match of an item in top level menu:
       if (Fl::test_shortcut(m->shortcut_)) return m;
       // if (Fl_Widget::test_shortcut(m->text)) return m;

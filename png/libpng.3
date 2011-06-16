@@ -1,6 +1,6 @@
-.TH LIBPNG 3 "September 10, 2009"
+.TH LIBPNG 3 "February 3, 2011"
 .SH NAME
-libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
+libpng \- Portable Network Graphics (PNG) Reference Library 1.5.1
 .SH SYNOPSIS
 \fI\fB
 
@@ -12,7 +12,19 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBint png_check_sig (png_bytep \fP\fIsig\fP\fB, int \fInum\fP\fB);\fP
+\fBvoid png_benign_error (png_structp \fP\fIpng_ptr\fP\fB, png_const_charp \fIerror\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_build_grayscale_palette (int \fP\fIbit_depth\fP\fB, png_colorp \fIpalette\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_voidp png_calloc (png_structp \fP\fIpng_ptr\fP\fB, png_alloc_size_t \fIsize\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_chunk_benign_error (png_structp \fP\fIpng_ptr\fP\fB, png_const_charp \fIerror\fP\fB);\fP
 
 \fI\fB
 
@@ -44,7 +56,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBpng_structp png_create_read_struct_2(png_const_charp \fP\fIuser_png_ver\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fP\fIwarn_fn\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
+\fBpng_structp png_create_read_struct_2 (png_const_charp \fP\fIuser_png_ver\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fP\fIwarn_fn\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
 
 \fI\fB
 
@@ -52,19 +64,11 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBpng_structp png_create_write_struct_2(png_const_charp \fP\fIuser_png_ver\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fP\fIwarn_fn\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
+\fBpng_structp png_create_write_struct_2 (png_const_charp \fP\fIuser_png_ver\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fP\fIwarn_fn\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
 
 \fI\fB
 
-\fBint png_debug(int \fP\fIlevel\fP\fB, png_const_charp \fImessage\fP\fB);\fP
-
-\fI\fB
-
-\fBint png_debug1(int \fP\fIlevel\fP\fB, png_const_charp \fP\fImessage\fP\fB, \fIp1\fP\fB);\fP
-
-\fI\fB
-
-\fBint png_debug2(int \fP\fIlevel\fP\fB, png_const_charp \fP\fImessage\fP\fB, \fP\fIp1\fP\fB, \fIp2\fP\fB);\fP
+\fBvoid png_data_freer (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIfreer\fP\fB, png_uint_32 \fImask)\fP\fB);\fP
 
 \fI\fB
 
@@ -80,6 +84,10 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
+\fBvoid png_err (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
 \fBvoid png_error (png_structp \fP\fIpng_ptr\fP\fB, png_const_charp \fIerror\fP\fB);\fP
 
 \fI\fB
@@ -92,7 +100,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_free_default(png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fIptr\fP\fB);\fP
+\fBvoid png_free_default (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fIptr\fP\fB);\fP
 
 \fI\fB
 
@@ -100,67 +108,89 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBpng_byte png_get_bit_depth (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_byte png_get_bit_depth (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_bKGD (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_16p \fI*background\fP\fB);\fP
+\fBpng_uint_32 png_get_bKGD (png_const_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_16p \fI*background\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_channels (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_byte png_get_channels (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_cHRM (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, double \fP\fI*white_x\fP\fB, double \fP\fI*white_y\fP\fB, double \fP\fI*red_x\fP\fB, double \fP\fI*red_y\fP\fB, double \fP\fI*green_x\fP\fB, double \fP\fI*green_y\fP\fB, double \fP\fI*blue_x\fP\fB, double \fI*blue_y\fP\fB);\fP
+\fBpng_uint_32 png_get_cHRM (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, double \fP\fI*white_x\fP\fB, double \fP\fI*white_y\fP\fB, double \fP\fI*red_x\fP\fB, double \fP\fI*red_y\fP\fB, double \fP\fI*green_x\fP\fB, double \fP\fI*green_y\fP\fB, double \fP\fI*blue_x\fP\fB, double \fI*blue_y\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_cHRM_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*white_x\fP\fB, png_uint_32 \fP\fI*white_y\fP\fB, png_uint_32 \fP\fI*red_x\fP\fB, png_uint_32 \fP\fI*red_y\fP\fB, png_uint_32 \fP\fI*green_x\fP\fB, png_uint_32 \fP\fI*green_y\fP\fB, png_uint_32 \fP\fI*blue_x\fP\fB, png_uint_32 \fI*blue_y\fP\fB);\fP
+\fBpng_uint_32 png_get_cHRM_fixed (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*white_x\fP\fB, png_uint_32 \fP\fI*white_y\fP\fB, png_uint_32 \fP\fI*red_x\fP\fB, png_uint_32 \fP\fI*red_y\fP\fB, png_uint_32 \fP\fI*green_x\fP\fB, png_uint_32 \fP\fI*green_y\fP\fB, png_uint_32 \fP\fI*blue_x\fP\fB, png_uint_32 \fI*blue_y\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_color_type (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_chunk_cache_max (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_compression_type (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fI\fB
+
+\fBpng_alloc_size_t png_get_chunk_malloc_max (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_copyright (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_byte png_get_color_type (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_voidp png_get_error_ptr (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_compression_buffer_size (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_filter_type (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_byte png_get_compression_type (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_gAMA (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, double \fI*file_gamma\fP\fB);\fP
+\fBpng_byte png_get_copyright (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_gAMA_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fI*int_file_gamma\fP\fB);\fP
+\fBpng_uint_32 png_get_current_row_number \fI(png_const_structp\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_header_ver (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_byte png_get_current_pass_number \fI(png_const_structp\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_header_version (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_voidp png_get_error_ptr (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_hIST (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_16p \fI*hist\fP\fB);\fP
+\fBpng_byte png_get_filter_type (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_iCCP (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charpp \fP\fIname\fP\fB, int \fP\fI*compression_type\fP\fB, png_charpp \fP\fIprofile\fP\fB, png_uint_32 \fI*proflen\fP\fB);\fP
+\fBpng_uint_32 png_get_gAMA (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, double \fI*file_gamma\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_gAMA_fixed (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fI*int_file_gamma\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_byte png_get_header_ver (png_const_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_byte png_get_header_version (png_const_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_hIST (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_uint_16p \fI*hist\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_iCCP (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_charpp \fP\fIname\fP\fB, int \fP\fI*compression_type\fP\fB, png_bytepp \fP\fIprofile\fP\fB, png_uint_32 \fI*proflen\fP\fB);\fP
 
 \fI\fB
 
@@ -168,23 +198,27 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBpng_uint_32 png_get_image_height (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_image_height (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_image_width (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_image_width (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
-
-\fB#if \fI!defined(PNG_1_0_X)
 
 \fBpng_int_32 png_get_int_32 (png_bytep \fIbuf\fP\fB);\fP
 
-\fI\fB#endif
+\fI\fB
+
+\fBpng_byte png_get_interlace_type (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_interlace_type (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_const_bytep png_get_io_chunk_name (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_io_chunk_type (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -192,145 +226,193 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBpng_byte png_get_libpng_ver (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_io_state (png_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_voidp png_get_mem_ptr(png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_byte png_get_libpng_ver (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_oFFs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*offset_x\fP\fB, png_uint_32 \fP\fI*offset_y\fP\fB, int \fI*unit_type\fP\fB);\fP
+\fBpng_voidp png_get_mem_ptr (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_pCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fI*purpose\fP\fB, png_int_32 \fP\fI*X0\fP\fB, png_int_32 \fP\fI*X1\fP\fB, int \fP\fI*type\fP\fB, int \fP\fI*nparams\fP\fB, png_charp \fP\fI*units\fP\fB, png_charpp \fI*params\fP\fB);\fP
+\fBpng_uint_32 png_get_oFFs (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*offset_x\fP\fB, png_uint_32 \fP\fI*offset_y\fP\fB, int \fI*unit_type\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_pHYs (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*res_x\fP\fB, png_uint_32 \fP\fI*res_y\fP\fB, int \fI*unit_type\fP\fB);\fP
+\fBpng_uint_32 png_get_pCAL (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fI*purpose\fP\fB, png_int_32 \fP\fI*X0\fP\fB, png_int_32 \fP\fI*X1\fP\fB, int \fP\fI*type\fP\fB, int \fP\fI*nparams\fP\fB, png_charp \fP\fI*units\fP\fB, png_charpp \fI*params\fP\fB);\fP
 
 \fI\fB
 
-\fBfloat png_get_pixel_aspect_ratio (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_pHYs (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*res_x\fP\fB, png_uint_32 \fP\fI*res_y\fP\fB, int \fI*unit_type\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_pixels_per_meter (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBfloat png_get_pixel_aspect_ratio (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_voidp png_get_progressive_ptr (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_pHYs_dpi (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fI*res_x\fP\fB, png_uint_32 \fP\fI*res_y\fP\fB, int \fI*unit_type\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_PLTE (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_colorp \fP\fI*palette\fP\fB, int \fI*num_palette\fP\fB);\fP
+\fBpng_fixed_point png_get_pixel_aspect_ratio_fixed (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_byte png_get_rgb_to_gray_status (png_structp \fIpng_ptr)
-
-\fBpng_uint_32 png_get_rowbytes (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_pixels_per_inch (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_bytepp png_get_rows (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_pixels_per_meter (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_sBIT (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_8p \fI*sig_bit\fP\fB);\fP
+\fBpng_voidp png_get_progressive_ptr (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_bytep png_get_signature (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_PLTE (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_colorp \fP\fI*palette\fP\fB, int \fI*num_palette\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_sPLT (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_spalette_p \fI*splt_ptr\fP\fB);\fP
+\fBpng_byte png_get_rgb_to_gray_status (png_const_structp \fIpng_ptr)
+
+\fBpng_uint_32 png_get_rowbytes (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_sRGB (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fI*intent\fP\fB);\fP
+\fBpng_bytepp png_get_rows (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_text (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_textp \fP\fI*text_ptr\fP\fB, int \fI*num_text\fP\fB);\fP
+\fBpng_uint_32 png_get_sBIT (png_const_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_8p \fI*sig_bit\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_tIME (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_timep \fI*mod_time\fP\fB);\fP
+\fBvoid png_get_sCAL (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, int* \fP\fIunit\fP\fB, double* \fP\fIwidth\fP\fB, double* \fIheight\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_tRNS (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_bytep \fP\fI*trans\fP\fB, int \fP\fI*num_trans\fP\fB, png_color_16p \fI*trans_values\fP\fB);\fP
+\fBvoid png_get_sCAL_fixed (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, int* \fP\fIunit\fP\fB, png_fixed_pointp \fP\fIwidth\fP\fB, png_fixed_pointp \fIheight\fP\fB);\fP
 
 \fI\fB
 
-\fB#if \fI!defined(PNG_1_0_X)
+\fBvoid png_get_sCAL_s (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, int* \fP\fIunit\fP\fB, png_charpp \fP\fIwidth\fP\fB, png_charpp \fIheight\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_bytep png_get_signature (png_const_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_sPLT (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_spalette_p \fI*splt_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_sRGB (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, int \fI*file_srgb_intent\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_text (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_textp \fP\fI*text_ptr\fP\fB, int \fI*num_text\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_tIME (png_const_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_timep \fI*mod_time\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_tRNS (png_const_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_bytep \fP\fI*trans_alpha\fP\fB, int \fP\fI*num_trans\fP\fB, png_color_16p \fI*trans_color\fP\fB);\fP
+
+\fI\fB
+
+\fB/* This function is really an inline macro. \fI*/
 
 \fBpng_uint_16 png_get_uint_16 (png_bytep \fIbuf\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_uint_31 (png_bytep \fIbuf\fP\fB);\fP
+\fBpng_uint_32 png_get_uint_31 (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fIbuf\fP\fB);\fP
 
 \fI\fB
+
+\fB/* This function is really an inline macro. \fI*/
 
 \fBpng_uint_32 png_get_uint_32 (png_bytep \fIbuf\fP\fB);\fP
 
-\fI\fB#endif
+\fI\fB
+
+\fBpng_uint_32 png_get_unknown_chunks (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_unknown_chunkpp \fIunknowns\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_unknown_chunks (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_unknown_chunkpp \fIunknowns\fP\fB);\fP
+\fBpng_voidp png_get_user_chunk_ptr (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_voidp png_get_user_chunk_ptr (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_user_height_max (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_user_height_max( png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_voidp png_get_user_transform_ptr (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_voidp png_get_user_transform_ptr (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_user_width_max (png_const_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_user_width_max (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_valid (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fIflag\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_valid (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fIflag\fP\fB);\fP
+\fBfloat png_get_x_offset_inches (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_int_32 png_get_x_offset_microns (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_fixed_point png_get_x_offset_inches_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_int_32 png_get_x_offset_pixels (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_int_32 png_get_x_offset_microns (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_x_pixels_per_meter (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_int_32 png_get_x_offset_pixels (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_int_32 png_get_y_offset_microns (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_x_pixels_per_inch (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_int_32 png_get_y_offset_pixels (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBpng_uint_32 png_get_x_pixels_per_meter (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_y_pixels_per_meter (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
+\fBfloat png_get_y_offset_inches (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_uint_32 png_get_compression_buffer_size (png_structp \fIpng_ptr\fP\fB);\fP
+\fBpng_fixed_point png_get_y_offset_inches_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_int_32 png_get_y_offset_microns (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_int_32 png_get_y_offset_pixels (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_y_pixels_per_inch (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBpng_uint_32 png_get_y_pixels_per_meter (png_const_structp \fP\fIpng_ptr\fP\fB, png_const_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -338,43 +420,31 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
+\fBvoid png_info_init_3 (png_infopp \fP\fIinfo_ptr\fP\fB, png_size_t \fIpng_info_struct_size\fP\fB);\fP
+
+\fI\fB
+
 \fBvoid png_init_io (png_structp \fP\fIpng_ptr\fP\fB, FILE \fI*fp\fP\fB);\fP
 
 \fI\fB
 
-\fBDEPRECATED: void png_info_init (png_infop \fIinfo_ptr\fP\fB);\fP
+\fBvoid png_longjmp (png_structp \fP\fIpng_ptr\fP\fB, int \fIval\fP\fB);\fP
 
 \fI\fB
 
-\fBDEPRECATED: void png_info_init_2 (png_infopp \fP\fIptr_ptr\fP\fB, png_size_t \fIpng_info_struct_size\fP\fB);\fP
+\fBpng_voidp png_malloc (png_structp \fP\fIpng_ptr\fP\fB, png_alloc_size_t \fIsize\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_voidp png_malloc (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
+\fBpng_voidp png_malloc_default (png_structp \fP\fIpng_ptr\fP\fB, png_alloc_size_t \fIsize\fP\fB);\fP
 
 \fI\fB
 
-\fBpng_voidp png_malloc_default(png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
+\fBpng_voidp png_malloc_warn (png_structp \fP\fIpng_ptr\fP\fB, png_alloc_size_t \fIsize\fP\fB);\fP
 
 \fI\fB
 
-\fBvoidp png_memcpy (png_voidp \fP\fIs1\fP\fB, png_voidp \fP\fIs2\fP\fB, png_size_t \fIsize\fP\fB);\fP
-
-\fI\fB
-
-\fBpng_voidp png_memcpy_check (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIs1\fP\fB, png_voidp \fP\fIs2\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
-
-\fI\fB
-
-\fBvoidp png_memset (png_voidp \fP\fIs1\fP\fB, int \fP\fIvalue\fP\fB, png_size_t \fIsize\fP\fB);\fP
-
-\fI\fB
-
-\fBpng_voidp png_memset_check (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIs1\fP\fB, int \fP\fIvalue\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
-
-\fI\fB
-
-\fBDEPRECATED: void png_permit_empty_plte (png_structp \fP\fIpng_ptr\fP\fB, int \fIempty_plte_permitted\fP\fB);\fP
+\fBpng_uint_32 png_permit_mng_features (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fImng_features_permitted\fP\fB);\fP
 
 \fI\fB
 
@@ -382,11 +452,15 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_progressive_combine_row (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fP\fIold_row\fP\fB, png_bytep \fInew_row\fP\fB);\fP
+\fBpng_size_t png_process_data_pause \fP\fI(png_structp\fP\fB, int \fIsave\fP\fB);\fP
 
 \fI\fB
 
-\fBvoid png_read_destroy (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_infop \fIend_info_ptr\fP\fB);\fP
+\fBpng_uint_32 png_process_data_skip \fI(png_structp\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_progressive_combine_row (png_structp \fP\fIpng_ptr\fP\fB, png_bytep \fP\fIold_row\fP\fB, png_bytep \fInew_row\fP\fB);\fP
 
 \fI\fB
 
@@ -395,14 +469,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 \fI\fB
 
 \fBvoid png_read_image (png_structp \fP\fIpng_ptr\fP\fB, png_bytepp \fIimage\fP\fB);\fP
-
-\fI\fB
-
-\fBDEPRECATED: void png_read_init (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
-
-\fBDEPRECATED: void png_read_init_2 (png_structpp \fP\fIptr_ptr\fP\fB, png_const_charp \fP\fIuser_png_ver\fP\fB, png_size_t \fP\fIpng_struct_size\fP\fB, png_size_t \fIpng_info_size\fP\fB);\fP
 
 \fI\fB
 
@@ -426,9 +492,11 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fB#if \fI!defined(PNG_1_0_X)
+\fBint png_reset_zstream (png_structp \fIpng_ptr\fP\fB);\fP
 
-\fBpng_save_int_32 (png_bytep \fP\fIbuf\fP\fB, png_int_32 \fIi\fP\fB);\fP
+\fI\fB
+
+\fBvoid png_save_int_32 (png_bytep \fP\fIbuf\fP\fB, png_int_32 \fIi\fP\fB);\fP
 
 \fI\fB
 
@@ -442,11 +510,17 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fBvoid png_set_add_alpha (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fP\fIfiller\fP\fB, int \fIflags\fP\fB);\fP
 
-\fI\fB#endif
-
 \fI\fB
 
 \fBvoid png_set_background (png_structp \fP\fIpng_ptr\fP\fB, png_color_16p \fP\fIbackground_color\fP\fB, int \fP\fIbackground_gamma_code\fP\fB, int \fP\fIneed_expand\fP\fB, double \fIbackground_gamma\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_background_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_color_16p \fP\fIbackground_color\fP\fB, int \fP\fIbackground_gamma_code\fP\fB, int \fP\fIneed_expand\fP\fB, png_uint_32 \fIbackground_gamma\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_benign_errors (png_structp \fP\fIpng_ptr\fP\fB, int \fIallowed\fP\fB);\fP
 
 \fI\fB
 
@@ -463,6 +537,10 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 \fI\fB
 
 \fBvoid png_set_cHRM_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_uint_32 \fP\fIwhite_x\fP\fB, png_uint_32 \fP\fIwhite_y\fP\fB, png_uint_32 \fP\fIred_x\fP\fB, png_uint_32 \fP\fIred_y\fP\fB, png_uint_32 \fP\fIgreen_x\fP\fB, png_uint_32 \fP\fIgreen_y\fP\fB, png_uint_32 \fP\fIblue_x\fP\fB, png_uint_32 \fIblue_y\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_chunk_cache_max (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIuser_chunk_cache_max\fP\fB);\fP
 
 \fI\fB
 
@@ -490,10 +568,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_dither (png_structp \fP\fIpng_ptr\fP\fB, png_colorp \fP\fIpalette\fP\fB, int \fP\fInum_palette\fP\fB, int \fP\fImaximum_colors\fP\fB, png_uint_16p \fP\fIhistogram\fP\fB, int \fIfull_dither\fP\fB);\fP
-
-\fI\fB
-
 \fBvoid png_set_error_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIerror_ptr\fP\fB, png_error_ptr \fP\fIerror_fn\fP\fB, png_error_ptr \fIwarning_fn\fP\fB);\fP
 
 \fI\fB
@@ -502,7 +576,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_expand_gray_1_2_4_to_8(png_structp \fIpng_ptr\fP\fB);\fP
+\fBvoid png_set_expand_gray_1_2_4_to_8 (png_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -518,11 +592,19 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
+\fBvoid png_set_filter_heuristics_fixed (png_structp \fP\fIpng_ptr\fP\fB, int \fP\fIheuristic_method\fP\fB, int \fP\fInum_weights\fP\fB, png_fixed_point_p \fP\fIfilter_weights\fP\fB, png_fixed_point_p \fIfilter_costs\fP\fB);\fP
+
+\fI\fB
+
 \fBvoid png_set_flush (png_structp \fP\fIpng_ptr\fP\fB, int \fInrows\fP\fB);\fP
 
 \fI\fB
 
 \fBvoid png_set_gamma (png_structp \fP\fIpng_ptr\fP\fB, double \fP\fIscreen_gamma\fP\fB, double \fIdefault_file_gamma\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_gamma_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fP\fIscreen_gamma\fP\fB, png_uint_32 \fIdefault_file_gamma\fP\fB);\fP
 
 \fI\fB
 
@@ -534,7 +616,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_gray_1_2_4_to_8(png_structp \fIpng_ptr\fP\fB);\fP
+\fBvoid png_set_gray_1_2_4_to_8 (png_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -546,7 +628,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_iCCP (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fIname\fP\fB, int \fP\fIcompression_type\fP\fB, png_charp \fP\fIprofile\fP\fB, png_uint_32 \fIproflen\fP\fB);\fP
+\fBvoid png_set_iCCP (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_const_charp \fP\fIname\fP\fB, int \fP\fIcompression_type\fP\fB, png_const_bytep \fP\fIprofile\fP\fB, png_uint_32 \fIproflen\fP\fB);\fP
 
 \fI\fB
 
@@ -574,7 +656,19 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_mem_fn(png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
+\fBjmp_buf* png_set_longjmp_fn (png_structp \fP\fIpng_ptr\fP\fB, png_longjmp_ptr \fP\fIlongjmp_fn\fP\fB, size_t \fIjmp_buf_size\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_chunk_malloc_max (png_structp \fP\fIpng_ptr\fP\fB, png_alloc_size_t \fIuser_chunk_cache_max\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_compression_buffer_size (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_mem_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fImem_ptr\fP\fB, png_malloc_ptr \fP\fImalloc_fn\fP\fB, png_free_ptr \fIfree_fn\fP\fB);\fP
 
 \fI\fB
 
@@ -590,7 +684,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_palette_to_rgb(png_structp \fIpng_ptr\fP\fB);\fP
+\fBvoid png_set_palette_to_rgb (png_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -610,11 +704,19 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
+\fBvoid png_set_quantize (png_structp \fP\fIpng_ptr\fP\fB, png_colorp \fP\fIpalette\fP\fB, int \fP\fInum_palette\fP\fB, int \fP\fImaximum_colors\fP\fB, png_uint_16p \fP\fIhistogram\fP\fB, int \fIfull_quantize\fP\fB);\fP
+
+\fI\fB
+
 \fBvoid png_set_read_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIio_ptr\fP\fB, png_rw_ptr \fIread_data_fn\fP\fB);\fP
 
 \fI\fB
 
 \fBvoid png_set_read_status_fn (png_structp \fP\fIpng_ptr\fP\fB, png_read_status_ptr \fIread_row_fn\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_read_user_chunk_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIuser_chunk_ptr\fP\fB, png_user_chunk_ptr \fIread_user_chunk_fn\fP\fB);\fP
 
 \fI\fB
 
@@ -626,7 +728,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_rgb_to_gray_fixed (png_structp \fP\fIpng_ptr\fP\fB, int error_action png_fixed_point \fP\fIred\fP\fB, png_fixed_point \fIgreen\fP\fB);\fP
+\fBvoid png_set_rgb_to_gray_fixed (png_structp \fP\fIpng_ptr\fP\fB, int error_action png_uint_32 \fP\fIred\fP\fB, png_uint_32 \fIgreen\fP\fB);\fP
 
 \fI\fB
 
@@ -638,7 +740,15 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_sCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_charp \fP\fIunit\fP\fB, double \fP\fIwidth\fP\fB, double \fIheight\fP\fB);\fP
+\fBvoid png_set_sCAL (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIunit\fP\fB, double \fP\fIwidth\fP\fB, double \fIheight\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_sCAL_fixed (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIunit\fP\fB, png_fixed_point \fP\fIwidth\fP\fB, png_fixed_point \fIheight\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_sCAL_s (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIunit\fP\fB, png_charp \fP\fIwidth\fP\fB, png_charp \fIheight\fP\fB);\fP
 
 \fI\fB
 
@@ -654,11 +764,11 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_sRGB (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fIintent\fP\fB);\fP
+\fBvoid png_set_sRGB (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fIsrgb_intent\fP\fB);\fP
 
 \fI\fB
 
-\fBvoid png_set_sRGB_gAMA_and_cHRM (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fIintent\fP\fB);\fP
+\fBvoid png_set_sRGB_gAMA_and_cHRM (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fIsrgb_intent\fP\fB);\fP
 
 \fI\fB
 
@@ -667,6 +777,10 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 \fI\fB
 
 \fBvoid png_set_strip_alpha (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
+\fBvoid png_set_strip_error_numbers (png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIstrip_mode\fP\fB);\fP
 
 \fI\fB
 
@@ -686,11 +800,11 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_tRNS (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_bytep \fP\fItrans\fP\fB, int \fP\fInum_trans\fP\fB, png_color_16p \fItrans_values\fP\fB);\fP
+\fBvoid png_set_tRNS (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_bytep \fP\fItrans_alpha\fP\fB, int \fP\fInum_trans\fP\fB, png_color_16p \fItrans_color\fP\fB);\fP
 
 \fI\fB
 
-\fBvoid png_set_tRNS_to_alpha(png_structp \fIpng_ptr\fP\fB);\fP
+\fBvoid png_set_tRNS_to_alpha (png_structp \fIpng_ptr\fP\fB);\fP
 
 \fI\fB
 
@@ -698,11 +812,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_set_unknown_chunk_location(png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIchunk\fP\fB, int \fIlocation\fP\fB);\fP
-
-\fI\fB
-
-\fBvoid png_set_read_user_chunk_fn (png_structp \fP\fIpng_ptr\fP\fB, png_voidp \fP\fIuser_chunk_ptr\fP\fB, png_user_chunk_ptr \fIread_user_chunk_fn\fP\fB);\fP
+\fBvoid png_set_unknown_chunk_location (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, int \fP\fIchunk\fP\fB, int \fIlocation\fP\fB);\fP
 
 \fI\fB
 
@@ -723,10 +833,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 \fI\fB
 
 \fBvoid png_set_write_user_transform_fn (png_structp \fP\fIpng_ptr\fP\fB, png_user_transform_ptr \fIwrite_user_transform_fn\fP\fB);\fP
-
-\fI\fB
-
-\fBvoid png_set_compression_buffer_size(png_structp \fP\fIpng_ptr\fP\fB, png_uint_32 \fIsize\fP\fB);\fP
 
 \fI\fB
 
@@ -758,10 +864,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
-\fBvoid png_write_destroy (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
-
 \fBvoid png_write_end (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fIinfo_ptr\fP\fB);\fP
 
 \fI\fB
@@ -771,14 +873,6 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 \fI\fB
 
 \fBvoid png_write_image (png_structp \fP\fIpng_ptr\fP\fB, png_bytepp \fIimage\fP\fB);\fP
-
-\fI\fB
-
-\fBDEPRECATED: void png_write_init (png_structp \fIpng_ptr\fP\fB);\fP
-
-\fI\fB
-
-\fBDEPRECATED: void png_write_init_2 (png_structpp \fP\fIptr_ptr\fP\fB, png_const_charp \fP\fIuser_png_ver\fP\fB, png_size_t \fP\fIpng_struct_size\fP\fB, png_size_t \fIpng_info_size\fP\fB);\fP
 
 \fI\fB
 
@@ -802,6 +896,10 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.2.40
 
 \fI\fB
 
+\fBvoid png_write_sig (png_structp \fIpng_ptr\fP\fB);\fP
+
+\fI\fB
+
 \fBvoidpf png_zalloc (voidpf \fP\fIpng_ptr\fP\fB, uInt \fP\fIitems\fP\fB, uInt \fIsize\fP\fB);\fP
 
 \fI\fB
@@ -817,14 +915,14 @@ library supports encoding, decoding, and various manipulations of
 the Portable Network Graphics (PNG) format image files.  It uses the
 .IR zlib(3)
 compression library.
-Following is a copy of the libpng.txt file that accompanies libpng.
+Following is a copy of the libpng-manual.txt file that accompanies libpng.
 .SH LIBPNG.TXT
-libpng.txt - A description on how to use and modify libpng
+libpng-manual.txt - A description on how to use and modify libpng
 
- libpng version 1.2.40 - September 10, 2009
+ libpng version 1.5.1 - February 3, 2011
  Updated and distributed by Glenn Randers-Pehrson
  <glennrp at users.sourceforge.net>
- Copyright (c) 1998-2009 Glenn Randers-Pehrson
+ Copyright (c) 1998-2011 Glenn Randers-Pehrson
 
  This document is released under the libpng license.
  For conditions of distribution and use, see the disclaimer
@@ -832,9 +930,9 @@ libpng.txt - A description on how to use and modify libpng
 
  Based on:
 
- libpng versions 0.97, January 1998, through 1.2.40 - September 10, 2009
+ libpng versions 0.97, January 1998, through 1.5.1 - February 3, 2011
  Updated and distributed by Glenn Randers-Pehrson
- Copyright (c) 1998-2009 Glenn Randers-Pehrson
+ Copyright (c) 1998-2011 Glenn Randers-Pehrson
 
  libpng 1.0 beta 6  version 0.96 May 28, 1997
  Updated and distributed by Andreas Dilger
@@ -861,8 +959,8 @@ will need.  We assume that libpng is already installed; see the
 INSTALL file for instructions on how to install libpng.
 
 For examples of libpng usage, see the files "example.c", "pngtest.c",
-and the files in the "contrib" directory, all of which are included in the
-libpng distribution.
+and the files in the "contrib" directory, all of which are included in
+the libpng distribution.
 
 Libpng was written as a companion to the PNG specification, as a way
 of reducing the amount of time and effort it takes to support the PNG
@@ -920,33 +1018,180 @@ same instance of a structure.
 .SH II. Structures
 
 There are two main structures that are important to libpng, png_struct
-and png_info.  The first, png_struct, is an internal structure that
-will not, for the most part, be used by a user except as the first
-variable passed to every libpng function call.
+and png_info.  Both are internal structures that are no longer exposed
+in the libpng interface (as of libpng 1.5.0).
 
 The png_info structure is designed to provide information about the
 PNG file.  At one time, the fields of png_info were intended to be
 directly accessible to the user.  However, this tended to cause problems
 with applications using dynamically loaded libraries, and as a result
 a set of interface functions for png_info (the png_get_*() and png_set_*()
-functions) was developed.  The fields of png_info are still available for
-older applications, but it is suggested that applications use the new
-interfaces if at all possible.
+functions) was developed.
 
-Applications that do make direct access to the members of png_struct (except
-for png_ptr->jmpbuf) must be recompiled whenever the library is updated,
-and applications that make direct access to the members of png_info must
-be recompiled if they were compiled or loaded with libpng version 1.0.6,
-in which the members were in a different order.  In version 1.0.7, the
-members of the png_info structure reverted to the old order, as they were
-in versions 0.97c through 1.0.5.  Starting with version 2.0.0, both
-structures are going to be hidden, and the contents of the structures will
-only be accessible through the png_get/png_set functions.
+The png_struct structure is the object used by the library to decode a
+single image.  As of 1.5.0 this structure is also not exposed.
+
+Almost all libpng APIs require a pointer to a png_struct as the first argument.
+Many (in particular the png_set and png_get APIs) also require a pointer
+to png_info as the second argument.  Some application visible macros
+defined in png.h designed for basic data access (reading and writing
+integers in the PNG format) break this rule, but it's almost always safe
+to assume that a (png_struct*) has to be passed to call an API function.
 
 The png.h header file is an invaluable reference for programming with libpng.
 And while I'm on the topic, make sure you include the libpng header file:
 
 #include <png.h>
+
+.SS Types
+
+The png.h header file defines a number of integral types used by the
+APIs.  Most of these are fairly obvious; for example types corresponding
+to integers of particular sizes and types for passing color values.
+
+One exception is how non-integral numbers are handled.  For application
+convenience most APIs that take such numbers have C (double) arguments,
+however internally PNG, and libpng, use 32 bit signed integers and encode
+the value by multiplying by 100,000.  As of libpng 1.5.0 a convenience
+macro PNG_FP_1 is defined in png.h along with a type (png_fixed_point)
+which is simply (png_int_32).
+
+All APIs that take (double) arguments also have an matching API that
+takes the corresponding fixed point integer arguments.  The fixed point
+API has the same name as the floating point one with _fixed appended.
+The actual range of values permitted in the APIs is frequently less than
+the full range of (png_fixed_point) (-21474 to +21474).  When APIs require
+a non-negative argument the type is recorded as png_uint_32 above.  Consult
+the header file and the text below for more information.
+
+Special care must be take with sCAL chunk handling because the chunk itself
+uses non-integral values encoded as strings containing decimal floating point
+numbers.  See the comments in the header file.
+
+.SS Configuration
+
+The main header file function declarations are frequently protected by C
+preprocessing directives of the form:
+
+    #ifdef PNG_feature_SUPPORTED
+    declare-function
+    #endif
+
+The library can be built without support for these APIs, although a
+standard build will have all implemented APIs.  Application programs
+should check the feature macros before using an API for maximum
+portability.  From libpng 1.5.0 the feature macros set during the build
+of libpng are recorded in the header file "pnglibconf.h" and this file
+is always included by png.h.
+
+If you don't need to change the library configuration from the default skip to
+the next section ("Reading").
+
+Notice that some of the makefiles in the 'scripts' directory and (in 1.5.0) all
+of the build project files in the 'projects' directory simply copy
+scripts/pnglibconf.h.prebuilt to pnglibconf.h.  This means that these build
+systems do not permit easy auto-configuration of the library - they only
+support the default configuration.
+
+The easiest way to make minor changes to the libpng configuration when
+auto-configuration is supported is to add definitions to the command line
+using (typically) CPPFLAGS.  For example:
+
+CPPFLAGS=-DPNG_NO_FLOATING_ARITHMETIC
+
+will change the internal libpng math implementation for gamma correction and
+other arithmetic calculations to fixed point, avoiding the need for fast
+floating point support.  The result can be seen in the generated pnglibconf.h -
+make sure it contains the changed feature macro setting.
+
+If you need to make more extensive configuration changes - more than one or two
+feature macro settings - you can either add -DPNG_USER_CONFIG to the build
+command line and put a list of feature macro settings in pngusr.h or you can set
+DFA_XTRA (a makefile variable) to a file containing the same information in the
+form of 'option' settings.
+
+A. Changing pnglibconf.h
+
+A variety of methods exist to build libpng.  Not all of these support
+reconfiguration of pnglibconf.h.  To reconfigure pnglibconf.h it must either be
+rebuilt from scripts/pnglibconf.dfa using awk or it must be edited by hand.
+
+Hand editing is achieved by copying scripts/pnglibconf.h.prebuilt and changing
+the lines defining the supported features, paying very close attention to the
+'option' information in scripts/pnglibconf.dfa that describes those features and
+their requirements.  This is easy to get wrong.
+
+B. Configuration using DFA_XTRA
+
+Rebuilding from pnglibconf.dfa is easy if a functioning 'awk', or a later
+variant such as 'nawk' or 'gawk', is available.  The configure build will
+automatically find an appropriate awk and build pnglibconf.h.
+scripts/pnglibconf.mak contains a set of make rules for doing the same thing if
+configure is not used, and many of the makefiles in the scripts directory use
+this approach.
+
+When rebuilding simply write new file containing changed options and set
+DFA_XTRA to the name of this file.  This causes the build to append the new file
+to the end of scripts/pnglibconf.dfa.  pngusr.dfa should contain lines of the
+following forms:
+
+everything = off
+
+This turns all optional features off.  Include it at the start of pngusr.dfa to
+make it easier to build a minimal configuration.  You will need to turn at least
+some features on afterward to enable either reading or writing code, or both.
+
+option feature on
+option feature off
+
+Enable or disable a single feature.  This will automatically enable other
+features required by a feature that is turned on or disable other features that
+require a feature which is turned off.  Conflicting settings will cause an error
+message to be emitted by awk.
+
+setting feature default value
+
+Changes the default value of setting 'feature' to 'value'.  There are a small
+number of settings listed at the top of pnglibconf.h, they are documented in the
+source code.  Most of these values have performance implications for the library
+but most of them have no visible effect on the API.  Some can also be overridden
+from the API.
+
+C. Configuration using PNG_USR_CONFIG
+
+If -DPNG_USR_CONFIG is added to the CFLAGS when pnglibconf.h is built the file
+pngusr.h will automatically be included before the options in
+scripts/pnglibconf.dfa are processed.  pngusr.h should contain only macro
+definitions turning features on or off or setting settings.
+
+Apart from the global setting "everything = off" all the options listed above
+can be set using macros in pngusr.h:
+
+#define PNG_feature_SUPPORTED
+
+is equivalent to:
+
+option feature on
+
+#define PNG_NO_feature
+
+is equivalent to:
+
+option feature off
+
+#define PNG_feature value
+
+is equivalent to:
+
+setting feature default value
+
+Notice that in both cases, pngusr.dfa and pngusr.h, the contents of the
+pngusr file you supply override the contents of scripts/pnglibconf.dfa
+
+If confusing or incomprehensible behavior results it is possible to
+examine the intermediate file pnglibconf.dfn to find the full set of
+dependency information for each setting and option.  Simply locate the
+feature in the file and read the C comments that precede it.
 
 .SH III. Reading
 
@@ -983,13 +1228,15 @@ Customizing libpng.
     FILE *fp = fopen(file_name, "rb");
     if (!fp)
     {
-        return (ERROR);
+       return (ERROR);
     }
+
     fread(header, 1, number, fp);
     is_png = !png_sig_cmp(header, 0, number);
+
     if (!is_png)
     {
-        return (NOT_PNG);
+       return (NOT_PNG);
     }
 
 
@@ -1005,29 +1252,32 @@ The structure allocation functions quietly return NULL if they fail to
 create the structure, so your application should check for that.
 
     png_structp png_ptr = png_create_read_struct
-       (PNG_LIBPNG_VER_STRING, (png_voidp)user_error_ptr,
+        (PNG_LIBPNG_VER_STRING, (png_voidp)user_error_ptr,
         user_error_fn, user_warning_fn);
+
     if (!png_ptr)
-        return (ERROR);
+       return (ERROR);
 
     png_infop info_ptr = png_create_info_struct(png_ptr);
+
     if (!info_ptr)
     {
-        png_destroy_read_struct(&png_ptr,
+       png_destroy_read_struct(&png_ptr,
            (png_infopp)NULL, (png_infopp)NULL);
-        return (ERROR);
+       return (ERROR);
     }
 
     png_infop end_info = png_create_info_struct(png_ptr);
+
     if (!end_info)
     {
-        png_destroy_read_struct(&png_ptr, &info_ptr,
+       png_destroy_read_struct(&png_ptr, &info_ptr,
           (png_infopp)NULL);
-        return (ERROR);
+       return (ERROR);
     }
 
 If you want to use your own memory allocation routines,
-define PNG_USER_MEM_SUPPORTED and use
+use a libpng that was built with PNG_USER_MEM_SUPPORTED defined, and use
 png_create_read_struct_2() instead of png_create_read_struct():
 
     png_structp png_ptr = png_create_read_struct_2
@@ -1055,15 +1305,19 @@ free any memory.
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        png_destroy_read_struct(&png_ptr, &info_ptr,
+       png_destroy_read_struct(&png_ptr, &info_ptr,
            &end_info);
-        fclose(fp);
-        return (ERROR);
+       fclose(fp);
+       return (ERROR);
     }
 
 If you would rather avoid the complexity of setjmp/longjmp issues,
-you can compile libpng with PNG_SETJMP_NOT_SUPPORTED, in which case
+you can compile libpng with PNG_NO_SETJMP, in which case
 errors will result in a call to PNG_ABORT() which defaults to abort().
+
+You can #define PNG_ABORT() to a function that does something
+more useful than abort(), as long as your function does not
+return.
 
 Now you need to set up the input code.  The default for libpng is to
 use the C function fread().  If you use this, you will need to pass a
@@ -1081,12 +1335,46 @@ libpng know that there are some bytes missing from the start of the file.
 
     png_set_sig_bytes(png_ptr, number);
 
+You can change the zlib compression buffer size to be used while
+reading compressed data with
+
+    png_set_compression_buffer_size(png_ptr, buffer_size);
+
+where the default size is 8192 bytes.  Note that the buffer size
+is changed immediately and the buffer is reallocated immediately,
+instead of setting a flag to be acted upon later.
+
+If you want CRC errors to be handled in a different manner than
+the default, use
+
+    png_set_crc_action(png_ptr, crit_action, ancil_action);
+
+The values for png_set_crc_action() say how libpng is to handle CRC errors in
+ancillary and critical chunks, and whether to use the data contained
+therein.  Note that it is impossible to "discard" data in a critical
+chunk.
+
+Choices for (int) crit_action are
+   PNG_CRC_DEFAULT      0  error/quit
+   PNG_CRC_ERROR_QUIT   1  error/quit
+   PNG_CRC_WARN_USE     3  warn/use data
+   PNG_CRC_QUIET_USE    4  quiet/use data
+   PNG_CRC_NO_CHANGE    5  use the current value
+
+Choices for (int) ancil_action are
+   PNG_CRC_DEFAULT      0  error/quit
+   PNG_CRC_ERROR_QUIT   1  error/quit
+   PNG_CRC_WARN_DISCARD 2  warn/discard data
+   PNG_CRC_WARN_USE     3  warn/use data
+   PNG_CRC_QUIET_USE    4  quiet/use data
+   PNG_CRC_NO_CHANGE    5  use the current value
+
 .SS Setting up callback code
 
 You can set up a callback function to handle any unknown chunks in the
 input stream. You must supply the function
 
-    read_chunk_callback(png_ptr ptr,
+    read_chunk_callback(png_structp png_ptr,
          png_unknown_chunkp chunk);
     {
        /* The unknown chunk structure contains your
@@ -1132,8 +1420,8 @@ called after each row has been read, which you can use to control
 a progress meter or the like.  It's demonstrated in pngtest.c.
 You must supply a function
 
-    void read_row_callback(png_ptr ptr, png_uint_32 row,
-       int pass);
+    void read_row_callback(png_structp png_ptr,
+       png_uint_32 row, int pass);
     {
       /* put your code here */
     }
@@ -1159,14 +1447,17 @@ chunk types. To change this, you can call:
                  1: ignore; do not keep
                  2: keep only if safe-to-copy
                  3: keep even if unsafe-to-copy
+
                You can use these definitions:
                  PNG_HANDLE_CHUNK_AS_DEFAULT   0
                  PNG_HANDLE_CHUNK_NEVER        1
                  PNG_HANDLE_CHUNK_IF_SAFE      2
                  PNG_HANDLE_CHUNK_ALWAYS       3
+
     chunk_list - list of chunks affected (a byte string,
                  five bytes per chunk, NULL or '\0' if
                  num_chunks is 0)
+
     num_chunks - number of chunks affected; if 0, all
                  unknown chunks are affected.  If nonzero,
                  only the chunks in the list are affected
@@ -1202,8 +1493,10 @@ callback function:
     #if defined(PNG_UNKNOWN_CHUNKS_SUPPORTED)
       /* ignore all unknown chunks: */
       png_set_keep_unknown_chunks(read_ptr, 1, NULL, 0);
+
       /* except for vpAg: */
       png_set_keep_unknown_chunks(read_ptr, 2, vpAg, 1);
+
       /* also ignore unused known chunks: */
       png_set_keep_unknown_chunks(read_ptr, 1, unused_chunks,
          (int)sizeof(unused_chunks)/5);
@@ -1230,6 +1523,31 @@ If you need to retrieve the limits that are being applied, use
 
    width_max = png_get_user_width_max(png_ptr);
    height_max = png_get_user_height_max(png_ptr);
+
+The PNG specification sets no limit on the number of ancillary chunks
+allowed in a PNG datastream.  You can impose a limit on the total number
+of sPLT, tEXt, iTXt, zTXt, and unknown chunks that will be stored, with
+
+   png_set_chunk_cache_max(png_ptr, user_chunk_cache_max);
+
+where 0x7fffffffL means unlimited.  You can retrieve this limit with
+
+   chunk_cache_max = png_get_chunk_cache_max(png_ptr);
+
+This limit also applies to the number of buffers that can be allocated
+by png_decompress_chunk() while decompressing iTXt, zTXt, and iCCP chunks.
+
+You can also set a limit on the amount of memory that a compressed chunk
+other than IDAT can occupy, with
+
+   png_set_chunk_malloc_max(png_ptr, user_chunk_malloc_max);
+
+and you can retrieve the limit with
+
+   chunk_malloc_max = png_get_chunk_malloc_max(png_ptr);
+
+Any chunks that would cause either of these limits to be exceeded will
+be ignored.
 
 .SS The high-level read interface
 
@@ -1258,14 +1576,16 @@ you want to do are limited to the following set:
     PNG_TRANSFORM_INVERT_ALPHA  Change alpha from opacity
                                 to transparency
     PNG_TRANSFORM_SWAP_ENDIAN   Byte-swap 16-bit samples
+    PNG_TRANSFORM_GRAY_TO_RGB   Expand grayscale samples
+                                to RGB (or GA to RGBA)
 
 (This excludes setting a background color, doing gamma transformation,
-dithering, and setting filler.)  If this is the case, simply do this:
+quantizing, and setting filler.)  If this is the case, simply do this:
 
     png_read_png(png_ptr, info_ptr, png_transforms, NULL)
 
-where png_transforms is an integer containing the bitwise OR of
-some set of transformation flags.  This call is equivalent to png_read_info(),
+where png_transforms is an integer containing the bitwise OR of some
+set of transformation flags.  This call is equivalent to png_read_info(),
 followed the set of transformations indicated by the transform mask,
 then png_read_image(), and finally png_read_end().
 
@@ -1289,17 +1609,22 @@ row_pointers prior to calling png_read_png() with
 
    if (height > PNG_UINT_32_MAX/png_sizeof(png_byte))
       png_error (png_ptr,
-         "Image is too tall to process in memory");
+          "Image is too tall to process in memory");
+
    if (width > PNG_UINT_32_MAX/pixel_size)
       png_error (png_ptr,
-         "Image is too wide to process in memory");
+          "Image is too wide to process in memory");
+
    row_pointers = png_malloc(png_ptr,
-      height*png_sizeof(png_bytep));
+       height*png_sizeof(png_bytep));
+
    for (int i=0; i<height, i++)
       row_pointers[i]=NULL;  /* security precaution */
+
    for (int i=0; i<height, i++)
       row_pointers[i]=png_malloc(png_ptr,
-         width*pixel_size);
+          width*pixel_size);
+
    png_set_rows(png_ptr, info_ptr, &row_pointers);
 
 Alternatively you could allocate your image in one big block and define
@@ -1309,7 +1634,7 @@ If you use png_set_rows(), the application is responsible for freeing
 row_pointers (and row_pointers[i], if they were separately allocated).
 
 If you don't allocate row_pointers ahead of time, png_read_png() will
-do it, and it'll be free'ed when you call png_destroy_*().
+do it, and it'll be free'ed by libpng when you call png_destroy_*().
 
 .SS The low-level read interface
 
@@ -1333,13 +1658,16 @@ in until png_read_end() has read the chunk data following the image.
 
     width          - holds the width of the image
                      in pixels (up to 2^31).
+
     height         - holds the height of the image
                      in pixels (up to 2^31).
+
     bit_depth      - holds the bit depth of one of the
                      image channels.  (valid values are
                      1, 2, 4, 8, 16 and depend also on
                      the color_type.  See also
                      significant bits (sBIT) below).
+
     color_type     - describes which color/alpha channels
                          are present.
                      PNG_COLOR_TYPE_GRAY
@@ -1357,28 +1685,63 @@ in until png_read_end() has read the chunk data following the image.
                      PNG_COLOR_MASK_COLOR
                      PNG_COLOR_MASK_ALPHA
 
+    interlace_type - (PNG_INTERLACE_NONE or
+                     PNG_INTERLACE_ADAM7)
+
+    compression_type - (must be PNG_COMPRESSION_TYPE_BASE
+                     for PNG 1.0)
+
     filter_method  - (must be PNG_FILTER_TYPE_BASE
                      for PNG 1.0, and can also be
                      PNG_INTRAPIXEL_DIFFERENCING if
                      the PNG datastream is embedded in
                      a MNG-1.0 datastream)
-    compression_type - (must be PNG_COMPRESSION_TYPE_BASE
-                     for PNG 1.0)
-    interlace_type - (PNG_INTERLACE_NONE or
-                     PNG_INTERLACE_ADAM7)
-    Any or all of interlace_type, compression_type, of
+
+    Any or all of interlace_type, compression_type, or
     filter_method can be NULL if you are
     not interested in their values.
 
+    Note that png_get_IHDR() returns 32-bit data into
+    the application's width and height variables.
+    This is an unsafe situation if these are 16-bit
+    variables.  In such situations, the
+    png_get_image_width() and png_get_image_height()
+    functions described below are safer.
+
+    width            = png_get_image_width(png_ptr,
+                         info_ptr);
+
+    height           = png_get_image_height(png_ptr,
+                         info_ptr);
+
+    bit_depth        = png_get_bit_depth(png_ptr,
+                         info_ptr);
+
+    color_type       = png_get_color_type(png_ptr,
+                         info_ptr);
+
+    interlace_type   = png_get_interlace_type(png_ptr,
+                         info_ptr);
+
+    compression_type = png_get_compression_type(png_ptr,
+                         info_ptr);
+
+    filter_method    = png_get_filter_type(png_ptr,
+                         info_ptr);
+
     channels = png_get_channels(png_ptr, info_ptr);
+
     channels       - number of channels of info for the
                      color type (valid values are 1 (GRAY,
                      PALETTE), 2 (GRAY_ALPHA), 3 (RGB),
                      4 (RGB_ALPHA or RGB + filler byte))
+
     rowbytes = png_get_rowbytes(png_ptr, info_ptr);
+
     rowbytes       - number of bytes needed to hold a row
 
     signature = png_get_signature(png_ptr, info_ptr);
+
     signature      - holds the signature read from the
                      file (if any).  The data is kept in
                      the same offset it would be if the
@@ -1389,42 +1752,33 @@ in until png_read_end() has read the chunk data following the image.
                      be in signature[4] through signature[7]
                      (see png_set_sig_bytes())).
 
-
-    width            = png_get_image_width(png_ptr,
-                         info_ptr);
-    height           = png_get_image_height(png_ptr,
-                         info_ptr);
-    bit_depth        = png_get_bit_depth(png_ptr,
-                         info_ptr);
-    color_type       = png_get_color_type(png_ptr,
-                         info_ptr);
-    filter_method    = png_get_filter_type(png_ptr,
-                         info_ptr);
-    compression_type = png_get_compression_type(png_ptr,
-                         info_ptr);
-    interlace_type   = png_get_interlace_type(png_ptr,
-                         info_ptr);
-
-
 These are also important, but their validity depends on whether the chunk
 has been read.  The png_get_valid(png_ptr, info_ptr, PNG_INFO_<chunk>) and
 png_get_<chunk>(png_ptr, info_ptr, ...) functions return non-zero if the
 data has been read, or zero if it is missing.  The parameters to the
-png_get_<chunk> are set directly if they are simple data types, or a pointer
-into the info_ptr is returned for any complex types.
+png_get_<chunk> are set directly if they are simple data types, or a
+pointer into the info_ptr is returned for any complex types.
 
     png_get_PLTE(png_ptr, info_ptr, &palette,
                      &num_palette);
+
     palette        - the palette for the file
                      (array of png_color)
+
     num_palette    - number of entries in the palette
 
-    png_get_gAMA(png_ptr, info_ptr, &gamma);
-    gamma          - the gamma the file is written
-                     at (PNG_INFO_gAMA)
+    png_get_gAMA(png_ptr, info_ptr, &file_gamma);
+    png_get_gAMA_fixed(png_ptr, info_ptr, &int_file_gamma);
+
+    file_gamma     - the gamma at which the file is
+                     written (PNG_INFO_gAMA)
+
+    int_file_gamma - 100,000 times the gamma at which the
+                     file is written
 
     png_get_sRGB(png_ptr, info_ptr, &srgb_intent);
-    srgb_intent    - the rendering intent (PNG_INFO_sRGB)
+
+    file_srgb_intent - the rendering intent (PNG_INFO_sRGB)
                      The presence of the sRGB chunk
                      means that the pixel data is in the
                      sRGB color space.  This chunk also
@@ -1433,71 +1787,97 @@ into the info_ptr is returned for any complex types.
 
     png_get_iCCP(png_ptr, info_ptr, &name,
        &compression_type, &profile, &proflen);
-    name            - The profile name.
-    compression     - The compression type; always
-                      PNG_COMPRESSION_TYPE_BASE for PNG 1.0.
-                      You may give NULL to this argument to
-                      ignore it.
-    profile         - International Color Consortium color
-                      profile data. May contain NULs.
-    proflen         - length of profile data in bytes.
+
+    name             - The profile name.
+
+    compression_type - The compression type; always
+                       PNG_COMPRESSION_TYPE_BASE for PNG 1.0.
+                       You may give NULL to this argument to
+                       ignore it.
+
+    profile          - International Color Consortium color
+                       profile data. May contain NULs.
+
+    proflen          - length of profile data in bytes.
 
     png_get_sBIT(png_ptr, info_ptr, &sig_bit);
+
     sig_bit        - the number of significant bits for
                      (PNG_INFO_sBIT) each of the gray,
                      red, green, and blue channels,
                      whichever are appropriate for the
                      given color type (png_color_16)
 
-    png_get_tRNS(png_ptr, info_ptr, &trans, &num_trans,
-                     &trans_values);
-    trans          - array of transparent entries for
-                     palette (PNG_INFO_tRNS)
-    trans_values   - graylevel or color sample values of
-                     the single transparent color for
-                     non-paletted images (PNG_INFO_tRNS)
+    png_get_tRNS(png_ptr, info_ptr, &trans_alpha,
+                     &num_trans, &trans_color);
+
+    trans_alpha    - array of alpha (transparency)
+                     entries for palette (PNG_INFO_tRNS)
+
     num_trans      - number of transparent entries
                      (PNG_INFO_tRNS)
 
+    trans_color    - graylevel or color sample values of
+                     the single transparent color for
+                     non-paletted images (PNG_INFO_tRNS)
+
     png_get_hIST(png_ptr, info_ptr, &hist);
                      (PNG_INFO_hIST)
+
     hist           - histogram of palette (array of
                      png_uint_16)
 
     png_get_tIME(png_ptr, info_ptr, &mod_time);
+
     mod_time       - time image was last modified
                     (PNG_VALID_tIME)
 
     png_get_bKGD(png_ptr, info_ptr, &background);
+
     background     - background color (PNG_VALID_bKGD)
                      valid 16-bit red, green and blue
                      values, regardless of color_type
 
     num_comments   = png_get_text(png_ptr, info_ptr,
                      &text_ptr, &num_text);
+
     num_comments   - number of comments
+
     text_ptr       - array of png_text holding image
                      comments
+
     text_ptr[i].compression - type of compression used
                  on "text" PNG_TEXT_COMPRESSION_NONE
                            PNG_TEXT_COMPRESSION_zTXt
                            PNG_ITXT_COMPRESSION_NONE
                            PNG_ITXT_COMPRESSION_zTXt
+
     text_ptr[i].key   - keyword for comment.  Must contain
                          1-79 characters.
+
     text_ptr[i].text  - text comments for current
                          keyword.  Can be empty.
+
     text_ptr[i].text_length - length of text string,
                  after decompression, 0 for iTXt
+
     text_ptr[i].itxt_length - length of itxt string,
                  after decompression, 0 for tEXt/zTXt
+
     text_ptr[i].lang  - language of comment (empty
                          string for unknown).
+
     text_ptr[i].lang_key  - keyword in UTF-8
                          (empty string for unknown).
+
+    Note that the itxt_length, lang, and lang_key
+    members of the text_ptr structure only exist
+    when the library is built with iTXt chunk support.
+
     num_text       - number of comments (same as
                      num_comments; you can put NULL here
                      to avoid the duplication)
+
     Note while png_set_text() will accept text, language,
     and translated keywords that can be NULL pointers, the
     structure returned by png_get_text will always contain
@@ -1506,49 +1886,68 @@ into the info_ptr is returned for any complex types.
 
     num_spalettes = png_get_sPLT(png_ptr, info_ptr,
        &palette_ptr);
+
+    num_spalettes  - number of sPLT chunks read.
+
     palette_ptr    - array of palette structures holding
                      contents of one or more sPLT chunks
                      read.
-    num_spalettes  - number of sPLT chunks read.
 
     png_get_oFFs(png_ptr, info_ptr, &offset_x, &offset_y,
        &unit_type);
+
     offset_x       - positive offset from the left edge
                      of the screen
+
     offset_y       - positive offset from the top edge
                      of the screen
+
     unit_type      - PNG_OFFSET_PIXEL, PNG_OFFSET_MICROMETER
 
     png_get_pHYs(png_ptr, info_ptr, &res_x, &res_y,
        &unit_type);
+
     res_x          - pixels/unit physical resolution in
                      x direction
+
     res_y          - pixels/unit physical resolution in
                      x direction
+
     unit_type      - PNG_RESOLUTION_UNKNOWN,
                      PNG_RESOLUTION_METER
 
     png_get_sCAL(png_ptr, info_ptr, &unit, &width,
        &height)
+
     unit        - physical scale units (an integer)
+
     width       - width of a pixel in physical scale units
+
     height      - height of a pixel in physical scale units
                  (width and height are doubles)
 
     png_get_sCAL_s(png_ptr, info_ptr, &unit, &width,
        &height)
+
     unit        - physical scale units (an integer)
+
     width       - width of a pixel in physical scale units
+
     height      - height of a pixel in physical scale units
                  (width and height are strings like "2.54")
 
     num_unknown_chunks = png_get_unknown_chunks(png_ptr,
        info_ptr, &unknowns)
+
     unknowns          - array of png_unknown_chunk
                         structures holding unknown chunks
+
     unknowns[i].name  - name of unknown chunk
+
     unknowns[i].data  - data of unknown chunk
+
     unknowns[i].size  - size of unknown chunk's data
+
     unknowns[i].location - position of chunk in file
 
     The value of "i" corresponds to the order in which the
@@ -1560,34 +1959,55 @@ forms:
 
     res_x = png_get_x_pixels_per_meter(png_ptr,
        info_ptr)
+
     res_y = png_get_y_pixels_per_meter(png_ptr,
        info_ptr)
+
     res_x_and_y = png_get_pixels_per_meter(png_ptr,
        info_ptr)
+
     res_x = png_get_x_pixels_per_inch(png_ptr,
        info_ptr)
+
     res_y = png_get_y_pixels_per_inch(png_ptr,
        info_ptr)
+
     res_x_and_y = png_get_pixels_per_inch(png_ptr,
        info_ptr)
+
     aspect_ratio = png_get_pixel_aspect_ratio(png_ptr,
        info_ptr)
 
-   (Each of these returns 0 [signifying "unknown"] if
+    Each of these returns 0 [signifying "unknown"] if
        the data is not present or if res_x is 0;
-       res_x_and_y is 0 if res_x != res_y)
+       res_x_and_y is 0 if res_x != res_y
+
+    Note that because of the way the resolutions are
+       stored internally, the inch conversions won't
+       come out to exactly even number.  For example,
+       72 dpi is stored as 0.28346 pixels/meter, and
+       when this is retrieved it is 71.9988 dpi, so
+       be sure to round the returned value appropriately
+       if you want to display a reasonable-looking result. 
 
 The data from the oFFs chunk can be retrieved in several convenient
 forms:
 
     x_offset = png_get_x_offset_microns(png_ptr, info_ptr);
+
     y_offset = png_get_y_offset_microns(png_ptr, info_ptr);
+
     x_offset = png_get_x_offset_inches(png_ptr, info_ptr);
+
     y_offset = png_get_y_offset_inches(png_ptr, info_ptr);
 
-   (Each of these returns 0 [signifying "unknown" if both
+    Each of these returns 0 [signifying "unknown" if both
        x and y are 0] if the data is not present or if the
-       chunk is present but the unit is the pixel)
+       chunk is present but the unit is the pixel.  The
+       remark about inexact inch conversions applies here
+       as well, because a value in inches can't always be
+       converted to microns and back without some loss
+       of precision.
 
 For more information, see the png_info definition in png.h and the
 PNG specification for chunk contents.  Be careful with trusting
@@ -1674,11 +2094,48 @@ things.
 As of libpng version 1.2.9, png_set_expand_gray_1_2_4_to_8() was
 added.  It expands the sample depth without changing tRNS to alpha.
 
+As of libpng version 1.5.1, not all possible expansions are supported.
+
+In the following table, the 01 means grayscale with depth<8, 31 means
+indexed with depth<8, other numerals represent the color type, "T" means
+the tRNS chunk is present, A means an alpha channel is present, and O
+means tRNS or alpha is present but all pixels in the image are opaque.
+
+  FROM  01  31   0  0T  0O   2  2T  2O   3  3T  3O  4A  4O  6A  6O 
+   TO
+   01    -                   
+   31        -
+    0    1       -           
+   0T                -
+   0O                    -
+    2           GX           -
+   2T                            -
+   2O                                -
+    3        1                           -
+   3T                                        -
+   3O                                            -
+   4A                T                               -
+   4O                                                    -
+   6A               GX         TX           TX               -
+   6O                   GX                      TX               -
+
+Within the matrix,
+     "-" means the transformation is not supported.
+     "X" means the transformation is obtained by png_set_expand().
+     "1" means the transformation is obtained by
+         png_set_expand_gray_1_2_4_to_8
+     "G" means the transformation is obtained by
+         png_set_gray_to_rgb().
+     "P" means the transformation is obtained by
+         png_set_expand_palette_to_rgb().
+     "T" means the transformation is obtained by
+         png_set_tRNS_to_alpha().
+
 PNG can have files with 16 bits per channel.  If you only can handle
 8 bits per channel, this will strip the pixels down to 8 bit.
 
     if (bit_depth == 16)
-        png_set_strip_16(png_ptr);
+       png_set_strip_16(png_ptr);
 
 If, for some reason, you don't need the alpha channel on an image,
 and you want to remove it rather than combining it with the background
@@ -1686,7 +2143,7 @@ and you want to remove it rather than combining it with the background
 it with the background, so that's what you should probably do):
 
     if (color_type & PNG_COLOR_MASK_ALPHA)
-        png_set_strip_alpha(png_ptr);
+       png_set_strip_alpha(png_ptr);
 
 In PNG files, the alpha channel in an image
 is the level of opacity.  If you need the alpha channel in an image to
@@ -1703,32 +2160,32 @@ files.  This code expands to 1 pixel per byte without changing the
 values of the pixels:
 
     if (bit_depth < 8)
-        png_set_packing(png_ptr);
+       png_set_packing(png_ptr);
 
 PNG files have possible bit depths of 1, 2, 4, 8, and 16.  All pixels
 stored in a PNG image have been "scaled" or "shifted" up to the next
-higher possible bit depth (e.g. from 5 bits/sample in the range [0,31] to
-8 bits/sample in the range [0, 255]).  However, it is also possible to
-convert the PNG pixel data back to the original bit depth of the image.
-This call reduces the pixels back down to the original bit depth:
+higher possible bit depth (e.g. from 5 bits/sample in the range [0,31]
+to 8 bits/sample in the range [0, 255]).  However, it is also possible
+to convert the PNG pixel data back to the original bit depth of the
+image.  This call reduces the pixels back down to the original bit depth:
 
     png_color_8p sig_bit;
 
     if (png_get_sBIT(png_ptr, info_ptr, &sig_bit))
-        png_set_shift(png_ptr, sig_bit);
+       png_set_shift(png_ptr, sig_bit);
 
 PNG files store 3-color pixels in red, green, blue order.  This code
 changes the storage of the pixels to blue, green, red:
 
     if (color_type == PNG_COLOR_TYPE_RGB ||
         color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-        png_set_bgr(png_ptr);
+       png_set_bgr(png_ptr);
 
 PNG files store RGB pixels packed into 3 or 6 bytes. This code expands them
 into 4 or 8 bytes for windowing systems that need them in this format:
 
     if (color_type == PNG_COLOR_TYPE_RGB)
-        png_set_filler(png_ptr, filler, PNG_FILLER_BEFORE);
+       png_set_filler(png_ptr, filler, PNG_FILLER_BEFORE);
 
 where "filler" is the 8 or 16-bit number to fill with, and the location is
 either PNG_FILLER_BEFORE or PNG_FILLER_AFTER, depending upon whether
@@ -1741,8 +2198,8 @@ Note that png_set_filler() does not change the color type.  If you want
 to do that, you can add a true alpha channel with
 
     if (color_type == PNG_COLOR_TYPE_RGB ||
-           color_type == PNG_COLOR_TYPE_GRAY)
-    png_set_add_alpha(png_ptr, filler, PNG_FILLER_AFTER);
+       color_type == PNG_COLOR_TYPE_GRAY)
+       png_set_add_alpha(png_ptr, filler, PNG_FILLER_AFTER);
 
 where "filler" contains the alpha value to assign to each pixel.
 This function was added in libpng-1.2.7.
@@ -1751,33 +2208,36 @@ If you are reading an image with an alpha channel, and you need the
 data as ARGB instead of the normal PNG format RGBA:
 
     if (color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-        png_set_swap_alpha(png_ptr);
+       png_set_swap_alpha(png_ptr);
 
 For some uses, you may want a grayscale image to be represented as
 RGB.  This code will do that conversion:
 
     if (color_type == PNG_COLOR_TYPE_GRAY ||
         color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-          png_set_gray_to_rgb(png_ptr);
+       png_set_gray_to_rgb(png_ptr);
 
 Conversely, you can convert an RGB or RGBA image to grayscale or grayscale
 with alpha.
 
     if (color_type == PNG_COLOR_TYPE_RGB ||
         color_type == PNG_COLOR_TYPE_RGB_ALPHA)
-          png_set_rgb_to_gray_fixed(png_ptr, error_action,
-             int red_weight, int green_weight);
+       png_set_rgb_to_gray_fixed(png_ptr, error_action,
+           int red_weight, int green_weight);
 
     error_action = 1: silently do the conversion
+
     error_action = 2: issue a warning if the original
                       image has any pixel where
                       red != green or red != blue
+
     error_action = 3: issue an error and abort the
                       conversion if the original
                       image has any pixel where
                       red != green or red != blue
 
     red_weight:       weight of red component times 100000
+
     green_weight:     weight of green component times 100000
                       If either weight is negative, default
                       weights (21268, 71514) are used.
@@ -1804,16 +2264,12 @@ Copyright (c) 1998-01-04 Charles Poynton <poynton at inforamp.net>
 
     Y = 0.212671 * R + 0.715160 * G + 0.072169 * B
 
-Libpng approximates this with
+Libpng approximates this with integers scaled by 32768:
 
-    Y = 0.21268 * R    + 0.7151 * G    + 0.07217 * B
-
-which can be expressed with integers as
-
-    Y = (6969 * R + 23434 * G + 2365 * B)/32768
+    Y = (6968 * R + 23434 * G + 2366 * B)/32768
 
 The calculation is done in a linear colorspace, if the image gamma
-is known.
+can be determined.
 
 If you have a grayscale and you are using png_set_expand_depth(),
 png_set_expand(), or png_set_gray_to_rgb to change to truecolor or to
@@ -1828,11 +2284,11 @@ or as an RGB triplet that may or may not be in the palette (need_expand = 0).
     png_color_16p image_background;
 
     if (png_get_bKGD(png_ptr, info_ptr, &image_background))
-        png_set_background(png_ptr, image_background,
-          PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
+       png_set_background(png_ptr, image_background,
+           PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
     else
-        png_set_background(png_ptr, &my_background,
-          PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
+       png_set_background(png_ptr, &my_background,
+           PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
 
 The png_set_background() function tells libpng to composite images
 with alpha or simple transparency against the supplied background
@@ -1865,6 +2321,7 @@ a slightly smaller exponent is better.
    {
       screen_gamma = user_defined_screen_gamma;
    }
+
    /* One way that applications can share the same
       screen gamma value */
    else if ((gamma_str = getenv("SCREEN_GAMMA"))
@@ -1872,18 +2329,22 @@ a slightly smaller exponent is better.
    {
       screen_gamma = (double)atof(gamma_str);
    }
+
    /* If we don't have another value */
    else
    {
       screen_gamma = 2.2; /* A good guess for a
            PC monitor in a bright office or a dim room */
+
       screen_gamma = 2.0; /* A good guess for a
            PC monitor in a dark room */
+
       screen_gamma = 1.7 or 1.0;  /* A good
            guess for Mac systems */
    }
 
-The png_set_gamma() function handles gamma transformations of the data.
+The functions png_set_gamma() and its fixed point equivalent
+png_set_gamma_fixed() handle gamma transformations of the data.
 Pass both the file gamma and the current screen_gamma.  If the file does
 not have a gamma value, you can pass one anyway if you have an idea what
 it is (usually 0.45455 is a good guess for GIF images on PCs).  Note
@@ -1892,16 +2353,17 @@ on gamma in the PNG specification for an excellent description of what
 gamma is, and why all applications should support it.  It is strongly
 recommended that PNG viewers support gamma correction.
 
-   if (png_get_gAMA(png_ptr, info_ptr, &gamma))
-      png_set_gamma(png_ptr, screen_gamma, gamma);
+   if (png_get_gAMA(png_ptr, info_ptr, &file_gamma))
+      png_set_gamma(png_ptr, screen_gamma, file_gamma);
+
    else
       png_set_gamma(png_ptr, screen_gamma, 0.45455);
 
 If you need to reduce an RGB file to a paletted file, or if a paletted
-file has more entries then will fit on your screen, png_set_dither()
-will do that.  Note that this is a simple match dither that merely
+file has more entries then will fit on your screen, png_set_quantize()
+will do that.  Note that this is a simple match quantization that merely
 finds the closest color available.  This should work fairly well with
-optimized palettes, and fairly badly with linear color cubes.  If you
+optimized palettes, but fairly badly with linear color cubes.  If you
 pass a palette that is larger then maximum_colors, the file will
 reduce the number of colors in the palette so it will fit into
 maximum_colors.  If there is a histogram, it will use it to make
@@ -1911,21 +2373,22 @@ histogram, it may not do as good a job.
    if (color_type & PNG_COLOR_MASK_COLOR)
    {
       if (png_get_valid(png_ptr, info_ptr,
-         PNG_INFO_PLTE))
+          PNG_INFO_PLTE))
       {
          png_uint_16p histogram = NULL;
 
          png_get_hIST(png_ptr, info_ptr,
-            &histogram);
-         png_set_dither(png_ptr, palette, num_palette,
+             &histogram);
+         png_set_quantize(png_ptr, palette, num_palette,
             max_screen_colors, histogram, 1);
       }
+
       else
       {
          png_color std_color_cube[MAX_SCREEN_COLORS] =
             { ... colors ... };
 
-         png_set_dither(png_ptr, std_color_cube,
+         png_set_quantize(png_ptr, std_color_cube,
             MAX_SCREEN_COLORS, MAX_SCREEN_COLORS,
             NULL,0);
       }
@@ -1941,7 +2404,7 @@ zero):
 This function can also be used to invert grayscale and gray-alpha images:
 
    if (color_type == PNG_COLOR_TYPE_GRAY ||
-        color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+       color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
       png_set_invert_mono(png_ptr);
 
 PNG files store 16 bit pixels in network byte order (big-endian,
@@ -1950,7 +2413,7 @@ other way (little-endian, i.e. least significant bits first, the
 way PCs store them):
 
     if (bit_depth == 16)
-        png_set_swap(png_ptr);
+       png_set_swap(png_ptr);
 
 If you are using packed-pixel images (1, 2, or 4 bits/pixel), and you
 need to change the order the pixels are packed into bytes, you can use:
@@ -1963,15 +2426,28 @@ the existing ones meets your needs.  This is done by setting a callback
 with
 
     png_set_read_user_transform_fn(png_ptr,
-       read_transform_fn);
+        read_transform_fn);
 
 You must supply the function
 
-    void read_transform_fn(png_ptr ptr, row_info_ptr
-       row_info, png_bytep data)
+    void read_transform_fn(png_structp png_ptr, row_info_ptr
+        row_info, png_bytep data)
 
 See pngtest.c for a working example.  Your function will be called
-after all of the other transformations have been processed.
+after all of the other transformations have been processed.  Take care with
+interlaced images if you do the interlace yourself - the width of the row is the
+width in 'row_info', not the overall image width.
+
+If supported libpng provides two information routines that you can use to find
+where you are in processing the image:
+
+   png_get_current_pass_number(png_structp png_ptr);
+   png_get_current_row_number(png_structp png_ptr);
+
+Don't try using these outside a transform callback - firstly they are only
+supported if user transforms are supported, secondly they may well return
+unexpected results unless the row is actually being processed at the moment they
+are called.
 
 You can also set up a pointer to a user structure for use by your
 callback function, and you can inform libpng that your transform
@@ -1979,7 +2455,7 @@ function will change the number of channels or bit depth with the
 function
 
     png_set_user_transform_info(png_ptr, user_ptr,
-       user_depth, user_channels);
+        user_depth, user_channels);
 
 The user's application, not libpng, is responsible for allocating and
 freeing any memory required for the user structure.
@@ -1988,7 +2464,7 @@ You can retrieve the pointer via the function
 png_get_user_transform_ptr().  For example:
 
     voidp read_user_transform_ptr =
-       png_get_user_transform_ptr(png_ptr);
+        png_get_user_transform_ptr(png_ptr);
 
 The last thing to handle is interlacing; this is covered in detail below,
 but you must call the function here if you want libpng to handle expansion
@@ -2013,6 +2489,15 @@ are allocating one large chunk, you will need to build an
 array of pointers to each row, as it will be needed for some
 of the functions below.
 
+Remember: Before you call png_read_update_info(), the png_get_
+functions return the values corresponding to the original PNG image.
+After you call png_read_update_info the values refer to the image
+that libpng will output.  Consequently you must call all the png_set_
+functions before you call png_read_update_info().  This is particularly
+important for png_set_interlace_handling() - if you are going to call
+png_read_update_info() you must call png_set_interlace_handling() before
+it unless you want to receive interlaced output.
+
 .SS Reading image data
 
 After you've allocated memory, you can read the image data.
@@ -2022,9 +2507,10 @@ call png_read_image() and libpng will read in all the image data
 and put it in the memory area supplied.  You will need to pass in
 an array of pointers to each row.
 
-This function automatically handles interlacing, so you don't need
-to call png_set_interlace_handling() or call this function multiple
-times, or any of that other stuff necessary with png_read_rows().
+This function automatically handles interlacing, so you don't
+need to call png_set_interlace_handling() (unless you call
+png_read_update_info()) or call this function multiple times, or any
+of that other stuff necessary with png_read_rows().
 
    png_read_image(png_ptr, row_pointers);
 
@@ -2039,7 +2525,7 @@ use png_read_rows() instead.  If there is no interlacing (check
 interlace_type == PNG_INTERLACE_NONE), this is simple:
 
     png_read_rows(png_ptr, row_pointers, NULL,
-       number_of_rows);
+        number_of_rows);
 
 where row_pointers is the same as in the png_read_image() call.
 
@@ -2051,13 +2537,15 @@ a single row_pointer instead of an array of row_pointers:
 
 If the file is interlaced (interlace_type != 0 in the IHDR chunk), things
 get somewhat harder.  The only current (PNG Specification version 1.2)
-interlacing type for PNG is (interlace_type == PNG_INTERLACE_ADAM7)
-is a somewhat complicated 2D interlace scheme, known as Adam7, that
+interlacing type for PNG is (interlace_type == PNG_INTERLACE_ADAM7);
+a somewhat complicated 2D interlace scheme, known as Adam7, that
 breaks down an image into seven smaller images of varying size, based
-on an 8x8 grid.
+on an 8x8 grid.  This number is defined (from libpng 1.5) as
+PNG_INTERLACE_ADAM7_PASSES in png.h
 
 libpng can fill out those images or it can give them to you "as is".
-If you want them filled out, there are two ways to do that.  The one
+It is almost always better to have libpng handle the interlacing for you.
+If you want the images filled out, there are two ways to do that.  The one
 mentioned in the PNG specification is to expand each pixel to cover
 those pixels that have not been read yet (the "rectangle" method).
 This results in a blocky image for the first pass, which gradually
@@ -2067,37 +2555,20 @@ rest of the image remaining whatever colors they were initialized to
 before the start of the read.  The first method usually looks better,
 but tends to be slower, as there are more pixels to put in the rows.
 
-If you don't want libpng to handle the interlacing details, just call
-png_read_rows() seven times to read in all seven images.  Each of the
-images is a valid image by itself, or they can all be combined on an
-8x8 grid to form a single image (although if you intend to combine them
-you would be far better off using the libpng interlace handling).
-
-The first pass will return an image 1/8 as wide as the entire image
-(every 8th column starting in column 0) and 1/8 as high as the original
-(every 8th row starting in row 0), the second will be 1/8 as wide
-(starting in column 4) and 1/8 as high (also starting in row 0).  The
-third pass will be 1/4 as wide (every 4th pixel starting in column 0) and
-1/8 as high (every 8th row starting in row 4), and the fourth pass will
-be 1/4 as wide and 1/4 as high (every 4th column starting in column 2,
-and every 4th row starting in row 0).  The fifth pass will return an
-image 1/2 as wide, and 1/4 as high (starting at column 0 and row 2),
-while the sixth pass will be 1/2 as wide and 1/2 as high as the original
-(starting in column 1 and row 0).  The seventh and final pass will be as
-wide as the original, and 1/2 as high, containing all of the odd
-numbered scanlines.  Phew!
-
-If you want libpng to expand the images, call this before calling
-png_start_read_image() or png_read_update_info():
+If, as is likely, you want libpng to expand the images, call this before
+calling png_start_read_image() or png_read_update_info():
 
     if (interlace_type == PNG_INTERLACE_ADAM7)
-        number_of_passes
+       number_of_passes
            = png_set_interlace_handling(png_ptr);
 
-This will return the number of passes needed.  Currently, this
-is seven, but may change if another interlace type is added.
-This function can be called even if the file is not interlaced,
-where it will return one pass.
+This will return the number of passes needed.  Currently, this is seven,
+but may change if another interlace type is added.  This function can be
+called even if the file is not interlaced, where it will return one pass.
+You then need to read the whole image 'number_of_passes' times.  Each time
+will distribute the pixels from the current pass to the correct place in
+the output image, so you need to supply the same rows to png_read_rows in
+each pass.
 
 If you are not going to display the image after each pass, but are
 going to wait until the entire image is read in, use the sparkle
@@ -2114,14 +2585,104 @@ not the data.  Each pass only writes the pixels appropriate for that
 pass, and assumes the data from previous passes is still valid.
 
     png_read_rows(png_ptr, row_pointers, NULL,
-       number_of_rows);
+        number_of_rows);
 
 If you only want the first effect (the rectangles), do the same as
 before except pass the row buffer in the third parameter, and leave
 the second parameter NULL.
 
     png_read_rows(png_ptr, NULL, row_pointers,
-       number_of_rows);
+        number_of_rows);
+
+If you don't want libpng to handle the interlacing details, just call
+png_read_rows() PNG_INTERLACE_ADAM7_PASSES times to read in all the images.
+Each of the images is a valid image by itself, however you will almost
+certainly need to distribute the pixels from each sub-image to the
+correct place.  This is where everything gets very tricky.
+
+If you want to retrieve the separate images you must pass the correct
+number of rows to each successive call of png_read_rows().  The calculation
+gets pretty complicated for small images, where some sub-images may
+not even exist because either their width or height ends up zero.
+libpng provides two macros to help you in 1.5 and later versions:
+
+   png_uint_32 width = PNG_PASS_COLS(image_width, pass_number);
+   png_uint_32 height = PNG_PASS_ROWS(image_height, pass_number);
+
+Respectively these tell you the width and height of the sub-image
+corresponding to the numbered pass.  'pass' is in in the range 0 to 6 -
+this can be confusing because the specification refers to the same passes
+as 1 to 7!  Be careful, you must check both the width and height before
+calling png_read_rows() and not call it for that pass if either is zero.
+
+You can, of course, read each sub-image row by row.  If you want to
+produce optimal code to make a pixel-by-pixel transformation of an
+interlaced image this is the best approach; read each row of each pass,
+transform it, and write it out to a new interlaced image.
+
+If you want to de-interlace the image yourself libpng provides further
+macros to help that tell you where to place the pixels in the output image.
+Because the interlacing scheme is rectangular - sub-image pixels are always
+arranged on a rectangular grid - all you need to know for each pass is the
+starting column and row in the output image of the first pixel plus the
+spacing between each pixel.  As of libpng 1.5 there are four macros to
+retrieve this information:
+
+   png_uint_32 x = PNG_PASS_START_COL(pass);
+   png_uint_32 y = PNG_PASS_START_ROW(pass);
+   png_uint_32 xStep = 1U << PNG_PASS_COL_SHIFT(pass);
+   png_uint_32 yStep = 1U << PNG_PASS_ROW_SHIFT(pass);
+
+These allow you to write the obvious loop:
+
+   png_uint_32 input_y = 0;
+   png_uint_32 output_y = PNG_PASS_START_ROW(pass);
+
+   while (output_y < output_image_height)
+   {
+      png_uint_32 input_x = 0;
+      png_uint_32 output_x = PNG_PASS_START_COL(pass);
+
+      while (output_x < output_image_width)
+      {
+         image[output_y][output_x] =
+             subimage[pass][input_y][input_x++];
+
+         output_x += xStep;
+      }
+
+      ++input_y;
+      output_y += yStep;
+   }
+
+Notice that the steps between successive output rows and columns are
+returned as shifts.  This is possible because the pixels in the subimages
+are always a power of 2 apart - 1, 2, 4 or 8 pixels - in the original
+image.  In practice you may need to directly calculate the output coordinate
+given an input coordinate.  libpng provides two further macros for this
+purpose:
+
+   png_uint_32 output_x = PNG_COL_FROM_PASS_COL(input_x, pass);
+   png_uint_32 output_y = PNG_ROW_FROM_PASS_ROW(input_y, pass);
+
+Finally a pair of macros are provided to tell you if a particular image
+row or column appears in a given pass:
+
+   int col_in_pass = PNG_COL_IN_INTERLACE_PASS(output_x, pass);
+   int row_in_pass = PNG_ROW_IN_INTERLACE_PASS(output_y, pass);
+
+Bear in mind that you will probably also need to check the width and height
+of the pass in addition to the above to be sure the pass even exists!
+
+With any luck you are convinced by now that you don't want to do your own
+interlace handling.  In reality normally the only good reason for doing this
+is if you are processing PNG files on a pixel-by-pixel basis and don't want
+to load the whole file into memory when it is interlaced.
+
+libpng includes a test program, pngvalid, that illustrates reading and
+writing of interlaced images.  If you can't get interlacing to work in your
+code and don't want to leave it to libpng (the recommended approach) see
+how pngvalid.c does it.
 
 .SS Finishing a sequential read
 
@@ -2143,6 +2704,7 @@ It is also possible to individually free the info_ptr members that
 point to libpng-allocated storage with the following function:
 
     png_free_data(png_ptr, info_ptr, mask, seq)
+
     mask - identifies data to be freed, a mask
            containing the bitwise OR of one or
            more of
@@ -2152,17 +2714,17 @@ point to libpng-allocated storage with the following function:
              PNG_FREE_SCAL, PNG_FREE_SPLT,
              PNG_FREE_TEXT, PNG_FREE_UNKN,
            or simply PNG_FREE_ALL
+
     seq  - sequence number of item to be freed
            (-1 for all items)
 
 This function may be safely called when the relevant storage has
 already been freed, or has not yet been allocated, or was allocated
-by the user and not by libpng,  and will in those
-cases do nothing.  The "seq" parameter is ignored if only one item
-of the selected data type, such as PLTE, is allowed.  If "seq" is not
--1, and multiple items are allowed for the data type identified in
-the mask, such as text or sPLT, only the n'th item in the structure
-is freed, where n is "seq".
+by the user and not by libpng,  and will in those cases do nothing.
+The "seq" parameter is ignored if only one item of the selected data
+type, such as PLTE, is allowed.  If "seq" is not -1, and multiple items
+are allowed for the data type identified in the mask, such as text or
+sPLT, only the n'th item in the structure is freed, where n is "seq".
 
 The default behavior is only to free data that was allocated internally
 by libpng.  This can be changed, so that libpng will not free the data,
@@ -2170,12 +2732,14 @@ or so that it will free data that was allocated by the user with png_malloc()
 or png_zalloc() and passed in via a png_set_*() function, with
 
     png_data_freer(png_ptr, info_ptr, freer, mask)
-    mask   - which data elements are affected
-             same choices as in png_free_data()
+
     freer  - one of
                PNG_DESTROY_WILL_FREE_DATA
                PNG_SET_WILL_FREE_DATA
                PNG_USER_WILL_FREE_DATA
+
+    mask   - which data elements are affected
+             same choices as in png_free_data()
 
 This function only affects data that has already been allocated.
 You can call this function after reading the PNG data but before calling
@@ -2201,10 +2765,11 @@ if you transfer responsibility for free'ing text_ptr from libpng to your
 application, your application must not separately free those members.
 
 The png_free_data() function will turn off the "valid" flag for anything
-it frees.  If you need to turn the flag off for a chunk that was freed by your
-application instead of by libpng, you can use
+it frees.  If you need to turn the flag off for a chunk that was freed by
+your application instead of by libpng, you can use
 
     png_set_invalid(png_ptr, info_ptr, mask);
+
     mask - identifies the chunks to be made invalid,
            containing the bitwise OR of one or
            more of
@@ -2244,21 +2809,24 @@ png_infop info_ptr;
     png_ptr = png_create_read_struct
         (PNG_LIBPNG_VER_STRING, (png_voidp)user_error_ptr,
          user_error_fn, user_warning_fn);
+
     if (!png_ptr)
         return (ERROR);
+
     info_ptr = png_create_info_struct(png_ptr);
+
     if (!info_ptr)
     {
-        png_destroy_read_struct(&png_ptr, (png_infopp)NULL,
-           (png_infopp)NULL);
-        return (ERROR);
+       png_destroy_read_struct(&png_ptr,
+          (png_infopp)NULL, (png_infopp)NULL);
+       return (ERROR);
     }
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        png_destroy_read_struct(&png_ptr, &info_ptr,
-           (png_infopp)NULL);
-        return (ERROR);
+       png_destroy_read_struct(&png_ptr, &info_ptr,
+          (png_infopp)NULL);
+       return (ERROR);
     }
 
     /* This one's new.  You can provide functions
@@ -2290,9 +2858,9 @@ png_infop info_ptr;
  {
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        png_destroy_read_struct(&png_ptr, &info_ptr,
+       png_destroy_read_struct(&png_ptr, &info_ptr,
            (png_infopp)NULL);
-        return (ERROR);
+       return (ERROR);
     }
 
     /* This one's new also.  Simply give it a chunk
@@ -2309,6 +2877,12 @@ png_infop info_ptr;
        so there.
      */
     png_process_data(png_ptr, info_ptr, buffer, length);
+
+    /* At this point you can call png_process_data_skip if
+       you want to handle data the library will skip yourself;
+       it simply returns the number of bytes to skip (and stops
+       libpng skipping that number of bytes on the next
+       png_process_data call).
     return 0;
  }
 
@@ -2329,6 +2903,19 @@ png_infop info_ptr;
        any).  You may start getting rows before
        png_process_data() returns, so this is your
        last chance to prepare for that.
+
+       This is where you turn on interlace handling,
+       assuming you don't want to do it yourself.
+
+       If you need to you can stop the processing of
+       your original input data at this point by calling
+       png_process_data_pause.  This returns the number
+       of unprocessed bytes from the last png_process_data
+       call - it is up to you to ensure that the next call
+       sees these bytes again.  If you don't want to bother
+       with this you can get libpng to cache the unread
+       bytes by setting the 'save' parameter (see png.h) but
+       then libpng will have to copy the data internally.
      */
  }
 
@@ -2349,14 +2936,22 @@ png_infop info_ptr;
        supplying them because it may make your life
        easier.
 
-       For the non-NULL rows of interlaced images,
+       If you did not turn on interlace handling then
+       the callback is called for each row of each
+       sub-image when the image is interlaced.  In this
+       case 'row_num' is the row in the sub-image, not
+       the row in the output image as it is in all other
+       cases.
+
+       For the non-NULL rows of interlaced images when
+       you have switched on libpng interlace handling,
        you must call png_progressive_combine_row()
        passing in the row and the old row.  You can
        call this function for NULL rows (it will just
        return) and for non-interlaced images (it just
        does the memcpy for you) if it will make the
        code easier.  Thus, you can just do this for
-       all cases:
+       all cases if you switch on interlace handling;
      */
 
         png_progressive_combine_row(png_ptr, old_row,
@@ -2370,6 +2965,9 @@ png_infop info_ptr;
        for interlaced images), you will have to pass
        the current row, and the function will combine
        the old row and the new row.
+
+       You can also call png_process_data_pause in this
+       callback - see above.
     */
  }
 
@@ -2404,10 +3002,9 @@ using the standard I/O functions, you will need to replace them with
 custom writing functions.  See the discussion under Customizing libpng.
 
     FILE *fp = fopen(file_name, "wb");
+
     if (!fp)
-    {
        return (ERROR);
-    }
 
 Next, png_struct and png_info need to be allocated and initialized.
 As these can be both relatively large, you may not want to store these
@@ -2420,6 +3017,7 @@ both "png_ptr"; you can call them anything you like, such as
     png_structp png_ptr = png_create_write_struct
        (PNG_LIBPNG_VER_STRING, (png_voidp)user_error_ptr,
         user_error_fn, user_warning_fn);
+
     if (!png_ptr)
        return (ERROR);
 
@@ -2427,7 +3025,7 @@ both "png_ptr"; you can call them anything you like, such as
     if (!info_ptr)
     {
        png_destroy_write_struct(&png_ptr,
-         (png_infopp)NULL);
+           (png_infopp)NULL);
        return (ERROR);
     }
 
@@ -2453,7 +3051,7 @@ section below for more information on the libpng error handling.
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-       png_destroy_write_struct(&png_ptr, &info_ptr);
+    png_destroy_write_struct(&png_ptr, &info_ptr);
        fclose(fp);
        return (ERROR);
     }
@@ -2461,8 +3059,12 @@ section below for more information on the libpng error handling.
     return;
 
 If you would rather avoid the complexity of setjmp/longjmp issues,
-you can compile libpng with PNG_SETJMP_NOT_SUPPORTED, in which case
+you can compile libpng with PNG_NO_SETJMP, in which case
 errors will result in a call to PNG_ABORT() which defaults to abort().
+
+You can #define PNG_ABORT() to a function that does something
+more useful than abort(), as long as your function does not
+return.
 
 Now you need to set up the output code.  The default for libpng is to
 use the C function fwrite().  If you use this, you will need to pass a
@@ -2488,7 +3090,7 @@ called after each row has been written, which you can use to control
 a progress meter or the like.  It's demonstrated in pngtest.c.
 You must supply a function
 
-    void write_row_callback(png_ptr, png_uint_32 row,
+    void write_row_callback(png_structp png_ptr, png_uint_32 row,
        int pass);
     {
       /* put your code here */
@@ -2512,14 +3114,15 @@ the filter method, for which the only valid values are 0 (as of the
 July 1999 PNG specification, version 1.2) or 64 (if you are writing
 a PNG datastream that is to be embedded in a MNG datastream).  The third
 parameter is a flag that indicates which filter type(s) are to be tested
-for each scanline.  See the PNG specification for details on the specific filter
-types.
+for each scanline.  See the PNG specification for details on the specific
+filter types.
 
 
     /* turn on or off filtering, and/or choose
        specific filters.  You can use either a single
        PNG_FILTER_VALUE_NAME or the bitwise OR of one
-       or more PNG_FILTER_NAME masks. */
+       or more PNG_FILTER_NAME masks.
+     */
     png_set_filter(png_ptr, 0,
        PNG_FILTER_NONE  | PNG_FILTER_VALUE_NONE |
        PNG_FILTER_SUB   | PNG_FILTER_VALUE_SUB  |
@@ -2528,11 +3131,10 @@ types.
        PNG_FILTER_PAETH | PNG_FILTER_VALUE_PAETH|
        PNG_ALL_FILTERS);
 
-If an application
-wants to start and stop using particular filters during compression,
-it should start out with all of the filters (to ensure that the previous
-row of pixels will be stored in case it's needed later), and then add
-and remove them after the start of compression.
+If an application wants to start and stop using particular filters during
+compression, it should start out with all of the filters (to ensure that
+the previous row of pixels will be stored in case it's needed later),
+and then add and remove them after the start of compression.
 
 If you are writing a PNG datastream that is to be embedded in a MNG
 datastream, the second parameter can be either 0 or 64.
@@ -2576,16 +3178,20 @@ Some of the more important parts of the png_info are:
     png_set_IHDR(png_ptr, info_ptr, width, height,
        bit_depth, color_type, interlace_type,
        compression_type, filter_method)
+
     width          - holds the width of the image
                      in pixels (up to 2^31).
+
     height         - holds the height of the image
                      in pixels (up to 2^31).
+
     bit_depth      - holds the bit depth of one of the
                      image channels.
                      (valid values are 1, 2, 4, 8, 16
                      and depend also on the
                      color_type.  See also significant
                      bits (sBIT) below).
+
     color_type     - describes which color/alpha
                      channels are present.
                      PNG_COLOR_TYPE_GRAY
@@ -2605,8 +3211,10 @@ Some of the more important parts of the png_info are:
 
     interlace_type - PNG_INTERLACE_NONE or
                      PNG_INTERLACE_ADAM7
+
     compression_type - (must be
                      PNG_COMPRESSION_TYPE_DEFAULT)
+
     filter_method  - (must be PNG_FILTER_TYPE_DEFAULT
                      or, if you are writing a PNG to
                      be embedded in a MNG datastream,
@@ -2624,15 +3232,22 @@ width, height, bit_depth, and color_type must be the same in each call.
 
     png_set_PLTE(png_ptr, info_ptr, palette,
        num_palette);
+
     palette        - the palette for the file
                      (array of png_color)
     num_palette    - number of entries in the palette
 
-    png_set_gAMA(png_ptr, info_ptr, gamma);
-    gamma          - the gamma the image was created
-                     at (PNG_INFO_gAMA)
+    png_set_gAMA(png_ptr, info_ptr, file_gamma);
+    png_set_gAMA_fixed(png_ptr, info_ptr, int_file_gamma);
+
+    file_gamma     - the gamma at which the image was
+                     created (PNG_INFO_gAMA)
+
+    int_file_gamma - 100,000 times the gamma at which
+                     the image was created
 
     png_set_sRGB(png_ptr, info_ptr, srgb_intent);
+
     srgb_intent    - the rendering intent
                      (PNG_INFO_sRGB) The presence of
                      the sRGB chunk means that the pixel
@@ -2652,6 +3267,7 @@ width, height, bit_depth, and color_type must be the same in each call.
 
     png_set_sRGB_gAMA_and_cHRM(png_ptr, info_ptr,
        srgb_intent);
+
     srgb_intent    - the rendering intent
                      (PNG_INFO_sRGB) The presence of the
                      sRGB chunk means that the pixel
@@ -2662,49 +3278,61 @@ width, height, bit_depth, and color_type must be the same in each call.
                      written.
 
     png_set_iCCP(png_ptr, info_ptr, name, compression_type,
-                      profile, proflen);
-    name            - The profile name.
-    compression     - The compression type; always
-                      PNG_COMPRESSION_TYPE_BASE for PNG 1.0.
-                      You may give NULL to this argument to
-                      ignore it.
-    profile         - International Color Consortium color
-                      profile data. May contain NULs.
-    proflen         - length of profile data in bytes.
+                       profile, proflen);
+
+    name             - The profile name.
+
+    compression_type - The compression type; always
+                       PNG_COMPRESSION_TYPE_BASE for PNG 1.0.
+                       You may give NULL to this argument to
+                       ignore it.
+
+    profile          - International Color Consortium color
+                       profile data. May contain NULs.
+
+    proflen          - length of profile data in bytes.
 
     png_set_sBIT(png_ptr, info_ptr, sig_bit);
+
     sig_bit        - the number of significant bits for
                      (PNG_INFO_sBIT) each of the gray, red,
                      green, and blue channels, whichever are
                      appropriate for the given color type
                      (png_color_16)
 
-    png_set_tRNS(png_ptr, info_ptr, trans, num_trans,
-       trans_values);
-    trans          - array of transparent entries for
-                     palette (PNG_INFO_tRNS)
-    trans_values   - graylevel or color sample values
+    png_set_tRNS(png_ptr, info_ptr, trans_alpha,
+       num_trans, trans_color);
+
+    trans_alpha    - array of alpha (transparency)
+                     entries for palette (PNG_INFO_tRNS)
+
+    trans_color    - graylevel or color sample values
                      (in order red, green, blue) of the
                      single transparent color for
                      non-paletted images (PNG_INFO_tRNS)
+
     num_trans      - number of transparent entries
                      (PNG_INFO_tRNS)
 
     png_set_hIST(png_ptr, info_ptr, hist);
-                    (PNG_INFO_hIST)
+
     hist           - histogram of palette (array of
-                     png_uint_16)
+                     png_uint_16) (PNG_INFO_hIST)
 
     png_set_tIME(png_ptr, info_ptr, mod_time);
+
     mod_time       - time image was last modified
                      (PNG_VALID_tIME)
 
     png_set_bKGD(png_ptr, info_ptr, background);
+
     background     - background color (PNG_VALID_bKGD)
 
     png_set_text(png_ptr, info_ptr, text_ptr, num_text);
+
     text_ptr       - array of png_text holding image
                      comments
+
     text_ptr[i].compression - type of compression used
                  on "text" PNG_TEXT_COMPRESSION_NONE
                            PNG_TEXT_COMPRESSION_zTXt
@@ -2722,10 +3350,15 @@ width, height, bit_depth, and color_type must be the same in each call.
                          empty for unknown).
     text_ptr[i].translated_keyword  - keyword in UTF-8 (NULL
                          or empty for unknown).
+    Note that the itxt_length, lang, and lang_key
+    members of the text_ptr structure only exist
+    when the library is built with iTXt chunk support.
+
     num_text       - number of comments
 
     png_set_sPLT(png_ptr, info_ptr, &palette_ptr,
        num_spalettes);
+
     palette_ptr    - array of png_sPLT_struct structures
                      to be added to the list of palettes
                      in the info structure.
@@ -2734,35 +3367,48 @@ width, height, bit_depth, and color_type must be the same in each call.
 
     png_set_oFFs(png_ptr, info_ptr, offset_x, offset_y,
         unit_type);
+
     offset_x  - positive offset from the left
                      edge of the screen
+
     offset_y  - positive offset from the top
                      edge of the screen
+
     unit_type - PNG_OFFSET_PIXEL, PNG_OFFSET_MICROMETER
 
     png_set_pHYs(png_ptr, info_ptr, res_x, res_y,
         unit_type);
+
     res_x       - pixels/unit physical resolution
                   in x direction
+
     res_y       - pixels/unit physical resolution
                   in y direction
+
     unit_type   - PNG_RESOLUTION_UNKNOWN,
                   PNG_RESOLUTION_METER
 
     png_set_sCAL(png_ptr, info_ptr, unit, width, height)
+
     unit        - physical scale units (an integer)
+
     width       - width of a pixel in physical scale units
+
     height      - height of a pixel in physical scale units
                   (width and height are doubles)
 
     png_set_sCAL_s(png_ptr, info_ptr, unit, width, height)
+
     unit        - physical scale units (an integer)
+
     width       - width of a pixel in physical scale units
+
     height      - height of a pixel in physical scale units
                  (width and height are strings like "2.54")
 
     png_set_unknown_chunks(png_ptr, info_ptr, &unknowns,
        num_unknowns)
+
     unknowns          - array of png_unknown_chunk
                         structures holding unknown chunks
     unknowns[i].name  - name of unknown chunk
@@ -2801,21 +3447,30 @@ Until text gets around 1000 bytes, it is not worth compressing it.
 After the text has been written out to the file, the compression type
 is set to PNG_TEXT_COMPRESSION_NONE_WR or PNG_TEXT_COMPRESSION_zTXt_WR,
 so that it isn't written out again at the end (in case you are calling
-png_write_end() with the same struct.
+png_write_end() with the same struct).
 
 The keywords that are given in the PNG Specification are:
 
     Title            Short (one line) title or
                      caption for image
+
     Author           Name of image's creator
+
     Description      Description of image (possibly long)
+
     Copyright        Copyright notice
+
     Creation Time    Time of original image creation
                      (usually RFC 1123 format, see below)
+
     Software         Software used to create the image
+
     Disclaimer       Legal disclaimer
+
     Warning          Warning of nature of content
+
     Source           Device used to create the image
+
     Comment          Miscellaneous comment; conversion
                      from other image format
 
@@ -2927,10 +3582,10 @@ this with a call to png_write_info().
 
 Note that there is one transformation you may need to do before
 png_write_info().  In PNG files, the alpha channel in an image is the
-level of opacity.  If your data is supplied as a level of
-transparency, you can invert the alpha channel before you write it, so
-that 0 is fully transparent and 255 (in 8-bit or paletted images) or
-65535 (in 16-bit images) is fully opaque, with
+level of opacity.  If your data is supplied as a level of transparency,
+you can invert the alpha channel before you write it, so that 0 is
+fully transparent and 255 (in 8-bit or paletted images) or 65535
+(in 16-bit images) is fully opaque, with
 
     png_set_invert_alpha(png_ptr);
 
@@ -2985,17 +3640,19 @@ file so that decoders can recover the original data if desired.
     /* Set the true bit depth of the image data */
     if (color_type & PNG_COLOR_MASK_COLOR)
     {
-        sig_bit.red = true_bit_depth;
-        sig_bit.green = true_bit_depth;
-        sig_bit.blue = true_bit_depth;
+       sig_bit.red = true_bit_depth;
+       sig_bit.green = true_bit_depth;
+       sig_bit.blue = true_bit_depth;
     }
+
     else
     {
-        sig_bit.gray = true_bit_depth;
+       sig_bit.gray = true_bit_depth;
     }
+
     if (color_type & PNG_COLOR_MASK_ALPHA)
     {
-        sig_bit.alpha = true_bit_depth;
+       sig_bit.alpha = true_bit_depth;
     }
 
     png_set_sBIT(png_ptr, info_ptr, &sig_bit);
@@ -3041,11 +3698,18 @@ with
 
 You must supply the function
 
-    void write_transform_fn(png_ptr ptr, row_info_ptr
-       row_info, png_bytep data)
+    void write_transform_fn(png_structp png_ptr ptr,
+       row_info_ptr row_info, png_bytep data)
 
 See pngtest.c for a working example.  Your function will be called
-before any of the other transformations are processed.
+before any of the other transformations are processed.  If supported
+libpng also supplies an information routine that may be called from
+your callback:
+
+   png_get_current_row_number(png_ptr);
+
+This returns the current row passed to the transform.  Even with interlaced
+images the value returned is the row in the final output image.
 
 You can also set up a pointer to a user structure for use by your
 callback function.
@@ -3117,36 +3781,49 @@ a single row_pointer instead of an array of row_pointers:
 
     png_write_row(png_ptr, row_pointer);
 
-When the file is interlaced, things can get a good deal more
-complicated.  The only currently (as of the PNG Specification
-version 1.2, dated July 1999) defined interlacing scheme for PNG files
-is the "Adam7" interlace scheme, that breaks down an
-image into seven smaller images of varying size.  libpng will build
-these images for you, or you can do them yourself.  If you want to
-build them yourself, see the PNG specification for details of which
-pixels to write when.
+When the file is interlaced, things can get a good deal more complicated.
+The only currently (as of the PNG Specification version 1.2, dated July
+1999) defined interlacing scheme for PNG files is the "Adam7" interlace
+scheme, that breaks down an image into seven smaller images of varying
+size.  libpng will build these images for you, or you can do them
+yourself.  If you want to build them yourself, see the PNG specification
+for details of which pixels to write when.
 
 If you don't want libpng to handle the interlacing details, just
 use png_set_interlace_handling() and call png_write_rows() the
-correct number of times to write all seven sub-images.
+correct number of times to write all the sub-images
+(png_set_interlace_handling() returns the number of sub-images.)
 
 If you want libpng to build the sub-images, call this before you start
 writing any rows:
 
-    number_of_passes =
-       png_set_interlace_handling(png_ptr);
+    number_of_passes = png_set_interlace_handling(png_ptr);
 
-This will return the number of passes needed.  Currently, this
-is seven, but may change if another interlace type is added.
+This will return the number of passes needed.  Currently, this is seven,
+but may change if another interlace type is added.
 
 Then write the complete image number_of_passes times.
 
-    png_write_rows(png_ptr, row_pointers,
-       number_of_rows);
+    png_write_rows(png_ptr, row_pointers, number_of_rows);
 
-As some of these rows are not used, and thus return immediately,
-you may want to read about interlacing in the PNG specification,
-and only update the rows that are actually used.
+Think carefully before you write an interlaced image.  Typically code that
+reads such images reads all the image data into memory, uncompressed, before
+doing any processing.  Only code that can display an image on the fly can
+take advantage of the interlacing and even then the image has to be exactly
+the correct size for the output device, because scaling an image requires
+adjacent pixels and these are not available until all the passes have been
+read.
+
+If you do write an interlaced image you will hardly ever need to handle
+the interlacing yourself.  Call png_set_interlace_handling() and use the
+approach described above.
+
+The only time it is conceivable that you will really need to write an
+interlaced image pass-by-pass is when you have read one pass by pass and
+made some pixel-by-pixel transformation to it, as described in the read
+code above.  In this case use the PNG_PASS_ROWS and PNG_PASS_COLS macros
+to determine the size of each sub-image in turn and simply write the rows
+you obtained from the read code.
 
 .SS Finishing a sequential write
 
@@ -3165,6 +3842,7 @@ It is also possible to individually free the info_ptr members that
 point to libpng-allocated storage with the following function:
 
     png_free_data(png_ptr, info_ptr, mask, seq)
+
     mask  - identifies data to be freed, a mask
             containing the bitwise OR of one or
             more of
@@ -3174,20 +3852,20 @@ point to libpng-allocated storage with the following function:
               PNG_FREE_SCAL, PNG_FREE_SPLT,
               PNG_FREE_TEXT, PNG_FREE_UNKN,
             or simply PNG_FREE_ALL
+
     seq   - sequence number of item to be freed
             (-1 for all items)
 
 This function may be safely called when the relevant storage has
 already been freed, or has not yet been allocated, or was allocated
-by the user  and not by libpng,  and will in those
-cases do nothing.  The "seq" parameter is ignored if only one item
-of the selected data type, such as PLTE, is allowed.  If "seq" is not
--1, and multiple items are allowed for the data type identified in
-the mask, such as text or sPLT, only the n'th item in the structure
-is freed, where n is "seq".
+by the user  and not by libpng,  and will in those cases do nothing.
+The "seq" parameter is ignored if only one item of the selected data
+type, such as PLTE, is allowed.  If "seq" is not -1, and multiple items
+are allowed for the data type identified in the mask, such as text or
+sPLT, only the n'th item in the structure is freed, where n is "seq".
 
-If you allocated data such as a palette that you passed
-in to libpng with png_set_*, you must not free it until just before the call to
+If you allocated data such as a palette that you passed in to libpng
+with png_set_*, you must not free it until just before the call to
 png_destroy_write_struct().
 
 The default behavior is only to free data that was allocated internally
@@ -3196,12 +3874,14 @@ or so that it will free data that was allocated by the user with png_malloc()
 or png_zalloc() and passed in via a png_set_*() function, with
 
     png_data_freer(png_ptr, info_ptr, freer, mask)
-    mask   - which data elements are affected
-             same choices as in png_free_data()
+
     freer  - one of
                PNG_DESTROY_WILL_FREE_DATA
                PNG_SET_WILL_FREE_DATA
                PNG_USER_WILL_FREE_DATA
+
+    mask   - which data elements are affected
+             same choices as in png_free_data()
 
 For example, to transfer responsibility for some data from a read structure
 to a write structure, you could use
@@ -3209,6 +3889,7 @@ to a write structure, you could use
     png_data_freer(read_ptr, read_info_ptr,
        PNG_USER_WILL_FREE_DATA,
        PNG_FREE_PLTE|PNG_FREE_tRNS|PNG_FREE_hIST)
+
     png_data_freer(write_ptr, write_info_ptr,
        PNG_DESTROY_WILL_FREE_DATA,
        PNG_FREE_PLTE|PNG_FREE_tRNS|PNG_FREE_hIST)
@@ -3253,23 +3934,28 @@ goes through callbacks that are user-settable.  The default routines are
 in pngmem.c, pngrio.c, pngwio.c, and pngerror.c, respectively.  To change
 these functions, call the appropriate png_set_*_fn() function.
 
-Memory allocation is done through the functions png_malloc()
-and png_free().  These currently just call the standard C functions.  If
-your pointers can't access more then 64K at a time, you will want to set
-MAXSEG_64K in zlib.h.  Since it is unlikely that the method of handling
-memory allocation on a platform will change between applications, these
-functions must be modified in the library at compile time.  If you prefer
-to use a different method of allocating and freeing data, you can use
-png_create_read_struct_2() or png_create_write_struct_2() to register
-your own functions as described above.
-These functions also provide a void pointer that can be retrieved via
+Memory allocation is done through the functions png_malloc(), png_calloc(),
+and png_free().  These currently just call the standard C functions.
+png_calloc() calls png_malloc() and then clears the newly
+allocated memory to zero.  There is limited support for certain systems
+with segmented memory architectures and the types of pointers declared by
+png.h match this; you will have to use appropriate pointers in your
+application.  Since it is
+unlikely that the method of handling memory allocation on a platform
+will change between applications, these functions must be modified in
+the library at compile time.  If you prefer to use a different method
+of allocating and freeing data, you can use png_create_read_struct_2() or
+png_create_write_struct_2() to register your own functions as described
+above.  These functions also provide a void pointer that can be retrieved
+via
 
     mem_ptr=png_get_mem_ptr(png_ptr);
 
 Your replacement memory functions must have prototypes as follows:
 
     png_voidp malloc_fn(png_structp png_ptr,
-       png_size_t size);
+       png_alloc_size_t size);
+
     void free_fn(png_structp png_ptr, png_voidp ptr);
 
 Your malloc_fn() must return NULL in case of failure.  The png_malloc()
@@ -3302,8 +3988,10 @@ The replacement I/O functions must have prototypes as follows:
 
     void user_read_data(png_structp png_ptr,
         png_bytep data, png_size_t length);
+
     void user_write_data(png_structp png_ptr,
         png_bytep data, png_size_t length);
+
     void user_flush_data(png_structp png_ptr);
 
 The user_read_data() function is responsible for detecting and
@@ -3320,8 +4008,9 @@ Error handling in libpng is done through png_error() and png_warning().
 Errors handled through png_error() are fatal, meaning that png_error()
 should never return to its caller.  Currently, this is handled via
 setjmp() and longjmp() (unless you have compiled libpng with
-PNG_SETJMP_NOT_SUPPORTED, in which case it is handled via PNG_ABORT()),
-but you could change this to do things like exit() if you should wish.
+PNG_NO_SETJMP, in which case it is handled via PNG_ABORT()),
+but you could change this to do things like exit() if you should wish,
+as long as your function does not return.
 
 On non-fatal errors, png_warning() is called
 to print a warning message, and then control returns to the calling code.
@@ -3347,6 +4036,7 @@ parameters as follows:
 
     void user_error_fn(png_structp png_ptr,
         png_const_charp error_msg);
+
     void user_warning_fn(png_structp png_ptr,
         png_const_charp warning_msg);
 
@@ -3354,10 +4044,10 @@ The motivation behind using setjmp() and longjmp() is the C++ throw and
 catch exception handling methods.  This makes the code much easier to write,
 as there is no need to check every return code of every function call.
 However, there are some uncertainties about the status of local variables
-after a longjmp, so the user may want to be careful about doing anything after
-setjmp returns non-zero besides returning itself.  Consult your compiler
-documentation for more details.  For an alternative approach, you may wish
-to use the "cexcept" facility (see http://cexcept.sourceforge.net).
+after a longjmp, so the user may want to be careful about doing anything
+after setjmp returns non-zero besides returning itself.  Consult your
+compiler documentation for more details.  For an alternative approach, you
+may wish to use the "cexcept" facility (see http://cexcept.sourceforge.net).
 
 .SS Custom chunks
 
@@ -3369,15 +4059,14 @@ library code itself needs to know about interactions between your
 chunk and existing `intrinsic' chunks.
 
 If you need to write a new intrinsic chunk, first read the PNG
-specification. Acquire a first level of
-understanding of how it works.  Pay particular attention to the
-sections that describe chunk names, and look at how other chunks were
-designed, so you can do things similarly.  Second, check out the
-sections of libpng that read and write chunks.  Try to find a chunk
-that is similar to yours and use it as a template.  More details can
-be found in the comments inside the code.  It is best to handle unknown
-chunks in a generic method, via callback functions, instead of by
-modifying libpng functions.
+specification. Acquire a first level of understanding of how it works.
+Pay particular attention to the sections that describe chunk names,
+and look at how other chunks were designed, so you can do things
+similarly.  Second, check out the sections of libpng that read and
+write chunks.  Try to find a chunk that is similar to yours and use
+it as a template.  More details can be found in the comments inside
+the code.  It is best to handle unknown chunks in a generic method,
+via callback functions, instead of by modifying libpng functions.
 
 If you wish to write your own transformation for the data, look through
 the part of the code that does the transformations, and check out some of
@@ -3421,10 +4110,10 @@ you may also have to change the memory allocators (png_malloc, etc.).
 
 All includes for libpng are in pngconf.h.  If you need to add, change
 or delete an include, this is the place to do it.
-The includes that are not needed outside libpng are protected by the
-PNG_INTERNAL definition, which is only defined for those routines inside
-libpng itself.  The files in libpng proper only include png.h, which
-includes pngconf.h.
+The includes that are not needed outside libpng are placed in pngpriv.h,
+which is only used by the routines inside libpng itself.
+The files in libpng proper only include pngpriv.h and png.h, which
+in turn includes pngconf.h.
 
 .SS Configuring zlib:
 
@@ -3458,8 +4147,10 @@ zlib.h for more information on what these mean.
 
     png_set_compression_strategy(png_ptr,
         strategy);
+
     png_set_compression_window_bits(png_ptr,
         window_bits);
+
     png_set_compression_method(png_ptr, method);
     png_set_compression_buffer_size(png_ptr, size);
 
@@ -3549,19 +4240,21 @@ before recompiling libpng and save yourself code and data space, or
 you can turn off individual capabilities with defines that begin with
 PNG_NO_.
 
+In libpng-1.5.0 and later, the #define's are in pnglibconf.h instead.
+
 You can also turn all of the transforms and ancillary chunk capabilities
 off en masse with compiler directives that define
 PNG_NO_READ[or WRITE]_TRANSFORMS, or PNG_NO_READ[or WRITE]_ANCILLARY_CHUNKS,
 or all four,
 along with directives to turn on any of the capabilities that you do
-want.  The PNG_NO_READ[or WRITE]_TRANSFORMS directives disable
-the extra transformations but still leave the library fully capable of reading
-and writing PNG files with all known public chunks
-Use of the PNG_NO_READ[or WRITE]_ANCILLARY_CHUNKS directive
-produces a library that is incapable of reading or writing ancillary chunks.
-If you are not using the progressive reading capability, you can
-turn that off with PNG_NO_PROGRESSIVE_READ (don't confuse
-this with the INTERLACING capability, which you'll still have).
+want.  The PNG_NO_READ[or WRITE]_TRANSFORMS directives disable the extra
+transformations but still leave the library fully capable of reading
+and writing PNG files with all known public chunks. Use of the
+PNG_NO_READ[or WRITE]_ANCILLARY_CHUNKS directive produces a library
+that is incapable of reading or writing ancillary chunks.  If you are
+not using the progressive reading capability, you can turn that off
+with PNG_NO_PROGRESSIVE_READ (don't confuse this with the INTERLACING
+capability, which you'll still have).
 
 All the reading and writing specific code are in separate files, so the
 linker should only grab the files it needs.  However, if you want to
@@ -3601,8 +4294,8 @@ according to printf-style formatting directives.  For example,
 
 is expanded to
 
-   if(PNG_DEBUG > 2)
-     fprintf(PNG_DEBUG_FILE, "foo=%d\n", foo);
+   if (PNG_DEBUG > 2)
+      fprintf(PNG_DEBUG_FILE, "foo=%d\n", foo);
 
 When PNG_DEBUG is defined but is zero, the macros aren't defined, but you
 can still use PNG_DEBUG to control your own debugging:
@@ -3623,11 +4316,13 @@ Libpng can support some of these extensions.  To enable them, use the
 png_permit_mng_features() function:
 
    feature_set = png_permit_mng_features(png_ptr, mask)
+
    mask is a png_uint_32 containing the bitwise OR of the
         features you want to enable.  These include
         PNG_FLAG_MNG_EMPTY_PLTE
         PNG_FLAG_MNG_FILTER_64
         PNG_ALL_MNG_FEATURES
+
    feature_set is a png_uint_32 that is the bitwise AND of
       your mask with the set of MNG features that is
       supported by the version of libpng that you are using.
@@ -3652,7 +4347,7 @@ still alive and well, but they have moved on to other things.
 The old libpng functions png_read_init(), png_write_init(),
 png_info_init(), png_read_destroy(), and png_write_destroy() have been
 moved to PNG_INTERNAL in version 0.95 to discourage their use.  These
-functions will be removed from libpng version 2.0.0.
+functions will be removed from libpng version 1.4.0.
 
 The preferred method of creating and initializing the libpng structures is
 via the png_create_read_struct(), png_create_write_struct(), and
@@ -3695,6 +4390,9 @@ Support for user memory management was enabled by default.  To
 accomplish this, the functions png_create_read_struct_2(),
 png_create_write_struct_2(), png_set_mem_fn(), png_get_mem_ptr(),
 png_malloc_default(), and png_free_default() were added.
+
+Support for the iTXt chunk has been enabled by default as of
+version 1.2.41.
 
 Support for certain MNG features was enabled.
 
@@ -3750,9 +4448,415 @@ selection of assembler code features:
 We replaced all of these functions with simple stubs in libpng-1.2.20,
 when the Intel assembler code was removed due to a licensing issue.
 
-.SH IX.  (Omitted)
+These macros are deprecated:
 
-.SH X. Detecting libpng
+    PNG_READ_TRANSFORMS_NOT_SUPPORTED
+    PNG_PROGRESSIVE_READ_NOT_SUPPORTED
+    PNG_NO_SEQUENTIAL_READ_SUPPORTED
+    PNG_WRITE_TRANSFORMS_NOT_SUPPORTED
+    PNG_READ_ANCILLARY_CHUNKS_NOT_SUPPORTED
+    PNG_WRITE_ANCILLARY_CHUNKS_NOT_SUPPORTED
+
+They have been replaced, respectively, by:
+
+    PNG_NO_READ_TRANSFORMS
+    PNG_NO_PROGRESSIVE_READ
+    PNG_NO_SEQUENTIAL_READ
+    PNG_NO_WRITE_TRANSFORMS
+    PNG_NO_READ_ANCILLARY_CHUNKS
+    PNG_NO_WRITE_ANCILLARY_CHUNKS
+
+PNG_MAX_UINT was replaced with PNG_UINT_31_MAX.  It has been
+deprecated since libpng-1.0.16 and libpng-1.2.6.
+
+The function
+    png_check_sig(sig, num)
+was replaced with
+    !png_sig_cmp(sig, 0, num)
+It has been deprecated since libpng-0.90.
+
+The function
+    png_set_gray_1_2_4_to_8()
+which also expands tRNS to alpha was replaced with
+    png_set_expand_gray_1_2_4_to_8()
+which does not. It has been deprecated since libpng-1.0.18 and 1.2.9.
+
+.SH IX.  Changes to Libpng from version 1.0.x/1.2.x to 1.4.x
+
+Private libpng prototypes and macro definitions were moved from
+png.h and pngconf.h into a new pngpriv.h header file.
+
+Functions png_set_benign_errors(), png_benign_error(), and
+png_chunk_benign_error() were added.
+
+Support for setting the maximum amount of memory that the application
+will allocate for reading chunks was added, as a security measure.
+The functions png_set_chunk_cache_max() and png_get_chunk_cache_max()
+were added to the library.
+
+We implemented support for I/O states by adding png_ptr member io_state
+and functions png_get_io_chunk_name() and png_get_io_state() in pngget.c
+
+We added PNG_TRANSFORM_GRAY_TO_RGB to the available high-level
+input transforms.
+
+Checking for and reporting of errors in the IHDR chunk is more thorough.
+
+Support for global arrays was removed, to improve thread safety.
+
+Some obsolete/deprecated macros and functions have been removed.
+
+Typecasted NULL definitions such as
+   #define png_voidp_NULL            (png_voidp)NULL
+were eliminated.  If you used these in your application, just use
+NULL instead.
+
+The png_struct and info_struct members "trans" and "trans_values" were
+changed to "trans_alpha" and "trans_color", respectively.
+
+The obsolete, unused pnggccrd.c and pngvcrd.c files and related makefiles
+were removed.
+
+The PNG_1_0_X and PNG_1_2_X macros were eliminated.
+
+The PNG_LEGACY_SUPPORTED macro was eliminated.
+
+Many WIN32_WCE #ifdefs were removed.
+
+The functions png_read_init(info_ptr), png_write_init(info_ptr),
+png_info_init(info_ptr), png_read_destroy(), and png_write_destroy()
+have been removed.  They have been deprecated since libpng-0.95.
+
+The png_permit_empty_plte() was removed. It has been deprecated
+since libpng-1.0.9.  Use png_permit_mng_features() instead.
+
+We removed the obsolete stub functions png_get_mmx_flagmask(),
+png_set_mmx_thresholds(), png_get_asm_flags(),
+png_get_mmx_bitdepth_threshold(), png_get_mmx_rowbytes_threshold(),
+png_set_asm_flags(), and png_mmx_supported()
+
+We removed the obsolete png_check_sig(), png_memcpy_check(), and
+png_memset_check() functions.  Instead use !png_sig_cmp(), memcpy(),
+and memset(), respectively.
+
+The function png_set_gray_1_2_4_to_8() was removed. It has been
+deprecated since libpng-1.0.18 and 1.2.9, when it was replaced with
+png_set_expand_gray_1_2_4_to_8() because the former function also
+expanded palette images.
+
+Macros for png_get_uint_16, png_get_uint_32, and png_get_int_32
+were added and are used by default instead of the corresponding
+functions. Unfortunately,
+from libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the  
+function) incorrectly returned a value of type png_uint_32.
+
+We changed the prototype for png_malloc() from
+    png_malloc(png_structp png_ptr, png_uint_32 size)
+to
+    png_malloc(png_structp png_ptr, png_alloc_size_t size)
+
+This also applies to the prototype for the user replacement malloc_fn().
+
+The png_calloc() function was added and is used in place of
+of "png_malloc(); memset();" except in the case in png_read_png()
+where the array consists of pointers; in this case a "for" loop is used
+after the png_malloc() to set the pointers to NULL, to give robust.
+behavior in case the application runs out of memory part-way through
+the process.
+
+We changed the prototypes of png_get_compression_buffer_size() and
+png_set_compression_buffer_size() to work with png_size_t instead of
+png_uint_32.
+
+Support for numbered error messages was removed by default, since we
+never got around to actually numbering the error messages. The function
+png_set_strip_error_numbers() was removed from the library by default.
+
+The png_zalloc() and png_zfree() functions are no longer exported.
+The png_zalloc() function no longer zeroes out the memory that it
+allocates.
+
+Support for dithering was disabled by default in libpng-1.4.0, because
+been well tested and doesn't actually "dither".  The code was not
+removed, however, and could be enabled by building libpng with
+PNG_READ_DITHER_SUPPORTED defined.  In libpng-1.4.2, this support
+was reenabled, but the function was renamed png_set_quantize() to
+reflect more accurately what it actually does.  At the same time,
+the PNG_DITHER_[RED,GREEN_BLUE]_BITS macros were also renamed to
+PNG_QUANTIZE_[RED,GREEN,BLUE]_BITS, and PNG_READ_DITHER_SUPPORTED
+was renamed to PNG_READ_QUANTIZE_SUPPORTED.
+
+We removed the trailing '.' from the warning and error messages.
+
+.SH X.  Changes to Libpng from version 1.4.x to 1.5.x
+
+From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the  
+function) incorrectly returned a value of type png_uint_32.
+
+A. Changes that affect users of libpng
+
+There are no substantial API changes between the non-deprecated parts of
+the 1.4.5 API and the 1.5.0 API, however the ability to directly access
+the main libpng control structures, png_struct and png_info, deprecated
+in earlier versions of libpng, has been completely removed from
+libpng 1.5.
+
+We no longer include zlib.h in png.h.  Applications that need access
+to information in zlib.h will need to add the '#include "zlib.h"'
+directive.  It does not matter whether it is placed prior to or after
+the '"#include png.h"' directive.
+
+We moved the png_strcpy(), png_strncpy(), png_strlen(), png_memcpy(),
+png_memcmp(), png_sprintf, and png_memcpy() macros into a private
+header file (pngpriv.h) that is not accessible to applications.
+
+In png_get_iCCP, the type of "profile" was changed from png_charpp
+to png_bytepp, and in png_set_iCCP, from png_charp to png_const_bytep.
+
+There are changes of form in png.h, including new and changed macros to
+declare
+parts of the API.  Some API functions with arguments that are pointers to
+data not modified within the function have been corrected to declare
+these arguments with PNG_CONST.
+
+Much of the internal use of C macros to control the library build has also
+changed and some of this is visible in the exported header files, in
+particular the use of macros to control data and API elements visible
+during application compilation may require significant revision to
+application code.  (It is extremely rare for an application to do this.)
+
+Any program that compiled against libpng 1.4 and did not use deprecated
+features or access internal library structures should compile and work
+against libpng 1.5.
+
+libpng 1.5.0 adds PNG_ PASS macros to help in the reading and writing of
+interlaced images.  The macros return the number of rows and columns in
+each pass and information that can be used to de-interlace and (if
+absolutely necessary) interlace an image.
+
+libpng 1.5.0 adds an API png_longjmp(png_ptr, value).  This API calls
+the application provided png_longjmp_ptr on the internal, but application
+initialized, jmpbuf.  It is provided as a convenience to avoid the need
+to use the png_jmpbuf macro, which had the unnecessary side effect of
+resetting the internal png_longjmp_ptr value.
+
+libpng 1.5.0 includes a complete fixed point API.  By default this is
+present along with the corresponding floating point API.  In general the
+fixed point API is faster and smaller than the floating point one because
+the PNG file format used fixed point, not floating point.  This applies
+even if the library uses floating point in internal calculations.  A new
+macro, PNG_FLOATING_ARITHMETIC_SUPPORTED, reveals whether the library
+uses floating point arithmetic (the default) or fixed point arithmetic
+internally for performance critical calculations such as gamma correction.
+In some cases, the gamma calculations may produce slightly different
+results.  This has changed the results in png_rgb_to_gray and in alpha
+composition (png_set_background for example). This applies even if the
+original image was already linear (gamma == 1.0) and, therefore, it is
+not necessary to linearize the image.  This is because libpng has *not*
+been changed to optimize that case correctly, yet.
+
+Fixed point support for the sCAL chunk comes with an important caveat;
+the sCAL specification uses a decimal encoding of floating point values
+and the accuracy of PNG fixed point values is insufficient for
+representation of these values. Consequently a "string" API
+(png_get_sCAL_s and png_set_sCAL_s) is the only reliable way of reading
+arbitrary sCAL chunks in the absence of either the floating point API or
+internal floating point calculations.
+
+Applications no longer need to include the optional distribution header
+file pngusr.h or define the corresponding macros during application
+build in order to see the correct variant of the libpng API.  From 1.5.0
+application code can check for the corresponding _SUPPORTED macro:
+
+#ifdef PNG_INCH_CONVERSIONS_SUPPORTED
+   /* code that uses the inch conversion APIs. */
+#endif
+
+This macro will only be defined if the inch conversion functions have been
+compiled into libpng.  The full set of macros, and whether or not support
+has been compiled in, are available in the header file pnglibconf.h.
+This header file is specific to the libpng build.  Notice that prior to
+1.5.0 the _SUPPORTED macros would always have the default definition unless
+reset by pngusr.h or by explicit settings on the compiler command line.
+These settings may produce compiler warnings or errors in 1.5.0 because
+of macro redefinition.
+
+From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the  
+function) incorrectly returned a value of type png_uint_32.  libpng 1.5.0
+is consistent with the implementation in 1.4.5 and 1.2.x (where the macro
+did not exist.)
+
+Applications can now choose whether to use these macros or to call the
+corresponding function by defining PNG_USE_READ_MACROS or
+PNG_NO_USE_READ_MACROS before including png.h.  Notice that this is
+only supported from 1.5.0 -defining PNG_NO_USE_READ_MACROS prior to 1.5.0
+ will lead to a link failure.
+
+B. Changes to the build and configuration of libpng
+
+Details of internal changes to the library code can be found in the CHANGES
+file.  These will be of no concern to the vast majority of library users or
+builders, however the few who configure libpng to a non-default feature
+set may need to change how this is done.
+
+There should be no need for library builders to alter build scripts if
+these use the distributed build support - configure or the makefiles -
+however users of the makefiles may care to update their build scripts
+to build pnglibconf.h where the corresponding makefile does not do so.
+
+Building libpng with a non-default configuration has changed completely.
+The old method using pngusr.h should still work correctly even though the
+way pngusr.h is used in the build has been changed, however library
+builders will probably want to examine the changes to take advantage of
+new capabilities and to simplify their build system.
+
+B.1 Specific changes to library configuration capabilities
+
+The library now supports a complete fixed point implementation and can
+thus be used on systems which have no floating point support or very
+limited or slow support.  Previously gamma correction, an essential part
+of complete PNG support, required reasonably fast floating point.
+
+As part of this the choice of internal implementation has been made
+independent of the choice of fixed versus floating point APIs and all the
+missing fixed point APIs have been implemented.
+
+The exact mechanism used to control attributes of API functions has
+changed.  A single set of operating system independent macro definitions
+is used and operating system specific directives are defined in
+pnglibconf.h
+
+As part of this the mechanism used to choose procedure call standards on
+those systems that allow a choice has been changed.  At present this only
+affects certain Microsoft (DOS, Windows) and IBM (OS/2) operating systems
+running on Intel processors.  As before PNGAPI is defined where required
+to control the exported API functions; however, two new macros, PNGCBAPI
+and PNGCAPI, are used instead for callback functions (PNGCBAPI) and
+(PNGCAPI) for functions that must match a C library prototype (currently
+only png_longjmp_ptr, which must match the C longjmp function.)  The new
+approach is documented in pngconf.h
+
+Despite these changes libpng 1.5.0 only supports the native C function
+calling standard on those platforms tested so far (__cdecl on Microsoft
+Windows).  This is because the support requirements for alternative
+calling conventions seem to no longer exist.  Developers who find it
+necessary to set PNG_API_RULE to 1 should advise the mailing list
+(png-mng-implement) of this and library builders who use Openwatcom and
+therefore set PNG_API_RULE to 2 should also contact the mailing list.
+
+A new test program, pngvalid, is provided in addition to pngtest.
+pngvalid validates the arithmetic accuracy of the gamma correction
+calculations and includes a number of validations of the file format.
+A subset of the full range of tests is run when "make check" is done
+(in the 'configure' build.)  pngvalid also allows total allocated memory
+usage to be evaluated and performs additional memory overwrite validation.
+
+Many changes to individual feature macros have been made. The following
+are the changes most likely to be noticed by library builders who
+configure libpng:
+
+1) All feature macros now have consistent naming:
+
+#define PNG_NO_feature turns the feature off
+#define PNG_feature_SUPPORTED turns the feature on
+
+pnglibconf.h contains one line for each feature macro which is either:
+
+#define PNG_feature_SUPPORTED
+
+if the feature is supported or:
+
+/*#undef PNG_feature_SUPPORTED*/
+
+if it is not.  Library code consistently checks for the 'SUPPORTED' macro.
+It does not, and should not, check for the 'NO' macro which will not
+normally be defined even if the feature is not supported.
+
+Compatibility with the old names is provided as follows:
+
+PNG_INCH_CONVERSIONS turns on PNG_INCH_CONVERSIONS_SUPPORTED
+
+And the following definitions disable the corresponding feature:
+
+PNG_SETJMP_NOT_SUPPORTED disables SETJMP
+PNG_READ_TRANSFORMS_NOT_SUPPORTED disables READ_TRANSFORMS
+PNG_NO_READ_COMPOSITED_NODIV disables READ_COMPOSITE_NODIV
+PNG_WRITE_TRANSFORMS_NOT_SUPPORTED disables WRITE_TRANSFORMS
+PNG_READ_ANCILLARY_CHUNKS_NOT_SUPPORTED disables READ_ANCILLARY_CHUNKS
+PNG_WRITE_ANCILLARY_CHUNKS_NOT_SUPPORTED disables WRITE_ANCILLARY_CHUNKS
+
+Library builders should remove use of the above, inconsistent, names.
+
+2) Warning and error message formatting was previously conditional on
+the STDIO feature. The library has been changed to use the
+CONSOLE_IO feature instead. This means that if CONSOLE_IO is disabled
+the library no longer uses the printf(3) functions, even though the
+default read/write implementations use (FILE) style stdio.h functions.
+
+3) Three feature macros now control the fixed/floating point decisions:
+
+PNG_FLOATING_POINT_SUPPORTED enables the floating point APIs
+
+PNG_FIXED_POINT_SUPPORTED enables the fixed point APIs; however, in
+practice these are normally required internally anyway (because the PNG
+file format is fixed point), therefore in most cases PNG_NO_FIXED_POINT
+merely stops the function from being exported.
+
+PNG_FLOATING_ARITHMETIC_SUPPORTED chooses between the internal floating
+point implementation or the fixed point one.  Typically the fixed point
+implementation is larger and slower than the floating point implementation
+on a system that supports floating point, however it may be faster on a
+system which lacks floating point hardware and therefore uses a software
+emulation.
+
+4) Added PNG_{READ,WRITE}_INT_FUNCTIONS_SUPPORTED.  This allows the
+functions to read and write ints to be disabled independently of
+PNG_USE_READ_MACROS, which allows libpng to be built with the functions
+even though the default is to use the macros - this allows applications
+to choose at app buildtime whether or not to use macros (previously
+impossible because the functions weren't in the default build.)
+
+B.2 Changes to the configuration mechanism
+
+Prior to libpng-1.5.0 library builders who needed to configure libpng
+had either to modify the exported pngconf.h header file to add system
+specific configuration or had to write feature selection macros into
+pngusr.h and cause this to be included into pngconf.h by defining
+PNG_USER_CONFIG. The latter mechanism had the disadvantage that an
+application built without PNG_USER_CONFIG defined would see the
+unmodified, default, libpng API and thus would probably fail to link.
+
+These mechanisms still work in the configure build and in any makefile
+build that builds pnglibconf.h although the feature selection macros
+have changed somewhat as described above.  In 1.5.0, however, pngusr.h is
+processed only once, when the exported header file pnglibconf.h is built.
+pngconf.h no longer includes pngusr.h, therefore it is ignored after the
+build of pnglibconf.h and it is never included in an application build.
+
+The rarely used alternative of adding a list of feature macros to the
+CFLAGS setting in the build also still works, however the macros will be
+copied to pnglibconf.h and this may produce macro redefinition warnings
+when the individual C files are compiled.
+
+All configuration now only works if pnglibconf.h is built from
+scripts/pnglibconf.dfa.  This requires the program awk.  Brian Kernighan
+(the original author of awk) maintains C source code of that awk and this
+and all known later implementations (often called by subtly different
+names - nawk and gawk for example) are adequate to build pnglibconf.h.
+The Sun Microsystems (now Oracle) program 'awk' is an earlier version
+and does not work, this may also apply to other systems that have a
+functioning awk called 'nawk'.
+
+Configuration options are now documented in scripts/pnglibconf.dfa.  This
+file also includes dependency information that ensures a configuration is
+consistent; that is, if a feature is switched off dependent features are
+also removed.  As a recommended alternative to using feature macros in
+pngusr.h a system builder may also define equivalent options in pngusr.dfa
+(or, indeed, any file) and add that to the configuration by setting
+DFA_XTRA to the file name.  The makefiles in contrib/pngminim illustrate
+how to do this, and a case where pngusr.h is still required.
+
+.SH XI. Detecting libpng
 
 The png_get_io_ptr() function has been present since libpng-0.88, has never
 changed, and is unaffected by conditional compilation macros.  It is the
@@ -3761,7 +4865,7 @@ libpng version since 0.88.  In an autoconf "configure.in" you could use
 
     AC_CHECK_LIB(png, png_get_io_ptr, ...
 
-.SH XI. Source code repository
+.SH XII. Source code repository
 
 Since about February 2009, version 1.2.34, libpng has been under "git" source
 control.  The git repository was built from old libpng-x.y.z.tar.gz files
@@ -3780,7 +4884,12 @@ the libpng bug tracker at
 
     http://libpng.sourceforge.net
 
-.SH XII. Coding style
+We also accept patches built from the tar or zip distributions, and
+simple verbal discriptions of bug fixes, reported either to the
+SourceForge bug tracker or to the png-mng-implement at lists.sf.net
+mailing list.
+
+.SH XIII. Coding style
 
 Our coding style is similar to the "Allman" style, with curly
 braces on separate lines:
@@ -3804,18 +4913,27 @@ We use 3-space indentation, except for continued statements which
 are usually indented the same as the first line of the statement
 plus four more spaces.
 
+For macro definitions we use 2-space indentation, always leaving the "#"
+in the first column.
+
+    #ifndef PNG_NO_FEATURE
+    #  ifndef PNG_FEATURE_SUPPORTED
+    #    define PNG_FEATURE_SUPPORTED
+    #  endif
+    #endif
+
 Comments appear with the leading "/*" at the same indentation as
 the statement that follows the comment:
 
     /* Single-line comment */
     statement;
 
-    /* Multiple-line
-     * comment
+    /* This is a multiple-line
+     * comment.
      */
     statement;
 
-Very short comments can be placed at the end of the statement
+Very short comments can be placed after the end of the statement
 to which they pertain:
 
     statement;    /* comment */
@@ -3828,7 +4946,7 @@ Functions and their curly braces are not indented, and
 exported functions are marked with PNGAPI:
 
  /* This is a public function that is visible to
-  * application programers. It does thus-and-so.
+  * application programmers. It does thus-and-so.
   */
  void PNGAPI
  png_exported_function(png_ptr, png_info, foo)
@@ -3851,40 +4969,44 @@ We mark all non-exported functions with "/* PRIVATE */"":
 
 The prototypes for non-exported functions (except for those in
 pngtest) appear in
-the PNG_INTERNAL section of png.h
+pngpriv.h
 above the comment that says
 
   /* Maintainer: Put new private prototypes here ^ and in libpngpf.3 */
 
-The names of all exported functions and variables begin
-with  "png_", and all publicly visible C preprocessor
-macros begin with "PNG_".
+To avoid polluting the global namespace, the names of all exported
+functions and variables begin with  "png_", and all publicly visible C
+preprocessor macros begin with "PNG_".  We request that applications that
+use libpng *not* begin any of their own symbols with either of these strings.
 
 We put a space after each comma and after each semicolon
-in "for" statments, and we put spaces before and after each
-C binary operator and after "for" or "while".  We don't
-put a space between a typecast and the expression being
-cast, nor do we put one between a function name and the
+in "for" statements, and we put spaces before and after each
+C binary operator and after "for" or "while", and before
+"?".  We don't put a space between a typecast and the expression
+being cast, nor do we put one between a function name and the
 left parenthesis that follows it:
 
     for (i = 2; i > 0; --i)
-       x[i] = a(x) + (int)b;
+       y[i] = a(x) + (int)b;
 
 We prefer #ifdef and #ifndef to #if defined() and if !defined()
 when there is only one macro being tested.
 
-Other rules can be inferred by inspecting the libpng
-source.
+We do not use the TAB character for indentation in the C sources.
 
-.SH XIII. Y2K Compliance in libpng
+Lines do not exceed 80 characters.
 
-September 10, 2009
+Other rules can be inferred by inspecting the libpng source.
+
+.SH XIV. Y2K Compliance in libpng
+
+February 3, 2011
 
 Since the PNG Development group is an ad-hoc body, we can't make
 an official declaration.
 
 This is your unofficial assurance that libpng from version 0.71 and
-upward through 1.2.40 are Y2K compliant.  It is my belief that earlier
+upward through 1.5.1 are Y2K compliant.  It is my belief that earlier
 versions were also Y2K compliant.
 
 Libpng only has three year fields.  One is a 2-byte unsigned integer that
@@ -4028,144 +5150,48 @@ the first widely used release:
  1.0.16              10    10016  10.so.0.1.0.16
  1.2.6               13    10206  12.so.0.1.2.6
  1.2.7beta1-2        13    10207  12.so.0.1.2.7beta1-2
- 1.0.17rc1           10    10017  10.so.0.1.0.17rc1
+ 1.0.17rc1           10    10017  12.so.0.1.0.17rc1
  1.2.7rc1            13    10207  12.so.0.1.2.7rc1
- 1.0.17              10    10017  10.so.0.1.0.17
+ 1.0.17              10    10017  12.so.0.1.0.17
  1.2.7               13    10207  12.so.0.1.2.7
  1.2.8beta1-5        13    10208  12.so.0.1.2.8beta1-5
- 1.0.18rc1-5         10    10018  10.so.0.1.0.18rc1-5
+ 1.0.18rc1-5         10    10018  12.so.0.1.0.18rc1-5
  1.2.8rc1-5          13    10208  12.so.0.1.2.8rc1-5
- 1.0.18              10    10018  10.so.0.1.0.18
+ 1.0.18              10    10018  12.so.0.1.0.18
  1.2.8               13    10208  12.so.0.1.2.8
  1.2.9beta1-3        13    10209  12.so.0.1.2.9beta1-3
  1.2.9beta4-11       13    10209  12.so.0.9[.0]
  1.2.9rc1            13    10209  12.so.0.9[.0]
  1.2.9               13    10209  12.so.0.9[.0]
- 1.2.10beta1-8       13    10210  12.so.0.10[.0]
- 1.2.10rc1-3         13    10210  12.so.0.10[.0]
+ 1.2.10beta1-7       13    10210  12.so.0.10[.0]
+ 1.2.10rc1-2         13    10210  12.so.0.10[.0]
  1.2.10              13    10210  12.so.0.10[.0]
- 1.2.11beta1-4       13    10211  12.so.0.11[.0]
- 1.0.19rc1-5         10    10019  10.so.0.19[.0]
- 1.2.11rc1-5         13    10211  12.so.0.11[.0]
- 1.0.19              10    10019  10.so.0.19[.0]
+ 1.4.0beta1-6        14    10400  14.so.0.0[.0]
+ 1.2.11beta1-4       13    10210  12.so.0.11[.0]
+ 1.4.0beta7-8        14    10400  14.so.0.0[.0]
  1.2.11              13    10211  12.so.0.11[.0]
- 1.0.20              10    10020  10.so.0.20[.0]
  1.2.12              13    10212  12.so.0.12[.0]
- 1.2.13beta1         13    10213  12.so.0.13[.0]
- 1.0.21              10    10021  10.so.0.21[.0]
+ 1.4.0beta9-14       14    10400  14.so.0.0[.0]
  1.2.13              13    10213  12.so.0.13[.0]
- 1.2.14beta1-2       13    10214  12.so.0.14[.0]
- 1.0.22rc1           10    10022  10.so.0.22[.0]
- 1.2.14rc1           13    10214  12.so.0.14[.0]
- 1.2.15beta1-6       13    10215  12.so.0.15[.0]
- 1.0.23rc1-5         10    10023  10.so.0.23[.0]
- 1.2.15rc1-5         13    10215  12.so.0.15[.0]
- 1.0.23              10    10023  10.so.0.23[.0]
- 1.2.15              13    10215  12.so.0.15[.0]
- 1.2.16beta1-2       13    10216  12.so.0.16[.0]
- 1.2.16rc1           13    10216  12.so.0.16[.0]
- 1.0.24              10    10024  10.so.0.24[.0]
- 1.2.16              13    10216  12.so.0.16[.0]
- 1.2.17beta1-2       13    10217  12.so.0.17[.0]
- 1.0.25rc1           10    10025  10.so.0.25[.0]
- 1.2.17rc1-3         13    10217  12.so.0.17[.0]
- 1.0.25              10    10025  10.so.0.25[.0]
- 1.2.17              13    10217  12.so.0.17[.0]
- 1.0.26              10    10026  10.so.0.26[.0]
- 1.2.18              13    10218  12.so.0.18[.0]
- 1.2.19beta1-31      13    10219  12.so.0.19[.0]
- 1.0.27rc1-6         10    10027  10.so.0.27[.0]
- 1.2.19rc1-6         13    10219  12.so.0.19[.0]
- 1.0.27              10    10027  10.so.0.27[.0]
- 1.2.19              13    10219  12.so.0.19[.0]
- 1.2.20beta01-04     13    10220  12.so.0.20[.0]
- 1.0.28rc1-6         10    10028  10.so.0.28[.0]
- 1.2.20rc1-6         13    10220  12.so.0.20[.0]
- 1.0.28              10    10028  10.so.0.28[.0]
- 1.2.20              13    10220  12.so.0.20[.0]
- 1.2.21beta1-2       13    10221  12.so.0.21[.0]
- 1.2.21rc1-3         13    10221  12.so.0.21[.0]
- 1.0.29              10    10029  10.so.0.29[.0]
- 1.2.21              13    10221  12.so.0.21[.0]
- 1.2.22beta1-4       13    10222  12.so.0.22[.0]
- 1.0.30rc1           13    10030  10.so.0.30[.0]
- 1.2.22rc1           13    10222  12.so.0.22[.0]
- 1.0.30              10    10030  10.so.0.30[.0]
- 1.2.22              13    10222  12.so.0.22[.0]
- 1.2.23beta01-05     13    10223  12.so.0.23[.0]
- 1.2.23rc01          13    10223  12.so.0.23[.0]
- 1.2.23              13    10223  12.so.0.23[.0]
- 1.2.24beta01-02     13    10224  12.so.0.24[.0]
- 1.2.24rc01          13    10224  12.so.0.24[.0]
- 1.2.24              13    10224  12.so.0.24[.0]
- 1.2.25beta01-06     13    10225  12.so.0.25[.0]
- 1.2.25rc01-02       13    10225  12.so.0.25[.0]
- 1.0.31              10    10031  10.so.0.31[.0]
- 1.2.25              13    10225  12.so.0.25[.0]
- 1.2.26beta01-06     13    10226  12.so.0.26[.0]
- 1.2.26rc01          13    10226  12.so.0.26[.0]
- 1.2.26              13    10226  12.so.0.26[.0]
- 1.0.32              10    10032  10.so.0.32[.0]
- 1.2.27beta01-06     13    10227  12.so.0.27[.0]
- 1.2.27rc01          13    10227  12.so.0.27[.0]
- 1.0.33              10    10033  10.so.0.33[.0]
- 1.2.27              13    10227  12.so.0.27[.0]
- 1.0.34              10    10034  10.so.0.34[.0]
- 1.2.28              13    10228  12.so.0.28[.0]
- 1.2.29beta01-03     13    10229  12.so.0.29[.0]
- 1.2.29rc01          13    10229  12.so.0.29[.0]
- 1.0.35              10    10035  10.so.0.35[.0]
- 1.2.29              13    10229  12.so.0.29[.0]
- 1.0.37              10    10037  10.so.0.37[.0]
- 1.2.30beta01-04     13    10230  12.so.0.30[.0]
- 1.0.38rc01-08       10    10038  10.so.0.38[.0]
- 1.2.30rc01-08       13    10230  12.so.0.30[.0]
- 1.0.38              10    10038  10.so.0.38[.0]
- 1.2.30              13    10230  12.so.0.30[.0]
- 1.0.39rc01-03       10    10039  10.so.0.39[.0]
- 1.2.31rc01-03       13    10231  12.so.0.31[.0]
- 1.0.39              10    10039  10.so.0.39[.0]
- 1.2.31              13    10231  12.so.0.31[.0]
- 1.2.32beta01-02     13    10232  12.so.0.32[.0]
- 1.0.40rc01          10    10040  10.so.0.40[.0]
- 1.2.32rc01          13    10232  12.so.0.32[.0]
- 1.0.40              10    10040  10.so.0.40[.0]
- 1.2.32              13    10232  12.so.0.32[.0]
- 1.2.33beta01-02     13    10233  12.so.0.33[.0]
- 1.2.33rc01-02       13    10233  12.so.0.33[.0]
- 1.0.41rc01          10    10041  10.so.0.41[.0]
- 1.2.33              13    10233  12.so.0.33[.0]
- 1.0.41              10    10041  10.so.0.41[.0]
- 1.2.34beta01-07     13    10234  12.so.0.34[.0]
- 1.0.42rc01          10    10042  10.so.0.42[.0]
- 1.2.34rc01          13    10234  12.so.0.34[.0]
- 1.0.42              10    10042  10.so.0.42[.0]
- 1.2.34              13    10234  12.so.0.34[.0]
- 1.2.35beta01-03     13    10235  12.so.0.35[.0]
- 1.0.43rc01-02       10    10043  10.so.0.43[.0]
- 1.2.35rc01-02       13    10235  12.so.0.35[.0]
- 1.0.43              10    10043  10.so.0.43[.0]
- 1.2.35              13    10235  12.so.0.35[.0]
- 1.2.36beta01-05     13    10236  12.so.0.36[.0]
- 1.2.36rc01          13    10236  12.so.0.36[.0]
- 1.0.44              10    10044  10.so.0.44[.0]
- 1.2.36              13    10236  12.so.0.36[.0]
- 1.2.37beta01-03     13    10237  12.so.0.37[.0]
- 1.2.37rc01          13    10237  12.so.0.37[.0]
- 1.2.37              13    10237  12.so.0.37[.0]
- 1.2.45              10    10045  12.so.0.45[.0]
- 1.0.46              10    10046  10.so.0.46[.0]
- 1.2.38beta01        13    10238  12.so.0.38[.0]
- 1.2.38rc01-03       13    10238  12.so.0.38[.0]
- 1.0.47              10    10047  10.so.0.47[.0]
- 1.2.38              13    10238  12.so.0.38[.0]
- 1.2.39beta01-05     13    10239  12.so.0.39[.0]
- 1.2.39rc01          13    10239  12.so.0.39[.0]
- 1.0.48              10    10048  10.so.0.48[.0]
- 1.2.39              13    10239  12.so.0.39[.0]
- 1.2.40rc01          13    10240  12.so.0.40[.0]
- 1.0.49              10    10049  10.so.0.49[.0]
- 1.2.40              13    10240  12.so.0.40[.0]
+ 1.4.0beta15-36      14    10400  14.so.0.0[.0]
+ 1.4.0beta37-87      14    10400  14.so.14.0[.0]
+ 1.4.0rc01           14    10400  14.so.14.0[.0]
+ 1.4.0beta88-109     14    10400  14.so.14.0[.0]
+ 1.4.0rc02-08        14    10400  14.so.14.0[.0]
+ 1.4.0               14    10400  14.so.14.0[.0]
+ 1.4.1beta01-03      14    10401  14.so.14.1[.0]
+ 1.4.1rc01           14    10401  14.so.14.1[.0]
+ 1.4.1beta04-12      14    10401  14.so.14.1[.0]
+ 1.4.1               14    10401  14.so.14.1[.0]
+ 1.4.2               14    10402  14.so.14.2[.0]
+ 1.4.3               14    10403  14.so.14.3[.0]
+ 1.4.4               14    10404  14.so.14.4[.0]
+ 1.5.0beta01-58      15    10500  15.so.15.0[.0]
+ 1.5.0rc01-07        15    10500  15.so.15.0[.0]
+ 1.5.0               15    10500  15.so.15.0[.0]
+ 1.5.1beta01-11      15    10501  15.so.15.1[.0]
+ 1.5.1rc01-02        15    10501  15.so.15.1[.0]
+ 1.5.1               15    10501  15.so.15.1[.0]
 
 Henceforth the source version will match the shared-library minor
 and patch numbers; the shared-library major version number will be
@@ -4178,7 +5204,8 @@ version 1.0.6j; from then on they were given the upcoming public
 release number plus "betaNN" or "rcN".
 
 .SH "SEE ALSO"
-.IR libpngpf(3) ", " png(5)
+.BR "png"(5), " libpngpf"(3), " zlib"(3), " deflate"(5), " " and " zlib"(5)
+
 .LP
 .IR libpng :
 .IP
@@ -4201,7 +5228,7 @@ ftp://ftp.info-zip.org/pub/infozip/zlib
 .I libpng
 or at
 .br
-ftp://ftp.rfc-editor.org:/in-notes/rfc2083.txt
+ftp://ds.internic.net/rfc/rfc2083.txt
 .br
 or (as a W3C Recommendation) at
 .br
@@ -4221,7 +5248,7 @@ possible without all of you.
 
 Thanks to Frank J. T. Wojcik for helping with the documentation.
 
-Libpng version 1.2.40 - September 10, 2009:
+Libpng version 1.5.1 - February 3, 2011:
 Initially created in 1995 by Guy Eric Schalnat, then of Group 42, Inc.
 Currently maintained by Glenn Randers-Pehrson (glennrp at users.sourceforge.net).
 
@@ -4244,8 +5271,8 @@ this sentence.
 
 This code is released under the libpng license.
 
-libpng versions 1.2.6, August 15, 2004, through 1.2.40, September 10, 2009, are
-Copyright (c) 2004,2006-2008 Glenn Randers-Pehrson, and are
+libpng versions 1.2.6, August 15, 2004, through 1.5.1, February 3, 2011, are
+Copyright (c) 2004,2006-2007 Glenn Randers-Pehrson, and are
 distributed according to the same disclaimer and license as libpng-1.2.5
 with the following individual added to the list of Contributing Authors
 
@@ -4343,7 +5370,7 @@ certification mark of the Open Source Initiative.
 
 Glenn Randers-Pehrson
 glennrp at users.sourceforge.net
-September 10, 2009
+February 3, 2011
 
 .\" end of man page
 

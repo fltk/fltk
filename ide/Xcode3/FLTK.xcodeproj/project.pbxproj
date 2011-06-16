@@ -90,6 +90,14 @@
 		242570F8A9539222DEAC6CAF /* filename_isdir.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 2BECA86D733575C07B9982DF /* filename_isdir.cxx */; };
 		25BD82F1B2EC9988A25447F0 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		2642F76001144A05102CC191 /* inffast.c in Sources */ = {isa = PBXBuildFile; fileRef = 4B4931D88DEFF9253DD2B260 /* inffast.c */; };
+		273EA93D130ACF91000D6870 /* jaricom.c in Sources */ = {isa = PBXBuildFile; fileRef = 273EA935130ACF91000D6870 /* jaricom.c */; };
+		273EA93E130ACF91000D6870 /* jcarith.c in Sources */ = {isa = PBXBuildFile; fileRef = 273EA936130ACF91000D6870 /* jcarith.c */; };
+		273EA93F130ACF91000D6870 /* jdarith.c in Sources */ = {isa = PBXBuildFile; fileRef = 273EA937130ACF91000D6870 /* jdarith.c */; };
+		273EA940130ACF91000D6870 /* jdct.h in Headers */ = {isa = PBXBuildFile; fileRef = 273EA938130ACF91000D6870 /* jdct.h */; };
+		273EA941130ACF91000D6870 /* jinclude.h in Headers */ = {isa = PBXBuildFile; fileRef = 273EA939130ACF91000D6870 /* jinclude.h */; };
+		273EA942130ACF91000D6870 /* jmemsys.h in Headers */ = {isa = PBXBuildFile; fileRef = 273EA93A130ACF91000D6870 /* jmemsys.h */; };
+		273EA943130ACF91000D6870 /* jpegint.h in Headers */ = {isa = PBXBuildFile; fileRef = 273EA93B130ACF91000D6870 /* jpegint.h */; };
+		273EA944130ACF91000D6870 /* jversion.h in Headers */ = {isa = PBXBuildFile; fileRef = 273EA93C130ACF91000D6870 /* jversion.h */; };
 		274F92CF30A586E0F8E21530 /* Fl_Bitmap.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 3F000DD5F091F66BC42822E3 /* Fl_Bitmap.cxx */; };
 		2773DE9597485DA8088C87BF /* hello.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 4C2EEE3E17025A63A0AEEF5F /* hello.cxx */; };
 		27995ECF594A0572EAF3C346 /* fltk_gl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EA8E6EC230301E597B9D9AED /* fltk_gl.framework */; };
@@ -132,7 +140,6 @@
 		33FCC793A92F544711E09A1E /* fltk_png.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
 		3451831A2E9F171627CCA8C5 /* button.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D06E371A971A3BC1B399AD78 /* button.cxx */; };
 		34870EA10DBD90DB3DD49DA0 /* fl_call_main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1501BD6AB688B2DB8120E852 /* fl_call_main.c */; };
-		362C4C6926F1D16B73E4FDA1 /* ide_maketools.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 8EF20FF84687D00EF687AF62 /* ide_maketools.cxx */; };
 		36332A81E6A6E7E3D5D26531 /* radio.fl in Sources */ = {isa = PBXBuildFile; fileRef = 58166AA7A85D9E037993FC38 /* radio.fl */; };
 		363CA6BAC2E1C6F51F3C4F91 /* tiled_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 94D15578CD49CC75FE6617E4 /* tiled_image.cxx */; };
 		365C8ABAB40CA4E4F4DE497B /* jcmaster.c in Sources */ = {isa = PBXBuildFile; fileRef = D77F126A951A15185214FF2E /* jcmaster.c */; };
@@ -156,7 +163,6 @@
 		3B39A4D9B92163A3DC42B79D /* jdapistd.c in Sources */ = {isa = PBXBuildFile; fileRef = AB3E00F5BBC9AB1C51B0EEDC /* jdapistd.c */; };
 		3B627DDF4E12177AED294C76 /* jdapimin.c in Sources */ = {isa = PBXBuildFile; fileRef = D3FB35B309F2E1E59D1618C8 /* jdapimin.c */; };
 		3B93665C37B124E7072A0C29 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
-		3BA58E827191046DB7277DBE /* gzio.c in Sources */ = {isa = PBXBuildFile; fileRef = D3D556728D5CDD2FD7B86AC8 /* gzio.c */; };
 		3BB6C389D42EA62871E9F4B4 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		3BD005D954ABCB5983F540AB /* fl_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = 42660BA0E346168608D0FADB /* fl_utf.c */; };
 		3C0CA0BFF07538026590AE21 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -221,7 +227,6 @@
 		58D9DA0C0F0A11E97EAAB61B /* freeglut_stroke_roman.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6CCA5064754A8314839CB37A /* freeglut_stroke_roman.cxx */; };
 		59826A4FF117DE06A6F70ABD /* Fl_Native_File_Chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 2DE25DB4CE986C1857B5ECF7 /* Fl_Native_File_Chooser.cxx */; };
 		59879CC60E91D23A1380763F /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACB2F49A22C3FB3E837EC61 /* AGL.framework */; };
-		59930AC7D5318A72BE9ED1FB /* ide_xcode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 464D522BF0A1D61F58E94456 /* ide_xcode.cxx */; };
 		5B3DACE9AD337A089D2A2BDA /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		5B4CB32F2F0797A635568B3A /* fltk_gl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA8E6EC230301E597B9D9AED /* fltk_gl.framework */; };
 		5BF4C749E28B3792559C9107 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -283,7 +288,6 @@
 		6F8B4EC22CC54B6B06F9D5C7 /* Fl_Image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6DCFF326B588B1B27618F28C /* Fl_Image.cxx */; };
 		6FD47E04046FAD55F12B263D /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		708B512D2D2F2FE8B26D329C /* curve.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 09A55ED62CD9010F1E512122 /* curve.cxx */; };
-		7091A9422A9360F48A65B790 /* jcphuff.c in Sources */ = {isa = PBXBuildFile; fileRef = 7A76AE49F30DFB877BA43A02 /* jcphuff.c */; };
 		717B3CDBF11CAE5C04D035F8 /* Fl_Progress.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 570D0C7510FE3A3FB7A1BD5D /* Fl_Progress.cxx */; };
 		71967BE27E13E5EA2F6627D0 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		71A1293362845D379D9FE9D1 /* fltk_png.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
@@ -298,7 +302,6 @@
 		753A6417598E2D35C308632A /* valuators.fl in Sources */ = {isa = PBXBuildFile; fileRef = 590C56F672356072A5C86BC3 /* valuators.fl */; };
 		761829645FD3BCA7EE9DE369 /* fltk_gl.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EA8E6EC230301E597B9D9AED /* fltk_gl.framework */; };
 		762325B25679668EB687A028 /* gl_overlay.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 1F6E4CE3C0DF58D8F7B3A94A /* gl_overlay.cxx */; };
-		76BA5F2997A55DDFA04EFC98 /* ide_visualc.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 9C0598A21FEE02AA4F0E39C9 /* ide_visualc.cxx */; };
 		7780DFF77FE8A2E3918D76EE /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		78A86E05D9AE49D54C6503EB /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		794879F3090773543095027D /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -316,6 +319,12 @@
 		7E8E2DC7A53A62D0F1EB860E /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		7EA88708B9A088FCEB7CAA27 /* file_chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 39CD231E22E0B53E92CABDC9 /* file_chooser.cxx */; };
 		7EC3AD9A56535A54430B8DCD /* Fl_Browser_.cxx in Sources */ = {isa = PBXBuildFile; fileRef = AAD25B747F4122A2C5224708 /* Fl_Browser_.cxx */; };
+		7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */; };
+		7F54C8A8130FAC4F00E736F3 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A3130FAC4F00E736F3 /* gzclose.c */; };
+		7F54C8A9130FAC4F00E736F3 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A4130FAC4F00E736F3 /* gzlib.c */; };
+		7F54C8AA130FAC4F00E736F3 /* gzread.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A5130FAC4F00E736F3 /* gzread.c */; };
+		7F54C8AB130FAC4F00E736F3 /* gzwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A6130FAC4F00E736F3 /* gzwrite.c */; };
+		7F54C8AC130FAC4F00E736F3 /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A7130FAC4F00E736F3 /* infback.c */; };
 		7F66B1D912BB924C00C67B59 /* Fl_cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */; };
 		7F66B1DA12BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */; };
 		7F66B1DB12BB924C00C67B59 /* Fl_Quartz_Printer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */; };
@@ -357,7 +366,6 @@
 		8E652C61D0A4E2CBDCC794F5 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		8F77031B8CCFF315D4CB151E /* Fl_Text_Editor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D9FC21A432D9F4C118B2B1D4 /* Fl_Text_Editor.cxx */; };
 		902B7D9D5C27F6AF1727D275 /* fl_draw_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6F065A63833D5944E820C951 /* fl_draw_image.cxx */; };
-		916E94D46FCF743D6CC07005 /* jidctred.c in Sources */ = {isa = PBXBuildFile; fileRef = EDCB878D48197F6AE1C99614 /* jidctred.c */; };
 		91D17317EFB32F4E9E022744 /* Fl_Menu_Type.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 88F715478C4F84C8E55B0820 /* Fl_Menu_Type.cxx */; };
 		928D03671DF168D88B96D178 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		929E238322B78D6EE544D8A3 /* fl_font.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 9E8F7BCC0292044D887D423B /* fl_font.cxx */; };
@@ -404,7 +412,6 @@
 		A6ED3327A24E5445BC27F29C /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		A749C4ADD4C26B198214260A /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		A76B5A74F4082F02C1A917F6 /* Fl_Tree_Prefs.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 197D446B1F4FEB565793FC67 /* Fl_Tree_Prefs.cxx */; };
-		A814D7DD818DB1FC5E8C7E0D /* ide_support.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5CA491664CF9A4BE4060CDBD /* ide_support.cxx */; };
 		A8C6B33E92B95C8BFC2474AA /* clock.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5EF025FDE53B2276B6931CD5 /* clock.cxx */; };
 		A8CCCF7D542DA0B5FED00393 /* Fl_Tree_Item_Array.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 00E3864092375950FE42449E /* Fl_Tree_Item_Array.cxx */; };
 		A98C734F750F2119D508FB8A /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -500,14 +507,12 @@
 		C95961881274CEA1009C0594 /* README.Xcode in Headers */ = {isa = PBXBuildFile; fileRef = C95961641274CDEC009C0594 /* README.Xcode */; settings = {ATTRIBUTES = (Public, ); }; };
 		C95961891274CEA4009C0594 /* README.Xcode in Headers */ = {isa = PBXBuildFile; fileRef = C95961641274CDEC009C0594 /* README.Xcode */; settings = {ATTRIBUTES = (Public, ); }; };
 		C959618A1274CEA6009C0594 /* README.Xcode in Headers */ = {isa = PBXBuildFile; fileRef = C95961641274CDEC009C0594 /* README.Xcode */; settings = {ATTRIBUTES = (Public, ); }; };
-		C96290C11274D0CD007D3CFE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFB1274D0B3007D3CFE /* Carbon.framework */; };
 		C96290C21274D0CF007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96290E21274D0EF007D3CFE /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E11274D0EF007D3CFE /* AGL.framework */; };
 		C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290E51274D100007D3CFE /* OpenGL.framework */; };
-		C96290EC1274D134007D3CFE /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C96290EB1274D133007D3CFE /* AudioToolbox.framework */; };
-		C962910E1274D1D7007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
 		C96291151274D1FD007D3CFE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFD1274D0B3007D3CFE /* Cocoa.framework */; };
-		C96291E712756D5E007D3CFE /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9628FFB1274D0B3007D3CFE /* Carbon.framework */; };
+		C984AFA812D02A1800D66DAD /* demo.menu in Resources */ = {isa = PBXBuildFile; fileRef = C984AFA712D02A1800D66DAD /* demo.menu */; };
+		C99FD8E212D2A2AD002FC776 /* browser.cxx in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6D999C03407EAEE9C4D3477A /* browser.cxx */; };
 		C9A374AB3AD29E141C659819 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		C9C4C91FDA73557BB6B69F3D /* jchuff.c in Sources */ = {isa = PBXBuildFile; fileRef = D9DB580DCA05DE487FACA272 /* jchuff.c */; };
 		C9D72F10B7A22DD0349ABC68 /* fltk_forms.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097D0B476E396B9AAC6FA1E0 /* fltk_forms.framework */; };
@@ -660,6 +665,7 @@
 		C9EDD4ED1274BBCD00ADB21C /* forms.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = E0132688B22159A85307F264 /* forms.H */; };
 		C9EDD5531274C04500ADB21C /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05376DC900B2C885B847EA36 /* OpenGL.framework */; };
 		C9EDD5B31274C51600ADB21C /* Fl_PostScript.H in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9EDD5B11274C4FA00ADB21C /* Fl_PostScript.H */; };
+		C9F9C0DE12CFCDAC0067ADCC /* rgb.txt in Resources */ = {isa = PBXBuildFile; fileRef = C9F9C0DD12CFCDAC0067ADCC /* rgb.txt */; };
 		CA035B0265710EFABD6E632D /* Fl_Dial.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 3AFC31503AB99F6D00BAC647 /* Fl_Dial.cxx */; };
 		CAA4C60E679571629681FAC8 /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		CAF6CE97B3EBEFFA65AAEEAD /* Fl_Widget.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0B9D4355B2E878715DD43AD3 /* Fl_Widget.cxx */; };
@@ -748,7 +754,6 @@
 		F4769A68D050A61218AC5B42 /* Fl_XPM_Image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0CBC6DC7942212D47B70681B /* Fl_XPM_Image.cxx */; };
 		F485B877C27D5431338DB400 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		F48AA8D3A3B18C6FBC8D69E6 /* fltk_images.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E917C15E28EE293416A38C5E /* fltk_images.framework */; };
-		F4B47F14754880CE01415BE4 /* jdphuff.c in Sources */ = {isa = PBXBuildFile; fileRef = F20C125E79B7CC1F5109248C /* jdphuff.c */; };
 		F56E295E6736DABDA07693C1 /* fltk_zlib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8880CD3FEF32388A24C1B94 /* fltk_zlib.framework */; };
 		F61DCEF69E70439429A6C865 /* Fl_get_system_colors.cxx in Sources */ = {isa = PBXBuildFile; fileRef = EB5B18A1B9B1E41F2AB56A97 /* Fl_get_system_colors.cxx */; };
 		F6307C90D252F006E432B184 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
@@ -3670,6 +3675,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C99FD8E112D2A295002FC776 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				C99FD8E212D2A2AD002FC776 /* browser.cxx in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C9EDD42D1274B84100ADB21C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4062,7 +4077,7 @@
 		0B9D4355B2E878715DD43AD3 /* Fl_Widget.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Widget.cxx; path = ../../src/Fl_Widget.cxx; sourceTree = SOURCE_ROOT; };
 		0BD550D5F4A9E53E93B19234 /* Fl_Tree_Item.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Tree_Item.H; path = ../../FL/Fl_Tree_Item.H; sourceTree = SOURCE_ROOT; };
 		0C4D02EC5E80D2BF56CFB48B /* jcapistd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcapistd.c; path = ../../jpeg/jcapistd.c; sourceTree = SOURCE_ROOT; };
-		0C9E126B5F827C426EC22043 /* tabs.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = tabs.fl; path = ../../test/tabs.fl; sourceTree = SOURCE_ROOT; };
+		0C9E126B5F827C426EC22043 /* tabs.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tabs.fl; path = ../../test/tabs.fl; sourceTree = SOURCE_ROOT; };
 		0CAFE7CA950A492FE35F2163 /* Fl_Chart.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Chart.H; path = ../../FL/Fl_Chart.H; sourceTree = SOURCE_ROOT; };
 		0CBC6DC7942212D47B70681B /* Fl_XPM_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_XPM_Image.cxx; path = ../../src/Fl_XPM_Image.cxx; sourceTree = SOURCE_ROOT; };
 		0CFB24E7079EC601366BCECF /* Fl_Table_Row.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Table_Row.H; path = ../../FL/Fl_Table_Row.H; sourceTree = SOURCE_ROOT; };
@@ -4099,7 +4114,7 @@
 		1C75365D167645656C3A6752 /* ps_image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ps_image.cxx; path = ../../src/ps_image.cxx; sourceTree = SOURCE_ROOT; };
 		1CFFC165E8EE6C1AD9CFD33C /* Fl_Int_Input.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Int_Input.H; path = ../../FL/Fl_Int_Input.H; sourceTree = SOURCE_ROOT; };
 		1D02929D32167C37921C842E /* resizebox.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = resizebox.cxx; path = ../../test/resizebox.cxx; sourceTree = SOURCE_ROOT; };
-		1D152F81B7390EEECF3BB670 /* preferences.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = preferences.fl; path = ../../test/preferences.fl; sourceTree = SOURCE_ROOT; };
+		1D152F81B7390EEECF3BB670 /* preferences.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = preferences.fl; path = ../../test/preferences.fl; sourceTree = SOURCE_ROOT; };
 		1D499CE6ECA4995EEA46EAD7 /* math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = math.h; path = ../../FL/math.h; sourceTree = SOURCE_ROOT; };
 		1DBDBB6B583C028BD8D1D2F4 /* Fl_Menu_Bar.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Menu_Bar.H; path = ../../FL/Fl_Menu_Bar.H; sourceTree = SOURCE_ROOT; };
 		1E431497B296C454015D42C2 /* pixmap_browser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pixmap_browser.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4117,6 +4132,14 @@
 		25F7E879F4C04CF85422D2B7 /* keyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = keyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2621527FD926C67B778C41F3 /* fl_draw.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = fl_draw.H; path = ../../FL/fl_draw.H; sourceTree = SOURCE_ROOT; };
 		270962DA6A7684128875ADDE /* Fl_Round_Button.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Round_Button.H; path = ../../FL/Fl_Round_Button.H; sourceTree = SOURCE_ROOT; };
+		273EA935130ACF91000D6870 /* jaricom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jaricom.c; path = ../../jpeg/jaricom.c; sourceTree = SOURCE_ROOT; };
+		273EA936130ACF91000D6870 /* jcarith.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcarith.c; path = ../../jpeg/jcarith.c; sourceTree = SOURCE_ROOT; };
+		273EA937130ACF91000D6870 /* jdarith.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdarith.c; path = ../../jpeg/jdarith.c; sourceTree = SOURCE_ROOT; };
+		273EA938130ACF91000D6870 /* jdct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jdct.h; path = ../../jpeg/jdct.h; sourceTree = SOURCE_ROOT; };
+		273EA939130ACF91000D6870 /* jinclude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jinclude.h; path = ../../jpeg/jinclude.h; sourceTree = SOURCE_ROOT; };
+		273EA93A130ACF91000D6870 /* jmemsys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jmemsys.h; path = ../../jpeg/jmemsys.h; sourceTree = SOURCE_ROOT; };
+		273EA93B130ACF91000D6870 /* jpegint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jpegint.h; path = ../../jpeg/jpegint.h; sourceTree = SOURCE_ROOT; };
+		273EA93C130ACF91000D6870 /* jversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jversion.h; path = ../../jpeg/jversion.h; sourceTree = SOURCE_ROOT; };
 		274CBEBF1D1BFD5C91605CBE /* Fl_add_idle.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_add_idle.cxx; path = ../../src/Fl_add_idle.cxx; sourceTree = SOURCE_ROOT; };
 		27C65F509527076EB26E9C0F /* Fl_Gl_Choice.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Choice.cxx; path = ../../src/Fl_Gl_Choice.cxx; sourceTree = SOURCE_ROOT; };
 		28AFF174A53E38CCB7475C19 /* jdmaster.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmaster.c; path = ../../jpeg/jdmaster.c; sourceTree = SOURCE_ROOT; };
@@ -4179,12 +4202,10 @@
 		4343E645136756B9FEEE6902 /* fl_cursor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_cursor.cxx; path = ../../src/fl_cursor.cxx; sourceTree = SOURCE_ROOT; };
 		43D9A7CD936B1382F5EA23E1 /* about_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = about_panel.cxx; path = ../../fluid/about_panel.cxx; sourceTree = SOURCE_ROOT; };
 		44277061B27BFBE1FB22B79B /* menubar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = menubar.cxx; path = ../../test/menubar.cxx; sourceTree = SOURCE_ROOT; };
-		44B6E71105CCEECB4D5E2DC8 /* ide_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ide_support.h; path = ../../fluid/ide_support.h; sourceTree = SOURCE_ROOT; };
 		451D01896EFDD83277515630 /* glut.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = glut.H; path = ../../FL/glut.H; sourceTree = SOURCE_ROOT; };
 		4577F046D6D5D93D2553BFBC /* jdtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdtrans.c; path = ../../jpeg/jdtrans.c; sourceTree = SOURCE_ROOT; };
 		45B993D3FA0EED6037499D3A /* color_chooser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = color_chooser.cxx; path = ../../test/color_chooser.cxx; sourceTree = SOURCE_ROOT; };
 		461BBD068DF8C58F4FFB131B /* Fl_Round_Clock.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Round_Clock.H; path = ../../FL/Fl_Round_Clock.H; sourceTree = SOURCE_ROOT; };
-		464D522BF0A1D61F58E94456 /* ide_xcode.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_xcode.cxx; path = ../../fluid/ide_xcode.cxx; sourceTree = SOURCE_ROOT; };
 		46DBACE210E8AEF57FFB5693 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		48A8DC166D69EDC6F24AE678 /* rotated_text.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rotated_text.cxx; path = ../../test/rotated_text.cxx; sourceTree = SOURCE_ROOT; };
 		49F26943DBCFA9878A9C3F55 /* adler32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = adler32.c; path = ../../zlib/adler32.c; sourceTree = SOURCE_ROOT; };
@@ -4222,9 +4243,9 @@
 		57639C1D5415FB55436556A2 /* Fl_Shared_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Shared_Image.cxx; path = ../../src/Fl_Shared_Image.cxx; sourceTree = SOURCE_ROOT; };
 		577CE0F473400471A5F96A52 /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwutil.c; path = ../../png/pngwutil.c; sourceTree = SOURCE_ROOT; };
 		577F8362F7016862051E2AC3 /* fl_overlay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_overlay.cxx; path = ../../src/fl_overlay.cxx; sourceTree = SOURCE_ROOT; };
-		58166AA7A85D9E037993FC38 /* radio.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = radio.fl; path = ../../test/radio.fl; sourceTree = SOURCE_ROOT; };
+		58166AA7A85D9E037993FC38 /* radio.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = radio.fl; path = ../../test/radio.fl; sourceTree = SOURCE_ROOT; };
 		5876E03E2818B598FAA5C307 /* fl_rounded_box.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_rounded_box.cxx; path = ../../src/fl_rounded_box.cxx; sourceTree = SOURCE_ROOT; };
-		590C56F672356072A5C86BC3 /* valuators.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = valuators.fl; path = ../../test/valuators.fl; sourceTree = SOURCE_ROOT; };
+		590C56F672356072A5C86BC3 /* valuators.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = valuators.fl; path = ../../test/valuators.fl; sourceTree = SOURCE_ROOT; };
 		598DD70F89D7731D61BBD8EF /* fractals.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fractals.cxx; path = ../../test/fractals.cxx; sourceTree = SOURCE_ROOT; };
 		59EAC37D26FEC2AB49D79C08 /* Fl_Radio_Button.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Radio_Button.H; path = ../../FL/Fl_Radio_Button.H; sourceTree = SOURCE_ROOT; };
 		5A7532B3CDA46030885D1D14 /* Fl_Button.cxx */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Button.cxx; path = ../../src/Fl_Button.cxx; sourceTree = SOURCE_ROOT; tabWidth = 8; };
@@ -4233,7 +4254,6 @@
 		5B2B6ED6A3649923BAAFFDF1 /* Fl_visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_visual.cxx; path = ../../src/Fl_visual.cxx; sourceTree = SOURCE_ROOT; };
 		5B566F3BAD7101C63D5494E3 /* Fl_get_key.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_get_key.cxx; path = ../../src/Fl_get_key.cxx; sourceTree = SOURCE_ROOT; };
 		5B8BFBDF9C48A998F0781C9E /* Fl_Hor_Value_Slider.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Hor_Value_Slider.H; path = ../../FL/Fl_Hor_Value_Slider.H; sourceTree = SOURCE_ROOT; };
-		5CA491664CF9A4BE4060CDBD /* ide_support.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_support.cxx; path = ../../fluid/ide_support.cxx; sourceTree = SOURCE_ROOT; };
 		5CD5D087391E39030838C823 /* jcomapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcomapi.c; path = ../../jpeg/jcomapi.c; sourceTree = SOURCE_ROOT; };
 		5CDA214AEABC15E3EF1BB172 /* Fl_Adjuster.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Adjuster.H; path = ../../FL/Fl_Adjuster.H; sourceTree = SOURCE_ROOT; };
 		5CE4CB9AEF9070A32A27696D /* fl_overlay_visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_overlay_visual.cxx; path = ../../src/fl_overlay_visual.cxx; sourceTree = SOURCE_ROOT; };
@@ -4291,9 +4311,8 @@
 		790419B5A0AD64D66F9B19E1 /* Fl_Help_View.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Help_View.cxx; path = ../../src/Fl_Help_View.cxx; sourceTree = SOURCE_ROOT; };
 		79EE61E7DCB96EF56E71DD19 /* Fl_Toggle_Light_Button.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Toggle_Light_Button.H; path = ../../FL/Fl_Toggle_Light_Button.H; sourceTree = SOURCE_ROOT; };
 		7A2CE7959780A1C6E60103E8 /* fl_gtk.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_gtk.cxx; path = ../../src/fl_gtk.cxx; sourceTree = SOURCE_ROOT; };
-		7A76AE49F30DFB877BA43A02 /* jcphuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcphuff.c; path = ../../jpeg/jcphuff.c; sourceTree = SOURCE_ROOT; };
 		7AC3212E8EECF086DCDEEC46 /* fractals.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fractals.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7B084447C58E292798B27283 /* keyboard_ui.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = keyboard_ui.fl; path = ../../test/keyboard_ui.fl; sourceTree = SOURCE_ROOT; };
+		7B084447C58E292798B27283 /* keyboard_ui.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = keyboard_ui.fl; path = ../../test/keyboard_ui.fl; sourceTree = SOURCE_ROOT; };
 		7C57535613D421F393DD662F /* fl_shortcut.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_shortcut.cxx; path = ../../src/fl_shortcut.cxx; sourceTree = SOURCE_ROOT; };
 		7C67E3A1368F9AC0A03A7BD6 /* fl_scroll_area.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_scroll_area.cxx; path = ../../src/fl_scroll_area.cxx; sourceTree = SOURCE_ROOT; };
 		7C8D88FDB0A0A32E59465025 /* fl_symbols.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_symbols.cxx; path = ../../src/fl_symbols.cxx; sourceTree = SOURCE_ROOT; };
@@ -4301,7 +4320,18 @@
 		7DF4AD3769671959EA813845 /* jcparam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcparam.c; path = ../../jpeg/jcparam.c; sourceTree = SOURCE_ROOT; };
 		7E05602BE68211B11E493E18 /* Fl_Menu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu.cxx; path = ../../src/Fl_Menu.cxx; sourceTree = SOURCE_ROOT; };
 		7E51DAB7D0F93ACFB736EE9A /* Fl_Tree_Prefs.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Tree_Prefs.H; path = ../../FL/Fl_Tree_Prefs.H; sourceTree = SOURCE_ROOT; };
+		7F2A29041338C6B80033C0A6 /* pnglibconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnglibconf.h; path = ../../png/pnglibconf.h; sourceTree = SOURCE_ROOT; };
+		7F2A29051338C6D40033C0A6 /* pngpriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngpriv.h; path = ../../png/pngpriv.h; sourceTree = SOURCE_ROOT; };
+		7F2A29071338C7450033C0A6 /* pngstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngstruct.h; path = ../../png/pngstruct.h; sourceTree = SOURCE_ROOT; };
+		7F2A29081338C7520033C0A6 /* pnginfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnginfo.h; path = ../../png/pnginfo.h; sourceTree = SOURCE_ROOT; };
+		7F2A29091338C7650033C0A6 /* pngdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngdebug.h; path = ../../png/pngdebug.h; sourceTree = SOURCE_ROOT; };
+		7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		7F4B8ADD01CB2F8BFE43ACBA /* Fl_Menu_Bar.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu_Bar.cxx; path = ../../src/Fl_Menu_Bar.cxx; sourceTree = SOURCE_ROOT; };
+		7F54C8A3130FAC4F00E736F3 /* gzclose.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzclose.c; path = ../../zlib/gzclose.c; sourceTree = SOURCE_ROOT; };
+		7F54C8A4130FAC4F00E736F3 /* gzlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzlib.c; path = ../../zlib/gzlib.c; sourceTree = SOURCE_ROOT; };
+		7F54C8A5130FAC4F00E736F3 /* gzread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzread.c; path = ../../zlib/gzread.c; sourceTree = SOURCE_ROOT; };
+		7F54C8A6130FAC4F00E736F3 /* gzwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzwrite.c; path = ../../zlib/gzwrite.c; sourceTree = SOURCE_ROOT; };
+		7F54C8A7130FAC4F00E736F3 /* infback.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = infback.c; path = ../../zlib/infback.c; sourceTree = SOURCE_ROOT; };
 		7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_cocoa.mm; path = ../../src/Fl_cocoa.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Native_File_Chooser_MAC.mm; path = ../../src/Fl_Native_File_Chooser_MAC.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Quartz_Printer.mm; path = ../../src/Fl_Quartz_Printer.mm; sourceTree = SOURCE_ROOT; };
@@ -4317,7 +4347,7 @@
 		813C830680D031C1B2FCF9B6 /* Fl_Pack.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Pack.cxx; path = ../../src/Fl_Pack.cxx; sourceTree = SOURCE_ROOT; };
 		819B540345E59C29EE9DF3DA /* jcinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcinit.c; path = ../../jpeg/jcinit.c; sourceTree = SOURCE_ROOT; };
 		81CBEA61461E59652A309159 /* filename_match.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = filename_match.cxx; path = ../../src/filename_match.cxx; sourceTree = SOURCE_ROOT; };
-		8222D901BB4DAF097B81C1FE /* mandelbrot_ui.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = mandelbrot_ui.fl; path = ../../test/mandelbrot_ui.fl; sourceTree = SOURCE_ROOT; };
+		8222D901BB4DAF097B81C1FE /* mandelbrot_ui.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mandelbrot_ui.fl; path = ../../test/mandelbrot_ui.fl; sourceTree = SOURCE_ROOT; };
 		8277A82AB4C46B991D48F852 /* label.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = label.cxx; path = ../../test/label.cxx; sourceTree = SOURCE_ROOT; };
 		82863AEFE086C3469C386C22 /* Fl_Device.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Device.H; path = ../../FL/Fl_Device.H; sourceTree = SOURCE_ROOT; };
 		834EF24528E256603D6F39FF /* menubar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = menubar.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4342,7 +4372,6 @@
 		8D4E2F8A10BA06E332B7EB03 /* demo.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = demo.cxx; path = ../../test/demo.cxx; sourceTree = SOURCE_ROOT; };
 		8DFB9E7E8DB3AEC762613348 /* Fl_Menu_Window.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Menu_Window.H; path = ../../FL/Fl_Menu_Window.H; sourceTree = SOURCE_ROOT; };
 		8E81EE378D475F9CFDE296C9 /* Fl_Gl_Overlay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Overlay.cxx; path = ../../src/Fl_Gl_Overlay.cxx; sourceTree = SOURCE_ROOT; };
-		8EF20FF84687D00EF687AF62 /* ide_maketools.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_maketools.cxx; path = ../../fluid/ide_maketools.cxx; sourceTree = SOURCE_ROOT; };
 		8F311718B3CD16844535EEE6 /* comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = comments.h; path = ../../fluid/comments.h; sourceTree = SOURCE_ROOT; };
 		8F40BFA65740DDA6E9240F30 /* overlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = overlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90D9C06A2DCECD5B99C4A90A /* jdatadst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdatadst.c; path = ../../jpeg/jdatadst.c; sourceTree = SOURCE_ROOT; };
@@ -4371,7 +4400,6 @@
 		9B54C6B8D801E899981FC5E6 /* fl_boxtype.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_boxtype.cxx; path = ../../src/fl_boxtype.cxx; sourceTree = SOURCE_ROOT; };
 		9B57B581401BD8575BFAF2F1 /* Fl_Simple_Counter.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Simple_Counter.H; path = ../../FL/Fl_Simple_Counter.H; sourceTree = SOURCE_ROOT; };
 		9BCF393F94482AE7C7421397 /* Fl_Clock.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Clock.H; path = ../../FL/Fl_Clock.H; sourceTree = SOURCE_ROOT; };
-		9C0598A21FEE02AA4F0E39C9 /* ide_visualc.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ide_visualc.cxx; path = ../../fluid/ide_visualc.cxx; sourceTree = SOURCE_ROOT; };
 		9C87CC8FC8B566C55594BA36 /* sudoku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sudoku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CA94171ECE3444BB9D65BAE /* fl_read_image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_read_image.cxx; path = ../../src/fl_read_image.cxx; sourceTree = SOURCE_ROOT; };
 		9CBDD66D771449423070F912 /* template_panel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = template_panel.cxx; path = ../../fluid/template_panel.cxx; sourceTree = SOURCE_ROOT; };
@@ -4390,7 +4418,7 @@
 		A0B57FF2A1D358159C950F7F /* boxtype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = boxtype.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C1440AC6EE3239EEC7D81B /* Fl_Text_Display.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Text_Display.cxx; path = ../../src/Fl_Text_Display.cxx; sourceTree = SOURCE_ROOT; };
 		A0E4F14B0B1B1BCD1307E3CC /* fullscreen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fullscreen.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A136058B2D308F81E748921C /* fast_slow.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = fast_slow.fl; path = ../../test/fast_slow.fl; sourceTree = SOURCE_ROOT; };
+		A136058B2D308F81E748921C /* fast_slow.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = fast_slow.fl; path = ../../test/fast_slow.fl; sourceTree = SOURCE_ROOT; };
 		A2B930ADD957B492869191EB /* Fl_Check_Browser.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Check_Browser.H; path = ../../FL/Fl_Check_Browser.H; sourceTree = SOURCE_ROOT; };
 		A2C688326DDAF4AA29EA9120 /* Fl_Toggle_Round_Button.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Toggle_Round_Button.H; path = ../../FL/Fl_Toggle_Round_Button.H; sourceTree = SOURCE_ROOT; };
 		A2CF2FD35911638AD607092F /* Fl_Check_Button.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Check_Button.cxx; path = ../../src/Fl_Check_Button.cxx; sourceTree = SOURCE_ROOT; };
@@ -4426,7 +4454,7 @@
 		AC14DA2BFF3CBEE249FC2E89 /* line_style.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = line_style.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC5B933E5C802F33BC495FF8 /* Fl_Multiline_Output.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Multiline_Output.H; path = ../../FL/Fl_Multiline_Output.H; sourceTree = SOURCE_ROOT; };
 		AD6E04F6F1B72EB797867D80 /* tile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tile.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		ADA5BC653C9EFBEAA8C0AD29 /* CubeViewUI.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = CubeViewUI.fl; path = ../../test/CubeViewUI.fl; sourceTree = SOURCE_ROOT; };
+		ADA5BC653C9EFBEAA8C0AD29 /* CubeViewUI.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CubeViewUI.fl; path = ../../test/CubeViewUI.fl; sourceTree = SOURCE_ROOT; };
 		ADC532751F27C32E46DEFF6F /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtrans.c; path = ../../png/pngtrans.c; sourceTree = SOURCE_ROOT; };
 		AE1717E43F50EBA343960B1E /* Fl_Hor_Slider.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Hor_Slider.H; path = ../../FL/Fl_Hor_Slider.H; sourceTree = SOURCE_ROOT; };
 		AF65626F49A71525D24ED1B0 /* filename.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = filename.H; path = ../../FL/filename.H; sourceTree = SOURCE_ROOT; };
@@ -4480,11 +4508,10 @@
 		C9165EAF1291A304003FF4F0 /* utf8.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = utf8.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9165ED31291A376003FF4F0 /* unittests.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = unittests.cxx; path = ../../test/unittests.cxx; sourceTree = SOURCE_ROOT; };
 		C95961641274CDEC009C0594 /* README.Xcode */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.Xcode; path = ../../FL/README.Xcode; sourceTree = SOURCE_ROOT; };
-		C9628FFB1274D0B3007D3CFE /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		C9628FFD1274D0B3007D3CFE /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C96290E11274D0EF007D3CFE /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = System/Library/Frameworks/AGL.framework; sourceTree = SDKROOT; };
 		C96290E51274D100007D3CFE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		C96290EB1274D133007D3CFE /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		C984AFA712D02A1800D66DAD /* demo.menu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = demo.menu; path = ../../test/demo.menu; sourceTree = SOURCE_ROOT; };
 		C9EDD143127338F600ADB21C /* README.OSX.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.OSX.txt; path = ../../README.OSX.txt; sourceTree = SOURCE_ROOT; };
 		C9EDD4DE1274BB6600ADB21C /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = ../../png/png.h; sourceTree = SOURCE_ROOT; };
 		C9EDD4DF1274BB6600ADB21C /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = ../../png/pngconf.h; sourceTree = SOURCE_ROOT; };
@@ -4494,6 +4521,7 @@
 		C9EDD4E61274BBB600ADB21C /* jpeglib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jpeglib.h; path = ../../jpeg/jpeglib.h; sourceTree = SOURCE_ROOT; };
 		C9EDD5B11274C4FA00ADB21C /* Fl_PostScript.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_PostScript.H; path = ../../FL/Fl_PostScript.H; sourceTree = SOURCE_ROOT; };
 		C9F1464F0E6A4DCD77AF72B8 /* Fl_Function_Type.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Function_Type.cxx; path = ../../fluid/Fl_Function_Type.cxx; sourceTree = SOURCE_ROOT; };
+		C9F9C0DD12CFCDAC0067ADCC /* rgb.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rgb.txt; path = ../../test/rgb.txt; sourceTree = SOURCE_ROOT; };
 		CAEC632CEFC2CA7592EF9D74 /* image.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = image.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB23A4CE90D5A89FA2640A78 /* label.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = label.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC0C80DA4DD31B6B2DB91096 /* CodeEditor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeEditor.cxx; path = ../../fluid/CodeEditor.cxx; sourceTree = SOURCE_ROOT; };
@@ -4509,13 +4537,12 @@
 		D02CF2893ECCE831CD5D3176 /* Fl_Multi_Label.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Multi_Label.cxx; path = ../../src/Fl_Multi_Label.cxx; sourceTree = SOURCE_ROOT; };
 		D06E371A971A3BC1B399AD78 /* button.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = button.cxx; path = ../../test/button.cxx; sourceTree = SOURCE_ROOT; };
 		D0E376E93B4F22BE701D29E0 /* Fl_Roller.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Roller.cxx; path = ../../src/Fl_Roller.cxx; sourceTree = SOURCE_ROOT; };
-		D10B1EA053B5C8F02A636D93 /* tree.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = tree.fl; path = ../../test/tree.fl; sourceTree = SOURCE_ROOT; };
+		D10B1EA053B5C8F02A636D93 /* tree.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tree.fl; path = ../../test/tree.fl; sourceTree = SOURCE_ROOT; };
 		D1C792936D427CC48581BFAE /* Fl_Overlay_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Overlay_Window.cxx; path = ../../src/Fl_Overlay_Window.cxx; sourceTree = SOURCE_ROOT; };
 		D2DE1079C826533A91053A9C /* Fl_XBM_Image.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_XBM_Image.H; path = ../../FL/Fl_XBM_Image.H; sourceTree = SOURCE_ROOT; };
 		D33C668435685F7CCB359EE2 /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrio.c; path = ../../png/pngrio.c; sourceTree = SOURCE_ROOT; };
 		D3761C93D5C7A48D4B80225A /* doublebuffer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = doublebuffer.cxx; path = ../../test/doublebuffer.cxx; sourceTree = SOURCE_ROOT; };
 		D390A37D428892B9A8AD63AD /* Fl_Text_Buffer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Text_Buffer.cxx; path = ../../src/Fl_Text_Buffer.cxx; sourceTree = SOURCE_ROOT; };
-		D3D556728D5CDD2FD7B86AC8 /* gzio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = gzio.c; path = ../../zlib/gzio.c; sourceTree = SOURCE_ROOT; };
 		D3E25408466639AACEF4D2A6 /* jmemnobs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemnobs.c; path = ../../jpeg/jmemnobs.c; sourceTree = SOURCE_ROOT; };
 		D3FB35B309F2E1E59D1618C8 /* jdapimin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdapimin.c; path = ../../jpeg/jdapimin.c; sourceTree = SOURCE_ROOT; };
 		D4E11692C02E48A71A18527C /* function_panel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = function_panel.h; path = ../../fluid/function_panel.h; sourceTree = SOURCE_ROOT; };
@@ -4572,7 +4599,7 @@
 		E7C720E51DAC292F13358811 /* Fl_Gl_Window.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Gl_Window.H; path = ../../FL/Fl_Gl_Window.H; sourceTree = SOURCE_ROOT; };
 		E82932DF2A0C624C6EDC9207 /* Fl_Tile.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tile.cxx; path = ../../src/Fl_Tile.cxx; sourceTree = SOURCE_ROOT; };
 		E82DD2B5676CF315E945AF23 /* Fl_FormsBitmap.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_FormsBitmap.H; path = ../../FL/Fl_FormsBitmap.H; sourceTree = SOURCE_ROOT; };
-		E840F8E478F4C8C6038E235B /* resize.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = resize.fl; path = ../../test/resize.fl; sourceTree = SOURCE_ROOT; };
+		E840F8E478F4C8C6038E235B /* resize.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = resize.fl; path = ../../test/resize.fl; sourceTree = SOURCE_ROOT; };
 		E887B4AE75EC9D885D592636 /* fluid.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fluid.cxx; path = ../../fluid/fluid.cxx; sourceTree = SOURCE_ROOT; };
 		E8D790E9361D2B311B6839B1 /* pixmap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pixmap.cxx; path = ../../test/pixmap.cxx; sourceTree = SOURCE_ROOT; };
 		E917C15E28EE293416A38C5E /* fltk_images.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltk_images.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4589,7 +4616,6 @@
 		EC57889382FB898FD3EF2580 /* Fl_Gl_Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Gl_Window.cxx; path = ../../src/Fl_Gl_Window.cxx; sourceTree = SOURCE_ROOT; };
 		EC5862E1FC79542DC55D8462 /* colbrowser.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = colbrowser.cxx; path = ../../test/colbrowser.cxx; sourceTree = SOURCE_ROOT; };
 		ECFF712363202EC351A51E53 /* Fl_PNM_Image.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_PNM_Image.cxx; path = ../../src/Fl_PNM_Image.cxx; sourceTree = SOURCE_ROOT; };
-		EDCB878D48197F6AE1C99614 /* jidctred.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jidctred.c; path = ../../jpeg/jidctred.c; sourceTree = SOURCE_ROOT; };
 		EDE6CE6B09D31AC0AAC9FF56 /* fullscreen.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fullscreen.cxx; path = ../../test/fullscreen.cxx; sourceTree = SOURCE_ROOT; };
 		EE2FB1F7B99BE408E1B4DFB7 /* Fl_Object.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Object.H; path = ../../FL/Fl_Object.H; sourceTree = SOURCE_ROOT; };
 		EE6507EFCDDA13ACF9373E3E /* Fl_Hor_Fill_Slider.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Hor_Fill_Slider.H; path = ../../FL/Fl_Hor_Fill_Slider.H; sourceTree = SOURCE_ROOT; };
@@ -4600,7 +4626,6 @@
 		F0F281028A82F2E8C2070B26 /* cursor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cursor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F123133D8A3AD430ED07DF17 /* jdcolor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdcolor.c; path = ../../jpeg/jdcolor.c; sourceTree = SOURCE_ROOT; };
 		F1C4032FB66042A96955A62E /* Fl_Value_Output.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Value_Output.cxx; path = ../../src/Fl_Value_Output.cxx; sourceTree = SOURCE_ROOT; };
-		F20C125E79B7CC1F5109248C /* jdphuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdphuff.c; path = ../../jpeg/jdphuff.c; sourceTree = SOURCE_ROOT; };
 		F2E5612A81A6E8D53ED91CAE /* Fl_Slider.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Slider.H; path = ../../FL/Fl_Slider.H; sourceTree = SOURCE_ROOT; };
 		F319551D961725F0949D0235 /* ask.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ask.cxx; path = ../../test/ask.cxx; sourceTree = SOURCE_ROOT; };
 		F397A185D11C3DED903CB99F /* Fl_Chart.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Chart.cxx; path = ../../src/Fl_Chart.cxx; sourceTree = SOURCE_ROOT; };
@@ -4625,7 +4650,7 @@
 		FBB2C3FCFF8322A237DDBE23 /* fl_set_font.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_set_font.cxx; path = ../../src/fl_set_font.cxx; sourceTree = SOURCE_ROOT; };
 		FC940D10359580615C166335 /* shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shape.cxx; path = ../../test/shape.cxx; sourceTree = SOURCE_ROOT; };
 		FD1BB104911A6726B02EEE37 /* Fl_Radio_Round_Button.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Radio_Round_Button.H; path = ../../FL/Fl_Radio_Round_Button.H; sourceTree = SOURCE_ROOT; };
-		FE29497A25C52BC2F7D5A9D4 /* inactive.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.fluid; name = inactive.fl; path = ../../test/inactive.fl; sourceTree = SOURCE_ROOT; };
+		FE29497A25C52BC2F7D5A9D4 /* inactive.fl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = inactive.fl; path = ../../test/inactive.fl; sourceTree = SOURCE_ROOT; };
 		FE466F26BF6C316E5A1770E6 /* jccolor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jccolor.c; path = ../../jpeg/jccolor.c; sourceTree = SOURCE_ROOT; };
 		FE90AA3BB40510FA45E0C27B /* Fl_Bitmap.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Bitmap.H; path = ../../FL/Fl_Bitmap.H; sourceTree = SOURCE_ROOT; };
 		FEB0F8FE6383384180570D94 /* fltk.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = fltk.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5129,11 +5154,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C96291E712756D5E007D3CFE /* Carbon.framework in Frameworks */,
-				C962910E1274D1D7007D3CFE /* Cocoa.framework in Frameworks */,
 				04C166D5213DD80648BE1F4D /* fltk.framework in Frameworks */,
 				C96290E21274D0EF007D3CFE /* AGL.framework in Frameworks */,
 				C96290E61274D100007D3CFE /* OpenGL.framework in Frameworks */,
+				7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5208,9 +5232,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C96290C11274D0CD007D3CFE /* Carbon.framework in Frameworks */,
 				C96290C21274D0CF007D3CFE /* Cocoa.framework in Frameworks */,
-				C96290EC1274D134007D3CFE /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5608,6 +5630,7 @@
 			isa = PBXGroup;
 			children = (
 				8D4E2F8A10BA06E332B7EB03 /* demo.cxx */,
+				C984AFA712D02A1800D66DAD /* demo.menu */,
 			);
 			name = Demo;
 			sourceTree = "<group>";
@@ -5638,7 +5661,6 @@
 				BD209D4716895D1365B6BA73 /* alignment_panel.h */,
 				8F311718B3CD16844535EEE6 /* comments.h */,
 				D4E11692C02E48A71A18527C /* function_panel.h */,
-				44B6E71105CCEECB4D5E2DC8 /* ide_support.h */,
 				176A3053D562D80CD4D3A400 /* print_panel.h */,
 				4A6DFBFA4FDD6D0B8F65009E /* template_panel.h */,
 				91726A70C25E6155A2FAF315 /* undo.h */,
@@ -6076,6 +6098,14 @@
 		A07416CF2BF150F093A0F9AD /* fltk_jpeg */ = {
 			isa = PBXGroup;
 			children = (
+				273EA935130ACF91000D6870 /* jaricom.c */,
+				273EA936130ACF91000D6870 /* jcarith.c */,
+				273EA937130ACF91000D6870 /* jdarith.c */,
+				273EA938130ACF91000D6870 /* jdct.h */,
+				273EA939130ACF91000D6870 /* jinclude.h */,
+				273EA93A130ACF91000D6870 /* jmemsys.h */,
+				273EA93B130ACF91000D6870 /* jpegint.h */,
+				273EA93C130ACF91000D6870 /* jversion.h */,
 				C9EDD4E21274BB7C00ADB21C /* Headers */,
 				37EC93410A76CE3EB094F162 /* jcapimin.c */,
 				0C4D02EC5E80D2BF56CFB48B /* jcapistd.c */,
@@ -6089,7 +6119,6 @@
 				D77F126A951A15185214FF2E /* jcmaster.c */,
 				5CD5D087391E39030838C823 /* jcomapi.c */,
 				7DF4AD3769671959EA813845 /* jcparam.c */,
-				7A76AE49F30DFB877BA43A02 /* jcphuff.c */,
 				14AA766D5DA5A8BCFF60B626 /* jcprepct.c */,
 				65E1ABE72414529CBD1F937C /* jcsample.c */,
 				E4337D2D7CEEDCAD78B068E5 /* jctrans.c */,
@@ -6106,7 +6135,6 @@
 				BB37899B104B362F32F0F417 /* jdmarker.c */,
 				28AFF174A53E38CCB7475C19 /* jdmaster.c */,
 				C84F99F5AC8C6517F45055B0 /* jdmerge.c */,
-				F20C125E79B7CC1F5109248C /* jdphuff.c */,
 				4D4D056FC1F1EFEC7585CA17 /* jdpostct.c */,
 				5538B949B47F04D03589F2CE /* jdsample.c */,
 				4577F046D6D5D93D2553BFBC /* jdtrans.c */,
@@ -6117,7 +6145,6 @@
 				377C68AADE10A3244413CFF6 /* jidctflt.c */,
 				2B5CC86924C64E849EBE0179 /* jidctfst.c */,
 				33F18D02CA150D5654D48366 /* jidctint.c */,
-				EDCB878D48197F6AE1C99614 /* jidctred.c */,
 				E618B793B357747DC837667E /* jmemmgr.c */,
 				D3E25408466639AACEF4D2A6 /* jmemnobs.c */,
 				DD96B70D85E60B641F061D51 /* jquant1.c */,
@@ -6363,8 +6390,7 @@
 		C9628FFA1274D0A1007D3CFE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C96290EB1274D133007D3CFE /* AudioToolbox.framework */,
-				C9628FFB1274D0B3007D3CFE /* Carbon.framework */,
+				7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */,
 				C9628FFD1274D0B3007D3CFE /* Cocoa.framework */,
 				C96290E11274D0EF007D3CFE /* AGL.framework */,
 				C96290E51274D100007D3CFE /* OpenGL.framework */,
@@ -6377,6 +6403,11 @@
 			children = (
 				C9EDD4DE1274BB6600ADB21C /* png.h */,
 				C9EDD4DF1274BB6600ADB21C /* pngconf.h */,
+				7F2A29091338C7650033C0A6 /* pngdebug.h */,
+				7F2A29081338C7520033C0A6 /* pnginfo.h */,
+				7F2A29041338C6B80033C0A6 /* pnglibconf.h */,
+				7F2A29051338C6D40033C0A6 /* pngpriv.h */,
+				7F2A29071338C7450033C0A6 /* pngstruct.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -6442,10 +6473,6 @@
 				2333DEC98DFFAA27F3D85449 /* file.cxx */,
 				E887B4AE75EC9D885D592636 /* fluid.cxx */,
 				FEE2F6E62FECD745952CB51D /* function_panel.cxx */,
-				8EF20FF84687D00EF687AF62 /* ide_maketools.cxx */,
-				5CA491664CF9A4BE4060CDBD /* ide_support.cxx */,
-				9C0598A21FEE02AA4F0E39C9 /* ide_visualc.cxx */,
-				464D522BF0A1D61F58E94456 /* ide_xcode.cxx */,
 				9CBDD66D771449423070F912 /* template_panel.cxx */,
 				D754515384F42D9E502F4A98 /* undo.cxx */,
 				102D0B1D203936477107B2D8 /* widget_panel.cxx */,
@@ -6477,7 +6504,11 @@
 				6BCDA929CD8600DE9AC516DD /* compress.c */,
 				B95D0F0F7652C2937824E87D /* crc32.c */,
 				65E5BAE2A9732DA6B4A53098 /* deflate.c */,
-				D3D556728D5CDD2FD7B86AC8 /* gzio.c */,
+				7F54C8A3130FAC4F00E736F3 /* gzclose.c */,
+				7F54C8A4130FAC4F00E736F3 /* gzlib.c */,
+				7F54C8A5130FAC4F00E736F3 /* gzread.c */,
+				7F54C8A6130FAC4F00E736F3 /* gzwrite.c */,
+				7F54C8A7130FAC4F00E736F3 /* infback.c */,
 				4B4931D88DEFF9253DD2B260 /* inffast.c */,
 				C64D06EA8317E22EE4B2376D /* inflate.c */,
 				65B20106A8A21FCCA56538F8 /* inftrees.c */,
@@ -6647,6 +6678,7 @@
 			isa = PBXGroup;
 			children = (
 				EC5862E1FC79542DC55D8462 /* colbrowser.cxx */,
+				C9F9C0DD12CFCDAC0067ADCC /* rgb.txt */,
 			);
 			name = colbrowser;
 			sourceTree = "<group>";
@@ -6699,6 +6731,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				C95961881274CEA1009C0594 /* README.Xcode in Headers */,
+				273EA940130ACF91000D6870 /* jdct.h in Headers */,
+				273EA941130ACF91000D6870 /* jinclude.h in Headers */,
+				273EA942130ACF91000D6870 /* jmemsys.h in Headers */,
+				273EA943130ACF91000D6870 /* jpegint.h in Headers */,
+				273EA944130ACF91000D6870 /* jversion.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6984,6 +7021,7 @@
 				FD1A7D2F7532522CCF2B0FFB /* Sources */,
 				5CEB6CB961822D1167C891C6 /* Frameworks */,
 				B1608C348129813E176E8357 /* CopyFiles */,
+				C99FD8E112D2A295002FC776 /* CopyFiles */,
 			);
 			buildRules = (
 				982E85D9644C6688DAA59FCA /* PBXBuildRule */,
@@ -8420,6 +8458,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -8540,6 +8579,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9F9C0DE12CFCDAC0067ADCC /* rgb.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9045,6 +9085,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C984AFA812D02A1800D66DAD /* demo.menu in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9688,13 +9729,17 @@
 				4CA85FBAAB7E8F8801ECB742 /* compress.c in Sources */,
 				81BF2B665315DE651C49F1CF /* crc32.c in Sources */,
 				449DC0C1FDA01F16CB184F66 /* deflate.c in Sources */,
-				3BA58E827191046DB7277DBE /* gzio.c in Sources */,
 				2642F76001144A05102CC191 /* inffast.c in Sources */,
 				AFA33B6FF7209CC7EE2B1D5D /* inflate.c in Sources */,
 				9642156FA4A17DE4872E0A6E /* inftrees.c in Sources */,
 				6D0C34F0837A30162A7B3759 /* trees.c in Sources */,
 				AF9F3D486CCB9B87E4C2736B /* uncompr.c in Sources */,
 				880B2140496D2B6744225CEF /* zutil.c in Sources */,
+				7F54C8A8130FAC4F00E736F3 /* gzclose.c in Sources */,
+				7F54C8A9130FAC4F00E736F3 /* gzlib.c in Sources */,
+				7F54C8AA130FAC4F00E736F3 /* gzread.c in Sources */,
+				7F54C8AB130FAC4F00E736F3 /* gzwrite.c in Sources */,
+				7F54C8AC130FAC4F00E736F3 /* infback.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9738,7 +9783,6 @@
 				365C8ABAB40CA4E4F4DE497B /* jcmaster.c in Sources */,
 				FB64FC6F7054A5B50F2C3344 /* jcomapi.c in Sources */,
 				6405302969D2F33411D220BA /* jcparam.c in Sources */,
-				7091A9422A9360F48A65B790 /* jcphuff.c in Sources */,
 				39755B7CD55E28BE048D5743 /* jcprepct.c in Sources */,
 				7B95C9D17987D8A4E6951C8E /* jcsample.c in Sources */,
 				387225B73ACF720C07465CC1 /* jctrans.c in Sources */,
@@ -9755,7 +9799,6 @@
 				BD48B8B0B3DE04E72A17F60D /* jdmarker.c in Sources */,
 				11AAF790D7EBFBC6565962F3 /* jdmaster.c in Sources */,
 				F77512958607662BAA15DA70 /* jdmerge.c in Sources */,
-				F4B47F14754880CE01415BE4 /* jdphuff.c in Sources */,
 				48E16D81DEAAD2BD2F01C0A2 /* jdpostct.c in Sources */,
 				5EDF60DDCDC6919CF0165574 /* jdsample.c in Sources */,
 				88C021DD6A74CF51B3C5F8D5 /* jdtrans.c in Sources */,
@@ -9766,12 +9809,14 @@
 				0F15FD350AAEC543A5A9E462 /* jidctflt.c in Sources */,
 				3680B81A8A377F872BA42B8C /* jidctfst.c in Sources */,
 				8A3AEEE3EEDBB52D79AF606A /* jidctint.c in Sources */,
-				916E94D46FCF743D6CC07005 /* jidctred.c in Sources */,
 				B9B2EDBADB95D97D474797A0 /* jmemmgr.c in Sources */,
 				B054ACC849A1BEDD69CB70C5 /* jmemnobs.c in Sources */,
 				6D8F8E2E6F8039FE4B127D31 /* jquant1.c in Sources */,
 				F9C96700B8B44B5E3F736E66 /* jquant2.c in Sources */,
 				4FD74129390D07ED56265A84 /* jutils.c in Sources */,
+				273EA93D130ACF91000D6870 /* jaricom.c in Sources */,
+				273EA93E130ACF91000D6870 /* jcarith.c in Sources */,
+				273EA93F130ACF91000D6870 /* jdarith.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9827,10 +9872,6 @@
 				68D18B8291BECB504DDAE1A9 /* file.cxx in Sources */,
 				E1B04810E72BD9557356CAAE /* fluid.cxx in Sources */,
 				98A96758FF9D01852DFBECFE /* function_panel.cxx in Sources */,
-				362C4C6926F1D16B73E4FDA1 /* ide_maketools.cxx in Sources */,
-				A814D7DD818DB1FC5E8C7E0D /* ide_support.cxx in Sources */,
-				76BA5F2997A55DDFA04EFC98 /* ide_visualc.cxx in Sources */,
-				59930AC7D5318A72BE9ED1FB /* ide_xcode.cxx in Sources */,
 				438CCCA43724B2E59680EF6B /* template_panel.cxx in Sources */,
 				27B4C89E8CBF260313ACA42E /* undo.cxx in Sources */,
 				B7D0770AC83AA04E8E12B76E /* widget_panel.cxx in Sources */,
@@ -10990,8 +11031,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = line_style;
 				WARNING_CFLAGS = (
@@ -11014,6 +11053,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -11053,8 +11093,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = ask;
 				WARNING_CFLAGS = (
@@ -11087,8 +11125,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tile;
 				WARNING_CFLAGS = (
@@ -11121,8 +11157,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = mandelbrot;
 				WARNING_CFLAGS = (
@@ -11155,8 +11189,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = hello;
 				WARNING_CFLAGS = (
@@ -11186,8 +11218,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = list_visuals;
 				WARNING_CFLAGS = (
@@ -11217,8 +11247,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = image;
 				WARNING_CFLAGS = (
@@ -11251,8 +11279,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = keyboard;
 				WARNING_CFLAGS = (
@@ -11282,8 +11308,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tiled_image;
 				WARNING_CFLAGS = (
@@ -11316,8 +11340,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = utf8;
 				WARNING_CFLAGS = (
@@ -11347,8 +11369,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = checkers;
 				WARNING_CFLAGS = (
@@ -11381,8 +11401,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = doublebuffer;
 				WARNING_CFLAGS = (
@@ -11415,8 +11433,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = overlay;
 				WARNING_CFLAGS = (
@@ -11449,8 +11465,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = checkers;
 				WARNING_CFLAGS = (
@@ -11480,8 +11494,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = radio;
 				WARNING_CFLAGS = (
@@ -11511,8 +11523,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = navigation;
 				WARNING_CFLAGS = (
@@ -11542,8 +11552,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tile;
 				WARNING_CFLAGS = (
@@ -11573,8 +11581,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = utf8;
 				WARNING_CFLAGS = (
@@ -11604,8 +11610,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = output;
 				WARNING_CFLAGS = (
@@ -11667,8 +11671,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = editor;
 				WARNING_CFLAGS = (
@@ -11701,8 +11703,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tree;
 				WARNING_CFLAGS = (
@@ -11735,8 +11735,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tabs;
 				WARNING_CFLAGS = (
@@ -11769,8 +11767,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = image;
 				WARNING_CFLAGS = (
@@ -11800,8 +11796,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = help;
 				WARNING_CFLAGS = (
@@ -11834,8 +11828,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = bitmap;
 				WARNING_CFLAGS = (
@@ -11868,8 +11860,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = list_visuals;
 				WARNING_CFLAGS = (
@@ -11888,8 +11878,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -11902,8 +11890,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = arc;
 				WARNING_CFLAGS = (
@@ -11933,8 +11919,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = resizebox;
 				WARNING_CFLAGS = (
@@ -11964,8 +11948,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = sudoku;
 				WARNING_CFLAGS = (
@@ -11998,8 +11980,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = boxtype;
 				WARNING_CFLAGS = (
@@ -12029,8 +12009,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = label;
 				WARNING_CFLAGS = (
@@ -12060,8 +12038,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = gl_overlay;
 				WARNING_CFLAGS = (
@@ -12080,8 +12056,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -12123,8 +12097,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = browser;
 				WARNING_CFLAGS = (
@@ -12157,8 +12129,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = cursor;
 				WARNING_CFLAGS = (
@@ -12191,8 +12161,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = blocks;
 				WARNING_CFLAGS = (
@@ -12225,8 +12193,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = colbrowser;
 				WARNING_CFLAGS = (
@@ -12259,8 +12225,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = glpuzzle;
 				WARNING_CFLAGS = (
@@ -12290,8 +12254,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = clock;
 				WARNING_CFLAGS = (
@@ -12321,8 +12283,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = inactive;
 				WARNING_CFLAGS = (
@@ -12355,8 +12315,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = help;
 				WARNING_CFLAGS = (
@@ -12386,8 +12344,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = valuators;
 				WARNING_CFLAGS = (
@@ -12417,8 +12373,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fast_slow;
 				WARNING_CFLAGS = (
@@ -12451,8 +12405,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = navigation;
 				WARNING_CFLAGS = (
@@ -12485,8 +12437,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = resize;
 				WARNING_CFLAGS = (
@@ -12519,8 +12469,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pack;
 				WARNING_CFLAGS = (
@@ -12553,8 +12501,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = symbols;
 				WARNING_CFLAGS = (
@@ -12576,8 +12522,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -12609,6 +12553,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -12652,8 +12597,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = message;
 				WARNING_CFLAGS = (
@@ -12675,8 +12618,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -12718,8 +12659,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = cube;
 				WARNING_CFLAGS = (
@@ -12749,8 +12688,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fonts;
 				WARNING_CFLAGS = (
@@ -12809,8 +12746,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = shape;
 				WARNING_CFLAGS = (
@@ -12840,8 +12775,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = iconize;
 				WARNING_CFLAGS = (
@@ -12874,8 +12807,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = "native-filechooser";
 				WARNING_CFLAGS = (
@@ -12908,8 +12839,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = menubar;
 				WARNING_CFLAGS = (
@@ -12939,8 +12868,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fractals;
 				WARNING_CFLAGS = (
@@ -12973,8 +12900,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = valuators;
 				WARNING_CFLAGS = (
@@ -12990,8 +12915,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -13004,8 +12927,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = arc;
 				WARNING_CFLAGS = (
@@ -13035,8 +12956,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = device;
 				WARNING_CFLAGS = (
@@ -13062,6 +12981,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -13101,8 +13021,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = minimum;
 				WARNING_CFLAGS = (
@@ -13123,8 +13041,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -13177,8 +13093,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = rotated_text;
 				WARNING_CFLAGS = (
@@ -13211,8 +13125,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = iconize;
 				WARNING_CFLAGS = (
@@ -13245,8 +13157,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = sudoku;
 				WARNING_CFLAGS = (
@@ -13279,8 +13189,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pixmap_browser;
 				WARNING_CFLAGS = (
@@ -13310,8 +13218,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = preferences;
 				WARNING_CFLAGS = (
@@ -13341,8 +13247,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = forms;
 				WARNING_CFLAGS = (
@@ -13375,8 +13279,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = preferences;
 				WARNING_CFLAGS = (
@@ -13409,8 +13311,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = label;
 				WARNING_CFLAGS = (
@@ -13440,8 +13340,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = buttons;
 				WARNING_CFLAGS = (
@@ -13462,8 +13360,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -13529,8 +13425,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = glpuzzle;
 				WARNING_CFLAGS = (
@@ -13563,8 +13457,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = button;
 				WARNING_CFLAGS = (
@@ -13597,8 +13489,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fast_slow;
 				WARNING_CFLAGS = (
@@ -13628,8 +13518,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = message;
 				WARNING_CFLAGS = (
@@ -13659,8 +13547,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = editor;
 				WARNING_CFLAGS = (
@@ -13690,8 +13576,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = bitmap;
 				WARNING_CFLAGS = (
@@ -13724,8 +13608,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = inactive;
 				WARNING_CFLAGS = (
@@ -13758,8 +13640,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = clock;
 				WARNING_CFLAGS = (
@@ -13789,8 +13669,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = file_chooser;
 				WARNING_CFLAGS = (
@@ -13806,8 +13684,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -13846,8 +13722,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = curve;
 				WARNING_CFLAGS = (
@@ -13877,8 +13751,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fullscreen;
 				WARNING_CFLAGS = (
@@ -13908,8 +13780,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = colbrowser;
 				WARNING_CFLAGS = (
@@ -13928,8 +13798,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -13968,8 +13836,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = browser;
 				WARNING_CFLAGS = (
@@ -13999,8 +13865,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tree;
 				WARNING_CFLAGS = (
@@ -14033,8 +13897,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = scroll;
 				WARNING_CFLAGS = (
@@ -14064,8 +13926,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = hello;
 				WARNING_CFLAGS = (
@@ -14089,6 +13949,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -14127,8 +13988,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pack;
 				WARNING_CFLAGS = (
@@ -14161,8 +14020,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = device;
 				WARNING_CFLAGS = (
@@ -14195,8 +14052,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = subwindow;
 				WARNING_CFLAGS = (
@@ -14226,8 +14081,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = doublebuffer;
 				WARNING_CFLAGS = (
@@ -14257,8 +14110,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = mandelbrot;
 				WARNING_CFLAGS = (
@@ -14291,8 +14142,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = resizebox;
 				WARNING_CFLAGS = (
@@ -14305,12 +14154,12 @@
 		AC3226B9FE17327A0476ACA0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH_ACTUAL)";
+				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
@@ -14336,8 +14185,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pixmap_browser;
 				WARNING_CFLAGS = (
@@ -14367,8 +14214,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = color_chooser;
 				WARNING_CFLAGS = (
@@ -14433,8 +14278,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = buttons;
 				WARNING_CFLAGS = (
@@ -14467,8 +14310,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = minimum;
 				WARNING_CFLAGS = (
@@ -14501,8 +14342,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = input;
 				WARNING_CFLAGS = (
@@ -14535,8 +14374,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = file_chooser;
 				WARNING_CFLAGS = (
@@ -14569,8 +14406,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fonts;
 				WARNING_CFLAGS = (
@@ -14600,8 +14435,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tabs;
 				WARNING_CFLAGS = (
@@ -14663,8 +14496,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = input_choice;
 				WARNING_CFLAGS = (
@@ -14694,8 +14525,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = keyboard;
 				WARNING_CFLAGS = (
@@ -14725,8 +14554,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = scroll;
 				WARNING_CFLAGS = (
@@ -14759,8 +14586,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = curve;
 				WARNING_CFLAGS = (
@@ -14785,6 +14610,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -14816,8 +14642,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -14857,8 +14681,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = menubar;
 				WARNING_CFLAGS = (
@@ -14888,8 +14710,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = table;
 				WARNING_CFLAGS = (
@@ -14922,8 +14742,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = rotated_text;
 				WARNING_CFLAGS = (
@@ -14956,8 +14774,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = input_choice;
 				WARNING_CFLAGS = (
@@ -14990,8 +14806,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = output;
 				WARNING_CFLAGS = (
@@ -15021,8 +14835,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = boxtype;
 				WARNING_CFLAGS = (
@@ -15055,8 +14867,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = table;
 				WARNING_CFLAGS = (
@@ -15089,8 +14899,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = threads;
 				WARNING_CFLAGS = (
@@ -15118,13 +14926,11 @@
 					../../png,
 					../../jpeg,
 				);
-				INFOPLIST_FILE = "plists/utf8-Info copy.plist";
+				INFOPLIST_FILE = "plists/utf8-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = utf8;
 				WARNING_CFLAGS = (
@@ -15149,13 +14955,11 @@
 					../../png,
 					../../jpeg,
 				);
-				INFOPLIST_FILE = "plists/utf8-Info copy.plist";
+				INFOPLIST_FILE = "plists/utf8-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = utf8;
 				WARNING_CFLAGS = (
@@ -15185,8 +14989,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = button;
 				WARNING_CFLAGS = (
@@ -15219,8 +15021,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = gl_overlay;
 				WARNING_CFLAGS = (
@@ -15253,8 +15053,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = tiled_image;
 				WARNING_CFLAGS = (
@@ -15287,8 +15085,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pixmap;
 				WARNING_CFLAGS = (
@@ -15321,8 +15117,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = radio;
 				WARNING_CFLAGS = (
@@ -15352,8 +15146,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = pixmap;
 				WARNING_CFLAGS = (
@@ -15383,8 +15175,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = line_style;
 				WARNING_CFLAGS = (
@@ -15414,8 +15204,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = shape;
 				WARNING_CFLAGS = (
@@ -15445,8 +15233,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = subwindow;
 				WARNING_CFLAGS = (
@@ -15476,8 +15262,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = overlay;
 				WARNING_CFLAGS = (
@@ -15510,8 +15294,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = ask;
 				WARNING_CFLAGS = (
@@ -15541,8 +15323,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = input;
 				WARNING_CFLAGS = (
@@ -15575,8 +15355,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = forms;
 				WARNING_CFLAGS = (
@@ -15606,8 +15384,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = cube;
 				WARNING_CFLAGS = (
@@ -15637,8 +15413,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = blocks;
 				WARNING_CFLAGS = (
@@ -15654,8 +15428,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = "USING_XCODE=1";
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -15694,8 +15466,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = cursor;
 				WARNING_CFLAGS = (
@@ -15725,8 +15495,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = "native-filechooser";
 				WARNING_CFLAGS = (
@@ -15759,8 +15527,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = color_chooser;
 				WARNING_CFLAGS = (
@@ -15784,6 +15550,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = fltk.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = FL_LIBRARY;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
@@ -15823,8 +15590,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = symbols;
 				WARNING_CFLAGS = (
@@ -15854,8 +15619,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = resize;
 				WARNING_CFLAGS = (
@@ -15917,8 +15680,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fractals;
 				WARNING_CFLAGS = (
@@ -15940,8 +15701,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = fltk.pch;
 				HEADER_SEARCH_PATHS = (
 					../../ide/XCode3/,
 					../../,
@@ -15983,8 +15742,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = fullscreen;
 				WARNING_CFLAGS = (
@@ -16014,8 +15771,6 @@
 				OTHER_LDFLAGS = (
 					"-framework",
 					Cocoa,
-					"-framework",
-					Carbon,
 				);
 				PRODUCT_NAME = threads;
 				WARNING_CFLAGS = (

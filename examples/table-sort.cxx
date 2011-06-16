@@ -34,7 +34,7 @@
 // 
 
 #include <FL/Fl.H>
-#include <FL/Fl_Window.H>
+#include <FL/Fl_Double_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Table_Row.H>
 
@@ -45,17 +45,19 @@
 
 #define MARGIN 20
 
-#ifdef _WIN32
+#ifdef WIN32
 // WINDOWS
-#define DIRCMD          "dir"
-#define DIRHEADER       { "Date", "Time", "Size", "Filename", "", "", "", "", "" }
-#define popen           _popen
-#else /*_WIN32*/
+#  define DIRCMD          "dir"
+#  define DIRHEADER       { "Date", "Time", "Size", "Filename", "", "", "", "", "" }
+#  ifdef _MSC_VER
+#    define popen           _popen
+#  endif
+#else /*WIN32*/
 // UNIX
-#include <ctype.h>
-#define DIRCMD          "ls -l"
-#define DIRHEADER       { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename" }
-#endif /*_WIN32*/
+#  include <ctype.h>
+#  define DIRCMD          "ls -l"
+#  define DIRHEADER       { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename" }
+#endif /*WIN32*/
 
 // A single row of columns
 class Row {
@@ -267,7 +269,7 @@ void MyTable::event_callback2() {
 }
 
 int main() {
-    Fl_Window win(900,500,"Table Sorting");
+    Fl_Double_Window win(900,500,"Table Sorting");
         MyTable table(MARGIN, MARGIN, win.w()-MARGIN*2, win.h()-MARGIN*2);
         table.selection_color(FL_YELLOW);
         table.col_header(1);

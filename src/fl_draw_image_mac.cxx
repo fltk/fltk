@@ -30,6 +30,7 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Printer.H>
 #include <FL/x.H>
 
 #define MAXBUFFER 0x40000 // 256k
@@ -39,7 +40,7 @@ static void dataReleaseCB(void *info, const void *data, size_t size)
   delete[] (uchar *)data;
 }
 
-/**
+/*
  * draw an image based on the input parameters
  *
  * buf:       image source data
@@ -63,10 +64,18 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 
   const void *array = buf;
   uchar *tmpBuf = 0;
-  if (cb) {
+  if (cb || Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
     tmpBuf = new uchar[ H*W*delta ];
-    for (int i=0; i<H; i++) {
-      cb(userdata, 0, i, W, tmpBuf+i*W*delta);
+    if (cb) {
+      for (int i=0; i<H; i++) {
+	cb(userdata, 0, i, W, tmpBuf+i*W*delta);
+      }
+    } else {
+      uchar *p = tmpBuf;
+      for (int i=0; i<H; i++) {
+	memcpy(p, buf+i*linedelta, W*delta);
+	p += W*delta;
+	}
     }
     array = (void*)tmpBuf;
     linedelta = W*delta;
@@ -79,18 +88,12 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
     lut = CGColorSpaceCreateDeviceRGB();
   // a release callback is necessary when the fl_gc is a print context because the image data
   // must be kept until the page is closed. Thus tmpBuf can't be deleted here. It's too early.
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-  typedef void (*CGDataProviderReleaseDataCallback) (
-						     void *info,
-						     const void *data,
-						     size_t size
-  );
-#endif  
-  CGDataProviderReleaseDataCallback releaseCB = ( cb ? dataReleaseCB : NULL);
-  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H, releaseCB);
+  CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, linedelta*H, 
+						       tmpBuf ? dataReleaseCB : NULL
+						       );
   CGImageRef        img = CGImageCreate( W, H, 8, 8*delta, linedelta,
-                            //lut, delta&1?kCGImageAlphaNone:kCGImageAlphaNoneSkipLast,
-                            lut, delta&1?kCGImageAlphaNone:kCGImageAlphaLast,
+                            lut, delta&1?kCGImageAlphaNone:kCGImageAlphaNoneSkipLast,
+                            //lut, delta&1?kCGImageAlphaNone:kCGImageAlphaLast,
                             src, 0L, false, kCGRenderingIntentDefault);
   // draw the image into the destination context
   if (img) {
@@ -148,17 +151,17 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   CGContextSetShouldAntialias(fl_gc, true);
 }
 
-void Fl_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_Quartz_Graphics_Driver::draw_image(const uchar* buf, int x, int y, int w, int h, int d, int l){
   innards(buf,x,y,w,h,d,l,(d<3&&d>-3),0,0);
 }
-void Fl_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
+void Fl_Quartz_Graphics_Driver::draw_image(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,(d<3&&d>-3),cb,data);
 }
-void Fl_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
+void Fl_Quartz_Graphics_Driver::draw_image_mono(const uchar* buf, int x, int y, int w, int h, int d, int l){
   innards(buf,x,y,w,h,d,l,1,0,0);
 }
-void Fl_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
+void Fl_Quartz_Graphics_Driver::draw_image_mono(Fl_Draw_Image_Cb cb, void* data,
 		   int x, int y, int w, int h,int d) {
   innards(0,x,y,w,h,d,0,1,cb,data);
 }

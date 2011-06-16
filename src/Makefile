@@ -217,7 +217,7 @@ UTF8CFILES = \
 	xutf8/utf8Wrap.c
 
 ################################################################
-
+FLTKFLAGS = -DFL_LIBRARY
 include ../makeinclude
 
 MMFILES = $(shell if test $(USEMMFILES) = Yes; then echo $(OBJCPPFILES); fi)
@@ -529,7 +529,6 @@ Fl_Gl_Window.o:	../FL/mac.H ../FL/win32.H
 Fl_grab.o:	../FL/mac.H ../FL/win32.H
 Fl_Image.o:	../FL/mac.H ../FL/win32.H
 fl_line_style.o:	../FL/mac.H ../FL/win32.H
-Fl_Native_File_Chooser.o: ../FL/Fl_Native_File_Chooser_MAC.H ../FL/Fl_Native_File_Chooser_WIN32.H
 Fl_Menu_Window.o:	../FL/mac.H ../FL/win32.H
 fl_overlay.o:	../FL/mac.H ../FL/win32.H
 fl_overlay_visual.o:	../FL/mac.H ../FL/win32.H

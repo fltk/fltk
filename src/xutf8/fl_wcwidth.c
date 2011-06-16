@@ -44,7 +44,7 @@ static int mk_wcswidth_cjk(const unsigned int *pwcs, size_t n);
 #include "mk_wcwidth.c"
 
 int fl_wcwidth(unsigned int ucs) {
-  // warning: we have problems if sizeof(wchar_t) == 2 and ucs > 0xffff
+  /* warning: we have problems if sizeof(wchar_t) == 2 and ucs > 0xffff */
   return mk_wcwidth(ucs);
 }
 

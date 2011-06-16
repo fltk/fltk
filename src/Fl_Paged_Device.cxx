@@ -3,7 +3,7 @@
 //
 // implementation of Fl_Paged_Device class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010 by Bill Spitzak and others.
+// Copyright 2010-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -32,7 +32,7 @@
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
 
-const char *Fl_Paged_Device::device_type = "Fl_Paged_Device";
+const char *Fl_Paged_Device::class_id = "Fl_Paged_Device";
 
 
 /**
@@ -74,7 +74,7 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
       int width, height;
       this->printable_rect(&width, &height);
       drawn_by_plugin = pi->print(widget, 0, 0, height);
-      }
+    }
   }
   if (!drawn_by_plugin) {
     widget->draw();
@@ -118,7 +118,7 @@ void Fl_Paged_Device::origin(int *x, int *y)
 
 /**
  @brief Prints a rectangular part of an on-screen window.
- *
+
  @param win The window from where to capture.
  @param x The rectangle left
  @param y The rectangle top
@@ -129,7 +129,6 @@ void Fl_Paged_Device::origin(int *x, int *y)
  */
 void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int h, int delta_x, int delta_y)
 {
-  int slice, width, offset, count = 0;
   Fl_Surface_Device *current = Fl_Surface_Device::surface();
   Fl_Display_Device::display_device()->set_current();
   Fl_Window *save_front = Fl::first_window();
@@ -137,88 +136,51 @@ void Fl_Paged_Device::print_window_part(Fl_Window *win, int x, int y, int w, int
   fl_gc = NULL;
   Fl::check();
   win->make_current();
-  uchar *image_data[20];
-#ifdef WIN32 // because of bug in StretchDIBits, vertically cut image in pieces of width slice
-  slice = 500;
-#else
-  slice = w;
-#endif
-  for ( offset = 0; offset < w; offset += slice) {
-    width = slice; 
-    if (offset + width > w) width = w - offset;
-    image_data[count++] = fl_read_image(NULL, x + offset, y, width, h);
-  }  
-  save_front->show();
+  uchar *image_data;
+  image_data = fl_read_image(NULL, x, y, w, h);
+  if (save_front != win) save_front->show();
   current->set_current();
-  offset = 0;
-  for ( int i = 0; i < count; i++, offset += slice) {
-    width = slice; 
-    if (offset + width > w) width = w - offset;
-    fl_draw_image(image_data[i], delta_x + offset, delta_y, width, h, 3);
-#ifdef __APPLE__
-    add_image(NULL, image_data[i]);
-#else
-    delete image_data[i];
+  fl_draw_image(image_data, delta_x, delta_y, w, h, 3);
+  delete[] image_data;
+#ifdef WIN32
+  fl_gc = GetDC(fl_xid(win));
+  ReleaseDC(fl_xid(win), fl_gc);
 #endif
-  }
 }
-
-#ifdef __APPLE__
-void Fl_Paged_Device::add_image(Fl_Image *image, const uchar *data)
-{
-  struct chain_elt *elt =  (struct chain_elt *)calloc(sizeof(struct chain_elt), 1);
-  elt->image = image;
-  elt->data = data;
-  if (image_list_) { elt->next = image_list_; }
-  image_list_ = elt;
-}
-
-void Fl_Paged_Device::delete_image_list()
-{
-  while(image_list_) {
-    struct chain_elt *next = image_list_->next;
-    if(image_list_->image) delete image_list_->image;
-    if (image_list_->data) delete (uchar*) image_list_->data; // msvc6 compilation fix
-    free(image_list_);
-    image_list_ = next;
-  }
-}
-#endif
-
 
 /**
  @brief Starts a print job.
- *
+
  @param[in] pagecount the total number of pages of the job
  @param[out] frompage if non-null, *frompage is set to the first page the user wants printed
  @param[out] topage if non-null, *topage is set to the last page the user wants printed
- @return 0 iff OK
+ @return 0 if OK, non-zero if any error
  */
 int Fl_Paged_Device::start_job(int pagecount, int *frompage, int *topage) {return 1;}
 
 /**
  @brief Starts a new printed page
- *
+
  The page coordinates are initially in points, i.e., 1/72 inch, 
  and with origin at the top left of the printable page area.
- @return 0 iff OK
+ @return 0 if OK, non-zero if any error
  */
 int Fl_Paged_Device::start_page (void) {return 1;}
 
 /**
  @brief Computes the width and height of the printable area of the page.
- *
+
  Values are in the same unit as that used by FLTK drawing functions,
  are unchanged by calls to origin(), but are changed by scale() calls.
  Values account for the user-selected paper type and print orientation.
- @return 0 iff OK.
+ @return 0 if OK, non-zero if any error
  */
 int Fl_Paged_Device::printable_rect(int *w, int *h) {return 1;}
 
 /**
  @brief Computes the dimensions of margins that lie between the printable page area and
  the full page.
- *
+
  Values are in the same unit as that used by FLTK drawing functions. They are changed
  by scale() calls.
  @param[out] left If non-null, *left is set to the left margin size.
@@ -230,7 +192,7 @@ void Fl_Paged_Device::margins(int *left, int *top, int *right, int *bottom) {}
 
 /**
  @brief Sets the position in page coordinates of the origin of graphics functions.
- *
+
  Arguments should be expressed relatively to the result of a previous printable_rect() call.
  That is, <tt>printable_rect(&w, &h); origin(w/2, 0);</tt> sets the graphics origin at the
  top center of the page printable area.
@@ -243,28 +205,30 @@ void Fl_Paged_Device::origin(int x, int y) {}
 
 /**
  @brief Changes the scaling of page coordinates.
- *
+
  This function also resets the origin of graphics functions at top left of printable page area.
  After a scale() call, do a printable_rect() call to get the new dimensions of the printable page area.
  Successive scale() calls don't combine their effects.
  @param scale_x Horizontal dimensions of plot are multiplied by this quantity.
- @param scale_y Same as above, vertically.
+ @param scale_y Same as above, vertically. 
+  The value 0. is equivalent to setting \p scale_y = \p scale_x. Thus, scale(factor);
+  is equivalent to scale(factor, factor);
  */
 void Fl_Paged_Device::scale (float scale_x, float scale_y) {}
 
 /**
  @brief Rotates the graphics operations relatively to paper.
- *
+
  The rotation is centered on the current graphics origin. 
  Successive rotate() calls don't combine their effects.
- @param angle Rotation angle in counterclockwise degrees.
+ @param angle Rotation angle in counter-clockwise degrees.
  */
 void Fl_Paged_Device::rotate(float angle) {}
 
 /**
  @brief To be called at the end of each page.
- *
- @return 0 iff OK.
+
+ @return 0 if OK, non-zero if any error.
  */
 int Fl_Paged_Device::end_page (void) {return 1;}
 
@@ -275,7 +239,7 @@ void Fl_Paged_Device::end_job (void) {}
 
 /**
  @brief Translates the current graphics origin accounting for the current rotation.
- *
+
  This function is only useful after a rotate() call. 
  Each translate() call must be matched by an untranslate() call.
  Successive translate() calls add up their effects.
@@ -331,4 +295,3 @@ const Fl_Paged_Device::page_format Fl_Paged_Device::page_formats[NO_PAGE_FORMATS
 //
 // End of "$Id$".
 //
-

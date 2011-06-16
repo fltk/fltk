@@ -49,7 +49,7 @@ extern int fl_line_width_;
 
 #ifdef __APPLE_QUARTZ__
 extern float fl_quartz_line_width_;
-#define USINGQUARTZPRINTER  (Fl_Surface_Device::surface()->type() == Fl_Printer::device_type)
+#define USINGQUARTZPRINTER  (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id)
 #endif
 
 #ifdef USE_X11
@@ -82,6 +82,10 @@ extern float fl_quartz_line_width_;
   
   In this example case, no clipping would be done, because X can
   handle it and clip unneeded pixels.
+  
+  Note that we must also take care of the case where fl_line_width_
+  is zero (maybe unitialized). If this is the case, we assume a line
+  width of 1.
 
   Todo: Arbitrary line drawings (e.g. polygons) and clip regions
   are not yet done.
@@ -120,8 +124,9 @@ extern float fl_quartz_line_width_;
 
 static int clip_to_short(int &x, int &y, int &w, int &h) {
 
-  int kmin = -fl_line_width_;
-  int kmax = SHRT_MAX - fl_line_width_;
+  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
+  int kmin = -lw;
+  int kmax = SHRT_MAX - lw;
 
   if (w <= 0 || h <= 0) return 1;		// (a)
   if (x+w < kmin || y+h < kmin) return 1;	// (b)
@@ -145,8 +150,9 @@ static int clip_to_short(int &x, int &y, int &w, int &h) {
 */
 static int clip_x (int x) {
 
-  int kmin = -fl_line_width_;
-  int kmax = SHRT_MAX - fl_line_width_;
+  int lw = (fl_line_width_ > 0) ? fl_line_width_ : 1;
+  int kmin = -lw;
+  int kmax = SHRT_MAX - lw;
 
   if (x < kmin)
     x = kmin;
@@ -171,10 +177,10 @@ void Fl_Graphics_Driver::rect(int x, int y, int w, int h) {
   LineTo(fl_gc, x, y+h-1);
   LineTo(fl_gc, x, y);
 #elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
+  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
   CGRect rect = CGRectMake(x, y, w-1, h-1);
   CGContextStrokeRect(fl_gc, rect);
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  if ( (!USINGQUARTZPRINTER) && fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
 #endif
@@ -191,10 +197,14 @@ void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {
   rect.right = x + w; rect.bottom = y + h;
   FillRect(fl_gc, &rect, fl_brush());
 #elif defined(__APPLE_QUARTZ__)
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGRect rect = CGRectMake(x, y, w-1, h-1);
+  CGFloat delta_size =  0.9;
+  CGFloat delta_ori = 0;
+  if (USINGQUARTZPRINTER) {
+    delta_size = 0;
+    delta_ori = 0.5;
+    }
+  CGRect  rect = CGRectMake(x - delta_ori, y - delta_ori, w - delta_size , h - delta_size);
   CGContextFillRect(fl_gc, rect);
-  if (USINGQUARTZPRINTER || fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
 #else
 # error unsupported platform
 #endif
@@ -495,23 +505,13 @@ void Fl_Graphics_Driver::point(int x, int y) {
 #elif defined(WIN32)
   SetPixel(fl_gc, x, y, fl_RGB());
 #elif defined(__APPLE_QUARTZ__)
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, true);
-  CGContextMoveToPoint(fl_gc, x-.5, y); // Quartz needs a line that is one pixel long, or it will not draw anything
-  CGContextAddLineToPoint(fl_gc, x+.5, y);
-  CGContextStrokePath(fl_gc);
-  if (fl_quartz_line_width_ > 1.5f) CGContextSetShouldAntialias(fl_gc, false);
+  CGContextFillRect(fl_gc, CGRectMake(x - 0.5, y - 0.5, 1, 1) );
 #else
 # error unsupported platform
 #endif
 }
 
 ////////////////////////////////////////////////////////////////
-
-#define STACK_SIZE 10
-#define STACK_MAX (STACK_SIZE - 1)
-static Fl_Region rstack[STACK_SIZE];
-static int rstackptr=0;
-int fl_clip_state_number=0; // used by gl_begin.cxx to update GL clip
 
 #if !defined(WIN32) && !defined(__APPLE__)
 // Missing X call: (is this the fastest way to init a 1-rectangle region?)
@@ -526,7 +526,7 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
 }
 #endif
 
-void fl_restore_clip() {
+void Fl_Graphics_Driver::restore_clip() {
   fl_clip_state_number++;
   Fl_Region r = rstack[rstackptr];
 #if defined(USE_X11)
@@ -554,14 +554,14 @@ void fl_restore_clip() {
 #endif
 }
 
-void fl_clip_region(Fl_Region r) {
+void Fl_Graphics_Driver::clip_region(Fl_Region r) {
   Fl_Region oldr = rstack[rstackptr];
   if (oldr) XDestroyRegion(oldr);
   rstack[rstackptr] = r;
   fl_restore_clip();
 }
 
-Fl_Region fl_clip_region() {
+Fl_Region Fl_Graphics_Driver::clip_region() {
   return rstack[rstackptr];
 }
 
@@ -596,14 +596,14 @@ void Fl_Graphics_Driver::push_clip(int x, int y, int w, int h) {
 # error unsupported platform
 #endif
   }
-  if (rstackptr < STACK_MAX) rstack[++rstackptr] = r;
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = r;
   else Fl::warning("fl_push_clip: clip stack overflow!\n");
   fl_restore_clip();
 }
 
 // make there be no clip (used by fl_begin_offscreen() only!)
 void Fl_Graphics_Driver::push_no_clip() {
-  if (rstackptr < STACK_MAX) rstack[++rstackptr] = 0;
+  if (rstackptr < region_stack_max) rstack[++rstackptr] = 0;
   else Fl::warning("fl_push_no_clip: clip stack overflow!\n");
   fl_restore_clip();
 }
@@ -627,7 +627,7 @@ int Fl_Graphics_Driver::not_clipped(int x, int y, int w, int h) {
   return XRectInRegion(r, x, y, w, h);
 #elif defined(WIN32)
   RECT rect;
-  if (Fl_Surface_Device::surface()->type() == Fl_Printer::device_type) { // in case of print context, convert coords from logical to device
+  if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) { // in case of print context, convert coords from logical to device
     POINT pt[2] = { {x, y}, {x + w, y + h} };
     LPtoDP(fl_gc, pt, 2);
     rect.left = pt[0].x; rect.top = pt[0].y; rect.right = pt[1].x; rect.bottom = pt[1].y;
@@ -687,7 +687,7 @@ int Fl_Graphics_Driver::clip_box(int x, int y, int w, int h, int& X, int& Y, int
   } else {	// partial intersection
     RECT rect;
     GetRgnBox(temp, &rect);
-    if(Fl_Surface_Device::surface()->type() == Fl_Printer::device_type) { // if print context, convert coords from device to logical
+    if(Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) { // if print context, convert coords from device to logical
       POINT pt[2] = { {rect.left, rect.top}, {rect.right, rect.bottom} };
       DPtoLP(fl_gc, pt, 2);
       X = pt[0].x; Y = pt[0].y; W = pt[1].x - X; H = pt[1].y - Y;

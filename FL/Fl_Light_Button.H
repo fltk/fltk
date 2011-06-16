@@ -34,7 +34,7 @@
 #include "Fl_Button.H"
 
 /**
-  <P>This subclass displays the "on" state by turning on a light, 
+  This subclass displays the "on" state by turning on a light, 
   rather than drawing pushed in.  The shape of the  "light" 
   is initially set to FL_DOWN_BOX.  The color of the light when
   on is controlled with selection_color(), which defaults to FL_YELLOW.

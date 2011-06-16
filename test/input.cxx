@@ -35,6 +35,7 @@
 #include <FL/Fl_Multiline_Input.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Toggle_Button.H>
+#include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Color_Chooser.H>
 
 void cb(Fl_Widget *ob) {
@@ -78,12 +79,23 @@ void color_cb(Fl_Widget* button, void* v) {
   }
 }
 
+void tabnav_cb(Fl_Widget *w, void *v) {
+  Fl_Light_Button *b = (Fl_Light_Button*)w;
+  Fl_Multiline_Input *fmi = (Fl_Multiline_Input*)v;
+  fmi->tab_nav(b->value() ? 1 : 0);
+}
+
+void arrownav_cb(Fl_Widget *w, void *v) {
+  Fl_Light_Button *b = (Fl_Light_Button*)w;
+  Fl::option(Fl::OPTION_ARROW_FOCUS, b->value() ? true : false);
+}
+
 int main(int argc, char **argv) {
   // the following two lines set the correct color scheme, so that 
   // calling fl_contrast below will return good results
   Fl::args(argc, argv);
   Fl::get_system_colors();
-  Fl_Window *window = new Fl_Window(400,400);
+  Fl_Window *window = new Fl_Window(400,420);
 
   int y = 10;
   input[0] = new Fl_Input(70,y,300,30,"Normal:"); y += 35;
@@ -122,18 +134,29 @@ int main(int argc, char **argv) {
   b->callback(toggle_cb, FL_WHEN_NOT_CHANGED); y += 25;
   b->tooltip("Do callback even if the text is not changed");
   y += 5;
-  b = new Fl_Button(10,y,200,25,"&print changed()");
+  b = new Fl_Button(10,y,200,25,"&print changed()"); y += 25;
   b->callback(button_cb);
   b->tooltip("Print widgets that have changed() flag set");
 
-  b = new Fl_Button(220,y1,100,25,"color"); y1 += 25;
+  b = new Fl_Light_Button(10,y,100,25," Tab Nav");
+  b->tooltip("Control tab navigation for the multiline input field");
+  b->callback(tabnav_cb, (void*)input[4]);
+  b->value(input[4]->tab_nav() ? 1 : 0);
+  b = new Fl_Light_Button(110,y,100,25," Arrow Nav"); y += 25;
+  b->tooltip("Control horizontal arrow key focus navigation behavior.\n"
+             "e.g. Fl::OPTION_ARROW_FOCUS");
+  b->callback(arrownav_cb);
+  b->value(input[4]->tab_nav() ? 1 : 0);
+  b->value(Fl::option(Fl::OPTION_ARROW_FOCUS) ? 1 : 0);
+
+  b = new Fl_Button(220,y1,120,25,"color"); y1 += 25;
   b->color(input[0]->color()); b->callback(color_cb, (void*)0);
   b->tooltip("Color behind the text");
-  b = new Fl_Button(220,y1,100,25,"selection_color"); y1 += 25;
+  b = new Fl_Button(220,y1,120,25,"selection_color"); y1 += 25;
   b->color(input[0]->selection_color()); b->callback(color_cb, (void*)1);
   b->labelcolor(fl_contrast(FL_BLACK,b->color()));
   b->tooltip("Color behind selected text");
-  b = new Fl_Button(220,y1,100,25,"textcolor"); y1 += 25;
+  b = new Fl_Button(220,y1,120,25,"textcolor"); y1 += 25;
   b->color(input[0]->textcolor()); b->callback(color_cb, (void*)2);
   b->labelcolor(fl_contrast(FL_BLACK,b->color()));
   b->tooltip("Color of the text");

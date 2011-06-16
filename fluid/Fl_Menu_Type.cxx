@@ -211,10 +211,14 @@ void Fl_Menu_Item_Type::write_static() {
     write_c("\n}\n");
     if (k) {
       write_c("void %s::%s(Fl_Menu_* o, %s v) {\n", k, cn, ut);
-      write_c("  ((%s*)(o->", k);
+      write_c("  ((%s*)(o", k);
       Fl_Type* t = parent; while (t->is_menu_item()) t = t->parent;
-      for (t = t->parent; t && t->is_widget() && !is_class(); t = t->parent) write_c("parent()->");
-      write_c("user_data()))->%s_i(o,v);\n}\n", cn);
+      Fl_Type *q = 0;
+      for (t = t->parent; t && t->is_widget() && !is_class(); q = t, t = t->parent) 
+        write_c("->parent()");
+      if (!q || strcmp(q->type_name(), "widget_class"))
+        write_c("->user_data()");
+      write_c("))->%s_i(o,v);\n}\n", cn);
     }
   }
   if (image) {
@@ -466,7 +470,10 @@ void Fl_Menu_Type::write_code2() {
       const char *mName = mi->menu_name(i);
       for (Fl_Type* q = next; q && q->is_menu_item(); q = q->next) {
         if (((Fl_Menu_Item_Type*)q)->label()) nLabel++;
-        nItem++;
+	int thislevel = q->level; if (q->is_parent()) thislevel++;
+	int nextlevel =
+	    (q->next && q->next->is_menu_item()) ? q->next->level : next->level+1;
+	nItem += 1 + ((thislevel > nextlevel) ? (thislevel-nextlevel) : 0);
       }
       if (nLabel) {
         write_c("%sif (!%s_i18n_done) {\n", indent(), mName);

@@ -72,7 +72,7 @@ fl_read_image(uchar *p,		// I - Pixel buffer or NULL to allocate
       pdst[2] = psrc[2];  // B
     }
   }
-  if(fl_window != NULL) delete base;
+  if(fl_window != NULL) delete[] base;
   return p;
 }
 

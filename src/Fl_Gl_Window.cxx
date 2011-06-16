@@ -34,6 +34,9 @@ static int temp = fl_gl_load_plugin;
 
 #include <FL/Fl.H>
 #include <FL/x.H>
+#ifdef __APPLE__
+#include <FL/gl.h>
+#endif
 #include "Fl_Gl_Choice.H"
 #include <FL/Fl_Gl_Window.H>
 #include <stdlib.h>
@@ -92,7 +95,6 @@ void Fl_Gl_Window::show() {
     if (overlay && overlay != this) ((Fl_Gl_Window*)overlay)->show();
 #elif defined(__APPLE__)
 	if( ! parent() ) need_redraw=1;
-	else Fl_X::i(window())->contains_GL_subwindow();
 #endif
   }
   Fl_Window::show();
@@ -277,12 +279,12 @@ void Fl_Gl_Window::flush() {
   // warning: the Quartz version should probably use Core GL (CGL) instead of AGL
   //: clear previous clipping in this shared port
 #if ! __LP64__
-  GrafPtr port = GetWindowPort( Fl_X::i(this)->window_ref() );
+/*GrafPtr port = GetWindowPort( Fl_X::i(this)->window_ref() );
   Rect rect; SetRect( &rect, 0, 0, 0x7fff, 0x7fff );
   GrafPtr old; GetPort( &old );
   SetPort( port );
   ClipRect( &rect );
-  SetPort( old );
+  SetPort( old );*/
 #endif
 #endif
 
@@ -323,7 +325,7 @@ void Fl_Gl_Window::flush() {
     glDrawBuffer(GL_BACK);
 
     if (!SWAP_TYPE) {
-#if defined (__APPLE_QUARTZ__) || defined (__linux__)
+#if defined (__APPLE_QUARTZ__) || defined (USE_X11)
       SWAP_TYPE = COPY;
 #else
       SWAP_TYPE = UNDEFINED;
@@ -469,6 +471,11 @@ void Fl_Gl_Window::hide() {
 Fl_Gl_Window::~Fl_Gl_Window() {
   hide();
 //  delete overlay; this is done by ~Fl_Group
+#ifdef __APPLE__
+  // resets the pile of string textures used to draw strings
+  extern void gl_texture_reset();
+  gl_texture_reset();
+#endif
 }
 
 void Fl_Gl_Window::init() {
@@ -535,16 +542,16 @@ void Fl_Gl_Window::draw() {
 int Fl_Gl_Window::handle(int event) 
 {
 #ifdef __APPLE_QUARTZ__
-  if (event==FL_HIDE) {
+  /*if (event==FL_HIDE) {
     // if we are not hidden, just the parent was hidden, so we must throw away the context
     if (!visible_r())
-      context(0); // remove context wthout setting the hidden flags
+      context(0); // remove context without setting the hidden flags
   }
   if (event==FL_SHOW) {
     // if we are not hidden, just the parent was shown, so we must create a new context
     if (visible_r())
       show(); //
-  }
+  }*/
 #endif
   return Fl_Window::handle(event);
 }

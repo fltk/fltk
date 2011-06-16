@@ -37,6 +37,12 @@
 #include <ctype.h>
 
 #define MAXBUF 1024
+#if defined(USE_X11) && !USE_XFT
+const int secret_char = '*'; // asterisk to hide secret input
+#else
+const int secret_char = 0x2022; // bullet to hide secret input
+#endif
+static int l_secret;
 
 extern void fl_draw(const char*, int, float, float);
 
@@ -67,7 +73,10 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
 
   if (input_type()==FL_SECRET_INPUT) {
     while (o<e && p < value_+size_) {
-      if (fl_utf8len((char)p[0]) >= 1) *o++ = '*';
+      if (fl_utf8len((char)p[0]) >= 1) {
+	l_secret = fl_utf8encode(secret_char, o);
+	o += l_secret;
+      }
       p++;
     }
 
@@ -124,10 +133,12 @@ double Fl_Input_::expandpos(
 ) const {
   int n = 0;
   int chr = 0;
+  int l;
   if (input_type()==FL_SECRET_INPUT) {
     while (p<e) {
-      if (fl_utf8len((char)p[0]) >= 1) n++;
-      p++;
+      l = fl_utf8len((char)p[0]);
+      if (l >= 1) n += l_secret;
+      p += l;
     }
   } else while (p<e) {
     int c = *p & 255;
@@ -1059,6 +1070,7 @@ Fl_Input_::Fl_Input_(int X, int Y, int W, int H, const char* l)
   maximum_size_ = 32767;
   shortcut_ = 0;
   set_flag(SHORTCUT_LABEL);
+  tab_nav(1);
 }
 
 /**

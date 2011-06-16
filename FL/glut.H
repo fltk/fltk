@@ -3,7 +3,7 @@
 //
 // GLUT emulation header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -407,7 +407,7 @@ FL_EXPORT GLUTproc glutGetProcAddress(const char *procName);
 
 //inline void glutVideoPan(int x, int y, int width, int height);
 
-// Font argument must be a void* for compatability, so...
+// Font argument must be a void* for compatibility, so...
 /** fltk glut font/size attributes used in the glutXXX functions */
 struct Fl_Glut_Bitmap_Font {Fl_Font font; Fl_Fontsize size;};
 

@@ -27,7 +27,7 @@
 
 #include <config.h>
 
-#ifdef HAVE_CAIRO
+#ifdef FLTK_HAVE_CAIRO
 
 #include <FL/Fl_Cairo_Window.H>
 #include <FL/Fl_Box.H>
@@ -151,9 +151,9 @@ int main(int argc, char** argv) {
     
     window.resizable(&window);
     window.color(FL_WHITE);
-    window.show(argc,argv);
     window.set_draw_cb(my_cairo_draw_cb);
-    
+    window.show(argc,argv);
+
     return Fl::run();
 }
 #else

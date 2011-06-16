@@ -292,7 +292,7 @@ responsibility to set it back to the default with
 
 \par
 \b Note:
-Because of how line styles are implemented on WIN32 systems, you
+Because of how line styles are implemented on MS Windows systems, you
 \e must set the line style \e after setting the drawing color.
 If you set the
 color after the line style you will lose the line style settings!
@@ -411,7 +411,7 @@ void fl_pie(int x, int y, int w, int h, double a1, double a2)
 \par
 Draw ellipse sections using integer coordinates. These
 functions match the rather limited circle drawing code provided
-by X and WIN32. The advantage over using
+by X and MS Windows. The advantage over using
 \ref drawing_fl_arc "fl_arc()"
 with floating point
 coordinates is that they are faster because they often use the
@@ -420,7 +420,7 @@ small sizes are often hard-coded bitmaps.
 
 \par
 If a complete circle is drawn it will fit inside the passed bounding
-box. The two angles are measured in degrees counterclockwise from
+box. The two angles are measured in degrees counter-clockwise from
 3'oclock and are the starting and ending angle of the arc, \p a2
 must be greater or equal to \p a1.
 
@@ -455,7 +455,7 @@ with 2-D linear transformations. The functionality matches that
 found in the Adobe&reg; PostScript&tm; language. The
 exact pixels that are filled are less defined than for the fast
 drawing functions so that FLTK can take advantage of drawing
-hardware. On both X and WIN32 the transformed vertices are
+hardware. On both X and MS Windows the transformed vertices are
 rounded to integers before drawing the line segments: this
 severely limits the accuracy of these functions for complex
 graphics, so use OpenGL when greater accuracy and/or performance
@@ -466,7 +466,7 @@ void fl_pop_matrix()
 
 \par
 Save and restore the current transformation.  The maximum
-depth of the stack is 4.
+depth of the stack is 32 entries.
 
 void fl_scale(double x,double y) <br>
 void fl_scale(double x) <br>
@@ -645,7 +645,7 @@ the text at so it looks centered vertically in that box.
 
 double fl_width(const char* txt) <br>
 double fl_width(const char* txt, int n) <br>
-double fl_width(Fl_Unichar)
+double fl_width(unsigned int unicode_char)
 
 \par
 Return the pixel width of a nul-terminated string, a sequence of \p n
@@ -699,48 +699,13 @@ Returns the face and size set by the most recent call to
 
 \subsection ssect_CharacterEncoding Character Encoding
 
-\todo
-Rework the Character Encoding section for UTF-8
+FLTK 1.3 expects all text in Unicode UTF-8 encoding. UTF-8 is 
+ASCII compatible for the first 128 characters. International 
+characters are encoded in multibyte sequences. 
 
-FLTK 1 supports western character sets using the eight bit encoding
-of the user-selected global code page. For MS Windows and X11, the code
-page is assumed to be Windows-1252/Latin1, a superset to ISO 8859-1. 
-On Mac OS X, we assume MacRoman.
-
-FLTK provides the functions fl_latin1_to_local(), 
-fl_local_to_latin1(), fl_mac_roman_to_local(), and
-fl_local_to_mac_roman() to convert strings between both
-encodings. These functions are only required if your source
-code contains "C"-strings with international characters and 
-if this source will be compiled on multiple platforms.
-
-<!-- Editor's note:
-   ** Caution: the following text contains utf-8 encoded characters.
-   ** be careful when using non-utf-8-aware editors !
--->
-
-Assuming that the following source code was written on MS Windows, 
-this example will output the correct label on OS X and X11 as well.
-Without the conversion call, the label on OS X would read 
-<tt>Fahrvergn¸gen</tt> with a deformed umlaut u ("cedille",
-html "&cedil;").
-\code
-  btn = new Fl_Button(10, 10, 300, 25);
-  btn->copy_label(fl_latin1_to_local("Fahrvergnügen"));
-\endcode
-
-\note	If your application uses characters that are not part of both
-	encodings, or it will be used in areas that commonly use different
-	code pages, you might consider upgrading to FLTK 2 which supports
-	UTF-8 encoding. 
-
-\todo	drawing.dox: I fixed the above encoding problem of these \&cedil;
-	and umlaut characters, but this text is obsoleted by FLTK 1.3
-	with UTF-8 encoding, or must be rewritten accordingly:
-	How to use native (e.g. Windows "ANSI", or ISO-8859-x)
-	encoding in embedded strings for labels, error messages
-	and more. Please check this (UTF-8) encoding on different
-	OS'es and with different language and font environments.
+FLTK expects individual characters, characters that are not part of 
+a string, in UCS-4 encoding, which is also ASCII compatible, but 
+requires 4 bytes to store a Unicode character.
 
 For more information about character encodings, see the chapter on
 \ref unicode.
@@ -1051,7 +1016,7 @@ in the offscreen buffer into the current buffer at \p x,y.
     </a>
   </td>
   <td width="10%" align="CENTER">
-    <a class="el" href="main.html">[Index]</a>
+    <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="events.html">

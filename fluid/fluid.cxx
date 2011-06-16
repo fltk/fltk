@@ -25,8 +25,6 @@
 //     http://www.fltk.org/str.php
 //
 
-#undef IDE_SUPPORT
-
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
@@ -40,6 +38,7 @@
 #include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_File_Chooser.H>
+#include <FL/Fl_PNG_Image.H>
 #include <FL/fl_message.H>
 #include <FL/filename.H>
 #include <stdio.h>
@@ -105,8 +104,8 @@ int show_comments = 1;
 int show_coredevmenus = 1;
 
 // File history info...
-char	absolute_history[10][1024];
-char	relative_history[10][1024];
+char	absolute_history[10][FL_PATH_MAX];
+char	relative_history[10][FL_PATH_MAX];
 
 void	load_history();
 void	update_history(const char *);
@@ -133,11 +132,11 @@ void goto_source_dir() {
   if (!filename || !*filename) return;
   const char *p = fl_filename_name(filename);
   if (p <= filename) return; // it is in the current directory
-  char buffer[1024];
+  char buffer[FL_PATH_MAX];
   strlcpy(buffer, filename, sizeof(buffer));
   int n = p-filename; if (n>1) n--; buffer[n] = 0;
   if (!pwd) {
-    pwd = getcwd(0,1024);
+    pwd = getcwd(0,FL_PATH_MAX);
     if (!pwd) {fprintf(stderr,"getwd : %s\n",strerror(errno)); return;}
   }
   if (chdir(buffer)<0) {fprintf(stderr, "Can't chdir to %s : %s\n",
@@ -182,7 +181,7 @@ Fl_Window *main_window;
 Fl_Menu_Bar *main_menubar;
 
 static char* cutfname(int which = 0) {
-  static char name[2][1024];
+  static char name[2][FL_PATH_MAX];
   static char beenhere = 0;
 
   if (!beenhere) {
@@ -263,14 +262,14 @@ void save_template_cb(Fl_Widget *, void *) {
   if (!c || !*c) return;
 
   // Convert template name to filename_with_underscores
-  char safename[1024], *safeptr;
+  char safename[FL_PATH_MAX], *safeptr;
   strlcpy(safename, c, sizeof(safename));
   for (safeptr = safename; *safeptr; safeptr ++) {
     if (isspace(*safeptr)) *safeptr = '_';
   }
 
   // Find the templates directory...
-  char filename[1024];
+  char filename[FL_PATH_MAX];
   fluid_prefs.getUserdataPath(filename, sizeof(filename));
 
   strlcat(filename, "templates", sizeof(filename));
@@ -653,15 +652,15 @@ const char* i18n_include = "";
 const char* i18n_function = "";
 const char* i18n_file = "";
 const char* i18n_set = "";
-char i18n_program[1024] = "";
+char i18n_program[FL_PATH_MAX] = "";
 
 void write_cb(Fl_Widget *, void *) {
   if (!filename) {
     save_cb(0,0);
     if (!filename) return;
   }
-  char cname[1024];
-  char hname[1024];
+  char cname[FL_PATH_MAX];
+  char hname[FL_PATH_MAX];
   strlcpy(i18n_program, fl_filename_name(filename), sizeof(i18n_program));
   fl_filename_setext(i18n_program, sizeof(i18n_program), "");
   if (*code_file_name == '.' && strchr(code_file_name, '/') == NULL) {
@@ -698,7 +697,7 @@ void write_strings_cb(Fl_Widget *, void *) {
     save_cb(0,0);
     if (!filename) return;
   }
-  char sname[1024];
+  char sname[FL_PATH_MAX];
   strlcpy(sname, fl_filename_name(filename), sizeof(sname));
   fl_filename_setext(sname, sizeof(sname), exts[i18n_type]);
   if (!compile_only) goto_source_dir();
@@ -837,6 +836,7 @@ static void sort_cb(Fl_Widget *,void *) {
 void show_project_cb(Fl_Widget *, void *);
 void show_grid_cb(Fl_Widget *, void *);
 void show_settings_cb(Fl_Widget *, void *);
+void show_global_settings_cb(Fl_Widget *, void *);
 
 void align_widget_cb(Fl_Widget *, long);
 void widget_size_cb(Fl_Widget *, long);
@@ -848,14 +848,14 @@ void about_cb(Fl_Widget *, void *) {
 
 void show_help(const char *name) {
   const char	*docdir;
-  char		helpname[1024];
+  char		helpname[FL_PATH_MAX];
 
   if (!help_dialog) help_dialog = new Fl_Help_Dialog();
 
   if ((docdir = getenv("FLTK_DOCDIR")) == NULL) {
 #ifdef __EMX__
     // Doesn't make sense to have a hardcoded fallback
-    static char fltk_docdir[1024];
+    static char fltk_docdir[FL_PATH_MAX];
 
     strlcpy(fltk_docdir, __XOS2RedirRoot("/XFree86/lib/X11/fltk/doc"),
             sizeof(fltk_docdir));
@@ -867,7 +867,56 @@ void show_help(const char *name) {
   }
   snprintf(helpname, sizeof(helpname), "%s/%s", docdir, name);
 
-  help_dialog->load(helpname);
+  // make sure that we can read the file
+  FILE *f = fopen(helpname, "rb");
+  if (f) {
+    fclose(f);
+    help_dialog->load(helpname);
+  } else {
+    // if we can not read the file, we display the canned version instead
+    // or ask the native browser to open the page on www.fltk.org
+    if (strcmp(name, "fluid.html")==0) {
+      if (!Fl_Shared_Image::find("embedded:/fluid-org.png"))
+        new Fl_PNG_Image("embedded:/fluid-org.png", fluid_org_png, sizeof(fluid_org_png));
+      help_dialog->value
+      (
+       "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n"
+       "<html><head><title>FLTK: Programming with FLUID</title></head><body>\n"
+       "<h2>What is FLUID?</h2>\n"
+       "The Fast Light User Interface Designer, or FLUID, is a graphical editor "
+       "that is used to produce FLTK source code. FLUID edits and saves its state "
+       "in <code>.fl</code> files. These files are text, and you can (with care) "
+       "edit them in a text editor, perhaps to get some special effects.<p>\n"
+       "FLUID can \"compile\" the <code>.fl</code> file into a <code>.cxx</code> "
+       "and a <code>.h</code> file. The <code>.cxx</code> file defines all the "
+       "objects from the <code>.fl</code> file and the <code>.h</code> file "
+       "declares all the global ones. FLUID also supports localization "
+       "(Internationalization) of label strings using message files and the GNU "
+       "gettext or POSIX catgets interfaces.<p>\n"
+       "A simple program can be made by putting all your code (including a <code>"
+       "main()</code> function) into the <code>.fl</code> file and thus making the "
+       "<code>.cxx</code> file a single source file to compile. Most programs are "
+       "more complex than this, so you write other <code>.cxx</code> files that "
+       "call the FLUID functions. These <code>.cxx</code> files must <code>"
+       "#include</code> the <code>.h</code> file or they can <code>#include</code> "
+       "the <code>.cxx</code> file so it still appears to be a single source file.<p>"
+       "<img src=\"embedded:/fluid-org.png\"></p>"
+       "<p>More information is available online at <a href="
+       "\"http://www.fltk.org/doc-1.3/fluid.html\">http://www.fltk.org/</a>"
+       "</body></html>"
+       );
+    } else if (strcmp(name, "license.html")==0) {
+      fl_open_uri("http://www.fltk.org/doc-1.3/license.html");
+      return;
+    } else if (strcmp(name, "index.html")==0) {
+      fl_open_uri("http://www.fltk.org/doc-1.3/index.html");
+      return;
+    } else {
+      snprintf(helpname, sizeof(helpname), "http://www.fltk.org/%s", name);
+      fl_open_uri(helpname);
+      return;
+    }
+  }
   help_dialog->show();
 }
 
@@ -876,7 +925,7 @@ void help_cb(Fl_Widget *, void *) {
 }
 
 void manual_cb(Fl_Widget *, void *) {
-  show_help("main.html");
+  show_help("index.html");
 }
 
 
@@ -1152,7 +1201,7 @@ void print_menu_cb(Fl_Widget *, void *) {
 // Quote a string for PostScript printing
 static const char *ps_string(const char *s) {
   char *bufptr;
-  static char buffer[2048];
+  static char buffer[FL_PATH_MAX];
 
 
   if (!s) {
@@ -1211,7 +1260,7 @@ void print_cb(Fl_Return_Button *, void *) {
     if (t->is_window()) {
       winpage ++;
       windows[num_windows] = (Fl_Window_Type *)t;
-
+      if (!((Fl_Window*)(windows[num_windows]->o))->shown()) continue;
       if (print_all->value()) num_windows ++;
       else if (print_pages->value() && winpage >= first &&
                winpage <= last) num_windows ++;
@@ -1580,30 +1629,6 @@ void print_cb(Fl_Return_Button *, void *) {
 }
 #endif // WIN32 && !__CYGWIN__
 
-void fltkdb_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("FltkDB.fluid.fltk.org");
-  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db");
-}
-
-void dbxcode_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("ideXcode.fluid.fltk.org");
-  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
-}
-
-void dbvisualc_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("ideVisualC.fluid.fltk.org");
-  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
-}
-
-void dbmake_cb(Fl_Widget*, void*) {
-  Fl_Plugin_Manager pm("commandline");  
-  Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin("ideMaketools.fluid.fltk.org");
-  if (pi) pi->test("/Users/matt/dev/fltk-1.3.0/fltk.db", "/Users/matt/dev/fltk-1.3.0");
-}
-
 ////////////////////////////////////////////////////////////////
 
 extern Fl_Menu_Item New_Menu[];
@@ -1656,7 +1681,8 @@ Fl_Menu_Item Main_Menu[] = {
   {"Show Widget &Bin...",FL_ALT+'b',toggle_widgetbin_cb},
   {"Show Source Code...",FL_ALT+FL_SHIFT+'s', (Fl_Callback*)toggle_sourceview_cb, 0, FL_MENU_DIVIDER},
   {"Pro&ject Settings...",FL_ALT+'p',show_project_cb},
-  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb},
+  {"GU&I Settings...",FL_ALT+FL_SHIFT+'p',show_settings_cb,0,FL_MENU_DIVIDER},
+  {"Global &FLTK Settings...",FL_ALT+FL_SHIFT+'g',show_global_settings_cb},
   {0},
 {"&New", 0, 0, (void *)New_Menu, FL_SUBMENU_POINTER},
 {"&Layout",0,0,0,FL_SUBMENU},
@@ -1694,12 +1720,6 @@ Fl_Menu_Item Main_Menu[] = {
 {"&Shell",0,0,0,FL_SUBMENU},
   {"Execute &Command...",FL_ALT+'x',(Fl_Callback *)show_shell_window},
   {"Execute &Again...",FL_ALT+'g',(Fl_Callback *)do_shell_command},
-#ifdef IDE_SUPPORT
-  {"--fltkdb",0,(Fl_Callback *)fltkdb_cb},
-  {"--dbxcode3",0,(Fl_Callback *)dbxcode_cb},
-  {"--dbvisualc6",0,(Fl_Callback *)dbvisualc_cb},
-  {"--dbmake",0,(Fl_Callback *)dbmake_cb},
-#endif
   {0},
 {"&Help",0,0,0,FL_SUBMENU},
   {"&Rapid development with FLUID...",0,help_cb},
@@ -1820,6 +1840,7 @@ void make_main_window() {
   if (!compile_only) {
     load_history();
     make_settings_window();
+    make_global_settings_window();
   }
 }
 
@@ -1853,7 +1874,7 @@ void load_history() {
 // Update file history from preferences...
 void update_history(const char *flname) {
   int	i;		// Looping var
-  char	absolute[1024];
+  char	absolute[FL_PATH_MAX];
   int	max_files;
 
 
@@ -2241,7 +2262,7 @@ void update_sourceview_timer(void*)
 // Set the "modified" flag and update the title of the main window...
 void set_modflag(int mf) {
   const char	*basename;
-  static char	title[1024];
+  static char	title[FL_PATH_MAX];
 
   modflag = mf;
 
@@ -2327,20 +2348,32 @@ int main(int argc,char **argv) {
   int i = 1;
   
   if (!Fl::args(argc,argv,i,arg) || i < argc-1) {
-    fprintf(stderr,
-"usage: %s <switches> name.fl\n"
-" -c : write .cxx and .h and exit\n"
-" -cs : write .cxx and .h and strings and exit\n"
-" -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
-" -h <name> : .h output filename, or extension if <name> starts with '.'\n"
-            , argv[0]);
+    static const char *msg = 
+      "usage: %s <switches> name.fl\n"
+      " -c : write .cxx and .h and exit\n"
+      " -cs : write .cxx and .h and strings and exit\n"
+      " -o <name> : .cxx output filename, or extension if <name> starts with '.'\n"
+      " -h <name> : .h output filename, or extension if <name> starts with '.'\n";
+    int len = strlen(msg) + strlen(argv[0]) + strlen(Fl::help);
     Fl_Plugin_Manager pm("commandline");
     int i, n = pm.plugins();
     for (i=0; i<n; i++) {
       Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
-      if (pi) puts(pi->help());
+      if (pi) len += strlen(pi->help());
     }
-    fprintf(stderr, "%s\n", Fl::help);
+    char *buf = (char*)malloc(len+1);
+    sprintf(buf, msg, argv[0]);
+    for (i=0; i<n; i++) {
+      Fl_Commandline_Plugin *pi = (Fl_Commandline_Plugin*)pm.plugin(i);
+      if (pi) strcat(buf, pi->help());
+    }
+    strcat(buf, Fl::help);
+#ifdef _MSC_VER
+    fl_message("%s\n", buf);
+#else
+    fprintf(stderr, "%s\n", buf);
+#endif
+    free(buf);
     return 1;
   }
   if (exit_early)

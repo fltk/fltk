@@ -166,15 +166,18 @@ int Fl_Check_Browser::item_selected(void *v) const {
 	return i->selected;
 }
 /**
-    Add a new unchecked line to the end of the browser.  The text is copied
-    using the strdup() function.  It may also be NULL to make
-    a blank line.  The second form can set the item checked.
+ Add a new unchecked line to the end of the browser.  
+ \see add(char *s, int b)
 */
 int Fl_Check_Browser::add(char *s) {
 	return (add(s, 0));
 }
 
-/** See int Fl_Check_Browser::add(char *s) */
+/** 
+ Add a new line to the end of the browser.  The text is copied
+ using the strdup() function.  It may also be NULL to make
+ a blank line.  It can set the item checked if \p b is not 0.
+ */
 int Fl_Check_Browser::add(char *s, int b) {
 	cb_item *p = (cb_item *)malloc(sizeof(cb_item));
 	p->next = 0;

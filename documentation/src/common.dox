@@ -171,7 +171,7 @@ widget's parent.
 FLTK stores the colors of widgets as an 32-bit unsigned
 number that is either an index into a color palette of 256
 colors or a 24-bit RGB color. The color palette is \e not
-the X or WIN32 colormap, but instead is an internal table with
+the X or MS Windows colormap, but instead is an internal table with
 fixed contents.
 
 See the
@@ -392,11 +392,18 @@ constants are defined and may be OR'd together as needed:
 \li \p FL_ALIGN_BOTTOM - align the label at the bottom of the widget.
 \li \p FL_ALIGN_LEFT - align the label to the left of the widget.
 \li \p FL_ALIGN_RIGHT - align the label to the right of the widget.
+\li \p FL_ALIGN_LEFT_TOP - The label appears to the left of the widget, aligned at the top. Outside labels only.
+\li \p FL_ALIGN_RIGHT_TOP - The label appears to the right of the widget, aligned at the top. Outside labels only.
+\li \p FL_ALIGN_LEFT_BOTTOM - The label appears to the left of the widget, aligned at the bottom. Outside labels only.
+\li \p FL_ALIGN_RIGHT_BOTTOM - The label appears to the right of the widget, aligned at the bottom. Outside labels only.
 \li \p FL_ALIGN_INSIDE - align the label inside the widget.
 \li \p FL_ALIGN_CLIP - clip the label to the widget's bounding box.
 \li \p FL_ALIGN_WRAP - wrap the label text as needed.
-\li \p FL_TEXT_OVER_IMAGE - show the label text over the image.
-\li \p FL_IMAGE_OVER_TEXT - show the label image over the text (default).
+\li \p FL_ALIGN_TEXT_OVER_IMAGE - show the label text over the image.
+\li \p FL_ALIGN_IMAGE_OVER_TEXT - show the label image over the text (default).
+\li \p FL_ALIGN_IMAGE_NEXT_TO_TEXT - The image will appear to the left of the text.
+\li \p FL_ALIGN_TEXT_NEXT_TO_IMAGE - The image will appear to the right of the text.
+\li \p FL_ALIGN_IMAGE_BACKDROP - The image will be used as a background for the widget.
 
 \anchor common_labeltype
 \par labeltype()
@@ -623,7 +630,7 @@ combined with any modifiers like \p Shift , \p Alt , and \p Control.
     </a>
   </td>
   <td width="10%" align="CENTER">
-    <a class="el" href="main.html">[Index]</a>
+    <a class="el" href="index.html">[Index]</a>
   </td>
   <td width="45%" align="RIGHT">
     <a class="el" href="editor.html">

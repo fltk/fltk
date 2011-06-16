@@ -66,18 +66,21 @@ void Fl_Window::fullscreen() {
   //determine its thickness
   border(0);
 #endif
-#if defined(__APPLE__) || defined(WIN32)
+#if defined(__APPLE__) || defined(WIN32) || defined(USE_X11)
   int sx, sy, sw, sh;
-  Fl::screen_xywh(sx, sy, sw, sh, x()+w()/2, y()+h()/2);
+  Fl::screen_xywh(sx, sy, sw, sh, x(), y(), w(), h());
   // if we are on the main screen, we will leave the system menu bar unobstructed
   if (Fl::x()>=sx && Fl::y()>=sy && Fl::x()+Fl::w()<=sx+sw && Fl::y()+Fl::h()<=sy+sh) {
     sx = Fl::x(); sy = Fl::y(); 
     sw = Fl::w(); sh = Fl::h();
   }
   if (x()==sx) x(sx+1); // make sure that we actually execute the resize
+#if defined(USE_X11)
+  resize(0, 0, w(), h()); // work around some quirks in X11
+#endif
   resize(sx, sy, sw, sh);
 #else
-  if (!x()) x(1); // force it to call XResizeWindow()
+  if (!x()) x(1); // make sure that we actually execute the resize
   resize(0,0,Fl::w(),Fl::h());
 #endif
 }

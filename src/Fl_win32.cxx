@@ -38,6 +38,7 @@
 #include <FL/fl_draw.H>
 #include <FL/Enumerations.H>
 #include <FL/Fl_Tooltip.H>
+#include <FL/Fl_Paged_Device.H>
 #include "flstring.h"
 #include "Fl_Font.H"
 #include <stdio.h>
@@ -50,7 +51,14 @@
 #endif
 
 #if !defined(NO_TRACK_MOUSE)
-#include <commctrl.h>	// TrackMouseEvent
+#  include <commctrl.h>	// TrackMouseEvent
+// fabien: Ms Visual Studio >= 2003 permit embedded lib reference
+// that makes fltk use easier as only fltk libs are now requested
+// This idea could be extended to fltk libs themselves, 
+// implementer should then care about DLL linkage flags ...
+#  if (_MSC_VER>=1310)
+#    pragma comment (lib, "comctl32.lib")
+#  endif
 #endif
 
 #if defined(__GNUC__)
@@ -86,9 +94,9 @@
 
 static Fl_GDI_Graphics_Driver fl_gdi_driver;
 static Fl_Display_Device fl_gdi_display(&fl_gdi_driver);
-FL_EXPORT Fl_Display_Device *fl_display_device = (Fl_Display_Device*)&fl_gdi_display; // does not change
 FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver = (Fl_Graphics_Driver*)&fl_gdi_driver; // the current target driver of graphics operations
-FL_EXPORT Fl_Surface_Device *fl_surface = (Fl_Surface_Device*)fl_display_device; // the current target surface of graphics operations
+Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_gdi_display; // the current target surface of graphics operations
+Fl_Display_Device *Fl_Display_Device::_display = &fl_gdi_display; // the platform display
 
 // dynamic wsock dll handling api:
 #if defined(__CYGWIN__) && !defined(SOCKET)
@@ -734,6 +742,7 @@ static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {VK_LWIN,	FL_Meta_L},
   {VK_RWIN,	FL_Meta_R},
   {VK_APPS,	FL_Menu},
+  {VK_SLEEP, FL_Sleep},
   {VK_MULTIPLY,	FL_KP+'*'},
   {VK_ADD,	FL_KP+'+'},
   {VK_SUBTRACT,	FL_KP+'-'},
@@ -741,6 +750,23 @@ static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {VK_DIVIDE,	FL_KP+'/'},
   {VK_NUMLOCK,	FL_Num_Lock},
   {VK_SCROLL,	FL_Scroll_Lock},
+# if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0500)
+  {VK_BROWSER_BACK, FL_Back},
+  {VK_BROWSER_FORWARD, FL_Forward},
+  {VK_BROWSER_REFRESH, FL_Refresh},
+  {VK_BROWSER_STOP, FL_Stop},
+  {VK_BROWSER_SEARCH, FL_Search},
+  {VK_BROWSER_FAVORITES, FL_Favorites},
+  {VK_BROWSER_HOME, FL_Home_Page},
+  {VK_VOLUME_MUTE, FL_Volume_Mute},
+  {VK_VOLUME_DOWN, FL_Volume_Down},
+  {VK_VOLUME_UP, FL_Volume_Up},
+  {VK_MEDIA_NEXT_TRACK, FL_Media_Next},
+  {VK_MEDIA_PREV_TRACK, FL_Media_Prev},
+  {VK_MEDIA_STOP, FL_Media_Stop},
+  {VK_MEDIA_PLAY_PAUSE, FL_Media_Play},
+  {VK_LAUNCH_MAIL, FL_Mail},
+#endif
   {0xba,	';'},
   {0xbb,	'='},
   {0xbc,	','},
@@ -1067,9 +1093,20 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	    break;
 	}
       }
-    } else if ((lParam & (1<<31))==0){
+    } else if ((lParam & (1<<31))==0) {
+#ifdef FLTK_PREVIEW_DEAD_KEYS
+      if ((lParam & (1<<24))==0) { // clear if dead key (always?)
+        xchar u = (xchar) wParam;
+        Fl::e_length = fl_utf8fromwc(buffer, 1024, &u, 1);
+        buffer[Fl::e_length] = 0;
+      } else { // set if "extended key" (never printable?)
+        buffer[0] = 0;
+        Fl::e_length = 0;
+      }
+#else
       buffer[0] = 0;
       Fl::e_length = 0;
+#endif
     }
     Fl::e_text = buffer;
     if (lParam & (1<<31)) { // key up events.
@@ -1078,7 +1115,11 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     // for (int i = lParam&0xff; i--;)
     while (window->parent()) window = window->window();
-    if (Fl::handle(FL_KEYBOARD,window)) return 0;
+    if (Fl::handle(FL_KEYBOARD,window)) {
+	  if (uMsg==WM_DEADCHAR || uMsg==WM_SYSDEADCHAR)
+		Fl::compose_state = 1;
+	  return 0;
+	}
     break;}
 
   case WM_MOUSEWHEEL: {
@@ -1538,7 +1579,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     w->redraw(); // force draw to happen
   }
   // If we've captured the mouse, we dont want to activate any
-  // other windows from the code, or we loose the capture.
+  // other windows from the code, or we lose the capture.
   ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
 	     (Fl::grab() || (style & WS_POPUP)) ? SW_SHOWNOACTIVATE : SW_SHOWNORMAL);
 
@@ -1911,12 +1952,72 @@ void fl_cleanup_dc_list(void) {          // clean up the list
 }
 
 Fl_Region XRectangleRegion(int x, int y, int w, int h) {
-  if (Fl_Surface_Device::surface()->type() == Fl_Display_Device::device_type) return CreateRectRgn(x,y,x+w,y+h);
+  if (Fl_Surface_Device::surface()->class_name() == Fl_Display_Device::class_id) return CreateRectRgn(x,y,x+w,y+h);
   // because rotation may apply, the rectangle becomes a polygon in device coords
   POINT pt[4] = { {x, y}, {x + w, y}, {x + w, y + h}, {x, y + h} };
   LPtoDP(fl_gc, pt, 4);
   return CreatePolygonRgn(pt, 4, ALTERNATE);
 }
+
+Window fl_xid_(const Fl_Window *w) {
+  Fl_X *temp = Fl_X::i(w); 
+  return temp ? temp->xid : 0;
+}
+
+int Fl_Window::decorated_w()
+{
+  if (!shown() || parent() || !border() || !visible()) return w();
+  int X, Y, bt, bx, by;
+  Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
+  return w() + 2 * bx;
+}
+
+int Fl_Window::decorated_h()
+{
+  if (!shown() || parent() || !border() || !visible()) return h();
+  int X, Y, bt, bx, by;
+  Fl_X::fake_X_wm(this, X, Y, bt, bx, by);
+  return h() + bt + 2 * by;
+}
+
+void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
+{
+  if (!win->shown() || win->parent() || !win->border() || !win->visible()) {
+    this->print_widget(win, x_offset, y_offset);
+    return;
+  }
+  int X, Y, bt, bx, by, ww, wh; // compute the window border sizes
+  Fl_X::fake_X_wm(win, X, Y, bt, bx, by);
+  ww = win->w() + 2 * bx;
+  wh = win->h() + bt + 2 * by;
+  Fl_Display_Device::display_device()->set_current(); // make window current
+  win->show();
+  Fl::check();
+  win->make_current();
+  HDC save_gc = fl_gc;
+  fl_gc = GetDC(NULL); // get the screen device context
+  // capture the 4 window sides from screen
+  RECT r; GetWindowRect(fl_window, &r);
+  uchar *top_image = fl_read_image(NULL, r.left, r.top, ww, bt + by);
+  uchar *left_image = fl_read_image(NULL, r.left, r.top, bx, wh);
+  uchar *right_image = fl_read_image(NULL, r.right - bx, r.top, bx, wh);
+  uchar *bottom_image = fl_read_image(NULL, r.left, r.bottom-by, ww, by);
+  ReleaseDC(NULL, fl_gc); fl_gc = save_gc;
+  this->set_current();
+  // print the 4 window sides
+  fl_draw_image(top_image, x_offset, y_offset, ww, bt + by, 3);
+  fl_draw_image(left_image, x_offset, y_offset, bx, wh, 3);
+  fl_draw_image(right_image, x_offset + win->w() + bx, y_offset, bx, wh, 3);
+  fl_draw_image(bottom_image, x_offset, y_offset + win->h() + bt + by, ww, by, 3);
+  delete[] top_image;
+  delete[] left_image;
+  delete[] right_image;
+  delete[] bottom_image;
+  // print the window inner part
+  this->print_widget(win, x_offset + bx, y_offset + bt + by);
+  fl_gc = GetDC(fl_xid(win));
+  ReleaseDC(fl_xid(win), fl_gc);
+}  
 
 #ifdef USE_PRINT_BUTTON
 // to test the Fl_Printer class creating a "Print front window" button in a separate window
@@ -1933,11 +2034,14 @@ void printFront(Fl_Widget *o, void *data)
   if( printer.start_job(1) ) { o->window()->show(); return; }
   if( printer.start_page() ) { o->window()->show(); return; }
   printer.printable_rect(&w,&h);
+  int  wh, ww;
+  wh = win->decorated_h();
+  ww = win->decorated_w();
   // scale the printer device so that the window fits on the page
   float scale = 1;
-  if (win->w() > w || win->h() > h) {
-    scale = (float)w/win->w();
-    if ((float)h/win->h() < scale) scale = (float)h/win->h();
+  if (ww > w || wh > h) {
+    scale = (float)w/ww;
+    if ((float)h/wh < scale) scale = (float)h/wh;
     printer.scale(scale, scale);
   }
 // #define ROTATE 20.0
@@ -1948,9 +2052,8 @@ void printFront(Fl_Widget *o, void *data)
   printer.rotate(ROTATE);
   printer.print_widget( win, - win->w()/2, - win->h()/2 );
   //printer.print_window_part( win, 0,0, win->w(), win->h(), - win->w()/2, - win->h()/2 );
-#else
-  printer.print_widget( win );
-  //printer.print_window_part( win, 0,0, win->w(), win->h() );
+#else  
+  printer.print_window(win);
 #endif
   printer.end_page();
   printer.end_job();

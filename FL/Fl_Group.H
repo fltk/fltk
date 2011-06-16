@@ -177,12 +177,7 @@ public:
   */
   unsigned int clip_children() { return (flags() & CLIP_CHILDREN) != 0; }
 
-  /** Returns an Fl_Group pointer if this widget is an Fl_Group.
-  
-      \retval NULL if this widget is not derived from Fl_Group.
-      \note This method is provided to avoid dynamic_cast.
-      \todo More documentation ...
-   */
+  // Note: Doxygen docs in Fl_Widget.H to avoid redundancy.
   virtual Fl_Group* as_group() { return this; }
 
   // back compatibility functions:

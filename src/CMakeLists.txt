@@ -193,6 +193,7 @@ set(CFILES
   fl_utf.c
 )
 
+add_definitions(-DFL_LIBRARY)
 if(APPLE)
 	set(MMFILES
 		Fl_cocoa.mm
@@ -230,9 +231,9 @@ if(WIN32)
    target_link_libraries(fltk comctl32)
 endif(WIN32)
 
-if(HAVE_CAIRO)
+if(FLTK_HAVE_CAIRO)
    target_link_libraries(fltk fltk_cairo ${PKG_CAIRO_LIBRARIES})
-ENDif(HAVE_CAIRO)
+ENDif(FLTK_HAVE_CAIRO)
 
 if(HAVE_XINERAMA)
    target_link_libraries(fltk ${X11_Xinerama_LIB})
@@ -344,9 +345,9 @@ if(WIN32)
    target_link_libraries(fltk_SHARED comctl32)
 endif(WIN32)
 
-if(HAVE_CAIRO)
+if(FLTK_HAVE_CAIRO)
    target_link_libraries(fltk_SHARED fltk_cairo ${PKG_CAIRO_LIBRARIES})
-ENDif(HAVE_CAIRO)
+ENDif(FLTK_HAVE_CAIRO)
 
 if(HAVE_XINERAMA)
    target_link_libraries(fltk_SHARED ${X11_Xinerama_LIB})

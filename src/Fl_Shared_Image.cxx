@@ -374,11 +374,24 @@ Fl_Shared_Image* Fl_Shared_Image::find(const char *n, int W, int H) {
 
 
 /** 
-  Gets a shared image, if it exists already ; it will return it.
-  If it does not exist or if it exist but with other size, 
-  then the existing image is deleted and replaced
-  by a new image from the n filename of the proper dimension.
-  If n is not a valid image filename, then get() will return NULL.
+ \brief Find or load an image that can be shared by multiple widgets.
+ 
+ Gets a shared image, if it exists already ; it will return it.
+ If it does not exist or if it exist but with other size, 
+ then the existing image is deleted and replaced
+ by a new image from the n filename of the proper dimension.
+ If n is not a valid image filename, then get() will return NULL.
+ 
+ Shared JPEG and PNG images can also be created from memory by using their 
+ named memory access constructor.
+ 
+ \param n name of the image
+ \param W, H desired size
+ 
+ \see Fl_Shared_Image::find(const char *n, int W, int H)
+ \see Fl_Shared_Image::release() 
+ \see Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
+ \see Fl_PNG_Image::Fl_PNG_Image (const char *name_png, const unsigned char *buffer, int maxsize)
 */
 Fl_Shared_Image* Fl_Shared_Image::get(const char *n, int W, int H) {
   Fl_Shared_Image	*temp;		// Image

@@ -44,8 +44,8 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
   _label        = 0;
   _labelfont    = prefs.labelfont();
   _labelsize    = prefs.labelsize();
-  _labelfgcolor = prefs.fgcolor();
-  _labelbgcolor = prefs.bgcolor();
+  _labelfgcolor = prefs.labelfgcolor();
+  _labelbgcolor = prefs.labelbgcolor();
   _widget       = 0;
   _open         = 1;
   _visible      = 1;
@@ -299,7 +299,7 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, const char *new_labe
 ///
 Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, char **arr) {
   int t = find_child(*arr);
-  Fl_Tree_Item *item;
+  Fl_Tree_Item *item = 0;
   if ( t == -1 ) {
     item = (Fl_Tree_Item*)add(prefs, *arr);
   } else {
@@ -450,7 +450,7 @@ void Fl_Tree_Item::draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_
 
 /// Find the item that the last event was over.
 ///
-///    Returns the item if its visible, and mouse is over it.
+///    Returns the item if it is visible, and mouse is over it.
 ///    Works even if widget deactivated.
 ///    Use event_on_collapse_icon() to determine if collapse button was pressed.
 ///
@@ -480,7 +480,7 @@ const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) const
 /// Non-const version of the above.
 /// Find the item that the last event was over.
 ///
-///    Returns the item if its visible, and mouse is over it.
+///    Returns the item if it is visible, and mouse is over it.
 ///    Works even if widget deactivated.
 ///    Use event_on_collapse_icon() to determine if collapse button was pressed.
 ///
@@ -562,12 +562,12 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     W += prefs.openicon()->w();
   }
   // Colors, fonts
-  Fl_Color fg = _selected ? prefs.bgcolor()     : _labelfgcolor;
-  Fl_Color bg = _selected ? prefs.selectcolor() : _labelbgcolor;
-  if ( ! _active ) {
-    fg = fl_inactive(fg);
-    if ( _selected ) bg = fl_inactive(bg);
-  }
+  Fl_Color fg = _selected ? fl_contrast(_labelfgcolor, tree->selection_color())
+                          : _active ? _labelfgcolor 
+			            : fl_inactive(_labelfgcolor);
+  Fl_Color bg = _selected ? _active ? tree->selection_color() 
+                                    : fl_inactive(tree->selection_color())
+                          : _labelbgcolor;
   // Update the xywh of this item
   _xywh[0] = X;
   _xywh[1] = Y;
