@@ -1,5 +1,5 @@
 //
-// "$Id: $"
+// "$Id: curve.cxx 7978 2010-12-08 14:00:35Z AlbrechtS $"
 //
 // Curve test program for the Fast Light Tool Kit (FLTK).
 //
@@ -741,5 +741,5 @@ b_bitmap.labelcolor(FL_GREEN);
 }
 
 //
-// End of "$Id: $".
+// End of "$Id: curve.cxx 7978 2010-12-08 14:00:35Z AlbrechtS $"
 //
