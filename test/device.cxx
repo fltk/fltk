@@ -1,9 +1,9 @@
 //
-// "$Id:$"
+// "$Id$"
 //
 // Curve test program for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Roman Kantor and others.
+// Copyright 1998-2011 by Roman Kantor and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -741,5 +741,5 @@ b_bitmap.labelcolor(FL_GREEN);
 }
 
 //
-// End of "$Id:$"
+// End of "$Id$"
 //
