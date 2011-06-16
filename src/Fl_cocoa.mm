@@ -1747,7 +1747,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   if ( tMods )
   {
     unsigned short keycode = [theEvent keyCode];
-    Fl::e_keysym = macKeyLookUp[keycode & 0x7f];
+    Fl::e_keysym = Fl::e_original_keysym = macKeyLookUp[keycode & 0x7f];
     if ( Fl::e_keysym ) 
       sendEvent = ( prevMods<mods ) ? FL_KEYBOARD : FL_KEYUP;
     Fl::e_length = 0;
