@@ -3600,7 +3600,7 @@ int Fl_Text_Display::handle(int event) {
       dragType = Fl::event_clicks();
       if (dragType == DRAG_CHAR) {
         buffer()->unselect();
-	Fl::copy("", 0, 0);
+//	Fl::copy("", 0, 0); /* removed for STR 2668 */
       }
       else if (dragType == DRAG_WORD) {
         buffer()->select(word_start(pos), word_end(pos));
