@@ -2915,7 +2915,9 @@ static void createAppleMenu(void)
   NSMenuItem *menuItem;
   NSString *title;
 
-  NSString *nsappname = [[NSProcessInfo processInfo] processName];
+  NSString *nsappname = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+  if (nsappname == nil)
+    nsappname = [[NSProcessInfo processInfo] processName];
   appleMenu = [[NSMenu alloc] initWithTitle:@""];
   /* Add menu items */
   title = [[NSString stringWithUTF8String:Fl_Mac_App_Menu::about] stringByAppendingString:nsappname];
