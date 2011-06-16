@@ -1,20 +1,29 @@
-// Cartesian.H,v 0.9
 //
-// Copyright 2000 by Roman Kantor.
+// "$Id: $"
+//
+// Curve test program for the Fast Light Tool Kit (FLTK).
+//
+// Copyright 1998-2010 by Roman Kantor and others.
 //
 // This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public License
-// version 2 as published by the Free Software Foundation.
+// modify it under the terms of the GNU Library General Public
+// License as published by the Free Software Foundation; either
+// version 2 of the License, or (at your option) any later version.
 //
-
-// This library is distributed  WITHOUT ANY WARRANTY;
-// WITHOUT even the implied warranty of MERCHANTABILITY 
-// or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Library General Public License for more details.
+//
 // You should have received a copy of the GNU Library General Public
 // License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+// USA.
+//
+// Please report all bugs and problems on the following page:
+//
+//     http://www.fltk.org/str.php
+//
 
 #include <math.h>
 #include <FL/Fl.H>
@@ -730,3 +739,7 @@ b_bitmap.labelcolor(FL_GREEN);
 	Fl::run();
 	return 0;
 }
+
+//
+// End of "$Id: $".
+//
