@@ -1959,7 +1959,7 @@ Fl_Region XRectangleRegion(int x, int y, int w, int h) {
   return CreatePolygonRgn(pt, 4, ALTERNATE);
 }
 
-Window fl_xid_(const Fl_Window *w) {
+FL_EXPORT Window fl_xid_(const Fl_Window *w) {
   Fl_X *temp = Fl_X::i(w); 
   return temp ? temp->xid : 0;
 }
