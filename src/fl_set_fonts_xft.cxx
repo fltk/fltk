@@ -3,7 +3,7 @@
 //
 // More font utilities for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Library General Public
@@ -241,8 +241,9 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
   // Hopefully, this is a set of all the fonts...
   fnt_set = FcFontList(0, fnt_pattern, fnt_obj_set);
   
-  // We don't need the fnt_pattern any more, release it
+  // We don't need the fnt_pattern and fnt_obj_set any more, release them
   FcPatternDestroy(fnt_pattern);
+  FcObjectSetDestroy(fnt_obj_set);
 
   // Now, if we got any fonts, iterate through them...
   if (fnt_set)
