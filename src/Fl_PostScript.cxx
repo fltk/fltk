@@ -633,6 +633,7 @@ void Fl_PostScript_Graphics_Driver::page(double pw, double ph, int media) {
   }
   ++nPages;
   fprintf(output, "%%%%Page: %i %i\n" , nPages , nPages);
+  fprintf(output, "%%%%PageBoundingBox: 0 0 %d %d\n", (int)pw, (int)ph);
   if (pw>ph){
     fprintf(output, "%%%%PageOrientation: Landscape\n");
   }else{
