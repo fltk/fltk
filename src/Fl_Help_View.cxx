@@ -2940,8 +2940,6 @@ void Fl_Help_View::end_selection(int clipboard)
   free(txt);
 }
 
-#define ctrl(x) ((x)&0x1f)
-
 /** Handles events in the widget. */
 int				// O - 1 if we handled it, 0 otherwise
 Fl_Help_View::handle(int event)	// I - Event to handle
@@ -3014,11 +3012,12 @@ Fl_Help_View::handle(int event)	// I - Event to handle
       }
       return 1;
     case FL_SHORTCUT: {
-      char ascii = Fl::event_text()[0];
-      switch (ascii) {
-        case ctrl('A'): select_all(); redraw(); return 1;
-        case ctrl('C'):
-        case ctrl('X'): end_selection(1); return 1;
+      if (Fl::event_state() == FL_COMMAND) {
+	switch ( Fl::event_key() ) {
+	  case 'a': select_all(); redraw(); return 1;
+	  case 'c':
+	  case 'x': end_selection(1); return 1;
+	}
       }
       break; }
   }
