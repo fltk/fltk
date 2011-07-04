@@ -108,6 +108,7 @@ Fl_Printer::Fl_Printer(void) {
 #else
   printer = new Fl_PostScript_Printer();
 #endif
+  Fl_Surface_Device::driver(printer->driver());
 }
 
 int Fl_Printer::start_job(int pagecount, int *frompage, int *topage)
