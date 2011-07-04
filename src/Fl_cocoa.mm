@@ -2897,7 +2897,7 @@ void Fl_X::set_cursor(Fl_Cursor c)
   printer.printable_rect(&w, &h);
   printer.origin(w/2, h/2 );
   printer.rotate(20.);
-  printer.print_widget( win, - win->w()/2, - win->h()/2 );
+  printer.print_window( win, - win->w()/2, - win->h()/2 );
 #else
   printer.print_window(win);
 #endif
@@ -3427,7 +3427,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   // capture the window title bar from screen
   CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
   this->set_current(); // back to the Fl_Paged_Device
-  CGRect rect = { { 0, 0 }, { win->w(), bt } }; // print the title bar
+  CGRect rect = { { x_offset, y_offset }, { win->w(), bt } }; // print the title bar
   Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
   CGContextDrawImage(fl_gc, rect, img);
   Fl_X::q_end_image();
