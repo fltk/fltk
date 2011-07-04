@@ -3424,14 +3424,24 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   fl_gc = NULL;
   Fl::check();
   win->make_current();
-  // capture the window title bar from screen
-  CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
   this->set_current(); // back to the Fl_Paged_Device
-  CGRect rect = { { x_offset, y_offset }, { win->w(), bt } }; // print the title bar
-  Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
-  CGContextDrawImage(fl_gc, rect, img);
-  Fl_X::q_end_image();
-  CGImageRelease(img);
+  if (this->class_name() == Fl_Printer::class_id) {
+    // capture as transparent image the window title bar from screen
+    CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
+    CGRect rect = { { x_offset, y_offset }, { win->w(), bt } }; // print the title bar
+    Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
+    CGContextDrawImage(fl_gc, rect, img);
+    Fl_X::q_end_image();
+    CGImageRelease(img);
+    }
+  else {
+    // capture the window title bar from screen
+    uchar *top_image = fl_read_image(NULL, 0, -bt, win->w(), bt);
+    if (top_image) { // print the title bar
+      fl_draw_image(top_image, x_offset, y_offset, win->w(), bt, 3);
+      delete[] top_image;
+      }
+    }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
 
