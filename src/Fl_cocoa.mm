@@ -3417,6 +3417,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     this->print_widget(win, x_offset, y_offset);
     return;
   }
+  fl_lock_function(); // necessary because of call to Fl::check() below.
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
@@ -3443,6 +3444,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       }
     }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
+  fl_unlock_function();
 }
 
 #include <dlfcn.h>
