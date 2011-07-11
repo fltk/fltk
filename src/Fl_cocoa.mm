@@ -2881,6 +2881,7 @@ void Fl_X::set_cursor(Fl_Cursor c)
   if(!win) return;
   if( printer.start_job(1) ) return;
   if( printer.start_page() ) return;
+  fl_lock_function();
   // scale the printer device so that the window fits on the page
   float scale = 1;
   printer.printable_rect(&w, &h);
@@ -2903,6 +2904,7 @@ void Fl_X::set_cursor(Fl_Cursor c)
 #endif
   printer.end_page();
   printer.end_job();
+  fl_unlock_function();
 }
 @end
 
@@ -2991,6 +2993,7 @@ static void createAppleMenu(void)
 @implementation FLMenuItem
 - (void) doCallback:(id)unused
 {
+  fl_lock_function();
   int flRank = [self tag];
   const Fl_Menu_Item *items = fl_sys_menu_bar->Fl_Menu_::menu();
   const Fl_Menu_Item *item = items + flRank;
@@ -3019,11 +3022,14 @@ static void createAppleMenu(void)
       }
     }
   }
+  fl_unlock_function();
 }
 - (void) directCallback:(id)unused
 {
+  fl_lock_function();
   Fl_Menu_Item *item = (Fl_Menu_Item *)[(NSData*)[self representedObject] bytes];
   if ( item && item->callback() ) item->do_callback(NULL);
+  fl_unlock_function();
 }
 @end
 
@@ -3417,7 +3423,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     this->print_widget(win, x_offset, y_offset);
     return;
   }
-  fl_lock_function(); // necessary because of call to Fl::check() below.
   int bx, by, bt;
   get_window_frame_sizes(bx, by, bt);
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
@@ -3444,7 +3449,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       }
     }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
-  fl_unlock_function();
 }
 
 #include <dlfcn.h>
