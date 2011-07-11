@@ -2866,10 +2866,11 @@ void Fl_X::set_cursor(Fl_Cursor c)
 {
     NSDictionary *options;
     options = [NSDictionary dictionaryWithObjectsAndKeys:
-                	     [NSString stringWithFormat:@" GUI with FLTK %d.%d", FL_MAJOR_VERSION,
-                              FL_MINOR_VERSION ], @"Copyright",
+	       [[[NSAttributedString alloc] 
+		initWithString:[NSString stringWithFormat:@" GUI with FLTK %d.%d", 
+		FL_MAJOR_VERSION, FL_MINOR_VERSION ]] autorelease], @"Credits",
                 	     nil];
-    [NSApp  orderFrontStandardAboutPanelWithOptions:options];
+    [NSApp orderFrontStandardAboutPanelWithOptions:options];
   }
 //#include <FL/Fl_PostScript.H>
 - (void)printPanel
