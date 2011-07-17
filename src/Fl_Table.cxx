@@ -30,7 +30,7 @@
 #include <FL/fl_utf8.H>	// currently only Windows and Linux
 #endif
 
-#define SCROLLBAR_SIZE	16
+#define SCROLLBAR_SIZE	(Fl::scrollbar_size())
 
 // Scroll display so 'row' is at top
 void Fl_Table::row_position(int row) {
@@ -1117,6 +1117,13 @@ void Fl_Table::set_selection(int row_top, int col_left, int row_bot, int col_rig
 //    Then tell the group to draw over us.
 //
 void Fl_Table::draw() {   
+  // Check if scrollbar size changed
+  if ( ( vscrollbar && (SCROLLBAR_SIZE != vscrollbar->w()) ) || 
+       ( hscrollbar && (SCROLLBAR_SIZE != hscrollbar->h()) ) ) {
+    // handle size change, min/max, table dim's, etc
+    table_resized();
+  }
+
   draw_cell(CONTEXT_STARTPAGE, 0, 0,	 	// let user's drawing routine
             tix, tiy, tiw, tih);		// prep new page
   

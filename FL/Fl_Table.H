@@ -26,6 +26,7 @@
 // TODO:
 //    o Auto scroll during dragged selection
 //    o Keyboard navigation (up/down/left/right arrow)
+//    o Add scrollbar_size() method and integer [breaks ABI]
 //
 
 #ifndef _FL_TABLE_H
@@ -218,6 +219,7 @@ private:
   
   int _auto_drag;
   int _selecting;
+  //int _scrollbar_size;		// TODO: BREAKS ABI
   
   // An STL-ish vector without templates
   class FL_EXPORT IntVector {
@@ -1072,6 +1074,8 @@ public:
    */
   void callback(Fl_Widget*, void*);
 #endif
+  //int scrollbar_size() const {		// TODO: BREAKS ABI
+  //void scrollbar_size(int size) {		// TODO: BREAKS ABI
 };
 
 #endif /*_FL_TABLE_H*/

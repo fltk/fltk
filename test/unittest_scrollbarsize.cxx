@@ -135,6 +135,7 @@ class ScrollBarSizeTest : public Fl_Group {
 	if ( strcmp(label,"A: Scroll Size") == 0 ) {
 	    brow_a->scrollbar_size(val);
 	    tree_a->scrollbar_size(val);
+	    //table_a->scrollbar_size(val);	// awaiting method (ABI)
 	} else {
 	    Fl::scrollbar_size(val);
 	}
@@ -211,7 +212,7 @@ public:
 	    "Scrollbar's size should change interactively as size sliders are changed.\n"
             "Changing 'Global Scroll Size' should affect all three browser's scrollbars UNLESS\n"
 	    "the 'A: Scroll Size' slider is changed, in which case its value will take precedence\n"
-	    "for 'Browser A', and the global size will only affect Browser B and C.");
+	    "for the 'A' group of widgets. (NOTE: 'table_a' does not currently support this)");
       labelsize(10);
       align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     }
