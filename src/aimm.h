@@ -5,24 +5,15 @@
 //
 // Copyright 2009-2010 by Bill Spitzak and others.
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version
-// with exceptions that allow sub-classing and static linking in
-// non-LGPL compliant software. These exceptions are subject to
-// conditions, see the FLTK License for more details.
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the FLTK
-// License for more details.
+//     http://www.fltk.org/COPYING.php
 //
-// You should have received a copy of the FLTK License along with
-// this library; if not, write to  OksiD Software, Jean-Marc Lienher,
-// Rue de la Cheminee 1, CH-2065 Savagnier, Switzerland.
+// Please report all bugs and problems on the following page:
 //
-// Please report all bugs and problems to "oksid@bluewin.ch".
+//     http://www.fltk.org/str.php
 //
 
 #ifndef AIMM_H

@@ -7,20 +7,11 @@ dnl Configuration script for the Fast Light Tool Kit (FLTK).
 dnl
 dnl Copyright 1998-2010 by Bill Spitzak and others.
 dnl
-dnl This library is free software; you can redistribute it and/or
-dnl modify it under the terms of the GNU Library General Public
-dnl License as published by the Free Software Foundation; either
-dnl version 2 of the License, or (at your option) any later version.
+dnl This library is free software. Distribution and use rights are outlined in
+dnl the file "COPYING" which should have been included with this file.  If this
+dnl file is missing or damaged, see the license at:
 dnl
-dnl This library is distributed in the hope that it will be useful,
-dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
-dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-dnl Library General Public License for more details.
-dnl
-dnl You should have received a copy of the GNU Library General Public
-dnl License along with this library; if not, write to the Free Software
-dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-dnl USA.
+dnl     http://www.fltk.org/COPYING.php
 dnl
 dnl Please report all bugs and problems on the following page:
 dnl
