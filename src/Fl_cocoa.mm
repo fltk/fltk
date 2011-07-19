@@ -891,64 +891,14 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 /*
  * Open callback function to call...
  */
-
 static void	(*open_cb)(const char *) = 0;
-
 
 /*
  * Install an open documents event handler...
  */
-@interface FLAppleEventHandler : NSObject
-{
-}
-- (void)handleAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent: (NSAppleEventDescriptor *)replyEvent;
-@end
-@implementation FLAppleEventHandler
-- (void)handleAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent: (NSAppleEventDescriptor *)replyEvent
-{
-  NSAppleEventDescriptor *single = [event descriptorAtIndex:1];
-  const AEDesc *document = [single aeDesc];
-  long i, n;
-  FSRef fileRef;
-  AEKeyword keyWd;
-  DescType typeCd;
-  Size actSz;
-  char filename[1024];
-  // Lock access to FLTK in this thread...
-  fl_lock_function();
-  
-  // Open the documents via the callback...
-  if (AECountItems(document, &n) == noErr) {
-    for (i = 1; i <= n; i ++) {
-      AEGetNthPtr(document, i, typeFSRef, &keyWd, &typeCd,
-                  (Ptr)&fileRef, sizeof(fileRef),
-                  (actSz = sizeof(fileRef), &actSz));
-      FSRefMakePath( &fileRef, (UInt8*)filename, sizeof(filename) );
-      
-      (*open_cb)(filename);
-    }
-  }
-  // Unlock access to FLTK for all threads...
-  fl_unlock_function();
-}
-@end
-
 void fl_open_callback(void (*cb)(const char *)) {
-  static NSAppleEventManager *aeventmgr = nil;
-  static FLAppleEventHandler *handler;
   fl_open_display();
-  if (!aeventmgr) {
-    aeventmgr = [NSAppleEventManager sharedAppleEventManager];
-    handler = [[FLAppleEventHandler alloc] init];
-  }
-  
   open_cb = cb;
-  if (cb) {
-    [aeventmgr setEventHandler:handler andSelector:@selector(handleAppleEvent:withReplyEvent:) 
-                 forEventClass:kCoreEventClass andEventID:kAEOpenDocuments];
-  } else {
-    [aeventmgr removeEventHandlerForEventClass:kCoreEventClass andEventID:kAEOpenDocuments];  
-  }
 }
 
 
@@ -983,6 +933,7 @@ extern "C" {
 - (void)applicationWillHide:(NSNotification *)notify;
 - (void)applicationWillUnhide:(NSNotification *)notify;
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 @end
 @implementation FLDelegate
 - (void)windowDidMove:(NSNotification *)notif
@@ -1216,6 +1167,16 @@ extern "C" {
     return view;
   }
   return nil;
+}
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
+{
+  if (open_cb) {
+    fl_lock_function();
+    (*open_cb)([filename UTF8String]);
+    fl_unlock_function();
+    return YES;
+  }
+  return NO;
 }
 @end
 
