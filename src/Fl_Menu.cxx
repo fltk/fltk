@@ -72,7 +72,7 @@ const Fl_Menu_Item* Fl_Menu_Item::next(int n) const {
   if (!m->visible()) n++;
   while (n) {
     m = next_visible_or_not(m);
-    if (m->visible()) n--;
+    if (m->visible() || !m->text) n--;
   }
   return m;
 }
