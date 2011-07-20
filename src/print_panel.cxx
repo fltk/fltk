@@ -574,11 +574,11 @@ void print_update_status() {
   char name[1024];
   int val;
 
-  snprintf(name, sizeof(name), "%s/page_size", printer);
+  snprintf(name, sizeof(name), "%s/page_size", printer == NULL ? "" : printer);
   print_prefs.get(name, val, 1);
   print_page_size->value(val);
 
-  snprintf(name, sizeof(name), "%s/output_mode", printer);
+  snprintf(name, sizeof(name), "%s/output_mode", printer == NULL ? "" : printer);
   print_prefs.get(name, val, 0);
   print_output_mode[val]->setonly();
 }
