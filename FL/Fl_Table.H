@@ -854,9 +854,14 @@ public:
   }
   void add(Fl_Widget& w) {
     table->add(w);
+    if ( table->children() > 2 ) {
+      table->show();
+    } else {
+      table->hide();
+    } 
   }
   void add(Fl_Widget* w) {
-    table->add(w);
+    add(*w);
   }
   void insert(Fl_Widget& w, int n) {
     table->insert(w,n);
