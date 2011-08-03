@@ -44,6 +44,11 @@ USA.  */
 #      endif
 #    endif
 
+/* This warning added to help identify any hosts that actually use this function... */
+#    if defined(__GNUC__)
+#      warning Using deprecated scandir() replacement function
+#    endif /*__GNUC__*/
+
 int
 fl_scandir(const char *dir, struct dirent ***namelist,
 	   int (*select)(struct dirent *),
