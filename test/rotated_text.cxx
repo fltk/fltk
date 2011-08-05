@@ -1,5 +1,5 @@
 //
-// "$Id: label.cxx 6626 2009-01-12 14:52:45Z fabien $"
+// "$Id$"
 //
 // Label test program for the Fast Light Tool Kit (FLTK).
 //
@@ -215,5 +215,5 @@ int main(int argc, char **argv) {
 }
 
 //
-// End of "$Id: label.cxx 6626 2009-01-12 14:52:45Z fabien $".
+// End of "$Id$".
 //
