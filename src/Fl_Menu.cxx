@@ -279,7 +279,10 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   int scr_x, scr_y, scr_w, scr_h;
   int tx = X, ty = Y;
 
-  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+  scr_x = Fl::x();
+  scr_w = Fl::w();
+  scr_y = Fl::y();
+  scr_h = Fl::h();
   if (!right_edge || right_edge > scr_x+scr_w) right_edge = scr_x+scr_w;
 
   end();
@@ -410,10 +413,11 @@ void menuwindow::position(int X, int Y) {
 
 // scroll so item i is visible on screen
 void menuwindow::autoscroll(int n) {
-  int scr_x, scr_y, scr_w, scr_h;
+  int scr_y, scr_h;
   int Y = y()+Fl::box_dx(box())+2+n*itemheight;
 
-  Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+  scr_y = Fl::y();
+  scr_h = Fl::h();
   if (Y <= scr_y) Y = scr_y-Y+10;
   else {
     Y = Y+itemheight-scr_h-scr_y;
