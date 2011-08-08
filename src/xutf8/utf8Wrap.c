@@ -900,6 +900,7 @@ XUtf8UcsWidth(XUtf8FontStruct  *font_set,
   int 		nb_font;    /* quantity of fonts in the font array */
   char 		glyph[2];   /* byte1 and byte2 value of the UTF-8 char */
   int		*ranges;    /* sub range of iso10646 */
+  unsigned int  no_spc;
 
   nb_font = font_set->nb_font;
   x = 0;
@@ -924,7 +925,8 @@ XUtf8UcsWidth(XUtf8FontStruct  *font_set,
   first = fnum;
   last_fnum = fnum;
 
-  ucs = XUtf8IsNonSpacing(ucs);
+  no_spc = XUtf8IsNonSpacing(ucs);
+  if (no_spc) ucs = no_spc;
 
   /*
    * find the first encoding which can be used to
