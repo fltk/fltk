@@ -1911,6 +1911,7 @@ void update_history(const char *flname) {
     if (i) history_item[i-1].flags |= FL_MENU_DIVIDER;
     history_item[i].hide();
   }
+  fluid_prefs.flush();
 }
 
 // ********** portable process class definition **********
@@ -2137,7 +2138,8 @@ void set_filename(const char *c) {
   if (filename) free((void *)filename);
   filename = c ? strdup(c) : NULL;
 
-  if (filename) update_history(filename);
+  if (filename && !compile_only) 
+    update_history(filename);
 
   set_modflag(modflag);
 }
