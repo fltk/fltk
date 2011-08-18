@@ -35,7 +35,7 @@ static int num_screens = -1;
 // functions from the USER32.DLL . If these functions are not available, we
 // will gracefully fall back to single monitor support.
 //
-// If we were to insist on the existence of "EnumDisplayMonitors" and 
+// If we were to insist on the existence of "EnumDisplayMonitors" and
 // "GetMonitorInfoA", it would be impossible to use FLTK on Windows 2000
 // before SP2 or earlier.
 
@@ -59,7 +59,9 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
 //  (but we use our self-aquired function pointer instead)
   if (fl_gmi(mon, &mi)) {
     screens[num_screens] = mi.rcMonitor;
-    
+// If we also want to record the work area, we would also store mi.rcWork at this point
+//  work_area[num_screens] = mi.rcWork;
+
     // find the pixel size
     if (mi.cbSize == sizeof(mi)) {
       HDC screen = CreateDC(mi.szDevice, NULL, NULL, NULL);
@@ -69,14 +71,13 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
       }
       ReleaseDC(0L, screen);
     }
-    
+
     num_screens ++;
   }
   return TRUE;
 }
 
 static void screen_init() {
-  num_screens = 0;
   // Since not all versions of Windows include multiple monitor support,
   // we do a run-time check for the required functions...
   HMODULE hMod = GetModuleHandle("USER32.DLL");
@@ -86,21 +87,17 @@ static void screen_init() {
     fl_edm_func fl_edm = (fl_edm_func)GetProcAddress(hMod, "EnumDisplayMonitors");
 
     if (fl_edm) {
-      // We do have EnumDisplayMonitors, so lets find out how many monitors...
-      num_screens = GetSystemMetrics(SM_CMONITORS);
-
-//      if (num_screens > 1) {
-        // If there is more than 1 monitor, enumerate them...
-        fl_gmi = (fl_gmi_func)GetProcAddress(hMod, "GetMonitorInfoA");
-
-        if (fl_gmi) {
-          // We have GetMonitorInfoA, enumerate all the screens...
-//        EnumDisplayMonitors(0,0,screen_cb,0);
-//        (but we use our self-aquired function pointer instead)
-          fl_edm(0, 0, screen_cb, 0);
-          return;
-        }
-//      }
+      // we have EnumDisplayMonitors - do we also have GetMonitorInfoA ?
+      fl_gmi = (fl_gmi_func)GetProcAddress(hMod, "GetMonitorInfoA");
+      if (fl_gmi) {
+        // We have GetMonitorInfoA, enumerate all the screens...
+//      EnumDisplayMonitors(0,0,screen_cb,0);
+//      (but we use our self-aquired function pointer instead)
+//      NOTE: num_screens is incremented in screen_cb so we must first reset it here...
+        num_screens = 0;
+        fl_edm(0, 0, screen_cb, 0);
+        return;
+      }
     }
   }
 
@@ -172,7 +169,7 @@ static void screen_init() {
   int mm = DisplayWidthMM(fl_display, fl_screen);
   dpi[0] = mm ? Fl::w()*25.4f/mm : 0.0f;
   mm = DisplayHeightMM(fl_display, fl_screen);
-  dpi[1] = mm ? Fl::h()*25.4f/mm : dpi[0];  
+  dpi[1] = mm ? Fl::h()*25.4f/mm : dpi[0];
 }
 #endif // WIN32
 
@@ -187,7 +184,7 @@ int Fl::screen_count() {
 }
 
 /**
-  Gets the bounding box of a screen 
+  Gets the bounding box of a screen
   that contains the specified screen position \p mx, \p my
   \param[out]  X,Y,W,H the corresponding screen bounding box
   \param[in] mx, my the absolute screen position
@@ -211,10 +208,10 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
 }
 
 /**
-  Gets the screen bounding rect for the given screen. 
+  Gets the screen bounding rect for the given screen.
   \param[out]  X,Y,W,H the corresponding screen bounding box
   \param[in] n the screen number (0 to Fl::screen_count() - 1)
-  \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
+  \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
 */
 void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
   if (num_screens < 0) screen_init();
@@ -300,20 +297,20 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int
   }
   screen_xywh(X, Y, W, H, best_screen);
 }
-  
+
 
 
 /**
- Gets the screen resolution in dots-per-inch for the given screen. 
+ Gets the screen resolution in dots-per-inch for the given screen.
  \param[out]  h, v  horizontal and vertical resolution
  \param[in]   n     the screen number (0 to Fl::screen_count() - 1)
- \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
+ \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
  */
 void Fl::screen_dpi(float &h, float &v, int n)
 {
   if (num_screens < 0) screen_init();
   h = v = 0.0f;
-  
+
 #ifdef WIN32
   if (n >= 0 && n < num_screens) {
     h = float(dpi[n][0]);
