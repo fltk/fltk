@@ -17,7 +17,7 @@ the base color of the gray ramp is changed using Fl::background().
 \c FL_DARK3 and \c FL_LIGHT3 can be used instead to 
 draw a very dark or a very bright background hue.
 
-Widgets use the new color symbols \c FL_FORGROUND_COLOR,
+Widgets use the new color symbols \c FL_FOREGROUND_COLOR,
 \c FL_BACKGROUND_COLOR, \c FL_BACKGROUND2_COLOR, 
 \c FL_INACTIVE_COLOR, and \c FL_SELECTION_COLOR.
 More details can be found in the chapter \ref enumerations.
