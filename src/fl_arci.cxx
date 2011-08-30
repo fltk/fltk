@@ -77,6 +77,7 @@ void Fl_Graphics_Driver::pie(int x,int y,int w,int h,double a1,double a2) {
   if (w <= 0 || h <= 0) return;
 
 #if defined(USE_X11)
+  XDrawArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
   XFillArc(fl_display, fl_window, fl_gc, x,y,w-1,h-1, int(a1*64),int((a2-a1)*64));
 #elif defined(WIN32)
   if (a1 == a2) return;

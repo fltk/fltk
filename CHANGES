@@ -1,6 +1,7 @@
 
 CHANGES IN FLTK 1.3.1
 
+	- Fixed fl_pie() drawing too small on X11 (STR #2703)
 	- Fixed Fl_Menu issue with unusual menu flags (STR #2680)
 	- Fixed Windows DLL import of fl_xid() (STR #2670)
 
