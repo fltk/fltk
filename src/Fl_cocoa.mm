@@ -2625,7 +2625,11 @@ void Fl_X::relink(Fl_Window *w, Fl_Window *wp) {
 void Fl_X::destroy() {
   // subwindows share their xid with their parent window, so should not close it
   if (!subwindow && w && !w->parent() && xid) {
-    [[(NSWindow *)xid contentView] release];
+    NSView *topview = [(NSWindow *)xid contentView]; 
+    if ( [NSView focusView] == topview ) {
+      [topview unlockFocus];
+    }
+    [topview release];
     [(NSWindow *)xid close];
   }
 }
