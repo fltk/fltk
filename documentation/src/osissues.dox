@@ -82,10 +82,6 @@ Window fl_xid(const Fl_Window *)
 \par
 Returns the XID for a window, or zero if not \c shown().
 
-\par
-You must \#define FL_INTERNALS above all FLTK related \#include's
-to access this function.
-
 Fl_Window *fl_find(ulong xid)
 
 \par
@@ -520,10 +516,6 @@ HWND fl_xid(const Fl_Window *)
 Returns the window handle for a Fl_Window, or zero
 if not \c shown().
 
-\par
-You must \#define FL_INTERNALS above all FLTK related \#include's
-to access this function.
-
 Fl_Window *fl_find(HWND xid)
 
 \par
@@ -704,10 +696,6 @@ Window fl_xid(const Fl_Window *)
 Returns the window reference for an Fl_Window, or
 \c NULL if the window has not been shown. This reference is a pointer
 to an instance of the subclass FLWindow of Cocoa's NSWindow class.
-
-\par
-You must \#define FL_INTERNALS above all FLTK related \#include's
-to access this function.
 
 Fl_Window *fl_find(Window xid)
 
