@@ -159,6 +159,7 @@ extern FL_EXPORT Fl_CGContextRef fl_gc;
 extern FL_EXPORT class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
 extern Window fl_xid(const Fl_Window*);
+extern Fl_Window* fl_find(Window xid);
 void fl_clip_region(Fl_Region);
 
 extern FL_EXPORT Fl_Bitmask fl_create_bitmask(int w, int h, const uchar *data);
