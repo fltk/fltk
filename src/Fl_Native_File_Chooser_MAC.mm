@@ -399,7 +399,7 @@ static char *prepareMacFilter(int count, const char *filter, char **patterns) {
     }
     rank++;
     *(q++) = '\n'; 
-    if (*p) p = r + 1;
+    if (*r) p = r + 1; else p = r;
   } while(*p);
   *q = 0;
   return t;
