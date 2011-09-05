@@ -120,8 +120,6 @@ int Fl_Native_File_Chooser::show() {
   // POST BROWSER
   int err = post();
 
-  _filt_total = 0;
-
   return(err);
 }
 
@@ -600,6 +598,7 @@ int Fl_Native_File_Chooser::post() {
     }
     if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
     if (_filt_total) {
+      if (_filt_value >= _filt_total) _filt_value = _filt_total - 1;
       char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
       popup = createPopupAccessory((NSSavePanel*)_panel, t, [[(NSSavePanel*)_panel nameFieldLabel] UTF8String], _filt_value);
       delete[] t;
