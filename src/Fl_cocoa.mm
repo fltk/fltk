@@ -2848,6 +2848,7 @@ void Fl_X::set_cursor(Fl_Cursor c)
     scale = (float)w/win->w();
     if ((float)h/wh < scale) scale = (float)h/wh;
     printer.scale(scale);
+    printer.printable_rect(&w, &h);
   }
 //#define ROTATE 1
 #ifdef ROTATE
@@ -2855,10 +2856,10 @@ void Fl_X::set_cursor(Fl_Cursor c)
   printer.printable_rect(&w, &h);
   printer.origin(w/2, h/2 );
   printer.rotate(20.);
-  printer.print_window( win, - win->w()/2, - win->h()/2 );
 #else
-  printer.print_window(win);
+  printer.origin(w/2, h/2);
 #endif
+  printer.print_window(win, -ww/2, -wh/2);
   printer.end_page();
   printer.end_job();
   fl_unlock_function();
