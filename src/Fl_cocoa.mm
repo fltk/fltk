@@ -1069,7 +1069,7 @@ extern "C" {
   for (x = Fl_X::first;x;x = x->next) {
     FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
-    if (win && cw) {
+    if (win && cw && [cw isVisible]) {
       if (win->modal()) {
         [cw setLevel:NSModalPanelWindowLevel];
         if (topModal) 
@@ -1113,7 +1113,7 @@ extern "C" {
   for (x = Fl_X::first;x;x = x->next) {
     FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
-    if (win && cw) {
+    if (win && cw && [cw isVisible]) {
       if (win->modal()) {
         [cw setLevel:NSNormalWindowLevel];
         if (top) [cw orderWindow:NSWindowAbove relativeTo:[top windowNumber]];
@@ -1124,7 +1124,7 @@ extern "C" {
   for (x = Fl_X::first;x;x = x->next) {
     FLWindow *cw = (FLWindow*)x->xid;
     Fl_Window *win = x->w;
-    if (win && cw) {
+    if (win && cw && [cw isVisible]) {
       if (win->non_modal()) {
         [cw setLevel:NSNormalWindowLevel];
         if (top) [cw orderWindow:NSWindowAbove relativeTo:[top windowNumber]];
@@ -1150,7 +1150,6 @@ extern "C" {
   for (x = Fl_X::first;x;x = x->next) {
     Fl_Window *w = x->w;
     if ( !w->parent() ) {
-      if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle( FL_FOCUS, w);
       Fl::handle( FL_SHOW, w);
       }
   }
