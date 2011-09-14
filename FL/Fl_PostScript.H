@@ -206,7 +206,7 @@ class Clip {
  */
 class FL_EXPORT Fl_PostScript_File_Device : public Fl_Paged_Device {
 #ifdef __APPLE__
-  Fl_CGContextRef gc;
+  CGContextRef gc;
 #endif
 protected:
   Fl_PostScript_Graphics_Driver *driver();
