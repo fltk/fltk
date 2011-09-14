@@ -728,7 +728,7 @@ is expected to call Quartz drawing functions. The Quartz coordinate system
 is flipped to match
 FLTK's coordinate system. The origin for all drawing is in the top
 left corner of the enclosing Fl_Window. The global variable
-\c fl_gc is the appropriate Quartz 2D drawing environment.
+\c fl_gc (of type \c CGContextRef) is the appropriate Quartz 2D drawing environment.
 Include FL/x.H to declare the \c fl_gc variable.
 
 Fl_Double_Window
