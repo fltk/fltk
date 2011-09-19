@@ -188,13 +188,7 @@ void Fl_Graphics_Driver::rectf(int x, int y, int w, int h) {
   rect.right = x + w; rect.bottom = y + h;
   FillRect(fl_gc, &rect, fl_brush());
 #elif defined(__APPLE_QUARTZ__)
-  CGFloat delta_size =  0.9;
-  CGFloat delta_ori = 0;
-  if (USINGQUARTZPRINTER) {
-    delta_size = 0;
-    delta_ori = 0.5;
-    }
-  CGRect  rect = CGRectMake(x - delta_ori, y - delta_ori, w - delta_size , h - delta_size);
+  CGRect  rect = CGRectMake(x, y, w - 1 , h - 1);
   CGContextFillRect(fl_gc, rect);
 #else
 # error unsupported platform
