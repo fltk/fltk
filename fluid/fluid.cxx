@@ -33,7 +33,7 @@
 #include <FL/fl_message.H>
 #include <FL/filename.H>
 #include <FL/Fl_Native_File_Chooser.H>
-#include <Fl/Fl_Printer.H>
+#include <FL/Fl_Printer.H>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
