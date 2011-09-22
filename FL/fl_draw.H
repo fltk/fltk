@@ -571,7 +571,7 @@ FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
 /** \addtogroup  fl_drawings
     @{ */
 /**
-  Draws a nul-terminated string starting at the given location.
+  Draws a nul-terminated UTF-8 string starting at the given \p x, \p y location.
 
   Text is aligned to the left and to the baseline of the font.
   To align to the bottom, subtract fl_descent() from \p y.
@@ -582,7 +582,7 @@ FL_EXPORT const char *fl_local_to_mac_roman(const char *t, int n=-1);
 */
 FL_EXPORT void fl_draw(const char* str, int x, int y);
 /**
-  Draws a nul-terminated string starting at the given location and 
+  Draws a nul-terminated UTF-8 string starting at the given \p x, \p y location and 
   rotating \p angle degrees counter-clockwise.
   This version of fl_draw provides direct access to the text drawing
   function of the underlying OS and is supported by Xft, Win32 and MacOS
@@ -590,16 +590,16 @@ FL_EXPORT void fl_draw(const char* str, int x, int y);
 */
 FL_EXPORT void fl_draw(int angle, const char* str, int x, int y);
 /**
-  Draws an array of \p n characters starting at the given location.
+ Draws starting at the given \p x, \p y location a UTF-8 string of length \p n bytes.
 */
 inline void fl_draw(const char* str, int n, int x, int y) {fl_graphics_driver->draw(str,n,x,y); }
 /**
-  Draws an array of \p n characters starting at the given location,
+  Draws at the given \p x, \p y location a UTF-8 string of length \p n bytes 
   rotating \p angle degrees counter-clockwise.
 */
-inline void fl_draw(int angle,const char* str, int n, int x, int y) {fl_graphics_driver->draw(angle,str,n,x,y); }
+inline void fl_draw(int angle, const char* str, int n, int x, int y) {fl_graphics_driver->draw(angle,str,n,x,y); }
 /**
-  Draws an array of \p n characters right to left starting at given location.
+  Draws a UTF-8 string of length \p n bytes right to left starting at the given \p x, \p y location.
 */
 inline void fl_rtl_draw(const char* str, int n, int x, int y) {fl_graphics_driver->rtl_draw(str,n,x,y); }
 FL_EXPORT void fl_measure(const char* str, int& x, int& y,
