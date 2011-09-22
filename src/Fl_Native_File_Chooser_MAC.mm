@@ -30,6 +30,7 @@
 
 
 #include <FL/Fl.H>
+#include <FL/x.H>
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/filename.H>
@@ -340,9 +341,6 @@ int Fl_Native_File_Chooser::filters() const {
 
 #import <Cocoa/Cocoa.h>
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
-#ifndef MAC_OS_X_VERSION_10_6
-#define MAC_OS_X_VERSION_10_6 1060
-#endif
 
 int Fl_Native_File_Chooser::get_saveas_basename(void) {
   char *q = strdup( [[(NSSavePanel*)_panel filename] fileSystemRepresentation] );
