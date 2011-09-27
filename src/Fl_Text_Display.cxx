@@ -606,6 +606,7 @@ void Fl_Text_Display::insert_position( int newPos ) {
  */
 void Fl_Text_Display::show_cursor(int b) {
   mCursorOn = b;
+  if (!buffer()) return;
   redisplay_range(buffer()->prev_char_clipped(mCursorPos), buffer()->next_char(mCursorPos));
 }
 
