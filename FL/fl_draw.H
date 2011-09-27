@@ -704,7 +704,8 @@ inline void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int
   Draws a gray-scale image using a callback function to generate image data.
   \see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D)
   */
-FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1);
+inline void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1)
+  { fl_graphics_driver->draw_image_mono(cb, data, X, Y, W, H, D); }
 
 /**
   Checks whether platform supports true alpha blending for RGBA images.
