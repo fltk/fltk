@@ -2087,6 +2087,10 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
     segs[ 2 ].x1 = right; segs[ 2 ].y1 = bot; segs[ 2 ].x2 = X; segs[ 2 ].y2 = bot;
     segs[ 3 ].x1 = X; segs[ 3 ].y1 = bot; segs[ 3 ].x2 = X; segs[ 3 ].y2 = Y;
     nSegs = 4;
+  } else if ( mCursorStyle == SIMPLE_CURSOR ){
+    segs[ 0 ].x1 = X; segs[ 0 ].y1 = Y; segs[ 0 ].x2 = X; segs[ 0 ].y2 = bot;
+    segs[ 1 ].x1 = X+1; segs[ 1 ].y1 = Y; segs[ 1 ].x2 = X+1; segs[ 1 ].y2 = bot;
+    nSegs = 2;
   }
   fl_color( mCursor_color );
 
