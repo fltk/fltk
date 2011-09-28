@@ -327,7 +327,7 @@ void fl_message(const char *fmt, ...) {
 
   va_list ap;
 
-  fl_beep(FL_BEEP_MESSAGE);
+  // fl_beep(FL_BEEP_MESSAGE);
 
   va_start(ap, fmt);
   iconlabel = "i";
@@ -350,7 +350,7 @@ void fl_alert(const char *fmt, ...) {
 
   va_list ap;
 
-  fl_beep(FL_BEEP_ERROR);
+  // fl_beep(FL_BEEP_ERROR);
 
   va_start(ap, fmt);
   iconlabel = "!";
@@ -375,7 +375,7 @@ int fl_ask(const char *fmt, ...) {
 
   va_list ap;
 
-  fl_beep(FL_BEEP_QUESTION);
+  // fl_beep(FL_BEEP_QUESTION);
 
   va_start(ap, fmt);
   int r = innards(fmt, ap, fl_no, fl_yes, 0);
@@ -405,7 +405,7 @@ int fl_choice(const char*fmt,const char *b0,const char *b1,const char *b2,...){
 
   va_list ap;
 
-  fl_beep(FL_BEEP_QUESTION);
+  // fl_beep(FL_BEEP_QUESTION);
 
   va_start(ap, b2);
   int r = innards(fmt, ap, b0, b1, b2);
@@ -448,7 +448,7 @@ const char* fl_input(const char *fmt, const char *defstr, ...) {
 
   if (avoidRecursion) return 0;
 
-  fl_beep(FL_BEEP_QUESTION);
+  // fl_beep(FL_BEEP_QUESTION);
 
   va_list ap;
   va_start(ap, defstr);
@@ -474,7 +474,7 @@ const char *fl_password(const char *fmt, const char *defstr, ...) {
 
   if (avoidRecursion) return 0;
 
-  fl_beep(FL_BEEP_PASSWORD);
+  // fl_beep(FL_BEEP_PASSWORD);
 
   va_list ap;
   va_start(ap, defstr);
