@@ -2073,7 +2073,7 @@ void Fl_Widget_Type::write_code1() {
     const char* cn = callback_name();
     const char* ut = user_data_type() ? user_data_type() : "void*";
     write_public(0);
-    write_h("  void %s_i(%s*, %s);\n", cn, t, ut);
+    write_h("  inline void %s_i(%s*, %s);\n", cn, t, ut);
     write_h("  static void %s(%s*, %s);\n", cn, t, ut);
   }
   // figure out if local variable will be used (prevent compiler warnings):

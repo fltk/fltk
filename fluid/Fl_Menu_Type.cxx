@@ -353,7 +353,7 @@ void Fl_Menu_Item_Type::write_code1() {
       const char* cn = callback_name();
       const char* ut = user_data_type() ? user_data_type() : "void*";
       write_public(0);
-      write_h("  void %s_i(Fl_Menu_*, %s);\n", cn, ut);
+      write_h("  inline void %s_i(Fl_Menu_*, %s);\n", cn, ut);
       write_h("  static void %s(Fl_Menu_*, %s);\n", cn, ut);
     }
   }
