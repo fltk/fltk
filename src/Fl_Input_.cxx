@@ -255,7 +255,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 	// figure out scrolling so there is space after the cursor:
 	newscroll = curx+threshold-W;
 	// figure out the furthest left we ever want to scroll:
-	int ex = int(expandpos(p, e, buf, 0))+2-W;
+	int ex = int(expandpos(p, e, buf, 0))+4-W;
 	// use minimum of both amounts:
 	if (ex < newscroll) newscroll = ex;
       } else if (curx < newscroll+threshold) {
