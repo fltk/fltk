@@ -1476,6 +1476,17 @@ void Fl_Widget_Class_Type::read_property(const char *c) {
   }
 }
 
+// Convert A::B::C::D to D (i.e. keep only innermost name)
+// This is useful for classes that contain a namespace component
+static const char *trimclassname(const char *n) {
+  const char *nn;
+  while((nn = strstr(n, "::"))) {
+    n = nn + 2;
+  }
+  return(n);
+}
+
+
 void Fl_Widget_Class_Type::write_code1() {
 #if 0
   Fl_Widget_Type::write_code1();
@@ -1489,43 +1500,43 @@ void Fl_Widget_Class_Type::write_code1() {
 
   write_h("\nclass %s : public %s {\n", name(), c);
   if (strstr(c, "Window")) {
-    write_h("  void _%s();\n", name());
+    write_h("  void _%s();\n", trimclassname(name()));
     write_h("public:\n");
-    write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
-    write_h("  %s(int W, int H, const char *L = 0);\n", name());
-    write_h("  %s();\n", name());
+    write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", trimclassname(name()));
+    write_h("  %s(int W, int H, const char *L = 0);\n", trimclassname(name()));
+    write_h("  %s();\n", trimclassname(name()));
 
     // a constructor with all four dimensions plus label
-    write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), name());
+    write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), trimclassname(name()));
     write_c("  : %s(X, Y, W, H, L) {\n", c);
-    write_c("  _%s();\n", name());
+    write_c("  _%s();\n", trimclassname(name()));
     write_c("}\n\n");
 
     // a constructor with just the size and label. The window manager will position the window
-    write_c("%s::%s(int W, int H, const char *L)\n", name(), name());
+    write_c("%s::%s(int W, int H, const char *L)\n", name(), trimclassname(name()));
     write_c("  : %s(0, 0, W, H, L) {\n", c);
     write_c("  clear_flag(16);\n");
-    write_c("  _%s();\n", name());
+    write_c("  _%s();\n", trimclassname(name()));
     write_c("}\n\n");
     
     // a constructor that takes size and label from the Fluid database
-    write_c("%s::%s()\n", name(), name());
+    write_c("%s::%s()\n", name(), trimclassname(name()));
     write_c("  : %s(0, 0, %d, %d, ", c, o->w(), o->h());
     const char *cstr = label();
     if (cstr) write_cstring(cstr);
     else write_c("0");
     write_c(") {\n");
     write_c("  clear_flag(16);\n");
-    write_c("  _%s();\n", name());
+    write_c("  _%s();\n", trimclassname(name()));
     write_c("}\n\n");
     
-    write_c("void %s::_%s() {\n", name(), name());
+    write_c("void %s::_%s() {\n", name(), trimclassname(name()));
 //    write_c("  %s *w = this;\n", name());
   } else {
     write_h("public:\n");
-    write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", name());
+    write_h("  %s(int X, int Y, int W, int H, const char *L = 0);\n", trimclassname(name()));
 
-    write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), name());
+    write_c("%s::%s(int X, int Y, int W, int H, const char *L)\n", name(), trimclassname(name()));
     if (wc_relative)
       write_c("  : %s(0, 0, W, H, L) {\n", c);
     else
