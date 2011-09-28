@@ -139,7 +139,7 @@ int Fl_Menu_Item::measure(int* hp, const Fl_Menu_* m) const {
   int w = 0; int h = 0;
   l.measure(w, hp ? *hp : h);
   fl_draw_shortcut = 0;
-  if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += 14;
+  if (flags & (FL_MENU_TOGGLE|FL_MENU_RADIO)) w += FL_NORMAL_SIZE;
   return w;
 }
 
@@ -188,11 +188,8 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
       if (value()) {
 	int tW = (W - Fl::box_dw(FL_ROUND_DOWN_BOX)) / 2 + 1;
 	if ((W - tW) & 1) tW++;	// Make sure difference is even to center
-	int td = Fl::box_dx(FL_ROUND_DOWN_BOX) + 1;
+	int td = (W - tW) / 2;
         if (Fl::scheme()) {
-	  // Offset the radio circle...
-	  td ++;
-
 	  if (!strcmp(Fl::scheme(), "gtk+")) {
 	    fl_color(FL_SELECTION_COLOR);
 	    tW --;
@@ -332,7 +329,8 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
     int hh; 
     int w1 = m->measure(&hh, button);
     if (hh+LEADING>itemheight) itemheight = hh+LEADING;
-    if (m->flags&(FL_SUBMENU|FL_SUBMENU_POINTER)) w1 += 14;
+    if (m->flags&(FL_SUBMENU|FL_SUBMENU_POINTER)) 
+      w1 += FL_NORMAL_SIZE;
     if (w1 > W) W = w1;
     // calculate the maximum width of all shortcuts
     if (m->shortcut_) {
