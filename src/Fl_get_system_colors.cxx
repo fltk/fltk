@@ -291,7 +291,9 @@ int Fl::scheme(const char *s) {
 
   if (s) {
     if (!strcasecmp(s, "none") || !strcasecmp(s, "base") || !*s) s = 0;
-    else s = strdup(s);
+    else if (!strcasecmp(s, "gtk+")) s = strdup("gtk+");
+    else if (!strcasecmp(s, "plastic")) s = strdup("plastic");
+    else s = 0;
   }
   if (scheme_) free((void*)scheme_);
   scheme_ = s;
