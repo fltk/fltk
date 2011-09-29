@@ -47,6 +47,7 @@ typedef BOOL (WINAPI* fl_gmi_func)(HMONITOR, LPMONITORINFO);
 static fl_gmi_func fl_gmi = NULL; // used to get a proc pointer for GetMonitorInfoA
 
 static RECT screens[16];
+static RECT work_area[16];
 static float dpi[16][2];
 
 static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
@@ -60,8 +61,11 @@ static BOOL CALLBACK screen_cb(HMONITOR mon, HDC, LPRECT r, LPARAM) {
   if (fl_gmi(mon, &mi)) {
     screens[num_screens] = mi.rcMonitor;
 // If we also want to record the work area, we would also store mi.rcWork at this point
-//  work_area[num_screens] = mi.rcWork;
-
+    work_area[num_screens] = mi.rcWork;
+/*fl_alert("screen %d %d,%d,%d,%d work %d,%d,%d,%d",num_screens,
+	 screens[num_screens].left,screens[num_screens].right,screens[num_screens].top,screens[num_screens].bottom,
+    work_area[num_screens].left,work_area[num_screens].right,work_area[num_screens].top,work_area[num_screens].bottom);
+*/
     // find the pixel size
     if (mi.cbSize == sizeof(mi)) {
       HDC screen = CreateDC(mi.szDevice, NULL, NULL, NULL);
@@ -107,6 +111,7 @@ static void screen_init() {
   screens[0].left      = 0;
   screens[0].right  = GetSystemMetrics(SM_CXSCREEN);
   screens[0].bottom = GetSystemMetrics(SM_CYSCREEN);
+  work_area[0] = screens[0];
 }
 #elif defined(__APPLE__)
 static XRectangle screens[16];
@@ -124,12 +129,23 @@ static void screen_init() {
     screens[i].y      = int(r.origin.y);
     screens[i].width  = int(r.size.width);
     screens[i].height = int(r.size.height);
-    CGSize s = CGDisplayScreenSize(displays[i]);
-    dpi_h[i] = screens[i].width / (s.width/25.4);
-    dpi_v[i] = screens[i].height / (s.height/25.4);
+//fprintf(stderr,"screen %d %dx%dx%dx%d\n",i,screens[i].x,screens[i].y,screens[i].width,screens[i].height);
+    if (CGDisplayScreenSize != NULL) {
+      CGSize s = CGDisplayScreenSize(displays[i]); // from 10.3
+      dpi_h[i] = screens[i].width / (s.width/25.4);
+      dpi_v[i] = screens[i].height / (s.height/25.4);
+      }
+    else {
+      dpi_h[i] = dpi_v[i] = 75.;
+      }
   }
   num_screens = count;
 }
+
+void Fl_X::mac_screen_init() {
+  screen_init();
+  }
+
 #elif HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
 
@@ -183,19 +199,11 @@ int Fl::screen_count() {
   return num_screens ? num_screens : 1;
 }
 
-/**
-  Gets the bounding box of a screen
-  that contains the specified screen position \p mx, \p my
-  \param[out]  X,Y,W,H the corresponding screen bounding box
-  \param[in] mx, my the absolute screen position
-*/
-void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
+static int find_screen_with_point(int mx, int my) {
   int screen = 0;
-  int i;
-
   if (num_screens < 0) screen_init();
-
-  for (i = 0; i < num_screens; i ++) {
+  
+  for (int i = 0; i < num_screens; i ++) {
     int sx, sy, sw, sh;
     Fl::screen_xywh(sx, sy, sw, sh, i);
     if ((mx >= sx) && (mx < (sx+sw)) && (my >= sy) && (my < (sy+sh))) {
@@ -203,12 +211,62 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
       break;
     }
   }
+  return screen;
+}
 
-  screen_xywh(X, Y, W, H, screen);
+/**
+  Gets the bounding box of a screen
+  that contains the specified screen position \p mx, \p my
+  \param[out]  X,Y,W,H the corresponding screen bounding box
+  \param[in] mx, my the absolute screen position
+*/
+void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my) {
+  screen_xywh(X, Y, W, H, find_screen_with_point(mx, my));
+}
+
+
+/**
+ Gets the bounding box of the work area of a screen
+ that contains the specified screen position \p mx, \p my
+ \param[out]  X,Y,W,H the work area bounding box
+ \param[in] mx, my the absolute screen position
+ */
+void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my) {
+  screen_work_area(X, Y, W, H, find_screen_with_point(mx, my));
+}
+
+/**
+ Gets the bounding box of the work area of the given screen.
+ \param[out]  X,Y,W,H the work area bounding box
+ \param[in] n the screen number (0 to Fl::screen_count() - 1)
+ \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
+*/
+void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n) {
+  if (num_screens < 0) screen_init();
+  if (n < 0 || n >= num_screens) n = 0;
+#ifdef WIN32
+  X = work_area[n].left;
+  Y = work_area[n].top;
+  W = work_area[n].right - X;
+  H = work_area[n].bottom - Y;
+#elif defined(__APPLE__)
+  Fl_X::screen_work_area(X, Y, W, H, n);
+#else
+  if (n == 0) { // for the main screen, these return the work area
+    X = Fl::x();
+    Y = Fl::y();
+    W = Fl::w();
+    H = Fl::h();
+    }
+  else { // for other screens, work area is full screen,
+    screen_xywh(X, Y, W, H, n);
+    }
+#endif
 }
 
 /**
   Gets the screen bounding rect for the given screen.
+  Under MSWindows, Mac OS X, and the Gnome desktop, screen #0 contains the menubar/taskbar
   \param[out]  X,Y,W,H the corresponding screen bounding box
   \param[in] n the screen number (0 to Fl::screen_count() - 1)
   \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my)
@@ -233,18 +291,10 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     H = GetSystemMetrics(SM_CYSCREEN);
   }
 #elif defined(__APPLE__)
-  if (num_screens > 0) {
     X = screens[n].x;
     Y = screens[n].y;
     W = screens[n].width;
     H = screens[n].height;
-  } else {
-    /* Fallback if something is broken... */
-    X = Fl::x();
-    Y = Fl::y();
-    W = Fl::w();
-    H = Fl::h();
-  }
 #else
 #if HAVE_XINERAMA
   if (num_screens > 0 && screens) {

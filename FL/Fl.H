@@ -757,13 +757,13 @@ public:
 	fl global screen functions declared in <FL/Fl.H>
      @{ */
   // screen size:
-  /** Returns the origin of the current screen work area, where 0 indicates the left side of the screen. */
+  /** Returns the leftmost x coordinate of the main screen work area. */
   static int x(); // platform dependent
-  /** Returns the origin of the current screen work area, where 0 indicates the top edge of the screen. */
+  /** Returns the topmost y coordinate of the main screen work area. */
   static int y(); // platform dependent
-  /** Returns the width of the screen work area in pixels. */
+  /** Returns the width in pixels of the main screen work area. */
   static int w(); // platform dependent
-  /** Returns the height of the screen work area in pixels. */
+  /** Returns the height in pixels of the main screen work area. */
   static int h(); // platform dependent
 
   // multi-head support:
@@ -780,6 +780,16 @@ public:
   static void screen_xywh(int &X, int &Y, int &W, int &H, int n); 
   static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
   static void screen_dpi(float &h, float &v, int n=0);
+  static void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my);
+  static void screen_work_area(int &X, int &Y, int &W, int &H, int n);
+  /** 
+   Gets the bounding box of the work area of the screen that contains the mouse pointer.
+   \param[out]  X,Y,W,H the work area bounding box
+   \see void screen_work_area(int &x, int &y, int &w, int &h, int mx, int my) 
+   */
+  static void screen_work_area(int &X, int &Y, int &W, int &H) {
+    screen_work_area(X, Y, W, H, e_x_root, e_y_root);
+  }
 
   /**   @} */
 

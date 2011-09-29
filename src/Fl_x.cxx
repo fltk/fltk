@@ -655,16 +655,21 @@ static void fl_init_workarea() {
   int format;
   unsigned *xywh;
 
-  if (XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
+  /* If there are several screens, the _NET_WORKAREA property 
+   does not give the work area of the main screen, but that of all screens together.
+   Therefore, we use this property only when there is a single screen,
+   and fall back to the main screen full area when there are several screens.
+   */
+  if (Fl::screen_count() > 1 || XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
                          _NET_WORKAREA, 0, 4 * sizeof(unsigned), False,
                          XA_CARDINAL, &actual, &format, &count, &remaining,
                          (unsigned char **)&xywh) || !xywh || !xywh[2] ||
                          !xywh[3])
   {
-    fl_workarea_xywh[0] = 0;
-    fl_workarea_xywh[1] = 0;
-    fl_workarea_xywh[2] = DisplayWidth(fl_display, fl_screen);
-    fl_workarea_xywh[3] = DisplayHeight(fl_display, fl_screen);
+    Fl::screen_xywh(fl_workarea_xywh[0], 
+		    fl_workarea_xywh[1], 
+		    fl_workarea_xywh[2], 
+		    fl_workarea_xywh[3], 0);
   }
   else
   {
