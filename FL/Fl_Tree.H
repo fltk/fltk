@@ -200,17 +200,9 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   int            _scrollbar_size;		// size of scrollbar trough
 
 protected:
-  /// Vertical scrollbar
-  Fl_Scrollbar *_vscroll;
-  
-protected:
+  Fl_Scrollbar *_vscroll;			/// Vertical scrollbar
   void item_clicked(Fl_Tree_Item* val);
-  /// Do the callback for the item, setting the item and reason
-  void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason) {
-    callback_reason(reason);
-    callback_item(item);
-    do_callback((Fl_Widget*)this, user_data());
-  }
+  void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason);
   Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);
 
 public:
@@ -218,24 +210,14 @@ public:
   ~Fl_Tree();
   int handle(int e);
   void draw();
+  void show_self();
   
   ///////////////////////
   // root methods
   ///////////////////////
-  
-  /// Set the label for the root item. 
-  ///
-  /// Makes an internally managed copy of 'new_label'.
-  ///
-  void root_label(const char *new_label) {
-    if ( ! _root ) return;
-    _root->label(new_label);
-  }
-  /// Returns the root item.
-  Fl_Tree_Item* root() {
-    return(_root);
-  }
-  
+  void root_label(const char *new_label);
+  Fl_Tree_Item* root();
+
   ////////////////////////////////
   // Item creation/removal methods
   ////////////////////////////////
@@ -243,61 +225,18 @@ public:
   Fl_Tree_Item* add(Fl_Tree_Item *item, const char *name);
   Fl_Tree_Item *insert_above(Fl_Tree_Item *above, const char *name);
   Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos);
-  
-  /// Remove the specified \p item from the tree.
-  /// \p item may not be NULL.
-  /// If it has children, all those are removed too.
-  /// \returns 0 if done, -1 if 'item' not found.
-  ///
-  int remove(Fl_Tree_Item *item) {
-    if ( item == _root ) {
-      clear();
-    } else {
-      Fl_Tree_Item *parent = item->parent();		// find item's parent
-      if ( ! parent ) return(-1);
-      parent->remove_child(item);			// remove child + children
-    }
-    return(0);
-  } 
-  /// Clear all children from the tree.
-  /// The tree will be left completely empty.
-  ///
-  void clear() {
-    if ( ! _root ) return;
-    _root->clear_children();
-    delete _root; _root = 0;
-  } 
-  /// Clear all the children of a particular node in the tree specified by \p item.
-  /// Item may not be NULL.
-  ///
-  void clear_children(Fl_Tree_Item *item) {
-    if ( item->has_children() ) {
-      item->clear_children();
-      redraw();				// redraw only if there were children to clear
-    }
-  } 
-  
+  int remove(Fl_Tree_Item *item);
+  void clear();
+  void clear_children(Fl_Tree_Item *item);
+
   ////////////////////////
   // Item lookup methods
   ////////////////////////
   Fl_Tree_Item *find_item(const char *path);
   const Fl_Tree_Item *find_item(const char *path) const;
   int item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *item) const;
-
   const Fl_Tree_Item *find_clicked() const;
-  
-  /// Return the item that was last clicked.
-  ///
-  /// Valid only from within the callback().
-  ///
-  /// Deprecated: use callback_item() instead.
-  ///
-  /// \returns the item clicked, or 0 if none.
-  ///          0 may also be used to indicate several items were clicked/changed.
-  ///
-  Fl_Tree_Item *item_clicked() {
-    return(_callback_item);
-  }
+  Fl_Tree_Item *item_clicked();
   Fl_Tree_Item *first();
   Fl_Tree_Item *next(Fl_Tree_Item *item=0);
   Fl_Tree_Item *prev(Fl_Tree_Item *item=0);
@@ -308,697 +247,92 @@ public:
   //////////////////////////
   // Item open/close methods
   //////////////////////////
-  
-  /// Open the specified 'item'.
-  /// This causes the item's children (if any) to be shown.
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] item -- the item to be opened. Must not be NULL.
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - callback() is not invoked
-  ///     -   1 - callback() is invoked if item changed,
-  ///             callback_reason() will be FL_TREE_REASON_OPENED
-  /// \returns
-  ///     -   1 -- item was opened
-  ///     -   0 -- item was already open, no change
-  ///
-  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
-  ///
-  int open(Fl_Tree_Item *item, int docallback=1) {
-    if ( item->is_open() ) return(0);
-    item->open();
-    redraw();
-    if ( docallback ) {
-      do_callback_for_item(item, FL_TREE_REASON_OPENED);
-    }
-    return(1);
-  }
-  /// Opens the item specified by \p path (eg: "Parent/child/item").
-  /// This causes the item's children (if any) to be shown.
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// Items or submenus that themselves contain slashes ('/' or '\')
-  /// should be escaped, e.g. open("Holidays/12\\/25\//2010").
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - callback() is not invoked
-  ///     -   1 - callback() is invoked if item changed,
-  ///             callback_reason() will be FL_TREE_REASON_OPENED
-  /// \returns
-  ///     -   1 -- OK: item opened
-  ///     -   0 -- OK: item was already open, no change
-  ///     -  -1 -- ERROR: item was not found
-  ///
-  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
-  ///         
-  int open(const char *path, int docallback=1) {
-    Fl_Tree_Item *item = find_item(path);
-    if ( ! item ) return(-1);
-    return(open(item, docallback));
-  }
-  /// Toggle the open state of \p item.
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] item -- the item whose open state is to be toggled. Must not be NULL.
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - callback() is not invoked
-  ///     -   1 - callback() is invoked, callback_reason() will be either
-  ///             FL_TREE_REASON_OPENED or FL_TREE_REASON_CLOSED
-  ///
-  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
-  ///
-  void open_toggle(Fl_Tree_Item *item, int docallback=1) {
-    if ( item->is_open() ) {
-      close(item, docallback);
-    } else {
-      open(item, docallback);
-    }
-  }
-  /// Closes the specified \p item.
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] item -- the item to be closed. Must not be NULL.
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - callback() is not invoked
-  ///     -   1 - callback() is invoked if item changed,
-  ///             callback_reason() will be FL_TREE_REASON_CLOSED
-  /// \returns
-  ///     -   1 -- item was closed
-  ///     -   0 -- item was already closed, no change
-  ///
-  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
-  ///
-  int close(Fl_Tree_Item *item, int docallback=1) {
-    if ( item->is_close() ) return(0);
-    item->close();
-    redraw();
-    if ( docallback ) {
-      do_callback_for_item(item, FL_TREE_REASON_CLOSED);
-    }
-    return(1);
-  }
-  /// Closes the item specified by \p path, eg: "Parent/child/item".
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// Items or submenus that themselves contain slashes ('/' or '\')
-  /// should be escaped, e.g. close("Holidays/12\\/25\//2010").
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - callback() is not invoked
-  ///     -   1 - callback() is invoked if item changed,
-  ///             callback_reason() will be FL_TREE_REASON_CLOSED
-  /// \returns
-  ///     -   1 -- OK: item closed
-  ///     -   0 -- OK: item was already closed, no change
-  ///     -  -1 -- ERROR: item was not found
-  ///
-  /// \see open(), close(), is_open(), is_close(), callback_item(), callback_reason()
-  ///         
-  int close(const char *path, int docallback=1) {
-    Fl_Tree_Item *item = find_item(path);
-    if ( ! item ) return(-1);
-    return(close(item, docallback));
-  }
-  /// See if \p item is open.
-  ///
-  /// Items that are 'open' are themselves not necessarily visible;
-  /// one of the item's parents might be closed.
-  ///
-  /// \param[in] item -- the item to be tested. Must not be NULL.
-  /// \returns
-  ///     -  1 : item is open
-  ///     -  0 : item is closed
-  ///
-  int is_open(Fl_Tree_Item *item) const {
-    return(item->is_open()?1:0);
-  }
-  /// See if item specified by \p path (eg: "Parent/child/item") is open.
-  ///
-  /// Items or submenus that themselves contain slashes ('/' or '\')
-  /// should be escaped, e.g. is_open("Holidays/12\\/25\//2010").
-  ///
-  /// Items that are 'open' are themselves not necessarily visible;
-  /// one of the item's parents might be closed.
-  ///
-  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
-  /// \returns
-  ///     -    1 - OK: item is open
-  ///     -    0 - OK: item is closed
-  ///     -   -1 - ERROR: item was not found
-  ///
-  int is_open(const char *path) const {
-    const Fl_Tree_Item *item = find_item(path);
-    if ( ! item ) return(-1);
-    return(item->is_open()?1:0);
-  }
-  /// See if the specified \p item is closed.
-  ///
-  /// \param[in] item -- the item to be tested. Must not be NULL.
-  /// \returns
-  ///     -   1 : item is open
-  ///     -   0 : item is closed
-  ///
-  int is_close(Fl_Tree_Item *item) const {
-    return(item->is_close());
-  }
-  /// See if item specified by \p path (eg: "Parent/child/item") is closed.
-  ///
-  /// Items or submenus that themselves contain slashes ('/' or '\')
-  /// should be escaped, e.g. is_close("Holidays/12\\/25\//2010").
-  ///
-  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
-  /// \returns
-  ///     -   1 - OK: item is closed
-  ///     -   0 - OK: item is open
-  ///     -  -1 - ERROR: item was not found
-  ///
-  int is_close(const char *path) const {
-    const Fl_Tree_Item *item = find_item(path);
-    if ( ! item ) return(-1);
-    return(item->is_close()?1:0);
-  }
-  
-  /// Select the specified \p item. Use 'deselect()' to de-select it.
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] item -- the item to be selected. Must not be NULL.
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - the callback() is not invoked
-  ///     -   1 - the callback() is invoked if item changed state,
-  ///             callback_reason() will be FL_TREE_REASON_SELECTED
-  /// \returns
-  ///     -   1 - item's state was changed
-  ///     -   0 - item was already selected, no change was made
-  ///
-  int select(Fl_Tree_Item *item, int docallback=1) {
-    if ( ! item->is_selected() ) {
-      item->select();
-      set_changed();
-      if ( docallback ) {
-        do_callback_for_item(item, FL_TREE_REASON_SELECTED);
-      }
-      redraw();
-      return(1);
-    }
-    return(0);
-  }
-  /// Select the item specified by \p path (eg: "Parent/child/item").
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// Items or submenus that themselves contain slashes ('/' or '\')
-  /// should be escaped, e.g. select("Holidays/12\\/25\//2010").
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - the callback() is not invoked
-  ///     -   1 - the callback() is invoked if item changed state,
-  ///             callback_reason() will be FL_TREE_REASON_SELECTED
-  /// \returns
-  ///     -   1 : OK: item's state was changed
-  ///     -   0 : OK: item was already selected, no change was made
-  ///     -  -1 : ERROR: item was not found
-  ///
-  int select(const char *path, int docallback=1) {
-    Fl_Tree_Item *item = find_item(path);
-    if ( ! item ) return(-1);
-    return(select(item, docallback));
-  }
-  /// Toggle the select state of the specified \p item.
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] item -- the item to be selected. Must not be NULL.
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - the callback() is not invoked
-  ///     -   1 - the callback() is invoked, callback_reason() will be
-  ///             either FL_TREE_REASON_SELECTED or FL_TREE_REASON_DESELECTED
-  ///
-  void select_toggle(Fl_Tree_Item *item, int docallback=1) {
-    item->select_toggle();
-    set_changed();
-    if ( docallback ) {
-      do_callback_for_item(item, item->is_selected() ? FL_TREE_REASON_SELECTED
-                                                     : FL_TREE_REASON_DESELECTED);
-    }
-    redraw();
-  }
-  /// De-select the specified \p item.
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] item -- the item to be selected. Must not be NULL.
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - the callback() is not invoked
-  ///     -   1 - the callback() is invoked if item changed state,
-  ///             callback_reason() will be FL_TREE_REASON_DESELECTED
-  /// \returns
-  ///     -   0 - item was already deselected, no change was made
-  ///     -   1 - item's state was changed
-  ///
-  int deselect(Fl_Tree_Item *item, int docallback=1) {
-    if ( item->is_selected() ) {
-      item->deselect();
-      set_changed();
-      if ( docallback ) {
-        do_callback_for_item(item, FL_TREE_REASON_DESELECTED);
-      }
-      redraw();
-      return(1);
-    }
-    return(0);
-  }
-  /// Deselect an item specified by \p path (eg: "Parent/child/item").
-  /// Handles redrawing if anything was actually changed.
-  /// Invokes the callback depending on the value of optional parameter \p docallback.
-  ///
-  /// Items or submenus that themselves contain slashes ('/' or '\')
-  /// should be escaped, e.g. deselect("Holidays/12\\/25\//2010").
-  ///
-  /// The callback can use callback_item() and callback_reason() respectively to determine 
-  /// the item changed and the reason the callback was called.
-  ///
-  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
-  /// \param[in] docallback -- A flag that determines if the callback() is invoked or not:
-  ///     -   0 - the callback() is not invoked
-  ///     -   1 - the callback() is invoked if item changed state,
-  ///             callback_reason() will be FL_TREE_REASON_DESELECTED
-  ///  \returns
-  ///     -   1 - OK: item's state was changed
-  ///     -   0 - OK: item was already deselected, no change was made
-  ///     -  -1 - ERROR: item was not found
-  ///
-  int deselect(const char *path, int docallback=1) {
-    Fl_Tree_Item *item = find_item(path);
-    if ( ! item ) return(-1);
-    return(deselect(item, docallback));
-  }
-  
+  int open(Fl_Tree_Item *item, int docallback=1);
+  int open(const char *path, int docallback=1);
+  void open_toggle(Fl_Tree_Item *item, int docallback=1);
+  int close(Fl_Tree_Item *item, int docallback=1);
+  int close(const char *path, int docallback=1);
+  int is_open(Fl_Tree_Item *item) const;
+  int is_open(const char *path) const;
+  int is_close(Fl_Tree_Item *item) const;
+  int is_close(const char *path) const;
+
+  /////////////////////////
+  // Item selection methods
+  /////////////////////////
+  int select(Fl_Tree_Item *item, int docallback=1);
+  int select(const char *path, int docallback=1);
+  void select_toggle(Fl_Tree_Item *item, int docallback=1);
+  int deselect(Fl_Tree_Item *item, int docallback=1);
+  int deselect(const char *path, int docallback=1);
   int deselect_all(Fl_Tree_Item *item=0, int docallback=1);
   int select_only(Fl_Tree_Item *selitem, int docallback=1);
   int select_all(Fl_Tree_Item *item=0, int docallback=1);
-  void set_item_focus(Fl_Tree_Item *o);
-  
-  /// See if the specified \p item is selected.
-  ///
-  /// \param[in] item -- the item to be tested. Must not be NULL.
-  ///
-  /// \return
-  ///     -   1 : item selected
-  ///     -   0 : item deselected
-  ///
-  int is_selected(Fl_Tree_Item *item) const {
-    return(item->is_selected()?1:0);
-  }
-  /// See if item specified by \p path (eg: "Parent/child/item") is selected.
-  ///
-  /// Items or submenus that themselves contain slashes ('/' or '\')
-  /// should be escaped, e.g. is_selected("Holidays/12\\/25\//2010").
-  ///
-  /// \param[in] path -- the tree item's pathname (e.g. "Flintstones/Fred")
-  /// \returns
-  ///     -   1 : item selected
-  ///     -   0 : item deselected
-  ///     -  -1 : item was not found
-  ///
-  int is_selected(const char *path) {
-    Fl_Tree_Item *item = find_item(path);
-    if ( ! item ) return(-1);
-    return(is_selected(item));
-  }
-  /// Print the tree as 'ascii art' to stdout.
-  /// Used mainly for debugging.
-  ///
-  void show_self() {
-    if ( ! _root ) return;
-    _root->show_self();
-  }
-  
+  void set_item_focus(Fl_Tree_Item *item);
+  int is_selected(Fl_Tree_Item *item) const;
+  int is_selected(const char *path);
+
   /////////////////////////////////
   // Item attribute related methods
   /////////////////////////////////
-  
-  /// Get the default label fontsize used for creating new items.
-  Fl_Fontsize item_labelsize() const {
-    return(_prefs.labelsize());
-  }
-  /// Set the default label font size used for creating new items.
-  /// To change the font size on a per-item basis, use Fl_Tree_Item::labelsize(Fl_Fontsize)
-  ///
-  void item_labelsize(Fl_Fontsize val) {
-    _prefs.labelsize(val);
-  }
-  /// Get the default font face used for creating new items.
-  Fl_Font item_labelfont() const {
-    return(_prefs.labelfont());
-  }
-  /// Set the default font face used for creating new items.
-  /// To change the font face on a per-item basis, use Fl_Tree_Item::labelfont(Fl_Font)
-  ///
-  void item_labelfont(Fl_Font val) {
-    _prefs.labelfont(val);
-  }
-  /// Get the default label foreground color used for creating new items.
-  Fl_Color item_labelfgcolor(void) const {
-    return(_prefs.labelfgcolor());
-  }
-  /// Set the default label foreground color used for creating new items.
-  /// To change the foreground color on a per-item basis, use Fl_Tree_Item::labelfgcolor(Fl_Color)
-  ///
-  void item_labelfgcolor(Fl_Color val) {
-    _prefs.labelfgcolor(val);
-  }
-  /// Get the default label background color used for creating new items.
-  Fl_Color item_labelbgcolor(void) const {
-    return(_prefs.labelbgcolor());
-  }
-  /// Set the default label background color used for creating new items.
-  /// To change the background color on a per-item basis, use Fl_Tree_Item::labelbgcolor(Fl_Color)
-  ///
-  void item_labelbgcolor(Fl_Color val) {
-    _prefs.labelbgcolor(val);
-  }
-  /// Get the connector color used for tree connection lines.
-  Fl_Color connectorcolor() const {
-    return(_prefs.connectorcolor());
-  }
-  /// Set the connector color used for tree connection lines.
-  void connectorcolor(Fl_Color val) {
-    _prefs.connectorcolor(val);
-  }
-  /// Get the amount of white space (in pixels) that should appear
-  /// between the widget's left border and the tree's contents.
-  ///
-  int marginleft() const {
-    return(_prefs.marginleft());
-  }
-  /// Set the amount of white space (in pixels) that should appear
-  /// between the widget's left border and the left side of the tree's contents.
-  ///
-  void marginleft(int val) {
-    _prefs.marginleft(val);
-    redraw();
-  }
-  /// Get the amount of white space (in pixels) that should appear
-  /// between the widget's top border and the top of the tree's contents.
-  ///
-  int margintop() const {
-    return(_prefs.margintop());
-  }
-  /// Sets the amount of white space (in pixels) that should appear
-  /// between the widget's top border and the top of the tree's contents.
-  ///
-  void margintop(int val) {
-    _prefs.margintop(val);
-    redraw();
-  }
-  /// Get the amount of white space (in pixels) that should appear
-  /// below an open child tree's contents.
-  ///
-  int openchild_marginbottom() const {
-    return(_prefs.openchild_marginbottom());
-  }
-  /// Set the amount of white space (in pixels) that should appear
-  /// below an open child tree's contents.
-  ///
-  void openchild_marginbottom(int val) {
-    _prefs.openchild_marginbottom(val);
-    redraw();
-  }
-  /// Gets the width of the horizontal connection lines (in pixels) 
-  /// that appear to the left of each tree item's label.
-  ///
-  int connectorwidth() const {
-    return(_prefs.connectorwidth());
-  }
-  /// Sets the width of the horizontal connection lines (in pixels) 
-  /// that appear to the left of each tree item's label.
-  ///
-  void connectorwidth(int val) {
-    _prefs.connectorwidth(val);
-    redraw();
-  }
-  /// Returns the Fl_Image being used as the default user icon for all
-  /// newly created items.
-  /// Returns zero if no icon has been set, which is the default.
-  ///
-  Fl_Image *usericon() const {
-    return(_prefs.usericon());
-  }
-  /// Sets the Fl_Image to be used as the default user icon for all
-  /// newly created items.
-  ///
-  /// If you want to specify user icons on a per-item basis,
-  /// use Fl_Tree_Item::usericon() instead.
-  ///
-  /// \param[in] val -- The new image to be used, or
-  ///                   zero to disable user icons.
-  ///
-  void usericon(Fl_Image *val) {
-    _prefs.usericon(val);
-    redraw();
-  }
-  /// Returns the icon to be used as the 'open' icon.
-  /// If none was set, the internal default is returned,
-  /// a simple '[+]' icon.
-  ///
-  Fl_Image *openicon() const {
-    return(_prefs.openicon());
-  }
-  /// Sets the icon to be used as the 'open' icon.
-  /// This overrides the built in default '[+]' icon.
-  ///
-  /// \param[in] val -- The new image, or zero to use the default [+] icon.
-  ///
-  void openicon(Fl_Image *val) {
-    _prefs.openicon(val);
-    redraw();
-  }
-  /// Returns the icon to be used as the 'close' icon.
-  /// If none was set, the internal default is returned,
-  /// a simple '[-]' icon.
-  ///
-  Fl_Image *closeicon() const {
-    return(_prefs.closeicon());
-  }
-  /// Sets the icon to be used as the 'close' icon.
-  /// This overrides the built in default '[-]' icon.
-  ///
-  /// \param[in] val -- The new image, or zero to use the default [-] icon.
-  ///
-  void closeicon(Fl_Image *val) {
-    _prefs.closeicon(val);
-    redraw();
-  }
-  /// Returns 1 if the collapse icon is enabled, 0 if not.
-  int showcollapse() const {
-    return(_prefs.showcollapse());
-  }
-  /// Set if we should show the collapse icon or not.
-  /// If collapse icons are disabled, the user will not be able
-  /// to interactively collapse items in the tree, unless the application
-  /// provides some other means via open() and close().
-  ///
-  /// \param[in] val 1: shows collapse icons (default),\n
-  ///                0: hides collapse icons.
-  ///
-  void showcollapse(int val) {
-    _prefs.showcollapse(val);
-    redraw();
-  }
-  /// Returns 1 if the root item is to be shown, or 0 if not.
-  int showroot() const {
-    return(_prefs.showroot());
-  }
-  /// Set if the root item should be shown or not.
-  /// \param[in] val 1 -- show the root item (default)\n
-  ///                0 -- hide the root item.
-  ///
-  void showroot(int val) {
-    _prefs.showroot(val);
-    redraw();
-  }
-  /// Returns the line drawing style for inter-connecting items.
-  Fl_Tree_Connector connectorstyle() const {
-    return(_prefs.connectorstyle());
-  }
-  /// Sets the line drawing style for inter-connecting items.
-  void connectorstyle(Fl_Tree_Connector val) {
-    _prefs.connectorstyle(val);
-    redraw();
-  }
-  /// Set the default sort order used when items are added to the tree.
-  ///     See Fl_Tree_Sort for possible values.
-  ///
-  Fl_Tree_Sort sortorder() const {
-    return(_prefs.sortorder());
-  }
-  /// Gets the sort order used to add items to the tree.
-  void sortorder(Fl_Tree_Sort val) {
-    _prefs.sortorder(val);
-    // no redraw().. only affects new add()itions
-  }
-  /// Sets the style of box used to draw selected items.
-  /// This is an fltk Fl_Boxtype.
-  /// The default is influenced by FLTK's current Fl::scheme()
-  ///
-  Fl_Boxtype selectbox() const {
-    return(_prefs.selectbox());
-  }
-  /// Gets the style of box used to draw selected items.
-  /// This is an fltk Fl_Boxtype.
-  /// The default is influenced by FLTK's current Fl::scheme()
-  ///
-  void selectbox(Fl_Boxtype val) {
-    _prefs.selectbox(val);
-    redraw();
-  }
-  /// Gets the tree's current selection mode.
-  Fl_Tree_Select selectmode() const {
-    return(_prefs.selectmode());
-  }
-  /// Sets the tree's selection mode.
-  void selectmode(Fl_Tree_Select val) {
-    _prefs.selectmode(val);
-  }
+  Fl_Fontsize item_labelsize() const;
+  void item_labelsize(Fl_Fontsize val);
+  Fl_Font item_labelfont() const;
+  void item_labelfont(Fl_Font val);
+  Fl_Color item_labelfgcolor(void) const;
+  void item_labelfgcolor(Fl_Color val);
+  Fl_Color item_labelbgcolor(void) const;
+  void item_labelbgcolor(Fl_Color val);
+  Fl_Color connectorcolor() const;
+  void connectorcolor(Fl_Color val);
+  int marginleft() const;
+  void marginleft(int val);
+  int margintop() const;
+  void margintop(int val);
+  int openchild_marginbottom() const;
+  void openchild_marginbottom(int val);
+  int connectorwidth() const;
+  void connectorwidth(int val);
+  Fl_Image* usericon() const;
+  void usericon(Fl_Image *val);
+  Fl_Image* openicon() const;
+  void openicon(Fl_Image *val);
+  Fl_Image* closeicon() const;
+  void closeicon(Fl_Image *val);
+  int showcollapse() const;
+  void showcollapse(int val);
+  int showroot() const;
+  void showroot(int val);
+  Fl_Tree_Connector connectorstyle() const;
+  void connectorstyle(Fl_Tree_Connector val);
+  Fl_Tree_Sort sortorder() const;
+  void sortorder(Fl_Tree_Sort val);
+  Fl_Boxtype selectbox() const;
+  void selectbox(Fl_Boxtype val);
+  Fl_Tree_Select selectmode() const;
+  void selectmode(Fl_Tree_Select val);
+
   int displayed(Fl_Tree_Item *item);
   void show_item(Fl_Tree_Item *item, int yoff);
   void show_item(Fl_Tree_Item *item);
-  void show_item_bottom(Fl_Tree_Item *item);
-  void show_item_middle(Fl_Tree_Item *item);
   void show_item_top(Fl_Tree_Item *item);
+  void show_item_middle(Fl_Tree_Item *item);
+  void show_item_bottom(Fl_Tree_Item *item);
   void display(Fl_Tree_Item *item);
   int  vposition() const;
-  void vposition(int ypos);
+  void vposition(int pos);
 
-  /// See if widget \p w is one of the Fl_Tree widget's scrollbars.
-  /// Use this to skip over the scrollbars when walking the child() array. Example:
-  /// \code
-  /// for ( int i=0; i<tree->children(); i++ ) {    // walk children
-  ///     Fl_Widget *w= tree->child(i);
-  ///     if ( brow->is_scrollbar(w) ) continue;    // skip scrollbars
-  ///     ..do work here..
-  /// }
-  /// \endcode
-  /// \param[in] w Widget to test
-  /// \returns 1 if \p w is a scrollbar, 0 if not.
-  ///
-  int is_scrollbar(Fl_Widget *w) {
-      return( ( w == _vscroll ) ? 1 : 0 );
-  }
-  /// Gets the current size of the scrollbars' troughs, in pixels.
-  ///
-  /// If this value is zero (default), this widget will use the global
-  /// Fl::scrollbar_size() value as the scrollbar's width.
-  /// 
-  /// \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
-  /// \see Fl::scrollbar_size(int)
-  ///
-  int scrollbar_size() const {
-      return(_scrollbar_size);
-  }
-  /// Sets the pixel size of the scrollbars' troughs to the \p size, in pixels.
-  ///
-  /// Normally you should not need this method, and should use the global
-  /// Fl::scrollbar_size(int) instead to manage the size of ALL 
-  /// your widgets' scrollbars. This ensures your application 
-  /// has a consistent UI, is the default behavior, and is normally
-  /// what you want.
-  ///
-  /// Only use THIS method if you really need to override the global
-  /// scrollbar size. The need for this should be rare.
-  ///   
-  /// Setting \p size to the special value of 0 causes the widget to
-  /// track the global Fl::scrollbar_size(), which is the default.
-  ///   
-  /// \param[in] size Sets the scrollbar size in pixels.\n
-  ///                 If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
-  /// \see Fl::scrollbar_size()
-  ///
-  void scrollbar_size(int size) {
-      _scrollbar_size = size;
-      int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
-      if ( _vscroll->w() != scrollsize ) {
-        _vscroll->resize(x()+w()-scrollsize, h(), scrollsize, _vscroll->h());
-      }
-  }   
+  int is_scrollbar(Fl_Widget *w);
+  int scrollbar_size() const;
+  void scrollbar_size(int size);
 
   ///////////////////////
   // callback related
   ///////////////////////
-
-  /// Sets the item that was changed for this callback.
-  ///    Used internally to pass the item that invoked the callback.
-  ///
-  void callback_item(Fl_Tree_Item* item) {
-    _callback_item = item;
-  }
-  /// Gets the item that caused the callback.
-  /// The callback() can use this value to see which item changed.
-  ///
-  Fl_Tree_Item* callback_item() {
-    return(_callback_item);
-  }
-  /// Sets the reason for this callback.
-  ///    Used internally to pass the reason the callback was invoked.
-  ///
-  void callback_reason(Fl_Tree_Reason reason) {
-    _callback_reason = reason;
-  }
-  /// Gets the reason for this callback.
-  ///
-  /// The callback() can use this value to see why it was called. Example:
-  /// \code
-  ///     void MyTreeCallback(Fl_Widget *w, void *userdata) {
-  ///         Fl_Tree *tree = (Fl_Tree*)w;
-  ///         Fl_Tree_Item *item = tree->callback_item();    // the item changed (can be NULL if more than one item was changed!)
-  ///         switch ( tree->callback_reason() ) {           // reason callback was invoked
-  ///             case     FL_TREE_REASON_OPENED: ..item was opened..
-  ///             case     FL_TREE_REASON_CLOSED: ..item was closed..
-  ///             case   FL_TREE_REASON_SELECTED: ..item was selected..
-  ///             case FL_TREE_REASON_DESELECTED: ..item was deselected..
-  ///         }
-  ///     }
-  /// \endcode
-  ///
-  Fl_Tree_Reason callback_reason() const {
-    return(_callback_reason);
-  }
+  void callback_item(Fl_Tree_Item* item);
+  Fl_Tree_Item* callback_item();
+  void callback_reason(Fl_Tree_Reason reason);
+  Fl_Tree_Reason callback_reason() const;
 
   /// Load FLTK preferences
   void load(class Fl_Preferences&);
