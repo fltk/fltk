@@ -27,7 +27,7 @@
 #include <FL/fl_draw.H>
 
 #define MAX_ROWS 30
-#define MAX_COLS 30
+#define MAX_COLS 26		// A-Z
 
 // Derive a class from Fl_Table
 class MyTable : public Fl_Table {
