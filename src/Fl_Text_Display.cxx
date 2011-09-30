@@ -359,7 +359,8 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
       }
 
       /*
-       Decide if the horizontal scrollbar needs to be visible.  If there
+       Decide if the horizontal scrollbar needs to be visible. If the text
+       wraps at the right edge, do not draw a horizontal scrollbar. Otherwise, if there
        is a vertical scrollbar, a horizontal is always created too.  This
        is because the alternatives are unattractive:
        * Dynamically creating a horizontal scrollbar based on the currently
@@ -382,18 +383,19 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
       if (scrollbar_align() & (FL_ALIGN_TOP|FL_ALIGN_BOTTOM) &&
           (mVScrollBar->visible() || longest_vline() > text_area.w))
       {
-        if (!mHScrollBar->visible()) {
+        char wrap_at_bounds = mContinuousWrap && (mWrapMarginPix==0);
+        if (!mHScrollBar->visible() && !wrap_at_bounds) {
           mHScrollBar->set_visible();
           again = 1; // loop again to see if we now need vert. & recalc sizes
         }
         if (scrollbar_align() & FL_ALIGN_TOP) {
           text_area.y = Y + scrollbar_width()+TOP_MARGIN;
-          text_area.h = H - scrollbar_width()-TOP_MARGIN-BOTTOM_MARGIN;
+          text_area.h = H - (wrap_at_bounds?0:scrollbar_width())-TOP_MARGIN-BOTTOM_MARGIN;
           mHScrollBar->resize(text_area.x-LEFT_MARGIN, Y,
                               text_area.w+LEFT_MARGIN+RIGHT_MARGIN, scrollbar_width());
         } else {
           text_area.y = Y+TOP_MARGIN;
-          text_area.h = H - scrollbar_width()-TOP_MARGIN-BOTTOM_MARGIN;
+          text_area.h = H - (wrap_at_bounds?0:scrollbar_width())-TOP_MARGIN-BOTTOM_MARGIN;
           mHScrollBar->resize(text_area.x-LEFT_MARGIN, Y+H-scrollbar_width(),
                               text_area.w+LEFT_MARGIN+RIGHT_MARGIN, scrollbar_width());
         }
