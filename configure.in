@@ -997,6 +997,16 @@ case $uname_GUI in
 		LIBS="-lXext $LIBS")
 	fi
 
+	dnl Check for the XRandR extension unless disabled...
+        AC_ARG_ENABLE(xrandr, [  --enable-xrandr         turn on XRandR support [default=yes]])
+
+	if test x$enable_xrandr != xno; then
+	    AC_CHECK_HEADER(X11/extensions/Xrandr.h, AC_DEFINE(HAVE_XRANDR),,
+	        [#include <X11/Xlib.h>])
+	    AC_CHECK_LIB(Xrandr, XRRQueryExtension,
+		LIBS="-lXrandr $LIBS")
+	fi
+
 	dnl Check for overlay visuals...
 	AC_PATH_PROG(XPROP, xprop)
 	AC_CACHE_CHECK(for X overlay visuals, ac_cv_have_overlay,
@@ -1329,6 +1339,9 @@ case $uname_GUI in
 	fi
 	if test x$enable_xdbe != xno; then
 	    graphics="$graphics+Xdbe"
+	fi
+	if test x$enable_xrandr != xno; then
+	    graphics="$graphics+Xrandr"
 	fi
 	if test x$enable_xinerama != xno; then
 	    graphics="$graphics+Xinerama"

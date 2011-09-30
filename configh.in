@@ -84,6 +84,14 @@
 #define HAVE_XINERAMA 0
 
 /*
+ * HAVE_XRANDR
+ *
+ * Do we have the Xrandr library to support runtime update of multi-head displays?
+ */
+
+#define HAVE_XRANDR 0
+
+/*
  * USE_XFT
  *
  * Use the new Xft library to draw anti-aliased text.
