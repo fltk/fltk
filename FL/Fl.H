@@ -133,6 +133,7 @@ public: // should be private!
   static Fl_Window* modal_;
   static Fl_Window* grab_;
   static int compose_state;
+  static void call_screen_init(); // recompute screen number and dimensions
 #endif
   /**
     If true then flush() will do something.

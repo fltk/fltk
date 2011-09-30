@@ -1088,7 +1088,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 - (void)applicationDidChangeScreenParameters:(NSNotification *)unused
 { // react to changes in screen numbers and positions
   main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
-  Fl_X::mac_screen_init();
+  Fl::call_screen_init();
   // FLTK windows have already been notified they were moved,
   // but they had the old main_screen_height, so they must be notified again.
   NSArray *windows = [NSApp windows];

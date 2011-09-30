@@ -142,10 +142,6 @@ static void screen_init() {
   num_screens = count;
 }
 
-void Fl_X::mac_screen_init() {
-  screen_init();
-  }
-
 #elif HAVE_XINERAMA
 #  include <X11/extensions/Xinerama.h>
 
@@ -189,6 +185,11 @@ static void screen_init() {
 }
 #endif // WIN32
 
+#ifndef FL_DOXYGEN
+void Fl::call_screen_init() {
+  screen_init();
+}
+#endif
 
 /**
   Gets the number of available screens.
