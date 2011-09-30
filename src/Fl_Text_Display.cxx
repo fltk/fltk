@@ -295,6 +295,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
   text_area.y = Y+TOP_MARGIN;
   text_area.w = W-LEFT_MARGIN-RIGHT_MARGIN;
   text_area.h = H-TOP_MARGIN-BOTTOM_MARGIN;
+  const int oldTAWidth = text_area.w;
   int i;
 
   /* Find the new maximum font height for this text display */
@@ -341,6 +342,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
     // figure the scrollbars
     if (scrollbar_width()) {
       /* Decide if the vertical scrollbar needs to be visible */
+      int vbvis = mVScrollBar->visible();
       if (scrollbar_align() & (FL_ALIGN_LEFT|FL_ALIGN_RIGHT) &&
           mNBufferLines >= mNVisibleLines - 1)
       {
@@ -357,6 +359,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
                               scrollbar_width(), text_area.h+TOP_MARGIN+BOTTOM_MARGIN);
         }
       }
+      if (vbvis != mVScrollBar->visible()) again = 1;
 
       /*
        Decide if the horizontal scrollbar needs to be visible. If the text
