@@ -342,7 +342,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
     // figure the scrollbars
     if (scrollbar_width()) {
       /* Decide if the vertical scrollbar needs to be visible */
-      int vbvis = mVScrollBar->visible();
+      uchar vbvis = mVScrollBar->visible();
       if (scrollbar_align() & (FL_ALIGN_LEFT|FL_ALIGN_RIGHT) &&
           mNBufferLines >= mNVisibleLines - 1)
       {
@@ -386,7 +386,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
       if (scrollbar_align() & (FL_ALIGN_TOP|FL_ALIGN_BOTTOM) &&
           (mVScrollBar->visible() || longest_vline() > text_area.w))
       {
-        char wrap_at_bounds = mContinuousWrap && (mWrapMarginPix==0);
+        char wrap_at_bounds = mContinuousWrap && (mWrapMarginPix<text_area.w);
         if (!mHScrollBar->visible() && !wrap_at_bounds) {
           mHScrollBar->set_visible();
           again = 1; // loop again to see if we now need vert. & recalc sizes
