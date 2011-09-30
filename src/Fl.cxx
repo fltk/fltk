@@ -776,8 +776,9 @@ static handler_link *handlers = 0;
   them returns non-zero then the event is ignored.  Events that cause
   this to be called are:
 
-  - FL_SHORTCUT events that are not recognized by any widget.
+  - \ref FL_SHORTCUT events that are not recognized by any widget.
     This lets you provide global shortcut keys.
+  - \ref FL_SCREEN_CONFIGURATION_CHANGED events (not implemented on the X11 platform).
   - System events that FLTK does not recognize.  See fl_xevent.
   - \e Some other events when the widget FLTK selected returns
     zero from its handle() method.  Exactly which ones may change

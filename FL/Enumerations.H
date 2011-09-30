@@ -283,7 +283,11 @@ enum Fl_Event {	// events
       If the widget returns 1, it will receive the data in the immediately 
       following FL_PASTE event.
    */
-  FL_DND_RELEASE	= 23
+  FL_DND_RELEASE	= 23,
+  /** The screen configuration (number, positions) was changed.
+   Use Fl::add_handler() to be notified of this event.
+   */
+  FL_SCREEN_CONFIGURATION_CHANGED = 24
 };
 
 /** \name When Conditions */

@@ -1099,6 +1099,7 @@ void fl_open_callback(void (*cb)(const char *)) {
       [[NSNotificationCenter defaultCenter] postNotificationName:NSWindowDidMoveNotification object:win];
       }
     }
+  Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
 }
 - (void)applicationWillResignActive:(NSNotification *)notify
 {

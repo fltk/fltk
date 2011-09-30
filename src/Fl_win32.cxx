@@ -1203,6 +1203,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     // unclear on what is correct:
     if (fl_msg.message == WM_RENDERALLFORMATS) CloseClipboard();
     return 1;}
+  case WM_DISPLAYCHANGE: // occurs when screen configuration (number, position) changes
+    Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
+    return 0;
 
   default:
     if (Fl::handle(0,0)) return 0;
