@@ -200,7 +200,7 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   int            _scrollbar_size;		// size of scrollbar trough
 
 protected:
-  Fl_Scrollbar *_vscroll;			/// Vertical scrollbar
+  Fl_Scrollbar *_vscroll;			///< Vertical scrollbar
   void item_clicked(Fl_Tree_Item* val);
   void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason);
   Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);
