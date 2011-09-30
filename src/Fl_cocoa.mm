@@ -1738,6 +1738,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   int ret = Fl::handle( FL_DND_ENTER, target );
   breakMacEventLoop();
   fl_unlock_function();
+  Fl::flush();
   return ret ? NSDragOperationCopy : NSDragOperationNone;
 }
 - (NSDragOperation)draggingUpdated:(id < NSDraggingInfo >)sender
@@ -1749,6 +1750,10 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   int ret = Fl::handle( FL_DND_DRAG, target );
   breakMacEventLoop();
   fl_unlock_function();
+  // if the DND started in the same application, Fl::dnd() will not return until 
+  // the the DND operation is finished. The call below causes the drop indicator
+  // to be draw correctly (a full event handling would be better...)
+  Fl::flush();
   return ret ? NSDragOperationCopy : NSDragOperationNone;
 }
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender 
