@@ -1748,16 +1748,17 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     // set the class property, which controls the icon used:
     if (win->xclass()) {
       char buffer[1024];
-      char *p; const char *q;
-      // truncate on any punctuation, because they break XResource lookup:
-      for (p = buffer, q = win->xclass(); isalnum(*q)||(*q&128);) *p++ = *q++;
-      *p++ = 0;
+      const char *xclass = win->xclass();
+      const int len = strlen(xclass);
+      // duplicate the xclass string for use as XA_WM_CLASS
+      strcpy(buffer, xclass);
+      strcpy(buffer + len + 1, xclass);
       // create the capitalized version:
-      q = buffer;
-      *p = toupper(*q++); if (*p++ == 'X') *p++ = toupper(*q++);
-      while ((*p++ = *q++));
+      buffer[len + 1] = toupper(buffer[len + 1]);
+      if (buffer[len + 1] == 'X')
+        buffer[len + 2] = toupper(buffer[len + 2]);
       XChangeProperty(fl_display, xp->xid, XA_WM_CLASS, XA_STRING, 8, 0,
-                      (unsigned char *)buffer, p-buffer-1);
+                      (unsigned char *)buffer, len * 2 + 2);
     }
 
     if (win->non_modal() && xp->next && !fl_disable_transient_for) {
