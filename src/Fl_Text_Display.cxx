@@ -315,7 +315,7 @@ void Fl_Text_Display::resize(int X, int Y, int W, int H) {
     /* In continuous wrap mode, a change in width affects the total number of
      lines in the buffer, and can leave the top line number incorrect, and
      the top character no longer pointing at a valid line start */
-    if (mContinuousWrap && !mWrapMarginPix && W!=oldWidth) {
+    if (mContinuousWrap && !mWrapMarginPix && (W!=oldWidth || text_area.w!=oldTAWidth)) {
       int oldFirstChar = mFirstChar;
       mNBufferLines = count_lines(0, buffer()->length(), true);
       mFirstChar = line_start(mFirstChar);
