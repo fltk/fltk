@@ -122,7 +122,7 @@ static void make_raw_name(char *raw, char *pretty)
     while ((style) && (style < last))
     {
       int type;
-      while ((*style == '=') || (*style == ' ') || (*style == '\t'))
+      while ((*style == '=') || (*style == ' ') || (*style == '\t') || (*style == ','))
       {
         style++; // Start of Style string
         if ((style >= last) || (*style == 0)) continue;
@@ -165,7 +165,7 @@ static void make_raw_name(char *raw, char *pretty)
         goto NEXT_STYLE;
       } // switch end
 NEXT_STYLE:
-      while ((*style != ' ') && (*style != '\t'))
+      while ((*style != ' ') && (*style != '\t') && (*style != ','))
       {
         style++;
         if ((style >= last) || (*style == 0)) goto STYLE_DONE;
@@ -276,10 +276,12 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
         first = (char *)font; // name is just what was returned
       }
       // Truncate the name after the (english) modifiers description
-      if (stop)
-      {
-        *stop = 0; // Terminate the string at the first comma, if there is one
-      }
+      // Matt: Actually, there is no guarantee that the *first* description is the English one.
+      // Matt: So we keep the entire description, just in case.
+      //if (stop)
+      //{
+      //  *stop = 0; // Terminate the string at the first comma, if there is one
+      //}
 
       // Copy the font description into our list
       if (first == (char *)font)
