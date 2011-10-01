@@ -43,7 +43,7 @@
 #  include <X11/Xlocale.h>
 #  include <X11/Xlib.h>
 #  include <X11/keysym.h>
-#ifdef HAVE_XRANDR
+#if HAVE_XRANDR
 #include <X11/extensions/Xrandr.h>
 static int randrEventBase = -1;
 #endif
@@ -642,7 +642,7 @@ void fl_open_display(Display* d) {
 #if !USE_COLORMAP
   Fl::visual(FL_RGB);
 #endif
-#ifdef HAVE_XRANDR
+#if HAVE_XRANDR
   int error_base;
   if (XRRQueryExtension(d, &randrEventBase, &error_base))
     XRRSelectInput(d, RootWindow(d, fl_screen), RRScreenChangeNotifyMask);
@@ -932,7 +932,7 @@ int fl_handle(const XEvent& thisevent)
   if ( XFilterEvent((XEvent *)&xevent, 0) )
       return(1);
   
-#ifdef HAVE_XRANDR  
+#if HAVE_XRANDR  
   if( randrEventBase >= 0 && xevent.type == randrEventBase + RRScreenChangeNotify) {
     XRRUpdateConfiguration (&xevent);
     Fl::call_screen_init();
