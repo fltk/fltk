@@ -332,53 +332,54 @@ void Fl_Tree::draw() {
   // Let group draw box+label but *NOT* children.
   // We handle drawing children ourselves by calling each item's draw()
   //
-  // Handle group's bg
-  Fl_Group::draw_box();
-  Fl_Group::draw_label();
-  // Handle tree
-  if ( ! _root ) return;
   int cx = x() + Fl::box_dx(box());
   int cy = y() + Fl::box_dy(box());
   int cw = w() - Fl::box_dw(box());
   int ch = h() - Fl::box_dh(box());
-  // These values are changed during drawing
-  // 'Y' will be the lowest point on the tree
-  int X = cx + _prefs.marginleft();
-  int Y = cy + _prefs.margintop() - (_vscroll->visible() ? _vscroll->value() : 0);
-  int W = cw - _prefs.marginleft();			// - _prefs.marginright();
-  int Ysave = Y;
-  fl_push_clip(cx,cy,cw,ch);
-  {
-    fl_font(_prefs.labelfont(), _prefs.labelsize());
-    _root->draw(X, Y, W, this,
-                (Fl::focus()==this)?_item_focus:0,	// show focus item ONLY if Fl_Tree has focus
-		_prefs);
-  }
-  fl_pop_clip();
-  
-  // Show vertical scrollbar?
-  int ydiff = (Y+_prefs.margintop())-Ysave;		// ydiff=size of tree
-  int ytoofar = (cy+ch) - Y;				// ytoofar -- scrolled beyond bottom (e.g. stow)
-  
-  //printf("ydiff=%d ch=%d Ysave=%d ytoofar=%d value=%d\n",
-  //int(ydiff),int(ch),int(Ysave),int(ytoofar), int(_vscroll->value()));
-  
-  if ( ytoofar > 0 ) ydiff += ytoofar;
-  if ( Ysave<cy || ydiff > ch || int(_vscroll->value()) > 1 ) {
-    _vscroll->visible();
+  if (damage() & ~FL_DAMAGE_CHILD) { // redraw entire thing
+    // Handle group's bg
+    Fl_Group::draw_box();
+    Fl_Group::draw_label();
+    if ( ! _root ) return;
+    // These values are changed during drawing
+    // 'Y' will be the lowest point on the tree
+    int X = cx + _prefs.marginleft();
+    int Y = cy + _prefs.margintop() - (_vscroll->visible() ? _vscroll->value() : 0);
+    int W = cw - _prefs.marginleft();			// - _prefs.marginright();
+    int Ysave = Y;
+    fl_push_clip(cx,cy,cw,ch);
+    {
+      fl_font(_prefs.labelfont(), _prefs.labelsize());
+      _root->draw(X, Y, W, this,
+		  (Fl::focus()==this)?_item_focus:0,	// show focus item ONLY if Fl_Tree has focus
+		  _prefs);
+    }
+    fl_pop_clip();
+    
+    // Show vertical scrollbar?
+    int ydiff = (Y+_prefs.margintop())-Ysave;		// ydiff=size of tree
+    int ytoofar = (cy+ch) - Y;				// ytoofar -- scrolled beyond bottom (e.g. stow)
+    
+    //printf("ydiff=%d ch=%d Ysave=%d ytoofar=%d value=%d\n",
+    //int(ydiff),int(ch),int(Ysave),int(ytoofar), int(_vscroll->value()));
+    
+    if ( ytoofar > 0 ) ydiff += ytoofar;
+    if ( Ysave<cy || ydiff > ch || int(_vscroll->value()) > 1 ) {
+      _vscroll->visible();
 
-    int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
-    int sx = x()+w()-Fl::box_dx(box())-scrollsize;
-    int sy = y()+Fl::box_dy(box());
-    int sw = scrollsize;
-    int sh = h()-Fl::box_dh(box());
-    _vscroll->show();
-    _vscroll->range(0.0,ydiff-ch);
-    _vscroll->resize(sx,sy,sw,sh);
-    _vscroll->slider_size(float(ch)/float(ydiff));
-  } else {
-    _vscroll->Fl_Slider::value(0);
-    _vscroll->hide();
+      int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
+      int sx = x()+w()-Fl::box_dx(box())-scrollsize;
+      int sy = y()+Fl::box_dy(box());
+      int sw = scrollsize;
+      int sh = h()-Fl::box_dh(box());
+      _vscroll->show();
+      _vscroll->range(0.0,ydiff-ch);
+      _vscroll->resize(sx,sy,sw,sh);
+      _vscroll->slider_size(float(ch)/float(ydiff));
+    } else {
+      _vscroll->Fl_Slider::value(0);
+      _vscroll->hide();
+    }
   }
   fl_push_clip(cx,cy,cw,ch);
   Fl_Group::draw_children();	// draws any FLTK children set via Fl_Tree::widget()
