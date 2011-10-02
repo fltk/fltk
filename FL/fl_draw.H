@@ -488,7 +488,7 @@ inline void fl_transformed_vertex(double xf, double yf) {fl_graphics_driver->tra
   The size of the font is measured in pixels and not "points".
   Lines should be spaced \p size pixels apart or more.
 */
-inline void fl_font(Fl_Font face, Fl_Fontsize size) { fl_graphics_driver->font(face,size); }
+inline void fl_font(Fl_Font face, Fl_Fontsize fsize) { fl_graphics_driver->font(face,fsize); }
 
 /**
   Returns the \p face set by the most recent call to fl_font().

@@ -283,7 +283,7 @@ public:
   /**
     Sets the default text size (in pixels) for the lines in the browser to \p size.
   */
-  void textsize(Fl_Fontsize size) { textsize_ = size; }
+  void textsize(Fl_Fontsize newSize) { textsize_ = newSize; }
 
   /**
     Gets the default text color for the lines in the browser.
@@ -325,8 +325,8 @@ public:
                     If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
     \see Fl::scrollbar_size()
   */
-  void scrollbar_size(int size) {
-      scrollbar_size_ = size;
+  void scrollbar_size(int newSize) {
+      scrollbar_size_ = newSize;
   }   
   /**
     This method has been deprecated, existing for backwards compatibility only.

@@ -202,7 +202,7 @@ protected:
 
   /** \internal Vertical offset of text to top edge of widget. */
   int yscroll() const {return yscroll_;}
-  void yscroll(int y) { yscroll_ = y; damage(FL_DAMAGE_EXPOSE);}
+  void yscroll(int yOffset) { yscroll_ = yOffset; damage(FL_DAMAGE_EXPOSE);}
 
   /* Return the number of lines displayed on a single page.  */
   int linesPerPage();

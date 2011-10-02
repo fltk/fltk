@@ -56,8 +56,8 @@ class FL_EXPORT Fl_Input_Choice : public Fl_Group {
       if (Fl::focus() == this) draw_focus();
     }
   public:
-    InputMenuButton(int x,int y,int w,int h,const char*l=0) : 
-	Fl_Menu_Button(x,y,w,h,l) { box(FL_UP_BOX); }
+    InputMenuButton(int X,int Y,int W,int H,const char*L=0) : 
+	Fl_Menu_Button(X, Y, W, H, L) { box(FL_UP_BOX); }
   };
 
   Fl_Input *inp_;
@@ -128,7 +128,7 @@ public:
     and label string.
   <P> Inherited destructor Destroys the widget and any value associated with it.
   */
-  Fl_Input_Choice (int x,int y,int w,int h,const char*l=0) : Fl_Group(x,y,w,h,l) {
+  Fl_Input_Choice (int X,int Y,int W,int H,const char*L=0) : Fl_Group(X,Y,W,H,L) {
     Fl_Group::box(FL_DOWN_BOX);
     align(FL_ALIGN_LEFT);				// default like Fl_Input
     inp_ = new Fl_Input(inp_x(), inp_y(),

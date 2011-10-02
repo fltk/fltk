@@ -375,8 +375,8 @@ public:
                     If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
     \see Fl::scrollbar_size()
   */
-  void scrollbar_size(int size) {
-      scrollbar_size_ = size;
+  void scrollbar_size(int newSize) {
+      scrollbar_size_ = newSize;
   }   
 };
 

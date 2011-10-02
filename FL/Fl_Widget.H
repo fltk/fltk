@@ -857,7 +857,7 @@ public:
       \param[in] w the possible parent widget.
       \see contains()
    */
-  int inside(const Fl_Widget* w) const {return w ? w->contains(this) : 0;}
+  int inside(const Fl_Widget* wgt) const {return wgt ? wgt->contains(this) : 0;}
 
   /** Schedules the drawing of the widget.
       Marks the widget as needing its draw() routine called.

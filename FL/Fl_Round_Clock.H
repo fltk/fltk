@@ -28,8 +28,8 @@
 class FL_EXPORT Fl_Round_Clock : public Fl_Clock {
 public:
     /** Creates the clock widget, setting his type and box. */
-    Fl_Round_Clock(int x,int y,int w,int h, const char *l = 0)
-	: Fl_Clock(x,y,w,h,l) {type(FL_ROUND_CLOCK); box(FL_NO_BOX);}
+    Fl_Round_Clock(int X,int Y,int W,int H, const char *L = 0)
+	: Fl_Clock(X, Y, W, H, L) {type(FL_ROUND_CLOCK); box(FL_NO_BOX);}
 };
 
 #endif

@@ -449,19 +449,19 @@ protected:
   
   void damage_zone(int r1, int c1, int r2, int c2, int r3 = 0, int c3 = 0);
   
-  void redraw_range(int toprow, int botrow, int leftcol, int rightcol) {
+  void redraw_range(int topRow, int botRow, int leftCol, int rightCol) {
     if ( _redraw_toprow == -1 ) {
       // Initialize redraw range
-      _redraw_toprow = toprow;
-      _redraw_botrow = botrow;
-      _redraw_leftcol = leftcol;
-      _redraw_rightcol = rightcol;
+      _redraw_toprow = topRow;
+      _redraw_botrow = botRow;
+      _redraw_leftcol = leftCol;
+      _redraw_rightcol = rightCol;
     } else {
       // Extend redraw range
-      if ( toprow < _redraw_toprow ) _redraw_toprow = toprow;
-      if ( botrow > _redraw_botrow ) _redraw_botrow = botrow;
-      if ( leftcol < _redraw_leftcol ) _redraw_leftcol = leftcol;
-      if ( rightcol > _redraw_rightcol ) _redraw_rightcol = rightcol;
+      if ( topRow < _redraw_toprow ) _redraw_toprow = topRow;
+      if ( botRow > _redraw_botrow ) _redraw_botrow = botRow;
+      if ( leftCol < _redraw_leftcol ) _redraw_leftcol = leftCol;
+      if ( rightCol > _redraw_rightcol ) _redraw_rightcol = rightCol;
     }
     
     // Indicate partial redraw needed of some cells
@@ -852,25 +852,25 @@ public:
     table->init_sizes();
     table->redraw();
   }
-  void add(Fl_Widget& w) {
-    table->add(w);
+  void add(Fl_Widget& wgt) {
+    table->add(wgt);
     if ( table->children() > 2 ) {
       table->show();
     } else {
       table->hide();
     } 
   }
-  void add(Fl_Widget* w) {
-    add(*w);
+  void add(Fl_Widget* wgt) {
+    add(*wgt);
   }
-  void insert(Fl_Widget& w, int n) {
-    table->insert(w,n);
+  void insert(Fl_Widget& wgt, int n) {
+    table->insert(wgt,n);
   }
-  void insert(Fl_Widget& w, Fl_Widget* w2) {
-    table->insert(w,w2);
+  void insert(Fl_Widget& wgt, Fl_Widget* w2) {
+    table->insert(wgt,w2);
   }
-  void remove(Fl_Widget& w) {
-    table->remove(w);
+  void remove(Fl_Widget& wgt) {
+    table->remove(wgt);
   }
   void begin() {
     table->begin();
@@ -920,11 +920,11 @@ public:
   int children() const {
     return(table->children()-2);    // -2: skip Fl_Scroll's h/v scrollbar widgets
   }
-  int find(const Fl_Widget *w) const {
-    return(table->find(w));
+  int find(const Fl_Widget *wgt) const {
+    return(table->find(wgt));
   }
-  int find(const Fl_Widget &w) const {
-    return(table->find(w));
+  int find(const Fl_Widget &wgt) const {
+    return(table->find(wgt));
   } 
   // CALLBACKS
   

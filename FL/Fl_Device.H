@@ -364,7 +364,7 @@ public:
   static const char *class_id;
   virtual const char *class_name() {return class_id;};
   /** \brief see fl_font(Fl_Font face, Fl_Fontsize size). */
-  virtual void font(Fl_Font face, Fl_Fontsize size) {font_ = face; size_ = size;}
+  virtual void font(Fl_Font face, Fl_Fontsize fsize) {font_ = face; size_ = fsize;}
   /** \brief see fl_font(void). */
   Fl_Font font() {return font_; }
   /** \brief see fl_size(). */
@@ -529,8 +529,8 @@ public:
 class FL_EXPORT Fl_Device_Plugin : public Fl_Plugin {
 public:
   /** \brief The constructor */
-  Fl_Device_Plugin(const char *name)
-  : Fl_Plugin(klass(), name) { }
+  Fl_Device_Plugin(const char *pluginName)
+  : Fl_Plugin(klass(), pluginName) { }
   /** \brief Returns the class name */
   virtual const char *klass() { return "fltk:device"; }
   /** \brief Returns the plugin name */
