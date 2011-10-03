@@ -302,35 +302,47 @@ if (fl_mac_os_version >= 100500) {
     // r: index of the character block containing uni
     unsigned int r = uni >> 7; // change 7 if sizeof(width) is changed
     if (!fl_fontsize->width[r]) { // this character block has not been hit yet
-//fprintf(stderr,"r=%d size=%d name=%s\n",r,fl_fontsize->size, fl_fontsize->q_name);
+      //fprintf(stderr,"r=%d size=%d name=%s\n",r,fl_fontsize->size, fl_fontsize->q_name);
       // allocate memory to hold width of each character in the block
       fl_fontsize->width[r] = (float*) malloc(sizeof(float) * block);
       UniChar ii = r * block;
       CGSize advance_size;
       CGGlyph glyph;
       for (int j = 0; j < block; j++) { // loop over the block
-	CTFontRef font2 = fl_fontsize->fontref;
-	bool must_release = false;
 	// ii spans all characters of this block
-	bool b = CTFontGetGlyphsForCharacters(font2, &ii, &glyph, 1);
-	if (!b) { // the current font doesn't contain this char
-	  CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, &ii, 1, kCFAllocatorNull);
-	  // find a font that contains it
-	  font2 = CTFontCreateForString(font2, str, CFRangeMake(0,1));
-	  must_release = true;
-	  CFRelease(str);
-	  b = CTFontGetGlyphsForCharacters(font2, &ii, &glyph, 1);
-	  }
-	if (b) CTFontGetAdvancesForGlyphs(font2, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
-	else advance_size.width = 0.;
+	bool b = CTFontGetGlyphsForCharacters(fl_fontsize->fontref, &ii, &glyph, 1);
+	if (b) 
+	  CTFontGetAdvancesForGlyphs(fl_fontsize->fontref, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
+	else 
+	  advance_size.width = -1e9; // calculate this later
 	// the width of one character of this block of characters
 	fl_fontsize->width[r][j] = advance_size.width;
-	if (must_release) CFRelease(font2);
 	ii++;
       }
     }
     // sum the widths of all characters of txt
-    retval += fl_fontsize->width[r][uni & (block-1)];
+    double wdt = fl_fontsize->width[r][uni & (block-1)];
+    if (wdt == -1e9) {
+      CGSize advance_size;
+      CGGlyph glyph;
+      CTFontRef font2 = fl_fontsize->fontref;
+      bool must_release = false;
+      bool b = CTFontGetGlyphsForCharacters(font2, &uni, &glyph, 1);
+      if (!b) { // the current font doesn't contain this char
+	CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, &uni, 1, kCFAllocatorNull);
+	// find a font that contains it
+	font2 = CTFontCreateForString(font2, str, CFRangeMake(0,1));
+	must_release = true;
+	CFRelease(str);
+	b = CTFontGetGlyphsForCharacters(font2, &uni, &glyph, 1);
+      }
+      if (b) CTFontGetAdvancesForGlyphs(font2, kCTFontHorizontalOrientation, &glyph, &advance_size, 1);
+      else advance_size.width = 0.;
+      // the width of the 'uni' character
+      wdt = fl_fontsize->width[r][uni & (block-1)] = advance_size.width;
+      if (must_release) CFRelease(font2);
+    }
+    retval += wdt;
   }
   return retval;
 } else {
