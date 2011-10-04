@@ -779,6 +779,8 @@ static handler_link *handlers = 0;
   - \ref FL_SHORTCUT events that are not recognized by any widget.
     This lets you provide global shortcut keys.
   - \ref FL_SCREEN_CONFIGURATION_CHANGED events.
+    Under X11, this event requires the libXrandr.so shared library to be
+    loadable at run-time and the X server to implement the RandR extension.
   - System events that FLTK does not recognize.  See fl_xevent.
   - \e Some other events when the widget FLTK selected returns
     zero from its handle() method.  Exactly which ones may change
