@@ -43,7 +43,7 @@
 #  include <X11/Xlocale.h>
 #  include <X11/Xlib.h>
 #  include <X11/keysym.h>
-#define USE_XRANDR 1 // means attempt to dynamically load libXrandr.so
+#define USE_XRANDR (HAVE_DLSYM && HAVE_DLFCN_H) // means attempt to dynamically load libXrandr.so
 #if USE_XRANDR
 #include <dlfcn.h>
 #define RRScreenChangeNotifyMask  (1L << 0) // from X11/extensions/Xrandr.h
