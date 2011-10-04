@@ -851,10 +851,10 @@ public:
    */
   int contains(const Fl_Widget *w) const ;
 
-  /** Checks if this widget is a child of w.
-      Returns 1 if this widget is a child of \p w, or is
-      equal to \p w. Returns 0 if \p w is NULL.
-      \param[in] w the possible parent widget.
+  /** Checks if this widget is a child of \p wgt.
+      Returns 1 if this widget is a child of \p wgt, or is
+      equal to \p wgt. Returns 0 if \p wgt is NULL.
+      \param[in] wgt the possible parent widget.
       \see contains()
    */
   int inside(const Fl_Widget* wgt) const {return wgt ? wgt->contains(this) : 0;}

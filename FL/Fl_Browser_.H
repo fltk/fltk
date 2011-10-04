@@ -307,7 +307,7 @@ public:
       return(scrollbar_size_);
   }
   /**
-    Sets the pixel size of the scrollbars' troughs to the \p size, in pixels.
+    Sets the pixel size of the scrollbars' troughs to \p newSize, in pixels.
 
     Normally you should not need this method, and should use
     Fl::scrollbar_size(int) instead to manage the size of ALL 
@@ -318,10 +318,10 @@ public:
     Only use THIS method if you really need to override the global
     scrollbar size. The need for this should be rare.
     
-    Setting \p size to the special value of 0 causes the widget to
+    Setting \p newSize to the special value of 0 causes the widget to
     track the global Fl::scrollbar_size(), which is the default.
     
-    \param[in] size Sets the scrollbar size in pixels.\n
+    \param[in] newSize Sets the scrollbar size in pixels.\n
                     If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
     \see Fl::scrollbar_size()
   */
