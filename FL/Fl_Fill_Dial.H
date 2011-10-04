@@ -28,8 +28,8 @@
 class FL_EXPORT Fl_Fill_Dial : public Fl_Dial {
 public:
     /** Creates a filled dial, also setting its type to FL_FILL_DIAL. */
-    Fl_Fill_Dial(int x,int y,int w,int h, const char *l = 0)
-	: Fl_Dial(x,y,w,h,l) {type(FL_FILL_DIAL);}
+    Fl_Fill_Dial(int X,int Y,int W,int H, const char *L = 0)
+	: Fl_Dial(X,Y,W,H,L) {type(FL_FILL_DIAL);}
 };
 
 #endif
