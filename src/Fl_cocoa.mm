@@ -1295,7 +1295,7 @@ void fl_open_display() {
 	       selector:@selector(anywindowwillclosenotif:) 
 		   name:NSWindowWillCloseNotification 
 		 object:nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSApplicationDidChangeScreenParametersNotification object:NSApp];
+    main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
   }
 }
 
