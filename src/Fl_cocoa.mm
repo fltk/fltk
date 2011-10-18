@@ -1976,7 +1976,6 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  */
 void Fl_X::make(Fl_Window* w)
 {
-  static int xyPos = 100;
   if ( w->parent() ) {		// create a subwindow
     Fl_Group::current(0);
     // our subwindow needs this structure to know about its clipping. 
@@ -2061,13 +2060,7 @@ void Fl_X::make(Fl_Window* w)
       wp += 2*bx;
       hp += 2*by+bt;
     }
-    if (!(w->flags() & Fl_Window::FORCE_POSITION)) {
-      // default window positioning on the main screen
-      w->x(xyPos+Fl::x());
-      w->y(xyPos+Fl::y());
-      xyPos += 25;
-      if (xyPos>200) xyPos = 100;
-    } else {
+    if (w->flags() & Fl_Window::FORCE_POSITION) {
       if (!Fl::grab()) {
         xp = xwm; yp = ywm;
         w->x(xp);w->y(yp);
