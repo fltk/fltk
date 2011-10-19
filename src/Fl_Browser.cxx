@@ -386,7 +386,7 @@ int Fl_Browser::item_height(void *item) const {
 	case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
 	case 'f': case 't': font = FL_COURIER; break;
 	case 'B':
-	case 'C': while (isdigit(*str & 255)) str++;; break;// skip a color number
+	case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
 	case 'F': font = (Fl_Font)strtol(str,&str,10); break;
 	case 'S': tsize = strtol(str,&str,10); break;
 	case 0: case '@': str--;
@@ -448,7 +448,7 @@ int Fl_Browser::item_width(void *item) const {
     case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
     case 'f': case 't': font = FL_COURIER; break;
     case 'B':
-    case 'C': while (isdigit(*str & 255)) str++;; break; // skip a color number
+    case 'C': while (isdigit(*str & 255)) str++; break; // skip a color number
     case 'F': font = (Fl_Font)strtol(str, &str, 10); break;
     case 'S': tsize = strtol(str, &str, 10); break;
     case '.':
