@@ -372,7 +372,6 @@ int Fl_Browser::item_height(void *item) const {
     if (hh > hmax) hmax = hh;
   } else {
     const int* i = column_widths();
-    long int dummy;
     // do each column separately as they may all set different fonts:
     for (char* str = l->txt; str && *str; str++) {
       Fl_Font font = textfont(); // default font
@@ -387,7 +386,7 @@ int Fl_Browser::item_height(void *item) const {
 	case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
 	case 'f': case 't': font = FL_COURIER; break;
 	case 'B':
-	case 'C': dummy = strtol(str, &str, 10); break;// skip a color number
+	case 'C': while (isdigit(*str & 255)) str++;; break;// skip a color number
 	case 'F': font = (Fl_Font)strtol(str,&str,10); break;
 	case 'S': tsize = strtol(str,&str,10); break;
 	case 0: case '@': str--;
@@ -440,7 +439,6 @@ int Fl_Browser::item_width(void *item) const {
   int done = 0;
 
   while (*str == format_char_ && str[1] && str[1] != format_char_) {
-    long int dummy;
     str ++;
     switch (*str++) {
     case 'l': case 'L': tsize = 24; break;
@@ -450,7 +448,7 @@ int Fl_Browser::item_width(void *item) const {
     case 'i': font = (Fl_Font)(font|FL_ITALIC); break;
     case 'f': case 't': font = FL_COURIER; break;
     case 'B':
-    case 'C': dummy = strtol(str, &str, 10); break;// skip a color number
+    case 'C': while (isdigit(*str & 255)) str++;; break; // skip a color number
     case 'F': font = (Fl_Font)strtol(str, &str, 10); break;
     case 'S': tsize = strtol(str, &str, 10); break;
     case '.':
@@ -535,7 +533,6 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
     //#warning FIXME This maybe needs to be more UTF8 aware now...?
     //#endif /*__GNUC__*/
     while (*str == format_char() && *++str && *str != format_char()) {
-      long int dummy;
       switch (*str++) {
       case 'l': case 'L': tsize = 24; break;
       case 'm': case 'M': tsize = 18; break;
@@ -549,7 +546,7 @@ void Fl_Browser::item_draw(void* item, int X, int Y, int W, int H) const {
 	if (!(l->flags & SELECTED)) {
 	  fl_color((Fl_Color)strtol(str, &str, 10));
 	  fl_rectf(X, Y, w1, H);
-	} else dummy = strtol(str, &str, 10);
+	} else while (isdigit(*str & 255)) str++; // skip digits
         break;
       case 'C':
 	lcol = (Fl_Color)strtol(str, &str, 10);
