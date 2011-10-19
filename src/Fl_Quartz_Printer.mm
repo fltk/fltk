@@ -257,7 +257,7 @@ int Fl_System_Printer::start_page (void)
   CGContextSaveGState(fl_gc);
   CGContextSaveGState(fl_gc);
   fl_line_style(FL_SOLID);
-  fl_window = (void *)1; // TODO: something better
+  fl_window = (Window)1; // TODO: something better
   fl_clip_region(0);
   if( status == noErr) gc = fl_gc;
   return status != noErr;
