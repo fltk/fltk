@@ -684,9 +684,9 @@ int Fl_Table::move_cursor(int R, int C) {
 
 // #define DEBUG 1
 #ifdef DEBUG
-#include "eventnames.h"
+#include <FL/names.h>
 #define PRINTEVENT \
-fprintf(stderr,"Table %s: ** Event: %s --\n", (label()?label():"none"), eventnames[event]);
+    fprintf(stderr,"Table %s: ** Event: %s --\n", (label()?label():"none"), fl_eventnames[event]);
 #else
 #define PRINTEVENT
 #endif
@@ -695,14 +695,19 @@ fprintf(stderr,"Table %s: ** Event: %s --\n", (label()?label():"none"), eventnam
 int Fl_Table::handle(int event) {
   PRINTEVENT;
   int ret = Fl_Group::handle(event);	// let FLTK group handle events first
-  if (ret) {
-    if (Fl::event_inside(hscrollbar) || Fl::event_inside(vscrollbar)) return 1;
-    if (Fl::focus() != this && contains(Fl::focus())) return 1;
-  }
   // Which row/column are we over?
   int R, C;  				// row/column being worked on
   ResizeFlag resizeflag;		// which resizing area are we over? (0=none)
   TableContext context = cursor2rowcol(R, C, resizeflag);
+  if (ret) {
+    if (Fl::event_inside(hscrollbar) || Fl::event_inside(vscrollbar)) return 1;
+    if ( context != CONTEXT_ROW_HEADER &&		// mouse not in row header (STR#2742)
+         context != CONTEXT_COL_HEADER &&		// mouse not in col header (STR#2742)
+         Fl::focus() != this && 			// we don't have focus?
+         contains(Fl::focus())) {			// focus is a child?
+      return 1;
+    }
+  }
   switch ( event ) {
     case FL_PUSH:
       if (Fl::event_button() == 1 && !Fl::event_clicks()) {
