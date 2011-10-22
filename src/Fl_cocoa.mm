@@ -932,7 +932,6 @@ void fl_open_callback(void (*cb)(const char *)) {
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (void)windowWillClose:(NSNotification *)notif;
-- (void)anywindowwillclosenotif:(NSNotification *)notif;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
 - (void)applicationDidChangeScreenParameters:(NSNotification *)aNotification;
@@ -1035,18 +1034,6 @@ void fl_open_callback(void (*cb)(const char *)) {
     }
   }
   fl_unlock_function();
-}
-- (void)anywindowwillclosenotif:(NSNotification *)notif
-{
-  // necessary so that after closing a non-FLTK window (e.g., Fl_Native_File_Chooser)
-  // the front window turns key again
-  NSWindow *closing = (NSWindow*)[notif object];
-  if ([closing isMemberOfClass:[FLWindow class]]) return;
-  NSWindow *nsk = [NSApp keyWindow];
-  NSWindow *nsm = [NSApp mainWindow];
-  if ([nsm isMemberOfClass:[FLWindow class]] && nsk == nil) {
-    [nsm makeKeyAndOrderFront:nil];
-  }
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
@@ -1304,11 +1291,6 @@ void fl_open_display() {
     }
     if (![NSApp servicesMenu]) createAppleMenu();
     fl_system_menu = [NSApp mainMenu];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:[NSApp delegate] 
-	       selector:@selector(anywindowwillclosenotif:) 
-		   name:NSWindowWillCloseNotification 
-		 object:nil];
     main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
   }
 }
