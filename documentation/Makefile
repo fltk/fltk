@@ -47,7 +47,8 @@ HTMLFILES	= 	 \
                          $(SRC_DOCDIR)/migration_1_3.dox \
                          $(SRC_DOCDIR)/development.dox \
                          $(SRC_DOCDIR)/license.dox \
-                         $(SRC_DOCDIR)/examples.dox
+                         $(SRC_DOCDIR)/examples.dox \
+                         $(SRC_DOCDIR)/faq.dox
 
 MANPAGES =	$(SRC_DOCDIR)/fltk.$(CAT3EXT) $(SRC_DOCDIR)/fltk-config.$(CAT1EXT) \
 		$(SRC_DOCDIR)/fluid.$(CAT1EXT) $(SRC_DOCDIR)/blocks.$(CAT6EXT) \

@@ -4,8 +4,8 @@
 
 The FLTK distribution contains over 60 sample applications written
 in, or ported to, FLTK. If the FLTK archive you received does not
-contain a 'test' directory, you can download the complete FLTK
-distribution from \b http://fltk.org/software.php .
+contain either an 'examples' or 'test' directory, you can download
+the complete FLTK distribution from \b http://fltk.org/software.php .
 
 Most of the example programs were created while testing a group of widgets. 
 They are not meant to be great achievements in clean C++ programming, but
