@@ -2825,6 +2825,7 @@ void Fl_X::set_cursor(Fl_Cursor c)
 }
 - (void)showPanel;
 - (void)printPanel;
+- (void)closePanel:(NSNotification *)notif;
 @end
 @implementation FLaboutItemTarget
 - (void)showPanel
@@ -2836,7 +2837,16 @@ void Fl_X::set_cursor(Fl_Cursor c)
 		FL_MAJOR_VERSION, FL_MINOR_VERSION ]] autorelease], @"Credits",
                 	     nil];
     [NSApp orderFrontStandardAboutPanelWithOptions:options];
-  }
+  [[NSNotificationCenter defaultCenter] addObserver:self 
+					   selector:@selector(closePanel:) 
+					       name:NSWindowWillCloseNotification 
+					     object:[NSApp keyWindow]];
+}
+- (void)closePanel:(NSNotification *)notif
+{
+  [[NSApp delegate] windowWillClose:notif];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 //#include <FL/Fl_PostScript.H>
 - (void)printPanel
 {
