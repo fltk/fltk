@@ -145,9 +145,11 @@ int Fl_Button::handle(int event) {
       set_changed();
     triggered_by_keyboard:
       Fl_Widget_Tracker wp(this);
-      if (type() == FL_RADIO_BUTTON && !value_) {
-	setonly();
-	if (when() & FL_WHEN_CHANGED) do_callback();
+      if (type() == FL_RADIO_BUTTON) {
+        if (!value_) {
+	  setonly();
+	  if (when() & FL_WHEN_CHANGED) do_callback();
+        }
       } else if (type() == FL_TOGGLE_BUTTON) {
 	value(!value());
 	if (when() & FL_WHEN_CHANGED) do_callback();
