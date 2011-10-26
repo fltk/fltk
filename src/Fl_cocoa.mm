@@ -94,7 +94,6 @@ Fl_Surface_Device* Fl_Surface_Device::_surface = (Fl_Surface_Device*)&fl_quartz_
 Fl_Display_Device *Fl_Display_Device::_display = &fl_quartz_display; // the platform display
 
 // public variables
-int fl_screen;
 CGContextRef fl_gc = 0;
 void *fl_system_menu;                   // this is really a NSMenu*
 Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
