@@ -131,10 +131,6 @@ private:
   bool subwindow;
 };
 
-extern struct Fl_XMap {
-  RGBColor rgb;
-  ulong pen;
-} *fl_current_xmap;
 extern Window fl_window;
 
 #endif // FL_LIBRARY || FL_INTERNALS
