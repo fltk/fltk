@@ -140,7 +140,7 @@ Fl_PostScript_File_Device::~Fl_PostScript_File_Device() {
 #ifndef FL_DOXYGEN
 
 #if ! (defined(__APPLE__) || defined(WIN32) )
-  #include "print_panel.cxx"
+#  include "print_panel.cxx"
 #endif
 
 //  Prolog string 
@@ -1538,7 +1538,35 @@ int Fl_PostScript_Printer::start_job(int pages, int *firstpage, int *lastpage) {
 
   // get options
 
-  format = print_page_size->value() ? Fl_Paged_Device::A4 : Fl_Paged_Device::LETTER;
+  switch (print_page_size->value()) {
+    case 0:
+      format = Fl_Paged_Device::LETTER;
+      break;
+    case 2:
+      format = Fl_Paged_Device::LEGAL;
+      break;
+    case 3:
+      format = Fl_Paged_Device::EXECUTIVE;
+      break;
+    case 4:
+      format = Fl_Paged_Device::A3;
+      break;
+    case 5:
+      format = Fl_Paged_Device::A5;
+      break;
+    case 6:
+      format = Fl_Paged_Device::B5;
+      break;
+    case 7:
+      format = Fl_Paged_Device::ENVELOPE;
+      break;
+    case 8:
+      format = Fl_Paged_Device::DLE;
+      break;
+    default:
+      format = Fl_Paged_Device::A4;
+      }
+      
   { // page range choice
     int from = 1, to = pages;
     if (print_pages->value()) {

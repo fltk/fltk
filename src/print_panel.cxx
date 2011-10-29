@@ -111,8 +111,15 @@ static void cb_print_properties_panel(Fl_Double_Window*, void*) {
 }
 
 static Fl_Menu_Item menu_print_page_size[] = {
- {"Letter", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
- {"A4", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"Letter", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"A4", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"Legal", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"Executive", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"A3", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"A5", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"B5", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"Com10", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+  {"DL", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 
@@ -218,10 +225,10 @@ static void cb_Save(Fl_Return_Button*, void*) {
   int val;
   const char *printer = (const char *)print_choice->menu()[print_choice->value()].user_data();
 
-  snprintf(name, sizeof(name), "%s/page_size", printer);
+  snprintf(name, sizeof(name), "%s/page_size", printer == NULL ? "" : printer);
   print_prefs.set(name, print_page_size->value());
 
-  snprintf(name, sizeof(name), "%s/output_mode", printer);
+  snprintf(name, sizeof(name), "%s/output_mode", printer == NULL ? "" : printer);
   for (val = 0; val < 4; val ++) {
     if (print_output_mode[val]->value()) break;
   }
