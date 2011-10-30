@@ -930,7 +930,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 - (void)windowDidBecomeMain:(NSNotification *)notif;
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
-- (void)windowWillClose:(NSNotification *)notif;
+- (void)anyWindowWillClose:(NSNotification *)notif;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
 - (void)applicationDidChangeScreenParameters:(NSNotification *)aNotification;
@@ -1017,7 +1017,7 @@ void fl_open_callback(void (*cb)(const char *)) {
   Fl::handle(FL_HIDE, window);
   fl_unlock_function();
 }
-- (void)windowWillClose:(NSNotification *)notif
+- (void)anyWindowWillClose:(NSNotification *)notif
 {
   fl_lock_function();
   if ([[notif object] isKeyWindow]) {
@@ -1028,7 +1028,7 @@ void fl_open_callback(void (*cb)(const char *)) {
       w = Fl::next_window(w);
       }
     if (w) {
-      [(FLWindow*)Fl_X::i(w)->xid makeKeyAndOrderFront:nil];
+      [(FLWindow*)Fl_X::i(w)->xid makeKeyWindow];
     }
   }
   fl_unlock_function();
@@ -1290,6 +1290,10 @@ void fl_open_display() {
     if (![NSApp servicesMenu]) createAppleMenu();
     fl_system_menu = [NSApp mainMenu];
     main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
+    [[NSNotificationCenter defaultCenter] addObserver:[NSApp delegate] 
+					     selector:@selector(anyWindowWillClose:) 
+						 name:NSWindowWillCloseNotification 
+					       object:nil];
   }
 }
 
@@ -2824,7 +2828,6 @@ void Fl_X::set_cursor(Fl_Cursor c)
 }
 - (void)showPanel;
 - (void)printPanel;
-- (void)closePanel:(NSNotification *)notif;
 @end
 @implementation FLaboutItemTarget
 - (void)showPanel
@@ -2836,15 +2839,6 @@ void Fl_X::set_cursor(Fl_Cursor c)
 		FL_MAJOR_VERSION, FL_MINOR_VERSION ]] autorelease], @"Credits",
                 	     nil];
     [NSApp orderFrontStandardAboutPanelWithOptions:options];
-  [[NSNotificationCenter defaultCenter] addObserver:self 
-					   selector:@selector(closePanel:) 
-					       name:NSWindowWillCloseNotification 
-					     object:[NSApp keyWindow]];
-}
-- (void)closePanel:(NSNotification *)notif
-{
-  [[NSApp delegate] windowWillClose:notif];
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 //#include <FL/Fl_PostScript.H>
 - (void)printPanel
