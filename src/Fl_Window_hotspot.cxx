@@ -32,7 +32,7 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
   // stays on the screen, if possible.
   if (!offscreen) {
     int scr_x, scr_y, scr_w, scr_h;
-    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h);
+    Fl::screen_work_area(scr_x, scr_y, scr_w, scr_h);
 
     int top = 0;
     int left = 0;
@@ -64,10 +64,10 @@ void Fl_Window::hotspot(int X, int Y, int offscreen) {
 #endif
     }
     // now insure contents are on-screen (more important than border):
-    if (X+w()+right > scr_w-scr_x) X = scr_w-scr_x-right-w();
-    if (X-left < scr_x) X = left;
-    if (Y+h()+bottom > scr_h-scr_y) Y = scr_h-scr_y-bottom-h();
-    if (Y-top < scr_y) Y = top;
+    if (X+w()+right > scr_w+scr_x) X = scr_w+scr_x-right-w();
+    if (X-left < scr_x) X = left + scr_x;
+    if (Y+h()+bottom > scr_h+scr_y) Y = scr_h+scr_y-bottom-h();
+    if (Y-top < scr_y) Y = top + scr_y;
     // make sure that we will force this position
     if (X==x()) x(X-1);
   }
