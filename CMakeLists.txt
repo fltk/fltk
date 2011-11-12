@@ -156,6 +156,7 @@ include(CheckFunctionExists)
 
 if(HAVE_DLFCN_H)
    set(CMAKE_REQUIRED_LIBRARIES dl)
+   set(HAVE_DLFCN_H 1)
 endif(HAVE_DLFCN_H)
 CHECK_FUNCTION_EXISTS(dlsym                  HAVE_DLSYM)
 
