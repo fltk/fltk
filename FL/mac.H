@@ -25,7 +25,12 @@
 #  error "Never use <FL/mac.H> directly; include <FL/x.H> instead."
 #endif // !Fl_X_H
 
-typedef void* Window;	    // this is really a pointer to the subclass FLWindow of NSWindow
+#ifdef __OBJC__
+@class FLWindow; // a subclass of the NSWindow Cocoa class
+typedef FLWindow *Window;
+#else
+typedef class FLWindow_opaque *Window; // pointer to the FLWindow objective-c class
+#endif // __OBJC__
 
 #if !(defined(FL_LIBRARY) || defined(FL_INTERNALS)) // this part is used when compiling an application program
 #  include <FL/Fl_Widget.H>
