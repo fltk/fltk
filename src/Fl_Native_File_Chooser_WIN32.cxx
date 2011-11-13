@@ -26,6 +26,9 @@
 #include <stdio.h>		// debugging
 #include <wchar.h>		//MG
 #include "Fl_Native_File_Chooser_common.cxx"		// strnew/strfree/strapp/chrcat
+
+#define FNFC_MAX_PATH 32768		// XXX: MAX_PATH under win32 is 260, too small for modern use
+
 typedef const wchar_t *LPCWSTR; //MG
 LPCWSTR utf8towchar(const char *in); //MG
 char *wchartoutf8(LPCWSTR in);  //MG
@@ -273,7 +276,7 @@ void Fl_Native_File_Chooser::Unix2Win(char *s) {
 int Fl_Native_File_Chooser::showfile() {
   ClearOFN();
   clear_pathnames();
-  size_t fsize = MAX_PATH;
+  size_t fsize = FNFC_MAX_PATH;
   _ofn.Flags |= OFN_NOVALIDATE;		// prevent disabling of front slashes
   _ofn.Flags |= OFN_HIDEREADONLY;	// hide goofy readonly flag
   // USE NEW BROWSER
@@ -291,11 +294,9 @@ int Fl_Native_File_Chooser::showfile() {
     case BROWSE_SAVE_DIRECTORY:
       abort();				// never happens: handled by showdir()
     case BROWSE_FILE:
-      fsize = 65536;			// XXX: there must be a better way
       break;
     case BROWSE_MULTI_FILE:
       _ofn.Flags |= OFN_ALLOWMULTISELECT;
-      fsize = 65536;			// XXX: there must be a better way
       break;
     case BROWSE_SAVE_FILE:
       if ( options() & SAVEAS_CONFIRM && type() == BROWSE_SAVE_FILE ) {
@@ -313,18 +314,19 @@ int Fl_Native_File_Chooser::showfile() {
   // DIALOG TITLE
   if (_title) {
     static WCHAR wtitle[200];
-    wcscpy(wtitle, utf8towchar(_title));
+    wcsncpy(wtitle, utf8towchar(_title), 200);
+    wtitle[200-1] = 0;
     _ofn.lpstrTitle =  wtitle;
   } else {
     _ofn.lpstrTitle = NULL;
   }
   // FILTER
   if (_parsedfilt != NULL) {	// to convert a null-containing char string into a widechar string
-    static WCHAR wpattern[MAX_PATH];
+    static WCHAR wpattern[FNFC_MAX_PATH];
     const char *p = _parsedfilt;
     while(*(p + strlen(p) + 1) != 0) p += strlen(p) + 1;
     p += strlen(p) + 2;
-    MultiByteToWideChar(CP_UTF8, 0, _parsedfilt, p - _parsedfilt, wpattern, MAX_PATH);
+    MultiByteToWideChar(CP_UTF8, 0, _parsedfilt, p - _parsedfilt, wpattern, FNFC_MAX_PATH);
     _ofn.lpstrFilter = wpattern;
   } else {
     _ofn.lpstrFilter = NULL;
@@ -350,7 +352,7 @@ int Fl_Native_File_Chooser::showfile() {
     //     XXX: See KB Q86920 for doc bug:
     //     http://support.microsoft.com/default.aspx?scid=kb;en-us;86920
     //
-    _ofn.lpstrInitialDir    = new WCHAR[MAX_PATH];
+    _ofn.lpstrInitialDir    = new WCHAR[FNFC_MAX_PATH];
     wcscpy((WCHAR *)_ofn.lpstrInitialDir, utf8towchar(_directory));
     // Unix2Win((char*)_ofn.lpstrInitialDir);
   }
@@ -359,9 +361,14 @@ int Fl_Native_File_Chooser::showfile() {
   //     change it, in spite of the OFN_NOCHANGEDIR flag, due to its docs
   //     saying the flag is 'ineffective'. %^(
   //
-  char oldcwd[MAX_PATH];
-  GetCurrentDirectory(MAX_PATH, oldcwd);
-  oldcwd[MAX_PATH-1] = '\0';
+  char *oldcwd = 0;
+  DWORD oldcwdsz = GetCurrentDirectory(0,0);
+  if ( oldcwdsz > 0 ) {
+    oldcwd = (char*)malloc(oldcwdsz); 
+    if (GetCurrentDirectory(oldcwdsz, oldcwd) == 0 ) {
+      free(oldcwd); oldcwd = 0;
+    }
+  }
   // OPEN THE DIALOG WINDOW
   int err;
   if ( _btype == BROWSE_SAVE_FILE ) {
@@ -379,12 +386,16 @@ int Fl_Native_File_Chooser::showfile() {
     sprintf(msg, "CommDlgExtendedError() code=%d", err);
     errmsg(msg);
     // XXX: RESTORE CWD
-    if ( oldcwd[0] ) SetCurrentDirectory(oldcwd);
+    if ( oldcwd ) {
+      SetCurrentDirectory(oldcwd);
+      free(oldcwd); oldcwd = 0;
+    }
     return(-1);
   }
   // XXX: RESTORE CWD
-  if ( oldcwd[0] ) {
+  if ( oldcwd ) {
     SetCurrentDirectory(oldcwd);
+    free(oldcwd); oldcwd = 0;
   }
   // PREPARE PATHNAMES FOR RETURN
   switch ( _btype ) {
@@ -401,7 +412,7 @@ int Fl_Native_File_Chooser::showfile() {
 	// WALK STRING SEARCHING FOR 'DOUBLE-NULL'
 	//     eg. "/dir/name\0foo1\0foo2\0foo3\0\0"
 	//
-	char pathname[MAX_PATH]; 
+	char pathname[FNFC_MAX_PATH]; 
 	for ( const WCHAR *s = dirname + dirlen + 1; 
 		 *s; s+= (wcslen(s)+1)) {
 		strcpy(pathname, wchartoutf8(dirname));
@@ -439,7 +450,7 @@ int CALLBACK Fl_Native_File_Chooser::Dir_CB(HWND win, UINT msg, LPARAM param, LP
       if (data) ::SendMessage(win, BFFM_SETSELECTION, TRUE, data);
       break;
     case BFFM_SELCHANGED:
-      TCHAR path[MAX_PATH];
+      TCHAR path[FNFC_MAX_PATH];
       if ( SHGetPathFromIDList((ITEMIDLIST*)param, path) ) {
 	::SendMessage(win, BFFM_ENABLEOK, 0, 1);
       } else {
@@ -493,10 +504,10 @@ int Fl_Native_File_Chooser::showdir() {
 #endif
 
   // BUFFER
-  char displayname[MAX_PATH];
+  char displayname[FNFC_MAX_PATH];
   _binf.pszDisplayName = displayname;
   // PRESET DIR
-  char presetname[MAX_PATH];
+  char presetname[FNFC_MAX_PATH];
   if ( _directory ) {
     strcpy(presetname, _directory);
     // Unix2Win(presetname);
@@ -513,7 +524,7 @@ int Fl_Native_File_Chooser::showdir() {
   // TBD: expand NetHood shortcuts from this PIDL??
   // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/reference/functions/shbrowseforfolder.asp
 
-  TCHAR path[MAX_PATH];
+  TCHAR path[FNFC_MAX_PATH];
   if ( SHGetPathFromIDList(pidl, path) ) {
     // Win2Unix(path);
     add_pathname(path);
