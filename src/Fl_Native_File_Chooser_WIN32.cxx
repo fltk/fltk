@@ -628,7 +628,11 @@ void Fl_Native_File_Chooser::add_filter(const char *name_in,	// name of filter (
   if ( !name_in || name_in[0] == '\0' ) {
     sprintf(name, "%.*s Files", int(sizeof(name)-10), winfilter);
   } else {
-    sprintf(name, "%.*s", int(sizeof(name)-10), name_in);
+    if ((strlen(name)+strlen(winfilter)+3) < sizeof(name)) {
+      sprintf(name, "%s (%s)", name_in, winfilter);
+    } else {
+      sprintf(name, "%.*s", int(sizeof(name)), name_in);
+    }
   }
   dnullcat(_parsedfilt, name);
   dnullcat(_parsedfilt, winfilter);
