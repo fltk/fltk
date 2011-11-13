@@ -708,10 +708,20 @@ int Fl_Table::handle(int event) {
       return 1;
     }
   }
+  // Make snapshots of realtime event states *before* we service user's cb,
+  // which may do things like post popup menus that return with unexpected button states.
+  int _event_button = Fl::event_button();
+  int _event_clicks = Fl::event_clicks();
+  int _event_x      = Fl::event_x();
+  int _event_y      = Fl::event_y();
+  int _event_key    = Fl::event_key();
+  int _event_state  = Fl::event_state();
+  Fl_Widget *_focus = Fl::focus();
   switch ( event ) {
     case FL_PUSH:
-      if (Fl::event_button() == 1 && !Fl::event_clicks()) {
-        if (Fl::focus() != this) {
+      // Single left-click on table? do user's callback with CONTEXT_TABLE
+      if (_event_button == 1 && !_event_clicks) {
+        if (_focus == this) {
           take_focus();
           do_callback(CONTEXT_TABLE, -1, -1);
           ret = 1;
@@ -726,21 +736,27 @@ int Fl_Table::handle(int event) {
           current_col = select_col = -1;
         }
       }
-      // Need this for eg. right click to pop up a menu
+      // A click on table with user's callback defined?
+      //     Need this for eg. right click to pop up a menu
+      //
       if ( Fl_Widget::callback() &&		// callback defined?
-          resizeflag == RESIZE_NONE ) {	// not resizing?
-        do_callback(context, R, C);		// do callback
+          resizeflag == RESIZE_NONE ) {		// not resizing?
+        do_callback(context, R, C);		// do callback with context (cell, header, etc)
       }
+      // Handle selection if handling a left-click
+      //    Use snapshot of _event_button we made before servicing user's cb's
+      //    to avoid checking realtime state of buttons which may have changed
+      //    during the user's callbacks.
+      //
       switch ( context ) {
         case CONTEXT_CELL:
           // FL_PUSH on a cell?
-          ret = 1; 			// express interest in FL_RELEASE
+          ret = 1;				// express interest in FL_RELEASE
           break;
           
         case CONTEXT_NONE:
           // FL_PUSH on table corner?
-          if ( Fl::event_button() == 1 && 
-              Fl::event_x() < x() + row_header_width()) {
+          if ( _event_button == 1 && _event_x < x() + row_header_width()) {
             current_col = 0;
             select_col = cols() - 1;
             current_row = 0;
@@ -752,7 +768,7 @@ int Fl_Table::handle(int event) {
           
         case CONTEXT_COL_HEADER:
           // FL_PUSH on a column header?
-          if ( Fl::event_button() == 1) {
+          if ( _event_button == 1) {
             // Resizing? Handle it
             if ( resizeflag ) {
               // Start resize if left click on column border.
@@ -762,7 +778,7 @@ int Fl_Table::handle(int event) {
               //
               _resizing_col = ( resizeflag & RESIZE_COL_LEFT ) ? C-1 : C; 
               _resizing_row = -1;
-              _dragging_x = Fl::event_x(); 
+              _dragging_x = _event_x;
               ret = 1;
             } else {
               // Not resizing? Select the column
@@ -778,7 +794,7 @@ int Fl_Table::handle(int event) {
           
         case CONTEXT_ROW_HEADER:
           // FL_PUSH on a row header?
-          if ( Fl::event_button() == 1 ) {
+          if ( _event_button == 1 ) {
             // Resizing? Handle it
             if ( resizeflag ) {
               // Start resize if left mouse clicked on row border.
@@ -788,7 +804,7 @@ int Fl_Table::handle(int event) {
               //
               _resizing_row = ( resizeflag & RESIZE_ROW_ABOVE ) ? R-1 : R; 
               _resizing_col = -1;
-              _dragging_y = Fl::event_y(); 
+              _dragging_y = _event_y; 
               ret = 1;
             } else {
               // Not resizing? Select the row
@@ -821,11 +837,11 @@ int Fl_Table::handle(int event) {
         //    Don't allow column width smaller than 1.
         //    Continue to show FL_CURSOR_WE at all times during drag.
         //
-        int offset = _dragging_x - Fl::event_x();
+        int offset = _dragging_x - _event_x;
         int new_w = col_width(_resizing_col) - offset;
         if ( new_w < _col_resize_min ) new_w = _col_resize_min;
         col_width(_resizing_col, new_w);
-        _dragging_x = Fl::event_x();
+        _dragging_x = _event_x;
         table_resized();
         redraw();
         change_cursor(FL_CURSOR_WE);
@@ -841,11 +857,11 @@ int Fl_Table::handle(int event) {
         //    Don't allow row width smaller than 1.
         //    Continue to show FL_CURSOR_NS at all times during drag.
         //
-        int offset = _dragging_y - Fl::event_y();
+        int offset = _dragging_y - _event_y;
         int new_h = row_height(_resizing_row) - offset;
         if ( new_h < _row_resize_min ) new_h = _row_resize_min;
         row_height(_resizing_row, new_h);
-        _dragging_y = Fl::event_y();
+        _dragging_y = _event_y;
         table_resized();
         redraw();
         change_cursor(FL_CURSOR_NS);
@@ -854,7 +870,7 @@ int Fl_Table::handle(int event) {
           do_callback(CONTEXT_RC_RESIZE, R, C);
         }
       } else {
-        if (Fl::event_button() == 1 && 
+        if (_event_button == 1 && 
             _selecting == CONTEXT_CELL &&
             context == CONTEXT_CELL) {
           if (select_row != R || select_col != C) {
@@ -864,7 +880,7 @@ int Fl_Table::handle(int event) {
           select_col = C;
           ret = 1;
         }
-        else if (Fl::event_button() == 1 && 
+        else if (_event_button == 1 && 
                  _selecting == CONTEXT_ROW_HEADER && 
                  context & (CONTEXT_ROW_HEADER|CONTEXT_COL_HEADER|CONTEXT_CELL)) {
           if (select_row != R) {
@@ -873,7 +889,7 @@ int Fl_Table::handle(int event) {
           select_row = R;
           ret = 1;
         }
-        else if (Fl::event_button() == 1 && 
+        else if (_event_button == 1 && 
                  _selecting == CONTEXT_COL_HEADER 
                  && context & (CONTEXT_ROW_HEADER|CONTEXT_COL_HEADER|CONTEXT_CELL)) {
           if (select_col != C) {
@@ -885,10 +901,10 @@ int Fl_Table::handle(int event) {
       }
       // Enable autodrag if not resizing, and mouse has moved off table edge
       if ( _resizing_row < 0 && _resizing_col < 0 && _auto_drag == 0 && 
-          ( Fl::event_x() > x() + w() - 20 ||
-           Fl::event_x() < x() + row_header_width() || 
-           Fl::event_y() > y() + h() - 20 ||
-           Fl::event_y() < y() + col_header_height()
+          ( _event_x > x() + w() - 20 ||
+            _event_x < x() + row_header_width() || 
+            _event_y > y() + h() - 20 ||
+            _event_y < y() + col_header_height()
            ) ) {
             _start_auto_drag();
           }
@@ -903,7 +919,7 @@ int Fl_Table::handle(int event) {
         case CONTEXT_TABLE:			// release on dead zone
           if ( _resizing_col == -1 &&		// not resizing a column
               _resizing_row == -1 &&		// not resizing a row
-              Fl_Widget::callback() && 	// callback defined
+              Fl_Widget::callback() && 		// callback defined
               when() & FL_WHEN_RELEASE && 	// on button release
               _last_row == R ) {		// release on same row PUSHed?
             // Need this for eg. left clicking on a cell to select it
@@ -914,7 +930,7 @@ int Fl_Table::handle(int event) {
         default:
           break;
       }
-      if ( Fl::event_button() == 1 ) {
+      if ( _event_button == 1 ) {
         change_cursor(FL_CURSOR_DEFAULT);
         _resizing_col = -1;
         _resizing_row = -1;
@@ -964,7 +980,7 @@ int Fl_Table::handle(int event) {
       ret = 0;
       int is_row = select_row;
       int is_col = select_col;
-      switch(Fl::event_key()) {
+      switch(_event_key) {
         case FL_Home:
           ret = move_cursor(0, -1000000);
           break;
@@ -990,7 +1006,7 @@ int Fl_Table::handle(int event) {
           ret = move_cursor(1, 0);
           break;
 	case FL_Tab:
-	  if ( Fl::event_state() & FL_SHIFT ) {
+	  if ( _event_state & FL_SHIFT ) {
             ret = move_cursor(0, -1);		// shift-tab -> left
 	  } else {
 	    ret = move_cursor(0, 1);		// tab -> right
