@@ -2067,6 +2067,10 @@ void Fl_X::make(Fl_Window* w)
     [cw setHasShadow:YES];
     [cw setAcceptsMouseMovedEvents:YES];
     x->xid = cw;
+    x->w = w; w->i = x;
+    x->wait_for_expose = 1;
+    x->next = Fl_X::first;
+    Fl_X::first = x;
     FLView *myview = [[FLView alloc] init];
     [cw setContentView:myview];
     [cw setLevel:winlevel];
@@ -2085,10 +2089,6 @@ void Fl_X::make(Fl_Window* w)
     if(w->menu_window()) { // make menu windows slightly transparent
       [cw setAlphaValue:0.97];
     }
-    x->w = w; w->i = x;
-    x->wait_for_expose = 1;
-    x->next = Fl_X::first;
-    Fl_X::first = x;
     // Install DnD handlers 
     [myview registerForDraggedTypes:[NSArray arrayWithObjects:
                                      NSStringPboardType,  NSFilenamesPboardType, nil]];
