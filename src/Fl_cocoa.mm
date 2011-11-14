@@ -576,21 +576,7 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 	      contentRect:(NSRect)rect 
 		styleMask:(NSUInteger)windowStyle 
 {
-  NSScreen *gd = nil; // gd will point to the screen containing the bottom-left of rect
-  NSArray *a = [NSScreen screens]; 
-  for(NSUInteger i = 0; i < [a count]; i++) {
-    NSRect r = [[a objectAtIndex:i] frame];
-    if (rect.origin.x >= r.origin.x && rect.origin.x <= r.origin.x + r.size.width
-        && rect.origin.y >= r.origin.y && rect.origin.y <= r.origin.y + r.size.height) {
-      gd = [a objectAtIndex:i];
-      rect.origin.x -= r.origin.x; // express rect relatively to gd's origin
-      rect.origin.y -= r.origin.y;
-      break;
-      }
-  }
-  // attempt to create the window on screen gd
-  self = [super initWithContentRect:rect styleMask:windowStyle backing:NSBackingStoreBuffered defer:NO
-	  screen:gd];
+  self = [super initWithContentRect:rect styleMask:windowStyle backing:NSBackingStoreBuffered defer:NO];
   if (self) {
     w = flw;
     containsGLsubwindow = NO;
@@ -2077,6 +2063,7 @@ void Fl_X::make(Fl_Window* w)
     FLWindow *cw = [[FLWindow alloc] initWithFl_W:w 
 				      contentRect:crect  
 					styleMask:winstyle];
+    [cw setFrameOrigin:crect.origin];
     [cw setHasShadow:YES];
     [cw setAcceptsMouseMovedEvents:YES];
     x->xid = cw;
