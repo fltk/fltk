@@ -354,7 +354,7 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (Wp > W) W = Wp;
   if (Wtitle > W) W = Wtitle;
 
-  if (X < scr_x) X = scr_x; if (X > scr_x+scr_w-W) X = right_edge-W; //X= scr_x+scr_w-W;
+  if (X < scr_x) X = scr_x; if (X > scr_x+scr_w-W) X = right_edge-W;
   x(X); w(W);
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);
   if (selected >= 0) {
@@ -935,7 +935,8 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 	// delete all the old menus and create new one:
 	while (pp.nummenus > pp.menu_number+1) delete pp.p[--pp.nummenus];
 	pp.p[pp.nummenus++]= new menuwindow(menutable, nX, nY,
-					  title?1:0, 0, 0, title, 0, menubar, cw.x());
+					  title?1:0, 0, 0, title, 0, menubar, 
+					    (title ? 0 : cw.x()) );
       }
     } else { // !m->submenu():
       while (pp.nummenus > pp.menu_number+1) delete pp.p[--pp.nummenus];
