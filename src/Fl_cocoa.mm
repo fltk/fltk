@@ -590,10 +590,12 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 - (BOOL)windowShouldClose:(FLWindow *)fl
 {
   fl_lock_function();
-  Fl::handle( FL_CLOSE, [fl getFl_Window] ); // this might or might not close the window
+  Fl_Window *to_close = [fl getFl_Window];
+  Fl::handle( FL_CLOSE, to_close ); // this might or might not close the window
+  Fl::do_widget_deletion();
   if (!Fl_X::first) return YES;
   Fl_Window *l = Fl::first_window();
-  while( l != NULL && l != [fl getFl_Window]) l = Fl::next_window(l);
+  while( l != NULL && l != to_close) l = Fl::next_window(l);
   fl_unlock_function();
   return (l == NULL ? YES : NO);
 }
@@ -1027,6 +1029,7 @@ void fl_open_callback(void (*cb)(const char *)) {
   while ( Fl_X::first ) {
     Fl_X *x = Fl_X::first;
     Fl::handle( FL_CLOSE, x->w );
+    Fl::do_widget_deletion();
     if ( Fl_X::first == x ) {
       reply = NSTerminateCancel; // FLTK has not closed all windows, so we return to the main program now
       break;
