@@ -937,6 +937,7 @@ void fl_open_callback(void (*cb)(const char *)) {
   pt.y = [[nsw contentView] frame].size.height;
   pt2 = [nsw convertBaseToScreen:pt];
   update_e_xy_and_e_xy_root(nsw);
+  resize_from_system = window;
   window->position((int)pt2.x, (int)(main_screen_height - pt2.y));
   if ([nsw containsGLsubwindow] ) {
     [nsw display];// redraw window after moving if it contains OpenGL subwindows
@@ -2237,13 +2238,14 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
       dim.origin.y = main_screen_height - (Y + H);
       dim.size.width = W;
       dim.size.height = H + bt;
-      [i->xid setFrame:dim display:YES];
+      [i->xid setFrame:dim display:YES]; // calls windowDidResize
     } else {
       NSPoint pt; 
       pt.x = X; 
       pt.y = main_screen_height - (Y + h());
-      [i->xid setFrameOrigin:pt];
+      [i->xid setFrameOrigin:pt]; // calls windowDidMove
     }
+    return;
   }
   resize_from_system = 0;
   if (is_a_resize) {
