@@ -566,7 +566,6 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 	      contentRect:(NSRect)rect 
 		styleMask:(NSUInteger)windowStyle;
 - (Fl_Window *)getFl_Window;
-- (BOOL)windowShouldClose:(FLWindow *)w;
 - (BOOL)containsGLsubwindow;
 - (void)setContainsGLsubwindow:(BOOL)contains;
 @end
@@ -586,18 +585,6 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 - (Fl_Window *)getFl_Window;
 {
   return w;
-}
-- (BOOL)windowShouldClose:(FLWindow *)fl
-{
-  fl_lock_function();
-  Fl_Window *to_close = [fl getFl_Window];
-  Fl::handle( FL_CLOSE, to_close ); // this might or might not close the window
-  Fl::do_widget_deletion();
-  if (!Fl_X::first) return YES;
-  Fl_Window *l = Fl::first_window();
-  while( l != NULL && l != to_close) l = Fl::next_window(l);
-  fl_unlock_function();
-  return (l == NULL ? YES : NO);
 }
 - (BOOL)containsGLsubwindow
 {
@@ -918,6 +905,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 - (void)windowDidBecomeMain:(NSNotification *)notif;
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
+- (BOOL)windowShouldClose:(id)fl;
 - (void)anyWindowWillClose:(NSNotification *)notif;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
 - (void)applicationDidBecomeActive:(NSNotification *)notify;
@@ -1005,6 +993,14 @@ void fl_open_callback(void (*cb)(const char *)) {
   Fl_Window *window = [nsw getFl_Window];
   Fl::handle(FL_HIDE, window);
   fl_unlock_function();
+}
+- (BOOL)windowShouldClose:(id)fl
+{
+  fl_lock_function();
+  Fl::handle( FL_CLOSE, [(FLWindow *)fl getFl_Window] ); // this might or might not close the window
+  fl_unlock_function();
+  // the system doesn't need to send [fl close] because FLTK does it when needed
+  return NO; 
 }
 - (void)anyWindowWillClose:(NSNotification *)notif
 {
