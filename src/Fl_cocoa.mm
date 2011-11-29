@@ -2030,7 +2030,7 @@ void Fl_X::make(Fl_Window* w)
       wp += 2*bx;
       hp += 2*by+bt;
     }
-    if (w->flags() & Fl_Window::FORCE_POSITION) {
+    if (w->force_position()) {
       if (!Fl::grab()) {
         xp = xwm; yp = ywm;
         w->x(xp);w->y(yp);
@@ -2076,7 +2076,7 @@ void Fl_X::make(Fl_Window* w)
     [cw setLevel:winlevel];
     
     q_set_window_title(cw, w->label(), w->iconlabel());
-    if (!(w->flags() & Fl_Window::FORCE_POSITION)) {
+    if (!w->force_position()) {
       if (w->modal()) {
         [cw center];
       } else if (w->non_modal()) {

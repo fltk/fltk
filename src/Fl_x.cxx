@@ -1671,7 +1671,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   if (!win->parent() && !Fl::grab()) {
     // center windows in case window manager does not do anything:
 #ifdef FL_CENTER_WINDOWS
-    if (!(win->flags() & Fl_Widget::FORCE_POSITION)) {
+    if (!win->force_position()) {
       win->x(X = scr_x+(scr_w-W)/2);
       win->y(Y = scr_y+(scr_h-H)/2);
     }
@@ -1885,7 +1885,7 @@ void Fl_X::sendxjunk() {
     prop[1] = 1|2|16; // MWM_FUNC_ALL | MWM_FUNC_RESIZE | MWM_FUNC_MAXIMIZE
   }
 
-  if (w->flags() & Fl_Widget::FORCE_POSITION) {
+  if (w->force_position()) {
     hints->flags |= USPosition;
     hints->x = w->x();
     hints->y = w->y();
