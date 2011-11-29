@@ -2217,7 +2217,10 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   //  printf("Fl_Window::resize(X=%d, Y=%d, W=%d, H=%d), is_a_resize=%d, resize_from_system=%p, this=%p\n",
   //         X, Y, W, H, is_a_resize, resize_from_system, this);
   if (X != x() || Y != y()) set_flag(FORCE_POSITION);
-  else if (!is_a_resize) return;
+  else if (!is_a_resize) {
+    resize_from_system = 0;
+    return;
+    }
   if ( (resize_from_system!=this) && (!parent()) && shown()) {
     if (is_a_resize) {
       if (resizable()) {
