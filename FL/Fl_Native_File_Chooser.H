@@ -38,7 +38,6 @@
 
 // Use Apple's chooser
 #ifdef __APPLE__
-#include <FL/filename.H>
 #define MAXFILTERS	80
 #endif
 
@@ -46,6 +45,8 @@
 #if ! defined(__APPLE__) && !defined(WIN32)
 #include <FL/Fl_File_Chooser.H>
 #include <unistd.h>		// _POSIX_NAME_MAX
+#else
+#include <FL/filename.H>	// FL_EXPORT
 #endif
 
 
