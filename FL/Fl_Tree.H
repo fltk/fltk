@@ -199,6 +199,8 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Prefs  _prefs;			// all the tree's settings
   int            _scrollbar_size;		// size of scrollbar trough
 
+  void fix_scrollbar_order();
+
 protected:
   Fl_Scrollbar *_vscroll;			///< Vertical scrollbar
   void item_clicked(Fl_Tree_Item* val);

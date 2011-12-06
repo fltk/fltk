@@ -329,6 +329,7 @@ int Fl_Tree::handle(int e) {
 
 /// Standard FLTK draw() method, handles draws the tree widget.
 void Fl_Tree::draw() {
+  fix_scrollbar_order();
   // Let group draw box+label but *NOT* children.
   // We handle drawing children ourselves by calling each item's draw()
   //
@@ -381,9 +382,11 @@ void Fl_Tree::draw() {
       _vscroll->hide();
     }
   }
-  fl_push_clip(cx,cy,cw,ch);
+  // Draw children
+  fl_push_clip(cx,cy,cw-(_vscroll->visible()?_vscroll->w():0),ch);
   Fl_Group::draw_children();	// draws any FLTK children set via Fl_Tree::widget()
   fl_pop_clip();
+  draw_child(*_vscroll);	// draw scroll last
 }
 
 /// Print the tree as 'ascii art' to stdout.
@@ -1755,6 +1758,18 @@ void Fl_Tree::load(Fl_Preferences &prefs)
     free(p);
     free(val);
     free(key);
+  }
+}
+
+/// Ensure the scrollbars are the last children
+void Fl_Tree::fix_scrollbar_order() {
+  Fl_Widget** a = (Fl_Widget**)array();
+  if (a[children()-1] != _vscroll) {
+    int i,j;
+    for (i = j = 0; j < children(); j++) {
+      if (a[j] != _vscroll) a[i++] = a[j];
+    }
+    a[i++] = _vscroll;
   }
 }
 
