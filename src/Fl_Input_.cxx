@@ -3,7 +3,7 @@
 //
 // Common input widget routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -719,9 +719,9 @@ static void undobuffersize(int n) {
   Deletes text from \p b to \p e and inserts the new string \p text.
 
   All changes to the text buffer go through this function.
-  It deletes the region between \p a and \p b (either one may be less or
+  It deletes the region between \p b and \p e (either one may be less or
   equal to the other), and then inserts the string \p text
-  at that point and moves the mark() and
+  at that point and moves the mark() and 
   position() to the end of the insertion. Does the callback if
   <tt>when() & FL_WHEN_CHANGED</tt> and there is a change.
 
@@ -731,11 +731,23 @@ static void undobuffersize(int n) {
   \p ilen can be zero or <tt>strlen(text)</tt>, which
   saves a tiny bit of time if you happen to already know the
   length of the insertion, or can be used to insert a portion of a
-  string.
-  
-  \p b and \p e are clamped to the
-  <tt>0..size()</tt> range, so it is safe to pass any values.
-  
+  string. If \p ilen is zero, <tt>strlen(text)</tt> is used instead.
+
+  \p b and \p e are clamped to the <tt>0..size()</tt> range, so it is
+  safe to pass any values. \p b, \p e, and \p ilen are used as numbers
+  of bytes (not characters), where \p b and \p e count from 0 to
+  size() (end of buffer).
+
+  If \p b and/or \p e don't point to a valid UTF-8 character boundary,
+  they are adjusted to the previous (\p b) or the next (\p e) valid
+  UTF-8 character boundary, resp..
+
+  If the current number of characters in the buffer minus deleted
+  characters plus inserted characters in \p text would overflow the
+  number of allowed characters (maximum_size()), then only the first
+  characters of the string are inserted, so that maximum_size()
+  is not exceeded.
+
   cut() and insert() are just inline functions that call replace().
 
   \param [in] b beginning index of text to be deleted
@@ -743,6 +755,10 @@ static void undobuffersize(int n) {
   \param [in] text string that will be inserted
   \param [in] ilen length of \p text or 0 for \c nul terminated strings
   \return 0 if nothing changed
+  
+  \note If \p text does not point to a valid UTF-8 character or includes
+  invalid UTF-8 sequences, the text is inserted nevertheless (counting
+  invalid UTF-8 bytes as one character each).
 */
 int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   int ul, om, op;
@@ -762,10 +778,32 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
   }
   if (text && !ilen) ilen = strlen(text);
   if (e<=b && !ilen) return 0; // don't clobber undo for a null operation
-  if (size_+ilen-(e-b) > maximum_size_) {
-    ilen = maximum_size_-size_+(e-b);
-    if (ilen < 0) ilen = 0;
+
+  // we must count UTF-8 *characters* to determine whether we can insert
+  // the full text or only a part of it (and how much this would be)
+
+  int nchars = 0;	// characters in value() - deleted + inserted
+  const char *p = value_;
+  while (p < (char *)(value_+size_)) {
+    if (p == (char *)(value_+b)) { // skip removed part
+      p = (char *)(value_+e);
+      if (p >= (char *)(value_+size_)) break;
+    }
+    int ulen = fl_utf8len(*p);
+    if (ulen < 1) ulen = 1; // invalid UTF-8 character: count as 1
+    nchars++;
+    p += ulen;
   }
+  int nlen = 0;		// length (in bytes) to be inserted
+  p = text;
+  while (p < (char *)(text+ilen) && nchars < maximum_size()) {
+    int ulen = fl_utf8len(*p);
+    if (ulen < 1) ulen = 1; // invalid UTF-8 character: count as 1
+    nchars++;
+    p += ulen;
+    nlen += ulen;
+  }
+  ilen = nlen;
 
   put_in_buffer(size_+ilen);
 

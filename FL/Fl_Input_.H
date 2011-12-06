@@ -3,7 +3,7 @@
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2011 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -69,9 +69,10 @@
   \endcode
 
   All variables that represent an index into a text buffer are byte-oriented,
-  not character oriented. Since UTF-8 characters can be up to six bytes long,
-  simply incrementing such an index will not reliably advance to the next character
-  in the text buffer.
+  not character oriented, counting from 0 (at or before the first character)
+  to size() (at the end of the buffer, after the last byte). Since UTF-8
+  characters can be up to six bytes long, simply incrementing such an index
+  will not reliably advance to the next character in the text buffer.
 
   Indices and pointers into the text buffer should always point at a 7 bit ASCII
   character or the beginning of a UTF-8 character sequence. Behavior for false
@@ -123,7 +124,7 @@ class FL_EXPORT Fl_Input_ : public Fl_Widget {
       of the buffer. */
   int mu_p;
 
-  /** \internal Maximum size of buffer. \todo Is this really needed? */
+  /** \internal Maximum number of characters. */
   int maximum_size_;
 
   /** \internal Shortcut key that will fetch focus for this widget. */
@@ -260,16 +261,21 @@ public:
     \see Fl_Widget::size(int, int) */
   void size(int W, int H) { Fl_Widget::size(W, H); }
 
-  /** Gets the maximum length of the input field.  
-    \todo It is not clear if this function is actually required */
+  /** Gets the maximum length of the input field in characters.
+    \see maximum_size(int). */
   int maximum_size() const {return maximum_size_;}
 
-  /** Sets the maximum length of the input field. 
-    \todo It is not clear if this function is actually required */
+  /** Sets the maximum length of the input field in characters.
+    This limits the number of <b>characters</b> that can be inserted
+    in the widget.
+    \since FLTK 1.3 this is different than the buffer size, since one
+    character can be more than one byte in UTF-8 encoding. In FLTK 1.1
+    this was the same (one byte = one character).
+  */
   void maximum_size(int m) {maximum_size_ = m;}
 
   /** Gets the position of the text cursor.
-    \return the cursor position as an index
+    \return the cursor position as an index in the range 0..size()
     \see position(int, int)
   */
   int position() const {return position_;}
@@ -281,7 +287,7 @@ public:
   /* Sets the index for the cursor and mark. */
   int position(int p, int m);
 
-  /** Set the cursor position and mark.
+  /** Sets the cursor position and mark.
     position(n) is the same as <tt>position(n, n)</tt>.
     \param p new index for cursor and mark
     \return 0 if no positions changed
@@ -296,8 +302,8 @@ public:
     \see position(), position(int, int) */
   int mark(int m) {return position(position(), m);}
 
-  /* Deletes text from b to e and inserts the new string text. */
-  int replace(int, int, const char*, int=0);
+  /* Deletes text from \p b to \p e and inserts the new string \p text. */
+  int replace(int b, int e, const char *text, int ilen=0);
 
   /**
     Deletes the current selection.
