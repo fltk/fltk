@@ -16,19 +16,13 @@
 //     http://www.fltk.org/str.php
 //
 
-/** \fn virtual void Fl_Overlay_Window::draw_overlay() = 0
-  You must subclass Fl_Overlay_Window and provide this method.
-  It is just like a draw() method, except it draws the overlay.
-  The overlay will have already been "cleared" when this is called.  You
-  can use any of the routines described in &lt;FL/fl_draw.H&gt;.
-*/
 
 // A window using double-buffering and able to draw an overlay
 // on top of that.  Uses the hardware to draw the overlay if
 // possible, otherwise it just draws in the front buffer.
 
 #include <config.h>
-#include <FL/Fl.H>
+#include <FL/Fl.H>g
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
