@@ -36,14 +36,17 @@
 
 /**
   A combination of the input widget and a menu button.
+
+  \image html input_choice.jpg
+  \image latex input_choice.jpg "Fl_Input_Choice widget" width=6cm
+
   The user can either type into the input area, or use the
-  menu button chooser on the right, which loads the input area
-  with predefined text.  Normally it is drawn with an inset box 
-  and a white background. 
+  menu button chooser on the right to choose an item which loads
+  the input area with the selected text.
   <P>
-  The application can directly access both the input and menu
-  widgets directly, using the menubutton()
-  and input() accessor methods.
+  The application can directly access both the internal Fl_Input 
+  and Fl_Menu_Button widgets respectively using the input() and menubutton()
+  accessor methods.
 */
 class FL_EXPORT Fl_Input_Choice : public Fl_Group {
   // Private class to handle slightly 'special' behavior of menu button
@@ -126,7 +129,7 @@ public:
   /**
     Creates a new Fl_Input_Choice widget using the given position, size,
     and label string.
-  <P> Inherited destructor Destroys the widget and any value associated with it.
+    Inherited destructor destroys the widget and any values associated with it.
   */
   Fl_Input_Choice (int X,int Y,int W,int H,const char*L=0) : Fl_Group(X,Y,W,H,L) {
     Fl_Group::box(FL_DOWN_BOX);
@@ -143,13 +146,26 @@ public:
     end();
   }
   
-  /** Adds an item to the menu.*/
+  /// Adds an item to the menu.
+  /// You can access the more complex Fl_Menu_Button::add() methods 
+  /// (setting callbacks, userdata, etc), via menubutton(). Example:
+  /// \code
+  /// Fl_Input_Choice *choice = new Fl_Input_Choice(100,10,120,25,"Fonts");
+  /// Fl_Menu_Button *mb = choice->menubutton();             // use Fl_Input_Choice's Fl_Menu_Button
+  /// mb->add("Helvetica", 0, MyFont_CB,     (void*)mydata); // use Fl_Menu_Button's add() methods
+  /// mb->add("Courier",   0, MyFont_CB,     (void*)mydata);
+  /// mb->add("More..",    0, FontDialog_CB, (void*)mydata);
+  /// \endcode
   void add(const char *s) { menu_->add(s);  }
-  int changed() const { return inp_->changed() | Fl_Widget::changed();}
+  /// Returns the combined changed() state of the input and menu button widget.
+  int changed() const { return inp_->changed() | Fl_Widget::changed(); }
+  /// Clears the changed() state of both input and menu button widgets.
   void clear_changed() { 
     inp_->clear_changed();
     Fl_Widget::clear_changed();
   }
+  /// Sets the changed() state of both input and menu button widgets
+  /// to the specfied value.
   void set_changed() { 
     inp_->set_changed();
     // no need to call Fl_Widget::set_changed()
@@ -169,38 +185,44 @@ public:
     inp_->resize(inp_x(), inp_y(), inp_w(), inp_h());
     menu_->resize(menu_x(), menu_y(), menu_w(), menu_h());
   }
-  /** Gets the encapsulated input text color attributes */
+  /// Gets the Fl_Input text field's text color.
   Fl_Color textcolor() const { return (inp_->textcolor());}
-  /** Sets the encapsulated input text color attributes */
+  /// Sets the Fl_Input text field's text color to \p c.
   void textcolor(Fl_Color c) { inp_->textcolor(c);}
-  /** Gets the encapsulated input text font  attributes */
+  /// Gets the Fl_Input text field's font style.
   Fl_Font textfont() const { return (inp_->textfont());}
-  /** Sets the encapsulated input text font attributes */
+  /// Sets the Fl_Input text field's font style to \p f.
   void textfont(Fl_Font f) { inp_->textfont(f);}
-  /** Gets the encapsulated input size attributes */
+  /// Gets the Fl_Input text field's font size
   Fl_Fontsize textsize() const { return (inp_->textsize()); }
-  /** Sets the encapsulated input size attributes */
+  /// Sets the Fl_Input text field's font size to \p s.
   void textsize(Fl_Fontsize s) { inp_->textsize(s); }
-  /** See void Fl_Input_Choice::value(const char *s)  */
+  /// Returns the Fl_Input text field's current contents.
   const char* value() const { return (inp_->value()); }
-  /**
-    Sets or returns the input widget's current contents. The
-    second form sets the contents using the index into the menu
-    which you can set as an integer.  Setting the value effectively
-    'chooses' this menu item, and sets it as the new input text,
-    deleting the previous text.
-  */
+  /// Sets the Fl_Input text field's contents to \p val.
+  /// Does not affect the menu selection.
   void value(const char *val) { inp_->value(val); }
-  /**    See void Fl_Input_Choice::value(const char *s)  */
+  /// Chooses item# \p val in the menu, and sets the Fl_Input text field
+  /// to that value. Any previous text is cleared.
   void value(int val) {
     menu_->value(val);
     inp_->value(menu_->text(val));
   }
-  /**    Returns a reference to the internal Fl_Menu_Button widget.  */
+  /// Returns a pointer to the internal Fl_Menu_Button widget.
+  /// This can be used to access any of the methods of the menu button, e.g.
+  /// \code
+  /// Fl_Input_Choice *choice = new Fl_Input_Choice(100,10,120,25,"Choice:");
+  /// [..]
+  /// // Print all the items in the choice menu
+  /// for ( int t=0; t<choice->menubutton()->size(); t++ ) {
+  ///     const Fl_Menu_Item &item = choice->menubutton()->menu()[t];
+  ///     printf("item %d -- label=%s\n", t, item.label() ? item.label() : "(Null)");
+  /// }
+  /// \endcode
   Fl_Menu_Button *menubutton() { return menu_; }
-  /**
-    Returns a reference to the internal Fl_Input widget.</p>
-  */
+  /// Returns a pointer to the internal Fl_Input widget.
+  /// This can be used to directly access all of the Fl_Input widget's
+  /// methods.
   Fl_Input *input() { return inp_; }
 };
 
