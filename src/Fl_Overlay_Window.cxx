@@ -22,7 +22,7 @@
 // possible, otherwise it just draws in the front buffer.
 
 #include <config.h>
-#include <FL/Fl.H>g
+#include <FL/Fl.H>
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/fl_draw.H>
 #include <FL/x.H>
