@@ -78,6 +78,20 @@ public:
   /**
     Returns a pointer to the array of Fl_Menu_Items.  This will either be
     the value passed to menu(value) or the private copy.
+    \sa size() -- returns the size of the Fl_Menu_Item array.
+
+    \b Example: How to walk the array:
+    \code
+    for ( int t=0; t<menubar->size(); t++ ) {                // walk array of items
+        const Fl_Menu_Item &item = menubar->menu()[t];       // get each item
+        fprintf(stderr, "item #%d -- label=%s, value=%s type=%s\n",
+            t,
+            item.label() ? item.label() : "(Null)",          // menu terminators have NULL labels
+            (item.flags & FL_MENU_VALUE) ? "set" : "clear",  // value of toggle or radio items
+            (item.flags & FL_SUBMENU) ? "Submenu" : "Item"); // see if item is a submenu or actual item
+    }
+    \endcode
+
   */  
   const Fl_Menu_Item *menu() const {return menu_;}
   void menu(const Fl_Menu_Item *m);
