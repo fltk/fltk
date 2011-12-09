@@ -11,7 +11,11 @@ README.Cairo.txt - 2010-10-25 - Cairo rendering support for FLTK
    2.1   Configuration
    2.2   Currently supported features
    2.3   Future considerations 
- 3   DOCUMENT HISTORY
+ 3   PLATFORM SPECIFIC NOTES
+   3.1  Linux
+   3.2  Windows
+   3.3  Mac OSX
+ 4   DOCUMENT HISTORY
 
 
 
@@ -103,6 +107,52 @@ called, it is exactly as though cairo_make_current(window) has been done.
 Note that it should be possible to compile so FLTK_HAVE_CAIRO works even if
 FLTK_USE_CAIRO does not, and so that turning on FLTK_USE_CAIRO does not break any
 programs written for FLTK_HAVE_CAIRO.
+
+ PLATFORM SPECIFIC NOTES
+=========================
+
+The folowing are notes about building FLTK with Cairo support
+on the various supported operating systems.
+
+    3.1 Linux
+    ---------
+
+    From Greg (erco@seriss.com):
+    To get FLTK 1.3.x (r9204) to build on Centos 5.5, I found that
+    I only needed to install the "cairo-devel" package, ie:
+    
+        sudo yum install cairo-devel
+
+    ..and then rebuild fltk:
+
+        make distclean
+	./configure --enable-cairo
+	make
+
+    If you get this error:
+
+        [..]
+	Linking cairo_test...
+	/usr/bin/ld: cannot find -lpixman-1
+	collect2: ld returned 1 exit status
+	make[1]: *** [cairo_test] Error 1
+
+    ..remove "-lpixman-1" from fltk's Makefile, i.e. change this line:
+
+        -CAIROLIBS      = -lcairo -lpixman-1
+	+CAIROLIBS      = -lcairo
+
+    ..then another 'make' should finish the build without errors.
+    You should be able to then run the test/cairo_test program.
+
+    3.2 Windows
+    -----------
+    TBD
+
+    3.3 Mac OSX
+    -----------
+    TBD
+
 
 
  DOCUMENT HISTORY
