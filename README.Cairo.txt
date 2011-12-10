@@ -147,12 +147,13 @@ on the various supported operating systems.
     You should be able to then run the test/cairo_test program.
     
     According to the cairo site, "For Debian and Debian derivatives including
-    Ubuntu" you need to install libcairo2.dev, ie:
+    Ubuntu" you need to install libcairo2-dev, i.e.
 
 	sudo apt-get install libcairo2-dev
 
-    Tested and working with Ubuntu 11.10. Note that this also installs
-    libpixman-1-dev, so that dependencies on this should be resolved as well.
+    This has been tested and works with Ubuntu 11.10. Note that this also
+    installs libpixman-1-dev, so that dependencies on this should be resolved
+    as well.
 
 
     3.2 Windows
