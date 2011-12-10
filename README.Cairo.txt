@@ -1,4 +1,4 @@
-README.Cairo.txt - 2010-10-25 - Cairo rendering support for FLTK
+README.Cairo.txt - 2011-12-10 - Cairo rendering support for FLTK
 ----------------------------------------------------------------
 
 
@@ -19,36 +19,36 @@ README.Cairo.txt - 2010-10-25 - Cairo rendering support for FLTK
 
 
 
- iINTRODUCTION
-===============
+ INTRODUCTION
+==============
 
 Cairo is a software library used to provide a vector graphics-based, 
 device-independent API for software developers. It is designed to provide 
 primitives for 2-dimensional drawing across a number of different 
-wbackends. Cairo is designed to use hardware acceleration when available.
+backends. Cairo is designed to use hardware acceleration when available.
 
 
  CAIRO SUPPORT FOR FLTK 1.3
-=============================
+============================
 
 It is now possible to integrate cairo rendering in your fltk application
 more easily and transparently.
 In 1.3, we provide minimum support for Cairo,
-In particular, no "total" cairo rendering layer support is achieved,
+in particular, no "total" cairo rendering layer support is achieved,
 as in fltk2.
 
 
  Configuration
 ---------------
 
-All the changes are *inactive*  as long as the new configuration
+All the changes are *inactive* as long as the new configuration
 option --enable-cairo is not added to the configure command.
-For non configure based platforms/ide, the FLTK_HAVE_CAIRO preprocess var.
-has to be defined.
-All configure based build files has now this feature integrated,
+For non configure based platforms/ide, the FLTK_HAVE_CAIRO preprocess
+variable has to be defined.
+All configure based build files have now this feature integrated,
 also vc2005 build files have 2 new build modes "Release Cairo" and 
 "Debug Cairo".
-Others IDE's will be updated progressively.
+Other IDE's will be updated progressively.
 
 
  Currently supported features
@@ -68,12 +68,12 @@ This function is intended to be used in your overloaded draw() method.
   This feature should be only necessary in the following cases:
   -  Intensive and almost systematic use of cairo contexts in an fltk application
   -  Creation of a new cairo based scheme for fltk ...
-  -  Other uses of cairo necessiting the flk internals instrumentation 
+  -  Other uses of cairo necessitating the fltk internal instrumentation 
      to automatically making possible the use of a cairo context 
      in any fltk window.
 
 - A new cairo demo that is available in the test subdirectory and has been
-   used as a testcase durings the multiplatform tests.
+   used as a testcase during the multiplatform tests.
 
 For more details, please have a look to the doxygen documentation,
 in the Modules section.
@@ -95,7 +95,7 @@ void Fl::cairo_make_current(Fl_Window*)
 
 *** POST 1.3 potential cairo use:
 // Set cr to something you made yourself. This lets you reuse functions
-// that use cr, and also tells fltk that cr is not one of it's own and
+// that use cr, and also tells fltk that cr is not one of its own and
 // thus cannot be destroyed or reused for a different window:
 void Fl::cairo_make_current(cairo_t*)
 
@@ -104,9 +104,10 @@ drawing is done using Cairo. In this case when a widget draw() method is
 called, it is exactly as though cairo_make_current(window) has been done.
 *** 
 
-Note that it should be possible to compile so FLTK_HAVE_CAIRO works even if
-FLTK_USE_CAIRO does not, and so that turning on FLTK_USE_CAIRO does not break any
-programs written for FLTK_HAVE_CAIRO.
+Note that it should be possible to compile so FLTK_HAVE_CAIRO works even
+if FLTK_USE_CAIRO does not, and so that turning on FLTK_USE_CAIRO does not
+break any programs written for FLTK_HAVE_CAIRO.
+
 
  PLATFORM SPECIFIC NOTES
 =========================
@@ -137,17 +138,27 @@ on the various supported operating systems.
 	collect2: ld returned 1 exit status
 	make[1]: *** [cairo_test] Error 1
 
-    ..remove "-lpixman-1" from fltk's Makefile, i.e. change this line:
+    ..remove "-lpixman-1" from fltk's makeinclude file, i.e. change this line:
 
-        -CAIROLIBS      = -lcairo -lpixman-1
+	-CAIROLIBS      = -lcairo -lpixman-1
 	+CAIROLIBS      = -lcairo
 
     ..then another 'make' should finish the build without errors.
     You should be able to then run the test/cairo_test program.
+    
+    According to the cairo site, "For Debian and Debian derivatives including
+    Ubuntu" you need to install libcairo2.dev, ie:
+
+	sudo apt-get install libcairo2-dev
+
+    Tested and working with Ubuntu 11.10. Note that this also installs
+    libpixman-1-dev, so that dependencies on this should be resolved as well.
+
 
     3.2 Windows
     -----------
     TBD
+
 
     3.3 Mac OSX
     -----------
@@ -159,3 +170,5 @@ on the various supported operating systems.
 ==================
 
 Dec 20 2010 - matt: restructured document
+Dec 09 2011 - greg: Updates for Centos 5.5 builds
+Dec 10 2011 - Albrecht: Updates for Ubuntu and Debian, fixed typos.
