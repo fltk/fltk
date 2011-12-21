@@ -43,7 +43,6 @@ static void draw(int which, int x,int y,int w,int h, int inset, Fl_Color color)
   int d = w <= h ? w : h;
   if (d <= 1) return;
   fl_color(color);
-  fl_line_style(0,1);
   void (*f)(int,int,int,int,double,double);
   f = (which==FILL) ? fl_pie : fl_arc_i;
   if (which >= CLOSED) {
@@ -70,7 +69,6 @@ static void draw(int which, int x,int y,int w,int h, int inset, Fl_Color color)
       if (which != LOWER_RIGHT) fl_xyline(x+d/2-1, y, x+w-d/2+1);
     }
   }
-  fl_line_style(0);
 }
 
 extern uchar* fl_gray_ramp();
