@@ -293,7 +293,7 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, const char *new_labe
 /// \returns the item added.
 ///
 Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, char **arr) {
-  int t = find_child(*arr);
+  int t = (*arr && *(arr+1)) ? find_child(*arr) : -1;
   Fl_Tree_Item *item = 0;
   if ( t == -1 ) {
     item = (Fl_Tree_Item*)add(prefs, *arr);
@@ -583,27 +583,30 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
   
   // See if we should draw this item
   //    If this item is root, and showroot() is disabled, don't draw.
+  //    'clipped' is an optimization to prevent drawing anything offscreen.
   //
   char drawthis = ( is_root() && prefs.showroot() == 0 ) ? 0 : 1;
+  char clipped = ((Y+H) < tree->y()) || (Y>(tree->y()+tree->h())) ? 1 : 0;
   if ( drawthis ) {
     // Draw connectors
     if ( prefs.connectorstyle() != FL_TREE_CONNECTOR_NONE ) {
       // Horiz connector between center of icon and text
       // if this is root, the connector should not dangle in thin air on the left
-      if (is_root())
-        draw_horizontal_connector(hcenterx, hendx, textycenter, prefs);
-      else
-        draw_horizontal_connector(hstartx, hendx, textycenter, prefs);
+      if (is_root()) {
+        if (!clipped) draw_horizontal_connector(hcenterx, hendx, textycenter, prefs);
+      } else {
+        if (!clipped) draw_horizontal_connector(hstartx, hendx, textycenter, prefs);
+      }
       if ( has_children() && is_open() ) {
         // Small vertical line down to children
-        draw_vertical_connector(hcenterx, textycenter, Y+H, prefs);
+        if (!clipped) draw_vertical_connector(hcenterx, textycenter, Y+H, prefs);
       }
       // Connectors for last child
       if ( ! is_root() ) {
         if ( lastchild ) {
-          draw_vertical_connector(hstartx, Y, textycenter, prefs);
+          if (!clipped) draw_vertical_connector(hstartx, Y, textycenter, prefs);
         } else {
-          draw_vertical_connector(hstartx, Y, Y+H, prefs);
+          if (!clipped) draw_vertical_connector(hstartx, Y, Y+H, prefs);
         }
       }
     } 
@@ -611,9 +614,9 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     if ( has_children() && prefs.showcollapse() ) {
       // Draw icon image
       if ( is_open() ) {
-        prefs.closeicon()->draw(icon_x,icon_y);
+        if (!clipped) prefs.closeicon()->draw(icon_x,icon_y);
       } else {
-        prefs.openicon()->draw(icon_x,icon_y);
+        if (!clipped) prefs.openicon()->draw(icon_x,icon_y);
       }
     }
     // Background for this item
@@ -627,11 +630,13 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     if ( bg != tree->color() || is_selected() ) {
       if ( is_selected() ) {
         // Selected? Use selectbox() style
-        fl_draw_box(prefs.selectbox(), bx, by, bw, bh, bg);
+        if (!clipped) fl_draw_box(prefs.selectbox(), bx, by, bw, bh, bg);
       } else {
         // Not Selected? use plain filled rectangle
-        fl_color(bg);
-        fl_rectf(bx, by, bw, bh);
+	if (!clipped) {
+	  fl_color(bg);
+	  fl_rectf(bx, by, bw, bh);
+	}
       }
     }
     // Draw user icon (if any)
@@ -640,13 +645,13 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       // Item has user icon? Use it
       useroff += prefs.usericonmarginleft();
       icon_y = textycenter - (usericon()->h() >> 1);
-      usericon()->draw(X+useroff,icon_y);
+      if (!clipped) usericon()->draw(X+useroff,icon_y);
       useroff += usericon()->w();
     } else if ( prefs.usericon() ) {
       // Prefs has user icon? Use it
       useroff += prefs.usericonmarginleft();
       icon_y = textycenter - (prefs.usericon()->h() >> 1);
-      prefs.usericon()->draw(X+useroff,icon_y);
+      if (!clipped) prefs.usericon()->draw(X+useroff,icon_y);
       useroff += prefs.usericon()->w();
     }
     useroff += prefs.labelmarginleft();
@@ -663,12 +668,15 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       }
     } else {
       // No label widget? Draw text label
-      if ( _label ) {
+      if ( _label && !clipped ) {
         fl_color(fg);
         fl_draw(_label, X+useroff, Y+H-fl_descent()-1);
       }
     }
-    if ( this == itemfocus && Fl::visible_focus() && Fl::focus() == tree) {
+    if ( !clipped &&
+         this == itemfocus &&
+         Fl::visible_focus() &&
+	 Fl::focus() == tree) {
       // Draw focus box around this item
       draw_item_focus(FL_NO_BOX,bg,bx+1,by+1,bw-1,bh-1);
     }
@@ -688,7 +696,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       Y += prefs.openchild_marginbottom();		// offset below open child tree
     }
     if ( ! lastchild ) {
-      draw_vertical_connector(hstartx, child_y_start, Y, prefs);
+      if (!clipped) draw_vertical_connector(hstartx, child_y_start, Y, prefs);
     }
   }
 }

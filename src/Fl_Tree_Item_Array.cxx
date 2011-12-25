@@ -79,6 +79,7 @@ void Fl_Tree_Item_Array::clear() {
 void Fl_Tree_Item_Array::enlarge(int count) {
   int newtotal = _total + count;	// new total
   if ( newtotal >= _size ) {		// more than we have allocated?
+    if ( (newtotal/150) > _chunksize ) _chunksize *= 10;
     // Increase size of array
     int newsize = _size + _chunksize;
     Fl_Tree_Item **newitems = (Fl_Tree_Item**)malloc(newsize * sizeof(Fl_Tree_Item*));
