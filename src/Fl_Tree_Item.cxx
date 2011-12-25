@@ -547,6 +547,8 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 			Fl_Tree_Item *itemfocus,
                         const Fl_Tree_Prefs &prefs, int lastchild) {
   if ( ! _visible ) return; 
+  int tree_top = tree->y();
+  int tree_bot = tree_top + tree->h();
   fl_font(_labelfont, _labelsize);
   int H = _labelsize;
   if(usericon() && H < usericon()->h()) H = usericon()->h(); 
@@ -586,7 +588,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
   //    'clipped' is an optimization to prevent drawing anything offscreen.
   //
   char drawthis = ( is_root() && prefs.showroot() == 0 ) ? 0 : 1;
-  char clipped = ((Y+H) < tree->y()) || (Y>(tree->y()+tree->h())) ? 1 : 0;
+  char clipped = ((Y+H) < tree_top) || (Y>tree_bot) ? 1 : 0;
   if ( drawthis ) {
     // Draw connectors
     if ( prefs.connectorstyle() != FL_TREE_CONNECTOR_NONE ) {
@@ -696,6 +698,9 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       Y += prefs.openchild_marginbottom();		// offset below open child tree
     }
     if ( ! lastchild ) {
+      // Special 'clipped' calculation. (intentional variable shadowing)
+      int clipped = ((child_y_start < tree_top) && (Y < tree_top)) ||
+                    ((child_y_start > tree_bot) && (Y > tree_bot));
       if (!clipped) draw_vertical_connector(hstartx, child_y_start, Y, prefs);
     }
   }
