@@ -327,7 +327,7 @@ int Fl_Tree::handle(int e) {
   return(ret);
 }
 
-/// Standard FLTK draw() method, handles draws the tree widget.
+/// Standard FLTK draw() method, handles drawing the tree widget.
 void Fl_Tree::draw() {
   fix_scrollbar_order();
   // Let group draw box+label but *NOT* children.
