@@ -100,46 +100,46 @@ static void setMenuFlags( MenuHandle mh, int miCnt, const Fl_Menu_Item *m )
 /*
  * create a sub menu for a specific menu handle
  */
-static void createSubMenu( void * mh, pFl_Menu_Item &mm )
+static void createSubMenu( void * mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *mitem)
 {
   void *submenu;
   int miCnt, flags;
   
   void *menuItem;
-  submenu = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::initWithTitle, mm->text);
+  submenu = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::initWithTitle, mitem->text);
   int cnt;
   Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::numberOfItems, mh, &cnt);
   cnt--;
   menuItem = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::itemAtIndex, mh, cnt);
   Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setSubmenu, menuItem, submenu);
-  if ( mm->flags & FL_MENU_INACTIVE ) {
-    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setEnabled, menuItem, 0);
-  }
-  mm++;
   
   while ( mm->text )
   {
-    int flRank = mm - fl_sys_menu_bar->Fl_Menu_::menu();
-    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::addNewItem, submenu, flRank, &miCnt);
+    char visible = mm->visible() ? 1 : 0;
+    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::addNewItem, submenu, mm, &miCnt);
     setMenuFlags( submenu, miCnt, mm );
     setMenuShortcut( submenu, miCnt, mm );
-    if ( mm->flags & FL_MENU_INACTIVE ) {
+    if ( mm->flags & FL_MENU_INACTIVE || mitem->flags & FL_MENU_INACTIVE) {
       void *item = Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::itemAtIndex, submenu, miCnt);
       Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setEnabled, item, 0);
     }
     flags = mm->flags;
     if ( mm->flags & FL_SUBMENU )
     {
-      createSubMenu( submenu, mm );
+      mm++;
+      createSubMenu( submenu, mm, mm - 1 );
     }
     else if ( mm->flags & FL_SUBMENU_POINTER )
     {
       const Fl_Menu_Item *smm = (Fl_Menu_Item*)mm->user_data_;
-      createSubMenu( submenu, smm );
+      createSubMenu( submenu, smm, mm );
     }
     if ( flags & FL_MENU_DIVIDER ) {
       Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::addSeparatorItem, submenu);
       }
+    if ( !visible ) {
+      Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::removeItem, submenu, miCnt);
+    }
     mm++;
   }
 }
@@ -147,10 +147,11 @@ static void createSubMenu( void * mh, pFl_Menu_Item &mm )
 
 /*
  * convert a complete Fl_Menu_Item array into a series of menus in the top menu bar
- * ALL PREVIOUS SYSTEM MENUS, EXCEPT APPLICATION MENU, ARE REPLACED BY THE NEW DATA
+ * ALL PREVIOUS SYSTEM MENUS, EXCEPT THE APPLICATION MENU, ARE REPLACED BY THE NEW DATA
  */
 static void convertToMenuBar(const Fl_Menu_Item *mm)
 {
+  int rank;
   int count;//first, delete all existing system menus
   Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::numberOfItems, fl_system_menu, &count);
   for(int i = count - 1; i > 0; i--) {
@@ -162,17 +163,18 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
     if ( !mm || !mm->text )
       break;
     char visible = mm->visible() ? 1 : 0;
-    int flRank = mm - fl_sys_menu_bar->Fl_Menu_::menu();
-    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::addNewItem, fl_system_menu, flRank, NULL);
-		
-    if ( mm->flags & FL_SUBMENU )
-      createSubMenu( fl_system_menu, mm );
+    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::addNewItem, fl_system_menu, mm, &rank);
+    
+    if ( mm->flags & FL_SUBMENU ) {
+      mm++;
+      createSubMenu( fl_system_menu, mm, mm - 1);
+      }
     else if ( mm->flags & FL_SUBMENU_POINTER ) {
       const Fl_Menu_Item *smm = (Fl_Menu_Item*)mm->user_data_;
-      createSubMenu( fl_system_menu, smm );
+      createSubMenu( fl_system_menu, smm, mm);
     }
-    if ( visible ) {
-      //      InsertMenu( mh, 0 );
+    if ( !visible ) {
+      Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::removeItem, fl_system_menu, rank);
     }
     mm++;
   }
@@ -270,6 +272,8 @@ void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
  */
 void Fl_Sys_Menu_Bar::draw() {
 }
+
+extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
 
 #endif /* __APPLE__ */

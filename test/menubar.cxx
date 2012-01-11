@@ -19,7 +19,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Double_Window.H>
-#include <FL/Fl_Menu_Bar.H>
+#include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/Fl_Toggle_Button.H>
 #include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Choice.H>
@@ -170,6 +170,33 @@ Fl_Menu_Item pulldown[] = {
   {0}
 };
 
+#ifdef __APPLE__
+Fl_Menu_Item menu_location[] = {
+  {"Window menu bar",	0, 0, 0, FL_MENU_VALUE},
+  {"System menu bar",	},
+  {0}
+};
+
+Fl_Sys_Menu_Bar* smenubar;
+
+void menu_location_cb(Fl_Widget* w, void* data) 
+{
+  Fl_Menu_Bar *menubar = (Fl_Menu_Bar*)data;
+  if (((Fl_Choice*)w)->value() == 1) { // switch to system menu bar
+    menubar->hide();
+    const Fl_Menu_Item *menu = menubar->menu();
+    smenubar = new  Fl_Sys_Menu_Bar(0,0,0,30); 
+    smenubar->menu(menu);
+    smenubar->callback(test_cb);
+    }
+  else { // switch to window menu bar
+    smenubar->clear();
+    delete smenubar;
+    menubar->show();
+    }
+}
+#endif // __APPLE__
+
 #define WIDTH 700
 
 Fl_Menu_* menus[4];
@@ -204,6 +231,11 @@ int main(int argc, char **argv) {
   Fl_Box b(200,200,200,100,"Press right button\nfor a pop-up menu");
   window.resizable(&mb);
   window.size_range(300,400,0,400);
+#ifdef __APPLE__
+  Fl_Choice ch2(500,100,150,25,"Use:"); 
+  ch2.menu(menu_location);
+  ch2.callback(menu_location_cb, &menubar);
+#endif
   window.end();
   window.show(argc, argv);
   return Fl::run();
