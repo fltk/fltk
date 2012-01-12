@@ -52,7 +52,7 @@ public:
   int clear_submenu(int index);
 #if ! defined(FL_DOXYGEN)
   enum menuOrItemOperation { itemAtIndex, setKeyEquivalent, setKeyEquivalentModifierMask, setState, initWithTitle,
-    numberOfItems, setSubmenu, setEnabled, addSeparatorItem, setTitle, removeItem, addNewItem, renameItem };
+    numberOfItems, setSubmenu, setEnabled, addSeparatorItem, setTitle, removeItem, addNewItem };
   // function doMenuOrItemOperation is in file Fl_cocoa.mm because it contains objective-c code
   static void *doMenuOrItemOperation( menuOrItemOperation operation, ...);
 #endif

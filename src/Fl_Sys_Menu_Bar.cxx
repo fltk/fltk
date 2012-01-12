@@ -261,8 +261,8 @@ void Fl_Sys_Menu_Bar::remove(int rank)
  */
 void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
 {
-  doMenuOrItemOperation(renameItem, rank, name);
-  fl_sys_menu_bar->Fl_Menu_::replace(rank, name);
+  Fl_Menu_::replace(rank, name);
+  convertToMenuBar(Fl_Menu_::menu());
 }
 
 
@@ -272,9 +272,6 @@ void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
  */
 void Fl_Sys_Menu_Bar::draw() {
 }
-
-extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
-
 
 #endif /* __APPLE__ */
 
