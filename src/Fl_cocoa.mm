@@ -2960,37 +2960,31 @@ static void createAppleMenu(void)
 {
   fl_lock_function();
   const Fl_Menu_Item *item = [self getFlItem];
-  NSMenu* menu = [self menu];
-  NSInteger flRank = [menu indexOfItem:self];
-  NSInteger last = [menu numberOfItems];
-  if (item) {
-    fl_sys_menu_bar->picked(item);
-    if ( item->flags & FL_MENU_TOGGLE ) {	// update the menu toggle symbol
-      [self setState:(item->value() ? NSOnState : NSOffState)];
-    }
-    else if ( item->flags & FL_MENU_RADIO ) {	// update the menu radio symbols
-      const Fl_Menu_Item *item2;
-      int from = flRank;
-      while(from > 0) {
-	if ([[menu itemAtIndex:from-1] isSeparatorItem]) break;
-	item2 = [(FLMenuItem*)[menu itemAtIndex:from-1] getFlItem];
-	if ( !(item2->flags & FL_MENU_RADIO) ) break;
-	from--;
-	}
-      int to = flRank;
-      while (to+1 < last) {
-	if ([[menu itemAtIndex:to+1] isSeparatorItem]) break;
-	item2 = [(FLMenuItem*)[menu itemAtIndex:to+1] getFlItem];
-	if (!(item2->flags & FL_MENU_RADIO)) break;
-	to++;
-	}
-      NSMenu *nsmenu = [self menu];
-      int nsrank = (int)[nsmenu indexOfItem:self];
-      for(int i =  from - flRank + nsrank ; i <= to - flRank + nsrank; i++) {
-        NSMenuItem *nsitem = [nsmenu itemAtIndex:i];
-        if (nsitem != self) [nsitem setState:NSOffState];
-        else [nsitem setState:(item->value() ? NSOnState : NSOffState) ];
+  fl_sys_menu_bar->picked(item);
+  if ( item->flags & FL_MENU_TOGGLE ) {	// update the menu toggle symbol
+    [self setState:(item->value() ? NSOnState : NSOffState)];
+  }
+  else if ( item->flags & FL_MENU_RADIO ) {	// update the menu radio symbols
+    NSMenu* menu = [self menu];
+    NSInteger flRank = [menu indexOfItem:self];
+    NSInteger last = [menu numberOfItems] - 1;
+    int from = flRank;
+    while(from > 0) {
+      if ([[menu itemAtIndex:from-1] isSeparatorItem]) break;
+      item = [(FLMenuItem*)[menu itemAtIndex:from-1] getFlItem];
+      if ( !(item->flags & FL_MENU_RADIO) ) break;
+      from--;
       }
+    int to = flRank;
+    while (to < last) {
+      if ([[menu itemAtIndex:to+1] isSeparatorItem]) break;
+      item = [(FLMenuItem*)[menu itemAtIndex:to+1] getFlItem];
+      if (!(item->flags & FL_MENU_RADIO)) break;
+      to++;
+      }
+    for(int i =  from; i <= to; i++) {
+      NSMenuItem *nsitem = [menu itemAtIndex:i];
+      [nsitem setState:(nsitem != self ? NSOffState : NSOnState)];
     }
   }
   fl_unlock_function();
