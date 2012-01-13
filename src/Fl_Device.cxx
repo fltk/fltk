@@ -68,9 +68,22 @@ Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_S
   SInt32 versionMajor = 0;
   SInt32 versionMinor = 0;
   SInt32 versionBugFix = 0;
-  Gestalt( gestaltSystemVersionMajor, &versionMajor );
-  Gestalt( gestaltSystemVersionMinor, &versionMinor );
-  Gestalt( gestaltSystemVersionBugFix, &versionBugFix );
+  SInt32 version;
+  Gestalt( gestaltSystemVersion, &version);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  if (version >= 0x1040) {
+    Gestalt( gestaltSystemVersionMajor, &versionMajor );
+    Gestalt( gestaltSystemVersionMinor, &versionMinor );
+    Gestalt( gestaltSystemVersionBugFix, &versionBugFix );
+    }
+  else {
+#endif
+    versionMajor = 10;
+    versionMinor = (version / 0x10) % 0x10;
+    versionBugFix = version % 0x10;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+    }
+#endif
   fl_mac_os_version = versionMajor * 10000 + versionMinor * 100 + versionBugFix;
 #endif
 };
