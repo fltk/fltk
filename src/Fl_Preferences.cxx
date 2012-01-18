@@ -330,7 +330,7 @@ Fl_Preferences::Fl_Preferences( Fl_Preferences *parent, int groupIndex ) {
  An ID can be retrieved from any Fl_Preferences dataset, and can then be used
  to create multiple new references to the same dataset.
 
- ID's can be put very helpful when put into the <tt>user_data()</tt> field of
+ ID's can be very helpful when put into the <tt>user_data()</tt> field of
  widget callbacks.
  */
 Fl_Preferences::Fl_Preferences( Fl_Preferences::ID id ) {
@@ -370,7 +370,7 @@ Fl_Preferences::~Fl_Preferences() {
   if (node && !node->parent()) delete rootNode;
   // DO NOT delete nodes! The root node will do that after writing the preferences
   // zero all pointer to avoid memory errors, even though
-  // Valgrind does not complain (Cygwind does though)
+  // Valgrind does not complain (Cygwin does though)
   node = 0L;
   rootNode = 0L;
 }
@@ -657,7 +657,7 @@ static char *decodeText( const char *src ) {
  supplied. The return value indicates if the value was available
  (non-zero) or the default was used (0).
  'maxSize' is the maximum length of text that will be read.
- The text buffer must allow for one additional byte for a trailling zero.
+ The text buffer must allow for one additional byte for a trailing zero.
 
  \param[in] key name of entry
  \param[out] text returned from preferences or default value if none was set

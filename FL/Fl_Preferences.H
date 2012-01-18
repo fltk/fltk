@@ -27,16 +27,16 @@
 
 /**
    \brief Fl_Preferences provides methods to store user
-   settings between application starts. 
+   settings between application starts.
 
    It is similar to the
    Registry on WIN32 and Preferences on MacOS, and provides a
    simple configuration mechanism for UNIX.
-   
+
    Fl_Preferences uses a hierarchy to store data. It
    bundles similar data into groups and manages entries into those
    groups as name/value pairs.
-   
+
    Preferences are stored in text files that can be edited
    manually. The file format is easy to read and relatively
    forgiving. Preferences files are the same on all platforms. User
@@ -45,16 +45,16 @@
    scheme. The user must provide default values for all entries to
    ensure proper operation should preferences be corrupted or not
    yet exist.
-   
+
    Entries can be of any length. However, the size of each
    preferences file should be kept small for performance
    reasons. One application can have multiple preferences files.
    Extensive binary data however should be stored in separate
    files: see getUserdataPath().
- 
-   \note Starting with FLTK 1.3, preference databases are expected to 
-   be in utf8 encoding. Previous databases were stored in the 
-   current chracter set or code page which renders them incompatible
+
+   \note Starting with FLTK 1.3, preference databases are expected to
+   be in UTF-8 encoding. Previous databases were stored in the
+   current character set or code page which renders them incompatible
    for text entries using international characters.
  */
 class FL_EXPORT Fl_Preferences {
@@ -101,7 +101,7 @@ public:
    */
   const char *name() { return node->name(); }
   
-  /** Return the the full path to this entry.
+  /** Return the full path to this entry.
    */
   const char *path() { return node->path(); }
   
@@ -145,12 +145,13 @@ public:
   // char import( const char *filename );
   
   /**
-     'Name' provides a simple method to create numerical or more complex 
+     'Name' provides a simple method to create numerical or more complex
      procedural names for entries and groups on the fly.
      
-     Example: prefs.set(Fl_Preferences::Name("File%d",i),file[i]);. 
+     Example: prefs.set(Fl_Preferences::Name("File%d",i),file[i]);.
     
-     See test/preferences.cxx as a sample for writing arrays into preferences.<p>
+     See test/preferences.cxx as a sample for writing arrays into preferences.
+
      'Name' is actually implemented as a class inside Fl_Preferences. It casts
      into const char* and gets automatically destroyed after the enclosing call
      ends.
