@@ -23,6 +23,12 @@ decl {void readPrefs();} {public local
 decl {void writePrefs();} {public local
 } 
 
+decl {const char *project = "fltk.org";} {private local
+} 
+
+decl {const char *application = "test/preferences";} {private local
+} 
+
 Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
 } {
   code {Fl::delete_widget(myWindow);} {}
@@ -39,7 +45,7 @@ Function {} {open return_type int
   Fl_Window myWindow {
     label {My Preferences}
     callback closeWindowCB open
-    xywh {394 64 298 311} type Double visible
+    xywh {709 76 298 311} type Double visible
   } {
     Fl_Button {} {
       label Cancel
@@ -195,7 +201,7 @@ int intValue;
 char buffer[80];
 double doubleValue;
 
-Fl_Preferences app( Fl_Preferences::USER, "fltk.org", "test/preferences" );
+Fl_Preferences app( Fl_Preferences::USER, project, application );
 
   char path[ FL_PATH_MAX ];
   app.getUserdataPath( path, sizeof(path) );
@@ -262,12 +268,13 @@ Fl_Preferences app( Fl_Preferences::USER, "fltk.org", "test/preferences" );
     eat.get( "binFoo", (void*)&hex, 0, 0, sizeof( unsigned int ) );
     void *data;
     eat.get( "binFoo2", data, 0, 0 );
-  **/} {}
+  **/} {selected
+  }
 } 
 
 Function {writePrefs()} {open return_type void
 } {
-  code {Fl_Preferences app( Fl_Preferences::USER, "fltk.org", "test/preferences" );
+  code {Fl_Preferences app( Fl_Preferences::USER, project, application );
 
   Fl_Preferences bed( app, "Bed" );
 
@@ -323,6 +330,5 @@ Function {writePrefs()} {open return_type void
   /* sample code only: */
   unsigned int hex = 0x2387efcd;
   eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
-  eat.set( "binFoo2", (void*)&bed, 256 );} {selected
-  }
+  eat.set( "binFoo2", (void*)&bed, 256 );} {}
 } 
