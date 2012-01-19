@@ -61,6 +61,10 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
   _usericon         = 0;
   _userdata         = 0;
   _parent           = 0;
+#if FLTK_ABI_VERSION >= 10302
+  _prev_sibling     = 0;
+  _next_sibling     = 0;
+#endif /*FLTK_ABI_VERSION*/
 }
 
 // DTOR
@@ -101,6 +105,10 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
   _usericon         = o->usericon();
   _userdata         = o->user_data();
   _parent           = o->_parent;
+#if FLTK_ABI_VERSION >= 10302
+  _prev_sibling     = 0;		// do not copy ptrs! use update_prev_next()
+  _next_sibling     = 0;		// do not copy ptrs! use update_prev_next()
+#endif /*FLTK_ABI_VERSION*/
 }
 
 /// Print the tree as 'ascii art' to stdout.
@@ -108,8 +116,14 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
 ///
 void Fl_Tree_Item::show_self(const char *indent) const {
   if ( label() ) {
+#if FLTK_ABI_VERSION >= 10302
+    printf("%s-%s (%d children, this=%p, parent=%p, prev=%p, next=%p, depth=%d)\n",
+           indent,label(),children(),(void*)this, (void*)_parent,
+	   _prev_sibling, _next_sibling, depth());
+#else /*FLTK_ABI_VERSION*/
     printf("%s-%s (%d children, this=%p, parent=%p depth=%d)\n",
            indent,label(),children(),(void*)this, (void*)_parent, depth());
+#endif /*FLTK_ABI_VERSION*/
   }
   if ( children() ) {
     char *i2 = (char*)malloc(strlen(indent) + 2);
@@ -793,12 +807,22 @@ Fl_Tree_Item *Fl_Tree_Item::next() {
   if ( c->has_children() ) {
     return(c->child(0));
   }
+#if FLTK_ABI_VERSION >= 10302
+  // NEW
+  while ( ( p = c->parent() ) != NULL ) {	// loop upwards through parents
+    if ( c->_next_sibling )			// not last child?
+      return(c->_next_sibling);			// return next child
+    c = p;					// child becomes parent to move up generation
+  }						// loop: moves up to next parent
+#else /*FLTK_ABI_VERSION*/
+  // OLD
   while ( ( p = c->parent() ) != NULL ) {	// loop upwards through parents
     int t = p->find_child(c);			// find our position in parent's children[] array
     if ( ++t < p->children() )			// not last child?
       return(p->child(t));			// return next child
     c = p;					// child becomes parent to move up generation
   }						// loop: moves up to next parent
+#endif /*FLTK_ABI_VERSION*/
   return(0);					// hit root? done
 }
 
@@ -810,6 +834,37 @@ Fl_Tree_Item *Fl_Tree_Item::next() {
 /// \returns the previous item in the tree, or 0 if there's no item above this one (hit the root).
 ///
 Fl_Tree_Item *Fl_Tree_Item::prev() {
+#if FLTK_ABI_VERSION >= 10302
+  // NEW
+  if ( !parent() ) return(0);	// hit root? done
+  if ( !_prev_sibling ) {	// are we first child?
+    return(parent());		// return parent
+  }
+  // Tricky: in the following example our current position
+  // in the tree is 'j', and we need to move "up one" to 'i':
+  //
+  //        ROOT
+  //          |-- a
+  //              b-- c
+  //              |   d-- e
+  //              |   |   f
+  //              |   |
+  //              |   g-- h
+  //              |       i
+  //              j
+  //
+  // We do this via b->g->i:
+  //    1. Find j's prev_sibling (b)  _
+  //    2. Find b's 'last child' (g)   |_ while loop
+  //    3. Find g's 'last child' (i)  _|
+  //
+  Fl_Tree_Item *p = _prev_sibling;	// focus on our prev sibling
+  while ( p->has_children() ) {		// item has children?
+    p = p->child(p->children()-1);	// descend hierarchy finding deepest 'last child'
+  }
+  return(p);
+#else /*FLTK_ABI_VERSION*/
+  // OLD
   Fl_Tree_Item *p=parent();		// start with parent
   if ( ! p ) return(0);			// hit root? done
   int t = p->find_child(this);		// find our position in parent's children[] array
@@ -821,6 +876,7 @@ Fl_Tree_Item *Fl_Tree_Item::prev() {
     p = p->child(p->children()-1);	// take last child
   }
   return(p);
+#endif /*FLTK_ABI_VERSION*/
 }
 
 /// Return this item's next sibling.
@@ -832,12 +888,18 @@ Fl_Tree_Item *Fl_Tree_Item::prev() {
 /// \returns item's next sibling, or 0 if none.
 ///
 Fl_Tree_Item *Fl_Tree_Item::next_sibling() {
+#if FLTK_ABI_VERSION >= 10302
+  // NEW
+  return(_next_sibling);
+#else /*FLTK_ABI_VERSION*/
+  // OLD
   if ( !parent() ) return(0);			// No parent (root)? We have no siblings
   int index = parent()->find_child(this);	// find our position in parent's child() array
   if ( index == -1 ) return(0);			// parent doesn't know us? weird
   if ( (index+1) < parent()->children() )	// is there a next child?
     return(parent()->child(index+1));		// return next child if there's one below us
   return(0);					// no siblings below us
+#endif /*FLTK_ABI_VERSION*/
 }
 
 /// Return this item's previous sibling.
@@ -848,13 +910,44 @@ Fl_Tree_Item *Fl_Tree_Item::next_sibling() {
 /// \returns This item's previous sibling, or 0 if none.
 ///
 Fl_Tree_Item *Fl_Tree_Item::prev_sibling() {
+#if FLTK_ABI_VERSION >= 10302
+  // NEW
+  return(_prev_sibling);
+#else /*FLTK_ABI_VERSION*/
+  // OLD
   if ( !parent() ) return(0);				// No parent (root)? We have no siblings
   int index = parent()->find_child(this);		// find next position up in parent's child() array
   if ( index == -1 ) return(0);				// parent doesn't know us? weird
   if ( index > 0 ) return(parent()->child(index-1));	// return previous child if there's one above us
   return(0);						// no siblings above us
+#endif /*FLTK_ABI_VERSION*/
 }
 
+/// Update our _prev_sibling and _next_sibling pointers to point to neighbors,
+/// given \p index as being our current position in the parent's item array.
+/// Call this whenever items in the array are added/removed/moved/swapped.
+/// 
+void Fl_Tree_Item::update_prev_next(int index) {
+#if FLTK_ABI_VERSION >= 10302
+  // NEW
+  int pchildren = parent() ? parent()->children() : 0;
+  int index_prev = index-1;
+  int index_next = index+1;
+  // Get pointers to prev+next items
+  Fl_Tree_Item *item_prev = (index_prev>=0)&&(index_prev<pchildren) ? parent()->child(index_prev) : 0;
+  Fl_Tree_Item *item_next = (index_next>=0)&&(index_next<pchildren) ? parent()->child(index_next) : 0;
+  // Adjust our prev+next ptrs
+  _prev_sibling = item_prev;
+  _next_sibling = item_next;
+  // Adjust neighbors to point to us
+  if ( item_prev ) item_prev->_next_sibling = this;
+  if ( item_next ) item_next->_prev_sibling = this;
+#else /*FLTK_ABI_VERSION*/
+  // OLD
+  // -- does nothing --
+#endif /*FLTK_ABI_VERSION*/
+}
+      
 /// Return the next visible item. (If this item has children and is closed, children are skipped)
 ///
 /// This method can be used to walk the tree forward, skipping items

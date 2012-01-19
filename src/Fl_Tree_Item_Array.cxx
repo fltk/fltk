@@ -47,11 +47,13 @@ Fl_Tree_Item_Array::~Fl_Tree_Item_Array() {
 /// Copy constructor. Makes new copy of array, with new instances of each item.
 Fl_Tree_Item_Array::Fl_Tree_Item_Array(const Fl_Tree_Item_Array* o) {
   _items = (Fl_Tree_Item**)malloc(o->_size * sizeof(Fl_Tree_Item*));
-  _total     = o->_total;
+  _total     = 0;
   _size      = o->_size;
   _chunksize = o->_chunksize;
   for ( int t=0; t<o->_total; t++ ) {
     _items[t] = new Fl_Tree_Item(o->_items[t]);
+    ++_total;
+    _items[t]->update_prev_next(t);		// update uses _total's current value
   }
 }
 
@@ -108,6 +110,7 @@ void Fl_Tree_Item_Array::insert(int pos, Fl_Tree_Item *new_item) {
   } 
   _items[pos] = new_item;
   _total++;
+  _items[pos]->update_prev_next(pos);	// adjust item's prev/next and its neighbors
 }
 
 /// Add an item* to the end of the array.
@@ -125,12 +128,19 @@ void Fl_Tree_Item_Array::add(Fl_Tree_Item *val) {
 ///     The item will be delete'd (if non-NULL), so its destructor will be called.
 ///
 void Fl_Tree_Item_Array::remove(int index) {
-  if ( _items[index] ) {		// delete if non-zero
+  if ( _items[index] ) {			// delete if non-zero
     delete _items[index];
   }
   _items[index] = 0;
-  for ( _total--; index<_total; index++ ) {
-    _items[index] = _items[index+1];
+  _total--;
+  for ( int i=index; i<_total; i++ ) {		// reshuffle the array
+    _items[i] = _items[i+1];
+  }
+  if ( index < _total ) {			// removed item not last?
+    _items[index]->update_prev_next(index);	// update next item's prev/next and neighbors
+  } else if ( ((index-1) >= 0) &&		// removed item IS last?
+            ((index-1) < _total)) {
+    _items[index-1]->update_prev_next(index-1);	// update prev item's prev/next and neighbors
   }
 }
 
@@ -147,6 +157,18 @@ int Fl_Tree_Item_Array::remove(Fl_Tree_Item *item) {
   }
   return(-1);
 }
+
+#if FLTK_ABI_VERSION >= 10302
+/// Swap the two items at index positions \p ax and \p bx.
+void Fl_Tree_Item_Array::swap(int ax, int bx) {
+  Fl_Tree_Item *asave = _items[ax];
+  _items[ax] = _items[bx];
+  _items[bx] = asave;
+  // Adjust prev/next ptrs
+  _items[ax]->update_prev_next(ax);
+  _items[bx]->update_prev_next(bx);
+}
+#endif /* FLTK_ABI_VERSION */
 
 //
 // End of "$Id$".

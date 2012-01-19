@@ -69,6 +69,10 @@ class FL_EXPORT Fl_Tree_Item {
   Fl_Tree_Item_Array      _children;		// array of child items
   Fl_Tree_Item           *_parent;		// parent item (=0 if root)
   void                   *_userdata;    	// user data that can be associated with an item
+#if FLTK_ABI_VERSION >= 10302
+  Fl_Tree_Item           *_prev_sibling;	// previous sibling (same level)
+  Fl_Tree_Item           *_next_sibling;	// next sibling (same level)
+#endif /*FLTK_ABI_VERSION*/
 protected:
   void show_widgets();
   void hide_widgets();
@@ -178,6 +182,7 @@ public:
   Fl_Tree_Item *next();
   Fl_Tree_Item *next_sibling();
   Fl_Tree_Item *prev_sibling();
+  void update_prev_next(int index);
   Fl_Tree_Item *next_displayed(Fl_Tree_Prefs &prefs);
   Fl_Tree_Item *prev_displayed(Fl_Tree_Prefs &prefs);
   
