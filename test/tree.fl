@@ -194,8 +194,7 @@ tree->close("500 Items");	// close the 500 items by default
 
 AssignUserIcons();
 
-tree->redraw();} {selected
-  }
+tree->redraw();} {}
 } 
 
 Function {EditColor(Fl_Color val)} {
@@ -250,7 +249,7 @@ if ( item ) {
         callback {int val = (int)margintop_slider->value();
 tree->margintop(val);
 tree->redraw();}
-        tooltip {Changes the top margin for the tree widget} xywh {486 31 140 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+        tooltip {Changes the top margin for the tree widget} xywh {486 31 140 16} type Horizontal labelsize 12 align 4 textsize 12
         code0 {o->value(tree->margintop());}
         code1 {o->range(0.0, 100.0);}
         code2 {o->step(1.0);}
@@ -262,7 +261,7 @@ tree->redraw();}
         callback {int val = (int)marginleft_slider->value();
 tree->marginleft(val);
 tree->redraw();}
-        tooltip {Changes the left margin for the tree widget} xywh {486 51 140 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+        tooltip {Changes the left margin for the tree widget} xywh {486 51 140 16} type Horizontal labelsize 12 align 4 textsize 12
         code0 {o->value(tree->marginleft());}
         code1 {o->range(0.0, 100.0);}
         code2 {o->step(1.0);}
@@ -274,7 +273,7 @@ tree->redraw();}
         callback {int val = (int)openchild_marginbottom_slider->value();
 tree->openchild_marginbottom(val);
 tree->redraw();}
-        tooltip {Changes the vertical space below an open child tree} xywh {486 71 140 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+        tooltip {Changes the vertical space below an open child tree} xywh {486 71 140 16} type Horizontal labelsize 12 align 4 textsize 12
         code0 {o->value(tree->openchild_marginbottom());}
         code1 {o->range(0.0, 100.0);}
         code2 {o->step(1.0);}
@@ -659,6 +658,13 @@ tree->deselect("ROOT"); // leave deselected
 fl_alert("TEST COMPLETED\\n If you didn't see any error dialogs, test PASSED.");}
         tooltip {Test the 'docallback' argument can disable callbacks.} xywh {531 358 95 16} labelsize 9
       }
+      Fl_Button testrootshowself_button {
+        label {Root Show Self}
+        callback {Fl_Tree_Item *root = tree->root();
+fprintf(stderr, "--- Show Tree\\n");
+if (root) root->show_self();}
+        tooltip {Test the root->'show_self() method to show the entire tree} xywh {530 378 95 16} labelsize 9
+      }
       Fl_Box {} {
         label {Selected Items}
         tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {661 23 335 263} box GTK_DOWN_BOX color 47 labelsize 12 align 1
@@ -780,7 +786,7 @@ if ( ! count ) {
 }
 
 tree->redraw();}
-        tooltip {Changes the font size of the selected items's labels. If none selected, all are changed. Tests Fl_Tree_Item::labelsize();} xywh {828 55 140 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+        tooltip {Changes the font size of the selected items's labels. If none selected, all are changed. Tests Fl_Tree_Item::labelsize();} xywh {828 55 140 16} type Horizontal labelsize 12 align 4 textsize 12
         code0 {o->value(tree->item_labelsize());}
         code1 {o->range(5.0, 200.0);}
         code2 {o->step(1.0);}
@@ -850,7 +856,7 @@ tree->redraw();}
         label {Connector Width}
         user_data tree
         callback {tree->connectorwidth((int)connectorwidth_slider->value());}
-        tooltip {Tests Fl_Tree::connectorwidth()} xywh {828 126 140 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+        tooltip {Tests Fl_Tree::connectorwidth()} xywh {828 126 140 16} type Horizontal labelsize 12 align 4 textsize 12
         code0 {o->value(tree->connectorwidth());}
         code1 {o->range(1.0, 100.0);}
         code2 {o->step(1.0);}
@@ -933,13 +939,13 @@ tree->redraw();}
         label {Select All}
         callback {tree->select_all(0);
 tree->redraw();}
-        tooltip {Selects all items in the tree} xywh {689 201 95 16} labelsize 9
+        tooltip {Selects all items in the tree} xywh {689 219 95 16} labelsize 9
       }
       Fl_Button deselectall_button {
         label {Deselect All}
         callback {tree->deselect_all(0);
 tree->redraw();}
-        tooltip {Deselects all items in the tree} xywh {689 221 95 16} labelsize 9
+        tooltip {Deselects all items in the tree} xywh {689 239 95 16} labelsize 9
       }
       Fl_Light_Button bbbselect_toggle {
         label { Select Bbb}
@@ -953,7 +959,7 @@ int onoff = bbbselect_toggle->value();
 if ( onoff ) tree->select(bbb);		// select /Bbb
 else         tree->deselect(bbb);	// deselect /Bbb}
         tooltip {Toggle selection of just the /Bbb item
-(Not children)} xywh {784 201 95 16} selection_color 1 labelsize 9
+(Not children)} xywh {784 219 95 16} selection_color 1 labelsize 9
       }
       Fl_Light_Button bbbselect2_toggle {
         label { Select Bbb+}
@@ -966,7 +972,7 @@ if ( !bbb) {
 int onoff = bbbselect2_toggle->value();
 if ( onoff ) tree->select_all(bbb);		// select /Bbb and its children
 else         tree->deselect_all(bbb);	// deselect /Bbb and its children}
-        tooltip {Toggle selection of the /Bbb item and its children} xywh {784 221 95 16} selection_color 1 labelsize 9
+        tooltip {Toggle selection of the /Bbb item and its children} xywh {784 239 95 16} selection_color 1 labelsize 9
       }
       Fl_Light_Button bbbchild02select_toggle {
         label { Toggle child-02}
@@ -981,7 +987,7 @@ if ( err == -1 ) {
   fl_alert("FAIL: Couldn't find item '%s'",pathname);
   return;
 }}
-        tooltip {Toggle the single item "/Bbb/child-02" using the item's "pathname".} xywh {784 241 95 16} selection_color 1 labelsize 9
+        tooltip {Toggle the single item "/Bbb/child-02" using the item's "pathname".} xywh {784 259 95 16} selection_color 1 labelsize 9
       }
       Fl_Light_Button rootselect_toggle {
         label {Select ROOT}
@@ -994,7 +1000,7 @@ if ( !item) {
 int onoff = rootselect_toggle->value();
 if ( onoff ) tree->select(item);	// select /ROOT and its children
 else         tree->deselect(item);	// deselect /ROOT and its children}
-        tooltip {Toggle selection of the ROOT item} xywh {879 201 95 16} selection_color 1 labelsize 9
+        tooltip {Toggle selection of the ROOT item} xywh {879 219 95 16} selection_color 1 labelsize 9
       }
       Fl_Light_Button rootselect2_toggle {
         label {Select ROOT+}
@@ -1007,7 +1013,7 @@ if ( !item) {
 int onoff = rootselect2_toggle->value();
 if ( onoff ) tree->select_all(item);	// select /ROOT and its children
 else         tree->deselect_all(item);	// deselect /ROOT and its children}
-        tooltip {Toggle selection of the ROOT item and all children} xywh {879 221 95 16} selection_color 1 labelsize 9
+        tooltip {Toggle selection of the ROOT item and all children} xywh {879 239 95 16} selection_color 1 labelsize 9
       }
       Fl_Box {} {
         label {New Item Defaults}
@@ -1105,11 +1111,62 @@ tree->item_labelfont(val);			  // change font in tree}
         label item_labelsize
         user_data tree
         callback {tree->item_labelsize((int)item_labelsize_slider->value());}
-        tooltip {Sets the default labelsize used for new items. Does NOT affect existing items.} xywh {828 396 140 16} type Horizontal labelsize 12 align 4 step 0.01 textsize 12
+        tooltip {Sets the default labelsize used for new items. Does NOT affect existing items.} xywh {828 396 140 16} type Horizontal labelsize 12 align 4 textsize 12
         code0 {o->value((int)tree->item_labelsize());}
         code1 {o->range(1.0, 50.0);}
         code2 {o->step(1.0);}
         code3 {o->color(46); o->selection_color(FL_RED);}
+      }
+      Fl_Button swapselected_button {
+        label {Swap Selected}
+        callback {Fl_Tree_Item *item=tree->first();
+Fl_Tree_Item *a = 0, *b = 0;
+while (item) {
+    if ( item->is_selected() ) {
+             if ( !a ) a = item;
+        else if ( !b ) b = item;
+        else {
+          fl_alert("Too many items selected. (must select only two)");
+          return;
+        }
+    }
+    item = item->next();
+}
+if ( !a || !b ) {
+  fl_alert("Too few items selected. (you must select two)");
+  return;
+}
+Fl_Tree_Item *pa = a->parent();
+Fl_Tree_Item *pb = b->parent();
+if ( pa != pb ) {
+  fl_alert("The two selected items must be siblings");
+  return;
+}
+pa->swap_children(a,b);
+tree->redraw();}
+        tooltip {Tests the Fl_Tree_Item::swap_children() method
+Swaps two selected items (items must be siblings)} xywh {829 194 95 16} labelsize 9
+      }
+      Fl_Button add20k_button {
+        label {Add 20,000}
+        callback {static int item_id = 501;
+Fl_Tree_Item *item=tree->first();
+while (item) {
+    if ( item->is_selected() ) {
+        Fl_Tree_Item *parent = item->parent();
+        if ( parent == 0 ) parent = tree->root();
+        char s[80];
+        for ( int i=0; i<20000; i++ ) {
+            sprintf(s, "Item \#%d", item_id+i);
+            tree->add(parent, s);
+        }
+        item_id += 20000;
+        break;
+    }
+    item = item->next();
+}
+tree->redraw();} selected
+        tooltip {Adds 20,000 items to the selected item's parent} xywh {530 398 95 16} labelsize 9
       }
     }
     Fl_Box resizer_box {
