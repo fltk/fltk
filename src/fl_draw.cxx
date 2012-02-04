@@ -383,9 +383,25 @@ void fl_draw(
   Measure how wide and tall the string will be when printed by the
   fl_draw() function with \p align parameter. If the incoming \p w
   is non-zero it will wrap to that width.
+  
+  The 'current font' is used to do the width/height calculations,
+  so unless its value is known at the time fl_measure() is called,
+  it is advised to first set the current font with fl_font().
+
+  \b Note: In the general use case, it's a common error to forget to set
+  \p w to 0 before calling fl_measure() when wrap behavior isn't needed.
+
   \param[in] str nul-terminated string
   \param[out] w,h width and height of string in current font
   \param[in] draw_symbols non-zero to enable @@symbol handling [default=1]
+
+  \code
+  // Example: Common use case for fl_measure()
+  const char *s = "This is a test";
+  int wi=0, hi=0;              // initialize to zero before calling fl_measure()
+  fl_font(FL_HELVETICA, 14);   // set current font face/size to be used for measuring
+  fl_measure(s, wi, hi);       // returns pixel width/height of string in current font
+  \endcode
 */
 void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   if (!str || !*str) {w = 0; h = 0; return;}
