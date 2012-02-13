@@ -43,6 +43,7 @@ public:
     deactivate();			// don't let the old area take events
     fl_sys_menu_bar = this;
   }
+  const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
   void menu(const Fl_Menu_Item *m);
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
   int insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data=0, int flags=0);
