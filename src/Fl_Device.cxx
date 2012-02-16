@@ -53,6 +53,7 @@ Fl_Graphics_Driver::Fl_Graphics_Driver() {
   fl_matrix = &m; 
   p = (XPOINT *)0;
   font_descriptor_ = NULL;
+  p_size = 0;
 };
 
 void Fl_Graphics_Driver::text_extents(const char*t, int n, int& dx, int& dy, int& w, int& h)

@@ -386,7 +386,7 @@ public:
   /** Sets the current Fl_Font_Descriptor for the graphics driver */
   inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   /** \brief The destructor */
-  virtual ~Fl_Graphics_Driver() {};
+  virtual ~Fl_Graphics_Driver() { if (p) free(p); };
 };
 
 #if defined(__APPLE__) || defined(FL_DOXYGEN)
