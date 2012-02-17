@@ -31,6 +31,7 @@
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
+#include <stdlib.h>
 
 class Fl_Graphics_Driver;
 class Fl_Font_Descriptor;
@@ -386,7 +387,7 @@ public:
   /** Sets the current Fl_Font_Descriptor for the graphics driver */
   inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   /** \brief The destructor */
-  virtual ~Fl_Graphics_Driver() { if (p) free(p); };
+  virtual ~Fl_Graphics_Driver() { if (p) free(p); }
 };
 
 #if defined(__APPLE__) || defined(FL_DOXYGEN)
