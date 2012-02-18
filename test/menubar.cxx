@@ -172,8 +172,8 @@ Fl_Menu_Item pulldown[] = {
 
 #ifdef __APPLE__
 Fl_Menu_Item menu_location[] = {
-  {"Window menu bar",	0, 0, 0, FL_MENU_VALUE},
-  {"System menu bar",	},
+  {"Fl_Menu_Bar",	0, 0, 0, FL_MENU_VALUE},
+  {"Fl_Sys_Menu_Bar",	},
   {0}
 };
 
