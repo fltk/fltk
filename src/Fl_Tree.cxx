@@ -169,7 +169,7 @@ int Fl_Tree::handle(int e) {
 	    case FL_Enter:	// ENTER: selects current item only
 	    case FL_KP_Enter:
 	      if ( when() & ~FL_WHEN_ENTER_KEY) {
-		select_only(_item_focus);
+		select_only(_item_focus, when());
 		show_item(_item_focus);		// STR #2426
 		return(1);
 	      }
@@ -180,12 +180,12 @@ int Fl_Tree::handle(int e) {
 		  break;
 		case FL_TREE_SELECT_SINGLE:
 		  if ( ! _item_focus->is_selected() )		// not selected?
-		    select_only(_item_focus);			// select only this
+		    select_only(_item_focus, when());		// select only this
 		  else
-		    deselect_all();				// select nothing
+		    deselect_all(0, when());			// select nothing
 		  break;
 		case FL_TREE_SELECT_MULTI:
-		  select_toggle(_item_focus);
+		  select_toggle(_item_focus, when());
 		  break;
 	      }
 	      break;
@@ -220,7 +220,7 @@ int Fl_Tree::handle(int e) {
 		if ( _prefs.selectmode() == FL_TREE_SELECT_MULTI &&	// multiselect on?
 		     (Fl::event_state() & FL_SHIFT) &&			// shift key?
 		     ! _item_focus->is_selected() ) {			// not already selected?
-		    select(_item_focus);				// extend selection..
+		    select(_item_focus, when());			// extend selection..
 		}
 		return(1);
 	      }
@@ -264,16 +264,16 @@ int Fl_Tree::handle(int e) {
 	    case FL_TREE_SELECT_NONE:
 	      break;
 	    case FL_TREE_SELECT_SINGLE:
-	      select_only(o);
+	      select_only(o, when());
 	      break;
 	    case FL_TREE_SELECT_MULTI: {
 	      if ( Fl::event_state() & FL_SHIFT ) {		// SHIFT+PUSH?
 	        select(o);					// add to selection
 	      } else if ( Fl::event_state() & FL_CTRL ) {	// CTRL+PUSH?
-		select_toggle(o);				// toggle selection state
+		select_toggle(o, when());			// toggle selection state
 		lastselect = o;					// save toggled item (prevent oscillation)
 	      } else {
-		select_only(o);
+		select_only(o, when());
 	      }
 	      break;
 	    }
@@ -308,12 +308,12 @@ int Fl_Tree::handle(int e) {
 	switch ( _prefs.selectmode() ) {
 	  case FL_TREE_SELECT_NONE: break;	// no selection changes
 	  case FL_TREE_SELECT_SINGLE:
-	    select_only(o);
+	    select_only(o, when());
 	    break;
 	  case FL_TREE_SELECT_MULTI:
 	    if ( Fl::event_state() & FL_CTRL &&	// CTRL-DRAG: toggle?
 	         lastselect != o ) {		// not already toggled from last microdrag?
-	      select_toggle(o);			// toggle selection
+	      select_toggle(o, when());		// toggle selection
 	      lastselect = o;			// save we toggled it (prevents oscillation)
 	    } else {
 	      select(o);			// select this
