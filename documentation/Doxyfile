@@ -567,6 +567,7 @@ INPUT                  = src/index.dox \
                          src/unicode.dox \
                          ../FL \
                          ../src \
+                         ../cairo \
                          src/enumerations.dox \
                          src/glut.dox \
                          src/forms.dox \
