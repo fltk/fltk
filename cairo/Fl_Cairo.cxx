@@ -109,10 +109,15 @@ cairo_t * Fl::cairo_make_current(void *gc) {
 # warning FIXME get W,H for cairo_make_current(void*)
 #elif defined(__APPLE_QUARTZ__) 
     if (fl_window) {
+#if __LP64__
+      W = Fl_Window::current()->w();
+      H = Fl_Window::current()->h();
+#else
       Rect portRect; 
       GetPortBounds(GetWindowPort( Fl_X::i(Fl_Window::current())->window_ref() ), &portRect);
       W = portRect.right-portRect.left;
       H = portRect.bottom-portRect.top;
+#endif
     } 
     else {
       W = CGBitmapContextGetHeight(fl_gc);
