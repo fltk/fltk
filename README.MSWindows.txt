@@ -535,9 +535,22 @@ is changed, the corresponding .cxx file will be recompiled.
 
 Windows has a flag that determines whether an application
 runs in the foreground with a console or in the background
-without a console.  Use the "-mwindows" option to make your
-application run in the background and "-mconsole" to run in
-the foreground.
+without a console. 
+
+If you're using gcc (i.e. MinGW or Cygwin), then use the
+linker option "-mwindows" to make your application run in
+the background and "-mconsole" to run in the foreground. Use
+fltk-config --ldflags to see appropriate linker flags, or use
+fltk-config --compile to compile a single source file.
+
+If you're using MS VC++, then you must set the linker option
+"/subsystem:windows" to create a "Windows" program (w/o console
+window), or set the linker option "/subsystem:console" for a
+console program, i.e. with a console window. These options
+are set differently in the FLTK project files, depending on
+whether you select a "Debug" or "Release" build.
+
+Other compilers and build systems may have different options.
 
 Keep in mind that a windows application cannot send output
 to stdout, even if you run it from an existing console
@@ -606,3 +619,4 @@ The following links may be of use:
 Oct 25 2010 - matt: restructured entire document and verified instructions
 Dec 20 2010 - matt: merged with README.win32
 Dec 22 2010 - AlbrechtS: added newer Cygwin (cross/mingw-w64) options
+Feb 24 2012 - AlbrechtS: clarified console window FAQ
