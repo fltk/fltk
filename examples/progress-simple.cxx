@@ -23,14 +23,14 @@
 //     http://www.fltk.org/str.php
 //
 
-#ifdef _WIN32
+#ifdef WIN32
 // WINDOWS
 #include <windows.h>
 #define usleep(v) Sleep(v/1000)
-#else
+#else /*WIN32*/
 // UNIX
 #include <unistd.h>                            // usleep
-#endif
+#endif /*WIN32*/
 
 // Button callback
 void butt_cb(Fl_Widget *butt, void *data) {
