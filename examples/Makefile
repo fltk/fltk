@@ -11,6 +11,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       howto-text-over-image-button$(EXEEXT) \
       menubar-add$(EXEEXT) \
       nativefilechooser-simple-app$(EXEEXT) \
+      progress-simple$(EXEEXT) \
       table-as-container$(EXEEXT) \
       table-simple$(EXEEXT) \
       table-sort$(EXEEXT) \
