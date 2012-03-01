@@ -78,7 +78,7 @@ Fl_PostScript_Graphics_Driver *Fl_PostScript_File_Device::driver()
  @brief Begins the session where all graphics requests will go to a local PostScript file.
  *
  Opens a file dialog entitled with Fl_PostScript_File_Device::file_chooser_title to select an output PostScript file.
- @param pagecount The total number of pages to be created.
+ @param pagecount The total number of pages to be created. Use 0 if this number is unknown when this function is called.
  @param format Desired page format.
  @param layout Desired page layout.
  @return 0 if OK, 1 if user cancelled the file dialog, 2 if fopen failed on user-selected output file.
@@ -112,7 +112,7 @@ static int dont_close(FILE *f)
  *
  @param ps_output A writable FILE pointer that will receive PostScript output and that should not be closed
  until after end_job() has been called.
- @param pagecount The total number of pages to be created.
+ @param pagecount The total number of pages to be created. Use 0 if this number is unknown when this function is called.
  @param format Desired page format.
  @param layout Desired page layout.
  @return always 0.
