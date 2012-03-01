@@ -1559,7 +1559,7 @@ static int general_input_filter(char *buffer, int buflen,
 {
   char *p, *q, multibyte[5];
   int lq, r, offset;
-  p = endline = line;
+  p = line;
   q = buffer;
   while (q < buffer + buflen) {
     if (p >= endline) {
@@ -1597,7 +1597,7 @@ static int utf8_input_filter(char *buffer, int buflen, char *line, int sline, ch
   char *p, *q, multibyte[5];
   int l, lp, lq, r;
   unsigned u;
-  p = endline = line;
+  p = line;
   q = buffer;
   while (q < buffer + buflen) {
     if (p >= endline) {
