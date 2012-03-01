@@ -1586,43 +1586,63 @@ static int general_input_filter(char *buffer, int buflen,
 /*
  filter that produces, from an input stream fed by reading from fp,
  a UTF-8-encoded output stream written in buffer.
+ Returns #bytes read into 'buffer'.
+
  Input can be UTF-8. If it is not, it is decoded with CP1252.
  Output is UTF-8.
- *input_was_changed is set to true if the input was not strict UTF-8 so output
+
+ *input_was_changed returns true if input was not strict UTF-8, so output
  differs from input.
  */
-static int utf8_input_filter(char *buffer, int buflen, char *line, int sline, char* &endline, 
-	      FILE *fp, int *input_was_changed)
+static int utf8_input_filter(char *buffer, 		// result buffer we fill with utf8 encoded text
+			     int buflen,		// max size of buffer from caller
+			     char *line,		// file line buffer caller wants us to use
+			     int sline, 		// max size of line buffer
+			     char* &endline, 		// keeps track of leftovers in line[] buffer between calls
+	                     FILE *fp,			// open file we're reading data from
+			     int *input_was_changed)	// returned flag: 'true' if buffer[] different from file due to utf8 encoding
 {
+  // p - work pointer to line[]
+  // q - work pointer to buffer[]
+  // l - length of utf8 sequence being worked on
+  // lp - fl_utf8decode() length of utf8 sequence being worked on
+  // lq - fl_utf8encode() length of utf8 sequence being worked on
+  // r - bytes read from last fread()
+  // u - utf8 decoded sequence as a single multibyte unsigned integer
   char *p, *q, multibyte[5];
   int l, lp, lq, r;
   unsigned u;
   p = line;
   q = buffer;
   while (q < buffer + buflen) {
-    if (p >= endline) {
-      r = fread(line, 1, sline, fp);
+    if (p >= endline) {			// walked off end of input file's line buffer?
+      r = fread(line, 1, sline, fp);	// read another block of sline bytes from file
       endline = line + r; 
-      if (r == 0) return q - buffer;
+      if (r == 0) return q - buffer;	// EOF? return bytes read into buffer[]
       p = line;
     }
-    l = fl_utf8len1(*p);
-    if (p + l > endline) {
-      memmove(line, p, endline - p);
+    // Predict length of utf8 sequence
+    //    See if utf8 seq we're working on would extend off end of line buffer,
+    //    and if so, adjust + load more data so that it doesn't.
+    //
+    l = fl_utf8len1(*p);		// anticipate length of utf8 sequence
+    if (p + l > endline) {		// would walk off end of line buffer?
+      memmove(line, p, endline - p);	// re-jigger line buffer to get some room
       endline -= (p - line);
-      r = fread(endline, 1, sline - (endline - line), fp);
+      r = fread(endline, 1, sline - (endline - line), fp);	 // re-fill line buffer
       endline += r;
       p = line;
-      if (endline - line < l) break;
+      if (endline - line < l) break;	// sequence *still* extends past end? stop loop
     }
     while ( l > 0) {
-      u = fl_utf8decode(p, p+l, &lp);
-      lq = fl_utf8encode(u, multibyte);
+      u = fl_utf8decode(p, p+l, &lp);	// get single utf8 encoded char as a Unicode value
+      lq = fl_utf8encode(u, multibyte);	// re-encode Unicode value to utf8 in multibyte[]
       if (lp != l || lq != l) *input_was_changed = true;
-      if (q + lq > buffer + buflen) {
-	memmove(line, p, endline - p);
-	endline -= (p - line);
-	return q - buffer;
+
+      if (q + lq > buffer + buflen) {	// encoding would walk off end of buffer[]?
+	memmove(line, p, endline - p);	// re-jigger line[] buffer for next call
+	endline -= (p - line);		// adjust end of line[] buffer for next call
+	return q - buffer;		// return what's decoded so far, caller will enlarge buffer
       }
       memcpy(q, multibyte, lq);
       q += lq; 
@@ -1672,13 +1692,13 @@ const char *Fl_Text_Buffer::file_encoding_warning_message =
     buffer[l] = 0;
     insert(pos, buffer);
     pos += l;
-    }
+  }
   int e = ferror(fp) ? 2 : 0;
   fclose(fp);
   delete[]buffer;
   if ( (!e) && input_file_was_transcoded && transcoding_warning_action) {
     transcoding_warning_action(this);
-    }
+  }
   return e;
 }
 
