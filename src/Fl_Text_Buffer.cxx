@@ -1642,7 +1642,7 @@ static int utf8_input_filter(char *buffer, 		// result buffer we fill with utf8 
       if (q + lq > buffer + buflen) {	// encoding would walk off end of buffer[]?
 	memmove(line, p, endline - p);	// re-jigger line[] buffer for next call
 	endline -= (p - line);		// adjust end of line[] buffer for next call
-	return q - buffer;		// return what's decoded so far, caller will enlarge buffer
+	return q - buffer;		// return what's decoded so far, caller will consume buffer
       }
       memcpy(q, multibyte, lq);
       q += lq; 
