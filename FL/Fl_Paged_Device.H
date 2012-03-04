@@ -107,9 +107,15 @@ protected:
   int y_offset;
   /** \brief The constructor */
   Fl_Paged_Device() : Fl_Surface_Device(NULL) {};
+#if FLTK_ABI_VERSION >= 10302
+public:
+  /** \brief The destructor */
+  virtual ~Fl_Paged_Device() {};
+#else
   /** \brief The destructor */
   virtual ~Fl_Paged_Device() {};
 public:
+#endif // FLTK_ABI_VERSION
   static const char *class_id;
   const char *class_name() {return class_id;};
   virtual int start_job(int pagecount, int *frompage = NULL, int *topage = NULL);
