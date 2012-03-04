@@ -234,18 +234,18 @@ protected:
   /** \brief see fl_line(int x, int y, int x1, int y1, int x2, int y2). */
   virtual void line(int x, int y, int x1, int y1, int x2, int y2);
   /** \brief see fl_draw(const char *str, int n, int x, int y). */
-  virtual void draw(const char *str, int n, int x, int y) = 0;
+  virtual void draw(const char *str, int n, int x, int y) {}
 #ifdef __APPLE__
-  virtual void draw(const char *str, int n, float x, float y) = 0;
+  virtual void draw(const char *str, int n, float x, float y) { draw(str, n, (int)(x+0.5), (int)(y+0.5));}
 #endif
   /** \brief see fl_draw(int angle, const char *str, int n, int x, int y). */
-  virtual void draw(int angle, const char *str, int n, int x, int y) = 0;
+  virtual void draw(int angle, const char *str, int n, int x, int y) {}
   /** \brief see fl_rtl_draw(const char *str, int n, int x, int y). */
-  virtual void rtl_draw(const char *str, int n, int x, int y) = 0;
+  virtual void rtl_draw(const char *str, int n, int x, int y) {};
   /** \brief see fl_color(Fl_Color c). */
   virtual void color(Fl_Color c) {color_ = c;}
   /** \brief see fl_color(uchar r, uchar g, uchar b). */
-  virtual void color(uchar r, uchar g, uchar b) = 0;
+  virtual void color(uchar r, uchar g, uchar b) {}
   /** \brief see fl_point(int x, int y). */
   virtual void point(int x, int y);
   /** \brief see fl_loop(int x0, int y0, int x1, int y1, int x2, int y2). */
@@ -334,32 +334,32 @@ protected:
   
   // Images
   /** \brief see fl_draw_image(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
-  virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) = 0;
+  virtual   void draw_image(const uchar* buf, int X,int Y,int W,int H, int D=3, int L=0) {}
   /** \brief see fl_draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D, int L). */
-  virtual   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) = 0;
+  virtual   void draw_image_mono(const uchar* buf, int X,int Y,int W,int H, int D=1, int L=0) {}
   /** \brief see fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D). */
-  virtual   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) = 0;
+  virtual   void draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=3) {}
   /** \brief see fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D). */
-  virtual   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) = 0;
+  virtual   void draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D=1) {}
   // Image classes
   /** \brief Draws an Fl_RGB_Image object to the device. 
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
    the image offset by the cx and cy arguments.
    */
-  virtual   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) = 0;
+  virtual   void draw(Fl_RGB_Image * rgb,int XP, int YP, int WP, int HP, int cx, int cy) {}
   /** \brief Draws an Fl_Pixmap object to the device. 
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
    the image offset by the cx and cy arguments.
    */
-  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) = 0;
+  virtual   void draw(Fl_Pixmap * pxm,int XP, int YP, int WP, int HP, int cx, int cy) {}
   /** \brief Draws an Fl_Bitmap object to the device. 
    *
    Specifies a bounding box for the image, with the origin (upper left-hand corner) of 
    the image offset by the cx and cy arguments.
    */
-  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) = 0;
+  virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
     
 public:
   static const char *class_id;
@@ -371,15 +371,15 @@ public:
   /** \brief see fl_size(). */
   Fl_Fontsize size() {return size_; }
   /** \brief see fl_width(const char *str, int n). */
-  virtual double width(const char *str, int n) = 0;
+  virtual double width(const char *str, int n) {return 0;}
   /** \brief see fl_width(unsigned int n). */
   virtual inline double width(unsigned int c) { char ch = (char)c; return width(&ch, 1); }
   /** \brief see fl_text_extents(const char*, int n, int& dx, int& dy, int& w, int& h). */
   virtual void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   /** \brief see fl_height(). */
-  virtual int height() = 0;
+  virtual int height() {return size();}
   /** \brief see fl_descent(). */
-  virtual int descent() = 0;
+  virtual int descent() {return 0;}
   /** \brief see fl_color(void). */
   Fl_Color color() {return color_;}
   /** Returns a pointer to the current Fl_Font_Descriptor for the graphics driver */
