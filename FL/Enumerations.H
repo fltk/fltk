@@ -23,6 +23,12 @@
 #ifndef Fl_Enumerations_H
 #define Fl_Enumerations_H
 
+/* Uncomment the following FLTK_ABI_VERSION line to enable ABI breaking fixes
+ * in the current patch release of FLTK. ** Use for static builds only! **
+ * For more info on this macro, see: http://fltk.org/cmp.php#FLTK_ABI_VERSION
+ */
+//#define FLTK_ABI_VERSION 10302
+
 #  include "Fl_Export.H"
 #  include "fl_types.h"
 
