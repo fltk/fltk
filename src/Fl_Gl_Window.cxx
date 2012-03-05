@@ -20,6 +20,9 @@
 #if HAVE_GL
 
 extern int fl_gl_load_plugin;
+#ifdef __APPLE__
+extern void gl_texture_reset();
+#endif
 
 static int temp = fl_gl_load_plugin;
 
@@ -167,6 +170,10 @@ void Fl_Gl_Window::make_current() {
     context_ = fl_create_gl_context(this, g);
     valid(0);
     context_valid(0);
+#ifdef __APPLE__
+    // resets the pile of string textures used to draw strings
+    gl_texture_reset();
+#endif
   }
   fl_set_gl_context(this, context_);
 
@@ -462,11 +469,6 @@ void Fl_Gl_Window::hide() {
 Fl_Gl_Window::~Fl_Gl_Window() {
   hide();
 //  delete overlay; this is done by ~Fl_Group
-#ifdef __APPLE__
-  // resets the pile of string textures used to draw strings
-  extern void gl_texture_reset();
-  gl_texture_reset();
-#endif
 }
 
 void Fl_Gl_Window::init() {
@@ -533,7 +535,7 @@ void Fl_Gl_Window::draw() {
 int Fl_Gl_Window::handle(int event) 
 {
 #ifdef __APPLE_QUARTZ__
-  /*if (event==FL_HIDE) {
+  if (event==FL_HIDE) {
     // if we are not hidden, just the parent was hidden, so we must throw away the context
     if (!visible_r())
       context(0); // remove context without setting the hidden flags
@@ -542,7 +544,7 @@ int Fl_Gl_Window::handle(int event)
     // if we are not hidden, just the parent was shown, so we must create a new context
     if (visible_r())
       show(); //
-  }*/
+  }
 #endif
   return Fl_Window::handle(event);
 }
