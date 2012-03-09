@@ -24,42 +24,187 @@
 #include <FL/x.H>
 #include <config.h>
 
-// convert an FLTK (X) keysym to a MacOS symbol:
-// See also the inverse converter in table macKeyLookUp of Fl_cocoa.mm
-// This table is in numeric order by FLTK symbol order for binary search.
 // The list of Mac OS virtual keycodes appears with OS 10.5 in
 // ...../Carbon.framework/Frameworks/HIToolbox.framework/Headers/Events.h
-
-static const struct {unsigned short vk, fltk;} vktab[] = {
-  { 49, ' ' }, { 39, '\'' }, { 43, ',' }, { 27, '-' }, { 47, '.' }, { 44, '/' }, 
-  { 29, '0' }, { 18, '1'  }, { 19, '2'  }, { 20, '3'  }, 
-  { 21, '4' }, { 23, '5'  }, { 22, '6'  }, { 26, '7'  }, 
-  { 28, '8' }, { 25, '9'  }, { 41, ';'  }, { 24, '='  },
-  {  0, 'A' }, { 11, 'B'  }, {  8, 'C'  }, {  2, 'D'  }, 
-  { 14, 'E' }, {  3, 'F'  }, {  5, 'G'  }, {  4, 'H'  }, 
-  { 34, 'I' }, { 38, 'J'  }, { 40, 'K'  }, { 37, 'L'  }, 
-  { 46, 'M' }, { 45, 'N'  }, { 31, 'O'  }, { 35, 'P'  }, 
-  { 12, 'Q' }, { 15, 'R'  }, {  1, 'S'  }, { 17, 'T'  }, 
-  { 32, 'U' }, {  9, 'V'  }, { 13, 'W'  }, {  7, 'X'  }, 
-  { 16, 'Y' }, {  6, 'Z'  }, 
-  { 33, '[' }, { 30, ']' }, { 50, '`' },  { 42, '\\' },
-  { 51, FL_BackSpace }, { 48, FL_Tab }, { 36, FL_Enter }, { 0x7F, FL_Pause },
-  { 0x7F, FL_Scroll_Lock }, { 53, FL_Escape }, { 0x73, FL_Home }, { 123, FL_Left },
-  { 126, FL_Up }, { 124, FL_Right }, { 125, FL_Down }, { 0x74, FL_Page_Up },
-  { 0x79, FL_Page_Down },  { 119, FL_End }, { 0x7F, FL_Print }, { 0x7F, FL_Insert },
-  { 0x6e, FL_Menu }, { 114, FL_Help }, { 0x47, FL_Num_Lock },
-  { 76, FL_KP_Enter }, { 67, FL_KP+'*' }, { 69, FL_KP+'+'}, { 78, FL_KP+'-' }, { 65, FL_KP+'.' }, { 75, FL_KP+'/' }, 
-  { 82, FL_KP+'0' }, { 83, FL_KP+'1' }, { 84, FL_KP+'2' }, { 85, FL_KP+'3' }, 
-  { 86, FL_KP+'4' }, { 87, FL_KP+'5' }, { 88, FL_KP+'6' }, { 89, FL_KP+'7' }, 
-  { 91, FL_KP+'8' }, { 92, FL_KP+'9' }, { 81, FL_KP+'=' }, 
-  { 0x7a, FL_F+1 }, { 0x78, FL_F+2  }, { 0x63, FL_F+3  }, { 0x76, FL_F+4  }, 
-  { 0x60, FL_F+5 }, { 0x61, FL_F+6  }, { 0x62, FL_F+7  }, { 0x64, FL_F+8  }, 
-  { 0x65, FL_F+9 }, { 0x6D, FL_F+10 }, { 0x67, FL_F+11 }, { 0x6f, FL_F+12 }, 
-  { 0x69, FL_F+13 }, { 0x6B, FL_F+14 }, { 0x71, FL_F+15 }, { 0x6A, FL_F+16 }, 
-  { 0x38, FL_Shift_L }, { 0x3C, FL_Shift_R }, { 0x3B, FL_Control_L }, { 0x3E, FL_Control_R }, 
-  { 0x39, FL_Caps_Lock }, { 0x37, FL_Meta_L }, { 0x36, FL_Meta_R },
-  { 0x3A, FL_Alt_L }, { 0x3D, FL_Alt_R }, { 0x75, FL_Delete },
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+#include <Carbon/Carbon.h>
+#else
+/*
+ *    These constants are the virtual keycodes defined originally in
+ *    Inside Mac Volume V, pg. V-191. They identify physical keys on a
+ *    keyboard. Those constants with "ANSI" in the name are labeled
+ *    according to the key position on an ANSI-standard US keyboard.
+ *    For example, kVK_ANSI_A indicates the virtual keycode for the key
+ *    with the letter 'A' in the US keyboard layout. Other keyboard
+ *    layouts may have the 'A' key label on a different physical key;
+ *    in this case, pressing 'A' will generate a different virtual
+ *    keycode.
+ */
+enum {
+  kVK_ANSI_A                    = 0x00,
+  kVK_ANSI_S                    = 0x01,
+  kVK_ANSI_D                    = 0x02,
+  kVK_ANSI_F                    = 0x03,
+  kVK_ANSI_H                    = 0x04,
+  kVK_ANSI_G                    = 0x05,
+  kVK_ANSI_Z                    = 0x06,
+  kVK_ANSI_X                    = 0x07,
+  kVK_ANSI_C                    = 0x08,
+  kVK_ANSI_V                    = 0x09,
+  kVK_ANSI_B                    = 0x0B,
+  kVK_ANSI_Q                    = 0x0C,
+  kVK_ANSI_W                    = 0x0D,
+  kVK_ANSI_E                    = 0x0E,
+  kVK_ANSI_R                    = 0x0F,
+  kVK_ANSI_Y                    = 0x10,
+  kVK_ANSI_T                    = 0x11,
+  kVK_ANSI_1                    = 0x12,
+  kVK_ANSI_2                    = 0x13,
+  kVK_ANSI_3                    = 0x14,
+  kVK_ANSI_4                    = 0x15,
+  kVK_ANSI_6                    = 0x16,
+  kVK_ANSI_5                    = 0x17,
+  kVK_ANSI_Equal                = 0x18,
+  kVK_ANSI_9                    = 0x19,
+  kVK_ANSI_7                    = 0x1A,
+  kVK_ANSI_Minus                = 0x1B,
+  kVK_ANSI_8                    = 0x1C,
+  kVK_ANSI_0                    = 0x1D,
+  kVK_ANSI_RightBracket         = 0x1E,
+  kVK_ANSI_O                    = 0x1F,
+  kVK_ANSI_U                    = 0x20,
+  kVK_ANSI_LeftBracket          = 0x21,
+  kVK_ANSI_I                    = 0x22,
+  kVK_ANSI_P                    = 0x23,
+  kVK_ANSI_L                    = 0x25,
+  kVK_ANSI_J                    = 0x26,
+  kVK_ANSI_Quote                = 0x27,
+  kVK_ANSI_K                    = 0x28,
+  kVK_ANSI_Semicolon            = 0x29,
+  kVK_ANSI_Backslash            = 0x2A,
+  kVK_ANSI_Comma                = 0x2B,
+  kVK_ANSI_Slash                = 0x2C,
+  kVK_ANSI_N                    = 0x2D,
+  kVK_ANSI_M                    = 0x2E,
+  kVK_ANSI_Period               = 0x2F,
+  kVK_ANSI_Grave                = 0x32,
+  kVK_ANSI_KeypadDecimal        = 0x41,
+  kVK_ANSI_KeypadMultiply       = 0x43,
+  kVK_ANSI_KeypadPlus           = 0x45,
+  kVK_ANSI_KeypadClear          = 0x47,
+  kVK_ANSI_KeypadDivide         = 0x4B,
+  kVK_ANSI_KeypadEnter          = 0x4C,
+  kVK_ANSI_KeypadMinus          = 0x4E,
+  kVK_ANSI_KeypadEquals         = 0x51,
+  kVK_ANSI_Keypad0              = 0x52,
+  kVK_ANSI_Keypad1              = 0x53,
+  kVK_ANSI_Keypad2              = 0x54,
+  kVK_ANSI_Keypad3              = 0x55,
+  kVK_ANSI_Keypad4              = 0x56,
+  kVK_ANSI_Keypad5              = 0x57,
+  kVK_ANSI_Keypad6              = 0x58,
+  kVK_ANSI_Keypad7              = 0x59,
+  kVK_ANSI_Keypad8              = 0x5B,
+  kVK_ANSI_Keypad9              = 0x5C
 };
+
+/* keycodes for keys that are independent of keyboard layout*/
+enum {
+  kVK_Return                    = 0x24,
+  kVK_Tab                       = 0x30,
+  kVK_Space                     = 0x31,
+  kVK_Delete                    = 0x33,
+  kVK_Escape                    = 0x35,
+  kVK_Command                   = 0x37,
+  kVK_Shift                     = 0x38,
+  kVK_CapsLock                  = 0x39,
+  kVK_Option                    = 0x3A,
+  kVK_Control                   = 0x3B,
+  kVK_RightShift                = 0x3C,
+  kVK_RightOption               = 0x3D,
+  kVK_RightControl              = 0x3E,
+  kVK_Function                  = 0x3F,
+  kVK_F17                       = 0x40,
+  kVK_VolumeUp                  = 0x48,
+  kVK_VolumeDown                = 0x49,
+  kVK_Mute                      = 0x4A,
+  kVK_F18                       = 0x4F,
+  kVK_F19                       = 0x50,
+  kVK_F20                       = 0x5A,
+  kVK_F5                        = 0x60,
+  kVK_F6                        = 0x61,
+  kVK_F7                        = 0x62,
+  kVK_F3                        = 0x63,
+  kVK_F8                        = 0x64,
+  kVK_F9                        = 0x65,
+  kVK_F11                       = 0x67,
+  kVK_F13                       = 0x69,
+  kVK_F16                       = 0x6A,
+  kVK_F14                       = 0x6B,
+  kVK_F10                       = 0x6D,
+  kVK_F12                       = 0x6F,
+  kVK_F15                       = 0x71,
+  kVK_Help                      = 0x72,
+  kVK_Home                      = 0x73,
+  kVK_PageUp                    = 0x74,
+  kVK_ForwardDelete             = 0x75,
+  kVK_F4                        = 0x76,
+  kVK_End                       = 0x77,
+  kVK_F2                        = 0x78,
+  kVK_PageDown                  = 0x79,
+  kVK_F1                        = 0x7A,
+  kVK_LeftArrow                 = 0x7B,
+  kVK_RightArrow                = 0x7C,
+  kVK_DownArrow                 = 0x7D,
+  kVK_UpArrow                   = 0x7E
+};
+
+#endif
+
+// convert an FLTK (X) keysym to a MacOS symbol:
+// This table is in numeric order by FLTK symbol order for binary search.
+static const struct {unsigned short vk, fltk;} vktab[] = {
+  { kVK_Space, ' ' }, { kVK_ANSI_Quote, '\'' }, { kVK_ANSI_Comma, ',' }, { kVK_ANSI_KeypadMinus, '-' }, { kVK_ANSI_Period, '.' }, { kVK_ANSI_Slash, '/' }, 
+  { kVK_ANSI_0, '0' }, { kVK_ANSI_1, '1'  }, { kVK_ANSI_2, '2'  }, { kVK_ANSI_3, '3'  }, 
+  { kVK_ANSI_4, '4' }, { kVK_ANSI_5, '5'  }, { kVK_ANSI_6, '6'  }, { kVK_ANSI_7, '7'  }, 
+  { kVK_ANSI_8, '8' }, { kVK_ANSI_9, '9'  }, { kVK_ANSI_Semicolon, ';'  }, { kVK_ANSI_Equal, '='  },
+  { kVK_ANSI_A, 'A' }, { kVK_ANSI_B, 'B'  }, {  kVK_ANSI_C, 'C'  }, {  kVK_ANSI_D, 'D'  }, 
+  { kVK_ANSI_E, 'E' }, {  kVK_ANSI_F, 'F'  }, {  kVK_ANSI_G, 'G'  }, {  kVK_ANSI_H, 'H'  }, 
+  { kVK_ANSI_I, 'I' }, { kVK_ANSI_J, 'J'  }, { kVK_ANSI_K, 'K'  }, { kVK_ANSI_L, 'L'  }, 
+  { kVK_ANSI_M, 'M' }, { kVK_ANSI_N, 'N'  }, { kVK_ANSI_O, 'O'  }, { kVK_ANSI_P, 'P'  }, 
+  { kVK_ANSI_Q, 'Q' }, { kVK_ANSI_R, 'R'  }, {  kVK_ANSI_S, 'S'  }, { kVK_ANSI_T, 'T'  }, 
+  { kVK_ANSI_U, 'U' }, {  kVK_ANSI_V, 'V'  }, { kVK_ANSI_W, 'W'  }, {  kVK_ANSI_X, 'X'  }, 
+  { kVK_ANSI_Y, 'Y' }, {  kVK_ANSI_Z, 'Z'  }, 
+  { kVK_ANSI_LeftBracket, '[' }, { kVK_ANSI_Backslash, '\\' }, { kVK_ANSI_RightBracket, ']' }, { kVK_ANSI_Grave, '`' },  
+  { kVK_Delete, FL_BackSpace }, { kVK_Tab, FL_Tab }, { kVK_Return, FL_Enter }, /*{ 0x7F, FL_Pause },
+  { 0x7F, FL_Scroll_Lock },*/ { kVK_Escape, FL_Escape }, { kVK_Home, FL_Home }, { kVK_LeftArrow, FL_Left },
+  { kVK_UpArrow, FL_Up }, { kVK_RightArrow, FL_Right }, { kVK_DownArrow, FL_Down }, { kVK_PageUp, FL_Page_Up },
+  { kVK_PageDown, FL_Page_Down },  { kVK_End, FL_End }, /*{ 0x7F, FL_Print }, { 0x7F, FL_Insert },*/
+  { 0x6e, FL_Menu }, { kVK_Help, FL_Help }, { kVK_ANSI_KeypadClear, FL_Num_Lock },
+  { kVK_ANSI_KeypadEnter, FL_KP_Enter }, { kVK_ANSI_KeypadMultiply, FL_KP+'*' }, { kVK_ANSI_KeypadPlus, FL_KP+'+'}, 
+  { kVK_ANSI_KeypadMinus, FL_KP+'-' }, { kVK_ANSI_KeypadDecimal, FL_KP+'.' }, { kVK_ANSI_KeypadDivide, FL_KP+'/' }, 
+  { kVK_ANSI_Keypad0, FL_KP+'0' }, { kVK_ANSI_Keypad1, FL_KP+'1' }, { kVK_ANSI_Keypad2, FL_KP+'2' }, { kVK_ANSI_Keypad3, FL_KP+'3' }, 
+  { kVK_ANSI_Keypad4, FL_KP+'4' }, { kVK_ANSI_Keypad5, FL_KP+'5' }, { kVK_ANSI_Keypad6, FL_KP+'6' }, { kVK_ANSI_Keypad7, FL_KP+'7' }, 
+  { kVK_ANSI_Keypad8, FL_KP+'8' }, { kVK_ANSI_Keypad9, FL_KP+'9' }, { kVK_ANSI_KeypadEquals, FL_KP+'=' }, 
+  { kVK_F1, FL_F+1 }, { kVK_F2, FL_F+2  }, { kVK_F3, FL_F+3  }, { kVK_F4, FL_F+4  }, 
+  { kVK_F5, FL_F+5 }, { kVK_F6, FL_F+6  }, { kVK_F7, FL_F+7  }, { kVK_F8, FL_F+8  }, 
+  { kVK_F9, FL_F+9 }, { kVK_F10, FL_F+10 }, { kVK_F11, FL_F+11 }, { kVK_F12, FL_F+12 }, 
+  { kVK_F13, FL_F+13 }, { kVK_F14, FL_F+14 }, { kVK_F15, FL_F+15 }, { kVK_F16, FL_F+16 }, 
+  { kVK_Shift, FL_Shift_L }, { kVK_RightShift, FL_Shift_R }, { kVK_Control, FL_Control_L }, { kVK_RightControl, FL_Control_R }, 
+  { kVK_CapsLock, FL_Caps_Lock }, { kVK_Command, FL_Meta_L }, { 0x36, FL_Meta_R },
+  { kVK_Option, FL_Alt_L }, { kVK_RightOption, FL_Alt_R }, { kVK_ForwardDelete, FL_Delete }
+};
+
+// Computes the macKeyLookUp table that transforms a Mac OS virtual keycode into an FLTK keysym
+unsigned short *compute_macKeyLookUp()
+{
+  static unsigned short macKeyLookUp[128];
+  memset(macKeyLookUp, 0, sizeof(macKeyLookUp));
+  for (unsigned i = 0; i < sizeof(vktab)/sizeof(*vktab); i++) {
+    macKeyLookUp[vktab[i].vk] = vktab[i].fltk;
+  }
+  return macKeyLookUp;
+}
 
 static int fltk2mac(int fltk) {
   int a = 0;

@@ -79,6 +79,7 @@ typedef unsigned int NSUInteger;
 // external functions
 extern void fl_fix_focus();
 extern Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h);
+extern unsigned short *compute_macKeyLookUp();
 
 // forward definition of functions in this file
 // converting cr lf converter function
@@ -133,36 +134,8 @@ void fl_set_status(int x, int y, int w, int h)
 
 /*
  * Mac keyboard lookup table
- * See also the inverse converter vktab in Fl_get_key_mac.cxx
  */
-static unsigned short macKeyLookUp[128] =
-{
-  'a', 's', 'd', 'f', 'h', 'g', 'z', 'x',
-  'c', 'v', '^', 'b', 'q', 'w', 'e', 'r',
-  
-  'y', 't', '1', '2', '3', '4', '6', '5',
-  '=', '9', '7', '-', '8', '0', ']', 'o',
-  
-  'u', '[', 'i', 'p', FL_Enter, 'l', 'j', '\'',
-  'k', ';', '\\', ',', '/', 'n', 'm', '.',
-  
-  FL_Tab, ' ', '`', FL_BackSpace, 
-  FL_KP_Enter, FL_Escape, FL_Meta_R, FL_Meta_L,
-  FL_Shift_L, FL_Caps_Lock, FL_Alt_L, FL_Control_L, 
-  FL_Shift_R, FL_Alt_R, FL_Control_R, 0/*FL_F*/,
-  
-  0, FL_KP+'.', FL_Right, FL_KP+'*', 0, FL_KP+'+', FL_Left, FL_Num_Lock,
-  FL_Down, 0, 0, FL_KP+'/', FL_KP_Enter, FL_Up, FL_KP+'-', 0,
-  
-  0, FL_KP+'=', FL_KP+'0', FL_KP+'1', FL_KP+'2', FL_KP+'3', FL_KP+'4', FL_KP+'5',
-  FL_KP+'6', FL_KP+'7', 0, FL_KP+'8', FL_KP+'9', 0, 0, 0,
-  
-  FL_F+5, FL_F+6, FL_F+7, FL_F+3, FL_F+8, FL_F+9, 0, FL_F+11,
-  0, FL_F+13, FL_F+16, FL_F+14, 0, FL_F+10, FL_Menu, FL_F+12,
-  
-  0, FL_F+15, FL_Help, FL_Home, FL_Page_Up, FL_Delete, FL_F+4, FL_End,
-  FL_F+2, FL_Page_Down, FL_F+1, FL_Left, FL_Right, FL_Down, FL_Up, 0/*FL_Power*/,
-};
+static unsigned short *macKeyLookUp;
 
 /*
  * convert the current mouse chord into the FLTK modifier state
@@ -1216,6 +1189,8 @@ void fl_open_display() {
   static char beenHereDoneThat = 0;
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
+    
+    macKeyLookUp = compute_macKeyLookUp();
 
     BOOL need_new_nsapp = (NSApp == nil);
     if (need_new_nsapp) [NSApplication sharedApplication];
