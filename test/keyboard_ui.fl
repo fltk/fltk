@@ -286,7 +286,6 @@ Function {make_window()} {open
     }
     Fl_Button {} {
       label {\\}
-      user_data {'|'}
       callback key_cb
       xywh {282 120 28 20} labelsize 10 align 20
     }
