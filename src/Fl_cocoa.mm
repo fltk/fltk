@@ -79,7 +79,7 @@ typedef unsigned int NSUInteger;
 // external functions
 extern void fl_fix_focus();
 extern Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h);
-extern unsigned short *compute_macKeyLookUp();
+extern unsigned short *fl_compute_macKeyLookUp();
 
 // forward definition of functions in this file
 // converting cr lf converter function
@@ -135,7 +135,7 @@ void fl_set_status(int x, int y, int w, int h)
 /*
  * Mac keyboard lookup table
  */
-static unsigned short *macKeyLookUp;
+static unsigned short* macKeyLookUp = fl_compute_macKeyLookUp();
 
 /*
  * convert the current mouse chord into the FLTK modifier state
@@ -1190,8 +1190,6 @@ void fl_open_display() {
   if ( !beenHereDoneThat ) {
     beenHereDoneThat = 1;
     
-    macKeyLookUp = compute_macKeyLookUp();
-
     BOOL need_new_nsapp = (NSApp == nil);
     if (need_new_nsapp) [NSApplication sharedApplication];
     NSAutoreleasePool *localPool;
