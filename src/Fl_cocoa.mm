@@ -3,7 +3,7 @@
 //
 // MacOS-Cocoa specific code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -3347,7 +3347,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   Fl::check();
   win->make_current();
   this->set_current(); // back to the Fl_Paged_Device
-  if (this->class_name() == Fl_Printer::class_id) {
+  if (driver()->class_name() == Fl_Quartz_Graphics_Driver::class_id) {
     // capture as transparent image the window title bar from screen
     CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
     CGRect rect = { { x_offset, y_offset }, { win->w(), bt } }; // print the title bar

@@ -3,7 +3,7 @@
 //
 // Double-buffered window code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -71,7 +71,7 @@ static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscree
  \param srcx,srcy origin in offscreen buffer of rectangle to copy
  */
 void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
-  if (fl_graphics_driver == Fl_Display_Device::display_device()->driver()) {
+  if (fl_graphics_driver->class_name() == Fl_Display_Device::display_device()->driver()->class_name()) {
     fl_copy_offscreen_to_display(x, y, w, h, pixmap, srcx, srcy);
   }
   else { // when copy is not to the display
