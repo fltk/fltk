@@ -3,7 +3,7 @@
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,10 +46,6 @@
 
 #ifdef WIN32
 extern void fl_release_dc(HWND, HDC);      // located in Fl_win32.cxx
-#endif
-
-#ifdef __APPLE_QUARTZ__
-extern Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h);
 #endif
 
 extern uchar **fl_mask_bitmap; // used by fl_draw_pixmap.cxx to store mask
@@ -106,7 +102,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int
     return;
     }
   if (!pxm->id_) {
-    pxm->id_ = fl_create_offscreen_with_alpha(pxm->w(), pxm->h());
+    pxm->id_ = create_offscreen_with_alpha(pxm->w(), pxm->h());
     fl_begin_offscreen((Fl_Offscreen)pxm->id_);
     fl_draw_pixmap(pxm->data(), 0, 0, FL_GREEN);
     fl_end_offscreen();

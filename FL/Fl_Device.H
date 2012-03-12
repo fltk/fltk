@@ -4,7 +4,7 @@
 // Definition of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, Fl_Display_Device
 // for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2011 by Bill Spitzak and others.
+// Copyright 2010-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -421,6 +421,9 @@ public:
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();
+#if ! defined(FL_DOXYGEN)
+  static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
+#endif
 };
 #endif
 #if defined(WIN32) || defined(FL_DOXYGEN)
@@ -451,6 +454,9 @@ public:
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();
+#if ! defined(FL_DOXYGEN)
+  void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
+#endif
 };
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))

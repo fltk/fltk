@@ -167,7 +167,7 @@ static void fl_copy_offscreen_to_display(int x,int y,int w,int h,HBITMAP bitmap,
   DeleteDC(new_gc);
 }
 
-void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
+void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
@@ -176,7 +176,7 @@ void fl_copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int src
   // if to printer, always try alpha_blend
   int to_display = Fl_Surface_Device::surface()->class_name() == Fl_Display_Device::class_id; // true iff display output
   if ( (to_display && fl_can_do_alpha_blending()) || Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
-    alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
+    if (fl_alpha_blend) alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
   }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
   if (!alpha_ok) {
@@ -194,7 +194,7 @@ char fl_can_do_alpha_blending() {
   return 1;
 }
 
-Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h) {
+Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h) {
   void *data = calloc(w*h,4);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   CGContextRef ctx = CGBitmapContextCreate(

@@ -3,7 +3,7 @@
 //
 // Mouse cursor support for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -125,13 +125,10 @@ void Fl_Window::cursor(Fl_Cursor c, Fl_Color c1, Fl_Color c2) {
 # error "Either __LITTLE_ENDIAN__ or __BIG_ENDIAN__ must be defined"
 #endif
 
-extern Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h);
-
-
 CGContextRef Fl_X::help_cursor_image(void)
 {
   int w = 20, h = 20;
-  Fl_Offscreen off = fl_create_offscreen_with_alpha(w, h);
+  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w, h);
   fl_begin_offscreen(off);
   CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
   fl_rectf(0,0,w,h);
@@ -145,7 +142,7 @@ CGContextRef Fl_X::help_cursor_image(void)
 CGContextRef Fl_X::none_cursor_image(void)
 {
   int w = 20, h = 20;
-  Fl_Offscreen off = fl_create_offscreen_with_alpha(w, h);
+  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w, h);
   fl_begin_offscreen(off);
   CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
   fl_rectf(0,0,w,h);
@@ -158,7 +155,7 @@ CGContextRef Fl_X::watch_cursor_image(void)
   int w, h, r = 5;
   w = 2*r+6;
   h = 4*r;
-  Fl_Offscreen off = fl_create_offscreen_with_alpha(w, h);
+  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w, h);
   fl_begin_offscreen(off);
   CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
   fl_rectf(0,0,w,h);
@@ -182,7 +179,7 @@ CGContextRef Fl_X::nesw_cursor_image(void)
 {
   int c = 7, r = 2*c;
   int w = r, h = r;
-  Fl_Offscreen off = fl_create_offscreen_with_alpha(w, h);
+  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w, h);
   fl_begin_offscreen(off);
   CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
   fl_rectf(0,0,w,h);
@@ -202,7 +199,7 @@ CGContextRef Fl_X::nwse_cursor_image(void)
 {
   int c = 7, r = 2*c;
   int w = r, h = r;
-  Fl_Offscreen off = fl_create_offscreen_with_alpha(w, h);
+  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w, h);
   fl_begin_offscreen(off);
   CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
   fl_rectf(0,0,w,h);

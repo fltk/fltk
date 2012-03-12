@@ -78,7 +78,6 @@ typedef unsigned int NSUInteger;
 
 // external functions
 extern void fl_fix_focus();
-extern Fl_Offscreen fl_create_offscreen_with_alpha(int w, int h);
 extern unsigned short *fl_compute_macKeyLookUp();
 
 // forward definition of functions in this file
@@ -3154,7 +3153,7 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
   }
   height = nl * fl_height() + 3;
   width += 6;
-  Fl_Offscreen off = fl_create_offscreen_with_alpha(width, height);
+  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(width, height);
   fl_begin_offscreen(off);
   CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
   fl_rectf(0,0,width,height);
@@ -3183,7 +3182,7 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
 static NSImage *defaultDragImage(int *pwidth, int *pheight)
 {
   const int width = 16, height = 16;
-  Fl_Offscreen off = fl_create_offscreen_with_alpha(width, height);
+  Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(width, height);
   fl_begin_offscreen(off);
   CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
   fl_rectf(0,0,width,height);

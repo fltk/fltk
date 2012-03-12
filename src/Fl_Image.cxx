@@ -3,7 +3,7 @@
 //
 // Image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -513,7 +513,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else if (img->d()==2 || img->d()==4) {
-    fl_copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
+    copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
   } else {
     fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
   }
