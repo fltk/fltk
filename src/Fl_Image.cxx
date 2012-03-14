@@ -461,11 +461,11 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, 
   if (start(img, XP, YP, WP, HP, img->w(), img->h(), cx, cy, X, Y, W, H)) {
     return;
   }
-  CGDataProviderReleaseDataCallback release_cb = NULL;
-  const uchar* img_bytes = img->array;
-  int ld = img->ld();
   if (!img->id_) {
     CGColorSpaceRef lut = 0;
+    CGDataProviderReleaseDataCallback release_cb = NULL;
+    const uchar* img_bytes = img->array;
+    int ld = img->ld();
     if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
       // when printing, duplicate the image data so it can be deleted later, at page end
       release_cb = imgProviderReleaseData;
