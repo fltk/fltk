@@ -304,8 +304,6 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP,
     if (fl_TransparentBlt) use_print_algo = true;
   }
   if (use_print_algo) { // algorithm for bitmap output to Fl_GDI_Printer
-    Fl_Offscreen tmp_id = fl_create_offscreen(W, H);
-    fl_begin_offscreen(tmp_id);
     Fl_Color save_c = fl_color(); // save bitmap's desired color
     uchar r, g, b;
     Fl::get_color(save_c, r, g, b);
@@ -313,6 +311,8 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP,
     g = 255-g;
     b = 255-b;
     Fl_Color background = fl_rgb_color(r, g, b); // a color very different from the bitmap's
+    Fl_Offscreen tmp_id = fl_create_offscreen(W, H);
+    fl_begin_offscreen(tmp_id);
     fl_color(background);
     fl_rectf(0,0,W,H); // use this color as offscreen background
     fl_color(save_c); // back to bitmap's color
