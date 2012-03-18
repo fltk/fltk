@@ -3,7 +3,7 @@
 //
 // WIN32 font selection routines for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -263,7 +263,7 @@ static void on_printer_extents_update(int &dx, int &dy, int &w, int &h)
 
 // if printer context, extents shd be converted to logical coords
 #define EXTENTS_UPDATE(x,y,w,h) \
-  if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) { on_printer_extents_update(x,y,w,h); }
+  if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) { on_printer_extents_update(x,y,w,h); }
 
 // Function to determine the extent of the "inked" area of the glyphs in a string
 void Fl_GDI_Graphics_Driver::text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h) {

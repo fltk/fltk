@@ -59,7 +59,6 @@ void Fl_Double_Window::show() {
   Fl_Window::show();
 }
 
-static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 
 /** \addtogroup fl_drawings
  @{
@@ -70,23 +69,46 @@ static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscree
  \param pixmap  offscreen buffer containing the rectangle to copy
  \param srcx,srcy origin in offscreen buffer of rectangle to copy
  */
+#if FLTK_ABI_VERSION >= 10302
+inline void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
+  fl_graphics_driver->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
+}
+#else
 void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
+#ifdef WIN32
+  if (fl_graphics_driver->class_name() == Fl_GDI_Graphics_Driver::class_id ||
+      fl_graphics_driver->class_name() == Fl_GDI_Printer_Graphics_Driver::class_id) {
+#else
   if (fl_graphics_driver->class_name() == Fl_Display_Device::display_device()->driver()->class_name()) {
-    fl_copy_offscreen_to_display(x, y, w, h, pixmap, srcx, srcy);
+#endif
+#ifdef USE_X11
+    ((Fl_Xlib_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
+#elif defined(WIN32)
+    ((Fl_GDI_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
+#elif defined(__APPLE__)
+    ((Fl_Quartz_Graphics_Driver*)fl_graphics_driver)->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
+#endif
   }
   else { // when copy is not to the display
-    fl_begin_offscreen(pixmap);
-    uchar *img = fl_read_image(NULL, srcx, srcy, w, h, 0);
-    fl_end_offscreen();
-    fl_draw_image(img, x, y, w, h, 3, 0);
-    delete[] img;
+    fl_graphics_driver->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
   }
 }
+#endif // FLTK_ABI_VERSION
 /** @} */
+
+/** see fl_copy_offscreen() */
+void Fl_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy)
+{
+  fl_begin_offscreen(pixmap);
+  uchar *img = fl_read_image(NULL, srcx, srcy, w, h, 0);
+  fl_end_offscreen();
+  fl_draw_image(img, x, y, w, h, 3, 0);
+  delete[] img;
+}
 
 #if defined(USE_X11)
 
-static void fl_copy_offscreen_to_display(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
+void Fl_Xlib_Graphics_Driver::copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
   XCopyArea(fl_display, pixmap, fl_window, fl_gc, srcx, srcy, w, h, x, y);
 }
 
@@ -158,7 +180,7 @@ HDC fl_makeDC(HBITMAP bitmap) {
   return new_gc;
 }
 
-static void fl_copy_offscreen_to_display(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
+void Fl_GDI_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy) {
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
@@ -171,11 +193,11 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
   HDC new_gc = CreateCompatibleDC(fl_gc);
   int save = SaveDC(new_gc);
   SelectObject(new_gc, bitmap);
+  fl_can_do_alpha_blending(); // make sure this is called
   BOOL alpha_ok = 0;
   // first try to alpha blend
   // if to printer, always try alpha_blend
-  int to_display = Fl_Surface_Device::surface()->class_name() == Fl_Display_Device::class_id; // true iff display output
-  if ( (to_display && fl_can_do_alpha_blending()) || Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
+  if ( Fl_Surface_Device::surface() != Fl_Display_Device::display_device() || fl_can_do_alpha_blending() ) {
     if (fl_alpha_blend) alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
   }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
@@ -194,6 +216,7 @@ char fl_can_do_alpha_blending() {
   return 1;
 }
 
+#if ! defined(FL_DOXYGEN)
 Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h) {
   void *data = calloc(w*h,4);
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
@@ -202,6 +225,7 @@ Fl_Offscreen Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(int w, int h
   CGColorSpaceRelease(lut);
   return (Fl_Offscreen)ctx;
 }
+#endif
 
 /** \addtogroup fl_drawings
  @{
@@ -227,7 +251,7 @@ static void bmProviderRelease (void *src, const void *data, size_t size) {
   if(count == 1) free((void*)data);
 }
 
-static void fl_copy_offscreen_to_display(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {
+void Fl_Quartz_Graphics_Driver::copy_offscreen(int x,int y,int w,int h,Fl_Offscreen osrc,int srcx,int srcy) {
   CGContextRef src = (CGContextRef)osrc;
   void *data = CGBitmapContextGetData(src);
   int sw = CGBitmapContextGetWidth(src);

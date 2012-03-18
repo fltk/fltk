@@ -532,7 +532,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int
   } else if (img->d()==2 || img->d()==4) {
     copy_offscreen_with_alpha(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
   } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)img->id_, cx, cy);
   }
 }
 
@@ -569,7 +569,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, in
       XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
     }
     
-    fl_copy_offscreen(X, Y, W, H, img->id_, cx, cy);
+    copy_offscreen(X, Y, W, H, img->id_, cx, cy);
     
     if (img->mask_) {
       // put the old clip region back

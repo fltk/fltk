@@ -3,7 +3,7 @@
 //
 // MacOS image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -55,7 +55,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
 
   const void *array = buf;
   uchar *tmpBuf = 0;
-  if (cb || Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
+  if (cb || Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
     tmpBuf = new uchar[ H*W*delta ];
     if (cb) {
       for (int i=0; i<H; i++) {

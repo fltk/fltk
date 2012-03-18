@@ -92,69 +92,50 @@ static int start(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int w, int h, i
   return 0;
 }
 
+int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int cx, int cy,
+			   int &X, int &Y, int &W, int &H) {
+  if (w() < 0) measure();
+  int code = start(this, XP, YP, WP, HP, w(), h(), cx, cy, X, Y, W, H);
+  if (code) {
+    if (code == 2) draw_empty(XP, YP);
+    return 1;
+  }
+  if (!id_) {
+#ifdef __APPLE__
+    id_ = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(w(), h());
+#else
+    id_ = fl_create_offscreen(w(), h());
+#endif
+    fl_begin_offscreen((Fl_Offscreen)id_);
+#ifndef __APPLE__
+    uchar *bitmap = 0;
+    fl_mask_bitmap = &bitmap;
+#endif
+    fl_draw_pixmap(data(), 0, 0, FL_BLACK);
+#ifndef __APPLE__
+    fl_mask_bitmap = 0;
+    if (bitmap) {
+      mask_ = fl_create_bitmask(w(), h(), bitmap);
+      delete[] bitmap;
+    }
+#endif
+    fl_end_offscreen();
+  }
+  return 0;
+}  
+
 #ifdef __APPLE__
 void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (pxm->w() < 0) pxm->measure();
-  int code = start(pxm, XP, YP, WP, HP, pxm->w(), pxm->h(), cx, cy, X, Y, W, H);
-  if (code) {
-    if (code == 2) pxm->draw_empty(XP, YP);
-    return;
-    }
-  if (!pxm->id_) {
-    pxm->id_ = create_offscreen_with_alpha(pxm->w(), pxm->h());
-    fl_begin_offscreen((Fl_Offscreen)pxm->id_);
-    fl_draw_pixmap(pxm->data(), 0, 0, FL_GREEN);
-    fl_end_offscreen();
-    }
-  fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
 }
 
 #elif defined(WIN32)
 void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (pxm->w() < 0) pxm->measure();
-  int code = start(pxm, XP, YP, WP, HP, pxm->w(), pxm->h(), cx, cy, X, Y, W, H);
-  if (code) {
-    if (code == 2) pxm->draw_empty(XP, YP);
-    return;
-  }
-  if (!pxm->id_) {
-    pxm->id_ = fl_create_offscreen(pxm->w(), pxm->h());
-    fl_begin_offscreen((Fl_Offscreen)pxm->id_);
-    uchar *bitmap = 0;
-    fl_mask_bitmap = &bitmap;
-    fl_draw_pixmap(pxm->data(), 0, 0, FL_BLACK);
-    fl_mask_bitmap = 0;
-    if (bitmap) {
-      pxm->mask_ = fl_create_bitmask(pxm->w(), pxm->h(), bitmap);
-      delete[] bitmap;
-    }
-    fl_end_offscreen();
-  }
-  if (Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
-    typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
-    static HMODULE hMod = NULL;
-    static fl_transp_func fl_TransparentBlt = NULL;
-    if (!hMod) {
-      hMod = LoadLibrary("MSIMG32.DLL");
-      if(hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
-    }
-    if (fl_TransparentBlt) {
-      HDC new_gc = CreateCompatibleDC(fl_gc);
-      int save = SaveDC(new_gc);
-      SelectObject(new_gc, (void*)pxm->id_);
-      // print all of offscreen but its parts in background color
-      extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
-      fl_TransparentBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, pxm->w(), pxm->h(), win_pixmap_bg_color );
-      RestoreDC(new_gc,save);
-      DeleteDC(new_gc);
-    }
-    else {
-      fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
-    }
-  }
-  else if (pxm->mask_) {
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  if (pxm->mask_) {
     HDC new_gc = CreateCompatibleDC(fl_gc);
     int save = SaveDC(new_gc);
     SelectObject(new_gc, (void*)pxm->mask_);
@@ -164,32 +145,39 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   } else {
-    fl_copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
+  }
+}
+
+void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
+  typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
+  static HMODULE hMod = NULL;
+  static fl_transp_func fl_TransparentBlt = NULL;
+  if (!hMod) {
+    hMod = LoadLibrary("MSIMG32.DLL");
+    if(hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
+  }
+  if (fl_TransparentBlt) {
+    HDC new_gc = CreateCompatibleDC(fl_gc);
+    int save = SaveDC(new_gc);
+    SelectObject(new_gc, (void*)pxm->id_);
+    // print all of offscreen but its parts in background color
+    extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
+    fl_TransparentBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, pxm->w(), pxm->h(), win_pixmap_bg_color );
+    RestoreDC(new_gc,save);
+    DeleteDC(new_gc);
+  }
+  else {
+    copy_offscreen(X, Y, W, H, (Fl_Offscreen)pxm->id_, cx, cy);
   }
 }
 
 #else // Xlib
 void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (pxm->w() < 0) pxm->measure();
-  int code = start(pxm, XP, YP, WP, HP, pxm->w(), pxm->h(), cx, cy, X, Y, W, H);
-  if (code) {
-    if (code == 2) pxm->draw_empty(XP, YP);
-    return;
-  }
-  if (!pxm->id_) {
-    pxm->id_ = fl_create_offscreen(pxm->w(), pxm->h());
-    fl_begin_offscreen((Fl_Offscreen)pxm->id_);
-    uchar *bitmap = 0;
-    fl_mask_bitmap = &bitmap;
-    fl_draw_pixmap(pxm->data(), 0, 0, FL_BLACK);
-    fl_mask_bitmap = 0;
-    if (bitmap) {
-      pxm->mask_ = fl_create_bitmask(pxm->w(), pxm->h(), bitmap);
-      delete[] bitmap;
-    }
-    fl_end_offscreen();
-  }
+  if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
   if (pxm->mask_) {
     // I can't figure out how to combine a mask with existing region,
     // so cut the image down to a clipped rectangle:
@@ -202,7 +190,7 @@ void Fl_Xlib_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int H
     int oy = Y-cy; if (oy < 0) oy += pxm->h();
     XSetClipOrigin(fl_display, fl_gc, X-cx, Y-cy);
   }
-  fl_copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
+  copy_offscreen(X, Y, W, H, pxm->id_, cx, cy);
   if (pxm->mask_) {
     // put the old clip region back
     XSetClipOrigin(fl_display, fl_gc, 0, 0);

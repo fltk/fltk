@@ -73,6 +73,8 @@ public:
   static const char *class_id;
   /** 
    Returns the name of the class of this object. 
+   Use of the class_name() function is discouraged because it will be removed from future FLTK versions.
+   
    The class of an instance of an Fl_Device subclass can be checked with code such as:
    \code
    if ( instance->class_name() == Fl_Printer::class_id ) { ... }
@@ -206,7 +208,7 @@ protected:
   friend void fl_draw_image(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend FL_EXPORT void fl_draw_image_mono(Fl_Draw_Image_Cb cb, void* data, int X,int Y,int W,int H, int D);
   friend FL_EXPORT void gl_start();
-
+  friend void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
   matrix *fl_matrix; /**< Points to the current coordinate transformation matrix */
 
   /** \brief The constructor. */
@@ -360,7 +362,11 @@ protected:
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
-    
+#if FLTK_ABI_VERSION >= 10302
+  virtual
+#endif
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+  
 public:
   static const char *class_id;
   virtual const char *class_name() {return class_id;};
@@ -424,6 +430,7 @@ public:
 #if ! defined(FL_DOXYGEN)
   static Fl_Offscreen create_offscreen_with_alpha(int w, int h);
 #endif
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 };
 #endif
 #if defined(WIN32) || defined(FL_DOXYGEN)
@@ -457,6 +464,19 @@ public:
 #if ! defined(FL_DOXYGEN)
   void copy_offscreen_with_alpha(int x,int y,int w,int h,HBITMAP bitmap,int srcx,int srcy);
 #endif
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
+};
+
+/**
+ The graphics driver used when printing on MSWindows.
+ *
+ This class is implemented only on the MSWindows platform. It 's extremely similar to Fl_GDI_Graphics_Driver.
+ */
+class FL_EXPORT Fl_GDI_Printer_Graphics_Driver : public Fl_GDI_Graphics_Driver {
+public:
+  static const char *class_id;
+  const char *class_name() {return class_id;};
+  void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
 };
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))
@@ -487,6 +507,7 @@ public:
   void text_extents(const char*, int n, int& dx, int& dy, int& w, int& h);
   int height();
   int descent();
+  void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);
 };
 #endif
 

@@ -3,7 +3,7 @@
 //
 // Pixmap header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -38,10 +38,13 @@ struct Fl_Menu_Item;
 class FL_EXPORT Fl_Pixmap : public Fl_Image {
   friend class Fl_Quartz_Graphics_Driver;
   friend class Fl_GDI_Graphics_Driver;
+  friend class Fl_GDI_Printer_Graphics_Driver;
   friend class Fl_Xlib_Graphics_Driver;
   void copy_data();
   void delete_data();
   void set_data(const char * const *p);
+  int prepare(int XP, int YP, int WP, int HP, int cx, int cy,
+			 int &X, int &Y, int &W, int &H);
 
   protected:
 

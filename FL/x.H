@@ -3,7 +3,7 @@
 //
 // X11 header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -86,7 +86,7 @@ extern FL_EXPORT ulong fl_event_time;
 typedef ulong Fl_Offscreen;
 #   define fl_create_offscreen(w,h) \
   XCreatePixmap(fl_display, \
-	      (Fl_Surface_Device::surface()->class_name() == Fl_Display_Device::class_id ? \
+	      (Fl_Surface_Device::surface() == Fl_Display_Device::display_device() ? \
 	      fl_window : fl_xid(Fl::first_window()) ) , \
 	      w, h, fl_visual->depth)
 // begin/end are macros that save the old state in local variables:

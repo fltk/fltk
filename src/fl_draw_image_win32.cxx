@@ -3,7 +3,7 @@
 //
 // WIN32 image drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -169,7 +169,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
   int blocking = h;
   {int size = linesize*h;
   // when printing, don't limit buffer size not to get a crash in StretchDIBits
-  if (size > MAXBUFFER && Fl_Surface_Device::surface()->class_name() != Fl_Printer::class_id) {
+  if (size > MAXBUFFER && Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) {
     size = MAXBUFFER;
     blocking = MAXBUFFER/linesize;
   }
@@ -247,7 +247,7 @@ static void innards(const uchar *buf, int X, int Y, int W, int H,
         }            
       }
     }
-    if(Fl_Surface_Device::surface()->class_name() == Fl_Printer::class_id) {
+    if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
       // if print context, device and logical units are not equal, so SetDIBitsToDevice
       // does not do the expected job, whereas StretchDIBits does it.
       StretchDIBits(fl_gc, x, y+j-k, w, k, 0, 0, w, k,

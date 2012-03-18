@@ -3,7 +3,7 @@
 //
 // Pixmap drawing code for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -332,9 +332,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #endif
   
 #ifdef  __APPLE_QUARTZ__
-  if (fl_graphics_driver->class_name() == Fl_Quartz_Graphics_Driver::class_id ) {
-    bool transparent = (transparent_index>=0);
-    transparent = true;
+  if (Fl_Surface_Device::surface() == Fl_Display_Device::display_device()) {
     U32 *array = new U32[d.w * d.h], *q = array;
     for (int Y = 0; Y < d.h; Y++) {
       const uchar* p = data[Y];
@@ -349,18 +347,9 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 	}
       }
     }
-    CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-    CGDataProviderRef src = CGDataProviderCreateWithData( 0L, array, d.w * d.h * 4, 0L);
-    CGImageRef img = CGImageCreate(d.w, d.h, 8, 4*8, 4*d.w,
-				   lut, transparent?kCGImageAlphaLast:kCGImageAlphaNoneSkipLast,
-				   src, 0L, false, kCGRenderingIntentDefault);
-    CGColorSpaceRelease(lut);
-    CGDataProviderRelease(src);
-    CGRect rect = { { x, y} , { d.w, d.h } };
-    Fl_X::q_begin_image(rect, 0, 0, d.w, d.h);
-    CGContextDrawImage(fl_gc, rect, img);
-    Fl_X::q_end_image();
-    CGImageRelease(img);
+    Fl_RGB_Image* rgb = new Fl_RGB_Image((uchar*)array, d.w, d.h, 4);
+    rgb->draw(x, y);
+    delete rgb;
     delete[] array;
     }
   else {

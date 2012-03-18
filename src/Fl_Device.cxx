@@ -3,7 +3,7 @@
 //
 // implementation of Fl_Device class for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 2010-2011 by Bill Spitzak and others.
+// Copyright 2010-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -29,6 +29,7 @@ const char *Fl_Quartz_Graphics_Driver::class_id = "Fl_Quartz_Graphics_Driver";
 #endif
 #if defined(WIN32) || defined(FL_DOXYGEN)
 const char *Fl_GDI_Graphics_Driver::class_id = "Fl_GDI_Graphics_Driver";
+const char *Fl_GDI_Printer_Graphics_Driver::class_id = "Fl_GDI_Printer_Graphics_Driver";
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))
 const char *Fl_Xlib_Graphics_Driver::class_id = "Fl_Xlib_Graphics_Driver";
@@ -41,6 +42,9 @@ void Fl_Surface_Device::set_current(void)
   fl_graphics_driver = _driver;
   _surface = this;
 }
+
+FL_EXPORT Fl_Graphics_Driver *fl_graphics_driver; // the current target device of graphics operations
+Fl_Surface_Device* Fl_Surface_Device::_surface; // the current target surface of graphics operations
 
 const Fl_Graphics_Driver::matrix Fl_Graphics_Driver::m0 = {1, 0, 0, 1, 0, 0};
 
@@ -88,6 +92,7 @@ Fl_Display_Device::Fl_Display_Device(Fl_Graphics_Driver *graphics_driver) : Fl_S
 #endif
   fl_mac_os_version = versionMajor * 10000 + versionMinor * 100 + versionBugFix;
 #endif
+this->set_current();
 };
 
 
