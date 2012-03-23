@@ -3,7 +3,7 @@
 //
 // Window header file for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -49,6 +49,10 @@ class Fl_X;
 class FL_EXPORT Fl_Window : public Fl_Group {
 
   static char *default_xclass_;
+#if FLTK_ABI_VERSION < 10302
+  static // when these members are static, ABI compatibility with 1.3.0 is respected
+#endif
+  int no_fullscreen_x, no_fullscreen_y, no_fullscreen_w, no_fullscreen_h;
 
   friend class Fl_X;
   Fl_X *i; // points at the system-specific stuff
@@ -65,6 +69,8 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   Fl_Color cursor_fg, cursor_bg;
   void size_range_();
   void _Fl_Window(); // constructor innards
+  void fullscreen_x(); // platform-specific part of sending a window to full screen
+  void fullscreen_off_x(int X, int Y, int W, int H);// platform-specific part of leaving full screen
 
   // unimplemented copy ctor and assignment operator
   Fl_Window(const Fl_Window&);
@@ -375,14 +381,26 @@ public:
   /**
     Makes the window completely fill the screen, without any window
     manager border visible.  You must use fullscreen_off() to undo
-    this. This may not work with all window managers.
+    this. 
+
+    \note On some platforms, this can result in the keyboard being
+    grabbed. The window may also be recreated, meaning hide() and
+    show() will be called.
   */
   void fullscreen();
+  /**
+    Turns off any side effects of fullscreen()
+  */
+  void fullscreen_off();
   /**
     Turns off any side effects of fullscreen() and does 
     resize(x,y,w,h).
   */
   void fullscreen_off(int,int,int,int);
+  /**
+    Returns non zero if FULLSCREEN flag is set, 0 otherwise. 
+  */
+  unsigned int fullscreen_active() const { return flags() & FULLSCREEN; }
   /**
     Iconifies the window.  If you call this when shown() is false
     it will show() it as an icon.  If the window is already

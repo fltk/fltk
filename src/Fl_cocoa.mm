@@ -931,6 +931,10 @@ void fl_open_callback(void (*cb)(const char *)) {
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
+  /* Fullscreen windows obscure all other windows so we need to return
+     to a "normal" level when the user switches to another window */
+  if (window->fullscreen_active())
+    [nsw setLevel:NSNormalWindowLevel];
   Fl::handle( FL_UNFOCUS, window);
   fl_unlock_function();
 }
@@ -939,6 +943,9 @@ void fl_open_callback(void (*cb)(const char *)) {
   fl_lock_function();
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *w = [nsw getFl_Window];
+  /* Restore previous fullscreen level */
+  if (w->fullscreen_active())
+    [nsw setLevel:NSStatusWindowLevel];
   if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle( FL_FOCUS, w);
   fl_unlock_function();
 }
@@ -1914,6 +1921,22 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 
 @end
 
+void Fl_Window::fullscreen_x() {
+  _set_fullscreen();
+  /* On OS X < 10.6, it is necessary to recreate the window. This is done
+     with hide+show. */
+  hide();
+  show();
+  Fl::handle(FL_FULLSCREEN, this);
+}
+
+void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
+  _clear_fullscreen();
+  hide();
+  resize(X, Y, W, H);
+  show();
+  Fl::handle(FL_FULLSCREEN, this);
+}
 
 /*
  * go ahead, create that (sub)window
@@ -2030,6 +2053,13 @@ void Fl_X::make(Fl_Window* w)
     x->gc = 0;
 	  
     NSRect crect;
+    if (w->flags() & Fl_Widget::FULLSCREEN) {
+      int sx, sy, sw, sh;
+      Fl::screen_xywh(sx, sy, sw, sh, w->x(), w->y(), w->w(), w->h());
+      w->resize(sx, sy, sw, sh);
+      winstyle = NSBorderlessWindowMask;
+      winlevel = NSStatusWindowLevel;
+    }
     crect.origin.x = w->x(); 
     crect.origin.y = main_screen_height - (w->y() + w->h());
     crect.size.width=w->w(); 

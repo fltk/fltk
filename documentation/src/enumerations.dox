@@ -27,7 +27,7 @@ The FLTK version number is stored in a number of compile-time constants:
 
 \section enumerations_events Events
 
-Events are identified by an \p Fl_Event enumeration value.  The
+Events are identified by an \ref Fl_Event enumeration value.  The
 following events are currently defined:
 
 \li FL_NO_EVENT - No event (or an event fltk does not
@@ -57,6 +57,8 @@ following events are currently defined:
 \li FL_DND_LEAVE - The mouse pointer left a widget still dragging
     data. 
 \li FL_DND_RELEASE - Dragged data is about to be dropped. 
+\li FL_SCREEN_CONFIGURATION_CHANGED - The screen configuration (number, positions) was changed.
+\li FL_FULLSCREEN - The fullscreen state of the window has changed.
 
 
 \section enumerations_when Callback "When" Conditions

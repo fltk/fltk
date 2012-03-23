@@ -50,6 +50,12 @@ void Fl_Window::_Fl_Window() {
   resizable(0);
   size_range_set = 0;
   minw = maxw = minh = maxh = 0;
+#if FLTK_ABI_VERSION >= 10302
+  no_fullscreen_x = 0;
+  no_fullscreen_y = 0;
+  no_fullscreen_w = w();
+  no_fullscreen_h = h();
+#endif
   callback((Fl_Callback*)default_callback);
 }
 

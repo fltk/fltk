@@ -67,6 +67,7 @@ const char * const fl_eventnames[] =
   "FL_DND_LEAVE",
   "FL_DND_RELEASE",
   "FL_SCREEN_CONFIGURATION_CHANGED",
+  "FL_FULLSCREEN"
 };
 
 /**

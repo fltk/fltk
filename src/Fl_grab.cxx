@@ -42,6 +42,15 @@ extern void *fl_capture;
 #endif
 
 void Fl::grab(Fl_Window* win) {
+#if USE_X11
+    Fl_Window *fullscreen_win = NULL;
+    for (Fl_Window *W = Fl::first_window(); W; W = Fl::next_window(W)) {
+      if (W->fullscreen_active()) {
+        fullscreen_win = W;
+        break;
+      }
+    }
+#endif
   if (win) {
     if (!grab_) {
 #ifdef WIN32
@@ -51,8 +60,9 @@ void Fl::grab(Fl_Window* win) {
       fl_capture = Fl_X::i(first_window())->xid;
       Fl_X::i(first_window())->set_key_window();
 #else
+      Window xid = fullscreen_win ? fl_xid(fullscreen_win) : fl_xid(first_window());
       XGrabPointer(fl_display,
-		   fl_xid(first_window()),
+		   xid,
 		   1,
 		   ButtonPressMask|ButtonReleaseMask|
 		   ButtonMotionMask|PointerMotionMask,
@@ -62,7 +72,7 @@ void Fl::grab(Fl_Window* win) {
 		   0,
 		   fl_event_time);
       XGrabKeyboard(fl_display,
-		    fl_xid(first_window()),
+		    xid,
 		    1,
 		    GrabModeAsync,
 		    GrabModeAsync, 
@@ -78,7 +88,10 @@ void Fl::grab(Fl_Window* win) {
 #elif defined(__APPLE__)
       fl_capture = 0;
 #else
+      // We must keep the grab in the non-EWMH fullscreen case
+      if (!fullscreen_win || Fl_X::ewmh_supported()) {
       XUngrabKeyboard(fl_display, fl_event_time);
+      }
       XUngrabPointer(fl_display, fl_event_time);
       // this flush is done in case the picked menu item goes into
       // an infinite loop, so we don't leave the X server locked up:

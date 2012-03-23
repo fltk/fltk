@@ -54,8 +54,11 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Single_Window.H>
 #include <FL/Fl_Hor_Slider.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Menu_Button.H>
 #include <FL/Fl_Toggle_Light_Button.H>
 #include <FL/math.h>
+#include <FL/fl_ask.H>
 #include <stdio.h>
 
 #if HAVE_GL
@@ -118,6 +121,27 @@ void shape_window::draw() {
 
 #endif
 
+class fullscreen_window : public Fl_Single_Window {
+  public:
+  fullscreen_window(int W, int H, const char *t=0);
+  int handle (int e);
+  Fl_Toggle_Light_Button *b3;
+
+};
+
+fullscreen_window::fullscreen_window(int W, int H, const char *t) : Fl_Single_Window(W, H, t) { 
+
+}
+
+int fullscreen_window::handle(int e) {
+  if (e == FL_FULLSCREEN) {
+    printf("Received FL_FULLSCREEN event\n");
+    b3->value(fullscreen_active());
+  }
+  if (Fl_Single_Window::handle(e)) return 1;
+  return 0;
+}
+
 void sides_cb(Fl_Widget *o, void *p) {
   shape_window *sw = (shape_window *)p;
   sw->sides = int(((Fl_Slider *)o)->value());
@@ -155,13 +179,14 @@ void fullscreen_cb(Fl_Widget *o, void *p) {
     py = w->y();
     pw = w->w();
     ph = w->h();
-#ifndef WIN32//necessary because fullscreen removes border
-	border_button->value(0);
-	border_button->do_callback();
-#endif
     w->fullscreen();
+    w->override();
+#ifndef WIN32 // update our border state in case border was turned off
+    border_button->value(w->border());
+#endif
   } else {
-    w->fullscreen_off(px,py,pw,ph);
+    //w->fullscreen_off(px,py,pw,ph);
+    w->fullscreen_off();
   }
 }
 
@@ -171,7 +196,7 @@ void exit_cb(Fl_Widget *, void *) {
   exit(0);
 }
 
-#define NUMB 5
+#define NUMB 6
 
 int twowindow = 0;
 int initfull = 0;
@@ -187,9 +212,10 @@ int main(int argc, char **argv) {
   if (Fl::args(argc,argv,i,arg) < argc)
     Fl::fatal("Options are:\n -2 = 2 windows\n -f = startup fullscreen\n%s",Fl::help);
 
-  Fl_Single_Window window(300,300+30*NUMB); window.end();
+  fullscreen_window window(300,300+30*NUMB); window.end();
 
   shape_window sw(10,10,window.w()-20,window.h()-30*NUMB-20);
+
 #if HAVE_GL
   sw.mode(FL_RGB);
 #endif
@@ -222,21 +248,24 @@ int main(int argc, char **argv) {
   b1.callback(double_cb,&sw);
   y+=30;
 
+  Fl_Input i1(50,y,window.w()-60,30, "Input");
+  y+=30;
+
   Fl_Toggle_Light_Button b2(50,y,window.w()-60,30,"Border");
   b2.callback(border_cb,w);
   b2.set();
   border_button = &b2;
   y+=30;
 
-  Fl_Toggle_Light_Button b3(50,y,window.w()-60,30,"FullScreen");
-  b3.callback(fullscreen_cb,w);
+  window.b3 = new Fl_Toggle_Light_Button(50,y,window.w()-60,30,"FullScreen");
+  window.b3->callback(fullscreen_cb,w);
   y+=30;
 
   Fl_Button eb(50,y,window.w()-60,30,"Exit");
   eb.callback(exit_cb);
   y+=30;
 
-  if (initfull) {b3.set(); b3.do_callback();}
+  if (initfull) {window.b3->set(); window.b3->do_callback();}
 
   window.end();
   window.show(argc,argv);

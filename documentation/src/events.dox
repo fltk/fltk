@@ -300,6 +300,20 @@ The user has released the mouse button dropping data into
 the widget. If the widget returns 1, it will receive the data in
 the immediately following \p FL_PASTE event.
 
+\section events_fl_misc Other events
+
+\subsection events_fl_screen_config FL_SCREEN_CONFIGURATION_CHANGED
+Sent whenever the screen configuration changes (a screen is added/removed,
+a screen resolution is changed, screens are moved).
+Use Fl::add_handler() to be notified of this event.
+
+\subsection events_fl_fullscreen FL_FULLSCREEN
+
+The application window has been changed from normal to fullscreen, or
+from fullscreen to normal. If you are using a X window manager which
+supports Extended Window Manager Hints, this event will not be
+delivered until the change has actually happened. 
+
 
 \section events_event_xxx Fl::event_*() methods
 

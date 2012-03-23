@@ -21,6 +21,7 @@
 #include <FL/x.H>
 #include <config.h>
 
+#define MAX_SCREENS 16
 
 // Number of screens returned by multi monitor aware API; -1 before init
 static int num_screens = -1;
@@ -142,47 +143,61 @@ static void screen_init() {
   num_screens = count;
 }
 
-#elif HAVE_XINERAMA
-#  include <X11/extensions/Xinerama.h>
+#else
 
-// Screen data...
-static XineramaScreenInfo *screens;
-static float dpi[16][2];
+#if HAVE_XINERAMA
+#  include <X11/extensions/Xinerama.h>
+#endif
+typedef struct {
+   short x_org;
+   short y_org;
+   short width;
+   short height;
+  } FLScreenInfo;
+static FLScreenInfo screens[MAX_SCREENS];
+static float dpi[MAX_SCREENS][2];
 
 static void screen_init() {
   if (!fl_display) fl_open_display();
-
+  // FIXME: Rewrite using RandR instead
+#if HAVE_XINERAMA
   if (XineramaIsActive(fl_display)) {
-    screens = XineramaQueryScreens(fl_display, &num_screens);
-    int i;
-    // Xlib and Xinerama may disagree on the screen count. Sigh...
-    // Use the minimum of the reported counts.
-    // Use the previous screen's info for non-existent ones.
-    int sc = ScreenCount(fl_display); // Xlib screen count
-    for (i=0; i<num_screens; i++) {
-      int mm = (i < sc) ? DisplayWidthMM(fl_display, i) : 0;
-      dpi[i][0] = mm ? screens[i].width*25.4f/mm : (i > 0) ? dpi[i-1][0] : 0.0f;
-      mm = (i < sc) ? DisplayHeightMM(fl_display, i) : 0;
-      dpi[i][1] = mm ? screens[i].height*25.4f/mm : (i > 0) ? dpi[i-1][1] : 0.0f;
+    XineramaScreenInfo *xsi = XineramaQueryScreens(fl_display, &num_screens);
+    if (num_screens > MAX_SCREENS) num_screens = MAX_SCREENS;
+
+    /* There's no way to use different DPI for different Xinerama screens. */
+    for (int i=0; i<num_screens; i++) {
+      screens[i].x_org = xsi[i].x_org;
+      screens[i].y_org = xsi[i].y_org;
+      screens[i].width = xsi[i].width;
+      screens[i].height = xsi[i].height;
+
+      int mm = DisplayWidthMM(fl_display, fl_screen);
+      dpi[i][0] = mm ? screens[i].width*25.4f/mm : 0.0f;
+      mm = DisplayHeightMM(fl_display, fl_screen);
+      dpi[i][1] = mm ? screens[i].height*25.4f/mm : 0.0f;
     }
-  } else { // ! XineramaIsActive()
-    num_screens = 1;
-    int mm = DisplayWidthMM(fl_display, fl_screen);
-    dpi[0][0] = mm ? Fl::w()*25.4f/mm : 0.0f;
-    mm = DisplayHeightMM(fl_display, fl_screen);
-    dpi[0][1] = mm ? Fl::h()*25.4f/mm : dpi[0][0];
+    if (xsi) XFree(xsi);
+  } else 
+#endif
+  { // ! XineramaIsActive()
+    num_screens = ScreenCount(fl_display);
+    if (num_screens > MAX_SCREENS) num_screens = MAX_SCREENS;
+    
+    for (int i=0; i<num_screens; i++) {
+      screens[i].x_org = 0;
+      screens[i].y_org = 0;
+      screens[i].width = DisplayWidth(fl_display, i);
+      screens[i].height = DisplayHeight(fl_display, i);
+  
+      int mm = DisplayWidthMM(fl_display, i);
+      dpi[i][0] = mm ? DisplayWidth(fl_display, i)*25.4f/mm : 0.0f;
+      mm = DisplayHeightMM(fl_display, i);
+      dpi[i][1] = mm ? DisplayHeight(fl_display, i)*25.4f/mm : 0.0f;
+    }
   }
 }
-#else
-static float dpi[2];
-static void screen_init() {
-  num_screens = 1;
-  if (!fl_display) fl_open_display();
-  int mm = DisplayWidthMM(fl_display, fl_screen);
-  dpi[0] = mm ? Fl::w()*25.4f/mm : 0.0f;
-  mm = DisplayHeightMM(fl_display, fl_screen);
-  dpi[1] = mm ? Fl::h()*25.4f/mm : dpi[0];
-}
+
 #endif // WIN32
 
 #ifndef FL_DOXYGEN
@@ -297,20 +312,11 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     W = screens[n].width;
     H = screens[n].height;
 #else
-#if HAVE_XINERAMA
-  if (num_screens > 0 && screens) {
+  if (num_screens > 0) {
     X = screens[n].x_org;
     Y = screens[n].y_org;
     W = screens[n].width;
     H = screens[n].height;
-  } else
-#endif // HAVE_XINERAMA
-  {
-    /* Fallback if something is broken (or no Xinerama)... */
-    X = 0;
-    Y = 0;
-    W = DisplayWidth(fl_display, fl_screen);
-    H = DisplayHeight(fl_display, fl_screen);
   }
 #endif // WIN32
 }
@@ -372,15 +378,10 @@ void Fl::screen_dpi(float &h, float &v, int n)
     h = dpi_h[n];
     v = dpi_v[n];
   }
-#elif HAVE_XINERAMA
+#else
   if (n >= 0 && n < num_screens) {
     h = dpi[n][0];
     v = dpi[n][1];
-  }
-#else
-  if (n >= 0 && n < num_screens) {
-    h = dpi[0];
-    v = dpi[1];
   }
 #endif // WIN32
 }

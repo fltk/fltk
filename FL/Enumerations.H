@@ -3,7 +3,7 @@
 //
 // Enumerations for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2011 by Bill Spitzak and others.
+// Copyright 1998-2012 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -293,7 +293,10 @@ enum Fl_Event {	// events
   /** The screen configuration (number, positions) was changed.
    Use Fl::add_handler() to be notified of this event.
    */
-  FL_SCREEN_CONFIGURATION_CHANGED = 24
+  FL_SCREEN_CONFIGURATION_CHANGED = 24,
+  /** The fullscreen state of the window has changed
+   */
+   FL_FULLSCREEN         = 25
 };
 
 /** \name When Conditions */
