@@ -159,6 +159,11 @@ enum {
   kVK_UpArrow                   = 0x7E
 };
 
+/* ISO keyboards only*/
+enum {
+  kVK_ISO_Section               = 0x0A
+};
+
 #endif
 
 // convert an FLTK (X) keysym to a MacOS symbol:
@@ -176,7 +181,7 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   { kVK_ANSI_U, 'U' }, { kVK_ANSI_V, 'V' }, { kVK_ANSI_W, 'W' }, { kVK_ANSI_X, 'X' }, 
   { kVK_ANSI_Y, 'Y' }, { kVK_ANSI_Z, 'Z' }, 
   { kVK_ANSI_LeftBracket, '[' }, { kVK_ANSI_Backslash, '\\' }, { kVK_ANSI_RightBracket, ']' }, { kVK_ANSI_Grave, '`' },  
-  { kVK_Delete, FL_BackSpace }, { kVK_Tab, FL_Tab }, { kVK_Return, FL_Enter }, /*{ 0x7F, FL_Pause },
+  { kVK_Delete, FL_BackSpace }, { kVK_Tab, FL_Tab }, { kVK_ISO_Section, FL_Iso_Key }, { kVK_Return, FL_Enter }, /*{ 0x7F, FL_Pause },
   { 0x7F, FL_Scroll_Lock },*/ { kVK_Escape, FL_Escape }, { kVK_Home, FL_Home }, { kVK_LeftArrow, FL_Left },
   { kVK_UpArrow, FL_Up }, { kVK_RightArrow, FL_Right }, { kVK_DownArrow, FL_Down }, { kVK_PageUp, FL_Page_Up },
   { kVK_PageDown, FL_Page_Down },  { kVK_End, FL_End }, /*{ 0x7F, FL_Print }, { 0x7F, FL_Insert },*/

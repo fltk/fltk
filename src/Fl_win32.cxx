@@ -766,7 +766,8 @@ static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {0xdb,	'['},
   {0xdc,	'\\'},
   {0xdd,	']'},
-  {0xde,	'\''}
+  {0xde,	'\''},
+  {VK_OEM_102,	FL_Iso_Key}
 };
 static int ms2fltk(int vk, int extended) {
   static unsigned short vklut[256];

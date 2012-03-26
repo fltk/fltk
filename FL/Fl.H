@@ -637,7 +637,7 @@ public:
     \li All other keys on the keypad have a symbol: FL_Escape,
 	FL_BackSpace, FL_Tab, FL_Enter, FL_Print, FL_Scroll_Lock, FL_Pause,
 	FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down,
-	FL_Left, FL_Up, FL_Right, FL_Down, FL_Shift_L, FL_Shift_R,
+	FL_Left, FL_Up, FL_Right, FL_Down, FL_Iso_Key, FL_Shift_L, FL_Shift_R,
 	FL_Control_L, FL_Control_R, FL_Caps_Lock, FL_Alt_L, FL_Alt_R,
 	FL_Meta_L, FL_Meta_R, FL_Menu, FL_Num_Lock, FL_KP_Enter.  Be
 	careful not to confuse these with the very similar, but all-caps,

@@ -63,6 +63,7 @@ struct keycode_table{int n; const char* text;} table[] = {
   {FL_Escape, "FL_Escape"},
   {FL_BackSpace, "FL_BackSpace"},
   {FL_Tab, "FL_Tab"},
+  {FL_Iso_Key, "FL_Iso_Key"},
   {FL_Enter, "FL_Enter"},
   {FL_Print, "FL_Print"},
   {FL_Scroll_Lock, "FL_Scroll_Lock"},

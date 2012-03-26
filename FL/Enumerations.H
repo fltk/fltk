@@ -337,6 +337,7 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_Button	0xfee8	///< A mouse button; use Fl_Button + n for mouse button n.
 #define FL_BackSpace	0xff08	///< The backspace key.
 #define FL_Tab		0xff09	///< The tab key.
+#define FL_Iso_Key	0xff0c  ///< The additional key of ISO keyboards.
 #define FL_Enter	0xff0d	///< The enter key. 
 #define FL_Pause	0xff13	///< The pause key.
 #define FL_Scroll_Lock	0xff14	///< The scroll lock key.
