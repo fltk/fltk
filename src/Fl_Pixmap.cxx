@@ -113,6 +113,10 @@ int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int cx, int cy,
 #endif
     fl_draw_pixmap(data(), 0, 0, FL_BLACK);
 #ifndef __APPLE__
+#if defined(WIN32)
+    extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
+    this->pixmap_bg_color = win_pixmap_bg_color;
+#endif
     fl_mask_bitmap = 0;
     if (bitmap) {
       mask_ = fl_create_bitmask(w(), h(), bitmap);
@@ -149,6 +153,10 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
   }
 }
 
+#if FLTK_ABI_VERSION < 10302
+COLORREF Fl_Pixmap::pixmap_bg_color = 0;
+#endif
+
 void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   if (pxm->prepare(XP, YP, WP, HP, cx, cy, X, Y, W, H)) return;
@@ -164,8 +172,7 @@ void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP
     int save = SaveDC(new_gc);
     SelectObject(new_gc, (void*)pxm->id_);
     // print all of offscreen but its parts in background color
-    extern UINT win_pixmap_bg_color; // computed by fl_draw_pixmap()
-    fl_TransparentBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, pxm->w(), pxm->h(), win_pixmap_bg_color );
+    fl_TransparentBlt(fl_gc, X, Y, W, H, new_gc, cx, cy, pxm->w(), pxm->h(), pxm->pixmap_bg_color );
     RestoreDC(new_gc,save);
     DeleteDC(new_gc);
   }
