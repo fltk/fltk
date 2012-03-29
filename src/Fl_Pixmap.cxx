@@ -65,7 +65,7 @@ void Fl_Pixmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
-static int start(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 
+static int start(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy,
 		 int &X, int &Y, int &W, int &H)
 {
   // ignore empty or bad pixmap data:
@@ -126,7 +126,7 @@ int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int cx, int cy,
     fl_end_offscreen();
   }
   return 0;
-}  
+}
 
 #ifdef __APPLE__
 void Fl_Quartz_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
@@ -154,7 +154,7 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP
 }
 
 #if FLTK_ABI_VERSION < 10302
-COLORREF Fl_Pixmap::pixmap_bg_color = 0;
+UINT Fl_Pixmap::pixmap_bg_color = 0;
 #endif
 
 void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy) {
@@ -245,7 +245,7 @@ void Fl_Pixmap::copy_data() {
   int		i,		// Looping var
 		ncolors,	// Number of colors in image
 		chars_per_pixel,// Characters per color
-		chars_per_line;	// Characters per line 
+		chars_per_line;	// Characters per line
 
   // Figure out how many colors there are, and how big they are...
   sscanf(data()[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
@@ -283,7 +283,7 @@ void Fl_Pixmap::copy_data() {
 
   // Update pointers...
   data((const char **)new_data, h() + ncolors + 1);
-  alloc_data = 1;  
+  alloc_data = 1;
 }
 
 Fl_Image *Fl_Pixmap::copy(int W, int H) {
@@ -298,7 +298,7 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
   }
   if (W <= 0 || H <= 0) return 0;
 
-  // OK, need to resize the image data; allocate memory and 
+  // OK, need to resize the image data; allocate memory and
   char		**new_data,	// New array for image data
 		**new_row,	// Pointer to row in image data
 		*new_ptr,	// Pointer into new array
@@ -313,7 +313,7 @@ Fl_Image *Fl_Pixmap::copy(int W, int H) {
 		xstep, ystep;	// X & Y step increments
   int		ncolors,	// Number of colors in image
 		chars_per_pixel,// Characters per color
-		chars_per_line;	// Characters per line 
+		chars_per_line;	// Characters per line
 
   // Figure out how many colors there are, and how big they are...
   sscanf(data()[0],"%*d%*d%d%d", &ncolors, &chars_per_pixel);
