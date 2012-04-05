@@ -145,11 +145,11 @@ static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
 
 
 static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
-  uchar		*g = fl_gray_ramp();
-  int		i, j;
+  uchar	*g = fl_gray_ramp();
+  int	i, j;
   int	clen = (int) strlen(c) - 1;
   int	chalf = clen / 2;
-  int		cstep = 1;
+  int	cstep = 1;
 
   if (h < (w * 2)) {
     // Horizontal shading...
@@ -217,8 +217,8 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 }
 
 static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
-  uchar		*g = fl_gray_ramp();
-  int		i;
+  uchar	*g = fl_gray_ramp();
+  int	i;
   int 	clen = (int) (strlen(c) - 1);
   int 	chalf = clen / 2;
 

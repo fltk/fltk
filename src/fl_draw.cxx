@@ -303,7 +303,7 @@ void fl_draw(
       callthis(buf,buflen,xpos,ypos-desc);
 
       if (underline_at && underline_at >= buf && underline_at < (buf + buflen))
-      callthis("_",1,xpos+int(fl_width(buf,(int) (underline_at-buf))),ypos-desc);
+	callthis("_",1,xpos+int(fl_width(buf,(int) (underline_at-buf))),ypos-desc);
 
       if (!*e || (*e == '@' && e[1] != '@')) break;
       p = e;

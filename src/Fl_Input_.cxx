@@ -461,7 +461,7 @@ int Fl_Input_::line_end(int i) const {
     for (const char* p=value()+j; ;) {
       char buf[MAXBUF];
       p = expand(p, buf);
-	  int k = (int) (p-value());
+      int k = (int) (p-value());
       if (k >= i) return k;
       p++;
     }

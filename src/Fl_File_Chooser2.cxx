@@ -951,16 +951,16 @@ Fl_File_Chooser::fileNameCB()
     } else if (max_match > min_match && first_line) {
       // Add the matching portion...
       fileName->replace( 
-		  (int) (filename - pathname), 
-		  (int) (filename - pathname + min_match),
-           matchname);
+			(int) (filename - pathname), 
+			(int) (filename - pathname + min_match),
+			matchname);
 
       // Highlight it with the cursor at the end of the selection so
       // s/he can press the right arrow to accept the selection
       // (Tab and End also do this for both cases.)
       fileName->position(
-		  (int) (filename - pathname + max_match),
-	      (int) (filename - pathname + min_match));
+			 (int) (filename - pathname + max_match),
+			 (int) (filename - pathname + min_match));
     } else if (max_match == 0) {
       fileList->deselect(0);
       fileList->redraw();

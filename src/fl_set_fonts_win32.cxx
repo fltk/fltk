@@ -69,7 +69,7 @@ enumcbw(CONST LOGFONTW    *lpelf,
   dstlen = fl_utf8fromwc(n, dstlen, (xchar*)lpelf->lfFaceName, (unsigned) l); // convert the string
   n[dstlen] = 0;
   for (int i=0; i<FL_FREE_FONT; i++) // skip if one of our built-in fonts
-	  if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) {free(n);return 1;}
+    if (!strcmp(Fl::get_font_name((Fl_Font)i),n)) {free(n);return 1;}
   char buffer[LF_FACESIZE + 1];
   strcpy(buffer+1, n);
   buffer[0] = ' '; Fl::set_font((Fl_Font)(fl_free_font++), strdup(buffer));
@@ -86,7 +86,7 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
   if (fl_free_font == FL_FREE_FONT) {// if not already been called
     if (!fl_gc) fl_GetDC(0);
 
-      EnumFontFamiliesW(fl_gc, NULL, (FONTENUMPROCW)enumcbw, xstarname != 0);
+    EnumFontFamiliesW(fl_gc, NULL, (FONTENUMPROCW)enumcbw, xstarname != 0);
 
   }
   return (Fl_Font)fl_free_font;
@@ -145,14 +145,14 @@ Fl::get_font_sizes(Fl_Font fnum, int*& sizep) {
 //  int l = fl_utf_nb_char((unsigned char*)s->name+1, strlen(s->name+1));
 //  unsigned short *b = (unsigned short*) malloc((l + 1) * sizeof(short));
 //  fl_utf2unicode((unsigned char*)s->name+1, l, (xchar*)b);
-	const char *nm = (const char*)s->name+1;
-	size_t len = strlen(s->name+1);
-    unsigned l = fl_utf8toUtf16(nm, (unsigned) len, NULL, 0); // Pass NULL to query length required
-    unsigned short *b = (unsigned short*) malloc((l + 1) * sizeof(short));
-    l = fl_utf8toUtf16(nm, (unsigned) len, b, (l+1)); // Now do the conversion
-    b[l] = 0;
-    EnumFontFamiliesW(fl_gc, (WCHAR*)b, (FONTENUMPROCW)EnumSizeCbW, 0);
-	free(b);
+  const char *nm = (const char*)s->name+1;
+  size_t len = strlen(s->name+1);
+  unsigned l = fl_utf8toUtf16(nm, (unsigned) len, NULL, 0); // Pass NULL to query length required
+  unsigned short *b = (unsigned short*) malloc((l + 1) * sizeof(short));
+  l = fl_utf8toUtf16(nm, (unsigned) len, b, (l+1)); // Now do the conversion
+  b[l] = 0;
+  EnumFontFamiliesW(fl_gc, (WCHAR*)b, (FONTENUMPROCW)EnumSizeCbW, 0);
+  free(b);
 
   sizep = sizes;
   return nbSize;
