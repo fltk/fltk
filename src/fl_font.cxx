@@ -57,20 +57,20 @@
 
 
 double fl_width(const char* c) {
-  if (c) return fl_width(c, strlen(c));
+  if (c) return fl_width(c, (int) strlen(c));
   else return 0.0f;
 }
 
 void fl_draw(const char* str, int x, int y) {
-  fl_draw(str, strlen(str), x, y);
+  fl_draw(str, (int) strlen(str), x, y);
 }
 
 void fl_draw(int angle, const char* str, int x, int y) {
-  fl_draw(angle, str, strlen(str), x, y);//must be fixed!
+  fl_draw(angle, str, (int) strlen(str), x, y);//must be fixed!
 }
 
 void fl_text_extents(const char *c, int &dx, int &dy, int &w, int &h) {
-  if (c)  fl_text_extents(c, strlen(c), dx, dy, w, h);
+  if (c)  fl_text_extents(c, (int) strlen(c), dx, dy, w, h);
   else {
     w = 0; h = 0;
     dx = 0; dy = 0;

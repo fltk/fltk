@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SAFE_STRCAT(s) { len += strlen(s); if ( len >= namelen ) { *name='\0'; return(-2); } else strcat(name,(s)); }
+#define SAFE_STRCAT(s) { len += (int) strlen(s); if ( len >= namelen ) { *name='\0'; return(-2); } else strcat(name,(s)); }
 
 /** Get the menu 'pathname' for the specified menuitem.
 
@@ -81,7 +81,7 @@ int Fl_Menu_::item_pathname(char *name, int namelen, const Fl_Menu_Item *findite
 		}
 	    } else {					// end of submenu? pop
 	        char *ss = strrchr(name, '/');
-		if ( ss ) { *ss = 0; len = strlen(name); }	// "File/Edit" -> "File"
+		if ( ss ) { *ss = 0; len = (int) strlen(name); }	// "File/Edit" -> "File"
 		else { name[0] = '\0'; len = 0; }		// "File" -> ""
 		continue;
 	    }
@@ -148,7 +148,7 @@ const Fl_Menu_Item * Fl_Menu_::find_item(const char *pathname) {
 int Fl_Menu_::find_index(const Fl_Menu_Item *item) const {
   Fl_Menu_Item *max = menu_+size();
   if (item<menu_ || item>=max) return(-1);
-  return(item-menu_);
+  return (int) (item-menu_);
 }
 
 /**

@@ -35,7 +35,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   struct dirent **dir = 0, *selectDir;
   unsigned long ret;
 
-  len    = strlen(dirname);
+  len    = (int) strlen(dirname);
   findIn = (char *)malloc((size_t)(len+10));
   if (!findIn) return -1;
   strcpy(findIn, dirname);
@@ -58,10 +58,10 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
      /* unsigned short * wbuf = (unsigned short*)malloc(sizeof(short) *(len + 10)); */
      /* wbuf[fl_utf2unicode(findIn, strlen(findIn), wbuf)] = 0; */
 	unsigned short *wbuf = NULL;
-	unsigned wlen = fl_utf8toUtf16(findIn, strlen(findIn), NULL, 0); /* Pass NULL to query length */
+	unsigned wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), NULL, 0); /* Pass NULL to query length */
 	wlen++; /* add a little extra for termination etc. */
 	wbuf = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
-	wlen = fl_utf8toUtf16(findIn, strlen(findIn), wbuf, wlen); /* actually convert the filename */
+	wlen = fl_utf8toUtf16(findIn, (unsigned) strlen(findIn), wbuf, wlen); /* actually convert the filename */
 	wbuf[wlen] = 0; /* NULL terminate the resultant string */
 	h = FindFirstFileW(wbuf, &findw); /* get a handle to the first filename in the search */
 	free(wbuf); /* release the "wide" buffer before the pointer goes out of scope */
@@ -76,7 +76,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
     return nDir;
   }
   do {
-	int l = wcslen(findw.cFileName);
+	int l = (int) wcslen(findw.cFileName);
 	int dstlen = l * 5 + 1;
 	selectDir=(struct dirent*)malloc(sizeof(struct dirent)+dstlen);
 

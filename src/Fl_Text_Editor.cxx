@@ -309,7 +309,7 @@ int Fl_Text_Editor::kf_shift_move(int c, Fl_Text_Editor* e) {
   fl_text_drag_me(e->insert_position(), e);
   char *copy = e->buffer()->selection_text();
   if (copy) {
-    Fl::copy(copy, strlen(copy), 0);
+    Fl::copy(copy, (int) strlen(copy), 0);
     free(copy);
     }
   return 1;
@@ -459,7 +459,7 @@ int Fl_Text_Editor::kf_delete(int, Fl_Text_Editor* e) {
 int Fl_Text_Editor::kf_copy(int, Fl_Text_Editor* e) {
   if (!e->buffer()->selected()) return 1;
   const char *copy = e->buffer()->selection_text();
-  if (*copy) Fl::copy(copy, strlen(copy), 1);
+  if (*copy) Fl::copy(copy, (int) strlen(copy), 1);
   free((void*)copy);
   e->show_insert_position();
   return 1;
@@ -488,7 +488,7 @@ int Fl_Text_Editor::kf_paste(int, Fl_Text_Editor* e) {
 int Fl_Text_Editor::kf_select_all(int, Fl_Text_Editor* e) {
   e->buffer()->select(0, e->buffer()->length());
   const char *copy = e->buffer()->selection_text();
-  if (*copy) Fl::copy(copy, strlen(copy), 0);
+  if (*copy) Fl::copy(copy, (int) strlen(copy), 0);
   free((void*)copy);
   return 1;
 }

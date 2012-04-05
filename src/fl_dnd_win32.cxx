@@ -172,7 +172,7 @@ public:
       }
       *b = 0;
       Fl::e_text = currDragData;
-      Fl::e_length = b - currDragData;
+      Fl::e_length = (int) (b - currDragData);
       Fl::belowmouse()->handle(Fl::e_number = FL_PASTE); // e_text will be invalid after this call
       Fl::e_number = old_event;
       SetForegroundWindow( hwnd );
@@ -251,7 +251,7 @@ private:
 	q += len;
 	}
       *q = 0;
-      currDragSize = q - currDragData;
+      currDragSize = (int) (q - currDragData);
       currDragData = (char*)realloc(currDragData, currDragSize + 1);
       GlobalUnlock( medium.hGlobal );
       ReleaseStgMedium( &medium );

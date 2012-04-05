@@ -254,8 +254,8 @@ void Fl_Help_View::hv_draw(const char *t, int x, int y)
     int w = (int)fl_width(t);
     if (mouse_x>=x && mouse_x<x+w) {
       if (mouse_y>=y-fl_height()+fl_descent()&&mouse_y<=y+fl_descent()) {
-        int f = current_pos;
-        int l = f+strlen(t); // use 'quote_char' to calculate the true length of the HTML string
+        int f = (int) current_pos;
+        int l = (int) (f+strlen(t)); // use 'quote_char' to calculate the true length of the HTML string
         if (draw_mode==1) {
           selection_push_first = f;
           selection_push_last = l;
@@ -542,7 +542,7 @@ Fl_Help_View::draw()
               fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                xx + x() - leftline_ + ww + xtra_ww);
             }
-            current_pos = ptr-value_;
+            current_pos = (int) (ptr-value_);
 
             xx += ww;
 	    if ((fsize + 2) > hh)
@@ -564,7 +564,7 @@ Fl_Help_View::draw()
 	                        	 xx + x() - leftline_ +
 					     (int)fl_width(buf));
 
-                current_pos = ptr-value_;
+                current_pos = (int) (ptr-value_);
 		if (line < 31)
 	          line ++;
 		xx = block->line[line];
@@ -596,7 +596,7 @@ Fl_Help_View::draw()
 	      if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                               xx + x() - leftline_ + ww);
               xx += ww;
-              current_pos = ptr-value_;
+              current_pos = (int) (ptr-value_);
 	    }
 
 	    needspace = 0;
@@ -607,7 +607,7 @@ Fl_Help_View::draw()
 
 	    while (isspace((*ptr)&255))
               ptr ++;
-            current_pos = ptr-value_;
+            current_pos = (int) (ptr-value_);
 	  }
 	}
 
@@ -645,7 +645,7 @@ Fl_Help_View::draw()
             ptr ++;
 
           // end of command reached, set the supposed start of printed eord here
-          current_pos = ptr-value_;
+          current_pos = (int) (ptr-value_);
 	  if (strcasecmp(buf, "HEAD") == 0)
             head = 1;
 	  else if (strcasecmp(buf, "BR") == 0)
@@ -901,7 +901,7 @@ Fl_Help_View::draw()
 	  needspace = 0;
 
 	  ptr ++;
-          current_pos = ptr-value_;
+          current_pos = (int) (ptr-value_);
 	}
 	else if (isspace((*ptr)&255))
 	{
@@ -918,7 +918,7 @@ Fl_Help_View::draw()
 	  }
 
           ptr ++;
-          if (!pre) current_pos = ptr-value_;
+          if (!pre) current_pos = (int) (ptr-value_);
 	  needspace = 1;
 	}
 	else if (*ptr == '&')
@@ -973,7 +973,7 @@ Fl_Help_View::draw()
         hv_draw(buf, xx + x() - leftline_, yy + y());
 	if (underline) fl_xyline(xx + x() - leftline_, yy + y() + 1,
 	                         xx + x() - leftline_ + ww);
-        current_pos = ptr-value_;
+        current_pos = (int) (ptr-value_);
       }
     }
 
@@ -1035,7 +1035,7 @@ Fl_Help_View::find(const char *s,		// I - String to find
     if (!*sp) {
       // Found a match!
       topline(b->y - b->h);
-      return (b->end - value_);
+      return (int) (b->end - value_);
     }
   }
 
@@ -1517,7 +1517,7 @@ void Fl_Help_View::format() {
 	  yy        = block->y + block->h - 4;
 	  hh        = 0;
           block     = add_block(start, xx, yy, hsize_, 0);
-	  row       = block - blocks_;
+	  row       = (int) (block - blocks_);
 	  needspace = 0;
 	  column    = 0;
 	  line      = 0;
@@ -1602,7 +1602,7 @@ void Fl_Help_View::format() {
 	  newalign  = get_align(attrs, tolower(buf[1]) == 'h' ? CENTER : LEFT);
 	  talign    = newalign;
 
-          cells[column] = block - blocks_;
+          cells[column] = (int) (block - blocks_);
 
 	  column += colspan;
 
@@ -2752,7 +2752,7 @@ void Fl_Help_View::select_all()
   clear_global_selection();
   if (!value_) return;
   current_view = this;
-  selection_drag_last = selection_last = strlen(value_);
+  selection_drag_last = selection_last = (int) strlen(value_);
   selected = 1;
 }
 
@@ -2858,7 +2858,7 @@ void Fl_Help_View::end_selection(int clipboard)
   // convert the select part of our html text into some kind of somewhat readable ASCII
   // and store it in the selection buffer
   char p = 0, pre = 0;;
-  int len = strlen(value_);
+  int len = (int) strlen(value_);
   char *txt = (char*)malloc(len+1), *d = txt;
   const char *s = value_, *cmd, *src;
   for (;;) {
@@ -2898,7 +2898,7 @@ void Fl_Help_View::end_selection(int clipboard)
         case CMD('d','t', 0 , 0 ): src = "\n "; break;
         case CMD('d','d', 0 , 0 ): src = "\n - "; break;
       }
-      int n = s-value_;
+      int n = (int) (s-value_);
       if (src && n>selection_first && n<=selection_last) {
         while (*src) {
           *d++ = *src++;
@@ -2918,7 +2918,7 @@ void Fl_Help_View::end_selection(int clipboard)
         }
       }
     }
-    int n = s-value_;
+    int n = (int) (s-value_);
     if (n>selection_first && n<=selection_last) {
       if (!pre && isspace(c&255)) c = ' ';
       if (p!=' '||c!=' ')
@@ -2927,7 +2927,7 @@ void Fl_Help_View::end_selection(int clipboard)
     }
   }
   *d = 0;
-  Fl::copy(txt, strlen(txt), clipboard);
+  Fl::copy(txt, (int) strlen(txt), clipboard);
   free(txt);
 }
 

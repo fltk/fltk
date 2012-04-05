@@ -72,7 +72,7 @@ inline Fl_Color shade_color(uchar gc, Fl_Color bc) {
 
 static void frame_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar *g = fl_gray_ramp();
-  int b = strlen(c) / 4 + 1;
+  int b = ((int) strlen(c)) / 4 + 1;
 
   for (x += b, y += b, w -= 2 * b, h -= 2 * b; b > 1; b --)
   {
@@ -92,7 +92,7 @@ static void frame_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 
 static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar *g = fl_gray_ramp();
-  int b = strlen(c) / 4 + 1;
+  size_t b = strlen(c) / 4 + 1;
 
   if (w==h) {
     for (; b > 1; b --, x ++, y ++, w -= 2, h -= 2)
@@ -147,8 +147,8 @@ static void frame_round(int x, int y, int w, int h, const char *c, Fl_Color bc) 
 static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar		*g = fl_gray_ramp();
   int		i, j;
-  int		clen = strlen(c) - 1;
-  int		chalf = clen / 2;
+  int	clen = (int) strlen(c) - 1;
+  int	chalf = clen / 2;
   int		cstep = 1;
 
   if (h < (w * 2)) {
@@ -219,8 +219,8 @@ static void shade_rect(int x, int y, int w, int h, const char *c, Fl_Color bc) {
 static void shade_round(int x, int y, int w, int h, const char *c, Fl_Color bc) {
   uchar		*g = fl_gray_ramp();
   int		i;
-  int		clen = strlen(c) - 1;
-  int		chalf = clen / 2;
+  int 	clen = (int) (strlen(c) - 1);
+  int 	chalf = clen / 2;
 
   if (w>h) {
     int d = h/2;

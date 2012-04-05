@@ -317,7 +317,7 @@ int Fl_Input::handle_key() {
       // initialize the list of legal characters inside a floating point number
 #ifdef HAVE_LOCALECONV
       if (!legal_fp_chars) {
-        int len = strlen(standard_fp_chars);
+        size_t len = strlen(standard_fp_chars);
         struct lconv *lc = localeconv();
         if (lc) {
           if (lc->decimal_point) len += strlen(lc->decimal_point);

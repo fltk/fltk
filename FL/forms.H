@@ -159,9 +159,9 @@ typedef int FL_COLOR;
 extern FL_EXPORT void fl_initialize(int*, char*[], const char*, FL_CMD_OPT*, int);
 inline void fl_finish() {}
 
-typedef void (*FL_IO_CALLBACK) (int, void*);
+typedef void (*FL_IO_CALLBACK) (FL_SOCKET, void*);
 inline void fl_add_io_callback(int fd, short w, FL_IO_CALLBACK cb, void* v) {
-  Fl::add_fd(fd,w,cb,v);}
+  Fl::add_fd(fd, w, cb, v);}
 inline void fl_remove_io_callback(int fd, short, FL_IO_CALLBACK) {
   Fl::remove_fd(fd);} // removes all the callbacks!
 

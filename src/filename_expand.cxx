@@ -97,7 +97,7 @@ int fl_filename_expand(char *to,int tolen, const char *from) {
       // also if it starts with "A:"
       if (value[0] && value[1]==':') start = a;
 #endif
-      int t = strlen(value); if (isdirsep(value[t-1])) t--;
+      int t = (int) strlen(value); if (isdirsep(value[t-1])) t--;
       if ((end+1-e+t) >= tolen) end += tolen - (end+1-e+t);
       memmove(a+t, e, end+1-e);
       end = a+t+(end-e);

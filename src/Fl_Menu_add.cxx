@@ -172,7 +172,7 @@ int Fl_Menu_Item::insert(
       if (m->flags&FL_SUBMENU && !compare(item, m->text)) break;
 
     if (!m->text) { /* create a new menu */
-      int n = (index==-1) ? m-array : index;
+      int n = (index==-1) ? (int) (m-array) : index;
       array = array_insert(array, msize, n, item, FL_SUBMENU|flags1);
       msize++;
       array = array_insert(array, msize, n+1, 0, 0);
@@ -188,7 +188,7 @@ int Fl_Menu_Item::insert(
     if (!(m->flags&FL_SUBMENU) && !compare(m->text,item)) break;
 
   if (!m->text) {	/* add a new menu item */
-    int n = (index==-1) ? m-array : index;
+    int n = (index==-1) ? (int) (m-array) : index;
     array = array_insert(array, msize, n, item, myflags|flags1);
     msize++;
     if (myflags & FL_SUBMENU) { // add submenu delimiter
@@ -205,7 +205,7 @@ int Fl_Menu_Item::insert(
   m->flags = myflags|flags1;
 
   if (array == local_array) local_array_size = msize;
-  return m-array;
+  return (int) (m-array);
 }
 
 
@@ -366,7 +366,7 @@ int Fl_Menu_::insert(
     if (fl_menu_array_owner) {
       Fl_Menu_* o = fl_menu_array_owner;
       // the previous owner get's its own correctly-sized array:
-      int value_offset = o->value_-local_array;
+      int value_offset = (int) (o->value_-local_array);
       int n = local_array_size;
       Fl_Menu_Item* newMenu = o->menu_ = new Fl_Menu_Item[n];
       memcpy(newMenu, local_array, n*sizeof(Fl_Menu_Item));
@@ -396,7 +396,7 @@ int Fl_Menu_::insert(
   }
   int r = menu_->insert(index,label,shortcut,callback,userdata,flags);
   // if it rellocated array we must fix the pointer:
-  int value_offset = value_-menu_;
+  int value_offset = (int) (value_-menu_);
   menu_ = local_array; // in case it reallocated it
   if (value_) value_ = menu_+value_offset;
   return r;

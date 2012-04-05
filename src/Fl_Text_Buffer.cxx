@@ -174,7 +174,7 @@ void Fl_Text_Buffer::text(const char *t)
   free((void *) mBuf);
   
   /* Start a new buffer with a gap of mPreferredGapSize at the end */
-  int insertedLength = strlen(t);
+  int insertedLength = (int) strlen(t);
   mBuf = (char *) malloc(insertedLength + mPreferredGapSize);
   mLength = insertedLength;
   mGapStart = insertedLength;
@@ -1117,7 +1117,7 @@ int Fl_Text_Buffer::insert_(int pos, const char *text)
   if (!text || !*text)
     return 0;
   
-  int insertedLength = strlen(text);
+  int insertedLength = (int) strlen(text);
   
   /* Prepare the buffer to receive the new text.  If the new text fits in
    the current buffer, just move the gap (if necessary) to where
@@ -1616,9 +1616,9 @@ static int utf8_input_filter(char *buffer, 		// result buffer we fill with utf8 
   q = buffer;
   while (q < buffer + buflen) {
     if (p >= endline) {			// walked off end of input file's line buffer?
-      r = fread(line, 1, sline, fp);	// read another block of sline bytes from file
+      r = (int) fread(line, 1, sline, fp);	// read another block of sline bytes from file
       endline = line + r; 
-      if (r == 0) return q - buffer;	// EOF? return bytes read into buffer[]
+      if (r == 0) return (int) (q - buffer);	// EOF? return bytes read into buffer[]
       p = line;
     }
     // Predict length of utf8 sequence
@@ -1629,7 +1629,7 @@ static int utf8_input_filter(char *buffer, 		// result buffer we fill with utf8 
     if (p + l > endline) {		// would walk off end of line buffer?
       memmove(line, p, endline - p);	// re-jigger line buffer to get some room
       endline -= (p - line);
-      r = fread(endline, 1, sline - (endline - line), fp);	 // re-fill line buffer
+      r = (int) fread(endline, 1, sline - (endline - line), fp);	 // re-fill line buffer
       endline += r;
       p = line;
       if (endline - line < l) break;	// sequence *still* extends past end? stop loop
@@ -1642,7 +1642,7 @@ static int utf8_input_filter(char *buffer, 		// result buffer we fill with utf8 
       if (q + lq > buffer + buflen) {	// encoding would walk off end of buffer[]?
 	memmove(line, p, endline - p);	// re-jigger line[] buffer for next call
 	endline -= (p - line);		// adjust end of line[] buffer for next call
-	return q - buffer;		// return what's decoded so far, caller will consume buffer
+	return (int) (q - buffer);		// return what's decoded so far, caller will consume buffer
       }
       memcpy(q, multibyte, lq);
       q += lq; 
@@ -1652,7 +1652,7 @@ static int utf8_input_filter(char *buffer, 		// result buffer we fill with utf8 
   }
   memmove(line, p, endline - p);
   endline -= (p - line);
-  return q - buffer;
+  return (int) (q - buffer);
 }
 
 const char *Fl_Text_Buffer::file_encoding_warning_message = 
@@ -1715,7 +1715,7 @@ int Fl_Text_Buffer::outputfile(const char *file,
     return 1;
   for (int n; (n = min(end - start, buflen)); start += n) {
     const char *p = text_range(start, start + n);
-    int r = fwrite(p, 1, n, fp);
+    int r = (int) fwrite(p, 1, n, fp);
     free((void *) p);
     if (r != n)
       break;

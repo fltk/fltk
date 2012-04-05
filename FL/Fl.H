@@ -43,6 +43,16 @@ class Fl_Window;
 class Fl_Image;
 struct Fl_Label;
 
+// Keep avoiding having the socket deps at that level but mke sure it will work in both 32 & 64 bit builds
+#if defined(WIN32) && !defined(__CYGWIN__)
+# if defined(_WIN64)
+#  define FL_SOCKET unsigned __int64
+# else
+#  define FL_SOCKET int
+# endif
+#else
+# define FL_SOCKET int
+#endif
 
 /** \defgroup  callback_functions Callback function typedefs
  \brief Typedefs defined in <FL/Fl.H> for callback or handler functions passed as function parameters.
@@ -81,7 +91,7 @@ typedef void (*Fl_Idle_Handler)(void *data);
 typedef void (*Fl_Old_Idle_Handler)();
 
 /** Signature of add_fd functions passed as parameters */
-typedef void (*Fl_FD_Handler)(int fd, void *data);
+typedef void (*Fl_FD_Handler)(FL_SOCKET fd, void *data);
 
 /** Signature of add_handler functions passed as parameters */
 typedef int (*Fl_Event_Handler)(int event);

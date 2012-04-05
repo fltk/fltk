@@ -181,7 +181,7 @@ Fl_Clock::Fl_Clock(uchar t, int X, int Y, int W, int H, const char *L)
 }
 
 static void tick(void *v) {
-  ((Fl_Clock*)v)->value(time(0));
+  ((Fl_Clock*)v)->value((ulong) time(0));
   Fl::add_timeout(1.0, tick, v);
 }
 

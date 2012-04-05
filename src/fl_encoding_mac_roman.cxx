@@ -78,7 +78,7 @@ static int n_buf = 0;
 
 const char *fl_local_to_mac_roman(const char *t, int n)  
 {
-  if (n==-1) n = strlen(t);
+  if (n==-1) n = (int) strlen(t);
   if (n<=n_buf) {
     n_buf = (n + 257) & 0x7fffff00;
     if (buf) free(buf);
@@ -99,7 +99,7 @@ const char *fl_local_to_mac_roman(const char *t, int n)
 
 const char *fl_mac_roman_to_local(const char *t, int n)
 {
-  if (n==-1) n = strlen(t);
+  if (n==-1) n = (int) strlen(t);
   if (n<=n_buf) {
     n_buf = (n + 257) & 0x7fffff00;
     if (buf) free(buf);

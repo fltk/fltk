@@ -169,7 +169,7 @@ int Fl_Valuator::format(char* buffer) {
   // seems to be needed to get high precission
   snprintf(temp, sizeof(temp), "%.12f", A/B);
   // strip all trailing 0's
-  for (i=strlen(temp)-1; i>0; i--) {
+  for (i=(int) strlen(temp)-1; i>0; i--) {
     if (temp[i]!='0') break;
   }
   // count digits until we find the decimal point (or comma or whatever

@@ -74,7 +74,7 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
   } else while (o<e) {
     if (wrap() && (p >= value_+size_ || isspace(*p & 255))) {
       word_wrap = w() - Fl::box_dw(box()) - 2;
-      width_to_lastspace += (int)fl_width(lastspace_out, o-lastspace_out);
+      width_to_lastspace += (int)fl_width(lastspace_out, (int) (o-lastspace_out));
       if (p > lastspace+1) {
 	if (word_count && width_to_lastspace > word_wrap) {
 	  p = lastspace; o = lastspace_out; break;
@@ -90,7 +90,7 @@ const char* Fl_Input_::expand(const char* p, char* buf) const {
     if (c < ' ' || c == 127) {
       if (c=='\n' && input_type()==FL_MULTILINE_INPUT) {p--; break;}
       if (c == '\t' && input_type()==FL_MULTILINE_INPUT) {
-        for (c = fl_utf_nb_char((uchar*)buf, o-buf)%8; c<8 && o<e; c++) {
+        for (c = fl_utf_nb_char((uchar*)buf, (int) (o-buf))%8; c<8 && o<e; c++) {
           *o++ = ' ';
         }
       } else {
@@ -338,19 +338,19 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       float x2 = (float)(X+W);
       int offset2;
       if (pp <= e) x2 = xpos + (float)expandpos(p, pp, buf, &offset2);
-      else offset2 = strlen(buf);
+      else offset2 = (int) strlen(buf);
       fl_color(selection_color());
       fl_rectf((int)(x1+0.5), Y+ypos, (int)(x2-x1+0.5), height);
       fl_color(fl_contrast(textcolor(), selection_color()));
       fl_draw(buf+offset1, offset2-offset1, x1, (float)(Y+ypos+desc));
       if (pp < e) {
 	fl_color(tc);
-	fl_draw(buf+offset2, strlen(buf+offset2), x2, (float)(Y+ypos+desc));
+	fl_draw(buf+offset2, (int) strlen(buf+offset2), x2, (float)(Y+ypos+desc));
       }
     } else {
       // draw unselected text
       fl_color(tc);
-      fl_draw(buf, strlen(buf), xpos, (float)(Y+ypos+desc));
+      fl_draw(buf, (int) strlen(buf), xpos, (float)(Y+ypos+desc));
     }
 
     if (do_mu) fl_pop_clip();
@@ -461,7 +461,8 @@ int Fl_Input_::line_end(int i) const {
     for (const char* p=value()+j; ;) {
       char buf[MAXBUF];
       p = expand(p, buf);
-      if (p-value() >= i) return p-value();
+	  int k = (int) (p-value());
+      if (k >= i) return k;
       p++;
     }
   } else {
@@ -489,7 +490,7 @@ int Fl_Input_::line_start(int i) const {
     for (const char* p=value()+j; ;) {
       char buf[MAXBUF];
       const char* e = expand(p, buf);
-      if (e-value() >= i) return p-value();
+      if ((int) (e-value()) >= i) return (int) (p-value());
       p = e+1;
     }
   } else return j;
@@ -535,7 +536,7 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
       if (f1 < f0) l = l+cw;
     }
   }
-  newpos = l-value();
+  newpos = (int) (l-value());
 
   int newmark = drag ? mark() : newpos;
   if (Fl::event_clicks()) {
@@ -566,7 +567,7 @@ void Fl_Input_::handle_mouse(int X, int Y, int /*W*/, int /*H*/, int drag) {
                   (newmark >= position() && newpos <= mark()) :
                   (newmark >= mark() && newpos <= position()))) {
       Fl::event_clicks(0);
-      newmark = newpos = l-value();
+      newmark = newpos = (int) (l-value());
     }
   }
   position(newpos, newmark);
@@ -662,7 +663,7 @@ int Fl_Input_::up_down_position(int i, int keepmark) {
     int f = (int)expandpos(p, t, buf, 0);
     if (f <= up_down_pos) l = t; else r = t-1;
   }
-  int j = l-value();
+  int j = (int) (l-value());
   j = position(j, keepmark ? mark_ : j);
   was_up_down = 1;
   return j;
@@ -776,7 +777,7 @@ int Fl_Input_::replace(int b, int e, const char* text, int ilen) {
        e++;
        ul = fl_utf8len((char)(value_ + e)[0]);
   }
-  if (text && !ilen) ilen = strlen(text);
+  if (text && !ilen) ilen = (int) strlen(text);
   if (e<=b && !ilen) return 0; // don't clobber undo for a null operation
 
   // we must count UTF-8 *characters* to determine whether we can insert
@@ -1035,7 +1036,7 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
       if (p < e) {
         fl_beep(FL_BEEP_ERROR);
         return 1;
-      } else return replace(0, size(), t, e - t);
+      } else return replace(0, size(), t, (int) (e-t));
     } else if (input_type() == FL_FLOAT_INPUT) {
       while (isspace(*t & 255) && t < e) t ++;
       const char *p = t;
@@ -1053,9 +1054,9 @@ int Fl_Input_::handletext(int event, int X, int Y, int W, int H) {
       if (p < e) {
         fl_beep(FL_BEEP_ERROR);
         return 1;
-      } else return replace(0, size(), t, e - t);
+      } else return replace(0, size(), t, (int) (e-t));
     }
-    return replace(position(), mark(), t, e-t);}
+    return replace(position(), mark(), t, (int) (e-t));}
 
   case FL_SHORTCUT:
     if (!(shortcut() ? Fl::test_shortcut(shortcut()) : test_shortcut())) 
@@ -1205,7 +1206,7 @@ int Fl_Input_::static_value(const char* str, int len) {
   \return non-zero if the new value is different than the current one
 */
 int Fl_Input_::static_value(const char* str) {
-  return static_value(str, str ? strlen(str) : 0);
+  return static_value(str, str ? (int) strlen(str) : 0);
 }
 
 /**
@@ -1241,7 +1242,7 @@ int Fl_Input_::value(const char* str, int len) {
   \see Fl_Input_::value(const char* str, int len), Fl_Input_::value()
 */
 int Fl_Input_::value(const char* str) {
-  return value(str, str ? strlen(str) : 0);
+  return value(str, str ? (int) strlen(str) : 0);
 }
 
 /**

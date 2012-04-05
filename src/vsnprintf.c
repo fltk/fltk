@@ -129,7 +129,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 
 	  sprintf(temp, tformat, va_arg(ap, double));
 
-          bytes += strlen(temp);
+          bytes += (int) strlen(temp);
 
           if (bufptr) {
 	    if ((bufptr + strlen(temp)) > bufend) {
@@ -162,7 +162,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	  else
 	    sprintf(temp, tformat, va_arg(ap, int));
 
-          bytes += strlen(temp);
+          bytes += (int) strlen(temp);
 
 	  if (bufptr) {
 	    if ((bufptr + strlen(temp)) > bufend) {
@@ -180,7 +180,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 
 	  sprintf(temp, tformat, va_arg(ap, void *));
 
-          bytes += strlen(temp);
+          bytes += (int) strlen(temp);
 
 	  if (bufptr) {
 	    if ((bufptr + strlen(temp)) > bufend) {
@@ -199,7 +199,7 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	  if (bufptr) {
 	    if (width <= 1) *bufptr++ = va_arg(ap, int);
 	    else {
-	      if ((bufptr + width) > bufend) width = bufend - bufptr;
+	      if ((bufptr + width) > bufend) width = (int) (bufend - bufptr);
 
 	      memcpy(bufptr, va_arg(ap, char *), (size_t)width);
 	      bufptr += width;
@@ -210,13 +210,13 @@ int fl_vsnprintf(char* buffer, size_t bufsize, const char* format, va_list ap) {
 	case 's' : /* String */
 	  if ((s = va_arg(ap, char *)) == NULL) s = "(null)";
 
-	  slen = strlen(s);
+	  slen = (int) strlen(s);
 	  if (slen > width && prec != width) width = slen;
 
           bytes += width;
 
 	  if (bufptr) {
-	    if ((bufptr + width) > bufend) width = bufend - bufptr;
+	    if ((bufptr + width) > bufend) width = (int) (bufend - bufptr);
 
             if (slen > width) slen = width;
 

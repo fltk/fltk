@@ -285,7 +285,7 @@ void Fl_Browser::insert(int line, FL_BLINE* item) {
   \param[in] d Optional pointer to user data to be associated with the new line.
 */
 void Fl_Browser::insert(int line, const char* newtext, void* d) {
-  int l = strlen(newtext);
+  int l = (int) strlen(newtext);
   FL_BLINE* t = (FL_BLINE*)malloc(sizeof(FL_BLINE)+l);
   t->length = (short)l;
   t->flags = 0;
@@ -320,7 +320,7 @@ void Fl_Browser::move(int to, int from) {
 void Fl_Browser::text(int line, const char* newtext) {
   if (line < 1 || line > lines) return;
   FL_BLINE* t = find_line(line);
-  int l = strlen(newtext);
+  int l = (int) strlen(newtext);
   if (l > t->length) {
     FL_BLINE* n = (FL_BLINE*)malloc(sizeof(FL_BLINE)+l);
     replacing(t, n);

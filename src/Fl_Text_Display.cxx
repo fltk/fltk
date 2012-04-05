@@ -723,7 +723,7 @@ void Fl_Text_Display::insert(const char* text) {
 
   int pos = mCursorPos;
 
-  mCursorToHint = pos + strlen( text );
+  mCursorToHint = (int) (pos + strlen( text ));
   mBuffer->insert( pos, text );
   mCursorToHint = NO_HINT;
 }
@@ -743,7 +743,7 @@ void Fl_Text_Display::overstrike(const char* text) {
   int startPos = mCursorPos;
   Fl_Text_Buffer *buf = mBuffer;
   int lineStart = buf->line_start( startPos );
-  int textLen = strlen( text );
+  int textLen = (int) strlen( text );
   int i, p, endPos, indent, startIndent, endIndent;
   const char *c;
   unsigned int ch;
@@ -3703,7 +3703,7 @@ int Fl_Text_Display::handle(int event) {
       }
 
       const char* copy = buffer()->selection_text();
-      if (*copy) Fl::copy(copy, strlen(copy), 0);
+      if (*copy) Fl::copy(copy, (int) strlen(copy), 0);
       free((void*)copy);
       return 1;
     }
@@ -3737,7 +3737,7 @@ int Fl_Text_Display::handle(int event) {
       if ((Fl::event_state()&(FL_CTRL|FL_COMMAND)) && Fl::event_key()=='c') {
         if (!buffer()->selected()) return 1;
         const char *copy = buffer()->selection_text();
-        if (*copy) Fl::copy(copy, strlen(copy), 1);
+        if (*copy) Fl::copy(copy, (int) strlen(copy), 1);
         free((void*)copy);
         return 1;
       }
@@ -3746,7 +3746,7 @@ int Fl_Text_Display::handle(int event) {
       if ((Fl::event_state()&(FL_CTRL|FL_COMMAND)) && Fl::event_key()=='a') {
         buffer()->select(0,buffer()->length());
         const char *copy = buffer()->selection_text();
-        if (*copy) Fl::copy(copy, strlen(copy), 0);
+        if (*copy) Fl::copy(copy, (int) strlen(copy), 0);
         free((void*)copy);
         return 1;
       }

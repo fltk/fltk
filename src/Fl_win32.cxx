@@ -242,7 +242,7 @@ static int fd_array_size = 0;
 static struct FD {
   int fd;
   short events;
-  void (*cb)(int, void*);
+  void (*cb)(FL_SOCKET, void*); // keep socket api opaque at this level to reduce multiplatform deps headaches
   void* arg;
 } *fd = 0;
 
@@ -276,7 +276,7 @@ void fl_set_status(int x, int y, int w, int h)
 {
 }
 
-void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
+void Fl::add_fd(int n, int events, void (*cb)(FL_SOCKET, void*), void *v) {
   remove_fd(n,events);
   int i = nfds++;
   if (i >= fd_array_size) {
@@ -294,7 +294,7 @@ void Fl::add_fd(int n, int events, void (*cb)(int, void*), void *v) {
   if (n > maxfd) maxfd = n;
 }
 
-void Fl::add_fd(int fd, void (*cb)(int, void*), void* v) {
+void Fl::add_fd(int fd, void (*cb)(FL_SOCKET, void*), void* v) {
   Fl::add_fd(fd, FL_READ, cb, v);
 }
 
@@ -589,7 +589,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
       else *o++ = *i++;
     }
     *o = 0;
-    Fl::e_length = o - Fl::e_text;
+    Fl::e_length = (int) (o - Fl::e_text);
     receiver.handle(FL_PASTE);
     delete [] Fl::e_text;
     Fl::e_text = 0;
@@ -598,9 +598,9 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     HANDLE h = GetClipboardData(CF_UNICODETEXT);
     if (h) {
       wchar_t *memLock = (wchar_t*) GlobalLock(h);
-      int utf16_len = wcslen(memLock);
+      size_t utf16_len = wcslen(memLock);
       Fl::e_text = (char*) malloc (utf16_len * 4 + 1);
-      int utf8_len = fl_utf8fromwc(Fl::e_text, utf16_len * 4, memLock, utf16_len);
+      unsigned utf8_len = fl_utf8fromwc(Fl::e_text, (unsigned) (utf16_len * 4), memLock, (unsigned) utf16_len);
       *(Fl::e_text + utf8_len) = 0;
       LPSTR a,b;
       a = b = Fl::e_text;
@@ -609,7 +609,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
         else *b++ = *a++;
       }
       *b = 0;
-      Fl::e_length = b - Fl::e_text;
+      Fl::e_length = (int) (b - Fl::e_text);
       receiver.handle(FL_PASTE);
       GlobalUnlock(h);
       free(Fl::e_text);
@@ -769,7 +769,7 @@ static const struct {unsigned short vk, fltk, extended;} vktab[] = {
   {0xde,	'\''},
   {VK_OEM_102,	FL_Iso_Key}
 };
-static int ms2fltk(int vk, int extended) {
+static int ms2fltk(WPARAM vk, int extended) {
   static unsigned short vklut[256];
   static unsigned short extendedlut[256];
   if (!vklut[1]) { // init the table
@@ -1316,7 +1316,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   X+=xoff;
   Y+=yoff;
 
-  if (w->flags() & Fl_Widget::FULLSCREEN) {
+  if (w->is_fullscreen()) {
     X = Y = 0;
     bx = by = bt = 0;
   }
@@ -1489,9 +1489,10 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   // convert UTF-8 class_name to wchar_t for RegisterClassExW and CreateWindowExW
 
-  fl_utf8toUtf16(class_name,strlen(class_name),		// in
+  fl_utf8toUtf16(class_name,
+		 (unsigned)strlen(class_name),		// in
 		 (unsigned short*)class_namew,		// out
-		 sizeof(class_namew)/sizeof(wchar_t));	// max. size
+		 (unsigned)sizeof(class_namew)/sizeof(wchar_t));	// max. size
 
   if (!class_name_list.has_name(class_name)) {
     WNDCLASSEXW wcw;
@@ -1606,14 +1607,14 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   WCHAR *lab = NULL;
   if (w->label()) {
-    int l = strlen(w->label());
+    size_t l = strlen(w->label());
 //  lab = (WCHAR*) malloc((l + 1) * sizeof(short));
 //  l = fl_utf2unicode((unsigned char*)w->label(), l, (xchar*)lab);
 //  lab[l] = 0;
-    unsigned wlen = fl_utf8toUtf16(w->label(), l, NULL, 0); // Pass NULL to query length
+    unsigned wlen = fl_utf8toUtf16(w->label(), (unsigned) l, NULL, 0); // Pass NULL to query length
     wlen++;
     lab = (WCHAR *) malloc(sizeof(WCHAR)*wlen);
-    wlen = fl_utf8toUtf16(w->label(), l, (unsigned short*)lab, wlen);
+    wlen = fl_utf8toUtf16(w->label(), (unsigned) l, (unsigned short*)lab, wlen);
     lab[wlen] = 0;
   }
   x->xid = CreateWindowExW(
@@ -1627,7 +1628,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   );
   if (lab) free(lab);
 
-  if (w->flags() & Fl_Widget::FULLSCREEN) {
+  if (w->is_fullscreen()) {
   /* We need to make sure that the fullscreen is created on the
      default monitor, ie the desktop where the shortcut is located
      etc. This requires that CreateWindow is called with CW_USEDEFAULT
@@ -1686,7 +1687,7 @@ static LRESULT CALLBACK s_TimerProc(HWND hwnd, UINT msg,
   switch (msg) {
   case WM_TIMER:
     {
-      unsigned int id = wParam - 1;
+      unsigned int id = (unsigned) (wParam - 1);
       if (id < (unsigned int)win32_timer_used && win32_timers[id].handle) {
         Fl_Timeout_Handler cb   = win32_timers[id].callback;
         void*              data = win32_timers[id].data;
@@ -1836,13 +1837,13 @@ void Fl_Window::label(const char *name,const char *iname) {
   iconlabel_ = iname;
   if (shown() && !parent()) {
     if (!name) name = "";
-    int l = strlen(name);
+    size_t l = strlen(name);
 //  WCHAR *lab = (WCHAR*) malloc((l + 1) * sizeof(short));
 //  l = fl_utf2unicode((unsigned char*)name, l, (xchar*)lab);
-    unsigned wlen = fl_utf8toUtf16(name, l, NULL, 0); // Pass NULL to query length
+    unsigned wlen = fl_utf8toUtf16(name, (unsigned) l, NULL, 0); // Pass NULL to query length
     wlen++;
     unsigned short * lab = (unsigned short*)malloc(sizeof(unsigned short)*wlen);
-    wlen = fl_utf8toUtf16(name, l, lab, wlen);
+    wlen = fl_utf8toUtf16(name, (unsigned) l, lab, wlen);
     lab[wlen] = 0;
     SetWindowTextW(i->xid, (WCHAR *)lab);
     free(lab);

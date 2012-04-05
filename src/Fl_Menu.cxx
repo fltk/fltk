@@ -35,7 +35,7 @@ int Fl_Menu_Item::size() const {
   int nest = 0;
   for (;;) {
     if (!m->text) {
-      if (!nest) return (m-this+1);
+      if (!nest) return (int) (m-this+1);
       nest--;
     } else if (m->flags & FL_SUBMENU) {
       nest++;
@@ -331,9 +331,9 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
       // s is a pointerto the utf8 string for the entire shortcut
       // k points only to the key part (minus the modifier keys)
       const char *k, *s = fl_shortcut_label(m->shortcut_, &k);
-      if (fl_utf_nb_char((const unsigned char*)k, strlen(k))<=4) {
+      if (fl_utf_nb_char((const unsigned char*)k, (int) strlen(k))<=4) {
         // a regular shortcut has a right-justified modifier followed by a left-justified key
-        w1 = int(fl_width(s, k-s));
+        w1 = int(fl_width(s, (int) (k-s)));
         if (w1 > hotModsw) hotModsw = w1;
         w1 = int(fl_width(k))+4;
         if (w1 > hotKeysw) hotKeysw = w1;
@@ -455,7 +455,7 @@ void menuwindow::drawentry(const Fl_Menu_Item* m, int n, int eraseit) {
     fl_font(f, m->labelsize_ ? m->labelsize_ :
                    button ? button->textsize() : FL_NORMAL_SIZE);
     const char *k, *s = fl_shortcut_label(m->shortcut_, &k);
-    if (fl_utf_nb_char((const unsigned char*)k, strlen(k))<=4) {
+    if (fl_utf_nb_char((const unsigned char*)k, (int) strlen(k))<=4) {
       // righ-align the modifiers and left-align the key
       char buf[32]; strcpy(buf, s); buf[k-s] = 0;
       fl_draw(buf, xx, yy, ww-shortcutWidth, hh, FL_ALIGN_RIGHT);

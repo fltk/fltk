@@ -152,7 +152,7 @@ protected:
       See activate(), output(), visible(), changed(), set_visible_focus()
   */
   enum {
-        INACTIVE        = 1<<0,   ///< the widget can't receive focus, and is disabled but potentially visible
+ 	    INACTIVE        = 1<<0,   ///< the widget can't receive focus, and is disabled but potentially visible
         INVISIBLE       = 1<<1,   ///< the widget is not drawn, but can receive a few special events
         OUTPUT          = 1<<2,   ///< for output only
         NOBORDER        = 1<<3,   ///< don't draw a decoration (Fl_Window)
@@ -687,11 +687,17 @@ public:
    */
   void clear_visible() {flags_ |= INVISIBLE;}
 
+  /** Returns whether the widget is in full screen mode
+      \retval non 0 if in full screen mode
+   */
+  unsigned int is_fullscreen() const {return (flags_ & FULLSCREEN);}
+
   /** Returns whether the widget is active.
-      \retval 0 if the widget is inactive
+      \retval 0 if the widget is inacti
       \see active_r(), activate(), deactivate()
    */
   unsigned int active() const {return !(flags_&INACTIVE);}
+
 
   /** Returns whether the widget and all of its parents are active. 
       \retval 0 if this or any of the parent widgets are inactive

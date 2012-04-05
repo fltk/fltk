@@ -98,8 +98,8 @@ static void set_selection_color(uchar r, uchar g, uchar b) {
 // simulation of XParseColor:
 int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b) {
   if (*p == '#') p++;
-  int n = strlen(p);
-  int m = n/3;
+  size_t n = strlen(p);
+  size_t m = n/3;
   const char *pattern = 0;
   switch(m) {
   case 1: pattern = "%1x%1x%1x"; break;

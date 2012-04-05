@@ -1432,7 +1432,7 @@ static bool prepare_shell_command(const char * &command)  { // common pre-shell 
 #if !defined(__MWERKS__)
 // Support the full piped shell command...
 void
-shell_pipe_cb(int, void*) {
+shell_pipe_cb(FL_SOCKET, void*) {
   char	line[1024]="";		// Line from command output...
 
   if (s_proc.get_line(line, sizeof(line)) != NULL) {

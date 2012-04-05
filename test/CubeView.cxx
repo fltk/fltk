@@ -149,8 +149,8 @@ void CubeView::draw() {
 
     glPushMatrix();
 
-    glTranslatef(xshift, yshift, 0);
-    glRotatef(hAng,0,1,0); glRotatef(vAng,1,0,0);
+    glTranslatef((GLfloat) xshift, (GLfloat) yshift, 0);
+    glRotatef((GLfloat) hAng,0,1,0); glRotatef((GLfloat) vAng,1,0,0);
     glScalef(float(size),float(size),float(size));
 
     drawCube();

@@ -59,7 +59,7 @@ static int mbcs2utf(const char *s, int l, char *dst)
   if (!s) return 0;
   dstlen = (l * 6) + 6;
   mbwbuf = (xchar*)malloc(dstlen * sizeof(xchar));
-  l = mbstowcs(mbwbuf, s, l);
+  l = (int) mbstowcs(mbwbuf, s, l);
 /* l = fl_unicode2utf(mbwbuf, l, dst); */
   l = fl_utf8fromwc(dst, dstlen, mbwbuf, l);
   dst[l] = 0;

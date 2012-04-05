@@ -45,7 +45,7 @@ static void print(Fl_Widget *o, void *data)
   uchar *image_data = fl_read_image(NULL, 0, 0, win->w(), win->h(), 0);
   if( printer.start_job(1) ) return;
   if( printer.start_page() ) return;
-  printer.scale(.7,.7);
+  printer.scale(.7f,.7f);
   fl_draw_image(image_data, 0,0, win->w(), win->h());
   printer.end_page();
   delete image_data;
