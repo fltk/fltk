@@ -1290,7 +1290,7 @@ dnl Define the FLTK documentation directory...
 case $uname in
   MINGW*)
      # Determine the path where MSys has /usr installed
- 	msyspath=`mount | grep '\/usr' | grep -v '\/usr\/bin' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g'`
+ 	msyspath=`mount | grep '\/usr ' | cut -d ' ' -f -1 | sed -e 's/\\\/\// g'`
      # Then substitute that in the WIN32 path instead of /usr
  	AC_DEFINE_UNQUOTED(FLTK_DOCDIR, "$msyspath/local/share/doc/fltk")
     ;;
