@@ -687,11 +687,6 @@ public:
    */
   void clear_visible() {flags_ |= INVISIBLE;}
 
-  /** Returns whether the widget is in full screen mode
-      \retval non 0 if in full screen mode
-   */
-  unsigned int is_fullscreen() const {return (flags_ & FULLSCREEN);}
-
   /** Returns whether the widget is active.
       \retval 0 if the widget is inactive
       \see active_r(), activate(), deactivate()

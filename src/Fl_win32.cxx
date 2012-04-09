@@ -1316,7 +1316,7 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   X+=xoff;
   Y+=yoff;
 
-  if (w->is_fullscreen()) {
+  if (w->fullscreen_active()) {
     X = Y = 0;
     bx = by = bt = 0;
   }
@@ -1628,7 +1628,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   );
   if (lab) free(lab);
 
-  if (w->is_fullscreen()) {
+  if (w->fullscreen_active()) {
   /* We need to make sure that the fullscreen is created on the
      default monitor, ie the desktop where the shortcut is located
      etc. This requires that CreateWindow is called with CW_USEDEFAULT
