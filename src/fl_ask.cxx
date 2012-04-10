@@ -92,18 +92,22 @@ static Fl_Window *makeform() {
  }
  w->end(); // don't add the buttons automatically
  // create the buttons (right to left)
- for (int b=0, x=310; b<3; b++, x -= 100) {
-   if (b==1)
-     button[b] = new Fl_Return_Button(x, 70, 90, 23);
-   else
-     button[b] = new Fl_Button(x, 70, 90, 23);
-   button[b]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
-   button[b]->callback(button_cb,(void *)b);
+ {
+   for (int b=0, x=310; b<3; b++, x -= 100) {
+     if (b==1)
+       button[b] = new Fl_Return_Button(x, 70, 90, 23);
+     else
+       button[b] = new Fl_Button(x, 70, 90, 23);
+     button[b]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
+     button[b]->callback(button_cb,(void *)b);
+   }
  }
  button[0]->shortcut(FL_Escape);
  // add the buttons (left to right)
- for (int b=2; b>=0; b--)
-   w->add(button[b]);
+ {
+   for (int b=2; b>=0; b--)
+     w->add(button[b]);
+ }
  w->begin();
  w->resizable(new Fl_Box(60,10,110-60,27));
  w->end();
