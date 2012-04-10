@@ -666,13 +666,13 @@ public:
   static int get_key(int key); // platform dependent
   /** 
     Returns the text associated with the current event, including FL_PASTE or FL_DND_RELEASE events.
-    This can be used in response to FL_KEYUP, FL_KEYDOWN, FL_PASTE, FL_DND_RELEASE.
+    This can be used in response to FL_KEYUP, FL_KEYDOWN, FL_PASTE, and FL_DND_RELEASE.
 
     When responding to FL_KEYUP/FL_KEYDOWN, use this function instead of Fl::event_key()
     to get the text equivalent of keystrokes suitable for inserting into strings 
     and text widgets.
 
-    The returned string is guaranteed to be be NULL terminated.
+    The returned string is guaranteed to be NULL terminated.
     However, see Fl::event_length() for the actual length of the string,
     in case the string itself contains NULLs that are part of the text data.
 
