@@ -98,6 +98,14 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _callback_item   = 0;
   _callback_reason = FL_TREE_REASON_NONE;
   _scrollbar_size  = 0;				// 0: uses Fl::scrollbar_size()
+
+#if FLTK_ABI_VERSION >= 10302
+  // NEW
+  _lastselect       = 0;
+#else
+  // OLD: data initialized static inside handle()
+#endif
+
   box(FL_DOWN_BOX);
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
   when(FL_WHEN_CHANGED);
@@ -240,7 +248,12 @@ int Fl_Tree::handle(int e) {
 
   // Handle events the child FLTK widgets didn't need
 
-  static Fl_Tree_Item *lastselect = 0;
+#if FLTK_ABI_VERSION >= 10302
+  // NEW: data inside Fl_Tree
+#else
+  // OLD:
+  static Fl_Tree_Item *_lastselect = 0;
+#endif
   // fprintf(stderr, "ERCODEBUG: Fl_Tree::handle(): Event was %s (%d)\n", fl_eventnames[e], e); // DEBUGGING
   if ( ! _root ) return(ret);
   switch ( e ) {
@@ -248,7 +261,7 @@ int Fl_Tree::handle(int e) {
       if (Fl::visible_focus() && handle(FL_FOCUS)) {
         Fl::focus(this);
       }
-      lastselect = 0;
+      _lastselect = 0;
       Fl_Tree_Item *o = _root->find_clicked(_prefs);
       if ( ! o ) break;
       set_item_focus(o);				// becomes new focus widget
@@ -271,7 +284,7 @@ int Fl_Tree::handle(int e) {
 	        select(o);					// add to selection
 	      } else if ( Fl::event_state() & FL_CTRL ) {	// CTRL+PUSH?
 		select_toggle(o, when());			// toggle selection state
-		lastselect = o;					// save toggled item (prevent oscillation)
+		_lastselect = o;				// save toggled item (prevent oscillation)
 	      } else {
 		select_only(o, when());
 	      }
@@ -312,9 +325,9 @@ int Fl_Tree::handle(int e) {
 	    break;
 	  case FL_TREE_SELECT_MULTI:
 	    if ( Fl::event_state() & FL_CTRL &&	// CTRL-DRAG: toggle?
-	         lastselect != o ) {		// not already toggled from last microdrag?
+	         _lastselect != o ) {		// not already toggled from last microdrag?
 	      select_toggle(o, when());		// toggle selection
-	      lastselect = o;			// save we toggled it (prevents oscillation)
+	      _lastselect = o;			// save we toggled it (prevents oscillation)
 	    } else {
 	      select(o);			// select this
 	    }

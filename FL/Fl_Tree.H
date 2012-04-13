@@ -199,6 +199,13 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Prefs  _prefs;			// all the tree's settings
   int            _scrollbar_size;		// size of scrollbar trough
 
+#if FLTK_ABI_VERSION >= 10302
+  // NEW: 
+  Fl_Tree_Item *_lastselect;
+#else
+  // OLD: static data inside handle() method
+#endif
+
   void fix_scrollbar_order();
 
 protected:
