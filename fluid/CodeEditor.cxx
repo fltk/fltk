@@ -114,6 +114,16 @@ const char * const CodeEditor::
 		  "volatile"
 		};
 
+// attempt to make the fluid code editor widget honour textsize setting
+void CodeEditor::textsize(Fl_Fontsize s) {
+  Fl_Text_Editor::textsize(s); // call base class method
+  // now attempt to update our styletable to honour the new size...
+  int entries = sizeof(styletable) / sizeof(styletable[0]);
+  for(int iter = 0; iter < entries; iter++) {
+    styletable[iter].size = s;
+  }
+} // textsize
+
 
 // 'compare_keywords()' - Compare two keywords...
 int CodeEditor::compare_keywords(const void *a, const void *b) {
