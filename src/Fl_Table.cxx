@@ -25,8 +25,6 @@
 #include <FL/fl_utf8.H>	// currently only Windows and Linux
 #endif
 
-#define SCROLLBAR_SIZE	(Fl::scrollbar_size())
-
 // Scroll display so 'row' is at top
 void Fl_Table::row_position(int row) {
   if ( _row_position == row ) return;		// OPTIMIZATION: no change? avoid redraw
@@ -126,20 +124,22 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
   _dragging_y       = -1;
   _last_row         = -1;
   _auto_drag        = 0;
-  current_col	      = -1;
+  current_col	    = -1;
   current_row       = -1;
   select_row        = -1;
   select_col        = -1;
-  
+#if FLTK_ABI_VERSION >= 10302
+  _scrollbar_size   = 0;
+#endif  
   box(FL_THIN_DOWN_FRAME);
   
-  vscrollbar = new Fl_Scrollbar(x()+w()-SCROLLBAR_SIZE, y(),
-                                SCROLLBAR_SIZE, h()-SCROLLBAR_SIZE);
+  vscrollbar = new Fl_Scrollbar(x()+w()-Fl::scrollbar_size(), y(),
+                                Fl::scrollbar_size(), h()-Fl::scrollbar_size());
   vscrollbar->type(FL_VERTICAL);
   vscrollbar->callback(scroll_cb, (void*)this);
   
-  hscrollbar = new Fl_Scrollbar(x(), y()+h()-SCROLLBAR_SIZE,
-                                w(), SCROLLBAR_SIZE);
+  hscrollbar = new Fl_Scrollbar(x(), y()+h()-Fl::scrollbar_size(),
+                                w(), Fl::scrollbar_size());
   hscrollbar->type(FL_HORIZONTAL);
   hscrollbar->callback(scroll_cb, (void*)this);
   
@@ -480,14 +480,21 @@ void Fl_Table::recalc_dimensions() {
     // First pass: can hide via window size?
     int hidev = (table_h <= tih);
     int hideh = (table_w <= tiw); 
+#if FLTK_ABI_VERSION >= 10302
+    // NEW
+    int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
+#else
+    // OLD
+    int scrollsize = Fl::scrollbar_size();
+#endif
     // Second pass: Check for interference
-    if ( !hideh & hidev ) { hidev = (( table_h - tih + SCROLLBAR_SIZE ) <= 0 ); } 
-    if ( !hidev & hideh ) { hideh = (( table_w - tiw + SCROLLBAR_SIZE ) <= 0 ); } 
+    if ( !hideh & hidev ) { hidev = (( table_h - tih + scrollsize ) <= 0 ); } 
+    if ( !hidev & hideh ) { hideh = (( table_w - tiw + scrollsize ) <= 0 ); } 
     // Determine scrollbar visibility, trim ti[xywh]/to[xywh]
     if ( hidev ) { vscrollbar->hide(); } 
-    else { vscrollbar->show(); tiw -= SCROLLBAR_SIZE; tow -= SCROLLBAR_SIZE; }
+    else { vscrollbar->show(); tiw -= scrollsize; tow -= scrollsize; }
     if ( hideh ) { hscrollbar->hide(); } 
-    else { hscrollbar->show(); tih -= SCROLLBAR_SIZE; toh -= SCROLLBAR_SIZE; }
+    else { hscrollbar->show(); tih -= scrollsize; toh -= scrollsize; }
   } 
   // Resize the child table
   table->resize(tox, toy, tow, toh);
@@ -554,20 +561,27 @@ void Fl_Table::table_resized() {
     // Vertical scrollbar
     float vscrolltab = ( table_h == 0 || tih > table_h ) ? 1 : (float)tih / table_h;
     float hscrolltab = ( table_w == 0 || tiw > table_w ) ? 1 : (float)tiw / table_w;
+#if FLTK_ABI_VERSION >= 10302
+    // NEW
+    int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
+#else
+    // OLD
+    int scrollsize = Fl::scrollbar_size();
+#endif
     vscrollbar->bounds(0, table_h-tih);
     vscrollbar->precision(10);
     vscrollbar->slider_size(vscrolltab);
-    vscrollbar->resize(wix+wiw-SCROLLBAR_SIZE, wiy,
-                       SCROLLBAR_SIZE, 
-                       wih - ((hscrollbar->visible())?SCROLLBAR_SIZE:0));
+    vscrollbar->resize(wix+wiw-scrollsize, wiy,
+                       scrollsize, 
+                       wih - ((hscrollbar->visible())?scrollsize:0));
     vscrollbar->Fl_Valuator::value(vscrollbar->clamp(vscrollbar->value()));	
     // Horizontal scrollbar
     hscrollbar->bounds(0, table_w-tiw);
     hscrollbar->precision(10);
     hscrollbar->slider_size(hscrolltab);
-    hscrollbar->resize(wix, wiy+wih-SCROLLBAR_SIZE,
-                       wiw - ((vscrollbar->visible())?SCROLLBAR_SIZE:0), 
-                       SCROLLBAR_SIZE);
+    hscrollbar->resize(wix, wiy+wih-scrollsize,
+                       wiw - ((vscrollbar->visible())?scrollsize:0), 
+                       scrollsize);
     hscrollbar->Fl_Valuator::value(hscrollbar->clamp(hscrollbar->value()));
   }
   
@@ -1133,9 +1147,16 @@ void Fl_Table::set_selection(int row_top, int col_left, int row_bot, int col_rig
 //    Then tell the group to draw over us.
 //
 void Fl_Table::draw() {   
+#if FLTK_ABI_VERSION >= 10302
+    // NEW
+    int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
+#else
+    // OLD
+    int scrollsize = Fl::scrollbar_size();
+#endif
   // Check if scrollbar size changed
-  if ( ( vscrollbar && (SCROLLBAR_SIZE != vscrollbar->w()) ) || 
-       ( hscrollbar && (SCROLLBAR_SIZE != hscrollbar->h()) ) ) {
+  if ( ( vscrollbar && (scrollsize != vscrollbar->w()) ) || 
+       ( hscrollbar && (scrollsize != hscrollbar->h()) ) ) {
     // handle size change, min/max, table dim's, etc
     table_resized();
   }
@@ -1253,7 +1274,7 @@ void Fl_Table::draw() {
           //
           fl_rectf(wix, tiy + table_h, row_header_width(), 
                    (wiy+wih) - (tiy+table_h) - 
-                   ( hscrollbar->visible() ? SCROLLBAR_SIZE : 0),
+                   ( hscrollbar->visible() ? scrollsize : 0),
                    color());
         }
       }

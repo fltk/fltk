@@ -19,7 +19,7 @@
 
 //
 // TODO:
-//    o Auto scroll during dragged selection
+//    o Auto scroll during dragged selection (done)
 //    o Keyboard navigation (up/down/left/right arrow)
 //    o Add scrollbar_size() method and integer [breaks ABI]
 //
@@ -214,7 +214,9 @@ private:
   
   int _auto_drag;
   int _selecting;
-  //int _scrollbar_size;		// TODO: BREAKS ABI
+#if FLTK_ABI_VERSION >= 10302
+  int _scrollbar_size;
+#endif
   
   // An STL-ish vector without templates
   class FL_EXPORT IntVector {
@@ -1074,8 +1076,44 @@ public:
    */
   void callback(Fl_Widget*, void*);
 #endif
-  //int scrollbar_size() const {		// TODO: BREAKS ABI
-  //void scrollbar_size(int size) {		// TODO: BREAKS ABI
+
+#if FLTK_ABI_VERSION >= 10302
+  // NEW
+  /**
+    Gets the current size of the scrollbars' troughs, in pixels.
+
+    If this value is zero (default), this widget will use the 
+    Fl::scrollbar_size() value as the scrollbar's width.
+  
+    \returns Scrollbar size in pixels, or 0 if the global Fl::scrollsize() is being used.
+    \see Fl::scrollbar_size(int)
+  */
+  int scrollbar_size() const {
+      return(_scrollbar_size);
+  }
+  /**
+    Sets the pixel size of the scrollbars' troughs to \p newSize, in pixels.
+
+    Normally you should not need this method, and should use
+    Fl::scrollbar_size(int) instead to manage the size of ALL your
+    widgets' scrollbars. This ensures your application has a consistent
+    UI, is the default behavior, and is normally what you want.
+
+    Only use THIS method if you really need to override the global
+    scrollbar size. The need for this should be rare.
+
+    Setting \p newSize to the special value of 0 causes the widget to
+    track the global Fl::scrollbar_size(), which is the default.
+    
+    \param[in] newSize Sets the scrollbar size in pixels.\n
+                    If 0 (default), scrollbar size tracks the global Fl::scrollbar_size()
+    \see Fl::scrollbar_size()
+  */
+  void scrollbar_size(int newSize) {
+      if ( newSize != _scrollbar_size ) redraw();
+      _scrollbar_size = newSize;
+  }   
+#endif
 };
 
 #endif /*_FL_TABLE_H*/

@@ -126,7 +126,10 @@ class ScrollBarSizeTest : public Fl_Group {
 	if ( strcmp(label,"A: Scroll Size") == 0 ) {
 	    brow_a->scrollbar_size(val);
 	    tree_a->scrollbar_size(val);
-	    //table_a->scrollbar_size(val);	// awaiting method (ABI)
+#if FLTK_ABI_VERSION >= 10302
+	    // NEW
+	    table_a->scrollbar_size(val);
+#endif
 	} else {
 	    Fl::scrollbar_size(val);
 	}
@@ -191,7 +194,7 @@ public:
         slide_glob->callback(slide_cb, (void*)this);
         slide_glob->labelsize(12);
         Fl_Value_Slider *slide_browa = new Fl_Value_Slider(X+350,Y,100,18,"A: Scroll Size");
-        slide_browa->value(16);
+        slide_browa->value(0);
         slide_browa->type(FL_HORIZONTAL);
         slide_browa->align(FL_ALIGN_LEFT);
         slide_browa->range(0.0, 30.0);
@@ -203,7 +206,11 @@ public:
 	    "Scrollbar's size should change interactively as size sliders are changed.\n"
             "Changing 'Global Scroll Size' should affect all three browser's scrollbars UNLESS\n"
 	    "the 'A: Scroll Size' slider is changed, in which case its value will take precedence\n"
+#if FLTK_ABI_VERSION >= 10302
+	    "for the 'A' group of widgets.");
+#else
 	    "for the 'A' group of widgets. (NOTE: 'table_a' does not currently support this)");
+#endif
       labelsize(10);
       align(FL_ALIGN_INSIDE|FL_ALIGN_BOTTOM|FL_ALIGN_LEFT|FL_ALIGN_WRAP);
     }
