@@ -17,13 +17,6 @@
 //     http://www.fltk.org/str.php
 //
 
-//
-// TODO:
-//    o Auto scroll during dragged selection (done)
-//    o Keyboard navigation (up/down/left/right arrow)
-//    o Add scrollbar_size() method and integer [breaks ABI]
-//
-
 #ifndef _FL_TABLE_H
 #define _FL_TABLE_H
 
