@@ -45,6 +45,9 @@ Function {reason_as_name(Fl_Tree_Reason reason)} {
       case FL_TREE_REASON_DESELECTED: return("deselected");
       case FL_TREE_REASON_OPENED:     return("opened");
       case FL_TREE_REASON_CLOSED:     return("closed");
+\#if FLTK_ABI_VERSION >= 10302
+	  case FL_TREE_REASON_RESELECTED: return("reselected");
+\#endif
       default:                        return("???");
     }} {}
 } 
@@ -221,7 +224,9 @@ Function {} {open
       label Tree
       user_data 1234
       callback {G_cb_counter++; // Increment callback counter whenever tree callback is invoked
-
+\#if FLTK_ABI_VERSION >= 10302
+	  tree->item_reselect_mode(Fl_Tree::FL_TREE_SELECTABLE_ALWAYS);
+\#endif
 Fl_Tree_Item *item = tree->callback_item();
 if ( item ) {
   fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld reason=%s\\n",
@@ -231,7 +236,7 @@ if ( item ) {
 } else {
   fprintf(stderr, "TREE CALLBACK: reason=%s item=(no item -- probably multiple items were changed at once)\\n",
           reason_as_name(tree->callback_reason()));
-}} open
+}} open selected
       tooltip {Test tree} xywh {15 22 280 411} box DOWN_BOX color 55 selection_color 15
       class Fl_Tree
     } {}
@@ -1165,7 +1170,7 @@ while (item) {
     }
     item = item->next();
 }
-tree->redraw();} selected
+tree->redraw();}
         tooltip {Adds 20,000 items to the selected item's parent} xywh {530 398 95 16} labelsize 9
       }
     }

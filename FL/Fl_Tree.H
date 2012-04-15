@@ -186,11 +186,16 @@ enum Fl_Tree_Reason {
   FL_TREE_REASON_NONE=0,	///< unknown reason
   FL_TREE_REASON_SELECTED,	///< an item was selected
   FL_TREE_REASON_DESELECTED,	///< an item was de-selected
+#if FLTK_ABI_VERSION >= 10302
+  FL_TREE_REASON_RESELECTED,	///< an item was re-selected
+#endif
   FL_TREE_REASON_OPENED,	///< an item was opened
   FL_TREE_REASON_CLOSED		///< an item was closed
 };
 
-
+/// \enum Fl_Tree_Item_Select_Mode
+/// Defines the ways an item can be (re) selected.
+///
 class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Item  *_root;				// can be null!
   Fl_Tree_Item  *_item_focus;			// item that has focus box
@@ -202,6 +207,25 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
 #if FLTK_ABI_VERSION >= 10302
   // NEW: 
   Fl_Tree_Item *_lastselect;
+	
+  // NEW:
+public:
+  enum Fl_Tree_Item_Reselect_Mode
+  {
+    FL_TREE_SELECTABLE_ONCE=0, /// backward compatible default: an item can only be selected once
+	FL_TREE_SELECTABLE_ALWAYS, /// needed for new RESELECT feature
+  };
+  //! Returns the current item re/selection mode
+  Fl_Tree_Item_Reselect_Mode item_reselect_mode() const {
+	return _itemReselectMode;
+  }
+  
+  //! Sets the item re/selection mode
+  void item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode) {
+	_itemReselectMode = mode;
+  }
+private:
+	Fl_Tree_Item_Reselect_Mode _itemReselectMode;
 #else
   // OLD: static data inside handle() method
 #endif
@@ -280,7 +304,6 @@ public:
   void set_item_focus(Fl_Tree_Item *item);
   int is_selected(Fl_Tree_Item *item) const;
   int is_selected(const char *path);
-
   /////////////////////////////////
   // Item attribute related methods
   /////////////////////////////////

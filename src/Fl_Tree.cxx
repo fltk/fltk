@@ -98,10 +98,11 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _callback_item   = 0;
   _callback_reason = FL_TREE_REASON_NONE;
   _scrollbar_size  = 0;				// 0: uses Fl::scrollbar_size()
-
+	
 #if FLTK_ABI_VERSION >= 10302
   // NEW
   _lastselect       = 0;
+ _itemReselectMode = FL_TREE_SELECTABLE_ONCE;
 #else
   // OLD: data initialized static inside handle()
 #endif
@@ -257,7 +258,8 @@ int Fl_Tree::handle(int e) {
   // fprintf(stderr, "ERCODEBUG: Fl_Tree::handle(): Event was %s (%d)\n", fl_eventnames[e], e); // DEBUGGING
   if ( ! _root ) return(ret);
   switch ( e ) {
-    case FL_PUSH: {					// clicked on a tree item?
+    case FL_PUSH: {	
+				// clicked on a tree item?
       if (Fl::visible_focus() && handle(FL_FOCUS)) {
         Fl::focus(this);
       }
@@ -273,6 +275,7 @@ int Fl_Tree::handle(int e) {
 	} else if ( o->event_on_label(_prefs) && 	// label clicked?
 		 (!o->widget() || !Fl::event_inside(o->widget())) &&		// not inside widget
 		 (!_vscroll->visible() || !Fl::event_inside(_vscroll)) ) {	// not on scroller
+	  
 	  switch ( _prefs.selectmode() ) {
 	    case FL_TREE_SELECT_NONE:
 	      break;
@@ -995,13 +998,25 @@ int Fl_Tree::is_close(const char *path) const {
 ///     -   0 - item was already selected, no change was made
 ///
 int Fl_Tree::select(Fl_Tree_Item *item, int docallback) {
-  if ( ! item->is_selected() ) {
+  int alreadySelected = item->is_selected();
+  
+  if ( !alreadySelected
+#if FLTK_ABI_VERSION >= 10302
+	  || item_reselect_mode()==FL_TREE_SELECTABLE_ALWAYS
+#endif	
+	 ) {
     item->select();
     set_changed();
     if ( docallback ) {
-      do_callback_for_item(item, FL_TREE_REASON_SELECTED);
+		do_callback_for_item(item, 
+#if FLTK_ABI_VERSION >= 10302
+          alreadySelected ? FL_TREE_REASON_RESELECTED :FL_TREE_REASON_SELECTED);
+#else
+          FL_TREE_REASON_SELECTED);
+#endif	
     }
-    redraw();
+
+	redraw();
     return(1);
   }
   return(0);
@@ -1165,7 +1180,13 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
   int changed = 0;
   for ( Fl_Tree_Item *item = first(); item; item = item->next() ) {
     if ( item == selitem ) {
-      if ( item->is_selected() ) continue;	// don't count if already selected
+      if ( item->is_selected()
+		  
+#if FLTK_ABI_VERSION >= 10302
+		  && item_reselect_mode()!=FL_TREE_SELECTABLE_ALWAYS
+#endif	
+		  
+		  ) continue;	// don't count if already selected
       select(item, docallback);
       ++changed;
     } else {
