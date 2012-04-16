@@ -193,6 +193,17 @@ enum Fl_Tree_Reason {
   FL_TREE_REASON_CLOSED		///< an item was closed
 };
 
+#if FLTK_ABI_VERSION >= 10302
+/// \enum Fl_Tree_Item_Select_Mode
+/// Defines the ways an item can be (re) selected.
+///
+enum Fl_Tree_Item_Reselect_Mode
+{
+    FL_TREE_SELECTABLE_ONCE=0, /// backward compatible default: an item can only be selected once
+	FL_TREE_SELECTABLE_ALWAYS, /// needed for new RESELECT feature
+};
+#endif
+
 class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Item  *_root;				// can be null!
   Fl_Tree_Item  *_item_focus;			// item that has focus box
@@ -207,15 +218,6 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
 	
   // NEW:
 public:
-  /// \enum Fl_Tree_Item_Select_Mode
-  /// Defines the ways an item can be (re) selected.
-  ///
-  enum Fl_Tree_Item_Reselect_Mode
-  {
-    FL_TREE_SELECTABLE_ONCE=0, /// backward compatible default: an item can only be selected once
-	FL_TREE_SELECTABLE_ALWAYS, /// needed for new RESELECT feature
-  };
-	
   //! Returns the current item re/selection mode
   Fl_Tree_Item_Reselect_Mode item_reselect_mode() const {
 	return _itemReselectMode;

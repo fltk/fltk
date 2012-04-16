@@ -225,7 +225,7 @@ Function {} {open
       user_data 1234
       callback {G_cb_counter++; // Increment callback counter whenever tree callback is invoked
 \#if FLTK_ABI_VERSION >= 10302
-	  tree->item_reselect_mode(Fl_Tree::FL_TREE_SELECTABLE_ALWAYS);
+	  tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS);
 \#endif
 Fl_Tree_Item *item = tree->callback_item();
 if ( item ) {
