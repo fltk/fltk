@@ -25,7 +25,15 @@ README.OSX.txt - 2010-10-23 - Building FLTK under Apple OS X
     3.7   Installing FLTK
     3.8   Installing Little Helpers
     3.9   Creating new Projects
-  4   DOCUMENT HISTORY
+  4   HOW TO BUILD FLTK USING XCODE4
+    4.1   Prerequisites
+    4.2   Downloading and Unpacking
+    4.3   Configuring FLTK
+    4.4   Building FLTK
+    4.5   Testing FLTK
+    4.6   Uninstalling previous versions of FLTK
+    4.7   Installing FLTK
+  5   DOCUMENT HISTORY
 
 
  1  INTRODUCTION
@@ -308,7 +316,102 @@ follow the instructions.
 
 
 
- 4  DOCUMENT HISTORY
+ 4  HOW TO BUILD FLTK USING XCODE4
+===================================
+
+
+ 4.1  Prerequisites
+--------------------
+
+In order to build FLTK from within Xcode 4, you need to install the Xcode
+developer environment via the Apple App Store that comes with Lion and up. 
+If you also want the command line version of gcc, you can use the 
+Downlaod section in the Preferences dialog.
+  
+
+ 4.2  Downloading and Unpacking
+--------------------------------
+
+Download FLTK from here:
+
+  http://www.fltk.org/software.php
+
+If you are familiar with "subversion" and like to stay current with your 
+version, you will find the subversion access parameters at the bottom of that 
+page. You can use the SCM system that is built into Xcode.
+
+Unpack FLTK by double-clicking it and copy the new folder into a convenient
+location. I have set up a "dev" folder in my home folder for all my projects.
+
+
+ 4.3  Configuring FLTK
+-----------------------
+
+Launch Xcode. Open the project file in 
+
+  .../fltk-1.3.xxxx/ide/Xcode4/FLTK.xcodeproj
+
+There is nothing else to configure.
+  
+
+ 4.4  Building FLTK
+--------------------
+
+Use the "Scheme" pulldown menu to change the active target to "Demo" and 
+"My Mac 32-bit" or "My Mac 64-bit". Select "Build for" -> "Running"Run" from 
+the "Product" menu to create all libraries and test applications.
+
+All frameworks and apps will be located in a private directory. Use
+"Window"->"Organizer" to find the full path. 
+
+
+ 4.5  Testing FLTK
+-------------------
+
+Select "Run" from the "Product" menu to run the Demo program. Use "Demo"
+to explore all test programs.
+
+
+ 4.6  Uninstalling previous versions of FLTK
+---------------------------------------------
+
+Remove FLTK frameworks:
+
+  sudo rm -r /Library/Frameworks/fltk*.framework
+  
+Remove Fluid and possibly other utilities:
+
+  sudo rm -r /Applications/FLTK/
+  
+
+ 4.7  Installing FLTK
+----------------------
+
+When distributing FLTK applications, the FLTK frameworks should be made part of
+the application package. For development however, it is very convenient to have
+the Release-mode Frameworks in a standard location.
+
+For Xcode project template use, all FLTK frameworks should ibe built using
+"Build for Archiving" and then copied from 
+"./(Organizer->Derived Data Path)/Release/" to "/Library/Frameworks/". The FLTK header files 
+for all FLTK frameworks will then be at "/Library/Frameworks/fltk.framework/
+Headers/". Add this path to the header search path of your projects.
+
+  sudo rm -f -r /Library/Frameworks/fltk*
+  sudo cp -R (Organizer->Derived Data Path)/Release/fltk*.framework /Library/Frameworks/
+
+Many FLTK applications will use Fluid, the FLTK User Interface builder, to 
+generate C++ source code from .fl resource files. Add Fluid to the developer 
+tools:
+
+  sudo mkdir /Applications/FLTK/
+  sudo rm -f -r /Applications/FLTK/Fluid.app
+  sudo cp -R (Organizer->Derived Data Path)/Release/Fluid.app /Applications/FLTK/
+
+    (TODO: 4.8   Installing Little Helpers)
+    (TODO: 4.9   Creating new Projects)
+
+ 5  DOCUMENT HISTORY
 =====================
 
 Oct 29 2010 - matt: removed warnings
@@ -316,3 +419,4 @@ Oct 24 2010 - matt: restructured entire document and verified instructions
 Dec 19 2010 - Manolo: corrected typos
 Dec 29 2010 - Manolo: removed reference to AudioToolbox.framework that's no longer needed
 Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config script.
+Apr 17 2012 - matt: added Xcode4 documentation
