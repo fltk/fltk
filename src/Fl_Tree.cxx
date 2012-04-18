@@ -229,7 +229,7 @@ int Fl_Tree::handle(int e) {
 		if ( _prefs.selectmode() == FL_TREE_SELECT_MULTI &&	// multiselect on?
 		     (Fl::event_state() & FL_SHIFT) &&			// shift key?
 		     ! _item_focus->is_selected() ) {			// not already selected?
-		    select(_item_focus, when());			// extend selection..
+		  select(_item_focus, when());				// extend selection..
 		}
 		return(1);
 	      }
@@ -999,7 +999,6 @@ int Fl_Tree::is_close(const char *path) const {
 ///
 int Fl_Tree::select(Fl_Tree_Item *item, int docallback) {
   int alreadySelected = item->is_selected();
-  
   if ( !alreadySelected
 #if FLTK_ABI_VERSION >= 10302
 	  || item_reselect_mode()==FL_TREE_SELECTABLE_ALWAYS
@@ -1008,15 +1007,14 @@ int Fl_Tree::select(Fl_Tree_Item *item, int docallback) {
     item->select();
     set_changed();
     if ( docallback ) {
-		do_callback_for_item(item, 
+      do_callback_for_item(item, 
 #if FLTK_ABI_VERSION >= 10302
-          alreadySelected ? FL_TREE_REASON_RESELECTED :FL_TREE_REASON_SELECTED);
+          alreadySelected ? FL_TREE_REASON_RESELECTED : FL_TREE_REASON_SELECTED);
 #else
           FL_TREE_REASON_SELECTED);
 #endif	
     }
-
-	redraw();
+    redraw();
     return(1);
   }
   return(0);
@@ -1183,10 +1181,10 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
       if ( item->is_selected()
 		  
 #if FLTK_ABI_VERSION >= 10302
-		  && item_reselect_mode()!=FL_TREE_SELECTABLE_ALWAYS
+           && item_reselect_mode()!=FL_TREE_SELECTABLE_ALWAYS
 #endif	
 		  
-		  ) continue;	// don't count if already selected
+	 ) continue;	// don't count if already selected
       select(item, docallback);
       ++changed;
     } else {
@@ -1656,7 +1654,7 @@ void Fl_Tree::vposition(int pos) {
 /// \returns 1 if \p w is a scrollbar, 0 if not.
 ///
 int Fl_Tree::is_scrollbar(Fl_Widget *w) {
-    return( ( w == _vscroll ) ? 1 : 0 );
+  return( ( w == _vscroll ) ? 1 : 0 );
 }
 
 /// Gets the current size of the scrollbars' troughs, in pixels.
@@ -1668,7 +1666,7 @@ int Fl_Tree::is_scrollbar(Fl_Widget *w) {
 /// \see Fl::scrollbar_size(int)
 ///
 int Fl_Tree::scrollbar_size() const {
-    return(_scrollbar_size);
+  return(_scrollbar_size);
 }
 
 /// Sets the pixel size of the scrollbars' troughs to the \p size, in pixels.
@@ -1690,11 +1688,11 @@ int Fl_Tree::scrollbar_size() const {
 /// \see Fl::scrollbar_size()
 ///
 void Fl_Tree::scrollbar_size(int size) {
-    _scrollbar_size = size;
-    int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
-    if ( _vscroll->w() != scrollsize ) {
-      _vscroll->resize(x()+w()-scrollsize, h(), scrollsize, _vscroll->h());
-    }
+  _scrollbar_size = size;
+  int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
+  if ( _vscroll->w() != scrollsize ) {
+    _vscroll->resize(x()+w()-scrollsize, h(), scrollsize, _vscroll->h());
+  }
 }   
 
 /// Do the callback for the item, setting the item and reason
@@ -1736,6 +1734,7 @@ void Fl_Tree::callback_reason(Fl_Tree_Reason reason) {
 ///             case     FL_TREE_REASON_OPENED: ..item was opened..
 ///             case     FL_TREE_REASON_CLOSED: ..item was closed..
 ///             case   FL_TREE_REASON_SELECTED: ..item was selected..
+///             case   FL_TREE_REASON_RELECTED: ..item was reselected (double-clicked, etc)..
 ///             case FL_TREE_REASON_DESELECTED: ..item was deselected..
 ///         }
 ///     }

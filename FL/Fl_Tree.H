@@ -119,6 +119,7 @@
 ///   switch ( tree->callback_reason() ) {
 ///     case FL_TREE_REASON_SELECTED: [..]
 ///     case FL_TREE_REASON_DESELECTED: [..]
+///     case FL_TREE_REASON_RESELECTED: [..]
 ///     case FL_TREE_REASON_OPENED: [..]
 ///     case FL_TREE_REASON_CLOSED: [..]
 ///   }
@@ -183,11 +184,11 @@
 /// The reason the callback was invoked.
 ///
 enum Fl_Tree_Reason {
-  FL_TREE_REASON_NONE=0,		///< unknown reason
-  FL_TREE_REASON_SELECTED,		///< an item was selected
+  FL_TREE_REASON_NONE=0,	///< unknown reason
+  FL_TREE_REASON_SELECTED,	///< an item was selected
   FL_TREE_REASON_DESELECTED,	///< an item was de-selected
 #if FLTK_ABI_VERSION >= 10302
-  FL_TREE_REASON_RESELECTED,	///< an item was re-selected
+  FL_TREE_REASON_RESELECTED,	///< an item was re-selected (e.g. double-clicked)
 #endif
   FL_TREE_REASON_OPENED,	///< an item was opened
   FL_TREE_REASON_CLOSED		///< an item was closed
@@ -199,8 +200,8 @@ enum Fl_Tree_Reason {
 ///
 enum Fl_Tree_Item_Reselect_Mode
 {
-    FL_TREE_SELECTABLE_ONCE=0, /// backward compatible default: an item can only be selected once
-	FL_TREE_SELECTABLE_ALWAYS, /// needed for new RESELECT feature
+  FL_TREE_SELECTABLE_ONCE=0, /// backward compatible default: an item can only be selected once
+  FL_TREE_SELECTABLE_ALWAYS, /// needed for new RESELECT feature
 };
 #endif
 
@@ -220,15 +221,15 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
 public:
   //! Returns the current item re/selection mode
   Fl_Tree_Item_Reselect_Mode item_reselect_mode() const {
-	return _itemReselectMode;
+    return _itemReselectMode;
   }
   
   //! Sets the item re/selection mode
   void item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode) {
-	_itemReselectMode = mode;
+    _itemReselectMode = mode;
   }
 private:
-	Fl_Tree_Item_Reselect_Mode _itemReselectMode;
+  Fl_Tree_Item_Reselect_Mode _itemReselectMode;
 #else
   // OLD: static data inside handle() method
 #endif
