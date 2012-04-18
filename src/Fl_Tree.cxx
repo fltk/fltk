@@ -125,6 +125,7 @@ Fl_Tree::~Fl_Tree() {
 
 /// Standard FLTK event handler for this widget.
 int Fl_Tree::handle(int e) {
+  if (e == FL_NO_EVENT) return(0);		// XXX: optimize to prevent slow resizes on large trees!
   int ret = 0;
   // Developer note: Fl_Browser_::handle() used for reference here..
   // #include <FL/names.h>	// for event debugging
@@ -400,7 +401,26 @@ void Fl_Tree::draw() {
   }
   // Draw children
   fl_push_clip(cx,cy,cw-(_vscroll->visible()?_vscroll->w():0),ch);
-  Fl_Group::draw_children();	// draws any FLTK children set via Fl_Tree::widget()
+  // Similar to Fl_Group::draw(), but optimized to ignore drawing
+  // items outside the viewport.
+  // TODO: Suggest Fl_Group::draw() do this if clip_children() is enabled.
+  {
+    Fl_Widget*const* a = Fl_Group::array();
+    if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
+      for (int i=Fl_Group::children(); i--;) {
+	Fl_Widget& o = **a++;
+	if ( (o.y()+o.h()) < y() || (o.y() > (y()+h())) ) continue;
+	Fl_Group::draw_child(o);
+	Fl_Group::draw_outside_label(o);
+      }
+    } else {	// only redraw the children that need it:
+      for (int i=Fl_Group::children(); i--;) {
+	Fl_Widget& o = **a++;
+	if ( (o.y()+o.h()) < y() || (o.y() > (y()+h())) ) continue;
+	Fl_Group::update_child(o);
+      }
+    }
+  }
   fl_pop_clip();
   draw_child(*_vscroll);	// draw scroll last
 }

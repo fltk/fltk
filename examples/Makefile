@@ -22,6 +22,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       textdisplay-with-colors$(EXEEXT) \
       texteditor-simple$(EXEEXT) \
       tree-simple$(EXEEXT) \
+      tree-as-container$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
 # default target -- build everything
