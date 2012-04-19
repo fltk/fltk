@@ -218,35 +218,43 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {800 102 1015 445} type Double visible
+    xywh {709 21 1015 465} type Double visible
   } {
     Fl_Group tree {
       label Tree
       user_data 1234
       callback {G_cb_counter++; // Increment callback counter whenever tree callback is invoked
-\#if FLTK_ABI_VERSION >= 10302
-	  tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS);
-\#endif
 Fl_Tree_Item *item = tree->callback_item();
 if ( item ) {
-  fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld reason=%s\\n",
+  fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld reason=%s, changed=%d",
           item->label(),
           (long)(fl_intptr_t)tree->user_data(),
-	  reason_as_name(tree->callback_reason()));
+	  reason_as_name(tree->callback_reason()),
+	  tree->changed() ? 1 : 0);
+  // More than one click? show click count
+  //    Should only happen if reason==FL_TREE_REASON_RESELECTED.
+  //
+  if ( Fl::event_clicks() > 0 ) {
+    fprintf(stderr, ", clicks=%d\\n", (Fl::event_clicks()+1));
+  } else {
+    fprintf(stderr, "\\n");
+  } 
 } else {
-  fprintf(stderr, "TREE CALLBACK: reason=%s item=(no item -- probably multiple items were changed at once)\\n",
-          reason_as_name(tree->callback_reason()));
-}} open selected
-      tooltip {Test tree} xywh {15 22 280 411} box DOWN_BOX color 55 selection_color 15
+  fprintf(stderr, "TREE CALLBACK: reason=%s, changed=%d, item=(no item -- probably multiple items were changed at once)\\n",
+          reason_as_name(tree->callback_reason()),
+          tree->changed() ? 1 : 0);
+}
+tree->clear_changed();} open
+      tooltip {Test tree} xywh {15 22 280 424} box DOWN_BOX color 55 selection_color 15
       class Fl_Tree
     } {}
     Fl_Group {} {open
-      xywh {300 5 705 427}
+      xywh {300 5 705 440}
       code0 {o->resizable(0);}
     } {
       Fl_Box {} {
         label {Tree Globals}
-        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {311 23 335 263} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {311 23 334 280} box GTK_DOWN_BOX color 47 labelsize 12 align 1
       }
       Fl_Value_Slider margintop_slider {
         label {margintop()}
@@ -438,6 +446,35 @@ switch ( selectmode_chooser->value() ) {
           xywh {60 60 36 21} labelsize 12
         }
       }
+      Fl_Choice reselectmode_chooser {
+        label {Item Reselect Mode}
+        callback {\#if FLTK_ABI_VERSION >= 10302
+// NEW
+// Set reselection mode
+switch ( reselectmode_chooser->value() ) {
+    case 0: tree->item_reselect_mode(FL_TREE_SELECTABLE_ONCE);   break;
+    case 1: tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS); break;
+}
+\#else
+// OLD
+reselectmode_chooser->deactivate();  // deactivate if this ABI feature is disabled
+reselectmode_chooser->tooltip("DISABLED.\\n"
+                              "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
+                              "to get this feature");
+\#endif} selected
+        tooltip {Enable 'reselect' events} xywh {486 168 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        code0 {reselectmode_chooser->value(1);}
+        code1 {reselectmode_chooser->do_callback();}
+      } {
+        MenuItem {} {
+          label {Selectable Once}
+          xywh {50 50 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Selectable Always}
+          xywh {60 60 36 21} labelsize 12
+        }
+      }
       Fl_Choice whenmode_chooser {
         label When
         callback {// Set when mode
@@ -447,7 +484,7 @@ switch ( whenmode_chooser->value() ) {
   case 2:  tree->when(FL_WHEN_NEVER);     break;
   default: tree->when(FL_WHEN_RELEASE);   break;
 }}
-        tooltip {Sets when() the tree's callback is invoked} xywh {486 168 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        tooltip {Sets when() the tree's callback is invoked} xywh {486 192 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {whenmode_chooser->value(1);}
         code1 {cb_whenmode_chooser(whenmode_chooser, (void*)0);}
       } {
@@ -468,7 +505,7 @@ switch ( whenmode_chooser->value() ) {
         label {Enable user icons?}
         user_data tree
         callback {AssignUserIcons();}
-        tooltip {Tests Fl_Tree_Item::usericon()} xywh {486 194 20 16} down_box DOWN_BOX labelsize 12 align 7
+        tooltip {Tests Fl_Tree_Item::usericon()} xywh {486 221 20 16} down_box DOWN_BOX labelsize 12 align 7
         code0 {usericon_radio->value(1);}
       }
       Fl_Check_Button showroot_radio {
@@ -476,7 +513,7 @@ switch ( whenmode_chooser->value() ) {
         user_data tree
         callback {int onoff = showroot_radio->value();
 tree->showroot(onoff);}
-        tooltip {Tests tree->showroot();} xywh {486 211 20 16} down_box DOWN_BOX labelsize 12 align 7
+        tooltip {Tests tree->showroot();} xywh {486 237 20 16} down_box DOWN_BOX labelsize 12 align 7
         code0 {int onoff = tree->showroot(); showroot_radio->value(onoff);}
       }
       Fl_Check_Button visiblefocus_checkbox {
@@ -484,7 +521,7 @@ tree->showroot(onoff);}
         user_data tree
         callback {int onoff = visiblefocus_checkbox->value();
 tree->visible_focus(onoff);}
-        tooltip {Toggles the tree's visible_focus() box} xywh {486 228 20 16} down_box DOWN_BOX labelsize 12 align 7
+        tooltip {Toggles the tree's visible_focus() box} xywh {486 254 20 16} down_box DOWN_BOX labelsize 12 align 7
         code0 {int onoff = tree->visible_focus(); visiblefocus_checkbox->value(onoff);}
       }
       Fl_Button selection_color_button {
@@ -493,17 +530,17 @@ tree->visible_focus(onoff);}
 selection_color_button->color(val);	// update modified color to button
 tree->selection_color(val);
 tree->redraw();}
-        tooltip {Changes the tree widget's selection color. Tests Fl_Tree::selection_color()} xywh {486 251 16 16} box DOWN_BOX labelsize 12 align 7
+        tooltip {Changes the tree widget's selection color. Tests Fl_Tree::selection_color()} xywh {486 277 16 16} box DOWN_BOX labelsize 12 align 7
         code0 {o->color(tree->selection_color());}
       }
       Fl_Box {} {
         label {Test Operations}
-        tooltip {These controls only affect the defaults for new items that are created. These test the Fl_Tree_Prefs methods.} xywh {311 312 335 120} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+        tooltip {These controls only affect the defaults for new items that are created. These test the Fl_Tree_Prefs methods.} xywh {311 325 335 120} box GTK_DOWN_BOX color 47 labelsize 12 align 1
       }
       Fl_Box showitem_box {
         label {show_item()
 }
-        xywh {331 335 70 82} box GTK_DOWN_BOX labelsize 11 align 1
+        xywh {331 348 70 82} box GTK_DOWN_BOX labelsize 11 align 1
       }
       Fl_Button {} {
         label Show
@@ -511,7 +548,7 @@ tree->redraw();}
 tree->show_item(item);}
         tooltip {Tests show_item() with no position specified.
 Makes the selected item visible IF it is off-screen.
-No change made if it is not off-screen.} xywh {346 344 40 17} labelsize 11
+No change made if it is not off-screen.} xywh {346 357 40 17} labelsize 11
       }
       Fl_Button {} {
         label Top
@@ -523,7 +560,7 @@ Scrolls selected item to the top of the display
 To use:
 1) open '500 items'
 2) select item 0010
-3) Hit Top/Mid/Bot} xywh {346 361 40 16} labelsize 11
+3) Hit Top/Mid/Bot} xywh {346 374 40 16} labelsize 11
       }
       Fl_Button {} {
         label Mid
@@ -534,7 +571,7 @@ Scrolls the selected item to the middle of the display
 To use:
   1) open '500 items'
   2) select 'item 0010'
-  3) Hit Top/Mid/Bot} xywh {346 377 40 16} labelsize 11
+  3) Hit Top/Mid/Bot} xywh {346 390 40 16} labelsize 11
       }
       Fl_Button {} {
         label Bot
@@ -545,7 +582,7 @@ Scrolls the selected item to the bottom of the display
 To use:
   1) open '500 items'
   2) select 'item 0010'
-  3) Hit Top/Mid/Bot} xywh {346 393 40 16} labelsize 11
+  3) Hit Top/Mid/Bot} xywh {346 406 40 16} labelsize 11
       }
       Fl_Button loaddb_button {
         label {Load Database...}
@@ -556,7 +593,7 @@ if (filename) {
   tree->load(prefs);
   tree->redraw();
 }}
-        tooltip {Load the contents of an Fl_Preferences database into the tree view} xywh {431 338 95 16} labelsize 9
+        tooltip {Load the contents of an Fl_Preferences database into the tree view} xywh {431 351 95 16} labelsize 9
       }
       Fl_Button insertabove_button {
         label {Insert Above}
@@ -571,12 +608,12 @@ while (item) {
 }
 
 tree->redraw();}
-        tooltip {Inserts three items above the selected items} xywh {431 358 95 16} labelsize 9
+        tooltip {Inserts three items above the selected items} xywh {431 371 95 16} labelsize 9
       }
       Fl_Button rebuildtree_button {
         label {Rebuild Tree}
         callback {RebuildTree();}
-        tooltip {Rebuilds the tree with defaults} xywh {431 378 95 16} labelsize 9
+        tooltip {Rebuilds the tree with defaults} xywh {431 391 95 16} labelsize 9
       }
       Fl_Button showpathname_button {
         label {Show Pathname}
@@ -589,14 +626,14 @@ switch ( tree->item_pathname(pathname, sizeof(pathname), item) ) {
     case -1: fl_message("item_pathname() returned -1 (NOT FOUND)"); break;
     case -2: fl_message("item_pathname() returned -2 (STRING TOO LONG)"); break;
 }}
-        tooltip {Show the pathname for the selected item. Tests the Fl_Tree::item_pathname() method.} xywh {431 398 95 16} labelsize 9
+        tooltip {Show the pathname for the selected item. Tests the Fl_Tree::item_pathname() method.} xywh {431 411 95 16} labelsize 9
       }
       Fl_Button clearall_button {
         label {Clear All}
         callback {tree->clear();
 tree->redraw();}
         tooltip {Clears all items
-Tests Fl_Tree::clear()} xywh {531 338 95 16} labelsize 9
+Tests Fl_Tree::clear()} xywh {531 351 95 16} labelsize 9
       }
       Fl_Button testcallbackflag_button {
         label {Test Callback Flag}
@@ -661,18 +698,18 @@ G_cb_counter = 0; tree->select("ROOT");      if ( !G_cb_counter ) fl_alert("FAIL
 tree->deselect("ROOT"); // leave deselected
 
 fl_alert("TEST COMPLETED\\n If you didn't see any error dialogs, test PASSED.");}
-        tooltip {Test the 'docallback' argument can disable callbacks.} xywh {531 358 95 16} labelsize 9
+        tooltip {Test the 'docallback' argument can disable callbacks.} xywh {531 371 95 16} labelsize 9
       }
       Fl_Button testrootshowself_button {
         label {Root Show Self}
         callback {Fl_Tree_Item *root = tree->root();
 fprintf(stderr, "--- Show Tree\\n");
 if (root) root->show_self();}
-        tooltip {Test the root->'show_self() method to show the entire tree} xywh {530 378 95 16} labelsize 9
+        tooltip {Test the root->'show_self() method to show the entire tree} xywh {530 391 95 16} labelsize 9
       }
       Fl_Box {} {
         label {Selected Items}
-        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {661 23 335 263} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {661 23 335 280} box GTK_DOWN_BOX color 47 labelsize 12 align 1
       }
       Fl_Choice all_font_choice {
         label {Label Font}
@@ -1022,14 +1059,14 @@ else         tree->deselect_all(item);	// deselect /ROOT and its children}
       }
       Fl_Box {} {
         label {New Item Defaults}
-        tooltip {These controls only affect the defaults for new items that are created. These test the Fl_Tree_Prefs methods.} xywh {661 312 335 120} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+        tooltip {These controls only affect the defaults for new items that are created. These test the Fl_Tree_Prefs methods.} xywh {661 325 335 120} box GTK_DOWN_BOX color 47 labelsize 12 align 1
       }
       Fl_Button item_labelfgcolor_button {
         label item_labelfgcolor
         callback {Fl_Color val = EditColor(tree->item_labelfgcolor());	// Let user edit the color
 tree->item_labelfgcolor(val);				// apply modified color to tree
 item_labelfgcolor_button->color(val);			// update modified color to button}
-        tooltip {Sets the *default* label foreground color for new items created. Does NOT affect existing items.} xywh {828 327 16 16} box DOWN_BOX labelsize 12 align 7
+        tooltip {Sets the *default* label foreground color for new items created. Does NOT affect existing items.} xywh {828 340 16 16} box DOWN_BOX labelsize 12 align 7
         code0 {o->color(tree->item_labelfgcolor());}
       }
       Fl_Button item_labelbgcolor_button {
@@ -1037,14 +1074,14 @@ item_labelfgcolor_button->color(val);			// update modified color to button}
         callback {Fl_Color val = EditColor(tree->item_labelbgcolor());	// Let user edit the color
 tree->item_labelbgcolor(val);				// apply modified color to tree
 item_labelbgcolor_button->color(val);			// update modified color to button}
-        tooltip {Sets the *default* label background color for new items created. Does NOT affect existing items.} xywh {828 345 16 16} box DOWN_BOX labelsize 12 align 7
+        tooltip {Sets the *default* label background color for new items created. Does NOT affect existing items.} xywh {828 358 16 16} box DOWN_BOX labelsize 12 align 7
         code0 {item_labelbgcolor_button->color(tree->item_labelbgcolor());}
       }
       Fl_Choice item_font_choice {
         label {Item label font}
         callback {Fl_Font val = (Fl_Font)item_font_choice->value(); // get chooser's current font value
 tree->item_labelfont(val);			  // change font in tree}
-        tooltip {Sets the default font used for new items created. Does NOT affect existing items.} xywh {828 371 140 21} down_box BORDER_BOX labelsize 12 textsize 12
+        tooltip {Sets the default font used for new items created. Does NOT affect existing items.} xywh {828 384 140 21} down_box BORDER_BOX labelsize 12 textsize 12
         code0 {o->value((int)tree->item_labelfont());   // get tree's current font, assign to chooser}
       } {
         MenuItem {} {
@@ -1116,7 +1153,7 @@ tree->item_labelfont(val);			  // change font in tree}
         label item_labelsize
         user_data tree
         callback {tree->item_labelsize((int)item_labelsize_slider->value());}
-        tooltip {Sets the default labelsize used for new items. Does NOT affect existing items.} xywh {828 396 140 16} type Horizontal labelsize 12 align 4 textsize 12
+        tooltip {Sets the default labelsize used for new items. Does NOT affect existing items.} xywh {828 409 140 16} type Horizontal labelsize 12 align 4 textsize 12
         code0 {o->value((int)tree->item_labelsize());}
         code1 {o->range(1.0, 50.0);}
         code2 {o->step(1.0);}
@@ -1171,7 +1208,7 @@ while (item) {
     item = item->next();
 }
 tree->redraw();}
-        tooltip {Adds 20,000 items to the selected item's parent} xywh {530 398 95 16} labelsize 9
+        tooltip {Adds 20,000 items to the selected item's parent} xywh {530 411 95 16} labelsize 9
       }
     }
     Fl_Box resizer_box {
@@ -1180,6 +1217,9 @@ tree->redraw();}
   }
   code {// Initialize Tree
 tree->root_label("ROOT");
+\#if FLTK_ABI_VERSION >= 10302
+tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS);
+\#endif
 RebuildTree();
 /*tree->show_self();*/} {}
   code {// FLTK stuff

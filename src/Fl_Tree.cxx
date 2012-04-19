@@ -102,7 +102,7 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
 #if FLTK_ABI_VERSION >= 10302
   // NEW
   _lastselect       = 0;
- _itemReselectMode = FL_TREE_SELECTABLE_ONCE;
+  _itemReselectMode = FL_TREE_SELECTABLE_ONCE;
 #else
   // OLD: data initialized static inside handle()
 #endif
@@ -1019,24 +1019,23 @@ int Fl_Tree::is_close(const char *path) const {
 ///
 int Fl_Tree::select(Fl_Tree_Item *item, int docallback) {
   int alreadySelected = item->is_selected();
-  if ( !alreadySelected
-#if FLTK_ABI_VERSION >= 10302
-	  || item_reselect_mode()==FL_TREE_SELECTABLE_ALWAYS
-#endif	
-	 ) {
+  if ( !alreadySelected ) {
     item->select();
     set_changed();
     if ( docallback ) {
-      do_callback_for_item(item, 
-#if FLTK_ABI_VERSION >= 10302
-          alreadySelected ? FL_TREE_REASON_RESELECTED : FL_TREE_REASON_SELECTED);
-#else
-          FL_TREE_REASON_SELECTED);
-#endif	
+      do_callback_for_item(item, FL_TREE_REASON_SELECTED);
     }
     redraw();
     return(1);
   }
+#if FLTK_ABI_VERSION >= 10302
+  // NEW
+  if ( alreadySelected ) {
+    if ( (item_reselect_mode() == FL_TREE_SELECTABLE_ALWAYS) && docallback ) {
+      do_callback_for_item(item, FL_TREE_REASON_RESELECTED);
+    }
+  }
+#endif
   return(0);
 }
 
@@ -1198,13 +1197,18 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
   int changed = 0;
   for ( Fl_Tree_Item *item = first(); item; item = item->next() ) {
     if ( item == selitem ) {
-      if ( item->is_selected()
-		  
 #if FLTK_ABI_VERSION >= 10302
-           && item_reselect_mode()!=FL_TREE_SELECTABLE_ALWAYS
+      // NEW
+      if ( item->is_selected() ) {		// already selected?
+        if ( item_reselect_mode() == FL_TREE_SELECTABLE_ALWAYS ) {
+	  select(item, docallback);		// handles callback with reason==reselect
+        }
+	continue;				// leave 'changed' unmodified (nothing changed)
+      }
+#else
+      // OLD
+      if ( item->is_selected() ) continue;	// don't count if already selected
 #endif	
-		  
-	 ) continue;	// don't count if already selected
       select(item, docallback);
       ++changed;
     } else {
