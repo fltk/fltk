@@ -236,6 +236,15 @@ int Fl_Tree::handle(int e) {
 	      }
 	      break;
 	    }
+	    case 'a':
+	    case 'A': {
+	      if ( Fl::event_state() & FL_CTRL ) {
+	        select_all();
+		take_focus();
+		return(1);
+	      }
+	      break;
+	    }
 	  }
 	}
       }
@@ -259,14 +268,23 @@ int Fl_Tree::handle(int e) {
   // fprintf(stderr, "ERCODEBUG: Fl_Tree::handle(): Event was %s (%d)\n", fl_eventnames[e], e); // DEBUGGING
   if ( ! _root ) return(ret);
   switch ( e ) {
-    case FL_PUSH: {	
-				// clicked on a tree item?
+    case FL_PUSH: {		// clicked on tree
       if (Fl::visible_focus() && handle(FL_FOCUS)) {
         Fl::focus(this);
       }
       _lastselect = 0;
       Fl_Tree_Item *o = _root->find_clicked(_prefs);
-      if ( ! o ) break;
+      if ( !o ) {		// clicked, but not on an item?
+	switch ( _prefs.selectmode() ) {
+	  case FL_TREE_SELECT_NONE:
+	    break;
+	  case FL_TREE_SELECT_SINGLE:
+	  case FL_TREE_SELECT_MULTI:
+	    deselect_all();
+	    break;
+	}
+	break;
+      }
       set_item_focus(o);				// becomes new focus widget
       redraw();
       ret |= 1;						// handled
