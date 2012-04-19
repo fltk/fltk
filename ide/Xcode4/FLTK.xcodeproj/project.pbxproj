@@ -12013,7 +12013,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = label;
-				SDKROOT = macosx;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13357,7 +13357,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = label;
-				SDKROOT = macosx;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
