@@ -594,9 +594,9 @@ int storestring(const char *n, const char * & p, int nostrip) {
   undo_checkpoint();
   int length = 0;
   if (n) { // see if blank, strip leading & trailing blanks
-    if (!nostrip) while (isspace(*n)) n++;
+    if (!nostrip) while (isspace((int) *n)) n++;
     const char *e = n + strlen(n);
-    if (!nostrip) while (e > n && isspace(*(e-1))) e--;
+    if (!nostrip) while (e > n && isspace((int)*(e-1))) e--;
     length = e-n;
     if (!length) n = 0;
   }    
