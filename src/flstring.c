@@ -90,6 +90,21 @@ fl_strlcpy(char       *dst,	/* O - Destination string */
   return (srclen);
 }
 
+/**
+* locale independent ascii oriented case cmp
+* returns 0 if string successfully compare, non zero otherwise
+*/
+int fl_ascii_strcasecmp(const char *s, const char *t) {
+	if (!s || !t) return (s!=t);
+	if (strlen(s) != strlen(t)) return -1;
+	for(;*s; s++,t++) {
+		if ( *s != *t) {
+			if (*s<*t && (*s+0x20)!=*t ) return -1;
+			if (*s>*t && *s!=(*t+0x20) ) return +1;
+		}
+	}
+	return 0;
+}
 
 /*
  * End of "$Id$".

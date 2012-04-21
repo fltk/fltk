@@ -84,11 +84,14 @@ FL_EXPORT extern size_t fl_strlcpy(char *, const char *, size_t);
 #    define strlcpy fl_strlcpy
 #  endif /* !HAVE_STRLCPY */
 
+// locale independent ascii compare, does not introduce locale pbs as w/  case cmp
+FL_EXPORT extern int fl_ascii_strcasecmp(const char *s, const char *t);
+
 #  ifdef __cplusplus
 }
 #  endif /* __cplusplus */
-#endif /* !flstring_h */
 
+#endif /* !flstring_h */
 
 /*
  * End of "$Id$".

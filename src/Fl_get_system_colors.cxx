@@ -312,7 +312,7 @@ int Fl::scheme(const char *s) {
 int Fl::reload_scheme() {
   Fl_Window *win;
 
-  if (scheme_ && !strcasecmp(scheme_, "plastic")) {
+  if (scheme_ && !fl_ascii_strcasecmp(scheme_, "plastic")) {
     // Update the tile image to match the background color...
     uchar r, g, b;
     int nr, ng, nb;
@@ -358,7 +358,7 @@ int Fl::reload_scheme() {
 
     // Use standard size scrollbars...
     Fl::scrollbar_size(16);
-  } else if (scheme_ && !strcasecmp(scheme_, "gtk+")) {
+  } else if (scheme_ && !fl_ascii_strcasecmp(scheme_, "gtk+")) {
     // Use a GTK+ inspired look-n-feel...
     if (scheme_bg_) {
       delete scheme_bg_;
