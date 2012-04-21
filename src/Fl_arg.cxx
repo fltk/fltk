@@ -173,7 +173,11 @@ int Fl::arg(int argc, char **argv, int &i) {
 #ifdef __APPLE__
   // The Finder application in MacOS X passes the "-psn_N_NNNNN" option
   // to all apps...
-  else if (strncmp(s, "psn_", 4) == 0) {
+  else if (strcmp(s, "NSDocumentRevisionsDebugMode") == 0) {
+    i++;
+    if (argv[i]) i++;
+    return 1;
+  } else if (strncmp(s, "psn_", 4) == 0) {
     i++;
     return 1;
   }
