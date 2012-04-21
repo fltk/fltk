@@ -165,7 +165,11 @@ char *Fl_Text_Buffer::text() const {
 void Fl_Text_Buffer::text(const char *t)
 {
   IS_UTF8_ALIGNED(t)
-  
+
+  // if t is null then substitute it with an empty string
+  // then don't return so that internal cleanup can happen
+  if (!t) t="";
+
   call_predelete_callbacks(0, length());
   
   /* Save information for redisplay, and get rid of the old buffer */
