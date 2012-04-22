@@ -45,7 +45,7 @@
 /// Sort order options for items added to the tree
 ///
 enum Fl_Tree_Sort {
-  FL_TREE_SORT_NONE=0,	///< No sorting; items are added in the order defined (default).
+  FL_TREE_SORT_NONE=0,		///< No sorting; items are added in the order defined (default).
   FL_TREE_SORT_ASCENDING=1,	///< Add items in ascending sort order.
   FL_TREE_SORT_DESCENDING=2	///< Add items in descending sort order.
 };
@@ -65,9 +65,27 @@ enum Fl_Tree_Connector {
 enum Fl_Tree_Select {
   FL_TREE_SELECT_NONE=0,	///< Nothing selected when items are clicked
   FL_TREE_SELECT_SINGLE=1,	///< Single item selected when item is clicked (default)
-  FL_TREE_SELECT_MULTI=2	///< Multiple items can be selected by clicking with
-  ///< SHIFT or CTRL or mouse drags.
+  FL_TREE_SELECT_MULTI=2	///< Multiple items can be selected by clicking
+  				///< with SHIFT, CTRL or mouse drags.
 };
+
+#if FLTK_ABI_VERSION >= 10302
+/// \enum Fl_Tree_Item_Select_Mode
+/// Defines the ways an item can be (re) selected.
+///
+enum Fl_Tree_Item_Reselect_Mode {
+  FL_TREE_SELECTABLE_ONCE=0,	///< item can only be selected once (default)
+  FL_TREE_SELECTABLE_ALWAYS, 	///< needed for new RESELECT feature
+};
+
+/// \enum Fl_Tree_Item_Draw_Mode
+/// Tree display style for items.
+///
+enum Fl_Tree_Item_Draw_Mode {
+  FL_TREE_ITEM_DRAW_WIDGET_ONLY=0,	///< if widget() defined, draw it in place of the label (default)
+  FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET=1	///< if widget() defined, draw it to right of label
+};
+#endif
 
 /// \class Fl_Tree_Prefs
 ///
@@ -81,12 +99,16 @@ class FL_EXPORT Fl_Tree_Prefs {
   Fl_Font _labelfont;			// label's font face
   Fl_Fontsize _labelsize;		// label's font size
   int _margintop;			// -- 
-  int _marginleft;			//   |- tree's margins
-  //int _marginright;			//   |
-  //int _marginbottom;			// --
+  int _marginleft;			//   |- tree's controllable margins
+#if FLTK_ABI_VERSION >= 10302
+  int _marginbottom;			// --
+#endif
   int _openchild_marginbottom;		// extra space below an open child tree
   int _usericonmarginleft;		// space to left of user icon (if any)
   int _labelmarginleft;			// space to left of label
+#if FLTK_ABI_VERSION >= 10302
+  int _widgetmarginleft;		// space to left of widget
+#endif
   int _connectorwidth;			// connector width (right of open/close icon)
   int _linespacing;			// vertical space between lines
   // Colors
@@ -102,6 +124,10 @@ class FL_EXPORT Fl_Tree_Prefs {
   Fl_Tree_Sort   _sortorder;		// none, ascening, descending, etc.
   Fl_Boxtype     _selectbox;		// selection box type
   Fl_Tree_Select _selectmode;		// selection mode
+#if FLTK_ABI_VERSION >= 10302
+  Fl_Tree_Item_Reselect_Mode _itemreselectmode;	// controls item selection callback() behavior
+  Fl_Tree_Item_Draw_Mode     _itemdrawmode;	// controls how items draw label, widget()
+#endif
 public:
   Fl_Tree_Prefs();
   
@@ -144,6 +170,18 @@ public:
   inline void margintop(int val) {
     _margintop = val;
   }
+#if FLTK_ABI_VERSION >= 10302
+  /// Get the bottom margin's value in pixels.
+  /// This is the extra distance the vertical scroller lets you travel.
+  inline int marginbottom() const {
+    return(_marginbottom);
+  }
+  /// Set the bottom margin's value in pixels
+  /// This is the extra distance the vertical scroller lets you travel.
+  inline void marginbottom(int val) {
+    _marginbottom = val;
+  }
+#endif
   /// Get the margin below an open child in pixels
   inline int openchild_marginbottom() const {
     return(_openchild_marginbottom);
@@ -152,22 +190,6 @@ public:
   inline void openchild_marginbottom(int val) {
     _openchild_marginbottom = val;
   }
-  
-  /****** NOT IMPLEMENTED
-   inline int marginright() const {
-   return(_marginright);
-   }
-   inline void marginright(int val) {
-   _marginright = val;
-   }
-   inline int marginbottom() const {
-   return(_marginbottom);
-   }
-   inline void marginbottom(int val) {
-   _marginbottom = val;
-   }
-   *******/
-  
   /// Get the user icon's left margin value in pixels
   inline int usericonmarginleft() const {
     return(_usericonmarginleft);
@@ -184,6 +206,16 @@ public:
   inline void labelmarginleft(int val) {
     _labelmarginleft = val;
   }
+#if FLTK_ABI_VERSION >= 10302
+  /// Get the widget()'s left margin value in pixels
+  inline int widgetmarginleft() const {
+    return(_widgetmarginleft);
+  }
+  /// Set the widget's left margin value in pixels
+  inline void widgetmarginleft(int val) {
+    _widgetmarginleft = val;
+  }
+#endif
   /// Get the line spacing value in pixels
   inline int linespacing() const {
     return(_linespacing);
@@ -329,6 +361,28 @@ public:
   inline void selectmode(Fl_Tree_Select val) {
     _selectmode = val;
   }
+#if FLTK_ABI_VERSION >= 10302
+  /// Returns the current item re/selection mode
+  Fl_Tree_Item_Reselect_Mode item_reselect_mode() const {
+    return _itemreselectmode;
+  }
+  /// Sets the item re/selection mode
+  void item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode) {
+    _itemreselectmode = mode;
+  }
+  /// Get the 'item draw mode' used for the tree
+  inline Fl_Tree_Item_Draw_Mode item_draw_mode() const {
+    return(_itemdrawmode);
+  }
+  /// Set the 'item draw mode' used for the tree to \p val.
+  ///     This affects how items in the tree are drawn,
+  ///     such as when a widget() is defined. 
+  ///     See Fl_Tree_Item_Draw_Mode for possible values.
+  ///
+  inline void item_draw_mode(Fl_Tree_Item_Draw_Mode val) {
+    _itemdrawmode = val;
+  }
+#endif
 };
 
 #endif /*FL_TREE_PREFS_H*/

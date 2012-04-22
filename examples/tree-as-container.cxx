@@ -23,10 +23,10 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Input.H>
 
-#define MAX_ROWS     80000
+#define MAX_ROWS     20000
 #define MAX_FIELDS   5
 #define FIELD_WIDTH  70
-#define FIELD_HEIGHT 25
+#define FIELD_HEIGHT 30
 
 class MyData : public Fl_Group {
     Fl_Input *fields[MAX_FIELDS];

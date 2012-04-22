@@ -62,7 +62,7 @@ class FL_EXPORT Fl_Tree_Item {
   char                    _active;		// item activated?
   char                    _selected;		// item selected?
   int                     _xywh[4];		// xywh of this widget (if visible)
-  int                     _collapse_xywh[4];	// xywh of collapse icon (if any)
+  int                     _collapse_xywh[4];	// xywh of collapse icon (if visible)
   int                     _label_xywh[4];	// xywh of label
   Fl_Widget              *_widget;		// item's label widget (optional)
   Fl_Image               *_usericon;		// item's user-specific icon (optional)
@@ -86,6 +86,7 @@ public:
   int y() const { return(_xywh[1]); }
   int w() const { return(_xywh[2]); }
   int h() const { return(_xywh[3]); }
+  int calc_item_height(const Fl_Tree_Prefs &prefs);
   void draw(int X, int &Y, int W, Fl_Widget *tree, Fl_Tree_Item *itemfocus, const Fl_Tree_Prefs &prefs, int lastchild=1);
   void show_self(const char *indent = "") const;
   void label(const char *val);

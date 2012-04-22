@@ -102,7 +102,6 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
 #if FLTK_ABI_VERSION >= 10302
   // NEW
   _lastselect       = 0;
-  _itemReselectMode = FL_TREE_SELECTABLE_ONCE;
 #else
   // OLD: data initialized static inside handle()
 #endif
@@ -372,17 +371,25 @@ void Fl_Tree::draw() {
   int cy = y() + Fl::box_dy(box());
   int cw = w() - Fl::box_dw(box());
   int ch = h() - Fl::box_dh(box());
-  if (damage() & ~FL_DAMAGE_CHILD) { // redraw entire thing
+  {
     // Handle group's bg
-    Fl_Group::draw_box();
-    Fl_Group::draw_label();
+    if ( damage() & ~FL_DAMAGE_CHILD) {			// redraw entire widget?
+      Fl_Group::draw_box();
+      Fl_Group::draw_label();
+    }
     if ( ! _root ) return;
     // These values are changed during drawing
-    // 'Y' will be the lowest point on the tree
+    // By end, 'Y' will be the lowest point on the tree
     int X = cx + _prefs.marginleft();
     int Y = cy + _prefs.margintop() - (_vscroll->visible() ? _vscroll->value() : 0);
     int W = cw - _prefs.marginleft();			// - _prefs.marginright();
+    // Adjust root's X/W if connectors off
+    if (_prefs.connectorstyle() == FL_TREE_CONNECTOR_NONE) {
+      X -= _prefs.openicon()->w();
+      W += _prefs.openicon()->w();
+    }
     int Ysave = Y;
+     
     fl_push_clip(cx,cy,cw,ch);
     {
       fl_font(_prefs.labelfont(), _prefs.labelsize());
@@ -393,53 +400,34 @@ void Fl_Tree::draw() {
     fl_pop_clip();
     
     // Show vertical scrollbar?
-    int ydiff = (Y+_prefs.margintop())-Ysave;		// ydiff=size of tree
-    int ytoofar = (cy+ch) - Y;				// ytoofar -- scrolled beyond bottom (e.g. stow)
-    
-    //printf("ydiff=%d ch=%d Ysave=%d ytoofar=%d value=%d\n",
-    //int(ydiff),int(ch),int(Ysave),int(ytoofar), int(_vscroll->value()));
-    
-    if ( ytoofar > 0 ) ydiff += ytoofar;
-    if ( Ysave<cy || ydiff > ch || int(_vscroll->value()) > 1 ) {
-      _vscroll->visible();
-
-      int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
-      int sx = x()+w()-Fl::box_dx(box())-scrollsize;
-      int sy = y()+Fl::box_dy(box());
-      int sw = scrollsize;
-      int sh = h()-Fl::box_dh(box());
-      _vscroll->show();
-      _vscroll->range(0.0,ydiff-ch);
-      _vscroll->resize(sx,sy,sw,sh);
-      _vscroll->slider_size(float(ch)/float(ydiff));
-    } else {
-      _vscroll->Fl_Slider::value(0);
-      _vscroll->hide();
-    }
-  }
-  // Draw children
-  fl_push_clip(cx,cy,cw-(_vscroll->visible()?_vscroll->w():0),ch);
-  // Similar to Fl_Group::draw(), but optimized to ignore drawing
-  // items outside the viewport.
-  // TODO: Suggest Fl_Group::draw() do this if clip_children() is enabled.
-  {
-    Fl_Widget*const* a = Fl_Group::array();
-    if (damage() & ~FL_DAMAGE_CHILD) { // redraw the entire thing:
-      for (int i=Fl_Group::children(); i--;) {
-	Fl_Widget& o = **a++;
-	if ( (o.y()+o.h()) < y() || (o.y() > (y()+h())) ) continue;
-	Fl_Group::draw_child(o);
-	Fl_Group::draw_outside_label(o);
-      }
-    } else {	// only redraw the children that need it:
-      for (int i=Fl_Group::children(); i--;) {
-	Fl_Widget& o = **a++;
-	if ( (o.y()+o.h()) < y() || (o.y() > (y()+h())) ) continue;
-	Fl_Group::update_child(o);
+    {
+#if FLTK_ABI_VERSION >= 10302
+      // NEW
+      int SY = Y + _prefs.marginbottom();
+#else
+      // OLD
+      int SY = Y;
+#endif
+      int ydiff = (SY+_prefs.margintop())-Ysave;		// ydiff=size of tree
+      int ytoofar = (cy+ch) - SY;				// ytoofar -- scrolled beyond bottom (e.g. stow)
+      if ( ytoofar > 0 ) ydiff += ytoofar;
+      if ( Ysave<cy || ydiff>ch || int(_vscroll->value())>1 ) {
+	_vscroll->visible();
+	int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
+	int sx = x()+w()-Fl::box_dx(box())-scrollsize;
+	int sy = y()+Fl::box_dy(box());
+	int sw = scrollsize;
+	int sh = h()-Fl::box_dh(box());
+	_vscroll->show();
+	_vscroll->resize(sx,sy,sw,sh);
+	_vscroll->slider_size(float(ch)/float(ydiff));
+	_vscroll->range(0.0,ydiff-ch);
+      } else {
+	_vscroll->Fl_Slider::value(0);
+	_vscroll->hide();
       }
     }
   }
-  fl_pop_clip();
   draw_child(*_vscroll);	// draw scroll last
 }
 
@@ -1399,6 +1387,38 @@ void Fl_Tree::margintop(int val) {
   redraw();
 }
 
+#if FLTK_ABI_VERSION >= 10302
+/// Get the amount of white space (in pixels) that should appear
+/// below the last visible item when the vertical scroller is scrolled to the bottom.
+///
+int Fl_Tree::marginbottom() const {
+  return(_prefs.marginbottom());
+}
+
+/// Sets the amount of white space (in pixels) that should appear
+/// below the last visible item when the vertical scroller is scrolled to the bottom.
+///
+void Fl_Tree::marginbottom(int val) {
+  _prefs.marginbottom(val);
+  redraw();
+}
+#endif
+
+/// Get the amount of white space (in pixels) that should appear
+/// between items in the tree.
+///
+int Fl_Tree::linespacing() const {
+  return(_prefs.linespacing());
+}
+
+/// Sets the amount of white space (in pixels) that should appear
+/// between items in the tree.
+///
+void Fl_Tree::linespacing(int val) {
+  _prefs.linespacing(val);
+  redraw();
+}
+
 /// Get the amount of white space (in pixels) that should appear
 /// below an open child tree's contents.
 ///
@@ -1413,6 +1433,41 @@ void Fl_Tree::openchild_marginbottom(int val) {
   _prefs.openchild_marginbottom(val);
   redraw();
 }
+/// Get the amount of white space (in pixels) that should appear
+/// to the left of the usericon.
+int Fl_Tree::usericonmarginleft() const {
+  return(_prefs.usericonmarginleft());
+}
+/// Set the amount of white space (in pixels) that should appear
+/// to the left of the usericon.
+void Fl_Tree::usericonmarginleft(int val) {
+  _prefs.usericonmarginleft(val);
+  redraw();
+}
+/// Get the amount of white space (in pixels) that should appear
+/// to the left of the label text.
+int Fl_Tree::labelmarginleft() const {
+  return(_prefs.labelmarginleft());
+}
+/// Set the amount of white space (in pixels) that should appear
+/// to the left of the label text.
+void Fl_Tree::labelmarginleft(int val) {
+  _prefs.labelmarginleft(val);
+  redraw();
+}
+#if FLTK_ABI_VERSION >= 10302
+/// Get the amount of white space (in pixels) that should appear
+/// to the left of the child fltk widget (if any).
+int Fl_Tree::widgetmarginleft() const {
+  return(_prefs.widgetmarginleft());
+}
+/// Set the amount of white space (in pixels) that should appear
+/// to the left of the child fltk widget (if any).
+void Fl_Tree::widgetmarginleft(int val) {
+  _prefs.widgetmarginleft(val);
+  redraw();
+}
+#endif
 
 /// Gets the width of the horizontal connection lines (in pixels) 
 /// that appear to the left of each tree item's label.
@@ -1569,6 +1624,32 @@ Fl_Tree_Select Fl_Tree::selectmode() const {
 void Fl_Tree::selectmode(Fl_Tree_Select val) {
   _prefs.selectmode(val);
 }
+
+#if FLTK_ABI_VERSION >= 10302
+/// Returns the current item re/selection mode
+Fl_Tree_Item_Reselect_Mode Fl_Tree::item_reselect_mode() const {
+  return(_prefs.item_reselect_mode());
+}
+
+/// Sets the item re/selection mode
+void Fl_Tree::item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode) {
+  _prefs.item_reselect_mode(mode);
+}
+
+/// Get the 'item draw mode' used for the tree
+Fl_Tree_Item_Draw_Mode Fl_Tree::item_draw_mode() const {
+  return(_prefs.item_draw_mode());
+}
+
+/// Set the 'item draw mode' used for the tree to \p val.
+///     This affects how items in the tree are drawn,
+///     such as when a widget() is defined. 
+///     See Fl_Tree_Item_Draw_Mode for possible values.
+///
+void Fl_Tree::item_draw_mode(Fl_Tree_Item_Draw_Mode val) {
+  _prefs.item_draw_mode(val);
+}
+#endif
 
 /// See if \p item is currently displayed on-screen (visible within the widget).
 /// This can be used to detect if the item is scrolled off-screen.

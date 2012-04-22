@@ -194,17 +194,6 @@ enum Fl_Tree_Reason {
   FL_TREE_REASON_CLOSED		///< an item was closed
 };
 
-#if FLTK_ABI_VERSION >= 10302
-/// \enum Fl_Tree_Item_Select_Mode
-/// Defines the ways an item can be (re) selected.
-///
-enum Fl_Tree_Item_Reselect_Mode
-{
-  FL_TREE_SELECTABLE_ONCE=0, /// backward compatible default: an item can only be selected once
-  FL_TREE_SELECTABLE_ALWAYS, /// needed for new RESELECT feature
-};
-#endif
-
 class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Item  *_root;				// can be null!
   Fl_Tree_Item  *_item_focus;			// item that has focus box
@@ -216,20 +205,6 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
 #if FLTK_ABI_VERSION >= 10302
   // NEW: 
   Fl_Tree_Item *_lastselect;
-	
-  // NEW:
-public:
-  //! Returns the current item re/selection mode
-  Fl_Tree_Item_Reselect_Mode item_reselect_mode() const {
-    return _itemReselectMode;
-  }
-  
-  //! Sets the item re/selection mode
-  void item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode) {
-    _itemReselectMode = mode;
-  }
-private:
-  Fl_Tree_Item_Reselect_Mode _itemReselectMode;
 #else
   // OLD: static data inside handle() method
 #endif
@@ -325,8 +300,20 @@ public:
   void marginleft(int val);
   int margintop() const;
   void margintop(int val);
+#if FLTK_ABI_VERSION >= 10302
+  int marginbottom() const;
+  void marginbottom(int val);
+#endif
+  int linespacing() const;
+  void linespacing(int val);
   int openchild_marginbottom() const;
   void openchild_marginbottom(int val);
+  int usericonmarginleft() const;
+  void usericonmarginleft(int val);
+  int labelmarginleft() const;
+  void labelmarginleft(int val);
+  int widgetmarginleft() const;
+  void widgetmarginleft(int val);
   int connectorwidth() const;
   void connectorwidth(int val);
   Fl_Image* usericon() const;
@@ -347,6 +334,12 @@ public:
   void selectbox(Fl_Boxtype val);
   Fl_Tree_Select selectmode() const;
   void selectmode(Fl_Tree_Select val);
+#if FLTK_ABI_VERSION >= 10302
+  Fl_Tree_Item_Reselect_Mode item_reselect_mode() const;
+  void item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode);
+  Fl_Tree_Item_Draw_Mode item_draw_mode() const;
+  void item_draw_mode(Fl_Tree_Item_Draw_Mode mode);
+#endif
 
   int displayed(Fl_Tree_Item *item);
   void show_item(Fl_Tree_Item *item, int yoff);

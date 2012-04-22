@@ -26,6 +26,7 @@
 //
 //     http://www.fltk.org/str.php
 //
+/////////////////////////////////////////////////////////////////////////// 80 /
 
 // Was the last event inside the specified xywh?
 static int event_inside(const int xywh[4]) {
@@ -556,6 +557,25 @@ static void draw_item_focus(Fl_Boxtype B, Fl_Color C, int X, int Y, int W, int H
 #endif
 }
 
+/// Return the item's 'visible' height
+int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) {
+  if ( ! _visible ) return(0);
+  int H = 0;
+  if ( _label ) {
+    fl_font(_labelfont, _labelsize);	// fldescent() needs this :/
+    H = _labelsize + fl_descent() + 1;	// at least one pixel space below descender
+  }
+  if ( has_children() && prefs.openicon() && H<prefs.openicon()->h() )
+    H = prefs.openicon()->h();
+  if ( usericon() && H<usericon()->h() )
+    H = usericon()->h();
+  // NO: we don't use widget's height, we force it to match ours
+  //if ( widget() && widget()->visible() && H<widget()->h() )
+  //  H = widget()->h();
+  H += prefs.linespacing();
+  return(H);
+}
+
 /// Draw this item and its children.
 void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 			Fl_Tree_Item *itemfocus,
@@ -563,145 +583,167 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
   if ( ! _visible ) return; 
   int tree_top = tree->y();
   int tree_bot = tree_top + tree->h();
-  fl_font(_labelfont, _labelsize);
-  int H = _labelsize;
-  if(usericon() && H < usericon()->h()) H = usericon()->h(); 
-  H += prefs.linespacing() + fl_descent();
-  // adjust horizontally if we draw no connecting lines
-  if ( is_root() && prefs.connectorstyle() == FL_TREE_CONNECTOR_NONE ) {
-    X -= prefs.openicon()->w();
-    W += prefs.openicon()->w();
-  }
-  // Colors, fonts
-  Fl_Color fg = _selected ? fl_contrast(_labelfgcolor, tree->selection_color())
-                          : _active ? _labelfgcolor 
-			            : fl_inactive(_labelfgcolor);
-  Fl_Color bg = _selected ? _active ? tree->selection_color() 
-                                    : fl_inactive(tree->selection_color())
-                          : _labelbgcolor;
+  int H = calc_item_height(prefs);
+
   // Update the xywh of this item
   _xywh[0] = X;
   _xywh[1] = Y;
   _xywh[2] = W;
   _xywh[3] = H;
-  // Text size
-  int textw=0, texth=0;
-  fl_measure(_label, textw, texth, 0);
-  int textycenter = Y+(H/2);
+
+  // Determine collapse icon's xywh
+  //   Note: calculate collapse icon's xywh for possible mouse click detection.
+  //   We don't care about items clipped off the viewport; they won't get mouse events.
+  //
+  int item_y_center = Y+(H/2);
   int &icon_w = _collapse_xywh[2] = prefs.openicon()->w();
   int &icon_x = _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
-  int &icon_y = _collapse_xywh[1] = textycenter - (prefs.openicon()->h()/2);
+  int &icon_y = _collapse_xywh[1] = item_y_center - (prefs.openicon()->h()/2);
   _collapse_xywh[3] = prefs.openicon()->h();
+
   // Horizontal connector values
-  int hstartx  = X+icon_w/2-1;
-  int hendx    = hstartx + prefs.connectorwidth();
-  int hcenterx = X + icon_w + ((hendx - (X + icon_w)) / 2);
-  
-  // See if we should draw this item
-  //    If this item is root, and showroot() is disabled, don't draw.
-  //    'clipped' is an optimization to prevent drawing anything offscreen.
+  //   XXX: Must calculate these even if(clipped) because 'draw children' code (below)
+  //   needs hconn_x_center value. (Otherwise, these calculations could be 'clipped')
   //
-  char drawthis = ( is_root() && prefs.showroot() == 0 ) ? 0 : 1;
+  int hconn_x  = X+icon_w/2-1;
+  int hconn_x2 = hconn_x + prefs.connectorwidth();
+  int hconn_x_center = X + icon_w + ((hconn_x2 - (X + icon_w)) / 2);
+  int cw1 = icon_w+prefs.connectorwidth()/2, cw2 = prefs.connectorwidth();
+  int conn_w = cw1>cw2 ? cw1 : cw2;
+
+  // Background position
+  int &bg_x = _label_xywh[0] = X+(icon_w/2-1+conn_w);
+  int &bg_y = _label_xywh[1] = Y;
+  int &bg_w = _label_xywh[2] = W-(icon_w/2-1+conn_w);
+  int &bg_h = _label_xywh[3] = H;
+
+  // Usericon position
+  int uicon_x = bg_x + ( (usericon() || prefs.usericon()) ? prefs.usericonmarginleft() : 0);
+  int uicon_w = usericon() ? usericon()->w() : prefs.usericon() ? prefs.usericon()->w() : 0;
+
+  // Label position
+  int label_x = uicon_x + uicon_w + (_label ? prefs.labelmarginleft() : 0);
+
+  // Recalc widget position
+  //   Do this whether clipped or not, so that when scrolled,
+  //   the widgets move to appropriate 'offscreen' positions
+  //   (so that they don't get mouse events, etc)
+  //
+  if ( widget() ) {
+    int wx = label_x;
+    int wy = bg_y;
+    int ww = widget()->w();		// use widget's width
+    int wh = H;				// lock widget's height to item height
+#if FLTK_ABI_VERSION >= 10302
+    if ( _label && prefs.item_draw_mode() == FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET ) {
+#else
+    if ( _label && !widget() ) {	// back compat: don't draw label if widget() present
+#endif
+      fl_font(_labelfont, _labelsize);	// fldescent() needs this
+      int dx,dy,lw,lh;
+      fl_text_extents(_label,dx,dy,lw,lh);
+#if FLTK_ABI_VERSION >= 10302
+      // NEW
+      wx += (lw + prefs.widgetmarginleft());
+#else
+      // OLD
+      wx += (lw + 3);
+#endif
+    }
+    if ( widget()->x() != wx || widget()->y() != wy ||
+	 widget()->w() != ww || widget()->h() != wh ) {
+      widget()->resize(wx,wy,ww,wh);		// we'll handle redraw below
+    }
+  }
   char clipped = ((Y+H) < tree_top) || (Y>tree_bot) ? 1 : 0;
-  if ( drawthis ) {
-    // Draw connectors
-    if ( prefs.connectorstyle() != FL_TREE_CONNECTOR_NONE ) {
-      // Horiz connector between center of icon and text
-      // if this is root, the connector should not dangle in thin air on the left
-      if (is_root()) {
-        if (!clipped) draw_horizontal_connector(hcenterx, hendx, textycenter, prefs);
-      } else {
-        if (!clipped) draw_horizontal_connector(hstartx, hendx, textycenter, prefs);
-      }
-      if ( has_children() && is_open() ) {
-        // Small vertical line down to children
-        if (!clipped) draw_vertical_connector(hcenterx, textycenter, Y+H, prefs);
-      }
-      // Connectors for last child
-      if ( ! is_root() ) {
-        if ( lastchild ) {
-          if (!clipped) draw_vertical_connector(hstartx, Y, textycenter, prefs);
-        } else {
-          if (!clipped) draw_vertical_connector(hstartx, Y, Y+H, prefs);
-        }
-      }
-    } 
-    // Draw collapse icon
-    if ( has_children() && prefs.showcollapse() ) {
-      // Draw icon image
-      if ( is_open() ) {
-        if (!clipped) prefs.closeicon()->draw(icon_x,icon_y);
-      } else {
-        if (!clipped) prefs.openicon()->draw(icon_x,icon_y);
-      }
-    }
-    // Background for this item
-    int cw1 = icon_w+prefs.connectorwidth()/2, cw2 = prefs.connectorwidth();
-    int cwidth = cw1>cw2 ? cw1 : cw2;
-    int &bx = _label_xywh[0] = X+(icon_w/2-1+cwidth);
-    int &by = _label_xywh[1] = Y;
-    int &bw = _label_xywh[2] = W-(icon_w/2-1+cwidth);
-    int &bh = _label_xywh[3] = H;
-    // Draw bg only if different from tree's bg
-    if ( bg != tree->color() || is_selected() ) {
-      if ( is_selected() ) {
-        // Selected? Use selectbox() style
-        if (!clipped) fl_draw_box(prefs.selectbox(), bx, by, bw, bh, bg);
-      } else {
-        // Not Selected? use plain filled rectangle
-	if (!clipped) {
-	  fl_color(bg);
-	  fl_rectf(bx, by, bw, bh);
+  char drawthis = ( is_root() && prefs.showroot() == 0 ) ? 0 : 1;
+  if ( !clipped ) {
+    Fl_Color fg = _selected ? fl_contrast(_labelfgcolor, tree->selection_color())
+			    : _active ? _labelfgcolor 
+				      : fl_inactive(_labelfgcolor);
+    Fl_Color bg = _selected ? _active ? tree->selection_color() 
+				      : fl_inactive(tree->selection_color())
+			    : _labelbgcolor;
+    // See if we should draw this item
+    //    If this item is root, and showroot() is disabled, don't draw.
+    //    'clipped' is an optimization to prevent drawing anything offscreen.
+    //
+    if ( drawthis ) {					// draw this item at all?
+      if ( tree->damage() & ~FL_DAMAGE_CHILD ) {	// non-child damage?
+	// Draw connectors
+	if ( prefs.connectorstyle() != FL_TREE_CONNECTOR_NONE ) {
+	  // Horiz connector between center of icon and text
+	  // if this is root, the connector should not dangle in thin air on the left
+	  if (is_root()) draw_horizontal_connector(hconn_x_center, hconn_x2, item_y_center, prefs);
+	  else           draw_horizontal_connector(hconn_x, hconn_x2, item_y_center, prefs);
+	  // Small vertical line down to children
+	  if ( has_children() && is_open() )
+	    draw_vertical_connector(hconn_x_center, item_y_center, Y+H, prefs);
+	  // Connectors for last child
+	  if ( !is_root() ) {
+	    if ( lastchild ) draw_vertical_connector(hconn_x, Y, item_y_center, prefs);
+	    else             draw_vertical_connector(hconn_x, Y, Y+H, prefs);
+	  }
 	}
+	// Draw collapse icon
+	if ( has_children() && prefs.showcollapse() ) {
+	  // Draw icon image
+	  if ( is_open() ) {
+	    prefs.closeicon()->draw(icon_x,icon_y);
+	  } else {
+	    prefs.openicon()->draw(icon_x,icon_y);
+	  }
+	}
+	// Background for this item
+	// Draw bg only if different from tree's bg
+	if ( bg != tree->color() || is_selected() ) {
+	  if ( is_selected() ) {			// Selected? Use selectbox() style
+	    fl_draw_box(prefs.selectbox(),bg_x,bg_y,bg_w,bg_h,bg);
+	  } else {					// Not Selected? use plain filled rectangle
+	    fl_color(bg);
+	    fl_rectf(bg_x,bg_y,bg_w,bg_h);
+	  }
+	  if ( widget() ) widget()->damage(FL_DAMAGE_ALL);	// if there's a child widget, we just damaged it
+	}
+	// Draw user icon (if any)
+	if ( usericon() ) {
+	  // Item has user icon? Use it
+	  int uicon_y = item_y_center - (usericon()->h() >> 1);
+	  usericon()->draw(uicon_x,uicon_y);
+	} else if ( prefs.usericon() ) {
+	  // Prefs has user icon? Use it
+	  int uicon_y = item_y_center - (prefs.usericon()->h() >> 1);
+	  prefs.usericon()->draw(uicon_x,uicon_y);
+	}
+	// Draw label
+#if FLTK_ABI_VERSION >= 10302
+        if ( _label && 
+	     ( !widget() || prefs.item_draw_mode() ==
+	       FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) {
+#else
+        if ( _label && !widget() ) {	// back compat: don't draw label if widget() present
+#endif
+	  int label_y = Y+(H/2)+(_labelsize/2)-fl_descent()/2;
+	  fl_color(fg);
+	  fl_font(_labelfont, _labelsize);
+	  fl_draw(_label, label_x, label_y);
+	}
+      }			// end non-child damage
+      // Draw child FLTK widget?
+      if ( widget() && widget()->damage() ) {
+        widget()->draw();
       }
-    }
-    // Draw user icon (if any)
-    int useroff = (icon_w/2-1+cwidth);
-    if ( usericon() ) {
-      // Item has user icon? Use it
-      useroff += prefs.usericonmarginleft();
-      icon_y = textycenter - (usericon()->h() >> 1);
-      if (!clipped) usericon()->draw(X+useroff,icon_y);
-      useroff += usericon()->w();
-    } else if ( prefs.usericon() ) {
-      // Prefs has user icon? Use it
-      useroff += prefs.usericonmarginleft();
-      icon_y = textycenter - (prefs.usericon()->h() >> 1);
-      if (!clipped) prefs.usericon()->draw(X+useroff,icon_y);
-      useroff += prefs.usericon()->w();
-    }
-    useroff += prefs.labelmarginleft();
-    // Draw label
-    if ( widget() ) {
-      // Widget? Draw it
-      int lx = X+useroff;
-      int ly = by;
-      int lw = widget()->w();
-      int lh = bh;
-      if ( widget()->x() != lx || widget()->y() != ly ||
-          widget()->w() != lw || widget()->h() != lh ) {
-        widget()->resize(lx, ly, lw, lh);		// fltk will handle drawing this
+      // Draw focus box around item's bg last
+      if ( this == itemfocus && Fl::visible_focus() && Fl::focus() == tree) {
+	draw_item_focus(FL_NO_BOX,bg,bg_x+1,bg_y+1,bg_w-1,bg_h-1);
       }
-    } else {
-      // No label widget? Draw text label
-      if ( _label && !clipped ) {
-        fl_color(fg);
-        fl_draw(_label, X+useroff, Y+H-fl_descent()-1);
-      }
-    }
-    if ( !clipped &&
-         this == itemfocus &&
-         Fl::visible_focus() &&
-	 Fl::focus() == tree) {
-      // Draw focus box around this item
-      draw_item_focus(FL_NO_BOX,bg,bx+1,by+1,bw-1,bh-1);
-    }
-    Y += H;
-  }			// end drawthis
-  // Draw children
+    }			// end drawthis
+  }			// end clipped
+  if ( drawthis ) Y += H;			// adjust Y (even if clipped)
+  // Draw child items (if any)
   if ( has_children() && is_open() ) {
-    int child_x = drawthis ? 				// offset children to right,
-    (hcenterx - (icon_w/2) + 1) : X;			// unless didn't drawthis
+    int child_x = drawthis ? (hconn_x_center - (icon_w/2) + 1)	// offset children to right,
+                           : X;					// unless didn't drawthis
     int child_w = W - (child_x-X);
     int child_y_start = Y;
     for ( int t=0; t<children(); t++ ) {
@@ -715,7 +757,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       // Special 'clipped' calculation. (intentional variable shadowing)
       int clipped = ((child_y_start < tree_top) && (Y < tree_top)) ||
                     ((child_y_start > tree_bot) && (Y > tree_bot));
-      if (!clipped) draw_vertical_connector(hstartx, child_y_start, Y, prefs);
+      if (!clipped) draw_vertical_connector(hconn_x, child_y_start, Y, prefs);
     }
   }
 }
