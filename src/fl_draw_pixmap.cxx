@@ -209,7 +209,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   if (!fl_measure_pixmap(cdata, d.w, d.h)) return 0;
   const uchar*const* data = (const uchar*const*)(cdata+1);
   int transparent_index = -1;
-  uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
+//  uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
 #ifdef WIN32
   color_count = 0;
   used_colors = (uchar *)malloc(abs(ncolors)*3*sizeof(uchar));
@@ -230,7 +230,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #endif
       transparent_index = ' ';
       Fl::get_color(bg, c[0], c[1], c[2]); c[3] = 0;
-      transparent_c = c;
+      // transparent_c = c;
       p += 4;
       ncolors--;
     }
@@ -316,7 +316,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
         c[3] = 0;
 #endif
 	transparent_index = ind;
-	transparent_c = c;
+	//transparent_c = c;
       }
     }
   }

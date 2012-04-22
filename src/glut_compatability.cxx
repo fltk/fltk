@@ -333,7 +333,12 @@ void glutAddMenuEntry(char *label, int value) {
   Fl_Menu_Item* i = additem(m);
   i->text = label;
   i->callback_ = (Fl_Callback*)(m->cb);
+
+#if defined(__LP64__)
+  i->user_data_ = (void *) (long long) value;
+#else
   i->user_data_ = (void *)value;
+#endif
 }
 
 void glutAddSubMenu(char *label, int submenu) {
@@ -350,7 +355,11 @@ void glutChangeToMenuEntry(int item, char *label, int value) {
   Fl_Menu_Item* i = &m->m[item-1];
   i->text = label;
   i->callback_ = (Fl_Callback*)(m->cb);
+#if defined(__LP64__)
+  i->user_data_ = (void *) (long long) value;
+#else
   i->user_data_ = (void *)value;
+#endif
   i->flags = 0;
 }
 

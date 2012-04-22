@@ -487,7 +487,7 @@ AC_CACHE_CHECK([whether we have the POSIX compatible scandir() prototype],
 
 dnl Define both HAVE_SCANDIR... macros, if the POSIX compatible function is
 dnl available. Otherwise: check, whether any scandir prototype is available,
-dnl but don't use it on SunOS and QNX because of an incompatibility in pre-Y2K
+dnl but dont use it on SunOS and QNX because of an incompatibility in pre-Y2K
 dnl SunOS scandir versions. We assume, though, that the POSIX compatible
 dnl version on newer SunOS/Solaris versions works as expected.
 if test "$ac_cv_cxx_scandir_posix" = yes; then

@@ -99,7 +99,11 @@ static Fl_Window *makeform() {
      else
        button[b] = new Fl_Button(x, 70, 90, 23);
      button[b]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
+#if defined (__LP64__)
+     button[b]->callback(button_cb,(void *)(long long) b);
+#else
      button[b]->callback(button_cb,(void *)b);
+#endif
    }
  }
  button[0]->shortcut(FL_Escape);

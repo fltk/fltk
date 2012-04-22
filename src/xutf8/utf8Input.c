@@ -62,10 +62,10 @@ XConvertEucTwToUtf8(char* buffer_return, int len) {
   int i = 0;
 #endif
   int l = 0;
-  char *buf, *b;
+  char *buf; // , *b;
 
   if (len < 1) return 0;
-  b = buf = (char*) malloc((unsigned)len);
+  /*b = */ buf = (char*) malloc((unsigned)len);
   memcpy(buf, buffer_return, (unsigned) len);
 
 #if HAVE_LIBC_ICONV
@@ -83,17 +83,22 @@ XConvertEucTwToUtf8(char* buffer_return, int len) {
       ucs = c;	
       i++;
     } else if (c >= 0xa1 && c < 0xff && len - i > 1 ) {
+
+#if 0 
       unsigned char b[2];
       b[0] = (unsigned char) c - 0x80;
       b[1] = (unsigned char) buf[i + 1] - 0x80;
+#endif
       ucs = ' '; i += 2;
     } else if (c == 0x8e &&  len - i > 3) {
-      unsigned char b[2];
       unsigned char c1 =  buf[i + 1];
       unsigned char c2 =  buf[i + 2];
       unsigned char c3 =  buf[i + 3];
+#if 0
+      unsigned char b[2];
       b[0] = (unsigned char)  buf[i + 2] - 0x80;
       b[1] = (unsigned char)  buf[i + 3] - 0x80;
+#endif
       if (c1 >= 0xa1 && c1 <= 0xb0) {
 	if (c2 >= 0xa1 && c2 < 0xff && c3 >= 0xa1 && c3 < 0xff) {
 	  ucs = ' '; i += 4;
