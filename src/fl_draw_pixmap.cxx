@@ -230,7 +230,9 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #endif
       transparent_index = ' ';
       Fl::get_color(bg, c[0], c[1], c[2]); c[3] = 0;
+#ifdef WIN32
       transparent_c = c;
+#endif
       p += 4;
       ncolors--;
     }
