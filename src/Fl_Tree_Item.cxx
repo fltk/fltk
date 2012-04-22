@@ -557,7 +557,9 @@ static void draw_item_focus(Fl_Boxtype B, Fl_Color C, int X, int Y, int W, int H
 #endif
 }
 
-/// Return the item's 'visible' height
+/// Return the item's 'visible' height.
+///   Doesn't include linespacing(); prevents affecting eg. height of widget().
+///
 int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
   if ( ! _visible ) return(0);
   int H = 0;
@@ -569,10 +571,6 @@ int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
     H = prefs.openicon()->h();
   if ( usericon() && H<usericon()->h() )
     H = usericon()->h();
-  // NO: we don't use widget's height, we force it to match ours
-  //if ( widget() && widget()->visible() && H<widget()->h() )
-  //  H = widget()->h();
-  H += prefs.linespacing();
   return(H);
 }
 
@@ -583,7 +581,8 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
   if ( ! _visible ) return; 
   int tree_top = tree->y();
   int tree_bot = tree_top + tree->h();
-  int H = calc_item_height(prefs);
+  int H = calc_item_height(prefs);	// height of item
+  int H2 = H + prefs.linespacing();	// height of item with line spacing
 
   // Update the xywh of this item
   _xywh[0] = X;
@@ -678,11 +677,11 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 	  else           draw_horizontal_connector(hconn_x, hconn_x2, item_y_center, prefs);
 	  // Small vertical line down to children
 	  if ( has_children() && is_open() )
-	    draw_vertical_connector(hconn_x_center, item_y_center, Y+H, prefs);
+	    draw_vertical_connector(hconn_x_center, item_y_center, Y+H2, prefs);
 	  // Connectors for last child
 	  if ( !is_root() ) {
 	    if ( lastchild ) draw_vertical_connector(hconn_x, Y, item_y_center, prefs);
-	    else             draw_vertical_connector(hconn_x, Y, Y+H, prefs);
+	    else             draw_vertical_connector(hconn_x, Y, Y+H2, prefs);
 	  }
 	}
 	// Draw collapse icon
@@ -739,7 +738,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       }
     }			// end drawthis
   }			// end clipped
-  if ( drawthis ) Y += H;			// adjust Y (even if clipped)
+  if ( drawthis ) Y += H2;			// adjust Y (even if clipped)
   // Draw child items (if any)
   if ( has_children() && is_open() ) {
     int child_x = drawthis ? (hconn_x_center - (icon_w/2) + 1)	// offset children to right,
