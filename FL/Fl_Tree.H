@@ -312,8 +312,10 @@ public:
   void usericonmarginleft(int val);
   int labelmarginleft() const;
   void labelmarginleft(int val);
+#if FLTK_ABI_VERSION >= 10302
   int widgetmarginleft() const;
   void widgetmarginleft(int val);
+#endif
   int connectorwidth() const;
   void connectorwidth(int val);
   Fl_Image* usericon() const;

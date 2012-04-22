@@ -1857,11 +1857,13 @@ void Fl_Tree::callback_reason(Fl_Tree_Reason reason) {
 ///             case     FL_TREE_REASON_OPENED: ..item was opened..
 ///             case     FL_TREE_REASON_CLOSED: ..item was closed..
 ///             case   FL_TREE_REASON_SELECTED: ..item was selected..
-///             case   FL_TREE_REASON_RELECTED: ..item was reselected (double-clicked, etc)..
+///             case FL_TREE_REASON_RESELECTED: ..item was reselected (double-clicked, etc)..
 ///             case FL_TREE_REASON_DESELECTED: ..item was deselected..
 ///         }
 ///     }
 /// \endcode
+///
+/// \see item_reselect_mode() -- enables FL_TREE_REASON_RESELECTED events
 ///
 Fl_Tree_Reason Fl_Tree::callback_reason() const {
   return(_callback_reason);

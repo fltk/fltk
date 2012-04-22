@@ -86,7 +86,7 @@ public:
   int y() const { return(_xywh[1]); }
   int w() const { return(_xywh[2]); }
   int h() const { return(_xywh[3]); }
-  int calc_item_height(const Fl_Tree_Prefs &prefs);
+  int calc_item_height(const Fl_Tree_Prefs &prefs) const;
   void draw(int X, int &Y, int W, Fl_Widget *tree, Fl_Tree_Item *itemfocus, const Fl_Tree_Prefs &prefs, int lastchild=1);
   void show_self(const char *indent = "") const;
   void label(const char *val);

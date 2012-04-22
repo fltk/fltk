@@ -558,7 +558,7 @@ static void draw_item_focus(Fl_Boxtype B, Fl_Color C, int X, int Y, int W, int H
 }
 
 /// Return the item's 'visible' height
-int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) {
+int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
   if ( ! _visible ) return(0);
   int H = 0;
   if ( _label ) {

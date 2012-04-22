@@ -5,6 +5,8 @@
 #ifndef FL_TREE_PREFS_H
 #define FL_TREE_PREFS_H
 
+#include <FL/Fl.H>	// needed for ABI version features (via Enumerations.H)
+
 //////////////////////
 // FL/Fl_Tree_Prefs.H
 //////////////////////
@@ -70,16 +72,16 @@ enum Fl_Tree_Select {
 };
 
 #if FLTK_ABI_VERSION >= 10302
-/// \enum Fl_Tree_Item_Select_Mode
+/// \enum Fl_Tree_Item_Reselect_Mode
 /// Defines the ways an item can be (re) selected.
 ///
 enum Fl_Tree_Item_Reselect_Mode {
   FL_TREE_SELECTABLE_ONCE=0,	///< item can only be selected once (default)
-  FL_TREE_SELECTABLE_ALWAYS, 	///< needed for new RESELECT feature
+  FL_TREE_SELECTABLE_ALWAYS, 	///< enables FL_TREE_REASON_RESELECTED events for callbacks
 };
 
 /// \enum Fl_Tree_Item_Draw_Mode
-/// Tree display style for items.
+/// Controls how item's labels and widget()s are drawn in the tree.
 ///
 enum Fl_Tree_Item_Draw_Mode {
   FL_TREE_ITEM_DRAW_WIDGET_ONLY=0,	///< if widget() defined, draw it in place of the label (default)
