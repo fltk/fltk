@@ -148,6 +148,7 @@ protected:
   void set_flag(unsigned int c) {flags_ |= c;}
   /** Clears a flag in the flags mask */
   void clear_flag(unsigned int c) {flags_ &= ~c;}
+public:
   /** flags possible values enumeration.
       See activate(), output(), visible(), changed(), set_visible_focus()
   */
@@ -176,6 +177,7 @@ protected:
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
         USERFLAG1       = 1<<31   ///< reserved for 3rd party extensions
   };
+protected:
   void draw_box() const;
   void draw_box(Fl_Boxtype t, Fl_Color c) const;
   void draw_box(Fl_Boxtype t, int x,int y,int w,int h, Fl_Color c) const;
