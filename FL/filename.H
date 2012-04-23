@@ -70,7 +70,7 @@ inline int fl_filename_relative(char *to, const char *from) { return fl_filename
 #  endif /* __cplusplus */
 
 
-#  if defined(WIN32) && !defined(__CYGWIN__) && !defined(__WATCOMC__)
+#  if defined(WIN32) && !defined(__MINGW32__) && !defined(__CYGWIN__) && !defined(__WATCOMC__)
 
 struct dirent {char d_name[1];};
 
