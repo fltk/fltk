@@ -733,7 +733,10 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
         widget()->draw();
       }
       // Draw focus box around item's bg last
-      if ( this == itemfocus && Fl::visible_focus() && Fl::focus() == tree) {
+      if ( this == itemfocus &&
+           Fl::visible_focus() && 
+	   Fl::focus() == tree &&
+	   prefs.selectmode() != FL_TREE_SELECT_NONE ) {
 	draw_item_focus(FL_NO_BOX,bg,bg_x+1,bg_y+1,bg_w-1,bg_h-1);
       }
     }			// end drawthis

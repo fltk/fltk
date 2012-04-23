@@ -473,7 +473,7 @@ switch ( collapseicons_chooser->value() ) {
     case 2:
         tree->showcollapse(0);
         break;
-}} selected
+}}
         tooltip {Tests Fl_Tree::openicon() and Fl_Tree::closeicon()} xywh {485 201 140 21} down_box BORDER_BOX labelsize 12 textsize 11
       } {
         MenuItem {} {
@@ -496,7 +496,7 @@ switch ( connectorstyle_chooser->value() ) {
     case 0: tree->connectorstyle(FL_TREE_CONNECTOR_NONE);     break;
     case 1: tree->connectorstyle(FL_TREE_CONNECTOR_DOTTED);   break;
     case 2: tree->connectorstyle(FL_TREE_CONNECTOR_SOLID);    break;
-}} selected
+}}
         tooltip {Tests connectorstyle() bit flags} xywh {485 225 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {switch (tree->connectorstyle()) { case FL_TREE_CONNECTOR_NONE: connectorstyle_chooser->value(0); break; case FL_TREE_CONNECTOR_DOTTED: connectorstyle_chooser->value(1); break; case FL_TREE_CONNECTOR_SOLID: connectorstyle_chooser->value(2); break; }}
       } {
@@ -523,7 +523,7 @@ switch ( selectmode_chooser->value() ) {
     default: tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
 }} selected
         tooltip {Sets how Fl_Tree handles mouse selection of tree items} xywh {485 249 140 21} down_box BORDER_BOX labelsize 12 textsize 11
-        code0 {selectmode_chooser->value(1);}
+        code0 {selectmode_chooser->value(2);}
         code1 {cb_selectmode_chooser(selectmode_chooser, (void*)0);}
       } {
         MenuItem {} {
@@ -555,7 +555,7 @@ reselectmode_chooser->tooltip("DISABLED.\\n"
                               "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
                               "to get this feature");
 window->redraw();  // deactivated
-\#endif} selected
+\#endif}
         tooltip {Enable 'reselect' events
 These happen when mouse drags or multi-clicks an item} xywh {485 273 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {reselectmode_chooser->value(1);}
@@ -586,7 +586,7 @@ itemdrawmode_chooser->tooltip("DISABLED.\\n"
                               "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
                               "to get this feature");
 window->redraw();  // deactivated
-\#endif} selected
+\#endif}
         tooltip {Sets how Fl_Tree draws item label and widget()} xywh {485 297 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {itemdrawmode_chooser->value(0);}
         code1 {itemdrawmode_chooser->do_callback();}
@@ -608,7 +608,7 @@ switch ( whenmode_chooser->value() ) {
   case 1:  tree->when(FL_WHEN_CHANGED);   break;
   case 2:  tree->when(FL_WHEN_NEVER);     break;
   default: tree->when(FL_WHEN_RELEASE);   break;
-}} selected
+}}
         tooltip {Sets when() the tree's callback is invoked} xywh {485 321 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {whenmode_chooser->value(1);}
         code1 {cb_whenmode_chooser(whenmode_chooser, (void*)0);}

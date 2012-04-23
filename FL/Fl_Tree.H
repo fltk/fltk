@@ -179,6 +179,78 @@
 ///     \image html tree-elements.png
 ///     \image latex tree-elements.png "Fl_Tree dimensions" width=6cm
 ///
+///     The following table lists keyboard bindings for navigating the tree:
+///
+///  <TABLE BORDER="1" SUMMARY="Fl_Tree keyboard bindings.">
+///    <CAPTION ALIGN=TOP>Fl_Tree keyboard bindings.</CAPTION>
+///  <TR>
+///    <TD WIDTH=25% ALIGN=CENTER><B>Keyboard</B></TD>
+///    <TD WIDTH=25% ALIGN=CENTER><B>FL_TREE_SELECT_MULTI</B></TD>
+///    <TD WIDTH=25% ALIGN=CENTER><B>FL_TREE_SELECT_SINGLE</B></TD>
+///    <TD WIDTH=25% ALIGN=CENTER><B>FL_TREE_SELECT_NONE</B></TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Ctrl-A</B> (Linux/Windows)<BR><B>Command-A</B> (Mac)</TD>
+///    <TD ALIGN=CENTER>Select all items.</TD>
+///    <TD ALIGN=CENTER>N/A</TD>
+///    <TD ALIGN=CENTER>N/A</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Space </B></TD>
+///    <TD ALIGN=CENTER>Selects item.</TD>
+///    <TD ALIGN=CENTER>Selects item.</TD>
+///    <TD ALIGN=CENTER>N/A</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Ctrl-Space </B></TD>
+///    <TD ALIGN=CENTER>Toggle item.</TD>
+///    <TD ALIGN=CENTER>Toggle item.</TD>
+///    <TD ALIGN=CENTER>N/A</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Shift-Space </B></TD>
+///    <TD ALIGN=CENTER>Extends selection<BR>from last item.</TD>
+///    <TD ALIGN=CENTER>Selects item.</TD>
+///    <TD ALIGN=CENTER>N/A</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Enter,<BR>Ctrl-Enter,<BR>Shift-Enter </B></TD>
+///    <TD ALIGN=CENTER>Toggles open/close</TD>
+///    <TD ALIGN=CENTER>Toggles open/close</TD>
+///    <TD ALIGN=CENTER>Toggles open/close</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Right / Left</B></TD>
+///    <TD ALIGN=CENTER>Open/Close item.</TD>
+///    <TD ALIGN=CENTER>Open/Close item.</TD>
+///    <TD ALIGN=CENTER>Open/Close item.</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Up / Down</B></TD>
+///    <TD ALIGN=CENTER>Move focus box up/down.</TD>
+///    <TD ALIGN=CENTER>Move focus box up/down.</TD>
+///    <TD ALIGN=CENTER>N/A</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Shift-Up / Shift-Down</B></TD>
+///    <TD ALIGN=CENTER>Extend selection up/down.</TD>
+///    <TD ALIGN=CENTER>Move focus up/down.</TD>
+///    <TD ALIGN=CENTER>N/A</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>Home / End</B></TD>
+///    <TD ALIGN=CENTER>Move to top/bottom of tree.</TD>
+///    <TD ALIGN=CENTER>Move to top/bottom of tree.</TD>
+///    <TD ALIGN=CENTER>Move to top/bottom of tree.</TD>
+///
+///  </TR><TR>
+///    <TD ALIGN=CENTER><B>PageUp / PageDown</B></TD>
+///    <TD ALIGN=CENTER>Page up/down.</TD>
+///    <TD ALIGN=CENTER>Page up/down.</TD>
+///    <TD ALIGN=CENTER>Page up/down.</TD>
+///
+///  </TD></TR></TABLE>
+///
 
 /// \enum Fl_Tree_Reason
 /// The reason the callback was invoked.
@@ -216,6 +288,7 @@ protected:
   void item_clicked(Fl_Tree_Item* val);
   void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason);
   Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);
+  void extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to);
 
 public:
   Fl_Tree(int X, int Y, int W, int H, const char *L=0);

@@ -122,10 +122,38 @@ Fl_Tree::~Fl_Tree() {
   if ( _root ) { delete _root; _root = 0; }
 }
 
+/// Extend a selection between 'from' and 'to'.
+///     Used by SHIFT-click to extend a selection between two items inclusive.
+///
+void Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to) {
+  char on = 0;
+  if ( from == to ) {
+    from->select();
+    return;
+  }
+  for ( Fl_Tree_Item *item = first(); item; item = next(item) ) {
+    if ( (item == from) || (item == to) ) {
+      item->select();		// inclusive
+      on ^= 1;
+    } else if ( on ) {
+      item->select();
+    }
+  }
+}
+
 /// Standard FLTK event handler for this widget.
 int Fl_Tree::handle(int e) {
   if (e == FL_NO_EVENT) return(0);		// XXX: optimize to prevent slow resizes on large trees!
   int ret = 0;
+  char is_shift   = Fl::event_state() & FL_SHIFT   ? 1 : 0;
+  char is_ctrl    = Fl::event_state() & FL_CTRL    ? 1 : 0;
+  char is_command = Fl::event_state() & FL_COMMAND ? 1 : 0;	// ctrl on win/lin, 'Command' on mac
+#if FLTK_ABI_VERSION >= 10302
+  // NEW: data inside Fl_Tree
+#else
+  // OLD:
+  static Fl_Tree_Item *_lastselect = 0;
+#endif
   // Developer note: Fl_Browser_::handle() used for reference here..
   // #include <FL/names.h>	// for event debugging
   // fprintf(stderr, "DEBUG: %s (%d)\n", fl_eventnames[e], e);
@@ -139,11 +167,8 @@ int Fl_Tree::handle(int e) {
       if ( ! _item_focus ) {					// no focus established yet?
 	switch (Fl::event_key()) {				// determine if focus was navigated..
 	  case FL_Tab: {					// received focus via TAB?
-	    if ( Fl::event_state(FL_SHIFT) ) {			// SHIFT-TAB similar to FL_Up
-	      set_item_focus(next_visible_item(0, FL_Up));
-	    } else {						// TAB similar to FL_Down
-	      set_item_focus(next_visible_item(0, FL_Down));
-	    }
+	    int updown = is_shift ? FL_Up : FL_Down;		// SHIFT-TAB similar to Up, TAB similar to Down
+	    set_item_focus(next_visible_item(0, updown));
 	    break;
 	  }
 	  case FL_Left:		// received focus via LEFT or UP?
@@ -175,31 +200,39 @@ int Fl_Tree::handle(int e) {
 	if ( _item_focus ) {
 	  int ekey = Fl::event_key();
 	  switch (ekey) {
-	    case FL_Enter:	// ENTER: selects current item only
-	    case FL_KP_Enter:
-	      if ( when() & ~FL_WHEN_ENTER_KEY) {
-		select_only(_item_focus, when());
-		show_item(_item_focus);		// STR #2426
-		return(1);
-	      }
+	    case FL_Enter:	// ENTER: toggle open/close
+	    case FL_KP_Enter: {
+	      open_toggle(_item_focus, when());
 	      break;
-	    case ' ':		// toggle selection state
+	    }
+	    case ' ':		// SPACE: change selection state
 	      switch ( _prefs.selectmode() ) {
 		case FL_TREE_SELECT_NONE:
 		  break;
 		case FL_TREE_SELECT_SINGLE:
-		  if ( ! _item_focus->is_selected() )		// not selected?
-		    select_only(_item_focus, when());		// select only this
-		  else
-		    deselect_all(0, when());			// select nothing
-		  break;
+		  if ( is_ctrl ) {				// CTRL-SPACE: (single mode) toggle
+		    if ( ! _item_focus->is_selected() ) {
+		      select_only(_item_focus, when());
+		    } else {
+		      deselect_all(0, when());
+		    }
+		  } else {
+		    select_only(_item_focus, when());		// SPACE: (single mode) select only
+		  }
+		  _lastselect = _item_focus;
+	          return(1);
 		case FL_TREE_SELECT_MULTI:
-		  select_toggle(_item_focus, when());
-		  break;
+		  if ( is_ctrl ) {
+		    select_toggle(_item_focus, when());		// CTRL-SPACE: (multi mode) toggle selection
+		  } else {
+		    select(_item_focus, when());		// SPACE: (multi-mode) select
+		  }
+		  _lastselect = _item_focus;
+	          return(1);
 	      }
 	      break;
-	    case FL_Right:  	// open children (if any)
-	    case FL_Left: {	// close children (if any)
+	    case FL_Right:  	// RIGHT: open children (if any)
+	    case FL_Left: {	// LEFT: close children (if any)
 	      if ( _item_focus ) {
 		if ( ekey == FL_Right && _item_focus->is_close() ) {
 		  // Open closed item
@@ -216,8 +249,8 @@ int Fl_Tree::handle(int e) {
 	      }
 	      break;
 	    }
-	    case FL_Up:		// next item up
-	    case FL_Down: {	// next item down
+	    case FL_Up:		// UP: next item up, or extend selection up
+	    case FL_Down: {	// DOWN: next item down, or extend selection down
 	      set_item_focus(next_visible_item(_item_focus, ekey));	// next item up|dn
 	      if ( _item_focus ) {					// item in focus?
 	        // Autoscroll
@@ -227,9 +260,10 @@ int Fl_Tree::handle(int e) {
 		if ( itembot > y()+h() ) { show_item_bottom(_item_focus); }
 		// Extend selection
 		if ( _prefs.selectmode() == FL_TREE_SELECT_MULTI &&	// multiselect on?
-		     (Fl::event_state() & FL_SHIFT) &&			// shift key?
+		     is_shift &&					// shift key?
 		     ! _item_focus->is_selected() ) {			// not already selected?
 		  select(_item_focus, when());				// extend selection..
+		  _lastselect = _item_focus;
 		}
 		return(1);
 	      }
@@ -237,10 +271,18 @@ int Fl_Tree::handle(int e) {
 	    }
 	    case 'a':
 	    case 'A': {
-	      if ( Fl::event_state() & FL_CTRL ) {
-	        select_all();
-		take_focus();
-		return(1);
+	      if ( is_command ) {					// ^A (win/linux), Meta-A (mac)
+		switch ( _prefs.selectmode() ) {
+		  case FL_TREE_SELECT_NONE:
+		  case FL_TREE_SELECT_SINGLE:
+		    break;
+		  case FL_TREE_SELECT_MULTI:
+		    // Do a 'select all'
+	            select_all();
+		    _lastselect = first();
+		    take_focus();
+		    return(1);
+		}
 	      }
 	      break;
 	    }
@@ -258,22 +300,16 @@ int Fl_Tree::handle(int e) {
 
   // Handle events the child FLTK widgets didn't need
 
-#if FLTK_ABI_VERSION >= 10302
-  // NEW: data inside Fl_Tree
-#else
-  // OLD:
-  static Fl_Tree_Item *_lastselect = 0;
-#endif
-  // fprintf(stderr, "ERCODEBUG: Fl_Tree::handle(): Event was %s (%d)\n", fl_eventnames[e], e); // DEBUGGING
+  // fprintf(stderr, "Fl_Tree::handle(): Event was %s (%d)\n", fl_eventnames[e], e); // DEBUGGING
   if ( ! _root ) return(ret);
   switch ( e ) {
     case FL_PUSH: {		// clicked on tree
       if (Fl::visible_focus() && handle(FL_FOCUS)) {
         Fl::focus(this);
       }
-      _lastselect = 0;
-      Fl_Tree_Item *o = _root->find_clicked(_prefs);
-      if ( !o ) {		// clicked, but not on an item?
+      // Not extending a selection? zero lastselect
+      Fl_Tree_Item *item = _root->find_clicked(_prefs);
+      if ( !item ) {		// clicked, but not on an item?
 	switch ( _prefs.selectmode() ) {
 	  case FL_TREE_SELECT_NONE:
 	    break;
@@ -284,31 +320,35 @@ int Fl_Tree::handle(int e) {
 	}
 	break;
       }
-      set_item_focus(o);				// becomes new focus widget
+      set_item_focus(item);				// becomes new focus widget
       redraw();
       ret |= 1;						// handled
       if ( Fl::event_button() == FL_LEFT_MOUSE ) {
-	if ( o->event_on_collapse_icon(_prefs) ) {	// collapse icon clicked?
-	  open_toggle(o);
-	} else if ( o->event_on_label(_prefs) && 	// label clicked?
-		 (!o->widget() || !Fl::event_inside(o->widget())) &&		// not inside widget
+	if ( item->event_on_collapse_icon(_prefs) ) {	// collapse icon clicked?
+	  open_toggle(item);
+	} else if ( item->event_on_label(_prefs) && 	// label clicked?
+		 (!item->widget() || !Fl::event_inside(item->widget())) &&	// not inside widget
 		 (!_vscroll->visible() || !Fl::event_inside(_vscroll)) ) {	// not on scroller
-	  
 	  switch ( _prefs.selectmode() ) {
 	    case FL_TREE_SELECT_NONE:
 	      break;
 	    case FL_TREE_SELECT_SINGLE:
-	      select_only(o, when());
+	      select_only(item, when());
+	      _lastselect = item;
 	      break;
 	    case FL_TREE_SELECT_MULTI: {
-	      if ( Fl::event_state() & FL_SHIFT ) {		// SHIFT+PUSH?
-	        select(o);					// add to selection
-	      } else if ( Fl::event_state() & FL_CTRL ) {	// CTRL+PUSH?
-		select_toggle(o, when());			// toggle selection state
-		_lastselect = o;				// save toggled item (prevent oscillation)
+	      if ( is_shift ) {			// SHIFT+PUSH?
+	        if ( _lastselect ) {
+	          extend_selection(_lastselect, item);
+	        } else {
+	          select(item);			// add to selection
+		}
+	      } else if ( is_ctrl ) {		// CTRL+PUSH?
+		select_toggle(item, when());	// toggle selection state
 	      } else {
-		select_only(o, when());
+		select_only(item, when());
 	      }
+	      _lastselect = item;
 	      break;
 	    }
 	  }
@@ -329,29 +369,32 @@ int Fl_Tree::handle(int e) {
         vposition(p);
       }
       if ( Fl::event_button() != FL_LEFT_MOUSE ) break;
-      Fl_Tree_Item *o = _root->find_clicked(_prefs);
-      if ( ! o ) break;
-      set_item_focus(o);			// becomes new focus widget
+      Fl_Tree_Item *item = _root->find_clicked(_prefs);
+      if ( ! item ) break;
+      set_item_focus(item);			// becomes new focus widget
       redraw();
       ret |= 1;
       // Item's label clicked?
-      if ( o->event_on_label(_prefs) && 
-	   (!o->widget() || !Fl::event_inside(o->widget())) &&
+      if ( item->event_on_label(_prefs) && 
+	   (!item->widget() || !Fl::event_inside(item->widget())) &&
 	   (!_vscroll->visible() || !Fl::event_inside(_vscroll)) ) {
 	// Handle selection behavior
 	switch ( _prefs.selectmode() ) {
-	  case FL_TREE_SELECT_NONE: break;	// no selection changes
+	  case FL_TREE_SELECT_NONE:
+	    break;				// no selection changes
 	  case FL_TREE_SELECT_SINGLE:
-	    select_only(o, when());
+	    select_only(item, when());
+	    _lastselect = item;
 	    break;
 	  case FL_TREE_SELECT_MULTI:
-	    if ( Fl::event_state() & FL_CTRL &&	// CTRL-DRAG: toggle?
-	         _lastselect != o ) {		// not already toggled from last microdrag?
-	      select_toggle(o, when());		// toggle selection
-	      _lastselect = o;			// save we toggled it (prevents oscillation)
+	    if ( is_ctrl ) {			// CTRL-DRAG: toggle?
+	      if ( _lastselect != item ) {	// not already toggled from last microdrag?
+	        select_toggle(item, when());	// toggle selection
+	      }
 	    } else {
-	      select(o);			// select this
+	      select(item);			// select this
 	    }
+	    _lastselect = item;
 	    break;
 	}
       }
