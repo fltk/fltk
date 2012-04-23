@@ -2053,7 +2053,7 @@ void Fl_X::make(Fl_Window* w)
     x->gc = 0;
 	  
     NSRect crect;
-    if (w->flags() & Fl_Widget::FULLSCREEN) {
+    if (w->fullscreen_active()) {
       int sx, sy, sw, sh;
       Fl::screen_xywh(sx, sy, sw, sh, w->x(), w->y(), w->w(), w->h());
       w->resize(sx, sy, sw, sh);
