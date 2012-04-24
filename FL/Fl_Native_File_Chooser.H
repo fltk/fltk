@@ -164,7 +164,7 @@ private:
   void set_single_pathname(const char *s);
   void add_pathname(const char *s);
   
-  void FreePIDL(ITEMIDLIST *pidl);
+  void FreePIDL(LPITEMIDLIST pidl);
   void ClearOFN();
   void ClearBINF();
   void Win2Unix(char *s);

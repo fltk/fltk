@@ -224,7 +224,7 @@ void Fl_Native_File_Chooser::add_pathname(const char *s) {
 }
 
 // FREE A PIDL (Pointer to IDentity List)
-void Fl_Native_File_Chooser::FreePIDL(ITEMIDLIST *pidl) {
+void Fl_Native_File_Chooser::FreePIDL(LPITEMIDLIST pidl) {
   IMalloc *imalloc = NULL;
   if ( SUCCEEDED(SHGetMalloc(&imalloc)) ) {
     imalloc->Free(pidl);
@@ -516,7 +516,7 @@ int Fl_Native_File_Chooser::showdir() {
   else _binf.lParam = 0;
   _binf.lpfn = Dir_CB;
   // OPEN BROWSER
-  ITEMIDLIST *pidl = SHBrowseForFolder(&_binf);
+  LPITEMIDLIST pidl = SHBrowseForFolder(&_binf);
   // CANCEL?
   if ( pidl == NULL ) return(1);
 
