@@ -665,7 +665,7 @@ XUtf8_measure_extents(
 
     if (last_fnum != fnum || no_spc) {
       XSetFont(display, gc, fonts[last_fnum]->fid);
-      res = XTextExtents16(fonts[last_fnum], buf, i, &dir_ret, &fnt_asc, &fnt_dsc, &sizes);
+      /* res = */ XTextExtents16(fonts[last_fnum], buf, i, &dir_ret, &fnt_asc, &fnt_dsc, &sizes);
       /* recover the dimensions - should verify that res == 0 first! */
       wd += sizes.width; /* accumulate the width */
       hs = sizes.ascent + sizes.descent; /* total height */
@@ -688,7 +688,7 @@ XUtf8_measure_extents(
   }
 
   XSetFont(display, gc, fonts[fnum]->fid);
-  res = XTextExtents16(fonts[fnum], buf, i, &dir_ret, &fnt_asc, &fnt_dsc, &sizes);
+  /* res = */ XTextExtents16(fonts[fnum], buf, i, &dir_ret, &fnt_asc, &fnt_dsc, &sizes);
   /* recover the dimensions - should verify that res == 0 first! */
   wd += sizes.width; /* accumulate the width */
   hs = sizes.ascent + sizes.descent; /* total height */

@@ -1289,7 +1289,7 @@ int fl_handle(const XEvent& thisevent)
     fl_key_vector[keycode/8] |= (1 << (keycode%8));
     static char *buffer = NULL;
     static int buffer_len = 0;
-    int len;
+    int len=0;
     KeySym keysym;
     if (buffer_len == 0) {
       buffer_len = 4096;
@@ -1297,7 +1297,7 @@ int fl_handle(const XEvent& thisevent)
     }
     if (xevent.type == KeyPress) {
       event = FL_KEYDOWN;
-      int len = 0;
+      len = 0;
 
       if (fl_xim_ic) {
 	Status status;
@@ -1489,9 +1489,9 @@ int fl_handle(const XEvent& thisevent)
     if (Fl::e_keysym == 0xfe20) Fl::e_keysym = FL_Tab;
 
     set_event_xy();
-    Fl::e_is_click = 0;
-    break;}
-
+    Fl::e_is_click = 0; }
+    break;
+  
   case ButtonPress:
     Fl::e_keysym = FL_Button + xevent.xbutton.button;
     set_event_xy();
