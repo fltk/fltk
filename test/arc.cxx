@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
     s->step(1);
     s->value(args[n]);
     s->align(FL_ALIGN_LEFT);
-#if __LP64__
+#ifdef __LP64__
     s->callback(slider_cb, (void*)(long long) n);
 #else
     s->callback(slider_cb, (void*) n);
