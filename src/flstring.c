@@ -97,8 +97,7 @@ fl_strlcpy(char       *dst,	/* O - Destination string */
 * returns 0 if string successfully compare, -1 if s<t, +1 if s>t
 */
 int fl_ascii_strcasecmp(const char *s, const char *t) {
-  if (!s || !t) return (s!=t);
-  size_t sl=strlen(s), tl=strlen(t);
+  if (!s || !t) return (s==t ? 0 : (!s ? -1 : +1));
   
   for(;*s && *t; s++,t++) {
     if (*s == *t) continue;
@@ -108,7 +107,7 @@ int fl_ascii_strcasecmp(const char *s, const char *t) {
       if ( (*s-0x20)!=*t || !C_RANGE(*s,'a','z') ) return +1;
     }
   }
-  return (sl==tl) ? 0 : (sl< tl ? -1 : +1);
+  return (*s==*t) ? 0 : (*s<*t ? -1 : +1);
 }
 
 /*
