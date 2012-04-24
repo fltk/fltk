@@ -240,7 +240,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {710 21 1015 590} type Double visible
+    xywh {425 44 1015 590} type Double visible
   } {
     Fl_Group tree {
       label Tree
@@ -521,7 +521,7 @@ switch ( selectmode_chooser->value() ) {
     case 1:  tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
     case 2:  tree->selectmode(FL_TREE_SELECT_MULTI);  break; 	// Multi
     default: tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
-}} selected
+}}
         tooltip {Sets how Fl_Tree handles mouse selection of tree items} xywh {485 249 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {selectmode_chooser->value(2);}
         code1 {cb_selectmode_chooser(selectmode_chooser, (void*)0);}
@@ -714,10 +714,10 @@ To use:
         callback {for ( Fl_Tree_Item *item = tree->first();
       item;
       item = tree->next(item) ) {
-    if ( !item->is_root() && item->has_children() )
+    if ( item->has_children() )
         item->open();
 }
-tree->redraw();}
+tree->redraw();} selected
         tooltip {Opens all nodes that have children} xywh {435 466 95 16} labelsize 9
       }
       Fl_Button loaddb_button {
