@@ -99,9 +99,8 @@ fl_strlcpy(char       *dst,	/* O - Destination string */
 int fl_ascii_strcasecmp(const char *s, const char *t) {
 	if (!s || !t) return (s!=t);
 	size_t sl=strlen(s), tl=strlen(t);
-        if  (sl!=tl) return sl< tl ? -1 : +1;
 	
-        for(;*s; s++,t++) {
+        for(;*s && *t; s++,t++) {
 	  if (*s == *t) continue;
 	  if (*s < *t) {
 	    if ( (*s+0x20)!=*t || !C_RANGE(*s,'A','Z') ) return -1;
@@ -109,6 +108,7 @@ int fl_ascii_strcasecmp(const char *s, const char *t) {
 	    if ( (*s-0x20)!=*t || !C_RANGE(*s,'a','z') ) return +1;
 	  }
 	}
+        if  (sl!=tl) return sl< tl ? -1 : +1;
 
 	return 0;
 }
