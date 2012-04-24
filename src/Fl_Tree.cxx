@@ -404,8 +404,37 @@ int Fl_Tree::handle(int e) {
   return(ret);
 }
 
+static void redraw_soon(void *data) {
+  ((Fl_Tree*)data)->redraw();
+  Fl::remove_timeout(redraw_soon, data);
+}
+
 /// Standard FLTK draw() method, handles drawing the tree widget.
 void Fl_Tree::draw() {
+  int ytoofar = draw_tree();
+  // See if we're scrolled below bottom of tree
+  //   This can happen if someone just closed a large item.
+  //   If so, change scroller as needed.
+  //
+  if ( _vscroll->visible() && ytoofar > 0 ) {
+    int scrollval = _vscroll->value();
+    int ch = h() - Fl::box_dh(box());
+    int range2 = scrollval - ytoofar;
+    int size2 = ch + range2;
+    if ( range2 < 0 ) {
+      _vscroll->value(0);
+      _vscroll->hide();
+    } else {
+      _vscroll->slider_size(float(ch)/float(size2));
+      _vscroll->range(0.0,range2);
+      _vscroll->value(range2);
+    }
+    Fl::add_timeout(.10, redraw_soon, (void*)this);	// use timer to trigger redraw; we can't
+  }
+}
+
+int Fl_Tree::draw_tree() {
+  int ret = 0;
   fix_scrollbar_order();
   // Let group draw box+label but *NOT* children.
   // We handle drawing children ourselves by calling each item's draw()
@@ -420,7 +449,7 @@ void Fl_Tree::draw() {
       Fl_Group::draw_box();
       Fl_Group::draw_label();
     }
-    if ( ! _root ) return;
+    if ( ! _root ) return(0);
     // These values are changed during drawing
     // By end, 'Y' will be the lowest point on the tree
     int X = cx + _prefs.marginleft();
@@ -452,7 +481,7 @@ void Fl_Tree::draw() {
       int SY = Y;
 #endif
       int ydiff = (SY+_prefs.margintop())-Ysave;		// ydiff=size of tree
-      int ytoofar = (cy+ch) - SY;				// ytoofar -- scrolled beyond bottom (e.g. stow)
+      int ytoofar = (cy+ch) - SY;				// ytoofar -- if >0, scrolled beyond bottom
       if ( ytoofar > 0 ) ydiff += ytoofar;
       if ( Ysave<cy || ydiff>ch || int(_vscroll->value())>1 ) {
 	_vscroll->visible();
@@ -465,13 +494,16 @@ void Fl_Tree::draw() {
 	_vscroll->resize(sx,sy,sw,sh);
 	_vscroll->slider_size(float(ch)/float(ydiff));
 	_vscroll->range(0.0,ydiff-ch);
+	ret = ytoofar;
       } else {
 	_vscroll->Fl_Slider::value(0);
 	_vscroll->hide();
+	ret = 0;
       }
     }
   }
   draw_child(*_vscroll);	// draw scroll last
+  return(ret);
 }
 
 /// Print the tree as 'ascii art' to stdout.

@@ -289,6 +289,7 @@ protected:
   void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason);
   Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);
   void extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to);
+  int draw_tree();
 
 public:
   Fl_Tree(int X, int Y, int W, int H, const char *L=0);
