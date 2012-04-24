@@ -107,7 +107,7 @@ int fl_ascii_strcasecmp(const char *s, const char *t) {
       if ( (*s-0x20)!=*t || !C_RANGE(*s,'a','z') ) return +1;
     }
   }
-  return (*s==*t) ? 0 : (*s<*t ? -1 : +1);
+  return (*s==*t) ? 0 : (*t ? -1 : +1);
 }
 
 /*
