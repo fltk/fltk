@@ -587,7 +587,8 @@ XUtf8_measure_extents(
   int ht = 0; /* used to find max height in text */
   int hs;     /* "height sum" of current text segment */
   int yt = 0x7FFFFFFF; /* used to find bounding rectangle delta-y */
-  int res; /* result from calling XTextExtents16() - we should test this is OK! */
+  // int res; /* result from calling XTextExtents16() - we should test this is OK! */
+  // FC: the man does not specify error codes for it, but X will generate X errors like BadGC or BadFont.
 
   XCharStruct sizes;
   int dir_ret = 0;
@@ -623,7 +624,7 @@ XUtf8_measure_extents(
     if (i > 120) {
       /*** draw the buffer **/
       XSetFont(display, gc, fonts[fnum]->fid);
-      res = XTextExtents16(fonts[fnum], buf, i, &dir_ret, &fnt_asc, &fnt_dsc, &sizes);
+      /* res = */ XTextExtents16(fonts[fnum], buf, i, &dir_ret, &fnt_asc, &fnt_dsc, &sizes);
       /* recover the dimensions - should verify that res == 0 first! */
       wd += sizes.width; /* accumulate the width */
       hs = sizes.ascent + sizes.descent; /* total height */
