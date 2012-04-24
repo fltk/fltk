@@ -65,7 +65,7 @@ static int name_sort(const void *aa, const void *bb) {
   // Also - the fontconfig listing returns some faces that are effectively duplicates
   // as far as fltk is concerned, e.g. where there are ko or ja variants that we
   // can't distinguish (since we are not yet fully UTF-*) - should we strip them here?
-  return strcasecmp(*(char**)aa, *(char**)bb);
+  return fl_ascii_strcasecmp(*(char**)aa, *(char**)bb);
 } // end of name_sort
 } // end of extern C section
 
