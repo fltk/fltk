@@ -97,20 +97,18 @@ fl_strlcpy(char       *dst,	/* O - Destination string */
 #define C_RANGE(c,l,r) ( (c) >= (l) && (c) <= (r) )
 
 int fl_ascii_strcasecmp(const char *s, const char *t) {
-	if (!s || !t) return (s!=t);
-	size_t sl=strlen(s), tl=strlen(t);
-	
-        for(;*s && *t; s++,t++) {
-	  if (*s == *t) continue;
-	  if (*s < *t) {
-	    if ( (*s+0x20)!=*t || !C_RANGE(*s,'A','Z') ) return -1;
-	  } else { // *s > *t
-	    if ( (*s-0x20)!=*t || !C_RANGE(*s,'a','z') ) return +1;
-	  }
-	}
-        if  (sl!=tl) return sl< tl ? -1 : +1;
-
-	return 0;
+  if (!s || !t) return (s!=t);
+  size_t sl=strlen(s), tl=strlen(t);
+  
+  for(;*s && *t; s++,t++) {
+    if (*s == *t) continue;
+    if (*s < *t) {
+      if ( (*s+0x20)!=*t || !C_RANGE(*s,'A','Z') ) return -1;
+    } else { // *s > *t
+      if ( (*s-0x20)!=*t || !C_RANGE(*s,'a','z') ) return +1;
+    }
+  }
+  return (sl==tl) ? 0 : (sl< tl ? -1 : +1);
 }
 
 /*
