@@ -90,12 +90,12 @@ fl_strlcpy(char       *dst,	/* O - Destination string */
   return (srclen);
 }
 
-/**
-* locale independent ascii oriented case cmp
-* returns 0 if string successfully compare, non zero otherwise
-*/
 #define C_RANGE(c,l,r) ( (c) >= (l) && (c) <= (r) )
 
+/**
+* locale independent ascii oriented case cmp
+* returns 0 if string successfully compare, -1 if s<t, +1 if s>t
+*/
 int fl_ascii_strcasecmp(const char *s, const char *t) {
   if (!s || !t) return (s!=t);
   size_t sl=strlen(s), tl=strlen(t);
