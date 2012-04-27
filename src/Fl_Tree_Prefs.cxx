@@ -154,7 +154,7 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _selectmode             = FL_TREE_SELECT_SINGLE;
 #if FLTK_ABI_VERSION >= 10302
   _itemreselectmode       = FL_TREE_SELECTABLE_ONCE;
-  _itemdrawmode           = FL_TREE_ITEM_DRAW_WIDGET_ONLY;
+  _itemdrawmode           = FL_TREE_ITEM_DRAW_DEFAULT;
 #endif
   // Let fltk's current 'scheme' affect defaults
   if ( Fl::scheme() ) {

@@ -564,9 +564,16 @@ int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
   if ( ! _visible ) return(0);
   int H = 0;
   if ( _label ) {
-    fl_font(_labelfont, _labelsize);	// fldescent() needs this :/
+    fl_font(_labelfont, _labelsize);	// fl_descent() needs this :/
     H = _labelsize + fl_descent() + 1;	// at least one pixel space below descender
   }
+#if FLTK_ABI_VERSION >= 10302
+  if ( widget() && 
+       (prefs.item_draw_mode() & FL_TREE_ITEM_HEIGHT_FROM_WIDGET) &&
+       H < widget()->h()) {
+    H = widget()->h();
+  }
+#endif
   if ( has_children() && prefs.openicon() && H<prefs.openicon()->h() )
     H = prefs.openicon()->h();
   if ( usericon() && H<usericon()->h() )
@@ -632,15 +639,18 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     int wx = label_x;
     int wy = bg_y;
     int ww = widget()->w();		// use widget's width
-    int wh = H;				// lock widget's height to item height
 #if FLTK_ABI_VERSION >= 10302
-    if ( _label && prefs.item_draw_mode() == FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET ) {
+    int wh = (prefs.item_draw_mode() & FL_TREE_ITEM_HEIGHT_FROM_WIDGET)
+             ? widget()->h() : H;
+    if ( _label && 
+         (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) {
 #else
+    int wh = H;				// lock widget's height to item height
     if ( _label && !widget() ) {	// back compat: don't draw label if widget() present
 #endif
       fl_font(_labelfont, _labelsize);	// fldescent() needs this
-      int dx,dy,lw,lh;
-      fl_text_extents(_label,dx,dy,lw,lh);
+      int lw=0, lh=0;
+      fl_measure(_label,lw,lh);		// get box around text (including white space)
 #if FLTK_ABI_VERSION >= 10302
       // NEW
       wx += (lw + prefs.widgetmarginleft());
@@ -717,14 +727,14 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 	// Draw label
 #if FLTK_ABI_VERSION >= 10302
         if ( _label && 
-	     ( !widget() || prefs.item_draw_mode() ==
-	       FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) {
+	     ( !widget() || 
+	       (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) ) {
 #else
         if ( _label && !widget() ) {	// back compat: don't draw label if widget() present
 #endif
-	  int label_y = Y+(H/2)+(_labelsize/2)-fl_descent()/2;
 	  fl_color(fg);
 	  fl_font(_labelfont, _labelsize);
+	  int label_y = Y+(H/2)+(_labelsize/2)-fl_descent()/2;
 	  fl_draw(_label, label_x, label_y);
 	}
       }			// end non-child damage

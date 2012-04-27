@@ -52,9 +52,24 @@ Function {reason_as_name(Fl_Tree_Reason reason)} {
     }} {}
 } 
 
-Function {Button_CB(Fl_Widget*w, void*data)} {return_type void
+Function {Button_CB(Fl_Widget*w, void*data)} {open return_type void
 } {
-  code {fprintf(stderr, "'%s' button pushed\\n", w->label());} {}
+  code {// Each push changes height so we can test 'Item h() from widget'
+//    Cycle through larger sizes until 50, then wrap to normal size.
+//
+//    In the case of 'ccc button', it is the child widget, so change
+//    its size.
+//
+//    In the case of the 'D1' and 'D2' buttons, the parent's Fl_Group
+//    is the child, so change the size of that instead.
+//
+Fl_Widget *cw = strcmp(w->label(), "ccc button")==0 ? w : w->parent();
+int height = cw->h();
+height += 10;
+if ( height > 50 ) height = 20;
+cw->resize(cw->x(), cw->y(), cw->w(), height);
+tree->redraw();	// adjusted height
+fprintf(stderr, "'%s' button pushed (height=%d)\\n", w->label(), height);} {}
 } 
 
 Function {AssignUserIcons()} {
@@ -135,6 +150,9 @@ tree->add("Bbb/child-04");
             but = new Fl_Button(1,1,140,1,"ccc button");     // we control w() only
             but->labelsize(10);
 	    but->callback(Button_CB);
+	    but->tooltip("Button inside tree.\\n"
+	                 "If 'Item h() from widget' enabled, "
+	                 "pressing button enlarges it.");
         }
         i->widget(but);
         tree->end();
@@ -143,6 +161,10 @@ tree->add("Bbb/child-04");
 {
     // Assign an FLTK group to one of the items with widgets
     Fl_Tree_Item *i;
+    const char *tipmsg = "A group of two buttons inside the tree.\\n"
+	                 "If 'Item h() from widget' enabled, "
+	                 "pressing either button enlarges the group "
+	                 "and both buttons together.";
     if ( ( i = tree->find_item("Bbb/child-04") ) != NULL ) {
         static Fl_Group *grp = 0;
         if ( !grp ) {		// only do this once at program startup
@@ -153,9 +175,12 @@ tree->add("Bbb/child-04");
                 Fl_Button *abut = new Fl_Button(grp->x()+0 ,grp->y()+2,65,15,"D1");
                 abut->labelsize(10);
 		abut->callback(Button_CB);
+		abut->tooltip(tipmsg);
                 Fl_Button *bbut = new Fl_Button(grp->x()+75,grp->y()+2,65,15,"D2");
                 bbut->labelsize(10);
 		bbut->callback(Button_CB);
+	        bbut->tooltip(tipmsg);
+
               grp->end();
               grp->resizable(grp);
             tree->end();
@@ -240,7 +265,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {425 44 1015 590} type Double visible
+    xywh {678 506 1015 590} type Double visible
   } {
     Fl_Group tree {
       label Tree
@@ -570,36 +595,6 @@ These happen when mouse drags or multi-clicks an item} xywh {485 273 140 21} dow
           xywh {60 60 36 21} labelsize 12
         }
       }
-      Fl_Choice itemdrawmode_chooser {
-        label {Item Draw Mode}
-        callback {\#if FLTK_ABI_VERSION >= 10302
-// NEW
-switch ( itemdrawmode_chooser->value() ) {
-    case 0:  tree->item_draw_mode(FL_TREE_ITEM_DRAW_WIDGET_ONLY);      break;	// None
-    case 1:  tree->item_draw_mode(FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET); break;	// Single
-}
-tree->redraw();
-\#else
-// OLD
-itemdrawmode_chooser->deactivate();  // deactivate if this ABI feature is disabled
-itemdrawmode_chooser->tooltip("DISABLED.\\n"
-                              "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
-                              "to get this feature");
-window->redraw();  // deactivated
-\#endif}
-        tooltip {Sets how Fl_Tree draws item label and widget()} xywh {485 297 140 21} down_box BORDER_BOX labelsize 12 textsize 11
-        code0 {itemdrawmode_chooser->value(0);}
-        code1 {itemdrawmode_chooser->do_callback();}
-      } {
-        MenuItem {} {
-          label {Widget Only}
-          xywh {50 50 36 21} labelsize 12
-        }
-        MenuItem {} {
-          label {Label And Widget}
-          xywh {60 60 36 21} labelsize 12
-        }
-      }
       Fl_Choice whenmode_chooser {
         label When
         callback {// Set when mode
@@ -609,7 +604,7 @@ switch ( whenmode_chooser->value() ) {
   case 2:  tree->when(FL_WHEN_NEVER);     break;
   default: tree->when(FL_WHEN_RELEASE);   break;
 }}
-        tooltip {Sets when() the tree's callback is invoked} xywh {485 321 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        tooltip {Sets when() the tree's callback is invoked} xywh {485 299 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {whenmode_chooser->value(1);}
         code1 {cb_whenmode_chooser(whenmode_chooser, (void*)0);}
       } {
@@ -630,7 +625,7 @@ switch ( whenmode_chooser->value() ) {
         label {Enable user icons?}
         user_data tree
         callback {AssignUserIcons();}
-        tooltip {Tests Fl_Tree_Item::usericon()} xywh {485 353 20 16} down_box DOWN_BOX labelsize 12 align 7
+        tooltip {Tests Fl_Tree_Item::usericon()} xywh {450 353 20 16} down_box DOWN_BOX labelsize 11 align 7
         code0 {usericon_radio->value(1);}
       }
       Fl_Check_Button showroot_radio {
@@ -638,7 +633,7 @@ switch ( whenmode_chooser->value() ) {
         user_data tree
         callback {int onoff = showroot_radio->value();
 tree->showroot(onoff);}
-        tooltip {Tests tree->showroot();} xywh {485 369 20 16} down_box DOWN_BOX labelsize 12 align 7
+        tooltip {Tests tree->showroot();} xywh {450 370 20 16} down_box DOWN_BOX labelsize 11 align 7
         code0 {int onoff = tree->showroot(); showroot_radio->value(onoff);}
       }
       Fl_Check_Button visiblefocus_checkbox {
@@ -646,7 +641,7 @@ tree->showroot(onoff);}
         user_data tree
         callback {int onoff = visiblefocus_checkbox->value();
 tree->visible_focus(onoff);}
-        tooltip {Toggles the tree's visible_focus() box} xywh {485 386 20 16} down_box DOWN_BOX labelsize 12 align 7
+        tooltip {Toggles the tree's visible_focus() box} xywh {450 387 20 16} down_box DOWN_BOX labelsize 11 align 7
         code0 {int onoff = tree->visible_focus(); visiblefocus_checkbox->value(onoff);}
       }
       Fl_Button selection_color_button {
@@ -655,8 +650,56 @@ tree->visible_focus(onoff);}
 selection_color_button->color(val);	// update modified color to button
 tree->selection_color(val);
 tree->redraw();}
-        tooltip {Changes the tree widget's selection color. Tests Fl_Tree::selection_color()} xywh {485 409 16 16} box DOWN_BOX labelsize 12 align 7
+        tooltip {Changes the tree widget's selection color. Tests Fl_Tree::selection_color()} xywh {450 409 16 16} box DOWN_BOX labelsize 11 align 7
         code0 {o->color(tree->selection_color());}
+      }
+      Fl_Check_Button labelandwidget_radio {
+        label {Show label + widget}
+        callback {\#if FLTK_ABI_VERSION >= 10302
+// NEW
+int flags = tree->item_draw_mode();
+if ( labelandwidget_radio->value() )
+    { flags |= FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET; }
+else
+    { flags &= ~FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET; }
+tree->item_draw_mode(flags);
+tree->redraw();
+\#else
+// OLD
+labelandwidget_radio->deactivate();  // deactivate if this ABI feature is disabled
+labelandwidget_radio->tooltip("DISABLED.\\n"
+                              "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
+                              "to get this feature");
+window->redraw();  // deactivated
+\#endif}
+        tooltip {Enables both label and widget() for display.
+By default, the widget() is shown in place of the item's label} xywh {610 354 20 16} down_box DOWN_BOX labelsize 11 align 7
+        code0 {labelandwidget_radio->value(0);}
+        code1 {labelandwidget_radio->do_callback();}
+      }
+      Fl_Check_Button itemheightfromwidget_radio {
+        label {Item h() from widget}
+        callback {\#if FLTK_ABI_VERSION >= 10302
+// NEW
+int flags = tree->item_draw_mode();
+if ( itemheightfromwidget_radio->value() )
+    { flags |= FL_TREE_ITEM_HEIGHT_FROM_WIDGET; }
+else
+    { flags &= ~FL_TREE_ITEM_HEIGHT_FROM_WIDGET; }
+tree->item_draw_mode(flags);
+tree->redraw();
+\#else
+// OLD
+itemheightfromwidget_radio->deactivate();  // deactivate if this ABI feature is disabled
+itemheightfromwidget_radio->tooltip("DISABLED.\\n"
+                              "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
+                              "to get this feature");
+window->redraw();  // deactivated
+\#endif} selected
+        tooltip {If enabled, item's height will track the widget()'s height.
+When enabled, click 'ccc' or 'D1/D2' buttons to test} xywh {610 369 20 16} down_box DOWN_BOX labelsize 11 align 7
+        code0 {itemheightfromwidget_radio->value(0);}
+        code1 {itemheightfromwidget_radio->do_callback();}
       }
       Fl_Box {} {
         label {Test Operations}
@@ -717,7 +760,7 @@ To use:
     if ( item->has_children() )
         item->open();
 }
-tree->redraw();} selected
+tree->redraw();}
         tooltip {Opens all nodes that have children} xywh {435 466 95 16} labelsize 9
       }
       Fl_Button loaddb_button {

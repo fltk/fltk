@@ -554,7 +554,7 @@ Fl_Tree_Item* Fl_Tree::add(const char *path) {
   return(item);
 }
 
-/// Add a new child to a tree-item.
+/// Add a new child to a specific item in the tree.
 ///
 /// \param[in] item The existing item to add new child to. Must not be NULL.
 /// \param[in] name The label for the new item
@@ -1723,6 +1723,9 @@ Fl_Tree_Item_Draw_Mode Fl_Tree::item_draw_mode() const {
 ///
 void Fl_Tree::item_draw_mode(Fl_Tree_Item_Draw_Mode val) {
   _prefs.item_draw_mode(val);
+}
+void Fl_Tree::item_draw_mode(int val) {
+  _prefs.item_draw_mode(Fl_Tree_Item_Draw_Mode(val));
 }
 #endif
 

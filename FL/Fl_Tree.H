@@ -52,9 +52,9 @@
 ///                  |--- Fl_Tree_Sort (enum)           // Sort behavior
 /// \endcode
 ///
-///     Similar to Fl_Browser, Fl_Tree is a browser of Fl_Tree_Item's, which is arranged
-///     in a parented hierarchy, or 'tree'. Subtrees can be expanded or closed. Items can be
-///     added, deleted, inserted, sorted and re-ordered.
+///     Similar to Fl_Browser, Fl_Tree is a browser of Fl_Tree_Item's arranged
+///     in a parented hierarchy, or 'tree'. Subtrees can be expanded or closed.
+///     Items can be added, deleted, inserted, sorted and re-ordered.
 ///
 ///     The tree items may also contain other FLTK widgets, like buttons, input fields,
 ///     or even "custom" widgets.
@@ -100,13 +100,23 @@
 ///     FLTK widgets (including custom widgets) can be assigned to tree items via
 ///     Fl_Tree_Item::widget().
 ///
-///     Icons for individual items can be changed with
-///     Fl_Tree_Item::openicon(), 
-///     Fl_Tree_Item::closeicon(),
-///     Fl_Tree_Item::usericon().
+///     When a widget() is defined, the default behavior is for the widget()
+///     to be shown in place of the item's label (if it has one).
+///     Only the widget()'s width will be used; the widget()'s x() and y() position
+///     will be managed by the tree, and the h() will track the item's height.
+///     This default behavior can be altered: 
+///     Setting Fl_Tree::item_draw_mode()'s FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET flag
+///     causes the label + widget to be displayed together in that order, and
+///     adding the FL_TREE_ITEM_HEIGHT_FROM_WIDGET flag causes widget's height
+///     to define the widget()'s height.
+///
+///     The tree's open/close icons can be redefined with
+///     Fl_Tree::openicon(), Fl_Tree::closeicon(). User icons
+///     can either be changed globally with Fl_Tree::usericon(),
+///     or on a per-item basis with Fl_Tree_Item::usericon().
 ///
 ///     Various default preferences can be globally manipulated via Fl_Tree_Prefs, 
-///     including colors, margins, icons, connection lines. 
+///     including colors, margins, icons, connection lines, etc. 
 ///
 ///     The tree's callback() will be invoked when items change state or are open/closed.
 ///     when() controls when mouse/keyboard events invoke the callback.
@@ -125,7 +135,7 @@
 ///   }
 /// \endcode
 ///
-///     To get the item's full menu pathname, you can use Fl_Tree_Item::item_pathname(), eg:
+///     To get the item's full menu pathname, you can use Fl_Tree::item_pathname(), eg:
 ///
 /// \code
 ///   char pathname[256] = "???";
@@ -415,6 +425,7 @@ public:
   void item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode);
   Fl_Tree_Item_Draw_Mode item_draw_mode() const;
   void item_draw_mode(Fl_Tree_Item_Draw_Mode mode);
+  void item_draw_mode(int mode);
 #endif
 
   int displayed(Fl_Tree_Item *item);

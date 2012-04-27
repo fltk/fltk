@@ -73,19 +73,23 @@ enum Fl_Tree_Select {
 
 #if FLTK_ABI_VERSION >= 10302
 /// \enum Fl_Tree_Item_Reselect_Mode
-/// Defines the ways an item can be (re) selected.
+/// Defines the ways an item can be (re) selected
+/// via item_reselect_mode().
 ///
 enum Fl_Tree_Item_Reselect_Mode {
-  FL_TREE_SELECTABLE_ONCE=0,	///< item can only be selected once (default)
-  FL_TREE_SELECTABLE_ALWAYS, 	///< enables FL_TREE_REASON_RESELECTED events for callbacks
+  FL_TREE_SELECTABLE_ONCE=0,	///< Item can only be selected once (default)
+  FL_TREE_SELECTABLE_ALWAYS, 	///< Enables FL_TREE_REASON_RESELECTED events for callbacks
 };
 
 /// \enum Fl_Tree_Item_Draw_Mode
-/// Controls how item's labels and widget()s are drawn in the tree.
+/// Bit flags that control how item's labels and widget()s are drawn in the tree
+/// via item_draw_mode().
 ///
 enum Fl_Tree_Item_Draw_Mode {
-  FL_TREE_ITEM_DRAW_WIDGET_ONLY=0,	///< if widget() defined, draw it in place of the label (default)
-  FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET=1	///< if widget() defined, draw it to right of label
+  FL_TREE_ITEM_DRAW_DEFAULT=0,		///< If widget() defined, draw in place of label,
+                                        ///< and widget() tracks item height (default)
+  FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET=1,	///< If widget() defined, include label to the left of the widget
+  FL_TREE_ITEM_HEIGHT_FROM_WIDGET=2	///< If widget() defined, widget()'s height controls item's height
 };
 #endif
 
@@ -128,7 +132,7 @@ class FL_EXPORT Fl_Tree_Prefs {
   Fl_Tree_Select _selectmode;		// selection mode
 #if FLTK_ABI_VERSION >= 10302
   Fl_Tree_Item_Reselect_Mode _itemreselectmode;	// controls item selection callback() behavior
-  Fl_Tree_Item_Draw_Mode     _itemdrawmode;	// controls how items draw label, widget()
+  Fl_Tree_Item_Draw_Mode     _itemdrawmode;	// controls how items draw label + widget()
 #endif
 public:
   Fl_Tree_Prefs();

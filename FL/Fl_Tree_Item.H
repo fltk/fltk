@@ -232,7 +232,7 @@ public:
       select();		// select if deselected
     }
   }
-  /// Select self and all children
+  /// Select item and all its children.
   ///     Returns count of how many items were in the 'deselected' state,
   ///     ie. how many items were "changed".
   ///
@@ -251,7 +251,7 @@ public:
   void deselect() {
     _selected = 0;
   }
-  /// Deselect self and all children
+  /// Deselect item and all its children.
   ///     Returns count of how many items were in the 'selected' state,
   ///     ie. how many items were "changed".
   ///
@@ -310,11 +310,11 @@ public:
   }
   int visible_r() const;
 
-  /// Set the user icon's image. '0' will disable.
+  /// Set the item's user icon to an Fl_Image. '0' will disable.
   void usericon(Fl_Image *val) {
     _usericon = val;
   }
-  /// Get the user icon. Returns '0' if disabled.
+  /// Get the item's user icon as an Fl_Image. Returns '0' if disabled.
   Fl_Image *usericon() const {
     return(_usericon);
   }
