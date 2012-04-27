@@ -23,6 +23,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       texteditor-simple$(EXEEXT) \
       tree-simple$(EXEEXT) \
       tree-as-container$(EXEEXT) \
+      tree-of-tables$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
 # default target -- build everything
