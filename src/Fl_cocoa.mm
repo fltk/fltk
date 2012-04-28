@@ -574,6 +574,7 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
   return !(w->tooltip_window() || w->menu_window());
 }
 
+// TODO see if we really need a canBecomeMainWindow ...
 #if 0
 
 - (BOOL)canBecomeMainWindow
