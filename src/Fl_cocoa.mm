@@ -564,10 +564,28 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
 {
   containsGLsubwindow = contains;
 }
+
 - (BOOL)canBecomeKeyWindow
 {
+  if (Fl::modal_ && (Fl::modal_ != w))
+    return NO;	// prevent the caption to be redrawn as active on click
+		//  when another modal window is currently the key win
+
   return !(w->tooltip_window() || w->menu_window());
 }
+
+#if 0
+
+- (BOOL)canBecomeMainWindow
+{
+  if (Fl::modal_ && (Fl::modal_ != w))
+    return NO;	// prevent the caption to be redrawn as active on click
+		//  when another modal window is currently the key win
+
+  return !(w->tooltip_window() || w->menu_window());
+}
+#endif
+
 @end
 
 @interface FLApplication : NSObject
@@ -2107,6 +2125,9 @@ void Fl_X::make(Fl_Window* w)
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) {
       Fl_Tooltip::enter(0);
     }
+
+    if (w->modal()) Fl::modal_ = w; 
+
     w->set_visible();
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle(FL_FOCUS, w);
     Fl::first_window(w);
@@ -2129,7 +2150,7 @@ void Fl_X::make(Fl_Window* w)
     w->handle(Fl::e_number = FL_SHOW);
     Fl::e_number = old_event;
     
-    if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
+    // if (w->modal()) { Fl::modal_ = w; fl_fix_focus(); }
   }
 }
 
