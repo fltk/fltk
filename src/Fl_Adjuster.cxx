@@ -1,4 +1,3 @@
-#error testing Jenkins
 //
 // "$Id$"
 //
