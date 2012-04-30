@@ -277,6 +277,7 @@ enum Fl_Tree_Reason {
 };
 
 class FL_EXPORT Fl_Tree : public Fl_Group {
+  friend class Fl_Tree_Item;
   Fl_Tree_Item  *_root;				// can be null!
   Fl_Tree_Item  *_item_focus;			// item that has focus box
   Fl_Tree_Item  *_callback_item;		// item invoked during callback (can be NULL)

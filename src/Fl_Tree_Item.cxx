@@ -8,6 +8,7 @@
 #include <FL/Fl_Widget.H>
 #include <FL/Fl_Tree_Item.H>
 #include <FL/Fl_Tree_Prefs.H>
+#include <FL/Fl_Tree.H>
 
 //////////////////////
 // Fl_Tree_Item.cxx
@@ -741,6 +742,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       // Draw child FLTK widget?
       if ( widget() && widget()->damage() ) {
         widget()->draw();
+        ((Fl_Tree*)tree)->draw_outside_label(*widget());
       }
       // Draw focus box around item's bg last
       if ( this == itemfocus &&
