@@ -742,7 +742,9 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       }			// end non-child damage
       // Draw child FLTK widget?
       if ( widget() ) {
-        ((Fl_Tree*)tree)->update_child(*widget());	// let group handle drawing child
+        ((Fl_Tree*)tree)->update_child(*widget());		// let group handle drawing child
+	if ( widget()->label() )
+	    ((Fl_Tree*)tree)->draw_outside_label(*widget());	// label too
       }
       // Draw focus box around item's bg last
       if ( this == itemfocus &&
