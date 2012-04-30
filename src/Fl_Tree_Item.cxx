@@ -729,10 +729,11 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 #if FLTK_ABI_VERSION >= 10302
         if ( _label && 
 	     ( !widget() || 
-	       (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) ) {
+	       (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) )
 #else
-        if ( _label && !widget() ) {	// back compat: don't draw label if widget() present
+        if ( _label && !widget() )	// back compat: don't draw label if widget() present
 #endif
+        {
 	  fl_color(fg);
 	  fl_font(_labelfont, _labelsize);
 	  int label_y = Y+(H/2)+(_labelsize/2)-fl_descent()/2;
@@ -740,9 +741,8 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 	}
       }			// end non-child damage
       // Draw child FLTK widget?
-      if ( widget() && widget()->damage() ) {
-        widget()->draw();
-        ((Fl_Tree*)tree)->draw_outside_label(*widget());
+      if ( widget() ) {
+        ((Fl_Tree*)tree)->update_child(*widget());	// let group handle drawing child
       }
       // Draw focus box around item's bg last
       if ( this == itemfocus &&

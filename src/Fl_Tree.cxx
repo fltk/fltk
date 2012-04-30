@@ -193,7 +193,8 @@ int Fl_Tree::handle(int e) {
     }
     case FL_KEYBOARD: {		// keyboard shortcut
       // Do shortcuts first or scrollbar will get them...
-      if (_prefs.selectmode() > FL_TREE_SELECT_NONE ) {
+      if ( (Fl::focus() == this) &&				// tree has focus?
+           _prefs.selectmode() > FL_TREE_SELECT_NONE ) {	// select mode that supports kb events?
 	if ( !_item_focus ) {
 	  set_item_focus(first());
 	}
