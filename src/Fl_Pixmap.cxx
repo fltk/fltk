@@ -92,7 +92,7 @@ static int start(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int w, int h, i
   return 0;
 }
 
-int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int cx, int cy,
+int Fl_Pixmap::prepare(int XP, int YP, int WP, int HP, int &cx, int &cy,
 			   int &X, int &Y, int &W, int &H) {
   if (w() < 0) measure();
   int code = start(this, XP, YP, WP, HP, w(), h(), cx, cy, X, Y, W, H);
