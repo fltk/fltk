@@ -110,7 +110,6 @@ private:
   Fl_Font font_; // current font
   Fl_Fontsize size_; // current font size
   Fl_Color color_; // current color
-  enum {LINE, LOOP, POLYGON, POINT_};
   int sptr;
   static const int matrix_stack_size = FL_MATRIX_STACK_SIZE;
   matrix stack[FL_MATRIX_STACK_SIZE];
@@ -131,6 +130,12 @@ private:
   void fixloop();
   
 protected:
+#ifndef FL_DOXYGEN
+  enum {LINE, LOOP, POLYGON, POINT_};
+  inline int vertex_no() { return n; }
+  inline XPOINT *vertices() {return p;}
+  inline int vertex_kind() {return what;}
+#endif
 /*  ** \brief red color for background and/or mixing if device does not support masking or alpha *
   uchar bg_r_; 
   ** \brief green color for background and/or mixing if device does not support masking or alpha *
