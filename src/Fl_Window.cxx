@@ -139,22 +139,16 @@ void Fl_Window::draw() {
 }
 
 void Fl_Window::label(const char *name) {
-  label(name, iconlabel());
+  label(name, iconlabel());	// platform dependent
 }
 
 void Fl_Window::copy_label(const char *a) {
-  if (flags() & COPIED_LABEL) {
-    free((void *)label());
-    clear_flag(COPIED_LABEL);
-  }
-  if (a) a = strdup(a);
-  label(a, iconlabel());
-  set_flag(COPIED_LABEL);
+  Fl_Widget::copy_label(a);
+  label(label(), iconlabel());	// platform dependent
 }
 
-
 void Fl_Window::iconlabel(const char *iname) {
-  label(label(), iname);
+  label(label(), iname);	// platform dependent
 }
 
 // the Fl::atclose pointer is provided for back compatibility.  You

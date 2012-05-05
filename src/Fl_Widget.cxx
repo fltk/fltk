@@ -303,13 +303,14 @@ Fl_Widget::label(const char *a) {
 
 void
 Fl_Widget::copy_label(const char *a) {
-  if (flags() & COPIED_LABEL) free((void *)(label_.value));
+  // reassigning a copied label remains the same copied label
+  if ((flags() & COPIED_LABEL) && (label_.value == a))
+    return;
   if (a) {
+    label(strdup(a));
     set_flag(COPIED_LABEL);
-    label_.value=strdup(a);
   } else {
-    clear_flag(COPIED_LABEL);
-    label_.value=(char *)0;
+    label(0);
   }
   redraw_label();
 }
