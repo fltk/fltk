@@ -312,7 +312,6 @@ Fl_Widget::copy_label(const char *a) {
   } else {
     label(0);
   }
-  redraw_label();
 }
 
 /** Calls the widget callback.
