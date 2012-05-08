@@ -528,6 +528,8 @@ inline double fl_width(unsigned int c)  {return fl_graphics_driver->width(c);}
   such that a bounding box that exactly fits around the text could be drawn with
   fl_rect(x+dx, y+dy, wo, ho). Note the dx, dy values hold the offset of the first
   "colored in" pixel of the string, from the draw origin.
+
+  No FLTK symbol expansion will be performed.
 */
 FL_EXPORT void fl_text_extents(const char*, int& dx, int& dy, int& w, int& h); // NO fltk symbol expansion will be performed
 /** Determines the minimum pixel dimensions of a sequence of \p n characters.

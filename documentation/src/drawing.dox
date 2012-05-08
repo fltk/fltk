@@ -627,8 +627,18 @@ void fl_measure(const char *str, int& w, int& h, int draw_symbols)
 
 \par
 Measure how wide and tall the string will be when printed by
-the \p fl_draw(...align) function.
+the \p fl_draw(...align) function. This includes leading/trailing
+white space in the string, kerning, etc.
+\par
 If the incoming \p w is non-zero it will wrap to that width.
+\par
+Refer to the full documentation for fl_measure() for details
+on usage and how to avoide common pitfalls.
+
+\see fl_text_extents() -- measure the 'inked' area of a string
+\see fl_width() -- measure the pixel width of a string or single character
+\see fl_height() -- measure the pixel height of the current font
+\see fl_descent() -- the height of the descender for the current font
 
 int fl_height()
 
@@ -636,6 +646,8 @@ int fl_height()
 Recommended minimum line spacing for the current font.  You
 can also just use the value of \p size passed to
 \ref drawing_fl_font "fl_font()".
+
+\see fl_text_extents(), fl_measure(), fl_width(), fl_descent()
 
 int fl_descent()
 
@@ -650,6 +662,24 @@ double fl_width(unsigned int unicode_char)
 \par
 Return the pixel width of a nul-terminated string, a sequence of \p n
 characters, or a single character in the current font.
+
+\see fl_measure(), fl_text_extents(), fl_height(), fl_descent()
+
+void fl_text_extents(const char* txt, int& dx, int& dy, int& w, int& h)
+
+\par
+Determines the minimum pixel dimensions of a nul-terminated string,
+ie. the 'inked area'.
+\par
+Given a string "txt" drawn using fl_draw(txt, x, y) you would determine
+its pixel extents on the display using fl_text_extents(txt, dx, dy, wo, ho)
+such that a bounding box that exactly fits around the inked area of the text
+could be drawn with fl_rect(x+dx, y+dy, wo, ho). 
+\par
+Refer to the full documentation for fl_text_extents() for details
+on usage.
+
+\see fl_measure(), fl_width(), fl_height(), fl_descent()
 
 const char* fl_shortcut_label(int shortcut)
 
