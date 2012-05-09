@@ -1273,11 +1273,10 @@ void Fl_PostScript_Graphics_Driver::arc(int x, int y, int w, int h, double a1, d
 }
 
 void Fl_PostScript_Graphics_Driver::pie(int x, int y, int w, int h, double a1, double a2) {
-  
   fprintf(output, "GS\n");
+  begin_polygon();
   fprintf(output, "%g %g TR\n", x + w/2.0 -0.5 , y + h/2.0 - 0.5);
   fprintf(output, "%g %g SC\n", (w-1)/2.0 , (h-1)/2.0 );
-  begin_polygon();
   vertex(0,0);
   arc(0.0,0.0, 1, a2, a1);
   end_polygon();
