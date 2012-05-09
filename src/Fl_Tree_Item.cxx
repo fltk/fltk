@@ -44,10 +44,14 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
   _labelfgcolor = prefs.labelfgcolor();
   _labelbgcolor = prefs.labelbgcolor();
   _widget       = 0;
+#if FLTK_ABI_VERSION >= 10302
+  _flags        = OPEN|VISIBLE|ACTIVE;
+#else /*FLTK_ABI_VERSION*/
   _open         = 1;
   _visible      = 1;
   _active       = 1;
   _selected     = 0;
+#endif /*FLTK_ABI_VERSION*/
   _xywh[0]      = 0;
   _xywh[1]      = 0;
   _xywh[2]      = 0;
@@ -88,10 +92,14 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
   _labelfgcolor = o->labelfgcolor();
   _labelbgcolor = o->labelbgcolor();
   _widget       = o->widget();
+#if FLTK_ABI_VERSION >= 10302
+  _flags        = o->_flags;
+#else /*FLTK_ABI_VERSION*/
   _open         = o->_open;
   _visible      = o->_visible;
   _active       = o->_active;
   _selected     = o->_selected;
+#endif /*FLTK_ABI_VERSION*/
   _xywh[0]      = o->_xywh[0];
   _xywh[1]      = o->_xywh[1];
   _xywh[2]      = o->_xywh[2];
@@ -468,7 +476,7 @@ void Fl_Tree_Item::draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_
 ///    \returns const visible item under the event if found, or 0 if none.
 ///
 const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) const {
-  if ( ! _visible ) return(0);
+  if ( ! is_visible() ) return(0);
   if ( is_root() && !prefs.showroot() ) {
     // skip event check if we're root but root not being shown
   } else {
@@ -498,7 +506,7 @@ const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) const
 ///    \returns the visible item under the event if found, or 0 if none.
 ///
 Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) {
-  if ( ! _visible ) return(0);
+  if ( ! is_visible() ) return(0);
   if ( is_root() && !prefs.showroot() ) {
     // skip event check if we're root but root not being shown
   } else {
@@ -562,7 +570,7 @@ static void draw_item_focus(Fl_Boxtype B, Fl_Color C, int X, int Y, int W, int H
 ///   Doesn't include linespacing(); prevents affecting eg. height of widget().
 ///
 int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
-  if ( ! _visible ) return(0);
+  if ( ! is_visible() ) return(0);
   int H = 0;
   if ( _label ) {
     fl_font(_labelfont, _labelsize);	// fl_descent() needs this :/
@@ -574,7 +582,7 @@ int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
        H < widget()->h()) {
     H = widget()->h();
   }
-#endif
+#endif /*FLTK_ABI_VERSION*/
   if ( has_children() && prefs.openicon() && H<prefs.openicon()->h() )
     H = prefs.openicon()->h();
   if ( usericon() && H<usericon()->h() )
@@ -586,7 +594,7 @@ int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
 void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 			Fl_Tree_Item *itemfocus,
                         const Fl_Tree_Prefs &prefs, int lastchild) {
-  if ( ! _visible ) return; 
+  if ( ! is_visible() ) return; 
   int tree_top = tree->y();
   int tree_bot = tree_top + tree->h();
   int H = calc_item_height(prefs);	// height of item
@@ -645,20 +653,20 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
              ? widget()->h() : H;
     if ( _label && 
          (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) {
-#else
+#else /*FLTK_ABI_VERSION*/
     int wh = H;				// lock widget's height to item height
     if ( _label && !widget() ) {	// back compat: don't draw label if widget() present
-#endif
+#endif /*FLTK_ABI_VERSION*/
       fl_font(_labelfont, _labelsize);	// fldescent() needs this
       int lw=0, lh=0;
       fl_measure(_label,lw,lh);		// get box around text (including white space)
 #if FLTK_ABI_VERSION >= 10302
       // NEW
       wx += (lw + prefs.widgetmarginleft());
-#else
+#else /*FLTK_ABI_VERSION*/
       // OLD
       wx += (lw + 3);
-#endif
+#endif /*FLTK_ABI_VERSION*/
     }
     if ( widget()->x() != wx || widget()->y() != wy ||
 	 widget()->w() != ww || widget()->h() != wh ) {
@@ -668,12 +676,13 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
   char clipped = ((Y+H) < tree_top) || (Y>tree_bot) ? 1 : 0;
   char drawthis = ( is_root() && prefs.showroot() == 0 ) ? 0 : 1;
   if ( !clipped ) {
-    Fl_Color fg = _selected ? fl_contrast(_labelfgcolor, tree->selection_color())
-			    : _active ? _labelfgcolor 
-				      : fl_inactive(_labelfgcolor);
-    Fl_Color bg = _selected ? _active ? tree->selection_color() 
-				      : fl_inactive(tree->selection_color())
-			    : _labelbgcolor;
+    Fl_Color fg = is_selected() ? fl_contrast(_labelfgcolor, tree->selection_color())
+			        : is_active() ? _labelfgcolor
+				              : fl_inactive(_labelfgcolor);
+    Fl_Color bg = is_selected() ? is_active() ? tree->selection_color() 
+				              : fl_inactive(tree->selection_color())
+			        : _labelbgcolor == 0xffffffff ? tree->color()		// transparent bg?
+							      : _labelbgcolor;
     // See if we should draw this item
     //    If this item is root, and showroot() is disabled, don't draw.
     //    'clipped' is an optimization to prevent drawing anything offscreen.
@@ -730,9 +739,9 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
         if ( _label && 
 	     ( !widget() || 
 	       (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) )
-#else
+#else /*FLTK_ABI_VERSION*/
         if ( _label && !widget() )	// back compat: don't draw label if widget() present
-#endif
+#endif /*FLTK_ABI_VERSION*/
         {
 	  fl_color(fg);
 	  fl_font(_labelfont, _labelsize);
@@ -781,7 +790,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 /// Was the event on the 'collapse' button?
 ///
 int Fl_Tree_Item::event_on_collapse_icon(const Fl_Tree_Prefs &prefs) const {
-  if ( _visible && _active && has_children() && prefs.showcollapse() ) {
+  if ( is_visible() && is_active() && has_children() && prefs.showcollapse() ) {
     return(event_inside(_collapse_xywh) ? 1 : 0);
   } else {
     return(0);
@@ -791,7 +800,7 @@ int Fl_Tree_Item::event_on_collapse_icon(const Fl_Tree_Prefs &prefs) const {
 /// Was event on the label()?
 ///
 int Fl_Tree_Item::event_on_label(const Fl_Tree_Prefs &prefs) const {
-  if ( _visible && _active ) {
+  if ( is_visible() && is_active() ) {
     return(event_inside(_label_xywh) ? 1 : 0);
   } else {
     return(0);
@@ -822,7 +831,7 @@ void Fl_Tree_Item::hide_widgets() {
 
 /// Open this item and all its children.
 void Fl_Tree_Item::open() {
-  _open = 1;
+  set_flag(OPEN,1);
   // Tell children to show() their widgets
   for ( int t=0; t<_children.total(); t++ ) {
     _children[t]->show_widgets();
@@ -831,7 +840,7 @@ void Fl_Tree_Item::open() {
 
 /// Close this item and all its children.
 void Fl_Tree_Item::close() {
-  _open = 0;
+  set_flag(OPEN,0);
   // Tell children to hide() their widgets
   for ( int t=0; t<_children.total(); t++ ) {
     _children[t]->hide_widgets();

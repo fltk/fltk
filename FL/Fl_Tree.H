@@ -80,6 +80,8 @@
 ///    tree.end();
 /// \endcode
 ///     
+/// \b FEATURES
+///
 ///     Items can be added with add(),
 ///     removed with remove(),
 ///     completely cleared with clear(),
@@ -95,7 +97,13 @@
 ///     and an item's pathname can be found with item_pathname().
 ///     The selected items' colors are controlled by selection_color() (inherited from Fl_Widget).
 ///
+/// \b SELECTION OF ITEMS
+///
 ///     The tree can have different selection behaviors controlled by selectmode().
+///     The background color used for selected items is the Fl_Tree::selection_color().
+///     The foreground color for selected items is controlled internally with fl_contrast().
+///
+/// \b CHILD WIDGETS
 ///
 ///     FLTK widgets (including custom widgets) can be assigned to tree items via
 ///     Fl_Tree_Item::widget().
@@ -110,6 +118,8 @@
 ///     adding the FL_TREE_ITEM_HEIGHT_FROM_WIDGET flag causes widget's height
 ///     to define the widget()'s height.
 ///
+/// \b ICONS
+///
 ///     The tree's open/close icons can be redefined with
 ///     Fl_Tree::openicon(), Fl_Tree::closeicon(). User icons
 ///     can either be changed globally with Fl_Tree::usericon(),
@@ -117,6 +127,27 @@
 ///
 ///     Various default preferences can be globally manipulated via Fl_Tree_Prefs, 
 ///     including colors, margins, icons, connection lines, etc. 
+///
+/// \b FONTS AND COLORS
+///
+///     When adding new items to the tree, the new items get the
+///     defaults for fonts and colors from:
+///
+///	- Fl_Tree::item_labelfont() -- The default item label font (default: FL_HELVETICA)
+///     - Fl_Tree::item_labelsize() -- The default item label size (default: FL_NORMAL_SIZE)
+///     - Fl_Tree::item_labelfgcolor() -- The default item label foreground color (default: FL_FOREGROUND_COLOR)
+///     - Fl_Tree::item_labelbgcolor() -- The default item label background color (default: 0xffffffff, which tree uses as 'transparent')
+///
+///     Each item (Fl_Tree_Item) inherits a copy of these font/color attributes when created,
+///     and each item has its own methods to let the app change these values on a per-item basis
+///	using methods of the same name:
+///
+///	- Fl_Tree_Item::item_labelfont() -- The item's label font (default: FL_HELVETICA)
+///     - Fl_Tree_Item::item_labelsize() -- The item's label size (default: FL_NORMAL_SIZE)
+///     - Fl_Tree_Item::item_labelfgcolor() -- The item's label foreground color (default: FL_FOREGROUND_COLOR)
+///     - Fl_Tree_Item::item_labelbgcolor() -- The item's label background color (default: 0xffffffff, which tree uses as 'transparent')
+///
+/// \b CALLBACKS
 ///
 ///     The tree's callback() will be invoked when items change state or are open/closed.
 ///     when() controls when mouse/keyboard events invoke the callback.
@@ -271,7 +302,7 @@ enum Fl_Tree_Reason {
   FL_TREE_REASON_DESELECTED,	///< an item was de-selected
 #if FLTK_ABI_VERSION >= 10302
   FL_TREE_REASON_RESELECTED,	///< an item was re-selected (e.g. double-clicked)
-#endif
+#endif /*FLTK_ABI_VERSION*/
   FL_TREE_REASON_OPENED,	///< an item was opened
   FL_TREE_REASON_CLOSED		///< an item was closed
 };
@@ -288,9 +319,9 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
 #if FLTK_ABI_VERSION >= 10302
   // NEW: 
   Fl_Tree_Item *_lastselect;
-#else
+#else /*FLTK_ABI_VERSION*/
   // OLD: static data inside handle() method
-#endif
+#endif /*FLTK_ABI_VERSION*/
 
   void fix_scrollbar_order();
 
@@ -368,17 +399,18 @@ public:
   void set_item_focus(Fl_Tree_Item *item);
   int is_selected(Fl_Tree_Item *item) const;
   int is_selected(const char *path);
+
   /////////////////////////////////
   // Item attribute related methods
   /////////////////////////////////
+  Fl_Font     item_labelfont() const;
+  void        item_labelfont(Fl_Font val);
   Fl_Fontsize item_labelsize() const;
-  void item_labelsize(Fl_Fontsize val);
-  Fl_Font item_labelfont() const;
-  void item_labelfont(Fl_Font val);
-  Fl_Color item_labelfgcolor(void) const;
-  void item_labelfgcolor(Fl_Color val);
-  Fl_Color item_labelbgcolor(void) const;
-  void item_labelbgcolor(Fl_Color val);
+  void        item_labelsize(Fl_Fontsize val);
+  Fl_Color    item_labelfgcolor(void) const;
+  void        item_labelfgcolor(Fl_Color val);
+  Fl_Color    item_labelbgcolor(void) const;
+  void        item_labelbgcolor(Fl_Color val);
   Fl_Color connectorcolor() const;
   void connectorcolor(Fl_Color val);
   int marginleft() const;
@@ -388,7 +420,7 @@ public:
 #if FLTK_ABI_VERSION >= 10302
   int marginbottom() const;
   void marginbottom(int val);
-#endif
+#endif /*FLTK_ABI_VERSION*/
   int linespacing() const;
   void linespacing(int val);
   int openchild_marginbottom() const;
@@ -400,7 +432,7 @@ public:
 #if FLTK_ABI_VERSION >= 10302
   int widgetmarginleft() const;
   void widgetmarginleft(int val);
-#endif
+#endif /*FLTK_ABI_VERSION*/
   int connectorwidth() const;
   void connectorwidth(int val);
   Fl_Image* usericon() const;
@@ -427,8 +459,7 @@ public:
   Fl_Tree_Item_Draw_Mode item_draw_mode() const;
   void item_draw_mode(Fl_Tree_Item_Draw_Mode mode);
   void item_draw_mode(int mode);
-#endif
-
+#endif /*FLTK_ABI_VERSION*/
   int displayed(Fl_Tree_Item *item);
   void show_item(Fl_Tree_Item *item, int yoff);
   void show_item(Fl_Tree_Item *item);

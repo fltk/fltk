@@ -5,7 +5,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_Tree_Prefs.H>
-#include <string.h>
+#include <string.h>		// strcmp
 
 //////////////////////
 // Fl_Tree_Prefs.cxx
@@ -44,7 +44,7 @@ static const char *L_open_xpm[] = {
   "...@@@.....",
   "...@@......",
   "...@......."
-#else
+#else /* __APPLE__ */
   "11 11 3 1",
   ".	c #fefefe",
   "#	c #444444",
@@ -60,7 +60,7 @@ static const char *L_open_xpm[] = {
   "#.........#",
   "#.........#",
   "###########"
-#endif
+#endif /* __APPLE__ */
 };
 static Fl_Pixmap L_openpixmap(L_open_xpm);
 
@@ -80,7 +80,7 @@ static const char *L_close_xpm[] = {
   "...@@@@@...",
   "....@@@....",
   ".....@....."
-#else
+#else /* __APPLE__ */
   "11 11 3 1",
   ".	c #fefefe",
   "#	c #444444",
@@ -96,7 +96,7 @@ static const char *L_close_xpm[] = {
   "#.........#",
   "#.........#",
   "###########"
-#endif
+#endif /* __APPLE__ */
 };
 static Fl_Pixmap L_closepixmap(L_close_xpm);
 
@@ -127,22 +127,22 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _margintop              = 3;
 #if FLTK_ABI_VERSION >= 10302
   _marginbottom           = 20;
-#endif
+#endif /*FLTK_ABI_VERSION*/
   _openchild_marginbottom = 0;
   _usericonmarginleft     = 3;
   _labelmarginleft        = 3;
 #if FLTK_ABI_VERSION >= 10302
   _widgetmarginleft       = 3;
-#endif
+#endif /*FLTK_ABI_VERSION*/
   _linespacing            = 0;
   _labelfgcolor           = FL_BLACK;
-  _labelbgcolor           = FL_WHITE;
+  _labelbgcolor           = 0xffffffff;		// we use this as 'transparent'
   _connectorcolor         = Fl_Color(43);
 #ifdef __APPLE__
   _connectorstyle         = FL_TREE_CONNECTOR_NONE;
-#else
+#else /* __APPLE__ */
   _connectorstyle         = FL_TREE_CONNECTOR_DOTTED;
-#endif
+#endif /* __APPLE__ */
   _openimage              = &L_openpixmap;
   _closeimage             = &L_closepixmap;
   _userimage              = 0;

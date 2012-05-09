@@ -91,7 +91,7 @@ enum Fl_Tree_Item_Draw_Mode {
   FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET=1,	///< If widget() defined, include label to the left of the widget
   FL_TREE_ITEM_HEIGHT_FROM_WIDGET=2	///< If widget() defined, widget()'s height controls item's height
 };
-#endif
+#endif /*FLTK_ABI_VERSION*/
 
 /// \class Fl_Tree_Prefs
 ///
@@ -119,7 +119,7 @@ class FL_EXPORT Fl_Tree_Prefs {
   int _linespacing;			// vertical space between lines
   // Colors
   Fl_Color _labelfgcolor;		// label's foreground color
-  Fl_Color _labelbgcolor;		// background color
+  Fl_Color _labelbgcolor;		// label's background color
   Fl_Color _connectorcolor;		// connector dotted line color
   Fl_Tree_Connector _connectorstyle;	// connector line style
   Fl_Image *_openimage;			// the 'open' icon [+]
@@ -133,7 +133,7 @@ class FL_EXPORT Fl_Tree_Prefs {
 #if FLTK_ABI_VERSION >= 10302
   Fl_Tree_Item_Reselect_Mode _itemreselectmode;	// controls item selection callback() behavior
   Fl_Tree_Item_Draw_Mode     _itemdrawmode;	// controls how items draw label + widget()
-#endif
+#endif /*FLTK_ABI_VERSION*/
 public:
   Fl_Tree_Prefs();
   
@@ -141,21 +141,61 @@ public:
   // Labels
   ////////////////////////////
   /// Return the label's font.
-  inline Fl_Font labelfont() const {
-    return(_labelfont);
-  }
+  inline Fl_Font item_labelfont() const { return(_labelfont); }
   /// Set the label's font to \p val.
-  inline void labelfont(Fl_Font val) {
-    _labelfont = val;
-  }
+  inline void item_labelfont(Fl_Font val) { _labelfont = val; }
   /// Return the label's size in pixels.
-  inline Fl_Fontsize labelsize() const {
-    return(_labelsize);
-  }
+  inline Fl_Fontsize item_labelsize() const { return(_labelsize); }
   /// Set the label's size in pixels to \p val.
-  inline void labelsize(Fl_Fontsize val) {
-    _labelsize = val;
+  inline void item_labelsize(Fl_Fontsize val) { _labelsize = val; }
+  /// Get the default label foreground color
+  inline Fl_Color item_labelfgcolor() const { return(_labelfgcolor); }
+  /// Set the default label foreground color
+  inline void item_labelfgcolor(Fl_Color val) { _labelfgcolor = val; }
+#if FLTK_ABI_VERSION >= 10302
+  /// Get the default label background color.
+  ///    This returns the Fl_Tree::color() unless item_labelbgcolor()
+  ///    has been set explicitly.
+  ///
+  inline Fl_Color item_labelbgcolor() const {
+    return _labelbgcolor;
   }
+  /// Set the default label background color.
+  ///     Once set, overrides the default behavior of using Fl_Tree::color().
+  ///
+  inline void item_labelbgcolor(Fl_Color val) {
+    _labelbgcolor = val;
+  }
+#else /*FLTK_ABI_VERSION*/
+  /// Get the default label background color
+  inline Fl_Color item_labelbgcolor() const {
+    return(_labelbgcolor);
+  }
+  /// Set the default label background color
+  inline void item_labelbgcolor(Fl_Color val) {
+    _labelbgcolor = val;
+  }
+#endif /*FLTK_ABI_VERSION*/
+
+  /////////////////
+  // Obsolete names - for 1.3.0 backwards compat
+  /////////////////
+  /// Obsolete: Return the label's font. Please use item_labelfont() instead.
+  inline Fl_Font labelfont() const { return(_labelfont); }
+  /// Obsolete: Set the label's font to \p val. Please use item_labelfont(Fl_Font) instead.
+  inline void labelfont(Fl_Font val) { _labelfont = val; }
+  /// Obsolete: Return the label's size in pixels. Please use item_labelsize() instead.
+  inline Fl_Fontsize labelsize() const { return(_labelsize); }
+  /// Obsolete: Set the label's size in pixels to \p val. Please use item_labelsize(Fl_Fontsize) instead.
+  inline void labelsize(Fl_Fontsize val) { _labelsize = val; }
+  /// Obsolete: Get the default label foreground color. Please use item_labelfgcolor() instead.
+  inline Fl_Color labelfgcolor() const { return(_labelfgcolor); }
+  /// Obsolete: Set the default label foreground color. Please use item_labelfgcolor(Fl_Color) instead.
+  inline void labelfgcolor(Fl_Color val) { _labelfgcolor = val; }
+  /// Obsolete: Get the default label background color. Please use item_labelbgcolor() instead.
+  inline Fl_Color labelbgcolor() const { return(item_labelbgcolor()); }
+  /// Obsolete: Set the default label background color. Please use item_labelbgcolor(Fl_Color) instead.
+  inline void labelbgcolor(Fl_Color val) { item_labelbgcolor(val); }
   
   ////////////////////////////
   // Margins
@@ -187,7 +227,7 @@ public:
   inline void marginbottom(int val) {
     _marginbottom = val;
   }
-#endif
+#endif /*FLTK_ABI_VERSION*/
   /// Get the margin below an open child in pixels
   inline int openchild_marginbottom() const {
     return(_openchild_marginbottom);
@@ -221,7 +261,7 @@ public:
   inline void widgetmarginleft(int val) {
     _widgetmarginleft = val;
   }
-#endif
+#endif /*FLTK_ABI_VERSION*/
   /// Get the line spacing value in pixels
   inline int linespacing() const {
     return(_linespacing);
@@ -234,22 +274,6 @@ public:
   ////////////////////////////
   // Colors and Styles
   ////////////////////////////
-  /// Get the default label foreground color
-  inline Fl_Color labelfgcolor() const {
-    return(_labelfgcolor);
-  }
-  /// Set the default label foreground color
-  inline void labelfgcolor(Fl_Color val) {
-    _labelfgcolor = val;
-  }
-  /// Get the default label background color
-  inline Fl_Color labelbgcolor() const {
-    return(_labelbgcolor);
-  }
-  /// Set the default label background color
-  inline void labelbgcolor(Fl_Color val) {
-    _labelbgcolor = val;
-  }
   /// Get the connector color used for tree connection lines.
   inline Fl_Color connectorcolor() const {
     return(_connectorcolor);
@@ -388,7 +412,7 @@ public:
   inline void item_draw_mode(Fl_Tree_Item_Draw_Mode val) {
     _itemdrawmode = val;
   }
-#endif
+#endif /*FLTK_ABI_VERSION*/
 };
 
 #endif /*FL_TREE_PREFS_H*/

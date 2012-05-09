@@ -102,9 +102,9 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
 #if FLTK_ABI_VERSION >= 10302
   // NEW
   _lastselect       = 0;
-#else
+#else /*FLTK_ABI_VERSION*/
   // OLD: data initialized static inside handle()
-#endif
+#endif /*FLTK_ABI_VERSION*/
 
   box(FL_DOWN_BOX);
   color(FL_BACKGROUND2_COLOR, FL_SELECTION_COLOR);
@@ -150,10 +150,10 @@ int Fl_Tree::handle(int e) {
   char is_command = Fl::event_state() & FL_COMMAND ? 1 : 0;	// ctrl on win/lin, 'Command' on mac
 #if FLTK_ABI_VERSION >= 10302
   // NEW: data inside Fl_Tree
-#else
+#else /*FLTK_ABI_VERSION*/
   // OLD:
   static Fl_Tree_Item *_lastselect = 0;
-#endif
+#endif /*FLTK_ABI_VERSION*/
   // Developer note: Fl_Browser_::handle() used for reference here..
   // #include <FL/names.h>	// for event debugging
   // fprintf(stderr, "DEBUG: %s (%d)\n", fl_eventnames[e], e);
@@ -477,10 +477,10 @@ int Fl_Tree::draw_tree() {
 #if FLTK_ABI_VERSION >= 10302
       // NEW
       int SY = Y + _prefs.marginbottom();
-#else
+#else /*FLTK_ABI_VERSION*/
       // OLD
       int SY = Y;
-#endif
+#endif /*FLTK_ABI_VERSION*/
       int ydiff = (SY+_prefs.margintop())-Ysave;		// ydiff=size of tree
       int ytoofar = (cy+ch) - SY;				// ytoofar -- if >0, scrolled beyond bottom
       if ( ytoofar > 0 ) ydiff += ytoofar;
@@ -1117,7 +1117,7 @@ int Fl_Tree::select(Fl_Tree_Item *item, int docallback) {
       do_callback_for_item(item, FL_TREE_REASON_RESELECTED);
     }
   }
-#endif
+#endif /*FLTK_ABI_VERSION*/
   return(0);
 }
 
@@ -1412,11 +1412,13 @@ void Fl_Tree::item_labelfgcolor(Fl_Color val) {
 }
 
 /// Get the default label background color used for creating new items.
+/// If the color is 0xffffffff, it is 'transparent'.
 Fl_Color Fl_Tree::item_labelbgcolor(void) const {
   return(_prefs.labelbgcolor());
 }
 
 /// Set the default label background color used for creating new items.
+/// A special case is made for color 0xffffffff (default) which is treated as 'transparent'.
 /// To change the background color on a per-item basis, use Fl_Tree_Item::labelbgcolor(Fl_Color)
 ///
 void Fl_Tree::item_labelbgcolor(Fl_Color val) {
@@ -1478,7 +1480,7 @@ void Fl_Tree::marginbottom(int val) {
   _prefs.marginbottom(val);
   redraw();
 }
-#endif
+#endif /*FLTK_ABI_VERSION*/
 
 /// Get the amount of white space (in pixels) that should appear
 /// between items in the tree.
@@ -1543,7 +1545,7 @@ void Fl_Tree::widgetmarginleft(int val) {
   _prefs.widgetmarginleft(val);
   redraw();
 }
-#endif
+#endif /*FLTK_ABI_VERSION*/
 
 /// Gets the width of the horizontal connection lines (in pixels) 
 /// that appear to the left of each tree item's label.
@@ -1728,7 +1730,7 @@ void Fl_Tree::item_draw_mode(Fl_Tree_Item_Draw_Mode val) {
 void Fl_Tree::item_draw_mode(int val) {
   _prefs.item_draw_mode(Fl_Tree_Item_Draw_Mode(val));
 }
-#endif
+#endif /*FLTK_ABI_VERSION*/
 
 /// See if \p item is currently displayed on-screen (visible within the widget).
 /// This can be used to detect if the item is scrolled off-screen.
