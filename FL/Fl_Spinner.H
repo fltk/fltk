@@ -38,6 +38,9 @@
   This widget is a combination of the input
   widget and repeat buttons. The user can either type into the
   input area or use the buttons to change the value.
+
+  \image html Fl_Spinner.png "Fl_Spinner widget"
+  \image latex Fl_Spinner.png "Fl_Spinner widget" width=6cm
 */
 class FL_EXPORT Fl_Spinner : public Fl_Group {
   
