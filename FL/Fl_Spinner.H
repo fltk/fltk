@@ -50,12 +50,16 @@ class FL_EXPORT Fl_Spinner : public Fl_Group {
   double	step_;			// Amount to add/subtract for up/down
   const char	*format_;		// Format string
 
+#if FLTK_ABI_VERSION >= 10302
+// NEW
+protected:
+#endif
   Fl_Input	input_;			// Input field for the value
   Fl_Repeat_Button
 		up_button_,		// Up button
 		down_button_;		// Down button
 
-
+private:
   static void	sb_cb(Fl_Widget *w, Fl_Spinner *sb) {
 		  double v;		// New value
 
@@ -253,6 +257,14 @@ class FL_EXPORT Fl_Spinner : public Fl_Group {
     type() should be changed to floating point. 
   */
   void		value(double v) { value_ = v; update(); }
+  /**
+    Change the background color of the spinner widget's input field.
+  */
+  void		color(Fl_Color v) { input_.color(v); }
+  /**
+    Return the background color of the spinner widget's input field.
+  */
+  Fl_Color	color() const { return(input_.color()); }
 };
 
 #endif // !Fl_Spinner_H
