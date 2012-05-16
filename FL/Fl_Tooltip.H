@@ -28,6 +28,10 @@
 /**
   The Fl_Tooltip class provides tooltip support for
   all FLTK widgets. It contains only static methods.
+
+  \image html tooltip-options.png "Fl_Tooltip Options"
+  \image latex src/tooltip-options.png "Fl_Tooltip Options" width=6cm
+
 */
 class FL_EXPORT Fl_Tooltip {
 public:
@@ -74,6 +78,25 @@ public:
   static Fl_Color textcolor() { return textcolor_; }
   /** Sets the color of the text in the tooltip. The default is  black. */
   static void textcolor(Fl_Color c) { textcolor_ = c; }
+#if FLTK_ABI_VERSION >= 10302
+  /** Gets the amount of extra space left/right of the tooltip's text. Default is 3. */
+  static int margin_width() { return margin_width_; }
+  /** Sets the amount of extra space left/right of the tooltip's text. Default is 3. */
+  static void margin_width(int v) { margin_width_ = v; }
+  /** Gets the amount of extra space above and below the tooltip's text. Default is 3. */
+  static int margin_height() { return margin_height_; }
+  /** Sets the amount of extra space above and below the tooltip's text. Default is 3. */
+  static void margin_height(int v) { margin_height_ = v; }
+  /** Gets the maximum width for tooltip's text before it word wraps. Default is 400. */
+  static int wrap_width() { return wrap_width_; }
+  /** Sets the maximum width for tooltip's text before it word wraps. Default is 400. */
+  static void wrap_width(int v) { wrap_width_ = v; }
+#else
+  static int margin_width() { return 3; }
+  static int margin_height() { return 3; }
+  static int wrap_width() { return 400; }
+#endif
+
 #ifdef __APPLE__
   // the unique tooltip window
   static Fl_Window* current_window(void);
@@ -96,6 +119,11 @@ private:
   static Fl_Font font_;
   static Fl_Fontsize size_;
   static Fl_Widget* widget_; //!< Keeps track of the current target widget
+#if FLTK_ABI_VERSION >= 10302
+  static int margin_width_;	//!< distance around tooltip text left+right
+  static int margin_height_;	//!< distance around tooltip text top+bottom
+  static int wrap_width_;	//!< maximum width of tooltip text before it word wraps
+#endif
 };
 
 #endif

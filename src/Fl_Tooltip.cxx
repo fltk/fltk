@@ -31,8 +31,11 @@ Fl_Color	Fl_Tooltip::color_ = fl_color_cube(FL_NUM_RED - 1,
 Fl_Color	Fl_Tooltip::textcolor_ = FL_BLACK;
 Fl_Font         Fl_Tooltip::font_ = FL_HELVETICA;
 Fl_Fontsize     Fl_Tooltip::size_ = -1;
-
-#define MAX_WIDTH 400
+#if FLTK_ABI_VERSION >= 10302
+int		Fl_Tooltip::margin_width_  = 3;
+int		Fl_Tooltip::margin_height_ = 3;
+int		Fl_Tooltip::wrap_width_    = 400;
+#endif
 
 static const char* tip;
 /**
@@ -70,10 +73,11 @@ Fl_Window *Fl_Tooltip::current_window(void)
 
 void Fl_TooltipBox::layout() {
   fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
-  int ww, hh;
-  ww = MAX_WIDTH;
+  int ww = Fl_Tooltip::wrap_width();
+  int hh;
   fl_measure(tip, ww, hh, FL_ALIGN_LEFT|FL_ALIGN_WRAP|FL_ALIGN_INSIDE);
-  ww += 6; hh += 6;
+  ww += (Fl_Tooltip::margin_width() * 2);
+  hh += (Fl_Tooltip::margin_height() * 2);
 
   // find position on the screen of the widget:
   int ox = Fl::event_x_root();
@@ -100,7 +104,11 @@ void Fl_TooltipBox::draw() {
   draw_box(FL_BORDER_BOX, 0, 0, w(), h(), Fl_Tooltip::color());
   fl_color(Fl_Tooltip::textcolor());
   fl_font(Fl_Tooltip::font(), Fl_Tooltip::size());
-  fl_draw(tip, 3, 3, w()-6, h()-6, Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_WRAP));
+  int X = Fl_Tooltip::margin_width();
+  int Y = Fl_Tooltip::margin_height();
+  int W = w() - (Fl_Tooltip::margin_width()*2);
+  int H = h() - (Fl_Tooltip::margin_height()*2);
+  fl_draw(tip, X, Y, W, H, Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_WRAP));
 }
 
 static char recent_tooltip;
