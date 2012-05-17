@@ -166,8 +166,8 @@ standard colors and color cube for the first 256 colors. All of
 these are named with symbols in
 \ref enumerations "<FL/Enumerations.H>". Example:
 
-    \image html fltk-colormap.jpg "FLTK default colormap (Fl_Color 0x00 - 0xff)"
-    \image latex fltk-colormap.jpg "FLTK default colormap (Fl_Color 0x00 - 0xff)" width=6cm
+    \image html fltk-colormap.png "FLTK default colormap (Fl_Color 0x00 - 0xff)"
+    \image latex fltk-colormap.png "FLTK default colormap (Fl_Color 0x00 - 0xff)" width=6cm
 
 Color values greater than 255 are treated as 24-bit RGB
 values. These are mapped to the closest color supported by the
