@@ -42,7 +42,7 @@ Fl_Slider::Fl_Slider(int X, int Y, int W, int H, const char* L)
 }
 
 /**
-  Creates a new Fl_Slider widget using the given box type, position,
+  Creates a new Fl_Slider widget using the given type, position,
   size, and label string.
 */
 Fl_Slider::Fl_Slider(uchar t, int X, int Y, int W, int H, const char* L)
