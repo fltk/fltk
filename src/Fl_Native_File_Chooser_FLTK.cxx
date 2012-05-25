@@ -122,7 +122,7 @@ int Fl_Native_File_Chooser::type() const {
   --------------    -----------------------------------------------   -------   -------   -------
   NEW_FOLDER        Shows the 'New Folder' button.                    Ignored   Used      Used
   PREVIEW           Enables the 'Preview' mode by default.            Ignored   Ignored   Used
-  SAVEAS_CONFIRM    Confirm dialog if BROWSE_SAVE_FILE file exists.   Ignored   Used      Used
+  SAVEAS_CONFIRM    Confirm dialog if BROWSE_SAVE_FILE file exists.   Used      Used      Used
   \endcode
 */
 void Fl_Native_File_Chooser::options(int val) {
