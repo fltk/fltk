@@ -62,7 +62,7 @@ XConvertEucTwToUtf8(char* buffer_return, int len) {
   int i = 0;
 #endif
   int l = 0;
-  char *buf; // , *b;
+  char *buf; /* , *b; */
 
   if (len < 1) return 0;
   /*b = */ buf = (char*) malloc((unsigned)len);
@@ -426,7 +426,7 @@ XUtf8LookupString(XIC                 ic,
     if (*keysym < 0x80) {
       ucs = (unsigned char)buffer_return[0];
     } else {
-      ucs = *keysym;
+      ucs = (long)*keysym;
     }
   } else  if (((*keysym >= 0x100 && *keysym <= 0xf000) ||
 	      (*keysym & 0xff000000U) == 0x01000000))

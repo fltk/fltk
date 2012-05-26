@@ -230,10 +230,10 @@ load_fonts(Display 	   *dpy,
 	   XUtf8FontStruct *font_set) {
 
   int i;
-  //char **list;
+  /* char **list; */
 
   i = 0;
-  //list = NULL;
+  /* list = NULL; */
 
   font_set->fonts = (XFontStruct**) malloc(sizeof(XFontStruct*) *
                                            font_set->nb_font);
@@ -587,8 +587,8 @@ XUtf8_measure_extents(
   int ht = 0; /* used to find max height in text */
   int hs;     /* "height sum" of current text segment */
   int yt = 0x7FFFFFFF; /* used to find bounding rectangle delta-y */
-  // int res; /* result from calling XTextExtents16() - we should test this is OK! */
-  // FC: the man does not specify error codes for it, but X will generate X errors like BadGC or BadFont.
+  /* int res; */ /* result from calling XTextExtents16() - we should test this is OK! */
+  /* FC: the man does not specify error codes for it, but X will generate X errors like BadGC or BadFont. */
 
   XCharStruct sizes;
   int dir_ret = 0;
@@ -821,19 +821,19 @@ XGetUtf8FontAndGlyph(XUtf8FontStruct  *font_set,
 		     XFontStruct      **fnt,
 		     unsigned short   *id) {
 
-  //int             x;
+  /* int             x; */
   int             *encodings; /* encodings array */
   XFontStruct     **fonts;    /* fonts array */
   int             fnum;       /* index of the current font in the fonts array*/
-  //int             i;          /* current byte in the XChar2b buffer */
+  /* int             i; */         /* current byte in the XChar2b buffer */
   int             first;      /* first valid font index */
-  //int             last_fnum;  /* font index of the previous char */
+  /* int             last_fnum; */ /* font index of the previous char */
   int             nb_font;    /* quantity of fonts in the font array */
   char 		  glyph[2];   /* byte1 and byte2 value of the UTF-8 char */
   int             *ranges;    /* sub range of iso10646 */
 
   nb_font = font_set->nb_font;
-  //x = 0;
+  /* x = 0; */
 
   if (nb_font < 1) {
     /* there is no font in the font_set :-( */
@@ -843,7 +843,7 @@ XGetUtf8FontAndGlyph(XUtf8FontStruct  *font_set,
   ranges = font_set->ranges;
   fonts = font_set->fonts;
   encodings = font_set->encodings;
-  //i = 0;
+  /* i = 0; */
   fnum = 0;
 
   while(fnum < nb_font && !fonts[fnum]) fnum++;
@@ -853,7 +853,7 @@ XGetUtf8FontAndGlyph(XUtf8FontStruct  *font_set,
   }
 
   first = fnum;
-  //last_fnum = fnum;
+  /* last_fnum = fnum; */
 
   /*
    * find the first encoding which can be used to
@@ -895,9 +895,9 @@ XUtf8UcsWidth(XUtf8FontStruct  *font_set,
   XFontStruct 	**fonts;    /* fonts array */
   Fl_XChar2b 	buf[8];     /* drawing buffer */
   int 		fnum;       /* index of the current font in the fonts array*/
-  //int 		i;          /* current byte in the XChar2b buffer */
+  /*int 		i;*/          /* current byte in the XChar2b buffer */
   int 		first;      /* first valid font index */
-  //int 		last_fnum;  /* font index of the previous char */
+  /*int 		last_fnum;*/ /* font index of the previous char */
   int 		nb_font;    /* quantity of fonts in the font array */
   char 		glyph[2];   /* byte1 and byte2 value of the UTF-8 char */
   int		*ranges;    /* sub range of iso10646 */
@@ -914,7 +914,7 @@ XUtf8UcsWidth(XUtf8FontStruct  *font_set,
   ranges = font_set->ranges;
   fonts = font_set->fonts;
   encodings = font_set->encodings;
-  //i = 0;
+  /* i = 0; */
   fnum = 0;
 
   while(fnum < nb_font && !fonts[fnum]) fnum++;
@@ -924,7 +924,7 @@ XUtf8UcsWidth(XUtf8FontStruct  *font_set,
   }
 
   first = fnum;
-  //last_fnum = fnum;
+  /* last_fnum = fnum; */
 
   no_spc = XUtf8IsNonSpacing(ucs);
   if (no_spc) ucs = no_spc;
