@@ -156,6 +156,13 @@
   control the appearance and use.
 */
 
+/** \var Fl_File_Chooser::showHiddenButton
+ When checked, hidden files (i.e., filename begins with dot) are displayed.
+ 
+ The "showHiddenButton" button is exported so that application developers can
+ control its appearance.
+ */
+
 /** \fn Fl_File_Chooser::~Fl_File_Chooser()
   Destroys the widget and frees all memory used by it.*/
 
