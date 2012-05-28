@@ -35,7 +35,7 @@
 #define FL_HOR_NICE_SLIDER	5
 
 /**
-  The Fl_Slider widget contains a sliding knob inside a box. It if
+  The Fl_Slider widget contains a sliding knob inside a box. It is
   often used as a scrollbar.  Moving the box all the way to the
   top/left sets it to the minimum(), and to the bottom/right to the
   maximum().  The minimum() may be greater than the maximum() to
