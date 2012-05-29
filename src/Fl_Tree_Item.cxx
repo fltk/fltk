@@ -1023,34 +1023,13 @@ void Fl_Tree_Item::update_prev_next(int index) {
 /// \returns the next visible item below us, or 0 if there's no more items.
 ///
 Fl_Tree_Item *Fl_Tree_Item::next_displayed(Fl_Tree_Prefs &prefs) {
-  Fl_Tree_Item *c = this;
-  while ( c ) {
-    if ( c->is_root() && !prefs.showroot() ) {		// on root and can't show it?
-      c = c->next();					// skip ahead, try again
-      continue;
-    }
-    if ( c->has_children() && c->is_close() ) {		// item has children and: invisible or closed?
-      // Skip children, take next sibling. If none, try parent's sibling, repeat
-      while ( c ) {
-	Fl_Tree_Item *sib = c->next_sibling();		// get sibling
-	if ( sib ) { c = sib; break; }			// Found? let outer loop test it
-	c = c->parent();				// No sibling? move up tree, try parent's sibling
-      }
-    } else {						// has children and isn't closed, or no children
-      c = c->next();					// use normal 'next'
-    }
-    if ( !c ) return(0);				// no more? done
-    // Check all parents to be sure none are closed.
-    // If closed, move up to that level and repeat until sure none are closed.
-    Fl_Tree_Item *p = c->parent();
-    while (1) {
-      if ( !p || p->is_root() ) return(c);		// hit top? then we're displayed, return c
-      if ( p->is_close() ) c = p;			// found closed parent? make it current
-      p = p->parent();					// continue up tree
-    }
-    if ( c && c->visible() ) return(c);			// item visible? return it
+  Fl_Tree_Item *item = this;
+  while ( 1 ) {
+    item = item->next();
+    if ( !item ) return 0;
+    if ( item->is_root() && !prefs.showroot() ) continue;
+    if ( item->visible_r() ) return(item);
   }
-  return(0);						// hit end: no more items
 }
 
 /// Return the previous visible item. (If this item above us has children and is closed, its children are skipped)
@@ -1087,7 +1066,8 @@ Fl_Tree_Item *Fl_Tree_Item::prev_displayed(Fl_Tree_Prefs &prefs) {
 ///    0 -- item (or parents) invisible or close()ed.
 ///
 int Fl_Tree_Item::visible_r() const {
-  for (const Fl_Tree_Item *p=this; p; p=p->parent())	// move up through parents
+  if ( !visible() ) return(0);
+  for (const Fl_Tree_Item *p=parent(); p; p=p->parent())// move up through parents
     if (!p->visible() || p->is_close()) return(0);	// any parent not visible or closed?
   return(1);
 }

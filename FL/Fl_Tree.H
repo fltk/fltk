@@ -366,9 +366,11 @@ public:
   const Fl_Tree_Item *find_clicked() const;
   Fl_Tree_Item *item_clicked();
   Fl_Tree_Item *first();
+  Fl_Tree_Item *first_visible();
   Fl_Tree_Item *next(Fl_Tree_Item *item=0);
   Fl_Tree_Item *prev(Fl_Tree_Item *item=0);
   Fl_Tree_Item *last();
+  Fl_Tree_Item *last_visible();
   Fl_Tree_Item *first_selected_item();
   Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item=0);
 
@@ -397,6 +399,7 @@ public:
   int select_only(Fl_Tree_Item *selitem, int docallback=1);
   int select_all(Fl_Tree_Item *item=0, int docallback=1);
   void set_item_focus(Fl_Tree_Item *item);
+  Fl_Tree_Item *get_item_focus() const;
   int is_selected(Fl_Tree_Item *item) const;
   int is_selected(const char *path);
 
@@ -473,6 +476,7 @@ public:
   int is_scrollbar(Fl_Widget *w);
   int scrollbar_size() const;
   void scrollbar_size(int size);
+  int is_vscroll_visible() const;
 
   ///////////////////////
   // callback related

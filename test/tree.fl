@@ -336,7 +336,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {5 21 1045 580} type Double visible
+    xywh {5 44 1045 580} type Double visible
   } {
     Fl_Group tree {
       label Tree
@@ -1586,6 +1586,13 @@ tree->redraw();}
         tooltip {Sets the default label bg color for newly created items. When set, this overrides the default behavior of using Fl_Tree::color().} xywh {975 477 16 16} box DOWN_BOX labelsize 12 align 7
         code0 {item_labelbgcolor_button->color(tree->item_labelbgcolor());}
       }
+      Fl_Button x_item_labelbgcolor_button {
+        label X
+        callback {tree->item_labelbgcolor(0xffffffff);
+UpdateColorChips();
+tree->redraw();}
+        tooltip {Make the bgcolor 'transparent' (0xffffffff)} xywh {995 477 16 16} labelsize 10 align 16
+      }
       Fl_Button testsuggs_button {
         label {Test Suggestions}
         callback {const char *helpmsg =
@@ -1649,13 +1656,6 @@ if ( !helpwin ) {
 helpwin->resizable(helpdisp);
 helpwin->show();} selected
         tooltip {Suggestions on how to do tests} xywh {935 554 95 16} labelsize 9
-      }
-      Fl_Button x_item_labelbgcolor_button {
-        label X
-        callback {tree->item_labelbgcolor(0xffffffff);
-UpdateColorChips();
-tree->redraw();}
-        tooltip {Make the bgcolor 'transparent' (0xffffffff)} xywh {995 477 16 16} labelsize 10 align 16
       }
     }
     Fl_Box resizer_box {

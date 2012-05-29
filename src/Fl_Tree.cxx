@@ -195,21 +195,24 @@ int Fl_Tree::handle(int e) {
       // Do shortcuts first or scrollbar will get them...
       if ( (Fl::focus() == this) &&				// tree has focus?
            _prefs.selectmode() > FL_TREE_SELECT_NONE ) {	// select mode that supports kb events?
-	if ( !_item_focus ) {
-	  set_item_focus(first());
+	if ( !_item_focus ) {					// no current focus item?
+	  set_item_focus(first_visible());			// use first vis item
+	  if ( Fl::event_key() == FL_Up ||			// Up or down?
+	       Fl::event_key() == FL_Down )			// ..if so, already did 'motion'
+	    return(1);						// ..so just return.
 	}
 	if ( _item_focus ) {
 	  int ekey = Fl::event_key();
 	  switch (ekey) {
 	    case FL_Enter:	// ENTER: toggle open/close
 	    case FL_KP_Enter: {
-	      open_toggle(_item_focus, when());
-	      break;
+	      open_toggle(_item_focus, when());			// toggle item in focus
+	      return(1);					// done, we handled key
 	    }
 	    case ' ':		// SPACE: change selection state
 	      switch ( _prefs.selectmode() ) {
 		case FL_TREE_SELECT_NONE:
-		  break;
+		  break;					// ignore, let group have shot at event
 		case FL_TREE_SELECT_SINGLE:
 		  if ( is_ctrl ) {				// CTRL-SPACE: (single mode) toggle
 		    if ( ! _item_focus->is_selected() ) {
@@ -221,7 +224,7 @@ int Fl_Tree::handle(int e) {
 		    select_only(_item_focus, when());		// SPACE: (single mode) select only
 		  }
 		  _lastselect = _item_focus;
-	          return(1);
+	          return(1);					// done, we handled key
 		case FL_TREE_SELECT_MULTI:
 		  if ( is_ctrl ) {
 		    select_toggle(_item_focus, when());		// CTRL-SPACE: (multi mode) toggle selection
@@ -229,7 +232,7 @@ int Fl_Tree::handle(int e) {
 		    select(_item_focus, when());		// SPACE: (multi-mode) select
 		  }
 		  _lastselect = _item_focus;
-	          return(1);
+	          return(1);					// done, we handled key
 	      }
 	      break;
 	    case FL_Right:  	// RIGHT: open children (if any)
@@ -280,7 +283,7 @@ int Fl_Tree::handle(int e) {
 		  case FL_TREE_SELECT_MULTI:
 		    // Do a 'select all'
 	            select_all();
-		    _lastselect = first();
+		    _lastselect = first_visible();
 		    take_focus();
 		    return(1);
 		}
@@ -588,13 +591,16 @@ Fl_Tree_Item* Fl_Tree::insert(Fl_Tree_Item *item, const char *name, int pos) {
 /// Remove the specified \p item from the tree.
 /// \p item may not be NULL.
 /// If it has children, all those are removed too.
+/// If item being removed has focus, no item will have focus.
 /// \returns 0 if done, -1 if 'item' not found.
 ///
 int Fl_Tree::remove(Fl_Tree_Item *item) {
+  // Item being removed is focus item? zero focus
+  if ( item == _item_focus ) _item_focus = 0;
   if ( item == _root ) {
     clear();
   } else {
-    Fl_Tree_Item *parent = item->parent();		// find item's parent
+    Fl_Tree_Item *parent = item->parent();	// find item's parent
     if ( ! parent ) return(-1);
     parent->remove_child(item);			// remove child + children
   }
@@ -755,7 +761,8 @@ Fl_Tree_Item* Fl_Tree::item_clicked() {
 ///
 Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
   if ( ! item ) {				// no start item?
-    item = ( dir == FL_Up ) ? last() : first();	// start at top or bottom
+    item = ( dir == FL_Up ) ? last_visible() : 	// wrap to bottom
+                              first_visible();	// wrap to top
     if ( ! item ) return(0);
     if ( item->visible_r() ) return(item);	// return first/last visible item
   }
@@ -780,6 +787,19 @@ Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
 ///
 Fl_Tree_Item* Fl_Tree::first() {
   return(_root);					// first item always root
+}
+
+/// Returns the first visible item in the tree.
+/// \returns first visible item in tree, or 0 if none.
+/// \see first_visible(), last_visible()
+///
+Fl_Tree_Item* Fl_Tree::first_visible() {
+  Fl_Tree_Item *i = showroot() ? first() : next(first());
+  while ( i ) {
+    if ( i->visible() ) return(i);
+    i = next(i);
+  }
+  return(0);
 }
 
 /// Return the next item after \p item, or 0 if no more items.
@@ -840,6 +860,26 @@ Fl_Tree_Item* Fl_Tree::last() {
   Fl_Tree_Item *item = _root;
   while ( item->has_children() ) {
     item = item->child(item->children()-1);
+  }
+  return(item);
+}
+
+/// Returns the last visible item in the tree.
+/// \returns last visible item in the tree, or 0 if none.
+///
+/// \see first_visible(), last_visible()
+///
+Fl_Tree_Item* Fl_Tree::last_visible() {
+  Fl_Tree_Item *item = last();
+  while ( item ) {
+    if ( item->visible() ) {
+      if ( item == _root && !showroot() ) {
+        return(0);
+      } else {
+        return(item);
+      }
+    }
+    item = prev(item);
   }
   return(item);
 }
@@ -1332,6 +1372,11 @@ int Fl_Tree::select_all(Fl_Tree_Item *item, int docallback) {
     count += select_all(item->child(t), docallback);	// recurse
   }
   return(count);
+}
+
+/// Get the item that currently has keyboard focus.
+Fl_Tree_Item* Fl_Tree::get_item_focus() const {
+  return(_item_focus);
 }
 
 /// Set the item that currently should have keyboard focus.
@@ -1898,6 +1943,12 @@ void Fl_Tree::scrollbar_size(int size) {
     _vscroll->resize(x()+w()-scrollsize, h(), scrollsize, _vscroll->h());
   }
 }   
+
+/// See if the vertical scrollbar is currently visible.
+/// \returns 1 if scrollbar visible, 0 if not.
+int Fl_Tree::is_vscroll_visible() const {
+  return(_vscroll->visible() ? 1 : 0);
+}
 
 /// Do the callback for the item, setting the item and reason
 void Fl_Tree::do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason) {
