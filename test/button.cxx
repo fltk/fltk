@@ -21,9 +21,11 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
+#include <FL/fl_ask.H>
 
 void beepcb(Fl_Widget *, void *) {
-  printf("\007"); fflush(stdout);
+  fl_beep();
+  fflush(stdout);
 }
 
 void exitcb(Fl_Widget *, void *) {
