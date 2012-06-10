@@ -131,6 +131,8 @@ FL_EXPORT void fl_filename_free_list(struct dirent ***l, int n);
 FL_EXPORT int	fl_open_uri(const char *uri, char *msg = (char *)0,
 		            int msglen = 0);
 
+FL_EXPORT void fl_decode_uri(char *uri);
+
 #    ifndef FL_DOXYGEN
 /*
  * _fl_filename_isdir_quick() is a private function that checks for a
