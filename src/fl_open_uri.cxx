@@ -236,6 +236,27 @@ fl_open_uri(const char *uri, char *msg, int msglen) {
 #endif // WIN32
 }
 
+/** Decodes a URL-encoded string.
+ 
+ In a Uniform Resource Identifier (URI), all non-ASCII bytes and several others (e.g., '<', '%', ' ')
+ are URL-encoded using 3 bytes by "%XY" where XY is the hexadecimal value of the byte. This function
+ decodes the URI restoring its original UTF-8 encoded content. Decoding is done in-place.
+ */
+void fl_decode_uri(char *uri)
+{
+  char *last = uri + strlen(uri);
+  while (uri < last-2) {
+    if (*uri == '%') {
+      int h;
+      if ( sscanf(uri+1, "%2X", &h) != 1 ) break;
+      *uri = h;
+      memmove(uri+1, uri+3, last - (uri+2));
+      last -= 2;
+    }
+    uri++;
+  }
+}
+
 /**   @} */
 
 #if !defined(WIN32) && !defined(__APPLE__)
