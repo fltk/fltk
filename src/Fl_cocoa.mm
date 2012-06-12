@@ -326,8 +326,6 @@ void DataReady::HandleData(fd_set& r, fd_set& w, fd_set& x)
 void* DataReady::DataReadyThread(void *o)
 {
   DataReady *self = (DataReady*)o;
-  NSAutoreleasePool *localPool;
-  localPool = [[NSAutoreleasePool alloc] init]; 
   while ( 1 ) {					// loop until thread cancel or error
     // Thread safe local copies of data before each select()
     self->DataLock();
@@ -358,12 +356,14 @@ void* DataReady::DataReadyThread(void *o)
 	  { return(NULL); }						// just exit
         DEBUGMSG("CHILD THREAD: DATA IS READY\n");
         NSPoint pt={0,0};
+	NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init]; 
         NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:pt 
 				       modifierFlags:0
                                            timestamp:0
                                         windowNumber:0 context:NULL 
 					     subtype:FLTKDataReadyEvent data1:0 data2:0];
         [NSApp postEvent:event atStart:NO];
+	[localPool release];
         return(NULL);		// done with thread
       }
     }
@@ -1280,6 +1280,9 @@ void fl_open_display() {
 					     selector:@selector(anyWindowWillClose:) 
 						 name:NSWindowWillCloseNotification 
 					       object:nil];
+    // necessary for secondary pthreads to be allowed to use cocoa, 
+    // especially to create an NSAutoreleasePool.
+    [NSThread detachNewThreadSelector:nil toTarget:nil withObject:nil];
   }
 }
 
