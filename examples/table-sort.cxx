@@ -93,7 +93,7 @@ protected:
     void draw_cell(TableContext context, int R=0, int C=0,      // table cell drawing
                    int X=0, int Y=0, int W=0, int H=0);
     void sort_column(int col, int reverse=0);                   // sort table by a column
-    void draw_sort_arrow(int X,int Y,int W,int H,int sort);
+    void draw_sort_arrow(int X,int Y,int W,int H);
 
 public:
     // Ctor
@@ -116,7 +116,7 @@ void MyTable::sort_column(int col, int reverse) {
 }
 
 // Draw sort arrow
-void MyTable::draw_sort_arrow(int X,int Y,int W,int H,int sort) {
+void MyTable::draw_sort_arrow(int X,int Y,int W,int H) {
     int xlft = X+(W-6)-8;
     int xctr = X+(W-6)-4;
     int xrit = X+(W-6)-0;
@@ -155,7 +155,7 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
                     fl_draw(head[C], X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left 
                     // Draw sort arrow
                     if ( C == _sort_lastcol ) {
-                        draw_sort_arrow(X,Y,W,H, _sort_reverse);
+                        draw_sort_arrow(X,Y,W,H);
                     }
                 }
             }
