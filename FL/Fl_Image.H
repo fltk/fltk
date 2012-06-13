@@ -190,7 +190,6 @@ public:
   \param[in] W      The width of the image in pixels
   \param[in] H      The height of the image in pixels
   \param[in] D      The image depth, or 'number of channels'. Default=3<br>
-                    If D=0, each uchar in bits[] is an 8 pixel bitmap<br>
                     If D=1, each uchar in bits[] is a grayscale pixel value.<br>
 		    If D=2, each uchar pair in bits[] is a grayscale + alpha pixel value.<br>
 		    If D=3, each uchar triplet in bits[] is an R/G/B pixel value<br>
