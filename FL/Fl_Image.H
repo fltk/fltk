@@ -184,7 +184,22 @@ public:
 
   public:
 
-/**  The constructor creates a new image from the specified data. */
+/**
+  The constructor creates a new image from the specified data.
+  \param[in] bits   The image data array.
+  \param[in] W      The width of the image in pixels
+  \param[in] H      The height of the image in pixels
+  \param[in] D      The image depth, or 'number of channels'. Default=3<br>
+                    If D=0, each uchar in bits[] is an 8 pixel bitmap<br>
+                    If D=1, each uchar in bits[] is a grayscale pixel value.<br>
+		    If D=2, each uchar pair in bits[] is a grayscale + alpha pixel value.<br>
+		    If D=3, each uchar triplet in bits[] is an R/G/B pixel value<br>
+		    If D=4, each uchar quad in bits[] is an R/G/B/A pixel value.
+  \param[in] LD     Line data size (default=0).<br>
+                    Line data is extra data that is included after each line
+		    of color image data and is normally not present. 
+  \see Fl_Image::data(), Fl_Image::w(), Fl_Image::h(), Fl_Image::d(), Fl_Image::ld()
+  */
   Fl_RGB_Image(const uchar *bits, int W, int H, int D=3, int LD=0) :
     Fl_Image(W,H,D), array(bits), alloc_array(0), id_(0), mask_(0) {data((const char **)&array, 1); ld(LD);}
   virtual ~Fl_RGB_Image();
