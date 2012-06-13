@@ -1143,7 +1143,7 @@ void fl_open_callback(void (*cb)(const char *)) {
   Fl_X *x;
   for (x = Fl_X::first;x;x = x->next) {
     Fl_Window *w = x->w;
-    if ( !w->parent() ) {
+    if ( !w->parent() && ![x->xid isMiniaturized]) {
       Fl::handle( FL_SHOW, w);
       }
   }
