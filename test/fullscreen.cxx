@@ -191,9 +191,8 @@ void fullscreen_cb(Fl_Widget *o, void *p) {
   }
 }
 
-Fl_Browser *browser;
-
-void update_screeninfo() {
+void update_screeninfo(Fl_Widget *b, void *p) {
+    Fl_Browser *browser = (Fl_Browser *)p;
     int x, y, w, h;
     char line[128];
     browser->clear();
@@ -214,22 +213,13 @@ void update_screeninfo() {
     }
 }
 
-int screen_changed(int event)
-{
-  if (event == FL_SCREEN_CONFIGURATION_CHANGED ) {
-    update_screeninfo();
-    return 1;
-    }
-  return 0;
-}
-
 #include <stdlib.h>
 
 void exit_cb(Fl_Widget *, void *) {
   exit(0);
 }
 
-#define NUMB 6
+#define NUMB 7
 
 int twowindow = 0;
 int initfull = 0;
@@ -298,27 +288,20 @@ int main(int argc, char **argv) {
   eb.callback(exit_cb);
   y+=30;
 
-  browser = new Fl_Browser(50,y,window.w()-60,100);
-  update_screeninfo();
+  Fl_Browser *browser = new Fl_Browser(50,y,window.w()-60,100);
+  update_screeninfo(0, browser);
   y+=100;
+  
+  Fl_Button update(50,y,window.w()-60,30,"Update");
+  update.callback(update_screeninfo, browser);
+  y+=30;
 
   if (initfull) {window.b3->set(); window.b3->do_callback();}
 
   window.end();
   window.show(argc,argv);
   
-  Fl::add_handler(screen_changed);
-
-  int xm, ym, wm, hm, X=0, Y=0;
-  while (Fl::first_window()) {
-    Fl::wait(1E10);
-    Fl::screen_xywh(xm, ym, wm, hm);
-    if (xm != X || ym != Y) {
-      X = xm; Y = ym;
-      update_screeninfo();
-      }
-    }
-  return 0;
+  return Fl::run();
 }
 
 //
