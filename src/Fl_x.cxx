@@ -48,7 +48,8 @@
 #include <dlfcn.h>
 #define RRScreenChangeNotifyMask  (1L << 0) // from X11/extensions/Xrandr.h
 #define RRScreenChangeNotify	0           // from X11/extensions/Xrandr.h
-static void *libxrandr_addr;                // run-time address of libXrandr.so
+typedef int (*XRRUpdateConfiguration_type)(XEvent *event);
+static XRRUpdateConfiguration_type XRRUpdateConfiguration_f;
 static int randrEventBase;                  // base of RandR-defined events
 #endif
 
@@ -328,6 +329,7 @@ Atom fl_NET_WM_ICON_NAME;		// utf8 aware window icon name
 Atom fl_NET_SUPPORTING_WM_CHECK;
 Atom fl_NET_WM_STATE;
 Atom fl_NET_WM_STATE_FULLSCREEN;
+Atom fl_NET_WORKAREA;
 
 /*
   X defines 32-bit-entities to have a format value of max. 32,
@@ -629,6 +631,7 @@ void fl_open_display(Display* d) {
   fl_NET_SUPPORTING_WM_CHECK = XInternAtom(d, "_NET_SUPPORTING_WM_CHECK", 0);
   fl_NET_WM_STATE       = XInternAtom(d, "_NET_WM_STATE",       0);
   fl_NET_WM_STATE_FULLSCREEN = XInternAtom(d, "_NET_WM_STATE_FULLSCREEN", 0);
+  fl_NET_WORKAREA       = XInternAtom(d, "_NET_WORKAREA",       0);
 
   if (sizeof(Atom) < 4)
     atom_bits = sizeof(Atom) * 8;
@@ -651,18 +654,22 @@ void fl_open_display(Display* d) {
   Fl::visual(FL_RGB);
 #endif
 #if USE_XRANDR
-  libxrandr_addr = dlopen("libXrandr.so", RTLD_LAZY);
+  void *libxrandr_addr = dlopen("libXrandr.so", RTLD_LAZY);
   if (libxrandr_addr) {
     int error_base;
     typedef Bool (*XRRQueryExtension_type)(Display*, int*, int*);
     typedef void (*XRRSelectInput_type)(Display*, Window, int);
     XRRQueryExtension_type XRRQueryExtension_f = (XRRQueryExtension_type)dlsym(libxrandr_addr, "XRRQueryExtension");
     XRRSelectInput_type XRRSelectInput_f = (XRRSelectInput_type)dlsym(libxrandr_addr, "XRRSelectInput");
+    XRRUpdateConfiguration_f = (XRRUpdateConfiguration_type)dlsym(libxrandr_addr, "XRRUpdateConfiguration");
     if (XRRQueryExtension_f && XRRSelectInput_f && XRRQueryExtension_f(d, &randrEventBase, &error_base))
       XRRSelectInput_f(d, RootWindow(d, fl_screen), RRScreenChangeNotifyMask);
-    else libxrandr_addr = NULL;
+    else XRRUpdateConfiguration_f = NULL;
     }
 #endif
+
+  // Listen for changes to _NET_WORKAREA
+  XSelectInput(d, RootWindow(d, fl_screen), PropertyChangeMask);
 }
 
 void fl_close_display() {
@@ -675,7 +682,6 @@ static int fl_workarea_xywh[4] = { -1, -1, -1, -1 };
 static void fl_init_workarea() {
   fl_open_display();
 
-  Atom _NET_WORKAREA = XInternAtom(fl_display, "_NET_WORKAREA", 0);
   Atom actual;
   unsigned long count, remaining;
   int format;
@@ -687,7 +693,7 @@ static void fl_init_workarea() {
    and fall back to the main screen full area when there are several screens.
    */
   if (Fl::screen_count() > 1 || XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
-                         _NET_WORKAREA, 0, 4 * sizeof(unsigned), False,
+			 fl_NET_WORKAREA, 0, 4 * sizeof(unsigned), False,
                          XA_CARDINAL, &actual, &format, &count, &remaining,
                          (unsigned char **)&xywh) || !xywh || !xywh[2] ||
                          !xywh[3])
@@ -973,12 +979,17 @@ int fl_handle(const XEvent& thisevent)
       return(1);
   
 #if USE_XRANDR  
-  if( libxrandr_addr && xevent.type == randrEventBase + RRScreenChangeNotify) {
+  if( XRRUpdateConfiguration_f && xevent.type == randrEventBase + RRScreenChangeNotify) {
+    XRRUpdateConfiguration_f(&xevent);
     Fl::call_screen_init();
     fl_init_workarea();
     Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
   }
 #endif
+
+  if (xevent.type == PropertyNotify && xevent.xproperty.atom == fl_NET_WORKAREA) {
+    fl_init_workarea();
+  }
   
   switch (xevent.type) {
 
