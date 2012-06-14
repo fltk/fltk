@@ -1324,6 +1324,7 @@ int Fl::x() {
  * smallest y coordinate in screen space of work area of menubar-containing display
  */
 int Fl::y() {
+  fl_open_display();
   NSRect visible = [[[NSScreen screens] objectAtIndex:0] visibleFrame];
   return int(main_screen_height - (visible.origin.y + visible.size.height));
 }
@@ -1347,11 +1348,12 @@ int Fl::h() {
 // computes the work area of the nth screen (screen #0 has the menubar)
 void Fl_X::screen_work_area(int &X, int &Y, int &W, int &H, int n)
 {
-    NSRect r = [[[NSScreen screens] objectAtIndex:n] visibleFrame];
-    X   = int(r.origin.x);
-    Y   = main_screen_height - int(r.origin.y + r.size.height);
-    W   = int(r.size.width);
-    H   = int(r.size.height);
+  fl_open_display();
+  NSRect r = [[[NSScreen screens] objectAtIndex:n] visibleFrame];
+  X   = int(r.origin.x);
+  Y   = main_screen_height - int(r.origin.y + r.size.height);
+  W   = int(r.size.width);
+  H   = int(r.size.height);
 }
 
 /*
