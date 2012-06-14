@@ -45,7 +45,7 @@
 // Turning off full screen when the border is on causes an unnecessary
 // resize and redraw when the program turns the border on.
 //
-// If it is a seperate window, turning double buffering on and off
+// If it is a separate window, turning double buffering on and off
 // will cause the window to raise, deiconize, and possibly move.  You
 // can avoid this by making the Fl_Gl_Window a child of a normal
 // window.
@@ -59,6 +59,7 @@
 #include <FL/Fl_Toggle_Light_Button.H>
 #include <FL/math.h>
 #include <FL/fl_ask.H>
+#include <FL/Fl_Browser.H>
 #include <stdio.h>
 
 #if HAVE_GL
@@ -190,6 +191,38 @@ void fullscreen_cb(Fl_Widget *o, void *p) {
   }
 }
 
+Fl_Browser *browser;
+
+void update_screeninfo() {
+    int x, y, w, h;
+    char line[128];
+    browser->clear();
+
+    sprintf(line, "Main screen work area: %dx%d@%d,%d", Fl::w(), Fl::h(), Fl::x(), Fl::y());
+    browser->add(line);
+    Fl::screen_work_area(x, y, w, h);
+    sprintf(line, "Mouse screen work area: %dx%d@%d,%d", w, h, x, y);
+    browser->add(line);
+    for (int n = 0; n < Fl::screen_count(); n++) {
+	int x, y, w, h;
+	Fl::screen_xywh(x, y, w, h, n);
+	sprintf(line, "Screen %d: %dx%d@%d,%d", n, w, h, x, y);
+	browser->add(line);
+	Fl::screen_work_area(x, y, w, h, n);
+	sprintf(line, "Work area %d: %dx%d@%d,%d", n, w, h, x, y);
+	browser->add(line);
+    }
+}
+
+int screen_changed(int event)
+{
+  if (event == FL_SCREEN_CONFIGURATION_CHANGED ) {
+    update_screeninfo();
+    return 1;
+    }
+  return 0;
+}
+
 #include <stdlib.h>
 
 void exit_cb(Fl_Widget *, void *) {
@@ -212,9 +245,9 @@ int main(int argc, char **argv) {
   if (Fl::args(argc,argv,i,arg) < argc)
     Fl::fatal("Options are:\n -2 = 2 windows\n -f = startup fullscreen\n%s",Fl::help);
 
-  fullscreen_window window(300,300+30*NUMB); window.end();
+  fullscreen_window window(400,400+30*NUMB); window.end();
 
-  shape_window sw(10,10,window.w()-20,window.h()-30*NUMB-20);
+  shape_window sw(10,10,window.w()-20,window.h()-30*NUMB-120);
 
 #if HAVE_GL
   sw.mode(FL_RGB);
@@ -235,7 +268,7 @@ int main(int argc, char **argv) {
 
   window.begin();
 
-  int y = window.h()-30*NUMB-5;
+  int y = window.h()-30*NUMB-105;
   Fl_Hor_Slider slider(50,y,window.w()-60,30,"Sides:");
   slider.align(FL_ALIGN_LEFT);
   slider.callback(sides_cb,&sw);
@@ -265,12 +298,27 @@ int main(int argc, char **argv) {
   eb.callback(exit_cb);
   y+=30;
 
+  browser = new Fl_Browser(50,y,window.w()-60,100);
+  update_screeninfo();
+  y+=100;
+
   if (initfull) {window.b3->set(); window.b3->do_callback();}
 
   window.end();
   window.show(argc,argv);
+  
+  Fl::add_handler(screen_changed);
 
-  return Fl::run();
+  int xm, ym, wm, hm, X=0, Y=0;
+  while (Fl::first_window()) {
+    Fl::wait(1E10);
+    Fl::screen_xywh(xm, ym, wm, hm);
+    if (xm != X || ym != Y) {
+      X = xm; Y = ym;
+      update_screeninfo();
+      }
+    }
+  return 0;
 }
 
 //
