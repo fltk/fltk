@@ -50,6 +50,7 @@ extern "C" {
 #include "flstring.h"
 #include <unistd.h>
 #include <stdarg.h>
+#include <math.h>
 
 #import <Cocoa/Cocoa.h>
 
@@ -424,7 +425,7 @@ void Fl::remove_fd(int n)
 }
 
 /*
- * Check if there is actually a message pending!
+ * Check if there is actually a message pending
  */
 int fl_ready()
 {
@@ -512,24 +513,110 @@ static void delete_timer(MacTimeout& t)
 		      kCFRunLoopDefaultMode);
     CFRelease(t.timer);
     memset(&t, 0, sizeof(MacTimeout));
+    if (&t == current_timer) current_timer = NULL;
   }
 }
 
 static void do_timer(CFRunLoopTimerRef timer, void* data)
 {
-  for (int i = 0;  i < mac_timer_used;  ++i) {
+  current_timer = (MacTimeout*)data;
+  current_timer->pending = 0;
+  (current_timer->callback)(current_timer->data);
+  if (current_timer && current_timer->pending == 0)
+    delete_timer(*current_timer);
+  current_timer = NULL;
+
+  breakMacEventLoop();
+}
+
+void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
+{
+  // check, if this timer slot exists already
+  for (int i = 0; i < mac_timer_used; ++i) {
     MacTimeout& t = mac_timers[i];
-    if (t.timer == timer  &&  t.data == data) {
-      t.pending = 0;
-      current_timer = &t;
-      (*t.callback)(data);
-      current_timer = NULL;
-      if (t.pending==0)
-        delete_timer(t);
+    // if so, simply change the fire interval
+    if (t.callback == cb  &&  t.data == data) {
+      t.next_timeout = CFAbsoluteTimeGetCurrent() + time;
+      CFRunLoopTimerSetNextFireDate(t.timer, t.next_timeout );
+      t.pending = 1;
+      return;
+    }
+  }
+  // no existing timer to use. Create a new one:
+  int timer_id = -1;
+  // find an empty slot in the timer array
+  for (int i = 0; i < mac_timer_used; ++i) {
+    if ( !mac_timers[i].timer ) {
+      timer_id = i;
       break;
     }
   }
-  breakMacEventLoop();
+  // if there was no empty slot, append a new timer
+  if (timer_id == -1) {
+    // make space if needed
+    if (mac_timer_used == mac_timer_alloc) {
+      realloc_timers();
+    }
+    timer_id = mac_timer_used++;
+  }
+  // now install a brand new timer
+  MacTimeout& t = mac_timers[timer_id];
+  CFRunLoopTimerContext context = {0, &t, NULL,NULL,NULL};
+  CFRunLoopTimerRef timerRef = CFRunLoopTimerCreate(kCFAllocatorDefault, 
+						    CFAbsoluteTimeGetCurrent() + time,
+						    1E30,  
+						    0,
+						    0,
+						    do_timer,
+						    &context
+						    );
+  if (timerRef) {
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(),
+		      timerRef,
+		      kCFRunLoopDefaultMode);
+    t.callback = cb;
+    t.data     = data;
+    t.timer    = timerRef;
+    t.pending  = 1;
+    t.next_timeout = CFRunLoopTimerGetNextFireDate(timerRef);
+  }
+}
+
+void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
+{
+  if (current_timer) {
+    // k = how many times 'time' seconds after the last scheduled timeout until the future
+    double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
+    if (k < 1) k = 1;
+    current_timer->next_timeout += k * time;
+    CFRunLoopTimerSetNextFireDate(current_timer->timer, current_timer->next_timeout );
+    current_timer->callback = cb;
+    current_timer->data = data;
+    current_timer->pending = 1;
+    return;
+  }
+  add_timeout(time, cb, data);
+}
+
+int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
+{
+  for (int i = 0; i < mac_timer_used; ++i) {
+    MacTimeout& t = mac_timers[i];
+    if (t.callback == cb  &&  t.data == data && t.pending) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
+{
+  for (int i = 0; i < mac_timer_used; ++i) {
+    MacTimeout& t = mac_timers[i];
+    if (t.callback == cb  && ( t.data == data || data == NULL)) {
+      delete_timer(t);
+    }
+  }
 }
 
 @interface FLWindow : NSWindow {
@@ -2539,96 +2626,6 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
   Fl::e_length = fl_selection_length[clipboard];
   if (!Fl::e_text) Fl::e_text = (char *)"";
   receiver.handle(FL_PASTE);
-}
-
-void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  // check, if this timer slot exists already
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    // if so, simply change the fire interval
-    if (t.callback == cb  &&  t.data == data) {
-      t.next_timeout = CFAbsoluteTimeGetCurrent() + time;
-      CFRunLoopTimerSetNextFireDate(t.timer, t.next_timeout );
-      t.pending = 1;
-      return;
-    }
-  }
-  // no existing timer to use. Create a new one:
-  int timer_id = -1;
-  // find an empty slot in the timer array
-  for (int i = 0; i < mac_timer_used; ++i) {
-    if ( !mac_timers[i].timer ) {
-      timer_id = i;
-      break;
-    }
-  }
-  // if there was no empty slot, append a new timer
-  if (timer_id == -1) {
-    // make space if needed
-    if (mac_timer_used == mac_timer_alloc) {
-      realloc_timers();
-    }
-    timer_id = mac_timer_used++;
-  }
-  // now install a brand new timer
-  MacTimeout& t = mac_timers[timer_id];
-  CFRunLoopTimerContext context = {0, data, NULL,NULL,NULL};
-  CFRunLoopTimerRef timerRef = CFRunLoopTimerCreate(kCFAllocatorDefault, 
-						    CFAbsoluteTimeGetCurrent() + time,
-						    1E30,  
-						    0,
-						    0,
-						    do_timer,
-						    &context
-						    );
-  if (timerRef) {
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(),
-		      timerRef,
-		      kCFRunLoopDefaultMode);
-    t.callback = cb;
-    t.data     = data;
-    t.timer    = timerRef;
-    t.pending  = 1;
-    t.next_timeout = CFRunLoopTimerGetNextFireDate(timerRef);
-  }
-}
-
-void Fl::repeat_timeout(double time, Fl_Timeout_Handler cb, void* data)
-{
-  if (current_timer) {
-    // k = how many times 'time' seconds after the last scheduled timeout until the future
-    double k = ceil( (CFAbsoluteTimeGetCurrent() - current_timer->next_timeout) / time);
-    if (k < 1) k = 1;
-    current_timer->next_timeout += k * time;
-    CFRunLoopTimerSetNextFireDate(current_timer->timer, current_timer->next_timeout );
-    current_timer->callback = cb;
-    current_timer->data = data;
-    current_timer->pending = 1;
-    return;
-  }
-  add_timeout(time, cb, data);
-}
-
-int Fl::has_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    if (t.callback == cb  &&  t.data == data && t.pending) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
-void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
-{
-  for (int i = 0; i < mac_timer_used; ++i) {
-    MacTimeout& t = mac_timers[i];
-    if (t.callback == cb  && ( t.data == data || data == NULL)) {
-      delete_timer(t);
-    }
-  }
 }
 
 int Fl_X::unlink(Fl_X *start) {
