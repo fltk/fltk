@@ -487,8 +487,14 @@ int Fl_Native_File_Chooser::showdir() {
   // TBD: match all 3 types of directories
   //
   // NOTE: *Don't* use BIF_SHAREABLE. It /disables/ mapped network shares
-  //       from being visible in BROWSE_DIRECTORY mode. 
-  //       See Walter Garm's comments in ./TODO.
+  //       from being visible in BROWSE_DIRECTORY mode. Walter Garm's comments:
+  //
+  //       --- Garms, Walter (GE EntSol, Security) wrote:
+  //       With your help I was able to solve the problem of the network drives.
+  //       For Version 6.0, at least, the BIF_SHAREABLE flag seems to have the
+  //       opposite sense:  With BIF_SHAREABLE not set I see the mapped network
+  //       drives, and with BIF_SHAREABLE set I do not.
+  //       ---
 
 #if defined(BIF_NONEWFOLDERBUTTON)				// Version 6.0
   if ( _btype == BROWSE_DIRECTORY ) _binf.ulFlags |= BIF_NONEWFOLDERBUTTON;
