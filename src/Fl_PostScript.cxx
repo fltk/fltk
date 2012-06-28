@@ -327,7 +327,7 @@ static const char * prolog_2 =  // prolog relevant only if lang_level >1
 "/Times-Roman ToISO /Times-Bold ToISO /Times-Italic ToISO /Times-BoldItalic ToISO \n"
 
 // define LatinExtA, the encoding of Latin-extended-A + some additional characters
-// see http://www.adobe.com/devnet/opentype/archives/glyphlist.txt for their names
+// see http://partners.adobe.com/public/developer/en/opentype/glyphlist.txt for their names
 "/LatinExtA \n"
 "[ "
 " /Amacron /amacron /Abreve /abreve /Aogonek /aogonek\n" // begin of Latin Extended-A code page
