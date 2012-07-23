@@ -28,6 +28,9 @@
  @brief A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
  *
  * On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
+ *
+ * You can configure a callback for the 'About' menu item to invoke your own code with fl_mac_set_about().
+ *
  */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
