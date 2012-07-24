@@ -81,7 +81,7 @@ public:
     variables, but you must declare the Fl_Tile <I>first</I>, so
     that it is destroyed last.
   */
-  Fl_Tile(int X,int Y,int W,int H,const char*l=0) : Fl_Group(X,Y,W,H,l) {}
+  Fl_Tile(int X,int Y,int W,int H,const char*l=0);
   void resize(int, int, int, int);
   void position(int, int, int, int);
 };

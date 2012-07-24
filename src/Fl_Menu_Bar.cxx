@@ -64,6 +64,12 @@ int Fl_Menu_Bar::handle(int event) {
   return 0;
 }
 
+
+Fl_Menu_Bar::Fl_Menu_Bar(int X, int Y, int W, int H,const char *l)
+: Fl_Menu_(X,Y,W,H,l) 
+{
+}
+
 //
 // End of "$Id$".
 //

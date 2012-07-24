@@ -96,6 +96,20 @@ Fl_Menu_Window::~Fl_Menu_Window() {
   hide();
 }
 
+
+Fl_Menu_Window::Fl_Menu_Window(int W, int H, const char *l)
+: Fl_Single_Window(W,H,l) 
+{ 
+  image(0); 
+}
+
+
+Fl_Menu_Window::Fl_Menu_Window(int X, int Y, int W, int H, const char *l)
+: Fl_Single_Window(X,Y,W,H,l) { 
+  image(0); 
+}
+
+
 //
 // End of "$Id$".
 //

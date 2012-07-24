@@ -59,6 +59,13 @@ int Fl_Return_Button::handle(int event) {
     return Fl_Button::handle(event);
 }
 
+
+Fl_Return_Button::Fl_Return_Button(int X, int Y, int W, int H,const char *l)
+: Fl_Button(X,Y,W,H,l) 
+{
+}
+
+
 //
 // End of "$Id$".
 //

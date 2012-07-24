@@ -31,14 +31,12 @@
 #include <FL/fl_ask.H>
 #include "flstring.h"
 
-#if defined(FL_DLL)	// really needed for c'tors for MS VC++ only
 #include <FL/Fl_Float_Input.H>
 #include <FL/Fl_Int_Input.H>
 #include <FL/Fl_Multiline_Input.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Multiline_Output.H>
 #include <FL/Fl_Secret_Input.H>
-#endif
 
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
@@ -763,50 +761,43 @@ Fl_Input::Fl_Input(int X, int Y, int W, int H, const char *l)
 : Fl_Input_(X, Y, W, H, l) {
 }
 
-/*
-  The following constructors must not be in the header file(s) if we
-  build a shared object (DLL). Instead they are defined here to force
-  the constructor (and default destructor as well) to be defined in
-  the DLL and exported (STR #2632).
-  
-  Note: if you change any of them, do the same changes in the specific
-  header file as well.  This redundant definition was chosen to enable
-  inline constructors in the header files (for static linking) as well
-  as those here for dynamic linking (Windows DLL).
-*/
-#if defined(FL_DLL)
 
 Fl_Float_Input::Fl_Float_Input(int X,int Y,int W,int H,const char *l)
-    : Fl_Input(X,Y,W,H,l) {
+: Fl_Input(X,Y,W,H,l) 
+{
   type(FL_FLOAT_INPUT);
 }
 
+
 Fl_Int_Input::Fl_Int_Input(int X,int Y,int W,int H,const char *l)
-    : Fl_Input(X,Y,W,H,l) {
+: Fl_Input(X,Y,W,H,l) {
   type(FL_INT_INPUT);
 }
 
+
 Fl_Multiline_Input::Fl_Multiline_Input(int X,int Y,int W,int H,const char *l)
-    : Fl_Input(X,Y,W,H,l) {
+: Fl_Input(X,Y,W,H,l) {
   type(FL_MULTILINE_INPUT);
 }
 
+
 Fl_Output::Fl_Output(int X,int Y,int W,int H, const char *l)
-    : Fl_Input(X, Y, W, H, l) {
+: Fl_Input(X, Y, W, H, l) {
   type(FL_NORMAL_OUTPUT);
 }
 
+
 Fl_Multiline_Output::Fl_Multiline_Output(int X,int Y,int W,int H,const char *l)
-    : Fl_Output(X,Y,W,H,l) {
+: Fl_Output(X,Y,W,H,l) {
   type(FL_MULTILINE_OUTPUT);
 }
 
+
 Fl_Secret_Input::Fl_Secret_Input(int X,int Y,int W,int H,const char *l)
-    : Fl_Input(X,Y,W,H,l) {
+: Fl_Input(X,Y,W,H,l) {
   type(FL_SECRET_INPUT);
 }
 
-#endif // FL_DLL
 
 //
 // End of "$Id$".

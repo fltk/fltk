@@ -69,8 +69,7 @@ public:
     <P>The destructor removes the Fl_Menu_Bar widget and all of its
     menu items.
   */
-    Fl_Menu_Bar(int X, int Y, int W, int H,const char *l=0)
-      : Fl_Menu_(X,Y,W,H,l) {}
+  Fl_Menu_Bar(int X, int Y, int W, int H,const char *l=0);
 };
 
 #endif

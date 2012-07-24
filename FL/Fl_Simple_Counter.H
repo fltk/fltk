@@ -30,8 +30,7 @@
 */
 class FL_EXPORT Fl_Simple_Counter : public Fl_Counter {
 public:
-    Fl_Simple_Counter(int X,int Y,int W,int H, const char *L = 0)
-	: Fl_Counter(X,Y,W,H,L) {type(FL_SIMPLE_COUNTER);}
+  Fl_Simple_Counter(int X,int Y,int W,int H, const char *L = 0);
 };
 
 #endif

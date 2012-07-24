@@ -22,6 +22,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Round_Button.H>
+#include <FL/Fl_Radio_Round_Button.H>
 
 /**
   Creates a new Fl_Round_Button widget using the given
@@ -33,6 +34,14 @@ Fl_Round_Button::Fl_Round_Button(int X,int Y,int W,int H, const char *l)
   down_box(FL_ROUND_DOWN_BOX);
   selection_color(FL_FOREGROUND_COLOR);
 }
+
+
+Fl_Radio_Round_Button::Fl_Radio_Round_Button(int X,int Y,int W,int H,const char *L)
+: Fl_Round_Button(X,Y,W,H,L) 
+{
+  type(FL_RADIO_BUTTON);
+}
+
 
 //
 // End of "$Id$".

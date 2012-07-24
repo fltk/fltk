@@ -18,6 +18,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Counter.H>
+#include <FL/Fl_Simple_Counter.H>
 #include <FL/fl_draw.H>
 
 void Fl_Counter::draw() {
@@ -196,6 +197,13 @@ Fl_Counter::Fl_Counter(int X, int Y, int W, int H, const char* L)
   textsize_ = FL_NORMAL_SIZE;
   textcolor_ = FL_FOREGROUND_COLOR;
 }
+
+
+Fl_Simple_Counter::Fl_Simple_Counter(int X,int Y,int W,int H, const char *L)
+: Fl_Counter(X,Y,W,H,L) {
+  type(FL_SIMPLE_COUNTER);
+}
+
 
 //
 // End of "$Id$".

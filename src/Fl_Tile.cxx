@@ -200,6 +200,13 @@ int Fl_Tile::handle(int event) {
   return Fl_Group::handle(event);
 }
 
+
+Fl_Tile::Fl_Tile(int X,int Y,int W,int H,const char*l) 
+: Fl_Group(X,Y,W,H,l) 
+{
+}
+
+
 //
 // End of "$Id$".
 //

@@ -27,9 +27,8 @@
 /** A clock widget of type FL_ROUND_CLOCK. Has no box. */
 class FL_EXPORT Fl_Round_Clock : public Fl_Clock {
 public:
-    /** Creates the clock widget, setting his type and box. */
-    Fl_Round_Clock(int X,int Y,int W,int H, const char *L = 0)
-	: Fl_Clock(X, Y, W, H, L) {type(FL_ROUND_CLOCK); box(FL_NO_BOX);}
+  /** Creates the clock widget, setting his type and box. */
+  Fl_Round_Clock(int X,int Y,int W,int H, const char *L = 0);
 };
 
 #endif

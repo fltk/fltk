@@ -26,8 +26,7 @@
 
 class FL_EXPORT Fl_Line_Dial : public Fl_Dial {
 public:
-    Fl_Line_Dial(int X,int Y,int W,int H, const char *L = 0)
-	: Fl_Dial(X,Y,W,H,L) {type(FL_LINE_DIAL);}
+  Fl_Line_Dial(int X,int Y,int W,int H, const char *L = 0);
 };
 
 #endif

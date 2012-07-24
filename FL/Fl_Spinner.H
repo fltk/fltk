@@ -121,31 +121,7 @@ private:
 		  and label string.
 		  <P>Inherited destructor Destroys the widget and any value associated with it.
 		*/
-		Fl_Spinner(int X, int Y, int W, int H, const char *L = 0)
-		  : Fl_Group(X, Y, W, H, L),
-		    input_(X, Y, W - H / 2 - 2, H),
-		    up_button_(X + W - H / 2 - 2, Y, H / 2 + 2, H / 2, "@-42<"),
-		    down_button_(X + W - H / 2 - 2, Y + H - H / 2,
-		                 H / 2 + 2, H / 2, "@-42>") {
-		  end();
-
-		  value_   = 1.0;
-		  minimum_ = 1.0;
-		  maximum_ = 100.0;
-		  step_    = 1.0;
-		  format_  = "%g";
-
-		  align(FL_ALIGN_LEFT);
-
-		  input_.value("1");
-		  input_.type(FL_INT_INPUT);
-		  input_.when(FL_WHEN_ENTER_KEY | FL_WHEN_RELEASE);
-		  input_.callback((Fl_Callback *)sb_cb, this);
-
-		  up_button_.callback((Fl_Callback *)sb_cb, this);
-
-		  down_button_.callback((Fl_Callback *)sb_cb, this);
-		}
+  Fl_Spinner(int X, int Y, int W, int H, const char *L = 0);
 
   /** Sets or returns the format string for the value. */
   const char	*format() { return (format_); }

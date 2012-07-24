@@ -19,6 +19,7 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Printer.H>
 #include <FL/x.H>
 #include <FL/fl_draw.H>
@@ -54,6 +55,23 @@ static int can_xdbe() {
   return use_xdbe;
 }
 #endif
+
+
+Fl_Double_Window::Fl_Double_Window(int W, int H, const char *l) 
+: Fl_Window(W,H,l), 
+  force_doublebuffering_(0) 
+{ 
+  type(FL_DOUBLE_WINDOW); 
+}
+
+
+Fl_Double_Window::Fl_Double_Window(int X, int Y, int W, int H, const char *l)
+: Fl_Window(X,Y,W,H,l), 
+  force_doublebuffering_(0) 
+{ 
+  type(FL_DOUBLE_WINDOW);
+}
+
 
 void Fl_Double_Window::show() {
   Fl_Window::show();
@@ -473,6 +491,25 @@ Fl_Double_Window::~Fl_Double_Window() {
   hide();
 }
 
+
+Fl_Overlay_Window::Fl_Overlay_Window(int W, int H, const char *l)
+: Fl_Double_Window(W,H,l) 
+{
+  overlay_ = 0; 
+  force_doublebuffering_=1; 
+  image(0); 
+}
+  
+  
+Fl_Overlay_Window::Fl_Overlay_Window(int X, int Y, int W, int H, const char *l)
+: Fl_Double_Window(X,Y,W,H,l) 
+{
+  overlay_ = 0; 
+  force_doublebuffering_=1; 
+  image(0); 
+}
+
+  
 //
 // End of "$Id$".
 //

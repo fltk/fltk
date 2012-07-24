@@ -26,9 +26,8 @@
 /** Widget that draws a filled horizontal  slider,  useful as a progress or value meter*/
 class FL_EXPORT Fl_Fill_Slider : public Fl_Slider {
 public:
-    /** Creates the slider from its position,size and optional title. */
-    Fl_Fill_Slider(int X,int Y,int W,int H,const char *L=0)
-	: Fl_Slider(X,Y,W,H,L) {type(FL_VERT_FILL_SLIDER);}
+  /** Creates the slider from its position,size and optional title. */
+  Fl_Fill_Slider(int X,int Y,int W,int H,const char *L=0);
 };
 
 #endif

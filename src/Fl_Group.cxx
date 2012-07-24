@@ -28,6 +28,10 @@
 #include <FL/fl_draw.H>
 #include <stdlib.h>
 
+#include <FL/Fl_Input_Choice.H>
+#include <FL/Fl_Spinner.H>
+
+
 Fl_Group* Fl_Group::current_;
 
 // Hack: A single child is stored in the pointer to the array, while
@@ -822,6 +826,53 @@ void Fl_Group::draw_outside_label(const Fl_Widget& widget) const {
   }
   widget.draw_label(X,Y,W,H,(Fl_Align)a);
 }
+
+
+Fl_Input_Choice::Fl_Input_Choice (int X,int Y,int W,int H,const char*L) 
+: Fl_Group(X,Y,W,H,L) 
+{
+  Fl_Group::box(FL_DOWN_BOX);
+  align(FL_ALIGN_LEFT);				// default like Fl_Input
+  inp_ = new Fl_Input(inp_x(), inp_y(),
+                      inp_w(), inp_h());
+  inp_->callback(inp_cb, (void*)this);
+  inp_->box(FL_FLAT_BOX);		// cosmetic
+  inp_->when(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED);
+  menu_ = new InputMenuButton(menu_x(), menu_y(),
+                              menu_w(), menu_h());
+  menu_->callback(menu_cb, (void*)this);
+  menu_->box(FL_FLAT_BOX);				// cosmetic
+  end();
+}
+
+
+Fl_Spinner::Fl_Spinner(int X, int Y, int W, int H, const char *L)
+: Fl_Group(X, Y, W, H, L),
+  input_(X, Y, W - H / 2 - 2, H),
+  up_button_(X + W - H / 2 - 2, Y, H / 2 + 2, H / 2, "@-42<"),
+  down_button_(X + W - H / 2 - 2, Y + H - H / 2,
+               H / 2 + 2, H / 2, "@-42>") 
+{
+  end();
+  
+  value_   = 1.0;
+  minimum_ = 1.0;
+  maximum_ = 100.0;
+  step_    = 1.0;
+  format_  = "%g";
+  
+  align(FL_ALIGN_LEFT);
+  
+  input_.value("1");
+  input_.type(FL_INT_INPUT);
+  input_.when(FL_WHEN_ENTER_KEY | FL_WHEN_RELEASE);
+  input_.callback((Fl_Callback *)sb_cb, this);
+  
+  up_button_.callback((Fl_Callback *)sb_cb, this);
+  
+  down_button_.callback((Fl_Callback *)sb_cb, this);
+}
+
 
 //
 // End of "$Id$".

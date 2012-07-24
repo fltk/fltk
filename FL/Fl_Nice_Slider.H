@@ -26,8 +26,7 @@
 
 class FL_EXPORT Fl_Nice_Slider : public Fl_Slider {
 public:
-    Fl_Nice_Slider(int X,int Y,int W,int H,const char *L=0)
-	: Fl_Slider(X,Y,W,H,L) {type(FL_VERT_NICE_SLIDER); box(FL_FLAT_BOX);}
+  Fl_Nice_Slider(int X,int Y,int W,int H,const char *L=0);
 };
 
 #endif

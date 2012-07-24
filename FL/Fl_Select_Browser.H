@@ -40,12 +40,7 @@ public:
     The constructor specializes Fl_Browser() by setting the type to FL_SELECT_BROWSER.
     The destructor destroys the widget and frees all memory that has been allocated.
   */
-#if defined(FL_DLL)	// implementation in src/Fl_Browser.cxx
   Fl_Select_Browser(int X,int Y,int W,int H,const char *L=0);
-#else
-  Fl_Select_Browser(int X,int Y,int W,int H,const char *L=0)
-	: Fl_Browser(X,Y,W,H,L) {type(FL_SELECT_BROWSER);}
-#endif
 };
 
 #endif

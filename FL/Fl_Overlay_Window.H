@@ -62,16 +62,14 @@ protected:
   /**
    See Fl_Overlay_Window::Fl_Overlay_Window(int X, int Y, int W, int H, const char *l=0)
    */
-  Fl_Overlay_Window(int W, int H, const char *l=0)
-    : Fl_Double_Window(W,H,l) {overlay_ = 0; force_doublebuffering_=1; image(0); }
+  Fl_Overlay_Window(int W, int H, const char *l=0);
   /**
    Creates a new Fl_Overlay_Window widget using the given
    position, size, and label (title) string. If the 
    positions (x,y) are not given, then the window manager
    will choose them.
    */
-  Fl_Overlay_Window(int X, int Y, int W, int H, const char *l=0)
-    : Fl_Double_Window(X,Y,W,H,l) {overlay_ = 0; force_doublebuffering_=1; image(0); }
+  Fl_Overlay_Window(int X, int Y, int W, int H, const char *l=0);
 public:
   void show(int a, char **b) {Fl_Double_Window::show(a,b);}
 };

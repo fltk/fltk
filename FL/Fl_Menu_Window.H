@@ -45,11 +45,9 @@ public:
   void clear_overlay() {set_flag(NO_OVERLAY);}
   ~Fl_Menu_Window();
   /** Creates a new Fl_Menu_Window widget using the given size, and label string. */
-  Fl_Menu_Window(int W, int H, const char *l = 0)
-    : Fl_Single_Window(W,H,l) { image(0); }
+  Fl_Menu_Window(int W, int H, const char *l = 0);
   /** Creates a new Fl_Menu_Window widget using the given position, size, and label string. */
-  Fl_Menu_Window(int X, int Y, int W, int H, const char *l = 0)
-    : Fl_Single_Window(X,Y,W,H,l) { image(0); }
+  Fl_Menu_Window(int X, int Y, int W, int H, const char *l = 0);
 };
 
 #endif

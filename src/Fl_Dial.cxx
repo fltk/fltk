@@ -18,9 +18,12 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Dial.H>
+#include <FL/Fl_Fill_Dial.H>
+#include <FL/Fl_Line_Dial.H>
 #include <FL/fl_draw.H>
 #include <stdlib.h>
 #include <FL/math.h>
+
 
 // All angles are measured with 0 to the right and counter-clockwise
 /**
@@ -151,6 +154,20 @@ Fl_Dial::Fl_Dial(int X, int Y, int W, int H, const char* l)
   a1 = 45;
   a2 = 315;
 }
+
+
+Fl_Fill_Dial::Fl_Fill_Dial(int X,int Y,int W,int H, const char *L)
+: Fl_Dial(X,Y,W,H,L) {
+  type(FL_FILL_DIAL);
+}
+
+
+Fl_Line_Dial::Fl_Line_Dial(int X,int Y,int W,int H, const char *L)
+: Fl_Dial(X,Y,W,H,L) 
+{
+  type(FL_LINE_DIAL);
+}
+
 
 //
 // End of "$Id$".

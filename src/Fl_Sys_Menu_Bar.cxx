@@ -273,6 +273,15 @@ void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
 void Fl_Sys_Menu_Bar::draw() {
 }
 
+
+Fl_Sys_Menu_Bar::Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l)
+: Fl_Menu_Bar(x,y,w,h,l) 
+{
+  deactivate();			// don't let the old area take events
+  fl_sys_menu_bar = this;
+}
+
+
 #endif /* __APPLE__ */
 
 //

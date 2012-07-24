@@ -56,6 +56,13 @@ int Fl_Repeat_Button::handle(int event) {
   }
 }
 
+
+Fl_Repeat_Button::Fl_Repeat_Button(int X,int Y,int W,int H,const char *l)
+: Fl_Button(X,Y,W,H,l) 
+{
+}
+
+
 //
 // End of "$Id$".
 //

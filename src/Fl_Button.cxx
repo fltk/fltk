@@ -21,6 +21,9 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Window.H>
 
+#include <FL/Fl_Radio_Button.H>
+#include <FL/Fl_Toggle_Button.H>
+
 
 Fl_Widget_Tracker *Fl_Button::key_release_tracker = 0;
 
@@ -205,6 +208,20 @@ Fl_Button::Fl_Button(int X, int Y, int W, int H, const char *L)
   shortcut_ = 0;
   set_flag(SHORTCUT_LABEL);
 }
+
+
+Fl_Radio_Button::Fl_Radio_Button(int X,int Y,int W,int H,const char *L)
+: Fl_Button(X, Y, W, H, L) {
+  type(FL_RADIO_BUTTON);
+}
+
+
+Fl_Toggle_Button::Fl_Toggle_Button(int X,int Y,int W,int H,const char *l)
+: Fl_Button(X,Y,W,H,l) 
+{
+  type(FL_TOGGLE_BUTTON);
+}
+
 
 //
 // End of "$Id$".

@@ -25,6 +25,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Radio_Light_Button.H>
 #include <FL/fl_draw.H>
 #include "flstring.h"
 
@@ -159,6 +160,14 @@ Fl_Light_Button::Fl_Light_Button(int X, int Y, int W, int H, const char* l)
   selection_color(FL_YELLOW);
   align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
 }
+
+
+Fl_Radio_Light_Button::Fl_Radio_Light_Button(int X,int Y,int W,int H,const char *l)
+: Fl_Light_Button(X,Y,W,H,l) 
+{
+  type(FL_RADIO_BUTTON);
+}
+
 
 //
 // End of "$Id$".

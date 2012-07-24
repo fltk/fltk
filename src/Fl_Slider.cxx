@@ -18,13 +18,15 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Slider.H>
+#include <FL/Fl_Fill_Slider.H>
+#include <FL/Fl_Hor_Slider.H>
+#include <FL/Fl_Hor_Fill_Slider.H>
+#include <FL/Fl_Hor_Nice_Slider.H>
+#include <FL/Fl_Nice_Slider.H>
 #include <FL/fl_draw.H>
 #include <math.h>
 #include "flstring.h"
 
-#if defined(FL_DLL)	// really needed for c'tors for MS VC++ only
-#include <FL/Fl_Hor_Slider.H>
-#endif
 
 void Fl_Slider::_Fl_Slider() {
   slider_size_ = 0;
@@ -359,24 +361,41 @@ int Fl_Slider::handle(int event) {
 		h()-Fl::box_dh(box()));
 }
 
-/*
-  The following constructor must not be in the header file if we
-  build a shared object (DLL). Instead it is defined here to force
-  the constructor (and default destructor as well) to be defined
-  in the DLL and exported (STR #2632).
-  
-  Note: if you the ctor here, do the same changes in the specific
-  header file as well.  This redundant definition was chosen to enable
-  inline constructors in the header files (for static linking) as well
-  as the one here for dynamic linking (Windows DLL).
-*/
 
-#if defined(FL_DLL)
+Fl_Fill_Slider::Fl_Fill_Slider(int X,int Y,int W,int H,const char *L)
+: Fl_Slider(X,Y,W,H,L) 
+{
+  type(FL_VERT_FILL_SLIDER);
+}
+
 
 Fl_Hor_Slider::Fl_Hor_Slider(int X,int Y,int W,int H,const char *l)
-	: Fl_Slider(X,Y,W,H,l) {type(FL_HOR_SLIDER);}
+: Fl_Slider(X,Y,W,H,l) {
+  type(FL_HOR_SLIDER);
+}
 
-#endif // FL_DLL
+
+Fl_Hor_Fill_Slider::Fl_Hor_Fill_Slider(int X,int Y,int W,int H,const char *L)
+: Fl_Slider(X,Y,W,H,L) 
+{
+  type(FL_HOR_FILL_SLIDER);
+}
+
+
+Fl_Hor_Nice_Slider::Fl_Hor_Nice_Slider(int X,int Y,int W,int H,const char *L)
+: Fl_Slider(X,Y,W,H,L) 
+{
+  type(FL_HOR_NICE_SLIDER); 
+  box(FL_FLAT_BOX);
+}
+
+
+Fl_Nice_Slider::Fl_Nice_Slider(int X,int Y,int W,int H,const char *L)
+: Fl_Slider(X,Y,W,H,L) {
+  type(FL_VERT_NICE_SLIDER); 
+  box(FL_FLAT_BOX);
+}
+
 
 //
 // End of "$Id$".

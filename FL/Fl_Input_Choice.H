@@ -131,20 +131,7 @@ public:
     and label string.
     Inherited destructor destroys the widget and any values associated with it.
   */
-  Fl_Input_Choice (int X,int Y,int W,int H,const char*L=0) : Fl_Group(X,Y,W,H,L) {
-    Fl_Group::box(FL_DOWN_BOX);
-    align(FL_ALIGN_LEFT);				// default like Fl_Input
-    inp_ = new Fl_Input(inp_x(), inp_y(),
-			inp_w(), inp_h());
-    inp_->callback(inp_cb, (void*)this);
-    inp_->box(FL_FLAT_BOX);		// cosmetic
-    inp_->when(FL_WHEN_CHANGED|FL_WHEN_NOT_CHANGED);
-    menu_ = new InputMenuButton(menu_x(), menu_y(),
-				menu_w(), menu_h());
-    menu_->callback(menu_cb, (void*)this);
-    menu_->box(FL_FLAT_BOX);				// cosmetic
-    end();
-  }
+  Fl_Input_Choice(int X,int Y,int W,int H,const char*L=0);
   
   /// Adds an item to the menu.
   /// You can access the more complex Fl_Menu_Button::add() methods 

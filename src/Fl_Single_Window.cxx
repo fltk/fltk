@@ -24,8 +24,30 @@
 
 #include <FL/Fl_Single_Window.H>
 
-void Fl_Single_Window::show() {Fl_Window::show();}
-void Fl_Single_Window::flush() {Fl_Window::flush();}
+
+void Fl_Single_Window::show() 
+{
+  Fl_Window::show();
+}
+
+
+void Fl_Single_Window::flush() 
+{
+  Fl_Window::flush();
+}
+
+
+Fl_Single_Window::Fl_Single_Window(int W, int H, const char *l)
+: Fl_Window(W,H,l) 
+{
+}
+
+
+Fl_Single_Window::Fl_Single_Window(int X, int Y, int W, int H, const char *l)
+: Fl_Window(X,Y,W,H,l) 
+{
+}
+
 
 //
 // End of "$Id$".

@@ -18,6 +18,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Clock.H>
+#include <FL/Fl_Round_Clock.H>
 #include <FL/fl_draw.H>
 #include <math.h>
 #include <time.h>
@@ -203,6 +204,15 @@ int Fl_Clock::handle(int event) {
 Fl_Clock::~Fl_Clock() {
   Fl::remove_timeout(tick, this);
 }
+
+
+Fl_Round_Clock::Fl_Round_Clock(int X,int Y,int W,int H, const char *L)
+: Fl_Clock(X, Y, W, H, L) 
+{
+  type(FL_ROUND_CLOCK); 
+  box(FL_NO_BOX);
+}
+
 
 //
 // End of "$Id$".

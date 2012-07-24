@@ -18,6 +18,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Value_Slider.H>
+#include <FL/Fl_Hor_Value_Slider.H>
 #include <FL/fl_draw.H>
 #include <math.h>
 
@@ -71,6 +72,13 @@ int Fl_Value_Slider::handle(int event) {
 			   sww-Fl::box_dw(box()),
 			   shh-Fl::box_dh(box()));
 }
+
+
+Fl_Hor_Value_Slider::Fl_Hor_Value_Slider(int X,int Y,int W,int H,const char *l)
+: Fl_Value_Slider(X,Y,W,H,l) {
+  type(FL_HOR_SLIDER);
+}
+
 
 //
 // End of "$Id$".
