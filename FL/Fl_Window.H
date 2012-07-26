@@ -185,7 +185,7 @@ public:
     dimensions. It is up to the application developer to verify window 
     parameters after the resize request.
   */
-  virtual void resize(int,int,int,int);
+  virtual void resize(int X,int Y,int W,int H);
   /**
     Sets whether or not the window manager border is around the
     window.  The default value is true. void border(int) can be
@@ -419,7 +419,7 @@ public:
     Turns off any side effects of fullscreen() and does 
     resize(x,y,w,h).
   */
-  void fullscreen_off(int,int,int,int);
+  void fullscreen_off(int X,int Y,int W,int H);
   /**
     Returns non zero if FULLSCREEN flag is set, 0 otherwise. 
   */
