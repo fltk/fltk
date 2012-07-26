@@ -291,17 +291,17 @@ public:
     Sets the allowable range the user can resize this window to.
     This only works for top-level windows.
     <UL>
-    <LI>minw and minh are the smallest the window can be.
+    <LI>\p minw and \p minh are the smallest the window can be.
 	Either value must be greater than 0.</LI>
-    <LI>maxw and maxh are the largest the window can be. If either is
+    <LI>\p maxw and \p maxh are the largest the window can be. If either is
 	<I>equal</I> to the minimum then you cannot resize in that direction.
 	If either is zero  then FLTK picks a maximum size in that direction
 	such that the window will fill the screen.</LI>
-    <LI>dw and dh are size increments.  The  window will be constrained
+    <LI>\p dw and \p dh are size increments.  The  window will be constrained
 	to widths of minw + N * dw,  where N is any non-negative integer.
 	If these are less or equal to 1 they are ignored (this is ignored
 	on WIN32).</LI>
-    <LI>aspect is a flag that indicates that the window should preserve its
+    <LI>\p aspect is a flag that indicates that the window should preserve its
 	aspect ratio.  This only works if both the maximum and minimum have
 	the same aspect ratio (ignored on WIN32 and by many X window managers).
 	</LI>
@@ -323,8 +323,16 @@ public:
     It is undefined what happens if the current size does not fit in the
     constraints passed to size_range().
   */
-  void size_range(int a, int b, int c=0, int d=0, int e=0, int f=0, int g=0) {
-    minw=a; minh=b; maxw=c; maxh=d; dw=e; dh=f; aspect=g; size_range_();}
+  void size_range(int minw, int minh, int maxw=0, int maxh=0, int dw=0, int dh=0, int aspect=0) {
+    this->minw   = minw;
+    this->minh   = minh;
+    this->maxw   = maxw;
+    this->maxh   = maxh;
+    this->dw     = dw;
+    this->dh     = dh;
+    this->aspect = aspect;
+    size_range_();
+  }
 
   /** See void Fl_Window::label(const char*)   */
   const char* label() const	{return Fl_Widget::label();}
