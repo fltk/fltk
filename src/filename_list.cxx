@@ -22,7 +22,9 @@
 #include <FL/fl_utf8.h>
 #include "flstring.h"
 #include <stdlib.h>
-
+#ifdef __APPLE__
+#include <FL/x.H>
+#endif
 
 extern "C" {
 #ifndef HAVE_SCANDIR
@@ -95,7 +97,7 @@ int fl_filename_list(const char *d, dirent ***list,
 #ifndef HAVE_SCANDIR
   // This version is when we define our own scandir
   int n = fl_scandir(dirloc, list, 0, sort);
-#elif defined(HAVE_SCANDIR_POSIX) && !defined(__APPLE__)
+#elif defined(HAVE_SCANDIR_POSIX)
   // POSIX (2008) defines the comparison function like this:
   int n = scandir(dirloc, list, 0, (int(*)(const dirent **, const dirent **))sort);
 #elif defined(__osf__)
