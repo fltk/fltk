@@ -11005,7 +11005,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = line_style;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11036,7 +11036,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_images;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11067,7 +11067,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = ask;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11099,7 +11099,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = tile;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11131,7 +11131,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = mandelbrot;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11163,7 +11163,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = hello;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11193,7 +11193,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = list_visuals;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11223,7 +11223,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = image;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11255,7 +11255,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = keyboard;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11285,7 +11285,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = tiled_image;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11317,7 +11317,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = utf8;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11347,7 +11347,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = checkers;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11379,7 +11379,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = doublebuffer;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11411,7 +11411,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = overlay;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11443,7 +11443,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = checkers;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11473,7 +11473,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = radio;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11503,7 +11503,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = navigation;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11533,7 +11533,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = tile;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11563,7 +11563,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = utf8;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11593,7 +11593,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = output;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11622,7 +11622,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = CubeView;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11654,7 +11654,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = editor;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11686,7 +11686,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = tree;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11718,7 +11718,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = tabs;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11750,7 +11750,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = image;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11780,7 +11780,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = help;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11812,7 +11812,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = bitmap;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11844,7 +11844,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = list_visuals;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11874,7 +11874,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = arc;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11904,7 +11904,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = resizebox;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11934,7 +11934,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = sudoku;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11966,7 +11966,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = boxtype;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -11996,7 +11996,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = label;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12026,7 +12026,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = gl_overlay;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12053,7 +12053,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = adjuster;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12085,7 +12085,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = browser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12117,7 +12117,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = cursor;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12149,7 +12149,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = blocks;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12181,7 +12181,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = colbrowser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12213,7 +12213,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = glpuzzle;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12243,7 +12243,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = clock;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12273,7 +12273,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = inactive;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12305,7 +12305,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = help;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12335,7 +12335,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = valuators;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12365,7 +12365,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = fast_slow;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12397,7 +12397,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = navigation;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12429,7 +12429,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = resize;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12461,7 +12461,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = pack;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12493,7 +12493,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = symbols;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12522,7 +12522,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_png;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12554,7 +12554,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_gl;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12587,7 +12587,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = message;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12616,7 +12616,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_jpeg;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12648,7 +12648,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = cube;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12678,7 +12678,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = fonts;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12705,7 +12705,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = CubeView;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12737,7 +12737,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = shape;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12767,7 +12767,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = iconize;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12799,7 +12799,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = "native-filechooser";
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12831,7 +12831,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = menubar;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12861,7 +12861,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = fractals;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12893,7 +12893,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = valuators;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12921,7 +12921,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = arc;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12951,7 +12951,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = device;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -12986,7 +12986,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13016,7 +13016,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = minimum;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13044,7 +13044,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_png;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13060,7 +13060,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				SDKROOT = "";
 			};
 			name = Release;
 		};
@@ -13086,7 +13086,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = rotated_text;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13118,7 +13118,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = iconize;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13150,7 +13150,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = sudoku;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13182,7 +13182,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = pixmap_browser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13212,7 +13212,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = preferences;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13242,7 +13242,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = forms;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13274,7 +13274,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = preferences;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13306,7 +13306,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = label;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13336,7 +13336,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = buttons;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13364,7 +13364,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_jpeg;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13392,7 +13392,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Demo;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13422,7 +13422,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = glpuzzle;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13454,7 +13454,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = button;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13486,7 +13486,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = fast_slow;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13516,7 +13516,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = message;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13546,7 +13546,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = editor;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13576,7 +13576,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = bitmap;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13608,7 +13608,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = inactive;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13640,7 +13640,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = clock;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13670,7 +13670,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = file_chooser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13695,7 +13695,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fluid;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13725,7 +13725,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = curve;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13755,7 +13755,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = fullscreen;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13785,7 +13785,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = colbrowser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13812,7 +13812,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Fluid;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13842,7 +13842,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = browser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13872,7 +13872,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = tree;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13904,7 +13904,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = scroll;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13934,7 +13934,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = hello;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13966,7 +13966,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_images;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -13996,7 +13996,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = pack;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14028,7 +14028,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = device;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14060,7 +14060,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = subwindow;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14090,7 +14090,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = doublebuffer;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14120,7 +14120,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = mandelbrot;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14152,7 +14152,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = resizebox;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14163,13 +14163,13 @@
 		AC3226B9FE17327A0476ACA0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				SDKROOT = "";
 			};
 			name = Debug;
 		};
@@ -14195,7 +14195,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = pixmap_browser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14225,7 +14225,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = color_chooser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14255,7 +14255,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_forms;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14288,7 +14288,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = buttons;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14320,7 +14320,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = minimum;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14352,7 +14352,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = input;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14384,7 +14384,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = file_chooser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14416,7 +14416,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = fonts;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14446,7 +14446,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = tabs;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14477,7 +14477,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_forms;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14507,7 +14507,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = input_choice;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14537,7 +14537,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = keyboard;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14567,7 +14567,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = scroll;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14599,7 +14599,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = curve;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14633,7 +14633,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14662,7 +14662,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_zlib;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14693,7 +14693,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = menubar;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14723,7 +14723,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = table;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14755,7 +14755,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = rotated_text;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14787,7 +14787,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = input_choice;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14819,7 +14819,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = output;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14849,7 +14849,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = boxtype;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14881,7 +14881,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = table;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14913,7 +14913,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = threads;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14945,7 +14945,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = utf8;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -14975,7 +14975,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = utf8;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15005,7 +15005,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = button;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15037,7 +15037,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = gl_overlay;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15069,7 +15069,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = tiled_image;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15101,7 +15101,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = pixmap;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15133,7 +15133,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = radio;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15163,7 +15163,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = pixmap;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15193,7 +15193,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = line_style;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15223,7 +15223,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = shape;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15253,7 +15253,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = subwindow;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15283,7 +15283,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = overlay;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15315,7 +15315,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = ask;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15345,7 +15345,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = input;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15377,7 +15377,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = forms;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15407,7 +15407,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = cube;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15437,7 +15437,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = blocks;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15462,7 +15462,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = adjuster;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15492,7 +15492,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = cursor;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15522,7 +15522,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = "native-filechooser";
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15554,7 +15554,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = color_chooser;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15587,7 +15587,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_gl;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15617,7 +15617,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = symbols;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15647,7 +15647,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = resize;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15676,7 +15676,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = Demo;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15708,7 +15708,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = fractals;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15737,7 +15737,7 @@
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = fltk_zlib;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15769,7 +15769,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = fullscreen;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",
@@ -15799,7 +15799,7 @@
 					Cocoa,
 				);
 				PRODUCT_NAME = threads;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = "";
 				WARNING_CFLAGS = (
 					"-Wno-format-security",
 					"-Wall",

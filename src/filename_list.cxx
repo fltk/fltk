@@ -108,6 +108,12 @@ int fl_filename_list(const char *d, dirent ***list,
   int n = scandir(dirloc, list, 0, (int(*)(void*, void*))sort);
 #elif defined(__sgi)
   int n = scandir(dirloc, list, 0, sort);
+#elif defined(__APPLE__)
+# if MAC_OS_X_VERSION_MAX_ALLOWED >= 1080
+  int n = scandir(dirloc, list, 0, (int(*)(const struct dirent**,const struct dirent**))sort);
+# else
+  int n = scandir(dirloc, list, 0, (int(*)(const void*,const void*))sort);
+# endif
 #else
   // The vast majority of UNIX systems want the sort function to have this
   // prototype, most likely so that it can be passed to qsort without any
