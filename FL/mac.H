@@ -156,15 +156,6 @@ extern Window fl_window;
 #define MAC_OS_X_VERSION_10_8 1080
 #endif
 
-#if defined(FL_LIBRARY) || defined(FL_INTERNALS) 
-#ifdef HAVE_SCANDIR_POSIX
-#undef HAVE_SCANDIR_POSIX
-#endif
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
-#define HAVE_SCANDIR_POSIX 1
-#endif
-#endif // FL_LIBRARY || FL_INTERNALS
-
 typedef CGImageRef Fl_Bitmask;
 
 extern CGContextRef fl_gc;

@@ -97,7 +97,7 @@ int fl_filename_list(const char *d, dirent ***list,
 #ifndef HAVE_SCANDIR
   // This version is when we define our own scandir
   int n = fl_scandir(dirloc, list, 0, sort);
-#elif defined(HAVE_SCANDIR_POSIX)
+#elif defined(HAVE_SCANDIR_POSIX) && !defined(__APPLE__)
   // POSIX (2008) defines the comparison function like this:
   int n = scandir(dirloc, list, 0, (int(*)(const dirent **, const dirent **))sort);
 #elif defined(__osf__)
@@ -109,7 +109,7 @@ int fl_filename_list(const char *d, dirent ***list,
 #elif defined(__sgi)
   int n = scandir(dirloc, list, 0, sort);
 #elif defined(__APPLE__)
-# if MAC_OS_X_VERSION_MAX_ALLOWED >= 1080
+# if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_8
   int n = scandir(dirloc, list, 0, (int(*)(const struct dirent**,const struct dirent**))sort);
 # else
   int n = scandir(dirloc, list, 0, (int(*)(const void*,const void*))sort);
