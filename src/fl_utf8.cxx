@@ -21,22 +21,25 @@
 #include <FL/filename.H>
 #include <stdarg.h>
 
-#if defined(WIN32) && !defined(__CYGWIN__)
+#if defined(WIN32) || defined(__CYGWIN__)
 # include <ctype.h>
 # include <io.h>
 # include <windows.h>
 # include <winbase.h>
 # include <process.h>
-#ifdef __CYGWIN__
-#include  <wchar.h>
-#else
-#include  <direct.h>
-#endif
+# ifdef __CYGWIN__
+#  include  <wchar.h>
+#  include <sys/types.h>
+#  include <sys/stat.h>
+#  include <fcntl.h>
+#  include <unistd.h>
+# else
+#  include  <direct.h>
+# endif
 extern "C" {
   int XUtf8Tolower(int ucs);
   unsigned short XUtf8IsNonSpacing(unsigned int ucs);
 };
-
 #elif defined(__APPLE__)
 # include <stdio.h>
 # include <time.h>
