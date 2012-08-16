@@ -1707,13 +1707,16 @@ void Fl_Window::flush() {
 //#elif defined(__APPLE__)
 #endif
 
+
 //
 // The following methods allow callbacks to schedule the deletion of
 // widgets at "safe" times.
 //
 
+
 static int		num_dwidgets = 0, alloc_dwidgets = 0;
 static Fl_Widget	**dwidgets = 0;
+
 
 /**
   Schedules a widget for deletion at the next call to the event loop.
@@ -1737,6 +1740,11 @@ static Fl_Widget	**dwidgets = 0;
 */
 void Fl::delete_widget(Fl_Widget *wi) {
   if (!wi) return;
+  
+  // don;t add the same widget twice
+  for (int i = 0; i < num_dwidgets; i++) {
+    if (dwidgets[i]==wi) return;
+  }
 
   if (num_dwidgets >= alloc_dwidgets) {
     Fl_Widget	**temp;
@@ -1754,6 +1762,7 @@ void Fl::delete_widget(Fl_Widget *wi) {
   dwidgets[num_dwidgets] = wi;
   num_dwidgets ++;
 }
+
 
 /**
     Deletes widgets previously scheduled for deletion.
@@ -1775,9 +1784,11 @@ void Fl::do_widget_deletion() {
   num_dwidgets = 0;
 }
 
+
 static Fl_Widget ***widget_watch = 0;
 static int num_widget_watch = 0;
 static int max_widget_watch = 0;
+
 
 /**
   Adds a widget pointer to the widget watch list.
@@ -1843,6 +1854,7 @@ void Fl::watch_widget_pointer(Fl_Widget *&w)
 #endif // DEBUG_WATCH
 }
 
+
 /**
   Releases a widget pointer from the watch list.
 
@@ -1876,6 +1888,8 @@ void Fl::release_widget_pointer(Fl_Widget *&w)
 #endif // DEBUG_WATCH
   return;
 }
+
+
 /**
   Clears a widget pointer \e in the watch list.
 
