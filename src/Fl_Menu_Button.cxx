@@ -23,20 +23,22 @@
 
 static Fl_Menu_Button	*pressed_menu_button_ = 0;
 
+
 void Fl_Menu_Button::draw() {
   if (!box() || type()) return;
+  int H = (labelsize()-3)&-2;
+  int X = x()+w()-H-Fl::box_dx(box())-Fl::box_dw(box())-1;
+  int Y = y()+(h()-H)/2;
   draw_box(pressed_menu_button_ == this ? fl_down(box()) : box(), color());
-  draw_label();
+  draw_label(x()+Fl::box_dx(box()), y(), X-x()+2, h());
   if (Fl::focus() == this) draw_focus();
   // ** if (box() == FL_FLAT_BOX) return; // for XForms compatibility
-  int H = (labelsize()-3)&-2;
-  int X = x()+w()-H*2;
-  int Y = y()+(h()-H)/2;
   fl_color(active_r() ? FL_DARK3 : fl_inactive(FL_DARK3));
   fl_line(X+H/2, Y+H, X, Y, X+H, Y);
   fl_color(active_r() ? FL_LIGHT3 : fl_inactive(FL_LIGHT3));
   fl_line(X+H, Y, X+H/2, Y+H);
 }
+
 
 /**
   Act exactly as though the user clicked the button or typed the
