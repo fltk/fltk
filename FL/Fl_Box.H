@@ -27,7 +27,7 @@
 #endif
 
 /**
-  This widget simply draws its box, and possibly it's label.  Putting it
+  This widget simply draws its box, and possibly its label.  Putting it
   before some other widgets and making it big enough to surround them
   will let you draw a frame around them.
 */
