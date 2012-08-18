@@ -59,6 +59,7 @@ class FLDropTarget : public IDropTarget
   int px, py;
 public:
   FLDropTarget() : m_cRefCount(0) { } // initialize
+  virtual ~FLDropTarget() { }
   HRESULT STDMETHODCALLTYPE QueryInterface( REFIID riid, LPVOID *ppvObject ) {
     if (IID_IUnknown==riid || IID_IDropTarget==riid)
     {
@@ -314,6 +315,7 @@ class FLDropSource : public IDropSource
   DWORD m_cRefCount;
 public:
   FLDropSource() { m_cRefCount = 0; }
+  virtual ~FLDropSource() { }
   HRESULT STDMETHODCALLTYPE QueryInterface( REFIID riid, LPVOID *ppvObject ) {
     if (IID_IUnknown==riid || IID_IDropSource==riid)
     {
@@ -424,6 +426,7 @@ class FLDataObject : public IDataObject
   FLEnum *m_EnumF;
 public:
   FLDataObject() { m_cRefCount = 1; }// m_EnumF = new FLEnum();}
+  virtual ~FLDataObject() { }
   HRESULT STDMETHODCALLTYPE QueryInterface( REFIID riid, LPVOID *ppvObject ) {
     if (IID_IUnknown==riid || IID_IDataObject==riid)
     {
