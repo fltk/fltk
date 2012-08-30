@@ -24,7 +24,6 @@
 		079434B72A838E83BD225CA8 /* demo.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 8D4E2F8A10BA06E332B7EB03 /* demo.cxx */; };
 		085A816C1A35B2F4A7A278F3 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		08B49F60E1211DE3569D73E2 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
-		09E7F79C70999FA727F27614 /* cmap.cxx in Sources */ = {isa = PBXBuildFile; fileRef = AC0F7C69B25854F609BD1A0C /* cmap.cxx */; };
 		09FD0BA86D2E85CF21F7C870 /* fl_read_image.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 9CA94171ECE3444BB9D65BAE /* fl_read_image.cxx */; };
 		0A1B92FA87D5464E4C1AC4EF /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		0A206149DF20CCCACC90E642 /* Fl_Window_iconize.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 9E22773911BDBADEA86730D4 /* Fl_Window_iconize.cxx */; };
@@ -9422,7 +9421,6 @@
 				3C2E57EF6298BB0FC9412871 /* Fl_own_colormap.cxx in Sources */,
 				AC85BE9A50BEE739620E7080 /* Fl_visual.cxx in Sources */,
 				9B1EDE4CD694BD6EECFDD3D9 /* Fl_x.cxx in Sources */,
-				09E7F79C70999FA727F27614 /* cmap.cxx in Sources */,
 				F8C4B882B6A9C15C2105AAA8 /* filename_absolute.cxx in Sources */,
 				D7E6146CFE9389C35447F23B /* filename_expand.cxx in Sources */,
 				FD872A3C0217DEF3E1042A02 /* filename_ext.cxx in Sources */,
