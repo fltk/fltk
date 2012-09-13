@@ -184,7 +184,7 @@ CHECK_FUNCTION_EXISTS(vsnprintf              HAVE_VSNPRINTF)
 
 set(CMAKE_REQUIRED_LIBRARIES)
 
-if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
+if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX AND NOT APPLE)
    set(MSG "POSIX compatible scandir")
    message(STATUS "Looking for ${MSG}")
    try_compile(V
@@ -198,7 +198,7 @@ if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
       message(STATUS "${MSG} - not found")
       set(HAVE_SCANDIR_POSIX HAVE_SCANDIR_POSIX-NOTFOUND)
    endif(V)
-endif(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
+endif(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX AND NOT APPLE)
 mark_as_advanced(HAVE_SCANDIR_POSIX)
 
 #######################################################################
