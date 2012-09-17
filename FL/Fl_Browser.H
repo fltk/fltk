@@ -257,7 +257,7 @@ public:
     Example:
     \code
   Fl_Browser *b = new Fl_Browser(..);
-  int widths[] = { 50, 50, 50, 70, 70, 40, 40, 70, 70, 50, 0 };  // widths for each column
+  static int widths[] = { 50, 50, 50, 70, 70, 40, 40, 70, 70, 50, 0 };  // widths for each column
   b->column_widths(widths); // assign array to widget
   b->column_char('\t');     // use tab as the column character
   b->add("USER\tPID\tCPU\tMEM\tVSZ\tRSS\tTTY\tSTAT\tSTART\tTIME\tCOMMAND");
