@@ -3315,10 +3315,10 @@ int Fl::dnd(void)
   return true;
 }
 
-unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel)
-// delete[] the returned pointer after use
+static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h)
+// release the returned value after use
 {
-  while(win->window()) {
+  while (win->window()) {
     x += win->x();
     y += win->y();
     win = win->window();
@@ -3329,7 +3329,13 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
   // left pixel column are not read, and bitmap is read shifted by one pixel in both directions. 
   // Under 10.5, we want no offset.
   NSRect rect = NSMakeRect(x - epsilon, y - epsilon, w, h);
-  NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
+  return [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
+}
+
+unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel)
+// delete[] the returned pointer after use
+{
+  NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
   *bytesPerPixel = [bitmap bitsPerPixel]/8;
   int bpp = (int)[bitmap bytesPerPlane];
   int bpr = (int)[bitmap bytesPerRow];
@@ -3359,16 +3365,24 @@ static void imgProviderReleaseData (void *info, const void *data, size_t size)
 CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h)
 // CFRelease the returned CGImageRef after use
 {
-  int bpp;
-  unsigned char *bitmap = bitmap_from_window_rect(win, x, y, w, h, &bpp);
   CGImageRef img;
-  CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
-  CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, bitmap, w*h*bpp, imgProviderReleaseData);
-  img = CGImageCreate(w, h, 8, 8*bpp, w*bpp, lut,
-                      bpp == 3 ? kCGImageAlphaNone : kCGImageAlphaLast,
-                      provider, NULL, false, kCGRenderingIntentDefault);
-  CGColorSpaceRelease(lut);
-  CGDataProviderRelease(provider);
+  if (fl_mac_os_version >= 100500) {
+    NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
+    img = [bitmap CGImage]; // requires Mac OS 10.5
+    CGImageRetain(img);
+    [bitmap release];
+    }
+  else {
+    int bpp;
+    unsigned char *bitmap = bitmap_from_window_rect(win, x, y, w, h, &bpp);
+    CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
+    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, bitmap, w*h*bpp, imgProviderReleaseData);
+    img = CGImageCreate(w, h, 8, 8*bpp, w*bpp, lut,
+			bpp == 3 ? kCGImageAlphaNone : kCGImageAlphaLast,
+			provider, NULL, false, kCGRenderingIntentDefault);
+    CGColorSpaceRelease(lut);
+    CGDataProviderRelease(provider);
+   }
   return img;
 }
 
