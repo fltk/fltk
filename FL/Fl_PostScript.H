@@ -29,9 +29,10 @@
 /**
  \brief PostScript graphical backend.
  *
- PostScript text uses vectorial fonts for the latin alphabet (exactly: all unicode
- characters between U+0020 and U+017F, that is, ASCII, Latin-1 Supplement and Latin Extended-A charts)
- plus a few other characters:
+ PostScript text uses vectorial fonts when using the FLTK standard fonts  
+ and the latin alphabet or a few other characters listed in the following table.
+ The latin alphabet means all unicode characters between U+0020 and U+017F, or, in other words, 
+ the ASCII, Latin-1 Supplement and Latin Extended-A charts.
  <table>
  <tr> <th>Char</th><th>Codepoint</th><th>Name</th>  <th>Char</th><th>Codepoint</th><th>Name</th> <th>Char</th><th>Codepoint</th><th>Name</th></tr>
  <tr><td>ƒ</td><td>U+0192</td><td>florin</td><td>‚</td><td>U+201A</td><td>quotesinglbase</td><td>™</td><td>U+2122</td><td>trademark</td></tr>
@@ -48,9 +49,8 @@
  <tr><td>‘</td><td>U+2018</td><td>quoteleft</td><td>/</td><td>U+2044</td><td>fraction</td><td>ﬂ</td><td>U+FB02</td><td>fl</td></tr>
  <tr><td>’</td><td>U+2019</td><td>quoteright</td><td>€</td><td>U+20AC</td><td>Euro</td><td></td><td>U+F8FF</td><td>apple (Mac OS only)</td></tr>
  </table>
- <br> All other unicode characters are output as a bitmap.
- <br> FLTK standard fonts are output using PostScript standard fonts: Helvetica, Courier, 
- Times (and their bold, oblique, italic variants).
+ <br> All other unicode characters or all other fonts (FL_FREE_FONT and above) are output as a bitmap.
+ <br> FLTK standard fonts are output using the corresponding PostScript standard fonts.
  */
 class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 public: 
