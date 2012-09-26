@@ -1331,20 +1331,12 @@ void fl_open_display() {
     if ( !GetCurrentProcess( &cur_psn ) && !GetFrontProcess( &front_psn ) &&
          !SameProcess( &front_psn, &cur_psn, &same_psn ) && !same_psn ) {
       // only transform the application type for unbundled apps
-      CFBundleRef bundle = CFBundleGetMainBundle();
-      if ( bundle ) {
-      	FSRef execFs;
-      	CFURLRef execUrl = CFBundleCopyExecutableURL( bundle );
-      	CFURLGetFSRef( execUrl, &execFs );
-        
-      	FSRef bundleFs;
-      	GetProcessBundleLocation( &cur_psn, &bundleFs );
-        
-      	if ( !FSCompareFSRefs( &execFs, &bundleFs ) )
-          bundle = NULL;
-        
-        CFRelease(execUrl);
-      }
+      NSBundle *bundle = [NSBundle mainBundle];
+      if (bundle) {
+	NSString *exe = [bundle executablePath];
+	NSString *bpath = [bundle bundlePath];
+	if ([bpath isEqualToString:exe]) bundle = nil;
+	}
             
       if ( !bundle )
       {
