@@ -343,11 +343,12 @@ int Fl_Native_File_Chooser::filters() const {
 #define UNLIKELYPREFIX "___fl_very_unlikely_prefix_"
 
 int Fl_Native_File_Chooser::get_saveas_basename(void) {
-  char *q = strdup( [[(NSSavePanel*)_panel filename] fileSystemRepresentation] );
+  char *q = strdup( [[[(NSSavePanel*)_panel URL] path] UTF8String] );
   id delegate = [(NSSavePanel*)_panel delegate];
   if (delegate != nil) {
-    const char *d = [[(NSSavePanel*)_panel directory] fileSystemRepresentation];
+    const char *d = [[[[(NSSavePanel*)_panel URL] path] stringByDeletingLastPathComponent] UTF8String];
     int l = strlen(d) + 1;
+    if (strcmp(d, "/") == 0) l = 1;
     int lu = strlen(UNLIKELYPREFIX);
     // Remove UNLIKELYPREFIX between directory and filename parts
     memmove(q + l, q + l + lu, strlen(q + l + lu) + 1);
@@ -484,7 +485,34 @@ static NSPopUpButton *createPopupAccessory(NSSavePanel *panel, const char *filte
   [panel setAccessoryView:view];
   return popup;
 }
-  
+
+int Fl_Native_File_Chooser::runmodal()
+{
+  NSString *dir = nil;
+  NSString *fname = nil;
+  NSString *preset = nil;
+  int retval;
+  if (_preset_file) {
+    preset = [[NSString alloc] initWithUTF8String:_preset_file];
+    if (strchr(_preset_file, '/') != NULL) {
+      dir = [[NSString alloc] initWithString:[preset stringByDeletingLastPathComponent]];
+    }
+    fname = [preset lastPathComponent];
+  }
+  if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
+  if (fl_mac_os_version >= 100600) {
+    if (dir) [(NSSavePanel*)_panel setDirectoryURL:[NSURL fileURLWithPath:dir]];
+    if (fname) [(NSSavePanel*)_panel setNameFieldStringValue:fname];
+    retval = [(NSSavePanel*)_panel runModal];
+  }
+  else {
+    retval = [(id)_panel runModalForDirectory:dir file:fname];
+  }
+  [dir release];
+  [preset release];
+  return retval;
+}
+
 // POST BROWSER
 //     Internal use only.
 //     Assumes '_opts' has been initialized.
@@ -551,36 +579,21 @@ int Fl_Native_File_Chooser::post() {
       [openDelegate setPopup:popup filter_pattern:_filt_patt];
       [(NSOpenPanel*)_panel setDelegate:openDelegate];
     }
-    NSString *dir = nil;
-    NSString *fname = nil;
-    NSString *preset = nil;
-    if (_preset_file) {
-      preset = [[NSString alloc] initWithUTF8String:_preset_file];
-      if (strchr(_preset_file, '/') != NULL) 
-	dir = [[NSString alloc] initWithString:[preset stringByDeletingLastPathComponent]];
-      fname = [preset lastPathComponent];
-    }
-    if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
-    retval = [(NSOpenPanel*)_panel runModalForDirectory:dir file:fname types:nil];	
-    [dir release];
-    [preset release];
+    retval = runmodal();
     if (_filt_total) {
       _filt_value = [popup indexOfSelectedItem];
     }
     if ( retval == NSOKButton ) {
       clear_pathnames();
-      NSArray *array = [(NSOpenPanel*)_panel filenames];
+      NSArray *array = [(NSOpenPanel*)_panel URLs];
       _tpathnames = [array count];
       _pathnames = new char*[_tpathnames];
       for(int i = 0; i < _tpathnames; i++) {
-	_pathnames[i] = strnew([(NSString*)[array objectAtIndex:i] fileSystemRepresentation]);
+	_pathnames[i] = strnew([[(NSURL*)[array objectAtIndex:i] path] UTF8String]);
       }
     }
   }
   else {
-    NSString *dir = nil;
-    NSString *fname = nil;
-    NSString *preset = nil;
     NSPopUpButton *popup = nil;
     [(NSSavePanel*)_panel setAllowsOtherFileTypes:YES];
     if ( !(_options & SAVEAS_CONFIRM) ) {
@@ -588,26 +601,16 @@ int Fl_Native_File_Chooser::post() {
       if (saveDelegate == nil)saveDelegate = [[FLsaveDelegate alloc] init]; // not to be ever freed
       [(NSSavePanel*)_panel setDelegate:saveDelegate];
     }
-    if (_preset_file) {
-      preset = [[NSString alloc] initWithUTF8String:_preset_file];
-      if (strchr(_preset_file, '/') != NULL) {
-	dir = [[NSString alloc] initWithString:[preset stringByDeletingLastPathComponent]];
-      }
-      fname = [preset lastPathComponent];
-    }
-    if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
     if (_filt_total) {
       if (_filt_value >= _filt_total) _filt_value = _filt_total - 1;
       char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
       popup = createPopupAccessory((NSSavePanel*)_panel, t, [[(NSSavePanel*)_panel nameFieldLabel] UTF8String], _filt_value);
       delete[] t;
     }
-    retval = [(NSSavePanel*)_panel runModalForDirectory:dir file:fname];
+    retval = runmodal();
     if (_filt_total) {
       _filt_value = [popup indexOfSelectedItem];
     }
-    [dir release];
-    [preset release];
     if ( retval == NSOKButton ) get_saveas_basename();
   }
   [key makeKeyWindow];

@@ -87,6 +87,7 @@ static void convert_crlf(char * string, size_t len);
 static void createAppleMenu(void);
 static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h);
 static void cocoaMouseHandler(NSEvent *theEvent);
+static int calc_mac_os_version();
 
 static Fl_Quartz_Graphics_Driver fl_quartz_driver;
 static Fl_Display_Device fl_quartz_display(&fl_quartz_driver);
@@ -102,7 +103,7 @@ bool fl_show_iconic;                    // true if called from iconize() - shows
 //int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
 Window fl_window;
 Fl_Window *Fl_Window::current_;
-int fl_mac_os_version = 0;		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
+int fl_mac_os_version = calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 
 // forward declarations of variables in this file
 static int got_events = 0;
@@ -3455,6 +3456,16 @@ void *Fl_X::get_carbon_function(const char *function_name) {
   return f;
 }
   
+/* Returns the version of the running Mac OS as an int such as 100802 for 10.8.2
+ */
+static int calc_mac_os_version() {
+  int M, m, b = 0;
+  NSDictionary * sv = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
+  const char *s = [[sv objectForKey:@"ProductVersion"] UTF8String];
+  sscanf(s, "%d.%d.%d", &M, &m, &b);
+  return M*10000 + m*100 + b;
+}
+
 #endif // __APPLE__
 
 //

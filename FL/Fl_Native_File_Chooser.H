@@ -213,6 +213,7 @@ private:
   void add_filter(const char *, const char *);
   void parse_filter(const char *from);
   int post();
+  int runmodal();
 #endif
 
 #if ! defined(__APPLE__) && !defined(WIN32)
