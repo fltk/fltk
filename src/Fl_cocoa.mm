@@ -3460,9 +3460,11 @@ void *Fl_X::get_carbon_function(const char *function_name) {
  */
 static int calc_mac_os_version() {
   int M, m, b = 0;
+  NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
   NSDictionary * sv = [NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"];
   const char *s = [[sv objectForKey:@"ProductVersion"] UTF8String];
   sscanf(s, "%d.%d.%d", &M, &m, &b);
+  [localPool release];
   return M*10000 + m*100 + b;
 }
 
