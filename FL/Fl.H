@@ -785,7 +785,9 @@ public:
       \see void screen_xywh(int &x, int &y, int &w, int &h, int mx, int my) 
   */
   static void screen_xywh(int &X, int &Y, int &W, int &H) {
-    screen_xywh(X, Y, W, H, e_x_root, e_y_root);
+    int x, y;
+    Fl::get_mouse(x, y);
+    screen_xywh(X, Y, W, H, x, y);
   }
   static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
   static void screen_xywh(int &X, int &Y, int &W, int &H, int n); 
@@ -799,7 +801,9 @@ public:
    \see void screen_work_area(int &x, int &y, int &w, int &h, int mx, int my) 
    */
   static void screen_work_area(int &X, int &Y, int &W, int &H) {
-    screen_work_area(X, Y, W, H, e_x_root, e_y_root);
+    int x, y;
+    Fl::get_mouse(x, y);
+    screen_work_area(X, Y, W, H, x, y);
   }
 
   /**   @} */
