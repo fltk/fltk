@@ -518,6 +518,15 @@ char *fl_getenv(const char* v)
 #endif
 }
 
+/** Cross-platform function to open files with a UTF-8 encoded name.
+ 
+ This function is especially useful under the MSWindows platform where the 
+ standard open() function fails with UTF-8 encoded non-ASCII filenames.
+ \param f  the UTF-8 encoded filename
+ \param oflags  other arguments are as in the standard open() function
+ \return  a file descriptor upon successful completion, or -1 in case of error.
+ \sa fl_fopen().
+ */
 int fl_open(const char* f, int oflags, ...)
 {
 	int pmode;
@@ -548,6 +557,7 @@ int fl_open(const char* f, int oflags, ...)
  \param f  the UTF-8 encoded filename
  \param mode  same as the second argument of the standard fopen() function
  \return  a FILE pointer upon successful completion, or NULL in case of error.
+ \sa fl_open().
  */
 FILE *fl_fopen(const char* f, const char *mode)
 {

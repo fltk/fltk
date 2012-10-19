@@ -475,9 +475,9 @@ state information and data structures.
 
 \subsection non_ascii_filenames Using filenames with non-ASCII characters
 
-In FLTK, all strings, including filenames, are UTF-8 encoded. The utility function
-fl_fopen() allows to open files potentially having non-ASCII names in a 
-cross-platform fashion, whereas the standard fopen() function fails to do so.
+In FLTK, all strings, including filenames, are UTF-8 encoded. The utility functions
+fl_fopen() and fl_open() allow to open files potentially having non-ASCII names in a 
+cross-platform fashion, whereas the standard fopen()/open() functions fail to do so.
 
 \subsection osissues_win32_messages Handling Other WIN32 Messages
 

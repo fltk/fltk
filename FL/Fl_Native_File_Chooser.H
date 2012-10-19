@@ -84,9 +84,10 @@
  \endcode
  
  The Fl_Native_File_Chooser widget transmits UTF-8 encoded filenames to its user. It is
- recommended to open files that may have non-ASCII names with the fl_fopen() utility 
- function that handles these names in a cross-platform way (whereas the standard 
- fopen() function fails on the MSWindows platform to open files with a non-ASCII name).
+ recommended to open files that may have non-ASCII names with the fl_fopen() or
+ fl_open() utility functions that handle these names in a cross-platform way 
+ (whereas the standard fopen()/open() functions fail on the MSWindows platform 
+ to open files with a non-ASCII name).
  
  <B>Platform Specific Caveats</B>
  

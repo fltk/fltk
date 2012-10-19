@@ -15,6 +15,9 @@
  *
  *     http://www.fltk.org/str.php
  */
+/** \file
+ File names and URI utility functions.
+ */
 
 /* Xcode on OS X includes files by recursing down into directories.
  * This code catches the cycle and directly includes the required file.
