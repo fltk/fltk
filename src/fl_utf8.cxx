@@ -541,6 +541,14 @@ int fl_open(const char* f, int oflags, ...)
 #endif
 }
 
+/** Cross-platform function to open files with a UTF-8 encoded name.
+ 
+ This function is especially useful under the MSWindows platform where the 
+ standard fopen() function fails with UTF-8 encoded non-ASCII filenames.
+ \param f  the UTF-8 encoded filename
+ \param mode  same as the second argument of the standard fopen() function
+ \return  a FILE pointer upon successful completion, or NULL in case of error.
+ */
 FILE *fl_fopen(const char* f, const char *mode)
 {
 #if  defined (WIN32) && !defined(__CYGWIN__)
