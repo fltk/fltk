@@ -3,7 +3,7 @@
  \page preface Preface
 
 This manual describes the Fast Light Tool Kit ("FLTK")
-version 1.3.0, a C++ Graphical User Interface
+version 1.3.1, a C++ Graphical User Interface
 ("GUI") toolkit for UNIX, Microsoft Windows and Apple OS X. Each
 of the chapters in this manual is designed as a tutorial for
 using FLTK, while the appendices provide a convenient reference
