@@ -207,7 +207,7 @@ private:
   
   int _auto_drag;
   int _selecting;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   int _scrollbar_size;
 #endif
   
@@ -1070,7 +1070,7 @@ public:
   void callback(Fl_Widget*, void*);
 #endif
 
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   /**
     Gets the current size of the scrollbars' troughs, in pixels.

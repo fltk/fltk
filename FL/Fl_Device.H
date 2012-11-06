@@ -367,7 +367,7 @@ protected:
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {}
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   virtual
 #endif
   void copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy);

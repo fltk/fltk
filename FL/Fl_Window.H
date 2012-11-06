@@ -52,19 +52,19 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   // Note: we must use separate statements for each of the following 4 variables,
   // with the static attribute, otherwise MS VC++ 2008/2010 complains :-(
   // AlbrechtS 04/2012
-#if FLTK_ABI_VERSION < 10302
+#if FLTK_ABI_VERSION < 10301
   static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int no_fullscreen_x;
-#if FLTK_ABI_VERSION < 10302
+#if FLTK_ABI_VERSION < 10301
   static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int no_fullscreen_y;
-#if FLTK_ABI_VERSION < 10302
+#if FLTK_ABI_VERSION < 10301
   static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int no_fullscreen_w;
-#if FLTK_ABI_VERSION < 10302
+#if FLTK_ABI_VERSION < 10301
   static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int no_fullscreen_h;

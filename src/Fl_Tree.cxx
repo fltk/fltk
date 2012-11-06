@@ -99,7 +99,7 @@ Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L
   _callback_reason = FL_TREE_REASON_NONE;
   _scrollbar_size  = 0;				// 0: uses Fl::scrollbar_size()
 	
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   _lastselect       = 0;
 #else /*FLTK_ABI_VERSION*/
@@ -148,7 +148,7 @@ int Fl_Tree::handle(int e) {
   char is_shift   = Fl::event_state() & FL_SHIFT   ? 1 : 0;
   char is_ctrl    = Fl::event_state() & FL_CTRL    ? 1 : 0;
   char is_command = Fl::event_state() & FL_COMMAND ? 1 : 0;	// ctrl on win/lin, 'Command' on mac
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW: data inside Fl_Tree
 #else /*FLTK_ABI_VERSION*/
   // OLD:
@@ -477,7 +477,7 @@ int Fl_Tree::draw_tree() {
     
     // Show vertical scrollbar?
     {
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
       // NEW
       int SY = Y + _prefs.marginbottom();
 #else /*FLTK_ABI_VERSION*/
@@ -1150,7 +1150,7 @@ int Fl_Tree::select(Fl_Tree_Item *item, int docallback) {
     redraw();
     return(1);
   }
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   if ( alreadySelected ) {
     if ( (item_reselect_mode() == FL_TREE_SELECTABLE_ALWAYS) && docallback ) {
@@ -1319,7 +1319,7 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
   int changed = 0;
   for ( Fl_Tree_Item *item = first(); item; item = item->next() ) {
     if ( item == selitem ) {
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
       // NEW
       if ( item->is_selected() ) {		// already selected?
         if ( item_reselect_mode() == FL_TREE_SELECTABLE_ALWAYS ) {
@@ -1510,7 +1510,7 @@ void Fl_Tree::margintop(int val) {
   redraw();
 }
 
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
 /// Get the amount of white space (in pixels) that should appear
 /// below the last visible item when the vertical scroller is scrolled to the bottom.
 ///
@@ -1578,7 +1578,7 @@ void Fl_Tree::labelmarginleft(int val) {
   _prefs.labelmarginleft(val);
   redraw();
 }
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
 /// Get the amount of white space (in pixels) that should appear
 /// to the left of the child fltk widget (if any).
 int Fl_Tree::widgetmarginleft() const {
@@ -1748,7 +1748,7 @@ void Fl_Tree::selectmode(Fl_Tree_Select val) {
   _prefs.selectmode(val);
 }
 
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
 /// Returns the current item re/selection mode
 Fl_Tree_Item_Reselect_Mode Fl_Tree::item_reselect_mode() const {
   return(_prefs.item_reselect_mode());

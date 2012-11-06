@@ -48,7 +48,7 @@ Function {reason_as_name(Fl_Tree_Reason reason)} {
       case FL_TREE_REASON_DESELECTED: return("deselected");
       case FL_TREE_REASON_OPENED:     return("opened");
       case FL_TREE_REASON_CLOSED:     return("closed");
-\#if FLTK_ABI_VERSION >= 10302
+\#if FLTK_ABI_VERSION >= 10301
 	  case FL_TREE_REASON_RESELECTED: return("reselected");
 \#endif
       default:                        return("???");
@@ -288,7 +288,7 @@ Function {GetTreeMarginBottom()} {
   comment {Get the current 'margin bottom' size
 Handles this as an ABI feature..} open return_type int
 } {
-  code {\#if FLTK_ABI_VERSION >= 10302
+  code {\#if FLTK_ABI_VERSION >= 10301
 return tree->marginbottom();
 \#else
 return 0;
@@ -299,7 +299,7 @@ Function {GetTreeWidgetMarginLeft()} {
   comment {Get the current 'margin bottom' size
 Handles this as an ABI feature..} open return_type int
 } {
-  code {\#if FLTK_ABI_VERSION >= 10302
+  code {\#if FLTK_ABI_VERSION >= 10301
 return tree->widgetmarginleft();
 \#else
 return 0;
@@ -399,7 +399,7 @@ tree->redraw();}
       Fl_Value_Slider marginbottom_slider {
         label {marginbottom()}
         user_data tree
-        callback {\#if FLTK_ABI_VERSION >= 10302
+        callback {\#if FLTK_ABI_VERSION >= 10301
 // NEW
 int val = (int)marginbottom_slider->value();
 tree->marginbottom(val);
@@ -408,7 +408,7 @@ tree->redraw();
 // OLD
 marginbottom_slider->deactivate();  // deactivate if this ABI feature is disabled
 marginbottom_slider->tooltip("DISABLED.\\n"
-                              "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
+                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
                               "to get this feature");
 \#endif}
         tooltip {Changes the bottom margin for the tree
@@ -454,14 +454,14 @@ tree->redraw();}
       Fl_Value_Slider widgetmarginleft_slider {
         label {widgetmarginleft()}
         user_data tree
-        callback {\#if FLTK_ABI_VERSION >= 10302
+        callback {\#if FLTK_ABI_VERSION >= 10301
 int val = (int)widgetmarginleft_slider->value();
 tree->widgetmarginleft(val);
 tree->redraw();
 \#else
 widgetmarginleft_slider->deactivate();
 widgetmarginleft_slider->tooltip("DISABLED.\\n"
-                                 "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
+                                 "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
                                  "to get this feature");
 \#endif}
         tooltip {Changes the margin to the left of child FLTK widget()} xywh {505 160 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
@@ -647,7 +647,7 @@ switch ( selectmode_chooser->value() ) {
       }
       Fl_Choice reselectmode_chooser {
         label {Item Reselect Mode}
-        callback {\#if FLTK_ABI_VERSION >= 10302
+        callback {\#if FLTK_ABI_VERSION >= 10301
 // NEW
 // Set reselection mode
 switch ( reselectmode_chooser->value() ) {
@@ -658,7 +658,7 @@ switch ( reselectmode_chooser->value() ) {
 // OLD
 reselectmode_chooser->deactivate();  // deactivate if this ABI feature is disabled
 reselectmode_chooser->tooltip("DISABLED.\\n"
-                              "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
+                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
                               "to get this feature");
 window->redraw();  // deactivated
 \#endif}
@@ -727,7 +727,7 @@ tree->visible_focus(onoff);}
       }
       Fl_Check_Button labelandwidget_radio {
         label {Show label + widget}
-        callback {\#if FLTK_ABI_VERSION >= 10302
+        callback {\#if FLTK_ABI_VERSION >= 10301
 // NEW
 int flags = tree->item_draw_mode();
 if ( labelandwidget_radio->value() )
@@ -740,7 +740,7 @@ tree->redraw();
 // OLD
 labelandwidget_radio->deactivate();  // deactivate if this ABI feature is disabled
 labelandwidget_radio->tooltip("DISABLED.\\n"
-                              "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
+                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
                               "to get this feature");
 window->redraw();  // deactivated
 \#endif}
@@ -751,7 +751,7 @@ When enabled, widget should appear to the right of the item's label. By default,
       }
       Fl_Check_Button itemheightfromwidget_radio {
         label {Item h() from widget}
-        callback {\#if FLTK_ABI_VERSION >= 10302
+        callback {\#if FLTK_ABI_VERSION >= 10301
 // NEW
 int flags = tree->item_draw_mode();
 if ( itemheightfromwidget_radio->value() )
@@ -764,7 +764,7 @@ tree->redraw();
 // OLD
 itemheightfromwidget_radio->deactivate();  // deactivate if this ABI feature is disabled
 itemheightfromwidget_radio->tooltip("DISABLED.\\n"
-                              "Set FLTK_ABI_VERSION to 10302 (or higher)\\n"
+                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
                               "to get this feature");
 window->redraw();  // deactivated
 \#endif}
@@ -1664,7 +1664,7 @@ helpwin->show();} selected
   }
   code {// Initialize Tree
 tree->root_label("ROOT");
-\#if FLTK_ABI_VERSION >= 10302
+\#if FLTK_ABI_VERSION >= 10301
 tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS);
 \#endif
 RebuildTree();

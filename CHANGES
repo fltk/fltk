@@ -6,7 +6,7 @@ CHANGES IN FLTK 1.3.2
 	  called with the old label() (STR #2836)
 
     1.3.2 ABI FEATURES
-	(To enable the following ABI features, put: #define FLTK_ABI_VERSION 10302
+	(To enable the following ABI features, put: #define FLTK_ABI_VERSION 10301
 	 at the top of your FL/Enumerations.H and rebuild FLTK and your app)
 
         - Fl_Tree optimized to support large trees (eg. 100k items):

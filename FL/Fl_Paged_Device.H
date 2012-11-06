@@ -107,7 +107,7 @@ protected:
   int y_offset;
   /** \brief The constructor */
   Fl_Paged_Device() : Fl_Surface_Device(NULL), x_offset(0), y_offset(0) {};
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
 public:
   /** \brief The destructor */
   virtual ~Fl_Paged_Device() {};

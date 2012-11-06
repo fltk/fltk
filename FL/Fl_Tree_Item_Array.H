@@ -67,7 +67,7 @@ public:
     return(_total);
   }
   /// Swap the two items at index positions \p ax and \p bx.
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW -- code moved to .cxx
   void swap(int ax, int bx);
 #else /*FLTK_ABI_VERSION*/

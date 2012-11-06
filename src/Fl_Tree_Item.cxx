@@ -44,7 +44,7 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
   _labelfgcolor = prefs.labelfgcolor();
   _labelbgcolor = prefs.labelbgcolor();
   _widget       = 0;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   _flags        = OPEN|VISIBLE|ACTIVE;
 #else /*FLTK_ABI_VERSION*/
   _open         = 1;
@@ -67,7 +67,7 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
   _usericon         = 0;
   _userdata         = 0;
   _parent           = 0;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   _prev_sibling     = 0;
   _next_sibling     = 0;
 #endif /*FLTK_ABI_VERSION*/
@@ -92,7 +92,7 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
   _labelfgcolor = o->labelfgcolor();
   _labelbgcolor = o->labelbgcolor();
   _widget       = o->widget();
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   _flags        = o->_flags;
 #else /*FLTK_ABI_VERSION*/
   _open         = o->_open;
@@ -115,7 +115,7 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
   _usericon         = o->usericon();
   _userdata         = o->user_data();
   _parent           = o->_parent;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   _prev_sibling     = 0;		// do not copy ptrs! use update_prev_next()
   _next_sibling     = 0;		// do not copy ptrs! use update_prev_next()
 #endif /*FLTK_ABI_VERSION*/
@@ -126,7 +126,7 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
 ///
 void Fl_Tree_Item::show_self(const char *indent) const {
   if ( label() ) {
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
     printf("%s-%s (%d children, this=%p, parent=%p, prev=%p, next=%p, depth=%d)\n",
            indent,label(),children(),(void*)this, (void*)_parent,
 	   _prev_sibling, _next_sibling, depth());
@@ -576,7 +576,7 @@ int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
     fl_font(_labelfont, _labelsize);	// fl_descent() needs this :/
     H = _labelsize + fl_descent() + 1;	// at least one pixel space below descender
   }
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   if ( widget() && 
        (prefs.item_draw_mode() & FL_TREE_ITEM_HEIGHT_FROM_WIDGET) &&
        H < widget()->h()) {
@@ -648,7 +648,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     int wx = label_x;
     int wy = bg_y;
     int ww = widget()->w();		// use widget's width
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
     int wh = (prefs.item_draw_mode() & FL_TREE_ITEM_HEIGHT_FROM_WIDGET)
              ? widget()->h() : H;
     if ( _label && 
@@ -660,7 +660,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
       fl_font(_labelfont, _labelsize);	// fldescent() needs this
       int lw=0, lh=0;
       fl_measure(_label,lw,lh);		// get box around text (including white space)
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
       // NEW
       wx += (lw + prefs.widgetmarginleft());
 #else /*FLTK_ABI_VERSION*/
@@ -735,7 +735,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 	  prefs.usericon()->draw(uicon_x,uicon_y);
 	}
 	// Draw label
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
         if ( _label && 
 	     ( !widget() || 
 	       (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) )
@@ -874,7 +874,7 @@ Fl_Tree_Item *Fl_Tree_Item::next() {
   if ( c->has_children() ) {
     return(c->child(0));
   }
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   while ( ( p = c->parent() ) != NULL ) {	// loop upwards through parents
     if ( c->_next_sibling )			// not last child?
@@ -901,7 +901,7 @@ Fl_Tree_Item *Fl_Tree_Item::next() {
 /// \returns the previous item in the tree, or 0 if there's no item above this one (hit the root).
 ///
 Fl_Tree_Item *Fl_Tree_Item::prev() {
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   if ( !parent() ) return(0);	// hit root? done
   if ( !_prev_sibling ) {	// are we first child?
@@ -955,7 +955,7 @@ Fl_Tree_Item *Fl_Tree_Item::prev() {
 /// \returns item's next sibling, or 0 if none.
 ///
 Fl_Tree_Item *Fl_Tree_Item::next_sibling() {
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   return(_next_sibling);
 #else /*FLTK_ABI_VERSION*/
@@ -977,7 +977,7 @@ Fl_Tree_Item *Fl_Tree_Item::next_sibling() {
 /// \returns This item's previous sibling, or 0 if none.
 ///
 Fl_Tree_Item *Fl_Tree_Item::prev_sibling() {
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   return(_prev_sibling);
 #else /*FLTK_ABI_VERSION*/
@@ -995,7 +995,7 @@ Fl_Tree_Item *Fl_Tree_Item::prev_sibling() {
 /// Call this whenever items in the array are added/removed/moved/swapped.
 /// 
 void Fl_Tree_Item::update_prev_next(int index) {
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   int pchildren = parent() ? parent()->children() : 0;
   int index_prev = index-1;

@@ -128,7 +128,7 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
   current_row       = -1;
   select_row        = -1;
   select_col        = -1;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   _scrollbar_size   = 0;
 #endif  
   box(FL_THIN_DOWN_FRAME);
@@ -480,7 +480,7 @@ void Fl_Table::recalc_dimensions() {
     // First pass: can hide via window size?
     int hidev = (table_h <= tih);
     int hideh = (table_w <= tiw); 
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
     // NEW
     int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
 #else
@@ -561,7 +561,7 @@ void Fl_Table::table_resized() {
     // Vertical scrollbar
     float vscrolltab = ( table_h == 0 || tih > table_h ) ? 1 : (float)tih / table_h;
     float hscrolltab = ( table_w == 0 || tiw > table_w ) ? 1 : (float)tiw / table_w;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
     // NEW
     int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
 #else
@@ -1147,7 +1147,7 @@ void Fl_Table::set_selection(int row_top, int col_left, int row_bot, int col_rig
 //    Then tell the group to draw over us.
 //
 void Fl_Table::draw() {   
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
     // NEW
     int scrollsize = _scrollbar_size ? _scrollbar_size : Fl::scrollbar_size();
 #else

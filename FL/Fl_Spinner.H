@@ -50,7 +50,7 @@ class FL_EXPORT Fl_Spinner : public Fl_Group {
   double	step_;			// Amount to add/subtract for up/down
   const char	*format_;		// Format string
 
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
 // NEW
 protected:
 #endif

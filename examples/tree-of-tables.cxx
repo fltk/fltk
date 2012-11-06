@@ -29,7 +29,7 @@
 #define PI 3.14159
 #endif
 
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
 class MyTable : public Fl_Table {
   char *mode;
 public:

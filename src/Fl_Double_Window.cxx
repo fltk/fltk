@@ -87,7 +87,7 @@ void Fl_Double_Window::show() {
  \param pixmap  offscreen buffer containing the rectangle to copy
  \param srcx,srcy origin in offscreen buffer of rectangle to copy
  */
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
 void fl_copy_offscreen(int x, int y, int w, int h, Fl_Offscreen pixmap, int srcx, int srcy) {
   fl_graphics_driver->copy_offscreen(x, y, w, h, pixmap, srcx, srcy);
 }

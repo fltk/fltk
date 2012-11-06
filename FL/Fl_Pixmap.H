@@ -60,7 +60,7 @@ class FL_EXPORT Fl_Pixmap : public Fl_Image {
   private:
 
 #if defined(WIN32)
-#if FLTK_ABI_VERSION < 10302
+#if FLTK_ABI_VERSION < 10301
   static // a static member is needed for ABI compatibility
 #endif
   UINT pixmap_bg_color; // RGB color used for pixmap background

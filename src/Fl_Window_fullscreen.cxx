@@ -31,7 +31,7 @@
 
 #include <config.h>
 
-#if FLTK_ABI_VERSION < 10302
+#if FLTK_ABI_VERSION < 10301
 int Fl_Window::no_fullscreen_x = 0;
 int Fl_Window::no_fullscreen_y = 0;
 int Fl_Window::no_fullscreen_w = 0;

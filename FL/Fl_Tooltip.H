@@ -78,7 +78,7 @@ public:
   static Fl_Color textcolor() { return textcolor_; }
   /** Sets the color of the text in the tooltip. The default is  black. */
   static void textcolor(Fl_Color c) { textcolor_ = c; }
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   /** Gets the amount of extra space left/right of the tooltip's text. Default is 3. */
   static int margin_width() { return margin_width_; }
   /** Sets the amount of extra space left/right of the tooltip's text. Default is 3. */
@@ -119,7 +119,7 @@ private:
   static Fl_Font font_;
   static Fl_Fontsize size_;
   static Fl_Widget* widget_; //!< Keeps track of the current target widget
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   static int margin_width_;	//!< distance around tooltip text left+right
   static int margin_height_;	//!< distance around tooltip text top+bottom
   static int wrap_width_;	//!< maximum width of tooltip text before it word wraps

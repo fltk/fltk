@@ -300,7 +300,7 @@ enum Fl_Tree_Reason {
   FL_TREE_REASON_NONE=0,	///< unknown reason
   FL_TREE_REASON_SELECTED,	///< an item was selected
   FL_TREE_REASON_DESELECTED,	///< an item was de-selected
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   FL_TREE_REASON_RESELECTED,	///< an item was re-selected (e.g. double-clicked)
 #endif /*FLTK_ABI_VERSION*/
   FL_TREE_REASON_OPENED,	///< an item was opened
@@ -316,7 +316,7 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Prefs  _prefs;			// all the tree's settings
   int            _scrollbar_size;		// size of scrollbar trough
 
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW: 
   Fl_Tree_Item *_lastselect;
 #else /*FLTK_ABI_VERSION*/
@@ -420,7 +420,7 @@ public:
   void marginleft(int val);
   int margintop() const;
   void margintop(int val);
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   int marginbottom() const;
   void marginbottom(int val);
 #endif /*FLTK_ABI_VERSION*/
@@ -432,7 +432,7 @@ public:
   void usericonmarginleft(int val);
   int labelmarginleft() const;
   void labelmarginleft(int val);
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   int widgetmarginleft() const;
   void widgetmarginleft(int val);
 #endif /*FLTK_ABI_VERSION*/
@@ -456,7 +456,7 @@ public:
   void selectbox(Fl_Boxtype val);
   Fl_Tree_Select selectmode() const;
   void selectmode(Fl_Tree_Select val);
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   Fl_Tree_Item_Reselect_Mode item_reselect_mode() const;
   void item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode);
   Fl_Tree_Item_Draw_Mode item_draw_mode() const;

@@ -125,13 +125,13 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _labelsize              = FL_NORMAL_SIZE;
   _marginleft             = 6;
   _margintop              = 3;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   _marginbottom           = 20;
 #endif /*FLTK_ABI_VERSION*/
   _openchild_marginbottom = 0;
   _usericonmarginleft     = 3;
   _labelmarginleft        = 3;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   _widgetmarginleft       = 3;
 #endif /*FLTK_ABI_VERSION*/
   _linespacing            = 0;
@@ -152,7 +152,7 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _sortorder              = FL_TREE_SORT_NONE;
   _selectbox              = FL_FLAT_BOX;
   _selectmode             = FL_TREE_SELECT_SINGLE;
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   _itemreselectmode       = FL_TREE_SELECTABLE_ONCE;
   _itemdrawmode           = FL_TREE_ITEM_DRAW_DEFAULT;
 #endif

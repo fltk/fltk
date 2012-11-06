@@ -63,7 +63,7 @@ class FL_EXPORT Fl_Tree_Item {
     ACTIVE              = 1<<2,		///> item is active
     SELECTED            = 1<<3,		///> item is selected
   };
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   // NEW
   unsigned short _flags;		// misc flags
 #else /*FLTK_ABI_VERSION*/
@@ -81,7 +81,7 @@ class FL_EXPORT Fl_Tree_Item {
   Fl_Tree_Item_Array      _children;		// array of child items
   Fl_Tree_Item           *_parent;		// parent item (=0 if root)
   void                   *_userdata;    	// user data that can be associated with an item
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   Fl_Tree_Item           *_prev_sibling;	// previous sibling (same level)
   Fl_Tree_Item           *_next_sibling;	// next sibling (same level)
 #endif /*FLTK_ABI_VERSION*/
@@ -350,7 +350,7 @@ public:
 
   // Protected methods
 protected:
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
   /// Set a flag to an on or off value. val is 0 or 1.
   inline void set_flag(unsigned short flag,int val) {
     if ( val ) _flags |= flag; else _flags &= ~flag;

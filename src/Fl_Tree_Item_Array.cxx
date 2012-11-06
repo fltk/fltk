@@ -158,7 +158,7 @@ int Fl_Tree_Item_Array::remove(Fl_Tree_Item *item) {
   return(-1);
 }
 
-#if FLTK_ABI_VERSION >= 10302
+#if FLTK_ABI_VERSION >= 10301
 /// Swap the two items at index positions \p ax and \p bx.
 void Fl_Tree_Item_Array::swap(int ax, int bx) {
   Fl_Tree_Item *asave = _items[ax];
