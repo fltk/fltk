@@ -28,6 +28,7 @@
 #include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/fl_utf8.h>
+#include <FL/Fl.H>
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -126,6 +127,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
   if (setjmp(jerr.errhand_))
   {
     // JPEG error handling...
+    Fl::warning("JPEG file \"%s\" is too large or contains errors!\n", filename);
     // if any of the cleanup routines hits another error, we would end up 
     // in a loop. So instead, we decrement max_err for some upper cleanup limit.
     if ( ((*max_finish_decompress_err)-- > 0) && array)
@@ -166,6 +168,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *filename)	// I - File to load
   h(dinfo.output_height);
   d(dinfo.output_components);
   
+  if (((size_t)w()) * h() * d() > max_size() ) longjmp(jerr.errhand_, 1);
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
   
@@ -304,6 +307,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
   if (setjmp(jerr.errhand_))
   {
     // JPEG error handling...
+    Fl::warning("JPEG data is too large or contains errors!\n");
     // if any of the cleanup routines hits another error, we would end up 
     // in a loop. So instead, we decrement max_err for some upper cleanup limit.
     if ( ((*max_finish_decompress_err)-- > 0) && array)
@@ -342,6 +346,7 @@ Fl_JPEG_Image::Fl_JPEG_Image(const char *name, const unsigned char *data)
   h(dinfo.output_height);
   d(dinfo.output_components);
   
+  if (((size_t)w()) * h() * d() > max_size() ) longjmp(jerr.errhand_, 1);
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
   

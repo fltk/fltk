@@ -27,6 +27,7 @@
 
 #include <FL/Fl_BMP_Image.H>
 #include <FL/fl_utf8.h>
+#include <FL/Fl.H>
 #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -187,6 +188,11 @@ Fl_BMP_Image::Fl_BMP_Image(const char *bmp) // I - File to read
   d(bDepth);
   if (offbits) fseek(fp, offbits, SEEK_SET);
 
+  if (((size_t)w()) * h() * d() > max_size() ) {
+    Fl::warning("BMP file \"%s\" is too large!\n", bmp);
+    fclose(fp);
+    return;
+  }
   array = new uchar[w() * h() * d()];
   alloc_array = 1;
 

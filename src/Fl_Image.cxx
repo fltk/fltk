@@ -163,6 +163,8 @@ Fl_Image::measure(const Fl_Label *lo,		// I - Label
 //
 // RGB image class...
 //
+size_t Fl_RGB_Image::max_size_ = ~((size_t)0);
+
 /**  The destructor free all memory and server resources that are used by  the image. */
 Fl_RGB_Image::~Fl_RGB_Image() {
   uncache();

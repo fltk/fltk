@@ -23,6 +23,7 @@
 #  define Fl_Image_H
 
 #  include "Enumerations.H"
+#include <stdlib.h>
 
 class Fl_Widget;
 struct Fl_Menu_Item;
@@ -167,6 +168,7 @@ class FL_EXPORT Fl_RGB_Image : public Fl_Image {
   friend class Fl_Quartz_Graphics_Driver;
   friend class Fl_GDI_Graphics_Driver;
   friend class Fl_Xlib_Graphics_Driver;
+  static size_t max_size_;
 public:
 
   const uchar *array;
@@ -211,6 +213,21 @@ public:
   virtual void label(Fl_Widget*w);
   virtual void label(Fl_Menu_Item*m);
   virtual void uncache();
+  /** Sets the maximum allowed image size in bytes when creating an Fl_RGB_Image object.
+   
+   The image size in bytes of an Fl_RGB_Image object is the value of the product w() * h() * d().
+   If this product exceeds size, the created object of a derived class of Fl_RGB_Image 
+   won't be loaded with the image data.
+   This does not apply to direct RGB image creation with 
+   Fl_RGB_Image::Fl_RGB_Image(const uchar *bits, int W, int H, int D, int LD).
+   The default max_size() value is essentially infinite. 
+   */
+  static void max_size(size_t size) { max_size_ = size;}
+  /** Returns the maximum allowed image size in bytes when creating an Fl_RGB_Image object.
+   
+   \sa  void Fl_RGB_Image::max_size(size_t)
+   */
+  static size_t max_size() {return max_size_;}
 };
 
 #endif // !Fl_Image_H

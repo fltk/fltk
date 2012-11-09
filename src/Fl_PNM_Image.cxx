@@ -119,6 +119,11 @@ Fl_PNM_Image::Fl_PNM_Image(const char *name)	// I - File to read
 
 //  printf("%s = %dx%dx%d\n", name, w(), h(), d());
 
+  if (((size_t)w()) * h() * d() > max_size() ) {
+    Fl::warning("PNM file \"%s\" is too large!\n", name);
+    fclose(fp);
+    return;
+  }
   array       = new uchar[w() * h() * d()];
   alloc_array = 1;
 
