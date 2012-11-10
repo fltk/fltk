@@ -3,7 +3,7 @@
 //
 // Fl_PNG_Image routines.
 //
-// Copyright 1997-2011 by Easy Software Products.
+// Copyright 1997-2012 by Easy Software Products.
 // Image support by Matthias Melcher, Copyright 2000-2009.
 //
 // This library is free software. Distribution and use rights are outlined in
@@ -114,7 +114,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   if (!from_memory) {
     if ((fp = fl_fopen(name_png, "rb")) == NULL) return;
   }
-  const char *display_name = (name_png ? name_png : "");
+  const char *display_name = (name_png ? name_png : "In-memory PNG data");
 
   // Setup the PNG data structures...
   pp = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
