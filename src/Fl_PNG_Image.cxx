@@ -114,7 +114,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   if (!from_memory) {
     if ((fp = fl_fopen(name_png, "rb")) == NULL) return;
   }
-  else name_png = "In-memory PNG data";
+  const char *display_name = (name_png ? name_png : "");
 
   // Setup the PNG data structures...
   pp = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -122,7 +122,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   if (!pp || !info) {
     if (pp) png_destroy_read_struct(&pp, NULL, NULL);
     if (!from_memory) fclose(fp);
-    Fl::warning("Cannot allocate memory to read PNG file or data \"%s\".\n", name_png);
+    Fl::warning("Cannot allocate memory to read PNG file or data \"%s\".\n", display_name);
     return;
   }
   
@@ -130,7 +130,7 @@ void Fl_PNG_Image::load_png_(const char *name_png, const unsigned char *buffer_p
   {
     png_destroy_read_struct(&pp, &info, NULL);
     if (!from_memory) fclose(fp);
-    Fl::warning("PNG file or data \"%s\" is too large or contains errors!\n", name_png);
+    Fl::warning("PNG file or data \"%s\" is too large or contains errors!\n", display_name);
     return;
   }
 
