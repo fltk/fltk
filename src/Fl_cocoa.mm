@@ -1000,6 +1000,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 - (void)applicationWillUnhide:(NSNotification *)notify;
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 @end
 @implementation FLDelegate
 - (void)windowDidMove:(NSNotification *)notif
@@ -1262,6 +1263,12 @@ void fl_open_callback(void (*cb)(const char *)) {
     return YES;
   }
   return NO;
+}
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
+  // without this, the opening of the 1st window is delayed by several seconds
+  // under Mac OS 10.8 when a file is dragged on the application icon
+  if (fl_mac_os_version >= 100800) [[NSApp mainWindow] orderFront:nil];
 }
 @end
 
