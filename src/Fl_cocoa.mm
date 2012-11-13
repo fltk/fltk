@@ -982,6 +982,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 <NSWindowDelegate, NSApplicationDelegate>
 #endif
 {
+  BOOL seen_open_file;
 }
 - (void)windowDidMove:(NSNotification *)notif;
 - (void)windowDidResize:(NSNotification *)notif;
@@ -1256,6 +1257,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 }
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
+  seen_open_file = YES;
   if (open_cb) {
     fl_lock_function();
     (*open_cb)([filename UTF8String]);
@@ -1268,7 +1270,7 @@ void fl_open_callback(void (*cb)(const char *)) {
 {
   // without this, the opening of the 1st window is delayed by several seconds
   // under Mac OS 10.8 when a file is dragged on the application icon
-  if (fl_mac_os_version >= 100800) [[NSApp mainWindow] orderFront:nil];
+  if (fl_mac_os_version >= 100800 && seen_open_file) [[NSApp mainWindow] orderFront:self];
 }
 @end
 
