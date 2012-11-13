@@ -33,7 +33,8 @@ README.OSX.txt - 2010-10-23 - Building FLTK under Apple OS X
     4.5   Testing FLTK
     4.6   Uninstalling previous versions of FLTK
     4.7   Installing FLTK
-  5   DOCUMENT HISTORY
+  5  MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON
+  6   DOCUMENT HISTORY
 
 
  1  INTRODUCTION
@@ -411,7 +412,28 @@ tools:
     (TODO: 4.8   Installing Little Helpers)
     (TODO: 4.9   Creating new Projects)
 
- 5  DOCUMENT HISTORY
+
+
+  5  MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON
+=================================================================
+- Prepare an Info.plist file for your application derived from file
+ide/Xcode4/plists/editor-Info.plist which allows any file to be dropped
+on the application icon.
+You can edit this file in Xcode and change 
+Document types/Item 0/CFBundleTypeExtensions/Item 0
+from the current "*" to the desired file extension. Use several items to declare 
+several extensions.
+
+- Call fl_open_callback() at the beginning of your main() function that
+sets what function will be called when a file is dropped on the application icon.
+
+- In Xcode, set the "Info.plist File" build setting of your target application
+to the Info.plist file you have prepared.
+
+- Rebuild your application.
+
+
+ 6  DOCUMENT HISTORY
 =====================
 
 Oct 29 2010 - matt: removed warnings
@@ -420,3 +442,4 @@ Dec 19 2010 - Manolo: corrected typos
 Dec 29 2010 - Manolo: removed reference to AudioToolbox.framework that's no longer needed
 Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config script.
 Apr 17 2012 - matt: added Xcode4 documentation
+Nov 13 2012 - Manolo: added "MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON"
