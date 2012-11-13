@@ -15,6 +15,9 @@
 //
 //     http://www.fltk.org/str.php
 //
+/** \file
+ Fl_Double_Window implementation.
+ */
 
 #include <config.h>
 #include <FL/Fl.H>

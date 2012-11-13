@@ -178,6 +178,9 @@ extern int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b);
 extern void fl_open_display();
 
 #endif // FL_DOXYGEN
+/** \file
+ Mac OS X-specific symbols.
+ */
 
 /** \defgroup group_macosx Mac OS X-specific symbols
  Mac OS X-specific symbols declared in <FL/x.H> or <FL/gl.h>
