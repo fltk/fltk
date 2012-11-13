@@ -423,8 +423,9 @@ J1:
     fl_pop_clip();
   }
   fl_pop_clip();
-  redraw1 = redraw2 = 0;
 
+  fl_push_clip(x(),y(),w(),h());		// STR# 2886
+  redraw1 = redraw2 = 0;
   if (!dont_repeat) {
     dont_repeat = 1;
     // see if changes to full_height caused by calls to slow_height
@@ -474,6 +475,7 @@ J1:
   }
 
   real_hposition_ = hposition_;
+  fl_pop_clip();
 }
 
 // Quick way to delete and reset everything:
