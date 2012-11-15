@@ -3326,7 +3326,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     win = win->window();
   }
   CGFloat epsilon = 0;
-  if (fl_mac_os_version >= 100600) epsilon = 0.001;
+  if (fl_mac_os_version >= 100600) epsilon = 0.5; // STR #2887
   // The epsilon offset is absolutely necessary under 10.6. Without it, the top pixel row and
   // left pixel column are not read, and bitmap is read shifted by one pixel in both directions. 
   // Under 10.5, we want no offset.
