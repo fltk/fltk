@@ -57,6 +57,7 @@ public:
   ~WidgetTable() { }
 
   void SetSize(int newrows, int newcols) {
+    clear();		// clear any previous widgets, if any
     rows(newrows);
     cols(newcols);
 
