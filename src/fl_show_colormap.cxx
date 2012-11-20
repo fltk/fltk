@@ -49,7 +49,7 @@ ColorMenu::ColorMenu(Fl_Color oldcol) :
 }
 
 void ColorMenu::drawbox(Fl_Color c) {
-  if (c < 0 || c > 255) return;
+  if (c > 255) return;
   int X = (c%8)*BOXSIZE+BORDER;
   int Y = (c/8)*BOXSIZE+BORDER;
 #if BORDER_WIDTH < 3
@@ -129,7 +129,7 @@ extern char fl_override_redirect; // hack for menus
 #pragma optimize("a",off) // needed to get the done check to work
 #endif
 Fl_Color ColorMenu::run() {
-  if (which < 0 || which > 255) {
+  if (which > 255) {
     position(Fl::event_x_root()-w()/2, Fl::event_y_root()-y()/2);
   } else {
     position(Fl::event_x_root()-(initial%8)*BOXSIZE-BOXSIZE/2-BORDER,
