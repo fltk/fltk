@@ -1345,7 +1345,8 @@ void fl_open_display() {
       if (bundle) {
 	NSString *exe = [bundle executablePath];
 	NSString *bpath = [bundle bundlePath];
-	if ([bpath isEqualToString:exe]) bundle = nil;
+	NSString *exe_dir = [exe stringByDeletingLastPathComponent];
+	if ([bpath isEqualToString:exe] || [bpath isEqualToString:exe_dir]) bundle = nil;
 	}
             
       if ( !bundle )
