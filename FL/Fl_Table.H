@@ -478,11 +478,11 @@ public:
   ~Fl_Table();
   
   /**
-   Clears the table to zero rows, zero columns.
-   Same as rows(0); cols(0);
+   Clears the table to zero rows (rows(0)), zero columns (cols(0)), and clears
+   any widgets (table->clear()) that were added with begin()/end() or add()/insert()/etc.
    \see rows(int), cols(int)
    */
-  virtual void clear() { rows(0); cols(0); }
+  virtual void clear() { rows(0); cols(0); table->clear(); }
   
   // \todo: add topline(), middleline(), bottomline()
   
