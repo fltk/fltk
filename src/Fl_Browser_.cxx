@@ -434,15 +434,15 @@ J1:
     full_width_ = full_width();
     if ((has_scrollbar_ & VERTICAL) &&
 	((has_scrollbar_ & ALWAYS_ON) || position_ || full_height_>H)) {
-      if (!scrollbar.visible()) { damage(FL_DAMAGE_ALL); goto J1; }
+      if (!scrollbar.visible()) { damage(FL_DAMAGE_ALL); fl_pop_clip(); goto J1; }
     } else {
-      if (scrollbar.visible()) { damage(FL_DAMAGE_ALL); goto J1; }
+      if (scrollbar.visible()) { damage(FL_DAMAGE_ALL); fl_pop_clip(); goto J1; }
     }
     if ((has_scrollbar_ & HORIZONTAL) &&
 	((has_scrollbar_ & ALWAYS_ON) || hposition_ || full_width_>W)) {
-      if (!hscrollbar.visible()) { damage(FL_DAMAGE_ALL); goto J1; }
+      if (!hscrollbar.visible()) { damage(FL_DAMAGE_ALL); fl_pop_clip(); goto J1; }
     } else {
-      if (hscrollbar.visible()) { damage(FL_DAMAGE_ALL); goto J1; }
+      if (hscrollbar.visible()) { damage(FL_DAMAGE_ALL); fl_pop_clip(); goto J1; }
     }
   }
 
