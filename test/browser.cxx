@@ -136,14 +136,18 @@ int main(int argc, char **argv) {
       fname = "../test/browser.cxx";
       done = browser->load(fname);
     }
-#elif defined(USING_XCODE)
+#elif defined(__APPLE__)
     if ( i == argc ) 
     {
       char buf[2048];
       strcpy(buf, argv[0]);
       char *slash = strrchr(buf, '/');
       if (slash)
+#if defined(USING_XCODE)
         strcpy(slash, "/../Resources/browser.cxx");
+#else
+	strcpy(slash, "/../../../browser.cxx");
+#endif
       done = browser->load(buf);
     }
 #endif

@@ -139,6 +139,7 @@ UNINSTALL_DESKTOP = @UNINSTALL_DESKTOP@
 .o$(EXEEXT):
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(LDFLAGS) $< $(LINKFLTK) $(LDLIBS) -o $@
+	$(OSX_ONLY) ../fltk-config --post $@
 
 .c.o:
 	echo Compiling $<...

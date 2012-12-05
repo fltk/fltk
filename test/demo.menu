@@ -10,7 +10,7 @@
 #
 
 @main:Widget\nTests...:@x
-	@x:Fl_Browser:browser
+	@x:Fl_Browser:browser browser.cxx
 	@x:Fl_Input:input
 	@x:Fl_Output:output
 	@x:Fl_Button:radio

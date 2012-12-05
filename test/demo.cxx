@@ -27,7 +27,7 @@
 #    define chdir _chdir
 #    define putenv _putenv
 #  endif // !__WATCOMC__
-#elif defined USING_XCODE
+#elif defined __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
 #include <unistd.h> // for chdir()
 #include <stdio.h>
@@ -272,7 +272,7 @@ void dobut(Fl_Widget *, long arg)
     delete[] command;
     delete[] copy_of_icommand;
     
-#elif defined USING_XCODE
+#elif defined __APPLE__
     char *cmd = strdup(menus[men].icommand[bn]);
     char *arg = strchr(cmd, ' ');
     
@@ -283,22 +283,32 @@ void dobut(Fl_Widget *, long arg)
     CFBundleRef app = CFBundleGetMainBundle();
     CFURLRef url = CFBundleCopyBundleURL(app);    
     CFStringRef cc_app_path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
+    CFRelease(url);
     CFStringGetCString(cc_app_path, app_path, 2048, kCFStringEncodingUTF8);
+    CFRelease(cc_app_path);
     if (*app_path) {
       char *n = strrchr(app_path, '/');
       if (n) {
+#if defined USING_XCODE
         *n = 0;
+#endif
         chdir(app_path);
       }
     }
     
     if (arg) {
+      const char *fluidpath;
       *arg = 0;
+#if defined USING_XCODE
+      fl_filename_absolute(path, 2048, "../../../../test/");
+      fluidpath = "Fluid.app";
+#else
+      strcpy(path, app_path); strcat(path, "/");
+      fluidpath = "../fluid/fluid.app";
+#endif
       if (strcmp(cmd, "../fluid/fluid")==0) {
-        fl_filename_absolute(path, 2048, "../../../../test/");
-	sprintf(command, "open Fluid.app --args %s%s", path, arg+1);
+	sprintf(command, "open %s --args %s%s", fluidpath, path, arg+1);
       } else {
-        fl_filename_absolute(path, 2048, "../../../../test/");
 	sprintf(command, "open %s.app --args %s%s", cmd, path, arg+1);
       }
     } else {
