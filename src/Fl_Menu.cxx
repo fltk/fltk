@@ -194,7 +194,6 @@ void Fl_Menu_Item::draw(int x, int y, int w, int h, const Fl_Menu_* m,
 	    fl_color(FL_SELECTION_COLOR);
 	    tW --;
 	    fl_pie(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
-	    fl_arc(x + td + 1, y + d + td - 1, tW + 3, tW + 3, 0.0, 360.0);
 	    fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
 	  } else fl_color(labelcolor_);
 	} else fl_color(labelcolor_);

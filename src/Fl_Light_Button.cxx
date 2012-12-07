@@ -81,7 +81,6 @@ void Fl_Light_Button::draw() {
 	    fl_color(FL_SELECTION_COLOR);
 	    tW --;
 	    fl_pie(x() + tdx - 1, y() + tdy - 1, tW + 3, tW + 3, 0.0, 360.0);
-	    fl_arc(x() + tdx - 1, y() + tdy - 1, tW + 3, tW + 3, 0.0, 360.0);
 	    fl_color(fl_color_average(FL_WHITE, FL_SELECTION_COLOR, 0.2f));
 	  } else fl_color(col);
 
