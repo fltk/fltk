@@ -1,0 +1,24 @@
+<!--BEGIN GENERATE_TREEVIEW-->
+    <li class="footer">
+      <!-- Generated for $projectname by Doxygen -->
+      &copy; 1998-2012 by Bill Spitzak and others. &nbsp;&nbsp;&nbsp;
+      <a href="http://www.fltk.org"><img src="tiny.png" align="bottom" alt="FLTK"></a>
+     </li>
+   </ul>
+ </div>
+<!--END GENERATE_TREEVIEW-->
+<!--BEGIN !GENERATE_TREEVIEW-->
+<hr class="footer"/><address class="footer"><small>
+    <!-- Generated for $projectname by Doxygen -->
+    &copy; 1998-2012 by Bill Spitzak and others. &nbsp;&nbsp;&nbsp;
+    <a href="http://www.fltk.org"><img src="tiny.png" align="bottom" alt="FLTK"></a>
+</small></address>
+<hr class="footer"/><address class="footer"><small>
+  <div align="center">
+    Permission is granted to reproduce this manual or any portion for any purpose,
+    provided this copyright and permission notice are preserved.
+  </div>
+</small></address>
+<!--END !GENERATE_TREEVIEW-->
+</body>
+</html>

@@ -1,0 +1,273 @@
+/**
+ <!-- Warning: \p .fd  does not work but <tt>.fd</tt>  does -->
+
+ \page	forms	Forms Compatibility
+
+This appendix describes the Forms compatibility included with FLTK.
+
+<center>
+<table border="1" width="90%" bgcolor="#cccccc">
+<tr>
+<th align="center">
+Warning: The Forms compatility is deprecated and no longer maintained in FLTK1,
+and is likely to be removed completely after the next official release.
+</th>
+</tr>
+</table>
+</center>
+
+\section forms_importing Importing Forms Layout Files
+
+\ref fluid "FLUID"
+can read the <tt>.fd</tt> files put out by
+all versions of Forms and XForms fdesign.  However, it will mangle them
+a bit, but it prints a warning message about anything it does not
+understand.  FLUID cannot write fdesign files, so you should save to a
+new name so you don't write over the old one.
+
+You will need to edit your main code considerably to get it to link
+with the output from FLUID.  If you are not interested in this you may
+have more immediate luck with the forms compatibility header, <FL/forms.H>. 
+
+\section forms_using Using the Compatibility Header File
+
+You should be able to compile existing Forms or XForms source code by
+changing the include directory switch to your compiler so that the
+\c forms.h file supplied with FLTK is included.
+The \c forms.h file simply pulls in <FL/forms.H> so you don't need to
+change your source code.
+Take a look at <FL/forms.H> to see how it works, but the basic trick
+is lots of inline functions. Most of the XForms demo programs work
+without changes.
+
+You will also have to compile your Forms or XForms program using a
+C++ compiler.  The FLTK library does not provide C bindings or header
+files. 
+
+Although FLTK was designed to be compatible with the GL Forms
+library (version 0.3 or so), XForms has bloated severely and it's
+interface is X-specific.  Therefore, XForms compatibility is no longer
+a goal of FLTK.  Compatibility was limited to things that were free, or
+that would add code that would not be linked in if the feature is
+unused, or that was not X-specific. 
+
+To use any new features of FLTK, you should rewrite your code to not
+use the inline functions and instead use "pure" FLTK.  This will make
+it a lot cleaner and make it easier to figure out how to call the FLTK
+functions.  Unfortunately this conversion is harder than expected and
+even Digital Domain's inhouse code still uses <tt>forms.H</tt> a lot. 
+
+\section forms_problems Problems You Will Encounter
+
+Many parts of XForms use X-specific structures like \c XEvent
+in their interface.  I did not emulate these!  Unfortunately these
+features (such as the "canvas" widget) are needed by most large
+programs.  You will need to rewrite these to use FLTK subclasses. 
+
+Fl_Free widgets emulate the \e old Forms "free" widget.
+It may be useful for porting programs that change the \c handle()
+function on widgets, but you will still need to rewrite things. 
+
+Fl_Timer widgets are
+provided to emulate the XForms timer.  These work, but are quite
+inefficient and inaccurate compared to using Fl::add_timeout().
+
+<I>All instance variables are hidden.</I> If you directly refer to
+the \p x, \p y, \p w, \p h, \p label, or other fields of your Forms
+widgets you will have to add empty parenthesis after each reference.
+The easiest way to do this is to globally replace <tt>"->x"</tt>
+with <tt>"->x()"</tt>, etc.
+Replace <tt>"boxtype"</tt> with <tt>"box()"</tt>. 
+
+<tt>const char *</tt> arguments to most FLTK methods are simply
+stored, while Forms would \c strdup() the passed string.  This is
+most noticable with the label of widgets.  Your program must always
+pass static data such as a string constant or malloc'd buffer to
+\c label().  If you are using labels to display program output you
+may want to try the Fl_Output widget. 
+
+The default fonts and sizes are matched to the older GL version of
+Forms, so all labels will draw somewhat larger than an XForms program
+does. 
+
+fdesign outputs a setting of a "fdui" instance variable to the main
+window.  I did not emulate this because I wanted all instance variables
+to be hidden.  You can store the same information in the \c user_data()
+field of a window.  To do this,  search through the fdesign output for all
+occurances of <tt>"->fdui"</tt> and edit to use <tt>"->user_data()"</tt>
+instead.  This will require casts and is not trivial. 
+
+The prototype for the functions passed to \c fl_add_timeout()
+and \c fl_set_idle_callback() callback are different. 
+
+<B>All the following XForms calls are missing:</B>
+
+\li \c FL_REVISION, \c fl_library_version()
+\li \c FL_RETURN_DBLCLICK (use Fl::event_clicks()) 
+\li \c fl_add_signal_callback()
+\li \c fl_set_form_atactivate() \c fl_set_form_atdeactivate()
+\li \c fl_set_form_property()
+\li \c fl_set_app_mainform(), \c fl_get_app_mainform()
+\li \c fl_set_form_minsize(), \c fl_set_form_maxsize()
+\li \c fl_set_form_event_cmask(), \c fl_get_form_event_cmask()
+\li \c fl_set_form_dblbuffer(), \c fl_set_object_dblbuffer()
+    (use an Fl_Double_Window instead) 
+\li \c fl_adjust_form_size()
+\li \c fl_register_raw_callback()
+\li \c fl_set_object_bw(), \c fl_set_border_width()
+\li \c fl_set_object_resize(), \c fl_set_object_gravity()
+\li \c fl_set_object_shortcutkey()
+\li \c fl_set_object_automatic()
+\li \c fl_get_object_bbox() (maybe FLTK should do this) 
+\li \c fl_set_object_prehandler(), \c fl_set_object_posthandler()
+\li \c fl_enumerate_fonts()
+\li Most drawing functions 
+\li \c fl_set_coordunit() (FLTK uses pixels all the time) 
+\li \c fl_ringbell()
+\li \c fl_gettime()
+\li \c fl_win*() (all these functions) 
+\li \c fl_initialize(argc,argv,x,y,z) ignores last 3 arguments 
+\li \c fl_read_bitmapfile(), \c fl_read_pixmapfile()
+\li \c fl_addto_browser_chars()
+\li \c FL_MENU_BUTTON just draws normally 
+\li \c fl_set_bitmapbutton_file(), \c fl_set_pixmapbutton_file()
+\li \c FL_CANVAS objects 
+\li \c FL_DIGITAL_CLOCK (comes out analog) 
+\li \c fl_create_bitmap_cursor(), \c fl_set_cursor_color()
+\li \c fl_set_dial_angles()
+\li \c fl_show_oneliner()
+\li \c fl_set_choice_shortcut(a,b,c) 
+\li command log 
+\li Only some of file selector is emulated 
+\li \c FL_DATE_INPUT
+\li \c fl_pup*() (all these functions) 
+\li textbox object (should be easy but I had no sample programs) 
+\li xyplot object 
+
+\section forms_notes Additional Notes
+
+These notes were written for porting programs written with the older
+IRISGL version of Forms.  Most of these problems are the same ones
+encountered when going from old Forms to XForms:
+
+\par Does Not Run In Background
+
+The IRISGL library always forked when you created the first window,
+unless "foreground()" was called.  FLTK acts like "foreground()" is
+called all the time.  If you really want the fork behavior do "if
+(fork()) exit(0)" right at the start of your program.
+
+\par You Cannot Use IRISGL Windows or fl_queue
+
+If a Forms (not XForms) program if you wanted your own window for
+displaying things you would create a IRISGL window and draw in it,
+periodically calling Forms to check if the user hit buttons on the
+panels.  If the user did things to the IRISGL window, you would find
+this out by having the value FL_EVENT returned from the call to Forms.
+
+None of this works with FLTK.  Nor will it compile, the necessary
+calls are not in the interface. 
+
+You have to make a subclass of Fl_Gl_Window and write a \c draw() method
+and \c handle() method.  This may require anywhere from a trivial to a
+major rewrite. 
+
+If you draw into the overlay planes you will have to also write a
+\c draw_overlay() method and call \c redraw_overlay() on the
+OpenGL window. 
+
+One easy way to hack your program so it works is to make the \c draw()
+and \c handle() methods on your window set some static variables, storing
+what event happened.  Then in the main loop of your program, call
+Fl::wait() and then check these variables, acting on them as though
+they are events read from \c fl_queue.
+
+\par You Must Use OpenGL to Draw Everything
+
+The file <FL/gl.h> defines replacements for a lot of IRISGL
+calls, translating them to OpenGL.  There are much better translators
+available that you might want to investigate. 
+
+\par You Cannot Make Forms Subclasses
+
+Programs that call \c fl_make_object or directly setting the
+handle routine will not compile.  You have to rewrite them to use a
+subclass of Fl_Widget.  It is important to note that the \c handle()
+method is not exactly the same as the \c handle() function of Forms.
+Where a Forms \c handle() returned non-zero, your \c handle() must
+call \c do_callback(). And your \c handle() must return non-zero
+if it "understood" the event.
+
+An attempt has been made to emulate the "free" widget.  This appears
+to work quite well.  It may be quicker to modify your subclass into a
+"free" widget, since the "handle" functions match. 
+
+If your subclass draws into the overlay you are in trouble and will
+have to rewrite things a lot. 
+
+\par You Cannot Use <device.h>
+
+If you have written your own "free" widgets you will probably get a
+lot of errors about "getvaluator".  You should substitute:
+
+<CENTER>
+<TABLE border=1 WIDTH=90% summary="Mapping of Forms valuators to FLTK.">
+<TR><TH align=center>Forms</TH><TH align=center>FLTK</TH></TR>
+<TR><TD>MOUSE_X</TD><TD>Fl::event_x_root()</TD></TR>
+<TR><TD>MOUSE_Y</TD><TD>Fl::event_y_root()</TD></TR>
+<TR><TD>LEFTSHIFTKEY,RIGHTSHIFTKEY</TD><TD>Fl::event_shift()</TD></TR>
+<TR><TD>CAPSLOCKKEY</TD><TD>Fl::event_capslock()</TD></TR>
+<TR><TD>LEFTCTRLKEY,RIGHTCTRLKEY</TD><TD>Fl::event_ctrl()</TD></TR>
+<TR><TD>LEFTALTKEY,RIGHTALTKEY</TD><TD>Fl::event_alt()</TD></TR>
+<TR><TD>MOUSE1,RIGHTMOUSE</TD><TD>Fl::event_state()</TD></TR>
+<TR><TD>MOUSE2,MIDDLEMOUSE</TD><TD>Fl::event_state()</TD></TR>
+<TR><TD>MOUSE3,LEFTMOUSE</TD><TD>Fl::event_state()</TD></TR>
+</TABLE>
+</CENTER>
+
+Anything else in \c getvaluator and you are on your own...
+
+\par Font Numbers Are Different
+
+The "style" numbers have been changed because I wanted to insert
+bold-italic versions of the normal fonts.  If you use Times, Courier,
+or Bookman to display any text you will get a different font out of
+FLTK.  If you are really desperate to fix this use the following code:
+
+\code
+fl_font_name(3,"*courier-medium-r-no*");
+fl_font_name(4,"*courier-bold-r-no*");
+fl_font_name(5,"*courier-medium-o-no*");
+fl_font_name(6,"*times-medium-r-no*");
+fl_font_name(7,"*times-bold-r-no*");
+fl_font_name(8,"*times-medium-i-no*");
+fl_font_name(9,"*bookman-light-r-no*");
+fl_font_name(10,"*bookman-demi-r-no*");
+fl_font_name(11,"*bookman-light-i-no*");
+\endcode
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="glut.html">
+    [Prev]
+    GLUT Compatibility
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="osissues.html">
+    Operating System Issues
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

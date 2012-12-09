@@ -1,0 +1,148 @@
+/**
+
+ \page	FAQ	FAQ (Frequently Asked Questions)
+
+A list of frequently asked questions about FLTK.
+
+This appendix describes various frequently asked questions regarding FLTK.
+\li \ref faq_start
+\li \ref faq_box_with_text
+\li \ref faq_license
+\li \ref faq_escape
+
+\section faq_start Where do I start learning FLTK?
+
+It is assumed you know C++, which is the language all FLTK programs
+are written in, including FLTK itself.
+
+If you like reading manuals to work your way into things, a good start
+is the FLTK documentation's \ref intro. Under the \ref basics section
+there's an example 'hello world' program that includes a line-by-line
+description.
+
+If you like looking at simple code first to pique your interest, and then
+read up from there, start with the example programs in the test/ and examples/
+directory that is included with the source code. A good place to start is
+the 'hello world' program in test/hello.cxx. Also do a google search for
+"FLTK example programs". "Erco's Cheat Page" is one that shows many simple
+examples of how to do specific things.
+
+If you like to run example programs and look for ones that are like yours
+and then read them, download and build FLTK from the source, then run the
+test/demo program. Also, go into the 'examples/' directory and run 'make',
+then run some of those programs.
+
+If you prefer watching TV to reading books and code, google search for 
+"FLTK video tutorials" which has some introductory examples of how to
+write FLTK programs in C++ and build them.
+
+\section faq_box_with_text How do a make a box with text?
+
+The 'hello world' program shows how to make a box with text.
+All widgets have labels, so picking a simple widget like Fl_Box
+and setting its label() and using align() to align the label
+and labelfont() to set the font, and labelsize() to set the size,
+you can get text just how you want.
+
+Labels are not selectable though; if you want selectable text,
+you can use Fl_Output or Fl_Multiline_Output for simple text
+that doesn't include scrollbars. For more complex text that
+might want scrollbars and multiple colors/fonts, use either
+Fl_Text_Display which handles plain text, or Fl_Help_View
+which handles simple HTML formatted text.
+
+\section faq_license Can I use FLTK to make closed-source commercial applications?
+
+Yes. The 
+\ref license FLTK license
+is standard LGPL, but also includes a special clause ("exception")
+to allow for static linking. Specifically:
+
+\verbatim
+
+    [from the top of the FLTK LGPL License section on exceptions]
+
+    3. Static linking of applications and widgets to the FLTK library does
+    not constitute a derivative work and does not require the author to
+    provide source code for the application or widget, use the shared FLTK
+    libraries, or link their applications or widgets against a user-supplied
+    version of FLTK.
+
+    If you link the application or widget to a modified version of FLTK,
+    then the changes to FLTK must be provided under the terms of the LGPL
+    in sections 1, 2, and 4.
+
+    4. You do not have to provide a copy of the FLTK license with programs
+    that are linked to the FLTK library, nor do you have to identify the
+    FLTK license in your program or documentation as required by section 6
+    of the LGPL.
+
+    However, programs must still identify their use of FLTK.  The following
+    example statement can be included in user documentation to satisfy
+    this requirement:
+
+	[program/widget] is based in part on the work of the 
+	FLTK project (http://www.fltk.org).
+
+\endverbatim
+
+\section faq_escape Hitting the 'Escape' key closes windows - how do I prevent this?
+
+[From FLTK article #378]
+
+1. FLTK has a "global event handler" that makes Escape try to close the
+window, the same as clicking the close box.  To disable this everywhere
+you can install your own that pretends it wants the escape key and thus
+stops the default one from seeing it (this may not be what you want,
+see below about the callbacks):
+
+\code
+static int my_handler(int event) {
+  if (event == FL_SHORTCUT) return 1; // eat all shortcut keys
+  return 0;
+}
+...in main():
+  Fl::add_handler(my_handler);
+...
+\endcode
+
+2. Attempts to close a window (both clicking the close box or typing
+Escape) call that window's callback.  The default version of the callback
+does hide().  To make the window not close or otherwise do something
+different you replace the callback.  To make the main window exit the
+program:
+
+\code
+void my_callback(Fl_Widget*, void*) {
+  exit(0);
+}
+...
+  main_window->callback(my_callback);
+...
+\endcode
+
+If you don't want Escape to close the main window and exit you can check
+for and ignore it.  This is better than replacing the global handler
+because Escape will still close pop-up windows:
+
+\code
+void my_callback(Fl_Widget*, void*) {
+  if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
+    return; // ignore Escape
+  exit(0);
+}
+\endcode
+
+It is very common to ask for confirmation before exiting, this can be
+done with:
+
+\code
+void my_callback(Fl_Widget*, void*) {
+  if (fl_ask("Are you sure you want to quit?"))
+    exit(0);
+}
+\endcode
+
+
+*/
+

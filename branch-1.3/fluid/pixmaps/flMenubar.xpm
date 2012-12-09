@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flMenubar_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"a c #606060",
+". c #2020cf",
+"c c none",
+"d c #b0b0b0",
+"e c #ffffff",
+"f c #e0e0e0",
+/* pixels */
+"cccccccccccccccc",
+"ffffffffffffffff",
+"dddddddddddddddd",
+"dddddddddddddddd",
+"dddddddddddddddd",
+"dddffffffffffffd",
+"aaafddddddddddaa",
+"cccfddddddddddac",
+"cccfddddddddddac",
+"cccfddddddddddac",
+"cccfddddddddddac",
+"cccfddddddddddac",
+"cccfddddddddddac",
+"cccfddddddddddac",
+"cccfaaaaaaaaaaac",
+"cccccccccccccccc"
+};

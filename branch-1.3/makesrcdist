@@ -1,0 +1,96 @@
+#!/bin/sh
+#
+# makesrcdist - make a distribution of FLTK.
+#
+
+echo "Getting distribution..."
+
+if test $# = 0 -o "x$1" = xsnapshot; then
+	echo Updating for snapshot...
+	svn up
+	rev=`svnversion . | sed -e '1,$s/[a-zA-Z]//g'`
+	version="1.3svn"
+	fileversion="1.3svn-r$rev"
+	fileurl="ftp://ftp.easysw.com/pub/fltk/snapshots/fltk-$fileversion-source.tar.bz2"
+	url="."
+else
+	if test ! -e "documentation/html/"; then
+		echo "ERROR: Please generate the HTML documentation before distributing:"
+		echo "  autoconf"
+		echo "  ./configure"
+		echo "  cd documentation; make dist"
+		exit
+	fi
+	if test ! -e "documentation/fltk.pdf"; then
+		echo "ERROR: Please generate the PDF documentation before distributing:"
+		echo "  autoconf"
+		echo "  ./configure"
+		echo "  cd documentation; make dist"
+		exit
+	fi
+	echo Creating tag for release...
+	rev="1"
+	version=$1
+	fileversion=$1
+	fileurl="ftp://ftp.easysw.com/pub/fltk/$version/fltk-$fileversion-source.tar.bz2"
+	url="https://svn.easysw.com/public/fltk/fltk/tags/release-$version"
+
+	svn copy https://svn.easysw.com/public/fltk/fltk/branches/branch-1.3 "$url" \
+		-m "Tag $version" || exit 1
+fi
+
+echo Exporting $version...
+rm -rf /tmp/fltk-$version
+svn export $url /tmp/fltk-$version
+
+if test $# != 0 -a "x$1" != xsnapshot; then
+	echo "Copying HTML and PDF documentation..."
+	cp -r documentation/html /tmp/fltk-$version/documentation/
+	cp documentation/fltk.pdf /tmp/fltk-$version/documentation/
+fi
+
+echo Applying version number...
+cd /tmp/fltk-$version
+
+fileurl=`echo $fileurl | sed -e '1,$s/\\//\\\\\\//g'`
+sed -e '1,$s/@VERSION@/'$version'/' \
+	-e '1,$s/@RELEASE@/'$rev'/' \
+	-e '1,$s/^Source:.*/Source: '$fileurl'/' \
+	<fltk.spec.in >fltk.spec
+
+echo Creating configure script...
+autoconf -f
+
+echo Cleaning developer files...
+rm -rf OpenGL autom4te* bc5 config forms glut images packages themes
+rm -f makesrcdist
+
+cd ..
+
+if test $# != 0 -a "x$1" != xsnapshot; then
+	echo "Making HTML docs distribution..."
+	gtar czf fltk-$fileversion-docs-html.tar.gz fltk-$version/documentation/html/
+
+	echo "Making PDF docs distribution..."
+	gtar czf fltk-$fileversion-docs-pdf.tar.gz fltk-$version/documentation/fltk.pdf
+fi
+
+echo "Removing documentation..."
+rm -rf fltk-$version/documentation/html/
+rm -f fltk-$version/documentation/fltk.pdf
+
+echo "Making UNIX distribution..."
+gtar czf fltk-$fileversion-source.tar.gz fltk-$version
+
+#echo "Making BZ2 distribution..."
+#gtar cjf fltk-$fileversion-source.tar.bz2 fltk-$version
+
+#echo "Making Windows distribution..."
+#rm -f fltk-$fileversion-source.zip
+#zip -r9 fltk-$fileversion-source.zip fltk-$version
+
+echo "Removing distribution directory..."
+
+rm -rf fltk-$version
+
+echo "Done!"

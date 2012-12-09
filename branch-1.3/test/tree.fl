@@ -1,0 +1,1682 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <stdio.h>} {public global
+} 
+
+decl {\#include <FL/Fl.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Pixmap.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Group.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Tree.H>} {public global
+} 
+
+decl {\#include <FL/fl_ask.H>} {public global
+} 
+
+decl {\#include <FL/fl_message.H>} {public global
+} 
+
+decl {\#include <FL/Fl_File_Chooser.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Preferences.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Color_Chooser.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Text_Display.H>} {public global
+} 
+
+decl {int G_cb_counter = 0;} {
+  comment {// Global callback event counter} private local
+} 
+
+Function {reason_as_name(Fl_Tree_Reason reason)} {
+  comment {Return an Fl_Tree_Reason as a text string name} return_type {const char*}
+} {
+  code {switch ( reason ) {
+      case FL_TREE_REASON_NONE:       return("none");
+      case FL_TREE_REASON_SELECTED:   return("selected");
+      case FL_TREE_REASON_DESELECTED: return("deselected");
+      case FL_TREE_REASON_OPENED:     return("opened");
+      case FL_TREE_REASON_CLOSED:     return("closed");
+\#if FLTK_ABI_VERSION >= 10301
+	  case FL_TREE_REASON_RESELECTED: return("reselected");
+\#endif
+      default:                        return("???");
+    }} {}
+} 
+
+Function {Button_CB(Fl_Widget*w, void*data)} {open return_type void
+} {
+  code {// Each push changes height so we can test 'Item h() from widget'
+//    Cycle through larger sizes until 50, then wrap to normal size.
+//
+//    In the case of 'ccc button', it is the child widget, so change
+//    its size.
+//
+//    In the case of the 'D1' and 'D2' buttons, the parent's Fl_Group
+//    is the child, so change the size of that instead.
+//
+Fl_Widget *cw = strcmp(w->label(), "ccc button")==0 ? w : w->parent();
+int height = cw->h();
+height += 10;
+if ( height > 50 ) height = 20;
+cw->resize(cw->x(), cw->y(), cw->w(), height);
+tree->redraw();	// adjusted height
+fprintf(stderr, "'%s' button pushed (height=%d)\\n", w->label(), height);} {}
+} 
+
+Function {AssignUserIcons()} {
+  comment {Assign user icons to the items} open
+} {
+  code {static const char *L_folder_xpm[] = {
+    "11 11 3 1",
+    ".  c None",
+    "x  c \#d8d833",
+    "@  c \#808011",
+    "...........",
+    ".....@@@@..",
+    "....@xxxx@.",
+    "@@@@@xxxx@@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@xxxxxxxxx@",
+    "@@@@@@@@@@@"};
+static Fl_Pixmap L_folderpixmap(L_folder_xpm);
+
+static const char *L_document_xpm[] = {
+    "11 11 3 1",
+    ".  c None",
+    "x  c \#d8d8f8",
+    "@  c \#202060",
+    ".@@@@@@@@@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@xxxxxxx@.",
+    ".@@@@@@@@@."};
+static Fl_Pixmap L_documentpixmap(L_document_xpm);
+
+// Assign user icons to tree items
+for ( Fl_Tree_Item *item = tree->first(); item; item=item->next())
+    if ( usericon_radio->value() )
+        // Assign custom icons
+        item->usericon(item->has_children() ? &L_folderpixmap : &L_documentpixmap);
+    else
+    	// Don't assign custom icons
+        item->usericon(0);
+
+tree->redraw();} {}
+} 
+
+Function {RebuildTree()} {
+  comment {Rebuild the 'example tree' from scratch} open
+} {
+  code {// REBUILD THE TREE TO MAKE CURRENT "DEFAULT" PREFS TAKE EFFECT
+tree->clear();
+tree->add("Aaa");
+tree->add("Bbb");
+tree->add("Ccc");
+tree->add("Ddd");
+tree->add("Bbb/child-01");
+tree->add("Bbb/child-01/111");
+tree->add("Bbb/child-01/222");
+tree->add("Bbb/child-01/333");
+tree->add("Bbb/child-02");
+tree->add("Bbb/child-03");
+tree->add("Bbb/child-04");
+
+{
+    static Fl_Input *in = 0;
+    // Assign an FLTK input widget to one of the items with a label() of its own (STR\#2832)
+    Fl_Tree_Item *i;
+    if ( ( i = tree->find_item("Bbb/child-02") ) != NULL ) {
+        if ( !in ) {		// only do this once at program startup
+            tree->begin();
+            in = new Fl_Input(1,1,100,1,"Fl_Input test");	// we control w() only
+            in->labelsize(10);
+            in->textsize(10);
+            in->align(FL_ALIGN_RIGHT);				// show label to the right of the widget
+	    in->tooltip("Fl_Input inside tree.\\n"
+	                "The widget's label 'Fl_Input test' should appear to the widget's right.");
+        }
+        i->widget(in);
+        tree->end();
+    }
+}
+
+{
+    static Fl_Button *but = 0;
+    // Assign an FLTK widget to one of the items
+    Fl_Tree_Item *i;
+    if ( ( i = tree->find_item("Bbb/child-03") ) != NULL ) {
+        if ( !but ) {		// only do this once at program startup
+            tree->begin();
+            but = new Fl_Button(1,1,140,1,"ccc button");     // we control w() only
+            but->labelsize(10);
+	    but->callback(Button_CB);
+	    but->tooltip("Button inside tree.\\n"
+	                 "If 'Item h() from widget' enabled, "
+	                 "pressing button enlarges it.");
+        }
+        i->widget(but);
+        tree->end();
+    }
+}
+{
+    // Assign an FLTK group to one of the items with widgets
+    Fl_Tree_Item *i;
+    const char *tipmsg = "A group of two buttons inside the tree.\\n"
+	                 "If 'Item h() from widget' enabled, "
+	                 "pressing either button enlarges the group "
+	                 "and both buttons together.";
+    if ( ( i = tree->find_item("Bbb/child-04") ) != NULL ) {
+        static Fl_Group *grp = 0;
+        if ( !grp ) {		// only do this once at program startup
+            tree->begin();
+              grp = new Fl_Group(100,100,140,18); // build group.. tree handles position
+              grp->color(FL_WHITE);
+              grp->begin();
+                Fl_Button *abut = new Fl_Button(grp->x()+0 ,grp->y()+2,65,15,"D1");
+                abut->labelsize(10);
+		abut->callback(Button_CB);
+		abut->tooltip(tipmsg);
+                Fl_Button *bbut = new Fl_Button(grp->x()+75,grp->y()+2,65,15,"D2");
+                bbut->labelsize(10);
+		bbut->callback(Button_CB);
+	        bbut->tooltip(tipmsg);
+
+              grp->end();
+              grp->resizable(grp);
+            tree->end();
+        }
+        i->widget(grp);
+    }
+}
+
+// Add an 'Ascending' node, and create it sorted
+tree->sortorder(FL_TREE_SORT_NONE);
+tree->add("Ascending")->close();
+tree->sortorder(FL_TREE_SORT_ASCENDING);
+tree->add("Ascending/Zzz");
+tree->add("Ascending/Xxx");
+tree->add("Ascending/Aaa");
+tree->add("Ascending/Bbb");
+tree->add("Ascending/Yyy");
+tree->add("Ascending/Ccc");
+
+// Add a 'Descending' node, and create it sorted
+tree->sortorder(FL_TREE_SORT_NONE);
+tree->add("Descending")->close();
+tree->sortorder(FL_TREE_SORT_DESCENDING);
+tree->add("Descending/Zzz");
+tree->add("Descending/Xxx");
+tree->add("Descending/Aaa");
+tree->add("Descending/Bbb");
+tree->add("Descending/Yyy");
+tree->add("Descending/Ccc");
+
+// Add 500 items in numerical order
+tree->sortorder(FL_TREE_SORT_NONE);
+for ( int t=0; t<500; t++ ) {
+    static char s[80];
+    sprintf(s, "500 Items/item %04d", t);
+    tree->add(s);
+}
+tree->close("500 Items");	// close the 500 items by default
+
+AssignUserIcons();
+
+tree->redraw();} {}
+} 
+
+Function {EditColor(Fl_Color &val)} {
+  comment {Prompt the user to change the specified color} return_type Fl_Color
+} {
+  code {// Returns:
+//     1 if color picked with new color in 'val'
+//     0 if user hit 'Cancel'.
+//
+uchar r,g,b;
+
+// Get the current color
+Fl::get_color(val,r,g,b);
+
+// Bring up a color chooser to edit it
+int ret = fl_color_chooser("Choose Color",r,g,b);
+
+val = fl_rgb_color(r,g,b);
+
+
+return(ret);} {}
+} 
+
+Function {UpdateColorChips()} {
+  comment {Updates the color chips with current colors from widget} open return_type void
+} {
+  code {color_button->color(tree->color());
+labelcolor_button->color(tree->labelcolor());
+selection_color_button->color(tree->selection_color());
+
+item_labelfgcolor_button->color(tree->item_labelfgcolor());
+item_labelbgcolor_button->color(tree->item_labelbgcolor());
+
+all_labelfgcolor_button->color(tree->item_labelfgcolor());  // use default
+all_labelbgcolor_button->color(tree->item_labelbgcolor());  // use default
+
+window->redraw();} {}
+} 
+
+Function {GetTreeMarginBottom()} {
+  comment {Get the current 'margin bottom' size
+Handles this as an ABI feature..} open return_type int
+} {
+  code {\#if FLTK_ABI_VERSION >= 10301
+return tree->marginbottom();
+\#else
+return 0;
+\#endif} {}
+} 
+
+Function {GetTreeWidgetMarginLeft()} {
+  comment {Get the current 'margin bottom' size
+Handles this as an ABI feature..} open return_type int
+} {
+  code {\#if FLTK_ABI_VERSION >= 10301
+return tree->widgetmarginleft();
+\#else
+return 0;
+\#endif} {}
+} 
+
+Function {GetSelectedItemFGColor()} {
+  comment {Return the selected item's fg color} open return_type Fl_Color
+} {
+  code {Fl_Tree_Item *item;
+for ( item=tree->first(); item; item = tree->next(item) ) {
+    if ( item->is_selected() ) {
+        return(item->labelfgcolor());
+    }
+}
+// No items selected? Use default
+return(tree->item_labelfgcolor());} {}
+} 
+
+Function {GetSelectedItemBGColor()} {
+  comment {Return the selected item's bg color} open return_type Fl_Color
+} {
+  code {Fl_Tree_Item *item;
+for ( item=tree->first(); item; item = tree->next(item) ) {
+    if ( item->is_selected() ) {
+        return(item->labelbgcolor());
+    }
+}
+// No items selected? Use default
+return(tree->item_labelbgcolor());} {}
+} 
+
+Function {} {open
+} {
+  Fl_Window window {
+    label tree open
+    xywh {5 44 1045 580} type Double visible
+  } {
+    Fl_Group tree {
+      label Tree
+      user_data 1234
+      callback {G_cb_counter++; // Increment callback counter whenever tree callback is invoked
+Fl_Tree_Item *item = tree->callback_item();
+if ( item ) {
+  fprintf(stderr, "TREE CALLBACK: label='%s' userdata=%ld reason=%s, changed=%d",
+          item->label(),
+          (long)(fl_intptr_t)tree->user_data(),
+	  reason_as_name(tree->callback_reason()),
+	  tree->changed() ? 1 : 0);
+  // More than one click? show click count
+  //    Should only happen if reason==FL_TREE_REASON_RESELECTED.
+  //
+  if ( Fl::event_clicks() > 0 ) {
+    fprintf(stderr, ", clicks=%d\\n", (Fl::event_clicks()+1));
+  } else {
+    fprintf(stderr, "\\n");
+  } 
+} else {
+  fprintf(stderr, "TREE CALLBACK: reason=%s, changed=%d, item=(no item -- probably multiple items were changed at once)\\n",
+          reason_as_name(tree->callback_reason()),
+          tree->changed() ? 1 : 0);
+}
+tree->clear_changed();} open
+      tooltip {Test tree} xywh {15 22 320 539} box DOWN_BOX color 55 selection_color 15
+      class Fl_Tree
+    } {}
+    Fl_Group {} {open
+      xywh {300 5 731 615}
+      code0 {o->resizable(0);}
+    } {
+      Fl_Box {} {
+        label {Tree Globals}
+        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {350 23 330 389} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+      }
+      Fl_Value_Slider margintop_slider {
+        label {margintop()}
+        user_data tree
+        callback {int val = (int)margintop_slider->value();
+tree->margintop(val);
+tree->redraw();}
+        tooltip {Changes the top margin for the tree widget} xywh {505 40 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        code0 {o->value(tree->margintop());}
+        code1 {o->range(0.0, 100.0);}
+        code2 {o->step(1.0);}
+      }
+      Fl_Value_Slider marginleft_slider {
+        label {marginleft()}
+        user_data tree
+        callback {int val = (int)marginleft_slider->value();
+tree->marginleft(val);
+tree->redraw();}
+        tooltip {Changes the left margin for the tree widget} xywh {505 60 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        code0 {o->value(tree->marginleft());}
+        code1 {o->range(0.0, 100.0);}
+        code2 {o->step(1.0);}
+      }
+      Fl_Value_Slider marginbottom_slider {
+        label {marginbottom()}
+        user_data tree
+        callback {\#if FLTK_ABI_VERSION >= 10301
+// NEW
+int val = (int)marginbottom_slider->value();
+tree->marginbottom(val);
+tree->redraw();
+\#else
+// OLD
+marginbottom_slider->deactivate();  // deactivate if this ABI feature is disabled
+marginbottom_slider->tooltip("DISABLED.\\n"
+                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
+                              "to get this feature");
+\#endif}
+        tooltip {Changes the bottom margin for the tree
+Sets how far beyond bottom of tree you can scroll} xywh {505 80 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        code0 {o->value(GetTreeMarginBottom()); // handle ABI feature}
+        code1 {o->range(0.0, 275.0);}
+        code2 {o->step(1.0);}
+        code3 {o->do_callback();}
+      }
+      Fl_Value_Slider linespacing_slider {
+        label {linespacing()}
+        user_data tree
+        callback {int val = (int)linespacing_slider->value();
+tree->linespacing(val);
+tree->redraw();}
+        tooltip {Changes the spacing between items in the tree} xywh {505 100 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        code0 {o->value(tree->linespacing());}
+        code1 {o->range(0.0, 100.0);}
+        code2 {o->step(1.0);}
+      }
+      Fl_Value_Slider usericonmarginleft_slider {
+        label {usericonmarginleft()}
+        user_data tree
+        callback {int val = (int)usericonmarginleft_slider->value();
+tree->usericonmarginleft(val);
+tree->redraw();}
+        tooltip {Changes the left margin for the user icons (if any)} xywh {505 120 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        code0 {o->value(tree->usericonmarginleft());}
+        code1 {o->range(0.0, 100.0);}
+        code2 {o->step(1.0);}
+      }
+      Fl_Value_Slider labelmarginleft_slider {
+        label {labelmarginleft()}
+        user_data tree
+        callback {int val = (int)labelmarginleft_slider->value();
+tree->labelmarginleft(val);
+tree->redraw();}
+        tooltip {Changes the left margin for the item label} xywh {505 140 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        code0 {o->value(tree->labelmarginleft());}
+        code1 {o->range(0.0, 100.0);}
+        code2 {o->step(1.0);}
+      }
+      Fl_Value_Slider widgetmarginleft_slider {
+        label {widgetmarginleft()}
+        user_data tree
+        callback {\#if FLTK_ABI_VERSION >= 10301
+int val = (int)widgetmarginleft_slider->value();
+tree->widgetmarginleft(val);
+tree->redraw();
+\#else
+widgetmarginleft_slider->deactivate();
+widgetmarginleft_slider->tooltip("DISABLED.\\n"
+                                 "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
+                                 "to get this feature");
+\#endif}
+        tooltip {Changes the margin to the left of child FLTK widget()} xywh {505 160 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        code0 {o->value(GetTreeWidgetMarginLeft());  // handle ABI feature}
+        code1 {o->range(0.0, 100.0);}
+        code2 {o->step(1.0);}
+        code3 {o->do_callback();}
+      }
+      Fl_Value_Slider openchild_marginbottom_slider {
+        label {openchild_marginbottom()}
+        user_data tree
+        callback {int val = (int)openchild_marginbottom_slider->value();
+tree->openchild_marginbottom(val);
+tree->redraw();}
+        tooltip {Changes the vertical space below an open child tree} xywh {505 180 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        code0 {o->value(tree->openchild_marginbottom());}
+        code1 {o->range(0.0, 100.0);}
+        code2 {o->step(1.0);}
+      }
+      Fl_Value_Slider connectorwidth_slider {
+        label {connectorwidth()}
+        user_data tree
+        callback {tree->connectorwidth((int)connectorwidth_slider->value());}
+        tooltip {Tests Fl_Tree::connectorwidth()} xywh {505 199 155 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 9
+        code0 {o->value(tree->connectorwidth());}
+        code1 {o->range(1.0, 100.0);}
+        code2 {o->step(1.0);}
+        code3 {o->color(46); o->selection_color(FL_RED);}
+      }
+      Fl_Choice collapseicons_chooser {
+        label {Collapse icons}
+        callback {static const char *L_open_xpm[] = {
+\#ifdef __APPLE__
+  "11 11 3 1",
+  ".	c \#fefefe",
+  "\#	c \#444444",
+  "@	c \#000000",
+  "\#\#\#\#\#\#\#\#\#\#\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#....@....\#",
+  "\#....@....\#",
+  "\#..@@@@@..\#",
+  "\#....@....\#",
+  "\#....@....\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#\#\#\#\#\#\#\#\#\#\#"
+\#else
+    "11 11 2 1",
+    ".  c None",
+    "@  c \#000000",
+    "...@.......",
+    "...@@......",
+    "...@@@.....",
+    "...@@@@....",
+    "...@@@@@...",
+    "...@@@@@@..",
+    "...@@@@@...",
+    "...@@@@....",
+    "...@@@.....",
+    "...@@......",
+    "...@......."
+\#endif
+    };
+static Fl_Pixmap L_openpixmap(L_open_xpm);
+
+static const char *L_close_xpm[] = {
+\#ifdef __APPLE__
+  "11 11 3 1",
+  ".	c \#fefefe",
+  "\#	c \#444444",
+  "@	c \#000000",
+  "\#\#\#\#\#\#\#\#\#\#\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#..@@@@@..\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#.........\#",
+  "\#\#\#\#\#\#\#\#\#\#\#"
+\#else
+    "11 11 2 1",
+    ".  c None",
+    "@  c \#000000",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "@@@@@@@@@@@",
+    ".@@@@@@@@@.",
+    "..@@@@@@@..",
+    "...@@@@@...",
+    "....@@@....",
+    ".....@....."
+\#endif
+    };
+static Fl_Pixmap L_closepixmap(L_close_xpm);
+
+switch ( collapseicons_chooser->value() ) {
+    case 0:
+        tree->showcollapse(1);
+        tree->openicon(0);
+        tree->closeicon(0);
+        break;
+    case 1:
+        tree->showcollapse(1);
+        tree->openicon(&L_openpixmap);
+        tree->closeicon(&L_closepixmap);
+        break;
+    case 2:
+        tree->showcollapse(0);
+        break;
+}}
+        tooltip {Tests Fl_Tree::openicon() and Fl_Tree::closeicon()} xywh {520 225 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+      } {
+        MenuItem {} {
+          label Normal
+          xywh {10 10 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Custom
+          xywh {20 20 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Off
+          xywh {30 30 36 21} labelsize 12
+        }
+      }
+      Fl_Choice connectorstyle_chooser {
+        label {Line style}
+        callback {// CHANGE COLLAPSESTYLE
+switch ( connectorstyle_chooser->value() ) {
+    case 0: tree->connectorstyle(FL_TREE_CONNECTOR_NONE);     break;
+    case 1: tree->connectorstyle(FL_TREE_CONNECTOR_DOTTED);   break;
+    case 2: tree->connectorstyle(FL_TREE_CONNECTOR_SOLID);    break;
+}}
+        tooltip {Tests connectorstyle() bit flags} xywh {520 249 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        code0 {switch (tree->connectorstyle()) { case FL_TREE_CONNECTOR_NONE: connectorstyle_chooser->value(0); break; case FL_TREE_CONNECTOR_DOTTED: connectorstyle_chooser->value(1); break; case FL_TREE_CONNECTOR_SOLID: connectorstyle_chooser->value(2); break; }}
+      } {
+        MenuItem {} {
+          label None
+          xywh {40 40 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Dotted
+          xywh {20 20 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Solid
+          xywh {30 30 36 21} labelsize 12
+        }
+      }
+      Fl_Choice selectmode_chooser {
+        label {Selection Mode}
+        callback {// Set selection mode
+switch ( selectmode_chooser->value() ) {
+    case 0:  tree->selectmode(FL_TREE_SELECT_NONE);   break;	// None
+    case 1:  tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
+    case 2:  tree->selectmode(FL_TREE_SELECT_MULTI);  break; 	// Multi
+    default: tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
+}}
+        tooltip {Sets how Fl_Tree handles mouse selection of tree items} xywh {520 273 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        code0 {selectmode_chooser->value(2);}
+        code1 {cb_selectmode_chooser(selectmode_chooser, (void*)0);}
+      } {
+        MenuItem {} {
+          label None
+          xywh {40 40 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Single
+          xywh {50 50 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Multi
+          xywh {60 60 36 21} labelsize 12
+        }
+      }
+      Fl_Choice reselectmode_chooser {
+        label {Item Reselect Mode}
+        callback {\#if FLTK_ABI_VERSION >= 10301
+// NEW
+// Set reselection mode
+switch ( reselectmode_chooser->value() ) {
+    case 0: tree->item_reselect_mode(FL_TREE_SELECTABLE_ONCE);   break;
+    case 1: tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS); break;
+}
+\#else
+// OLD
+reselectmode_chooser->deactivate();  // deactivate if this ABI feature is disabled
+reselectmode_chooser->tooltip("DISABLED.\\n"
+                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
+                              "to get this feature");
+window->redraw();  // deactivated
+\#endif}
+        tooltip {Enable 'reselect' events
+These happen when mouse drags or multi-clicks an item} xywh {520 297 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        code0 {reselectmode_chooser->value(1);}
+        code1 {reselectmode_chooser->do_callback();}
+      } {
+        MenuItem {} {
+          label {Selectable Once}
+          xywh {50 50 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Selectable Always}
+          xywh {60 60 36 21} labelsize 12
+        }
+      }
+      Fl_Choice whenmode_chooser {
+        label When
+        callback {// Set when mode
+switch ( whenmode_chooser->value() ) {
+  case 0:  tree->when(FL_WHEN_RELEASE);   break;
+  case 1:  tree->when(FL_WHEN_CHANGED);   break;
+  case 2:  tree->when(FL_WHEN_NEVER);     break;
+  default: tree->when(FL_WHEN_RELEASE);   break;
+}}
+        tooltip {Sets when() the tree's callback is invoked} xywh {520 323 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        code0 {whenmode_chooser->value(1);}
+        code1 {cb_whenmode_chooser(whenmode_chooser, (void*)0);}
+      } {
+        MenuItem {} {
+          label Changed
+          xywh {50 50 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Released
+          xywh {60 60 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Never
+          xywh {70 70 36 21} labelsize 12
+        }
+      }
+      Fl_Check_Button usericon_radio {
+        label {Enable user icons?}
+        user_data tree
+        callback {AssignUserIcons();}
+        tooltip {Tests Fl_Tree_Item::usericon()} xywh {485 355 20 16} down_box DOWN_BOX labelsize 11 align 7
+        code0 {usericon_radio->value(1);}
+      }
+      Fl_Check_Button showroot_radio {
+        label {Show root?}
+        user_data tree
+        callback {int onoff = showroot_radio->value();
+tree->showroot(onoff);}
+        tooltip {Tests tree->showroot();} xywh {485 372 20 16} down_box DOWN_BOX labelsize 11 align 7
+        code0 {int onoff = tree->showroot(); showroot_radio->value(onoff);}
+      }
+      Fl_Check_Button visiblefocus_checkbox {
+        label {Visible focus?}
+        user_data tree
+        callback {int onoff = visiblefocus_checkbox->value();
+tree->visible_focus(onoff);}
+        tooltip {Toggles the tree's visible_focus() box} xywh {485 389 20 16} down_box DOWN_BOX labelsize 11 align 7
+        code0 {int onoff = tree->visible_focus(); visiblefocus_checkbox->value(onoff);}
+      }
+      Fl_Check_Button labelandwidget_radio {
+        label {Show label + widget}
+        callback {\#if FLTK_ABI_VERSION >= 10301
+// NEW
+int flags = tree->item_draw_mode();
+if ( labelandwidget_radio->value() )
+    { flags |= FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET; }
+else
+    { flags &= ~FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET; }
+tree->item_draw_mode(flags);
+tree->redraw();
+\#else
+// OLD
+labelandwidget_radio->deactivate();  // deactivate if this ABI feature is disabled
+labelandwidget_radio->tooltip("DISABLED.\\n"
+                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
+                              "to get this feature");
+window->redraw();  // deactivated
+\#endif}
+        tooltip {Enables both label and widget() for display.
+When enabled, widget should appear to the right of the item's label. By default, the widget() is shown in place of the item's label.} xywh {645 356 20 16} down_box DOWN_BOX labelsize 11 align 7
+        code0 {labelandwidget_radio->value(0);}
+        code1 {labelandwidget_radio->do_callback();}
+      }
+      Fl_Check_Button itemheightfromwidget_radio {
+        label {Item h() from widget}
+        callback {\#if FLTK_ABI_VERSION >= 10301
+// NEW
+int flags = tree->item_draw_mode();
+if ( itemheightfromwidget_radio->value() )
+    { flags |= FL_TREE_ITEM_HEIGHT_FROM_WIDGET; }
+else
+    { flags &= ~FL_TREE_ITEM_HEIGHT_FROM_WIDGET; }
+tree->item_draw_mode(flags);
+tree->redraw();
+\#else
+// OLD
+itemheightfromwidget_radio->deactivate();  // deactivate if this ABI feature is disabled
+itemheightfromwidget_radio->tooltip("DISABLED.\\n"
+                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
+                              "to get this feature");
+window->redraw();  // deactivated
+\#endif}
+        tooltip {If enabled, item's height will track the widget()'s height.
+When enabled, click 'ccc' or 'D1/D2' buttons to test.} xywh {645 371 20 16} down_box DOWN_BOX labelsize 11 align 7
+        code0 {itemheightfromwidget_radio->value(0);}
+        code1 {itemheightfromwidget_radio->do_callback();}
+      }
+      Fl_Box {} {
+        label {Test Operations}
+        tooltip {These controls only affect the defaults for new items that are created. These test the Fl_Tree_Prefs methods.} xywh {350 435 330 125} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+      }
+      Fl_Box showitem_box {
+        label {show_item()
+}
+        xywh {370 460 70 82} box GTK_DOWN_BOX labelsize 11 align 1
+      }
+      Fl_Button {} {
+        label Show
+        callback {Fl_Tree_Item *item = tree->next_selected_item();
+tree->show_item(item);}
+        tooltip {Tests show_item() with no position specified.
+Makes the selected item visible IF it is off-screen.
+No change made if it is not off-screen.} xywh {385 469 40 17} labelsize 11
+      }
+      Fl_Button {} {
+        label Top
+        callback {Fl_Tree_Item *item = tree->next_selected_item();
+tree->show_item_top(item);}
+        tooltip {Test show_item_top().
+Scrolls selected item to the top of the display
+(only works if scrollbar showing)
+To use:
+1) open '500 items'
+2) select item 0010
+3) Hit Top/Mid/Bot} xywh {385 486 40 16} labelsize 11
+      }
+      Fl_Button {} {
+        label Mid
+        callback {Fl_Tree_Item *item = tree->next_selected_item();
+tree->show_item_middle(item);}
+        tooltip {Tests show_item_middle().
+Scrolls the selected item to the middle of the display
+To use:
+  1) open '500 items'
+  2) select 'item 0010'
+  3) Hit Top/Mid/Bot} xywh {385 502 40 16} labelsize 11
+      }
+      Fl_Button {} {
+        label Bot
+        callback {Fl_Tree_Item *item = tree->next_selected_item();
+tree->show_item_bottom(item);}
+        tooltip {Tests show_item_bottom().
+Scrolls the selected item to the bottom of the display
+To use:
+  1) open '500 items'
+  2) select 'item 0010'
+  3) Hit Top/Mid/Bot} xywh {385 518 40 16} labelsize 11
+      }
+      Fl_Button openall_button {
+        label {Open All}
+        callback {for ( Fl_Tree_Item *item = tree->first();
+      item;
+      item = tree->next(item) ) {
+    if ( item->has_children() )
+        item->open();
+}
+tree->redraw();}
+        tooltip {Opens all nodes that have children} xywh {470 451 95 16} labelsize 9
+      }
+      Fl_Button loaddb_button {
+        label {Load Database...}
+        callback {const char *filename = fl_file_chooser("Select a Preferences style Database", "Preferences(*.prefs)", 0L);
+if (filename) {
+  tree->clear();
+  Fl_Preferences prefs(filename, 0L, 0L);
+  tree->load(prefs);
+  tree->redraw();
+}}
+        tooltip {Load the contents of an Fl_Preferences database into the tree view} xywh {470 471 95 16} labelsize 9
+      }
+      Fl_Button insertabove_button {
+        label {Insert Above}
+        callback {Fl_Tree_Item *item=tree->first();
+while (item) {
+    if ( item->is_selected() ) {
+        tree->insert_above(item, "AaaAaa");
+        tree->insert_above(item, "BbbBbb");
+        tree->insert_above(item, "CccCcc");
+    }
+    item = item->next();
+}
+
+tree->redraw();}
+        tooltip {Inserts three items above the selected items} xywh {470 491 95 16} labelsize 9
+      }
+      Fl_Button rebuildtree_button {
+        label {Rebuild Tree}
+        callback {RebuildTree();}
+        tooltip {Rebuilds the tree with defaults} xywh {470 511 95 16} labelsize 9
+      }
+      Fl_Button showpathname_button {
+        label {Show Pathname}
+        callback {Fl_Tree_Item *item = tree->first_selected_item();
+if ( !item ) { fl_message("No item was selected"); return; }
+
+char pathname[256];
+switch ( tree->item_pathname(pathname, sizeof(pathname), item) ) {
+    case  0: fl_message("Pathname for '%s' is: \\"%s\\"", (item->label() ? item->label() : "???"), pathname); break;
+    case -1: fl_message("item_pathname() returned -1 (NOT FOUND)"); break;
+    case -2: fl_message("item_pathname() returned -2 (STRING TOO LONG)"); break;
+}}
+        tooltip {Show the pathname for the selected item. Tests the Fl_Tree::item_pathname() method.} xywh {470 531 95 16} labelsize 9
+      }
+      Fl_Button closeall_button {
+        label {Close All}
+        callback {for ( Fl_Tree_Item *item = tree->first();
+      item;
+      item = tree->next(item) ) {
+    if ( !item->is_root() && item->has_children() )
+        item->close();
+}
+tree->redraw();}
+        tooltip {Closes all nodes that have children
+(doesn't affect 'root')} xywh {570 451 95 16} labelsize 9
+      }
+      Fl_Button clearall_button {
+        label {Clear All}
+        callback {tree->clear();
+tree->redraw();}
+        tooltip {Clears all items
+Tests Fl_Tree::clear()} xywh {570 471 95 16} labelsize 9
+      }
+      Fl_Button testcallbackflag_button {
+        label {Test Callback Flag}
+        callback {Fl_Tree_Item *root = tree->root();
+fprintf(stderr, "--- Checking docallback off\\n");
+if (!root) return;
+
+//// "OFF" TEST
+
+// open/close: Make sure these methods don't trigger cb
+G_cb_counter = 0; tree->close(root, 0);       if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n close(item) triggered cb!");
+G_cb_counter = 0; tree->open(root, 0);        if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n open(item) triggered cb!");
+G_cb_counter = 0; tree->open_toggle(root, 0); if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n open_toggle(item) triggered cb!");
+G_cb_counter = 0; tree->open("ROOT", 0);      if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n open(path) triggered cb!");
+G_cb_counter = 0; tree->close("ROOT", 0);     if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n close(path) triggered cb!");
+tree->open(root,0);	// leave root open
+
+// select/deselect: Make sure these methods don't trigger cb
+G_cb_counter = 0; tree->select(root, 0);        if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n select(item) triggered cb!");
+G_cb_counter = 0; tree->deselect(root, 0);      if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n deselect(item) triggered cb!");
+G_cb_counter = 0; tree->select_toggle(root, 0); if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n select_toggle(item) triggered cb!");
+G_cb_counter = 0; tree->deselect("ROOT", 0);    if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n deselect(path) triggered cb!");
+G_cb_counter = 0; tree->select("ROOT", 0);      if ( G_cb_counter ) fl_alert("FAILED 'OFF' TEST\\n select(path) triggered cb!");
+tree->deselect("ROOT"); // leave deselected
+
+//// "ON" TEST
+
+// open/close: Make sure these methods don't trigger cb
+G_cb_counter = 0; tree->close(root, 1);       if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n close(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->open(root, 1);        if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n open(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->open_toggle(root, 1); if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n open_toggle(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->open(root, 1);        if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n open(item)[2] cb wasn't triggered!");
+G_cb_counter = 0; tree->close(root, 1);       if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n close(item)[2] cb wasn't triggered!");
+G_cb_counter = 0; tree->open("ROOT", 1);      if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n open(path) cb wasn't triggered!");
+G_cb_counter = 0; tree->close("ROOT", 1);     if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n close(path) cb wasn't triggered!");
+tree->open(root,0);	// leave root open
+
+// select/deselect: Make sure these methods don't trigger cb
+G_cb_counter = 0; tree->select(root, 1);        if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n select(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->deselect(root, 1);      if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n deselect(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->select_toggle(root, 1); if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n select_toggle(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->deselect("ROOT", 1);    if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n deselect(path) cb wasn't triggered!");
+G_cb_counter = 0; tree->select("ROOT", 1);      if ( !G_cb_counter ) fl_alert("FAILED 'ON' TEST\\n select(path) cb wasn't triggered!");
+tree->deselect("ROOT"); // leave deselected
+
+//// "default" TEST (should be same as 'on'
+
+// open/close: Make sure these methods don't trigger cb
+G_cb_counter = 0; tree->close(root);       if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST: close(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->open(root);        if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST: open(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->open_toggle(root); if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST: open_toggle(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->open("ROOT");      if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST: open(path) cb wasn't triggered!");
+G_cb_counter = 0; tree->close("ROOT");     if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST: close(path) cb wasn't triggered!");
+tree->open(root,0);	// leave root open
+
+// select/deselect: Make sure these methods don't trigger cb
+G_cb_counter = 0; tree->select(root);        if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST\\n select(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->deselect(root);      if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST\\n deselect(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->select_toggle(root); if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST\\n select_toggle(item) cb wasn't triggered!");
+G_cb_counter = 0; tree->deselect("ROOT");    if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST\\n deselect(path) cb wasn't triggered!");
+G_cb_counter = 0; tree->select("ROOT");      if ( !G_cb_counter ) fl_alert("FAILED 'DEFAULT' TEST\\n select(path) cb wasn't triggered!");
+tree->deselect("ROOT"); // leave deselected
+
+fl_alert("TEST COMPLETED\\n If you didn't see any error dialogs, test PASSED.");}
+        tooltip {Test the 'docallback' argument can disable callbacks.} xywh {570 491 95 16} labelsize 9
+      }
+      Fl_Button testrootshowself_button {
+        label {Root Show Self}
+        callback {Fl_Tree_Item *root = tree->root();
+fprintf(stderr, "--- Show Tree\\n");
+if (root) root->show_self();}
+        tooltip {Test the root->'show_self() method to show the entire tree on stdout} xywh {570 511 95 16} labelsize 9
+      }
+      Fl_Button add20k_button {
+        label {Add 20,000}
+        callback {static int item_id = 501;
+Fl_Tree_Item *item=tree->first();
+while (item) {
+    if ( item->is_selected() ) {
+        Fl_Tree_Item *parent = item->parent();
+        if ( parent == 0 ) parent = tree->root();
+        char s[80];
+        for ( int i=0; i<20000; i++ ) {
+            sprintf(s, "Item \#%d", item_id+i);
+            tree->add(parent, s);
+        }
+        item_id += 20000;
+        break;
+    }
+    item = item->next();
+}
+tree->redraw();}
+        tooltip {Adds 20,000 items to the selected item's parent} xywh {570 531 95 16} labelsize 9
+      }
+      Fl_Box {} {
+        label {Selected Items}
+        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {696 23 335 246} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+      }
+      Fl_Choice selected_labelfont_choice {
+        label {Fl_Tree_Item::labelfont()}
+        callback {// Find first item in tree
+Fl_Tree_Item *item = tree->first();
+if ( !item ) return;
+
+// Get first item's font.
+Fl_Font val = (Fl_Font)selected_labelfont_choice->value(); // Get font value
+
+// Do selected items
+int count = 0;
+for ( item=tree->first(); item; item = tree->next(item) ) {
+    if ( item->is_selected() ) {
+        item->labelfont(val);
+        count++;
+    }
+}
+
+// No items selected? Do all..
+if ( ! count ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
+        item->labelfont(val);
+    }
+}
+
+tree->redraw();}
+        tooltip {Changes the font for the selected items's labels. If none selected, all are changed. Tests Fl_Tree_Item::labelfont();} xywh {863 31 140 21} down_box BORDER_BOX labelsize 11 textsize 11
+        code0 {o->value((int)tree->item_labelfont());   // get tree's current font, assign to chooser}
+      } {
+        MenuItem {} {
+          label Helvetica
+          xywh {30 30 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Bold}
+          xywh {40 40 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Italic}
+          xywh {55 55 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Bold Italic}
+          xywh {60 60 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Courier
+          xywh {70 70 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Bold}
+          xywh {80 80 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Italic}
+          xywh {65 65 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Bold Italic}
+          xywh {70 70 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Times
+          xywh {80 80 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Bold}
+          xywh {90 90 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Italic}
+          xywh {75 75 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Bold Italic}
+          xywh {80 80 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Symbol
+          xywh {90 90 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Screen
+          xywh {100 100 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Screen bold}
+          xywh {85 85 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Zapf Dingbats}
+          xywh {90 90 36 21} labelsize 12
+        }
+      }
+      Fl_Value_Slider selected_labelsize_slider {
+        label {Fl_Tree_Item::labelsize()}
+        user_data tree
+        callback {int size = (int)selected_labelsize_slider->value();
+
+// DO SELECTED ITEMS
+int count = 0;
+Fl_Tree_Item *item;
+for ( item=tree->first(); item; item = tree->next(item) ) {
+    if ( item->is_selected() ) {
+        item->labelsize(size);
+        count++;
+    }
+}
+
+// NO ITEMS SELECTED? DO ALL
+if ( ! count ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
+        item->labelsize(size);
+    }
+}
+
+tree->redraw();}
+        tooltip {Changes the font size of the selected items's labels. If none selected, all are changed. Tests Fl_Tree_Item::labelsize();} xywh {863 55 140 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 12
+        code0 {o->value(tree->item_labelsize());}
+        code1 {o->range(5.0, 200.0);}
+        code2 {o->step(1.0);}
+        code3 {o->color(46); o->selection_color(FL_RED);}
+      }
+      Fl_Button all_labelfgcolor_button {
+        label {Fl_Tree_Item::labelfgcolor()}
+        callback {// Get first item's color
+Fl_Color val = GetSelectedItemFGColor();		// Get color of first selected item
+if ( EditColor(val) == 0 ) return;			// Let user edit color. (return if they hit 'Cancel')
+all_labelfgcolor_button->color(val);			// update modified color to button
+
+// Do selected items
+int count = 0;
+Fl_Tree_Item *item;
+for ( item=tree->first(); item; item = tree->next(item) ) {
+    if ( item->is_selected() ) {
+        item->labelfgcolor(val);
+        count++;
+    }
+}
+
+// No items selected? Do all..
+if ( ! count ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
+        item->labelfgcolor(val);
+    }
+}
+
+tree->redraw();}
+        tooltip {Sets the Fl_Tree_Item::labelfgcolor() for the selected items. If none selected, all are changed.} xywh {863 81 16 16} box DOWN_BOX labelsize 11 align 7
+        code0 {o->color(GetSelectedItemFGColor());}
+      }
+      Fl_Button all_labelbgcolor_button {
+        label {Fl_Tree_Item::labelbgcolor()}
+        callback {// Get first item's color
+Fl_Color val = GetSelectedItemBGColor();		// Get color of first selected item
+if ( EditColor(val) == 0 ) return;			// Let user edit color. (return if they hit 'Cancel')
+all_labelbgcolor_button->color(val);			// update modified color to button
+
+// Do selected items
+int count = 0;
+Fl_Tree_Item *item;
+for ( item=tree->first(); item; item = tree->next(item) ) {
+    if ( item->is_selected() ) {
+        item->labelbgcolor(val);
+        count++;
+    }
+}
+
+// No items selected? Do all..
+if ( ! count ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
+        item->labelbgcolor(val);
+    }
+}
+
+tree->redraw();}
+        tooltip {Sets the Fl_Tree_Item::labelbgcolor() for the selected items. If none selected, all are changed.} xywh {863 99 16 16} box DOWN_BOX labelsize 11 align 7
+        code0 {o->color(GetSelectedItemBGColor());}
+      }
+      Fl_Light_Button deactivate_toggle {
+        label { Deactivate}
+        callback {int onoff = deactivate_toggle->value() ? 0 : 1;
+
+Fl_Tree_Item *item;
+int count = 0;
+for ( item=tree->first(); item; item = tree->next(item) ) {
+    if ( item->is_selected() ) {
+        item->activate(onoff);
+        ++count;
+    }
+}
+
+if ( count == 0 ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
+        item->activate(onoff);
+    }
+}
+
+tree->redraw();}
+        tooltip {Toggle the deactivation state of the selected items.
+If none are selected, all are set.} xywh {769 134 95 16} selection_color 1 labelsize 9
+      }
+      Fl_Light_Button bold_toggle {
+        label { Bold Font}
+        callback {int face = bold_toggle->value() ? FL_HELVETICA_BOLD : FL_HELVETICA;
+
+// DO SELECTED ITEMS
+int count = 0;
+Fl_Tree_Item *item;
+for ( item=tree->first(); item; item = tree->next(item) ) {
+    if ( item->is_selected() ) {
+        item->labelfont(face);
+        count++;
+    }
+}
+
+// NO ITEMS SELECTED? DO ALL
+if ( ! count ) {
+    for ( item=tree->first(); item; item = tree->next(item) ) {
+        item->labelfont(face);
+    }
+}
+
+tree->redraw();}
+        tooltip {Toggles bold font for selected items
+If nothing selected, all are changed} xywh {769 154 95 16} selection_color 1 labelsize 9
+      }
+      Fl_Button showselected_button {
+        label {Show Selected}
+        callback {fprintf(stderr, "--- SELECTED ITEMS\\n");
+for ( Fl_Tree_Item *item = tree->first_selected_item();
+      item;
+      item = tree->next_selected_item(item) ) {
+  fprintf(stderr, "\\t%s\\n", item->label() ? item->label() : "???");
+}}
+        tooltip {Clears the selected items} xywh {864 134 95 16} labelsize 9
+      }
+      Fl_Button clearselected_button {
+        label {Remove Selected}
+        callback {Fl_Tree_Item *item=tree->first();
+while (item) {
+    if ( item->is_selected() ) {
+    	if ( tree->remove(item) == -1 ) break;
+    	item = tree->first();
+    } else {
+        item = item->next();
+    }
+}
+
+tree->redraw();}
+        tooltip {Removes the selected items} xywh {864 154 95 16} labelsize 9
+      }
+      Fl_Button swapselected_button {
+        label {Swap Selected}
+        callback {Fl_Tree_Item *item=tree->first();
+Fl_Tree_Item *a = 0, *b = 0;
+while (item) {
+    if ( item->is_selected() ) {
+             if ( !a ) a = item;
+        else if ( !b ) b = item;
+        else {
+          fl_alert("Too many items selected. (must select only two)");
+          return;
+        }
+    }
+    item = item->next();
+}
+if ( !a || !b ) {
+  fl_alert("Too few items selected. (you must select two)");
+  return;
+}
+Fl_Tree_Item *pa = a->parent();
+Fl_Tree_Item *pb = b->parent();
+if ( pa != pb ) {
+  fl_alert("The two selected items must be siblings");
+  return;
+}
+pa->swap_children(a,b);
+tree->redraw();}
+        tooltip {Tests the Fl_Tree_Item::swap_children() method
+Swaps two selected items (items must be siblings)} xywh {864 174 95 16} labelsize 9
+      }
+      Fl_Button selectall_button {
+        label {Select All}
+        callback {tree->select_all(0);
+tree->redraw();}
+        tooltip {Selects all items in the tree} xywh {724 199 95 16} labelsize 9
+      }
+      Fl_Button deselectall_button {
+        label {Deselect All}
+        callback {tree->deselect_all(0);
+tree->redraw();}
+        tooltip {Deselects all items in the tree} xywh {724 219 95 16} labelsize 9
+      }
+      Fl_Light_Button bbbselect_toggle {
+        label { Select Bbb}
+        callback {// Toggle select of just the Bbb item (not children)
+Fl_Tree_Item *bbb = tree->find_item("/Bbb");
+if ( !bbb) {
+  fl_alert("FAIL: Couldn't find item '/Bbb'???");
+  return;
+}
+int onoff = bbbselect_toggle->value();
+if ( onoff ) tree->select(bbb);		// select /Bbb
+else         tree->deselect(bbb);	// deselect /Bbb}
+        tooltip {Toggle selection of just the /Bbb item
+(Not children)} xywh {819 199 95 16} selection_color 1 labelsize 9
+      }
+      Fl_Light_Button bbbselect2_toggle {
+        label { Select Bbb+}
+        callback {// Toggle select of just the Bbb item and its immediate children
+Fl_Tree_Item *bbb = tree->find_item("/Bbb");
+if ( !bbb) {
+  fl_alert("FAIL: Couldn't find item '/Bbb'???");
+  return;
+}
+int onoff = bbbselect2_toggle->value();
+if ( onoff ) tree->select_all(bbb);		// select /Bbb and its children
+else         tree->deselect_all(bbb);	// deselect /Bbb and its children}
+        tooltip {Toggle selection of the /Bbb item and its children} xywh {819 219 95 16} selection_color 1 labelsize 9
+      }
+      Fl_Light_Button bbbchild02select_toggle {
+        label { Toggle child-02}
+        callback {// Toggle select of just the /Bbb/child-02 item
+const char *pathname = "/Bbb/child-02";
+int onoff = bbbchild02select_toggle->value();
+int err = 0;
+if ( onoff ) err = tree->select(pathname);
+else         err = tree->deselect(pathname);
+
+if ( err == -1 ) {
+  fl_alert("FAIL: Couldn't find item '%s'",pathname);
+  return;
+}}
+        tooltip {Toggle the single item "/Bbb/child-02" using the item's "pathname".} xywh {819 239 95 16} selection_color 1 labelsize 9
+      }
+      Fl_Light_Button rootselect_toggle {
+        label {Select ROOT}
+        callback {// Toggle select of ROOT item and its children
+Fl_Tree_Item *item = tree->find_item("/ROOT");
+if ( !item) {
+  fl_alert("FAIL: Couldn't find item '/ROOT'???");
+  return;
+}
+int onoff = rootselect_toggle->value();
+if ( onoff ) tree->select(item);	// select /ROOT and its children
+else         tree->deselect(item);	// deselect /ROOT and its children}
+        tooltip {Toggle selection of the ROOT item} xywh {914 199 95 16} selection_color 1 labelsize 9
+      }
+      Fl_Light_Button rootselect2_toggle {
+        label {Select ROOT+}
+        callback {// Toggle select of ROOT item and its children
+Fl_Tree_Item *item = tree->find_item("/ROOT");
+if ( !item) {
+  fl_alert("FAIL: Couldn't find item '/ROOT'???");
+  return;
+}
+int onoff = rootselect2_toggle->value();
+if ( onoff ) tree->select_all(item);	// select /ROOT and its children
+else         tree->deselect_all(item);	// deselect /ROOT and its children}
+        tooltip {Toggle selection of the ROOT item and all children} xywh {914 219 95 16} selection_color 1 labelsize 9
+      }
+      Fl_Box {} {
+        label {Tree Fonts + Colors}
+        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {695 298 335 244} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+      }
+      Fl_Choice labelfont_choice {
+        label {labelfont()}
+        callback {Fl_Font val = (Fl_Font)labelfont_choice->value();
+tree->labelfont(val);
+window->redraw();}
+        tooltip {Sets the default font used for new items created. Does NOT affect existing items.} xywh {850 319 140 21} down_box BORDER_BOX labelsize 12 textsize 12
+        code0 {o->value((int)tree->labelfont());   // get tree's current font, assign to chooser}
+      } {
+        MenuItem {} {
+          label Helvetica
+          xywh {35 35 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Bold}
+          xywh {45 45 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Italic}
+          xywh {60 60 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Bold Italic}
+          xywh {65 65 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Courier
+          xywh {75 75 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Bold}
+          xywh {85 85 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Italic}
+          xywh {70 70 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Bold Italic}
+          xywh {75 75 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Times
+          xywh {85 85 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Bold}
+          xywh {95 95 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Italic}
+          xywh {80 80 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Bold Italic}
+          xywh {85 85 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Symbol
+          xywh {95 95 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Screen
+          xywh {105 105 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Screen bold}
+          xywh {90 90 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Zapf Dingbats}
+          xywh {95 95 36 21} labelsize 12
+        }
+      }
+      Fl_Value_Slider labelsize_slider {
+        label {labelsize()}
+        user_data tree
+        callback {tree->labelsize((int)labelsize_slider->value());
+window->redraw();}
+        tooltip {Sets the font size for the  tree's label().
+This is also the font size that will be used to draw the items IF their size hasn't been set with Fl_Tree_Item::labelsize() or Fl_Tree::item_labelsize()} xywh {850 343 140 16} type Horizontal color 46 selection_color 1 labelsize 12 align 4 textsize 12
+        code0 {o->value((int)tree->labelsize());}
+        code1 {o->range(1.0, 50.0);}
+        code2 {o->step(1.0);}
+        code3 {o->color(46); o->selection_color(FL_RED);}
+      }
+      Fl_Choice item_labelfont_choice {
+        label {Item_labelfont()}
+        callback {Fl_Font val = (Fl_Font)item_labelfont_choice->value();
+tree->item_labelfont(val);
+tree->redraw();}
+        tooltip {Sets the default font used for new items created.
+.Also affects any items whose font has NOT specifically been set with item->labelfont().} xywh {850 363 140 21} down_box BORDER_BOX labelsize 12 textsize 12
+        code0 {o->value((int)tree->item_labelfont());}
+      } {
+        MenuItem {} {
+          label Helvetica
+          xywh {25 25 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Bold}
+          xywh {35 35 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Italic}
+          xywh {50 50 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Helvetica Bold Italic}
+          xywh {55 55 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Courier
+          xywh {65 65 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Bold}
+          xywh {75 75 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Italic}
+          xywh {60 60 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Courier Bold Italic}
+          xywh {65 65 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Times
+          xywh {75 75 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Bold}
+          xywh {85 85 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Italic}
+          xywh {70 70 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Times Bold Italic}
+          xywh {75 75 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Symbol
+          xywh {85 85 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label Screen
+          xywh {95 95 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Screen bold}
+          xywh {80 80 36 21} labelsize 12
+        }
+        MenuItem {} {
+          label {Zapf Dingbats}
+          xywh {85 85 36 21} labelsize 12
+        }
+      }
+      Fl_Value_Slider item_labelsize_slider {
+        label {item_labelsize()}
+        user_data tree
+        callback {tree->item_labelsize((int)item_labelsize_slider->value());
+tree->redraw();}
+        tooltip {Sets the default font size used for new items created.
+.Also affects any items whose font size has NOT specifically been set with item->labelsize().} xywh {850 388 140 16} type Horizontal color 46 selection_color 1 labelsize 12 align 4 textsize 12
+        code0 {o->value((int)tree->item_labelsize());}
+        code1 {o->range(1.0, 50.0);}
+        code2 {o->step(1.0);}
+        code3 {o->color(46); o->selection_color(FL_RED);}
+      }
+      Fl_Button labelcolor_button {
+        label {labelcolor()}
+        callback {Fl_Color val = tree->labelcolor();
+if ( EditColor(val) == 0 ) return;			// Let user edit color. (return if they hit 'Cancel')
+labelcolor_button->color(val);				// update modified color to button
+tree->labelcolor(val);
+window->redraw();   // affects window (tree's label is outside tree's area)}
+        tooltip {Changes Fl_Tree::labelcolor().
+This affects the text color of the widget's label.} xywh {815 458 16 16} box DOWN_BOX labelsize 11 align 7
+        code0 {o->color(tree->labelcolor());}
+      }
+      Fl_Button color_button {
+        label {color()}
+        callback {Fl_Color val = tree->color();
+if ( EditColor(val) == 0 ) return;			// Let user edit color. (return if they hit 'Cancel')
+color_button->color(val);	// update modified color to button
+tree->color(val);
+UpdateColorChips();
+tree->redraw();}
+        tooltip {Changes Fl_Tree::color().
+This affects the background color of the widget. It also affects the bg color of newly created  items *if*  Fl_Tree::item_labelbgcolor() hasn't been changed.} xywh {815 477 16 16} box DOWN_BOX labelsize 11 align 7
+        code0 {o->color(tree->color());}
+      }
+      Fl_Button selection_color_button {
+        label {selection_color()}
+        callback {Fl_Color val = tree->selection_color();
+if ( EditColor(val) == 0 ) return;		// Let user edit color. (return if they hit 'Cancel')
+selection_color_button->color(val);		// update modified color to button
+tree->selection_color(val);
+tree->redraw();}
+        tooltip {Sets the Fl_Tree::selection_color().
+This affects the item's colors when they're selected.} xywh {815 496 16 16} box DOWN_BOX labelsize 11 align 7
+        code0 {o->color(tree->selection_color());}
+      }
+      Fl_Button item_labelfgcolor_button {
+        label {item_labelfgcolor()}
+        callback {Fl_Color val = tree->item_labelfgcolor();
+if ( EditColor(val) == 0 ) return;		// Let user edit color. (return if they hit 'Cancel')
+tree->item_labelfgcolor(val);			// apply modified color to tree
+item_labelfgcolor_button->color(val);		// update modified color to button
+tree->redraw();}
+        tooltip {Sets the default label fg color for newly created  items.} xywh {975 458 16 16} box DOWN_BOX labelsize 12 align 7
+        code0 {o->color(tree->item_labelfgcolor());}
+      }
+      Fl_Button item_labelbgcolor_button {
+        label {item_labelbgcolor()}
+        callback {Fl_Color val = tree->item_labelbgcolor();
+if ( EditColor(val) == 0 ) return;		// Let user edit color. (return if they hit 'Cancel')
+tree->item_labelbgcolor(val);			// apply modified color to tree
+item_labelbgcolor_button->color(val);		// update modified color to button
+tree->redraw();}
+        tooltip {Sets the default label bg color for newly created items. When set, this overrides the default behavior of using Fl_Tree::color().} xywh {975 477 16 16} box DOWN_BOX labelsize 12 align 7
+        code0 {item_labelbgcolor_button->color(tree->item_labelbgcolor());}
+      }
+      Fl_Button x_item_labelbgcolor_button {
+        label X
+        callback {tree->item_labelbgcolor(0xffffffff);
+UpdateColorChips();
+tree->redraw();}
+        tooltip {Make the bgcolor 'transparent' (0xffffffff)} xywh {995 477 16 16} labelsize 10 align 16
+      }
+      Fl_Button testsuggs_button {
+        label {Test Suggestions}
+        callback {const char *helpmsg =
+"CHILD WIDGET SIZING TESTS\\n"
+"=========================\\n"
+"   1) Start program\\n"
+"   2) Click the 'ccc button' and D1/D2 buttons.\\n"
+"      Their sizes should not change.\\n"
+"   3) Click the 'Item h() from widget' checkbox.\\n"
+"   4) Click the 'ccc button' and D1/D2 buttons.\\n"
+"      Their sizes should change, getting larger vertically.\\n"
+"      This validates that widget's size can affect the tree.\\n"
+"   5) Disable the checkbox, widgets should resize back to the\\n"
+"      size of the other items.\\n"
+"   6) Hit ^A to select all items\\n"
+"   7) Under 'Selected Items', drag the 'Label Size' slider around.\\n"
+"      All the item's height should change, as well as child widgets.\\n"
+"   8) Put Label Size' slider back to normal\\n"
+"\\n"
+"CHILD WIDGET + LABEL ITEM DRAWING TESTS\\n"
+"=======================================\\n"
+"   1) Start program\\n"
+"   2) Click 'Show label + widget'.\\n"
+"      The widgets should all show item labels to their left.\\n"
+"   3) Disable same, item labels should disappear,\\n"
+"      showing the widgets in their place.\\n"
+"\\n"
+" COLORS\\n"
+" ======\\n"
+"    1) Start program\\n"
+"    2) Change 'Tree Fonts+Colors' -> color()\\n"
+"    3) Entire tree's background color will change, including items.\\n"
+"    4) Change the 'Tree Fonts + Colors -> item_labelbgcolor()'\\n"
+"    6) Click the '111' item to select it.\\n"
+"    7) Click 'Test Operations -> Insert Above'\\n"
+"       New items should appear above the selected item using the new color.\\n"
+"       This color will be different from the background color.\\n"
+"    8) Change the 'Tree Fonts+Colors' -> color()\\n"
+"       The entire tree's bg should change, except the new items.\\n"
+"    9) Click the Tree Fonts+Colors -> item_labelbgcolor() 'X' button.\\n"
+"       This resets item_labelbgcolor() to the default 'transparent' color (0xffffffff)\\n"
+"   10) Again, click the 'Insert Above' button.\\n"
+"       New items will be created in the background color, and changing the color()\\n"
+"       should affect the new items too.\\n"
+"";
+
+static Fl_Double_Window *helpwin  = 0;
+static Fl_Text_Display  *helpdisp = 0;
+static Fl_Text_Buffer   *helpbuff = 0;
+if ( !helpwin ) {
+  Fl_Group::current(0);  // ensure we don't become child of other win
+  helpwin = new Fl_Double_Window(600,600,"Test Suggestions");
+  helpdisp = new Fl_Text_Display(0,0,helpwin->w(),helpwin->h());
+  helpbuff = new Fl_Text_Buffer();
+  helpdisp->buffer(helpbuff);
+  helpdisp->textfont(FL_COURIER);
+  helpdisp->textsize(12);
+  helpbuff->text(helpmsg);
+  helpwin->end();
+}
+helpwin->resizable(helpdisp);
+helpwin->show();} selected
+        tooltip {Suggestions on how to do tests} xywh {935 554 95 16} labelsize 9
+      }
+    }
+    Fl_Box resizer_box {
+      xywh {0 263 15 14}
+    }
+  }
+  code {// Initialize Tree
+tree->root_label("ROOT");
+\#if FLTK_ABI_VERSION >= 10301
+tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS);
+\#endif
+RebuildTree();
+/*tree->show_self();*/} {}
+  code {// FLTK stuff
+
+//Fl::scheme("gtk+");
+
+window->resizable(tree);
+window->size_range(window->w(), window->h(), 0, 0);
+
+     if ( tree->when() == FL_WHEN_CHANGED ) whenmode_chooser->value(0);
+else if ( tree->when() == FL_WHEN_RELEASE ) whenmode_chooser->value(1);
+else if ( tree->when() == FL_WHEN_NEVER   ) whenmode_chooser->value(2);} {}
+} 

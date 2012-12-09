@@ -1,0 +1,17 @@
+
+# On unix create backward compatibility symlinks
+if(NOT EXISTS @PREFIX_INCLUDE@/Fl)
+   EXECUTE_PROCESS(COMMAND ln -s FL Fl
+      WORKING_DIRECTORY @PREFIX_INCLUDE@
+      )
+endif(NOT EXISTS @PREFIX_INCLUDE@/Fl)
+
+file(GLOB FLTK_HEADER_FILES @PREFIX_INCLUDE@/FL/*.H)
+foreach(file ${FLTK_HEADER_FILES})
+   GET_FILENAME_COMPONENT(nameWE ${file} NAME_WE)
+   if(NOT EXISTS @PREFIX_INCLUDE@/FL/${nameWE}.h)
+      EXECUTE_PROCESS(COMMAND ln -s ${nameWE}.H ${nameWE}.h
+         WORKING_DIRECTORY @PREFIX_INCLUDE@/FL
+      )
+   endif()
+endforeach(file)

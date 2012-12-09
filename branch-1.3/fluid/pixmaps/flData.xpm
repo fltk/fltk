@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flData_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+". c none",
+"a c #000000",
+"b c #c0e0c0",
+"c c #000000",
+"  c #000000",
+"- c #607006",
+/* pixels */
+"................",
+"................",
+"...aaaaaaaaaaaaa",
+"...abbbbbbbbbbbc",
+"...ab b- -b bbbc",
+"..abb b b b bbc.",
+"..abb b- -b bbc.",
+"..abbbbbbbbbbbc.",
+".abbbbbbbbbbbc..",
+".ab b b- -bbbc..",
+".ab b b b bbbc..",
+"abb b b- -bbc...",
+"abbbbbbbbbbbc...",
+"acccccccccccc...",
+"................",
+"................",
+};

@@ -1,0 +1,24 @@
+.TH checkers 6 "FLTK Checkers" "15 January 2006"
+.SH NAME
+checkers \- the fltk checkers game
+.sp
+.SH SYNOPSIS
+\fICheckers\fR is a FLTK-based version of the game of checkers.
+The game is played on an 8x8 board with each player starting with
+12 pieces or "checkers" on opposite sides of the board. The
+computer plays the white checkers in this version of the game.
+.LP
+The object of the game is to remove all of your opponents pieces.
+Players move one of their pieces diagonally forward on each move,
+either a single space or by "jumping" an adjacent piece. Your
+opponents pieces are removed by jumping them - you can make
+multiple jumps in a single turn.
+.LP
+If a piece reaches the other side of the board, it is converted
+to a "king" which can move both forwards and backwards.
+.SH SEE ALSO
+fltk(3)
+.br
+FLTK Web Site, http://www.fltk.org/
+.SH AUTHORS
+Bill Spitzak and others.

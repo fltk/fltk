@@ -1,0 +1,5 @@
+for f in html/*.html ; do
+  sed 's/<!-- ... ... .*:..:..\. -->/<!-- date removed for reducing unnecessary svn web updates  -->/' $f > $f.tmp
+  rm $f
+  mv $f.tmp $f
+done

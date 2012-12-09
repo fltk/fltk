@@ -1,0 +1,26 @@
+.TH blocks 6 "FLTK Checkers" "15 January 2006"
+.SH NAME
+blocks \- the fltk block attack! game
+.sp
+.SH SYNOPSIS
+\fIBlocks\fR is a FLTK-based block elimination game. Stacks of
+colored blocks move from right to left as you try to eliminate
+groups adjacent blocks by clicking on them. As the game
+progresses, more colors are added (up to a maximum of 7) and the
+blocks move faster and faster.
+.SH GAME PLAY
+Press the N key to start a game. As the blocks move across the
+window, click on groups of two or more blocks to clear them - the
+larger the number of adjacent blocks, the greater the score.
+Clicking on a blocks containing a dark ball will clear all blocks
+of that color, however you will score much fewer points than a
+normal click. The game is over when the blocks reach the left
+side of the window.
+.LP
+Press the spacebar to pause the game.
+.SH SEE ALSO
+fltk(3)
+.br
+FLTK Web Site, http://www.fltk.org/
+.SH AUTHOR
+Michael R Sweet.

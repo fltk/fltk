@@ -1,0 +1,469 @@
+/**
+
+ \page	events Handling Events
+ 
+This chapter discusses the FLTK event model and how to handle
+events in your program or widget.
+
+\section events_model The FLTK Event Model
+
+Every time a user moves the mouse pointer, clicks a button,
+or presses a key, an event is generated and sent to your
+application. Events can also come from other programs like the
+window manager.
+
+Events are identified by the integer argument passed to a
+\p handle() method that overrides the
+Fl_Widget::handle()
+virtual method.
+Other information about the most recent event is stored in
+static locations and acquired by calling the
+\ref events_event_xxx.
+This static information remains valid until the next event
+is read from the window system, so it is ok to look at it outside 
+of the
+\p handle()
+method.
+
+Event numbers can be converted to their actual names using the \ref fl_eventnames[] array
+defined in \#include &lt;FL/names.h&gt;; see next chapter for details.
+
+In the next chapter, the
+\ref subclassing_events "MyClass::handle()"
+example shows how to override the
+Fl_Widget::handle()
+method to accept and process specific events.
+
+\section events_mouse Mouse Events
+
+\subsection events_fl_push FL_PUSH
+
+A mouse button has gone down with the mouse pointing at this
+widget. You can find out what button by calling
+Fl::event_button().
+You find out the mouse position by calling
+Fl::event_x()
+and
+Fl::event_y().
+
+A widget indicates that it \e "wants" the mouse click
+by returning non-zero from its
+\p handle()
+method, as in the
+\ref subclassing_events "MyClass::handle()"
+example.
+It will then become the
+Fl::pushed()
+widget and will get \p FL_DRAG and
+the matching \p FL_RELEASE events.
+If
+\p handle()
+returns zero then FLTK will try sending the \p FL_PUSH to
+another widget. 
+
+\subsection events_fl_drag FL_DRAG
+
+The mouse has moved with a button held down. The current
+button state is in
+Fl::event_state().
+The mouse position is in
+Fl::event_x()
+and
+Fl::event_y().
+
+In order to receive \p FL_DRAG events, the widget must
+return non-zero when handling \p FL_PUSH.
+
+\subsection events_fl_release FL_RELEASE
+
+A mouse button has been released. You can find out what button by calling
+Fl::event_button().
+
+In order to receive the \p FL_RELEASE event, the widget must
+return non-zero when handling \p FL_PUSH.
+
+\subsection events_fl_move FL_MOVE
+
+The mouse has moved without any mouse buttons held down. 
+This event is sent to the
+Fl::belowmouse()
+widget.
+
+In order to receive \p FL_MOVE events, the widget must
+return non-zero when handling \p FL_ENTER.
+
+\subsection events_fl_mousewheel FL_MOUSEWHEEL
+
+The user has moved the mouse wheel. The
+Fl::event_dx()
+and
+Fl::event_dy()
+methods can be used to find the amount to scroll horizontally and
+vertically.
+
+\section events_focus Focus Events
+
+\subsection events_fl_enter FL_ENTER
+
+The mouse has been moved to point at this widget.  This can
+be used for highlighting feedback.  If a widget wants to
+highlight or otherwise track the mouse, it indicates this by
+returning non-zero from its
+\p handle()
+method. It then becomes the
+Fl::belowmouse()
+widget and will receive \p FL_MOVE and \p FL_LEAVE
+events.
+
+\subsection events_fl_leave FL_LEAVE
+
+The mouse has moved out of the widget.
+
+In order to receive the \p FL_LEAVE event, the widget must
+return non-zero when handling \p FL_ENTER.
+
+\subsection events_fl_focus FL_FOCUS
+
+This indicates an \e attempt to give a widget the keyboard focus.
+
+If a widget wants the focus, it should change itself to
+display the fact that it has the focus, and return non-zero from its
+\p handle() method. It then becomes the Fl::focus() widget and gets
+\p FL_KEYDOWN, \p FL_KEYUP, and \p FL_UNFOCUS events.
+
+The focus will change either because the window manager changed which
+window gets the focus, or because the user tried to navigate using tab,
+arrows, or other keys. You can check Fl::event_key() to figure out why
+it moved. For navigation it will be the key pressed and for interaction
+with the window manager it will be zero.
+
+\subsection events_fl_unfocus FL_UNFOCUS
+
+This event is sent to the previous Fl::focus() widget when another
+widget gets the focus or the window loses focus.
+
+\section events_keyboard Keyboard Events
+
+\subsection events_fl_keydown FL_KEYBOARD, FL_KEYDOWN, FL_KEYUP
+
+A key was pressed (FL_KEYDOWN) or released (FL_KEYUP). FL_KEYBOARD
+is a synonym for FL_KEYDOWN, and both names are used interchangeably
+in this documentation.
+
+The key can be found in Fl::event_key().
+The text that the key should insert can be found with Fl::event_text()
+and its length is in Fl::event_length().
+
+If you use the key, then \p handle() should return 1. If you
+return zero then FLTK assumes you ignored the key and will
+then attempt to send it to a parent widget. If none of them want
+it, it will change the event into a \p FL_SHORTCUT event.
+FL_KEYBOARD events are also generated by the character palette/map.
+
+To receive \p FL_KEYBOARD events you must also respond to the
+\p FL_FOCUS and \p FL_UNFOCUS events.
+
+If you are writing a text-editing widget you may also want to call the
+Fl::compose()
+function to translate individual keystrokes into characters.
+
+\p FL_KEYUP events are sent to the widget that 
+currently has focus. This is not necessarily the same widget
+that received the corresponding \p FL_KEYDOWN event
+because focus may have changed between events.
+
+\subsection events_fl_shortcut FL_SHORTCUT
+
+If the Fl::focus() widget is zero or ignores an \p FL_KEYBOARD event
+then FLTK tries sending this event to every widget it can, until one
+of them returns non-zero. \p FL_SHORTCUT is first sent to
+the Fl::belowmouse() widget, then its parents and
+siblings, and eventually to every widget in the window, trying
+to find an object that returns non-zero. FLTK tries really hard
+to not to ignore any keystrokes!
+
+You can also make "global" shortcuts by using Fl::add_handler().
+A global shortcut will work no matter what windows are displayed
+or which one has the focus.
+
+\section events_widget Widget Events
+
+\subsection events_fl_deactivate FL_DEACTIVATE
+
+This widget is no longer active, due to
+\ref Fl_Widget::deactivate() "deactivate()"
+being called on it or one of its parents.
+Please note that although
+\ref Fl_Widget::active() "active()"
+may still return true for this widget after receiving this event,
+it is only truly active if
+\ref Fl_Widget::active() "active()"
+is true for both it and all of its parents.
+(You can use
+\ref Fl_Widget::active_r() "active_r()"
+to check this).
+
+\subsection events_fl_activate FL_ACTIVATE
+
+This widget is now active, due to
+\ref Fl_Widget::activate() "activate()"
+being called on it or one of its parents.
+
+\subsection events_fl_hide FL_HIDE
+
+This widget is no longer visible, due to
+\ref Fl_Widget::hide() "hide()"
+being called on it or one of its parents, or due to a parent window
+being minimized.
+Please note that although
+\ref Fl_Widget::visible() "visible()"
+may still return true for this widget after receiving this event,
+it is only truly visible if
+\ref Fl_Widget::visible() "visible()"
+is true for both it and all of its parents.
+(You can use
+\ref Fl_Widget::visible_r() "visible_r()"
+to check this).
+
+\subsection events_fl_show FL_SHOW
+
+This widget is visible again, due to
+\ref Fl_Widget::show() "show()"
+being called on it or one of its parents, or due to a parent window
+being restored. <I>A child Fl_Window will respond to this by
+actually creating the window if not done already, so if you
+subclass a window, be sure to pass \p FL_SHOW to the base
+class
+\p handle()
+method!</I>
+
+\note	The events in this chapter ("Widget Events"), i.e.
+	FL_ACTIVATE, FL_DEACTIVATE, FL_SHOW, and FL_HIDE,
+	are the only events deactivated and invisible widgets
+	can usually get, depending on their states. Under certain
+	circumstances, there may also be FL_LEAVE or FL_UNFOCUS
+	events delivered to deactivated or hidden widgets.
+
+\section events_clipboard Clipboard Events
+
+\subsection events_fl_paste FL_PASTE
+
+You should get this event some time after you call Fl::paste().
+The contents of Fl::event_text() is the text to insert and the
+number of characters is in Fl::event_length().
+
+\subsection events_fl_selectionclear FL_SELECTIONCLEAR
+
+The Fl::selection_owner()
+will get this event before the selection is moved to another
+widget. This indicates that some other widget or program has
+claimed the selection. Motif programs used this to clear the
+selection indication. Most modern programs ignore this.
+
+\section events_dnd Drag and Drop Events
+
+FLTK supports drag and drop of text and files from any 
+application on the desktop to an FLTK widget. Text is transferred
+using UTF-8 encoding. Files are received as a list of full path
+and file names, separated by newline. 
+
+On some X11 platforms, files are received as a URL-encoded UTF-8 string,
+that is, non-ASCII bytes (and a few others such as space and %) are 
+replaced by the 3 bytes "%XY" where XY are the byte's hexadecimal value.
+The \ref fl_decode_uri() function can be used to transform in-place
+the received string into a proper UTF-8 string. On these platforms,
+strings corresponding to dropped files are further prepended 
+by <tt>file://</tt> (or other prefixes such as <tt>computer://</tt>).
+
+See Fl::dnd() for drag and drop from an FLTK widget.
+
+The drag and drop data is available in Fl::event_text()
+at the concluding \p FL_PASTE. On some platforms, the
+event text is also available for the \p FL_DND_* events,
+however application must not depend on that behavior because it
+depends on the protocol used on each platform.
+
+\p FL_DND_* events cannot be used in widgets derived
+from Fl_Group or Fl_Window.
+
+\subsection events_fl_dnd_enter FL_DND_ENTER
+
+The mouse has been moved to point at this widget. A widget that is
+interested in receiving drag'n'drop data must return 1 to receive
+\p FL_DND_DRAG, \p FL_DND_LEAVE and \p FL_DND_RELEASE events.
+
+\subsection events_fl_dnd_drag FL_DND_DRAG
+
+The mouse has been moved inside a widget while dragging data.
+A widget that is interested in receiving drag'n'drop data should
+indicate the possible drop position.
+
+\subsection events_fl_dnd_leave FL_DND_LEAVE
+
+The mouse has moved out of the widget.
+
+\subsection events_fl_dnd_release FL_DND_RELEASE
+
+The user has released the mouse button dropping data into 
+the widget. If the widget returns 1, it will receive the data in
+the immediately following \p FL_PASTE event.
+
+\section events_fl_misc Other events
+
+\subsection events_fl_screen_config FL_SCREEN_CONFIGURATION_CHANGED
+Sent whenever the screen configuration changes (a screen is added/removed,
+a screen resolution is changed, screens are moved).
+Use Fl::add_handler() to be notified of this event.
+
+\subsection events_fl_fullscreen FL_FULLSCREEN
+
+The application window has been changed from normal to fullscreen, or
+from fullscreen to normal. If you are using a X window manager which
+supports Extended Window Manager Hints, this event will not be
+delivered until the change has actually happened. 
+
+
+\section events_event_xxx Fl::event_*() methods
+
+FLTK keeps the information about the most recent event in
+static storage. This information is good until the next event is
+processed. Thus it is valid inside
+\p handle()
+and
+\p callback()
+methods.
+
+These are all trivial inline functions and thus very fast and small: 
+
+\li Fl::event_button()
+\li Fl::event_clicks()
+\li Fl::event_dx()
+\li Fl::event_dy()
+\li Fl::event_inside()
+\li Fl::event_is_click()
+\li Fl::event_key()
+\li Fl::event_length()
+\li Fl::event_state()
+\li Fl::event_text()
+\li Fl::event_x()
+\li Fl::event_x_root()
+\li Fl::event_y()
+\li Fl::event_y_root()
+\li Fl::get_key()
+\li Fl::get_mouse()
+\li Fl::test_shortcut()
+
+\section events_propagation Event Propagation
+
+Widgets receive events via the virtual handle() function. The argument indicates
+the type of event that can be handled. The widget must indicate if it handled the
+event by returning 1. FLTK will then remove the event and wait for further events 
+from the host. If the widget's handle function returns 0, FLTK may redistribute
+the event based on a few rules.
+
+Most events are sent directly to the \p handle() method
+of the Fl_Window that the window system says they
+belong to.  The window (actually the Fl_Group that
+Fl_Window is a subclass of) is responsible for sending
+the events on to any child widgets.  To make the
+Fl_Group code somewhat easier, FLTK sends some events
+(\p FL_DRAG, \p FL_RELEASE, \p FL_KEYBOARD,
+\p FL_SHORTCUT, \p FL_UNFOCUS, and \p FL_LEAVE)
+directly to leaf widgets. These procedures
+control those leaf widgets:
+
+\li Fl::add_handler()
+\li Fl::belowmouse()
+\li Fl::focus()
+\li Fl::grab()
+\li Fl::modal()
+\li Fl::pushed()
+\li Fl::release() (deprecated, see Fl::grab(0))
+\li Fl_Widget::take_focus()
+
+FLTK propagates events along the widget hierarchy depending on the kind of event
+and the status of the UI. Some events are injected directly into the widgets,
+others may be resent as new events to a different group of receivers.
+
+Mouse click events are first sent to the window that caused them. The window
+then forwards the event down the hierarchy until it reaches the widget that
+is below the click position. If that widget uses the given event, the widget
+is marked "pushed" and will receive all following mouse motion (FL_DRAG) events
+until the mouse button is released.
+
+Mouse motion (FL_MOVE) events are sent to the Fl::belowmouse() widget, i.e.
+the widget that returned 1 on the last FL_ENTER event.
+
+Mouse wheel events are sent to the window that caused the event. The window
+propagates the event down the tree, first to the widget that is below the 
+mouse pointer, and if that does not succeed, to all other widgets in the group.
+This ensures that scroll widgets work as expected with the widget furthest
+down in the hierarchy getting the first opportunity to use the wheel event,
+but also giving scroll bars, that are not directly below the mouse a chance.
+
+Keyboard events are sent directly to the widget that has keyboard focus.
+If the focused widget rejects the event, it is resent as a shortcut event,
+first to the top-most window, then to the widget below the mouse pointer, 
+propagating up the hierarchy to all its parents. Those send the event also
+to all widgets that are not below the mouse pointer. Now if that did not work 
+out, the shortcut is sent to all registered shortcut handlers.
+
+If we are still unsuccessful, the event handler flips the case of the shortcut
+letter and starts over. Finally, if the key is "escape", FLTK sends a close 
+event to the top-most window.
+
+All other events are pretty much sent right away to the window that created 
+the event.
+
+Widgets can "grab" events. The grabbing window gets all events exclusively, but
+usually by the same rules as described above.
+
+Windows can also request exclusivity in event handling by making the 
+window modal.
+
+
+\section events_compose_characters FLTK Compose-Character Sequences
+
+The character composition done by Fl_Input widget
+requires that you call the Fl::compose() function if you are
+writing your own text editor widget.
+
+Currently, all characters made by single key strokes
+with or without modifier keys, or by system-defined character 
+compose sequences (that can involve dead keys or a compose key) can be input.
+You should call Fl::compose() in case any
+enhancements to this processing are done in the future. The
+interface has been designed to handle arbitrary UTF-8 encoded
+text.
+
+The following methods are provided for character composition:
+
+\li Fl::compose()
+\li Fl::compose_reset()
+
+Under Mac OS X, FLTK "previews" partially composed sequences.
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="drawing.html">
+    [Prev]
+    Drawing Things in FLTK
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="subclassing.html">
+    Adding and Extending Widgets
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

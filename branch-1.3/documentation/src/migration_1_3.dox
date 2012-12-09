@@ -1,0 +1,80 @@
+/**
+
+ \page	migration_1_3	Migrating Code from FLTK 1.1 to 1.3
+
+This appendix describes the differences between the FLTK
+1.1.x and FLTK 1.3.x functions and classes.
+
+\section migration_1_3_fltk_1_0 Migrating From FLTK 1.0
+
+If you want to migrate your code from FLTK 1.0 to FLTK 1.3,
+then you should first consult Appendix \ref migration_1_1.
+
+
+\section migration_1_3_fl_scroll Fl_Scroll Widget
+
+Fl_Scroll::scroll_to(int x, int y) replaces Fl_Scroll::position(int x, int y).
+
+This change was needed because Fl_Scroll::position(int,int) redefined
+Fl_Widget::position(int,int), but with a completely different function (moving
+the scrollbars instead of moving the widget).
+
+Please be aware that you need to change your application's code for all
+Fl_Scroll-derived widgets, if you used Fl_Scroll::position(int x, int y)
+to position <b>the scrollbars</b> (not the widget itself).
+
+The compiler will not detect any errors, because your calls to 
+\b position(int x, int y) will be calling Fl_Widget::position(int x, int y).
+
+
+\section migration_1_3_unicode Unicode (UTF-8)
+
+FLTK 1.3 uses Unicode (UTF-8) encoding internally. If you are only using
+characters in the ASCII range (32-127), there is a high probability that
+you don't need to modify your code. However, if you use international
+characters (128-255), encoded as e.g. Windows codepage 1252, ISO-8859-1,
+ISO-8859-15 or any other encoding, then you will need to update your character
+string constants and widget input data accordingly.
+
+Please refer to the \ref unicode chapter for more details.
+
+\note It is important that, although your software uses only ASCII characters
+for input to FLTK widgets, the user may enter non-ASCII characters, and FLTK
+will return these characters with UTF-8 encoding to your application, e.g.
+via Fl_Input::value(). You \b will need to re-encode them to \b your (non-UTF-8)
+encoding, otherwise you might see or print garbage in your data.
+
+
+\section migration_1_3_int_coords Widget Coordinate Representation
+
+FLTK 1.3 changed all Widget coordinate variables and methods, e.g.
+Fl_Widget::x(), Fl_Widget::y(), Fl_Widget::w(), Fl_Widget::h(), from
+short (16-bit) to int (32-bit) representation. This should not affect
+any existing code, but makes it possible to use bigger scroll areas
+(e.g. Fl_Scroll widget).
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="migration_1_1.html">
+    [Prev]
+    Migrating Code from FLTK 1.0 to 1.1
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="development.html">
+    Developer Information
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

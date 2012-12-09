@@ -1,0 +1,414 @@
+/**
+
+ \page intro Introduction to FLTK
+
+The Fast Light Tool Kit ("FLTK", pronounced
+"fulltick") is a cross-platform C++ GUI toolkit for
+UNIX&reg;/Linux&reg; (X11), Microsoft&reg; Windows&reg;, and
+Apple&reg; OS X&reg;. FLTK provides modern GUI functionality without the
+bloat and supports 3D graphics via OpenGL&reg; and its built-in
+GLUT emulation. It was originally developed by Mr. Bill Spitzak
+and is currently maintained by a small group of developers
+across the world with a central repository in the US.
+
+\section intro_history History of FLTK
+
+It has always been Bill's belief that the GUI API of all
+modern  systems is much too high level. Toolkits (even FLTK) are
+\e not what should be provided and documented as part of an
+operating system. The  system only has to provide arbitrary
+shaped but featureless windows, a  powerful set of graphics
+drawing calls, and a simple \e unalterable method of
+delivering events to the owners of the windows. NeXT (if you
+ignored NextStep) provided this, but they chose to hide it and
+tried to push their own baroque toolkit instead.
+
+Many of the ideas in FLTK were developed on a NeXT (but
+\e not using NextStep) in 1987 in a C toolkit Bill called
+"views". Here he came up with passing events downward
+in the tree and having the handle routine return a value
+indicating whether it used the event, and the table-driven menus. In
+general he was trying to prove that complex UI ideas could be
+entirely implemented in a user space toolkit, with no knowledge
+or support by the system.
+
+After going to film school for a few years, Bill worked at
+Sun Microsystems on the (doomed) NeWS project. Here he found an
+even better and cleaner windowing system, and he reimplemented
+"views" atop that. NeWS did have an unnecessarily
+complex method of delivering events which hurt it. But the
+designers did admit that perhaps the user could write just as
+good of a button as they could, and officially exposed the lower
+level interface.
+
+With the death of NeWS Bill realized that he would have to
+live with X. The biggest problem with X is the "window
+manager", which means that the toolkit can no longer
+control the window borders or drag the window around.
+
+At Digital Domain Bill discovered another toolkit,
+"Forms". Forms was similar to his work, but provided
+many more widgets, since it was used in many real applications,
+rather than as theoretical work. He decided to use Forms, except
+he integrated his table-driven menus into it. Several very large
+programs were created using this version of Forms.
+
+The need to switch to OpenGL and GLX, portability, and a
+desire to use C++ subclassing required a rewrite of Forms.
+This produced the first version of FLTK. The conversion to C++
+required so many changes it made it impossible to recompile any
+Forms objects. Since it was incompatible anyway, Bill decided
+to incorporate his older ideas as much as possible by
+simplifying the lower level interface and the event passing
+mechanism.
+
+Bill received permission to release it for free on the
+Internet, with the GNU general public license. Response from
+Internet users indicated that the Linux market dwarfed the SGI
+and high-speed GL market, so he rewrote it to use X for all
+drawing, greatly speeding it up on these machines. That is the
+version you have now.
+
+Digital Domain has since withdrawn support for FLTK. While
+Bill is no longer able to actively develop it, he still
+contributes to FLTK in his free time and is a part of the FLTK
+development team.
+
+\section intro_features Features
+
+FLTK was designed to be statically linked. This was done by
+splitting it into many small objects and designing it so that
+functions that are not used do not have pointers to them in the
+parts that are used, and thus do not get linked in. This allows
+you to make an easy-to-install program or to modify FLTK to
+the exact requirements of your application without worrying
+about bloat. FLTK works fine as a shared library, though, and
+is now included with several Linux distributions.
+
+Here are some of the core features unique to FLTK:
+
+\li sizeof(Fl_Widget) == 64 to 92.
+
+\li The "core" (the "hello" program compiled & linked with a static FLTK
+    library using gcc on a 486 and then stripped) is 114K.
+
+\li The FLUID program (which includes every widget) is 538k.
+
+\li Written directly atop core libraries (Xlib, WIN32 or Cocoa) for
+    maximum speed, and carefully optimized for code size and performance.
+
+\li Precise low-level compatibility between the X11, WIN32 and MacOS
+    versions - only about 10% of the code is different.
+
+\li Interactive user interface builder program. Output is human-readable
+    and editable C++ source code.
+
+\li Support for overlay hardware, with emulation if none is available.
+
+\li Very small & fast portable 2-D drawing library to hide Xlib, WIN32,
+    or QuickDraw.
+
+\li OpenGL/Mesa drawing area widget.
+
+\li Support for OpenGL overlay hardware on both X11 and WIN32, with
+    emulation if none is available.
+
+\li Text widgets with cut & paste, undo, and support
+   for Unicode text and international input methods.
+
+\li Compatibility header file for the GLUT library.
+
+\li Compatibility header file for the XForms library.
+
+\section intro_licensing Licensing
+
+FLTK comes with complete free source code.
+FLTK is available under the terms of the
+\ref license "GNU Library General Public License"
+with exceptions that allow for static linking.
+Contrary to popular belief, it can be used in
+commercial software - even Bill Gates could use it!
+
+\section intro_what What Does "FLTK" Mean?
+
+FLTK was originally designed to be compatible with the Forms
+Library written for SGI machines. In that library all the
+functions and structures started with "fl_". This
+naming was extended to all new methods and widgets in the C++
+library, and this prefix was taken as the name of the library.
+It is almost impossible to search for "FL" on the
+Internet, due to the fact that it is also the abbreviation for
+Florida. After much debating and searching for a new name for
+the toolkit, which was already in use by several people, Bill
+came up with "FLTK", including a bogus excuse that it
+stands for "The Fast Light Toolkit".
+
+\section intro_unix Building and Installing FLTK Under UNIX and Apple OS X
+
+In most cases you can just type "make". This will
+run configure with the default of no options and then compile
+everything.
+
+For OS X, Xcode 3 project files can be found in the 'ide' directory.
+
+FLTK uses GNU autoconf to configure itself for your UNIX
+platform. The main things that the configure script will look
+for are the X11 and OpenGL (or Mesa) header and library files.
+If these cannot be found in the standard include/library
+locations you'll need to define the \p CFLAGS,
+\p CXXFLAGS, and \p LDFLAGS environment variables.
+For the Bourne and Korn shells you'd use:
+
+\code
+CFLAGS=-Iincludedir; export CFLAGS
+CXXFLAGS=-Iincludedir; export CXXFLAGS
+LDFLAGS=-Llibdir; export LDFLAGS
+\endcode
+
+For C shell and tcsh, use:
+
+\code
+setenv CFLAGS "-Iincludedir"
+setenv CXXFLAGS "-Iincludedir"
+setenv LDFLAGS "-Llibdir"
+\endcode
+
+By default configure will look for a C++ compiler named
+\p CC, \p c++, \p g++, or \p gcc in that
+order. To use another compiler you need to set the \p CXX
+environment variable:
+
+\code
+CXX=xlC; export CXX
+setenv CXX "xlC"
+\endcode
+
+The \p CC environment variable can also be used to
+override the default C compiler (\p cc or \p gcc),
+which is used for a few FLTK source files.
+
+You can run configure yourself to get the exact setup you need.
+Type  "./configure <options>", where options are:
+
+\par --enable-cygwin
+Enable the Cygwin libraries under WIN32
+
+\par --enable-debug
+Enable debugging code & symbols
+
+\par --disable-gl
+Disable OpenGL support
+
+\par --enable-shared
+Enable generation of shared libraries
+
+\par --enable-threads
+Enable multithreading support
+
+\par --enable-xdbe
+Enable the X double-buffer extension
+
+\par --enable-xft
+Enable the Xft library for anti-aliased fonts under X11
+
+\par --enable-x11
+When targeting cygwin, build with X11 GUI instead of windows GDI
+
+\par --enable-cp936
+Under X11, enable use of the GB2312 locale
+
+\par --bindir=/path
+Set the location for executables [default = $prefix/bin]
+
+\par --datadir=/path
+Set the location for data files. [default = $prefix/share]
+
+\par --libdir=/path
+Set the location for libraries [default = $prefix/lib]
+
+\par --includedir=/path
+Set the location for include files. [default = $prefix/include]
+
+\par --mandir=/path
+Set the location for man pages. [default = $prefix/man]
+
+\par --prefix=/dir
+Set the directory prefix for files [default = /usr/local]
+
+When the configure script is done you can just run the
+"make" command. This will build the library, FLUID
+tool, and all of the test programs.
+
+To install the library, become root and type "make install".
+This will copy the "fluid" executable to "bindir", the header
+files to "includedir", and the library files to "libdir".
+
+\section intro_windows Building FLTK Under Microsoft Windows
+
+NOTE: This documentation section is currently under review.
+More up-to-date information for this release may be available
+in the file "README.MSWindows.txt" and you should read
+that file to determine if there are changes that may be
+applicable to your build environment.
+
+FLTK 1.3 is officially supported on Windows (2000,) 2003,
+XP, and later.  Older Windows versions prior to Windows 2000
+are not officially supported, but may still work.
+The main reason is that the OS version needs to support UTF-8.
+FLTK 1.3 is known to work on recent versions of
+Windows such as Windows 7 and Vista and has been reported to work
+in both 32-bit and 64-bit versions of these.
+
+FLTK currently supports the following development
+environments on the Windows platform:
+
+CAUTION: Libraries built by any one of these build
+environments can not be mixed
+with object files from any of the other environments!
+(They use incompatible C++ conventions internally.)
+
+Free Microsoft Visual C++ 2008 Express and Visual
+C++ 2010 Express using the supplied workspace and
+project files. Older versions, and the commercial
+versions, can be used as well, if they can open
+the project files.
+Be sure to get your service packs!
+
+The project files can be found in the "ide/" directory.
+Please read "ide/README.IDE" for more info about this.
+
+
+\subsection intro_cygwin_mingw GNU toolsets (Cygwin or MinGW) hosted on Windows
+
+If using Cygwin with the Cygwin shell, or MinGW with
+the Msys shell, these build environments behave very
+much like a Unix or OS X build and the notes above in
+the section on
+<i>Building and Installing FLTK Under UNIX and Apple OS X</i>
+apply, in particular the descriptions of using the
+"configure" script and its related options.
+
+In general for a build using these tools, e.g. for
+the Msys shell with MinGW,
+it should suffice to "cd" into the directory where
+you have extracted the fltk tarball and type:
+
+\code
+./configure
+make
+\endcode
+
+This will build the fltk libraries and they can then be
+utilised directly from the build location.
+NOTE: this may be simpler than "installing" them in
+many cases as different tool chains on Windows have
+different ideas about where the files should be "installed" to.
+
+For example, if you "install" the libraries using Msys/MinGW
+with the following command:
+
+\code
+make install
+\endcode
+
+Then Msys will "install" the libraries to where it thinks
+the path "/usr/local/" leads to. If you only ever build code
+from within the Msys environment this works well, but the
+actual "Windows path" these files are located in will be
+something like "C:\msys\1.0\local\lib", depending
+on where your Msys installation is rooted, which may
+not be useful to other tools.
+
+If you want to install your built fltk libraries in a
+non-standard location you may do:
+
+\code
+sh configure --prefix=C:/FLTK
+make
+\endcode
+
+Where the value passed to "prefix" is the path at which
+you would like fltk to be installed.
+
+A subsequent invocation of "make install" will then place
+the fltk libraries and header files into that path.
+
+The other options to "configure" may also be used to
+tailor the build to suit your environment.
+
+\subsection intro_visualcpp Using the Visual C++ DLL Library
+
+The "fltkdll.dsp" project file builds a DLL-version
+of the FLTK library. Because of name mangling differences
+between PC compilers (even between different versions of Visual
+C++!) you can only use the DLL that is generated with the same
+version compiler that you built it with.
+
+When compiling an application or DLL that uses the FLTK DLL,
+you will need to define the \p FL_DLL preprocessor symbol
+to get the correct linkage commands embedded within the FLTK
+header files.
+
+\section intro_internet Internet Resources
+
+FLTK is available on the 'net in a bunch of locations:
+
+\par WWW
+http://www.fltk.org/ <br>
+http://www.fltk.org/str.php [for reporting bugs] <br>
+http://www.fltk.org/software.php [source code]<br>
+http://www.fltk.org/newsgroups.php [newsgroup/forums]
+
+\par FTP
+http://ftp.easysw.com/pub/fltk [California, USA, via http]<br>
+ftp://ftp.easysw.com/pub/fltk [California, USA via ftp]<br>
+ftp://ftp2.easysw.com/pub/fltk [Maryland, USA]<br>
+ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub/fltk [Espoo, Finland]<br>
+
+\par NNTP Newsgroups
+news://news.easysw.com/ [NNTP interface]<br>
+http://fltk.org/newsgroups.php [web interface]<br>
+
+Point your NNTP news reader at news.easysw.com. At minimum, you'll want to subscribe
+to the "fltk.general" group for general FLTK questions and answers.
+
+You can also use the web interface to the newsgroup; just go to the main http://fltk.org/
+page and click on "Forums".
+
+\section intro_reporting Reporting Bugs
+
+To report a bug in FLTK, or for feature requests, please use the form at
+<A href="http://www.fltk.org/str.php">http://www.fltk.org/str.php</A>,
+and click on "Submit Bug or Feature Request".
+
+You'll be prompted for the FLTK version, operating system & version,
+and compiler that you are using. We will be unable to provide
+any kind of help without that basic information.
+
+For general support and questions, please use the fltk.general newsgroup (see above, "NNTP Newsgroups")
+or the web interface to the newsgroups at <A href="http://fltk.org/newsgroups.php">http://fltk.org/newsgroups.php</A>.
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="preface.html">
+    [Prev]
+    Preface
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="basics.html">
+    FLTK Basics
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

@@ -1,0 +1,334 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include <FL/Fl_Preferences.H>} {public local
+} 
+
+decl {\#include <stdio.h>} {public local
+} 
+
+decl {\#include <stdlib.h>} {private local
+} 
+
+decl {\#include <FL/filename.H>} {private local
+} 
+
+decl {\#include <FL/fl_ask.H>} {private local
+} 
+
+decl {void readPrefs();} {public local
+} 
+
+decl {void writePrefs();} {public local
+} 
+
+decl {const char *project = "fltk.org";} {private local
+} 
+
+decl {const char *application = "test/preferences";} {private local
+} 
+
+Function {closeWindowCB( Fl_Widget*, void* )} {open private return_type void
+} {
+  code {Fl::delete_widget(myWindow);} {}
+} 
+
+Function {saveAndCloseWindowCB( Fl_Widget*, void* )} {open private return_type void
+} {
+  code {writePrefs();
+Fl::delete_widget(myWindow);} {}
+} 
+
+Function {} {open return_type int
+} {
+  Fl_Window myWindow {
+    label {My Preferences}
+    callback closeWindowCB open
+    xywh {709 76 298 311} type Double visible
+  } {
+    Fl_Button {} {
+      label Cancel
+      callback closeWindowCB
+      xywh {210 275 75 25}
+    }
+    Fl_Button {} {
+      label OK
+      callback saveAndCloseWindowCB
+      xywh {125 275 75 25}
+    }
+    Fl_Group {} {
+      label {Get Up:} open
+      xywh {20 30 115 225} box ENGRAVED_FRAME align 5
+    } {
+      Fl_Input wAlarm {
+        label {Alarm at:}
+        xywh {25 55 45 20} align 5
+      }
+      Fl_Choice wAmPm {open
+        xywh {75 55 55 20} down_box BORDER_BOX
+      } {
+        MenuItem {} {
+          label {a.m.}
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label {p.m.}
+          xywh {0 0 100 20}
+        }
+      }
+      Fl_Choice wWear {
+        label {Wear:} open
+        xywh {25 100 105 20} down_box BORDER_BOX align 5
+      } {
+        MenuItem {} {
+          label shoes
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label sandals
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label {flip flops}
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label {bare foot}
+          xywh {0 0 100 20}
+        }
+      }
+      Fl_Group {} {open
+        xywh {35 120 98 60}
+      } {
+        Fl_Round_Button wLeft {
+          label {left side}
+          xywh {35 120 95 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Round_Button wRight {
+          label {right side}
+          xywh {35 140 95 25} type Radio down_box ROUND_DOWN_BOX
+        }
+        Fl_Box {} {
+          label {of the bed}
+          xywh {38 160 95 20}
+        }
+      }
+      Fl_Check_Button wShower {
+        label shower
+        xywh {25 180 105 25} down_box DOWN_BOX
+      }
+      Fl_Check_Button wShave {
+        label shave
+        xywh {25 200 105 25} down_box DOWN_BOX
+      }
+      Fl_Check_Button wBrush {
+        label {brush teeth}
+        xywh {25 220 105 25} down_box DOWN_BOX
+      }
+    }
+    Fl_Group {} {
+      label {Breakfast::} open
+      xywh {160 30 115 225} box ENGRAVED_FRAME align 5
+    } {
+      Fl_Choice wDrink {
+        label {Drink:} open
+        xywh {165 50 105 20} down_box BORDER_BOX align 5
+      } {
+        MenuItem {} {
+          label coffee
+          xywh {10 10 100 20}
+        }
+        MenuItem {} {
+          label tea
+          xywh {10 10 100 20}
+        }
+        MenuItem {} {
+          label juice
+          xywh {10 10 100 20}
+        }
+      }
+      Fl_Check_Button wMilk {
+        label {with milk}
+        xywh {170 70 100 25} down_box DOWN_BOX
+      }
+      Fl_Choice wBread {
+        label {Bread:} open
+        xywh {165 110 105 20} down_box BORDER_BOX align 5
+      } {
+        MenuItem {} {
+          label wheat
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label white
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label rye
+          xywh {0 0 100 20}
+        }
+        MenuItem {} {
+          label {sour doh}
+          xywh {0 0 100 20}
+        }
+      }
+      Fl_Check_Button wButter {
+        label {with butter}
+        xywh {170 130 100 25} down_box DOWN_BOX
+      }
+      Fl_Input wEggs {
+        label eggs
+        xywh {165 163 30 20} type Int align 8
+      }
+      Fl_Value_Slider wMinutes {
+        label {min.}
+        xywh {175 185 70 20} type Horizontal align 8 minimum 2 maximum 6 value 3.1
+      }
+      Fl_Input wPaper {
+        label {Newspaper:}
+        xywh {165 225 105 20} align 5
+      }
+    }
+  }
+  code {readPrefs();} {}
+} 
+
+Function {readPrefs()} {open return_type void
+} {
+  code {int boolValue;
+int intValue;
+char buffer[80];
+double doubleValue;
+
+Fl_Preferences app( Fl_Preferences::USER, project, application );
+
+  char path[ FL_PATH_MAX ];
+  app.getUserdataPath( path, sizeof(path) );
+
+  Fl_Preferences bed( app, "Bed" );
+    bed.get( "alarm", buffer, "8:00", 79 );
+    wAlarm->value( buffer );
+
+    bed.get( "ampm", intValue, 0 );
+    wAmPm->value( intValue );
+
+    bed.get( "wear", intValue, 1 );
+    wWear->value( intValue );
+
+    int side;
+    bed.get( "side", side, 2 );
+    if ( side == 1 ) wLeft->value( 1 );
+    if ( side == 2 ) wRight->value( 1 );
+
+    int tasks;
+    bed.get( "taskFlags", tasks, 0x05 );
+    if ( tasks & 0x01 ) wShower->value( 1 );
+    if ( tasks & 0x02 ) wShave->value( 1 );
+    if ( tasks & 0x04 ) wBrush->value( 1 );
+
+  Fl_Preferences eat( app, "Breakfast" );
+
+    eat.get( "drink", intValue, 1 );
+    wDrink->value( intValue );
+
+    eat.get( "wMilk", boolValue, 0 );
+    wMilk->value( boolValue );
+
+    eat.get( "bread", intValue, 0 );
+    wBread->value( intValue );
+
+    eat.get( "wButter", boolValue, 1 );
+    wButter->value( boolValue );
+
+    eat.get( "nEggs", intValue, 2 );
+    sprintf( buffer, "%d", intValue );
+    wEggs->value( buffer );
+
+    eat.get( "minutes", doubleValue, 3.2 );
+    wMinutes->value( doubleValue );
+
+    char *flexBuffer;
+    eat.get( "newspaper", flexBuffer, "NY Tymes" );
+    wPaper->value( flexBuffer );
+    if ( flexBuffer ) free( flexBuffer );
+
+    eat.get( "foo", buffer, "bar", 80 );
+
+  /** sample code only:
+  Fl_Preferences prev( app, "PreviousStarts" );
+  {
+    int i, n;
+    prev.get( "n", n, 0 );
+    for ( i=0; i<n; i++ )
+      prev.get( Fl_Preferences::Name( i ), flexBuffer, "" );
+  }
+
+    unsigned int hex;
+    eat.get( "binFoo", (void*)&hex, 0, 0, sizeof( unsigned int ) );
+    void *data;
+    eat.get( "binFoo2", data, 0, 0 );
+  **/} {selected
+  }
+} 
+
+Function {writePrefs()} {open return_type void
+} {
+  code {Fl_Preferences app( Fl_Preferences::USER, project, application );
+
+  Fl_Preferences bed( app, "Bed" );
+
+    bed.set( "alarm", wAlarm->value() );
+    bed.set( "ampm", wAmPm->value() );
+
+    bed.set( "wear", wWear->value() );
+
+    int side = 0;
+    if ( wLeft->value() ) side = 1;
+    if ( wRight->value() ) side = 2;
+    bed.set( "side", side );
+
+    int tasks = 0;
+    if ( wShower->value() ) tasks |= 0x01;
+    if ( wShave->value() ) tasks |= 0x02;
+    if ( wBrush->value() ) tasks |= 0x04;
+    bed.set( "taskFlags", tasks );
+
+  Fl_Preferences eat( app, "Breakfast" );
+
+    eat.set( "drink", wDrink->value() );
+    eat.set( "wMilk", wMilk->value() );
+    eat.set( "bread", wBread->value() );
+    eat.set( "wButter", wButter->value() );
+
+    eat.set( "nEggs", wEggs->value() );
+    eat.set( "minutes", wMinutes->value() );
+
+    eat.set( "newspaper", wPaper->value() );
+
+    eat.set( "foo", "bar\\nfly\\rBackslash: \\\\ and bell: \\007 and delete: \\177\\n" );
+
+    eat.set( Fl_Preferences::Name( 3 ), "Test3" );
+
+  /* sample: create a sub-sub-group */
+  Fl_Preferences eatMore( eat, "More" );
+
+    eatMore.set( "more", "stuff" );
+
+  /* all the following searches should return 1 */
+  int sum = 0;
+  sum += app.groupExists( "Breakfast" ); /* find 'eat' relative to 'app' */
+  sum += app.groupExists( "Breakfast/More" ); /* find 'eat.eatMore' relative to 'app' */
+  sum += app.groupExists( "./Breakfast/More" ); /* find 'eat.eatMore' relative to Preferences */
+  sum += eat.groupExists( "More" ); /* find 'eatMore' relative to 'eat' */
+  sum += eat.groupExists( "./Breakfast/More" ); /* find 'eat.eatMore' relative to Preferences */
+  sum += eat.groupExists( "." ); /* find myself ('eat') */
+  sum += eat.groupExists( "./" ); /* find the topmost group ('app') */
+  if ( sum != 7 )
+    fl_message( "Assertion failed:\\nNot all group entries were found!" );
+
+  /* sample code only: */
+  unsigned int hex = 0x2387efcd;
+  eat.set( "binFoo", (void*)&hex, sizeof( unsigned int ) );
+  eat.set( "binFoo2", (void*)&bed, 256 );} {}
+} 

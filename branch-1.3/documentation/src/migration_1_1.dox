@@ -1,0 +1,176 @@
+/**
+
+ \page	migration_1_1	Migrating Code from FLTK 1.0 to 1.1
+
+
+This appendix describes the differences between the FLTK
+1.0.x and FLTK 1.1.x functions and classes.
+
+\section migration_1_1_color Color Values
+
+Color values are now stored in a 32-bit unsigned integer
+instead of the unsigned character in 1.0.x. This allows for the
+specification of 24-bit RGB values or 8-bit FLTK color indices.
+
+\c FL_BLACK and \c FL_WHITE now remain black and white, even if
+the base color of the gray ramp is changed using Fl::background().
+\c FL_DARK3 and \c FL_LIGHT3 can be used instead to 
+draw a very dark or a very bright background hue.
+
+Widgets use the new color symbols \c FL_FOREGROUND_COLOR,
+\c FL_BACKGROUND_COLOR, \c FL_BACKGROUND2_COLOR, 
+\c FL_INACTIVE_COLOR, and \c FL_SELECTION_COLOR.
+More details can be found in the chapter \ref enumerations.
+
+\section migration_1_1_cutnpaste Cut and Paste Support
+
+The FLTK clipboard is now broken into two parts - a local
+selection value and a cut-and-paste value. This allows FLTK to
+support things like highlighting and replacing text that was
+previously cut or copied, which makes FLTK applications behave
+like traditional GUI applications.
+
+\section migration_1_1_file_chooser File Chooser
+
+The file chooser in FLTK 1.1.x is significantly different
+than the one supplied with FLTK 1.0.x. Any code that directly
+references the old \c FCB class or members will need
+to be ported to the new Fl_File_Chooser class.
+
+\section migration_1_1_functions Function Names
+
+Some function names have changed from FLTK 1.0.x to 1.1.x in
+order to avoid name space collisions. You can still use the old
+function names by defining the \c FLTK_1_0_COMPAT symbol on
+the command-line when you compile (\c -DFLTK_1_0_COMPAT) or in
+your source, e.g.:
+
+\code
+#define FLTK_1_0_COMPAT
+#include <FL/Fl.H>
+#include <FL/Enumerations.H>
+#include <FL/filename.H>
+\endcode
+
+The following table shows the old and new function names:
+
+<CENTER>
+<TABLE WIDTH="80%" BORDER="1">
+<TR>
+	<TH>Old 1.0.x Name</TH>
+	<TH>New 1.1.x Name</TH>
+</TR>
+<TR>
+	<TD>contrast()</TD>
+	<TD>fl_contrast()</TD>
+</TR>
+<TR>
+	<TD>down()</TD>
+	<TD>fl_down()</TD>
+</TR>
+<TR>
+	<TD>filename_absolute()</TD>
+	<TD>fl_filename_absolute()</TD>
+</TR>
+<TR>
+	<TD>filename_expand()</TD>
+	<TD>fl_filename_expand()</TD>
+</TR>
+<TR>
+	<TD>filename_ext()</TD>
+	<TD>fl_filename_ext()</TD>
+</TR>
+<TR>
+	<TD>filename_isdir()</TD>
+	<TD>fl_filename_isdir()</TD>
+</TR>
+<TR>
+	<TD>filename_list()</TD>
+	<TD>fl_filename_list()</TD>
+</TR>
+<TR>
+	<TD>filename_match()</TD>
+	<TD>fl_filename_match()</TD>
+</TR>
+<TR>
+	<TD>filename_name()</TD>
+	<TD>fl_filename_name()</TD>
+</TR>
+<TR>
+	<TD>filename_relative()</TD>
+	<TD>fl_filename_relative()</TD>
+</TR>
+<TR>
+	<TD>filename_setext()</TD>
+	<TD>fl_filename_setext()</TD>
+</TR>
+<TR>
+	<TD>frame()</TD>
+	<TD>fl_frame()</TD>
+</TR>
+<TR>
+	<TD>inactive()</TD>
+	<TD>fl_inactive()</TD>
+</TR>
+<TR>
+	<TD>numericsort()</TD>
+	<TD>fl_numericsort()</TD>
+</TR>
+</TABLE>
+</CENTER>
+
+\section migration_1_1_images Image Support
+
+Image support in FLTK has been significantly revamped in 1.1.x.
+The Fl_Image class is now a proper base class, with the core 
+image drawing functionality in the Fl_Bitmap, Fl_Pixmap, and
+Fl_RGB_Image classes.
+
+BMP, GIF, JPEG, PNG, XBM, and XPM image files can now be
+loaded using the appropriate image classes, and the
+Fl_Shared_Image class can be used to cache images in memory.
+
+Image labels are no longer provided as an add-on label type.
+If you use the old \c label() methods on an image, the
+widget's \c image() method is called to set the image
+as the label.
+
+Image labels in menu items must still use the old labeltype
+mechanism to preserve source compatibility.
+
+\section migration_1_1_keyboard Keyboard Navigation
+
+FLTK 1.1.x now supports keyboard navigation and control with
+all widgets. To restore the old FLTK 1.0.x behavior so that only
+text widgets get keyboard focus, call the Fl::visible_focus()
+method to disable it:
+
+\code
+Fl::visible_focus(0);
+\endcode
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="osissues.html">
+    [Prev]
+    Operating System Issues
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="migration_1_3.html">
+    Migrating Code from FLTK 1.1 to 1.3
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

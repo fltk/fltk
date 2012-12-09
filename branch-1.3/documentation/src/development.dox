@@ -1,0 +1,355 @@
+/**
+
+ \page development Developer Information
+
+This chapter describes FLTK development and documentation.
+
+
+<H2>Example</H2>
+
+\verbatim
+/** \file
+   Fl_Clock, Fl_Clock_Output widgets. */
+
+
+/**
+  \class Fl_Clock_Output
+  \brief This widget can be used to display a program-supplied time.
+  
+  The time shown on the clock is not updated. To display the current time,
+  use Fl_Clock instead.
+
+  \image html clock.png 
+  \image latex clock.png "" width=10cm 
+  \image html round_clock.png
+  \image latex clock.png "" width=10cm 
+  \image html round_clock.png "" width=10cm */
+
+  /**
+    Returns the displayed time.
+    Returns the time in seconds since the UNIX epoch (January 1, 1970).
+    \see value(ulong)
+   */
+  ulong value() const {return value_;}
+
+/**
+  Set the displayed time.
+  Set the time in seconds since the UNIX epoch (January 1, 1970).
+  \param[in] v seconds since epoch
+  \see value()
+ */
+void Fl_Clock_Output::value(ulong v) {
+ [...]
+}
+
+/**
+  Create an Fl_Clock widget using the given position, size, and label string.
+  The default boxtype is \c FL_NO_BOX.
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ */
+Fl_Clock::Fl_Clock(int X, int Y, int W, int H, const char *L)
+  : Fl_Clock_Output(X, Y, W, H, L) {}
+
+/**
+  Create an Fl_Clock widget using the given boxtype, position, size, and
+  label string.
+  \param[in] t boxtype
+  \param[in] X, Y, W, H position and size of the widget
+  \param[in] L widget label, default is no label
+ */
+Fl_Clock::Fl_Clock(uchar t, int X, int Y, int W, int H, const char *L)
+  : Fl_Clock_Output(X, Y, W, H, L) {
+  type(t);
+  box(t==FL_ROUND_CLOCK ? FL_NO_BOX : FL_UP_BOX);
+}
+\endverbatim
+
+
+\note
+
+From Duncan: (will be removed later, just for now as a reminder)
+
+   I've just added comments for the fl_color_chooser() functions, and
+   in order to keep them and the general Function Reference information
+   for them together, I created a new doxygen group, and used \\ingroup
+   in the three comment blocks. This creates a new Modules page (which
+   may not be what we want) with links to it from the File Members and
+   Fl_Color_Chooser.H pages. It needs a bit more experimentation on my
+   part unless someone already knows how this should be handled. (Maybe
+   we can add it to a functions.dox file that defines a functions group
+   and do that for all of the function documentation?)
+
+\b Update: the trick is not to create duplicate entries in a new group, but
+   to move the function information into the doxygen comments for the
+   class, and use the navigation links provided. Simply using \\relatesalso
+   as the first doxygen command in the function's comment puts it in the
+   appropriate place. There is no need to have \\defgroup and \\ingroup as
+   well, and indeed they don't work. So, to summarize:
+
+\verbatim
+Gizmo.H
+  /** \class Gizmo
+      A gizmo that does everything
+    */
+  class Gizmo {
+    etc
+  };
+  extern int popup_gizmo(...);
+
+Gizmo.cxx:
+  /** \relatesalso Gizmo
+      Pops up a gizmo dialog with a Gizmo in it
+    */
+  int popup_gizmo(...);
+\endverbatim
+
+<H3>Comments Within Doxygen Comment Blocks:</H3>
+
+You can use HTML comment statements to embed comments in doxygen comment blocks.
+These comments will not be visible in the generated document.
+
+\code
+    The following text is a developer comment.
+    <!-- *** This *** is *** invisible *** -->
+    This will be visible again.
+\endcode
+
+will be shown as:
+
+    The following text is a developer comment.
+    <!-- *** This *** is *** invisible *** -->
+    This will be visible again.
+
+
+<H3>Different Headlines:</H3>
+
+\code
+    <H1>Headline in big text (H1)</H1>
+    <H2>Headline in big text (H2)</H2>
+    <H3>Headline in big text (H3)</H3>
+    <H4>Headline in big text (H4)</H4>
+\endcode
+
+    <H1>Headline in big text (H1)</H1>
+    <H2>Headline in big text (H2)</H2>
+    <H3>Headline in big text (H3)</H3>
+    <H4>Headline in big text (H4)</H4>
+
+
+\section development_non-ascii Non-ASCII Characters
+
+\code
+    Doxygen understands many HTML quoting characters like
+    &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
+\endcode
+
+This will appear in the document:
+
+    Doxygen understands many HTML quoting characters like
+    &quot;, &uuml;, &ccedil;, &Ccedil;, but not all HTML quoting characters.
+
+For further informations about HTML quoting characters see 
+    \b http://www.doxygen.org/htmlcmds.html
+
+Alternatively you can use \b UTF-8 encoding within Doxygen comments.
+
+
+\section development_structure Document Structure
+
+  \li	\b \\page	creates a named page
+  \li	\b \\section	creates a named section within that page
+  \li	\b \\subsection	creates a named subsection within the current section
+  \li	\b \\subsubsection creates a named subsubsection within the current subsection
+
+All these statements take a "name" as their first argument, and a title
+as their second argument. The title can contain spaces.
+
+The page, section, and subsection titles are formatted in blue color and
+a size like \b "<H1>", \b "<H2>", and \b "<H3>", and \b "<H4>", respectively.
+
+By <b>FLTK documentation convention</b>, a file like this one with a doxygen
+documentation chapter has the name <b>"<chapter>.dox".</b>
+The \b \\page statement at the top of the page is 
+<b>"\page <chapter> This is the title"</b>.
+Sections within a documentation page must be called \b "<chapter>_<section>",
+where \b "<chapter>" is the name part of the file, and \b "<section>" is a
+unique section name within the page that can be referenced in links. The
+same for subsections and subsubsections.
+
+These doxygen page and section commands work only in special documentation
+chapters, not within normal source or header documentation blocks. However,
+links \b from normal (e.g. class) documentation \b to documentation sections
+\b do \b work.
+
+This page has
+  \code
+	\page development I - Developer Information
+  \endcode
+at its top.
+
+This section is
+  \code
+	\section development_structure Document structure
+  \endcode
+
+The following section is
+  \code
+	\section development_links Creating Links
+  \endcode
+
+
+\section development_links Creating Links
+
+Links to other documents and external links can be embedded with
+
+- doxygen \\ref links to other doxygen \\page, \\section,
+  \\subsection and \\anchor locations
+- HTML links without markup - doxygen creates "http://..."
+  links automatically
+- standard, non-Doxygen, HTML links
+
+\code
+
+-   see chapter \ref unicode creates a link to the named chapter
+    unicode that has been created with a \page statement.
+
+-   For further informations about quoting see
+    http://www.doxygen.org/htmlcmds.html
+
+-   see <a href="http://www.nedit.org/">Nedit</a> creates
+    a standard HTML link
+
+\endcode
+
+appears as:
+
+-   see chapter \ref unicode creates a link to the named chapter
+    unicode that has been created with a \\page statement.
+
+-   For further informations about quoting see
+    http://www.doxygen.org/htmlcmds.html
+
+-   see <a href="http://www.nedit.org/">Nedit</a> creates
+    a standard HTML link
+
+
+\section development_paragraphs Paragraph Layout
+
+There is no real need to use HTML \<P\> and \</P\> tags within the text
+to tell doxygen to start or stop a paragraph. In most cases, when doxygen
+encounters a blank line or some, but not all, \b \\commands in the text it
+knows that it as reached the start or end of a paragraph. Doxygen also
+offers the \b \\par command for special paragraph handling. It can be used
+to provide a paragraph title and also to indent a paragraph. Unfortunately
+\b \\par won't do what you expect if you want to have doxygen links and
+sometimes html tags don't work either.
+
+  <!-- use verbatim rather than code to avoid links to code reference -->
+  \verbatim
+    \par Normal Paragraph with title
+
+    This paragraph will have a title, but because there is a blank line
+    between the \par and the text, it will have the normal layout.
+
+    \par Indented Paragraph with title
+    This paragraph will also have a title, but because there is no blank
+    line between the \par and the text, it will be indented.
+
+    \par
+    It is also possible to have an indented paragraph without title.
+    This is how you indent subsequent paragraphs.
+
+    \par No link to Fl_Widget::draw()
+    Note that the paragraph title is treated as plain text.
+    Doxygen type links will not work.
+    HTML characters and tags may or may not work.
+
+    Fl_Widget::draw() links and &quot;html&quot; tags work<br>
+    \par
+    Use a single line ending with <br> for complicated paragraph titles.
+  \endverbatim
+
+The above code produces the following paragraphs:
+
+    \par Normal Paragraph with title
+
+    This paragraph will have a title, but because there is a blank line
+    between the \\par and the text, it will have the normal layout.
+
+    \par Indented Paragraph with title
+    This paragraph will also have a title, but because there is no blank
+    line between the \\par and the text, it will be indented.
+
+    \par
+    It is also possible to have an indented paragraph without title.
+    This is how you indent subsequent paragraphs.
+
+    \par No link to Fl_Widget::draw()
+    Note that the paragraph title is treated as plain text.
+    Doxygen type links will not work.
+    HTML characters and tags may or may not work.
+
+    Fl_Widget::draw() links and &quot;html&quot; tags work<br>
+    \par
+    Use a single line ending with \<br\> for complicated paragraph titles.
+
+
+\section development_navigation_test Navigation Elements
+
+Each introduction (tutorial) page ends with navigation elements. These
+elements must only be included in the html documentation, therefore
+they must be separated with \\htmlonly and \\endhtmlonly.
+
+The following code gives the navigation bar at the bottom of this page:
+
+\verbatim
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="migration_1_3.html">
+    [Prev]
+    Migrating Code from FLTK 1.1 to 1.3
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="license.html">
+    Software License
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+\endverbatim
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="migration_1_3.html">
+    [Prev]
+    Migrating Code from FLTK 1.1 to 1.3
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="license.html">
+    Software License
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

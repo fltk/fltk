@@ -1,0 +1,565 @@
+/**
+
+ \page	subclassing Adding and Extending Widgets
+
+
+This chapter describes how to add your own widgets or extend existing
+widgets in FLTK.
+
+\section subclassing_subclassing Subclassing
+
+New widgets are created by \e subclassing an existing FLTK widget,
+typically Fl_Widget for controls and Fl_Group for composite widgets.
+
+A control widget typically interacts with the user to receive and/or
+display a value of some sort. 
+
+A composite widget holds a list of child widgets and handles moving,
+sizing, showing, or hiding them as needed. Fl_Group is the main
+composite widget class in FLTK, and all of the other composite widgets
+(Fl_Pack, Fl_Scroll, Fl_Tabs, Fl_Tile, and Fl_Window) are subclasses of it. 
+
+You can also subclass other existing widgets to provide a different
+look or user-interface. For example, the button widgets are all
+subclasses of Fl_Button since they all interact with the user
+via a mouse button click.  The only difference is the code that draws
+the face of the button. 
+
+\section subclassing_fl_widget Making a Subclass of Fl_Widget
+
+Your subclasses can directly descend from Fl_Widget or any
+subclass of Fl_Widget. Fl_Widget has only four
+virtual methods, and overriding some or all of these may be necessary.
+
+\section subclassing_constructor The Constructor
+
+The constructor should have the following arguments:
+
+\code
+MyClass(int x, int y, int w, int h, const char *label = 0);
+\endcode
+
+This will allow the class to be used in
+\ref fluid "FLUID"
+without problems.
+
+The constructor must call the constructor for the base class and
+pass the same arguments: 
+
+\code
+MyClass::MyClass(int x, int y, int w, int h, const char *label)
+: Fl_Widget(x, y, w, h, label) {
+// do initialization stuff...
+}
+\endcode
+
+Fl_Widget's protected constructor sets \p x(), \p y(),
+\p w(), \p h(), and \p label() to the passed values
+and initializes the other instance variables to:
+
+\code
+type(0);
+box(FL_NO_BOX);
+color(FL_BACKGROUND_COLOR);
+selection_color(FL_BACKGROUND_COLOR);
+labeltype(FL_NORMAL_LABEL);
+labelstyle(FL_NORMAL_STYLE);
+labelsize(FL_NORMAL_SIZE);
+labelcolor(FL_FOREGROUND_COLOR);
+align(FL_ALIGN_CENTER);
+callback(default_callback,0);
+flags(ACTIVE|VISIBLE);
+image(0);
+deimage(0);
+\endcode
+
+\section subclassing_protected Protected Methods of Fl_Widget
+
+The following methods are provided for subclasses to use:
+
+\li \ref subclassing_clear_visible "clear_visible()"
+\li \ref subclassing_damage "damage()"
+\li \ref subclassing_draw_box "draw_box()"
+\li \ref subclassing_draw_focus "draw_focus()"
+\li \ref subclassing_draw_label "draw_label()"
+\li \ref subclassing_set_flag "set_flag()"
+\li \ref subclassing_set_visible "set_visible()"
+\li \ref subclassing_test_shortcut "test_shortcut()"
+\li \ref subclassing_type "type()"
+
+\anchor subclassing_damage
+void Fl_Widget::damage(uchar mask) <br>
+void Fl_Widget::damage(uchar mask, int x, int y, int w, int h) <br>
+uchar Fl_Widget::damage()
+
+\par
+The first form indicates that a partial update of the object is
+needed.  The bits in mask are OR'd into
+\ref subclassing_damage "damage()".
+Your \p draw() routine can examine these bits to limit what it is
+drawing.  The public method Fl_Widget::redraw() simply does
+\p Fl_Widget::damage(FL_DAMAGE_ALL),
+but the implementation of your widget can call the public
+\p damage(n).
+
+\par
+The second form indicates that a region is damaged.  If only these
+calls are done in a window (no calls to \p damage(n)) then FLTK
+will clip to the union of all these calls before drawing anything.
+This can greatly speed up incremental displays.  The mask bits are
+OR'd into \p damage() unless this is a Fl_Window widget. 
+
+\par
+The third form returns the bitwise-OR of all \p damage(n)
+calls done since the last \p draw().
+
+\par
+<I>When redrawing your widgets you should look at the damage bits to
+see what parts of your widget need redrawing.</I> The \p handle()
+method can then set individual damage bits to limit the amount of drawing
+that needs to be done:
+\code
+MyClass::handle(int event) {
+  ...
+  if (change_to_part1) damage(1);
+  if (change_to_part2) damage(2);
+  if (change_to_part3) damage(4);
+}
+
+MyClass::draw() {
+  if (damage() & FL_DAMAGE_ALL) {
+    ... draw frame/box and other static stuff ...
+  }
+
+  if (damage() & (FL_DAMAGE_ALL | 1)) draw_part1();
+  if (damage() & (FL_DAMAGE_ALL | 2)) draw_part2();
+  if (damage() & (FL_DAMAGE_ALL | 4)) draw_part3();
+}
+\endcode
+
+\todo Clarify Fl_Window::damage(uchar) handling - seems confused/wrong?
+      ORing value doesn't match setting behaviour in FL_Widget.H!
+
+\anchor subclassing_draw_box
+void Fl_Widget::draw_box() const <br>
+void Fl_Widget::draw_box(Fl_Boxtype t, Fl_Color c) const
+
+\par
+The first form draws this widget's \p box(), using the
+dimensions of the widget.  The second form uses \p t as the box
+type and \p c as the color for the box.
+
+\anchor subclassing_draw_focus
+void Fl_Widget::draw_focus() <br>
+void Fl_Widget::draw_focus(Fl_Boxtype t, int x, int y, int w, int h) const
+
+\par
+Draws a focus box inside the widget's bounding box. The second
+form allows you to specify a different bounding box.
+
+\anchor subclassing_draw_label
+void Fl_Widget::draw_label() const <br>
+void Fl_Widget::draw_label(int x, int y, int w, int h) const <br>
+void Fl_Widget::draw_label(int x, int y, int w, int h, Fl_Align align) const
+
+\par
+The first form is the usual function for a \p draw() method to call to
+draw the widget's label. It does not draw the label if it is supposed
+to be outside the box (on the assumption that the enclosing group will
+draw those labels).
+
+\par
+The second form uses the passed bounding box instead of the widget's
+bounding box. This is useful so "centered" labels are aligned with some
+feature, like a moving slider. 
+
+\par
+The third form draws the label anywhere. It acts as though
+\p FL_ALIGN_INSIDE has been forced on so the label will appear inside
+the passed bounding box. This is designed for parent groups to draw
+labels with. 
+
+\anchor subclassing_set_flag
+void Fl_Widget::set_flag(int c) <br>
+
+\par
+Calling \p set_flag(SHORTCUT_LABEL) modifies the behavior of
+\ref subclassing_draw_label "draw_label()" so that '\&' characters
+cause an underscore to be printed under the next letter.
+
+\anchor subclassing_clear_visible
+\anchor subclassing_set_visible
+void Fl_Widget::set_visible() <br>
+void Fl_Widget::clear_visible()
+
+\par
+Fast inline versions of Fl_Widget::hide() and Fl_Widget::show().
+These do not send the \p FL_HIDE and \p FL_SHOW events to the widget.
+
+\anchor subclassing_test_shortcut
+int Fl_Widget::test_shortcut() <br>
+static int Fl_Widget::test_shortcut(const char *s)
+
+\par
+The first version tests Fl_Widget::label() against the current event 
+(which should be a \p FL_SHORTCUT event).  If the label contains a '&' 
+character and the character after it matches the keypress, this returns
+true. This returns false if the \p SHORTCUT_LABEL flag is off, if the 
+label is \p NULL, or does not have a '&' character in it, or if the 
+keypress does not match the character.
+
+\par
+The second version lets you do this test against an arbitrary string. 
+
+\todo Clarify Fl_Widget::test_shortcut() explanations. Fl_Widget.h
+      says Internal Use only, but subclassing chapter gives details!
+
+\anchor subclassing_type
+uchar Fl_Widget::type() const <br>
+void Fl_Widget::type(uchar t)
+
+\par
+The property Fl_Widget::type() can return an arbitrary 8-bit
+identifier, and can be set with the protected method <tt>type(uchar t)</tt>.
+This value had to be provided for Forms compatibility, but you can
+use it for any purpose you want.  Try to keep the value less than 100
+to not interfere with reserved values.
+
+\par
+FLTK does not use RTTI (Run Time Typing Information), to enhance
+portability.  But this may change in the near future if RTTI becomes
+standard everywhere. 
+
+\par
+If you don't have RTTI you can use the clumsy FLTK mechanism, by
+having \p type() use a unique value.  These unique values must
+be greater than the symbol \p FL_RESERVED_TYPE (which is 100) and
+less than \p FL_WINDOW (unless you make a subclass of Fl_Window).
+Look through the header files for \p FL_RESERVED_TYPE to find an
+unused number. If you make a subclass of Fl_Window you must use
+<tt>FL_WINDOW + n</tt> (where \p n must be in the range 1 to 7). 
+
+\section subclassing_events Handling Events
+
+The virtual method Fl_Widget::handle(int event) is called
+to handle each event passed to the widget. It can:
+
+\li Change the state of the widget. 
+\li Call Fl_Widget::redraw() if the widget needs to be redisplayed. 
+\li Call Fl_Widget::damage(uchar c) if the widget needs a partial-update
+    (assuming you provide support for this in your
+    \ref subclassing_drawing "draw()"
+    method). 
+\li Call Fl_Widget::do_callback() if a callback should be generated. 
+\li Call Fl_Widget::handle() on child widgets. 
+
+Events are identified by the integer argument.  Other information
+about the most recent event is stored in static locations and acquired
+by calling the
+\ref events_event_xxx.
+This information remains valid until another event is handled.
+
+Here is a sample \p handle() method for a widget that acts as
+a pushbutton and also accepts the keystroke \p 'x' to cause the callback: 
+
+\code
+int MyClass::handle(int event) {
+  switch(event) {
+    case FL_PUSH:
+      highlight = 1;
+      redraw();
+      return 1;
+    case FL_DRAG: {
+        int t = Fl::event_inside(this);
+        if (t != highlight) {
+          highlight = t;
+	  redraw();
+	}
+      }
+      return 1;
+    case FL_RELEASE:
+      if (highlight) {
+	highlight = 0;
+	redraw();
+        do_callback();
+	// never do anything after a callback, as the callback
+	// may delete the widget!
+      }
+      return 1;
+    case FL_SHORTCUT:
+      if (Fl::event_key() == 'x') {
+        do_callback();
+	return 1;
+      }
+      return 0;
+    default:
+      return Fl_Widget::handle(event);
+  }
+}
+\endcode
+
+You must return non-zero if your \p handle() method
+uses the event. If you return zero, the parent widget will try
+sending the event to another widget.
+
+For debugging purposes, event numbers can be printed as their actual event names 
+using the \ref fl_eventnames[] array, e.g.:
+\code
+  #include <FL/names.h>		// defines fl_eventnames[]
+  [..]
+  int MyClass::handle(int e) {
+      printf("Event was %s (%d)\n", fl_eventnames[e], e);     // e.g. "Event was FL_PUSH (1)"
+      [..]
+\endcode
+
+\section subclassing_drawing Drawing the Widget
+
+The \p draw() virtual method is called when FLTK wants
+you to redraw your widget. It will be called if and only if
+\p damage() is non-zero, and \p damage() will be
+cleared to zero after it returns. The \p draw() method
+should be declared protected so that it can't be called from
+non-drawing code.
+
+The \p damage() value contains the bitwise-OR of all
+the \p damage(n) calls to this widget since it was last
+drawn. This can be used for minimal update, by only redrawing
+the parts whose bits are set. FLTK will turn on the
+\p FL_DAMAGE_ALL bit if it thinks the entire widget must
+be redrawn, e.g. for an expose event. 
+
+Expose events (and the 
+\ref subclassing_damage "damage(mask,x,y,w,h)" function described 
+above) will cause \p draw() to be called with FLTK's
+\ref ssect_Clipping "clipping"
+turned on.  You can greatly speed up redrawing in some
+cases by testing \p fl_not_clipped(x,y,w,h) or \p %fl_clip_box()
+and skipping invisible parts. 
+
+Besides the protected methods described above, FLTK provides a large
+number of basic drawing functions, which are described in the chapter
+\ref drawing.
+
+\section subclassing_resizing Resizing the Widget
+
+The \p resize(x,y,w,h) method is called when
+the widget is being resized or moved.  The arguments are the new
+position, width, and height. \p x(), \p y(), \p w(),
+and \p h() still remain the old size.  You must call \p resize()
+on your base class with the same arguments to get the widget size to
+actually change.
+
+This should \e not call \p redraw(), at least if only the
+\p x() and \p y() change.  This is because composite widgets like
+Fl_Scroll may have a more efficient way of drawing the new position. 
+
+\section subclassing_composite Making a Composite Widget
+
+A "composite" widget contains one or more "child" widgets.
+To make a composite widget you should subclass Fl_Group.
+It is possible to make a composite object that is not a subclass of
+Fl_Group, but you'll have to duplicate the code in Fl_Group
+anyways.
+
+Instances of the child widgets may be included in the parent: 
+
+\code
+class MyClass : public Fl_Group {
+  Fl_Button the_button;
+  Fl_Slider the_slider;
+  ...
+};
+\endcode
+
+The constructor has to initialize these instances. They are automatically 
+added to the group, since the Fl_Group constructor does
+Fl_Group::begin().
+<I>Don't forget to call Fl_Group::end() or use the Fl_End pseudo-class:</I>
+
+\code
+MyClass::MyClass(int x, int y, int w, int h) :
+  Fl_Group(x, y, w, h),
+  the_button(x + 5, y + 5, 100, 20),
+  the_slider(x, y + 50, w, 20)
+{
+  ...(you could add dynamically created child widgets here)...
+  end(); // don't forget to do this!
+}
+\endcode
+
+The child widgets need callbacks.  These will be called with a pointer
+to the children, but the widget itself may be found in the \p parent()
+pointer of the child.  Usually these callbacks can be static private
+methods, with a matching private method:
+
+\code
+void MyClass::static_slider_cb(Fl_Widget* v, void *) { // static method
+  ((MyClass*)(v->parent())->slider_cb();
+}
+void MyClass::slider_cb() { // normal method
+  use(the_slider->value());
+}
+\endcode
+
+If you make the \p handle() method, you can quickly pass all the
+events to the children using the Fl_Group::handle() method.
+You don't need to override \p handle() if your composite widget
+does nothing other than pass events to the children:
+
+\code
+int MyClass::handle(int event) {
+  if (Fl_Group::handle(event)) return 1;
+  ... handle events that children don't want ...
+}
+\endcode
+
+If you override \p draw() you need to draw all the children.
+If \p redraw() or \p damage() is called on a child,
+\p damage(FL_DAMAGE_CHILD) is done to the group,
+so this bit of \p damage() can be used to indicate
+that a child needs to be drawn. It is fastest if you avoid
+drawing anything else in this case:
+
+\code
+int MyClass::draw() {
+  Fl_Widget *const*a = array();
+  if (damage() == FL_DAMAGE_CHILD) { // only redraw some children
+    for (int i = children(); i --; a ++) update_child(**a);
+  } else { // total redraw
+    ... draw background graphics ...
+    // now draw all the children atop the background:
+    for (int i = children_; i --; a ++) {
+      draw_child(**a);
+      draw_outside_label(**a); // you may not need to do this
+    }
+  }
+}
+\endcode
+
+Fl_Group provides some protected methods to make drawing easier:
+
+\li \ref subclassing_draw_child "draw_child()"
+\li \ref subclassing_draw_children "draw_children()"
+\li \ref subclassing_draw_outside_label "draw_outside_label()"
+\li \ref subclassing_update_child "update_child()"
+
+\anchor subclassing_draw_child
+void Fl_Group::draw_child(Fl_Widget &widget) const
+
+\par
+This will force the child's \p damage() bits all to one and call
+\p draw() on it, then clear the \p damage().  You should call
+this on all children if a total redraw of your widget is requested, or
+if you draw something (like a background box) that damages the child.
+Nothing is done if the child is not \p visible() or if it is
+clipped.
+
+\anchor subclassing_draw_children
+void Fl_Group::draw_children()
+
+\par
+A convenience function that draws all children of the group.
+This is useful if you derived a widget from Fl_Group and want to draw
+a special border or background. You can call \p draw_children() from the
+derived  \p draw() method after drawing the box, border, or background.
+
+\anchor subclassing_draw_outside_label
+void Fl_Group::draw_outside_label(const Fl_Widget &widget) const
+
+\par
+Draw the labels that are \e not drawn by
+\ref subclassing_draw_label "draw_label()".
+If you want more control over the label positions you might want to call
+<tt>child->draw_label(x,y,w,h,a)</tt>.
+
+\anchor subclassing_update_child
+void Fl_Group::update_child(Fl_Widget& widget) const
+
+\par
+Draws the child only if its \p damage() is non-zero.  You
+should call this on all the children if your own damage is equal to
+\p FL_DAMAGE_CHILD.  Nothing is done if the child is not \p visible()
+or if it is clipped.
+
+\section subclassing_cutnpaste Cut and Paste Support
+
+FLTK provides routines to cut and paste 8-bit text (in the future this
+may be UTF-8) between applications:
+
+\li Fl::paste()
+\li Fl::selection()
+\li Fl::selection_owner()
+
+It may be possible to cut/paste non-text data by using Fl::add_handler().
+Note that handling events beyond those provided by FLTK may be operating
+system specific. See \ref osissues for more details.
+
+\section subclassing_dragndrop Drag And Drop Support
+
+FLTK provides routines to drag and drop 8-bit text between applications:
+
+Drag'n'drop operations are initiated by copying data to the 
+clipboard and calling the function Fl::dnd().
+
+Drop attempts are handled via the following events,
+already described under \ref events_dnd in a previous chapter:
+
+\li \p FL_DND_ENTER
+\li \p FL_DND_DRAG
+\li \p FL_DND_LEAVE
+\li \p FL_DND_RELEASE
+\li \p FL_PASTE
+
+\section subclassing_fl_window Making a subclass of Fl_Window
+
+You may want your widget to be a subclass of
+Fl_Window, Fl_Double_Window, or
+Fl_Gl_Window. This can be useful if your widget wants
+to occupy an entire window, and can also be used to take
+advantage of system-provided clipping, or to work with a library
+that expects a system window ID to indicate where to draw.
+
+Subclassing Fl_Window is almost exactly like
+subclassing Fl_Group, and in fact you can easily
+switch a subclass back and forth. Watch out for the following
+differences: 
+
+-# Fl_Window is a subclass of Fl_Group so
+   <I>make sure your constructor calls</I> \p end()
+   unless you actually want children added to your window.
+-# When handling events and drawing, the upper-left corner is at
+   0,0, not <tt>x(),y()</tt> as in other Fl_Widget's.
+   For instance, to draw a box around the widget, call
+   <tt>draw_box(0,0,w(),h())</tt>, rather than
+   <tt>draw_box(x(),y(),w(),h())</tt>.
+
+You may also want to subclass Fl_Window in order to
+get access to different visuals or to change other attributes of
+the windows. See the
+\ref osissues chapter for more information.
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="events.html">
+    [Prev]
+    Handling Events
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="opengl.html">
+    Using OpenGL
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

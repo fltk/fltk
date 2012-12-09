@@ -1,0 +1,803 @@
+/**
+
+ \page	osissues	Operating System Issues
+
+This appendix describes the operating system specific interfaces in FLTK:
+\li \ref osissues_accessing
+\li \ref osissues_unix
+\li \ref osissues_win32
+\li \ref osissues_macos
+
+\section osissues_accessing Accessing the OS Interfaces
+
+All programs that need to access the operating system
+specific interfaces must include the following header file:
+
+\code
+#include <FL/x.H>
+\endcode
+
+Despite the name, this header file will define the
+appropriate interface for your environment. The pages that
+follow describe the functionality that is provided for each
+operating system.
+
+<CENTER>
+<TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>WARNING:</B>
+
+	The interfaces provided by this header file may
+	change radically in new FLTK releases. Use them only
+	when an existing generic FLTK interface is not
+	sufficient.
+
+	</TD>
+</TR>
+</TABLE>
+</CENTER>
+
+\section osissues_unix The UNIX (X11) Interface
+
+The UNIX interface provides access to the X Window System
+state information and data structures.
+
+\subsection osissues_x_events Handling Other X Events
+
+void Fl::add_handler(int (*f)(int))
+
+\par
+Installs a function to parse unrecognized events. If FLTK
+cannot figure out what to do with an event, it calls each of
+these functions (most recent first) until one of them returns
+non-zero. If none of them returns non-zero then the event is
+ignored.
+
+\par
+FLTK calls this for any X events it does not recognize, or X
+events with a window ID that FLTK does not recognize. You can
+look at the X event in the \c fl_xevent variable.
+
+\par
+The argument is the FLTK event type that was not handled, or
+zero for unrecognized X events. These handlers are also called
+for global shortcuts and some other events that the widget they
+were passed to did not handle, for example
+\c FL_SHORTCUT.
+
+extern XEvent *fl_xevent
+
+\par
+This variable contains the most recent X event.
+
+extern ulong fl_event_time
+
+\par
+This variable contains the time stamp from the most recent X
+event that reported it; not all events do. Many X calls like cut
+and paste need this value.
+
+Window fl_xid(const Fl_Window *)
+
+\par
+Returns the XID for a window, or zero if not \c shown().
+
+Fl_Window *fl_find(ulong xid)
+
+\par
+Returns the Fl_Window that corresponds to the given
+XID, or \c NULL if not found. This function uses a cache
+so it is slightly faster than iterating through the windows
+yourself.
+
+int fl_handle(const XEvent &)
+
+\par
+This call allows you to supply the X events to FLTK, which
+may allow FLTK to cooperate with another toolkit or library. The
+return value is non-zero if FLTK understood the event. If the
+window does not belong to FLTK and the \c add_handler()
+functions all return 0, this function will return false.
+
+\par
+Besides feeding events your code should call Fl::flush()
+periodically so that FLTK redraws its windows.
+
+\par
+This function will call the callback functions. It will not
+return until they complete. In particular, if a callback pops up
+a modal window by calling
+fl_ask(),
+for instance, it will not return until the modal function
+returns.
+
+\subsection osissues_drawing_xlib Drawing using Xlib
+
+The following global variables are set before
+Fl_Widget::draw() is called, or by Fl_Window::make_current():
+
+\code
+extern Display *fl_display;
+extern Window fl_window;
+extern GC fl_gc;
+extern int fl_screen;
+extern XVisualInfo *fl_visual;
+extern Colormap fl_colormap;
+\endcode
+
+You must use them to produce Xlib calls.  Don't attempt to change
+them. A typical X drawing call is written like this:
+
+\code
+XDrawSomething(fl_display, fl_window, fl_gc, ...);
+\endcode
+
+Other information such as the position or size of the X
+window can be found by looking at Fl_Window::current(),
+which returns a pointer to the Fl_Window being drawn.
+
+unsigned long fl_xpixel(Fl_Color i) <br>
+unsigned long fl_xpixel(uchar r, uchar g, uchar b)
+
+\par
+Returns the X pixel number used to draw the given FLTK color
+index or RGB color. This is the X pixel that
+\ref drawing_colors "fl_color()"
+would use.
+
+int fl_parse_color(const char* p, uchar& r, uchar& g, uchar& b)
+
+\par
+Convert a name into the red, green, and blue values of a color
+by parsing the X11 color names. On other systems, \c fl_parse_color()
+can only convert names in hexadecimal encoding, for example <tt>\#ff8083</tt>.
+ 
+extern XFontStruct *fl_xfont
+
+\par
+Points to the font selected by the most recent
+\ref ssect_Fonts "fl_font()".
+This is not necessarily the current font of \c fl_gc,
+which is not set until
+\ref ssect_Text "fl_draw()"
+is called. If FLTK was compiled with Xft support, \c fl_xfont
+will usually be 0 and \c fl_xftfont will contain a pointer 
+to the \c XftFont structure instead.
+
+extern void *fl_xftfont
+
+\par
+If FLTK was compiled with Xft support enabled, \c fl_xftfont
+points to the xft font selected by the most recent
+\ref ssect_Fonts "fl_font()".
+Otherwise it will be 0. \c fl_xftfont should be cast to 
+<tt>XftFont*</tt>.
+
+\subsection osissues_xvisual Changing the Display, Screen, or X Visual
+
+FLTK uses only a single display, screen, X visual, and X
+colormap. This greatly simplifies its internal structure and
+makes it much smaller and faster. You can change which it uses
+by setting global variables
+<I>
+before the first Fl_Window::show() is called.
+</I>
+You may also want to call Fl::visual(), which is a portable interface
+to get a full color and/or double buffered visual.
+
+int Fl::display(const char *)
+
+\par
+Set which X display to use.  This actually does
+<tt>putenv("DISPLAY=...")</tt> so that child programs
+will display on the same screen if called with \c exec().
+This must be done before the display is opened. This call is
+provided under MacOS and WIN32 but it has no effect.
+
+extern Display *fl_display
+
+\par
+The open X display. This is needed as an argument to most
+Xlib calls. Don't attempt to change it! This is \c NULL
+before the display is opened.
+
+void fl_open_display()
+
+\par
+Opens the display. Does nothing if it is already open. This
+will make sure \c fl_display is non-zero. You should call
+this if you wish to do X calls and there is a chance that your
+code will be called before the first \c show() of a window.
+
+\par
+This may call Fl::abort() if there is an error opening the display.
+
+void fl_close_display()
+
+\par
+This closes the X connection. You do \e not need to call
+this to exit, and in fact it is faster to not do so! It may be
+useful to call this if you want your program to continue without
+the X connection. You cannot open the display again, and
+probably cannot call any FLTK functions.
+
+extern int fl_screen
+
+\par
+Which screen number to use. This is set by
+\c fl_open_display() to the default screen. You can change
+it by setting this to a different value immediately afterwards.
+It can also be set by changing the last number in the
+Fl::display() string to "host:0.#".
+
+extern XVisualInfo *fl_visual <br>
+extern Colormap fl_colormap
+
+\par
+The visual and colormap that FLTK will use for all windows.
+These are set by \c fl_open_display() to the default
+visual and colormap. You can change them before calling
+\c show() on the first window. Typical code for changing
+the default visual is:
+\code
+Fl::args(argc, argv); // do this first so $DISPLAY is set
+fl_open_display();
+fl_visual = find_a_good_visual(fl_display, fl_screen);
+if (!fl_visual) Fl::abort("No good visual");
+fl_colormap = make_a_colormap(fl_display, fl_visual->visual, fl_visual->depth);
+// it is now ok to show() windows:
+window->show(argc, argv);
+\endcode
+
+\subsection osissues_specialx Using a Subclass of Fl_Window for Special X Stuff
+
+FLTK can manage an X window on a different screen, visual
+and/or colormap, you just can't use FLTK's drawing routines to
+draw into it. But you can write your own \c draw() method
+that uses Xlib (and/or OpenGL) calls only.
+
+FLTK can also manage XID's provided by other libraries or
+programs, and call those libraries when the window needs to be
+redrawn.
+
+To do this, you need to make a subclass of
+Fl_Window
+and override some of these virtual functions:
+
+virtual void Fl_Window::show()
+
+\par
+If the window is already \c shown() this must cause it
+to be raised, this can usually be done by calling Fl_Window::show().
+If not \c shown() your implementation must call either
+Fl_X::set_xid() or Fl_X::make_xid().
+
+\par
+An example:
+\code
+void MyWindow::show() {
+  if (shown()) {Fl_Window::show(); return;}  // you must do this!
+  fl_open_display();	// necessary if this is first window
+  // we only calculate the necessary visual colormap once:
+  static XVisualInfo *visual;
+  static Colormap colormap;
+  if (!visual) {
+    visual = figure_out_visual();
+    colormap = XCreateColormap(fl_display, RootWindow(fl_display,fl_screen),
+                               vis->visual, AllocNone);
+  }
+  Fl_X::make_xid(this, visual, colormap);
+}
+\endcode
+
+\verbatim
+Fl_X *Fl_X::set_xid(Fl_Window*, Window xid)
+\endverbatim
+
+\par
+Allocate a hidden class called an Fl_X, put the
+XID into it, and set a pointer to it from the Fl_Window.
+This causes Fl_Window::shown() to return true.
+
+void Fl_X::make_xid(Fl_Window*, XVisualInfo* = fl_visual, Colormap = fl_colormap)
+
+\par
+This static method does the most onerous parts of creating an
+X window, including setting the label, resize limitations, etc.
+It then does Fl_X::set_xid() with this new window and maps the window.
+
+virtual void Fl_Window::flush()
+
+\par
+This virtual function is called by Fl::flush() to
+update the window. For FLTK's own windows it does this by
+setting the global variables \c fl_window and \c fl_gc
+and then calling the \c draw() method.  For
+your own windows you might just want to put all the drawing code
+in here.
+
+\par
+The X region that is a combination of all \c damage()
+calls done so far is in <tt>Fl_X::i(this)->region</tt>. If
+\c NULL then you should redraw the entire window. The
+undocumented function \c fl_clip_region(XRegion) will
+initialize the FLTK clip stack with a region or \c NULL
+for no clipping. You must set region to \c NULL afterwards
+as \c fl_clip_region() will own and delete it when
+done.
+
+\par
+If <tt>damage() & FL_DAMAGE_EXPOSE</tt> then only X
+expose events have happened. This may be useful if you have an
+undamaged image (such as a backing buffer) around.
+
+\par
+Here is a sample where an undamaged image is kept somewhere:
+\code
+void MyWindow::flush() {
+  fl_clip_region(Fl_X::i(this)->region);
+  Fl_X::i(this)->region = 0;
+  if (damage() != 2) {... draw things into backing store ...}
+  ... copy backing store to window ...
+}
+\endcode
+
+virtual void Fl_Window::hide()
+
+\par
+Destroy the window server copy of the window. Usually you
+will destroy contexts, pixmaps, or other resources used by the
+window, and then call Fl_Window::hide() to get rid of
+the main window identified by \c xid(). If you override
+this, you must also override the destructor as shown:
+\code
+void MyWindow::hide() {
+  if (mypixmap) {
+    XFreePixmap(fl_display,mypixmap);
+    mypixmap = 0;
+  }
+  Fl_Window::hide(); // you must call this
+}
+\endcode
+
+virtual void Fl_Window::~Fl_Window()
+
+\par
+Because of the way C++ works, if you override \c hide()
+you \e must override the destructor as well (otherwise only
+the base class \c hide() is called):
+\code
+MyWindow::~MyWindow() {
+  hide();
+}
+\endcode
+
+\note Access to the Fl_X hidden class requires to \#define FL_INTERNALS
+before compilation.
+
+\subsection osissues_x_icon Setting the Icon of a Window
+
+FLTK currently supports setting a window's icon \b before it
+is shown using the Fl_Window::icon() method.
+
+void Fl_Window::icon(const void *)
+
+\par
+Sets the icon for the window to the passed pointer. You will
+need to cast the icon \c Pixmap to a \c char* when
+calling this method. To set a monochrome icon using a bitmap compiled
+with your application use:
+\code
+#include "icon.xbm"
+
+fl_open_display(); // needed if display has not been previously opened
+
+Pixmap p = XCreateBitmapFromData(fl_display, DefaultRootWindow(fl_display),
+                                 icon_bits, icon_width, icon_height);
+
+window->icon((const void*)p);
+\endcode
+
+\par
+To use a multi-colored icon, the XPM format and library
+should be used as follows:
+\code
+#include <X11/xpm.h>
+#include "icon.xpm"
+
+fl_open_display();                // needed if display has not been previously opened
+
+Pixmap p, mask;
+
+XpmCreatePixmapFromData(fl_display, DefaultRootWindow(fl_display),
+                                 icon_xpm, &p, &mask, NULL);
+
+window->icon((const void *)p);
+\endcode
+
+\par
+When using the Xpm library, be sure to include it in the list
+of libraries that are used to link the application (usually "-lXpm").
+
+<CENTER>
+<TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>NOTE:</B>
+	
+	You must call Fl_Window::show(int argc, char** argv)
+	for the icon to be used. The Fl_Window::show() method
+	does not bind the icon to the window.
+
+	</TD>
+</TR>
+</TABLE>
+</CENTER>
+
+\subsection osissues_xresources X Resources
+
+When the
+Fl_Window::show(int argc, char** argv)
+method is called, FLTK looks for the following X resources:
+
+\li \c background - The default background color
+	for widgets (color).
+
+\li \c dndTextOps - The default setting for
+	drag and drop text operations (boolean).
+
+\li \c foreground - The default foreground (label)
+	color for widgets (color).
+
+\li \c scheme - The default scheme to use (string).
+
+\li \c selectBackground - The default selection
+	color for menus, etc. (color).
+
+\li <tt>Text.background</tt> - The default background
+	color for text fields (color).
+
+\li \c tooltips - The default setting for
+	tooltips (boolean).
+
+\li \c visibleFocus - The default setting for
+	visible keyboard focus on non-text widgets (boolean).
+
+Resources associated with the first window's Fl_Window::xclass()
+string are queried first, or if no class has been specified then
+the class "fltk" is used (e.g. <tt>fltk.background</tt>). If no
+match is found, a global search is done (e.g.
+<tt>*background</tt>).
+
+\section osissues_win32 The Windows (WIN32) Interface
+
+The Windows interface provides access to the WIN32 GDI
+state information and data structures.
+
+\subsection non_ascii_filenames Using filenames with non-ASCII characters
+
+In FLTK, all strings, including filenames, are UTF-8 encoded. The utility functions
+fl_fopen() and fl_open() allow to open files potentially having non-ASCII names in a 
+cross-platform fashion, whereas the standard fopen()/open() functions fail to do so.
+
+\subsection osissues_win32_messages Handling Other WIN32 Messages
+
+By default a single WNDCLASSEX called "FLTK" is
+created. All Fl_Window 's are of this class unless you
+use Fl_Window::xclass(). The window class is created
+the first time Fl_Window::show() is called.
+
+You can probably combine FLTK with other libraries that make
+their own WIN32 window classes. The easiest way is to call
+Fl::wait(), as it will call \c DispatchMessage()
+for all messages to the other windows. If necessary you can let
+the other library take over as long as it calls
+\c DispatchMessage(), but you will have to arrange for the
+function Fl::flush() to be called regularly so that
+widgets are updated, timeouts are handled, and the idle
+functions are called.
+
+extern MSG fl_msg
+
+\par
+This variable contains the most recent message read by
+\c GetMessage(), which is called by Fl::wait().
+This may not be the
+most recent message sent to an FLTK window, because silly WIN32
+calls the handle procedures directly for some events (sigh).
+
+void Fl::add_handler(int (*f)(int))
+
+\par
+Installs a function to parse unrecognized messages sent to
+FLTK windows. If FLTK cannot figure out what to do with a
+message, it calls each of these functions (most recent first)
+until one of them returns non-zero. The argument passed to the
+functions is the FLTK event that was not handled or zero for
+unknown messages. If all the handlers return zero then FLTK
+calls \c DefWindowProc().
+
+HWND fl_xid(const Fl_Window *)
+
+\par
+Returns the window handle for a Fl_Window, or zero
+if not \c shown().
+
+Fl_Window *fl_find(HWND xid)
+
+\par
+Returns the Fl_Window that corresponds to the given
+window handle, or \c NULL if not found. This function uses
+a cache so it is slightly faster than iterating through the
+windows yourself.
+
+\subsection osissues_win32_gdi Drawing Things Using the WIN32 GDI
+
+When the virtual function Fl_Widget::draw() is
+called, FLTK stores all the extra arguments you need to
+make a proper GDI call in some global variables:
+
+\code
+extern HINSTANCE fl_display;
+extern HWND fl_window;
+extern HDC fl_gc;
+COLORREF fl_RGB();
+HPEN fl_pen();
+HBRUSH fl_brush();
+\endcode
+
+These global variables are set before Fl_Widget::draw() is called, or by
+Fl_Window::make_current().
+You can refer to them when needed to produce GDI calls, but don't
+attempt to change them. The functions return GDI objects for
+the current color set by
+\ref drawing_colors "fl_color()"
+and are created as
+needed and cached. A typical GDI drawing call is written like
+this:
+
+\code
+DrawSomething(fl_gc, ..., fl_brush());
+\endcode
+
+It may also be useful to refer to Fl_Window::current()
+to get the window's size or position.
+
+\subsection osissues_icon_windows Setting the Icon of a Window
+
+FLTK currently supports setting a window's icon *before* it
+is shown using the Fl_Window::icon() method.
+
+void Fl_Window::icon(const void *)
+
+\par
+Sets the icon for the window to the passed pointer. You will
+need to cast the \c HICON handle to a \c char* when
+calling this method. To set the icon using an icon resource
+compiled with your application use:
+\code
+window->icon((const void *)LoadIcon(fl_display, MAKEINTRESOURCE(IDI_ICON)));
+\endcode
+
+\par
+You can also use the \c LoadImage() and related
+functions to load specific resolutions or create the icon from
+bitmap data.
+
+<CENTER>
+<TABLE WIDTH="90%" BORDER="1" CELLPADDING="5" CELLSPACING="0" BGCOLOR="#cccccc">
+<TR>
+	<TD><B>NOTE:</B>
+	
+	You must call Fl_Window::show(int argc, char** argv)
+	for the icon to be used. The Fl_Window::show() method
+	does not bind the icon to the window.
+
+	</TD>
+</TR>
+</TABLE>
+</CENTER>
+
+\subsection osissues_msdos_console How to Not Get a MSDOS Console Window
+
+WIN32 has a really stupid mode switch stored in the
+executables that controls whether or not to make a console
+window.
+
+To always get a console window you simply create a console
+application (the "/SUBSYSTEM:CONSOLE" option for the
+linker). For a GUI-only application create a WIN32 application
+(the "/SUBSYSTEM:WINDOWS" option for the linker).
+
+FLTK includes a \c WinMain() function that calls the
+ANSI standard \c main() entry point for you.
+<I>
+This function creates a console window when you use the debug
+version of the library.
+</I>
+
+WIN32 applications without a console cannot write to
+\c stdout or \c stderr, even if they are run from a
+console window. Any output is silently thrown away.
+Additionally, WIN32 applications are run in the background by
+the console, although you can use "start /wait program" to run
+them in the foreground.
+
+\subsection osissues_win32_problems Known WIN32 Bugs and Problems
+
+The following is a list of known bugs and problems in the WIN32
+version of FLTK:
+
+\li	If a program is deactivated, <tt>Fl::wait()</tt>
+	does not return until it is activated again, even though
+	many events are delivered to the program. This can cause
+	idle background processes to stop unexpectedly. This
+	also happens while the user is dragging or resizing
+	windows or otherwise holding the mouse down. We were
+	forced to remove most of the efficiency FLTK uses for
+	redrawing in order to get windows to update while being
+	moved. This is a design error in WIN32 and probably
+	impossible to get around.
+
+\li	<tt>Fl_Gl_Window::can_do_overlay()</tt> returns true
+	until the first time it attempts to draw an overlay, and
+	then correctly returns whether or not there is overlay
+	hardware.
+
+\li	<tt>SetCapture</tt> (used by <tt>Fl::grab()</tt>)
+	doesn't work, and the main window title bar turns gray
+	while menus are popped up.
+
+\li	Compilation with <tt>gcc 3.4.4</tt> and <tt>-Os</tt> exposes an
+	optimisation bug in gcc. The symptom is that when drawing
+	filled circles only the perimeter is drawn. This can for instance
+	be seen in the symbols demo. Other optimisation options such
+	as -O2 and -O3 seem to work OK. More details can be found
+	in STR#1656
+
+\section osissues_macos The Apple OS X Interface
+
+FLTK supports Apple OS X using the Apple Cocoa library. Older
+versions of MacOS are no longer supported.
+
+Control, Option, and Command Modifier Keys
+
+\par
+FLTK maps the Mac 'control' key to \c FL_CTRL, the
+'option' key to \c FL_ALT and the 'Apple' key to
+\c FL_META. Furthermore, \c FL_COMMAND designates the 'Apple' key on Mac OS X
+and the 'control' key on other platforms.
+Keyboard events return the key name in
+Fl::event_key() and the keystroke translation in
+Fl::event_text(). For example, typing Option-Y on a Mac
+US keyboard will set \c FL_ALT in Fl::event_state(),
+set Fl::event_key() to 'y' and return the Yen symbol in
+Fl::event_text().
+
+Apple "Quit" Event
+
+\par
+When the user presses Cmd-Q or requests a termination of the
+application, OS X will send a "Quit" Apple Event. FLTK handles
+this event by sending an \c FL_CLOSE event to all open
+windows. If all windows close, the application will terminate.
+
+Apple "Open" Event
+
+\par
+Whenever the user drops a file onto an application icon, OS X
+generates an Apple Event of the type "Open". You can have FLTK
+notify you of an Open event by calling the \ref fl_open_callback 
+function.
+
+void fl_open_display()
+
+\par
+Opens the display. Does nothing if it is already open. You should call
+this if you wish to do Cocoa or Quartz calls and there is a chance that your
+code will be called before the first \c show() of a window.
+
+Window fl_xid(const Fl_Window *)
+
+\par
+Returns the window reference for an Fl_Window, or
+\c NULL if the window has not been shown. This reference is a pointer
+to an instance of the subclass FLWindow of Cocoa's NSWindow class.
+
+Fl_Window *fl_find(Window xid)
+
+\par
+Returns the Fl_Window that corresponds to the given window reference,
+or \c NULL if not found. FLTK windows that are children of top-level
+windows share the \c Window of the top-level window.
+
+void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
+
+\par
+Attaches the callback \c cb to the "About myprog" item of the system application menu.
+\c cb will be called with NULL first argument and \c user_data second argument.
+
+Fl_Mac_App_Menu class
+\par 
+The Fl_Mac_App_Menu class allows to localize the application menu.
+
+Fl_Sys_Menu_Bar class
+
+\par
+The Fl_Sys_Menu_Bar class allows to build menu bars that, on Mac OS X, are
+placed in the system menu bar (at top-left of display), and, on other platforms,
+at a user-chosen location of a user-chosen window.
+
+\subsection osissues_quartz Drawing Things Using Quartz
+
+All code inside Fl_Widget::draw()
+is expected to call Quartz drawing functions. The Quartz coordinate system 
+is flipped to match
+FLTK's coordinate system. The origin for all drawing is in the top
+left corner of the enclosing Fl_Window. The global variable
+\c fl_gc (of type \c CGContextRef) is the appropriate Quartz 2D drawing environment.
+Include FL/x.H to declare the \c fl_gc variable.
+
+Fl_Double_Window
+
+OS X double-buffers all windows automatically. On OS X,
+Fl_Window and Fl_Double_Window are handled
+internally in the same way.
+
+\subsection osissues_mac_files Mac File System Specifics
+
+\par Resource Forks
+
+FLTK does not access the resource fork of an application.
+However, a minimal resource fork must be created for OS X
+applications. Starting with OS X 10.6, resource forks are
+no longer needed.
+
+<CENTER>
+<TABLE WIDTH="80%" BORDER="1" BGCOLOR="#cccccc" CELLPADDING="5">
+<TR><TD><B>Caution (OS X 10.2 and older):</B>
+
+When using UNIX commands to copy or move executables, OS X
+will NOT copy any resource forks! For copying and moving use
+CpMac and MvMac respectively. For creating a tar archive, all
+executables need to be stripped from their Resource Fork before
+packing, e.g. "DeRez fluid > fluid.r". After unpacking the
+Resource Fork needs to be reattached, e.g. "Rez fluid.r -o
+fluid".
+</TD></TR></TABLE>
+</CENTER>
+
+It is advisable to use the Finder for moving and copying and
+Mac archiving tools like Sit for distribution as they will
+handle the Resource Fork correctly. 
+
+\par Mac File Paths
+
+FLTK uses UTF-8-encoded UNIX-style filenames and paths.
+
+\sa  group_macosx 
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    <a class="el" href="forms.html">
+    [Prev]
+    Forms Compatibility
+    </a>
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="migration_1_1.html">
+    Migrating Code from FLTK 1.0 to 1.1
+    [Next]
+    </a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/

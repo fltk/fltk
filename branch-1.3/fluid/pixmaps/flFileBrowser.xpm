@@ -1,0 +1,29 @@
+/* XPM */
+static const char *flFileBrowser_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"16 16 6 1",
+/* colors */
+"a c #ffff00",
+"b c #808080",
+"c c none",
+"d c #c0c0c0",
+"e c #ffffff",
+"f c #000000",
+/* pixels */
+"cccccccccccccccc",
+"dddddddddddddddc",
+"dfffffffffffffdc",
+"dfeeeeeeeeebbfdc",
+"dfeefffeeeebdfdc",
+"dfefaaafffebdfdc",
+"dfefaaaaafebffdc",
+"dfefaaaaafebdfdc",
+"dfefaaaaafebdfdc",
+"dfefffffffebdfdc",
+"dfeeeeeeeeebdfdc",
+"dfbbbbbbbbbbbfdc",
+"dfbdddfddddbdfdc",
+"dfffffffffffffdc",
+"dddddddddddddddc",
+"cccccccccccccccc"
+};

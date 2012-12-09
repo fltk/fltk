@@ -1,0 +1,1219 @@
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+
+Fl.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H
+Fl.o: ../FL/x.H ../FL/Fl_Window.H flstring.h ../FL/Fl_Export.H
+Fl.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Device.H
+Fl.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl.o: ../FL/Fl_RGB_Image.H
+Fl_Adjuster.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Adjuster.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Adjuster.H
+Fl_Adjuster.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/Fl_Bitmap.H
+Fl_Adjuster.o: ../FL/Fl_Image.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Adjuster.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Adjuster.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Adjuster.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Adjuster.o: fastarrow.h mediumarrow.h slowarrow.h
+Fl_Bitmap.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Bitmap.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Bitmap.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Bitmap.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+Fl_Bitmap.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Bitmap.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Bitmap.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Bitmap.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H ../FL/Fl_PostScript.H
+Fl_Bitmap.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Browser.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Browser.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Browser.H
+Fl_Browser.o: ../FL/Fl_Browser_.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Browser.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_Browser.o: ../FL/Fl_Image.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Browser.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_Browser.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Browser.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Browser.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Browser_.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Browser_.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Widget.H
+Fl_Browser_.o: ../FL/Fl_Browser_.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Browser_.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_Browser_.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Browser_.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_Browser_.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Browser_.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Browser_.o: ../FL/Fl_RGB_Image.H
+Fl_Browser_load.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Browser_load.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Browser_load.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Group.H
+Fl_Browser_load.o: ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_Browser_load.o: ../FL/Fl_Valuator.H ../FL/Fl_Image.H ../FL/fl_utf8.h
+Fl_Box.o: ../FL/Fl_Widget.H ../FL/Fl_Box.H ../FL/Fl_Widget.H
+Fl_Box.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Button.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Button.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Button.H
+Fl_Button.o: ../FL/Fl_Widget.H ../FL/Fl_Group.H ../FL/Fl_Window.H
+Fl_Button.o: ../FL/Fl_Group.H
+Fl_Chart.o: ../FL/math.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Chart.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Chart.o: ../FL/Fl_Chart.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Chart.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Chart.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Chart.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Chart.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Chart.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Check_Browser.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/fl_draw.H
+Fl_Check_Browser.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Check_Browser.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h
+Fl_Check_Browser.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Check_Browser.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Check_Browser.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Check_Browser.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Check_Browser.o: ../FL/Fl_Check_Browser.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Check_Browser.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+Fl_Check_Browser.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl.H
+Fl_Check_Button.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Check_Button.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Check_Button.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
+Fl_Check_Button.o: ../FL/Fl_Button.H ../FL/Fl_Widget.H
+Fl_Choice.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Choice.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Choice.H
+Fl_Choice.o: ../FL/Fl_Menu_.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Choice.o: ../FL/Fl_Image.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Choice.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Choice.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Choice.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
+Fl_Choice.o: ../FL/Fl_RGB_Image.H flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Clock.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Clock.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Clock.H
+Fl_Clock.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Clock.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Clock.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Clock.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Clock.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Color_Chooser.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Color_Chooser.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Color_Chooser.o: ../FL/Fl_Color_Chooser.H ../FL/Fl_Group.H ../FL/Fl_Box.H
+Fl_Color_Chooser.o: ../FL/Fl_Widget.H ../FL/Fl_Return_Button.H
+Fl_Color_Chooser.o: ../FL/Fl_Button.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+Fl_Color_Chooser.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H
+Fl_Color_Chooser.o: ../FL/Fl_Value_Input.H ../FL/Fl_Valuator.H
+Fl_Color_Chooser.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/fl_draw.H
+Fl_Color_Chooser.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_Color_Chooser.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Device.H
+Fl_Color_Chooser.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Color_Chooser.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Color_Chooser.o: ../FL/math.h
+Fl_Counter.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Counter.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Counter.H
+Fl_Counter.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Counter.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Counter.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Counter.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Counter.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Dial.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Dial.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Dial.H
+Fl_Dial.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Dial.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Dial.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Dial.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Dial.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Dial.o: ../FL/math.h
+Fl_Device.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Device.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Device.H ../FL/x.H
+Fl_Device.o: ../FL/Fl_Window.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Device.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Device.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Double_Window.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Double_Window.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Double_Window.o: ../FL/Fl_Double_Window.H ../FL/Fl_Window.H
+Fl_Double_Window.o: ../FL/Fl_Printer.H ../FL/x.H ../FL/Fl_Paged_Device.H
+Fl_Double_Window.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Double_Window.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Double_Window.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Double_Window.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Double_Window.o: ../FL/fl_draw.H ../FL/Enumerations.H
+Fl_Double_Window.o: ../FL/Fl_PostScript.H
+Fl_File_Browser.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
+Fl_File_Browser.o: ../FL/Fl_Browser_.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_File_Browser.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_File_Browser.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_File_Browser.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Xutf8.h ../FL/Fl_Image.H
+Fl_File_Browser.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H
+Fl_File_Browser.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_File_Browser.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_File_Browser.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_File_Browser.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_File_Browser.o: ../FL/filename.H flstring.h ../FL/Fl_Export.H ../config.h
+Fl_File_Chooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_File_Chooser.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+Fl_File_Chooser.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H
+Fl_File_Chooser.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
+Fl_File_Chooser.o: ../FL/Fl_Menu_.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_File_Chooser.o: ../FL/Fl_Image.H ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H
+Fl_File_Chooser.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H ../FL/Fl_Group.H
+Fl_File_Chooser.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
+Fl_File_Chooser.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_File_Chooser.o: ../FL/Fl_Valuator.H ../FL/Fl_File_Icon.H ../FL/Fl.H
+Fl_File_Chooser.o: ../FL/filename.H ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
+Fl_File_Chooser.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
+Fl_File_Chooser.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+Fl_File_Chooser.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H ../FL/fl_draw.H
+Fl_File_Chooser.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_File_Chooser.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_File_Chooser.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
+Fl_File_Chooser.o: ../FL/Fl_RGB_Image.H
+Fl_File_Chooser2.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_File_Chooser2.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+Fl_File_Chooser2.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H
+Fl_File_Chooser2.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
+Fl_File_Chooser2.o: ../FL/Fl_Menu_.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_File_Chooser2.o: ../FL/Fl_Image.H ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H
+Fl_File_Chooser2.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H ../FL/Fl_Group.H
+Fl_File_Chooser2.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
+Fl_File_Chooser2.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+Fl_File_Chooser2.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_File_Chooser2.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H
+Fl_File_Chooser2.o: ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
+Fl_File_Chooser2.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
+Fl_File_Chooser2.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+Fl_File_Chooser2.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H ../FL/filename.H
+Fl_File_Chooser2.o: ../FL/x.H ../FL/Fl_Shared_Image.H ../FL/fl_draw.H
+Fl_File_Chooser2.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_File_Chooser2.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_File_Chooser2.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_File_Chooser2.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_File_Icon.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
+Fl_File_Icon.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_File_Icon.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+Fl_File_Icon.o: ../FL/Enumerations.H ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl_File_Icon.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_File_Icon.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_File_Icon.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_File_Icon.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_File_Icon.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/filename.H
+Fl_File_Input.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_File_Input.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_File_Input.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+Fl_File_Input.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_File_Input.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_File_Input.o: ../FL/Enumerations.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_File_Input.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_File_Input.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_File_Input.o: ../FL/filename.H flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Group.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Group.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Group.H
+Fl_Group.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Group.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_Group.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Group.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Group.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Help_View.o: ../FL/Fl_Help_View.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Help_View.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+Fl_Help_View.o: ../FL/Enumerations.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Help_View.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_Help_View.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Help_View.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_Help_View.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Help_View.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Help_View.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H ../FL/filename.H
+Fl_Help_View.o: ../FL/fl_utf8.h ../FL/filename.H flstring.h ../FL/Fl_Export.H
+Fl_Help_View.o: ../config.h
+Fl_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Image.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
+Fl_Image.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Image.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+Fl_Image.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Image.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Image.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Image.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Input.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Input.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Input.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Input.H
+Fl_Input.o: ../FL/Fl_Input_.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Input.o: ../FL/Enumerations.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Input.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Input.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Input.o: ../FL/fl_ask.H flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Input_.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Input_.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Input_.H
+Fl_Input_.o: ../FL/Fl_Widget.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Input_.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_Input_.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Input_.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Input_.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/fl_ask.H
+Fl_Input_.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Light_Button.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Light_Button.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Light_Button.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
+Fl_Light_Button.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Light_Button.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Light_Button.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Light_Button.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Light_Button.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Light_Button.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Menu.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Menu.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Menu_Window.H
+Fl_Menu.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H ../FL/Fl_Menu_.H
+Fl_Menu.o: ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H
+Fl_Menu.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Menu.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Menu.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Menu.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H flstring.h
+Fl_Menu.o: ../FL/Fl_Export.H ../config.h
+Fl_Menu_.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Menu_.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Menu_.H
+Fl_Menu_.o: ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H
+Fl_Menu_.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Menu_Bar.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Menu_Bar.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Menu_Bar.H
+Fl_Menu_Bar.o: ../FL/Fl_Menu_.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Menu_Bar.o: ../FL/Fl_Image.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Menu_Bar.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Menu_Bar.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Menu_Bar.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
+Fl_Menu_Bar.o: ../FL/Fl_RGB_Image.H
+Fl_Menu_Button.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Menu_Button.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Menu_Button.o: ../FL/Fl_Menu_Button.H ../FL/Fl_Menu_.H ../FL/Fl_Widget.H
+Fl_Menu_Button.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Image.H ../FL/fl_draw.H
+Fl_Menu_Button.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_Menu_Button.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Device.H
+Fl_Menu_Button.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Menu_Button.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Menu_Window.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Menu_Window.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Menu_Window.o: ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
+Fl_Menu_Window.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Menu_Window.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Menu_Window.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Menu_Window.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Menu_Window.o: ../FL/Fl_Menu_Window.H ../FL/Fl_Single_Window.H
+Fl_Menu_add.o: ../FL/Fl_Menu_.H ../FL/Fl_Widget.H ../FL/Enumerations.H
+Fl_Menu_add.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Menu_Item.H
+Fl_Menu_add.o: ../FL/Fl_Image.H flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Menu_global.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Menu_global.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Menu_global.o: ../FL/Fl_Menu_.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Menu_global.o: ../FL/Fl_Image.H
+Fl_Multi_Label.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Multi_Label.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Multi_Label.o: ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H
+Fl_Multi_Label.o: ../FL/Fl_Image.H ../FL/Fl_Multi_Label.H
+Fl_Native_File_Chooser.o: Fl_Native_File_Chooser_FLTK.cxx
+Fl_Native_File_Chooser.o: ../FL/Fl_Native_File_Chooser.H
+Fl_Native_File_Chooser.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Native_File_Chooser.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+Fl_Native_File_Chooser.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Image.H ../FL/Fl_Menu_Button.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Tile.H ../FL/Fl_Group.H
+Fl_Native_File_Chooser.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_Native_File_Chooser.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Box.H ../FL/Fl_Check_Button.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Light_Button.H ../FL/Fl_Button.H
+Fl_Native_File_Chooser.o: ../FL/Fl_File_Input.H ../FL/Fl_Input.H
+Fl_Native_File_Chooser.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+Fl_Native_File_Chooser.o: ../FL/fl_ask.H ../FL/Fl_File_Icon.H
+Fl_Native_File_Chooser.o: Fl_Native_File_Chooser_common.cxx
+Fl_Native_File_Chooser.o: ../FL/Enumerations.H
+Fl_Overlay_Window.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Overlay_Window.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Overlay_Window.o: ../FL/Fl_Overlay_Window.H ../FL/Fl_Double_Window.H
+Fl_Overlay_Window.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/x.H
+Fl_Overlay_Window.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Overlay_Window.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Overlay_Window.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Overlay_Window.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Overlay_Window.o: ../FL/Fl_RGB_Image.H
+Fl_Pack.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Pack.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Pack.H
+Fl_Pack.o: ../FL/Fl_Group.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Pack.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Pack.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Pack.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Pack.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Paged_Device.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/x.H
+Fl_Paged_Device.o: ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Paged_Device.o: ../FL/Fl_Window.H ../FL/Xutf8.h ../FL/Fl_Plugin.H
+Fl_Paged_Device.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Paged_Device.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Paged_Device.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Paged_Device.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/fl_draw.H
+Fl_Paged_Device.o: ../FL/Enumerations.H
+Fl_Pixmap.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Pixmap.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
+Fl_Pixmap.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Pixmap.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+Fl_Pixmap.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Pixmap.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Pixmap.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+Fl_Pixmap.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H ../FL/Fl_PostScript.H
+Fl_Pixmap.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Positioner.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Positioner.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Positioner.o: ../FL/Fl_Positioner.H ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl_Positioner.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_Positioner.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Device.H
+Fl_Positioner.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Positioner.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Positioner.o: ../FL/Fl_RGB_Image.H
+Fl_Preferences.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Preferences.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Preferences.o: ../FL/Fl_Preferences.H ../FL/Fl_Plugin.H
+Fl_Preferences.o: ../FL/Fl_Preferences.H ../FL/filename.H ../FL/fl_utf8.h
+Fl_Preferences.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Printer.o: ../FL/Fl_Printer.H ../FL/x.H ../FL/Enumerations.H
+Fl_Printer.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
+Fl_Printer.o: ../FL/Xutf8.h ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H
+Fl_Printer.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Printer.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Printer.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Printer.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Enumerations.H
+Fl_Printer.o: ../FL/Fl_PostScript.H Fl_PostScript.cxx ../config.h ../FL/Fl.H
+Fl_Printer.o: ../FL/fl_utf8.h ../FL/fl_ask.H ../FL/Fl_Native_File_Chooser.H
+Fl_Printer.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H
+Fl_Printer.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+Fl_Printer.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H
+Fl_Printer.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H
+Fl_Printer.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+Fl_Printer.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_File_Icon.H
+Fl_Printer.o: ../FL/Fl.H ../FL/filename.H ../FL/Fl_Box.H
+Fl_Printer.o: ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
+Fl_Printer.o: ../FL/Fl_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
+Fl_Printer.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H Fl_Font.H
+Fl_Printer.o: print_panel.cxx print_panel.h ../FL/Fl_Round_Button.H
+Fl_Printer.o: ../FL/Fl_Spinner.H ../FL/Fl_Repeat_Button.H ../FL/Fl_Progress.H
+Fl_Printer.o: ../src/flstring.h ../FL/Fl_Export.H ../FL/Fl_Int_Input.H
+Fl_Printer.o: ../FL/Fl_Input.H
+Fl_Progress.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Progress.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Progress.H
+Fl_Progress.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Progress.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Progress.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Progress.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Progress.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Repeat_Button.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Repeat_Button.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Repeat_Button.o: ../FL/Fl_Repeat_Button.H ../FL/Fl.H ../FL/Fl_Button.H
+Fl_Repeat_Button.o: ../FL/Fl_Widget.H
+Fl_Return_Button.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Return_Button.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Return_Button.o: ../FL/Fl_Return_Button.H ../FL/Fl_Button.H
+Fl_Return_Button.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Return_Button.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Return_Button.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Return_Button.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Return_Button.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Roller.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Roller.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Roller.H
+Fl_Roller.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Roller.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Roller.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Roller.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Roller.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Round_Button.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Round_Button.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Round_Button.o: ../FL/Fl_Round_Button.H ../FL/Fl_Light_Button.H
+Fl_Round_Button.o: ../FL/Fl_Button.H ../FL/Fl_Widget.H
+Fl_Scroll.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Scroll.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Tiled_Image.H
+Fl_Scroll.o: ../FL/Fl_Image.H ../FL/Fl_Scroll.H ../FL/Fl_Group.H
+Fl_Scroll.o: ../FL/Fl_Widget.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_Scroll.o: ../FL/Fl_Valuator.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Scroll.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_Scroll.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Scroll.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Scrollbar.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Scrollbar.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Scrollbar.H
+Fl_Scrollbar.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Widget.H
+Fl_Scrollbar.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Scrollbar.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Scrollbar.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Scrollbar.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Scrollbar.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H flstring.h
+Fl_Scrollbar.o: ../FL/Fl_Export.H ../config.h
+Fl_Shared_Image.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Shared_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Shared_Image.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Shared_Image.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
+Fl_Shared_Image.o: ../FL/Fl_XBM_Image.H ../FL/Fl_Bitmap.H
+Fl_Shared_Image.o: ../FL/Fl_XPM_Image.H ../FL/Fl_Pixmap.H
+Fl_Single_Window.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H
+Fl_Slider.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Slider.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Slider.H
+Fl_Slider.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Slider.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Slider.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Slider.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Slider.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Slider.o: flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Table.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Table.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h
+Fl_Table.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Table.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Table.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Table.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Table.o: ../FL/Fl_Table.H ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Group.H
+Fl_Table.o: ../FL/Fl_Scroll.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_Table.o: ../FL/Fl_Valuator.H ../FL/Fl_Box.H ../FL/Fl_Scrollbar.H
+Fl_Table_Row.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Table_Row.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
+Fl_Table_Row.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Table_Row.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+Fl_Table_Row.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Table_Row.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Table_Row.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Table_Row.H ../FL/Fl_Table.H
+Fl_Table_Row.o: ../FL/Fl_Group.H ../FL/Fl_Scroll.H ../FL/Fl_Scrollbar.H
+Fl_Table_Row.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl_Box.H
+Fl_Table_Row.o: ../FL/Fl_Scrollbar.H
+Fl_Tabs.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Tabs.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Tabs.H
+Fl_Tabs.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Tabs.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Tabs.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Tabs.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Tabs.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/Fl_Tooltip.H
+Fl_Tabs.o: ../FL/Fl_Widget.H
+Fl_Text_Buffer.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Text_Buffer.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Text_Buffer.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Text_Buffer.o: ../FL/Fl_Text_Buffer.H ../FL/fl_ask.H
+Fl_Text_Display.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Text_Display.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Text_Display.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Text_Display.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Text_Display.H
+Fl_Text_Display.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Text_Display.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Text_Display.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Text_Display.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Text_Display.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Text_Display.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+Fl_Text_Display.o: ../FL/Fl_Text_Buffer.H ../FL/Fl_Printer.H
+Fl_Text_Display.o: ../FL/Fl_Paged_Device.H ../FL/fl_draw.H
+Fl_Text_Display.o: ../FL/Fl_PostScript.H
+Fl_Text_Editor.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H
+Fl_Text_Editor.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Text_Editor.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Text_Editor.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Text_Editor.H
+Fl_Text_Editor.o: ../FL/Fl_Text_Display.H ../FL/fl_draw.H ../FL/x.H
+Fl_Text_Editor.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Device.H
+Fl_Text_Editor.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Text_Editor.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Text_Editor.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_Text_Editor.o: ../FL/Fl_Valuator.H ../FL/Fl_Text_Buffer.H ../FL/fl_ask.H
+Fl_Tile.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Tile.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Tile.H
+Fl_Tile.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Window.H
+Fl_Tiled_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Tiled_Image.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Tiled_Image.o: ../FL/Fl_Tiled_Image.H ../FL/Fl_Image.H ../FL/fl_draw.H
+Fl_Tiled_Image.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_Tiled_Image.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Tiled_Image.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Tiled_Image.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H
+Fl_Tiled_Image.o: ../FL/Fl_RGB_Image.H
+Fl_Tree.o: ../FL/Fl_Tree.H ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Tree.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Tree.o: ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_Tree.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Tree.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Tree.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Tree.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Tree.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Tree.o: ../FL/Fl_Tree_Item.H ../FL/Fl_Widget.H ../FL/Fl_Tree_Item_Array.H
+Fl_Tree.o: ../FL/Fl_Tree_Prefs.H ../FL/Fl_Preferences.H
+Fl_Tree_Item.o: ../FL/Fl_Widget.H ../FL/Fl_Tree_Item.H ../FL/Fl.H
+Fl_Tree_Item.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Tree_Item.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Image.H
+Fl_Tree_Item.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Tree_Item.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Tree_Item.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Tree_Item.o: ../FL/Fl_Preferences.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Tree_Item.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Tree_Item.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Tree_Prefs.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Tree_Item_Array.H ../FL/Fl_Export.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Tree_Item.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Tree_Item_Array.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Widget.H ../FL/Fl_Image.H ../FL/fl_draw.H
+Fl_Tree_Item_Array.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Preferences.H ../FL/Fl_Bitmap.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Tree_Item_Array.o: ../FL/Fl_Tree_Prefs.H
+Fl_Tree_Prefs.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Tree_Prefs.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Tree_Prefs.o: ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/Fl_Tree_Prefs.H
+Fl_Tooltip.o: ../FL/Fl_Tooltip.H ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Tooltip.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Tooltip.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_Tooltip.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Tooltip.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Tooltip.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Tooltip.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Tooltip.o: ../FL/Fl_Menu_Window.H ../FL/Fl_Single_Window.H
+Fl_Valuator.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Valuator.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Valuator.H
+Fl_Valuator.o: ../FL/Fl_Widget.H ../FL/math.h flstring.h ../FL/Fl_Export.H
+Fl_Valuator.o: ../config.h
+Fl_Value_Input.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Value_Input.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Value_Input.o: ../FL/Fl_Value_Input.H ../FL/Fl_Valuator.H
+Fl_Value_Input.o: ../FL/Fl_Widget.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+Fl_Value_Input.o: ../FL/Fl_Group.H ../FL/math.h
+Fl_Value_Output.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Value_Output.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Value_Output.o: ../FL/Fl_Value_Output.H ../FL/Fl_Valuator.H
+Fl_Value_Output.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_Value_Output.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Value_Output.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+Fl_Value_Output.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+Fl_Value_Output.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Value_Slider.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Value_Slider.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Value_Slider.o: ../FL/Fl_Value_Slider.H ../FL/Fl_Slider.H
+Fl_Value_Slider.o: ../FL/Fl_Valuator.H ../FL/Fl_Widget.H ../FL/fl_draw.H
+Fl_Value_Slider.o: ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+Fl_Value_Slider.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Device.H
+Fl_Value_Slider.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Value_Slider.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Value_Slider.o: ../FL/Fl_RGB_Image.H
+Fl_Widget.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Widget.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Widget.H
+Fl_Widget.o: ../FL/Fl_Group.H ../FL/Fl_Tooltip.H ../FL/fl_draw.H ../FL/x.H
+Fl_Widget.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_Widget.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+Fl_Widget.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Widget.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Widget.o: ../FL/Fl_RGB_Image.H flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Window.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Window.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H
+Fl_Window.o: ../FL/Fl_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_Window.o: ../FL/Fl_Widget.H flstring.h ../FL/Fl_Export.H
+Fl_Window_fullscreen.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Window_fullscreen.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Window_fullscreen.o: ../FL/x.H ../FL/Fl_Window.H ../config.h
+Fl_Window_hotspot.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Window_hotspot.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Window_hotspot.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Window_hotspot.o: ../FL/x.H ../FL/Fl_Window.H
+Fl_Window_iconize.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Window_iconize.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h
+Fl_Wizard.o: ../FL/Fl_Wizard.H ../FL/Fl_Group.H ../FL/Fl_Window.H
+Fl_Wizard.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Enumerations.H
+Fl_Wizard.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/fl_draw.H ../FL/x.H
+Fl_Wizard.o: ../FL/Fl_Window.H ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Wizard.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Wizard.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Wizard.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_XBM_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_XBM_Image.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_XBM_Image.H
+Fl_XBM_Image.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h
+Fl_XBM_Image.o: ../FL/Fl_Export.H ../config.h
+Fl_XPM_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_XPM_Image.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_XPM_Image.H
+Fl_XPM_Image.o: ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h
+Fl_XPM_Image.o: ../FL/Fl_Export.H ../config.h
+Fl_abort.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_abort.o: ../FL/Xutf8.h ../FL/Enumerations.H flstring.h ../FL/Fl_Export.H
+Fl_abort.o: ../config.h
+Fl_add_idle.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_add_idle.o: ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_arg.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_arg.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H
+Fl_arg.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_arg.o: ../FL/Fl_Tooltip.H ../FL/Fl_Widget.H ../FL/filename.H
+Fl_arg.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Device.H
+Fl_arg.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_arg.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_arg.o: ../FL/Fl_RGB_Image.H flstring.h ../FL/Fl_Export.H ../config.h
+Fl_compose.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_compose.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H
+Fl_display.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_display.o: ../FL/Xutf8.h ../FL/Enumerations.H flstring.h ../FL/Fl_Export.H
+Fl_display.o: ../config.h
+Fl_get_key.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_get_key.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H
+Fl_get_system_colors.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_get_system_colors.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_get_system_colors.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+Fl_get_system_colors.o: ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_get_system_colors.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+Fl_get_system_colors.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_get_system_colors.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_get_system_colors.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H ../FL/math.h
+Fl_get_system_colors.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H
+Fl_get_system_colors.o: ../config.h ../FL/Fl_Tiled_Image.H tile.xpm
+Fl_grab.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_grab.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H
+Fl_grab.o: ../FL/Fl_Window.H
+Fl_lock.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_lock.o: ../FL/Xutf8.h ../FL/Enumerations.H ../config.h
+Fl_own_colormap.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_own_colormap.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_own_colormap.o: ../FL/x.H ../FL/Fl_Window.H
+Fl_visual.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_visual.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H
+Fl_visual.o: ../FL/Fl_Window.H
+Fl_x.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_x.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H
+Fl_x.o: ../FL/Fl_Window.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+Fl_x.o: ../FL/Fl_Widget.H ../FL/fl_utf8.h ../FL/Fl_Tooltip.H
+Fl_x.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/Enumerations.H
+Fl_x.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_x.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_x.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Paged_Device.H flstring.h
+Fl_x.o: ../FL/Fl_Export.H
+filename_absolute.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h
+filename_absolute.o: ../FL/Fl_Export.H ../config.h
+filename_expand.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h
+filename_expand.o: ../FL/Fl_Export.H ../config.h
+filename_ext.o: ../FL/filename.H
+filename_isdir.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/filename.H
+filename_isdir.o: ../FL/fl_utf8.h
+filename_list.o: ../FL/filename.H ../FL/fl_utf8.h flstring.h
+filename_list.o: ../FL/Fl_Export.H ../config.h
+filename_match.o: ../FL/filename.H
+filename_setext.o: ../FL/filename.H flstring.h ../FL/Fl_Export.H ../config.h
+fl_arc.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+fl_arc.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h
+fl_arc.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_arc.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_arc.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_arc.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_arc.o: ../FL/math.h
+fl_arci.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+fl_arci.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h
+fl_arci.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_arci.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_arci.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_arci.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_arci.o: ../config.h
+fl_ask.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H ../FL/fl_utf8.h
+fl_ask.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+fl_ask.o: ../FL/Enumerations.H ../FL/fl_ask.H ../FL/Fl_Box.H
+fl_ask.o: ../FL/Fl_Widget.H ../FL/Fl_Button.H ../FL/Fl_Return_Button.H
+fl_ask.o: ../FL/Fl_Button.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_ask.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Secret_Input.H
+fl_ask.o: ../FL/Fl_Input.H ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
+fl_ask.o: ../FL/Enumerations.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_ask.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_ask.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_boxtype.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_boxtype.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Widget.H
+fl_boxtype.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_boxtype.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_boxtype.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_boxtype.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_boxtype.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_boxtype.o: ../config.h
+fl_color.o: Fl_XColor.H ../config.h ../FL/Enumerations.H ../FL/Fl.H
+fl_color.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+fl_color.o: ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
+fl_color.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+fl_color.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+fl_color.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+fl_color.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H fl_cmap.h
+fl_cursor.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_cursor.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_cursor.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/x.H ../FL/Fl_Window.H
+fl_cursor.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Device.H
+fl_cursor.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_cursor.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_cursor.o: ../FL/Fl_RGB_Image.H
+fl_curve.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+fl_curve.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h
+fl_curve.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_curve.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_curve.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_curve.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_diamond_box.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_diamond_box.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_diamond_box.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_diamond_box.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_diamond_box.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_diamond_box.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_diamond_box.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_dnd.o: fl_dnd_x.cxx ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_dnd.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_dnd.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/x.H
+fl_dnd.o: ../FL/Fl_Window.H flstring.h ../FL/Fl_Export.H ../config.h
+fl_draw.o: ../FL/fl_utf8.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_draw.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_draw.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H ../FL/Enumerations.H
+fl_draw.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+fl_draw.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+fl_draw.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+fl_draw.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H flstring.h
+fl_draw.o: ../FL/Fl_Export.H ../config.h
+fl_draw_image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_draw_image.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_draw_image.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_draw_image.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_draw_image.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_draw_image.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_draw_image.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_draw_image.o: Fl_XColor.H ../config.h flstring.h ../FL/Fl_Export.H
+fl_draw_pixmap.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_draw_pixmap.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_draw_pixmap.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_draw_pixmap.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_draw_pixmap.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_draw_pixmap.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_draw_pixmap.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_draw_pixmap.o: flstring.h ../FL/Fl_Export.H ../config.h
+fl_encoding_latin1.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H
+fl_encoding_latin1.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
+fl_encoding_latin1.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_encoding_latin1.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_encoding_latin1.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+fl_encoding_latin1.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+fl_encoding_latin1.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H flstring.h
+fl_encoding_latin1.o: ../FL/Fl_Export.H ../config.h
+fl_encoding_mac_roman.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H
+fl_encoding_mac_roman.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
+fl_encoding_mac_roman.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_encoding_mac_roman.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_encoding_mac_roman.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+fl_encoding_mac_roman.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+fl_encoding_mac_roman.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H flstring.h
+fl_encoding_mac_roman.o: ../FL/Fl_Export.H ../config.h
+fl_engraved_label.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_engraved_label.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_engraved_label.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+fl_engraved_label.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_engraved_label.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_engraved_label.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+fl_engraved_label.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+fl_engraved_label.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_file_dir.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/filename.H
+fl_file_dir.o: ../FL/Fl_File_Chooser.H ../FL/Fl.H ../FL/fl_utf8.h
+fl_file_dir.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+fl_file_dir.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H
+fl_file_dir.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Choice.H
+fl_file_dir.o: ../FL/Fl_Menu_.H ../FL/Fl_Widget.H ../FL/Fl_Menu_Item.H
+fl_file_dir.o: ../FL/Fl_Image.H ../FL/Fl_Menu_Button.H ../FL/Fl_Button.H
+fl_file_dir.o: ../FL/Fl_Preferences.H ../FL/Fl_Tile.H ../FL/Fl_Group.H
+fl_file_dir.o: ../FL/Fl_File_Browser.H ../FL/Fl_Browser.H ../FL/Fl_Browser_.H
+fl_file_dir.o: ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H ../FL/Fl_Valuator.H
+fl_file_dir.o: ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/filename.H
+fl_file_dir.o: ../FL/Fl_Box.H ../FL/Fl_Check_Button.H ../FL/Fl_Light_Button.H
+fl_file_dir.o: ../FL/Fl_Button.H ../FL/Fl_File_Input.H ../FL/Fl_Input.H
+fl_file_dir.o: ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H ../FL/fl_ask.H
+fl_font.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H
+fl_font.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+fl_font.o: ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_font.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_font.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_font.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_font.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H Fl_Font.H
+fl_font.o: fl_font_xft.cxx
+fl_gtk.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_gtk.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
+fl_gtk.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_gtk.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_gtk.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_gtk.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_gtk.o: ../FL/Fl_RGB_Image.H
+fl_labeltype.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_labeltype.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Widget.H
+fl_labeltype.o: ../FL/Fl_Group.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_labeltype.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_labeltype.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_labeltype.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_labeltype.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_labeltype.o: ../FL/Fl_Input_.H
+fl_line_style.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_line_style.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_line_style.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_line_style.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_line_style.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_line_style.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_line_style.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_line_style.o: ../FL/Fl_Printer.H ../FL/Fl_Paged_Device.H
+fl_line_style.o: ../FL/Fl_PostScript.H flstring.h ../FL/Fl_Export.H
+fl_line_style.o: ../config.h
+fl_open_uri.o: ../FL/filename.H flstring.h ../FL/Fl_Export.H ../config.h
+fl_oval_box.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_oval_box.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
+fl_oval_box.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_oval_box.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_oval_box.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_oval_box.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_oval_box.o: ../FL/Fl_RGB_Image.H
+fl_overlay.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+fl_overlay.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h
+fl_overlay.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_overlay.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_overlay.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_overlay.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_overlay.o: ../FL/Fl_RGB_Image.H
+fl_overlay_visual.o: ../config.h
+fl_plastic.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_plastic.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
+fl_plastic.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_plastic.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_plastic.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_plastic.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_plastic.o: ../FL/Fl_RGB_Image.H flstring.h ../FL/Fl_Export.H ../config.h
+fl_read_image.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H
+fl_read_image.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h ../FL/Fl.H
+fl_read_image.o: ../FL/fl_utf8.h ../FL/fl_draw.H ../FL/Enumerations.H
+fl_read_image.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+fl_read_image.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+fl_read_image.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+fl_read_image.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H flstring.h
+fl_read_image.o: ../FL/Fl_Export.H ../config.h
+fl_rect.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_rect.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_rect.o: ../FL/Fl_Widget.H ../FL/Fl_Printer.H ../FL/x.H ../FL/Fl_Window.H
+fl_rect.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_rect.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_rect.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_rect.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+fl_rect.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_PostScript.H
+fl_round_box.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_round_box.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
+fl_round_box.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_round_box.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_round_box.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_round_box.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_round_box.o: ../FL/Fl_RGB_Image.H
+fl_rounded_box.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_rounded_box.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_rounded_box.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_rounded_box.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_rounded_box.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_rounded_box.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_rounded_box.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_set_font.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_set_font.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H
+fl_set_font.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_set_font.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_set_font.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_set_font.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_set_font.o: ../FL/Fl_RGB_Image.H flstring.h ../FL/Fl_Export.H ../config.h
+fl_set_font.o: Fl_Font.H
+fl_set_fonts.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_set_fonts.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H
+fl_set_fonts.o: ../FL/Fl_Window.H Fl_Font.H ../config.h flstring.h
+fl_set_fonts.o: ../FL/Fl_Export.H fl_set_fonts_xft.cxx
+fl_scroll_area.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_scroll_area.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_scroll_area.o: ../FL/x.H ../FL/Fl_Window.H ../FL/fl_draw.H
+fl_scroll_area.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_scroll_area.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_scroll_area.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_scroll_area.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_shadow_box.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_shadow_box.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_shadow_box.o: ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+fl_shadow_box.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+fl_shadow_box.o: ../FL/Fl_Widget.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_shadow_box.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_shadow_box.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_shortcut.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_shortcut.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Widget.H
+fl_shortcut.o: ../FL/Fl_Button.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+fl_shortcut.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_shortcut.o: ../FL/Fl_Group.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_shortcut.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_shortcut.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_shortcut.o: flstring.h ../FL/Fl_Export.H ../config.h
+fl_show_colormap.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+fl_show_colormap.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+fl_show_colormap.o: ../FL/Fl_Single_Window.H ../FL/Fl_Window.H
+fl_show_colormap.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H
+fl_show_colormap.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+fl_show_colormap.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+fl_show_colormap.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+fl_show_colormap.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+fl_show_colormap.o: ../FL/fl_show_colormap.H ../config.h
+fl_symbols.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+fl_symbols.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/fl_draw.H ../FL/x.H
+fl_symbols.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_symbols.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_symbols.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_symbols.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_symbols.o: ../FL/Fl_RGB_Image.H ../FL/math.h flstring.h ../FL/Fl_Export.H
+fl_symbols.o: ../config.h
+fl_vertex.o: ../config.h ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H
+fl_vertex.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl_Window.H
+fl_vertex.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Window.H
+fl_vertex.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+fl_vertex.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+fl_vertex.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+fl_vertex.o: ../FL/Fl_RGB_Image.H ../FL/Fl.H ../FL/fl_utf8.h ../FL/math.h
+screen_xywh.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+screen_xywh.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H ../FL/Fl_Window.H
+screen_xywh.o: ../config.h
+fl_utf8.o: ../config.h ../FL/filename.H ../FL/Xutf8.h ../FL/fl_utf8.h
+ps_image.o: ../FL/Fl_PostScript.H ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H
+ps_image.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Export.H ../FL/fl_types.h
+ps_image.o: ../FL/Fl_Window.H ../FL/Xutf8.h ../FL/Fl_Plugin.H
+ps_image.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+ps_image.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+ps_image.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+ps_image.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl.H ../FL/fl_utf8.h
+forms_compatability.o: ../FL/forms.H ../FL/Fl.H ../FL/fl_utf8.h
+forms_compatability.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+forms_compatability.o: ../FL/Enumerations.H ../FL/Fl_Group.H
+forms_compatability.o: ../FL/Fl_Widget.H ../FL/Fl_Window.H ../FL/fl_draw.H
+forms_compatability.o: ../FL/x.H ../FL/Enumerations.H ../FL/Fl_Window.H
+forms_compatability.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+forms_compatability.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+forms_compatability.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+forms_compatability.o: ../FL/Fl_RGB_Image.H ../FL/Fl_FormsBitmap.H
+forms_compatability.o: ../FL/Fl_Bitmap.H ../FL/Fl_FormsPixmap.H
+forms_compatability.o: ../FL/Fl_Pixmap.H ../FL/Fl_Box.H ../FL/Fl_Browser.H
+forms_compatability.o: ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+forms_compatability.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl.H
+forms_compatability.o: ../FL/Fl_Button.H ../FL/Fl_Light_Button.H
+forms_compatability.o: ../FL/Fl_Round_Button.H ../FL/Fl_Check_Button.H
+forms_compatability.o: ../FL/Fl_Chart.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+forms_compatability.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H
+forms_compatability.o: ../FL/Fl_Counter.H ../FL/Fl_Dial.H ../FL/Fl_Free.H
+forms_compatability.o: ../FL/fl_ask.H ../FL/fl_show_colormap.H
+forms_compatability.o: ../FL/filename.H ../FL/Fl_File_Chooser.H
+forms_compatability.o: ../FL/Fl_Double_Window.H ../FL/Fl_Group.H
+forms_compatability.o: ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+forms_compatability.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H
+forms_compatability.o: ../FL/Fl_Tile.H ../FL/Fl_File_Browser.H
+forms_compatability.o: ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
+forms_compatability.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
+forms_compatability.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H
+forms_compatability.o: ../FL/Fl_Return_Button.H ../FL/fl_ask.H
+forms_compatability.o: ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_compatability.o: ../FL/Fl_Positioner.H ../FL/Fl_Value_Slider.H
+forms_compatability.o: ../FL/Fl_Timer.H ../FL/Fl_Repeat_Button.H
+forms_bitmap.o: ../FL/forms.H ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+forms_bitmap.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+forms_bitmap.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Window.H
+forms_bitmap.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H
+forms_bitmap.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+forms_bitmap.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+forms_bitmap.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+forms_bitmap.o: ../FL/Fl_FormsBitmap.H ../FL/Fl_Bitmap.H
+forms_bitmap.o: ../FL/Fl_FormsPixmap.H ../FL/Fl_Pixmap.H ../FL/Fl_Box.H
+forms_bitmap.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+forms_bitmap.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl.H
+forms_bitmap.o: ../FL/Fl_Button.H ../FL/Fl_Light_Button.H
+forms_bitmap.o: ../FL/Fl_Round_Button.H ../FL/Fl_Check_Button.H
+forms_bitmap.o: ../FL/Fl_Chart.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+forms_bitmap.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H ../FL/Fl_Counter.H
+forms_bitmap.o: ../FL/Fl_Dial.H ../FL/Fl_Free.H ../FL/fl_ask.H
+forms_bitmap.o: ../FL/fl_show_colormap.H ../FL/filename.H
+forms_bitmap.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H
+forms_bitmap.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+forms_bitmap.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+forms_bitmap.o: ../FL/Fl_File_Browser.H ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
+forms_bitmap.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
+forms_bitmap.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+forms_bitmap.o: ../FL/fl_ask.H ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_bitmap.o: ../FL/Fl_Positioner.H ../FL/Fl_Value_Slider.H
+forms_bitmap.o: ../FL/Fl_Timer.H
+forms_free.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+forms_free.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Free.H
+forms_free.o: ../FL/Fl_Widget.H
+forms_fselect.o: ../FL/forms.H ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+forms_fselect.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+forms_fselect.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Window.H
+forms_fselect.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H
+forms_fselect.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+forms_fselect.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+forms_fselect.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+forms_fselect.o: ../FL/Fl_FormsBitmap.H ../FL/Fl_Bitmap.H
+forms_fselect.o: ../FL/Fl_FormsPixmap.H ../FL/Fl_Pixmap.H ../FL/Fl_Box.H
+forms_fselect.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+forms_fselect.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl.H
+forms_fselect.o: ../FL/Fl_Button.H ../FL/Fl_Light_Button.H
+forms_fselect.o: ../FL/Fl_Round_Button.H ../FL/Fl_Check_Button.H
+forms_fselect.o: ../FL/Fl_Chart.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+forms_fselect.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H ../FL/Fl_Counter.H
+forms_fselect.o: ../FL/Fl_Dial.H ../FL/Fl_Free.H ../FL/fl_ask.H
+forms_fselect.o: ../FL/fl_show_colormap.H ../FL/filename.H
+forms_fselect.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H
+forms_fselect.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+forms_fselect.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+forms_fselect.o: ../FL/Fl_File_Browser.H ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
+forms_fselect.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
+forms_fselect.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+forms_fselect.o: ../FL/fl_ask.H ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_fselect.o: ../FL/Fl_Positioner.H ../FL/Fl_Value_Slider.H
+forms_fselect.o: ../FL/Fl_Timer.H flstring.h ../FL/Fl_Export.H ../config.h
+forms_pixmap.o: ../FL/forms.H ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+forms_pixmap.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+forms_pixmap.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Window.H
+forms_pixmap.o: ../FL/fl_draw.H ../FL/x.H ../FL/Enumerations.H
+forms_pixmap.o: ../FL/Fl_Window.H ../FL/Fl_Device.H ../FL/Fl_Plugin.H
+forms_pixmap.o: ../FL/Fl_Preferences.H ../FL/Fl_Image.H ../FL/Fl_Bitmap.H
+forms_pixmap.o: ../FL/Fl_Image.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+forms_pixmap.o: ../FL/Fl_FormsBitmap.H ../FL/Fl_Bitmap.H
+forms_pixmap.o: ../FL/Fl_FormsPixmap.H ../FL/Fl_Pixmap.H ../FL/Fl_Box.H
+forms_pixmap.o: ../FL/Fl_Browser.H ../FL/Fl_Browser_.H ../FL/Fl_Scrollbar.H
+forms_pixmap.o: ../FL/Fl_Slider.H ../FL/Fl_Valuator.H ../FL/Fl.H
+forms_pixmap.o: ../FL/Fl_Button.H ../FL/Fl_Light_Button.H
+forms_pixmap.o: ../FL/Fl_Round_Button.H ../FL/Fl_Check_Button.H
+forms_pixmap.o: ../FL/Fl_Chart.H ../FL/Fl_Choice.H ../FL/Fl_Menu_.H
+forms_pixmap.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Clock.H ../FL/Fl_Counter.H
+forms_pixmap.o: ../FL/Fl_Dial.H ../FL/Fl_Free.H ../FL/fl_ask.H
+forms_pixmap.o: ../FL/fl_show_colormap.H ../FL/filename.H
+forms_pixmap.o: ../FL/Fl_File_Chooser.H ../FL/Fl_Double_Window.H
+forms_pixmap.o: ../FL/Fl_Group.H ../FL/Fl_Choice.H ../FL/Fl_Menu_Button.H
+forms_pixmap.o: ../FL/Fl_Button.H ../FL/Fl_Preferences.H ../FL/Fl_Tile.H
+forms_pixmap.o: ../FL/Fl_File_Browser.H ../FL/Fl_File_Icon.H ../FL/Fl_Box.H
+forms_pixmap.o: ../FL/Fl_Check_Button.H ../FL/Fl_File_Input.H
+forms_pixmap.o: ../FL/Fl_Input.H ../FL/Fl_Input_.H ../FL/Fl_Return_Button.H
+forms_pixmap.o: ../FL/fl_ask.H ../FL/Fl_Input.H ../FL/Fl_Menu_Button.H
+forms_pixmap.o: ../FL/Fl_Positioner.H ../FL/Fl_Value_Slider.H
+forms_pixmap.o: ../FL/Fl_Timer.H
+forms_timer.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+forms_timer.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_Timer.H
+forms_timer.o: ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H ../FL/Fl_Window.H
+forms_timer.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Group.H
+forms_timer.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+forms_timer.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+forms_timer.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Gl_Choice.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Gl_Choice.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H
+Fl_Gl_Choice.o: ../FL/Fl_Window.H Fl_Gl_Choice.H ../FL/gl_draw.H ../FL/gl.h
+Fl_Gl_Choice.o: flstring.h ../FL/Fl_Export.H ../FL/fl_utf8.h
+Fl_Gl_Overlay.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+Fl_Gl_Overlay.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+Fl_Gl_Overlay.o: ../FL/x.H ../FL/Fl_Window.H Fl_Gl_Choice.H
+Fl_Gl_Overlay.o: ../FL/Fl_Gl_Window.H
+Fl_Gl_Device_Plugin.o: ../config.h ../FL/Fl_Printer.H ../FL/x.H
+Fl_Gl_Device_Plugin.o: ../FL/Enumerations.H ../FL/Fl_Export.H
+Fl_Gl_Device_Plugin.o: ../FL/fl_types.h ../FL/Fl_Window.H ../FL/Xutf8.h
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Paged_Device.H ../FL/Fl_Device.H
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_Gl_Device_Plugin.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H
+Fl_Gl_Device_Plugin.o: ../FL/fl_draw.H ../FL/Enumerations.H
+Fl_Gl_Device_Plugin.o: ../FL/Fl_PostScript.H ../FL/Fl_Gl_Window.H
+Fl_Gl_Device_Plugin.o: Fl_Gl_Choice.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Gl_Window.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H
+Fl_Gl_Window.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_Gl_Window.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/x.H
+Fl_Gl_Window.o: ../FL/Fl_Window.H Fl_Gl_Choice.H ../FL/Fl_Gl_Window.H
+Fl_Gl_Window.o: ../FL/fl_utf8.h
+freeglut_geometry.o: ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
+freeglut_geometry.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl.H
+freeglut_geometry.o: ../FL/fl_utf8.h ../FL/Xutf8.h ../FL/Fl_Gl_Window.H
+freeglut_geometry.o: ../FL/Fl_Window.H ../FL/math.h
+freeglut_stroke_mono_roman.o: ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
+freeglut_stroke_mono_roman.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl.H
+freeglut_stroke_mono_roman.o: ../FL/fl_utf8.h ../FL/Xutf8.h
+freeglut_stroke_mono_roman.o: ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
+freeglut_stroke_roman.o: ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
+freeglut_stroke_roman.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl.H
+freeglut_stroke_roman.o: ../FL/fl_utf8.h ../FL/Xutf8.h ../FL/Fl_Gl_Window.H
+freeglut_stroke_roman.o: ../FL/Fl_Window.H
+freeglut_teapot.o: ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
+freeglut_teapot.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl.H
+freeglut_teapot.o: ../FL/fl_utf8.h ../FL/Xutf8.h ../FL/Fl_Gl_Window.H
+freeglut_teapot.o: ../FL/Fl_Window.H freeglut_teapot_data.h
+gl_draw.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/Fl.H
+gl_draw.o: ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+gl_draw.o: ../FL/Enumerations.H ../FL/gl.h ../FL/x.H ../FL/Fl_Window.H
+gl_draw.o: ../FL/fl_draw.H ../FL/Enumerations.H ../FL/Fl_Window.H
+gl_draw.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+gl_draw.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+gl_draw.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+gl_draw.o: ../FL/Fl_RGB_Image.H Fl_Gl_Choice.H Fl_Font.H ../FL/fl_utf8.h
+gl_draw.o: ../FL/Xutf8.h
+gl_start.o: ../config.h ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H
+gl_start.o: ../FL/fl_types.h ../FL/Xutf8.h ../FL/Enumerations.H
+gl_start.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/x.H
+gl_start.o: ../FL/Fl_Window.H ../FL/fl_draw.H ../FL/Enumerations.H
+gl_start.o: ../FL/Fl_Device.H ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H
+gl_start.o: ../FL/Fl_Image.H ../FL/Fl_Bitmap.H ../FL/Fl_Image.H
+gl_start.o: ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H Fl_Gl_Choice.H
+glut_compatability.o: flstring.h ../FL/Fl_Export.H ../config.h ../FL/glut.H
+glut_compatability.o: ../FL/gl.h ../FL/Enumerations.H ../FL/Fl_Export.H
+glut_compatability.o: ../FL/fl_types.h ../FL/Fl.H ../FL/fl_utf8.h
+glut_compatability.o: ../FL/Xutf8.h ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
+glut_compatability.o: ../FL/Fl_Menu_Item.H ../FL/Fl_Widget.H ../FL/Fl_Image.H
+glut_font.o: ../config.h ../FL/glut.H ../FL/gl.h ../FL/Enumerations.H
+glut_font.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Fl.H ../FL/fl_utf8.h
+glut_font.o: ../FL/Xutf8.h ../FL/Fl_Gl_Window.H ../FL/Fl_Window.H
+fl_images_core.o: ../FL/Fl_Shared_Image.H ../FL/Fl_Image.H
+fl_images_core.o: ../FL/Fl_BMP_Image.H ../FL/Fl_GIF_Image.H ../FL/Fl_Pixmap.H
+fl_images_core.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_PNG_Image.H
+fl_images_core.o: ../FL/Fl_PNM_Image.H flstring.h ../FL/Fl_Export.H
+fl_images_core.o: ../config.h
+Fl_BMP_Image.o: ../FL/Fl_BMP_Image.H ../FL/Fl_Image.H ../FL/fl_utf8.h
+Fl_BMP_Image.o: ../config.h
+Fl_File_Icon2.o: ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H ../config.h
+Fl_File_Icon2.o: ../FL/math.h ../FL/Fl_File_Icon.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_File_Icon2.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+Fl_File_Icon2.o: ../FL/Enumerations.H ../FL/Fl_Shared_Image.H
+Fl_File_Icon2.o: ../FL/Fl_Image.H ../FL/Fl_Widget.H ../FL/fl_draw.H ../FL/x.H
+Fl_File_Icon2.o: ../FL/Fl_Window.H ../FL/Enumerations.H ../FL/Fl_Window.H
+Fl_File_Icon2.o: ../FL/Fl_Group.H ../FL/Fl_Widget.H ../FL/Fl_Device.H
+Fl_File_Icon2.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_File_Icon2.o: ../FL/Fl_Bitmap.H ../FL/Fl_Pixmap.H ../FL/Fl_RGB_Image.H
+Fl_File_Icon2.o: ../FL/filename.H
+Fl_GIF_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_GIF_Image.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_GIF_Image.H
+Fl_GIF_Image.o: ../FL/Fl_Pixmap.H ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h
+Fl_GIF_Image.o: ../FL/Fl_Export.H ../config.h
+Fl_Help_Dialog.o: ../FL/Fl_Help_Dialog.H ../FL/Fl.H ../FL/fl_utf8.h
+Fl_Help_Dialog.o: ../FL/Fl_Export.H ../FL/fl_types.h ../FL/Xutf8.h
+Fl_Help_Dialog.o: ../FL/Enumerations.H ../FL/Fl_Double_Window.H
+Fl_Help_Dialog.o: ../FL/Fl_Window.H ../FL/Fl_Group.H ../FL/Fl_Button.H
+Fl_Help_Dialog.o: ../FL/Fl_Widget.H ../FL/Fl_Input.H ../FL/Fl_Input_.H
+Fl_Help_Dialog.o: ../FL/Fl_Box.H ../FL/Fl_Help_View.H ../FL/Fl.H
+Fl_Help_Dialog.o: ../FL/Fl_Group.H ../FL/Fl_Scrollbar.H ../FL/Fl_Slider.H
+Fl_Help_Dialog.o: ../FL/Fl_Valuator.H ../FL/fl_draw.H ../FL/x.H
+Fl_Help_Dialog.o: ../FL/Enumerations.H ../FL/Fl_Window.H ../FL/Fl_Device.H
+Fl_Help_Dialog.o: ../FL/Fl_Plugin.H ../FL/Fl_Preferences.H ../FL/Fl_Image.H
+Fl_Help_Dialog.o: ../FL/Fl_Bitmap.H ../FL/Fl_Image.H ../FL/Fl_Pixmap.H
+Fl_Help_Dialog.o: ../FL/Fl_RGB_Image.H ../FL/Fl_Shared_Image.H
+Fl_Help_Dialog.o: ../FL/filename.H flstring.h ../FL/Fl_Export.H ../config.h
+Fl_Help_Dialog.o: ../FL/fl_ask.H
+Fl_JPEG_Image.o: ../FL/Fl_JPEG_Image.H ../FL/Fl_Image.H
+Fl_JPEG_Image.o: ../FL/Fl_Shared_Image.H ../FL/fl_utf8.h ../config.h
+Fl_PNG_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_PNG_Image.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_PNG_Image.H
+Fl_PNG_Image.o: ../FL/Fl_Image.H ../FL/Fl_Shared_Image.H ../config.h
+Fl_PNG_Image.o: ../FL/fl_utf8.h
+Fl_PNM_Image.o: ../FL/Fl.H ../FL/fl_utf8.h ../FL/Fl_Export.H ../FL/fl_types.h
+Fl_PNM_Image.o: ../FL/Xutf8.h ../FL/Enumerations.H ../FL/Fl_PNM_Image.H
+Fl_PNM_Image.o: ../FL/Fl_Image.H ../FL/fl_utf8.h flstring.h ../FL/Fl_Export.H
+Fl_PNM_Image.o: ../config.h
+flstring.o: flstring.h ../FL/Fl_Export.H ../config.h
+scandir.o: flstring.h ../FL/Fl_Export.H ../config.h
+numericsort.o: ../config.h
+vsnprintf.o: flstring.h ../FL/Fl_Export.H ../config.h
+fl_utf.o: ../FL/fl_utf8.h xutf8/mk_wcwidth.c
+xutf8/case.o: xutf8/headers/case.h
+xutf8/is_spacing.o: xutf8/headers/spacing.h
+xutf8/keysym2Ucs.o: ../FL/Xutf8.h xutf8/imKStoUCS.c xutf8/Xlibint.h
+xutf8/keysym2Ucs.o: xutf8/Ximint.h
+xutf8/utf8Input.o: ../config.h ../FL/Xutf8.h xutf8/lcUniConv/big5.h
+xutf8/utf8Input.o: xutf8/lcUniConv/gb2312.h xutf8/lcUniConv/cp936ext.h
+xutf8/utf8Input.o: xutf8/lcUniConv/jisx0201.h xutf8/lcUniConv/jisx0208.h
+xutf8/utf8Input.o: xutf8/lcUniConv/jisx0212.h xutf8/lcUniConv/ksc5601.h
+xutf8/utf8Utils.o: ../FL/Xutf8.h
+xutf8/utf8Wrap.o: ../FL/Xutf8.h xutf8/ucs2fontmap.c
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp936ext.h xutf8/lcUniConv/big5.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/gb2312.h xutf8/lcUniConv/iso8859_10.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_11.h xutf8/lcUniConv/iso8859_13.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_14.h xutf8/lcUniConv/iso8859_15.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_2.h xutf8/lcUniConv/iso8859_3.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_4.h xutf8/lcUniConv/iso8859_5.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_6.h xutf8/lcUniConv/iso8859_7.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/iso8859_8.h xutf8/lcUniConv/iso8859_9.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0201.h xutf8/lcUniConv/jisx0208.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/jisx0212.h xutf8/lcUniConv/koi8_r.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/koi8_u.h xutf8/lcUniConv/ksc5601.h
+xutf8/utf8Wrap.o: xutf8/lcUniConv/cp1251.h xutf8/headers/symbol_.h
+xutf8/utf8Wrap.o: xutf8/headers/dingbats_.h

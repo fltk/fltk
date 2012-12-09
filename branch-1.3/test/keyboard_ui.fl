@@ -1,0 +1,718 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+Function {make_window()} {open
+} {
+  Fl_Window my_window {open selected
+    xywh {461 296 495 215} type Double
+    code0 {\#include "keyboard.h"}
+    class MyWindow visible
+  } {
+    Fl_Button {} {
+      label {Esc }
+      user_data FL_Escape user_data_type {void*}
+      callback key_cb
+      xywh {15 70 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label F1
+      user_data {FL_F+1} user_data_type {void*}
+      callback key_cb
+      xywh {50 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F2
+      user_data {FL_F+2} user_data_type {void*}
+      callback key_cb
+      xywh {70 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F3
+      user_data {FL_F+3} user_data_type {void*}
+      callback key_cb
+      xywh {90 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F4
+      user_data {FL_F+4} user_data_type {void*}
+      callback key_cb
+      xywh {110 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F5
+      user_data {FL_F+5} user_data_type {void*}
+      callback key_cb
+      xywh {140 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F6
+      user_data {FL_F+6} user_data_type {void*}
+      callback key_cb
+      xywh {160 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F7
+      user_data {FL_F+7} user_data_type {void*}
+      callback key_cb
+      xywh {180 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F8
+      user_data {FL_F+8} user_data_type {void*}
+      callback key_cb
+      xywh {200 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F9
+      user_data {FL_F+9} user_data_type {void*}
+      callback key_cb
+      xywh {230 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F10
+      user_data {FL_F+10} user_data_type {void*}
+      callback key_cb
+      xywh {250 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F11
+      user_data {FL_F+11} user_data_type {void*}
+      callback key_cb
+      xywh {270 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F12
+      user_data {FL_F+12} user_data_type {void*}
+      callback key_cb
+      xywh {290 70 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {Print }
+      user_data FL_Print user_data_type {void*}
+      callback key_cb
+      xywh {325 70 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {Sclk }
+      user_data FL_Scroll_Lock user_data_type {void*}
+      callback key_cb
+      xywh {345 70 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {Paus }
+      user_data FL_Pause user_data_type {void*}
+      callback key_cb
+      xywh {365 70 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {`}
+      callback key_cb
+      xywh {15 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 1
+      callback key_cb
+      xywh {35 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 2
+      callback key_cb
+      xywh {55 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 3
+      callback key_cb
+      xywh {75 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 4
+      callback key_cb
+      xywh {95 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 5
+      callback key_cb
+      xywh {115 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 6
+      callback key_cb
+      xywh {135 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 7
+      callback key_cb
+      xywh {155 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 8
+      callback key_cb
+      xywh {175 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 9
+      callback key_cb
+      xywh {195 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 0
+      callback key_cb
+      xywh {215 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {-}
+      callback key_cb
+      xywh {235 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {=}
+      callback key_cb
+      xywh {255 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label Bksp
+      user_data FL_BackSpace user_data_type {void*}
+      callback key_cb
+      xywh {275 100 35 20} labeltype SHADOW_LABEL labelsize 8 align 20
+    }
+    Fl_Button {} {
+      label {Ins }
+      user_data FL_Insert user_data_type {void*}
+      callback key_cb
+      xywh {325 100 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label Home
+      user_data FL_Home user_data_type {void*}
+      callback key_cb
+      xywh {345 100 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {pgup }
+      user_data FL_Page_Up user_data_type {void*}
+      callback key_cb
+      xywh {365 100 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label Num
+      user_data FL_Num_Lock user_data_type {void*}
+      callback key_cb
+      xywh {400 100 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {/}
+      user_data {FL_KP+'/'} user_data_type {void*}
+      callback key_cb
+      xywh {420 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {*}
+      user_data {FL_KP+'*'} user_data_type {void*}
+      callback key_cb
+      xywh {440 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {-}
+      user_data {FL_KP+'-'} user_data_type {void*}
+      callback key_cb
+      xywh {460 100 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label Tab
+      user_data FL_Tab user_data_type {void*}
+      callback key_cb
+      xywh {15 120 27 20} labelsize 8 align 20
+    }
+    Fl_Button {} {
+      label Q
+      callback key_cb
+      xywh {42 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label W
+      callback key_cb
+      xywh {62 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label E
+      callback key_cb
+      xywh {82 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label R
+      callback key_cb
+      xywh {102 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label T
+      callback key_cb
+      xywh {122 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label Y
+      callback key_cb
+      xywh {142 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label U
+      callback key_cb
+      xywh {162 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label I
+      callback key_cb
+      xywh {182 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label O
+      callback key_cb
+      xywh {202 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label P
+      callback key_cb
+      xywh {222 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {[}
+      callback key_cb
+      xywh {242 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {]}
+      callback key_cb
+      xywh {262 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {\\}
+      callback key_cb
+      xywh {282 120 28 20} labelsize 10 align 20
+    }
+    Fl_Button {} {
+      label {Del }
+      user_data FL_Delete user_data_type {void*}
+      callback key_cb
+      xywh {325 120 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {End }
+      user_data FL_End user_data_type {void*}
+      callback key_cb
+      xywh {345 120 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {pgdn }
+      user_data FL_Page_Down user_data_type {void*}
+      callback key_cb
+      xywh {365 120 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label 7
+      user_data {FL_KP+'7'} user_data_type {void*}
+      callback key_cb
+      xywh {400 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 8
+      user_data {FL_KP+'8'} user_data_type {void*}
+      callback key_cb
+      xywh {420 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 9
+      user_data {FL_KP+'9'} user_data_type {void*}
+      callback key_cb
+      xywh {440 120 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {+}
+      user_data {FL_KP+'+'} user_data_type {void*}
+      callback key_cb
+      xywh {460 120 20 40} labelsize 10 align 17
+    }
+    Fl_Button {} {
+      label Lock
+      user_data FL_Caps_Lock user_data_type {void*}
+      callback key_cb
+      xywh {15 140 36 20} labelsize 8 align 20
+    }
+    Fl_Button {} {
+      label A
+      callback key_cb
+      xywh {51 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label S
+      callback key_cb
+      xywh {71 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label D
+      callback key_cb
+      xywh {91 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label F
+      callback key_cb
+      xywh {111 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label G
+      callback key_cb
+      xywh {131 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label H
+      callback key_cb
+      xywh {151 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label J
+      callback key_cb
+      xywh {171 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label K
+      callback key_cb
+      xywh {191 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label L
+      callback key_cb
+      xywh {211 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {;}
+      callback key_cb
+      xywh {231 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {'}
+      callback key_cb
+      xywh {251 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label Enter
+      user_data FL_Enter user_data_type {void*}
+      callback key_cb
+      xywh {271 140 39 20} labelsize 8 align 20
+    }
+    Fl_Button {} {
+      label 4
+      user_data {FL_KP+'4'} user_data_type {void*}
+      callback key_cb
+      xywh {400 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 5
+      user_data {FL_KP+'5'} user_data_type {void*}
+      callback key_cb
+      xywh {420 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 6
+      user_data {FL_KP+'6'} user_data_type {void*}
+      callback key_cb
+      xywh {440 140 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label Shift
+      user_data FL_Shift_L user_data_type {void*}
+      callback key_cb
+      xywh {15 160 45 20} labelsize 8 align 20
+    }
+    Fl_Button {} {
+      label Z
+      callback key_cb
+      xywh {60 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label X
+      callback key_cb
+      xywh {80 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label C
+      callback key_cb
+      xywh {100 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label V
+      callback key_cb
+      xywh {120 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label B
+      callback key_cb
+      xywh {140 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label N
+      callback key_cb
+      xywh {160 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label M
+      callback key_cb
+      xywh {180 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {,}
+      callback key_cb
+      xywh {200 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {.}
+      callback key_cb
+      xywh {220 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {/}
+      callback key_cb
+      xywh {240 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label Shift
+      user_data FL_Shift_R user_data_type {void*}
+      callback key_cb
+      xywh {260 160 50 20} labelsize 8 align 20
+    }
+    Fl_Button {} {
+      label {@8->}
+      user_data FL_Up user_data_type {void*}
+      callback key_cb
+      xywh {345 160 20 20} labeltype SHADOW_LABEL labelsize 10 labelcolor 47
+    }
+    Fl_Button {} {
+      label 1
+      user_data {FL_KP+'1'} user_data_type {void*}
+      callback key_cb
+      xywh {400 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 2
+      user_data {FL_KP+'2'} user_data_type {void*}
+      callback key_cb
+      xywh {420 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label 3
+      user_data {FL_KP+'3'} user_data_type {void*}
+      callback key_cb
+      xywh {440 160 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      user_data FL_KP_Enter user_data_type {void*}
+      callback key_cb
+      xywh {460 160 20 40}
+    }
+    Fl_Button {} {
+      label Ctrl
+      user_data FL_Control_L user_data_type {void*}
+      callback key_cb
+      xywh {15 180 30 20} labelsize 8 align 20
+    }
+    Fl_Button {} {
+      label {Meta }
+      user_data FL_Meta_L user_data_type {void*}
+      callback key_cb
+      xywh {45 180 30 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {Alt }
+      user_data FL_Alt_L user_data_type {void*}
+      callback key_cb
+      xywh {75 180 30 20} labelsize 8
+    }
+    Fl_Button {} {
+      user_data {' '} user_data_type {void*}
+      callback key_cb
+      xywh {105 180 85 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {Alt }
+      user_data FL_Alt_R user_data_type {void*}
+      callback key_cb
+      xywh {190 180 30 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {Meta }
+      user_data FL_Meta_R user_data_type {void*}
+      callback key_cb
+      xywh {220 180 30 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {Menu }
+      user_data FL_Menu user_data_type {void*}
+      callback key_cb
+      xywh {250 180 30 20} labelsize 8
+    }
+    Fl_Button {} {
+      label Ctrl
+      user_data FL_Control_R user_data_type {void*}
+      callback key_cb
+      xywh {280 180 30 20} labelsize 8 align 20
+    }
+    Fl_Button {} {
+      label {@4->}
+      user_data FL_Left user_data_type {void*}
+      callback key_cb
+      xywh {325 180 20 20} labeltype SHADOW_LABEL labelsize 10 labelcolor 47
+    }
+    Fl_Button {} {
+      label {@2->}
+      user_data FL_Down user_data_type {void*}
+      callback key_cb
+      xywh {345 180 20 20} labeltype SHADOW_LABEL labelsize 10 labelcolor 47
+    }
+    Fl_Button {} {
+      label {@6->}
+      user_data FL_Right user_data_type {void*}
+      callback key_cb
+      xywh {365 180 20 20} labeltype SHADOW_LABEL labelsize 10 labelcolor 47
+    }
+    Fl_Button {} {
+      label 0
+      user_data {FL_KP+'0'} user_data_type {void*}
+      callback key_cb
+      xywh {400 180 40 20} labelsize 10 align 20
+    }
+    Fl_Button {} {
+      label {.}
+      user_data {FL_KP+'.'} user_data_type {void*}
+      callback key_cb
+      xywh {440 180 20 20} labelsize 10
+    }
+    Fl_Button {} {
+      label {shift }
+      user_data FL_SHIFT user_data_type {void*}
+      callback shift_cb
+      xywh {400 15 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {lock }
+      user_data FL_CAPS_LOCK user_data_type {void*}
+      callback shift_cb
+      xywh {420 15 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label ctrl
+      user_data FL_CTRL user_data_type {void*}
+      callback shift_cb
+      xywh {440 15 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label alt
+      user_data FL_ALT user_data_type {void*}
+      callback shift_cb
+      xywh {460 15 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label num
+      user_data FL_NUM_LOCK user_data_type {void*}
+      callback shift_cb
+      xywh {400 25 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {?}
+      user_data 0x20 user_data_type {void*}
+      callback shift_cb
+      xywh {420 25 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {meta }
+      user_data FL_META user_data_type {void*}
+      callback shift_cb
+      xywh {440 25 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label sclk
+      user_data FL_SCROLL_LOCK user_data_type {void*}
+      callback shift_cb
+      xywh {460 25 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label b1
+      user_data FL_BUTTON1 user_data_type {void*}
+      callback shift_cb
+      xywh {400 35 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label b2
+      user_data FL_BUTTON2 user_data_type {void*}
+      callback shift_cb
+      xywh {420 35 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label b3
+      user_data FL_BUTTON3 user_data_type {void*}
+      callback shift_cb
+      xywh {440 35 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label whl
+      user_data 0x800 user_data_type {void*}
+      callback shift_cb
+      xywh {460 35 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {?}
+      user_data 0x1000 user_data_type {void*}
+      callback shift_cb
+      xywh {400 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {?}
+      user_data 0x2000 user_data_type {void*}
+      callback shift_cb
+      xywh {420 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {?}
+      user_data 0x4000 user_data_type {void*}
+      callback shift_cb
+      xywh {440 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Button {} {
+      label {?}
+      user_data 0x8000 user_data_type {void*}
+      callback shift_cb
+      xywh {460 45 20 10} box THIN_UP_BOX selection_color 3 labelsize 8
+    }
+    Fl_Output key_output {
+      label {Fl::event_key():}
+      xywh {15 20 170 30} labelsize 9 align 5
+    }
+    Fl_Box {} {
+      label {Fl::event_state():}
+      xywh {400 15 80 40} labelsize 9 align 5
+    }
+    Fl_Output text_output {
+      label {Fl::event_text():}
+      xywh {195 20 190 30} labelsize 9 align 5
+    }
+    Fl_Button {} {
+      label Help
+      user_data FL_Help user_data_type {void*}
+      callback key_cb
+      xywh {400 70 20 20} labelsize 8
+    }
+    Fl_Button {} {
+      label {=}
+      user_data {FL_KP+'='} user_data_type {void*}
+      callback key_cb
+      xywh {420 70 20 20} labelsize 10
+    }
+    Fl_Dial roller_x {
+      label {x:}
+      callback wheel_cb
+      xywh {440 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
+    }
+    Fl_Dial roller_y {
+      label {y:}
+      callback wheel_cb
+      xywh {460 70 20 20} box ROUND_UP_BOX selection_color 49 labelsize 9 align 5 step 0.1
+    }
+  }
+} 

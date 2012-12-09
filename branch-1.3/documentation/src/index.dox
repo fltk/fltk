@@ -1,0 +1,120 @@
+/**
+
+\mainpage FLTK Programming Manual
+<TABLE BGCOLOR="#9f9f9f" CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+<TR>
+  <TD><CENTER>
+    \image html FL200.png
+    \image latex FL200.png "" width=5cm
+  </CENTER></TD>
+  <TD><CENTER>
+    <B>FLTK 1.3.2 Programming Manual</B>
+
+    Revision 9 by F.&nbsp;Costantini, D.&nbsp;Gibson, M.&nbsp;Melcher,
+    A.&nbsp;Schlosser, B.&nbsp;Spitzak and M.&nbsp;Sweet.
+
+    Copyright 1998-2012 by Bill Spitzak and others.
+  </CENTER></TD>
+</TR>
+</TABLE>
+<TABLE BGCOLOR="#9f9f9f" CELLPADDING="8" CELLSPACING="0" SUMMARY="TITLE BAR" WIDTH="100%" BORDER="0">
+<TR>
+  <TD>
+    This software and manual are provided under the terms of the GNU
+    Library General Public License. Permission is granted to reproduce
+    this manual or any portion for any purpose, provided this copyright
+    and permission notice are preserved.
+  </TD>
+</TR>
+</TABLE>
+<TABLE BGCOLOR="#9f9fef" CELLPADDING="8" CELLSPACING="0" SUMMARY="Table of Contents" WIDTH="100%" BORDER="0">
+<TR>
+  <TD ALIGN="LEFT" VALIGN="TOP">
+
+    \subpage preface
+
+    \subpage intro
+
+    \subpage basics
+
+    \subpage common
+	- \ref common_colors
+	- \ref common_boxtypes
+	- \ref common_labels
+	- \ref drawing_images
+
+    \subpage editor
+
+    \subpage drawing
+
+    \subpage events
+	- \ref events_event_xxx
+	- \ref events_propagation
+
+    \subpage subclassing
+
+    \subpage opengl
+
+    \subpage fluid
+	- \ref fluid_widget_attributes
+	- \ref fluid_selecting_moving
+	- \ref fluid_images
+
+  </TD>
+  <TD ALIGN="LEFT" VALIGN="TOP">
+
+    \subpage advanced
+
+    \subpage unicode
+
+    &nbsp;
+
+    <b>Appendices:</b>
+ 
+	- \subpage enumerations
+
+	-  \subpage glut
+		- \ref glut_Fl_Glut_Window
+		<!-- - Fl_Glut_Window (not yet commented ?) -->
+
+	- \subpage forms
+
+	- \subpage osissues
+
+	- \subpage migration_1_1
+
+	- \subpage migration_1_3
+
+	- \subpage development
+
+	- \subpage license
+
+	- \subpage examples
+
+	- \subpage FAQ
+
+  </TD>
+</TR>
+</TABLE>
+
+
+\htmlonly
+<hr>
+<table summary="navigation bar" width="100%" border="0">
+<tr>
+  <td width="45%" align="LEFT">
+    &nbsp;
+  </td>
+  <td width="10%" align="CENTER">
+    <a class="el" href="index.html">[Index]</a>
+  </td>
+  <td width="45%" align="RIGHT">
+    <a class="el" href="preface.html">
+    Preface
+    [Next]</a>
+  </td>
+</tr>
+</table>
+\endhtmlonly
+
+*/
