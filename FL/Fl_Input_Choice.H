@@ -133,26 +133,27 @@ public:
   */
   Fl_Input_Choice(int X,int Y,int W,int H,const char*L=0);
   
-  /// Adds an item to the menu.
-  /// You can access the more complex Fl_Menu_Button::add() methods 
-  /// (setting callbacks, userdata, etc), via menubutton(). Example:
-  /// \code
-  /// Fl_Input_Choice *choice = new Fl_Input_Choice(100,10,120,25,"Fonts");
-  /// Fl_Menu_Button *mb = choice->menubutton();             // use Fl_Input_Choice's Fl_Menu_Button
-  /// mb->add("Helvetica", 0, MyFont_CB,     (void*)mydata); // use Fl_Menu_Button's add() methods
-  /// mb->add("Courier",   0, MyFont_CB,     (void*)mydata);
-  /// mb->add("More..",    0, FontDialog_CB, (void*)mydata);
-  /// \endcode
+  /** Adds an item to the menu.
+   You can access the more complex Fl_Menu_Button::add() methods 
+   (setting callbacks, userdata, etc), via menubutton(). Example:
+   \code
+   Fl_Input_Choice *choice = new Fl_Input_Choice(100,10,120,25,"Fonts");
+   Fl_Menu_Button *mb = choice->menubutton();             // use Fl_Input_Choice's Fl_Menu_Button
+   mb->add("Helvetica", 0, MyFont_CB,     (void*)mydata); // use Fl_Menu_Button's add() methods
+   mb->add("Courier",   0, MyFont_CB,     (void*)mydata);
+   mb->add("More..",    0, FontDialog_CB, (void*)mydata);
+   \endcode
+   */
   void add(const char *s) { menu_->add(s);  }
-  /// Returns the combined changed() state of the input and menu button widget.
+  /** Returns the combined changed() state of the input and menu button widget. */
   int changed() const { return inp_->changed() | Fl_Widget::changed(); }
-  /// Clears the changed() state of both input and menu button widgets.
+  /** Clears the changed() state of both input and menu button widgets. */
   void clear_changed() { 
     inp_->clear_changed();
     Fl_Widget::clear_changed();
   }
-  /// Sets the changed() state of both input and menu button widgets
-  /// to the specfied value.
+  /** Sets the changed() state of both input and menu button widgets
+   to the specfied value.*/
   void set_changed() { 
     inp_->set_changed();
     // no need to call Fl_Widget::set_changed()
@@ -186,30 +187,31 @@ public:
   void textsize(Fl_Fontsize s) { inp_->textsize(s); }
   /// Returns the Fl_Input text field's current contents.
   const char* value() const { return (inp_->value()); }
-  /// Sets the Fl_Input text field's contents to \p val.
-  /// Does not affect the menu selection.
+  /** Sets the Fl_Input text field's contents to \p val.
+   Does not affect the menu selection.*/
   void value(const char *val) { inp_->value(val); }
-  /// Chooses item# \p val in the menu, and sets the Fl_Input text field
-  /// to that value. Any previous text is cleared.
+  /** Chooses item# \p val in the menu, and sets the Fl_Input text field
+   to that value. Any previous text is cleared.*/
   void value(int val) {
     menu_->value(val);
     inp_->value(menu_->text(val));
   }
-  /// Returns a pointer to the internal Fl_Menu_Button widget.
-  /// This can be used to access any of the methods of the menu button, e.g.
-  /// \code
-  /// Fl_Input_Choice *choice = new Fl_Input_Choice(100,10,120,25,"Choice:");
-  /// [..]
-  /// // Print all the items in the choice menu
-  /// for ( int t=0; t<choice->menubutton()->size(); t++ ) {
-  ///     const Fl_Menu_Item &item = choice->menubutton()->menu()[t];
-  ///     printf("item %d -- label=%s\n", t, item.label() ? item.label() : "(Null)");
-  /// }
-  /// \endcode
+  /** Returns a pointer to the internal Fl_Menu_Button widget.
+   This can be used to access any of the methods of the menu button, e.g.
+   \code
+   Fl_Input_Choice *choice = new Fl_Input_Choice(100,10,120,25,"Choice:");
+   [..]
+   // Print all the items in the choice menu
+   for ( int t=0; t<choice->menubutton()->size(); t++ ) {
+       const Fl_Menu_Item &item = choice->menubutton()->menu()[t];
+       printf("item %d -- label=%s\n", t, item.label() ? item.label() : "(Null)");
+   }
+   \endcode
+  */
   Fl_Menu_Button *menubutton() { return menu_; }
-  /// Returns a pointer to the internal Fl_Input widget.
-  /// This can be used to directly access all of the Fl_Input widget's
-  /// methods.
+  /** Returns a pointer to the internal Fl_Input widget.
+   This can be used to directly access all of the Fl_Input widget's
+   methods.*/
   Fl_Input *input() { return inp_; }
 };
 

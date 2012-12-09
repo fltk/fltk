@@ -261,20 +261,16 @@ static Fl_Pixmap	tile(tile_xpm);
     Gets or sets the current widget scheme. NULL will use
     the scheme defined in the FLTK_SCHEME environment
     variable or the scheme resource under X11. Otherwise,
-    any of the following schemes can be used:</P>
+    any of the following schemes can be used:
+      
+    	- "none" - This is the default look-n-feel which resembles old
+    	Windows (95/98/Me/NT/2000) and old GTK/KDE
     
-    <ul>
+    	- "plastic" - This scheme is inspired by the Aqua user interface
+    	on Mac OS X
     
-    	<li>"none" - This is the default look-n-feel which resembles old
-    	Windows (95/98/Me/NT/2000) and old GTK/KDE</li>
-    
-    	<li>"plastic" - This scheme is inspired by the Aqua user interface
-    	on Mac OS X</li>
-    
-    	<li>"gtk+" - This scheme is inspired by the Red Hat Bluecurve
-    	theme</li>
-    
-    </ul>
+    	- "gtk+" - This scheme is inspired by the Red Hat Bluecurve
+    	theme
 */
 int Fl::scheme(const char *s) {
   if (!s) {
