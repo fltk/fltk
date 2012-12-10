@@ -296,6 +296,11 @@ void dobut(Fl_Widget *, long arg)
       }
     }
     
+    char *name = new char[strlen(cmd) + 5];
+    strcpy(name, cmd);
+    strcat(name, ".app");
+    // check whether app bundle exists
+    if ( ! fl_filename_isdir(name) ) strcpy(name, cmd);
     if (arg) {
       const char *fluidpath;
       *arg = 0;
@@ -305,15 +310,18 @@ void dobut(Fl_Widget *, long arg)
 #else
       strcpy(path, app_path); strcat(path, "/");
       fluidpath = "../fluid/fluid.app";
+      // check whether fluid bundle exists
+      if ( ! fl_filename_isdir(fluidpath) ) fluidpath = "../fluid";
 #endif
       if (strcmp(cmd, "../fluid/fluid")==0) {
 	sprintf(command, "open %s --args %s%s", fluidpath, path, arg+1);
       } else {
-	sprintf(command, "open %s.app --args %s%s", cmd, path, arg+1);
+	sprintf(command, "open %s --args %s%s", name, path, arg+1);
       }
     } else {
-      sprintf(command, "open %s.app", cmd);
+      sprintf(command, "open %s", name);
     }
+    delete[] name;
 //    puts(command);    
     system(command);
     
