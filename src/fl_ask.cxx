@@ -16,6 +16,11 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+ \file fl_ask.cxx
+ \brief Utility functions for common dialogs.
+ */
+
 // Implementation of fl_message, fl_ask, fl_choice, fl_input
 // The three-message fl_show_x functions are for forms compatibility
 // mostly.  In most cases it is easier to get a multi-line message
@@ -272,6 +277,7 @@ const char* fl_close= "Close";   ///< string pointer used in common dialogs, you
 // fltk functions:
 /**
    Emits a system beep message.
+ \param[in] type   The beep type from the \ref Fl_Beep enumeration.
    \note \#include <FL/fl_ask.H>
  */
 void fl_beep(int type) {

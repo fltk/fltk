@@ -16,20 +16,26 @@
 //     http://www.fltk.org/str.php
 //
 
+/** \file fl_ask.H
+ API for common dialogs.
+ */
+
 #ifndef fl_ask_H
 #  define fl_ask_H
 
 #  include "Enumerations.H"
 
 class Fl_Widget;
-/** Different system beeps available. \relatesalso fl_beep(int) */
-enum {
-  FL_BEEP_DEFAULT = 0,
-  FL_BEEP_MESSAGE,
-  FL_BEEP_ERROR,
-  FL_BEEP_QUESTION,
-  FL_BEEP_PASSWORD,
-  FL_BEEP_NOTIFICATION
+
+/** Different system beeps available. 
+ \sa fl_beep(int) */
+enum Fl_Beep {
+  FL_BEEP_DEFAULT = 0,  ///< Default beep.
+  FL_BEEP_MESSAGE,  ///< Message beep.
+  FL_BEEP_ERROR,  ///< Error beep.
+  FL_BEEP_QUESTION,  ///< Question beep.
+  FL_BEEP_PASSWORD,  ///< Password beep.
+  FL_BEEP_NOTIFICATION  ///< Notification beep.
 };
 
 #  ifdef __GNUC__
