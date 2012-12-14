@@ -63,8 +63,8 @@ int Fl::compose(int& del) {
 #endif
   if(Fl::compose_state) {
     del = Fl::compose_state;
-    Fl::compose_state = 0;
 #ifndef __APPLE__
+    Fl::compose_state = 0;
   } else {
     // Only insert non-control characters:
     if (! (ascii & ~31 && ascii!=127)) { return 0; }

@@ -954,8 +954,8 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   }
   Fl::e_keysym = Fl::e_original_keysym = sym;
 
-  //NSLog(@"cocoaKeyboardHandler: keycode=%08x keysym=%08x mods=%08x symbol=%@ (%@)",
-  //  keyCode, sym, mods, [theEvent characters], [theEvent charactersIgnoringModifiers]);
+  /*NSLog(@"cocoaKeyboardHandler: keycode=%08x keysym=%08x mods=%08x symbol=%@ (%@)",
+    keyCode, sym, mods, [theEvent characters], [theEvent charactersIgnoringModifiers]);*/
 
   // If there is text associated with this key, it will be filled in later.
   Fl::e_length = 0;
@@ -1631,8 +1631,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 
 
 @interface FLView : NSView <NSTextInput> {
-  int next_compose_length;
   bool in_key_event;
+  NSInteger identifier;
 }
 + (void)prepareEtext:(NSString*)aString;
 - (id)init;
@@ -1665,10 +1665,11 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 @implementation FLView
 - (id)init
 {
+  static NSInteger counter = 0;
   self = [super init];
   if (self) {
-    next_compose_length = -1;
     in_key_event = false;
+    identifier = ++counter;
     }
   return self;
 }
@@ -1736,26 +1737,12 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
 
-  next_compose_length = -1;
   // First let's process the raw key press
   cocoaKeyboardHandler(theEvent);
 
-  int no_text_key = false;
-  static const int notext[] = { // keys that don't emit text
-    FL_BackSpace, FL_Print, FL_Scroll_Lock, FL_Pause,
-    FL_Insert, FL_Home, FL_Page_Up, FL_Delete, FL_End, FL_Page_Down,
-    FL_Left, FL_Up, FL_Right, FL_Down, 
-    FL_Menu, FL_Num_Lock, FL_Help 
-  };
-  static const int count = sizeof(notext)/sizeof(int);
-  if (Fl::e_keysym > FL_F && Fl::e_keysym <= FL_F_Last) no_text_key = true;
-  else for (int i=0; i < count; i++) {
-    if (notext[i] == Fl::e_keysym) {
-      no_text_key = true;
-      break;
-    }
-  }
-  if (!no_text_key && !(Fl::e_state & FL_META) ) {
+  int has_text_key = Fl::e_keysym <= '~' || (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) ||
+    Fl::e_keysym == FL_Tab || Fl::e_keysym == FL_Escape || Fl::e_keysym == FL_Iso_Key;
+  if (has_text_key && !(Fl::e_state & FL_META) ) {
     // Don't send cmd-<key> to interpretKeyEvents because it beeps.
     // Then we can let the OS have a stab at it and see if it thinks it
     // should result in some text
@@ -1764,12 +1751,11 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
     [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
     in_key_event = false;
   }
-  //NSLog(@"to text=%@ l=%d", [NSString stringWithUTF8String:Fl::e_text], Fl::e_length);
-  int handled = Fl::handle(FL_KEYDOWN, window);
-  // We have to update this after Fl::handle as it says what to do on the
-  // _next_ input
-  if (next_compose_length != -1)
-    Fl::compose_state = next_compose_length;
+  int handled = 1; 
+  if (Fl::e_length == 0 && Fl::compose_state == 0) {
+    //NSLog(@"to text=%@ l=%d Fl::compose_state=%d", [NSString stringWithUTF8String:Fl::e_text], Fl::e_length, Fl::compose_state);
+    handled = Fl::handle(FL_KEYBOARD, window);
+    }
 
   fl_unlock_function();
   return (handled ? YES : NO);
@@ -1937,39 +1923,38 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   } else {
     received = (NSString*)aString;
   }
-  //NSLog(@"insertText: received=%@",received);
+  //NSLog(@"insertText: received=%@ Fl::compose_state＝%d",received,Fl::compose_state);
 
-  if (!in_key_event) fl_lock_function();
+  fl_lock_function();
   [FLView prepareEtext:received];
-  // We can get called outside of key events (e.g. from the character
-  // palette). Transform such actions to FL_PASTE events.
-  if (!in_key_event) {
-    Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
-    Fl::handle(FL_PASTE, target);
-    // for some reason, the window does not redraw until the next mouse move or button push
-    // sending a 'redraw()' or 'awake()' does not solve the issue!
-    Fl::flush();
-  }
-  if (!in_key_event) fl_unlock_function();
+  // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
+  // Transform character palette actions to FL_PASTE events.
+  Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
+  Fl::handle( (in_key_event || Fl::compose_state) ? FL_KEYBOARD : FL_PASTE, target);
+  Fl::compose_state = 0;
+  // for some reason, with the palette, the window does not redraw until the next mouse move or button push
+  // sending a 'redraw()' or 'awake()' does not solve the issue!
+  Fl::flush();
+  fl_unlock_function();
 }
 
 - (void)setMarkedText:(id)aString selectedRange:(NSRange)newSelection  {
   NSString *received;
-  if (newSelection.location == 0) {
-    [self unmarkText];
-    return;
-  }
   if ([aString isKindOfClass:[NSAttributedString class]]) {
     received = [(NSAttributedString*)aString string];
   } else {
     received = (NSString*)aString;
   }
-  //NSLog(@"setMarkedText: %@ %d %d",received,newSelection.location,newSelection.length);
+  fl_lock_function();
   // This code creates the OS X behaviour of seeing dead keys as things
   // are being composed.
-  next_compose_length = newSelection.location;
   [FLView prepareEtext:received];
-  //NSLog(@"Fl::e_text=%@ Fl::e_length=%d next_compose_length=%d", received, Fl::e_length, next_compose_length);
+  /*NSLog(@"setMarkedText:%@ %d %d Fl::e_length=%d Fl::compose_state=%d ［received length]=%d", 
+	received, newSelection.location, newSelection.length, Fl::e_length, Fl::compose_state, [received length]);*/
+  Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
+  Fl::handle(FL_KEYBOARD, target);
+  Fl::compose_state = [received length];
+  fl_unlock_function();
 }
 
 - (void)unmarkText {
@@ -1984,8 +1969,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 - (NSRange)markedRange {
-  //NSLog(@"markedRange ?");
-  return NSMakeRange(NSNotFound, Fl::compose_state);
+  //NSLog(@"markedRange=%d %d", Fl::compose_state > 0?0:NSNotFound, Fl::compose_state);
+  return NSMakeRange(Fl::compose_state > 0?0:NSNotFound, Fl::compose_state);
 }
 
 - (BOOL)hasMarkedText {
@@ -2003,11 +1988,12 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)aRange {
+  //NSLog(@"firstRectForCharacterRange %d %d",aRange.location, aRange.length);
   NSRect glyphRect;
   fl_lock_function();
   Fl_Widget *focus = Fl::focus();
-  Fl_Window *wfocus = focus->window();
-  while (wfocus->window()) wfocus = wfocus->window();
+  Fl_Window *wfocus = [(FLWindow*)[self window] getFl_Window];
+  if (!focus) focus = wfocus;
   glyphRect.size.width = 0;
   
   if (dynamic_cast<Fl_Text_Display*>(focus) != NULL) {
@@ -2034,7 +2020,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 - (NSInteger)conversationIdentifier {
-  return (NSInteger)self;
+  return identifier;
 }
 
 @end
