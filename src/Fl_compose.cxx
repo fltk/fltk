@@ -49,9 +49,10 @@ int Fl::compose(int& del) {
   // character composition is now handled by the OS
   del = 0;
 #if defined(__APPLE__)
-  // this stuff is to be treated as a function key
-  if(Fl::e_length == 0 || Fl::e_keysym == FL_Enter || Fl::e_keysym == FL_KP_Enter || 
-     Fl::e_keysym == FL_Tab || Fl::e_keysym == FL_Escape || Fl::e_state&(FL_META | FL_CTRL) ) {
+  int has_text_key = Fl::compose_state || Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
+    (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
+  if ( Fl::e_state&(FL_META | FL_CTRL) || !has_text_key  ) {
+    // this stuff is to be treated as a function key
     return 0;
   }
 #elif defined(WIN32)

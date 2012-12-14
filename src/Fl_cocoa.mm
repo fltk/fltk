@@ -927,10 +927,6 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   UInt32 keyCode = 0, maskedKeyCode = 0;
   unsigned short sym = 0;
   keyCode = [theEvent keyCode];
-  NSString *s = [theEvent characters];  
-  if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
-    s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
-  }
   // extended keyboards can also send sequences on key-up to generate Kanji etc. codes.
   // Some observed prefixes are 0x81 to 0x83, followed by an 8 bit keycode.
   // In this mode, there seem to be no key-down codes
@@ -1631,7 +1627,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 
 
 @interface FLView : NSView <NSTextInput> {
-  bool in_key_event;
+  BOOL in_key_event;
   NSInteger identifier;
 }
 + (void)prepareEtext:(NSString*)aString;
@@ -1651,7 +1647,6 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 - (void)rightMouseDragged:(NSEvent *)theEvent;
 - (void)otherMouseDragged:(NSEvent *)theEvent;
 - (void)scrollWheel:(NSEvent *)theEvent;
-- (BOOL)handleKeyDown:(NSEvent *)theEvent;
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)keyUp:(NSEvent *)theEvent;
 - (void)flagsChanged:(NSEvent *)theEvent;
@@ -1668,7 +1663,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   static NSInteger counter = 0;
   self = [super init];
   if (self) {
-    in_key_event = false;
+    in_key_event = NO;
     identifier = ++counter;
     }
   return self;
@@ -1689,7 +1684,18 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent
 {   
   //NSLog(@"performKeyEquivalent:");
-  return [self handleKeyDown:theEvent];
+  fl_lock_function();
+  cocoaKeyboardHandler(theEvent);
+  Fl_Window *window = [(FLWindow*)[theEvent window] getFl_Window];
+  NSString *s = [theEvent characters];
+  NSUInteger mods = [theEvent modifierFlags];
+  if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
+    s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
+  }
+  if ([s length] >= 1) [FLView prepareEtext:s];
+  int handled = Fl::handle(FL_KEYBOARD, window);
+  fl_unlock_function();
+  return (handled ? YES : NO);
 }
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent
 {   
@@ -1730,39 +1736,22 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 - (void)scrollWheel:(NSEvent *)theEvent {
   cocoaMouseWheelHandler(theEvent);
 }
-- (BOOL)handleKeyDown:(NSEvent *)theEvent {
-  //NSLog(@"handleKeyDown");
+- (void)keyDown:(NSEvent *)theEvent {
+  //NSLog(@"keyDown");
   fl_lock_function();
 
-  Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
+  Fl_Window *window = [(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
 
   // First let's process the raw key press
   cocoaKeyboardHandler(theEvent);
 
-  int has_text_key = Fl::e_keysym <= '~' || (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last) ||
-    Fl::e_keysym == FL_Tab || Fl::e_keysym == FL_Escape || Fl::e_keysym == FL_Iso_Key;
-  if (has_text_key && !(Fl::e_state & FL_META) ) {
-    // Don't send cmd-<key> to interpretKeyEvents because it beeps.
-    // Then we can let the OS have a stab at it and see if it thinks it
-    // should result in some text
-    NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
-    in_key_event = true;
-    [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-    in_key_event = false;
-  }
-  int handled = 1; 
-  if (Fl::e_length == 0 && Fl::compose_state == 0) {
-    //NSLog(@"to text=%@ l=%d Fl::compose_state=%d", [NSString stringWithUTF8String:Fl::e_text], Fl::e_length, Fl::compose_state);
-    handled = Fl::handle(FL_KEYBOARD, window);
-    }
+  NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
+  in_key_event = YES;
+  [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+  in_key_event = NO;
 
   fl_unlock_function();
-  return (handled ? YES : NO);
-}
-- (void)keyDown:(NSEvent *)theEvent {
-  //NSLog(@"keyDown: ");
-  [self handleKeyDown:theEvent];
 }
 - (void)keyUp:(NSEvent *)theEvent {
   //NSLog(@"keyUp: ");
@@ -1910,9 +1899,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 // These functions implement text input.
-// Only two-stroke character composition works at this point.
-// Needs much elaboration to fully support CJK text input,
-// but this is the way to go.
+// On the way to fully support CJK text input, this is the way to go.
 - (void)doCommandBySelector:(SEL)aSelector {
 }
 
