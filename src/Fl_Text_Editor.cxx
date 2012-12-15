@@ -514,8 +514,9 @@ int Fl_Text_Editor::handle_key() {
   int del = 0;
   if (Fl::compose(del)) {
     if (del) {
-      int dp = insert_position(), di = del;
-      while (di--) dp = buffer()->prev_char_clipped(dp);
+      // del is a number of bytes
+      int dp = insert_position() - del;
+      if ( dp < 0 ) dp = 0;
       buffer()->select(dp, insert_position());
     }
     kill_selection(this);

@@ -1958,7 +1958,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 	received, newSelection.location, newSelection.length, Fl::e_length, Fl::compose_state, [received length]);*/
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   Fl::handle(FL_KEYBOARD, target);
-  Fl::compose_state = [received length];
+  Fl::compose_state = Fl::e_length;
   fl_unlock_function();
 }
 
