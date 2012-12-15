@@ -897,6 +897,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 // this subclass is needed under OS X <= 10.5 but not under >= 10.6 where the base class is enough
 {
 }
+- (void)interpretKeyEvents:(NSArray *)eventArray;
 @end
 @implementation FLTextView
 - (void)insertText:(id)aString
@@ -906,6 +907,24 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 - (void)doCommandBySelector:(SEL)aSelector
 {
   [[[NSApp keyWindow] contentView] doCommandBySelector:aSelector];
+}
+- (void)interpretKeyEvents:(NSArray *)eventArray
+{
+  if (Fl::e_keysym == FL_BackSpace || Fl::e_keysym == FL_KP_Enter ||
+   Fl::e_keysym == FL_Enter || Fl::e_keysym == FL_Escape || Fl::e_keysym == FL_Tab ) {
+    NSEvent *theEvent = (NSEvent*)[eventArray objectAtIndex:0];
+    // interpretKeyEvents doesn't output anything for these 5 keys under 10.5 or below
+    NSString *s = [theEvent characters];
+    if ([s length] >= 1) {
+      static char utf[2] = {0, 0};
+      utf[0] = [s UTF8String][0];
+      Fl::e_text = utf;
+      Fl::e_length = 1;
+      }
+    Fl_Window *window = [(FLWindow*)[theEvent window] getFl_Window];
+    Fl::handle(FL_KEYBOARD, window);
+  }
+  else [super interpretKeyEvents:eventArray];
 }
 @end
 
@@ -1745,20 +1764,11 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 
   // First let's process the raw key press
   cocoaKeyboardHandler(theEvent);
-  
-  if (fl_mac_os_version < 100600 && (Fl::e_keysym == FL_BackSpace ||
-      Fl::e_keysym == FL_Enter || Fl::e_keysym == FL_Escape || Fl::e_keysym == FL_Tab) ) {
-    // interpretKeyEvents doesn't output anything for these 4 keys under 10.5 or below
-    NSString *s = [theEvent characters];
-    if ([s length] >= 1) [FLView prepareEtext:s];
-    Fl::handle(FL_KEYBOARD, window);
-  }
-  else {
-    NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
-    in_key_event = YES;
-    [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-    in_key_event = NO;
-  }
+
+  NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
+  in_key_event = YES;
+  [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+  in_key_event = NO;
   fl_unlock_function();
 }
 - (void)keyUp:(NSEvent *)theEvent {
