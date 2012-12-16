@@ -51,7 +51,9 @@ int Fl::compose(int& del) {
 #if defined(__APPLE__)
   int has_text_key = Fl::compose_state || Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
     (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
-  if ( Fl::e_state&(FL_META | FL_CTRL) || !has_text_key  ) {
+  if ( Fl::e_state&(FL_META | FL_CTRL) || 
+      (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R) || // called from flagsChanged
+      !has_text_key  ) {
     // this stuff is to be treated as a function key
     return 0;
   }
