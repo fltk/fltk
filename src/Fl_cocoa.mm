@@ -1674,6 +1674,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender;
 - (void)draggingExited:(id < NSDraggingInfo >)sender;
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal;
+- (void)FLselectMarkedText;
 @end
 
 @implementation FLView
@@ -1937,6 +1938,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   Fl::handle( (in_key_event || Fl::compose_state) ? FL_KEYBOARD : FL_PASTE, target);
   Fl::compose_state = 0;
+  [self FLselectMarkedText];
+  
   // for some reason, with the palette, the window does not redraw until the next mouse move or button push
   // sending a 'redraw()' or 'awake()' does not solve the issue!
   Fl::flush();
@@ -1954,17 +1957,36 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   // This code creates the OS X behaviour of seeing dead keys as things
   // are being composed.
   [FLView prepareEtext:received];
-  /*NSLog(@"setMarkedText:%@ %d %d Fl::e_length=%d Fl::compose_state=%d ［received length]=%d", 
-	received, newSelection.location, newSelection.length, Fl::e_length, Fl::compose_state, [received length]);*/
+  /*NSLog(@"setMarkedText:%@ %d %d Fl::compose_state=%d Fl::e_length=%d", 
+	received, newSelection.location, newSelection.length, Fl::compose_state, Fl::e_length);*/
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   Fl::handle(FL_KEYBOARD, target);
   Fl::compose_state = Fl::e_length;
+  [self FLselectMarkedText];
+
   fl_unlock_function();
+}
+
+- (void)FLselectMarkedText
+{ // set/clear marked text as selected in text widgets
+  Fl_Widget *widget = Fl::focus();
+  if (!widget) return;
+  if (dynamic_cast<Fl_Input_*>(widget) != NULL) {
+    Fl_Input_* input = (Fl_Input_*)widget;
+    input->mark( input->position() - Fl::compose_state );
+    }
+  else if (dynamic_cast<Fl_Text_Display*>(widget) != NULL) {
+    Fl_Text_Display* input = (Fl_Text_Display*)widget;
+    Fl_Text_Selection* sel = (Fl_Text_Selection*)input->buffer()->highlight_selection();
+    int pos = input->insert_position();
+    sel->set(pos - Fl::compose_state, pos);
+    }
 }
 
 - (void)unmarkText {
   fl_lock_function();
   Fl::compose_state = 0;
+  [self FLselectMarkedText];
   fl_unlock_function();
   //NSLog(@"unmarkText");
 }
