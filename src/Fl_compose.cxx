@@ -84,9 +84,13 @@ int Fl::compose(int& del) {
  */
 void Fl::compose_reset()
 {
+#ifdef __APPLE__
+  Fl_X::compose_state(0);
+#else
   Fl::compose_state = 0;
-#if !defined(WIN32) && !defined(__APPLE__)
+#if !defined(WIN32)
   if (fl_xim_ic) XmbResetIC(fl_xim_ic);
+#endif
 #endif
 }
 
