@@ -2046,7 +2046,7 @@ void Fl_X::compose_state(int new_val)
     if ( ! dynamic_cast<Fl_Secret_Input*>(input) ) 
       input->mark( input->position() - Fl::compose_state );
   }
-  else if ( text = dynamic_cast<Fl_Text_Display*>(widget) ) {
+  else if ( (text = dynamic_cast<Fl_Text_Display*>(widget)) ) {
     int pos = text->insert_position();
     text->buffer()->select(pos - Fl::compose_state, pos);
   }
