@@ -46,33 +46,28 @@ extern XIC fl_xim_ic;
  other user-interface things to allow characters to be selected.
  */
 int Fl::compose(int& del) {
-  // character composition is now handled by the OS
-  del = 0;
+  int condition;
 #if defined(__APPLE__)
   int has_text_key = Fl::compose_state || Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
-    (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
-  if ( Fl::e_state&(FL_META | FL_CTRL) || 
+  (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
+  condition = Fl::e_state&(FL_META | FL_CTRL) || 
       (Fl::e_keysym >= FL_Shift_L && Fl::e_keysym <= FL_Alt_R) || // called from flagsChanged
-      !has_text_key  ) {
-    // this stuff is to be treated as a function key
-    return 0;
-  }
-#elif defined(WIN32)
-  unsigned char ascii = (unsigned)e_text[0];
-  if ((e_state & (FL_ALT | FL_META)) && !(ascii & 128)) return 0;
+      !has_text_key ;
 #else
-  unsigned char ascii = (unsigned)e_text[0];
-  if ((e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128)) return 0;
+unsigned char ascii = (unsigned char)e_text[0];
+#if defined(WIN32)
+  condition = (e_state & (FL_ALT | FL_META)) && !(ascii & 128) ;
+#else
+  condition = (e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128) ;
 #endif
-  if(Fl::compose_state) {
-    del = Fl::compose_state;
+#endif
+  if (condition) { del = 0; return 0;} // this stuff is to be treated as a function key
+  del = Fl::compose_state;
 #ifndef __APPLE__
-    Fl::compose_state = 0;
-  } else {
-    // Only insert non-control characters:
-    if (! (ascii & ~31 && ascii!=127)) { return 0; }
+  Fl::compose_state = 0;
+// Only insert non-control characters:
+  if ( (!Fl::compose_state) && ! (ascii & ~31 && ascii!=127)) { return 0; }
 #endif
-  }
   return 1;
 }
 

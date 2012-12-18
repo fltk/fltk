@@ -2034,20 +2034,21 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 @end
 
 void Fl_X::compose_state(int new_val)
-{ // highlight marked text in text widgets
+{ // select marked text in text widgets
   if (Fl::compose_state == 0 && new_val == 0) return;
   Fl::compose_state = new_val;
   Fl_Widget *widget = Fl::focus();
   if (!widget) return;
-  if (dynamic_cast<Fl_Input_*>(widget) != NULL) {
-    if (dynamic_cast<Fl_Secret_Input*>(widget) != NULL) return;
-    Fl_Input_* input = (Fl_Input_*)widget;
-    input->mark( input->position() - Fl::compose_state );
+  
+  Fl_Input_* input = dynamic_cast<Fl_Input_*>(widget);
+  Fl_Text_Display* text;
+  if (input) {
+    if ( ! dynamic_cast<Fl_Secret_Input*>(input) ) 
+      input->mark( input->position() - Fl::compose_state );
   }
-  else if (dynamic_cast<Fl_Text_Display*>(widget) != NULL) {
-    Fl_Text_Display* input = (Fl_Text_Display*)widget;
-    int pos = input->insert_position();
-    input->buffer()->highlight(pos - Fl::compose_state, pos);
+  else if ( text = dynamic_cast<Fl_Text_Display*>(widget) ) {
+    int pos = text->insert_position();
+    text->buffer()->select(pos - Fl::compose_state, pos);
   }
 }
 
