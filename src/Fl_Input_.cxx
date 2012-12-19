@@ -339,10 +339,25 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       int offset2;
       if (pp <= e) x2 = xpos + (float)expandpos(p, pp, buf, &offset2);
       else offset2 = (int) strlen(buf);
+#ifdef __APPLE__ // Mac OS: underline marked ( = selected + Fl::compose_state != 0) text 
+      if (Fl::compose_state) {
+        fl_color(textcolor());
+      }
+      else 
+#endif
+      {
       fl_color(selection_color());
       fl_rectf((int)(x1+0.5), Y+ypos, (int)(x2-x1+0.5), height);
       fl_color(fl_contrast(textcolor(), selection_color()));
+      }
       fl_draw(buf+offset1, offset2-offset1, x1, (float)(Y+ypos+desc));
+#ifdef __APPLE__ // Mac OS: underline marked ( = selected + Fl::compose_state != 0) text
+      if (Fl::compose_state) {
+        fl_color( fl_color_average(textcolor(), color(), 0.6) );
+        float width = fl_width(buf+offset1, offset2-offset1);
+        fl_line(x1, Y+ypos+height-1, x1+width, Y+ypos+height-1);
+      }
+#endif
       if (pp < e) {
 	fl_color(tc);
 	fl_draw(buf+offset2, (int) strlen(buf+offset2), x2, (float)(Y+ypos+desc));
@@ -357,7 +372,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
 
   CONTINUE2:
     // draw the cursor:
-    if (Fl::focus() == this && selstart == selend &&
+    if (Fl::focus() == this && (Fl::compose_state || selstart == selend) &&
 	position() >= p-value() && position() <= e-value()) {
       fl_color(cursor_color());
       // cursor position may need to be recomputed (see STR #2486)
