@@ -2004,9 +2004,9 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   if (!focus) focus = wfocus;
   glyphRect.size.width = 0;
   
-  if (dynamic_cast<Fl_Text_Display*>(focus) != NULL) {
+  Fl_Text_Display *current = dynamic_cast<Fl_Text_Display*>(focus);
+  if (current) {
     int x, y;
-    Fl_Text_Display *current = (Fl_Text_Display*)focus;
     current->position_to_xy( current->insert_position(), &x, &y );
     glyphRect.origin.x = (CGFloat)x;
     glyphRect.origin.y = (CGFloat)y + current->textsize();
@@ -2022,8 +2022,10 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
       }
     glyphRect.size.height = 12;
   }
-  Fl_Window *win = focus->window();
+  Fl_Window *win = focus->as_window();
+  if (!win) win = focus->window();
   while (win != NULL && win != wfocus) {
+    glyphRect.origin.x += win->x();
     glyphRect.origin.y += win->y();
     win = win->window();
   }
