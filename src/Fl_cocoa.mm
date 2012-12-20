@@ -2012,9 +2012,20 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
     glyphRect.origin.y = (CGFloat)y + current->textsize();
     glyphRect.size.height = current->textsize();
   } else {
-    glyphRect.origin.x = focus->x();
-    glyphRect.origin.y = focus->y() + focus->h();
+    if (focus->as_window()) {
+      glyphRect.origin.x = 0;
+      glyphRect.origin.y = focus->h();
+      }
+    else {
+      glyphRect.origin.x = focus->x();
+      glyphRect.origin.y = focus->y() + focus->h();
+      }
     glyphRect.size.height = 12;
+  }
+  Fl_Window *win = focus->window();
+  while (win != NULL && win != wfocus) {
+    glyphRect.origin.y += win->y();
+    win = win->window();
   }
   // Convert the rect to screen coordinates
   glyphRect.origin.y = wfocus->h() - glyphRect.origin.y;
