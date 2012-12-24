@@ -617,7 +617,8 @@ int Fl_Input::handle(int event) {
           && !Fl::event_state(FL_SHIFT)			// no shift?
           && !tab_nav()					// with tab navigation disabled?
 	  && input_type() == FL_MULTILINE_INPUT		// with a multiline input?
-          && (mark()==0 && position()==size())) {	// while entire field selected?
+	  && size() > 0                                 // non-empty field?
+          && ((mark()==0 && position()==size()) || (position()==0 && mark()==size()))) {// while entire field selected?
         // Set cursor to the end of the selection...
         if (mark() > position())
           position(mark());
