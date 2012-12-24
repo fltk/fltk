@@ -21,6 +21,9 @@
 
 #ifndef FL_DOXYGEN
 int Fl::compose_state = 0;
+#ifdef __APPLE__
+int Fl_X::next_marked_length = 0;
+#endif
 #endif
 
 #if !defined(WIN32) && !defined(__APPLE__)
@@ -41,6 +44,23 @@ extern XIC fl_xim_ic;
  keys, and del is set to zero. You could insert the text anyways, if
  you don't know what else to do.
  
+ <p>On the Mac OS platform, text editing widgets should preferentially signal
+ marked text, that is, temporary text replaced by other text during the text 
+ input process. Such signaling is usually done underlining marked text. Widgets can call
+ <tt>int Fl::marked_text_length()</tt> <i>after</i> having called Fl::compose(int&)
+ to obtain the length in bytes of marked text that always finishes at the
+ current insertion point. It's the widget's task to underline marked text.
+ Widgets should also call <tt>void Fl::reset_marked_text()</tt> when processing FL_UNFOCUS events.
+ Optionally, widgets can also call
+ <tt>void Fl::insertion_point_location(int x, int y)</tt> to indicate the window 
+ coordinates of the bottom of the current insertion point. 
+ This way, auxiliary windows that help choosing among alternative characters 
+ appear just below the insertion point. If widgets don't do that, 
+ auxiliary windows appear at the widget's bottom. The
+ Fl_Input and Fl_Text_Editor widgets signal marked text underlining it.
+ If none of this is done by a user-defined text editing widget, complex
+ (e.g., CJK) text input will work, but will not signal to the user what text is marked.
+ 
  <p>Though the current implementation returns immediately, future
  versions may take quite awhile, as they may pop up a window or do
  other user-interface things to allow characters to be selected.
@@ -59,17 +79,48 @@ unsigned char ascii = (unsigned char)e_text[0];
   condition = (e_state & (FL_ALT | FL_META)) && !(ascii & 128) ;
 #else
   condition = (e_state & (FL_ALT | FL_META | FL_CTRL)) && !(ascii & 128) ;
-#endif
-#endif
+#endif // WIN32
+#endif // __APPLE__
   if (condition) { del = 0; return 0;} // this stuff is to be treated as a function key
   del = Fl::compose_state;
-#ifndef __APPLE__
+#ifdef __APPLE__
+  Fl::compose_state = Fl_X::next_marked_length;
+#else
   Fl::compose_state = 0;
 // Only insert non-control characters:
   if ( (!Fl::compose_state) && ! (ascii & ~31 && ascii!=127)) { return 0; }
 #endif
   return 1;
 }
+
+#ifdef __APPLE__
+int Fl::marked_text_length() {
+  return (Fl::compose_state ? Fl::compose_state : Fl_X::next_marked_length);
+  }
+
+static int insertion_point_x = 0;
+static int insertion_point_y = 0;
+static bool insertion_point_location_is_valid = false;
+
+void Fl::reset_marked_text() {
+  Fl::compose_state = 0;
+  Fl_X::next_marked_length = 0;
+  insertion_point_location_is_valid = false;
+  }
+int Fl_X::insertion_point_location(int *px, int *py) 
+// return true if the current coordinates of the insertion point are available
+{
+  if ( ! insertion_point_location_is_valid ) return false;
+  *px = insertion_point_x;
+  *py = insertion_point_y;
+  return true;
+}
+void Fl::insertion_point_location(int x, int y) {
+  insertion_point_location_is_valid = true;
+  insertion_point_x = x;
+  insertion_point_y = y;
+}
+#endif // __APPLE__
 
 /**
  If the user moves the cursor, be sure to call Fl::compose_reset().
@@ -79,13 +130,9 @@ unsigned char ascii = (unsigned char)e_text[0];
  */
 void Fl::compose_reset()
 {
-#ifdef __APPLE__
-  Fl_X::compose_state(0);
-#else
   Fl::compose_state = 0;
-#if !defined(WIN32)
+#if !defined(WIN32) && !defined(__APPLE__)
   if (fl_xim_ic) XmbResetIC(fl_xim_ic);
-#endif
 #endif
 }
 

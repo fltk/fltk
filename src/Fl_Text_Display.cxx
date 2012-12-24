@@ -1942,7 +1942,7 @@ void Fl_Text_Display::draw_string(int style,
     if (style & PRIMARY_MASK) {
       if (Fl::focus() == (Fl_Widget*)this) {
 #ifdef __APPLE__
-	if (Fl::compose_state) background = color();// Mac OS: underline marked text
+	if (Fl::marked_text_length()) background = color();// Mac OS: underline marked text
 	else 
 #endif
 	background = selection_color();
@@ -1978,8 +1978,8 @@ void Fl_Text_Display::draw_string(int style,
     fl_push_clip(X, Y, toX - X, mMaxsize);
 #endif
     fl_draw( string, nChars, X, Y + mMaxsize - fl_descent());
-#ifdef __APPLE__ // Mac OS: underline marked (= selected + Fl::compose_state != 0) text
-    if (Fl::compose_state && (style & PRIMARY_MASK)) {
+#ifdef __APPLE__ // Mac OS: underline marked (= selected + Fl::marked_text_length() != 0) text
+    if (Fl::marked_text_length() && (style & PRIMARY_MASK)) {
       fl_color( fl_color_average(foreground, background, 0.6) );
       fl_line(X, Y + mMaxsize - 1, X + fl_width(string, nChars), Y + mMaxsize - 1);
     }
@@ -3469,7 +3469,11 @@ void Fl_Text_Display::draw(void) {
 
   // draw the text cursor
   if (damage() & (FL_DAMAGE_ALL | FL_DAMAGE_SCROLL | FL_DAMAGE_EXPOSE)
-      && (Fl::compose_state || !buffer()->primary_selection()->selected()) &&
+      && (
+#ifdef __APPLE__
+	  Fl::marked_text_length() ||
+#endif
+	  !buffer()->primary_selection()->selected()) &&
       mCursorOn && Fl::focus() == (Fl_Widget*)this ) {
     fl_push_clip(text_area.x-LEFT_MARGIN,
                  text_area.y,

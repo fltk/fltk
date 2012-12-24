@@ -524,6 +524,16 @@ int Fl_Text_Editor::handle_key() {
       if (insert_mode()) insert(Fl::event_text());
       else overstrike(Fl::event_text());
     }
+#ifdef __APPLE__
+    if (Fl::marked_text_length()) {
+      int x, y;
+      int pos = this->insert_position();
+      this->buffer()->select(pos - Fl::marked_text_length(), pos);
+      this->position_to_xy( this->insert_position(), &x, &y);
+      y += this->textsize();
+      Fl::insertion_point_location(x, y);
+      }
+#endif
     show_insert_position();
     set_changed();
     if (when()&FL_WHEN_CHANGED) do_callback();
@@ -561,6 +571,13 @@ int Fl_Text_Editor::handle(int event) {
 
     case FL_UNFOCUS:
       show_cursor(mCursorOn); // redraws the cursor
+#ifdef __APPLE__
+      if (buffer()->selected() && Fl::marked_text_length()) {
+	int pos = insert_position();
+	buffer()->select(pos, pos);
+	Fl::reset_marked_text();
+      }
+#endif
       if (buffer()->selected()) redraw(); // Redraw selections...
     case FL_HIDE:
       if (when() & FL_WHEN_RELEASE) maybe_do_callback();

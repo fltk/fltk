@@ -358,6 +358,11 @@ int Fl_Input::handle_key() {
       else replace(position(), del ? position()-del : mark(),
 	           Fl::event_text(), Fl::event_length());
     }
+#ifdef __APPLE__
+    if (Fl::marked_text_length()) {
+      this->mark( this->position() - Fl::marked_text_length() );
+      }
+#endif
     return 1;
   }
   
@@ -585,6 +590,14 @@ int Fl_Input::handle(int event) {
   static int dnd_save_position, dnd_save_mark, drag_start = -1, newpos;
   static Fl_Widget *dnd_save_focus;
   switch (event) {
+#ifdef __APPLE__
+    case FL_UNFOCUS:
+      if (Fl::marked_text_length()) {
+	this->mark( this->position() );
+	Fl::reset_marked_text();
+      }
+      break;
+#endif
     case FL_FOCUS:
       switch (Fl::event_key()) {
         case FL_Right:
@@ -799,6 +812,15 @@ Fl_Secret_Input::Fl_Secret_Input(int X,int Y,int W,int H,const char *l)
   type(FL_SECRET_INPUT);
 }
 
+int Fl_Secret_Input::handle(int event) {
+  int retval = Fl_Input::handle(event);
+#ifdef __APPLE__
+  if (event == FL_KEYBOARD && Fl::marked_text_length()) {
+    this->mark( this->position() ); // don't underline marked text
+  }
+#endif
+  return retval;
+}
 
 //
 // End of "$Id$".

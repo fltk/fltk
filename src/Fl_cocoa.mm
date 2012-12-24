@@ -1929,15 +1929,15 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   } else {
     received = (NSString*)aString;
   }
-  //NSLog(@"insertText: received=%@ Fl::compose_state＝%d",received,Fl::compose_state);
+  //NSLog(@"insertText: received=%@ Fl::marked_text_length()＝%d",received,Fl::marked_text_length());
 
   fl_lock_function();
   [FLView prepareEtext:received];
   // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
   // Transform character palette actions to FL_PASTE events.
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
-  Fl::handle( (in_key_event || Fl::compose_state) ? FL_KEYBOARD : FL_PASTE, target);
-  Fl_X::compose_state(0);
+  Fl_X::next_marked_length = 0;
+  Fl::handle( (in_key_event || Fl::marked_text_length()) ? FL_KEYBOARD : FL_PASTE, target);
   
   // for some reason, with the palette, the window does not redraw until the next mouse move or button push
   // sending a 'redraw()' or 'awake()' does not solve the issue!
@@ -1956,18 +1956,18 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   // This code creates the OS X behaviour of seeing dead keys as things
   // are being composed.
   [FLView prepareEtext:received];
-  /*NSLog(@"setMarkedText:%@ %d %d Fl::compose_state=%d Fl::e_length=%d", 
-	received, newSelection.location, newSelection.length, Fl::compose_state, Fl::e_length);*/
+  /*NSLog(@"setMarkedText:%@ %d %d Fl::marked_text_length()=%d Fl::e_length=%d", 
+	received, newSelection.location, newSelection.length, Fl::marked_text_length(), Fl::e_length);*/
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
+  Fl_X::next_marked_length = Fl::e_length;
   Fl::handle(FL_KEYBOARD, target);
-  Fl_X::compose_state(Fl::e_length);
 
   fl_unlock_function();
 }
 
 - (void)unmarkText {
   fl_lock_function();
-  Fl_X::compose_state(0);
+  Fl::reset_marked_text();
   fl_unlock_function();
   //NSLog(@"unmarkText");
 }
@@ -1977,13 +1977,13 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 - (NSRange)markedRange {
-  //NSLog(@"markedRange=%d %d", Fl::compose_state > 0?0:NSNotFound, Fl::compose_state);
-  return NSMakeRange(Fl::compose_state > 0?0:NSNotFound, Fl::compose_state);
+  //NSLog(@"markedRange=%d %d", Fl::marked_text_length() > 0?0:NSNotFound, Fl::marked_text_length());
+  return NSMakeRange(Fl::marked_text_length() > 0?0:NSNotFound, Fl::marked_text_length());
 }
 
 - (BOOL)hasMarkedText {
-  //NSLog(@"hasMarkedText %s", Fl::compose_state > 0?"YES":"NO");
-  return (Fl::compose_state > 0);
+  //NSLog(@"hasMarkedText %s", Fl::marked_text_length() > 0?"YES":"NO");
+  return (Fl::marked_text_length() > 0);
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)aRange {
@@ -2004,13 +2004,10 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   if (!focus) focus = wfocus;
   glyphRect.size.width = 0;
   
-  Fl_Text_Display *current = dynamic_cast<Fl_Text_Display*>(focus);
-  if (current) {
-    int x, y;
-    current->position_to_xy( current->insert_position(), &x, &y );
+  int x, y;
+  if (Fl_X::insertion_point_location(&x, &y)) {
     glyphRect.origin.x = (CGFloat)x;
-    glyphRect.origin.y = (CGFloat)y + current->textsize();
-    glyphRect.size.height = current->textsize();
+    glyphRect.origin.y = (CGFloat)y;
   } else {
     if (focus->as_window()) {
       glyphRect.origin.x = 0;
@@ -2020,8 +2017,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
       glyphRect.origin.x = focus->x();
       glyphRect.origin.y = focus->y() + focus->h();
       }
-    glyphRect.size.height = 12;
   }
+  glyphRect.size.height = 12;
   Fl_Window *win = focus->as_window();
   if (!win) win = focus->window();
   while (win != NULL && win != wfocus) {
@@ -2045,25 +2042,6 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 @end
-
-void Fl_X::compose_state(int new_val)
-{ // select marked text in text widgets
-  if (Fl::compose_state == 0 && new_val == 0) return;
-  Fl::compose_state = new_val;
-  Fl_Widget *widget = Fl::focus();
-  if (!widget) return;
-  
-  Fl_Input_* input = dynamic_cast<Fl_Input_*>(widget);
-  Fl_Text_Display* text;
-  if (input) {
-    if ( ! dynamic_cast<Fl_Secret_Input*>(input) ) 
-      input->mark( input->position() - Fl::compose_state );
-  }
-  else if ( (text = dynamic_cast<Fl_Text_Display*>(widget)) ) {
-    int pos = text->insert_position();
-    text->buffer()->select(pos - Fl::compose_state, pos);
-  }
-}
 
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
