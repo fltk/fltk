@@ -1703,6 +1703,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent
 {   
+  int handled = 1;
   //NSLog(@"performKeyEquivalent:");
   fl_lock_function();
   cocoaKeyboardHandler(theEvent);
@@ -1713,7 +1714,15 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
     s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
   }
   if ([s length] >= 1) [FLView prepareEtext:s];
-  int handled = Fl::handle(FL_KEYBOARD, window);
+  if ( (mods & NSControlKeyMask) || (mods & NSCommandKeyMask) ) {
+    handled = Fl::handle(FL_KEYBOARD, window);
+  }
+  else {
+    in_key_event = YES;
+    NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
+    [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    in_key_event = NO;
+  }
   fl_unlock_function();
   return (handled ? YES : NO);
 }
