@@ -342,6 +342,10 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_Pause	0xff13	///< The pause key.
 #define FL_Scroll_Lock	0xff14	///< The scroll lock key.
 #define FL_Escape	0xff1b	///< The escape key.
+#define FL_Kana         0xff2e  ///< The Kana key of JIS keyboards.
+#define FL_Eisu         0xff2f  ///< The Eisu key of JIS keyboards.
+#define FL_Yen          0xff30  ///< The Yen key of JIS keyboards.
+#define FL_JIS_Underscore 0xff31 ///< The underscore key of JIS keyboards.
 #define FL_Home		0xff50	///< The home key.
 #define FL_Left		0xff51	///< The left arrow key.
 #define FL_Up		0xff52	///< The up arrow key.
@@ -355,7 +359,7 @@ enum Fl_When { // Fl_Widget::when():
 #define FL_Menu		0xff67	///< The menu key.
 #define FL_Help		0xff68	///< The 'help' key on Mac keyboards
 #define FL_Num_Lock	0xff7f	///< The num lock key.
-#define FL_KP		0xff80	///< One of the keypad numbers; use FL_KP + n for number n.
+#define FL_KP		0xff80	///< One of the keypad numbers; use FL_KP + 'n' for digit n.
 #define FL_KP_Enter	0xff8d	///< The enter key on the keypad, same as Fl_KP+'\\r'.
 #define FL_KP_Last	0xffbd	///< The last keypad key; use to range-check keypad.
 #define FL_F		0xffbd	///< One of the function keys; use FL_F + n for function key n.

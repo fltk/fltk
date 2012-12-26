@@ -164,6 +164,15 @@ enum {
   kVK_ISO_Section               = 0x0A
 };
 
+/* JIS keyboards only*/
+enum {
+  kVK_JIS_Yen                   = 0x5D,
+  kVK_JIS_Underscore            = 0x5E,
+  kVK_JIS_KeypadComma           = 0x5F,
+  kVK_JIS_Eisu                  = 0x66,
+  kVK_JIS_Kana                  = 0x68
+};
+
 #endif
 
 // convert an FLTK (X) keysym to a MacOS symbol:
@@ -182,11 +191,14 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   { kVK_ANSI_Y, 'Y' }, { kVK_ANSI_Z, 'Z' }, 
   { kVK_ANSI_LeftBracket, '[' }, { kVK_ANSI_Backslash, '\\' }, { kVK_ANSI_RightBracket, ']' }, { kVK_ANSI_Grave, '`' },  
   { kVK_Delete, FL_BackSpace }, { kVK_Tab, FL_Tab }, { kVK_ISO_Section, FL_Iso_Key }, { kVK_Return, FL_Enter }, /*{ 0x7F, FL_Pause },
-  { 0x7F, FL_Scroll_Lock },*/ { kVK_Escape, FL_Escape }, { kVK_Home, FL_Home }, { kVK_LeftArrow, FL_Left },
+  { 0x7F, FL_Scroll_Lock },*/ { kVK_Escape, FL_Escape }, 
+  { kVK_JIS_Kana, FL_Kana}, { kVK_JIS_Eisu, FL_Eisu}, { kVK_JIS_Yen, FL_Yen}, { kVK_JIS_Underscore, FL_JIS_Underscore},
+  { kVK_Home, FL_Home }, { kVK_LeftArrow, FL_Left },
   { kVK_UpArrow, FL_Up }, { kVK_RightArrow, FL_Right }, { kVK_DownArrow, FL_Down }, { kVK_PageUp, FL_Page_Up },
   { kVK_PageDown, FL_Page_Down },  { kVK_End, FL_End }, /*{ 0x7F, FL_Print }, { 0x7F, FL_Insert },*/
   { 0x6e, FL_Menu }, { kVK_Help, FL_Help }, { kVK_ANSI_KeypadClear, FL_Num_Lock },
   { kVK_ANSI_KeypadEnter, FL_KP_Enter }, { kVK_ANSI_KeypadMultiply, FL_KP+'*' }, { kVK_ANSI_KeypadPlus, FL_KP+'+'}, 
+  { kVK_JIS_KeypadComma, FL_KP+',' },
   { kVK_ANSI_KeypadMinus, FL_KP+'-' }, { kVK_ANSI_KeypadDecimal, FL_KP+'.' }, { kVK_ANSI_KeypadDivide, FL_KP+'/' }, 
   { kVK_ANSI_Keypad0, FL_KP+'0' }, { kVK_ANSI_Keypad1, FL_KP+'1' }, { kVK_ANSI_Keypad2, FL_KP+'2' }, { kVK_ANSI_Keypad3, FL_KP+'3' }, 
   { kVK_ANSI_Keypad4, FL_KP+'4' }, { kVK_ANSI_Keypad5, FL_KP+'5' }, { kVK_ANSI_Keypad6, FL_KP+'6' }, { kVK_ANSI_Keypad7, FL_KP+'7' }, 
