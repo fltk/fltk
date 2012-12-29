@@ -3468,12 +3468,14 @@ void Fl_Text_Display::draw(void) {
   }
 
   // draw the text cursor
+  int start, end;
+  int has_selection = buffer()->selection_position(&start, &end);
   if (damage() & (FL_DAMAGE_ALL | FL_DAMAGE_SCROLL | FL_DAMAGE_EXPOSE)
       && (
 #ifdef __APPLE__
 	  Fl::marked_text_length() ||
 #endif
-	  !buffer()->primary_selection()->selected()) &&
+	  !has_selection || mCursorPos < start || mCursorPos > end) &&
       mCursorOn && Fl::focus() == (Fl_Widget*)this ) {
     fl_push_clip(text_area.x-LEFT_MARGIN,
                  text_area.y,
