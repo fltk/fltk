@@ -84,7 +84,7 @@ threads on all operating systems:
     widgets derived from Fl_Window, including dialogs, file
     choosers, subwindows or those using Fl_Gl_Window.
 
-\li Don't call Fl::wait(), Fl::flush() or any
+\li Don't call Fl::run(), Fl::wait(), Fl::flush() or any
     related methods that will handle system messages
 
 \li Don't start or cancel timers
