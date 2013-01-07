@@ -993,13 +993,11 @@ void fl_open_callback(void (*cb)(const char *)) {
 }
 
 
-@interface FLDelegate : NSObject 
+@interface FLWindowDelegate : NSObject 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
-<NSWindowDelegate, NSApplicationDelegate>
+<NSWindowDelegate>
 #endif
-{
-  BOOL seen_open_file;
-}
++ (FLWindowDelegate*)createOnce;
 - (void)windowDidMove:(NSNotification *)notif;
 - (void)windowDidResize:(NSNotification *)notif;
 - (void)windowDidResignKey:(NSNotification *)notif;
@@ -1008,18 +1006,18 @@ void fl_open_callback(void (*cb)(const char *)) {
 - (void)windowDidDeminiaturize:(NSNotification *)notif;
 - (void)windowDidMiniaturize:(NSNotification *)notif;
 - (BOOL)windowShouldClose:(id)fl;
-- (void)anyWindowWillClose:(NSNotification *)notif;
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
-- (void)applicationDidBecomeActive:(NSNotification *)notify;
-- (void)applicationDidChangeScreenParameters:(NSNotification *)aNotification;
-- (void)applicationWillResignActive:(NSNotification *)notify;
-- (void)applicationWillHide:(NSNotification *)notify;
-- (void)applicationWillUnhide:(NSNotification *)notify;
 - (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client;
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
+- (void)anyWindowWillClose:(NSNotification *)notif;
 @end
-@implementation FLDelegate
+@implementation FLWindowDelegate
++ (FLWindowDelegate*)createOnce
+{
+  static FLWindowDelegate* delegate = nil;
+  if (!delegate) {
+    delegate = [[FLWindowDelegate alloc] init];
+    }
+  return delegate;
+}
 - (void)windowDidMove:(NSNotification *)notif
 {
   fl_lock_function();
@@ -1061,7 +1059,7 @@ void fl_open_callback(void (*cb)(const char *)) {
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *window = [nsw getFl_Window];
   /* Fullscreen windows obscure all other windows so we need to return
-     to a "normal" level when the user switches to another window */
+   to a "normal" level when the user switches to another window */
   if (window->fullscreen_active())
     [nsw setLevel:NSNormalWindowLevel];
   Fl::handle( FL_UNFOCUS, window);
@@ -1112,6 +1110,18 @@ void fl_open_callback(void (*cb)(const char *)) {
   // the system doesn't need to send [fl close] because FLTK does it when needed
   return NO; 
 }
+- (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client
+{
+  if (fl_mac_os_version < 100600) {
+    static FLTextView *view = nil;
+    if (!view) {
+      NSRect rect={{0,0},{20,20}};
+      view = [[FLTextView alloc] initWithFrame:rect];
+    }
+    return view;
+  }
+  return nil;
+}
 - (void)anyWindowWillClose:(NSNotification *)notif
 {
   fl_lock_function();
@@ -1121,13 +1131,32 @@ void fl_open_callback(void (*cb)(const char *)) {
     Fl_Window *w = Fl::first_window();
     while (w && (w->parent() || !w->border() || !w->visible())) {
       w = Fl::next_window(w);
-      }
+    }
     if (w) {
       [Fl_X::i(w)->xid makeKeyWindow];
     }
   }
   fl_unlock_function();
 }
+@end
+
+@interface FLAppDelegate : NSObject 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+<NSApplicationDelegate>
+#endif
+{
+  BOOL seen_open_file;
+}
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
+- (void)applicationDidBecomeActive:(NSNotification *)notify;
+- (void)applicationDidChangeScreenParameters:(NSNotification *)aNotification;
+- (void)applicationWillResignActive:(NSNotification *)notify;
+- (void)applicationWillHide:(NSNotification *)notify;
+- (void)applicationWillUnhide:(NSNotification *)notify;
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
+@end
+@implementation FLAppDelegate
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {
   fl_lock_function();
@@ -1259,18 +1288,6 @@ void fl_open_callback(void (*cb)(const char *)) {
   }
   fl_unlock_function();
 }
-- (id)windowWillReturnFieldEditor:(NSWindow *)sender toObject:(id)client
-{
-  if (fl_mac_os_version < 100600) {
-    static FLTextView *view = nil;
-    if (!view) {
-      NSRect rect={{0,0},{20,20}};
-      view = [[FLTextView alloc] initWithFrame:rect];
-    }
-    return view;
-  }
-  return nil;
-}
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
   seen_open_file = YES;
@@ -1338,7 +1355,7 @@ void fl_open_display() {
     if (need_new_nsapp) [NSApplication sharedApplication];
     NSAutoreleasePool *localPool;
     localPool = [[NSAutoreleasePool alloc] init]; // never released
-    [NSApp setDelegate:[[FLDelegate alloc] init]];
+    [NSApp setDelegate:[[FLAppDelegate alloc] init]];
     if (need_new_nsapp) [NSApp finishLaunching];
 
     // empty the event queue but keep system events for drag&drop of files at launch
@@ -1386,7 +1403,7 @@ void fl_open_display() {
     if (![NSApp servicesMenu]) createAppleMenu();
     fl_system_menu = [NSApp mainMenu];
     main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
-    [[NSNotificationCenter defaultCenter] addObserver:[NSApp delegate] 
+    [[NSNotificationCenter defaultCenter] addObserver:[FLWindowDelegate createOnce] 
 					     selector:@selector(anyWindowWillClose:) 
 						 name:NSWindowWillCloseNotification 
 					       object:nil];
@@ -2244,7 +2261,7 @@ void Fl_X::make(Fl_Window* w)
     w->set_visible();
     if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle(FL_FOCUS, w);
     Fl::first_window(w);
-    [cw setDelegate:[NSApp delegate]];
+    [cw setDelegate:[FLWindowDelegate createOnce]];
     if (fl_show_iconic) { 
       fl_show_iconic = 0;
       [cw miniaturize:nil];
