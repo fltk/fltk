@@ -629,8 +629,13 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 	      contentRect:(NSRect)rect 
 		styleMask:(NSUInteger)windowStyle;
 - (Fl_Window *)getFl_Window;
+/* These two functions allow to check if a window contains OpenGL-subwindows.
+   This is useful only for Mac OS < 10.7 to repair a problem apparent with the "cube" test program:
+   if the cube window is moved around rapidly (with OS < 10.7), the GL pixels leak away from where they should be.
+   The repair is performed by [FLWindowDelegate windowDidMove:], only if OS < 10.7.
+ */
 - (BOOL)containsGLsubwindow;
-- (void)setContainsGLsubwindow:(BOOL)contains;
+- (void)containsGLsubwindow:(BOOL)contains;
 @end
 
 @implementation FLWindow
@@ -653,7 +658,7 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 {
   return containsGLsubwindow;
 }
-- (void)setContainsGLsubwindow:(BOOL)contains
+- (void)containsGLsubwindow:(BOOL)contains
 {
   containsGLsubwindow = contains;
 }
@@ -1030,8 +1035,8 @@ void fl_open_callback(void (*cb)(const char *)) {
   update_e_xy_and_e_xy_root(nsw);
   resize_from_system = window;
   window->position((int)pt2.x, (int)(main_screen_height - pt2.y));
-  if ([nsw containsGLsubwindow] ) {
-    [nsw display];// redraw window after moving if it contains OpenGL subwindows
+  if ([nsw containsGLsubwindow] && fl_mac_os_version < 100700) {
+    [nsw display];// with OS < 10.7, redraw window after moving if it contains OpenGL subwindows
   }
   fl_unlock_function();
 }
@@ -2123,7 +2128,7 @@ void Fl_X::make(Fl_Window* w)
     }
     if (w->as_gl_window()) { // if creating a sub-GL-window
       while (win->window()) win = win->window();
-      [Fl_X::i(win)->xid setContainsGLsubwindow:YES];
+      [Fl_X::i(win)->xid containsGLsubwindow:YES];
     }
     fl_show_iconic = 0;
   }
