@@ -1668,9 +1668,14 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 
-@interface FLView : NSView <NSTextInput> {
+@interface FLView : NSView <NSTextInput
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+, NSTextInputClient
+#endif
+> {
   BOOL in_key_event;
   NSInteger identifier;
+  NSRange selectedRange;
 }
 + (void)prepareEtext:(NSString*)aString;
 - (id)init;
@@ -1949,27 +1954,34 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 // These functions implement text input.
-// On the way to fully support CJK text input, this is the way to go.
 - (void)doCommandBySelector:(SEL)aSelector {
 }
-
 - (void)insertText:(id)aString {
+  [self insertText:aString replacementRange:NSMakeRange(NSNotFound, 0)];
+}
+- (void)insertText:(id)aString replacementRange:(NSRange)replacementRange {
   NSString *received;
   if ([aString isKindOfClass:[NSAttributedString class]]) {
     received = [(NSAttributedString*)aString string];
   } else {
     received = (NSString*)aString;
   }
-  //NSLog(@"insertText: received=%@ Fl::marked_text_length()＝%d",received,Fl::marked_text_length());
-
+  /*NSLog(@"insertText=%@ l=%d Fl::marked_text_length()=%d range=%d,%d",
+	received,strlen([received UTF8String]),Fl::marked_text_length(),replacementRange.location,replacementRange.length);*/
   fl_lock_function();
+  Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
+  while (replacementRange.length--) { // delete replacementRange.length characters before insertion point
+    int saved_keysym = Fl::e_keysym;
+    Fl::e_keysym = FL_BackSpace;
+    Fl::handle(FL_KEYBOARD, target);
+    Fl::e_keysym = saved_keysym;
+    }
   [FLView prepareEtext:received];
   // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
   // Transform character palette actions to FL_PASTE events.
-  Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   Fl_X::next_marked_length = 0;
   Fl::handle( (in_key_event || Fl::marked_text_length()) ? FL_KEYBOARD : FL_PASTE, target);
-  
+  selectedRange = NSMakeRange(100, 0); // 100 is an arbitrary value
   // for some reason, with the palette, the window does not redraw until the next mouse move or button push
   // sending a 'redraw()' or 'awake()' does not solve the issue!
   Fl::flush();
@@ -1977,6 +1989,10 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 - (void)setMarkedText:(id)aString selectedRange:(NSRange)newSelection  {
+  [self setMarkedText:aString selectedRange:newSelection replacementRange:NSMakeRange(NSNotFound, 0)];
+}
+
+- (void)setMarkedText:(id)aString selectedRange:(NSRange)newSelection replacementRange:(NSRange)replacementRange {
   NSString *received;
   if ([aString isKindOfClass:[NSAttributedString class]]) {
     received = [(NSAttributedString*)aString string];
@@ -1984,15 +2000,21 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
     received = (NSString*)aString;
   }
   fl_lock_function();
-  // This code creates the OS X behaviour of seeing dead keys as things
-  // are being composed.
-  [FLView prepareEtext:received];
-  /*NSLog(@"setMarkedText:%@ %d %d Fl::marked_text_length()=%d Fl::e_length=%d", 
-	received, newSelection.location, newSelection.length, Fl::marked_text_length(), Fl::e_length);*/
+  /*NSLog(@"setMarkedText:%@ l=%d newSelection=%d,%d Fl::marked_text_length()=%d replacement=%d,%d", 
+	received, strlen([received UTF8String]), newSelection.location, newSelection.length, Fl::marked_text_length(),
+	replacementRange.location, replacementRange.length);*/
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
+  while (replacementRange.length--) { // delete replacementRange.length characters before insertion point
+    Fl::e_keysym = FL_BackSpace;
+    Fl::compose_state = 0;
+    Fl_X::next_marked_length = 0;
+    Fl::handle(FL_KEYBOARD, target);
+    Fl::e_keysym = 'a'; // pretend a letter key was hit
+  }
+  [FLView prepareEtext:received];
   Fl_X::next_marked_length = Fl::e_length;
   Fl::handle(FL_KEYBOARD, target);
-
+  selectedRange = NSMakeRange(100, newSelection.length);
   fl_unlock_function();
 }
 
@@ -2004,6 +2026,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 - (NSRange)selectedRange {
+  Fl_Widget *w = Fl::focus();
+  if (w && w->use_accents_menu()) return selectedRange;
   return NSMakeRange(NSNotFound, 0);
 }
 
@@ -2018,6 +2042,9 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)aRange {
+  return [self attributedSubstringForProposedRange:aRange actualRange:NULL];
+}
+- (NSAttributedString *)attributedSubstringForProposedRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange {
   //NSLog(@"attributedSubstringFromRange: %d %d",aRange.location,aRange.length);
   return nil;
 }
@@ -2027,7 +2054,10 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)aRange {
-  //NSLog(@"firstRectForCharacterRange %d %d",aRange.location, aRange.length);
+  return [self firstRectForCharacterRange:aRange actualRange:NULL];
+}
+- (NSRect)firstRectForCharacterRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange {
+  //NSLog(@"firstRectForCharacterRange %d %d actualRange=%p",aRange.location, aRange.length,actualRange);
   NSRect glyphRect;
   fl_lock_function();
   Fl_Widget *focus = Fl::focus();
@@ -2035,8 +2065,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   if (!focus) focus = wfocus;
   glyphRect.size.width = 0;
   
-  int x, y;
-  if (Fl_X::insertion_point_location(&x, &y)) {
+  int x, y, height;
+  if (Fl_X::insertion_point_location(&x, &y, &height)) {
     glyphRect.origin.x = (CGFloat)x;
     glyphRect.origin.y = (CGFloat)y;
   } else {
@@ -2048,8 +2078,9 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
       glyphRect.origin.x = focus->x();
       glyphRect.origin.y = focus->y() + focus->h();
       }
+    height = 12;
   }
-  glyphRect.size.height = 12;
+  glyphRect.size.height = height;
   Fl_Window *win = focus->as_window();
   if (!win) win = focus->window();
   while (win != NULL && win != wfocus) {
@@ -2060,6 +2091,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   // Convert the rect to screen coordinates
   glyphRect.origin.y = wfocus->h() - glyphRect.origin.y;
   glyphRect.origin = [[self window] convertBaseToScreen:glyphRect.origin];
+  if (actualRange) *actualRange = aRange;
   fl_unlock_function();
   return glyphRect;
 }

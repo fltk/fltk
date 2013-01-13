@@ -16,6 +16,12 @@
 //     http://www.fltk.org/str.php
 //
 
+/**
+\file Fl_compose.cxx
+Utility functions to support text input.
+*/
+
+
 #include <FL/Fl.H>
 #include <FL/x.H>
 
@@ -44,22 +50,27 @@ extern XIC fl_xim_ic;
  keys, and del is set to zero. You could insert the text anyways, if
  you don't know what else to do.
  
- <p>On the Mac OS platform, text editing widgets should preferentially signal
- marked text, that is, temporary text replaced by other text during the text 
- input process. Such signaling is usually done underlining marked text. Widgets can call
+ <p>On the Mac OS platform, text input can involve marked text, that is, 
+ temporary text replaced by other text during the input process. This occurs,
+ e.g., when using dead keys or when entering CJK characters.
+ Text editing widgets should preferentially signal
+ marked text, usually underlining it. Widgets can call
  <tt>int Fl::marked_text_length()</tt> <i>after</i> having called Fl::compose(int&)
  to obtain the length in bytes of marked text that always finishes at the
  current insertion point. It's the widget's task to underline marked text.
- Widgets should also call <tt>void Fl::reset_marked_text()</tt> when processing FL_UNFOCUS events.
- Optionally, widgets can also call
- <tt>void Fl::insertion_point_location(int x, int y)</tt> to indicate the window 
- coordinates of the bottom of the current insertion point. 
+ Widgets should also call <tt>void Fl::reset_marked_text()</tt> when processing FL_UNFOCUS
+ events. Optionally, widgets can also call
+ <tt>void Fl::insertion_point_location(int x, int y, int height)</tt> to indicate the window 
+ coordinates of the bottom of the current insertion point and the line height. 
  This way, auxiliary windows that help choosing among alternative characters 
  appear just below the insertion point. If widgets don't do that, 
  auxiliary windows appear at the widget's bottom. The
- Fl_Input and Fl_Text_Editor widgets signal marked text underlining it.
- If none of this is done by a user-defined text editing widget, complex
- (e.g., CJK) text input will work, but will not signal to the user what text is marked.
+ Fl_Input and Fl_Text_Editor widgets underline marked text.
+ If none of this is done by a user-defined text editing widget,
+ text input will work, but will not signal to the user what text is marked.
+ Finally, text editing widgets should call <tt>set_flag(MAC_USE_ACCENTS_MENU);</tt>
+ in their constructor if they want to use the feature introduced with Mac OS 10.7 "Lion"
+ where pressing and holding a key on the keyboard opens an accented-character menu window.
  
  <p>Though the current implementation returns immediately, future
  versions may take quite awhile, as they may pop up a window or do
@@ -100,6 +111,7 @@ int Fl::marked_text_length() {
 
 static int insertion_point_x = 0;
 static int insertion_point_y = 0;
+static int insertion_point_height = 0;
 static bool insertion_point_location_is_valid = false;
 
 void Fl::reset_marked_text() {
@@ -107,18 +119,20 @@ void Fl::reset_marked_text() {
   Fl_X::next_marked_length = 0;
   insertion_point_location_is_valid = false;
   }
-int Fl_X::insertion_point_location(int *px, int *py) 
+int Fl_X::insertion_point_location(int *px, int *py, int *pheight) 
 // return true if the current coordinates of the insertion point are available
 {
   if ( ! insertion_point_location_is_valid ) return false;
   *px = insertion_point_x;
   *py = insertion_point_y;
+  *pheight = insertion_point_height;
   return true;
 }
-void Fl::insertion_point_location(int x, int y) {
+void Fl::insertion_point_location(int x, int y, int height) {
   insertion_point_location_is_valid = true;
   insertion_point_x = x;
   insertion_point_y = y;
+  insertion_point_height = height;
 }
 #endif // __APPLE__
 

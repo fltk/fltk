@@ -73,6 +73,7 @@ Fl_Text_Editor::Fl_Text_Editor(int X, int Y, int W, int H,  const char* l)
   mCursorOn = 1;
   insert_mode_ = 1;
   key_bindings = 0;
+  set_flag(MAC_USE_ACCENTS_MENU);
 
   // handle the default key bindings
   add_default_key_bindings(&key_bindings);
@@ -526,12 +527,8 @@ int Fl_Text_Editor::handle_key() {
     }
 #ifdef __APPLE__
     if (Fl::marked_text_length()) {
-      int x, y;
       int pos = this->insert_position();
       this->buffer()->select(pos - Fl::marked_text_length(), pos);
-      this->position_to_xy( this->insert_position(), &x, &y);
-      y += this->textsize();
-      Fl::insertion_point_location(x, y);
       }
 #endif
     show_insert_position();

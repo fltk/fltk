@@ -171,6 +171,7 @@ protected:
         GROUP_RELATIVE  = 1<<16,  ///< position this widget relative to the parent group, not to the window
         COPIED_TOOLTIP  = 1<<17,  ///< the widget tooltip is internally copied, its destruction is handled by the widget
         FULLSCREEN      = 1<<18,  ///< a fullscreen window (Fl_Window)
+        MAC_USE_ACCENTS_MENU = 1<<19, ///< On the Mac OS platform, pressing and holding a key on the keyboard opens an accented-character menu window (Fl_Input_, Fl_Text_Editor)
         // (space for more flags)
         USERFLAG3       = 1<<29,  ///< reserved for 3rd party extensions
         USERFLAG2       = 1<<30,  ///< reserved for 3rd party extensions
@@ -975,6 +976,10 @@ public:
       \see Fl_Widget::as_group(), Fl_Widget::as_window()
    */
   virtual class Fl_Gl_Window* as_gl_window() {return 0;}
+  
+  /** Returns non zero if MAC_USE_ACCENTS_MENU flag is set, 0 otherwise. 
+   */
+  int use_accents_menu() { return flags() & MAC_USE_ACCENTS_MENU; }
   
   /** For back compatibility only.
       \deprecated Use selection_color() instead.

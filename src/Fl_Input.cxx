@@ -780,12 +780,14 @@ Fl_Float_Input::Fl_Float_Input(int X,int Y,int W,int H,const char *l)
 : Fl_Input(X,Y,W,H,l) 
 {
   type(FL_FLOAT_INPUT);
+  clear_flag(MAC_USE_ACCENTS_MENU);
 }
 
 
 Fl_Int_Input::Fl_Int_Input(int X,int Y,int W,int H,const char *l)
 : Fl_Input(X,Y,W,H,l) {
   type(FL_INT_INPUT);
+  clear_flag(MAC_USE_ACCENTS_MENU);
 }
 
 
@@ -810,6 +812,7 @@ Fl_Multiline_Output::Fl_Multiline_Output(int X,int Y,int W,int H,const char *l)
 Fl_Secret_Input::Fl_Secret_Input(int X,int Y,int W,int H,const char *l)
 : Fl_Input(X,Y,W,H,l) {
   type(FL_SECRET_INPUT);
+  clear_flag(MAC_USE_ACCENTS_MENU);
 }
 
 int Fl_Secret_Input::handle(int event) {

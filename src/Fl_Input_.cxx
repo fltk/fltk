@@ -388,6 +388,9 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       } else {
         fl_rectf((int)(xpos+curx+0.5), Y+ypos, 2, height);
       }
+#ifdef __APPLE__
+      Fl::insertion_point_location(xpos+curx, Y+ypos+height, height);
+#endif
     }
 
   CONTINUE:
@@ -1119,6 +1122,7 @@ Fl_Input_::Fl_Input_(int X, int Y, int W, int H, const char* l)
   maximum_size_ = 32767;
   shortcut_ = 0;
   set_flag(SHORTCUT_LABEL);
+  set_flag(MAC_USE_ACCENTS_MENU);
   tab_nav(1);
 }
 

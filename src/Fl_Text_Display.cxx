@@ -2067,6 +2067,9 @@ void Fl_Text_Display::draw_cursor( int X, int Y ) {
   if ( X < text_area.x - 1 || X > text_area.x + text_area.w )
     return;
 
+#ifdef __APPLE__
+  Fl::insertion_point_location(X, bot, fontHeight);
+#endif
   /* For cursors other than the block, make them around 2/3 of a character
    width, rounded to an even number of pixels so that X will draw an
    odd number centered on the stem at x. */

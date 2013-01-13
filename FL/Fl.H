@@ -147,7 +147,7 @@ public: // should be private!
 #ifdef __APPLE__
   static int marked_text_length(void); // returns length of marked text
   static void reset_marked_text(); // resets marked text
-  static void insertion_point_location(int x, int y); // sets window coordinates of insertion point
+  static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
 #endif
 #endif
   /**
