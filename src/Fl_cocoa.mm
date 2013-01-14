@@ -2100,6 +2100,10 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   return 0;
 }
 
+- (NSInteger)windowLevel {
+  return [[self window] level];
+}
+
 - (NSInteger)conversationIdentifier {
   return identifier;
 }
