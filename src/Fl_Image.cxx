@@ -453,6 +453,10 @@ static void imgProviderReleaseData (void *info, const void *data, size_t size)
   delete[] (unsigned char *)data;
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+typedef void (*CGDataProviderReleaseDataCallback)(void *info, const void *data, size_t size);
+#endif
+
 void Fl_Quartz_Graphics_Driver::draw(Fl_RGB_Image *img, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
   // Don't draw an empty image...
