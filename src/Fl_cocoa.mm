@@ -105,6 +105,7 @@ bool fl_show_iconic;                    // true if called from iconize() - shows
 Window fl_window;
 Fl_Window *Fl_Window::current_;
 int fl_mac_os_version = calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
+static SEL inputContextSEL = (fl_mac_os_version >= 100600 ? @selector(inputContext) : @selector(FLinputContext));
 
 // forward declarations of variables in this file
 static int got_events = 0;
@@ -899,90 +900,28 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   return;
 }
 
-@interface FLTextView : NSTextView 
-// this subclass is needed under OS X <= 10.5 but not under >= 10.6 where the base class is enough
+@interface FLTextView : NSTextView // this subclass is only needed under OS X < 10.6 
 {
+  BOOL isActive;
 }
-- (void)interpretKeyEvents:(NSArray *)eventArray;
+- (void)insertText:(id)aString;
+- (void)doCommandBySelector:(SEL)aSelector;
+- (void)setActive:(BOOL)a;
 @end
 @implementation FLTextView
 - (void)insertText:(id)aString
 {
-  [[[NSApp keyWindow] contentView] insertText:aString];
+  if (isActive) [[[NSApp keyWindow] contentView] insertText:aString];
 }
 - (void)doCommandBySelector:(SEL)aSelector
 {
   [[[NSApp keyWindow] contentView] doCommandBySelector:aSelector];
 }
-- (void)interpretKeyEvents:(NSArray *)eventArray
+- (void)setActive:(BOOL)a
 {
-  if (Fl::e_keysym == FL_BackSpace || Fl::e_keysym == FL_KP_Enter ||
-   Fl::e_keysym == FL_Enter || Fl::e_keysym == FL_Escape || Fl::e_keysym == FL_Tab ) {
-    NSEvent *theEvent = (NSEvent*)[eventArray objectAtIndex:0];
-    // interpretKeyEvents doesn't output anything for these 5 keys under 10.5 or below
-    NSString *s = [theEvent characters];
-    if ([s length] >= 1) {
-      static char utf[2] = {0, 0};
-      utf[0] = [s UTF8String][0];
-      Fl::e_text = utf;
-      Fl::e_length = 1;
-      }
-    Fl_Window *window = [(FLWindow*)[theEvent window] getFl_Window];
-    Fl::handle(FL_KEYBOARD, window);
-  }
-  else [super interpretKeyEvents:eventArray];
+  isActive = a;
 }
 @end
-
-/*
-Handle cocoa keyboard events
-Events during a character composition sequence:
- - keydown with deadkey -> [[theEvent characters] length] is 0
- - keyup -> [theEvent characters] contains the deadkey
- - keydown with next key -> [theEvent characters] contains the composed character
- - keyup -> [theEvent characters] contains the standard character
- */
-static void cocoaKeyboardHandler(NSEvent *theEvent)
-{
-  NSUInteger mods;
-  
-  // get the modifiers
-  mods = [theEvent modifierFlags];
-  // get the key code
-  UInt32 keyCode = 0, maskedKeyCode = 0;
-  unsigned short sym = 0;
-  keyCode = [theEvent keyCode];
-  // extended keyboards can also send sequences on key-up to generate Kanji etc. codes.
-  // Some observed prefixes are 0x81 to 0x83, followed by an 8 bit keycode.
-  // In this mode, there seem to be no key-down codes
-  // printf("%08x %08x %08x\n", keyCode, mods, key);
-  maskedKeyCode = keyCode & 0x7f;
-
-  if ([theEvent type] == NSKeyUp) {
-    Fl::e_state &= 0xbfffffff; // clear the deadkey flag
-  }
-
-  mods_to_e_state( mods ); // process modifier keys
-  sym = macKeyLookUp[maskedKeyCode];
-  if (sym < 0xff00) { // a "simple" key
-    // find the result of this key without modifier
-    NSString *sim = [theEvent charactersIgnoringModifiers];
-    UniChar one;
-    CFStringGetCharacters((CFStringRef)sim, CFRangeMake(0, 1), &one);
-    // charactersIgnoringModifiers doesn't ignore shift, remove it when it's on
-    if(one >= 'A' && one <= 'Z') one += 32;
-    if (one > 0 && one <= 0x7f && (sym<'0' || sym>'9') ) sym = one;
-  }
-  Fl::e_keysym = Fl::e_original_keysym = sym;
-
-  /*NSLog(@"cocoaKeyboardHandler: keycode=%08x keysym=%08x mods=%08x symbol=%@ (%@)",
-    keyCode, sym, mods, [theEvent characters], [theEvent charactersIgnoringModifiers]);*/
-
-  // If there is text associated with this key, it will be filled in later.
-  Fl::e_length = 0;
-  Fl::e_text = (char*)"";
-}
-
 
 /*
  * Open callback function to call...
@@ -1667,6 +1606,120 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   }
 }
 
+/**                 How FLTK handles Mac OS text input
+ 
+ Let myview be the instance of the FLView class that has the keyboard focus. FLView is an FLTK-defined NSView subclass
+ that implements the NSTextInputClient protocol to properly handle text input. It also implements the old NSTextInput
+ protocol to run with OS <= 10.4. The few NSTextInput protocol methods that differ in signature from the NSTextInputClient 
+ protocol transmit the received message to the corresponding NSTextInputClient method.
+
+ Keyboard input sends keyDown: and performKeyEquivalent: messages to myview. The latter occurs for keys such as
+ ForwardDelete, arrows and F1, and when the Ctrl or Cmd modifiers are used. Other key presses send keyDown: messages.
+ Both keyDown: and performKeyEquivalent: methods call [[myview inputContext] handleEvent:theEvent] that triggers system 
+ processing of keyboard events. Three sorts of messages are then sent back by the system to myview: doCommandBySelector:, 
+ setMarkedText: and insertText:. All 3 messages eventually produce Fl::handle(FL_KEYBOARD, focus-window) calls.
+ The handleEvent: method, however, does not send any message back to myview when both the Alt and Cmd modifiers 
+ are pressed. In this situation, the performKeyEquivalent: method directly sends the doCommandBySelector: message to myview. 
+ The doCommandBySelector: message allows to process events such as new-line, forward and backward delete, arrows, escape, 
+ tab, F1 and when the Ctrl or Cmd modifiers are used. The message setMarkedText:
+ is sent when marked text, that is, temporary text that gets replaced later by some other text, is inserted. This happens
+ when a dead key is pressed, and also when entering complex scripts (e.g., Chinese). Fl_X::next_marked_length gives the byte
+ length of marked text before the FL_KEYBOARD event is processed. Fl::compose_state gives this length after this processing.
+ Message insertText: is sent to enter text in the focused widget. If there's marked text, Fl::compose_state is > 0, and this
+ marked text gets replaced by the inserted text. If there's no marked text, the new text is inserted at the insertion point. 
+ When the character palette is used to enter text, the system sends an insertText: message to myview. The code processes it 
+ as an FL_PASTE event. The in_key_event field of the FLView class allows to differentiate keyboard from palette inputs.
+ 
+ OS >= 10.7 contains a feature where pressing and holding certain keys opens a menu window that shows a list 
+ of possible accented variants of this key. The selectedRange field of the FLView class and the selectedRange, insertText:
+ and setMarkedText: methods of the NSTextInputClient protocol are used to support this feature.
+ The notion of selected text (!= marked text) is monitored by the selectedRange field. 
+ The -(NSRange)[FLView selectedRange] method is used to control whether an FLTK widget opens accented character windows 
+ by returning .location = NSNotFound to disable that, or returning the value of the selectedRange field to enable the feature.
+ When selectedRange.location >= 0, the value of selectedRange.length is meaningful. 0 means no text is currently selected, 
+ > 0 means this number of characters before the insertion point are selected. The insertText: method does
+ selectedRange = NSMakeRange(100, 0); to indicate no text is selected. The setMarkedText: method does   
+ selectedRange = NSMakeRange(100, newSelection.length); to indicate that this length of text is selected.
+
+ With OS <= 10.5, the crucial call [[myview inputContext] handleEvent:theEvent] is not possible because neither the 
+ inputContext nor the handleEvent: methods are implemented. This call is re-written:
+    static SEL inputContextSEL = (fl_mac_os_version >= 100600 ? @selector(inputContext) : @selector(FLinputContext));
+    [[myview performSelector:inputContextSEL] handleEvent:theEvent];
+ that replaces the 10.6 inputContext message by the FLinputContext message. This message and two FLTK-defined classes, 
+ FLTextInputContext and FLTextView, are used to emulate with OS <= 10.5 what's possible with OS >= 10.6. 
+ Method -(FLTextInputContext*)[FLView FLinputContext] returns an instance of class FLTextInputContext that possesses 
+ a handleEvent: method. FLView's FLinputContext method also calls [[self window] fieldEditor:YES forObject:nil] which 
+ returns the so-called view's "field editor". This editor is an instance of the FLTextView class allocated by the 
+ -(id)[FLWindowDelegate windowWillReturnFieldEditor: toObject:] method.
+ The -(BOOL)[FLTextInputContext handleEvent:] method emulates the missing 10.6 -(BOOL)[NSTextInputContext handleEvent:]
+ by sending the interpretKeyEvents: message to the FLTextView object. The system sends back doCommandBySelector: and
+ insertText: messages to the FLTextView object that are transmitted unchanged to myview to be processed as with OS >= 10.6. 
+ The system also sends setMarkedText: messages directly to myview.
+  
+ There is furthermore an oddity of dead key processing with OS <= 10.5. It occurs when a dead key followed by a non-accented  
+ key are pressed. Say, for example, that keys '^' followed by 'p' are pressed on a French or German keyboard. Resulting 
+ messages are: [myview setMarkedText:@"^"], [myview insertText:@"^"], [myview insertText:@"p"], [FLTextView insertText:@"^p"]. 
+ The 2nd '^' replaces the marked 1st one, followed by p^p. The resulting text in the widget is "^p^p" instead of the 
+ desired "^p". To avoid that, the FLTextView object is deactivated by the insertText: message and reactivated after 
+ the handleEvent: message has been processed.
+
+ NSEvent's during a character composition sequence:
+ - keyDown with deadkey -> [[theEvent characters] length] is 0
+ - keyUp -> [theEvent characters] contains the deadkey
+ - keyDown with next key -> [theEvent characters] contains the composed character
+ - keyUp -> [theEvent characters] contains the standard character
+ */
+
+static void cocoaKeyboardHandler(NSEvent *theEvent)
+{
+  NSUInteger mods;
+  // get the modifiers
+  mods = [theEvent modifierFlags];
+  // get the key code
+  UInt32 keyCode = 0, maskedKeyCode = 0;
+  unsigned short sym = 0;
+  keyCode = [theEvent keyCode];
+  // extended keyboards can also send sequences on key-up to generate Kanji etc. codes.
+  // Some observed prefixes are 0x81 to 0x83, followed by an 8 bit keycode.
+  // In this mode, there seem to be no key-down codes
+  // printf("%08x %08x %08x\n", keyCode, mods, key);
+  maskedKeyCode = keyCode & 0x7f;
+  if ([theEvent type] == NSKeyUp) {
+    Fl::e_state &= 0xbfffffff; // clear the deadkey flag
+  }
+  mods_to_e_state( mods ); // process modifier keys
+  sym = macKeyLookUp[maskedKeyCode];
+  if (sym < 0xff00) { // a "simple" key
+    // find the result of this key without modifier
+    NSString *sim = [theEvent charactersIgnoringModifiers];
+    UniChar one;
+    CFStringGetCharacters((CFStringRef)sim, CFRangeMake(0, 1), &one);
+    // charactersIgnoringModifiers doesn't ignore shift, remove it when it's on
+    if(one >= 'A' && one <= 'Z') one += 32;
+    if (one > 0 && one <= 0x7f && (sym<'0' || sym>'9') ) sym = one;
+  }
+  Fl::e_keysym = Fl::e_original_keysym = sym;
+  /*NSLog(@"cocoaKeyboardHandler: keycode=%08x keysym=%08x mods=%08x symbol=%@ (%@)",
+   keyCode, sym, mods, [theEvent characters], [theEvent charactersIgnoringModifiers]);*/
+  // If there is text associated with this key, it will be filled in later.
+  Fl::e_length = 0;
+  Fl::e_text = (char*)"";
+}
+
+@interface FLTextInputContext : NSObject { // "emulates" NSTextInputContext before OS 10.6
+@public
+  FLTextView *edit;
+}
+-(BOOL)handleEvent:(NSEvent*)theEvent;
+@end
+@implementation FLTextInputContext
+-(BOOL)handleEvent:(NSEvent*)theEvent {
+  [self->edit setActive:YES];
+  [self->edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+  [self->edit setActive:YES];
+  return YES;
+}
+@end
 
 @interface FLView : NSView <NSTextInput
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
@@ -1702,6 +1755,14 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender;
 - (void)draggingExited:(id < NSDraggingInfo >)sender;
 - (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal;
+- (FLTextInputContext*)FLinputContext;
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+- (void)insertText:(id)aString replacementRange:(NSRange)replacementRange;
+- (void)setMarkedText:(id)aString selectedRange:(NSRange)newSelection replacementRange:(NSRange)replacementRange;
+- (NSAttributedString *)attributedSubstringForProposedRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange;
+- (NSRect)firstRectForCharacterRange:(NSRange)aRange actualRange:(NSRangePointer)actualRange;
+- (NSInteger)windowLevel;
+#endif
 @end
 
 @implementation FLView
@@ -1730,28 +1791,17 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 }
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent
 {   
-  int handled = 1;
   //NSLog(@"performKeyEquivalent:");
   fl_lock_function();
   cocoaKeyboardHandler(theEvent);
-  Fl_Window *window = [(FLWindow*)[theEvent window] getFl_Window];
-  NSString *s = [theEvent characters];
+  in_key_event = YES;
   NSUInteger mods = [theEvent modifierFlags];
-  if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
-    s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
-  }
-  if ([s length] >= 1) [FLView prepareEtext:s];
-  if ( (mods & NSControlKeyMask) || (mods & NSCommandKeyMask) ) {
-    handled = Fl::handle(FL_KEYBOARD, window);
-  }
-  else {
-    in_key_event = YES;
-    NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
-    [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
-    in_key_event = NO;
-  }
+  BOOL handled = YES;
+  if ( (mods & NSAlternateKeyMask) && (mods & NSCommandKeyMask) ) [self doCommandBySelector:NULL];
+  else handled = [[self performSelector:inputContextSEL] handleEvent:theEvent];
+  in_key_event = NO;
   fl_unlock_function();
-  return (handled ? YES : NO);
+  return handled;
 }
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent
 {   
@@ -1793,23 +1843,18 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   cocoaMouseWheelHandler(theEvent);
 }
 - (void)keyDown:(NSEvent *)theEvent {
-  //NSLog(@"keyDown");
+  //NSLog(@"keyDown:%@",[theEvent characters]);
   fl_lock_function();
-
   Fl_Window *window = [(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
-
-  // First let's process the raw key press
   cocoaKeyboardHandler(theEvent);
-
-  NSText *edit = [[theEvent window]  fieldEditor:YES forObject:nil];
   in_key_event = YES;
-  [edit interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+  [[self performSelector:inputContextSEL] handleEvent:theEvent];
   in_key_event = NO;
   fl_unlock_function();
 }
 - (void)keyUp:(NSEvent *)theEvent {
-  //NSLog(@"keyUp: ");
+  //NSLog(@"keyUp:%@",[theEvent characters]);
   fl_lock_function();
   Fl_Window *window = (Fl_Window*)[(FLWindow*)[theEvent window] getFl_Window];
   Fl::first_window(window);
@@ -1932,6 +1977,15 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   return NSDragOperationGeneric;
 }
 
+- (FLTextInputContext*)FLinputContext { // used only if OS < 10.6 to replace [NSView inputContext]
+  static FLTextInputContext *context = NULL;
+  if (!context) {
+    context = [[FLTextInputContext alloc] init];
+    }
+  context->edit = (FLTextView*)[[self window] fieldEditor:YES forObject:nil];
+  return context;
+}
+
 + (void)prepareEtext:(NSString*)aString {
   // fills Fl::e_text with UTF-8 encoded aString using an adequate memory allocation
   static char *received_utf8 = NULL;
@@ -1953,12 +2007,22 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   Fl::e_length = l;
 }
 
-// These functions implement text input.
 - (void)doCommandBySelector:(SEL)aSelector {
+  //NSLog(@"doCommandBySelector:%s",sel_getName(aSelector));
+  NSString *s = [[NSApp currentEvent] characters];
+  NSUInteger mods = [[NSApp currentEvent] modifierFlags];
+  if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
+    s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
+  }
+  [FLView prepareEtext:s];
+  Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
+  Fl::handle(FL_KEYBOARD, target);
 }
+
 - (void)insertText:(id)aString {
   [self insertText:aString replacementRange:NSMakeRange(NSNotFound, 0)];
 }
+
 - (void)insertText:(id)aString replacementRange:(NSRange)replacementRange {
   NSString *received;
   if ([aString isKindOfClass:[NSAttributedString class]]) {
@@ -1980,11 +2044,13 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
   // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
   // Transform character palette actions to FL_PASTE events.
   Fl_X::next_marked_length = 0;
-  Fl::handle( (in_key_event || Fl::marked_text_length()) ? FL_KEYBOARD : FL_PASTE, target);
+  int flevent = (in_key_event || Fl::marked_text_length()) ? FL_KEYBOARD : FL_PASTE;
+  Fl::handle( flevent, target);
   selectedRange = NSMakeRange(100, 0); // 100 is an arbitrary value
   // for some reason, with the palette, the window does not redraw until the next mouse move or button push
   // sending a 'redraw()' or 'awake()' does not solve the issue!
-  Fl::flush();
+  if (flevent == FL_PASTE) Fl::flush();
+  if (fl_mac_os_version < 100600) [(FLTextView*)[[self window] fieldEditor:YES forObject:nil] setActive:NO];
   fl_unlock_function();
 }
 
@@ -3448,7 +3514,7 @@ CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, i
   CGImageRef img;
   if (fl_mac_os_version >= 100500) {
     NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
-    img = [bitmap CGImage]; // requires Mac OS 10.5
+    img = (CGImageRef)[bitmap performSelector:@selector(CGImage)]; // requires Mac OS 10.5
     CGImageRetain(img);
     [bitmap release];
     }
