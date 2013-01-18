@@ -1795,13 +1795,12 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   fl_lock_function();
   cocoaKeyboardHandler(theEvent);
   in_key_event = YES;
-  NSUInteger mods = [theEvent modifierFlags];
-  BOOL handled = YES;
-  if ( (mods & NSAlternateKeyMask) && (mods & NSCommandKeyMask) ) [self doCommandBySelector:NULL];
-  else handled = [[self performSelector:inputContextSEL] handleEvent:theEvent];
+  if (! [[self performSelector:inputContextSEL] handleEvent:theEvent] ) {
+    [self doCommandBySelector:@selector(noop:)];
+    }
   in_key_event = NO;
   fl_unlock_function();
-  return handled;
+  return YES;
 }
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent
 {   
