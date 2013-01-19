@@ -1615,15 +1615,16 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
 
  Keyboard input sends keyDown: and performKeyEquivalent: messages to myview. The latter occurs for keys such as
  ForwardDelete, arrows and F1, and when the Ctrl or Cmd modifiers are used. Other key presses send keyDown: messages.
- Both keyDown: and performKeyEquivalent: methods call [[myview inputContext] handleEvent:theEvent] that triggers system 
- processing of keyboard events. Three sorts of messages are then sent back by the system to myview: doCommandBySelector:, 
- setMarkedText: and insertText:. All 3 messages eventually produce Fl::handle(FL_KEYBOARD, focus-window) calls.
- The handleEvent: method, however, does not send any message back to myview when both the Alt and Cmd modifiers 
- are pressed. In this situation, the performKeyEquivalent: method directly sends the doCommandBySelector: message to myview. 
- The doCommandBySelector: message allows to process events such as new-line, forward and backward delete, arrows, escape, 
- tab, F1 and when the Ctrl or Cmd modifiers are used. The message setMarkedText:
- is sent when marked text, that is, temporary text that gets replaced later by some other text, is inserted. This happens
- when a dead key is pressed, and also when entering complex scripts (e.g., Chinese). Fl_X::next_marked_length gives the byte
+ The keyDown: method calls [[myview inputContext] handleEvent:theEvent] that triggers system 
+ processing of keyboard events. The performKeyEquivalent: method directly calls Fl::handle(FL_KEYBOARD, focus-window) 
+ when the Ctrl or Cmd modifiers are used. If not, it also calls [[myview inputContext] handleEvent:theEvent].
+ The performKeyEquivalent: method returns YES when the keystroke has been handled and NO otherwise, which allows 
+ shortcuts of the system menu to be processed. Three sorts of messages are then sent back by the system to myview: 
+ doCommandBySelector:, setMarkedText: and insertText:. All 3 messages eventually produce Fl::handle(FL_KEYBOARD, win) calls.
+ The doCommandBySelector: message allows to process events such as new-line, forward and backward delete, arrows, 
+ escape, tab, F1. The message setMarkedText: is sent when marked text, that is, temporary text that gets replaced later 
+ by some other text, is inserted. This happen when a dead key is pressed, and also 
+ when entering complex scripts (e.g., Chinese). Fl_X::next_marked_length gives the byte
  length of marked text before the FL_KEYBOARD event is processed. Fl::compose_state gives this length after this processing.
  Message insertText: is sent to enter text in the focused widget. If there's marked text, Fl::compose_state is > 0, and this
  marked text gets replaced by the inserted text. If there's no marked text, the new text is inserted at the insertion point. 
@@ -1794,12 +1795,21 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   //NSLog(@"performKeyEquivalent:");
   fl_lock_function();
   cocoaKeyboardHandler(theEvent);
-  in_key_event = YES;
+  BOOL handled;
   NSUInteger mods = [theEvent modifierFlags];
-  BOOL handled = YES;
-  if ( (mods & NSAlternateKeyMask) && (mods & NSCommandKeyMask) ) [self doCommandBySelector:@selector(noop:)];
-  else handled = [[self performSelector:inputContextSEL] handleEvent:theEvent];
-  in_key_event = NO;
+  if ( (mods & NSControlKeyMask) || (mods & NSCommandKeyMask) ) {
+    NSString *s = [theEvent characters];
+    if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
+      s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
+      }
+    [FLView prepareEtext:s];
+    handled = Fl::handle(FL_KEYBOARD, [(FLWindow*)[theEvent window] getFl_Window]);
+  }
+  else {
+    in_key_event = YES;
+    handled = [[self performSelector:inputContextSEL] handleEvent:theEvent];
+    in_key_event = NO;
+    }
   fl_unlock_function();
   return handled;
 }
@@ -2009,12 +2019,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 
 - (void)doCommandBySelector:(SEL)aSelector {
   //NSLog(@"doCommandBySelector:%s",sel_getName(aSelector));
-  NSString *s = [[NSApp currentEvent] characters];
-  NSUInteger mods = [[NSApp currentEvent] modifierFlags];
-  if ( (mods & NSShiftKeyMask) && (mods & NSCommandKeyMask) ) {
-    s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
-  }
-  [FLView prepareEtext:s];
+  [FLView prepareEtext:[[NSApp currentEvent] characters]];
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   Fl::handle(FL_KEYBOARD, target);
 }
@@ -3058,7 +3063,7 @@ static void createAppleMenu(void)
   static BOOL donethat = NO;
   if (donethat) return;
   donethat = YES;
-  NSMenu *mainmenu, *services, *appleMenu;
+  NSMenu *mainmenu, *services = nil, *appleMenu;
   NSMenuItem *menuItem;
   NSString *title;
 
@@ -3083,35 +3088,37 @@ static void createAppleMenu(void)
     [menuItem setEnabled:YES];
     [appleMenu addItem:[NSMenuItem separatorItem]];
     }
-  // Services Menu
-  services = [[NSMenu alloc] init];
-  menuItem = [appleMenu 
-	      addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::services] 
-	      action:nil 
-	      keyEquivalent:@""];
-  [appleMenu setSubmenu:services forItem:menuItem];
-  [appleMenu addItem:[NSMenuItem separatorItem]];
-  // Hide AppName
-  title = [[NSString stringWithUTF8String:Fl_Mac_App_Menu::hide] stringByAppendingString:nsappname];
-  [appleMenu addItemWithTitle:title 
-		       action:@selector(hide:) 
+  if (fl_mac_os_version >= 100400) { // services+hide+quit already in menu in OS 10.3
+    // Services Menu
+    services = [[NSMenu alloc] init];
+    menuItem = [appleMenu 
+		addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::services] 
+		action:nil 
+		keyEquivalent:@""];
+    [appleMenu setSubmenu:services forItem:menuItem];
+    [appleMenu addItem:[NSMenuItem separatorItem]];
+    // Hide AppName
+    title = [[NSString stringWithUTF8String:Fl_Mac_App_Menu::hide] stringByAppendingString:nsappname];
+    [appleMenu addItemWithTitle:title 
+			 action:@selector(hide:) 
+		  keyEquivalent:@"h"];
+    // Hide Others
+    menuItem = [appleMenu 
+		addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::hide_others] 
+		action:@selector(hideOtherApplications:) 
 		keyEquivalent:@"h"];
-  // Hide Others
-  menuItem = [appleMenu 
-	      addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::hide_others] 
-	      action:@selector(hideOtherApplications:) 
-	      keyEquivalent:@"h"];
-  [menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
-  // Show All
-  [appleMenu addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::show] 
-		       action:@selector(unhideAllApplications:) keyEquivalent:@""];
-  [appleMenu addItem:[NSMenuItem separatorItem]];
-  // Quit AppName
-  title = [[NSString stringWithUTF8String:Fl_Mac_App_Menu::quit] 
-	   stringByAppendingString:nsappname];
-  [appleMenu addItemWithTitle:title 
-		       action:@selector(terminate:) 
-		keyEquivalent:@"q"];
+    [menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
+    // Show All
+    [appleMenu addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::show] 
+			 action:@selector(unhideAllApplications:) keyEquivalent:@""];
+    [appleMenu addItem:[NSMenuItem separatorItem]];
+    // Quit AppName
+    title = [[NSString stringWithUTF8String:Fl_Mac_App_Menu::quit] 
+	     stringByAppendingString:nsappname];
+    [appleMenu addItemWithTitle:title 
+			 action:@selector(terminate:) 
+		  keyEquivalent:@"q"];
+    }
   /* Put menu into the menubar */
   menuItem = [[NSMenuItem alloc] initWithTitle:@"" action:nil keyEquivalent:@""];
   [menuItem setSubmenu:appleMenu];
@@ -3122,9 +3129,11 @@ static void createAppleMenu(void)
     //	to avoid compiler warning raised by use of undocumented setAppleMenu	:
     [NSApp performSelector:@selector(setAppleMenu:) withObject:appleMenu];
   }
-  [NSApp setServicesMenu:services];
   [NSApp setMainMenu:mainmenu];
-  [services release];
+  if (services) {
+    [NSApp setServicesMenu:services];
+    [services release];
+    }
   [mainmenu release];
   [appleMenu release];
   [menuItem release];
