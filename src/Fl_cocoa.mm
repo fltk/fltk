@@ -3521,7 +3521,7 @@ CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, i
 // CFRelease the returned CGImageRef after use
 {
   CGImageRef img;
-  if (fl_mac_os_version >= 100500) {
+  if (fl_mac_os_version >= 100600) { // crashes with 10.5
     NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
     img = (CGImageRef)[bitmap performSelector:@selector(CGImage)]; // requires Mac OS 10.5
     CGImageRetain(img);
