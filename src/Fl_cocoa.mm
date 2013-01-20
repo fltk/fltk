@@ -3466,7 +3466,7 @@ int Fl::dnd(void)
 }
 
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h)
-// release the returned value after use
+// the returned value is autoreleased
 {
   while (win->window()) {
     x += win->x();
@@ -3479,7 +3479,7 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
   // left pixel column are not read, and bitmap is read shifted by one pixel in both directions. 
   // Under 10.5, we want no offset.
   NSRect rect = NSMakeRect(x - epsilon, y - epsilon, w, h);
-  return [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
+  return [[[NSBitmapImageRep alloc] initWithFocusedViewRect:rect] autorelease];
 }
 
 unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel)
@@ -3508,7 +3508,6 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
       q += w * *bytesPerPixel;
       }
   }
-  [bitmap release];
   return data;
 }
 
@@ -3521,11 +3520,10 @@ CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, i
 // CFRelease the returned CGImageRef after use
 {
   CGImageRef img;
-  if (fl_mac_os_version >= 100600) { // crashes with 10.5
+  if (fl_mac_os_version >= 100500) {
     NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
     img = (CGImageRef)[bitmap performSelector:@selector(CGImage)]; // requires Mac OS 10.5
     CGImageRetain(img);
-    [bitmap release];
     }
   else {
     int bpp;
