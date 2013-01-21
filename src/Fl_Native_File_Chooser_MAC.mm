@@ -501,8 +501,8 @@ int Fl_Native_File_Chooser::runmodal()
   }
   if (_directory && !dir) dir = [[NSString alloc] initWithUTF8String:_directory];
   if (fl_mac_os_version >= 100600) {
-    if (dir) [(NSSavePanel*)_panel performSelector:@selector(setDirectoryURL) withObject:[NSURL fileURLWithPath:dir]];
-    if (fname) [(NSSavePanel*)_panel performSelector:@selector(setNameFieldStringValue) withObject:fname];
+    if (dir) [(NSSavePanel*)_panel performSelector:@selector(setDirectoryURL:) withObject:[NSURL fileURLWithPath:dir]];
+    if (fname) [(NSSavePanel*)_panel performSelector:@selector(setNameFieldStringValue:) withObject:fname];
     retval = [(NSSavePanel*)_panel runModal];
   }
   else {
