@@ -716,10 +716,6 @@ void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
 Attaches the callback \c cb to the "About myprog" item of the system application menu.
 \c cb will be called with NULL first argument and \c user_data second argument.
 
-Fl_Mac_App_Menu class
-\par 
-The Fl_Mac_App_Menu class allows to localize the application menu.
-
 Fl_Sys_Menu_Bar class
 
 \par
@@ -727,8 +723,8 @@ The Fl_Sys_Menu_Bar class allows to build menu bars that, on Mac OS X, are
 placed in the system menu bar (at top-left of display), and, on other platforms,
 at a user-chosen location of a user-chosen window.
 
-\subsection osissues_quartz Drawing Things Using Quartz
 
+\subsection osissues_quartz Drawing Things Using Quartz
 All code inside Fl_Widget::draw()
 is expected to call Quartz drawing functions. The Quartz coordinate system 
 is flipped to match
@@ -736,6 +732,27 @@ FLTK's coordinate system. The origin for all drawing is in the top
 left corner of the enclosing Fl_Window. The global variable
 \c fl_gc (of type \c CGContextRef) is the appropriate Quartz 2D drawing environment.
 Include FL/x.H to declare the \c fl_gc variable.
+
+\subsection osissues_localize Internationalization
+All FLTK programs contain an application menu with, e.g., the About xxx, Hide xxx, and Quit xxx items.
+This menu can be internationalized/localized by any of two means.
+\li using the Fl_Mac_App_Menu class.
+\li using the standard Mac OS X localization procedure. Create a language-specific .lproj directory 
+(e.g., <tt>German.lproj</tt>) in the Resources subdirectory of the application bundle. 
+Create therein a <tt>Localizable.strings</tt> file that translates all menu items to this language. 
+The German <tt>Localizable.strings</tt> file, for example, contains:
+\verbatim
+"About %@" = "Über %@";
+"Print Front Window"="Frontfenster drucken";
+"Services" = "Dienste";
+"Hide %@"="%@ ausblenden";
+"Hide Others"="Andere ausblenden";
+"Show All"="Alle einblenden";
+"Quit %@"="%@ beenden";
+\endverbatim
+Set <tt>"Print Front Window" = "";</tt> therein so the application menu doesn't show a "Print Front Window" item.
+To localize the application name itself, create a file <tt>InfoPlist.strings</tt> in each .lproj directory
+and put <tt>CFBundleName = "localized name";</tt> in each such file.
 
 Fl_Double_Window
 

@@ -3066,21 +3066,23 @@ static void createAppleMenu(void)
   NSMenu *mainmenu, *services = nil, *appleMenu;
   NSMenuItem *menuItem;
   NSString *title;
-
-  NSString *nsappname = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+  
+  SEL infodictSEL = (fl_mac_os_version >= 100200 ? @selector(localizedInfoDictionary) : @selector(infoDictionary));
+  NSString *nsappname = [[[NSBundle mainBundle] performSelector:infodictSEL] objectForKey:@"CFBundleName"];  
   if (nsappname == nil)
     nsappname = [[NSProcessInfo processInfo] processName];
   appleMenu = [[NSMenu alloc] initWithTitle:@""];
   /* Add menu items */
-  title = [[NSString stringWithUTF8String:Fl_Mac_App_Menu::about] stringByAppendingString:nsappname];
+  title = [NSString stringWithFormat:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::about],nil), nsappname];
   menuItem = [appleMenu addItemWithTitle:title action:@selector(showPanel) keyEquivalent:@""];
   FLaboutItemTarget *about = [[FLaboutItemTarget alloc] init];
   [menuItem setTarget:about];
   [appleMenu addItem:[NSMenuItem separatorItem]];
   // Print front window
-  if (strlen(Fl_Mac_App_Menu::print) > 0) {
+  title = NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::print], nil);
+  if ([title length] > 0) {
     menuItem = [appleMenu 
-		addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::print] 
+		addItemWithTitle:title
 		action:@selector(printPanel) 
 		keyEquivalent:@""];
     [menuItem setTarget:about];
@@ -3092,29 +3094,29 @@ static void createAppleMenu(void)
     // Services Menu
     services = [[NSMenu alloc] init];
     menuItem = [appleMenu 
-		addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::services] 
+		addItemWithTitle:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::services], nil)
 		action:nil 
 		keyEquivalent:@""];
     [appleMenu setSubmenu:services forItem:menuItem];
     [appleMenu addItem:[NSMenuItem separatorItem]];
     // Hide AppName
-    title = [[NSString stringWithUTF8String:Fl_Mac_App_Menu::hide] stringByAppendingString:nsappname];
+    title = [NSString stringWithFormat:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::hide],nil), nsappname];
     [appleMenu addItemWithTitle:title 
 			 action:@selector(hide:) 
 		  keyEquivalent:@"h"];
     // Hide Others
     menuItem = [appleMenu 
-		addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::hide_others] 
+		addItemWithTitle:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::hide_others] , nil)
 		action:@selector(hideOtherApplications:) 
 		keyEquivalent:@"h"];
     [menuItem setKeyEquivalentModifierMask:(NSAlternateKeyMask|NSCommandKeyMask)];
     // Show All
-    [appleMenu addItemWithTitle:[NSString stringWithUTF8String:Fl_Mac_App_Menu::show] 
+    [appleMenu addItemWithTitle:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::show] , nil)
 			 action:@selector(unhideAllApplications:) keyEquivalent:@""];
     [appleMenu addItem:[NSMenuItem separatorItem]];
     // Quit AppName
-    title = [[NSString stringWithUTF8String:Fl_Mac_App_Menu::quit] 
-	     stringByAppendingString:nsappname];
+    title = [NSString stringWithFormat:NSLocalizedString([NSString stringWithUTF8String:Fl_Mac_App_Menu::quit] , nil),
+	     nsappname];
     [appleMenu addItemWithTitle:title 
 			 action:@selector(terminate:) 
 		  keyEquivalent:@"q"];
