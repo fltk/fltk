@@ -52,6 +52,7 @@ extern "C" {
 #include <unistd.h>
 #include <stdarg.h>
 #include <math.h>
+#include <limits.h>
 
 #import <Cocoa/Cocoa.h>
 
@@ -106,6 +107,7 @@ Window fl_window;
 Fl_Window *Fl_Window::current_;
 int fl_mac_os_version = calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 static SEL inputContextSEL = (fl_mac_os_version >= 100600 ? @selector(inputContext) : @selector(FLinputContext));
+int Fl_X::shortcut_events_since_keyDown = INT_MIN;
 
 // forward declarations of variables in this file
 static int got_events = 0;
@@ -1656,6 +1658,14 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  by sending the interpretKeyEvents: message to the FLTextView object. The system sends back doCommandBySelector: and
  insertText: messages to the FLTextView object that are transmitted unchanged to myview to be processed as with OS >= 10.6. 
  The system also sends setMarkedText: messages directly to myview.
+ 
+ When 2 deadkeys are pressed in succession, the messages sent are [myview setMarkedText:] by the 1st keystroke and
+ [myview insertText:] [myview setMarkedText:] by the 2nd keystroke. Each of these messages creates an FL_KEYBOARD event,
+ so there are two FL_KEYBOARD events for the 2nd keystroke. If no widget in the window accepts keyboard input, FL_KEYBOARD
+ events are re-tried as FL_SHORTCUT events, which makes two FL_SHORTCUT events for a single keystroke. This is a problem
+ when these keystrokes are used as shortcuts. Such problem occurs, for example, with Alt+e on a US keyboard.
+ The Fl_X::shortcut_events_since_keyDown variable allows to transform only one FL_KEYBOARD event into an FL_SHORTCUT 
+ event during processing of a keystroke, and thus fixes the double-shortcut problem.
   
  There is furthermore an oddity of dead key processing with OS <= 10.5. It occurs when a dead key followed by a non-accented  
  key are pressed. Say, for example, that keys '^' followed by 'p' are pressed on a French or German keyboard. Resulting 
@@ -1859,7 +1869,9 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   Fl::first_window(window);
   cocoaKeyboardHandler(theEvent);
   in_key_event = YES;
+  Fl_X::shortcut_events_since_keyDown = 0;
   [[self performSelector:inputContextSEL] handleEvent:theEvent];
+  Fl_X::shortcut_events_since_keyDown = INT_MIN;
   in_key_event = NO;
   fl_unlock_function();
 }

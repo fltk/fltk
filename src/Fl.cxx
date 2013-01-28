@@ -1280,6 +1280,9 @@ int Fl::handle_(int e, Fl_Window* window)
     e_number = e = FL_SHORTCUT;
 
   case FL_SHORTCUT:
+#ifdef __APPLE__
+      if (Fl_X::shortcut_events_since_keyDown++ > 0) return 0;
+#endif
     if (grab()) {wi = grab(); break;} // send it to grab window
 
     // Try it as shortcut, sending to mouse widget and all parents:
