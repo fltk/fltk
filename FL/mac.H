@@ -133,7 +133,6 @@ public:
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // compute work area of a given screen
   static int next_marked_length; // next length of marked text after current marked text will have been replaced
   static int insertion_point_location(int *px, int *py, int *pheight); // computes window coordinates & height of insertion point
-  static int shortcut_events_since_keyDown; // to limit to one FL_SHORTCUT event per keyDown event.
 private:
   static void relink(Fl_Window*, Fl_Window*);
   bool subwindow;

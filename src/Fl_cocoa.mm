@@ -107,7 +107,6 @@ Window fl_window;
 Fl_Window *Fl_Window::current_;
 int fl_mac_os_version = calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 static SEL inputContextSEL = (fl_mac_os_version >= 100600 ? @selector(inputContext) : @selector(FLinputContext));
-int Fl_X::shortcut_events_since_keyDown = INT_MIN;
 
 // forward declarations of variables in this file
 static int got_events = 0;
@@ -1633,6 +1632,13 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  When the character palette is used to enter text, the system sends an insertText: message to myview. The code processes it 
  as an FL_PASTE event. The in_key_event field of the FLView class allows to differentiate keyboard from palette inputs.
  
+ During processing of the handleEvent message, inserted and marked strings are concatenated in a single string
+ inserted in a single FL_KEYBOARD event after return from handleEvent. The need_handle member variable of FLView allows 
+ to determine when setMarkedText or insertText strings have been sent during handleEvent processing and must trigger 
+ an FL_KEYBOARD event. Concatenating two insertText operations or an insertText followed by a setMarkedText is possible. 
+ In contrast, setMarkedText followed by insertText or by another setMarkedText isn't correct if concatenated in a single 
+ string. Thus, in such case, the setMarkedText and the next operation produce each an FL_KEYBOARD event. 
+ 
  OS >= 10.7 contains a feature where pressing and holding certain keys opens a menu window that shows a list 
  of possible accented variants of this key. The selectedRange field of the FLView class and the selectedRange, insertText:
  and setMarkedText: methods of the NSTextInputClient protocol are used to support this feature.
@@ -1658,15 +1664,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  by sending the interpretKeyEvents: message to the FLTextView object. The system sends back doCommandBySelector: and
  insertText: messages to the FLTextView object that are transmitted unchanged to myview to be processed as with OS >= 10.6. 
  The system also sends setMarkedText: messages directly to myview.
- 
- When 2 deadkeys are pressed in succession, the messages sent are [myview setMarkedText:] by the 1st keystroke and
- [myview insertText:] [myview setMarkedText:] by the 2nd keystroke. Each of these messages creates an FL_KEYBOARD event,
- so there are two FL_KEYBOARD events for the 2nd keystroke. If no widget in the window accepts keyboard input, FL_KEYBOARD
- events are re-tried as FL_SHORTCUT events, which makes two FL_SHORTCUT events for a single keystroke. This is a problem
- when these keystrokes are used as shortcuts. Such problem occurs, for example, with Alt+e on a US keyboard.
- The Fl_X::shortcut_events_since_keyDown variable allows to transform only one FL_KEYBOARD event into an FL_SHORTCUT 
- event during processing of a keystroke, and thus fixes the double-shortcut problem.
-  
+   
  There is furthermore an oddity of dead key processing with OS <= 10.5. It occurs when a dead key followed by a non-accented  
  key are pressed. Say, for example, that keys '^' followed by 'p' are pressed on a French or German keyboard. Resulting 
  messages are: [myview setMarkedText:@"^"], [myview insertText:@"^"], [myview insertText:@"p"], [FLTextView insertText:@"^p"]. 
@@ -1737,11 +1735,13 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 , NSTextInputClient
 #endif
 > {
-  BOOL in_key_event;
+  BOOL in_key_event; // YES means keypress is being processed by handleEvent
+  BOOL need_handle; // YES means Fl::handle(FL_KEYBOARD,) is needed after handleEvent processing
   NSInteger identifier;
   NSRange selectedRange;
 }
 + (void)prepareEtext:(NSString*)aString;
++ (void)concatEtext:(NSString*)aString;
 - (id)init;
 - (void)drawRect:(NSRect)rect;
 - (BOOL)acceptsFirstResponder;
@@ -1817,7 +1817,9 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   }
   else {
     in_key_event = YES;
+    need_handle = NO;
     handled = [[self performSelector:inputContextSEL] handleEvent:theEvent];
+    if (need_handle) handled = Fl::handle(FL_KEYBOARD, [(FLWindow*)[theEvent window] getFl_Window]);
     in_key_event = NO;
     }
   fl_unlock_function();
@@ -1869,9 +1871,9 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   Fl::first_window(window);
   cocoaKeyboardHandler(theEvent);
   in_key_event = YES;
-  Fl_X::shortcut_events_since_keyDown = 0;
+  need_handle = NO;
   [[self performSelector:inputContextSEL] handleEvent:theEvent];
-  Fl_X::shortcut_events_since_keyDown = INT_MIN;
+  if (need_handle) Fl::handle(FL_KEYBOARD, window);
   in_key_event = NO;
   fl_unlock_function();
 }
@@ -2029,6 +2031,12 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   Fl::e_length = l;
 }
 
++ (void)concatEtext:(NSString*)aString {
+  // extends Fl::e_text with aString
+  NSString *newstring = [[NSString stringWithUTF8String:Fl::e_text] stringByAppendingString:aString];
+  [FLView prepareEtext:newstring];
+}
+
 - (void)doCommandBySelector:(SEL)aSelector {
   //NSLog(@"doCommandBySelector:%s",sel_getName(aSelector));
   [FLView prepareEtext:[[NSApp currentEvent] characters]];
@@ -2057,12 +2065,19 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     Fl::handle(FL_KEYBOARD, target);
     Fl::e_keysym = saved_keysym;
     }
-  [FLView prepareEtext:received];
+  if (in_key_event && Fl_X::next_marked_length && Fl::e_length) {
+    // if setMarkedText + insertText is sent during handleEvent, text cannot be concatenated in single FL_KEYBOARD event
+    Fl::handle(FL_KEYBOARD, target);
+    Fl::e_length = 0;
+    }
+  if (in_key_event && Fl::e_length) [FLView concatEtext:received];
+  else [FLView prepareEtext:received];
   // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
   // Transform character palette actions to FL_PASTE events.
   Fl_X::next_marked_length = 0;
   int flevent = (in_key_event || Fl::marked_text_length()) ? FL_KEYBOARD : FL_PASTE;
-  Fl::handle( flevent, target);
+  if (!in_key_event) Fl::handle( flevent, target);
+  else need_handle = YES;
   selectedRange = NSMakeRange(100, 0); // 100 is an arbitrary value
   // for some reason, with the palette, the window does not redraw until the next mouse move or button push
   // sending a 'redraw()' or 'awake()' does not solve the issue!
@@ -2094,9 +2109,16 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     Fl::handle(FL_KEYBOARD, target);
     Fl::e_keysym = 'a'; // pretend a letter key was hit
   }
-  [FLView prepareEtext:received];
-  Fl_X::next_marked_length = Fl::e_length;
-  Fl::handle(FL_KEYBOARD, target);
+  if (in_key_event && Fl_X::next_marked_length && Fl::e_length) {
+    // if setMarkedText + setMarkedText is sent during handleEvent, text cannot be concatenated in single FL_KEYBOARD event
+    Fl::handle(FL_KEYBOARD, target);
+    Fl::e_length = 0;
+  }
+  if (in_key_event && Fl::e_length) [FLView concatEtext:received];
+  else [FLView prepareEtext:received];
+  Fl_X::next_marked_length = strlen([received UTF8String]);
+  if (!in_key_event) Fl::handle( FL_KEYBOARD, target);
+  else need_handle = YES;
   selectedRange = NSMakeRange(100, newSelection.length);
   fl_unlock_function();
 }
