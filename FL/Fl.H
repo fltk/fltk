@@ -142,10 +142,9 @@ public: // should be private!
   static Fl_Widget* selection_owner_;
   static Fl_Window* modal_;
   static Fl_Window* grab_;
-  static int compose_state;
+  static int compose_state; // used for dead keys (WIN32) or marked text (MacOS)
   static void call_screen_init(); // recompute screen number and dimensions
 #ifdef __APPLE__
-  static int marked_text_length(void); // returns length of marked text
   static void reset_marked_text(); // resets marked text
   static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
 #endif

@@ -339,8 +339,8 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       int offset2;
       if (pp <= e) x2 = xpos + (float)expandpos(p, pp, buf, &offset2);
       else offset2 = (int) strlen(buf);
-#ifdef __APPLE__ // Mac OS: underline marked ( = selected + Fl::marked_text_length() != 0) text 
-      if (Fl::marked_text_length()) {
+#ifdef __APPLE__ // Mac OS: underline marked ( = selected + Fl::compose_state != 0) text 
+      if (Fl::compose_state) {
         fl_color(textcolor());
       }
       else 
@@ -351,8 +351,8 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
       fl_color(fl_contrast(textcolor(), selection_color()));
       }
       fl_draw(buf+offset1, offset2-offset1, x1, (float)(Y+ypos+desc));
-#ifdef __APPLE__ // Mac OS: underline marked ( = selected + Fl::marked_text_length() != 0) text
-      if (Fl::marked_text_length()) {
+#ifdef __APPLE__ // Mac OS: underline marked ( = selected + Fl::compose_state != 0) text
+      if (Fl::compose_state) {
         fl_color( fl_color_average(textcolor(), color(), 0.6) );
         float width = fl_width(buf+offset1, offset2-offset1);
         fl_line(x1, Y+ypos+height-1, x1+width, Y+ypos+height-1);
@@ -374,7 +374,7 @@ void Fl_Input_::drawtext(int X, int Y, int W, int H) {
     // draw the cursor:
     if (Fl::focus() == this && (
 #ifdef __APPLE__
-				Fl::marked_text_length() || 
+				Fl::compose_state || 
 #endif
 				selstart == selend) &&
 	position() >= p-value() && position() <= e-value()) {

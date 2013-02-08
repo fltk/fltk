@@ -526,9 +526,9 @@ int Fl_Text_Editor::handle_key() {
       else overstrike(Fl::event_text());
     }
 #ifdef __APPLE__
-    if (Fl::marked_text_length()) {
+    if (Fl::compose_state) {
       int pos = this->insert_position();
-      this->buffer()->select(pos - Fl::marked_text_length(), pos);
+      this->buffer()->select(pos - Fl::compose_state, pos);
       }
 #endif
     show_insert_position();
@@ -569,7 +569,7 @@ int Fl_Text_Editor::handle(int event) {
     case FL_UNFOCUS:
       show_cursor(mCursorOn); // redraws the cursor
 #ifdef __APPLE__
-      if (buffer()->selected() && Fl::marked_text_length()) {
+      if (buffer()->selected() && Fl::compose_state) {
 	int pos = insert_position();
 	buffer()->select(pos, pos);
 	Fl::reset_marked_text();

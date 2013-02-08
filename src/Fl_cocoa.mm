@@ -2055,8 +2055,8 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   } else {
     received = (NSString*)aString;
   }
-  /*NSLog(@"insertText=%@ l=%d Fl::marked_text_length()=%d range=%d,%d",
-	received,strlen([received UTF8String]),Fl::marked_text_length(),replacementRange.location,replacementRange.length);*/
+  /*NSLog(@"insertText=%@ l=%d Fl::compose_state=%d range=%d,%d",
+	received,strlen([received UTF8String]),Fl::compose_state,replacementRange.location,replacementRange.length);*/
   fl_lock_function();
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   while (replacementRange.length--) { // delete replacementRange.length characters before insertion point
@@ -2075,7 +2075,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
   // Transform character palette actions to FL_PASTE events.
   Fl_X::next_marked_length = 0;
-  int flevent = (in_key_event || Fl::marked_text_length()) ? FL_KEYBOARD : FL_PASTE;
+  int flevent = (in_key_event || Fl::compose_state) ? FL_KEYBOARD : FL_PASTE;
   if (!in_key_event) Fl::handle( flevent, target);
   else need_handle = YES;
   selectedRange = NSMakeRange(100, 0); // 100 is an arbitrary value
@@ -2098,8 +2098,8 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     received = (NSString*)aString;
   }
   fl_lock_function();
-  /*NSLog(@"setMarkedText:%@ l=%d newSelection=%d,%d Fl::marked_text_length()=%d replacement=%d,%d", 
-	received, strlen([received UTF8String]), newSelection.location, newSelection.length, Fl::marked_text_length(),
+  /*NSLog(@"setMarkedText:%@ l=%d newSelection=%d,%d Fl::compose_state=%d replacement=%d,%d", 
+	received, strlen([received UTF8String]), newSelection.location, newSelection.length, Fl::compose_state,
 	replacementRange.location, replacementRange.length);*/
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   while (replacementRange.length--) { // delete replacementRange.length characters before insertion point
@@ -2137,13 +2137,13 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 }
 
 - (NSRange)markedRange {
-  //NSLog(@"markedRange=%d %d", Fl::marked_text_length() > 0?0:NSNotFound, Fl::marked_text_length());
-  return NSMakeRange(Fl::marked_text_length() > 0?0:NSNotFound, Fl::marked_text_length());
+  //NSLog(@"markedRange=%d %d", Fl::compose_state > 0?0:NSNotFound, Fl::compose_state);
+  return NSMakeRange(Fl::compose_state > 0?0:NSNotFound, Fl::compose_state);
 }
 
 - (BOOL)hasMarkedText {
-  //NSLog(@"hasMarkedText %s", Fl::marked_text_length() > 0?"YES":"NO");
-  return (Fl::marked_text_length() > 0);
+  //NSLog(@"hasMarkedText %s", Fl::compose_state > 0?"YES":"NO");
+  return (Fl::compose_state > 0);
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)aRange {

@@ -54,8 +54,8 @@ extern XIC fl_xim_ic;
  temporary text replaced by other text during the input process. This occurs,
  e.g., when using dead keys or when entering CJK characters.
  Text editing widgets should preferentially signal
- marked text, usually underlining it. Widgets can call
- <tt>int Fl::marked_text_length()</tt> <i>after</i> having called Fl::compose(int&)
+ marked text, usually underlining it. Widgets can use
+ <tt>int Fl::compose_state</tt> <i>after</i> having called Fl::compose(int&)
  to obtain the length in bytes of marked text that always finishes at the
  current insertion point. It's the widget's task to underline marked text.
  Widgets should also call <tt>void Fl::reset_marked_text()</tt> when processing FL_UNFOCUS
@@ -105,10 +105,6 @@ unsigned char ascii = (unsigned char)e_text[0];
 }
 
 #ifdef __APPLE__
-int Fl::marked_text_length() {
-  return (Fl::compose_state ? Fl::compose_state : Fl_X::next_marked_length);
-  }
-
 static int insertion_point_x = 0;
 static int insertion_point_y = 0;
 static int insertion_point_height = 0;
