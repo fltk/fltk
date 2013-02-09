@@ -2038,8 +2038,10 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 }
 
 - (void)doCommandBySelector:(SEL)aSelector {
-  //NSLog(@"doCommandBySelector:%s",sel_getName(aSelector));
-  [FLView prepareEtext:[[NSApp currentEvent] characters]];
+  NSString *s = [[NSApp currentEvent] characters];
+  //NSLog(@"doCommandBySelector:%s text='%@'",sel_getName(aSelector), s);
+  s = [s substringFromIndex:[s length] - 1];
+  [FLView prepareEtext:s]; // use the last character of the event; necessary for deadkey + Tab
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
   Fl::handle(FL_KEYBOARD, target);
 }
@@ -2055,7 +2057,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   } else {
     received = (NSString*)aString;
   }
-  /*NSLog(@"insertText=%@ l=%d Fl::compose_state=%d range=%d,%d",
+  /*NSLog(@"insertText='%@' l=%d Fl::compose_state=%d range=%d,%d",
 	received,strlen([received UTF8String]),Fl::compose_state,replacementRange.location,replacementRange.length);*/
   fl_lock_function();
   Fl_Window *target = [(FLWindow*)[self window] getFl_Window];
@@ -2076,7 +2078,15 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   // Transform character palette actions to FL_PASTE events.
   Fl_X::next_marked_length = 0;
   int flevent = (in_key_event || Fl::compose_state) ? FL_KEYBOARD : FL_PASTE;
-  if (!in_key_event) Fl::handle( flevent, target);
+  // YES if key has text attached
+  BOOL has_text_key = Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
+                      (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
+  // insertText sent during handleEvent of a key without text cannot be processed in a single FL_KEYBOARD event.
+  // Occurs with deadkey followed by non-text key
+  if (!in_key_event || !has_text_key) {
+    Fl::handle(flevent, target);
+    Fl::e_length = 0;
+    }
   else need_handle = YES;
   selectedRange = NSMakeRange(100, 0); // 100 is an arbitrary value
   // for some reason, with the palette, the window does not redraw until the next mouse move or button push
