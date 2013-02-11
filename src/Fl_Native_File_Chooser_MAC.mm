@@ -606,6 +606,7 @@ int Fl_Native_File_Chooser::post() {
       char *t = prepareMacFilter(_filt_total, _filter, _filt_patt);
       popup = createPopupAccessory((NSSavePanel*)_panel, t, [[(NSSavePanel*)_panel nameFieldLabel] UTF8String], _filt_value);
       delete[] t;
+      [(NSSavePanel*)_panel setCanSelectHiddenExtension:YES];
     }
     retval = runmodal();
     if (_filt_total) {
