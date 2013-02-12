@@ -5,6 +5,8 @@ CHANGES IN FLTK 1.3.3
 	and input of languages with large character sets (e.g., Chinese and Japanese). This
 	implementation has been reported to work well for Chinese. Superficial testing suggests
 	it's also operational for Japanese. In-depth testing remains needed though.
+	- Mac OS version of Fl_Native_File_Chooser: when using filters in a save file dialog,
+	the output file extension gets changed when the user modifies the output file type.
 
 CHANGES IN FLTK 1.3.2
 
@@ -17,7 +19,7 @@ CHANGES IN FLTK 1.3.2
 	- Documented how to make a Mac OS X FLTK application launchable by dropping files on its icon.
 	- Fixed a Mac-specific issue appeared with OS 10.8 (Mountain Lion): long delay before
 	opening when the application is started by dragging a file on the application icon.
-	- Fixed use of PNG image from im-memory data (STR #2884).
+	- Fixed use of PNG image from in-memory data (STR #2884).
 	- Added static Fl_RGB_Image::max_size(size_t) to limit the maximum memory size allowed to
 	RGB images (STR #2881).
 
