@@ -319,6 +319,7 @@ Atom fl_XdndFinished;
 //Atom fl_XdndProxy;
 Atom fl_XdndURIList;
 Atom fl_Xatextplainutf;
+Atom fl_Xatextplainutf2;		// STR#2930 
 Atom fl_Xatextplain;
 static Atom fl_XaText;
 Atom fl_XaCompoundText;
@@ -621,6 +622,7 @@ void fl_open_display(Display* d) {
   fl_XdndEnter          = XInternAtom(d, "XdndEnter",           0);
   fl_XdndURIList        = XInternAtom(d, "text/uri-list",       0);
   fl_Xatextplainutf     = XInternAtom(d, "text/plain;charset=UTF-8",0);
+  fl_Xatextplainutf2    = XInternAtom(d, "text/plain;charset=utf-8",0);	// Firefox/Thunderbird needs this - See STR#2930
   fl_Xatextplain        = XInternAtom(d, "text/plain",          0);
   fl_XaText             = XInternAtom(d, "TEXT",                0);
   fl_XaCompoundText     = XInternAtom(d, "COMPOUND_TEXT",       0);
@@ -1023,13 +1025,17 @@ int fl_handle(const XEvent& thisevent)
 	Atom type = XA_STRING;
 	for (unsigned i = 0; i<count; i++) {
 	  Atom t = ((Atom*)portion)[i];
-	    if (t == fl_Xatextplainutf ||
-		  t == fl_Xatextplain ||
-		  t == fl_XaUtf8String) {type = t; break;}
-	    // rest are only used if no utf-8 available:
-	    if (t == fl_XaText ||
-		  t == fl_XaTextUriList ||
-		  t == fl_XaCompoundText) type = t;
+	  if (t == fl_Xatextplainutf ||
+	      t == fl_Xatextplainutf2 ||
+	      t == fl_Xatextplain ||
+	      t == fl_XaUtf8String) {
+	    type = t;
+	    break;
+	  }
+	  // rest are only used if no utf-8 available:
+	  if (t == fl_XaText ||
+	      t == fl_XaTextUriList ||
+	      t == fl_XaCompoundText) type = t;
 	}
 	XFree(portion);
 	Atom property = xevent.xselection.property;
@@ -1096,7 +1102,8 @@ int fl_handle(const XEvent& thisevent)
 	     e.target == fl_XaCompoundText ||
 	     e.target == fl_XaText ||
 	     e.target == fl_Xatextplain ||
-	     e.target == fl_Xatextplainutf) {
+	     e.target == fl_Xatextplainutf ||
+	     e.target == fl_Xatextplainutf2) {
 	// clobber the target type, this seems to make some applications
 	// behave that insist on asking for XA_TEXT instead of UTF8_STRING
 	// Does not change XA_STRING as that breaks xclipboard.
@@ -1186,23 +1193,24 @@ int fl_handle(const XEvent& thisevent)
       }
 
       // Loop through the source types and pick the first text type...
-      int i;
-
-      for (i = 0; fl_dnd_source_types[i]; i ++)
-      {
-//        printf("fl_dnd_source_types[%d] = %ld (%s)\n", i,
-//             fl_dnd_source_types[i],
-//             XGetAtomName(fl_display, fl_dnd_source_types[i]));
-
-        if (!strncmp(XGetAtomName(fl_display, fl_dnd_source_types[i]),
-                     "text/", 5))
+      unsigned i;
+      Atom type = ((Atom*)fl_dnd_source_types)[0];
+      for (i = 0; fl_dnd_source_types[i]; i ++) {
+        Atom t = ((Atom*)fl_dnd_source_types)[i];
+        //printf("fl_dnd_source_types[%d]=%ld(%s)\n",i,t,XGetAtomName(fl_display,t));
+        if (t == fl_Xatextplainutf ||		// "text/plain;charset=UTF-8"
+            t == fl_Xatextplainutf2 ||		// "text/plain;charset=utf-8" -- See STR#2930
+            t == fl_Xatextplain ||		// "text/plain"
+            t == fl_XaUtf8String) {		// "UTF8_STRING"
+          type = t;
           break;
+	}
+        // rest are only used if no utf-8 available:
+        if (t == fl_XaText ||			// "TEXT"
+            t == fl_XaTextUriList ||		// "text/uri-list"
+            t == fl_XaCompoundText) type = t;	// "COMPOUND_TEXT"
       }
-
-      if (fl_dnd_source_types[i])
-        fl_dnd_type = fl_dnd_source_types[i];
-      else
-        fl_dnd_type = fl_dnd_source_types[0];
+      fl_dnd_type = type;
 
       event = FL_DND_ENTER;
       Fl::e_text = unknown;
