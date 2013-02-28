@@ -245,7 +245,7 @@ libfltk.1.3.dylib: $(OBJECTS)
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.1 \
+		-current_version 1.3.2 \
 		-compatibility_version 1.3.0 \
 		$(OBJECTS) $(LDLIBS)
 	$(RM) libfltk.dylib
@@ -281,7 +281,7 @@ libfltk_forms.1.3.dylib: $(FLOBJECTS) libfltk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.1 \
+		-current_version 1.3.2 \
 		-compatibility_version 1.3.0 \
 		$(FLOBJECTS) -L. $(LDLIBS) -lfltk
 	$(RM) libfltk_forms.dylib
@@ -317,7 +317,7 @@ libfltk_gl.1.3.dylib: $(GLOBJECTS) libfltk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.1 \
+		-current_version 1.3.2 \
 		-compatibility_version 1.3.0 \
 		$(GLOBJECTS) -L. $(GLDLIBS) -lfltk
 	$(RM) libfltk_gl.dylib
@@ -353,7 +353,7 @@ libfltk_images.1.3.dylib: $(IMGOBJECTS) libfltk.1.3.dylib
 	echo $(DSOCOMMAND) $@ ...
 	$(DSOCOMMAND) $@ \
 		-install_name $(libdir)/$@ \
-		-current_version 1.3.1 \
+		-current_version 1.3.2 \
 		-compatibility_version 1.3.0 \
 		$(IMGOBJECTS)  -L. $(LDLIBS) $(IMAGELIBS) -lfltk
 	$(RM) libfltk_images.dylib
