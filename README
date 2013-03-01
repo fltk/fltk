@@ -1,4 +1,4 @@
-README - Fast Light Tool Kit (FLTK) Version 1.3.0
+README - Fast Light Tool Kit (FLTK) Version 1.3.2
 -------------------------------------------------
 
 WHAT IS FLTK?
@@ -18,7 +18,7 @@ LICENSING
     FLTK comes with complete free source code. FLTK is available
     under the terms of the GNU Library General Public License.
     Contrary to popular belief, it can be used in commercial
-    software! (Even Bill Gates could use it.) 
+    software! (Even Bill Gates could use it.)
 
 
 ON-LINE DOCUMENTATION
@@ -79,7 +79,7 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
     install".  This will copy the "fluid" executable to
     "bindir", the header files to "includedir", and the library
     files to "libdir".
-    
+
     To install additional files and icons to be used by the main
     desktop environments such as KDE, GNOME and XFCE, you will also
     need to run "make install-desktop" as root.
@@ -87,7 +87,7 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
 
 BUILDING FLTK UNDER MICROSOFT WINDOWS
 
-    There are two ways to build FLTK under Microsoft Windows. 
+    There are two ways to build FLTK under Microsoft Windows.
     The first is to use the Visual C++ project files under the
     "ide/" directory.  See the file ide/README.IDE for more info.
 
@@ -145,8 +145,8 @@ TRADEMARKS
 
 COPYRIGHT
 
-    FLTK is copyright 1998-2011 by Bill Spitzak
-    (spitzak@users.sourceforge.net) and others, 
+    FLTK is copyright 1998-2013 by Bill Spitzak
+    (spitzak@users.sourceforge.net) and others,
     see the CREDITS file for more info.
 
     This library is free software. Distribution and use rights are
