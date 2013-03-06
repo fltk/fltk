@@ -1,10 +1,10 @@
 /*
  * "$Id$"
  *
- * This is a placekeeper stub that puuls in scandir implementations for host
+ * This is a placekeeper stub that pulls in scandir implementations for host
  * systems that do not provide a compatible one natively
  *
- * Copyright 1998-2010 by Bill Spitzak and others.
+ * Copyright 1998-2013 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
