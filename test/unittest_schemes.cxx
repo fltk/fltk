@@ -53,11 +53,11 @@ class SchemesTest : public Fl_Group {
       st->window()->redraw();	// redraw window
     }
   }
-public: 
+public:
   static Fl_Widget *create() {
     return new SchemesTest(TESTAREA_X, TESTAREA_Y, TESTAREA_W, TESTAREA_H);
   }
-  SchemesTest(int X,int Y,int W,int H) : Fl_Group(X,Y,W,H) { 
+  SchemesTest(int X,int Y,int W,int H) : Fl_Group(X,Y,W,H) {
     schemechoice = new Fl_Choice(X+125,Y,140,25,"FLTK Scheme");
     schemechoice->add("none");
     schemechoice->add("plastic");
@@ -261,6 +261,7 @@ public:
       } // Fl_Text_Editor* o
     }
     subwin->end();
+    subwin->resizable(subwin);
     subwin->show();
   }
 };
