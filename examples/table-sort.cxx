@@ -39,7 +39,7 @@
 #ifdef WIN32
 // WINDOWS
 #  define DIRCMD          "dir"
-#  define DIRHEADER       { "Date", "Time", "Size", "Filename", "", "", "", "", "" }
+static const char *G_header[] = { "Date", "Time", "Size", "Filename", "", "", "", "", "", 0 };
 #  ifdef _MSC_VER
 #    define popen           _popen
 #  endif
@@ -47,8 +47,14 @@
 // UNIX
 #  include <ctype.h>
 #  define DIRCMD          "ls -l"
-#  define DIRHEADER       { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename" }
+static const char *G_header[] = { "Perms", "#L", "Own", "Group", "Size", "Date", "", "", "Filename", 0 };
 #endif /*WIN32*/
+
+// Font face/sizes for header and rows
+#define HEADER_FONTFACE FL_HELVETICA_BOLD
+#define HEADER_FONTSIZE 16
+#define ROW_FONTFACE    FL_HELVETICA
+#define ROW_FONTSIZE    16
 
 // A single row of columns
 class Row {
@@ -147,12 +153,11 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
     switch ( context ) {
         case CONTEXT_COL_HEADER:
             fl_push_clip(X,Y,W,H); {
-                static const char *head[] = DIRHEADER; 
                 fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, FL_BACKGROUND_COLOR);
                 if ( C < 9 ) {
-		    fl_font(FL_HELVETICA_BOLD, 16);
+		    fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
                     fl_color(FL_BLACK);
-                    fl_draw(head[C], X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left 
+                    fl_draw(G_header[C], X+2,Y,W,H, FL_ALIGN_LEFT, 0, 0);         // +2=pad left 
                     // Draw sort arrow
                     if ( C == _sort_lastcol ) {
                         draw_sort_arrow(X,Y,W,H);
@@ -166,7 +171,7 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
                 // Bg color
                 Fl_Color bgcolor = row_selected(R) ? selection_color() : FL_WHITE;
                 fl_color(bgcolor); fl_rectf(X,Y,W,H); 
-		fl_font(FL_HELVETICA, 16);
+		fl_font(ROW_FONTFACE, ROW_FONTSIZE);
                 fl_color(FL_BLACK); fl_draw(s, X+2,Y,W,H, FL_ALIGN_LEFT);     // +2=pad left 
                 // Border
                 fl_color(FL_LIGHT2); fl_rect(X,Y,W,H);
@@ -181,13 +186,17 @@ void MyTable::draw_cell(TableContext context, int R, int C, int X, int Y, int W,
 
 // Automatically set column widths to widest data in each column
 void MyTable::autowidth(int pad) {
-    fl_font(FL_COURIER, 16); 
-    // Initialize all column widths to lowest value
-    for ( int c=0; c<cols(); c++ ) col_width(c, pad);
+    int w, h;
+    // Initialize all column widths to header width
+    fl_font(HEADER_FONTFACE, HEADER_FONTSIZE);
+    for ( int c=0; G_header[c]; c++ ) {
+	w=0; fl_measure(G_header[c], w, h, 0);                   // pixel width of header text
+        col_width(c, w+pad);
+    }
+    fl_font(ROW_FONTFACE, ROW_FONTSIZE);
     for ( int r=0; r<(int)_rowdata.size(); r++ ) {
-        int w, h;
         for ( int c=0; c<(int)_rowdata[r].cols.size(); c++ ) {
-            fl_measure(_rowdata[r].cols[c], w, h, 0);           // get pixel width of text
+            w=0; fl_measure(_rowdata[r].cols[c], w, h, 0);       // pixel width of row text
             if ( (w + pad) > col_width(c)) col_width(c, w + pad);
         }
     }
