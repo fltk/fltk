@@ -1931,6 +1931,14 @@ void Fl::clear_widget_pointer(Fl_Widget const *w)
  There should be an application that manages options system wide, per user, and
  per application.
 
+ Example:
+ \code
+     if ( Fl::option(Fl::OPTION_ARROW_FOCUS) )
+         { ..on..  }
+     else
+         { ..off..  }
+ \endcode
+
  \note As of FLTK 1.3.0, options can be managed within fluid, using the menu
  <i>Edit/Global FLTK Settings</i>.
 
@@ -1991,6 +1999,12 @@ bool Fl::option(Fl_Option opt)
  \brief Override an option while the application is running.
 
  This function does not change any system or user settings.
+
+ Example:
+ \code
+     Fl::option(Fl::OPTION_ARROW_FOCUS, true);     // on
+     Fl::option(Fl::OPTION_ARROW_FOCUS, false);    // off
+ \endcode
 
  \param opt which option
  \param val set to true or false
