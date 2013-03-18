@@ -290,6 +290,7 @@ void setrows_cb(Fl_Widget* w, void* v) {
 }
 
 int main() {
+  Fl::option(Fl::OPTION_ARROW_FOCUS, 1);		// we want arrow keys to navigate table's widgets
   Fl_Double_Window *win = new Fl_Double_Window(922, 382, "Fl_Table Spreadsheet with Keyboard Navigation");
   Spreadsheet* table = new Spreadsheet(20, 20, win->w()-80, win->h()-80);
   // Table rows
