@@ -52,10 +52,14 @@ public:
     input->callback(input_cb, (void*)this);
     input->when(FL_WHEN_ENTER_KEY_ALWAYS);		// callback triggered when user hits Enter
     input->maximum_size(5);
+    input->color(FL_YELLOW);
     for (int c = 0; c < MAX_COLS; c++)
       for (int r = 0; r < MAX_ROWS; r++)
 	values[r][c] = c + (r*MAX_COLS);		// initialize cells
     end();
+    row_edit = col_edit = 0;
+    select_row = current_row = 0;
+    select_col = current_col = 0;
   }
   ~Spreadsheet() { }
 
@@ -156,7 +160,7 @@ void Spreadsheet::draw_cell(TableContext context, int R,int C, int X,int Y,int W
       }
       // Background
       if ( C < cols()-1 && R < rows()-1 ) {
-	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, FL_WHITE);
+	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, (R==row_edit && C==col_edit) ? FL_YELLOW : FL_WHITE);
       } else {
 	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, 0xbbddbb00);	// money green
       }
@@ -205,7 +209,11 @@ void Spreadsheet::event_callback2() {
 	  return;
 
 	case FL_KEYBOARD:				// key press in table?
-	  if ( Fl::event_key() == FL_Escape ) exit(0);	// ESC closes app
+	  switch (Fl::event_key()) {
+	    case FL_Escape: exit(0);			// ESC closes app
+	    case FL_Shift_L: return;			// ignore shift
+	    case FL_Shift_R: return;
+	  }
 	  if (C == cols()-1 || R == rows()-1) return;	// no editing of totals column
 	  done_editing();				// finish any previous editing
 	  start_editing(R,C);				// start new edit
@@ -229,6 +237,7 @@ void Spreadsheet::event_callback2() {
 }
 
 int main() {
+  Fl::option(Fl::OPTION_ARROW_FOCUS, 1);		// we want arrow keys to navigate table's widgets
   Fl_Double_Window *win = new Fl_Double_Window(862, 322, "Fl_Table Spreadsheet");
   Spreadsheet *table = new Spreadsheet(10, 10, win->w()-20, win->h()-20);
   // Table rows
