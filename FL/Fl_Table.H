@@ -1122,7 +1122,7 @@ public:
     If off, Tab key navigates fltk widget focus. (default)
 
     As of fltk 1.3, the default behavior of the Tab key is to navigate focus off
-    the current widget, and on to the next one.  But in some applications,
+    of the current widget, and on to the next one.  But in some applications,
     it's useful for Tab to be used to navigate cells in the Fl_Table.
 
     \param [in] val If \p val is 1, Tab key navigates cells in table, not fltk widgets.<BR>
@@ -1134,9 +1134,9 @@ public:
   }
 
   /**
-    Get state of fltk widget tab navigation flag.
+    Get state of table's 'Tab' key cell navigation flag.
 
-    \returns 1 if Tab configured to navigate widget focus (default) or 0 for Tab to navigate table cells.
+    \returns 1 if Tab configured to navigate cells in table<br>0 to navigate widget focus (default)
 
     \see tab_cell_nav(int)
   */
