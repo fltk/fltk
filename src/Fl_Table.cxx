@@ -1028,7 +1028,9 @@ int Fl_Table::handle(int event) {
           break;
 	case FL_Tab:
 #if FLTK_ABI_VERSION >= 10303
-	  if ( !tab_cell_nav() ) break;	// not navigating cells? let fltk handle it (STR#2862)
+	  if ( !tab_cell_nav() ) break;		// not navigating cells? let fltk handle it (STR#2862)
+#else
+          break;				// without tab_cell_nav(), Fl_Table should default to navigating widgets, not cells
 #endif
 	  if ( _event_state & FL_SHIFT ) {
             ret = move_cursor(0, -1, 0);	// shift-tab -> left
