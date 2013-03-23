@@ -131,6 +131,9 @@ Fl_Table::Fl_Table(int X, int Y, int W, int H, const char *l) : Fl_Group(X,Y,W,H
 #if FLTK_ABI_VERSION >= 10301
   _scrollbar_size   = 0;
 #endif  
+#if FLTK_ABI_VERSION >= 10303
+  flags_            = 0;	// TABCELLNAV off
+#endif
   box(FL_THIN_DOWN_FRAME);
   
   vscrollbar = new Fl_Scrollbar(x()+w()-Fl::scrollbar_size(), y(),
@@ -674,7 +677,7 @@ void Fl_Table::damage_zone(int r1, int c1, int r2, int c2, int r3, int c3) {
   redraw_range(R1, R2, C1, C2);
 }
 
-int Fl_Table::move_cursor(int R, int C) {
+int Fl_Table::move_cursor(int R, int C, int shiftselect) {
   if (select_row == -1) R++;
   if (select_col == -1) C++;
   R += select_row;
@@ -687,7 +690,7 @@ int Fl_Table::move_cursor(int R, int C) {
   damage_zone(current_row, current_col, select_row, select_col, R, C);
   select_row = R;
   select_col = C;
-  if (!Fl::event_state(FL_SHIFT)) {
+  if (!shiftselect || !Fl::event_state(FL_SHIFT)) {
     current_row = R;
     current_col = C;
   }
@@ -696,7 +699,11 @@ int Fl_Table::move_cursor(int R, int C) {
   return 1;
 }
 
-// #define DEBUG 1
+int Fl_Table::move_cursor(int R, int C) {
+  return move_cursor(R,C,1);
+}
+
+//#define DEBUG 1
 #ifdef DEBUG
 #include <FL/names.h>
 #define PRINTEVENT \
@@ -1020,10 +1027,13 @@ int Fl_Table::handle(int event) {
           ret = move_cursor(1, 0);
           break;
 	case FL_Tab:
+#if FLTK_ABI_VERSION >= 10303
+	  if ( !tab_cell_nav() ) break;	// not navigating cells? let fltk handle it (STR#2862)
+#endif
 	  if ( _event_state & FL_SHIFT ) {
-            ret = move_cursor(0, -1);		// shift-tab -> left
+            ret = move_cursor(0, -1, 0);	// shift-tab -> left
 	  } else {
-	    ret = move_cursor(0, 1);		// tab -> right
+	    ret = move_cursor(0, 1, 0);		// tab -> right
 	  }
           break;
       }
