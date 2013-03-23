@@ -57,6 +57,7 @@ That was a blank line above this.
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Choice.H>
 #include <FL/fl_ask.H>
 #include <stdio.h>
 #include <string.h>
@@ -70,6 +71,7 @@ Fl_Button	*top,
 		*visible,
 		*swap,
 		*sort;
+Fl_Choice       *btype;
 Fl_Int_Input	*field;
 
 void b_cb(Fl_Widget* o, void*) {
@@ -113,12 +115,22 @@ void sort_cb(Fl_Widget *, void *) {
   browser->sort(FL_SORT_ASCENDING);
 }
 
+void btype_cb(Fl_Widget *, void *) {
+  for ( int t=1; t<=browser->size(); t++ ) browser->select(t,0);
+  browser->select(1,0);		// leave focus box on first line
+       if ( strcmp(btype->text(),"Normal")==0) browser->type(FL_NORMAL_BROWSER);
+  else if ( strcmp(btype->text(),"Select")==0) browser->type(FL_SELECT_BROWSER);
+  else if ( strcmp(btype->text(),"Hold"  )==0) browser->type(FL_HOLD_BROWSER);
+  else if ( strcmp(btype->text(),"Multi" )==0) browser->type(FL_MULTI_BROWSER);
+  browser->redraw();
+}
+
 int main(int argc, char **argv) {
   int i;
   if (!Fl::args(argc,argv,i)) Fl::fatal(Fl::help);
   const char* fname = (i < argc) ? argv[i] : "browser.cxx";
-  Fl_Double_Window window(480,400,fname);
-  browser = new Fl_Select_Browser(0,0,480,350,0);
+  Fl_Double_Window window(560,400,fname);
+  browser = new Fl_Select_Browser(0,0,560,350,0);
   browser->type(FL_MULTI_BROWSER);
   //browser->type(FL_HOLD_BROWSER);
   //browser->color(42);
@@ -159,7 +171,7 @@ int main(int argc, char **argv) {
   }
   browser->position(0);
 
-  field = new Fl_Int_Input(50, 350, 430, 25, "Line #:");
+  field = new Fl_Int_Input(55, 350, 505, 25, "Line #:");
   field->callback(show_cb);
 
   top = new Fl_Button(0, 375, 80, 25, "Top");
@@ -180,6 +192,15 @@ int main(int argc, char **argv) {
 
   sort = new Fl_Button(400, 375, 80, 25, "Sort");
   sort->callback(sort_cb);
+
+  btype = new Fl_Choice(480, 375, 80, 25);
+  btype->add("Normal");
+  btype->add("Select");
+  btype->add("Hold");
+  btype->add("Multi");
+  btype->callback(btype_cb);
+  btype->value(3);
+  btype->tooltip("Changes the browser type()");
 
   window.resizable(browser);
   window.show(argc,argv);
