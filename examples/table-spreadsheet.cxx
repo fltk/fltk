@@ -58,8 +58,7 @@ public:
 	values[r][c] = c + (r*MAX_COLS);		// initialize cells
     end();
     row_edit = col_edit = 0;
-    select_row = current_row = 0;
-    select_col = current_col = 0;
+    set_selection(0,0,0,0);
   }
   ~Spreadsheet() { }
 
@@ -76,6 +75,7 @@ public:
   void start_editing(int R, int C) {
     row_edit = R;					// Now editing this row/col
     col_edit = C;
+    set_selection(R,C,R,C);				// Clear any previous multicell selection
     int X,Y,W,H;
     find_cell(CONTEXT_CELL, R,C, X,Y,W,H);		// Find X/Y/W/H of cell
     input->resize(X,Y,W,H);				// Move Fl_Input widget there
@@ -160,7 +160,7 @@ void Spreadsheet::draw_cell(TableContext context, int R,int C, int X,int Y,int W
       }
       // Background
       if ( C < cols()-1 && R < rows()-1 ) {
-	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, (R==row_edit && C==col_edit) ? FL_YELLOW : FL_WHITE);
+	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, is_selected(R,C) ? FL_YELLOW : FL_WHITE);
       } else {
 	fl_draw_box(FL_THIN_UP_BOX, X,Y,W,H, 0xbbddbb00);	// money green
       }
@@ -209,16 +209,19 @@ void Spreadsheet::event_callback2() {
 	  return;
 
 	case FL_KEYBOARD:				// key press in table?
-	  switch (Fl::event_key()) {
-	    case FL_Escape: exit(0);			// ESC closes app
-	    case FL_Shift_L: return;			// ignore shift
-	    case FL_Shift_R: return;
-	  }
-	  if (C == cols()-1 || R == rows()-1) return;	// no editing of totals column
+	  if ( Fl::event_key() == FL_Escape ) exit(0);	// ESC closes app
 	  done_editing();				// finish any previous editing
-	  start_editing(R,C);				// start new edit
-	  if (Fl::event() == FL_KEYBOARD && Fl::e_text[0] != '\r') {
-	    input->handle(Fl::event());			// pass keypress to input widget
+	  if (C==cols()-1 || R==rows()-1) return;	// no editing of totals column
+	  switch ( Fl::e_text[0] ) {
+	    case '0': case '1': case '2': case '3':	// any of these should start editing new cell
+	    case '4': case '5': case '6': case '7':
+	    case '8': case '9': case '+': case '-':
+	      start_editing(R,C);			// start new edit
+	      input->handle(Fl::event());		// pass typed char to input
+	      break;
+	    case '\r': case '\n':			// let enter key edit the cell
+	      start_editing(R,C);			// start new edit
+	      break;
 	  }
 	  return;
       }
@@ -237,9 +240,13 @@ void Spreadsheet::event_callback2() {
 }
 
 int main() {
-  Fl::option(Fl::OPTION_ARROW_FOCUS, 1);		// we want arrow keys to navigate table's widgets
   Fl_Double_Window *win = new Fl_Double_Window(862, 322, "Fl_Table Spreadsheet");
   Spreadsheet *table = new Spreadsheet(10, 10, win->w()-20, win->h()-20);
+#if FLTK_ABI_VERSION >= 10303
+  table->tab_cell_nav(1);		// enable tab navigation of table cells (instead of fltk widgets)
+#endif
+  table->tooltip("Use keyboard to navigate cells:\n"
+                 "Arrow keys or Tab/Shift-Tab");
   // Table rows
   table->row_header(1);
   table->row_header_width(70);
