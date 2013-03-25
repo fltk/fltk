@@ -30,6 +30,7 @@
 #include <FL/Fl_Toggle_Button.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Table_Row.H>
+#include <FL/names.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -115,8 +116,9 @@ public:
 	int sum = GetSelectionSum();
 	if ( sum == -1 ) { sprintf(s, "(nothing selected)"); G_sum->color(48); }
 	else             { sprintf(s, "%d", sum); G_sum->color(FL_WHITE); }
-	G_sum->value(s);
-	G_sum->redraw();
+	// Update only if different (lets one copy/paste from sum)
+	if ( strcmp(s,G_sum->value()))
+	    { G_sum->value(s); G_sum->redraw(); }
     }
     // Keyboard and mouse events
     int handle(int e) {
@@ -128,9 +130,9 @@ public:
 	    case FL_KEYUP:
 	    case FL_KEYDOWN:
 	    case FL_DRAG: {
+		//ret = 1;		// *don't* indicate we 'handled' these, just update ('handling' prevents e.g. tab nav)
 	        UpdateSum();
 		redraw();
-		ret = 1;
 		break;
 	    }
 	    case FL_FOCUS:		// tells FLTK we're interested in keyboard events
