@@ -114,8 +114,13 @@ int Fl_Tabs::tab_height() {
   else return (H <= 0) ? 0 : H;
 }
 
-// This is used for event handling (clicks) and by fluid to pick tabs.
-// Returns 0, if children() = 0, or if the event is outside of the tabs area.
+/**
+  Return the widget of the tab the user clicked on at \p event_x / \p event_y.
+  This is used for event handling (clicks) and by fluid to pick tabs.
+
+  \returns The child widget of the tab the user clicked on, or<br>
+           0 if there are no children or if the event is outside of the tabs area.
+*/
 Fl_Widget *Fl_Tabs::which(int event_x, int event_y) {
   if (children() == 0) return 0;
   int H = tab_height();
@@ -257,6 +262,9 @@ int Fl_Tabs::handle(int event) {
   }
 }
 
+/**
+  \todo This public method needs to be documented
+*/
 int Fl_Tabs::push(Fl_Widget *o) {
   if (push_ == o) return 0;
   if ( (push_ && !push_->visible()) || (o && !o->visible()) )

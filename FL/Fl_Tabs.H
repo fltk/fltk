@@ -68,6 +68,9 @@ public:
   int handle(int);
   Fl_Widget *value();
   int value(Fl_Widget *);
+  /**
+  \todo This public method needs to be documented
+  */
   Fl_Widget *push() const {return push_;}
   int push(Fl_Widget *);
   Fl_Tabs(int,int,int,int,const char * = 0);
