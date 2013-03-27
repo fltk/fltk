@@ -148,6 +148,7 @@ public:
 #include "unittest_rects.cxx"
 #include "unittest_circles.cxx"
 #include "unittest_text.cxx"
+#include "unittest_symbol.cxx"
 #include "unittest_images.cxx"
 #include "unittest_viewport.cxx"
 #include "unittest_scrollbarsize.cxx"
