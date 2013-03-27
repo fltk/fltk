@@ -26,7 +26,7 @@ class SymbolTest : public Fl_Widget
 {
   void DrawTextAndBoxes(const char *txt, int X, int Y) {
     int wo = 0, ho = 0;
-    fl_measure(txt, wo, ho, 0);
+    fl_measure(txt, wo, ho, 1);
     // Draw fl_measure() rect
     fl_color(FL_RED);
     fl_rect(X, Y, wo, ho);
@@ -59,21 +59,23 @@ public:
       // set the background colour - slightly off-white to enhance the green bounding box
       fl_color(fl_gray_ramp(FL_NUM_GRAY - 3));
       fl_rectf(x0, y0, w0, h0);
-      int fsize = 30;
+      int fsize = 25;
       fl_font(FL_HELVETICA, fsize);
       int xx = x0+10;
-      int yy = y0+20;
-      DrawTextAndBoxes("Text"            ,xx,yy); yy += fsize+10;
-      DrawTextAndBoxes("@->"             ,xx,yy); yy += fsize+10;
-      DrawTextAndBoxes("@-> "            ,xx,yy); yy += fsize+10;
-      DrawTextAndBoxes("@-> Rt Arrow"    ,xx,yy); yy += fsize+10;
-      DrawTextAndBoxes("@-> Rt/Lt @<-"   ,xx,yy); yy += fsize+10;
-      DrawTextAndBoxes("@@ At/Lt @<-"    ,xx,yy); yy += fsize+10;
-      DrawTextAndBoxes("@-> Lt/At @@"    ,xx,yy); yy += fsize+10;
-      xx = x0+260;
+      int yy = y0+10;
+      DrawTextAndBoxes("Text"            ,xx,yy); yy += fsize+10;	// check no symbols
+      DrawTextAndBoxes("@->"             ,xx,yy); yy += fsize+10;	// check symbol alone
+      DrawTextAndBoxes("@-> "            ,xx,yy); yy += fsize+10;	// check symbol with trailing space
+      DrawTextAndBoxes("@-> Rt Arrow"    ,xx,yy); yy += fsize+10;	// check symbol at left edge
+      DrawTextAndBoxes("Lt Arrow @<-"    ,xx,yy); yy += fsize+10;	// check symbol at right edge
+      DrawTextAndBoxes("@-> Rt/Lt @<-"   ,xx,yy); yy += fsize+10;	// check symbol at lt+rt edges
+      DrawTextAndBoxes("@@ At/Lt @<-"    ,xx,yy); yy += fsize+10;	// check @@ at left, symbol at right
+      DrawTextAndBoxes("@-> Lt/At @@"    ,xx,yy); yy += fsize+10;	// check symbol at left, @@ at right
+      xx = x0+200;
       yy = y0+10;
-      DrawTextAndBoxes("Line1\nLine2",xx,yy); yy += 100;
-      DrawTextAndBoxes("@-> Line1\nLine2 @<-",xx,yy); yy += 100;
+      DrawTextAndBoxes("Line1\nLine2",xx,yy); yy += (fsize+10)*2;		// check 2 lines, no symbol
+      DrawTextAndBoxes("@-> Line1\nLine2 @<-",xx,yy); yy += (fsize+10)*2;	// check 2 lines, lt+rt symbols
+      DrawTextAndBoxes("@-> Line1\nLine2\nLine3 @<-",xx,yy); yy += (fsize+10)*3;// check 3 lines, lt+rt symbols
 
       fl_font(FL_HELVETICA, 14);
       fl_color(FL_RED);
