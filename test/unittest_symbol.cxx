@@ -71,11 +71,14 @@ public:
       DrawTextAndBoxes("@-> Rt/Lt @<-"   ,xx,yy); yy += fsize+10;	// check symbol at lt+rt edges
       DrawTextAndBoxes("@@ At/Lt @<-"    ,xx,yy); yy += fsize+10;	// check @@ at left, symbol at right
       DrawTextAndBoxes("@-> Lt/At @@"    ,xx,yy); yy += fsize+10;	// check symbol at left, @@ at right
+      DrawTextAndBoxes("@@ At/At @@"     ,xx,yy); yy += fsize+10;	// check @@ at left+right
       xx = x0+200;
       yy = y0+10;
-      DrawTextAndBoxes("Line1\nLine2",xx,yy); yy += (fsize+10)*2;		// check 2 lines, no symbol
-      DrawTextAndBoxes("@-> Line1\nLine2 @<-",xx,yy); yy += (fsize+10)*2;	// check 2 lines, lt+rt symbols
-      DrawTextAndBoxes("@-> Line1\nLine2\nLine3 @<-",xx,yy); yy += (fsize+10)*3;// check 3 lines, lt+rt symbols
+      DrawTextAndBoxes("Line1\nLine2"               ,xx,yy); yy += (fsize+10)*2; // check 2 lines, no symbol
+      DrawTextAndBoxes("@-> Line1\nLine2 @<-"       ,xx,yy); yy += (fsize+10)*2; // check 2 lines, lt+rt symbols
+      DrawTextAndBoxes("@-> Line1\nLine2\nLine3 @<-",xx,yy); yy += (fsize+10)*3; // check 3 lines, lt+rt symbols
+      DrawTextAndBoxes("@@@@"                       ,xx,yy); yy += (fsize+10);   // check abutting @@'s
+      DrawTextAndBoxes("@@ @@"                      ,xx,yy); yy += (fsize+10);   // check @@'s with space sep
 
       fl_font(FL_HELVETICA, 14);
       fl_color(FL_RED);
