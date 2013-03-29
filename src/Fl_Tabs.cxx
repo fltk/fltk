@@ -304,6 +304,8 @@ Fl_Widget* Fl_Tabs::value() {
   Sets the widget to become the current visible widget/tab.
   Setting the value hides all other children, and makes this one
   visible, if it is really a child.
+  \returns 1 if there was a change (new value different from previous),<BR>
+           0 if there was no change (new value already set)
 */
 int Fl_Tabs::value(Fl_Widget *newvalue) {
   Fl_Widget*const* a = array();
