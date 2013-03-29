@@ -69,7 +69,14 @@ public:
   Fl_Widget *value();
   int value(Fl_Widget *);
   /**
-  \todo This public method needs to be documented
+    Returns the tab group for the tab the user has currently down-clicked on
+    and remains over until FL_RELEASE. Otherwise, returns NULL.
+
+    While the user is down-clicked on a tab, the return value is the tab group
+    for that tab. But as soon as the user releases, or drags off the tab with
+    the button still down, the return value will be NULL.
+
+    \see push(Fl_Widget*).
   */
   Fl_Widget *push() const {return push_;}
   int push(Fl_Widget *);

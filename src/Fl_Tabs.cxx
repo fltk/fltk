@@ -263,7 +263,15 @@ int Fl_Tabs::handle(int event) {
 }
 
 /**
-  \todo This public method needs to be documented
+  This is called by the tab widget's handle() method to set the
+  tab group widget the user last FL_PUSH'ed on. Set back to zero
+  on FL_RELEASE.
+
+  As of this writing, the value is mainly used by draw_tab()
+  to determine whether or not to draw a 'down' box for the tab
+  when it's clicked, and to turn it off if the user drags off it.
+
+  \see push().
 */
 int Fl_Tabs::push(Fl_Widget *o) {
   if (push_ == o) return 0;
