@@ -89,12 +89,12 @@ int Fl_Button::handle(int event) {
     return 1;
   case FL_PUSH:
     if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
+    /* FALLTHROUGH */
   case FL_DRAG:
     if (Fl::event_inside(this)) {
       if (type() == FL_RADIO_BUTTON) newval = 1;
       else newval = !oldval;
-    } else
-    {
+    } else {
       clear_changed();
       newval = oldval;
     }
@@ -129,7 +129,7 @@ int Fl_Button::handle(int event) {
 	  Fl::test_shortcut(shortcut()) : test_shortcut())) return 0;    
     if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
     goto triggered_by_keyboard;
-  case FL_FOCUS : /* FALLTHROUGH */
+  case FL_FOCUS :
   case FL_UNFOCUS :
     if (Fl::visible_focus()) {
       if (box() == FL_NO_BOX) {
@@ -142,6 +142,7 @@ int Fl_Button::handle(int event) {
       } else redraw();
       return 1;
     } else return 0;
+    /* NOTREACHED */
   case FL_KEYBOARD :
     if (Fl::focus() == this && Fl::event_key() == ' ' &&
         !(Fl::event_state() & (FL_SHIFT | FL_CTRL | FL_ALT | FL_META))) {
