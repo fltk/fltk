@@ -755,7 +755,7 @@ extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
     The Fl_Color type holds an FLTK color value.
 
     Colors are either 8-bit indexes into a virtual colormap
-    or 24-bit RGB color values.
+    or 24-bit RGB color values. (See \ref drawing_colors for the default FLTK colormap)
 
     Color indices occupy the lower 8 bits of the value, while
     RGB colors occupy the upper 24 bits, for a byte organization of RGBI.
@@ -763,7 +763,7 @@ extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
 <pre>
  Fl_Color => 0xrrggbbii
                 | | | |
-                | | | +--- index between 0 and 255
+                | | | +--- \ref drawing_colors "index" between 0 and 255
                 | | +----- blue color component (8 bit)
                 | +------- green component (8 bit)
                 +--------- red component (8 bit)
@@ -774,7 +774,7 @@ extern FL_EXPORT Fl_Fontsize FL_NORMAL_SIZE;	///< normal font size
 
  */
 /*@{*/
-/** an FLTK color value */
+/** An FLTK color value; see also \ref drawing_colors  */
 typedef unsigned int Fl_Color;
 
 // Standard colors. These are used as default colors in widgets and altered as necessary

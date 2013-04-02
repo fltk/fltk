@@ -154,11 +154,12 @@ the current clipping region.
 \section drawing_colors Colors
 
 FLTK manages colors as 32-bit unsigned integers, encoded as RGBI.
-When the RGB bytes are non-zero, the value is treated as RGB.
-If these bytes are zero, the I byte will be used as an index
-into the colormap.
+When the "RGB" bytes are non-zero, the value is treated as RGB.
+If these bytes are zero, the "I" byte will be used as an index
+into the colormap. Colors with both RGB set and an index >0
+are reserved for special use.
 
-Values from 0 to 255, i.e. the I index value, represent
+Values from 0 to 255, i.e. the "I" index value, represent
 colors from the FLTK 1.3.x standard colormap
 and are allocated as needed on screens without TrueColor support.
 The \b Fl_Color enumeration type defines the
