@@ -21,7 +21,7 @@
 #if defined(WIN32) && !defined(__CYGWIN__)
 #  include "scandir_win32.c"
 #else
-#  include "../config.h"
+#  include <config.h>
 #  ifndef HAVE_SCANDIR
 #   include "scandir_posix.c"
 #  endif /* HAVE_SCANDIR */
