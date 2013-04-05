@@ -20,5 +20,7 @@
 	<string>Copyright 1998-2010 by Bill Spitzak and others.</string>
 	<key>CFBundleGetInfoString</key>
 	<string>Part of the FLTK library. Please visit www.fltk.org.</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
 </dict>
-	</plist>
+</plist>
