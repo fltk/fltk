@@ -317,6 +317,8 @@ if test -n "$post"; then
 	<string>$post</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
     </dict>
 </plist>
 EOF
