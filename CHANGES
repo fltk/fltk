@@ -7,6 +7,7 @@ CHANGES IN FLTK 1.3.3
 	it's also operational for Japanese. In-depth testing remains needed though.
 	- Mac OS version of Fl_Native_File_Chooser: when using filters in a save file dialog,
 	the output file extension gets changed when the user modifies the output file type.
+	- Removed the now unused src/Fl_mac.cxx
 
 CHANGES IN FLTK 1.3.2
 
