@@ -319,6 +319,7 @@ if test -n "$post"; then
 	<string>APPL</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+    </dict>
 </plist>
 EOF
 	    ;;
