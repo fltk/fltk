@@ -19,7 +19,7 @@
 #ifdef WIN32
 //#  include "Fl_win32.cxx"
 #elif defined(__APPLE__)
-//#  include "Fl_mac.cxx"
+//#  include "Fl_mac.cxx"	// now Fl_cocoa.mm
 #elif !defined(FL_DOXYGEN)
 
 #  define CONSOLIDATE_MOTION 1

@@ -220,7 +220,7 @@ int Fl::event_inside(const Fl_Widget *o) /*const*/ {
 
 #elif defined(__APPLE__)
 
-// implementation in Fl_mac.cxx
+// implementation in Fl_cocoa.mm (was Fl_mac.cxx)
 
 #else
 
