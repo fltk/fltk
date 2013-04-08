@@ -183,8 +183,10 @@ void Fl_Gl_Window::make_current() {
   GLint xywh[4];
 
   if (window()) {
-    xywh[0] = x();
-    xywh[1] = window()->h() - y() - h();
+    int xoff,yoff;
+    const Fl_Window *win = window_offset(xoff, yoff);	// STR #2944 [2]
+    xywh[0] = xoff;
+    xywh[1] = win->h() - yoff - h();
   } else {
     xywh[0] = 0;
     xywh[1] = 0;

@@ -278,6 +278,21 @@ void Fl_Window::icon(const void * ic) {
   icon_ = ic;
 }
 
+/**
+  Finds the x/y offset of the current window relative to the top-level window.
+  \param[out] xoff,yoff Returns the x/y offset
+  \returns the top-level window
+*/
+Fl_Window* Fl_Window::window_offset(int& xoff, int& yoff) const {
+  xoff = yoff = 0;
+  const Fl_Window *win = (const Fl_Window*)this;
+  while (win && win->window()) {
+    xoff += win->x();			// accumulate offsets
+    yoff += win->y();
+    win = win->window();		// walk up window hierarchy
+  }
+  return (Fl_Window*)win;
+}
 
 //
 // End of "$Id$".
