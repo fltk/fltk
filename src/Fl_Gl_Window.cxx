@@ -249,10 +249,34 @@ void Fl_Gl_Window::swap_buffers() {
 #  endif
 #elif defined(__APPLE_QUARTZ__)
   if(overlay != NULL) {
-    //aglSwapBuffers does not work well with overlays under cocoa
-    glReadBuffer(GL_BACK);
-    glDrawBuffer(GL_FRONT);
-    glCopyPixels(0,0,w(),h(),GL_COLOR);
+    // STR# 2944 [1]
+    //    Save matrixmode/proj/modelview/rasterpos before doing overlay.
+    //
+    int wo=w(), ho=h();
+    GLint matrixmode;
+    GLfloat pos[4];
+    glGetIntegerv(GL_MATRIX_MODE, &matrixmode);
+    glGetFloatv(GL_CURRENT_RASTER_POSITION, pos);       // save original glRasterPos
+    glMatrixMode(GL_PROJECTION);			// save proj/model matrices
+    glPushMatrix();
+      glLoadIdentity();
+      glMatrixMode(GL_MODELVIEW);
+      glPushMatrix();
+        glLoadIdentity();
+        glScalef(2.0f/wo, 2.0f/ho, 1.0f);
+        glTranslatef(-wo/2.0f, -ho/2.0f, 0.0f);         // set transform so 0,0 is bottom/left of Gl_Window
+        glRasterPos2i(0,0);                             // set glRasterPos to bottom left corner
+        {
+          // Emulate overlay by doing copypixels
+          glReadBuffer(GL_BACK);
+          glDrawBuffer(GL_FRONT);
+          glCopyPixels(0, 0, wo, ho, GL_COLOR);         // copy GL_BACK to GL_FRONT
+        }
+        glPopMatrix(); // GL_MODELVIEW                  // restore model/proj matrices
+      glMatrixMode(GL_PROJECTION);
+      glPopMatrix();
+    glMatrixMode(matrixmode);
+    glRasterPos3f(pos[0], pos[1], pos[2]);              // restore original glRasterPos
   }
   else
     aglSwapBuffers((AGLContext)context_);
