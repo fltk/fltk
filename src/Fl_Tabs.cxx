@@ -170,25 +170,59 @@ int Fl_Tabs::handle(int event) {
     }}
     /* FALLTHROUGH */
   case FL_DRAG:
-  case FL_RELEASE:
-    o = which(Fl::event_x(), Fl::event_y());
+  case FL_RELEASE: {
+    // PUSH, DRAG, RELEASE..
+    int do_cb=0;
+    if ((o = which(Fl::event_x(), Fl::event_y()))) {	// get tab group for tab user is over
+      if (o != value()) set_changed();		// if over tab, handle change
+      else              clear_changed();
+    }
     if (event == FL_RELEASE) {
-      push(0);
-      if (o && Fl::visible_focus() && Fl::focus()!=this) { 
-        Fl::focus(this);
-        redraw_tabs();
-      }
-      if (o && value(o)) {
-        Fl_Widget_Tracker wp(o);
-        set_changed();
-	do_callback();
-	if (wp.deleted()) return 1;
+      push(0);					// no longer 'pushed'
+      // Over a tab?
+      if (o) {
+	// Handle taking keyboard focus w/visible focus indication
+	if (Fl::visible_focus() && Fl::focus()!=this) { 
+	  Fl::focus(this);
+	  redraw_tabs();
+	}
+	if (value(o)) {				// commit to value, see if it "changed"..
+	  set_changed();				// it changed
+	  do_cb = 
+	    ( (when() & FL_WHEN_RELEASE) &&		// wants cb on RELEASE and..
+	      (when() & FL_WHEN_CHANGED)		// when changed?
+	    ) || (					// ..or..
+	      (when() == FL_WHEN_RELEASE)		// *only* WHEN_RELEASE specified? (default behavior)
+	    ) ? 1 : 0;
+	} else {
+	  clear_changed();				// no change
+	  do_cb = (when() & FL_WHEN_RELEASE &&	// wants cb when RELEASE and..
+		   when() & FL_WHEN_NOT_CHANGED)?1:0;	// ..when no change occurred?
+	}
       }
       Fl_Tooltip::current(o);
     } else {
-      push(o);
+      // PUSH or DRAG?
+      //    Be careful; a user can PUSH on a tab, but can abort the change
+      //    if they glide off the tab before a RELEASE. Callbacks on PUSH
+      //    will see a value change, but it may change back on RELEASE if
+      //    the user aborts the change.
+      //
+      push(o);							// DRAG|PUSH -- indicate if still on tab
+      if (o && event == FL_PUSH) {					// still on tab?
+	// See if we should do the callback
+	do_cb = 
+	  ( !(when() & FL_WHEN_RELEASE) &&				// wants callback on PUSH? (ie. NOT RELEASE)
+	    (
+	      ((when() & FL_WHEN_NOT_CHANGED) && !changed()) ||	// want cb if no change and no change occurred?
+	      ((when() & FL_WHEN_CHANGED) && changed())		// want cb if change and change occurred?
+	    )
+	  ) ? 1 : 0;
+      }
     }
-    return 1;
+    if (do_cb)
+      do_callback();
+    return 1; }
   case FL_MOVE: {
     int ret = Fl_Group::handle(event);
     Fl_Widget *o = Fl_Tooltip::current(), *n = o;
@@ -217,28 +251,81 @@ int Fl_Tabs::handle(int event) {
       if (Fl::event() == FL_UNFOCUS) return 0;
       else return 1;
     } else return Fl_Group::handle(event);
+    /* NOTREACHED */
   case FL_KEYBOARD:
+    // NOTE:
+    //  1) FL_KEYBOARD same as FL_KEYDN; we can receive a string of these
+    //     without FL_KEYUP between during key-repeat.
+    //  2) We use push() to keep track of value() changes during key-repeat for FL_KEYUP.
+    //     (It would be bad if app's callback saw changed()=false if key-repeat hit the
+    //     left-most or right-most tabs)
+    //
     switch (Fl::event_key()) {
       case FL_Left:
-        if (child(0)->visible()) return 0;
-	for (i = 1; i < children(); i ++)
+        // First push on tab? (ie. non key-repeat?)
+	//    Save current value (so KEYUP can see if changed() during key-repeat)
+	//    and clear_changed().
+	//
+        if (!push()) { push(value()); clear_changed(); }// first push on tab? (not key-repeat) save curr value for change
+	if (child(0)->visible()) {			// already on left-most tab?
+	  if (when() & FL_WHEN_NOT_CHANGED)		// want callback if no change?
+	    do_callback();				// do callback
+	  // return 1 to 'handle' the arrow key, or 0 to let
+	  // arrow key be used by fltk for focus navigation.
+	  return (Fl::option(Fl::OPTION_ARROW_FOCUS) ? 0 : 1);
+	}
+	for (i = 1; i < children(); i ++)		// Find currently visible child
 	  if (child(i)->visible()) break;
-	value(child(i - 1));
+	value(child(i - 1));				// select the next tab to the left
 	set_changed();
-	do_callback();
+	if ( (when() & FL_WHEN_CHANGED) &&		// changed: want cb on change and..
+	    !(when() & FL_WHEN_RELEASE))		// ..on PUSH?
+	  do_callback();				// do callback
         return 1;
       case FL_Right:
-        if (child(children() - 1)->visible()) return 0;
-	for (i = 0; i < children(); i ++)
+        if (!push()) { push(value()); clear_changed(); }// first push on tab? (not key-repeat)
+	if (child(children() - 1)->visible()) {		// already on right-most tab?
+	  if (when() & FL_WHEN_NOT_CHANGED)		// want callback if no change?
+	    do_callback();				// do callback
+	  // return 1 to 'handle' the arrow key, or 0 to let
+	  // arrow key be used by fltk for focus navigation.
+	  return (Fl::option(Fl::OPTION_ARROW_FOCUS) ? 0 : 1);
+	}
+	for (i = 0; i < children(); i ++)		// Find currently visible child
 	  if (child(i)->visible()) break;
-	value(child(i + 1));
+	value(child(i + 1));				// select the next tab to the right
 	set_changed();
-	do_callback();
+	if ( (when() & FL_WHEN_CHANGED) &&		// change: want callback on change and..
+	    !(when() & FL_WHEN_RELEASE))		// ..on PUSH?
+	  do_callback();				// do callback
         return 1;
       case FL_Down:
         redraw();
         return Fl_Group::handle(FL_FOCUS);
       default:
+        break;
+    }
+    return Fl_Group::handle(event);
+  case FL_KEYUP:
+    switch (Fl::event_key()) {
+      case FL_Left:
+      case FL_Right:
+	if (push()) {
+	  // See if value() changed since first KEYDN
+	  if (push() != value()) set_changed();
+	  else clear_changed();
+	  push(0);					// key released, no longer push()ed
+	  if ( when() & FL_WHEN_RELEASE) { 		// want cb on RELEASE?
+	    if ( (changed() && (			// changed and..
+	           (when() & FL_WHEN_CHANGED) ||	//    want cb on change or..
+		   (when()==FL_WHEN_RELEASE))) ||	//    want cb on RELEASE only (implies change -- legacy default)
+	         (!changed() &&				// ..or, not changed and..
+		   (when() & FL_WHEN_NOT_CHANGED))) {	//    want cb on no change?
+	      do_callback();				// do callback
+	    }
+	  }
+	}
+        return 1;
         break;
     }
     return Fl_Group::handle(event);
@@ -256,6 +343,7 @@ int Fl_Tabs::handle(int event) {
     return Fl_Group::handle(event);
   case FL_SHOW:
     value(); // update visibilities and fall through
+    /* FALLTHROUGH */
   default:
     return Fl_Group::handle(event);
 

@@ -49,6 +49,49 @@
   gap is larger. It is easiest to lay this out in fluid, using the
   fluid browser to select each child group and resize them until
   the tabs look the way you want them to.
+
+  Typical use:
+  \code
+      Fl_Tabs *tabs = new Fl_Tabs(10,10,300,200);
+      {
+          Fl_Group *tab1 = new Fl_Group(20,30,280,170,"Tab1");
+	  {
+	      ..widgets that go in tab#1..
+          }
+	  tab1->end();
+          Fl_Group *tab2 = new Fl_Group(20,30,280,170,"Tab2");
+	  {
+	      ..widgets that go in tab#2..
+	  }
+	  tab2->end();
+      }
+      tabs->end();
+  \endcode
+
+  In the above, tab1's tab can be made red by using tab1->selection_color(FL_RED);
+  and tab1's text can be made bold by tab1->labelfont(FL_HELVETICA_BOLD),
+  and can be made 'engraved' by tab1->labeltype(FL_ENGRAVED_LABEL);
+
+  As of FLTK 1.3.3, Fl_Tabs() supports the following flags for when():
+
+    - \ref FL_WHEN_NEVER       -- callback never invoked (all flags off)
+    - \ref FL_WHEN_CHANGED     -- if flag set, invokes callback when a tab has been changed (on click or keyboard navigation)
+    - \ref FL_WHEN_NOT_CHANGED -- if flag set, invokes callback when the tabs remain unchanged (on click or keyboard navigation)
+    - \ref FL_WHEN_RELEASE     -- if flag set, invokes callback on RELEASE of mouse button or keyboard navigation
+
+  Notes:
+
+    -#  The above flags can be logically OR-ed (|) or added (+) to combine behaviors.
+    -#  The default value for when() is \ref FL_WHEN_RELEASE (inherited from Fl_Widget).
+    -#  If \ref FL_WHEN_RELEASE is the \em only flag specified, 
+        the behavior will be as if (\ref FL_WHEN_RELEASE|\ref FL_WHEN_CHANGED) was specified.
+    -#  The value of changed() will be valid during the callback.
+    -#  If both \ref FL_WHEN_CHANGED and \ref FL_WHEN_NOT_CHANGED are specified, 
+        the callback is invoked whether the tab has been changed or not.
+	The changed() method can be used to determine the cause.
+    -#  \ref FL_WHEN_NOT_CHANGED can happen if someone clicks on an already selected tab,
+        or if a keyboard navigation attempt results in no change to the tabs,
+	such as using the arrow keys while at the left or right end of the tabs.
 */
 class FL_EXPORT Fl_Tabs : public Fl_Group {
   Fl_Widget *value_;
