@@ -413,29 +413,22 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   int lines;
   double width=0;
   int W = 0;
-  char symbol[2][255], *symptr;
   int symwidth[2], symtotal;
 
-  // count how many lines and put the last one into the buffer:
-  symbol[0][0] = '\0';
-  symwidth[0]  = 0;
-
-  symbol[1][0] = '\0';
-  symwidth[1]  = 0;
+  symwidth[0] = 0;	// size of symbol at beginning of string (if any)
+  symwidth[1] = 0;	// size of symbol at end of string (if any)
 
   if (draw_symbols) {
-    if (str && str[0] == '@' && str[1] && str[1] != '@') {
-      // Start with a symbol...
-      for (symptr = symbol[0];
-           *str && !isspace(*str) && symptr < (symbol[0] + sizeof(symbol[0]) - 1);
-           *symptr++ = *str++);
-      *symptr = '\0';
-      if (isspace(*str)) str++;
+    // Symbol at beginning of string?
+    const char *sym2 = (str[0]=='@' && str[1]=='@') ? str+2 : str;	// sym2 check will skip leading @@
+    if (str[0] == '@' && str[1] != '@') {
+      while (*str && !isspace(*str)) { ++str; }		// skip over symbol
+      if (isspace(*str)) ++str;				// skip over trailing space
+      sym2 = str;					// sym2 check will skip leading symbol
       symwidth[0] = h;
     }
-
-    if (str && (p = strrchr(str, '@')) != NULL && p > (str + 1) && p[-1]!='@') {
-      strlcpy(symbol[1], p, sizeof(symbol[1]));
+    // Symbol at end of string?
+    if ((p=strchr(sym2,'@')) != NULL && p[1] != '@') {
       symwidth[1] = h;
     }
   }
