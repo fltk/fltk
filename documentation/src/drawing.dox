@@ -217,7 +217,6 @@ void Fl::get_color(Fl_Color i, uchar &red, uchar &green, uchar &blue)
 Generate RGB values from a colormap index value \p i.
 The first returns the RGB as a 32-bit unsigned integer,
 and the second decomposes the RGB into three 8-bit values.
-\todo work out why Fl::get_color() does not give links!
 
 Fl::get_system_colors() <br>
 Fl::foreground() <br>
@@ -237,7 +236,6 @@ Fl::set_color(Fl_Color i, unsigned c)
 \par
 \p Fl::free_color() and \p Fl::set_color() are used to remove and replace
 entries from the colormap.
-\todo work out why these do not give links!
 
 There are two predefined graphical interfaces for choosing colors.
 The function fl_show_colormap() shows a table of colors and returns an
@@ -355,7 +353,7 @@ void fl_point(int x, int y)
 Draw a single pixel at the given coordinates.
 
 void fl_rectf(int x, int y, int w, int h) <br>
-void fl_rectf(int x, int y, int w, int h)
+void fl_rectf(int x, int y, int w, int h, Fl_Color c)
 
 \par
 Color a rectangle that exactly fills the given bounding box.
