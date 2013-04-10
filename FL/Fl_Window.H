@@ -120,7 +120,6 @@ protected:
     \see force_position(int)
   */
   int force_position() const { return ((flags() & FORCE_POSITION)?1:0); }
-  Fl_Window* top_window_offset(int& xoff, int& yoff) const;
 
 public:
 

@@ -106,6 +106,22 @@ Fl_Window *Fl_Widget::top_window() const {
   return const_cast<Fl_Widget*>(w)->as_window();	// return if window, or NULL if not
 }
 
+/**
+  Finds the x/y offset of the current window relative to the top-level window.
+  \param[out] xoff,yoff Returns the x/y offset
+  \returns the top-level window
+*/
+Fl_Window* Fl_Widget::top_window_offset(int& xoff, int& yoff) const {
+  xoff = yoff = 0;
+  const Fl_Window *win = (const Fl_Window*)this;
+  while (win && win->window()) {
+    xoff += win->x();			// accumulate offsets
+    yoff += win->y();
+    win = win->window();		// walk up window hierarchy
+  }
+  return (Fl_Window*)win;
+}
+
 /** Gets the x position of the window on the screen */
 int Fl_Window::x_root() const {
   Fl_Window *p = window();
@@ -297,22 +313,6 @@ const void *Fl_Window::icon() const {
 /** Sets the current icon window target dependent data. */
 void Fl_Window::icon(const void * ic) {
   icon_ = ic;
-}
-
-/**
-  Finds the x/y offset of the current window relative to the top-level window.
-  \param[out] xoff,yoff Returns the x/y offset
-  \returns the top-level window
-*/
-Fl_Window* Fl_Window::top_window_offset(int& xoff, int& yoff) const {
-  xoff = yoff = 0;
-  const Fl_Window *win = (const Fl_Window*)this;
-  while (win && win->window()) {
-    xoff += win->x();			// accumulate offsets
-    yoff += win->y();
-    win = win->window();		// walk up window hierarchy
-  }
-  return (Fl_Window*)win;
 }
 
 //

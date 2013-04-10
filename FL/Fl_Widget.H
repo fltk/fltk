@@ -921,6 +921,7 @@ public:
 
   Fl_Window* window() const ;
   Fl_Window* top_window() const;
+  Fl_Window* top_window_offset(int& xoff, int& yoff) const;
 
   /** Returns an Fl_Group pointer if this widget is an Fl_Group.
 
