@@ -283,7 +283,7 @@ void Fl_Window::icon(const void * ic) {
   \param[out] xoff,yoff Returns the x/y offset
   \returns the top-level window
 */
-Fl_Window* Fl_Window::window_offset(int& xoff, int& yoff) const {
+Fl_Window* Fl_Window::top_window_offset(int& xoff, int& yoff) const {
   xoff = yoff = 0;
   const Fl_Window *win = (const Fl_Window*)this;
   while (win && win->window()) {

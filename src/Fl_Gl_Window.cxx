@@ -184,7 +184,7 @@ void Fl_Gl_Window::make_current() {
 
   if (window()) {
     int xoff,yoff;
-    const Fl_Window *win = window_offset(xoff, yoff);	// STR #2944 [2]
+    const Fl_Window *win = top_window_offset(xoff, yoff);	// STR #2944 [2]
     xywh[0] = xoff;
     xywh[1] = win->h() - yoff - h();
   } else {
