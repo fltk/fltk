@@ -919,12 +919,8 @@ public:
    */
   void measure_label(int& ww, int& hh) const {label_.measure(ww, hh);}
 
-  /** Returns a pointer to the primary Fl_Window widget.
-      \retval  NULL if no window is associated with this widget.  
-      \note for an Fl_Window widget, this returns its <I>parent</I> window 
-            (if any), not <I>this</I> window.
-   */
   Fl_Window* window() const ;
+  Fl_Window* top_window() const;
 
   /** Returns an Fl_Group pointer if this widget is an Fl_Group.
 
