@@ -107,19 +107,19 @@ Fl_Window *Fl_Widget::top_window() const {
 }
 
 /**
-  Finds the x/y offset of the current window relative to the top-level window.
+  Finds the x/y offset of the current widget relative to the top-level window.
   \param[out] xoff,yoff Returns the x/y offset
-  \returns the top-level window
+  \returns the top-level window (or NULL for a widget that's not in any window)
 */
 Fl_Window* Fl_Widget::top_window_offset(int& xoff, int& yoff) const {
   xoff = yoff = 0;
-  const Fl_Window *win = (const Fl_Window*)this;
-  while (win && win->window()) {
-    xoff += win->x();			// accumulate offsets
-    yoff += win->y();
-    win = win->window();		// walk up window hierarchy
+  const Fl_Widget *w = this;
+  while (w && w->window()) {
+    xoff += w->x();			// accumulate offsets
+    yoff += w->y();
+    w = w->window();			// walk up window hierarchy
   }
-  return (Fl_Window*)win;
+  return ((Fl_Widget*)w)->as_window();
 }
 
 /** Gets the x position of the window on the screen */
