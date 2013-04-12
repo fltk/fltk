@@ -80,21 +80,28 @@ public:
       { Fl_Button* o = new Fl_Button(10, 9, 90, 25, "button");
 	o->box(FL_UP_BOX);
 	o->color((Fl_Color)101);
+	o->tooltip("selection_color() = default");
 	o->labelfont(5);
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(10, 36, 90, 25, "button");
 	o->box(FL_UP_BOX);
 	o->color((Fl_Color)179);
+	o->selection_color(o->color());
+	o->tooltip("selection_color() = color()");
 	o->labelfont(4);
 	o->labelcolor(FL_BACKGROUND2_COLOR);
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(10, 63, 90, 25, "button");
 	o->box(FL_UP_BOX);
 	o->color((Fl_Color)91);
+	o->selection_color(fl_lighter(o->color()));
+	o->tooltip("selection_color() = fl_lighter(color())");
       } // Fl_Button* o
       { Fl_Button* o = new Fl_Button(10, 90, 90, 25, "button");
 	o->box(FL_UP_BOX);
 	o->color(FL_INACTIVE_COLOR);
+	o->selection_color(fl_darker(o->color()));
+	o->tooltip("selection_color() = fl_darker(color())");
 	o->labelcolor(FL_BACKGROUND2_COLOR);
       } // Fl_Button* o
       { Fl_Tabs* o = new Fl_Tabs(10, 120, 320, 215);
