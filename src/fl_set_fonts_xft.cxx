@@ -102,12 +102,16 @@ static void make_raw_name(char *raw, char *pretty)
     nm2 = strchr(nm1, ',');
   }
   raw[0] = ' '; raw[1] = 0; // Default start of "raw name" text
-  strncat(raw, nm1, LOCAL_RAW_NAME_MAX);
+  strncat(raw, nm1, LOCAL_RAW_NAME_MAX-1); // only copy MAX-1 chars, we have already set cell 0
+  // Ensure raw is terminated, just in case the given name is infeasibly long...
+  raw[LOCAL_RAW_NAME_MAX-1] = 0;
 #else // keep the first remaining name entry
   char *nm2 = strchr(pretty, ',');
   if(nm2) *nm2 = 0; // terminate name after first entry
   raw[0] = ' '; raw[1] = 0; // Default start of "raw name" text
-  strncat(raw, pretty, LOCAL_RAW_NAME_MAX-1);
+  strncat(raw, pretty, LOCAL_RAW_NAME_MAX-1); // only copy MAX-1 chars, we have already set cell 0
+  // Ensure raw is terminated, just in case the given name is infeasibly long...
+  raw[LOCAL_RAW_NAME_MAX-1] = 0;
 #endif
   // At this point, the name is "marked" as regular...
   if (style)
@@ -153,14 +157,14 @@ static void make_raw_name(char *raw, char *pretty)
           mods |= ITALIC;
         }
         goto NEXT_STYLE;
-          
-      case 's':
+
+      case 'S':
         if (strncasecmp(style, "SuperBold", 9) == 0)
         {
           mods |= BOLD;
         }
         goto NEXT_STYLE;
-          
+
       default: // find the next gap
         goto NEXT_STYLE;
       } // switch end
@@ -202,17 +206,17 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
 {
   FcFontSet  *fnt_set;     // Will hold the list of fonts we find
   FcPattern   *fnt_pattern; // Holds the generic "match all names" pattern
-  FcObjectSet *fnt_obj_set = 0; // Holds the generic "match all objects" 
-  
+  FcObjectSet *fnt_obj_set = 0; // Holds the generic "match all objects"
+
   int j; // loop iterator variable
   int font_count; // Total number of fonts found to process
   char **full_list; // The list of font names we build
 
   if (fl_free_font > FL_FREE_FONT) // already been here
     return (Fl_Font)fl_free_font;
-  
+
   fl_open_display(); // Just in case...
-    
+
   // Make sure fontconfig is ready... is this necessary? The docs say it is
   // safe to call it multiple times, so just go for it anyway!
   if (!FcInit())
@@ -228,10 +232,10 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
   // "pattern_name"?
   fnt_pattern = FcPatternCreate();
   fnt_obj_set = FcObjectSetBuild(FC_FAMILY, FC_STYLE, (void *)0);
-    
+
   // Hopefully, this is a set of all the fonts...
   fnt_set = FcFontList(0, fnt_pattern, fnt_obj_set);
-  
+
   // We don't need the fnt_pattern and fnt_obj_set any more, release them
   FcPatternDestroy(fnt_pattern);
   FcObjectSetDestroy(fnt_obj_set);
@@ -242,22 +246,22 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
     char *stop;
     char *start;
     char *first;
-    
+
     font_count = fnt_set->nfont; // How many fonts?
-    
+
     // Allocate array of char*'s to hold the name strings
     full_list = (char **)malloc(sizeof(char *) * font_count);
-    
+
     // iterate through all the font patterns and get the names out...
       for (j = 0; j < font_count; j++)
       {
       // NOTE: FcChar8 is a typedef of "unsigned char"...
       FcChar8 *font; // String to hold the font's name
-            
+
       // Convert from fontconfig internal pattern to human readable name
       // NOTE: This WILL malloc storage, so we need to free it later...
       font = FcNameUnparse(fnt_set->fonts[j]);
-            
+
       // The returned strings look like this...
       // Century Schoolbook:style=Bold Italic,fed kursiv,Fett Kursiv,...
       // So the bit we want is up to the first comma - BUT some strings have
@@ -300,13 +304,13 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
         if (reg) reg[1]='.';
       }
     }
-        
+
     // Release the fnt_set - we don't need it any more
     FcFontSetDestroy(fnt_set);
-        
+
     // Sort the list into alphabetic order
     qsort(full_list, font_count, sizeof(*full_list), name_sort);
-    
+
     // Now let us add the names we got to fltk's font list...
     for (j = 0; j < font_count; j++)
     {
@@ -321,7 +325,7 @@ Fl_Font Fl::set_fonts(const char* pattern_name)
         stored_name = strdup(xft_name);
         Fl::set_font((Fl_Font)(j + FL_FREE_FONT), stored_name);
         fl_free_font ++;
-        
+
         free(full_list[j]); // release that name from our internal array
       }
     }
