@@ -49,7 +49,6 @@ CPPFILES = \
 	Fl_Menu.cxx \
 	Fl_Menu_.cxx \
 	Fl_Menu_Bar.cxx \
-	Fl_Sys_Menu_Bar.cxx \
 	Fl_Menu_Button.cxx \
 	Fl_Menu_Window.cxx \
 	Fl_Menu_add.cxx \
@@ -161,7 +160,8 @@ CPPFILES = \
 OBJCPPFILES = \
     Fl_cocoa.mm \
     Fl_Quartz_Printer.mm \
-    Fl_Native_File_Chooser_MAC.mm
+    Fl_Native_File_Chooser_MAC.mm \
+    Fl_Sys_Menu_Bar.mm
 	
 FLCPPFILES = \
 	forms_compatability.cxx \

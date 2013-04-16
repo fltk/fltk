@@ -41,7 +41,7 @@ extern "C" {
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
-#include <FL/Fl_Sys_Menu_Bar.H>
+#include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Input_.H>
 #include <FL/Fl_Secret_Input.H>
@@ -95,8 +95,6 @@ Fl_Display_Device *Fl_Display_Device::_display = new Fl_Display_Device(new Fl_Qu
 
 // public variables
 CGContextRef fl_gc = 0;
-void *fl_system_menu;                   // this is really a NSMenu*
-Fl_Sys_Menu_Bar *fl_sys_menu_bar = 0;
 void *fl_default_cursor;		// this is really a NSCursor*
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
@@ -1345,7 +1343,6 @@ void fl_open_display() {
       }
     }
     if (![NSApp servicesMenu]) createAppleMenu();
-    fl_system_menu = [NSApp mainMenu];
     main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
     [[NSNotificationCenter defaultCenter] addObserver:[FLWindowDelegate createOnce] 
 					     selector:@selector(anyWindowWillClose:) 
@@ -3181,216 +3178,6 @@ static void createAppleMenu(void)
   [menuItem release];
 }
 
-@interface FLMenuItem : NSMenuItem {
-}
-- (void) doCallback:(id)unused;
-- (void) directCallback:(id)unused;
-- (const Fl_Menu_Item*) getFlItem;
-@end
-@implementation FLMenuItem
-- (const Fl_Menu_Item*) getFlItem
-{
-  return *(const Fl_Menu_Item **)[(NSData*)[self representedObject] bytes];
-}
-- (void) doCallback:(id)unused
-{
-  fl_lock_function();
-  const Fl_Menu_Item *item = [self getFlItem];
-  fl_sys_menu_bar->picked(item);
-  if ( item->flags & FL_MENU_TOGGLE ) {	// update the menu toggle symbol
-    [self setState:(item->value() ? NSOnState : NSOffState)];
-  }
-  else if ( item->flags & FL_MENU_RADIO ) {	// update the menu radio symbols
-    NSMenu* menu = [self menu];
-    NSInteger flRank = [menu indexOfItem:self];
-    NSInteger last = [menu numberOfItems] - 1;
-    int from = flRank;
-    while(from > 0) {
-      if ([[menu itemAtIndex:from-1] isSeparatorItem]) break;
-      item = [(FLMenuItem*)[menu itemAtIndex:from-1] getFlItem];
-      if ( !(item->flags & FL_MENU_RADIO) ) break;
-      from--;
-      }
-    int to = flRank;
-    while (to < last) {
-      if ([[menu itemAtIndex:to+1] isSeparatorItem]) break;
-      item = [(FLMenuItem*)[menu itemAtIndex:to+1] getFlItem];
-      if (!(item->flags & FL_MENU_RADIO)) break;
-      to++;
-      }
-    for(int i =  from; i <= to; i++) {
-      NSMenuItem *nsitem = [menu itemAtIndex:i];
-      [nsitem setState:(nsitem != self ? NSOffState : NSOnState)];
-    }
-  }
-  fl_unlock_function();
-}
-- (void) directCallback:(id)unused
-{
-  fl_lock_function();
-  Fl_Menu_Item *item = (Fl_Menu_Item *)[(NSData*)[self representedObject] bytes];
-  if ( item && item->callback() ) item->do_callback(NULL);
-  fl_unlock_function();
-}
-@end
-
-void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut) 
-{
-  fl_open_display();
-  Fl_Menu_Item aboutItem;
-  memset(&aboutItem, 0, sizeof(Fl_Menu_Item));
-  aboutItem.callback(cb);
-  aboutItem.user_data(user_data);
-  aboutItem.shortcut(shortcut);
-  NSMenu *appleMenu = [[[NSApp mainMenu] itemAtIndex:0] submenu];
-  CFStringRef cfname = CFStringCreateCopy(NULL, (CFStringRef)[[appleMenu itemAtIndex:0] title]);
-  [appleMenu removeItemAtIndex:0];
-  FLMenuItem *item = [[[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
-						 action:@selector(directCallback:) 
-					  keyEquivalent:@""] autorelease];
-  if (aboutItem.shortcut()) {
-    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setKeyEquivalent, item, aboutItem.shortcut() & 0xff);
-    Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::setKeyEquivalentModifierMask, item, aboutItem.shortcut() );
-  }
-  NSData *pointer = [NSData dataWithBytes:&aboutItem length:sizeof(Fl_Menu_Item)];
-  [item setRepresentedObject:pointer];
-  [appleMenu insertItem:item atIndex:0];
-  CFRelease(cfname);
-  [item setTarget:item];
-}
-
-static char *remove_ampersand(const char *s)
-{
-  char *ret = strdup(s);
-  const char *p = s;
-  char *q = ret;
-  while(*p != 0) {
-    if (p[0]=='&') {
-      if (p[1]=='&') {
-        *q++ = '&'; p+=2;
-      } else {
-        p++;
-      }
-    } else {
-      *q++ = *p++;
-    }
-  }
-  *q = 0;
-  return ret;
-}
-
-void *Fl_Sys_Menu_Bar::doMenuOrItemOperation(Fl_Sys_Menu_Bar::menuOrItemOperation operation, ...)
-/* these operations apply to menus, submenus, or menu items
- */
-{
-  NSAutoreleasePool *localPool;
-  localPool = [[NSAutoreleasePool alloc] init]; 
-  NSMenu *menu;
-  NSMenuItem *item;
-  int value;
-  void *pter;
-  void *retval = NULL;
-  va_list ap;
-  va_start(ap, operation);
-  
-  if (operation == Fl_Sys_Menu_Bar::itemAtIndex) {	// arguments: NSMenu*, int. Returns the item
-    menu = va_arg(ap, NSMenu*);
-    value = va_arg(ap, int);
-    retval = (void *)[menu itemAtIndex:value];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::setKeyEquivalent) {	// arguments: NSMenuItem*, int
-    item = va_arg(ap, NSMenuItem*);
-    value = va_arg(ap, int);
-    char key = value;
-    NSString *equiv = [[NSString alloc] initWithBytes:&key length:1 encoding:NSASCIIStringEncoding];
-    [item setKeyEquivalent:equiv];
-    [equiv release];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::setKeyEquivalentModifierMask) {		// arguments: NSMenuItem*, int
-    item = va_arg(ap, NSMenuItem*);
-    value = va_arg(ap, int);
-    NSUInteger macMod = 0;
-    if ( value & FL_META ) macMod = NSCommandKeyMask;
-    if ( value & FL_SHIFT || isupper(value) ) macMod |= NSShiftKeyMask;
-    if ( value & FL_ALT ) macMod |= NSAlternateKeyMask;
-    if ( value & FL_CTRL ) macMod |= NSControlKeyMask;
-    [item setKeyEquivalentModifierMask:macMod];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::setState) {	// arguments: NSMenuItem*, int
-    item = va_arg(ap, NSMenuItem*);
-    value = va_arg(ap, int);
-    [item setState:(value ? NSOnState : NSOffState)];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::initWithTitle) {	// arguments: const char*title. Returns the newly created menu
-                                                                // creates a new (sub)menu
-    char *ts = remove_ampersand(va_arg(ap, char *));
-    CFStringRef title = CFStringCreateWithCString(NULL, ts, kCFStringEncodingUTF8);
-    free(ts);
-    NSMenu *menu = [[NSMenu alloc] initWithTitle:(NSString*)title];
-    CFRelease(title);
-    [menu setAutoenablesItems:NO];
-    retval = (void *)menu;
-  }
-  else if (operation == Fl_Sys_Menu_Bar::numberOfItems) {	// arguments: NSMenu *menu, int *pcount
-                                                                // upon return, *pcount is set to menu's item count
-    menu = va_arg(ap, NSMenu*);
-    pter = va_arg(ap, void *);
-    *(int*)pter = [menu numberOfItems];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::setSubmenu) {		// arguments: NSMenuItem *item, NSMenu *menu
-                                                        	// sets 'menu' as submenu attached to 'item'
-    item = va_arg(ap, NSMenuItem*);
-    menu = va_arg(ap, NSMenu*);
-    [item setSubmenu:menu];
-    [menu release];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::setEnabled) {		// arguments: NSMenuItem*, int
-    item = va_arg(ap, NSMenuItem*);
-    value = va_arg(ap, int);
-    [item setEnabled:(value ? YES : NO)];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::addSeparatorItem) {	// arguments: NSMenu*
-    menu = va_arg(ap, NSMenu*);
-    [menu addItem:[NSMenuItem separatorItem]];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::setTitle) {		// arguments: NSMenuItem*, const char *
-    item = va_arg(ap, NSMenuItem*);
-    char *ts = remove_ampersand(va_arg(ap, char *));
-    CFStringRef title = CFStringCreateWithCString(NULL, ts, kCFStringEncodingUTF8);
-    free(ts);
-    [item setTitle:(NSString*)title];
-    CFRelease(title);
-  }
-  else if (operation == Fl_Sys_Menu_Bar::removeItem) {		// arguments: NSMenu*, int
-    menu = va_arg(ap, NSMenu*);
-    value = va_arg(ap, int);
-    [menu removeItem:[menu itemAtIndex:value]];
-  }
-  else if (operation == Fl_Sys_Menu_Bar::addNewItem) {		// arguments: NSMenu *menu, Fl_Menu_Item* mitem, int *prank
-    // creates a new menu item at the end of 'menu'
-    // attaches the item of fl_sys_menu_bar to it
-    // upon return, puts the rank (counted in NSMenu) of the new item in *prank unless prank is NULL
-    menu = va_arg(ap, NSMenu*);
-    Fl_Menu_Item *mitem = va_arg(ap, Fl_Menu_Item *);
-    int *prank = va_arg(ap, int*);
-    char *name = remove_ampersand(mitem->label());
-    CFStringRef cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
-    free(name);
-    FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
-						  action:@selector(doCallback:) 
-					   keyEquivalent:@""];
-    NSData *pointer = [NSData dataWithBytes:&mitem length:sizeof(Fl_Menu_Item*)];
-    [item setRepresentedObject:pointer];
-    [menu addItem:item];
-    CFRelease(cfname);
-    [item setTarget:item];
-    if (prank != NULL) *prank = [menu indexOfItem:item];
-    [item release];
-  }
-  va_end(ap);
-  [localPool release];
-  return retval;
-}
 
 void Fl_X::set_key_window()
 {

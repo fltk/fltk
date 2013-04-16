@@ -83,7 +83,6 @@ inline void XDestroyRegion(Fl_Region r) {
     free(r);
   }
 }
-extern void *fl_system_menu;
 extern void *fl_default_cursor;
 
 // This object contains all mac-specific stuff about a window:
