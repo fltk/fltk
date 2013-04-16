@@ -62,6 +62,33 @@
 #  include <sys/mount.h>
 #endif // __APPLE__
 
+#if defined(_AIX)
+extern "C" {
+#  include <sys/types.h>
+#  include <sys/vmount.h>
+#  include <sys/mntctl.h>
+  // Older AIX versions don't expose this prototype
+  int
+  mntctl(int, int, char *);
+}
+#endif  // _AIX
+
+#if defined(__NetBSD__)
+extern "C" {
+#  include <sys/param.h>  // For '__NetBSD_Version__' definition
+#  if defined(__NetBSD_Version__) && (__NetBSD_Version__ >= 300000000)
+#    include <sys/types.h>
+#    include <sys/statvfs.h>
+#    if defined(HAVE_PTHREAD) && defined(HAVE_PTHREAD_H)
+#      include <pthread.h>
+#    endif  // HAVE_PTHREAD && HAVE_PTHREAD_H
+#    ifdef HAVE_PTHREAD
+  static pthread_mutex_t getvfsstat_mutex = PTHREAD_MUTEX_INITIALIZER;
+#    endif  // HAVE_PTHREAD/
+#  endif  // __NetBSD_Version__
+}
+#endif  // __NetBSD__
+
 //
 // FL_BLINE definition from "Fl_Browser.cxx"...
 //
@@ -522,6 +549,77 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
       // Free the memory used for the file system info array...
       delete[] fs;
     }
+#elif defined(_AIX)
+    // AIX don't write the mounted filesystems to a file like '/etc/mnttab'.
+    // But reading the list of mounted filesystems from the kernel is possible:
+    // http://publib.boulder.ibm.com/infocenter/pseries/v5r3/topic/com.ibm.aix.basetechref/doc/basetrf1/mntctl.htm
+    int res = -1, len;
+    char *list = NULL, *name;
+    struct vmount *vp;
+
+    // We always have the root filesystem
+    add("/", icon);
+    // Get the required buffer size for the vmount structures
+    res = mntctl(MCTL_QUERY, sizeof(len), (char *) &len);
+    if (!res) {
+      // Allocate buffer ...
+      list = (char *) malloc((size_t) len);
+      if (NULL == list) {
+        res = -1;
+      } else {
+        // ... and read vmount structures from kernel
+        res = mntctl(MCTL_QUERY, len, list);
+        if (0 >= res) {
+          res = -1;
+        } else {
+          for (i = 0, vp = (struct vmount *) list; i < res; ++i) {
+            name = (char *) vp + vp->vmt_data[VMT_STUB].vmt_off;
+            strlcpy(filename, name, sizeof(filename));
+            // Skip the already added root filesystem
+            if (strcmp("/", filename) != 0) {
+              strlcat(filename, "/", sizeof(filename));
+              add(filename, icon);
+            }
+            vp = (struct vmount *) ((char *) vp + vp->vmt_length);
+          }
+        }
+      }
+    }
+    // Note: Executing 'free(NULL)' is allowed and simply do nothing
+    free((void *) list);
+#elif defined(__NetBSD__) && defined(__NetBSD_Version__) \
+      && (__NetBSD_Version__ >= 300000000)
+    // NetBSD don't write the mounted filesystems to a file like '/etc/mnttab'.
+    // Since NetBSD 3.0 the system call getvfsstat(2) has replaced getfsstat(2)
+    // that is used by getmntinfo(3):
+    // http://www.daemon-systems.org/man/getmntinfo.3.html
+    int res = -1;
+    struct statvfs *list;
+
+    // We always have the root filesystem
+    add("/", icon);
+#  ifdef HAVE_PTHREAD
+    // Lock mutex for thread safety
+    if (!pthread_mutex_lock(&getvfsstat_mutex)) {
+#  endif  // HAVE_PTHREAD
+      // Get list of statvfs structures
+      res = getmntinfo(&list, ST_WAIT);
+      if(0 < res) {
+        for (i = 0;  i < res; ++i) {
+          strlcpy(filename, list[i].f_mntonname, sizeof(filename));
+          // Skip the already added root filesystem
+          if (strcmp("/", filename) != 0) {
+            strlcat(filename, "/", sizeof(filename));
+            add(filename, icon);
+          }
+        }
+      } else {
+         res = -1;
+      }
+#  ifdef HAVE_PTHREAD
+      pthread_mutex_unlock(&getvfsstat_mutex);
+    }
+#  endif  // HAVE_PTHREAD
 #else
     //
     // UNIX code uses /etc/fstab or similar...
@@ -550,7 +648,10 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
         if (sscanf(line, "%*s%4095s", filename) != 1)
 	  continue;
 
-        strlcat(filename, "/", sizeof(filename));
+        // Add a trailing slash (except for the root filesystem)
+        if (strcmp("/", filename) != 0) {
+          strlcat(filename, "/", sizeof(filename));
+        }
 
 //        printf("Fl_File_Browser::load() - adding \"%s\" to list...\n", filename);
         add(filename, icon);
@@ -558,8 +659,13 @@ Fl_File_Browser::load(const char     *directory,// I - Directory to load
       }
 
       fclose(mtab);
+    } else {
+      // Every Unix has a root filesystem '/'.
+      // This last stage fallback ensures that the user don't get an empty
+      // window after requesting filesystem list.
+      add("/", icon);
     }
-#endif // WIN32 || __EMX__
+#endif // WIN32 || __EMX__ || __APPLE__ || _AIX || ...
   }
   else
   {
