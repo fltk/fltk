@@ -69,7 +69,7 @@ extern void (*fl_unlock_function)();
 @implementation FLMenuItem
 - (const Fl_Menu_Item*) getFlItem
 {
-  return *(const Fl_Menu_Item **)[(NSData*)[self representedObject] bytes];
+  return (const Fl_Menu_Item *)[(NSData*)[self representedObject] bytes];
 }
 - (void) doCallback:(id)unused
 {
@@ -134,7 +134,7 @@ extern void (*fl_unlock_function)();
   FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
 						action:@selector(doCallback:) 
 					 keyEquivalent:@""];
-  NSData *pointer = [NSData dataWithBytes:&mitem length:sizeof(Fl_Menu_Item*)];
+  NSData *pointer = [NSData dataWithBytesNoCopy:(void*)mitem length:sizeof(Fl_Menu_Item) freeWhenDone:NO];
   [item setRepresentedObject:pointer];
   [menu addItem:item];
   CFRelease(cfname);
