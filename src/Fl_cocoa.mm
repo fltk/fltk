@@ -3232,14 +3232,30 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
 
 static NSImage *defaultDragImage(int *pwidth, int *pheight)
 {
-  const int width = 16, height = 16;
+  const int version_threshold = 100800;
+  int width, height;
+  if (fl_mac_os_version >= version_threshold) {
+    width = 50; height = 40;
+    }
+  else {
+    width = 16; height = 16;
+    }
   Fl_Offscreen off = Fl_Quartz_Graphics_Driver::create_offscreen_with_alpha(width, height);
   fl_begin_offscreen(off);
-  CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
-  fl_rectf(0,0,width,height);
-  CGContextSetRGBStrokeColor( (CGContextRef)off, 0,0,0,0.6);
-  fl_rect(0,0,width,height);
-  fl_rect(2,2,width-4,height-4);
+  if (fl_mac_os_version >= version_threshold) {
+    fl_font(FL_HELVETICA, 20);
+    fl_color(FL_BLACK);
+    char str[4];
+    int l = fl_utf8encode(0x1F69A, str); // the "Delivery truck" Unicode character
+    fl_draw(str, l, 1, 16);
+    }
+  else { // draw two squares
+    CGContextSetRGBFillColor( (CGContextRef)off, 0,0,0,0);
+    fl_rectf(0,0,width,height);
+    CGContextSetRGBStrokeColor( (CGContextRef)off, 0,0,0,0.6);
+    fl_rect(0,0,width,height);
+    fl_rect(2,2,width-4,height-4);
+  }
   fl_end_offscreen();
   NSImage* image = CGBitmapContextToNSImage( (CGContextRef)off );
   fl_delete_offscreen( off );
