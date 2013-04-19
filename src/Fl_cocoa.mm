@@ -3191,7 +3191,7 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
   fl_font(FL_HELVETICA, 10);
   p = text;
   int nl = 0;
-  while((q=strchr(p, '\n')) != NULL) { 
+  while(nl < 100 && (q=strchr(p, '\n')) != NULL) { 
     nl++; 
     w2 = int(fl_width(p, q - p));
     if (w2 > width) width = w2;
@@ -3232,7 +3232,7 @@ static NSImage *imageFromText(const char *text, int *pwidth, int *pheight)
 
 static NSImage *defaultDragImage(int *pwidth, int *pheight)
 {
-  const int version_threshold = 100800;
+  const int version_threshold = 100700;
   int width, height;
   if (fl_mac_os_version >= version_threshold) {
     width = 50; height = 40;
@@ -3246,7 +3246,7 @@ static NSImage *defaultDragImage(int *pwidth, int *pheight)
     fl_font(FL_HELVETICA, 20);
     fl_color(FL_BLACK);
     char str[4];
-    int l = fl_utf8encode(0x1F69A, str); // the "Delivery truck" Unicode character
+    int l = fl_utf8encode(0x1F69A, str); // the "Delivery truck" Unicode character from "Apple Color Emoji" font
     fl_draw(str, l, 1, 16);
     }
   else { // draw two squares
