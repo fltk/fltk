@@ -29,7 +29,7 @@
 // of the font name array.
 #define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
 
-// turn a stored font name into a pretty name:
+// turn a stored font name in "fltk format" into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
