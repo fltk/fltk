@@ -2960,19 +2960,30 @@ void Fl_X::collapse() {
 static NSImage *CGBitmapContextToNSImage(CGContextRef c)
 // the returned NSImage is autoreleased
 {
-  unsigned char *pdata = (unsigned char *)CGBitmapContextGetData(c);
-  NSBitmapImageRep *imagerep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:&pdata
-                                                                       pixelsWide:CGBitmapContextGetWidth(c)
-                                                                       pixelsHigh:CGBitmapContextGetHeight(c)
-                                                                    bitsPerSample:8
-                                                                  samplesPerPixel:4
-                                                                         hasAlpha:YES
-                                                                         isPlanar:NO
-                                                                   colorSpaceName:NSDeviceRGBColorSpace
-                                                                      bytesPerRow:CGBitmapContextGetBytesPerRow(c)
-                                                                     bitsPerPixel:CGBitmapContextGetBitsPerPixel(c)];
-  NSImage* image = [[NSImage alloc] initWithData: [imagerep TIFFRepresentation]];
-  [imagerep release];
+  NSImage* image;
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+  if (fl_mac_os_version >= 100600) {
+    CGImageRef cgimg = CGBitmapContextCreateImage(c);  // requires 10.4
+    image = [[NSImage alloc] initWithCGImage:cgimg size:NSZeroSize]; // requires 10.6
+    CFRelease(cgimg);
+  }
+  else 
+#endif
+    {
+    unsigned char *pdata = (unsigned char *)CGBitmapContextGetData(c);
+    NSBitmapImageRep *imagerep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:&pdata
+									 pixelsWide:CGBitmapContextGetWidth(c)
+									 pixelsHigh:CGBitmapContextGetHeight(c)
+								      bitsPerSample:8
+								    samplesPerPixel:4
+									   hasAlpha:YES
+									   isPlanar:NO
+								     colorSpaceName:NSDeviceRGBColorSpace
+									bytesPerRow:CGBitmapContextGetBytesPerRow(c)
+								       bitsPerPixel:CGBitmapContextGetBitsPerPixel(c)];
+    image = [[NSImage alloc] initWithData: [imagerep TIFFRepresentation]];
+    [imagerep release];
+    }
   return [image autorelease];
 }
 
@@ -3275,12 +3286,7 @@ int Fl::dnd(void)
   [mypasteboard setData:(NSData*)text forType:@"public.utf8-plain-text"];
   CFRelease(text);
   Fl_Widget *w = Fl::pushed();
-  Fl_Window *win = w->window();
-  if (win == NULL) {
-    win = (Fl_Window*)w;
-  } else { 
-    while(win->window()) win = win->window();
-  }
+  Fl_Window *win = w->top_window();
   NSView *myview = [Fl_X::i(win)->xid contentView];
   NSEvent *theEvent = [NSApp currentEvent];
   
