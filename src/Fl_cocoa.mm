@@ -645,6 +645,12 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   if (self) {
     w = flw;
     containsGLsubwindow = NO;
+    if (fl_mac_os_version >= 100700) {
+      // replaces [self setRestorable:NO] that may trigger a compiler warning
+      typedef void (*setIMP)(id, SEL, BOOL);
+      setIMP addr = (setIMP)[self methodForSelector:@selector(setRestorable:)];
+      addr(self, @selector(setRestorable:), NO);
+      }
   }
   return self;
 }
