@@ -63,7 +63,7 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
     Fl_Device_Plugin *pi = (Fl_Device_Plugin*)pm.plugin("opengl.device.fltk.org");
     if (pi) {
       int height = 0;
-#ifdef _APPLE__
+#ifdef __APPLE__
       int width;
       this->printable_rect(&width, &height);
 #endif
