@@ -363,7 +363,7 @@ endif(LIB_fontconfig)
 
 #######################################################################
 add_library(fltk_forms_SHARED SHARED ${FLCPPFILES})
-target_link_libraries(fltk_forms_SHARED fltk)
+target_link_libraries(fltk_forms_SHARED fltk_SHARED)
 set_target_properties(fltk_forms_SHARED
    PROPERTIES CLEAN_DIRECT_OUTPUT 1
    VERSION ${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}
@@ -393,7 +393,7 @@ endif(USE_X11)
 
 #######################################################################
 add_library(fltk_images_SHARED SHARED ${IMGCPPFILES})
-target_link_libraries(fltk_images_SHARED fltk
+target_link_libraries(fltk_images_SHARED fltk_SHARED
    ${FLTK_PNG_LIBRARIES} ${FLTK_JPEG_LIBRARIES} ${FLTK_ZLIB_LIBRARIES}
 )
 set_target_properties(fltk_images_SHARED
@@ -424,7 +424,7 @@ install(TARGETS fltk_SHARED fltk_forms_SHARED fltk_images_SHARED
 #######################################################################
 if(OPENGL_FOUND)
    add_library(fltk_gl_SHARED SHARED ${GLCPPFILES})
-   target_link_libraries(fltk_gl_SHARED fltk ${OPENGL_LIBRARIES})
+   target_link_libraries(fltk_gl_SHARED fltk_SHARED ${OPENGL_LIBRARIES})
    set_target_properties(fltk_gl_SHARED
       PROPERTIES CLEAN_DIRECT_OUTPUT 1
       VERSION ${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}
