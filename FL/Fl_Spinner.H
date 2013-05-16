@@ -241,6 +241,14 @@ private:
     Return the background color of the spinner widget's input field.
   */
   Fl_Color	color() const { return(input_.color()); }
+  /**
+    Change the selection color of the spinner widget's input field.
+  */
+  void		selection_color(Fl_Color val) { input_.selection_color(val); }
+  /**
+    Return the selection color of the spinner widget's input field.
+  */
+  Fl_Color	selection_color() const { return input_.selection_color(); }
 };
 
 #endif // !Fl_Spinner_H
