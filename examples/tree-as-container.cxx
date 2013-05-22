@@ -32,12 +32,12 @@ class MyData : public Fl_Group {
     Fl_Input *fields[MAX_FIELDS];
 public:
     MyData(int X,int Y,int W,int H) : Fl_Group(X,Y,W,H) {
-	static int colors[MAX_FIELDS] = {
+	static unsigned int colors[MAX_FIELDS] = {
 	    0xffffdd00, 0xffdddd00, 0xddffff00, 0xddffdd00, 0xddddff00
 	};
         for ( int t=0; t<MAX_FIELDS; t++ ) {
 	    fields[t] = new Fl_Input(X+t*FIELD_WIDTH,Y,FIELD_WIDTH,H);
-	    fields[t]->color(colors[t]);
+	    fields[t]->color(Fl_Color(colors[t]));
 	}
 	end();
     }
