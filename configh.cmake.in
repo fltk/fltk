@@ -293,16 +293,6 @@
 #endif /* HAVE_LONG_LONG */
 
 /*
- * Do we have the strtoll() function?
- */
-
-#cmakedefine HAVE_STRTOLL @HAVE_STRTOLL@
-
-#ifndef HAVE_STRTOLL
-#  define strtoll(nptr,endptr,base) strtol((nptr), (endptr), (base))
-#endif /* !HAVE_STRTOLL */
-
-/*
  * Do we have the dlsym() function and header?
  */
 

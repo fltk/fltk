@@ -587,8 +587,6 @@ if test $ac_cv_c_long_long = yes; then
 	AC_DEFINE(HAVE_LONG_LONG)
 fi
 
-AC_CHECK_FUNC(strtoll, AC_DEFINE(HAVE_STRTOLL))
-
 dnl Check for dlopen/dlsym...
 AC_SEARCH_LIBS(dlsym, dl, AC_DEFINE(HAVE_DLSYM))
 AC_CHECK_HEADER(dlfcn.h, AC_DEFINE(HAVE_DLFCN_H))
