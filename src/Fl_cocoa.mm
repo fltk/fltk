@@ -1631,8 +1631,8 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  length of marked text before the FL_KEYBOARD event is processed. Fl::compose_state gives this length after this processing.
  Message insertText: is sent to enter text in the focused widget. If there's marked text, Fl::compose_state is > 0, and this
  marked text gets replaced by the inserted text. If there's no marked text, the new text is inserted at the insertion point. 
- When the character palette is used to enter text, the system sends an insertText: message to myview. The code processes it 
- as an FL_PASTE event. The in_key_event field of the FLView class allows to differentiate keyboard from palette inputs.
+ When the character palette is used to enter text, the system sends an insertText: message to myview. 
+ The in_key_event field of the FLView class allows to differentiate keyboard from palette inputs.
  
  During processing of the handleEvent message, inserted and marked strings are concatenated in a single string
  inserted in a single FL_KEYBOARD event after return from handleEvent. The need_handle member variable of FLView allows 
@@ -2073,24 +2073,24 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     }
   if (in_key_event && Fl::e_length) [FLView concatEtext:received];
   else [FLView prepareEtext:received];
-  // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
-  // Transform character palette actions to FL_PASTE events.
   Fl_X::next_marked_length = 0;
-  int flevent = (in_key_event || Fl::compose_state) ? FL_KEYBOARD : FL_PASTE;
+  // We can get called outside of key events (e.g., from the character palette, from CJK text input). 
+  BOOL palette = !(in_key_event || Fl::compose_state);
+  if (palette) Fl::e_keysym = 0;
   // YES if key has text attached
   BOOL has_text_key = Fl::e_keysym <= '~' || Fl::e_keysym == FL_Iso_Key ||
                       (Fl::e_keysym >= FL_KP && Fl::e_keysym <= FL_KP_Last && Fl::e_keysym != FL_KP_Enter);
   // insertText sent during handleEvent of a key without text cannot be processed in a single FL_KEYBOARD event.
   // Occurs with deadkey followed by non-text key
   if (!in_key_event || !has_text_key) {
-    Fl::handle(flevent, target);
+    Fl::handle(FL_KEYBOARD, target);
     Fl::e_length = 0;
     }
   else need_handle = YES;
   selectedRange = NSMakeRange(100, 0); // 100 is an arbitrary value
   // for some reason, with the palette, the window does not redraw until the next mouse move or button push
   // sending a 'redraw()' or 'awake()' does not solve the issue!
-  if (flevent == FL_PASTE) Fl::flush();
+  if (palette) Fl::flush();
   if (fl_mac_os_version < 100600) [(FLTextView*)[[self window] fieldEditor:YES forObject:nil] setActive:NO];
   fl_unlock_function();
 }
