@@ -27,6 +27,8 @@
 #include <wchar.h>		//MG
 #include "Fl_Native_File_Chooser_common.cxx"		// strnew/strfree/strapp/chrcat
 
+#include <FL/fl_utf8.h>
+
 #define FNFC_MAX_PATH 32768		// XXX: MAX_PATH under win32 is 260, too small for modern use
 
 typedef const wchar_t *LPCWSTR; //MG
@@ -54,7 +56,7 @@ static void dnullprint(char *wp) {
       return;
     } else if ( wp[t] == '\0' ) {
       printf("\\0");
-    } else { 
+    } else {
       printf("%c",wp[t]);
     }
   }
@@ -214,7 +216,7 @@ void Fl_Native_File_Chooser::add_pathname(const char *s) {
   } else {
     // Grow array by 1
     char **tmp = new char*[_tpathnames+1];		// create new buffer
-    memcpy((void*)tmp, (void*)_pathnames, 
+    memcpy((void*)tmp, (void*)_pathnames,
 		       sizeof(char*)*_tpathnames);	// copy old
     delete [] _pathnames;				// delete old
     _pathnames = tmp;					// use new
@@ -364,7 +366,7 @@ int Fl_Native_File_Chooser::showfile() {
   char *oldcwd = 0;
   DWORD oldcwdsz = GetCurrentDirectory(0,0);
   if ( oldcwdsz > 0 ) {
-    oldcwd = (char*)malloc(oldcwdsz); 
+    oldcwd = (char*)malloc(oldcwdsz);
     if (GetCurrentDirectory(oldcwdsz, oldcwd) == 0 ) {
       free(oldcwd); oldcwd = 0;
     }
@@ -399,7 +401,7 @@ int Fl_Native_File_Chooser::showfile() {
   }
   // PREPARE PATHNAMES FOR RETURN
   switch ( _btype ) {
-    case BROWSE_FILE: 
+    case BROWSE_FILE:
     case BROWSE_SAVE_FILE:
       set_single_pathname(wchartoutf8(_ofn.lpstrFile));
       // Win2Unix(_pathnames[_tpathnames-1]);
@@ -412,8 +414,8 @@ int Fl_Native_File_Chooser::showfile() {
 	// WALK STRING SEARCHING FOR 'DOUBLE-NULL'
 	//     eg. "/dir/name\0foo1\0foo2\0foo3\0\0"
 	//
-	char pathname[FNFC_MAX_PATH]; 
-	for ( const WCHAR *s = dirname + dirlen + 1; 
+	char pathname[FNFC_MAX_PATH];
+	for ( const WCHAR *s = dirname + dirlen + 1;
 		 *s; s+= (wcslen(s)+1)) {
 		strcpy(pathname, wchartoutf8(dirname));
 		strcat(pathname, "\\");
@@ -427,7 +429,7 @@ int Fl_Native_File_Chooser::showfile() {
       //    not to grok forward slashes, passing back as a 'filename'..!
       //
       if ( _tpathnames == 0 ) {
-	add_pathname(wchartoutf8(dirname)); 
+	add_pathname(wchartoutf8(dirname));
 	// Win2Unix(_pathnames[_tpathnames-1]);
       }
       break;
@@ -459,7 +461,7 @@ int CALLBACK Fl_Native_File_Chooser::Dir_CB(HWND win, UINT msg, LPARAM param, LP
       }
       break;
     case BFFM_VALIDATEFAILED:
-      // we could pop up an annoying message here. 
+      // we could pop up an annoying message here.
       // also needs set ulFlags |= BIF_VALIDATE
       break;
     default:
@@ -477,7 +479,16 @@ int Fl_Native_File_Chooser::showdir() {
   // PARENT WINDOW
   _binf.hwndOwner = GetForegroundWindow();
   // DIALOG TITLE
-  _binf.lpszTitle = _title ? _title : NULL;
+  //_binf.lpszTitle = _title ? _title : NULL;
+  if (_title) {
+    static WCHAR wtitle[256];
+    wcsncpy(wtitle, utf8towchar(_title), 256);
+    wtitle[255] = 0;
+    _binf.lpszTitle =  wtitle;
+  } else {
+    _binf.lpszTitle = NULL;
+  }
+
   // FLAGS
   _binf.ulFlags = 0; 		// initialize
 
@@ -510,8 +521,10 @@ int Fl_Native_File_Chooser::showdir() {
 #endif
 
   // BUFFER
-  char displayname[FNFC_MAX_PATH];
+  //char displayname[FNFC_MAX_PATH];
+  WCHAR displayname[FNFC_MAX_PATH];
   _binf.pszDisplayName = displayname;
+
   // PRESET DIR
   char presetname[FNFC_MAX_PATH];
   if ( _directory ) {
@@ -522,7 +535,7 @@ int Fl_Native_File_Chooser::showdir() {
   else _binf.lParam = 0;
   _binf.lpfn = Dir_CB;
   // OPEN BROWSER
-  LPITEMIDLIST pidl = SHBrowseForFolder(&_binf);
+  LPITEMIDLIST pidl = SHBrowseForFolderW(&_binf);
   // CANCEL?
   if ( pidl == NULL ) return(1);
 
@@ -530,13 +543,14 @@ int Fl_Native_File_Chooser::showdir() {
   // TBD: expand NetHood shortcuts from this PIDL??
   // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/shellcc/platform/shell/reference/functions/shbrowseforfolder.asp
 
-  TCHAR path[FNFC_MAX_PATH];
-  if ( SHGetPathFromIDList(pidl, path) ) {
+  WCHAR path[FNFC_MAX_PATH];
+  if ( SHGetPathFromIDListW(pidl, path) ) {
     // Win2Unix(path);
-    add_pathname(path);
+    //add_pathname(path);
+    add_pathname(wchartoutf8(path));
   }
   FreePIDL(pidl);
-  if ( !strlen(path) ) return(1);             // don't return empty pathnames
+  if ( !wcslen(path) ) return(1);             // don't return empty pathnames
   return(0);
 }
 
@@ -546,8 +560,8 @@ int Fl_Native_File_Chooser::showdir() {
 //   -1 - failed; errmsg() has reason
 //
 int Fl_Native_File_Chooser::show() {
-  if ( _btype == BROWSE_DIRECTORY || 
-       _btype == BROWSE_MULTI_DIRECTORY || 
+  if ( _btype == BROWSE_DIRECTORY ||
+       _btype == BROWSE_MULTI_DIRECTORY ||
        _btype == BROWSE_SAVE_DIRECTORY ) {
     return(showdir());
   } else {
@@ -781,7 +795,7 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
       default:
       regchar:		// handle regular char
 	switch ( mode ) {
-	  case LBRACKET_CHR: 
+	  case LBRACKET_CHR:
 	    // create new wildcard
 	    ++nwildcards;
 	    // copy in prefix
