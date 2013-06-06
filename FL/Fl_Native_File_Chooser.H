@@ -51,19 +51,19 @@
 
 
 /**
- This class lets an FLTK application easily and consistently access 
- the operating system's native file chooser. Some operating systems 
- have very complex and specific file choosers that many users want 
- access to specifically, instead of FLTK's default file chooser(s). 
- 
+ This class lets an FLTK application easily and consistently access
+ the operating system's native file chooser. Some operating systems
+ have very complex and specific file choosers that many users want
+ access to specifically, instead of FLTK's default file chooser(s).
+
  In cases where there is no native file browser, FLTK's own file browser
  is used instead.
- 
+
  To use this widget, use the following include in your code:
  \code
  #include <FL/Fl_Native_File_Chooser.H>
  \endcode
- 
+
  The following example shows how to pick a single file:
  \code
  // Create and post the local native file chooser
@@ -82,25 +82,25 @@
    default: printf("PICKED: %s\n", fnfc.filename()); break;  // FILE CHOSEN
  }
  \endcode
- 
+
  The Fl_Native_File_Chooser widget transmits UTF-8 encoded filenames to its user. It is
  recommended to open files that may have non-ASCII names with the fl_fopen() or
- fl_open() utility functions that handle these names in a cross-platform way 
- (whereas the standard fopen()/open() functions fail on the MSWindows platform 
+ fl_open() utility functions that handle these names in a cross-platform way
+ (whereas the standard fopen()/open() functions fail on the MSWindows platform
  to open files with a non-ASCII name).
- 
+
  <B>Platform Specific Caveats</B>
- 
+
  - Under X windows, it's best if you call Fl_File_Icon::load_system_icons()
  at the start of main(), to enable the nicer looking file browser widgets.
  Use the static public attributes of class Fl_File_Chooser to localize
  the browser.
- - Some operating systems support certain OS specific options; see 
+ - Some operating systems support certain OS specific options; see
  Fl_Native_File_Chooser::options() for a list.
- 
+
  \image html Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms."
  \image latex Fl_Native_File_Chooser.png "The Fl_Native_File_Chooser on different platforms" width=14cm
- 
+
  */
 class FL_EXPORT Fl_Native_File_Chooser {
 public:
@@ -121,11 +121,11 @@ public:
   };
   /** Localizable message */
   static const char *file_exists_message;
-  
+
 public:
   Fl_Native_File_Chooser(int val=BROWSE_FILE);
   ~Fl_Native_File_Chooser();
-  
+
   // Public methods
   void type(int);
   int type() const;
@@ -147,13 +147,13 @@ public:
   const char* preset_file() const;
   const char *errmsg() const;
   int show();
-  
+
 #ifdef WIN32
 private:
   int  _btype;			// kind-of browser to show()
   int  _options;		// general options
   OPENFILENAMEW _ofn;		// GetOpenFileName() & GetSaveFileName() struct
-  BROWSEINFO   _binf;		// SHBrowseForFolder() struct
+  BROWSEINFOW   _binf;	// SHBrowseForFolder() struct
   char  **_pathnames;		// array of pathnames
   int     _tpathnames;		// total pathnames
   char   *_directory;		// default pathname to use
@@ -163,14 +163,14 @@ private:
   int     _nfilters;		// number of filters parse_filter counted
   char   *_preset_file;		// the file to preselect
   char   *_errmsg;		// error message
-  
+
   // Private methods
   void errmsg(const char *msg);
-  
+
   void clear_pathnames();
   void set_single_pathname(const char *s);
   void add_pathname(const char *s);
-  
+
   void FreePIDL(LPITEMIDLIST pidl);
   void ClearOFN();
   void ClearBINF();
@@ -179,7 +179,7 @@ private:
   int showfile();
   static int CALLBACK Dir_CB(HWND win, UINT msg, LPARAM param, LPARAM data);
   int showdir();
-  
+
   void parse_filter(const char *);
   void clear_filters();
   void add_filter(const char *, const char *);
@@ -195,22 +195,22 @@ private:
   char           *_directory;		// default pathname to use
   char           *_title;		// title for window
   char           *_preset_file;	        // the 'save as' filename
-  
+
   char           *_filter;		// user-side search filter, eg:
 					// C Files\t*.[ch]\nText Files\t*.txt"
-  
+
   char           *_filt_names;		// filter names (tab delimited)
 					// eg. "C Files\tText Files"
-  
+
   char           *_filt_patt[MAXFILTERS];
   // array of filter patterns, eg:
   //     _filt_patt[0]="*.{cxx,h}"
   //     _filt_patt[1]="*.txt"
-  
+
   int             _filt_total;		// parse_filter() # of filters loaded
   int             _filt_value;		// index of the selected filter
   char           *_errmsg;		// error message
-  
+
   // Private methods
   void errmsg(const char *msg);
   void clear_pathnames();
@@ -236,7 +236,7 @@ private:
   char *_directory;
   char *_errmsg;		// error message
   Fl_File_Chooser *_file_chooser;
-  
+
   // Private methods
   void errmsg(const char *msg);
   int type_fl_file(int);
