@@ -27,8 +27,6 @@
 #include <wchar.h>		//MG
 #include "Fl_Native_File_Chooser_common.cxx"		// strnew/strfree/strapp/chrcat
 
-#include <FL/fl_utf8.h>
-
 #define FNFC_MAX_PATH 32768		// XXX: MAX_PATH under win32 is 260, too small for modern use
 
 typedef const wchar_t *LPCWSTR; //MG
