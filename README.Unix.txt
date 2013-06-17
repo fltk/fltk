@@ -296,6 +296,36 @@ The linker flags are located in the "Linker Settings" tab under "Other Linker
 Options". Add the flags to `fltk-config --ldstaticflags` in front of the 
 second "`".
 
+CodeBlocks can be set up to use fluid to manage modules..
+The following info is from mingodad@gmail.com posted on fltk.general 06/17/2013:
+
+"""
+    I have this settings on codeblocks on linux:
+
+    Settings -> 
+      Compiler and debugging settings ->
+        Other settings -> 
+	  Advanced options:
+
+    -- Add an extension (in my case "fl")
+
+    -- On command line macro:
+		cd $file_dir;  fluid -c $file
+
+    -- Generated files  (to be further compiled):
+		$file_dir/$file_name.cxx
+		$file_dir/$file_name.h
+
+    Settings -> Environment -> Files extension handling :
+		Wildcard : *.fl
+		To open file: Launch an external program
+		External program: fluid
+
+    With that I can double click on any fluid file I include on a project
+    and it opens it with fluid, when I press "run" or "build" codeblocks
+    calls fluid to generate the c++ files and compile then if needed.
+"""
+
 
 
  5  DOCUMENT HISTORY
@@ -304,3 +334,4 @@ second "`".
 Oct 30 2010 - matt: added Code::Blocks chapter
 Oct 28 2010 - matt: restructured entire document and verified instructions
 Nov 14 2010 - duncan: added install-desktop
+Jun 17 2013 - erco: added mingodad's CodeBlocks/Fluid recommendations
