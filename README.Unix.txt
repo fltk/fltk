@@ -300,7 +300,7 @@ CodeBlocks can be set up to use fluid to manage modules..
 The following info is from mingodad@gmail.com posted on fltk.general 06/17/2013:
 
 """
-    I have this settings on codeblocks on linux:
+    I have these settings in codeblocks on linux:
 
     Settings -> 
       Compiler and debugging settings ->
@@ -322,8 +322,8 @@ The following info is from mingodad@gmail.com posted on fltk.general 06/17/2013:
 		External program: fluid
 
     With that I can double click on any fluid file I include on a project
-    and it opens it with fluid, when I press "run" or "build" codeblocks
-    calls fluid to generate the c++ files and compile then if needed.
+    and it opens with fluid. When I press "run" or "build" codeblocks
+    calls fluid to generate the c++ files and compiles if needed.
 """
 
 
