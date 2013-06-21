@@ -724,6 +724,22 @@ placed in the system menu bar (at top-left of display), and, on other platforms,
 at a user-chosen location of a user-chosen window.
 
 
+\subsection osissues_icon_osx Setting the icon of an application
+\li First, create a .icns file containing several copies of your icon of decreasing sizes.
+This can be done using the Preview application or the Icon Composer application
+available in "Graphics Tools for Xcode". To create a high resolution icon file,
+it is necessary to use the iconutil command-line utility.
+\li Put your .icns file in the Resources subdirectory of your application bundle.
+\li Add these two lines to the Info.plist file of your application bundle
+\verbatim
+<key>CFBundleIconFile</key>
+<string>foo.icns</string>
+\endverbatim
+replacing <tt>foo</tt> by your application name. If you use Xcode, just add your .icns file to your 
+application target.
+
+
+
 \subsection osissues_quartz Drawing Things Using Quartz
 All code inside Fl_Widget::draw()
 is expected to call Quartz drawing functions. The Quartz coordinate system 
