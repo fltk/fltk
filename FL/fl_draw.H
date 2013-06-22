@@ -394,6 +394,24 @@ inline void fl_curve(double X0, double Y0, double X1, double Y1, double X2, doub
  \param[in] start,end angles of start and end of arc measured in degrees
  counter-clockwise from 3 o'clock. If \p end is less than \p start
  then it draws the arc in a clockwise direction.
+
+ Examples:
+ \code
+    // Draw an arc of points
+    fl_begin_points();
+    fl_arc(100.0, 100.0, 50.0, 0.0, 180.0);
+    fl_end_points();
+
+    // Draw arc with a line
+    fl_begin_line();
+    fl_arc(200.0, 100.0, 50.0, 0.0, 180.0);
+    fl_end_line();
+
+    // Draw filled arc
+    fl_begin_polygon();
+    fl_arc(300.0, 100.0, 50.0, 0.0, 180.0);
+    fl_end_polygon();
+ \endcode
  */
 inline void fl_arc(double x, double y, double r, double start, double end) {fl_graphics_driver->arc(x,y,r,start,end); }
 /**
