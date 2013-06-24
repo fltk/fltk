@@ -40,5 +40,8 @@
 	<key>CFBundleGetInfoString</key>
 	<string>1.0, Copyright 1997-2010 by Bill Spitzak and others</string>
 
+	<key>NSHighResolutionCapable</key>
+	<true/>
+
     </dict>
 </plist>
