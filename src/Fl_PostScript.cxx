@@ -1254,6 +1254,7 @@ void Fl_PostScript_Graphics_Driver::arc(double x, double y, double r, double sta
 }
 
 void Fl_PostScript_Graphics_Driver::arc(int x, int y, int w, int h, double a1, double a2) {
+  if (w <= 1 || h <= 1) return;
   fprintf(output, "GS\n");
   //fprintf(output, "BP\n");
   begin_line();
