@@ -190,6 +190,7 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   { kVK_ANSI_U, 'U' }, { kVK_ANSI_V, 'V' }, { kVK_ANSI_W, 'W' }, { kVK_ANSI_X, 'X' }, 
   { kVK_ANSI_Y, 'Y' }, { kVK_ANSI_Z, 'Z' }, 
   { kVK_ANSI_LeftBracket, '[' }, { kVK_ANSI_Backslash, '\\' }, { kVK_ANSI_RightBracket, ']' }, { kVK_ANSI_Grave, '`' },  
+  { kVK_VolumeDown, FL_Volume_Down}, { kVK_Mute, FL_Volume_Mute}, { kVK_VolumeUp, FL_Volume_Up},
   { kVK_Delete, FL_BackSpace }, { kVK_Tab, FL_Tab }, { kVK_ISO_Section, FL_Iso_Key }, { kVK_Return, FL_Enter }, /*{ 0x7F, FL_Pause },
   { 0x7F, FL_Scroll_Lock },*/ { kVK_Escape, FL_Escape }, 
   { kVK_JIS_Kana, FL_Kana}, { kVK_JIS_Eisu, FL_Eisu}, { kVK_JIS_Yen, FL_Yen}, { kVK_JIS_Underscore, FL_JIS_Underscore},
@@ -207,6 +208,7 @@ static const struct {unsigned short vk, fltk;} vktab[] = {
   { kVK_F5, FL_F+5 }, { kVK_F6, FL_F+6 }, { kVK_F7, FL_F+7 }, { kVK_F8, FL_F+8 }, 
   { kVK_F9, FL_F+9 }, { kVK_F10, FL_F+10 }, { kVK_F11, FL_F+11 }, { kVK_F12, FL_F+12 }, 
   { kVK_F13, FL_F+13 }, { kVK_F14, FL_F+14 }, { kVK_F15, FL_F+15 }, { kVK_F16, FL_F+16 }, 
+  { kVK_F17, FL_F+17 }, { kVK_F18, FL_F+18 }, { kVK_F19, FL_F+19 }, { kVK_F20, FL_F+20 }, 
   { kVK_Shift, FL_Shift_L }, { kVK_RightShift, FL_Shift_R }, { kVK_Control, FL_Control_L }, { kVK_RightControl, FL_Control_R }, 
   { kVK_CapsLock, FL_Caps_Lock }, { kVK_Command, FL_Meta_L }, { 0x36, FL_Meta_R },
   { kVK_Option, FL_Alt_L }, { kVK_RightOption, FL_Alt_R }, { kVK_ForwardDelete, FL_Delete }
@@ -231,7 +233,7 @@ static int fltk2mac(int fltk) {
     if (vktab[c].fltk == fltk) return vktab[c].vk;
     if (vktab[c].fltk < fltk) a = c+1; else b = c;
   }
-  return 127;
+  return vktab[a].vk;
 }
 
 //: returns true, if that key was pressed during the last event
