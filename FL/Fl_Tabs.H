@@ -50,11 +50,11 @@
   fluid browser to select each child group and resize them until
   the tabs look the way you want them to.
 
-  The background area behind and to the right of the tabs is transparent,
-  inheriting the color of the parent. The setting of Fl_Tabs::box()
-  does not affect this.  So, if Fl_Tabs is resized by itself, without
-  the parent, you may need to force the parent to redraw() after resizing
-  to prevent artifacts in this "transparent" region.
+  The background area behind and to the right of the tabs is
+  "transparent", exposing the background detail of the parent. The
+  value of Fl_Tabs::box() does not affect this area. So if Fl_Tabs is
+  resized by itself without the parent, force the appropriate parent
+  (visible behind the tabs) to redraw() to prevent artifacts.
 
   Resizing note: when Fl_Tabs is resized vertically, the default
   behavior scales the tab's height as well as its children.
