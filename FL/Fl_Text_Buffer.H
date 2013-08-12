@@ -207,7 +207,7 @@ public:
   /**
    Returns the character at the specified position pos in the buffer.
    Positions start at 0 
-   \param pos byte offset into buffer, pos must be at acharacter boundary
+   \param pos byte offset into buffer, pos must be at a character boundary
    \return Unicode UCS-4 encoded character
    */
   unsigned int char_at(int pos) const;
