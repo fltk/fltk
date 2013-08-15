@@ -28,7 +28,7 @@
 // GLOBALS
 Fl_Input *G_filename = NULL;
 
-void Butt_CB(Fl_Widget*, void*) {
+void PickFile_CB(Fl_Widget*, void*) {
   // Create native chooser
   Fl_Native_File_Chooser native;
   native.title("Pick a file");
@@ -42,6 +42,26 @@ void Butt_CB(Fl_Widget*, void*) {
     case -1: fprintf(stderr, "ERROR: %s\n", native.errmsg()); break;	// ERROR
     case  1: fprintf(stderr, "*** CANCEL\n"); fl_beep(); break;		// CANCEL
     default: 								// PICKED FILE
+      if ( native.filename() ) {
+        G_filename->value(native.filename());
+      } else {
+	G_filename->value("NULL");
+      }
+      break;
+  }
+}
+
+void PickDir_CB(Fl_Widget*, void*) {
+  // Create native chooser
+  Fl_Native_File_Chooser native;
+  native.title("Pick a Directory");
+  native.directory(G_filename->value());
+  native.type(Fl_Native_File_Chooser::BROWSE_DIRECTORY);
+  // Show native chooser
+  switch ( native.show() ) {
+    case -1: fprintf(stderr, "ERROR: %s\n", native.errmsg()); break;	// ERROR
+    case  1: fprintf(stderr, "*** CANCEL\n"); fl_beep(); break;		// CANCEL
+    default: 								// PICKED DIR
       if ( native.filename() ) {
         G_filename->value(native.filename());
       } else {
@@ -79,7 +99,9 @@ int main(int argc, char **argv) {
     G_filename->tooltip("Default filename");
     y += G_filename->h() + 5;
     Fl_Button *but = new Fl_Button(win->w()-80-10, win->h()-25-10, 80, 25, "Pick File");
-    but->callback(Butt_CB);
+    but->callback(PickFile_CB);
+    Fl_Button *butdir = new Fl_Button(but->x()-80-10, win->h()-25-10, 80, 25, "Pick Dir");
+    butdir->callback(PickDir_CB);
     Fl_Box *dummy = new Fl_Box(80, 0, 430, 100);
     dummy->hide();
     win->resizable(dummy);
