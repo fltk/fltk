@@ -14,7 +14,7 @@
  *     http://www.fltk.org/str.php
  */
 
-#ifndef _Xutf8_h
+#if ! ( defined(_Xutf8_h) || defined(FL_DOXYGEN) )
 #define _Xutf8_h
 
 #  ifdef __cplusplus
