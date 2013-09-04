@@ -2703,12 +2703,13 @@ static void convert_crlf(char * s, size_t len)
 
 // fltk 1.3 clipboard support constant definitions:
 const CFStringRef	flavorNames[] = {
-  CFSTR("public.utf16-plain-text"), 
   CFSTR("public.utf8-plain-text"),
-  CFSTR("com.apple.traditional-mac-plain-text") };
+  CFSTR("public.utf16-plain-text"), 
+  CFSTR("com.apple.traditional-mac-plain-text") 
+};
 const CFStringEncoding encodings[] = { 
-  kCFStringEncodingUnicode, 
   kCFStringEncodingUTF8, 
+  kCFStringEncodingUnicode, 
   kCFStringEncodingMacRoman};
 const size_t handledFlavorsCount = sizeof(encodings)/sizeof(CFStringEncoding);
 
@@ -2796,17 +2797,30 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
         if (found) break;
       }
       if (found) {
+	// Textual data was found in the pasteboard. Copy it directly if it's UTF-8 encoded,
+	// and put it in a CFString if it's in another encoding.
+	CFStringRef mycfs;
         CFIndex len = CFDataGetLength(flavorData);
-        CFStringRef mycfs = CFStringCreateWithBytes(NULL, CFDataGetBytePtr(flavorData), len, encoding, false);
-        CFRelease(flavorData);
-        len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(mycfs), kCFStringEncodingUTF8) + 1;
+	if (encoding != kCFStringEncodingUTF8) {
+	  mycfs = CFStringCreateWithBytes(NULL, CFDataGetBytePtr(flavorData), len, encoding, false);
+	  CFRelease(flavorData);
+	  len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(mycfs), kCFStringEncodingUTF8);
+	  }
+	len++;
         if ( len >= fl_selection_buffer_length[1] ) {
           fl_selection_buffer_length[1] = len;
           delete[] fl_selection_buffer[1];
           fl_selection_buffer[1] = new char[len];
         }
-        CFStringGetCString(mycfs, fl_selection_buffer[1], len, kCFStringEncodingUTF8);
-        CFRelease(mycfs);
+	if (encoding == kCFStringEncodingUTF8) {
+	  memcpy(fl_selection_buffer[1], CFDataGetBytePtr(flavorData), len-1);
+	  CFRelease(flavorData);
+	  fl_selection_buffer[1][len-1] = 0;
+	  }
+	else {
+	  CFStringGetCString(mycfs, fl_selection_buffer[1], len, kCFStringEncodingUTF8);
+	  CFRelease(mycfs);
+	}
         len = strlen(fl_selection_buffer[1]);
         fl_selection_length[1] = len;
         convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
