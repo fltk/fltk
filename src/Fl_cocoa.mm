@@ -1147,6 +1147,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 }
 - (void)applicationDidChangeScreenParameters:(NSNotification *)unused
 { // react to changes in screen numbers and positions
+  fl_lock_function();
   main_screen_height = [[[NSScreen screens] objectAtIndex:0] frame].size.height;
   Fl::call_screen_init();
   // FLTK windows have already been notified they were moved,
@@ -1160,6 +1161,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
       }
     }
   Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
+  fl_unlock_function();
 }
 - (void)applicationWillResignActive:(NSNotification *)notify
 {
