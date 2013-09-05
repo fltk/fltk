@@ -1291,10 +1291,11 @@ void fl_open_callback(void (*cb)(const char *)) {
 }
 @end
 
-extern "C" {
-  OSErr CPSEnableForegroundOperation(ProcessSerialNumber *psn, UInt32 _arg2,
-				     UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
+/* Prototype of undocumented function needed to support Mac OS 10.2 or earlier
+ extern "C" {
+  OSErr CPSEnableForegroundOperation(ProcessSerialNumber*, UInt32, UInt32, UInt32, UInt32);
 }
+*/
 
 void fl_open_display() {
   static char beenHereDoneThat = 0;
@@ -1334,17 +1335,11 @@ void fl_open_display() {
             
       if ( !bundle )
       {
-        // Earlier versions of this code tried to use weak linking, however it
-        // appears that this does not work on 10.2.  Since 10.3 and higher provide
-        // both TransformProcessType and CPSEnableForegroundOperation, the following
-        // conditional code compiled on 10.2 will still work on newer releases...
         OSErr err;
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
-        if (TransformProcessType != NULL) {
-          err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication);
-        } else
-#endif // MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3
-          err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
+	err = TransformProcessType(&cur_psn, kProcessTransformToForegroundApplication); // needs Mac OS 10.3
+	/* support of Mac OS 10.2 or earlier used this undocumented call instead
+	 err = CPSEnableForegroundOperation(&cur_psn, 0x03, 0x3C, 0x2C, 0x1103);
+	*/
         if (err == noErr) {
           SetFrontProcess( &cur_psn );
         }
@@ -2693,6 +2688,7 @@ void Fl_X::q_end_image() {
 
 ////////////////////////////////////////////////////////////////
 // Copy & Paste fltk implementation.
+// Requires Mac OS 10.3 or later
 ////////////////////////////////////////////////////////////////
 
 static void convert_crlf(char * s, size_t len)
