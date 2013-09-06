@@ -1623,7 +1623,7 @@ static void  q_set_window_title(NSWindow *nsw, const char * name, const char *mi
  doCommandBySelector:, setMarkedText: and insertText:. All 3 messages eventually produce Fl::handle(FL_KEYBOARD, win) calls.
  The doCommandBySelector: message allows to process events such as new-line, forward and backward delete, arrows, 
  escape, tab, F1. The message setMarkedText: is sent when marked text, that is, temporary text that gets replaced later 
- by some other text, is inserted. This happen when a dead key is pressed, and also 
+ by some other text, is inserted. This happens when a dead key is pressed, and also 
  when entering complex scripts (e.g., Chinese). Fl_X::next_marked_length gives the byte
  length of marked text before the FL_KEYBOARD event is processed. Fl::compose_state gives this length after this processing.
  Message insertText: is sent to enter text in the focused widget. If there's marked text, Fl::compose_state is > 0, and this
