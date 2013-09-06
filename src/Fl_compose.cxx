@@ -41,7 +41,7 @@ extern XIC fl_xim_ic;
  
  <p>If <i>true</i> is returned, then it has modified the
  Fl::event_text() and Fl::event_length() to a set of <i>bytes</i> to
- insert (it may be of zero length!).  In will also set the "del"
+ insert (it may be of zero length!).  It will also set the "del"
  parameter to the number of <i>bytes</i> to the left of the cursor to
  delete, this is used to delete the results of the previous call to
  Fl::compose().
