@@ -98,6 +98,20 @@ BUILDING FLTK UNDER MICROSOFT WINDOWS
         sh configure ...options...
 
 
+BUILDING HTML DOCUMENTATION
+
+    If you want to build the HTML documentation:
+
+    	( cd documentation && make html )
+
+    If you want to build the PDF documentation:
+
+    	( cd documentation && make pdf )
+    
+    FLTK uses doxygen for documentation, so you'll at least need doxygen
+    installed for creating html docs, and LaTeX for creating PDF docs.
+
+
 INTERNET RESOURCES
 
     FLTK is available on the 'net in a bunch of locations:
@@ -106,23 +120,16 @@ INTERNET RESOURCES
 	         http://www.fltk.org/str.php [for reporting bugs]
 	         http://www.fltk.org/software.php [source code]
 
-	- FTP:   http://ftp.easysw.com/pub/fltk
-	         ftp://ftp.easysw.com/pub/fltk
-	         ftp://ftp2.easysw.com/pub/fltk
+	- FTP:   (offline Apr 20 '13) http://ftp.easysw.com/pub/fltk
+	         (offline Apr 20 '13) ftp://ftp.easysw.com/pub/fltk
+	         (offline Apr 20 '13) ftp://ftp2.easysw.com/pub/fltk
 	         ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub/fltk
 	         ftp://linux.mathematik.tu-darmstadt.de/pub/linux/mirrors/misc/fltk
 	         ftp://gd.tuwien.ac.at/hci/fltk
 
-	- EMail: fltk@fltk.org [see instructions below]
-
-    To send a message to the FLTK mailing list ("fltk@fltk.org")
-    you must first join the list.  Non-member submissions are
-    blocked to avoid problems with SPAM.
-
     To join the FLTK mailing list, go the following web page:
 
-        http://lists.easysw.com/listinfo/fltk
-
+        http://www.fltk.org/newsgroups.php
 
 REPORTING BUGS
 
