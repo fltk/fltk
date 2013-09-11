@@ -531,6 +531,37 @@ public:
   const char* GetValue() const { return(out); }
 };
 
+void fl_update_clipboard(void) {
+  Fl_Window *w1 = Fl::first_window();
+  if (!w1)
+    return;
+
+  HWND hwnd = fl_xid(w1);
+
+  if (!OpenClipboard(hwnd))
+    return;
+
+  EmptyClipboard();
+
+  int utf16_len = fl_utf8toUtf16(fl_selection_buffer[1],
+                                 fl_selection_length[1], 0, 0);
+
+  HGLOBAL hMem = GlobalAlloc(GHND, utf16_len * 2 + 2); // moveable and zero'ed mem alloc.
+  LPVOID memLock = GlobalLock(hMem);
+
+  fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1],
+                 (unsigned short*) memLock, utf16_len + 1);
+
+  GlobalUnlock(hMem);
+  SetClipboardData(CF_UNICODETEXT, hMem);
+
+  CloseClipboard();
+
+  // In case Windows managed to lob of a WM_DESTROYCLIPBOARD during
+  // the above.
+  fl_i_own_selection[1] = 1;
+}
+
 // call this when you create a selection:
 void Fl::copy(const char *stuff, int len, int clipboard) {
   if (!stuff || len<0) return;
@@ -548,25 +579,9 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   memcpy(fl_selection_buffer[clipboard], stuff, len);
   fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
   fl_selection_length[clipboard] = len;
-  if (clipboard) {
-    // set up for "delayed rendering":
-    if (OpenClipboard(NULL)) {
-      // if the system clipboard works, use it
-      int utf16_len = fl_utf8toUtf16(fl_selection_buffer[clipboard], fl_selection_length[clipboard], 0, 0);
-      EmptyClipboard();
-      HGLOBAL hMem = GlobalAlloc(GHND, utf16_len * 2 + 2); // moveable and zero'ed mem alloc.
-      LPVOID memLock = GlobalLock(hMem);
-      fl_utf8toUtf16(fl_selection_buffer[clipboard], fl_selection_length[clipboard], (unsigned short*) memLock, utf16_len + 1);
-      GlobalUnlock(hMem);
-      SetClipboardData(CF_UNICODETEXT, hMem);
-      CloseClipboard();
-      GlobalFree(hMem);
-      fl_i_own_selection[clipboard] = 0;
-    } else {
-      // only if it fails, instruct paste() to use the internal buffers
-      fl_i_own_selection[clipboard] = 1;
-    }
-  }
+  fl_i_own_selection[clipboard] = 1;
+  if (clipboard)
+    fl_update_clipboard();
 }
 
 // Call this when a "paste" operation happens:
@@ -1191,33 +1206,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     fl_i_own_selection[1] = 0;
     return 1;
 
-  case WM_RENDERALLFORMATS:
-    fl_i_own_selection[1] = 0;
-    // Windoze seems unhappy unless I do these two steps. Documentation
-    // seems to vary on whether opening the clipboard is necessary or
-    // is in fact wrong:
-    CloseClipboard();
-    OpenClipboard(NULL);
-    // fall through...
-  case WM_RENDERFORMAT: {
-    HANDLE h;
-
-//  int l = fl_utf_nb_char((unsigned char*)fl_selection_buffer[1], fl_selection_length[1]);
-    int l = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], NULL, 0); // Pass NULL buffer to query length required
-    h = GlobalAlloc(GHND, (l+1) * sizeof(unsigned short));
-    if (h) {
-      unsigned short *g = (unsigned short*) GlobalLock(h);
-//    fl_utf2unicode((unsigned char *)fl_selection_buffer[1], fl_selection_length[1], (xchar*)g);
-      l = fl_utf8toUtf16(fl_selection_buffer[1], fl_selection_length[1], g, (l+1));
-      g[l] = 0;
-      GlobalUnlock(h);
-      SetClipboardData(CF_UNICODETEXT, h);
-    }
-
-    // Windoze also seems unhappy if I don't do this. Documentation very
-    // unclear on what is correct:
-    if (fl_msg.message == WM_RENDERALLFORMATS) CloseClipboard();
-    return 1;}
   case WM_DISPLAYCHANGE: // occurs when screen configuration (number, position) changes
     Fl::call_screen_init();
     Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);

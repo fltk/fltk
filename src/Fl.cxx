@@ -1357,7 +1357,9 @@ int Fl::handle_(int e, Fl_Window* window)
 ////////////////////////////////////////////////////////////////
 // hide() destroys the X window, it does not do unmap!
 
-#if !defined(WIN32) && USE_XFT
+#if defined(WIN32)
+extern void fl_update_clipboard(void);
+#elif USE_XFT
 extern void fl_destroy_xft_draw(Window);
 #endif
 
@@ -1404,14 +1406,8 @@ void Fl_Window::hide() {
 #if defined(WIN32)
   // this little trick keeps the current clipboard alive, even if we are about
   // to destroy the window that owns the selection.
-  if (GetClipboardOwner()==ip->xid) {
-    Fl_Window *w1 = Fl::first_window();
-    if (w1 && OpenClipboard(fl_xid(w1))) {
-      EmptyClipboard();
-      SetClipboardData(CF_TEXT, NULL);
-      CloseClipboard();
-    }
-  }
+  if (GetClipboardOwner()==ip->xid)
+    fl_update_clipboard();
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
   if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);
