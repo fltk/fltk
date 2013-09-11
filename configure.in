@@ -995,6 +995,16 @@ case $uname_GUI in
 		LIBS="-lXext $LIBS")
 	fi
 
+	dnl Check for the Xfixes extension unless disabled...
+        AC_ARG_ENABLE(xfixes, [  --enable-xfixes       turn on Xfixes support [default=yes]])
+
+	if test x$enable_xfixes != xno; then
+	    AC_CHECK_HEADER(X11/extensions/Xfixes.h, AC_DEFINE(HAVE_XFIXES),,
+	        [#include <X11/Xlib.h>])
+	    AC_CHECK_LIB(Xfixes, XFixesQueryExtension,
+		LIBS="-lXfixes $LIBS")
+	fi
+
 	dnl Check for overlay visuals...
 	AC_PATH_PROG(XPROP, xprop)
 	AC_CACHE_CHECK(for X overlay visuals, ac_cv_have_overlay,

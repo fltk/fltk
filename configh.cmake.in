@@ -108,6 +108,14 @@
 #define USE_XDBE HAVE_XDBE
 
 /*
+ * HAVE_XFIXES:
+ *
+ * Do we have the X fixes extension?
+ */
+
+#cmakedefine01 HAVE_XFIXES
+
+/*
  * __APPLE_QUARTZ__:
  *
  * If __APPLE_QUARTZ__ is defined, FLTK will be

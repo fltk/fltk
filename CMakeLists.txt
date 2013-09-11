@@ -514,6 +514,20 @@ else()
 endif(OPTION_USE_XINERAMA)
 
 #######################################################################
+if(X11_Xfixes_FOUND)
+   option(OPTION_USE_XFIXES "use lib XFIXES" ON)
+endif(X11_Xfixes_FOUND)
+
+if(OPTION_USE_XFIXES)
+   set(HAVE_XFIXES ${X11_Xfixes_FOUND})
+   include_directories(${X11_Xfixes_INCLUDE_PATH})
+   list(APPEND FLTK_LDLIBS -lXfixes)
+   set(FLTK_XFIXES_FOUND TRUE)
+else()
+   set(FLTK_XFIXES_FOUND FALSE)
+endif(OPTION_USE_XFIXES)
+
+#######################################################################
 if(X11_Xft_FOUND)
    option(OPTION_USE_XFT "use lib Xft" ON)
 endif(X11_Xft_FOUND)

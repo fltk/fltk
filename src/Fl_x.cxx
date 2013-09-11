@@ -53,6 +53,12 @@ static XRRUpdateConfiguration_type XRRUpdateConfiguration_f;
 static int randrEventBase;                  // base of RandR-defined events
 #endif
 
+#  if HAVE_XFIXES
+#  include <X11/extensions/Xfixes.h>
+static int xfixes_event_base = 0;
+static bool have_xfixes = false;
+#  endif
+
 static Fl_Xlib_Graphics_Driver fl_xlib_driver;
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
 Fl_Display_Device *Fl_Display_Device::_display = &fl_xlib_display;// the platform display
@@ -306,6 +312,9 @@ static Atom WM_PROTOCOLS;
 static Atom fl_MOTIF_WM_HINTS;
 static Atom TARGETS;
 static Atom CLIPBOARD;
+static Atom TIMESTAMP;
+static Atom PRIMARY_TIMESTAMP;
+static Atom CLIPBOARD_TIMESTAMP;
 Atom fl_XdndAware;
 Atom fl_XdndSelection;
 Atom fl_XdndEnter;
@@ -608,6 +617,9 @@ void fl_open_display(Display* d) {
   fl_MOTIF_WM_HINTS     = XInternAtom(d, "_MOTIF_WM_HINTS",     0);
   TARGETS               = XInternAtom(d, "TARGETS",             0);
   CLIPBOARD             = XInternAtom(d, "CLIPBOARD",           0);
+  TIMESTAMP             = XInternAtom(d, "TIMESTAMP",           0);
+  PRIMARY_TIMESTAMP     = XInternAtom(d, "PRIMARY_TIMESTAMP",   0);
+  CLIPBOARD_TIMESTAMP   = XInternAtom(d, "CLIPBOARD_TIMESTAMP", 0);
   fl_XdndAware          = XInternAtom(d, "XdndAware",           0);
   fl_XdndSelection      = XInternAtom(d, "XdndSelection",       0);
   fl_XdndEnter          = XInternAtom(d, "XdndEnter",           0);
@@ -655,6 +667,15 @@ void fl_open_display(Display* d) {
 #if !USE_COLORMAP
   Fl::visual(FL_RGB);
 #endif
+
+#if HAVE_XFIXES
+  int error_base;
+  if (XFixesQueryExtension(fl_display, &xfixes_event_base, &error_base))
+    have_xfixes = true;
+  else
+    have_xfixes = false;
+#endif
+
 #if USE_XRANDR
   void *libxrandr_addr = dlopen("libXrandr.so.2", RTLD_LAZY);
   if (!libxrandr_addr)  libxrandr_addr = dlopen("libXrandr.so", RTLD_LAZY);
@@ -843,6 +864,107 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
 }
 
 ////////////////////////////////////////////////////////////////
+// Code for tracking clipboard changes:
+
+static Time primary_timestamp = -1;
+static Time clipboard_timestamp = -1;
+
+extern bool fl_clipboard_notify_empty(void);
+extern void fl_trigger_clipboard_notify(int source);
+
+static void poll_clipboard_owner(void) {
+  Window xid;
+
+#if HAVE_XFIXES
+  // No polling needed with Xfixes
+  if (have_xfixes)
+    return;
+#endif
+
+  // No one is interested, so no point polling
+  if (fl_clipboard_notify_empty())
+    return;
+
+  // We need a window for this to work
+  if (!Fl::first_window())
+    return;
+  xid = fl_xid(Fl::first_window());
+  if (!xid)
+    return;
+
+  // Request an update of the selection time for both the primary and
+  // clipboard selections. Magic continues when we get a SelectionNotify.
+  if (!fl_i_own_selection[0])
+    XConvertSelection(fl_display, XA_PRIMARY, TIMESTAMP, PRIMARY_TIMESTAMP,
+                      xid, fl_event_time);
+  if (!fl_i_own_selection[1])
+    XConvertSelection(fl_display, CLIPBOARD, TIMESTAMP, CLIPBOARD_TIMESTAMP,
+                      xid, fl_event_time);
+}
+
+static void clipboard_timeout(void *data)
+{
+  // No one is interested, so stop polling
+  if (fl_clipboard_notify_empty())
+    return;
+
+  poll_clipboard_owner();
+
+  Fl::repeat_timeout(0.5, clipboard_timeout);
+}
+
+static void handle_clipboard_timestamp(int clipboard, Time time)
+{
+  Time *timestamp;
+
+  timestamp = clipboard ? &clipboard_timestamp : &primary_timestamp;
+
+#if HAVE_XFIXES
+  if (!have_xfixes)
+#endif
+  {
+    // Initial scan, just store the value
+    if (*timestamp == (Time)-1) {
+      *timestamp = time;
+      return;
+    }
+  }
+
+  // Same selection
+  if (time == *timestamp)
+    return;
+
+  *timestamp = time;
+
+  // The clipboard change is the event that caused us to request
+  // the clipboard data, so use that time as the latest event.
+  if (time > fl_event_time)
+    fl_event_time = time;
+
+  // Something happened! Let's tell someone!
+  fl_trigger_clipboard_notify(clipboard);
+}
+
+void fl_clipboard_notify_change() {
+  // Reset the timestamps if we've going idle so that you don't
+  // get a bogus immediate trigger next time they're activated.
+  if (fl_clipboard_notify_empty()) {
+    primary_timestamp = -1;
+    clipboard_timestamp = -1;
+  } else {
+#if HAVE_XFIXES
+    if (!have_xfixes)
+#endif
+    {
+      poll_clipboard_owner();
+
+      if (!Fl::has_timeout(clipboard_timeout))
+        Fl::add_timeout(0.5, clipboard_timeout);
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////
 
 const XEvent* fl_xevent; // the current x event
 ulong fl_event_time; // the last timestamp from an x event
@@ -1005,7 +1127,6 @@ int fl_handle(const XEvent& thisevent)
     return 0;
 
   case SelectionNotify: {
-    if (!fl_selection_requestor) return 0;
     static unsigned char* buffer = 0;
     if (buffer) {XFree(buffer); buffer = 0;}
     long bytesread = 0;
@@ -1021,6 +1142,19 @@ int fl_handle(const XEvent& thisevent)
                              bytesread/4, 65536, 1, 0,
                              &actual, &format, &count, &remaining,
                              &portion)) break; // quit on error
+
+      if ((fl_xevent->xselection.property == PRIMARY_TIMESTAMP) ||
+          (fl_xevent->xselection.property == CLIPBOARD_TIMESTAMP)) {
+        if (portion && format == 32 && count == 1) {
+          Time t = *(unsigned int*)portion;
+          if (fl_xevent->xselection.property == CLIPBOARD_TIMESTAMP)
+            handle_clipboard_timestamp(1, t);
+          else
+            handle_clipboard_timestamp(0, t);
+        }
+        return true;
+      }
+
       if (actual == TARGETS || actual == XA_ATOM) {
 	Atom type = XA_STRING;
 	for (unsigned i = 0; i<count; i++) {
@@ -1061,6 +1195,9 @@ int fl_handle(const XEvent& thisevent)
       buffer[bytesread] = 0;
       convert_crlf(buffer, bytesread);
     }
+
+    if (!fl_selection_requestor) return 0;
+
     Fl::e_text = buffer ? (char*)buffer : (char *)"";
     Fl::e_length = bytesread;
     int old_event = Fl::e_number;
@@ -1081,6 +1218,7 @@ int fl_handle(const XEvent& thisevent)
   case SelectionClear: {
     int clipboard = fl_xevent->xselectionclear.selection == CLIPBOARD;
     fl_i_own_selection[clipboard] = 0;
+    poll_clipboard_owner();
     return 1;}
 
   case SelectionRequest: {
@@ -1295,6 +1433,9 @@ int fl_handle(const XEvent& thisevent)
   case FocusIn:
     if (fl_xim_ic) XSetICFocus(fl_xim_ic);
     event = FL_FOCUS;
+    // If the user has toggled from another application to this one,
+    // then it's a good time to check for clipboard changes.
+    poll_clipboard_owner();
     break;
 
   case FocusOut:
@@ -1663,6 +1804,25 @@ int fl_handle(const XEvent& thisevent)
     }
   }
 
+#if HAVE_XFIXES
+  switch (xevent.type - xfixes_event_base) {
+  case XFixesSelectionNotify: {
+    // Someone feeding us bogus events?
+    if (!have_xfixes)
+      return true;
+
+    XFixesSelectionNotifyEvent *selection_notify = (XFixesSelectionNotifyEvent *)&xevent;
+
+    if ((selection_notify->selection == XA_PRIMARY) && !fl_i_own_selection[0])
+      handle_clipboard_timestamp(0, selection_notify->selection_timestamp);
+    else if ((selection_notify->selection == CLIPBOARD) && !fl_i_own_selection[1])
+      handle_clipboard_timestamp(1, selection_notify->selection_timestamp);
+
+    return true;
+    }
+  }
+#endif
+
   return Fl::handle(event, window);
 }
 
@@ -1981,6 +2141,16 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     Atom net_wm_type_kind = XInternAtom(fl_display, "_NET_WM_WINDOW_TYPE_MENU", False);
     XChangeProperty(fl_display, xp->xid, net_wm_type, XA_ATOM, 32, PropModeReplace, (unsigned char*)&net_wm_type_kind, 1);
   }
+
+#if HAVE_XFIXES
+  // register for clipboard change notifications
+  if (have_xfixes && !win->parent()) {
+    XFixesSelectSelectionInput(fl_display, xp->xid, XA_PRIMARY,
+                               XFixesSetSelectionOwnerNotifyMask);
+    XFixesSelectSelectionInput(fl_display, xp->xid, CLIPBOARD,
+                               XFixesSetSelectionOwnerNotifyMask);
+  }
+#endif
 
   XMapWindow(fl_display, xp->xid);
   if (showit) {

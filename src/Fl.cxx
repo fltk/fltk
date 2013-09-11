@@ -435,6 +435,70 @@ static char in_idle;
 #endif
 
 ////////////////////////////////////////////////////////////////
+// Clipboard notifications
+
+struct Clipboard_Notify {
+  Fl_Clipboard_Notify_Handler handler;
+  void *data;
+  struct Clipboard_Notify *next;
+};
+
+static struct Clipboard_Notify *clip_notify_list = NULL;
+
+extern void fl_clipboard_notify_change(); // in Fl_<platform>.cxx
+
+void Fl::add_clipboard_notify(Fl_Clipboard_Notify_Handler h, void *data) {
+  struct Clipboard_Notify *node;
+
+  remove_clipboard_notify(h);
+
+  node = new Clipboard_Notify;
+
+  node->handler = h;
+  node->data = data;
+  node->next = clip_notify_list;
+
+  clip_notify_list = node;
+
+  fl_clipboard_notify_change();
+}
+
+void Fl::remove_clipboard_notify(Fl_Clipboard_Notify_Handler h) {
+  struct Clipboard_Notify *node, **prev;
+
+  node = clip_notify_list;
+  prev = &clip_notify_list;
+  while (node != NULL) {
+    if (node->handler == h) {
+      *prev = node->next;
+      delete node;
+
+      fl_clipboard_notify_change();
+
+      return;
+    }
+
+    prev = &node->next;
+    node = node->next;
+  }
+}
+
+bool fl_clipboard_notify_empty(void) {
+  return clip_notify_list == NULL;
+}
+
+void fl_trigger_clipboard_notify(int source) {
+  struct Clipboard_Notify *node, *next;
+
+  node = clip_notify_list;
+  while (node != NULL) {
+    next = node->next;
+    node->handler(source, node->data);
+    node = next;
+  }
+}
+
+////////////////////////////////////////////////////////////////
 // wait/run/check/ready:
 
 void (*Fl::idle)(); // see Fl::add_idle.cxx for the add/remove functions
@@ -1358,6 +1422,7 @@ int Fl::handle_(int e, Fl_Window* window)
 // hide() destroys the X window, it does not do unmap!
 
 #if defined(WIN32)
+extern void fl_clipboard_notify_untarget(HWND wnd);
 extern void fl_update_clipboard(void);
 #elif USE_XFT
 extern void fl_destroy_xft_draw(Window);
@@ -1408,6 +1473,8 @@ void Fl_Window::hide() {
   // to destroy the window that owns the selection.
   if (GetClipboardOwner()==ip->xid)
     fl_update_clipboard();
+  // Make sure we unlink this window from the clipboard chain
+  fl_clipboard_notify_untarget(ip->xid);
   // Send a message to myself so that I'll get out of the event loop...
   PostMessage(ip->xid, WM_APP, 0, 0);
   if (ip->private_dc) fl_release_dc(ip->xid, ip->private_dc);

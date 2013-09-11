@@ -634,6 +634,38 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
   }
 }
 
+static HWND clipboard_wnd = 0;
+static HWND next_clipboard_wnd = 0;
+
+static bool initial_clipboard = true;
+
+void fl_clipboard_notify_change() {
+  // No need to do anything here...
+}
+
+void fl_clipboard_notify_target(HWND wnd) {
+  if (clipboard_wnd)
+    return;
+
+  // We get one fake WM_DRAWCLIPBOARD immediately, which we therefore
+  // need to ignore.
+  initial_clipboard = true;
+
+  clipboard_wnd = wnd;
+  next_clipboard_wnd = SetClipboardViewer(wnd);
+}
+
+void fl_clipboard_notify_untarget(HWND wnd) {
+  if (wnd != clipboard_wnd)
+    return;
+
+  ChangeClipboardChain(wnd, next_clipboard_wnd);
+  clipboard_wnd = next_clipboard_wnd = 0;
+
+  if (Fl::first_window())
+    fl_clipboard_notify_target(fl_xid(Fl::first_window()));
+}
+
 ////////////////////////////////////////////////////////////////
 char fl_is_ime = 0;
 void fl_get_codepage()
@@ -1211,6 +1243,27 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     Fl::handle(FL_SCREEN_CONFIGURATION_CHANGED, NULL);
     return 0;
 
+  case WM_CHANGECBCHAIN:
+    if ((hWnd == clipboard_wnd) &&
+        (next_clipboard_wnd == (HWND)wParam)) {
+      next_clipboard_wnd = (HWND)lParam;
+      return 0;
+    }
+    break;
+
+  case WM_DRAWCLIPBOARD:
+    // When the clipboard moves between two FLTK windows,
+    // fl_i_own_selection will temporarily be false as we are
+    // processing this message. Hence the need to use fl_find().
+    if (!initial_clipboard && !fl_find(GetClipboardOwner()))
+      fl_trigger_clipboard_notify(1);
+    initial_clipboard = false;
+
+    if (next_clipboard_wnd)
+      SendMessage(next_clipboard_wnd, WM_DRAWCLIPBOARD, wParam, lParam);
+
+    return 0;
+
   default:
     if (Fl::handle(0,0)) return 0;
     break;
@@ -1646,6 +1699,8 @@ Fl_X* Fl_X::make(Fl_Window* w) {
 
   x->next = Fl_X::first;
   Fl_X::first = x;
+
+  fl_clipboard_notify_target(x->xid);
 
   x->wait_for_expose = 1;
   if (fl_show_iconic) {showit = 0; fl_show_iconic = 0;}

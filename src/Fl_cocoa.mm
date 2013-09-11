@@ -90,6 +90,7 @@ static void createAppleMenu(void);
 static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h);
 static void cocoaMouseHandler(NSEvent *theEvent);
 static int calc_mac_os_version();
+static void clipboard_check(void);
 
 Fl_Display_Device *Fl_Display_Device::_display = new Fl_Display_Device(new Fl_Quartz_Graphics_Driver); // the platform display
 
@@ -1109,16 +1110,21 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   fl_unlock_function();
   return reply;
 }
-/**
- * Cocoa organizes the Z depth of windows on a global priority. FLTK however
- * expects the window manager to organize Z level by application. The trickery
- * below will change Z order during activation and deactivation.
- */
 - (void)applicationDidBecomeActive:(NSNotification *)notify
 {
-  fl_lock_function();
   Fl_X *x;
   FLWindow *top = 0, *topModal = 0, *topNonModal = 0;
+
+  fl_lock_function();
+
+  // update clipboard status
+  clipboard_check();
+
+  /**
+   * Cocoa organizes the Z depth of windows on a global priority. FLTK however
+   * expects the window manager to organize Z level by application. The trickery
+   * below will change Z order during activation and deactivation.
+   */
   for (x = Fl_X::first;x;x = x->next) {
     FLWindow *cw = x->xid;
     Fl_Window *win = x->w;
@@ -2720,6 +2726,26 @@ static void allocatePasteboard() {
     PasteboardCreate(kPasteboardClipboard, &myPasteboard);
 }
 
+extern void fl_trigger_clipboard_notify(int source);
+
+void fl_clipboard_notify_change() {
+  // No need to do anything here...
+}
+
+static void clipboard_check(void)
+{
+  PasteboardSyncFlags flags;
+
+  allocatePasteboard();
+  flags = PasteboardSynchronize(myPasteboard);
+
+  if (!(flags & kPasteboardModified))
+    return;
+  if (flags & kPasteboardClientIsOwner)
+    return;
+
+  fl_trigger_clipboard_notify(1);
+}
 
 /*
  * create a selection

@@ -239,6 +239,10 @@ if(HAVE_XINERAMA)
    target_link_libraries(fltk ${X11_Xinerama_LIB})
 endif(HAVE_XINERAMA)
 
+if(HAVE_XFIXES)
+   target_link_libraries(fltk ${X11_Xfixes_LIB})
+endif(HAVE_XFIXES)
+
 if(USE_XFT)
    target_link_libraries(fltk ${X11_Xft_LIB})
 endif(USE_XFT)
