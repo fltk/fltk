@@ -2694,7 +2694,6 @@ void Fl_X::q_end_image() {
 
 ////////////////////////////////////////////////////////////////
 // Copy & Paste fltk implementation.
-// Requires Mac OS 10.3 or later
 ////////////////////////////////////////////////////////////////
 
 static void convert_crlf(char * s, size_t len)
@@ -2704,27 +2703,20 @@ static void convert_crlf(char * s, size_t len)
 }
 
 // fltk 1.3 clipboard support constant definitions:
-const CFStringRef	flavorNames[] = {
-  CFSTR("public.utf8-plain-text"),
-  CFSTR("public.utf16-plain-text"), 
-  CFSTR("com.apple.traditional-mac-plain-text") 
-};
-const CFStringEncoding encodings[] = { 
-  kCFStringEncodingUTF8, 
-  kCFStringEncodingUnicode, 
-  kCFStringEncodingMacRoman};
-const size_t handledFlavorsCount = sizeof(encodings)/sizeof(CFStringEncoding);
+static const NSString *utf8_format = @"public.utf8-plain-text";
 
 // clipboard variables definitions :
 char *fl_selection_buffer[2];
 int fl_selection_length[2];
 static int fl_selection_buffer_length[2];
 
-static PasteboardRef myPasteboard = 0;
-static void allocatePasteboard() {
-  if (!myPasteboard)
-    PasteboardCreate(kPasteboardClipboard, &myPasteboard);
+static PasteboardRef allocatePasteboard(void) 
+{
+  PasteboardRef clip;
+  PasteboardCreate(kPasteboardClipboard, &clip); // requires Mac OS 10.3
+  return clip;
 }
+static PasteboardRef myPasteboard = allocatePasteboard();
 
 extern void fl_trigger_clipboard_notify(int source);
 
@@ -2735,9 +2727,8 @@ void fl_clipboard_notify_change() {
 static void clipboard_check(void)
 {
   PasteboardSyncFlags flags;
-
-  allocatePasteboard();
-  flags = PasteboardSynchronize(myPasteboard);
+  
+  flags = PasteboardSynchronize(myPasteboard); // requires Mac OS 10.3
 
   if (!(flags & kPasteboardModified))
     return;
@@ -2764,13 +2755,11 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
   fl_selection_length[clipboard] = len;
   if (clipboard) {
-    allocatePasteboard();
-    OSStatus err = PasteboardClear(myPasteboard);
-    if (err!=noErr) return; // clear did not work, maybe not owner of clipboard.
-    PasteboardSynchronize(myPasteboard);
     CFDataRef text = CFDataCreate(kCFAllocatorDefault, (UInt8*)fl_selection_buffer[1], len);
     if (text==NULL) return; // there was a pb creating the object, abort.
-    err=PasteboardPutItemFlavor(myPasteboard, (PasteboardItemID)1, CFSTR("public.utf8-plain-text"), text, 0);
+    NSPasteboard *clip = [NSPasteboard generalPasteboard];
+    [clip declareTypes:[NSArray arrayWithObject:utf8_format] owner:nil];
+    [clip setData:(NSData*)text forType:utf8_format];
     CFRelease(text);
   }
 }
@@ -2780,74 +2769,24 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
   if (clipboard) {
     // see if we own the selection, if not go get it:
     fl_selection_length[1] = 0;
-    OSStatus err = noErr;
-    Boolean found = false;
-    CFDataRef flavorData = NULL;
-    CFStringEncoding encoding = 0;
     
-    allocatePasteboard();
-    PasteboardSynchronize(myPasteboard);
-    ItemCount nFlavor = 0, i, j;
-    err = PasteboardGetItemCount(myPasteboard, &nFlavor);
-    if (err==noErr) {
-      for (i=1; i<=nFlavor; i++) {
-        PasteboardItemID itemID = 0;
-        CFArrayRef flavorTypeArray = NULL;
-        found = false;
-        err = PasteboardGetItemIdentifier(myPasteboard, i, &itemID);
-        if (err!=noErr) continue;
-        err = PasteboardCopyItemFlavors(myPasteboard, itemID, &flavorTypeArray);
-        if (err!=noErr) {
-          if (flavorTypeArray) {CFRelease(flavorTypeArray); flavorTypeArray = NULL;}
-          continue;
-        }
-        CFIndex flavorCount = CFArrayGetCount(flavorTypeArray);
-        for (j = 0; j < handledFlavorsCount; j++) {
-          for (CFIndex flavorIndex=0; flavorIndex<flavorCount; flavorIndex++) {
-            CFStringRef flavorType = (CFStringRef)CFArrayGetValueAtIndex(flavorTypeArray, flavorIndex);
-            if (UTTypeConformsTo(flavorType, flavorNames[j])) {
-              err = PasteboardCopyItemFlavorData( myPasteboard, itemID, flavorNames[j], &flavorData );
-              if (err != noErr) continue;
-              encoding = encodings[j];
-              found = true;
-              break;
-            }
-          }
-          if (found) break;
-        }
-        if (flavorTypeArray) {CFRelease(flavorTypeArray); flavorTypeArray = NULL;}
-        if (found) break;
-      }
-      if (found) {
-	// Textual data was found in the pasteboard. Copy it directly if it's UTF-8 encoded,
-	// and put it in a CFString if it's in another encoding.
-	CFStringRef mycfs;
-        CFIndex len = CFDataGetLength(flavorData);
-	if (encoding != kCFStringEncodingUTF8) {
-	  mycfs = CFStringCreateWithBytes(NULL, CFDataGetBytePtr(flavorData), len, encoding, false);
-	  CFRelease(flavorData);
-	  len = CFStringGetMaximumSizeForEncoding(CFStringGetLength(mycfs), kCFStringEncodingUTF8);
-	  }
-	len++;
+    NSPasteboard *clip = [NSPasteboard generalPasteboard];
+    NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObject:utf8_format]];
+    if (found) {
+      NSData *data = [clip dataForType:found];
+      if (data) {
+	NSInteger len = [data length] + 1;
         if ( len >= fl_selection_buffer_length[1] ) {
           fl_selection_buffer_length[1] = len;
           delete[] fl_selection_buffer[1];
           fl_selection_buffer[1] = new char[len];
         }
-	if (encoding == kCFStringEncodingUTF8) {
-	  memcpy(fl_selection_buffer[1], CFDataGetBytePtr(flavorData), len-1);
-	  CFRelease(flavorData);
-	  fl_selection_buffer[1][len-1] = 0;
-	  }
-	else {
-	  CFStringGetCString(mycfs, fl_selection_buffer[1], len, kCFStringEncodingUTF8);
-	  CFRelease(mycfs);
-	}
-        len = strlen(fl_selection_buffer[1]);
-        fl_selection_length[1] = len;
-        convert_crlf(fl_selection_buffer[1],len); // turn all \r characters into \n:
+	[data getBytes:fl_selection_buffer[1]];
+	fl_selection_buffer[1][len - 1] = 0;
+	fl_selection_length[1] = len - 1;
+        convert_crlf(fl_selection_buffer[1], len - 1); // turn all \r characters into \n:
       }
-    }
+    }    
   }
   Fl::e_text = fl_selection_buffer[clipboard];
   Fl::e_length = fl_selection_length[clipboard];
@@ -3326,8 +3265,8 @@ int Fl::dnd(void)
   NSAutoreleasePool *localPool;
   localPool = [[NSAutoreleasePool alloc] init]; 
   NSPasteboard *mypasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-  [mypasteboard declareTypes:[NSArray arrayWithObjects:@"public.utf8-plain-text", nil] owner:nil];
-  [mypasteboard setData:(NSData*)text forType:@"public.utf8-plain-text"];
+  [mypasteboard declareTypes:[NSArray arrayWithObject:utf8_format] owner:nil];
+  [mypasteboard setData:(NSData*)text forType:utf8_format];
   CFRelease(text);
   Fl_Widget *w = Fl::pushed();
   Fl_Window *win = w->top_window();
