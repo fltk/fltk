@@ -756,6 +756,20 @@ public:
   FLTK will call the registered callback whenever there is a change to the
   selection buffer or the clipboard. The source argument indicates which
   of the two has changed. Only changes by other applications are reported.
+
+  Example:
+  \code
+    void clip_callback(int source, void *data) {
+        if ( source == 0 ) printf("CLIP CALLBACK: selection buffer changed\n");
+	if ( source == 1 ) printf("CLIP CALLBACK: clipboard changed\n");
+    }
+    [..]
+    int main() {
+        [..]
+	Fl::add_clipboard_notify(clip_callback);
+	[..]
+    }
+  \endcode
   \note Some systems require polling to monitor the clipboard and may
   therefore have some delay in detecting changes.
   */
