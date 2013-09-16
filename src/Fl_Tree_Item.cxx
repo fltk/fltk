@@ -611,9 +611,12 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
   //   We don't care about items clipped off the viewport; they won't get mouse events.
   //
   int item_y_center = Y+(H/2);
-  int &icon_w = _collapse_xywh[2] = prefs.openicon()->w();
-  int &icon_x = _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
-  int &icon_y = _collapse_xywh[1] = item_y_center - (prefs.openicon()->h()/2);
+  _collapse_xywh[2] = prefs.openicon()->w();
+  int &icon_w = _collapse_xywh[2];
+  _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
+  int &icon_x = _collapse_xywh[0];
+  _collapse_xywh[1] = item_y_center - (prefs.openicon()->h()/2);
+  int &icon_y = _collapse_xywh[1];
   _collapse_xywh[3] = prefs.openicon()->h();
 
   // Horizontal connector values

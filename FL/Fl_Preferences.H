@@ -185,6 +185,7 @@ private:
   static char uuidBuffer[40];
   static Fl_Preferences *runtimePrefs;
 
+public:  // older Sun compilers need this (public definition of the following classes)
   class RootNode;
   
   class FL_EXPORT Node {	// a node contains a list to all its entries 

@@ -88,11 +88,11 @@ private:
     nTest++;
   }
   static int nTest;
-  static UnitTest *fTest[200];
+  static UnitTest *fTest[];
 };
 
 int UnitTest::nTest = 0;
-UnitTest *UnitTest::fTest[];
+UnitTest *UnitTest::fTest[200];
 
 
 // The main window needs an additional drawing feature in order to support 

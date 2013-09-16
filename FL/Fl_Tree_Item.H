@@ -61,7 +61,7 @@ class FL_EXPORT Fl_Tree_Item {
     OPEN                = 1<<0,		///> item is open
     VISIBLE             = 1<<1,		///> item is visible
     ACTIVE              = 1<<2,		///> item is active
-    SELECTED            = 1<<3,		///> item is selected
+    SELECTED            = 1<<3		///> item is selected
   };
 #if FLTK_ABI_VERSION >= 10301
   // NEW
