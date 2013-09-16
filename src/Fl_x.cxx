@@ -866,8 +866,8 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
 ////////////////////////////////////////////////////////////////
 // Code for tracking clipboard changes:
 
-static Time primary_timestamp = -1;
-static Time clipboard_timestamp = -1;
+static Time primary_timestamp = (Time)-1;
+static Time clipboard_timestamp = (Time)-1;
 
 extern bool fl_clipboard_notify_empty(void);
 extern void fl_trigger_clipboard_notify(int source);
@@ -949,8 +949,8 @@ void fl_clipboard_notify_change() {
   // Reset the timestamps if we've going idle so that you don't
   // get a bogus immediate trigger next time they're activated.
   if (fl_clipboard_notify_empty()) {
-    primary_timestamp = -1;
-    clipboard_timestamp = -1;
+    primary_timestamp = (Time)-1;
+    clipboard_timestamp = (Time)-1;
   } else {
 #if HAVE_XFIXES
     if (!have_xfixes)
