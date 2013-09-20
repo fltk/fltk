@@ -709,7 +709,7 @@ static void fl_init_workarea() {
   Atom actual;
   unsigned long count, remaining;
   int format;
-  unsigned *xywh;
+  unsigned *xywh = 0;
 
   /* If there are several screens, the _NET_WORKAREA property 
    does not give the work area of the main screen, but that of all screens together.
@@ -733,8 +733,8 @@ static void fl_init_workarea() {
     fl_workarea_xywh[1] = (int)xywh[1];
     fl_workarea_xywh[2] = (int)xywh[2];
     fl_workarea_xywh[3] = (int)xywh[3];
-    XFree(xywh);
   }
+  if ( xywh ) { XFree(xywh); xywh = 0; }
 }
 
 int Fl::x() {
@@ -824,6 +824,13 @@ void fl_sendClientMessage(Window window, Atom message,
 /* 
    Get window property value (32 bit format) 
    Returns zero on success, -1 on error
+
+   'data' should be freed with XFree() using this pattern:
+ 
+        unsigned long *data = 0;
+        if (0 == get_xwinprop(....., &nitems, &data) ) { ..success.. }
+        else { ..fail.. }
+        if ( data ) { XFree(data); data=0; }
 */
 static int get_xwinprop(Window wnd, Atom prop, long max_length,
                         unsigned long *nitems, unsigned long **data) {
@@ -1152,6 +1159,7 @@ int fl_handle(const XEvent& thisevent)
           else
             handle_clipboard_timestamp(0, t);
         }
+	XFree(portion); portion = 0;
         return true;
       }
 
@@ -1171,7 +1179,7 @@ int fl_handle(const XEvent& thisevent)
 	      t == fl_XaTextUriList ||
 	      t == fl_XaCompoundText) type = t;
 	}
-	XFree(portion);
+	XFree(portion); portion = 0;
 	Atom property = xevent.xselection.property;
 	XConvertSelection(fl_display, property, type, property,
 	      fl_xid(Fl::first_window()),
@@ -1180,12 +1188,12 @@ int fl_handle(const XEvent& thisevent)
       }
       // Make sure we got something sane...
       if ((portion == NULL) || (format != 8) || (count == 0)) {
-	if (portion) XFree(portion);
+	if (portion) { XFree(portion); portion = 0; }
         return true;
-	}
+      }
       buffer = (unsigned char*)realloc(buffer, bytesread+count+remaining+1);
       memcpy(buffer+bytesread, portion, count);
-      XFree(portion);
+      if (portion) { XFree(portion); portion = 0; }
       bytesread += count;
       // Cannot trust data to be null terminated
       buffer[bytesread] = '\0';
@@ -1312,14 +1320,17 @@ int fl_handle(const XEvent& thisevent)
         XGetWindowProperty(fl_display, fl_dnd_source_window, fl_XdndTypeList,
                            0, 0x8000000L, False, XA_ATOM, &actual, &format,
                            &count, &remaining, &buffer);
-        if (actual != XA_ATOM || format != 32 || count<4 || !buffer)
+        if (actual != XA_ATOM || format != 32 || count<4 || !buffer) {
+	  if ( buffer ) { XFree(buffer); buffer = 0; }
           goto FAILED;
+	}
         delete [] fl_dnd_source_types;
         fl_dnd_source_types = new Atom[count+1];
         for (unsigned i = 0; i < count; i++) {
           fl_dnd_source_types[i] = ((Atom*)buffer)[i];
         }
         fl_dnd_source_types[count] = 0;
+        XFree(buffer); buffer = 0;
       } else {
       FAILED:
         // less than four data types, or if the above messes up:
@@ -1692,6 +1703,7 @@ int fl_handle(const XEvent& thisevent)
             }
           }
         }
+	if ( words ) { XFree(words); words = 0; }
       }
       if (window->fullscreen_active() && !fullscreen_state) {
         window->_clear_fullscreen();
@@ -1891,9 +1903,11 @@ int Fl_X::ewmh_supported() {
     if (0 == get_xwinprop(XRootWindow(fl_display, fl_screen), fl_NET_SUPPORTING_WM_CHECK, 64,
                           &nitems, &words) && nitems == 1) {
       Window child = words[0];
+      if ( words ) { XFree(words); words = 0; }
       if (0 == get_xwinprop(child, fl_NET_SUPPORTING_WM_CHECK, 64,
-                           &nitems, &words) && nitems == 1) {
-        result = (child == words[0]);
+                           &nitems, &words) ) {
+        if ( nitems == 1) result = (child == words[0]);
+        if ( words ) { XFree(words); words = 0; }
       }
     }
   }

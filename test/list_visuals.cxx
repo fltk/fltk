@@ -213,6 +213,7 @@ void list_visuals() {
 
     putchar('\n');
   }
+  if ( overlayInfo ) { XFree(overlayInfo); overlayInfo = 0; }
 }
 
 #endif
