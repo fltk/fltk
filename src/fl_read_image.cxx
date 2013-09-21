@@ -70,8 +70,10 @@ fl_subimage_offsets(int a, int aw, int b, int bw, int &obw)
 
 // this handler will catch and ignore exceptions during XGetImage
 // to avoid an application crash
-static int xgetimageerrhandler(Display *display, XErrorEvent *error) {
-  return 0;
+extern "C" {
+  static int xgetimageerrhandler(Display *display, XErrorEvent *error) {
+    return 0;
+  }
 }
 
 //

@@ -102,9 +102,11 @@ int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_Paged_Device::P
   return 0;
 }
 
-static int dont_close(FILE *f) 
-{
-  return 0;
+extern "C" {
+  static int dont_close(FILE *f)
+  {
+    return 0;
+  }
 }
 
 /**

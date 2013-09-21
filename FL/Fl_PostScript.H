@@ -52,6 +52,12 @@
  <br> All other unicode characters or all other fonts (FL_FREE_FONT and above) are output as a bitmap.
  <br> FLTK standard fonts are output using the corresponding PostScript standard fonts.
  */
+
+/** Signature of Fl_PostScript::close_command() functions passed as parameters. */
+extern "C" {
+  typedef int (Fl_PostScript_Close_Command)(FILE *);
+}
+
 class FL_EXPORT Fl_PostScript_Graphics_Driver : public Fl_Graphics_Driver {
 public: 
   static const char *class_id;
@@ -89,7 +95,7 @@ class Clip {
   int mx; // width of mask;
   int my; // mask lines
   //Fl_Color bg_;
-  int (*close_cmd_)(FILE *);
+  Fl_PostScript_Close_Command* close_cmd_;
   int page_policy_;
   int nPages;
   int orientation_;
@@ -116,7 +122,11 @@ class Clip {
  
   void page_policy(int p);
   int page_policy(){return page_policy_;};
+#if FLTK_ABI_VERSION < 10303
   void close_command( int (*cmd)(FILE *)){close_cmd_=cmd;};
+#else
+  void close_command(Fl_PostScript_Close_Command* cmd){close_cmd_=cmd;};
+#endif
   FILE * file() {return output;};
   //void orientation (int o);
   //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int pages = 0); // ps (also multi-page) constructor

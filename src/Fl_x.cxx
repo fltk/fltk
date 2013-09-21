@@ -1134,8 +1134,8 @@ int fl_handle(const XEvent& thisevent)
     return 0;
 
   case SelectionNotify: {
-    static unsigned char* buffer = 0;
-    if (buffer) {XFree(buffer); buffer = 0;}
+    static unsigned char* sn_buffer = 0;
+    if (sn_buffer) {XFree(sn_buffer); sn_buffer = 0;}
     long bytesread = 0;
     if (fl_xevent->xselection.property) for (;;) {
       // The Xdnd code pastes 64K chunks together, possibly to avoid
@@ -1191,22 +1191,22 @@ int fl_handle(const XEvent& thisevent)
 	if (portion) { XFree(portion); portion = 0; }
         return true;
       }
-      buffer = (unsigned char*)realloc(buffer, bytesread+count+remaining+1);
-      memcpy(buffer+bytesread, portion, count);
+      sn_buffer = (unsigned char*)realloc(sn_buffer, bytesread+count+remaining+1);
+      memcpy(sn_buffer+bytesread, portion, count);
       if (portion) { XFree(portion); portion = 0; }
       bytesread += count;
       // Cannot trust data to be null terminated
-      buffer[bytesread] = '\0';
+      sn_buffer[bytesread] = '\0';
       if (!remaining) break;
     }
-    if (buffer) {
-      buffer[bytesread] = 0;
-      convert_crlf(buffer, bytesread);
+    if (sn_buffer) {
+      sn_buffer[bytesread] = 0;
+      convert_crlf(sn_buffer, bytesread);
     }
 
     if (!fl_selection_requestor) return 0;
 
-    Fl::e_text = buffer ? (char*)buffer : (char *)"";
+    Fl::e_text = sn_buffer ? (char*)sn_buffer : (char *)"";
     Fl::e_length = bytesread;
     int old_event = Fl::e_number;
     fl_selection_requestor->handle(Fl::e_number = FL_PASTE);
@@ -1316,21 +1316,21 @@ int fl_handle(const XEvent& thisevent)
       if (data[1]&1) {
         // get list of data types:
         Atom actual; int format; unsigned long count, remaining;
-        unsigned char *buffer = 0;
+        unsigned char *cm_buffer = 0;
         XGetWindowProperty(fl_display, fl_dnd_source_window, fl_XdndTypeList,
                            0, 0x8000000L, False, XA_ATOM, &actual, &format,
-                           &count, &remaining, &buffer);
-        if (actual != XA_ATOM || format != 32 || count<4 || !buffer) {
-	  if ( buffer ) { XFree(buffer); buffer = 0; }
+                           &count, &remaining, &cm_buffer);
+        if (actual != XA_ATOM || format != 32 || count<4 || !cm_buffer) {
+          if ( cm_buffer ) { XFree(cm_buffer); cm_buffer = 0; }
           goto FAILED;
 	}
         delete [] fl_dnd_source_types;
         fl_dnd_source_types = new Atom[count+1];
         for (unsigned i = 0; i < count; i++) {
-          fl_dnd_source_types[i] = ((Atom*)buffer)[i];
+          fl_dnd_source_types[i] = ((Atom*)cm_buffer)[i];
         }
         fl_dnd_source_types[count] = 0;
-        XFree(buffer); buffer = 0;
+        XFree(cm_buffer); cm_buffer = 0;
       } else {
       FAILED:
         // less than four data types, or if the above messes up:
@@ -1459,13 +1459,13 @@ int fl_handle(const XEvent& thisevent)
   KEYPRESS:
     int keycode = xevent.xkey.keycode;
     fl_key_vector[keycode/8] |= (1 << (keycode%8));
-    static char *buffer = NULL;
-    static int buffer_len = 0;
+    static char *kp_buffer = NULL;
+    static int kp_buffer_len = 0;
     int len=0;
     KeySym keysym;
-    if (buffer_len == 0) {
-      buffer_len = 4096;
-      buffer = (char*) malloc(buffer_len);
+    if (kp_buffer_len == 0) {
+      kp_buffer_len = 4096;
+      kp_buffer = (char*) malloc(kp_buffer_len);
     }
     if (xevent.type == KeyPress) {
       event = FL_KEYDOWN;
@@ -1474,23 +1474,23 @@ int fl_handle(const XEvent& thisevent)
       if (fl_xim_ic) {
 	Status status;
 	len = XUtf8LookupString(fl_xim_ic, (XKeyPressedEvent *)&xevent.xkey,
-			     buffer, buffer_len, &keysym, &status);
+			     kp_buffer, kp_buffer_len, &keysym, &status);
 
-	while (status == XBufferOverflow && buffer_len < 50000) {
-	  buffer_len = buffer_len * 5 + 1;
-	  buffer = (char*)realloc(buffer, buffer_len);
+	while (status == XBufferOverflow && kp_buffer_len < 50000) {
+	  kp_buffer_len = kp_buffer_len * 5 + 1;
+	  kp_buffer = (char*)realloc(kp_buffer, kp_buffer_len);
 	  len = XUtf8LookupString(fl_xim_ic, (XKeyPressedEvent *)&xevent.xkey,
-			     buffer, buffer_len, &keysym, &status);
+			     kp_buffer, kp_buffer_len, &keysym, &status);
 	}
 	keysym = XKeycodeToKeysym(fl_display, keycode, 0);
       } else {
         //static XComposeStatus compose;
         len = XLookupString((XKeyEvent*)&(xevent.xkey),
-                             buffer, buffer_len, &keysym, 0/*&compose*/);
+                             kp_buffer, kp_buffer_len, &keysym, 0/*&compose*/);
         if (keysym && keysym < 0x400) { // a character in latin-1,2,3,4 sets
           // force it to type a character (not sure if this ever is needed):
-          // if (!len) {buffer[0] = char(keysym); len = 1;}
-          len = fl_utf8encode(XKeysymToUcs(keysym), buffer);
+          // if (!len) {kp_buffer[0] = char(keysym); len = 1;}
+          len = fl_utf8encode(XKeysymToUcs(keysym), kp_buffer);
           if (len < 1) len = 1;
           // ignore all effects of shift on the keysyms, which makes it a lot
           // easier to program shortcuts and is Windoze-compatible:
@@ -1499,9 +1499,9 @@ int fl_handle(const XEvent& thisevent)
       }
       // MRS: Can't use Fl::event_state(FL_CTRL) since the state is not
       //      set until set_event_xy() is called later...
-      if ((xevent.xkey.state & ControlMask) && keysym == '-') buffer[0] = 0x1f; // ^_
-      buffer[len] = 0;
-      Fl::e_text = buffer;
+      if ((xevent.xkey.state & ControlMask) && keysym == '-') kp_buffer[0] = 0x1f; // ^_
+      kp_buffer[len] = 0;
+      Fl::e_text = kp_buffer;
       Fl::e_length = len;
     } else {
       // Stupid X sends fake key-up events when a repeating key is held
@@ -1640,7 +1640,7 @@ int fl_handle(const XEvent& thisevent)
           (keysym1 <= 0x7f || (keysym1 > 0xff9f && keysym1 <= FL_KP_Last))) {
         // Store ASCII numeric keypad value...
         keysym = keysym1 | FL_KP;
-        buffer[0] = char(keysym1) & 0x7F;
+        kp_buffer[0] = char(keysym1) & 0x7F;
         len = 1;
       } else {
         // Map keypad to special key...

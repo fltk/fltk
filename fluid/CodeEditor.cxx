@@ -126,8 +126,10 @@ void CodeEditor::textsize(Fl_Fontsize s) {
 
 
 // 'compare_keywords()' - Compare two keywords...
-int CodeEditor::compare_keywords(const void *a, const void *b) {
-  return (strcmp(*((const char **)a), *((const char **)b)));
+extern "C" {
+  static int compare_keywords(const void *a, const void *b) {
+    return strcmp(*((const char **)a), *((const char **)b));
+  }
 }
 
 // 'style_parse()' - Parse text and produce style data.

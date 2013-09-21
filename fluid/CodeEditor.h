@@ -38,9 +38,6 @@ class CodeEditor : public Fl_Text_Editor {
   static const char * const code_types[];
 
 
-  // 'compare_keywords()' - Compare two keywords...
-  static int compare_keywords(const void *a, const void *b);
-
   // 'style_parse()' - Parse text and produce style data.
   static void style_parse(const char *text, char *style, int length);
 

@@ -126,6 +126,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 #elif defined(__hpux)
 /* This code to prevent "empty translation unit" or similar warnings... */
 static void dummy(void) {}
+#else
+/* This is perhaps a better code for general cases than 'static void dummy() {}' to avoid "empty translation unit" (e.g. Sun) */
+typedef int dummy;
 #endif /* WIN32 && !FL_DLL && !__GNUC__ */
 
 /*

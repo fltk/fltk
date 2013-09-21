@@ -41,7 +41,7 @@ void magic_number_cb(void *p)
   w->redraw_label();
 }
 
-void* prime_func(void* p)
+extern "C" void* prime_func(void* p)
 {
   Fl_Browser* browser = (Fl_Browser*) p;
   Fl_Value_Output *value;

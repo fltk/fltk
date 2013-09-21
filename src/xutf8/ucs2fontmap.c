@@ -63,7 +63,6 @@ int ucs2fontmap(char *s, unsigned int ucs, int enc) {
     s[0] = (char) ((ucs & 0xFF00) >> 8);
     s[1] = (char) (ucs & 0xFF);
     return 0;
-    break;
   case 1:	/* iso8859-1 */
     if (ucs <= 0x00FF) {
       if (ucs >= 0x0001) {
