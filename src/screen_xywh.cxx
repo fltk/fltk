@@ -135,10 +135,9 @@ static void screen_init() {
       CGSize s = CGDisplayScreenSize(displays[i]); // from 10.3
       dpi_h[i] = screens[i].width / (s.width/25.4);
       dpi_v[i] = screens[i].height / (s.height/25.4);
-      }
-    else {
+    } else {
       dpi_h[i] = dpi_v[i] = 75.;
-      }
+    }
   }
   num_screens = count;
 }
@@ -149,11 +148,11 @@ static void screen_init() {
 #  include <X11/extensions/Xinerama.h>
 #endif
 typedef struct {
-   short x_org;
-   short y_org;
-   short width;
-   short height;
-  } FLScreenInfo;
+  short x_org;
+  short y_org;
+  short width;
+  short height;
+} FLScreenInfo;
 static FLScreenInfo screens[MAX_SCREENS];
 static float dpi[MAX_SCREENS][2];
 
@@ -258,10 +257,9 @@ void Fl::screen_work_area(int &X, int &Y, int &W, int &H, int n) {
     Y = Fl::y();
     W = Fl::w();
     H = Fl::h();
-    }
-  else { // for other screens, work area is full screen,
+  } else { // for other screens, work area is full screen,
     screen_xywh(X, Y, W, H, n);
-    }
+  }
 #endif
 }
 
@@ -292,10 +290,10 @@ void Fl::screen_xywh(int &X, int &Y, int &W, int &H, int n) {
     H = GetSystemMetrics(SM_CYSCREEN);
   }
 #elif defined(__APPLE__)
-    X = screens[n].x;
-    Y = screens[n].y;
-    W = screens[n].width;
-    H = screens[n].height;
+  X = screens[n].x;
+  Y = screens[n].y;
+  W = screens[n].width;
+  H = screens[n].height;
 #else
   if (num_screens > 0) {
     X = screens[n].x_org;
@@ -340,7 +338,7 @@ int Fl::screen_num(int x, int y) {
 
 // Return the number of pixels common to the two rectangular areas
 static inline float fl_intersection(int x1, int y1, int w1, int h1,
-                        int x2, int y2, int w2, int h2) {
+                                    int x2, int y2, int w2, int h2) {
   if(x1+w1 < x2 || x2+w2 < x1 || y1+h1 < y2 || y2+h2 < y1)
     return 0.;
   int int_left = x1 > x2 ? x1 : x2;
