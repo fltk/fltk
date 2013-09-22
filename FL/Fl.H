@@ -826,6 +826,8 @@ public:
   static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my);
   static void screen_xywh(int &X, int &Y, int &W, int &H, int n); 
   static void screen_xywh(int &X, int &Y, int &W, int &H, int mx, int my, int mw, int mh);
+  static int screen_num(int x, int y);
+  static int screen_num(int x, int y, int w, int h);
   static void screen_dpi(float &h, float &v, int n=0);
   static void screen_work_area(int &X, int &Y, int &W, int &H, int mx, int my);
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n);
