@@ -2740,9 +2740,8 @@ static void clipboard_check(void)
 
 /*
  * create a selection
- * owner: widget that created the selection
  * stuff: pointer to selected data
- * size of selected data
+ * len: size of selected data
  */
 void Fl::copy(const char *stuff, int len, int clipboard) {
   if (!stuff || len<0) return;
@@ -2771,17 +2770,36 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     fl_selection_length[1] = 0;
     
     NSPasteboard *clip = [NSPasteboard generalPasteboard];
-    NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObject:utf8_format]];
+    NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObjects:utf8_format, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
     if (found) {
       NSData *data = [clip dataForType:found];
       if (data) {
-	NSInteger len = [data length] + 1;
+	NSInteger len;
+	char *aux_c;
+	if (![found isEqualToString:utf8_format]) {
+	  NSString *auxstring;
+	  auxstring = (NSString *)CFStringCreateWithBytes(NULL, 
+							  (const UInt8*)[data bytes], 
+							  [data length],
+							  [found isEqualToString:@"public.utf16-plain-text"] ? kCFStringEncodingUnicode : kCFStringEncodingMacRoman,
+							  false);
+	  aux_c = strdup([auxstring UTF8String]);
+	  [auxstring release];
+	  len = strlen(aux_c) + 1;
+	}
+	else len = [data length] + 1;
         if ( len >= fl_selection_buffer_length[1] ) {
           fl_selection_buffer_length[1] = len;
           delete[] fl_selection_buffer[1];
           fl_selection_buffer[1] = new char[len];
         }
-	[data getBytes:fl_selection_buffer[1]];
+	if (![found isEqualToString:utf8_format]) {
+	  strcpy(fl_selection_buffer[1], aux_c);
+	  free(aux_c);
+	  }
+	else {
+	  [data getBytes:fl_selection_buffer[1]];
+	  }
 	fl_selection_buffer[1][len - 1] = 0;
 	fl_selection_length[1] = len - 1;
         convert_crlf(fl_selection_buffer[1], len - 1); // turn all \r characters into \n:
