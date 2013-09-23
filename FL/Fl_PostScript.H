@@ -122,11 +122,7 @@ class Clip {
  
   void page_policy(int p);
   int page_policy(){return page_policy_;};
-#if FLTK_ABI_VERSION < 10303
-  void close_command( int (*cmd)(FILE *)){close_cmd_=cmd;};
-#else
   void close_command(Fl_PostScript_Close_Command* cmd){close_cmd_=cmd;};
-#endif
   FILE * file() {return output;};
   //void orientation (int o);
   //Fl_PostScript_Graphics_Driver(FILE *o, int lang_level, int pages = 0); // ps (also multi-page) constructor
