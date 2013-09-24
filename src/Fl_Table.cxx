@@ -736,7 +736,9 @@ int Fl_Table::handle(int event) {
   int _event_x      = Fl::event_x();
   int _event_y      = Fl::event_y();
   int _event_key    = Fl::event_key();
+#if FLTK_ABI_VERSION >= 10303
   int _event_state  = Fl::event_state();
+#endif
   Fl_Widget *_focus = Fl::focus();
   switch ( event ) {
     case FL_PUSH:
@@ -1029,15 +1031,15 @@ int Fl_Table::handle(int event) {
 	case FL_Tab:
 #if FLTK_ABI_VERSION >= 10303
 	  if ( !tab_cell_nav() ) break;		// not navigating cells? let fltk handle it (STR#2862)
-#else
-          break;				// without tab_cell_nav(), Fl_Table should default to navigating widgets, not cells
-#endif
 	  if ( _event_state & FL_SHIFT ) {
             ret = move_cursor(0, -1, 0);	// shift-tab -> left
 	  } else {
 	    ret = move_cursor(0, 1, 0);		// tab -> right
 	  }
           break;
+#else
+          break;				// without tab_cell_nav(), Fl_Table should default to navigating widgets, not cells
+#endif
       }
       if (ret && Fl::focus() != this) {
         do_callback(CONTEXT_TABLE, -1, -1);

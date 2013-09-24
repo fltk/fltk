@@ -24,8 +24,6 @@ extern int fl_gl_load_plugin;
 extern void gl_texture_reset();
 #endif
 
-static int temp = fl_gl_load_plugin;
-
 #include <FL/Fl.H>
 #include <FL/x.H>
 #ifdef __APPLE__

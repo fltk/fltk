@@ -326,7 +326,6 @@ int Fl_Tabs::handle(int event) {
 	  }
 	}
         return 1;
-        break;
     }
     return Fl_Group::handle(event);
   case FL_SHORTCUT:

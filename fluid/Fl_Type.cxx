@@ -237,10 +237,8 @@ int Widget_Browser::item_height(void *l) const {
       return textsize()*2+1;
     else
       return textsize()+2;
-  } else {
-    return 0;
   }
-  return ((Fl_Type *)l)->visible ? textsize()+2 : 0;
+  return 0;
 }
 
 int Widget_Browser::incr_height() const {return textsize()+2;}
