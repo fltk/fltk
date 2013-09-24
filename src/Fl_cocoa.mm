@@ -2705,7 +2705,7 @@ static void convert_crlf(char * s, size_t len)
 // fltk 1.3 clipboard support constant definitions:
 static const NSString *calc_utf8_format(void)
 {
-  if (fl_mac_os_version >= 100500) return @"public.utf8-plain-text";
+  if (fl_mac_os_version >= 100600) return @"public.utf8-plain-text"; // same as NSPasteboardTypeString
   return NSStringPboardType;
 }
 
