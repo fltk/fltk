@@ -66,7 +66,7 @@ clean:
 	done
 
 distclean: clean
-	$(RM) config.*
+	$(RM) config.h config.log config.status
 	$(RM) fltk-config fltk.list makeinclude
 	$(RM) fltk.spec
 	$(RM) FL/Makefile
@@ -90,7 +90,7 @@ fltk-config: configure configh.in fltk-config.in
 	touch config.h
 	chmod +x fltk-config
 
-makeinclude: configure configh.in makeinclude.in
+makeinclude: configure configh.in makeinclude.in config.guess config.sub
 	if test -f config.status; then \
 		./config.status --recheck; \
 		./config.status; \
@@ -102,6 +102,11 @@ makeinclude: configure configh.in makeinclude.in
 
 configure: configure.in
 	autoconf
+
+config.guess config.sub:
+	-automake --add-missing 2> /dev/null
+	if [ ! -e config.sub   ]; then echo NOTE: Using frozen copy of config.sub;   cp misc/config.sub   . ; fi
+	if [ ! -e config.guess ]; then echo NOTE: Using frozen copy of config.guess; cp misc/config.guess . ; fi
 
 portable-dist:
 	epm -v -s fltk.xpm fltk
