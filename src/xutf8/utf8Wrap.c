@@ -79,7 +79,7 @@ get_font_list(
   while (*ptr) {
     int l = 0, i = 0;
 
-    while(isspace(*ptr)) ptr++;
+    while(isspace((int)(unsigned char)*ptr)) ptr++;
     p = ptr;
     while (*ptr && *ptr != ',') { ptr++; l++; }
     if (l > 2) {
