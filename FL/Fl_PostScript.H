@@ -198,6 +198,7 @@ class Clip {
   void rtl_draw(const char* s, int n, int x, int y);
   void font(int face, int size);
   double width(const char *, int);
+  double width(unsigned int u);
   void text_extents(const char *c, int n, int &dx, int &dy, int &w, int &h);
   int height();
   int descent();

@@ -964,6 +964,10 @@ double Fl_PostScript_Graphics_Driver::width(const char *s, int n) {
   return Fl_Display_Device::display_device()->driver()->width(s, n);
 }
 
+double Fl_PostScript_Graphics_Driver::width(unsigned u) {
+  return Fl_Display_Device::display_device()->driver()->width(u);
+}
+
 int Fl_PostScript_Graphics_Driver::height() {
   return Fl_Display_Device::display_device()->driver()->height();
 }

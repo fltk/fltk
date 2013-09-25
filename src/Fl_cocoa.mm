@@ -2781,7 +2781,7 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
       NSData *data = [clip dataForType:found];
       if (data) {
 	NSInteger len;
-	char *aux_c;
+	char *aux_c = NULL;
 	if (![found isEqualToString:utf8_format]) {
 	  NSString *auxstring;
 	  auxstring = (NSString *)CFStringCreateWithBytes(NULL, 
