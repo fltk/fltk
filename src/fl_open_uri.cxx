@@ -68,6 +68,14 @@ static int	run_program(const char *program, char **argv, char *msg, int msglen);
  *
  * On failure, the msg buffer is filled with an English error message.
  *
+ * \note
+ * \b Platform \b Specific \b Issues: \b Windows \n
+ * With "file:" based URIs on Windows, you may encounter issues with
+ * anchors being ignored. Example: "file:///c:/some/index.html#anchor"
+ * may open in the browser without the "#anchor" suffix. The behavior
+ * seems to vary across different Windows versions. Workaround: open a link
+ * to a separate html file that redirects to the desired "file:" URI.
+ *
  * \b Example
  * \code
  * #include <FL/filename.H>
