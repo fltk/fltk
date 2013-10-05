@@ -48,14 +48,13 @@ public:
   int insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data=0, int flags=0);
   void remove(int n);
   void replace(int rank, const char *name);
+#ifdef __APPLE__
+  void update();
+#else
+  void update() {}
+#endif
   void clear();
   int clear_submenu(int index);
-#if ! defined(FL_DOXYGEN)
-  enum menuOrItemOperation { itemAtIndex, setKeyEquivalent, setKeyEquivalentModifierMask, setState, initWithTitle,
-    numberOfItems, setSubmenu, setEnabled, addSeparatorItem, setTitle, removeItem, addNewItem };
-  // function doMenuOrItemOperation is in file Fl_cocoa.mm because it contains objective-c code
-  static void *doMenuOrItemOperation( menuOrItemOperation operation, ...);
-#endif
 };
 
 #else

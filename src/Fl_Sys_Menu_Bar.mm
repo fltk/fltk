@@ -415,6 +415,13 @@ void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
   convertToMenuBar(Fl_Menu_::menu());
 }
 
+/** Updates the system menu.
+ Useful after changes in the menu items, e.g., item activation/deactivation.
+ */
+void Fl_Sys_Menu_Bar::update()
+{
+  convertToMenuBar(Fl_Menu_::menu());
+}
 
 /*
  * Draw the menu bar. 
