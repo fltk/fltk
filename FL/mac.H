@@ -160,7 +160,6 @@ extern Window fl_window;
 typedef CGImageRef Fl_Bitmask;
 
 extern CGContextRef fl_gc;
-extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
 
 extern Window fl_xid(const Fl_Window*);
 extern Fl_Window* fl_find(Window xid);
@@ -207,6 +206,11 @@ extern void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut = 0
 /** \brief The version number of the running Mac OS X (e.g., 100604 for 10.6.4)
  */
 extern int fl_mac_os_version;
+
+/** The system menu bar.
+ */
+extern class Fl_Sys_Menu_Bar *fl_sys_menu_bar;
+
 
 class Fl_Mac_App_Menu {
 public:
