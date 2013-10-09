@@ -821,16 +821,19 @@ void fl_sendClientMessage(Window window, Atom message,
 }
 
 
-/* 
-   Get window property value (32 bit format) 
+/*
+   Get window property value (32 bit format)
    Returns zero on success, -1 on error
 
    'data' should be freed with XFree() using this pattern:
- 
+
         unsigned long *data = 0;
         if (0 == get_xwinprop(....., &nitems, &data) ) { ..success.. }
         else { ..fail.. }
         if ( data ) { XFree(data); data=0; }
+	
+    Note: 'data' can be non-zero, even if the return value is -1 (error) and
+    should hence be XFree'd *after* the if/else statement, as described above.
 */
 static int get_xwinprop(Window wnd, Atom prop, long max_length,
                         unsigned long *nitems, unsigned long **data) {
@@ -1907,9 +1910,9 @@ int Fl_X::ewmh_supported() {
       if (0 == get_xwinprop(child, fl_NET_SUPPORTING_WM_CHECK, 64,
                            &nitems, &words) ) {
         if ( nitems == 1) result = (child == words[0]);
-        if ( words ) { XFree(words); words = 0; }
       }
     }
+    if ( words ) { XFree(words); words = 0; }
   }
 
   return result;
