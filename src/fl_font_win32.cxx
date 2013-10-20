@@ -77,8 +77,9 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #endif
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
   DeleteObject(fid);
-  int i;
-  for (i = 0; i < 64; i++) free(width[i]);
+  for (int i = 0; i < 64; i++)
+    if ( width[i] )
+      free(width[i]);
 }
 
 ////////////////////////////////////////////////////////////////
