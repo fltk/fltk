@@ -74,7 +74,7 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
       case 'x': {
 	q++;
 	int n = 0;
-	for (int x = 0; x < 3; x++) {
+	for (int x = 0; x < 2; x++) {
 	  int xd = hexdigit(*q);
 	  if (xd > 15) break;
 	  n = (n<<4)+xd;
