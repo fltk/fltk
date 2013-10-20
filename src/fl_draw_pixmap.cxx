@@ -16,6 +16,9 @@
 //     http://www.fltk.org/str.php
 //
 
+// NOTE: I believe many of the following comments (between the dash markers)
+// are no longer accurate:
+// --------------------------------------------------------------------
 // Implemented without using the xpm library (which I can't use because
 // it interferes with the color cube used by fl_draw_image).
 // Current implementation is cheap and slow, and works best on a full-color
@@ -25,6 +28,9 @@
 // Notice that there is no pixmap file interface.  This is on purpose,
 // as I want to discourage programs that require support files to work.
 // All data needed by a program ui should be compiled in!!!
+// --------------------------------------------------------------------
+// The above comments were checked in as r2, and much has changed since then;
+// transparency added, color cube not required, etc.      -erco Oct 20 2013
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
