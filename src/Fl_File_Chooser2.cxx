@@ -1423,6 +1423,15 @@ Fl_File_Chooser::update_preview()
       previewBox->labelsize(size);
       previewBox->labelfont(FL_COURIER);
     }
+  } else if (image && ( (image->w() <= 0) ||
+                        (image->h() <= 0) ||
+                        (image->d() <= 0) )) {
+    // Image has errors? Show big 'X'
+    previewBox->label("X");
+    previewBox->align(FL_ALIGN_CLIP);
+    previewBox->labelsize(70);
+    previewBox->labelfont(FL_HELVETICA);
+    previewBox->redraw();
   } else if (image) {
     pbw = previewBox->w() - 20;
     pbh = previewBox->h() - 20;
