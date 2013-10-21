@@ -43,7 +43,7 @@ static int ncolors, chars_per_pixel;
 /**
   Get the dimensions of a pixmap.
   An XPM image contains the dimensions in its data. This function
-  returns te width and height.
+  returns the width and height.
   \param[in]  data pointer to XPM image data.
   \param[out] w,h  width and height of image
   \returns non-zero if the dimensions were parsed OK
@@ -178,31 +178,32 @@ FL_EXPORT UINT win_pixmap_bg_color; // the RGB() of the pixmap background color
 static int color_count; // # of non-transparent colors used in pixmap
 static uchar *used_colors; // used_colors[3*i+j] j=0,1,2 are the RGB values of the ith used color
 
-static void make_unused_color(uchar &r, uchar &g, uchar &b)
-// makes an RGB triplet different from all the colors used in the pixmap
+// Makes an RGB triplet different from all the colors used in the pixmap
 // and compute win_pixmap_bg_color from this triplet
-{
+static void make_unused_color(uchar &r, uchar &g, uchar &b) {
   int i;
   r = 2; g = 3; b = 4;
   while (1) {
-    for ( i = 0; i < color_count; i++) {
-      if(used_colors[3*i] == r && used_colors[3*i+1] == g && used_colors[3*i+2] == b) break;
-      }
+    for ( i = 0; i < color_count; i++)
+      if (used_colors[3*i] == r && used_colors[3*i+1] == g && used_colors[3*i+2] == b)
+        break;
     if (i >= color_count) {
       free(used_colors);
       win_pixmap_bg_color = RGB(r, g, b);
       return;
-      }
-    if (r < 255) r++;
-    else {
+    }
+    if (r < 255) {
+      r++;
+    } else {
       r = 0;
-      if (g < 255) g++;
-      else {
+      if (g < 255) {
+        g++;
+      } else {
 	g = 0;
 	b++;
-	}
       }
     }
+  }
 }
 #endif
 
@@ -315,8 +316,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 	used_colors[3*color_count+2] = c[2];
 	color_count++;
 #endif
-	}
-      else {
+      } else {
         // assume "None" or "#transparent" for any errors
 	// "bg" should be transparent...
 	Fl::get_color(bg, c[0], c[1], c[2]);
@@ -327,15 +327,14 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #ifdef WIN32
 	transparent_c = c;
 #endif
-      }
-    }
-  }
+      } // if parse
+    } // for ncolors
+  } // if ncolors
   d.data = data;
 #ifdef WIN32
   if (transparent_c) {
     make_unused_color(transparent_c[0], transparent_c[1], transparent_c[2]);
-  }
-  else {
+  } else {
     uchar r, g, b;
     make_unused_color(r, g, b);
   }
@@ -361,8 +360,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
     rgb->draw(x, y);
     delete rgb;
     delete[] array;
-    }
-  else {
+  } else {
 #endif // __APPLE_QUARTZ__
 
   // build the mask bitmap used by Fl_Pixmap:
@@ -392,25 +390,27 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 	  ind = (ind<<8) | (*p++);
 	  if (ind != transparent_index) b |= bit;
 
-          if (bit < 128) bit <<= 1;
-	  else {
+          if (bit < 128) {
+	    bit <<= 1;
+	  } else {
 	    *bitmap++ = b;
 	    b = 0;
 	    bit = 1;
 	  }
 	}
-
         if (bit > 1) *bitmap++ = b;
-      }
-    }
+      } // if chars_per_pixel
+    } // for Y
   }
 
   fl_draw_image(chars_per_pixel==1 ? cb1 : cb2, &d, x, y, d.w, d.h, 4);
 #ifdef __APPLE_QUARTZ__
-    }
+  }
 #endif
 
-  if (chars_per_pixel > 1) for (int i = 0; i < 256; i++) delete[] d.byte1[i];
+  if (chars_per_pixel > 1)
+    for (int i = 0; i < 256; i++)
+      delete[] d.byte1[i];
   return 1;
 }
 
