@@ -175,8 +175,9 @@ int fl_draw_pixmap(/*const*/ char* const* data, int x,int y,Fl_Color bg) {
 #ifdef WIN32
 // to compute an unused color to be used for the pixmap background
 FL_EXPORT UINT win_pixmap_bg_color; // the RGB() of the pixmap background color
-static int color_count; // # of non-transparent colors used in pixmap
-static uchar *used_colors; // used_colors[3*i+j] j=0,1,2 are the RGB values of the ith used color
+static int     color_count; 	    // # of non-transparent colors used in pixmap
+typedef struct { uchar r; uchar g; uchar b; } UsedColor;
+static UsedColor *used_colors;
 
 // Makes an RGB triplet different from all the colors used in the pixmap
 // and compute win_pixmap_bg_color from this triplet
@@ -184,11 +185,13 @@ static void make_unused_color(uchar &r, uchar &g, uchar &b) {
   int i;
   r = 2; g = 3; b = 4;
   while (1) {
-    for ( i = 0; i < color_count; i++)
-      if (used_colors[3*i] == r && used_colors[3*i+1] == g && used_colors[3*i+2] == b)
-        break;
+    for ( i=0; i<color_count; i++ )
+      if ( used_colors[i].r == r &&
+           used_colors[i].g == g &&
+           used_colors[i].b == b )
+	break;
     if (i >= color_count) {
-      free(used_colors);
+      free((void*)used_colors); used_colors = NULL;
       win_pixmap_bg_color = RGB(r, g, b);
       return;
     }
@@ -219,7 +222,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #ifdef WIN32
   uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
   color_count = 0;
-  used_colors = (uchar *)malloc(abs(ncolors)*3*sizeof(uchar));
+  used_colors = (UsedColor*)malloc(abs(ncolors) * sizeof(UsedColor));
 #endif
 
   if (ncolors < 0) {	// FLTK (non standard) compressed colormap
@@ -253,9 +256,9 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #  endif
 #endif
 #ifdef WIN32
-      used_colors[3*color_count] = *p;
-      used_colors[3*color_count+1] = *(p+1);
-      used_colors[3*color_count+2] = *(p+2);
+      used_colors[color_count].r = *(p+0);
+      used_colors[color_count].g = *(p+1);
+      used_colors[color_count].b = *(p+2);
       color_count++;
 #endif
       *c++ = *p++;
@@ -311,9 +314,9 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
       int parse = fl_parse_color((const char*)p, c[0], c[1], c[2]);
       if (parse) {
 #ifdef WIN32
-	used_colors[3*color_count] = c[0];
-	used_colors[3*color_count+1] = c[1];
-	used_colors[3*color_count+2] = c[2];
+        used_colors[color_count].r = c[0];
+        used_colors[color_count].g = c[1];
+        used_colors[color_count].b = c[2];
 	color_count++;
 #endif
       } else {
