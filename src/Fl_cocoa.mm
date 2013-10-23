@@ -3435,22 +3435,21 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
     this->print_widget(win, x_offset, y_offset);
     return;
   }
-  int bx, by, bt;
+  int bx, by, bt, bpp;
   get_window_frame_sizes(bx, by, bt);
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
   win->show();
   fl_gc = NULL;
   Fl::check();
   win->make_current();
-  this->set_current(); // back to the Fl_Paged_Device
   // capture the window title bar
-  CGImageRef img = Fl_X::CGImage_from_window_rect(win, 0, -bt, win->w(), bt);
+  unsigned char *bitmap = Fl_X::bitmap_from_window_rect(win, 0, -bt, win->w(), bt, &bpp);
   // and print it
-  CGRect rect = { { x_offset, y_offset }, { win->w(), bt } };
-  Fl_X::q_begin_image(rect, 0, 0, win->w(), bt);
-  CGContextDrawImage(fl_gc, rect, img);
-  Fl_X::q_end_image();
-  CFRelease(img);
+  this->set_current(); // back to the Fl_Paged_Device
+  Fl_RGB_Image *rgb = new Fl_RGB_Image(bitmap, win->w(), bt, bpp);
+  rgb->draw(x_offset, y_offset);
+  delete rgb;
+  delete[] bitmap;
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
 
