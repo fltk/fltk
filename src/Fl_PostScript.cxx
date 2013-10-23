@@ -94,7 +94,7 @@ int Fl_PostScript_File_Device::start_job (int pagecount, enum Fl_Paged_Device::P
   // Show native chooser
   if ( fnfc.show() ) return 1;
   Fl_PostScript_Graphics_Driver *ps = driver();
-  ps->output = fopen(fnfc.filename(), "w");
+  ps->output = fl_fopen(fnfc.filename(), "w");
   if(ps->output == NULL) return 2;
   ps->ps_filename_ = strdup(fnfc.filename());
   ps->start_postscript(pagecount, format, layout);
