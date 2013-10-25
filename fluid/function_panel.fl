@@ -89,7 +89,7 @@ Function {make_function_panel()} {} {
       }
       Fl_Light_Button f_c_button {
         label {C declaration}
-        tooltip {Declare with a C interface instead of C++.} xywh {95 10 80 20} labelsize 11
+        tooltip {Declare with a C interface instead of C++.} xywh {95 10 120 20} labelsize 11
       }
       Fl_Box {} {
         xywh {235 10 45 20} resizable
