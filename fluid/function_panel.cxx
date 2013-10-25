@@ -78,7 +78,7 @@ Fl_Double_Window* make_function_panel() {
         f_public_choice->when(FL_WHEN_CHANGED);
         f_public_choice->menu(menu_f_public_choice);
       } // Fl_Choice* f_public_choice
-      { f_c_button = new Fl_Light_Button(95, 10, 80, 20, "C declaration");
+      { f_c_button = new Fl_Light_Button(95, 10, 120, 20, "C declaration");
         f_c_button->tooltip("Declare with a C interface instead of C++.");
         f_c_button->labelsize(11);
       } // Fl_Light_Button* f_c_button
