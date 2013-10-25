@@ -113,7 +113,6 @@ Fl_Double_Window* make_function_panel() {
       } // Fl_Return_Button* f_panel_ok
       { f_panel_cancel = new Fl_Button(280, 200, 50, 20, "Cancel");
         f_panel_cancel->tooltip("Cancel the changes.");
-        f_panel_cancel->shortcut(0xff1b);
         f_panel_cancel->labelsize(11);
       } // Fl_Button* f_panel_cancel
       { Fl_Box* o = new Fl_Box(10, 200, 205, 20);
@@ -140,6 +139,12 @@ Fl_Double_Window* make_function_panel() {
 
 Fl_Double_Window *code_panel=(Fl_Double_Window *)0;
 
+static void cb_code_panel(Fl_Double_Window*, void*) {
+  if (Fl::event()==FL_SHORTCUT && Fl::event_key()==FL_Escape) 
+    return; // ignore Escape
+code_panel->hide(); // otherwise hide..;
+}
+
 CodeEditor *code_input=(CodeEditor *)0;
 
 Fl_Return_Button *code_panel_ok=(Fl_Return_Button *)0;
@@ -149,6 +154,7 @@ Fl_Button *code_panel_cancel=(Fl_Button *)0;
 Fl_Double_Window* make_code_panel() {
   { Fl_Double_Window* o = code_panel = new Fl_Double_Window(540, 180, "Code Properties");
     code_panel->labelsize(11);
+    code_panel->callback((Fl_Callback*)cb_code_panel);
     { CodeEditor* o = code_input = new CodeEditor(10, 10, 520, 130);
       code_input->box(FL_DOWN_BOX);
       code_input->color(FL_BACKGROUND2_COLOR);
@@ -171,7 +177,6 @@ Fl_Double_Window* make_code_panel() {
         code_panel_ok->window()->hotspot(code_panel_ok);
       } // Fl_Return_Button* code_panel_ok
       { code_panel_cancel = new Fl_Button(470, 150, 60, 20, "Cancel");
-        code_panel_cancel->shortcut(0xff1b);
         code_panel_cancel->labelsize(11);
       } // Fl_Button* code_panel_cancel
       { Fl_Box* o = new Fl_Box(10, 150, 380, 20);
