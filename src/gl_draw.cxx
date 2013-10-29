@@ -101,8 +101,9 @@ void  gl_font(int fontid, int size) {
 //http://developer.apple.com/mac/library/documentation/Carbon/Conceptual/Carbon64BitGuide/OtherAPIChanges/OtherAPIChanges.html
     short font, face, size;
     uchar fn[256];
-    fn[0]=strlen(fl_fontsize->q_name);
-    strcpy((char*)(fn+1), fl_fontsize->q_name);
+    const char *pname = Fl::get_font_name(fontid, NULL);
+    fn[0]=strlen(pname);
+    strcpy((char*)(fn+1), pname);
     GetFNum(fn, &font);
     face = 0;
     size = fl_fontsize->size;
