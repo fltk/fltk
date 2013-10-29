@@ -104,6 +104,7 @@ Window fl_window;
 Fl_Window *Fl_Window::current_;
 int fl_mac_os_version = calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 static SEL inputContextSEL = (fl_mac_os_version >= 100600 ? @selector(inputContext) : @selector(FLinputContext));
+Fl_Fontdesc* fl_fonts = Fl_X::calc_fl_fonts();
 
 // forward declarations of variables in this file
 static int got_events = 0;

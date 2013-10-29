@@ -57,6 +57,7 @@ typedef struct flCocoaRegion {
 } *Fl_Region;  // a region is the union of a series of rectangles
 
 #  include "Fl_Window.H"
+#  include "../src/Fl_Font.H"
 
 // Some random X equivalents
 struct XPoint { int x, y; };
@@ -132,6 +133,8 @@ public:
   static void screen_work_area(int &X, int &Y, int &W, int &H, int n); // compute work area of a given screen
   static int next_marked_length; // next length of marked text after current marked text will have been replaced
   static int insertion_point_location(int *px, int *py, int *pheight); // computes window coordinates & height of insertion point
+  static const int CoreText_threshold;  // Mac OS version from which the Core Text API is used to display text
+  static Fl_Fontdesc* calc_fl_fonts(void); // computes the fl_fonts global variable
 private:
   static void relink(Fl_Window*, Fl_Window*);
   bool subwindow;

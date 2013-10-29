@@ -60,7 +60,6 @@ public:
 #     endif
   ATSUStyle style;
   short ascent, descent, q_width;
-  char *q_name;
 #  elif USE_XFT
   XftFont* font;
   //const char* encoding;

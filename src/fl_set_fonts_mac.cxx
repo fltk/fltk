@@ -29,15 +29,27 @@
 // making the name, and then forgot about it. To avoid having to change
 // the header files I decided to store this value in the last character
 // of the font name array.
-#define ENDOFBUFFER 127 // sizeof(Fl_Font.fontname)-1
+#define ENDOFBUFFER  sizeof(fl_fonts->fontname)-1
 
 // turn a stored font name into a pretty name:
 const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
   Fl_Fontdesc *f = fl_fonts + fnum;
   if (!f->fontname[0]) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+    if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
+      CFStringRef cfname = CFStringCreateWithCString(NULL, f->name, kCFStringEncodingUTF8);
+      CTFontRef ctfont = CTFontCreateWithName(cfname, 0, NULL);
+      CFRelease(cfname);
+      cfname = CTFontCopyFullName(ctfont);
+      CFRelease(ctfont);
+      CFStringGetCString(cfname, f->fontname, ENDOFBUFFER, kCFStringEncodingUTF8);
+      CFRelease(cfname);
+      }
+    else 
+#endif
+      strlcpy(f->fontname, f->name, ENDOFBUFFER);
     const char* p = f->name;
     if (!p || !*p) {if (ap) *ap = 0; return "";}
-    strlcpy(f->fontname, p, ENDOFBUFFER);
     int type = 0;
     if (strstr(f->name, "Bold")) type |= FL_BOLD;
     if (strstr(f->name, "Italic")) type |= FL_ITALIC;
@@ -61,8 +73,7 @@ Fl_Font Fl::set_fonts(const char* xstarname) {
 if (fl_free_font > FL_FREE_FONT) return (Fl_Font)fl_free_font; // if already called
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if(fl_mac_os_version >= 100500) {
-//if(CTFontCreateWithFontDescriptor != NULL) {// CTFontCreateWithFontDescriptor != NULL on 10.4 also!
+if(fl_mac_os_version >= Fl_X::CoreText_threshold) {
   int value[1] = {1};
   CFDictionaryRef dict = CFDictionaryCreate(NULL, 
 					    (const void **)kCTFontCollectionRemoveDuplicatesOption, 
@@ -77,9 +88,9 @@ if(fl_mac_os_version >= 100500) {
   for (i = 0; i < count; i++) {
 	CTFontDescriptorRef fdesc = (CTFontDescriptorRef)CFArrayGetValueAtIndex(arrayref, i);
 	CTFontRef font = CTFontCreateWithFontDescriptor(fdesc, 0., NULL);
-	CFStringRef cfname = CTFontCopyFullName(font);
+        CFStringRef cfname = CTFontCopyPostScriptName(font);
 	CFRelease(font);
-	static char fname[100];
+	static char fname[200];
 	CFStringGetCString(cfname, fname, sizeof(fname), kCFStringEncodingUTF8);
 	tabfontnames[i] = strdup(fname); // never free'ed
 	CFRelease(cfname);

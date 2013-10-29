@@ -26,6 +26,8 @@ static CGAffineTransform font_mx = { 1, 0, 0, -1, 0, 0 };
 static CFMutableDictionaryRef attributes = NULL;
 #endif
 
+const int Fl_X::CoreText_threshold = 100500; // this represents Mac OS 10.5
+
 Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
   next = 0;
 #  if HAVE_GL
@@ -34,10 +36,9 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize Size) {
 
 //  knowWidths = 0;
     // OpenGL needs those for its font handling
-  q_name = strdup(name);
   size = Size;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= 100500) {//unfortunately, CTFontCreateWithName != NULL on 10.4 also!
+if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   CFStringRef str = CFStringCreateWithCString(NULL, name, kCFStringEncodingUTF8);
   fontref = CTFontCreateWithName(str, size, NULL);
   CGGlyph glyph[2];
@@ -115,9 +116,12 @@ else {
     // render our font up-side-down, so when rendered through our inverted CGContext,
     // text will appear normal again.
   Fixed fsize = IntToFixed(Size);
-//  ATSUFontID fontID = FMGetFontFromATSFontRef(font);
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   ATSUFontID fontID;
   ATSUFindFontFromName(name, strlen(name), kFontFullName, kFontMacintoshPlatform, kFontRomanScript, kFontEnglishLanguage, &fontID);
+#else
+  ATSUFontID fontID = FMGetFontFromATSFontRef(font);
+#endif
 
   // draw the font upside-down... Compensate for fltk/OSX origin differences
   ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag, kATSUFontMatrixTag };
@@ -176,7 +180,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
   */
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= 100500)  {
+  if (fl_mac_os_version >= Fl_X::CoreText_threshold)  {
     CFRelease(fontref);
     for (unsigned i = 0; i < sizeof(width)/sizeof(float*); i++) {
       if (width[i]) free(width[i]);
@@ -187,23 +191,42 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 
 ////////////////////////////////////////////////////////////////
 
-static Fl_Fontdesc built_in_table[] = {
-{"Arial"},
-{"Arial Bold"},
-{"Arial Italic"},
-{"Arial Bold Italic"},
-{"Courier New"},
-{"Courier New Bold"},
-{"Courier New Italic"},
-{"Courier New Bold Italic"},
-{"Times New Roman"},
-{"Times New Roman Bold"},
-{"Times New Roman Italic"},
-{"Times New Roman Bold Italic"},
+static Fl_Fontdesc built_in_table_PS[] = { // PostScript font names preferred when Mac OS ≥ 10.5
+{"ArialMT"},
+{"Arial-BoldMT"},
+{"Arial-ItalicMT"},
+{"Arial-BoldItalicMT"},
+{"CourierNewPSMT"},
+{"CourierNewPS-BoldMT"},
+{"CourierNewPS-ItalicMT"},
+{"CourierNewPS-BoldItalicMT"},
+{"TimesNewRomanPSMT"},
+{"TimesNewRomanPS-BoldMT"},
+{"TimesNewRomanPS-ItalicMT"},
+{"TimesNewRomanPS-BoldItalicMT"},
 {"Symbol"},
 {"Monaco"},
-{"Andale Mono"}, // there is no bold Monaco font on standard Mac
-{"Webdings"},
+{"AndaleMono"}, // there is no bold Monaco font on standard Mac
+{"ZapfDingbatsITC"}
+};
+
+static Fl_Fontdesc built_in_table_full[] = { // full font names used before 10.5
+  {"Arial"},
+  {"Arial Bold"},
+  {"Arial Italic"},
+  {"Arial Bold Italic"},
+  {"Courier New"},
+  {"Courier New Bold"},
+  {"Courier New Italic"},
+  {"Courier New Bold Italic"},
+  {"Times New Roman"},
+  {"Times New Roman Bold"},
+  {"Times New Roman Italic"},
+  {"Times New Roman Bold Italic"},
+  {"Symbol"},
+  {"Monaco"},
+  {"Andale Mono"}, // there is no bold Monaco font on standard Mac
+  {"Webdings"}
 };
 
 static UniChar *utfWbuf = 0;
@@ -223,7 +246,10 @@ static UniChar *mac_Utf8_to_Utf16(const char *txt, int len, int *new_len)
   return utfWbuf;
 } // mac_Utf8_to_Utf16
 
-Fl_Fontdesc* fl_fonts = built_in_table;
+Fl_Fontdesc* Fl_X::calc_fl_fonts(void)
+{
+  return (fl_mac_os_version >= Fl_X::CoreText_threshold ? built_in_table_PS : built_in_table_full);
+}
 
 static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
   Fl_Fontdesc* s = fl_fonts+fnum;
@@ -287,7 +313,7 @@ static CGFloat surrogate_width(const UniChar *txt, Fl_Font_Descriptor *fl_fontsi
 
 static double fl_mac_width(const UniChar* txt, int n, Fl_Font_Descriptor *fl_fontsize) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= 100500) {
+if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   double retval = 0;
   UniChar uni;
   int i;
@@ -302,7 +328,7 @@ if (fl_mac_os_version >= 100500) {
     // r: index of the character block containing uni
     unsigned int r = uni >> 7; // change 7 if sizeof(width) is changed
     if (!fl_fontsize->width[r]) { // this character block has not been hit yet
-      //fprintf(stderr,"r=%d size=%d name=%s\n",r,fl_fontsize->size, fl_fontsize->q_name);
+      //fprintf(stderr,"r=%d size=%d name=%s\n",r,fl_fontsize->size,fl_fonts[fl_font()].name);
       // allocate memory to hold width of each character in the block
       fl_fontsize->width[r] = (float*) malloc(sizeof(float) * block);
       UniChar ii = r * block;
@@ -406,7 +432,7 @@ void Fl_Quartz_Graphics_Driver::text_extents(const char *str8, int n, int &dx, i
   Fl_Font_Descriptor *fl_fontsize = font_descriptor();
   UniChar *txt = mac_Utf8_to_Utf16(str8, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-if (fl_mac_os_version >= 100500) {
+if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
   CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, txt, n,  kCFAllocatorNull);
   CFDictionarySetValue (attributes, kCTFontAttributeName, fl_fontsize->fontref);
   CFAttributedStringRef mastr = CFAttributedStringCreate(kCFAllocatorDefault, str16, attributes);
@@ -474,7 +500,7 @@ static void fl_mac_draw(const char *str, int n, float x, float y, Fl_Graphics_Dr
   // convert to UTF-16 first
   UniChar *uniStr = mac_Utf8_to_Utf16(str, n, &n);
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
-  if (fl_mac_os_version >= 100500) {
+  if (fl_mac_os_version >= Fl_X::CoreText_threshold) {
     CFStringRef str16 = CFStringCreateWithCharactersNoCopy(NULL, uniStr, n,  kCFAllocatorNull);
     if (str16 == NULL) return; // shd not happen
     CGColorRef color = flcolortocgcolor(driver->color());
