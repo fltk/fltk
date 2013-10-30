@@ -56,6 +56,19 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
 }
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+
+static char *skip(char *p, int& derived)
+{
+  if (memcmp(p, "-BoldItalic", 11) == 0) { p += 11; derived = 3; }
+  else if (memcmp(p, "-BoldOblique", 12) == 0) { p += 12; derived = 3; }
+  else if (memcmp(p, "-Bold", 5) == 0) {p += 5; derived = 1; }
+  else if (memcmp(p, "-Italic", 7) == 0) {p += 7; derived = 2; }
+  else if (memcmp(p, "-Oblique", 8) == 0) {p += 8; derived = 2; }
+  else if (memcmp(p, "-Regular", 8) == 0) {p += 8; }
+  else if (memcmp(p, "-Roman", 6) == 0) {p += 6; }
+  return p;
+}
+
 static int name_compare(const void *a, const void *b)
 {
   /* Compare PostScript font names. 
@@ -67,20 +80,8 @@ static int name_compare(const void *a, const void *b)
   int derived1 = 0;
   int derived2 = 0;
   while (true) {
-    if (*n1 == '-') {
-      if (memcmp(n1, "-BoldItalic", 11) == 0) { n1 += 11; derived1 = 3; }
-      else if (memcmp(n1, "-BoldOblique", 12) == 0) { n1 += 12; derived1 = 3; }
-      else if (memcmp(n1, "-Bold", 5) == 0) {n1 += 5; derived1 = 1; }
-      else if (memcmp(n1, "-Italic", 7) == 0) {n1 += 7; derived1 = 2; }
-      else if (memcmp(n1, "-Oblique", 8) == 0) {n1 += 8; derived1 = 2; }
-      }
-    if (*n2 == '-') {
-      if (memcmp(n2, "-BoldItalic", 11) == 0) {n2 += 11; derived2 = 3; }
-      else if (memcmp(n2, "-BoldOblique", 12) == 0) {n2 += 12; derived2 = 3; }
-      else if (memcmp(n2, "-Bold", 5) == 0) {n2 += 5; derived2 = 1; }
-      else if (memcmp(n2, "-Italic", 7) == 0) {n2 += 7; derived2 = 2; }
-      else if (memcmp(n2, "-Oblique", 8) == 0) {n2 += 8; derived2 = 2; }
-      }
+    if (*n1 == '-') n1 = skip(n1, derived1);
+    if (*n2 == '-') n2 = skip(n2, derived2);
     if (*n1 < *n2) return -1;
     if (*n1 > *n2) return +1;
     if (*n1 == 0) {
