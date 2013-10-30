@@ -20,10 +20,6 @@
 
 // #inclde <SFNTTypes.h>
 
-// This function fills in the fltk font table with all the fonts that
-// are found on the X server.  It tries to place the fonts into families
-// and to sort them so the first 4 in a family are normal, bold, italic,
-// and bold italic.
 
 // Bug: older versions calculated the value for *ap as a side effect of
 // making the name, and then forgot about it. To avoid having to change
@@ -52,7 +48,7 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
     if (!p || !*p) {if (ap) *ap = 0; return "";}
     int type = 0;
     if (strstr(f->name, "Bold")) type |= FL_BOLD;
-    if (strstr(f->name, "Italic")) type |= FL_ITALIC;
+    if (strstr(f->name, "Italic") || strstr(f->name, "Oblique")) type |= FL_ITALIC;
     f->fontname[ENDOFBUFFER] = (char)type;
   }
   if (ap) *ap = f->fontname[ENDOFBUFFER];
@@ -62,11 +58,45 @@ const char* Fl::get_font_name(Fl_Font fnum, int* ap) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static int name_compare(const void *a, const void *b)
 {
-  return strcmp(*(char**)a, *(char**)b);
+  /* Compare PostScript font names. 
+   First compare font family names ignoring bold, italic and oblique qualifiers.
+   When families are identical, order them according to regular, bold, italic, bolditalic.
+   */
+  char *n1 = *(char**)a;
+  char *n2 = *(char**)b;
+  int derived1 = 0;
+  int derived2 = 0;
+  while (true) {
+    if (*n1 == '-') {
+      if (memcmp(n1, "-BoldItalic", 11) == 0) { n1 += 11; derived1 = 3; }
+      else if (memcmp(n1, "-BoldOblique", 12) == 0) { n1 += 12; derived1 = 3; }
+      else if (memcmp(n1, "-Bold", 5) == 0) {n1 += 5; derived1 = 1; }
+      else if (memcmp(n1, "-Italic", 7) == 0) {n1 += 7; derived1 = 2; }
+      else if (memcmp(n1, "-Oblique", 8) == 0) {n1 += 8; derived1 = 2; }
+      }
+    if (*n2 == '-') {
+      if (memcmp(n2, "-BoldItalic", 11) == 0) {n2 += 11; derived2 = 3; }
+      else if (memcmp(n2, "-BoldOblique", 12) == 0) {n2 += 12; derived2 = 3; }
+      else if (memcmp(n2, "-Bold", 5) == 0) {n2 += 5; derived2 = 1; }
+      else if (memcmp(n2, "-Italic", 7) == 0) {n2 += 7; derived2 = 2; }
+      else if (memcmp(n2, "-Oblique", 8) == 0) {n2 += 8; derived2 = 2; }
+      }
+    if (*n1 < *n2) return -1;
+    if (*n1 > *n2) return +1;
+    if (*n1 == 0) {
+      return derived1 - derived2;
+      }
+    n1++; n2++;
+    }
 }
 #endif
 
 static int fl_free_font = FL_FREE_FONT;
+
+// This function fills in the fltk font table with all the fonts that
+// are found on the X server.  It tries to place the fonts into families
+// and to sort them so the first 4 in a family are normal, bold, italic,
+// and bold italic.
 
 Fl_Font Fl::set_fonts(const char* xstarname) {
 #pragma unused ( xstarname )
