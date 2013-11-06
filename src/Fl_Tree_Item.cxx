@@ -67,6 +67,9 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
   _usericon         = 0;
   _userdata         = 0;
   _parent           = 0;
+#if FLTK_ABI_VERSION >= 10303
+  _children.manage_item_destroy(1);	// let array's dtor manage destroying Fl_Tree_Items
+#endif
 #if FLTK_ABI_VERSION >= 10301
   _prev_sibling     = 0;
   _next_sibling     = 0;

@@ -924,6 +924,31 @@ Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item) {
   return(0);
 }
 
+#if FLTK_ABI_VERSION >= 10303		/* reason for this: Fl_Tree_Item_Array::manage_item_destroy() */
+/// Returns the currently selected items as an array. Example:
+/// \code
+///   // Get selected items as an array
+///   Fl_Tree_Item_Array items;
+///   tree->get_selected_items(items);
+///   // Manipulate the returned array
+///   for ( int t=0; t<items.total(); t++ ) {
+///       Fl_Tree_Item &item = items[t];
+///       ..do stuff with each selected item..
+///   }
+/// \endcode
+/// \param[in] items The returned array of selected items.
+/// \returns The number of items in the returned array.
+/// \see first_selected_item(), next_selected_item()
+///
+int Fl_Tree::get_selected_items(Fl_Tree_Item_Array &ret_items) {
+  ret_items.clear();
+  for ( Fl_Tree_Item *i=first_selected_item(); i; i=next_selected_item(i) ) {
+    ret_items.add(i);
+  }
+  return ret_items.total();
+}
+#endif
+
 /// Open the specified 'item'.
 /// This causes the item's children (if any) to be shown.
 /// Handles redrawing if anything was actually changed.

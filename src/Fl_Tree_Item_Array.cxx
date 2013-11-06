@@ -36,6 +36,9 @@ Fl_Tree_Item_Array::Fl_Tree_Item_Array(int new_chunksize) {
   _items     = 0;
   _total     = 0;
   _size      = 0;
+#if FLTK_ABI_VERSION >= 10303
+  _flags     = 0;
+#endif
   _chunksize = new_chunksize;
 }
 
@@ -50,10 +53,24 @@ Fl_Tree_Item_Array::Fl_Tree_Item_Array(const Fl_Tree_Item_Array* o) {
   _total     = 0;
   _size      = o->_size;
   _chunksize = o->_chunksize;
+#if FLTK_ABI_VERSION >= 10303
+  _flags     = o->_flags;
+#endif
   for ( int t=0; t<o->_total; t++ ) {
-    _items[t] = new Fl_Tree_Item(o->_items[t]);
+#if FLTK_ABI_VERSION >= 10303
+    if ( _flags & MANAGE_ITEM ) {
+      _items[t] = new Fl_Tree_Item(o->_items[t]);	// make new copy of item
+      ++_total;
+      _items[t]->update_prev_next(t);			// update uses _total's current value
+    } else {
+      _items[t] = o->_items[t];				// copy ptr only
+      ++_total;
+    }
+#else
+    _items[t] = new Fl_Tree_Item(o->_items[t]);		// make new copy of item
     ++_total;
-    _items[t]->update_prev_next(t);		// update uses _total's current value
+    _items[t]->update_prev_next(t);			// update uses _total's current value
+#endif
   }
 }
 
@@ -65,8 +82,13 @@ Fl_Tree_Item_Array::Fl_Tree_Item_Array(const Fl_Tree_Item_Array* o) {
 void Fl_Tree_Item_Array::clear() {
   if ( _items ) {
     for ( int t=0; t<_total; t++ ) {
-      delete _items[t];
-      _items[t] = 0;
+#if FLTK_ABI_VERSION >= 10303
+      if ( _flags & MANAGE_ITEM )
+#endif
+      {
+        delete _items[t];
+	_items[t] = 0;
+      }
     }
     free((void*)_items); _items = 0;
   }
@@ -110,7 +132,12 @@ void Fl_Tree_Item_Array::insert(int pos, Fl_Tree_Item *new_item) {
   } 
   _items[pos] = new_item;
   _total++;
-  _items[pos]->update_prev_next(pos);	// adjust item's prev/next and its neighbors
+#if FLTK_ABI_VERSION >= 10303
+  if ( _flags & MANAGE_ITEM )
+#endif
+  {
+    _items[pos]->update_prev_next(pos);	// adjust item's prev/next and its neighbors
+  }
 }
 
 /// Add an item* to the end of the array.
@@ -129,18 +156,26 @@ void Fl_Tree_Item_Array::add(Fl_Tree_Item *val) {
 ///
 void Fl_Tree_Item_Array::remove(int index) {
   if ( _items[index] ) {			// delete if non-zero
-    delete _items[index];
+#if FLTK_ABI_VERSION >= 10303
+    if ( _flags & MANAGE_ITEM )
+#endif
+      delete _items[index];
   }
   _items[index] = 0;
   _total--;
   for ( int i=index; i<_total; i++ ) {		// reshuffle the array
     _items[i] = _items[i+1];
   }
-  if ( index < _total ) {			// removed item not last?
-    _items[index]->update_prev_next(index);	// update next item's prev/next and neighbors
-  } else if ( ((index-1) >= 0) &&		// removed item IS last?
-            ((index-1) < _total)) {
-    _items[index-1]->update_prev_next(index-1);	// update prev item's prev/next and neighbors
+#if FLTK_ABI_VERSION >= 10303
+  if ( _flags & MANAGE_ITEM ) 
+#endif
+  {
+    if ( index < _total ) {			// removed item not last?
+      _items[index]->update_prev_next(index);	// update next item's prev/next and neighbors
+    } else if ( ((index-1) >= 0) &&		// removed item IS last?
+	      ((index-1) < _total)) {
+      _items[index-1]->update_prev_next(index-1);// update prev item's prev/next and neighbors
+    }
   }
 }
 
@@ -164,9 +199,14 @@ void Fl_Tree_Item_Array::swap(int ax, int bx) {
   Fl_Tree_Item *asave = _items[ax];
   _items[ax] = _items[bx];
   _items[bx] = asave;
-  // Adjust prev/next ptrs
-  _items[ax]->update_prev_next(ax);
-  _items[bx]->update_prev_next(bx);
+#if FLTK_ABI_VERSION >= 10303
+  if ( _flags & MANAGE_ITEM )
+#endif
+  {
+    // Adjust prev/next ptrs
+    _items[ax]->update_prev_next(ax);
+    _items[bx]->update_prev_next(bx);
+  }
 }
 #endif /* FLTK_ABI_VERSION */
 

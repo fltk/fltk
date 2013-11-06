@@ -373,6 +373,9 @@ public:
   Fl_Tree_Item *last_visible();
   Fl_Tree_Item *first_selected_item();
   Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item=0);
+#if FLTK_ABI_VERSION >= 10303
+  int get_selected_items(Fl_Tree_Item_Array &items);
+#endif
 
   //////////////////////////
   // Item open/close methods
