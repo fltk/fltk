@@ -1317,29 +1317,33 @@ int Fl_Tree::select_only(Fl_Tree_Item *selitem, int docallback) {
   selitem = selitem ? selitem : first();	// NULL? use first()
   if ( ! selitem ) return(0);
   int changed = 0;
+  // Deselect everything first.
+  //    Prevents callbacks from seeing more than one item selected.
+  //
   for ( Fl_Tree_Item *item = first(); item; item = item->next() ) {
-    if ( item == selitem ) {
-#if FLTK_ABI_VERSION >= 10301
-      // NEW
-      if ( item->is_selected() ) {		// already selected?
-        if ( item_reselect_mode() == FL_TREE_SELECTABLE_ALWAYS ) {
-	  select(item, docallback);		// handles callback with reason==reselect
-        }
-	continue;				// leave 'changed' unmodified (nothing changed)
-      }
-#else
-      // OLD
-      if ( item->is_selected() ) continue;	// don't count if already selected
-#endif	
-      select(item, docallback);
+    if ( item == selitem ) continue;		// don't do anything to selitem yet..
+    if ( item->is_selected() ) {
+      deselect(item, docallback);
       ++changed;
-    } else {
-      if ( item->is_selected() ) {
-        deselect(item, docallback);
-        ++changed;
-      }
     }
   }
+#if FLTK_ABI_VERSION >= 10301
+  // Should we 'reselect' item if already selected?
+  if ( selitem->is_selected() && (item_reselect_mode()==FL_TREE_SELECTABLE_ALWAYS) ) {
+    // Selection unchanged, so no ++change
+    select(selitem, docallback);			// do callback with reason=reselect
+  } else if ( !selitem->is_selected() ) {
+    // Item was not already selected, select and indicate changed
+    select(selitem, docallback);
+    ++changed;
+  }
+#else
+  if ( !selitem->is_selected() ) {
+    // All items deselected, now select the one we want
+    select(selitem, docallback);
+    ++changed;
+  }
+#endif
   return(changed);
 }
 

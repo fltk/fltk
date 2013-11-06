@@ -43,6 +43,13 @@ void TreeCallback(Fl_Widget *w, void *data) {
       break;
     case FL_TREE_REASON_CLOSED:
       // fprintf(stderr, "TreeCallback: Item '%s' closed\n", item->label());
+      break;
+#if FLTK_ABI_VERSION >= 10301
+    // To enable this callback, use tree->item_reselect_mode(FL_TREE_SELECTABLE_ALWAYS);
+    case FL_TREE_REASON_RESELECTED:
+      // fprintf(stderr, "TreeCallback: Item '%s' reselected\n", item->label());
+      break;
+#endif
     default:
       break;
   }
