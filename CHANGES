@@ -1,4 +1,4 @@
-CHANGES IN FLTK 1.3.3
+CHANGES IN FLTK 1.3.3                                              RELEASED: MMM DD YYYY
 
 	- Removed autoconf/configure and CMake tests and defines for
 	  unused function strtoll().
@@ -17,8 +17,20 @@ CHANGES IN FLTK 1.3.3
 	  New methods:
 	      Fl::add_clipboard_notify(Fl_Clipboard_Notify_Handler h, void *data = 0)
 	      Fl::remove_clipboard_notify(Fl_Clipboard_Notify_Handler h)
+        - Fl_Tree_Item: added four new public accessor methods:
+	    label_x(), label_y(), label_w(), label_h().
+	    (Useful for new item_draw_callback() ABI feature)
 
-CHANGES IN FLTK 1.3.2
+    1.3.3 ABI FEATURES
+	  (To enable the following ABI features, put: #define FLTK_ABI_VERSION 10303
+	  at the top of your FL/Enumerations.H and rebuild FLTK and your app)
+
+	- Added Fl_Table::tab_cell_nav() for controlling Tab key navigation of table
+	- Added Fl_Tree::get_selected_items(), returns the selected items as an array
+        - Added Fl_Tree::item_draw_callback(), letting one define a custom draw function
+	           for Fl_Tree_Item's.
+
+CHANGES IN FLTK 1.3.2                                              RELEASED: Dec 12 2012
 
 	- Removed unnecessary drawing calls (STR #2898)
         - Fixed regression in FLTK 1.3.1 for unbundled Mac OS FLTK applications that
@@ -33,7 +45,7 @@ CHANGES IN FLTK 1.3.2
 	- Added static Fl_RGB_Image::max_size(size_t) to limit the maximum memory size allowed to
 	  RGB images (STR #2881).
 
-CHANGES IN FLTK 1.3.1
+CHANGES IN FLTK 1.3.1                                              RELEASED: Nov 06 2012
 
 	- Fixed utf_strncasecmp and utf_strcasecmp
 	- Moved all inline constructors into source file to avoid bad DLLs
@@ -69,7 +81,7 @@ CHANGES IN FLTK 1.3.1
 	  and support methods.
 
 
-CHANGES IN FLTK 1.3.0
+CHANGES IN FLTK 1.3.0                                              RELEASED: Jun 16 2011
 
 	  New Features
 
@@ -308,7 +320,7 @@ CHANGES IN FLTK 1.3.0
 	- Removed support for gcc 2.x (or older)
 	- Removed redundant Fl_Group casts
 
-CHANGES IN FLTK 1.1.9
+CHANGES IN FLTK 1.1.9                                              RELEASED: Apr 27 2008
 
 	- Improved color contrast in secondary selection blocks
 	  of Fl_Text_Display (STR #1917)
@@ -321,7 +333,7 @@ CHANGES IN FLTK 1.1.9
 	  in Fl_Help_View (STR #1912)
 
 
-CHANGES IN FLTK 1.1.8
+CHANGES IN FLTK 1.1.8                                              RELEASED: Mar 27 2008
 
 	- Documentation fixes  (STR #1454, STR #1455, STR #1456,
 	  STR #1457, STR #1458, STR #1460, STR #1481, STR #1578,
@@ -657,7 +669,7 @@ CHANGES IN FLTK 1.1.8
 	  #1159)
 
 
-CHANGES IN FLTK 1.1.7
+CHANGES IN FLTK 1.1.7                                              RELEASED: Jan 17 2006
 
 	- Documentation fixes (STR #571, STR #648, STR #692, STR
 	  #730, STR #744, STR #745, STR #931, STR #942, STR #960,
@@ -1048,7 +1060,7 @@ CHANGES IN FLTK 1.1.7
 	  was at position 0 (STR #635)
 
 
-CHANGES IN FLTK 1.1.6
+CHANGES IN FLTK 1.1.6                                              RELEASED: Nov 23 2004
 
 	- Documentation updates (STR #552, STR #608)
 	- Added the 2.0 Fl_Widget::copy_label() method to
@@ -1089,7 +1101,7 @@ CHANGES IN FLTK 1.1.6
 	  problems with some programs (STR #613)
 
 
-CHANGES IN FLTK 1.1.5
+CHANGES IN FLTK 1.1.5                                              RELEASED: Oct 19 2004
 
 	- Documentation updates (STR #568, STR #570)
 	- Shortcuts were incorrectly underlined in multi-line
@@ -1378,7 +1390,7 @@ CHANGES IN FLTK 1.1.5rc1
 	  (STR #166)
 
 
-CHANGES IN FLTK 1.1.4
+CHANGES IN FLTK 1.1.4                                              RELEASED: Sep 08 2003
 
 	- The fl_read_image() function was not implemented on
 	  OSX (STR #161)
@@ -1586,7 +1598,7 @@ CHANGES IN FLTK 1.1.4rc1
 	  without a background color set.
 
 
-CHANGES IN FLTK 1.1.3
+CHANGES IN FLTK 1.1.3                                              RELEASED: Feb 13 2003
 
 	- Documentation updates.
 	- FLTK now ignores KeyRelease events when X11 sends them
@@ -1639,7 +1651,7 @@ CHANGES IN FLTK 1.1.3
 	  the OpenGL context on MacOS.
 
 
-CHANGES IN FLTK 1.1.2
+CHANGES IN FLTK 1.1.2                                              RELEASED: Nov 25 2002
 
 	- Fl_Menu_Bar now supports drawing vertical dividers
 	  between menu items and submenus in the menu bar.
@@ -1720,7 +1732,7 @@ CHANGES IN FLTK 1.1.2
 	  the text.
 
 
-CHANGES IN FLTK 1.1.1
+CHANGES IN FLTK 1.1.1                                              RELEASED: ??? ?? 2002
 
 	- Fl_Text_Display didn't always show the cursor.
 	- Fl_Tabs now only redraws the tabs themselves when
@@ -1783,7 +1795,7 @@ CHANGES IN FLTK 1.1.1
 	  when the scrollbar was inactive.
 
 
-CHANGES IN FLTK 1.1.0
+CHANGES IN FLTK 1.1.0                                              RELEASED: ??? ?? 2002
 
 	- Documentation updates.
 	- Added a Fl_Widget::redraw_label() method which flags a
@@ -1812,7 +1824,7 @@ CHANGES IN FLTK 1.1.0
 	  (syntax highlighting) information.
 
 
-CHANGES IN FLTK 1.1.0rc7
+CHANGES IN FLTK 1.1.0rc7                                             CANDIDATE: ??? ?? 2002
 
 	- Updated the Fl_Text_Buffer and Fl_Text_Display classes
 	  to be based on NEdit 5.3 (patch from George Garvey).
@@ -1860,7 +1872,7 @@ CHANGES IN FLTK 1.1.0rc7
 	- Fl_Help_View didn't support table alignment.
 
 
-CHANGES IN FLTK 1.1.0rc6
+CHANGES IN FLTK 1.1.0rc6                                             CANDIDATE: ??? ?? 2002
 
 	- Documentation updates.
 	- Fl::handle() didn't apply the modal tests for
@@ -1915,7 +1927,7 @@ CHANGES IN FLTK 1.1.0rc6
 	  Albrecht Schlosser.
 
 
-CHANGES IN FLTK 1.1.0rc5
+CHANGES IN FLTK 1.1.0rc5                                             CANDIDATE: ??? ?? 2002
 
 	- Added "wrap" type bit to Fl_Input_, so you can now
 	  have a multiline text field that wraps text.
@@ -1969,7 +1981,7 @@ CHANGES IN FLTK 1.1.0rc5
 	- FLTK didn't provide a Fl::remove_handler() method.
 
 
-CHANGES IN FLTK 1.1.0rc4
+CHANGES IN FLTK 1.1.0rc4                                             CANDIDATE: Jul 02 2002
 
 	- Added new filter_value() methods to Fl_File_Chooser to
 	  get and set the current file filters.
@@ -2024,7 +2036,7 @@ CHANGES IN FLTK 1.1.0rc4
 	  fl_font_ and fl_size_.
 
 
-CHANGES IN FLTK 1.1.0rc3
+CHANGES IN FLTK 1.1.0rc3                                             CANDIDATE: ??? ?? ????
 
 	- Documentation updates.
 	- New file chooser from design contest.
@@ -2085,7 +2097,7 @@ CHANGES IN FLTK 1.1.0rc3
 	- DND text operations would loop under X11.
 
 
-CHANGES IN FLTK 1.1.0rc2
+CHANGES IN FLTK 1.1.0rc2                                             CANDIDATE: ??? ?? ????
 
 	- Portability fixes.
 	- Backported 2.0 tooltip changes.
@@ -2112,7 +2124,7 @@ CHANGES IN FLTK 1.1.0rc2
 	  instead of FL/Fl_Preferences.H.
 
 
-CHANGES IN FLTK 1.1.0rc1
+CHANGES IN FLTK 1.1.0rc1                                             CANDIDATE: ??? ?? ????
 
 	- The fl_file_chooser() and fl_dir_chooser() functions
 	  now support an optional "relative" argument to get
@@ -2202,7 +2214,7 @@ CHANGES IN FLTK 1.1.0rc1
 	  user-defined colors.
 
 
-CHANGES IN FLTK 1.1.0b13
+CHANGES IN FLTK 1.1.0b13                                                  BETA: ??? ?? ????
 
 	- Fixed a bug in the Xft support in Fl_Window::hide()
 	  (the config header wasn't included, so the Xft code
@@ -2242,7 +2254,7 @@ CHANGES IN FLTK 1.1.0b13
 	  additional image file formats transparently.
 
 
-CHANGES IN FLTK 1.1.0b12
+CHANGES IN FLTK 1.1.0b12                                                  BETA: ??? ?? ????
 
 	- Documentation updates.
 	- Fl_Choice didn't clip the current value properly - it
@@ -2273,7 +2285,7 @@ CHANGES IN FLTK 1.1.0b12
 	- Updated MacOS issues documentation.
 
 
-CHANGES IN FLTK 1.1.0b11
+CHANGES IN FLTK 1.1.0b11                                                  BETA: ??? ?? ????
 
 	- Now conditionally use the WIN32 TrackMouseEvent API
 	  (default is no...)
@@ -2314,14 +2326,14 @@ CHANGES IN FLTK 1.1.0b11
 	- Initial port of FLTK 2.0 drag-and-drop support.
 
 
-CHANGES IN FLTK 1.1.0b10
+CHANGES IN FLTK 1.1.0b10                                                 BETA: ??? ?? ????
 
 	- Fixed the new WIN32 TrackMouseEvent code.
 	- Fixed the VC++ project files to link against
 	  comctl32.lib.
 
 
-CHANGES IN FLTK 1.1.0b9
+CHANGES IN FLTK 1.1.0b9                                                  BETA: ??? ?? ????
 
 	- Better FL_LEAVE event handling for WIN32.
 	- The alpha mask was bit-reversed.
@@ -2367,7 +2379,7 @@ CHANGES IN FLTK 1.1.0b9
 	  'help' and FL_NK+'='
 
 
-CHANGES IN FLTK 1.1.0b8
+CHANGES IN FLTK 1.1.0b8                                                  BETA: ??? ?? ????
 
 	- OS/2 build fixes.
 	- fl_draw() didn't ignore symbol escapes properly for
@@ -2468,7 +2480,7 @@ CHANGES IN FLTK 1.1.0b8
 	  using the fltk.book file for some reason...
 
 
-CHANGES IN FLTK 1.1.0b7
+CHANGES IN FLTK 1.1.0b7                                                  BETA: ??? ?? ????
 
 	- More documentation updates...
 	- Mac OS X support works 95%
@@ -2572,7 +2584,7 @@ CHANGES IN FLTK 1.1.0b7
 	  to 3 lines for the mouse wheel and scrollbar arrows.
 
 
-CHANGES IN FLTK 1.1.0b6
+CHANGES IN FLTK 1.1.0b6                                                  BETA: ??? ?? ????
 
 	- Documentation updates...
 	- The configure script now works within the CygWin
@@ -2665,7 +2677,7 @@ CHANGES IN FLTK 1.1.0b6
 	- Fl_Help_View now supports all ampersand escapes.
 
 
-CHANGES IN FLTK 1.1.0b5
+CHANGES IN FLTK 1.1.0b5                                                  BETA: ??? ?? ????
 
 	**** NOTE: DUE TO CHANGES IN THE WIDGET CLASSES,  ****
 	****       YOU MUST RECOMPILE ALL SOURCE FILES    ****
@@ -2695,7 +2707,7 @@ CHANGES IN FLTK 1.1.0b5
 	- FLUID didn't write the deimage() static data.
 
 
-CHANGES IN FLTK 1.1.0b4
+CHANGES IN FLTK 1.1.0b4                                                  BETA: ??? ?? ????
 
 	**** NOTE: DUE TO CHANGES IN THE FL_WIDGET CLASS, ****
 	****       YOU MUST RECOMPILE ALL SOURCE FILES    ****
@@ -2753,7 +2765,7 @@ CHANGES IN FLTK 1.1.0b4
 	  UNIX...
 
 
-CHANGES IN FLTK 1.1.0b3
+CHANGES IN FLTK 1.1.0b3                                                  BETA: ??? ?? ????
 
 	- The top-level makefile did not include the makeinclude
 	  file, causing the fltk-config installation commands to
@@ -2770,7 +2782,7 @@ CHANGES IN FLTK 1.1.0b3
 	- Documentation updates from A. Suatoni.
 
 
-CHANGES IN FLTK 1.1.0b2
+CHANGES IN FLTK 1.1.0b2                                                  BETA: ??? ?? ????
 
 	- New fltk-config script.
 
