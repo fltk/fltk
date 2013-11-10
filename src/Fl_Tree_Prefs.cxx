@@ -156,6 +156,10 @@ Fl_Tree_Prefs::Fl_Tree_Prefs() {
   _itemreselectmode       = FL_TREE_SELECTABLE_ONCE;
   _itemdrawmode           = FL_TREE_ITEM_DRAW_DEFAULT;
 #endif
+#if FLTK_ABI_VERSION >= 10303
+  _itemdrawcallback       = 0;
+  _itemdrawuserdata       = 0;
+#endif
   // Let fltk's current 'scheme' affect defaults
   if ( Fl::scheme() ) {
     if ( strcmp(Fl::scheme(), "gtk+") == 0 ) {

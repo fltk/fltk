@@ -96,6 +96,8 @@
 ///     Items can be found by their pathname using find_item(const char*),
 ///     and an item's pathname can be found with item_pathname().
 ///     The selected items' colors are controlled by selection_color() (inherited from Fl_Widget).
+///     A hook is provided to allow you to redefine how item's labels are drawn
+///     via Fl_Tree::item_draw_callback().
 ///
 /// \b SELECTION OF ITEMS
 ///
@@ -465,7 +467,13 @@ public:
   Fl_Tree_Item_Draw_Mode item_draw_mode() const;
   void item_draw_mode(Fl_Tree_Item_Draw_Mode mode);
   void item_draw_mode(int mode);
-#endif /*FLTK_ABI_VERSION*/
+#endif
+#if FLTK_ABI_VERSION >= 10303
+  void item_draw_callback(Fl_Tree_Item_Draw_Callback *cb, void *data=0);
+  Fl_Tree_Item_Draw_Callback* item_draw_callback() const;
+  void* item_draw_user_data() const;
+  void do_item_draw_callback(Fl_Tree_Item *o) const;
+#endif
   int displayed(Fl_Tree_Item *item);
   void show_item(Fl_Tree_Item *item, int yoff);
   void show_item(Fl_Tree_Item *item);

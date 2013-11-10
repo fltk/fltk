@@ -936,7 +936,7 @@ Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item) {
 ///       ..do stuff with each selected item..
 ///   }
 /// \endcode
-/// \param[in] items The returned array of selected items.
+/// \param[in] ret_items The returned array of selected items.
 /// \returns The number of items in the returned array.
 /// \see first_selected_item(), next_selected_item()
 ///
@@ -1787,7 +1787,9 @@ Fl_Tree_Item_Reselect_Mode Fl_Tree::item_reselect_mode() const {
 void Fl_Tree::item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode) {
   _prefs.item_reselect_mode(mode);
 }
+#endif
 
+#if FLTK_ABI_VERSION >= 10303
 /// Get the 'item draw mode' used for the tree
 Fl_Tree_Item_Draw_Mode Fl_Tree::item_draw_mode() const {
   return(_prefs.item_draw_mode());
@@ -1804,7 +1806,51 @@ void Fl_Tree::item_draw_mode(Fl_Tree_Item_Draw_Mode val) {
 void Fl_Tree::item_draw_mode(int val) {
   _prefs.item_draw_mode(Fl_Tree_Item_Draw_Mode(val));
 }
-#endif /*FLTK_ABI_VERSION*/
+
+/// Set a callback to be invoked to handle drawing the Fl_Tree_Item
+/// instead of the default label drawing behavior. Lets one define
+/// custom drawing behavior for Fl_Tree_Item's. eg:
+/// \code
+///    static void draw_item(Fl_Tree_Item *item, void *data) {
+///        Fl_Tree *tree = (Fl_Tree*)data;
+///        int X=item->label_x(), Y=item->label_y(),
+///            W=item->label_w(), H=item->label_h();
+///        // Draw the background
+///        fl_color(item->is_selected() ? tree->selection_color() : item->labelbgcolor());
+///        fl_rectf(X,Y,W,H);
+///        // Draw text
+///        fl_font(item->labelfont(), item->labelsize());
+///        fl_color(item->labelfgcolor());
+///        fl_draw("Some text", X+tree->labelmarginleft(),Y,W,H, FL_ALIGN_LEFT);
+///    }
+///    ..
+/// int main() {
+///    Fl_Tree *tree = new Fl_Tree(0,0,100,100);
+///    tree->item_draw_callback(draw_item, (void*)tree);
+///    [..]
+/// \endcode
+///
+/// Note: This only affects the drawing of item's labels;
+/// it does not affect the drawing of widgets assigned with
+/// Fl_Tree_Item::widget().
+///
+void Fl_Tree::item_draw_callback(Fl_Tree_Item_Draw_Callback *cb, void *data) {
+  _prefs.item_draw_callback(cb,data);
+}
+/// Get the current item draw callback. Returns 0 if none.
+Fl_Tree_Item_Draw_Callback* Fl_Tree::item_draw_callback() const {
+  return(_prefs.item_draw_callback());
+}
+/// Get the current item draw callback's user data.
+void* Fl_Tree::item_draw_user_data() const {
+  return(_prefs.item_draw_user_data());
+}
+/// Invoke the configured item_draw_callback().
+//  Do NOT call this if no item_draw_callback() was configured.
+void Fl_Tree::do_item_draw_callback(Fl_Tree_Item *o) const {
+  _prefs.do_item_draw_callback(o);
+}
+#endif
 
 /// See if \p item is currently displayed on-screen (visible within the widget).
 /// This can be used to detect if the item is scrolled off-screen.

@@ -24,6 +24,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       texteditor-simple$(EXEEXT) \
       tree-simple$(EXEEXT) \
       tree-as-container$(EXEEXT) \
+      tree-custom-draw-items$(EXEEXT) \
       tree-of-tables$(EXEEXT) \
       wizard-simple$(EXEEXT)
 

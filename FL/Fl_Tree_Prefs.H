@@ -93,6 +93,11 @@ enum Fl_Tree_Item_Draw_Mode {
 };
 #endif /*FLTK_ABI_VERSION*/
 
+#if FLTK_ABI_VERSION >= 10303
+class Fl_Tree_Item;
+typedef void (Fl_Tree_Item_Draw_Callback)(Fl_Tree_Item*, void*);
+#endif
+
 /// \class Fl_Tree_Prefs
 ///
 /// \brief Fl_Tree's Preferences class.
@@ -134,6 +139,10 @@ class FL_EXPORT Fl_Tree_Prefs {
   Fl_Tree_Item_Reselect_Mode _itemreselectmode;	// controls item selection callback() behavior
   Fl_Tree_Item_Draw_Mode     _itemdrawmode;	// controls how items draw label + widget()
 #endif /*FLTK_ABI_VERSION*/
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Tree_Item_Draw_Callback *_itemdrawcallback;	// callback to handle drawing items (0=none)
+  void                       *_itemdrawuserdata;	// data for drawing items (0=none)
+#endif
 public:
   Fl_Tree_Prefs();
   
@@ -412,7 +421,22 @@ public:
   inline void item_draw_mode(Fl_Tree_Item_Draw_Mode val) {
     _itemdrawmode = val;
   }
-#endif /*FLTK_ABI_VERSION*/
+#endif
+#if FLTK_ABI_VERSION >= 10303
+  void item_draw_callback(Fl_Tree_Item_Draw_Callback *cb, void *data=0) {
+    _itemdrawcallback = cb;
+    _itemdrawuserdata = data;
+  }
+  Fl_Tree_Item_Draw_Callback* item_draw_callback() const {
+    return(_itemdrawcallback);
+  }
+  void* item_draw_user_data() const {
+    return(_itemdrawuserdata);
+  }
+  void do_item_draw_callback(Fl_Tree_Item *o) const {
+    _itemdrawcallback(o, _itemdrawuserdata);
+  }
+#endif
 };
 
 #endif /*FL_TREE_PREFS_H*/

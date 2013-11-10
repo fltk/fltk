@@ -529,7 +529,7 @@ Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) {
   return(0);
 }
 
-static void draw_item_focus(Fl_Boxtype B, Fl_Color C, int X, int Y, int W, int H) {
+static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y, int W, int H) {
   if (!Fl::visible_focus()) return;
   switch (B) {
     case FL_DOWN_BOX:
@@ -541,7 +541,7 @@ static void draw_item_focus(Fl_Boxtype B, Fl_Color C, int X, int Y, int W, int H
     default:
       break;
   }
-  fl_color(fl_contrast(FL_BLACK, C));
+  fl_color(fl_contrast(fg, bg));
 
 #if defined(USE_X11) || defined(__APPLE_QUARTZ__)
   fl_line_style(FL_DOT);
@@ -719,41 +719,51 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 	    prefs.openicon()->draw(icon_x,icon_y);
 	  }
 	}
-	// Background for this item
-	// Draw bg only if different from tree's bg
-	if ( bg != tree->color() || is_selected() ) {
-	  if ( is_selected() ) {			// Selected? Use selectbox() style
-	    fl_draw_box(prefs.selectbox(),bg_x,bg_y,bg_w,bg_h,bg);
-	  } else {					// Not Selected? use plain filled rectangle
-	    fl_color(bg);
-	    fl_rectf(bg_x,bg_y,bg_w,bg_h);
+	// Draw the item
+#if FLTK_ABI_VERSION >= 10303
+	if ( !widget() && prefs.item_draw_callback() ) {
+	  // Draw item using user supplied custom item draw callback
+	  prefs.do_item_draw_callback(this);
+        }
+	else
+#endif
+	{
+	  // Background for this item
+	  // Draw bg only if different from tree's bg
+	  if ( bg != tree->color() || is_selected() ) {
+	    if ( is_selected() ) {			// Selected? Use selectbox() style
+	      fl_draw_box(prefs.selectbox(),bg_x,bg_y,bg_w,bg_h,bg);
+	    } else {					// Not Selected? use plain filled rectangle
+	      fl_color(bg);
+	      fl_rectf(bg_x,bg_y,bg_w,bg_h);
+	    }
+	    if ( widget() ) widget()->damage(FL_DAMAGE_ALL);	// if there's a child widget, we just damaged it
 	  }
-	  if ( widget() ) widget()->damage(FL_DAMAGE_ALL);	// if there's a child widget, we just damaged it
-	}
-	// Draw user icon (if any)
-	if ( usericon() ) {
-	  // Item has user icon? Use it
-	  int uicon_y = item_y_center - (usericon()->h() >> 1);
-	  usericon()->draw(uicon_x,uicon_y);
-	} else if ( prefs.usericon() ) {
-	  // Prefs has user icon? Use it
-	  int uicon_y = item_y_center - (prefs.usericon()->h() >> 1);
-	  prefs.usericon()->draw(uicon_x,uicon_y);
-	}
-	// Draw label
+	  // Draw user icon (if any)
+	  if ( usericon() ) {
+	    // Item has user icon? Use it
+	    int uicon_y = item_y_center - (usericon()->h() >> 1);
+	    usericon()->draw(uicon_x,uicon_y);
+	  } else if ( prefs.usericon() ) {
+	    // Prefs has user icon? Use it
+	    int uicon_y = item_y_center - (prefs.usericon()->h() >> 1);
+	    prefs.usericon()->draw(uicon_x,uicon_y);
+	  }
+	  // Draw label
 #if FLTK_ABI_VERSION >= 10301
-        if ( _label && 
-	     ( !widget() || 
-	       (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) )
+	  if ( _label && 
+	       ( !widget() || 
+		 (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) )
 #else /*FLTK_ABI_VERSION*/
-        if ( _label && !widget() )	// back compat: don't draw label if widget() present
+	  if ( _label && !widget() )	// back compat: don't draw label if widget() present
 #endif /*FLTK_ABI_VERSION*/
-        {
-	  fl_color(fg);
-	  fl_font(_labelfont, _labelsize);
-	  int label_y = Y+(H/2)+(_labelsize/2)-fl_descent()/2;
-	  fl_draw(_label, label_x, label_y);
-	}
+	  {
+	    fl_color(fg);
+	    fl_font(_labelfont, _labelsize);
+	    int label_y = Y+(H/2)+(_labelsize/2)-fl_descent()/2;
+	    fl_draw(_label, label_x, label_y);
+	  }
+        }		// end non-custom draw
       }			// end non-child damage
       // Draw child FLTK widget?
       if ( widget() ) {
@@ -766,7 +776,7 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
            Fl::visible_focus() && 
 	   Fl::focus() == tree &&
 	   prefs.selectmode() != FL_TREE_SELECT_NONE ) {
-	draw_item_focus(FL_NO_BOX,bg,bg_x+1,bg_y+1,bg_w-1,bg_h-1);
+	draw_item_focus(FL_NO_BOX,fg,bg,bg_x+1,bg_y+1,bg_w-1,bg_h-1);
       }
     }			// end drawthis
   }			// end clipped
