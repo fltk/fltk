@@ -463,9 +463,7 @@ static void processFLTKEvent(void) {
  * break the current event loop
  */
 static void breakMacEventLoop()
-{
-  fl_lock_function();
-  
+{  
   NSPoint pt={0,0};
   NSEvent *event = [NSEvent otherEventWithType:NSApplicationDefined location:pt 
 				 modifierFlags:0
@@ -473,7 +471,6 @@ static void breakMacEventLoop()
                                   windowNumber:0 context:NULL 
 				       subtype:FLTKTimerEvent data1:0 data2:0];
   [NSApp postEvent:event atStart:NO];
-  fl_unlock_function();
 }
 
 //
@@ -521,6 +518,7 @@ static void delete_timer(MacTimeout& t)
 
 static void do_timer(CFRunLoopTimerRef timer, void* data)
 {
+  fl_lock_function();
   current_timer = (MacTimeout*)data;
   current_timer->pending = 0;
   (current_timer->callback)(current_timer->data);
@@ -529,6 +527,7 @@ static void do_timer(CFRunLoopTimerRef timer, void* data)
   current_timer = NULL;
 
   breakMacEventLoop();
+  fl_unlock_function();
 }
 
 void Fl::add_timeout(double time, Fl_Timeout_Handler cb, void* data)
