@@ -189,11 +189,11 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
     shortcut |= FL_SHIFT;
   }
 #ifdef __APPLE__
-  //                        this column contains utf8 characters - v
-  if (shortcut & FL_SHIFT) {strcpy(p,"\xe2\x87\xa7"); p += 3;}  // upwards white arrow
-  if (shortcut & FL_CTRL)  {strcpy(p,"\xe2\x8c\x83"); p += 3;}  // up arrowhead
-  if (shortcut & FL_ALT)   {strcpy(p,"\xe2\x8c\xa5"); p += 3;}  // alternative key symbol
-  if (shortcut & FL_META)  {strcpy(p,"\xe2\x8c\x98"); p += 3;}  // place of interest sign
+  //   this column contains utf8 characters - v
+  if (shortcut & FL_SHIFT) {strcpy(p,"\xe2\x87\xa7"); p += 3;}  // U+21E7 (upwards white arrow)
+  if (shortcut & FL_CTRL)  {strcpy(p,"\xe2\x8c\x83"); p += 3;}  // U+2303 (up arrowhead)
+  if (shortcut & FL_ALT)   {strcpy(p,"\xe2\x8c\xa5"); p += 3;}  // U+2325 (option key)
+  if (shortcut & FL_META)  {strcpy(p,"\xe2\x8c\x98"); p += 3;}  // U+2318 (place of interest sign)
 #else
   if (shortcut & FL_META) {strcpy(p,"Meta+"); p += 5;}
   if (shortcut & FL_ALT) {strcpy(p,"Alt+"); p += 4;}
