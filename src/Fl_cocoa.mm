@@ -1040,7 +1040,14 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 - (BOOL)windowShouldClose:(id)fl
 {
   fl_lock_function();
+  NSView *old_focus = [NSView focusView];
   Fl::handle( FL_CLOSE, [(FLWindow *)fl getFl_Window] ); // this might or might not close the window
+  NSView *new_focus = [NSView focusView];
+  // the currently focused view can have changed
+  if (new_focus != old_focus) { 
+    // in that case it is necessary to remove the new lock (see STR #3010)
+    [new_focus unlockFocus];
+  }
   fl_unlock_function();
   // the system doesn't need to send [fl close] because FLTK does it when needed
   return NO; 
