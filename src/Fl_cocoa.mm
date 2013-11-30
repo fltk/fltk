@@ -2391,6 +2391,7 @@ void Fl_X::make(Fl_Window* w)
     Fl_X::first = x;
     FLView *myview = [[FLView alloc] init];
     [cw setContentView:myview];
+    [myview release];
     [cw setLevel:winlevel];
     
     q_set_window_title(cw, w->label(), w->iconlabel());
@@ -2872,7 +2873,6 @@ void Fl_X::destroy() {
     if ( [NSView focusView] == topview ) {
       [topview unlockFocus];
     }
-    [topview release];
     [xid close];
   }
 }
