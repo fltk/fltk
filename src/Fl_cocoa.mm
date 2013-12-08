@@ -3445,18 +3445,26 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   int bx, by, bt, bpp;
   get_window_frame_sizes(bx, by, bt);
   Fl_Display_Device::display_device()->set_current(); // send win to front and make it current
+  const char *title = win->label();
+  win->label(""); // temporarily set a void window title
   win->show();
   fl_gc = NULL;
   Fl::check();
   win->make_current();
-  // capture the window title bar
+  // capture the window title bar with no title
   unsigned char *bitmap = Fl_X::bitmap_from_window_rect(win, 0, -bt, win->w(), bt, &bpp);
+  win->label(title); // put back the window title
   // and print it
   this->set_current(); // back to the Fl_Paged_Device
   Fl_RGB_Image *rgb = new Fl_RGB_Image(bitmap, win->w(), bt, bpp);
   rgb->draw(x_offset, y_offset);
   delete rgb;
   delete[] bitmap;
+  if (title) { // print the window title
+    fl_font(FL_HELVETICA, 14);
+    fl_color(FL_BLACK);
+    fl_draw(title, x_offset+win->w()/2-fl_width(title)/2, y_offset+bt/2+4);
+    }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
 
