@@ -1087,7 +1087,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 <NSApplicationDelegate>
 #endif
 {
-  BOOL seen_open_file;
   void (*open_cb)(const char*);
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender;
@@ -1097,7 +1096,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 - (void)applicationWillHide:(NSNotification *)notify;
 - (void)applicationWillUnhide:(NSNotification *)notify;
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 - (void)open_cb:(void (*)(const char*))cb;
 @end
 @implementation FLAppDelegate
@@ -1241,7 +1239,9 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 }
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-  seen_open_file = YES;
+  // without the next statement, the opening of the 1st window is delayed by several seconds
+  // under Mac OS ≥ 10.8 when a file is dragged on the application icon
+  [[theApplication mainWindow] orderFront:self];
   if (open_cb) {
     fl_lock_function();
     (*open_cb)([filename UTF8String]);
@@ -1249,12 +1249,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
     return YES;
   }
   return NO;
-}
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
-  // without this, the opening of the 1st window is delayed by several seconds
-  // under Mac OS 10.8 when a file is dragged on the application icon
-  if (fl_mac_os_version >= 100800 && seen_open_file) [[NSApp mainWindow] orderFront:self];
 }
 - (void)open_cb:(void (*)(const char*))cb
 {
