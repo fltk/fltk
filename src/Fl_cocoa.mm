@@ -91,6 +91,7 @@ static Fl_Region MacRegionMinusRect(Fl_Region r, int x,int y,int w,int h);
 static void cocoaMouseHandler(NSEvent *theEvent);
 static int calc_mac_os_version();
 static void clipboard_check(void);
+static NSString *calc_utf8_format(void);
 
 Fl_Display_Device *Fl_Display_Device::_display = new Fl_Display_Device(new Fl_Quartz_Graphics_Driver); // the platform display
 
@@ -105,6 +106,7 @@ Fl_Window *Fl_Window::current_;
 int fl_mac_os_version = calc_mac_os_version();		// the version number of the running Mac OS X (e.g., 100604 for 10.6.4)
 static SEL inputContextSEL = (fl_mac_os_version >= 100600 ? @selector(inputContext) : @selector(FLinputContext));
 Fl_Fontdesc* fl_fonts = Fl_X::calc_fl_fonts();
+static NSString *utf8_format = calc_utf8_format();
 
 // forward declarations of variables in this file
 static int got_events = 0;
@@ -1965,8 +1967,8 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
     CFStringGetCString(all, DragData, l + 1, kCFStringEncodingUTF8);
     CFRelease(all);
   }
-  else if ( [[pboard types] containsObject:NSStringPboardType] ) {
-    NSData *data = [pboard dataForType:NSStringPboardType];
+  else if ( [[pboard types] containsObject:utf8_format] ) {
+    NSData *data = [pboard dataForType:utf8_format];
     DragData = (char *)malloc([data length] + 1);
     [data getBytes:DragData];
     DragData[[data length]] = 0;
@@ -2403,8 +2405,7 @@ void Fl_X::make(Fl_Window* w)
       [cw setAlphaValue:0.97];
     }
     // Install DnD handlers 
-    [myview registerForDraggedTypes:[NSArray arrayWithObjects:
-                                     NSStringPboardType,  NSFilenamesPboardType, nil]];
+    [myview registerForDraggedTypes:[NSArray arrayWithObjects:utf8_format,  NSFilenamesPboardType, nil]];
     if ( ! Fl_X::first->next ) {	
       // if this is the first window, we need to bring the application to the front
       ProcessSerialNumber psn = { 0, kCurrentProcess };
@@ -2707,11 +2708,12 @@ static void convert_crlf(char * s, size_t len)
 // fltk 1.3 clipboard support constant definitions:
 static NSString *calc_utf8_format(void)
 {
-  if (fl_mac_os_version >= 100600) return @"public.utf8-plain-text"; // same as NSPasteboardTypeString
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
+#define NSPasteboardTypeString @"public.utf8-plain-text"
+#endif
+  if (fl_mac_os_version >= 100600) return NSPasteboardTypeString;
   return NSStringPboardType;
 }
-
-static NSString *utf8_format = calc_utf8_format();
 
 // clipboard variables definitions :
 char *fl_selection_buffer[2];
