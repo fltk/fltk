@@ -136,7 +136,7 @@ cairo_t * Fl::cairo_make_current(void *gc) {
     }
     if (gc==Fl::cairo_state_.gc() && 
 	fl_window== (Window) Fl::cairo_state_.window() && 
-	cairo_state_.cc()==0)
+	cairo_state_.cc()!=0)
 	return Fl::cairo_cc();
     cairo_state_.gc(fl_gc); // keep track for next time
     cairo_surface_t * s = cairo_create_surface(gc, W, H);
