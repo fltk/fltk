@@ -85,6 +85,7 @@ cairo_t * Fl::cairo_make_current(Fl_Window* wi) {
     Creates transparently a cairo_surface_t object.
     gc is an HDC context in  WIN32, a CGContext* in Quartz, a display on X11
  */
+
 static cairo_surface_t * cairo_create_surface(void * gc, int W, int H) {
 # if defined(USE_X11)
     return cairo_xlib_surface_create(fl_display, fl_window, fl_visual->visual, W, H);
@@ -133,13 +134,15 @@ cairo_t * Fl::cairo_make_current(void *gc) {
 	cairo_state_.gc(0); // keep track for next time
 	return 0;
     }
-    if (gc==Fl::cairo_state_.gc() && fl_window== (Window) Fl::cairo_state_.window())
+    if (gc==Fl::cairo_state_.gc() && 
+	fl_window== (Window) Fl::cairo_state_.window() && 
+	cairo_state_.cc()==0)
 	return Fl::cairo_cc();
     cairo_state_.gc(fl_gc); // keep track for next time
     cairo_surface_t * s = cairo_create_surface(gc, W, H);
     cairo_t * c = cairo_create(s);
     cairo_surface_destroy(s);
-    Fl::cairo_cc(c);
+    cairo_state_.cc(c);
     return c;
 }
 
@@ -148,10 +151,17 @@ cairo_t * Fl::cairo_make_current(void *gc) {
    \note Only available when configure has the --enable-cairo option
 */
 cairo_t * Fl::cairo_make_current(void *gc, int W, int H) {
-  cairo_surface_t * s = cairo_create_surface(gc, W, H);
+    if (gc==Fl::cairo_state_.gc() && 
+	fl_window== (Window) Fl::cairo_state_.window() &&
+	cairo_state_.cc()!=0) // no need to create a cc, just return that one
+	return cairo_state_.cc(); 
+
+    // we need to (re-)create a fresh cc ...
+    cairo_state_.gc(gc); // keep track for next time
+    cairo_surface_t * s = cairo_create_surface(gc, W, H);
     cairo_t * c = cairo_create(s);
+    cairo_state_.cc(c); //  and purge any previously owned context
     cairo_surface_destroy(s);
-    Fl::cairo_cc(c);
     return c;
 }
 #else
