@@ -3457,7 +3457,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   delete rgb;
   delete[] bitmap;
   if (title) { // print the window title
-    fl_font(FL_HELVETICA, 14);
+    fl_font(FL_HELVETICA, 14); // the exact font is LucidaGrande 13 pts
     fl_color(FL_BLACK);
     fl_draw(title, x_offset+win->w()/2-fl_width(title)/2, y_offset+bt/2+4);
     }
