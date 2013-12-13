@@ -479,6 +479,15 @@ In FLTK, all strings, including filenames, are UTF-8 encoded. The utility functi
 fl_fopen() and fl_open() allow to open files potentially having non-ASCII names in a 
 cross-platform fashion, whereas the standard fopen()/open() functions fail to do so.
 
+\subsection osissues_wm_quit Responding to WM_QUIT
+
+FLTK will intercept WM_QUIT messages that are directed towards the
+thread that runs the main loop. These are converted to SIGTERM signals
+via \c raise(). This allows you to deal with outside termination
+requests with the same code on both Windows and UNIX systems.
+Other processes can send this message via \c PostThreadMessage() in
+order to request, rather than force your application to terminate.
+
 \subsection osissues_win32_messages Handling Other WIN32 Messages
 
 By default a single WNDCLASSEX called "FLTK" is
