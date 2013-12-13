@@ -293,12 +293,11 @@ dev directory:
  3.2  Configuring FLTK
 -----------------------
 
-If you got FLTK via subversion then you need two extra steps. Otherwise skip
-over this part. Stay in your FLTK source-code directory. Type the following
-but ignore any errors from the second command:
-  
-  autoconf
-  automake --add-missing
+If you got FLTK via subversion then you need one extra step. Otherwise skip
+over this part. Stay in your FLTK source-code directory and type the
+following:
+
+  NOCONFIGURE=1 ./autogen.sh
 
 Now configure your FLTK installation:
 
