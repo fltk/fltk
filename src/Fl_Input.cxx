@@ -588,7 +588,7 @@ int Fl_Input::handle_key() {
 
 int Fl_Input::handle(int event) {
   static int dnd_save_position, dnd_save_mark, drag_start = -1, newpos;
-  static Fl_Widget *dnd_save_focus;
+  static Fl_Widget *dnd_save_focus = NULL;
   switch (event) {
 #ifdef __APPLE__
     case FL_UNFOCUS:
@@ -676,6 +676,7 @@ int Fl_Input::handle(int event) {
                                               // save the position because sometimes we don't get DND_ENTER:
           dnd_save_position = position();
           dnd_save_mark = mark();
+	  dnd_save_focus = this;
           // drag the data:
           copy(0); Fl::dnd();
           return 1;
@@ -707,10 +708,10 @@ int Fl_Input::handle(int event) {
       
     case FL_DND_ENTER:
       Fl::belowmouse(this); // send the leave events first
-      dnd_save_position = position();
-      dnd_save_mark = mark();
-      dnd_save_focus = Fl::focus();
       if (dnd_save_focus != this) {
+	dnd_save_position = position();
+	dnd_save_mark = mark();
+	dnd_save_focus = Fl::focus();
         Fl::focus(this);
         handle(FL_FOCUS);
       }
@@ -736,16 +737,33 @@ int Fl_Input::handle(int event) {
 #if DND_OUT_XXXX
       if (!focused())
 #endif
-        if (dnd_save_focus != this) {
+        if (dnd_save_focus && dnd_save_focus != this) {
           Fl::focus(dnd_save_focus);
           handle(FL_UNFOCUS);
         }
 #if !(defined(__APPLE__) || defined(WIN32))
       Fl::first_window()->cursor(FL_CURSOR_MOVE);
 #endif
+      dnd_save_focus = NULL;
       return 1;
       
     case FL_DND_RELEASE:
+      if (dnd_save_focus == this) { // if the dragged text comes from the same widget
+	// remove the selected text
+	int old_position = position();
+	if (dnd_save_mark > dnd_save_position) {
+	  int tmp = dnd_save_mark;
+	  dnd_save_mark = dnd_save_position;
+	  dnd_save_position = tmp;
+	  }
+	replace(dnd_save_mark, dnd_save_position, NULL, 0);
+	if (old_position > dnd_save_position) position(old_position - (dnd_save_position - dnd_save_mark));
+	else position(old_position);
+	}
+      else if(dnd_save_focus) {
+	dnd_save_focus->handle(FL_UNFOCUS);
+	}
+      dnd_save_focus = NULL;
       take_focus();
       return 1;
       

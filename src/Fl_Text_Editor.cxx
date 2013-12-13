@@ -646,7 +646,7 @@ int Fl_Text_Editor::handle(int event) {
       insert_position(dndCursorPos);
       return 1;      
     case FL_DND_RELEASE: // keep insertion cursor and wait for the FL_PASTE event
-      buffer()->unselect(); // FL_PASTE must not destroy current selection!
+      if (!dragging) buffer()->unselect(); // FL_PASTE must not destroy current selection if drag comes from outside
       return 1;
   }
 
