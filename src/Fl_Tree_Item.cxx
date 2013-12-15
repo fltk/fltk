@@ -35,9 +35,20 @@ static int event_inside(const int xywh[4]) {
 }
 
 /// Constructor.
-///     Makes a new instance of Fl_Tree_Item using defaults from 'prefs'.
+/// Makes a new instance of Fl_Tree_Item using defaults from \p 'prefs'.
+/// \deprecated in 1.3.3 ABI -- use Fl_Tree_Item(Fl_Tree*) instead.
 ///
 Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
+  _Init(prefs, 0);
+}
+
+// Initialize the tree item
+//    Used by constructors
+//
+void Fl_Tree_Item::_Init(const Fl_Tree_Prefs &prefs, Fl_Tree *tree) {
+#if FLTK_ABI_VERSION >= 10303
+  _tree         = tree;
+#endif
   _label        = 0;
   _labelfont    = prefs.labelfont();
   _labelsize    = prefs.labelsize();
@@ -76,6 +87,15 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Prefs &prefs) {
 #endif /*FLTK_ABI_VERSION*/
 }
 
+#if FLTK_ABI_VERSION >= 10303
+/// Constructor.
+/// Makes a new instance of Fl_Tree_Item for \p 'tree'.
+///
+Fl_Tree_Item::Fl_Tree_Item(Fl_Tree *tree) {
+  _Init(tree->_prefs, tree);
+}
+#endif
+
 // DTOR
 Fl_Tree_Item::~Fl_Tree_Item() {
   if ( _label ) { 
@@ -89,6 +109,9 @@ Fl_Tree_Item::~Fl_Tree_Item() {
 
 /// Copy constructor.
 Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
+#if FLTK_ABI_VERSION >= 10303
+  _tree             = o->_tree;
+#endif
   _label        = o->label() ? strdup(o->label()) : 0;
   _labelfont    = o->labelfont();
   _labelsize    = o->labelsize();
@@ -149,10 +172,13 @@ void Fl_Tree_Item::show_self(const char *indent) const {
   fflush(stdout);
 }
 
-/// Set the label. Makes a copy of the name.
+/// Set the label to \p 'name'.
+/// Makes and manages an internal copy of \p 'name'.
+///
 void Fl_Tree_Item::label(const char *name) {
   if ( _label ) { free((void*)_label); _label = 0; }
   _label = name ? strdup(name) : 0;
+  recalc_tree();		// may change label geometry
 }
 
 /// Return the label.
@@ -168,9 +194,11 @@ const Fl_Tree_Item *Fl_Tree_Item::child(int index) const {
 /// Clear all the children for this item.
 void Fl_Tree_Item::clear_children() {
   _children.clear();
+  recalc_tree();		// may change tree geometry
 }
 
-/// Return the index of the immediate child of this item that has the label 'name'.
+/// Return the index of the immediate child of this item
+/// that has the label \p 'name'.
 ///
 /// \returns index of found item, or -1 if not found.
 ///
@@ -187,7 +215,8 @@ int Fl_Tree_Item::find_child(const char *name) {
   return(-1);
 }
 
-/// Find child item by descending array of names. Does not include self in search.
+/// Find child item by descending array \p 'arr' of names.
+/// Does not include self in search.
 /// Only Fl_Tree should need this method.
 ///
 /// \returns item, or 0 if not found
@@ -207,7 +236,8 @@ const Fl_Tree_Item *Fl_Tree_Item::find_child_item(char **arr) const {
   return(0);
 }
 
-/// Find child item by descending array of names. Does not include self in search.
+/// Find child item by descending array \p 'arr' of names.
+/// Does not include self in search.
 /// Only Fl_Tree should need this method. Use Fl_Tree::find_item() instead.
 ///
 /// \returns item, or 0 if not found
@@ -227,7 +257,8 @@ Fl_Tree_Item *Fl_Tree_Item::find_child_item(char **arr) {
   return(0);
 }
 
-/// Find item by descending array of \p names. Includes self in search.
+/// Find item by descending array of \p 'names'.
+/// Includes self in search.
 /// Only Fl_Tree should need this method. Use Fl_Tree::find_item() instead.
 ///
 /// \returns item, or 0 if not found
@@ -244,7 +275,8 @@ const Fl_Tree_Item *Fl_Tree_Item::find_item(char **names) const {
   return(0);
 }
 
-/// Find item by descending array of \p names. Includes self in search.
+/// Find item by descending array of \p 'names'.
+/// Includes self in search.
 /// Only Fl_Tree should need this method.
 ///
 /// \returns item, or 0 if not found
@@ -261,7 +293,7 @@ Fl_Tree_Item *Fl_Tree_Item::find_item(char **names) {
   return(0);
 }
 
-/// Find the index number for the specified 'item'
+/// Find the index number for the specified \p 'item'
 /// in the current item's list of children.
 ///
 /// \returns the index, or -1 if not found.
@@ -275,12 +307,18 @@ int Fl_Tree_Item::find_child(Fl_Tree_Item *item) {
   return(-1);
 }
 
-/// Add a new child to this item with the name 'new_label', with defaults from 'prefs'.
+/// Add a new child to this item with the name \p 'new_label'
+/// and defaults from \p 'prefs'.
 /// An internally managed copy is made of the label string.
 /// Adds the item based on the value of prefs.sortorder().
 ///
 Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, const char *new_label) {
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Tree_Item *item = new Fl_Tree_Item(_tree);
+#else
   Fl_Tree_Item *item = new Fl_Tree_Item(prefs);
+#endif
+  recalc_tree();		// may change tree geometry
   item->label(new_label);
   item->_parent = this;
   switch ( prefs.sortorder() ) {
@@ -314,7 +352,7 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, const char *new_labe
   return(item);
 }
 
-/// Descend into the path specified by \p arr, and add a new child there.
+/// Descend into the path specified by \p 'arr', and add a new child there.
 /// Should be used only by Fl_Tree's internals.
 /// Adds the item based on the value of prefs.sortorder().
 /// \returns the item added.
@@ -327,6 +365,7 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, char **arr) {
   } else {
     item = (Fl_Tree_Item*)child(t);
   }
+  recalc_tree();		// may change tree geometry
   if ( *(arr+1) ) {		// descend?
     return(item->add(prefs, arr+1));
   } else {
@@ -334,18 +373,24 @@ Fl_Tree_Item *Fl_Tree_Item::add(const Fl_Tree_Prefs &prefs, char **arr) {
   }
 }
 
-/// Insert a new item into current item's children at a specified position.
+/// Insert a new item named \p 'new_label' into current item's
+/// children at a specified position \p 'pos'.
 /// \returns the new item inserted.
 ///
 Fl_Tree_Item *Fl_Tree_Item::insert(const Fl_Tree_Prefs &prefs, const char *new_label, int pos) {
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Tree_Item *item = new Fl_Tree_Item(_tree);
+#else
   Fl_Tree_Item *item = new Fl_Tree_Item(prefs);
+#endif
   item->label(new_label);
   item->_parent = this;
   _children.insert(pos, item);
+  recalc_tree();		// may change tree geometry
   return(item);
 }
 
-/// Insert a new item above this item.
+/// Insert a new item named \p 'new_label' above this item.
 /// \returns the new item inserted, or 0 if an error occurred.
 ///
 Fl_Tree_Item *Fl_Tree_Item::insert_above(const Fl_Tree_Prefs &prefs, const char *new_label) {
@@ -361,21 +406,22 @@ Fl_Tree_Item *Fl_Tree_Item::insert_above(const Fl_Tree_Prefs &prefs, const char 
   return(0);
 }
 
-/// Remove child by item.
-///    \returns 0 if removed, -1 if item not an immediate child.
+/// Remove \p 'item' from the current item's children.
+/// \returns 0 if removed, -1 if item not an immediate child.
 ///
 int Fl_Tree_Item::remove_child(Fl_Tree_Item *item) {
   for ( int t=0; t<children(); t++ ) {
     if ( child(t) == item ) {
       item->clear_children();
       _children.remove(t);
+      recalc_tree();		// may change tree geometry
       return(0);
     }
   }
   return(-1);
 }
 
-/// Remove immediate child (and its children) by its label 'name'.
+/// Remove immediate child (and its children) by its label \p 'name'.
 /// \returns 0 if removed, -1 if not found.
 ///
 int Fl_Tree_Item::remove_child(const char *name) {
@@ -383,6 +429,7 @@ int Fl_Tree_Item::remove_child(const char *name) {
     if ( child(t)->label() ) {
       if ( strcmp(child(t)->label(), name) == 0 ) {
         _children.remove(t);
+	recalc_tree();		// may change tree geometry
         return(0);
       }
     }
@@ -390,30 +437,23 @@ int Fl_Tree_Item::remove_child(const char *name) {
   return(-1);
 }
 
-/// Swap two of our children, given two child index values.
-/// Use this eg. for sorting.
-///
-/// This method is FAST, and does not involve lookups.
-///
+/// Swap two of our children, given two child index values \p 'ax' and \p 'bx'.
+/// Use e.g. for sorting.<br>
+/// This method is FAST, and does not involve lookups.<br>
 /// No range checking is done on either index value.
-///
-/// \returns
-///    -    0 : OK
-///    -   -1 : failed: 'a' or 'b' is not our immediate child
 ///
 void Fl_Tree_Item::swap_children(int ax, int bx) {
   _children.swap(ax, bx);
 }
 
-/// Swap two of our children, given item pointers.
-/// Use this eg. for sorting. 
+/// Swap two of our immediate children, given item pointers.
+/// Use e.g. for sorting. 
 ///
-/// This method is SLOW because it involves linear lookups.
+/// This method is SLOW because it involves linear lookups.<br>
 /// For speed, use swap_children(int,int) instead.
-///
 /// \returns
 ///    -    0 : OK
-///    -   -1 : failed: 'a' or 'b' is not our immediate child
+///    -   -1 : failed: item \p 'a' or \p 'b' is not our child.
 ///
 int Fl_Tree_Item::swap_children(Fl_Tree_Item *a, Fl_Tree_Item *b) {
   int ax = -1, bx = -1;
@@ -470,28 +510,31 @@ void Fl_Tree_Item::draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_
   }
 }
 
-/// Find the item that the last event was over.
-///
-///    Returns the item if it is visible, and mouse is over it.
-///    Works even if widget deactivated.
-///    Use event_on_collapse_icon() to determine if collapse button was pressed.
-///
-///    \returns const visible item under the event if found, or 0 if none.
-///
-const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) const {
+// Internal
+// Find the item that the last event was over.
+// If \p 'yonly' is 1, only check event's y value, don't care about x.
+//
+const Fl_Tree_Item *Fl_Tree_Item::find_clicked_(const Fl_Tree_Prefs &prefs, int yonly) const {
   if ( ! is_visible() ) return(0);
   if ( is_root() && !prefs.showroot() ) {
     // skip event check if we're root but root not being shown
   } else {
     // See if event is over us
-    if ( event_inside(_xywh) ) {		// event within this item?
-      return(this);				// found
+    if ( yonly ) {
+      if ( Fl::event_y() >= _xywh[1] &&
+           Fl::event_y() <= (_xywh[1]+_xywh[3]) ) {
+        return(this);
+      }
+    } else {
+      if ( event_inside(_xywh) ) {		// event within this item?
+        return(this);				// found
+      }
     }
   }
   if ( is_open() ) {				// open? check children of this item
     for ( int t=0; t<children(); t++ ) {
       const Fl_Tree_Item *item;
-      if ( ( item = _children[t]->find_clicked(prefs) ) != NULL) {	// check child and its descendents
+      if ( (item = _children[t]->find_clicked(prefs, yonly)) != NULL) {	// check child and its descendents
         return(item);							// found?
       }
     }
@@ -499,34 +542,24 @@ const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) const
   return(0);
 }
 
-/// Non-const version of the above.
 /// Find the item that the last event was over.
+/// There is both a const and non-const version of this method.
 ///
-///    Returns the item if it is visible, and mouse is over it.
-///    Works even if widget deactivated.
-///    Use event_on_collapse_icon() to determine if collapse button was pressed.
+/// Returns the item if it is visible, and mouse is over it.
+/// Works even if widget deactivated.
+/// Use event_on_collapse_icon() to determine if collapse button was pressed.
 ///
-///    \returns the visible item under the event if found, or 0 if none.
+/// If \a yonly is set, only the mouse Y position is checked.
 ///
-Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) {
-  if ( ! is_visible() ) return(0);
-  if ( is_root() && !prefs.showroot() ) {
-    // skip event check if we're root but root not being shown
-  } else {
-    // See if event is over us
-    if ( event_inside(_xywh) ) {		// event within this item?
-      return(this);				// found
-    }
-  }
-  if ( is_open() ) {				// open? check children of this item
-    for ( int t=0; t<children(); t++ ) {
-      Fl_Tree_Item *item;
-      if ( ( item = _children[t]->find_clicked(prefs) ) != NULL ) {	// check child and its descendents
-        return(item);							// found?
-      }
-    }
-  }
-  return(0);
+/// \returns const visible item under the event if found, or 0 if none.
+///
+const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) const {
+  return(find_clicked_(prefs, yonly));
+}
+
+/// A const version of Fl_Tree_Item::find_clicked()
+Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) {
+  return((Fl_Tree_Item*)find_clicked_(prefs, yonly));
 }
 
 static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y, int W, int H) {
@@ -570,7 +603,7 @@ static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y
 }
 
 /// Return the item's 'visible' height.
-///   Doesn't include linespacing(); prevents affecting eg. height of widget().
+/// Doesn't include linespacing(); prevents affecting e.g. height of widget().
 ///
 int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
   if ( ! is_visible() ) return(0);
@@ -593,7 +626,235 @@ int Fl_Tree_Item::calc_item_height(const Fl_Tree_Prefs &prefs) const {
   return(H);
 }
 
+#if FLTK_ABI_VERSION >= 10303
 /// Draw this item and its children.
+///
+/// \param[in]     X	          Horizontal position for item being drawn
+/// \param[in,out] Y	          Vertical position for item being drawn, returns new position for next item
+/// \param[in]     W	          Recommended width of item
+/// \param[in]	   itemfocus      The tree's current focus item (if any)
+/// \param[in,out] tree_item_xmax The tree's running xmax (right-most edge so far).
+///                               Mainly used by parent tree when render==0 to calculate tree's max width.
+/// \param[in]	   lastchild      Is this item the last child in a subtree?
+/// \param[in]	   render         Whether or not to render the item:
+///				  - 0 -- no rendering, just calculate size.
+///					 (used to calculate size of tree without doing drawing)
+///				  - 1 -- render the item as well as doing size calculations
+///
+void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus,
+			int &tree_item_xmax, int lastchild, int render) {
+  Fl_Tree_Prefs &prefs = _tree->_prefs;
+  if ( !is_visible() ) return; 
+  int tree_top = _tree->_tiy;
+  int tree_bot = tree_top + _tree->_tih;
+  int H = calc_item_height(prefs);	// height of item
+  int H2 = H + prefs.linespacing();	// height of item with line spacing
+
+  // Update the xywh of this item
+  _xywh[0] = X;
+  _xywh[1] = Y;
+  _xywh[2] = W;
+  _xywh[3] = H;
+
+  // Determine collapse icon's xywh
+  //   Note: calculate collapse icon's xywh for possible mouse click detection.
+  //   We don't care about items clipped off the viewport; they won't get mouse events.
+  //
+  int item_y_center = Y+(H/2);
+  _collapse_xywh[2] = prefs.openicon()->w();
+  int &icon_w = _collapse_xywh[2];
+  _collapse_xywh[0] = X + (icon_w + prefs.connectorwidth())/2 - 3;
+  int &icon_x = _collapse_xywh[0];
+  _collapse_xywh[1] = item_y_center - (prefs.openicon()->h()/2);
+  int &icon_y = _collapse_xywh[1];
+  _collapse_xywh[3] = prefs.openicon()->h();
+
+  // Horizontal connector values
+  //   Must calculate these even if(clipped) because 'draw children' code (below)
+  //   needs hconn_x_center value. (Otherwise, these calculations could be 'clipped')
+  //
+  int hconn_x  = X+icon_w/2-1;
+  int hconn_x2 = hconn_x + prefs.connectorwidth();
+  int hconn_x_center = X + icon_w + ((hconn_x2 - (X + icon_w)) / 2);
+  int cw1 = icon_w+prefs.connectorwidth()/2, cw2 = prefs.connectorwidth();
+  int conn_w = cw1>cw2 ? cw1 : cw2;
+
+  // Background xywh
+  int &bg_x = _label_xywh[0] = X+(icon_w/2-1+conn_w);
+  int &bg_y = _label_xywh[1] = Y;
+  int &bg_w = _label_xywh[2] = _tree->_tix + _tree->_tiw - bg_x;
+  int &bg_h = _label_xywh[3] = H;
+
+  // Usericon position
+  int uicon_x = bg_x + ( (usericon() || prefs.usericon()) ? prefs.usericonmarginleft() : 0);
+  int uicon_w = usericon() ? usericon()->w() : prefs.usericon() ? prefs.usericon()->w() : 0;
+
+  // Label position
+  int label_x = uicon_x + uicon_w + (_label ? prefs.labelmarginleft() : 0);
+
+  // Begin calc of this item's max width..
+  //     It might not even be visible, so start at zero.
+  //
+  int ixmax = 0;
+
+  // Recalc widget position
+  //   Do this whether clipped or not, so that when scrolled,
+  //   the widgets move to appropriate 'offscreen' positions
+  //   (so that they don't get mouse events, etc)
+  //
+  if ( widget() ) {
+    int wx = label_x;
+    int wy = bg_y;
+    int ww = widget()->w();		// use widget's width
+    int wh = (prefs.item_draw_mode() & FL_TREE_ITEM_HEIGHT_FROM_WIDGET)
+             ? widget()->h() : H;
+    if ( _label && 
+         (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) {
+      fl_font(_labelfont, _labelsize);	// fldescent() needs this
+      int lw=0, lh=0;
+      fl_measure(_label,lw,lh);		// get box around text (including white space)
+      wx += (lw + prefs.widgetmarginleft());
+    }
+    if ( widget()->x() != wx || widget()->y() != wy ||
+	 widget()->w() != ww || widget()->h() != wh ) {
+      widget()->resize(wx,wy,ww,wh);		// we'll handle redraw below
+    }
+  }
+  char clipped = ((Y+H) < tree_top) || (Y>tree_bot) ? 1 : 0;
+  if (!render) clipped = 0;			// NOT rendering? Then don't clip, so we calc unclipped items
+  char drawthis = ( is_root() && prefs.showroot() == 0 ) ? 0 : 1;
+  if ( !clipped ) {
+    Fl_Color fg = is_selected() ? fl_contrast(_labelfgcolor, _tree->selection_color())
+			        : is_active() ? _labelfgcolor
+				              : fl_inactive(_labelfgcolor);
+    Fl_Color bg = is_selected() ? is_active() ? _tree->selection_color() 
+				              : fl_inactive(_tree->selection_color())
+			        : _labelbgcolor == 0xffffffff ? _tree->color()		// transparent bg?
+							      : _labelbgcolor;
+    // See if we should draw this item
+    //    If this item is root, and showroot() is disabled, don't draw.
+    //    'clipped' is an optimization to prevent drawing anything offscreen.
+    //
+    if ( drawthis ) {						// draw this item at all?
+      if ( (_tree->damage() & ~FL_DAMAGE_CHILD) || !render ) {	// non-child damage?
+	// Draw connectors
+	if ( render && prefs.connectorstyle() != FL_TREE_CONNECTOR_NONE ) {
+	  // Horiz connector between center of icon and text
+	  // if this is root, the connector should not dangle in thin air on the left
+	  if (is_root()) draw_horizontal_connector(hconn_x_center, hconn_x2, item_y_center, prefs);
+	  else           draw_horizontal_connector(hconn_x, hconn_x2, item_y_center, prefs);
+	  // Small vertical line down to children
+	  if ( has_children() && is_open() )
+	    draw_vertical_connector(hconn_x_center, item_y_center, Y+H2, prefs);
+	  // Connectors for last child
+	  if ( !is_root() ) {
+	    if ( lastchild ) draw_vertical_connector(hconn_x, Y, item_y_center, prefs);
+	    else             draw_vertical_connector(hconn_x, Y, Y+H2, prefs);
+	  }
+	}
+	// Draw collapse icon
+	if ( render && has_children() && prefs.showcollapse() ) {
+	  // Draw icon image
+	  if ( is_open() ) {
+	    prefs.closeicon()->draw(icon_x,icon_y);
+	  } else {
+	    prefs.openicon()->draw(icon_x,icon_y);
+	  }
+	}
+	// Background for this item
+	// Draw bg only if different from tree's bg
+	if ( render && (bg != _tree->color() || is_selected()) ) {
+	  if ( is_selected() ) {			// Selected? Use selectbox() style
+	    fl_draw_box(prefs.selectbox(),bg_x,bg_y,bg_w,bg_h,bg);
+	  } else {					// Not Selected? use plain filled rectangle
+	    fl_color(bg);
+	    fl_rectf(bg_x,bg_y,bg_w,bg_h);
+	  }
+	  if ( widget() ) widget()->damage(FL_DAMAGE_ALL);	// if there's a child widget, we just damaged it
+	}
+	// Draw user icon (if any)
+	if ( render && usericon() ) {
+	  // Item has user icon? Use it
+	  int uicon_y = item_y_center - (usericon()->h() >> 1);
+	  usericon()->draw(uicon_x,uicon_y);
+	} else if ( render && prefs.usericon() ) {
+	  // Prefs has user icon? Use it
+	  int uicon_y = item_y_center - (prefs.usericon()->h() >> 1);
+	  prefs.usericon()->draw(uicon_x,uicon_y);
+	}
+	// Draw label
+        if ( _label && 
+	     ( !widget() || 
+	       (prefs.item_draw_mode() & FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET) ) ) {
+	  if ( render ) {
+	    fl_color(fg);
+	    fl_font(_labelfont, _labelsize);
+          }
+	  int label_y = Y+(H/2)+(_labelsize/2)-fl_descent()/2;
+
+	  int lw=0, lh=0;
+	  fl_measure(_label, lw, lh);		// get box around text (including white space)
+	  if ( render ) fl_draw(_label, label_x, label_y);
+	  ixmax = label_x + lw;			// update max width of drawn item
+	}
+      }			// end non-child damage
+      // Draw child FLTK widget?
+      if ( widget() ) {
+        if (render)
+	  _tree->draw_child(*widget());		// let group handle drawing child
+	if ( widget()->label() && render )
+	  _tree->draw_outside_label(*widget());	// label too
+        ixmax = widget()->x() + widget()->w();	// update max width of widget
+      }
+      // Draw focus box around item's bg last
+      if ( render &&
+           this == itemfocus &&
+           Fl::visible_focus() && 
+	   Fl::focus() == _tree &&
+	   prefs.selectmode() != FL_TREE_SELECT_NONE ) {
+	draw_item_focus(FL_NO_BOX,fg,bg,bg_x+1,bg_y+1,bg_w-1,bg_h-1);
+      }
+    }			// end drawthis
+  }			// end clipped
+  if ( drawthis ) Y += H2;					// adjust Y (even if clipped)
+  // Manage tree_item_xmax
+  if ( ixmax > tree_item_xmax )
+    tree_item_xmax = ixmax;
+  // Draw child items (if any)
+  if ( has_children() && is_open() ) {
+    int child_x = drawthis ? (hconn_x_center - (icon_w/2) + 1)	// offset children to right,
+                           : X;					// unless didn't drawthis
+    int child_w = W - (child_x-X);
+    int child_y_start = Y;
+    for ( int t=0; t<children(); t++ ) {
+      int lastchild = ((t+1)==children()) ? 1 : 0;
+      _children[t]->draw(child_x, Y, child_w, itemfocus, tree_item_xmax, lastchild, render);
+    }
+    if ( has_children() && is_open() ) {
+      Y += prefs.openchild_marginbottom();		// offset below open child tree
+    }
+    if ( ! lastchild ) {
+      // Special 'clipped' calculation. (intentional variable shadowing)
+      int clipped = ((child_y_start < tree_top) && (Y < tree_top)) ||
+                    ((child_y_start > tree_bot) && (Y > tree_bot));
+      if (render && !clipped )
+        draw_vertical_connector(hconn_x, child_y_start, Y, prefs);
+    }
+  }
+}
+
+#else
+
+/// Draw this item and its children.
+///
+/// \param[in]     X	     Horizontal position for item being drawn
+/// \param[in,out] Y	     Vertical position for item being drawn, returns new position for next item
+/// \param[in]     W	     Recommended width of item
+/// \param[in]	   tree      The parent tree
+/// \param[in]	   itemfocus The tree's current focus item (if any)
+/// \param[in]	   prefs     The tree's preferences
+/// \param[in]	   lastchild Is this item the last child in a subtree?
+///
 void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
 			Fl_Tree_Item *itemfocus,
                         const Fl_Tree_Prefs &prefs, int lastchild) {
@@ -802,8 +1063,9 @@ void Fl_Tree_Item::draw(int X, int &Y, int W, Fl_Widget *tree,
     }
   }
 }
+#endif
 
-/// Was the event on the 'collapse' button?
+/// Was the event on the 'collapse' button of this item?
 ///
 int Fl_Tree_Item::event_on_collapse_icon(const Fl_Tree_Prefs &prefs) const {
   if ( is_visible() && is_active() && has_children() && prefs.showcollapse() ) {
@@ -813,7 +1075,7 @@ int Fl_Tree_Item::event_on_collapse_icon(const Fl_Tree_Prefs &prefs) const {
   }
 }
 
-/// Was event on the label()?
+/// Was event on the label() of this item?
 ///
 int Fl_Tree_Item::event_on_label(const Fl_Tree_Prefs &prefs) const {
   if ( is_visible() && is_active() ) {
@@ -852,6 +1114,7 @@ void Fl_Tree_Item::open() {
   for ( int t=0; t<_children.total(); t++ ) {
     _children[t]->show_widgets();
   }
+  recalc_tree();		// may change tree geometry
 }
 
 /// Close this item and all its children.
@@ -861,12 +1124,14 @@ void Fl_Tree_Item::close() {
   for ( int t=0; t<_children.total(); t++ ) {
     _children[t]->hide_widgets();
   }
+  recalc_tree();		// may change tree geometry
 }
 
 /// Returns how many levels deep this item is in the hierarchy.
 ///
 /// For instance; root has a depth of zero, and its immediate children
-/// would have a depth of 1, and so on.
+/// would have a depth of 1, and so on. Use e.g. for determining the
+/// horizontal indent of this item during drawing.
 ///
 int Fl_Tree_Item::depth() const {
   int count = 0;
@@ -914,7 +1179,8 @@ Fl_Tree_Item *Fl_Tree_Item::next() {
 /// This method can be used to walk the tree backwards.
 /// For an example of how to use this method, see Fl_Tree::last().
 /// 
-/// \returns the previous item in the tree, or 0 if there's no item above this one (hit the root).
+/// \returns the previous item in the tree, 
+///          or 0 if there's no item above this one (hit the root).
 ///
 Fl_Tree_Item *Fl_Tree_Item::prev() {
 #if FLTK_ABI_VERSION >= 10301
@@ -965,7 +1231,7 @@ Fl_Tree_Item *Fl_Tree_Item::prev() {
 /// Return this item's next sibling.
 ///
 /// Moves to the next item below us at the same level (sibling).
-/// Use this to move down the tree without moving deeper into the tree,
+/// Use this to move down the tree without changing depth().
 /// effectively skipping over this item's children/descendents.
 /// 
 /// \returns item's next sibling, or 0 if none.
@@ -988,7 +1254,7 @@ Fl_Tree_Item *Fl_Tree_Item::next_sibling() {
 /// Return this item's previous sibling.
 ///
 /// Moves to the previous item above us at the same level (sibling).
-/// Use this to move up the tree without moving deeper into the tree.
+/// Use this to move up the tree without changing depth().
 /// 
 /// \returns This item's previous sibling, or 0 if none.
 ///
@@ -1006,7 +1272,7 @@ Fl_Tree_Item *Fl_Tree_Item::prev_sibling() {
 #endif /*FLTK_ABI_VERSION*/
 }
 
-/// Update our _prev_sibling and _next_sibling pointers to point to neighbors,
+/// Update our _prev_sibling and _next_sibling pointers to point to neighbors
 /// given \p index as being our current position in the parent's item array.
 /// Call this whenever items in the array are added/removed/moved/swapped.
 /// 
@@ -1031,14 +1297,16 @@ void Fl_Tree_Item::update_prev_next(int index) {
 #endif /*FLTK_ABI_VERSION*/
 }
       
-/// Return the next visible item. (If this item has children and is closed, children are skipped)
+/// Return the next open(), visible() item. 
+/// (If this item has children and is closed, children are skipped)
 ///
 /// This method can be used to walk the tree forward, skipping items
-/// that are not currently visible to the user.
+/// that are not currently open/visible to the user.
 /// 
-/// \returns the next visible item below us, or 0 if there's no more items.
+/// \returns the next open() visible() item below us,
+///          or 0 if there's no more items.
 ///
-Fl_Tree_Item *Fl_Tree_Item::next_displayed(Fl_Tree_Prefs &prefs) {
+Fl_Tree_Item *Fl_Tree_Item::next_visible(Fl_Tree_Prefs &prefs) {
   Fl_Tree_Item *item = this;
   while ( 1 ) {
     item = item->next();
@@ -1048,14 +1316,22 @@ Fl_Tree_Item *Fl_Tree_Item::next_displayed(Fl_Tree_Prefs &prefs) {
   }
 }
 
-/// Return the previous visible item. (If this item above us has children and is closed, its children are skipped)
+/// Same as next_visible().
+/// \deprecated in 1.3.3 ABI for confusing name, use next_visible()
+Fl_Tree_Item *Fl_Tree_Item::next_displayed(Fl_Tree_Prefs &prefs) {
+  return next_visible(prefs);
+}
+
+/// Return the previous open(), visible() item. 
+/// (If this item above us has children and is closed, its children are skipped)
 ///
 /// This method can be used to walk the tree backward, 
-/// skipping items that are not currently visible to the user.
+/// skipping items that are not currently open/visible to the user.
 /// 
-/// \returns the previous visible item above us, or 0 if there's no more items.
+/// \returns the previous open() visible() item above us,
+///          or 0 if there's no more items.
 ///
-Fl_Tree_Item *Fl_Tree_Item::prev_displayed(Fl_Tree_Prefs &prefs) {
+Fl_Tree_Item *Fl_Tree_Item::prev_visible(Fl_Tree_Prefs &prefs) {
   Fl_Tree_Item *c = this;
   while ( c ) {
     c = c->prev();					// previous item
@@ -1075,17 +1351,33 @@ Fl_Tree_Item *Fl_Tree_Item::prev_displayed(Fl_Tree_Prefs &prefs) {
   return(0);						// hit end: no more items
 }
 
-/// Returns if item and all its parents are visible.
-/// Also takes into consideration if any parent is close()ed.
+/// Same as prev_visible().
+/// \deprecated in 1.3.3 ABI for confusing name, use prev_visible()
+///
+Fl_Tree_Item *Fl_Tree_Item::prev_displayed(Fl_Tree_Prefs &prefs) {
+  return prev_visible(prefs);
+}
+
+/// See if item and all its parents are open() and visible().
 /// \returns
-///    1 -- item and its parents are visible/open()
-///    0 -- item (or parents) invisible or close()ed.
+///    1 -- item and its parents are open() and visible()
+///    0 -- item (or one of its parents) are invisible or close()ed.
 ///
 int Fl_Tree_Item::visible_r() const {
   if ( !visible() ) return(0);
   for (const Fl_Tree_Item *p=parent(); p; p=p->parent())// move up through parents
     if (!p->visible() || p->is_close()) return(0);	// any parent not visible or closed?
   return(1);
+}
+
+/// Call this when our geometry is changed. (Font size, label contents, etc)
+/// Schedules tree to recalculate itself, as changes to us may affect tree
+/// widget's scrollbar visibility and tab sizes.
+///
+void Fl_Tree_Item::recalc_tree() {
+#if FLTK_ABI_VERSION >= 10303
+  _tree->recalc_tree();
+#endif
 }
 
 //

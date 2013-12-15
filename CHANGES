@@ -29,6 +29,38 @@ CHANGES IN FLTK 1.3.3                                              RELEASED: MMM
 	- Added Fl_Tree::get_selected_items(), returns the selected items as an array
         - Added Fl_Tree::item_draw_callback(), letting one define a custom draw function
 	           for Fl_Tree_Item's.
+	- Fl_Tree: various related changes:
+	    o Added horizontal scrollbar
+	    o Separated draw() and tree size calculation
+	    o Added new public methods:
+	        > resize()           -- uses optimized dim calc, avoids tree recalc
+		> next_item()        -- added parameters: direction, visibility
+		> extend_selection() -- added parameters, improved algorithm
+		> calc_dimensions()  -- calc tix/y/w/h, tox/y/w/h and scrollbars
+		> calc_tree()        -- calc tree_w/tree_h
+		> recalc_tree()      -- schedules calc_tree()
+		> first_visible_item(), last_visible_item(), next_visible_item()
+		> first_selected_item(), last_selected_item(), next_selected_item()
+	    o Added protected variables:
+	        > _tix/y/w/h      -- tree widget 'inner' dimension
+		> _tox/y/w/h      -- tree widget 'outer' dimension
+		> _tree_w,_tree_h -- entire tree hierarchy width/height
+	    o Deprecated:
+	        > item_clicked() -- use callback_item() instead
+		> first_visible() -- use first_visible_item() instead
+		> last_visible() -- use last_visible_item() instead
+
+	- Fl_Tree_Item: various related changes:
+	    o Added Fl_Tree ptr: needed for auto-recalc when item modified directly
+	    o Added new methods tree(), recalc_tree()
+	    o Added new ctor that accepts Fl_Tree*
+	    o draw() parameters changed to include tree size calculations
+	    o Deprecated:
+	       > ctor using Fl_Tree_Prefs parameter (Fl_Tree* version better,
+	         and must be used for 1.3.3 ABI features to work correctly)
+	       > next_displayed() -- use next_visible() instead
+	       > prev_displayed() -- use prev_visible() instead
+	- test/tree: added tests for newly added features
 
 CHANGES IN FLTK 1.3.2                                              RELEASED: Dec 12 2012
 

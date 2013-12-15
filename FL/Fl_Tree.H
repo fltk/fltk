@@ -80,36 +80,38 @@
 ///    tree.end();
 /// \endcode
 ///     
-/// \b FEATURES
-///
-///     Items can be added with add(),
-///     removed with remove(),
-///     completely cleared with clear(),
-///     inserted with insert() and insert_above(),
-///     selected/deselected with select() and deselect(),
-///     open/closed with open() and closed().
-///     Children of an item can be swapped around with Fl_Tree_Item::swap_children(),
-///     sorting can be controlled when items are add()ed via sortorder().
-///     You can walk the entire tree with first() and next().
+/// \par FEATURES
+///     Items can be added with add(),<BR>
+///     removed with remove(),<BR>
+///     completely cleared with clear(),<BR>
+///     inserted with insert() and insert_above(),<BR>
+///     selected/deselected with select() and deselect(),<BR>
+///     open/closed with open() and close(),<BR>
+///     positioned on the screen with show_item_top(), show_item_middle() and
+///     show_item_bottom(),<BR>
+///     item children can be swapped around with Fl_Tree_Item::swap_children(),<BR>
+///     sorting can be controlled when items are add()ed via sortorder().<BR>
+///     You can walk the entire tree with first() and next().<BR>
+///     You can walk visible items with first_visible_item()
+///     and next_visible_item().<BR>
 ///     You can walk selected items with first_selected_item() and
-///     next_selected_item().
+///     next_selected_item().<BR>
 ///     Items can be found by their pathname using find_item(const char*),
-///     and an item's pathname can be found with item_pathname().
-///     The selected items' colors are controlled by selection_color() (inherited from Fl_Widget).
+///     and an item's pathname can be found with item_pathname().<BR>
+///     The selected items' colors are controlled by selection_color()
+///     (inherited from Fl_Widget).<BR>
 ///     A hook is provided to allow you to redefine how item's labels are drawn
-///     via Fl_Tree::item_draw_callback().
+///     via Fl_Tree::item_draw_callback().<BR>
 ///
-/// \b SELECTION OF ITEMS
-///
+/// \par SELECTION OF ITEMS
 ///     The tree can have different selection behaviors controlled by selectmode().
 ///     The background color used for selected items is the Fl_Tree::selection_color().
 ///     The foreground color for selected items is controlled internally with fl_contrast().
 ///
-/// \b CHILD WIDGETS
-///
+/// \par CHILD WIDGETS
 ///     FLTK widgets (including custom widgets) can be assigned to tree items via
 ///     Fl_Tree_Item::widget().
-///
+/// \par
 ///     When a widget() is defined, the default behavior is for the widget()
 ///     to be shown in place of the item's label (if it has one).
 ///     Only the widget()'s width will be used; the widget()'s x() and y() position
@@ -120,41 +122,38 @@
 ///     adding the FL_TREE_ITEM_HEIGHT_FROM_WIDGET flag causes widget's height
 ///     to define the widget()'s height.
 ///
-/// \b ICONS
-///
+/// \par ICONS
 ///     The tree's open/close icons can be redefined with
 ///     Fl_Tree::openicon(), Fl_Tree::closeicon(). User icons
 ///     can either be changed globally with Fl_Tree::usericon(),
 ///     or on a per-item basis with Fl_Tree_Item::usericon().
-///
+/// \par
 ///     Various default preferences can be globally manipulated via Fl_Tree_Prefs, 
 ///     including colors, margins, icons, connection lines, etc. 
 ///
-/// \b FONTS AND COLORS
-///
+/// \par FONTS AND COLORS
 ///     When adding new items to the tree, the new items get the
 ///     defaults for fonts and colors from:
-///
+/// \par
 ///	- Fl_Tree::item_labelfont() -- The default item label font (default: FL_HELVETICA)
 ///     - Fl_Tree::item_labelsize() -- The default item label size (default: FL_NORMAL_SIZE)
 ///     - Fl_Tree::item_labelfgcolor() -- The default item label foreground color (default: FL_FOREGROUND_COLOR)
 ///     - Fl_Tree::item_labelbgcolor() -- The default item label background color (default: 0xffffffff, which tree uses as 'transparent')
-///
+/// \par
 ///     Each item (Fl_Tree_Item) inherits a copy of these font/color attributes when created,
 ///     and each item has its own methods to let the app change these values on a per-item basis
 ///	using methods of the same name:
-///
+/// \par
 ///	- Fl_Tree_Item::item_labelfont() -- The item's label font (default: FL_HELVETICA)
 ///     - Fl_Tree_Item::item_labelsize() -- The item's label size (default: FL_NORMAL_SIZE)
 ///     - Fl_Tree_Item::item_labelfgcolor() -- The item's label foreground color (default: FL_FOREGROUND_COLOR)
 ///     - Fl_Tree_Item::item_labelbgcolor() -- The item's label background color (default: 0xffffffff, which tree uses as 'transparent')
 ///
-/// \b CALLBACKS
-///
+/// \par CALLBACKS
 ///     The tree's callback() will be invoked when items change state or are open/closed.
 ///     when() controls when mouse/keyboard events invoke the callback.
-///     callback_item() and callback_reason() can be used to determine the cause of the callback. eg:
-///
+///     callback_item() and callback_reason() can be used to determine the cause of the callback. e.g.
+/// \par
 /// \code
 /// void MyTreeCallback(Fl_Widget *w, void *data) {
 ///   Fl_Tree      *tree = (Fl_Tree*)w;
@@ -168,13 +167,18 @@
 ///   }
 /// \endcode
 ///
-///     To get the item's full menu pathname, you can use Fl_Tree::item_pathname(), eg:
-///
+/// \par SIMPLE EXAMPLES
+///     To find all the selected items:
+/// \code
+/// for ( Fl_Tree_Item *i=first_selected_item(); i; i=next_selected_item(i) )
+///   printf("Item %s is selected\n", i->label());
+/// \endcode
+///     To get an item's full menu pathname, use Fl_Tree::item_pathname(), e.g.
 /// \code
 ///   char pathname[256] = "???";
 ///   tree->item_pathname(pathname, sizeof(pathname), item);		// eg. "Parent/Child/Item"
 /// \endcode
-///
+/// \par
 ///     To walk all the items of the tree from top to bottom:
 /// \code
 /// // Walk all the items in the tree, and print their labels
@@ -182,7 +186,7 @@
 ///     printf("Item: %s\n", item->label());
 /// }
 /// \endcode
-///
+/// \par
 ///     To recursively walk all the children of a particular item, 
 ///     define a function that uses recursion:
 ///     \code
@@ -194,8 +198,8 @@
 ///     }
 /// }
 ///     \endcode
-///
-///     To change the default label font and color for creating new items:
+/// \par
+///     To change the default label font and color when creating new items:
 /// \code
 ///  tree = new Fl_Tree(..);
 ///  tree->item_labelfont(FL_COURIER);	// Use Courier font for all new items
@@ -206,8 +210,8 @@
 ///  tree->add("Bbb");
 ///  [..]
 /// \endcode
-///
-///     To change the font and color of all items in the tree:
+/// \par
+///     To change the font and color of all existing items in the tree:
 /// \code
 /// // Change the font and color of all items currently in the tree
 /// for ( Fl_Tree_Item *item = tree->first(); item; item = tree->next(item) ) {
@@ -216,12 +220,19 @@
 /// }
 /// \endcode
 ///
+/// \par DISPLAY DESCRIPTION
 ///     The following image shows the tree's various visual elements
 ///     and the methods that control them:
-///     
+/// \par
 ///     \image html tree-elements.png
-///     \image latex tree-elements.png "Fl_Tree dimensions" width=6cm
+///     \image latex tree-elements.png "Fl_Tree elements" width=6cm
+/// \par
+///     The following shows the protected 'tree inner' (tix..)
+///     and 'tree outer' (tox..) dimension variables:
+///     \image html tree-dimensions.png "Fl_Tree inner/outer dimensions" width=6cm
+///     \image latex tree-dimensions.png "Fl_Tree inner/outer dimensions" width=6cm
 ///
+/// \par KEYBOARD BINDINGS
 ///     The following table lists keyboard bindings for navigating the tree:
 ///
 ///  <TABLE BORDER="1" SUMMARY="Fl_Tree keyboard bindings.">
@@ -317,23 +328,36 @@ class FL_EXPORT Fl_Tree : public Fl_Group {
   Fl_Tree_Reason _callback_reason;		// reason for the callback
   Fl_Tree_Prefs  _prefs;			// all the tree's settings
   int            _scrollbar_size;		// size of scrollbar trough
-
 #if FLTK_ABI_VERSION >= 10301
   // NEW: 
   Fl_Tree_Item *_lastselect;
 #else /*FLTK_ABI_VERSION*/
   // OLD: static data inside handle() method
 #endif /*FLTK_ABI_VERSION*/
-
   void fix_scrollbar_order();
 
 protected:
-  Fl_Scrollbar *_vscroll;			///< Vertical scrollbar
+  Fl_Scrollbar *_vscroll;	///< Vertical scrollbar
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Scrollbar *_hscroll;	///< Horizontal scrollbar
+  int _tox,_toy,_tow,_toh;	///< Tree widget outer xywh dimension: outside scrollbars, inside widget border
+  int _tix,_tiy,_tiw,_tih;	///< Tree widget inner xywh dimension: inside borders + scrollbars
+
+  /// the calculated width of the entire tree hierarchy. See calc_tree()
+  int _tree_w;
+  /// the calculated height of the entire tree hierarchy. See calc_tree()
+  int _tree_h;
+#endif
   void item_clicked(Fl_Tree_Item* val);
   void do_callback_for_item(Fl_Tree_Item* item, Fl_Tree_Reason reason);
+#if FLTK_ABI_VERSION >= 10303
+// next_visible_item() and extend_selection() moved to 'public' in ABI 1.3.3
+// undocmented draw_tree() dropped -- draw() does all the work now
+#else
   Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);
   void extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to);
   int draw_tree();
+#endif
 
 public:
   Fl_Tree(int X, int Y, int W, int H, const char *L=0);
@@ -341,7 +365,8 @@ public:
   int handle(int e);
   void draw();
   void show_self();
-  
+  void resize(int,int,int,int);
+
   ///////////////////////
   // root methods
   ///////////////////////
@@ -352,7 +377,7 @@ public:
   // Item creation/removal methods
   ////////////////////////////////
   Fl_Tree_Item *add(const char *path);
-  Fl_Tree_Item* add(Fl_Tree_Item *item, const char *name);
+  Fl_Tree_Item* add(Fl_Tree_Item *parent_item, const char *name);
   Fl_Tree_Item *insert_above(Fl_Tree_Item *above, const char *name);
   Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos);
   int remove(Fl_Tree_Item *item);
@@ -368,15 +393,25 @@ public:
   const Fl_Tree_Item *find_clicked() const;
   Fl_Tree_Item *item_clicked();
   Fl_Tree_Item *first();
-  Fl_Tree_Item *first_visible();
+  Fl_Tree_Item *first_visible();		// deprecated in ABI 10303
+  Fl_Tree_Item *first_visible_item();
   Fl_Tree_Item *next(Fl_Tree_Item *item=0);
   Fl_Tree_Item *prev(Fl_Tree_Item *item=0);
   Fl_Tree_Item *last();
-  Fl_Tree_Item *last_visible();
-  Fl_Tree_Item *first_selected_item();
-  Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item=0);
+  Fl_Tree_Item *last_visible();			// deprecated in ABI 10303
+  Fl_Tree_Item *last_visible_item();
 #if FLTK_ABI_VERSION >= 10303
+  Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);
+#endif
+  Fl_Tree_Item *first_selected_item();
+  Fl_Tree_Item *last_selected_item();
+  Fl_Tree_Item *next_item(Fl_Tree_Item *item, int dir=FL_Down, bool visible=false);
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item=0, int dir=FL_Down);
   int get_selected_items(Fl_Tree_Item_Array &items);
+#else
+  Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item=0);
+  Fl_Tree_Item *next_selected_item(Fl_Tree_Item *item, int dir);
 #endif
 
   //////////////////////////
@@ -403,6 +438,18 @@ public:
   int deselect_all(Fl_Tree_Item *item=0, int docallback=1);
   int select_only(Fl_Tree_Item *selitem, int docallback=1);
   int select_all(Fl_Tree_Item *item=0, int docallback=1);
+#if FLTK_ABI_VERSION >= 10303
+  void extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to);
+  int extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to, int dir, int val, bool visible);
+  int extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to, int val, bool visible);
+#else
+  // Adding overload if not at least one overload breaks ABI, so avoid
+  // See: http://www.ros.org/reps/rep-0009.html
+private:
+  int extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to, int dir, int val, bool visible);
+  int extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to, int val, bool visible);
+public:
+#endif
   void set_item_focus(Fl_Tree_Item *item);
   Fl_Tree_Item *get_item_focus() const;
   int is_selected(Fl_Tree_Item *item) const;
@@ -473,7 +520,10 @@ public:
   Fl_Tree_Item_Draw_Callback* item_draw_callback() const;
   void* item_draw_user_data() const;
   void do_item_draw_callback(Fl_Tree_Item *o) const;
+  void calc_dimensions();
+  void calc_tree();
 #endif
+  void recalc_tree();
   int displayed(Fl_Tree_Item *item);
   void show_item(Fl_Tree_Item *item, int yoff);
   void show_item(Fl_Tree_Item *item);
@@ -483,11 +533,14 @@ public:
   void display(Fl_Tree_Item *item);
   int  vposition() const;
   void vposition(int pos);
+  int  hposition() const;
+  void hposition(int pos);
 
   int is_scrollbar(Fl_Widget *w);
   int scrollbar_size() const;
   void scrollbar_size(int size);
   int is_vscroll_visible() const;
+  int is_hscroll_visible() const;
 
   ///////////////////////
   // callback related

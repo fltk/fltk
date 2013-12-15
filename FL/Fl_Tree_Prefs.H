@@ -11,7 +11,7 @@
 // FL/Fl_Tree_Prefs.H
 //////////////////////
 //
-// Fl_Tree -- This file is part of the Fl_Tree widget for FLTK
+// Fl_Tree_Prefs -- This file is part of the Fl_Tree widget for FLTK
 // Copyright (C) 2009-2010 by Greg Ercolano.
 //
 // This library is free software. Distribution and use rights are outlined in

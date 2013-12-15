@@ -1,11 +1,14 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0300 
+version 1.0302 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include <stdio.h>} {public global
 } 
 
 decl {\#include <FL/Fl.H>} {public global
+} 
+
+decl {\#include <FL/Fl_Tooltip.H>} {public global
 } 
 
 decl {\#include <FL/Fl_Pixmap.H>} {public global
@@ -233,11 +236,17 @@ tree->add("Descending/Bbb");
 tree->add("Descending/Yyy");
 tree->add("Descending/Ccc");
 
-// Add 500 items in numerical order
+// Add a long line to trigger horiz scrollbar
 tree->sortorder(FL_TREE_SORT_NONE);
+tree->add("Long Line")->close();
+tree->add("Long Line/The quick brown fox jumped over the lazy dog. 0123456789");
+tree->add("Long Line/Longer Line")->close();
+tree->add("Long Line/Longer Line/The quick brown fox jumped over the lazy dog. ---------------- 0123456789");
+
+// Add 500 items in numerical order
 for ( int t=0; t<500; t++ ) {
     static char s[80];
-    sprintf(s, "500 Items/item %04d", t);
+    sprintf(s, "500 Items/item %04d", t+1);
     tree->add(s);
 }
 tree->close("500 Items");	// close the 500 items by default
@@ -336,7 +345,7 @@ Function {} {open
 } {
   Fl_Window window {
     label tree open
-    xywh {5 44 1045 580} type Double visible
+    xywh {0 234 1045 580} type Double visible
   } {
     Fl_Group tree {
       label Tree
@@ -367,7 +376,7 @@ tree->clear_changed();} open
       class Fl_Tree
     } {}
     Fl_Group {} {open
-      xywh {300 5 731 615}
+      xywh {350 5 681 615}
       code0 {o->resizable(0);}
     } {
       Fl_Box {} {
@@ -393,7 +402,7 @@ tree->marginleft(val);
 tree->redraw();}
         tooltip {Changes the left margin for the tree widget} xywh {505 60 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
         code0 {o->value(tree->marginleft());}
-        code1 {o->range(0.0, 100.0);}
+        code1 {o->range(0.0, 200.0);}
         code2 {o->step(1.0);}
       }
       Fl_Value_Slider marginbottom_slider {
@@ -409,7 +418,7 @@ tree->redraw();
 marginbottom_slider->deactivate();  // deactivate if this ABI feature is disabled
 marginbottom_slider->tooltip("DISABLED.\\n"
                               "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
-                              "to get this feature");
+                              "to enable this feature");
 \#endif}
         tooltip {Changes the bottom margin for the tree
 Sets how far beyond bottom of tree you can scroll} xywh {505 80 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
@@ -462,9 +471,11 @@ tree->redraw();
 widgetmarginleft_slider->deactivate();
 widgetmarginleft_slider->tooltip("DISABLED.\\n"
                                  "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
-                                 "to get this feature");
+                                 "to enable this feature");
 \#endif}
-        tooltip {Changes the margin to the left of child FLTK widget()} xywh {505 160 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
+        tooltip {Changes the margin to the left of child FLTK widget()
+"Show label + widget" must be 'on' for this to take effect, i.e.
+item_draw_mode(FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET)} xywh {505 160 155 16} type Horizontal color 46 selection_color 1 labelsize 10 align 4 textsize 9
         code0 {o->value(GetTreeWidgetMarginLeft());  // handle ABI feature}
         code1 {o->range(0.0, 100.0);}
         code2 {o->step(1.0);}
@@ -580,7 +591,7 @@ switch ( collapseicons_chooser->value() ) {
         tree->showcollapse(0);
         break;
 }}
-        tooltip {Tests Fl_Tree::openicon() and Fl_Tree::closeicon()} xywh {520 225 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        tooltip {Tests Fl_Tree::openicon(), Fl_Tree::closeicon() and Fl_Tree::showcollapse().} xywh {520 225 140 21} down_box BORDER_BOX labelsize 12 textsize 11
       } {
         MenuItem {} {
           label Normal
@@ -603,7 +614,7 @@ switch ( connectorstyle_chooser->value() ) {
     case 1: tree->connectorstyle(FL_TREE_CONNECTOR_DOTTED);   break;
     case 2: tree->connectorstyle(FL_TREE_CONNECTOR_SOLID);    break;
 }}
-        tooltip {Tests connectorstyle() bit flags} xywh {520 249 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        tooltip {Tests Fl_Tree::connectorstyle() bit flags} xywh {520 249 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {switch (tree->connectorstyle()) { case FL_TREE_CONNECTOR_NONE: connectorstyle_chooser->value(0); break; case FL_TREE_CONNECTOR_DOTTED: connectorstyle_chooser->value(1); break; case FL_TREE_CONNECTOR_SOLID: connectorstyle_chooser->value(2); break; }}
       } {
         MenuItem {} {
@@ -628,7 +639,11 @@ switch ( selectmode_chooser->value() ) {
     case 2:  tree->selectmode(FL_TREE_SELECT_MULTI);  break; 	// Multi
     default: tree->selectmode(FL_TREE_SELECT_SINGLE); break;	// Single
 }}
-        tooltip {Sets how Fl_Tree handles mouse selection of tree items} xywh {520 273 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        tooltip {Tests Fl_Tree::selectmode()
+Sets how Fl_Tree handles mouse selection of tree items.
+    NONE	-- Not selectable by keyboard/mouse
+    SINGLE	-- Only one item at a time selectable by keyboard/mouse
+    MULTI	-- Multiple items selectable} xywh {520 273 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {selectmode_chooser->value(2);}
         code1 {cb_selectmode_chooser(selectmode_chooser, (void*)0);}
       } {
@@ -659,11 +674,13 @@ switch ( reselectmode_chooser->value() ) {
 reselectmode_chooser->deactivate();  // deactivate if this ABI feature is disabled
 reselectmode_chooser->tooltip("DISABLED.\\n"
                               "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
-                              "to get this feature");
+                              "to enable this feature");
 window->redraw();  // deactivated
 \#endif}
-        tooltip {Enable 'reselect' events
-These happen when mouse drags or multi-clicks an item} xywh {520 297 140 21} down_box BORDER_BOX labelsize 12 textsize 11
+        tooltip {Tests Fl_Tree::item_reselect_mode().
+Enables 'reselect' events.
+These happen when someone selects an item already selected
+(mouse drags or multi-clicks)} xywh {520 297 140 21} down_box BORDER_BOX labelsize 12 textsize 11
         code0 {reselectmode_chooser->value(1);}
         code1 {reselectmode_chooser->do_callback();}
       } {
@@ -727,7 +744,7 @@ tree->visible_focus(onoff);}
       }
       Fl_Check_Button labelandwidget_radio {
         label {Show label + widget}
-        callback {\#if FLTK_ABI_VERSION >= 10301
+        callback {\#if FLTK_ABI_VERSION >= 10303
 // NEW
 int flags = tree->item_draw_mode();
 if ( labelandwidget_radio->value() )
@@ -740,18 +757,20 @@ tree->redraw();
 // OLD
 labelandwidget_radio->deactivate();  // deactivate if this ABI feature is disabled
 labelandwidget_radio->tooltip("DISABLED.\\n"
-                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
-                              "to get this feature");
+                              "Set FLTK_ABI_VERSION to 10303 (or higher)\\n"
+                              "to enable this feature");
 window->redraw();  // deactivated
 \#endif}
-        tooltip {Enables both label and widget() for display.
-When enabled, widget should appear to the right of the item's label. By default, the widget() is shown in place of the item's label.} xywh {645 356 20 16} down_box DOWN_BOX labelsize 11 align 7
+        tooltip {Tests Fl_Tree::item_draw_mode(FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET)
+Enables both label and widget() for display.
+When enabled, widget should appear to the right of the item's label.
+By default, the widget() is shown in place of the item's label.} xywh {645 356 20 16} down_box DOWN_BOX labelsize 11 align 7
         code0 {labelandwidget_radio->value(0);}
         code1 {labelandwidget_radio->do_callback();}
       }
       Fl_Check_Button itemheightfromwidget_radio {
         label {Item h() from widget}
-        callback {\#if FLTK_ABI_VERSION >= 10301
+        callback {\#if FLTK_ABI_VERSION >= 10303
 // NEW
 int flags = tree->item_draw_mode();
 if ( itemheightfromwidget_radio->value() )
@@ -764,11 +783,12 @@ tree->redraw();
 // OLD
 itemheightfromwidget_radio->deactivate();  // deactivate if this ABI feature is disabled
 itemheightfromwidget_radio->tooltip("DISABLED.\\n"
-                              "Set FLTK_ABI_VERSION to 10301 (or higher)\\n"
-                              "to get this feature");
+                              "Set FLTK_ABI_VERSION to 10303 (or higher)\\n"
+                              "to enable this feature");
 window->redraw();  // deactivated
 \#endif}
-        tooltip {If enabled, item's height will track the widget()'s height.
+        tooltip {Tests Fl_Tree::item_draw_mode(FL_TREE_ITEM_HEIGHT_FROM_WIDGET)
+If enabled, item's height will track the widget()'s height.
 When enabled, click 'ccc' or 'D1/D2' buttons to test.} xywh {645 371 20 16} down_box DOWN_BOX labelsize 11 align 7
         code0 {itemheightfromwidget_radio->value(0);}
         code1 {itemheightfromwidget_radio->do_callback();}
@@ -877,7 +897,8 @@ switch ( tree->item_pathname(pathname, sizeof(pathname), item) ) {
     case -1: fl_message("item_pathname() returned -1 (NOT FOUND)"); break;
     case -2: fl_message("item_pathname() returned -2 (STRING TOO LONG)"); break;
 }}
-        tooltip {Show the pathname for the selected item. Tests the Fl_Tree::item_pathname() method.} xywh {470 531 95 16} labelsize 9
+        tooltip {Tests Fl_Tree::item_pathname()
+Show the pathname for the selected item.} xywh {470 531 95 16} labelsize 9
       }
       Fl_Button closeall_button {
         label {Close All}
@@ -895,8 +916,8 @@ tree->redraw();}
         label {Clear All}
         callback {tree->clear();
 tree->redraw();}
-        tooltip {Clears all items
-Tests Fl_Tree::clear()} xywh {570 471 95 16} labelsize 9
+        tooltip {Tests Fl_Tree::clear().
+Clears all items} xywh {570 471 95 16} labelsize 9
       }
       Fl_Button testcallbackflag_button {
         label {Test Callback Flag}
@@ -1021,7 +1042,9 @@ if ( ! count ) {
 }
 
 tree->redraw();}
-        tooltip {Changes the font for the selected items's labels. If none selected, all are changed. Tests Fl_Tree_Item::labelfont();} xywh {863 31 140 21} down_box BORDER_BOX labelsize 11 textsize 11
+        tooltip {Tests Fl_Tree_Item::labelfont();
+Changes the font for the selected items's labels.
+If none selected, all are changed.} xywh {863 31 140 21} down_box BORDER_BOX labelsize 11 textsize 11
         code0 {o->value((int)tree->item_labelfont());   // get tree's current font, assign to chooser}
       } {
         MenuItem {} {
@@ -1112,7 +1135,9 @@ if ( ! count ) {
 }
 
 tree->redraw();}
-        tooltip {Changes the font size of the selected items's labels. If none selected, all are changed. Tests Fl_Tree_Item::labelsize();} xywh {863 55 140 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 12
+        tooltip {Tests Fl_Tree_Item::labelsize();
+Changes the font size of the selected items's labels.
+If none selected, all are changed.} xywh {863 55 140 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 12
         code0 {o->value(tree->item_labelsize());}
         code1 {o->range(5.0, 200.0);}
         code2 {o->step(1.0);}
@@ -1289,6 +1314,20 @@ tree->redraw();}
 tree->redraw();}
         tooltip {Deselects all items in the tree} xywh {724 219 95 16} labelsize 9
       }
+      Fl_Button nextselected_button {
+        label {next_selected()}
+        callback {printf("--- TEST next_selected():\\n");
+printf("    // Walk down the tree (forwards)\\n");
+ for ( Fl_Tree_Item *i=tree->first_selected_item(); i; i=tree->next_selected_item(i, FL_Down) ) {
+     printf("    Selected item: %s\\n", i->label()?i->label():"<nolabel>");
+ }
+
+printf("    // Walk up the tree (backwards)\\n");
+ for ( Fl_Tree_Item *i=tree->last_selected_item(); i; i=tree->next_selected_item(i, FL_Up) ) {
+     printf("    Selected item: %s\\n", i->label()?i->label():"<nolabel>");
+ }}
+        tooltip {Tests the Fl_Tree::next_selected() function} xywh {723 239 95 16} labelsize 9
+      }
       Fl_Light_Button bbbselect_toggle {
         label { Select Bbb}
         callback {// Toggle select of just the Bbb item (not children)
@@ -1354,19 +1393,19 @@ if ( !item) {
 }
 int onoff = rootselect2_toggle->value();
 if ( onoff ) tree->select_all(item);	// select /ROOT and its children
-else         tree->deselect_all(item);	// deselect /ROOT and its children}
+else         tree->deselect_all(item);	// deselect /ROOT and its children} selected
         tooltip {Toggle selection of the ROOT item and all children} xywh {914 219 95 16} selection_color 1 labelsize 9
       }
       Fl_Box {} {
         label {Tree Fonts + Colors}
-        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {695 298 335 244} box GTK_DOWN_BOX color 47 labelsize 12 align 1
+        tooltip {These controls only affect the selected items. If no items are selected, all existing items in tree are modified.} xywh {695 298 335 186} box GTK_DOWN_BOX color 47 labelsize 12 align 1
       }
       Fl_Choice labelfont_choice {
         label {labelfont()}
         callback {Fl_Font val = (Fl_Font)labelfont_choice->value();
 tree->labelfont(val);
 window->redraw();}
-        tooltip {Sets the default font used for new items created. Does NOT affect existing items.} xywh {850 319 140 21} down_box BORDER_BOX labelsize 12 textsize 12
+        tooltip {Sets the default font used for new items created. Does NOT affect existing items.} xywh {848 314 140 21} down_box BORDER_BOX labelsize 12 textsize 12
         code0 {o->value((int)tree->labelfont());   // get tree's current font, assign to chooser}
       } {
         MenuItem {} {
@@ -1440,7 +1479,7 @@ window->redraw();}
         callback {tree->labelsize((int)labelsize_slider->value());
 window->redraw();}
         tooltip {Sets the font size for the  tree's label().
-This is also the font size that will be used to draw the items IF their size hasn't been set with Fl_Tree_Item::labelsize() or Fl_Tree::item_labelsize()} xywh {850 343 140 16} type Horizontal color 46 selection_color 1 labelsize 12 align 4 textsize 12
+This is also the font size that will be used to draw the items IF their size hasn't been set with Fl_Tree_Item::labelsize() or Fl_Tree::item_labelsize()} xywh {848 338 140 16} type Horizontal color 46 selection_color 1 labelsize 12 align 4 textsize 12
         code0 {o->value((int)tree->labelsize());}
         code1 {o->range(1.0, 50.0);}
         code2 {o->step(1.0);}
@@ -1452,7 +1491,7 @@ This is also the font size that will be used to draw the items IF their size has
 tree->item_labelfont(val);
 tree->redraw();}
         tooltip {Sets the default font used for new items created.
-.Also affects any items whose font has NOT specifically been set with item->labelfont().} xywh {850 363 140 21} down_box BORDER_BOX labelsize 12 textsize 12
+.Also affects any items whose font has NOT specifically been set with item->labelfont().} xywh {848 358 140 21} down_box BORDER_BOX labelsize 12 textsize 12
         code0 {o->value((int)tree->item_labelfont());}
       } {
         MenuItem {} {
@@ -1526,7 +1565,7 @@ tree->redraw();}
         callback {tree->item_labelsize((int)item_labelsize_slider->value());
 tree->redraw();}
         tooltip {Sets the default font size used for new items created.
-.Also affects any items whose font size has NOT specifically been set with item->labelsize().} xywh {850 388 140 16} type Horizontal color 46 selection_color 1 labelsize 12 align 4 textsize 12
+.Also affects any items whose font size has NOT specifically been set with item->labelsize().} xywh {848 383 140 16} type Horizontal color 46 selection_color 1 labelsize 12 align 4 textsize 12
         code0 {o->value((int)tree->item_labelsize());}
         code1 {o->range(1.0, 50.0);}
         code2 {o->step(1.0);}
@@ -1540,7 +1579,7 @@ labelcolor_button->color(val);				// update modified color to button
 tree->labelcolor(val);
 window->redraw();   // affects window (tree's label is outside tree's area)}
         tooltip {Changes Fl_Tree::labelcolor().
-This affects the text color of the widget's label.} xywh {815 458 16 16} box DOWN_BOX labelsize 11 align 7
+This affects the text color of the widget's label.} xywh {813 414 16 16} box DOWN_BOX labelsize 11 align 7
         code0 {o->color(tree->labelcolor());}
       }
       Fl_Button color_button {
@@ -1552,7 +1591,7 @@ tree->color(val);
 UpdateColorChips();
 tree->redraw();}
         tooltip {Changes Fl_Tree::color().
-This affects the background color of the widget. It also affects the bg color of newly created  items *if*  Fl_Tree::item_labelbgcolor() hasn't been changed.} xywh {815 477 16 16} box DOWN_BOX labelsize 11 align 7
+This affects the background color of the widget. It also affects the bg color of newly created  items *if*  Fl_Tree::item_labelbgcolor() hasn't been changed.} xywh {813 433 16 16} box DOWN_BOX labelsize 11 align 7
         code0 {o->color(tree->color());}
       }
       Fl_Button selection_color_button {
@@ -1563,7 +1602,7 @@ selection_color_button->color(val);		// update modified color to button
 tree->selection_color(val);
 tree->redraw();}
         tooltip {Sets the Fl_Tree::selection_color().
-This affects the item's colors when they're selected.} xywh {815 496 16 16} box DOWN_BOX labelsize 11 align 7
+This affects the item's colors when they're selected.} xywh {813 452 16 16} box DOWN_BOX labelsize 11 align 7
         code0 {o->color(tree->selection_color());}
       }
       Fl_Button item_labelfgcolor_button {
@@ -1573,7 +1612,7 @@ if ( EditColor(val) == 0 ) return;		// Let user edit color. (return if they hit 
 tree->item_labelfgcolor(val);			// apply modified color to tree
 item_labelfgcolor_button->color(val);		// update modified color to button
 tree->redraw();}
-        tooltip {Sets the default label fg color for newly created  items.} xywh {975 458 16 16} box DOWN_BOX labelsize 12 align 7
+        tooltip {Sets the default label fg color for newly created  items.} xywh {973 414 16 16} box DOWN_BOX labelsize 12 align 7
         code0 {o->color(tree->item_labelfgcolor());}
       }
       Fl_Button item_labelbgcolor_button {
@@ -1583,7 +1622,7 @@ if ( EditColor(val) == 0 ) return;		// Let user edit color. (return if they hit 
 tree->item_labelbgcolor(val);			// apply modified color to tree
 item_labelbgcolor_button->color(val);		// update modified color to button
 tree->redraw();}
-        tooltip {Sets the default label bg color for newly created items. When set, this overrides the default behavior of using Fl_Tree::color().} xywh {975 477 16 16} box DOWN_BOX labelsize 12 align 7
+        tooltip {Sets the default label bg color for newly created items. When set, this overrides the default behavior of using Fl_Tree::color().} xywh {973 433 16 16} box DOWN_BOX labelsize 12 align 7
         code0 {item_labelbgcolor_button->color(tree->item_labelbgcolor());}
       }
       Fl_Button x_item_labelbgcolor_button {
@@ -1591,7 +1630,7 @@ tree->redraw();}
         callback {tree->item_labelbgcolor(0xffffffff);
 UpdateColorChips();
 tree->redraw();}
-        tooltip {Make the bgcolor 'transparent' (0xffffffff)} xywh {995 477 16 16} labelsize 10 align 16
+        tooltip {Make the bgcolor 'transparent' (0xffffffff)} xywh {993 433 16 16} labelsize 10 align 16
       }
       Fl_Button testsuggs_button {
         label {Test Suggestions}
@@ -1620,23 +1659,50 @@ tree->redraw();}
 "   3) Disable same, item labels should disappear,\\n"
 "      showing the widgets in their place.\\n"
 "\\n"
-" COLORS\\n"
-" ======\\n"
-"    1) Start program\\n"
-"    2) Change 'Tree Fonts+Colors' -> color()\\n"
-"    3) Entire tree's background color will change, including items.\\n"
-"    4) Change the 'Tree Fonts + Colors -> item_labelbgcolor()'\\n"
-"    6) Click the '111' item to select it.\\n"
-"    7) Click 'Test Operations -> Insert Above'\\n"
-"       New items should appear above the selected item using the new color.\\n"
-"       This color will be different from the background color.\\n"
-"    8) Change the 'Tree Fonts+Colors' -> color()\\n"
-"       The entire tree's bg should change, except the new items.\\n"
-"    9) Click the Tree Fonts+Colors -> item_labelbgcolor() 'X' button.\\n"
-"       This resets item_labelbgcolor() to the default 'transparent' color (0xffffffff)\\n"
-"   10) Again, click the 'Insert Above' button.\\n"
-"       New items will be created in the background color, and changing the color()\\n"
-"       should affect the new items too.\\n"
+"COLORS\\n"
+"======\\n"
+"   1) Start program\\n"
+"   2) Change 'Tree Fonts+Colors' -> color()\\n"
+"   3) Entire tree's background color will change, including items.\\n"
+"   4) Change the 'Tree Fonts + Colors -> item_labelbgcolor()'\\n"
+"   6) Click the '111' item to select it.\\n"
+"   7) Click 'Test Operations -> Insert Above'\\n"
+"      New items should appear above the selected item using the new color.\\n"
+"      This color will be different from the background color.\\n"
+"   8) Change the 'Tree Fonts+Colors' -> color()\\n"
+"      The entire tree's bg should change, except the new items.\\n"
+"   9) Click the Tree Fonts+Colors -> item_labelbgcolor() 'X' button.\\n"
+"      This resets item_labelbgcolor() to the default 'transparent' color (0xffffffff)\\n"
+"  10) Again, click the 'Insert Above' button.\\n"
+"      New items will be created in the background color, and changing the color()\\n"
+"      should affect the new items too.\\n"
+"\\n"
+"SCROLLING\\n"
+"=========\\n"
+"   1) Open '500 items' and 'Long Line' so that both scrollbars appear:\\n"
+"        * The 'focus box' for the selected item should not be clipped\\n"
+"          horizontally by the vertical scrollbar.\\n"
+"        * Resizing the window horizontally should resize the focus box\\n"
+"        * Scrolling vertically/horizontally should show reveal all\\n"
+"          edges of the tree. One *exception* is the widget label\\n"
+"          to the right of the 'ccc button'; labels aren't part\\n"
+"          of the widget, and therefore don't affect scroll tabs\\n"
+"   2) Scroll vertical scroller to the middle of the tree\\n"
+"   3) Left click and drag up/down to extend the selection:\\n"
+"        * Selection should autoscroll if you drag off the top/bottom\\n"
+"        * Selection should work *even* if you drag horizontally\\n"
+"          off the window edge; moving up/down outside the window\\n"
+"          should continue to autoscroll\\n"
+"   4) Click either of the the scrollbar tabs and drag:\\n"
+"        * Even if you drag off the scrollbar, the scrollbar\\n"
+"          tab should continue to move\\n"
+"        * Should continue to work if you drag off the window edge\\n"
+"          horizontally drag off the window.\\n"
+"   5) Click 'Bbb' and hit 'Add 20,000', then position the\\n"
+"      'ccc button' so it's partially obscured by a scrollbar tab:\\n"
+"        * Clicking the obscured button should work\\n"
+"        * Clicking on the tab over the button should not 'click through'\\n"
+"          to the button.\\n"
 "";
 
 static Fl_Double_Window *helpwin  = 0;
@@ -1654,8 +1720,30 @@ if ( !helpwin ) {
   helpwin->end();
 }
 helpwin->resizable(helpdisp);
-helpwin->show();} selected
+helpwin->show();}
         tooltip {Suggestions on how to do tests} xywh {935 554 95 16} labelsize 9
+      }
+      Fl_Value_Slider tree_scrollbar_size_slider {
+        label {Fl_Tree::scrollbar_size()}
+        callback {tree->scrollbar_size(tree_scrollbar_size_slider->value());
+tree->redraw();}
+        tooltip {Tests Fl_Tree::scrollbar_size() effects on tree clipping.
+The value is normally 0, which causes Fl_Tree to use the global Fl::scrollbar_size() instead.
+} xywh {835 499 180 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 9
+        code0 {o->value(tree->scrollbar_size());}
+        code1 {o->range(0.0, 30.0);}
+        code2 {o->step(1.0);}
+        code3 {o->color(46); o->selection_color(FL_RED);}
+      }
+      Fl_Value_Slider scrollbar_size_slider {
+        label {Fl::scrollbar_size()}
+        callback {Fl::scrollbar_size(scrollbar_size_slider->value());
+tree->redraw();}
+        tooltip {Tests Fl::scrollbar_size() effects on tree clipping} xywh {835 519 180 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 9
+        code0 {o->value(Fl::scrollbar_size());}
+        code1 {o->range(5.0, 30.0);}
+        code2 {o->step(1.0);}
+        code3 {o->color(46); o->selection_color(FL_RED);}
       }
     }
     Fl_Box resizer_box {
@@ -1672,6 +1760,8 @@ RebuildTree();
   code {// FLTK stuff
 
 //Fl::scheme("gtk+");
+
+Fl_Tooltip::size(10);		// small font for tooltips
 
 window->resizable(tree);
 window->size_range(window->w(), window->h(), 0, 0);
