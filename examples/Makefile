@@ -25,6 +25,7 @@ ALL = howto-add_fd-and-popen$(EXEEXT) \
       tree-simple$(EXEEXT) \
       tree-as-container$(EXEEXT) \
       tree-custom-draw-items$(EXEEXT) \
+      tree-custom-sort$(EXEEXT) \
       tree-of-tables$(EXEEXT) \
       wizard-simple$(EXEEXT)
 
