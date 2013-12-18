@@ -1725,7 +1725,7 @@ helpwin->show();}
       }
       Fl_Value_Slider tree_scrollbar_size_slider {
         label {Fl_Tree::scrollbar_size()}
-        callback {tree->scrollbar_size(tree_scrollbar_size_slider->value());
+        callback {tree->scrollbar_size((int)tree_scrollbar_size_slider->value());
 tree->redraw();}
         tooltip {Tests Fl_Tree::scrollbar_size() effects on tree clipping.
 The value is normally 0, which causes Fl_Tree to use the global Fl::scrollbar_size() instead.
@@ -1737,7 +1737,7 @@ The value is normally 0, which causes Fl_Tree to use the global Fl::scrollbar_si
       }
       Fl_Value_Slider scrollbar_size_slider {
         label {Fl::scrollbar_size()}
-        callback {Fl::scrollbar_size(scrollbar_size_slider->value());
+        callback {Fl::scrollbar_size((int)scrollbar_size_slider->value());
 tree->redraw();}
         tooltip {Tests Fl::scrollbar_size() effects on tree clipping} xywh {835 519 180 16} type Horizontal color 46 selection_color 1 labelsize 11 align 4 textsize 9
         code0 {o->value(Fl::scrollbar_size());}
