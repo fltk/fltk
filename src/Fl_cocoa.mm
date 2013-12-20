@@ -1818,6 +1818,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
       s = [s uppercaseString]; // US keyboards return lowercase letter in s if cmd-shift-key is hit
       }
     [FLView prepareEtext:s];
+    Fl::compose_state = 0;
     handled = Fl::handle(FL_KEYBOARD, [(FLWindow*)[theEvent window] getFl_Window]);
   }
   else {
