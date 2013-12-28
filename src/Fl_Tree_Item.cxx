@@ -243,18 +243,9 @@ const Fl_Tree_Item *Fl_Tree_Item::find_child_item(char **arr) const {
 /// \returns item, or 0 if not found
 ///
 Fl_Tree_Item *Fl_Tree_Item::find_child_item(char **arr) {
-  for ( int t=0; t<children(); t++ ) {
-    if ( child(t)->label() ) {
-      if ( strcmp(child(t)->label(), *arr) == 0 ) {	// match?
-        if ( *(arr+1) ) {				// more in arr? descend
-          return(_children[t]->find_item(arr+1));
-        } else {					// end of arr? done
-          return(_children[t]);
-        }
-      }
-    }
-  }
-  return(0);
+  // I evoke "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  return(const_cast<Fl_Tree_Item*>(
+	 static_cast<const Fl_Tree_Item &>(*this).find_child_item(arr)));
 }
 
 /// Find item by descending array of \p 'names'.
@@ -265,9 +256,8 @@ Fl_Tree_Item *Fl_Tree_Item::find_child_item(char **arr) {
 ///
 const Fl_Tree_Item *Fl_Tree_Item::find_item(char **names) const {
   if ( label() && strcmp(label(), *names) == 0 ) {	// match self?
-    if ( *(names+1) == 0 ) {				// end of names,
-      return(this);					// found ourself.
-    }
+    ++names;						// skip self
+    if ( *names == 0 ) return(this);			// end of names, found ourself
   }
   if ( children() ) {					// check children..
     return(find_child_item(names));
@@ -282,15 +272,9 @@ const Fl_Tree_Item *Fl_Tree_Item::find_item(char **names) const {
 /// \returns item, or 0 if not found
 ///
 Fl_Tree_Item *Fl_Tree_Item::find_item(char **names) {
-  if ( label() && strcmp(label(), *names) == 0 ) {	// match self?
-    if ( *(names+1) == 0 ) {				// end of names,
-      return(this);					// found ourself.
-    }
-  }
-  if ( children() ) {					// check children..
-    return(find_child_item(names));
-  }
-  return(0);
+  // I evoke "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  return(const_cast<Fl_Tree_Item*>(
+	 static_cast<const Fl_Tree_Item &>(*this).find_item(names)));
 }
 
 /// Find the index number for the specified \p 'item'

@@ -997,11 +997,9 @@ void Fl_Tree::clear_children(Fl_Tree_Item *item) {
 /// \see item_pathname()
 ///
 Fl_Tree_Item *Fl_Tree::find_item(const char *path) {
-  if ( ! _root ) return(NULL);
-  char **arr = parse_path(path);
-  Fl_Tree_Item *item = _root->find_item(arr);
-  free_path(arr);
-  return(item);
+  // I evoke "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  return(const_cast<Fl_Tree_Item*>(
+	 static_cast<const Fl_Tree&>(*this).find_item(path)));
 }
 
 /// A const version of Fl_Tree::find_item(const char *path)
