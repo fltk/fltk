@@ -25,6 +25,9 @@ CHANGES IN FLTK 1.3.3                                              RELEASED: MMM
 	  (To enable the following ABI features, put: #define FLTK_ABI_VERSION 10303
 	  at the top of your FL/Enumerations.H and rebuild FLTK and your app)
 
+	- Made Fl_Help_View::handle() public and Fl_Help_View::draw() protected
+	  to enable inheritance and for consistency (STR #2834).
+	  Note: both methods were private.
 	- Added Fl_Table::tab_cell_nav() for controlling Tab key navigation of table
 	- Added Fl_Tree::get_selected_items(), returns the selected items as an array
         - Added Fl_Tree::item_draw_callback(), letting one define a custom draw function
