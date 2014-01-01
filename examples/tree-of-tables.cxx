@@ -31,9 +31,9 @@
 
 #if FLTK_ABI_VERSION >= 10301
 class MyTable : public Fl_Table {
-  char *mode;
+  const char *mode;
 public:
-  MyTable(int X,int Y,int W,int H,char *mode) : Fl_Table(X,Y,W,H) {
+  MyTable(int X,int Y,int W,int H,const char *mode) : Fl_Table(X,Y,W,H) {
     rows(11); row_height_all(20); row_header(1);
     cols(11); col_width_all(60);  col_header(1);
     col_resize(1);				// enable column resizing
