@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.3.3                                              RELEASED: MMM DD YYYY
 
+	- Fixed segfault in fl_set_fonts_xft.cxx when loading fonts not named
+	  as expected (STR #2976).
 	- Removed autoconf/configure and CMake tests and defines for
 	  unused function strtoll().
 	- Fixed access of protected member (STR #2903)

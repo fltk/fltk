@@ -82,7 +82,6 @@ static void make_raw_name(char *raw, char *pretty)
   //   italic, bold, bold italic or normal - this seems to be the fltk way...
 
   char *style = strchr(pretty, ':');
-  char *last = style + strlen(style) - 2;
 
   if (style)
   {
@@ -120,7 +119,10 @@ static void make_raw_name(char *raw, char *pretty)
 #define BOLD    1
 #define ITALIC  2
 #define BITALIC (BOLD | ITALIC)
+
     int mods = PLAIN;
+    char *last = style + strlen(style) - 2;
+
     // Now try and parse the style string - look for the "=" sign
     style = strchr(style, '=');
     while ((style) && (style < last))
