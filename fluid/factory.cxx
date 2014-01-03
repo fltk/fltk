@@ -37,7 +37,15 @@
 
 extern Fl_Pixmap *pixmap[];
 
-#if !HAVE_STRCASECMP
+// Note: current MinGW versions don't find strcasecmp() in configure,
+// since it has been #define'd to _stricmp, and hence it does work,
+// although it is actually not available as a function in any lib.
+// The following "&& !defined(strcasecmp)" fixes this *temporarily*,
+// until a better fix can be found. One way would be to rename this
+// local, static version of function strcasecmp()...
+// AlbrechtS, Jan 03, 2014, svn -r ~10044, see STR #2994
+
+#if !HAVE_STRCASECMP && !defined(strcasecmp)
 //
 // 'strcasecmp()' - Do a case-insensitive compare...
 //

@@ -1,5 +1,7 @@
 CHANGES IN FLTK 1.3.3                                              RELEASED: MMM DD YYYY
 
+	- Fixed recent MinGW build WRT configure not finding strcasecmp() (STR #2994).
+	  Note: This fix is temporary and should be revisited later.
 	- Fixed missing libdl dependency in CMake builds (STR #2977).
 	- Fixed segfault in fl_set_fonts_xft.cxx when loading fonts not named
 	  as expected (STR #2976).
