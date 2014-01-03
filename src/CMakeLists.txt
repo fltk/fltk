@@ -220,7 +220,7 @@ if(MSVC)
 endif(MSVC)
 
 if(USE_THREADS)
-   target_link_libraries(fltk ${CMAKE_THREAD_LIBS_INIT})
+   target_link_libraries(fltk ${CMAKE_THREAD_LIBS_INIT} ${LIB_dl})
 endif(USE_THREADS)
 
 if(USE_X11)
@@ -338,7 +338,7 @@ else()
 endif(MSVC)
 
 if(USE_THREADS)
-   target_link_libraries(fltk_SHARED ${CMAKE_THREAD_LIBS_INIT})
+   target_link_libraries(fltk_SHARED ${CMAKE_THREAD_LIBS_INIT} ${LIB_dl})
 endif(USE_THREADS)
 
 if(USE_X11)
@@ -388,11 +388,11 @@ else()
 endif(MSVC)
 
 if(USE_THREADS)
-   target_link_libraries(fltk_SHARED ${CMAKE_THREAD_LIBS_INIT})
+   target_link_libraries(fltk_forms_SHARED ${CMAKE_THREAD_LIBS_INIT} ${LIB_dl})
 endif(USE_THREADS)
 
 if(USE_X11)
-   target_link_libraries(fltk_SHARED ${X11_LIBRARIES})
+   target_link_libraries(fltk_forms_SHARED ${X11_LIBRARIES})
 endif(USE_X11)
 
 #######################################################################

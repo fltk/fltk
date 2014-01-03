@@ -52,6 +52,7 @@ if(APPLE)
    set(HAVE_STRCASECMP 1)
    set(HAVE_DIRENT_H 1)
    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
+   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework Cocoa")
 endif(APPLE)
 
 if(WIN32)
@@ -138,6 +139,7 @@ mark_as_advanced(FREETYPE_PATH)
 #######################################################################
 # libraries
 find_library(LIB_CAIRO cairo)
+find_library(LIB_dl dl)
 find_library(LIB_fontconfig fontconfig)
 find_library(LIB_freetype freetype)
 find_library(LIB_GL GL)
@@ -146,7 +148,7 @@ find_library(LIB_jpeg jpeg)
 find_library(LIB_png png)
 find_library(LIB_zlib z)
 
-mark_as_advanced(LIB_CAIRO LIB_fontconfig LIB_freetype)
+mark_as_advanced(LIB_CAIRO LIB_dl LIB_fontconfig LIB_freetype)
 mark_as_advanced(LIB_GL LIB_MesaGL)
 mark_as_advanced(LIB_jpeg LIB_png LIB_zlib)
 
