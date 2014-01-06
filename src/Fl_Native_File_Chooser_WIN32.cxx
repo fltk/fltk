@@ -376,26 +376,21 @@ int Fl_Native_File_Chooser::showfile() {
   } else {
     err = GetOpenFileNameW(&_ofn);
   }
-  if ( err == 0 ) {
-    // EXTENDED ERROR CHECK
-    int err = CommDlgExtendedError();
-    // CANCEL?
-    if ( err == 0 ) return(1);	// user hit 'cancel'
-    // AN ERROR OCCURRED
-    char msg[80];
-    sprintf(msg, "CommDlgExtendedError() code=%d", err);
-    errmsg(msg);
-    // XXX: RESTORE CWD
-    if ( oldcwd ) {
-      SetCurrentDirectory(oldcwd);
-      free(oldcwd); oldcwd = 0;
-    }
-    return(-1);
-  }
+  // GET EXTENDED ERROR
+  int exterr = CommDlgExtendedError();
   // XXX: RESTORE CWD
   if ( oldcwd ) {
     SetCurrentDirectory(oldcwd);
     free(oldcwd); oldcwd = 0;
+  }
+  // ERROR OR CANCEL?
+  if ( err == 0 ) {
+    if ( exterr == 0 ) return(1);	// user hit cancel
+    // Otherwise, an error occurred..
+    char msg[80];
+    sprintf(msg, "CommDlgExtendedError() code=%d", err);
+    errmsg(msg);
+    return(-1);
   }
   // PREPARE PATHNAMES FOR RETURN
   switch ( _btype ) {
