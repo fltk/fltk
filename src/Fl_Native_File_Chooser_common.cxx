@@ -71,6 +71,26 @@ static void chrcat(char *s, char c) {
   strcat(s, tmp);
 }
 
+// COUNT OCCURANCES OF CHAR 'c' IN 'find'.
+int strcnt(const char *s, char c) {
+  int cnt = 0;
+  while ( *s ) { if (*s++ == c ) ++cnt; }
+  return cnt;
+}
+
+// COUNT OCCURANCES OF ANY CHARS FROM 'find' IN 's'.
+int strcnt(const char *s, const char *find) {
+  int cnt = 0;
+  const char *f;
+  while ( *s ) {
+    for (f=find; *f; f++) {
+      if (*s == *f) { ++cnt; break; }
+    }
+    ++s;
+  }
+  return cnt;
+}
+
 //
 // End of "$Id$".
 //

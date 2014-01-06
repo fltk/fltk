@@ -39,7 +39,6 @@ char *wchartoutf8(LPCWSTR in);  //MG
 #define RCURLY_CHR	'}'
 #define LBRACKET_CHR	'['
 #define RBRACKET_CHR	']'
-#define MAXFILTERS	80
 
 void fl_OleInitialize();	// in Fl.cxx (Windows only)
 
@@ -96,7 +95,7 @@ static void dnullcat(char*&wp, const char *string, int n = -1 ) {
     // Make copy of wp into larger buffer
     char *tmp = new char[wplen + inlen + 4];
     memcpy(tmp, wp, wplen+2);	// copy of wp plus doublenull
-    delete [] wp;			// delete old wp
+    delete[] wp;		// delete old wp
     wp = tmp;			// use new copy
     //DEBUG printf("DEBUG: dnullcat COPY: <"); dnullprint(wp); printf("> (wplen=%d)\n", wplen);
   }
@@ -191,7 +190,7 @@ void Fl_Native_File_Chooser::clear_pathnames() {
     while ( --_tpathnames >= 0 ) {
       _pathnames[_tpathnames] = strfree(_pathnames[_tpathnames]);
     }
-    delete [] _pathnames;
+    delete[] _pathnames;
     _pathnames = NULL;
   }
   _tpathnames = 0;
@@ -216,7 +215,7 @@ void Fl_Native_File_Chooser::add_pathname(const char *s) {
     char **tmp = new char*[_tpathnames+1];		// create new buffer
     memcpy((void*)tmp, (void*)_pathnames,
 		       sizeof(char*)*_tpathnames);	// copy old
-    delete [] _pathnames;				// delete old
+    delete[] _pathnames;				// delete old
     _pathnames = tmp;					// use new
     ++_tpathnames;
   }
@@ -237,11 +236,11 @@ void Fl_Native_File_Chooser::FreePIDL(LPITEMIDLIST pidl) {
 void Fl_Native_File_Chooser::ClearOFN() {
   // Free any previously allocated lpstrFile before zeroing out _ofn
   if ( _ofn.lpstrFile ) {
-    delete [] _ofn.lpstrFile;
+    delete[] _ofn.lpstrFile;
     _ofn.lpstrFile = NULL;
   }
   if ( _ofn.lpstrInitialDir ) {
-    delete [] (TCHAR*) _ofn.lpstrInitialDir; //msvc6 compilation fix
+    delete[] (TCHAR*) _ofn.lpstrInitialDir; //msvc6 compilation fix
     _ofn.lpstrInitialDir = NULL;
   }
   _ofn.lpstrFilter = NULL;		// (deleted elsewhere)
@@ -665,6 +664,8 @@ void Fl_Native_File_Chooser::add_filter(const char *name_in,	// name of filter (
 }
 
 // CONVERT FLTK STYLE PATTERN MATCHES TO WINDOWS 'DOUBLENULL' PATTERN
+// Returns with the parsed double-null result in '_parsedfilt'.
+//
 //    Handles:
 //        IN              OUT
 //        -----------     -----------------------------
@@ -692,16 +693,23 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
   if ( ! in ) return;
 
   int has_name = strchr(in, '\t') ? 1 : 0;
+  char mode = has_name ? 'n' : 'w';		// parse mode: n=name, w=wildcard
 
-  char mode = has_name ? 'n' : 'w';	// parse mode: n=name, w=wildcard
-  int nwildcards = 0;
-  char wildcards[MAXFILTERS][1024];	// parsed wildcards (can be several)
-  char wildprefix[512] = "";
-  char name[512] = "";
+  // whatever input string is, our output won't be much longer in length..
+  // use double length just for safety.
+  int slen = strlen(in);
+  char *wildprefix = new char[slen*2]; wildprefix[0] = 0;
+  char *comp       = new char[slen*2]; comp[0] = 0;
+  char *name       = new char[slen*2]; name[0] = 0;
 
   // Init
+  int nwildcards = 0;
+  char **wildcards;				// parsed wildcards (can be several)
+  int maxfilters = (strcnt(in, ",|") + 1);	// count wildcard seps
   int t;
-  for ( t=0; t<MAXFILTERS; t++ ) {
+  wildcards = new char*[maxfilters];
+  for ( t=0; t<maxfilters; t++ ) {
+    wildcards[t] = new char[slen];
     wildcards[t][0] = '\0';
   }
 
@@ -746,7 +754,7 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
 	    strcpy(wildcards[nwildcards++], wildprefix);
 	  }
 	  // Append wildcards in Microsoft's "*.one;*.two" format
-	  char comp[4096] = "";
+	  comp[0] = 0;
 	  for ( t=0; t<nwildcards; t++ ) {
 	    if ( t != 0 ) strcat(comp, ";");
 	    strcat(comp, wildcards[t]);
@@ -757,14 +765,22 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
 	  }
 	}
 	// RESET
-	for ( t=0; t<MAXFILTERS; t++ ) {
+	for ( t=0; t<maxfilters; t++ ) {
 	  wildcards[t][0] = '\0';
 	}
 	nwildcards = 0;
 	wildprefix[0] = name[0] = '\0';
 	mode = strchr(in,'\t') ? 'n' : 'w';
 	// DONE?
-	if ( *in == '\0' ) return;	// done
+	if ( *in == '\0' ) {		// done
+	  // Free everything
+	  delete[] wildprefix;
+	  delete[] comp;
+	  delete[] name;
+	  for ( t=0; t<maxfilters; t++ ) delete[] wildcards[t];
+	  delete[] wildcards;
+	  return;
+	}
 	continue;			// not done yet, more filters
       }
 
