@@ -673,9 +673,9 @@ void Fl_Xlib_Graphics_Driver::rtl_draw(const char* c, int n, int x, int y) {
   if (num_chars < n) n = num_chars; // limit drawing to usable characters in input array
   FcChar32 *ucs_txt = new FcChar32[n+1];
   FcChar32* pu;
-  int in, out, sz;
+  int out, sz;
   ucs_txt[n] = 0;
-  in = 0; out = n-1;
+  out = n-1;
   while ((out >= 0) && (utf_len > 0))
   {
     pu = &ucs_txt[out];
