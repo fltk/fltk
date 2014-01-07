@@ -49,6 +49,12 @@ typedef CGContextRef Fl_Offscreen;
 #include <ApplicationServices/ApplicationServices.h>
 #undef check // because of Fl::check()
 
+#ifdef __OBJC__
+@class NSCursor;
+#else
+class NSCursor;
+#endif // __OBJC__
+
 typedef CGContextRef Fl_Offscreen;
 
 typedef struct flCocoaRegion {
@@ -84,7 +90,7 @@ inline void XDestroyRegion(Fl_Region r) {
     free(r);
   }
 }
-extern void *fl_default_cursor;
+extern NSCursor *fl_default_cursor;
 
 // This object contains all mac-specific stuff about a window:
 // WARNING: this object is highly subject to change!
@@ -99,7 +105,7 @@ public:
   Fl_X *next;              // linked tree to support subwindows
   Fl_X *xidChildren, *xidNext; // more subwindow tree
   int wait_for_expose;
-  void *cursor;	           // is really NSCursor*
+  NSCursor *cursor;
   static Fl_X* first;
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window*,int&,int&,int&,int&,int&);

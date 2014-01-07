@@ -97,7 +97,7 @@ Fl_Display_Device *Fl_Display_Device::_display = new Fl_Display_Device(new Fl_Qu
 
 // public variables
 CGContextRef fl_gc = 0;
-void *fl_default_cursor;		// this is really a NSCursor*
+NSCursor *fl_default_cursor;
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
 //int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
