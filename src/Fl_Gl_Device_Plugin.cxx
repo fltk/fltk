@@ -39,7 +39,7 @@ static void print_gl_window(Fl_Gl_Window *glw, int x, int y, int height)
 #else
   const int bytesperpixel = 3;
 #endif
-  glw->make_current();
+  glw->flush(); // forces a GL redraw necessary for the glpuzzle demo
   // Read OpenGL context pixels directly.
   // For extra safety, save & restore OpenGL states that are changed
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
