@@ -24,7 +24,7 @@ extern int fl_gl_load_plugin;
 extern void gl_texture_reset();
 #endif
 
-static int temp = fl_gl_load_plugin; // don't remove me! I force linking of Fl_Gl_Device_Plugin.o
+static volatile int temp = fl_gl_load_plugin; // don't remove me! I force linking of Fl_Gl_Device_Plugin.o
 
 #include <FL/Fl.H>
 #include <FL/x.H>
