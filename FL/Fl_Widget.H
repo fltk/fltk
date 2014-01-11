@@ -28,7 +28,7 @@
   \todo	typedef's fl_intptr_t and fl_uintptr_t should be documented.
 */
 #ifdef _WIN64
-#ifdef __GNUC__
+#if defined(__GNUC__) || defined(__clang__)
 #include <stdint.h>
 #else
 #include <stddef.h>  // M$VC
