@@ -33,50 +33,32 @@ static void scroll_cb(Fl_Widget*,void *data) {
 }
 
 // INTERNAL: Parse elements from 'path' into an array of null terminated strings
-//    Handles escape characters.
-//    Path="/aa/bb"
-//    Return: arr[0]="aa", arr[1]="bb", arr[2]=0
+//    Handles escape characters, ignores multiple /'s.
+//    Path="/aa/bb", returns arr[0]="aa", arr[1]="bb", arr[2]=0.
 //    Caller must call free_path(arr).
 //
 static char **parse_path(const char *path) {
-  while ( *path == '/' ) path++;	// skip leading '/' 
-  // First pass: identify, null terminate, and count separators
-  int seps = 1;				// separator count (1: first item)
-  int arrsize = 1;			// array size (1: first item)
-  char *save = strdup(path);		// make copy we can modify
-  char *sin = save, *sout = save;
-  while ( *sin ) {
-    if ( *sin == '\\' ) {		// handle escape character
-      *sout++ = *++sin;
-      if ( *sin ) ++sin;
-    } else if ( *sin == '/' ) {		// handle submenu
-      *sout++ = 0;
-      sin++;
-      seps++;
-      arrsize++;
-    } else {				// all other chars
-      *sout++ = *sin++;
-    }
+  int len = strlen(path);
+  char *cp = new char[(len+1)], *word = cp, *s = cp; // freed below or in free_path()
+  char **ap = new char*[(len+1)], **arr = ap;	     // overallocates arr[]
+  while (1) {
+    if (*path =='/' || *path == 0) {		// handle path sep or eos
+      if (word != s) { *s++ = 0; *arr++= word; word = s; }
+      if ( !*path++) break; else continue;	// eos? done, else cont
+    } else if ( *path == '\\' ) {		// handle escape
+      if ( *(++path) ) { *s++ = *path++; } else continue;
+    } else { *s++ = *path++; }			// handle normal char
   }
-  *sout = 0;
-  arrsize++;				// (room for terminating NULL) 
-  // Second pass: create array, save nonblank elements
-  char **arr = (char**)malloc(sizeof(char*) * arrsize);
-  int t = 0;
-  sin = save;
-  while ( seps-- > 0 ) {
-    if ( *sin ) { arr[t++] = sin; }	// skips empty fields, e.g. '//'
-    sin += (strlen(sin) + 1);
-  }
-  arr[t] = 0;
-  return(arr);
+  *arr = 0;
+  if ( arr == ap ) delete[] cp;	// empty arr[]? delete since free_path() can't
+  return ap;
 }
 
 // INTERNAL: Free an array 'arr' returned by parse_path()
 static void free_path(char **arr) {
   if ( arr ) {
-    if ( arr[0] ) { free((void*)arr[0]); }
-    free((void*)arr);
+    if ( arr[0] ) { delete[] arr[0]; }	// deletes cp in parse_path
+    delete[] arr;  // deletes ptr array
   }
 }
 
