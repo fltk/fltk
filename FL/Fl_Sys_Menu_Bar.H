@@ -45,6 +45,9 @@ public:
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
   void menu(const Fl_Menu_Item *m);
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
+  int add(const char* label, const char* shortcut, Fl_Callback* cb, void *user_data=0, int flags=0) {
+    return add(label, fl_old_shortcut(shortcut), cb, user_data, flags);
+    }
   int insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data=0, int flags=0);
   void remove(int n);
   void replace(int rank, const char *name);
