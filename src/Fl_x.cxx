@@ -709,7 +709,7 @@ static void fl_init_workarea() {
   Atom actual;
   unsigned long count, remaining;
   int format;
-  unsigned *xywh = 0;
+  long *xywh = 0;
 
   /* If there are several screens, the _NET_WORKAREA property 
    does not give the work area of the main screen, but that of all screens together.
@@ -717,7 +717,7 @@ static void fl_init_workarea() {
    and fall back to the main screen full area when there are several screens.
    */
   if (Fl::screen_count() > 1 || XGetWindowProperty(fl_display, RootWindow(fl_display, fl_screen),
-			 fl_NET_WORKAREA, 0, 4 * sizeof(unsigned), False,
+			 fl_NET_WORKAREA, 0, 4, False,
                          XA_CARDINAL, &actual, &format, &count, &remaining,
                          (unsigned char **)&xywh) || !xywh || !xywh[2] ||
                          !xywh[3])
