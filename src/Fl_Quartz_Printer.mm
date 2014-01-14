@@ -284,6 +284,13 @@ void Fl_System_Printer::end_job (void)
     fl_alert ("PM Session error %d", (int)status);
   }
   PMSessionEndDocumentNoDialog(printSession);
+#if !__LP64__
+  if (fl_mac_os_version < 100500) {
+    PMRelease(printSettings);
+    PMRelease(pageFormat);
+    PMRelease(printSession);
+    }
+#endif
   Fl_Display_Device::display_device()->set_current();
   fl_gc = 0;
   Fl_Window *w = Fl::first_window();
