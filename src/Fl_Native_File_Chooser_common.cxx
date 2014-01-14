@@ -71,15 +71,15 @@ static void chrcat(char *s, char c) {
   strcat(s, tmp);
 }
 
-// COUNT OCCURANCES OF CHAR 'c' IN 'find'.
-int strcnt(const char *s, char c) {
+// COUNT OCCURRENCES OF CHAR 'c' IN 'find'.
+static int strcnt(const char *s, char c) {
   int cnt = 0;
   while ( *s ) { if (*s++ == c ) ++cnt; }
   return cnt;
 }
 
-// COUNT OCCURANCES OF ANY CHARS FROM 'find' IN 's'.
-int strcnt(const char *s, const char *find) {
+// COUNT OCCURRENCES OF ANY CHARS FROM 'find' IN 's'.
+static int strcnt(const char *s, const char *find) {
   int cnt = 0;
   const char *f;
   while ( *s ) {
