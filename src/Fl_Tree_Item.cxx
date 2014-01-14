@@ -151,23 +151,23 @@ Fl_Tree_Item::Fl_Tree_Item(const Fl_Tree_Item *o) {
 /// Used mainly for debugging.
 ///
 void Fl_Tree_Item::show_self(const char *indent) const {
-  if ( label() ) {
+  const char *thelabel = label() ? label() : "(NULL)";
 #if FLTK_ABI_VERSION >= 10301
-    printf("%s-%s (%d children, this=%p, parent=%p, prev=%p, next=%p, depth=%d)\n",
-           indent,label(),children(),(void*)this, (void*)_parent,
-	   _prev_sibling, _next_sibling, depth());
+  printf("%s-%s (%d children, this=%p, parent=%p, prev=%p, next=%p, depth=%d)\n",
+	 indent,thelabel,children(),(void*)this, (void*)_parent,
+	 _prev_sibling, _next_sibling, depth());
 #else /*FLTK_ABI_VERSION*/
-    printf("%s-%s (%d children, this=%p, parent=%p depth=%d)\n",
-           indent,label(),children(),(void*)this, (void*)_parent, depth());
+  printf("%s-%s (%d children, this=%p, parent=%p depth=%d)\n",
+	 indent,thelabel,children(),(void*)this, (void*)_parent, depth());
 #endif /*FLTK_ABI_VERSION*/
-  }
   if ( children() ) {
-    char *i2 = (char*)malloc(strlen(indent) + 2);
+    char *i2 = new char [strlen(indent)+2];
     strcpy(i2, indent);
     strcat(i2, " |");
     for ( int t=0; t<children(); t++ ) {
       child(t)->show_self(i2);
     }
+    delete[] i2;
   }
   fflush(stdout);
 }
