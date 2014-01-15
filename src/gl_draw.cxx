@@ -473,6 +473,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
   void *base = calloc(4*fifo[current].width, fifo[current].height);
   if (base == NULL) return -1;
+  CGContextRef save_gc = fl_gc;
   fl_gc = CGBitmapContextCreate(base, fifo[current].width, fifo[current].height, 8, fifo[current].width*4, lut, kCGImageAlphaPremultipliedLast);
   CGColorSpaceRelease(lut);
   fl_graphics_driver->font_descriptor(gl_fontsize);
@@ -488,7 +489,7 @@ int gl_texture_fifo::compute_texture(const char* str, int n)
   glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA, fifo[current].width, fifo[current].height, 0,  GL_RGBA, GL_UNSIGNED_BYTE, base);
   glPopAttrib();
   CGContextRelease(fl_gc);
-  fl_gc = NULL;
+  fl_gc = save_gc;
   free(base);
   fifo[current].fdesc = gl_fontsize;
   return current;
