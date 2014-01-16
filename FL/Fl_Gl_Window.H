@@ -70,6 +70,7 @@ class FL_EXPORT Fl_Gl_Window : public Fl_Window {
 
   static int can_do(int, const int *);
   int mode(int, const int *);
+  static int gl_plugin_linkage();
 
 public:
 
