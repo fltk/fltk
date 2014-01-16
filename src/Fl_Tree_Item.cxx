@@ -494,11 +494,15 @@ void Fl_Tree_Item::draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_
   }
 }
 
-// Internal
-// Find the item that the last event was over.
-// If \p 'yonly' is 1, only check event's y value, don't care about x.
-//
-const Fl_Tree_Item *Fl_Tree_Item::find_clicked_(const Fl_Tree_Prefs &prefs, int yonly) const {
+#if FLTK_ABI_VERSION >= 10303
+/// Find the item that the last event was over.
+/// If \p 'yonly' is 1, only check event's y value, don't care about x.
+/// \param[in] prefs The parent tree's Fl_Tree_Prefs
+/// \param[in] yonly -- 0: check both event's X and Y values.
+///                  -- 1: only check event's Y value, don't care about X.
+/// \returns pointer to clicked item, or NULL if none found
+///
+const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) const {
   if ( ! is_visible() ) return(0);
   if ( is_root() && !prefs.showroot() ) {
     // skip event check if we're root but root not being shown
@@ -518,33 +522,63 @@ const Fl_Tree_Item *Fl_Tree_Item::find_clicked_(const Fl_Tree_Prefs &prefs, int 
   if ( is_open() ) {				// open? check children of this item
     for ( int t=0; t<children(); t++ ) {
       const Fl_Tree_Item *item;
-      if ( (item = _children[t]->find_clicked(prefs, yonly)) != NULL) {	// check child and its descendents
-        return(item);							// found?
-      }
+      if ( (item = _children[t]->find_clicked(prefs, yonly)) != NULL)  // recurse into child for descendents
+        return(item);						       // found?
     }
   }
   return(0);
 }
 
 /// Find the item that the last event was over.
-/// There is both a const and non-const version of this method.
+/// If \p 'yonly' is 1, only check event's y value, don't care about x.
+/// \param[in] prefs The parent tree's Fl_Tree_Prefs
+/// \param[in] yonly -- 0: check both event's X and Y values.
+///                  -- 1: only check event's Y value, don't care about X.
+/// \returns pointer to clicked item, or NULL if none found
+/// \version 1.3.3 ABI
 ///
-/// Returns the item if it is visible, and mouse is over it.
-/// Works even if widget deactivated.
-/// Use event_on_collapse_icon() to determine if collapse button was pressed.
+Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) {
+  // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  return(const_cast<Fl_Tree_Item*>(
+	 static_cast<const Fl_Tree_Item &>(*this).find_clicked(prefs, yonly)));
+}
+#else
+/// Find the item that the last event was over.
+/// \param[in] prefs The parent tree's Fl_Tree_Prefs
+/// \returns pointer to clicked item, or NULL if none found
+/// \version 1.3.0
 ///
-/// If \a yonly is set, only the mouse Y position is checked.
-///
-/// \returns const visible item under the event if found, or 0 if none.
-///
-const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) const {
-  return(find_clicked_(prefs, yonly));
+const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) const {
+  if ( ! is_visible() ) return(0);
+  if ( is_root() && !prefs.showroot() ) {
+    // skip event check if we're root but root not being shown
+  } else {
+    // See if event is over us
+    if ( event_inside(_xywh) ) {		// event within this item?
+      return(this);				// found
+    }
+  }
+  if ( is_open() ) {				// open? check children of this item
+    for ( int t=0; t<children(); t++ ) {
+      const Fl_Tree_Item *item;
+      if ( (item = _children[t]->find_clicked(prefs)) != NULL)  // recurse into child for descendents
+        return(item);						// found?
+    }
+  }
+  return(0);
 }
 
-/// A const version of Fl_Tree_Item::find_clicked()
-Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) {
-  return((Fl_Tree_Item*)find_clicked_(prefs, yonly));
+/// Find the item that the last event was over.
+/// \param[in] prefs The parent tree's Fl_Tree_Prefs
+/// \returns pointer to clicked item, or NULL if none found
+/// \version 1.3.0
+///
+Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) {
+  // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  return(const_cast<Fl_Tree_Item*>(
+	 static_cast<const Fl_Tree_Item &>(*this).find_clicked(prefs)));
 }
+#endif
 
 static void draw_item_focus(Fl_Boxtype B, Fl_Color fg, Fl_Color bg, int X, int Y, int W, int H) {
   if (!Fl::visible_focus()) return;

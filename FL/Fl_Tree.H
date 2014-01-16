@@ -390,7 +390,13 @@ public:
   Fl_Tree_Item *find_item(const char *path);
   const Fl_Tree_Item *find_item(const char *path) const;
   int item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *item) const;
+#if FLTK_ABI_VERSION >= 10303
+  const Fl_Tree_Item* find_clicked(int yonly=0) const;
+  Fl_Tree_Item* find_clicked(int yonly=0);
+#else
   const Fl_Tree_Item *find_clicked() const;
+  Fl_Tree_Item *find_clicked();
+#endif
   Fl_Tree_Item *item_clicked();
   Fl_Tree_Item *first();
   Fl_Tree_Item *first_visible();		// deprecated in ABI 10303

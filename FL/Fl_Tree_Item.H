@@ -103,7 +103,6 @@ protected:
   void draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_Prefs &prefs);
   void draw_horizontal_connector(int x1, int x2, int y, const Fl_Tree_Prefs &prefs);
   void recalc_tree();
-  const Fl_Tree_Item* find_clicked_(const Fl_Tree_Prefs &prefs, int yonly=0) const;  // internal
 public:
   Fl_Tree_Item(const Fl_Tree_Prefs &prefs);	// CTOR -- backwards compatible
 #if FLTK_ABI_VERSION >= 10303
@@ -377,8 +376,13 @@ public:
   //////////////////
   // Events
   //////////////////
-  const Fl_Tree_Item *find_clicked(const Fl_Tree_Prefs &prefs, int yonly=0) const;
-  Fl_Tree_Item *find_clicked(const Fl_Tree_Prefs &prefs, int yonly=0);
+#if FLTK_ABI_VERSION >= 10303
+  const Fl_Tree_Item* find_clicked(const Fl_Tree_Prefs &prefs, int yonly=0) const;
+  Fl_Tree_Item* find_clicked(const Fl_Tree_Prefs &prefs, int yonly=0);
+#else
+  const Fl_Tree_Item* find_clicked(const Fl_Tree_Prefs &prefs) const;
+  Fl_Tree_Item* find_clicked(const Fl_Tree_Prefs &prefs);
+#endif
   int event_on_collapse_icon(const Fl_Tree_Prefs &prefs) const;
   int event_on_label(const Fl_Tree_Prefs &prefs) const;
   /// Is this item the root of the tree?

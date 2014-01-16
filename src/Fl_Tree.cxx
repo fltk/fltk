@@ -415,7 +415,11 @@ int Fl_Tree::handle(int e) {
     case FL_PUSH: {		// clicked on tree
       last_my = Fl::event_y();	// save for dragging direction..
       if (Fl::visible_focus() && handle(FL_FOCUS)) Fl::focus(this);
+#if FLTK_ABI_VERSION >= 10303
+      Fl_Tree_Item *item = _root->find_clicked(_prefs, 0);
+#else
       Fl_Tree_Item *item = _root->find_clicked(_prefs);
+#endif
       if ( !item ) {		// clicked, but not on an item?
         _lastselect = 0;
 	switch ( _prefs.selectmode() ) {
@@ -494,7 +498,11 @@ int Fl_Tree::handle(int e) {
       //    During drag, only interested in left-mouse operations.
       //
       if ( Fl::event_button() != FL_LEFT_MOUSE ) break;
-      Fl_Tree_Item *item = _root->find_clicked(_prefs, 1);  // item we're on, vertically
+#if FLTK_ABI_VERSION >= 10303
+      Fl_Tree_Item *item = _root->find_clicked(_prefs, 1); // item we're on, vertically
+#else
+      Fl_Tree_Item *item = _root->find_clicked(_prefs); // item we're on, vertically
+#endif
       if ( !item ) break;			// not near item? ignore drag event
       ret |= 1;					// acknowledge event
       set_item_focus(item);			// becomes new focus item
@@ -1047,6 +1055,28 @@ int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *
   return(0);
 }
 
+#if FLTK_ABI_VERSION >= 10303
+/// Find the item that was last clicked on.
+/// You should use callback_item() instead, which is fast,
+/// and is meant to be used within a callback to determine the item clicked.
+///
+/// This method walks the entire tree looking for the first item that is
+/// under the mouse. (The value of the \p 'yonly' flag affects whether
+/// both x and y events are checked, or just y)
+///
+/// Use this method /only/ if you've subclassed Fl_Tree, and are receiving
+/// events before Fl_Tree has been able to process and update callback_item().
+/// 
+/// \param[in] yonly -- 0: check both event's X and Y values.
+///                  -- 1: only check event's Y value, don't care about X.
+/// \returns The item clicked, or NULL if no item was under the current event.
+/// \version 1.3.0, added yonly parameter as a 1.3.3 ABI feature.
+///
+const Fl_Tree_Item* Fl_Tree::find_clicked(int yonly) const {
+  if ( ! _root ) return(NULL);
+  return(_root->find_clicked(_prefs, yonly));
+}
+#else
 /// Find the item that was last clicked on.
 /// You should use callback_item() instead, which is fast,
 /// and is meant to be used within a callback to determine the item clicked.
@@ -1057,12 +1087,14 @@ int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *
 /// Use this method /only/ if you've subclassed Fl_Tree, and are receiving
 /// events before Fl_Tree has been able to process and update callback_item().
 /// 
-/// \returns The item clicked, or 0 if no item was under the current event.
+/// \returns The item clicked, or NULL if no item was under the current event.
+/// \version 1.3.0
 ///
 const Fl_Tree_Item* Fl_Tree::find_clicked() const {
   if ( ! _root ) return(NULL);
   return(_root->find_clicked(_prefs));
 }
+#endif
 
 /// Set the item that was last clicked.
 /// Should only be used by subclasses needing to change this value.
