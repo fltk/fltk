@@ -752,8 +752,18 @@ int fl_wait( double time )
   return (got_events);
 }
 
-double fl_mac_flush_and_wait(double time_to_wait, char in_idle) {
+double fl_mac_flush_and_wait(double time_to_wait) {
+  static int in_idle = 0;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  if (Fl::idle) {
+    if (!in_idle) {
+      in_idle = 1;
+      Fl::idle();
+      in_idle = 0;
+    }
+    // the idle function may turn off idle, we can then wait:
+    if (Fl::idle) time_to_wait = 0.0;
+  }
   Fl::flush();
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;

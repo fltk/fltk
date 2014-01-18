@@ -67,7 +67,7 @@ void fl_cleanup_pens(void);
 void fl_release_dc(HWND,HDC);
 void fl_cleanup_dc_list(void);
 #elif defined(__APPLE__)
-extern double fl_mac_flush_and_wait(double time_to_wait, char in_idle);
+extern double fl_mac_flush_and_wait(double time_to_wait);
 #endif // WIN32
 
 //
@@ -430,7 +430,7 @@ static void run_checks()
   }
 }
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__APPLE__)
 static char in_idle;
 #endif
 
@@ -520,16 +520,7 @@ double Fl::wait(double time_to_wait) {
 #elif defined(__APPLE__)
 
   run_checks();
-  if (idle) {
-    if (!in_idle) {
-      in_idle = 1;
-      idle();
-      in_idle = 0;
-    }
-    // the idle function may turn off idle, we can then wait:
-    if (idle) time_to_wait = 0.0;
-  }
-  return fl_mac_flush_and_wait(time_to_wait, in_idle);
+  return fl_mac_flush_and_wait(time_to_wait);
 
 #else
 
