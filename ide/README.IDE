@@ -18,7 +18,7 @@ Notes :
 -------
 (1) For *nix platforms based on the autoconf/configure/make toolchain,
     simply run autoconf, then the configure script on the root dir.
-    read the ./README file for more info.
+    Read the ./README file for more info.
 (2) When first using the project file (ide/VisualC6/fltk.dsw) with
     VC++ 2005, you will be asked to convert the project to the newer 
     format.
