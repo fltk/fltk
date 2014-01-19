@@ -768,6 +768,8 @@ double fl_mac_flush_and_wait(double time_to_wait) {
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   double retval = fl_wait(time_to_wait);
+  if (fl_gc) CGContextFlush(fl_gc);
+  fl_gc = 0; // essential because the graphics context may be autoreleased
   [pool release];
   return retval;
 }
@@ -1052,14 +1054,7 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 - (BOOL)windowShouldClose:(id)fl
 {
   fl_lock_function();
-  NSView *old_focus = [NSView focusView];
   Fl::handle( FL_CLOSE, [(FLWindow *)fl getFl_Window] ); // this might or might not close the window
-  NSView *new_focus = [NSView focusView];
-  // the currently focused view can have changed
-  if (new_focus != old_focus) { 
-    // in that case it is necessary to remove the new lock (see STR #3010)
-    [new_focus unlockFocus];
-  }
   fl_unlock_function();
   // the system doesn't need to send [fl close] because FLTK does it when needed
   return NO; 
@@ -1465,6 +1460,7 @@ void Fl_X::flush()
 {
   w->flush();
   if (fl_gc) CGContextFlush(fl_gc);
+  fl_gc = 0;
 }
 
 /*
@@ -2608,11 +2604,7 @@ void Fl_Window::make_current()
     win = (Fl_Window*)win->window();
   }
   
-  NSView *current_focus = [NSView focusView]; 
-  // sometimes current_focus is set to a non-FLTK view: don't touch that
-  if ( [current_focus isKindOfClass:[FLView class]] ) [current_focus unlockFocus];
-  [[i->xid contentView]  lockFocus];
-  i->gc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+  i->gc = (CGContextRef)[[NSGraphicsContext graphicsContextWithWindow:fl_window] graphicsPort];
   fl_gc = i->gc;
   Fl_Region fl_window_region = XRectangleRegion(0,0,w(),h());
   if ( ! this->window() ) {
@@ -2680,7 +2672,8 @@ void Fl_X::q_clear_clipping() {
 void Fl_X::q_release_context(Fl_X *x) {
   if (x && x->gc!=fl_gc) return;
   if (!fl_gc) return;
-  CGContextRestoreGState(fl_gc); // matches the CGContextSaveGState of make_current
+  CGContextRestoreGState(fl_gc); // KEEP IT: matches the CGContextSaveGState of make_current
+  CGContextFlush(fl_gc);
   fl_gc = 0;
 #if defined(FLTK_USE_CAIRO)
   if (Fl::cairo_autolink_context()) Fl::cairo_make_current((Fl_Window*) 0); // capture gc changes automatically to update the cairo context adequately
@@ -2876,10 +2869,6 @@ void Fl_X::relink(Fl_Window *w, Fl_Window *wp) {
 void Fl_X::destroy() {
   // subwindows share their xid with their parent window, so should not close it
   if (!subwindow && w && !w->parent() && xid) {
-    NSView *topview = [xid contentView]; 
-    if ( [NSView focusView] == topview ) {
-      [topview unlockFocus];
-    }
     [xid close];
   }
 }
@@ -3345,13 +3334,12 @@ static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, 
     y += win->y();
     win = win->window();
   }
-  CGFloat epsilon = 0;
-  if (fl_mac_os_version >= 100600) epsilon = 0.5; // STR #2887
-  // The epsilon offset is absolutely necessary under 10.6. Without it, the top pixel row and
-  // left pixel column are not read, and bitmap is read shifted by one pixel in both directions. 
-  // Under 10.5, we want no offset.
-  NSRect rect = NSMakeRect(x - epsilon, y - epsilon, w, h);
-  return [[[NSBitmapImageRep alloc] initWithFocusedViewRect:rect] autorelease];
+  NSRect rect = NSMakeRect(x, win->h()-(y+h), w, h);
+  NSView *currentview = [fl_xid(win) contentView];
+  [currentview lockFocus];
+  NSBitmapImageRep *bitmap = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:rect] autorelease];
+  [currentview unlockFocus];
+  return bitmap;
 }
 
 unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel)
@@ -3457,7 +3445,6 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   win->show();
   fl_gc = NULL;
   Fl::check();
-  win->make_current();
   // capture the window title bar with no title
   unsigned char *bitmap = Fl_X::bitmap_from_window_rect(win, 0, -bt, win->w(), bt, &bpp);
   win->label(title); // put back the window title
