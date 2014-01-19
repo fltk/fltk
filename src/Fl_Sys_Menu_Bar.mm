@@ -144,7 +144,7 @@ extern void (*fl_unlock_function)();
   FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
 						action:@selector(doCallback:) 
 					 keyEquivalent:@""];
-  NSData *pointer = [NSData dataWithBytesNoCopy:(void*)mitem length:sizeof(Fl_Menu_Item) freeWhenDone:NO];
+  NSData *pointer = [NSData dataWithBytes:(void*)mitem length:sizeof(Fl_Menu_Item)];
   [item setRepresentedObject:pointer];
   [menu addItem:item];
   CFRelease(cfname);
