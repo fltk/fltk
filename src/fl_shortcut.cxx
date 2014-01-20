@@ -270,14 +270,73 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
    # - Alt
    + - Shift
    ^ - Control
+   ! - Meta
+   @ - Command (Ctrl on linux/win, Meta on OSX)
   \endverbatim
+
+  These special characters can be combined to form chords of modifier
+  keys. (See 'Remarks' below)
+
+  After the optional modifier key prefixes listed above, one can either
+  specify a single keyboard character to use as the shortcut, or a
+  numeric sequence in hex, decimal or octal.
+
+  Examples:
+  \verbatim
+   "c"      -- Uses 'c' as the shortcut
+   "#^c"    -- Same as FL_ALT|FL_CTRL|'c'
+   "#^!c"   -- Same as FL_ALT|FL_CTRL|FL_META|'c'
+   "@c"     -- Same as FL_COMMAND|'c' (see FL_COMMAND for platform specific behavior)
+   "0x63"   -- Same as "c" (hex 63=='c')
+   "99"     -- Same as "c" (dec 99=='c')
+   "0143"   -- Same as "c" (octal 0143=='c')
+   "^0x63"  -- Same as (FL_CTRL|'c'), or (FL_CTRL|0x63)
+   "^99"    -- Same as (FL_CTRL|'c'), or (FL_CTRL|99)
+   "^0143"  -- Same as (FL_CTRL|'c'), or (FL_CTRL|0143)
+  \endverbatim
+
+  \remarks
+      Due to XForms legacy, there are some odd things to consider
+      when using the modifier characters.
+  \remarks
+      (1) You can use the special modifier keys for chords *only*
+      if the modifiers are provided in this order: #, +, ^, !, @.
+      Other ordering can yield undefined results.
+  \remarks
+      So for instance, Ctrl-Alt-c must be specified as "#^c" (and not
+      "^#c"), due to the above ordering rule.
+  \remarks
+      (2) If you want to make a shortcut that uses one of the special
+      modifier characters (as the character being modified), then to
+      avoid confusion, specify the numeric equivalent, e.g.
+  \remarks
+  \verbatim
+   If you want..                    Then use..
+   -----------------------------    ------------------------------
+   '#' as the shortcut..            "0x23"  (instead of just "#").
+   '+' as the shortcut..            "0x2b"  (instead of just "+").
+   '^' as the shortcut..            "0x5e"  (instead of just "^").
+   Alt-+ as the shortcut..          "#0x2b" (instead of "#+").
+   Alt-^ as the shortcut..          "#0x5e" (instead of "#^").
+   ..etc..
+  \endverbatim
+  \remarks
+      As a general rule that's easy to remember, unless the shortcut
+      key to be modified is a single alpha-numeric character [A-Z,a-z,0-9),
+      it's probably best to use the numeric equivalents.
+
+  \todo Fix these silly legacy issues in a future release
+        to support more predictable behavior for the modifier keys.
 */
 unsigned int fl_old_shortcut(const char* s) {
   if (!s || !*s) return 0;
+  if (s[1]==0 && strchr("@!",s[0])) return s[0]; // maintain legacy behavior for "!" and "@"
   unsigned int n = 0;
   if (*s == '#') {n |= FL_ALT; s++;}
   if (*s == '+') {n |= FL_SHIFT; s++;}
   if (*s == '^') {n |= FL_CTRL; s++;}
+  if (*s == '!') {n |= FL_META; s++;} 	 // added in 1.3.3
+  if (*s == '@') {n |= FL_COMMAND; s++;} // added in 1.3.3
   if (*s && s[1]) return n | (int)strtol(s,0,0); // allow 0xf00 to get any key
   return n | *s;
 }
