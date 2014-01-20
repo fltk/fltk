@@ -372,11 +372,18 @@ public:
   ///////////////////////
   void root_label(const char *new_label);
   Fl_Tree_Item* root();
+  void root(Fl_Tree_Item *newitem);
+  const Fl_Tree_Prefs& prefs() const { return _prefs; }
 
   ////////////////////////////////
   // Item creation/removal methods
   ////////////////////////////////
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Tree_Item *add(const char *path, Fl_Tree_Item *newitem=0);
+#else
   Fl_Tree_Item *add(const char *path);
+  Fl_Tree_Item *add(const char *path, Fl_Tree_Item *newitem);
+#endif
   Fl_Tree_Item* add(Fl_Tree_Item *parent_item, const char *name);
   Fl_Tree_Item *insert_above(Fl_Tree_Item *above, const char *name);
   Fl_Tree_Item* insert(Fl_Tree_Item *item, const char *name, int pos);
@@ -407,7 +414,7 @@ public:
   Fl_Tree_Item *last_visible();			// deprecated in ABI 10303
   Fl_Tree_Item *last_visible_item();
 #if FLTK_ABI_VERSION >= 10303
-  Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);
+  Fl_Tree_Item *next_visible_item(Fl_Tree_Item *start, int dir);	// made public in 1.3.3 ABI
 #endif
   Fl_Tree_Item *first_selected_item();
   Fl_Tree_Item *last_selected_item();
@@ -444,16 +451,24 @@ public:
   int deselect_all(Fl_Tree_Item *item=0, int docallback=1);
   int select_only(Fl_Tree_Item *selitem, int docallback=1);
   int select_all(Fl_Tree_Item *item=0, int docallback=1);
+  int extend_selection_dir(Fl_Tree_Item *from,
+                           Fl_Tree_Item *to,
+			   int dir,
+			   int val,
+			   bool visible);
 #if FLTK_ABI_VERSION >= 10303
-  void extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to);
-  int extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to, int dir, int val, bool visible);
-  int extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to, int val, bool visible);
+  int extend_selection(Fl_Tree_Item *from,
+  		       Fl_Tree_Item *to,
+		       int val=1,
+		       bool visible=false);
 #else
-  // Adding overload if not at least one overload breaks ABI, so avoid
-  // See: http://www.ros.org/reps/rep-0009.html
 private:
-  int extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to, int dir, int val, bool visible);
-  int extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to, int val, bool visible);
+  // Adding overload if not at least one overload breaks ABI, so avoid
+  // by keeping private until we can break ABI. ref: http://www.ros.org/reps/rep-0009.html
+  int extend_selection__(Fl_Tree_Item *from,
+  			 Fl_Tree_Item *to,
+			 int val,
+			 bool visible);
 public:
 #endif
   void set_item_focus(Fl_Tree_Item *item);
@@ -522,10 +537,6 @@ public:
   void item_draw_mode(int mode);
 #endif
 #if FLTK_ABI_VERSION >= 10303
-  void item_draw_callback(Fl_Tree_Item_Draw_Callback *cb, void *data=0);
-  Fl_Tree_Item_Draw_Callback* item_draw_callback() const;
-  void* item_draw_user_data() const;
-  void do_item_draw_callback(Fl_Tree_Item *o) const;
   void calc_dimensions();
   void calc_tree();
 #endif

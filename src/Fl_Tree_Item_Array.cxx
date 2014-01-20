@@ -150,6 +150,29 @@ void Fl_Tree_Item_Array::add(Fl_Tree_Item *val) {
   insert(_total, val);
 }
 
+/// Replace the item at \p index with \p newitem.
+///
+/// Old item at index position will be destroyed,
+/// and the new item will take it's place, and stitched into the linked list.
+///
+void Fl_Tree_Item_Array::replace(int index, Fl_Tree_Item *newitem) {
+  if ( _items[index] ) {			// delete if non-zero
+#if FLTK_ABI_VERSION >= 10303
+    if ( _flags & MANAGE_ITEM )
+#endif
+      // Destroy old item
+      delete _items[index];
+  }
+  _items[index] = newitem;			// install new item
+#if FLTK_ABI_VERSION >= 10303
+  if ( _flags & MANAGE_ITEM ) 
+#endif
+  {
+    // Restitch into linked list
+    _items[index]->update_prev_next(index);
+  }
+}
+
 /// Remove the item at \param[in] index from the array.
 ///
 ///     The item will be delete'd (if non-NULL), so its destructor will be called.

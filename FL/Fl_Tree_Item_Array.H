@@ -87,6 +87,7 @@ public:
   void clear();
   void add(Fl_Tree_Item *val);
   void insert(int pos, Fl_Tree_Item *new_item);
+  void replace(int pos, Fl_Tree_Item *new_item);
   void remove(int index);
   int  remove(Fl_Tree_Item *item);
 #if FLTK_ABI_VERSION >= 10303

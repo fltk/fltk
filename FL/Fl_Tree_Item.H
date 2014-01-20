@@ -52,6 +52,17 @@
 /// When you make changes to items, you'll need to tell the tree to redraw()
 /// for the changes to show up.
 ///
+/// New 1.3.3 ABI feature:
+/// You can define custom items by either adding a custom widget to the item
+/// with Fl_Tree_Item::widget(), or override the draw_item_content() method
+/// if you want to just redefine how the label is drawn.
+///
+/// The following shows the Fl_Tree_Item's dimensions, useful when overriding
+/// the draw_item_content() method:
+///
+///     \image html  Fl_Tree_Item-dimensions.png "Fl_Tree_Item's internal dimensions." width=6cm
+///     \image latex Fl_Tree_Item-dimensions.png "Fl_Tree_Item's internal dimensions." width=6cm
+///
 class Fl_Tree;
 class FL_EXPORT Fl_Tree_Item {
 #if FLTK_ABI_VERSION >= 10303
@@ -96,6 +107,7 @@ class FL_EXPORT Fl_Tree_Item {
   Fl_Tree_Item           *_prev_sibling;	// previous sibling (same level)
   Fl_Tree_Item           *_next_sibling;	// next sibling (same level)
 #endif /*FLTK_ABI_VERSION*/
+  // Protected methods
 protected:
   void _Init(const Fl_Tree_Prefs &prefs, Fl_Tree *tree);
   void show_widgets();
@@ -103,6 +115,12 @@ protected:
   void draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_Prefs &prefs);
   void draw_horizontal_connector(int x1, int x2, int y, const Fl_Tree_Prefs &prefs);
   void recalc_tree();
+  int calc_item_height(const Fl_Tree_Prefs &prefs) const;
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Color drawfgcolor() const;
+  Fl_Color drawbgcolor() const;
+#endif
+
 public:
   Fl_Tree_Item(const Fl_Tree_Prefs &prefs);	// CTOR -- backwards compatible
 #if FLTK_ABI_VERSION >= 10303
@@ -110,20 +128,35 @@ public:
 #endif
   ~Fl_Tree_Item();				// DTOR
   Fl_Tree_Item(const Fl_Tree_Item *o);		// COPY CTOR
+  /// The item's x position relative to the window
   int x() const { return(_xywh[0]); }
+  /// The item's y position relative to the window
   int y() const { return(_xywh[1]); }
+  /// The entire item's width to right edge of Fl_Tree's inner width
+  /// within scrollbars.
   int w() const { return(_xywh[2]); }
+  /// The item's height
   int h() const { return(_xywh[3]); }
+  /// The item's label x position relative to the window
+  /// \version 1.3.3
   int label_x() const { return(_label_xywh[0]); }
+  /// The item's label y position relative to the window
+  /// \version 1.3.3
   int label_y() const { return(_label_xywh[1]); }
+  /// The item's maximum label width to right edge of Fl_Tree's inner width
+  /// within scrollbars.
+  /// \version 1.3.3
   int label_w() const { return(_label_xywh[2]); }
+  /// The item's label height
+  /// \version 1.3.3
   int label_h() const { return(_label_xywh[3]); }
-  int calc_item_height(const Fl_Tree_Prefs &prefs) const;
 #if FLTK_ABI_VERSION >= 10303
+  virtual int draw_item_content(int render);
   void draw(int X, int &Y, int W, Fl_Tree_Item *itemfocus, 
-            int &tree_item_xmax, int lastchild=1, int render=1);
+	    int &tree_item_xmax, int lastchild=1, int render=1);
 #else
-  void draw(int X, int &Y, int W, Fl_Widget *tree, Fl_Tree_Item *itemfocus, const Fl_Tree_Prefs &prefs, int lastchild=1);
+  void draw(int X, int &Y, int W, Fl_Widget *tree, 
+            Fl_Tree_Item *itemfocus, const Fl_Tree_Prefs &prefs, int lastchild=1);
 #endif
   void show_self(const char *indent = "") const;
   void label(const char *val);
@@ -157,25 +190,27 @@ public:
   void labelfgcolor(Fl_Color val) {
     _labelfgcolor = val; 
   }
-  /// Set item's label text color.
-  void labelcolor(Fl_Color val) {
-    _labelfgcolor = val; 
-  }
-  /// Return item's label text color.
-  Fl_Color labelcolor() const {
-    return(_labelfgcolor); 
-  }
   /// Return item's label foreground text color.
   Fl_Color labelfgcolor() const {
     return(_labelfgcolor); 
   }
+  /// Set item's label text color. Alias for labelfgcolor(Fl_Color)).
+  void labelcolor(Fl_Color val) {
+     labelfgcolor(val);
+  }
+  /// Return item's label text color. Alias for labelfgcolor() const).
+  Fl_Color labelcolor() const {
+    return labelfgcolor(); 
+  }
   /// Set item's label background color.
-  /// A special case is made for color 0xffffffff which is treated as 'transparent'.
+  /// A special case is made for color 0xffffffff which uses the parent tree's bg color.
   void labelbgcolor(Fl_Color val) {
     _labelbgcolor = val; 
   }
-  /// Return item's background text color.
-  /// If the color is 0xffffffff, it is 'transparent'.
+  /// Return item's label background text color.
+  /// If the color is 0xffffffff, the default behavior is the parent tree's
+  /// bg color will be used. (An overloaded draw_item_content() can override
+  /// this behavior.)
   Fl_Color labelbgcolor() const {
     return(_labelbgcolor); 
   }
@@ -209,15 +244,29 @@ public:
   void clear_children();
   void swap_children(int ax, int bx);
   int swap_children(Fl_Tree_Item *a, Fl_Tree_Item *b);
-  const Fl_Tree_Item *find_child_item(char **arr) const;	// const
-        Fl_Tree_Item *find_child_item(char **arr);		// non-const
-  const Fl_Tree_Item *find_item(char **arr) const;		// const
-        Fl_Tree_Item *find_item(char **arr);			// non-const
+  const Fl_Tree_Item *find_child_item(const char *name) const;
+        Fl_Tree_Item *find_child_item(const char *name);
+  const Fl_Tree_Item *find_child_item(char **arr) const;
+        Fl_Tree_Item *find_child_item(char **arr);
+  const Fl_Tree_Item *find_item(char **arr) const;
+        Fl_Tree_Item *find_item(char **arr);
   //////////////////
   // Adding items
   //////////////////
-  Fl_Tree_Item *add(const Fl_Tree_Prefs &prefs, const char *new_label);
-  Fl_Tree_Item *add(const Fl_Tree_Prefs &prefs, char **arr);
+  Fl_Tree_Item *add(const Fl_Tree_Prefs &prefs,
+  		    const char *new_label,
+  		    Fl_Tree_Item *newitem);
+  Fl_Tree_Item *add(const Fl_Tree_Prefs &prefs,
+  		    const char *new_label);
+  Fl_Tree_Item *add(const Fl_Tree_Prefs &prefs,
+  		    char **arr,
+		    Fl_Tree_Item *newitem);
+  Fl_Tree_Item *add(const Fl_Tree_Prefs &prefs,
+  		    char **arr);
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Tree_Item *replace(Fl_Tree_Item *new_item);
+  Fl_Tree_Item *replace_child(Fl_Tree_Item *olditem, Fl_Tree_Item *newitem);
+#endif
   Fl_Tree_Item *insert(const Fl_Tree_Prefs &prefs, const char *new_label, int pos=0);
   Fl_Tree_Item *insert_above(const Fl_Tree_Prefs &prefs, const char *new_label);
   int depth() const;
@@ -246,6 +295,7 @@ public:
     _parent = val;
   }
 #if FLTK_ABI_VERSION >= 10303
+  const Fl_Tree_Prefs& prefs() const;
   /// Return the tree for this item.
   const Fl_Tree *tree() const {
     return(_tree);
@@ -323,9 +373,8 @@ public:
   /// Change the item's activation state to the optionally specified 'val'.
   ///
   /// When deactivated, the item will be 'grayed out'; the callback() 
-  /// won't be invoked if the user clicks on the label. If the item
-  /// has a widget() associated with the item, its activation state
-  /// will be changed as well.
+  /// won't be invoked if the user clicks on the label. If a widget()
+  /// is associated with the item, its activation state will be changed as well.
   ///
   /// If 'val' is not specified, the item will be activated.
   ///
@@ -350,7 +399,7 @@ public:
   char is_activated() const {
     return(is_flag(ACTIVE));
   }
-  /// See if the item is activated.
+  /// See if the item is activated. Alias for is_activated().
   char is_active() const {
     return(is_activated());
   }
@@ -391,6 +440,7 @@ public:
   }
 
   // Protected methods
+  // TODO: move these to top 'protected:' section
 protected:
 #if FLTK_ABI_VERSION >= 10301
   /// Set a flag to an on or off value. val is 0 or 1.

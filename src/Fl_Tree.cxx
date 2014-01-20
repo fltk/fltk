@@ -58,7 +58,7 @@ static char **parse_path(const char *path) {
 static void free_path(char **arr) {
   if ( arr ) {
     if ( arr[0] ) { delete[] arr[0]; }	// deletes cp in parse_path
-    delete[] arr;  // deletes ptr array
+    delete[] arr;  			// deletes ptr array
   }
 }
 
@@ -128,10 +128,15 @@ Fl_Tree::~Fl_Tree() {
 /// depending on direction \p 'dir', \p 'val', and \p 'visible'.
 ///
 /// Efficient: does not walk entire tree; starts with \p 'from' and stops
-/// at \p 'to' while moving in direction \p 'dir'. Dir must be specified
-/// though; when not available (such as during SHIFT-click operations),
-/// the other method extend_selection(Fl_Tree_Item*,Fl_Tree_Item*,int,bool)
-/// should be used.  Handles calling redraw() if anything changed.
+/// at \p 'to' while moving in direction \p 'dir'. Dir must be specified though.
+#if FLTK_ABI_VERSION >= 10303
+///
+/// If dir cannot be known in advance, such as during SHIFT-click operations,
+/// the method extend_selection(Fl_Tree_Item*,Fl_Tree_Item*,int,bool)
+/// should be used.
+#endif
+///
+/// Handles calling redraw() if anything changed.
 ///
 /// \param[in] from Starting item
 /// \param[in] to   Ending item
@@ -140,15 +145,10 @@ Fl_Tree::~Fl_Tree() {
 /// \param[in] visible true=affect only open(), visible items,<br>
 ///                    false=affect open or closed items (default)
 /// \returns The number of items whose selection states were changed, if any.
+/// \version 1.3.3
 ///
-#if FLTK_ABI_VERSION >= 10303
-int Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to,
-			      int dir, int val, bool visible ) {
-#else
-// Adding overload if not at least one overload breaks ABI, so avoid
-int Fl_Tree::extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to,
-			        int dir, int val, bool visible ) {
-#endif
+int Fl_Tree::extend_selection_dir(Fl_Tree_Item *from, Fl_Tree_Item *to,
+			          int dir, int val, bool visible ) {
   int changed = 0;
   for (Fl_Tree_Item *item=from; item; item = next_item(item, dir, visible) ) {
     switch (val) {
@@ -171,8 +171,8 @@ int Fl_Tree::extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to,
 /// Extend a selection between \p 'from' and \p 'to' depending on \p 'visible'.
 ///
 /// Similar to the more efficient
-/// extend_selection(Fl_Tree_Item*,Fl_Tree_Item*,int,int,bool) method,
-/// but direction (up or down) doesn't need to be known.<br>
+/// extend_selection_dir(Fl_Tree_Item*,Fl_Tree_Item*,int dir,int val,bool vis)
+/// method, but direction (up or down) doesn't need to be known.<br>
 /// We're less efficient because we search the tree for to/from, then operate
 /// on items in between. The more efficient method avoids the "search",
 /// but necessitates a direction to be specified to find \p 'to'.<br>
@@ -185,12 +185,14 @@ int Fl_Tree::extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to,
 /// \param[in] visible true=affect only open(), visible items,<br>
 ///                    false=affect open or closed items (default)
 /// \returns The number of items whose selection states were changed, if any.
-///
 #if FLTK_ABI_VERSION >= 10303
+/// \version 1.3.3 ABI feature
 int Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to,
 			      int val, bool visible) {
 #else
+/// \notes Made public in 1.3.3 ABI
 // Adding overload if not at least one overload breaks ABI, so avoid
+// by making a private function until ABI can change..
 int Fl_Tree::extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to,
 			        int val, bool visible) {
 #endif
@@ -237,13 +239,17 @@ int Fl_Tree::extend_selection__(Fl_Tree_Item *from, Fl_Tree_Item *to,
 }
 
 #if FLTK_ABI_VERSION >= 10303
-// nothing
+// not needed, above overload handles this
 #else
 /// Extend a selection between \p 'from' and \p 'to'.
+/// Extends selection for items and all children, visible ('open') or not.
+/// Walks entire tree from top to bottom looking for \p 'from' and \p 'to'.
+/// \version 1.3.0
+///
 void Fl_Tree::extend_selection(Fl_Tree_Item *from, Fl_Tree_Item *to) {
-  const int val = 1;
-  const bool visible = false;
-  extend_selection__(from, to, val, visible);
+  const int val = 1;		// 0=clr, 1=set, 2=toggle
+  const bool visible = false;	// true=only 'open' items, false='open' or 'closed'
+  extend_selection__(from, to, val, visible);	// use private method until we can release it
 }
 #endif
 
@@ -521,11 +527,7 @@ int Fl_Tree::handle(int e) {
 	  Fl_Tree_Item *to = item;
 	  int val = is_ctrl ? 2 : 1;	// toggle_select() or just select()?
 	  bool visible = true;
-#if FLTK_ABI_VERSION >= 10303
-	  extend_selection(from, to, dir, val, visible);
-#else
-	  extend_selection__(from, to, dir, val, visible);
-#endif
+	  extend_selection_dir(from, to, dir, val, visible);
 	  break;
 	}
       }
@@ -850,6 +852,7 @@ int Fl_Tree::draw_tree() {
 /// Print the tree as 'ascii art' to stdout.
 /// Used mainly for debugging.
 /// \todo should be const
+/// \version 1.3.0
 ///
 void Fl_Tree::show_self() {
   if ( ! _root ) return;
@@ -870,9 +873,28 @@ Fl_Tree_Item* Fl_Tree::root() {
   return(_root);
 }
 
+/// Sets the root item to \p 'newitem'.
+///
+/// If a root item already exists, clear() is first to clear it
+/// before replacing it with newitem.
+///
+#if FLTK_ABI_VERSION >= 10303
+/// Use this to install a custom item (derived from Fl_Tree_Item) as the root
+/// of the tree. This allows the derived class to implement custom drawing
+/// by overriding Fl_Tree_Item::draw_item_content().
+///
+#endif
+/// \version 1.3.3
+///
+void Fl_Tree::root(Fl_Tree_Item *newitem) {
+  if ( _root ) clear();
+  _root = newitem;
+}
+
 /// Adds a new item, given a menu style \p 'path'.
 /// Any parent nodes that don't already exist are created automatically.
 /// Adds the item based on the value of sortorder().
+/// If \p 'item' is NULL, a new item is created.
 ///
 /// To specify items or submenus that contain slashes ('/' or '\')
 /// use an escape character to protect them, e.g.
@@ -881,10 +903,15 @@ Fl_Tree_Item* Fl_Tree::root() {
 ///     tree->add("/Pathnames/c:\\\\Program Files\\\\MyApp"); // Adds item "c:\Program Files\MyApp"
 /// \endcode
 /// \param[in] path The path to the item, e.g. "Flintsone/Fred".
+/// \param[in] item The new item to be added.
+///                 If NULL, a new item is created with
+///                 a name that is the last element in \p 'path'.
 /// \returns The new item added, or 0 on error.
+/// \version 1.3.3
 ///
-Fl_Tree_Item* Fl_Tree::add(const char *path) {
-  if ( ! _root ) {					// Create root if none
+Fl_Tree_Item* Fl_Tree::add(const char *path, Fl_Tree_Item *item) {
+  // Tree has no root? make one
+  if ( ! _root ) {
 #if FLTK_ABI_VERSION >= 10303
     _root = new Fl_Tree_Item(this);
 #else
@@ -892,12 +919,28 @@ Fl_Tree_Item* Fl_Tree::add(const char *path) {
 #endif
     _root->parent(0);
     _root->label("ROOT");
-  }
+  } 
+  // Find parent item via path
   char **arr = parse_path(path);
-  Fl_Tree_Item *item = _root->add(_prefs, arr);
+  item = _root->add(_prefs, arr, item);
   free_path(arr);
   return(item);
 }
+
+#if FLTK_ABI_VERSION >= 10303
+// do nothing here: add(path,item) where item defaults to 0 takes its place
+#else
+/// Adds a new item given a menu style \p 'path'.
+/// Same as calling add(path, NULL);
+/// \param[in] path The path to the item to be created, e.g. "Flintsone/Fred".
+/// \returns The new item added, or 0 on error.
+/// \see add(const char*,Fl_Tree_Item*)
+/// \version 1.3.0 release
+///
+Fl_Tree_Item* Fl_Tree::add(const char *path) {
+  return add(path, 0);
+}
+#endif
 
 /// Add a new child item labeled \p 'name' to the specified \p 'parent_item'.
 ///
@@ -905,6 +948,7 @@ Fl_Tree_Item* Fl_Tree::add(const char *path) {
 ///                        Must not be NULL.
 /// \param[in] name The label for the new item
 /// \returns The new item added.
+/// \version 1.3.0 release
 ///
 Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *parent_item, const char *name) {
   return(parent_item->add(_prefs, name));
@@ -949,7 +993,7 @@ int Fl_Tree::remove(Fl_Tree_Item *item) {
   return(0);
 } 
 
-/// Clear all children from the tree.
+/// Clear the entire tree's children, including the root.
 /// The tree will be left completely empty.
 ///
 void Fl_Tree::clear() {
@@ -987,7 +1031,7 @@ void Fl_Tree::clear_children(Fl_Tree_Item *item) {
 /// \see item_pathname()
 ///
 Fl_Tree_Item *Fl_Tree::find_item(const char *path) {
-  // I evoke "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
 	 static_cast<const Fl_Tree&>(*this).find_item(path)));
 }
@@ -1136,6 +1180,7 @@ Fl_Tree_Item* Fl_Tree::item_clicked() {
 /// \param[in] item The item above/below which we'll find the next visible item
 /// \param[in] dir  The direction to search. Can be FL_Up or FL_Down.
 /// \returns The item found, or 0 if there's no visible items above/below the specified \p item.
+/// \version 1.3.3
 ///
 Fl_Tree_Item *Fl_Tree::next_visible_item(Fl_Tree_Item *item, int dir) {
   return next_item(item, dir, true);
@@ -1166,6 +1211,7 @@ Fl_Tree_Item* Fl_Tree::first_visible() {
 /// Returns the first open(), visible item in the tree, or 0 if none.
 /// \returns First visible item in tree, or 0 if none.
 /// \see first_visible_item(), last_visible_item(), next_visible_item()
+/// \version 1.3.3
 ///
 Fl_Tree_Item* Fl_Tree::first_visible_item() {
   Fl_Tree_Item *i = showroot() ? first() : next(first());
@@ -1234,7 +1280,7 @@ Fl_Tree_Item* Fl_Tree::last() {
 }
 
 /// Returns the last open(), visible item in the tree.
-/// \deprecated in 1.3.3 ABI -- use last_visible_item() instead.
+/// \deprecated in 1.3.3 -- use last_visible_item() instead.
 ///
 Fl_Tree_Item* Fl_Tree::last_visible() {
   return(last_visible_item());
@@ -1243,6 +1289,7 @@ Fl_Tree_Item* Fl_Tree::last_visible() {
 /// Returns the last open(), visible item in the tree.
 /// \returns Last visible item in the tree, or 0 if none.
 /// \see first_visible_item(), last_visible_item(), next_visible_item()
+/// \version 1.3.3
 ///
 Fl_Tree_Item* Fl_Tree::last_visible_item() {
   Fl_Tree_Item *item = last();
@@ -1313,6 +1360,7 @@ Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item) {
 ///
 /// \returns The last selected item, or 0 if none.
 /// \see first_selected_item(), last_selected_item(), next_selected_item()
+/// \version 1.3.3
 ///     
 Fl_Tree_Item *Fl_Tree::last_selected_item() {
   return(next_selected_item(0, FL_Up));
@@ -1325,13 +1373,13 @@ Fl_Tree_Item *Fl_Tree::last_selected_item() {
 /// If \p 'visible' is true, only items whose parents are open() will be returned.
 /// If \p 'visible' is false, even items whose parents are close()ed will be returned.
 ///
-/// If \p item is 0, the return value will be:
-/// <pre>
-///      last_visible_item()   - If \p visible=true and \p dir=FL_Up<br>
-///      first_visible_item()  - If \p visible=true and \p dir=FL_Down<br>
-///      last()                - If \p visible=false and \p dir=FL_Up<br>
-///      first()               - If \p visible=false and \p dir=FL_Down
-/// </pre>
+/// If \p item is 0, the return value will be the result of this truth table:
+/// <PRE>
+///                        visible=true           visible=false
+///                        -------------------    -------------
+///          dir=Fl_Up:    last_visible_item()    last()
+///        dir=Fl_Down:    first_visible_item()   first()
+/// </PRE>
 ///
 /// \par Example use:
 /// \code
@@ -1361,7 +1409,8 @@ Fl_Tree_Item *Fl_Tree::last_selected_item() {
 /// \see first(), last(), next(),<BR>
 ///      first_visible_item(), last_visible_item(), next_visible_item(),<BR>
 ///      first_selected_item(), last_selected_item(), next_selected_item()
-///
+/// \version 1.3.3
+///  
 Fl_Tree_Item *Fl_Tree::next_item(Fl_Tree_Item *item, int dir, bool visible) {
   if ( ! item ) {					// no start item?
     if ( visible ) {
@@ -1408,6 +1457,7 @@ Fl_Tree_Item *Fl_Tree::next_item(Fl_Tree_Item *item, int dir, bool visible) {
 ///                 FL_Down for down the tree (default)
 /// \returns The next selected item, or 0 if there are no more selected items.
 /// \see first_selected_item(), last_selected_item(), next_selected_item()
+/// \version 1.3.3
 ///
 Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) {
   switch (dir) {
@@ -1451,6 +1501,7 @@ Fl_Tree_Item *Fl_Tree::next_selected_item(Fl_Tree_Item *item, int dir) {
 /// \param[out] ret_items The returned array of selected items.
 /// \returns The number of items in the returned array.
 /// \see first_selected_item(), next_selected_item()
+/// \version 1.3.3 ABI feature
 ///
 int Fl_Tree::get_selected_items(Fl_Tree_Item_Array &ret_items) {
   ret_items.clear();
@@ -2350,7 +2401,7 @@ void Fl_Tree::item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode) {
 }
 #endif
 
-#if FLTK_ABI_VERSION >= 10303
+#if FLTK_ABI_VERSION >= 10301
 /// Get the 'item draw mode' used for the tree
 Fl_Tree_Item_Draw_Mode Fl_Tree::item_draw_mode() const {
   return(_prefs.item_draw_mode());
@@ -2372,54 +2423,6 @@ void Fl_Tree::item_draw_mode(Fl_Tree_Item_Draw_Mode mode) {
 ///
 void Fl_Tree::item_draw_mode(int mode) {
   _prefs.item_draw_mode(Fl_Tree_Item_Draw_Mode(mode));
-}
-
-/// Set a callback to be invoked to handle drawing the Fl_Tree_Item
-/// instead of the default label drawing behavior. Lets one define
-/// custom drawing behavior for Fl_Tree_Item's. e.g.
-/// \code
-/// static void draw_item(Fl_Tree_Item *item, void *data) {
-///     Fl_Tree *tree = (Fl_Tree*)data;
-///     int X=item->label_x(), Y=item->label_y(),
-///         W=item->label_w(), H=item->label_h();
-///     // Draw the background
-///     fl_color(item->is_selected() ? tree->selection_color() : item->labelbgcolor());
-///     fl_rectf(X,Y,W,H);
-///     // Draw text
-///     fl_font(item->labelfont(), item->labelsize());
-///     fl_color(item->labelfgcolor());
-///     fl_draw("Some text", X+tree->labelmarginleft(),Y,W,H, FL_ALIGN_LEFT);
-/// }
-/// ..
-/// int main() {
-///    Fl_Tree *tree = new Fl_Tree(0,0,100,100);
-///    tree->item_draw_callback(draw_item, (void*)tree);
-///    [..]
-/// \endcode
-/// \param[in] cb The callback to use
-/// \param[in] data Optional item_draw_user_data() (default=NULL)
-/// \note This only affects the drawing of item's labels,
-///       it does not affect the drawing of widgets assigned with
-///       Fl_Tree_Item::widget().
-///
-void Fl_Tree::item_draw_callback(Fl_Tree_Item_Draw_Callback *cb, void *data) {
-  _prefs.item_draw_callback(cb,data);	// no recalc_tree() -- changes don't affect item geometry
-}
-
-/// Get the current item draw callback. Returns 0 if none.
-Fl_Tree_Item_Draw_Callback* Fl_Tree::item_draw_callback() const {
-  return(_prefs.item_draw_callback());
-}
-
-/// Get the current item draw callback's user data.
-void* Fl_Tree::item_draw_user_data() const {
-  return(_prefs.item_draw_user_data());
-}
-
-/// Invoke the configured item_draw_callback().
-/// Do NOT call this if no item_draw_callback() was configured.
-void Fl_Tree::do_item_draw_callback(Fl_Tree_Item *o) const {
-  _prefs.do_item_draw_callback(o);
 }
 #endif
 
@@ -2613,11 +2616,11 @@ int Fl_Tree::scrollbar_size() const {
 /// Normally you should not need this method, and should use the global
 /// Fl::scrollbar_size(int) instead to manage the size of ALL 
 /// your widgets' scrollbars. This ensures your application 
-/// has a consistent UI, is the default behavior, and is normally
-/// what you want.
+/// has a consistent UI, and is the default behavior. Normally
+/// this is what you want.
 ///
-/// Only use THIS method if you really need to override just this
-/// widget instance's scrollbar size. (The need for this should be rare.)
+/// Only use this method if you really need to override just THIS
+/// instance of the widget's scrollbar size. (This need should be rare.)
 ///   
 /// Setting \p size to the special value of 0 causes the widget to
 /// track the global Fl::scrollbar_size(), which is the default.
