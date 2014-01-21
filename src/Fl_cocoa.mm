@@ -3455,14 +3455,31 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   delete rgb;
   delete[] bitmap;
   if (title) { // print the window title
-    fl_font(FL_HELVETICA, 14); // the exact font is LucidaGrande 13 pts
-    fl_color(FL_BLACK);
-    const int skip = 68; // about the width of the zone of the 3 window control buttons
-    int x = x_offset + win->w()/2 - fl_width(title)/2;
-    if (x < x_offset+skip) x = x_offset+skip;
-    fl_push_clip(x_offset, y_offset, win->w(), bt);
-    fl_draw(title, x, y_offset+bt/2+4);
-    fl_pop_clip();
+    const int skip = 68; // approx width of the zone of the 3 window control buttons
+    if (fl_mac_os_version >= 100400) { // use Cocoa string drawing with exact title bar font
+      NSGraphicsContext *current = [NSGraphicsContext currentContext];
+      [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:fl_gc flipped:YES]];//10.4
+      NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0] 
+						       forKey:NSFontAttributeName];
+      NSString *title_s = [NSString stringWithUTF8String:title];
+      NSSize size = [title_s sizeWithAttributes:attr];
+      int x = x_offset + win->w()/2 - size.width/2;
+      if (x < x_offset+skip) x = x_offset+skip;
+      NSRect r = {{x, y_offset+bt/2+4}, {win->w() - skip, bt}};
+      [[NSGraphicsContext currentContext] setShouldAntialias:YES];
+      [title_s drawWithRect:r options:0 attributes:attr]; // 10.4
+      [[NSGraphicsContext currentContext] setShouldAntialias:NO];
+      [NSGraphicsContext setCurrentContext:current];
+      }
+    else {
+      fl_font(FL_HELVETICA, 14); // the exact font is LucidaGrande 13 pts
+      fl_color(FL_BLACK);
+      int x = x_offset + win->w()/2 - fl_width(title)/2;
+      if (x < x_offset+skip) x = x_offset+skip;
+      fl_push_clip(x_offset, y_offset, win->w(), bt);
+      fl_draw(title, x, y_offset+bt/2+4);
+      fl_pop_clip();
+      }
     }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
