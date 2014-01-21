@@ -1120,6 +1120,12 @@ const Fl_Tree_Item* Fl_Tree::find_clicked(int yonly) const {
   if ( ! _root ) return(NULL);
   return(_root->find_clicked(_prefs, yonly));
 }
+
+Fl_Tree_Item *Fl_Tree::find_clicked(int yonly) {
+  // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  return(const_cast<Fl_Tree_Item*>(
+	 static_cast<const Fl_Tree&>(*this).find_clicked(yonly)));
+}
 #else
 /// Find the item that was last clicked on.
 /// You should use callback_item() instead, which is fast,
@@ -1137,6 +1143,11 @@ const Fl_Tree_Item* Fl_Tree::find_clicked(int yonly) const {
 const Fl_Tree_Item* Fl_Tree::find_clicked() const {
   if ( ! _root ) return(NULL);
   return(_root->find_clicked(_prefs));
+}
+Fl_Tree_Item *Fl_Tree::find_clicked() {
+  // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  return(const_cast<Fl_Tree_Item*>(
+	 static_cast<const Fl_Tree&>(*this).find_clicked()));
 }
 #endif
 
