@@ -44,8 +44,13 @@ extern Fl_Pixmap *pixmap[];
 // until a better fix can be found. One way would be to rename this
 // local, static version of function strcasecmp()...
 // AlbrechtS, Jan 03, 2014, svn -r ~10044, see STR #2994
+//
+// For some (yet unknown) reason the previous fix didn't work with
+// CMake-generated MinGW (MSYS) Makefiles, hence we have to use
+// !defined(__MINGW32__) instead of !defined(strcasecmp).
+// AlbrechtS, Jan 21, 2014, svn -r ~10074, see STR #2994
 
-#if !HAVE_STRCASECMP && !defined(strcasecmp)
+#if !HAVE_STRCASECMP && !defined(__MINGW32__)
 //
 // 'strcasecmp()' - Do a case-insensitive compare...
 //

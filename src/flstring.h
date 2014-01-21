@@ -39,7 +39,7 @@
 #    undef index
 #  endif /* index */
 
-#  if defined(WIN32) && !defined(__CYGWIN__)
+#  if defined(WIN32) && !defined(__CYGWIN__) && !defined(__MINGW32__)
 #    define strcasecmp(s,t)	_stricmp((s), (t))
 #    define strncasecmp(s,t,n)	_strnicmp((s), (t), (n))
 /* Visual C++ 2005 incorrectly displays a warning about the use of POSIX APIs
