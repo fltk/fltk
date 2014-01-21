@@ -3457,7 +3457,12 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   if (title) { // print the window title
     fl_font(FL_HELVETICA, 14); // the exact font is LucidaGrande 13 pts
     fl_color(FL_BLACK);
-    fl_draw(title, x_offset+win->w()/2-fl_width(title)/2, y_offset+bt/2+4);
+    const int skip = 68; // about the width of the zone of the 3 window control buttons
+    int x = x_offset + win->w()/2 - fl_width(title)/2;
+    if (x < x_offset+skip) x = x_offset+skip;
+    fl_push_clip(x_offset, y_offset, win->w(), bt);
+    fl_draw(title, x, y_offset+bt/2+4);
+    fl_pop_clip();
     }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
