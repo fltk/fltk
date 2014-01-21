@@ -275,10 +275,41 @@ public:
   static void background2(uchar, uchar, uchar);
 
   // schemes:
-  static int scheme(const char*);
+  static int scheme(const char *name);
   /** See void scheme(const char *name) */
   static const char* scheme() {return scheme_;}
-  /** 
+
+  /** Returns whether the current scheme is the given name.
+
+    This is a fast inline convenience function to support scheme-specific
+    code in widgets, e.g. in their draw() methods, if required.
+
+    Use a valid scheme name, not \p NULL (although \p NULL is allowed,
+    this is not a useful argument - see below).
+
+    If Fl::scheme() has not been set or has been set to the default
+    scheme ("none" or "base"), then this will always return 0 regardless
+    of the argument, because Fl::scheme() is \p NULL in this case.
+
+    \note The stored scheme name is always lowercase, and this method will
+    do a case-sensitive compare, so you \b must use a lowercase string to
+    return the correct value. This is intentional for performance reasons.
+
+    Example:
+    \code
+      if (Fl::scheme_is("gtk+")) { your_code_here(); }
+    \endcode
+
+    \param[in] name \b lowercase string of requested scheme name.
+
+    \return 1 if the given scheme is active, 0 otherwise.
+
+    \see Fl::scheme(const char *name)
+  */
+  static int scheme_is(const char *name) {
+    return (scheme_ && name && !strcmp(name,scheme_));
+  }
+  /**
     Called by scheme according to scheme name. 
     Loads or reloads the current scheme selection. 
     See void scheme(const char *name) 
