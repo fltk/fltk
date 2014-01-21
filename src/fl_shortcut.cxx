@@ -300,7 +300,7 @@ const char* fl_shortcut_label(unsigned int shortcut, const char **eom) {
       when using the modifier characters.
   \remarks
       (1) You can use the special modifier keys for chords *only*
-      if the modifiers are provided in this order: #, +, ^, !, @.
+      if the modifiers are provided in this order: #, +, ^, !, \@.
       Other ordering can yield undefined results.
   \remarks
       So for instance, Ctrl-Alt-c must be specified as "#^c" (and not

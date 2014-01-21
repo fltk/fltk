@@ -292,7 +292,7 @@ public:
     of the argument, because Fl::scheme() is \p NULL in this case.
 
     \note The stored scheme name is always lowercase, and this method will
-    do a case-sensitive compare, so you \b must use a lowercase string to
+    do a case-sensitive compare, so you \b must provide a lowercase string to
     return the correct value. This is intentional for performance reasons.
 
     Example:
