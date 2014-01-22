@@ -3351,6 +3351,7 @@ unsigned char *Fl_X::bitmap_from_window_rect(Fl_Window *win, int x, int y, int w
  */
 {
   NSBitmapImageRep *bitmap = rect_to_NSBitmapImageRep(win, x, y, w, h);
+  if (bitmap == nil) return NULL;
   *bytesPerPixel = [bitmap bitsPerPixel]/8;
   int bpp = (int)[bitmap bytesPerPlane];
   int bpr = (int)[bitmap bytesPerRow];
@@ -3388,6 +3389,7 @@ CGImageRef Fl_X::CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, i
   else {
     int bpp;
     unsigned char *bitmap = bitmap_from_window_rect(win, x, y, w, h, &bpp);
+    if (!bitmap) return NULL;
     CGColorSpaceRef lut = CGColorSpaceCreateDeviceRGB();
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, bitmap, w*h*bpp, imgProviderReleaseData);
     img = CGImageCreate(w, h, 8, 8*bpp, w*bpp, lut,
