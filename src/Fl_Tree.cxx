@@ -957,11 +957,11 @@ Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *parent_item, const char *name) {
 /// Inserts a new item \p 'name' above the specified Fl_Tree_Item \p 'above'.
 /// Example:
 /// \code
-/// tree->add("Aaa/000");   // "000" is index 0 in Aaa's children
-/// tree->add("Aaa/111");   // "111" is index 1 in Aaa's children
-/// tree->add("Aaa/222");   // "222" is index 2 in Aaa's children
+/// tree->add("Aaa/000");       // "000" is index 0 in Aaa's children
+/// tree->add("Aaa/111");       // "111" is index 1 in Aaa's children
+/// tree->add("Aaa/222");       // "222" is index 2 in Aaa's children
 /// ..
-/// // How to insert an item between items Aaa/111 and Aaa/222
+/// // How to use insert_above() to insert a new item above Aaa/222
 /// Fl_Tree_Item *item = tree->find_item("Aaa/222");  // get item Aaa/222
 /// if (item) tree->insert_above(item, "New item");   // insert new item above it
 /// \endcode
@@ -979,11 +979,11 @@ Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
 ///
 /// Example:
 /// \code
-/// tree->add("Aaa/000");   // "000" is index 0 in Aaa's children
-/// tree->add("Aaa/111");   // "111" is index 1 in Aaa's children
-/// tree->add("Aaa/222");   // "222" is index 2 in Aaa's children
+/// tree->add("Aaa/000");       // "000" is index 0 in Aaa's children
+/// tree->add("Aaa/111");       // "111" is index 1 in Aaa's children
+/// tree->add("Aaa/222");       // "222" is index 2 in Aaa's children
 /// ..
-/// // How to insert an item between items Aaa/111 and Aaa/222
+/// // How to use insert() to insert a new item between Aaa/111 + Aaa/222
 /// Fl_Tree_Item *item = tree->find_item("Aaa");  // get parent item Aaa
 /// if (item) tree->insert(item, "New item", 2);  // insert as a child of Aaa at index #2
 /// \endcode
