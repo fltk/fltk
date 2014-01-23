@@ -955,9 +955,21 @@ Fl_Tree_Item* Fl_Tree::add(Fl_Tree_Item *parent_item, const char *name) {
 }
 
 /// Inserts a new item \p 'name' above the specified Fl_Tree_Item \p 'above'.
+/// Example:
+/// \code
+/// tree->add("Aaa/000");   // "000" is index 0 in Aaa's children
+/// tree->add("Aaa/111");   // "111" is index 1 in Aaa's children
+/// tree->add("Aaa/222");   // "222" is index 2 in Aaa's children
+/// ..
+/// // How to insert an item between items Aaa/111 and Aaa/222
+/// Fl_Tree_Item *item = tree->find_item("Aaa/222");  // get item Aaa/222
+/// if (item) tree->insert_above(item, "New item");   // insert new item above it
+/// \endcode
+///
 /// \param[in] above -- the item above which to insert the new item. Must not be NULL.
 /// \param[in] name -- the name of the new item
 /// \returns The new item added, or 0 if 'above' could not be found.
+/// \see insert()
 /// 
 Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
   return(above->insert_above(_prefs, name));
@@ -965,10 +977,22 @@ Fl_Tree_Item* Fl_Tree::insert_above(Fl_Tree_Item *above, const char *name) {
 
 /// Insert a new item \p 'name' into \p 'item's children at position \p 'pos'.
 ///
+/// Example:
+/// \code
+/// tree->add("Aaa/000");   // "000" is index 0 in Aaa's children
+/// tree->add("Aaa/111");   // "111" is index 1 in Aaa's children
+/// tree->add("Aaa/222");   // "222" is index 2 in Aaa's children
+/// ..
+/// // How to insert an item between items Aaa/111 and Aaa/222
+/// Fl_Tree_Item *item = tree->find_item("Aaa");  // get parent item Aaa
+/// if (item) tree->insert(item, "New item", 2);  // insert as a child of Aaa at index #2
+/// \endcode
+///
 /// \param[in] item The existing item to insert new child into. Must not be NULL.
 /// \param[in] name The label for the new item
 /// \param[in] pos The position of the new item in the child list
 /// \returns The new item added.
+/// \see insert_above()
 ///
 Fl_Tree_Item* Fl_Tree::insert(Fl_Tree_Item *item, const char *name, int pos) {
   return(item->insert(_prefs, name, pos));
