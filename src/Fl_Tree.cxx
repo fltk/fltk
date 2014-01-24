@@ -568,6 +568,7 @@ static void redraw_soon(void *data) {
 /// This method is called when the widget is resize()ed or if the
 /// scrollbar's sizes are changed (affects tree widget's inner dimensions
 /// tix/y/w/h), and also used by calc_tree().
+/// \version 1.3.3 ABI feature
 ///
 void Fl_Tree::calc_dimensions() {
   // Calc tree outer xywh
@@ -751,6 +752,7 @@ void Fl_Tree::draw() {
   }
 }
 #else
+/// Standard FLTK draw() method, handles drawing the tree widget.
 void Fl_Tree::draw() {
   int ytoofar = draw_tree();
 
@@ -1051,22 +1053,21 @@ void Fl_Tree::clear_children(Fl_Tree_Item *item) {
 ///
 /// \param[in] path -- the tree item's pathname to be found (e.g. "Flintstones/Fred")
 /// \returns The item, or NULL if not found.
-///
 /// \see item_pathname()
 ///
-Fl_Tree_Item *Fl_Tree::find_item(const char *path) {
-  // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
-  return(const_cast<Fl_Tree_Item*>(
-	 static_cast<const Fl_Tree&>(*this).find_item(path)));
-}
-
-/// A const version of Fl_Tree::find_item(const char *path)
 const Fl_Tree_Item *Fl_Tree::find_item(const char *path) const {
   if ( ! _root ) return(NULL);
   char **arr = parse_path(path);
   const Fl_Tree_Item *item = _root->find_item(arr);
   free_path(arr);
   return(item);
+}
+
+/// Non-const version of Fl_Tree::find_item(const char *path) const
+Fl_Tree_Item *Fl_Tree::find_item(const char *path) {
+  // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
+  return(const_cast<Fl_Tree_Item*>(
+	 static_cast<const Fl_Tree&>(*this).find_item(path)));
 }
 
 // Handle safe 'reverse string concatenation'.
@@ -1138,13 +1139,15 @@ int Fl_Tree::item_pathname(char *pathname, int pathnamelen, const Fl_Tree_Item *
 /// \param[in] yonly -- 0: check both event's X and Y values.
 ///                  -- 1: only check event's Y value, don't care about X.
 /// \returns The item clicked, or NULL if no item was under the current event.
-/// \version 1.3.0, added yonly parameter as a 1.3.3 ABI feature.
+/// \version 1.3.0
+/// \version 1.3.3 ABI feature: added yonly parameter
 ///
 const Fl_Tree_Item* Fl_Tree::find_clicked(int yonly) const {
   if ( ! _root ) return(NULL);
   return(_root->find_clicked(_prefs, yonly));
 }
 
+/// Non-const version of Fl_Tree::find_clicked(int yonly) const.
 Fl_Tree_Item *Fl_Tree::find_clicked(int yonly) {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
@@ -1168,6 +1171,9 @@ const Fl_Tree_Item* Fl_Tree::find_clicked() const {
   if ( ! _root ) return(NULL);
   return(_root->find_clicked(_prefs));
 }
+
+/// Non-const version of Fl_Tree::find_clicked() const.
+/// \version 1.3.0
 Fl_Tree_Item *Fl_Tree::find_clicked() {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
@@ -2423,38 +2429,45 @@ void Fl_Tree::selectmode(Fl_Tree_Select val) {
 }
 
 #if FLTK_ABI_VERSION >= 10301
-/// Returns the current item re/selection mode
+/// Returns the current item re/selection mode.
+/// \version 1.3.1 ABI feature
+///
 Fl_Tree_Item_Reselect_Mode Fl_Tree::item_reselect_mode() const {
   return(_prefs.item_reselect_mode());
 }
 
 /// Sets the item re/selection mode
 /// See ::Fl_Tree_Item_Reselect_Mode for possible values.
+/// \version 1.3.1 ABI feature
 ///
 void Fl_Tree::item_reselect_mode(Fl_Tree_Item_Reselect_Mode mode) {
   _prefs.item_reselect_mode(mode);
 }
-#endif
 
-#if FLTK_ABI_VERSION >= 10301
 /// Get the 'item draw mode' used for the tree
+/// \version 1.3.1 ABI feature
+///
 Fl_Tree_Item_Draw_Mode Fl_Tree::item_draw_mode() const {
   return(_prefs.item_draw_mode());
 }
 
 /// Set the 'item draw mode' used for the tree to \p 'mode'.
-///     This affects how items in the tree are drawn,
-///     such as when a widget() is defined. 
-///     See ::Fl_Tree_Item_Draw_Mode for possible values.
+///
+/// This affects how items in the tree are drawn,
+/// such as when a widget() is defined. 
+/// See ::Fl_Tree_Item_Draw_Mode for possible values.
+/// \version 1.3.1 ABI feature
 ///
 void Fl_Tree::item_draw_mode(Fl_Tree_Item_Draw_Mode mode) {
   _prefs.item_draw_mode(mode);
 }
 
 /// Set the 'item draw mode' used for the tree to integer \p 'mode'.
-///     This affects how items in the tree are drawn,
-///     such as when a widget() is defined. 
-///     See ::Fl_Tree_Item_Draw_Mode for possible values.
+///
+/// This affects how items in the tree are drawn,
+/// such as when a widget() is defined. 
+/// See ::Fl_Tree_Item_Draw_Mode for possible values.
+/// \version 1.3.1 ABI feature
 ///
 void Fl_Tree::item_draw_mode(int mode) {
   _prefs.item_draw_mode(Fl_Tree_Item_Draw_Mode(mode));

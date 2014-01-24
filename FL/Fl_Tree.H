@@ -112,11 +112,11 @@
 ///     FLTK widgets (including custom widgets) can be assigned to tree items via
 ///     Fl_Tree_Item::widget().
 /// \par
-///     When a widget() is defined, the default behavior is for the widget()
-///     to be shown in place of the item's label (if it has one).
+///     When an Fl_Tree_Item::widget() is defined, the default behavior is for the
+///     widget() to be shown in place of the item's label (if it has one).
 ///     Only the widget()'s width will be used; the widget()'s x() and y() position
 ///     will be managed by the tree, and the h() will track the item's height.
-///     This default behavior can be altered: 
+///     This default behavior can be altered (ABI 1.3.1): 
 ///     Setting Fl_Tree::item_draw_mode()'s FL_TREE_ITEM_DRAW_LABEL_AND_WIDGET flag
 ///     causes the label + widget to be displayed together in that order, and
 ///     adding the FL_TREE_ITEM_HEIGHT_FROM_WIDGET flag causes widget's height
@@ -144,10 +144,10 @@
 ///     and each item has its own methods to let the app change these values on a per-item basis
 ///	using methods of the same name:
 /// \par
-///	- Fl_Tree_Item::item_labelfont() -- The item's label font (default: FL_HELVETICA)
-///     - Fl_Tree_Item::item_labelsize() -- The item's label size (default: FL_NORMAL_SIZE)
-///     - Fl_Tree_Item::item_labelfgcolor() -- The item's label foreground color (default: FL_FOREGROUND_COLOR)
-///     - Fl_Tree_Item::item_labelbgcolor() -- The item's label background color (default: 0xffffffff, which tree uses as 'transparent')
+///	- Fl_Tree_Item::labelfont() -- The item's label font (default: FL_HELVETICA)
+///     - Fl_Tree_Item::labelsize() -- The item's label size (default: FL_NORMAL_SIZE)
+///     - Fl_Tree_Item::labelfgcolor() -- The item's label foreground color (default: FL_FOREGROUND_COLOR)
+///     - Fl_Tree_Item::labelbgcolor() -- The item's label background color (default: 0xffffffff, which uses the tree's own bg color)
 ///
 /// \par CALLBACKS
 ///     The tree's callback() will be invoked when items change state or are open/closed.

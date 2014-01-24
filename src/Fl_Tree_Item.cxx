@@ -235,12 +235,7 @@ const Fl_Tree_Item* Fl_Tree_Item::find_child_item(const char *name) const {
   return(0);
 }
 
-/// Return the /immediate/ child of current item
-/// that has the label \p 'name'.
-///
-/// \returns found item, or 0 if not found.
-/// \version 1.3.3
-///
+/// Non-const version of Fl_Tree_Item::find_child_item(const char *name) const.
 Fl_Tree_Item* Fl_Tree_Item::find_child_item(const char *name) {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
@@ -269,13 +264,7 @@ const Fl_Tree_Item *Fl_Tree_Item::find_child_item(char **arr) const {
   return(0);
 }
 
-/// Find child item by descending array \p 'arr' of names.
-/// Does not include self in search.
-/// Only Fl_Tree should need this method. Use Fl_Tree::find_item() instead.
-///
-/// \returns item, or 0 if not found
-/// \version 1.3.0 release
-///
+/// Non-const version of Fl_Tree_Item::find_child_item(char **arr) const.
 Fl_Tree_Item *Fl_Tree_Item::find_child_item(char **arr) {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
@@ -300,12 +289,7 @@ const Fl_Tree_Item *Fl_Tree_Item::find_item(char **names) const {
   return(0);
 }
 
-/// Find item by descending array of \p 'names'.
-/// Includes self in search.
-/// Only Fl_Tree should need this method.
-///
-/// \returns item, or 0 if not found
-///
+/// Non-const version of Fl_Tree_Item::find_item(char **names) const.
 Fl_Tree_Item *Fl_Tree_Item::find_item(char **names) {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
@@ -656,6 +640,7 @@ void Fl_Tree_Item::draw_vertical_connector(int x, int y1, int y2, const Fl_Tree_
 /// \param[in] yonly -- 0: check both event's X and Y values.
 ///                  -- 1: only check event's Y value, don't care about X.
 /// \returns pointer to clicked item, or NULL if none found
+/// \version 1.3.3 ABI feature
 ///
 const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) const {
   if ( ! is_visible() ) return(0);
@@ -684,14 +669,7 @@ const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int y
   return(0);
 }
 
-/// Find the item that the last event was over.
-/// If \p 'yonly' is 1, only check event's y value, don't care about x.
-/// \param[in] prefs The parent tree's Fl_Tree_Prefs
-/// \param[in] yonly -- 0: check both event's X and Y values.
-///                  -- 1: only check event's Y value, don't care about X.
-/// \returns pointer to clicked item, or NULL if none found
-/// \version 1.3.3 ABI feature
-///
+/// Non-const version of Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs&,int) const
 Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs, int yonly) {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
@@ -723,11 +701,7 @@ const Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) const
   return(0);
 }
 
-/// Find the item that the last event was over.
-/// \param[in] prefs The parent tree's Fl_Tree_Prefs
-/// \returns pointer to clicked item, or NULL if none found
-/// \version 1.3.0
-///
+/// Non-const version of Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs&) const.
 Fl_Tree_Item *Fl_Tree_Item::find_clicked(const Fl_Tree_Prefs &prefs) {
   // "Effective C++, 3rd Ed", p.23. Sola fide, Amen.
   return(const_cast<Fl_Tree_Item*>(
