@@ -139,9 +139,9 @@ Fl_Text_Buffer::~Fl_Text_Buffer()
     delete[]mModifyProcs;
     delete[]mCbArgs;
   }
-  if (mNPredeleteProcs != 0) {
-    delete[]mPredeleteProcs;
-    delete[]mPredeleteCbArgs;
+  if (mNPredeleteProcs > 0) {
+    delete[] mPredeleteProcs;
+    delete[] mPredeleteCbArgs;
   }
 }
 
@@ -735,9 +735,9 @@ void Fl_Text_Buffer::add_predelete_callback(Fl_Text_Predelete_Cb bufPreDeleteCB,
     newPreDeleteProcs[i + 1] = mPredeleteProcs[i];
     newCBArgs[i + 1] = mPredeleteCbArgs[i];
   }
-  if (!mNPredeleteProcs != 0) {
-    delete[]mPredeleteProcs;
-    delete[]mPredeleteCbArgs;
+  if (mNPredeleteProcs > 0) {
+    delete[] mPredeleteProcs;
+    delete[] mPredeleteCbArgs;
   }
   newPreDeleteProcs[0] = bufPreDeleteCB;
   newCBArgs[0] = cbArg;
@@ -767,19 +767,16 @@ void Fl_Text_Buffer::remove_predelete_callback(Fl_Text_Predelete_Cb bufPreDelete
     return;
   }
   
-  /* Allocate new lists for remaining callback procs and args (if
-   any are left) */
+  /* Allocate new lists for remaining callback procs and args (if any are left) */
   mNPredeleteProcs--;
   if (mNPredeleteProcs == 0) {
-    mNPredeleteProcs = 0;
     delete[]mPredeleteProcs;
     mPredeleteProcs = NULL;
     delete[]mPredeleteCbArgs;
     mPredeleteCbArgs = NULL;
     return;
   }
-  Fl_Text_Predelete_Cb *newPreDeleteProcs =
-  new Fl_Text_Predelete_Cb[mNPredeleteProcs];
+  Fl_Text_Predelete_Cb *newPreDeleteProcs = new Fl_Text_Predelete_Cb[mNPredeleteProcs];
   void **newCBArgs = new void *[mNPredeleteProcs];
   
   /* copy out the remaining members and free the old lists */
@@ -791,8 +788,8 @@ void Fl_Text_Buffer::remove_predelete_callback(Fl_Text_Predelete_Cb bufPreDelete
     newPreDeleteProcs[i] = mPredeleteProcs[i + 1];
     newCBArgs[i] = mPredeleteCbArgs[i + 1];
   }
-  delete[]mPredeleteProcs;
-  delete[]mPredeleteCbArgs;
+  delete[] mPredeleteProcs;
+  delete[] mPredeleteCbArgs;
   mPredeleteProcs = newPreDeleteProcs;
   mPredeleteCbArgs = newCBArgs;
 }
