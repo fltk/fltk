@@ -44,7 +44,7 @@ int fl_scandir(const char *dirname, struct dirent ***namelist,
   /* #warning FIXME This probably needs to be MORE UTF8 aware now */
   /* #endif */
   for (d = findIn; *d; d++) if (*d=='/') *d='\\';
-  if ((len==0)) { strcpy(findIn, ".\\*"); }
+  if (len==0) { strcpy(findIn, ".\\*"); }
   if ((len==2)&&findIn[1]==':'&&isalpha(findIn[0])) { *d++ = '\\'; *d = 0; }
   if ((len==1)&& (d[-1]=='.')) { strcpy(findIn, ".\\*"); is_dir = 1; }
   if ((len>0) && (d[-1]=='\\')) { *d++ = '*'; *d = 0; is_dir = 1; }
