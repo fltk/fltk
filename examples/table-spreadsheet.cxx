@@ -188,6 +188,14 @@ void Spreadsheet::draw_cell(TableContext context, int R,int C, int X,int Y,int W
       return;
     }
 
+    case CONTEXT_RC_RESIZE:			// table resizing rows or columns
+      if ( input->visible() ) {
+        find_cell(CONTEXT_TABLE, row_edit, col_edit, X, Y, W, H);
+        input->resize(X,Y,W,H);
+        init_sizes();
+      }
+      return;
+
     default:
       return;
   }
