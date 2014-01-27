@@ -710,7 +710,7 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
 
   // whatever input string is, our output won't be much longer in length..
   // use double length just for safety.
-  int slen = strlen(in);
+  size_t slen = strlen(in);
   char *wildprefix = new char[slen*2]; wildprefix[0] = 0;
   char *comp       = new char[slen*2]; comp[0] = 0;
   char *name       = new char[slen*2]; name[0] = 0;

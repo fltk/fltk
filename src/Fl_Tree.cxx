@@ -38,7 +38,7 @@ static void scroll_cb(Fl_Widget*,void *data) {
 //    Caller must call free_path(arr).
 //
 static char **parse_path(const char *path) {
-  int len = strlen(path);
+  size_t len = strlen(path);
   char *cp = new char[(len+1)], *word = cp, *s = cp; // freed below or in free_path()
   char **ap = new char*[(len+1)], **arr = ap;	     // overallocates arr[]
   while (1) {
