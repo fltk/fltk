@@ -3458,12 +3458,12 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   delete[] bitmap;
   if (title) { // print the window title
     const int skip = 68; // approx width of the zone of the 3 window control buttons
-    if (fl_mac_os_version >= 100400) { // use Cocoa string drawing with exact title bar font
+    if (fl_mac_os_version >= 100400 && dynamic_cast<Fl_Quartz_Graphics_Driver*>(this->driver())) { // use Cocoa string drawing with exact title bar font
       NSGraphicsContext *current = [NSGraphicsContext currentContext];
       [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:fl_gc flipped:YES]];//10.4
       NSDictionary *attr = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0] 
 						       forKey:NSFontAttributeName];
-      NSString *title_s = [NSString stringWithUTF8String:title];
+      NSString *title_s = [fl_xid(win) title];
       NSSize size = [title_s sizeWithAttributes:attr];
       int x = x_offset + win->w()/2 - size.width/2;
       if (x < x_offset+skip) x = x_offset+skip;
