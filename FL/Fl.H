@@ -297,7 +297,7 @@ public:
 
     Example:
     \code
-      if (Fl::scheme_is("gtk+")) { your_code_here(); }
+      if (Fl::is_scheme("gtk+")) { your_code_here(); }
     \endcode
 
     \param[in] name \b lowercase string of requested scheme name.
@@ -306,7 +306,7 @@ public:
 
     \see Fl::scheme(const char *name)
   */
-  static int scheme_is(const char *name) {
+  static int is_scheme(const char *name) {
     return (scheme_ && name && !strcmp(name,scheme_));
   }
   /**
