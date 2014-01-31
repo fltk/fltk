@@ -609,7 +609,7 @@ int fl_execvp(const char *file, char *const *argv)
 	return _execvp(fl_utf2mbcs(file), argv);
 #else
 		size_t l = strlen(file);
-		int i, n, ret;
+		int i, n;
 		xchar **ar;
 //		wbuf = (xchar*)realloc(wbuf, sizeof(xchar) * (l+1));
 //		wbuf[fl_utf2unicode((const unsigned char*)file, l, wbuf)] = 0;
@@ -634,14 +634,14 @@ int fl_execvp(const char *file, char *const *argv)
 			i++;
 		}
 		ar[n] = NULL;
-		ret = _wexecvp(wbuf, ar);
+		_wexecvp(wbuf, ar);  // STR #3040
 		i = 0;
 		while (i <= n) {
 			free(ar[i]);
 			i++;
 		}
 		free(ar);
-		return ret;
+		return -1;	     // STR #3040
 #endif
 #else
 	return execvp(file, argv);
