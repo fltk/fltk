@@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 2.6)
 # The FLTK version
 set(FLTK_VERSION_MAJOR "1")
 set(FLTK_VERSION_MINOR "3")
-set(FLTK_VERSION_PATCH "0")
+set(FLTK_VERSION_PATCH "2")
 set(FLTK_VERSION "${FLTK_VERSION_MAJOR}.${FLTK_VERSION_MINOR}")
 set(FLTK_VERSION_FULL "${FLTK_VERSION}.${FLTK_VERSION_PATCH}")
 
@@ -54,6 +54,7 @@ if(APPLE)
    set(HAVE_SNPRINTF 1)
    set(HAVE_VSNPRINTF 1)
    set(HAVE_SCANDIR 1)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework Cocoa")
 endif(APPLE)
@@ -133,7 +134,7 @@ mark_as_advanced(HAVE_SYS_NDIR_H HAVE_SYS_SELECT_H)
 mark_as_advanced(HAVE_SYS_STDTYPES_H HAVE_XDBE_H)
 
 # where to find freetype headers
-find_path(FREETYPE_PATH freetype/config/ftheader.h PATH_SUFFIXES freetype2)
+find_path(FREETYPE_PATH freetype.h PATH_SUFFIXES freetype2)
 if(FREETYPE_PATH)
    include_directories(${FREETYPE_PATH})
 endif(FREETYPE_PATH)
@@ -188,7 +189,7 @@ CHECK_FUNCTION_EXISTS(vsnprintf              HAVE_VSNPRINTF)
 
 set(CMAKE_REQUIRED_LIBRARIES)
 
-if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX AND NOT APPLE)
+if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
    set(MSG "POSIX compatible scandir")
    message(STATUS "Looking for ${MSG}")
    try_compile(V
@@ -202,7 +203,7 @@ if(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX AND NOT APPLE)
       message(STATUS "${MSG} - not found")
       set(HAVE_SCANDIR_POSIX HAVE_SCANDIR_POSIX-NOTFOUND)
    endif(V)
-endif(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX AND NOT APPLE)
+endif(HAVE_SCANDIR AND NOT HAVE_SCANDIR_POSIX)
 mark_as_advanced(HAVE_SCANDIR_POSIX)
 
 #######################################################################
