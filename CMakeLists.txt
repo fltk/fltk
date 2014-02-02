@@ -69,7 +69,7 @@ if(WIN32)
    endif(CMAKE_C_COMPILER_ID STREQUAL GNU)
    if(MINGW AND EXISTS /mingw)
       list(APPEND CMAKE_PREFIX_PATH /mingw)
-	endif(MINGW AND EXISTS /mingw)
+   endif(MINGW AND EXISTS /mingw)
 endif(WIN32)
 
 #######################################################################
@@ -409,6 +409,7 @@ endif(OPTION_USE_THREADS AND CMAKE_HAVE_THREADS_LIBRARY)
 
 if(OPTION_USE_THREADS AND CMAKE_USE_PTHREADS_INIT)
    set(HAVE_PTHREAD 1)
+   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
    list(APPEND FLTK_LDLIBS -lpthread)
    list(APPEND FLTK_CFLAGS -D_THREAD_SAFE -D_REENTRANT)
    set(FLTK_PTHREADS_FOUND TRUE)
