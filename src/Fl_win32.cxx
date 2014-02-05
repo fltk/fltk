@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <time.h>
+#include <signal.h>
 #ifdef __CYGWIN__
 #  include <sys/time.h>
 #  include <unistd.h>
@@ -403,6 +404,9 @@ int fl_wait(double time_to_wait) {
   have_message = PeekMessageW(&fl_msg, NULL, 0, 0, PM_REMOVE);
   if (have_message > 0) {
     while (have_message != 0 && have_message != -1) {
+      // Let applications treat WM_QUIT identical to SIGTERM on *nix
+      if (fl_msg.message == WM_QUIT)
+        raise(SIGTERM);
       if (fl_msg.message == fl_wake_msg) {
         // Used for awaking wait() from another thread
 	thread_message_ = (void*)fl_msg.wParam;
@@ -903,7 +907,6 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
   case WM_CLOSE: // user clicked close box
     Fl::handle(FL_CLOSE, window);
-    PostQuitMessage(0);
     return 0;
 
   case WM_SYNCPAINT :
