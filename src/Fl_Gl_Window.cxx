@@ -292,6 +292,7 @@ int fl_overlay_depth = 0;
 
 
 void Fl_Gl_Window::flush() {
+  if (!shown()) return;
   uchar save_valid = valid_f_ & 1;
 #if HAVE_GL_OVERLAY && defined(WIN32)
   uchar save_valid_f = valid_f_;

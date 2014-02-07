@@ -1750,6 +1750,7 @@ void Fl_Widget::damage(uchar fl, int X, int Y, int W, int H) {
   Fl::damage(FL_DAMAGE_CHILD);
 }
 void Fl_Window::flush() {
+  if (!shown()) return;
   make_current();
 //if (damage() == FL_DAMAGE_EXPOSE && can_boxcheat(box())) fl_boxcheat = this;
   fl_clip_region(i->region); i->region = 0;

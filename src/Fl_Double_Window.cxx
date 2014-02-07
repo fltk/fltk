@@ -369,6 +369,7 @@ void Fl_Double_Window::flush() {flush(0);}
   and leaving the clip region set to the entire window.
 */
 void Fl_Double_Window::flush(int eraseoverlay) {
+  if (!shown()) return;
   make_current(); // make sure fl_gc is non-zero
   Fl_X *myi = Fl_X::i(this);
   if (!myi) return; // window not yet created

@@ -34,6 +34,7 @@
 #  include <FL/Fl_Tooltip.H>
 #  include <FL/fl_draw.H>
 #  include <FL/Fl_Paged_Device.H>
+#  include <FL/fl_ask.H>
 #  include <stdio.h>
 #  include <stdlib.h>
 #  include "flstring.h"
@@ -2339,6 +2340,10 @@ GC fl_gc;
 // make X drawing go into this window (called by subclass flush() impl.)
 void Fl_Window::make_current() {
   static GC gc; // the GC used by all X windows
+  if (!shown()) {
+    fl_alert("Fl_Window::make_current(), but window is not shown().");
+    Fl::fatal("Fl_Window::make_current(), but window is not shown().");
+  }
   if (!gc) gc = XCreateGC(fl_display, i->xid, 0, 0);
   fl_window = i->xid;
   fl_gc = gc;

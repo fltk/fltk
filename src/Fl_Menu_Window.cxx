@@ -54,6 +54,7 @@ void Fl_Menu_Window::show() {
 }
 
 void Fl_Menu_Window::flush() {
+  if (!shown()) return;
 #if HAVE_OVERLAY
   if (!fl_overlay_visual || !overlay()) {Fl_Single_Window::flush(); return;}
   Fl_X *myi = Fl_X::i(this);
