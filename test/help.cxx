@@ -68,14 +68,14 @@ main(int  argc,			// I - Number of command-line arguments
   set_app_dir();
   
   if (argc <= argn)
-    help->load("../../../../documentation/html/intro.html");
+    help->load("../../../../test/help-test.html");
   else
     help->load(argv[argn]);
   
 #else
   
   if (argc <= argn)
-    help->load("../documentation/html/intro.html");
+    help->load("help-test.html");
   else
     help->load(argv[1]);
   
