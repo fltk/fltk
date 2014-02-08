@@ -916,6 +916,10 @@ public:
 
   /** Sets width ww and height hh accordingly with the label size.
       Labels with images will return w() and h() of the image.
+      
+      This calls fl_measure() internally. For more information about
+      the arguments \p ww and \p hh and word wrapping
+      \see fl_measure(const char*, int&, int&, int)
    */
   void measure_label(int& ww, int& hh) const {label_.measure(ww, hh);}
 
