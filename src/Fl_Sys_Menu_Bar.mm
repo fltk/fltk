@@ -17,8 +17,7 @@
 //
 
 /*
- * This code is a quick hack! It was written as a proof of concept.
- * It has been tested on the "menubar" sample program and provides
+ * This code has been tested on the "menubar" sample program and provides
  * basic functionality. 
  * 
  * To use the System Menu Bar, simply replace the main Fl_Menu_Bar
@@ -29,8 +28,6 @@
  * - no symbolic labels
  * - no embossed labels
  * - no font sizes
- * - Shortcut Characters should be Latin letters only
- * - no disable main menus
  *
  * Many other calls of the parent class don't work.
  */
@@ -66,20 +63,43 @@ static char *remove_ampersand(const char *s);
 extern void (*fl_lock_function)();
 extern void (*fl_unlock_function)();
 
+/*  Each MacOS system menu item contains a pointer to a record of type sys_menu_item defined below.
+    The purpose of these records is to associate each MacOS system menu item with a relevant Fl_Menu_Item.
+    If use_rank is YES, the "rank" field is used, and fl_sys_menu_bar->menu() + rank is the address 
+	of the relevant Fl_Menu_Item;
+    Otherwise, the "item" field points to the relevant Fl_Menu_Item.
+    This allows the MacOS system menu to use the same Fl_Menu_Item's as those used by FLTK menus, 
+    the address of which can be relocated by the FLTK menu logic.
+    The "item" field is used for non-relocatable Fl_Menu_Item's associated to FL_SUBMENU_POINTER.
+    Sending the getFlItem message to a MacOS system menu item (of class FLMenuItem) returns the address
+    of the relevant Fl_Menu_Item.
+*/
+typedef struct {
+  union {
+    int rank;
+    const Fl_Menu_Item *item;
+  };
+  BOOL use_rank;
+} sys_menu_item;
+
+
 @interface FLMenuItem : NSMenuItem {
 }
 - (void) doCallback:(id)unused;
 - (void) directCallback:(id)unused;
 - (const Fl_Menu_Item*) getFlItem;
-- (void) setKeyEquivalent:(char)value;
 - (void) setKeyEquivalentModifierMask:(int)value;
+- (void) setFltkShortcut:(int)key;
 + (int) addNewItem:(const Fl_Menu_Item*)mitem menu:(NSMenu*)menu;
 @end
 
 @implementation FLMenuItem
 - (const Fl_Menu_Item*) getFlItem
+// returns the Fl_Menu_Item corresponding to this system menu item
 {
-  return (const Fl_Menu_Item *)[(NSData*)[self representedObject] bytes];
+  sys_menu_item *smi = (sys_menu_item*)[(NSData*)[self representedObject] bytes];
+  if (smi->use_rank) return fl_sys_menu_bar->menu() + smi->rank;
+  return smi->item;
 }
 - (void) doCallback:(id)unused
 {
@@ -121,12 +141,6 @@ extern void (*fl_unlock_function)();
   if ( item && item->callback() ) item->do_callback(NULL);
   fl_unlock_function();
 }
-- (void) setKeyEquivalent:(char)key
-{
-  NSString *equiv = [[NSString alloc] initWithBytes:&key length:1 encoding:NSASCIIStringEncoding];
-  [super setKeyEquivalent:equiv];
-  [equiv release];
-}
 - (void) setKeyEquivalentModifierMask:(int)value
 {
   NSUInteger macMod = 0;
@@ -136,6 +150,20 @@ extern void (*fl_unlock_function)();
   if ( value & FL_CTRL ) macMod |= NSControlKeyMask;
   [super setKeyEquivalentModifierMask:macMod];
 }
+- (void) setFltkShortcut:(int)key
+{
+  // Separate key and modifier
+  int mod = key;
+  mod &= ~FL_KEY_MASK;	// modifier(s)
+  key &=  FL_KEY_MASK;	// key
+  unichar mac_key = (unichar)key;
+  if ( (key >= (FL_F+1)) && (key <= FL_F_Last) ) { // Handle function keys
+    int fkey_num = (key - FL_F);	// 1,2..
+    mac_key = NSF1FunctionKey + fkey_num - 1;
+    }
+  [self setKeyEquivalent:[NSString stringWithCharacters:&mac_key length:1]];
+  [self setKeyEquivalentModifierMask:mod];
+}
 + (int) addNewItem:(const Fl_Menu_Item*)mitem menu:(NSMenu*)menu
 {
   char *name = remove_ampersand(mitem->label());
@@ -144,7 +172,11 @@ extern void (*fl_unlock_function)();
   FLMenuItem *item = [[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
 						action:@selector(doCallback:) 
 					 keyEquivalent:@""];
-  NSData *pointer = [NSData dataWithBytes:(void*)mitem length:sizeof(Fl_Menu_Item)];
+  sys_menu_item smi;
+  smi.rank = fl_sys_menu_bar->find_index(mitem); // ≥ 0 if mitem is in the menu items of fl_sys_menu_bar, -1 if not
+  smi.use_rank = (smi.rank >= 0);
+  if (!smi.use_rank) smi.item = mitem;
+  NSData *pointer = [NSData dataWithBytes:&smi length:sizeof(smi)];
   [item setRepresentedObject:pointer];
   [menu addItem:item];
   CFRelease(cfname);
@@ -170,10 +202,8 @@ void fl_mac_set_about( Fl_Callback *cb, void *user_data, int shortcut)
   FLMenuItem *item = [[[FLMenuItem alloc] initWithTitle:(NSString*)cfname 
 						 action:@selector(directCallback:) 
 					  keyEquivalent:@""] autorelease];
-  if (aboutItem.shortcut()) {
-    [item setKeyEquivalent:(aboutItem.shortcut() & 0xff)];
-    [item setKeyEquivalentModifierMask:aboutItem.shortcut()];
-  }
+  if (aboutItem.shortcut())
+    [item setFltkShortcut:aboutItem.shortcut()];
   NSData *pointer = [NSData dataWithBytes:&aboutItem length:sizeof(Fl_Menu_Item)];
   [item setRepresentedObject:pointer];
   [appleMenu insertItem:item atIndex:0];
@@ -192,13 +222,8 @@ static void setMenuShortcut( NSMenu* mh, int miCnt, const Fl_Menu_Item *m )
     return;
   if ( m->flags & FL_SUBMENU_POINTER )
     return;
-  char key = m->shortcut_ & 0xff;
-  if ( !isalnum( key ) )
-    return;
-  
   FLMenuItem* menuItem = (FLMenuItem*)[mh itemAtIndex:miCnt];
-  [menuItem setKeyEquivalent:(m->shortcut_ & 0xff)];
-  [menuItem setKeyEquivalentModifierMask:m->shortcut_];
+  [menuItem setFltkShortcut:(m->shortcut_)];
 }
 
 
@@ -281,7 +306,7 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
     else if ( mm->flags & FL_SUBMENU_POINTER )
     {
       const Fl_Menu_Item *smm = (Fl_Menu_Item*)mm->user_data_;
-      createSubMenu( submenu, smm, mm );
+      createSubMenu( submenu, smm, mm);
     }
     if ( flags & FL_MENU_DIVIDER ) {
       [submenu addItem:[NSMenuItem separatorItem]];
@@ -358,7 +383,7 @@ int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void 
 {
   fl_open_display();
   int rank = Fl_Menu_::add(label, shortcut, cb, user_data, flags);
-  convertToMenuBar(Fl_Menu_::menu());
+  update();
   return rank;
 }
 
@@ -374,7 +399,7 @@ int Fl_Sys_Menu_Bar::insert(int index, const char* label, int shortcut, Fl_Callb
 {
   fl_open_display();
   int rank = Fl_Menu_::insert(index, label, shortcut, cb, user_data, flags);
-  convertToMenuBar(Fl_Menu_::menu());
+  update();
   return rank;
 }
 
@@ -387,7 +412,7 @@ void Fl_Sys_Menu_Bar::clear()
 int Fl_Sys_Menu_Bar::clear_submenu(int index)
 {
   int retval = Fl_Menu_::clear_submenu(index);
-  if (retval != -1) convertToMenuBar(Fl_Menu_::menu());
+  if (retval != -1) update();
   return retval;
 }
 
@@ -399,7 +424,7 @@ int Fl_Sys_Menu_Bar::clear_submenu(int index)
 void Fl_Sys_Menu_Bar::remove(int rank)
 {
   Fl_Menu_::remove(rank);
-  convertToMenuBar(Fl_Menu_::menu());
+  update();
 }
 
 
@@ -412,7 +437,7 @@ void Fl_Sys_Menu_Bar::remove(int rank)
 void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
 {
   Fl_Menu_::replace(rank, name);
-  convertToMenuBar(Fl_Menu_::menu());
+  update();
 }
 
 /** Updates the system menu.
@@ -430,14 +455,33 @@ void Fl_Sys_Menu_Bar::update()
 void Fl_Sys_Menu_Bar::draw() {
 }
 
+static int process_sys_menu_shortcuts(int event)
+{
+  if (event != FL_SHORTCUT || !fl_sys_menu_bar) return 0;
+  // have the system menu process the shortcut, highlighting the corresponding menu if found
+  return [[NSApp mainMenu] performKeyEquivalent:[NSApp currentEvent]];
+}
 
+
+/**
+ The constructor.
+ On Mac OS X, all arguments are unused. On other platforms they are used as by Fl_Menu_Bar::Fl_Menu_Bar().
+ */
 Fl_Sys_Menu_Bar::Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l)
 : Fl_Menu_Bar(x,y,w,h,l) 
 {
   deactivate();			// don't let the old area take events
   fl_sys_menu_bar = this;
+  Fl::add_handler(process_sys_menu_shortcuts);
 }
 
+/** The destructor */
+Fl_Sys_Menu_Bar::~Fl_Sys_Menu_Bar()
+{
+  fl_sys_menu_bar = 0;
+  clear();
+  Fl::remove_handler(process_sys_menu_shortcuts);
+}
 
 #endif /* __APPLE__ */
 

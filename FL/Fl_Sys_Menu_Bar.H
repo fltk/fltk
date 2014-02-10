@@ -25,23 +25,24 @@
 #if defined(__APPLE__) || defined(FL_DOXYGEN)
 
 /**
- @brief A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
- *
- * On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
- *
- * You can configure a callback for the 'About' menu item to invoke your own code with fl_mac_set_about().
+ \brief A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
+ 
+  On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
+  Some FLTK features are not supported by the Mac System menu:
+  \li no symbolic labels
+  \li no embossed labels
+  \li no font sizes
+  \li some calls of the parent class don't work
+ 
+  You can configure a callback for the 'About' menu item to invoke your own code with fl_mac_set_about().
  *
  */
 class FL_EXPORT Fl_Sys_Menu_Bar : public Fl_Menu_Bar {
 protected:
   void draw();
 public:
-  /**
-   @brief The constructor.
-   *
-   * On Mac OS X, all arguments are unused. On other platforms they are used as by Fl_Menu_Bar::Fl_Menu_Bar().
-   */
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0);
+  ~Fl_Sys_Menu_Bar();
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
   void menu(const Fl_Menu_Item *m);
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
