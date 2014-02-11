@@ -457,7 +457,7 @@ void Fl_Sys_Menu_Bar::draw() {
 
 static int process_sys_menu_shortcuts(int event)
 {
-  if (event != FL_SHORTCUT || !fl_sys_menu_bar) return 0;
+  if (event != FL_SHORTCUT || !fl_sys_menu_bar || Fl::modal()) return 0;
   // have the system menu process the shortcut, highlighting the corresponding menu if found
   return [[NSApp mainMenu] performKeyEquivalent:[NSApp currentEvent]];
 }
