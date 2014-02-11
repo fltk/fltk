@@ -388,6 +388,19 @@ int Fl_Sys_Menu_Bar::add(const char* label, int shortcut, Fl_Callback *cb, void 
 }
 
 /**
+ * Forms-compatible procedure to add items to the system menu bar
+*
+ * @see Fl_Menu_::add(const char* str) 
+ */
+int Fl_Sys_Menu_Bar::add(const char* str)
+{
+  fl_open_display();
+  int rank = Fl_Menu_::add(str);
+  update();
+  return rank;
+}
+
+/**
  * @brief insert in the system menu bar a new menu item
  *
  * insert in the system menu bar a new menu item, with a title string, shortcut int,
@@ -440,8 +453,7 @@ void Fl_Sys_Menu_Bar::replace(int rank, const char *name)
   update();
 }
 
-/** Updates the system menu.
- Useful after changes in the menu items, e.g., item activation/deactivation.
+/** Updates the system menu after any change to its items.
  */
 void Fl_Sys_Menu_Bar::update()
 {
