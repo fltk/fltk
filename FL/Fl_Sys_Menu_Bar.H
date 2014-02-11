@@ -27,8 +27,9 @@
 /**
  \brief A class to create, modify and delete menus that appear on Mac OS X in the menu bar at the top of the screen.
  
-  On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar.
-  Some FLTK features are not supported by the Mac System menu:
+  On other than Mac OS X platforms, Fl_Sys_Menu_Bar is a synonym of class Fl_Menu_Bar,
+ except for Fl_Sys_Menu_Bar::update() defined for Mac OS X only.
+  \n Some FLTK features are not supported by the Mac System menu:
   \li no symbolic labels
   \li no embossed labels
   \li no font sizes
@@ -43,21 +44,27 @@ protected:
 public:
   Fl_Sys_Menu_Bar(int x,int y,int w,int h,const char *l=0);
   ~Fl_Sys_Menu_Bar();
+  /** Return the system menu's array of Fl_Menu_Item's */
   const Fl_Menu_Item *menu() const {return Fl_Menu_::menu();}
   void menu(const Fl_Menu_Item *m);
   int add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0);
+  /** Adds a new menu item. 
+   \see Fl_Menu_::add(const char* label, int shortcut, Fl_Callback*, void *user_data=0, int flags=0)
+   */
   int add(const char* label, const char* shortcut, Fl_Callback* cb, void *user_data=0, int flags=0) {
     return add(label, fl_old_shortcut(shortcut), cb, user_data, flags);
     }
   int insert(int index, const char* label, int shortcut, Fl_Callback *cb, void *user_data=0, int flags=0);
   void remove(int n);
   void replace(int rank, const char *name);
-#ifdef __APPLE__
   void update();
-#else
-  void update() {}
-#endif
+  /** Set the Fl_Menu_Item array pointer to null, indicating a zero-length menu. 
+   \see Fl_Menu_::clear()
+   */
   void clear();
+  /** Clears the specified submenu pointed to by index of all menu items.
+   \see Fl_Menu_::clear_submenu(int index)
+   */
   int clear_submenu(int index);
 };
 
