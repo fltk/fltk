@@ -808,6 +808,7 @@ int Fl_Table::handle(int event) {
               ret = 1;
             } else {
               // Not resizing? Select the column
+	      if ( Fl::focus() != this && contains(Fl::focus()) ) return 0;	// STR #3018 - item 1
               current_col = select_col = C;
               current_row = 0;
               select_row = rows() - 1;
@@ -834,6 +835,7 @@ int Fl_Table::handle(int event) {
               ret = 1;
             } else {
               // Not resizing? Select the row
+	      if ( Fl::focus() != this && contains(Fl::focus()) ) return 0;	// STR #3018 - item 1
               current_row = select_row = R;
               current_col = 0;
               select_col = cols() - 1;
@@ -899,6 +901,8 @@ int Fl_Table::handle(int event) {
         if (_event_button == 1 && 
             _selecting == CONTEXT_CELL &&
             context == CONTEXT_CELL) {
+          // Dragging a cell selection?
+	  if ( _event_clicks ) break;			// STR #3018 - item 2
           if (select_row != R || select_col != C) {
             damage_zone(current_row, current_col, select_row, select_col, R, C);
           }
