@@ -755,8 +755,11 @@ int Fl_Table::handle(int event) {
           current_col = select_col = C;
           _selecting = CONTEXT_CELL;
         } else {
-          current_row = select_row = -1;
-          current_col = select_col = -1;
+	  // Clear selection if not resizing row/col
+	  if ( !resizeflag ) {
+            current_row = select_row = -1;
+            current_col = select_col = -1;
+	  }
         }
       }
       // A click on table with user's callback defined?
