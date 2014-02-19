@@ -289,7 +289,10 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
   
   while ( mm->text )
   {
-    char visible = mm->visible() ? 1 : 0;
+    if (!mm->visible() ) { // skip invisible items and submenus
+      mm = mm->next(0);
+      continue;
+    }
     miCnt = [FLMenuItem addNewItem:mm menu:submenu];
     setMenuFlags( submenu, miCnt, mm );
     setMenuShortcut( submenu, miCnt, mm );
@@ -311,9 +314,6 @@ static void createSubMenu( NSMenu *mh, pFl_Menu_Item &mm,  const Fl_Menu_Item *m
     if ( flags & FL_MENU_DIVIDER ) {
       [submenu addItem:[NSMenuItem separatorItem]];
       }
-    if ( !visible ) {
-      [submenu removeItem:[submenu itemAtIndex:miCnt]];
-    }
     mm++;
   }
 }
@@ -337,7 +337,10 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
   {
     if ( !mm || !mm->text )
       break;
-    char visible = mm->visible() ? 1 : 0;
+    if (!mm->visible() ) { // skip invisible menus
+      mm = mm->next(0);
+      continue;
+    }
     rank = [FLMenuItem  addNewItem:mm menu:fl_system_menu];
     
     if ( mm->flags & FL_SUBMENU ) {
@@ -347,9 +350,6 @@ static void convertToMenuBar(const Fl_Menu_Item *mm)
     else if ( mm->flags & FL_SUBMENU_POINTER ) {
       const Fl_Menu_Item *smm = (Fl_Menu_Item*)mm->user_data_;
       createSubMenu(fl_system_menu, smm, mm);
-    }
-    if ( !visible ) {
-      [fl_system_menu removeItem:[fl_system_menu itemAtIndex:rank]];
     }
     mm++;
   }
