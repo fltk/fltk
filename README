@@ -85,6 +85,23 @@ BUILDING AND INSTALLING FLTK UNDER UNIX AND Mac OS X
     need to run "make install-desktop" as root.
 
 
+SVN USERS
+    
+    If you've just checked out a fresh copy of FLTK from SVN,
+    you'll need to generate an initial version of 'configure'
+    by running 'make makeinclude'. (We don't include a copy
+    of configure in svn)
+
+
+MAKE TARGETS
+    
+    make            -- builds the library + test programs (does not install)
+    make install    -- builds and installs
+    make clean      -- clean for a rebuild
+    make distclean  -- like 'clean', but also removes docs, configure, fltk-config
+    ( cd src; make ) -- builds just the fltk libraries
+
+
 BUILDING FLTK UNDER MICROSOFT WINDOWS
 
     There are two ways to build FLTK under Microsoft Windows.
