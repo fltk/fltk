@@ -470,8 +470,14 @@ void Fl_Sys_Menu_Bar::draw() {
 static int process_sys_menu_shortcuts(int event)
 {
   if (event != FL_SHORTCUT || !fl_sys_menu_bar || Fl::modal()) return 0;
-  // have the system menu process the shortcut, highlighting the corresponding menu if found
-  return [[NSApp mainMenu] performKeyEquivalent:[NSApp currentEvent]];
+  // is the last event the shortcut of an item of the fl_sys_menu_bar menu ?
+  const Fl_Menu_Item *item = fl_sys_menu_bar->menu()->test_shortcut();
+  if (!item) return 0;
+  if (item->visible()) // have the system menu process the shortcut, highlighting the corresponding menu
+    [[NSApp mainMenu] performKeyEquivalent:[NSApp currentEvent]];
+  else // have FLTK process the shortcut associated to an invisible Fl_Menu_Item
+    fl_sys_menu_bar->picked(item);
+  return 1;
 }
 
 
