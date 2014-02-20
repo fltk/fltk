@@ -81,7 +81,8 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
   if (new_x != old_x || new_y != old_y) {
     untranslate();
   }
-  widget->clear_damage(old_damage);
+  if ((old_damage & FL_DAMAGE_CHILD) == 0) widget->clear_damage(old_damage);
+  else widget->damage(FL_DAMAGE_ALL);
 }
 
 
