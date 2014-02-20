@@ -42,6 +42,7 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
   int old_x, old_y, new_x, new_y, is_window;
   if ( ! widget->visible() ) return;
   is_window = (widget->as_window() != NULL);
+  uchar old_damage = widget->damage();
   widget->damage(FL_DAMAGE_ALL);
   // set origin to the desired top-left position of the widget
   origin(&old_x, &old_y);
@@ -80,6 +81,7 @@ void Fl_Paged_Device::print_widget(Fl_Widget* widget, int delta_x, int delta_y)
   if (new_x != old_x || new_y != old_y) {
     untranslate();
   }
+  widget->clear_damage(old_damage);
 }
 
 
