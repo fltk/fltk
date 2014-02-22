@@ -243,33 +243,37 @@ void Fl_Bitmap::draw(int XP, int YP, int WP, int HP, int cx, int cy) {
   fl_graphics_driver->draw(this, XP, YP, WP, HP, cx, cy);
 }
 
-static int start(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int w, int h, int &cx, int &cy, 
+int Fl_Bitmap::start(int XP, int YP, int WP, int HP, int &cx, int &cy, 
 		 int &X, int &Y, int &W, int &H)
 {
+  if (!array) {
+    draw_empty(XP, YP);
+    return 1;
+  }
   // account for current clip region (faster on Irix):
   fl_clip_box(XP,YP,WP,HP,X,Y,W,H);
   cx += X-XP; cy += Y-YP;
   // clip the box down to the size of image, quit if empty:
   if (cx < 0) {W += cx; X -= cx; cx = 0;}
-  if (cx+W > w) W = w-cx;
+  if (cx+W > w()) W = w()-cx;
   if (W <= 0) return 1;
   if (cy < 0) {H += cy; Y -= cy; cy = 0;}
-  if (cy+H > h) H = h-cy;
+  if (cy+H > h()) H = h()-cy;
   if (H <= 0) return 1;
+#if defined(WIN32)
+  if (!id_) id_ = fl_create_bitmap(w(), h(), array);
+#else
+  if (!id_) id_ = fl_create_bitmask(w(), h(), array);
+#endif
   return 0;
 }
 
 #ifdef __APPLE__
 void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (!bm->array) {
-    bm->draw_empty(XP, YP);
+  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
-  if (start(bm, XP, YP, WP, HP, bm->w(), bm->h(), cx, cy, X, Y, W, H)) {
-    return;
-  }
-  if (!bm->id_) bm->id_ = fl_create_bitmask(bm->w(), bm->h(), bm->array);
   if (bm->id_ && fl_gc) {
     CGRect rect = { { X, Y }, { W, H } };
     Fl_X::q_begin_image(rect, cx, cy, bm->w(), bm->h());
@@ -281,60 +285,62 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int 
 #elif defined(WIN32)
 void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (!bm->array) {
-    bm->draw_empty(XP, YP);
+  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
-  if (start(bm, XP, YP, WP, HP, bm->w(), bm->h(), cx, cy, X, Y, W, H)) {
-    return;
-  }
-  if (!bm->id_) bm->id_ = fl_create_bitmap(bm->w(), bm->h(), bm->array);
   
+  HDC tempdc = CreateCompatibleDC(fl_gc);
+  int save = SaveDC(tempdc);
+  SelectObject(tempdc, (HGDIOBJ)bm->id_);
+  SelectObject(fl_gc, fl_brush());
+  // secret bitblt code found in old MSWindows reference manual:
+  BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
+  RestoreDC(tempdc, save);
+  DeleteDC(tempdc);
+}  
+
+void Fl_GDI_Printer_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
+  int X, Y, W, H;
   typedef BOOL (WINAPI* fl_transp_func)  (HDC,int,int,int,int,HDC,int,int,int,int,UINT);
-  static fl_transp_func fl_TransparentBlt;
+  static fl_transp_func fl_TransparentBlt = NULL;
+  static HMODULE hMod = NULL;
+  if (!hMod) {
+    hMod = LoadLibrary("MSIMG32.DLL");
+    if (hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
+  }
+  if (!fl_TransparentBlt) {
+    Fl_GDI_Graphics_Driver::draw(bm,  XP,  YP,  WP,  HP,  cx,  cy);
+    return;
+    }
+  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
+    return;
+  }
+  
   HDC tempdc;
   int save;
-  BOOL use_print_algo = false;
-  if (Fl_Surface_Device::surface() != Fl_Display_Device::display_device()) {
-    static HMODULE hMod = NULL;
-    if (!hMod) {
-      hMod = LoadLibrary("MSIMG32.DLL");
-      if (hMod) fl_TransparentBlt = (fl_transp_func)GetProcAddress(hMod, "TransparentBlt");
-    }
-    if (fl_TransparentBlt) use_print_algo = true;
-  }
-  if (use_print_algo) { // algorithm for bitmap output to Fl_GDI_Printer
-    Fl_Color save_c = fl_color(); // save bitmap's desired color
-    uchar r, g, b;
-    Fl::get_color(save_c, r, g, b);
-    r = 255-r;
-    g = 255-g;
-    b = 255-b;
-    Fl_Color background = fl_rgb_color(r, g, b); // a color very different from the bitmap's
-    Fl_Offscreen tmp_id = fl_create_offscreen(W, H);
-    fl_begin_offscreen(tmp_id);
-    fl_color(background);
-    fl_rectf(0,0,W,H); // use this color as offscreen background
-    fl_color(save_c); // back to bitmap's color
-    tempdc = CreateCompatibleDC(fl_gc);
-    save = SaveDC(tempdc);
-    SelectObject(tempdc, (HGDIOBJ)bm->id_);
-    SelectObject(fl_gc, fl_brush()); // use bitmap's desired color
-    BitBlt(fl_gc, 0, 0, W, H, tempdc, 0, 0, 0xE20746L); // draw bitmap to offscreen
-    fl_end_offscreen(); // offscreen data is in tmp_id
-    SelectObject(tempdc, (HGDIOBJ)tmp_id); // use offscreen data
-    // draw it to printer context with background color as transparent
-    fl_TransparentBlt(fl_gc, X,Y,W,H, tempdc, cx, cy, bm->w(), bm->h(), RGB(r, g, b) ); 
-    fl_delete_offscreen(tmp_id);
-  }
-  else { // algorithm for bitmap output to display
-    tempdc = CreateCompatibleDC(fl_gc);
-    save = SaveDC(tempdc);
-    SelectObject(tempdc, (HGDIOBJ)bm->id_);
-    SelectObject(fl_gc, fl_brush());
-    // secret bitblt code found in old MSWindows reference manual:
-    BitBlt(fl_gc, X, Y, W, H, tempdc, cx, cy, 0xE20746L);
-  }
+  // algorithm for bitmap output to Fl_GDI_Printer
+  Fl_Color save_c = fl_color(); // save bitmap's desired color
+  uchar r, g, b;
+  Fl::get_color(save_c, r, g, b);
+  r = 255-r;
+  g = 255-g;
+  b = 255-b;
+  Fl_Color background = fl_rgb_color(r, g, b); // a color very different from the bitmap's
+  Fl_Offscreen tmp_id = fl_create_offscreen(W, H);
+  fl_begin_offscreen(tmp_id);
+  fl_color(background);
+  fl_rectf(0,0,W,H); // use this color as offscreen background
+  fl_color(save_c); // back to bitmap's color
+  tempdc = CreateCompatibleDC(fl_gc);
+  save = SaveDC(tempdc);
+  SelectObject(tempdc, (HGDIOBJ)bm->id_);
+  SelectObject(fl_gc, fl_brush()); // use bitmap's desired color
+  BitBlt(fl_gc, 0, 0, W, H, tempdc, 0, 0, 0xE20746L); // draw bitmap to offscreen
+  fl_end_offscreen(); // offscreen data is in tmp_id
+  SelectObject(tempdc, (HGDIOBJ)tmp_id); // use offscreen data
+  // draw it to printer context with background color as transparent
+  fl_TransparentBlt(fl_gc, X,Y,W,H, tempdc, cx, cy, bm->w(), bm->h(), RGB(r, g, b) ); 
+  fl_delete_offscreen(tmp_id);
   RestoreDC(tempdc, save);
   DeleteDC(tempdc);
 }  
@@ -342,14 +348,9 @@ void Fl_GDI_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP,
 #else // Xlib
 void Fl_Xlib_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) {
   int X, Y, W, H;
-  if (!bm->array) {
-    bm->draw_empty(XP, YP);
+  if (bm->start(XP, YP, WP, HP, cx, cy, X, Y, W, H)) {
     return;
   }
-  if (start(bm, XP, YP, WP, HP, bm->w(), bm->h(), cx, cy, X, Y, W, H)) {
-    return;
-  }
-  if (!bm->id_) bm->id_ = fl_create_bitmask(bm->w(), bm->h(), bm->array);
   
   XSetStipple(fl_display, fl_gc, bm->id_);
   int ox = X-cx; if (ox < 0) ox += bm->w();

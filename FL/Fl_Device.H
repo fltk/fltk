@@ -482,6 +482,7 @@ public:
   static const char *class_id;
   const char *class_name() {return class_id;};
   void draw(Fl_Pixmap *pxm, int XP, int YP, int WP, int HP, int cx, int cy);
+  void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy);
 };
 #endif
 #if !(defined(__APPLE__) || defined(WIN32))
