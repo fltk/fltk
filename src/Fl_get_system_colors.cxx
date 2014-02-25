@@ -295,6 +295,7 @@ int Fl::scheme(const char *s) {
     if (!fl_ascii_strcasecmp(s, "none") || !fl_ascii_strcasecmp(s, "base") || !*s) s = 0;
     else if (!fl_ascii_strcasecmp(s, "gtk+")) s = strdup("gtk+");
     else if (!fl_ascii_strcasecmp(s, "plastic")) s = strdup("plastic");
+    else if (!fl_ascii_strcasecmp(s, "gleam")) s = strdup("gleam");
     else s = 0;
   }
   if (scheme_) free((void*)scheme_);
@@ -378,6 +379,27 @@ int Fl::reload_scheme() {
     set_boxtype(FL_THIN_DOWN_BOX,   FL_GTK_THIN_DOWN_BOX);
     set_boxtype(_FL_ROUND_UP_BOX,   FL_GTK_ROUND_UP_BOX);
     set_boxtype(_FL_ROUND_DOWN_BOX, FL_GTK_ROUND_DOWN_BOX);
+
+    // Use slightly thinner scrollbars...
+    Fl::scrollbar_size(15);
+  } else if (scheme_ && !fl_ascii_strcasecmp(scheme_, "gleam")) {
+    // Use a GTK+ inspired look-n-feel...
+    if (scheme_bg_) {
+      delete scheme_bg_;
+      scheme_bg_ = (Fl_Image *)0;
+    }
+
+    set_boxtype(FL_UP_FRAME,        FL_GLEAM_UP_FRAME);
+    set_boxtype(FL_DOWN_FRAME,      FL_GLEAM_DOWN_FRAME);
+    set_boxtype(FL_THIN_UP_FRAME,   FL_GLEAM_UP_FRAME);
+    set_boxtype(FL_THIN_DOWN_FRAME, FL_GLEAM_DOWN_FRAME);
+
+    set_boxtype(FL_UP_BOX,          FL_GLEAM_UP_BOX);
+    set_boxtype(FL_DOWN_BOX,        FL_GLEAM_DOWN_BOX);
+    set_boxtype(FL_THIN_UP_BOX,     FL_GLEAM_THIN_UP_BOX);
+    set_boxtype(FL_THIN_DOWN_BOX,   FL_GLEAM_THIN_DOWN_BOX);
+    set_boxtype(_FL_ROUND_UP_BOX,   FL_GLEAM_ROUND_UP_BOX);
+    set_boxtype(_FL_ROUND_DOWN_BOX, FL_GLEAM_ROUND_DOWN_BOX);
 
     // Use slightly thinner scrollbars...
     Fl::scrollbar_size(15);

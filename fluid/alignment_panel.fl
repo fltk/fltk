@@ -187,6 +187,10 @@ Function {make_settings_window()} {} {
         label {GTK+}
         xywh {10 10 35 25}
       }
+      MenuItem {} {
+        label {Gleam}
+        xywh {20 20 35 25}
+      }
     }
     Fl_Group {} {open
       xywh {116 43 220 126} labelfont 1 align 0

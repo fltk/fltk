@@ -2928,6 +2928,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\src\fl_gleam.cxx"
+			>
+		</File>
+		<File
 			RelativePath="..\..\src\Fl_Help_Dialog.cxx"
 			>
 			<FileConfiguration

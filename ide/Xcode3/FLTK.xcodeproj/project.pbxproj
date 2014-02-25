@@ -110,6 +110,7 @@
 		291FA24A9E91A2036BC718A2 /* Fl_Overlay_Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D1C792936D427CC48581BFAE /* Fl_Overlay_Window.cxx */; };
 		29303C4480E0BBEB9E29EE7B /* vsnprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = EBC0D2C965EDD6503B0CF519 /* vsnprintf.c */; };
 		299CB8A2848CB844BCEC7829 /* Fl_Paged_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */; };
+		299E717818BC503400FF83F2 /* fl_gleam.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 299E717718BC503400FF83F2 /* fl_gleam.cxx */; };
 		29A99477531233BE9391CE66 /* Fl_Slider.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5AF5119D08DFC92EA1032671 /* Fl_Slider.cxx */; };
 		29B01C1F3FF6C5B007DEEF45 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		29ED282EF51CBBB0CDEE76D6 /* Fl_Color_Chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 058BCBC36ADE724A418F1C43 /* Fl_Color_Chooser.cxx */; };
@@ -4145,6 +4146,7 @@
 		28AFF174A53E38CCB7475C19 /* jdmaster.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmaster.c; path = ../../jpeg/jdmaster.c; sourceTree = SOURCE_ROOT; };
 		28E8F2802DEA5334F914BE98 /* Fl_grab.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_grab.cxx; path = ../../src/Fl_grab.cxx; sourceTree = SOURCE_ROOT; };
 		28F3E4EBB6E5F8420624A5DA /* Fl_Scrollbar.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Scrollbar.H; path = ../../FL/Fl_Scrollbar.H; sourceTree = SOURCE_ROOT; };
+		299E717718BC503400FF83F2 /* fl_gleam.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_gleam.cxx; path = ../../src/fl_gleam.cxx; sourceTree = SOURCE_ROOT; };
 		29E61287C1F4A1123829C900 /* glut_font.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glut_font.cxx; path = ../../src/glut_font.cxx; sourceTree = SOURCE_ROOT; };
 		2A3CEBA07E8AE9BF4C002531 /* CubeMain.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CubeMain.cxx; path = ../../test/CubeMain.cxx; sourceTree = SOURCE_ROOT; };
 		2A5CB08352A0DBD0980FC770 /* pngpread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngpread.c; path = ../../png/pngpread.c; sourceTree = SOURCE_ROOT; };
@@ -5560,6 +5562,7 @@
 				FA2F70BA8FF4E7F4B7B36971 /* fl_file_dir.cxx */,
 				9E8F7BCC0292044D887D423B /* fl_font.cxx */,
 				7A2CE7959780A1C6E60103E8 /* fl_gtk.cxx */,
+				299E717718BC503400FF83F2 /* fl_gleam.cxx */,
 				EF6D2F48B12359DE60E499C2 /* fl_labeltype.cxx */,
 				0B5987E1A293E67A6290612A /* fl_line_style.cxx */,
 				FAD24127A06F3F9F0EEB843A /* fl_open_uri.cxx */,
@@ -9875,6 +9878,7 @@
 				438CCCA43724B2E59680EF6B /* template_panel.cxx in Sources */,
 				27B4C89E8CBF260313ACA42E /* undo.cxx in Sources */,
 				B7D0770AC83AA04E8E12B76E /* widget_panel.cxx in Sources */,
+				299E717818BC503400FF83F2 /* fl_gleam.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

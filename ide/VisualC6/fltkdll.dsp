@@ -341,6 +341,10 @@ SOURCE=..\..\src\fl_gtk.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\fl_gleam.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\Fl_Help_View.cxx
 # End Source File
 # Begin Source File

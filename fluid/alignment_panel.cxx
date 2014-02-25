@@ -153,6 +153,7 @@ Fl_Menu_Item menu_scheme_choice[] = {
  {"None", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"Plastic", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {"GTK+", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
+ {"Gleam", 0,  0, 0, 0, FL_NORMAL_LABEL, 0, 14, 0},
  {0,0,0,0,0,0,0,0,0}
 };
 

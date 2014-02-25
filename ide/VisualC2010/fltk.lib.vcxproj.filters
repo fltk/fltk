@@ -427,6 +427,7 @@
     <ClCompile Include="..\..\src\Fl_grab.cxx" />
     <ClCompile Include="..\..\src\Fl_Group.cxx" />
     <ClCompile Include="..\..\src\fl_gtk.cxx" />
+    <ClCompile Include="..\..\src\fl_gleam.cxx" />
     <ClCompile Include="..\..\src\Fl_Help_View.cxx" />
     <ClCompile Include="..\..\src\Fl_Image.cxx" />
     <ClCompile Include="..\..\src\Fl_Input.cxx" />

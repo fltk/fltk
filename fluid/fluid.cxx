@@ -1113,6 +1113,9 @@ void scheme_cb(Fl_Choice *, void *) {
     case 3 : // GTK+
       Fl::scheme("gtk+");
       break;
+    case 4 : // Gleam
+      Fl::scheme("gleam");
+      break;
   }
 
   fluid_prefs.set("scheme", scheme_choice->value());
