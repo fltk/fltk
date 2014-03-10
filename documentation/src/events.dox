@@ -172,6 +172,8 @@ currently has focus. This is not necessarily the same widget
 that received the corresponding \p FL_KEYDOWN event
 because focus may have changed between events.
 
+\todo Add details on how to detect repeating keys, since on some X servers a repeating key will generate both FL_KEYUP and FL_KEYDOWN, such that to tell if a key is held, you need Fl::event_key(int) to detect if the key is being held down during FL_KEYUP or not.
+
 \subsection events_fl_shortcut FL_SHORTCUT
 
 If the Fl::focus() widget is zero or ignores an \p FL_KEYBOARD event
