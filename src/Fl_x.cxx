@@ -1513,7 +1513,7 @@ int fl_handle(const XEvent& thisevent)
       // we can detect this because the repeating KeyPress event is in
       // the queue, get it and execute it instead:
 
-      // Bool XkbSetDetectableAutorepeat ( display, detectable, supported_rtrn )
+      // Bool XkbSetDetectableAutoRepeat ( display, detectable, supported_rtrn )
       // Display * display ;
       // Bool detectable ;
       // Bool * supported_rtrn ;
