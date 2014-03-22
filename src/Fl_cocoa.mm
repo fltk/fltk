@@ -41,10 +41,8 @@ extern "C" {
 #include <FL/x.H>
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tooltip.H>
-#include <FL/Fl_Menu_Item.H>
 #include <FL/Fl_Printer.H>
 #include <FL/Fl_Input_.H>
-#include <FL/Fl_Secret_Input.H>
 #include <FL/Fl_Text_Display.H>
 #include <stdio.h>
 #include <stdlib.h>
@@ -112,6 +110,9 @@ static NSString *utf8_format = calc_utf8_format();
 static int got_events = 0;
 static Fl_Window* resize_from_system;
 static int main_screen_height; // height of menubar-containing screen used to convert between Cocoa and FLTK global screen coordinates
+// through_drawRect = YES means the drawRect: message was sent to the view, 
+// thus the graphics context was prepared by the system
+static BOOL through_drawRect = NO; 
 
 #if CONSOLIDATE_MOTION
 static Fl_Window* send_motion;
@@ -739,6 +740,7 @@ static double do_queued_events( double time = 0.0 )
   return time;
 }
 
+
 /*
  * This public function handles all events. It wait a maximum of 
  * 'time' seconds for an event. This version returns 1 if events
@@ -768,8 +770,10 @@ double fl_mac_flush_and_wait(double time_to_wait) {
   if (Fl::idle && !in_idle) // 'idle' may have been set within flush()
     time_to_wait = 0.0;
   double retval = fl_wait(time_to_wait);
-  if (fl_gc) CGContextFlush(fl_gc);
-  fl_gc = 0; // essential because the graphics context may be autoreleased
+  if (fl_gc) {
+    CGContextFlush(fl_gc);
+    fl_gc = 0;
+    }  
   [pool release];
   return retval;
 }
@@ -1454,16 +1458,6 @@ void Fl::get_mouse(int &x, int &y)
 
 
 /*
- * Initialize the given port for redraw and call the window's flush() to actually draw the content
- */ 
-void Fl_X::flush()
-{
-  w->flush();
-  if (fl_gc) CGContextFlush(fl_gc);
-  fl_gc = 0;
-}
-
-/*
  * Gets called when a window is created, resized, or deminiaturized
  */    
 static void handleUpdateEvent( Fl_Window *window ) 
@@ -1483,7 +1477,10 @@ static void handleUpdateEvent( Fl_Window *window )
       cx->region = 0;
     }
     cx->w->clear_damage(FL_DAMAGE_ALL);
+    CGContextRef gc = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextSaveGState(gc); // save original context
     cx->flush();
+    CGContextRestoreGState(gc); // restore original context
     cx->w->clear_damage();
   }
   window->clear_damage(FL_DAMAGE_ALL);
@@ -1750,6 +1747,8 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   BOOL need_handle; // YES means Fl::handle(FL_KEYBOARD,) is needed after handleEvent processing
   NSInteger identifier;
   NSRange selectedRange;
+  @public
+  Fl_X *fl_x_to_redraw; // set by Fl_X::flush() to the Fl_X object of the window to be redrawn
 }
 + (void)prepareEtext:(NSString*)aString;
 + (void)concatEtext:(NSString*)aString;
@@ -1795,15 +1794,19 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   if (self) {
     in_key_event = NO;
     identifier = ++counter;
+    fl_x_to_redraw = NULL;
     }
   return self;
 }
 - (void)drawRect:(NSRect)rect
 {
   fl_lock_function();
+  through_drawRect = YES;
   FLWindow *cw = (FLWindow*)[self window];
   Fl_Window *w = [cw getFl_Window];
-  handleUpdateEvent(w);
+  if (fl_x_to_redraw) fl_x_to_redraw->flush();
+  else handleUpdateEvent(w);
+  through_drawRect = NO;
   fl_unlock_function();
 }
 
@@ -2255,6 +2258,26 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
 }
 
 /*
+ * Initialize the given port for redraw and call the window's flush() to actually draw the content
+ */ 
+void Fl_X::flush()
+{
+  if (through_drawRect || w->as_gl_window()) {
+    w->flush();
+    Fl_X::q_release_context();
+    return;
+  }
+  // have Cocoa immediately redraw the window's view
+  FLView *view = (FLView*)[fl_xid(w) contentView];
+  view->fl_x_to_redraw = this;
+  [view setNeedsDisplay:YES];
+  // will send the drawRect: message to the window's view after having prepared the adequate NSGraphicsContext
+  [view displayIfNeededIgnoringOpacity]; 
+  view->fl_x_to_redraw = NULL;
+}
+
+
+/*
  * go ahead, create that (sub)window
  */
 void Fl_X::make(Fl_Window* w)
@@ -2587,6 +2610,29 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
 
 /*
  * make all drawing go into this window (called by subclass flush() impl.)
+ 
+ This can be called in 3 different instances:
+ 
+ 1) When a window is created, resized, or deminiaturized. 
+ The system sends the drawRect: message to the window's view after having prepared the current graphics context 
+ to draw to this view. Variable through_drawRect is YES, and fl_x_to_redraw is NULL. Processing of drawRect: calls 
+ handleUpdateEvent() that calls Fl_X::flush() for the window and its subwindows. Fl_X::flush() calls 
+ Fl_Window::flush() that calls Fl_Window::make_current() that only needs to identify the graphics port of the 
+ current graphics context. The window's draw() function is then executed.
+ 
+ 2) At each round of the FLTK event loop.
+ Fl::flush() is called, that calls Fl_X::flush() on each window that needs drawing. Fl_X::flush() sets 
+ fl_x_to_redraw to this and sends the displayIfNeededIgnoringOpacity message to the window's view. 
+ This message makes the system prepare the current graphics context adequately for drawing to this view, and 
+ send it the drawRect: message which sets through_drawRect to YES. Processing of the drawRect: message calls 
+ Fl_X::flush() for the window which proceeds as in 1) above.
+ 
+ 3) An FLTK application can call Fl_Window::make_current() at any time before it draws to a window.
+ This occurs for instance in the idle callback function of the mandelbrot test program. Variable through_drawRect is NO,
+ so Fl_Window::make_current() creates a new graphics context adequate for the window. 
+ Subsequent drawing requests go to this window. CAUTION: it's not possible to call Fl::wait(), Fl::check()
+ nor Fl::ready() while in the draw() function of a widget. Use an idle callback instead.
+ 
  */
 void Fl_Window::make_current() 
 {
@@ -2603,8 +2649,9 @@ void Fl_Window::make_current()
     yp += win->y();
     win = (Fl_Window*)win->window();
   }
-  
-  i->gc = (CGContextRef)[[NSGraphicsContext graphicsContextWithWindow:fl_window] graphicsPort];
+  NSGraphicsContext *nsgc = through_drawRect ? [NSGraphicsContext currentContext] : 
+					       [NSGraphicsContext graphicsContextWithWindow:fl_window];
+  i->gc = (CGContextRef)[nsgc graphicsPort];
   fl_gc = i->gc;
   Fl_Region fl_window_region = XRectangleRegion(0,0,w(),h());
   if ( ! this->window() ) {
@@ -2720,8 +2767,8 @@ static NSString *calc_utf8_format(void)
 }
 
 // clipboard variables definitions :
-char *fl_selection_buffer[2];
-int fl_selection_length[2];
+char *fl_selection_buffer[2] = {NULL, NULL};
+int fl_selection_length[2] = {0, 0};
 static int fl_selection_buffer_length[2];
 
 static PasteboardRef allocatePasteboard(void) 
@@ -2777,6 +2824,7 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   }
 }
 
+
 // Call this when a "paste" operation happens:
 void Fl::paste(Fl_Widget &receiver, int clipboard) {
   if (clipboard) {
@@ -2810,10 +2858,10 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
 	if (![found isEqualToString:utf8_format]) {
 	  strcpy(fl_selection_buffer[1], aux_c);
 	  free(aux_c);
-	  }
+	}
 	else {
 	  [data getBytes:fl_selection_buffer[1]];
-	  }
+	}
 	fl_selection_buffer[1][len - 1] = 0;
 	fl_selection_length[1] = len - 1;
         convert_crlf(fl_selection_buffer[1], len - 1); // turn all \r characters into \n:
@@ -2980,19 +3028,19 @@ static NSImage *CGBitmapContextToNSImage(CGContextRef c)
   else 
 #endif
     {
-    unsigned char *pdata = (unsigned char *)CGBitmapContextGetData(c);
-    NSBitmapImageRep *imagerep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:&pdata
-									 pixelsWide:CGBitmapContextGetWidth(c)
-									 pixelsHigh:CGBitmapContextGetHeight(c)
-								      bitsPerSample:8
-								    samplesPerPixel:4
-									   hasAlpha:YES
-									   isPlanar:NO
-								     colorSpaceName:NSDeviceRGBColorSpace
-									bytesPerRow:CGBitmapContextGetBytesPerRow(c)
-								       bitsPerPixel:CGBitmapContextGetBitsPerPixel(c)];
-    image = [[NSImage alloc] initWithData: [imagerep TIFFRepresentation]];
-    [imagerep release];
+      unsigned char *pdata = (unsigned char *)CGBitmapContextGetData(c);
+      NSBitmapImageRep *imagerep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:&pdata
+									   pixelsWide:CGBitmapContextGetWidth(c)
+									   pixelsHigh:CGBitmapContextGetHeight(c)
+									bitsPerSample:8
+								      samplesPerPixel:4
+									     hasAlpha:YES
+									     isPlanar:NO
+								       colorSpaceName:NSDeviceRGBColorSpace
+									  bytesPerRow:CGBitmapContextGetBytesPerRow(c)
+									 bitsPerPixel:CGBitmapContextGetBitsPerPixel(c)];
+      image = [[NSImage alloc] initWithData: [imagerep TIFFRepresentation]];
+      [imagerep release];
     }
   return [image autorelease];
 }
@@ -3080,7 +3128,7 @@ void Fl_X::set_cursor(Fl_Cursor c)
 }
 //#include <FL/Fl_PostScript.H>
 - (void)printPanel
-{
+{  
   Fl_Printer printer;
   //Fl_PostScript_File_Device printer;
   int w, h, ww, wh;
@@ -3329,16 +3377,26 @@ int Fl::dnd(void)
 static NSBitmapImageRep* rect_to_NSBitmapImageRep(Fl_Window *win, int x, int y, int w, int h)
 // the returned value is autoreleased
 {
+  NSRect rect;
+  NSView *winview = nil;
   while (win->window()) {
     x += win->x();
     y += win->y();
     win = win->window();
   }
-  NSRect rect = NSMakeRect(x, win->h()-(y+h), w, h);
-  NSView *currentview = [fl_xid(win) contentView];
-  [currentview lockFocus];
+  if ( through_drawRect ) {
+    CGFloat epsilon = 0;
+    if (fl_mac_os_version >= 100600) epsilon = 0.5; // STR #2887
+    rect = NSMakeRect(x - epsilon, y - epsilon, w, h);
+    }
+  else {
+    rect = NSMakeRect(x, win->h()-(y+h), w, h);
+    // lock focus to win's view
+    winview = [fl_xid(win) contentView];
+    [winview lockFocus];
+    }
   NSBitmapImageRep *bitmap = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:rect] autorelease];
-  [currentview unlockFocus];
+  if ( !through_drawRect ) [winview unlockFocus];
   return bitmap;
 }
 
@@ -3472,7 +3530,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       [title_s drawWithRect:r options:0 attributes:attr]; // 10.4
       [[NSGraphicsContext currentContext] setShouldAntialias:NO];
       [NSGraphicsContext setCurrentContext:current];
-      }
+    }
     else {
       fl_font(FL_HELVETICA, 14); // the exact font is LucidaGrande 13 pts
       fl_color(FL_BLACK);
@@ -3481,8 +3539,8 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       fl_push_clip(x_offset, y_offset, win->w(), bt);
       fl_draw(title, x, y_offset+bt/2+4);
       fl_pop_clip();
-      }
     }
+  }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
 
