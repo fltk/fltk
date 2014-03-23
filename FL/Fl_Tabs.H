@@ -49,47 +49,133 @@
   gap is larger. It is easiest to lay this out in fluid, using the
   fluid browser to select each child group and resize them until
   the tabs look the way you want them to.
-
+  
   The background area behind and to the right of the tabs is
   "transparent", exposing the background detail of the parent. The
   value of Fl_Tabs::box() does not affect this area. So if Fl_Tabs is
   resized by itself without the parent, force the appropriate parent
   (visible behind the tabs) to redraw() to prevent artifacts.
 
-  Resizing note: when Fl_Tabs is resized vertically, the default
-  behavior scales the tab's height as well as its children.
-  To keep the tab height constant during resizing, set the
-  tab widget's resizable() to one of the tab's children, i.e.
-
-  \code
-    tabs = new Fl_Tabs(..);
-    child_a = new Fl_Group(..);
-    child_b = new Fl_Group(..);
-    tabs->end();
-    tabs->resizable(child_a);	// keeps tab height constant
-  \endcode
+  See "Resizing Caveats" below on how to keep tab heights constant.
+  See "Callback's Use Of when()" on how to control the details
+  of how clicks invoke the callback().
 
   A typical use of the Fl_Tabs widget:
+
+  \par
   \code
+      // Typical use of Fl_Tabs
       Fl_Tabs *tabs = new Fl_Tabs(10,10,300,200);
       {
-          Fl_Group *tab1 = new Fl_Group(20,30,280,170,"Tab1");
+          Fl_Group *grp1 = new Fl_Group(20,30,280,170,"Tab1");
 	  {
 	      ..widgets that go in tab#1..
           }
-	  tab1->end();
-          Fl_Group *tab2 = new Fl_Group(20,30,280,170,"Tab2");
+	  grp1->end();
+          Fl_Group *grp2 = new Fl_Group(20,30,280,170,"Tab2");
 	  {
 	      ..widgets that go in tab#2..
 	  }
-	  tab2->end();
+	  grp2->end();
       }
       tabs->end();
   \endcode
 
-  In the above, tab1's tab can be made red by using tab1->selection_color(FL_RED);
-  and tab1's text can be made bold by tab1->labelfont(FL_HELVETICA_BOLD),
-  and can be made 'engraved' by tab1->labeltype(FL_ENGRAVED_LABEL);
+  \b Default \b Appearance
+
+  The appearance of each "tab" is taken from the label() and color() of the
+  child group corresponding to that "tab" and panel. Where the "tabs" appear
+  depends on the position and size of the child groups that make up the
+  panels within the Fl_Tab, i.e. whether there is more space above or
+  below them. The height of the "tabs" depends on how much free space
+  is available.
+
+  \image html  tabs_default.png "Fl_Tabs Default Appearance"
+  \image latex tabs_default.png "Fl_Tabs Default Appearance" width=8cm
+
+  \b Highlighting \b The \b Selected \b Tab
+
+  The selected "tab" can be highlighted further by setting the
+  selection_color() of the Fl_Tab itself, e.g.
+
+  \par
+  \code
+  ..
+  tabs = new Fl_Tabs(..);
+  tabs->selection_color(FL_DARK3);
+  ..
+  \endcode
+
+  The result of the above looks like:
+  \image html  tabs_selection.png "Highlighting the selected tab"
+  \image latex tabs_selection.png "Highlighting the selected tab" width=8cm
+
+  \b Uniform \b Tab \b and \b Panel \b Appearance
+
+  In order to have uniform tab and panel appearance, not only must the color()
+  and selection_color() for each child group be set, but also the 
+  selection_color() of the Fl_Tab itself any time a new "tab" is selected.
+  This can be achieved within the Fl_Tab callback, e.g.
+
+  \par
+  \code
+  void MyTabCallback(Fl_Widget *w, void*) {
+    Fl_Tabs *tabs = (Fl_Tabs*)w;
+    // When tab changed, make sure it has same color as its group
+    tabs->selection_color( (tab->value())->color() );
+  }
+  ..
+  int main(..) {
+    // Define tabs widget
+    tabs = new Fl_Tabs(..);
+    tabs->callback(MyTabCallback);
+
+    // Create three tabs each colored differently
+    grp1 = new Fl_Group(.. "One");
+     grp1->color(9);
+     grp1->selection_color(9);
+    grp1->end();
+
+    grp2 = new Fl_Group(.. "Two");
+     grp2->color(10);
+     grp2->selection_color(10);
+    grp2->end();
+
+    grp3 = new Fl_Group(.. "Three");
+     grp3->color(14);
+     grp3->selection_color(14);
+    grp3->end();
+    ..
+    // Make sure default tab has same color as its group
+    tabs->selection_color( (tab->value())->color() );
+    ..
+    return Fl::run();
+  }
+  \endcode
+
+  The result of the above looks like:
+  \image html  tabs_uniform.png "Fl_Tabs with uniform colors"
+  \image latex tabs_uniform.png "Fl_Tabs with uniform colors" width=8cm
+
+  \b Resizing \b Caveats
+
+  When Fl_Tabs is resized vertically, the default behavior scales the
+  tab's height as well as its children.  To keep the tab height constant
+  during resizing, set the tab widget's resizable() to one of the tab's
+  child groups, i.e.
+
+  \par
+  \code
+    tabs = new Fl_Tabs(..);
+    grp1 = new Fl_Group(..);
+    ..
+    grp2 = new Fl_Group(..);
+    ..
+    tabs->end();
+    tabs->resizable(grp1);	// keeps tab height constant
+  \endcode
+
+  \par Callback's Use Of when()
 
   As of FLTK 1.3.3, Fl_Tabs() supports the following flags for when():
 
