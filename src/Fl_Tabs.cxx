@@ -178,7 +178,11 @@ int Fl_Tabs::handle(int event) {
         Fl::focus(this);
         redraw_tabs();
       }
-      if (o && value(o)) {
+      if (o &&                              // Released on a tab and..
+          (value(o) ||                      // tab changed value or..
+	   (when()&(FL_WHEN_NOT_CHANGED))   // ..no change but WHEN_NOT_CHANGED set,
+	  )                                 // handles FL_WHEN_RELEASE_ALWAYS too.
+	 ) {
         Fl_Widget_Tracker wp(o);
         set_changed();
 	do_callback();
