@@ -32,17 +32,16 @@
 #include <ctype.h>
 #include <math.h>
 
-#define MAXBUF 1024
 
 char fl_draw_shortcut;	// set by fl_labeltypes.cxx
 
 static char* underline_at;
 
-/** 
+/* This function is no longer called
     utf8 multibyte char seq. detection an pass-thru routine.
     \retval false if no utf8 seq detected, no change made. true if utf8 and d copied with s seq.
-    note that for n bytes copied dest incremented of n, but s of n-1 for compatible loop use see below.
-*/
+    note that for n bytes copied d incremented of n, but s of n-1 for compatible loop use see below.
+*
 #define C_IN(c,a,b) ((c)>=(a) && (c)<=(b)) 
 #define C_UTF8(c)   C_IN(c,0x80,0xBF)
 
@@ -88,27 +87,26 @@ static bool handle_utf8_seq(const char * &s,char * &d) {
     // fprintf(stderr, "Not UTF8 char \n");
     return false; 
   }
-  return true; //  we did handled and copied the utf8 multibyte char seq.
-}
+  return true; //  we handled and copied the utf8 multibyte char seq.
+}*/
 
-/**
- Copy \p from to \p buf, replacing unprintable characters with ^X and \\nnn.
-
- Stop at a newline or if MAXBUF characters written to buffer.
- Also word-wrap if width exceeds maxw.
- Returns a pointer to the start of the next line of characters.
- Sets n to the number of characters put into the buffer.
- Sets width to the width of the string in the current font.
-*/
-const char*
-fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n, 
-	double &width, int wrap, int draw_symbols) {
-  char* o = buf;
+/* If called with maxbuf==0, use an internally allocated buffer and enlarge it as needed.
+ Otherwise, use buf as buffer but don't go beyond its length of maxbuf.
+ */
+static const char* expand_text_(const char* from, char*& buf, int maxbuf, double maxw, int& n, 
+	       double &width, int wrap, int draw_symbols) {
   char* e = buf+(maxbuf-4);
   underline_at = 0;
+  double w = 0;
+  static int l_local_buff = 500;
+  static char *local_buf = (char*)malloc(l_local_buff); // initial buffer allocation
+  if (maxbuf == 0) {
+    buf = local_buf;
+    e = buf + l_local_buff - 4;
+    }
+  char* o = buf;
   char* word_end = o;
   const char* word_start = from;
-  double w = 0;
 
   const char* p = from;
   for (;; p++) {
@@ -132,7 +130,15 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
       word_start = p+1;
     }
 
-    if (o > e) break; // don't overflow buffer
+    if (o > e) {
+      if (maxbuf) break; // don't overflow buffer
+      l_local_buff += (o - e) + 200; // enlarge buffer
+      buf = (char*)realloc(local_buf, l_local_buff);
+      e = buf + l_local_buff - 4; // update pointers to buffer content
+      o = buf + (o - local_buf);
+      word_end = buf + (word_end - local_buf);
+      local_buf = buf;
+      }
 
     if (c == '\t') {
       for (c = fl_utf_nb_char((uchar*)buf, (int) (o-buf) )%8; c<8 && o<e; c++) 
@@ -143,14 +149,17 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
     } else if (c < ' ' || c == 127) { // ^X
       *o++ = '^';
       *o++ = c ^ 0x40;
-    } else  if (handle_utf8_seq(p, o)) { // figure out if we have an utf8 valid sequence before we determine the nbsp test validity:
+/* This is in fact not useful: the point is that a valid UTF-8 sequence for a non-ascii char contains no ascii char,
+ thus no tab, space, control, & or @ we want to process differently. 
+ Also, invalid UTF-8 sequences are copied unchanged by this procedure.
+ Therefore, checking for tab, space, control, & or @, and copying the byte otherwise, is enough.
+ } else  if (handle_utf8_seq(p, o)) { // figure out if we have an utf8 valid sequence before we determine the nbsp test validity:
 #ifdef __APPLE__
     } else if (c == 0xCA) { // non-breaking space in MacRoman
 #else
     } else if (c == 0xA0) { // non-breaking space in ISO 8859
 #endif
-      *o++ = ' ';
-       
+      *o++ = ' ';*/
     } else if (c == '@' && draw_symbols) { // Symbol???
       if (p[1] && p[1] != '@')  break;
       *o++ = c;
@@ -167,6 +176,21 @@ fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n,
 }
 
 /**
+ Copy \p from to \p buf, replacing control characters with ^X.
+ 
+ Stop at a newline or if \p maxbuf characters written to buffer.
+ Also word-wrap if width exceeds maxw.
+ Returns a pointer to the start of the next line of characters.
+ Sets n to the number of characters put into the buffer.
+ Sets width to the width of the string in the current font.
+ */
+const char*
+fl_expand_text(const char* from, char* buf, int maxbuf, double maxw, int& n, 
+	       double &width, int wrap, int draw_symbols) {
+  return expand_text_(from,  buf, maxbuf, maxw,  n, width,  wrap,  draw_symbols);
+}
+
+/**
   The same as fl_draw(const char*,int,int,int,int,Fl_Align,Fl_Image*,int) with
   the addition of the \p callthis parameter, which is a pointer to a text drawing
   function such as fl_draw(const char*, int, int, int) to do the real work
@@ -178,9 +202,9 @@ void fl_draw(
     void (*callthis)(const char*,int,int,int),
     Fl_Image* img, int draw_symbols) 
 {
+  char *linebuf = NULL;
   const char* p;
   const char* e;
-  char buf[MAXBUF];
   int buflen;
   char symbol[2][255], *symptr;
   int symwidth[2], symoffset, symtotal, imgtotal;
@@ -223,7 +247,7 @@ void fl_draw(
 
   if (str) {
     for (p = str, lines=0; p;) {
-      e = fl_expand_text(p, buf, MAXBUF, w - symtotal - imgtotal, buflen, width, 
+      e = expand_text_(p, linebuf, 0, w - symtotal - imgtotal, buflen, width, 
                          align&FL_ALIGN_WRAP, draw_symbols);
       if (strw<width) strw = (int)width;
       lines++;
@@ -290,7 +314,7 @@ void fl_draw(
   if (str) {
     int desc = fl_descent();
     for (p=str; ; ypos += height) {
-      if (lines>1) e = fl_expand_text(p, buf, MAXBUF, w - symtotal - imgtotal, buflen, 
+      if (lines>1) e = expand_text_(p, linebuf, 0, w - symtotal - imgtotal, buflen, 
 				width, align&FL_ALIGN_WRAP, draw_symbols);
       else e = "";
 
@@ -300,10 +324,10 @@ void fl_draw(
       else if (align & FL_ALIGN_RIGHT) xpos = x + w - (int)(width + .5) - symwidth[1] - imgw[1];
       else xpos = x + (w - (int)(width + .5) - symtotal - imgw[0] - imgw[1]) / 2 + symwidth[0] + imgw[0];
 
-      callthis(buf,buflen,xpos,ypos-desc);
+      callthis(linebuf,buflen,xpos,ypos-desc);
 
-      if (underline_at && underline_at >= buf && underline_at < (buf + buflen))
-	callthis("_",1,xpos+int(fl_width(buf,(int) (underline_at-buf))),ypos-desc);
+      if (underline_at && underline_at >= linebuf && underline_at < (linebuf + buflen))
+	callthis("_",1,xpos+int(fl_width(linebuf,(int) (underline_at-linebuf))),ypos-desc);
 
       if (!*e || (*e == '@' && e[1] != '@')) break;
       p = e;
@@ -361,7 +385,6 @@ void fl_draw(
   below the text as specified by the \p align value.
   The \p draw_symbols argument specifies whether or not to look for symbol
   names starting with the '\@' character'
-  The text length is limited to 1024 characters per line.
 */
 void fl_draw(
   const char* str,
@@ -406,9 +429,9 @@ void fl_draw(
 void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   if (!str || !*str) {w = 0; h = 0; return;}
   h = fl_height();
+  char *linebuf = NULL;
   const char* p;
   const char* e;
-  char buf[MAXBUF];
   int buflen;
   int lines;
   double width=0;
@@ -436,8 +459,8 @@ void fl_measure(const char* str, int& w, int& h, int draw_symbols) {
   symtotal = symwidth[0] + symwidth[1];
   
   for (p = str, lines=0; p;) {
-//    e = expand(p, buf, w - symtotal, buflen, width, w != 0, draw_symbols);
-    e = fl_expand_text(p, buf, MAXBUF, w - symtotal, buflen, width, 
+//    e = expand(p, linebuf, w - symtotal, buflen, width, w != 0, draw_symbols);
+    e = expand_text_(p, linebuf, 0, w - symtotal, buflen, width, 
 			w != 0, draw_symbols);
     if ((int)ceil(width) > W) W = (int)ceil(width);
     lines++;
