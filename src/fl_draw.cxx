@@ -138,7 +138,7 @@ static const char* expand_text_(const char* from, char*& buf, int maxbuf, double
       o = buf + (o - local_buf);
       word_end = buf + (word_end - local_buf);
       local_buf = buf;
-      }
+    }
 
     if (c == '\t') {
       for (c = fl_utf_nb_char((uchar*)buf, (int) (o-buf) )%8; c<8 && o<e; c++) 
