@@ -622,9 +622,6 @@ image is drawn above or below the text as specified by the
 The \p draw_symbols argument specifies whether or not
 to look for symbol names starting with the "@" character.
 
-\par
-The text length is limited to 1024 characters per line.
-
 void fl_measure(const char *str, int& w, int& h, int draw_symbols)
 
 \par
@@ -635,7 +632,7 @@ white space in the string, kerning, etc.
 If the incoming \p w is non-zero it will wrap to that width.
 \par
 Refer to the full documentation for fl_measure() for details
-on usage and how to avoide common pitfalls.
+on usage and how to avoid common pitfalls.
 
 \see fl_text_extents() -- measure the 'inked' area of a string
 \see fl_width() -- measure the pixel width of a string or single character
