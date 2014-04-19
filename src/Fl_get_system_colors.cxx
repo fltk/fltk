@@ -262,15 +262,18 @@ static Fl_Pixmap	tile(tile_xpm);
     in the FLTK_SCHEME environment variable or the scheme resource
     under X11. Otherwise, any of the following schemes can be used:
 
-    	- "none" - This is the default look-n-feel which resembles old
-    	Windows (95/98/Me/NT/2000) and old GTK/KDE
+        - "none" - This is the default look-n-feel which resembles old
+                   Windows (95/98/Me/NT/2000) and old GTK/KDE
 
-    	- "base" - This is an alias for "none"
+        - "base" - This is an alias for "none"
 
-    	- "plastic" - This scheme is inspired by the Aqua user interface
-    	on Mac OS X
+        - "plastic" - This scheme is inspired by the Aqua user interface
+                      on Mac OS X
 
-    	- "gtk+" - This scheme is inspired by the Red Hat Bluecurve theme
+        - "gtk+" - This scheme is inspired by the Red Hat Bluecurve theme
+
+        - "gleam" - This scheme is inspired by the Clearlooks Glossy scheme.
+                    (Colin Jones and Edmanuel Torres).
 
     Uppercase scheme names are equivalent, but the stored scheme name will
     always be lowercase and Fl::scheme() will return this lowercase name.
