@@ -3527,7 +3527,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       if (x < x_offset+skip) x = x_offset+skip;
       NSRect r = {{x, y_offset+bt/2+4}, {win->w() - skip, bt}};
       [[NSGraphicsContext currentContext] setShouldAntialias:YES];
-      [title_s drawWithRect:r options:0 attributes:attr]; // 10.4
+      [title_s drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
       [[NSGraphicsContext currentContext] setShouldAntialias:NO];
       [NSGraphicsContext setCurrentContext:current];
     }
