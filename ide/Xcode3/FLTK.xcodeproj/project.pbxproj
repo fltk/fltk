@@ -110,7 +110,6 @@
 		291FA24A9E91A2036BC718A2 /* Fl_Overlay_Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = D1C792936D427CC48581BFAE /* Fl_Overlay_Window.cxx */; };
 		29303C4480E0BBEB9E29EE7B /* vsnprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = EBC0D2C965EDD6503B0CF519 /* vsnprintf.c */; };
 		299CB8A2848CB844BCEC7829 /* Fl_Paged_Device.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 6C1C9A4F054C48CDD6A2DE44 /* Fl_Paged_Device.cxx */; };
-		299E717818BC503400FF83F2 /* fl_gleam.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 299E717718BC503400FF83F2 /* fl_gleam.cxx */; };
 		29A99477531233BE9391CE66 /* Fl_Slider.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 5AF5119D08DFC92EA1032671 /* Fl_Slider.cxx */; };
 		29B01C1F3FF6C5B007DEEF45 /* fltk.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		29ED282EF51CBBB0CDEE76D6 /* Fl_Color_Chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 058BCBC36ADE724A418F1C43 /* Fl_Color_Chooser.cxx */; };
@@ -328,6 +327,7 @@
 		7F66B1D912BB924C00C67B59 /* Fl_cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */; };
 		7F66B1DA12BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */; };
 		7F66B1DB12BB924C00C67B59 /* Fl_Quartz_Printer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */; };
+		7F74F393190D7F0500C56950 /* fl_gleam.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 299E717718BC503400FF83F2 /* fl_gleam.cxx */; };
 		7FFDE4AD171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDE4AC171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm */; };
 		812129561A1981D6DEFBCBFB /* Fl_Positioner.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */; };
 		812761E94039F13357F56EE6 /* fltk_png.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
@@ -8461,7 +8461,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.0";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -9510,6 +9509,7 @@
 				CE14EC6653D4EF4779992758 /* is_right2left.c in Sources */,
 				9DD7A2B6D63D30C07781F446 /* is_spacing.c in Sources */,
 				299CB8A2848CB844BCEC7829 /* Fl_Paged_Device.cxx in Sources */,
+				7F74F393190D7F0500C56950 /* fl_gleam.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9878,7 +9878,6 @@
 				438CCCA43724B2E59680EF6B /* template_panel.cxx in Sources */,
 				27B4C89E8CBF260313ACA42E /* undo.cxx in Sources */,
 				B7D0770AC83AA04E8E12B76E /* widget_panel.cxx in Sources */,
-				299E717818BC503400FF83F2 /* fl_gleam.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
