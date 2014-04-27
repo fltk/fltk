@@ -3516,6 +3516,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
   delete[] bitmap;
   if (title) { // print the window title
     const int skip = 68; // approx width of the zone of the 3 window control buttons
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
     if (fl_mac_os_version >= 100400 && dynamic_cast<Fl_Printer*>(this)) { // use Cocoa string drawing with exact title bar font
       NSGraphicsContext *current = [NSGraphicsContext currentContext];
       [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:fl_gc flipped:YES]];//10.4
@@ -3530,8 +3531,10 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       [title_s drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
       [[NSGraphicsContext currentContext] setShouldAntialias:NO];
       [NSGraphicsContext setCurrentContext:current];
-    }
-    else {
+      }
+    else 
+#endif
+      {
       fl_font(FL_HELVETICA, 14); // the exact font is LucidaGrande 13 pts
       fl_color(FL_BLACK);
       int x = x_offset + win->w()/2 - fl_width(title)/2;
@@ -3539,7 +3542,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       fl_push_clip(x_offset, y_offset, win->w(), bt);
       fl_draw(title, x, y_offset+bt/2+4);
       fl_pop_clip();
-    }
+      }
   }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }
