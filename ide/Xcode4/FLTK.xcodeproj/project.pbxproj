@@ -317,6 +317,7 @@
 		7E8E2DC7A53A62D0F1EB860E /* fltk.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FEB0F8FE6383384180570D94 /* fltk.framework */; };
 		7EA88708B9A088FCEB7CAA27 /* file_chooser.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 39CD231E22E0B53E92CABDC9 /* file_chooser.cxx */; };
 		7EC3AD9A56535A54430B8DCD /* Fl_Browser_.cxx in Sources */ = {isa = PBXBuildFile; fileRef = AAD25B747F4122A2C5224708 /* Fl_Browser_.cxx */; };
+		7F12FCC718E1EEB900AB6A11 /* fl_gleam.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F12FCC618E1EEB900AB6A11 /* fl_gleam.cxx */; };
 		7F4762EE12D22C470073A4F9 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F4762ED12D22C470073A4F9 /* ApplicationServices.framework */; };
 		7F54C8A8130FAC4F00E736F3 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A3130FAC4F00E736F3 /* gzclose.c */; };
 		7F54C8A9130FAC4F00E736F3 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F54C8A4130FAC4F00E736F3 /* gzlib.c */; };
@@ -4309,6 +4310,7 @@
 		7DF4AD3769671959EA813845 /* jcparam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcparam.c; path = ../../jpeg/jcparam.c; sourceTree = SOURCE_ROOT; };
 		7E05602BE68211B11E493E18 /* Fl_Menu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Menu.cxx; path = ../../src/Fl_Menu.cxx; sourceTree = SOURCE_ROOT; };
 		7E51DAB7D0F93ACFB736EE9A /* Fl_Tree_Prefs.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Tree_Prefs.H; path = ../../FL/Fl_Tree_Prefs.H; sourceTree = SOURCE_ROOT; };
+		7F12FCC618E1EEB900AB6A11 /* fl_gleam.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fl_gleam.cxx; path = ../../src/fl_gleam.cxx; sourceTree = "<group>"; };
 		7F2A29041338C6B80033C0A6 /* pnglibconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnglibconf.h; path = ../../png/pnglibconf.h; sourceTree = SOURCE_ROOT; };
 		7F2A29051338C6D40033C0A6 /* pngpriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngpriv.h; path = ../../png/pngpriv.h; sourceTree = SOURCE_ROOT; };
 		7F2A29071338C7450033C0A6 /* pngstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngstruct.h; path = ../../png/pngstruct.h; sourceTree = SOURCE_ROOT; };
@@ -5553,6 +5555,7 @@
 				3D85A740C2D5F1D6C6A9420D /* fl_engraved_label.cxx */,
 				FA2F70BA8FF4E7F4B7B36971 /* fl_file_dir.cxx */,
 				9E8F7BCC0292044D887D423B /* fl_font.cxx */,
+				7F12FCC618E1EEB900AB6A11 /* fl_gleam.cxx */,
 				7A2CE7959780A1C6E60103E8 /* fl_gtk.cxx */,
 				EF6D2F48B12359DE60E499C2 /* fl_labeltype.cxx */,
 				0B5987E1A293E67A6290612A /* fl_line_style.cxx */,
@@ -8497,7 +8500,6 @@
 			};
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -9469,6 +9471,7 @@
 				86C566B54637B5F773257067 /* Fl_Value_Output.cxx in Sources */,
 				A40F3E633565708E8113728D /* Fl_Value_Slider.cxx in Sources */,
 				CAF6CE97B3EBEFFA65AAEEAD /* Fl_Widget.cxx in Sources */,
+				7F12FCC718E1EEB900AB6A11 /* fl_gleam.cxx in Sources */,
 				023D5B2431F40114C118A5DB /* Fl_Window.cxx in Sources */,
 				5FE596C22B71AF1F7235ECAE /* Fl_Window_fullscreen.cxx in Sources */,
 				382C61DCD714A86859AA21CC /* Fl_Window_hotspot.cxx in Sources */,
