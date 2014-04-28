@@ -40,11 +40,14 @@ README.OSX.txt - 2010-10-23 - Building FLTK under Apple OS X
  1  INTRODUCTION
 =================
 
+FLTK supports all Mac OS X versions above 10.3 (Panther). See below for how to
+build FLTK applications that can run on all (old or recent) Mac OS X versions.
+
 FLTK currently supports the following development environments on the Apple OS X
 platform:
 
     - gcc command line tools
-    - Xcode 3.x
+    - Xcode 3.x and higher
     
 CAUTION: gcc command line built libraries and Xcode created Frameworks should
 not be mixed!    
@@ -77,7 +80,7 @@ Download FLTK from here:
 
 If you are familiar with "subversion" and like to stay current with your 
 version, you will find the subversion access parameters at the bottom of that 
-page. Unpack FLTK into a convinient location. I like to have everything in my 
+page. Unpack FLTK into a convenient location. I like to have everything in my 
 dev directory:
 
   cd
@@ -107,6 +110,10 @@ more details can be found in README.
 
 To create Universal Binaries, start "configure" with these flags:
   ./configure  --with-archflags="-arch i386 -arch ppc -arch x86_64"
+  
+To create applications that can run under Mac OS X 10.4 and above, use these flags:
+  ./configure CXXFLAGS="-mmacosx-version-min=10.4" LDFLAGS="-mmacosx-version-min=10.4"
+
 :END_ADVANCED
 
 The configuration script will check your machine for the required resources
@@ -211,6 +218,11 @@ Use the "Project" pulldown menu to change "Active Build Configuration" to
 
 Use the "Project" pulldown menu to set the "Active Target" to "Demo". 
 Select "Build" from the "Build" menu to create all libraries and test applications.
+
+By default, the Xcode3 project builds applications that run under Mac OS X 10.5 and above.
+To build applications that run under older Mac OS versions, select "Edit Project Settings" 
+of the Project menu, then select the Build panel, and modify the "Mac OS X Deployment Target" 
+item.
 
 All frameworks and apps will be located in "./ide/Xcode3/build/Release/".
 
@@ -329,7 +341,7 @@ follow the instructions.
 In order to build FLTK from within Xcode 4, you need to install the Xcode
 developer environment via the Apple App Store that comes with Lion and up. 
 If you also want the command line version of gcc, you can use the 
-Downlaod section in the Preferences dialog.
+Download section in the Preferences dialog.
   
 
  4.2  Downloading and Unpacking
@@ -363,6 +375,10 @@ There is nothing else to configure.
 Use the "Scheme" pulldown menu to change the active target to "Demo" and 
 "My Mac 32-bit" or "My Mac 64-bit". Select "Build for" -> "Running"Run" from 
 the "Product" menu to create all libraries and test applications.
+
+By default, the Xcode4 project builds applications that need the current Mac OS X version.
+To build applications that also run under older Mac OS versions, modify the "OS X Deployment
+Target" item of the FLTK project build settings.
 
 All frameworks and apps will be located in a private directory. Use
 "Window"->"Organizer" to find the full path. 
@@ -445,3 +461,4 @@ Dec 29 2010 - Manolo: removed reference to AudioToolbox.framework that's no long
 Feb 24 2011 - Manolo: architecture flags are not propagated to the fltk-config script.
 Apr 17 2012 - matt: added Xcode4 documentation
 Nov 13 2012 - Manolo: added "MAKE AN APPLICATION LAUNCHABLE BY DROPPING FILES ON ITS ICON"
+Apr 28 2014 - Manolo: how to build programs that run on various Mac OS X versions
