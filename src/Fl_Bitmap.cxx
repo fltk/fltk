@@ -275,7 +275,7 @@ void Fl_Quartz_Graphics_Driver::draw(Fl_Bitmap *bm, int XP, int YP, int WP, int 
     return;
   }
   if (bm->id_ && fl_gc) {
-    CGRect rect = { { X, Y }, { W, H } };
+    CGRect rect = { { (CGFloat)X, (CGFloat)Y }, { (CGFloat)W, (CGFloat)H } };
     Fl_X::q_begin_image(rect, cx, cy, bm->w(), bm->h());
     CGContextDrawImage(fl_gc, rect, (CGImageRef)bm->id_);
     Fl_X::q_end_image();
