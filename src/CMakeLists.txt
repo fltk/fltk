@@ -115,6 +115,7 @@ set(CPPFILES
   fl_engraved_label.cxx
   fl_file_dir.cxx
   fl_font.cxx
+  fl_gleam.cxx
   fl_gtk.cxx
   fl_labeltype.cxx
   fl_line_style.cxx
