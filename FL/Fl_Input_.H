@@ -468,6 +468,8 @@ public:
 
     \param [in] val If \p val is 1, Tab advances focus (default).<BR>
                     If \p val is 0, Tab inserts a tab character (old FLTK behavior).
+
+    \see tab_nav(), Fl::OPTION_ARROW_FOCUS.
   */
   void tab_nav(int val) {
     tab_nav_ = val;
@@ -480,7 +482,8 @@ public:
 
     If disabled, hitting Tab inserts a tab character into the text field.
     \returns 1 if Tab advances focus (default), 0 if Tab inserts tab characters.
-    \see tab_nav(int)
+
+    \see tab_nav(int), Fl::OPTION_ARROW_FOCUS.
   */
   int tab_nav() const {
     return tab_nav_;
