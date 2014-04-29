@@ -165,14 +165,12 @@ public:
       \see Fl::option(Fl_Option)
   */
   typedef enum {
-      /// When switched on, arrow keys will navigate focus between widgets.
-      /// Also, left/right arrow keys in text widgets will change widget focus
-      /// if the cursor is moved off the start or end of text.
+      /// When switched on, moving the text cursor beyond the start or end of
+      /// a text in a text widget will change focus to the next text widget.
+      /// (This is considered 'old' behavior)
       ///
-      /// When switched off, arrow keys will not navigate focus, and in text
-      /// widgets left/right arrows will not move off the widget when the
-      /// start or end of text is reached.  Pressing Tab or Ctrl-Tab will
-      /// advance the keyboard focus.
+      /// When switched off, the cursor will stop at the end of the text.
+      /// Pressing Tab or Ctrl-Tab will advance the keyboard focus.
       ///
       /// See also: Fl_Input_::tab_nav()
       ///
