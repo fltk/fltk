@@ -55,7 +55,7 @@ Fl_Font_Descriptor::Fl_Font_Descriptor(const char* name, Fl_Fontsize fsize) {
 // ...would be the right call, but is not implemented into Window95! (WinNT?)
   //GetCharWidth(fl_gc, 0, 255, width);
   int i;
-  for (i = 0; i < 64; i++) width[i] = NULL;
+  memset(width, 0, 64 * sizeof(int*));
 #if HAVE_GL
   listbase = 0;
   for (i = 0; i < 64; i++) glok[i] = 0;
@@ -77,9 +77,9 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 #endif
   if (this == fl_graphics_driver->font_descriptor()) fl_graphics_driver->font_descriptor(NULL);
   DeleteObject(fid);
-  for (int i = 0; i < 64; i++)
-    if ( width[i] )
-      free(width[i]);
+  for (int i = 0; i < 64; i++) {
+    if ( width[i] ) free(width[i]);
+    }
 }
 
 ////////////////////////////////////////////////////////////////
@@ -202,32 +202,34 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
   // else - this falls through to the lookup-table for glyph widths
   // in the basic multilingual plane
   r = (c & 0xFC00) >> 10;
-  if (!fl_fontsize->width[r]) {
+  if (!fl_fontsize->width[r]) {  
     fl_fontsize->width[r] = (int*) malloc(sizeof(int) * 0x0400);
-    unsigned short i = 0, ii = r * 0x400;
-    // The following code makes a best effort attempt to obtain a valid fl_gc.
-    // If no fl_gc is available at the time we call fl_width(), then we first
-    // try to obtain a gc from the first fltk window.
-    // If that is null then we attempt to obtain the gc from the current screen
-    // using (GetDC(NULL)).
-    // This should resolve STR #2086
-    HDC gc = fl_gc;
-    HWND hWnd = 0;
-    if (!gc) { // We have no valid gc, try and obtain one
-      // Use our first fltk window, or fallback to using the screen via GetDC(NULL)
-      hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
-      gc = GetDC(hWnd);
+    for (int i = 0; i < 0x0400; i++) fl_fontsize->width[r][i] = -1;
+  } else {
+    if ( fl_fontsize->width[r][c&0x03FF] >= 0 ) { // already cached
+	return (double) fl_fontsize->width[r][c & 0x03FF];
     }
-    if (!gc)
-	Fl::fatal("Invalid graphic context: fl_width() failed because no valid HDC was found!");
-    SelectObject(gc, fl_fontsize->fid);
-    for (; i < 0x400; i++) {
-      GetTextExtentPoint32W(gc, (WCHAR*)&ii, 1, &s);
-      fl_fontsize->width[r][i] = s.cx;
-      ii++;
-    }
-    if (gc && gc!=fl_gc) ReleaseDC(hWnd, gc);
   }
+  unsigned short ii = r * 0x400;
+  // The following code makes a best effort attempt to obtain a valid fl_gc.
+  // If no fl_gc is available at the time we call fltk3::width(), then we first
+  // try to obtain a gc from the first fltk window.
+  // If that is null then we attempt to obtain the gc from the current screen
+  // using (GetDC(NULL)).
+  // This should resolve STR #2086  
+  HDC gc = fl_gc;
+  HWND hWnd = 0;
+  if (!gc) { // We have no valid gc, try and obtain one
+    // Use our first fltk window, or fallback to using the screen via GetDC(NULL)
+    hWnd = Fl::first_window() ? fl_xid(Fl::first_window()) : NULL;
+    gc = GetDC(hWnd);
+  }
+  if (!gc) Fl::fatal("Invalid graphic context: fl_width() failed because no valid HDC was found!");
+  SelectObject(gc, fl_fontsize->fid);
+  ii += c &0x03FF;
+  GetTextExtentPoint32W(gc, (WCHAR*)&ii, 1, &s);
+  fl_fontsize->width[r][c&0x03FF] = s.cx;
+  if (gc && gc!=fl_gc) ReleaseDC(hWnd, gc);
   return (double) fl_fontsize->width[r][c & 0x03FF];
 }
 
