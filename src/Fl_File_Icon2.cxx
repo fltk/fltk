@@ -570,9 +570,14 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
   img->release();
 
 #ifdef DEBUG
+{
+  int i;
   printf("Icon File \"%s\":\n", xpm);
   for (i = 0; i < num_data_; i ++)
+  {
     printf("    %d,\n", data_[i]);
+  }
+}
 #endif // DEBUG
 
   return 0;
@@ -582,7 +587,7 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 /**
   Loads all system-defined icons. This call is useful when using the
   FileChooser widget and should be used when the application starts:
-  
+
   \code
   Fl_File_Icon::load_system_icons();
   \endcode
@@ -616,7 +621,7 @@ Fl_File_Icon::load_system_icons(void) {
 		  VERTEX, 7000, 5000, END, LINE, VERTEX, 3000, 4000,
 		  VERTEX, 7000, 4000, END, LINE, VERTEX, 3000, 3000,
 		  VERTEX, 7000, 3000, END, LINE, VERTEX, 3000, 2000,
-		  VERTEX, 7000, 2000, END, 
+		  VERTEX, 7000, 2000, END,
 		  END
 		};
   static short	image[] = {	// Image file icon
