@@ -572,7 +572,7 @@ int Fl_File_Icon::load_image(const char *ifile)	// I - File to read from
 #ifdef DEBUG
 {
   int i;
-  printf("Icon File \"%s\":\n", xpm);
+  printf("Icon File \"%s\":\n", ifile);
   for (i = 0; i < num_data_; i ++)
   {
     printf("    %d,\n", data_[i]);
