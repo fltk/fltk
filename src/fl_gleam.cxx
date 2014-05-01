@@ -1,4 +1,6 @@
 //
+// "$Id$"
+//
 // "Gleam" drawing routines for the Fast Light Tool Kit (FLTK).
 //
 // Copyright 1998-2010 by Bill Spitzak and others.
@@ -25,9 +27,11 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-#include <iostream>
+//#include <iostream>
 
-using namespace std;
+//using namespace std;
+
+#define min(A,B) ((A) < (B) ? (A) : (B))
 
 static void gleam_color(Fl_Color c) {
   if (Fl::draw_box_active()) fl_color(c);
@@ -129,3 +133,9 @@ Fl_Boxtype fl_define_FL_GLEAM_UP_BOX() {
   fl_internal_boxtype(_FL_GLEAM_ROUND_DOWN_BOX, down_box);
   return _FL_GLEAM_UP_BOX;
 }
+
+
+//
+// End of "$Id$".
+//
+
