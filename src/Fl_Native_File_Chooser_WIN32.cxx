@@ -626,7 +626,7 @@ void Fl_Native_File_Chooser::filter(const char *val) {
   add_filter("All Files", "*.*");	// always include 'all files' option
 
 #ifdef DEBUG
-  nullprint(_parsedfilt);
+  dnullprint(_parsedfilt);
 #endif /*DEBUG*/
 }
 
