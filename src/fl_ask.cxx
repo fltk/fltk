@@ -66,8 +66,8 @@ static char avoidRecursion = 0;
 // The first argument (Fl_Widget *) can either be an Fl_Button*
 // pointer to one of the buttons or an Fl_Window* pointer to the
 // message window (message_form).
-static void button_cb(Fl_Widget *, void *val) {
-  ret_val = (int) (fl_intptr_t)val;
+static void button_cb(Fl_Widget *, long val) {
+  ret_val = (int) val;
   message_form->hide();
 }
 
@@ -82,7 +82,7 @@ static Fl_Window *makeform() {
  Fl_Group::current(0);
  // create a new top level window
  Fl_Window *w = message_form = new Fl_Window(410,103);
- message_form->callback(button_cb,(void *)0);
+  message_form->callback(button_cb);
  // w->clear_border();
  // w->box(FL_UP_BOX);
  (message = new Fl_Box(60, 25, 340, 20))
@@ -104,11 +104,7 @@ static Fl_Window *makeform() {
      else
        button[b] = new Fl_Button(x, 70, 90, 23);
      button[b]->align(FL_ALIGN_INSIDE|FL_ALIGN_WRAP);
-#if defined (__LP64__)
-     button[b]->callback(button_cb,(void *)(long long) b);
-#else
-     button[b]->callback(button_cb,(void *)b);
-#endif
+     button[b]->callback(button_cb, b);
    }
  }
  button[0]->shortcut(FL_Escape);
