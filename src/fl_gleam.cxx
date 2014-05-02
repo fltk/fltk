@@ -27,11 +27,7 @@
 
 #include <FL/Fl.H>
 #include <FL/fl_draw.H>
-//#include <iostream>
 
-//using namespace std;
-
-#define min(A,B) ((A) < (B) ? (A) : (B))
 
 static void gleam_color(Fl_Color c) {
   if (Fl::draw_box_active()) fl_color(c);
@@ -40,8 +36,8 @@ static void gleam_color(Fl_Color c) {
 
 static void shade_rect_top_bottom(int x, int y, int w, int h, Fl_Color fg1, Fl_Color fg2, float th) {
   // Draws the shiny using maximum limits
-  int h_top  = min(h/2,20);
-  int h_bottom = min(h/6,15);
+  int h_top    = ((h/2) < (20) ? (h/2) : (20)); // min(h/2,20);
+  int h_bottom = ((h/6) < (15) ? (h/6) : (15)); // min(h/6,15);
   int h_flat = h-(h_top+h_bottom);
   int j = 0;
   float step_size_top = h_top>1?(0.999/(float)(h_top)):1;
