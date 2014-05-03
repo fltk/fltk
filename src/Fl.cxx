@@ -1420,6 +1420,30 @@ extern void fl_destroy_xft_draw(Window);
 #endif
 
 void Fl_Window::hide() {
+#ifdef WIN32
+  // STR#3079: if there remains a window and a non-modal window, and the window is deleted,
+  // the app remains running without any apparent window.
+  // Bug mechanism: hiding an owner window unmaps the owned (non-modal) window(s)
+  // but does not delete it(them) in FLTK.
+  // Fix for it: 
+  // when hiding a window, build list of windows it owns, and do hide/show on them.
+  int count = 0;
+  Fl_Window *win, **doit = NULL;
+  for (win = Fl::first_window(); win; win = Fl::next_window(win)) {
+    if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == i->xid) {
+      count++;
+    }
+  }
+  if (count) {
+    doit = new Fl_Window*[count];
+    count = 0;
+    for (win = Fl::first_window(); win; win = Fl::next_window(win)) {
+      if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == i->xid) {
+	doit[count++] = win;
+      }
+    }
+  }
+#endif
   clear_visible();
 
   if (!shown()) return;
@@ -1499,6 +1523,12 @@ void Fl_Window::hide() {
     ShowWindow(p, SW_SHOWNA);
   }
   XDestroyWindow(fl_display, ip->xid);
+  // end of fix for STR#3079
+  for (int ii = 0; ii < count; ii++) {
+    doit[ii]->hide();
+    doit[ii]->show();
+  }
+  if (count) delete[] doit;
 #elif defined(__APPLE_QUARTZ__)
   ip->destroy();
 #else
