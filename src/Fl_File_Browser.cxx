@@ -376,7 +376,7 @@ Fl_File_Browser::item_draw(void *p,	// I - List item data
       if (columns)
       {
         // Try clipping inside this column...
-	for (i = 0; i < column && columns[i]; i ++);
+	for (i = 0; i < column && columns[i]; i ++) { ; }
 
         if (columns[i])
           cW = columns[i];
