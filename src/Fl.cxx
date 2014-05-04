@@ -1429,7 +1429,7 @@ void Fl_Window::hide() {
   // when hiding a window, build list of windows it owns, and do hide/show on them.
   int count = 0;
   Fl_Window *win, **doit = NULL;
-  for (win = Fl::first_window(); win; win = Fl::next_window(win)) {
+  for (win = Fl::first_window(); win && i; win = Fl::next_window(win)) {
     if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == i->xid) {
       count++;
     }
@@ -1437,7 +1437,7 @@ void Fl_Window::hide() {
   if (count) {
     doit = new Fl_Window*[count];
     count = 0;
-    for (win = Fl::first_window(); win; win = Fl::next_window(win)) {
+    for (win = Fl::first_window(); win && i; win = Fl::next_window(win)) {
       if (win->non_modal() && GetWindow(fl_xid(win), GW_OWNER) == i->xid) {
 	doit[count++] = win;
       }
