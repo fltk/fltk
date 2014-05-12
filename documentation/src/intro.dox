@@ -360,20 +360,12 @@ http://www.fltk.org/software.php [source code]<br>
 http://www.fltk.org/newsgroups.php [newsgroup/forums]
 
 \par FTP
-http://ftp.easysw.com/pub/fltk [California, USA, via http]<br>
-ftp://ftp.easysw.com/pub/fltk [California, USA via ftp]<br>
-ftp://ftp2.easysw.com/pub/fltk [Maryland, USA]<br>
 ftp://ftp.funet.fi/pub/mirrors/ftp.easysw.com/pub/fltk [Espoo, Finland]<br>
 
 \par NNTP Newsgroups
-news://news.easysw.com/ [NNTP interface]<br>
+https://groups.google.com/forum/#!forum/fltkgeneral [Google Groups interface]
+news://fltk.org:1024/ [NNTP interface]<br>
 http://fltk.org/newsgroups.php [web interface]<br>
-
-Point your NNTP news reader at news.easysw.com. At minimum, you'll want to subscribe
-to the "fltk.general" group for general FLTK questions and answers.
-
-You can also use the web interface to the newsgroup; just go to the main http://fltk.org/
-page and click on "Forums".
 
 \section intro_reporting Reporting Bugs
 
