@@ -87,7 +87,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
         Fl_Group {} {
           label {Alignment:}
           callback propagate_load open
-          xywh {95 115 300 20} labelfont 1 labelsize 11 align 4
+          xywh {95 115 310 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Button {} {
             label Clip
@@ -99,35 +99,35 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
             label Wrap
             user_data FL_ALIGN_WRAP
             callback align_cb
-            tooltip {Wrap the label text.} xywh {130 115 30 20} type Toggle selection_color 8 labelsize 11
+            tooltip {Wrap the label text.} xywh {130 115 38 20} type Toggle selection_color 8 labelsize 11
           }
           Fl_Button {} {
             label {@-1<-}
             user_data FL_ALIGN_LEFT
             callback align_cb
-            tooltip {Left-align the label.} xywh {270 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
+            tooltip {Left-align the label.} xywh {278 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Button {} {
             label {@-1->}
             user_data FL_ALIGN_RIGHT
             callback align_cb
-            tooltip {Right-align the label.} xywh {295 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
+            tooltip {Right-align the label.} xywh {303 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Button {} {
             label {@-18}
             user_data FL_ALIGN_TOP
             callback align_cb
-            tooltip {Top-align the label.} xywh {320 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
+            tooltip {Top-align the label.} xywh {328 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Button {} {
             label {@-12}
             user_data FL_ALIGN_BOTTOM
             callback align_cb
-            tooltip {Bottom-align the label.} xywh {345 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
+            tooltip {Bottom-align the label.} xywh {353 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8 hide
           }
           Fl_Choice {} {
             callback align_text_image_cb open selected
-            xywh {165 115 110 20} down_box BORDER_BOX labelsize 11 textsize 11
+            xywh {172 115 110 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {   Image Alignment   }
@@ -162,7 +162,7 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           }
           Fl_Choice {} {
             callback align_position_cb open
-            xywh {280 115 85 20} down_box BORDER_BOX labelsize 11 textsize 11
+            xywh {288 115 85 20} down_box BORDER_BOX labelsize 11 textsize 11
           } {
             MenuItem {} {
               label {   Inside && Outside   }
@@ -244,16 +244,16 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
             label {@-3square}
             user_data FL_ALIGN_INSIDE
             callback align_cb
-            tooltip {Show the label inside the widget.} xywh {370 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
+            tooltip {Show the label inside the widget.} xywh {378 115 20 20} type Toggle selection_color 8 labelsize 11 labelcolor 8
           }
           Fl_Box {} {
-            xywh {395 115 0 20} labelsize 11 resizable
+            xywh {404 115 0 20} labelsize 11 resizable
           }
         }
         Fl_Group {} {
           label {Position:}
           callback propagate_load
-          xywh {95 150 300 20} labelfont 1 labelsize 11 align 4
+          xywh {95 150 314 20} labelfont 1 labelsize 11 align 4
         } {
           Fl_Value_Input widget_x_input {
             label {X:}
@@ -278,10 +278,10 @@ Use Ctrl-J for newlines.} xywh {95 40 190 20} labelfont 1 labelsize 11 when 1 te
           Fl_Light_Button {} {
             label Relative
             callback wc_relative_cb
-            tooltip {If set, widgets inside a widget class of type Fl_Group are repositioned relative to the origin at construction time} xywh {335 150 55 20} labelsize 11
+            tooltip {If set, widgets inside a widget class of type Fl_Group are repositioned relative to the origin at construction time} xywh {335 150 65 20} labelsize 11
           }
           Fl_Box {} {
-            xywh {394 150 1 20} resizable
+            xywh {398 150 1 20} resizable
           }
         }
         Fl_Group {} {

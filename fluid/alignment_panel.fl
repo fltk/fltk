@@ -79,29 +79,29 @@ Function {make_project_window()} {} {
       } {
         Fl_Box {} {
           label {Use "name.ext" to set a file name or just ".ext" to set extension.}
-          xywh {100 49 236 49} align 144
+          xywh {20 49 340 49} align 148
         }
         Fl_Input header_file_input {
           label {Header File:}
           user_data 1 user_data_type {void*}
           callback header_input_cb
-          tooltip {The name of the generated header file.} xywh {99 103 272 20} box THIN_DOWN_BOX labelfont 1 when 1 textfont 4
+          tooltip {The name of the generated header file.} xywh {119 103 252 20} box THIN_DOWN_BOX labelfont 1 when 1 textfont 4
         }
         Fl_Input code_file_input {
           label {Code File:}
           user_data 1 user_data_type {void*}
           callback code_input_cb
-          tooltip {The name of the generated code file.} xywh {100 128 272 20} box THIN_DOWN_BOX labelfont 1 when 1 textfont 4
+          tooltip {The name of the generated code file.} xywh {119 128 252 20} box THIN_DOWN_BOX labelfont 1 when 1 textfont 4
         }
         Fl_Check_Button include_H_from_C_button {
           label {Include Header from Code}
           callback include_H_from_C_button_cb
-          tooltip {Include the header file from the code file.} xywh {100 153 272 20} down_box DOWN_BOX
+          tooltip {Include the header file from the code file.} xywh {117 153 272 20} down_box DOWN_BOX
         }
         Fl_Check_Button use_FL_COMMAND_button {
           label {Menu shortcuts use FL_COMMAND}
           callback use_FL_COMMAND_button_cb
-          tooltip {Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.} xywh {100 176 272 20} down_box DOWN_BOX
+          tooltip {Replace FL_CTRL with FL_COMMAND when generating menu shortcut code.} xywh {117 176 272 20} down_box DOWN_BOX
         }
       }
       Fl_Group {} {
@@ -160,12 +160,12 @@ decl {void scheme_cb(Fl_Choice *, void *);} {public local
 Function {make_settings_window()} {} {
   Fl_Window settings_window {
     label {GUI Settings} open
-    xywh {393 191 339 241} type Double non_modal visible
+    xywh {393 191 349 241} type Double non_modal visible
   } {
     Fl_Choice scheme_choice {
       label {Scheme: }
       callback scheme_cb open
-      xywh {116 10 115 25} down_box BORDER_BOX labelfont 1
+      xywh {140 10 115 25} down_box BORDER_BOX labelfont 1
       code0 {int s;}
       code1 {fluid_prefs.get("scheme", s, 0);}
       code2 {scheme_choice->value(s);}
@@ -197,13 +197,13 @@ Function {make_settings_window()} {} {
     } {
       Fl_Box {} {
         label {Options: }
-        xywh {116 43 1 25} labelfont 1 align 4
+        xywh {140 43 1 25} labelfont 1 align 4
       }
       Fl_Check_Button tooltips_button {
         label {Show Tooltips}
         callback {Fl_Tooltip::enable(tooltips_button->value());
 fluid_prefs.set("show_tooltips", tooltips_button->value());}
-        xywh {116 43 113 25} down_box DOWN_BOX
+        xywh {138 43 113 25} down_box DOWN_BOX labelsize 12
         code0 {int b;}
         code1 {fluid_prefs.get("show_tooltips", b, 1);}
         code2 {tooltips_button->value(b);}
@@ -212,7 +212,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button completion_button {
         label {Show Completion Dialogs}
         callback {fluid_prefs.set("show_completion_dialogs", completion_button->value());}
-        xywh {116 68 186 25} down_box DOWN_BOX
+        xywh {138 68 186 25} down_box DOWN_BOX labelsize 12
         code0 {int b;}
         code1 {fluid_prefs.get("show_completion_dialogs", b, 1);}
         code2 {completion_button->value(b);}
@@ -220,7 +220,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button openlast_button {
         label {Open Previous File on Startup}
         callback {fluid_prefs.set("open_previous_file", openlast_button->value());}
-        xywh {116 93 214 25} down_box DOWN_BOX
+        xywh {138 93 214 25} down_box DOWN_BOX labelsize 12
         code0 {int b;}
         code1 {fluid_prefs.get("open_previous_file", b, 0);}
         code2 {openlast_button->value(b);}
@@ -228,7 +228,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
       Fl_Check_Button prevpos_button {
         label {Remember Window Positions}
         callback {fluid_prefs.set("prev_window_pos", prevpos_button->value());}
-        xywh {116 118 209 25} down_box DOWN_BOX
+        xywh {138 118 209 25} down_box DOWN_BOX labelsize 12
         code0 {int b;}
         code1 {fluid_prefs.get("prev_window_pos", b, 1);}
         code2 {prevpos_button->value(b);}
@@ -238,7 +238,7 @@ fluid_prefs.set("show_tooltips", tooltips_button->value());}
         callback {show_comments = show_comments_button->value();
 fluid_prefs.set("show_comments", show_comments);
 redraw_browser();}
-        xywh {116 143 209 25} down_box DOWN_BOX
+        xywh {138 143 209 25} down_box DOWN_BOX labelsize 12
         code1 {fluid_prefs.get("show_comments", show_comments, 1);}
         code2 {show_comments_button->value(show_comments);}
       }
@@ -247,7 +247,7 @@ redraw_browser();}
       label {\# Recent Files: }
       callback {fluid_prefs.set("recent_files", recent_spinner->value());
 load_history();}
-      xywh {115 173 40 25} labelfont 1 when 1
+      xywh {140 173 40 25} labelfont 1 when 1
       code0 {int c;}
       code1 {fluid_prefs.get("recent_files", c, 5);}
       code2 {recent_spinner->maximum(10);}
@@ -256,7 +256,7 @@ load_history();}
     Fl_Button {} {
       label Close
       callback {settings_window->hide();}
-      tooltip {Close this dialog.} xywh {266 205 64 25}
+      tooltip {Close this dialog.} xywh {276 205 64 25}
     }
   }
 } 
@@ -329,47 +329,47 @@ Function {make_shell_window()} {} {
 Function {make_layout_window()} {} {
   Fl_Window grid_window {
     label {Layout Settings} open
-    xywh {760 427 285 245} type Double non_modal visible
+    xywh {760 427 310 245} type Double non_modal visible
   } {
     Fl_Input horizontal_input {
       label x
       user_data 1 user_data_type long
       callback grid_cb
-      tooltip {Horizontal grid spacing.} xywh {106 10 50 25} type Int box THIN_DOWN_BOX align 8
+      tooltip {Horizontal grid spacing.} xywh {116 10 50 25} type Int box THIN_DOWN_BOX align 8
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Input vertical_input {
       label pixels
       user_data 2 user_data_type long
       callback grid_cb
-      tooltip {Vertical grid spacing.} xywh {166 10 50 25} type Int box THIN_DOWN_BOX align 8
+      tooltip {Vertical grid spacing.} xywh {179 10 50 25} type Int box THIN_DOWN_BOX align 8
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Input snap_input {
       label {pixel snap}
       user_data 3 user_data_type long
       callback grid_cb
-      tooltip {Snap to grid within this many pixels.} xywh {106 45 50 25} type Int box THIN_DOWN_BOX align 8
+      tooltip {Snap to grid within this many pixels.} xywh {116 45 50 25} type Int box THIN_DOWN_BOX align 8
       code0 {o->when(FL_WHEN_RELEASE|FL_WHEN_ENTER_KEY);}
     }
     Fl_Check_Button guides_toggle {
       label {Show Guides}
       user_data 4 user_data_type long
       callback guides_cb
-      tooltip {Show distance and alignment guides in overlay} xywh {106 80 110 25} down_box DOWN_BOX
+      tooltip {Show distance and alignment guides in overlay} xywh {116 80 110 25} down_box DOWN_BOX
     }
     Fl_Button {} {
       label Close
       callback {grid_window->hide();}
-      tooltip {Close this dialog.} xywh {215 210 60 25}
+      tooltip {Close this dialog.} xywh {240 210 60 25}
     }
     Fl_Box {} {
       label {Grid:}
-      xywh {26 10 70 25} labelfont 1 align 24
+      xywh {47 10 70 25} labelfont 1 align 24
     }
     Fl_Box {} {
       label {Widget Size:}
-      xywh {-1 115 97 25} labelfont 1 align 24
+      xywh {10 115 107 25} labelfont 1 align 24
     }
     Fl_Group {} {open
       xywh {105 115 170 75}
@@ -377,56 +377,56 @@ Function {make_layout_window()} {} {
       Fl_Round_Button {def_widget_size[0]} {
         user_data 8 user_data_type long
         callback default_widget_size_cb
-        xywh {105 115 70 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {115 115 70 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label tiny
-        xywh {120 115 50 25} labelsize 8 align 20
+        xywh {130 115 50 25} labelsize 8 align 20
       }
       Fl_Round_Button {def_widget_size[1]} {
         user_data 11 user_data_type long
         callback default_widget_size_cb
-        xywh {180 115 70 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {202 115 70 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label small
-        xywh {195 115 50 25} labelsize 11 align 20
+        xywh {218 115 50 25} labelsize 11 align 20
       }
       Fl_Round_Button {def_widget_size[2]} {
         user_data 14 user_data_type long
         callback default_widget_size_cb
-        xywh {105 140 70 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {115 140 70 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label normal
-        xywh {120 140 50 25} align 20
+        xywh {130 140 50 25} align 20
       }
       Fl_Round_Button {def_widget_size[3]} {
         user_data 18 user_data_type long
         callback default_widget_size_cb
-        xywh {180 140 90 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {202 140 90 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label medium
-        xywh {195 140 68 25} labelsize 18 align 20
+        xywh {218 140 68 25} labelsize 18 align 20
       }
       Fl_Round_Button {def_widget_size[4]} {
         user_data 24 user_data_type long
         callback default_widget_size_cb
-        xywh {105 165 75 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {115 165 75 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label large
-        xywh {120 165 64 25} labelsize 24 align 20
+        xywh {130 165 64 25} labelsize 24 align 20
       }
       Fl_Round_Button {def_widget_size[5]} {
         user_data 32 user_data_type long
         callback default_widget_size_cb
-        xywh {180 165 95 25} type Radio down_box ROUND_DOWN_BOX
+        xywh {202 165 95 25} type Radio down_box ROUND_DOWN_BOX
       }
       Fl_Box {} {
         label huge
-        xywh {195 165 76 25} labelsize 32 align 20
+        xywh {218 165 76 25} labelsize 32 align 20
       }
     }
   }

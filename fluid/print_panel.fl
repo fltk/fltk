@@ -214,7 +214,7 @@ print_update_status();} open
   } {
     Fl_Choice print_page_size {
       label {Page Size:}
-      xywh {110 10 80 25} down_box BORDER_BOX labelfont 1
+      xywh {110 10 80 25} down_box BORDER_BOX labelfont 1 labelsize 12
     } {
       MenuItem {} {
         label Letter
@@ -227,7 +227,7 @@ print_update_status();} open
     }
     Fl_Group {} {
       label {Output Mode:} open
-      xywh {110 45 170 40} labelfont 1 align 4
+      xywh {110 45 170 40} labelfont 1 labelsize 12 align 4
     } {
       Fl_Button {print_output_mode[0]} {
         image {pixmaps/print_color.xpm} xywh {110 45 30 40} type Radio box BORDER_BOX down_box BORDER_BOX value 1 color 7 selection_color 0
