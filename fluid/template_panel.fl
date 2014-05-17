@@ -117,7 +117,7 @@ if (img) {
   template_submit->activate();
   if (Fl::event_key() == FL_Enter) template_panel->hide();
 } else template_submit->deactivate();}
-      xywh {124 288 326 25} labelfont 1 when 3 textfont 4
+      xywh {144 288 306 25} labelfont 1 when 3 textfont 4
     }
     Fl_Input template_instance {
       label {Instance Name:}
@@ -129,7 +129,7 @@ if (img) {
       Fl_Button template_delete {
         label {Delete Template}
         callback template_delete_cb
-        xywh {10 323 133 25}
+        xywh {10 323 143 25}
       }
       Fl_Box {} {
         xywh {153 323 126 25} resizable
