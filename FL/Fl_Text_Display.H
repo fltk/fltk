@@ -33,10 +33,51 @@
 /**
  \brief Rich text display widget.
  
- This is the FLTK text display widget. It allows the user to view multiple lines
- of text and supports highlighting and scrolling. The buffer that is displayed 
- in the widget is managed by the Fl_Text_Buffer class. A single Text Buffer
- can be displayed by multiple Text Displays.
+ This is the FLTK text display widget. It allows the user to view
+ multiple lines of text and supports highlighting, word wrap, mixes
+ of font faces and colors, line numbers and scrolling.  The buffer
+ that is displayed in the widget is managed by the Fl_Text_Buffer
+ class. A single Text Buffer can be displayed by multiple Text
+ Displays.
+
+ \image html editor.png "Fl_Text_Display widget"
+ \image latex editor.png "Fl_Text_Display widget" width=6cm
+ <BR><BR>
+ \image html editor-linenumbers.png "Fl_Text_Display widget with line numbers enabled"
+ \image latex editor-linenumbers.png "Fl_Text_Display widget with line numbers enabled" width=6cm
+
+ \b Example \b Use
+ \code
+     #include <FL/FL_Text_Display.H>
+     ..
+     int main() {
+         ..
+         Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+         Fl_Text_Display *disp = new Fl_Text_Display(10, 10, 640, 480);
+         disp->buffer(buff);                 // attach text buffer to display widget
+         buff->text("line one\nline two");   // add some text to buffer
+	 ..
+     }
+ \endcode
+
+ \b Features
+
+ - Word wrap: wrap_mode(), wrapped_column(), wrapped_row()
+ - Font control: textfont(), textsize(), textcolor()
+ - Font styling: highlight_data()
+ - Cursor: cursor_style(), show_cursor(), hide_cursor(), cursor_color()
+ - Line numbers: linenumber_width(), linenumber_font(),
+   linenumber_size(), linenumber_fgcolor(), linenumber_bgcolor(),
+   linenumber_align(), linenumber_format()
+
+ Note that other features may be available via Fl_Text_Editor
+ and Fl_Text_Buffer classes.
+
+ \note Line numbers were added in 1.3.3. To avoid breaking ABI,
+       many of its options are read only. To adjust these features
+       in 1.3.x, you must build FLTK with FLTK_ABI_VERSION set to 10303
+       or higher.
+
  */
 class FL_EXPORT Fl_Text_Display: public Fl_Group {
 
@@ -290,6 +331,21 @@ public:
    */
   double col_to_x(double col) const;
   
+  void linenumber_width(int width);
+  int linenumber_width() const;
+  void linenumber_font(Fl_Font val);
+  Fl_Font linenumber_font() const;
+  void linenumber_size(Fl_Fontsize val);
+  Fl_Fontsize linenumber_size() const;
+  void linenumber_fgcolor(Fl_Color val);
+  Fl_Color linenumber_fgcolor() const;
+  void linenumber_bgcolor(Fl_Color val);
+  Fl_Color linenumber_bgcolor() const;
+  void linenumber_align(Fl_Align val);
+  Fl_Align linenumber_align() const;
+  void linenumber_format(const char* val);
+  const char* linenumber_format() const;
+
 protected:
   // Most (all?) of this stuff should only be called from resize() or
   // draw().
@@ -457,12 +513,18 @@ protected:
   Fl_Fontsize textsize_;
   Fl_Color textcolor_;
   
-  // The following are not presently used from the original NEdit code,
-  // but are being put here so that future versions of Fl_Text_Display
-  // can implement line numbers without breaking binary compatibility.
-  
-  /* Line number margin and width */
+  // Line number margin and width
   int mLineNumLeft, mLineNumWidth;
+
+  // Line number font/colors
+#if FLTK_ABI_VERSION >= 10303
+  Fl_Font     linenumber_font_;
+  Fl_Fontsize linenumber_size_;
+  Fl_Color    linenumber_fgcolor_;
+  Fl_Color    linenumber_bgcolor_;
+  Fl_Align    linenumber_align_;
+  const char* linenumber_format_;
+#endif
 };
 
 #endif

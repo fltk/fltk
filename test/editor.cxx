@@ -515,6 +515,19 @@ void delete_cb(Fl_Widget*, void*) {
   textbuf->remove_selection();
 }
 
+void linenumbers_cb(Fl_Widget *w, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  Fl_Menu_Bar* m = (Fl_Menu_Bar*)w;
+  const Fl_Menu_Item* i = m->mvalue();
+  if ( i->value() ) {
+    e->editor->linenumber_width(50);	// enable
+    e->editor->linenumber_size(e->editor->textsize());
+  } else {
+    e->editor->linenumber_width(0);	// disable
+  }
+  e->redraw();
+}
+
 void find_cb(Fl_Widget* w, void* v) {
   EditorWindow* e = (EditorWindow*)v;
   const char *val;
@@ -751,6 +764,9 @@ Fl_Menu_Item menuitems[] = {
     { "&Copy",            FL_COMMAND + 'c', (Fl_Callback *)copy_cb },
     { "&Paste",           FL_COMMAND + 'v', (Fl_Callback *)paste_cb },
     { "&Delete",          0, (Fl_Callback *)delete_cb },
+    { "Preferences",      0, 0, 0, FL_SUBMENU },
+      { "Line Numbers",   FL_COMMAND + 'l', (Fl_Callback *)linenumbers_cb, 0, FL_MENU_TOGGLE },
+      { 0 },
     { 0 },
 
   { "&Search", 0, 0, 0, FL_SUBMENU },
