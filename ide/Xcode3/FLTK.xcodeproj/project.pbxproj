@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		00BD4FD0209BFB1A6446B9A5 /* freeglut_teapot.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 95604163D1E6CBE33AAD66CD /* freeglut_teapot.cxx */; };
+		01C68DB0192C6089000BD75C /* Fl_sleep.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 01C68DAF192C6089000BD75C /* Fl_sleep.cxx */; };
 		023D5B2431F40114C118A5DB /* Fl_Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = BF1FE1C69D048AA23CF27B1E /* Fl_Window.cxx */; };
 		0262498E858406B6E51BD4E4 /* fl_symbols.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7C8D88FDB0A0A32E59465025 /* fl_symbols.cxx */; };
 		036C655FFDAEEE93046F08A6 /* checkers.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 67989D22AB6482C5B577D395 /* checkers.cxx */; };
@@ -4051,6 +4052,7 @@
 		00B08A2C8EA901C350696F8D /* Fl_compose.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_compose.cxx; path = ../../src/Fl_compose.cxx; sourceTree = SOURCE_ROOT; };
 		00CAAA52DC3193E1133AE26C /* Fl_Float_Input.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Float_Input.H; path = ../../FL/Fl_Float_Input.H; sourceTree = SOURCE_ROOT; };
 		00E3864092375950FE42449E /* Fl_Tree_Item_Array.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Tree_Item_Array.cxx; path = ../../src/Fl_Tree_Item_Array.cxx; sourceTree = SOURCE_ROOT; };
+		01C68DAF192C6089000BD75C /* Fl_sleep.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_sleep.cxx; path = ../../src/Fl_sleep.cxx; sourceTree = SOURCE_ROOT; };
 		020FFBC4E06A072BF8D098FB /* resize.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = resize.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02C21BB31E7DDFE9E76F4997 /* Fl_Dial.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Dial.H; path = ../../FL/Fl_Dial.H; sourceTree = SOURCE_ROOT; };
 		02EE866C628E67B0928F7E6C /* output.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = output.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5532,6 +5534,7 @@
 				EB5B18A1B9B1E41F2AB56A97 /* Fl_get_system_colors.cxx */,
 				28E8F2802DEA5334F914BE98 /* Fl_grab.cxx */,
 				D004B2D87C53E063F848C539 /* Fl_lock.cxx */,
+				01C68DAF192C6089000BD75C /* Fl_sleep.cxx */,
 				AAE8D31DC4F024028C66743C /* Fl_own_colormap.cxx */,
 				5B2B6ED6A3649923BAAFFDF1 /* Fl_visual.cxx */,
 				09A359CA8F522F64BAF6CEAF /* Fl_x.cxx */,
@@ -8461,6 +8464,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 615453DB5B8EBEE070930DA7 /* Build configuration list for PBXProject "FLTK" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -9510,6 +9514,7 @@
 				9DD7A2B6D63D30C07781F446 /* is_spacing.c in Sources */,
 				299CB8A2848CB844BCEC7829 /* Fl_Paged_Device.cxx in Sources */,
 				7F74F393190D7F0500C56950 /* fl_gleam.cxx in Sources */,
+				01C68DB0192C6089000BD75C /* Fl_sleep.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
