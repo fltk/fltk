@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_sleep.cxx $"
+// "$Id$"
 //
 // Multi-threading support code for the Fast Light Tool Kit (FLTK).
 //
@@ -64,5 +64,5 @@ void Fl::usleep(unsigned long long microseconds)
 }
 
 //
-// End of "$Id: $".
+// End of "$Id$".
 //
