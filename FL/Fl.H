@@ -1075,6 +1075,16 @@ public:
   static void awake(void* message = 0);
   /** See void awake(void* message=0). */
   static int awake(Fl_Awake_Handler cb, void* message = 0);
+ 
+  // Cross platform sleep API
+
+  /** flexible sleep function in seconds, accepts decimals typically up to 100usec resolution (depends on your hardware) */
+  static void sleep(double seconds);
+  /** milli seconds sleep */
+  static void msleep(unsigned long milliseconds);
+  /** microseconds sleep */
+  static void usleep(unsigned long long microseconds);
+  
   /**
     The thread_message() method returns the last message
     that was sent from a child by the awake() method.

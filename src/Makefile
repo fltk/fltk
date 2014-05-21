@@ -106,6 +106,7 @@ CPPFILES = \
 	Fl_get_system_colors.cxx \
 	Fl_grab.cxx \
 	Fl_lock.cxx \
+	Fl_sleep.cxx \
 	Fl_own_colormap.cxx \
 	Fl_visual.cxx \
 	Fl_x.cxx \
@@ -157,13 +158,13 @@ CPPFILES = \
 	screen_xywh.cxx \
 	fl_utf8.cxx \
 	ps_image.cxx
-	
+
 OBJCPPFILES = \
     Fl_cocoa.mm \
     Fl_Quartz_Printer.mm \
     Fl_Native_File_Chooser_MAC.mm \
     Fl_Sys_Menu_Bar.mm
-	
+
 FLCPPFILES = \
 	forms_compatability.cxx \
 	forms_bitmap.cxx \

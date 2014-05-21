@@ -418,18 +418,19 @@ SudokuSound::audio_cb(AudioDeviceID device,
 }
 #endif // __APPLE__
 
+#define NOTE_DURATION_MS 50
 
 // Play a note for 250ms...
 void SudokuSound::play(char note) {
   Fl::check();
-
+  
 #ifdef __APPLE__
   // Point to the next note...
   data      = sample_data[note - 'A'];
   remaining = sample_size * 2;
 
   // Wait for the sound to complete...
-  usleep(50000);
+    Fl::msleep(NOTE_DURATION_MS);
 
 #elif defined(WIN32)
   if (sample_size) {
@@ -437,8 +438,8 @@ void SudokuSound::play(char note) {
 
     waveOutWrite(device, header_ptr, sizeof(WAVEHDR));
 
-    Sleep(50);
-  } else Beep(frequencies[note - 'A'], 50);
+    Fl::msleep(NOTE_DURATION_MS);
+  } else Beep(frequencies[note - 'A'], NOTE_DURATION_MS);
 
 #else
 #  ifdef HAVE_ALSA_ASOUNDLIB_H
@@ -448,7 +449,7 @@ void SudokuSound::play(char note) {
       snd_pcm_prepare(handle);
       snd_pcm_writei(handle, sample_data[note - 'A'], sample_size);
     }
-    usleep(50000);
+    Fl::msleep(NOTE_DURATION_MS);
     return;
   }
 #  endif // HAVE_ALSA_ASOUNDLIB_H
@@ -463,7 +464,7 @@ void SudokuSound::play(char note) {
   // Sound a tone for the given note...
   control.bell_percent  = 100;
   control.bell_pitch    = frequencies[note - 'A'];
-  control.bell_duration = 50;
+  control.bell_duration = NOTE_DURATION_MS;
 
   XChangeKeyboardControl(fl_display,
                          KBBellPercent | KBBellPitch | KBBellDuration,

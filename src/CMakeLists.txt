@@ -90,6 +90,7 @@ set(CPPFILES
   Fl_get_system_colors.cxx
   Fl_grab.cxx
   Fl_lock.cxx
+  Fl_sleep.cxx
   Fl_own_colormap.cxx
   Fl_visual.cxx
   Fl_x.cxx

@@ -517,5 +517,6 @@
     <ClCompile Include="..\..\src\scandir.c" />
     <ClCompile Include="..\..\src\screen_xywh.cxx" />
     <ClCompile Include="..\..\src\vsnprintf.c" />
+    <ClCompile Include="..\..\src\Fl_sleep.cxx" />
   </ItemGroup>
 </Project>
