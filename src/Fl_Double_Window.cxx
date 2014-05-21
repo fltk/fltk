@@ -218,8 +218,8 @@ void Fl_GDI_Graphics_Driver::copy_offscreen_with_alpha(int x,int y,int w,int h,H
   BOOL alpha_ok = 0;
   // first try to alpha blend
   // if to printer, always try alpha_blend
-  if (fl_graphics_driver->class_name() == Fl_GDI_Printer_Graphics_Driver::class_id && fl_alpha_blend ||
-      Fl_Surface_Device::surface() == Fl_Display_Device::display_device() && fl_can_do_alpha_blending() ) {
+  if ( (fl_graphics_driver->class_name() == Fl_GDI_Printer_Graphics_Driver::class_id && fl_alpha_blend) ||
+      (Fl_Surface_Device::surface() == Fl_Display_Device::display_device() && fl_can_do_alpha_blending() ) ) {
     alpha_ok = fl_alpha_blend(fl_gc, x, y, w, h, new_gc, srcx, srcy, w, h, blendfunc);
   }
   // if that failed (it shouldn't), still copy the bitmap over, but now alpha is 1
