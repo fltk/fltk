@@ -60,6 +60,7 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
   int malloc_size = INITIALLINES;
   char buffer[MAXSIZE+20];
   int i = 0;
+  int W,H,ncolors,chars_per_pixel;
   while (fgets(buffer,MAXSIZE+20,f)) {
     if (buffer[0] != '\"') continue;
     char *myp = buffer;
@@ -107,6 +108,15 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
       new_data = temp_data;
       malloc_size += INITIALLINES;
     }
+    // first line has 4 ints: width, height, ncolors, chars_per_pixel
+    // followed by color segment: 
+    //   if ncolors < 0 this is FLTK (non standard) compressed colormap - all colors coded in single line of 4*ncolors bytes
+    //   otherwise - ncolor lines of at least chars_per_pixel bytes
+    // followed by pic segment: H lines of at least chars_per_pixel*W bytes
+    // next line: would have loved to use measure_pixmap, but it doesn't return all the data!
+    if ((!i) && (sscanf(buffer,"%d%d%d%d", &W, &H, &ncolors, &chars_per_pixel) < 4)) goto bad_data; // first line
+    else if ((i > (ncolors<0?1:ncolors)) && (myp-buffer-1<W*chars_per_pixel)) goto bad_data; // pic segment
+    else if (myp-buffer-1<(ncolors<0?-ncolors*4:chars_per_pixel)) goto bad_data; // color segment
     new_data[i] = new char[myp-buffer+1];
     memcpy(new_data[i], buffer,myp-buffer);
     new_data[i][myp-buffer] = 0;
@@ -114,11 +124,18 @@ Fl_XPM_Image::Fl_XPM_Image(const char *name) : Fl_Pixmap((char *const*)0) {
   }
 
   fclose(f);
-
+  f = NULL;
+  if ((!i) || (i<1+(ncolors<0?1:ncolors)+H)) goto bad_data;
   data((const char **)new_data, i);
   alloc_data = 1;
 
   measure();
+  return;
+  // dealloc and close as needed when bad data was found
+bad_data:
+  while (i > 0) delete[] new_data[--i];
+  delete[] new_data;
+  if (f) fclose(f);
 }
 
 
