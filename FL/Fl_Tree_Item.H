@@ -125,8 +125,10 @@ public:
   Fl_Tree_Item(const Fl_Tree_Prefs &prefs);	// CTOR -- backwards compatible
 #if FLTK_ABI_VERSION >= 10303
   Fl_Tree_Item(Fl_Tree *tree);			// CTOR -- ABI 1.3.3+
+  virtual ~Fl_Tree_Item();			// DTOR -- ABI 1.3.3+
+#else
+  ~Fl_Tree_Item();				// DTOR -- backwards compatible
 #endif
-  ~Fl_Tree_Item();				// DTOR
   Fl_Tree_Item(const Fl_Tree_Item *o);		// COPY CTOR
   /// The item's x position relative to the window
   int x() const { return(_xywh[0]); }
