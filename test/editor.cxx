@@ -528,6 +528,17 @@ void linenumbers_cb(Fl_Widget *w, void* v) {
   e->redraw();
 }
 
+void wordwrap_cb(Fl_Widget *w, void* v) {
+  EditorWindow* e = (EditorWindow*)v;
+  Fl_Menu_Bar* m = (Fl_Menu_Bar*)w;
+  const Fl_Menu_Item* i = m->mvalue();
+  if ( i->value() )
+    e->editor->wrap_mode(Fl_Text_Display::WRAP_AT_BOUNDS, 0);
+  else
+    e->editor->wrap_mode(Fl_Text_Display::WRAP_NONE, 0);
+  e->redraw();
+}
+
 void find_cb(Fl_Widget* w, void* v) {
   EditorWindow* e = (EditorWindow*)v;
   const char *val;
@@ -766,6 +777,7 @@ Fl_Menu_Item menuitems[] = {
     { "&Delete",          0, (Fl_Callback *)delete_cb },
     { "Preferences",      0, 0, 0, FL_SUBMENU },
       { "Line Numbers",   FL_COMMAND + 'l', (Fl_Callback *)linenumbers_cb, 0, FL_MENU_TOGGLE },
+      { "Word Wrap",      0,                (Fl_Callback *)wordwrap_cb, 0, FL_MENU_TOGGLE },
       { 0 },
     { 0 },
 
