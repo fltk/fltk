@@ -40,6 +40,7 @@
 #  include <stdlib.h>
 #  include "flstring.h"
 #  include <unistd.h>
+#  include <time.h>
 #  include <sys/time.h>
 #  include <X11/Xmd.h>
 #  include <X11/Xlocale.h>
