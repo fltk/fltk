@@ -1219,7 +1219,7 @@ static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lowe
 	num_bytes = nitems * (actual_format / 8);
 	offset += num_bytes/4;
 	//slice_size += num_bytes;
-	if (total + num_bytes > lower_bound) data = (uchar*)realloc(data, total + num_bytes);
+	if (total + num_bytes > (size_t)lower_bound) data = (uchar*)realloc(data, total + num_bytes);
 	memcpy(data + total, prop, num_bytes); total += num_bytes;
 	if (prop) XFree(prop);
       } while (bytes_after != 0);
