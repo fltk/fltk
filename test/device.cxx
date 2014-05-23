@@ -21,6 +21,7 @@
 
 #include <FL/Fl_Overlay_Window.H>
 #include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Radio_Round_Button.H>
 #include <FL/fl_draw.H>
 #include <FL/Fl_Clock.H>
 #include "pixmaps/porsche.xpm"
@@ -30,8 +31,8 @@
 
 
 #include <FL/Fl_Printer.H>
-
-//#include "fl_printer_chooser.H"
+#include <FL/Fl_Copy_Surface.H>
+#include <FL/Fl_Image_Surface.H>
 
 #include <FL/Fl_File_Chooser.H>
 #include <FL/fl_draw.H>
@@ -448,7 +449,6 @@ class MyWidget5: public Fl_Box{
 protected:
   void draw(){
     Fl_Box::draw();
-    //fl_push_clip(x(),y(),w(),h());
     fl_push_matrix();
     
     fl_translate(x(),y());
@@ -512,11 +512,6 @@ protected:
     fl_end_complex_polygon();
     
     fl_pop_matrix();
-    
-    //    fl_color(FL_BLACK);
-    //    fl_line_style(0);
-    //fl_pop_clip();
-    
   };
 public:
   MyWidget5(int x, int y):Fl_Box(x,y,230,250, "Complex (double) drawings:\nBlue ellipse may not be\ncorrectly transformed\ndue to non-orthogonal\ntransformation"){
@@ -551,37 +546,53 @@ void make_image() {
 }
 
 
-void print(Fl_Widget *, void *w) {
-  Fl_Widget * g = (Fl_Widget *)w;
-  
-  Fl_Printer * p = new Fl_Printer();
-  if (!p->start_job(1)) {
-    p->start_page();
-    p->print_window(g->window());
-    p->end_page();
-    p->end_job();
-  }
-  delete p;
-}
+Fl_Widget *target;
+const  char *operation;
 
-/*void print2(Fl_Widget *, void *w) {
- Fl_Widget * g = (Fl_Widget *)w;
- Fl_Printer * p = fl_printer_chooser();
- if(!p) return;
- p->page(Fl_Printer::A4);
- // fitting inside margins 1 inch wide
- p->place(g, FL_INCH, FL_INCH, p->page_width() - 2 * FL_INCH, p->page_height() - 2 * FL_INCH,  FL_ALIGN_CENTER);
- Fl_Device * c = p->set_current();
- fl_draw(g); 
- c->set_current();
- delete p;
- };*/
+void copy(Fl_Widget *, void *data) {
+  if (strcmp(operation, "Fl_Image_Surface") == 0) {
+    Fl_Image_Surface *rgb_surf = new Fl_Image_Surface(target->w()+20, target->h()+10);
+    rgb_surf->set_current();
+    fl_color(FL_BLUE);fl_rectf(0,0,1000,1000);
+    rgb_surf->draw(target,10,5);
+    Fl_Image *img = rgb_surf->image();
+    delete rgb_surf;
+    Fl_Display_Device::display_device()->set_current();
+    Fl_Window* g2 = new Fl_Window(img->w(), img->h());
+    Fl_Box *b = new Fl_Box(FL_NO_BOX,0,0,img->w(), img->h(),0);
+    b->image(img);
+    g2->end();
+    g2->show();
+    return;
+  }
+  
+  
+  if (strcmp(operation, "Fl_Copy_Surface") == 0) {
+    Fl_Copy_Surface *copy_surf = new Fl_Copy_Surface(target->w()+10, target->h()+20);
+    copy_surf->set_current();
+    fl_color(FL_YELLOW);fl_rectf(0,0,1000,1000);
+    copy_surf->draw(target, 5, 10);
+    delete copy_surf;
+    Fl_Display_Device::display_device()->set_current();  
+    }
+  
+  if (strcmp(operation, "Fl_Printer") == 0) {
+    Fl_Printer * p = new Fl_Printer();
+    if (!p->start_job(1)) {
+      p->start_page();
+      if (target->as_window()) p->print_window(target->as_window());
+      else p->print_widget(target);
+      p->end_page();
+      p->end_job();
+    }
+    delete p;
+  }
+}
 
 
 class My_Button:public Fl_Button{
 protected:
   void draw(){
-    // Fl_Button::draw();
     if (type() == FL_HIDDEN_BUTTON) return;
     Fl_Color col = value() ? selection_color() : color();
     draw_box(value() ? (down_box()?down_box():fl_down(box())) : box(), col);
@@ -598,14 +609,21 @@ public:
 };
 
 
+void target_cb(Fl_Widget* wid, void *data)
+{
+  target = (Fl_Widget*)data;
+}
+
+void operation_cb(Fl_Widget* wid, void *data)
+{
+  operation = wid->label();
+}
+
 int main(int argc, char ** argv) {
   
-  //Fl::scheme("plastic");
-  
-  
+  //Fl::scheme("plastic");  
   
   Fl_Window * w2 = new Fl_Window(500,560,"Graphics test");
-  
   
   Fl_Group *c2 =new Fl_Group(3, 43, 494, 514 );
   
@@ -643,14 +661,12 @@ int main(int argc, char ** argv) {
   but5.labelfont(FL_BOLD|FL_ITALIC);
   but5.labeltype(FL_SHADOW_LABEL);
   but5.box(FL_ROUND_UP_BOX);
-  //  but5.selection_color(FL_WHITE);
   
   Fl_Button but6(360, 460, 120, 30, "Plastic");
   but6.box(FL_PLASTIC_UP_BOX);
   
-  //Fl_Button but7(, 480, 120, 30, "Engraved box");
-  //but7.box(FL_ENGRAVED_BOX);
-  { Fl_Group* o = new Fl_Group(360, 495, 120, 40);
+  Fl_Group *group;
+  { Fl_Group* o = new Fl_Group(360, 495, 120, 40); group=o;
     o->box(FL_UP_BOX);
     { Fl_Group* o = new Fl_Group(365, 500, 110, 30);
       o->box(FL_THIN_UP_FRAME);
@@ -673,15 +689,29 @@ int main(int argc, char ** argv) {
   tx.hide();
   
   c2->end();
-  Fl_Button *b4 = new Fl_Button(10,5, 150, 25, "Print");
-  b4->callback(print,c2);
-  /*Fl_Button *b5 = new Fl_Button(165,5, 90, 25, "Print");
-   b5->tooltip("This is a tooltip");
-   b5->callback(print2,c2);*/
+  
+  Fl_Radio_Round_Button *rb;
+  Fl_Window *w3 = new Fl_Window(2,5,w2->w()-10,55);
+  w3->box(FL_DOWN_BOX);
+  Fl_Group *g1 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
+  rb = new Fl_Radio_Round_Button(5,5,150,12, "Fl_Image_Surface"); 
+  rb->set(); rb->callback(operation_cb, NULL); operation = rb->label();
+  rb = new Fl_Radio_Round_Button(5,22,150,12, "Fl_Copy_Surface"); rb->callback(operation_cb, NULL);
+  rb = new Fl_Radio_Round_Button(5,39,150,12, "Fl_Printer"); rb->callback(operation_cb, NULL);
+  g1->end();
+  
+  Fl_Group *g2 = new Fl_Group(w3->x(),w3->y(),w3->w(),w3->h());
+  rb = new Fl_Radio_Round_Button(170,5,150,12, "Window"); 
+  rb->set(); rb->callback(target_cb, w2); target = w2;
+  rb = new Fl_Radio_Round_Button(170,22,150,12, "Sub-window"); rb->callback(target_cb, w3);
+  rb = new Fl_Radio_Round_Button(170,39,150,12, "Group"); rb->callback(target_cb, group);
+  g2->end();
+  Fl_Button *b4 = new Fl_Button(330, (w3->h() - 25)/2, 150, 25, "GO");
+  b4->callback((Fl_Callback*)copy,NULL);
+  w3->end();
   
   w2->end();
   w2->show(argc, argv);
-  
   
   Fl::run();
   return 0;

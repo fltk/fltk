@@ -34,6 +34,7 @@
 #  include <FL/Fl_Tooltip.H>
 #  include <FL/fl_draw.H>
 #  include <FL/Fl_Paged_Device.H>
+#  include <FL/Fl_Shared_Image.H>
 #  include <FL/fl_ask.H>
 #  include <stdio.h>
 #  include <stdlib.h>
@@ -335,6 +336,9 @@ static Atom fl_XaText;
 Atom fl_XaCompoundText;
 Atom fl_XaUtf8String;
 Atom fl_XaTextUriList;
+Atom fl_XaImageBmp;
+Atom fl_XaImagePNG;
+Atom fl_INCR;
 Atom fl_NET_WM_NAME;			// utf8 aware window label
 Atom fl_NET_WM_ICON_NAME;		// utf8 aware window icon name
 Atom fl_NET_SUPPORTING_WM_CHECK;
@@ -641,6 +645,9 @@ void fl_open_display(Display* d) {
   fl_XaCompoundText     = XInternAtom(d, "COMPOUND_TEXT",       0);
   fl_XaUtf8String       = XInternAtom(d, "UTF8_STRING",         0);
   fl_XaTextUriList      = XInternAtom(d, "text/uri-list",       0);
+  fl_XaImageBmp         = XInternAtom(d, "image/bmp",           0);
+  fl_XaImagePNG         = XInternAtom(d, "image/png",           0);
+  fl_INCR               = XInternAtom(d, "INCR",                0);
   fl_NET_WM_NAME        = XInternAtom(d, "_NET_WM_NAME",        0);
   fl_NET_WM_ICON_NAME   = XInternAtom(d, "_NET_WM_ICON_NAME",   0);
   fl_NET_SUPPORTING_WM_CHECK = XInternAtom(d, "_NET_SUPPORTING_WM_CHECK", 0);
@@ -773,15 +780,18 @@ void Fl::get_mouse(int &xx, int &yy) {
 Fl_Widget *fl_selection_requestor;
 char *fl_selection_buffer[2];
 int fl_selection_length[2];
+const char * fl_selection_type[2];
 int fl_selection_buffer_length[2];
 char fl_i_own_selection[2] = {0,0};
 
 // Call this when a "paste" operation happens:
-void Fl::paste(Fl_Widget &receiver, int clipboard) {
+void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
   if (fl_i_own_selection[clipboard]) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is
     // called in response to FL_PASTE!
+    // However, for now, we only paste text in this function
+    if (fl_selection_type[clipboard] != Fl::clipboard_plain_text) return; //TODO: allow copy/paste of image within same app
     Fl::e_text = fl_selection_buffer[clipboard];
     Fl::e_length = fl_selection_length[clipboard];
     if (!Fl::e_text) Fl::e_text = (char *)"";
@@ -791,8 +801,55 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
   // otherwise get the window server to return it:
   fl_selection_requestor = &receiver;
   Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
+  Fl::e_clipboard_type = type;
   XConvertSelection(fl_display, property, TARGETS, property,
                     fl_xid(Fl::first_window()), fl_event_time);
+}
+
+int Fl::clipboard_contains(const char *type)
+{
+  XEvent event;
+  Atom actual; int format; unsigned long count, remaining, i = 0;
+  unsigned char* portion = NULL;
+  Fl_Window *win = Fl::first_window();
+  if (!win || !fl_xid(win)) return 0;
+  XConvertSelection(fl_display, CLIPBOARD, TARGETS, CLIPBOARD,
+		    fl_xid(win), fl_event_time);
+  XFlush(fl_display);
+  do  { XNextEvent(fl_display, &event); i++; }
+  while (i < 10 && (event.type != SelectionNotify || event.xselection.property == None));
+  if (i >= 10) return 0;
+  XGetWindowProperty(fl_display,
+		     event.xselection.requestor,
+		     event.xselection.property,
+		     0, 4000, 0, 0,
+		     &actual, &format, &count, &remaining, &portion);
+  if (actual != XA_ATOM) return 0;
+  Atom t;
+  int retval = 0;
+  if (strcmp(type, Fl::clipboard_plain_text) == 0) {
+    for (i = 0; i<count; i++) { // searching for text data
+      t = ((Atom*)portion)[i];
+      if (t == fl_Xatextplainutf ||
+	  t == fl_Xatextplainutf2 ||
+	  t == fl_Xatextplain ||
+	  t == fl_XaUtf8String) {
+	retval = 1;
+	break;
+      }
+    }	
+  }
+  else if (strcmp(type, Fl::clipboard_image) == 0) {
+    for (i = 0; i<count; i++) { // searching for image data
+      t = ((Atom*)portion)[i];
+      if (t == fl_XaImageBmp || t == fl_XaImagePNG) {
+	retval = 1;
+	break;
+      }
+    }	
+  }
+  XFree(portion);
+  return retval;
 }
 
 Window fl_dnd_source_window;
@@ -859,7 +916,7 @@ static int get_xwinprop(Window wnd, Atom prop, long max_length,
 ////////////////////////////////////////////////////////////////
 // Code for copying to clipboard and DnD out of the program:
 
-void Fl::copy(const char *stuff, int len, int clipboard) {
+void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
   if (len+1 > fl_selection_buffer_length[clipboard]) {
     delete[] fl_selection_buffer[clipboard];
@@ -870,6 +927,77 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   fl_selection_buffer[clipboard][len] = 0; // needed for direct paste
   fl_selection_length[clipboard] = len;
   fl_i_own_selection[clipboard] = 1;
+  fl_selection_type[clipboard] = Fl::clipboard_plain_text;
+  Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
+  XSetSelectionOwner(fl_display, property, fl_message_window, fl_event_time);
+}
+
+static void write_short(unsigned char **cp,short i){
+  unsigned char *c=*cp;
+  *c++=i&0xFF;i>>=8;
+  *c++=i&0xFF;i>>=8;
+  *cp=c;
+}
+
+static void write_int(unsigned char **cp,int i){
+  unsigned char *c=*cp;
+  *c++=i&0xFF;i>>=8;
+  *c++=i&0xFF;i>>=8;
+  *c++=i&0xFF;i>>=8;
+  *c++=i&0xFF;i>>=8;
+  *cp=c;
+}
+
+static unsigned char *create_bmp(const unsigned char *data, int W, int H, int *return_size){
+  int R=(3*W+3)/4 * 4; // the number of bytes per row, rounded up to multiple of 4
+  int s=H*R;
+  int fs=14+40+s;
+  unsigned char *b=new unsigned char[fs];
+  unsigned char *c=b;
+  // BMP header
+  *c++='B';
+  *c++='M';
+  write_int(&c,fs);
+  write_int(&c,0);
+  write_int(&c,14+40);
+  // DIB header:
+  write_int(&c,40);
+  write_int(&c,W);
+  write_int(&c,H);
+  write_short(&c,1);
+  write_short(&c,24);//bits ber pixel
+  write_int(&c,0);//RGB
+  write_int(&c,s);
+  write_int(&c,0);// horizontal resolution
+  write_int(&c,0);// vertical resolution
+  write_int(&c,0);//number of colors. 0 -> 1<<bits_per_pixel
+  write_int(&c,0);
+  // Pixel data
+  data+=3*W*H;
+  for (int y=0;y<H;++y){
+    data-=3*W;
+    const unsigned char *s=data;
+    unsigned char *p=c;
+    for (int x=0;x<W;++x){
+      *p++=s[2];
+      *p++=s[1];
+      *p++=s[0];
+      s+=3;
+    }
+    c+=R;
+  }
+  *return_size = fs;
+  return b;
+}
+
+void Fl::copy_image(const unsigned char *data, int W, int H, int clipboard){
+  if(!data || W<=0 || H<=0) return;
+  delete[] fl_selection_buffer[clipboard];
+  fl_selection_buffer[clipboard] = (char *) create_bmp(data,W,H,&fl_selection_length[clipboard]);
+  fl_selection_buffer_length[clipboard] = fl_selection_length[clipboard];
+  fl_i_own_selection[clipboard] = 1;
+  fl_selection_type[clipboard] = Fl::clipboard_image;
+
   Atom property = clipboard ? CLIPBOARD : XA_PRIMARY;
   XSetSelectionOwner(fl_display, property, fl_message_window, fl_event_time);
 }
@@ -1047,6 +1175,62 @@ static int wasXExceptionRaised() {
 
 }
 
+static bool getNextEvent(XEvent *event_return)
+{
+  time_t t = time(NULL);
+  while(!XPending(fl_display))
+  {
+    if(time(NULL) - t > 10.0)
+    {
+      //fprintf(stderr,"Error: The XNextEvent never came...\n");
+      return false; 
+    }
+  }
+  XNextEvent(fl_display, event_return);
+  return true;
+}
+
+static long getIncrData(uchar* &data, const XSelectionEvent& selevent, long lower_bound)
+{
+//fprintf(stderr,"Incremental transfer starting due to INCR property\n");
+  size_t total = 0;
+  XEvent event;
+  XDeleteProperty(fl_display, selevent.requestor, selevent.property);  
+  data = (uchar*)realloc(data, lower_bound);
+  for (;;)
+  {
+    if (!getNextEvent(&event)) break;
+    if (event.type == PropertyNotify)
+    {
+      if (event.xproperty.state != PropertyNewValue) continue;
+      Atom actual_type;
+      int actual_format;
+      unsigned long nitems;
+      unsigned long bytes_after;
+      unsigned char* prop = 0;
+      long offset = 0;
+      size_t num_bytes;
+      //size_t slice_size = 0;
+      do
+      {
+	XGetWindowProperty(fl_display, selevent.requestor, selevent.property, offset, 70000, True,
+			   AnyPropertyType, &actual_type, &actual_format, &nitems, &bytes_after, &prop);
+	num_bytes = nitems * (actual_format / 8);
+	offset += num_bytes/4;
+	//slice_size += num_bytes;
+	if (total + num_bytes > lower_bound) data = (uchar*)realloc(data, total + num_bytes);
+	memcpy(data + total, prop, num_bytes); total += num_bytes;
+	if (prop) XFree(prop);
+      } while (bytes_after != 0);
+//fprintf(stderr,"INCR data size:%ld\n", slice_size);
+      if (num_bytes == 0) break;
+    }
+    else break;
+  }
+  XDeleteProperty(fl_display, selevent.requestor, selevent.property);
+  return (long)total;
+}
+
 
 int fl_handle(const XEvent& thisevent)
 {
@@ -1139,6 +1323,7 @@ int fl_handle(const XEvent& thisevent)
 
   case SelectionNotify: {
     static unsigned char* sn_buffer = 0;
+    //static const char *buffer_format = 0;
     if (sn_buffer) {XFree(sn_buffer); sn_buffer = 0;}
     long bytesread = 0;
     if (fl_xevent->xselection.property) for (;;) {
@@ -1150,7 +1335,7 @@ int fl_handle(const XEvent& thisevent)
       if (XGetWindowProperty(fl_display,
                              fl_xevent->xselection.requestor,
                              fl_xevent->xselection.property,
-                             bytesread/4, 65536, 1, 0,
+                             bytesread/4, 65536, 0/*1*/, AnyPropertyType,
                              &actual, &format, &count, &remaining,
                              &portion)) break; // quit on error
 
@@ -1168,9 +1353,24 @@ int fl_handle(const XEvent& thisevent)
       }
 
       if (actual == TARGETS || actual == XA_ATOM) {
-	Atom type = XA_STRING;
-	for (unsigned i = 0; i<count; i++) {
-	  Atom t = ((Atom*)portion)[i];
+/*for (unsigned i = 0; i<count; i++) {
+  fprintf(stderr," %s", XGetAtomName(fl_display, ((Atom*)portion)[i]) );
+  }
+fprintf(stderr,"\n");*/
+	Atom t, type = XA_STRING;
+	if (Fl::e_clipboard_type == Fl::clipboard_image) { // searching for image data
+	  for (unsigned i = 0; i<count; i++) { 
+	    t = ((Atom*)portion)[i];
+	    if (t == fl_XaImageBmp || t == fl_XaImagePNG) {
+	      type = t;
+	      goto found;
+	    }
+	  }
+	  XFree(portion);
+	  return true;
+	}
+	for (unsigned i = 0; i<count; i++) { // searching for text data
+	  t = ((Atom*)portion)[i];
 	  if (t == fl_Xatextplainutf ||
 	      t == fl_Xatextplainutf2 ||
 	      t == fl_Xatextplain ||
@@ -1183,14 +1383,33 @@ int fl_handle(const XEvent& thisevent)
 	      t == fl_XaTextUriList ||
 	      t == fl_XaCompoundText) type = t;
 	}
+      found:
 	XFree(portion); portion = 0;
 	Atom property = xevent.xselection.property;
 	XConvertSelection(fl_display, property, type, property,
 	      fl_xid(Fl::first_window()),
 	      fl_event_time);
+	if (type == fl_XaImageBmp) {
+	  Fl::e_clipboard_type = Fl::clipboard_image;
+	  //buffer_format = "image/bmp";
+	  }
+	else if (type == fl_XaImagePNG) {
+	  Fl::e_clipboard_type = Fl::clipboard_image;
+	  //buffer_format = "image/png";
+	  }
+	else {
+	  Fl::e_clipboard_type = Fl::clipboard_plain_text;
+	  //buffer_format = Fl::clipboard_plain_text;
+	  }
+//fprintf(stderr,"used format=%s\n", buffer_format);
 	return true;
       }
-      // Make sure we got something sane...
+	if (actual == fl_INCR) {
+	  bytesread = getIncrData(sn_buffer, xevent.xselection, *(long*)portion);
+	  XFree(portion);
+	  break;
+	}
+	// Make sure we got something sane...
       if ((portion == NULL) || (format != 8) || (count == 0)) {
 	if (portion) { XFree(portion); portion = 0; }
         return true;
@@ -1203,22 +1422,45 @@ int fl_handle(const XEvent& thisevent)
       sn_buffer[bytesread] = '\0';
       if (!remaining) break;
     }
-    if (sn_buffer) {
+    if (sn_buffer && Fl::e_clipboard_type == Fl::clipboard_plain_text) {
       sn_buffer[bytesread] = 0;
       convert_crlf(sn_buffer, bytesread);
     }
-
+    if (Fl::e_clipboard_type == Fl::clipboard_image) {
+      if (bytesread == 0) return 0;
+      Fl_Image *image = 0;
+      static char tmp_fname[21];
+      static Fl_Shared_Image *shared = 0;
+      strcpy(tmp_fname, "/tmp/clipboardXXXXXX");
+      int fd = mkstemp(tmp_fname);
+      if (fd == -1) return 0;
+      uchar *p = sn_buffer; ssize_t towrite = bytesread, written;
+      while (towrite) {
+	written = write(fd, p, towrite);
+	p += written; towrite -= written;
+	}
+      close(fd);
+      free(sn_buffer); sn_buffer = 0;
+      shared = Fl_Shared_Image::get(tmp_fname);
+      unlink(tmp_fname);
+      if (!shared) return 0;
+      image = shared->copy();
+      shared->release();
+      Fl::e_clipboard_data = (void*)image;
+    }
     if (!fl_selection_requestor) return 0;
 
-    Fl::e_text = sn_buffer ? (char*)sn_buffer : (char *)"";
-    Fl::e_length = bytesread;
+    if (Fl::e_clipboard_type == Fl::clipboard_plain_text) {
+      Fl::e_text = sn_buffer ? (char*)sn_buffer : (char *)"";
+      Fl::e_length = bytesread;
+      }
     int old_event = Fl::e_number;
     fl_selection_requestor->handle(Fl::e_number = FL_PASTE);
     Fl::e_number = old_event;
     // Detect if this paste is due to Xdnd by the property name (I use
     // XA_SECONDARY for that) and send an XdndFinished message. It is not
     // clear if this has to be delayed until now or if it can be done
-    // immediatly after calling XConvertSelection.
+    // immediately after calling XConvertSelection.
     if (fl_xevent->xselection.property == XA_SECONDARY &&
         fl_dnd_source_window) {
       fl_sendClientMessage(fl_dnd_source_window, fl_XdndFinished,
@@ -1242,32 +1484,51 @@ int fl_handle(const XEvent& thisevent)
     e.target = fl_xevent->xselectionrequest.target;
     e.time = fl_xevent->xselectionrequest.time;
     e.property = fl_xevent->xselectionrequest.property;
-    if (e.target == TARGETS) {
-      Atom a[3] = {fl_XaUtf8String, XA_STRING, fl_XaText};
-      XChangeProperty(fl_display, e.requestor, e.property,
-                      XA_ATOM, atom_bits, 0, (unsigned char*)a, 3);
-    } else if (/*e.target == XA_STRING &&*/ fl_selection_length[clipboard]) {
-    if (e.target == fl_XaUtf8String ||
-	     e.target == XA_STRING ||
-	     e.target == fl_XaCompoundText ||
-	     e.target == fl_XaText ||
-	     e.target == fl_Xatextplain ||
-	     e.target == fl_Xatextplainutf ||
-	     e.target == fl_Xatextplainutf2) {
-	// clobber the target type, this seems to make some applications
-	// behave that insist on asking for XA_TEXT instead of UTF8_STRING
-	// Does not change XA_STRING as that breaks xclipboard.
-	if (e.target != XA_STRING) e.target = fl_XaUtf8String;
+    if (fl_selection_type[clipboard] == Fl::clipboard_plain_text) {
+      if (e.target == TARGETS) {
+	Atom a[3] = {fl_XaUtf8String, XA_STRING, fl_XaText};
 	XChangeProperty(fl_display, e.requestor, e.property,
-			 e.target, 8, 0,
-			 (unsigned char *)fl_selection_buffer[clipboard],
-			 fl_selection_length[clipboard]);
+	                XA_ATOM, atom_bits, 0, (unsigned char*)a, 3);
+      } else {
+	if (/*e.target == XA_STRING &&*/ fl_selection_length[clipboard]) {
+	  if (e.target == fl_XaUtf8String ||
+	      e.target == XA_STRING ||
+	      e.target == fl_XaCompoundText ||
+	      e.target == fl_XaText ||
+	      e.target == fl_Xatextplain ||
+	      e.target == fl_Xatextplainutf ||
+	      e.target == fl_Xatextplainutf2) {
+	    // clobber the target type, this seems to make some applications
+	    // behave that insist on asking for XA_TEXT instead of UTF8_STRING
+	    // Does not change XA_STRING as that breaks xclipboard.
+	    if (e.target != XA_STRING) e.target = fl_XaUtf8String;
+	    XChangeProperty(fl_display, e.requestor, e.property,
+		            e.target, 8, 0,
+		            (unsigned char *)fl_selection_buffer[clipboard],
+		            fl_selection_length[clipboard]);
+	  }
+	} else {
+	  //    char* x = XGetAtomName(fl_display,e.target);
+	  //    fprintf(stderr,"selection request of %s\n",x);
+	  //    XFree(x);
+	  e.property = 0;
+	}
       }
-    } else {
-//    char* x = XGetAtomName(fl_display,e.target);
-//    fprintf(stderr,"selection request of %s\n",x);
-//    XFree(x);
-      e.property = 0;
+    } else { // image in clipboard
+      if (e.target == TARGETS) {
+	Atom a[1] = {fl_XaImageBmp};
+	XChangeProperty(fl_display, e.requestor, e.property,
+	                XA_ATOM, atom_bits, 0, (unsigned char*)a, 1);
+      } else {
+	if (e.target == fl_XaImageBmp && fl_selection_length[clipboard]) {
+	    XChangeProperty(fl_display, e.requestor, e.property,
+		            e.target, 8, 0,
+		            (unsigned char *)fl_selection_buffer[clipboard],
+		            fl_selection_length[clipboard]);
+	} else {
+	  e.property = 0;
+	}
+      }
     }
     XSendEvent(fl_display, e.requestor, 0, 0, (XEvent *)&e);}
     return 1;
@@ -1517,13 +1778,13 @@ int fl_handle(const XEvent& thisevent)
       // Display * display ;
       // Bool detectable ;
       // Bool * supported_rtrn ;
-      // ...would be the easy way to corrct this isuue. Unfortunatly, this call is also
+      // ...would be the easy way to correct this issue. Unfortunately, this call is also
       // broken on many Unix distros including Ubuntu and Solaris (as of Dec 2009)
 
       // Bogus KeyUp events are generated by repeated KeyDown events. One
-      // neccessary condition is an identical key event pending right after
+      // necessary condition is an identical key event pending right after
       // the bogus KeyUp.
-      // The new code introduced Dec 2009 differs in that it only check the very
+      // The new code introduced Dec 2009 differs in that it only checks the very
       // next event in the queue, not the entire queue of events.
       // This function wrongly detects a repeat key if a software keyboard
       // sends a burst of events containing two consecutive equal keys. However,

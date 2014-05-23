@@ -2803,8 +2803,9 @@ static void clipboard_check(void)
  * create a selection
  * stuff: pointer to selected data
  * len: size of selected data
+ * type: always "plain/text" for now
  */
-void Fl::copy(const char *stuff, int len, int clipboard) {
+void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
   if (len+1 > fl_selection_buffer_length[clipboard]) {
     delete[] fl_selection_buffer[clipboard];
@@ -2824,54 +2825,169 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
   }
 }
 
+static int get_plain_text_from_clipboard(char **buffer, int previous_length)
+{
+  NSInteger length = 0;
+  NSPasteboard *clip = [NSPasteboard generalPasteboard];
+  NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObjects:utf8_format, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
+  if (found) {
+    NSData *data = [clip dataForType:found];
+    if (data) {
+      NSInteger len;
+      char *aux_c = NULL;
+      if (![found isEqualToString:utf8_format]) {
+	NSString *auxstring;
+	auxstring = (NSString *)CFStringCreateWithBytes(NULL, 
+							(const UInt8*)[data bytes], 
+							[data length],
+							[found isEqualToString:@"public.utf16-plain-text"] ? kCFStringEncodingUnicode : kCFStringEncodingMacRoman,
+							false);
+	aux_c = strdup([auxstring UTF8String]);
+	[auxstring release];
+	len = strlen(aux_c) + 1;
+      }
+      else len = [data length] + 1;
+      if ( len >= previous_length ) {
+	length = len;
+	delete[] *buffer;
+	*buffer = new char[len];
+      }
+      if (![found isEqualToString:utf8_format]) {
+	strcpy(*buffer, aux_c);
+	free(aux_c);
+      }
+      else {
+	[data getBytes:*buffer];
+      }
+      (*buffer)[len - 1] = 0;
+      length = len - 1;
+      convert_crlf(*buffer, len - 1); // turn all \r characters into \n:
+      Fl::e_clipboard_type = Fl::clipboard_plain_text;
+    }
+  }    
+  return length;
+}
+
+static Fl_Image* get_image_from_clipboard()
+{
+  Fl_RGB_Image *image = NULL;
+  uchar *imagedata;
+  NSBitmapImageRep *bitmap;
+  NSPasteboard *clip = [NSPasteboard generalPasteboard];
+  NSArray *present = [clip types]; // types in pasteboard in order of decreasing preference
+  NSArray  *possible = [NSArray arrayWithObjects:@"com.adobe.pdf", @"public.tiff", @"com.apple.pict", nil];
+  NSString *found = nil;
+  NSUInteger rank;
+  for (rank = 0; rank < [present count]; rank++) { // find first of possible types present in pasteboard
+    for (NSUInteger i = 0; i < [possible count]; i++) {
+      if ([[present objectAtIndex:rank] isEqualToString:[possible objectAtIndex:i]]) {
+	found = [present objectAtIndex:rank];
+	goto after_loop;
+      }
+    }
+  }
+after_loop: 
+  if (found) {
+    NSData *data = [clip dataForType:found];
+    if (data) {
+      if ([found isEqualToString:@"public.tiff"]) {
+	bitmap = [NSBitmapImageRep imageRepWithData:data];
+	int bpp = [bitmap bytesPerPlane];
+	int bpr = [bitmap bytesPerRow];
+	int depth = [bitmap samplesPerPixel], w = bpr/depth, h = bpp/bpr;
+	imagedata = new uchar[w * h * depth];
+	memcpy(imagedata, [bitmap bitmapData], w * h * depth);
+	image = new Fl_RGB_Image(imagedata, w, h, depth);
+	image->alloc_array = 1;
+      }
+      else if ([found isEqualToString:@"com.adobe.pdf"] || [found isEqualToString:@"com.apple.pict"]) {
+	NSRect rect;
+	NSImageRep *vectorial;
+	NSAffineTransform *dilate = [NSAffineTransform transform];
+	if ([found isEqualToString:@"com.adobe.pdf"] ) {
+	  vectorial = [NSPDFImageRep imageRepWithData:data];
+	  rect = [(NSPDFImageRep*)vectorial bounds]; // in points =  1/72 inch
+	  Fl_Window *win = Fl::first_window();
+	  int screen_num = win ? Fl::screen_num(win->x(), win->y(), win->w(), win->h()) : 0;
+	  float hr, vr;
+	  Fl::screen_dpi(hr, vr, screen_num); // 1 inch = hr pixels = 72 points -> hr/72 pixel/point	  
+	  CGFloat scale = hr/72;
+	  [dilate scaleBy:scale];
+	  rect.size.width *= scale;
+	  rect.size.height *= scale;
+	  rect = NSIntegralRect(rect);
+	  }
+	else {
+	  vectorial = [NSPICTImageRep imageRepWithData:data];
+	  rect = [(NSPICTImageRep*)vectorial boundingBox]; // in pixel, no scaling required
+	  }
+	imagedata = new uchar[(int)(rect.size.width * rect.size.height) * 4];
+	memset(imagedata, -1, (int)(rect.size.width * rect.size.height) * 4);
+	bitmap = [[NSBitmapImageRep alloc]  initWithBitmapDataPlanes:&imagedata
+							  pixelsWide:rect.size.width
+							  pixelsHigh:rect.size.height
+						       bitsPerSample:8
+						     samplesPerPixel:3
+							    hasAlpha:NO
+							    isPlanar:NO
+						      colorSpaceName:NSDeviceRGBColorSpace
+							 bytesPerRow:rect.size.width*4
+							bitsPerPixel:32];
+	NSDictionary *dict = [NSDictionary dictionaryWithObject:bitmap 
+							 forKey:NSGraphicsContextDestinationAttributeName];
+	NSGraphicsContext *oldgc = [NSGraphicsContext currentContext];
+	[NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithAttributes:dict]];
+	[dilate concat];
+	[vectorial draw];
+	[NSGraphicsContext setCurrentContext:oldgc];
+	[bitmap release];
+	image = new Fl_RGB_Image(imagedata, rect.size.width, rect.size.height, 4);
+	image->alloc_array = 1;
+      }
+      Fl::e_clipboard_type = Fl::clipboard_image;
+    }
+  }
+  return image;
+}
 
 // Call this when a "paste" operation happens:
-void Fl::paste(Fl_Widget &receiver, int clipboard) {
+void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
+  if (type[0] == 0) type = Fl::clipboard_plain_text;
   if (clipboard) {
-    // see if we own the selection, if not go get it:
-    fl_selection_length[1] = 0;
-    
-    NSPasteboard *clip = [NSPasteboard generalPasteboard];
-    NSString *found = [clip availableTypeFromArray:[NSArray arrayWithObjects:utf8_format, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
-    if (found) {
-      NSData *data = [clip dataForType:found];
-      if (data) {
-	NSInteger len;
-	char *aux_c = NULL;
-	if (![found isEqualToString:utf8_format]) {
-	  NSString *auxstring;
-	  auxstring = (NSString *)CFStringCreateWithBytes(NULL, 
-							  (const UInt8*)[data bytes], 
-							  [data length],
-							  [found isEqualToString:@"public.utf16-plain-text"] ? kCFStringEncodingUnicode : kCFStringEncodingMacRoman,
-							  false);
-	  aux_c = strdup([auxstring UTF8String]);
-	  [auxstring release];
-	  len = strlen(aux_c) + 1;
-	}
-	else len = [data length] + 1;
-        if ( len >= fl_selection_buffer_length[1] ) {
-          fl_selection_buffer_length[1] = len;
-          delete[] fl_selection_buffer[1];
-          fl_selection_buffer[1] = new char[len];
-        }
-	if (![found isEqualToString:utf8_format]) {
-	  strcpy(fl_selection_buffer[1], aux_c);
-	  free(aux_c);
-	}
-	else {
-	  [data getBytes:fl_selection_buffer[1]];
-	}
-	fl_selection_buffer[1][len - 1] = 0;
-	fl_selection_length[1] = len - 1;
-        convert_crlf(fl_selection_buffer[1], len - 1); // turn all \r characters into \n:
+    Fl::e_clipboard_type = "";
+   if (strcmp(type, Fl::clipboard_plain_text) == 0) {
+      fl_selection_length[1] = get_plain_text_from_clipboard( &fl_selection_buffer[1],  fl_selection_length[1]);   
       }
-    }    
+    else if (strcmp(type, Fl::clipboard_image) == 0) {
+      Fl::e_clipboard_data = get_image_from_clipboard( );
+      if (Fl::e_clipboard_data) {
+	int done = receiver.handle(FL_PASTE);
+	Fl::e_clipboard_type = "";
+	if (done == 0) {
+	  delete (Fl_Image*)Fl::e_clipboard_data;
+	  Fl::e_clipboard_data = NULL;
+	}
+      }
+      return;
+      }
+    else
+      fl_selection_length[1] = 0;
   }
   Fl::e_text = fl_selection_buffer[clipboard];
   Fl::e_length = fl_selection_length[clipboard];
-  if (!Fl::e_text) Fl::e_text = (char *)"";
+  if (!Fl::e_length) Fl::e_text = (char *)"";
   receiver.handle(FL_PASTE);
+}
+
+int Fl::clipboard_contains(const char *type) {
+  NSString *found = nil;
+  if (strcmp(type, Fl::clipboard_plain_text) == 0) {
+    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:utf8_format, @"public.utf16-plain-text", @"com.apple.traditional-mac-plain-text", nil]];
+    }
+  else if (strcmp(type, Fl::clipboard_image) == 0) {
+    found = [[NSPasteboard generalPasteboard] availableTypeFromArray:[NSArray arrayWithObjects:@"public.tiff", @"com.adobe.pdf", @"com.apple.pict", nil]];
+    }
+  return found != nil;
 }
 
 int Fl_X::unlink(Fl_X *start) {
@@ -3043,6 +3159,25 @@ static NSImage *CGBitmapContextToNSImage(CGContextRef c)
       [imagerep release];
     }
   return [image autorelease];
+}
+
+
+CFDataRef Fl_X::CGBitmapContextToTIFF(CGContextRef c)
+{ // the returned value is autoreleased
+  unsigned char *pdata = (unsigned char *)CGBitmapContextGetData(c);
+  NSBitmapImageRep *imagerep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:&pdata
+								       pixelsWide:CGBitmapContextGetWidth(c)
+								       pixelsHigh:CGBitmapContextGetHeight(c)
+								    bitsPerSample:8
+								  samplesPerPixel:3
+									 hasAlpha:NO
+									 isPlanar:NO
+								   colorSpaceName:NSDeviceRGBColorSpace
+								      bytesPerRow:CGBitmapContextGetBytesPerRow(c)
+								     bitsPerPixel:CGBitmapContextGetBitsPerPixel(c)];
+  NSData* tiff = [imagerep TIFFRepresentation];
+  [imagerep release];
+  return (CFDataRef)tiff;
 }
 
 static NSCursor *PrepareCursor(NSCursor *cursor, CGContextRef (*f)() )
@@ -3531,10 +3666,10 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       [title_s drawWithRect:r options:(NSStringDrawingOptions)0 attributes:attr]; // 10.4
       [[NSGraphicsContext currentContext] setShouldAntialias:NO];
       [NSGraphicsContext setCurrentContext:current];
-      }
-    else 
+    }
+    else
 #endif
-      {
+    {
       fl_font(FL_HELVETICA, 14); // the exact font is LucidaGrande 13 pts
       fl_color(FL_BLACK);
       int x = x_offset + win->w()/2 - fl_width(title)/2;
@@ -3542,7 +3677,7 @@ void Fl_Paged_Device::print_window(Fl_Window *win, int x_offset, int y_offset)
       fl_push_clip(x_offset, y_offset, win->w(), bt);
       fl_draw(title, x, y_offset+bt/2+4);
       fl_pop_clip();
-      }
+    }
   }
   this->print_widget(win, x_offset, y_offset + bt); // print the window inner part
 }

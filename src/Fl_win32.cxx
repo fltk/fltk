@@ -567,7 +567,7 @@ void fl_update_clipboard(void) {
 }
 
 // call this when you create a selection:
-void Fl::copy(const char *stuff, int len, int clipboard) {
+void Fl::copy(const char *stuff, int len, int clipboard, const char *type) {
   if (!stuff || len<0) return;
 
   // Convert \n -> \r\n (for old apps like Notepad, DOS)
@@ -589,13 +589,11 @@ void Fl::copy(const char *stuff, int len, int clipboard) {
 }
 
 // Call this when a "paste" operation happens:
-void Fl::paste(Fl_Widget &receiver, int clipboard) {
-  if (!clipboard || fl_i_own_selection[clipboard]) {
+void Fl::paste(Fl_Widget &receiver, int clipboard, const char *type) {
+  if (!clipboard || (fl_i_own_selection[clipboard] && strcmp(type, Fl::clipboard_plain_text) == 0)) {
     // We already have it, do it quickly without window server.
     // Notice that the text is clobbered if set_selection is
     // called in response to FL_PASTE!
-
-    // Convert \r\n -> \n
     char *i = fl_selection_buffer[clipboard];
     if (i==0L) {
       Fl::e_text = 0; 
@@ -603,39 +601,137 @@ void Fl::paste(Fl_Widget &receiver, int clipboard) {
     }
     Fl::e_text = new char[fl_selection_length[clipboard]+1];
     char *o = Fl::e_text;
-    while (*i) {
+    while (*i) { // Convert \r\n -> \n
       if ( *i == '\r' && *(i+1) == '\n') i++;
       else *o++ = *i++;
     }
     *o = 0;
     Fl::e_length = (int) (o - Fl::e_text);
+    Fl::e_clipboard_type = Fl::clipboard_plain_text;
     receiver.handle(FL_PASTE);
     delete [] Fl::e_text;
     Fl::e_text = 0;
-  } else {
+  } else if (clipboard) {
+    HANDLE h;
     if (!OpenClipboard(NULL)) return;
-    HANDLE h = GetClipboardData(CF_UNICODETEXT);
-    if (h) {
-      wchar_t *memLock = (wchar_t*) GlobalLock(h);
-      size_t utf16_len = wcslen(memLock);
-      Fl::e_text = (char*) malloc (utf16_len * 4 + 1);
-      unsigned utf8_len = fl_utf8fromwc(Fl::e_text, (unsigned) (utf16_len * 4), memLock, (unsigned) utf16_len);
-      *(Fl::e_text + utf8_len) = 0;
-      LPSTR a,b;
-      a = b = Fl::e_text;
-      while (*a) { // strip the CRLF pairs ($%$#@^)
-        if (*a == '\r' && a[1] == '\n') a++;
-        else *b++ = *a++;
+    if (strcmp(type, Fl::clipboard_plain_text) == 0) { // we want plain text from clipboard
+      if ((h = GetClipboardData(CF_UNICODETEXT))) { // there's text in the clipboard
+	wchar_t *memLock = (wchar_t*) GlobalLock(h);
+	size_t utf16_len = wcslen(memLock);
+	Fl::e_text = new char[utf16_len * 4 + 1];
+	unsigned utf8_len = fl_utf8fromwc(Fl::e_text, (unsigned) (utf16_len * 4), memLock, (unsigned) utf16_len);
+	*(Fl::e_text + utf8_len) = 0;
+	GlobalUnlock(h);
+	LPSTR a,b;
+	a = b = Fl::e_text;
+	while (*a) { // strip the CRLF pairs ($%$#@^)
+	  if (*a == '\r' && a[1] == '\n') a++;
+	  else *b++ = *a++;
+	}
+	*b = 0;
+	Fl::e_length = (int) (b - Fl::e_text);
+	Fl::e_clipboard_type = Fl::clipboard_plain_text;  // indicates that the paste event is for plain UTF8 text
+	receiver.handle(FL_PASTE); // send the FL_PASTE event to the widget
+	delete[] Fl::e_text;
+	Fl::e_text = 0;
+	}
       }
-      *b = 0;
-      Fl::e_length = (int) (b - Fl::e_text);
-      receiver.handle(FL_PASTE);
-      GlobalUnlock(h);
-      free(Fl::e_text);
-      Fl::e_text = 0;
+      else if (strcmp(type, Fl::clipboard_image) == 0) { // we want an image from clipboard
+	uchar *rgb = NULL;
+	int width, height, depth;
+	if ( (h = GetClipboardData(CF_DIB)) ) { // if there's a DIB in clipboard
+	  LPBITMAPINFO lpBI = (LPBITMAPINFO)GlobalLock(h) ;
+	  width = lpBI->bmiHeader.biWidth; // bitmap width & height
+	  height = lpBI->bmiHeader.biHeight;
+	  if ( (lpBI->bmiHeader.biBitCount == 24 || lpBI->bmiHeader.biBitCount == 32) && 
+	      lpBI->bmiHeader.biCompression == BI_RGB &&
+	      lpBI->bmiHeader.biClrUsed == 0) { // direct use of the DIB data if it's RGB or RGBA
+	    int linewidth; // row length
+	    depth = lpBI->bmiHeader.biBitCount/8; // 3 or 4
+	    if (depth == 3) linewidth = 4 * ((3*width + 3)/4); // row length: series of groups of 3 bytes, rounded to multiple of 4 bytes
+	    else linewidth = 4*width;
+	    rgb = new uchar[width * height * depth]; // will hold the image data
+	    uchar *p = rgb, *r, rr, gg, bb;
+	    for (int i=height-1; i>=0; i--) { // for each row, from last to first
+	      r = (uchar*)(lpBI->bmiColors) + i*linewidth; // beginning of pixel data for the ith row
+	      for (int j=0; j<width; j++) { // for each pixel in a row
+		bb = *r++; // BGR is in DIB
+		gg = *r++;
+		rr = *r++;
+		*p++ = rr; // we want RGB
+		*p++ = gg;
+		*p++ = bb;
+		if (depth == 4) *p++ = *r++; // copy alpha if present
+	      }
+	    }
+	  }
+	  else { // the system will decode a complex DIB
+	    void *pDIBBits = (void*)(lpBI->bmiColors); 
+	    if (lpBI->bmiHeader.biCompression == BI_BITFIELDS) pDIBBits = (void*)(lpBI->bmiColors + 3);
+	    else if (lpBI->bmiHeader.biClrUsed > 0) pDIBBits = (void*)(lpBI->bmiColors + lpBI->bmiHeader.biClrUsed);
+	    Fl_Offscreen off = fl_create_offscreen(width, height);
+	    fl_begin_offscreen(off);
+	    SetDIBitsToDevice(fl_gc, 0, 0, width, height, 0, 0, 0, height, pDIBBits, lpBI, DIB_RGB_COLORS);
+	    rgb = fl_read_image(NULL, 0, 0, width, height);
+	    depth = 3;
+	    fl_end_offscreen();
+	    fl_delete_offscreen(off);
+	  }
+	  GlobalUnlock(h);
+	}
+	else if ((h = GetClipboardData(CF_ENHMETAFILE))) { // if there's an enhanced metafile in clipboard
+	  ENHMETAHEADER header;
+	  GetEnhMetaFileHeader((HENHMETAFILE)h, sizeof(header), &header); // get structure containing metafile dimensions
+	  width = (header.rclFrame.right - header.rclFrame.left + 1); // in .01 mm units
+	  height = (header.rclFrame.bottom - header.rclFrame.top + 1);
+	  HDC hdc = GetDC(NULL); // get unit correspondance between .01 mm and screen pixels
+	  int hmm = GetDeviceCaps(hdc, HORZSIZE);
+	  int hdots = GetDeviceCaps(hdc, HORZRES);
+	  int vmm = GetDeviceCaps(hdc, VERTSIZE);
+	  int vdots = GetDeviceCaps(hdc, VERTRES);
+	  ReleaseDC(NULL, hdc);
+	  float factorw =  (100. * hmm) / hdots;
+	  float factorh =  (100. * vmm) / vdots + 0.5;
+	  width /= factorw; height /= factorh; // convert to screen pixel unit
+	  RECT rect = {0, 0, width, height};
+	  Fl_Offscreen off = fl_create_offscreen(width, height);
+	  fl_begin_offscreen(off);
+	  fl_color(FL_WHITE); fl_rectf(0,0,width, height); // draw white background
+	  PlayEnhMetaFile(fl_gc, (HENHMETAFILE)h, &rect); // draw metafile to offscreen buffer
+	  rgb = fl_read_image(NULL, 0, 0, width, height); // read pixels from offscreen buffer
+	  depth = 3;
+	  fl_end_offscreen();
+	  fl_delete_offscreen(off);
+	}
+	if (rgb) {
+	  Fl_RGB_Image *image = new Fl_RGB_Image(rgb, width, height, depth); // create new image from pixel data
+	  image->alloc_array = 1;
+	  Fl::e_clipboard_data = image;
+	  Fl::e_clipboard_type = Fl::clipboard_image;  // indicates that the paste event is for image data
+	  int done = receiver.handle(FL_PASTE); // send FL_PASTE event to widget
+	  Fl::e_clipboard_type = "";
+	  if (done == 0) { // if widget did not handle the event, delete the image
+	    Fl::e_clipboard_data = NULL;
+	    delete image;
+	  }
+	}
+      }
+     CloseClipboard();
     }
-    CloseClipboard();
+}
+
+int Fl::clipboard_contains(const char *type)
+{
+  int retval = 0;
+  if (!OpenClipboard(NULL)) return 0;
+  if (strcmp(type, Fl::clipboard_plain_text) == 0 || type[0] == 0) {
+    retval = IsClipboardFormatAvailable(CF_UNICODETEXT);
   }
+  else if (strcmp(type, Fl::clipboard_image) == 0) {
+    retval = IsClipboardFormatAvailable(CF_DIB) || IsClipboardFormatAvailable(CF_ENHMETAFILE);
+  }
+  CloseClipboard();
+  return retval;
 }
 
 static HWND clipboard_wnd = 0;

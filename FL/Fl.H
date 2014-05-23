@@ -137,6 +137,8 @@ public: // should be private!
   static int e_keysym;
   static char* e_text;
   static int e_length;
+  static void *e_clipboard_data;
+  static const char *e_clipboard_type;
   static Fl_Event_Dispatch e_dispatch;
   static Fl_Widget* belowmouse_;
   static Fl_Widget* pushed_;
@@ -151,7 +153,9 @@ public: // should be private!
   static void reset_marked_text(); // resets marked text
   static void insertion_point_location(int x, int y, int height); // sets window coordinates & height of insertion point
 #endif
-#endif
+#endif // FL_DOXYGEN
+  
+  
   /**
     If true then flush() will do something.
   */
@@ -729,6 +733,16 @@ public:
     you paste a nul character.
   */
   static int event_length() {return e_length;}
+  
+  /** During an FL_PASTE event of non-textual data, returns a pointer to the pasted data.
+   The returned data is an Fl_Image * when the result of Fl::event_clipboard_type() is Fl::clipboard_image.
+   */
+  static void *event_clipboard() { return e_clipboard_data; }
+  /** Returns the type of the pasted data during an FL_PASTE event.
+   This type can be Fl::clipboard_plain_text or Fl::clipboard_image.
+   */
+  static const char *event_clipboard_type() {return e_clipboard_type; }
+
 
   static int compose(int &del);
   static void compose_reset();
@@ -763,19 +777,39 @@ public:
   /**
   Copies the data pointed to by \p stuff to the selection buffer 
   (\p destination is 0) or
-  the clipboard (\p destination is 1); \p len is the number of relevant
-  bytes in \p stuff.
+  the clipboard (\p destination is 1).
+  \p len is the number of relevant bytes in \p stuff.
+  \p type is always Fl::clipboard_plain_text.
   The selection buffer is used for
   middle-mouse pastes and for drag-and-drop selections. The 
   clipboard is used for traditional copy/cut/paste operations.
+   
+   \note This function is, at present, intended only to copy UTF-8 encoded textual data.
+   To copy graphical data, use the Fl_Copy_Surface class. The \p type argument may allow
+   in the future to copy other kinds of data.
   */
-  static void copy(const char* stuff, int len, int destination = 0); // platform dependent
+#if FLTK_ABI_VERSION >= 10303 || defined(FL_DOXYGEN)
+  static void copy(const char* stuff, int len, int destination = 0, const char *type = Fl::clipboard_plain_text); // platform dependent
+#else
+  static void copy(const char* stuff, int len, int destination, const char *type);
+  static void copy(const char* stuff, int len, int destination = 0);
+#endif
+  
+#if !(defined(__APPLE__) || defined(WIN32) || defined(FL_DOXYGEN))
+  static void copy_image(const unsigned char* data, int W, int H, int destination = 0); // platform dependent
+#endif
   /**
   Pastes the data from the selection buffer (\p source is 0) or the clipboard 
-  (\p source is 1) into \p receiver.  
-  Set things up so the receiver widget will be called with an FL_PASTE event some
-  time in the future with the data from the specified \p source in Fl::event_text()
-  and the number of characters in Fl::event_length().
+  (\p source is 1) into \p receiver.  If \p source is 1,
+  the optional \p type argument indicates what type of data is requested from the clipboard
+  (at present, Fl::clipboard_plain_text - requesting text data - and 
+  Fl::clipboard_image - requesting image data - are possible).
+  Set things up so the handle function of the \p receiver widget will be called with an FL_PASTE event some
+  time in the future if the clipboard does contain data of the requested type. During processing of this event,
+  and if \p type is Fl::clipboard_plain_text, the text data from the specified \p source are in Fl::event_text()
+  with UTF-8 encoding, and the number of characters in Fl::event_length();
+  if \p type is Fl::clipboard_image, Fl::event_clipboard() returns a pointer to the
+  image data, as an Fl_Image *.
   The receiver
   should be prepared to be called \e directly by this, or for
   it to happen \e later, or possibly <i>not at all</i>.  This
@@ -786,8 +820,21 @@ public:
   The selection buffer is used for middle-mouse pastes and for 
   drag-and-drop selections. The clipboard is used for traditional 
   copy/cut/paste operations.
-  */
-  static void paste(Fl_Widget &receiver, int source /*=0*/); // platform dependent
+   
+   \par Platform details for image data:
+   \li Unix/Linux platform: Image data in PNG or BMP formats are recognized. Requires linking with the fltk_images library.
+   \li MSWindows platform: Both bitmap and vectorial (Enhanced metafile) data from clipboard
+   can be pasted as image data.
+   \li Mac OS X platform: Both bitmap (TIFF) and vectorial (PDF) data from clipboard
+   can be pasted as image data.
+    
+   */
+#if FLTK_ABI_VERSION >= 10303 || defined(FL_DOXYGEN)
+  static void paste(Fl_Widget &receiver, int source, const char *type = Fl::clipboard_plain_text); // platform dependent
+#else
+  static void paste(Fl_Widget &receiver, int source, const char *type);
+  static void paste(Fl_Widget &receiver, int source /*=0*/);
+#endif
   /**
   FLTK will call the registered callback whenever there is a change to the
   selection buffer or the clipboard. The source argument indicates which
@@ -815,6 +862,17 @@ public:
   buffer or the clipboard.
   */
   static void remove_clipboard_notify(Fl_Clipboard_Notify_Handler h);
+  /** Returns non 0 if the clipboard contains data matching \p type.
+   \p type can be Fl::clipboard_plain_text or Fl::clipboard_image.
+   */
+  static int clipboard_contains(const char *type);
+  /**  Denotes plain textual data
+   */
+  static char const * const clipboard_plain_text;
+  /**  Denotes image data
+   */
+  static char const * const clipboard_image;
+
   /**
     Initiate a Drag And Drop operation. The selection buffer should be
     filled with relevant data before calling this method. FLTK will

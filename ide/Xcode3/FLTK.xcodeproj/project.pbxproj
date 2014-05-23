@@ -329,6 +329,8 @@
 		7F66B1DA12BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */; };
 		7F66B1DB12BB924C00C67B59 /* Fl_Quartz_Printer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */; };
 		7F74F393190D7F0500C56950 /* fl_gleam.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 299E717718BC503400FF83F2 /* fl_gleam.cxx */; };
+		7F76E016192FAD420071728B /* Fl_Copy_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F76E015192FAD420071728B /* Fl_Copy_Surface.cxx */; };
+		7F76E018192FAD590071728B /* Fl_Image_Surface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7F76E017192FAD590071728B /* Fl_Image_Surface.cxx */; };
 		7FFDE4AD171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FFDE4AC171D8AA3008753A3 /* Fl_Sys_Menu_Bar.mm */; };
 		812129561A1981D6DEFBCBFB /* Fl_Positioner.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 05BBBFE4BED0452E5D6A81F7 /* Fl_Positioner.cxx */; };
 		812761E94039F13357F56EE6 /* fltk_png.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 98A16A4EC098BA7DB21E13DC /* fltk_png.framework */; };
@@ -4338,6 +4340,10 @@
 		7F66B1D612BB924C00C67B59 /* Fl_cocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_cocoa.mm; path = ../../src/Fl_cocoa.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D712BB924C00C67B59 /* Fl_Native_File_Chooser_MAC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Native_File_Chooser_MAC.mm; path = ../../src/Fl_Native_File_Chooser_MAC.mm; sourceTree = SOURCE_ROOT; };
 		7F66B1D812BB924C00C67B59 /* Fl_Quartz_Printer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Fl_Quartz_Printer.mm; path = ../../src/Fl_Quartz_Printer.mm; sourceTree = SOURCE_ROOT; };
+		7F76E015192FAD420071728B /* Fl_Copy_Surface.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Copy_Surface.cxx; path = ../../src/Fl_Copy_Surface.cxx; sourceTree = SOURCE_ROOT; };
+		7F76E017192FAD590071728B /* Fl_Image_Surface.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fl_Image_Surface.cxx; path = ../../src/Fl_Image_Surface.cxx; sourceTree = SOURCE_ROOT; };
+		7F76E019192FAD740071728B /* Fl_Copy_Surface.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Copy_Surface.H; path = ../../FL/Fl_Copy_Surface.H; sourceTree = SOURCE_ROOT; };
+		7F76E01A192FAD840071728B /* Fl_Image_Surface.H */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Fl_Image_Surface.H; path = ../../FL/Fl_Image_Surface.H; sourceTree = SOURCE_ROOT; };
 		7F784151AF1B748D0F3DB1C0 /* forms.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = forms.cxx; path = ../../test/forms.cxx; sourceTree = SOURCE_ROOT; };
 		7FAC914955D699539F73B996 /* bitmap.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bitmap.cxx; path = ../../test/bitmap.cxx; sourceTree = SOURCE_ROOT; };
 		7FC91721DA7888C8A1FD762E /* input_choice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = input_choice.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5459,6 +5465,7 @@
 				4D55C9FE101986BC47029A16 /* Fl_Choice.cxx */,
 				F5CAE7DC565B8398F02ED7BA /* Fl_Clock.cxx */,
 				058BCBC36ADE724A418F1C43 /* Fl_Color_Chooser.cxx */,
+				7F76E015192FAD420071728B /* Fl_Copy_Surface.cxx */,
 				E9893274B0B6C5F24730235F /* Fl_Counter.cxx */,
 				D9A7DCBAFF41CBC3DCB67C6F /* Fl_Device.cxx */,
 				3AFC31503AB99F6D00BAC647 /* Fl_Dial.cxx */,
@@ -5471,6 +5478,7 @@
 				806103D71A8CD0075BF8E1DA /* Fl_Group.cxx */,
 				790419B5A0AD64D66F9B19E1 /* Fl_Help_View.cxx */,
 				6DCFF326B588B1B27618F28C /* Fl_Image.cxx */,
+				7F76E017192FAD590071728B /* Fl_Image_Surface.cxx */,
 				63CB19652C470F1E58DCF01E /* Fl_Input.cxx */,
 				D531F77A15AACC9E297B4490 /* Fl_Input_.cxx */,
 				BA7B1E9C7AA7316E98D369C2 /* Fl_Light_Button.cxx */,
@@ -6219,6 +6227,7 @@
 				C8AE10A8DDF53B8B27E3215A /* Fl_Choice.H */,
 				9BCF393F94482AE7C7421397 /* Fl_Clock.H */,
 				2CD1EF8B4BFD0820E9A42641 /* Fl_Color_Chooser.H */,
+				7F76E019192FAD740071728B /* Fl_Copy_Surface.H */,
 				CE97D58B5B0F1A2A7DB2A3FF /* Fl_Counter.H */,
 				82863AEFE086C3469C386C22 /* Fl_Device.H */,
 				02C21BB31E7DDFE9E76F4997 /* Fl_Dial.H */,
@@ -6241,6 +6250,7 @@
 				AE1717E43F50EBA343960B1E /* Fl_Hor_Slider.H */,
 				5B8BFBDF9C48A998F0781C9E /* Fl_Hor_Value_Slider.H */,
 				332598626430923370C48554 /* Fl_Image.H */,
+				7F76E01A192FAD840071728B /* Fl_Image_Surface.H */,
 				EFEEE679374D7E4191873447 /* Fl_Input.H */,
 				A5166C3C9311628F6E450095 /* Fl_Input_.H */,
 				648E9C3B61328280244FCCA5 /* Fl_Input_Choice.H */,
@@ -9515,6 +9525,8 @@
 				299CB8A2848CB844BCEC7829 /* Fl_Paged_Device.cxx in Sources */,
 				7F74F393190D7F0500C56950 /* fl_gleam.cxx in Sources */,
 				01C68DB0192C6089000BD75C /* Fl_sleep.cxx in Sources */,
+				7F76E016192FAD420071728B /* Fl_Copy_Surface.cxx in Sources */,
+				7F76E018192FAD590071728B /* Fl_Image_Surface.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

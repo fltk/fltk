@@ -104,6 +104,8 @@ int		Fl::damage_,
 
 char		*Fl::e_text = (char *)"";
 int		Fl::e_length;
+const char*	Fl::e_clipboard_type = "";
+void *		Fl::e_clipboard_data = NULL;
 
 Fl_Event_Dispatch Fl::e_dispatch = 0;
 
@@ -117,6 +119,9 @@ Fl_Window *Fl::grab_;	// most recent Fl::grab()
 Fl_Window *Fl::modal_;	// topmost modal() window
 
 #endif // FL_DOXYGEN
+
+char const * const Fl::clipboard_plain_text = "text/plain";
+char const * const Fl::clipboard_image = "image";
 
 //
 // 'Fl::version()' - Return the API version number...
@@ -1635,12 +1640,23 @@ void Fl::selection(Fl_Widget &owner, const char* text, int len) {
 
 /** Backward compatibility only.
   This calls Fl::paste(receiver, 0);
-  \see Fl::paste(Fl_Widget &receiver, int clipboard)
+  \see Fl::paste(Fl_Widget &receiver, int clipboard, const char* type)
 */
 void Fl::paste(Fl_Widget &receiver) {
   Fl::paste(receiver, 0);
 }
+#if FLTK_ABI_VERSION >= 10303
+#elif !defined(FL_DOXYGEN)
+void Fl::paste(Fl_Widget &receiver, int source)
+{
+  Fl::paste(receiver, source, Fl::clipboard_plain_text);
+}
 
+void Fl::copy(const char* stuff, int len, int destination) {
+  Fl::copy(stuff, len, destination, Fl::clipboard_plain_text);
+}
+
+#endif
 ////////////////////////////////////////////////////////////////
 
 #include <FL/fl_draw.H>

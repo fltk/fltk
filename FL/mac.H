@@ -145,6 +145,7 @@ public:
   void set_cursor(Fl_Cursor);
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
+  static CFDataRef CGBitmapContextToTIFF(CGContextRef c);
   static Fl_Region intersect_region_and_rect(Fl_Region current, int x,int y,int w, int h);
   static CGContextRef watch_cursor_image(void);
   static CGContextRef help_cursor_image(void);

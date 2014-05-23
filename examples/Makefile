@@ -5,7 +5,8 @@ SHELL = /bin/sh
 .SILENT:
 
 # Executables
-ALL = howto-add_fd-and-popen$(EXEEXT) \
+ALL = clipboard$(EXEEXT) \
+      howto-add_fd-and-popen$(EXEEXT) \
       howto-browser-with-icons$(EXEEXT) \
       howto-drag-and-drop$(EXEEXT) \
       howto-parse-args$(EXEEXT) \
