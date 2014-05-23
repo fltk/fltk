@@ -261,7 +261,7 @@ void Fl_Copy_Surface::complete_copy_pdf_and_tiff()
 /* graphics driver that translates all graphics coordinates before calling Xlib */
 class Fl_translated_Xlib_Graphics_Driver_ : public Fl_Xlib_Graphics_Driver {
   int offset_x, offset_y; // translation between user and graphical coordinates: graphical = user + offset
-  int depth; // depth of translation stack
+  unsigned depth; // depth of translation stack
   int stack_x[20], stack_y[20]; // translation stack allowing cumulative translations
 public:
   static const char *class_id;

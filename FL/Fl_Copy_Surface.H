@@ -102,7 +102,7 @@ public:
 class Fl_GDI_Surface_ : public Fl_Paged_Device {
   int width;
   int height;
-  int depth;
+  unsigned depth;
   POINT origins[10];
 public:
   static const char *class_id;
