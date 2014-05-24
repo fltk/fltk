@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image_Surface.H 9869 2013-04-09 20:11:28Z greg.ercolano $"
+// "$Id$"
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
@@ -86,5 +86,5 @@ public:
 #endif // Fl_Image_Surface_H
 
 //
-// End of "$Id: $".
+// End of "$Id$".
 //
