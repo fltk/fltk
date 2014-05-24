@@ -211,6 +211,10 @@ SOURCE=..\..\src\Fl_Color_Chooser.cxx
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\Fl_Copy_Surface.cxx
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\Fl_compose.cxx
 # End Source File
 # Begin Source File
@@ -332,6 +336,10 @@ SOURCE=..\..\src\Fl_Help_View.cxx
 # Begin Source File
 
 SOURCE=..\..\src\Fl_Image.cxx
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\Fl_Image_Surface.cxx
 # End Source File
 # Begin Source File
 
