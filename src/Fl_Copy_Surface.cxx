@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Copy_Surface.cxx 9869 2013-04-09 20:11:28Z greg.ercolano $"
+// "$Id$"
 //
 // Copy-to-clipboard code for the Fast Light Tool Kit (FLTK).
 //
@@ -395,5 +395,5 @@ const char *Fl_Xlib_Surface_::class_id = "Fl_Xlib_Surface_";
 #endif
 
 //
-// End of "$Id: $".
+// End of "$Id$".
 //
