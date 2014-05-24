@@ -15,6 +15,7 @@ set(CPPFILES
   Fl_Choice.cxx
   Fl_Clock.cxx
   Fl_Color_Chooser.cxx
+  Fl_Copy_Surface.cxx
   Fl_Counter.cxx
   Fl_Device.cxx
   Fl_Dial.cxx
@@ -27,6 +28,7 @@ set(CPPFILES
   Fl_Group.cxx
   Fl_Help_View.cxx
   Fl_Image.cxx
+  Fl_Image_Surface.cxx
   Fl_Input.cxx
   Fl_Input_.cxx
   Fl_Light_Button.cxx
