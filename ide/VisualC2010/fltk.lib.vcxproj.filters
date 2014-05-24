@@ -52,6 +52,9 @@
     <ClInclude Include="..\..\FL\Fl_Color_Chooser.H">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\FL\Fl_Copy_Surface.H">
+      <Filter>Headers</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\FL\Fl_Counter.H">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -131,6 +134,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\FL\Fl_Image.H">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\FL\Fl_Image_Surface.H">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\FL\Fl_Input.H">
@@ -402,6 +408,7 @@
     <ClCompile Include="..\..\src\fl_color.cxx" />
     <ClCompile Include="..\..\src\Fl_Color_Chooser.cxx" />
     <ClCompile Include="..\..\src\Fl_compose.cxx" />
+    <ClCompile Include="..\..\src\Fl_Copy_Surface.cxx" />
     <ClCompile Include="..\..\src\Fl_Counter.cxx" />
     <ClCompile Include="..\..\src\fl_cursor.cxx" />
     <ClCompile Include="..\..\src\fl_curve.cxx" />
@@ -430,6 +437,7 @@
     <ClCompile Include="..\..\src\fl_gleam.cxx" />
     <ClCompile Include="..\..\src\Fl_Help_View.cxx" />
     <ClCompile Include="..\..\src\Fl_Image.cxx" />
+    <ClCompile Include="..\..\src\Fl_Image_Surface.cxx" />
     <ClCompile Include="..\..\src\Fl_Input.cxx" />
     <ClCompile Include="..\..\src\Fl_Input_.cxx" />
     <ClCompile Include="..\..\src\fl_labeltype.cxx" />
