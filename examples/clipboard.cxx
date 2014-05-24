@@ -1,5 +1,5 @@
 //
-// "$Id: clipboard.cxx 9869 2013-04-09 20:11:28Z greg.ercolano $"
+// "$Id$"
 //
 // Clipboard display test application for the Fast Light Tool Kit (FLTK).
 //
@@ -164,5 +164,5 @@ int main()
 }
 
 //
-// End of "$Id: $".
+// End of "$Id$".
 //
