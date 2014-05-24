@@ -112,17 +112,19 @@ public:
 	  o->color(FL_DARK1);
 	  o->selection_color((Fl_Color)23);
 	  o->hide();
-	  { Fl_Clock* o = new Fl_Clock(24, 166, 130, 124);
+	  { Fl_Clock* o = new Fl_Clock(24, 166, 130, 130);
 	    o->box(FL_THIN_UP_BOX);
 	    o->color((Fl_Color)12);
 	    o->selection_color(FL_BACKGROUND2_COLOR);
 	    o->labelcolor(FL_BACKGROUND2_COLOR);
+	    o->tooltip("Fl_Clock with thin up box");
 	  } // Fl_Clock* o
 	  { new Fl_Progress(22, 306, 290, 20);
 	  } // Fl_Progress* o
 	  { Fl_Clock* o = new Fl_Clock(179, 166, 130, 130);
 	    o->box(FL_THIN_DOWN_BOX);
 	    o->color((Fl_Color)26);
+	    o->tooltip("Fl_Clock with thin down box");
 	  } // Fl_Clock* o
 	  o->end();
 	} // Fl_Group* o
@@ -131,26 +133,34 @@ public:
 	  o->color(FL_DARK1);
 	  { Fl_Slider* o = new Fl_Slider(20, 161, 25, 155);
 	    o->box(FL_DOWN_BOX);
+	    o->tooltip("Fl_Slider with down box");
 	  } // Fl_Slider* o
 	  { Fl_Scrollbar* o = new Fl_Scrollbar(50, 161, 25, 155);
+            o->value(0, 50, 1, 100);
 	    o->box(FL_DOWN_BOX);
+	    o->tooltip("Fl_Scrollbar with down box");
 	  } // Fl_Scrollbar* o
 	  { Fl_Value_Slider* o = new Fl_Value_Slider(115, 161, 25, 155);
 	    o->box(FL_DOWN_BOX);
 	  } // Fl_Value_Slider* o
 	  { Fl_Value_Output* o = new Fl_Value_Output(240, 265, 75, 25);
 	    o->box(FL_DOWN_BOX);
+	    o->tooltip("Fl_Value_Output with down box");
 	  } // Fl_Value_Output* o
-	  { new Fl_Adjuster(185, 210, 100, 25);
+	  { Fl_Adjuster* o = new Fl_Adjuster(185, 210, 100, 25);
+	    o->tooltip("Fl_Adjuster");
 	  } // Fl_Adjuster* o
 	  { Fl_Counter* o = new Fl_Counter(185, 180, 100, 25);
 	    o->box(FL_DOWN_BOX);
+	    o->tooltip("Fl_Counter with down box");
 	  } // Fl_Counter* o
 	  { Fl_Roller* o = new Fl_Roller(85, 161, 25, 155);
 	    o->box(FL_UP_BOX);
+	    o->tooltip("Fl_Roller with up box");
 	  } // Fl_Roller* o
 	  { Fl_Value_Input* o = new Fl_Value_Input(155, 265, 75, 25);
 	    o->box(FL_DOWN_BOX);
+	    o->tooltip("Fl_Value_Input with down box");
 	  } // Fl_Value_Input* o
 	  o->end();
 	} // Fl_Group* o
@@ -160,20 +170,25 @@ public:
 	  o->hide();
 	  { Fl_Input* o = new Fl_Input(40, 230, 120, 25);
 	    o->box(FL_DOWN_BOX);
+	    o->tooltip("Fl_Input with down box");
 	  } // Fl_Input* o
 	  { Fl_Output* o = new Fl_Output(40, 260, 120, 25);
 	    o->box(FL_DOWN_BOX);
+	    o->tooltip("Fl_Output with down box");
 	  } // Fl_Output* o
 	  { Fl_Text_Editor* o = new Fl_Text_Editor(220, 160, 90, 55);
 	    o->box(FL_DOWN_FRAME);
 	    o->color((Fl_Color)80);
+	    o->tooltip("Fl_Text_Editor with down frame");
 	  } // Fl_Text_Editor* o
 	  { Fl_Text_Display* o = new Fl_Text_Display(220, 230, 90, 55);
 	    o->box(FL_DOWN_FRAME);
 	    o->color((Fl_Color)12);
+	    o->tooltip("Fl_Text_Display with down frame");
 	  } // Fl_Text_Display* o
 	  { Fl_File_Input* o = new Fl_File_Input(40, 290, 265, 30);
 	    o->box(FL_DOWN_BOX);
+	    o->tooltip("Fl_File_Input with down box");
 	  } // Fl_File_Input* o
 	  o->end();
 	} // Fl_Group* o
@@ -240,31 +255,37 @@ public:
 	o->box(FL_DOWN_BOX);
 	o->color(FL_BACKGROUND2_COLOR);
 	o->selection_color((Fl_Color)30);
+	o->tooltip("Fl_Light_Button with down box");
       } // Fl_Light_Button* o
       { Fl_Check_Button* o = new Fl_Check_Button(110, 37, 105, 25, "Check");
 	o->box(FL_DOWN_FRAME);
 	o->down_box(FL_DOWN_BOX);
 	o->color(FL_DARK1);
+	o->tooltip("Fl_Check_Button with down frame");
       } // Fl_Check_Button* o
       { Fl_Input* o = new Fl_Input(220, 10, 100, 25);
 	o->box(FL_DOWN_BOX);
 	o->color((Fl_Color)23);
+	o->tooltip("Fl_Input with down box");
       } // Fl_Input* o
       { Fl_Adjuster* o = new Fl_Adjuster(110, 65, 80, 43);
 	o->box(FL_UP_BOX);
 	o->color(FL_INACTIVE_COLOR);
 	o->selection_color(FL_BACKGROUND2_COLOR);
 	o->labelcolor((Fl_Color)55);
+	o->tooltip("Fl_Adjuster with up box");
       } // Fl_Adjuster* o
       { Fl_Text_Editor* o = new Fl_Text_Editor(220, 53, 100, 29, "down frame");
 	o->box(FL_DOWN_FRAME);
 	o->color((Fl_Color)19);
 	o->selection_color(FL_DARK1);
+	o->tooltip("Fl_Adjuster with down frame");
       } // Fl_Text_Editor* o
       { Fl_Text_Editor* o = new Fl_Text_Editor(220, 99, 100, 38, "up frame");
 	o->box(FL_UP_FRAME);
 	o->color((Fl_Color)19);
 	o->selection_color(FL_DARK1);
+	o->tooltip("Fl_Text_Editor with up frame");
       } // Fl_Text_Editor* o
     }
     subwin->end();
