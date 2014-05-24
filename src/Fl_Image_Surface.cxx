@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Image_Surface.cxx 9869 2013-04-09 20:11:28Z greg.ercolano $"
+// "$Id$"
 //
 // Draw-to-image code for the Fast Light Tool Kit (FLTK).
 //
@@ -154,5 +154,5 @@ const char *Fl_Quartz_Flipped_Surface_::class_id = "Fl_Quartz_Flipped_Surface_";
 #endif // __APPLE__
 
 //
-// End of "$Id: $".
+// End of "$Id$".
 //
