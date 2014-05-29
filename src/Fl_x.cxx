@@ -814,11 +814,14 @@ int Fl::clipboard_contains(const char *type)
   unsigned char* portion = NULL;
   Fl_Window *win = Fl::first_window();
   if (!win || !fl_xid(win)) return 0;
-  XConvertSelection(fl_display, CLIPBOARD, TARGETS, CLIPBOARD,
-		    fl_xid(win), fl_event_time);
+  XConvertSelection(fl_display, CLIPBOARD, TARGETS, CLIPBOARD, fl_xid(win), CurrentTime);
   XFlush(fl_display);
-  do  { XNextEvent(fl_display, &event); i++; }
-  while (i < 10 && (event.type != SelectionNotify || event.xselection.property == None));
+  do  { 
+    XNextEvent(fl_display, &event); 
+    if (event.type == SelectionNotify && event.xselection.property == None) return 0;
+    i++; 
+  }
+  while (i < 10 && event.type != SelectionNotify);
   if (i >= 10) return 0;
   XGetWindowProperty(fl_display,
 		     event.xselection.requestor,
