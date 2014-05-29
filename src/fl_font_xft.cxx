@@ -270,7 +270,10 @@ static XftFont* fontopen(const char* name, Fl_Fontsize size, bool core, int angl
     free(picked_name);
 #endif
 
-    if (!match_pat) {
+    // open the matched font
+    if (match_pat) the_font = XftFontOpenPattern(fl_display, match_pat);
+
+    if (!match_pat || !the_font) {
       // last chance, just open any font in the right size
       the_font = XftFontOpen (fl_display, fl_screen,
                         XFT_FAMILY, XftTypeString, "sans",
@@ -283,9 +286,6 @@ static XftFont* fontopen(const char* name, Fl_Fontsize size, bool core, int angl
       }
       return the_font;
     }
-
-    // open the matched font
-    the_font = XftFontOpenPattern(fl_display, match_pat);
 
 #if 0 // diagnostic to print the "full name" of the font we actually opened. This works.
     FcChar8 *picked_name2 =  FcNameUnparse(the_font->pattern);
