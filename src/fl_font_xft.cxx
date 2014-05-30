@@ -153,7 +153,7 @@ static XftFont* fontopen(const char* name, Fl_Fontsize size, bool core, int angl
   fl_open_display();
 
   if(!is_xlfd) { // Not an XLFD - open as a XFT style name
-    XftFont *the_font; // the font we will return;
+    XftFont *the_font = NULL; // the font we will return;
     XftPattern *fnt_pat = XftPatternCreate(); // the pattern we will use for matching
     int slant = XFT_SLANT_ROMAN;
     int weight = XFT_WEIGHT_MEDIUM;
