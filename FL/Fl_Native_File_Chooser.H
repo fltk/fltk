@@ -114,10 +114,10 @@ public:
   };
   enum Option {
     NO_OPTIONS     = 0x0000,		///< no options enabled
-    SAVEAS_CONFIRM = 0x0001,		///< Show native 'Save As' overwrite confirm dialog (if supported)
+    SAVEAS_CONFIRM = 0x0001,		///< Show native 'Save As' overwrite confirm dialog
     NEW_FOLDER     = 0x0002,		///< Show 'New Folder' icon (if supported)
-    PREVIEW        = 0x0004,		///< enable preview mode
-    USE_FILTER_EXT = 0x0008		///< Chooser filter pilots the output file extension
+    PREVIEW        = 0x0004,		///< enable preview mode (if supported)
+    USE_FILTER_EXT = 0x0008		///< Chooser filter pilots the output file extension (if supported)
   };
   /** Localizable message */
   static const char *file_exists_message;
