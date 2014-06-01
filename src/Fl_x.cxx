@@ -1356,6 +1356,7 @@ int fl_handle(const XEvent& thisevent)
         return true;
       }
 
+Fl::e_clipboard_type = Fl::clipboard_plain_text; // default data type
       if (actual == TARGETS || actual == XA_ATOM) {
 /*for (unsigned i = 0; i<count; i++) {
   fprintf(stderr," %s", XGetAtomName(fl_display, ((Atom*)portion)[i]) );
