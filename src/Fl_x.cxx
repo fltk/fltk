@@ -1339,7 +1339,7 @@ int fl_handle(const XEvent& thisevent)
       if (XGetWindowProperty(fl_display,
                              fl_xevent->xselection.requestor,
                              fl_xevent->xselection.property,
-                             bytesread/4, 65536, 0/*1*/, AnyPropertyType,
+                             bytesread/4, 65536, 1, AnyPropertyType,
                              &actual, &format, &count, &remaining,
                              &portion)) break; // quit on error
 
@@ -1356,7 +1356,6 @@ int fl_handle(const XEvent& thisevent)
         return true;
       }
 
-      Fl::e_clipboard_type = Fl::clipboard_plain_text; // default data type
       if (actual == TARGETS || actual == XA_ATOM) {
 /*for (unsigned i = 0; i<count; i++) {
   fprintf(stderr," %s", XGetAtomName(fl_display, ((Atom*)portion)[i]) );
@@ -1677,6 +1676,7 @@ fprintf(stderr,"\n");*/
       Fl::e_length = unknown_len;
       if (Fl::handle(FL_DND_RELEASE, window)) {
         fl_selection_requestor = Fl::belowmouse();
+        Fl::e_clipboard_type = Fl::clipboard_plain_text;
         XConvertSelection(fl_display, fl_XdndSelection,
                           fl_dnd_type, XA_SECONDARY,
                           to_window, fl_event_time);
