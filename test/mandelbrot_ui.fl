@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0300 
+version 1.0302 
 header_name {.h} 
 code_name {.cxx}
 decl {\#include "mandelbrot.h"} {public local
@@ -13,7 +13,7 @@ class Drawing_Window {open
   Function {make_window()} {open return_type void
   } {
     Fl_Window window {open
-      xywh {178 479 450 520} type Single resizable
+      xywh {515 343 450 520} type Single resizable
       code0 {o->size_range(220,220);} visible
     } {
       Fl_Box d {
@@ -25,21 +25,21 @@ class Drawing_Window {open
         label {x:}
         callback {d->X = atof(o->value());;
 d->new_display();}
-        xywh {30 15 125 30} type Float box THIN_DOWN_BOX color 48 selection_color 7 labelfont 11 labelsize 20 textfont 11 textsize 20
+        xywh {30 15 125 30} type Float box THIN_DOWN_BOX color 48 selection_color 7 labelfont 11 labelsize 16 textfont 11 textsize 12
         code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
       }
       Fl_Input y_input {
         label {y:}
         callback {d->Y = atof(o->value());
 d->new_display();}
-        xywh {175 15 125 30} type Float box THIN_DOWN_BOX color 48 selection_color 7 labelfont 11 labelsize 20 textfont 11 textsize 20
+        xywh {175 15 125 30} type Float box THIN_DOWN_BOX color 48 selection_color 7 labelfont 11 labelsize 16 textfont 11 textsize 12
         code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
       }
       Fl_Input w_input {
         label {w:}
         callback {d->scale = atof(o->value());
 d->new_display();}
-        xywh {325 15 105 30} type Float box THIN_DOWN_BOX color 48 selection_color 7 labelfont 11 labelsize 20 textfont 11 textsize 20
+        xywh {325 15 105 30} type Float box THIN_DOWN_BOX color 48 selection_color 7 labelfont 11 labelsize 16 textfont 11 textsize 12
         code0 {o->when(FL_WHEN_ENTER_KEY|FL_WHEN_RELEASE);}
       }
       Fl_Slider {} {
@@ -54,7 +54,7 @@ d->new_display();}
       Fl_Box {} {
         label {left: click = zoom out, drag = zoom in
 right click: Julia set, ctrl-P: Print} selected
-        xywh {240 50 190 30} labelsize 10 align 24 deactivate
+        xywh {240 50 190 30} labelsize 8 align 24 deactivate
       }
       Fl_Slider {} {
         label {iterations:}
