@@ -331,11 +331,37 @@ void agvSwitchMoveMode(int move)
 
 void agvHandleButton(int button, int state, int x, int y)
 {
- if (button > GLUT_RIGHT_BUTTON)return;
- if (state == GLUT_DOWN && downb == -1) {  
+ // deal with mouse wheel events, that fltk sends as buttons 3 or 4
+ //if (button > GLUT_RIGHT_BUTTON)return;
+ if ((state == GLUT_DOWN) && ((button == 3) || (button == 4))) {
+    // attempt to process scrollwheel as zoom in/out
+    float deltay = 0.25;
+    if (button == 3) {
+      deltay = (-0.25);
+    }
+    downb = -1;
+    downDist = EyeDist;
+    downEx = Ex;
+    downEy = Ey;
+    downEz = Ez;
+    downEyeMove = EyeMove;
+    EyeMove = 0;
+
+    EyeDist = downDist + deltay;
+    Ex = downEx - E_SENS*deltay*sin(TORAD(EyeAz))*cos(TORAD(EyeEl));
+    Ey = downEy - E_SENS*deltay*sin(TORAD(EyeEl));
+    Ez = downEz + E_SENS*deltay*cos(TORAD(EyeAz))*cos(TORAD(EyeEl));
+
+    EyeMove = downEyeMove;
+    glutPostRedisplay();
+    return;
+ }
+ else if (button > GLUT_RIGHT_BUTTON)return; // ignore any other button...
+
+ if (state == GLUT_DOWN && downb == -1) {
     lastx = downx = x;
     lasty = downy = y;
-    downb = button;    
+    downb = button;
 
     switch (button) {
       case GLUT_LEFT_BUTTON:
