@@ -331,6 +331,7 @@ void agvSwitchMoveMode(int move)
 
 void agvHandleButton(int button, int state, int x, int y)
 {
+ if (button > GLUT_RIGHT_BUTTON)return;
  if (state == GLUT_DOWN && downb == -1) {  
     lastx = downx = x;
     lasty = downy = y;
