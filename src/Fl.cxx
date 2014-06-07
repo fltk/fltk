@@ -2069,6 +2069,8 @@ bool Fl::option(Fl_Option opt)
       options_[OPTION_DND_TEXT] = tmp;
       opt_prefs.get("ShowTooltips", tmp, 1);                    // default: on
       options_[OPTION_SHOW_TOOLTIPS] = tmp;
+      opt_prefs.get("FNFCUsesGTK", tmp, 1);                    // default: on
+      options_[OPTION_FNFC_USES_GTK] = tmp;
     }
     { // next, check the user preferences
       // override system options only, if the option is set ( >= 0 )
@@ -2086,6 +2088,8 @@ bool Fl::option(Fl_Option opt)
       if (tmp >= 0) options_[OPTION_DND_TEXT] = tmp;
       opt_prefs.get("ShowTooltips", tmp, -1);
       if (tmp >= 0) options_[OPTION_SHOW_TOOLTIPS] = tmp;
+      opt_prefs.get("FNFCUsesGTK", tmp, -1);
+      if (tmp >= 0) options_[OPTION_FNFC_USES_GTK] = tmp;
     }
     { // now, if the developer has registered this app, we could as for per-application preferences
     }
