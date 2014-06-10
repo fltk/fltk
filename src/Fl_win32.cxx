@@ -1343,12 +1343,11 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return 0;
 
   case WM_CHANGECBCHAIN:
-    if ((hWnd == clipboard_wnd) &&
-        (next_clipboard_wnd == (HWND)wParam)) {
+    if ((hWnd == clipboard_wnd) && (next_clipboard_wnd == (HWND)wParam))
       next_clipboard_wnd = (HWND)lParam;
-      return 0;
-    }
-    break;
+    else
+      SendMessage(next_clipboard_wnd, WM_CHANGECBCHAIN, wParam, lParam);
+    return 0;
 
   case WM_DRAWCLIPBOARD:
     // When the clipboard moves between two FLTK windows,
