@@ -738,9 +738,20 @@ static HWND clipboard_wnd = 0;
 static HWND next_clipboard_wnd = 0;
 
 static bool initial_clipboard = true;
+void fl_clipboard_notify_target(HWND wnd);
 
 void fl_clipboard_notify_change() {
-  // No need to do anything here...
+  // untarget clipboard monitor if no handlers are registered
+  if (clipboard_wnd != NULL && fl_clipboard_notify_empty())
+  {
+    fl_clipboard_notify_untarget(clipboard_wnd);
+    return;
+  }
+
+  // if there are clipboard notify handlers but no window targeted
+  // target first window if available
+  if (clipboard_wnd == NULL && Fl::first_window())
+    fl_clipboard_notify_target(fl_xid(Fl::first_window()));
 }
 
 void fl_clipboard_notify_target(HWND wnd) {
@@ -1798,7 +1809,10 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->next = Fl_X::first;
   Fl_X::first = x;
 
-  fl_clipboard_notify_target(x->xid);
+  // Setup clipboard monitor target if there are registered handlers and
+  // no window is targeted.
+  if (!fl_clipboard_notify_empty() && clipboard_wnd == NULL)
+    fl_clipboard_notify_target(x->xid);
 
   x->wait_for_expose = 1;
   if (fl_show_iconic) {showit = 0; fl_show_iconic = 0;}
