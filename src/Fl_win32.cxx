@@ -1099,6 +1099,10 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     break;
 
   case WM_SETFOCUS:
+    if ((Fl::modal_) && (Fl::modal_ != window)) {
+      SetFocus(fl_xid(Fl::modal_));
+      return 0;
+    }
     Fl::handle(FL_FOCUS, window);
     break;
 
@@ -1845,6 +1849,11 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     Fl::e_number = old_event;
     w->redraw(); // force draw to happen
   }
+
+  // Needs to be done before ShowWindow() to get the correct behaviour
+  // when we get WM_SETFOCUS.
+  if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
+
   // If we've captured the mouse, we dont want to activate any
   // other windows from the code, or we lose the capture.
   ShowWindow(x->xid, !showit ? SW_SHOWMINNOACTIVE :
@@ -1862,7 +1871,6 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     }
   }
 
-  if (w->modal()) {Fl::modal_ = w; fl_fix_focus();}
   return x;
 }
 
