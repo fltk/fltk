@@ -49,7 +49,7 @@ class Fl_X;
 class FL_EXPORT Fl_Window : public Fl_Group {
 
   static char *default_xclass_;
-  // Note: we must use separate statements for each of the following 4 variables,
+  // Note: we must use separate statements for each of the following 8 variables,
   // with the static attribute, otherwise MS VC++ 2008/2010 complains :-(
   // AlbrechtS 04/2012
 #if FLTK_ABI_VERSION < 10301
@@ -68,6 +68,22 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   static // when these members are static, ABI compatibility with 1.3.0 is respected
 #endif
   int no_fullscreen_h;
+#if FLTK_ABI_VERSION < 10303
+  static // when these members are static, ABI compatibility with 1.3.2 is respected
+#endif
+  int fullscreen_screen_top;
+#if FLTK_ABI_VERSION < 10303
+  static // when these members are static, ABI compatibility with 1.3.2 is respected
+#endif
+  int fullscreen_screen_bottom;
+#if FLTK_ABI_VERSION < 10303
+  static // when these members are static, ABI compatibility with 1.3.2 is respected
+#endif
+  int fullscreen_screen_left;
+#if FLTK_ABI_VERSION < 10303
+  static // when these members are static, ABI compatibility with 1.3.2 is respected
+#endif
+  int fullscreen_screen_right;
 
   friend class Fl_X;
   Fl_X *i; // points at the system-specific stuff
@@ -402,13 +418,15 @@ public:
   */
   void show(int argc, char **argv);
   /**
-    Makes the window completely fill the screen, without any window
-    manager border visible.  You must use fullscreen_off() to undo
-    this. 
+    Makes the window completely fill one or more screens, without any
+    window manager border visible.  You must use fullscreen_off() to
+    undo this. 
 
     \note On some platforms, this can result in the keyboard being
     grabbed. The window may also be recreated, meaning hide() and
     show() will be called.
+
+    \see void Fl_Window::fullscreen_screens()
   */
   void fullscreen();
   /**
@@ -424,6 +442,17 @@ public:
     Returns non zero if FULLSCREEN flag is set, 0 otherwise. 
   */
   unsigned int fullscreen_active() const { return flags() & FULLSCREEN; }
+  /**
+    Sets which screens should be used when this window is in fullscreen
+    mode. The window will be resized to the top of the screen with index
+    \p top, the bottom of the screen with index \p bottom, etc. 
+
+    If this method is never called, or if any argument is < 0, then the
+    window will be resized to fill the screen it is currently on.
+
+    \see void Fl_Window::fullscreen()
+    */
+  void fullscreen_screens(int top, int bottom, int left, int right);
   /**
     Iconifies the window.  If you call this when shown() is false
     it will show() it as an icon.  If the window is already

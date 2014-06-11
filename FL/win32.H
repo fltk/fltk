@@ -79,6 +79,7 @@ public:
   static Fl_X* i(const Fl_Window* w) {return w->i;}
   static int fake_X_wm(const Fl_Window* w,int &X, int &Y,
 		                 int &bt,int &bx,int &by);
+  void make_fullscreen(int X, int Y, int W, int H);
   void setwindow(Fl_Window* wi) {w=wi; wi->i=this;}
   void flush() {w->flush();}
   void set_minmax(LPMINMAXINFO minmax);

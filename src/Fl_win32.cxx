@@ -1483,7 +1483,6 @@ int Fl_X::fake_X_wm(const Fl_Window* w,int &X,int &Y, int &bt,int &bx, int &by) 
   Y+=yoff;
 
   if (w->fullscreen_active()) {
-    X = Y = 0;
     bx = by = bt = 0;
   }
 
@@ -1537,19 +1536,42 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
   }
 }
 
-static void make_fullscreen(Fl_Window *w, Window xid, int X, int Y, int W, int H) {
+void Fl_X::make_fullscreen(int X, int Y, int W, int H) {
+  int top, bottom, left, right;
   int sx, sy, sw, sh;
-  Fl::screen_xywh(sx, sy, sw, sh, X, Y, W, H);
+
+  top = w->fullscreen_screen_top;
+  bottom = w->fullscreen_screen_bottom;
+  left = w->fullscreen_screen_left;
+  right = w->fullscreen_screen_right;
+
+  if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
+    top = Fl::screen_num(X, Y, W, H);
+    bottom = top;
+    left = top;
+    right = top;
+  }
+
+  Fl::screen_xywh(sx, sy, sw, sh, top);
+  Y = sy;
+  Fl::screen_xywh(sx, sy, sw, sh, bottom);
+  H = sy + sh - Y;
+  Fl::screen_xywh(sx, sy, sw, sh, left);
+  X = sx;
+  Fl::screen_xywh(sx, sy, sw, sh, right);
+  W = sx + sw - X;
+
   DWORD flags = GetWindowLong(xid, GWL_STYLE);
   flags = flags & ~(WS_THICKFRAME|WS_CAPTION);
   SetWindowLong(xid, GWL_STYLE, flags);
+
   // SWP_NOSENDCHANGING is so that we can override size limits
-  SetWindowPos(xid, HWND_TOP, sx, sy, sw, sh, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
+  SetWindowPos(xid, HWND_TOP, X, Y, W, H, SWP_NOSENDCHANGING | SWP_FRAMECHANGED);
 }
 
 void Fl_Window::fullscreen_x() {
   _set_fullscreen();
-  make_fullscreen(this, fl_xid(this), x(), y(), w(), h());
+  i->make_fullscreen(x(), y(), w(), h());
   Fl::handle(FL_FULLSCREEN, this);
 }
 
@@ -1802,8 +1824,8 @@ Fl_X* Fl_X::make(Fl_Window* w) {
      monitor the window was placed on. */
     RECT rect;
     GetWindowRect(x->xid, &rect);
-    make_fullscreen(w, x->xid, rect.left, rect.top, 
-                    rect.right - rect.left, rect.bottom - rect.top);
+    x->make_fullscreen(rect.left, rect.top, 
+                       rect.right - rect.left, rect.bottom - rect.top);
   }
 
   x->next = Fl_X::first;

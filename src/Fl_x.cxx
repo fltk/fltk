@@ -345,6 +345,7 @@ Atom fl_NET_WM_ICON_NAME;		// utf8 aware window icon name
 Atom fl_NET_SUPPORTING_WM_CHECK;
 Atom fl_NET_WM_STATE;
 Atom fl_NET_WM_STATE_FULLSCREEN;
+Atom fl_NET_WM_FULLSCREEN_MONITORS;
 Atom fl_NET_WORKAREA;
 
 /*
@@ -654,6 +655,7 @@ void fl_open_display(Display* d) {
   fl_NET_SUPPORTING_WM_CHECK = XInternAtom(d, "_NET_SUPPORTING_WM_CHECK", 0);
   fl_NET_WM_STATE       = XInternAtom(d, "_NET_WM_STATE",       0);
   fl_NET_WM_STATE_FULLSCREEN = XInternAtom(d, "_NET_WM_STATE_FULLSCREEN", 0);
+  fl_NET_WM_FULLSCREEN_MONITORS = XInternAtom(d, "_NET_WM_FULLSCREEN_MONITORS", 0);
   fl_NET_WORKAREA       = XInternAtom(d, "_NET_WORKAREA",       0);
 
   if (sizeof(Atom) < 4)
@@ -2147,20 +2149,28 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
 #define _NET_WM_STATE_ADD           1  /* add/set property */
 #define _NET_WM_STATE_TOGGLE        2  /* toggle property  */
 
-static void send_wm_state_event(Window wnd, int add, Atom prop) {
+static void send_wm_event(Window wnd, Atom message,
+                          unsigned long d0, unsigned long d1=0,
+                          unsigned long d2=0, unsigned long d3=0,
+                          unsigned long d4=0) {
   XEvent e;
   e.xany.type = ClientMessage;
   e.xany.window = wnd;
-  e.xclient.message_type = fl_NET_WM_STATE;
+  e.xclient.message_type = message;
   e.xclient.format = 32;
-  e.xclient.data.l[0] = add ? _NET_WM_STATE_ADD : _NET_WM_STATE_REMOVE;
-  e.xclient.data.l[1] = prop;
-  e.xclient.data.l[2] = 0;
-  e.xclient.data.l[3] = 0;
-  e.xclient.data.l[4] = 0;
+  e.xclient.data.l[0] = d0;
+  e.xclient.data.l[1] = d1;
+  e.xclient.data.l[2] = d2;
+  e.xclient.data.l[3] = d3;
+  e.xclient.data.l[4] = d4;
   XSendEvent(fl_display, RootWindow(fl_display, fl_screen),
              0, SubstructureNotifyMask | SubstructureRedirectMask,
              &e);
+}
+
+static void send_wm_state_event(Window wnd, int add, Atom prop) {
+  send_wm_event(wnd, fl_NET_WM_STATE,
+                add ? _NET_WM_STATE_ADD : _NET_WM_STATE_REMOVE, prop);
 }
 
 int Fl_X::ewmh_supported() {
@@ -2188,6 +2198,22 @@ int Fl_X::ewmh_supported() {
 /* Change an existing window to fullscreen */
 void Fl_Window::fullscreen_x() {
   if (Fl_X::ewmh_supported()) {
+    int top, bottom, left, right;
+
+    top = fullscreen_screen_top;
+    bottom = fullscreen_screen_bottom;
+    left = fullscreen_screen_left;
+    right = fullscreen_screen_right;
+
+    if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
+      top = Fl::screen_num(x(), y(), w(), h());
+      bottom = top;
+      left = top;
+      right = top;
+    }
+
+    send_wm_event(fl_xid(this), fl_NET_WM_FULLSCREEN_MONITORS,
+                  top, bottom, left, right);
     send_wm_state_event(fl_xid(this), 1, fl_NET_WM_STATE_FULLSCREEN);
   } else {
     _set_fullscreen();
@@ -2274,7 +2300,7 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     // force the window to be on-screen.  Usually the X window manager
     // does this, but a few don't, so we do it here for consistency:
     int scr_x, scr_y, scr_w, scr_h;
-    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X, Y);
+    Fl::screen_xywh(scr_x, scr_y, scr_w, scr_h, X, Y, W, H);
 
     if (win->border()) {
       // ensure border is on screen:
@@ -2303,6 +2329,23 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
     return;
   }
 
+  // Compute which screen(s) we should be on if we want to go fullscreen
+  int fullscreen_top, fullscreen_bottom, fullscreen_left, fullscreen_right;
+
+  fullscreen_top = win->fullscreen_screen_top;
+  fullscreen_bottom = win->fullscreen_screen_bottom;
+  fullscreen_left = win->fullscreen_screen_left;
+  fullscreen_right = win->fullscreen_screen_right;
+
+  if ((fullscreen_top < 0) || (fullscreen_bottom < 0) ||
+      (fullscreen_left < 0) || (fullscreen_right < 0)) {
+    fullscreen_top = Fl::screen_num(X, Y, W, H);
+    fullscreen_bottom = fullscreen_top;
+    fullscreen_left = fullscreen_top;
+    fullscreen_right = fullscreen_top;
+  }
+
+
   ulong root = win->parent() ?
     fl_xid(win->window()) : RootWindow(fl_display, fl_screen);
 
@@ -2326,9 +2369,17 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
   // border, and cannot grab without an existing window. Besides, 
   // there is no clear_override(). 
   if (win->fullscreen_active() && !Fl_X::ewmh_supported()) {
+    int sx, sy, sw, sh;
     attr.override_redirect = 1;
     mask |= CWOverrideRedirect;
-    Fl::screen_xywh(X, Y, W, H, X, Y, W, H);
+    Fl::screen_xywh(sx, sy, sw, sh, fullscreen_left);
+    X = sx;
+    Fl::screen_xywh(sx, sy, sw, sh, fullscreen_right);
+    W = sx + sw - X;
+    Fl::screen_xywh(sx, sy, sw, sh, fullscreen_top);
+    Y = sy;
+    Fl::screen_xywh(sx, sy, sw, sh, fullscreen_bottom);
+    H = sy + sh - Y;
   }
 
   if (fl_background_pixel >= 0) {
@@ -2393,6 +2444,13 @@ void Fl_X::make_xid(Fl_Window* win, XVisualInfo *visual, Colormap colormap)
 
     // If asked for, create fullscreen
     if (win->fullscreen_active() && Fl_X::ewmh_supported()) {
+      unsigned long data[4];
+      data[0] = fullscreen_top;
+      data[1] = fullscreen_bottom;
+      data[2] = fullscreen_left;
+      data[3] = fullscreen_right;
+      XChangeProperty (fl_display, xp->xid, fl_NET_WM_FULLSCREEN_MONITORS, XA_ATOM, 32,
+                       PropModeReplace, (unsigned char*) data, 4);
       XChangeProperty (fl_display, xp->xid, fl_NET_WM_STATE, XA_ATOM, 32,
                        PropModeAppend, (unsigned char*) &fl_NET_WM_STATE_FULLSCREEN, 1);
     }

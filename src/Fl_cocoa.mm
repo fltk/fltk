@@ -2394,9 +2394,32 @@ void Fl_X::make(Fl_Window* w)
 	  
     NSRect crect;
     if (w->fullscreen_active()) {
-      int sx, sy, sw, sh;
-      Fl::screen_xywh(sx, sy, sw, sh, w->x(), w->y(), w->w(), w->h());
-      w->resize(sx, sy, sw, sh);
+      int top, bottom, left, right;
+      int sx, sy, sw, sh, X, Y, W, H;
+
+      top = w->fullscreen_screen_top;
+      bottom = w->fullscreen_screen_bottom;
+      left = w->fullscreen_screen_left;
+      right = w->fullscreen_screen_right;
+
+      if ((top < 0) || (bottom < 0) || (left < 0) || (right < 0)) {
+        top = Fl::screen_num(w->x(), w->y(), w->w(), w->h());
+        bottom = top;
+        left = top;
+        right = top;
+      }
+
+      Fl::screen_xywh(sx, sy, sw, sh, top);
+      Y = sy;
+      Fl::screen_xywh(sx, sy, sw, sh, bottom);
+      H = sy + sh - Y;
+      Fl::screen_xywh(sx, sy, sw, sh, left);
+      X = sx;
+      Fl::screen_xywh(sx, sy, sw, sh, right);
+      W = sx + sw - X;
+
+      w->resize(X, Y, W, H);
+
       winstyle = NSBorderlessWindowMask;
       winlevel = NSStatusWindowLevel;
     }
