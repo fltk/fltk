@@ -680,9 +680,6 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
   return !(w->tooltip_window() || w->menu_window());
 }
 
-// TODO see if we really need a canBecomeMainWindow ...
-#if 0
-
 - (BOOL)canBecomeMainWindow
 {
   if (Fl::modal_ && (Fl::modal_ != w))
@@ -691,7 +688,6 @@ void Fl::remove_timeout(Fl_Timeout_Handler cb, void* data)
 
   return !(w->tooltip_window() || w->menu_window());
 }
-#endif
 
 @end
 
