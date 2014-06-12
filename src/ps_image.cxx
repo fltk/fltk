@@ -185,72 +185,38 @@ static inline uchar swap_byte(const uchar b) {
 
 extern uchar **fl_mask_bitmap;
 
+struct callback_data {
+  const uchar *data;
+  int D, LD;
+};
+
+
+static void draw_image_cb(void *data, int x, int y, int w, uchar *buf) {
+  struct callback_data *cb_data;
+  const uchar *curdata;
+
+  cb_data = (struct callback_data*)data;
+  curdata = cb_data->data + x*cb_data->D + y*cb_data->LD;
+
+  memcpy(buf, curdata, w*cb_data->D);
+}
+
 
 void Fl_PostScript_Graphics_Driver::draw_image(const uchar *data, int ix, int iy, int iw, int ih, int D, int LD) {
-  double x = ix, y = iy, w = iw, h = ih;
-
   if (D<3){ //mono
     draw_image_mono(data, ix, iy, iw, ih, D, LD);
     return;
   }
 
-
-  int i,j, k;
-
-  fprintf(output,"save\n");
-
-  const char * interpol;
-  if (lang_level_>1){
-    if (interpolate_)
-      interpol="true";
-    else
-      interpol="false";
-    if (mask && lang_level_>2)
-      fprintf(output, "%g %g %g %g %i %i %i %i %s CIM\n", x , y+h , w , -h , iw , ih, mx, my, interpol);
-    else
-      fprintf(output, "%g %g %g %g %i %i %s CII\n", x , y+h , w , -h , iw , ih, interpol);
-  } else
-    fprintf(output , "%g %g %g %g %i %i CI", x , y+h , w , -h , iw , ih);
-
+  struct callback_data cb_data;
 
   if (!LD) LD = iw*D;
-  uchar *curmask=mask;
 
-  for (j=0; j<ih;j++){
-    if (mask){
+  cb_data.data = data;
+  cb_data.D = D;
+  cb_data.LD = LD;
 
-      for (k=0;k<my/ih;k++){
-        for (i=0; i<((mx+7)/8);i++){
-          if (!(i%80)) fprintf(output, "\n");
-          fprintf(output, "%.2x",swap_byte(*curmask));
-          curmask++;
-        }
-        fprintf(output,"\n");
-      }
-    }
-    const uchar *curdata=data+j*LD;
-    for (i=0 ; i<iw ; i++) {
-      uchar r = curdata[0];
-      uchar g =  curdata[1];
-      uchar b =  curdata[2];
-      if (lang_level_<3 && D>3) { //can do  mixing using bg_* colors)
-        unsigned int a2 = curdata[3]; //must be int
-        unsigned int a = 255-a2;
-        r = (a2 * r + bg_r * a)/255;
-        g = (a2 * g + bg_g * a)/255;
-        b = (a2 * b + bg_b * a)/255;
-      }
-      if (!(i%40)) fprintf(output, "\n");
-      fprintf(output, "%.2x%.2x%.2x", r, g, b);
-      curdata +=D;
-    }
-    fprintf(output,"\n");
-
-  }
-
-  fprintf(output," >\nrestore\n" );
-
-
+  draw_image(draw_image_cb, &cb_data, ix, iy, iw, ih, D);
 }
 
 void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data, int ix, int iy, int iw, int ih, int D) {
@@ -324,6 +290,14 @@ void Fl_PostScript_Graphics_Driver::draw_image(Fl_Draw_Image_Cb call, void *data
 	uchar r = curdata[0];
 	uchar g =  curdata[1];
 	uchar b =  curdata[2];
+
+        if (lang_level_<3 && D>3) { //can do  mixing using bg_* colors)
+          unsigned int a2 = curdata[3]; //must be int
+          unsigned int a = 255-a2;
+          r = (a2 * r + bg_r * a)/255;
+          g = (a2 * g + bg_g * a)/255;
+          b = (a2 * b + bg_b * a)/255;
+        }
 
 	if (!(i%40)) 	fputs("\n", output);
 	fprintf(output, "%.2x%.2x%.2x", r, g, b);

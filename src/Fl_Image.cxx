@@ -165,7 +165,22 @@ Fl_Image::measure(const Fl_Label *lo,		// I - Label
 //
 size_t Fl_RGB_Image::max_size_ = ~((size_t)0);
 
-/**  The destructor free all memory and server resources that are used by  the image. */
+int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg);
+
+/** The constructor creates a new RGBA image from the specified Fl_Pixmap. 
+ 
+ The RGBA image is built fully opaque except for the transparent area
+ of the pixmap that is assigned the \par bg color with full transparency */
+Fl_RGB_Image::Fl_RGB_Image(const Fl_Pixmap *pxm, Fl_Color bg):
+  Fl_Image(pxm->w(), pxm->h(), 4), id_(0), mask_(0)
+{
+  array = new uchar[w() * h() * d()];
+  alloc_array = 1;
+  fl_convert_pixmap(pxm->data(), (uchar*)array, bg);
+  data((const char **)&array, 1);
+}
+
+/**  The destructor frees all memory and server resources that are used by the image. */
 Fl_RGB_Image::~Fl_RGB_Image() {
   uncache();
   if (alloc_array) delete[] (uchar *)array;
