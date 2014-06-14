@@ -89,22 +89,9 @@ else {
 #if ! __LP64__
   OSStatus err;
     // fill our structure with a few default values
-  ascent = Size*3/4;
+  ascent = Size*3/4.;
   descent = Size-ascent;
-  q_width = Size*2/3;
-	// now use ATS to get the actual Glyph size information
-	// say that our passed-in name is encoded as UTF-8, since this works for plain ASCII names too...
-  CFStringRef cfname = CFStringCreateWithCString(0L, name, kCFStringEncodingUTF8);
-  ATSFontRef font = ATSFontFindFromName(cfname, kATSOptionFlagsDefault);
-  if (font) {
-    ATSFontMetrics m = { 0 };
-    ATSFontGetHorizontalMetrics(font, kATSOptionFlagsDefault, &m);
-    if (m.avgAdvanceWidth) q_width = int(m.avgAdvanceWidth*Size);
-      // playing with the offsets a little to make standard sizes fit
-    if (m.ascent) ascent  = int(m.ascent*Size-0.5f);
-    if (m.descent) descent = -int(m.descent*Size-1.5f);
-  }
-  CFRelease(cfname);
+  q_width = Size*2/3.;
     // now we allocate everything needed to render text in this font later
     // get us the default layout and style
   err = ATSUCreateTextLayout(&layout);
@@ -116,18 +103,15 @@ else {
     // render our font up-side-down, so when rendered through our inverted CGContext,
     // text will appear normal again.
   Fixed fsize = IntToFixed(Size);
-#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7
   ATSUFontID fontID;
-  ATSUFindFontFromName(name, strlen(name), kFontFullName, kFontMacintoshPlatform, kFontRomanScript, kFontEnglishLanguage, &fontID);
-#else
-  ATSUFontID fontID = FMGetFontFromATSFontRef(font);
-#endif
+  ATSUFindFontFromName(name, strlen(name), kFontFullName, kFontMacintoshPlatform, kFontNoScriptCode, kFontEnglishLanguage, &fontID);
 
   // draw the font upside-down... Compensate for fltk/OSX origin differences
   ATSUAttributeTag sTag[] = { kATSUFontTag, kATSUSizeTag, kATSUFontMatrixTag };
   ByteCount sBytes[] = { sizeof(ATSUFontID), sizeof(Fixed), sizeof(CGAffineTransform) };
   ATSUAttributeValuePtr sAttr[] = { &fontID, &fsize, &font_mx };
-  err = ATSUSetAttributes(style, 3, sTag, sBytes, sAttr);
+  if (fontID != kATSUInvalidFontID) err = ATSUSetAttributes(style, 1, sTag, sBytes, sAttr); // set the font attribute
+  err = ATSUSetAttributes(style, 2, sTag + 1, sBytes + 1, sAttr + 1); // then the size and matrix attributes
     // next, make sure that Quartz will only render at integer coordinates
   ATSLineLayoutOptions llo = kATSLineUseDeviceMetrics | kATSLineDisableAllLayoutOperations;
   ATSUAttributeTag aTag[] = { kATSULineLayoutOptionsTag };
@@ -191,6 +175,7 @@ Fl_Font_Descriptor::~Fl_Font_Descriptor() {
 
 ////////////////////////////////////////////////////////////////
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
 static Fl_Fontdesc built_in_table_PS[] = { // PostScript font names preferred when Mac OS ≥ 10.5
 {"ArialMT"},
 {"Arial-BoldMT"},
@@ -209,6 +194,7 @@ static Fl_Fontdesc built_in_table_PS[] = { // PostScript font names preferred wh
 {"AndaleMono"}, // there is no bold Monaco font on standard Mac
 {"ZapfDingbatsITC"}
 };
+#endif
 
 static Fl_Fontdesc built_in_table_full[] = { // full font names used before 10.5
   {"Arial"},
@@ -248,7 +234,11 @@ static UniChar *mac_Utf8_to_Utf16(const char *txt, int len, int *new_len)
 
 Fl_Fontdesc* Fl_X::calc_fl_fonts(void)
 {
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
   return (fl_mac_os_version >= Fl_X::CoreText_threshold ? built_in_table_PS : built_in_table_full);
+#else
+  return built_in_table_full;
+#endif
 }
 
 static Fl_Font_Descriptor* find(Fl_Font fnum, Fl_Fontsize size) {
