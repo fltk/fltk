@@ -90,6 +90,8 @@ static void cocoaMouseHandler(NSEvent *theEvent);
 static int calc_mac_os_version();
 static void clipboard_check(void);
 static NSString *calc_utf8_format(void);
+static unsigned make_current_counts = 0; // if > 0, then Fl_Window::make_current() can be called only once
+static Fl_X *fl_x_to_redraw = NULL; // set by Fl_X::flush() to the Fl_X object of the window to be redrawn
 
 Fl_Display_Device *Fl_Display_Device::_display = new Fl_Display_Device(new Fl_Quartz_Graphics_Driver); // the platform display
 
@@ -1743,8 +1745,6 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   BOOL need_handle; // YES means Fl::handle(FL_KEYBOARD,) is needed after handleEvent processing
   NSInteger identifier;
   NSRange selectedRange;
-  @public
-  Fl_X *fl_x_to_redraw; // set by Fl_X::flush() to the Fl_X object of the window to be redrawn
 }
 + (void)prepareEtext:(NSString*)aString;
 + (void)concatEtext:(NSString*)aString;
@@ -1790,7 +1790,6 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   if (self) {
     in_key_event = NO;
     identifier = ++counter;
-    fl_x_to_redraw = NULL;
     }
   return self;
 }
@@ -2259,17 +2258,19 @@ void Fl_Window::fullscreen_off_x(int X, int Y, int W, int H) {
 void Fl_X::flush()
 {
   if (through_drawRect || w->as_gl_window()) {
+    make_current_counts = 1;
     w->flush();
+    make_current_counts = 0;
     Fl_X::q_release_context();
     return;
   }
   // have Cocoa immediately redraw the window's view
   FLView *view = (FLView*)[fl_xid(w) contentView];
-  view->fl_x_to_redraw = this;
+  fl_x_to_redraw = this;
   [view setNeedsDisplay:YES];
   // will send the drawRect: message to the window's view after having prepared the adequate NSGraphicsContext
   [view displayIfNeededIgnoringOpacity]; 
-  view->fl_x_to_redraw = NULL;
+  fl_x_to_redraw = NULL;
 }
 
 
@@ -2655,6 +2656,8 @@ void Fl_Window::resize(int X,int Y,int W,int H) {
  */
 void Fl_Window::make_current() 
 {
+  if (make_current_counts > 1) return;
+  if (make_current_counts) make_current_counts++;
   Fl_X::q_release_context();
   fl_window = i->xid;
   current_ = this;
