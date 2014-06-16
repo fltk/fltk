@@ -247,6 +247,10 @@ if(HAVE_XFIXES)
    target_link_libraries(fltk ${X11_Xfixes_LIB})
 endif(HAVE_XFIXES)
 
+if(HAVE_XCURSOR)
+   target_link_libraries(fltk ${X11_Xcursor_LIB})
+endif(HAVE_XCURSOR)
+
 if(USE_XFT)
    target_link_libraries(fltk ${X11_Xft_LIB})
 endif(USE_XFT)

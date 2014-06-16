@@ -975,6 +975,16 @@ case $host_os_gui in
 		LIBS="-lXfixes $LIBS")
 	fi
 
+	dnl Check for the Xcursor library unless disabled...
+        AC_ARG_ENABLE(xcursor, [  --enable-xcursor        turn on Xcursor support [default=yes]])
+
+	if test x$enable_xcursor != xno; then
+	    AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, AC_DEFINE(HAVE_XCURSOR),,
+	        [#include <X11/Xlib.h>])
+	    AC_CHECK_LIB(Xcursor, XcursorImageCreate,
+		LIBS="-lXcursor $LIBS")
+	fi
+
 	dnl Check for overlay visuals...
 	AC_PATH_PROG(XPROP, xprop)
 	AC_CACHE_CHECK(for X overlay visuals, ac_cv_have_overlay,

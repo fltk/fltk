@@ -901,35 +901,37 @@ inline Fl_Color fl_color_cube(int r, int g, int b) {
 
 /** The following constants define the mouse cursors that are available in FLTK.
 
-    The double-headed arrows are bitmaps provided by FLTK on X, the others
-    are provided by system-defined cursors.
+    Cursors are provided by the system when available, or bitmaps built into
+    FLTK as a fallback.
 
     \todo enum Fl_Cursor needs maybe an image.
 */
+/* FIXME: We should renumber these, but that will break the ABI */
 enum Fl_Cursor {
-  FL_CURSOR_DEFAULT	=  0, /**< the default cursor, usually an arrow. */
-  FL_CURSOR_ARROW	= 35, /**< an arrow pointer. */
-  FL_CURSOR_CROSS	= 66, /**< crosshair. */
-  FL_CURSOR_WAIT	= 76, /**< watch or hourglass. */
-  FL_CURSOR_INSERT	= 77, /**< I-beam. */
-  FL_CURSOR_HAND	= 31, /**< hand (uparrow on MSWindows). */
-  FL_CURSOR_HELP	= 47, /**< question mark. */
-  FL_CURSOR_MOVE	= 27, /**< 4-pointed arrow. */
-  // fltk provides bitmaps for these:
-  FL_CURSOR_NS		= 78, /**< up/down arrow. */
-  FL_CURSOR_WE		= 79, /**< left/right arrow. */
-  FL_CURSOR_NWSE	= 80, /**< diagonal arrow. */
-  FL_CURSOR_NESW	= 81, /**< diagonal arrow. */
-  FL_CURSOR_NONE	=255, /**< invisible. */
-  // for back compatibility (non MSWindows ones):
-  FL_CURSOR_N		= 70, /**< for back compatibility. */
-  FL_CURSOR_NE		= 69, /**< for back compatibility. */
-  FL_CURSOR_E		= 49, /**< for back compatibility. */
-  FL_CURSOR_SE		=  8, /**< for back compatibility. */
-  FL_CURSOR_S		=  9, /**< for back compatibility. */
-  FL_CURSOR_SW		=  7, /**< for back compatibility. */
-  FL_CURSOR_W		= 36, /**< for back compatibility. */
-  FL_CURSOR_NW		= 68 /**< for back compatibility. */
+  FL_CURSOR_DEFAULT    =  0, /**< the default cursor, usually an arrow. */
+  FL_CURSOR_ARROW      = 35, /**< an arrow pointer. */
+  FL_CURSOR_CROSS      = 66, /**< crosshair. */
+  FL_CURSOR_WAIT       = 76, /**< busy indicator (e.g. hourglass). */
+  FL_CURSOR_INSERT     = 77, /**< I-beam. */
+  FL_CURSOR_HAND       = 31, /**< pointing hand. */
+  FL_CURSOR_HELP       = 47, /**< question mark pointer. */
+  FL_CURSOR_MOVE       = 27, /**< 4-pointed arrow or hand. */
+
+  /* Resize indicators */
+  FL_CURSOR_NS         = 78, /**< up/down resize. */
+  FL_CURSOR_WE         = 79, /**< left/right resize. */
+  FL_CURSOR_NWSE       = 80, /**< diagonal resize. */
+  FL_CURSOR_NESW       = 81, /**< diagonal resize. */
+  FL_CURSOR_N          = 70, /**< upwards resize. */
+  FL_CURSOR_NE         = 69, /**< upwards, right resize. */
+  FL_CURSOR_E          = 49, /**< rightwards resize. */
+  FL_CURSOR_SE         =  8, /**< downwards, right resize. */
+  FL_CURSOR_S          =  9, /**< downwards resize. */
+  FL_CURSOR_SW         =  7, /**< downwards, left resize. */
+  FL_CURSOR_W          = 36, /**< leftwards resize. */
+  FL_CURSOR_NW         = 68, /**< upwards, left resize. */
+
+  FL_CURSOR_NONE       =255, /**< invisible. */
 };
 /*@}*/		// group: Cursors  
 

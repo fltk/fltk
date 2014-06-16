@@ -28,6 +28,7 @@
 #define FL_DOUBLE_WINDOW 0xF1   ///< double window type id
 
 class Fl_X;
+class Fl_RGB_Image;
 
 /**
   This widget produces an actual window.  This can either be a main
@@ -97,7 +98,10 @@ class FL_EXPORT Fl_Window : public Fl_Group {
   uchar size_range_set;
   // cursor stuff
   Fl_Cursor cursor_default;
+#if FLTK_ABI_VERSION < 10303
+  // legacy, not used
   Fl_Color cursor_fg, cursor_bg;
+#endif
   void size_range_();
   void _Fl_Window(); // constructor innards
   void fullscreen_x(); // platform-specific part of sending a window to full screen
@@ -495,14 +499,17 @@ public:
     is different.
 
     The type Fl_Cursor is an enumeration defined in <FL/Enumerations.H>.
-    (Under X you can get any XC_cursor value by passing 
-    Fl_Cursor((XC_foo/2)+1)).  The colors only work on X, they are
-    not implemented on WIN32.
 
-    For back compatibility only.
+    \see cursor(const Fl_RGB_Image*, int, int), default_cursor()
   */
-  void cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE); // platform dependent
-  void default_cursor(Fl_Cursor, Fl_Color=FL_BLACK, Fl_Color=FL_WHITE);
+  void cursor(Fl_Cursor);
+  void cursor(const Fl_RGB_Image*, int, int);
+  void default_cursor(Fl_Cursor);
+
+  /* for legacy compatibility */
+  void cursor(Fl_Cursor c, Fl_Color, Fl_Color=FL_WHITE);
+  void default_cursor(Fl_Cursor c, Fl_Color, Fl_Color=FL_WHITE);
+
   static void default_callback(Fl_Window*, void* v);
   
   /** Returns the window width including any frame added by the window manager.

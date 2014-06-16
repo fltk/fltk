@@ -62,8 +62,6 @@ void Fl_Window::_Fl_Window() {
 Fl_Window::Fl_Window(int X,int Y,int W, int H, const char *l)
 : Fl_Group(X, Y, W, H, l) {
   cursor_default = FL_CURSOR_DEFAULT;
-  cursor_fg      = FL_BLACK;
-  cursor_bg      = FL_WHITE;
 
   _Fl_Window();
   set_flag(FORCE_POSITION);
@@ -73,8 +71,6 @@ Fl_Window::Fl_Window(int W, int H, const char *l)
 // fix common user error of a missing end() with current(0):
   : Fl_Group((Fl_Group::current(0),0), 0, W, H, l) {
   cursor_default = FL_CURSOR_DEFAULT;
-  cursor_fg      = FL_BLACK;
-  cursor_bg      = FL_WHITE;
 
   _Fl_Window();
   clear_visible();

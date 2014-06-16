@@ -23,8 +23,6 @@
 #include <FL/fl_draw.H>
 #include <FL/Fl_Box.H>
 
-Fl_Color fg = FL_BLACK;
-Fl_Color bg = FL_WHITE;
 Fl_Cursor cursor = FL_CURSOR_DEFAULT;
 
 Fl_Hor_Value_Slider *cursor_slider;
@@ -32,7 +30,7 @@ Fl_Hor_Value_Slider *cursor_slider;
 void choice_cb(Fl_Widget *, void *v) {
   cursor = (Fl_Cursor)(fl_intptr_t)v;
   cursor_slider->value(cursor);
-  fl_cursor(cursor,fg,bg);
+  fl_cursor(cursor);
 }
 
 Fl_Menu_Item choices[] = {
@@ -48,8 +46,6 @@ Fl_Menu_Item choices[] = {
   {"FL_CURSOR_WE",0,choice_cb,(void*)FL_CURSOR_WE},
   {"FL_CURSOR_NWSE",0,choice_cb,(void*)FL_CURSOR_NWSE},
   {"FL_CURSOR_NESW",0,choice_cb,(void*)FL_CURSOR_NESW},
-  {"FL_CURSOR_NONE",0,choice_cb,(void*)FL_CURSOR_NONE},
-#if 0
   {"FL_CURSOR_N",0,choice_cb,(void*)FL_CURSOR_N},
   {"FL_CURSOR_NE",0,choice_cb,(void*)FL_CURSOR_NE},
   {"FL_CURSOR_E",0,choice_cb,(void*)FL_CURSOR_E},
@@ -58,26 +54,14 @@ Fl_Menu_Item choices[] = {
   {"FL_CURSOR_SW",0,choice_cb,(void*)FL_CURSOR_SW},
   {"FL_CURSOR_W",0,choice_cb,(void*)FL_CURSOR_W},
   {"FL_CURSOR_NW",0,choice_cb,(void*)FL_CURSOR_NW},
-#endif
+  {"FL_CURSOR_NONE",0,choice_cb,(void*)FL_CURSOR_NONE},
   {0}
 };
 
 void setcursor(Fl_Widget *o, void *) {
   Fl_Hor_Value_Slider *slider = (Fl_Hor_Value_Slider *)o;
   cursor = Fl_Cursor((int)slider->value());
-  fl_cursor(cursor,fg,bg);
-}
-
-void setfg(Fl_Widget *o, void *) {
-  Fl_Hor_Value_Slider *slider = (Fl_Hor_Value_Slider *)o;
-  fg = Fl_Color((int)slider->value());
-  fl_cursor(cursor,fg,bg);
-}
-
-void setbg(Fl_Widget *o, void *) {
-  Fl_Hor_Value_Slider *slider = (Fl_Hor_Value_Slider *)o;
-  bg = Fl_Color((int)slider->value());
-  fl_cursor(cursor,fg,bg);
+  fl_cursor(cursor);
 }
 
 // draw the label without any ^C or \nnn conversions:
@@ -103,28 +87,10 @@ int main(int argc, char **argv) {
   slider1.align(FL_ALIGN_LEFT);
   slider1.step(1);
   slider1.precision(0);
-  slider1.bounds(0,100);
+  slider1.bounds(0,255);
   slider1.value(0);
   slider1.callback(setcursor);
   slider1.value(cursor);
-
-  Fl_Hor_Value_Slider slider2(80,220,310,30,"fgcolor:");
-  slider2.align(FL_ALIGN_LEFT);
-  slider2.step(1);
-  slider2.precision(0);
-  slider2.bounds(0,255);
-  slider2.value(0);
-  slider2.callback(setfg);
-  slider2.value(fg);
-
-  Fl_Hor_Value_Slider slider3(80,260,310,30,"bgcolor:");
-  slider3.align(FL_ALIGN_LEFT);
-  slider3.step(1);
-  slider3.precision(0);
-  slider3.bounds(0,255);
-  slider3.value(0);
-  slider3.callback(setbg);
-  slider3.value(bg);
 
 #if 0
   // draw the manual's diagram of cursors...

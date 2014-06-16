@@ -1653,7 +1653,6 @@ void fl_fix_focus(); // in Fl.cxx
 
 char fl_show_iconic;	// hack for Fl_Window::iconic()
 // int fl_background_pixel = -1; // color to use for background
-HCURSOR fl_default_cursor;
 UINT fl_wake_msg = 0;
 int fl_disable_transient_for; // secret method of removing TRANSIENT_FOR
 
@@ -1702,7 +1701,7 @@ Fl_X* Fl_X::make(Fl_Window* w) {
     if (!w->icon())
       w->icon((void *)LoadIcon(NULL, IDI_APPLICATION));
     wcw.hIcon = wcw.hIconSm = (HICON)w->icon();
-    wcw.hCursor = fl_default_cursor = LoadCursor(NULL, IDC_ARROW);
+    wcw.hCursor = LoadCursor(NULL, IDC_ARROW);
     //uchar r,g,b; Fl::get_color(FL_GRAY,r,g,b);
     //wc.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(r,g,b));
     wcw.hbrBackground = NULL;
@@ -1794,7 +1793,8 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   x->setwindow(w);
   x->region = 0;
   x->private_dc = 0;
-  x->cursor = fl_default_cursor;
+  x->cursor = LoadCursor(NULL, IDC_ARROW);
+  x->custom_cursor = 0;
   if (!fl_codepage) fl_get_codepage();
 
   WCHAR *lab = NULL;
@@ -2049,6 +2049,153 @@ void Fl_Window::label(const char *name,const char *iname) {
     SetWindowTextW(i->xid, (WCHAR *)lab);
     free(lab);
   }
+}
+
+////////////////////////////////////////////////////////////////
+
+#ifndef IDC_HAND
+#  define IDC_HAND  MAKEINTRESOURCE(32649)
+#endif // !IDC_HAND
+
+int Fl_X::set_cursor(Fl_Cursor c) {
+  LPSTR n;
+  HCURSOR new_cursor;
+
+  if (c == FL_CURSOR_NONE)
+    new_cursor = NULL;
+  else {
+    switch (c) {
+    case FL_CURSOR_ARROW:   n = IDC_ARROW; break;
+    case FL_CURSOR_CROSS:   n = IDC_CROSS; break;
+    case FL_CURSOR_WAIT:    n = IDC_WAIT; break;
+    case FL_CURSOR_INSERT:  n = IDC_IBEAM; break;
+    case FL_CURSOR_HAND:    n = IDC_HAND; break;
+    case FL_CURSOR_HELP:    n = IDC_HELP; break;
+    case FL_CURSOR_MOVE:    n = IDC_SIZEALL; break;
+    case FL_CURSOR_N:
+    case FL_CURSOR_S:
+      // FIXME: Should probably have fallbacks for these instead
+    case FL_CURSOR_NS:      n = IDC_SIZENS; break;
+    case FL_CURSOR_NE:
+    case FL_CURSOR_SW:
+      // FIXME: Dito.
+    case FL_CURSOR_NESW:    n = IDC_SIZENESW; break;
+    case FL_CURSOR_E:
+    case FL_CURSOR_W:
+      // FIXME: Dito.
+    case FL_CURSOR_WE:      n = IDC_SIZEWE; break;
+    case FL_CURSOR_SE:
+    case FL_CURSOR_NW:
+      // FIXME: Dito.
+    case FL_CURSOR_NWSE:    n = IDC_SIZENWSE; break;
+    default:
+      return 0;
+    }
+
+    new_cursor = LoadCursor(NULL, n);
+    if (new_cursor == NULL)
+      return 0;
+  }
+
+  if ((cursor != NULL) && custom_cursor)
+    DestroyIcon(cursor);
+
+  cursor = new_cursor;
+  custom_cursor = 0;
+
+  SetCursor(cursor);
+
+  return 1;
+}
+
+int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
+  BITMAPV5HEADER bi;
+  HBITMAP bitmap, mask;
+  DWORD *bits;
+  HCURSOR new_cursor;
+
+  if ((hotx < 0) || (hotx >= image->w()))
+    return 0;
+  if ((hoty < 0) || (hoty >= image->h()))
+    return 0;
+
+  memset(&bi, 0, sizeof(BITMAPV5HEADER));
+
+  bi.bV5Size        = sizeof(BITMAPV5HEADER);
+  bi.bV5Width       = image->w();
+  bi.bV5Height      = -image->h(); // Negative for top-down
+  bi.bV5Planes      = 1;
+  bi.bV5BitCount    = 32;
+  bi.bV5Compression = BI_BITFIELDS;
+  bi.bV5RedMask     = 0x00FF0000;
+  bi.bV5GreenMask   = 0x0000FF00;
+  bi.bV5BlueMask    = 0x000000FF;
+  bi.bV5AlphaMask   = 0xFF000000;
+
+  HDC hdc;
+
+  hdc = GetDC(NULL);
+  bitmap = CreateDIBSection(hdc, (BITMAPINFO*)&bi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
+  ReleaseDC(NULL, hdc);
+
+  if (bits == NULL)
+    return 0;
+
+  const uchar *i = (const uchar*)*image->data();
+  for (int y = 0;y < image->h();y++) {
+    for (int x = 0;x < image->w();x++) {
+      switch (image->d()) {
+      case 1:
+        *bits = (0xff<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
+        break;
+      case 2:
+        *bits = (i[1]<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
+        break;
+      case 3:
+        *bits = (0xff<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
+        break;
+      case 4:
+        *bits = (i[3]<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
+        break;
+      }
+      i += image->d();
+      bits++;
+    }
+    i += image->ld();
+  }
+
+  // A mask bitmap is still needed even though it isn't used
+  mask = CreateBitmap(image->w(),image->h(),1,1,NULL);
+  if (mask == NULL) {
+    DeleteObject(bitmap);
+    return 0;
+  }
+
+  ICONINFO ii;
+
+  ii.fIcon    = FALSE;
+  ii.xHotspot = hotx;
+  ii.yHotspot = hoty;
+  ii.hbmMask  = mask;
+  ii.hbmColor = bitmap;
+
+  new_cursor = CreateIconIndirect(&ii);
+
+  DeleteObject(bitmap);
+  DeleteObject(mask);
+
+  if (new_cursor == NULL)
+    return 0;
+
+  if ((cursor != NULL) && custom_cursor)
+    DestroyIcon(cursor);
+
+  cursor = new_cursor;
+  custom_cursor = 1;
+
+  SetCursor(cursor);
+
+  return 1;
 }
 
 ////////////////////////////////////////////////////////////////

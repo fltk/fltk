@@ -346,6 +346,20 @@ else()
 endif(OPTION_USE_XFIXES)
 
 #######################################################################
+if(X11_Xcursor_FOUND)
+   option(OPTION_USE_XCURSOR "use lib XCURSOR" ON)
+endif(X11_Xcursor_FOUND)
+
+if(OPTION_USE_XCURSOR)
+   set(HAVE_XCURSOR ${X11_Xcursor_FOUND})
+   include_directories(${X11_Xcursor_INCLUDE_PATH})
+   list(APPEND FLTK_LDLIBS -lXcursor)
+   set(FLTK_XCURSOR_FOUND TRUE)
+else()
+   set(FLTK_XCURSOR_FOUND FALSE)
+endif(OPTION_USE_XCURSOR)
+
+#######################################################################
 if(X11_Xft_FOUND)
    option(OPTION_USE_XFT "use lib Xft" ON)
 endif(X11_Xft_FOUND)

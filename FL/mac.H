@@ -142,7 +142,8 @@ public:
   void collapse(void);
   WindowRef window_ref(void);
   void set_key_window(void);
-  void set_cursor(Fl_Cursor);
+  int set_cursor(Fl_Cursor);
+  int set_cursor(const Fl_RGB_Image*, int, int);
   static CGImageRef CGImage_from_window_rect(Fl_Window *win, int x, int y, int w, int h);
   static unsigned char *bitmap_from_window_rect(Fl_Window *win, int x, int y, int w, int h, int *bytesPerPixel);
   static CFDataRef CGBitmapContextToTIFF(CGContextRef c);

@@ -116,6 +116,14 @@
 #define HAVE_XFIXES 0
 
 /*
+ * HAVE_XCURSOR:
+ *
+ * Do we have the X cursor library?
+ */
+
+#define HAVE_XCURSOR 0
+
+/*
  * __APPLE_QUARTZ__:
  *
  * All Apple implementations are now based on Quartz and Cocoa,

@@ -116,6 +116,14 @@
 #cmakedefine01 HAVE_XFIXES
 
 /*
+ * HAVE_XCURSOR:
+ *
+ * Do we have the X cursor library?
+ */
+
+#cmakedefine01 HAVE_XCURSOR
+
+/*
  * __APPLE_QUARTZ__:
  *
  * If __APPLE_QUARTZ__ is defined, FLTK will be

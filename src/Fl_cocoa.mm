@@ -97,7 +97,6 @@ Fl_Display_Device *Fl_Display_Device::_display = new Fl_Display_Device(new Fl_Qu
 
 // public variables
 CGContextRef fl_gc = 0;
-NSCursor *fl_default_cursor;
 void *fl_capture = 0;			// (NSWindow*) we need this to compensate for a missing(?) mouse capture
 bool fl_show_iconic;                    // true if called from iconize() - shows the next created window in collapsed state
 //int fl_disable_transient_for;           // secret method of removing TRANSIENT_FOR
@@ -1413,8 +1412,6 @@ void fl_open_display() {
 					  dequeue:YES];
     while (ign_event);
     
-    fl_default_cursor = [NSCursor arrowCursor];
-
     // bring the application into foreground without a 'CARB' resource
     Boolean same_psn;
     ProcessSerialNumber cur_psn, front_psn;
@@ -1832,6 +1829,7 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
 - (void)drawRect:(NSRect)rect;
 - (BOOL)acceptsFirstResponder;
 - (BOOL)acceptsFirstMouse:(NSEvent*)theEvent;
+- (void)resetCursorRects;
 - (BOOL)performKeyEquivalent:(NSEvent*)theEvent;
 - (void)mouseUp:(NSEvent *)theEvent;
 - (void)rightMouseUp:(NSEvent *)theEvent;
@@ -1920,6 +1918,16 @@ static void cocoaKeyboardHandler(NSEvent *theEvent)
   Fl_Window *w = [(FLWindow*)[theEvent window] getFl_Window];
   Fl_Window *first = Fl::first_window();
   return (first == w || !first->modal());
+}
+- (void)resetCursorRects {
+  Fl_Window *w = [(FLWindow*)[self window] getFl_Window];
+  Fl_X *i = Fl_X::i(w);
+  // We have to have at least one cursor rect for invalidateCursorRectsForView
+  // to work, hence the "else" clause.
+  if (i->cursor)
+    [self addCursorRect:[self visibleRect] cursor:(NSCursor*)i->cursor];
+  else
+    [self addCursorRect:[self visibleRect] cursor:[NSCursor arrowCursor]];
 }
 - (void)mouseUp:(NSEvent *)theEvent {
   cocoaMouseHandler(theEvent);
@@ -2367,7 +2375,7 @@ void Fl_X::make(Fl_Window* w)
     x->other_xid = 0;
     x->region = 0;
     x->subRegion = 0;
-    x->cursor = fl_default_cursor;
+    x->cursor = NULL;
     x->gc = 0;			// stay 0 for Quickdraw; fill with CGContext for Quartz
     w->set_visible();
     Fl_Window *win = w->window();
@@ -2464,7 +2472,7 @@ void Fl_X::make(Fl_Window* w)
     x->other_xid = 0; // room for doublebuffering image map. On OS X this is only used by overlay windows
     x->region = 0;
     x->subRegion = 0;
-    x->cursor = fl_default_cursor;
+    x->cursor = NULL;
     x->xidChildren = 0;
     x->xidNext = 0;
     x->gc = 0;
@@ -3148,6 +3156,10 @@ void Fl_X::map() {
     Fl_X::relink(w, w->window() );
     w->redraw();
   }
+  if (cursor) {
+    [(NSCursor*)cursor release];
+    cursor = NULL;
+  }
 }
 
 void Fl_X::unmap() {
@@ -3282,68 +3294,106 @@ CFDataRef Fl_X::CGBitmapContextToTIFF(CGContextRef c)
   return (CFDataRef)tiff;
 }
 
-static NSCursor *PrepareCursor(NSCursor *cursor, CGContextRef (*f)() )
+int Fl_X::set_cursor(Fl_Cursor c)
 {
-  if (cursor == nil) {
-    CGContextRef c = f();
-    NSImage *image = CGBitmapContextToNSImage(c);
-    fl_delete_offscreen( (Fl_Offscreen)c ); 
-    NSPoint pt = {[image size].width/2, [image size].height/2};
-    cursor = [[NSCursor alloc] initWithImage:image hotSpot:pt];
+  if (cursor) {
+    [(NSCursor*)cursor release];
+    cursor = NULL;
   }
-  return cursor;
+
+  switch (c) {
+  case FL_CURSOR_ARROW:   cursor = [NSCursor arrowCursor]; break;
+  case FL_CURSOR_CROSS:   cursor = [NSCursor crosshairCursor]; break;
+  case FL_CURSOR_INSERT:  cursor = [NSCursor IBeamCursor]; break;
+  case FL_CURSOR_HAND:    cursor = [NSCursor pointingHandCursor]; break;
+  case FL_CURSOR_MOVE:    cursor = [NSCursor openHandCursor]; break;
+  case FL_CURSOR_NS:      cursor = [NSCursor resizeUpDownCursor]; break;
+  case FL_CURSOR_WE:      cursor = [NSCursor resizeLeftRightCursor]; break;
+  case FL_CURSOR_N:       cursor = [NSCursor resizeUpCursor]; break;
+  case FL_CURSOR_E:       cursor = [NSCursor resizeRightCursor]; break;
+  case FL_CURSOR_W:       cursor = [NSCursor resizeLeftCursor]; break;
+  case FL_CURSOR_S:       cursor = [NSCursor resizeDownCursor]; break;
+  default:
+    return 0;
+  }
+
+  [(NSCursor*)cursor retain];
+
+  [(NSWindow*)xid invalidateCursorRectsForView:[(NSWindow*)xid contentView]];
+
+  return 1;
 }
 
-void Fl_X::set_cursor(Fl_Cursor c)
-{
-  NSCursor *icrsr;
-  switch (c) {
-    case FL_CURSOR_CROSS:  icrsr = [NSCursor crosshairCursor]; break;
-    case FL_CURSOR_WAIT:
-      static NSCursor *watch = nil;
-      watch = PrepareCursor(watch,  &Fl_X::watch_cursor_image);
-      icrsr = watch;
-      break;
-    case FL_CURSOR_INSERT: icrsr = [NSCursor IBeamCursor]; break;
-    case FL_CURSOR_N:      icrsr = [NSCursor resizeUpCursor]; break;
-    case FL_CURSOR_S:      icrsr = [NSCursor resizeDownCursor]; break;
-    case FL_CURSOR_NS:     icrsr = [NSCursor resizeUpDownCursor]; break;
-    case FL_CURSOR_HELP:   
-      static NSCursor *help = nil;
-      help = PrepareCursor(help,  &Fl_X::help_cursor_image);
-      icrsr = help;
-      break;
-    case FL_CURSOR_HAND:   icrsr = [NSCursor pointingHandCursor]; break;
-    case FL_CURSOR_MOVE:   icrsr = [NSCursor openHandCursor]; break;
-    case FL_CURSOR_NE:
-    case FL_CURSOR_SW:
-    case FL_CURSOR_NESW:   
-      static NSCursor *nesw = nil;
-      nesw = PrepareCursor(nesw,  &Fl_X::nesw_cursor_image);
-      icrsr = nesw;
-      break;
-    case FL_CURSOR_E:      icrsr = [NSCursor resizeRightCursor]; break;
-    case FL_CURSOR_W:      icrsr = [NSCursor resizeLeftCursor]; break;
-    case FL_CURSOR_WE:     icrsr = [NSCursor resizeLeftRightCursor]; break;
-    case FL_CURSOR_SE:
-    case FL_CURSOR_NW:
-    case FL_CURSOR_NWSE:   
-      static NSCursor *nwse = nil;
-      nwse = PrepareCursor(nwse,  &Fl_X::nwse_cursor_image);
-      icrsr = nwse;
-      break;
-    case FL_CURSOR_NONE:   
-      static NSCursor *none = nil;
-      none = PrepareCursor(none,  &Fl_X::none_cursor_image);
-      icrsr = none; 
-      break;
-    case FL_CURSOR_ARROW:
-    case FL_CURSOR_DEFAULT:
-    default:			   icrsr = [NSCursor arrowCursor];
-      break;
+int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
+  if (cursor) {
+    [(NSCursor*)cursor release];
+    cursor = NULL;
   }
-  [icrsr set];
-  cursor = icrsr;
+
+  if ((hotx < 0) || (hotx >= image->w()))
+    return 0;
+  if ((hoty < 0) || (hoty >= image->h()))
+    return 0;
+
+  // OS X >= 10.6 can create a NSImage from a CGImage, but we need to
+  // support older versions, hence this pesky handling.
+
+  NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc]
+                              initWithBitmapDataPlanes:NULL
+                              pixelsWide:image->w()
+                              pixelsHigh:image->h()
+                              bitsPerSample:8
+                              samplesPerPixel:image->d()
+                              hasAlpha:!(image->d() & 1)
+                              isPlanar:NO
+                              colorSpaceName:(image->d()<=2) ? NSDeviceWhiteColorSpace : NSDeviceRGBColorSpace
+                              bytesPerRow:(image->w() * image->d())
+                              bitsPerPixel:(image->d()*8)];
+
+  // Alpha needs to be premultiplied for this format
+
+  const uchar *i = (const uchar*)*image->data();
+  unsigned char *o = [bitmap bitmapData];
+  for (int y = 0;y < image->h();y++) {
+    if (image->d() & 1) {
+      for (int x = 0;x < image->w();x++) {
+        unsigned int alpha;
+        if (image->d() == 4) {
+          alpha = i[3];
+          *o++ = (unsigned char)((unsigned int)*i++ * alpha / 255);
+          *o++ = (unsigned char)((unsigned int)*i++ * alpha / 255);
+        }
+
+        alpha = i[1];
+        *o++ = (unsigned char)((unsigned int)*i++ * alpha / 255);
+        *o++ = alpha;
+        i++;
+  }
+    } else {
+      // No alpha, so we can just copy everything directly.
+      int len = image->w() * image->d();
+      memcpy(o, i, len);
+      o += len;
+      i += len;
+    }
+    i += image->ld();
+  }
+
+  NSImage *nsimage = [[NSImage alloc]
+                      initWithSize:NSMakeSize(image->w(), image->h())];
+
+  [nsimage addRepresentation:bitmap];
+
+  cursor = [[NSCursor alloc]
+            initWithImage:nsimage
+            hotSpot:NSMakePoint(hotx, hoty)];
+
+  [(NSWindow*)xid invalidateCursorRectsForView:[(NSWindow*)xid contentView]];
+
+  [bitmap release];
+  [nsimage release];
+
+  return 1;
 }
 
 @interface FLaboutItemTarget : NSObject 

@@ -73,6 +73,7 @@ public:
   int wait_for_expose;
   HDC private_dc; // used for OpenGL
   HCURSOR cursor;
+  int custom_cursor;
   HDC saved_hdc;  // saves the handle of the DC currently loaded
   // static variables, static functions and member functions
   static Fl_X* first;
@@ -84,6 +85,8 @@ public:
   void flush() {w->flush();}
   void set_minmax(LPMINMAXINFO minmax);
   void mapraise();
+  int set_cursor(Fl_Cursor);
+  int set_cursor(const Fl_RGB_Image*, int, int);
   static Fl_X* make(Fl_Window*);
 };
 extern FL_EXPORT HCURSOR fl_default_cursor;

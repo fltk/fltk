@@ -62,6 +62,11 @@ static int xfixes_event_base = 0;
 static bool have_xfixes = false;
 #  endif
 
+#  include <X11/cursorfont.h>
+
+#  if HAVE_XCURSOR
+#    include <X11/Xcursor/Xcursor.h>
+#  endif
 static Fl_Xlib_Graphics_Driver fl_xlib_driver;
 static Fl_Display_Device fl_xlib_display(&fl_xlib_driver);
 Fl_Display_Device *Fl_Display_Device::_display = &fl_xlib_display;// the platform display
@@ -2596,6 +2601,94 @@ void Fl_X::sendxjunk() {
 void Fl_Window::size_range_() {
   size_range_set = 1;
   if (shown()) i->sendxjunk();
+}
+
+////////////////////////////////////////////////////////////////
+
+int Fl_X::set_cursor(Fl_Cursor c) {
+  unsigned int shape;
+  Cursor xc;
+
+  switch (c) {
+  case FL_CURSOR_ARROW:   shape = XC_left_ptr; break;
+  case FL_CURSOR_CROSS:   shape = XC_tcross; break;
+  case FL_CURSOR_WAIT:    shape = XC_watch; break;
+  case FL_CURSOR_INSERT:  shape = XC_xterm; break;
+  case FL_CURSOR_HAND:    shape = XC_hand2; break;
+  case FL_CURSOR_HELP:    shape = XC_question_arrow; break;
+  case FL_CURSOR_MOVE:    shape = XC_fleur; break;
+  case FL_CURSOR_NS:      shape = XC_sb_v_double_arrow; break;
+  case FL_CURSOR_WE:      shape = XC_sb_h_double_arrow; break;
+  case FL_CURSOR_NE:      shape = XC_top_right_corner; break;
+  case FL_CURSOR_N:       shape = XC_top_side; break;
+  case FL_CURSOR_NW:      shape = XC_top_left_corner; break;
+  case FL_CURSOR_E:       shape = XC_right_side; break;
+  case FL_CURSOR_W:       shape = XC_left_side; break;
+  case FL_CURSOR_SE:      shape = XC_bottom_right_corner; break;
+  case FL_CURSOR_S:       shape = XC_bottom_side; break;
+  case FL_CURSOR_SW:      shape = XC_bottom_left_corner; break;
+  default:
+    return 0;
+  }
+
+  xc = XCreateFontCursor(fl_display, shape);
+  XDefineCursor(fl_display, xid, xc);
+  XFreeCursor(fl_display, xc);
+
+  return 1;
+}
+
+int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
+#if ! HAVE_XCURSOR
+  return 0;
+#else
+  XcursorImage *cursor;
+  Cursor xc;
+
+  if ((hotx < 0) || (hotx >= image->w()))
+    return 0;
+  if ((hoty < 0) || (hoty >= image->h()))
+    return 0;
+
+  cursor = XcursorImageCreate(image->w(), image->h());
+  if (!cursor)
+    return 0;
+
+  const uchar *i = (const uchar*)*image->data();
+  XcursorPixel *o = cursor->pixels;
+  for (int y = 0;y < image->h();y++) {
+    for (int x = 0;x < image->w();x++) {
+      switch (image->d()) {
+      case 1:
+        *o = (0xff<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
+        break;
+      case 2:
+        *o = (i[1]<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
+        break;
+      case 3:
+        *o = (0xff<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
+        break;
+      case 4:
+        *o = (i[3]<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
+        break;
+      }
+      i += image->d();
+      o++;
+    }
+    i += image->ld();
+  }
+
+  cursor->xhot = hotx;
+  cursor->yhot = hoty;
+
+  xc = XcursorImageLoadCursor(fl_display, cursor);
+  XDefineCursor(fl_display, xid, xc);
+  XFreeCursor(fl_display, xc);
+
+  XcursorImageDestroy(cursor);
+
+  return 1;
+#endif
 }
 
 ////////////////////////////////////////////////////////////////
