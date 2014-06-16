@@ -1,5 +1,5 @@
 /* XPM */
-static char * fl_cursor_wait_xpm[] = {
+static const char * fl_cursor_wait_xpm[] = {
 "17 32 11 1",
 " 	c None",
 ".	c #FFFFFF",
