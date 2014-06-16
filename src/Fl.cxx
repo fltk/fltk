@@ -1489,6 +1489,8 @@ void Fl_Window::hide() {
   handle(FL_HIDE);
 
 #if defined(WIN32)
+  // make sure any custom icons get freed
+  icons(NULL, 0);
   // this little trick keeps the current clipboard alive, even if we are about
   // to destroy the window that owns the selection.
   if (GetClipboardOwner()==ip->xid)
@@ -1553,6 +1555,8 @@ Fl_Window::~Fl_Window() {
   if (xclass_) {
     free(xclass_);
   }
+  free_icons();
+  delete icon_;
 }
 
 // FL_SHOW and FL_HIDE are called whenever the visibility of this widget

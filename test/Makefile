@@ -53,6 +53,7 @@ CPPFILES =\
 	glpuzzle.cxx \
 	hello.cxx \
 	help.cxx \
+	icon.cxx \
 	iconize.cxx \
 	image.cxx \
 	inactive.cxx \
@@ -121,6 +122,7 @@ ALL =	\
 	forms$(EXEEXT) \
 	hello$(EXEEXT) \
 	help$(EXEEXT) \
+	icon$(EXEEXT) \
 	iconize$(EXEEXT) \
 	image$(EXEEXT) \
 	inactive$(EXEEXT) \
@@ -354,6 +356,8 @@ help$(EXEEXT): help.o $(IMGLIBNAME)
 	echo Linking $@...
 	$(CXX) $(ARCHFLAGS) $(CXXFLAGS) $(LDFLAGS) help.o -o $@ $(LINKFLTKIMG) $(LDLIBS)
 	$(OSX_ONLY) ../fltk-config --post $@
+
+icon$(EXEEXT): icon.o
 
 iconize$(EXEEXT): iconize.o
 

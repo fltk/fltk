@@ -1820,6 +1820,8 @@ Fl_X* Fl_X::make(Fl_Window* w) {
   );
   if (lab) free(lab);
 
+  x->set_icons();
+
   if (w->fullscreen_active()) {
   /* We need to make sure that the fullscreen is created on the
      default monitor, ie the desktop where the shortcut is located
@@ -2053,6 +2055,254 @@ void Fl_Window::label(const char *name,const char *iname) {
 
 ////////////////////////////////////////////////////////////////
 
+static HICON image_to_icon(const Fl_RGB_Image *image, bool is_icon,
+                           int hotx, int hoty) {
+  BITMAPV5HEADER bi;
+  HBITMAP bitmap, mask;
+  DWORD *bits;
+  HICON icon;
+
+  if (!is_icon) {
+    if ((hotx < 0) || (hotx >= image->w()))
+      return NULL;
+    if ((hoty < 0) || (hoty >= image->h()))
+      return NULL;
+  }
+
+  memset(&bi, 0, sizeof(BITMAPV5HEADER));
+
+  bi.bV5Size        = sizeof(BITMAPV5HEADER);
+  bi.bV5Width       = image->w();
+  bi.bV5Height      = -image->h(); // Negative for top-down
+  bi.bV5Planes      = 1;
+  bi.bV5BitCount    = 32;
+  bi.bV5Compression = BI_BITFIELDS;
+  bi.bV5RedMask     = 0x00FF0000;
+  bi.bV5GreenMask   = 0x0000FF00;
+  bi.bV5BlueMask    = 0x000000FF;
+  bi.bV5AlphaMask   = 0xFF000000;
+
+  HDC hdc;
+
+  hdc = GetDC(NULL);
+  bitmap = CreateDIBSection(hdc, (BITMAPINFO*)&bi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
+  ReleaseDC(NULL, hdc);
+
+  if (bits == NULL)
+    return NULL;
+
+  const uchar *i = (const uchar*)*image->data();
+  for (int y = 0;y < image->h();y++) {
+    for (int x = 0;x < image->w();x++) {
+      switch (image->d()) {
+      case 1:
+        *bits = (0xff<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
+        break;
+      case 2:
+        *bits = (i[1]<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
+        break;
+      case 3:
+        *bits = (0xff<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
+        break;
+      case 4:
+        *bits = (i[3]<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
+        break;
+      }
+      i += image->d();
+      bits++;
+    }
+    i += image->ld();
+  }
+
+  // A mask bitmap is still needed even though it isn't used
+  mask = CreateBitmap(image->w(),image->h(),1,1,NULL);
+  if (mask == NULL) {
+    DeleteObject(bitmap);
+    return NULL;
+  }
+
+  ICONINFO ii;
+
+  ii.fIcon    = is_icon;
+  ii.xHotspot = hotx;
+  ii.yHotspot = hoty;
+  ii.hbmMask  = mask;
+  ii.hbmColor = bitmap;
+
+  icon = CreateIconIndirect(&ii);
+
+  DeleteObject(bitmap);
+  DeleteObject(mask);
+
+  if (icon == NULL)
+    return NULL;
+
+  return icon;
+}
+
+////////////////////////////////////////////////////////////////
+
+static HICON default_big_icon = NULL;
+static HICON default_small_icon = NULL;
+
+static const Fl_RGB_Image *find_best_icon(int ideal_width, 
+                                          const Fl_RGB_Image *icons[],
+                                          int count) {
+  const Fl_RGB_Image *best;
+
+  best = NULL;
+
+  for (int i = 0;i < count;i++) {
+    if (best == NULL)
+      best = icons[i];
+    else {
+      if (best->w() < ideal_width) {
+        if (icons[i]->w() > best->w())
+          best = icons[i];
+      } else {
+        if ((icons[i]->w() >= ideal_width) &&
+            (icons[i]->w() < best->w()))
+          best = icons[i];
+      }
+    }
+  }
+
+  return best;
+}
+
+void Fl_X::set_default_icons(const Fl_RGB_Image *icons[], int count) {
+  const Fl_RGB_Image *best_big, *best_small;
+
+  if (default_big_icon != NULL)
+    DestroyIcon(default_big_icon);
+  if (default_small_icon != NULL)
+    DestroyIcon(default_small_icon);
+
+  default_big_icon = NULL;
+  default_small_icon = NULL;
+
+  best_big = find_best_icon(GetSystemMetrics(SM_CXICON), icons, count);
+  best_small = find_best_icon(GetSystemMetrics(SM_CXSMICON), icons, count);
+
+  if (best_big != NULL)
+    default_big_icon = image_to_icon(best_big, true, 0, 0);
+
+  if (best_small != NULL)
+    default_small_icon = image_to_icon(best_small, true, 0, 0);
+}
+
+void Fl_X::set_default_icons(HICON big_icon, HICON small_icon) {
+  if (default_big_icon != NULL)
+    DestroyIcon(default_big_icon);
+  if (default_small_icon != NULL)
+    DestroyIcon(default_small_icon);
+
+  default_big_icon = NULL;
+  default_small_icon = NULL;
+
+  if (big_icon != NULL)
+    default_big_icon = CopyIcon(big_icon);
+  if (small_icon != NULL)
+    default_small_icon = CopyIcon(small_icon);
+}
+
+void Fl_X::set_icons() {
+  HICON big_icon, small_icon;
+
+  // Windows doesn't copy the icons, so we have to "leak" them when
+  // setting, and clean up when we change to some other icons.
+  big_icon = (HICON)SendMessage(xid, WM_GETICON, ICON_BIG, 0);
+  if ((big_icon != NULL) && (big_icon != default_big_icon))
+    DestroyIcon(big_icon);
+  small_icon = (HICON)SendMessage(xid, WM_GETICON, ICON_SMALL, 0);
+  if ((small_icon != NULL) && (small_icon != default_small_icon))
+    DestroyIcon(small_icon);
+
+  big_icon = NULL;
+  small_icon = NULL;
+
+  if (w->icon_->count) {
+    const Fl_RGB_Image *best_big, *best_small;
+
+    best_big = find_best_icon(GetSystemMetrics(SM_CXICON),
+                              (const Fl_RGB_Image **)w->icon_->icons,
+                              w->icon_->count);
+    best_small = find_best_icon(GetSystemMetrics(SM_CXSMICON),
+                                (const Fl_RGB_Image **)w->icon_->icons,
+                                w->icon_->count);
+
+    if (best_big != NULL)
+      big_icon = image_to_icon(best_big, true, 0, 0);
+    if (best_small != NULL)
+      small_icon = image_to_icon(best_small, true, 0, 0);
+  } else {
+    if ((w->icon_->big_icon != NULL) || (w->icon_->small_icon != NULL)) {
+      big_icon = w->icon_->big_icon;
+      small_icon = w->icon_->small_icon;
+    } else {
+      big_icon = default_big_icon;
+      small_icon = default_small_icon;
+    }
+  }
+
+  SendMessage(xid, WM_SETICON, ICON_BIG, (LPARAM)big_icon);
+  SendMessage(xid, WM_SETICON, ICON_SMALL, (LPARAM)small_icon);
+}
+
+/** Sets the default window icons.
+
+  Convenience function to set the default icons using Windows'
+  native HICON icon handles.
+
+  The given icons are copied. You can free the icons immediately after
+  this call.
+
+  \param[in] big_icon default large icon for all windows
+                      subsequently created
+  \param[in] small_icon default small icon for all windows
+                        subsequently created
+
+  \see Fl_Window::default_icon(const Fl_RGB_Image *)
+  \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
+  \see Fl_Window::icon(const Fl_RGB_Image *)
+  \see Fl_Window::icons(const Fl_RGB_Image *[], int)
+  \see Fl_Window::icons(HICON, HICON)
+ */
+void Fl_Window::default_icons(HICON big_icon, HICON small_icon) {
+  Fl_X::set_default_icons(big_icon, small_icon);
+}
+
+/** Sets the window icons.
+
+  Convenience function to set this window's icons using Windows'
+  native HICON icon handles.
+
+  The given icons are copied. You can free the icons immediately after
+  this call.
+
+  \param[in] big_icon large icon for this window
+  \param[in] small_icon small icon for this windows
+
+  \see Fl_Window::default_icon(const Fl_RGB_Image *)
+  \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
+  \see Fl_Window::default_icons(HICON, HICON)
+  \see Fl_Window::icon(const Fl_RGB_Image *)
+  \see Fl_Window::icons(const Fl_RGB_Image *[], int)
+ */
+void Fl_Window::icons(HICON big_icon, HICON small_icon) {
+  free_icons();
+
+  if (big_icon != NULL)
+    icon_->big_icon = CopyIcon(big_icon);
+  if (small_icon != NULL)
+    icon_->small_icon = CopyIcon(small_icon);
+
+  if (i)
+    i->set_icons();
+}
+
+////////////////////////////////////////////////////////////////
+
 #ifndef IDC_HAND
 #  define IDC_HAND  MAKEINTRESOURCE(32649)
 #endif // !IDC_HAND
@@ -2109,81 +2359,9 @@ int Fl_X::set_cursor(Fl_Cursor c) {
 }
 
 int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
-  BITMAPV5HEADER bi;
-  HBITMAP bitmap, mask;
-  DWORD *bits;
   HCURSOR new_cursor;
 
-  if ((hotx < 0) || (hotx >= image->w()))
-    return 0;
-  if ((hoty < 0) || (hoty >= image->h()))
-    return 0;
-
-  memset(&bi, 0, sizeof(BITMAPV5HEADER));
-
-  bi.bV5Size        = sizeof(BITMAPV5HEADER);
-  bi.bV5Width       = image->w();
-  bi.bV5Height      = -image->h(); // Negative for top-down
-  bi.bV5Planes      = 1;
-  bi.bV5BitCount    = 32;
-  bi.bV5Compression = BI_BITFIELDS;
-  bi.bV5RedMask     = 0x00FF0000;
-  bi.bV5GreenMask   = 0x0000FF00;
-  bi.bV5BlueMask    = 0x000000FF;
-  bi.bV5AlphaMask   = 0xFF000000;
-
-  HDC hdc;
-
-  hdc = GetDC(NULL);
-  bitmap = CreateDIBSection(hdc, (BITMAPINFO*)&bi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
-  ReleaseDC(NULL, hdc);
-
-  if (bits == NULL)
-    return 0;
-
-  const uchar *i = (const uchar*)*image->data();
-  for (int y = 0;y < image->h();y++) {
-    for (int x = 0;x < image->w();x++) {
-      switch (image->d()) {
-      case 1:
-        *bits = (0xff<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
-        break;
-      case 2:
-        *bits = (i[1]<<24) | (i[0]<<16) | (i[0]<<8) | i[0];
-        break;
-      case 3:
-        *bits = (0xff<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
-        break;
-      case 4:
-        *bits = (i[3]<<24) | (i[0]<<16) | (i[1]<<8) | i[2];
-        break;
-      }
-      i += image->d();
-      bits++;
-    }
-    i += image->ld();
-  }
-
-  // A mask bitmap is still needed even though it isn't used
-  mask = CreateBitmap(image->w(),image->h(),1,1,NULL);
-  if (mask == NULL) {
-    DeleteObject(bitmap);
-    return 0;
-  }
-
-  ICONINFO ii;
-
-  ii.fIcon    = FALSE;
-  ii.xHotspot = hotx;
-  ii.yHotspot = hoty;
-  ii.hbmMask  = mask;
-  ii.hbmColor = bitmap;
-
-  new_cursor = CreateIconIndirect(&ii);
-
-  DeleteObject(bitmap);
-  DeleteObject(mask);
-
+  new_cursor = image_to_icon(image, false, hotx, hoty);
   if (new_cursor == NULL)
     return 0;
 

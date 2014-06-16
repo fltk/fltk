@@ -23,6 +23,7 @@
 #include <config.h>
 #include <FL/Fl.H>
 #include <FL/x.H>
+#include <FL/Fl_RGB_Image.H>
 #include <FL/Fl_Window.H>
 #include <stdlib.h>
 #include "flstring.h"
@@ -45,7 +46,8 @@ void Fl_Window::_Fl_Window() {
   }
   i = 0;
   xclass_ = 0;
-  icon_ = 0;
+  icon_ = new icon_data;
+  memset(icon_, 0, sizeof(*icon_));
   iconlabel_ = 0;
   resizable(0);
   size_range_set = 0;
@@ -301,14 +303,118 @@ const char *Fl_Window::xclass() const
   }
 }
 
-/** Gets the current icon window target dependent data. */
-const void *Fl_Window::icon() const {
-  return icon_;
+/** Sets a single default window icon.
+
+  \param[in] icon default icon for all windows subsequently created
+
+  \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
+  \see Fl_Window::icon(const Fl_RGB_Image *)
+  \see Fl_Window::icons(const Fl_RGB_Image *[], int)
+ */
+void Fl_Window::default_icon(const Fl_RGB_Image *icon) {
+  default_icons(&icon, 1);
 }
 
-/** Sets the current icon window target dependent data. */
+/** Sets the default window icons.
+
+  The default icons are used for all windows that don't have their
+  own icons set before show() is called. You can change the default
+  icons whenever you want, but this only affects windows that are
+  created (and shown) after this call.
+
+  The given images in \p icons are copied. You can use a local
+  variable or free the images immediately after this call.
+
+  \param[in] icons default icons for all windows subsequently created
+  \param[in] count number of images in \p icons. set to 0 to remove
+                   the current default icons
+
+  \see Fl_Window::default_icon(const Fl_RGB_Image *)
+  \see Fl_Window::icon(const Fl_RGB_Image *)
+  \see Fl_Window::icons(const Fl_RGB_Image *[], int)
+ */
+void Fl_Window::default_icons(const Fl_RGB_Image *icons[], int count) {
+  Fl_X::set_default_icons(icons, count);
+}
+
+/** Sets a single window icon.
+
+  \param[in] icon icon for this window
+
+  \see Fl_Window::default_icon(const Fl_RGB_Image *)
+  \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
+  \see Fl_Window::icons(const Fl_RGB_Image *[], int)
+ */
+void Fl_Window::icon(const Fl_RGB_Image *icon) {
+  icons(&icon, 1);
+}
+
+/** Sets the window icons.
+
+  The given images in \p icons are copied. You can use a local
+  variable or free the images immediately after this call.
+
+  \param[in] icons icons for this window
+  \param[in] count number of images in \p icons. set to 0 to remove
+                   the current icons
+
+  \see Fl_Window::default_icon(const Fl_RGB_Image *)
+  \see Fl_Window::default_icons(const Fl_RGB_Image *[], int)
+  \see Fl_Window::icon(const Fl_RGB_Image *)
+ */
+void Fl_Window::icons(const Fl_RGB_Image *icons[], int count) {
+  free_icons();
+
+  if (count > 0) {
+    icon_->icons = new Fl_RGB_Image*[count];
+    icon_->count = count;
+    // FIXME: Fl_RGB_Image lacks const modifiers on methods
+    for (int i = 0;i < count;i++)
+      icon_->icons[i] = (Fl_RGB_Image*)((Fl_RGB_Image*)icons[i])->copy();
+  }
+
+  if (i)
+    i->set_icons();
+}
+
+/** Gets the current icon window target dependent data.
+  \deprecated in 1.3.3
+ */
+const void *Fl_Window::icon() const {
+  return icon_->legacy_icon;
+}
+
+/** Sets the current icon window target dependent data.
+  \deprecated in 1.3.3
+ */
 void Fl_Window::icon(const void * ic) {
-  icon_ = ic;
+  free_icons();
+  icon_->legacy_icon = ic;
+}
+
+void Fl_Window::free_icons() {
+  int i;
+
+  icon_->legacy_icon = 0L;
+
+  if (icon_->icons) {
+    for (i = 0;i < icon_->count;i++)
+      delete icon_->icons[i];
+    delete [] icon_->icons;
+    icon_->icons = 0L;
+  }
+
+  icon_->count = 0;
+
+#ifdef WIN32
+  if (icon_->big_icon)
+    DestroyIcon(icon_->big_icon);
+  if (icon_->small_icon)
+    DestroyIcon(icon_->small_icon);
+
+  icon_->big_icon = NULL;
+  icon_->small_icon = NULL;
+#endif
 }
 
 //
