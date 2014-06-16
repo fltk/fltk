@@ -777,6 +777,107 @@ double fl_mac_flush_and_wait(double time_to_wait) {
 }
 
 
+static NSInteger max_normal_window_level(void)
+{
+  Fl_X *x;
+  NSInteger max_level;
+
+  max_level = 0;
+
+  for (x = Fl_X::first;x;x = x->next) {
+    NSInteger level;
+    FLWindow *cw = x->xid;
+    Fl_Window *win = x->w;
+    if (!win || !cw || ![cw isVisible])
+      continue;
+    if (win->modal() || win->non_modal())
+      continue;
+    level = [cw level];
+    if (level >= max_level)
+      max_level = level;
+  }
+
+  return max_level;
+}
+
+// appropriate window level for modal windows
+static NSInteger modal_window_level(void)
+{
+  NSInteger level;
+
+  level = max_normal_window_level();
+  if (level < NSModalPanelWindowLevel)
+    return NSModalPanelWindowLevel;
+
+  // Need some room for non-modal windows
+  level += 2;
+
+  // We cannot exceed this
+  if (level > CGShieldingWindowLevel())
+    return CGShieldingWindowLevel();
+
+  return level;
+}
+
+// appropriate window level for non-modal windows
+static NSInteger non_modal_window_level(void)
+{
+  NSInteger level;
+
+  level = max_normal_window_level();
+  if (level < NSFloatingWindowLevel)
+    return NSFloatingWindowLevel;
+
+  level += 1;
+
+  if (level > CGShieldingWindowLevel())
+    return CGShieldingWindowLevel();
+
+  return level;
+}
+
+// makes sure modal and non-modal windows stay on top
+static void fixup_window_levels(void)
+{
+  NSInteger modal_level, non_modal_level;
+
+  Fl_X *x;
+  FLWindow *prev_modal, *prev_non_modal;
+
+  modal_level = modal_window_level();
+  non_modal_level = non_modal_window_level();
+
+  prev_modal = NULL;
+  prev_non_modal = NULL;
+
+  for (x = Fl_X::first;x;x = x->next) {
+    FLWindow *cw = x->xid;
+    Fl_Window *win = x->w;
+    if (!win || !cw || ![cw isVisible])
+      continue;
+    if (win->modal()) {
+      if ([cw level] != modal_level) {
+        [cw setLevel:modal_level];
+        // changing level puts then in front, so make sure the
+        // stacking isn't messed up
+        if (prev_modal != NULL)
+          [cw orderWindow:NSWindowBelow
+              relativeTo:[prev_modal windowNumber]];
+      }
+      prev_modal = cw;
+    } else if (win->non_modal()) {
+      if ([cw level] != non_modal_level) {
+        [cw setLevel:non_modal_level];
+        if (prev_non_modal != NULL)
+          [cw orderWindow:NSWindowBelow
+              relativeTo:[prev_non_modal windowNumber]];
+      }
+      prev_non_modal = cw;
+    }
+  }
+}
+
+
 // updates Fl::e_x, Fl::e_y, Fl::e_x_root, and Fl::e_y_root
 static void update_e_xy_and_e_xy_root(NSWindow *nsw)
 {
@@ -1011,8 +1112,10 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   Fl_Window *window = [nsw getFl_Window];
   /* Fullscreen windows obscure all other windows so we need to return
    to a "normal" level when the user switches to another window */
-  if (window->fullscreen_active())
+  if (window->fullscreen_active()) {
     [nsw setLevel:NSNormalWindowLevel];
+    fixup_window_levels();
+  }
   Fl::handle( FL_UNFOCUS, window);
   fl_unlock_function();
 }
@@ -1022,8 +1125,10 @@ static void cocoaMouseHandler(NSEvent *theEvent)
   FLWindow *nsw = (FLWindow*)[notif object];
   Fl_Window *w = [nsw getFl_Window];
   /* Restore previous fullscreen level */
-  if (w->fullscreen_active())
+  if (w->fullscreen_active()) {
     [nsw setLevel:NSStatusWindowLevel];
+    fixup_window_levels();
+  }
   if ( w->border() || (!w->modal() && !w->tooltip_window()) ) Fl::handle( FL_FOCUS, w);
   fl_unlock_function();
 }
@@ -1126,9 +1231,6 @@ static void cocoaMouseHandler(NSEvent *theEvent)
 }
 - (void)applicationDidBecomeActive:(NSNotification *)notify
 {
-  Fl_X *x;
-  FLWindow *top = 0, *topModal = 0, *topNonModal = 0;
-
   fl_lock_function();
 
   // update clipboard status
@@ -1139,30 +1241,8 @@ static void cocoaMouseHandler(NSEvent *theEvent)
    * expects the window manager to organize Z level by application. The trickery
    * below will change Z order during activation and deactivation.
    */
-  for (x = Fl_X::first;x;x = x->next) {
-    FLWindow *cw = x->xid;
-    Fl_Window *win = x->w;
-    if (win && cw && [cw isVisible]) {
-      if (win->modal()) {
-        [cw setLevel:NSModalPanelWindowLevel];
-        if (topModal) 
-          [cw orderWindow:NSWindowBelow relativeTo:[topModal windowNumber]];
-        else
-          topModal = cw;
-      } else if (win->non_modal()) {
-        [cw setLevel:NSFloatingWindowLevel];
-        if (topNonModal) 
-          [cw orderWindow:NSWindowBelow relativeTo:[topNonModal windowNumber]];
-        else
-          topNonModal = cw;
-      } else {
-        if (top) 
-          ;
-        else
-          top = cw;
-      }
-    }
-  }
+  fixup_window_levels();
+
   fl_unlock_function();
 }
 - (void)applicationDidChangeScreenParameters:(NSNotification *)unused
@@ -2347,17 +2427,17 @@ void Fl_X::make(Fl_Window* w)
       // menu windows and tooltips
       if (w->modal()||w->tooltip_window()) {
         winstyle = NSBorderlessWindowMask;
-        winlevel = NSModalPanelWindowLevel;
+        winlevel = modal_window_level();
       } else {
         winstyle = NSBorderlessWindowMask;
       }
     } else if (w->modal()) {
       winstyle &= ~NSMiniaturizableWindowMask;
       // winstyle &= ~(NSResizableWindowMask | NSMiniaturizableWindowMask);
-      winlevel = NSModalPanelWindowLevel;
+      winlevel = modal_window_level();
     }
     else if (w->non_modal()) {
-      winlevel = NSFloatingWindowLevel;
+      winlevel = non_modal_window_level();
     }
     
     if (by+bt) {
