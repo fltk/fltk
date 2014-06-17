@@ -3355,7 +3355,7 @@ int Fl_X::set_cursor(const Fl_RGB_Image *image, int hotx, int hoty) {
   const uchar *i = (const uchar*)*image->data();
   unsigned char *o = [bitmap bitmapData];
   for (int y = 0;y < image->h();y++) {
-    if (image->d() & 1) {
+    if (!(image->d() & 1)) {
       for (int x = 0;x < image->w();x++) {
         unsigned int alpha;
         if (image->d() == 4) {
