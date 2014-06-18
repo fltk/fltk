@@ -64,11 +64,10 @@ Fl_Image_Surface::~Fl_Image_Surface() {
 #endif
 }
 
-/** Returns the image made of all drawings sent to the Fl_Image_Surface object.
- The returned object can be safely cast to Fl_RGB_Image* and contains its own copy
- of the RGB data.
+/** Returns an image made of all drawings sent to the Fl_Image_Surface object.
+ The returned object contains its own copy of the RGB data.
  */
-Fl_Image* Fl_Image_Surface::image()
+Fl_RGB_Image* Fl_Image_Surface::image()
 {
   unsigned char *data;
 #ifdef __APPLE__
