@@ -497,7 +497,7 @@ int Fl_GTK_File_Chooser::fl_gtk_chooser_wrapper()
       count++;
     }
     free(filter);
-    fl_gtk_file_chooser_set_filter((GtkFileChooser *)gtkw_ptr, filter_tab[_filtvalue]);
+    fl_gtk_file_chooser_set_filter((GtkFileChooser *)gtkw_ptr, filter_tab[_filtvalue < _nfilters?_filtvalue:0]);
     previous_filter = NULL;
     if (gtw_action_type == GTK_FILE_CHOOSER_ACTION_OPEN) {
       GtkFileFilter* gfilter = fl_gtk_file_filter_new();
