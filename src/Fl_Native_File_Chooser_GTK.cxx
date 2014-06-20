@@ -405,6 +405,8 @@ int Fl_GTK_File_Chooser::fl_gtk_chooser_wrapper()
 {
   int result = 1;
   static int have_gtk_init = 0;
+  char *p;
+  
   if(!have_gtk_init) {
     have_gtk_init = -1;
     int ac = 0;
@@ -475,12 +477,25 @@ int Fl_GTK_File_Chooser::fl_gtk_chooser_wrapper()
   }
   
   if (_directory && _directory[0]) fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, _directory);
+  else if (_preset_file) {
+    if (fl_filename_isdir(_preset_file)) {
+      fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, _preset_file);
+    }
+    else if (strrchr(_preset_file, '/')) {
+      char *dir = strdup(_preset_file);
+      p = strrchr(dir, '/');
+      if (p == dir) p++;
+      *p = 0;
+      fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, dir);
+      free(dir);
+    }
+  }
   
   GtkFileFilter **filter_tab = NULL;
   if (_parsedfilt) {
     filter_tab = new GtkFileFilter*[_nfilters];
     char *filter = strdup(_parsedfilt);
-    char *p = strtok(filter, "\t");
+    p = strtok(filter, "\t");
     int count = 0;
     while (p) {
       filter_tab[count] = fl_gtk_file_filter_new();
