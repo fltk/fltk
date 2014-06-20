@@ -393,6 +393,23 @@ int Fl_GTK_File_Chooser::show()
   return retval;
 }
 
+static char *extract_dir_from_path(const char *path)
+{
+  static char *dir = NULL;
+  if (fl_filename_isdir(path)) {
+    return (char*)path;
+  }
+  if (*path != '/') return NULL;
+  if (dir) free(dir);
+  dir = strdup(path);
+  do {
+    char *p = strrchr(dir, '/');
+    if (p == dir) p++;
+    *p = 0;
+    }
+  while (!fl_filename_isdir(dir));
+  return dir;
+}
 
 static void run_response_handler(GtkDialog *dialog, gint response_id, gpointer data)
 {
@@ -476,19 +493,13 @@ int Fl_GTK_File_Chooser::fl_gtk_chooser_wrapper()
       break;
   }
   
-  if (_directory && _directory[0]) fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, _directory);
+  if (_directory && _directory[0]) {
+    p = extract_dir_from_path(_directory);
+    if (p) fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, p);
+  }
   else if (_preset_file) {
-    if (fl_filename_isdir(_preset_file)) {
-      fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, _preset_file);
-    }
-    else if (strrchr(_preset_file, '/')) {
-      char *dir = strdup(_preset_file);
-      p = strrchr(dir, '/');
-      if (p == dir) p++;
-      *p = 0;
-      fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, dir);
-      free(dir);
-    }
+    p = extract_dir_from_path(_preset_file);
+    if (p) fl_gtk_file_chooser_set_current_folder((GtkFileChooser *)gtkw_ptr, p);
   }
   
   GtkFileFilter **filter_tab = NULL;
