@@ -128,7 +128,8 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
   if ((chars_per_pixel < 1) || (chars_per_pixel > 2))
     return 0;
 
-  uchar colors[1<<(chars_per_pixel*8)][4];
+  typedef uchar uchar4[4];
+  uchar4 *colors = new uchar4[1<<(chars_per_pixel*8)];
 
 #ifdef WIN32
   uchar *transparent_c = (uchar *)0; // such that transparent_c[0,1,2] are the RGB of the transparent color
@@ -230,7 +231,7 @@ int fl_convert_pixmap(const char*const* cdata, uchar* out, Fl_Color bg) {
 	}
       }
     }
-  
+  delete[] colors;
   return 1;
 }
 
@@ -244,10 +245,12 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
   if (!fl_measure_pixmap(cdata, w, h))
     return 0;
 
-  uchar buffer[w*h*4];
+  uchar *buffer = new uchar[w*h*4];
 
-  if (!fl_convert_pixmap(cdata, buffer, bg))
+  if (!fl_convert_pixmap(cdata, buffer, bg)) {
+    delete[] buffer;
     return 0;
+  }
 
   // FIXME: Hack until fl_draw_image() supports alpha properly
 #ifdef  __APPLE_QUARTZ__
@@ -284,7 +287,7 @@ int fl_draw_pixmap(const char*const* cdata, int x, int y, Fl_Color bg) {
 #ifdef __APPLE_QUARTZ__
   }
 #endif
-
+  delete[] buffer;
   return 1;
 }
 
