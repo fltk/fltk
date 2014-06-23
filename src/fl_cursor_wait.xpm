@@ -1,5 +1,5 @@
 /* XPM */
-static char *fl_cursor_wait_xpm[] = {
+static const char *fl_cursor_wait_xpm[] = {
 /* width height ncolors chars_per_pixel */
 "13 18 3 1",
 /* colors */
