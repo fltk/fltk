@@ -73,8 +73,8 @@ static void fallback_cursor(Fl_Window *w, Fl_Cursor c) {
   switch (c) {
   case FL_CURSOR_WAIT:
     xpm = (const char**)fl_cursor_wait_xpm;
-    hotx = 8;
-    hoty = 15;
+    hotx = 7;
+    hoty = 9;
     break;
   case FL_CURSOR_HELP:
     xpm = (const char**)fl_cursor_help_xpm;
