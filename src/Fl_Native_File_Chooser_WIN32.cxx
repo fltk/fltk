@@ -441,7 +441,7 @@ int Fl_Native_File_Chooser::showfile() {
 int CALLBACK Fl_Native_File_Chooser::Dir_CB(HWND win, UINT msg, LPARAM param, LPARAM data) {
   switch (msg) {
     case BFFM_INITIALIZED:
-      if (data) ::SendMessage(win, BFFM_SETSELECTIONW, TRUE, data);
+      if (data) ::SendMessageW(win, BFFM_SETSELECTIONW, TRUE, data);
       break;
     case BFFM_SELCHANGED:
       TCHAR path[FNFC_MAX_PATH];
