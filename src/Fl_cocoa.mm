@@ -2416,7 +2416,7 @@ void Fl_X::make(Fl_Window* w)
     int hp = w->h();
     if (w->size_range_set) {
       if ( w->minh != w->maxh || w->minw != w->maxw) {
-        winstyle |= NSResizableWindowMask;
+        if (w->border()) winstyle |= NSResizableWindowMask;
       }
     } else {
       if (w->resizable()) {
@@ -2424,7 +2424,7 @@ void Fl_X::make(Fl_Window* w)
         int minw = o->w(); if (minw > 100) minw = 100;
         int minh = o->h(); if (minh > 100) minh = 100;
         w->size_range(w->w() - o->w() + minw, w->h() - o->h() + minh, 0, 0);
-	winstyle |= NSResizableWindowMask;
+	if (w->border()) winstyle |= NSResizableWindowMask;
       } else {
         w->size_range(w->w(), w->h(), w->w(), w->h());
       }
@@ -2434,12 +2434,11 @@ void Fl_X::make(Fl_Window* w)
     if (!fake_X_wm(w, xwm, ywm, bt, bx, by)) {
       // menu windows and tooltips
       if (w->modal()||w->tooltip_window()) {
-        winstyle = NSBorderlessWindowMask;
         winlevel = modal_window_level();
-      } else {
-        winstyle = NSBorderlessWindowMask;
       }
-    } else if (w->modal()) {
+      //winstyle = NSBorderlessWindowMask;
+    } 
+    if (w->modal()) {
       winstyle &= ~NSMiniaturizableWindowMask;
       // winstyle &= ~(NSResizableWindowMask | NSMiniaturizableWindowMask);
       winlevel = modal_window_level();
