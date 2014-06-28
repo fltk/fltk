@@ -353,7 +353,11 @@ menuwindow::menuwindow(const Fl_Menu_Item* m, int X, int Y, int Wp, int Hp,
   if (Wp > W) W = Wp;
   if (Wtitle > W) W = Wtitle;
 
-  if (X < scr_x) X = scr_x; if (X > scr_x+scr_w-W) X = right_edge-W;
+  if (X < scr_x) X = scr_x; 
+  // this change improves popup submenu positioning at right screen edge, 
+  // but it makes right_edge argument useless
+  //if (X > scr_x+scr_w-W) X = right_edge-W;
+  if (X > scr_x+scr_w-W) X = scr_x+scr_w-W;
   x(X); w(W);
   h((numitems ? itemheight*numitems-LEADING : 0)+2*BW+3);
   if (selected >= 0) {
@@ -916,10 +920,12 @@ const Fl_Menu_Item* Fl_Menu_Item::pulldown(
 	if (n->selected>=0) {
 	  int dy = n->y()-nY;
 	  int dx = n->x()-nX;
+	  int waX, waY, waW, waH;
+	  Fl::screen_work_area(waX, waY, waW, waH, X, Y);
 	  for (int menu = 0; menu <= pp.menu_number; menu++) {
 	    menuwindow* tt = pp.p[menu];
-	    int nx = tt->x()+dx; if (nx < 0) {nx = 0; dx = -tt->x();}
-	    int ny = tt->y()+dy; if (ny < 0) {ny = 0; dy = -tt->y();}
+	    int nx = tt->x()+dx; if (nx < waX) {nx = waX; dx = -tt->x() + waX;}
+	    int ny = tt->y()+dy; if (ny < waY) {ny = waY; dy = -tt->y() + waY;}
 	    tt->position(nx, ny);
 	  }
 	  setitem(pp.nummenus-1, n->selected);
