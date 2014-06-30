@@ -423,9 +423,6 @@ void Fl_Gl_Window::flush() {
 
   }
 
-#if HAVE_GL_OVERLAY && defined(WIN32)
-  if (fixcursor) SetCursor(Fl_X::i(this)->cursor);
-#endif
   valid(1);
   context_valid(1);
 }
