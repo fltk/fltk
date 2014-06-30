@@ -92,7 +92,6 @@ public:
   int set_cursor(const Fl_RGB_Image*, int, int);
   static Fl_X* make(Fl_Window*);
 };
-extern FL_EXPORT HCURSOR fl_default_cursor;
 extern FL_EXPORT UINT fl_wake_msg;
 extern FL_EXPORT char fl_override_redirect; // hack into Fl_Window::make_xid()
 extern FL_EXPORT int fl_background_pixel;  // hack into Fl_Window::make_xid()
