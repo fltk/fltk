@@ -718,11 +718,12 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
 
   // Init
   int nwildcards = 0;
-  char **wildcards;				// parsed wildcards (can be several)
+  //char **wildcards;				// parsed wildcards (can be several)
+  char *wildcards[80]; // TMP
   int maxfilters = (strcnt(in, ",|") + 1);	// count wildcard seps
   int t;
-  wildcards = new char*[maxfilters];
-  for ( t=0; t<maxfilters; t++ ) {
+  //wildcards = new char*[maxfilters];
+  for ( t=0; t<80/*maxfilters*/; t++ ) {
     wildcards[t] = new char[slen];
     wildcards[t][0] = '\0';
   }
@@ -791,8 +792,8 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
 	  delete[] wildprefix;
 	  delete[] comp;
 	  delete[] name;
-	  for ( t=0; t<maxfilters; t++ ) delete[] wildcards[t];
-	  delete[] wildcards;
+	  for ( t=0; t<80/*maxfilters*/; t++ ) delete[] wildcards[t];
+	  //delete[] wildcards;
 	  return;
 	}
 	continue;			// not done yet, more filters
