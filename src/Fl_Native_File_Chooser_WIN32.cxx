@@ -677,6 +677,52 @@ static int strcnt(const char *s, const char *find) {
   return cnt;
 }
 
+// RETURN HOW MANY DIFFERENT FILTERS WERE SPECIFIED
+//   In: "foo.[CH]" or "foo.{C,H}"
+//   Out: 2
+//
+static int count_filters(const char *filter) {
+  int count = 0;
+  char mode = 0;
+  const char *in = filter;
+  while (*in) {
+    switch(*in) {
+      case '\\':			// escape next character
+        ++in; if ( *in == 0 ) continue;	// skip escape. EOL? done
+	++in;				// skip escaped char
+	continue;
+      case LCURLY_CHR:			// start "{aaa,bbb}"
+	mode = *in;			// set mode, parse over curly
+        ++count;			// at least +1 wildcard
+	break;
+      case RCURLY_CHR:			// end "{aaa,bbb}"
+	if ( mode == LCURLY_CHR )	// disable curly mode (if on)
+	  mode = 0;
+	break;
+      case LBRACKET_CHR:		// start "[xyz]"
+        mode = *in;			// set mode, parse over bracket
+	break;
+      case RBRACKET_CHR:		// end "[xyz]"
+	if ( mode == LBRACKET_CHR )	// disable bracket mode (if on)
+	  mode = 0;
+	break;
+      default:				// any other char
+        switch (mode) {			// handle {} or [] modes
+	  case LCURLY_CHR:		// handle "{aaa,bbb}"
+	    if (*in==',' || *in=='|')	// ',' and '|' adds filters
+	      ++count;
+	    break;
+	  case LBRACKET_CHR:		// handle "[xyz]"
+	    ++count;			// all chars in []'s add new filter
+	    break;
+	}
+	break;
+    }
+    ++in;				// parse past char
+  }
+  return count > 0 ? count : 1;		// return at least 1
+}
+
 // CONVERT FLTK STYLE PATTERN MATCHES TO WINDOWS 'DOUBLENULL' PATTERN
 // Returns with the parsed double-null result in '_parsedfilt'.
 //
@@ -718,12 +764,10 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
 
   // Init
   int nwildcards = 0;
-  //char **wildcards;				// parsed wildcards (can be several)
-  char *wildcards[80]; // TMP
-  int maxfilters = (strcnt(in, ",|") + 1);	// count wildcard seps
+  int maxfilters = count_filters(in) + 1;	// count wildcard seps
+  char **wildcards = new char*[maxfilters];	// parsed wildcards (can be several)
   int t;
-  //wildcards = new char*[maxfilters];
-  for ( t=0; t<80/*maxfilters*/; t++ ) {
+  for ( t=0; t<maxfilters; t++ ) {
     wildcards[t] = new char[slen];
     wildcards[t][0] = '\0';
   }
@@ -792,8 +836,8 @@ void Fl_Native_File_Chooser::parse_filter(const char *in) {
 	  delete[] wildprefix;
 	  delete[] comp;
 	  delete[] name;
-	  for ( t=0; t<80/*maxfilters*/; t++ ) delete[] wildcards[t];
-	  //delete[] wildcards;
+	  for ( t=0; t<maxfilters; t++ ) delete[] wildcards[t];
+	  delete[] wildcards;
 	  return;
 	}
 	continue;			// not done yet, more filters
