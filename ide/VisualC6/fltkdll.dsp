@@ -557,10 +557,6 @@ SOURCE=..\..\src\fl_symbols.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\Fl_Sys_Menu_Bar.cxx
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\Fl_Table.cxx
 # End Source File
 # Begin Source File
