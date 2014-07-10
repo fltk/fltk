@@ -19,6 +19,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Tiled_Image.H>
+#include <FL/Fl_Window.H>
 #include <FL/fl_draw.H>
 
 /**
@@ -31,9 +32,10 @@ Fl_Tiled_Image::Fl_Tiled_Image(Fl_Image *i,	// I - Image to tile
   Fl_Image(W,H,0) {
   image_       = i;
   alloc_image_ = 0;
-
-  if (W == 0) w(Fl::w());
-  if (H == 0) h(Fl::h());
+  // giving to the tiled image the screen size may fail with multiscreen configurations 
+  // so we leave it with w = h = 0 (STR #3106)
+  /* if (W == 0) w(Fl::w());
+  if (H == 0) h(Fl::h());*/
 }
 /**
   The destructor frees all memory and server resources that are used by
@@ -99,8 +101,11 @@ Fl_Tiled_Image::draw(int X,	// I - Starting X position
 		     int cx,	// I - "Source" X position
 		     int cy) {	// I - "Source" Y position
   if (!image_->w() || !image_->h()) return;
-  if (W == 0) W = Fl::w();
-  if (H == 0) H = Fl::h();
+  if (W == 0 && H == 0 && Fl_Window::current()) { // W and H null means the image is potentially as large as the current window
+    W = Fl_Window::current()->w();
+    H = Fl_Window::current()->h();
+    X = Y = 0;
+  }
 
   fl_push_clip(X, Y, W, H);
 
