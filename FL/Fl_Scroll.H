@@ -94,14 +94,12 @@ class FL_EXPORT Fl_Scroll : public Fl_Group {
   void fix_scrollbar_order();
   static void draw_clip(void*,int,int,int,int);
 
-private:
-
-  //
+#if FLTK_ABI_VERSION >= 10303
+protected:	// NEW (STR#1895)
+#else
+private:	// OLD
+#endif
   //  Structure to manage scrollbar and widget interior sizes.
-  //
-  //  Private for now -- we'd like to expose some of this at 
-  //  some point to solve STR#1895.)
-  //
   typedef struct {
       int scrollsize;							// the scrollsize (global|local)
       int innerbox_x, innerbox_y, innerbox_w, innerbox_h;		// widget's inner box (excludes scrollbars)
