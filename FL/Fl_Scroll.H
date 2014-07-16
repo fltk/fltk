@@ -108,20 +108,25 @@ private:	// OLD
   typedef struct {
     /// A local struct to manage a region defined by xywh
     typedef struct { int x,y,w,h; } Fl_Region_XYWH;
-    /// A local struct to manage a region defined by left/right/bottom/top
-    typedef struct { int l,r,b,t; } Fl_Region_LRBT;
+    /// A local struct to manage a region defined by left/right/top/bottom
+    typedef struct {
+      int l;			///< (l)eft "x" position, aka x1
+      int r;			///< (r)ight "x" position, aka x2
+      int t;			///< (t)op "y" position, aka y1
+      int b;			///< (b)ottom "y" position, aka y2
+    } Fl_Region_LRTB;
     /// A local struct to manage a scrollbar's xywh region and tab values
     typedef struct {
       int x,y,w,h;
-      int pos;			///< scrollbar tab's position value
-      int size;			///< scrollbar tab's size
-      int first;		///< scrollbar tab's first value
-      int total;		///< scrollbar tab's total value
+      int pos;			///< scrollbar tab's "position of first line displayed"
+      int size;			///< scrollbar tab's "size of window in lines"
+      int first;		///< scrollbar tab's "number of first line"
+      int total;		///< scrollbar tab's "total number of lines"
     } Fl_Scrollbar_Data;
     int scrollsize;		///< the effective scrollbar thickness (local or global)
     Fl_Region_XYWH innerbox;	///< widget's inner box, excluding scrollbars
     Fl_Region_XYWH innerchild;	///< widget's inner box, including scrollbars
-    Fl_Region_LRBT child;	///< child bounding box: left/right/bottom/top
+    Fl_Region_LRTB child;	///< child bounding box: left/right/top/bottom
     int hneeded;		///< horizontal scrollbar visibility
     int vneeded;		///< vertical scrollbar visibility
     Fl_Scrollbar_Data hscroll;	///< horizontal scrollbar region + values
