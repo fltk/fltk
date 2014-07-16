@@ -99,17 +99,33 @@ protected:	// NEW (STR#1895)
 #else
 private:	// OLD
 #endif
-  //  Structure to manage scrollbar and widget interior sizes.
+  /**
+    Structure to manage scrollbar and widget interior sizes.
+    This is filled out by recalc_scrollbars() for use in calculations
+    that need to know the visible scroll area size, etc.
+    \note Availability in FLTK_ABI_VERSION 10303 or higher.
+  */
   typedef struct {
-      int scrollsize;							// the scrollsize (global|local)
-      int innerbox_x, innerbox_y, innerbox_w, innerbox_h;		// widget's inner box (excludes scrollbars)
-      int innerchild_x, innerchild_y, innerchild_w, innerchild_h;	// widget's inner box including scrollbars
-      int child_l, child_r, child_b, child_t;				// child bounding box: left/right/bottom/top
-      int hneeded, vneeded;						// hor + ver scrollbar visibility
-      int hscroll_x, hscroll_y, hscroll_w, hscroll_h;			// hor scrollbar size/position
-      int vscroll_x, vscroll_y, vscroll_w, vscroll_h;			// ver scrollbar size/position
-      int hpos, hsize, hfirst, htotal;					// hor scrollbar values (pos/size/first/total)
-      int vpos, vsize, vfirst, vtotal;					// ver scrollbar values (pos/size/first/total)
+    /// A local struct to manage a region defined by xywh
+    typedef struct { int x,y,w,h; } Fl_Region_XYWH;
+    /// A local struct to manage a region defined by left/right/bottom/top
+    typedef struct { int l,r,b,t; } Fl_Region_LRBT;
+    /// A local struct to manage a scrollbar's xywh region and tab values
+    typedef struct {
+      int x,y,w,h;
+      int pos;			///< scrollbar tab's position value
+      int size;			///< scrollbar tab's size
+      int first;		///< scrollbar tab's first value
+      int total;		///< scrollbar tab's total value
+    } Fl_Scrollbar_Data;
+    int scrollsize;		///< the effective scrollbar thickness (local or global)
+    Fl_Region_XYWH innerbox;	///< widget's inner box, excluding scrollbars
+    Fl_Region_XYWH innerchild;	///< widget's inner box, including scrollbars
+    Fl_Region_LRBT child;	///< child bounding box: left/right/bottom/top
+    int hneeded;		///< horizontal scrollbar visibility
+    int vneeded;		///< vertical scrollbar visibility
+    Fl_Scrollbar_Data hscroll;	///< horizontal scrollbar region + values
+    Fl_Scrollbar_Data vscroll;	///< vertical scrollbar region + values
   } ScrollInfo;
   void recalc_scrollbars(ScrollInfo &si);
 
