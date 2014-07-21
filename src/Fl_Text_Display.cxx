@@ -2872,8 +2872,6 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
     Y = y();
     line = get_absolute_top_line_number();
 
-    int last_y = y();
-
     // set font color for line numbers
     fl_color(linenumber_fgcolor());
     for (visLine=0; visLine < mNVisibleLines; visLine++) {
@@ -2886,7 +2884,6 @@ void Fl_Text_Display::draw_line_numbers(bool /*clearAll*/) {
 	    hh = lineHeight;
 	fl_draw(lineNumString, xx, yy, ww, hh, linenumber_align(), 0, 0);
 	//DEBUG fl_rect(xx, yy, ww, hh);
-	last_y = Y;
 	line++;
       } else {
 	if (visLine == 0) line++;
