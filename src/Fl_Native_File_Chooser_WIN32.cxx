@@ -664,19 +664,6 @@ void Fl_Native_File_Chooser::add_filter(const char *name_in,	// name of filter (
   //DEBUG printf("DEBUG: ADD FILTER name=<%s> winfilter=<%s>\n", name, winfilter);
 }
 
-// COUNT OCCURRENCES OF ANY CHARS FROM 'find' IN 's'.
-static int strcnt(const char *s, const char *find) {
-  int cnt = 0;
-  const char *f;
-  while ( *s ) {
-    for (f=find; *f; f++) {
-      if (*s == *f) { ++cnt; break; }
-    }
-    ++s;
-  }
-  return cnt;
-}
-
 // RETURN HOW MANY DIFFERENT FILTERS WERE SPECIFIED
 //   In: "foo.[CH]" or "foo.{C,H}"
 //   Out: 2
