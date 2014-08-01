@@ -60,7 +60,7 @@ depend: makeinclude
 
 clean:
 	-$(RM) core *.o
-	for dir in $(DIRS); do\
+	for dir in examples $(DIRS); do\
 		echo "=== cleaning $$dir ===";\
 		(cd $$dir; $(MAKE) $(MFLAGS) clean) || exit 1;\
 	done
