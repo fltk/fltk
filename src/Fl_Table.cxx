@@ -199,7 +199,7 @@ void Fl_Table::col_width(int col, int width)
   // Add column widths, even if none yet
   int now_size = (int)_colwidths.size();
   if ( col >= now_size ) {
-    _colwidths.size(col);
+    _colwidths.size(col+1);
     while (now_size < col) {
       _colwidths[now_size++] = width;
     }
