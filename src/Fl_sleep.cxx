@@ -1,9 +1,9 @@
 //
 // "$Id$"
 //
-// Multi-threading support code for the Fast Light Tool Kit (FLTK).
+// Multi-platform sleep functions for the Fast Light Tool Kit (FLTK).
 //
-// Copyright 1998-2010 by Bill Spitzak and others.
+// Copyright 1998-2014 by Bill Spitzak and others.
 //
 // This library is free software. Distribution and use rights are outlined in
 // the file "COPYING" which should have been included with this file.  If this
@@ -46,18 +46,18 @@ void Fl::msleep(unsigned long milliseconds)
 }
 
 /** Make the current thread to sleep for n microseconds */
-void Fl::usleep(unsigned long long microseconds) 
+void Fl::usleep(unsigned long long microseconds)
 // unsigned long long more should be more portable than int64_t before c++ 2011 ...
 {
 #ifdef WIN32
-  HANDLE timer; 
-  LARGE_INTEGER reltime; 
-  
+  HANDLE timer;
+  LARGE_INTEGER reltime;
+
   reltime.QuadPart = (LONGLONG) -(10*microseconds); // Convert to 100 nanosecond relative time interval
-  timer = CreateWaitableTimer(NULL, TRUE, NULL); 
-  SetWaitableTimer(timer, &reltime, 0, NULL, NULL, 0); 
-  WaitForSingleObject(timer, INFINITE); 
-  CloseHandle(timer); 
+  timer = CreateWaitableTimer(NULL, TRUE, NULL);
+  SetWaitableTimer(timer, &reltime, 0, NULL, NULL, 0);
+  WaitForSingleObject(timer, INFINITE);
+  CloseHandle(timer);
 #else
   ::usleep((useconds_t) microseconds);
 #endif
