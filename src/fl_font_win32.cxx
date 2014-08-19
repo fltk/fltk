@@ -202,7 +202,7 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
   // else - this falls through to the lookup-table for glyph widths
   // in the basic multilingual plane
   r = (c & 0xFC00) >> 10;
-  if (!fl_fontsize->width[r]) {  
+  if (!fl_fontsize->width[r]) {
     fl_fontsize->width[r] = (int*) malloc(sizeof(int) * 0x0400);
     for (int i = 0; i < 0x0400; i++) fl_fontsize->width[r][i] = -1;
   } else {
@@ -212,11 +212,11 @@ double Fl_GDI_Graphics_Driver::width(unsigned int c) {
   }
   unsigned short ii = r * 0x400;
   // The following code makes a best effort attempt to obtain a valid fl_gc.
-  // If no fl_gc is available at the time we call fltk3::width(), then we first
+  // If no fl_gc is available at the time we call fl_width(), then we first
   // try to obtain a gc from the first fltk window.
   // If that is null then we attempt to obtain the gc from the current screen
   // using (GetDC(NULL)).
-  // This should resolve STR #2086  
+  // This should resolve STR #2086
   HDC gc = fl_gc;
   HWND hWnd = 0;
   if (!gc) { // We have no valid gc, try and obtain one
